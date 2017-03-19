@@ -1,0 +1,5 @@
+set username/password for testing
+
+export FOLIO_UI_USERNAME=diku_admin 
+export FOLIO_UI_PASSWORD=admin
+
