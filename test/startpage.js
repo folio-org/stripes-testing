@@ -7,13 +7,14 @@ describe('Load a Page', function() {
 
   let nightmare = null
   beforeEach(() => {
-    nightmare = new Nightmare()
+    nightmare = new Nightmare({ show: true })
   })
 
   describe('/ (Home Page)', () => {
     it('should load without error', done => {
       // your actual testing urls will likely be `http://localhost:port/path`
       nightmare.goto('http://localhost:3000')
+        .wait('button[type=submit]')
         .end()
         .then(function (result) { done() })
         .catch(done)
