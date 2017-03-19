@@ -7,7 +7,7 @@ describe('Load a Page', function() {
 
   let nightmare = null
   beforeEach(() => {
-    nightmare = new Nightmare({ show: true })
+    nightmare = new Nightmare({ show: false })
   })
 
   describe('/ (Home Page)', () => {
