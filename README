@@ -1,10 +1,20 @@
+Regression tests for Folio UI
+----------------------------------
+# install node packages first
 $ yarn install
 
 # set username/password for testing
-
 export FOLIO_UI_USERNAME=diku_admin 
 export FOLIO_UI_PASSWORD=admin
 export FOLIO_UI_DEBUG=2
 
 $ yarn test
+
+or
+
+$ FOLIO_UI_DEBUG=2 yarn test
+
+--
+EOF
+
 
