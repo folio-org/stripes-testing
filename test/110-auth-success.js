@@ -12,14 +12,12 @@ describe('Login Page / 110-auth-success', function () {
   })
 
   describe('signing up and finishing setup', () => {
-    let username = process.env.FOLIO_UI_USERNAME
-    let password = process.env.FOLIO_UI_PASSWORD
-    
+            
     it('should work without timing out', done => {
       nightmare
       .goto(config.url)
-      .type('input[name=username]', username)
-      .type('input[name=password]', password)
+      .type('input[name=username]', config.username)
+      .type('input[name=password]', config.password)
       .click('button[type=submit]')
       .wait('h3')
       .end()
