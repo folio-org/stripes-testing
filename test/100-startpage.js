@@ -1,5 +1,6 @@
 const Nightmare = require('nightmare')
 const assert = require('assert')
+const nightmare_opt = require('./.nightmare-debug.js')
 
 describe('Load a Page', function() {
   // Recommended: 5s locally, 10s to remote server, 30s from airplane
@@ -7,7 +8,7 @@ describe('Load a Page', function() {
 
   let nightmare = null
   beforeEach(() => {
-    nightmare = new Nightmare({ show: false })
+    nightmare = new Nightmare(nightmare_opt.opt)
   })
 
   describe('/ (Home Page)', () => {

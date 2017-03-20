@@ -1,5 +1,6 @@
 const Nightmare = require('nightmare')
 const assert = require('assert')
+const nightmare_opt = require('./.nightmare-debug.js')
 
 describe('Login Page', function () {
   this.timeout('9s')
@@ -7,7 +8,7 @@ describe('Login Page', function () {
   let nightmare = null
   beforeEach(() => {
     // show true lets you see wth is actually happening :)
-    nightmare = new Nightmare({ show: false })
+    nightmare = new Nightmare(nightmare_opt.opt)
   })
 
   describe('given bad data', () => {
