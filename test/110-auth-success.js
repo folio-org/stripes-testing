@@ -1,14 +1,14 @@
 const Nightmare = require('nightmare')
 const assert = require('assert')
-const nightmare_opt = require('./.nightmare-debug.js')
+const config = require('./.folio-ui-config.js')
 
-describe('Login Page / 120-auth-success', function () {
+describe('Login Page / 110-auth-success', function () {
   this.timeout('6s')
 
   let nightmare = null
   beforeEach(() => {
     // show true lets you see wth is actually happening :)
-    nightmare = new Nightmare(nightmare_opt.opt)
+    nightmare = new Nightmare(config.nightmare)
   })
 
   describe('signing up and finishing setup', () => {
@@ -17,7 +17,7 @@ describe('Login Page / 120-auth-success', function () {
     
     it('should work without timing out', done => {
       nightmare
-      .goto('http://localhost:3000')
+      .goto(config.url)
       .type('input[name=username]', username)
       .type('input[name=password]', password)
       .click('button[type=submit]')

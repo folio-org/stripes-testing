@@ -1,14 +1,14 @@
 const Nightmare = require('nightmare')
 const assert = require('assert')
-const nightmare_opt = require('./.nightmare-debug.js')
+const config = require('./.folio-ui-config.js')
 
-describe('Using the App Folio UI App scan', function () {
+describe('Using the App Folio UI App /scan', function () {
   this.timeout('10s')
 
   let nightmare = null
   beforeEach(() => {
     // show true lets you see wth is actually happening :)
-    nightmare = new Nightmare(nightmare_opt.opt)
+    nightmare = new Nightmare(config.nightmare)
   })
 
   describe('signing up and finishing setup', () => {
@@ -17,7 +17,7 @@ describe('Using the App Folio UI App scan', function () {
     
     it('should work without timing out', done => {
       nightmare
-      .goto('http://localhost:3000')
+      .goto(config.url)
       .type('input[name=username]', username)
       .type('input[name=password]', password)
       .click('button[type=submit]')

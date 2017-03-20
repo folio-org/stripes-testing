@@ -1,6 +1,6 @@
 const Nightmare = require('nightmare')
 const assert = require('assert')
-const nightmare_opt = require('./.nightmare-debug.js')
+const config = require('./.folio-ui-config.js')
 
 describe('Login Page / 120-auth-fail', function () {
   this.timeout('9s')
@@ -8,13 +8,13 @@ describe('Login Page / 120-auth-fail', function () {
   let nightmare = null
   beforeEach(() => {
     // show true lets you see wth is actually happening :)
-    nightmare = new Nightmare(nightmare_opt.opt)
+    nightmare = new Nightmare(config.nightmare)
   })
 
   describe('given bad data', () => {
     it('should fail', done => {
       nightmare
-      .goto('http://localhost:3000')
+      .goto(config.url)
       .type('input[name=username]', 'notgonnawork')
       .type('input[name=password]', 'invalid password')
       .click('button[type=submit]')

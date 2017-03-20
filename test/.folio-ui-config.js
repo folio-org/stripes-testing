@@ -2,7 +2,9 @@
 // global debug options for tests
 //
 module.exports = {
-    opt: process.env.FOLIO_UI_DEBUG == 2 ? {
+    url:  process.env.FOLIO_UI_URL || 'http://localhost:3000',
+    
+    nightmare: process.env.FOLIO_UI_DEBUG == 2 ? {
         openDevTools: {
             mode: 'detach'
         },
