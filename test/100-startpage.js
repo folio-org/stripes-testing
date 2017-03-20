@@ -4,7 +4,7 @@ const nightmare_opt = require('./.nightmare-debug.js')
 
 describe('Load a Page / 100-startpage', function() {
   // Recommended: 5s locally, 10s to remote server, 30s from airplane
-  this.timeout('30s')
+  this.timeout('5s')
 
   let nightmare = null
   beforeEach(() => {
