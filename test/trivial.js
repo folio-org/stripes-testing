@@ -2,7 +2,7 @@ const Nightmare = require('nightmare')
 const assert = require('assert')
 const nightmare_opt = require('./.nightmare-debug.js')
 
-describe('Using the App', function () {
+describe('Using the Folio UI App trivial', function () {
   this.timeout('10s')
 
   let nightmare = null

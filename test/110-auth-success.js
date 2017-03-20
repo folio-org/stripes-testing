@@ -2,7 +2,7 @@ const Nightmare = require('nightmare')
 const assert = require('assert')
 const nightmare_opt = require('./.nightmare-debug.js')
 
-describe('Using the App', function () {
+describe('Login Page / 120-auth-success', function () {
   this.timeout('6s')
 
   let nightmare = null
