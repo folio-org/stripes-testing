@@ -13,7 +13,11 @@ Version 2.0. See the file "[LICENSE](LICENSE)" for more information.
 
     export FOLIO_UI_USERNAME=diku_admin 
     export FOLIO_UI_PASSWORD=admin
+
+optional:
+
     export FOLIO_UI_DEBUG=2
+    export FOLIO_UI_URL=http://localhost:3000
 
     $ yarn test
 
