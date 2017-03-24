@@ -23,10 +23,10 @@ optional:
 
 or
 
-    # command line only
+    # headless browser test / command line
     $ FOLIO_UI_DEBUG=0 yarn test
     
-    # with browser window
+    # with browser window on a desktop machine
     $ FOLIO_UI_DEBUG=1 yarn test
     
     # with browser window + debug console
