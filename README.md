@@ -23,9 +23,19 @@ optional:
 
 or
 
+    # command line only
     $ FOLIO_UI_DEBUG=0 yarn test
+    
+    # with browser window
     $ FOLIO_UI_DEBUG=1 yarn test
+    
+    # with browser window + debug console
     $ FOLIO_UI_DEBUG=2 yarn test
+    
+Nightmare debug options:
+
+    $ DEBUG=nightmare yarn test
+    $ DEBUG=nightmare* yarn test
   
 --
 March 2017
