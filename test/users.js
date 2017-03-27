@@ -22,12 +22,16 @@ describe('Using the App Folio UI App /users', function () {
       .wait('h3')
       
       .click('a[title=Users] > span')
-      //.wait('h1')
-      //.wait(2000)
       .wait('em')
+      
       .type('input[placeholder=Search]', "da")
       .wait('em')
-      .wait(4000)
+      
+      .click('input[id="active.Inactive-ItemFilter"]')
+      .wait('em')
+      
+      .wait(4000) // debugging
+      
       .end()
       .then(result => { done() })
       .catch(done)
