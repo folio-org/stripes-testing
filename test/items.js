@@ -27,7 +27,8 @@ describe('Using the App Folio UI App /users', function () {
       .wait('em')
       .type('input[placeholder=Search]', "da")
       .wait('em')
-      .wait(4000)
+      
+      .wait(parseInt(process.env.FOLIO_UI_DEBUG) ? parseInt(config.debug_sleep) : 0) // debugging
       .end()
       .then(result => { done() })
       .catch(done)
