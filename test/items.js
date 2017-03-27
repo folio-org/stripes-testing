@@ -2,7 +2,7 @@ const Nightmare = require('nightmare')
 const assert = require('assert')
 const config = require('./.folio-ui-config.js')
 
-describe('Using the App Folio UI App /users', function () {
+describe('Using the App Folio UI App /items', function () {
   this.timeout('10s')
 
   let nightmare = null
@@ -21,11 +21,11 @@ describe('Using the App Folio UI App /users', function () {
       .click('button[type=submit]')
       .wait('h3')
       
-      .click('a[title=Users] > span')
+      .click('a[title=Items] > span')
       //.wait('h1')
       //.wait(2000)
       .wait('em')
-      .type('input[placeholder=Search]', "da")
+      .click('button[class="button---2NsdC primary---5q6-s fullWidth---2bppW"]')
       .wait('em')
       
       .wait(parseInt(process.env.FOLIO_UI_DEBUG) ? parseInt(config.debug_sleep) : 0) // debugging
