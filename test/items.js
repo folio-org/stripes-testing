@@ -3,7 +3,7 @@ const assert = require('assert')
 const config = require('./.folio-ui-config.js')
 
 describe('Using the App Folio UI App /items', function () {
-  this.timeout('10s')
+  this.timeout('20s')
 
   let nightmare = null
   beforeEach(() => {
@@ -27,6 +27,13 @@ describe('Using the App Folio UI App /items', function () {
       .wait('em')
       .click('button[class="button---2NsdC primary---5q6-s fullWidth---2bppW"]')
       .wait('em')
+      
+      .type('input[id="additem_instanceId"]', "instance one")
+      .type('input[id="additem_title"]', "my new book")
+      .type('input[id="additem_materialType"]', "hardcover")
+      .type('input[id="additem_barcode"]', "1234")
+      .type('input[id="additem_location"]', "basement")
+      .click('button[class="button---2NsdC primary---5q6-s"]')
       
       .wait(parseInt(process.env.FOLIO_UI_DEBUG) ? parseInt(config.debug_sleep) : 0) // debugging
       .end()
