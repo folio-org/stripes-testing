@@ -4,7 +4,7 @@ const config = require('./.folio-ui-config.js')
 
 describe('Load a Page / 100-startpage', function() {
   // Recommended: 5s locally, 10s to remote server, 30s from airplane
-  this.timeout('5s')
+  this.timeout('25s')
 
   let nightmare = null
   beforeEach(() => {
