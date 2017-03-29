@@ -1,6 +1,6 @@
 const Nightmare = require('nightmare')
 const assert = require('assert')
-const config = require('./.folio-ui-config.js')
+const config = require('../folio-ui.config.js')
 
 describe('Load a Page / 100-startpage', function() {
   // Recommended: 5s locally, 10s to remote server, 30s from airplane
