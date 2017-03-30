@@ -3,7 +3,7 @@ const assert = require('assert')
 const config = require('../folio-ui.config.js')
 
 describe('Login Page / 110-auth-success', function () {
-  this.timeout('10s')
+  this.timeout('15s')
 
   let nightmare = null
   beforeEach(() => {
@@ -21,6 +21,11 @@ describe('Login Page / 110-auth-success', function () {
       .click('button[type=submit]')
       .wait('h3')
       .wait(parseInt(process.env.FOLIO_UI_DEBUG) ? parseInt(config.debug_sleep) : 0) // debugging
+      
+      .click('button[class="ddButton---3nc81"]') // logout
+      .wait('h1') // login page
+      .wait(parseInt(process.env.FOLIO_UI_DEBUG) ? parseInt(config.debug_sleep/3) : 0) // debugging
+      
       .end()
       .then(result => { done() })
       .catch(done)

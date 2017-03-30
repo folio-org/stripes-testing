@@ -35,6 +35,11 @@ describe('Using the Folio UI App /trivial', function () {
       
       .wait('h3')
       .wait(parseInt(process.env.FOLIO_UI_DEBUG) ? parseInt(config.debug_sleep) : 0) // debugging
+      
+      .click('button[class="ddButton---3nc81"]')
+      .wait('h1')
+      .wait(parseInt(process.env.FOLIO_UI_DEBUG) ? parseInt(config.debug_sleep/3) : 0) // debugging
+      
       .end()
       .then(result => { done() })
       .catch(done)
