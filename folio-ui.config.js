@@ -13,9 +13,11 @@ module.exports = {
             mode: 'detach'
         },
         width: 1200,
-        height: 600,
+        height: 800,
         show: true
     } : process.env.FOLIO_UI_DEBUG == 1 ? {
+        width: 1200,
+        height: 600,
         typeInterval: 20,
         show: true
     } : { typeInterval: 5 }
