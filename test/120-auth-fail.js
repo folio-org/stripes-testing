@@ -20,6 +20,7 @@ describe('Login Page / 120-auth-fail', function () {
       .click('button[type=submit]')
       .wait('button[disabled]') // failure
       .wait('span') // failure
+      .wait(parseInt(process.env.FOLIO_UI_DEBUG) ? parseInt(config.debug_sleep) : 0) // debugging
       .end()
       .then(result => { done () })
       .catch(done)

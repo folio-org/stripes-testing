@@ -20,6 +20,7 @@ describe('Login Page / 110-auth-success', function () {
       .type('input[name=password]', config.password)
       .click('button[type=submit]')
       .wait('h3')
+      .wait(parseInt(process.env.FOLIO_UI_DEBUG) ? parseInt(config.debug_sleep) : 0) // debugging
       .end()
       .then(result => { done() })
       .catch(done)
