@@ -37,6 +37,9 @@ or
     
     # with browser window + debug console
     $ FOLIO_UI_DEBUG=2 yarn test
+
+    # a single test
+    $ ./node_modules/.bin/mocha test/100-startpage.js 
     
 Nightmare debug options:
 
