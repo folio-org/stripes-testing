@@ -15,9 +15,17 @@ RUN wget --no-check-certificate --no-cookies https://deb.nodesource.com/setup_${
     sh -c "/tmp/node.sh" && \
     rm -f /tmp/node.sh && \
     apt-get install nodejs && \
-    npm install -g yarn && \
-    cd /usr/src && \
-    git clone https://github.com/folio-org/ui-testing && \
-    cd ui-testing && yarn install
+    npm install -g yarn 
 
 WORKDIR /usr/src/ui-testing
+
+COPY test /usr/src/ui-testing/test
+COPY LICENSE /usr/src/ui-testing/LICENSE
+COPY folio-ui.config.js /usr/src/ui-testing/folio-ui.config.js
+COPY package.json /usr/src/ui-testing/package.json
+
+RUN yarn install 
+COPY docker-run.sh /usr/src/ui-testing/docker-run.sh
+
+ENTRYPOINT ["./docker-run.sh"]
+
