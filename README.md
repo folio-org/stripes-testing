@@ -42,6 +42,7 @@ Nightmare debug options:
 
     $ DEBUG=nightmare yarn test
     $ DEBUG=nightmare* yarn test
+    $ DEBUG=nightmare:*,electron:* yarn test
 
 
 All options in one:
