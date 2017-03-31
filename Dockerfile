@@ -17,7 +17,7 @@ RUN wget --no-check-certificate --no-cookies https://deb.nodesource.com/setup_${
     apt-get install nodejs && \
     npm install -g yarn && \
     cd /usr/src && \
-    git clone https://github.com/wschnrid/folio-ui-test && \
-    cd folio-ui-test && yarn install
+    git clone https://github.com/folio-org/ui-testing && \
+    cd ui-testing && yarn install
 
-WORKDIR /usr/src/folio-ui-test
+WORKDIR /usr/src/ui-testing
