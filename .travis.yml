@@ -3,6 +3,7 @@ dist: trusty
 
 node_js:
   - "6"
+  - "7"
 
 before_script:
   - "export DISPLAY=:99"
