@@ -52,8 +52,3 @@ All options in one:
 
     $ FOLIO_UI_URL="http://folio-uidemo.aws.indexdata.com" DEBUG=nightmare FOLIO_UI_DEBUG=2 yarn test
 
---
-March 2017
-
-
-
