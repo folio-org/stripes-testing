@@ -1,11 +1,11 @@
-# Regression tests for Folio UI
+# Regression tests for FOLIO UI
 
 Copyright (C) 2017 The Open Library Foundation
 
 This software is distributed under the terms of the Apache License,
 Version 2.0. See the file "[LICENSE](LICENSE)" for more information.
 
-## About Folio UI Tests
+## About FOLIO UI Tests
 
 The tests are using the [nightmarejs](http://www.nightmarejs.org) browser automation library,
 and [mocha](https://mochajs.org) for the tests itself.
