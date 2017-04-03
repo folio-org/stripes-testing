@@ -12,7 +12,7 @@ describe('Using the App Folio UI App /users', function () {
   })
 
   describe('signing up and finishing setup', () => {
-            
+
     it('should work without timing out', done => {
       nightmare
       .goto(config.url)
@@ -20,25 +20,25 @@ describe('Using the App Folio UI App /users', function () {
       .type('input[name=password]', config.password)
       .click('button[type=submit]')
       .wait('h3')
-      
+
       .click('a[title=Users] > span')
       .wait('em')
-      
+
       .click('input[id="pg.On-campus-ItemFilter"]')
       .wait('em')
-      
+
       .type('input[placeholder=Search]', "a")
       .wait('em')
-      
+
       .click('input[id="active.Inactive-ItemFilter"]')
       .wait('em')
-      
+
       .wait(parseInt(process.env.FOLIO_UI_DEBUG) ? parseInt(config.debug_sleep) : 0) // debugging
-      
+
       .click('button[class="ddButton---3nc81"]')
       .wait('h1')
       .wait(parseInt(process.env.FOLIO_UI_DEBUG) ? parseInt(config.debug_sleep/3) : 0) // debugging
-      
+
       .end()
       .then(result => { done() })
       .catch(done)

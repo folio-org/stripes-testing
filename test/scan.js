@@ -13,7 +13,7 @@ describe('Using the App Folio UI App /scan', function () {
 
   describe('signing up and finishing setup', () => {
     var scan_user = "dante"
-            
+
     it('should work without timing out', done => {
       nightmare
       .goto(config.url)
@@ -21,19 +21,19 @@ describe('Using the App Folio UI App /scan', function () {
       .type('input[name=password]', config.password)
       .click('button[type=submit]')
       .wait('h3')
-      
+
       .click('a[title=Scan] > span')
       //.wait('h1')
-      
+
       .type('input[id=patronid]', scan_user)
       .click('div.col-xs-3 > button[type=button]')
-      
+
       .wait(parseInt(process.env.FOLIO_UI_DEBUG) ? parseInt(config.debug_sleep) : 0) // debugging
-      
+
       .click('button[class="ddButton---3nc81"]')
       .wait('h1')
       .wait(parseInt(process.env.FOLIO_UI_DEBUG) ? parseInt(config.debug_sleep/3) : 0) // debugging
-      
+
       .end()
       .then(result => { done() })
       .catch(done)
