@@ -1,14 +1,14 @@
 {
-  "name": "folio-nightmare",
+  "name": "@folio/ui-testing",
   "version": "1.0.0",
-  "description": "folio ui regression tests",
-  "repository": "https://github.com/folio-org",
+  "description": "Regression tests for FOLIO UI",
+  "repository": "folio-org/ui-testing",
   "author": "Wolfram Schneider <wosch@indexdata.com>",
   "license": "Apache-2.0",
-  
+
   "scripts": {
-   "test": "./node_modules/.bin/mocha",
-   "test-simple": "./node_modules/.bin/mocha test/100-startpage.js"
+    "test": "./node_modules/.bin/mocha",
+    "test-simple": "./node_modules/.bin/mocha test/100-startpage.js"
   },
 
   "dependencies": {

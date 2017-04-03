@@ -15,11 +15,11 @@ describe('Load a Page / 100-startpage', function() {
     it('should load without error', done => {
       // your actual testing urls will likely be `http://localhost:port/path`
       nightmare.goto(config.url)
-        .wait('button[type=submit]')
-        .wait(parseInt(process.env.FOLIO_UI_DEBUG) ? parseInt(config.debug_sleep) : 0) // debugging
-        .end()
-        .then(function (result) { done() })
-        .catch(done)
+      .wait('button[type=submit]')
+      .wait(parseInt(process.env.FOLIO_UI_DEBUG) ? parseInt(config.debug_sleep) : 0) // debugging
+      .end()
+      .then(function (result) { done() })
+      .catch(done)
     })
   })
 })
