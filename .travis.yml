@@ -1,8 +1,8 @@
 language: node_js 
-dist: trusty
+#dist: trusty
 
 node_js:
-  - "6"
+  #- "6"
   - "7"
 
 before_script:
