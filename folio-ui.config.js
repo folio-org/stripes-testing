@@ -8,7 +8,7 @@ module.exports = {
     debug_sleep: process.env.FOLIO_UI_DEBUG_SLEEP || 4000,
 
     nightmare: process.env.FOLIO_UI_DEBUG == 2 ? {
-        typeInterval: 30,
+        typeInterval: 50,
         openDevTools: {
             mode: 'detach'
         },
