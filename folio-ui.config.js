@@ -12,12 +12,12 @@ module.exports = {
         openDevTools: {
             mode: 'detach'
         },
-        width: 1200,
-        height: 800,
+        width: 800,
+        height: 600,
         show: true
     } : process.env.FOLIO_UI_DEBUG == 1 ? {
-        width: 1200,
-        height: 600,
+        width: 1000,
+        height: 700,
         typeInterval: 20,
         show: true
     } : { typeInterval: 5 }
