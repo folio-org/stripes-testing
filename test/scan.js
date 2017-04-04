@@ -12,7 +12,7 @@ describe('Using the App FOLIO UI App /scan', function () {
   })
 
   describe('signing up and finishing setup', () => {
-    var scan_user = "dante"
+    var scan_user = "jade"
 
     it('should work without timing out', done => {
       nightmare
