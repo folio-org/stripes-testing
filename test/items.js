@@ -33,7 +33,8 @@ describe('Using the App FOLIO UI App /items', function () {
 
       .type('input[id="additem_instanceId"]', "instance one")
       .type('input[id="additem_title"]', "my new book")
-      .type('input[id="additem_materialType"]', "Book")
+      .click('select[id="additem_materialType"]')
+      .select('select#additem_materialType', "Book")
       .type('input[id="additem_barcode"]', "1234")
       .type('input[id="additem_location"]', "basement")
       .click('button[class="button---2NsdC primary---5q6-s"]')

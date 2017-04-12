@@ -3,6 +3,7 @@
 set -e
 set -x
 
-/usr/bin/Xvfb :1 &
-sleep 1
-DISPLAY=:1 yarn test
+/usr/bin/Xvfb :2 &
+sleep 0.5 
+DISPLAY=:2 yarn test
+
