@@ -23,9 +23,13 @@ COPY test /usr/src/ui-testing/test
 COPY LICENSE /usr/src/ui-testing/LICENSE
 COPY folio-ui.config.js /usr/src/ui-testing/folio-ui.config.js
 COPY package.json /usr/src/ui-testing/package.json
+COPY docker-run.sh /usr/src/ui-testing/docker-run.sh
+
+RUN useradd -ms /bin/bash folio
+RUN chown -R folio /usr/src/ui-testing
+USER folio
 
 RUN yarn install
-COPY docker-run.sh /usr/src/ui-testing/docker-run.sh
 
 ENTRYPOINT ["./docker-run.sh"]
 
