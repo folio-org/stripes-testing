@@ -15,17 +15,20 @@ and [mocha](https://mochajs.org) for the tests itself.
 
     $ yarn install
 
-## set username/password for testing
+## run the tests with default user/pw/debug level
+
+    $ yarn test
+
+## optional: environment variables to modify tests
+
+set username/password to something different from the default:
 
     export FOLIO_UI_USERNAME=diku_admin
     export FOLIO_UI_PASSWORD=admin
 
-optional:
+run against a different Stripes service:
 
-    export FOLIO_UI_DEBUG=2
     export FOLIO_UI_URL=http://localhost:3000
-
-    $ yarn test
 
 or
 
