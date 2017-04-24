@@ -52,6 +52,9 @@ describe('Using the App FOLIO UI App /items', function () {
       .click('input[id="location.Main Library-ItemFilter"]') // main lib
       .wait(500)
       
+      .click('table > tbody > tr > td')
+      .wait(500)
+      
       //.click('input[id="item.Books-ItemFilter"]') // disable Books
       
       .wait(30000)
