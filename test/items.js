@@ -56,8 +56,6 @@ describe('Using the App FOLIO UI App /items', function () {
       .wait(500)
       
       //.click('input[id="item.Books-ItemFilter"]') // disable Books
-      
-      .wait(30000)
 
       .wait(parseInt(process.env.FOLIO_UI_DEBUG) ? parseInt(config.debug_sleep) : 0) // debugging
 
