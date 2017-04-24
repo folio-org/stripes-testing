@@ -3,7 +3,7 @@ const assert = require('assert')
 const config = require('../folio-ui.config.js')
 
 describe('Login Page / 120-auth-fail', function () {
-  this.timeout('9s')
+  this.timeout('20s')
 
   let nightmare = null
   beforeEach(() => {
