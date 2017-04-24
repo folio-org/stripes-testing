@@ -26,20 +26,35 @@ describe('Using the App FOLIO UI App /items', function () {
       //.wait(2000)
       .wait('em')
 
-      .click('input[id="item.DVDs-ItemFilter"]') // DVD only
+      .click('input[id="item.Books-ItemFilter"]') // enable Books
+      .click('input[id="item.DVDs-ItemFilter"]') // enable DVD
+      
+      .type('input[placeholder=Search]', "43620390")
+      .wait(500)
+
 
       .click('button[class="button---2NsdC primary---5q6-s fullWidth---2bppW"]')
       .wait('em')
 
       .type('input[id="additem_instanceId"]', "instance one")
-      .type('input[id="additem_title"]', "my new book")
+      .type('input[id="additem_title"]', "my new Book")
       .click('select[id="additem_materialType"]')
       .select('select#additem_materialType', "Book")
-      .type('input[id="additem_barcode"]', "1234")
-      .type('input[id="additem_location"]', "basement")
+      .type('input[id="additem_barcode"]', "1234567")
+      .type('input[id="additem_location"]', "Main Library")
       .click('button[class="button---2NsdC primary---5q6-s"]')
 
+      
+      .click('circle') // clean search field
+      .type('input[placeholder=Search]', "12")
+      .wait(500)
+      
       .click('input[id="location.Main Library-ItemFilter"]') // main lib
+      .wait(500)
+      
+      //.click('input[id="item.Books-ItemFilter"]') // disable Books
+      
+      .wait(30000)
 
       .wait(parseInt(process.env.FOLIO_UI_DEBUG) ? parseInt(config.debug_sleep) : 0) // debugging
 
