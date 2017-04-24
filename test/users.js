@@ -24,13 +24,25 @@ describe('Using the App FOLIO UI App /users', function () {
       .click('a[title=Users] > span')
       .wait('em')
 
-      .click('input[id="pg.On-campus-ItemFilter"]')
-      .wait('em')
-
-      .type('input[placeholder=Search]', "a")
+      .type('input[placeholder=Search]', "bo")
       .wait('em')
 
       .click('input[id="active.Inactive-ItemFilter"]')
+      .wait('em')
+      
+      // select campus filter
+      .click('input[id="pg.On-campus-ItemFilter"]')
+      .wait('em')
+      .click('input[id="pg.Off-campus-ItemFilter"]')
+      .wait('em')
+      
+      // de-select campus filter
+      .click('input[id="pg.On-campus-ItemFilter"]')
+      .click('input[id="pg.Off-campus-ItemFilter"]')
+      .wait('em')
+      
+      .wait(500)
+      .click('input[id="active.Active-ItemFilter"]')
       .wait('em')
 
       .wait(parseInt(process.env.FOLIO_UI_DEBUG) ? parseInt(config.debug_sleep) : 0) // debugging
