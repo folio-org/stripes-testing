@@ -19,11 +19,9 @@ describe('Using the App FOLIO UI App /items', function () {
       .type('input[name=username]', config.username)
       .type('input[name=password]', config.password)
       .click('button[type=submit]')
-      .wait('h3')
-
-      .click('a[title=Items] > span')
-      //.wait('h1')
-      //.wait(2000)
+      .wait('a[title=Items]')
+      .screenshot('./screenshot.png')
+      .click('a[title=Items]')
       .wait('em')
 
       .click('input[id="item.Books-ItemFilter"]') // enable Books
