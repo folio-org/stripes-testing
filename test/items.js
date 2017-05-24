@@ -11,22 +11,18 @@ describe('Using the App FOLIO UI App /items', function () {
     nightmare = new Nightmare(config.nightmare)
   })
 
-  describe('signing up and finishing setup', () => {
-
-    it('should work without timing out', done => {
+  describe('Login as ' + config.username + '/' + config.password + ', load Items module, select material types, execute search, add new item, search for new item...', () => {
+    it('should load a page with an "Items" link', done => {
       nightmare
       .goto(config.url)
       .type('input[name=username]', config.username)
       .type('input[name=password]', config.password)
       .click('button[type=submit]')
       .wait('a[title=Items]')
-      .screenshot('./screenshot.png')
       .click('a[title=Items]')
-      .wait('em')
-
-      .click('input[id="item.Books-ItemFilter"]') // enable Books
-      .click('input[id="item.DVDs-ItemFilter"]') // enable DVD
-      
+      .wait('#item\\.book-ItemFilter')
+      .click('#item\\.book-ItemFilter') // enable Books
+      .click('#item\\.dvd-ItemFilter') // enable DVD
       .type('input[placeholder=Search]', "43620390")
       .wait(500)
 
@@ -55,12 +51,10 @@ describe('Using the App FOLIO UI App /items', function () {
       
       //.click('input[id="item.Books-ItemFilter"]') // disable Books
 
-      .wait(parseInt(process.env.FOLIO_UI_DEBUG) ? parseInt(config.debug_sleep) : 0) // debugging
 
       .click('button[class="ddButton---3nc81"]')
       .wait('h1')
-      .wait(parseInt(process.env.FOLIO_UI_DEBUG) ? parseInt(config.debug_sleep/3) : 0) // debugging
-
+      //.wait(parseInt(process.env.FOLIO_UI_DEBUG) ? parseInt(config.debug_sleep/3) : 0) // debugging
 
       .end()
       .then(result => { done() })
@@ -68,5 +62,3 @@ describe('Using the App FOLIO UI App /items', function () {
     })
   })
 })
-
-
