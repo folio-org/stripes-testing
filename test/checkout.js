@@ -3,29 +3,29 @@ const assert = require('assert')
 const config = require('../folio-ui.config.js')
 
 describe('Using the App FOLIO UI App /scan', function () {
-  this.timeout('30s')
+  this.timeout('20s')
 
-  let nightmare = null
-  beforeEach(() => {
+  describe('Login, adjust scan/checkout settings, checkout item to a patron', () => {
     nightmare = new Nightmare(config.nightmare)
-  })
 
-  describe('signing up and finishing setup', () => {
     var scan_user = 'heath'
     var barcode = '22169083'
-    var select_set = 'a[href="/settings"]'
     var select_set_scan = 'a[href="/settings/scan"]'
     var select_set_scan_check = 'a[href="/settings/scan/checkout"]'
 
-    it('should work without timing out', done => {
+    it('Login as ' + config.username + '/' + config.password, done => {
       nightmare
       .goto(config.url)
       .type(config.select.username, config.username)
       .type(config.select.password, config.password)
       .click(config.select.submit)
-      // Go to settings to select user id for checkout
-      .wait(select_set)
-      .click(select_set)
+      .wait(config.select.settings)
+      .then(result => { done() })
+      .catch(done)
+    })
+    it('Set patron scan ID to "User"', done => {
+      nightmare
+      .click(config.select.settings)
       .wait(select_set_scan)
       .click(select_set_scan)
       .wait(select_set_scan_check)
@@ -33,14 +33,28 @@ describe('Using the App FOLIO UI App /scan', function () {
       .wait('#patronScanId')
       .wait(222)
       .select('#patronScanId','USER')
+      .then(result => { done() })
+      .catch(done)
+    })
+    it('Check out ' + barcode + ' to ' + scan_user, done => {
+      nightmare
+      .wait('a[title=Scan]')
       .click('a[title=Scan]')
       .wait('#patron_identifier')
       .type('#patron_identifier',scan_user)
       .click('.pane---CC1ap:nth-of-type(1) button')
       .wait('tr[data-row]')
       .type('#barcode',barcode)
-      .wait(5000)
+      .click('.pane---CC1ap:nth-of-type(2) button')
+      .wait('.pane---CC1ap:nth-of-type(2) tr[data-row]')
+      .wait(parseInt(process.env.FOLIO_UI_DEBUG) ? parseInt(config.debug_sleep) : 0) // debugging
+      .then(result => { done() })
+      .catch(done)
+    })
+    it('Logout', done => {
+      nightmare
       .click('#button-logout')
+      .wait(parseInt(process.env.FOLIO_UI_DEBUG) ? parseInt(config.debug_sleep) : 0) // debugging
       .end()
       .then(result => { done() })
       .catch(done)
