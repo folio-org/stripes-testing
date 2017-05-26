@@ -9,7 +9,8 @@ module.exports = {
     select: {
       username: 'input[name=username]',
       password: 'input[name=password]',
-      submit: 'button[type=submit]'
+      submit: 'button[type=submit]',
+      logout: '#button-logout'
     },
 
     nightmare: process.env.FOLIO_UI_DEBUG == 2 ? {
