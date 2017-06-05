@@ -6,6 +6,13 @@ module.exports = {
     username: process.env.FOLIO_UI_USERNAME || 'diku_admin',
     password: process.env.FOLIO_UI_PASSWORD || 'admin',
     debug_sleep: process.env.FOLIO_UI_DEBUG_SLEEP || 4000,
+    select: {
+      username: 'input[name=username]',
+      password: 'input[name=password]',
+      submit: 'button[type=submit]',
+      logout: '#button-logout',
+      settings: 'a[href="/settings"]'
+    },
 
     nightmare: process.env.FOLIO_UI_DEBUG == 2 ? {
         typeInterval: 50,
@@ -18,7 +25,7 @@ module.exports = {
     } : process.env.FOLIO_UI_DEBUG == 1 ? {
         width: 1000,
         height: 700,
-        typeInterval: 20,
+        typeInterval: 50,
         show: true
     } : { typeInterval: 5 }
 }

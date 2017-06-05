@@ -41,4 +41,3 @@ describe('Using the App FOLIO UI App /scan', function () {
   })
 })
 
-

@@ -12,17 +12,16 @@ describe('Login Page / 120-auth-fail', function () {
   })
 
   describe('given bad data', () => {
-    it('should fail', done => {
+    it('Should find a login error message', done => {
       nightmare
       .goto(config.url)
-      .type('input[name=username]', 'notgonnawork')
-      .type('input[name=password]', 'invalid password')
-      .click('button[type=submit]')
-      .wait('button[disabled]') // failure
-      .wait('span') // failure
+      .type(config.select.username, 'notgonnawork')
+      .type(config.select.password, 'invalid password')
+      .click(config.select.submit)
+      .wait('span[class^="loginError"]') // failure
       .wait(parseInt(process.env.FOLIO_UI_DEBUG) ? parseInt(config.debug_sleep) : 0) // debugging
       .end()
-      .then(result => { done () })
+      .then(result => { done() })
       .catch(done)
     })
   })
