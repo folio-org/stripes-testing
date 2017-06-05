@@ -10,7 +10,7 @@
     "test-simple": "./node_modules/.bin/mocha test/100-startpage.js"
   },
   "dependencies": {
-    "mocha": "^3.2.0",
+    "mocha": "^3.4.2",
     "nightmare": "^2.10.0",
     "nightmarejs": "^0.0.1"
   }

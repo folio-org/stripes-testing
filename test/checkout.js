@@ -8,7 +8,8 @@ describe('Using the App FOLIO UI App /scan', function () {
   describe('Login, adjust scan/checkout settings, checkout item to a patron, check patron account for item', () => {
     nightmare = new Nightmare(config.nightmare)
 
-    var scan_user = 'heath'
+    var ts = new Date().valueOf()
+    var scan_user = 'homer' + ts
     var barcode = '22169083'
     var select_set_scan = 'a[href="/settings/scan"]'
     var select_set_scan_check = 'a[href="/settings/scan/checkout"]'
@@ -36,6 +37,26 @@ describe('Using the App FOLIO UI App /scan', function () {
       .then(result => { done() })
       .catch(done)
     })
+    it('should create a user with USER ID ' + scan_user, done => {
+      nightmare
+      .click('a[Title=Users]')
+      .wait('.button---2NsdC')
+      .click('.button---2NsdC')
+      .type('#adduser_username',scan_user)
+      .type('#pw','lardlad')
+      .click('#useractiveYesRB')
+      .type('#adduser_firstname','Homer')
+      .type('#adduser_lastname','Simpson')
+      .type('#adduser_dateofbirth','1980-05-05')
+      .select('#adduser_group','c847c5ca-ac15-42e6-9841-95ff70db86a9')
+      .type('#adduser_enrollmentdate','2017-01-01')
+      .type('#adduser_expirationdate','2020-01-01')
+      .type('#adduser_barcode',ts)
+      .click('button[title="Create New User"]')
+      .wait(parseInt(process.env.FOLIO_UI_DEBUG) ? parseInt(config.debug_sleep) : 0) // debugging
+      .then(result => { done() })
+      .catch(done)
+    })
     it('should check out ' + barcode + ' to ' + scan_user, done => {
       nightmare
       .wait('a[title=Scan]')
@@ -56,8 +77,8 @@ describe('Using the App FOLIO UI App /scan', function () {
       .click('a[title=Users]')
       .wait('.headerSearchInput---1z5qG')
       .type('.headerSearchInput---1z5qG',scan_user)
-      .wait('.selected---2W7aQ')
-      .click('.selected---2W7aQ')
+      .wait('tr[data-row]')
+      .click('tr[data-row]')
       .wait('h2')
       .wait(parseInt(process.env.FOLIO_UI_DEBUG) ? parseInt(config.debug_sleep) : 0) // debugging
       .then(result => { done() })
