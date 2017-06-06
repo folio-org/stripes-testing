@@ -39,6 +39,7 @@ describe('Using the App FOLIO UI App /scan', function () {
     })
     it('should create a user with USER ID ' + scan_user, done => {
       nightmare
+      .wait('a[Title=Users]')
       .click('a[Title=Users]')
       .wait('.button---2NsdC')
       .click('.button---2NsdC')
@@ -47,6 +48,7 @@ describe('Using the App FOLIO UI App /scan', function () {
       .click('#useractiveYesRB')
       .type('#adduser_firstname','Homer')
       .type('#adduser_lastname','Simpson')
+      .type('#adduser_email', scan_user + '@folio.org')
       .type('#adduser_dateofbirth','1980-05-05')
       .select('#adduser_group','c847c5ca-ac15-42e6-9841-95ff70db86a9')
       .type('#adduser_enrollmentdate','2017-01-01')
@@ -68,6 +70,8 @@ describe('Using the App FOLIO UI App /scan', function () {
       .type('#barcode',barcode)
       .click('.pane---CC1ap:nth-of-type(2) button')
       .wait('.pane---CC1ap:nth-of-type(2) tr[data-row]')
+      .wait(222)
+      .click('form > div > button')
       .wait(parseInt(process.env.FOLIO_UI_DEBUG) ? parseInt(config.debug_sleep) : 0) // debugging
       .then(result => { done() })
       .catch(done)
@@ -77,9 +81,18 @@ describe('Using the App FOLIO UI App /scan', function () {
       .click('a[title=Users]')
       .wait('.headerSearchInput---1z5qG')
       .type('.headerSearchInput---1z5qG',scan_user)
-      .wait('tr[data-row]')
-      .click('tr[data-row]')
-      .wait('h2')
+      .wait(999)
+      .click('tr[data-row="0"] > td')
+      .wait(function(bc) {
+        var xp = document.evaluate( '//td[.="' + bc + '"]', document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null)
+	try { 
+	  var val = xp.singleNodeValue.innerHTML
+	  return true
+	}
+	catch(e) {
+	  return false
+        }
+      }, barcode)
       .wait(parseInt(process.env.FOLIO_UI_DEBUG) ? parseInt(config.debug_sleep) : 0) // debugging
       .then(result => { done() })
       .catch(done)
