@@ -6,35 +6,41 @@ describe('Using the App FOLIO UI App /users', function () {
   this.timeout('15s')
 
   let nightmare = null
-  beforeEach(() => {
-    // show true lets you see wth is actually happening :)
-    nightmare = new Nightmare(config.nightmare)
-  })
+  nightmare = new Nightmare(config.nightmare)
 
   describe('signing up and finishing setup', () => {
 
-    it('should work without timing out', done => {
+    it('should login as ' + config.username + '/' + config.password, done => {
       nightmare
       .goto(config.url)
-      .type('input[name=username]', config.username)
-      .type('input[name=password]', config.password)
-      .click('button[type=submit]')
-      .wait('h3')
+      .type(config.select.username, config.username)
+      .type(config.select.password, config.password)
+      .click(config.select.submit)
+      .wait('a[title=Users]')
+      .then(result => { done() })
+      .catch(done)
+      })
 
-      .click('a[title=Users] > span')
-      .wait('em')
-
+    it('enter a search and check "Inactive"', done => {
+      nightmare
+      .click('a[title=Users]')
+      .wait('input[placeholder=Search]')
       .type('input[placeholder=Search]', "bo")
-      .wait('em')
+      .wait(555)
 
-      .click('input[id="active.Inactive-ItemFilter"]')
-      .wait('em')
+      .click('#active\\.Inactive-ItemFilter')
+      .wait(555)
+      .then(result => { done() })
+      .catch(done)
+      })
       
       // select campus filter
-      .click('input[id="pg.On-campus-ItemFilter"]')
-      .wait('em')
-      .click('input[id="pg.Off-campus-ItemFilter"]')
-      .wait('em')
+    it('should select campus filter', done => {
+      nightmare
+      .click('#pg\\.On-campus-ItemFilter')
+      .wait(555)
+      .click('#pg\\.Off-campus-ItemFilter')
+      .wait(555)
       
       // de-select campus filter
       .click('input[id="pg.On-campus-ItemFilter"]')
