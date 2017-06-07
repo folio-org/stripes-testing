@@ -5,7 +5,7 @@ const config = require('../folio-ui.config.js')
 describe('Using the App FOLIO UI App /scan', function () {
   this.timeout('20s')
 
-  describe('Login, adjust scan/checkout settings, checkout item to a patron, check patron account for item', () => {
+  describe('Login, update checkout settings, checkout item to a user, check user history for item', () => {
     nightmare = new Nightmare(config.nightmare)
 
     var ts = new Date().valueOf()
@@ -37,7 +37,7 @@ describe('Using the App FOLIO UI App /scan', function () {
       .then(result => { done() })
       .catch(done)
     })
-    it('should create a user with USER ID ' + scan_user, done => {
+    it('should create a user with id ' + scan_user, done => {
       nightmare
       .wait('a[Title=Users]')
       .click('a[Title=Users]')
@@ -76,21 +76,58 @@ describe('Using the App FOLIO UI App /scan', function () {
       .then(result => { done() })
       .catch(done)
     })
-    it('should find ' + barcode + ' in ' + scan_user + ' current loans', done => {
+    it('should find ' + barcode + ' in ' + scan_user + ' history', done => {
       nightmare
       .click('a[title=Users]')
       .wait('.headerSearchInput---1z5qG')
       .type('.headerSearchInput---1z5qG',scan_user)
       .wait(999)
       .click('tr[data-row="0"] > td')
+      .wait('.pane---CC1ap:nth-of-type(3) > div:nth-of-type(2)')
+      .click('.pane---CC1ap:nth-of-type(3) > div:nth-of-type(2) > div:nth-of-type(4) .col-xs-5 button')
       .wait(function(bc) {
         var xp = document.evaluate( '//td[.="' + bc + '"]', document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null)
 	try { 
 	  var val = xp.singleNodeValue.innerHTML
 	  return true
-	}
-	catch(e) {
+	} catch(e) {
 	  return false
+        }
+      }, barcode)
+      .wait(parseInt(process.env.FOLIO_UI_DEBUG) ? parseInt(config.debug_sleep) : 0) // debugging
+      .then(result => { done() })
+      .catch(done)
+    })
+    it('should check ' + barcode + ' in', done => {
+      nightmare
+      .click('a[title=Scan]')
+      .wait('select')
+      .select('select','CheckIn')
+      .wait(222)
+      .type('#barcode',barcode)
+      .wait(222)
+      .click('#ModuleContainer button')
+      .wait('tr[data-row]')
+      .wait(parseInt(process.env.FOLIO_UI_DEBUG) ? parseInt(config.debug_sleep) : 0) // debugging
+      .then(result => { done() })
+      .catch(done)
+    })
+    it('should confirm that ' + barcode + ' is removed from ' + scan_user + ' history', done => {
+      nightmare
+      .click('a[title=Users]')
+      .wait('.headerSearchInput---1z5qG')
+      .type('.headerSearchInput---1z5qG',scan_user)
+      .wait(999)
+      .click('tr[data-row="0"] > td')
+      .wait('.pane---CC1ap:nth-of-type(3) > div:nth-of-type(2)')
+      .click('.pane---CC1ap:nth-of-type(3) > div:nth-of-type(2) > div:nth-of-type(4) .col-xs-5 button')
+      .wait(function(bc) {
+        var xp = document.evaluate( '//td[.="' + bc + '"]', document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null)
+	try { 
+	  var val = xp.singleNodeValue.innerHTML
+	  return false 
+	} catch(e) {
+	  return true
         }
       }, barcode)
       .wait(parseInt(process.env.FOLIO_UI_DEBUG) ? parseInt(config.debug_sleep) : 0) // debugging
