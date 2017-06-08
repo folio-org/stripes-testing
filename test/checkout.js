@@ -5,7 +5,7 @@ const config = require('../folio-ui.config.js')
 describe('Using the App FOLIO UI App /scan', function () {
   this.timeout('20s')
 
-  describe('Login, update checkout settings, checkout item to a user, check user history for item', () => {
+  describe('Login > Update settings > Create user > Checkout item > Confirm checkout > Checkin > Confirm checkin > Logout', () => {
     nightmare = new Nightmare(config.nightmare)
 
     var ts = new Date().valueOf()
@@ -72,7 +72,6 @@ describe('Using the App FOLIO UI App /scan', function () {
       .wait('.pane---CC1ap:nth-of-type(2) tr[data-row]')
       .wait(222)
       .click('form > div > button')
-      .wait(parseInt(process.env.FOLIO_UI_DEBUG) ? parseInt(config.debug_sleep) : 0) // debugging
       .then(result => { done() })
       .catch(done)
     })
@@ -85,6 +84,7 @@ describe('Using the App FOLIO UI App /scan', function () {
       .click('tr[data-row="0"] > td')
       .wait('.pane---CC1ap:nth-of-type(3) > div:nth-of-type(2)')
       .click('.pane---CC1ap:nth-of-type(3) > div:nth-of-type(2) > div:nth-of-type(4) .col-xs-5 button')
+      .wait(5555)
       .wait(function(bc) {
         var xp = document.evaluate( '//td[.="' + bc + '"]', document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null)
 	try { 
@@ -92,9 +92,8 @@ describe('Using the App FOLIO UI App /scan', function () {
 	  return true
 	} catch(e) {
 	  return false
-        }
+        } 
       }, barcode)
-      .wait(parseInt(process.env.FOLIO_UI_DEBUG) ? parseInt(config.debug_sleep) : 0) // debugging
       .then(result => { done() })
       .catch(done)
     })
@@ -108,7 +107,7 @@ describe('Using the App FOLIO UI App /scan', function () {
       .wait(222)
       .click('#ModuleContainer button')
       .wait('tr[data-row]')
-      .wait(parseInt(process.env.FOLIO_UI_DEBUG) ? parseInt(config.debug_sleep) : 0) // debugging
+      .wait(4000)
       .then(result => { done() })
       .catch(done)
     })
@@ -117,19 +116,27 @@ describe('Using the App FOLIO UI App /scan', function () {
       .click('a[title=Users]')
       .wait('.headerSearchInput---1z5qG')
       .type('.headerSearchInput---1z5qG',scan_user)
-      .wait(999)
+      .wait(222)
       .click('tr[data-row="0"] > td')
       .wait('.pane---CC1ap:nth-of-type(3) > div:nth-of-type(2)')
       .click('.pane---CC1ap:nth-of-type(3) > div:nth-of-type(2) > div:nth-of-type(4) .col-xs-5 button')
-      .wait(function(bc) {
+      .wait(4000)
+      .evaluate ( function(bc) {
+        var m = document.querySelector('tr[data-row="0"] > td:nth-of-type(4)')
+	if (m == bc) {
+	  throw new Error('Item not removed from user history!')
+	}
+	else { return true }
+      }, barcode)
+      /* .wait(function(bc) {
         var xp = document.evaluate( '//td[.="' + bc + '"]', document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null)
 	try { 
 	  var val = xp.singleNodeValue.innerHTML
 	  return false 
 	} catch(e) {
 	  return true
-        }
-      }, barcode)
+        } 
+      }, barcode) */
       .wait(parseInt(process.env.FOLIO_UI_DEBUG) ? parseInt(config.debug_sleep) : 0) // debugging
       .then(result => { done() })
       .catch(done)
