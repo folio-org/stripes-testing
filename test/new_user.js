@@ -2,7 +2,7 @@ const Nightmare = require('nightmare')
 const assert = require('assert')
 const config = require('../folio-ui.config.js')
 
-describe('Using the App FOLIO UI App /scan', function () {
+describe('Using the App FOLIO UI App /users', function () {
   this.timeout('20s')
 
   describe('Login > Create new user > Logout > Login as new user > Logout', () => {
@@ -11,19 +11,34 @@ describe('Using the App FOLIO UI App /scan', function () {
     var ts = new Date().valueOf()
     var scan_user = 'newuser' + ts
     var pw = 'newman123'
+    
 
-    it('should login as ' + config.username + '/' + config.password, done => {
-      nightmare
-      .goto(config.url)
-      .type(config.select.username, config.username)
-      .type(config.select.password, config.password)
-      .click(config.select.submit)
-      .wait('a[Title=Users]')
-      .then(result => { done() })
-      .catch(done)
-    })
+    flogin = function(un, pw) {
+      it('should login as ' + un + '/' + pw, done => {
+        nightmare
+        .goto(config.url)
+        .type(config.select.username, config.username)
+        .type(config.select.password, config.password)
+        .click(config.select.submit)
+        .wait('#UserMenuDropDown')
+        .then(result => { done() })
+        .catch(done)
+      }) 
+    }
+    flogout = function() {
+      it('should logout', done => {
+        nightmare
+        .click('#button-logout')
+        .wait(config.select.username)
+        .wait(parseInt(process.env.FOLIO_UI_DEBUG) ? parseInt(config.debug_sleep) : 0) // debugging
+        .then(result => { done() })
+        .catch(done)
+      })
+    }
+    flogin(config.username, config.password)
     it('should create a user: ' + scan_user + '/' + pw, done => {
       nightmare
+      .wait('a[Title=Users]')
       .click('a[Title=Users]')
       .wait('.button---2NsdC')
       .click('.button---2NsdC')
@@ -44,30 +59,25 @@ describe('Using the App FOLIO UI App /scan', function () {
       .then(result => { done() })
       .catch(done)
     })
-    it('should logout', done => {
+    flogout()
+    flogin(scan_user,pw)
+    flogout()
+    flogin(config.username, config.password)
+    it('should edit user: ' + scan_user, done => {
       nightmare
-      .click('#button-logout')
-      .wait(config.select.username)
+      .wait('a[Title=Users]')
+      .click('a[Title=Users]')
+      .wait('input[placeholder="Search"]')
+      .type('input[placeholder="Search"]',scan_user)
+      .wait(555)
+      .click('tr[data-row="0"] > td')
+      .wait('button[title="Edit User"]')
+      .click('button[title="Edit User"]')
+      .wait('#adduser_mobilePhone')
+      .type('#adduser_mobilePhone','+1 555 234-0000')
+      .wait(555)
+      .click('button[Title="Update User"]')
       .wait(parseInt(process.env.FOLIO_UI_DEBUG) ? parseInt(config.debug_sleep) : 0) // debugging
-      .then(result => { done() })
-      .catch(done)
-    })
-    it('should login as ' + scan_user + '/' + pw, done => {
-      nightmare
-      .goto(config.url)
-      .type(config.select.username, scan_user)
-      .type(config.select.password, pw)
-      .click(config.select.submit)
-      .wait('#UserMenuDropDown')
-      .then(result => { done() })
-      .catch(done)
-    })
-    it('should logout', done => {
-      nightmare
-      .click('#button-logout')
-      .wait(config.select.username)
-      .wait(parseInt(process.env.FOLIO_UI_DEBUG) ? parseInt(config.debug_sleep) : 0) // debugging
-      .end()
       .then(result => { done() })
       .catch(done)
     })
