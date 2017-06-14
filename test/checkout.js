@@ -50,7 +50,11 @@ describe('Using the App FOLIO UI App /scan', function () {
       .type('#adduser_lastname','Simpson')
       .type('#adduser_email', scan_user + '@folio.org')
       .type('#adduser_dateofbirth','1980-05-05')
-      .select('#adduser_group','c847c5ca-ac15-42e6-9841-95ff70db86a9')
+      .evaluate(function() {
+        var type = document.querySelector('#adduser_group > option:nth-of-type(2)').value
+	return type
+      })
+      .type('#adduser_group','o')
       .type('#adduser_enrollmentdate','2017-01-01')
       .type('#adduser_expirationdate','2020-01-01')
       .type('#adduser_barcode',ts)
@@ -80,13 +84,13 @@ describe('Using the App FOLIO UI App /scan', function () {
       .click('a[title=Users]')
       .wait('.headerSearchInput---1z5qG')
       .type('.headerSearchInput---1z5qG',scan_user)
-      .wait(999)
-      .click('tr[data-row="0"] > td')
+      .wait(2222)
+      .click('div.row---23rwN')
       .wait('.pane---CC1ap:nth-of-type(3) > div:nth-of-type(2)')
       .click('.pane---CC1ap:nth-of-type(3) > div:nth-of-type(2) > div:nth-of-type(4) .col-xs-5 button')
-      .wait(5555)
+      .wait(2222)
       .wait(function(bc) {
-        var xp = document.evaluate( '//td[.="' + bc + '"]', document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null)
+        var xp = document.evaluate( '//div[.="' + bc + '"]/following-sibling::div[.="Open"]', document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null)
 	try { 
 	  var val = xp.singleNodeValue.innerHTML
 	  return true
@@ -94,10 +98,11 @@ describe('Using the App FOLIO UI App /scan', function () {
 	  return false
         } 
       }, barcode)
+      .wait(parseInt(process.env.FOLIO_UI_DEBUG) ? parseInt(config.debug_sleep) : 0) // debugging
       .then(result => { done() })
       .catch(done)
     })
-    it('should check ' + barcode + ' in', done => {
+    it('should check in ' + barcode, done => {
       nightmare
       .click('a[title=Scan]')
       .wait('select')
@@ -107,7 +112,7 @@ describe('Using the App FOLIO UI App /scan', function () {
       .wait(222)
       .click('#ModuleContainer button')
       .wait('tr[data-row]')
-      .wait(4000)
+      .wait(222)
       .then(result => { done() })
       .catch(done)
     })
@@ -116,27 +121,20 @@ describe('Using the App FOLIO UI App /scan', function () {
       .click('a[title=Users]')
       .wait('.headerSearchInput---1z5qG')
       .type('.headerSearchInput---1z5qG',scan_user)
-      .wait(222)
-      .click('tr[data-row="0"] > td')
+      .wait(1111)
+      .click('div.row---23rwN')
       .wait('.pane---CC1ap:nth-of-type(3) > div:nth-of-type(2)')
       .click('.pane---CC1ap:nth-of-type(3) > div:nth-of-type(2) > div:nth-of-type(4) .col-xs-5 button')
       .wait(4000)
-      .evaluate ( function(bc) {
-        var m = document.querySelector('tr[data-row="0"] > td:nth-of-type(4)')
-	if (m == bc) {
-	  throw new Error('Item not removed from user history!')
-	}
-	else { return true }
-      }, barcode)
-      /* .wait(function(bc) {
-        var xp = document.evaluate( '//td[.="' + bc + '"]', document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null)
+      .wait(function(bc) {
+        var xp = document.evaluate( '//div[.="' + bc + '"]/following-sibling::div[.="Closed"]', document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null)
 	try { 
 	  var val = xp.singleNodeValue.innerHTML
-	  return false 
-	} catch(e) {
 	  return true
+	} catch(e) {
+	  return false
         } 
-      }, barcode) */
+      }, barcode)
       .wait(parseInt(process.env.FOLIO_UI_DEBUG) ? parseInt(config.debug_sleep) : 0) // debugging
       .then(result => { done() })
       .catch(done)
