@@ -11,14 +11,14 @@ describe('Using the App FOLIO UI App /users', function () {
     var ts = new Date().valueOf()
     var scan_user = 'newuser' + ts
     var pw = 'newman123'
-    
+    var phone = '+1 555 234 0000'
 
     flogin = function(un, pw) {
       it('should login as ' + un + '/' + pw, done => {
         nightmare
         .goto(config.url)
-        .type(config.select.username, config.username)
-        .type(config.select.password, config.password)
+        .type(config.select.username, un)
+        .type(config.select.password, pw)
         .click(config.select.submit)
         .wait('#UserMenuDropDown')
         .then(result => { done() })
@@ -49,7 +49,7 @@ describe('Using the App FOLIO UI App /users', function () {
       .type('#adduser_lastname','Newman')
       .type('#adduser_email', scan_user + '@folio.org')
       .type('#adduser_dateofbirth','1980-05-05')
-      .select('#adduser_group','c847c5ca-ac15-42e6-9841-95ff70db86a9')
+      .type('#adduser_group','oo')
       .type('#adduser_enrollmentdate','2017-01-01')
       .type('#adduser_expirationdate','2020-01-01')
       .type('#adduser_barcode',ts)
@@ -70,13 +70,16 @@ describe('Using the App FOLIO UI App /users', function () {
       .wait('input[placeholder="Search"]')
       .type('input[placeholder="Search"]',scan_user)
       .wait(555)
-      .click('tr[data-row="0"] > td')
+      .click('div.row---23rwN')
       .wait('button[title="Edit User"]')
       .click('button[title="Edit User"]')
       .wait('#adduser_mobilePhone')
-      .type('#adduser_mobilePhone','+1 555 234-0000')
+      .type('#adduser_mobilePhone',phone)
       .wait(555)
       .click('button[Title="Update User"]')
+      .wait(function(pn) {
+         
+      }, phone)
       .wait(parseInt(process.env.FOLIO_UI_DEBUG) ? parseInt(config.debug_sleep) : 0) // debugging
       .then(result => { done() })
       .catch(done)
