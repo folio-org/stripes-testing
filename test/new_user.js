@@ -5,7 +5,7 @@ const config = require('../folio-ui.config.js')
 describe('Using the App FOLIO UI App /users', function () {
   this.timeout('20s')
 
-  describe('Login > Create new user > Logout > Login as new user > Logout', () => {
+  describe('Login > Create new user > Logout > Login as new user > Logout > Login > Edit new user and confirm changes', () => {
     nightmare = new Nightmare(config.nightmare)
 
     var ts = new Date().valueOf()
@@ -69,7 +69,7 @@ describe('Using the App FOLIO UI App /users', function () {
       .click('a[Title=Users]')
       .wait('input[placeholder="Search"]')
       .type('input[placeholder="Search"]',scan_user)
-      .wait(555)
+      .wait(2222)
       .click('div.row---23rwN')
       .wait('button[title="Edit User"]')
       .click('button[title="Edit User"]')
@@ -78,7 +78,13 @@ describe('Using the App FOLIO UI App /users', function () {
       .wait(555)
       .click('button[Title="Update User"]')
       .wait(function(pn) {
-         
+        var xp = document.evaluate( '//div[.="' + pn + '"]', document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null)
+        try { 
+          var val = xp.singleNodeValue.innerHTML
+          return true
+        } catch(e) {
+          return false
+        } 
       }, phone)
       .wait(parseInt(process.env.FOLIO_UI_DEBUG) ? parseInt(config.debug_sleep) : 0) // debugging
       .then(result => { done() })
