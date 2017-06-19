@@ -21,6 +21,7 @@ describe('Using the App FOLIO UI App /users', function () {
         .type(config.select.password, pw)
         .click(config.select.submit)
         .wait('#UserMenuDropDown')
+	.wait(555)
         .then(result => { done() })
         .catch(done)
       }) 
@@ -77,6 +78,7 @@ describe('Using the App FOLIO UI App /users', function () {
       .type('#adduser_mobilePhone',phone)
       .wait(555)
       .click('button[Title="Update User"]')
+      .wait(555)
       .wait(function(pn) {
         var xp = document.evaluate( '//div[.="' + pn + '"]', document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null)
         try { 

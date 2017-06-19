@@ -24,10 +24,9 @@ describe('Using the App FOLIO UI App /items', function () {
       .click('#item\\.book-ItemFilter') // enable Books
       .click('#item\\.dvd-ItemFilter') // enable DVD
       .type('input[placeholder=Search]', "43620390")
-      .wait(500)
 
-
-      .click('button[class="button---2NsdC primary---5q6-s fullWidth---2bppW"]')
+      .wait('div.row---23rwN')
+      .click('div.row---23rwN')
       .wait('em')
 
       .type('input[id="additem_instanceId"]', "instance one")
@@ -54,7 +53,7 @@ describe('Using the App FOLIO UI App /items', function () {
 
       .click('button[class="ddButton---3nc81"]')
       .wait('h1')
-      //.wait(parseInt(process.env.FOLIO_UI_DEBUG) ? parseInt(config.debug_sleep/3) : 0) // debugging
+      .wait(parseInt(process.env.FOLIO_UI_DEBUG) ? parseInt(config.debug_sleep/3) : 0) // debugging
 
       .end()
       .then(result => { done() })
