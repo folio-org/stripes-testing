@@ -43,7 +43,7 @@ describe('Using the App FOLIO UI App /scan', function () {
       .wait('.button---2NsdC')
       .click('.button---2NsdC')
       .type('#adduser_username',user.id)
-      .type('#pw','lardlad')
+      .type('#pw',user.password)
       .click('#useractiveYesRB')
       .type('#adduser_firstname',user.firstname)
       .type('#adduser_lastname',user.lastname)
@@ -69,7 +69,7 @@ describe('Using the App FOLIO UI App /scan', function () {
       .type('#barcode',barcode)
       .click('.pane---CC1ap:nth-of-type(2) button')
       .wait('.pane---CC1ap:nth-of-type(2) tr[data-row]')
-      .wait(222)
+      .wait(5555)
       .click('form > div > button')
       .then(result => { done() })
       .catch(done)
@@ -83,7 +83,8 @@ describe('Using the App FOLIO UI App /scan', function () {
       .click('div.row---23rwN')
       .wait('.pane---CC1ap:nth-of-type(3) > div:nth-of-type(2)')
       .click('.pane---CC1ap:nth-of-type(3) > div:nth-of-type(2) > div:nth-of-type(4) .col-xs-5 button')
-      .wait(2222)
+      .wait(5555)
+      .screenshot('debug1.png')
       .wait(function(bc) {
         var xp = document.evaluate( '//div[.="' + bc + '"]/following-sibling::div[.="Open"]', document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null)
 	try { 
@@ -93,6 +94,7 @@ describe('Using the App FOLIO UI App /scan', function () {
 	  return false
         } 
       }, barcode)
+      .screenshot('debug2.png')
       .wait(parseInt(process.env.FOLIO_UI_DEBUG) ? parseInt(config.debug_sleep) : 0) // debugging
       .then(result => { done() })
       .catch(done)

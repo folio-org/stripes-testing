@@ -6,9 +6,10 @@ var lnpos = Math.floor(Math.random() * ln.length)
 var firstname = fn[fnpos]
 var lastname = ln[lnpos]
 module.exports = {
-  id: lastname.toLowerCase() + '_' + firstname.toLowerCase() + ts,
+  id: firstname.substr(0,1).toLowerCase() + lastname.toLowerCase() + ts,
   firstname: firstname,
   lastname: lastname,
   email: firstname.toLowerCase() + '.' + lastname.toLowerCase() + '@someserver.org',
-  barcode: ts
+  barcode: ts,
+  password: 'P@$$w0rd23'
 }

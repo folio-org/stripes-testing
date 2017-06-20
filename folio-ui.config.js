@@ -2,7 +2,7 @@
 // global debug options for tests
 //
 module.exports = {
-    url:  process.env.FOLIO_UI_URL || 'http://localhost:3000',
+    url:  process.env.FOLIO_UI_URL || 'http://folio-demo-test.aws.indexdata.com',
     username: process.env.FOLIO_UI_USERNAME || 'diku_admin',
     password: process.env.FOLIO_UI_PASSWORD || 'admin',
     debug_sleep: process.env.FOLIO_UI_DEBUG_SLEEP || 4000,
