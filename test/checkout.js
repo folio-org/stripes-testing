@@ -1,6 +1,7 @@
 const Nightmare = require('nightmare')
 const assert = require('assert')
 const config = require('../folio-ui.config.js')
+const user = require('../namegen.js')
 
 describe('Using the App FOLIO UI App /scan', function () {
   this.timeout('20s')
@@ -8,8 +9,6 @@ describe('Using the App FOLIO UI App /scan', function () {
   describe('Login > Update settings > Create user > Checkout item > Confirm checkout > Checkin > Confirm checkin > Logout', () => {
     nightmare = new Nightmare(config.nightmare)
 
-    var ts = new Date().valueOf()
-    var scan_user = 'homer' + ts
     var barcode = '22169083'
     var select_set_scan = 'a[href="/settings/scan"]'
     var select_set_scan_check = 'a[href="/settings/scan/checkout"]'
@@ -37,38 +36,34 @@ describe('Using the App FOLIO UI App /scan', function () {
       .then(result => { done() })
       .catch(done)
     })
-    it('should create a user with id ' + scan_user, done => {
+    it('should create a user with id ' + user.id, done => {
       nightmare
       .wait('a[Title=Users]')
       .click('a[Title=Users]')
       .wait('.button---2NsdC')
       .click('.button---2NsdC')
-      .type('#adduser_username',scan_user)
+      .type('#adduser_username',user.id)
       .type('#pw','lardlad')
       .click('#useractiveYesRB')
-      .type('#adduser_firstname','Homer')
-      .type('#adduser_lastname','Simpson')
-      .type('#adduser_email', scan_user + '@folio.org')
+      .type('#adduser_firstname',user.firstname)
+      .type('#adduser_lastname',user.lastname)
+      .type('#adduser_email', user.email)
       .type('#adduser_dateofbirth','1980-05-05')
-      .evaluate(function() {
-        var type = document.querySelector('#adduser_group > option:nth-of-type(2)').value
-	return type
-      })
       .type('#adduser_group','o')
       .type('#adduser_enrollmentdate','2017-01-01')
       .type('#adduser_expirationdate','2020-01-01')
-      .type('#adduser_barcode',ts)
+      .type('#adduser_barcode',user.barcode)
       .click('button[title="Create New User"]')
       .wait(parseInt(process.env.FOLIO_UI_DEBUG) ? parseInt(config.debug_sleep) : 0) // debugging
       .then(result => { done() })
       .catch(done)
     })
-    it('should check out ' + barcode + ' to ' + scan_user, done => {
+    it('should check out ' + barcode + ' to ' + user.id, done => {
       nightmare
       .wait('a[title=Scan]')
       .click('a[title=Scan]')
       .wait('#patron_identifier')
-      .type('#patron_identifier',scan_user)
+      .type('#patron_identifier',user.id)
       .click('.pane---CC1ap:nth-of-type(1) button')
       .wait('tr[data-row]')
       .type('#barcode',barcode)
@@ -79,11 +74,11 @@ describe('Using the App FOLIO UI App /scan', function () {
       .then(result => { done() })
       .catch(done)
     })
-    it('should find ' + barcode + ' in ' + scan_user + ' history', done => {
+    it('should find ' + barcode + ' in ' + user.id + ' history', done => {
       nightmare
       .click('a[title=Users]')
       .wait('.headerSearchInput---1z5qG')
-      .type('.headerSearchInput---1z5qG',scan_user)
+      .type('.headerSearchInput---1z5qG',user.id)
       .wait(2222)
       .click('div.row---23rwN')
       .wait('.pane---CC1ap:nth-of-type(3) > div:nth-of-type(2)')
@@ -116,11 +111,11 @@ describe('Using the App FOLIO UI App /scan', function () {
       .then(result => { done() })
       .catch(done)
     })
-    it('should confirm that ' + barcode + ' is removed from ' + scan_user + ' history', done => {
+    it('should confirm that ' + barcode + ' is removed from ' + user.id + ' history', done => {
       nightmare
       .click('a[title=Users]')
       .wait('.headerSearchInput---1z5qG')
-      .type('.headerSearchInput---1z5qG',scan_user)
+      .type('.headerSearchInput---1z5qG',user.id)
       .wait(1111)
       .click('div.row---23rwN')
       .wait('.pane---CC1ap:nth-of-type(3) > div:nth-of-type(2)')
