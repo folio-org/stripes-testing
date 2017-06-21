@@ -10,8 +10,6 @@ describe('Using the App FOLIO UI App /scan', function () {
     nightmare = new Nightmare(config.nightmare)
 
     var barcode = '22169083'
-    var select_set_scan = 'a[href="/settings/scan"]'
-    var select_set_scan_check = 'a[href="/settings/scan/checkout"]'
 
     it('should login as ' + config.username + '/' + config.password, done => {
       nightmare
@@ -26,10 +24,10 @@ describe('Using the App FOLIO UI App /scan', function () {
     it('should set patron scan ID to "User"', done => {
       nightmare
       .click(config.select.settings)
-      .wait(select_set_scan)
-      .click(select_set_scan)
-      .wait(select_set_scan_check)
-      .click(select_set_scan_check)
+      .wait('a[href="/settings/scan"]')
+      .click('a[href="/settings/scan"]')
+      .wait('a[href="/settings/scan/checkout"]')
+      .click('a[href="/settings/scan/checkout"]')
       .wait('#patronScanId')
       .wait(222)
       .select('#patronScanId','USER')
@@ -54,7 +52,7 @@ describe('Using the App FOLIO UI App /scan', function () {
       .type('#adduser_expirationdate','2020-01-01')
       .type('#adduser_barcode',user.barcode)
       .click('button[title="Create New User"]')
-      .wait(parseInt(process.env.FOLIO_UI_DEBUG) ? parseInt(config.debug_sleep) : 0) // debugging
+      .wait(parseInt(process.env.FOLIO_UI_DEBUG) ? parseInt(config.debug_sleep) : 555) // debugging
       .then(result => { done() })
       .catch(done)
     })
@@ -69,7 +67,7 @@ describe('Using the App FOLIO UI App /scan', function () {
       .type('#barcode',barcode)
       .click('.pane---CC1ap:nth-of-type(2) button')
       .wait('.pane---CC1ap:nth-of-type(2) tr[data-row]')
-      .wait(5555)
+      .wait(555)
       .click('form > div > button')
       .then(result => { done() })
       .catch(done)
@@ -83,22 +81,20 @@ describe('Using the App FOLIO UI App /scan', function () {
       .click('div.row---23rwN')
       .wait('.pane---CC1ap:nth-of-type(3) > div:nth-of-type(2)')
       .click('.pane---CC1ap:nth-of-type(3) > div:nth-of-type(2) > div:nth-of-type(4) .col-xs-5 button')
-      .wait(5555)
-      .screenshot('debug1.png')
+      .wait(2222)
       .wait(function(bc) {
-        var xp = document.evaluate( '//div[.="' + bc + '"]/following-sibling::div[.="Open"]', document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null)
+        var xp = document.evaluate( '//div[@class="cell---18D9A"][.="' + bc + '"]/following-sibling::div[.="Open"]', document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null)
 	try { 
 	  var val = xp.singleNodeValue.innerHTML
 	  return true
 	} catch(e) {
 	  return false
         } 
-      }, barcode)
-      .screenshot('debug2.png')
-      .wait(parseInt(process.env.FOLIO_UI_DEBUG) ? parseInt(config.debug_sleep) : 0) // debugging
+      }, barcode) 
+      .wait(parseInt(process.env.FOLIO_UI_DEBUG) ? parseInt(config.debug_sleep) : 555) // debugging
       .then(result => { done() })
       .catch(done)
-    })
+    }) 
     it('should check in ' + barcode, done => {
       nightmare
       .click('a[title=Scan]')
@@ -109,11 +105,11 @@ describe('Using the App FOLIO UI App /scan', function () {
       .wait(222)
       .click('#ModuleContainer button')
       .wait('tr[data-row]')
-      .wait(222)
+      .wait(555)
       .then(result => { done() })
       .catch(done)
     })
-    it('should confirm that ' + barcode + ' is removed from ' + user.id + ' history', done => {
+    it('should confirm that ' + barcode + ' has status of Closed in ' + user.id + ' history', done => {
       nightmare
       .click('a[title=Users]')
       .wait('.headerSearchInput---1z5qG')
@@ -122,7 +118,7 @@ describe('Using the App FOLIO UI App /scan', function () {
       .click('div.row---23rwN')
       .wait('.pane---CC1ap:nth-of-type(3) > div:nth-of-type(2)')
       .click('.pane---CC1ap:nth-of-type(3) > div:nth-of-type(2) > div:nth-of-type(4) .col-xs-5 button')
-      .wait(4000)
+      .wait(555)
       .wait(function(bc) {
         var xp = document.evaluate( '//div[.="' + bc + '"]/following-sibling::div[.="Closed"]', document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null)
 	try { 
@@ -132,14 +128,15 @@ describe('Using the App FOLIO UI App /scan', function () {
 	  return false
         } 
       }, barcode)
-      .wait(parseInt(process.env.FOLIO_UI_DEBUG) ? parseInt(config.debug_sleep) : 0) // debugging
+      .wait(parseInt(process.env.FOLIO_UI_DEBUG) ? parseInt(config.debug_sleep) : 555) // debugging
       .then(result => { done() })
       .catch(done)
     })
     it('should logout', done => {
       nightmare
       .click('#button-logout')
-      .wait(parseInt(process.env.FOLIO_UI_DEBUG) ? parseInt(config.debug_sleep) : 0) // debugging
+      .wait('input[name="username"]')
+      .wait(parseInt(process.env.FOLIO_UI_DEBUG) ? parseInt(config.debug_sleep) : 555) // debugging
       .end()
       .then(result => { done() })
       .catch(done)

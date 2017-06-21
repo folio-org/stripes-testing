@@ -27,5 +27,5 @@ module.exports = {
         height: 700,
         typeInterval: 50,
         show: true
-    } : { typeInterval: 5 }
+    } : { typeInterval: 50 }
 }

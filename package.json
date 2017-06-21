@@ -6,9 +6,10 @@
   "author": "Wolfram Schneider <wosch@indexdata.com>",
   "license": "Apache-2.0",
   "scripts": {
-    "test": "./node_modules/.bin/mocha",
+    "test": "./node_modules/.bin/mocha test/checkout.js test/new_user.js",
     "test-simple": "./node_modules/.bin/mocha test/100-startpage.js",
-    "test-checkout": "./node_modules/.bin/mocha test/checkout.js"
+    "test-checkout": "./node_modules/.bin/mocha test/checkout.js",
+    "test-all": "./node_modules/.bin/mocha"
   },
   "dependencies": {
     "mocha": "^3.4.2",
