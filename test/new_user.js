@@ -4,7 +4,9 @@ const config = require('../folio-ui.config.js')
 const user = require('../namegen.js')
 
 describe('Using the App FOLIO UI App /users', function () {
+
   this.timeout('20s')
+  let nightmare = null
 
   describe('Login > Create new user > Logout > Login as new user > Logout > Login > Edit new user and confirm changes', () => {
     nightmare = new Nightmare(config.nightmare)

@@ -6,9 +6,9 @@ describe('Using the App FOLIO UI App /users', function () {
   this.timeout('15s')
 
   let nightmare = null
-  nightmare = new Nightmare(config.nightmare)
 
   describe('signing up and finishing setup', () => {
+    nightmare = new Nightmare(config.nightmare)
 
     it('should login as ' + config.username + '/' + config.password, done => {
       nightmare
