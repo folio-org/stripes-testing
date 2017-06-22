@@ -26,7 +26,7 @@ describe('Using the App FOLIO UI App /users', function () {
         .catch(done)
       }) 
     }
-    flogout = function() {
+    flogout = function(end) {
       it('should logout', done => {
         nightmare
         .click('#button-logout')
@@ -50,7 +50,7 @@ describe('Using the App FOLIO UI App /users', function () {
       .type('#adduser_lastname',user.lastname)
       .type('#adduser_email', user.email)
       .type('#adduser_dateofbirth','1980-05-05')
-      .type('#adduser_group','oo')
+      .type('#adduser_group','u')
       .type('#adduser_enrollmentdate','2017-01-01')
       .type('#adduser_expirationdate','2020-01-01')
       .type('#adduser_barcode',user.barcode)
@@ -88,7 +88,8 @@ describe('Using the App FOLIO UI App /users', function () {
           return false
         } 
       }, phone)
-      .wait(parseInt(process.env.FOLIO_UI_DEBUG) ? parseInt(config.debug_sleep) : 0) // debugging
+      .wait(parseInt(process.env.FOLIO_UI_DEBUG) ? parseInt(config.debug_sleep) : 555) // debugging
+      .end()
       .then(result => { done() })
       .catch(done)
     })
