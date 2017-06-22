@@ -47,7 +47,7 @@ describe('Using the App FOLIO UI App /scan', function () {
       .type('#adduser_lastname',user.lastname)
       .type('#adduser_email', user.email)
       .type('#adduser_dateofbirth','1980-05-05')
-      .type('#adduser_group','o')
+      .type('#adduser_group','u')
       .type('#adduser_enrollmentdate','2017-01-01')
       .type('#adduser_expirationdate','2020-01-01')
       .type('#adduser_barcode',user.barcode)
