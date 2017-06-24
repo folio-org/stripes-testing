@@ -11,6 +11,7 @@
     "test-checkout": "./node_modules/.bin/mocha test/checkout.js",
     "test-new-user": "./node_modules/.bin/mocha test/new_user.js",
     "test-new-item": "./node_modules/.bin/mocha test/new_item.js",
+    "test-user-item": "./node_modules/.bin/mocha test/new_user.js test/new_item.js",
     "test-all": "./node_modules/.bin/mocha"
   },
   "dependencies": {
