@@ -135,10 +135,8 @@ describe('Using the App FOLIO UI App /scan', function () {
     })
     it('should logout', done => {
       nightmare
-      .click(config.select.logout)
-      .wait('div[class^="loginContainer"]')
-      .wait(parseInt(process.env.FOLIO_UI_DEBUG) ? parseInt(config.debug_sleep) : 555) // debugging
-      .wait(9999)
+      .click('#button-logout')
+      .wait(config.select.username)
       .end()
       .then(result => { done() })
       .catch(done)

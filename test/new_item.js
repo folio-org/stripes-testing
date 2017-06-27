@@ -4,7 +4,7 @@ const config = require('../folio-ui.config.js')
 
 describe('Using the App FOLIO UI App /items', function () {
   this.timeout('20s')
-  let nigthmare = null
+  let nightmare = null
 
   describe('Login > Create new item > Confirm creation > Edit item > Confirm changes > Logout', () => {
     nightmare = new Nightmare(config.nightmare)
