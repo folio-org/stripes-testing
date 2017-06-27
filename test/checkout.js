@@ -1,7 +1,8 @@
 const Nightmare = require('nightmare')
 const assert = require('assert')
 const config = require('../folio-ui.config.js')
-const user = require('../namegen.js')
+const names = require('../namegen.js')
+const user = names.namegen()
 
 describe('Using the App FOLIO UI App /scan', function () {
   this.timeout('20s')
