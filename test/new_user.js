@@ -9,6 +9,7 @@ describe('Using the App FOLIO UI App /users', function () {
 
   this.timeout('20s')
   let nightmare = null
+  let pgroup = null
 
   describe('Login > Create new user > Logout > Login as new user > Logout > Login > Edit new user and confirm changes', () => {
     nightmare = new Nightmare(config.nightmare)
@@ -39,12 +40,24 @@ describe('Using the App FOLIO UI App /users', function () {
       })
     }
     flogin(config.username, config.password)
-    it('should create a user: ' + user.id + '/' + user.password, done => {
+    it('should extract a patron group value', done => {
       nightmare
       .wait('a[Title=Users]')
       .click('a[Title=Users]')
       .wait('.button---2NsdC')
       .click('.button---2NsdC')
+      .wait('#adduser_group > option:nth-of-type(3)')
+      .evaluate(function() {
+        return document.querySelector('#adduser_group > option:nth-of-type(3)').value
+      })
+      .then(function(result) {
+        pgroup = result
+	done()
+      })
+      .catch(done)
+    })
+    it('should create a user: ' + user.id + '/' + user.password, done => {
+      nightmare
       .type('#adduser_username',user.id)
       .type('#pw',user.password)
       .click('#useractiveYesRB')
@@ -52,7 +65,7 @@ describe('Using the App FOLIO UI App /users', function () {
       .type('#adduser_lastname',user.lastname)
       .type('#adduser_email', user.email)
       .type('#adduser_dateofbirth','04/05/1980')
-      .type('#adduser_group','o')
+      .select('#adduser_group', pgroup)
       .type('#adduser_enrollmentdate','01/01/2017')
       .type('#adduser_expirationdate','01/01/2020')
       .type('#adduser_barcode',user.barcode)

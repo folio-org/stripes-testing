@@ -8,7 +8,8 @@ describe('Using the App FOLIO UI App /scan', function () {
   this.timeout('20s')
 
   describe('Login > Update settings > Create user > Checkout item > Confirm checkout > Checkin > Confirm checkin > Logout', () => {
-    nightmare = new Nightmare(config.nightmare)
+    let nightmare = new Nightmare(config.nightmare)
+    let pgroup = null
 
     var barcode = '22169083'
 
@@ -35,12 +36,23 @@ describe('Using the App FOLIO UI App /scan', function () {
       .then(result => { done() })
       .catch(done)
     })
-    it('should create a user with id ' + user.id, done => {
+    it('should extract a patron group value', done => {
       nightmare
-      .wait('a[Title=Users]')
       .click('a[Title=Users]')
       .wait('.button---2NsdC')
       .click('.button---2NsdC')
+      .wait('#adduser_group > option:nth-of-type(3)')
+      .evaluate(function() {
+        return document.querySelector('#adduser_group > option:nth-of-type(3)').value
+      })
+      .then(function(result) {
+        pgroup = result
+        done()
+      })
+      .catch(done)
+    })
+    it('should create a user with id ' + user.id, done => {
+      nightmare
       .type('#adduser_username',user.id)
       .type('#pw',user.password)
       .click('#useractiveYesRB')
@@ -48,7 +60,7 @@ describe('Using the App FOLIO UI App /scan', function () {
       .type('#adduser_lastname',user.lastname)
       .type('#adduser_email', user.email)
       .type('#adduser_dateofbirth','10/20/1977')
-      .type('#adduser_group','o')
+      .select('#adduser_group',pgroup)
       .type('#adduser_enrollmentdate','01/01/2017')
       .type('#adduser_expirationdate','01/01/2020')
       .type('#adduser_barcode',user.barcode)
