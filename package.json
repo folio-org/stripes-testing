@@ -13,6 +13,7 @@
     "test-new-item": "./node_modules/.bin/mocha test/new_item.js",
     "test-user-item": "./node_modules/.bin/mocha test/new_user.js test/new_item.js",
     "test-checkout-user": "./node_modules/.bin/mocha test/checkout.js test/new_user.js",
+    "test-patron-group": "./node_modules/.bin/mocha test/patron_group.js",
     "test-all": "./node_modules/.bin/mocha"
   },
   "dependencies": {
