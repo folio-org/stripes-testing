@@ -76,10 +76,10 @@ describe('Using the App FOLIO UI App /scan', function () {
       .wait('#patron_identifier')
       .type('#patron_identifier',user.id)
       .click('.pane---CC1ap:nth-of-type(1) button')
-      .wait('tr[data-row]')
+      .wait('div[title="' + user.id + '"]')
       .type('#barcode',barcode)
       .click('.pane---CC1ap:nth-of-type(2) button')
-      .wait('.pane---CC1ap:nth-of-type(2) tr[data-row]')
+      .wait('div[title="' + barcode + '"]')
       .wait(555)
       .click('form > div > button')
       .then(result => { done() })
@@ -92,18 +92,9 @@ describe('Using the App FOLIO UI App /scan', function () {
       .type('.headerSearchInput---1z5qG',user.id)
       .wait(2222)
       .click('div.row---23rwN')
-      .wait('.pane---CC1ap:nth-of-type(3) > div:nth-of-type(2)')
-      .click('.pane---CC1ap:nth-of-type(3) > div:nth-of-type(2) > div:nth-of-type(4) .col-xs-5 button')
-      .wait(2222)
-      .wait(function(bc) {
-        var xp = document.evaluate( '//div[@class="cell---18D9A"][.="' + bc + '"]/following-sibling::div[.="Open"]', document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null)
-	try { 
-	  var val = xp.singleNodeValue.innerHTML
-	  return true
-	} catch(e) {
-	  return false
-        } 
-      }, barcode) 
+      .wait('#ModuleContainer > div > div:nth-child(3) > div:nth-child(2) > div:nth-child(9) > div.row > div.col-sm-6.col-xs-5 > button')
+      .click('#ModuleContainer > div > div:nth-child(3) > div:nth-child(2) > div:nth-child(9) > div.row > div.col-sm-6.col-xs-5 > button')
+      .wait('div[title="' + barcode + '"]~div[title="Open"]')
       .wait(parseInt(process.env.FOLIO_UI_DEBUG) ? parseInt(config.debug_sleep) : 555) // debugging
       .then(result => { done() })
       .catch(done)
@@ -117,7 +108,7 @@ describe('Using the App FOLIO UI App /scan', function () {
       .type('#barcode',barcode)
       .wait(222)
       .click('#ModuleContainer button')
-      .wait('tr[data-row]')
+      .wait('div[title="' + barcode + '"]')
       .wait(555)
       .then(result => { done() })
       .catch(done)
@@ -129,18 +120,9 @@ describe('Using the App FOLIO UI App /scan', function () {
       .type('.headerSearchInput---1z5qG',user.id)
       .wait(1111)
       .click('div.row---23rwN')
-      .wait('.pane---CC1ap:nth-of-type(3) > div:nth-of-type(2)')
-      .click('.pane---CC1ap:nth-of-type(3) > div:nth-of-type(2) > div:nth-of-type(4) .col-xs-5 button')
-      .wait(555)
-      .wait(function(bc) {
-        var xp = document.evaluate( '//div[.="' + bc + '"]/following-sibling::div[.="Closed"]', document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null)
-	try { 
-	  var val = xp.singleNodeValue.innerHTML
-	  return true
-	} catch(e) {
-	  return false
-        } 
-      }, barcode)
+      .wait('#ModuleContainer > div > div:nth-child(3) > div:nth-child(2) > div:nth-child(9) > div.row > div.col-sm-6.col-xs-5 > button')
+      .click('#ModuleContainer > div > div:nth-child(3) > div:nth-child(2) > div:nth-child(9) > div.row > div.col-sm-6.col-xs-5 > button')
+      .wait('div[title="' + barcode + '"]~div[title="Open"]')
       .wait(parseInt(process.env.FOLIO_UI_DEBUG) ? parseInt(config.debug_sleep) : 555) // debugging
       .then(result => { done() })
       .catch(done)
