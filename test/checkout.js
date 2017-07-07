@@ -10,8 +10,7 @@ describe('Using the App FOLIO UI App /scan', function () {
   describe('Login > Update settings > Create user > Checkout item > Confirm checkout > Checkin > Confirm checkin > Logout', () => {
     let nightmare = new Nightmare(config.nightmare)
     let pgroup = null
-
-    var barcode = '22169083'
+    let barcode = 'item'
 
     it('should login as ' + config.username + '/' + config.password, done => {
       nightmare
@@ -67,6 +66,20 @@ describe('Using the App FOLIO UI App /scan', function () {
       .click('button[title="Create New User"]')
       .wait(parseInt(process.env.FOLIO_UI_DEBUG) ? parseInt(config.debug_sleep) : 555) // debugging
       .then(result => { done() })
+      .catch(done)
+    })
+    it('should find an item to checkout', done=> {
+      nightmare
+      .click('a[title=Items]')
+      .wait('.pane---CC1ap:nth-of-type(2) .rowContainer---2tH5Y .cell---18D9A')
+      .evaluate(function() {
+	var element = document.evaluate('//div[.="Available"]/preceding-sibling::div[2]', document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null)
+	return element.singleNodeValue.innerHTML
+      })
+      .then(function(result) {
+        barcode = result
+        done()
+      })
       .catch(done)
     })
     it('should check out ' + barcode + ' to ' + user.id, done => {
