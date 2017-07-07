@@ -1,4 +1,4 @@
-const Nightmare = require('nightmare')
+const Nightmare = require('../xnightmare.js')
 const assert = require('assert')
 const config = require('../folio-ui.config.js')
 
@@ -41,7 +41,8 @@ describe('Using the App FOLIO UI App /settings/users/groups', function () {
       .wait('a[href="/settings/users/groups"]')
       .click('a[href="/settings/users/groups"]')
       .wait('.paneset---3HNbw > .paneset---3HNbw button')
-      .click('.paneset---3HNbw > .paneset---3HNbw button')
+      //.click('.paneset---3HNbw > .paneset---3HNbw button')
+      .xclick('//button[contains(.,"Add type")]')
       .type('[name=group]','community')
       .type('[name=desc]','Community Member')
       .click('li[data-id^="0"] button:last-of-type')
