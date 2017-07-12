@@ -1,4 +1,4 @@
-const Nightmare = require('nightmare')
+const Nightmare = require('../xnightmare.js')
 const assert = require('assert')
 const config = require('../folio-ui.config.js')
 const names = require('../namegen.js')
@@ -77,6 +77,7 @@ describe('Using the App FOLIO UI App /scan', function () {
 	return element.singleNodeValue.innerHTML
       })
       .then(function(result) {
+        console.log(result)
         barcode = result
         done()
       })
@@ -88,12 +89,12 @@ describe('Using the App FOLIO UI App /scan', function () {
       .click('a[title=Scan]')
       .wait('#patron_identifier')
       .type('#patron_identifier',user.id)
-      .click('.pane---CC1ap:nth-of-type(1) button')
+      .xclick('//button[contains(.,"Find Patron")]')
       .wait('div[title="' + user.id + '"]')
       .type('#barcode',barcode)
       .click('.pane---CC1ap:nth-of-type(2) button')
       .wait('div[title="' + barcode + '"]')
-      .wait(555)
+      .wait(parseInt(process.env.FOLIO_UI_DEBUG) ? parseInt(config.debug_sleep) : 555) // debugging
       .click('form > div > button')
       .then(result => { done() })
       .catch(done)
@@ -105,8 +106,8 @@ describe('Using the App FOLIO UI App /scan', function () {
       .type('.headerSearchInput---1z5qG',user.id)
       .wait(2222)
       .click('div.row---23rwN')
-      .wait('#ModuleContainer > div > div:nth-child(3) > div:nth-child(2) > div:nth-child(9) > div.row > div.col-sm-6.col-xs-5 > button')
-      .click('#ModuleContainer > div > div:nth-child(3) > div:nth-child(2) > div:nth-child(9) > div.row > div.col-sm-6.col-xs-5 > button')
+      .wait('#button-viewfullhistory')
+      .click('#button-viewfullhistory')
       .wait('div[title="' + barcode + '"]~div[title="Open"]')
       .wait(parseInt(process.env.FOLIO_UI_DEBUG) ? parseInt(config.debug_sleep) : 555) // debugging
       .then(result => { done() })
@@ -122,7 +123,7 @@ describe('Using the App FOLIO UI App /scan', function () {
       .wait(222)
       .click('#ModuleContainer button')
       .wait('div[title="' + barcode + '"]')
-      .wait(555)
+      .wait(parseInt(process.env.FOLIO_UI_DEBUG) ? parseInt(config.debug_sleep) : 555) // debugging
       .then(result => { done() })
       .catch(done)
     })
@@ -130,11 +131,12 @@ describe('Using the App FOLIO UI App /scan', function () {
       nightmare
       .click('a[title=Users]')
       .wait('.headerSearchInput---1z5qG')
+      .click('.headerSearchClearButton---2MIXs')
       .type('.headerSearchInput---1z5qG',user.id)
       .wait(1111)
       .click('div.row---23rwN')
-      .wait('#ModuleContainer > div > div:nth-child(3) > div:nth-child(2) > div:nth-child(9) > div.row > div.col-sm-6.col-xs-5 > button')
-      .click('#ModuleContainer > div > div:nth-child(3) > div:nth-child(2) > div:nth-child(9) > div.row > div.col-sm-6.col-xs-5 > button')
+      .wait('#button-viewfullhistory')
+      .click('#button-viewfullhistory')
       .wait('div[title="' + barcode + '"]~div[title="Open"]')
       .wait(parseInt(process.env.FOLIO_UI_DEBUG) ? parseInt(config.debug_sleep) : 555) // debugging
       .then(result => { done() })
