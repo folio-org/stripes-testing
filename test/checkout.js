@@ -77,7 +77,6 @@ describe('Using the App FOLIO UI App /scan', function () {
 	return element.singleNodeValue.innerHTML
       })
       .then(function(result) {
-        console.log(result)
         barcode = result
         done()
       })
