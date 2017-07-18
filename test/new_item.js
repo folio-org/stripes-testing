@@ -6,7 +6,7 @@ describe('Using the App FOLIO UI App /items', function () {
   this.timeout('20s')
   let nightmare = null
 
-  describe('Login > Create new item > Confirm creation > Edit item > Confirm changes > Logout', () => {
+  describe("Login > Create new item > Confirm creation > Edit item > Confirm changes > Logout\n", () => {
     nightmare = new Nightmare(config.nightmare)
 
     var ts = new Date().valueOf()
@@ -30,7 +30,7 @@ describe('Using the App FOLIO UI App /items', function () {
         nightmare
         .click('#button-logout')
         .wait(config.select.username)
-        .wait(parseInt(process.env.FOLIO_UI_DEBUG) ? parseInt(config.debug_sleep) : 0) // debugging
+        .wait(parseInt(process.env.FOLIO_UI_DEBUG) ? parseInt(config.debug_sleep) : 555) // debugging
         .end()
         .then(result => { done() })
         .catch(done)
@@ -64,28 +64,20 @@ describe('Using the App FOLIO UI App /items', function () {
       .click('a[Title=Items]')
       .wait('input[placeholder=Search')
       .type('input[placeholder=Search', barcode)
-      .wait(function(bc) {
-        var xp = document.evaluate( '//div[1]/div[.="' + bc + '"]', document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null)
-        try { 
-          var val = xp.singleNodeValue.innerHTML
-          return true
-        } catch(e) {
-          return false
-        } 
-      }, barcode)
-      .wait(parseInt(process.env.FOLIO_UI_DEBUG) ? parseInt(config.debug_sleep) : 0) // debugging
+      .wait('div[aria-label*="' + barcode + '"]')
+      .wait(parseInt(process.env.FOLIO_UI_DEBUG) ? parseInt(config.debug_sleep) : 555) // debugging
       .then(result => { done() })
       .catch(done)
     })
     it('should edit item', done => {
       nightmare
-      .click('#ModuleContainer > div > div:nth-child(2) > div:nth-child(2) > div:nth-child(1) > div > div.scrollable---9-pBJ > div > div > div:nth-child(1)')
+      .click('div[aria-label*="' + barcode + '"]')
       .wait('button[title="Edit Item"]')
       .click('button[title="Edit Item"]')
       .wait('#additem_title')
       .type('#additem_title', ' (revised edition)')
       .click('button[title="Update Item"')
-      .wait(parseInt(process.env.FOLIO_UI_DEBUG) ? parseInt(config.debug_sleep) : 0) // debugging
+      .wait(parseInt(process.env.FOLIO_UI_DEBUG) ? parseInt(config.debug_sleep) : 555) // debugging
       .then(result => { done() })
       .catch(done)
     })

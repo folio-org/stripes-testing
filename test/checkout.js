@@ -7,7 +7,7 @@ const user = names.namegen()
 describe("Using the App FOLIO UI App /scan:", function () {
   this.timeout('20s')
 
-  describe("Login > Update settings > Create user > Checkout item > Confirm checkout > Checkin > Confirm checkin > Logout...", () => {
+  describe("Login > Update settings > Create user > Checkout item > Confirm checkout > Checkin > Confirm checkin > Logout\n", () => {
     let nightmare = new Nightmare(config.nightmare)
     let pgroup = null
     let barcode = 'item'

@@ -13,4 +13,14 @@ Nightmare.action('xclick', function(selector, done) {
   }, done, selector);
 })
 
+Nightmare.action('xtract', function(selector, done) {
+  this.evaluate_now(function(selector) {
+    var element = document.evaluate(selector, document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue
+    if (!element) {
+      throw new Error('Unable to find element by selector: ' + selector);
+    }
+    return element.textContent
+  }, done, selector);
+})
+
 module.exports = Nightmare

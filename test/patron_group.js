@@ -3,14 +3,20 @@ const assert = require('assert')
 const config = require('../folio-ui.config.js')
 
 describe('Using the App FOLIO UI App /settings/users/groups', function () {
-  this.timeout('20s')
+  this.timeout('30s')
+  let userid = null;
+  let groupid = null;
+  let alert = null;
 
-  describe('Login > Add new patron group > Assign to user > Try to delete patron group > Logout', () => {
+  describe("Login > Add new patron group > Assign to user > Try to delete patron group > Logout\n", () => {
     nightmare = new Nightmare(config.nightmare)
 
     flogin = function(un, pw) {
       it('should login as ' + un + '/' + pw, done => {
         nightmare
+        .on('page', function(type="alert", message) {
+           alert = message;
+        })
         .goto(config.url)
         .type(config.select.username, un)
         .type(config.select.password, pw)
@@ -27,7 +33,7 @@ describe('Using the App FOLIO UI App /settings/users/groups', function () {
         .click('#button-logout')
         .wait(config.select.username)
         .wait(parseInt(process.env.FOLIO_UI_DEBUG) ? parseInt(config.debug_sleep) : 0) // debugging
-	.end()
+        .end()
         .then(result => { done() })
         .catch(done)
       })
@@ -41,7 +47,6 @@ describe('Using the App FOLIO UI App /settings/users/groups', function () {
       .wait('a[href="/settings/users/groups"]')
       .click('a[href="/settings/users/groups"]')
       .wait('.paneset---3HNbw > .paneset---3HNbw button')
-      //.click('.paneset---3HNbw > .paneset---3HNbw button')
       .xclick('//button[contains(.,"Add type")]')
       .type('[name=group]','community')
       .type('[name=desc]','Community Member')
@@ -50,6 +55,108 @@ describe('Using the App FOLIO UI App /settings/users/groups', function () {
       .then(result => { done() })
       .catch(done)
     })
-    flogout()
+    it('should find a user to edit', done => {
+      nightmare
+      .click('a[title="Users"]')
+      .wait('#list-users a:nth-of-type(11) > div:nth-of-type(5)')
+      .evaluate(function() {
+        return document.querySelector('#list-users a:nth-of-type(11) > div:nth-of-type(3)').title
+      })
+      .then(function(result) {
+        userid = result
+        console.log('Found ' + userid)
+	done()
+      })
+      .catch(done)
+    })
+    it('should find patron group ID', done => {
+      nightmare
+      .type('.headerSearchInput---1z5qG', userid)
+      .wait('div[title="' + userid + '"]')
+      .click('div[title="' + userid + '"]')
+      .wait('#button-edituser')
+      .click('#button-edituser')
+      .wait('#adduser_group')
+      .xtract('id("adduser_group")/option[contains(.,"Community")]/@value')
+      .then(function(result) {
+        groupid = result
+        console.log('Found ' + groupid)
+	done()
+      })
+      .catch(done)
+    })
+    it('should edit user record with new patron group', done => {
+      nightmare
+      .select('#adduser_group', groupid)
+      .click('#button-updateuser')
+      .wait(parseInt(process.env.FOLIO_UI_DEBUG) ? parseInt(config.debug_sleep) : 555) // debugging
+      .then(result => { done() })
+      .catch(done)
+    })
+    it('should fail at deleting patron group', done => {
+      nightmare
+      .wait(9999)
+      .xclick('//span[.="Settings"]')
+      .click('a[href="/settings/users"]')
+      .wait('a[href="/settings/users/groups"]')
+      .click('a[href="/settings/users/groups"]')
+      .wait('.paneset---3HNbw > .paneset---3HNbw button')
+      .xclick('//li[@data-id="' + groupid + '"]//button[.="Delete"]')
+      .evaluate(function(msg) {
+        if (!msg.match(/ERROR/)) { throw new Error("No error alert detected!") }
+      }, alert)
+      .wait(parseInt(process.env.FOLIO_UI_DEBUG) ? parseInt(config.debug_sleep) : 555) // debugging
+      .then(function(result) { 
+        done()
+       })
+      .catch(done)
+    })
+    it('should find patron group ID for Staff', done => {
+      nightmare
+      .click('a[title=Users]')
+      .wait('.headerSearchInput---1z5qG')
+      .click('button[class^="headerSearchClearButton"]')
+      .type('.headerSearchInput---1z5qG', userid)
+      .wait('div[title="' + userid + '"]')
+      .click('div[title="' + userid + '"]')
+      .wait('#button-edituser')
+      .click('#button-edituser')
+      .wait('#adduser_group')
+      .xtract('id("adduser_group")/option[contains(.,"Staff")]/@value')
+      .then(function(result) {
+        groupid = result
+        console.log('Found ' + groupid)
+	done()
+      })
+      .catch(done)
+    })
+    it('should change patron group ID in user record', done => {
+      nightmare
+      .select('#adduser_group', groupid)
+      .click('#button-updateuser')
+      .wait(parseInt(process.env.FOLIO_UI_DEBUG) ? parseInt(config.debug_sleep) : 555) // debugging
+      .then(result => { done() })
+      .catch(done)
+    })
+/*    it('should successfully delete Community patron group', done => {
+      nightmare
+      .wait(9999)
+      .xclick('//span[.="Settings"]')
+      .wait(2222)
+      .xclick('id("ModuleContainer")//a[.="Users"]')
+      .wait(2222)
+      .xclick('id("ModuleContainer")//a[.="Patron groups"]')
+      .wait(9999)
+      .xclick('//li[@data-id="' + groupid + '"]//button[.="Delete"]')
+      .evaluate(function(msg) {
+        if (msg.match(/ERROR/)) { throw new Error(msg) }
+      }, alert)
+      .wait(parseInt(process.env.FOLIO_UI_DEBUG) ? parseInt(config.debug_sleep) : 555) // debugging
+      .then(function(result) { 
+        done()
+       })
+      .catch(done)
+    }) */
+    flogout();
   })
 })
