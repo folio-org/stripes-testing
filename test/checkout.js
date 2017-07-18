@@ -4,10 +4,10 @@ const config = require('../folio-ui.config.js')
 const names = require('../namegen.js')
 const user = names.namegen()
 
-describe('Using the App FOLIO UI App /scan', function () {
+describe("Using the App FOLIO UI App /scan:", function () {
   this.timeout('20s')
 
-  describe('Login > Update settings > Create user > Checkout item > Confirm checkout > Checkin > Confirm checkin > Logout', () => {
+  describe("Login > Update settings > Create user > Checkout item > Confirm checkout > Checkin > Confirm checkin > Logout...", () => {
     let nightmare = new Nightmare(config.nightmare)
     let pgroup = null
     let barcode = 'item'
@@ -137,7 +137,7 @@ describe('Using the App FOLIO UI App /scan', function () {
       .click('div.row---23rwN')
       .wait('#button-viewfullhistory')
       .click('#button-viewfullhistory')
-      .wait('div[title="' + barcode + '"]~div[title="Open"]')
+      .wait('div[title="' + barcode + '"]~div[title="Closed"]')
       .wait(parseInt(process.env.FOLIO_UI_DEBUG) ? parseInt(config.debug_sleep) : 555) // debugging
       .then(result => { done() })
       .catch(done)
