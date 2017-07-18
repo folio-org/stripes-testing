@@ -34,7 +34,7 @@ describe('Using the App FOLIO UI App /users', function () {
         nightmare
         .click('#button-logout')
         .wait(config.select.username)
-        .wait(parseInt(process.env.FOLIO_UI_DEBUG) ? parseInt(config.debug_sleep) : 0) // debugging
+        .wait(parseInt(process.env.FOLIO_UI_DEBUG) ? parseInt(config.debug_sleep) : 555) // debugging
         .then(result => { done() })
         .catch(done)
       })
@@ -86,7 +86,7 @@ describe('Using the App FOLIO UI App /users', function () {
       .wait('input[placeholder="Search"]')
       .type('input[placeholder="Search"]',user.id)
       .wait(2222)
-      .click('div.row---23rwN')
+      .click('.row---23rwN')
       .wait('button[title="Edit User"]')
       .click('button[title="Edit User"]')
       .wait('#adduser_mobilePhone')

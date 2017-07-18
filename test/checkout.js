@@ -18,12 +18,13 @@ describe('Using the App FOLIO UI App /scan', function () {
       .type(config.select.username, config.username)
       .type(config.select.password, config.password)
       .click(config.select.submit)
-      .wait(config.select.settings)
+      .wait('#button-logout')
       .then(result => { done() })
       .catch(done)
     })
     it('should set patron scan ID to "User"', done => {
       nightmare
+      .wait(config.select.settings)
       .click(config.select.settings)
       .wait('a[href="/settings/scan"]')
       .click('a[href="/settings/scan"]')
@@ -38,8 +39,8 @@ describe('Using the App FOLIO UI App /scan', function () {
     it('should extract a patron group value', done => {
       nightmare
       .click('a[Title=Users]')
-      .wait('.button---2NsdC')
-      .click('.button---2NsdC')
+      .wait('#button-newuser')
+      .click('#button-newuser')
       .wait('#adduser_group > option:nth-of-type(3)')
       .evaluate(function() {
         return document.querySelector('#adduser_group > option:nth-of-type(3)').value
@@ -71,7 +72,7 @@ describe('Using the App FOLIO UI App /scan', function () {
     it('should find an item to checkout', done=> {
       nightmare
       .click('a[title=Items]')
-      .wait('.pane---CC1ap:nth-of-type(2) .rowContainer---2tH5Y .cell---18D9A')
+      .wait(2222)
       .evaluate(function() {
 	var element = document.evaluate('//div[.="Available"]/preceding-sibling::div[2]', document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null)
 	return element.singleNodeValue.innerHTML
