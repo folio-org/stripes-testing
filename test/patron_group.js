@@ -5,7 +5,8 @@ const config = require('../folio-ui.config.js')
 describe('Using the App FOLIO UI App /settings/users/groups', function () {
   this.timeout('30s')
   let userid = null;
-  let groupid = null;
+  let communityid = null;
+  let staffid = null;
   let alert = null;
 
   describe("Login > Add new patron group > Assign to user > Try to delete patron group > Logout\n", () => {
@@ -39,7 +40,7 @@ describe('Using the App FOLIO UI App /settings/users/groups', function () {
       })
     }
     flogin(config.username, config.password)
-    it('should create a patron group', done => {
+    it('should create a patron group for "Community"', done => {
       nightmare
       .click(config.select.settings)
       .wait('a[href="/settings/users"]')
@@ -51,6 +52,7 @@ describe('Using the App FOLIO UI App /settings/users/groups', function () {
       .type('[name=group]','community')
       .type('[name=desc]','Community Member')
       .click('li[data-id^="0"] button:last-of-type')
+      .wait(2222)
       .wait(parseInt(process.env.FOLIO_UI_DEBUG) ? parseInt(config.debug_sleep) : 555) // debugging
       .then(result => { done() })
       .catch(done)
@@ -60,7 +62,7 @@ describe('Using the App FOLIO UI App /settings/users/groups', function () {
       .click('a[title="Users"]')
       .wait('#list-users a:nth-of-type(11) > div:nth-of-type(5)')
       .evaluate(function() {
-        return document.querySelector('#list-users a:nth-of-type(11) > div:nth-of-type(3)').title
+        return document.querySelector('#list-users a:nth-of-type(11) > div:nth-of-type(5)').title
       })
       .then(function(result) {
         userid = result
@@ -69,7 +71,7 @@ describe('Using the App FOLIO UI App /settings/users/groups', function () {
       })
       .catch(done)
     })
-    it('should find patron group ID', done => {
+    it('should find patron group ID for Community', done => {
       nightmare
       .type('.headerSearchInput---1z5qG', userid)
       .wait('div[title="' + userid + '"]')
@@ -79,39 +81,46 @@ describe('Using the App FOLIO UI App /settings/users/groups', function () {
       .wait('#adduser_group')
       .xtract('id("adduser_group")/option[contains(.,"Community")]/@value')
       .then(function(result) {
-        groupid = result
-        console.log('Found ' + groupid)
+        communityid = result
+        console.log('Found ' + communityid)
 	done()
       })
       .catch(done)
     })
-    it('should edit user record with new patron group', done => {
+    it('should edit user record using "Community" group', done => {
       nightmare
-      .select('#adduser_group', groupid)
+      .select('#adduser_group', communityid)
       .click('#button-updateuser')
       .wait(parseInt(process.env.FOLIO_UI_DEBUG) ? parseInt(config.debug_sleep) : 555) // debugging
       .then(result => { done() })
       .catch(done)
     })
-    it('should fail at deleting patron group', done => {
+    it('should fail at deleting "Community" group', done => {
       nightmare
-      .wait(9999)
+      .wait(4444)
       .xclick('//span[.="Settings"]')
       .click('a[href="/settings/users"]')
       .wait('a[href="/settings/users/groups"]')
       .click('a[href="/settings/users/groups"]')
       .wait('.paneset---3HNbw > .paneset---3HNbw button')
-      .xclick('//li[@data-id="' + groupid + '"]//button[.="Delete"]')
-      .evaluate(function(msg) {
+      .xclick('//li[@data-id="' + communityid + '"]//button[.="Delete"]')
+      .wait(555)
+      .evaluate(function(communityid) {
+        var cnode = document.querySelector('li[data-id="' + communityid + '"]')
+	if (!cnode) {
+	  throw new Error('Community patron group NOT found after clicking "Delete" button!')
+	}
+      }, communityid)
+      /*.evaluate(function(msg) {
         if (!msg.match(/ERROR/)) { throw new Error("No error alert detected!") }
-      }, alert)
+      }, alert) */
       .wait(parseInt(process.env.FOLIO_UI_DEBUG) ? parseInt(config.debug_sleep) : 555) // debugging
       .then(function(result) { 
         done()
        })
       .catch(done)
     })
-    it('should find patron group ID for Staff', done => {
+    it('should find ID for "Staff" group', done => {
       nightmare
       .click('a[title=Users]')
       .wait('.headerSearchInput---1z5qG')
@@ -124,39 +133,47 @@ describe('Using the App FOLIO UI App /settings/users/groups', function () {
       .wait('#adduser_group')
       .xtract('id("adduser_group")/option[contains(.,"Staff")]/@value')
       .then(function(result) {
-        groupid = result
-        console.log('Found ' + groupid)
+        staffid = result
+        console.log('Found ' + staffid)
 	done()
       })
       .catch(done)
     })
-    it('should change patron group ID in user record', done => {
+    it('should change patron group to "Staff" in user record', done => {
       nightmare
-      .select('#adduser_group', groupid)
+      .select('#adduser_group', staffid)
       .click('#button-updateuser')
       .wait(parseInt(process.env.FOLIO_UI_DEBUG) ? parseInt(config.debug_sleep) : 555) // debugging
       .then(result => { done() })
       .catch(done)
     })
-/*    it('should successfully delete Community patron group', done => {
+    it('should delete "Community" patron group', done => {
       nightmare
-      .wait(9999)
+      .wait(555)
       .xclick('//span[.="Settings"]')
-      .wait(2222)
+      .wait(555)
       .xclick('id("ModuleContainer")//a[.="Users"]')
-      .wait(2222)
+      .wait(555)
       .xclick('id("ModuleContainer")//a[.="Patron groups"]')
-      .wait(9999)
-      .xclick('//li[@data-id="' + groupid + '"]//button[.="Delete"]')
-      .evaluate(function(msg) {
-        if (msg.match(/ERROR/)) { throw new Error(msg) }
-      }, alert)
+      .wait(555)
+      .xclick('//li[@data-id="' + communityid + '"]//button[.="Delete"]')
       .wait(parseInt(process.env.FOLIO_UI_DEBUG) ? parseInt(config.debug_sleep) : 555) // debugging
-      .then(function(result) { 
-        done()
-       })
+      .then(result => { done() })
       .catch(done)
-    }) */
+    }) 
+    it('should confirm that "Community" patron group has been deleted', done => {
+      nightmare
+      .wait(555)
+      .evaluate(function(communityid) {
+        var cnode = document.querySelector('li[data-id="' + communityid + '"]')
+	if (cnode) {
+	  throw new Error('Community patron group found after clicking "Delete" button!')
+	}
+      }, communityid)
+      .wait(parseInt(process.env.FOLIO_UI_DEBUG) ? parseInt(config.debug_sleep) : 555) // debugging
+      .then(result => { done() })
+      .catch(done)
+    }) 
     flogout();
   })
 })

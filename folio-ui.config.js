@@ -23,8 +23,8 @@ module.exports = {
         height: 600,
         show: true
     } : process.env.FOLIO_UI_DEBUG == 1 ? {
-        width: 1000,
-        height: 700,
+        width: 1600,
+        height: 1200,
         typeInterval: 50,
         show: true
     } : { typeInterval: 50 }
