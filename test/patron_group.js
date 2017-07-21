@@ -71,7 +71,7 @@ describe('Using the App FOLIO UI App /settings/users/groups', function () {
       })
       .catch(done)
     })
-    it('should find patron group ID for Community', done => {
+    it('should find patron group ID for "Community"', done => {
       nightmare
       .type('.headerSearchInput---1z5qG', userid)
       .wait('div[title="' + userid + '"]')
