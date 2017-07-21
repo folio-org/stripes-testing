@@ -10,7 +10,7 @@ module.exports = {
       username: 'input[name=username]',
       password: 'input[name=password]',
       submit: 'button[type=submit]',
-      logout: '#button-logout',
+      logout: '#clickable-logout',
       settings: 'a[href="/settings"]'
     },
 

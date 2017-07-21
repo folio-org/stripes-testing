@@ -24,7 +24,7 @@ describe('Using the App FOLIO UI App /about', function () {
     flogout = function() {
       it('should logout', done => {
         nightmare
-        .click('#button-logout')
+        .click('#clickable-logout')
         .wait(config.select.username)
         .wait(parseInt(process.env.FOLIO_UI_DEBUG) ? parseInt(config.debug_sleep) : 555) // debugging
         .end()

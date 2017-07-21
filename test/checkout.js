@@ -18,7 +18,7 @@ describe("Using the App FOLIO UI App /scan:", function () {
       .type(config.select.username, config.username)
       .type(config.select.password, config.password)
       .click(config.select.submit)
-      .wait('#button-logout')
+      .wait('#clickable-logout')
       .then(result => { done() })
       .catch(done)
     })
@@ -39,8 +39,8 @@ describe("Using the App FOLIO UI App /scan:", function () {
     it('should extract a patron group value', done => {
       nightmare
       .click('a[Title=Users]')
-      .wait('#button-newuser')
-      .click('#button-newuser')
+      .wait('#clickable-newuser')
+      .click('#clickable-newuser')
       .wait('#adduser_group > option:nth-of-type(3)')
       .evaluate(function() {
         return document.querySelector('#adduser_group > option:nth-of-type(3)').value
@@ -106,8 +106,8 @@ describe("Using the App FOLIO UI App /scan:", function () {
       .type('.headerSearchInput---1z5qG',user.id)
       .wait(2222)
       .click('div.row---23rwN')
-      .wait('#button-viewfullhistory')
-      .click('#button-viewfullhistory')
+      .wait('#clickable-viewfullhistory')
+      .click('#clickable-viewfullhistory')
       .wait('div[title="' + barcode + '"]~div[title="Open"]')
       .wait(parseInt(process.env.FOLIO_UI_DEBUG) ? parseInt(config.debug_sleep) : 555) // debugging
       .then(result => { done() })
@@ -135,8 +135,8 @@ describe("Using the App FOLIO UI App /scan:", function () {
       .type('.headerSearchInput---1z5qG',user.id)
       .wait(1111)
       .click('div.row---23rwN')
-      .wait('#button-viewfullhistory')
-      .click('#button-viewfullhistory')
+      .wait('#clickable-viewfullhistory')
+      .click('#clickable-viewfullhistory')
       .wait('div[title="' + barcode + '"]~div[title="Closed"]')
       .wait(parseInt(process.env.FOLIO_UI_DEBUG) ? parseInt(config.debug_sleep) : 555) // debugging
       .then(result => { done() })
@@ -144,7 +144,7 @@ describe("Using the App FOLIO UI App /scan:", function () {
     })
     it('should logout', done => {
       nightmare
-      .click('#button-logout')
+      .click('#clickable-logout')
       .wait(config.select.username)
       .end()
       .then(result => { done() })

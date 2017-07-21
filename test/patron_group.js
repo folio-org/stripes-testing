@@ -31,7 +31,7 @@ describe('Using the App FOLIO UI App /settings/users/groups', function () {
     flogout = function() {
       it('should logout', done => {
         nightmare
-        .click('#button-logout')
+        .click('#clickable-logout')
         .wait(config.select.username)
         .wait(parseInt(process.env.FOLIO_UI_DEBUG) ? parseInt(config.debug_sleep) : 0) // debugging
         .end()
@@ -76,8 +76,8 @@ describe('Using the App FOLIO UI App /settings/users/groups', function () {
       .type('.headerSearchInput---1z5qG', userid)
       .wait('div[title="' + userid + '"]')
       .click('div[title="' + userid + '"]')
-      .wait('#button-edituser')
-      .click('#button-edituser')
+      .wait('#clickable-edituser')
+      .click('#clickable-edituser')
       .wait('#adduser_group')
       .xtract('id("adduser_group")/option[contains(.,"Community")]/@value')
       .then(function(result) {
@@ -90,7 +90,7 @@ describe('Using the App FOLIO UI App /settings/users/groups', function () {
     it('should edit user record using "Community" group', done => {
       nightmare
       .select('#adduser_group', communityid)
-      .click('#button-updateuser')
+      .click('#clickable-updateuser')
       .wait(parseInt(process.env.FOLIO_UI_DEBUG) ? parseInt(config.debug_sleep) : 555) // debugging
       .then(result => { done() })
       .catch(done)
@@ -128,8 +128,8 @@ describe('Using the App FOLIO UI App /settings/users/groups', function () {
       .type('.headerSearchInput---1z5qG', userid)
       .wait('div[title="' + userid + '"]')
       .click('div[title="' + userid + '"]')
-      .wait('#button-edituser')
-      .click('#button-edituser')
+      .wait('#clickable-edituser')
+      .click('#clickable-edituser')
       .wait('#adduser_group')
       .xtract('id("adduser_group")/option[contains(.,"Staff")]/@value')
       .then(function(result) {
@@ -142,7 +142,7 @@ describe('Using the App FOLIO UI App /settings/users/groups', function () {
     it('should change patron group to "Staff" in user record', done => {
       nightmare
       .select('#adduser_group', staffid)
-      .click('#button-updateuser')
+      .click('#clickable-updateuser')
       .wait(parseInt(process.env.FOLIO_UI_DEBUG) ? parseInt(config.debug_sleep) : 555) // debugging
       .then(result => { done() })
       .catch(done)
