@@ -23,6 +23,14 @@ and [mocha](https://mochajs.org) for the tests itself.
  
     $ ./node_modules/.bin/mocha test/new_item.js   # runs the new-item test
 
+or (if definded in package.json)
+
+    $ yarn test-new-item
+    
+to list pre-defined tests
+
+    $ yarn run
+
 ## optional: environment variables to modify tests
 
 set username/password to something different from the default:
@@ -56,4 +64,47 @@ Nightmare debug options:
 All options in one:
 
     $ FOLIO_UI_URL="http://folio-uidemo.aws.indexdata.com" DEBUG=nightmare FOLIO_UI_DEBUG=2 yarn test
+    
+## xnightmare.js
+
+    The Xnightmare.js file extends nightmare by adding actions that use XPath as a node selector.  So far there are only two actions contained in this file: 
+    
+#### .xclick(xpath) 
+
+    Does the same as .click but takes an XPath instead of a CSS selector as an argument.
+
+#### .xtract(xpath)
+
+    This will extract and return the textContent of an XPath node.  The returned value will be passed to the next action in the chain (most likely .then)
+    
+## namgen.js
+
+    This script creates random user data (100 possibilities.)
+    Returns: id, firstname, lastname, email, barcode, password
+
+```js
+    const Nightmare = require('nightmare')
+    const assert = require('assert')
+    const config = require('../folio-ui.config.js')
+    const names = require('../namegen.js')
+    const user = names.namegen()
+    
+    ...
+    
+    it('should create a user: ' + user.id + '/' + user.password, done => {
+      nightmare
+      .type('#adduser_username',user.id)
+      .type('#pw',user.password)
+      .click('#useractiveYesRB')
+      .type('#adduser_firstname',user.firstname)
+      .type('#adduser_lastname',user.lastname)
+      .type('#adduser_email', user.email)
+      .type('#adduser_barcode',user.barcode)
+      .click('button[title="Create New User"]')
+      .wait('.button---2NsdC')
+      .wait(parseInt(process.env.FOLIO_UI_DEBUG) ? parseInt(config.debug_sleep) : 0) // debugging
+      .then(result => { done() })
+      .catch(done)
+    })
+```
 
