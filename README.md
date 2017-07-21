@@ -18,6 +18,10 @@ and [mocha](https://mochajs.org) for the tests itself.
 ## run the tests with default user/pw/debug level
 
     $ yarn test
+    
+## run individual tests
+ 
+    $ ./node_modules/.bin/mocha test/new_item.js   # runs the new-item test
 
 ## optional: environment variables to modify tests
 
@@ -41,13 +45,11 @@ or
     # with browser window + debug console
     $ FOLIO_UI_DEBUG=2 yarn test
 
-    # a single test
-    $ ./node_modules/.bin/mocha test/100-startpage.js
-
 Nightmare debug options:
 
     $ DEBUG=nightmare yarn test
     $ DEBUG=nightmare* yarn test
+    $ DEBUG=nightmare:actions* yarn test
     $ DEBUG=nightmare:*,electron:* yarn test
 
 
