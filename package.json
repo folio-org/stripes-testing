@@ -1,6 +1,6 @@
 {
   "name": "@folio/ui-testing",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "description": "Regression tests for FOLIO UI",
   "repository": "folio-org/ui-testing",
   "author": "Wolfram Schneider <wosch@indexdata.com>",
