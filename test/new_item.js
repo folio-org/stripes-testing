@@ -15,6 +15,9 @@ describe('Using the App FOLIO UI App /items', function () {
     flogin = function(un, pw) {
       it('should login as ' + un + '/' + pw, done => {
         nightmare
+        .on('page', function(type="alert", message) {
+           throw new Error(message)
+        })
         .goto(config.url)
         .type(config.select.username, un)
         .type(config.select.password, pw)
