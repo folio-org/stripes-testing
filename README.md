@@ -67,7 +67,8 @@ All options in one:
     
 ## xnightmare.js
 
-    The Xnightmare.js file extends nightmare by adding actions that use XPath as a node selector.  So far there are only two actions contained in this file: 
+    The Xnightmare.js file extends nightmare by adding actions that use XPath as a node selector.
+    So far there are only two actions contained in this file: 
     
 #### .xclick(xpath) 
 
@@ -75,7 +76,8 @@ All options in one:
 
 #### .xtract(xpath)
 
-    This will extract and return the textContent of an XPath node.  The returned value will be passed to the next action in the chain (most likely .then)
+    This will extract and return the textContent of an XPath node.
+    The returned value will be passed to the next action in the chain (most likely .then)
     
 ## namgen.js
 
