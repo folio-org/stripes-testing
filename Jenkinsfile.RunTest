@@ -9,8 +9,8 @@ pipeline {
     
    environment {
       docker_image = 'folioci/ui-testing:latest'
-      slack_channel = 'folio-ci'
-      mail_to = 'malc@indexdata.com'
+      slack_channel = 'coreteam'
+      mail_to = 'folio-jenkins.ui@indexdata.com'
    }
     
    stages {
