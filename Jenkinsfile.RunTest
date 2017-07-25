@@ -2,13 +2,14 @@ pipeline {
    agent any
     
    // This script expects an input parameter called 'FOLIO_UI_URL'
+   // and the docker image tag e.g version - 'UI_TESTING_VERSION'
 
    // parameters {
    //    string(name: 'FOLIO_UI_URL', defaultValue: '', description: 'FOLIO URL')
    // }
     
    environment {
-      docker_image = 'folioci/ui-testing:latest'
+      docker_image = 'folioci/ui-testing'
       slack_channel = 'coreteam'
       mail_to = 'folio-jenkins.ui@indexdata.com'
    }
@@ -27,8 +28,8 @@ pipeline {
       } 
       stage('Run_Tests') {
          steps {
-            sh 'docker pull ${docker_image}'
-            sh "docker run -i --rm -e \"FOLIO_UI_URL=${FOLIO_UI_URL}\" ${docker_image}"
+            sh 'docker pull ${docker_image}:${UI_TESTING_VERSION}'
+            sh "docker run -i --rm -e \"FOLIO_UI_URL=${FOLIO_UI_URL}\" ${docker_image}:${UI_TESTING_VERSION}"
          }
       }
    }
