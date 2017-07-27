@@ -5,7 +5,7 @@ const names = require('../namegen.js')
 const user = names.namegen()
 
 
-describe('"test-new-user": Using the App FOLIO UI App /users', function () {
+describe('Using the App FOLIO UI App /users ("test-new-user")', function () {
 
   this.timeout('20s')
   let nightmare = null

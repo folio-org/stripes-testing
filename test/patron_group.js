@@ -2,7 +2,7 @@ const Nightmare = require('../xnightmare.js')
 const assert = require('assert')
 const config = require('../folio-ui.config.js')
 
-describe('Using the App FOLIO UI App /settings/users/groups', function () {
+describe('Using the App FOLIO UI App /settings/users/groups ("test-patron-group")', function () {
   this.timeout('30s')
   let userid = null;
   let communityid = null;

@@ -2,7 +2,7 @@ const Nightmare = require('nightmare')
 const assert = require('assert')
 const config = require('../folio-ui.config.js')
 
-describe('Using the App FOLIO UI App /about', function () {
+describe('Using the App FOLIO UI App /about ("dependencies.js")', function () {
   this.timeout('20s')
   let nightmare = null
 

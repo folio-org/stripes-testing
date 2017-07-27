@@ -2,7 +2,7 @@ const Nightmare = require('nightmare')
 const assert = require('assert')
 const config = require('../folio-ui.config.js')
 
-describe('Login Page / 110-auth-success', function () {
+describe('Login Page ("110-auth-success.js")', function () {
   this.timeout('20s')
 
   let nightmare = null

@@ -4,7 +4,7 @@ const config = require('../folio-ui.config.js')
 const names = require('../namegen.js')
 const user = names.namegen()
 
-describe("Using the App FOLIO UI App /scan:", function () {
+describe('Using the App FOLIO UI App /scan ("test-checkout")', function () {
   this.timeout('20s')
 
   describe("Login > Update settings > Create user > Checkout item > Confirm checkout > Checkin > Confirm checkin > Logout\n", () => {
