@@ -1,6 +1,8 @@
 Nightmare = require('nightmare')
+var debug = require('debug')('nightmare:actions');
 
 Nightmare.action('xclick', function(selector, done) {
+  debug('.xclick() on ' + selector);
   this.evaluate_now(function(selector) {
     document.activeElement.blur();
     var element = document.evaluate(selector, document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue
@@ -14,6 +16,7 @@ Nightmare.action('xclick', function(selector, done) {
 })
 
 Nightmare.action('xtract', function(selector, done) {
+  debug('.xtract() on ' + selector);
   this.evaluate_now(function(selector) {
     var element = document.evaluate(selector, document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue
     if (!element) {

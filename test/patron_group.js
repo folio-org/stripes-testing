@@ -14,6 +14,7 @@ describe('Using the App FOLIO UI App /settings/users/groups ("test-patron-group"
 
     const gid = 'alumni'
     const gidlabel = 'Alumni'
+    const deletePath = '//div[.="' + gidlabel + '"]//following-sibling::div//button[contains(.,"Delete")]'
 
     flogin = function(un, pw) {
       it('should login as ' + un + '/' + pw, done => {
@@ -50,11 +51,12 @@ describe('Using the App FOLIO UI App /settings/users/groups ("test-patron-group"
       .click('a[href="/settings/users"]')
       .wait('a[href="/settings/users/groups"]')
       .click('a[href="/settings/users/groups"]')
-      .wait('.paneset---3HNbw > .paneset---3HNbw button')
+      .wait(555)
       .xclick('//button[contains(.,"Add type")]')
-      .type('[name=group]', gid)
-      .type('[name=desc]', gidlabel)
-      .click('li[data-id^="0"] button:last-of-type')
+      .wait(555)
+      .type('input[name="items[0].group"]', gid)
+      .type('input[name="items[0].desc"]', gidlabel)
+      .xclick('//li//button[.="Save"]')
       .wait(2222)
       .wait(parseInt(process.env.FOLIO_UI_DEBUG) ? parseInt(config.debug_sleep) : 555) // debugging
       .then(result => { done() })
@@ -107,14 +109,14 @@ describe('Using the App FOLIO UI App /settings/users/groups ("test-patron-group"
       .wait('a[href="/settings/users/groups"]')
       .click('a[href="/settings/users/groups"]')
       .wait('.paneset---3HNbw > .paneset---3HNbw button')
-      .xclick('//li[@data-id="' + communityid + '"]//button[.="Delete"]')
+      .xclick(deletePath)
       .wait(555)
-      .evaluate(function(communityid) {
-        var cnode = document.querySelector('li[data-id="' + communityid + '"]')
+      .evaluate(function(gidlabel) {
+	var cnode = document.evaluate('//div[.="' + gidlabel + '"]', document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null)
 	if (!cnode) {
 	  throw new Error(gidlabel + ' patron group NOT found after clicking "Delete" button!')
 	}
-      }, communityid)
+      }, gidlabel)
       /*.evaluate(function(msg) {
         if (!msg.match(/ERROR/)) { throw new Error("No error alert detected!") }
       }, alert) */
@@ -160,7 +162,7 @@ describe('Using the App FOLIO UI App /settings/users/groups ("test-patron-group"
       .wait(555)
       .xclick('id("ModuleContainer")//a[.="Patron groups"]')
       .wait(555)
-      .xclick('//li[@data-id="' + communityid + '"]//button[.="Delete"]')
+      .xclick(deletePath)
       .wait(parseInt(process.env.FOLIO_UI_DEBUG) ? parseInt(config.debug_sleep) : 555) // debugging
       .then(result => { done() })
       .catch(done)
