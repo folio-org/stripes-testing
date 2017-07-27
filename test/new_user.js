@@ -5,7 +5,7 @@ const names = require('../namegen.js')
 const user = names.namegen()
 
 
-describe('Using the App FOLIO UI App /users', function () {
+describe('"test-new-user": Using the App FOLIO UI App /users', function () {
 
   this.timeout('20s')
   let nightmare = null
@@ -83,8 +83,8 @@ describe('Using the App FOLIO UI App /users', function () {
       nightmare
       .wait('a[Title=Users]')
       .click('a[Title=Users]')
-      .wait('input[placeholder="Search"]')
-      .type('input[placeholder="Search"]',user.id)
+      .wait('input[placeholder="Search by Name or ID"]')
+      .type('input[placeholder="Search by Name or ID"]',user.id)
       .wait(2222)
       .click('.row---23rwN')
       .wait('button[title="Edit User"]')
