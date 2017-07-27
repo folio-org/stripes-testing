@@ -106,8 +106,8 @@ All options in one:
       .type('#adduser_lastname',user.lastname)
       .type('#adduser_email', user.email)
       .type('#adduser_barcode',user.barcode)
-      .click('button[title="Create New User"]')
-      .wait('.button---2NsdC')
+      .click('#clickable-createnewuser')
+      .wait('#clickable-newuser')
       .wait(parseInt(process.env.FOLIO_UI_DEBUG) ? parseInt(config.debug_sleep) : 0) // debugging
       .then(result => { done() })
       .catch(done)
