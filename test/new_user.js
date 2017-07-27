@@ -83,8 +83,8 @@ describe('"test-new-user": Using the App FOLIO UI App /users', function () {
       nightmare
       .wait('a[Title=Users]')
       .click('a[Title=Users]')
-      .wait('input[placeholder="Search by Name or ID"]')
-      .type('input[placeholder="Search by Name or ID"]',user.id)
+      .wait('#input-user-search')
+      .type('#input-user-search',user.id)
       .wait(2222)
       .click('.row---23rwN')
       .wait('button[title="Edit User"]')
