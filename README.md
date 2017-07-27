@@ -31,7 +31,7 @@ to list pre-defined tests
 
     $ yarn run
 
-    The test log will show, for each test, the script or predefined command to execute in order to repeat individual tests:
+The test log will show, for each test, the script or predefined command to execute in order to repeat individual tests:
 
     $ Load a Page ("test-simple")
 
