@@ -44,8 +44,8 @@ describe('Using the App FOLIO UI App /users ("test-new-user")', function () {
       nightmare
       .wait('a[Title=Users]')
       .click('a[Title=Users]')
-      .wait('.button---2NsdC')
-      .click('.button---2NsdC')
+      .wait('#clickable-newuser')
+      .click('#clickable-newuser')
       .wait('#adduser_group > option:nth-of-type(3)')
       .evaluate(function() {
         return document.querySelector('#adduser_group > option:nth-of-type(3)').value
@@ -69,8 +69,8 @@ describe('Using the App FOLIO UI App /users ("test-new-user")', function () {
       .type('#adduser_enrollmentdate','01/01/2017')
       .type('#adduser_expirationdate','01/01/2020')
       .type('#adduser_barcode',user.barcode)
-      .click('button[title="Create New User"]')
-      .wait('.button---2NsdC')
+      .click('#clickable-createnewuser')
+      .wait('#clickable-newuser')
       .wait(parseInt(process.env.FOLIO_UI_DEBUG) ? parseInt(config.debug_sleep) : 0) // debugging
       .then(result => { done() })
       .catch(done)
@@ -87,12 +87,12 @@ describe('Using the App FOLIO UI App /users ("test-new-user")', function () {
       .type('#input-user-search',user.id)
       .wait(2222)
       .click('.row---23rwN')
-      .wait('button[title="Edit User"]')
-      .click('button[title="Edit User"]')
+      .wait('#clickable-edituser')
+      .click('#clickable-edituser')
       .wait('#adduser_mobilePhone')
       .type('#adduser_mobilePhone',phone)
       .wait(555)
-      .click('button[Title="Update User"]')
+      .click('#clickable-updateuser')
       .wait(555)
       .wait(function(pn) {
         var xp = document.evaluate( '//div[.="' + pn + '"]', document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null)
