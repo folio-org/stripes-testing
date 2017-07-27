@@ -33,7 +33,7 @@ to list pre-defined tests
 
 The test log will show, for each test, the script or predefined command to execute in order to repeat individual tests:
 
-    $ Load a Page ("test-simple")
+    Load a Page ("test-simple")
 
 ## optional: environment variables to modify tests
 
