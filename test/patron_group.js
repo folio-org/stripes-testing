@@ -103,12 +103,13 @@ describe('Using the App FOLIO UI App /settings/users/groups ("test-patron-group"
     })
     it('should fail at deleting "' + gidlabel + '" group', done => {
       nightmare
-      .wait(4444)
+      .wait(2222)
       .xclick('//span[.="Settings"]')
       .click('a[href="/settings/users"]')
       .wait('a[href="/settings/users/groups"]')
       .click('a[href="/settings/users/groups"]')
       .wait('.paneset---3HNbw > .paneset---3HNbw button')
+      .wait(555)
       .xclick(deletePath)
       .wait(555)
       .evaluate(function(gidlabel) {
