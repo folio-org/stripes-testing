@@ -9,11 +9,14 @@ describe('Using the App FOLIO UI App /scan ("test-checkout")', function () {
 
   describe("Login > Update settings > Create user > Checkout item > Confirm checkout > Checkin > Confirm checkin > Logout\n", () => {
     let nightmare = new Nightmare(config.nightmare)
-    let pgroup = null
+    let userid = 'user'
     let barcode = 'item'
 
     it('should login as ' + config.username + '/' + config.password, done => {
       nightmare
+      .on('page', function(type="alert", message) {
+        throw new Error(message)
+       })
       .goto(config.url)
       .type(config.select.username, config.username)
       .type(config.select.password, config.password)
@@ -36,37 +39,18 @@ describe('Using the App FOLIO UI App /scan ("test-checkout")', function () {
       .then(result => { done() })
       .catch(done)
     })
-    it('should extract a patron group value', done => {
+    it('should find an active user ', done => {
       nightmare
-      .click('a[Title=Users]')
-      .wait('#clickable-newuser')
-      .click('#clickable-newuser')
-      .wait('#adduser_group > option:nth-of-type(3)')
+      .click('a[title="Users"]')
+      .wait('#list-users a:nth-of-type(11) > div:nth-of-type(5)')
       .evaluate(function() {
-        return document.querySelector('#adduser_group > option:nth-of-type(3)').value
+        return document.querySelector('#list-users a:nth-of-type(11) > div:nth-of-type(5)').title
       })
       .then(function(result) {
-        pgroup = result
+        userid = result
+        console.log('Found ' + userid)
         done()
       })
-      .catch(done)
-    })
-    it('should create a user with id ' + user.id, done => {
-      nightmare
-      .type('#adduser_username',user.id)
-      .type('#pw',user.password)
-      .click('#useractiveYesRB')
-      .type('#adduser_firstname',user.firstname)
-      .type('#adduser_lastname',user.lastname)
-      .type('#adduser_email', user.email)
-      .type('#adduser_dateofbirth','10/20/1977')
-      .select('#adduser_group',pgroup)
-      .type('#adduser_enrollmentdate','01/01/2017')
-      .type('#adduser_expirationdate','01/01/2020')
-      .type('#adduser_barcode',user.barcode)
-      .click('button[title="Create New User"]')
-      .wait(parseInt(process.env.FOLIO_UI_DEBUG) ? parseInt(config.debug_sleep) : 555) // debugging
-      .then(result => { done() })
       .catch(done)
     })
     it('should find an item to checkout', done=> {
@@ -78,35 +62,37 @@ describe('Using the App FOLIO UI App /scan ("test-checkout")', function () {
 	return element.singleNodeValue.innerHTML
       })
       .then(function(result) {
+        console.log('Found ' + result)
         barcode = result
         done()
       })
       .catch(done)
     })
-    it('should check out ' + barcode + ' to ' + user.id, done => {
+    it('should check out ' + barcode + ' to ' + userid, done => {
       nightmare
       .wait('a[title=Scan]')
       .click('a[title=Scan]')
       .wait('#patron_identifier')
-      .type('#patron_identifier',user.id)
+      .type('#patron_identifier',userid)
       .xclick('//button[contains(.,"Find Patron")]')
-      .wait('div[title="' + user.id + '"]')
+      .wait('div[title="' + userid + '"]')
       .type('#barcode',barcode)
-      .click('.pane---CC1ap:nth-of-type(2) button')
+      .xclick('//button[contains(.,"Add item")]')
       .wait('div[title="' + barcode + '"]')
+      .wait(2222)
+      .xclick('//button[contains(.,"Done")]')
       .wait(parseInt(process.env.FOLIO_UI_DEBUG) ? parseInt(config.debug_sleep) : 555) // debugging
-      .click('form > div > button')
       .then(result => { done() })
       .catch(done)
     })
-    it('should find ' + barcode + ' in ' + user.id + ' history', done => {
+    it('should find ' + barcode + ' in ' + userid + ' history', done => {
       nightmare
       .click('a[title=Users]')
       .wait('.headerSearchInput---1z5qG')
-      .type('.headerSearchInput---1z5qG',user.id)
-      .wait('div.row---23rwN')
-      .click('div.row---23rwN')
-      .wait('#clickable-viewcurrentloans')
+      .type('.headerSearchInput---1z5qG',userid)
+      .wait('#list-users div[title="' + userid + '"]')
+      .click('#list-users div[title="' + userid + '"]')
+      .wait(2222)
       .click('#clickable-viewcurrentloans')
       .wait('div[title="' + barcode + '"]~div[title="Open"]')
       .wait(parseInt(process.env.FOLIO_UI_DEBUG) ? parseInt(config.debug_sleep) : 555) // debugging
@@ -127,14 +113,15 @@ describe('Using the App FOLIO UI App /scan ("test-checkout")', function () {
       .then(result => { done() })
       .catch(done)
     })
-    it('should confirm that ' + barcode + ' has status of Closed in ' + user.id + ' history', done => {
+    it('should confirm that ' + barcode + ' has status of Closed in ' + userid + ' history', done => {
       nightmare
       .click('a[title=Users]')
       .wait('.headerSearchInput---1z5qG')
       .click('.headerSearchClearButton---2MIXs')
-      .type('.headerSearchInput---1z5qG',user.id)
+      .type('.headerSearchInput---1z5qG',userid)
       .wait(2222)
-      .click('div[title="' + user.id + '"]')
+      .click('div[title="' + userid + '"]')
+      .wait(2222)
       .wait('#clickable-viewclosedloans')
       .click('#clickable-viewclosedloans')
       .wait('div[title="' + barcode + '"]~div[title="Closed"]')
