@@ -79,7 +79,7 @@ describe('Using the App FOLIO UI App /scan ("test-checkout")', function () {
       .type('#barcode',barcode)
       .xclick('//button[contains(.,"Add item")]')
       .wait('div[title="' + barcode + '"]')
-      .wait(2222)
+      .wait(222)
       .xclick('//button[contains(.,"Done")]')
       .wait(parseInt(process.env.FOLIO_UI_DEBUG) ? parseInt(config.debug_sleep) : 555) // debugging
       .then(result => { done() })
@@ -88,9 +88,12 @@ describe('Using the App FOLIO UI App /scan ("test-checkout")', function () {
     it('should find ' + barcode + ' in ' + userid + ' history', done => {
       nightmare
       .click('a[title=Users]')
-      .wait('.headerSearchInput---1z5qG')
-      .type('.headerSearchInput---1z5qG',userid)
+      .wait('#input-user-search')
+      .click('#input-user-search~button')
+      .wait(222)
+      .type('#input-user-search',userid)
       .wait('#list-users div[title="' + userid + '"]')
+      .wait(222)
       .click('#list-users div[title="' + userid + '"]')
       .wait(2222)
       .click('#clickable-viewcurrentloans')
