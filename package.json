@@ -6,7 +6,7 @@
   "author": "Wolfram Schneider <wosch@indexdata.com>",
   "license": "Apache-2.0",
   "scripts": {
-    "test": "./node_modules/.bin/mocha test/100-startpage.js test/120-auth-fail.js test/dependencies.js test/checkout.js test/new_user.js test/new_item.js test/patron_group.js",
+    "test": "./node_modules/.bin/mocha test/100-startpage.js test/120-auth-fail.js test/dependencies.js test/new_user.js test/new_item.js test/patron_group.js",
     "test-simple": "./node_modules/.bin/mocha test/100-startpage.js",
     "test-checkout": "./node_modules/.bin/mocha test/checkout.js",
     "test-new-user": "./node_modules/.bin/mocha test/new_user.js",
