@@ -67,14 +67,14 @@ describe('Using the App FOLIO UI App /items ("test-new-item")', function () {
       .click('a[Title=Items]')
       .wait('input[placeholder=Search')
       .type('input[placeholder=Search', barcode)
-      .wait('div[aria-label*="' + barcode + '"]')
+      .wait('div[title="' + barcode + '"]')
       .wait(parseInt(process.env.FOLIO_UI_DEBUG) ? parseInt(config.debug_sleep) : 555) // debugging
       .then(result => { done() })
       .catch(done)
     })
     it('should edit item', done => {
       nightmare
-      .click('div[aria-label*="' + barcode + '"]')
+      .click('div[title="' + barcode + '"]')
       .wait('button[title="Edit Item"]')
       .click('button[title="Edit Item"]')
       .wait('#additem_title')
