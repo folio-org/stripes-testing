@@ -12,6 +12,8 @@ describe('Login Page ("110-auth-success.js")', function () {
     it('Login successfully', done => {
       nightmare
       .goto(config.url)
+      .wait(555)
+      .click(config.select.username)
       .type(config.select.username, config.username)
       .type(config.select.password, config.password)
       .click(config.select.submit)

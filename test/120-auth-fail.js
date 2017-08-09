@@ -7,7 +7,6 @@ describe('Login Page ("120-auth-fail.js")', function () {
 
   let nightmare = null
   beforeEach(() => {
-    // show true lets you see wth is actually happening :)
     nightmare = new Nightmare(config.nightmare)
   })
 
@@ -15,6 +14,7 @@ describe('Login Page ("120-auth-fail.js")', function () {
     it('Should find a login error message', done => {
       nightmare
       .goto(config.url)
+      .wait(555)
       .type(config.select.username, 'notgonnawork')
       .type(config.select.password, 'invalid password')
       .click(config.select.submit)

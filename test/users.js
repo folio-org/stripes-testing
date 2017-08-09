@@ -13,6 +13,7 @@ describe('Using the App FOLIO UI App /users ("users.js")', function () {
     it('should login as ' + config.username + '/' + config.password, done => {
       nightmare
       .goto(config.url)
+      .wait(555)
       .type(config.select.username, config.username)
       .type(config.select.password, config.password)
       .click(config.select.submit)

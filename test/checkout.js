@@ -18,6 +18,7 @@ describe('Using the App FOLIO UI App /scan ("test-checkout")', function () {
         throw new Error(message)
        })
       .goto(config.url)
+      .wait(555)
       .type(config.select.username, config.username)
       .type(config.select.password, config.password)
       .click(config.select.submit)
