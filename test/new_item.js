@@ -19,7 +19,7 @@ describe('Using the App FOLIO UI App /items ("test-new-item")', function () {
            throw new Error(message)
         })
         .goto(config.url)
-	.wait(555)
+	.wait(999)
         .type(config.select.username, un)
         .type(config.select.password, pw)
         .click(config.select.submit)

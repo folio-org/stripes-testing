@@ -2,9 +2,9 @@ module.exports.namegen = function() {
   var ts = new Date().valueOf()
   var fn = ['Emma','Olivia','Ava','Sophia','Isabella','Liam','Noah','Mason','Lucas','Oliver']
   var ln = ['Smith','Johnson','Williams','Brown','Jones','Miller','Davis','Garcia','Rodriquez','Wilson']
-  var ad = [{city: 'Chicago',zip: '60609',address: '5 Wacker Dr', country: 'USA',state: 'IL', phone:'13125552121'},
-            {city: 'New York',zip: '10002-2341',address: '425 Bowery', country: 'USA',state: 'NY', phone:'12125554444'},
-            {city: 'San Francisco',zip: '94016',address: '39 Green Street', country: 'USA',state: 'CA', phone:'12153338888'},
+  var ad = [{city: 'Chicago',zip: '60609',address: '5 Wacker Dr', country: 'United States',state: 'IL', phone:'13125552121'},
+            {city: 'New York',zip: '10002-2341',address: '425 Bowery', country: 'United States',state: 'NY', phone:'12125554444'},
+            {city: 'San Francisco',zip: '94016',address: '39 Green Street', country: 'United States',state: 'CA', phone:'12153338888'},
             {city: 'København',zip: '1208',address: 'Nybrogade 30', country: 'Denmark',state: 'K', phone:'453332229999'}]
   var fnpos = Math.floor(Math.random() * fn.length)
   var lnpos = Math.floor(Math.random() * ln.length)

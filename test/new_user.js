@@ -1,4 +1,4 @@
-const Nightmare = require('nightmare')
+const Nightmare = require('../xnightmare.js')
 const assert = require('assert')
 const config = require('../folio-ui.config.js')
 const names = require('../namegen.js')
@@ -14,17 +14,31 @@ describe('Using the App FOLIO UI App /users ("test-new-user")', function () {
   describe('Login > Create new user > Logout > Login as new user > Logout > Login > Edit new user and confirm changes', () => {
     nightmare = new Nightmare(config.nightmare)
 
-    var phone = '15552340001'
+    var phone = user.address.phone
 
     flogin = function(un, pw) {
       it('should login as ' + un + '/' + pw, done => {
         nightmare
+        .on('page', function(type="alert", message) {
+          throw new Error(message)
+         })
         .goto(config.url)
-	.wait(555)
+	.wait(999)
         .type(config.select.username, un)
         .type(config.select.password, pw)
         .click(config.select.submit)
-        .wait('#UserMenuDropDown')
+        //.wait('#UserMenuDropDown')
+	.wait(function() {
+	  var success = document.querySelector('#clickable-logout')
+	  var fail = document.querySelector('span[class^="loginError"]')
+	  if (fail) {
+	    throw new Error(fail.textContent);
+	    return false
+	  }
+	  else if (success) {
+	    return true
+	  }
+	})
 	.wait(555)
         .then(result => { done() })
         .catch(done)
@@ -70,9 +84,18 @@ describe('Using the App FOLIO UI App /users ("test-new-user")', function () {
       .type('#adduser_enrollmentdate','01/01/2017')
       .type('#adduser_expirationdate','01/01/2020')
       .type('#adduser_barcode',user.barcode)
+      .xclick('//button[contains(.,"ddress")]')
+      .wait(555)
+      .click('input[id^="PrimaryAddress"]')
+      .type('input[name=country]',user.address.country)
+      .type('input[name*="addressLine1"]',user.address.address)
+      .type('input[name*="city"]',user.address.city)
+      .type('input[name*="stateRegion"]',user.address.state)
+      .type('input[name*="zipCode"]',user.address.zip)
+      .select('select[name*="addressType"]','Home')
       .click('#clickable-createnewuser')
       .wait('#clickable-newuser')
-      .wait(parseInt(process.env.FOLIO_UI_DEBUG) ? parseInt(config.debug_sleep) : 0) // debugging
+      .wait(parseInt(process.env.FOLIO_UI_DEBUG) ? parseInt(config.debug_sleep) : 555) // debugging
       .then(result => { done() })
       .catch(done)
     })
@@ -92,7 +115,7 @@ describe('Using the App FOLIO UI App /users ("test-new-user")', function () {
       .click('#clickable-edituser')
       .wait('#adduser_mobilePhone')
       .type('#adduser_mobilePhone',phone)
-      .wait(555)
+      .wait(999)
       .click('#clickable-updateuser')
       .wait(555)
       .wait(function(pn) {
