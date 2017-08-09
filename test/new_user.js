@@ -14,7 +14,7 @@ describe('Using the App FOLIO UI App /users ("test-new-user")', function () {
   describe('Login > Create new user > Logout > Login as new user > Logout > Login > Edit new user and confirm changes', () => {
     nightmare = new Nightmare(config.nightmare)
 
-    var phone = '+1 555 234 0000'
+    var phone = '15552340001'
 
     flogin = function(un, pw) {
       it('should login as ' + un + '/' + pw, done => {
