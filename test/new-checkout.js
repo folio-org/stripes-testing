@@ -86,8 +86,7 @@ describe('Using the Apps FOLIO UI App /ui-checkout, /ui-checkin ("new-checkout.j
       .then(result => { done() })
       .catch(done)
     })
-    /* Disabled due to https://issues.folio.org/browse/FOLIO-767
-    it('should find ' + barcode + ' in ' + userid + ' history', done => {
+    it('should find ' + barcode + ' in ' + userid + '\'s open loans', done => {
       nightmare
       .click('a[title=Users]')
       .wait('#input-user-search')
@@ -99,25 +98,24 @@ describe('Using the Apps FOLIO UI App /ui-checkout, /ui-checkin ("new-checkout.j
       .click('#list-users div[title="' + userid + '"]')
       .wait(2222)
       .click('#clickable-viewcurrentloans')
-      .wait('div[title="' + barcode + '"]~div[title="Open"]')
+      .wait('div[title="' + barcode + '"]')
       .wait(parseInt(process.env.FOLIO_UI_DEBUG) ? parseInt(config.debug_sleep) : 555) // debugging
       .then(result => { done() })
       .catch(done)
-    })
-    */ 
+    }) 
     it('should check in ' + barcode, done => {
       nightmare
       .click('a[title="Check in"]')
       .wait(222)
       .type('#barcode',barcode)
       .wait(222)
-      //.click('#ModuleContainer button') Disabled due to https://issues.folio.org/browse/FOLIO-767
-      //.wait('div[title="' + barcode + '"]')
+      .click('#ModuleContainer button')
+      .wait('div[title="' + barcode + '"]')
       .wait(parseInt(process.env.FOLIO_UI_DEBUG) ? parseInt(config.debug_sleep) : 555) // debugging
       .then(result => { done() })
       .catch(done)
     })
-    it('should confirm that ' + barcode + ' has status of Closed in ' + userid + ' history', done => {
+    it('should confirm ' + barcode + ' in ' + userid + '\'s closed loans', done => {
       nightmare
       .click('a[title=Users]')
       .wait('.headerSearchInput---1z5qG')
@@ -128,7 +126,7 @@ describe('Using the Apps FOLIO UI App /ui-checkout, /ui-checkin ("new-checkout.j
       .wait(2222)
       .wait('#clickable-viewclosedloans')
       .click('#clickable-viewclosedloans')
-      .wait('div[title="' + barcode + '"]~div[title="Closed"]')
+      .wait('div[title="' + barcode + '"]')
       .wait(parseInt(process.env.FOLIO_UI_DEBUG) ? parseInt(config.debug_sleep) : 555) // debugging
       .then(result => { done() })
       .catch(done)
