@@ -86,7 +86,7 @@ describe('Using the App FOLIO UI App /scan ("test-checkout")', function () {
       .then(result => { done() })
       .catch(done)
     })
-    it('should find ' + barcode + ' in ' + userid + ' history', done => {
+    it('should find ' + barcode + ' in ' + userid + '\'s open loans', done => {
       nightmare
       .click('a[title=Users]')
       .wait('#input-user-search')
@@ -98,7 +98,7 @@ describe('Using the App FOLIO UI App /scan ("test-checkout")', function () {
       .click('#list-users div[title="' + userid + '"]')
       .wait(2222)
       .click('#clickable-viewcurrentloans')
-      .wait('div[title="' + barcode + '"]~div[title="Open"]')
+      .wait('div[title="' + barcode + '"]')
       .wait(parseInt(process.env.FOLIO_UI_DEBUG) ? parseInt(config.debug_sleep) : 555) // debugging
       .then(result => { done() })
       .catch(done)
@@ -117,7 +117,7 @@ describe('Using the App FOLIO UI App /scan ("test-checkout")', function () {
       .then(result => { done() })
       .catch(done)
     })
-    it('should confirm that ' + barcode + ' has status of Closed in ' + userid + ' history', done => {
+    it('should confirm ' + barcode + ' in ' + userid + '\'s closed loans', done => {
       nightmare
       .click('a[title=Users]')
       .wait('.headerSearchInput---1z5qG')
@@ -128,7 +128,7 @@ describe('Using the App FOLIO UI App /scan ("test-checkout")', function () {
       .wait(2222)
       .wait('#clickable-viewclosedloans')
       .click('#clickable-viewclosedloans')
-      .wait('div[title="' + barcode + '"]~div[title="Closed"]')
+      .wait('div[title="' + barcode + '"]')
       .wait(parseInt(process.env.FOLIO_UI_DEBUG) ? parseInt(config.debug_sleep) : 555) // debugging
       .then(result => { done() })
       .catch(done)
