@@ -71,8 +71,8 @@ describe('Using the App FOLIO UI App /scan ("test-checkout")', function () {
     })
     it('should check out ' + barcode + ' to ' + userid, done => {
       nightmare
-      .wait('a[title=Scan]')
-      .click('a[title=Scan]')
+      .wait('a[title=Circulation]')
+      .click('a[title=Circulation]')
       .wait('#patron_identifier')
       .type('#patron_identifier',userid)
       .xclick('//button[contains(.,"Find Patron")]')
@@ -105,7 +105,7 @@ describe('Using the App FOLIO UI App /scan ("test-checkout")', function () {
     }) 
     it('should check in ' + barcode, done => {
       nightmare
-      .click('a[title=Scan]')
+      .click('a[title=Circulation]')
       .wait('select')
       .select('select','CheckIn')
       .wait(222)
