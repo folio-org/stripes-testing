@@ -103,20 +103,20 @@ describe('Using the App FOLIO UI App /users ("test-new-user")', function () {
     flogin(user.id,user.password)
     flogout()
     flogin(config.username, config.password)
-    nightmare.typeInterval = 100
     it('should edit user: ' + user.id, done => {
       nightmare
       .wait('a[Title=Users]')
       .click('a[Title=Users]')
       .wait('#input-user-search')
       .type('#input-user-search',user.id)
-      .wait(2222)
+      .wait(555)
       .click('.row---23rwN')
       .wait('#clickable-edituser')
       .click('#clickable-edituser')
       .wait('#adduser_mobilePhone')
+      .wait(555)
       .type('#adduser_mobilePhone',phone)
-      .wait(999)
+      .wait(555)
       .click('#clickable-updateuser')
       .wait(555)
       .wait(function(pn) {

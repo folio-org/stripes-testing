@@ -15,7 +15,7 @@ module.exports = {
     },
 
     nightmare: process.env.FOLIO_UI_DEBUG == 2 ? {
-        typeInterval: 50,
+        typeInterval: 75,
         openDevTools: {
             mode: 'detach'
         },
@@ -25,7 +25,7 @@ module.exports = {
     } : process.env.FOLIO_UI_DEBUG == 1 ? {
         width: 1600,
         height: 1200,
-        typeInterval: 50,
+        typeInterval: 75,
         show: true
-    } : { typeInterval: 50 }
+    } : { typeInterval: 75 }
 }
