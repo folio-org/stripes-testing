@@ -4,7 +4,7 @@ const config = require('../folio-ui.config.js')
 const names = require('../namegen.js')
 const user = names.namegen()
 
-describe('Using the App FOLIO UI App /scan ("test-checkout")', function () {
+describe('Using the App FOLIO UI App settings/checkout/checkin ("test-checkout")', function () {
   this.timeout('20s')
 
   describe("Login > Update settings > Create user > Checkout item > Confirm checkout > Checkin > Confirm checkin > Logout\n", () => {
@@ -30,10 +30,10 @@ describe('Using the App FOLIO UI App /scan ("test-checkout")', function () {
       nightmare
       .wait(config.select.settings)
       .click(config.select.settings)
-      .wait('a[href="/settings/scan"]')
-      .click('a[href="/settings/scan"]')
-      .wait('a[href="/settings/scan/checkout"]')
-      .click('a[href="/settings/scan/checkout"]')
+      .wait('a[href="/settings/checkout"]')
+      .click('a[href="/settings/checkout"]')
+      .wait('a[href="/settings/checkout/checkout"]')
+      .click('a[href="/settings/checkout/checkout"]')
       .wait('#patronScanId')
       .wait(222)
       .select('#patronScanId','USER')
@@ -71,8 +71,7 @@ describe('Using the App FOLIO UI App /scan ("test-checkout")', function () {
     })
     it('should check out ' + barcode + ' to ' + userid, done => {
       nightmare
-      .wait('a[title=Circulation]')
-      .click('a[title=Circulation]')
+      .click('a[title="Check out"]')
       .wait('#patron_identifier')
       .type('#patron_identifier',userid)
       .xclick('//button[contains(.,"Find Patron")]')
@@ -105,9 +104,7 @@ describe('Using the App FOLIO UI App /scan ("test-checkout")', function () {
     }) 
     it('should check in ' + barcode, done => {
       nightmare
-      .click('a[title=Circulation]')
-      .wait('select')
-      .select('select','CheckIn')
+      .click('a[title="Check in"]')
       .wait(222)
       .type('#barcode',barcode)
       .wait(222)
