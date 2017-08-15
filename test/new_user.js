@@ -103,6 +103,7 @@ describe('Using the App FOLIO UI App /users ("test-new-user")', function () {
     flogin(user.id,user.password)
     flogout()
     flogin(config.username, config.password)
+    nightmare.typeInterval = 100
     it('should edit user: ' + user.id, done => {
       nightmare
       .wait('a[Title=Users]')
