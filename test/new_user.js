@@ -115,6 +115,7 @@ describe('Using the App FOLIO UI App /users ("test-new-user")', function () {
       .click('#clickable-edituser')
       .wait('#adduser_mobilePhone')
       .wait(555)
+      .type('#adduser_mobilePhone',null)
       .type('#adduser_mobilePhone',phone)
       .wait(555)
       .click('#clickable-updateuser')
