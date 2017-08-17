@@ -53,7 +53,7 @@ describe('Using the App FOLIO UI App /settings/users/groups ("test-patron-group"
       .wait('a[href="/settings/users/groups"]')
       .click('a[href="/settings/users/groups"]')
       .wait(555)
-      .xclick('//button[contains(.,"Add type")]')
+      .xclick('//button[contains(.,"Add new")]')
       .wait(555)
       .type('input[name="items[0].group"]', gid)
       .type('input[name="items[0].desc"]', gidlabel)
