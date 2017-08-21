@@ -5,10 +5,10 @@ module.exports.login = (nightmare, config, done) => {
      })
     .goto(config.url)
     .wait(1999)
-    .type(config.select.username, config.username)
-    .type(config.select.password, config.password)
-    .click(config.select.submit)
-    .wait('#clickable-logout')
+    .insert(config.select.username, config.username)
+    .insert(config.select.password, config.password)
+    .click(config.select.login)
+    .wait(config.select.logout)
     .then(result => done())
 };
 
