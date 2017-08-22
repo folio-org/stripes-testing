@@ -23,12 +23,12 @@ describe('Using the App FOLIO UI App /settings/users/groups ("test-patron-group"
            alert = message;
         })
         .goto(config.url)
-	.wait(999)
+        .wait(999)
         .type(config.select.username, un)
         .type(config.select.password, pw)
         .click(config.select.submit)
         .wait('#UserMenuDropDown')
-	.wait(555)
+        .wait(555)
         .then(result => { done() })
         .catch(done)
       }) 
@@ -73,7 +73,7 @@ describe('Using the App FOLIO UI App /settings/users/groups ("test-patron-group"
       .then(function(result) {
         userid = result
         console.log('Found ' + userid)
-	done()
+        done()
       })
       .catch(done)
     })
@@ -89,7 +89,7 @@ describe('Using the App FOLIO UI App /settings/users/groups ("test-patron-group"
       .then(function(result) {
         communityid = result
         console.log('Found ' + communityid)
-	done()
+        done()
       })
       .catch(done)
     })
@@ -114,10 +114,10 @@ describe('Using the App FOLIO UI App /settings/users/groups ("test-patron-group"
       .xclick(deletePath)
       .wait(555)
       .evaluate(function(gidlabel) {
-	var cnode = document.evaluate('//div[.="' + gidlabel + '"]', document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null)
-	if (!cnode) {
-	  throw new Error(gidlabel + ' patron group NOT found after clicking "Delete" button!')
-	}
+        var cnode = document.evaluate('//div[.="' + gidlabel + '"]', document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null)
+        if (!cnode) {
+          throw new Error(gidlabel + ' patron group NOT found after clicking "Delete" button!')
+        }
       }, gidlabel)
       /*.evaluate(function(msg) {
         if (!msg.match(/ERROR/)) { throw new Error("No error alert detected!") }
@@ -143,7 +143,7 @@ describe('Using the App FOLIO UI App /settings/users/groups ("test-patron-group"
       .then(function(result) {
         staffid = result
         console.log('Found ' + staffid)
-	done()
+        done()
       })
       .catch(done)
     })
@@ -174,9 +174,9 @@ describe('Using the App FOLIO UI App /settings/users/groups ("test-patron-group"
       .wait(555)
       .evaluate(function(communityid) {
         var cnode = document.querySelector('li[data-id="' + communityid + '"]')
-	if (cnode) {
-	  throw new Error(gidlabel + ' patron group found after clicking "Delete" button!')
-	}
+        if (cnode) {
+          throw new Error(gidlabel + ' patron group found after clicking "Delete" button!')
+        }
       }, communityid)
       .wait(parseInt(process.env.FOLIO_UI_DEBUG) ? parseInt(config.debug_sleep) : 555) // debugging
       .then(result => { done() })

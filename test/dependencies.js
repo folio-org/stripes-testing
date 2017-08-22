@@ -12,12 +12,12 @@ describe('Using the App FOLIO UI App /about ("dependencies.js")', function () {
       it('should login as ' + un + '/' + pw, done => {
         nightmare
         .goto(config.url)
-	.wait(999)
+        .wait(999)
         .type(config.select.username, un)
         .type(config.select.password, pw)
         .click(config.select.submit)
         .wait('#UserMenuDropDown')
-	.wait(555)
+        .wait(555)
         .then(result => { done() })
         .catch(done)
       }) 
@@ -46,13 +46,13 @@ describe('Using the App FOLIO UI App /about ("dependencies.js")', function () {
       nightmare
       .evaluate(function() {
         var elements = document.querySelectorAll('li[style*=" red"]')
-	var msgs = new Array();
-	for (x = 0; x < elements.length; x++) {
-	  msgs.push(elements[x].textContent)  
-	}
-	if (msgs.length > 0) {
-	  throw new Error("Interfaces that are required but absent:\n" + msgs.join("\n"))
-	}
+      var msgs = new Array();
+      for (x = 0; x < elements.length; x++) {
+        msgs.push(elements[x].textContent)  
+      }
+      if (msgs.length > 0) {
+        throw new Error("Interfaces that are required but absent:\n" + msgs.join("\n"))
+      }
       })
       .wait(parseInt(process.env.FOLIO_UI_DEBUG) ? parseInt(config.debug_sleep) : 555) // debugging
       .then(result => { done() })
@@ -62,13 +62,13 @@ describe('Using the App FOLIO UI App /about ("dependencies.js")', function () {
       nightmare
       .evaluate(function() {
         var elements = document.querySelectorAll('li[style*="orange"]')
-	var msgs = new Array();
-	for (x = 0; x < elements.length; x++) {
-	  msgs.push(elements[x].textContent)  
-	}
-	if (msgs.length > 0) {
-	  throw new Error("Interfaces that are required but present only in an incompatible version:\n" + msgs.join("\n"))
-	}
+        var msgs = new Array();
+        for (x = 0; x < elements.length; x++) {
+          msgs.push(elements[x].textContent)  
+        }
+        if (msgs.length > 0) {
+          throw new Error("Interfaces that are required but present only in an incompatible version:\n" + msgs.join("\n"))
+        }
       })
       .wait(parseInt(process.env.FOLIO_UI_DEBUG) ? parseInt(config.debug_sleep) : 555) // debugging
       .then(result => { done() })

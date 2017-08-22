@@ -23,23 +23,23 @@ describe('Using the App FOLIO UI App /users ("test-new-user")', function () {
           throw new Error(message)
          })
         .goto(config.url)
-	.wait(999)
+        .wait(999)
         .type(config.select.username, un)
         .type(config.select.password, pw)
         .click(config.select.submit)
         //.wait('#UserMenuDropDown')
-	.wait(function() {
-	  var success = document.querySelector('#clickable-logout')
-	  var fail = document.querySelector('span[class^="loginError"]')
-	  if (fail) {
-	    throw new Error(fail.textContent);
-	    return false
-	  }
-	  else if (success) {
-	    return true
-	  }
-	})
-	.wait(555)
+        .wait(function() {
+          var success = document.querySelector('#clickable-logout')
+          var fail = document.querySelector('span[class^="loginError"]')
+          if (fail) {
+            throw new Error(fail.textContent);
+            return false
+          }
+          else if (success) {
+            return true
+          }
+        })
+        .wait(555)
         .then(result => { done() })
         .catch(done)
       }) 
@@ -67,7 +67,7 @@ describe('Using the App FOLIO UI App /users ("test-new-user")', function () {
       })
       .then(function(result) {
         pgroup = result
-	done()
+        done()
       })
       .catch(done)
     })
