@@ -3,6 +3,9 @@
   "version": "v0.24.5",
   "description": "Regression tests for FOLIO UI",
   "repository": "folio-org/ui-testing",
+  "publishConfig": {
+    "registry": "https://repository.folio.org/repository/npm-folio/"
+  },
   "author": "Wolfram Schneider <wosch@indexdata.com>",
   "license": "Apache-2.0",
   "scripts": {
@@ -23,6 +26,6 @@
     "mocha": "^3.4.2",
     "nightmare": "^2.10.0",
     "nightmarejs": "^0.0.1",
-    "@folio/checkout": "^0.0.1"
+    "@folio/checkout": "^1.0.0"
   }
 }
