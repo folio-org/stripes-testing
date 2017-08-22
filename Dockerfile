@@ -31,6 +31,8 @@ RUN useradd -ms /bin/bash folio
 RUN chown -R folio /usr/src/ui-testing
 USER folio
 
+RUN yarn config set @folio:registry https://repository.folio.org/repository/npm-folioci/
+
 RUN yarn install
 
 ENTRYPOINT ["./docker-run.sh"]
