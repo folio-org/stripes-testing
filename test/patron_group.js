@@ -8,7 +8,7 @@ describe('Using the App FOLIO UI App /settings/users/groups ("test-patron-group"
   let communityid = null;
   let staffid = null;
   let alert = null;
-  const wait = 800;
+  const wait = 1000;
 
   describe("Login > Add new patron group > Assign to user > Try to delete patron group > Logout\n", () => {
     nightmare = new Nightmare(config.nightmare)
