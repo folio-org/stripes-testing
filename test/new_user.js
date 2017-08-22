@@ -7,7 +7,7 @@ const user = names.namegen()
 
 describe('Using the App FOLIO UI App /users ("test-new-user")', function () {
 
-  this.timeout('20s')
+  this.timeout(Number(config.test_timeout))
   let nightmare = null
   let pgroup = null
 

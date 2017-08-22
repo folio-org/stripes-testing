@@ -5,7 +5,7 @@ config.nightmare.gotoTimeout = 90000
 
 describe('Load a Page ("test-simple")', function() {
   // Recommended: 5s locally, 10s to remote server, 30s from airplane
-  this.timeout('90s')
+  this.timeout(Number(config.test_timeout))
   
   let nightmare = null
   beforeEach(() => {

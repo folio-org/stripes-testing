@@ -3,7 +3,7 @@ const assert = require('assert')
 const config = require('../folio-ui.config.js')
 
 describe('Using the App FOLIO UI App /items ("test-new-item")', function () {
-  this.timeout('20s')
+  this.timeout(Number(config.test_timeout))
   let nightmare = null
 
   describe("Login > Create new item > Confirm creation > Edit item > Confirm changes > Logout\n", () => {
