@@ -12,10 +12,10 @@ describe('Using the App FOLIO UI App /about ("dependencies.js")', function () {
       it('should login as ' + un + '/' + pw, done => {
         nightmare
         .goto(config.url)
-        .wait(999)
-        .type(config.select.username, un)
-        .type(config.select.password, pw)
-        .click(config.select.submit)
+        .wait(Number(config.login_wait))
+        .insert(config.select.username, un)
+        .insert(config.select.password, pw)
+        .click('#clickable-login')
         .wait('#UserMenuDropDown')
         .wait(555)
         .then(result => { done() })

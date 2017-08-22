@@ -3,7 +3,7 @@ const assert = require('assert')
 const config = require('../folio-ui.config.js')
 
 describe('Using the App FOLIO UI App /settings/users/groups ("test-patron-group")', function () {
-  this.timeout('30s')
+  this.timeout('20s')
   let userid = null;
   let communityid = null;
   let staffid = null;
@@ -23,10 +23,10 @@ describe('Using the App FOLIO UI App /settings/users/groups ("test-patron-group"
            alert = message;
         })
         .goto(config.url)
-        .wait(999)
-        .type(config.select.username, un)
-        .type(config.select.password, pw)
-        .click(config.select.submit)
+        .wait(Number(config.login_wait))
+        .insert(config.select.username, un)
+        .insert(config.select.password, pw)
+        .click('#clickable-login')
         .wait('#UserMenuDropDown')
         .wait(555)
         .then(result => { done() })
@@ -65,7 +65,7 @@ describe('Using the App FOLIO UI App /settings/users/groups ("test-patron-group"
     })
     it('should find a user to edit', done => {
       nightmare
-      .click('a[title="Users"]')
+      .click('#clickable-users-module')
       .wait('#list-users a:nth-of-type(11) > div:nth-of-type(5)')
       .evaluate(function() {
         return document.querySelector('#list-users a:nth-of-type(11) > div:nth-of-type(5)').title
@@ -130,7 +130,7 @@ describe('Using the App FOLIO UI App /settings/users/groups ("test-patron-group"
     })
     it('should find ID for "Staff" group', done => {
       nightmare
-      .click('a[title=Users]')
+      .click('#clickable-users-module')
       .wait('.headerSearchInput---1z5qG')
       .click('button[class^="headerSearchClearButton"]')
       .type('.headerSearchInput---1z5qG', userid)

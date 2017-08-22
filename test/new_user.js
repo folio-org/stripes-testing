@@ -23,10 +23,10 @@ describe('Using the App FOLIO UI App /users ("test-new-user")', function () {
           throw new Error(message)
          })
         .goto(config.url)
-        .wait(999)
-        .type(config.select.username, un)
-        .type(config.select.password, pw)
-        .click(config.select.submit)
+        .wait(Number(config.login_wait))
+        .insert(config.select.username, un)
+        .insert(config.select.password, pw)
+        .click('#clickable-login')
         //.wait('#UserMenuDropDown')
         .wait(function() {
           var success = document.querySelector('#clickable-logout')
@@ -57,9 +57,10 @@ describe('Using the App FOLIO UI App /users ("test-new-user")', function () {
     flogin(config.username, config.password)
     it('should extract a patron group value', done => {
       nightmare
-      .wait('a[Title=Users]')
-      .click('a[Title=Users]')
+      .wait('#clickable-users-module')
+      .click('#clickable-users-module')
       .wait('#clickable-newuser')
+      .wait(555)
       .click('#clickable-newuser')
       .wait('#adduser_group > option:nth-of-type(3)')
       .evaluate(function() {
@@ -105,8 +106,8 @@ describe('Using the App FOLIO UI App /users ("test-new-user")', function () {
     flogin(config.username, config.password)
     it('should edit user: ' + user.id, done => {
       nightmare
-      .wait('a[Title=Users]')
-      .click('a[Title=Users]')
+      .wait('#clickable-users-module')
+      .click('#clickable-users-module')
       .wait('#input-user-search')
       .type('#input-user-search',user.id)
       .wait(555)

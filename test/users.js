@@ -3,7 +3,7 @@ const assert = require('assert')
 const config = require('../folio-ui.config.js')
 
 describe('Using the App FOLIO UI App /users ("users.js")', function () {
-  this.timeout('15s')
+  this.timeout('20s')
 
   let nightmare = null
 
@@ -13,11 +13,11 @@ describe('Using the App FOLIO UI App /users ("users.js")', function () {
     it('should login as ' + config.username + '/' + config.password, done => {
       nightmare
       .goto(config.url)
-      .wait(999)
-      .type(config.select.username, config.username)
-      .type(config.select.password, config.password)
-      .click(config.select.submit)
-      .wait('a[title=Users]')
+      .wait(Number(config.login_wait))
+      .insert(config.select.username, config.username)
+      .insert(config.select.password, config.password)
+      .click('#clickable-login')
+      .wait('#clickable-module-users')
       .then(result => { done() })
       .catch(done)
       })

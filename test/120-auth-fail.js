@@ -14,10 +14,10 @@ describe('Login Page ("120-auth-fail.js")', function () {
     it('Should find a login error message', done => {
       nightmare
       .goto(config.url)
-      .wait(555)
+      .wait(Number(config.login_wait))
       .type(config.select.username, 'notgonnawork')
       .type(config.select.password, 'invalid password')
-      .click(config.select.submit)
+      .click('#clickable-login')
       .wait('span[class^="loginError"]') // failure
       .wait(parseInt(process.env.FOLIO_UI_DEBUG) ? parseInt(config.debug_sleep) : 0) // debugging
       .end()
