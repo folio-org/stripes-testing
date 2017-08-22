@@ -27,7 +27,7 @@ describe('Using the App FOLIO UI App /users ("test-new-user")', function () {
         .insert(config.select.username, un)
         .insert(config.select.password, pw)
         .click('#clickable-login')
-        //.wait('#UserMenuDropDown')
+        .wait(555)
         .wait(function() {
           var success = document.querySelector('#clickable-logout')
           var fail = document.querySelector('span[class^="loginError"]')
@@ -48,7 +48,7 @@ describe('Using the App FOLIO UI App /users ("test-new-user")', function () {
       it('should logout', done => {
         nightmare
         .click('#clickable-logout')
-        .wait(config.select.username)
+        .wait('#clickable-login')
         .wait(parseInt(process.env.FOLIO_UI_DEBUG) ? parseInt(config.debug_sleep) : 555) // debugging
         .then(result => { done() })
         .catch(done)
