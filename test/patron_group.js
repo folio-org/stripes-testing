@@ -3,11 +3,12 @@ const assert = require('assert')
 const config = require('../folio-ui.config.js')
 
 describe('Using the App FOLIO UI App /settings/users/groups ("test-patron-group")', function () {
-  this.timeout('20s')
+  this.timeout(Number(config.test_timeout))
   let userid = null;
   let communityid = null;
   let staffid = null;
   let alert = null;
+  const wait = 800;
 
   describe("Login > Add new patron group > Assign to user > Try to delete patron group > Logout\n", () => {
     nightmare = new Nightmare(config.nightmare)
@@ -27,8 +28,7 @@ describe('Using the App FOLIO UI App /settings/users/groups ("test-patron-group"
         .insert(config.select.username, un)
         .insert(config.select.password, pw)
         .click('#clickable-login')
-        .wait('#UserMenuDropDown')
-        .wait(555)
+        .wait('#clickable-logout')
         .then(result => { done() })
         .catch(done)
       }) 
@@ -49,16 +49,18 @@ describe('Using the App FOLIO UI App /settings/users/groups ("test-patron-group"
       nightmare
       .click(config.select.settings)
       .wait('a[href="/settings/users"]')
+      .wait(wait)
       .click('a[href="/settings/users"]')
       .wait('a[href="/settings/users/groups"]')
+      .wait(wait)
       .click('a[href="/settings/users/groups"]')
-      .wait(555)
+      .wait(wait)
       .xclick('//button[contains(.,"Add new")]')
-      .wait(555)
+      .wait(wait)
       .type('input[name="items[0].group"]', gid)
       .type('input[name="items[0].desc"]', gidlabel)
       .xclick('//li//button[.="Save"]')
-      .wait(2222)
+      .wait(wait)
       .wait(parseInt(process.env.FOLIO_UI_DEBUG) ? parseInt(config.debug_sleep) : 555) // debugging
       .then(result => { done() })
       .catch(done)
@@ -104,15 +106,17 @@ describe('Using the App FOLIO UI App /settings/users/groups ("test-patron-group"
     })
     it('should fail at deleting "' + gidlabel + '" group', done => {
       nightmare
-      .wait(2222)
+      .wait(wait)
       .xclick('//span[.="Settings"]')
+      .wait(wait)
       .click('a[href="/settings/users"]')
       .wait('a[href="/settings/users/groups"]')
+      .wait(wait)
       .click('a[href="/settings/users/groups"]')
       .wait('.paneset---3HNbw > .paneset---3HNbw button')
-      .wait(555)
+      .wait(wait)
       .xclick(deletePath)
-      .wait(555)
+      .wait(wait)
       .evaluate(function(gidlabel) {
         var cnode = document.evaluate('//div[.="' + gidlabel + '"]', document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null)
         if (!cnode) {
@@ -157,13 +161,13 @@ describe('Using the App FOLIO UI App /settings/users/groups ("test-patron-group"
     })
     it('should delete "' + gidlabel + '" patron group', done => {
       nightmare
-      .wait(555)
+      .wait(wait)
       .xclick('//span[.="Settings"]')
-      .wait(555)
+      .wait(wait)
       .xclick('id("ModuleContainer")//a[.="Users"]')
-      .wait(555)
+      .wait(wait)
       .xclick('id("ModuleContainer")//a[.="Patron groups"]')
-      .wait(555)
+      .wait(wait)
       .xclick(deletePath)
       .wait(parseInt(process.env.FOLIO_UI_DEBUG) ? parseInt(config.debug_sleep) : 555) // debugging
       .then(result => { done() })
@@ -171,7 +175,6 @@ describe('Using the App FOLIO UI App /settings/users/groups ("test-patron-group"
     }) 
     it('should confirm that "' + gidlabel + '" patron group has been deleted', done => {
       nightmare
-      .wait(555)
       .evaluate(function(communityid) {
         var cnode = document.querySelector('li[data-id="' + communityid + '"]')
         if (cnode) {
