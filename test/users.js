@@ -24,11 +24,10 @@ describe('Using the App FOLIO UI App /users ("users.js")', function () {
 
     it('enter a search and check "Inactive"', done => {
       nightmare
-      .click('a[title=Users]')
+      .click('#clickable-users-module')
       .wait('input[placeholder=Search]')
       .type('input[placeholder=Search]', "bo")
       .wait(555)
-
       .click('#active\\.Inactive-ItemFilter')
       .wait(555)
       .then(result => { done() })
