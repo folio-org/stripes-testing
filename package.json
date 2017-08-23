@@ -20,12 +20,14 @@
     "test-patron-group": "./node_modules/.bin/mocha test/patron_group.js",
     "test-dependencies": "./node_modules/.bin/mocha test/dependencies.js",
     "test-all": "./node_modules/.bin/mocha",
-    "module-checkout": "./node_modules/.bin/mocha test/modules/checkout.js"
+    "test-module": "./node_modules/.bin/mocha test-module.js",
+    "module-tests": "./node_modules/.bin/mocha test-module.js --app=checkout,checkin"
   },
   "dependencies": {
     "mocha": "^3.4.2",
     "nightmare": "^2.10.0",
     "nightmarejs": "^0.0.1",
-    "@folio/checkout": "^1.0.0"
+    "@folio/checkout": "^1.0.0",
+    "@folio/checkin": "^1.0.0"
   }
 }
