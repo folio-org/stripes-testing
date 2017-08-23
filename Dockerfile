@@ -1,5 +1,7 @@
 FROM ubuntu:xenial
 
+ARG folio_registry=https://repository.folio.org/repository/npm-folioci/
+
 RUN apt-get -q update && \
     DEBIAN_FRONTEND="noninteractive" apt-get -q install -y \
     -o Dpkg::Options::="--force-confnew"  --no-install-recommends \
@@ -31,7 +33,7 @@ RUN useradd -ms /bin/bash folio
 RUN chown -R folio /usr/src/ui-testing
 USER folio
 
-RUN yarn config set @folio:registry https://repository.folio.org/repository/npm-folioci/
+RUN yarn config set @folio:registry $folio_registry
 
 RUN yarn install
 
