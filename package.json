@@ -9,14 +9,14 @@
   "author": "Wolfram Schneider <wosch@indexdata.com>",
   "license": "Apache-2.0",
   "scripts": {
-    "test": "yarn module-tests; ./node_modules/.bin/mocha test/100-startpage.js test/120-auth-fail.js test/dependencies.js test/checkout.js",
+    "test": "./node_modules/.bin/mocha test/100-startpage.js test/120-auth-fail.js test/dependencies.js test/checkout.js test-module.js --app=checkout/checkin/users/items",
     "test-simple": "./node_modules/.bin/mocha test/100-startpage.js",
     "test-good-login": "./node_modules/.bin/mocha test/110-auth-success.js",
     "test-bad-login": "./node_modules/.bin/mocha test/110-auth-failure.js",
     "test-checkout": "./node_modules/.bin/mocha test/checkout.js",
     "test-dependencies": "./node_modules/.bin/mocha test/dependencies.js",
-    "test-user-item": "./node_modules/.bin/mocha oldtests/new_user.js oldtests/new_item.js",
-    "test-checkout-user": "./node_modules/.bin/mocha oldtests/checkout.js oldtests/new_user.js",
+    "test-user-item": "./node_modules/.bin/mocha --app=users:new_user/items:new_item",
+    "test-checkout-user": "./node_modules/.bin/mocha test/checkout.js --app=users:new_user",
     "test-all": "./node_modules/.bin/mocha",
     "test-module": "./node_modules/.bin/mocha test-module.js",
     "module-tests": "./node_modules/.bin/mocha test-module.js --app=checkout/checkin/users/items"

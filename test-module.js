@@ -13,7 +13,7 @@ if (app) {
 
   const appArray = app.split('/');
   var appTest = null;
-  console.log("Running module tests: ")
+  console.log("Running module tests against "+config.url+": ")
   for (var i=0; i< appArray.length; i++) {
     if (appArray[i].length>0) {
       let app = "";
