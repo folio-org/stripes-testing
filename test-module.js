@@ -9,11 +9,11 @@ config.nightmare.gotoTimeout = 90000;
 const app = minimist(process.argv.slice(2)).app;
 const appArray = app.split(',');
 var appTest = null;
+console.log("Running module tests. ")
 for (var i=0; i< appArray.length; i++) {
   try {
-
     var scripts = '@folio/'+appArray[i]+'/test/ui-testing/test.js'
-    console.log("Test: ", scripts);
+    console.log("Module: ", scripts);
     appTest = require(scripts);
     try {
       appTest.test({ config, utils: { auth, names }});
