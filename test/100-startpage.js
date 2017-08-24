@@ -3,7 +3,7 @@ const assert = require('assert')
 const config = require('../folio-ui.config.js')
 config.nightmare.gotoTimeout = 90000
 
-describe('Load a Page ("test-simple")', function() {
+describe('Load '+config.url+' ("test-simple")', function() {
   // Recommended: 5s locally, 10s to remote server, 30s from airplane
   this.timeout(Number(config.test_timeout))
   
