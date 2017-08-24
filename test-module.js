@@ -3,11 +3,11 @@ const minimist = require('minimist')
 const config = require('./folio-ui.config.js')
 const auth = require('./auth.js');
 const names = require('./namegen.js')
+
+config.nightmare.gotoTimeout = 90000;
+
 const app = minimist(process.argv.slice(2)).app;
 const appArray = app.split(',');
-
-const nightmare = new Nightmare(config.nightmare);
-
 var appTest = null;
 for (var i=0; i< appArray.length; i++) {
   try {
@@ -16,7 +16,7 @@ for (var i=0; i< appArray.length; i++) {
     console.log("Test: ", scripts);
     appTest = require(scripts);
     try {
-      appTest.test({ nightmare, config, utils: { auth, names }});
+      appTest.test({ config, utils: { auth, names }});
     } catch (e) {
       console.log("Could not run tests for module ", appArray[i], e);
     }
