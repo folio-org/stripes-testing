@@ -18,7 +18,7 @@
     "test-checkout-user": "./node_modules/.bin/mocha oldtests/checkout.js oldtests/new_user.js",
     "test-all": "./node_modules/.bin/mocha",
     "test-module": "./node_modules/.bin/mocha test-module.js",
-    "module-tests": "./node_modules/.bin/mocha test-module.js --app=checkout,checkin,users,items"
+    "module-tests": "./node_modules/.bin/mocha test-module.js --app=checkout/checkin/users/items"
   },
   "dependencies": {
     "mocha": "^3.4.2",
