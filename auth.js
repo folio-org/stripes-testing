@@ -1,12 +1,12 @@
-module.exports.login = (nightmare, config, done) => {
+module.exports.login = (nightmare, config, done, un, pw) => {
     nightmare
     .on('page', function(type="alert", message) {
        throw new Error(message)
      })
     .goto(config.url)
-    .wait(1999)
-    .insert(config.select.username, config.username)
-    .insert(config.select.password, config.password)
+    .wait(Number(config.login_wait))
+    .insert(config.select.username, (un || config.username))
+    .insert(config.select.password, (pw || config.password))
     .click(config.select.login)
     .wait(config.select.logout)
     .then(result => done())
