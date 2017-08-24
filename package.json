@@ -14,7 +14,7 @@
     "test-login": "./node_modules/.bin/mocha test/110-auth-success.js",
     "test-checkout": "./node_modules/.bin/mocha test/checkout.js",
     "test-new-user": "./node_modules/.bin/mocha test/new_user.js",
-    "test-new-item": "./node_modules/.bin/mocha test/new_item.js",
+    "test-new-item": "./node_modules/.bin/mocha test-module.js --app=items",
     "test-user-item": "./node_modules/.bin/mocha test/new_user.js test/new_item.js",
     "test-checkout-user": "./node_modules/.bin/mocha test/checkout.js test/new_user.js",
     "test-patron-group": "./node_modules/.bin/mocha test/patron_group.js",
@@ -28,6 +28,8 @@
     "nightmare": "^2.10.0",
     "nightmarejs": "^0.0.1",
     "@folio/checkout": "^1.0.0",
-    "@folio/checkin": "^1.0.0"
+    "@folio/checkin": "^1.0.0",
+    "@folio/items": "^1.9.0",
+    "@folio/users": "^2.9.0"
   }
 }
