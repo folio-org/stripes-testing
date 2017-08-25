@@ -16,7 +16,7 @@ describe('Login Page ("test-good-login")', function () {
       .click(config.select.username)
       .insert(config.select.username, config.username)
       .insert(config.select.password, config.password)
-      .click(config.select.login)
+      .click('#clickable-login')
       .wait('h3')
       .wait(parseInt(process.env.FOLIO_UI_DEBUG) ? parseInt(config.debug_sleep) : 0) // debugging
       .then(result => { done() })
@@ -25,7 +25,7 @@ describe('Login Page ("test-good-login")', function () {
 
     it('Logout properly', done => {
       nightmare
-      .click(config.select.logout) // logout
+      .click('#clickable-logout') // logout
       .wait('div[class^="loginContainer"') // login page
       .wait(parseInt(process.env.FOLIO_UI_DEBUG) ? parseInt(config.debug_sleep/3) : 0) // debugging
 

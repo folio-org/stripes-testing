@@ -11,7 +11,6 @@ module.exports = {
     select: {
       username: 'input[name=username]',
       password: 'input[name=password]',
-      submit: 'button[type=submit]',
       login: '#clickable-login',
       logout: '#clickable-logout',
       settings: 'a[href="/settings"]'
