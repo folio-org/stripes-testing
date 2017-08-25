@@ -23,11 +23,10 @@ WORKDIR /usr/src/ui-testing
 
 COPY test /usr/src/ui-testing/test
 COPY LICENSE /usr/src/ui-testing/LICENSE
-COPY folio-ui.config.js /usr/src/ui-testing/folio-ui.config.js
 COPY package.json /usr/src/ui-testing/package.json
-COPY namegen.js /usr/src/ui-testing/namegen.js
-COPY xnightmare.js /usr/src/ui-testing/xnightmare.js
 COPY docker-run.sh /usr/src/ui-testing/docker-run.sh
+COPY yarn.lock /usr/src/ui-testing/yarn.lock
+COPY *.js /usr/src/ui-testing/
 
 RUN useradd -ms /bin/bash folio
 RUN chown -R folio /usr/src/ui-testing
