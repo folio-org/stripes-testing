@@ -1,6 +1,6 @@
 {
   "name": "@folio/ui-testing",
-  "version": "v0.24.5",
+  "version": "4.0.0",
   "description": "Regression tests for FOLIO UI",
   "repository": "folio-org/ui-testing",
   "publishConfig": {
