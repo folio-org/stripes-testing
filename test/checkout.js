@@ -1,8 +1,8 @@
 const Nightmare = require('../xnightmare.js')
 const assert = require('assert')
 const config = require('../folio-ui.config.js')
-const names = require('../namegen.js')
-const user = names.namegen()
+const helpers = require('../helpers.js')
+const user = helpers.namegen()
 
 describe('Exercise users, items, checkout, checkin, settings ("test-checkout")', function () {
   this.timeout(Number(config.test_timeout))

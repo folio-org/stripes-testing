@@ -1,8 +1,7 @@
 const Nightmare = require('./xnightmare.js')
 const minimist = require('minimist')
 const config = require('./folio-ui.config.js')
-const auth = require('./auth.js');
-const names = require('./namegen.js')
+const helpers = require('./helpers.js');
 
 config.nightmare.gotoTimeout = 90000;
 
@@ -44,13 +43,15 @@ if (run) {
         if (script) {
           try {
             let tests = require('@folio/'+app+'/test/ui-testing/'+script+'.js');
+            let moduleInfo = require('@folio/'+app+'/package.json');
+            let meta = { testVersion: moduleInfo.name+':'+moduleInfo.version };
             try {
-              tests.test({ config, utils: { auth, names }});
+              tests.test({ config, helpers, meta } );
             } catch (e) {
               console.log('Could not run tests for module "'+app+'"\n', e);
             }
           } catch (e) {
-            console.log('Module or test script not found: "'+app+ (script=='test' ? '' : ':'+ script) +'"\n', e.message);
+            console.log('Module or test script not found: "'+app+ (script=='test' ? '' : ':'+ script) +'"\n', e);
           }
         } else {
           emptyScriptArg = true;
