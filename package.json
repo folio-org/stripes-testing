@@ -9,7 +9,7 @@
   "author": "Wolfram Schneider <wosch@indexdata.com>",
   "license": "Apache-2.0",
   "scripts": {
-    "test": "./node_modules/.bin/mocha test/100-startpage.js test/120-auth-fail.js test/dependencies.js test/checkout.js test-module.js --run=/checkin/users/items/",
+    "test": "./node_modules/.bin/mocha test/100-startpage.js test/120-auth-fail.js test/dependencies.js test/checkout.js test-module.js --run=/checkin/checkout/users/items/",
     "test-simple": "./node_modules/.bin/mocha test/100-startpage.js",
     "test-good-login": "./node_modules/.bin/mocha test/110-auth-success.js",
     "test-bad-login": "./node_modules/.bin/mocha test/110-auth-failure.js",
