@@ -82,7 +82,7 @@ All options in one:
 
 ## Choose the source of UI module tests to run
 
-When running a UI module's own test suites from ui-testing, there are three potential sources for the actual version of the module, whose tests are being pulled in and executed:
+When running a UI module's own test suites from ui-testing, there are three potential sources for the actual version of the module and its tests:
 
 * FOLIO's release repository: npm-folio at repository.folio.org. This is appropriate for testing a stable FOLIO platform, built with npm released versions of UI modules. The package.json of ui-testing controls which releases are installed, and those releases should match the releases in the live service. 
 * FOLIO's continuous integration repository: npm-folioci at repository.folio.org. This is appropriate for regression tests and continuous integration. This would also suit developers who are programming test suites or UI modules and want to test very the latest developments. 
@@ -100,7 +100,7 @@ When running a UI module's own test suites from ui-testing, there are three pote
     
 #### Run UI module tests against a FOLIO service with the latest commits
 
-    npm config set @folio:registry https://repository.folio.org/repository/npm-folio/
+    npm config set @folio:registry https://repository.folio.org/repository/npm-folioci/
     rm yarn.lock
     yarn install
     
