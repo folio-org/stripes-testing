@@ -40,8 +40,8 @@ module.exports.openApp = (nightmare, config, done, app, testVersion) => {
     }, app)
     .then(function(meta) {
       if (testVersion !== undefined) {
-        console.log("      Test suite   "+testVersion);
-        console.log("      Live module  "+meta.moduleName+":"+meta.moduleVersion+" ("+config.url+")");
+        console.log("          Test suite   "+testVersion);
+        console.log("          Live module  "+meta.moduleName+":"+meta.moduleVersion+" ("+config.url+")");
       }
       done();
       return meta;
