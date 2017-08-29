@@ -28,23 +28,23 @@ or (if definded in package.json)
 
     $ yarn test-checkout
     
+to list pre-defined tests
+
+    $ yarn run
+        
 ### run tests from a UI module
 
 #### run all of a UI module's tests
 
-    $ yarn test-module -- -o --run=users    # runs all tests from the users module
+    $ yarn test-module -- -o --run=users    # runs all tests in test.js from the users module 
 
 #### run individual tests from a UI module
 
     $ yarn test-module -- -o --run=users:new_user  # runs the new-user tests from the users module
 
-to view these options for running UI module tests
+to view options for running UI module tests
 
     $ yarn test-module
-
-to list pre-defined tests
-
-    $ yarn run
 
 ## optional: environment variables to modify tests
 
@@ -79,6 +79,8 @@ Nightmare debug options:
 All options in one:
 
     $ FOLIO_UI_URL="http://folio-uidemo.aws.indexdata.com" DEBUG=nightmare FOLIO_UI_DEBUG=2 yarn test
+    
+See [folio-ui.config.js](https://github.com/folio-org/ui-testing/blob/master/folio-ui.config.js) for current environment variables.    
 
 ## Choose the source of UI module tests to run
 
@@ -110,7 +112,7 @@ When running a UI module's own test suites from ui-testing, there are three pote
    
 ## Develop tests for a UI module
 
-For ui-testing to run a UI module's own tests individually or as part of an overall test suite, the UI module should contain scripts with Nightmare tests that takes one argument (with the test context, see below).
+In order for ui-testing to be able to run a UI module's own tests individually or as part of an overall test suite, the UI module should contain scripts with Nightmare tests that takes one argument holding all of the test context (see below).
 
 While tests scripts could be placed anywhere in the module's source structure, ui-testing will be looking for a main test script in, say, the Users module, at /ui-users/test/ui-testing/test.js
 
@@ -150,10 +152,12 @@ This script might be invoked from test.js:
         extensive.test(uiTestCtx);
       }
 
+### The test context object
+
 The test context passed to the module's test from ui-testing has following content at the time of writing:
 
       {
-       config :  (see ui-testing/folio-ui.config.js)
+       config :  (see folio-ui.config.js)
        helpers: {  
          login:    function for logging in to the FOLIO app
          logout,
@@ -167,36 +171,21 @@ The test context passed to the module's test from ui-testing has following conte
 
   NOTE: This is the first version of the context and it is subject to change. 
 
-The Nightmare instance is extended with the actions documented below (xnigthmare.js) and the context contains the helper for generated random user names and addresses also documented below.
-
-#### Developing a UI module and the UI tests to go with it
-
-Sometimes developers might update the UI and the tests scripts at the same time, for instance to ensure that tests still pass after changing the structure or functionality of the UI. 
-
-For that they would conventionally 
-
-     * check out ui-testing and install it from the npm-folioci repository
-     * check out a Stripes platform to run the UI module in locally
-     * check out the UI module in question 
-     * yarn link the UI module into both ui-testing and the local Stripes platform. 
-
-## The context passed from ui-testing to the UI module test suites
-
-### xnightmare.js
+#### xnightmare.js
 
     The Xnightmare.js file extends nightmare by adding actions that use XPath as a node selector.
     So far there are only two actions contained in this file: 
     
-#### .xclick(xpath) 
+##### .xclick(xpath) 
 
     Does the same as .click but takes an XPath instead of a CSS selector as an argument.
 
-#### .xtract(xpath)
+##### .xtract(xpath)
 
     This will extract and return the textContent of an XPath node.
     The returned value will be passed to the next action in the chain (most likely .then)
     
-### namegen.js
+#### namegen.js
 
     This script creates random user data (100 possibilities.)
     Returns: id, firstname, lastname, email, barcode, password
@@ -226,11 +215,13 @@ For that they would conventionally
       .catch(done)
     })
 ```
-### openApp 
+#### openApp 
 
-openApp is a helper function that will open the page of a given UI module. If the test script pass it's version of to openApp, then openApp will log the version of the test as well as the version of the module under test. 
+    openApp is a helper function that will open the page of a given UI module. 
+    If the test script pass it's version of to openApp, then openApp will log the version of the test
+    as well as the version of the module under test. 
 
-The UI module can find 'openApp' in 'helpers' and its own version in 'meta'
+    The UI module can find 'openApp' in 'helpers' and its own version in 'meta'
 
     For example:
     
@@ -247,3 +238,68 @@ The UI module can find 'openApp' in 'helpers' and its own version in 'meta'
           Test suite   @folio/checkout:1.0.10020
           Live module  @folio/checkout:1.0.10019 (http://folio-testing.aws.indexdata.com)
     
+### Developing a UI module together with ist UI tests
+
+Sometimes developers might update the UI and the tests scripts at the same time, for instance to ensure that tests still pass after changing the structure or functionality of the UI. 
+
+For that they would conventionally 
+
+     * check out ui-testing and install it from the npm-folioci repository
+     * check out a Stripes platform to run the UI module in locally
+     * check out the UI module in question 
+     * yarn link the UI module into both ui-testing and the local Stripes platform. 
+
+### Support test scripting with unique identifiers on UI elements
+
+Test scripts are both easier to write and read if unique IDs have been assigned to crucial elements of the UI. 
+
+Stripes will assign certain IDs out of the box that the test script can use:
+
+     The module's menu bar button:  #clickable-users-module
+     The module's page:             #users-module-display
+     The login button:              #clickable-login
+     The logout button:             #clickable-logout
+     
+Beyond that the UI module developer should assign ID's to actionable UI elements at least. 
+
+Following conventions are suggested:
+
+     Controls/links that can be clicked:   #clickable-add-user
+     Elements for entering data:           #input-user-name
+     Lists of data:                        #list-users
+     Section of a page:                    #section-loans-history
+
+Examples of identifiers in a UI 
+
+     <Row id="section-patron" ...
+     <Field id="input-patron-identifier" ...
+     <Button id="clickable-find-patron" ...
+     <MultiColumnList id="list-patrons" ...
+     <Row id="section-item" ...
+     <Field id="input-item-barcode" ...
+     <Button id="clickable-add-item" ...
+     <MultiColumnList id="list-items-checked-out" ...
+     <Button id="clickable-done" ...
+      
+and usage in a test script
+
+     it('should show error when scanning item before patron card', done => {
+        nightmare
+        .wait('#clickable-checkout-module')
+        .click('#clickable-checkout-module')
+        .wait('#input-item-barcode')
+        .insert('#input-item-barcode',"some-item-barcode")
+        .wait('#clickable-add-item')
+        .click('#clickable-add-item')
+        .wait('#section-patron div[class^="textfieldError"]')
+        .evaluate(function() {
+          var errorText = document.querySelector('#section-patron div[class^="textfieldError"]').innerText;
+          if (!errorText.startsWith("Please fill")) {
+            throw new Error("Error message not found for item entered before patron found");
+          }
+         })
+        .wait(parseInt(process.env.FOLIO_UI_DEBUG) ? parseInt(config.debug_sleep) : 555) // debugging
+        .then(result => { done() })
+        .catch(done)
+     })
+     
