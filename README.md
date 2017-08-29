@@ -22,7 +22,7 @@ Some tests are contained within ui-testing itself while others live in the invid
     
 ### run individual tests contained in ui-testing
  
-    $ ./node_modules/.bin/mocha test/checkout.js   # runs the checkout test that visits a number of apps on the platform
+    $ ./node_modules/.bin/mocha test/checkout.js   # runs the checkout test that visits multiple apps
 
 or (if definded in package.json)
 
