@@ -94,7 +94,7 @@ When running a UI module's own test suites from ui-testing, there are three pote
     rm yarn.lock
     yarn install
     
-    export FOLIO_UI_URL=http://folio-stable/
+    export FOLIO_UI_URL=http://folio-staging.aws.indexdata.com/
     
     yarn test-module -- -o --run=users
     
@@ -104,7 +104,7 @@ When running a UI module's own test suites from ui-testing, there are three pote
     rm yarn.lock
     yarn install
     
-    export FOLIO_UI_URL=http://folio-testing/
+    export FOLIO_UI_URL=http://folio-testing.aws.indexdata.com/
     
     yarn test-module -- -o --run=users
    
