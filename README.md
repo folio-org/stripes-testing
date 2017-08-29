@@ -228,11 +228,15 @@ For that they would conventionally
 ```
 ### openApp 
 
-    The function openApp is found in the helpers object of the test context passed to the UI module's test suites. This function will look for the UI modules ID in the page and open the page. 
-    If the UI module test passes info about the version of the test being run, openApp will log the version of the test and as well as the version of the module under test.
+openApp is a helper function that will open the page of a given UI module. If the test script pass it's version of to openApp, then openApp will log the version of the test as well as the version of the module under test. 
 
-    For example, in a module's test script just after log-in:
+The UI module can find 'openApp' in 'helpers' and its own version in 'meta'
+
+    For example:
     
+    const { config, helpers: { namegen, openApp }, meta: { testVersion } } = uiTestContext;
+       ...
+       ...
        nightmare
          .use(openApp(nightmare, config, done, 'checkout', testVersion ))
 
@@ -241,6 +245,5 @@ For that they would conventionally
         Module test: checkout:error_messages.
         Open app > Trigger error messages > Logout
           Test suite   @folio/checkout:1.0.10020
-          Live module  @folio/checkout:1.0.10019 (http://folio-testing
-
-    The module test script can get the test version from the object meta in the test context. 
+          Live module  @folio/checkout:1.0.10019 (http://folio-testing.aws.indexdata.com)
+    
