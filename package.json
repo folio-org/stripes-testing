@@ -30,6 +30,5 @@
     "@folio/items": "^1.9.0",
     "@folio/users": "^2.9.0",
     "@folio/circulation": "^1.0.0",
-    "@folio/requests": "^0.0.1"
   }
 }
