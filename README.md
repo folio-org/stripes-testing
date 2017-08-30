@@ -120,30 +120,34 @@ This test script would probably contain references to all the individual tests t
 
 This is an example of a minimal test that logs in and evaluates if a module named 'app' opens:
 
-    module.exports.test = function(uiTestCtx) {
-      describe('Module test: app:minimal', function() {
-        const { config, helpers: { login, openApp, logout }, meta: { testVersion } } = uiTestCtx;
-        const nightmare = new Nightmare(config.nightmare);
+```js
+module.exports.test = function(uiTestCtx) {
+  describe('Module test: app:minimal', function() {
+    const { config, helpers: { login, openApp, logout }, meta: { testVersion } } = uiTestCtx;
+    const nightmare = new Nightmare(config.nightmare);
 
-        this.timeout(Number(config.test_timeout));
+    this.timeout(Number(config.test_timeout));
 
-        describe('Login > Open module "Requests" > Logout', () => {
-          before( done => {
-            login(nightmare, config, done);  // logs in with the default admin credentials
-          })
-          after( done => {
-            logout(nightmare, config, done);
-          })
-          it('should open module "Requests" and find version tag ', done => {
-            nightmare
-            .use(openApp(nightmare, config, done, 'app', testVersion))
-            .then(result => result )
-          })
-        })
+    describe('Login > Open module "Requests" > Logout', () => {
+      before( done => {
+        login(nightmare, config, done);  // logs in with the default admin credentials
       })
+      after( done => {
+        logout(nightmare, config, done);
+      })
+      it('should open module "Requests" and find version tag ', done => {
+        nightmare
+        .use(openApp(nightmare, config, done, 'app', testVersion))
+        .then(result => result )
+      })
+    })
+  })
+}
+```
 
 This script might be invoked from test.js:
 
+```js
       const minimal = require('./minimal.js');
       const extensive = require('./extensive.js');
 
@@ -151,6 +155,7 @@ This script might be invoked from test.js:
         minimal.test(uiTestCtx);
         extensive.test(uiTestCtx);
       }
+```
 
 ### The test context object
 
@@ -169,7 +174,7 @@ The test context passed to the module's test from ui-testing has following conte
        }
       }
 
-  NOTE: This is the first version of the context and it is subject to change.
+NOTE: This is the first version of the context and it is subject to change.
 
 #### xnightmare.js
 
@@ -191,30 +196,31 @@ The test context passed to the module's test from ui-testing has following conte
     Returns: id, firstname, lastname, email, barcode, password
 
 ```js
-    const Nightmare = require('nightmare')
-    const assert = require('assert')
-    const config = require('../folio-ui.config.js')
-    const names = require('../namegen.js')
-    const user = names.namegen()
+const Nightmare = require('nightmare')
+const assert = require('assert')
+const config = require('../folio-ui.config.js')
+const names = require('../namegen.js')
+const user = names.namegen()
 
-    ...
+...
 
-    it('should create a user: ' + user.id + '/' + user.password, done => {
-      nightmare
-      .type('#adduser_username',user.id)
-      .type('#pw',user.password)
-      .click('#useractiveYesRB')
-      .type('#adduser_firstname',user.firstname)
-      .type('#adduser_lastname',user.lastname)
-      .type('#adduser_email', user.email)
-      .type('#adduser_barcode',user.barcode)
-      .click('#clickable-createnewuser')
-      .wait('#clickable-newuser')
-      .wait(parseInt(process.env.FOLIO_UI_DEBUG) ? parseInt(config.debug_sleep) : 0) // debugging
-      .then(result => { done() })
-      .catch(done)
-    })
+it('should create a user: ' + user.id + '/' + user.password, done => {
+  nightmare
+  .type('#adduser_username',user.id)
+  .type('#pw',user.password)
+  .click('#useractiveYesRB')
+  .type('#adduser_firstname',user.firstname)
+  .type('#adduser_lastname',user.lastname)
+  .type('#adduser_email', user.email)
+  .type('#adduser_barcode',user.barcode)
+  .click('#clickable-createnewuser')
+  .wait('#clickable-newuser')
+  .wait(parseInt(process.env.FOLIO_UI_DEBUG) ? parseInt(config.debug_sleep) : 0) // debugging
+  .then(result => { done() })
+  .catch(done)
+})
 ```
+
 #### openApp
 
     openApp is a helper function that will open the page of a given UI module.
@@ -283,23 +289,25 @@ Examples of identifiers in a UI:
 
 and usage in a test script:
 
-     it('should show error when scanning item before patron card', done => {
-        nightmare
-        .wait('#clickable-checkout-module')
-        .click('#clickable-checkout-module')
-        .wait('#input-item-barcode')
-        .insert('#input-item-barcode',"some-item-barcode")
-        .wait('#clickable-add-item')
-        .click('#clickable-add-item')
-        .wait('#section-patron div[class^="textfieldError"]')
-        .evaluate(function() {
-          var errorText = document.querySelector('#section-patron div[class^="textfieldError"]').innerText;
-          if (!errorText.startsWith("Please fill")) {
-            throw new Error("Error message not found for item entered before patron found");
-          }
-         })
-        .wait(parseInt(process.env.FOLIO_UI_DEBUG) ? parseInt(config.debug_sleep) : 555) // debugging
-        .then(result => { done() })
-        .catch(done)
-     })
+```js
+it('should show error when scanning item before patron card', done => {
+  nightmare
+  .wait('#clickable-checkout-module')
+  .click('#clickable-checkout-module')
+  .wait('#input-item-barcode')
+  .insert('#input-item-barcode',"some-item-barcode")
+  .wait('#clickable-add-item')
+  .click('#clickable-add-item')
+  .wait('#section-patron div[class^="textfieldError"]')
+  .evaluate(function() {
+    var errorText = document.querySelector('#section-patron div[class^="textfieldError"]').innerText;
+    if (!errorText.startsWith("Please fill")) {
+      throw new Error("Error message not found for item entered before patron found");
+    }
+  })
+  .wait(parseInt(process.env.FOLIO_UI_DEBUG) ? parseInt(config.debug_sleep) : 555) // debugging
+  .then(result => { done() })
+  .catch(done)
+})
+```
 
