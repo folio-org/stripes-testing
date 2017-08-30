@@ -10,7 +10,7 @@ Version 2.0. See the file "[LICENSE](LICENSE)" for more information.
 The tests are using the [nightmarejs](http://www.nightmarejs.org) browser automation library,
 and [mocha](https://mochajs.org) for the tests itself.
 
-Some tests are contained within ui-testing itself while others live in the invidual UI modules and can be executed from there by ui-testing.
+Some tests are contained within ui-testing itself while others live in the individual UI modules and can be executed from there by ui-testing.
 
 ## install node packages first
 
@@ -24,7 +24,7 @@ Some tests are contained within ui-testing itself while others live in the invid
 
     $ ./node_modules/.bin/mocha test/checkout.js   # runs the checkout test that visits multiple apps
 
-or (if definded in package.json)
+or (if defined in package.json)
 
     $ yarn test-checkout
 
@@ -238,7 +238,7 @@ The test context passed to the module's test from ui-testing has following conte
           Test suite   @folio/checkout:1.0.10020
           Live module  @folio/checkout:1.0.10019 (http://folio-testing.aws.indexdata.com)
 
-### Developing a UI module together with ist UI tests
+### Developing a UI module together with its UI tests
 
 Sometimes developers might update the UI and the tests scripts at the same time, for instance to ensure that tests still pass after changing the structure or functionality of the UI.
 
@@ -260,7 +260,7 @@ Stripes will assign certain IDs out of the box that the test script can use:
      The login button:              #clickable-login
      The logout button:             #clickable-logout
 
-Beyond that the UI module developer should assign ID's to actionable UI elements at least.
+Beyond that the UI module developer should assign IDs to actionable UI elements at least.
 
 Following conventions are suggested:
 
