@@ -224,7 +224,7 @@ it('should create a user: ' + user.id + '/' + user.password, done => {
 #### openApp
 
 openApp is a helper function that will open the page of a given UI module.
-If the test script pass it's version of to openApp, then openApp will log the version of the test
+If the test script passes it's version to openApp, then openApp will log the version of the test
 as well as the version of the module under test.
 
 The UI module can find 'openApp' in 'helpers' and its own version in 'meta'.
