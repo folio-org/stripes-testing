@@ -10,7 +10,7 @@ Version 2.0. See the file "[LICENSE](LICENSE)" for more information.
 The tests are using the [nightmarejs](http://www.nightmarejs.org) browser automation library,
 and [mocha](https://mochajs.org) for the tests itself.
 
-Some tests are contained within ui-testing itself while others live in the invidual UI modules and can be executed from there by ui-testing. 
+Some tests are contained within ui-testing itself while others live in the invidual UI modules and can be executed from there by ui-testing.
 
 ## install node packages first
 
@@ -19,24 +19,24 @@ Some tests are contained within ui-testing itself while others live in the invid
 ## run the main tests with default user/pw/url/debug level
 
     $ yarn test
-    
+
 ### run individual tests contained in ui-testing
- 
+
     $ ./node_modules/.bin/mocha test/checkout.js   # runs the checkout test that visits multiple apps
 
 or (if definded in package.json)
 
     $ yarn test-checkout
-    
+
 to list pre-defined tests
 
     $ yarn run
-        
+
 ### run tests from a UI module
 
 #### run all of a UI module's tests
 
-    $ yarn test-module -- -o --run=users    # runs all tests in test.js from the users module 
+    $ yarn test-module -- -o --run=users    # runs all tests in test.js from the users module
 
 #### run individual tests from a UI module
 
@@ -79,37 +79,37 @@ Nightmare debug options:
 All options in one:
 
     $ FOLIO_UI_URL="http://folio-uidemo.aws.indexdata.com" DEBUG=nightmare FOLIO_UI_DEBUG=2 yarn test
-    
-See [folio-ui.config.js](https://github.com/folio-org/ui-testing/blob/master/folio-ui.config.js) for current environment variables.    
+
+See [folio-ui.config.js](https://github.com/folio-org/ui-testing/blob/master/folio-ui.config.js) for current environment variables.
 
 ## Choose the source of UI module tests to run
 
 When running a UI module's own test suites from ui-testing, there are three potential sources for the actual version of the module and its tests:
 
-* FOLIO's release repository: npm-folio at repository.folio.org. This is appropriate for testing a stable FOLIO platform, built with npm released versions of UI modules. The package.json of ui-testing controls which releases are installed, and those releases should match the releases in the live service. 
-* FOLIO's continuous integration repository: npm-folioci at repository.folio.org. This is appropriate for regression tests and continuous integration. This would also suit developers who are programming test suites or UI modules and want to test very the latest developments. 
-* A local checkout of the UI module, brought into ui-testing by yarn link or similar. This could be for developers programming test suites for a UI module and wanting to execute the test scripts with local changes.   
+* FOLIO's release repository: npm-folio at repository.folio.org. This is appropriate for testing a stable FOLIO platform, built with npm released versions of UI modules. The package.json of ui-testing controls which releases are installed, and those releases should match the releases in the live service.
+* FOLIO's continuous integration repository: npm-folioci at repository.folio.org. This is appropriate for regression tests and continuous integration. This would also suit developers who are programming test suites or UI modules and want to test very the latest developments.
+* A local checkout of the UI module, brought into ui-testing by yarn link or similar. This could be for developers programming test suites for a UI module and wanting to execute the test scripts with local changes.
 
 #### Run UI module tests against a stable FOLIO service
 
     npm config set @folio:registry https://repository.folio.org/repository/npm-folio/
     rm yarn.lock
     yarn install
-    
+
     export FOLIO_UI_URL=http://folio-staging.aws.indexdata.com/
-    
+
     yarn test-module -- -o --run=users
-    
+
 #### Run UI module tests against a FOLIO service with the latest commits
 
     npm config set @folio:registry https://repository.folio.org/repository/npm-folioci/
     rm yarn.lock
     yarn install
-    
+
     export FOLIO_UI_URL=http://folio-testing.aws.indexdata.com/
-    
+
     yarn test-module -- -o --run=users
-   
+
 ## Develop tests for a UI module
 
 In order for ui-testing to be able to run a UI module's own tests individually or as part of an overall test suite, the UI module should contain scripts with Nightmare tests that takes one argument holding all of the test context (see below).
@@ -158,7 +158,7 @@ The test context passed to the module's test from ui-testing has following conte
 
       {
        config :  (see folio-ui.config.js)
-       helpers: {  
+       helpers: {
          login:    function for logging in to the FOLIO app
          logout,
          openApp:   function for opening a module's page
@@ -169,14 +169,14 @@ The test context passed to the module's test from ui-testing has following conte
        }
       }
 
-  NOTE: This is the first version of the context and it is subject to change. 
+  NOTE: This is the first version of the context and it is subject to change.
 
 #### xnightmare.js
 
     The Xnightmare.js file extends nightmare by adding actions that use XPath as a node selector.
-    So far there are only two actions contained in this file: 
-    
-##### .xclick(xpath) 
+    So far there are only two actions contained in this file:
+
+##### .xclick(xpath)
 
     Does the same as .click but takes an XPath instead of a CSS selector as an argument.
 
@@ -184,7 +184,7 @@ The test context passed to the module's test from ui-testing has following conte
 
     This will extract and return the textContent of an XPath node.
     The returned value will be passed to the next action in the chain (most likely .then)
-    
+
 #### namegen.js
 
     This script creates random user data (100 possibilities.)
@@ -196,9 +196,9 @@ The test context passed to the module's test from ui-testing has following conte
     const config = require('../folio-ui.config.js')
     const names = require('../namegen.js')
     const user = names.namegen()
-    
+
     ...
-    
+
     it('should create a user: ' + user.id + '/' + user.password, done => {
       nightmare
       .type('#adduser_username',user.id)
@@ -215,16 +215,16 @@ The test context passed to the module's test from ui-testing has following conte
       .catch(done)
     })
 ```
-#### openApp 
+#### openApp
 
-    openApp is a helper function that will open the page of a given UI module. 
+    openApp is a helper function that will open the page of a given UI module.
     If the test script pass it's version of to openApp, then openApp will log the version of the test
-    as well as the version of the module under test. 
+    as well as the version of the module under test.
 
     The UI module can find 'openApp' in 'helpers' and its own version in 'meta'
 
     For example:
-    
+
     const { config, helpers: { namegen, openApp }, meta: { testVersion } } = uiTestContext;
        ...
        ...
@@ -232,26 +232,26 @@ The test context passed to the module's test from ui-testing has following conte
          .use(openApp(nightmare, config, done, 'checkout', testVersion ))
 
     Output in the test log:
-    
+
         Module test: checkout:error_messages.
         Open app > Trigger error messages > Logout
           Test suite   @folio/checkout:1.0.10020
           Live module  @folio/checkout:1.0.10019 (http://folio-testing.aws.indexdata.com)
-    
+
 ### Developing a UI module together with ist UI tests
 
-Sometimes developers might update the UI and the tests scripts at the same time, for instance to ensure that tests still pass after changing the structure or functionality of the UI. 
+Sometimes developers might update the UI and the tests scripts at the same time, for instance to ensure that tests still pass after changing the structure or functionality of the UI.
 
-For that they would conventionally 
+For that they would conventionally
 
      * check out ui-testing and install it from the npm-folioci repository
      * check out a Stripes platform to run the UI module in locally
-     * check out the UI module in question 
-     * yarn link the UI module into both ui-testing and the local Stripes platform. 
+     * check out the UI module in question
+     * yarn link the UI module into both ui-testing and the local Stripes platform.
 
 ### Support test scripting with unique identifiers on UI elements
 
-Test scripts are both easier to write and read if unique IDs have been assigned to crucial elements of the UI. 
+Test scripts are both easier to write and read if unique IDs have been assigned to crucial elements of the UI.
 
 Stripes will assign certain IDs out of the box that the test script can use:
 
@@ -259,8 +259,8 @@ Stripes will assign certain IDs out of the box that the test script can use:
      The module's page:             #users-module-display
      The login button:              #clickable-login
      The logout button:             #clickable-logout
-     
-Beyond that the UI module developer should assign ID's to actionable UI elements at least. 
+
+Beyond that the UI module developer should assign ID's to actionable UI elements at least.
 
 Following conventions are suggested:
 
@@ -269,7 +269,7 @@ Following conventions are suggested:
      Lists of data:                        #list-users
      Section of a page:                    #section-loans-history
 
-Examples of identifiers in a UI 
+Examples of identifiers in a UI
 
      <Row id="section-patron" ...
      <Field id="input-patron-identifier" ...
@@ -280,7 +280,7 @@ Examples of identifiers in a UI
      <Button id="clickable-add-item" ...
      <MultiColumnList id="list-items-checked-out" ...
      <Button id="clickable-done" ...
-      
+
 and usage in a test script
 
      it('should show error when scanning item before patron card', done => {
@@ -302,4 +302,4 @@ and usage in a test script
         .then(result => { done() })
         .catch(done)
      })
-     
+
