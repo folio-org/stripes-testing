@@ -178,22 +178,22 @@ NOTE: This is the first version of the context and it is subject to change.
 
 #### xnightmare.js
 
-    The xnightmare.js file extends nightmare by adding actions that use XPath as a node selector.
-    So far there are only two actions contained in this file:
+The xnightmare.js file extends nightmare by adding actions that use XPath as a node selector.
+So far there are only two actions contained in this file:
 
 ##### .xclick(xpath)
 
-    Does the same as .click but takes an XPath instead of a CSS selector as an argument.
+Does the same as .click but takes an XPath instead of a CSS selector as an argument.
 
 ##### .xtract(xpath)
 
-    This will extract and return the textContent of an XPath node.
-    The returned value will be passed to the next action in the chain (most likely .then).
+This will extract and return the textContent of an XPath node.
+The returned value will be passed to the next action in the chain (most likely .then).
 
 #### namegen.js
 
-    This script creates random user data (100 possibilities).
-    Returns: id, firstname, lastname, email, barcode, password
+This script creates random user data (100 possibilities).
+Returns: id, firstname, lastname, email, barcode, password
 
 ```js
 const Nightmare = require('nightmare')
@@ -223,26 +223,30 @@ it('should create a user: ' + user.id + '/' + user.password, done => {
 
 #### openApp
 
-    openApp is a helper function that will open the page of a given UI module.
-    If the test script pass it's version of to openApp, then openApp will log the version of the test
-    as well as the version of the module under test.
+openApp is a helper function that will open the page of a given UI module.
+If the test script pass it's version of to openApp, then openApp will log the version of the test
+as well as the version of the module under test.
 
-    The UI module can find 'openApp' in 'helpers' and its own version in 'meta'.
+The UI module can find 'openApp' in 'helpers' and its own version in 'meta'.
 
-    For example:
+For example:
 
-    const { config, helpers: { namegen, openApp }, meta: { testVersion } } = uiTestContext;
-       ...
-       ...
-       nightmare
-         .use(openApp(nightmare, config, done, 'checkout', testVersion ))
+```
+const { config, helpers: { namegen, openApp }, meta: { testVersion } } = uiTestContext;
+   ...
+   ...
+   nightmare
+     .use(openApp(nightmare, config, done, 'checkout', testVersion ))
+```
 
-    Output in the test log:
+Output in the test log:
 
-        Module test: checkout:error_messages.
-        Open app > Trigger error messages > Logout
-          Test suite   @folio/checkout:1.0.10020
-          Live module  @folio/checkout:1.0.10019 (http://folio-testing.aws.indexdata.com)
+```
+Module test: checkout:error_messages.
+Open app > Trigger error messages > Logout
+  Test suite   @folio/checkout:1.0.10020
+  Live module  @folio/checkout:1.0.10019 (http://folio-testing.aws.indexdata.com)
+```
 
 ### Developing a UI module together with its UI tests
 
