@@ -7,7 +7,7 @@ const user = helpers.namegen()
 describe('Exercise users, items, checkout, checkin, settings ("test-checkout")', function () {
   this.timeout(Number(config.test_timeout))
 
-  describe("Login > Update settings > Create user > Checkout item > Confirm checkout > Checkin > Confirm checkin > Logout\n", () => {
+  describe("Login > Update settings > Find user > Checkout item > Confirm checkout > Checkin > Confirm checkin > Logout\n", () => {
     let nightmare = new Nightmare(config.nightmare)
     let userid = 'user'
     let barcode = 'item'
@@ -49,7 +49,7 @@ describe('Exercise users, items, checkout, checkin, settings ("test-checkout")',
       })
       .then(function(result) {
         userid = result
-        console.log('Found ' + userid)
+        console.log('          Found user ' + userid)
         done()
       })
       .catch(done)
@@ -59,11 +59,11 @@ describe('Exercise users, items, checkout, checkin, settings ("test-checkout")',
       .click('#clickable-items-module')
       .wait(2222)
       .evaluate(function() {
-	var element = document.evaluate('//div[.="Available"]/preceding-sibling::div[2]', document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null)
-	return element.singleNodeValue.innerHTML
+        var element = document.evaluate('//div[.="Available"]/preceding-sibling::div[2]', document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null)
+        return element.singleNodeValue.innerHTML
       })
       .then(function(result) {
-        console.log('Found ' + result)
+        console.log('          Found item ' + result)
         barcode = result
         done()
       })
