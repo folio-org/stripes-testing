@@ -128,14 +128,14 @@ module.exports.test = function(uiTestCtx) {
 
     this.timeout(Number(config.test_timeout));
 
-    describe('Login > Open module "Requests" > Logout', () => {
+    describe('Login > Open module "App" > Logout', () => {
       before( done => {
         login(nightmare, config, done);  // logs in with the default admin credentials
       })
       after( done => {
         logout(nightmare, config, done);
       })
-      it('should open module "Requests" and find version tag ', done => {
+      it('should open module "App" and find version tag ', done => {
         nightmare
         .use(openApp(nightmare, config, done, 'app', testVersion))
         .then(result => result )
@@ -190,7 +190,7 @@ Does the same as .click but takes an XPath instead of a CSS selector as an argum
 This will extract and return the textContent of an XPath node.
 The returned value will be passed to the next action in the chain (most likely .then).
 
-#### namegen.js
+#### namegen (helpers.js)  
 
 This script creates random user data (100 possibilities).
 Returns: id, firstname, lastname, email, barcode, password
@@ -221,7 +221,7 @@ it('should create a user: ' + user.id + '/' + user.password, done => {
 })
 ```
 
-#### openApp
+#### openApp (helpers.js)
 
 openApp is a helper function that will open the page of a given UI module.
 If the test script passes it's version to openApp, then openApp will log the version of the test
