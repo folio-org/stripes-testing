@@ -80,6 +80,20 @@ All options in one:
 
     $ FOLIO_UI_URL="http://folio-uidemo.aws.indexdata.com" DEBUG=nightmare FOLIO_UI_DEBUG=2 yarn test
 
+
+## alternative when testing a module: use command line arguments for test parameters
+
+run a module's test in browser against http://localhost:3000/
+
+    $ yarn test-module -- -o --show --h=localhost --run=checkout:error_messages
+
+A command line argument overrides the corresponding environment variable. 
+
+To see all command line options:
+
+    $ yarn test-module
+
+
 See [folio-ui.config.js](https://github.com/folio-org/ui-testing/blob/master/folio-ui.config.js) for current environment variables.
 
 ## Choose the source of UI module tests to run
