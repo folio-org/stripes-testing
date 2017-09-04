@@ -3,21 +3,24 @@ const minimist = require('minimist')
 const config = require('./folio-ui.config.js')
 const helpers = require('./helpers.js');
 
-const o = minimist(process.argv.slice(2))
+const options = minimist(process.argv.slice(2))
 
-if (o.run) {
+if (options.run) {
 
-  let options = getOptions(o,config);
+  let o = getOptions(options,config);  // Mutates the config
 
-  if (options.host||options.h)              console.log("Host:          "+config.url);
-  if (options.testtimeout||options.timeout) console.log("Test timeout:  "+config.test_timeout);
-  if (options.gototimeout||options.goto)    console.log("Goto timeout:  "+ config.nightmare.gotoTimeout);
-  if (options.loginwait)                    console.log("Login wait     "+config.login_wait);
-  if (options.debugsleep||options.sleep)    console.log("Debug sleep:   "+config.debug_sleep);
-  if (options.username||options.un)         console.log("Username:      "+config.username);
-  if (options.typeinterval)                 console.log("Type interval: "+config.nightmare.typeInterval);
+  if (o.host||o.h||o.url)        console.log("Host:          "+config.url);
+  if (o.testtimeout||o.tto)      console.log("Test timeout:  "+config.test_timeout);
+  if (o.gototimeout||o.gto)      console.log("Goto timeout:  "+config.nightmare.gotoTimeout);
+  if (o.waittimeout||o.wto)      console.log("Wait timeout:  "+config.nightmare.waitTimeout);
+  if (o.executiontimeout||o.eto) console.log("Exec timeout:  "+config.nightmare.executionTimeout);
+  if (o.loginwait)               console.log("Login wait:    "+config.login_wait);
+  if (o.debugsleep||o.sleep)     console.log("Debug sleep:   "+config.debug_sleep);
+  if (o.username||o.un)          console.log("Username:      "+config.username);
+  if (o.typeinterval)            console.log("Type interval: "+config.nightmare.typeInterval);
+  if (o.consolelogs)             console.log("Console logs:  "+config.console_logs);
 
-  const apps = options.run.split('/'); // find modules to test
+  const apps = o.run.split('/'); // find modules to test
 
   for (var a=0; a< apps.length; a++) { // for each module in argv
     let appscripts = apps[a];
@@ -73,12 +76,14 @@ if (o.run) {
   showHelp();
 }
 
-function getOptions (o, config) {
+function getOptions (options, config) {
   const recognizedOptions =
   [ "run",
-    "host", "h",
-    "testtimeout", "timeout",
-    "gototimeout", "goto",
+    "host", "h", "url",
+    "testtimeout", "tto",
+    "gototimeout", "gto",
+    "executiontimeout", "eto",
+    "waittimeout", "wto",
     "loginwait",
     "debugsleep", "sleep",
     "typeinterval",
@@ -90,23 +95,23 @@ function getOptions (o, config) {
     "height"
   ];
 
-  let options = {};
-  for (var property in o) {
-      if (o.hasOwnProperty(property)) {
+  let o = {};
+  for (var property in options) {
+      if (options.hasOwnProperty(property)) {
         if (property!="_" && property!="o") {
           let prop = property.toLowerCase().replace(/_/g,'');
           if (recognizedOptions.indexOf(prop)>-1) {
-            options[prop] = o[property];
+            o[prop] = options[property];
           } else {
             console.log("Ignoring unrecognized option: ",property);
           }
         }
       }
   }
-  let run = options.run.replace(/\s/g, '');
+  let run = o.run.replace(/\s/g, '');
 
-  if (options.host||options.h) {
-    let host = (options.host||options.h).replace(/\s/g,'');
+  if (o.host||o.h||o.url) {
+    let host = (o.host||o.h||o.url).replace(/\s/g,'');
     let overrides = {
       localhost: "http://localhost:3000",
       staging: "http://folio-staging.aws.indexdata.com",
@@ -115,33 +120,26 @@ function getOptions (o, config) {
     }
     config.url = overrides[host] || overrides.host;
   }
-  config.test_timeout = options.testtimeout || options.timeout  || config.testTimeout;
-  config.login_wait = options.loginwait || config.login_wait;
-  config.debug_sleep = options.debugsleep || options.sleep || config.debug_sleep;
-  config.username = options.username || options.un || config.username;
-  config.password = options.password || options.pw || config.password;
-  if (options.show) {
-    config.nightmare = {
-      width: options.width || 1600,
-      height: options.width || 1200,
-      typeInterval: options.typeinterval || 75,
-      show: true,
-      gotoTimeout: options.gototimeout || options.goto || 90000
-    };
+  config.test_timeout = o.testtimeout || o.tto || config.test_timeout;
+  config.login_wait = o.loginwait || config.login_wait;
+  config.debug_sleep = o.debugsleep || o.sleep || config.debug_sleep;
+  config.console_logs = o.consolelogs || config.console_logs;
+  config.username = o.username || o.un || config.username;
+  config.password = o.password || o.pw || config.password;
+  if (o.show) {
+    config.nightmare.show = true;
   }
-  if (options.devtools) {
-    config.nightmare = {
-      typeInterval: options.typeinterval || 75,
-      openDevTools: {
-        mode: 'detach'
-      },
-      width: 800,
-      height: 600,
-      show: true,
-      gotoTimeout: options.gototimeout || options.goto || 90000
-    };
+  if (o.devtools) {
+    config.nightmare.openDevTools = { mode: 'detach'};
+    config.nightmare.show = true;
   }
-  return options;
+  config.nightmare.width = o.width || config.nightmare.width;
+  config.nightmare.height =  o.height || config.nightmare.height;
+  config.nightmare.typeInterval = o.typeinterval || config.nightmare.typeInterval;
+  config.nightmare.gotoTimeout = o.gototimeout || o.gto || config.nightmare.gotoTimeout;
+  config.nightmare.executionTimeout = o.executiontimeout || o.eto || config.nightmare.executionTimeout;
+  config.nightmare.waitTimeout = o.waittimeout || o.wto || config.nightmare.waitTimeout;
+  return o;
 }
 
 function showHelp() {
@@ -161,7 +159,7 @@ function showHelp() {
   console.log("");
   console.log("Options");
   console.log("");
-  console.log("  --host, --h ");
+  console.log("  --host, --h, --url ");
   console.log("      Override default URL of application to be tested. ");
   console.log("      Predefined options: ");
   console.log("         --h=localhost :   http://localhost:3000");
@@ -169,32 +167,58 @@ function showHelp() {
   console.log("         --h=staging   :   http://folio-staging.aws.indexdata.com");
   console.log("         --h=[any other URL for the application to be tested]");
   console.log("");
-  console.log("  --gotoTimeout, goto");
-  console.log("      Set the timeout for opening a URL, in milliseconds:    --goto=20000");
+  console.log("      Corresponds to environment variable FOLIO_UI_URL");
   console.log("");
-  console.log("  --testTimeout, --timeout");
+  console.log("  --waitTimeout, --wto");
+  console.log("      Set the timeout for wait actions, in milliseconds:    --waitTimeout=30000");  
+  console.log("");
+  console.log("      Corresponds to environment variable FOLIO_UI_WAIT_TIMEOUT");
+  console.log("");
+  console.log("  --gotoTimeout, --gto");
+  console.log("      Set the timeout for opening a URL, in milliseconds:    --gotoTimeout=20000");
+  console.log("");
+  console.log("      Corresponds to environment variable FOLIO_UI_GOTO_TIMEOUT");
+  console.log("");
+  console.log("  --executionTimeout, --eto");
+  console.log("      Set the timeout for evaluate(), in milliseconds:    --executionTimeout=20000");
+  console.log("");
+  console.log("      Corresponds to environment variable FOLIO_UI_EXECUTION_TIMEOUT");
+  console.log("");
+  console.log("  --testTimeout, --tto");
   console.log("      Set overall timeout for each test that use this argument");
   console.log("        in milliseconds:  --timeout=30000");
   console.log("");
+  console.log("      Corresponds to environment variable FOLIO_UI_TEST_TIMEOUT");
+  console.log("");
   console.log("  --debugSleep, --sleep");
-  console.log("       Set the sleep time for tests that use this argument, in milliseconds: --sleep=4000");
+  console.log("      Set the sleep time for tests that use this argument, in milliseconds: --sleep=4000");
+  console.log("");
+  console.log("      Corresponds to enviroment variable FOLIO_UI_DEBUG_SLEEP");
   console.log("");
   console.log("  --loginWait");
-  console.log("        Set the time to wait for the login page load to complete for tests that");
-  console.log("        use this argument. The provided login helper ('helpers.login')");
-  console.log("        will honor this argument, in milliseconds:        --loginWait=2000");
+  console.log("      Set the time to wait for the login page load to complete for tests that");
+  console.log("      honor this setting. The provided login helper ('helpers.login')");
+  console.log("      will honor this argument, in milliseconds:        --loginWait=2000");
   console.log("")
-  console.log("   --typeInterval");
-  console.log("        Override the default typing interval on user input, in milliseconds:  --typeinterval=50");
+  console.log("      Corresponds to enviroment variable FOLIO_UI_LOGIN_WAIT");
+  console.log("");
+  console.log("  --typeInterval");
+  console.log("      Override the default typing interval on user input, in milliseconds:  --typeinterval=50");
   console.log("");
   console.log("  --username, --un");
-  console.log("        Override the default username used for testing:   --un=myuser");
+  console.log("      Override the default username used for testing:   --un=myuser");
+  console.log("");
+  console.log("      Corresponds to enviroment variable FOLIO_UI_USERNAME");
   console.log("");
   console.log("  --password, --pw");
-  console.log("        Override the default password used for testing:  --pw=mypass")
+  console.log("      Override the default password used for testing:  --pw=mypass")
+  console.log("");
+  console.log("      Corresponds to enviroment variable FOLIO_UI_PASSWORD");
   console.log("");
   console.log("  --show");
   console.log("      Show test execution in browser window:   --show");
+  console.log("");
+  console.log("      Corresponds to enviroment variable FOLIO_UI_DEBUG=1");
   console.log("");
   console.log("  --width");
   console.log("      Change the default width of the browser window:    --width=800");
@@ -204,6 +228,9 @@ function showHelp() {
   console.log("");
   console.log("  --devTools");
   console.log("      Show test execution in browser window with DevTools opened:  --devTools");
+  console.log("");
+  console.log("      Corresponds to enviroment variable FOLIO_UI_DEBUG=2");
+  console.log("");
   console.log("");
   console.log("Examples using options: ");
   console.log("");

@@ -5,9 +5,9 @@ module.exports = {
     url:  process.env.FOLIO_UI_URL || 'http://folio-testing.aws.indexdata.com',
     username: process.env.FOLIO_UI_USERNAME || 'diku_admin',
     password: process.env.FOLIO_UI_PASSWORD || 'admin',
-    debug_sleep: process.env.FOLIO_UI_DEBUG_SLEEP || 4000,
-    login_wait: process.env.FOLIO_UI_LOGIN_WAIT || 1000,
-    test_timeout: process.env.FOLIO_UI_TEST_TIMEOUT || 40000,
+    debug_sleep: parseInt(process.env.FOLIO_UI_DEBUG_SLEEP) || 4000,
+    login_wait: parseInt(process.env.FOLIO_UI_LOGIN_WAIT) || 1000,
+    test_timeout: parseInt(process.env.FOLIO_UI_TEST_TIMEOUT) || 40000,
     select: {
       username: 'input[name=username]',
       password: 'input[name=password]',
@@ -15,19 +15,29 @@ module.exports = {
       logout: '#clickable-logout',
       settings: 'a[href="/settings"]'
     },
-
     nightmare: process.env.FOLIO_UI_DEBUG == 2 ? {
-        typeInterval: 75,
         openDevTools: {
             mode: 'detach'
         },
         width: 800,
         height: 600,
-        show: true
+        show: true,
+        typeInterval: parseInt(process.env.FOLIO_UI_TYPE_INTERVAL) || 75,
+        gotoTimeout: parseInt(process.env.FOLIO_UI_GOTO_TIMEOUT) || 90000,
+        waitTimeout: parseInt(process.env.FOLIO_UI_WAIT_TIMEOUT) || 30000,
+        executionTimeout: parseInt(process.env.FOLIO_UI_EXECUTION_TIMEOUT) || 30000
     } : process.env.FOLIO_UI_DEBUG == 1 ? {
         width: 1600,
         height: 1200,
-        typeInterval: 75,
-        show: true
-    } : { typeInterval: 75 }
+        show: true,
+        typeInterval: parseInt(process.env.FOLIO_UI_TYPE_INTERVAL) || 75,
+        gotoTimeout: parseInt(process.env.FOLIO_UI_GOTO_TIMEOUT) || 90000,
+        waitTimeout: parseInt(process.env.FOLIO_UI_WAIT_TIMEOUT) || 30000,
+        executionTimeout: parseInt(process.env.FOLIO_UI_EXECUTION_TIMEOUT) || 30000
+    } : {
+        typeInterval: parseInt(process.env.FOLIO_UI_TYPE_INTERVAL) || 75,
+        gotoTimeout: parseInt(process.env.FOLIO_UI_GOTO_TIMEOUT) || 90000,
+        waitTimeout: parseInt(process.env.FOLIO_UI_WAIT_TIMEOUT) || 30000,
+        executionTimeout: parseInt(process.env.FOLIO_UI_EXECUTION_TIMEOUT) || 30000
+    }
 }
