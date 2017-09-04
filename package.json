@@ -25,10 +25,10 @@
     "mocha": "^3.4.2",
     "nightmare": "^2.10.0",
     "nightmarejs": "^0.0.1",
-    "@folio/checkout": "^1.0.0",
-    "@folio/checkin": "^1.0.0",
-    "@folio/items": "^1.9.0",
-    "@folio/users": "^2.9.0",
-    "@folio/circulation": "^1.0.0"
+    "@folio/checkout": "^1.1.2",
+    "@folio/checkin": "^1.1.1",
+    "@folio/items": "^1.11.0",
+    "@folio/users": "^2.10.0",
+    "@folio/circulation": "^1.1.1"
   }
 }
