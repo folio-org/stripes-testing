@@ -106,23 +106,38 @@ When running a UI module's own test suites from ui-testing, there are three pote
 
 #### Run UI module tests against a stable FOLIO service
 
+Install tests from release repository
+
     npm config set @folio:registry https://repository.folio.org/repository/npm-folio/
     rm yarn.lock
     yarn install
 
-    export FOLIO_UI_URL=http://folio-staging.aws.indexdata.com/
+Then run the tests against a service built on releases, for example the folio-staging service
 
+    export FOLIO_UI_URL=http://folio-staging.aws.indexdata.com/
     yarn test-module -- -o --run=users
 
+or run the same with command line arguments
+
+    yarn test-module -- -o --host=staging --run=users
+    
 #### Run UI module tests against a FOLIO service with the latest commits
+
+Install tests from continuous integration repository
 
     npm config set @folio:registry https://repository.folio.org/repository/npm-folioci/
     rm yarn.lock
     yarn install
 
-    export FOLIO_UI_URL=http://folio-testing.aws.indexdata.com/
+Then run the tests against the folio-testing service, also based on the continuous integration repository:
 
+    export FOLIO_UI_URL=http://folio-testing.aws.indexdata.com/    # The current default URL for testing
     yarn test-module -- -o --run=users
+
+or run the same with command line arguments
+
+    yarn test-module -- -o --host=testing --run=users
+
 
 ## Develop tests for a UI module
 
