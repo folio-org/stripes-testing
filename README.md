@@ -5,6 +5,27 @@ Copyright (C) 2017 The Open Library Foundation
 This software is distributed under the terms of the Apache License,
 Version 2.0. See the file "[LICENSE](LICENSE)" for more information.
 
+<!-- ../okapi/doc/md2toc -l 2 -h 3 README.md -->
+* [About FOLIO UI Tests](#about-folio-ui-tests)
+* [Install node packages first](#install-node-packages-first)
+* [Run the main tests with default user/pw/url/debug level](#run-the-main-tests-with-default-userpwurldebug-level)
+* [Run individual tests contained in ui-testing](#run-individual-tests-contained-in-ui-testing)
+* [Run tests from a UI module](#run-tests-from-a-ui-module)
+    * [Run all of a UI module's tests](#run-all-of-a-ui-modules-tests)
+    * [Run individual tests from a UI module](#run-individual-tests-from-a-ui-module)
+* [Optional: environment variables to modify tests](#optional-environment-variables-to-modify-tests)
+* [Alternative for module tests: use command line arguments](#alternative-for-module-tests-use-command-line-arguments)
+* [Choose the source of UI module tests to run](#choose-the-source-of-ui-module-tests-to-run)
+    * [Run UI module tests against a stable FOLIO service](#run-ui-module-tests-against-a-stable-folio-service)
+    * [Run UI module tests against a FOLIO service with the latest commits](#run-ui-module-tests-against-a-folio-service-with-the-latest-commits)
+* [Develop tests for a UI module](#develop-tests-for-a-ui-module)
+    * [The test context object](#the-test-context-object)
+    * [xnightmare.js](#xnightmarejs)
+    * [namegen (helpers.js)  ](#namegen-helpersjs--)
+    * [openApp (helpers.js)](#openapp-helpersjs)
+    * [Developing a UI module together with its UI tests](#developing-a-ui-module-together-with-its-ui-tests)
+    * [Support test scripting with unique identifiers on UI elements](#support-test-scripting-with-unique-identifiers-on-ui-elements)
+
 ## About FOLIO UI Tests
 
 The tests are using the [nightmarejs](http://www.nightmarejs.org) browser automation library,
