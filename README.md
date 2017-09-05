@@ -12,15 +12,15 @@ and [mocha](https://mochajs.org) for the tests itself.
 
 Some tests are contained within ui-testing itself while others live in the individual UI modules, and can be executed from there by ui-testing.
 
-## install node packages first
+## Install node packages first
 
     $ yarn install
 
-## run the main tests with default user/pw/url/debug level
+## Run the main tests with default user/pw/url/debug level
 
     $ yarn test
 
-### run individual tests contained in ui-testing
+## Run individual tests contained in ui-testing
 
     $ ./node_modules/.bin/mocha test/checkout.js   # runs the checkout test that visits multiple apps
 
@@ -32,13 +32,13 @@ to list pre-defined tests
 
     $ yarn run
 
-### run tests from a UI module
+## Run tests from a UI module
 
-#### run all of a UI module's tests
+### Run all of a UI module's tests
 
     $ yarn test-module -- -o --run=users    # runs all tests in test.js from the users module
 
-#### run individual tests from a UI module
+### Run individual tests from a UI module
 
     $ yarn test-module -- -o --run=users:new_user  # runs the new-user tests from the users module
 
@@ -46,7 +46,7 @@ to view options for running UI module tests
 
     $ yarn test-module
 
-## optional: environment variables to modify tests
+## Optional: environment variables to modify tests
 
 set username/password to something different from the default:
 
@@ -83,7 +83,7 @@ All options in one:
 
 See [folio-ui.config.js](https://github.com/folio-org/ui-testing/blob/master/folio-ui.config.js) for current environment variables.
 
-## alternative for module tests: use command line arguments
+## Alternative for module tests: use command line arguments
 
 run a module's test in browser against localhost:3000
 
@@ -104,7 +104,7 @@ When running a UI module's own test suites from ui-testing, there are three pote
 * FOLIO's continuous integration repository: npm-folioci at repository.folio.org. This is appropriate for regression tests and continuous integration. This would also suit developers who are programming test suites or UI modules, and want to test very the latest developments.
 * A local checkout of the UI module, brought into ui-testing by 'yarn link' or similar. This could be for developers programming test suites for a UI module and wanting to execute the test scripts with local changes.
 
-#### Run UI module tests against a stable FOLIO service
+### Run UI module tests against a stable FOLIO service
 
 Install tests from release repository
 
@@ -121,7 +121,7 @@ or run the same with command line arguments
 
     yarn test-module -- -o --host=staging --run=users
     
-#### Run UI module tests against a FOLIO service with the latest commits
+### Run UI module tests against a FOLIO service with the latest commits
 
 Install tests from continuous integration repository
 
@@ -205,21 +205,21 @@ The test context passed to the module's test from ui-testing has following conte
 
 NOTE: This is the first version of the context and it is subject to change.
 
-#### xnightmare.js
+### xnightmare.js
 
 The xnightmare.js file extends nightmare by adding actions that use XPath as a node selector.
 So far there are only two actions contained in this file:
 
-##### .xclick(xpath)
+#### .xclick(xpath)
 
 Does the same as .click but takes an XPath instead of a CSS selector as an argument.
 
-##### .xtract(xpath)
+#### .xtract(xpath)
 
 This will extract and return the textContent of an XPath node.
 The returned value will be passed to the next action in the chain (most likely .then).
 
-#### namegen (helpers.js)  
+### namegen (helpers.js)  
 
 This script creates random user data (100 possibilities).
 Returns: id, firstname, lastname, email, barcode, password
@@ -250,7 +250,7 @@ it('should create a user: ' + user.id + '/' + user.password, done => {
 })
 ```
 
-#### openApp (helpers.js)
+### openApp (helpers.js)
 
 openApp is a helper function that will open the page of a given UI module.
 If the test script passes it's version to openApp, then openApp will log the version of the test
