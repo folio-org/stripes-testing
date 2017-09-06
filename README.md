@@ -25,6 +25,7 @@ Version 2.0. See the file "[LICENSE](LICENSE)" for more information.
     * [openApp (helpers.js)](#openapp-helpersjs)
     * [Developing a UI module together with its UI tests](#developing-a-ui-module-together-with-its-ui-tests)
     * [Support test scripting with unique identifiers on UI elements](#support-test-scripting-with-unique-identifiers-on-ui-elements)
+* [Additional information](#additional-information)
 
 ## About FOLIO UI Tests
 
@@ -364,4 +365,14 @@ it('should show error when scanning item before patron card', done => {
   .catch(done)
 })
 ```
+
+## Additional information
+
+See [stripes-core](https://github.com/folio-org/stripes-core)
+and other [modules](http://dev.folio.org/source-code/#client-side).
+
+See project [UITEST](https://issues.folio.org/browse/UITEST)
+at the [FOLIO issue tracker](http://dev.folio.org/community/guide-issues).
+
+Other FOLIO Developer documentation is at [dev.folio.org](http://dev.folio.org/)
 
