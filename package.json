@@ -29,6 +29,7 @@
     "@folio/checkin": "^1.1.1",
     "@folio/items": "^1.11.0",
     "@folio/users": "^2.10.0",
-    "@folio/circulation": "^1.1.1"
+    "@folio/circulation": "^1.1.1",
+    "@folio/requests": "^0.0.1"
   }
 }
