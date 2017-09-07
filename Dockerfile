@@ -16,7 +16,7 @@ RUN wget --no-check-certificate --no-cookies https://deb.nodesource.com/setup_${
     chmod +x /tmp/node.sh && \
     sh -c "/tmp/node.sh" && \
     rm -f /tmp/node.sh && \
-    apt-get install nodejs && \
+    apt-get install -y nodejs && \
     npm install -g yarn
 
 WORKDIR /usr/src/ui-testing
