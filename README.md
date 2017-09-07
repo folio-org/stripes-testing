@@ -376,7 +376,7 @@ When a stable FOLIO platform build is made that passes the ui-testing test suite
  
 Run the tests against the platform build to verify that they pass. If they do not, we are not yet ready to tag a version of ui-testing for the platform build. If they do, proceed with the versioning: 
 
-Add the yarn.lock to git and commit it with a commit message referring to the version of the platform build, for instance:
+Add the newly generated yarn.lock to git and commit it with a commit message referring to the version of the platform build, for instance:
  
     $ git add yarn.lock    
     $ git commit -m "Add yarn.lock v5.0.0"
