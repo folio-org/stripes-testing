@@ -365,6 +365,30 @@ it('should show error when scanning item before patron card', done => {
   .catch(done)
 })
 ```
+## Manage ui-testing versions
+We maintain versions of ui-testing itself for the purpose of testing specific builds of FOLIO platforms based entirely on NPM released components. 
+
+When a stable FOLIO platform build is made that passes the ui-testing test suite, we lock down that version of the test suite like this:
+
+    $ npm config set @folio:registry https://repository.folio.org/repository/npm-folio/
+    $ rm yarn.lock
+    $ yarn install
+ 
+Run the tests against the platform build to verify that they pass. If they do not, we are not yet ready to tag a version of ui-testing for the platform build. If they do, proceed with the versioning: 
+
+Add the yarn.lock to git and commit it with a commit message referring to the version of the platform build, for instance:
+ 
+    $ git add yarn.lock    
+    $ git commit -m "Add yarn.lock v5.0.0"
+
+Tag the commit with a label that indicates the platform build it pertains to, for instance:
+
+    $ git tag "v5.0.0"
+    $ git push
+    $ git push origin tag "v5.0.0"
+    
+Once the version is tagged, the yarn.lock should be removed again. The regular test builds for testing the continuous integration platform should always pick the latest from the CI repository, and should thus not be locked down by yarn.lock. Delete the yarn.lock file from ui-testing, git commit and git push.  
+
 
 ## Additional information
 
