@@ -9,7 +9,7 @@
   "author": "Wolfram Schneider <wosch@indexdata.com>",
   "license": "Apache-2.0",
   "scripts": {
-    "test": "./node_modules/.bin/mocha test/100-startpage.js test/120-auth-fail.js test/dependencies.js test/checkout.js test-module.js --run=/checkin/checkout/users/items/",
+    "test": "./node_modules/.bin/mocha test/100-startpage.js test/120-auth-fail.js test/dependencies.js test/checkout.js test-module.js --run=/checkin/checkout/users/items/instances",
     "test-simple": "./node_modules/.bin/mocha test/100-startpage.js",
     "test-good-login": "./node_modules/.bin/mocha test/110-auth-success.js",
     "test-bad-login": "./node_modules/.bin/mocha test/110-auth-failure.js",
@@ -19,7 +19,7 @@
     "test-checkout-user": "./node_modules/.bin/mocha test/checkout.js test-module.js --run=users:new_user",
     "test-all": "./node_modules/.bin/mocha",
     "test-module": "./node_modules/.bin/mocha test-module.js",
-    "module-tests": "./node_modules/.bin/mocha test-module.js --run=/checkout/checkin/users/items/"
+    "module-tests": "./node_modules/.bin/mocha test-module.js --run=/checkout/checkin/users/items/instances"
   },
   "dependencies": {
     "mocha": "^3.4.2",
@@ -29,6 +29,7 @@
     "@folio/checkin": "^1.1.1",
     "@folio/items": "^1.11.0",
     "@folio/users": "^2.10.0",
-    "@folio/circulation": "^1.1.1"
+    "@folio/circulation": "^1.1.1",
+    "@folio/instances": "^1.0.0"
   }
 }
