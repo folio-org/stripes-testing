@@ -25,6 +25,7 @@ Version 2.0. See the file "[LICENSE](LICENSE)" for more information.
     * [openApp (helpers.js)](#openapp-helpersjs)
     * [Developing a UI module together with its UI tests](#developing-a-ui-module-together-with-its-ui-tests)
     * [Support test scripting with unique identifiers on UI elements](#support-test-scripting-with-unique-identifiers-on-ui-elements)
+* [Manage ui-testing versions](#manage-ui-testing-versions)
 * [Additional information](#additional-information)
 
 ## About FOLIO UI Tests
