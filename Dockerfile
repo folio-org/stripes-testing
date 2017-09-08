@@ -16,17 +16,13 @@ RUN wget --no-check-certificate --no-cookies https://deb.nodesource.com/setup_${
     chmod +x /tmp/node.sh && \
     sh -c "/tmp/node.sh" && \
     rm -f /tmp/node.sh && \
-    apt-get install nodejs && \
+    apt-get install -y nodejs && \
     npm install -g yarn
 
 WORKDIR /usr/src/ui-testing
 
 COPY test /usr/src/ui-testing/test
-COPY LICENSE /usr/src/ui-testing/LICENSE
-COPY package.json /usr/src/ui-testing/package.json
-COPY docker-run.sh /usr/src/ui-testing/docker-run.sh
-COPY yarn.lock /usr/src/ui-testing/yarn.lock
-COPY *.js /usr/src/ui-testing/
+COPY LICENSE package.json docker-run.sh yarn.* *.js /usr/src/ui-testing/
 
 RUN useradd -ms /bin/bash folio
 RUN chown -R folio /usr/src/ui-testing
