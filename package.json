@@ -17,6 +17,7 @@
     "test-dependencies": "./node_modules/.bin/mocha test/dependencies.js",
     "test-user-item": "./node_modules/.bin/mocha test-module.js --run=/users:new_user/items:new_item/",
     "test-checkout-user": "./node_modules/.bin/mocha test/checkout.js test-module.js --run=users:new_user",
+    "test-instances": "./node_modules/.bin/mocha test-module.js --run=/instances",
     "test-all": "./node_modules/.bin/mocha",
     "test-module": "./node_modules/.bin/mocha test-module.js",
     "module-tests": "./node_modules/.bin/mocha test-module.js --run=/checkout/checkin/users/items/instances"
