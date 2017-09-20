@@ -77,7 +77,7 @@ describe('Exercise users, items, checkout, checkin, settings ("test-checkout")',
       .insert('#input-patron-identifier',userid)
       .wait(222)
       .click('#clickable-find-patron')
-      .wait('div[title="' + userid + '"]')
+      .wait('#patron-form ~ div a > strong')
       .wait(222)
       .insert('#input-item-barcode',barcode)
       .wait(222)
