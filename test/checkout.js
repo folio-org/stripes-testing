@@ -101,7 +101,16 @@ describe('Exercise users, items, checkout, checkin, settings ("test-checkout")',
       .click('#list-users div[title="' + userid + '"]')
       .wait(2222)
       .click('#clickable-viewcurrentloans')
-      .wait('div[title="' + barcode + '"]')
+      //.wait('div[title="' + barcode + '"]')
+      .wait(function(barcode) {
+        var element = document.evaluate('id("list-loanshistory")//a[.="' + barcode + '"]', document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null)
+	if (!element) {
+	  return false
+	}
+	else {
+	  return true
+	}
+      }, barcode)
       .wait(parseInt(process.env.FOLIO_UI_DEBUG) ? parseInt(config.debug_sleep) : 555) // debugging
       .then(result => { done() })
       .catch(done)
@@ -127,9 +136,18 @@ describe('Exercise users, items, checkout, checkin, settings ("test-checkout")',
       .wait(2222)
       .click('div[title="' + userid + '"]')
       .wait(2222)
-      .wait('#clickable-viewclosedloans')
-      .click('#clickable-viewclosedloans')
-      .wait('div[title="' + barcode + '"]')
+      .wait('#clickable-viewfullhistory')
+      .click('#clickable-viewfullhistory')
+      .wait(function(barcode) {
+        var element = document.evaluate('id("list-loanshistory")//a[.="' + barcode + '"]', document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null)
+	if (!element) {
+	  return false
+	}
+	else {
+	  return true
+	}
+      }, barcode)
+      //.wait('div[title="' + barcode + '"]')
       .wait(parseInt(process.env.FOLIO_UI_DEBUG) ? parseInt(config.debug_sleep) : 555) // debugging
       .then(result => { done() })
       .catch(done)
