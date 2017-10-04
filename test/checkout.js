@@ -130,14 +130,13 @@ describe('Exercise users, items, checkout, checkin, settings ("test-checkout")',
     it('should confirm ' + barcode + ' in ' + userid + '\'s closed loans', done => {
       nightmare
       .click('#clickable-users-module')
-      .wait('.headerSearchInput---1z5qG')
-      .click('.headerSearchClearButton---2MIXs')
-      .type('.headerSearchInput---1z5qG',userid)
-      .wait(2222)
+      .wait('#input-user-search')
+      .click('#input-user-search ~ button')
+      .type('#input-user-search',userid)
+      .wait(222)
       .click('div[title="' + userid + '"]')
-      .wait(2222)
-      .wait('#clickable-viewfullhistory')
-      .click('#clickable-viewfullhistory')
+      .wait(222)
+      .click('#clickable-viewclosedloans')
       .wait(function(barcode) {
         var element = document.evaluate('id("list-loanshistory")//a[.="' + barcode + '"]', document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null)
 	if (!element) {
