@@ -13,7 +13,7 @@ module.exports = {
       password: 'input[name=password]',
       login: '#clickable-login',
       logout: '#clickable-logout',
-      settings: 'a[href="/settings"]'
+      settings: '#clickable-settings'
     },
     nightmare: process.env.FOLIO_UI_DEBUG == 2 ? {
         openDevTools: {
