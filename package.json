@@ -23,15 +23,15 @@
     "module-tests": "./node_modules/.bin/mocha test-module.js --run=/checkout/checkin/users/items/instances"
   },
   "dependencies": {
+    "@folio/checkin": "latest",
+    "@folio/checkout": "latest",
+    "@folio/circulation": "latest",
+    "@folio/instances": "latest",
+    "@folio/items": "latest",
+    "@folio/users": "^2.10.100044",
+    "electron": "1.7.6",
     "mocha": "^3.4.2",
     "nightmare": "^2.10.0",
-    "nightmarejs": "^0.0.1",
-    "electron": "1.7.6",
-    "@folio/checkout": "latest",
-    "@folio/checkin": "latest",
-    "@folio/items": "latest",
-    "@folio/users": "latest",
-    "@folio/circulation": "latest",
-    "@folio/instances": "latest"
+    "nightmarejs": "^0.0.1"
   }
 }
