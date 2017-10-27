@@ -123,8 +123,15 @@ describe('Exercise users, items, checkout, checkin, settings ("test-checkout")',
       .wait(222)
       .click('#clickable-add-item')
       .wait('div[title="' + barcode + '"]')
-      .wait(parseInt(process.env.FOLIO_UI_DEBUG) ? parseInt(config.debug_sleep) : 555) // debugging
-      .then(result => { done() })
+      .evaluate(function() {
+        var a = document.querySelector('div[title="Available"]')
+	if (a == undefined) {
+	  throw new Error("Checkin did not return 'Available' status")
+	}
+      })
+      .then(result => {
+        done() 
+      })
       .catch(done)
     })
     it('should confirm ' + barcode + ' in ' + userid + '\'s closed loans', done => {
