@@ -28,6 +28,7 @@
     "@folio/circulation": "latest",
     "@folio/instances": "latest",
     "@folio/items": "latest",
+    "@folio/requests": "latest",
     "@folio/users": "^2.10.100044",
     "electron": "1.7.6",
     "mocha": "^3.4.2",
