@@ -92,7 +92,7 @@ describe('Exercise users, items, checkout, checkin, settings ("test-checkout")',
 	}
       }, barcode)
       .wait(222) 
-      .click('#clickable-done')
+      .click('#section-item button')
       .wait(parseInt(process.env.FOLIO_UI_DEBUG) ? parseInt(config.debug_sleep) : 555) // debugging
       .then(result => { done() })
       .catch(done)
