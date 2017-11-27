@@ -82,7 +82,15 @@ describe('Exercise users, items, checkout, checkin, settings ("test-checkout")',
       .type('#input-item-barcode',barcode)
       .wait(222)
       .click('#clickable-add-item')
-      .wait('div[title="' + barcode + '"]')
+      .wait(function(barcode) {
+        var element = document.evaluate('id("list-items-checked-out")//a[.="' + barcode + '"]', document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null)
+	if (!element) {
+	  return false
+	}
+	else {
+	  return true
+	}
+      }, barcode)
       .wait(222) 
       .click('#clickable-done')
       .wait(parseInt(process.env.FOLIO_UI_DEBUG) ? parseInt(config.debug_sleep) : 555) // debugging
