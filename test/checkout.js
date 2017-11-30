@@ -11,6 +11,7 @@ describe('Exercise users, items, checkout, checkin, settings ("test-checkout")',
     let nightmare = new Nightmare(config.nightmare)
     let userid = 'user'
     let barcode = 'item'
+    let uselector = "#list-users div[role='listitem']:nth-of-type(12) > a > div:nth-of-type(5)"
 
     it('should login as ' + config.username + '/' + config.password, done => {
       nightmare
@@ -43,10 +44,10 @@ describe('Exercise users, items, checkout, checkin, settings ("test-checkout")',
     it('should find an active user ', done => {
       nightmare
       .click('#clickable-users-module')
-      .wait('#list-users a:nth-of-type(11) > div:nth-of-type(5)')
-      .evaluate(function() {
-        return document.querySelector('#list-users a:nth-of-type(11) > div:nth-of-type(5)').title
-      })
+      .wait(uselector)
+      .evaluate(function(selector) {
+        return document.querySelector(selector).title
+      }, uselector)
       .then(function(result) {
         userid = result
         console.log('          Found user ' + userid)
@@ -82,15 +83,13 @@ describe('Exercise users, items, checkout, checkin, settings ("test-checkout")',
       .type('#input-item-barcode',barcode)
       .wait(222)
       .click('#clickable-add-item')
-      .wait(function(barcode) {
-        var element = document.evaluate('id("list-items-checked-out")//a[.="' + barcode + '"]', document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null)
-	if (!element) {
-	  return false
+      .wait(1111)
+      .evaluate(function() {
+        var sel = document.querySelector('div[class^="textfieldError"]')
+	if (sel) {
+	  throw new Error(sel.textContent)
 	}
-	else {
-	  return true
-	}
-      }, barcode)
+      })
       .wait(222) 
       .click('#section-item button')
       .wait(parseInt(process.env.FOLIO_UI_DEBUG) ? parseInt(config.debug_sleep) : 555) // debugging
@@ -130,7 +129,7 @@ describe('Exercise users, items, checkout, checkin, settings ("test-checkout")',
       .type('#input-item-barcode',barcode)
       .wait(222)
       .click('#clickable-add-item')
-      .wait('div[title="' + barcode + '"]')
+      .wait(1111)
       .evaluate(function() {
         var a = document.querySelector('div[title="Available"]')
 	if (a == undefined) {
