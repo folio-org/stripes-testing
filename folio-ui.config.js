@@ -6,7 +6,7 @@ module.exports = {
     username: process.env.FOLIO_UI_USERNAME || 'diku_admin',
     password: process.env.FOLIO_UI_PASSWORD || 'admin',
     debug_sleep: parseInt(process.env.FOLIO_UI_DEBUG_SLEEP) || 4000,
-    login_wait: parseInt(process.env.FOLIO_UI_LOGIN_WAIT) || 15000,
+    login_wait: parseInt(process.env.FOLIO_UI_LOGIN_WAIT) || 1000,
     test_timeout: parseInt(process.env.FOLIO_UI_TEST_TIMEOUT) || 40000,
     select: {
       username: 'input[name=username]',
@@ -40,4 +40,7 @@ module.exports = {
         waitTimeout: parseInt(process.env.FOLIO_UI_WAIT_TIMEOUT) || 30000,
         executionTimeout: parseInt(process.env.FOLIO_UI_EXECUTION_TIMEOUT) || 30000
     }
+}
+if (module.exports.url.match(/snapshot/)) {
+  module.exports.login_wait = 15000
 }
