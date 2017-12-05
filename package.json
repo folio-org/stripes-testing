@@ -23,10 +23,10 @@
     "module-tests": "./node_modules/.bin/mocha test-module.js --run=/checkout/checkin/users/items/inventory"
   },
   "dependencies": {
-    "@folio/checkin": "latest",
+    "@folio/checkin": "^1.1.100013",
     "@folio/checkout": "^1.1.200034",
     "@folio/circulation": "^1.1.100020",
-    "@folio/inventory": "latest",
+    "@folio/inventory": "^1.0.100023",
     "@folio/items": "latest",
     "@folio/requests": "^1.0.100015",
     "@folio/users": "^2.10.100044",

@@ -12,6 +12,7 @@ describe('Exercise users, items, checkout, checkin, settings ("test-checkout")',
     let userid = 'user'
     let barcode = 'item'
     let uselector = "#list-users div[role='listitem']:nth-of-type(12) > a > div:nth-of-type(5)"
+    let openLoans = null
 
     it('should login as ' + config.username + '/' + config.password, done => {
       nightmare
@@ -50,8 +51,36 @@ describe('Exercise users, items, checkout, checkin, settings ("test-checkout")',
       }, uselector)
       .then(function(result) {
         userid = result
-        console.log('          Found user ' + userid)
         done()
+        console.log('          Found user ' + userid)
+      })
+      .catch(done)
+    })
+    it('should find current loans count for ' + userid, done => {
+      nightmare
+      .click('div[title="' + userid + '"]')
+      .wait('#clickable-viewcurrentloans')
+      .evaluate(function() {
+        return document.querySelector('#clickable-viewcurrentloans').textContent
+      })
+      .then(function(result) {
+        var ol = result
+	openLoans = Number(ol.replace(/^(\d+).*/,"$1"))
+        done()
+        console.log('          Open loans: ' + openLoans)
+      })
+      .catch(done)
+    })
+    it('should find closed loans count for ' + userid, done => {
+      nightmare
+      .evaluate(function() {
+        return document.querySelector('#clickable-viewclosedloans').textContent
+      })
+      .then(function(result) {
+        var ol = result
+	openLoans = Number(ol.replace(/^(\d+).*/,"$1"))
+        done()
+        console.log('          Closed loans: ' + openLoans)
       })
       .catch(done)
     })
@@ -64,9 +93,9 @@ describe('Exercise users, items, checkout, checkin, settings ("test-checkout")',
         return element.singleNodeValue.innerHTML
       })
       .then(function(result) {
-        console.log('          Found item ' + result)
         barcode = result
         done()
+        console.log('          Found item ' + result)
       })
       .catch(done)
     })
@@ -75,12 +104,12 @@ describe('Exercise users, items, checkout, checkin, settings ("test-checkout")',
       .click('#clickable-checkout-module')
       .wait('#input-patron-identifier')
       .wait(222)
-      .type('#input-patron-identifier',userid)
+      .insert('#input-patron-identifier',userid)
       .wait(222)
       .click('#clickable-find-patron')
       .wait('#patron-form ~ div a > strong')
       .wait(222)
-      .type('#input-item-barcode',barcode)
+      .insert('#input-item-barcode',barcode)
       .wait(222)
       .click('#clickable-add-item')
       .wait(1111)
@@ -102,11 +131,10 @@ describe('Exercise users, items, checkout, checkin, settings ("test-checkout")',
       .wait('#input-user-search')
       .click('#input-user-search~button')
       .wait(222)
-      .type('#input-user-search',userid)
+      .insert('#input-user-search',userid)
       .wait('#list-users div[title="' + userid + '"]')
-      .wait(222)
       .click('#list-users div[title="' + userid + '"]')
-      .wait(2222)
+      .wait('#clickable-viewcurrentloans')
       .click('#clickable-viewcurrentloans')
       //.wait('div[title="' + barcode + '"]')
       .wait(function(barcode) {
@@ -126,13 +154,13 @@ describe('Exercise users, items, checkout, checkin, settings ("test-checkout")',
       nightmare
       .click('#clickable-checkin-module')
       .wait(222)
-      .type('#input-item-barcode',barcode)
+      .insert('#input-item-barcode',barcode)
       .wait(222)
       .click('#clickable-add-item')
-      .wait(1111)
+      .wait('#list-items-checked-in')
       .evaluate(function() {
         var a = document.querySelector('div[title="Available"]')
-	if (a == undefined) {
+	if (a === null) {
 	  throw new Error("Checkin did not return 'Available' status")
 	}
       })
@@ -146,10 +174,10 @@ describe('Exercise users, items, checkout, checkin, settings ("test-checkout")',
       .click('#clickable-users-module')
       .wait('#input-user-search')
       .click('#input-user-search ~ button')
-      .type('#input-user-search',userid)
-      .wait(222)
+      .insert('#input-user-search',userid)
+      .wait('div[title="' + userid + '"]')
       .click('div[title="' + userid + '"]')
-      .wait(222)
+      .wait('#clickable-viewclosedloans')
       .click('#clickable-viewclosedloans')
       .wait(function(barcode) {
         var element = document.evaluate('id("list-loanshistory")//a[.="' + barcode + '"]', document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null)
@@ -160,7 +188,6 @@ describe('Exercise users, items, checkout, checkin, settings ("test-checkout")',
 	  return true
 	}
       }, barcode)
-      //.wait('div[title="' + barcode + '"]')
       .wait(parseInt(process.env.FOLIO_UI_DEBUG) ? parseInt(config.debug_sleep) : 555) // debugging
       .then(result => { done() })
       .catch(done)
