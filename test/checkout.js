@@ -39,6 +39,7 @@ describe('Exercise users, items, checkout, checkin, settings ("test-checkout")',
       .wait('#patronScanId')
       .wait(222)
       .select('#patronScanId','USER')
+      .wait(parseInt(process.env.FOLIO_UI_DEBUG) ? parseInt(config.debug_sleep) : 555) // debugging
       .then(result => { done() })
       .catch(done)
     })
@@ -60,6 +61,7 @@ describe('Exercise users, items, checkout, checkin, settings ("test-checkout")',
       nightmare
       .click('div[title="' + userid + '"]')
       .wait('#clickable-viewcurrentloans')
+      .wait(1999)
       .evaluate(function() {
         return document.querySelector('#clickable-viewcurrentloans').textContent
       })
@@ -103,11 +105,28 @@ describe('Exercise users, items, checkout, checkin, settings ("test-checkout")',
       nightmare
       .click('#clickable-checkout-module')
       .wait('#input-patron-identifier')
-      .wait(222)
+      .wait(2222)
+      .evaluate(function() {
+        var ph = document.querySelector('#input-patron-identifier').placeholder
+	if (!ph.match(/username/i)) {
+	  throw new Error('Placeholder is not asking for Username! (' + ph + ')');
+	}
+      })
       .insert('#input-patron-identifier',userid)
-      .wait(222)
       .click('#clickable-find-patron')
-      .wait('#patron-form ~ div a > strong')
+      .wait(function() {
+        var err = document.querySelector('#patron-form div[class^="textfieldError"]')
+        var yay = document.querySelector('#patron-form ~ div a > strong')
+	if (err) {
+	  throw new Error(err.textContent)
+	}
+	else if (yay) {
+	  return true
+	}
+	else {
+	  return false
+	}
+      })
       .wait(222)
       .insert('#input-item-barcode',barcode)
       .wait(222)
@@ -136,14 +155,13 @@ describe('Exercise users, items, checkout, checkin, settings ("test-checkout")',
       .click('#list-users div[title="' + userid + '"]')
       .wait('#clickable-viewcurrentloans')
       .click('#clickable-viewcurrentloans')
-      //.wait('div[title="' + barcode + '"]')
       .wait(function(barcode) {
         var element = document.evaluate('id("list-loanshistory")//a[.="' + barcode + '"]', document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null)
-	if (!element) {
-	  return false
+	if (element.singleNodeValue) {
+	  return true
 	}
 	else {
-	  return true
+	  return false
 	}
       }, barcode)
       .wait(parseInt(process.env.FOLIO_UI_DEBUG) ? parseInt(config.debug_sleep) : 555) // debugging
@@ -181,11 +199,11 @@ describe('Exercise users, items, checkout, checkin, settings ("test-checkout")',
       .click('#clickable-viewclosedloans')
       .wait(function(barcode) {
         var element = document.evaluate('id("list-loanshistory")//a[.="' + barcode + '"]', document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null)
-	if (!element) {
-	  return false
+	if (element.singleNodeValue) {
+	  return true
 	}
 	else {
-	  return true
+	  return false
 	}
       }, barcode)
       .wait(parseInt(process.env.FOLIO_UI_DEBUG) ? parseInt(config.debug_sleep) : 555) // debugging
