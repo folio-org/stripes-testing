@@ -2,7 +2,7 @@
 // global debug options for tests
 //
 module.exports = {
-    url:  process.env.FOLIO_UI_URL || 'http://folio-snapshot.aws.indexdata.com',
+    url:  process.env.FOLIO_UI_URL || 'http://folio-testing.aws.indexdata.com',
     username: process.env.FOLIO_UI_USERNAME || 'diku_admin',
     password: process.env.FOLIO_UI_PASSWORD || 'admin',
     debug_sleep: parseInt(process.env.FOLIO_UI_DEBUG_SLEEP) || 4000,
