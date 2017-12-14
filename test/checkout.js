@@ -39,6 +39,7 @@ describe('Exercise users, items, checkout, checkin, settings ("test-checkout")',
       .wait('#patronScanId')
       .wait(222)
       .select('#patronScanId','USER')
+      .xclick('//button[.="Save"]')
       .wait(parseInt(process.env.FOLIO_UI_DEBUG) ? parseInt(config.debug_sleep) : 555) // debugging
       .then(result => { done() })
       .catch(done)
