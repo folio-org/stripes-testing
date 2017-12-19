@@ -37,7 +37,8 @@ describe('Checking for dependency issues on FOLIO UI App /about ("test-dependenc
     flogin(config.username, config.password)
     it('should load "about" page', done => {
       nightmare
-      .click('a[href="/about"]')
+      .click('#clickable-settings')
+      .click('a[href="/settings/about"]')
       .wait(555)
       .then(result => { done() })
       .catch(done)
