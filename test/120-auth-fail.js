@@ -18,7 +18,7 @@ describe('Login Page ("test-bad-login")', function () {
       .type(config.select.username, 'notgonnawork')
       .type(config.select.password, 'invalid password')
       .click('#clickable-login')
-      .wait('div[class^="loginError"]') // failure
+      .wait('div[class^="formMessage"]') // failure
       .wait(parseInt(process.env.FOLIO_UI_DEBUG) ? parseInt(config.debug_sleep) : 0) // debugging
       .end()
       .then(result => { done() })

@@ -1,27 +1,26 @@
-
-
 module.exports.login = (nightmare, config, done, un, pw) => {
-    nightmare
-    .on('page', function(type="alert", message) {
-       throw new Error(message)
-     })
-    .goto(config.url)
-    .wait(Number(config.login_wait))
-    .insert(config.select.username, (un || config.username))
-    .insert(config.select.password, (pw || config.password))
-    .click('#clickable-login')
-    .wait('#clickable-logout')
-    .then(result => {
-      done()
-    })
+  nightmare
+  .on('page', function(type="alert", message) {
+     throw new Error(message)
+   })
+  .goto(config.url)
+  .wait(Number(config.login_wait))
+  .insert(config.select.username, (un || config.username))
+  .insert(config.select.password, (pw || config.password))
+  .click('#clickable-login')
+  .wait('#clickable-logout')
+  .then(result => {done()})
+  .catch(done)
 };
 
 module.exports.logout = (nightmare, config, done) => {
   nightmare
   .click('#clickable-logout') // logout
-  .wait('div[class^="loginContainer"') // login page
+  .wait('#clickable-login') // login page
   .wait(parseInt(process.env.FOLIO_UI_DEBUG) ? parseInt(config.debug_sleep/3) : 0) // debugging
+  .end()
   .then(result => {done()})
+  .catch(done)
 }
 
 
