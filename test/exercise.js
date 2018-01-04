@@ -4,7 +4,7 @@ const config = require('../folio-ui.config.js')
 const helpers = require('../helpers.js')
 const user = helpers.namegen()
 
-describe('Exercise users, inventory, checkout, checkin, settings ("test-checkout")', function () {
+describe('Exercise users, inventory, checkout, checkin, settings ("test-exercise")', function () {
   this.timeout(Number(config.test_timeout))
 
   describe("Login > Update settings > Find user > Create inventory record > Create holdings record > Create item record > Checkout item > Confirm checkout > Checkin > Confirm checkin > Logout\n", () => {
