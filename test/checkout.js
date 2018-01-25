@@ -149,7 +149,7 @@ describe('Exercise users, items, checkout, checkin, settings ("test-checkout")',
       nightmare
       .click('#clickable-users-module')
       .wait('#input-user-search')
-      .click('#input-user-search~button')
+      .click('#input-user-search ~ div button')
       .wait(222)
       .insert('#input-user-search',userid)
       .wait('#list-users div[title="' + userid + '"]')
@@ -192,7 +192,7 @@ describe('Exercise users, items, checkout, checkin, settings ("test-checkout")',
       nightmare
       .click('#clickable-users-module')
       .wait('#input-user-search')
-      .click('#input-user-search ~ button')
+      .click('#input-user-search ~ div button')
       .insert('#input-user-search',userid)
       .wait('div[title="' + userid + '"]')
       .click('div[title="' + userid + '"]')

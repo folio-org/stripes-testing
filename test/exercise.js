@@ -97,7 +97,7 @@ describe('Exercise users, inventory, checkout, checkin, settings ("test-exercise
       .wait('#input_instance_title')
       .insert('#input_instance_title', title)
       .wait(333)
-      .type('#select_instance_type', 'ss')
+      .type('#select_instance_type', 'b')
       .click('#clickable-create-instance')
       .wait('#clickable-new-holdings-record')
       .then(result => { done() })
@@ -175,7 +175,7 @@ describe('Exercise users, inventory, checkout, checkin, settings ("test-exercise
       nightmare
       .click('#clickable-users-module')
       .wait('#input-user-search')
-      .click('#input-user-search~button')
+      // .click('#input-user-search ~ div button')
       .wait(222)
       .insert('#input-user-search',userid)
       .wait('#list-users div[title="' + userid + '"]')
@@ -218,7 +218,7 @@ describe('Exercise users, inventory, checkout, checkin, settings ("test-exercise
       nightmare
       .click('#clickable-users-module')
       .wait('#input-user-search')
-      .click('#input-user-search ~ button')
+      // .click('#input-user-search ~ div button')
       .insert('#input-user-search',userid)
       .wait('div[title="' + userid + '"]')
       .click('div[title="' + userid + '"]')
