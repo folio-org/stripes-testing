@@ -16,7 +16,7 @@ describe('Checking for dependency issues on FOLIO UI App /about ("test-dependenc
         .insert(config.select.username, un)
         .insert(config.select.password, pw)
         .click('#clickable-login')
-        .wait('#UserMenuDropDown')
+        .wait('#clickable-logout')
         .wait(555)
         .then(result => { done() })
         .catch(done)
