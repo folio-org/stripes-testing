@@ -32,13 +32,19 @@ describe('Exercise users, items, checkout, checkin, settings ("test-checkout")',
       nightmare
       .wait(config.select.settings)
       .click(config.select.settings)
-      .wait('a[href="/settings/checkout"]')
-      .click('a[href="/settings/checkout"]')
-      .wait('a[href="/settings/checkout/checkout"]')
-      .click('a[href="/settings/checkout/checkout"]')
-      .wait('#patronScanId')
+      .wait('a[href="/settings/circulation"]')
+      .click('a[href="/settings/circulation"]')
+      .wait('a[href="/settings/circulation/checkout"]')
+      .click('a[href="/settings/circulation/checkout"]')
+      .wait('#username-checkbox')
+      .wait(1000)
+      .evaluate(() => {
+        const list = document.querySelectorAll('[data-checked="true"]');
+        list.forEach(el => (el.click()));
+      })
       .wait(222)
-      .select('#patronScanId','USER')
+      .click('#username-checkbox')
+      .wait(222)
       .xclick('//button[.="Save"]')
       .wait(parseInt(process.env.FOLIO_UI_DEBUG) ? parseInt(config.debug_sleep) : 555) // debugging
       .then(result => { done() })
@@ -139,7 +145,7 @@ describe('Exercise users, items, checkout, checkin, settings ("test-checkout")',
 	  throw new Error(sel.textContent)
 	}
       })
-      .wait(222) 
+      .wait(222)
       .click('#section-item button')
       .wait(parseInt(process.env.FOLIO_UI_DEBUG) ? parseInt(config.debug_sleep) : 555) // debugging
       .then(result => { done() })
@@ -168,7 +174,7 @@ describe('Exercise users, items, checkout, checkin, settings ("test-checkout")',
       .wait(parseInt(process.env.FOLIO_UI_DEBUG) ? parseInt(config.debug_sleep) : 555) // debugging
       .then(result => { done() })
       .catch(done)
-    }) 
+    })
     it('should check in ' + barcode, done => {
       nightmare
       .click('#clickable-checkin-module')
@@ -184,7 +190,7 @@ describe('Exercise users, items, checkout, checkin, settings ("test-checkout")',
 	}
       })
       .then(result => {
-        done() 
+        done()
       })
       .catch(done)
     })
