@@ -5,7 +5,7 @@ Copyright (C) 2017-2018 The Open Library Foundation
 This software is distributed under the terms of the Apache License,
 Version 2.0. See the file "[LICENSE](LICENSE)" for more information.
 
-<!-- ../okapi/doc/md2toc -l 2 -h 3 README.md -->
+<!-- md2toc -l 2 -h 3 README.md -->
 * [About FOLIO UI Tests](#about-folio-ui-tests)
 * [Install node packages first](#install-node-packages-first)
 * [Run the main tests with default user/pw/url/debug level](#run-the-main-tests-with-default-userpwurldebug-level)
