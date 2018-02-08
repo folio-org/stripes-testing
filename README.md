@@ -8,7 +8,7 @@ Version 2.0. See the file "[LICENSE](LICENSE)" for more information.
 <!-- md2toc -l 2 -h 3 README.md -->
 * [About FOLIO UI Tests](#about-folio-ui-tests)
 * [Install node packages first](#install-node-packages-first)
-* [Run the main tests with default user/pw/url/debug level](#run-the-main-tests-with-default-userpwurldebug-level)
+* [Run the main tests with default user/password/URL/debug-level](#run-the-main-tests-with-default-userpasswordurldebug-level)
 * [Run individual tests contained in ui-testing](#run-individual-tests-contained-in-ui-testing)
 * [Run tests from a UI module](#run-tests-from-a-ui-module)
     * [Run all of a UI module's tests](#run-all-of-a-ui-modules-tests)
@@ -28,10 +28,11 @@ Version 2.0. See the file "[LICENSE](LICENSE)" for more information.
 * [Manage ui-testing versions](#manage-ui-testing-versions)
 * [Additional information](#additional-information)
 
+
 ## About FOLIO UI Tests
 
-The tests are using the [nightmarejs](http://www.nightmarejs.org) browser automation library,
-and [mocha](https://mochajs.org) for the tests itself.
+The tests are using the [NightmareJS](http://www.nightmarejs.org) browser automation library,
+and [Mocha](https://mochajs.org) for the tests itself.
 
 Some tests are contained within ui-testing itself while others live in the individual UI modules, and can be executed from there by ui-testing.
 
@@ -39,7 +40,7 @@ Some tests are contained within ui-testing itself while others live in the indiv
 
     $ yarn install
 
-## Run the main tests with default user/pw/url/debug level
+## Run the main tests with default user/password/URL/debug-level
 
     $ yarn test
 
@@ -82,6 +83,9 @@ run against a different Stripes service:
 
 or
 
+    # Wait for up to 10 seconds for each action, not the 30s default
+    $ FOLIO_UI_WAIT_TIMEOUT=10000 yarn test
+
     # headless browser test / command line
     $ FOLIO_UI_DEBUG=0 yarn test
 
@@ -98,6 +102,7 @@ Nightmare debug options:
     $ DEBUG=nightmare:actions* yarn test
     $ DEBUG=nightmare:*,electron:* yarn test
 
+`nightmare:actions*` logs each browser-driving action as it happens, so it's easier to see what's happened when something goes wrong.
 
 All options in one:
 
