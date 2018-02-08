@@ -23,7 +23,6 @@ module.exports.logout = (nightmare, config, done) => {
   .catch(done)
 }
 
-
 module.exports.openApp = (nightmare, config, done, app, testVersion) => {
   return function(nightmare) {
     nightmare
