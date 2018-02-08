@@ -42,5 +42,5 @@ module.exports = {
     }
 }
 if (module.exports.url.match(/snapshot/)) {
-  module.exports.login_wait = 15000
+  module.exports.login_wait = 2000
 }
