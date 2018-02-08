@@ -47,6 +47,52 @@ module.exports.openApp = (nightmare, config, done, app, testVersion) => {
   }
 }
 
+module.exports.createInventory = (nightmare, config) => {
+    var barcode = new Date().valueOf()
+    it('should create inventory record', done=> {
+      nightmare
+      .click('#clickable-inventory-module')
+      .wait(2222)
+      .click('#clickable-newinventory')
+      .wait('#input_instance_title')
+      .insert('#input_instance_title', 'New test title')
+      .wait(333)
+      .type('#select_instance_type', 'b')
+      .click('#clickable-create-instance')
+      .wait('#clickable-new-holdings-record')
+      .then(result => { done() })
+      .catch(done)
+    })
+    it('should create holdings record', done=> {
+      nightmare
+      .click('#clickable-new-holdings-record')
+      .wait('#additem_permanentlocation')
+      .type('#additem_permanentlocation', 'm')
+      .insert('#additem_callnumber', 'ZZ39.50')
+      .click('#clickable-create-item')
+      .wait('#clickable-new-item')
+      .then(result => { done() })
+      .catch(done)
+    })
+    it('should create item record', done=> {
+      nightmare
+      .click('#clickable-new-item')
+      .wait('#additem_materialType')
+      .type('#additem_materialType', 's')
+      .wait(222)
+      .type('#additem_loanTypePerm', 'cc')
+      .wait(222)
+      .insert('#additem_barcode', barcode)
+      .wait(222)
+      .click('#clickable-create-item')
+      .then(result => { done() })
+      .catch(done)
+    })
+    return {
+      barcode: barcode
+    }
+}
+
 module.exports.namegen = function() {
   var ts = new Date().valueOf()
   var fn = ['Emma','Olivia','Ava','Sophia','Isabella','Liam','Noah','Mason','Lucas','Oliver']
