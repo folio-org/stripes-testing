@@ -34,13 +34,19 @@ describe('Exercise users, inventory, checkout, checkin, settings ("test-exercise
       nightmare
       .wait(config.select.settings)
       .click(config.select.settings)
-      .wait('a[href="/settings/checkout"]')
-      .click('a[href="/settings/checkout"]')
-      .wait('a[href="/settings/checkout/checkout"]')
-      .click('a[href="/settings/checkout/checkout"]')
-      .wait('#patronScanId')
+      .wait('a[href="/settings/circulation"]')
+      .click('a[href="/settings/circulation"]')
+      .wait('a[href="/settings/circulation/checkout"]')
+      .click('a[href="/settings/circulation/checkout"]')
+      .wait('#username-checkbox')
+      .wait(1000)
+      .evaluate(() => {
+        const list = document.querySelectorAll('[data-checked="true"]');
+        list.forEach(el => (el.click()));
+      })
       .wait(222)
-      .select('#patronScanId','USER')
+      .click('#username-checkbox')
+      .wait(222)
       .xclick('//button[.="Save"]')
       .wait(parseInt(process.env.FOLIO_UI_DEBUG) ? parseInt(config.debug_sleep) : 555) // debugging
       .then(result => { done() })
@@ -102,7 +108,7 @@ describe('Exercise users, inventory, checkout, checkin, settings ("test-exercise
       .wait('#clickable-new-holdings-record')
       .then(result => { done() })
       .catch(done)
-    }) 
+    })
     it('should create holdings record', done=> {
       nightmare
       .click('#clickable-new-holdings-record')
@@ -113,7 +119,7 @@ describe('Exercise users, inventory, checkout, checkin, settings ("test-exercise
       .wait('#clickable-new-item')
       .then(result => { done() })
       .catch(done)
-    }) 
+    })
     it('should create item record', done=> {
       nightmare
       .click('#clickable-new-item')
@@ -127,7 +133,7 @@ describe('Exercise users, inventory, checkout, checkin, settings ("test-exercise
       .click('#clickable-create-item')
       .then(result => { done() })
       .catch(done)
-    }) 
+    })
     it('should check out ' + barcode + ' to ' + userid, done => {
       nightmare
       .click('#clickable-checkout-module')
@@ -165,7 +171,7 @@ describe('Exercise users, inventory, checkout, checkin, settings ("test-exercise
 	  throw new Error(sel.textContent)
 	}
       })
-      .wait(222) 
+      .wait(222)
       .click('#section-item button')
       .wait(parseInt(process.env.FOLIO_UI_DEBUG) ? parseInt(config.debug_sleep) : 555) // debugging
       .then(result => { done() })
@@ -194,7 +200,7 @@ describe('Exercise users, inventory, checkout, checkin, settings ("test-exercise
       .wait(parseInt(process.env.FOLIO_UI_DEBUG) ? parseInt(config.debug_sleep) : 555) // debugging
       .then(result => { done() })
       .catch(done)
-    }) 
+    })
     it('should check in ' + barcode, done => {
       nightmare
       .click('#clickable-checkin-module')
@@ -210,7 +216,7 @@ describe('Exercise users, inventory, checkout, checkin, settings ("test-exercise
 	}
       })
       .then(result => {
-        done() 
+        done()
       })
       .catch(done)
     })
