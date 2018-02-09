@@ -47,6 +47,35 @@ module.exports.openApp = (nightmare, config, done, app, testVersion) => {
   }
 }
 
+module.exports.getUsers = (nightmare, config, done) => {
+      return function(nightmare) {
+	nightmare
+        .click('#clickable-users-module')
+        .wait('#list-users div[role="listitem"]')
+        .evaluate(() => {
+          var udata = new Array();
+          var users = document.querySelectorAll('#list-users div[role="listitem"]');
+          for (x = 0; x <users.length; x++) {
+            var st = users[x].querySelector('div:nth-of-type(1)').innerText;
+            var nm = users[x].querySelector('div:nth-of-type(2)').innerText;
+            var bc = users[x].querySelector('div:nth-of-type(3)').innerText;
+            var pg = users[x].querySelector('div:nth-of-type(4)').innerText;
+            var id = users[x].querySelector('div:nth-of-type(5)').innerText;
+            var em = users[x].querySelector('div:nth-of-type(6)').innerText;
+            if (bc.match(/\d/)) {
+              udata.push({ status: st, name: nm, barcode: bc, group: pg, id: id, email: em });
+            }
+          } 
+          return udata;
+        })
+        .then((u) => {
+           done();
+	   return u;
+        })
+        .catch(done);
+      }
+}
+
 module.exports.createInventory = (nightmare, config) => {
     var barcode = new Date().valueOf()
     it('should create inventory record', done=> {
