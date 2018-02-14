@@ -31,6 +31,7 @@
     "@folio/items": "latest",
     "@folio/requests": "latest",
     "@folio/users": "latest",
+    "@folio/search": "latest",
     "electron": "1.7.6",
     "mocha": "^3.4.2",
     "nightmare": "^2.10.0",
