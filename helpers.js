@@ -76,15 +76,16 @@ module.exports.getUsers = (nightmare, config, done) => {
       }
 }
 
-module.exports.createInventory = (nightmare, config) => {
-    var barcode = new Date().valueOf()
+module.exports.createInventory = (nightmare, config, title) => {
+    var title = title || 'New test title';
+    var barcode = new Date().valueOf();
     it('should create inventory record', done=> {
       nightmare
       .click('#clickable-inventory-module')
       .wait(2222)
       .click('#clickable-newinventory')
       .wait('#input_instance_title')
-      .insert('#input_instance_title', 'New test title')
+      .insert('#input_instance_title', title)
       .wait(333)
       .type('#select_instance_type', 'b')
       .click('#clickable-create-instance')
@@ -117,9 +118,7 @@ module.exports.createInventory = (nightmare, config) => {
       .then(result => { done() })
       .catch(done)
     })
-    return {
-      barcode: barcode
-    }
+    return barcode;
 }
 
 module.exports.namegen = function() {
