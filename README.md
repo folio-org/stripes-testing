@@ -219,8 +219,8 @@ The test context passed to the module's test from ui-testing has following conte
          login:    function for logging into Stripes
          logout:   function for logging out of Stripes
          openApp:  function for opening a specified module's page
-	 getUsers: function that returns an array of currently listed users
-	 createInventory: function that creates inventory, holdings and item records
+         getUsers: function that returns an array of currently listed users
+         createInventory: function that creates inventory, holdings and item records
          namegen:  function for generating user names and addresses
        }
        meta:  {
