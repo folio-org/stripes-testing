@@ -124,6 +124,7 @@ describe('Exercise users, inventory, checkout, checkin, settings ("test-exercise
       nightmare
       .click('#clickable-new-item')
       .wait('#additem_materialType')
+      .wait(444)
       .type('#additem_materialType', 's')
       .wait(222)
       .type('#additem_loanTypePerm', 'cc')
