@@ -216,9 +216,11 @@ The test context passed to the module's test from ui-testing has following conte
       {
        config :  (see folio-ui.config.js)
        helpers: {
-         login:    function for logging in to the FOLIO app
-         logout,
-         openApp:   function for opening a module's page
+         login:    function for logging into Stripes
+         logout:   function for logging out of Stripes
+         openApp:  function for opening a specified module's page
+	 getUsers: function that returns an array of currently listed users
+	 createInventory: function that creates inventory, holdings and item records
          namegen:  function for generating user names and addresses
        }
        meta:  {
