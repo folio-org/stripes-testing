@@ -1,5 +1,5 @@
 /* eslint import/no-extraneous-dependencies:0 */
-const Nightmare = require('nightmare');
+Nightmare = require('nightmare');
 const debug = require('debug')('nightmare:actions');
 
 Nightmare.action('xclick', function xclick(selector, done) {
