@@ -76,23 +76,25 @@ module.exports.getUsers = (nightmare, config, done) => {
       }
 }
 
-module.exports.createInventory = (nightmare, config, title) => {
+module.exports.createInventory = (nightmare, config, title, holdingsOnly) => {
     var title = title || 'New test title';
     var barcode = new Date().valueOf();
-    it('should create inventory record', done=> {
-      nightmare
-      .click('#clickable-inventory-module')
-      .wait(2222)
-      .click('#clickable-newinventory')
-      .wait('#input_instance_title')
-      .insert('#input_instance_title', title)
-      .wait(333)
-      .type('#select_instance_type', 'b')
-      .click('#clickable-create-instance')
-      .wait('#clickable-new-holdings-record')
-      .then(result => { done() })
-      .catch(done)
-    })
+    if (!holdingsOnly) {
+      it('should create inventory record', done=> {
+        nightmare
+        .click('#clickable-inventory-module')
+        .wait(2222)
+        .click('#clickable-newinventory')
+        .wait('#input_instance_title')
+        .insert('#input_instance_title', title)
+        .wait(333)
+        .type('#select_instance_type', 'b')
+        .click('#clickable-create-instance')
+        .wait('#clickable-new-holdings-record')
+        .then(result => { done() })
+        .catch(done)
+      })
+    }
     it('should create holdings record', done=> {
       nightmare
       .click('#clickable-new-holdings-record')
