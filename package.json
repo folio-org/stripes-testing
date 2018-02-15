@@ -21,7 +21,8 @@
     "test-inventory": "./node_modules/.bin/mocha test-module.js --run=/inventory",
     "test-requests": "./node_modules/.bin/mocha test-module.js --run=/requests",
     "test-module": "./node_modules/.bin/mocha test-module.js",
-    "module-tests": "./node_modules/.bin/mocha test-module.js --run=/checkout/checkin/users/items/inventory"
+    "module-tests": "./node_modules/.bin/mocha test-module.js --run=/checkout/checkin/users/items/inventory",
+    "lint": "eslint *.js test/*.js"
   },
   "dependencies": {
     "@folio/checkin": "latest",
@@ -30,11 +31,21 @@
     "@folio/inventory": "latest",
     "@folio/items": "latest",
     "@folio/requests": "latest",
-    "@folio/users": "latest",
     "@folio/search": "latest",
+    "@folio/users": "latest",
     "electron": "1.7.6",
     "mocha": "^3.4.2",
     "nightmare": "^2.10.0",
     "nightmarejs": "^0.0.1"
+  },
+  "devDependencies": {
+    "babel-core": "^6.17.0",
+    "babel-eslint": "^7.0.0",
+    "babel-preset-es2015": "^6.18.0",
+    "babel-preset-react": "^6.16.0",
+    "babel-preset-stage-2": "^6.16.0",
+    "babel-register": "^6.18.0",
+    "eslint": "^4.8.0",
+    "@folio/eslint-config-stripes": "^1.1.0"
   }
 }

@@ -1,29 +1,30 @@
-Nightmare = require('nightmare')
-var debug = require('debug')('nightmare:actions');
+/* eslint import/no-extraneous-dependencies:0 */
+const Nightmare = require('nightmare');
+const debug = require('debug')('nightmare:actions');
 
-Nightmare.action('xclick', function(selector, done) {
-  debug('.xclick() on ' + selector);
-  this.evaluate_now(function(selector) {
+Nightmare.action('xclick', function xclick(selector, done) {
+  debug(`.xclick() on ${selector}`);
+  this.evaluate_now((select) => {
     document.activeElement.blur();
-    var element = document.evaluate(selector, document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue
+    const element = document.evaluate(select, document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue;
     if (!element) {
-      throw new Error('Unable to find element by selector: ' + selector);
+      throw new Error(`Unable to find element by selector: ${select}`);
     }
-    var event = document.createEvent('MouseEvent');
+    const event = document.createEvent('MouseEvent');
     event.initEvent('click', true, true);
-    element.dispatchEvent(event)
+    element.dispatchEvent(event);
   }, done, selector);
-})
+});
 
-Nightmare.action('xtract', function(selector, done) {
-  debug('.xtract() on ' + selector);
-  this.evaluate_now(function(selector) {
-    var element = document.evaluate(selector, document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue
+Nightmare.action('xtract', function xtract(selector, done) {
+  debug(`.xtract() on ${selector}`);
+  this.evaluate_now((select) => {
+    const element = document.evaluate(select, document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue;
     if (!element) {
-      throw new Error('Unable to find element by selector: ' + selector);
+      throw new Error(`Unable to find element by selector: ${select}`);
     }
-    return element.textContent
+    return element.textContent;
   }, done, selector);
-})
+});
 
-module.exports = Nightmare
+module.exports = Nightmare;

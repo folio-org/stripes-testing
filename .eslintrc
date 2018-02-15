@@ -1,0 +1,4 @@
+{
+  "parser": "babel-eslint",
+  "extends": "@folio/eslint-config-stripes"
+}
