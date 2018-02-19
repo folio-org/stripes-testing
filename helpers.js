@@ -96,6 +96,7 @@ module.exports.createInventory = (nightmare, config, title, holdingsOnly) => {
     nightmare
       .click('#clickable-new-holdings-record')
       .wait('#additem_permanentlocation')
+      .wait(1111)
       .type('#additem_permanentlocation', 'm')
       .insert('#additem_callnumber', 'ZZ39.50')
       .click('#clickable-create-item')
@@ -107,6 +108,7 @@ module.exports.createInventory = (nightmare, config, title, holdingsOnly) => {
     nightmare
       .click('#clickable-new-item')
       .wait('#additem_materialType')
+      .wait(1111)
       .type('#additem_materialType', 's')
       .wait(222)
       .type('#additem_loanTypePerm', 'cc')
