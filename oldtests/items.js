@@ -37,17 +37,17 @@ describe('Using the App FOLIO UI App /items', function () {
       .type('input[id="additem_location"]', "Main Library")
       .click('button[class="button---2NsdC primary---5q6-s"]')
 
-      
+
       .click('circle') // clean search field
       .type('input[placeholder=Search]', "12")
       .wait(500)
-      
+
       .click('input[id="location.Main Library-ItemFilter"]') // main lib
       .wait(500)
-      
+
       .click('table > tbody > tr > td')
       .wait(500)
-      
+
       //.click('input[id="item.Books-ItemFilter"]') // disable Books
 
 

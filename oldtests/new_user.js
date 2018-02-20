@@ -42,7 +42,7 @@ describe('Using the App FOLIO UI App /users ("test-new-user")', function () {
         .wait(555)
         .then(result => { done() })
         .catch(done)
-      }) 
+      })
     }
     flogout = function(end) {
       it('should logout', done => {
@@ -123,12 +123,12 @@ describe('Using the App FOLIO UI App /users ("test-new-user")', function () {
       .wait(555)
       .wait(function(pn) {
         var xp = document.evaluate( '//div[.="' + pn + '"]', document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null)
-        try { 
+        try {
           var val = xp.singleNodeValue.innerHTML
           return true
         } catch(e) {
           return false
-        } 
+        }
       }, phone)
       .wait(parseInt(process.env.FOLIO_UI_DEBUG) ? parseInt(config.debug_sleep) : 555) // debugging
       .end()
