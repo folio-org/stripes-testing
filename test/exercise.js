@@ -81,7 +81,7 @@ describe('Exercise users, inventory, checkout, checkin, settings ("test-exercise
           const ol = result;
           openLoans = Number(ol.replace(/^(\d+).*/, '$1'));
           done();
-          console.log(`          Open loans: ${openLoans}`);
+          // console.log(`          Open loans: ${openLoans}`);
         })
         .catch(done);
     });
@@ -94,7 +94,7 @@ describe('Exercise users, inventory, checkout, checkin, settings ("test-exercise
           const ol = result;
           openLoans = Number(ol.replace(/^(\d+).*/, '$1'));
           done();
-          console.log(`          Closed loans: ${openLoans}`);
+          // console.log(`          Closed loans: ${openLoans}`);
         })
         .catch(done);
     });
