@@ -68,7 +68,7 @@ module.exports.getUsers = (nightmare, config, done) => function (nightmare) {
     })
     .then((u) => {
       done();
-	   return u;
+      return u;
     })
     .catch(done);
 };

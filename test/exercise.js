@@ -153,7 +153,7 @@ describe('Exercise users, inventory, checkout, checkin, settings ("test-exercise
         .evaluate(function () {
           const ph = document.querySelector('#input-patron-identifier').placeholder;
           if (!ph.match(/username/i)) {
-	  throw new Error(`Placeholder is not asking for Username! (${ph})`);
+            throw new Error(`Placeholder is not asking for Username! (${ph})`);
           }
         })
         .insert('#input-patron-identifier', userid)
@@ -162,11 +162,11 @@ describe('Exercise users, inventory, checkout, checkin, settings ("test-exercise
           const err = document.querySelector('#patron-form div[class^="textfieldError"]');
           const yay = document.querySelector('#patron-form ~ div a > strong');
           if (err) {
-	  throw new Error(err.textContent);
+            throw new Error(err.textContent);
           } else if (yay) {
-	  return true;
+            return true;
           } else {
-	  return false;
+            return false;
           }
         })
         .wait(222)
@@ -177,7 +177,7 @@ describe('Exercise users, inventory, checkout, checkin, settings ("test-exercise
         .evaluate(function () {
           const sel = document.querySelector('div[class^="textfieldError"]');
           if (sel) {
-	  throw new Error(sel.textContent);
+            throw new Error(sel.textContent);
           }
         })
         .wait(222)
@@ -200,9 +200,9 @@ describe('Exercise users, inventory, checkout, checkin, settings ("test-exercise
         .wait(function (barcode) {
           const element = document.evaluate(`id("list-loanshistory")//a[.="${barcode}"]`, document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null);
           if (element.singleNodeValue) {
-	  return true;
+            return true;
           } else {
-	  return false;
+            return false;
           }
         }, barcode)
         .wait(parseInt(process.env.FOLIO_UI_DEBUG) ? parseInt(config.debug_sleep) : 555) // debugging
@@ -220,7 +220,7 @@ describe('Exercise users, inventory, checkout, checkin, settings ("test-exercise
         .evaluate(function () {
           const a = document.querySelector('div[title="Available"]');
           if (a === null) {
-	  throw new Error("Checkin did not return 'Available' status");
+            throw new Error("Checkin did not return 'Available' status");
           }
         })
         .then((result) => {
@@ -241,9 +241,9 @@ describe('Exercise users, inventory, checkout, checkin, settings ("test-exercise
         .wait(function (barcode) {
           const element = document.evaluate(`id("list-loanshistory")//a[.="${barcode}"]`, document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null);
           if (element.singleNodeValue) {
-	  return true;
+            return true;
           } else {
-	  return false;
+            return false;
           }
         }, barcode)
         .wait(parseInt(process.env.FOLIO_UI_DEBUG) ? parseInt(config.debug_sleep) : 555) // debugging
