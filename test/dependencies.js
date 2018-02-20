@@ -59,8 +59,8 @@ describe('Checking for dependency issues on FOLIO UI App /about ("test-dependenc
           done();
           if (result !== null) {
             for (x = 0; x < result.length; x++) {
-	    console.log('          WARN:', result[x]);
-	  }
+              console.log('          WARN:', result[x]);
+            }
           }
         })
         .catch(done);
@@ -74,16 +74,16 @@ describe('Checking for dependency issues on FOLIO UI App /about ("test-dependenc
             msgs.push(`* ${elements[x].textContent}`);
           }
           if (msgs.length > 0) {
-	  msgs.unshift('Interfaces that are required but present only in an incompatible version:');
-	  return msgs;
+            msgs.unshift('Interfaces that are required but present only in an incompatible version:');
+            return msgs;
           }
         })
         .then((result) => {
           done();
           if (result !== null) {
             for (x = 0; x < result.length; x++) {
-	    console.log('          WARN:', result[x]);
-	  }
+              console.log('          WARN:', result[x]);
+            }
           }
         })
         .catch(done);

@@ -27,7 +27,7 @@ describe('Using the App FOLIO UI App /items ("test-new-item")', function () {
         .wait(555)
         .then(result => { done() })
         .catch(done)
-      }) 
+      })
     }
     flogout = function() {
       it('should logout', done => {
@@ -91,12 +91,12 @@ describe('Using the App FOLIO UI App /items ("test-new-item")', function () {
       nightmare
       .wait(function(bc) {
         var xp = document.evaluate( '//div[@class="kvValue---1ImHP"][contains(.,"revised")]', document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null)
-        try { 
+        try {
           var val = xp.singleNodeValue.innerHTML
           return true
         } catch(e) {
           return false
-        } 
+        }
       }, barcode)
       .wait(parseInt(process.env.FOLIO_UI_DEBUG) ? parseInt(config.debug_sleep) : 0) // debugging
       .then(result => { done() })

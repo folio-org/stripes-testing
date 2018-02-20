@@ -31,7 +31,7 @@ describe('Using the App FOLIO UI App /settings/users/groups ("test-patron-group"
         .wait('#clickable-logout')
         .then(result => { done() })
         .catch(done)
-      }) 
+      })
     }
     flogout = function() {
       it('should logout', done => {
@@ -127,7 +127,7 @@ describe('Using the App FOLIO UI App /settings/users/groups ("test-patron-group"
         if (!msg.match(/ERROR/)) { throw new Error("No error alert detected!") }
       }, alert) */
       .wait(parseInt(process.env.FOLIO_UI_DEBUG) ? parseInt(config.debug_sleep) : 555) // debugging
-      .then(function(result) { 
+      .then(function(result) {
         done()
        })
       .catch(done)
@@ -172,7 +172,7 @@ describe('Using the App FOLIO UI App /settings/users/groups ("test-patron-group"
       .wait(parseInt(process.env.FOLIO_UI_DEBUG) ? parseInt(config.debug_sleep) : 555) // debugging
       .then(result => { done() })
       .catch(done)
-    }) 
+    })
     it('should confirm that "' + gidlabel + '" patron group has been deleted', done => {
       nightmare
       .evaluate(function(communityid) {
@@ -184,7 +184,7 @@ describe('Using the App FOLIO UI App /settings/users/groups ("test-patron-group"
       .wait(parseInt(process.env.FOLIO_UI_DEBUG) ? parseInt(config.debug_sleep) : 555) // debugging
       .then(result => { done() })
       .catch(done)
-    }) 
+    })
     flogout();
   })
 })

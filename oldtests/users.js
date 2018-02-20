@@ -33,7 +33,7 @@ describe('Using the App FOLIO UI App /users ("users.js")', function () {
       .then(result => { done() })
       .catch(done)
       })
-      
+
       // select campus filter
     it('should select campus filter', done => {
       nightmare
@@ -41,12 +41,12 @@ describe('Using the App FOLIO UI App /users ("users.js")', function () {
       .wait(555)
       .click('#pg\\.Off-campus-ItemFilter')
       .wait(555)
-      
+
       // de-select campus filter
       .click('input[id="pg.On-campus-ItemFilter"]')
       .click('input[id="pg.Off-campus-ItemFilter"]')
       .wait('em')
-      
+
       .wait(500)
       .click('input[id="active.Active-ItemFilter"]')
       .wait('em')

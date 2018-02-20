@@ -112,7 +112,7 @@ run a module's test in browser against localhost:3000
 
     $ yarn test-module -- -o --show --h=localhost --run=checkout:error_messages
 
-A command line argument overrides the corresponding environment variable. 
+A command line argument overrides the corresponding environment variable.
 
 To see all command line options:
 
@@ -143,7 +143,7 @@ Then run the tests against a service built on releases, for example the folio-st
 or run the same with command line arguments
 
     yarn test-module -- -o --host=staging --run=users
-    
+
 ### Run UI module tests against a FOLIO service with the latest commits
 
 Install tests from continuous integration repository
@@ -244,7 +244,7 @@ Does the same as .click but takes an XPath instead of a CSS selector as an argum
 This will extract and return the textContent of an XPath node.
 The returned value will be passed to the next action in the chain (most likely .then).
 
-### namegen (helpers.js)  
+### namegen (helpers.js)
 
 This script creates random user data (100 possibilities).
 Returns: id, firstname, lastname, email, barcode, password
@@ -369,19 +369,19 @@ it('should show error when scanning item before patron card', done => {
 })
 ```
 ## Manage ui-testing versions
-We maintain versions of ui-testing itself for the purpose of testing specific builds of FOLIO platforms based entirely on NPM released components. 
+We maintain versions of ui-testing itself for the purpose of testing specific builds of FOLIO platforms based entirely on NPM released components.
 
 When a stable FOLIO platform build is made that passes the ui-testing test suite, we lock down that version of the test suite like this:
 
     $ npm config set @folio:registry https://repository.folio.org/repository/npm-folio/
     $ rm yarn.lock
     $ yarn install
- 
-Run the tests against the platform build to verify that they pass. If they do not, we are not yet ready to tag a version of ui-testing for the platform build. If they do, proceed with the versioning: 
+
+Run the tests against the platform build to verify that they pass. If they do not, we are not yet ready to tag a version of ui-testing for the platform build. If they do, proceed with the versioning:
 
 Add the newly generated yarn.lock to git and commit it with a commit message referring to the version of the platform build, for instance:
- 
-    $ git add yarn.lock    
+
+    $ git add yarn.lock
     $ git commit -m "Add yarn.lock v5.0.0"
 
 Tag the commit with a label that indicates the platform build it pertains to, for instance:
@@ -389,8 +389,8 @@ Tag the commit with a label that indicates the platform build it pertains to, fo
     $ git tag "v5.0.0"
     $ git push
     $ git push origin tag "v5.0.0"
-    
-Once the version is tagged, the yarn.lock should be removed again. The regular test builds for testing the continuous integration platform should always pick the latest from the CI repository, and should thus not be locked down by yarn.lock. Delete the yarn.lock file from ui-testing, git commit and git push.  
+
+Once the version is tagged, the yarn.lock should be removed again. The regular test builds for testing the continuous integration platform should always pick the latest from the CI repository, and should thus not be locked down by yarn.lock. Delete the yarn.lock file from ui-testing, git commit and git push.
 
 
 ## Additional information
