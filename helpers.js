@@ -1,3 +1,5 @@
+/* global it */
+/* eslint no-unused-vars: ["error", { "argsIgnorePattern": "^xxxtype" }] */
 module.exports.login = (nightmare, config, done, un, pw) => {
   nightmare
     .on('page', (type = 'alert', message) => {
@@ -9,7 +11,7 @@ module.exports.login = (nightmare, config, done, un, pw) => {
     .insert(config.select.password, (pw || config.password))
     .click('#clickable-login')
     .wait('#clickable-logout')
-    .then((result) => { done(); })
+    .then(() => { done(); })
     .catch(done);
 };
 
@@ -17,19 +19,19 @@ module.exports.logout = (nightmare, config, done) => {
   nightmare
     .click('#clickable-logout') // logout
     .wait('#clickable-login') // login page
-    .wait(parseInt(process.env.FOLIO_UI_DEBUG) ? parseInt(config.debug_sleep / 3) : 0) // debugging
+    .wait(parseInt(process.env.FOLIO_UI_DEBUG, 10) ? parseInt(config.debug_sleep / 3, 10) : 0) // debugging
     .end()
-    .then((result) => { done(); })
+    .then(() => { done(); })
     .catch(done);
 };
 
-module.exports.openApp = (nightmare, config, done, app, testVersion) => function (nightmare) {
+module.exports.openApp = (nightmare, config, done, app, testVersion) => function opena() {
   nightmare
     .wait(`#clickable-${app}-module`)
     .click(`#clickable-${app}-module`)
     .wait(`#${app}-module-display`)
-    .evaluate((app) => {
-      const metaData = document.querySelector(`#${app}-module-display`);
+    .evaluate((mapp) => {
+      const metaData = document.querySelector(`#${mapp}-module-display`);
       return {
         moduleName: metaData.getAttribute('data-module'),
         moduleVersion: metaData.getAttribute('data-version'),
@@ -37,8 +39,8 @@ module.exports.openApp = (nightmare, config, done, app, testVersion) => function
     }, app)
     .then((meta) => {
       if (testVersion !== undefined) {
-        console.log(`          Test suite   ${testVersion}`);
-        console.log(`          Live module  ${meta.moduleName}:${meta.moduleVersion} (${config.url})`);
+        console.log(`          Test suite   ${testVersion}`); // eslint-disable-line
+        console.log(`          Live module  ${meta.moduleName}:${meta.moduleVersion} (${config.url})`); // eslint-disable-line
       }
       done();
       return meta;
@@ -46,14 +48,14 @@ module.exports.openApp = (nightmare, config, done, app, testVersion) => function
     .catch(done);
 };
 
-module.exports.getUsers = (nightmare, config, done) => function (nightmare) {
+module.exports.getUsers = (nightmare, config, done) => function getu() {
   nightmare
     .click('#clickable-users-module')
     .wait('#list-users div[role="listitem"]')
     .evaluate(() => {
-      const udata = new Array();
+      const udata = [];
       const users = document.querySelectorAll('#list-users div[role="listitem"]');
-      for (x = 0; x < users.length; x++) {
+      for (let x = 0; x < users.length; x++) {
         const st = users[x].querySelector('div:nth-of-type(1)').innerText;
         const nm = users[x].querySelector('div:nth-of-type(2)').innerText;
         const bc = users[x].querySelector('div:nth-of-type(3)').innerText;
@@ -74,7 +76,7 @@ module.exports.getUsers = (nightmare, config, done) => function (nightmare) {
 };
 
 module.exports.createInventory = (nightmare, config, title, holdingsOnly) => {
-  var title = title || 'New test title';
+  const ti = title || 'New test title';
   const barcode = new Date().valueOf();
   if (!holdingsOnly) {
     it('should create inventory record', (done) => {
@@ -83,12 +85,12 @@ module.exports.createInventory = (nightmare, config, title, holdingsOnly) => {
         .wait(2222)
         .click('#clickable-newinventory')
         .wait('#input_instance_title')
-        .insert('#input_instance_title', title)
+        .insert('#input_instance_title', ti)
         .wait(333)
         .type('#select_instance_type', 'b')
         .click('#clickable-create-instance')
         .wait('#clickable-new-holdings-record')
-        .then((result) => { done(); })
+        .then(() => { done(); })
         .catch(done);
     });
   }
@@ -101,7 +103,7 @@ module.exports.createInventory = (nightmare, config, title, holdingsOnly) => {
       .insert('#additem_callnumber', 'ZZ39.50')
       .click('#clickable-create-item')
       .wait('#clickable-new-item')
-      .then((result) => { done(); })
+      .then(() => { done(); })
       .catch(done);
   });
   it('should create item record', (done) => {
@@ -116,13 +118,13 @@ module.exports.createInventory = (nightmare, config, title, holdingsOnly) => {
       .insert('#additem_barcode', barcode)
       .wait(222)
       .click('#clickable-create-item')
-      .then((result) => { done(); })
+      .then(() => { done(); })
       .catch(done);
   });
   return barcode;
 };
 
-module.exports.namegen = function () {
+module.exports.namegen = () => {
   const ts = new Date().valueOf();
   const fn = ['Emma', 'Olivia', 'Ava', 'Sophia', 'Isabella', 'Liam', 'Noah', 'Mason', 'Lucas', 'Oliver'];
   const ln = ['Smith', 'Johnson', 'Williams', 'Brown', 'Jones', 'Miller', 'Davis', 'Garcia', 'Rodriquez', 'Wilson'];
