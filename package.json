@@ -33,6 +33,7 @@
     "@folio/requests": "latest",
     "@folio/search": "latest",
     "@folio/users": "latest",
+    "debug": "^3.1.0",
     "electron": "1.7.6",
     "minimist": "^1.2.0",
     "mocha": "^3.4.2",

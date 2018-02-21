@@ -1,4 +1,4 @@
-/* eslint import/no-extraneous-dependencies:0 */
+/* eslint-disable no-undef */
 Nightmare = require('nightmare');
 const debug = require('debug')('nightmare:actions');
 
