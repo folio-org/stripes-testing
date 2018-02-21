@@ -1,144 +1,11 @@
+/* eslint-disable no-console, eqeqeq, no-prototype-builtins, no-shadow, import/no-dynamic-require, global-require */
+/* eslint no-unused-vars: ["error", { "varsIgnorePattern": "^Nightmare" }] */
 const Nightmare = require('./xnightmare.js');
 const minimist = require('minimist');
 const config = require('./folio-ui.config.js');
 const helpers = require('./helpers.js');
 
 const options = minimist(process.argv.slice(2));
-
-if (options.run) {
-  const o = getOptions(options, config); // Mutates the config
-
-  if (o.host || o.h || o.url) console.log(`Host:          ${config.url}`);
-  if (o.testtimeout || o.tto) console.log(`Test timeout:  ${config.test_timeout}`);
-  if (o.gototimeout || o.gto) console.log(`Goto timeout:  ${config.nightmare.gotoTimeout}`);
-  if (o.waittimeout || o.wto) console.log(`Wait timeout:  ${config.nightmare.waitTimeout}`);
-  if (o.executiontimeout || o.eto) console.log(`Exec timeout:  ${config.nightmare.executionTimeout}`);
-  if (o.loginwait) console.log(`Login wait:    ${config.login_wait}`);
-  if (o.debugsleep || o.sleep) console.log(`Debug sleep:   ${config.debug_sleep}`);
-  if (o.username || o.un) console.log(`Username:      ${config.username}`);
-  if (o.typeinterval) console.log(`Type interval: ${config.nightmare.typeInterval}`);
-  if (o.consolelogs) console.log(`Console logs:  ${config.console_logs}`);
-
-  const apps = o.run.split('/'); // find modules to test
-
-  for (let a = 0; a < apps.length; a++) { // for each module in argv
-    const appscripts = apps[a];
-
-    if (appscripts.length > 0) {
-      let app = '';
-      let scripts = [];
-      if (appscripts.indexOf(':') == -1) { // no scripts requested, run main ("test.js")
-        app = appscripts;
-        scripts.push('test');
-      } else { // get scripts
-        app = appscripts.substring(0, appscripts.indexOf(':'));
-        scripts = appscripts.substring(appscripts.indexOf(':') + 1).split(',');
-        let run_main = true;
-        for (let s = 0; s < scripts.length; s++) {
-          if (scripts[s].length > 0) {
-            run_main = false;
-          }
-        }
-        if (run_main) {
-          console.log(`No scripts found after script indicator ":", running main ("test.js") for module "${app}"`);
-          scripts[0] = 'test';
-        }
-      }
-
-      let emptyScriptArg = false;
-      for (let j = 0; j < scripts.length; j++) { // for each test script requested from the module
-        const script = scripts[j];
-        if (script) {
-          try {
-            const tests = require(`@folio/${app}/test/ui-testing/${script}.js`);
-            const moduleInfo = require(`@folio/${app}/package.json`);
-            const meta = { testVersion: `${moduleInfo.name}:${moduleInfo.version}` };
-            try {
-              tests.test({ config, helpers, meta });
-            } catch (e) {
-              console.log(`Could not run tests for module "${app}"\n`, e);
-            }
-          } catch (e) {
-            console.log(`Module or test script not found: "${app}${script == 'test' ? '' : `:${script}`}"\n`, e);
-          }
-        } else {
-          emptyScriptArg = true;
-        }
-      }
-      if (emptyScriptArg) {
-        console.log(`Found empty script argument(s) for "${app}". Skipped.`);
-      }
-    }
-  }
-} else {
-  showHelp();
-}
-
-function getOptions(options, config) {
-  const recognizedOptions =
-  ['run',
-    'host', 'h', 'url',
-    'testtimeout', 'tto',
-    'gototimeout', 'gto',
-    'executiontimeout', 'eto',
-    'waittimeout', 'wto',
-    'loginwait',
-    'debugsleep', 'sleep',
-    'typeinterval',
-    'username', 'un',
-    'password', 'pw',
-    'show',
-    'devtools',
-    'width',
-    'height',
-  ];
-
-  const o = {};
-  for (const property in options) {
-    if (options.hasOwnProperty(property)) {
-      if (property != '_' && property != 'o') {
-        const prop = property.toLowerCase().replace(/_/g, '');
-        if (recognizedOptions.indexOf(prop) > -1) {
-          o[prop] = options[property];
-        } else {
-          console.log('Ignoring unrecognized option: ', property);
-        }
-      }
-    }
-  }
-  const run = o.run.replace(/\s/g, '');
-
-  if (o.host || o.h || o.url) {
-    const host = (o.host || o.h || o.url).replace(/\s/g, '');
-    const overrides = {
-      localhost: 'http://localhost:3000',
-      staging: 'http://folio-staging.aws.indexdata.com',
-      testing: 'http://folio-testing.aws.indexdata.com',
-      host,
-    };
-    config.url = overrides[host] || overrides.host;
-  }
-  config.test_timeout = o.testtimeout || o.tto || config.test_timeout;
-  config.login_wait = o.loginwait || config.login_wait;
-  config.debug_sleep = o.debugsleep || o.sleep || config.debug_sleep;
-  config.console_logs = o.consolelogs || config.console_logs;
-  config.username = o.username || o.un || config.username;
-  config.password = o.password || o.pw || config.password;
-  if (o.show) {
-    config.nightmare.show = true;
-  }
-  if (o.devtools) {
-    config.nightmare.openDevTools = { mode: 'detach' };
-    config.nightmare.show = true;
-  }
-  config.nightmare.width = o.width || config.nightmare.width;
-  config.nightmare.height = o.height || config.nightmare.height;
-  config.nightmare.typeInterval = o.typeinterval || config.nightmare.typeInterval;
-  config.nightmare.gotoTimeout = o.gototimeout || o.gto || config.nightmare.gotoTimeout;
-  config.nightmare.executionTimeout = o.executiontimeout || o.eto || config.nightmare.executionTimeout;
-  config.nightmare.waitTimeout = o.waittimeout || o.wto || config.nightmare.waitTimeout;
-  return o;
-}
 
 function showHelp() {
   console.log("test-module:   Missing 'run' argument. Found no modules or tests to run.");
@@ -235,7 +102,7 @@ function showHelp() {
   console.log('  Run a test against localhost port 3000, show the execution in a browser window:');
   console.log('');
   console.log('    yarn test-module -- -o --show --h=localhost --run=checkout:error_messages');
-  console.log(''),
+  console.log('');
   console.log('  Run a test against folio-testing, in a browser window with dev tools opened,');
   console.log('  using increased test timeouts and long login wait setting:');
   console.log('');
@@ -250,4 +117,139 @@ function showHelp() {
   console.log('');
   console.log('  The npm version of the test suite should match the version of the live module being tested.');
   console.log('');
+}
+
+function getOptions(opts, config) {
+  const recognizedOptions =
+  ['run',
+    'host', 'h', 'url',
+    'testtimeout', 'tto',
+    'gototimeout', 'gto',
+    'executiontimeout', 'eto',
+    'waittimeout', 'wto',
+    'loginwait',
+    'debugsleep', 'sleep',
+    'typeinterval',
+    'username', 'un',
+    'password', 'pw',
+    'show',
+    'devtools',
+    'width',
+    'height',
+  ];
+
+  const o = {};
+  for (const property in opts) {
+    if (opts.hasOwnProperty(property)) {
+      if (property != '_' && property != 'o') {
+        const prop = property.toLowerCase().replace(/_/g, '');
+        if (recognizedOptions.indexOf(prop) > -1) {
+          o[prop] = opts[property];
+        } else {
+          console.log('Ignoring unrecognized option: ', property);
+        }
+      }
+    }
+  }
+  // const run = o.run.replace(/\s/g, '');
+
+  if (o.host || o.h || o.url) {
+    const host = (o.host || o.h || o.url).replace(/\s/g, '');
+    const overrides = {
+      localhost: 'http://localhost:3000',
+      staging: 'http://folio-staging.aws.indexdata.com',
+      testing: 'http://folio-testing.aws.indexdata.com',
+      host,
+    };
+    config.url = overrides[host] || overrides.host;
+  }
+  config.test_timeout = o.testtimeout || o.tto || config.test_timeout;
+  config.login_wait = o.loginwait || config.login_wait;
+  config.debug_sleep = o.debugsleep || o.sleep || config.debug_sleep;
+  config.console_logs = o.consolelogs || config.console_logs;
+  config.username = o.username || o.un || config.username;
+  config.password = o.password || o.pw || config.password;
+  if (o.show) {
+    config.nightmare.show = true;
+  }
+  if (o.devtools) {
+    config.nightmare.openDevTools = { mode: 'detach' };
+    config.nightmare.show = true;
+  }
+  config.nightmare.width = o.width || config.nightmare.width;
+  config.nightmare.height = o.height || config.nightmare.height;
+  config.nightmare.typeInterval = o.typeinterval || config.nightmare.typeInterval;
+  config.nightmare.gotoTimeout = o.gototimeout || o.gto || config.nightmare.gotoTimeout;
+  config.nightmare.executionTimeout = o.executiontimeout || o.eto || config.nightmare.executionTimeout;
+  config.nightmare.waitTimeout = o.waittimeout || o.wto || config.nightmare.waitTimeout;
+  return o;
+}
+
+if (options.run) {
+  const o = getOptions(options, config); // Mutates the config
+
+  if (o.host || o.h || o.url) console.log(`Host:          ${config.url}`);
+  if (o.testtimeout || o.tto) console.log(`Test timeout:  ${config.test_timeout}`);
+  if (o.gototimeout || o.gto) console.log(`Goto timeout:  ${config.nightmare.gotoTimeout}`);
+  if (o.waittimeout || o.wto) console.log(`Wait timeout:  ${config.nightmare.waitTimeout}`);
+  if (o.executiontimeout || o.eto) console.log(`Exec timeout:  ${config.nightmare.executionTimeout}`);
+  if (o.loginwait) console.log(`Login wait:    ${config.login_wait}`);
+  if (o.debugsleep || o.sleep) console.log(`Debug sleep:   ${config.debug_sleep}`);
+  if (o.username || o.un) console.log(`Username:      ${config.username}`);
+  if (o.typeinterval) console.log(`Type interval: ${config.nightmare.typeInterval}`);
+  if (o.consolelogs) console.log(`Console logs:  ${config.console_logs}`);
+
+  const apps = o.run.split('/'); // find modules to test
+
+  for (let a = 0; a < apps.length; a++) { // for each module in argv
+    const appscripts = apps[a];
+
+    if (appscripts.length > 0) {
+      let app = '';
+      let scripts = [];
+      if (appscripts.indexOf(':') == -1) { // no scripts requested, run main ("test.js")
+        app = appscripts;
+        scripts.push('test');
+      } else { // get scripts
+        app = appscripts.substring(0, appscripts.indexOf(':'));
+        scripts = appscripts.substring(appscripts.indexOf(':') + 1).split(',');
+        let runMain = true;
+        for (let s = 0; s < scripts.length; s++) {
+          if (scripts[s].length > 0) {
+            runMain = false;
+          }
+        }
+        if (runMain) {
+          console.log(`No scripts found after script indicator ":", running main ("test.js") for module "${app}"`);
+          scripts[0] = 'test';
+        }
+      }
+
+      let emptyScriptArg = false;
+      for (let j = 0; j < scripts.length; j++) { // for each test script requested from the module
+        const script = scripts[j];
+        if (script) {
+          try {
+            const tests = require(`@folio/${app}/test/ui-testing/${script}.js`);
+            const moduleInfo = require(`@folio/${app}/package.json`);
+            const meta = { testVersion: `${moduleInfo.name}:${moduleInfo.version}` };
+            try {
+              tests.test({ config, helpers, meta });
+            } catch (e) {
+              console.log(`Could not run tests for module "${app}"\n`, e);
+            }
+          } catch (e) {
+            console.log(`Module or test script not found: "${app}${script == 'test' ? '' : `:${script}`}"\n`, e);
+          }
+        } else {
+          emptyScriptArg = true;
+        }
+      }
+      if (emptyScriptArg) {
+        console.log(`Found empty script argument(s) for "${app}". Skipped.`);
+      }
+    }
+  }
+} else {
+  showHelp();
 }
