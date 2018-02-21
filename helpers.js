@@ -1,5 +1,5 @@
 /* global it */
-/* eslint no-unused-vars: ["error", { "argsIgnorePattern": "^xxxtype" }] */
+/* eslint no-unused-vars: ["error", { "argsIgnorePattern": "^type" }] */
 module.exports.login = (nightmare, config, done, un, pw) => {
   nightmare
     .on('page', (type = 'alert', message) => {
