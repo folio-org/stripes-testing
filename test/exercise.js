@@ -58,6 +58,8 @@ describe('Exercise users, inventory, checkout, checkin, settings ("test-exercise
     it('should find an active user ', (done) => {
       nightmare
         .click('#clickable-users-module')
+        .wait(2000)
+        .click('#clickable-filter-active-Active')
         .wait(uselector)
         .evaluate(function (selector) {
           return document.querySelector(selector).title;
