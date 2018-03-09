@@ -21,7 +21,8 @@
     "test-users": "./node_modules/.bin/mocha test-module.js --run=/users",
     "test-module": "./node_modules/.bin/mocha test-module.js",
     "module-tests": "./node_modules/.bin/mocha test-module.js --run=/checkout/checkin/users/items/inventory",
-    "lint": "eslint *.js test/*.js"
+    "lint": "eslint *.js test/*.js",
+	"test-codexsearch": "./node_modules/.bin/mocha test/codex-search.js"
   },
   "dependencies": {
     "@folio/checkin": "latest",
