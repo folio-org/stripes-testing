@@ -4,5 +4,6 @@
 
 * Extend README with documentation on module tests. UITEST-2.
 * Add module 'checkout' to main test.
+* Change @folio dependencies to * for access to local checkouts. Refs UITEST-21. 
 
 ## [4.0.0](https://github.com/folio-org/ui-testing/tree/v4.0.0) (2017-08-28)
