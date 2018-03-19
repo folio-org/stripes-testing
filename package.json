@@ -9,11 +9,12 @@
   "author": "Wolfram Schneider <wosch@indexdata.com>",
   "license": "Apache-2.0",
   "scripts": {
-    "test": "./node_modules/.bin/mocha test/100-startpage.js test/120-auth-fail.js test/dependencies.js test/exercise.js test-module.js --run=/checkin/checkout/users/inventory/requests",
+    "test": "./node_modules/.bin/mocha test/100-startpage.js test/120-auth-fail.js test/dependencies.js test/exercise.js test/inventorySearch test-module.js --run=/checkin/checkout/users/inventory/requests",
     "test-simple": "./node_modules/.bin/mocha test/100-startpage.js",
     "test-good-login": "./node_modules/.bin/mocha test/110-auth-success.js",
     "test-bad-login": "./node_modules/.bin/mocha test/120-auth-fail.js",
     "test-exercise": "./node_modules/.bin/mocha test/exercise.js",
+    "test-inventorySearch": "./node_modules/.bin/mocha test/inventorySearch.js",
     "test-dependencies": "./node_modules/.bin/mocha test/dependencies.js",
     "test-new-proxy": "./node_modules/.bin/mocha test-module.js --run=/users:new_proxy",
     "test-inventory": "./node_modules/.bin/mocha test-module.js --run=/inventory",
@@ -37,7 +38,8 @@
     "minimist": "^1.2.0",
     "mocha": "^3.4.2",
     "nightmare": "^2.10.0",
-    "nightmarejs": "^0.0.1"
+    "nightmarejs": "^0.0.1",
+    "npm": "^5.7.1"
   },
   "devDependencies": {
     "@folio/eslint-config-stripes": "^1.1.0",
