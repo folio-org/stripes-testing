@@ -18,7 +18,4 @@ describe(`Load ${config.url} ("stub")`, function runMain() {
       helpers.logout(nightmare, config, done);
     });
   });
-  
-  
-  
 });

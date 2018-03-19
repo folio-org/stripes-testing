@@ -17,7 +17,7 @@ describe('Exercise users, inventory, checkout, checkin, settings ("test-exercise
     const title = 'Soul station';
     const callno = 'SDA 32171';
 
-    it(`should login as ${config.username}/${config.password}`, (done) => {this.timeout(Number(config.test_timeout));
+    it(`should login as ${config.username}/${config.password}`, (done) => {
       nightmare
         .on('page', function (type = 'alert', message) {
           throw new Error(message);
