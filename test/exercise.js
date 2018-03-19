@@ -192,7 +192,7 @@ describe('Exercise users, inventory, checkout, checkin, settings ("test-exercise
         .wait('#clickable-viewcurrentloans')
         .click('#clickable-viewcurrentloans')
         .wait((fbarcode) => {
-          const element = document.evaluate(`id("list-loanshistory")//a[.="${fbarcode}"]`, document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null);
+          const element = document.evaluate(`id("list-loanshistory")//div[.="${fbarcode}"]`, document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null);
           if (element.singleNodeValue) {
             return true;
           } else {
@@ -231,7 +231,7 @@ describe('Exercise users, inventory, checkout, checkin, settings ("test-exercise
         .wait('#clickable-viewclosedloans')
         .click('#clickable-viewclosedloans')
         .wait((fbarcode) => {
-          const element = document.evaluate(`id("list-loanshistory")//a[.="${fbarcode}"]`, document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null);
+          const element = document.evaluate(`id("list-loanshistory")//div[.="${fbarcode}"]`, document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null);
           if (element.singleNodeValue) {
             return true;
           } else {
