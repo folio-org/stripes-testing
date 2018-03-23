@@ -22,7 +22,8 @@
     "test-module": "./node_modules/.bin/mocha test-module.js",
     "module-tests": "./node_modules/.bin/mocha test-module.js --run=/checkout/checkin/users/items/inventory",
     "lint": "eslint *.js test/*.js",
-	"test-codexsearch": "./node_modules/.bin/mocha test/codex-search.js"
+	"test-codexsearch": "./node_modules/.bin/mocha test/codex-search.js",
+    "test-profilePictures": "./node_modules/.bin/mocha test/profile-pictures.js"
   },
   "dependencies": {
     "@folio/checkin": "latest",
