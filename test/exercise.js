@@ -145,8 +145,7 @@ describe('Exercise users, inventory, checkout, checkin, settings ("test-exercise
     it(`should check out ${barcode} to ${userid}`, (done) => {
       nightmare
         .click('#clickable-checkout-module')
-        .wait('#input-patron-identifier')
-        .wait(2222)
+        .wait('#input-patron-identifier[placeholder*="username"]')
         .evaluate(() => {
           const ph = document.querySelector('#input-patron-identifier').placeholder;
           if (!ph.match(/username/i)) {
