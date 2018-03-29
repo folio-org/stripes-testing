@@ -82,15 +82,16 @@ module.exports.createInventory = (nightmare, config, title, holdingsOnly) => {
     it('should create inventory record', (done) => {
       nightmare
         .click('#clickable-inventory-module')
-        .wait(2222)
+        .wait('#clickable-newinventory')
         .click('#clickable-newinventory')
         .wait('#input_instance_title')
         .insert('#input_instance_title', ti)
         .wait(333)
         .type('#select_instance_type', 'b')
+        .wait(2222)
         .click('#clickable-create-instance')
-        .wait('#clickable-new-holdings-record')
-        .then(() => { done(); })
+        .wait(2222)
+        .then(done)
         .catch(done);
     });
   }
@@ -98,12 +99,12 @@ module.exports.createInventory = (nightmare, config, title, holdingsOnly) => {
     nightmare
       .click('#clickable-new-holdings-record')
       .wait('#additem_permanentlocation')
-      .wait(1111)
+      .wait(333)
       .type('#additem_permanentlocation', 'm')
       .insert('#additem_callnumber', 'ZZ39.50')
       .click('#clickable-create-item')
       .wait('#clickable-new-item')
-      .then(() => { done(); })
+      .then(done)
       .catch(done);
   });
   it('should create item record', (done) => {
@@ -118,7 +119,7 @@ module.exports.createInventory = (nightmare, config, title, holdingsOnly) => {
       .insert('#additem_barcode', barcode)
       .wait(222)
       .click('#clickable-create-item')
-      .then(() => { done(); })
+      .then(done)
       .catch(done);
   });
   return barcode;
