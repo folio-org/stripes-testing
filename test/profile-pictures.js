@@ -35,9 +35,6 @@ describe('Load test-profilePictures', function runMain() {
 
     it('should enable profile pictures', (done) => {
       nightmare
-        .on('console', (log, msg) => {
-          console.log(msg);
-        })
         .click('#clickable-settings')
         .wait(pageLoadPeriod)
         .click('a[href="/settings/users"]')
@@ -62,6 +59,22 @@ describe('Load test-profilePictures', function runMain() {
         .catch(done);
     });
 
+    it('should check that profile pictures are enabled', (done) => {
+      nightmare
+        .click('a[href="/settings/users"]')
+        .wait(actionLoadPeriod)
+        .click('a[href="/settings/users/profilepictures"]')
+        .wait(actionLoadPeriod)
+        .evaluate(() => {
+          const elem = document.querySelector('#profile_pictures');
+          if (!elem.checked) {
+            throw new Error('Profile pictures not enabled');
+          }
+        })
+        .then(() => { done(); })
+        .catch(done);
+    });
+
     it('should check picture present in user information', (done) => {
       nightmare
         .click('#clickable-users-module')
@@ -69,16 +82,18 @@ describe('Load test-profilePictures', function runMain() {
         // check on active users filter
         .click('#clickable-filter-active-Active')
         .wait('#list-users')
+        .wait(pageLoadPeriod)
         .click('#list-users div[role="listitem"]:first-of-type > a')
+        .wait(pageLoadPeriod)
         .wait('#userInformationSection')
-        .wait('#userInformationSection > div[role="tabpanel"] img')
+        .wait(pageLoadPeriod)
         .evaluate((imgW, imgH) => {
           const imgElem = document.querySelector('#userInformationSection > div[role="tabpanel"] img');
           if (imgElem === null) {
             throw new Error('Image not being displayed');
           }
-          console.log(imgElem.naturalWidth);
-          console.log(imgElem.naturalHeight);
+          // console.log(imgElem.naturalWidth);
+          // console.log(imgElem.naturalHeight);
           if (imgElem.naturalWidth !== imgW && imgElem.naturalHeight !== imgH) {
             throw new Error('Image displayed does not have the correct dimensions');
           }
@@ -91,10 +106,6 @@ describe('Load test-profilePictures', function runMain() {
       nightmare
         .click('#clickable-settings')
         .wait(pageLoadPeriod)
-        // .click('a[href="/settings/users"]')
-        // .wait(actionLoadPeriod)
-        // .click('a[href="/settings/users/profilepictures"]')
-        // .wait(actionLoadPeriod)
         .evaluate(() => {
           const elem = document.querySelector('#profile_pictures');
           if (elem.checked) {
@@ -110,6 +121,22 @@ describe('Load test-profilePictures', function runMain() {
         .catch(done);
     });
 
+    it('should check that profiel pictures is disabled', (done) => {
+      nightmare
+        .click('a[href="/settings/users"]')
+        .wait(actionLoadPeriod)
+        .click('a[href="/settings/users/profilepictures"]')
+        .wait(actionLoadPeriod)
+        .evaluate(() => {
+          const elem = document.querySelector('#profile_pictures');
+          if (elem.checked) {
+            throw new Error('Profile pictures still enabled');
+          }
+        })
+        .then(() => { done(); })
+        .catch(done);
+    });
+
     it('should check picture not present in user information', (done) => {
       nightmare
         .click('#clickable-users-module')
@@ -118,7 +145,9 @@ describe('Load test-profilePictures', function runMain() {
         .check('#clickable-filter-active-Active')
         .wait('#list-users')
         .click('#list-users div[role="listitem"]:first-of-type > a')
+        .wait(pageLoadPeriod)
         .wait('#userInformationSection')
+        .wait(pageLoadPeriod)
         .evaluate(() => {
           const img = document.querySelector('#userInformationSection > div[role="tabpanel"] img');
           if (img !== null) {
