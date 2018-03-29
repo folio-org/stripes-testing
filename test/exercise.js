@@ -3,6 +3,7 @@
 
 const Nightmare = require('../xnightmare.js');
 const config = require('../folio-ui.config.js');
+const helpers = require('../helpers.js');
 
 describe('Exercise users, inventory, checkout, checkin, settings ("test-exercise")', function descRoot() {
   this.timeout(Number(config.test_timeout));
@@ -11,7 +12,7 @@ describe('Exercise users, inventory, checkout, checkin, settings ("test-exercise
     const nightmare = new Nightmare(config.nightmare);
     let userid = 'user';
     const uselector = "#list-users div[role='listitem']:nth-of-type(12) > a > div:nth-of-type(5)";
-    const barcode = new Date().valueOf();
+    // const barcode = new Date().valueOf();
     const title = 'Soul station';
     const callno = 'SDA 32171';
 
@@ -49,7 +50,7 @@ describe('Exercise users, inventory, checkout, checkin, settings ("test-exercise
         .click('#username-checkbox')
         .wait(222)
         .xclick('//button[.="Save"]')
-        .wait(parseInt(process.env.FOLIO_UI_DEBUG, 10) ? parseInt(config.debug_sleep, 10) : 555) // debugging
+        .wait(parseInt(process.env.FOLIO_UI_DEBUG, 10) ? parseInt(config.debug_sleep, 10) : 1111) // debugging
         .then(done)
         .catch(done);
     });
@@ -92,6 +93,8 @@ describe('Exercise users, inventory, checkout, checkin, settings ("test-exercise
         })
         .catch(done);
     });
+    const barcode = helpers.createInventory(nightmare, config, 'Soul station / Hank Mobley');
+    /*
     it('should create inventory record', (done) => {
       nightmare
         .click('#clickable-inventory-module')
@@ -138,7 +141,7 @@ describe('Exercise users, inventory, checkout, checkin, settings ("test-exercise
         .click('#clickable-create-item')
         .then(done)
         .catch(done);
-    });
+    }); */
     it(`should check out ${barcode} to ${userid}`, (done) => {
       nightmare
         .click('#clickable-checkout-module')
