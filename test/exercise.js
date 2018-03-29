@@ -13,8 +13,8 @@ describe('Exercise users, inventory, checkout, checkin, settings ("test-exercise
     let userid = 'user';
     const uselector = "#list-users div[role='listitem']:nth-of-type(12) > a > div:nth-of-type(5)";
     // const barcode = new Date().valueOf();
-    const title = 'Soul station';
-    const callno = 'SDA 32171';
+    // const title = 'Soul station';
+    // const callno = 'SDA 32171';
 
     it(`should login as ${config.username}/${config.password}`, (done) => {
       nightmare
