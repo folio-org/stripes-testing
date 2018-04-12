@@ -8,10 +8,10 @@ describe('Load test-codexsearch', function runMain() {
   this.timeout(Number(config.test_timeout));
 
   const nightmare = new Nightmare(config.nightmare);
-  const title = 'Arctic A to Z';
-  const pageLoadPeriod = 2000;
+  const title = 'POPs in Marine Mammals';
+  // const pageLoadPeriod = 2000;
   const actionLoadPeriod = 222;
-  const searchResultsTitleSelector = '#list-search div[role="listitem"]:first-of-type > a > div[role="gridcell"]:nth-of-type(2)';
+  const searchResultsTitleSelector = `#list-search div[role="gridcell"][title*="${title}"]`;
   const resetButtonLabel = 'Reset all';
   const resetButtonSelector = 'button > span';
 
@@ -20,21 +20,20 @@ describe('Load test-codexsearch', function runMain() {
       helpers.login(nightmare, config, done);
     });
 
-    it('should open codex search', (done) => {
+    it('should open codex search and execute search', (done) => {
       nightmare
         .click('#clickable-search-module')
-        .wait(pageLoadPeriod)
+        .wait('#input-record-search')
         .type('#input-record-search', title)
-        .wait('#list-search') // wait for the search results to be displayed, #list-search is created when search results are output to screen
-        .wait(actionLoadPeriod)
-        .then((result) => { done(); })
+        .wait(searchResultsTitleSelector)
+        .then(done)
         .catch(done);
     });
 
-    it('should confirm search results', (done) => {
+    /* it('should confirm search results', (done) => {
       nightmare
         .wait(searchResultsTitleSelector)
-        .evaluate(function (selector, itemTitle) {
+        .evaluate(function csearch(selector, itemTitle) {
           const firstResult = document.querySelector(selector).title; // the entered title should be the first result
           if (firstResult !== itemTitle) {
             throw new Error(`Title not found in first position. Title found is (${firstResult})`);
@@ -42,17 +41,17 @@ describe('Load test-codexsearch', function runMain() {
         }, searchResultsTitleSelector, title)
         .then((result) => { done(); })
         .catch(done);
-    });
+    }); */
 
     it('should reset search', (done) => {
       nightmare
-        .evaluate(function (resetLabel, resetSelector) {
+        .evaluate(function rsearch(resetLabel, resetSelector) {
           const matches = document.querySelectorAll(resetSelector);
           let found = false;
           if (matches.length === 0) {
             throw new Error('No buttons found');
           }
-          matches.forEach(function (currentValue, currentIndex, listObj) {
+          matches.forEach(function codexClick(currentValue, currentIndex, listObj) {
             if (currentValue.textContent === resetLabel) {
               currentValue.click();
               found = true;
@@ -70,15 +69,15 @@ describe('Load test-codexsearch', function runMain() {
       // #input-record-search should be empty and Reset all disappears
       nightmare
         .wait(actionLoadPeriod)
-        .evaluate(function (selector) {
+        .evaluate(function confReset(selector) {
           const searchField = document.querySelector(selector);
           if (searchField.value.length > 0) {
             throw new Error('Input field not cleared on reset');
           }
         }, '#input-record-search')
-        .evaluate(function (resetLabel, resetSelector) {
+        .evaluate(function confResetAgain(resetLabel, resetSelector) {
           const matches = document.querySelectorAll(resetSelector);
-          matches.forEach(function (currentValue, currentIndex, listObj) {
+          matches.forEach(function confResetEach(currentValue, currentIndex, listObj) {
             if (currentValue.textContent === resetLabel) {
               throw new Error('Reset all button is visible');
             }
