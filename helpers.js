@@ -31,10 +31,10 @@ module.exports.openApp = (nightmare, config, done, app, testVersion) => function
     .click(`#clickable-${app}-module`)
     .wait(`#${app}-module-display`)
     .evaluate((mapp) => {
-      const metaData = document.querySelector(`#${mapp}-module-display`);
+      const metadata = document.querySelector(`#${mapp}-module-display`);
       return {
-        moduleName: metaData.getAttribute('data-module'),
-        moduleVersion: metaData.getAttribute('data-version'),
+        moduleName: metadata.getAttribute('data-module'),
+        moduleVersion: metadata.getAttribute('data-version'),
       };
     }, app)
     .then((meta) => {
