@@ -7,7 +7,7 @@ module.exports = {
   username: process.env.FOLIO_UI_USERNAME || 'diku_admin',
   password: process.env.FOLIO_UI_PASSWORD || 'admin',
   debug_sleep: parseInt(process.env.FOLIO_UI_DEBUG_SLEEP, 10) || 4000,
-  login_wait: parseInt(process.env.FOLIO_UI_LOGIN_WAIT, 10) || 1000,
+  login_wait: parseInt(process.env.FOLIO_UI_LOGIN_WAIT, 10) || 3000,
   test_timeout: parseInt(process.env.FOLIO_UI_TEST_TIMEOUT, 10) || 60000,
   select: {
     username: 'input[name=username]',
