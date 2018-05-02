@@ -1,5 +1,5 @@
+/* global it describe */
 const Nightmare = require('nightmare');
-const assert = require('assert');
 const config = require('../folio-ui.config.js');
 
 describe('Checking for dependency issues on FOLIO UI App /about ("test-dependencies")', function () {
@@ -8,7 +8,7 @@ describe('Checking for dependency issues on FOLIO UI App /about ("test-dependenc
 
   describe('Login > Click "About" link > Check for dependency errors > Logout\n', () => {
     nightmare = new Nightmare(config.nightmare);
-    flogin = function (un, pw) {
+    const flogin = function (un, pw) {
       it(`should login as ${un}/${pw}`, (done) => {
         nightmare
           .goto(config.url)
@@ -22,12 +22,12 @@ describe('Checking for dependency issues on FOLIO UI App /about ("test-dependenc
           .catch(done);
       });
     };
-    flogout = function () {
+    const flogout = function () {
       it('should logout', (done) => {
         nightmare
           .click('#clickable-logout')
           .wait(config.select.username)
-          .wait(parseInt(process.env.FOLIO_UI_DEBUG) ? parseInt(config.debug_sleep) : 555) // debugging
+          .wait(parseInt(process.env.FOLIO_UI_DEBUG, 10) ? parseInt(config.debug_sleep, 10) : 555) // debugging
           .end()
           .then((result) => { done(); })
           .catch(done);
@@ -47,18 +47,19 @@ describe('Checking for dependency issues on FOLIO UI App /about ("test-dependenc
       nightmare
         .evaluate(function () {
           const elements = document.querySelectorAll('li[style*=" red"]');
-          const msgs = new Array();
-          for (x = 0; x < elements.length; x++) {
+          const msgs = [];
+          for (let x = 0; x < elements.length; x++) {
             msgs.push(elements[x].textContent);
           }
           if (msgs.length > 0) {
             msgs.push('Interfaces that are required but absent:');
           }
+          return msgs;
         })
         .then((result) => {
           done();
           if (result !== null) {
-            for (x = 0; x < result.length; x++) {
+            for (let x = 0; x < result.length; x++) {
               console.log('          WARN:', result[x]);
             }
           }
@@ -69,19 +70,19 @@ describe('Checking for dependency issues on FOLIO UI App /about ("test-dependenc
       nightmare
         .evaluate(function () {
           const elements = document.querySelectorAll('li[style*="orange"]');
-          const msgs = new Array();
-          for (x = 0; x < elements.length; x++) {
+          const msgs = [];
+          for (let x = 0; x < elements.length; x++) {
             msgs.push(`* ${elements[x].textContent}`);
           }
           if (msgs.length > 0) {
             msgs.unshift('Interfaces that are required but present only in an incompatible version:');
-            return msgs;
           }
+          return msgs;
         })
         .then((result) => {
           done();
           if (result !== null) {
-            for (x = 0; x < result.length; x++) {
+            for (let x = 0; x < result.length; x++) {
               console.log('          WARN:', result[x]);
             }
           }
