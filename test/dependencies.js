@@ -1,51 +1,28 @@
 /* global it describe */
 const Nightmare = require('nightmare');
 const config = require('../folio-ui.config.js');
+const helpers = require('../helpers.js');
 
-describe('Checking for dependency issues on FOLIO UI App /about ("test-dependencies")', function () {
+describe('Checking for dependency issues on FOLIO UI App /about ("test-dependencies")', function start() {
   this.timeout(Number(config.test_timeout));
   let nightmare = null;
 
   describe('Login > Click "About" link > Check for dependency errors > Logout\n', () => {
     nightmare = new Nightmare(config.nightmare);
-    const flogin = function (un, pw) {
-      it(`should login as ${un}/${pw}`, (done) => {
-        nightmare
-          .goto(config.url)
-          .wait(Number(config.login_wait))
-          .insert(config.select.username, un)
-          .insert(config.select.password, pw)
-          .click('#clickable-login')
-          .wait('#clickable-logout')
-          .wait(555)
-          .then((result) => { done(); })
-          .catch(done);
-      });
-    };
-    const flogout = function () {
-      it('should logout', (done) => {
-        nightmare
-          .click('#clickable-logout')
-          .wait(config.select.username)
-          .wait(parseInt(process.env.FOLIO_UI_DEBUG, 10) ? parseInt(config.debug_sleep, 10) : 555) // debugging
-          .end()
-          .then((result) => { done(); })
-          .catch(done);
-      });
-    };
-
-    flogin(config.username, config.password);
+    it('should login', (done) => {
+      helpers.login(nightmare, config, done);
+    });
     it('should load "about" page', (done) => {
       nightmare
         .click('#clickable-settings')
         .click('a[href="/settings/about"]')
         .wait(555)
-        .then((result) => { done(); })
+        .then(() => { done(); })
         .catch(done);
     });
     it('should check for "red" errors', (done) => {
       nightmare
-        .evaluate(function () {
+        .evaluate(() => {
           const elements = document.querySelectorAll('li[style*=" red"]');
           const msgs = [];
           for (let x = 0; x < elements.length; x++) {
@@ -68,7 +45,7 @@ describe('Checking for dependency issues on FOLIO UI App /about ("test-dependenc
     });
     it('should check for "orange" errors', (done) => {
       nightmare
-        .evaluate(function () {
+        .evaluate(() => {
           const elements = document.querySelectorAll('li[style*="orange"]');
           const msgs = [];
           for (let x = 0; x < elements.length; x++) {
@@ -89,6 +66,8 @@ describe('Checking for dependency issues on FOLIO UI App /about ("test-dependenc
         })
         .catch(done);
     });
-    flogout();
+    it('should logout', (done) => {
+      helpers.logout(nightmare, config, done);
+    });
   });
 });
