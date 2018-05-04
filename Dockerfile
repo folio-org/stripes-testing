@@ -10,7 +10,7 @@ RUN apt-get -q update && \
     apt-get -q clean -y && rm -rf /var/lib/apt/lists/* && \
     rm -f /var/cache/apt/*.bin
 
-ENV NODEJS_VERSION 6
+ENV NODEJS_VERSION 8
 
 RUN wget --no-check-certificate --no-cookies https://deb.nodesource.com/setup_${NODEJS_VERSION}.x -O /tmp/node.sh  && \
     chmod +x /tmp/node.sh && \
