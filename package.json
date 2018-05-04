@@ -39,6 +39,7 @@
     "electron": "2.0.0",
     "minimist": "^1.2.0",
     "mocha": "^3.4.2",
+    "mocha-jenkins-reporter": "^0.3.12",
     "nightmare": "^2.10.0",
     "nightmarejs": "^0.0.1"
   },
