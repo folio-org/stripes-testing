@@ -36,7 +36,7 @@
     "@folio/search": "*",
     "@folio/users": "*",
     "debug": "^3.1.0",
-    "electron": "1.7.6",
+    "electron": "2.0.0",
     "minimist": "^1.2.0",
     "mocha": "^3.4.2",
     "nightmare": "^2.10.0",
