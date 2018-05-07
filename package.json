@@ -23,6 +23,7 @@
     "test-codexsearch": "./node_modules/.bin/mocha test/codex-search.js",
     "test-profile-pictures": "./node_modules/.bin/mocha test/profile-pictures.js",
     "test-vendors": "./node_modules/.bin/mocha test/vendor.js",
+    "test-location": "./node_modules/.bin/mocha test/location.js",
     "module-tests": "./node_modules/.bin/mocha test-module.js --run=/checkout/checkin/users/items/inventory",
     "lint": "eslint *.js test/*.js"
   },
