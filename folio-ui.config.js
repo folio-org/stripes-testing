@@ -10,8 +10,8 @@ module.exports = {
   login_wait: parseInt(process.env.FOLIO_UI_LOGIN_WAIT, 10) || 3000,
   test_timeout: parseInt(process.env.FOLIO_UI_TEST_TIMEOUT, 10) || 60000,
   select: {
-    username: 'input[name=username]',
-    password: 'input[name=password]',
+    username: '#input-username',
+    password: '#input-password',
     login: '#clickable-login',
     logout: '#clickable-logout',
     settings: '#clickable-settings',

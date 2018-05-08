@@ -12,13 +12,11 @@ describe('Login Page ("test-good-login")', function () {
     it('Login successfully', (done) => {
       nightmare
         .goto(config.url)
-        .wait(Number(config.login_wait))
-        .click(config.select.username)
-        .insert(config.select.username, config.username)
-        .insert(config.select.password, config.password)
+        .wait(config.select.username)
+        .type(config.select.username, config.username)
+        .type(config.select.password, config.password)
         .click('#clickable-login')
-        .wait('h3')
-        .wait(parseInt(process.env.FOLIO_UI_DEBUG) ? parseInt(config.debug_sleep) : 0) // debugging
+        .wait('#clickable-logout')
         .then((result) => { done(); })
         .catch(done);
     });
@@ -26,9 +24,7 @@ describe('Login Page ("test-good-login")', function () {
     it('Logout properly', (done) => {
       nightmare
         .click('#clickable-logout') // logout
-        .wait('div[class^="loginContainer"') // login page
-        .wait(parseInt(process.env.FOLIO_UI_DEBUG) ? parseInt(config.debug_sleep / 3) : 0) // debugging
-
+        .wait('#clickable-login')
         .end()
         .then((result) => { done(); })
         .catch(done);
