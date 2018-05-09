@@ -22,7 +22,7 @@ describe('Exercise users, inventory, checkout, checkin, settings ("test-exercise
           throw new Error(message);
         })
         .goto(config.url)
-        .wait(Number(config.login_wait))
+        .wait(config.select.username)
         .insert(config.select.username, config.username)
         .insert(config.select.password, config.password)
         .click('#clickable-login')
