@@ -8,7 +8,7 @@
 * [Starting tests with `stripes test`](#starting-tests-with-stripes-test)
 
 
-The tests for the `stripes-components` library currently differ in several ways from those of the Stripes applications (`ui-users`, etc.) It turns out that these are all orthogonal and can be considered in isolation. We should decide, for each of them, whether to retrofit to the application tests.
+The tests for the `stripes-components` library currently differ in several ways from those of the Stripes applications (`ui-users`, etc.). It turns out that these are all orthogonal and can be considered in isolation. We should decide, for each of them, whether to retrofit to the application tests.
 
 This discussion paper is the outcome of an informal break-out meeting on the afternoon of Tuesday 8 May 2018, with Mike Taylor, John Coburn, Matt Jones and Zak Burke.
 
@@ -41,7 +41,7 @@ It's probably worth having a wider discussion about switching to Karma.
 
 ## Using `@bigtest/mocha` instead of regular Mocha
 
-[`@bigtestjs/mocha`](https://github.com/bigtestjs/mocha) is Frontside's derivative of the standard Mocha test-running library. It differs from the parent package in repeatedly polling each test until it becomes true, or until an implicit timeout expires. (They call this approach "convergent assertion").
+[`@bigtestjs/mocha`](https://github.com/bigtestjs/mocha) is Frontside's derivative of the standard Mocha test-running library. It differs from the parent package in repeatedly polling each test until it becomes true, or until an implicit timeout expires. (They call this approach "convergent assertion".)
 
 On the positive side, this allows `.wait` actions to be omitted altogether. On the negative side, it introduces some surprises if any test inadvertently contains anything that changes state, as that state-change will be executed an indeterminate number of times.
 
