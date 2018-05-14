@@ -15,6 +15,7 @@ pipeline {
    // defaults
    environment {
       dockerImage = 'folioci/ui-testing'
+      okapiUrl = 'http://folio-testing-backend01.aws.indexdata.com:9130'
    }
 
    stages {
@@ -37,7 +38,7 @@ pipeline {
 
    post {
       always {
-        sendUitestNotifications env.testStatus
+        sendUitestNotifications(env.testStatus,env.FOLIO_UI_URL,env.okapiUrl)
       }
    }
 }
