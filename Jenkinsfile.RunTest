@@ -1,4 +1,4 @@
-@Library ('folio_jenkins_shared_libs') _
+@Library ('folio_jenkins_shared_libs@folio-1235') _
 
 pipeline {
    agent { 
@@ -15,7 +15,7 @@ pipeline {
    // defaults
    environment {
       dockerImage = 'folioci/ui-testing'
-      testStatus = 'FAILED'
+      okapiUrl = 'http://folio-testing-backend01.aws.indexdata.com:9130'
    }
 
    stages {
@@ -38,7 +38,7 @@ pipeline {
 
    post {
       always {
-        sendUitestNotifications env.testStatus
+        sendUitestNotifications(env.testStatus,env.FOLIO_UI_URL,env.okapiUrl)
       }
    }
 }
