@@ -1,17 +1,21 @@
+@Library ('folio_jenkins_shared_libs') _
+
 pipeline {
-   agent any
+   agent { 
+     label 'master'
+   }
 
    // This script expects an input parameter called 'FOLIO_UI_URL'
-   // and the docker image tag e.g version - 'UI_TESTING_VERSION'
+   // and the docker image tag/version e.g 'latest', etc - 'UI_TESTING_VERSION'
 
    // parameters {
    //    string(name: 'FOLIO_UI_URL', defaultValue: '', description: 'FOLIO URL')
    // }
 
+   // defaults
    environment {
-      docker_image = 'folioci/ui-testing'
-      slack_channel = 'coreteam'
-      mail_to = 'folio-jenkins.ui@indexdata.com'
+      dockerImage = 'folioci/ui-testing'
+      okapiUrl = 'http://folio-testing-backend01.aws.indexdata.com:9130'
    }
 
    stages {
@@ -20,47 +24,21 @@ pipeline {
             script {
                currentBuild.displayName = "#${env.BUILD_NUMBER}-${env.JOB_BASE_NAME}"
             }
-
-            slackSend(channel: "${env.slack_channel}",
-                      message: "UI Regression Tests Started for ${params.FOLIO_UI_URL}: ${env.JOB_NAME} ${env.BUILD_NUMBER} (<${env.BUILD_URL}|Open>)")
             step([$class: 'WsCleanup'])
          }
       }
-      stage('Run_Tests') {
+      stage('Run UI Regression Test') {
          steps {
-            sh 'docker pull ${docker_image}:${UI_TESTING_VERSION}'
-            sh "docker run -i --rm -e \"FOLIO_UI_URL=${FOLIO_UI_URL}\" ${docker_image}:${UI_TESTING_VERSION}"
+           script { 
+             env.testStatus = runUiRegression(env.UI_TESTING_VERSION,env.FOLIO_UI_URL)
+           }
          }
       }
    }
 
    post {
-      success {
-         slackSend(color: '#008000',
-                   channel: "${env.slack_channel}",
-                   message: "All UI Regression Tests _Passed_ for ${params.FOLIO_UI_URL}: ${env.JOB_NAME} ${env.BUILD_NUMBER} (<${env.BUILD_URL}|Open>)")
-      }
-
-      failure {
-         slackSend(color: '#FF0000',
-                   channel: "${env.slack_channel}",
-                   message: "UI Regression Tests Failure(s) for ${params.FOLIO_UI_URL}: ${env.JOB_NAME} ${env.BUILD_NUMBER} (<${env.BUILD_URL}|Open>)")
-
-         mail bcc: '', body: "${env.JOB_NAME} ${env.BUILD_NUMBER} ${env.BUILD_URL}",
-              cc: '', from: 'folio-jenkins@indexdata.com', replyTo: '',
-              subject: "UI Regression Tests Failure(s) for ${params.FOLIO_UI_URL}",
-              to: "${env.mail_to}"
-      }
-
-      unstable {
-         slackSend(color:'#008000',
-                   channel: "${env.slack_channel}",
-                   message: "UI Regression Tests Unstable for ${params.FOLIO_UI_URL}: ${env.JOB_NAME} ${env.BUILD_NUMBER} (<${env.BUILD_URL}|Open>)")
-
-         mail bcc: '', body: "${env.JOB_NAME} ${env.BUILD_NUMBER} ${env.BUILD_URL}",
-              cc: '', from: 'folio-jenkins@indexdata.com', replyTo: '',
-              subject: "UI Regression Tests Unstable for ${params.FOLIO_UI_URL}",
-              to: "${env.mail_to}"
+      always {
+        sendUitestNotifications(env.testStatus,env.FOLIO_UI_URL,env.okapiUrl)
       }
    }
 }

@@ -27,7 +27,7 @@ describe('Load test-vendor', function runMain() {
   const vendorDesc = 'GOBI Library Solutions from EBSCO (formerly YBP Library Services) provides acquisition, collection development and technical services to academic and research libraries around the world';
 
   // selector constants
-  const vendorListSelector = '#list-multilist div[role="listitem"]';
+  const vendorListSelector = 'div[role="listitem"]';
   const vendorNameSelector = `div[role="gridcell"][title="${vendorName}"]`;
   const vendorNewNameSelector = `div[role="gridcell"][title="${newVendorName}"]`;
 
@@ -42,15 +42,14 @@ describe('Load test-vendor', function runMain() {
       console.log(msg)
      }) */
         .click('#clickable-vendors-module')
-        .wait('#vendors-module-display')
+        .wait('#clickable-newvendors')
         .then(() => { done(); })
         .catch(done);
     });
 
     it('should add a vendor', (done) => {
       nightmare
-        .wait('#clickable-new')
-        .click('#clickable-new')
+        .click('#clickable-newvendors')
         .wait('#form-add-new-vendor')
       // populate form
         .insert('#name', vendorName)
@@ -59,16 +58,16 @@ describe('Load test-vendor', function runMain() {
         .select('#vendor_status', vendorStatus)
         .select('#language', vendorLang)
       // vendor names
-        .wait('#form-add-new-vendor button[type="submit"]')
-        .click('#form-add-new-vendor button[type="submit"]')
-        .wait(3333)
+        .wait('#clickable-createnewvendor')
+        .click('#clickable-createnewvendor')
+        .wait(555)
         .then(() => { done(); })
         .catch(done);
     });
 
     it('should confirm vendor created and edit the vendor', (done) => {
       nightmare
-        .wait('#list-multilist')
+        .wait('#clickable-newvendors')
         .evaluate((vendListSelector, vendNameSelector, vendName) => {
           let found = false;
           const matches = document.querySelectorAll(vendListSelector);
@@ -89,22 +88,22 @@ describe('Load test-vendor', function runMain() {
           }
         }, vendorListSelector, vendorNameSelector, vendorName)
       // edit the vendor, open the vendor form
-        .wait('#edit-vendor')
-        .click('#edit-vendor')
-        .wait('#form-edit-vendor')
+        .wait('#clickable-editvendor')
+        .click('#clickable-editvendor')
+        .wait('#form-add-new-vendor')
       // change the vendor name
         .insert('#name', '') // clear existing value
         .insert('#name', newVendorName)
-        .wait('#form-edit-vendor button[type="submit"]')
-        .click('#form-edit-vendor button[type="submit"]')
-        .wait(3333)
+        .wait('#clickable-updatevendor')
+        .click('#clickable-updatevendor')
+        .wait(999)
         .then(() => { done(); })
         .catch(done);
     });
 
     it('should confirm the edit and remove the vendor', (done) => {
       nightmare
-        .wait('#list-multilist')
+        .wait(vendorListSelector)
         .evaluate((vendListSelector, vendNameSelector, vendName) => {
           let found = false;
           const matches = document.querySelectorAll(vendListSelector);
@@ -125,10 +124,10 @@ describe('Load test-vendor', function runMain() {
           }
         }, vendorListSelector, vendorNewNameSelector, newVendorName)
       // open the edit form
-        .wait('#edit-vendor')
-        .click('#edit-vendor')
-        .wait('#form-edit-vendor')
-      // get the remove button and click
+        .wait('#clickable-editvendor')
+        .click('#clickable-editvendor')
+        .wait('#form-add-new-vendor > div:nth-child(3) > div > button > span')
+      /* get the remove button and click
         .evaluate(() => {
           const removeButton = document.querySelector('#form-edit-vendor>section>div>button[role="button"]>span');
           if (removeButton !== null && removeButton.innerHTML === 'Remove') {
@@ -140,8 +139,9 @@ describe('Load test-vendor', function runMain() {
               currentValue.click();
             }
           });
-        })
-        .wait(3333)
+        }) */
+        .click('#form-add-new-vendor > div:nth-child(3) > div > button > span')
+        // .wait(3333)
         .then(() => { done(); })
         .catch(done);
     });
