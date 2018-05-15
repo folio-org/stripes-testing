@@ -21,7 +21,7 @@ describe('Load test-location', function runMain() {
   // location constants
   const institutionName = 'The University of The West Indies';
   const institutionCode = 'UWI';
-  const campusName = 'St. Augustine';
+  const campusName = 'St Augustine';
   const campusCode = 'STA';
   const libraryName = 'The Alma Jordan Library';
   const libraryCode = 'AJL';
@@ -44,16 +44,16 @@ describe('Load test-location', function runMain() {
         .click('#clickable-settings')
         .wait('#ModuleContainer')
         .click('div[role="presentation"] a[href="/settings/organization"]')
-        .wait(3333)
+        .wait(999)
         .then(() => { done(); })
         .catch(done);
     });
     
-    /*it('it should create an institution', (done) => {
+    it('it should create an institution', (done) => {
       nightmare
         .wait('a[href="/settings/organization/location-institutions"]')
         .click('a[href="/settings/organization/location-institutions"]')
-        .wait(3333)
+        .wait(999)
         .wait('#clickable-add-institutions')
         .click('#clickable-add-institutions')
         .wait('input[name="items[0].name"]')
@@ -62,41 +62,43 @@ describe('Load test-location', function runMain() {
         .type('input[name="items[0].code"]', institutionCode)
         .wait('#clickable-save-institutions-0')
         .click('#clickable-save-institutions-0')
-        .wait(3333)
+        .wait(999)
         .then(() => { done(); })
         .catch(done);
     });
     
     it('it should confirm institution created', (done) => {
       nightmare
-        .wait('#editList-institutions')
         .evaluate((instName, instNameSelector) => {
           // each institution in an div.editListRow class 
           let found = false;
-          list = document.querySelectorAll('#editList-institutions div:nth-of-type(2)>div');
-          console.log(list.length);
-          list.forEach((currentValue) => {
-            const row = currentValue.querySelector(instNameSelector);
-            if (row !== null) {
-              console.log(row.title);
-              if (row.title === instName) {
-                found = true;
+          container = document.querySelector('#editList-institutions');
+          if (container !== null) {
+            list = document.querySelectorAll('#editList-institutions>div:nth-of-type(2)>div');
+            console.log(list.length);
+            list.forEach((currentValue) => {
+              const row = currentValue.querySelector(instNameSelector);
+              if (row !== null) {
+                console.log(row.title);
+                if (row.title === instName) {
+                  found = true;
+                }
               }
-            }
-          });
+            });
+          }
           if (!found) {
             throw new Error('Institution not created');
           }
         }, institutionName, institutionNameSelector)
         .then(() => { done(); })
         .catch(done);
-    });*/
+    });
     
     it('it should create a campus', (done) => {
       nightmare
         .wait('a[href="/settings/organization/location-campuses"]')
         .click('a[href="/settings/organization/location-campuses"]')
-        .wait(3333)
+        .wait(999)
         .wait('#institutionSelect')
         .evaluate((instNameCode) => {
           console.log(instNameCode);
@@ -127,33 +129,36 @@ describe('Load test-location', function runMain() {
         .type('input[name="items[0].name"]', campusName)
         .wait('input[name="items[0].code"]')
         .type('input[name="items[0].code"]', campusCode)
-        .wait('#editList-patrongroups #clickable-save-patrongroups-0')
-        .click('#editList-patrongroups #clickable-save-patrongroups-0') //not saving
-        .wait(3333)
+        .click('#clickable-save-patrongroups-0') //not saving
+        .wait(999)
         .then(() => { done(); })
         .catch(done);
     });
     
     it('it should confirm campus created', (done) => {
       nightmare
-        .wait('#editList-patrongroups')
         .evaluate((campName, campNameSelector) => {
           let found = false;
-          list = document.querySelectorAll('#editList-patrongroups div:nth-of-type(2)>div');
-          console.log(list.length);
-          list.forEach((currentValue) => {
-            const row = currentValue.querySelector(campNameSelector);
-            if (row !== null) {
-              console.log(row.title);
-              if (row.title === campName) {
-                found = true;
+          container = document.querySelector('#editList-patrongroups');
+          if (container !== null) {
+            list = document.querySelectorAll('#editList-patrongroups>div:nth-of-type(2)>div');
+            console.log(list.length);
+            list.forEach((currentValue) => {
+              const row = currentValue.querySelector(campNameSelector);
+              if (row !== null) {
+                console.log(row.title);
+                if (row.title === campName) {
+                  found = true;
+                }
               }
-            }
-          });
+            });
+          }
           if (!found) {
             throw new Error('Campus not created');
           }
         }, campusName, campusNameSelector)
+        .then(() => { done(); })
+        .catch(done);
     });
     
     /*it('it should create a library', (done) => {
