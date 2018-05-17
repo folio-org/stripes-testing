@@ -31,7 +31,7 @@ describe('Load test-vendor', function runMain() {
   const vendorNameSelector = `div[role="gridcell"][title="${vendorName}"]`;
   const vendorNewNameSelector = `div[role="gridcell"][title="${newVendorName}"]`;
 
-  describe('Login > Vendors > Add Vendor > Confirm Creation > Edit New Vendor > Confirm Changes > Deletes New Vendor > Confirm > Logout\n', () => {
+  describe(`(${config.url}) Login > Vendors > Add Vendor > Confirm Creation > Edit New Vendor > Confirm Changes > Deletes New Vendor > Confirm > Logout\n`, () => {
     it(`should login as ${config.username}/${config.password}`, (done) => {
       helpers.login(nightmare, config, done);
     });
