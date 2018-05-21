@@ -25,22 +25,24 @@ describe('Load test-location', function runMain() {
   const campusCode = 'STA';
   const libraryName = 'The Alma Jordan Library';
   const libraryCode = 'AJL';
-  
-  //selectors
+  let institutionUUID = '';
+  let campusUUID = '';
+
+  // selectors
   const institutionNameSelector = `div[role="gridcell"][title="${institutionName}"]`;
   const campusNameSelector = `div[role="gridcell"][title="${campusName}"]`;
   const libraryNameSelector = `div[role="gridcell"][title="${libraryName}"]`;
-  
+
   describe('Login > Settings > Organisation > Create Institutions > Confirm Creation > Create Campus > Confirm Creation > Create Library > Confirm Creation > Remove Library, Campus, Institution > Confirm Removal > Logout\n', () => {
     it(`should login as ${config.username}/${config.password}`, (done) => {
       helpers.login(nightmare, config, done);
     });
-    
+
     it('it should click on settings and organisation', (done) => {
       nightmare
-        .on('console', (log, msg) => {
-         console.log(msg)
-        }) 
+        /* .on('console', (log, msg) => {
+          console.log(msg);
+        }) */
         .click('#clickable-settings')
         .wait('#ModuleContainer')
         .click('div[role="presentation"] a[href="/settings/organization"]')
@@ -48,7 +50,7 @@ describe('Load test-location', function runMain() {
         .then(() => { done(); })
         .catch(done);
     });
-    
+
     it('it should create an institution', (done) => {
       nightmare
         .wait('a[href="/settings/organization/location-institutions"]')
@@ -66,15 +68,15 @@ describe('Load test-location', function runMain() {
         .then(() => { done(); })
         .catch(done);
     });
-    
+
     it('it should confirm institution created', (done) => {
       nightmare
         .evaluate((instName, instNameSelector) => {
-          // each institution in an div.editListRow class 
+          // each institution in an div.editListRow class
           let found = false;
-          container = document.querySelector('#editList-institutions');
+          const container = document.querySelector('#editList-institutions');
           if (container !== null) {
-            list = document.querySelectorAll('#editList-institutions>div:nth-of-type(2)>div');
+            const list = document.querySelectorAll('#editList-institutions>div:nth-of-type(2)>div');
             console.log(list.length);
             list.forEach((currentValue) => {
               const row = currentValue.querySelector(instNameSelector);
@@ -93,55 +95,60 @@ describe('Load test-location', function runMain() {
         .then(() => { done(); })
         .catch(done);
     });
-    
+
     it('it should create a campus', (done) => {
       nightmare
         .wait('a[href="/settings/organization/location-campuses"]')
         .click('a[href="/settings/organization/location-campuses"]')
-        .wait(999)
+        .wait(3333)
         .wait('#institutionSelect')
         .evaluate((instNameCode) => {
           console.log(instNameCode);
           let index = -1;
-          selectOptions = document.querySelector('#institutionSelect').options;
+          let optValue = '';
+          const selectOptions = document.querySelector('#institutionSelect').options;
           let i = 0;
+          console.log(selectOptions.length);
           while (i < selectOptions.length) {
             if (selectOptions[i].text === instNameCode) {
               index = i;
+              optValue = selectOptions[i].value;
               i = selectOptions.length;
             }
             i++;
           }
           if (index === -1) {
             throw new Error('Add campus - institution not found in list');
+          } else {
+            return optValue;
           }
-          else {
-            document.querySelector('#institutionSelect').selectedIndex = index;
-            //let event = document.createEvent('HTMLEvents');
-            //event.initEvent('onchange', true, true);
-            //let target = document.querySelector('#institutionSelect');
-            //target.dispatchEvent(event);
-          }
-        }, `${institutionName} ${institutionCode}`)
-        .wait('#clickable-add-patrongroups')
-        .click('#clickable-add-patrongroups')
-        .wait('input[name="items[0].name"]')
-        .type('input[name="items[0].name"]', campusName)
-        .wait('input[name="items[0].code"]')
-        .type('input[name="items[0].code"]', campusCode)
-        .click('#clickable-save-patrongroups-0') //not saving
-        .wait(999)
+        }, `${institutionName} (${institutionCode})`)
+        .then((optValue) => { institutionUUID = optValue; })
+        .then(() => {
+          nightmare
+            .wait('#institutionSelect')
+            .select('#institutionSelect', institutionUUID)
+            .wait('#clickable-add-patrongroups')
+            .click('#clickable-add-patrongroups')
+            .wait('input[name="items[0].name"]')
+            .type('input[name="items[0].name"]', campusName)
+            .wait('input[name="items[0].code"]')
+            .type('input[name="items[0].code"]', campusCode)
+            .click('#clickable-save-patrongroups-0')
+            .wait(999);
+        })
         .then(() => { done(); })
         .catch(done);
     });
-    
+
     it('it should confirm campus created', (done) => {
       nightmare
+        .wait(999)
         .evaluate((campName, campNameSelector) => {
           let found = false;
-          container = document.querySelector('#editList-patrongroups');
+          const container = document.querySelector('#editList-patrongroups');
           if (container !== null) {
-            list = document.querySelectorAll('#editList-patrongroups>div:nth-of-type(2)>div');
+            const list = document.querySelectorAll('#editList-patrongroups>div:nth-of-type(2)>div');
             console.log(list.length);
             list.forEach((currentValue) => {
               const row = currentValue.querySelector(campNameSelector);
@@ -160,187 +167,167 @@ describe('Load test-location', function runMain() {
         .then(() => { done(); })
         .catch(done);
     });
-    
-    /*it('it should create a library', (done) => {
+
+    it('it should create a library', (done) => {
       nightmare
         .wait('a[href="/settings/organization/location-libraries"]')
         .click('a[href="/settings/organization/location-libraries"]')
+        .wait(3333)
         .wait('#institutionSelect')
-        .evaluate((instNameCode) => {
-          console.log(instNameCode);
-          let index = -1;
-          selectOptions = document.querySelector('#institutionSelect').options;
-          let i = 0;
-          while (i < selectOptions.length) {
-            if (selectOptions[i].text === instNameCode) {
-              index = i;
-              i = selectOptions.length;
-            }
-            i++;
-          }
-          if (index === -1) {
-            throw new Error('Add library - institution not found in list');
-          }
-          else {
-            document.querySelector('#institutionSelect').selectedIndex = index;
-          }
-        }, `${institutionName} ${institutionCode}`)
+        .select('#institutionSelect', institutionUUID)
         .wait('#campusSelect')
         .evaluate((campNameCode) => {
           console.log(campNameCode);
           let index = -1;
-          selectOptions = document.querySelector('#campusSelect').options;
+          let optValue = '';
+          const selectOptions = document.querySelector('#campusSelect').options;
           let i = 0;
           while (i < selectOptions.length) {
             if (selectOptions[i].text === campNameCode) {
               index = i;
+              optValue = selectOptions[i].value;
               i = selectOptions.length;
             }
             i++;
           }
           if (index === -1) {
             throw new Error('Add library - campus not found in list');
+          } else {
+            console.log(optValue);
+            return optValue;
           }
-          else {
-            document.querySelector('#institutionSelect').selectedIndex = index;
-          }
-        }, `${campusName} ${campusCode}`)
-        .wait('#clickable-add-patrongroups')
-        .click('#clickable-add-patrongroups')
-        .wait('input[name="items[0].name"]')
-        .insert('input[name="items[0].name"]', libraryName)
-        .wait('input[name="items[0].code"]')
-        .insert('input[name="items[0].code"]', libraryCode)
-        .wait('#clickable-save-patrongroups-0')
-        .click('#clickable-save-patrongroups-0')
-        .wait(3333)
+        }, `${campusName} (${campusCode})`)
+        .then((optValue) => { campusUUID = optValue; })
+        .then(() => {
+          nightmare
+            .wait('#campusSelect')
+            .select('#campusSelect', campusUUID)
+            .wait('#clickable-add-patrongroups')
+            .click('#clickable-add-patrongroups')
+            .wait('input[name="items[0].name"]')
+            .type('input[name="items[0].name"]', libraryName)
+            .wait('input[name="items[0].code"]')
+            .type('input[name="items[0].code"]', libraryCode)
+            .click('#clickable-save-patrongroups-0')
+            .wait(999);
+        })
         .then(() => { done(); })
         .catch(done);
     });
-    
+
     it('should confirm library created', (done) => {
       nightmare
-        .wait('#editList-patrongroups')
         .evaluate((libName, libNameSelector) => {
           let found = false;
-          list = document.querySelectorAll('#editList-patrongroups div:nth-of-type(2)>div');
-          console.log(list.length);
-          list.forEach((currentValue) => {
-            const row = currentValue.querySelector(libNameSelector);
-            if (row !== null) {
-              console.log(row.title);
-              if (row.title === libName) {
-                found = true;
+          const container = document.querySelector('#editList-patrongroups');
+          if (container !== null) {
+            const list = document.querySelectorAll('#editList-patrongroups>div:nth-of-type(2)>div');
+            console.log(list.length);
+            list.forEach((currentValue) => {
+              const row = currentValue.querySelector(libNameSelector);
+              if (row !== null) {
+                console.log(row.title);
+                if (row.title === libName) {
+                  found = true;
+                }
               }
-            }
-          });
+            });
+          }
           if (!found) {
             throw new Error('Library not created');
           }
         }, libraryName, libraryNameSelector)
+        .then(() => { done(); })
+        .catch(done);
     });
-    
-    // remove 
+
+    // remove
     it('should remove library', (done) => {
       nightmare
         .wait('#editList-patrongroups')
         .evaluate((libName) => {
           let index = -1;
           let i = 0;
-          list = document.querySelectorAll('#editList-patrongroups div:nth-of-type(2)>div');
+          const list = document.querySelectorAll('#editList-patrongroups>div:nth-of-type(2)>div');
+          console.log(list.length);
           list.forEach((currentValue) => {
             const titleCol = currentValue.querySelector('div[role="gridcell"]:first-child');
-            if (titleCol === libName) {
+            console.log(titleCol.title);
+            if (titleCol.title === libName) {
               index = i;
             }
             i++;
           });
           if (index === -1) {
             throw new Error('Remove library - library not found');
-          }
-          else {
+          } else {
             document.querySelector(`#clickable-delete-patrongroups-${index}`).click();
           }
         }, libraryName)
         // wait for confirmation to appear
         .wait('#deletelibrary-confirmation-modal-heading')
         .click('#clickable-deletelibrary-confirmation-confirm')
-        .wait(3333)
+        .wait(999)
         // confirm removal
         .evaluate((libName, libNameSelector) => {
           let found = false;
-          list = document.querySelectorAll('#editList-patrongroups div:nth-of-type(2)>div');
-          console.log(list.length);
-          list.forEach((currentValue) => {
-            const row = currentValue.querySelector(libNameSelector);
-            if (row !== null) {
-              console.log(row.title);
-              if (row.title === libName) {
-                found = true;
+          const container = document.querySelector('#editList-patrongroups');
+          if (container !== null) {
+            const list = document.querySelectorAll('#editList-patrongroups>div:nth-of-type(2)>div');
+            console.log(list.length);
+            list.forEach((currentValue) => {
+              const row = currentValue.querySelector(libNameSelector);
+              if (row !== null) {
+                console.log(row.title);
+                if (row.title === libName) {
+                  found = true;
+                }
               }
-            }
-          });
+            });
+          }
           if (found) {
             throw new Error('Library has not been removed');
           }
         }, libraryName, libraryNameSelector)
-        .wait(3333)
         .then(() => { done(); })
         .catch(done);
     });
-    
+
     it('it should remove campus', (done) => {
       nightmare
         .wait('a[href="/settings/organization/location-campuses"]')
         .click('a[href="/settings/organization/location-campuses"]')
         // select institution
         .wait('#institutionSelect')
-        .evaluate((instNameCode) => {
-          console.log(instNameCode);
-          let index = -1;
-          selectOptions = document.querySelector('#institutionSelect').options;
-          let i = 0;
-          while (i < selectOptions.length) {
-            if (selectOptions[i].text === instNameCode) {
-              index = i;
-              i = selectOptions.length;
-            }
-            i++;
-          }
-          if (index === -1) {
-            throw new Error('Remove campus - institution not found in list');
-          }
-          else {
-            document.querySelector('#institutionSelect').selectedIndex = index;
-          }
-        }, `${institutionName} ${institutionCode}`)
+        .select('#institutionSelect', institutionUUID)
         .wait('#editList-patrongroups')
         .evaluate((campName) => {
           let index = -1;
           let i = 0;
-          list = document.querySelectorAll('#editList-patrongroups div:nth-of-type(2)>div');
+          const list = document.querySelectorAll('#editList-patrongroups>div:nth-of-type(2)>div');
+          console.log(list.length);
           list.forEach((currentValue) => {
             const titleCol = currentValue.querySelector('div[role="gridcell"]:first-child');
-            if (titleCol === campName) {
+            console.log(titleCol.title);
+            if (titleCol.title === campName) {
               index = i;
             }
             i++;
           });
           if (index === -1) {
             throw new Error('Remove campus - campus not found');
-          }
-          else {
+          } else {
             document.querySelector(`#clickable-delete-patrongroups-${index}`).click();
           }
         }, campusName)
         // wait for modal
         .wait('#deletecampus-confirmation-modal')
         .click('#clickable-deletecampus-confirmation-confirm')
-        .wait(3333)
+        .wait(999)
         // confirm removal
         .evaluate((campName, campNameSelector) => {
           let found = false;
-          list = document.querySelectorAll('#editList-patrongroups div:nth-of-type(2)>div');
+          const list = document.querySelectorAll('#editList-patrongroups>div:nth-of-type(2)>div');
           console.log(list.length);
           list.forEach((currentValue) => {
             const row = currentValue.querySelector(campNameSelector);
@@ -355,41 +342,42 @@ describe('Load test-location', function runMain() {
             throw new Error('Campus not removed');
           }
         }, campusName, campusNameSelector)
-        .wait(3333)
         .then(() => { done(); })
         .catch(done);
     });
-    
+
     it('should remove institution', (done) => {
       nightmare
         .wait('a[href="/settings/organization/location-institutions"]')
         .click('a[href="/settings/organization/location-institutions"]')
         .wait('#editList-institutions')
+        .wait(999)
         .evaluate((instName) => {
           let index = -1;
           let i = 0;
-          list = document.querySelectorAll('#editList-institutions div:nth-of-type(2)>div');
+          const list = document.querySelectorAll('#editList-institutions>div:nth-of-type(2)>div');
+          console.log(list.length);
           list.forEach((currentValue) => {
             const titleCol = currentValue.querySelector('div[role="gridcell"]:first-child');
-            if (titleCol === instName) {
+            console.log(titleCol.title);
+            if (titleCol.title === instName) {
               index = i;
             }
             i++;
           });
           if (index === -1) {
             throw new Error('Remove institution - institution not found');
-          }
-          else {
+          } else {
             document.querySelector(`#clickable-delete-institutions-${index}`).click();
           }
         }, institutionName)
         .wait('#deleteinstitution-confirmation-modal')
         .click('#clickable-deleteinstitution-confirmation-confirm')
-        .wait(3333)
+        .wait(999)
         // confirm removal
         .evaluate((instName, instNameSelector) => {
           let found = false;
-          list = document.querySelectorAll('#editList-institutions div:nth-of-type(2)>div');
+          const list = document.querySelectorAll('#editList-institutions>div:nth-of-type(2)>div');
           console.log(list.length);
           list.forEach((currentValue) => {
             const row = currentValue.querySelector(instNameSelector);
@@ -404,11 +392,10 @@ describe('Load test-location', function runMain() {
             throw new Error('Institution not removed');
           }
         }, institutionName, institutionNameSelector)
-        .wait(3333)
         .then(() => { done(); })
         .catch(done);
-    });*/
-    
+    });
+
     it('should logout', (done) => {
       helpers.logout(nightmare, config, done);
     });
