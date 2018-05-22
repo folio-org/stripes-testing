@@ -144,7 +144,7 @@ module.exports.namegen = () => {
     firstname,
     lastname,
     email: `${firstname.toLowerCase()}.${lastname.toLowerCase()}@someserver.org`,
-    barcode: ts,
+    barcode: `0${ts}`,
     password: 'P@$$w0rd23',
     address: ad[adpos],
   };
