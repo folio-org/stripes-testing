@@ -5,7 +5,7 @@ const Nightmare = require('../xnightmare.js');
 const config = require('../folio-ui.config.js');
 const helpers = require('../helpers.js');
 
-describe('Exercise users, inventory, checkout, loanRenewal, checkin, delete loan policy, logout', function descRoot() {
+describe('Tests to validate the loan renewals', function descRoot() {
   this.timeout(Number(config.test_timeout));
 
   describe('Login > Update settings > Find user > Create inventory record > Create holdings record > Create item record > Checkout item > Confirm checkout > Logout\n', function descStart() {
