@@ -58,7 +58,8 @@ describe('Exercise users, inventory, checkout, checkin, settings ("test-exercise
       nightmare
         .click('#clickable-users-module')
         .wait(2000)
-        .click('#clickable-filter-active-Active')
+        .wait('#input-user-search')
+        .type('#input-user-search', '0')
         .wait(uselector)
         .evaluate(selector => document.querySelector(selector).title, uselector)
         .then((result) => {
@@ -186,8 +187,10 @@ describe('Exercise users, inventory, checkout, checkin, settings ("test-exercise
       nightmare
         .click('#clickable-users-module')
         .wait('#input-user-search')
-      // .click('#input-user-search ~ div button')
-        .wait(222)
+        .type('#input-user-search', '0')
+        .wait('#clickable-reset-all')
+        .click('#clickable-reset-all')
+        .wait(1000)
         .insert('#input-user-search', userid)
         .wait(`#list-users div[title="${userid}"]`)
         .click(`#list-users div[title="${userid}"]`)
@@ -226,7 +229,9 @@ describe('Exercise users, inventory, checkout, checkin, settings ("test-exercise
       nightmare
         .click('#clickable-users-module')
         .wait('#input-user-search')
-      // .click('#input-user-search ~ div button')
+        .type('#input-user-search', '0')
+        .wait('#clickable-reset-all')
+        .click('#clickable-reset-all')
         .insert('#input-user-search', userid)
         .wait(`div[title="${userid}"]`)
         .click(`div[title="${userid}"]`)
