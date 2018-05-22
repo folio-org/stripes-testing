@@ -113,7 +113,7 @@ module.exports.createInventory = (nightmare, config, title, holdingsOnly) => {
       .click('#clickable-new-item')
       .wait('#additem_materialType')
       .wait(1111)
-      .type('#additem_materialType', 's')
+      .type('#additem_materialType', 'b')
       .wait(222)
       .type('#additem_loanTypePerm', 'cc')
       .wait(222)
