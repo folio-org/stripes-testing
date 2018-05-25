@@ -468,6 +468,24 @@ describe('Tests to validate the loan renewals', function descRoot() {
         .catch(done);
     });
 
+    it('should delete the fixedDueDateSchedule', (done) => {
+      nightmare
+        .wait(222)
+        .wait('a[href="/settings/circulation/fixed-due-date-schedules"]')
+        .click('a[href="/settings/circulation/fixed-due-date-schedules"]')
+        .wait(333)
+        .xclick(`id("ModuleContainer")//a[.="${scheduleName}"]`)
+        .wait('#clickable-edit-item')
+        .click('#clickable-edit-item')
+        .wait('#clickable-delete-set')
+        .click('#clickable-delete-set')
+        .wait('#clickable-deletefixedduedateschedule-confirmation-confirm')
+        .click('#clickable-deletefixedduedateschedule-confirmation-confirm')
+        .wait(222)
+        .then(done)
+        .catch(done);
+    });
+
     it('should logout', (done) => {
       nightmare
         .click('#clickable-logout')
