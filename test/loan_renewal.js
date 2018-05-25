@@ -4,17 +4,22 @@
 const Nightmare = require('../xnightmare.js');
 const config = require('../folio-ui.config.js');
 const helpers = require('../helpers.js');
+const moment = require('moment');
 
 describe('Tests to validate the loan renewals', function descRoot() {
   this.timeout(Number(config.test_timeout));
 
-  describe('Login > Update settings > Find user > Create inventory record > Create holdings record > Create item record > Checkout item > Confirm checkout > Logout\n', function descStart() {
+  describe('Login > Update settings > Create loan policy > Apply Loan rule > Find Active user > Create inventory record > Create holdings record > Create item record > Checkout item > Confirm checkout > Renew success > Renew failure > Renew failure > create fixedDueDateSchedule > Assign fdds to loan policy > Renew failure > Edit loan policy > Renew failure > Check in > delete loan policy > logout\n', function descStart() {
     const nightmare = new Nightmare(config.nightmare);
     let userid = 'user';
-    const uselector = "#list-users div[role='listitem']:nth-of-type(12) > a > div:nth-of-type(5)";
-    const policyName = 'test-policy';
+    const uselector = "#list-users div[role='listitem']:nth-of-type(6) > a > div:nth-of-type(5)";
+    const policyName = `test-policy-${Math.floor(Math.random() * 10000)}`;
+    const scheduleName = `test-schedule-${Math.floor(Math.random() * 10000)}`;
     const renewalLimit = 1;
     const loanPeriod = 1;
+    const nextMonthValue = moment().add(65, 'days').format('MM/DD/YYYY');
+    const tomorrowValue = moment().add(3, 'days').format('MM/DD/YYYY');
+    const dayAfterValue = moment().add(4, 'days').format('MM/DD/YYYY');
 
     it(`should login as ${config.username}/${config.password}`, (done) => {
       nightmare
@@ -90,7 +95,8 @@ describe('Tests to validate the loan renewals', function descRoot() {
         .then(done)
         .catch(done);
     });
-    it('Apply the loan policy created to the loan rule', (done) => {
+
+    it('Apply the loan policy created as a loan rule to material-type book', (done) => {
       nightmare
         .wait(config.select.settings)
         .click(config.select.settings)
@@ -100,15 +106,17 @@ describe('Tests to validate the loan renewals', function descRoot() {
         .click('a[href="/settings/circulation/loan-rules"]')
         .wait('#form-loan-rules')
         .wait(1000)
-        .evaluate(() => {
-          document.getElementsByClassName("CodeMirror")[0].CodeMirror.setValue('priority: t, s, c, b, a, m, g \nfallback-policy: example-loan-policy \nm book: test-policy');
-        })
+        .evaluate((policy) => {
+          const value = `priority: t, s, c, b, a, m, g \nfallback-policy: example-loan-policy \nm book: ${policy}`;
+          document.getElementsByClassName('CodeMirror')[0].CodeMirror.setValue(value);
+        }, policyName)
         .wait(222)
         .xclick('//button[.="Save"]')
         .wait(parseInt(process.env.FOLIO_UI_DEBUG, 10) ? parseInt(config.debug_sleep, 10) : 1111) // debugging
         .then(done)
         .catch(done);
     });
+
     it('should find an active user ', (done) => {
       nightmare
         .click('#clickable-users-module')
@@ -165,6 +173,7 @@ describe('Tests to validate the loan renewals', function descRoot() {
         .then(done)
         .catch(done);
     });
+
     it(`should find ${barcode} in ${userid}'s open loans`, (done) => {
       nightmare
         .click('#clickable-users-module')
@@ -188,7 +197,7 @@ describe('Tests to validate the loan renewals', function descRoot() {
         .catch(done);
     });
 
-    it(`should Renew the loan`, (done) => {
+    it('should Renew the loan and succeed', (done) => {
       nightmare
         .wait(222)
         .wait(`div[title="${barcode}"]`)
@@ -196,17 +205,72 @@ describe('Tests to validate the loan renewals', function descRoot() {
           const ele = document.querySelector(`div[title="${fbarcode}"]`);
           ele.parentElement.querySelector('input[type="checkbox"]').click();
         }, barcode)
-        .wait(333)
         .wait('button[title="Renew"]')
         .click('button[title="Renew"]')
+        .wait('div[class^="calloutBase"]')
         .wait(555)
         .then(done)
         .catch(done);
     });
 
-    it(`should Renew the loan second time and shouldn't succeed`, (done) => {
+    it('should Renew the loan second time and hit the renewal limit', (done) => {
       nightmare
+        .wait(555)
+        .wait(`div[title="${barcode}"]`)
         .wait(1000)
+        .evaluate((fbarcode) => {
+          const ele = document.querySelector(`div[title="${fbarcode}"]`);
+          ele.parentElement.querySelector('input[type="checkbox"]').click();
+        }, barcode)
+        .wait(1000)
+        .wait('button[title="Renew"]')
+        .wait(333)
+        .click('button[title="Renew"]')
+        .wait(333)
+        .wait('#renewal-failure-modal')
+        .wait(333)
+        .evaluate(() => {
+          const errorMsg = document.querySelector('#renewal-failure-modal > div:nth-of-type(2) > p').innerText;
+          if (errorMsg === null) {
+            throw new Error('Should throw an error as the renewalLimit is reached');
+          } else if (errorMsg !== 'Loan cannot be renewed because: loan has reached its maximum number of renewals') {
+            throw new Error('Expected only the renewal failure error message');
+          }
+        })
+        .then(done)
+        .catch(done);
+    });
+
+    it('Edit loan policy and Renew from system date should fail the renewal', (done) => {
+      nightmare
+        .wait(222)
+        .xclick('//span[.="Settings"]')
+        .wait(222)
+        .xclick('id("ModuleContainer")//a[.="Circulation"]')
+        .wait(222)
+        .xclick('id("ModuleContainer")//a[.="Loan policies"]')
+        .wait(222)
+        .xclick(`id("ModuleContainer")//a[.="${policyName}"]`)
+        .wait('#clickable-edit-item')
+        .click('#clickable-edit-item')
+        .wait('#input_allowed_renewals')
+        .evaluate(() => {
+          document.querySelector('#input_allowed_renewals').value = '';
+        })
+        .wait(555)
+        .type('#input_allowed_renewals', 2)
+        .wait('#select_renew_from')
+        .type('#select_renew_from', 'sy')
+        .xclick('//button[.="Save and close"]')
+        .wait(1000)
+        .evaluate(() => {
+          const sel = document.querySelector('div[class^="textfieldError"]');
+          if (sel) {
+            throw new Error(sel.textContent);
+          }
+        })
+        .wait('#clickable-users-module')
+        .click('#clickable-users-module')
         .wait(`div[title="${barcode}"]`)
         .evaluate((fbarcode) => {
           const ele = document.querySelector(`div[title="${fbarcode}"]`);
@@ -217,12 +281,147 @@ describe('Tests to validate the loan renewals', function descRoot() {
         .click('button[title="Renew"]')
         .wait('#renewal-failure-modal')
         .evaluate(() => {
-          const errorMsg = document.querySelector('#renewal-failure-modal > p').innerText;
-          if(errorMsg === null){
-            throw new Error("Should throw an error as the renewalLimit is reached");
+          const errorMsg = document.querySelector('#renewal-failure-modal > div:nth-of-type(2) > p').innerText;
+          if (errorMsg === null) {
+            throw new Error('Should throw an error as the renewalLimit is reached');
+          } else if (errorMsg !== 'Loan cannot be renewed because: renewal at this time would not change the due date') {
+            throw new Error('Expected only the renewal failure error message');
           }
-          else if(errorMsg !== "Loan cannot be renewed because: loan has reached its maximum number of renewals"){
-            throw new Error("Expected only the renewal failure error message");
+        })
+        .then(done)
+        .catch(done);
+    });
+
+    it('should create a new fixedDueDateSchedule', (done) => {
+      nightmare
+        .wait(config.select.settings)
+        .click(config.select.settings)
+        .wait('a[href="/settings/circulation"]')
+        .click('a[href="/settings/circulation"]')
+        .wait('a[href="/settings/circulation/fixed-due-date-schedules"]')
+        .click('a[href="/settings/circulation/fixed-due-date-schedules"]')
+        .wait(222)
+        .xclick('//button[.="+ New"]')
+        .wait('#input_schedule_name')
+        .type('#input_schedule_name', scheduleName)
+        .type('input[name="schedules[0].from"]', tomorrowValue)
+        .type('input[name="schedules[0].to"]', dayAfterValue)
+        .type('input[name="schedules[0].due"]', nextMonthValue)
+        .wait(555)
+        .wait('#clickable-save-fixedDueDateSchedule')
+        .click('#clickable-save-fixedDueDateSchedule')
+        .wait(1000)
+        .evaluate(() => {
+          const sel = document.querySelector('div[class^="feedbackError"]');
+          if (sel) {
+            throw new Error(sel.textContent);
+          }
+        })
+        .then(done)
+        .catch(done);
+    });
+
+    it('Assign the fixedDueDateSchedule to the loan policy', (done) => {
+      nightmare
+        .wait('a[href="/settings/circulation/loan-policies"]')
+        .click('a[href="/settings/circulation/loan-policies"]')
+        .wait(222)
+        .xclick(`id("ModuleContainer")//a[.="${policyName}"]`)
+        .wait('#clickable-edit-item')
+        .click('#clickable-edit-item')
+        .wait('#input_loan_profile')
+        .type('#input_loan_profile', 'fi')
+        .wait('#input_loansPolicy_fixedDueDateSchedule')
+        .type('#input_loansPolicy_fixedDueDateSchedule', `${scheduleName}`)
+        .wait(333)
+        .xclick('//button[.="Save and close"]')
+        .wait(1000)
+        .evaluate(() => {
+          const sel = document.querySelector('div[class^="feedbackError"]');
+          if (sel) {
+            throw new Error(sel.textContent);
+          }
+        })
+        .then(done)
+        .catch(done);
+    });
+
+    it('Renewal should fail as renewal date falls outside of the date ranges', (done) => {
+      nightmare
+        .wait(555)
+        .wait('#clickable-users-module')
+        .click('#clickable-users-module')
+        .wait(`div[title="${barcode}"]`)
+        .evaluate((fbarcode) => {
+          const ele = document.querySelector(`div[title="${fbarcode}"]`);
+          ele.parentElement.querySelector('input[type="checkbox"]').click();
+        }, barcode)
+        .wait(333)
+        .wait('button[title="Renew"]')
+        .click('button[title="Renew"]')
+        .wait('#renewal-failure-modal')
+        .evaluate(() => {
+          const errorMsg = document.querySelector('#renewal-failure-modal > div:nth-of-type(2) > p').innerText;
+          if (errorMsg === null) {
+            throw new Error('Should throw an error as the renewalLimit is reached');
+          } else if (errorMsg !== 'Loan cannot be renewed because: renewal date falls outside of the date ranges in the loan policy') {
+            throw new Error('Expected Loan cannot be renewed because: renewal date falls outside of the date ranges in the loan policy error message');
+          }
+        })
+        .then(done)
+        .catch(done);
+    });
+
+    it('Edit the loan policy to renewalLimit of 1', (done) => {
+      nightmare
+        .wait(222)
+        .xclick('//span[.="Settings"]')
+        .wait(222)
+        .xclick('id("ModuleContainer")//a[.="Circulation"]')
+        .wait(222)
+        .xclick('id("ModuleContainer")//a[.="Loan policies"]')
+        .wait(222)
+        .xclick(`id("ModuleContainer")//a[.="${policyName}"]`)
+        .wait('#clickable-edit-item')
+        .click('#clickable-edit-item')
+        .wait('#input_allowed_renewals')
+        .evaluate(() => {
+          document.querySelector('#input_allowed_renewals').value = '';
+        })
+        .wait(111)
+        .type('#input_allowed_renewals', 1)
+        .xclick('//button[.="Save and close"]')
+        .wait(1000)
+        .evaluate(() => {
+          const sel = document.querySelector('div[class^="textfieldError"]');
+          if (sel) {
+            throw new Error(sel.textContent);
+          }
+        })
+        .then(done)
+        .catch(done);
+    });
+
+    it('Renew and verify the consolidated error messages', (done) => {
+      nightmare
+        .wait(555)
+        .wait('#clickable-users-module')
+        .click('#clickable-users-module')
+        .wait(`div[title="${barcode}"]`)
+        .evaluate((fbarcode) => {
+          const ele = document.querySelector(`div[title="${fbarcode}"]`);
+          ele.parentElement.querySelector('input[type="checkbox"]').click();
+        }, barcode)
+        .wait(333)
+        .wait('button[title="Renew"]')
+        .click('button[title="Renew"]')
+        .wait('#renewal-failure-modal')
+        .evaluate(() => {
+          const errorMsg = document.querySelector('#renewal-failure-modal > div:nth-of-type(2) > p').innerText;
+          if (errorMsg === null) {
+            throw new Error('Should throw an error as the renewalLimit is reached');
+          } else if (errorMsg !== 'Loan cannot be renewed because: renewal date falls outside of the date ranges in the loan policy and loan has reached its maximum number of renewals.') {
+            throw new Error('Expected Loan cannot be renewed because: renewal date falls outside of the date ranges in the loan policy and loan has reached its maximum number of renewals.');
           }
         })
         .then(done)
@@ -247,26 +446,26 @@ describe('Tests to validate the loan renewals', function descRoot() {
         .catch(done);
     });
 
-    it(`should delete the loan policy`, (done) => {
+    it('should delete the loan policy', (done) => {
       nightmare
-      .wait(222)
-      .xclick('//span[.="Settings"]')
-      .wait(222)
-      .xclick('id("ModuleContainer")//a[.="Circulation"]')
-      .wait(222)
-      .xclick('id("ModuleContainer")//a[.="Loan policies"]')
-      .wait(222)
-      .xclick('id("ModuleContainer")//a[.="test-policy"]')
-      .wait('#clickable-edit-item')
-      .click('#clickable-edit-item')
-      .wait('button[title="Delete Loan Policy"]')
-      .click('button[title="Delete Loan Policy"]')
-      .wait(222)
-      .wait('#clickable-deleteloanpolicy-confirmation-confirm')
-      .click('#clickable-deleteloanpolicy-confirmation-confirm')
-      .wait(222)
-      .then(done)
-      .catch(done);
+        .wait(222)
+        .xclick('//span[.="Settings"]')
+        .wait(222)
+        .xclick('id("ModuleContainer")//a[.="Circulation"]')
+        .wait(222)
+        .xclick('id("ModuleContainer")//a[.="Loan policies"]')
+        .wait(222)
+        .xclick(`id("ModuleContainer")//a[.="${policyName}"]`)
+        .wait('#clickable-edit-item')
+        .click('#clickable-edit-item')
+        .wait('button[title="Delete Loan Policy"]')
+        .click('button[title="Delete Loan Policy"]')
+        .wait(222)
+        .wait('#clickable-deleteloanpolicy-confirmation-confirm')
+        .click('#clickable-deleteloanpolicy-confirmation-confirm')
+        .wait(222)
+        .then(done)
+        .catch(done);
     });
 
     it('should logout', (done) => {

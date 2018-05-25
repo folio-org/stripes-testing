@@ -14,6 +14,7 @@
     "test-good-login": "./node_modules/.bin/mocha test/110-auth-success.js",
     "test-bad-login": "./node_modules/.bin/mocha test/120-auth-fail.js",
     "test-exercise": "./node_modules/.bin/mocha test/exercise.js",
+    "test-loan-renewals": "./node_modules/.bin/mocha test/loan_renewal.js",
     "test-dependencies": "./node_modules/.bin/mocha test/dependencies.js",
     "test-new-proxy": "./node_modules/.bin/mocha test-module.js --run=/users:new_proxy",
     "test-inventory": "./node_modules/.bin/mocha test-module.js --run=/inventory",
@@ -23,6 +24,7 @@
     "test-codexsearch": "./node_modules/.bin/mocha test/codex-search.js",
     "test-profile-pictures": "./node_modules/.bin/mocha test/profile-pictures.js",
     "test-vendors": "./node_modules/.bin/mocha test/vendor.js",
+    "test-location": "./node_modules/.bin/mocha test/location.js",
     "module-tests": "./node_modules/.bin/mocha test-module.js --run=/checkout/checkin/users/items/inventory",
     "lint": "eslint *.js test/*.js"
   },
@@ -40,6 +42,7 @@
     "minimist": "^1.2.0",
     "mocha": "^3.4.2",
     "mocha-jenkins-reporter": "^0.3.12",
+    "moment": "^2.22.1",
     "nightmare": "^2.10.0",
     "nightmarejs": "^0.0.1"
   },
