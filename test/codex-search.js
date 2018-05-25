@@ -8,7 +8,7 @@ describe('Load test-codexsearch', function runMain() {
   this.timeout(Number(config.test_timeout));
 
   const nightmare = new Nightmare(config.nightmare);
-  const title = 'POPs in Marine Mammals';
+  const title = 'Bridget';
   // const pageLoadPeriod = 2000;
   const actionLoadPeriod = 222;
   const searchResultsTitleSelector = `#list-search div[role="gridcell"][title*="${title}"]`;
