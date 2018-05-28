@@ -79,8 +79,9 @@ describe('Load test-profilePictures', function runMain() {
     it('should check picture present in user information', (done) => {
       nightmare
         .click('#clickable-users-module')
-        .wait('#input-user-search')
-        .type('#input-user-search', '0')
+        .wait('#clickable-filter-active-Active')
+        // check on active users filter
+        .click('#clickable-filter-active-Active')
         .wait('#list-users')
         .wait('#list-users div[role="listitem"]:first-of-type > a')
         .click('#list-users div[role="listitem"]:first-of-type > a')
@@ -142,8 +143,7 @@ describe('Load test-profilePictures', function runMain() {
         .click('#clickable-users-module')
         .wait('#users-module-display')
         // check on active users filter
-        .wait('#input-user-search')
-        .type('#input-user-search', '0')
+        .check('#clickable-filter-active-Active')
         .wait('#list-users')
         .click('#list-users div[role="listitem"]:first-of-type > a')
         .wait('#userInformationSection > div[role="tabpanel"]')
