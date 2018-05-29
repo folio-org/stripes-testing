@@ -20,6 +20,7 @@ describe('Tests to validate the loan renewals', function descRoot() {
     const nextMonthValue = moment().add(65, 'days').format('MM/DD/YYYY');
     const tomorrowValue = moment().add(3, 'days').format('MM/DD/YYYY');
     const dayAfterValue = moment().add(4, 'days').format('MM/DD/YYYY');
+    let loanRules = '';
 
     it(`should login as ${config.username}/${config.password}`, (done) => {
       nightmare
@@ -107,6 +108,7 @@ describe('Tests to validate the loan renewals', function descRoot() {
         .wait('#form-loan-rules')
         .wait(1000)
         .evaluate((policy) => {
+          loanRules = document.getElementsByClassName('CodeMirror')[0].CodeMirror.getValue();
           const value = `priority: t, s, c, b, a, m, g \nfallback-policy: example-loan-policy \nm book: ${policy}`;
           document.getElementsByClassName('CodeMirror')[0].CodeMirror.setValue(value);
         }, policyName)
@@ -442,6 +444,26 @@ describe('Tests to validate the loan renewals', function descRoot() {
             throw new Error("Checkin did not return 'Available' status");
           }
         })
+        .then(done)
+        .catch(done);
+    });
+
+    it('should restore the loanRules', (done) => {
+      nightmare
+        .wait(config.select.settings)
+        .click(config.select.settings)
+        .wait('a[href="/settings/circulation"]')
+        .click('a[href="/settings/circulation"]')
+        .wait('a[href="/settings/circulation/loan-rules"]')
+        .click('a[href="/settings/circulation/loan-rules"]')
+        .wait('#form-loan-rules')
+        .wait(1000)
+        .evaluate(() => {
+          document.getElementsByClassName('CodeMirror')[0].CodeMirror.setValue(loanRules);
+        })
+        .wait(666)
+        .xclick('//button[.="Save"]')
+        .wait(parseInt(process.env.FOLIO_UI_DEBUG, 10) ? parseInt(config.debug_sleep, 10) : 1111) // debugging
         .then(done)
         .catch(done);
     });
