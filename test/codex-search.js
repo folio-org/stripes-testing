@@ -12,6 +12,8 @@ describe('Load test-codexsearch', function runMain() {
   // const pageLoadPeriod = 2000;
   const actionLoadPeriod = 222;
   const searchResultsTitleSelector = `#list-search div[role="gridcell"][title*="${title}"]`;
+  const resultCountSelector = `#paneHeaderpane-results-subtitle span`;
+  const filterCheckBoxSelector = `#clickable-filter-type-Audio`;
   const resetButtonLabel = 'Reset all';
   const resetButtonSelector = 'button > span';
 
@@ -42,6 +44,43 @@ describe('Load test-codexsearch', function runMain() {
         .then((result) => { done(); })
         .catch(done);
     }); */
+
+    it('should filter results', (done) => {
+
+      nightmare
+        .evaluate(resultSelectorBeforeClick=>{
+          const matchBeforClick = document.querySelector(resultSelectorBeforeClick);
+          const countTextBeforeClick = matchBeforClick.innerText;
+          return parseInt(countTextBeforeClick.substr(0, countTextBeforeClick.indexOf(' ')));
+        }, resultCountSelector)
+        .then((resultCountBeforeClick)=>{
+
+          nightmare
+            .click(filterCheckBoxSelector)
+            .wait(10000)
+            .evaluate((filterCheckBoxSelector, resultSelectorAfterClick)=>{
+
+              const filterCheckBox = document.querySelector(filterCheckBoxSelector);
+
+              if(!filterCheckBox.checked) {
+                throw new Error(`Filter not activated: filterCheckBox.checked = ${filterCheckBox.checked}`);
+              }
+
+              const matchAfterClick = document.querySelector(resultSelectorAfterClick);
+              const countTextAfterClick = matchAfterClick.innerText;
+              return parseInt(countTextAfterClick.substr(0, countTextAfterClick.indexOf(' ')));
+            }, filterCheckBoxSelector, resultCountSelector)
+            .then(resultCountAfterClick=>{
+              if(resultCountBeforeClick <= resultCountAfterClick) {
+                throw new Error(`Results were not reduced by filtering: resultCountBeforeClick: ${resultCountBeforeClick}, resultCountAfterClick: ${resultCountAfterClick}`);
+              }
+              done();
+            })
+            .catch(done);
+        })
+        .catch(done);
+
+    });
 
     it('should reset search', (done) => {
       nightmare
