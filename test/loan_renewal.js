@@ -9,7 +9,7 @@ const moment = require('moment');
 describe('Tests to validate the loan renewals', function descRoot() {
   this.timeout(Number(config.test_timeout));
 
-  describe('Login > Update settings > Create loan policy > Apply Loan rule > Find Active user > Create inventory record > Create holdings record > Create item record > Checkout item > Confirm checkout > Renew success > Renew failure > Renew failure > create fixedDueDateSchedule > Assign fdds to loan policy > Renew failure > Edit loan policy > Renew failure > Check in > delete loan policy > logout\n', function descStart() {
+  describe('Login > Update settings > Create loan policy > Apply Loan rule > Find Active user > Create inventory record > Create holdings record > Create item record > Checkout item > Confirm checkout > Renew success > Renew failure > Renew failure > create fixedDueDateSchedule > Assign fdds to loan policy > Renew failure > Edit loan policy > Renew failure > Check in > delete loan policy > delete fixedDueDateSchedule > logout\n', function descStart() {
     const nightmare = new Nightmare(config.nightmare);
     let userid = 'user';
     const uselector = "#list-users div[role='listitem']:nth-of-type(9) > a > div:nth-of-type(5)";
@@ -20,6 +20,7 @@ describe('Tests to validate the loan renewals', function descRoot() {
     const nextMonthValue = moment().add(65, 'days').format('MM/DD/YYYY');
     const tomorrowValue = moment().add(3, 'days').format('MM/DD/YYYY');
     const dayAfterValue = moment().add(4, 'days').format('MM/DD/YYYY');
+    const debugSleep = parseInt(process.env.FOLIO_UI_DEBUG, 10) ? parseInt(config.debug_sleep, 10) : 0;
     let loanRules = '';
 
     it(`should login as ${config.username}/${config.password}`, (done) => {
@@ -57,7 +58,7 @@ describe('Tests to validate the loan renewals', function descRoot() {
         .click('#username-checkbox')
         .wait(222)
         .xclick('//button[.="Save"]')
-        .wait(parseInt(process.env.FOLIO_UI_DEBUG, 10) ? parseInt(config.debug_sleep, 10) : 1111) // debugging
+        .wait(Math.max(1111, debugSleep)) // debugging
         .then(done)
         .catch(done);
     });
@@ -114,7 +115,7 @@ describe('Tests to validate the loan renewals', function descRoot() {
         }, policyName)
         .wait(222)
         .xclick('//button[.="Save"]')
-        .wait(parseInt(process.env.FOLIO_UI_DEBUG, 10) ? parseInt(config.debug_sleep, 10) : 1111) // debugging
+        .wait(Math.max(1111, debugSleep)) // debugging
         .then(done)
         .catch(done);
     });
@@ -171,7 +172,7 @@ describe('Tests to validate the loan renewals', function descRoot() {
         })
         .wait(222)
         .click('#section-item button')
-        .wait(parseInt(process.env.FOLIO_UI_DEBUG, 10) ? parseInt(config.debug_sleep, 10) : 555) // debugging
+        .wait(Math.max(555, debugSleep)) // debugging
         .then(done)
         .catch(done);
     });
@@ -194,7 +195,7 @@ describe('Tests to validate the loan renewals', function descRoot() {
             return false;
           }
         }, barcode)
-        .wait(parseInt(process.env.FOLIO_UI_DEBUG, 10) ? parseInt(config.debug_sleep, 10) : 555) // debugging
+        .wait(Math.max(555, debugSleep)) // debugging
         .then(done)
         .catch(done);
     });
@@ -215,7 +216,7 @@ describe('Tests to validate the loan renewals', function descRoot() {
         .catch(done);
     });
 
-    it('should Renew the loan second time and hit the renewal limit', (done) => {
+    it('should renew the loan second time and hit the renewal limit', (done) => {
       nightmare
         .wait(555)
         .wait(`div[title="${barcode}"]`)
@@ -243,7 +244,7 @@ describe('Tests to validate the loan renewals', function descRoot() {
         .catch(done);
     });
 
-    it('Edit loan policy and Renew from system date should fail the renewal', (done) => {
+    it('Edit loan policy, renew from system date should fail the renewal', (done) => {
       nightmare
         .wait(222)
         .xclick('//span[.="Settings"]')
@@ -463,7 +464,7 @@ describe('Tests to validate the loan renewals', function descRoot() {
         })
         .wait(666)
         .xclick('//button[.="Save"]')
-        .wait(parseInt(process.env.FOLIO_UI_DEBUG, 10) ? parseInt(config.debug_sleep, 10) : 1111) // debugging
+        .wait(Math.max(1111, debugSleep)) // debugging
         .then(done)
         .catch(done);
     });
