@@ -170,6 +170,12 @@ describe('Load test-codexsearch', function runMain() {
             }
           });
         }, resetButtonLabel, resetButtonSelector)
+        .evaluate(function confResetOfFilters(resetSelector) {
+          const filterCheckBox = document.querySelector(resetSelector);
+          if(filterCheckBox.checked) {
+            throw new Error('Filters have not been reset.');
+          }
+        }, filterCheckBoxSelector)
         .then((result) => { done(); })
         .catch(done);
     });
