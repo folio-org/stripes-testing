@@ -4,7 +4,7 @@ const Nightmare = require('nightmare');
 const config = require('../folio-ui.config.js');
 const helpers = require('../helpers.js');
 
-
+/* Found at https://intoli.com/blog/nightmare-network-idle/ */
 Nightmare.action('waitUntilNetworkIdle',
   // The first callback defines the action on Electron's end,
   // making some internal objects available.
@@ -60,12 +60,14 @@ describe('Load test-codexsearch', function runMain() {
   // const pageLoadPeriod = 2000;
   const actionLoadPeriod = 222;
   const searchResultsTitleSelector = `#list-search div[role="gridcell"][title*="${title}"]`;
+  const titleSortSelector = `#clickable-list-column-title`;
+  const firstResultSelector = `#list-search div[role="listitem"] div[role="gridcell"][title]`;
   const resultCountSelector = `#paneHeaderpane-results-subtitle span`;
   const filterCheckBoxSelector = `#clickable-filter-type-Audio`;
   const resetButtonLabel = 'Reset all';
   const resetButtonSelector = 'button > span';
 
-  describe('Login > Codex Search > Confirm Results > Reset Search > Confirm Reset > Logout\n', () => {
+  describe('Login > Codex Search > Confirm Results > *Sorting Results (Not working currently)* > Filtering Results > Reset Search > Confirm Reset > Logout\n', () => {
     it(`should login as ${config.username}/${config.password}`, (done) => {
       helpers.login(nightmare, config, done);
     });
@@ -80,18 +82,49 @@ describe('Load test-codexsearch', function runMain() {
         .catch(done);
     });
 
-    /* it('should confirm search results', (done) => {
+    it('should confirm search results', (done) => {
       nightmare
-        .wait(searchResultsTitleSelector)
+        .wait(firstResultSelector)
         .evaluate(function csearch(selector, itemTitle) {
           const firstResult = document.querySelector(selector).title; // the entered title should be the first result
-          if (firstResult !== itemTitle) {
+          if (firstResult.indexOf(itemTitle) === -1) {
             throw new Error(`Title not found in first position. Title found is (${firstResult})`);
           }
-        }, searchResultsTitleSelector, title)
+        }, firstResultSelector, title)
         .then((result) => { done(); })
         .catch(done);
-    }); */
+    });
+
+
+    /* 
+      This test is failing do to this functionality having regressed.
+      https://issues.folio.org/browse/FOLIO-1149
+    */
+
+    // it('should sort results', (done) => {
+    //   nightmare
+    //     .evaluate(firstResultSelectorBeforeClick=>{
+    //       let firstResult = document.querySelector(firstResultSelectorBeforeClick);
+    //       return firstResult.title;
+    //     }, firstResultSelector)
+    //     .then((firstResultValueBeforeClick)=>{
+    //       nightmare
+    //         .click(titleSortSelector)
+    //         .waitUntilNetworkIdle()
+    //         .evaluate((firstResultSelectorAfterClick)=>{
+    //           let firstResultAfterClick = document.querySelector(firstResultSelectorAfterClick);
+    //           return firstResultAfterClick.title;
+    //         }, firstResultSelector)
+    //         .then(firstResultValueAfterClick=>{
+    //           if(firstResultValueBeforeClick === firstResultValueAfterClick) {
+    //             throw new Error(`Sort did not change ordering. ${firstResultValueBeforeClick} ${firstResultValueAfterClick}`);
+    //           }
+    //           done();
+    //         })
+    //         .catch(done);
+    //     })
+    //     .catch(done);
+    // });
 
     it('should filter results', (done) => {
 
@@ -105,14 +138,14 @@ describe('Load test-codexsearch', function runMain() {
 
           nightmare
             .click(filterCheckBoxSelector)
-            .waitUntilNetworkIdle(actionLoadPeriod, done)
+            .waitUntilNetworkIdle()
             .evaluate((filterCheckBoxSelector, resultSelectorAfterClick)=>{
 
               const filterCheckBox = document.querySelector(filterCheckBoxSelector);
 
               if(!filterCheckBox.checked) {
                 throw new Error(`Filter not activated: filterCheckBox.checked = ${filterCheckBox.checked}`);
-              }
+              } 
 
               const matchAfterClick = document.querySelector(resultSelectorAfterClick);
               const countTextAfterClick = matchAfterClick.innerText;
