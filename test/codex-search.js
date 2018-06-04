@@ -96,7 +96,7 @@ describe('Load test-codexsearch', function runMain() {
     });
 
 
-    /* 
+    /*
       This test is failing do to this functionality having regressed.
       https://issues.folio.org/browse/FOLIO-1149
     */
@@ -139,13 +139,14 @@ describe('Load test-codexsearch', function runMain() {
           nightmare
             .click(filterCheckBoxSelector)
             .waitUntilNetworkIdle()
+            .wait(555)
             .evaluate((filterCheckBoxSelector, resultSelectorAfterClick)=>{
 
               const filterCheckBox = document.querySelector(filterCheckBoxSelector);
 
               if(!filterCheckBox.checked) {
                 throw new Error(`Filter not activated: filterCheckBox.checked = ${filterCheckBox.checked}`);
-              } 
+              }
 
               const matchAfterClick = document.querySelector(resultSelectorAfterClick);
               const countTextAfterClick = matchAfterClick.innerText;
