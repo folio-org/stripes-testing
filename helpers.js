@@ -88,7 +88,7 @@ module.exports.createInventory = (nightmare, config, title, holdingsOnly) => {
         .wait('#input_instance_title')
         .insert('#input_instance_title', ti)
         .wait(333)
-        .type('#select_instance_type', 'b')
+        .type('#select_instance_type', 'o')
         .wait(2222)
         .click('#clickable-create-instance')
         .wait(2222)
