@@ -1,7 +1,7 @@
 @Library ('folio_jenkins_shared_libs') _
 
 pipeline {
-   agent { 
+   agent {
      label 'master'
    }
 
@@ -28,7 +28,7 @@ pipeline {
       }
       stage('Run UI Regression Test') {
          steps {
-           script { 
+           script {
              env.testStatus = runUiRegression(env.UI_TESTING_VERSION,env.FOLIO_UI_URL)
            }
          }
