@@ -5,8 +5,8 @@ pipeline {
      label 'master'
    }
 
-   // This script expects an input parameters called 'FOLIO_UI_URL and FOLIO_INSTANCE'
-   // and the docker image tag/version e.g 'latest', etc - 'UI_TESTING_VERSION'
+   // This script expects input parameters called 'FOLIO_UI_URL and FOLIO_INSTANCE'
+   // and the docker image tag/version e.g. 'latest', etc - 'UI_TESTING_VERSION'
 
    // parameters {
    //    string(name: 'FOLIO_UI_URL', defaultValue: '', description: 'FOLIO URL')
