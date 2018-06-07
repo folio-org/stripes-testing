@@ -1,12 +1,12 @@
 @Library ('folio_jenkins_shared_libs') _
 
 pipeline {
-   agent { 
+   agent {
      label 'master'
    }
 
-   // This script expects an input parameters called 'FOLIO_UI_URL and FOLIO_INSTANCE'
-   // and the docker image tag/version e.g 'latest', etc - 'UI_TESTING_VERSION'
+   // This script expects input parameters called 'FOLIO_UI_URL and FOLIO_INSTANCE'
+   // and the docker image tag/version e.g. 'latest', etc - 'UI_TESTING_VERSION'
 
    // parameters {
    //    string(name: 'FOLIO_UI_URL', defaultValue: '', description: 'FOLIO URL')
@@ -28,7 +28,7 @@ pipeline {
       }
       stage('Run UI Regression Test') {
          steps {
-           script { 
+           script {
              env.testStatus = runUiRegression(env.UI_TESTING_VERSION,env.FOLIO_UI_URL)
            }
          }
