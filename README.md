@@ -401,10 +401,10 @@ Once the version is tagged, the yarn.lock should be removed again. The regular t
 ## Additional information
 
 See [stripes-core](https://github.com/folio-org/stripes-core)
-and other [modules](http://dev.folio.org/source-code/#client-side).
+and other [modules](https://dev.folio.org/source-code/#client-side).
 
 See project [UITEST](https://issues.folio.org/browse/UITEST)
-at the [FOLIO issue tracker](http://dev.folio.org/community/guide-issues).
+at the [FOLIO issue tracker](https://dev.folio.org/guidelines/issue-tracker).
 
-Other FOLIO Developer documentation is at [dev.folio.org](http://dev.folio.org/)
+Other FOLIO Developer documentation is at [dev.folio.org](https://dev.folio.org/)
 
