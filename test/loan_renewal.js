@@ -236,7 +236,7 @@ describe('Tests to validate the loan renewals', function descRoot() {
           const errorMsg = document.querySelector('#renewal-failure-modal > div:nth-of-type(2) > p').innerText;
           if (errorMsg === null) {
             throw new Error('Should throw an error as the renewalLimit is reached');
-          } else if (errorMsg !== 'Loan cannot be renewed because: loan has reached its maximum number of renewals') {
+          } else if (!errorMsg.match('Loan cannot be renewed because: loan has reached its maximum number of renewals')) {
             throw new Error('Expected only the renewal failure error message');
           }
         })
@@ -287,7 +287,7 @@ describe('Tests to validate the loan renewals', function descRoot() {
           const errorMsg = document.querySelector('#renewal-failure-modal > div:nth-of-type(2) > p').innerText;
           if (errorMsg === null) {
             throw new Error('Should throw an error as the renewalLimit is reached');
-          } else if (errorMsg !== 'Loan cannot be renewed because: renewal at this time would not change the due date') {
+          } else if (!errorMsg.match('Loan cannot be renewed because: renewal at this time would not change the due date')) {
             throw new Error('Expected only the renewal failure error message');
           }
         })
@@ -367,7 +367,7 @@ describe('Tests to validate the loan renewals', function descRoot() {
           const errorMsg = document.querySelector('#renewal-failure-modal > div:nth-of-type(2) > p').innerText;
           if (errorMsg === null) {
             throw new Error('Should throw an error as the renewalLimit is reached');
-          } else if (errorMsg !== 'Loan cannot be renewed because: renewal date falls outside of the date ranges in the loan policy') {
+          } else if (!errorMsg.match('Loan cannot be renewed because: renewal date falls outside of the date ranges in the loan policy')) {
             throw new Error('Expected Loan cannot be renewed because: renewal date falls outside of the date ranges in the loan policy error message');
           }
         })
