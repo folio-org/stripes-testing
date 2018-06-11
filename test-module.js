@@ -80,6 +80,10 @@ function showHelp() {
   console.log('');
   console.log('      Corresponds to enviroment variable FOLIO_UI_PASSWORD');
   console.log('');
+  console.log('  --workingDirectory, wd');
+  console.log('      Override the default working directory that is searched for tests,');
+  console.log('      @folio/${app}.'); // eslint-disable-line no-template-curly-in-string
+  console.log('');
   console.log('  --show');
   console.log('      Show test execution in browser window:   --show');
   console.log('');
@@ -132,6 +136,7 @@ function getOptions(opts, config) {
     'typeinterval',
     'username', 'un',
     'password', 'pw',
+    'workingdirectory', 'wd',
     'show',
     'devtools',
     'width',
@@ -169,6 +174,7 @@ function getOptions(opts, config) {
   config.console_logs = o.consolelogs || config.console_logs;
   config.username = o.username || o.un || config.username;
   config.password = o.password || o.pw || config.password;
+  config.working_directory = o.workingdirectory || o.wd || config.working_directory;
   if (o.show) {
     config.nightmare.show = true;
   }
@@ -230,8 +236,9 @@ if (options.run) {
         const script = scripts[j];
         if (script) {
           try {
-            const tests = require(`@folio/${app}/test/ui-testing/${script}.js`);
-            const moduleInfo = require(`@folio/${app}/package.json`);
+            const workingDirectory = o.workingdirectory || o.wd ? config.working_directory : `@folio/${app}`;
+            const tests = require(`${workingDirectory}/test/ui-testing/${script}.js`);
+            const moduleInfo = require(`${workingDirectory}/package.json`);
             const meta = { testVersion: `${moduleInfo.name}:${moduleInfo.version}` };
             try {
               tests.test({ config, helpers, meta });
