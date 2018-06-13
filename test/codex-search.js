@@ -126,6 +126,11 @@ describe('Load test-codexsearch', function runMain() {
     //     .catch(done);
     // });
 
+    /* NE, 2018-06-13:
+       Disabled until further as it inexplicably fails on snapshot (and sometimes on testing iirc)
+       I can at times reproduce it from home on the first try against a new snapshot build, but it usually 
+       passes in subsequent runs, making it all but impossible to experiment with it in one sitting. 
+       Will instead try with, like, one or two test runs per day, while tweaking test code and logging.  
     it('should filter results', (done) => {
 
       nightmare
@@ -163,6 +168,7 @@ describe('Load test-codexsearch', function runMain() {
         .catch(done);
 
     });
+    */
 
     it('should reset search', (done) => {
       nightmare
