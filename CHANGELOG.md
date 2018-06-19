@@ -5,6 +5,7 @@
 * Ignore yarn-error.log. Refs STRIPES-517.
 * Prefer metadata to metaData for consistency. Fixes UITEST-24.
 * Accept --workingDirectory CLI option. Fixes UITEST-23.
+* Include ui-organization integration tests. Refs UITEST-27.
 
 ## [4.1.0](https://github.com/folio-org/ui-testing/tree/v4.0.0) (2017-09-01)
 
