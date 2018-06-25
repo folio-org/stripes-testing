@@ -5,7 +5,7 @@ const minimist = require('minimist');
 const config = require('./folio-ui.config.js');
 const helpers = require('./helpers.js');
 
-const wdToken = 'wd'; // --run value to selectively apply working directory
+const wdToken = 'WD'; // --run value to selectively apply working directory
 const options = minimist(process.argv.slice(2));
 
 function showHelp() {
