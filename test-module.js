@@ -5,6 +5,7 @@ const minimist = require('minimist');
 const config = require('./folio-ui.config.js');
 const helpers = require('./helpers.js');
 
+const wdToken = 'WD'; // --run value to selectively apply working directory
 const options = minimist(process.argv.slice(2));
 
 function showHelp() {
@@ -82,7 +83,7 @@ function showHelp() {
   console.log('');
   console.log('  --workingDirectory, wd');
   console.log('      Override the default working directory that is searched for tests,');
-  console.log('      @folio/${app}.'); // eslint-disable-line no-template-curly-in-string
+  console.log(`      @folio/\${app}. Used together with "${wdToken}" in --run, e.g. "--run ${wdToken}".`);
   console.log('');
   console.log('  --show');
   console.log('      Show test execution in browser window:   --show');
@@ -236,7 +237,7 @@ if (options.run) {
         const script = scripts[j];
         if (script) {
           try {
-            const workingDirectory = o.workingdirectory || o.wd ? config.working_directory : `@folio/${app}`;
+            const workingDirectory = (o.workingdirectory || o.wd) && app === wdToken ? config.working_directory : `@folio/${app}`;
             const tests = require(`${workingDirectory}/test/ui-testing/${script}.js`);
             const moduleInfo = require(`${workingDirectory}/package.json`);
             const meta = { testVersion: `${moduleInfo.name}:${moduleInfo.version}` };
