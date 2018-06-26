@@ -42,24 +42,26 @@ describe('Tests to validate the loan renewals', function descRoot() {
       nightmare
         .wait(config.select.settings)
         .click(config.select.settings)
+        .wait('#clickable-settings')
         .wait('a[href="/settings/circulation"]')
-        .wait(222)
         .click('a[href="/settings/circulation"]')
         .wait('a[href="/settings/circulation/checkout"]')
-        .wait(222)
         .click('a[href="/settings/circulation/checkout"]')
         .wait('#username-checkbox')
-        .wait(1000)
+        .wait(1111)
         .evaluate(() => {
-          const list = document.querySelectorAll('[data-checked="true"]');
-          list.forEach(el => (el.click()));
+        const list = document.querySelectorAll('[data-checked="true"]');
+            list.forEach(el => (el.click()));
         })
-        .wait(222)
-        .click('#username-checkbox')
-        .wait(222)
-        .xclick('//button[.="Save"]')
-        .wait(Math.max(1111, debugSleep)) // debugging
-        .then(done)
+        .then(() => {
+            nightmare
+              .wait(222)
+              .wait('#username-checkbox')
+              .click('#username-checkbox')
+              .wait('#clickable-savescanid')
+              .click('#clickable-savescanid');
+        })
+        .then(() => { done(); })
         .catch(done);
     });
 
