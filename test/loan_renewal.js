@@ -50,16 +50,16 @@ describe('Tests to validate the loan renewals', function descRoot() {
         .wait('#username-checkbox')
         .wait(1111)
         .evaluate(() => {
-        const list = document.querySelectorAll('[data-checked="true"]');
-            list.forEach(el => (el.click()));
+          const list = document.querySelectorAll('[data-checked="true"]');
+          list.forEach(el => (el.click()));
         })
         .then(() => {
-            nightmare
-              .wait(222)
-              .wait('#username-checkbox')
-              .click('#username-checkbox')
-              .wait('#clickable-savescanid')
-              .click('#clickable-savescanid');
+          nightmare
+            .wait(222)
+            .wait('#username-checkbox')
+            .click('#username-checkbox')
+            .wait('#clickable-savescanid')
+            .click('#clickable-savescanid');
         })
         .then(() => { done(); })
         .catch(done);
@@ -115,10 +115,13 @@ describe('Tests to validate the loan renewals', function descRoot() {
           const value = `priority: t, s, c, b, a, m, g \nfallback-policy: example-loan-policy \nm book: ${policy}`;
           document.getElementsByClassName('CodeMirror')[0].CodeMirror.setValue(value);
         }, policyName)
-        .wait(222)
-        .xclick('//button[.="Save"]')
-        .wait(Math.max(1111, debugSleep)) // debugging
-        .then(done)
+        .then(() => {
+          nightmare
+            .wait(222)
+            .xclick('//button[.="Save"]')
+            .wait(Math.max(1111, debugSleep)); // debugging
+          done();
+        })
         .catch(done);
     });
 
@@ -136,7 +139,7 @@ describe('Tests to validate the loan renewals', function descRoot() {
         })
         .catch(done);
     });
-    const barcode = helpers.createInventory(nightmare, config, 'Soul station / Hank Mobley');
+    const barcode = helpers.createInventory(nightmare, config, 'Soul stution / Hank Mobley');
 
     it(`should check out ${barcode} to ${userid}`, (done) => {
       nightmare
@@ -202,20 +205,41 @@ describe('Tests to validate the loan renewals', function descRoot() {
         .catch(done);
     });
 
-    it('should Renew the loan and succeed', (done) => {
+    it('should renew the loan and succeed', (done) => {
       nightmare
         .wait(222)
         .wait(`div[title="${barcode}"]`)
         .evaluate((fbarcode) => {
           const ele = document.querySelector(`div[title="${fbarcode}"]`);
           ele.parentElement.querySelector('input[type="checkbox"]').click();
+          console.log('checked renewable checkbox');
         }, barcode)
-        .wait('button[title="Renew"]')
-        .click('button[title="Renew"]')
-        .wait('div[class^="calloutBase"]')
-        .wait(555)
-        .then(done)
-        .catch(done);
+        .then(() => {
+          nightmare
+            .wait(1000)
+            .wait('button[title="Renew"]')
+            .wait(() => {
+              console.log('found renew button');
+              return true;
+            })
+            .wait(1000)
+            .click('button[title="Renew"]')
+            .wait(() => {
+              console.log('clicked renew button; waiting for calloutBase');
+              return true;
+            })
+            .wait('div[class^="calloutBase"]')
+            .wait(() => {
+              console.log('found calloutBase! all done!');
+              return true;
+            })
+            .then(done)
+            .catch(done);
+        })
+        .catch(() => {
+          console.error('FAILED');
+          done();
+        });
     });
 
     it('should renew the loan second time and hit the renewal limit', (done) => {
@@ -227,22 +251,26 @@ describe('Tests to validate the loan renewals', function descRoot() {
           const ele = document.querySelector(`div[title="${fbarcode}"]`);
           ele.parentElement.querySelector('input[type="checkbox"]').click();
         }, barcode)
-        .wait(1000)
-        .wait('button[title="Renew"]')
-        .wait(333)
-        .click('button[title="Renew"]')
-        .wait(333)
-        .wait('#renewal-failure-modal')
-        .wait(333)
-        .evaluate(() => {
-          const errorMsg = document.querySelector('#renewal-failure-modal > div:nth-of-type(2) > p').innerText;
-          if (errorMsg === null) {
-            throw new Error('Should throw an error as the renewalLimit is reached');
-          } else if (!errorMsg.match('Loan cannot be renewed because: loan has reached its maximum number of renewals')) {
-            throw new Error('Expected only the renewal failure error message');
-          }
+        .then(() => {
+          nightmare
+            .wait(1000)
+            .wait('button[title="Renew"]')
+            .wait(333)
+            .click('button[title="Renew"]')
+            .wait(333)
+            .wait('#renewal-failure-modal')
+            .wait(333)
+            .evaluate(() => {
+              const errorMsg = document.querySelector('#renewal-failure-modal > div:nth-of-type(2) > p').innerText;
+              if (errorMsg === null) {
+                throw new Error('Should throw an error as the renewalLimit is reached');
+              } else if (!errorMsg.match('Loan cannot be renewed because: loan has reached its maximum number of renewals')) {
+                throw new Error('Expected only the renewal failure error message');
+              }
+            })
+            .then(done)
+            .catch(done);
         })
-        .then(done)
         .catch(done);
     });
 
@@ -262,38 +290,45 @@ describe('Tests to validate the loan renewals', function descRoot() {
         .evaluate(() => {
           document.querySelector('#input_allowed_renewals').value = '';
         })
-        .wait(1000)
-        .type('#input_allowed_renewals', 2)
-        .wait('#select_renew_from')
-        .type('#select_renew_from', 'sy')
-        .xclick('//button[.="Save and close"]')
-        .wait(1000)
-        .evaluate(() => {
-          const sel = document.querySelector('div[class^="textfieldError"]');
-          if (sel) {
-            throw new Error(sel.textContent);
-          }
+        .then(() => {
+          nightmare
+            .wait(1000)
+            .type('#input_allowed_renewals', 2)
+            .wait('#select_renew_from')
+            .type('#select_renew_from', 'sy')
+            .xclick('//button[.="Save and close"]')
+            .wait(1000)
+            .evaluate(() => {
+              const sel = document.querySelector('div[class^="textfieldError"]');
+              if (sel) {
+                throw new Error(sel.textContent);
+              }
+            })
+            .then(() => {
+              nightmare
+                .wait('#clickable-users-module')
+                .click('#clickable-users-module')
+                .wait(`div[title="${barcode}"]`)
+                .evaluate((fbarcode) => {
+                  const ele = document.querySelector(`div[title="${fbarcode}"]`);
+                  ele.parentElement.querySelector('input[type="checkbox"]').click();
+                }, barcode)
+                .wait(333)
+                .wait('button[title="Renew"]')
+                .click('button[title="Renew"]')
+                .wait('#renewal-failure-modal')
+                .evaluate(() => {
+                  const errorMsg = document.querySelector('#renewal-failure-modal > div:nth-of-type(2) > p').innerText;
+                  if (errorMsg === null) {
+                    throw new Error('Should throw an error as the renewalLimit is reached');
+                  } else if (!errorMsg.match('Loan cannot be renewed because: renewal at this time would not change the due date')) {
+                    throw new Error('Expected only the renewal failure error message');
+                  }
+                })
+                .then(done)
+                .catch(done);
+            });
         })
-        .wait('#clickable-users-module')
-        .click('#clickable-users-module')
-        .wait(`div[title="${barcode}"]`)
-        .evaluate((fbarcode) => {
-          const ele = document.querySelector(`div[title="${fbarcode}"]`);
-          ele.parentElement.querySelector('input[type="checkbox"]').click();
-        }, barcode)
-        .wait(333)
-        .wait('button[title="Renew"]')
-        .click('button[title="Renew"]')
-        .wait('#renewal-failure-modal')
-        .evaluate(() => {
-          const errorMsg = document.querySelector('#renewal-failure-modal > div:nth-of-type(2) > p').innerText;
-          if (errorMsg === null) {
-            throw new Error('Should throw an error as the renewalLimit is reached');
-          } else if (!errorMsg.match('Loan cannot be renewed because: renewal at this time would not change the due date')) {
-            throw new Error('Expected only the renewal failure error message');
-          }
-        })
-        .then(done)
         .catch(done);
     });
 
