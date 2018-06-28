@@ -7,6 +7,7 @@
 * Accept --workingDirectory CLI option. Fixes UITEST-23.
 * Include ui-organization integration tests. Refs UITEST-27.
 * Selectively apply --workingDirectory, fixes UITEST-36.
+* Make waitUntilNetworkIdle available globally via xnightmare.
 
 ## [4.1.0](https://github.com/folio-org/ui-testing/tree/v4.0.0) (2017-09-01)
 
