@@ -134,31 +134,29 @@ describe('Load test-codexsearch', function runMain() {
     it('should filter results', (done) => {
 
       nightmare
-        .evaluate(resultSelectorBeforeClick=>{
+        .evaluate(resultSelectorBeforeClick => {
           const matchBeforClick = document.querySelector(resultSelectorBeforeClick);
           const countTextBeforeClick = matchBeforClick.innerText;
-          return parseInt(countTextBeforeClick.substr(0, countTextBeforeClick.indexOf(' ')));
+          return parseInt(countTextBeforeClick.substr(0, countTextBeforeClick.indexOf(' ')), 10);
         }, resultCountSelector)
-        .then((resultCountBeforeClick)=>{
-
+        .then((resultCountBeforeClick) => {
           nightmare
             .click(filterCheckBoxSelector)
             .waitUntilNetworkIdle()
-            .wait(555)
-            .evaluate((filterCheckBoxSelector, resultSelectorAfterClick)=>{
-
+            .wait(1000)
+            .evaluate((filterCheckBoxSelector, resultSelectorAfterClick) => {
               const filterCheckBox = document.querySelector(filterCheckBoxSelector);
 
-              if(!filterCheckBox.checked) {
+              if (!filterCheckBox.checked) {
                 throw new Error(`Filter not activated: filterCheckBox.checked = ${filterCheckBox.checked}`);
               }
 
               const matchAfterClick = document.querySelector(resultSelectorAfterClick);
               const countTextAfterClick = matchAfterClick.innerText;
-              return parseInt(countTextAfterClick.substr(0, countTextAfterClick.indexOf(' ')));
+              return parseInt(countTextAfterClick.substr(0, countTextAfterClick.indexOf(' ')), 10);
             }, filterCheckBoxSelector, resultCountSelector)
-            .then(resultCountAfterClick=>{
-              if(resultCountBeforeClick <= resultCountAfterClick) {
+            .then(resultCountAfterClick => {
+              if (resultCountBeforeClick <= resultCountAfterClick) {
                 throw new Error(`Results were not reduced by filtering: resultCountBeforeClick: ${resultCountBeforeClick}, resultCountAfterClick: ${resultCountAfterClick}`);
               }
               done();
@@ -166,7 +164,6 @@ describe('Load test-codexsearch', function runMain() {
             .catch(done);
         })
         .catch(done);
-
     });
     */
 
