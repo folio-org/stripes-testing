@@ -35,7 +35,16 @@ The tests are using the [NightmareJS](http://www.nightmarejs.org) browser automa
 and [Mocha](https://mochajs.org) for the tests itself.
 
 Some tests are contained within ui-testing itself while others live in the individual UI modules, and can be executed from there by ui-testing.
+## Pre-requisite on linux( Ubuntu and AWS at least...possibly others)
+You may need to install supporting libraries for Electron(Nightmare uses electron to execute browser tests).
 
+Detailed instructions can be found here:  [Running nightmare on AWS](https://gist.github.com/dimkir/f4afde77366ff041b66d2252b45a13db#attempt-to-run-nightmare)
+
+To immediately find out if you need to install dependencies execute:  
+```
+$ cd node_modules/nigthmare/node_modules/electron/dist
+$ ldd electron  | grep 'not found'
+```
 ## Install node packages first
 
     $ yarn install
