@@ -39,10 +39,10 @@ Some tests are contained within ui-testing itself while others live in the indiv
 	You may need to install supporting libraries for Electron(Nightmare uses electron to execute browser tests). 
 	Detailed instructions can be found here:  [Running nightmare on AWS](https://gist.github.com/dimkir/f4afde77366ff041b66d2252b45a13db#attempt-to-run-nightmare)
 	To immediately find out if you need to install dependencies execute
-	```
+	`
 	$ cd node_modules/nigthmare/node_modules/electron/dist
 	$ ldd electron  | grep 'not found'
-	```
+	`
 ## Install node packages first
 
     $ yarn install
