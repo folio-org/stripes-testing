@@ -25,7 +25,7 @@
     "test-codexsearch": "./node_modules/.bin/mocha test/codex-search.js",
     "test-profile-pictures": "./node_modules/.bin/mocha test/profile-pictures.js",
     "test-vendors": "./node_modules/.bin/mocha test/vendor.js",
-    "module-tests": "./node_modules/.bin/mocha test-module.js --run=/checkout/checkin/users/items/inventory/organization",
+    "module-tests": "./node_modules/.bin/mocha test-module.js --run=/checkout/checkin/users/inventory/organization",
     "lint": "eslint *.js test/*.js"
   },
   "dependencies": {
@@ -33,7 +33,6 @@
     "@folio/checkout": "*",
     "@folio/circulation": "*",
     "@folio/inventory": "*",
-    "@folio/items": "*",
     "@folio/requests": "*",
     "@folio/search": "*",
     "@folio/users": "*",
