@@ -5,7 +5,7 @@ ARG folio_registry=https://repository.folio.org/repository/npm-folioci/
 RUN apt-get -q update && \
     DEBIAN_FRONTEND="noninteractive" apt-get -q install -y \
     -o Dpkg::Options::="--force-confnew"  --no-install-recommends \
-    git wget unzip xvfb && \
+    git wget unzip bzip2 xvfb && \
     apt-get install -y libgtk2.0-0 libxtst6 libxss1 libgconf-2-4 libnss3 libnspr4  libasound2 && \
     apt-get -q clean -y && rm -rf /var/lib/apt/lists/* && \
     rm -f /var/cache/apt/*.bin
