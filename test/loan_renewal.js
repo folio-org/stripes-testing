@@ -48,7 +48,7 @@ describe('Tests to validate the loan renewals', function descRoot() {
         .wait('a[href="/settings/circulation/checkout"]')
         .click('a[href="/settings/circulation/checkout"]')
         .wait('#username-checkbox')
-        .wait(1111)
+        .wait(4444)
         .evaluate(() => {
           const list = document.querySelectorAll('[data-checked="true"]');
           list.forEach(el => (el.click()));
