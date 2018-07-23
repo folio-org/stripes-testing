@@ -4,7 +4,7 @@ const Nightmare = require('./xnightmare.js');
 const minimist = require('minimist');
 const config = require('./folio-ui.config.js');
 const helpers = require('./helpers.js');
-const coverageHelper = require("./test/coverage.js");
+const coverageHelper = require('./test/coverage.js');
 
 const wdToken = 'WD'; // --run value to selectively apply working directory
 const options = minimist(process.argv.slice(2));
@@ -244,12 +244,12 @@ if (options.run) {
             const meta = { testVersion: `${moduleInfo.name}:${moduleInfo.version}` };
             const nightmare = new Nightmare(config.nightmare);
             try {
-              describe( "test Wrapper", function bar() {
+              describe( 'test Wrapper', function bar() {
                 tests.test({ config, helpers, meta },nightmare);
                 after(function() {
 			            coverageHelper.doCoverage(nightmare);
 		            });
-	            }); 
+	            });
             } catch (e) {
               console.log(`Could not run tests for module "${app}"\n`, e);
             }
