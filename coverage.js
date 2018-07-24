@@ -32,7 +32,6 @@ module.exports.prepareCoverage = function prepareCoverage(dirname) {
     removeDirectoryContents(dirname);
     return result;
   });
-
 };
 module.exports.doCoverage = function coverage(nightmare, dirname) {
   nightmare
