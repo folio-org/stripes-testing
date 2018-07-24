@@ -143,6 +143,7 @@ function getOptions(opts, config) {
     'devtools',
     'width',
     'height',
+    'coverage',
   ];
 
   const o = {};
@@ -235,7 +236,10 @@ if (options.run) {
 
       let emptyScriptArg = false;
       const tempFolder = './artifacts/coveragetemp/';
-      coverageHelper.prepareCoverage(tempFolder);
+      if (o.coverage) {
+        console.log('coverage sent to module');
+        coverageHelper.prepareCoverage(tempFolder);
+      }
       const nightmare = new Nightmare(config.nightmare);
       describe('test Wrapper', () => { // eslint-disable-line no-loop-func,no-undef
         for (let j = 0; j < scripts.length; j++) { // for each test script requested from the module
