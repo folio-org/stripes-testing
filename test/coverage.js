@@ -19,20 +19,24 @@ function ensureDirectoryExistence(filePath) {
   }, '');
 }
 function removeDirectoryContents(directory) {
-  fs.readdirSync(directory, (err, files) => {
-    if (err) throw err;
-    for (const file of files) {
-      console.log('removing file ' + path.join(directory, file));
-      fs.unlinkSync(path.join(directory, file), error => {
-        if (error) throw error;
-      });
-    }
-  });
+  const files = fs.readdirSync(directory);
+  for (const file of files) {
+    fs.unlinkSync(path.join(directory, file));
+  }
 }
-module.exports.doCoverage = function coverage(nightmare) {
+module.exports.prepareCoverage = function prepareCoverage(dirname) {
+  new Promise((resolve) => {
+    ensureDirectoryExistence(dirname);
+    resolve(true);
+  }).then((result) => {
+    removeDirectoryContents(dirname);
+    return result;
+  });
+
+};
+module.exports.doCoverage = function coverage(nightmare, dirname) {
   nightmare
     .evaluate(() => window.__coverage__)
-    .end()
     .then((cov) => {
       // this executes in Node scope
       // handle the data passed back to us from browser scope
@@ -41,19 +45,8 @@ module.exports.doCoverage = function coverage(nightmare) {
         const hash = crypto.createHmac('sha256', '')
           .update(strCoverage)
           .digest('hex');
-        const dirname = './artifacts/coveragetemp/';
         const fileName = dirname + 'coverage-' + hash + '.json';
-        new Promise((resolve) => {
-          ensureDirectoryExistence(dirname);
-          resolve(true);
-        }).then((result) => {
-          removeDirectoryContents(dirname);
-          return result;
-        }).then((result) => {
-          console.log('writing new file' + fileName);
-          fs.writeFileSync(fileName, strCoverage);
-          return result;
-        });
+        fs.writeFileSync(fileName, strCoverage);
       }
     })
     .catch(err => console.log(err));

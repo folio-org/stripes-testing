@@ -234,32 +234,39 @@ if (options.run) {
       }
 
       let emptyScriptArg = false;
-      for (let j = 0; j < scripts.length; j++) { // for each test script requested from the module
-        const script = scripts[j];
-        if (script) {
-          try {
-            const workingDirectory = (o.workingdirectory || o.wd) && app === wdToken ? config.working_directory : `@folio/${app}`;
-            const tests = require(`${workingDirectory}/test/ui-testing/${script}.js`);
-            const moduleInfo = require(`${workingDirectory}/package.json`);
-            const meta = { testVersion: `${moduleInfo.name}:${moduleInfo.version}` };
-            const nightmare = new Nightmare(config.nightmare);
+      const tempFolder = './artifacts/coveragetemp/';
+      coverageHelper.prepareCoverage(tempFolder);
+      const nightmare = new Nightmare(config.nightmare);
+      describe('test Wrapper', () => { // eslint-disable-line no-loop-func,no-undef
+        for (let j = 0; j < scripts.length; j++) { // for each test script requested from the module
+          const script = scripts[j];
+          if (script) {
             try {
-              describe( 'test Wrapper', function bar() {
-                tests.test({ config, helpers, meta },nightmare);
-                after(function() {
-			            coverageHelper.doCoverage(nightmare);
-		            });
-	            });
+              const workingDirectory = (o.workingdirectory || o.wd) && app === wdToken ? config.working_directory : `@folio/${app}`;
+              const tests = require(`${workingDirectory}/test/ui-testing/${script}.js`);
+              const moduleInfo = require(`${workingDirectory}/package.json`);
+              const meta = { testVersion: `${moduleInfo.name}:${moduleInfo.version}` };
+              try {
+                tests.test({ config, helpers, meta }, nightmare);
+              } catch (e) {
+                console.log(`Could not run tests for module "${app}"\n`, e);
+              }
             } catch (e) {
-              console.log(`Could not run tests for module "${app}"\n`, e);
+              console.log(`Module or test script not found: "${app}${script == 'test' ? '' : `:${script}`}"\n`, e);
             }
-          } catch (e) {
-            console.log(`Module or test script not found: "${app}${script == 'test' ? '' : `:${script}`}"\n`, e);
+          } else {
+            emptyScriptArg = true;
           }
-        } else {
-          emptyScriptArg = true;
         }
-      }
+        afterEach(function aftereachFunc() { // eslint-disable-line prefer-arrow-callback,no-undef
+          coverageHelper.doCoverage(nightmare, tempFolder);
+        });
+        after(function afterFunc() { // eslint-disable-line prefer-arrow-callback,no-undef
+          nightmare.end().then(() => {
+            // do nothing then to make end() actually execute
+          });
+        });
+      });
       if (emptyScriptArg) {
         console.log(`Found empty script argument(s) for "${app}". Skipped.`);
       }
