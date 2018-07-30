@@ -149,3 +149,36 @@ module.exports.namegen = () => {
     address: ad[adpos],
   };
 };
+
+/**
+ * Visit "settings > circulation > other settings" to tick the checkboxes
+ * for "barcode" and "username".
+ */
+module.exports.circSettingsCheckoutByBarcodeAndUsername = (nightmare, config, done) => {
+  nightmare
+    .wait(config.select.settings)
+    .click(config.select.settings)
+    .wait('#clickable-settings')
+    .wait('a[href="/settings/circulation"]')
+    .click('a[href="/settings/circulation"]')
+    .wait('a[href="/settings/circulation/checkout"]')
+    .click('a[href="/settings/circulation/checkout"]')
+    .wait('#username-checkbox')
+    .wait(222)
+    .evaluate(() => {
+      const list = document.querySelectorAll('[data-checked="true"]');
+      list.forEach(el => (el.click()));
+    })
+    .then(() => {
+      nightmare
+        .wait(222)
+        .wait('#barcode-checkbox')
+        .click('#barcode-checkbox')
+        .wait('#username-checkbox')
+        .click('#username-checkbox')
+        .wait('#clickable-savescanid')
+        .click('#clickable-savescanid')
+        .then(done)
+        .catch(done);
+    });
+};
