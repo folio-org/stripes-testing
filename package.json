@@ -38,7 +38,6 @@
     "@folio/users": "*",
     "@folio/organization": "*",
     "debug": "^3.1.0",
-    "electron": "2.0.0",
     "minimist": "^1.2.0",
     "mocha": "^3.4.2",
     "mocha-jenkins-reporter": "^0.3.12",
