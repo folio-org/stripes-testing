@@ -263,7 +263,9 @@ if (options.run) {
           }
         }
         afterEach(function aftereachFunc() { // eslint-disable-line prefer-arrow-callback,no-undef
-          coverageHelper.doCoverage(nightmare, tempFolder);
+          if (o.coverage) {
+            coverageHelper.doCoverage(nightmare, tempFolder);
+          }
         });
         after(function afterFunc() { // eslint-disable-line prefer-arrow-callback,no-undef
           nightmare.end().then(() => {
