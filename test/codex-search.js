@@ -17,7 +17,7 @@ describe('Load test-codexsearch', function runMain() {
   const resultCountSelector = `#paneHeaderpane-results-subtitle span`;
   const filterCheckBoxSelector = `#clickable-filter-type-Audio`;
   const resetButtonLabel = 'Reset all';
-  const resetButtonSelector = 'button > span';
+  const resetButtonSelector = '#clickable-reset-all';
 
   describe('Login > Codex Search > Confirm Results > *Sorting Results (Not working currently)* > Filtering Results > Reset Search > Confirm Reset > Logout\n', () => {
     it(`should login as ${config.username}/${config.password}`, (done) => {
@@ -151,14 +151,17 @@ describe('Load test-codexsearch', function runMain() {
             throw new Error('Input field not cleared on reset');
           }
         }, '#input-record-search')
-        .evaluate(function confResetAgain(resetLabel, resetSelector) {
+        .evaluate(function confResetAgain(resetSelector) {
           const matches = document.querySelectorAll(resetSelector);
           matches.forEach(function confResetEach(currentValue, currentIndex, listObj) {
-            if (currentValue.textContent === resetLabel) {
-              throw new Error('Reset all button is visible');
+            if (!currentValue.disabled) {
+              throw new Error('Reset all button is visible. '
+                + 'Content: ' + currentValue.textContent
+                + ' ID: ' + currentValue.id
+                + ' Disabled: ' + currentValue.disabled);
             }
           });
-        }, resetButtonLabel, resetButtonSelector)
+        }, resetButtonSelector)
         .evaluate(function confResetOfFilters(resetSelector) {
           const filterCheckBox = document.querySelector(resetSelector);
           if(filterCheckBox.checked) {

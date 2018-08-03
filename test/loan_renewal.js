@@ -24,45 +24,11 @@ describe('Tests to validate the loan renewals', function descRoot() {
     let loanRules = '';
 
     it(`should login as ${config.username}/${config.password}`, (done) => {
-      nightmare
-        .on('page', function onAlert(type = 'alert', message) {
-          throw new Error(message);
-        })
-        .goto(config.url)
-        .wait(Number(config.login_wait))
-        .insert(config.select.username, config.username)
-        .insert(config.select.password, config.password)
-        .click('#clickable-login')
-        .wait('#clickable-logout')
-        .then(done)
-        .catch(done);
+      helpers.login(nightmare, config, done);
     });
 
-    it('should set patron scan ID to "User"', (done) => {
-      nightmare
-        .wait(config.select.settings)
-        .click(config.select.settings)
-        .wait('#clickable-settings')
-        .wait('a[href="/settings/circulation"]')
-        .click('a[href="/settings/circulation"]')
-        .wait('a[href="/settings/circulation/checkout"]')
-        .click('a[href="/settings/circulation/checkout"]')
-        .wait('#username-checkbox')
-        .wait(1111)
-        .evaluate(() => {
-          const list = document.querySelectorAll('[data-checked="true"]');
-          list.forEach(el => (el.click()));
-        })
-        .then(() => {
-          nightmare
-            .wait(222)
-            .wait('#username-checkbox')
-            .click('#username-checkbox')
-            .wait('#clickable-savescanid')
-            .click('#clickable-savescanid');
-        })
-        .then(() => { done(); })
-        .catch(done);
+    it('should configure checkout for barcode and username', (done) => {
+      helpers.circSettingsCheckoutByBarcodeAndUsername(nightmare, config, done);
     });
 
     it('should create a new loan policy with renewalLimit of 1', (done) => {
@@ -128,8 +94,11 @@ describe('Tests to validate the loan renewals', function descRoot() {
     it('should find an active user ', (done) => {
       nightmare
         .click('#clickable-users-module')
-        .wait(2000)
-        .click('#clickable-filter-active-Active')
+        .wait('#input-user-search')
+        .type('#input-user-search', '0')
+        .wait('#clickable-reset-all')
+        .click('#clickable-reset-all')
+        .type('#input-user-search', '0')
         .wait(uselector)
         .evaluate(selector => document.querySelector(selector).title, uselector)
         .then((result) => {
@@ -139,19 +108,14 @@ describe('Tests to validate the loan renewals', function descRoot() {
         })
         .catch(done);
     });
-    const barcode = helpers.createInventory(nightmare, config, 'Soul stution / Hank Mobley');
+    const barcode = helpers.createInventory(nightmare, config, 'Soul station / Hank Mobley');
 
     it(`should check out ${barcode} to ${userid}`, (done) => {
       nightmare
         .click('#clickable-checkout-module')
-        .wait('#input-patron-identifier[placeholder*="username"]')
-        .evaluate(() => {
-          const ph = document.querySelector('#input-patron-identifier').placeholder;
-          if (!ph.match(/username/i)) {
-            throw new Error(`Placeholder is not asking for Username! (${ph})`);
-          }
-        })
-        .insert('#input-patron-identifier', userid)
+        .wait('#input-patron-identifier')
+        .type('#input-patron-identifier', userid)
+        .wait('#clickable-find-patron')
         .click('#clickable-find-patron')
         .wait(() => {
           const err = document.querySelector('#patron-form div[class^="textfieldError"]');
@@ -216,28 +180,15 @@ describe('Tests to validate the loan renewals', function descRoot() {
         }, barcode)
         .then(() => {
           nightmare
-            .wait(1000)
             .wait('button[title="Renew"]')
-            .wait(() => {
-              console.log('found renew button');
-              return true;
-            })
-            .wait(1000)
             .click('button[title="Renew"]')
-            .wait(() => {
-              console.log('clicked renew button; waiting for calloutBase');
-              return true;
-            })
             .wait('div[class^="calloutBase"]')
-            .wait(() => {
-              console.log('found calloutBase! all done!');
-              return true;
-            })
             .then(done)
             .catch(done);
         })
-        .catch(() => {
+        .catch((e) => {
           console.error('FAILED');
+          console.error(e);
           done();
         });
     });
@@ -344,10 +295,12 @@ describe('Tests to validate the loan renewals', function descRoot() {
         .xclick('//button[.="+ New"]')
         .wait('#input_schedule_name')
         .type('#input_schedule_name', scheduleName)
-        .type('input[name="schedules[0].from"]', tomorrowValue)
-        .type('input[name="schedules[0].to"]', dayAfterValue)
-        .type('input[name="schedules[0].due"]', nextMonthValue)
-        .wait(555)
+        .wait('input[name="schedules[0].from"]')
+        .insert('input[name="schedules[0].from"]', tomorrowValue)
+        .wait('input[name="schedules[0].to"]')
+        .insert('input[name="schedules[0].to"]', dayAfterValue)
+        .wait('input[name="schedules[0].due"]')
+        .insert('input[name="schedules[0].due"]', nextMonthValue)
         .wait('#clickable-save-fixedDueDateSchedule')
         .click('#clickable-save-fixedDueDateSchedule')
         .wait(1000)
@@ -372,7 +325,7 @@ describe('Tests to validate the loan renewals', function descRoot() {
         .wait('#input_loan_profile')
         .type('#input_loan_profile', 'fi')
         .wait('#input_loansPolicy_fixedDueDateSchedule')
-        .type('#input_loansPolicy_fixedDueDateSchedule', `${scheduleName}`)
+        .type('#input_loansPolicy_fixedDueDateSchedule', scheduleName)
         .wait(333)
         .xclick('//button[.="Save and close"]')
         .wait(1000)
@@ -546,13 +499,32 @@ describe('Tests to validate the loan renewals', function descRoot() {
         .catch(done);
     });
 
-    it('should logout', (done) => {
+    it('should confirm deletion', (done) => {
       nightmare
-        .click('#clickable-logout')
-        .wait(config.select.username)
-        .end()
+        .click(config.select.settings)
+        .wait(222)
+        .wait('a[href="/settings/circulation"]')
+        .wait(222)
+        .wait('a[href="/settings/circulation/fixed-due-date-schedules"]')
+        .click('a[href="/settings/circulation/fixed-due-date-schedules"]')
+        .wait(333)
+        .xclick(`id("ModuleContainer")//a[.="${scheduleName}"]`)
+        .wait('#clickable-edit-item')
+        .click('#clickable-edit-item')
+        .wait('#clickable-delete-set')
+        .click('#clickable-delete-set')
+        .wait('#clickable-deletefixedduedateschedule-confirmation-confirm')
+        .click('#clickable-deletefixedduedateschedule-confirmation-confirm')
+        .wait(222)
         .then(done)
-        .catch(done);
+        .catch((e) => {
+          console.dir(e);
+          done();
+        });
+    });
+
+    it('should logout', (done) => {
+      helpers.logout(nightmare, config, done);
     });
   });
 });
