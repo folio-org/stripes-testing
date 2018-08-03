@@ -1,4 +1,5 @@
 /* global describe it */
+/* eslint-disable no-console */
 /* eslint no-unused-vars: ["error", { "argsIgnorePattern": "^type" }] */
 
 const Nightmare = require('../xnightmare.js');
@@ -11,63 +12,50 @@ describe('Exercise users, inventory, checkout, checkin, settings ("test-exercise
   describe('Login > Update settings > Find user > Create inventory record > Create holdings record > Create item record > Checkout item > Confirm checkout > Checkin > Confirm checkin > Logout\n', function descStart() {
     const nightmare = new Nightmare(config.nightmare);
     let userid = 'user';
-    const uselector = "#list-users div[role='listitem']:nth-of-type(12) > a > div:nth-of-type(5)";
-    // const barcode = new Date().valueOf();
-    // const title = 'Soul station';
-    // const callno = 'SDA 32171';
 
     it(`should login as ${config.username}/${config.password}`, (done) => {
-      nightmare
-        .on('page', function onAlert(type = 'alert', message) {
-          throw new Error(message);
-        })
-        .goto(config.url)
-        .wait(config.select.username)
-        .insert(config.select.username, config.username)
-        .insert(config.select.password, config.password)
-        .click('#clickable-login')
-        .wait('#clickable-logout')
-        .then(done)
-        .catch(done);
+      helpers.login(nightmare, config, done);
     });
-    it('should set patron scan ID to "User"', (done) => {
-      nightmare
-        .wait(config.select.settings)
-        .click(config.select.settings)
-        .wait('a[href="/settings/circulation"]')
-        .wait(222)
-        .click('a[href="/settings/circulation"]')
-        .wait('a[href="/settings/circulation/checkout"]')
-        .wait(222)
-        .click('a[href="/settings/circulation/checkout"]')
-        .wait('#username-checkbox')
-        .wait(1000)
-        .evaluate(() => {
-          const list = document.querySelectorAll('[data-checked="true"]');
-          list.forEach(el => (el.click()));
-        })
-        .wait(222)
-        .click('#username-checkbox')
-        .wait(222)
-        .xclick('//button[.="Save"]')
-        .wait(parseInt(process.env.FOLIO_UI_DEBUG, 10) ? parseInt(config.debug_sleep, 10) : 1111) // debugging
-        .then(done)
-        .catch(done);
+
+    it('should configure checkout for barcode and username', (done) => {
+      helpers.circSettingsCheckoutByBarcodeAndUsername(nightmare, config, done);
     });
+
     it('should find an active user ', (done) => {
       nightmare
         .click('#clickable-users-module')
-        .wait(2000)
-        .click('#clickable-filter-active-Active')
-        .wait(uselector)
-        .evaluate(selector => document.querySelector(selector).title, uselector)
+        .wait('#input-user-search')
+        .type('#input-user-search', '0')
+        .wait('#clickable-reset-all')
+        .click('#clickable-reset-all')
+        .type('#input-user-search', '0')
+        .wait('#list-users div[role="listitem"]:nth-child(9)')
+        .evaluate(() => {
+          const ubc = [];
+          const list = document.querySelectorAll('#list-users div[role="listitem"]');
+          list.forEach((node) => {
+            const status = node.querySelector('a div:nth-child(1)').innerText;
+            const barcode = node.querySelector('a div:nth-child(3)').innerText;
+            const username = node.querySelector('a div:nth-child(5)').innerText;
+            const uuid = node.querySelector('a').href.replace(/.+?([^/]+)\?.*/, '$1');
+            if (barcode && status.match(/Active/)) {
+              ubc.push({
+                barcode,
+                uuid,
+                username,
+              });
+            }
+          });
+          return ubc;
+        })
         .then((result) => {
-          userid = result;
-          done();
+          userid = result[0].username;
           console.log(`          Found user ${userid}`);
+          done();
         })
         .catch(done);
     });
+
     it(`should find current loans count for ${userid}`, (done) => {
       nightmare
         .click(`div[title="${userid}"]`)
@@ -93,66 +81,15 @@ describe('Exercise users, inventory, checkout, checkin, settings ("test-exercise
         })
         .catch(done);
     });
+
     const barcode = helpers.createInventory(nightmare, config, 'Soul station / Hank Mobley');
-    /*
-    it('should create inventory record', (done) => {
-      nightmare
-        .click('#clickable-inventory-module')
-        .wait(2222)
-        .click('#clickable-newinventory')
-        .wait('#input_instance_title')
-        .insert('#input_instance_title', title)
-        .wait(222)
-        .click('#select_instance_type')
-        .wait(111)
-        .type('#select_instance_type', 'b')
-        .click('#clickable-create-instance')
-        .wait('#clickable-new-holdings-record')
-        .then(done)
-        .catch(done);
-    });
-    it('should create holdings record', (done) => {
-      nightmare
-        .click('#clickable-new-holdings-record')
-        .wait('#additem_permanentlocation')
-        .wait(1111)
-        .type('#additem_permanentlocation', 'm')
-        .insert('#additem_callnumber', callno)
-        .click('#clickable-create-item')
-        .wait('#clickable-new-item')
-        .then(done)
-        .catch(done);
-    });
-    it('should create item record', (done) => {
-      nightmare
-        .click('#clickable-new-item')
-        .wait('#additem_materialType')
-        .wait(1111)
-        .click('#additem_materialType')
-        .wait(111)
-        .type('#additem_materialType', 's')
-        .wait(111)
-        .click('#additem_loanTypePerm')
-        .wait(111)
-        .type('#additem_loanTypePerm', 'cc')
-        .wait(222)
-        .insert('#additem_barcode', barcode)
-        .wait(222)
-        .click('#clickable-create-item')
-        .then(done)
-        .catch(done);
-    }); */
+
     it(`should check out ${barcode} to ${userid}`, (done) => {
       nightmare
         .click('#clickable-checkout-module')
-        .wait('#input-patron-identifier[placeholder*="username"]')
-        .evaluate(() => {
-          const ph = document.querySelector('#input-patron-identifier').placeholder;
-          if (!ph.match(/username/i)) {
-            throw new Error(`Placeholder is not asking for Username! (${ph})`);
-          }
-        })
-        .insert('#input-patron-identifier', userid)
+        .wait('#input-patron-identifier')
+        .type('#input-patron-identifier', userid)
+        .wait('#clickable-find-patron')
         .click('#clickable-find-patron')
         .wait(() => {
           const err = document.querySelector('#patron-form div[class^="textfieldError"]');
@@ -166,7 +103,7 @@ describe('Exercise users, inventory, checkout, checkin, settings ("test-exercise
           }
         })
         .wait(222)
-        .insert('#input-item-barcode', barcode)
+        .type('#input-item-barcode', barcode)
         .wait(222)
         .click('#clickable-add-item')
         .wait(1111)
@@ -176,10 +113,13 @@ describe('Exercise users, inventory, checkout, checkin, settings ("test-exercise
             throw new Error(sel.textContent);
           }
         })
-        .wait(222)
-        .click('#section-item button')
-        .wait(parseInt(process.env.FOLIO_UI_DEBUG, 10) ? parseInt(config.debug_sleep, 10) : 555) // debugging
-        .then(done)
+        .then(() => {
+          nightmare
+            .wait(222)
+            .click('#section-item button')
+            .wait(parseInt(process.env.FOLIO_UI_DEBUG, 10) ? parseInt(config.debug_sleep, 10) : 555) // debugging
+            .then(done);
+        })
         .catch(done);
     });
     it(`should find ${barcode} in ${userid}'s open loans`, (done) => {
@@ -244,13 +184,9 @@ describe('Exercise users, inventory, checkout, checkin, settings ("test-exercise
         .then(done)
         .catch(done);
     });
+
     it('should logout', (done) => {
-      nightmare
-        .click('#clickable-logout')
-        .wait(config.select.username)
-        .end()
-        .then(done)
-        .catch(done);
+      helpers.logout(nightmare, config, done);
     });
   });
 });
