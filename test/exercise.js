@@ -126,8 +126,9 @@ describe('Exercise users, inventory, checkout, checkin, settings ("test-exercise
       nightmare
         .click('#clickable-users-module')
         .wait('#input-user-search')
-      // .click('#input-user-search ~ div button')
-        .wait(222)
+        .insert('#input-user-search', userid)
+        .wait('#clickable-reset-all')
+        .click('#clickable-reset-all')
         .insert('#input-user-search', userid)
         .wait(`#list-users div[title="${userid}"]`)
         .click(`#list-users div[title="${userid}"]`)
@@ -141,6 +142,8 @@ describe('Exercise users, inventory, checkout, checkin, settings ("test-exercise
             return false;
           }
         }, barcode)
+        .wait('div[class*="LayerRoot"] button[class*="paneHeaderCloseIcon"]')
+        .click('div[class*="LayerRoot"] button[class*="paneHeaderCloseIcon"]')
         .wait(parseInt(process.env.FOLIO_UI_DEBUG, 10) ? parseInt(config.debug_sleep, 10) : 555) // debugging
         .then(done)
         .catch(done);
@@ -166,7 +169,9 @@ describe('Exercise users, inventory, checkout, checkin, settings ("test-exercise
       nightmare
         .click('#clickable-users-module')
         .wait('#input-user-search')
-      // .click('#input-user-search ~ div button')
+        .insert('#input-user-search', userid)
+        .wait('#clickable-reset-all')
+        .click('#clickable-reset-all')
         .insert('#input-user-search', userid)
         .wait(`div[title="${userid}"]`)
         .click(`div[title="${userid}"]`)
@@ -180,6 +185,8 @@ describe('Exercise users, inventory, checkout, checkin, settings ("test-exercise
             return false;
           }
         }, barcode)
+        .wait('div[class*="LayerRoot"] button[class*="paneHeaderCloseIcon"]')
+        .click('div[class*="LayerRoot"] button[class*="paneHeaderCloseIcon"]')
         .wait(parseInt(process.env.FOLIO_UI_DEBUG, 10) ? parseInt(config.debug_sleep, 10) : 555) // debugging
         .then(done)
         .catch(done);
