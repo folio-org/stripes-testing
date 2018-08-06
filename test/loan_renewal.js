@@ -150,6 +150,9 @@ describe('Tests to validate the loan renewals', function descRoot() {
       nightmare
         .click('#clickable-users-module')
         .wait('#input-user-search')
+        .type('#input-user-search', '0')
+        .wait('#clickable-reset-all')
+        .click('#clickable-reset-all')
         .wait(222)
         .insert('#input-user-search', userid)
         .wait(`#list-users div[title="${userid}"]`)
