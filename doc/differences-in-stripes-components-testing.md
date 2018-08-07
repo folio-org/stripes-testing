@@ -19,15 +19,15 @@ The application tests are full of sequences like the following (from [`ui-users/
 
 	.click('#clickable-users-module')
 	.wait(1000)
-	.click('#clickable-filter-active-Active')
+	.click('#clickable-filter-pg-faculty')
 
 This waits for a fixed period of 1000 ms for the results of the first click to take place before attempting the second click, which is both slow and unreliable: it will fail if, for some reason, it takes more than a second for the click to take effect.
 
 Instead, the stripes-component tests wait for the required element to become available:
 
 	.click('#clickable-users-module')
-	.wait('#clickable-filter-active-Active')
-	.click('#clickable-filter-active-Active')
+	.wait('#clickable-filter-pg-faculty')
+	.click('#clickable-filter-pg-faculty')
 
 There is no reason why the application tests should not be using this form, in at least most cases. (There may be some specific difficult cases where timed delays are necessary; these should be considered on their merits.)
 
