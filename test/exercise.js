@@ -24,11 +24,8 @@ describe('Exercise users, inventory, checkout, checkin, settings ("test-exercise
     it('should find an active user ', (done) => {
       nightmare
         .click('#clickable-users-module')
-        .wait('#input-user-search')
-        .type('#input-user-search', '0')
-        .wait('#clickable-reset-all')
-        .click('#clickable-reset-all')
-        .type('#input-user-search', '0')
+        .wait('#clickable-filter-pg-faculty')
+        .click('#clickable-filter-pg-faculty')
         .wait('#list-users div[role="listitem"]:nth-child(9)')
         .evaluate(() => {
           const ubc = [];

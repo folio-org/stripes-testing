@@ -87,20 +87,18 @@ module.exports.createInventory = (nightmare, config, title, holdingsOnly) => {
         .click('#clickable-newinventory')
         .wait('#input_instance_title')
         .insert('#input_instance_title', ti)
-        .wait(333)
         .type('#select_instance_type', 'o')
-        .wait(2222)
         .click('#clickable-create-instance')
-        .wait(2222)
+        .waitUntilNetworkIdle(500)
         .then(done)
         .catch(done);
     });
   }
   it('should create holdings record', (done) => {
     nightmare
+      .wait('#clickable-new-holdings-record')
       .click('#clickable-new-holdings-record')
       .wait('#additem_permanentlocation')
-      .wait(333)
       .type('#additem_permanentlocation', 'm')
       .insert('#additem_callnumber', 'ZZ39.50')
       .click('#clickable-create-item')
@@ -111,14 +109,12 @@ module.exports.createInventory = (nightmare, config, title, holdingsOnly) => {
   it('should create item record', (done) => {
     nightmare
       .click('#clickable-new-item')
-      .wait('#additem_materialType')
-      .wait(1111)
-      .type('#additem_materialType', 'b')
-      .wait(222)
+      .wait('#additem_materialType option:nth-of-type(2)')
+      .type('#additem_materialType ', 'b')
+      .wait('#additem_loanTypePerm option:nth-of-type(2)')
       .type('#additem_loanTypePerm', 'cc')
-      .wait(222)
       .insert('#additem_barcode', barcode)
-      .wait(222)
+      .wait(500)
       .click('#clickable-create-item')
       .then(done)
       .catch(done);
