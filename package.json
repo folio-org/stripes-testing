@@ -1,57 +1,25 @@
 {
-  "name": "@folio/ui-testing",
-  "version": "4.0.0",
+  "name": "@folio/stripes-testing",
+  "version": "1.0.0",
   "description": "Regression tests for FOLIO UI",
-  "repository": "folio-org/ui-testing",
+  "repository": "folio-org/stripes-testing",
   "publishConfig": {
     "registry": "https://repository.folio.org/repository/npm-folio/"
   },
-  "author": "Wolfram Schneider <wosch@indexdata.com>",
   "license": "Apache-2.0",
   "scripts": {
-    "test": "./node_modules/.bin/mocha test/120-auth-fail.js test/dependencies.js test/loan_renewal.js test/exercise.js test/codex-search.js test-module.js --run=/checkin/checkout/users/inventory/requests/circulation/organization",
-    "test-simple": "./node_modules/.bin/mocha test/100-startpage.js",
-    "test-good-login": "./node_modules/.bin/mocha test/110-auth-success.js",
-    "test-bad-login": "./node_modules/.bin/mocha test/120-auth-fail.js",
-    "test-exercise": "./node_modules/.bin/mocha test/exercise.js",
-    "test-loan-renewals": "./node_modules/.bin/mocha test/loan_renewal.js",
-    "test-dependencies": "./node_modules/.bin/mocha test/dependencies.js",
-    "test-inventory": "./node_modules/.bin/mocha test-module.js --run=/inventory",
-    "test-requests": "./node_modules/.bin/mocha test-module.js --run=/requests",
-    "test-users": "./node_modules/.bin/mocha test-module.js --run=/users",
-    "test-organization": "./node_modules/.bin/mocha test-module.js --run=/organization",
-    "test-module": "./node_modules/.bin/mocha test-module.js",
-    "test-codexsearch": "./node_modules/.bin/mocha test/codex-search.js",
-    "test-profile-pictures": "./node_modules/.bin/mocha test/profile-pictures.js",
-    "test-vendors": "./node_modules/.bin/mocha test/vendor.js",
-    "module-tests": "./node_modules/.bin/mocha test-module.js --run=/checkout/checkin/users/inventory/organization",
+    "test": "echo 'Not implemented'",
     "lint": "eslint *.js test/*.js"
   },
   "dependencies": {
-    "@folio/checkin": "*",
-    "@folio/checkout": "*",
-    "@folio/circulation": "*",
-    "@folio/inventory": "*",
-    "@folio/requests": "*",
-    "@folio/search": "*",
-    "@folio/users": "*",
-    "@folio/organization": "*",
     "debug": "^3.1.0",
     "minimist": "^1.2.0",
     "mocha": "^3.4.2",
     "mocha-jenkins-reporter": "^0.3.12",
-    "moment": "^2.22.1",
-    "nightmare": "^2.10.0",
-    "nightmarejs": "^0.0.1"
+    "nightmare": "^2.10.0"
   },
   "devDependencies": {
-    "@folio/eslint-config-stripes": "^1.1.0",
-    "babel-core": "^6.17.0",
-    "babel-eslint": "^8.0.0",
-    "babel-preset-es2015": "^6.18.0",
-    "babel-preset-react": "^6.16.0",
-    "babel-preset-stage-2": "^6.16.0",
-    "babel-register": "^6.18.0",
+    "@folio/eslint-config-stripes": "^2.0.0",
     "eslint": "^4.8.0"
   }
 }

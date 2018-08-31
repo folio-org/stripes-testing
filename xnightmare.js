@@ -31,8 +31,7 @@ Nightmare.action('xtract', function xtract(selector, done) {
 Nightmare.action('waitUntilNetworkIdle',
   // The first callback defines the action on Electron's end,
   // making some internal objects available.
-  function (name, options, parent, win, renderer, done) {
-
+  function (name, options, parent, win, renderer, done1) {
     // `parent` is Electron's reference to the object that
     // passes messages between Electron and Nightmare.
     parent.respondTo('waitUntilNetworkIdle', (waitTime, done) => {
@@ -52,11 +51,11 @@ Nightmare.action('waitUntilNetworkIdle',
         } else {
           setTimeout(check, waitTime - elapsedTime);
         }
-      }
+      };
       setTimeout(check, waitTime);
     });
 
-    done(); // Complete the action's *creation*.
+    done1(); // Complete the action's *creation*.
   },
   // The second callback runs on Nightmare's end and determines
   // the action's interface.
@@ -65,14 +64,13 @@ Nightmare.action('waitUntilNetworkIdle',
     // action arguments are specified before `done`, and because
     // we wish to support calls without arguments.
     if (!done) {
-      done = waitTime;
-      waitTime = 500;
+      done = waitTime; // eslint-disable-line no-param-reassign
+      waitTime = 500; // eslint-disable-line no-param-reassign
     }
 
     // `this.child` is Nightmare's reference to the object that
     // passes messages between Electron and Nightmare.
     this.child.call('waitUntilNetworkIdle', waitTime, done);
-  }
-);
+  });
 
 module.exports = Nightmare;

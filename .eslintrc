@@ -1,4 +1,10 @@
 {
-  "parser": "babel-eslint",
-  "extends": "@folio/eslint-config-stripes"
+  "extends": "@folio/eslint-config-stripes",
+  "env": {
+    "mocha": true
+  },
+  "rules": {
+    "func-names": 0,
+    "prefer-arrow-callback": 0
+  }
 }
