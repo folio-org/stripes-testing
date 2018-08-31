@@ -16,17 +16,10 @@
     "minimist": "^1.2.0",
     "mocha": "^3.4.2",
     "mocha-jenkins-reporter": "^0.3.12",
-    "moment": "^2.22.1",
     "nightmare": "^2.10.0"
   },
   "devDependencies": {
     "@folio/eslint-config-stripes": "^1.1.0",
-    "babel-core": "^6.17.0",
-    "babel-eslint": "^8.0.0",
-    "babel-preset-es2015": "^6.18.0",
-    "babel-preset-react": "^6.16.0",
-    "babel-preset-stage-2": "^6.16.0",
-    "babel-register": "^6.18.0",
     "eslint": "^4.8.0"
   }
 }
