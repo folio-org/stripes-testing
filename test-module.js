@@ -4,6 +4,7 @@ const Nightmare = require('./xnightmare.js');
 const minimist = require('minimist');
 const config = require('./folio-ui.config.js');
 const helpers = require('./helpers.js');
+const coverageHelper = require('./coverage.js');
 
 const wdToken = 'WD'; // --run value to selectively apply working directory
 const options = minimist(process.argv.slice(2));
@@ -142,6 +143,7 @@ function getOptions(opts, config) {
     'devtools',
     'width',
     'height',
+    'coverage',
   ];
 
   const o = {};
@@ -233,26 +235,44 @@ if (options.run) {
       }
 
       let emptyScriptArg = false;
-      for (let j = 0; j < scripts.length; j++) { // for each test script requested from the module
-        const script = scripts[j];
-        if (script) {
-          try {
-            const workingDirectory = (o.workingdirectory || o.wd) && app === wdToken ? config.working_directory : `@folio/${app}`;
-            const tests = require(`${workingDirectory}/test/ui-testing/${script}.js`);
-            const moduleInfo = require(`${workingDirectory}/package.json`);
-            const meta = { testVersion: `${moduleInfo.name}:${moduleInfo.version}` };
-            try {
-              tests.test({ config, helpers, meta });
-            } catch (e) {
-              console.log(`Could not run tests for module "${app}"\n`, e);
-            }
-          } catch (e) {
-            console.log(`Module or test script not found: "${app}${script == 'test' ? '' : `:${script}`}"\n`, e);
-          }
-        } else {
-          emptyScriptArg = true;
-        }
+      const tempFolder = './artifacts/coveragetemp/';
+      if (o.coverage) {
+        console.log('coverage sent to module');
+        coverageHelper.prepareCoverage(tempFolder);
       }
+      const nightmare = new Nightmare(config.nightmare);
+      describe('test Wrapper', () => { // eslint-disable-line no-loop-func,no-undef
+        for (let j = 0; j < scripts.length; j++) { // for each test script requested from the module
+          const script = scripts[j];
+          if (script) {
+            try {
+              const workingDirectory = (o.workingdirectory || o.wd) && app === wdToken ? config.working_directory : `@folio/${app}`;
+              const tests = require(`${workingDirectory}/test/ui-testing/${script}.js`);
+              const moduleInfo = require(`${workingDirectory}/package.json`);
+              const meta = { testVersion: `${moduleInfo.name}:${moduleInfo.version}` };
+              try {
+                tests.test({ config, helpers, meta }, nightmare);
+              } catch (e) {
+                console.log(`Could not run tests for module "${app}"\n`, e);
+              }
+            } catch (e) {
+              console.log(`Module or test script not found: "${app}${script == 'test' ? '' : `:${script}`}"\n`, e);
+            }
+          } else {
+            emptyScriptArg = true;
+          }
+        }
+        afterEach(function aftereachFunc() { // eslint-disable-line prefer-arrow-callback,no-undef
+          if (o.coverage) {
+            coverageHelper.doCoverage(nightmare, tempFolder);
+          }
+        });
+        after(function afterFunc() { // eslint-disable-line prefer-arrow-callback,no-undef
+          nightmare.end().then(() => {
+            // do nothing then to make end() actually execute
+          });
+        });
+      });
       if (emptyScriptArg) {
         console.log(`Found empty script argument(s) for "${app}". Skipped.`);
       }
