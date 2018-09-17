@@ -9,7 +9,7 @@
   "license": "Apache-2.0",
   "scripts": {
     "test": "echo 'Not implemented'",
-    "lint": "eslint *.js test/*.js"
+    "lint": "eslint ."
   },
   "dependencies": {
     "debug": "^3.1.0",
@@ -19,7 +19,7 @@
     "nightmare": "^2.10.0"
   },
   "devDependencies": {
-    "@folio/eslint-config-stripes": "^2.0.0",
-    "eslint": "^4.8.0"
+    "@folio/eslint-config-stripes": "^3.2.1",
+    "eslint": "^5.5.0"
   }
 }
