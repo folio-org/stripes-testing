@@ -1,7 +1,7 @@
 /* eslint-disable no-console, eqeqeq, no-prototype-builtins, no-shadow, import/no-dynamic-require, global-require */
 /* eslint no-unused-vars: ["error", { "varsIgnorePattern": "^Nightmare" }] */
-const Nightmare = require('./xnightmare.js');
 const minimist = require('minimist');
+const Nightmare = require('./xnightmare.js');
 const config = require('./folio-ui.config.js');
 const helpers = require('./helpers.js');
 const coverageHelper = require('./coverage.js');

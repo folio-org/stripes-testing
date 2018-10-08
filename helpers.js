@@ -77,6 +77,7 @@ module.exports.getUsers = (nightmare, config, done) => function getu() {
 
 module.exports.createInventory = (nightmare, config, title, holdingsOnly) => {
   const ti = title || 'New test title';
+  const id = new Date().valueOf();
   const barcode = new Date().valueOf();
   if (!holdingsOnly) {
     it('should create inventory record', (done) => {
@@ -86,6 +87,7 @@ module.exports.createInventory = (nightmare, config, title, holdingsOnly) => {
         .click('#clickable-newinventory')
         .wait('#input_instance_title')
         .insert('#input_instance_title', ti)
+        .insert('input[name=hrid]', id)
         .type('#select_instance_type', 'o')
         .click('#clickable-create-instance')
         .waitUntilNetworkIdle(500)
