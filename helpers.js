@@ -25,7 +25,14 @@ module.exports.logout = (nightmare, config, done) => {
     .then(() => { done(); })
     .catch(done);
 };
-
+module.exports.logoutWithoutEnd = (nightmare, config, done) => {
+  nightmare
+    .click('#clickable-logout') // logout
+    .wait('#clickable-login') // login page
+    .wait(parseInt(process.env.FOLIO_UI_DEBUG, 10) ? parseInt(config.debug_sleep / 3, 10) : 0) // debugging
+    .then(() => { done(); })
+    .catch(done);
+};
 module.exports.openApp = (nightmare, config, done, app, testVersion) => function opena() {
   nightmare
     .wait(`#clickable-${app}-module`)
