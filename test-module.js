@@ -241,7 +241,7 @@ if (options.run) {
         coverageHelper.prepareCoverage(tempFolder);
       }
       const nightmare = new Nightmare(config.nightmare);
-      describe('test Wrapper', () => { // eslint-disable-line no-loop-func,no-undef
+      describe('', () => { // eslint-disable-line no-loop-func,no-undef
         for (let j = 0; j < scripts.length; j++) { // for each test script requested from the module
           const script = scripts[j];
           if (script) {
