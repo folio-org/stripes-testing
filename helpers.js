@@ -17,7 +17,6 @@ module.exports.login = (nightmare, config, done, un, pw) => {
 };
 
 module.exports.logout = (nightmare, config, done) => {
-  console.log('Logout called')
   nightmare
     .click('#clickable-logout') // logout
     .wait('#clickable-login') // login page
