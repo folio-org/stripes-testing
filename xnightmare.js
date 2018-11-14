@@ -73,4 +73,39 @@ Nightmare.action('waitUntilNetworkIdle',
     this.child.call('waitUntilNetworkIdle', waitTime, done);
   });
 
+// Found at https://github.com/segmentio/nightmare/issues/1258
+// Useful for AutoSuggest and other dropdowns that are hidden onBlur
+Nightmare.action('input',
+  function (name, options, parent, win, renderer, done1) {
+    parent.respondTo('input', function (value, done) {
+      const chars = String(value).split('');
+
+      function type() { // eslint-disable-line
+        const ch = chars.shift();
+        if (ch === undefined) {
+          return done();
+        }
+
+        win.webContents.sendInputEvent({ type: 'keyDown', keyCode: ch });
+        win.webContents.sendInputEvent({ type: 'char', keyCode: ch }); // keyPress
+        win.webContents.sendInputEvent({ type: 'keyUp', keyCode: ch });
+
+        setTimeout(type, options.typeInterval); // defer function into next event loop
+      }
+
+      // start
+      type();
+    });
+
+    done1();
+  },
+  function (selector, text, done) {
+    // focus, type
+    return this.evaluate_now(
+      innerSelector => document.querySelector(innerSelector).focus(),
+      () => this.child.call('input', text, done),
+      selector
+    );
+  });
+
 module.exports = Nightmare;
