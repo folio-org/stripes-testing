@@ -1,6 +1,6 @@
 # Change history for stripes-testing
 
-## 1.1.0 (IN PROGRESS)
+## [1.1.0](https://github.com/folio-org/stripes-testing/tree/v1.1.0) (2018-11-30)
 * Upgrade `debug` dependency, STRIPES-553
 * New `.input(selector, stringToType)` action
 * Initial support for coverage reporting, UITEST-39
