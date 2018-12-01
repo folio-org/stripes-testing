@@ -2,6 +2,8 @@
 
 ## 1.1.0 (IN PROGRESS)
 * Upgrade `debug` dependency, STRIPES-553
+* New `.input(selector, stringToType)` action
+* Initial support for coverage reporting, UITEST-39
 
 ## [1.0.1](https://github.com/folio-org/stripes-testing/tree/v1.0.1) (2018-09-17)
 * Set required field `hrid` to unique value, fixes UITEST-50
