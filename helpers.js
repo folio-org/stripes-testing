@@ -59,10 +59,18 @@ module.exports.openApp = (nightmare, config, done, app, testVersion) => function
 module.exports.getUsers = (nightmare, config, done) => function getu() {
   nightmare
     .click('#clickable-users-module')
-    .wait('#list-users div[role="listitem"]')
+    .wait('#clickable-filter-pg-faculty')
+    .click('#clickable-filter-pg-faculty')
+    .wait('#clickable-filter-pg-graduate')
+    .click('#clickable-filter-pg-graduate')
+    .wait('#clickable-filter-pg-staff')
+    .click('#clickable-filter-pg-staff')
+    .wait('#clickable-filter-pg-undergrad')
+    .click('#clickable-filter-pg-undergrad')
+    .wait('#list-users:not([data-total-count="0"])')
     .evaluate(() => {
       const udata = [];
-      const users = document.querySelectorAll('#list-users div[role="listitem"]');
+      const users = document.querySelectorAll('#list-users div[role="row"]');
       for (let x = 0; x < users.length; x++) {
         const st = users[x].querySelector('div:nth-of-type(1)').innerText;
         const nm = users[x].querySelector('div:nth-of-type(2)').innerText;
