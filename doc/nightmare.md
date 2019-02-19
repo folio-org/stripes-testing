@@ -1,5 +1,288 @@
-# Nightmare for FOLIO UI 
+# Nightmare for FOLIO UI
 
-To document
+* [Develop tests for a UI module](#develop-tests-for-a-ui-module)
+* [The test context object](#the-test-context-object)
+* [helpers](#helpers)
+* [namegen (helpers.js)](#namegen-helpersjs)
+* [openApp (helpers.js)](#openapp-helpersjs)
+* [Writing testable code](#writing-testable-code)
+  * [Provide unique identifiers on UI elements](#provide-unique-identifiers-on-ui-Elements)
+* [Writing robust tests](#writing-robust-tests)
+  * [Avoid timers](#avoid-timers)
+  * [Do not use XPath](#do-not-use-xpath)
+  * [Extract text from the DOM using .evaluate()](#extract-text-from-the-dom-using-evaluate)
+  * [Waiting for text in the DOM](#waiting-for-text-in-the-dom)
+  * [Be careful with barcodes](#be-careful-with-barcodes)
 
-Refer to [ui-testing readme](https://github.com/folio-org/ui-testing/blob/master/README.md) for general instructions on Nightmare, writing, and configuring tests.
+
+## Develop tests for a UI module
+
+To run an application's regression tests from a platform as part of a suite, the
+application must include them
+
+In order for stripes-testing to be able to run a UI module's own tests
+individually or as part of an overall test suite, the UI module must include
+them in the file `test/ui-testing/test.js`. Each test should contain a script
+that takes a single argument holding all the test context (see below).
+
+This is an example of a minimal test that logs in and evaluates if a module
+named 'app' opens:
+
+```js
+module.exports.test = function(uiTestCtx) {
+  describe('Module test: app:minimal', function() {
+    const { config, helpers: { login, openApp, logout }, meta: { testVersion } } = uiTestCtx;
+    const nightmare = new Nightmare(config.nightmare);
+
+    describe('Login > Open module "App" > Logout', () => {
+      before( done => {
+        login(nightmare, config, done);  // logs in with the default admin credentials
+      });
+
+      after( done => {
+        logout(nightmare, config, done);
+      });
+
+      it('should open module "App" and find version tag ', done => {
+        nightmare
+        .use(openApp(nightmare, config, done, 'app', testVersion))
+        .then(result => result )
+      });
+
+    });
+  });
+};
+```
+
+This script might be invoked from `test/ui-testig/test.js`:
+
+```js
+const minimal = require('./minimal.js');
+const extensive = require('./extensive.js');
+
+module.exports.test = function(uiTestCtx) {
+  minimal.test(uiTestCtx);
+  extensive.test(uiTestCtx);
+}
+```
+
+## The test context object
+
+The test context passed to the module's test from stripes-testing has following
+content at the time of writing:
+
+      {
+       config :  (see folio-ui.config.js)
+       helpers: {
+         login:    function for logging into Stripes
+         logout:   function for logging out of Stripes
+         openApp:  function for opening a specified module's page
+         getUsers: function that returns an array of currently listed users
+         createInventory: function that creates inventory, holdings and item records
+         namegen:  function for generating user names and addresses
+         circSettingsCheckoutByBarcodeAndUsername: function for configuring checkout
+       }
+       meta:  {
+         testVersion:  the npm version of the module that the test is pulled from
+       }
+      }
+
+## namegen (helpers.js)
+
+This script creates random user data (100 possibilities).
+Returns: id, firstname, lastname, email, barcode, password
+
+```js
+const Nightmare = require('nightmare')
+const assert = require('assert')
+const config = require('../folio-ui.config.js')
+const names = require('../namegen.js')
+const user = names.namegen()
+
+...
+
+it('should create a user: ' + user.id + '/' + user.password, done => {
+  nightmare
+  .type('#adduser_username',user.id)
+  .type('#pw',user.password)
+  .click('#useractiveYesRB')
+  .type('#adduser_firstname',user.firstname)
+  .type('#adduser_lastname',user.lastname)
+  .type('#adduser_email', user.email)
+  .type('#adduser_barcode',user.barcode)
+  .click('#clickable-createnewuser')
+  .wait('#clickable-newuser')
+  .wait(parseInt(process.env.FOLIO_UI_DEBUG) ? parseInt(config.debug_sleep) : 0) // debugging
+  .then(result => { done() })
+  .catch(done)
+})
+```
+
+## openApp (helpers.js)
+
+openApp is a helper function that will open the page of a given UI module.
+If the test script passes its version to openApp, then openApp will log the
+version of the test as well as the version of the module under test.
+
+The UI module can find 'openApp' in 'helpers' and its own version in 'meta'.
+
+For example:
+
+```
+const { config, helpers: { namegen, openApp }, meta: { testVersion } } = uiTestContext;
+   ...
+   ...
+   nightmare
+     .use(openApp(nightmare, config, done, 'checkout', testVersion ))
+```
+
+Output in the test log:
+
+```
+Module test: checkout:error_messages.
+Open app > Trigger error messages > Logout
+  Test suite   @folio/checkout:1.0.10020
+  Live module  @folio/checkout:1.0.10019 (http://folio-testing.aws.indexdata.com)
+```
+
+## Writing testable code
+
+### Provide unique identifiers on UI elements
+
+Test scripts are both easier to write and read if unique IDs have been assigned
+to crucial elements of the UI.
+
+Stripes will assign certain IDs out of the box that the test script can use:
+
+     The module's menu bar button:  #clickable-users-module
+     The module's page:             #users-module-display
+     The login button:              #clickable-login
+     The logout button:             #clickable-logout
+
+Beyond that the UI module developer should assign IDs to actionable UI elements at least.
+
+The following conventions are suggested:
+
+     Controls/links that can be clicked:   #clickable-add-user
+     Elements for entering data:           #input-user-name
+     Lists of data:                        #list-users
+     Section of a page:                    #section-loans-history
+
+Examples of identifiers in a UI:
+
+     <Row id="section-patron" ...
+     <Field id="input-patron-identifier" ...
+     <Button id="clickable-find-patron" ...
+     <MultiColumnList id="list-patrons" ...
+     <Row id="section-item" ...
+     <Field id="input-item-barcode" ...
+     <Button id="clickable-add-item" ...
+     <MultiColumnList id="list-items-checked-out" ...
+     <Button id="clickable-done" ...
+
+and usage in a test script:
+
+```js
+it('should show error when scanning item before patron card', done => {
+  nightmare
+  .wait('#clickable-checkout-module')
+  .click('#clickable-checkout-module')
+  .wait('#input-item-barcode')
+  .insert('#input-item-barcode',"some-item-barcode")
+  .wait('#clickable-add-item')
+  .click('#clickable-add-item')
+  .wait('#section-patron div[class^="textfieldError"]')
+  .evaluate(function() {
+    var errorText = document.querySelector('#section-patron div[class^="textfieldError"]').innerText;
+    if (!errorText.startsWith("Please fill")) {
+      throw new Error("Error message not found for item entered before patron found");
+    }
+  })
+  .then(done)
+  .catch(done)
+})
+```
+
+## Writing robust tests
+
+Nightmare tests are fussy. A few guidelines can go a long way toward writing
+robust tests that succeed regardless of the environment they run in or the speed
+of the internet connection they have access to.
+
+### Avoid timers
+
+React's tendency to render a page multiple times can work against the way Nightmare
+tests operate because Nightmare may begin interacting with the page as soon as it
+renders the first time. Avoid the temptation to use timers, e.g. `.wait(1000)`,
+to wait for the page to "settle down"; at best this strategy is unreliable because
+it so environmentally dependent. Instead, `.wait()` for specific elements to appear
+before interacting with them. For example,
+
+```js
+.wait('#some-button-id')
+.click('#some-button-id')
+```
+
+### Do not use XPath
+
+Code in a Nightmare test either operates in the context of the test or the context
+of the browser. Within a function passed to `.wait()` or `.evaluate()`, you're in
+browser context and can operate on the DOM. In browser context, avoid using
+`document.evaluate` to execute an XPath query to retrieve some part of the DOM.
+Do not do this. It seems to function asynchronously and causes Nightmare to
+operate in some mysterious multi-threaded mode, causing tests results to become
+interleaved with one another. Yes, really.
+
+
+### Extract text from the DOM using .evaluate()
+
+`.evaluate(fx, av1, ... avn)` accepts a function and a list of argument to pass
+to the function, and returns a Promise. You can use this feature to extract text
+from the DOM by passing a function that parses the DOM and returns a value. This
+example from platform-core's loan-renewal test gets the index of an anchor on
+the page, e.g. `<a href='some-link'>some text</a>`, given `some text` and then
+uses that index to click the link.
+
+```js
+evaluate((pn) => {
+  const index = Array.from(
+    document.querySelectorAll('#ModuleContainer div.hasEntries a div')
+  )
+    .findIndex(e => e.textContent === pn);
+
+  if (index === -1) {
+    throw new Error(`Could not find the loan policy ${pn} to edit`);
+  }
+
+  // CSS selectors are 1-based, which is just totally awesome.
+  return index + 1;
+}, policyName)
+.then((entryIndex) => {
+  nightmare
+    .wait(`#ModuleContainer div.hasEntries a:nth-of-type(${entryIndex})`)
+    .click(`#ModuleContainer div.hasEntries a:nth-of-type(${entryIndex})`)
+    ...
+````
+
+
+### Waiting for text in the DOM
+
+You can wait for text to appear on the page by passing a function to `.wait()`
+in much the same way you can extract text by passing a function to `.evaluate()`:
+
+```js
+const contentWait = (string) => {
+  return !!(Array.from(
+    document.querySelectorAll('#list-inventory div[role="row"] > a > div')
+  ).find(e => `${string}` === e.textContent));
+};
+````
+
+### Be careful with barcodes
+
+Barcodes tend to look like numbers to JavaScript, but in many cases they need to
+be treated like strings. Use string interpolation to force string context:
+
+```js
+if (e.textContent === `${fbarcode}`)
+````
