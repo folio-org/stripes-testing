@@ -5,7 +5,7 @@
 * [helpers](#helpers)
 * [namegen (helpers.js)](#namegen-helpersjs)
 * [openApp (helpers.js)](#openapp-helpersjs)
-* [Writing testable code]
+* [Writing testable code](#writing-testable-code)
   * [Provide unique identifiers on UI elements](#provide-unique-identifiers-on-ui-Elements)
 * [Writing robust tests](#writing-robust-tests)
   * [Avoid timers](#avoid-timers)
@@ -240,7 +240,7 @@ interleaved with one another. Yes, really.
 to the function, and returns a Promise. You can use this feature to extract text
 from the DOM by passing a function that parses the DOM and returns a value. This
 example from platform-core's loan-renewal test gets the index of an anchor on
-the page, e.g. "<a href='some-link'>some text</a>", given "some text" and then
+the page, e.g. `<a href='some-link'>some text</a>`, given `some text` and then
 uses that index to click the link.
 
 ```js
