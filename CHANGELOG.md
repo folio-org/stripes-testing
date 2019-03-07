@@ -3,7 +3,7 @@
 ## 1.2.0 (IN PROGRESS)
 
 * Update integration tests to accommodate MCL aria changes. Fixes UITEST-58.
-
+* Update integration tests to use always-available settings button. Refs STRIPES-606.
 
 ## [1.1.0](https://github.com/folio-org/stripes-testing/tree/v1.1.0) (2018-11-30)
 * Upgrade `debug` dependency, STRIPES-553

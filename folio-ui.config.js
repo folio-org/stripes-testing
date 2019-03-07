@@ -14,7 +14,7 @@ module.exports = {
     password: '#input-password',
     login: '#clickable-login',
     logout: '#clickable-logout',
-    settings: '#clickable-settings',
+    settings: '#app-list-item-clickable-settings',
   },
   nightmare: process.env.FOLIO_UI_DEBUG == 2 ? {
     openDevTools: {

@@ -171,7 +171,7 @@ module.exports.circSettingsCheckoutByBarcodeAndUsername = (nightmare, config, do
   nightmare
     .wait(config.select.settings)
     .click(config.select.settings)
-    .wait('#clickable-settings')
+    .wait('#app-list-item-clickable-settings')
     .wait('a[href="/settings/circulation"]')
     .click('a[href="/settings/circulation"]')
     .wait('a[href="/settings/circulation/checkout"]')
