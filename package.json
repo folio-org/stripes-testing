@@ -16,7 +16,7 @@
     "minimist": "^1.2.0",
     "mocha": "^3.4.2",
     "mocha-jenkins-reporter": "^0.3.12",
-    "nightmare": "^2.10.0"
+    "nightmare": "^3.0.1"
   },
   "devDependencies": {
     "@folio/eslint-config-stripes": "^3.2.1",
