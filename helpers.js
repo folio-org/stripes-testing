@@ -195,3 +195,39 @@ module.exports.circSettingsCheckoutByBarcodeAndUsername = (nightmare, config, do
         .catch(done);
     });
 };
+
+/**
+ * Visit "settings > organization > locale" and set the locale to
+ * US-English and the timezone to America/New_York.
+ */
+module.exports.setUsEnglishLocale = (nightmare, config, done) => {
+  nightmare
+    .wait(config.select.settings)
+    .click(config.select.settings)
+    .wait('a[href="/settings/organization"]')
+    .click('a[href="/settings/organization"]')
+    .wait('a[href="/settings/organization/locale"]')
+    .click('a[href="/settings/organization/locale"]')
+    .wait('#locale')
+    .select('#locale', 'en-US')
+    .wait('#timezone')
+    .select('#timezone', 'America/New_York')
+    .wait(1000)
+    .exists('#clickable-save-config[type=submit]:enabled')
+    .then((hasChanged) => {
+      if (hasChanged) {
+        nightmare
+          .click('#clickable-save-config')
+          .wait('#clickable-save-config[type=submit]:disabled')
+          // saving the locale has a 2s timout and we want to
+          // make sure we wait for that to finish
+          .wait(4000)
+          .then(done)
+          .catch(done);
+      } else {
+        done();
+      }
+    })
+    .catch(done);
+};
+
