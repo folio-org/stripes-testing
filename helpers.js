@@ -195,3 +195,129 @@ module.exports.circSettingsCheckoutByBarcodeAndUsername = (nightmare, config, do
         .catch(done);
     });
 };
+
+/**
+ * Given a user object as returned from namegen(), instantiate a user
+ * and grant checkin and checkout permission.
+ */
+module.exports.createUser = (nightmare, config, user) => {
+  describe('should create a new user', () => {
+    it('navigate to the new-user form', (done) => {
+      nightmare
+        .wait('#clickable-users-module')
+        .click('#clickable-users-module')
+        .wait('#input-user-search')
+        .type('#input-user-search', '0')
+        .wait('button[type=submit]')
+        .click('button[type=submit]')
+        .wait('#list-users div[role="row"] > a')
+        .wait('#clickable-newuser')
+        .click('#clickable-newuser')
+        .then(done)
+        .catch(done);
+    });
+
+    let gid;
+    it('extract a patron-group value', (done) => {
+      nightmare
+        .wait('#adduser_group')
+        .evaluate(() => {
+          return Array.from(document.querySelector('#adduser_group').options).find(e => e.text.startsWith('faculty')).value;
+        })
+        .then((groupId) => {
+          done();
+          gid = groupId;
+        });
+    });
+
+    it('create a user', (done) => {
+      nightmare
+        .wait('#adduser_lastname')
+        .insert('#adduser_lastname', user.lastname)
+        .wait('#adduser_firstname')
+        .insert('#adduser_firstname', user.firstname)
+        .wait('#adduser_barcode')
+        .insert('#adduser_barcode', user.barcode)
+        .wait('#adduser_group')
+        .select('#adduser_group', gid)
+        .wait('#useractive')
+        .select('#useractive', 'true')
+        .wait('#adduser_username')
+        .insert('#adduser_username', user.id)
+        .wait('#clickable-toggle-password')
+        .click('#clickable-toggle-password')
+        // It would be super-cool if the async username-blur validation
+        // fired reliably in electron, but for some reason it doesn't,
+        // which means waiting for the validation-success sometimes means
+        // we wait forever. It _does_ fire reliably with a real browser.
+        // .wait('#icon-adduser_username-validation-success')
+        .wait(222)
+        .wait('#pw')
+        .insert('#pw', user.password)
+        .wait('#adduser_email')
+        .insert('#adduser_email', user.email)
+        .wait('#adduser_dateofbirth')
+        .insert('#adduser_dateofbirth', '05/04/1980')
+        .wait('#adduser_enrollmentdate')
+        .insert('#adduser_enrollmentdate', '01/01/2017')
+        .wait('#adduser_expirationdate')
+        .insert('#adduser_expirationdate', '01/01/2022')
+        .wait('#clickable-createnewuser')
+        .click('#clickable-createnewuser')
+        .wait(() => {
+          return !document.querySelector('#clickable-createnewuser');
+        })
+        .then(done)
+        .catch(done);
+    });
+
+    it('verify new user exists', (done) => {
+      nightmare
+        .wait('#userInformationSection')
+        .wait((uid) => {
+          const us = document.querySelector('#extendedInfoSection');
+          let bool = false;
+          if (us.textContent.match(uid)) {
+            bool = true;
+          }
+          return bool;
+        }, user.id)
+        .then(done)
+        .catch(done);
+    });
+
+    const addPermission = (name) => {
+      it(`add permission: ${name}`, (done) => {
+        nightmare
+          .wait('#clickable-edituser')
+          .click('#clickable-edituser')
+          .wait('#clickable-add-permission')
+          .click('#clickable-add-permission')
+          .wait('ul[class*="PermissionList"] li button')
+          .evaluate((p) => {
+            const i = Array.from(document.querySelectorAll('ul[class*="PermissionList"] li button')).findIndex(e => e.textContent === p);
+            if (i >= 0) {
+              return i + 1;
+            }
+            throw new Error(`Could not find the permission "${name}"`);
+          }, name)
+          .then((index) => {
+            nightmare
+              .click(`ul[class*="PermissionList"] li:nth-of-type(${index}) button`)
+              .wait('#clickable-updateuser')
+              .click('#clickable-updateuser')
+              .wait(() => {
+                return !document.querySelector('#clickable-updateuser');
+              })
+              .then(done)
+              .catch(done);
+          })
+          .catch(done);
+      });
+    };
+
+    addPermission('Check in: All permissions');
+    addPermission('Check out: All permissions');
+  });
+};
+
