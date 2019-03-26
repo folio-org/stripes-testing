@@ -398,3 +398,52 @@ module.exports.createUser = (nightmare, config, user) => {
     addPermission('Check out: All permissions');
   });
 };
+
+/**
+ * grant the requested permission to the user identified by barcode
+ */
+module.exports.grantPermission = (nightmare, config, barcode, permission) => {
+  describe('grant permission to a user', () => {
+    it(`find the user ${barcode}`, (done) => {
+      nightmare
+        .wait('#clickable-users-module')
+        .click('#clickable-users-module')
+        .wait('#input-user-search')
+        .type('#input-user-search', barcode)
+        .wait('button[type=submit]')
+        .click('button[type=submit]')
+        .wait('#list-users[data-total-count="1"] div[role="row"] > a')
+        .click('#list-users[data-total-count="1"] div[role="row"] > a')
+        .then(done)
+        .catch(done);
+    });
+
+    it(`add permission: ${permission}`, (done) => {
+      nightmare
+        .wait('#clickable-edituser')
+        .click('#clickable-edituser')
+        .wait('#clickable-add-permission')
+        .click('#clickable-add-permission')
+        .wait('ul[class*="PermissionList"] li button')
+        .evaluate((p) => {
+          const i = Array.from(document.querySelectorAll('ul[class*="PermissionList"] li button')).findIndex(e => e.textContent === p);
+          if (i >= 0) {
+            return i + 1; // hooray for css 1-based selectors gag barf barf barf
+          }
+          throw new Error(`Could not find the permission "${p}"`);
+        }, permission)
+        .then((index) => {
+          nightmare
+            .click(`ul[class*="PermissionList"] li:nth-of-type(${index}) button`)
+            .wait('#clickable-updateuser')
+            .click('#clickable-updateuser')
+            .wait(() => {
+              return !document.querySelector('#clickable-updateuser');
+            })
+            .then(done)
+            .catch(done);
+        })
+        .catch(done);
+    });
+  });
+};
