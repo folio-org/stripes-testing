@@ -195,3 +195,46 @@ module.exports.circSettingsCheckoutByBarcodeAndUsername = (nightmare, config, do
         .catch(done);
     });
 };
+
+/**
+ * Click the given app in the main-nav's application-list dropdown.
+ * This may have the effect of expanding the dropdown, so we check for that
+ * and close it if so.
+ *
+ * All apps are always listed on the dropdown, unlike the clickable-${app}-module
+ * buttons which are only available for the first 12 apps in the platform's
+ * stripes.config.js file.
+ */
+module.exports.clickApp = (nightmare, config, done, app) => function opena() {
+  nightmare
+    .wait(`#app-list-item-clickable-${app}-module`)
+    .click(`#app-list-item-clickable-${app}-module`)
+    .wait(`#${app}-module-display`)
+    .exists('#app-list-dropdown-toggle[aria-expanded="true"]')
+    .then(dropdownOpen => {
+      if (dropdownOpen) nightmare.click('#app-list-dropdown-toggle');
+    })
+    .then(done)
+    .catch(done);
+};
+
+/**
+ * Click 'settings' in the main-nav's application-list dropdown.
+ * This may have the effect of expanding the dropdown, so we check for that
+ * and close it if so.
+ *
+ * Settings is always listed on the dropdown, unlike the clickable-settings
+ * button which will not be instantiated if there are 12 or more apps
+ * in the platform's stripes.config.js file that th
+ */module.exports.clickSettings = (nightmare, config, done) => function opena() {
+  nightmare
+    .wait('#app-list-item-clickable-settings')
+    .click('#app-list-item-clickable-settings')
+    .exists('#app-list-dropdown-toggle[aria-expanded="true"]')
+    .then(dropdownOpen => {
+      if (dropdownOpen) nightmare.click('#app-list-dropdown-toggle');
+    })
+    .then(done)
+    .catch(done);
+};
+
