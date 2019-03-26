@@ -197,6 +197,41 @@ module.exports.circSettingsCheckoutByBarcodeAndUsername = (nightmare, config, do
 };
 
 /**
+ * Visit "settings > organization > locale" and set the locale to
+ * US-English and the timezone to America/New_York.
+ */
+module.exports.setUsEnglishLocale = (nightmare, config, done) => {
+  nightmare
+    .wait(config.select.settings)
+    .click(config.select.settings)
+    .wait('a[href="/settings/organization"]')
+    .click('a[href="/settings/organization"]')
+    .wait('a[href="/settings/organization/locale"]')
+    .click('a[href="/settings/organization/locale"]')
+    .wait('#locale')
+    .select('#locale', 'en-US')
+    .wait('#timezone')
+    .select('#timezone', 'America/New_York')
+    .wait(1000)
+    .exists('#clickable-save-config[type=submit]:enabled')
+    .then((hasChanged) => {
+      if (hasChanged) {
+        nightmare
+          .click('#clickable-save-config')
+          .wait('#clickable-save-config[type=submit]:disabled')
+          // saving the locale has a 2s timout and we want to
+          // make sure we wait for that to finish
+          .wait(4000)
+          .then(done)
+          .catch(done);
+      } else {
+        done();
+      }
+    })
+    .catch(done);
+};
+
+/**
  * Click the given app in the main-nav's application-list dropdown.
  * This may have the effect of expanding the dropdown, so we check for that
  * and close it if so.
@@ -226,7 +261,8 @@ module.exports.clickApp = (nightmare, config, done, app) => function opena() {
  * Settings is always listed on the dropdown, unlike the clickable-settings
  * button which will not be instantiated if there are 12 or more apps
  * in the platform's stripes.config.js file that th
- */module.exports.clickSettings = (nightmare, config, done) => function opena() {
+ */
+module.exports.clickSettings = (nightmare, config, done) => function opena() {
   nightmare
     .wait('#app-list-item-clickable-settings')
     .click('#app-list-item-clickable-settings')
@@ -237,4 +273,3 @@ module.exports.clickApp = (nightmare, config, done, app) => function opena() {
     .then(done)
     .catch(done);
 };
-
