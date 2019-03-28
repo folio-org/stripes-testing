@@ -240,7 +240,7 @@ module.exports.setUsEnglishLocale = (nightmare, config, done) => {
  * buttons which are only available for the first 12 apps in the platform's
  * stripes.config.js file.
  */
-module.exports.clickApp = (nightmare, config, done, app) => function opena() {
+module.exports.clickApp = (nightmare, done, app) => {
   nightmare
     .wait(`#app-list-item-clickable-${app}-module`)
     .click(`#app-list-item-clickable-${app}-module`)
@@ -262,7 +262,7 @@ module.exports.clickApp = (nightmare, config, done, app) => function opena() {
  * button which will not be instantiated if there are 12 or more apps
  * in the platform's stripes.config.js file that th
  */
-module.exports.clickSettings = (nightmare, config, done) => function opena() {
+module.exports.clickSettings = (nightmare, done) => {
   nightmare
     .wait('#app-list-item-clickable-settings')
     .click('#app-list-item-clickable-settings')
