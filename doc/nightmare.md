@@ -9,6 +9,7 @@
   * [Provide unique identifiers on UI elements](#provide-unique-identifiers-on-ui-Elements)
 * [Writing robust tests](#writing-robust-tests)
   * [Avoid timers](#avoid-timers)
+  * [Do not manipulate the DOM in `evaluate`](#do-not-manipulate-the-dom-in-evaluate)
   * [Do not use XPath](#do-not-use-xpath)
   * [Extract text from the DOM using .evaluate()](#extract-text-from-the-dom-using-evaluate)
   * [Waiting for text in the DOM](#waiting-for-text-in-the-dom)
@@ -223,15 +224,31 @@ before interacting with them. For example,
 .click('#some-button-id')
 ```
 
+### Do not manipulate the DOM in `evaluate()`
+
+Code in a Nightmare test either operates in the scope of the test or the scope
+of the browser. You can read from the DOM in browser-scope but you should not
+interact with the DOM in browser scope. Nightmare behaves poorly when you
+manipulate the DOM behind its back, e.g. by clicking a link in a function
+passed to `evaluate()`. Nightmare really wants to own all the clicks. When it
+doesn't, tests may become mysteriously interleaved as though they are running
+in parallel instead of in series, and some will never return, lost in some
+Neverneverland of parllel execution.
+
+In short, treat `evaluate()` as a tool for extracting values to construct a
+CSS selector you can pass to Nightmare; do not use it to manipulate the DOM.
+
+When looking for an item on a list, `findIndex` is your friend as you can pass
+the value back to Nightmare for use in an `:nth-of-type(${theIndex})` selector.
+Just remember that JavaScript uses 0-based arrays and CSS uses 1-based arrays
+so you have to add one to the return value to find the right element.
+
+
 ### Do not use XPath
 
-Code in a Nightmare test either operates in the context of the test or the context
-of the browser. Within a function passed to `.wait()` or `.evaluate()`, you're in
-browser context and can operate on the DOM. In browser context, avoid using
-`document.evaluate` to execute an XPath query to retrieve some part of the DOM.
-Do not do this. It seems to function asynchronously and causes Nightmare to
-operate in some mysterious multi-threaded mode, causing tests results to become
-interleaved with one another. Yes, really.
+Along these lines, be careful with XPath queries. Use them to extract text
+from the DOM but not to interact with it, i.e. avoid helper functions like
+`xclick` as they appear to have harmful side-effects.
 
 
 ### Extract text from the DOM using .evaluate()
