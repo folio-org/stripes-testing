@@ -1,5 +1,9 @@
 # Change history for stripes-testing
 
+## 1.3.0 (IN PROGRESS)
+
+* Remove unused mocha deps. Refs STCOR-611.
+
 ## [1.2.0](https://github.com/folio-org/stripes-testing/tree/v1.2.0) (2019-03-15)
 [Full Changelog](https://github.com/folio-org/stripes-testing/compare/v1.1.0...v1.2.0)
 
