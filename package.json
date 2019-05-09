@@ -14,8 +14,6 @@
   "dependencies": {
     "debug": "^4.0.1",
     "minimist": "^1.2.0",
-    "mocha": "^3.4.2",
-    "mocha-jenkins-reporter": "^0.3.12",
     "nightmare": "^3.0.1"
   },
   "devDependencies": {
