@@ -2,6 +2,8 @@
 
 ## 1.3.0 (IN PROGRESS)
 
+* New helpers: set locale, nav-menu app-switcher, add-user, grant-permissions.
+* New test guidelines: only interact with the DOM via Nightmare scope.
 * Remove unused mocha deps. Refs STCOR-611.
 
 ## [1.2.0](https://github.com/folio-org/stripes-testing/tree/v1.2.0) (2019-03-15)
