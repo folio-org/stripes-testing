@@ -1,6 +1,12 @@
 # Change history for stripes-testing
 
-## 1.3.0 (IN PROGRESS)
+## [1.4.0](https://github.com/folio-org/stripes-testing/tree/v1.4.0) (2019-05-14)
+[Full Changelog](https://github.com/folio-org/stripes-testing/compare/v1.3.0...v1.4.0)
+
+* Optional `wait` param for the app switcher
+
+## [1.3.0](https://github.com/folio-org/stripes-testing/tree/v1.3.0) (2019-05-13)
+[Full Changelog](https://github.com/folio-org/stripes-testing/compare/v1.2.0...v1.3.0)
 
 * New helpers: set locale, nav-menu app-switcher, add-user, grant-permissions.
 * New test guidelines: only interact with the DOM via Nightmare scope.
