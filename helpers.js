@@ -240,8 +240,9 @@ module.exports.setUsEnglishLocale = (nightmare, config, done) => {
  * buttons which are only available for the first 12 apps in the platform's
  * stripes.config.js file.
  */
-module.exports.clickApp = (nightmare, done, app) => {
+module.exports.clickApp = (nightmare, done, app, pause) => {
   nightmare
+    .wait(pause || 0)
     .wait(`#app-list-item-clickable-${app}-module`)
     .click(`#app-list-item-clickable-${app}-module`)
     .wait(`#${app}-module-display`)
