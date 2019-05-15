@@ -1,9 +1,16 @@
 # Change history for stripes-testing
 
+## [1.5.0](https://github.com/folio-org/stripes-testing/tree/v1.5.0) (2019-05-15)
+[Full Changelog](https://github.com/folio-org/stripes-testing/compare/v1.4.0...v1.5.0)
+
+* `openApp` uses nav-menu
+* `setUsEnglishLocale` uses tenant-settings, replacing organization
+* Optional `wait` param for `clickSettings`
+
 ## [1.4.0](https://github.com/folio-org/stripes-testing/tree/v1.4.0) (2019-05-14)
 [Full Changelog](https://github.com/folio-org/stripes-testing/compare/v1.3.0...v1.4.0)
 
-* Optional `wait` param for the app switcher
+* Optional `wait` param for `clickApp`
 
 ## [1.3.0](https://github.com/folio-org/stripes-testing/tree/v1.3.0) (2019-05-13)
 [Full Changelog](https://github.com/folio-org/stripes-testing/compare/v1.2.0...v1.3.0)
