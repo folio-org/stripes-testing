@@ -197,17 +197,17 @@ module.exports.circSettingsCheckoutByBarcodeAndUsername = (nightmare, config, do
 };
 
 /**
- * Visit "settings > organization > locale" and set the locale to
+ * Visit "settings > tenant-settings > locale" and set the locale to
  * US-English and the timezone to America/New_York.
  */
 module.exports.setUsEnglishLocale = (nightmare, config, done) => {
   nightmare
     .wait(config.select.settings)
     .click(config.select.settings)
-    .wait('a[href="/settings/organization"]')
-    .click('a[href="/settings/organization"]')
-    .wait('a[href="/settings/organization/locale"]')
-    .click('a[href="/settings/organization/locale"]')
+    .wait('a[href="/settings/tenant-settings"]')
+    .click('a[href="/settings/tenant-settings"]')
+    .wait('a[href="/settings/tenant-settings/locale"]')
+    .click('a[href="/settings/tenant-settings/locale"]')
     .wait('#locale')
     .select('#locale', 'en-US')
     .wait('#timezone')
@@ -263,8 +263,9 @@ module.exports.clickApp = (nightmare, done, app, pause) => {
  * button which will not be instantiated if there are 12 or more apps
  * in the platform's stripes.config.js file that th
  */
-module.exports.clickSettings = (nightmare, done) => {
+module.exports.clickSettings = (nightmare, done, pause) => {
   nightmare
+    .wait(pause || 0)
     .wait('#app-list-item-clickable-settings')
     .click('#app-list-item-clickable-settings')
     .exists('#app-list-dropdown-toggle[aria-expanded="true"]')
