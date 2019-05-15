@@ -35,16 +35,23 @@ module.exports.logoutWithoutEnd = (nightmare, config, done) => {
 };
 module.exports.openApp = (nightmare, config, done, app, testVersion) => function opena() {
   nightmare
-    .wait(`#clickable-${app}-module`)
-    .click(`#clickable-${app}-module`)
+    .wait(`#app-list-item-clickable-${app}-module`)
+    .click(`#app-list-item-clickable-${app}-module`)
     .wait(`#${app}-module-display`)
-    .evaluate((mapp) => {
-      const metadata = document.querySelector(`#${mapp}-module-display`);
-      return {
-        moduleName: metadata.getAttribute('data-module'),
-        moduleVersion: metadata.getAttribute('data-version'),
-      };
-    }, app)
+    .exists('#app-list-dropdown-toggle[aria-expanded="true"]')
+    .then(dropdownOpen => {
+      return dropdownOpen ? nightmare.click('#app-list-dropdown-toggle') : nightmare.wait(0);
+    })
+    .then(() => {
+      return nightmare
+        .evaluate((mapp) => {
+          const metadata = document.querySelector(`#${mapp}-module-display`);
+          return {
+            moduleName: metadata.getAttribute('data-module'),
+            moduleVersion: metadata.getAttribute('data-version'),
+          };
+        }, app);
+    })
     .then((meta) => {
       if (testVersion !== undefined) {
         console.log(`          Test suite   ${testVersion}`); // eslint-disable-line
