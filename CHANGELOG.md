@@ -1,5 +1,9 @@
 # Change history for stripes-testing
 
+## 1.6.0 (IN PROGRESS)
+
+* Remove `xclick`; it was too likely to confound Nightmare.
+
 ## [1.5.0](https://github.com/folio-org/stripes-testing/tree/v1.5.0) (2019-05-15)
 [Full Changelog](https://github.com/folio-org/stripes-testing/compare/v1.4.0...v1.5.0)
 
