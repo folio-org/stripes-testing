@@ -105,14 +105,20 @@ module.exports.createInventory = (nightmare, config, title, holdingsOnly) => {
   if (!holdingsOnly) {
     it('should create inventory record', (done) => {
       nightmare
+        .wait('#clickable-inventory-module')
         .click('#clickable-inventory-module')
         .wait('#clickable-newinventory')
         .click('#clickable-newinventory')
         .wait('#input_instance_title')
         .insert('#input_instance_title', ti)
+        .wait('input[name=hrid]')
         .insert('input[name=hrid]', id)
+        .wait('#select_instance_type')
         .type('#select_instance_type', 'o')
+        .wait('#clickable-create-instance')
         .click('#clickable-create-instance')
+        .wait(() => !document.querySelector('#clickable-create-instance'))
+        .wait('#clickable-new-holdings-record')
         .waitUntilNetworkIdle(500)
         .then(done)
         .catch(done);
@@ -124,22 +130,34 @@ module.exports.createInventory = (nightmare, config, title, holdingsOnly) => {
       .click('#clickable-new-holdings-record')
       .wait('#additem_permanentlocation')
       .type('#additem_permanentlocation', 'm')
+      .wait('#additem_callnumber')
       .insert('#additem_callnumber', 'ZZ39.50')
-      .click('#clickable-create-item')
+      .wait('#clickable-create-holdings-record')
+      .click('#clickable-create-holdings-record')
+      .wait(() => !document.querySelector('#clickable-create-holdings-record'))
       .wait('#clickable-new-item')
       .then(done)
       .catch(done);
   });
   it('should create item record', (done) => {
     nightmare
+      .wait('#clickable-new-item')
       .click('#clickable-new-item')
       .wait('#additem_materialType option:nth-of-type(2)')
       .type('#additem_materialType ', 'b')
       .wait('#additem_loanTypePerm option:nth-of-type(2)')
       .type('#additem_loanTypePerm', 'cc')
+      .wait('#additem_barcode')
       .insert('#additem_barcode', barcode)
       .wait(500)
+      .wait('#clickable-create-item')
       .click('#clickable-create-item')
+      .wait(() => !document.querySelector('#clickable-create-item'))
+      .wait('#list-items')
+      .wait(bc => {
+        return !!(Array.from(document.querySelectorAll('#list-items span'))
+          .find(e => `${bc}` === e.textContent)); // `${}` forces string interpolation for numeric barcodes
+      }, barcode)
       .then(done)
       .catch(done);
   });
