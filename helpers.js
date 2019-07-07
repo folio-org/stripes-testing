@@ -12,7 +12,7 @@ module.exports.login = (nightmare, config, done, un, pw) => {
     .insert(config.select.password, (pw || config.password))
     .click('#clickable-login')
     .wait('#clickable-logout')
-    .then(() => { done(); })
+    .then(done)
     .catch(done);
 };
 
@@ -22,7 +22,7 @@ module.exports.logout = (nightmare, config, done) => {
     .wait('#clickable-login') // login page
     .wait(parseInt(process.env.FOLIO_UI_DEBUG, 10) ? parseInt(config.debug_sleep / 3, 10) : 0) // debugging
     .end()
-    .then(() => { done(); })
+    .then(done)
     .catch(done);
 };
 module.exports.logoutWithoutEnd = (nightmare, config, done) => {
@@ -30,7 +30,7 @@ module.exports.logoutWithoutEnd = (nightmare, config, done) => {
     .click('#clickable-logout') // logout
     .wait('#clickable-login') // login page
     .wait(parseInt(process.env.FOLIO_UI_DEBUG, 10) ? parseInt(config.debug_sleep / 3, 10) : 0) // debugging
-    .then(() => { done(); })
+    .then(done)
     .catch(done);
 };
 module.exports.openApp = (nightmare, config, done, app, testVersion) => function opena() {
@@ -275,6 +275,9 @@ module.exports.clickApp = (nightmare, done, app, pause) => {
     .then(dropdownOpen => {
       if (dropdownOpen) nightmare.click('#app-list-dropdown-toggle');
     })
+    .then(() => {
+      nightmare.wait('#app-list-dropdown-toggle[aria-expanded="false"]');
+    })
     .then(done)
     .catch(done);
 };
@@ -473,4 +476,58 @@ module.exports.grantPermission = (nightmare, config, barcode, permission) => {
         .catch(done);
     });
   });
+};
+
+module.exports.checkout = (nightmare, done, itemBarcode, userBarcode) => {
+  nightmare
+    .wait('#input-patron-identifier')
+    .insert('#input-patron-identifier', userBarcode)
+    .wait('#clickable-find-patron')
+    .click('#clickable-find-patron')
+    .wait('#clickable-done')
+    .wait(() => {
+      const err = document.querySelector('#patron-form div[class^="textfieldError"]');
+      if (err) {
+        throw new Error(err.textContent);
+      }
+      return !!(document.querySelector('#patron-form ~ div a > strong'));
+    })
+    .wait('#input-item-barcode')
+    .insert('#input-item-barcode', itemBarcode)
+    .wait('#clickable-add-item')
+    .click('#clickable-add-item')
+    .wait('#list-items-checked-out')
+    .wait(bc => {
+      return !!(Array.from(document.querySelectorAll('#list-items-checked-out div[role="row"] div[role="gridcell"]'))
+        .find(e => `${bc}` === e.textContent)); // `${}` forces string interpolation for numeric barcodes
+    }, itemBarcode)
+    .then(done)
+    .catch(done);
+};
+
+module.exports.setCirculationRules = (nightmare, done, newRules) => {
+  let oldRules = '';
+  nightmare
+    .wait('a[href="/settings/circulation"]')
+    .click('a[href="/settings/circulation"]')
+    .wait('a[href="/settings/circulation/rules"]')
+    .click('a[href="/settings/circulation/rules"]')
+    .wait('#form-loan-rules')
+    .wait(1000)
+    .evaluate((rules) => {
+      const defaultRules = document.getElementsByClassName('CodeMirror')[0].CodeMirror.getValue();
+      document.getElementsByClassName('CodeMirror')[0].CodeMirror.setValue(rules);
+      return defaultRules;
+    }, newRules)
+    .then((rules) => {
+      nightmare
+        .wait('#clickable-save-loan-rules')
+        .click('#clickable-save-loan-rules')
+        .wait(() => !document.querySelector('#OverlayContainer div[class^="calloutBase"]'))
+        .then(done)
+        .catch(done);
+      oldRules = rules;
+    })
+    .catch(done);
+  return oldRules;
 };
