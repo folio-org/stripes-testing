@@ -1,6 +1,6 @@
 {
   "name": "@folio/stripes-testing",
-  "version": "1.5.0",
+  "version": "1.6.0",
   "description": "Regression tests for FOLIO UI",
   "repository": "folio-org/stripes-testing",
   "publishConfig": {
@@ -14,7 +14,7 @@
   "dependencies": {
     "debug": "^4.0.1",
     "minimist": "^1.2.0",
-    "nightmare": "^3.0.1"
+    "nightmare": "^3.0.2"
   },
   "devDependencies": {
     "@folio/eslint-config-stripes": "^3.2.1",
