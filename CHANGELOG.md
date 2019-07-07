@@ -1,6 +1,7 @@
 # Change history for stripes-testing
 
-## 1.6.0 (IN PROGRESS)
+## [1.6.0](https://github.com/folio-org/stripes-testing/tree/v1.6.0) (2019-07-07)
+[Full Changelog](https://github.com/folio-org/stripes-testing/compare/v1.5.0...v1.6.0)
 
 * Remove `xclick`; it was too likely to confound Nightmare.
 * Add `checkout` and `setCirculationRules` helpers.
