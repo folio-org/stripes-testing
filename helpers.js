@@ -505,29 +505,50 @@ module.exports.checkout = (nightmare, done, itemBarcode, userBarcode) => {
     .catch(done);
 };
 
-module.exports.setCirculationRules = (nightmare, done, newRules) => {
-  let oldRules = '';
-  nightmare
+/**
+ * Visit Settings > Circulation > Circulation rules and save newRules
+ * as the circulation rules, returning the old rules in a Promise that
+ * may be resolved like so:
+
+let cachedRules = '';
+setCirculationRules(nightmare, rules)
+  .then(oldRules => {
+    cachedRules = oldRules;
+  })
+  .then(done)
+  .catch(done);
+});
+
+ * If `done()` receives any arguments, it expects an error first. This means
+ * if you want to ignore the return value from setCirculationRules in your
+ * then() block, you need to explicitly configure it not to receive the value:
+
+setCirculationRules(nightmare, cachedRules)
+  .then(() => done())
+  .catch(done);
+});
+
+ * calling .then(done) would implicitly pass the return value to done,
+ * causing Nightmare to throw the error, "done() invoked with non-Error".
+ */
+module.exports.setCirculationRules = (nightmare, newRules) => {
+  return nightmare
     .wait('a[href="/settings/circulation"]')
     .click('a[href="/settings/circulation"]')
     .wait('a[href="/settings/circulation/rules"]')
     .click('a[href="/settings/circulation/rules"]')
     .wait('#form-loan-rules')
-    .wait(1000)
+    .wait('.CodeMirror')
     .evaluate((rules) => {
-      const defaultRules = document.getElementsByClassName('CodeMirror')[0].CodeMirror.getValue();
+      const oldRules = document.getElementsByClassName('CodeMirror')[0].CodeMirror.getValue();
       document.getElementsByClassName('CodeMirror')[0].CodeMirror.setValue(rules);
-      return defaultRules;
+      return oldRules;
     }, newRules)
-    .then((rules) => {
+    .then(rules => {
       nightmare
         .wait('#clickable-save-loan-rules')
         .click('#clickable-save-loan-rules')
-        .wait(() => !document.querySelector('#OverlayContainer div[class^="calloutBase"]'))
-        .then(done)
-        .catch(done);
-      oldRules = rules;
-    })
-    .catch(done);
-  return oldRules;
+        .wait(() => !document.querySelector('#OverlayContainer div[class^="calloutBase"]'));
+      return rules;
+    });
 };
