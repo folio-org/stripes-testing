@@ -114,7 +114,9 @@ module.exports.createInventory = (nightmare, config, title, holdingsOnly) => {
         .wait('input[name=hrid]')
         .insert('input[name=hrid]', id)
         .wait('#select_instance_type')
+        .wait(100)
         .type('#select_instance_type', 'o')
+        .wait(100)
         .wait('#clickable-create-instance')
         .click('#clickable-create-instance')
         .wait(() => !document.querySelector('#clickable-create-instance'))
@@ -129,7 +131,9 @@ module.exports.createInventory = (nightmare, config, title, holdingsOnly) => {
       .wait('#clickable-new-holdings-record')
       .click('#clickable-new-holdings-record')
       .wait('#additem_permanentlocation')
+      .wait(100)
       .type('#additem_permanentlocation', 'm')
+      .wait(100)
       .wait('#additem_callnumber')
       .insert('#additem_callnumber', 'ZZ39.50')
       .wait('#clickable-create-holdings-record')
@@ -139,26 +143,64 @@ module.exports.createInventory = (nightmare, config, title, holdingsOnly) => {
       .then(done)
       .catch(done);
   });
+
   it('should create item record', (done) => {
     nightmare
+      .wait(1000)
       .wait('#clickable-new-item')
       .click('#clickable-new-item')
-      .wait('#additem_materialType option:nth-of-type(2)')
-      .type('#additem_materialType ', 'b')
-      .wait('#additem_loanTypePerm option:nth-of-type(2)')
-      .type('#additem_loanTypePerm', 'cc')
-      .wait('#additem_barcode')
-      .insert('#additem_barcode', barcode)
-      .wait(500)
-      .wait('#clickable-create-item')
-      .click('#clickable-create-item')
-      .wait(() => !document.querySelector('#clickable-create-item'))
-      .wait('#list-items')
-      .wait(bc => {
-        return !!(Array.from(document.querySelectorAll('#list-items span'))
-          .find(e => `${bc}` === e.textContent)); // `${}` forces string interpolation for numeric barcodes
-      }, barcode)
-      .then(done)
+      .evaluate(() => {
+        const node = Array.from(
+          document.querySelectorAll('#additem_materialType option')
+        ).find(e => e.text.startsWith('b'));
+        if (node) {
+          return node.value;
+        } else {
+          throw new Error('Could not find the ID for the materialType b...');
+        }
+      })
+      .then((mtypeid) => {
+        return nightmare
+          .wait(`#additem_materialType option[value="${mtypeid}"]`)
+          .wait(200)
+          .select('#additem_materialType', mtypeid);
+      })
+      .then(() => {
+        return nightmare
+          .evaluate(() => {
+            const node = Array.from(
+              document.querySelectorAll('#additem_loanTypePerm option')
+            ).find(e => e.text.startsWith('C'));
+            if (node) {
+              return node.value;
+            } else {
+              throw new Error('Could not find the ID for the loanTypePerm c...');
+            }
+          })
+          .then((ltypeid) => {
+            return nightmare
+              .wait(`#additem_loanTypePerm option[value="${ltypeid}"]`)
+              .wait(200)
+              .select('#additem_loanTypePerm', ltypeid)
+              .wait(200)
+              .wait('#additem_barcode')
+              .insert('#additem_barcode', barcode)
+              .wait(1000)
+              .wait('#clickable-create-item')
+              .click('#clickable-create-item');
+          });
+      })
+      .then(() => {
+        nightmare
+          .wait(() => !document.querySelector('#clickable-create-item'))
+          .wait('#list-items')
+          .wait(bc => {
+            return !!(Array.from(document.querySelectorAll('#list-items span'))
+              .find(e => `${bc}` === e.textContent)); // `${}` forces string interpolation for numeric barcodes
+          }, barcode)
+          .then(done)
+          .catch(done);
+      })
       .catch(done);
   });
   return barcode;
