@@ -101,7 +101,7 @@ module.exports.getUsers = (nightmare, config, done) => function getu() {
 module.exports.createInventory = (nightmare, config, title, holdingsOnly) => {
   const ti = title || 'New test title';
   const id = new Date().valueOf();
-  const barcode = new Date().valueOf();
+  const barcode = `${new Date().valueOf()}${Math.floor(Math.random() * Math.floor(999999))}`;
   if (!holdingsOnly) {
     it('should create inventory record', (done) => {
       nightmare
@@ -146,9 +146,10 @@ module.exports.createInventory = (nightmare, config, title, holdingsOnly) => {
 
   it('should create item record', (done) => {
     nightmare
-      .wait(1000)
       .wait('#clickable-new-item')
       .click('#clickable-new-item')
+      .wait('#additem_materialType')
+      .wait('#additem_loanTypePerm')
       .evaluate(() => {
         const node = Array.from(
           document.querySelectorAll('#additem_materialType option')
@@ -162,11 +163,11 @@ module.exports.createInventory = (nightmare, config, title, holdingsOnly) => {
       .then((mtypeid) => {
         return nightmare
           .wait(`#additem_materialType option[value="${mtypeid}"]`)
-          .wait(200)
-          .select('#additem_materialType', mtypeid);
-      })
-      .then(() => {
-        return nightmare
+          .select('#additem_materialType', mtypeid)
+          // it is IMPERATIVE that interaction with a non-select component
+          // immediately follows select(). See UIIN-671 for details.
+          .wait('input[name=copyNumbers]')
+          .insert('input[name=copyNumbers]', 1)
           .evaluate(() => {
             const node = Array.from(
               document.querySelectorAll('#additem_loanTypePerm option')
@@ -174,24 +175,21 @@ module.exports.createInventory = (nightmare, config, title, holdingsOnly) => {
             if (node) {
               return node.value;
             } else {
-              throw new Error('Could not find the ID for the loanTypePerm c...');
+              throw new Error('Could not find the ID for the loanTypePerm C...');
             }
-          })
-          .then((ltypeid) => {
-            return nightmare
-              .wait(`#additem_loanTypePerm option[value="${ltypeid}"]`)
-              .wait(200)
-              .select('#additem_loanTypePerm', ltypeid)
-              .wait(200)
-              .wait('#additem_barcode')
-              .insert('#additem_barcode', barcode)
-              .wait(1000)
-              .wait('#clickable-create-item')
-              .click('#clickable-create-item');
           });
       })
-      .then(() => {
+      .then((ltypeid) => {
         nightmare
+          .wait(`#additem_loanTypePerm option[value="${ltypeid}"]`)
+          .wait(200)
+          .select('#additem_loanTypePerm', ltypeid)
+          // it is IMPERATIVE that interaction with a non-select component
+          // immediately follows select(). See UIIN-671 for details.
+          .wait('#additem_barcode')
+          .insert('#additem_barcode', barcode)
+          .wait('#clickable-create-item')
+          .click('#clickable-create-item')
           .wait(() => !document.querySelector('#clickable-create-item'))
           .wait('#list-items')
           .wait(bc => {
@@ -203,6 +201,8 @@ module.exports.createInventory = (nightmare, config, title, holdingsOnly) => {
       })
       .catch(done);
   });
+
+
   return barcode;
 };
 
