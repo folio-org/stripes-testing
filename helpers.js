@@ -166,8 +166,8 @@ module.exports.createInventory = (nightmare, config, title, holdingsOnly) => {
           .select('#additem_materialType', mtypeid)
           // it is IMPERATIVE that interaction with a non-select component
           // immediately follows select(). See UIIN-671 for details.
-          .wait('input[name=copyNumbers]')
-          .insert('input[name=copyNumbers]', 1)
+          .wait('input[name="copyNumbers[0]"]')
+          .insert('input[name="copyNumbers[0]"]', 1)
           .evaluate(() => {
             const node = Array.from(
               document.querySelectorAll('#additem_loanTypePerm option')
