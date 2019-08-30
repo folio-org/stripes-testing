@@ -1,5 +1,9 @@
 # Change history for stripes-testing
 
+## 1.6.2 (IN PROGRESS)
+
+* Update selector for create-item form.
+
 ## [1.6.1](https://github.com/folio-org/stripes-testing/tree/v1.6.1) (2019-07-26)
 [Full Changelog](https://github.com/folio-org/stripes-testing/compare/v1.6.0...v1.6.1)
 
