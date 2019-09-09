@@ -1,8 +1,11 @@
 # Change history for stripes-testing
 
-## 1.6.2 (IN PROGRESS)
+## [1.6.2](https://github.com/folio-org/stripes-testing/tree/v1.6.2) (2019-09-09)
+[Full Changelog](https://github.com/folio-org/stripes-testing/compare/v1.6.1...v1.6.2)
 
 * Update selector for create-item form.
+* Interact with text-fields after select-fields to force blur-validation to fire. Refs UIIN-671
+* Update new-item form to use `copyNumbers` as an array, not a scalar.
 
 ## [1.6.1](https://github.com/folio-org/stripes-testing/tree/v1.6.1) (2019-07-26)
 [Full Changelog](https://github.com/folio-org/stripes-testing/compare/v1.6.0...v1.6.1)
