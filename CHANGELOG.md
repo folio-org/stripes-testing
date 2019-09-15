@@ -1,5 +1,10 @@
 # Change history for stripes-testing
 
+## [1.6.#](https://github.com/folio-org/stripes-testing/tree/v1.6.3) (2019-09-15)
+[Full Changelog](https://github.com/folio-org/stripes-testing/compare/v1.6.2...v1.6.3)
+
+* Rework new-item form to be more reliable.
+
 ## [1.6.2](https://github.com/folio-org/stripes-testing/tree/v1.6.2) (2019-09-09)
 [Full Changelog](https://github.com/folio-org/stripes-testing/compare/v1.6.1...v1.6.2)
 
