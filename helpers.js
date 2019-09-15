@@ -144,10 +144,42 @@ module.exports.createInventory = (nightmare, config, title, holdingsOnly) => {
       .catch(done);
   });
 
+  /**
+   * There is quite a lot of interaction with non-required fields in the
+   * following test. Why? Because it works, that's why. There are at least
+   * two attributes of the new-item form that apparently make it special,
+   * i.e. that make it a supergalactic pain in the ass.
+   *     1. it uses on-blur validation for the barcode field
+   *     2. it validates select elements in the validate function
+   * That may not seem very special, but both cause problems for nightmare.
+   *
+   * It appears that a select element will only have its onBlur handler
+   * fired if there is interaction with a non-select, non-button element
+   * immediately following. Thus, the order of field interaction in this
+   * test is quite specific.
+   * See UIIN-671 for details.
+   *
+   * onBlur validation seems to throw Nightmare off into neverneverland.
+   * Before the extra optional-field-button clicks were added, you could
+   * seen an extra Electon instance appear and close when the test timed
+   * out and failed. What's that all about? There are some actions that
+   * seem to cause Nightmare to lose its context. Clicking through extra
+   * fields, in particular, clicking on extra buttons, seems to restore
+   * the context. Thus, the clicks on former-id and statistical-code,
+   * while they appear purposeless since we don't actually add any data,
+   * are in fact very deliberate: they pull Nightmare out of its slumber
+   * and allow the final click on create-item to properly register.
+   */
   it('should create item record', (done) => {
     nightmare
       .wait('#clickable-new-item')
       .click('#clickable-new-item')
+      .wait('#additem_barcode')
+      .insert('#additem_barcode', barcode)
+      // interaction with fields with on-blur handlers, like barcode,
+      // MUST be followed by interaction with other fields in order to
+      // trigger the blur event. some delay is necessary as well in
+      // order to allow the event to trigger and complete.
       .wait('#additem_materialType')
       .wait('#additem_loanTypePerm')
       .evaluate(() => {
@@ -186,8 +218,14 @@ module.exports.createInventory = (nightmare, config, title, holdingsOnly) => {
           .select('#additem_loanTypePerm', ltypeid)
           // it is IMPERATIVE that interaction with a non-select component
           // immediately follows select(). See UIIN-671 for details.
-          .wait('#additem_barcode')
-          .insert('#additem_barcode', barcode)
+          .wait('#additem_accessionnumber')
+          .insert('#additem_accessionnumber', barcode)
+          // click other things, because without these clicks,
+          // the submit-button click never registers.
+          .wait('#clickable-add-former-id')
+          .click('#clickable-add-former-id')
+          .wait('#clickable-add-statistical-code')
+          .click('#clickable-add-statistical-code')
           .wait('#clickable-create-item')
           .click('#clickable-create-item')
           .wait(() => !document.querySelector('#clickable-create-item'))
