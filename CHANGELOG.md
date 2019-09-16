@@ -1,8 +1,10 @@
 # Change history for stripes-testing
 
-## 1.6.5 IN PROGRESS
+## [1.6.5](https://github.com/folio-org/stripes-testing/tree/v1.6.5) (2019-09-16)
+[Full Changelog](https://github.com/folio-org/stripes-testing/compare/v1.6.4...v1.6.5)
 
 * Prefer semantic over markup selectors; they are maaaaybe more reliable. Refs UITEST-69.
+* Wait for timeouts in addition to waiting for selectors. It's the only way. Refs UITEST-69.
 
 ## [1.6.4](https://github.com/folio-org/stripes-testing/tree/v1.6.4) (2019-09-16)
 [Full Changelog](https://github.com/folio-org/stripes-testing/compare/v1.6.3...v1.6.4)
