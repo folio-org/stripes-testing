@@ -170,10 +170,17 @@ module.exports.createInventory = (nightmare, config, title, holdingsOnly) => {
    * are in fact very deliberate: they pull Nightmare out of its slumber
    * and allow the final click on create-item to properly register.
    */
-  it('should create item record', (done) => {
+  it(`should create item record with barcode '${barcode}'`, (done) => {
     nightmare
       .wait('#clickable-new-item')
       .click('#clickable-new-item')
+      // Even though we wait for the #additem_barcode field to appear before
+      // interacting with it, that's not enough. With only that precaution in
+      // place, the first few characters of the barcode will occassionally be
+      // lost, i.e given a value of 123456789, only 3456789 will be captured.
+      // Adding a numeric timeout should be completely pointless given that we
+      // have the selector-timeout, but it ain't. Go figure.
+      .wait(1000)
       .wait('#additem_barcode')
       // Why, why `type` instead of `insert`? Why `type` in this, THE MOST
       // UNRELIABLE of tests? Because `insert` fails consistently, that's
