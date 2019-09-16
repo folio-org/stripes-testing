@@ -175,11 +175,29 @@ module.exports.createInventory = (nightmare, config, title, holdingsOnly) => {
       .wait('#clickable-new-item')
       .click('#clickable-new-item')
       .wait('#additem_barcode')
-      .insert('#additem_barcode', barcode)
+      // Why, why `type` instead of `insert`? why type in this, THE MOST
+      // UNRELIABLE of tests? Because `insert` fails consistently, that's
+      // why. Fails how? Like this: nothing happens, that's how. What do I
+      // mean, "nothing"? NOTHING. NOTHING HAPPENS. You can log things with
+      //    DEBUG=nightmare:actions*
+      // to your pretty little heart's content and see the `insert` command
+      // passes just fine, but if you watch carefully, about 20% of the time,
+      // the barcode field will be empty afterward and then the item-id and
+      // accession-number fields will populate with the same data, making
+      // clear that the value is available but for some reason Nightmare
+      // just didn't feel like using it.
+      //
+      // Am I bitter about this? Naw, I'm not bitter. Do I sound bitter?
+      // I don't think I sound bitter. I THINK I SOUND KINDA PISSED OFF
+      // because, you know what, I'm kinda pissed off.
+      .type('#additem_barcode', barcode)
       // interaction with fields with on-blur handlers, like barcode,
       // MUST be followed by interaction with other fields in order to
       // trigger the blur event. some delay is necessary as well in
       // order to allow the event to trigger and complete.
+      .wait(200)
+      .wait('#additem_itemidentifier')
+      .insert('#additem_itemidentifier', `iid-${barcode}`)
       .wait('#additem_materialType')
       .wait('#additem_loanTypePerm')
       .evaluate(() => {
@@ -219,7 +237,7 @@ module.exports.createInventory = (nightmare, config, title, holdingsOnly) => {
           // it is IMPERATIVE that interaction with a non-select component
           // immediately follows select(). See UIIN-671 for details.
           .wait('#additem_accessionnumber')
-          .insert('#additem_accessionnumber', barcode)
+          .insert('#additem_accessionnumber', `an-${barcode}`)
           // click other things, because without these clicks,
           // the submit-button click never registers.
           .wait('#clickable-add-former-id')
