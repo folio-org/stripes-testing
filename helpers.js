@@ -175,7 +175,7 @@ module.exports.createInventory = (nightmare, config, title, holdingsOnly) => {
       .wait('#clickable-new-item')
       .click('#clickable-new-item')
       .wait('#additem_barcode')
-      // Why, why `type` instead of `insert`? why type in this, THE MOST
+      // Why, why `type` instead of `insert`? Why `type` in this, THE MOST
       // UNRELIABLE of tests? Because `insert` fails consistently, that's
       // why. Fails how? Like this: nothing happens, that's how. What do I
       // mean, "nothing"? NOTHING. NOTHING HAPPENS. You can log things with
@@ -249,7 +249,7 @@ module.exports.createInventory = (nightmare, config, title, holdingsOnly) => {
           .wait(() => !document.querySelector('#clickable-create-item'))
           .wait('#list-items')
           .wait(bc => {
-            return !!(Array.from(document.querySelectorAll('#list-items span'))
+            return !!(Array.from(document.querySelectorAll('#list-items [role=gridcell]'))
               .find(e => `${bc}` === e.textContent)); // `${}` forces string interpolation for numeric barcodes
           }, barcode)
           .then(done)

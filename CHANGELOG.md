@@ -1,5 +1,9 @@
 # Change history for stripes-testing
 
+## 1.6.5 IN PROGRESS
+
+* Prefer semantic over markup selectors; they are maaaaybe more reliable. Refs UITEST-69.
+
 ## [1.6.4](https://github.com/folio-org/stripes-testing/tree/v1.6.4) (2019-09-16)
 [Full Changelog](https://github.com/folio-org/stripes-testing/compare/v1.6.3...v1.6.4)
 
