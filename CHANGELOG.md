@@ -1,5 +1,10 @@
 # Change history for stripes-testing
 
+## [1.6.6](https://github.com/folio-org/stripes-testing/tree/v1.6.6) (2019-09-16)
+[Full Changelog](https://github.com/folio-org/stripes-testing/compare/v1.6.5...v1.6.6)
+
+* Avoid the copy-number field in the new-item helper for historical reasons. Refs FOLIO-2248, UITEST-68.
+
 ## [1.6.5](https://github.com/folio-org/stripes-testing/tree/v1.6.5) (2019-09-16)
 [Full Changelog](https://github.com/folio-org/stripes-testing/compare/v1.6.4...v1.6.5)
 
