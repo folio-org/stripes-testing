@@ -603,7 +603,7 @@ module.exports.checkout = (nightmare, done, itemBarcode, userBarcode) => {
     .click('#clickable-add-item')
     .wait('#list-items-checked-out')
     .wait(bc => {
-      return !!(Array.from(document.querySelectorAll('#list-items-checked-out div[role="row"] div[role="gridcell"]'))
+      return !!(Array.from(document.querySelectorAll('#list-items-checked-out [role="row"] [role="gridcell"]'))
         .find(e => `${bc}` === e.textContent)); // `${}` forces string interpolation for numeric barcodes
     }, itemBarcode)
     .then(done)
