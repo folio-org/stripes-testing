@@ -1,5 +1,10 @@
 # Change history for stripes-testing
 
+## [1.6.7](https://github.com/folio-org/stripes-testing/tree/v1.6.7) (2019-09-26)
+[Full Changelog](https://github.com/folio-org/stripes-testing/compare/v1.6.6...v1.6.7)
+
+* Be more semantic in MCL selectors; a row is not always a `<div>`.
+
 ## [1.6.6](https://github.com/folio-org/stripes-testing/tree/v1.6.6) (2019-09-16)
 [Full Changelog](https://github.com/folio-org/stripes-testing/compare/v1.6.5...v1.6.6)
 
