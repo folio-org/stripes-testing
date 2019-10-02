@@ -40,7 +40,7 @@ module.exports.openApp = (nightmare, config, done, app, testVersion) => function
     .wait(`#${app}-module-display`)
     .exists('#app-list-dropdown-toggle[aria-expanded="true"]')
     .then(dropdownOpen => {
-      return dropdownOpen ? nightmare.click('#app-list-dropdown-toggle') : nightmare.wait(0);
+      return dropdownOpen ? nightmare.click('#app-list-dropdown-toggle').wait('#app-list-dropdown-toggle[aria-expanded="false"]') : nightmare.wait(0);
     })
     .then(() => {
       return nightmare
@@ -378,10 +378,7 @@ module.exports.clickApp = (nightmare, done, app, pause) => {
     .wait(`#${app}-module-display`)
     .exists('#app-list-dropdown-toggle[aria-expanded="true"]')
     .then(dropdownOpen => {
-      if (dropdownOpen) nightmare.click('#app-list-dropdown-toggle');
-    })
-    .then(() => {
-      nightmare.wait('#app-list-dropdown-toggle[aria-expanded="false"]');
+      return dropdownOpen ? nightmare.click('#app-list-dropdown-toggle').wait('#app-list-dropdown-toggle[aria-expanded="false"]') : nightmare.wait(0);
     })
     .then(done)
     .catch(done);
@@ -403,7 +400,7 @@ module.exports.clickSettings = (nightmare, done, pause) => {
     .click('#app-list-item-clickable-settings')
     .exists('#app-list-dropdown-toggle[aria-expanded="true"]')
     .then(dropdownOpen => {
-      if (dropdownOpen) nightmare.click('#app-list-dropdown-toggle');
+      return dropdownOpen ? nightmare.click('#app-list-dropdown-toggle').wait('#app-list-dropdown-toggle[aria-expanded="false"]') : nightmare.wait(0);
     })
     .then(done)
     .catch(done);
