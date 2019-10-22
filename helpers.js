@@ -657,3 +657,51 @@ module.exports.setCirculationRules = (nightmare, newRules) => {
       return rules;
     });
 };
+
+
+module.exports.findActiveUserBarcode = (nightmare, pg) => {
+  return nightmare
+    .wait('#clickable-reset-all')
+    .click('#clickable-reset-all')
+    .wait('[class^="noResultsMessageLabel"]')
+    .wait('#clickable-filter-active-active')
+    .click('#clickable-filter-active-active')
+    .wait(() => {
+      return Array.from(
+        document.querySelectorAll('[class^="noResultsMessageLabel"]')
+      ).length === 0;
+    })
+    .wait('#list-users[data-total-count]')
+    .evaluate(() => document.querySelector('#list-users').getAttribute('data-total-count'))
+    .then((result) => {
+      return nightmare
+        .wait(`#clickable-filter-pg-${pg}`)
+        .click(`#clickable-filter-pg-${pg}`)
+        .wait((activeCount) => document.querySelector('#list-users').getAttribute('data-total-count') !== activeCount, result)
+        .wait('#list-users [data-row-index="row-2"]')
+        .evaluate((patronGroupName) => {
+          const ubc = [];
+          const list = document.querySelectorAll('#list-users a[role="row"]');
+          list.forEach((node) => {
+            const status = node.querySelector('div:nth-child(1)').innerText;
+            const barcode = node.querySelector('div:nth-child(3)').innerText;
+            const patronGroup = node.querySelector('div:nth-child(4)').innerText;
+            const un = node.querySelector('div:nth-child(5)').innerText;
+            const nodeHref = node.href;
+            if (patronGroup === patronGroupName && nodeHref && barcode && RegExp(/^\d+$/).test(barcode) && status.match(/Active/)) {
+              const uuid = nodeHref.replace(/.+?([^/]+)\?.*/, '$1');
+              ubc.push({
+                barcode,
+                uuid,
+                username: un,
+              });
+            }
+          });
+          return ubc;
+        }, pg)
+        .then((userList) => {
+          return userList[0].barcode;
+        });
+    });
+};
+
