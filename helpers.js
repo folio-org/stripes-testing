@@ -98,34 +98,50 @@ module.exports.getUsers = (nightmare, config, done) => function getu() {
     .catch(done);
 };
 
-module.exports.createInventory = (nightmare, config, title, holdingsOnly) => {
+/**
+ * create inventory, holdings, and item records. Return the item
+ * record's barcode.
+ */
+module.exports.createInventory = (nightmare, config, title) => {
+  return this.createNInventory(nightmare, config, title, 1)[0];
+};
+
+/**
+ * create N items under a single inventory/holdings record.
+ *
+ * The guts of this function are a straigh copy-paste of createInventory,
+ * above. It is
+ *
+ * @param title string the title to create
+ * @param itemCount int the number of item records to create
+ *
+ * @return string[] array of barcodes of the created items
+ */
+module.exports.createNInventory = (nightmare, config, title, itemCount = 1) => {
+  const barcodes = [];
   const ti = title || 'New test title';
-  const id = new Date().valueOf();
-  const barcode = `${new Date().valueOf()}${Math.floor(Math.random() * Math.floor(999999))}`;
-  if (!holdingsOnly) {
-    it('should create inventory record', (done) => {
-      nightmare
-        .wait('#clickable-inventory-module')
-        .click('#clickable-inventory-module')
-        .wait('#clickable-newinventory')
-        .click('#clickable-newinventory')
-        .wait('#input_instance_title')
-        .insert('#input_instance_title', ti)
-        .wait('input[name=hrid]')
-        .insert('input[name=hrid]', id)
-        .wait('#select_instance_type')
-        .wait(100)
-        .type('#select_instance_type', 'o')
-        .wait(100)
-        .wait('#clickable-create-instance')
-        .click('#clickable-create-instance')
-        .wait(() => !document.querySelector('#clickable-create-instance'))
-        .wait('#clickable-new-holdings-record')
-        .waitUntilNetworkIdle(500)
-        .then(done)
-        .catch(done);
-    });
-  }
+
+  it('should create inventory record', (done) => {
+    nightmare
+      .wait('#clickable-inventory-module')
+      .click('#clickable-inventory-module')
+      .wait('#clickable-newinventory')
+      .click('#clickable-newinventory')
+      .wait('#input_instance_title')
+      .insert('#input_instance_title', ti)
+      .wait('#select_instance_type')
+      .wait(100)
+      .type('#select_instance_type', 'o')
+      .wait(100)
+      .wait('#clickable-create-instance')
+      .click('#clickable-create-instance')
+      .wait(() => !document.querySelector('#clickable-create-instance'))
+      .wait('#clickable-new-holdings-record')
+      .waitUntilNetworkIdle(500)
+      .then(done)
+      .catch(done);
+  });
+
   it('should create holdings record', (done) => {
     nightmare
       .wait('#clickable-new-holdings-record')
@@ -170,103 +186,107 @@ module.exports.createInventory = (nightmare, config, title, holdingsOnly) => {
    * are in fact very deliberate: they pull Nightmare out of its slumber
    * and allow the final click on create-item to properly register.
    */
-  it(`should create item record with barcode '${barcode}'`, (done) => {
-    nightmare
-      .wait('#clickable-new-item')
-      .click('#clickable-new-item')
-      // Even though we wait for the #additem_barcode field to appear before
-      // interacting with it, that's not enough. With only that precaution in
-      // place, the first few characters of the barcode will occassionally be
-      // lost, i.e given a value of 123456789, only 3456789 will be captured.
-      // Adding a numeric timeout should be completely pointless given that we
-      // have the selector-timeout, but it ain't. Go figure.
-      .wait(1000)
-      .wait('#additem_barcode')
-      // Why, why `type` instead of `insert`? Why `type` in this, THE MOST
-      // UNRELIABLE of tests? Because `insert` fails consistently, that's
-      // why. Fails how? Like this: nothing happens, that's how. What do I
-      // mean, "nothing"? NOTHING. NOTHING HAPPENS. You can log things with
-      //    DEBUG=nightmare:actions*
-      // to your pretty little heart's content and see the `insert` command
-      // passes just fine, but if you watch carefully, about 20% of the time,
-      // the barcode field will be empty afterward and then the item-id and
-      // accession-number fields will populate with the same data, making
-      // clear that the value is available but for some reason Nightmare
-      // just didn't feel like using it.
-      //
-      // Am I bitter about this? Naw, I'm not bitter. Do I sound bitter?
-      // I don't think I sound bitter. I THINK I SOUND KINDA PISSED OFF
-      // because, you know what, I'm kinda pissed off.
-      .type('#additem_barcode', barcode)
-      // interaction with fields with on-blur handlers, like barcode,
-      // MUST be followed by interaction with other fields in order to
-      // trigger the blur event. some delay is necessary as well in
-      // order to allow the event to trigger and complete.
-      .wait(200)
-      .wait('#additem_itemidentifier')
-      .insert('#additem_itemidentifier', `iid-${barcode}`)
-      .wait('#additem_materialType')
-      .wait('#additem_loanTypePerm')
-      .evaluate(() => {
-        const node = Array.from(
-          document.querySelectorAll('#additem_materialType option')
-        ).find(e => e.text.startsWith('b'));
-        if (node) {
-          return node.value;
-        } else {
-          throw new Error('Could not find the ID for the materialType b...');
-        }
-      })
-      .then((mtypeid) => {
-        return nightmare
-          .wait(`#additem_materialType option[value="${mtypeid}"]`)
-          .select('#additem_materialType', mtypeid)
-          // it is IMPERATIVE that interaction with a non-select component
-          // immediately follows select(). See UIIN-671 for details.
-          .wait('#additem_numberofpieces')
-          .insert('#additem_numberofpieces', 1)
-          .evaluate(() => {
-            const node = Array.from(
-              document.querySelectorAll('#additem_loanTypePerm option')
-            ).find(e => e.text.startsWith('C'));
-            if (node) {
-              return node.value;
-            } else {
-              throw new Error('Could not find the ID for the loanTypePerm C...');
-            }
-          });
-      })
-      .then((ltypeid) => {
-        nightmare
-          .wait(`#additem_loanTypePerm option[value="${ltypeid}"]`)
-          .wait(200)
-          .select('#additem_loanTypePerm', ltypeid)
-          // it is IMPERATIVE that interaction with a non-select component
-          // immediately follows select(). See UIIN-671 for details.
-          .wait('#additem_accessionnumber')
-          .insert('#additem_accessionnumber', `an-${barcode}`)
-          // click other things, because without these clicks,
-          // the submit-button click never registers.
-          .wait('#clickable-add-former-id')
-          .click('#clickable-add-former-id')
-          .wait('#clickable-add-statistical-code')
-          .click('#clickable-add-statistical-code')
-          .wait('#clickable-create-item')
-          .click('#clickable-create-item')
-          .wait(() => !document.querySelector('#clickable-create-item'))
-          .wait('#list-items')
-          .wait(bc => {
-            return !!(Array.from(document.querySelectorAll('#list-items [role=gridcell]'))
-              .find(e => `${bc}` === e.textContent)); // `${}` forces string interpolation for numeric barcodes
-          }, barcode)
-          .then(done)
-          .catch(done);
-      })
-      .catch(done);
-  });
+  for (let i = 0; i < itemCount; i++) {
+    const barcode = `${new Date().valueOf()}${Math.floor(Math.random() * Math.floor(999999))}`;
+    barcodes.push(barcode);
 
+    it(`should create item record with barcode '${barcode}'`, (done) => {
+      nightmare
+        .wait('#clickable-new-item')
+        .click('#clickable-new-item')
+        // Even though we wait for the #additem_barcode field to appear before
+        // interacting with it, that's not enough. With only that precaution in
+        // place, the first few characters of the barcode will occassionally be
+        // lost, i.e given a value of 123456789, only 3456789 will be captured.
+        // Adding a numeric timeout should be completely pointless given that we
+        // have the selector-timeout, but it ain't. Go figure.
+        .wait(1000)
+        .wait('#additem_barcode')
+        // Why, why `type` instead of `insert`? Why `type` in this, THE MOST
+        // UNRELIABLE of tests? Because `insert` fails consistently, that's
+        // why. Fails how? Like this: nothing happens, that's how. What do I
+        // mean, "nothing"? NOTHING. NOTHING HAPPENS. You can log things with
+        //    DEBUG=nightmare:actions*
+        // to your pretty little heart's content and see the `insert` command
+        // passes just fine, but if you watch carefully, about 20% of the time,
+        // the barcode field will be empty afterward and then the item-id and
+        // accession-number fields will populate with the same data, making
+        // clear that the value is available but for some reason Nightmare
+        // just didn't feel like using it.
+        //
+        // Am I bitter about this? Naw, I'm not bitter. Do I sound bitter?
+        // I don't think I sound bitter. I THINK I SOUND KINDA PISSED OFF
+        // because, you know what, I'm kinda pissed off.
+        .type('#additem_barcode', barcode)
+        // interaction with fields with on-blur handlers, like barcode,
+        // MUST be followed by interaction with other fields in order to
+        // trigger the blur event. some delay is necessary as well in
+        // order to allow the event to trigger and complete.
+        .wait(200)
+        .wait('#additem_itemidentifier')
+        .insert('#additem_itemidentifier', `iid-${barcode}`)
+        .wait('#additem_materialType')
+        .wait('#additem_loanTypePerm')
+        .evaluate(() => {
+          const node = Array.from(
+            document.querySelectorAll('#additem_materialType option')
+          ).find(e => e.text.startsWith('b'));
+          if (node) {
+            return node.value;
+          } else {
+            throw new Error('Could not find the ID for the materialType b...');
+          }
+        })
+        .then((mtypeid) => {
+          return nightmare
+            .wait(`#additem_materialType option[value="${mtypeid}"]`)
+            .select('#additem_materialType', mtypeid)
+            // it is IMPERATIVE that interaction with a non-select component
+            // immediately follows select(). See UIIN-671 for details.
+            .wait('#additem_numberofpieces')
+            .insert('#additem_numberofpieces', 1)
+            .evaluate(() => {
+              const node = Array.from(
+                document.querySelectorAll('#additem_loanTypePerm option')
+              ).find(e => e.text.startsWith('C'));
+              if (node) {
+                return node.value;
+              } else {
+                throw new Error('Could not find the ID for the loanTypePerm C...');
+              }
+            });
+        })
+        .then((ltypeid) => {
+          nightmare
+            .wait(`#additem_loanTypePerm option[value="${ltypeid}"]`)
+            .wait(200)
+            .select('#additem_loanTypePerm', ltypeid)
+            // it is IMPERATIVE that interaction with a non-select component
+            // immediately follows select(). See UIIN-671 for details.
+            .wait('#additem_accessionnumber')
+            .insert('#additem_accessionnumber', `an-${barcode}`)
+            // click other things, because without these clicks,
+            // the submit-button click never registers.
+            .wait('#clickable-add-former-id')
+            .click('#clickable-add-former-id')
+            .wait('#clickable-add-statistical-code')
+            .click('#clickable-add-statistical-code')
+            .wait('#clickable-create-item')
+            .click('#clickable-create-item')
+            .wait(() => !document.querySelector('#clickable-create-item'))
+            .wait('#list-items')
+            .wait(bc => {
+              return !!(Array.from(document.querySelectorAll('#list-items [role=gridcell]'))
+                .find(e => `${bc}` === e.textContent)); // `${}` forces string interpolation for numeric barcodes
+            }, barcode)
+            .then(done)
+            .catch(done);
+        })
+        .catch(done);
+    });
+  }
 
-  return barcode;
+  return barcodes;
 };
 
 module.exports.namegen = () => {
@@ -370,19 +390,21 @@ module.exports.setUsEnglishLocale = (nightmare, config, done) => {
  * buttons which are only available for the first 12 apps in the platform's
  * stripes.config.js file.
  */
-module.exports.clickApp = (nightmare, done, app, pause) => {
-  nightmare
+module.exports.clickApp = async (nightmare, done, app, pause) => {
+  const isOpen = await nightmare
     .wait(pause || 0)
     .wait(`#app-list-item-clickable-${app}-module`)
     .click(`#app-list-item-clickable-${app}-module`)
     .wait(`#${app}-module-display`)
-    .exists('#app-list-dropdown-toggle[aria-expanded="true"]')
-    .then(dropdownOpen => {
-      if (dropdownOpen) nightmare.click('#app-list-dropdown-toggle');
-    })
-    .then(() => {
-      nightmare.wait('#app-list-dropdown-toggle[aria-expanded="false"]');
-    })
+    .exists('#app-list-dropdown-toggle[aria-expanded="true"]');
+
+  if (isOpen) {
+    nightmare
+      .click('#app-list-dropdown-toggle');
+  }
+
+  nightmare
+    .wait('#app-list-dropdown-toggle[aria-expanded="false"]')
     .then(done)
     .catch(done);
 };
@@ -611,6 +633,44 @@ module.exports.checkout = (nightmare, done, itemBarcode, userBarcode) => {
 };
 
 /**
+ * checkout multiple items to a given user
+ *
+ * @itemBarcodeList string[] an array of barcodes
+ * @userBarcode string a user barcode
+ */
+module.exports.checkoutList = (nightmare, done, itemBarcodeList, userBarcode) => {
+  nightmare
+    .wait('#input-patron-identifier')
+    .insert('#input-patron-identifier', userBarcode)
+    .wait('#clickable-find-patron')
+    .click('#clickable-find-patron')
+    .wait('#clickable-done')
+    .wait(() => {
+      const err = document.querySelector('#patron-form div[class^="textfieldError"]');
+      if (err) {
+        throw new Error(err.textContent);
+      }
+      return !!(document.querySelector('#patron-form ~ div a > strong'));
+    })
+    .then(() => {
+      itemBarcodeList.forEach((itemBarcode) => {
+        nightmare
+          .wait('#input-item-barcode')
+          .insert('#input-item-barcode', itemBarcode)
+          .wait('#clickable-add-item')
+          .click('#clickable-add-item')
+          .wait('#list-items-checked-out')
+          .wait(bc => {
+            return !!(Array.from(document.querySelectorAll('#list-items-checked-out [role="row"] [role="gridcell"]'))
+              .find(e => `${bc}` === e.textContent)); // `${}` forces string interpolation for numeric barcodes
+          }, itemBarcode);
+      });
+    })
+    .then(done)
+    .catch(done);
+};
+
+/**
  * Visit Settings > Circulation > Circulation rules and save newRules
  * as the circulation rules, returning the old rules in a Promise that
  * may be resolved like so:
@@ -704,4 +764,3 @@ module.exports.findActiveUserBarcode = (nightmare, pg) => {
         });
     });
 };
-
