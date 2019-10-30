@@ -401,7 +401,7 @@ module.exports.clickApp = (nightmare, done, app, pause) => {
       if (dropdownOpen) {
         return nightmare
           .click('#app-list-dropdown-toggle')
-          .wait('#app-list-dropdown-toggle[aria-expanded="false"]') 
+          .wait('#app-list-dropdown-toggle[aria-expanded="false"]');
       }
       return nightmare.wait(0);
     })
