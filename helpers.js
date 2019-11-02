@@ -40,7 +40,7 @@ module.exports.openApp = (nightmare, config, done, app, testVersion) => function
     .wait(`#${app}-module-display`)
     .exists('#app-list-dropdown-toggle[aria-expanded="true"]')
     .then(dropdownOpen => {
-      return dropdownOpen ? nightmare.click('#app-list-dropdown-toggle') : nightmare.wait(0);
+      return dropdownOpen ? nightmare.click('#app-list-dropdown-toggle').wait('#app-list-dropdown-toggle[aria-expanded="false"]') : nightmare.wait(0);
     })
     .then(() => {
       return nightmare
@@ -390,21 +390,21 @@ module.exports.setUsEnglishLocale = (nightmare, config, done) => {
  * buttons which are only available for the first 12 apps in the platform's
  * stripes.config.js file.
  */
-module.exports.clickApp = async (nightmare, done, app, pause) => {
-  const isOpen = await nightmare
+module.exports.clickApp = (nightmare, done, app, pause) => {
+  nightmare
     .wait(pause || 0)
     .wait(`#app-list-item-clickable-${app}-module`)
     .click(`#app-list-item-clickable-${app}-module`)
     .wait(`#${app}-module-display`)
-    .exists('#app-list-dropdown-toggle[aria-expanded="true"]');
-
-  if (isOpen) {
-    nightmare
-      .click('#app-list-dropdown-toggle');
-  }
-
-  nightmare
-    .wait('#app-list-dropdown-toggle[aria-expanded="false"]')
+    .exists('#app-list-dropdown-toggle[aria-expanded="true"]')
+    .then(dropdownOpen => {
+      if (dropdownOpen) {
+        return nightmare
+          .click('#app-list-dropdown-toggle')
+          .wait('#app-list-dropdown-toggle[aria-expanded="false"]');
+      }
+      return nightmare.wait(0);
+    })
     .then(done)
     .catch(done);
 };
@@ -425,7 +425,7 @@ module.exports.clickSettings = (nightmare, done, pause) => {
     .click('#app-list-item-clickable-settings')
     .exists('#app-list-dropdown-toggle[aria-expanded="true"]')
     .then(dropdownOpen => {
-      if (dropdownOpen) nightmare.click('#app-list-dropdown-toggle');
+      return dropdownOpen ? nightmare.click('#app-list-dropdown-toggle').wait('#app-list-dropdown-toggle[aria-expanded="false"]') : nightmare.wait(0);
     })
     .then(done)
     .catch(done);
