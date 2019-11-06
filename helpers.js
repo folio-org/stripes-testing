@@ -121,10 +121,10 @@ module.exports.createNInventory = (nightmare, config, title, itemCount = 1) => {
   const barcodes = [];
   const ti = title || 'New test title';
 
-  it('should create inventory record', (done) => {
+  it('should create instance record', (done) => {
     nightmare
-      .wait('#clickable-inventory-module')
-      .click('#clickable-inventory-module')
+      .wait('#app-list-item-clickable-inventory-module')
+      .click('#app-list-item-clickable-inventory-module')
       .wait('#clickable-newinventory')
       .click('#clickable-newinventory')
       .wait('#input_instance_title')
