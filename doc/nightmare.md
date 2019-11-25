@@ -14,6 +14,7 @@
   * [Extract text from the DOM using .evaluate()](#extract-text-from-the-dom-using-evaluate)
   * [Waiting for text in the DOM](#waiting-for-text-in-the-dom)
   * [Be careful with barcodes](#be-careful-with-barcodes)
+  * [Be careful with `<MultiSelection>`](#be-careful-with-multiselection)
 
 
 ## Develop tests for a UI module
@@ -303,3 +304,35 @@ be treated like strings. Use string interpolation to force string context:
 ```js
 if (e.textContent === `${fbarcode}`)
 ````
+
+### Be careful with `<MultiSelection>`
+
+[`<MultiSelection>`](https://github.com/folio-org/stripes-components/blob/master/lib/MultiSelection/)
+is basically a `<select multiple>`, except it's a _really nice_
+`<select multiple>`. It renders HTML roughly like this:
+```
+<div role="listbox">
+  <ul>
+    <li role="option">
+      <div class="optionSegment---23qMO">Monkey bagel</div>
+      <div>+</div>
+    </li>
+  </ul>
+</div>
+```
+There are two important things to know about `<MultiSelection>`:
+1. It renders the `<div>` containing its list of options to different parent
+elements depending on the width of the screen: on a narrow screen <= 800px,
+it uses a portal and renders them under an `#OverlayContainer`; on a wider
+screen it renders them inline in the DOM under the component containing the
+`<MultiSelection>` element.
+2. That `<div>` is hidden by default by way of the `hidden` attribute.
+
+And there is one important thing to know about Nightmare in this context:
+
+1. Nightmare's default width is 800px.
+
+This means the _only_ way to distinguish whether an option
+belongs to the currently active `<MultiSelection> ` is the _absence_ of
+`hidden` on the `[role=listbox]` element. See [ui-inventory PR #828](https://github.com/folio-org/ui-inventory/pull/828)
+for details.
