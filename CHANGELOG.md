@@ -1,5 +1,13 @@
 # Change history for stripes-testing
 
+## [1.7.0](https://github.com/folio-org/stripes-testing/tree/v1.7.0) (2019-12-04)
+[Full Changelog](https://github.com/folio-org/stripes-testing/compare/v1.6.7...v1.7.0)
+
+* export `findActiveUserBarcode` to find a barcode for a user in a given group. Refs UIU-897.
+* export `createNInventory` to create N item records under a single instance record.
+* export `checkoutList` to charge many items to a single user.
+* update tests to work with new stripes-core navigation menu. Refs STCOR-377.
+
 ## [1.6.7](https://github.com/folio-org/stripes-testing/tree/v1.6.7) (2019-09-26)
 [Full Changelog](https://github.com/folio-org/stripes-testing/compare/v1.6.6...v1.6.7)
 
