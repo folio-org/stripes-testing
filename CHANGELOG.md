@@ -1,5 +1,10 @@
 # Change history for stripes-testing
 
+## [1.7.1](https://github.com/folio-org/stripes-testing/tree/v1.7.1) (2019-12-16)
+[Full Changelog](https://github.com/folio-org/stripes-testing/compare/v1.7.0...v1.7.1)
+
+* open closed holdings-record accordions to reveal their new-item buttons. Refs UITEST-71.
+
 ## [1.7.0](https://github.com/folio-org/stripes-testing/tree/v1.7.0) (2019-12-04)
 [Full Changelog](https://github.com/folio-org/stripes-testing/compare/v1.6.7...v1.7.0)
 
