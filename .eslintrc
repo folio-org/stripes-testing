@@ -5,6 +5,9 @@
   },
   "rules": {
     "func-names": 0,
+    "import/no-extraneous-dependencies": 0,
+    "no-redeclare": 0,
+    "no-console": 0,
     "prefer-arrow-callback": 0
   }
 }
