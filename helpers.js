@@ -431,7 +431,7 @@ module.exports.clickApp = (nightmare, done, app, pause) => {
  * button which will not be instantiated if there are 12 or more apps
  * in the platform's stripes.config.js file that th
  */
-module.exports.clickSettings = (nightmare, done, pause) => {
+const clickSettings = (nightmare, done, pause) => {
   nightmare
     .wait(pause || 0)
     .wait('#app-list-item-clickable-settings')
@@ -443,6 +443,9 @@ module.exports.clickSettings = (nightmare, done, pause) => {
     .then(done)
     .catch(done);
 };
+
+module.exports.clickSettings = clickSettings;
+
 
 /**
  * Given a user object as returned from namegen(), instantiate a user
@@ -722,11 +725,25 @@ module.exports.setCirculationRules = (nightmare, newRules) => {
       document.getElementsByClassName('CodeMirror')[0].CodeMirror.setValue(rules);
       return oldRules;
     }, newRules)
-    .then(rules => {
+    .then((rules) => {
+      // it would be super cool if this part of the test would work like
+      // every other test that assesses success by investigating #OverlayContainer
+      // but for reasons I cannot fathom, waiting for that element here causes
+      // it _not_ to appear. Hand to my heart I swear this is true. With a `wait()`
+      // after clicking the button, the toast appears and slides away as expected.
+      // But if you add a check like
+      //   .wait(() => document.querySelector('#OverlayContainer div[class^="calloutBase"]'))
+      // then the toast never appears. Really. It. Does. Not. Appear. WTAF?
+      // We have Heisenberg toasts whose status is changed merely by trying to
+      // observe them? Don't believe me? Try it yourself! Run the tests with
+      // --show and witness the toast, then add the line above just below the
+      // `click` and witness ... nothing. There will be nothing to witness
+      // because the toast is now GONE. I don't care who took my cheese. But
+      // who on earth is stealing my toast?!?!
       nightmare
         .wait('#clickable-save-loan-rules')
         .click('#clickable-save-loan-rules')
-        .wait(() => !document.querySelector('#OverlayContainer div[class^="calloutBase"]'));
+        .wait(1000);
       return rules;
     });
 };
@@ -776,4 +793,474 @@ module.exports.findActiveUserBarcode = (nightmare, pg) => {
           return userList[0].barcode;
         });
     });
+};
+
+// module.exports.foo = (nightmare) => {
+//   const policyName = `test-policy-${Math.floor(Math.random() * 10000)}`;
+//   const scheduleName = `test-schedule-${Math.floor(Math.random() * 10000)}`;
+//   const noticePolicyName = `test-notice-policy-${Math.floor(Math.random() * 10000)}`;
+//   const requestPolicyName = `test-request-policy-${Math.floor(Math.random() * 10000)}`;
+// }
+
+module.exports.addLoanPolicy = (nightmare, loanPolicyName, loanPeriod, renewalLimit) => {
+  it('should navigate to settings', (done) => {
+    clickSettings(nightmare, done);
+  });
+
+  it('should reach "Create loan policy" page', (done) => {
+    nightmare
+      .wait('a[href="/settings/circulation"]')
+      .click('a[href="/settings/circulation"]')
+      .wait('a[href="/settings/circulation/loan-policies"]')
+      .click('a[href="/settings/circulation/loan-policies"]')
+      .wait('#clickable-create-entry')
+      .click('#clickable-create-entry')
+      .then(done)
+      .catch(done);
+  });
+
+  it(`should create a new loan policy (${loanPolicyName}) with renewalLimit of ${renewalLimit}`, (done) => {
+    nightmare
+      .wait('#input_policy_name')
+      .type('#input_policy_name', loanPolicyName)
+      .wait('#input_loan_profile')
+      .select('#input_loan_profile', 'Rolling')
+      .wait('input[name="loansPolicy.period.duration"')
+      .type('input[name="loansPolicy.period.duration"', loanPeriod)
+      .wait('select[name="loansPolicy.period.intervalId"]')
+      .select('select[name="loansPolicy.period.intervalId"]', 'Minutes')
+      .wait('select[name="loansPolicy.closedLibraryDueDateManagementId"]')
+      .type('select[name="loansPolicy.closedLibraryDueDateManagementId"]', 'keep')
+      .wait('#input_allowed_renewals')
+      .type('#input_allowed_renewals', renewalLimit)
+      .wait('#select_renew_from')
+      .type('#select_renew_from', 'cu')
+      .wait('#footer-save-entity')
+      .click('#footer-save-entity')
+      .wait(1000)
+      .evaluate(() => {
+        const sel = document.querySelector('div[class^="textfieldError"]');
+        if (sel) {
+          throw new Error(sel.textContent);
+        }
+      })
+      .wait(() => {
+        return !document.querySelector('#footer-save-entity');
+      })
+      .then(done)
+      .catch(done);
+  });
+};
+
+module.exports.removeLoanPolicy = (nightmare, loanPolicyName) => {
+  it('should navigate to settings', (done) => {
+    clickSettings(nightmare, done);
+  });
+
+  it('should delete the loan policy', (done) => {
+    nightmare
+      .wait('a[href="/settings/circulation"]')
+      .click('a[href="/settings/circulation"]')
+      .wait('a[href="/settings/circulation/loan-policies"]')
+      .click('a[href="/settings/circulation/loan-policies"]')
+      .wait('div.hasEntries')
+      .wait((pn) => {
+        const index = Array.from(
+          document.querySelectorAll('#ModuleContainer div.hasEntries a div')
+        ).findIndex(e => e.textContent === pn);
+        return index >= 0;
+      }, loanPolicyName)
+      .evaluate((pn) => {
+        const index = Array.from(
+          document.querySelectorAll('#ModuleContainer div.hasEntries a div')
+        ).findIndex(e => e.textContent === pn);
+        if (index === -1) {
+          throw new Error(`Could not find the loan policy ${pn} to delete`);
+        }
+        // CSS selectors are 1-based, which is just totally awesome.
+        return index + 1;
+      }, loanPolicyName)
+      .then((entryIndex) => {
+        nightmare
+          .wait(`#ModuleContainer div.hasEntries div:nth-of-type(${entryIndex}) a`)
+          .click(`#ModuleContainer div.hasEntries div:nth-of-type(${entryIndex}) a`)
+          .wait('#dropdown-clickable-delete-item')
+          .click('#dropdown-clickable-delete-item')
+          .wait('#clickable-delete-item-confirmation-confirm')
+          .click('#clickable-delete-item-confirmation-confirm')
+          .wait((pn) => {
+            return Array.from(
+              document.querySelectorAll('#OverlayContainer div[class^="calloutBase"]')
+            ).findIndex(e => e.textContent === `The Loan policy ${pn} was successfully deleted.`) >= 0;
+          }, loanPolicyName)
+          .then(done)
+          .catch(done);
+      })
+      .catch(done);
+  });
+};
+
+module.exports.addNoticePolicy = (nightmare, noticePolicyName) => {
+  it('should navigate to settings', (done) => {
+    clickSettings(nightmare, done);
+  });
+
+  it('should reach "Create notice policy" page', (done) => {
+    nightmare
+      .wait('a[href="/settings/circulation"]')
+      .click('a[href="/settings/circulation"]')
+      .wait('a[href="/settings/circulation/notice-policies"]')
+      .click('a[href="/settings/circulation/notice-policies"]')
+      .wait('#clickable-create-entry')
+      .click('#clickable-create-entry')
+      .then(done)
+      .catch(done);
+  });
+
+  it(`should create a new notice policy (${noticePolicyName})`, (done) => {
+    nightmare
+      .wait('#notice_policy_name')
+      .type('#notice_policy_name', noticePolicyName)
+      .wait('#notice_policy_active')
+      .check('#notice_policy_active')
+      .wait('#footer-save-entity')
+      .click('#footer-save-entity')
+      .wait(1000)
+      .evaluate(() => {
+        const sel = document.querySelector('div[class^="textfieldError"]');
+        if (sel) {
+          throw new Error(sel.textContent);
+        }
+      })
+      .wait(() => {
+        return !document.querySelector('#footer-save-entity');
+      })
+      .then(done)
+      .catch(done);
+  });
+};
+
+module.exports.removeNoticePolicy = (nightmare, noticePolicyName) => {
+  it('should navigate to settings', (done) => {
+    clickSettings(nightmare, done);
+  });
+
+  it('should delete the notice policy', (done) => {
+    nightmare
+      .wait('a[href="/settings/circulation"]')
+      .click('a[href="/settings/circulation"]')
+      .wait('a[href="/settings/circulation/notice-policies"]')
+      .click('a[href="/settings/circulation/notice-policies"]')
+      .wait('div.hasEntries')
+      .wait((npn) => {
+        const index = Array.from(
+          document.querySelectorAll('#ModuleContainer div.hasEntries a div')
+        ).findIndex(e => e.textContent === npn);
+        return index >= 0;
+      }, noticePolicyName)
+      .evaluate((npn) => {
+        const index = Array.from(
+          document.querySelectorAll('#ModuleContainer div.hasEntries a div')
+        ).findIndex(e => e.textContent === npn);
+        if (index === -1) {
+          throw new Error(`Could not find the notice policy${npn} to delete`);
+        }
+        // CSS selectors are 1-based, which is just totally awesome.
+        return index + 1;
+      }, noticePolicyName)
+      .then((entryIndex) => {
+        nightmare
+          .wait(`#ModuleContainer div.hasEntries div:nth-of-type(${entryIndex}) a`)
+          .click(`#ModuleContainer div.hasEntries div:nth-of-type(${entryIndex}) a`)
+          .wait('#generalInformation')
+          .wait('#dropdown-clickable-delete-item')
+          .click('#dropdown-clickable-delete-item')
+          .wait('#clickable-delete-item-confirmation-confirm')
+          .click('#clickable-delete-item-confirmation-confirm')
+          .wait((npn) => {
+            return Array.from(
+              document.querySelectorAll('#OverlayContainer div[class^="calloutBase"]')
+            ).findIndex(e => e.textContent === `The Patron notice policy ${npn} was successfully deleted.`) >= 0;
+          }, noticePolicyName)
+          .wait(() => !document.querySelector('#OverlayContainer div[class^="calloutBase"]'))
+          .then(done)
+          .catch(done);
+      })
+      .catch(done);
+  });
+};
+
+module.exports.addRequestPolicy = (nightmare, requestPolicyName) => {
+  it('should navigate to settings', (done) => {
+    clickSettings(nightmare, done);
+  });
+
+  it('should reach "Create request policy" page', (done) => {
+    nightmare
+      .wait('a[href="/settings/circulation"]')
+      .click('a[href="/settings/circulation"]')
+      .wait('a[href="/settings/circulation/request-policies"]')
+      .click('a[href="/settings/circulation/request-policies"]')
+      .wait('#clickable-create-entry')
+      .click('#clickable-create-entry')
+      .then(done)
+      .catch(done);
+  });
+
+  it(`should create a new request policy (${requestPolicyName})`, (done) => {
+    nightmare
+      .wait('#request_policy_name')
+      .type('#request_policy_name', requestPolicyName)
+      .wait('#hold-checkbox')
+      .check('#hold-checkbox')
+      .wait('#page-checkbox')
+      .check('#page-checkbox')
+      .wait('#recall-checkbox')
+      .check('#recall-checkbox')
+      .wait('#footer-save-entity')
+      .click('#footer-save-entity')
+      .wait(1000)
+      .evaluate(() => {
+        const sel = document.querySelector('div[class^="textfieldError"]');
+        if (sel) {
+          throw new Error(sel.textContent);
+        }
+      })
+      .wait(() => {
+        return !document.querySelector('#footer-save-entity');
+      })
+      .then(done)
+      .catch(done);
+  });
+};
+
+module.exports.removeRequestPolicy = (nightmare, requestPolicyName) => {
+  it('should navigate to settings', (done) => {
+    clickSettings(nightmare, done);
+  });
+
+  it('should delete the request policy', (done) => {
+    nightmare
+      .wait('a[href="/settings/circulation"]')
+      .click('a[href="/settings/circulation"]')
+      .wait('a[href="/settings/circulation/request-policies"]')
+      .click('a[href="/settings/circulation/request-policies"]')
+      .wait('div.hasEntries')
+      .wait((rpn) => {
+        const index = Array.from(
+          document.querySelectorAll('#ModuleContainer div.hasEntries a div')
+        ).findIndex(e => e.textContent === rpn);
+        return index >= 0;
+      }, requestPolicyName)
+      .evaluate((rpn) => {
+        const index = Array.from(
+          document.querySelectorAll('#ModuleContainer div.hasEntries a div')
+        ).findIndex(e => e.textContent === rpn);
+        if (index === -1) {
+          throw new Error(`Could not find the request policy ${rpn} to delete`);
+        }
+        // CSS selectors are 1-based, which is just totally awesome.
+        return index + 1;
+      }, requestPolicyName)
+      .then((entryIndex) => {
+        nightmare
+          .wait(`#ModuleContainer div.hasEntries div:nth-of-type(${entryIndex}) a`)
+          .click(`#ModuleContainer div.hasEntries div:nth-of-type(${entryIndex}) a`)
+          .wait('#general')
+          .wait('#dropdown-clickable-delete-item')
+          .click('#dropdown-clickable-delete-item')
+          .wait('#clickable-delete-item-confirmation-confirm')
+          .click('#clickable-delete-item-confirmation-confirm')
+          .wait((rpn) => {
+            return Array.from(
+              document.querySelectorAll('#OverlayContainer div[class^="calloutBase"]')
+            ).findIndex(e => e.textContent === `The Request policy ${rpn} was successfully deleted.`) >= 0;
+          }, requestPolicyName)
+          .wait(() => !document.querySelector('#OverlayContainer div[class^="calloutBase"]'))
+          .then(done)
+          .catch(done);
+      })
+      .catch(done);
+  });
+};
+
+module.exports.addOverdueFinePolicy = (nightmare, overdueFinePolicyName) => {
+  it('should navigate to settings', (done) => {
+    clickSettings(nightmare, done);
+  });
+
+  it('should reach "Create overdue fine policy" page', (done) => {
+    nightmare
+      .wait('a[href="/settings/circulation"]')
+      .click('a[href="/settings/circulation"]')
+      .wait('a[href="/settings/circulation/fine-policies"]')
+      .click('a[href="/settings/circulation/fine-policies"]')
+      .wait('#clickable-create-entry')
+      .click('#clickable-create-entry')
+      .then(done)
+      .catch(done);
+  });
+
+  it(`should create a new overdue fine policy (${overdueFinePolicyName})`, (done) => {
+    nightmare
+      .wait('#input-policy-name')
+      .type('#input-policy-name', overdueFinePolicyName)
+      .wait('#footer-save-entity')
+      .click('#footer-save-entity')
+      .wait(1000)
+      .evaluate(() => {
+        const sel = document.querySelector('div[class^="textfieldError"]');
+        if (sel) {
+          throw new Error(sel.textContent);
+        }
+      })
+      .wait(() => {
+        return !document.querySelector('#footer-save-entity');
+      })
+      .then(done)
+      .catch(done);
+  });
+};
+
+module.exports.removeOverdueFinePolicy = (nightmare, overdueFinePolicyName) => {
+  it('should navigate to settings', (done) => {
+    clickSettings(nightmare, done);
+  });
+
+  it('should delete the overdue fine policy', (done) => {
+    nightmare
+      .wait('a[href="/settings/circulation"]')
+      .click('a[href="/settings/circulation"]')
+      .wait('a[href="/settings/circulation/fine-policies"]')
+      .click('a[href="/settings/circulation/fine-policies"]')
+      .wait('div.hasEntries')
+      .wait((rpn) => {
+        const index = Array.from(
+          document.querySelectorAll('#ModuleContainer div.hasEntries a div')
+        ).findIndex(e => e.textContent === rpn);
+        return index >= 0;
+      }, overdueFinePolicyName)
+      .evaluate((rpn) => {
+        const index = Array.from(
+          document.querySelectorAll('#ModuleContainer div.hasEntries a div')
+        ).findIndex(e => e.textContent === rpn);
+        if (index === -1) {
+          throw new Error(`Could not find the request policy ${rpn} to delete`);
+        }
+        // CSS selectors are 1-based, which is just totally awesome.
+        return index + 1;
+      }, overdueFinePolicyName)
+      .then((entryIndex) => {
+        nightmare
+          .wait(`#ModuleContainer div.hasEntries div:nth-of-type(${entryIndex}) a`)
+          .click(`#ModuleContainer div.hasEntries div:nth-of-type(${entryIndex}) a`)
+          .wait('#generalInformation')
+          .wait('#dropdown-clickable-delete-item')
+          .click('#dropdown-clickable-delete-item')
+          .wait('#clickable-delete-item-confirmation-confirm')
+          .click('#clickable-delete-item-confirmation-confirm')
+          .wait((rpn) => {
+            return Array.from(
+              document.querySelectorAll('#OverlayContainer div[class^="calloutBase"]')
+            ).findIndex(e => e.textContent === `The Overdue fine policies ${rpn} was successfully deleted.`) >= 0;
+          }, overdueFinePolicyName)
+          .wait(() => !document.querySelector('#OverlayContainer div[class^="calloutBase"]'))
+          .then(done)
+          .catch(done);
+      })
+      .catch(done);
+  });
+};
+
+
+module.exports.addLostItemFeePolicy = (nightmare, lostItemFeePolicyName, duration, durationInterval) => {
+  it('should navigate to settings', (done) => {
+    clickSettings(nightmare, done);
+  });
+
+  it('should reach "Create lost item fee policy" page', (done) => {
+    nightmare
+      .wait('a[href="/settings/circulation"]')
+      .click('a[href="/settings/circulation"]')
+      .wait('a[href="/settings/circulation/lost-item-fee-policy"]')
+      .click('a[href="/settings/circulation/lost-item-fee-policy"]')
+      .wait('#clickable-create-entry')
+      .click('#clickable-create-entry')
+      .then(done)
+      .catch(done);
+  });
+
+  it(`should create a new lost item fee policy (${lostItemFeePolicyName})`, (done) => {
+    nightmare
+      .wait('select[name="lostItemChargeFeeFine.intervalId"]')
+      .type('select[name="lostItemChargeFeeFine.intervalId"]', durationInterval)
+      .wait('#input-policy-name')
+      .type('#input-policy-name', lostItemFeePolicyName)
+      .wait('input[name="lostItemChargeFeeFine.duration"]')
+      .type('input[name="lostItemChargeFeeFine.duration"]', duration)
+      .click('#footer-save-entity')
+      .wait(1000)
+      .evaluate(() => {
+        const sel = document.querySelector('div[class^="textfieldError"]');
+        if (sel) {
+          throw new Error(sel.textContent);
+        }
+      })
+      .wait(() => {
+        return !document.querySelector('#footer-save-entity');
+      })
+      .then(done)
+      .catch(done);
+  });
+};
+
+
+module.exports.removeLostItemFeePolicy = (nightmare, lostItemPolicyName) => {
+  it('should navigate to settings', (done) => {
+    clickSettings(nightmare, done);
+  });
+
+  it('should delete the lost item policy', (done) => {
+    nightmare
+      .wait('a[href="/settings/circulation"]')
+      .click('a[href="/settings/circulation"]')
+      .wait('a[href="/settings/circulation/lost-item-fee-policy"]')
+      .click('a[href="/settings/circulation/lost-item-fee-policy"]')
+      .wait('div.hasEntries')
+      .wait((rpn) => {
+        const index = Array.from(
+          document.querySelectorAll('#ModuleContainer div.hasEntries a div')
+        ).findIndex(e => e.textContent === rpn);
+        return index >= 0;
+      }, lostItemPolicyName)
+      .evaluate((rpn) => {
+        const index = Array.from(
+          document.querySelectorAll('#ModuleContainer div.hasEntries a div')
+        ).findIndex(e => e.textContent === rpn);
+        if (index === -1) {
+          throw new Error(`Could not find the request policy ${rpn} to delete`);
+        }
+        // CSS selectors are 1-based, which is just totally awesome.
+        return index + 1;
+      }, lostItemPolicyName)
+      .then((entryIndex) => {
+        nightmare
+          .wait(`#ModuleContainer div.hasEntries div:nth-of-type(${entryIndex}) a`)
+          .click(`#ModuleContainer div.hasEntries div:nth-of-type(${entryIndex}) a`)
+          .wait('#LostItemFeeGeneralInformation')
+          .wait('#dropdown-clickable-delete-item')
+          .click('#dropdown-clickable-delete-item')
+          .wait('#clickable-delete-item-confirmation-confirm')
+          .click('#clickable-delete-item-confirmation-confirm')
+          .wait((rpn) => {
+            return Array.from(
+              document.querySelectorAll('#OverlayContainer div[class^="calloutBase"]')
+            ).findIndex(e => e.textContent === `The Lost item fee policies ${rpn} was successfully deleted.`) >= 0;
+          }, lostItemPolicyName)
+          .wait(() => !document.querySelector('#OverlayContainer div[class^="calloutBase"]'))
+          .then(done)
+          .catch(done);
+      })
+      .catch(done);
+  });
 };
