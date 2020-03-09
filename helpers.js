@@ -120,7 +120,7 @@ module.exports.createInventory = (nightmare, config, title) => {
 module.exports.createNInventory = (nightmare, config, title, itemCount = 1) => {
   const barcodes = [];
   const ti = title || 'New test title';
-  const expandedAccordionSelector = (expanded) => `section[class^=accordion] button[type=button][aria-expanded=${expanded ? 'true' : 'false'}]`;
+  const expandedAccordionSelector = (expanded) => `section[class^=pane]:nth-of-type(3) section[class^=accordion] button[type=button][aria-expanded=${expanded ? 'true' : 'false'}]`;
 
   it('should create instance record', (done) => {
     nightmare
