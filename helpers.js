@@ -651,11 +651,15 @@ module.exports.checkout = (nightmare, done, itemBarcode, userBarcode) => {
 /**
  * checkout multiple items to a given user
  *
+ * NOTE: this function DOES NOT CALL done(); rather, it returns the
+ * nightmare instance it received so the calling function can do that in
+ * its own then() block.
+ *
  * @itemBarcodeList string[] an array of barcodes
  * @userBarcode string a user barcode
  */
-module.exports.checkoutList = (nightmare, done, itemBarcodeList, userBarcode) => {
-  nightmare
+module.exports.checkoutList = (nightmare, itemBarcodeList, userBarcode) => {
+  return nightmare
     .wait('#input-patron-identifier')
     .insert('#input-patron-identifier', userBarcode)
     .wait('#clickable-find-patron')
@@ -681,9 +685,7 @@ module.exports.checkoutList = (nightmare, done, itemBarcodeList, userBarcode) =>
               .find(e => `${bc}` === e.textContent)); // `${}` forces string interpolation for numeric barcodes
           }, itemBarcode);
       });
-    })
-    .then(done)
-    .catch(done);
+    });
 };
 
 /**
