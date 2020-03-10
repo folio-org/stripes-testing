@@ -895,6 +895,9 @@ module.exports.removeLoanPolicy = (nightmare, loanPolicyName) => {
               document.querySelectorAll('#OverlayContainer div[class^="calloutBase"]')
             ).findIndex(e => e.textContent === `The Loan policy ${pn} was successfully deleted.`) >= 0;
           }, loanPolicyName)
+          .wait('#OverlayContainer [class^=callout] button[icon=times]')
+          .click('#OverlayContainer [class^=callout] button[icon=times]')
+          .wait(() => !document.querySelector('#OverlayContainer div[class^="calloutBase"]'))
           .then(done)
           .catch(done);
       })
@@ -984,6 +987,8 @@ module.exports.removeNoticePolicy = (nightmare, noticePolicyName) => {
               document.querySelectorAll('#OverlayContainer div[class^="calloutBase"]')
             ).findIndex(e => e.textContent === `The Patron notice policy ${npn} was successfully deleted.`) >= 0;
           }, noticePolicyName)
+          .wait('#OverlayContainer [class^=callout] button[icon=times]')
+          .click('#OverlayContainer [class^=callout] button[icon=times]')
           .wait(() => !document.querySelector('#OverlayContainer div[class^="calloutBase"]'))
           .then(done)
           .catch(done);
@@ -1078,6 +1083,8 @@ module.exports.removeRequestPolicy = (nightmare, requestPolicyName) => {
               document.querySelectorAll('#OverlayContainer div[class^="calloutBase"]')
             ).findIndex(e => e.textContent === `The Request policy ${rpn} was successfully deleted.`) >= 0;
           }, requestPolicyName)
+          .wait('#OverlayContainer [class^=callout] button[icon=times]')
+          .click('#OverlayContainer [class^=callout] button[icon=times]')
           .wait(() => !document.querySelector('#OverlayContainer div[class^="calloutBase"]'))
           .then(done)
           .catch(done);
@@ -1182,6 +1189,8 @@ module.exports.removeOverdueFinePolicy = (nightmare, overdueFinePolicyName) => {
               document.querySelectorAll('#OverlayContainer div[class^="calloutBase"]')
             ).findIndex(e => e.textContent === `The Overdue fine policies ${rpn} was successfully deleted.`) >= 0;
           }, overdueFinePolicyName)
+          .wait('#OverlayContainer [class^=callout] button[icon=times]')
+          .click('#OverlayContainer [class^=callout] button[icon=times]')
           .wait(() => !document.querySelector('#OverlayContainer div[class^="calloutBase"]'))
           .then(done)
           .catch(done);
@@ -1275,6 +1284,8 @@ module.exports.removeLostItemFeePolicy = (nightmare, lostItemPolicyName) => {
               document.querySelectorAll('#OverlayContainer div[class^="calloutBase"]')
             ).findIndex(e => e.textContent === `The Lost item fee policies ${rpn} was successfully deleted.`) >= 0;
           }, lostItemPolicyName)
+          .wait('#OverlayContainer [class^=callout] button[icon=times]')
+          .click('#OverlayContainer [class^=callout] button[icon=times]')
           .wait(() => !document.querySelector('#OverlayContainer div[class^="calloutBase"]'))
           .then(done)
           .catch(done);
