@@ -1,5 +1,15 @@
 # Change history for stripes-testing
 
+## [2.0.0](https://github.com/folio-org/stripes-testing/tree/v2.0.0) (2020-04-07)
+[Full Changelog](https://github.com/folio-org/stripes-testing/compare/v1.7.0...v2.0.0)
+
+* open closed accordions to find their buttons. Refs UITEST-71
+* Upgrade eslint to v6.2.1. Refs UXPROD-2240
+* Add policy helpers. Refs FOLIO-2440
+* provide non-zero overdue values. Refs CIRC-664
+* click the correct accordion. UITEST-74
+* click the `close` button in callouts to proceed more quickly
+
 ## [1.7.0](https://github.com/folio-org/stripes-testing/tree/v1.7.0) (2019-12-04)
 [Full Changelog](https://github.com/folio-org/stripes-testing/compare/v1.6.7...v1.7.0)
 
