@@ -283,9 +283,9 @@ module.exports.createNInventory = (nightmare, config, title, itemCount = 1) => {
                 .click('#clickable-add-former-id')
                 .wait('#clickable-add-statistical-code')
                 .click('#clickable-add-statistical-code')
-                .wait('#clickable-create-item')
-                .click('#clickable-create-item')
-                .wait(() => !document.querySelector('#clickable-create-item'))
+                .wait('#clickable-save-item')
+                .click('#clickable-save-item')
+                .wait(() => !document.querySelector('#clickable-save-item'))
                 .wait('#list-items')
                 .wait(bc => {
                   return !!(Array.from(document.querySelectorAll('#list-items [role=gridcell]'))
