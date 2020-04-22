@@ -868,13 +868,13 @@ module.exports.removeLoanPolicy = (nightmare, loanPolicyName) => {
       .wait('div.hasEntries')
       .wait((pn) => {
         const index = Array.from(
-          document.querySelectorAll('#ModuleContainer div.hasEntries a div')
+          document.querySelectorAll('#ModuleContainer div.hasEntries a[class^=NavListItem]')
         ).findIndex(e => e.textContent === pn);
         return index >= 0;
       }, loanPolicyName)
       .evaluate((pn) => {
         const index = Array.from(
-          document.querySelectorAll('#ModuleContainer div.hasEntries a div')
+          document.querySelectorAll('#ModuleContainer div.hasEntries a[class^=NavListItem]')
         ).findIndex(e => e.textContent === pn);
         if (index === -1) {
           throw new Error(`Could not find the loan policy ${pn} to delete`);
@@ -884,8 +884,8 @@ module.exports.removeLoanPolicy = (nightmare, loanPolicyName) => {
       }, loanPolicyName)
       .then((entryIndex) => {
         nightmare
-          .wait(`#ModuleContainer div.hasEntries div:nth-of-type(${entryIndex}) a`)
-          .click(`#ModuleContainer div.hasEntries div:nth-of-type(${entryIndex}) a`)
+          .wait(`#ModuleContainer div.hasEntries div:nth-of-type(${entryIndex}) a[class^=NavListItem]`)
+          .click(`#ModuleContainer div.hasEntries div:nth-of-type(${entryIndex}) a[class^=NavListItem]`)
           .wait('#dropdown-clickable-delete-item')
           .click('#dropdown-clickable-delete-item')
           .wait('#clickable-delete-item-confirmation-confirm')
@@ -959,13 +959,13 @@ module.exports.removeNoticePolicy = (nightmare, noticePolicyName) => {
       .wait('div.hasEntries')
       .wait((npn) => {
         const index = Array.from(
-          document.querySelectorAll('#ModuleContainer div.hasEntries a div')
+          document.querySelectorAll('#ModuleContainer div.hasEntries a[class^=NavListItem]')
         ).findIndex(e => e.textContent === npn);
         return index >= 0;
       }, noticePolicyName)
       .evaluate((npn) => {
         const index = Array.from(
-          document.querySelectorAll('#ModuleContainer div.hasEntries a div')
+          document.querySelectorAll('#ModuleContainer div.hasEntries a[class^=NavListItem]')
         ).findIndex(e => e.textContent === npn);
         if (index === -1) {
           throw new Error(`Could not find the notice policy${npn} to delete`);
@@ -975,8 +975,8 @@ module.exports.removeNoticePolicy = (nightmare, noticePolicyName) => {
       }, noticePolicyName)
       .then((entryIndex) => {
         nightmare
-          .wait(`#ModuleContainer div.hasEntries div:nth-of-type(${entryIndex}) a`)
-          .click(`#ModuleContainer div.hasEntries div:nth-of-type(${entryIndex}) a`)
+          .wait(`#ModuleContainer div.hasEntries div:nth-of-type(${entryIndex}) a[class^=NavListItem]`)
+          .click(`#ModuleContainer div.hasEntries div:nth-of-type(${entryIndex}) a[class^=NavListItem]`)
           .wait('#generalInformation')
           .wait('#dropdown-clickable-delete-item')
           .click('#dropdown-clickable-delete-item')
@@ -1055,13 +1055,13 @@ module.exports.removeRequestPolicy = (nightmare, requestPolicyName) => {
       .wait('div.hasEntries')
       .wait((rpn) => {
         const index = Array.from(
-          document.querySelectorAll('#ModuleContainer div.hasEntries a div')
+          document.querySelectorAll('#ModuleContainer div.hasEntries a[class^=NavListItem]')
         ).findIndex(e => e.textContent === rpn);
         return index >= 0;
       }, requestPolicyName)
       .evaluate((rpn) => {
         const index = Array.from(
-          document.querySelectorAll('#ModuleContainer div.hasEntries a div')
+          document.querySelectorAll('#ModuleContainer div.hasEntries a[class^=NavListItem]')
         ).findIndex(e => e.textContent === rpn);
         if (index === -1) {
           throw new Error(`Could not find the request policy ${rpn} to delete`);
@@ -1071,8 +1071,8 @@ module.exports.removeRequestPolicy = (nightmare, requestPolicyName) => {
       }, requestPolicyName)
       .then((entryIndex) => {
         nightmare
-          .wait(`#ModuleContainer div.hasEntries div:nth-of-type(${entryIndex}) a`)
-          .click(`#ModuleContainer div.hasEntries div:nth-of-type(${entryIndex}) a`)
+          .wait(`#ModuleContainer div.hasEntries div:nth-of-type(${entryIndex}) a[class^=NavListItem]`)
+          .click(`#ModuleContainer div.hasEntries div:nth-of-type(${entryIndex}) a[class^=NavListItem]`)
           .wait('#general')
           .wait('#dropdown-clickable-delete-item')
           .click('#dropdown-clickable-delete-item')
@@ -1161,13 +1161,13 @@ module.exports.removeOverdueFinePolicy = (nightmare, overdueFinePolicyName) => {
       .wait('div.hasEntries')
       .wait((rpn) => {
         const index = Array.from(
-          document.querySelectorAll('#ModuleContainer div.hasEntries a div')
+          document.querySelectorAll('#ModuleContainer div.hasEntries a[class^=NavListItem]')
         ).findIndex(e => e.textContent === rpn);
         return index >= 0;
       }, overdueFinePolicyName)
       .evaluate((rpn) => {
         const index = Array.from(
-          document.querySelectorAll('#ModuleContainer div.hasEntries a div')
+          document.querySelectorAll('#ModuleContainer div.hasEntries a[class^=NavListItem]')
         ).findIndex(e => e.textContent === rpn);
         if (index === -1) {
           throw new Error(`Could not find the request policy ${rpn} to delete`);
@@ -1177,8 +1177,8 @@ module.exports.removeOverdueFinePolicy = (nightmare, overdueFinePolicyName) => {
       }, overdueFinePolicyName)
       .then((entryIndex) => {
         nightmare
-          .wait(`#ModuleContainer div.hasEntries div:nth-of-type(${entryIndex}) a`)
-          .click(`#ModuleContainer div.hasEntries div:nth-of-type(${entryIndex}) a`)
+          .wait(`#ModuleContainer div.hasEntries div:nth-of-type(${entryIndex}) a[class^=NavListItem]`)
+          .click(`#ModuleContainer div.hasEntries div:nth-of-type(${entryIndex}) a[class^=NavListItem]`)
           .wait('#generalInformation')
           .wait('#dropdown-clickable-delete-item')
           .click('#dropdown-clickable-delete-item')
@@ -1256,13 +1256,13 @@ module.exports.removeLostItemFeePolicy = (nightmare, lostItemPolicyName) => {
       .wait('div.hasEntries')
       .wait((rpn) => {
         const index = Array.from(
-          document.querySelectorAll('#ModuleContainer div.hasEntries a div')
+          document.querySelectorAll('#ModuleContainer div.hasEntries a[class^=NavListItem]')
         ).findIndex(e => e.textContent === rpn);
         return index >= 0;
       }, lostItemPolicyName)
       .evaluate((rpn) => {
         const index = Array.from(
-          document.querySelectorAll('#ModuleContainer div.hasEntries a div')
+          document.querySelectorAll('#ModuleContainer div.hasEntries a[class^=NavListItem]')
         ).findIndex(e => e.textContent === rpn);
         if (index === -1) {
           throw new Error(`Could not find the request policy ${rpn} to delete`);
@@ -1272,8 +1272,8 @@ module.exports.removeLostItemFeePolicy = (nightmare, lostItemPolicyName) => {
       }, lostItemPolicyName)
       .then((entryIndex) => {
         nightmare
-          .wait(`#ModuleContainer div.hasEntries div:nth-of-type(${entryIndex}) a`)
-          .click(`#ModuleContainer div.hasEntries div:nth-of-type(${entryIndex}) a`)
+          .wait(`#ModuleContainer div.hasEntries div:nth-of-type(${entryIndex}) a[class^=NavListItem]`)
+          .click(`#ModuleContainer div.hasEntries div:nth-of-type(${entryIndex}) a[class^=NavListItem]`)
           .wait('#LostItemFeeGeneralInformation')
           .wait('#dropdown-clickable-delete-item')
           .click('#dropdown-clickable-delete-item')
