@@ -773,7 +773,7 @@ module.exports.findActiveUserBarcode = (nightmare, pg) => {
         .wait('#list-users [data-row-index="row-2"]')
         .evaluate((patronGroupName) => {
           const ubc = [];
-          const list = document.querySelectorAll('#list-users a[role="row"]');
+          const list = document.querySelectorAll('#list-users a[class^=mclRow---]');
           list.forEach((node) => {
             const status = node.querySelector('div:nth-child(1)').innerText;
             const barcode = node.querySelector('div:nth-child(3)').innerText;
