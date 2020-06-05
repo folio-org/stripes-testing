@@ -773,7 +773,7 @@ module.exports.findActiveUserBarcode = (nightmare, pg) => {
         .wait('#list-users [data-row-index="row-2"]')
         .evaluate((patronGroupName) => {
           const ubc = [];
-          const list = document.querySelectorAll('#list-users a[class^=mclRow---]');
+          const list = document.querySelectorAll('#list-users [role=rowgroup] [data-row-inner]');
           list.forEach((node) => {
             const status = node.querySelector('div:nth-child(1)').innerText;
             const barcode = node.querySelector('div:nth-child(3)').innerText;
@@ -1293,3 +1293,6 @@ module.exports.removeLostItemFeePolicy = (nightmare, lostItemPolicyName) => {
       .catch(done);
   });
 };
+
+
+module.exports.usersRowWrapperSelector = '#list-users [role=rowgroup] [data-row-inner]';
