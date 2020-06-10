@@ -1,5 +1,12 @@
 # Change history for stripes-testing
 
+## [2.0.1](https://github.com/folio-org/stripes-testing/tree/v2.0.1) (2020-06-10)
+[Full Changelog](https://github.com/folio-org/stripes-testing/compare/v2.0.0...v2.0.1)
+
+* instance- and item-record save buttons have moved to the footer
+* update `<a>` in `<MCL>`. Refs FOLIO-2569.
+* `<MCL>` default formatter no longer includes `role="row"`. STCOM-677.
+
 ## [2.0.0](https://github.com/folio-org/stripes-testing/tree/v2.0.0) (2020-04-07)
 [Full Changelog](https://github.com/folio-org/stripes-testing/compare/v1.7.0...v2.0.0)
 
