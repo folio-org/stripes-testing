@@ -49,7 +49,7 @@ Customize its behavior by editing the `stripes.config.js` file (or passing an
 alternative config file altogether) or by specifying options such as `--run
 <some app>` (to select tests other than those in the current directory),
 `--okapi <some URL>` (to set a backend other than http://localhost:9130), and
-`show` to show Nightmare's Electron browser and dev-tools while the tests are
+`--show` to show Nightmare's Electron browser and dev-tools while the tests are
 running.
 
 To run tests from multiple apps, separate them with a forward slash:
