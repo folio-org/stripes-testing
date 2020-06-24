@@ -204,8 +204,8 @@ module.exports.createNInventory = (nightmare, config, title, itemCount = 1) => {
         })
         .then(() => {
           nightmare
-            .wait('#clickable-new-item')
-            .click('#clickable-new-item')
+            .wait('button[id^=clickable-new-item]')
+            .click('button[id^=clickable-new-item]')
             // Even though we wait for the #additem_barcode field to appear before
             // interacting with it, that's not enough. With only that precaution in
             // place, the first few characters of the barcode will occassionally be
@@ -286,9 +286,9 @@ module.exports.createNInventory = (nightmare, config, title, itemCount = 1) => {
                 .wait('#clickable-save-item')
                 .click('#clickable-save-item')
                 .wait(() => !document.querySelector('#clickable-save-item'))
-                .wait('#list-items')
+                .wait('[id^=list-items-]')
                 .wait(bc => {
-                  return !!(Array.from(document.querySelectorAll('#list-items [role=gridcell]'))
+                  return !!(Array.from(document.querySelectorAll('[id^=list-items-] [role=gridcell]'))
                     .find(e => `${bc}` === e.textContent)); // `${}` forces string interpolation for numeric barcodes
                 }, barcode)
                 .then(done)
