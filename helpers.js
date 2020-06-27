@@ -1223,6 +1223,21 @@ module.exports.addLostItemFeePolicy = (nightmare, lostItemFeePolicyName, duratio
       .type('select[name="lostItemChargeFeeFine.intervalId"]', durationInterval)
       .wait('#input-policy-name')
       .type('#input-policy-name', lostItemFeePolicyName)
+      .wait('input[name="itemAgedLostOverdue.duration"]')
+      .type('input[name="itemAgedLostOverdue.duration"]', duration)
+      .wait('select[name="itemAgedLostOverdue.intervalId"]')
+      .type('select[name="itemAgedLostOverdue.intervalId"]', 'min')
+      .wait('input[name="patronBilledAfterAgedLost.duration"]')
+      .type('input[name="patronBilledAfterAgedLost.duration"]', duration)
+      .wait('select[name="patronBilledAfterAgedLost.intervalId"]')
+      .type('select[name="patronBilledAfterAgedLost.intervalId"]', 'min')
+      .wait('input[name="lostItemProcessingFee"]')
+      // the lostItemProcessingFee field has a default-value of 0.00 so we
+      // need to clear that value in order to put in an acceptable one.
+      // typing directly into the field will transform "0.00" to "0.00${value}"
+      // but we need a value >= 0.01.
+      .insert('input[name="lostItemProcessingFee"]', '')
+      .type('input[name="lostItemProcessingFee"]', '1.0')
       .wait('input[name="lostItemChargeFeeFine.duration"]')
       .type('input[name="lostItemChargeFeeFine.duration"]', duration)
       .click('#footer-save-entity')
