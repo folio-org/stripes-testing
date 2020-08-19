@@ -627,7 +627,7 @@ module.exports.checkout = (nightmare, done, itemBarcode, userBarcode) => {
     .insert('#input-patron-identifier', userBarcode)
     .wait('#clickable-find-patron')
     .click('#clickable-find-patron')
-    .wait('#clickable-done')
+    .wait('#clickable-done-footer')
     .wait(() => {
       const err = document.querySelector('#patron-form div[class^="textfieldError"]');
       if (err) {
@@ -655,6 +655,11 @@ module.exports.checkout = (nightmare, done, itemBarcode, userBarcode) => {
  * nightmare instance it received so the calling function can do that in
  * its own then() block.
  *
+ * Looping through itemBarcodeList with reduce, rather than forEach, is a
+ * very specific and deliberate decision. Details at:
+ * See https://github.com/segmentio/nightmare/issues/522#issuecomment-190820155
+ * See https://css-tricks.com/why-using-reduce-to-sequentially-resolve-promises-works/
+ *
  * @itemBarcodeList string[] an array of barcodes
  * @userBarcode string a user barcode
  */
@@ -664,7 +669,7 @@ module.exports.checkoutList = (nightmare, itemBarcodeList, userBarcode) => {
     .insert('#input-patron-identifier', userBarcode)
     .wait('#clickable-find-patron')
     .click('#clickable-find-patron')
-    .wait('#clickable-done')
+    .wait('#clickable-done-footer')
     .wait(() => {
       const err = document.querySelector('#patron-form div[class^="textfieldError"]');
       if (err) {
@@ -673,8 +678,8 @@ module.exports.checkoutList = (nightmare, itemBarcodeList, userBarcode) => {
       return !!(document.querySelector('#patron-form ~ div a > strong'));
     })
     .then(() => {
-      itemBarcodeList.forEach((itemBarcode) => {
-        nightmare
+      return itemBarcodeList.reduce((acc, itemBarcode) => {
+        return nightmare
           .wait('#input-item-barcode')
           .insert('#input-item-barcode', itemBarcode)
           .wait('#clickable-add-item')
@@ -684,7 +689,7 @@ module.exports.checkoutList = (nightmare, itemBarcodeList, userBarcode) => {
             return !!(Array.from(document.querySelectorAll('#list-items-checked-out [role="row"] [role="gridcell"]'))
               .find(e => `${bc}` === e.textContent)); // `${}` forces string interpolation for numeric barcodes
           }, itemBarcode);
-      });
+      }, Promise.resolve([]));
     });
 };
 
@@ -780,7 +785,18 @@ module.exports.findActiveUserBarcode = (nightmare, pg) => {
             const patronGroup = node.querySelector('div:nth-child(4)').innerText;
             const un = node.querySelector('div:nth-child(5)').innerText;
             const nodeHref = node.href;
-            if (patronGroup === patronGroupName && nodeHref && barcode && RegExp(/^\d+$/).test(barcode) && status.match(/Active/)) {
+            // lots of conditions to make sure we didn't get some wonky
+            // system user that is somehow special:
+            // 1. their patron group matches the given name
+            // 2. they have a barcode
+            // 3. the barcode is more than a few characters because sometimes
+            //    people type in barcodes like 123 for their own special use
+            //    and we sure don't want a special user here.
+            // 4. the barcode is numeric because we know "normal" test users
+            //    are created that way
+            // 5. status is Active because we don't want an inactive user
+            //    who probably isn't allowed to do anything at all.
+            if (patronGroup === patronGroupName && nodeHref && barcode && barcode.length > 5 && RegExp(/^\d+$/).test(barcode) && status.match(/Active/)) {
               const uuid = nodeHref.replace(/.+?([^/]+)\?.*/, '$1');
               ubc.push({
                 barcode,
@@ -823,6 +839,7 @@ module.exports.addLoanPolicy = (nightmare, loanPolicyName, loanPeriod, renewalLi
 
   it(`should create a new loan policy (${loanPolicyName}) with renewalLimit of ${renewalLimit}`, (done) => {
     nightmare
+      .wait(1000)
       .wait('#input_policy_name')
       .type('#input_policy_name', loanPolicyName)
       .wait('#input_loan_profile')
@@ -924,6 +941,7 @@ module.exports.addNoticePolicy = (nightmare, noticePolicyName) => {
 
   it(`should create a new notice policy (${noticePolicyName})`, (done) => {
     nightmare
+      .wait(1000) // final-forms take some time to settle down. <sigh>
       .wait('#notice_policy_name')
       .type('#notice_policy_name', noticePolicyName)
       .wait('#notice_policy_active')
@@ -1016,8 +1034,11 @@ module.exports.addRequestPolicy = (nightmare, requestPolicyName) => {
 
   it(`should create a new request policy (${requestPolicyName})`, (done) => {
     nightmare
+      .wait(1000) // final-forms take some time to settle down. <sigh>
       .wait('#request_policy_name')
       .type('#request_policy_name', requestPolicyName)
+      .wait('#request_policy_description')
+      .type('#request_policy_description', requestPolicyName)
       .wait('#hold-checkbox')
       .check('#hold-checkbox')
       .wait('#page-checkbox')
@@ -1026,7 +1047,6 @@ module.exports.addRequestPolicy = (nightmare, requestPolicyName) => {
       .check('#recall-checkbox')
       .wait('#footer-save-entity')
       .click('#footer-save-entity')
-      .wait(1000)
       .evaluate(() => {
         const sel = document.querySelector('div[class^="textfieldError"]');
         if (sel) {
@@ -1112,6 +1132,7 @@ module.exports.addOverdueFinePolicy = (nightmare, overdueFinePolicyName) => {
 
   it(`should create a new overdue fine policy (${overdueFinePolicyName})`, (done) => {
     nightmare
+      .wait(1000) // final-forms take some time to settle down. <sigh>
       .wait('#input-policy-name')
       .type('#input-policy-name', overdueFinePolicyName)
       .wait('input[name="overdueFine.quantity"]')
@@ -1219,6 +1240,7 @@ module.exports.addLostItemFeePolicy = (nightmare, lostItemFeePolicyName, duratio
 
   it(`should create a new lost item fee policy (${lostItemFeePolicyName})`, (done) => {
     nightmare
+      .wait(1000) // final-forms take some time to settle down. <sigh>
       .wait('select[name="lostItemChargeFeeFine.intervalId"]')
       .type('select[name="lostItemChargeFeeFine.intervalId"]', durationInterval)
       .wait('#input-policy-name')
@@ -1309,5 +1331,102 @@ module.exports.removeLostItemFeePolicy = (nightmare, lostItemPolicyName) => {
   });
 };
 
+
+module.exports.addFixedDueDateSchedule = (nightmare, scheduleName, tomorrowValue, dayAfterValue, nextMonthValue) => {
+  it('should navigate to settings', (done) => {
+    clickSettings(nightmare, done);
+  });
+
+  it('should create a new fixed due date schedule', (done) => {
+    nightmare
+      .wait(1000) // final-forms take some time to settle down. <sigh>
+      .wait('a[href="/settings/circulation"]')
+      .click('a[href="/settings/circulation"]')
+      .wait('a[href="/settings/circulation/fixed-due-date-schedules"]')
+      .click('a[href="/settings/circulation/fixed-due-date-schedules"]')
+      .wait('#clickable-create-entry')
+      .click('#clickable-create-entry')
+      .wait(1500)
+      .wait('#input_schedule_name')
+      .type('#input_schedule_name', scheduleName)
+      .wait('input[name="schedules[0].from"]')
+      .insert('input[name="schedules[0].from"]', tomorrowValue)
+      .wait('input[name="schedules[0].to"]')
+      .insert('input[name="schedules[0].to"]', dayAfterValue)
+      .wait('input[name="schedules[0].due"]')
+      .insert('input[name="schedules[0].due"]', nextMonthValue)
+      .wait('#clickable-save-fixedDueDateSchedule')
+      .click('#clickable-save-fixedDueDateSchedule')
+      .wait('textarea[name="description"]')
+      .insert('textarea[name="description"]', scheduleName)
+      .wait(1000)
+      .evaluate(() => {
+        const sel = document.querySelector('div[class^="feedbackError"]');
+        return new Promise((resolve, reject) => {
+          if (sel) {
+            reject(new Error(sel.textContent));
+          }
+          resolve();
+        });
+      })
+      .then(done)
+      .catch(done);
+  });
+};
+
+module.exports.removeFixedDueDateSchedule = (nightmare, scheduleName) => {
+  it('should navigate to settings', (done) => {
+    clickSettings(nightmare, done);
+  });
+
+  it('should delete the fixed due date schedule', (done) => {
+    nightmare
+      .wait('a[href="/settings/circulation"]')
+      .click('a[href="/settings/circulation"]')
+      .wait('a[href="/settings/circulation/fixed-due-date-schedules"]')
+      .click('a[href="/settings/circulation/fixed-due-date-schedules"]')
+      .wait('div.hasEntries')
+      .wait((sn) => {
+        const index = Array.from(
+          document.querySelectorAll('#ModuleContainer div.hasEntries a[class^=NavListItem]')
+        ).findIndex(e => e.textContent === sn);
+        return index >= 0;
+      }, scheduleName)
+      .evaluate((sn) => {
+        const index = Array.from(
+          document.querySelectorAll('#ModuleContainer div.hasEntries a[class^=NavListItem]')
+        ).findIndex(e => e.textContent === sn);
+        if (index === -1) {
+          throw new Error(`Could not find the fixed due date schedule ${sn} to delete`);
+        }
+        // CSS selectors are 1-based, which is just totally awesome.
+        return index + 1;
+      }, scheduleName)
+      .then((entryIndex) => {
+        nightmare
+          .wait(`#ModuleContainer div.hasEntries div:nth-of-type(${entryIndex}) a[class^=NavListItem]`)
+          .click(`#ModuleContainer div.hasEntries div:nth-of-type(${entryIndex}) a[class^=NavListItem]`)
+          .wait('#generalSection')
+          .wait('#fixedDueDateSchedule')
+          .wait('#clickable-edit-item')
+          .click('#clickable-edit-item')
+          .wait('#clickable-delete-item')
+          .click('#clickable-delete-item')
+          .wait('#clickable-deletefixedduedateschedule-confirmation-confirm')
+          .click('#clickable-deletefixedduedateschedule-confirmation-confirm')
+          .wait((sn) => {
+            return Array.from(
+              document.querySelectorAll('#OverlayContainer div[class^="calloutBase"]')
+            ).findIndex(e => e.textContent === `The fixed due date schedule ${sn} was successfully deleted.`) >= 0;
+          }, scheduleName)
+          .wait('#OverlayContainer [class^=callout] button[icon=times]')
+          .click('#OverlayContainer [class^=callout] button[icon=times]')
+          .wait(() => !document.querySelector('#OverlayContainer div[class^="calloutBase"]'))
+          .then(done)
+          .catch(done);
+      })
+      .catch(done);
+  });
+};
 
 module.exports.usersRowWrapperSelector = '#list-users [role=rowgroup] [data-row-inner]';
