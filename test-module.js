@@ -30,7 +30,7 @@ function showHelp() {
   console.log('      Override default URL of application to be tested. ');
   console.log('      Predefined options: ');
   console.log('         --h=localhost :   http://localhost:3000');
-  console.log('         --h=testing   :   http://folio-testing.aws.indexdata.com (the default URL)');
+  console.log('         --h=testing   :   https://folio-testing.dev.folio.org (the default URL)');
   console.log('         --h=staging   :   http://folio-staging.aws.indexdata.com');
   console.log('         --h=[any other URL for the application to be tested]');
   console.log('');
