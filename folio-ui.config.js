@@ -3,7 +3,7 @@
 //
 /* eslint-disable eqeqeq */
 module.exports = {
-  url: process.env.FOLIO_UI_URL || 'http://folio-testing.aws.indexdata.com',
+  url: process.env.FOLIO_UI_URL || 'https://folio-testing.dev.folio.org',
   username: process.env.FOLIO_UI_USERNAME || 'diku_admin',
   password: process.env.FOLIO_UI_PASSWORD || 'admin',
   debug_sleep: parseInt(process.env.FOLIO_UI_DEBUG_SLEEP, 10) || 4000,

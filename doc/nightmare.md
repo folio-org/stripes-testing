@@ -144,7 +144,7 @@ Output in the test log:
 Module test: checkout:error_messages.
 Open app > Trigger error messages > Logout
   Test suite   @folio/checkout:1.0.10020
-  Live module  @folio/checkout:1.0.10019 (http://folio-testing.aws.indexdata.com)
+  Live module  @folio/checkout:1.0.10019 (https://folio-testing.dev.folio.org)
 ```
 
 ## Writing testable code
