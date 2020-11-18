@@ -12,7 +12,9 @@
     "lint": "eslint ."
   },
   "dependencies": {
+    "@bigtest/interactor": "^0.21.0",
     "debug": "^4.0.1",
+    "element-is-visible": "^1.0.0",
     "minimist": "^1.2.0",
     "nightmare": "^3.0.2"
   },
