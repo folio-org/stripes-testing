@@ -1,3 +1,4 @@
+export { default as Checkbox } from './checkbox';
 export { default as IconButton } from './icon-button';
 export { default as KeyValue } from './key-value';
 export { Tooltip, TooltipProximity } from './tooltip';
