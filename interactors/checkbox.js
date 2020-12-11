@@ -1,11 +1,17 @@
 import { CheckBox, createInteractor, perform } from '@bigtest/interactor';
 
+// The built-in CheckBox interactor expects an input element,
+// and anything added in the future would likely not work without modification.
+// Explicitly import known working functions.
+const { title, visible, focused } = CheckBox().specification.filters;
+
 export default createInteractor('checkbox')({
   selector: 'div[class^=checkbox-]',
   locator: (el) => el.querySelector('[class^=labelText]')?.textContent,
   filters: {
     id: (el) => el.querySelector('input')?.id,
     checked: (el) => el.querySelector('input')?.checked,
+    valid: (el) => el.querySelector('input')?.validity.valid,
     value: (el) => el.querySelector('input')?.value,
     label: (el) => el.textContent,
     ariaLabel: (el) => el.querySelector('input')?.ariaLabel,
@@ -13,7 +19,10 @@ export default createInteractor('checkbox')({
     feedbackText: (el) => el.querySelector('[role=alert]').textContent,
     hasWarning: (el) => !!el.className.match(/hasWarning/),
     hasError: (el) => !!el.className.match(/hasError/),
-    disabled: (el) => el.disabled
+    disabled: (el) => el.disabled,
+    title,
+    visible,
+    focused
   },
   actions: {
     focus: perform((el) => el.querySelector('label').focus()),
