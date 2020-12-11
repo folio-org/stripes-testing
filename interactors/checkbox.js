@@ -4,7 +4,6 @@ export default createInteractor('checkbox')({
   selector: 'div[class^=checkbox-]',
   locator: (el) => el.querySelector('[class^=labelText]')?.textContent,
   filters: {
-    ...CheckBox().specification.filters,
     id: (el) => el.querySelector('input')?.id,
     checked: (el) => el.querySelector('input')?.checked,
     value: (el) => el.querySelector('input')?.value,
