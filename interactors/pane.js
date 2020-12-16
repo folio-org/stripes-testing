@@ -14,6 +14,16 @@ export default createInteractor('pane')({
       apply: (el) => isVisible(el) || (el.labels && Array.from(el.labels).some(isVisible)),
       default: true
     },
+    index: (el) => {
+      let set = el.parentNode;
+      let panes = [...set.querySelectorAll('[class^=pane-]')];
+
+      for (let i = 0; i < panes.length; i++) {
+        if (el == panes[i]) {
+          return i;
+        }
+      }
+    }
   },
   actions: {
     dismiss: (interactor) => interactor.find(Button()).click()
