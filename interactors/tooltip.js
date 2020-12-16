@@ -4,7 +4,7 @@ import { isVisible } from 'element-is-visible';
 export const Tooltip = createInteractor('tooltip')({
   selector: '[class^=tooltip], .sr-only',
   locator: (el) => {
-    return el.querySelector('[class^=text], span[role=tooltip]').textContent
+    return el.querySelector('[class^=text], span[role=tooltip]').textContent;
   },
   filters: {
     text: (el) => el.querySelector('[class^=text]').textContent,
@@ -13,7 +13,7 @@ export const Tooltip = createInteractor('tooltip')({
     id: (el) => el.id,
     proximity: {
       apply: (el) => {
-        return el.querySelector('span[role=tooltip]')?.getAttribute('role') === 'tooltip'
+        return el.querySelector('span[role=tooltip]').getAttribute('role') === 'tooltip';
       },
       default: false,
     }
