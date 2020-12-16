@@ -22,7 +22,6 @@ export default createInteractor('accordion')({
       return el.contains(focus);
     },
     index: (el) => {
-      //let set = el.closest('aria-multiselectable');
       let set = el.parentNode;
       let accordions = [...set.querySelectorAll('[class^=accordion]')];
 
