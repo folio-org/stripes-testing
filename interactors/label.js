@@ -1,4 +1,4 @@
-import {createInteractor} from "@bigtest/interactor";
+import { createInteractor } from '@bigtest/interactor';
 
 export default createInteractor('label')({
   selector: 'label',
