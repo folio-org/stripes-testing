@@ -1,3 +1,4 @@
+export { default as Checkbox } from './checkbox';
 export { default as Accordion } from './accordion';
 export { default as IconButton } from './icon-button';
 export { default as KeyValue } from './key-value';
