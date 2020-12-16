@@ -1,1 +1,1 @@
-export * from "./interactors";
+export * from './interactors';
