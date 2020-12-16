@@ -15,6 +15,7 @@ the [BigTest](https://github.com/folio-org/stripes/blob/master/doc/bigtest.md)
 toolkit instead.
 
 * [TL;DR](#tldr-i-just-want-to-run-some-tests)
+* [Stripes Component Interactors](doc/interactors.md)
 * [About Folio UI Tests](#about-folio-ui-tests)
 * [Prerequisites](#prerequisites)
 * [Nightmare debug options](#nightmare-debug-options)
@@ -35,7 +36,6 @@ yarn test-int
 ```
 This will start stripes at http://localhost:3000, run the platform's tests, and
 quit stripes.
-
 
 ## About Folio UI Tests
 
@@ -79,7 +79,7 @@ documentation for additional details and options.
 [Running nightmare on AWS](https://gist.github.com/dimkir/f4afde77366ff041b66d2252b45a13db#attempt-to-run-nightmare)
 may require additional supporting libraries. Nightmare uses Electron under the
 hood and may not install it by default. To immediately find out if you need to
-install dependencies, execute:  
+install dependencies, execute:
 
 ```
 cd node_modules/nightmare/node_modules/electron/dist
