@@ -16,5 +16,7 @@ export default createInteractor('button')({
   },
   actions: {
     click: perform((el) => el.click()),
+    focus: perform((el) => el.focus()),
+    blur: perform((el) => el.blur())
   }
 });
