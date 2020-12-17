@@ -1,4 +1,6 @@
-import { createInteractor, Button } from '@bigtest/interactor';
+// TODO, import `focus`, and `blur` when updating to >0.22.0
+import { createInteractor, Button, focused } from '@bigtest/interactor';
+// TODO, import from @bigtest/interactor when updating to >0.22.0
 import { isVisible } from 'element-is-visible';
 
 function title(el) { return el.querySelector('[class^=paneTitle]')?.textContent; }
@@ -9,7 +11,7 @@ export default createInteractor('pane')({
   filters: {
     id: (el) => el.id,
     title,
-    subTitle: (el) => el.querySelector('[class^=paneSub]').textContent,
+    subtitle: (el) => el.querySelector('[class^=paneSub]').textContent,
     visible: {
       apply: (el) => isVisible(el) || (el.labels && Array.from(el.labels).some(isVisible)),
       default: true
@@ -23,9 +25,14 @@ export default createInteractor('pane')({
           return i;
         }
       }
-    }
+    },
+    focused
   },
   actions: {
-    dismiss: (interactor) => interactor.find(Button()).click()
+    dismiss: (interactor) => interactor.find(Button()).click(),
+    // TODO, enable these when updating to >0.22.0
+    // we should also add some tests for these?
+    // focus,
+    // blur
   }
 });
