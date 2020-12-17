@@ -22,7 +22,7 @@ const KEY_CODES = {
 
 
 function press(code) {
-  return perform(async function(el) {
+  return perform(async function (el) {
     if (await dispatch(el, 'keydown', code)) {
       await dispatch(el, 'keyup', code);
     }

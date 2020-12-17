@@ -1,14 +1,14 @@
-import { RadioButton, createInteractor, perform } from '@bigtest/interactor';
+import { createInteractor, perform } from '@bigtest/interactor';
 
 export default createInteractor('radio button')({
   selector: 'div[class^=radioButton]',
-  locator: (el) => el.querySelector('[class^=labelText]')?.textContent,
+  locator: (el) => el.querySelector('[class^=labelText]').textContent,
   filters: {
-    title: (el) => el.querySelector('input')?.title,
-    id: (el) => el.querySelector('input')?.id,
-    valid: (el) => el.querySelector('input')?.validity.valid,
-    checked: (el) => el.querySelector('input')?.checked,
-    value: (el) => el.querySelector('input')?.value,
+    title: (el) => el.querySelector('input').title,
+    id: (el) => el.querySelector('input').id,
+    valid: (el) => el.querySelector('input').validity.valid,
+    checked: (el) => el.querySelector('input').checked,
+    value: (el) => el.querySelector('input').value,
     label: (el) => el.textContent,
     feedbackText: (el) => el.querySelector('[class^=radioFeedback]').textContent,
     hasWarning: (el) => !!el.className.match(/hasWarning/),
