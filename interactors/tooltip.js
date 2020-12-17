@@ -2,7 +2,7 @@ import { createInteractor, perform } from '@bigtest/interactor';
 import { isVisible } from 'element-is-visible';
 
 export const Tooltip = createInteractor('tooltip')({
-  selector: '[class^=tooltip], .sr-only',
+  selector: '[class^=tooltip], [data-test-tooltip-proximity-element]',
   locator: (el) => {
     return el.querySelector('[class^=text], span[role=tooltip]').textContent;
   },
@@ -12,9 +12,7 @@ export const Tooltip = createInteractor('tooltip')({
     visible: isVisible,
     id: (el) => el.id,
     proximity: {
-      apply: (el) => {
-        return el.querySelector('span[role=tooltip]').getAttribute('role') === 'tooltip';
-      },
+      apply: (el) => el.getAttribute('data-test-tooltip-proximity-element') === 'true',
       default: false,
     }
   },
