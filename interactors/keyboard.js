@@ -8,7 +8,8 @@ export default createInteractor('keyboard')({
     arrowUp: press('ArrowUp'),
     arrowDown: press('ArrowDown'),
     home: press('Home'),
-    end: press('End')
+    end: press('End'),
+    escape: press('Escape')
   }
 })();
 
@@ -17,7 +18,8 @@ const KEY_CODES = {
   ArrowDown: 40,
   ArrowUp: 38,
   Home: 36,
-  End: 35
+  End: 35,
+  Escape: 27,
 };
 
 

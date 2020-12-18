@@ -36,6 +36,7 @@ include the DOM under test such as Selenium, or Nightmare.
 ### Table of Contents
 
 - [`Accordion`](#accordion)
+- [`Tooltip`](#tooltip)
 
 #### Accordion
 
@@ -75,4 +76,38 @@ Accordion("Categories").exists()
   inside this accordion
 - `index`: _number_ = the 0 based index of this accordion with in a
   pane set. So for example `Accordion("Users").has({ index: 2 })`
-  would assert that the "Users" accordion was 3rd in its accordion set.
+  would assert that the "Users" accordion was 3rd in its accordion
+  set.
+
+#### Tooltip
+
+Informational text that appears next to an element on mouseover in
+order to provide additional instructions
+
+##### Synopsis
+
+``` javascript
+import { Tooltip } from '@folio/stripes-testing';
+
+Tooltip("Throw this user to the trash").exists();
+```
+
+##### Locator
+
+Tooltips are located by their text property:
+
+```javascript
+Tooltip("save this document").has({ text: "save this document" });
+```
+
+### Filters
+
+- `id`: _string_ = the DOM element id of this tooltip. The `id` filter
+  is providerd for debugging, but should not generally be used for
+  tests
+- `text`: _string_ = the text of the toolip
+- `subtext`: _string_ = subtext of the tooltip
+- `visible`: _boolean_ = `true` if the tooltip is currently showing
+- `proximity`: _boolean_ = `true` if this tooltip is a proximity
+  tooltip in the DOM for the benefit of assitive technology. You
+  should not generally need to use this filter in tests

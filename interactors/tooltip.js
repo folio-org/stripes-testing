@@ -1,30 +1,20 @@
-import { createInteractor, perform } from '@bigtest/interactor';
+import { createInteractor } from '@bigtest/interactor';
 import { isVisible } from 'element-is-visible';
 
 export const Tooltip = createInteractor('tooltip')({
-  selector: '[class^=tooltip], .sr-only',
+  selector: '[class^=tooltip], [data-test-tooltip-proximity-element]',
   locator: (el) => {
     return el.querySelector('[class^=text], span[role=tooltip]').textContent;
   },
   filters: {
-    text: (el) => el.querySelector('[class^=text]').textContent,
-    sub: (el) => el.querySelector('[class^=sub]').textContent,
-    visible: isVisible,
     id: (el) => el.id,
+    text: (el) => el.querySelector('[class^=text]').textContent,
+    subtext: (el) => el.querySelector('[class^=sub]').textContent,
+    visible: isVisible,
     proximity: {
-      apply: (el) => {
-        return el.querySelector('span[role=tooltip]').getAttribute('role') === 'tooltip';
-      },
+      apply: (el) => el.getAttribute('data-test-tooltip-proximity-element') === 'true',
       default: false,
     }
-  },
-  actions: {
-    pressEscape: perform((el) => {
-      const kbEvent = new KeyboardEvent('keydown', {
-        key: 'Escape'
-      });
-      return el.dispatchEvent(kbEvent);
-    })
   }
 });
 
