@@ -89,6 +89,7 @@ The pane element
 
 ``` javascript
 import { Pane } from '@folio/stripes-testing';
+
 Pane("Search Result").is({ visible: true });
 ```
 
