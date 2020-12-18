@@ -36,6 +36,7 @@ include the DOM under test such as Selenium, or Nightmare.
 ### Table of Contents
 
 - [`Accordion`](#accordion)
+- [`Select`](#select)
 - [`Tooltip`](#tooltip)
 
 #### Accordion
@@ -100,7 +101,7 @@ Tooltips are located by their text property:
 Tooltip("save this document").has({ text: "save this document" });
 ```
 
-### Filters
+##### Filters
 
 - `id`: _string_ = the DOM element id of this tooltip. The `id` filter
   is providerd for debugging, but should not generally be used for
@@ -111,3 +112,47 @@ Tooltip("save this document").has({ text: "save this document" });
 - `proximity`: _boolean_ = `true` if this tooltip is a proximity
   tooltip in the DOM for the benefit of assitive technology. You
   should not generally need to use this filter in tests
+
+#### Select
+
+Stripes Select component wraps a basic <select> tag, but also has
+other features to integrate it with forms, including things like error
+states, etc..
+
+##### Synopsis
+
+``` javascript
+import { Select } from '@folio/stripes-testing';
+
+Select("Currency").choose('USD');
+```
+
+##### Locator
+
+Selects are identified by their label
+
+```javascript
+Select("Country").exists()
+```
+
+##### Actions
+
+- `choose(optionName: string)`: selects the option matching option name
+
+##### Filters
+
+- `id`: _string_ = the DOM element id of the actual html `select`
+  element.  Note that this _not the id of the React component_. The `id`
+  filter is provided for debugging, but should not generally be used
+  in tests since it is not a user-facing value
+- `label`: _string_ = the user identifying text of this
+  select. This is the same value as the locator.
+- `placeholder`: _string_ = The placeholder text of the contained
+  `select` element
+- `value`: _string_ = the `value` property of the select element. It
+  will be the currently selected option
+- `error`: _string_ = text of the error associated with this
+  `select`. If there is no error, then this will be undefined
+- `warning`: _string_ = text of the warning associated with this
+  select. If there is no warning, then this will be undefined
+- `valid`: _boolean_ = is this select valid?
