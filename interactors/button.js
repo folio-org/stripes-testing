@@ -1,4 +1,5 @@
-import { Button as ButtonInteractor, createInteractor, perform, focused, isVisible } from '@bigtest/interactor';
+import { Button as ButtonInteractor, createInteractor, perform, focused } from '@bigtest/interactor';
+import { isVisible } from 'element-is-visible';
 
 export default createInteractor('button')({
   selector: ['a[href]', ButtonInteractor().specification.selector].join(','),
