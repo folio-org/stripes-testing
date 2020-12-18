@@ -1,4 +1,4 @@
-import { createInteractor, perform } from '@bigtest/interactor';
+import { createInteractor } from '@bigtest/interactor';
 import { isVisible } from 'element-is-visible';
 
 export const Tooltip = createInteractor('tooltip')({
