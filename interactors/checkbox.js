@@ -7,7 +7,10 @@ const { title, visible } = CheckBox().specification.filters;
 
 export default createInteractor('checkbox')({
   selector: 'div[class^=checkbox-]',
-  locator: (el) => el.querySelector('[class^=labelText]').textContent,
+  locator: (el) => {
+    const labelText = el.querySelector('[class^=labelText]');
+    return labelText ? labelText.innerText : undefined;
+  },
   filters: {
     id: (el) => el.querySelector('input').id,
     checked: (el) => el.querySelector('input').checked,
