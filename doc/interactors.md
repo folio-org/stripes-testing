@@ -36,6 +36,7 @@ include the DOM under test such as Selenium, or Nightmare.
 ### Table of Contents
 
 - [`Accordion`](#accordion)
+- [`Pane`](#tooltip)
 - [`Select`](#select)
 - [`Tooltip`](#tooltip)
 
@@ -80,6 +81,47 @@ Accordion("Categories").exists()
   would assert that the "Users" accordion was 3rd in its accordion
   set.
 
+#### Pane
+
+The pane element
+
+##### Synopsis
+
+``` javascript
+import { Pane } from '@folio/stripes-testing';
+
+Pane("Search Result").is({ visible: true });
+```
+
+##### Locator
+
+Panes are identified by their title. For example:
+
+```javascript
+Pane("Search Result").exists();
+```
+
+##### Actions
+
+- `dismiss`: clicks on close button on the selected pane
+- `focus`: focuses the pane
+- `blurs`: blurs (removes focus of) the pane
+
+##### Filters
+
+- `id`: _string_ = the DOM element id of this pane. The `id`
+  filter is provided for debugging, but should not generally be used
+  in tests since it is not a user-facing value
+- `title`: _string_ = the user identifying text of this
+  pane. This is the same value as the locator.
+- `subtitle`: _string_ = an additional user identifying text if needed
+  to differentiate between panes.
+- `focused`: _boolean_ = `true` if the keyboard focus is anywhere
+  inside this pane
+- `index`: _number_ = the 0 based index of this pane with in a
+  pane set. So for example `Pane("Users").has({ index: 2 })`
+  would assert that the "Users" pane was 3rd in its pane set.
+
 #### Tooltip
 
 Informational text that appears next to an element on mouseover in
@@ -115,7 +157,7 @@ Tooltip("save this document").has({ text: "save this document" });
 
 #### Select
 
-Stripes Select component wraps a basic <select> tag, but also has
+Stripes Select component wraps a basic `<select>` tag, but also has
 other features to integrate it with forms, including things like error
 states, etc..
 
