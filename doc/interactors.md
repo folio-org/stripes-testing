@@ -37,6 +37,7 @@ include the DOM under test such as Selenium, or Nightmare.
 
 - [`Accordion`](#accordion)
 - [`Pane`](#tooltip)
+- [`KeyValue`](#keyvalue)
 - [`Select`](#select)
 - [`Tooltip`](#tooltip)
 
@@ -80,6 +81,32 @@ Accordion("Categories").exists()
   pane set. So for example `Accordion("Users").has({ index: 2 })`
   would assert that the "Users" accordion was 3rd in its accordion
   set.
+
+#### KeyValue
+
+Key Value are simple label/text pairs.
+
+##### Synopsis
+
+``` javascript
+import { KeyValue } from '@folio/stripes-testing';
+
+Accordion("Occupation").has({ value: 'librarian'});
+```
+
+##### Locator
+
+KeyValue pairs are identified by their key. E.g.
+
+```javascript
+KeyValue("Occupation").exists();
+```
+
+##### Filters
+
+- `value`: _string_ = The value associated with the key
+- `subValue`: _string_ = KeyValue components can have a subvalue which
+  is a slightly less emphasized
 
 #### Pane
 
