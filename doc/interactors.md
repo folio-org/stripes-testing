@@ -12,7 +12,7 @@ library, there is a corresponding interactor that can be used in your
 tests. For example, to interact with a stripes Button in a Jest test,
 you would do something like the following:
 
-``` javascript
+```javascript
 import { Button, Heading } from '@folio/stripes-testing';
 import { App } from '../app';
 
@@ -28,7 +28,7 @@ describe("My Page", () => {
 ```
 
 You can use these interactors inside any testing framework that runs
-in the same runtime environment as the DOM  such as Karma, Jest,
+in the same runtime environment as the DOM such as Karma, Jest,
 Cypress, or BigTest Platform. However, they cannot be used with test
 runners that runs tests in a remote runtime environment that does not
 include the DOM under test such as Selenium, or Nightmare.
@@ -36,12 +36,14 @@ include the DOM under test such as Selenium, or Nightmare.
 ### Table of Contents
 
 - [`Accordion`](#accordion)
-- [`Pane`](#pane)
+- [`Checkbox`](#checkbox)
 - [`KeyValue`](#keyvalue)
+- [`Layer`](#layer)
+- [`Pane`](#pane)
+- [`RadioButton`](#radiobutton)
 - [`Select`](#select)
 - [`TextField`](#textfield)
 - [`Tooltip`](#tooltip)
-- [`Layer`](#layer)
 
 #### Accordion
 
@@ -49,8 +51,8 @@ The accordion element
 
 ##### Synopsis
 
-``` javascript
-import { Accordion } from '@folio/stripes-testing';
+```javascript
+import { Accordion } from "@folio/stripes-testing";
 
 Accordion("Location").is({ open: true });
 ```
@@ -60,7 +62,7 @@ Accordion("Location").is({ open: true });
 Accordions are identified by their header. For example:
 
 ```javascript
-Accordion("Categories").exists()
+Accordion("Categories").exists();
 ```
 
 ##### Actions
@@ -84,16 +86,64 @@ Accordion("Categories").exists()
   would assert that the "Users" accordion was 3rd in its accordion
   set.
 
+#### Checkbox
+
+The checkbox element
+
+##### Synopsis
+
+```javascript
+import { checkbox } from "@folio/stripes-testing";
+
+Checkbox("Label").is({ checked: true });
+```
+
+##### Locator
+
+A checkbox is identified by the label. For example:
+
+```javascript
+Checkbox("Label").exists();
+```
+
+##### Actions
+
+- `click`: clicks on checkbox label to toggle the checked status
+- `focus`: transfers focus to the enclosing label of this checkbox
+- `clickInput`: clicks on the actual checkbox (helpful if there is no label)
+- `clickAndBlur`: clicking also focuses the checkbox, this will immediately blur
+  after the click which will trigger the field validation
+
+##### Filters
+
+- `id`: _string_ = the DOM element id of this checkbox. The `id`
+  filter is provided for debugging, but should not generally be used
+  in tests since it is not a user-facing value
+- `title`: _string_ = the element title
+- `label`: _string_ = the user identifying text of this
+  checkbox. This is the same value as the locator.
+- `checked`: _boolean_ = `true` if this checkbox is expanded, `false`,
+  if not
+- `valid`: _boolean_ = `true` is valid
+- `value`: _string_ = the checkbox value if defined
+- `focused`: _boolean_ = `true` if the keyboard focus is anywhere
+  inside this checkbox
+- `ariaLabel`: _boolean_ = the aria label as passed via the props
+- `ariaInvalid`: _boolean_ = `true` is rendered with `"true"`, otherwise false
+- `feedbackText`: _string_ = the text related to the validation warning or error
+- `hasWarning`: _boolean_ = `true` if the checkbox has a warning [class]
+- `hasError`: _boolean_ = `true` if the checkbox has an error [class]
+
 #### KeyValue
 
 Key Value are simple label/text pairs.
 
 ##### Synopsis
 
-``` javascript
-import { KeyValue } from '@folio/stripes-testing';
+```javascript
+import { KeyValue } from "@folio/stripes-testing";
 
-Accordion("Occupation").has({ value: 'librarian'});
+Accordion("Occupation").has({ value: "librarian" });
 ```
 
 ##### Locator
@@ -110,14 +160,53 @@ KeyValue("Occupation").exists();
 - `subValue`: _string_ = KeyValue components can have a subvalue which
   is a slightly less emphasized
 
+#### Layer
+
+The layer element
+
+##### Synopsis
+
+```javascript
+import { Layer } from "@folio/stripes-testing";
+Layer("layer label").is({ visible: true });
+```
+
+##### Locator
+
+Layers are hidden initially and more structural in nature. As such,
+they can be identified by visual context. This is not applicable to
+screen readers however so the component requires an aria-label to suit.
+For example:
+
+```javascript
+Layer("layer label").exists();
+```
+
+##### Actions
+
+None.
+
+##### Filters
+
+- `id`: _string_ = the DOM element id of this layer. The `id`
+  filter is provided for debugging, but should not generally be used
+  in tests since it is not a user-facing value
+- `ariaLabel`: _string_ = the user identifying text of this
+  layer. This is the same value as the locator.
+- `visible`: _boolean_ = the state of the layer's visibility. Note that
+  with the initial state of this element, it does not exist in the DOM,
+  and it will be unable to find an element with `{ visible: false }`.
+- `focused`: _boolean_ = `true` if the keyboard focus is anywhere
+  inside this layer
+
 #### Pane
 
 The pane element
 
 ##### Synopsis
 
-``` javascript
-import { Pane } from '@folio/stripes-testing';
+```javascript
+import { Pane } from "@folio/stripes-testing";
 
 Pane("Search Result").is({ visible: true });
 ```
@@ -151,48 +240,51 @@ Pane("Search Result").exists();
   pane set. So for example `Pane("Users").has({ index: 2 })`
   would assert that the "Users" pane was 3rd in its pane set.
 
-#### TextField
+#### RadioButton
 
-Stripes TextField component wraps a standard `input` text element, adding support for things like controls and error states.
+The RadioButton element
 
 ##### Synopsis
 
-``` javascript
-import { TextField } from '@folio/stripes-testing';
+```javascript
+import { RadioButton } from "@folio/stripes-testing";
 
-TextField("First Name").exists();
+RadioButton("Label").is({ checked: true });
 ```
 
 ##### Locator
 
-Text fields are located by their label:
+A RadioButton is identified by the label. For example:
 
 ```javascript
-TextField("First Name").has({ label: "First Name" });
+RadioButton("Label").exists();
 ```
 
-##### Filters
-- `id`: _string_ = the DOM element id of this text field. The `id` filter
-  is providerd for debugging, but should not generally be used for
-  tests
-- `label`: _string_ = the label of the text field
-- `type`: _string_ = the type of the text field. should always return `"text"`
-- `value`: _string_ = the current value of the text field
-- `focused`: _boolean_ = `true` if the text field is currently in focus
-- `readOnly`: _boolean_ = `true` if the text field is read-only
-- `startControl`: _string_ = the text content of the `startControl` element
-- `endControl`: _string_ = the text content of the `endControl` element
-- `error`: _string_ = text of the error associated with this
-  text field. If there is no error, then this will be undefined
-- `warning`: _string_ = text of the warning associated with this
-  text field. If there is no warning, then this will be undefined
-- `valid`: _boolean_ = is this text field valid?
-
 ##### Actions
-- `blur()`: removes focus from the text field
-- `clear()`: clears the text field's current value
-- `fillIn(value: string)`: fills in the text field with a given value
-- `focus()`: sets focus on the text field
+
+- `click`: clicks on RadioButton label to toggle the checked status
+- `focus`: transfers focus to the RadioButton input
+- `blur`: blurs (removes focus of) the RadioButton
+
+##### Filters
+
+- `id`: _string_ = the DOM element id of this radio button. The `id`
+  filter is provided for debugging, but should not generally be used
+  in tests since it is not a user-facing value
+- `title`: _string_ = the element title
+- `label`: _string_ = the user identifying text of this
+  radio button. This is the same value as the locator.
+- `checked`: _boolean_ = `true` if this radio button is checked, `false`,
+  if not
+- `valid`: _boolean_ = `true` if the radio button is valid
+- `value`: _string_ = the radio button value if defined
+- `focused`: _boolean_ = `true` if the keyboard focus is anywhere
+  inside this radio button
+- `ariaLabel`: _boolean_ = the aria label as passed via the props
+- `ariaInvalid`: _boolean_ = `true` is rendered with `"true"`, otherwise false
+- `feedbackText`: _string_ = the text related to the validation warning or error
+- `hasWarning`: _boolean_ = `true` if the radio button has a warning [class]
+- `hasError`: _boolean_ = `true` if the radio button has an error [class]
 
 #### Tooltip
 
@@ -201,8 +293,8 @@ order to provide additional instructions
 
 ##### Synopsis
 
-``` javascript
-import { Tooltip } from '@folio/stripes-testing';
+```javascript
+import { Tooltip } from "@folio/stripes-testing";
 
 Tooltip("Throw this user to the trash").exists();
 ```
@@ -235,10 +327,10 @@ states, etc..
 
 ##### Synopsis
 
-``` javascript
-import { Select } from '@folio/stripes-testing';
+```javascript
+import { Select } from "@folio/stripes-testing";
 
-Select("Currency").choose('USD');
+Select("Currency").choose("USD");
 ```
 
 ##### Locator
@@ -246,7 +338,7 @@ Select("Currency").choose('USD');
 Selects are identified by their label
 
 ```javascript
-Select("Country").exists()
+Select("Country").exists();
 ```
 
 ##### Actions
@@ -256,7 +348,7 @@ Select("Country").exists()
 ##### Filters
 
 - `id`: _string_ = the DOM element id of the actual html `select`
-  element.  Note that this _not the id of the React component_. The `id`
+  element. Note that this _not the id of the React component_. The `id`
   filter is provided for debugging, but should not generally be used
   in tests since it is not a user-facing value
 - `label`: _string_ = the user identifying text of this
@@ -270,41 +362,3 @@ Select("Country").exists()
 - `warning`: _string_ = text of the warning associated with this
   select. If there is no warning, then this will be undefined
 - `valid`: _boolean_ = is this select valid?
-
-#### Layer
-
-The layer element
-
-##### Synopsis
-
-``` javascript
-import { Layer } from '@folio/stripes-testing';
-Layer("layer label").is({ visible: true });
-```
-
-##### Locator
-
-Layers are hidden initially and more structural in nature. As such,
-they can be identified by visual context. This is not applicable to
-screen readers however so the component requires an aria-label to suit.
-For example:
-
-```javascript
-Layer("layer label").exists()
-```
-
-##### Actions
-
-None.
-##### Filters
-
-- `id`: _string_ = the DOM element id of this layer. The `id`
-  filter is provided for debugging, but should not generally be used
-  in tests since it is not a user-facing value
-- `ariaLabel`: _string_ = the user identifying text of this
-  layer. This is the same value as the locator.
-- `visible`: _boolean_ = the state of the layer's visibility. Note that
-  with the initial state of this element, it does not exist in the DOM,
-  and it will be unable to find an element with `{ visible: false }`.
-- `focused`: _boolean_ = `true` if the keyboard focus is anywhere
-  inside this layer
