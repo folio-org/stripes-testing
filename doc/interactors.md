@@ -40,6 +40,7 @@ include the DOM under test such as Selenium, or Nightmare.
 - [`KeyValue`](#keyvalue)
 - [`Select`](#select)
 - [`Tooltip`](#tooltip)
+- [`Layer`](#layer)
 
 #### Accordion
 
@@ -225,3 +226,41 @@ Select("Country").exists()
 - `warning`: _string_ = text of the warning associated with this
   select. If there is no warning, then this will be undefined
 - `valid`: _boolean_ = is this select valid?
+
+#### Layer
+
+The layer element
+
+##### Synopsis
+
+``` javascript
+import { Layer } from '@folio/stripes-testing';
+Layer("layer label").is({ visible: true });
+```
+
+##### Locator
+
+Layers are hidden initially and more structural in nature. As such,
+they can be identified by visual context. This is not applicable to
+screen readers however so the component requires an aria-label to suit.
+For example:
+
+```javascript
+Layer("layer label").exists()
+```
+
+##### Actions
+
+None.
+##### Filters
+
+- `id`: _string_ = the DOM element id of this layer. The `id`
+  filter is provided for debugging, but should not generally be used
+  in tests since it is not a user-facing value
+- `ariaLabel`: _string_ = the user identifying text of this
+  layer. This is the same value as the locator.
+- `visible`: _boolean_ = the state of the layer's visibility. Note that
+  with the initial state of this element, it does not exist in the DOM,
+  and it will be unable to find an element with `{ visible: false }`.
+- `focused`: _boolean_ = `true` if the keyboard focus is anywhere
+  inside this layer
