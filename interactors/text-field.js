@@ -19,6 +19,9 @@ export default createInteractor('text field')({
     readOnly: (el) => el.querySelector('input').hasAttribute('readOnly'),
     startControl: (el) => el.querySelector('[class^=startControls').textContent,
     endControl: (el) => el.querySelector('[class^=endControls').textContent,
+    error: (el) => (el.querySelector('[class*=feedbackError-]') || {}).textContent,
+    warning: (el) => (el.querySelector('[class*=feedbackWarning-]') || {}).textContent,
+    valid: el => el.querySelector('input').getAttribute('aria-invalid') !== 'true'
   },
   actions: {
     blur: perform((el) => el.querySelector('input').blur()),

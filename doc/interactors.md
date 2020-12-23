@@ -182,6 +182,11 @@ TextField("First Name").has({ label: "First Name" });
 - `readOnly`: _boolean_ = `true` if the text field is read-only
 - `startControl`: _string_ = the text content of the `startControl` element
 - `endControl`: _string_ = the text content of the `endControl` element
+- `error`: _string_ = text of the error associated with this
+  text field. If there is no error, then this will be undefined
+- `warning`: _string_ = text of the warning associated with this
+  text field. If there is no warning, then this will be undefined
+- `valid`: _boolean_ = is this text field valid?
 
 ##### Actions
 - `blur()`: removes focus from the text field
