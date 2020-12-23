@@ -16,3 +16,4 @@ export { default as Button } from './button';
 export { default as Pane } from './pane';
 export { default as TextField } from './text-field';
 export { default as Dropdown } from './dropdown';
+export { default as TextArea } from './textarea';
