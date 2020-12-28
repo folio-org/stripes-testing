@@ -41,6 +41,7 @@ include the DOM under test such as Selenium, or Nightmare.
 - [`Layer`](#layer)
 - [`Pane`](#pane)
 - [`RadioButton`](#radiobutton)
+- [`SearchField`](#searchField)
 - [`Select`](#select)
 - [`TextField`](#textfield)
 - [`Tooltip`](#tooltip)
@@ -285,6 +286,35 @@ RadioButton("Label").exists();
 - `feedbackText`: _string_ = the text related to the validation warning or error
 - `hasWarning`: _boolean_ = `true` if the radio button has a warning [class]
 - `hasError`: _boolean_ = `true` if the radio button has an error [class]
+
+#### SearchField
+
+Stripes SearchField component composes basic `<select>` and `<input>` elements
+
+##### Synopsis
+
+``` javascript
+import { SearchField } from '@folio/stripes-testing';
+
+SearchField().has({ id: 'searchFieldTest'});
+```
+
+##### Actions
+
+- `selectIndex(string)`: selects the option matching option name
+- `fillIn(value: string)`: fills in the text field with a given value
+
+##### Filters
+
+- `id`: _string_ = the DOM element id of the contained `select`
+  element.  Note that this _not the id of the React component_. The `id`
+  filter is provided for debugging, but should not generally be used
+  in tests since it is not a user-facing value.
+- `placeholder`: _string_ = The placeholder text of the contained `input` element.
+- `value`: _string_ = the `value` property of the contained `input` element.
+- `readOnly`: _boolean_ = `true` if the contained `input` is read-only.
+- `isDisabledIndex`: _boolean_ = `true` if the contained `select` is disabled.
+- `isDisabled`: _boolean_ = `true` if the contained `input` is disabled.
 
 #### Select
 
