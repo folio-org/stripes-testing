@@ -10,6 +10,7 @@ export default createInteractor('icon button')({
     id: (el) => el.id,
     href: (el) => el.getAttribute('href'),
     hash: (el) => el.hash,
+    icon: (el) => el.getAttribute('icon'),
   },
   actions: {
     focus: perform((el) => el.focus()),

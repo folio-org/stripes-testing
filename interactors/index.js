@@ -12,5 +12,4 @@ export { default as Select } from './select';
 export { default as Label } from './label';
 export { default as Button } from './button';
 export { default as Pane } from './pane';
-
-export { TextField } from '@bigtest/interactor';
+export { default as TextField } from './text-field';

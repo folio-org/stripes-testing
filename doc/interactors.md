@@ -36,9 +36,10 @@ include the DOM under test such as Selenium, or Nightmare.
 ### Table of Contents
 
 - [`Accordion`](#accordion)
-- [`Pane`](#tooltip)
+- [`Pane`](#pane)
 - [`KeyValue`](#keyvalue)
 - [`Select`](#select)
+- [`TextField`](#textfield)
 - [`Tooltip`](#tooltip)
 - [`Layer`](#layer)
 
@@ -149,6 +150,49 @@ Pane("Search Result").exists();
 - `index`: _number_ = the 0 based index of this pane with in a
   pane set. So for example `Pane("Users").has({ index: 2 })`
   would assert that the "Users" pane was 3rd in its pane set.
+
+#### TextField
+
+Stripes TextField component wraps a standard `input` text element, adding support for things like controls and error states.
+
+##### Synopsis
+
+``` javascript
+import { TextField } from '@folio/stripes-testing';
+
+TextField("First Name").exists();
+```
+
+##### Locator
+
+Text fields are located by their label:
+
+```javascript
+TextField("First Name").has({ label: "First Name" });
+```
+
+##### Filters
+- `id`: _string_ = the DOM element id of this text field. The `id` filter
+  is providerd for debugging, but should not generally be used for
+  tests
+- `label`: _string_ = the label of the text field
+- `type`: _string_ = the type of the text field. should always return `"text"`
+- `value`: _string_ = the current value of the text field
+- `focused`: _boolean_ = `true` if the text field is currently in focus
+- `readOnly`: _boolean_ = `true` if the text field is read-only
+- `startControl`: _string_ = the text content of the `startControl` element
+- `endControl`: _string_ = the text content of the `endControl` element
+- `error`: _string_ = text of the error associated with this
+  text field. If there is no error, then this will be undefined
+- `warning`: _string_ = text of the warning associated with this
+  text field. If there is no warning, then this will be undefined
+- `valid`: _boolean_ = is this text field valid?
+
+##### Actions
+- `blur()`: removes focus from the text field
+- `clear()`: clears the text field's current value
+- `fillIn(value: string)`: fills in the text field with a given value
+- `focus()`: sets focus on the text field
 
 #### Tooltip
 
