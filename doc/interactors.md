@@ -442,7 +442,7 @@ RadioButton("Label").exists();
 
 #### SearchField
 
-Stripes SearchField component composes basic `<select>` and `<input>` elements
+Stripes SearchField component for initiating queries
 
 ##### Synopsis
 
@@ -454,7 +454,7 @@ SearchField().has({ id: 'searchFieldTest'});
 
 ##### Actions
 
-- `selectIndex(string)`: selects the option matching option name
+- `selectIndex(string)`: selects the searchable index to perform this search on. For example "users" or "locations"
 - `fillIn(value: string)`: fills in the text field with a given value
 
 ##### Filters
@@ -466,7 +466,6 @@ SearchField().has({ id: 'searchFieldTest'});
 - `placeholder`: _string_ = The placeholder text of the contained `input` element.
 - `value`: _string_ = the `value` property of the contained `input` element.
 - `readOnly`: _boolean_ = `true` if the contained `input` is read-only.
-- `isDisabledIndex`: _boolean_ = `true` if the contained `select` is disabled.
 - `isDisabled`: _boolean_ = `true` if the contained `input` is disabled.
 
 #### Select
