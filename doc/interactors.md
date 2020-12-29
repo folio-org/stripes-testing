@@ -460,7 +460,7 @@ TextArea("leave a comment").has({ text: "leave a comment" });
 
 ##### Filters
 - `id`: _string_ = the DOM element id of this textarea. The `id` filter
-  is providerd for debugging, but should not generally be used for
+  is provided for debugging, but should not generally be used for
   tests
 - `label`: _string_ = the label of the textarea
 - `value`: _string_ = the current value of the textarea
