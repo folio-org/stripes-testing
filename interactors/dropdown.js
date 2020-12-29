@@ -16,7 +16,13 @@ const DropdownMenu = createInteractor('dropdown menu')({
   }
 });
 
+const label = el => el.querySelector('[aria-haspopup]').textContent;
+
 const open = el => el.querySelector('[aria-haspopup]').getAttribute('aria-expanded') === 'true';
+
+// todo: 'visible' should ensure the DropdownMenu is visible as well,
+// once filters support interactor composition
+const visible = el => [el, el.querySelector(['[aria-haspopup]'])].every(isVisible);
 
 const control = (shouldOpen = true) => async interactor => {
   let isOpen;
@@ -28,11 +34,8 @@ const control = (shouldOpen = true) => async interactor => {
 
 export default createInteractor('dropdown')({
   selector: 'div[class*=dropdown]',
-  locator: el => el.querySelector('[aria-haspopup]').textContent,
-  filters: {
-    open,
-    visible: el => [el, el.querySelector(['[aria-haspopup]'])].every(isVisible),
-  },
+  locator: label,
+  filters: { label, open, visible },
   actions: {
     focus: interactor => interactor.find(DropdownTrigger()).focus(),
     toggle: interactor => interactor.find(DropdownTrigger()).click(),
