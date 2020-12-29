@@ -36,7 +36,9 @@ include the DOM under test such as Selenium, or Nightmare.
 ### Table of Contents
 
 - [`Accordion`](#accordion)
+- [`Button`](#button)
 - [`Checkbox`](#checkbox)
+- [`IconButton`](#iconbutton)
 - [`KeyValue`](#keyvalue)
 - [`Layer`](#layer)
 - [`Pane`](#pane)
@@ -86,6 +88,44 @@ Accordion("Categories").exists();
   would assert that the "Users" accordion was 3rd in its accordion
   set.
 
+#### Button
+
+The Button element
+
+##### Synopsis
+
+``` javascript
+import { Button } from '@folio/stripes-testing';
+
+Button("Click Me").click();
+```
+
+##### Locator
+
+Buttons are located by their text content. For example:
+
+```javascript
+Button("Click Me").has({ text: "Click Me" });
+```
+
+##### Actions
+
+- `click()`: clicks the button
+
+##### Filters
+
+- `id`: _string_ = the DOM element id of this button. The `id`
+  filter is provided for debugging, but should not generally be used
+  in tests since it is not a user-facing value
+- `text`: _string_ = the text content of the button. This is the same value as the locator.
+- `href`: _string_ = the `href` of the button, if provided
+- `button`: _boolean_ = `true` if the button is a `<button>` button element
+- `anchor`: _boolean_ = `true` if the button is a `<a>` anchor element
+- `default`: _boolean_ = `true` if the button contains the `default` class
+- `ariaLabel`: _string_ = the button's `ariaLabel` attribute
+- `visible`: _boolean_ = `true` if the button is visible
+- `focused`: _boolean_ = `true` if the button is in-focus
+
 #### Checkbox
 
 The checkbox element
@@ -96,7 +136,6 @@ The checkbox element
 import { checkbox } from "@folio/stripes-testing";
 
 Checkbox("Label").is({ checked: true });
-```
 
 ##### Locator
 
@@ -133,6 +172,43 @@ Checkbox("Label").exists();
 - `feedbackText`: _string_ = the text related to the validation warning or error
 - `hasWarning`: _boolean_ = `true` if the checkbox has a warning [class]
 - `hasError`: _boolean_ = `true` if the checkbox has an error [class]
+
+#### IconButton
+
+The IconButton element
+
+##### Synopsis
+
+``` javascript
+import { IconButton } from '@folio/stripes-testing';
+
+IconButton("Close").click();
+```
+
+##### Locator
+
+An IconButton is located by its aria-label. For example:
+
+```javascript
+IconButton("Close").has({ ariaLabel: "Close" });
+```
+
+##### Actions
+
+- `focus()`: sets focus on the icon button
+- `click()`: clicks the icon button
+
+##### Filters
+
+- `id`: _string_ = the DOM element id of this icon button. The `id`
+  filter is provided for debugging, but should not generally be used
+  in tests since it is not a user-facing value
+- `href`: _string_ = the `href` of the icon button, if provided
+- `hash`: _string_ = the `hash` of the icon button, if provided
+- `button`: _boolean_ = `true` if the icon button is a `<button>` button element
+- `anchor`: _boolean_ = `true` if the icon button is a `<a>` anchor element
+- `ariaLabel`: _string_ = the button's `ariaLabel` attribute
+- `focused`: _boolean_ = `true` if the button is in-focus
 
 #### KeyValue
 
