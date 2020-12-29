@@ -1,4 +1,4 @@
-import { createInteractor, perform } from '@bigtest/interactor';
+import { createInteractor, TextField } from '@bigtest/interactor';
 
 const label = (el) => {
   const labelText = el.querySelector('label');
@@ -17,11 +17,8 @@ export default createInteractor('text area')({
     valid: el => el.querySelector('textarea').getAttribute('aria-invalid') !== 'true'
   },
   actions: {
-    blur: perform(el => el.querySelector('textarea').blur()),
-    fillIn: async (interactor, value) => {
-      await interactor.focus();
-      await interactor.perform(el => { el.querySelector('textarea').value = value; });
-    },
-    focus: perform(el => el.querySelector('textarea').focus()),
+    blur: (interactor) => interactor.find(TextField()).blur(),
+    fillIn: (interactor, value) => interactor.find(TextField()).fillIn(value),
+    focus: (interactor) => interactor.find(TextField()).focus(),
   }
 });
