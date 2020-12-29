@@ -298,7 +298,13 @@ import { SearchField } from '@folio/stripes-testing';
 
 SearchField().has({ id: 'searchFieldTest'});
 ```
+##### Locator
 
+A SearchField is located by ___. For example:
+
+```javascript
+SearchField("Label").exists();
+```
 ##### Actions
 
 - `selectIndex(string)`: selects the searchable index to perform this search on. For example "users" or "locations"
