@@ -45,6 +45,7 @@ include the DOM under test such as Selenium, or Nightmare.
 - [`Pane`](#pane)
 - [`RadioButton`](#radiobutton)
 - [`Select`](#select)
+- [`TextArea`](#textarea)
 - [`TextField`](#textfield)
 - [`Tooltip`](#tooltip)
 
@@ -434,6 +435,46 @@ Select("Country").exists();
 - `warning`: _string_ = text of the warning associated with this
   select. If there is no warning, then this will be undefined
 - `valid`: _boolean_ = is this select valid?
+
+
+#### TextArea
+
+Stripes TextArea component wraps a standard `textarea` element,
+adding support for things like controls and error states.
+
+##### Synopsis
+
+``` javascript
+import { TextArea } from '@folio/stripes-testing';
+
+TextArea("leave a comment").exists();
+```
+
+##### Locator
+
+A TextArea is located by its label property:
+
+```javascript
+TextArea("leave a comment").has({ text: "leave a comment" });
+```
+
+##### Filters
+- `id`: _string_ = the DOM element id of this textarea. The `id` filter
+  is provided for debugging, but should not generally be used for
+  tests
+- `label`: _string_ = the label of the textarea
+- `value`: _string_ = the current value of the textarea
+- `error`: _string_ = text of the error associated with this
+  textarea. If there is no error, then this will be undefined
+- `warning`: _string_ = text of the warning associated with this
+  textarea. If there is no warning, then this will be undefined
+- `valid`: _boolean_ = is this textarea valid?
+
+##### Actions
+- `blur()`: removes focus from the textarea
+- `fillIn(value: string)`: fills in the textarea with a given value
+- `focus()`: sets focus on the textarea
+
 
 #### TextField
 
