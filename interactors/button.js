@@ -11,7 +11,7 @@ export default createInteractor('button')({
     anchor: (el) => el.tagName === 'A',
     default: (el) => el.classList.contains('default'),
     ariaLabel: (el) => el.ariaLabel,
-    visible: { apply: isVisible, default: true },
+    visible: isVisible,
     focused,
   },
   actions: {

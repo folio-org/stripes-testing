@@ -38,6 +38,7 @@ include the DOM under test such as Selenium, or Nightmare.
 - [`Accordion`](#accordion)
 - [`Button`](#button)
 - [`Checkbox`](#checkbox)
+- [`Dropdown`](#dropdown)
 - [`IconButton`](#iconbutton)
 - [`KeyValue`](#keyvalue)
 - [`Layer`](#layer)
@@ -172,6 +173,34 @@ Checkbox("Label").exists();
 - `feedbackText`: _string_ = the text related to the validation warning or error
 - `hasWarning`: _boolean_ = `true` if the checkbox has a warning [class]
 - `hasError`: _boolean_ = `true` if the checkbox has an error [class]
+
+#### Dropdown
+
+The Stripes Dropdown component
+
+##### Synopsis
+
+```javascript
+import { Dropdown } from "@folio/stripes-testing";
+
+Dropdown("Menu").choose("Contact Us");
+```
+
+Dropdowns are identified by their label, or trigger
+
+```javascript
+Dropdown("Menu").exists();
+```
+
+##### Actions
+
+- `choose(optionName: string)`: clicks a given option in the dropdown
+
+##### Filters
+- `open`: _boolean_ = `true` if the dropdown is open
+- `visible`: _boolean_ = `true` if the dropdown is visible
+- `label`: _string_ = the user identifying text of this
+  dropdown. This is the same value as the locator.
 
 #### IconButton
 
