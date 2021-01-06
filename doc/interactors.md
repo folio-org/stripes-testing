@@ -39,13 +39,13 @@ interactors](https://frontside.com/bigtest/interactors) for more information
 
 ### How do I write interactors for my own application?
 
-The simplest answer to this question is that in vast majority of
+The simplest answer to this question is that in the vast majority of
 cases, you should not need to write your own interactors for your
 application.
 
 One of the goals of the `@stripes/testing` library is that if your
 application is built with stripes components, then the ability to
-simulate any user interaction can easily tested. Even though your
+simulate any user interaction is baked in for free. Even though your
 application is built out of many complex components, your user still
 interacts _directly_ with the low-level input components like
 "button", "textfield".
@@ -79,7 +79,7 @@ is an interactor, then you might have found a gap in the
 `@stripes/testing` library itself. In that case, you can follow the
 guide for [creating a custom
 interactor](https://frontside.com/bigtest/docs/interactors/write-your-own)
-and make a pull request to this library itself.
+and make a pull request to this package.
 
 ### Table of Contents
 - [`Accordion`](#accordion)
