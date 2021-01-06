@@ -6,7 +6,7 @@ target an application using it. We know very precicesly what shape the
 structure the DOM will take, and we can use that knowledge to our
 advantage when it comes to writing tests.
 
-For every component in the
+For most components in the
 [stripes-components](https://github.com/folio-org/stripes-components#stripes-components)
 library, there is a corresponding interactor that can be used in your
 tests. For example, to interact with a stripes Button in a Jest test,
@@ -33,8 +33,55 @@ Cypress, or BigTest Platform. However, they cannot be used with test
 runners that runs tests in a remote runtime environment that does not
 include the DOM under test such as Selenium, or Nightmare.
 
-### Table of Contents
+See the [general guide for working with
+interactors](https://frontside.com/bigtest/interactors) for more information
 
+
+### How do I write interactors for my own application?
+
+The simplest answer to this question is that in vast majority of
+cases, you should not need to write your own interactors for your
+application.
+
+One of the goals of the `@stripes/testing` library is that if your
+application is built with stripes components, then the ability to
+simulate any user interaction can easily tested. Even though your
+application is built out of many complex components, your user still
+interacts _directly_ with the low-level input components like
+"button", "textfield".
+
+### What about complex, repetitive actions like filling out a form?
+
+Sometimes there are interactions that span many different components
+that need to be captured so that they can be used multiple times in
+multiple test cases. In this instance, you might be tempted to make a
+custom interactor to encapsulate this process. However, consider using
+a simple `async` function instead that itself uses interactors under
+the hood to manipulate the actual components:
+
+```js
+export async function Login(username, password) {
+  await TextField('username').fillIn(useranme);
+  await TextField({ placeholder: 'password' }).fillIn(password);
+}
+```
+
+you can now use this function anywhere inside your test code:
+
+```js
+  beforEach(Login('abfab', 'absolutely-fabulous'))
+```
+
+## What if I still think that there is an interactor missing?
+
+If an `async` function won't do, and you think that what's called for
+is an interactor, then you might have found a gap in the
+`@stripes/testing` library itself. In that case, you can follow the
+guide for [creating a custom
+interactor](https://frontside.com/bigtest/docs/interactors/write-your-own)
+and make a pull request to this library itself.
+
+### Table of Contents
 - [`Accordion`](#accordion)
 - [`Button`](#button)
 - [`Checkbox`](#checkbox)
