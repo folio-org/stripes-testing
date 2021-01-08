@@ -2,14 +2,21 @@
 
 import { createInteractor, perform } from '@bigtest/interactor';
 
-export default createInteractor('keyboard')({
+export default createInteractor('keyboard (requires window to have focus)')({
   selector: ':focus',
   actions: {
     arrowUp: press('ArrowUp'),
     arrowDown: press('ArrowDown'),
+    arrowLeft: press('ArrowLeft'),
+    arrowRight: press('ArrowRight'),
+    pageUp: press('PageUp'),
+    pageDown: press('PageDown'),
     home: press('Home'),
     end: press('End'),
-    escape: press('Escape')
+    enter: press('Enter'),
+    escape: press('Escape'),
+    alt: press('AltLeft'),
+    altLeft: press('AltLeft')
   }
 })();
 
@@ -17,9 +24,15 @@ export default createInteractor('keyboard')({
 const KEY_CODES = {
   ArrowDown: 40,
   ArrowUp: 38,
+  ArrowLeft: 37,
+  ArrowRight: 39,
+  PageUp: 33,
+  PageDown: 34,
   Home: 36,
   End: 35,
+  Enter: 13,
   Escape: 27,
+  AltLeft: 18
 };
 
 

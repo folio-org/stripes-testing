@@ -1,3 +1,9 @@
+import * as Bigtest from '@bigtest/interactor';
+
+export { Bigtest };
+
+export { default as Checkbox } from './checkbox';
+export { default as Datepicker, Calendar } from './datepicker';
 export { default as Accordion } from './accordion';
 export { default as Button } from './button';
 export { default as Checkbox } from './checkbox';
@@ -16,5 +22,12 @@ export { default as TextField } from './text-field';
 export { default as Dropdown } from './dropdown';
 export { default as TextArea } from './textarea';
 export { Tooltip, TooltipProximity } from './tooltip';
-
+export { default as Layer } from './layer';
 export { default as converge } from './converge';
+export { default as RadioButton } from './radio-button';
+export { default as Select } from './select';
+export { default as Label } from './label';
+export { default as Button } from './button';
+export { default as Pane } from './pane';
+export { default as TextField } from './text-field';
+export { default as HTML } from './html';
