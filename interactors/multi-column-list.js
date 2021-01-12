@@ -20,6 +20,10 @@ export const MultiColumnListCell = createInteractor('multi column list cell')({
     row,
     column: childIndex,
     xy: el => [row(el), childIndex(el)],
+    selected: (el) => el.parentElement.className.match(/mclSelected/)
+  },
+  actions: {
+    click: perform((el) => el.click)
   }
 });
 
@@ -48,9 +52,17 @@ export const MultiColumnList = createInteractor('multi column list')({
     height: el => el.offsetHeight,
     width: el => el.offsetWidth,
     visible: isVisible,
+    headerInteractivity: (el) => [...el.querySelectorAll('div[class*=mclHeader-]')].map((d) => !!d.querySelector('[data-test-clickable-header]'))
   },
   actions: {
-    clickHeader: (interactor, header) => interactor.find(MultiColumnListHeader(header)).click()
+    clickHeader: (interactor, header) => interactor.find(MultiColumnListHeader(header)).click(),
+    scrollBy: (interactor, value) => interactor.perform(
+      async (el) => {
+        const scrollable = el.querySelector('div[class^=mclScrollable-');
+        const fired = scrollable.dispatchEvent(new CustomEvent('scroll'));
+        if (fired) await scrollable.scrollBy({ top: value });
+      }
+    ),
   }
 });
 
