@@ -319,7 +319,7 @@ SearchField("Label").exists();
 - `placeholder`: _string_ = The placeholder text of the contained `input` element.
 - `value`: _string_ = the `value` property of the contained `input` element.
 - `readOnly`: _boolean_ = `true` if the contained `input` is read-only.
-- `isDisabled`: _boolean_ = `true` if the contained `input` is disabled.
+- `disabled`: _boolean_ = `true` if the contained `input` is disabled.
 
 #### Select
 
