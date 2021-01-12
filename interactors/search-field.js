@@ -13,7 +13,7 @@ export default createInteractor('search field')({
     readOnly: el => el.querySelector('input').hasAttribute('readOnly'),
     value: el => el.querySelector('input').value,
     placeholder: el => el.querySelector('input').placeholder,
-    isDisabled: el => el.querySelector('select').disabled,
+    disabled: el => el.querySelector('select').disabled,
   },
   actions: {
     fillIn: (interactor, value) => interactor.find(TextField()).fillIn(value),
