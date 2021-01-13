@@ -20,7 +20,8 @@ export const MultiColumnListCell = createInteractor('multi column list cell')({
     row,
     column: childIndex,
     xy: el => [row(el), childIndex(el)],
-    selected: (el) => el.parentElement.className.match(/mclSelected/)
+    selected: (el) => !!el.parentElement.className.match(/mclSelected/),
+    measured: (el) => el.style && el.style.width !== ''
   },
   actions: {
     click: perform((el) => el.click)
