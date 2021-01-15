@@ -12,17 +12,17 @@ library, there is a corresponding interactor that can be used in your
 tests. For example, to interact with a stripes Button in a Jest test,
 you would do something like the following:
 
-```javascript
+```js
 import { Button, Heading } from '@folio/stripes-testing';
 import { App } from '../app';
 
-describe("My Page", () => {
-  beforEach(() => render(<App>));
+describe('My Page', () => {
+  beforeEach(() => render(<App>));
 
   it('can click a button to reveal a secret message', async () => {
-    await Button("Click Me!").click();
+    await Button('Click Me!').click();
 
-    await Heading("Thank You!").exists();
+    await Heading('Thank You!').exists();
   });
 })
 ```
@@ -69,7 +69,7 @@ export async function Login(username, password) {
 you can now use this function anywhere inside your test code:
 
 ```js
-  beforEach(Login('abfab', 'absolutely-fabulous'))
+beforeEach(Login('abfab', 'absolutely-fabulous'));
 ```
 
 ## What if I still think that there is an interactor missing?
@@ -82,6 +82,7 @@ interactor](https://frontside.com/bigtest/docs/interactors/write-your-own)
 and make a pull request to this package.
 
 ### Table of Contents
+
 - [`Accordion`](#accordion)
 - [`Button`](#button)
 - [`Checkbox`](#checkbox)
@@ -104,18 +105,18 @@ The accordion element
 
 ##### Synopsis
 
-```javascript
-import { Accordion } from "@folio/stripes-testing";
+```js
+import { Accordion } from '@folio/stripes-testing';
 
-Accordion("Location").is({ open: true });
+Accordion('Location').is({ open: true });
 ```
 
 ##### Locator
 
 Accordions are identified by their header. For example:
 
-```javascript
-Accordion("Categories").exists();
+```js
+Accordion('Categories').exists();
 ```
 
 ##### Actions
@@ -135,7 +136,7 @@ Accordion("Categories").exists();
 - `focused`: _boolean_ = `true` if the keyboard focus is anywhere
   inside this accordion
 - `index`: _number_ = the 0 based index of this accordion with in a
-  pane set. So for example `Accordion("Users").has({ index: 2 })`
+  pane set. So for example `Accordion('Users').has({ index: 2 })`
   would assert that the "Users" accordion was 3rd in its accordion
   set.
 
@@ -145,18 +146,18 @@ The Button element
 
 ##### Synopsis
 
-```javascript
-import { Button } from "@folio/stripes-testing";
+```js
+import { Button } from '@folio/stripes-testing';
 
-Button("Click Me").click();
+Button('Click Me').click();
 ```
 
 ##### Locator
 
 Buttons are located by their text content. For example:
 
-```javascript
-Button("Click Me").has({ text: "Click Me" });
+```js
+Button('Click Me').has({ text: 'Click Me' });
 ```
 
 ##### Actions
@@ -183,18 +184,19 @@ The checkbox element
 
 ##### Synopsis
 
-````javascript
-import { checkbox } from "@folio/stripes-testing";
+```js
+import { checkbox } from '@folio/stripes-testing';
 
-Checkbox("Label").is({ checked: true });
+Checkbox('Label').is({ checked: true });
+```
 
 ##### Locator
 
 A checkbox is identified by the label. For example:
 
-```javascript
-Checkbox("Label").exists();
-````
+```js
+Checkbox('Label').exists();
+```
 
 ##### Actions
 
@@ -219,7 +221,7 @@ Checkbox("Label").exists();
 - `focused`: _boolean_ = `true` if the keyboard focus is anywhere
   inside this checkbox
 - `ariaLabel`: _boolean_ = the aria label as passed via the props
-- `ariaInvalid`: _boolean_ = `true` is rendered with `"true"`, otherwise false
+- `ariaInvalid`: _boolean_ = `true` is rendered with `'true'`, otherwise false
 - `feedbackText`: _string_ = the text related to the validation warning or error
 - `hasWarning`: _boolean_ = `true` if the checkbox has a warning [class]
 - `hasError`: _boolean_ = `true` if the checkbox has an error [class]
@@ -230,16 +232,16 @@ The Stripes Dropdown component
 
 ##### Synopsis
 
-```javascript
-import { Dropdown } from "@folio/stripes-testing";
+```js
+import { Dropdown } from '@folio/stripes-testing';
 
-Dropdown("Menu").choose("Contact Us");
+Dropdown('Menu').choose('Contact Us');
 ```
 
 Dropdowns are identified by their label, or trigger
 
-```javascript
-Dropdown("Menu").exists();
+```js
+Dropdown('Menu').exists();
 ```
 
 ##### Actions
@@ -247,6 +249,7 @@ Dropdown("Menu").exists();
 - `choose(optionName: string)`: clicks a given option in the dropdown
 
 ##### Filters
+
 - `open`: _boolean_ = `true` if the dropdown is open
 - `visible`: _boolean_ = `true` if the dropdown is visible
 - `label`: _string_ = the user identifying text of this
@@ -258,18 +261,18 @@ The IconButton element
 
 ##### Synopsis
 
-```javascript
-import { IconButton } from "@folio/stripes-testing";
+```js
+import { IconButton } from '@folio/stripes-testing';
 
-IconButton("Close").click();
+IconButton('Close').click();
 ```
 
 ##### Locator
 
 An IconButton is located by its aria-label. For example:
 
-```javascript
-IconButton("Close").has({ ariaLabel: "Close" });
+```js
+IconButton('Close').has({ ariaLabel: 'Close' });
 ```
 
 ##### Actions
@@ -295,18 +298,18 @@ Key Value are simple label/text pairs.
 
 ##### Synopsis
 
-```javascript
-import { KeyValue } from "@folio/stripes-testing";
+```js
+import { KeyValue } from '@folio/stripes-testing';
 
-KeyValue("Occupation").has({ value: "librarian" });
+KeyValue('Occupation').has({ value: 'librarian' });
 ```
 
 ##### Locator
 
 KeyValue pairs are identified by their key. E.g.
 
-```javascript
-KeyValue("Occupation").exists();
+```js
+KeyValue('Occupation').exists();
 ```
 
 ##### Filters
@@ -321,9 +324,9 @@ The layer element
 
 ##### Synopsis
 
-```javascript
-import { Layer } from "@folio/stripes-testing";
-Layer("layer label").is({ visible: true });
+```js
+import { Layer } from '@folio/stripes-testing';
+Layer('layer label').is({ visible: true });
 ```
 
 ##### Locator
@@ -333,8 +336,8 @@ they can be identified by visual context. This is not applicable to
 screen readers however so the component requires an aria-label to suit.
 For example:
 
-```javascript
-Layer("layer label").exists();
+```js
+Layer('layer label').exists();
 ```
 
 ##### Actions
@@ -362,8 +365,8 @@ The MultiColumnList element contains two interactors: an interactor for the over
 
 ###### Synopsis
 
-```javascript
-import { MultiColumnList } from "@folio/stripes-testing";
+```js
+import { MultiColumnList } from '@folio/stripes-testing';
 MultiColumnList().is({ visible: true });
 ```
 
@@ -371,21 +374,21 @@ MultiColumnList().is({ visible: true });
 
 The MultiColumnList is able to be located by the `id` due the structural nature of the element.
 
-```javascript
-MultiColumnList("mcl-container").exists();
+```js
+MultiColumnList('mcl-container').exists();
 ```
 
 Alternatively when only one is rendered on the page, you will likely prefer to omit the locator.
 
-```javascript
+```js
 MultiColumnList().exists();
 ```
 
 ###### Actions
 
 - `clickHeader`: clicks on the overall header element
-- `scrollBy`: _int_ = scrolls the container by the specified pixels entered as an integer, will trigger the related scroll events
-- `click`: {row: _int_, column: _string_} = clicks a cell within the MCL with the specified to row and column. Both row and column default to the cell in the first row and first column
+- `scrollBy(int)`: scrolls the container by the specified pixels entered as an integer, will trigger the related scroll events
+- `click({row: int, column: string})`: clicks a cell within the MCL with the specified to row and column. Both row and column default to the cell in the first row and first column
 
 ###### Filters
 
@@ -404,17 +407,17 @@ MultiColumnList().exists();
 
 ###### Synopsis
 
-```javascript
-import { MultiColumnListCell } from "@folio/stripes-testing";
-MultiColumnListCell("Jane Doe").is({ content: true });
+```js
+import { MultiColumnListCell } from '@folio/stripes-testing';
+MultiColumnListCell('Jane Doe').is({ content: true });
 ```
 
 ###### Locator
 
 The MultiColumnListCell is located by the text content.
 
-```javascript
-MultiColumnListCell("Jane Doe").is({ selected: true });
+```js
+MultiColumnListCell('Jane Doe').is({ selected: true });
 ```
 
 ###### Actions
@@ -436,18 +439,18 @@ The pane element
 
 ##### Synopsis
 
-```javascript
-import { Pane } from "@folio/stripes-testing";
+```js
+import { Pane } from '@folio/stripes-testing';
 
-Pane("Search Result").is({ visible: true });
+Pane('Search Result').is({ visible: true });
 ```
 
 ##### Locator
 
 Panes are identified by their title. For example:
 
-```javascript
-Pane("Search Result").exists();
+```js
+Pane('Search Result').exists();
 ```
 
 ##### Actions
@@ -468,7 +471,7 @@ Pane("Search Result").exists();
 - `focused`: _boolean_ = `true` if the keyboard focus is anywhere
   inside this pane
 - `index`: _number_ = the 0 based index of this pane with in a
-  pane set. So for example `Pane("Users").has({ index: 2 })`
+  pane set. So for example `Pane('Users').has({ index: 2 })`
   would assert that the "Users" pane was 3rd in its pane set.
 
 #### RadioButton
@@ -477,18 +480,18 @@ The RadioButton element
 
 ##### Synopsis
 
-```javascript
-import { RadioButton } from "@folio/stripes-testing";
+```js
+import { RadioButton } from '@folio/stripes-testing';
 
-RadioButton("Label").is({ checked: true });
+RadioButton('Label').is({ checked: true });
 ```
 
 ##### Locator
 
 A RadioButton is identified by the label. For example:
 
-```javascript
-RadioButton("Label").exists();
+```js
+RadioButton('Label').exists();
 ```
 
 ##### Actions
@@ -512,7 +515,7 @@ RadioButton("Label").exists();
 - `focused`: _boolean_ = `true` if the keyboard focus is anywhere
   inside this radio button
 - `ariaLabel`: _boolean_ = the aria label as passed via the props
-- `ariaInvalid`: _boolean_ = `true` is rendered with `"true"`, otherwise false
+- `ariaInvalid`: _boolean_ = `true` is rendered with `'true'`, otherwise false
 - `feedbackText`: _string_ = the text related to the validation warning or error
 - `hasWarning`: _boolean_ = `true` if the radio button has a warning [class]
 - `hasError`: _boolean_ = `true` if the radio button has an error [class]
@@ -523,18 +526,20 @@ Stripes SearchField component for initiating queries
 
 ##### Synopsis
 
-``` javascript
+```js
 import { SearchField } from '@folio/stripes-testing';
 
-SearchField().has({ id: 'searchFieldTest'});
+SearchField().has({ id: 'searchFieldTest' });
 ```
+
 ##### Locator
 
 A SearchField is located by ___. For example:
 
-```javascript
-SearchField("Label").exists();
+```js
+SearchField('Label').exists();
 ```
+
 ##### Actions
 
 - `selectIndex(string)`: selects the searchable index to perform this search on. For example "users" or "locations"
@@ -543,7 +548,7 @@ SearchField("Label").exists();
 ##### Filters
 
 - `id`: _string_ = the DOM element id of the contained `select`
-  element.  Note that this _not the id of the React component_. The `id`
+  element. Note that this _not the id of the React component_. The `id`
   filter is provided for debugging, but should not generally be used
   in tests since it is not a user-facing value.
 - `placeholder`: _string_ = The placeholder text of the contained `input` element.
@@ -559,18 +564,18 @@ states, etc..
 
 ##### Synopsis
 
-```javascript
-import { Select } from "@folio/stripes-testing";
+```js
+import { Select } from '@folio/stripes-testing';
 
-Select("Currency").choose("USD");
+Select('Currency').choose('USD');
 ```
 
 ##### Locator
 
 Selects are identified by their label
 
-```javascript
-Select("Country").exists();
+```js
+Select('Country').exists();
 ```
 
 ##### Actions
@@ -595,7 +600,6 @@ Select("Country").exists();
   select. If there is no warning, then this will be undefined
 - `valid`: _boolean_ = is this select valid?
 
-
 #### TextArea
 
 Stripes TextArea component wraps a standard `textarea` element,
@@ -603,21 +607,22 @@ adding support for things like controls and error states.
 
 ##### Synopsis
 
-``` javascript
+```js
 import { TextArea } from '@folio/stripes-testing';
 
-TextArea("leave a comment").exists();
+TextArea('leave a comment').exists();
 ```
 
 ##### Locator
 
 A TextArea is located by its label property:
 
-```javascript
-TextArea("leave a comment").has({ text: "leave a comment" });
+```js
+TextArea('leave a comment').has({ text: 'leave a comment' });
 ```
 
 ##### Filters
+
 - `id`: _string_ = the DOM element id of this textarea. The `id` filter
   is provided for debugging, but should not generally be used for
   tests
@@ -630,10 +635,10 @@ TextArea("leave a comment").has({ text: "leave a comment" });
 - `valid`: _boolean_ = is this textarea valid?
 
 ##### Actions
+
 - `blur()`: removes focus from the textarea
 - `fillIn(value: string)`: fills in the textarea with a given value
 - `focus()`: sets focus on the textarea
-
 
 #### TextField
 
@@ -641,18 +646,18 @@ Stripes TextField component wraps a standard `input` text element, adding suppor
 
 ##### Synopsis
 
-```javascript
-import { TextField } from "@folio/stripes-testing";
+```js
+import { TextField } from '@folio/stripes-testing';
 
-TextField("First Name").exists();
+TextField('First Name').exists();
 ```
 
 ##### Locator
 
 Text fields are located by their label:
 
-```javascript
-TextField("First Name").has({ label: "First Name" });
+```js
+TextField('First Name').has({ label: 'First Name' });
 ```
 
 ##### Filters
@@ -661,7 +666,7 @@ TextField("First Name").has({ label: "First Name" });
   is providerd for debugging, but should not generally be used for
   tests
 - `label`: _string_ = the label of the text field
-- `type`: _string_ = the type of the text field. should always return `"text"`
+- `type`: _string_ = the type of the text field. should always return `'text'`
 - `value`: _string_ = the current value of the text field
 - `focused`: _boolean_ = `true` if the text field is currently in focus
 - `readOnly`: _boolean_ = `true` if the text field is read-only
@@ -687,18 +692,18 @@ order to provide additional instructions
 
 ##### Synopsis
 
-```javascript
-import { Tooltip } from "@folio/stripes-testing";
+```js
+import { Tooltip } from '@folio/stripes-testing';
 
-Tooltip("Throw this user to the trash").exists();
+Tooltip('Throw this user to the trash').exists();
 ```
 
 ##### Locator
 
 Tooltips are located by their text property:
 
-```javascript
-Tooltip("save this document").has({ text: "save this document" });
+```js
+Tooltip('save this document').has({ text: 'save this document' });
 ```
 
 ##### Filters
