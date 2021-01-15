@@ -89,6 +89,7 @@ and make a pull request to this package.
 - [`IconButton`](#iconbutton)
 - [`KeyValue`](#keyvalue)
 - [`Layer`](#layer)
+- [`MultiColumnList`](#multicolumnlist) ([`MultiColumnListCell`](#multicolumnlistcell))
 - [`Pane`](#pane)
 - [`RadioButton`](#radiobutton)
 - [`SearchField`](#searchField)
@@ -144,8 +145,8 @@ The Button element
 
 ##### Synopsis
 
-``` javascript
-import { Button } from '@folio/stripes-testing';
+```javascript
+import { Button } from "@folio/stripes-testing";
 
 Button("Click Me").click();
 ```
@@ -182,7 +183,7 @@ The checkbox element
 
 ##### Synopsis
 
-```javascript
+````javascript
 import { checkbox } from "@folio/stripes-testing";
 
 Checkbox("Label").is({ checked: true });
@@ -193,7 +194,7 @@ A checkbox is identified by the label. For example:
 
 ```javascript
 Checkbox("Label").exists();
-```
+````
 
 ##### Actions
 
@@ -257,8 +258,8 @@ The IconButton element
 
 ##### Synopsis
 
-``` javascript
-import { IconButton } from '@folio/stripes-testing';
+```javascript
+import { IconButton } from "@folio/stripes-testing";
 
 IconButton("Close").click();
 ```
@@ -352,6 +353,80 @@ None.
   and it will be unable to find an element with `{ visible: false }`.
 - `focused`: _boolean_ = `true` if the keyboard focus is anywhere
   inside this layer
+
+#### MultiColumnList
+
+The MultiColumnList element contains two interactors: an interactor for the overall container, `MultiColumnList`, and an interactor that let's you target specific cells, `MultiColumnListCell`.
+
+##### MultiColumnList (Container)
+
+###### Synopsis
+
+```javascript
+import { MultiColumnList } from "@folio/stripes-testing";
+MultiColumnList().is({ visible: true });
+```
+
+###### Locator
+
+The MultiColumnList is able to be located by the `id` due the structural nature of the element.
+
+```javascript
+MultiColumnList("mcl-container").exists();
+```
+
+Alternatively when only one is rendered on the page, you will likely prefer to omit the locator.
+
+```javascript
+MultiColumnList().exists();
+```
+
+###### Actions
+
+- `clickHeader`: clicks on the overall header element
+- `scrollBy`: _int_ = scrolls the container by the specified pixels entered as an integer, will trigger the related scroll events
+
+###### Filters
+
+- `id`: _string_ = the DOM element id of this layer. The `id`
+  filter is provided for debugging, but should not generally be used
+  in tests since it is not a user-facing value
+- `columns`: [_string_, _string_, ...] = an array of strings representing each column header text
+- `headerInteractivity`: [_boolean_, _boolean_, ...] = an array of boolean representing if each column header is clickable
+- `columnCount`: _int_ = the number of columns in the MCL
+- `rowCount`: _int_ = the number of rows in the MCL, counting from 0, e.g. `Array.length`
+- `height`: _int_ = the container height, e.g. `el.offsetHeight`
+- `width`: _int_ = the container width, e.g. `el.offsetWidth`
+- `visible`: _boolean_ = `true` if the button is visible
+
+##### MultiColumnListCell
+
+###### Synopsis
+
+```javascript
+import { MultiColumnListCell } from "@folio/stripes-testing";
+MultiColumnListCell("Jane Doe").is({ content: true });
+```
+
+###### Locator
+
+The MultiColumnListCell is located by the text content.
+
+```javascript
+MultiColumnListCell("Jane Doe").is({ selected: true });
+```
+
+###### Actions
+
+- `click`: clicks on the cell
+
+###### Filters
+
+- `content`: _string_ = the content within a cell
+- `row`: _int_ = find a cell within a row
+- `column`: _int_ = find a cell within a column
+- `selected`: _boolean_ = `true` if the cell is selected
+- `measured`: _boolean_ = if the width of the cell has been measured
 
 #### Pane
 
