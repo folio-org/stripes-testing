@@ -1,10 +1,5 @@
-import { createInteractor, perform, focused, Button } from '@bigtest/interactor';
+import { createInteractor, perform } from '@bigtest/interactor';
 import { isVisible } from 'element-is-visible';
-
-const log = x => {
-  console.log(x);
-  return x;
-};
 
 const row = el => +el.parentElement.getAttribute('data-row-inner');
 
