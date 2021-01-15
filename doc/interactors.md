@@ -385,6 +385,7 @@ MultiColumnList().exists();
 
 - `clickHeader`: clicks on the overall header element
 - `scrollBy`: _int_ = scrolls the container by the specified pixels entered as an integer, will trigger the related scroll events
+- `click`: {row: _int_, column: _string_} = clicks a cell within the MCL with the specified to row and column. Both row and column default to the cell in the first row and first column
 
 ###### Filters
 
@@ -423,8 +424,9 @@ MultiColumnListCell("Jane Doe").is({ selected: true });
 ###### Filters
 
 - `content`: _string_ = the content within a cell
-- `row`: _int_ = find a cell within a row
-- `column`: _int_ = find a cell within a column
+- `row`: _int_ = find a cell within a row based on the index
+- `column`: _string_ = find a cell within a column, preferred over `columnIndex`
+- `columnIndex`: _int_ = find a cell within a column based on the index, prefer use of `column` as that is user facing
 - `selected`: _boolean_ = `true` if the cell is selected
 - `measured`: _boolean_ = if the width of the cell has been measured
 

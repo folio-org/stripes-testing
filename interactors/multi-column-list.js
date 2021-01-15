@@ -1,8 +1,6 @@
 import { createInteractor, perform } from '@bigtest/interactor';
 import { isVisible } from 'element-is-visible';
 
-const row = el => +el.parentElement.getAttribute('data-row-inner');
-
 const childIndex = el => [...el.parentElement.children].indexOf(el);
 
 const content = el => el.textContent;
@@ -12,13 +10,14 @@ export const MultiColumnListCell = createInteractor('multi column list cell')({
   locator: content,
   filters: {
     content,
-    row,
-    column: childIndex,
+    row: el => +el.parentElement.getAttribute('data-row-inner'),
+    column: (el) => el.textContent,
+    columnIndex: childIndex,
     selected: (el) => !!el.parentElement.className.match(/mclSelected/),
     measured: (el) => el.style && el.style.width !== ''
   },
   actions: {
-    click: perform((el) => el.click)
+    click: perform((el) => el.click())
   }
 });
 
@@ -58,6 +57,10 @@ export const MultiColumnList = createInteractor('multi column list')({
         if (fired) await scrollable.scrollBy({ top: value });
       }
     ),
+    click: (interactor, { row = 0, column }) => {
+      const columnSearch = !column ? { columnIndex: 0 } : { column };
+      return interactor.find(MultiColumnListCell({ row, ...columnSearch })).click();
+    }
   }
 });
 
