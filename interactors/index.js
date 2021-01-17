@@ -1,4 +1,5 @@
-export { default as Generic } from './generic';
+
+export { default as HTML } from './html';
 export { default as Accordion } from './accordion';
 export { default as Checkbox } from './checkbox';
 export { default as IconButton } from './icon-button';
