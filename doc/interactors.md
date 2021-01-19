@@ -87,6 +87,7 @@ and make a pull request to this package.
 - [`Button`](#button)
 - [`Checkbox`](#checkbox)
 - [`Dropdown`](#dropdown)
+- [`Datepicker`](#datepicker) ([`Calendar Widget`](#calendar-widget))
 - [`IconButton`](#iconbutton)
 - [`KeyValue`](#keyvalue)
 - [`Layer`](#layer)
@@ -225,6 +226,86 @@ Checkbox('Label').exists();
 - `feedbackText`: _string_ = the text related to the validation warning or error
 - `hasWarning`: _boolean_ = `true` if the checkbox has a warning [class]
 - `hasError`: _boolean_ = `true` if the checkbox has an error [class]
+#### Datepicker
+
+The datepicker and related elements
+
+##### Datepicker (input element)
+###### Synopsis
+
+```javascript
+import { Datepicker } from '@folio/stripes-testing';
+
+Datepicker().has({ today: true, required: true });
+```
+
+###### Locator
+
+Datepickers can be identified by their label. For example:
+
+```javascript
+Datepicker('Start Date').is({ visible: true });
+```
+
+###### Actions
+
+- `openCalendar`: clicks the icon that opens the calendar widget
+- `clear`: removes the value from the field
+- `click`: clicks the field
+- `focusInput`: focuses the input
+- `fillIn(value: string)`: fill in a specific date value as if the user typed in the field
+- `focus`: focuses the input field
+- `blur`: blurs the input field
+
+###### Filters
+
+- `id`: _string_ = the DOM element id of this datepciker. The `id` filter is provided for debugging, but should not generally be used in tests since it is not a user-facing value
+- `label`: _string_ = the user identifying text of this datepicker. This is the same value as the locator.
+- `placeholder`: _string_ = the input placeholder which is a user identifying text if label is not sufficiently unique.
+- `focused`: _boolean_ = `true` if the keyboard focus targets the input
+- `warning`: _boolean_ = `true` if in a warning state
+- `error`: _boolean_ = `true` if in an error state
+- `inputValue`: _string_ = the value in input
+- `inputDay`: _int_ = the day that is in the input
+- `today`: _boolean_ = `true` if the date in the input is today's date
+- `empty`: _boolean_ = `true` if the date in the input is cleared
+- `visible`: _boolean_ = `true` if the input is visible
+- `disabled`: _boolean_ = `true` if the input is disabled
+- `readOnly`: _boolean_ = `true` if the input is set to read only
+- `required`: _boolean_ = `true` if the input is a required field
+
+##### Calendar Widget
+###### Synopsis
+
+```javascript
+import { Calendar } from '@folio/stripes-testing';
+
+Calendar().is({ visible: true });
+```
+
+###### Locator
+
+The calendar widget does not have a locator. Only one widget may be visible at a time.
+
+###### Actions
+
+- `click`: clicks on the calendar widget container
+- `focus`: focuses on the calendar widget container
+- `clickDay(value: string)`: clicks the day passed on the calendar widget
+- `focusDay(value: string)`: focuses on a day passed within the calendar widget
+- `setYear(value: string)`: sets the year passed within the year input field in the widget
+
+###### Filters
+
+- `today`: _boolean_ = `true` if the input today's date
+- `month`: _string_ = the currently selected month
+- `year`: _string_ = the currently selected year
+- `days`: [_string_, _string_, ...] = an array of strings representing all of the days present (and not excluded) as two digits, `03` for the third day of the month. Note that days which are shown that are not within the currently selected month are surrounded by underscores, e.g. `_31_`, `_01_`
+- `excludedDays`: [_string_, _string_, ...] = the inverse of `days`, an array of strings representing all of the dates that are excluded
+- `portal`: _boolean_ = `true` if the widget is created within the `#OverlayContainer` portal
+- `visible`: _boolean_ = `true` if the input is visible
+- `focused`: _boolean_ = `true` if the calendar widget container is focused
+- `focusedWithin`: _boolean_ = `true` if anything within the widget has focus
 
 #### Dropdown
 

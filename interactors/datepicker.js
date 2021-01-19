@@ -5,6 +5,7 @@ import IconButton from './icon-button';
 
 export default createInteractor('datepicker')({
   selector: '[data-test-datepicker-container]',
+  locator: (el) => el.querySelector('label').textContent,
   filters: {
     id: (el) => el.querySelector('input').id,
     inputValue: (el) => el.querySelector('div[class^=textField] input').value,
@@ -38,7 +39,6 @@ export default createInteractor('datepicker')({
     openCalendar: (interactor) => interactor.find(IconButton({ icon: 'calendar' })).click(),
     clear: (interactor) => interactor.find(IconButton({ icon: 'times-circle-solid' })).click(),
     click: perform((el) => { el.click(); }),
-    focusInput: (interactor) => interactor.find(TextField()).focus(),
     fillIn: (interactor, value) => interactor.find(TextField()).fillIn(value),
     focus: (interactor) => interactor.find(TextField()).focus(),
     blur: (interactor) => interactor.find(TextField()).blur(),
@@ -53,14 +53,6 @@ const CalendarDays = createInteractor('calendar days')({
     } else {
       return el.textContent;
     }
-  },
-  filters: {
-    selected: (el) => !!el.querySelector('div').className.match(/selected-/),
-    dateSelected: (el) => el.getAttribute('data-date'),
-    disabled: (el) => el.querySelector('div').hasAttribute('data-excluded'),
-    month: (el) => el.getAttribute('data-date').split('/')[0],
-    year: (el) => el.getAttribute('data-date').split('/')[2],
-    focused
   },
   actions: {
     click: perform((el) => { el.click(); }),
@@ -121,5 +113,3 @@ export const Calendar = createInteractor('calendar widget')({
       })
   }
 });
-
-
