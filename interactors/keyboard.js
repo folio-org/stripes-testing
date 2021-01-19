@@ -1,6 +1,6 @@
 /* eslint-disable no-use-before-define */
 
-import { createInteractor, perform } from '@bigtest/interactor';
+import { createInteractor, perform, Select } from '@bigtest/interactor';
 
 export default createInteractor('keyboard (requires window to have focus)')({
   selector: ':focus',
@@ -9,6 +9,38 @@ export default createInteractor('keyboard (requires window to have focus)')({
     arrowDown: press('ArrowDown'),
     arrowLeft: press('ArrowLeft'),
     arrowRight: press('ArrowRight'),
+    // using an underscore to signify that this is a temporary workaround
+    // we want to use the default browser implementation, but it doesn't
+    // trigger the built-in browser functions so we will need a more
+    // fleshed out approach to this
+    _nextOption: perform(async (el) => {
+      if (el.localName === 'select') {
+        const options = el.querySelectorAll('option');
+        const nextValue = parseInt(el.value, 10) === options.length - 1
+          ? '0'
+          : `${parseInt(el.value, 10) + 1}`;
+        await Select().choose(options.item(nextValue).textContent);
+      } else {
+        const value = `${parseInt(el.value, 10) + 1}`;
+        const property = Object.getOwnPropertyDescriptor(Object.getPrototypeOf(el), 'value');
+        property.set.call(el, value);
+        el.dispatchEvent(new InputEvent('input', { inputType: 'insertFromPaste', bubbles: true, cancelable: false }));
+      }
+    }),
+    _prevOption: perform(async (el) => {
+      if (el.localName === 'select') {
+        const options = el.querySelectorAll('option');
+        const nextValue = parseInt(el.value, 10) === 0
+          ? `${options.length() - 1}`
+          : `${parseInt(el.value, 10) - 1}`;
+        await Select().choose(options.item(nextValue).textContent);
+      } else {
+        const value = `${parseInt(el.value, 10) - 1}`;
+        const property = Object.getOwnPropertyDescriptor(Object.getPrototypeOf(el), 'value');
+        property.set.call(el, value);
+        el.dispatchEvent(new InputEvent('input', { inputType: 'insertFromPaste', bubbles: true, cancelable: false }));
+      }
+    }),
     pageUp: press('PageUp'),
     pageDown: press('PageDown'),
     home: press('Home'),
@@ -19,7 +51,6 @@ export default createInteractor('keyboard (requires window to have focus)')({
     altLeft: press('AltLeft')
   }
 })();
-
 
 const KEY_CODES = {
   ArrowDown: 40,
