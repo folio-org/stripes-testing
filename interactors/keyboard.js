@@ -2,6 +2,7 @@
 
 import { createInteractor, perform, Select } from '@bigtest/interactor';
 
+
 export default createInteractor('keyboard (requires window to have focus)')({
   selector: ':focus',
   actions: {
@@ -41,8 +42,8 @@ export default createInteractor('keyboard (requires window to have focus)')({
         el.dispatchEvent(new InputEvent('input', { inputType: 'insertFromPaste', bubbles: true, cancelable: false }));
       }
     }),
-    pageUp: press('PageUp'),
-    pageDown: press('PageDown'),
+    pageUp: (interactor, options) => press('PageUp', options)(interactor),
+    pageDown: (interactor, options) => press('PageDown', options)(interactor),
     home: press('Home'),
     end: press('End'),
     enter: press('Enter'),
@@ -67,23 +68,23 @@ const KEY_CODES = {
 };
 
 
-function press(code) {
+function press(code, options) {
   return perform(async function (el) {
-    if (await dispatch(el, 'keydown', code)) {
-      await dispatch(el, 'keyup', code);
+    if (await dispatch(el, 'keydown', code, options)) {
+      await dispatch(el, 'keyup', code, options);
     }
   });
 }
 
-function dispatch(element, eventType, code) {
+function dispatch(element, eventType, code, options) {
   return new Promise((resolve, reject) => {
     try {
       const KeyboardEvent = element.ownerDocument.defaultView.KeyboardEvent;
       const event = new KeyboardEvent(eventType, {
-        altKey: false,
+        altKey: (options && options.altKey) || false,
         code,
         keyCode: KEY_CODES[code],
-        ctrlKey: false,
+        ctrlKey: (options && options.ctrlKey) || false,
         key: code,
         bubbles: true,
         cancelable: true
