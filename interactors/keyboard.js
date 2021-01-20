@@ -10,37 +10,34 @@ export default createInteractor('keyboard (requires window to have focus)')({
     arrowDown: press('ArrowDown'),
     arrowLeft: press('ArrowLeft'),
     arrowRight: press('ArrowRight'),
-    // using an underscore to signify that this is a temporary workaround
-    // we want to use the default browser implementation, but it doesn't
-    // trigger the built-in browser functions so we will need a more
-    // fleshed out approach to this
-    _nextOption: perform(async (el) => {
-      if (el.localName === 'select') {
-        const options = el.querySelectorAll('option');
-        const nextValue = parseInt(el.value, 10) === options.length - 1
-          ? '0'
-          : `${parseInt(el.value, 10) + 1}`;
-        await Select().choose(options.item(nextValue).textContent);
-      } else {
-        const value = `${parseInt(el.value, 10) + 1}`;
-        const property = Object.getOwnPropertyDescriptor(Object.getPrototypeOf(el), 'value');
-        property.set.call(el, value);
-        el.dispatchEvent(new InputEvent('input', { inputType: 'insertFromPaste', bubbles: true, cancelable: false }));
-      }
+    // next/prevOption and increment/decrementNumber are workarounds
+    // as we want to use the default browser implementation,
+    // but it doesn't trigger the built-in browser functions
+    nextOption: perform(async (el) => {
+      const options = el.querySelectorAll('option');
+      const nextValue = parseInt(el.value, 10) === options.length - 1
+        ? '0'
+        : `${parseInt(el.value, 10) + 1}`;
+      await Select().choose(options.item(nextValue).textContent);
     }),
-    _prevOption: perform(async (el) => {
-      if (el.localName === 'select') {
-        const options = el.querySelectorAll('option');
-        const nextValue = parseInt(el.value, 10) === 0
-          ? `${options.length() - 1}`
-          : `${parseInt(el.value, 10) - 1}`;
-        await Select().choose(options.item(nextValue).textContent);
-      } else {
-        const value = `${parseInt(el.value, 10) - 1}`;
-        const property = Object.getOwnPropertyDescriptor(Object.getPrototypeOf(el), 'value');
-        property.set.call(el, value);
-        el.dispatchEvent(new InputEvent('input', { inputType: 'insertFromPaste', bubbles: true, cancelable: false }));
-      }
+    prevOption: perform(async (el) => {
+      const options = el.querySelectorAll('option');
+      const nextValue = parseInt(el.value, 10) === 0
+        ? `${options.length() - 1}`
+        : `${parseInt(el.value, 10) - 1}`;
+      await Select().choose(options.item(nextValue).textContent);
+    }),
+    incrementNumber: perform(async (el) => {
+      const value = `${parseInt(el.value, 10) + 1}`;
+      const property = Object.getOwnPropertyDescriptor(Object.getPrototypeOf(el), 'value');
+      property.set.call(el, value);
+      el.dispatchEvent(new InputEvent('input', { inputType: 'insertFromPaste', bubbles: true, cancelable: false }));
+    }),
+    decrementNumber: perform(async (el) => {
+      const value = `${parseInt(el.value, 10) - 1}`;
+      const property = Object.getOwnPropertyDescriptor(Object.getPrototypeOf(el), 'value');
+      property.set.call(el, value);
+      el.dispatchEvent(new InputEvent('input', { inputType: 'insertFromPaste', bubbles: true, cancelable: false }));
     }),
     pageUp: (interactor, options) => press('PageUp', options)(interactor),
     pageDown: (interactor, options) => press('PageDown', options)(interactor),
