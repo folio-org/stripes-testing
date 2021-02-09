@@ -1,17 +1,12 @@
-import { CheckBox, createInteractor, perform } from '@bigtest/interactor';
+import { CheckBox, HTML, perform } from '@bigtest/interactor';
 
-// The built-in CheckBox interactor expects an input element,
-// and anything added in the future would likely not work without modification.
-// Explicitly import known working functions.
-const { title, visible } = CheckBox().specification.filters;
-
-export default createInteractor('checkbox')({
-  selector: 'div[class^=checkbox-]',
-  locator: (el) => {
+export default HTML.extend('checkbox')
+  .selector('div[class^=checkbox-]')
+  .locator((el) => {
     const labelText = el.querySelector('[class^=labelText]');
     return labelText ? labelText.innerText : undefined;
-  },
-  filters: {
+  })
+  .filters({
     id: (el) => el.querySelector('input').id,
     checked: (el) => el.querySelector('input').checked,
     valid: (el) => el.querySelector('input').validity.valid,
@@ -24,10 +19,8 @@ export default createInteractor('checkbox')({
     hasError: (el) => !!el.className.match(/hasError/),
     disabled: (el) => el.disabled,
     focused: (el) => el.contains(el.ownerDocument.activeElement),
-    title,
-    visible,
-  },
-  actions: {
+  })
+  .actions({
     focus: perform((el) => el.querySelector('label').focus()),
     click: perform((el) => el.querySelector('label').click()),
     // the input is actually transparent (opacity: 0) to opt for showing
@@ -37,5 +30,4 @@ export default createInteractor('checkbox')({
       el.querySelector('label').click();
       el.querySelector('input').blur();
     }),
-  }
-});
+  });

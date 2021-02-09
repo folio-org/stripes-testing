@@ -1,8 +1,9 @@
 import { Button as ButtonInteractor, createInteractor, perform, focused } from '@bigtest/interactor';
 import { isVisible } from 'element-is-visible';
 
+
 export default createInteractor('button')({
-  selector: ['a[href]', ButtonInteractor().specification.selector].join(','),
+  selector: 'a[href],button,input[type=button],input[type=submit],input[type=reset],input[type=image]',
   filters: {
     id: (el) => el.id,
     text: (el) => el.textContent,

@@ -1,13 +1,10 @@
-import { createInteractor } from '@bigtest/interactor';
+import { HTML, createInteractor } from '@bigtest/interactor';
 import { isVisible } from 'element-is-visible';
 
 import ButtonInteractor from './button';
 
-const DropdownTrigger = createInteractor('dropdown trigger')({
-  selector: '[aria-haspopup]',
-  filters: ButtonInteractor().specification.filters,
-  actions: ButtonInteractor().specification.actions,
-});
+const DropdownTrigger = HTML.extend('dropdown trigger')
+  .selector('[aria-haspopup]');
 
 const DropdownMenu = createInteractor('dropdown menu')({
   selector: 'div[class*=DropdownMenu]',

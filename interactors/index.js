@@ -1,13 +1,13 @@
 import * as Bigtest from '@bigtest/interactor';
 
 export { Bigtest };
+export { HTML, including, matching, and, or, not, some, every } from '@bigtest/interactor';
 export { default as converge } from './converge';
 
 export { default as Accordion } from './accordion';
 export { default as Button } from './button';
 export { default as Checkbox } from './checkbox';
 export { default as Datepicker, Calendar } from './datepicker';
-export { default as HTML } from './html';
 export { default as IconButton } from './icon-button';
 export { default as KeyValue } from './key-value';
 export { default as Keyboard } from './keyboard';
