@@ -1,4 +1,4 @@
-import { Button, createInteractor, perform } from '@bigtest/interactor';
+import { Button, createInteractor } from '@bigtest/interactor';
 import { isVisible } from 'element-is-visible';
 
 function label(element) {
@@ -39,7 +39,7 @@ export default createInteractor('accordion')({
     }
   },
   actions: {
-    clickHeader: perform(el => el.querySelector('[class^=labelArea-]').click()),
-    focus: interactor => interactor.find(Button()).focus()
+    clickHeader: ({ perform }) => perform(el => el.querySelector('[class^=labelArea-]').click()),
+    focus: ({ find }) => find(Button()).focus()
   }
 });
