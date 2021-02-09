@@ -1,16 +1,15 @@
-import { Button, createInteractor } from '@bigtest/interactor';
+import { Button, HTML } from '@bigtest/interactor';
 import { isVisible } from 'element-is-visible';
 
 function label(element) {
   return element.querySelector('[class^=labelArea]').textContent.trim();
 }
 
-export default createInteractor('accordion')({
-  selector: '[class^=accordion]',
-  locator: label,
-  filters: {
+export default HTML.extend('accordion')
+  .selector('[class^=accordion]')
+  .locator(label)
+  .filters({
     label,
-    id: el => el.id,
     open: el => isVisible(el.querySelector('[class^=content]')),
     contentHeight: el => el.querySelector('[class^=content]').offsetHeight,
     contentId: el => {
@@ -37,9 +36,8 @@ export default createInteractor('accordion')({
 
       return undefined;
     }
-  },
-  actions: {
+  })
+  .actions({
     clickHeader: ({ perform }) => perform(el => el.querySelector('[class^=labelArea-]').click()),
     focus: ({ find }) => find(Button()).focus()
-  }
-});
+  });
