@@ -68,7 +68,7 @@ export const Calendar = createInteractor('calendar widget')({
       apply: (el) => isVisible(el) || (el.labels && Array.from(el.labels).some(isVisible)),
       default: true
     },
-    focusedWithin: (el) => el.ownerDocument.activeElement === el,
+    containsFocus: (el) => el.ownerDocument.activeElement === el,
     today: (el) => format(parseISO(el.querySelector('td[tabindex="0"]').getAttribute('data-day')), 'yyyy-MM-dd') === format(new Date(), 'yyyy-MM-dd'),
     month: (el) => el.querySelector('select').selectedOptions[0].label || '',
     year: (el) => el.querySelector('input').value,
