@@ -13,6 +13,7 @@
   },
   "dependencies": {
     "@bigtest/interactor": "^0.23.0",
+    "date-fns": "^2.16.1",
     "debug": "^4.0.1",
     "element-is-visible": "^1.0.0",
     "minimist": "^1.2.0"
