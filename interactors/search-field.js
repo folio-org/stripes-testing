@@ -1,22 +1,21 @@
-import { createInteractor, TextField, Select } from '@bigtest/interactor';
+import { HTML, TextField, Select } from '@bigtest/interactor';
 
 const label = (el) => {
   const labelText = el.querySelector('label');
   return labelText ? labelText.innerText : undefined;
 };
 
-export default createInteractor('search field')({
-  selector: '[class^=searchField]',
-  locator: label,
-  filters: {
+export default HTML.extend('search field')
+  .selector('[class^=searchField]')
+  .locator(label)
+  .filters({
     id: el => el.querySelector('input').getAttribute('id'),
     readOnly: el => el.querySelector('input').hasAttribute('readOnly'),
     value: el => el.querySelector('input').value,
     placeholder: el => el.querySelector('input').placeholder,
     disabled: el => el.querySelector('select').disabled,
-  },
-  actions: {
-    fillIn: (interactor, value) => interactor.find(TextField()).fillIn(value),
-    selectIndex: (interactor, value) => interactor.find(Select()).choose(value),
-  }
-});
+  })
+  .actions({
+    fillIn: ({ find }, value) => find(TextField()).fillIn(value),
+    selectIndex: ({ find }, value) => find(Select()).choose(value),
+  });
