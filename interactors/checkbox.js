@@ -1,4 +1,4 @@
-import { CheckBox, HTML, perform } from '@bigtest/interactor';
+import { CheckBox, HTML } from '@bigtest/interactor';
 
 export default HTML.extend('checkbox')
   .selector('div[class^=checkbox-]')
@@ -21,12 +21,12 @@ export default HTML.extend('checkbox')
     focused: (el) => el.contains(el.ownerDocument.activeElement),
   })
   .actions({
-    focus: perform((el) => el.querySelector('label').focus()),
-    click: perform((el) => el.querySelector('label').click()),
+    focus: ({ perform }) => perform((el) => el.querySelector('label').focus()),
+    click: ({ perform }) => perform((el) => el.querySelector('label').click()),
     // the input is actually transparent (opacity: 0) to opt for showing
     // an svg element instead, it is still clickable, but in reality not visible
-    clickInput: (interactor) => interactor.find(CheckBox({ visible: false })).click(),
-    clickAndBlur: perform((el) => {
+    clickInput: ({ find }) => find(CheckBox({ visible: false })).click(),
+    clickAndBlur: ({ perform }) => perform((el) => {
       el.querySelector('label').click();
       el.querySelector('input').blur();
     }),
