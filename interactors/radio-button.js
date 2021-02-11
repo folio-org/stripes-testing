@@ -1,9 +1,9 @@
-import { createInteractor, perform } from '@bigtest/interactor';
+import { HTML } from '@bigtest/interactor';
 
-export default createInteractor('radio button')({
-  selector: 'div[class^=radioButton]',
-  locator: (el) => el.querySelector('[class^=labelText]').textContent,
-  filters: {
+export default HTML.extend('radio button')
+  .selector('div[class^=radioButton]')
+  .locator((el) => el.querySelector('[class^=labelText]').textContent)
+  .filters({
     title: (el) => el.querySelector('input').title,
     id: (el) => el.querySelector('input').id,
     valid: (el) => el.querySelector('input').validity.valid,
@@ -17,14 +17,13 @@ export default createInteractor('radio button')({
       apply: (el) => el.querySelector('input').disabled,
       default: false
     },
-  },
-  actions: {
-    click: perform((el) => { el.querySelector('label').click(); }),
-    focus: perform((el) => { el.querySelector('input').focus(); }),
-    blur: perform((el) => { el.querySelector('input').blur(); }),
+  })
+  .actions({
+    click: ({ perform }) => perform((el) => { el.querySelector('label').click(); }),
+    focus: ({ perform }) => perform((el) => { el.querySelector('input').focus(); }),
+    blur: ({ perform }) => perform((el) => { el.querySelector('input').blur(); }),
     // TODO: when @bigtest/interactors version gets bumped, we can find
     // the built-in radio button interactor instead
     // focus: (interactor) => { interactor.find(RadioButton()).focus(); },
     // blur: (interactor) => { interactor.find(RadioButton()).blur(); },
-  }
-});
+  });
