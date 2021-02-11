@@ -1,4 +1,4 @@
-import { HTML, createInteractor } from '@bigtest/interactor';
+import { HTML } from '@bigtest/interactor';
 import { isVisible } from 'element-is-visible';
 
 import ButtonInteractor from './button';
@@ -6,12 +6,11 @@ import ButtonInteractor from './button';
 const DropdownTrigger = HTML.extend('dropdown trigger')
   .selector('[aria-haspopup]');
 
-const DropdownMenu = createInteractor('dropdown menu')({
-  selector: 'div[class*=DropdownMenu]',
-  filters: {
+const DropdownMenu = HTML.extend('dropdown menu')
+  .selector('div[class*=DropdownMenu]')
+  .filters({
     visible: isVisible,
-  }
-});
+  });
 
 const label = el => el.querySelector('[aria-haspopup]').textContent;
 
@@ -29,13 +28,13 @@ const control = (shouldOpen = true) => async interactor => {
   }
 };
 
-export default createInteractor('dropdown')({
-  selector: 'div[class*=dropdown]',
-  locator: label,
-  filters: { label, open, visible },
-  actions: {
-    focus: interactor => interactor.find(DropdownTrigger()).focus(),
-    toggle: interactor => interactor.find(DropdownTrigger()).click(),
+export default HTML.extend('dropdown')
+  .selector('div[class*=dropdown]')
+  .locator(label)
+  .filters({ label, open, visible })
+  .actions({
+    focus: ({ find }) => find(DropdownTrigger()).focus(),
+    toggle: ({ find }) => find(DropdownTrigger()).click(),
     open: control(true),
     close: control(false),
     choose: async (interactor, value) => {
@@ -43,5 +42,4 @@ export default createInteractor('dropdown')({
       await DropdownMenu({ visible: true }).find(ButtonInteractor(value)).click();
       await interactor.close();
     },
-  }
-});
+  });
