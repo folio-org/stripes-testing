@@ -1,10 +1,10 @@
 import { createInteractor, focused } from '@bigtest/interactor';
 import { isVisible } from 'element-is-visible';
 
-export default createInteractor('layer')({
-  selector: '[class^=LayerRoot]',
-  locator: (el) => el.ariaLabel,
-  filters: {
+export default createInteractor('layer')
+  .selector('[class^=LayerRoot]')
+  .locator((el) => el.ariaLabel)
+  .filters({
     id: (el) => el.id,
     ariaLabel: (el) => el.ariaLabel,
     visible: {
@@ -12,5 +12,4 @@ export default createInteractor('layer')({
       default: true
     },
     focused
-  }
-});
+  });
