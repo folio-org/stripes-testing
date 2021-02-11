@@ -1,4 +1,4 @@
-import { createInteractor, perform, TextField } from '@bigtest/interactor';
+import { HTML, TextField } from '@bigtest/interactor';
 
 import IconButton from './icon-button';
 
@@ -7,10 +7,10 @@ const label = (el) => {
   return labelText ? labelText.innerText : undefined;
 };
 
-export default createInteractor('text field')({
-  selector: 'div[class^=textField-]',
-  locator: label,
-  filters: {
+export default HTML.extend('text field')
+  .selector('div[class^=textField-]')
+  .locator(label)
+  .filters({
     id: (el) => el.querySelector('input').id,
     label,
     type: (el) => el.querySelector('input').type,
@@ -22,14 +22,13 @@ export default createInteractor('text field')({
     error: (el) => (el.querySelector('[class*=feedbackError-]') || {}).textContent,
     warning: (el) => (el.querySelector('[class*=feedbackWarning-]') || {}).textContent,
     valid: el => el.querySelector('input').getAttribute('aria-invalid') !== 'true'
-  },
-  actions: {
-    blur: perform((el) => el.querySelector('input').blur()),
-    clear: async (interactor) => {
-      await interactor.focus();
-      await interactor.find(IconButton({ icon: 'times-circle-solid' })).click();
+  })
+  .actions({
+    blur: ({ perform }) => perform((el) => el.querySelector('input').blur()),
+    clear: async ({ find, focus }) => {
+      await focus();
+      await find(IconButton({ icon: 'times-circle-solid' })).click();
     },
-    fillIn: (interactor, value) => interactor.find(TextField()).fillIn(value),
-    focus: perform((el) => el.querySelector('input').focus()),
-  }
-});
+    fillIn: ({ find }, value) => find(TextField()).fillIn(value),
+    focus: ({ perform }) => perform((el) => el.querySelector('input').focus()),
+  });
