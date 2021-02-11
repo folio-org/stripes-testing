@@ -1,11 +1,11 @@
 /* eslint-disable no-use-before-define */
 
-import { createInteractor, perform, Select } from '@bigtest/interactor';
+import { createInteractor, Select } from '@bigtest/interactor';
 
 
-export default createInteractor('keyboard (requires window to have focus)')({
-  selector: ':focus',
-  actions: {
+export default createInteractor('keyboard (requires window to have focus)')
+  .selector(':focus')
+  .actions({
     arrowUp: press('ArrowUp'),
     arrowDown: press('ArrowDown'),
     arrowLeft: press('ArrowLeft'),
@@ -13,42 +13,41 @@ export default createInteractor('keyboard (requires window to have focus)')({
     // next/prevOption and increment/decrementNumber are workarounds
     // as we want to use the default browser implementation,
     // but it doesn't trigger the built-in browser functions
-    nextOption: perform(async (el) => {
+    nextOption: ({ perform }) => perform(async (el) => {
       const options = el.querySelectorAll('option');
       const nextValue = parseInt(el.value, 10) === options.length - 1
         ? '0'
         : `${parseInt(el.value, 10) + 1}`;
       await Select().choose(options.item(nextValue).textContent);
     }),
-    prevOption: perform(async (el) => {
+    prevOption: ({ perform }) => perform(async (el) => {
       const options = el.querySelectorAll('option');
       const nextValue = parseInt(el.value, 10) === 0
         ? `${options.length() - 1}`
         : `${parseInt(el.value, 10) - 1}`;
       await Select().choose(options.item(nextValue).textContent);
     }),
-    incrementNumber: perform(async (el) => {
+    incrementNumber: ({ perform }) => perform(async (el) => {
       const value = `${parseInt(el.value, 10) + 1}`;
       const property = Object.getOwnPropertyDescriptor(Object.getPrototypeOf(el), 'value');
       property.set.call(el, value);
       el.dispatchEvent(new InputEvent('input', { inputType: 'insertFromPaste', bubbles: true, cancelable: false }));
     }),
-    decrementNumber: perform(async (el) => {
+    decrementNumber: ({ perform }) => perform(async (el) => {
       const value = `${parseInt(el.value, 10) - 1}`;
       const property = Object.getOwnPropertyDescriptor(Object.getPrototypeOf(el), 'value');
       property.set.call(el, value);
       el.dispatchEvent(new InputEvent('input', { inputType: 'insertFromPaste', bubbles: true, cancelable: false }));
     }),
-    pageUp: (interactor, options) => press('PageUp', options)(interactor),
-    pageDown: (interactor, options) => press('PageDown', options)(interactor),
+    pageUp: press('PageUp'),
+    pageDown: press('PageDown'),
     home: press('Home'),
     end: press('End'),
     enter: press('Enter'),
     escape: press('Escape'),
     alt: press('AltLeft'),
     altLeft: press('AltLeft')
-  }
-})();
+  })();
 
 const KEY_CODES = {
   ArrowDown: 40,
@@ -65,13 +64,16 @@ const KEY_CODES = {
 };
 
 
-function press(code, options) {
-  return perform(async function (el) {
-    if (await dispatch(el, 'keydown', code, options)) {
-      await dispatch(el, 'keyup', code, options);
-    }
-  });
+function press(code) {
+  return (interactor, options) => {
+    return interactor.perform(async (el) => {
+      if (await dispatch(el, 'keydown', code, options)) {
+        await dispatch(el, 'keyup', code, options);
+      }
+    });
+  };
 }
+
 
 function dispatch(element, eventType, code, options) {
   return new Promise((resolve, reject) => {
