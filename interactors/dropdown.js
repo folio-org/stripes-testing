@@ -1,5 +1,4 @@
 import { HTML } from '@bigtest/interactor';
-import { isVisible } from 'element-is-visible';
 
 import ButtonInteractor from './button';
 
@@ -9,7 +8,6 @@ const DropdownTrigger = HTML.extend('dropdown trigger')
 const DropdownMenu = HTML.extend('dropdown menu')
   .selector('div[class*=DropdownMenu]')
   .filters({
-    visible: isVisible,
   });
 
 const label = el => el.querySelector('[aria-haspopup]').textContent;

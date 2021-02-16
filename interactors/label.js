@@ -5,5 +5,4 @@ export default HTML.extend('label')
   .locator((el) => el.textContent)
   .filters({
     for: (el) => el.htmlFor,
-    id: (el) => el.id,
   });

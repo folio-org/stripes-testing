@@ -3,7 +3,6 @@ import { HTML } from '@bigtest/interactor';
 export default HTML.extend('button')
   .selector('a[href],button,input[type=button],input[type=submit],input[type=reset],input[type=image]')
   .filters({
-    text: (el) => el.textContent,
     href: (el) => el.getAttribute('href'),
     button: (el) => el.tagName === 'BUTTON',
     anchor: (el) => el.tagName === 'A',

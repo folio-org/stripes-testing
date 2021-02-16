@@ -11,7 +11,6 @@ export default HTML.extend('pane')
   .selector('[class^=pane-]')
   .locator(title)
   .filters({
-    id: (el) => el.id,
     title,
     subtitle: (el) => el.querySelector('[class^=paneSub]').textContent,
     visible: {

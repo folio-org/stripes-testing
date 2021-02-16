@@ -7,7 +7,6 @@ export const Tooltip = createInteractor('tooltip')
     return el.querySelector('[class^=text], span[role=tooltip]').textContent;
   })
   .filters({
-    id: (el) => el.id,
     text: (el) => el.querySelector('[class^=text]').textContent,
     subtext: (el) => el.querySelector('[class^=sub]').textContent,
     visible: isVisible,
@@ -24,5 +23,4 @@ export const TooltipProximity = createInteractor('tooltip proximity element')
   ])
   .filters({
     text: (el) => el.querySelector('[class^=text]').textContent,
-    id: (el) => el.id,
   });

@@ -1,5 +1,4 @@
 import { HTML } from '@bigtest/interactor';
-import { isVisible } from 'element-is-visible';
 
 const childIndex = el => [...el.parentElement.children].indexOf(el);
 
@@ -29,21 +28,17 @@ const MultiColumnListHeader = HTML.extend('multi column list header')
     click: ({ perform }) => perform(el => el.querySelector('[role=button]').click()),
   });
 
-const id = el => el.id;
-
 const columns = el => [...el.querySelectorAll('[class*=mclHeader-]')].map(x => x.textContent);
 
 export const MultiColumnList = HTML.extend('multi column list')
   .selector('div[class*=mclContainer-]')
-  .locator(id)
+  .locator(el => el.id)
   .filters({
-    id,
     columns,
     columnCount: el => columns(el).length,
     rowCount: el => el.querySelectorAll('[class*=mclRow-]').length,
     height: el => el.offsetHeight,
     width: el => el.offsetWidth,
-    visible: isVisible,
     headerInteractivity: (el) => [...el.querySelectorAll('div[class*=mclHeader-]')].map((d) => !!d.querySelector('[data-test-clickable-header]'))
   })
   .actions({
