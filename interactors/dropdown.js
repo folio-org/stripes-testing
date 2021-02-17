@@ -1,27 +1,18 @@
-import { createInteractor } from '@bigtest/interactor';
+import { HTML } from '@bigtest/interactor';
 import { isVisible } from 'element-is-visible';
 
 import ButtonInteractor from './button';
 
-const DropdownTrigger = createInteractor('dropdown trigger')({
-  selector: '[aria-haspopup]',
-  filters: ButtonInteractor().specification.filters,
-  actions: ButtonInteractor().specification.actions,
-});
+const DropdownTrigger = HTML.extend('dropdown trigger')
+  .selector('[aria-haspopup]');
 
-const DropdownMenu = createInteractor('dropdown menu')({
-  selector: 'div[class*=DropdownMenu]',
-  filters: {
-    visible: isVisible,
-  }
-});
+const DropdownMenu = HTML.extend('dropdown menu')
+  .selector('div[class*=DropdownMenu]');
 
 const label = el => el.querySelector('[aria-haspopup]').textContent;
 
 const open = el => el.querySelector('[aria-haspopup]').getAttribute('aria-expanded') === 'true';
 
-// todo: 'visible' should ensure the DropdownMenu is visible as well,
-// once filters support interactor composition
 const visible = el => [el, el.querySelector(['[aria-haspopup]'])].every(isVisible);
 
 const control = (shouldOpen = true) => async interactor => {
@@ -32,13 +23,13 @@ const control = (shouldOpen = true) => async interactor => {
   }
 };
 
-export default createInteractor('dropdown')({
-  selector: 'div[class*=dropdown]',
-  locator: label,
-  filters: { label, open, visible },
-  actions: {
-    focus: interactor => interactor.find(DropdownTrigger()).focus(),
-    toggle: interactor => interactor.find(DropdownTrigger()).click(),
+export default HTML.extend('dropdown')
+  .selector('div[class*=dropdown]')
+  .locator(label)
+  .filters({ label, open, visible })
+  .actions({
+    focus: ({ find }) => find(DropdownTrigger()).focus(),
+    toggle: ({ find }) => find(DropdownTrigger()).click(),
     open: control(true),
     close: control(false),
     choose: async (interactor, value) => {
@@ -46,5 +37,4 @@ export default createInteractor('dropdown')({
       await DropdownMenu({ visible: true }).find(ButtonInteractor(value)).click();
       await interactor.close();
     },
-  }
-});
+  });

@@ -1,13 +1,13 @@
-import { createInteractor, Select } from '@bigtest/interactor';
+import { HTML, Select } from '@bigtest/interactor';
 
 function label(el) {
   return el.querySelector('label').innerText;
 }
 
-export default createInteractor('select')({
-  selector: '[class^=select-]',
-  locator: label,
-  filters: {
+export default HTML.extend('select')
+  .selector('[class^=select-]')
+  .locator(label)
+  .filters({
     id: el => el.querySelector('select').id,
     label,
     ariaLabelledBy: el => el.querySelector('select').getAttribute('aria-labelledby'),
@@ -22,8 +22,7 @@ export default createInteractor('select')({
       return feedbackWarning ? feedbackWarning.innerText : undefined;
     },
     valid: el => el.querySelector('select').getAttribute('aria-invalid') !== 'true'
-  },
-  actions: {
-    choose: (interactor, value) => interactor.find(Select()).choose(value)
-  }
-});
+  })
+  .actions({
+    choose: ({ find }, value) => find(Select()).choose(value)
+  });

@@ -1,12 +1,12 @@
-import { createInteractor, perform, focused, Select, TextField } from '@bigtest/interactor';
+import { createInteractor, TextField, HTML } from '@bigtest/interactor';
 import { isVisible } from 'element-is-visible';
 import { format, parseISO } from 'date-fns';
 import IconButton from './icon-button';
 
-export default createInteractor('datepicker')({
-  selector: '[data-test-datepicker-container]',
-  locator: (el) => el.querySelector('label').textContent,
-  filters: {
+export default HTML.extend('datepicker')
+  .selector('[data-test-datepicker-container]')
+  .locator((el) => el.querySelector('label').textContent)
+  .filters({
     id: (el) => el.querySelector('input').id,
     inputValue: (el) => el.querySelector('div[class^=textField] input').value,
     inputDay: (el) => Date(el.querySelector('div[class^=textField] input').value).getDay(),
@@ -34,35 +34,29 @@ export default createInteractor('datepicker')({
     },
     readOnly: (el) => el.querySelector('input').hasAttribute('readonly'),
     required: (el) => el.querySelector('input').hasAttribute('required'),
-  },
-  actions: {
+  })
+  .actions({
     openCalendar: (interactor) => interactor.find(IconButton({ icon: 'calendar' })).click(),
     clear: (interactor) => interactor.find(IconButton({ icon: 'times-circle-solid' })).click(),
-    click: perform((el) => { el.click(); }),
+    click: ({ perform }) => perform((el) => { el.click(); }),
     fillIn: (interactor, value) => interactor.find(TextField()).fillIn(value),
     focus: (interactor) => interactor.find(TextField()).focus(),
     blur: (interactor) => interactor.find(TextField()).blur(),
-  }
-});
+  });
 
-const CalendarDays = createInteractor('calendar days')({
-  selector: '[class^=calendar-] td',
-  locator: (el) => {
+const CalendarDays = HTML.extend('calendar days')
+  .selector('[class^=calendar-] td')
+  .locator((el) => {
     if (el.textContent.length === 1) {
       return `0${el.textContent}`;
     } else {
       return el.textContent;
     }
-  },
-  actions: {
-    click: perform((el) => { el.click(); }),
-    focus: perform((el) => { el.focus(); }),
-  }
-});
+  });
 
-export const Calendar = createInteractor('calendar widget')({
-  selector: '[class^=calendar-]',
-  filters: {
+export const Calendar = createInteractor('calendar widget')
+  .selector('[class^=calendar-]')
+  .filters({
     portal: (el) => el.parentElement.parentElement.id === 'OverlayContainer',
     visible: {
       apply: (el) => isVisible(el) || (el.labels && Array.from(el.labels).some(isVisible)),
@@ -99,11 +93,8 @@ export const Calendar = createInteractor('calendar widget')({
         }
       }, []
     ),
-    focused
-  },
-  actions: {
-    click: perform((el) => { el.click(); }),
-    focus: perform((el) => { el.focus(); }),
+  })
+  .actions({
     clickDay: (interactor, value) => interactor.find(CalendarDays(value)).click(),
     focusDay: (interactor, value) => interactor.find(CalendarDays(value)).focus(),
     setYear: (interactor, value) => interactor.find(TextField())
@@ -112,5 +103,5 @@ export const Calendar = createInteractor('calendar widget')({
         property.set.call(el, value);
         el.dispatchEvent(new InputEvent('input', { inputType: 'insertFromPaste', bubbles: true, cancelable: false }));
       })
-  }
-});
+  });
+
