@@ -13,8 +13,6 @@ const label = el => el.querySelector('[aria-haspopup]').textContent;
 
 const open = el => el.querySelector('[aria-haspopup]').getAttribute('aria-expanded') === 'true';
 
-// todo: 'visible' should ensure the DropdownMenu is visible as well,
-// once filters support interactor composition
 const visible = el => [el, el.querySelector(['[aria-haspopup]'])].every(isVisible);
 
 const control = (shouldOpen = true) => async interactor => {
