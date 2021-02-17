@@ -14,9 +14,6 @@ export const MultiColumnListCell = HTML.extend('multi column list cell')
     columnIndex: childIndex,
     selected: (el) => !!el.parentElement.className.match(/mclSelected/),
     measured: (el) => el.style && el.style.width !== ''
-  })
-  .actions({
-    click: ({ perform }) => perform((el) => el.click())
   });
 
 const MultiColumnListHeader = HTML.extend('multi column list header')
