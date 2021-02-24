@@ -1,13 +1,12 @@
 import { createInteractor } from '@bigtest/interactor';
 import { isVisible } from 'element-is-visible';
 
-export const Tooltip = createInteractor('tooltip')({
-  selector: '[class^=tooltip], [data-test-tooltip-proximity-element]',
-  locator: (el) => {
+export const Tooltip = createInteractor('tooltip')
+  .selector('[class^=tooltip], [data-test-tooltip-proximity-element]')
+  .locator((el) => {
     return el.querySelector('[class^=text], span[role=tooltip]').textContent;
-  },
-  filters: {
-    id: (el) => el.id,
+  })
+  .filters({
     text: (el) => el.querySelector('[class^=text]').textContent,
     subtext: (el) => el.querySelector('[class^=sub]').textContent,
     visible: isVisible,
@@ -15,16 +14,13 @@ export const Tooltip = createInteractor('tooltip')({
       apply: (el) => el.getAttribute('data-test-tooltip-proximity-element') === 'true',
       default: false,
     }
-  }
-});
+  });
 
-export const TooltipProximity = createInteractor('tooltip proximity element')({
-  selector: '[role^=tooltip]',
-  locator: [
+export const TooltipProximity = createInteractor('tooltip proximity element')
+  .selector('[role^=tooltip]')
+  .locator([
     (el) => el.querySelector('[class^=text]').textContent,
-  ],
-  filters: {
+  ])
+  .filters({
     text: (el) => el.querySelector('[class^=text]').textContent,
-    id: (el) => el.id,
-  }
-});
+  });

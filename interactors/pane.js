@@ -1,17 +1,13 @@
-// TODO, import `focus`, and `blur` when updating to >0.22.0
-import { createInteractor, focused } from '@bigtest/interactor';
-// TODO, import from @bigtest/interactor when updating to >0.22.0
+import { HTML } from '@bigtest/interactor';
 import { isVisible } from 'element-is-visible';
-// eslint-disable-next-line import/no-named-default
-import { default as Button } from './button';
+import Button from './button';
 
 function title(el) { return el.querySelector('[class^=paneTitle]').textContent; }
 
-export default createInteractor('pane')({
-  selector: '[class^=pane-]',
-  locator: title,
-  filters: {
-    id: (el) => el.id,
+export default HTML.extend('pane')
+  .selector('[class^=pane-]')
+  .locator(title)
+  .filters({
     title,
     subtitle: (el) => el.querySelector('[class^=paneSub]').textContent,
     visible: {
@@ -30,13 +26,7 @@ export default createInteractor('pane')({
 
       return undefined;
     },
-    focused
-  },
-  actions: {
+  })
+  .actions({
     dismiss: (interactor) => interactor.find(Button({ ariaLabel: 'Close ' })).click(),
-    // TODO, enable these when updating to >0.22.0
-    // we should also add some tests for these?
-    // focus,
-    // blur
-  }
-});
+  });
