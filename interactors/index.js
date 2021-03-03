@@ -8,6 +8,7 @@ export { default as Accordion } from './accordion';
 export { default as Button } from './button';
 export { default as Checkbox } from './checkbox';
 export { default as Datepicker, Calendar } from './datepicker';
+export { default as Dropdown } from './dropdown';
 export { default as IconButton } from './icon-button';
 export { default as KeyValue } from './key-value';
 export { default as Keyboard } from './keyboard';
