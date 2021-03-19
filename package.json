@@ -20,6 +20,8 @@
   },
   "devDependencies": {
     "@folio/eslint-config-stripes": "^5.0.0",
-    "eslint": "^6.2.1"
+    "bigtest": "^0.13.3",
+    "eslint": "^7.15.0",
+    "typescript": "^4.2.3"
   }
 }
