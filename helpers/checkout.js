@@ -4,7 +4,7 @@ import {
   Button,
   Dropdown,
   TextField,
-} from "@folio/stripes-testing/interactors";
+} from "../interactors";
 
 const App = HTML.extend("app-container")
   .selector("main#ModuleContainer")

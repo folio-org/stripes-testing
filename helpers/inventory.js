@@ -1,6 +1,6 @@
 import { HTML } from "@bigtest/interactor";
 import { or } from "@bigtest/interactor";
-import { Button } from "@folio/stripes-testing/interactors";
+import { Button } from "../interactors";
 
 function createInventory(config, title) {
   return {

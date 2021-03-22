@@ -1,6 +1,6 @@
 import { HTML } from '@bigtest/interactor';
 import { or } from '@bigtest/interactor';
-import { Button, Dropdown } from '@folio/stripes-testing/interactors';
+import { Button, Dropdown } from '../interactors';
 
 const App = HTML.extend('app-container')
   .selector("main#ModuleContainer")

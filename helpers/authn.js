@@ -1,5 +1,5 @@
 import { TextField } from 'bigtest';
-import { Button, Dropdown } from '@folio/stripes-testing/interactors';
+import { Button, Dropdown } from '../interactors';
 
 export const login = (username, password) => {
   return {
