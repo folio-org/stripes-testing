@@ -6,7 +6,7 @@ import { Core, Authn } from '../helpers';
 
 bigtestGlobals.defaultInteractorTimeout = 10000;
 
-export default test('Authentication: valid credentialss')
+export default test('Authentication: valid credentials')
   .step(Page.visit('/'))
   .step(Authn.login('diku_admin', 'admin'))
   .step(Core.Home().exists())

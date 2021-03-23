@@ -16,7 +16,10 @@
     "date-fns": "^2.16.1",
     "debug": "^4.0.1",
     "element-is-visible": "^1.0.0",
-    "minimist": "^1.2.0"
+    "ky": "^0.27.0",
+    "localforage": "^1.9.0",
+    "minimist": "^1.2.0",
+    "uuid": "^3.0.1"
   },
   "devDependencies": {
     "@folio/eslint-config-stripes": "^5.0.0",
