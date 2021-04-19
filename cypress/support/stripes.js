@@ -16,9 +16,9 @@ Cypress.Commands.add('okapiRequest', ({
 
   cy.request({
     method,
-    url: `https://folio-snapshot-okapi.dev.folio.org/${path}?${queryString}`,
+    url: `${Cypress.env('OKAPI_HOST')}/${path}?${queryString}`,
     headers: {
-      'x-okapi-tenant': 'diku',
+      'x-okapi-tenant': Cypress.env('OKAPI_TENANT'),
       'x-okapi-token': Cypress.env('token'),
     },
     body,
