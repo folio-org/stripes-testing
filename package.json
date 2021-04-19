@@ -12,19 +12,17 @@
     "lint": "eslint ."
   },
   "dependencies": {
-    "@bigtest/interactor": "^0.28.1",
     "date-fns": "^2.16.1",
     "debug": "^4.0.1",
     "element-is-visible": "^1.0.0",
-    "ky": "^0.27.0",
-    "localforage": "^1.9.0",
-    "minimist": "^1.2.0",
     "uuid": "^3.0.1"
   },
   "devDependencies": {
+    "@bigtest/interactor": "^0.28.1",
     "@folio/eslint-config-stripes": "^5.0.0",
-    "bigtest": "^0.13.3",
+    "bigtest": "0.13.3",
+    "cypress": "^6.8.0",
     "eslint": "^7.15.0",
-    "typescript": "^4.2.3"
+    "eslint-plugin-cypress": "^2.11.2"
   }
 }
