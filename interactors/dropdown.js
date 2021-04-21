@@ -28,8 +28,8 @@ const control = (shouldOpen = true) => async interactor => {
   }
 };
 
-export default HTML.extend("dropdown")
-  .selector("div[class*=dropdown]")
+export default HTML.extend('dropdown')
+  .selector('div[class*=dropdown]')
   .locator(label)
   .filters({ label, open, visible })
   .actions({

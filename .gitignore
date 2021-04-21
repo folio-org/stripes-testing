@@ -3,6 +3,4 @@ yarn.lock
 .yarnclean
 yarn-error.log
 
-.bigtest
-
 cypress/screenshots
