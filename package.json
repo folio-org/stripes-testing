@@ -18,11 +18,15 @@
     "uuid": "^3.0.1"
   },
   "devDependencies": {
+    "@bigtest/cypress": "^0.0.4",
     "@bigtest/interactor": "^0.28.1",
     "@folio/eslint-config-stripes": "^5.0.0",
     "bigtest": "0.13.3",
     "cypress": "^6.8.0",
     "eslint": "^7.15.0",
     "eslint-plugin-cypress": "^2.11.2"
+  },
+  "resolutions": {
+    "cypress": "^6.8.0"
   }
 }

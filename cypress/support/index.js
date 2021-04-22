@@ -1,4 +1,5 @@
-import './bigtest';
+import '@bigtest/cypress';
+
 import './stripes';
 
 import './api';
