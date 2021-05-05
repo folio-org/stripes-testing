@@ -1,6 +1,7 @@
 import {
   Button,
   Checkbox,
+  Modal,
   MultiColumnList,
   TextField,
 } from '../../interactors';
@@ -9,7 +10,7 @@ Cypress.Commands.add('checkInItem', barcode => {
   cy.do([
     TextField({ id: 'input-item-barcode' }).fillIn(barcode),
     Button('Enter').click(),
-    Button({ text: 'Check in', button: true }).click(),
+    Modal('Confirm multipiece check in').find(Button('Check in')).click(),
     Checkbox('Print slip').click(),
     Button('Close').click(),
   ]);

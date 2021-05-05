@@ -1,5 +1,6 @@
 import {
   Button,
+  Modal,
   MultiColumnList,
   TextField,
 } from '../../interactors';
@@ -14,7 +15,7 @@ Cypress.Commands.add('checkOutItem', (userBarcode, itemBarcode) => {
     TextField({ id: 'input-item-barcode' }).fillIn(itemBarcode),
     Button({ id: 'clickable-add-item' }).click(),
 
-    Button({ text: 'Check out', button: true }).click(),
+    Modal('Confirm multipiece check out').find(Button('Check out')).click(),
   ]);
 });
 
