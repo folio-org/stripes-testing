@@ -1,9 +1,10 @@
 # Change history for stripes-testing
 
-## 3.0.0 (IN PROGRESS)
+## [3.0.0](https://github.com/folio-org/stripes-testing/tree/v3.0.0) (2021-03-18)
+[Full Changelog](https://github.com/folio-org/stripes-testing/compare/v2.0.1...v3.0.0)
 
-* Remove NightmareJS 
-* Export dropdown interactor
+* Remove NightmareJS.
+* Export interactors.
 
 ## [2.0.1](https://github.com/folio-org/stripes-testing/tree/v2.0.1) (2020-06-10)
 [Full Changelog](https://github.com/folio-org/stripes-testing/compare/v2.0.0...v2.0.1)
