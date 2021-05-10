@@ -14,7 +14,6 @@ export { default as KeyValue } from './key-value';
 export { default as Keyboard } from './keyboard';
 export { default as Label } from './label';
 export { default as Layer } from './layer';
-export { default as Modal } from './modal';
 export { MultiColumnList, MultiColumnListCell } from './multi-column-list';
 export { default as Pane } from './pane';
 export { default as RadioButton } from './radio-button';
