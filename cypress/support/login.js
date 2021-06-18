@@ -29,7 +29,6 @@ Cypress.Commands.add('login', (username, password) => {
   //       cy.get('#app-list-item-clickable-courses-module').click()
   // fail because the button becomes detached from the DOM after the
   // get() but before the click().
-  cy.wait(1000);
 });
 
 Cypress.Commands.add('logout', () => {

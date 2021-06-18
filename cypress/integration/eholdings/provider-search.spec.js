@@ -4,18 +4,13 @@ describe('ui-eholdings: Search providers', () => {
     cy.visit('/eholdings');
   });
 
-  after(() => {
-    cy.logout();
-  });
-
   describe('searching by provider name', () => {
     beforeEach(() => {
       cy.search('EBSCO');
-      cy.wait(500);
     });
 
     it('should display two results', () => {
-      cy.get('#search-results-content li').should('have.length', 2);
+      cy.get('#search-results-content').find('li').should((li) => expect(li).to.have.length(2));
     });
   });
 
@@ -25,12 +20,11 @@ describe('ui-eholdings: Search providers', () => {
       cy.get('#accordionTagFilter input[type="checkbox"]').click();
 
       cy.get('#selectTagFilter-input').type('important');
-      cy.wait(100);
-      cy.get('#accordionTagFilter li[class*="multiSelectOption--"]:first').click();
+      cy.get('#accordionTagFilter li[class*="multiSelectOption--"]:first-child').click();
     });
 
     it('should display list of providers with important tag', () => {
-      cy.get('#search-results-content li').should('have.length', 2);
+      cy.get('#search-results-content').find('li').should((li) => expect(li).to.have.length(2));
     });
 
     afterEach(() => {
@@ -45,16 +39,14 @@ describe('ui-eholdings: Search providers', () => {
       cy.get('#accordionTagFilter input[type="checkbox"]').click();
 
       cy.get('#selectTagFilter-input').type('important');
-      cy.wait(100);
-      cy.get('#accordionTagFilter li[class*="multiSelectOption--"]:first').click();
+      cy.get('#accordionTagFilter li[class*="multiSelectOption--"]:first-child').click();
 
       cy.get('#selectTagFilter-input').type('urgent');
-      cy.wait(100);
-      cy.get('#accordionTagFilter li[class*="multiSelectOption--"]:first').click();
+      cy.get('#accordionTagFilter li[class*="multiSelectOption--"]:first-child').click();
     });
 
     it('should display list of providers with important and urgent tags', () => {
-      cy.get('#search-results-content li').should('have.length', 3);
+      cy.get('#search-results-content').find('li').should((li) => expect(li).to.have.length(3));
     });
 
     afterEach(() => {
