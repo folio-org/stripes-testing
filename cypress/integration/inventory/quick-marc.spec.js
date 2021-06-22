@@ -15,7 +15,7 @@ describe('ui-inventory: Derive MARC', () => {
 
     describe('opening Derive MARC record page', () => {
       before(() => {
-        cy.get('#list-inventory [class*="mclRowContainer--"] [class*="mclRowFormatterContainer--"]:first-child').click()
+        cy.get('#list-inventory [class*="mclRowContainer--"] [class*="mclRowFormatterContainer--"]:first-child').click();
 
         // wait for actions button and click it
         cy.get('#pane-instancedetails [class*="actionMenuToggle--"]', { timeout: 10000 }).click();
@@ -26,7 +26,7 @@ describe('ui-inventory: Derive MARC', () => {
         cy.location().should((loc) => {
           expect(loc.href).to.match(/\/inventory\/quick-marc\/duplicate/);
         });
-      })
+      });
 
       describe('saving the form', () => {
         before(() => {
@@ -53,7 +53,7 @@ describe('ui-inventory: MARC default subfield', () => {
   describe('editing a MARC record', () => {
     before('searching for MARC inventory items and editing', () => {
       cy.searchMARC('Robert C. Klove papers.');
-      cy.get('#list-inventory [class*="mclRowContainer--"] [class*="mclRowFormatterContainer--"]:first-child').click()
+      cy.get('#list-inventory [class*="mclRowContainer--"] [class*="mclRowFormatterContainer--"]:first-child').click();
 
       // wait for actions button and click it
       cy.get('#pane-instancedetails [class*="actionMenuToggle--"]', { timeout: 10000 }).click();
@@ -64,7 +64,7 @@ describe('ui-inventory: MARC default subfield', () => {
       cy.location().should((loc) => {
         expect(loc.href).to.match(/\/inventory\/quick-marc\/edit/);
       });
-    })
+    });
 
     describe('adding a new field', () => {
       let newField;
@@ -132,7 +132,7 @@ describe('ui-inventory: MARC 006/00 field', () => {
 
     before('and adding a 006/00 field', () => {
       cy.searchMARC('Robert C. Klove papers.');
-      cy.get('#list-inventory [class*="mclRowContainer--"] [class*="mclRowFormatterContainer--"]:first-child').click()
+      cy.get('#list-inventory [class*="mclRowContainer--"] [class*="mclRowFormatterContainer--"]:first-child').click();
 
       // wait for actions button and click it
       cy.get('#pane-instancedetails [class*="actionMenuToggle--"]', { timeout: 10000 }).click();

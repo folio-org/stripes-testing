@@ -20,7 +20,7 @@ Cypress.Commands.add('login', (username, password) => {
     TextField('Password').fillIn(password),
     Button('Log in').click(),
   ]);
-  
+
   // Login can be too slow for the default 4-second timeout
   cy.contains('Welcome', { timeout: 10000 });
 

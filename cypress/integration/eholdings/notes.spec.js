@@ -12,7 +12,7 @@ describe('ui-eholdings: Notes', () => {
 
     describe('clicking on note create button', () => {
       before(() => {
-        cy.get('#providerShowNotes #note-create').click();
+        cy.get('#providerShowNotes #note-create-button').click();
       });
 
       it('should open Note create page', () => {
@@ -84,7 +84,7 @@ describe('ui-eholdings: Notes', () => {
         cy.visit('/eholdings');
         cy.search('EBSCO');
         cy.get('#search-results-content li:first-child').click();
-        cy.get('#note-assign').click();
+        cy.get('#note-assign-button').click();
       });
 
       it('should open note modal', () => {
@@ -108,8 +108,8 @@ describe('ui-eholdings: Notes', () => {
           cy.get('#clickable-filter-notesStatus-assigned').click();
 
           cy.get('#notes-select-all-checkbox').click();
-          cy.get('#notes-modal-save').click();
-          cy.get('#note-assign').click();
+          cy.get('#notes-modal-save-button').click();
+          cy.get('#note-assign-button').click();
 
           cy.get('#clickable-filter-notesStatus-unassigned').click();
         });
@@ -127,9 +127,11 @@ describe('ui-eholdings: Notes', () => {
               cy.wrap(checkboxes[0]).click();
             });
             noteTitle = cy.get('#notes-modal-notes-list .note-title')
-              .then(titles => noteTitle = titles[0].innerText);
+              .then(titles => {
+                noteTitle = titles[0].innerText;
+              });
 
-            cy.get('#notes-modal-save').click();
+            cy.get('#notes-modal-save-button').click();
           });
 
           it('should show assigned note', () => {
