@@ -9,6 +9,11 @@
   "license": "Apache-2.0",
   "scripts": {
     "test": "echo 'Not implemented'",
+    "test:cypress:snapshot": "cypress run --config baseUrl=https://folio-snapshot.dev.folio.org",
+    "test:cypress:running-service": "cypress run",
+    "test:cypress:local": "stripes serve --port 3001 & wait-on http://localhost:3001 && cypress run && kill $!",
+    "test:cypress:yakbak": "stripes serve --port 3001 --okapi http://localhost:3002 & pid1=$! && yakbak-proxy -v -i -n https://folio-snapshot-okapi.dev.folio.org & pid2=$! && wait-on http://localhost:3001 && cypress run && kill $pid1 $pid2",
+    "regenerate": "stripes serve --port 3001 --okapi http://localhost:3002 & pid1=$! && rm -rf tapes && yakbak-proxy -v -i https://folio-snapshot-okapi.dev.folio.org & pid2=$! && wait-on http://localhost:3001 && cypress run && kill $pid1 $pid2",
     "lint": "eslint ."
   },
   "dependencies": {
@@ -24,7 +29,8 @@
     "bigtest": "0.13.3",
     "cypress": "^6.8.0",
     "eslint": "^7.15.0",
-    "eslint-plugin-cypress": "^2.11.2"
+    "eslint-plugin-cypress": "^2.11.2",
+    "localforage": "^1.9.0"
   },
   "resolutions": {
     "cypress": "^6.8.0"
