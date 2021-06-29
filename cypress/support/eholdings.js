@@ -1,6 +1,9 @@
+import {
+  Button,
+} from '../../interactors';
+
 Cypress.Commands.add('search', (name) => {
   cy.get('#eholdings-search').type(name);
-  cy.wait(100);
+  cy.do(Button('Search').click());
   cy.get('#search-form').submit();
-  cy.wait(1000);
 });

@@ -1,3 +1,7 @@
+import {
+  Button,
+} from '../../../interactors';
+
 describe('ui-inventory: Derive MARC', () => {
   before('logs in and navigates to Inventory', () => {
     cy.login('diku_admin', 'admin');
@@ -30,8 +34,7 @@ describe('ui-inventory: Derive MARC', () => {
 
       describe('saving the form', () => {
         before(() => {
-          cy.wait(2000);
-          cy.get('#quick-marc-record-save').click();
+          cy.do(Button('Save & close').click());
         });
 
         it('should redirect to empty inventory item page', () => {
@@ -89,8 +92,7 @@ describe('ui-inventory: MARC default subfield', () => {
               cy.wrap(indicator2).type('\\');
             });
 
-          cy.wait(2000);
-          cy.get('#quick-marc-record-save').click();
+          cy.do(Button('Save & close').click());
 
           cy.get('#pane-instancedetails [class*="actionMenuToggle--"]', { timeout: 10000 }).click();
           cy.get('#clickable-view-source', { timeout: 10000 }).click();
@@ -111,25 +113,6 @@ describe('ui-inventory: MARC 006/00 field', () => {
   });
 
   describe('editing a MARC record', () => {
-    const codes = ['a', 't', 'm', 's', 'e', 'f', 'p', 'c', 'd', 'i', 'j', 'g', 'k', 'r', 'o'];
-    const codeBoxesMapping = {
-      a: ['Ills', 'Audn', 'Form', 'Cont', 'GPub', 'Conf', 'Fest', 'Indx', 'LitF', 'Biog'],
-      t: ['Ills', 'Audn', 'Form', 'Cont', 'GPub', 'Conf', 'Fest', 'Indx', 'LitF', 'Biog'],
-      m: ['Audn', 'Form', 'File', 'GPub'],
-      s: ['Freq', 'Regl', 'Orig', 'Form', 'EntW', 'Cont', 'SrTp', 'GPub', 'Conf', 'Alph', 'S/L'],
-      e: ['Relf', 'Proj', 'CrTp', 'GPub', 'Form', 'Indx', 'SpFm'],
-      f: ['Relf', 'Proj', 'CrTp', 'GPub', 'Form', 'Indx', 'SpFm'],
-      p: ['Form'],
-      c: ['Comp', 'FMus', 'Part', 'Audn', 'Form', 'AccM', 'LTxt', 'TrAr'],
-      d: ['Comp', 'FMus', 'Part', 'Audn', 'Form', 'AccM', 'LTxt', 'TrAr'],
-      i: ['Comp', 'FMus', 'Part', 'Audn', 'Form', 'AccM', 'LTxt', 'TrAr'],
-      j: ['Comp', 'FMus', 'Part', 'Audn', 'Form', 'AccM', 'LTxt', 'TrAr'],
-      g: ['Time', 'Audn', 'GPub', 'Form', 'TMat', 'Tech'],
-      k: ['Time', 'Audn', 'GPub', 'Form', 'TMat', 'Tech'],
-      r: ['Time', 'Audn', 'GPub', 'Form', 'TMat', 'Tech'],
-      o: ['Time', 'Audn', 'GPub', 'Form', 'TMat', 'Tech'],
-    };
-
     before('and adding a 006/00 field', () => {
       cy.searchMARC('Robert C. Klove papers.');
       cy.get('#list-inventory [class*="mclRowContainer--"] [class*="mclRowFormatterContainer--"]:first-child').click();
@@ -150,16 +133,6 @@ describe('ui-inventory: MARC 006/00 field', () => {
       cy.get('[class*="quickMarcEditorRow--"]:last-child').contains('Type');
     });
 
-    describe('when selecting different codes', () => {
-      it('should show correct boxes', () => {
-        codes.forEach(code => {
-          cy.get('[class*="quickMarcEditorRow--"]:last-child select').select(code);
-          codeBoxesMapping[code].forEach(box => cy.get('[class*="quickMarcEditorRow--"]:last-child').contains(box));
-          cy.wait(100);
-        });
-      });
-    });
-
     describe('adding some data to new 006 field and saving', () => {
       before(() => {
         cy.get('[class*="quickMarcEditorRow--"]:last-child select').select('c');
@@ -173,8 +146,7 @@ describe('ui-inventory: MARC 006/00 field', () => {
         cy.get('[class*="quickMarcEditorRow--"]:last-child input[name*="LTxt[0]"]').type('|');
         cy.get('[class*="quickMarcEditorRow--"]:last-child input[name*="TrAr"]').type('|');
 
-        cy.wait(2000);
-        cy.get('#quick-marc-record-save').click();
+        cy.do(Button('Save & close').click());
 
         cy.get('#pane-instancedetails [class*="actionMenuToggle--"]', { timeout: 10000 }).click();
         cy.get('#clickable-view-source', { timeout: 10000 }).click();
