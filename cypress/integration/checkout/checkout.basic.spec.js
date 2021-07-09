@@ -1,6 +1,4 @@
-import { bigtestGlobals } from '@bigtest/globals';
-
-bigtestGlobals.defaultInteractorTimeout = 10000;
+import { Link } from '../../../interactors';
 
 describe('Check Out', () => {
   let ITEM_BARCODE;
@@ -56,7 +54,7 @@ describe('Check Out', () => {
   });
 
   it('Basic flow', function () {
-    cy.visit('/checkout');
+    cy.do(Link('Check out').click());
 
     cy.checkOutItem(Cypress.env('users')[0].barcode, ITEM_BARCODE);
 

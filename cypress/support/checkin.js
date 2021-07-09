@@ -8,7 +8,7 @@ import {
 
 Cypress.Commands.add('checkInItem', barcode => {
   cy.do([
-    TextField({ id: 'input-item-barcode' }).fillIn(barcode),
+    TextField('Item ID').fillIn(barcode),
     Button('Enter').click(),
     Modal('Confirm multipiece check in').find(Button('Check in')).click(),
     Checkbox('Print slip').click(),
@@ -17,5 +17,6 @@ Cypress.Commands.add('checkInItem', barcode => {
 });
 
 Cypress.Commands.add('verifyItemCheckIn', () => {
+  // There is a lot of preparation stuff to do to check this
   cy.expect(MultiColumnList({ id: 'list-items-checked-in' }).exists());
 });

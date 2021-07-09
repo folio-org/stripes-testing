@@ -1,6 +1,4 @@
-import { bigtestGlobals } from '@bigtest/globals';
-
-bigtestGlobals.defaultInteractorTimeout = 10000;
+import { Link } from '../../../interactors';
 
 describe('Check In', () => {
   let ITEM_BARCODE;
@@ -63,7 +61,7 @@ describe('Check In', () => {
   });
 
   it('Basic flow', function () {
-    cy.visit('/checkin');
+    cy.do(Link('Check in').click());
 
     cy.checkInItem(ITEM_BARCODE);
     cy.verifyItemCheckIn();

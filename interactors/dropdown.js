@@ -11,7 +11,7 @@ const DropdownMenu = HTML.extend('dropdown menu')
 
 const label = el => {
   const node = el.querySelector('[aria-haspopup]');
-  return node ? node.textContent : null;
+  return node ? node.getAttribute('aria-label') || node.textContent : null;
 };
 
 const open = el => el.querySelector('[aria-haspopup]').getAttribute('aria-expanded') === 'true';

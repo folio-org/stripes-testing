@@ -1,7 +1,6 @@
 import localforage from 'localforage';
-import { TextField } from 'bigtest';
 
-import { Button, Dropdown } from '../../interactors';
+import { Button, Dropdown, Heading, including, TextField } from '../../interactors';
 
 Cypress.Commands.add('login', (username, password) => {
   // We use a behind-the-scenes method of ensuring we are logged
@@ -10,19 +9,13 @@ Cypress.Commands.add('login', (username, password) => {
   // https://docs.cypress.io/guides/references/best-practices.html#Organizing-Tests-Logging-In-Controlling-State
   localforage.removeItem('okapiSess');
 
-  // But it's not feasible to log in to Stipes using a similar
-  // behind-the-scenes approach, so we have to use the UI.
-  cy.visit('');
-  cy.contains('Log in');
-
   cy.do([
     TextField('Username').fillIn(username),
     TextField('Password').fillIn(password),
     Button('Log in').click(),
   ]);
 
-  // Login can be too slow for the default 4-second timeout
-  cy.contains('Welcome', { timeout: 10000 });
+  cy.expect(Heading(including('Welcome')).exists());
 
   // There seems to be a race condition here: sometimes there is
   // re-render that happens so quickly that following actions like
@@ -33,7 +26,9 @@ Cypress.Commands.add('login', (username, password) => {
 
 Cypress.Commands.add('logout', () => {
   cy.do([
-    Dropdown(Cypress.env('defaultServicePoint').name).open(),
+    Dropdown('My profile').open(),
     Button('Log out').click(),
   ]);
+
+  cy.expect(Button('Log in', { disabled: true }).exists());
 });

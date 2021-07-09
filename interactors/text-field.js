@@ -3,8 +3,10 @@ import { HTML, TextField } from '@bigtest/interactor';
 import IconButton from './icon-button';
 
 const label = (el) => {
-  const labelText = el.querySelector('label');
-  return labelText ? labelText.innerText : undefined;
+  let labelEl = el.querySelector('label');
+  const input = el.querySelector('input');
+  if (!labelEl) labelEl = input ? (input.labels || [])[0] : null;
+  return labelEl ? labelEl.innerText : input.getAttribute('aria-label') || '';
 };
 
 export default HTML.extend('text field')
@@ -24,11 +26,11 @@ export default HTML.extend('text field')
     valid: el => el.querySelector('input').getAttribute('aria-invalid') !== 'true'
   })
   .actions({
-    blur: ({ perform }) => perform((el) => el.querySelector('input').blur()),
+    blur: ({ find }) => find(TextField()).blur(),
     clear: async ({ find, focus }) => {
       await focus();
       await find(IconButton({ icon: 'times-circle-solid' })).click();
     },
     fillIn: ({ find }, value) => find(TextField()).fillIn(value),
-    focus: ({ perform }) => perform((el) => el.querySelector('input').focus()),
+    focus: ({ find }) => find(TextField()).focus(),
   });
