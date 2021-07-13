@@ -1,15 +1,12 @@
 import {
-  Button, including, Link, matching, MultiColumnList, not, Page, Pane,
+  Button, including, matching, MultiColumnList, not, Page, Pane,
 } from '../../../interactors';
 
 describe('ui-inventory: Derive MARC', () => {
   before('logs in and navigates to Inventory', () => {
     cy.visit('/');
     cy.login('diku_admin', 'admin');
-    cy.do([
-      Button('Apps').click(),
-      Link('Inventory').click()
-    ]);
+    cy.visit('/inventory');
   });
 
   after(() => {
@@ -56,10 +53,7 @@ describe('ui-inventory: MARC default subfield', () => {
   before('logs in and navigates to Inventory', () => {
     cy.visit('/');
     cy.login('diku_admin', 'admin');
-    cy.do([
-      Button('Apps').click(),
-      Link('Inventory').click()
-    ]);
+    cy.visit('/inventory');
   });
 
   after(() => {
@@ -122,10 +116,7 @@ describe('ui-inventory: MARC 006/00 field', () => {
   before('logs in and navigates to Inventory', () => {
     cy.visit('/');
     cy.login('diku_admin', 'admin');
-    cy.do([
-      Button('Apps').click(),
-      Link('Inventory').click()
-    ]);
+    cy.visit('/inventory');
   });
 
   after(() => {

@@ -1,5 +1,3 @@
-import { Link } from '../../../interactors';
-
 describe('Check In', () => {
   let ITEM_BARCODE;
 
@@ -61,7 +59,7 @@ describe('Check In', () => {
   });
 
   it('Basic flow', function () {
-    cy.do(Link('Check in').click());
+    cy.visit('/checkin');
 
     cy.checkInItem(ITEM_BARCODE);
     cy.verifyItemCheckIn();

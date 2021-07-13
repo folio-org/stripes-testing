@@ -4,7 +4,7 @@ describe('ui-eholdings: Notes', () => {
   before('logs in and navigates to eHoldings', () => {
     cy.visit('/');
     cy.login('diku_admin', 'admin');
-    cy.do(Link('eHoldings').click());
+    cy.visit('/eholdings');
   });
 
   after(() => {

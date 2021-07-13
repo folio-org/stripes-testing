@@ -1,5 +1,3 @@
-import { Link } from '../../../interactors';
-
 describe('Check Out', () => {
   let ITEM_BARCODE;
 
@@ -54,7 +52,7 @@ describe('Check Out', () => {
   });
 
   it('Basic flow', function () {
-    cy.do(Link('Check out').click());
+    cy.visit('/checkout');
 
     cy.checkOutItem(Cypress.env('users')[0].barcode, ITEM_BARCODE);
 
