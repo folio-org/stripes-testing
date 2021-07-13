@@ -1,3 +1,4 @@
+import { bigtestGlobals } from '@bigtest/globals';
 import '@bigtest/cypress';
 
 import './stripes';
@@ -9,3 +10,5 @@ import './checkin';
 import './checkout';
 import './eholdings';
 import './inventory';
+
+bigtestGlobals.defaultInteractorTimeout = 10000;

@@ -1,7 +1,3 @@
-import { bigtestGlobals } from '@bigtest/globals';
-
-bigtestGlobals.defaultInteractorTimeout = 10000;
-
 describe('Check Out', () => {
   let ITEM_BARCODE;
 

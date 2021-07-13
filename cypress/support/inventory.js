@@ -1,5 +1,10 @@
+import { Button, Checkbox, TextField } from '../../interactors';
+
 Cypress.Commands.add('searchMARC', (name) => {
-  cy.get('#input-inventory-search').type(name);
-  cy.get('#accordion-toggle-button-source').click();
-  cy.get('#clickable-filter-source-marc').click();
+  cy.do([
+    // NOTE: aria-label has trailing space
+    TextField('Search ').fillIn(name),
+    Button('Source').click(),
+    Checkbox('MARC').click()
+  ]);
 });

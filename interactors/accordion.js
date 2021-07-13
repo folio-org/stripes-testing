@@ -2,7 +2,8 @@ import { Button, HTML } from '@bigtest/interactor';
 import { isVisible } from 'element-is-visible';
 
 function label(element) {
-  return element.querySelector('[class^=labelArea]').textContent.trim();
+  const labelEl = element.querySelector('[class^=labelArea]');
+  return labelEl ? labelEl.textContent.trim() : '';
 }
 
 export default HTML.extend('accordion')
