@@ -1,15 +1,10 @@
 describe('Check Out', () => {
   let ITEM_BARCODE;
 
-  before(() => {
-    cy.visit('/');
-
-    cy.login('diku_admin', 'admin');
-  });
-
   beforeEach(() => {
     ITEM_BARCODE = Number(new Date()).toString();
 
+    cy.visit('/');
     cy.getToken('diku_admin', 'admin')
       .then(() => {
         cy.getLoanTypes({ limit: 1 });
@@ -45,10 +40,6 @@ describe('Check Out', () => {
           ],
         });
       });
-  });
-
-  after(() => {
-    cy.logout();
   });
 
   it('Basic flow', function () {

@@ -12,3 +12,7 @@ import './eholdings';
 import './inventory';
 
 bigtestGlobals.defaultInteractorTimeout = 10000;
+
+beforeEach(() => {
+  cy.login('diku_admin', 'admin');
+});

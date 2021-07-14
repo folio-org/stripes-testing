@@ -1,14 +1,8 @@
 import { Button, Checkbox, List, MultiSelect, MultiSelectOption } from '../../../interactors';
 
 describe('ui-eholdings: Search providers', () => {
-  before('logs in and navigates to eHoldings', () => {
-    cy.visit('/');
-    cy.login('diku_admin', 'admin');
+  before('navigates to eHoldings', () => {
     cy.visit('/eholdings');
-  });
-
-  after(() => {
-    cy.logout();
   });
 
   describe('searching by provider name', () => {

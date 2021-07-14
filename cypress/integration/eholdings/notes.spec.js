@@ -1,14 +1,8 @@
 import { Accordion, Button, Checkbox, HTML, including, Link, matching, Modal, MultiColumnList, MultiColumnListCell, not, Page, RichEditor, TextField } from '../../../interactors';
 
 describe('ui-eholdings: Notes', () => {
-  before('logs in and navigates to eHoldings', () => {
-    cy.visit('/');
-    cy.login('diku_admin', 'admin');
+  before('navigates to eHoldings', () => {
     cy.visit('/eholdings');
-  });
-
-  after(() => {
-    cy.logout();
   });
 
   describe('creating a Note', () => {

@@ -9,6 +9,8 @@ Cypress.Commands.add('login', (username, password) => {
   // https://docs.cypress.io/guides/references/best-practices.html#Organizing-Tests-Logging-In-Controlling-State
   localforage.removeItem('okapiSess');
 
+  cy.visit('/');
+
   cy.do([
     TextField('Username').fillIn(username),
     TextField('Password').fillIn(password),

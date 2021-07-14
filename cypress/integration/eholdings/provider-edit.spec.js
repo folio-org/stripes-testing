@@ -1,14 +1,8 @@
 import { Accordion, Button, HTML, including, Link, matching, Page, PaneHeader, Select } from '../../../interactors';
 
 describe('ui-eholdings: Provider Edit', () => {
-  before('logs in and navigates to eHoldings', () => {
-    cy.visit('/');
-    cy.login('diku_admin', 'admin');
+  before('navigates to eHoldings', () => {
     cy.visit('/eholdings');
-  });
-
-  after(() => {
-    cy.logout();
   });
 
   describe('visiting Provider Edit page', () => {
