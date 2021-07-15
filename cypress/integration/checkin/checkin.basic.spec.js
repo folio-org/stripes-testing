@@ -4,7 +4,7 @@ describe('Check In', () => {
   beforeEach(() => {
     ITEM_BARCODE = Number(new Date()).toString();
 
-    cy.visit('/');
+    cy.login('diku_admin', 'admin');
     cy.getToken('diku_admin', 'admin')
       .then(() => {
         cy.getLoanTypes({ limit: 1 });

@@ -2,6 +2,7 @@ import { Accordion, Button, HTML, including, Link, matching, Page, PaneHeader, S
 
 describe('ui-eholdings: Provider Edit', () => {
   before('navigates to eHoldings', () => {
+    cy.login('diku_admin', 'admin');
     cy.visit('/eholdings');
   });
 
