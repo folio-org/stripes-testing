@@ -10,7 +10,7 @@ describe('ui-eholdings: Search providers', () => {
     });
 
     it('should display two results', () => {
-      cy.get('#search-results-content').find('li').should((li) => expect(li).to.have.length(2));
+      cy.get('#search-results-content').find('li').should(li => expect(li).to.have.length(2));
     });
   });
 
@@ -24,7 +24,7 @@ describe('ui-eholdings: Search providers', () => {
     });
 
     it('should display list of providers with important tag', () => {
-      cy.get('#search-results-content').find('li').should((li) => expect(li).to.have.length(2));
+      cy.get('#search-results-content').find('li').should(li => expect(li).to.have.length(2));
     });
 
     afterEach(() => {
@@ -46,7 +46,7 @@ describe('ui-eholdings: Search providers', () => {
     });
 
     it('should display list of providers with important and urgent tags', () => {
-      cy.get('#search-results-content').find('li').should((li) => expect(li).to.have.length(3));
+      cy.get('#search-results-content').find('li').should(li => expect(li).to.have.length(3));
     });
 
     afterEach(() => {

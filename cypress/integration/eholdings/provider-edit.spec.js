@@ -20,7 +20,7 @@ describe('ui-eholdings: Provider Edit', () => {
       });
 
       it('should open Provider Show page', () => {
-        cy.location().should((loc) => {
+        cy.location().should(loc => {
           expect(loc.href).to.match(/\/eholdings\/providers\/\d+/);
         });
       });

@@ -27,7 +27,7 @@ describe('ui-inventory: Derive MARC', () => {
       });
 
       it('should open Derive MARC record page', () => {
-        cy.location().should((loc) => {
+        cy.location().should(loc => {
           expect(loc.href).to.match(/\/inventory\/quick-marc\/duplicate/);
         });
       });
@@ -38,7 +38,7 @@ describe('ui-inventory: Derive MARC', () => {
         });
 
         it('should redirect to empty inventory item page', () => {
-          cy.location().should((loc) => {
+          cy.location().should(loc => {
             expect(loc.href).to.match(/\/inventory\/view\/(id|.+)/);
           });
         });
@@ -64,7 +64,7 @@ describe('ui-inventory: MARC default subfield', () => {
     });
 
     it('should open Edit MARC record page', () => {
-      cy.location().should((loc) => {
+      cy.location().should(loc => {
         expect(loc.href).to.match(/\/inventory\/quick-marc\/edit/);
       });
     });

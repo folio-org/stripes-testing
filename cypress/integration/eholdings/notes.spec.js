@@ -16,7 +16,7 @@ describe('ui-eholdings: Notes', () => {
       });
 
       it('should open Note create page', () => {
-        cy.location().should((loc) => {
+        cy.location().should(loc => {
           expect(loc.href).to.match(/\/eholdings\/notes\/new/);
         });
       });
@@ -33,7 +33,7 @@ describe('ui-eholdings: Notes', () => {
         });
 
         it('should redirect to Provider show page', () => {
-          cy.location().should((loc) => {
+          cy.location().should(loc => {
             expect(loc.href).to.match(/\/eholdings\/providers\/\d+/);
           });
         });
@@ -52,7 +52,7 @@ describe('ui-eholdings: Notes', () => {
       });
 
       it('should redirect to note edit page', () => {
-        cy.location().should((loc) => {
+        cy.location().should(loc => {
           expect(loc.href).to.match(/\/eholdings\/notes\/[0-9a-z-]+\/edit/);
         });
       });
@@ -68,7 +68,7 @@ describe('ui-eholdings: Notes', () => {
         });
 
         it('should redirect to note view page', () => {
-          cy.location().should((loc) => {
+          cy.location().should(loc => {
             expect(loc.href).to.match(/\/eholdings\/notes\/[0-9a-z-]+/);
           });
         });
