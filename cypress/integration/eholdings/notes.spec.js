@@ -8,10 +8,6 @@ describe('ui-eholdings: Notes', () => {
     cy.do(Link(including('EBSCO\n')).click());
   });
 
-  // it('should open Provider show page', () => {
-  //   cy.expect(Page.has({ url: matching(/\/eholdings\/providers\/\d+/) }));
-  // });
-
   describe('creating a Note', () => {
     beforeEach(() => {
       cy.do(Accordion('Notes').find(Button('New')).click());

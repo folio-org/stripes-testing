@@ -91,9 +91,12 @@ and make a pull request to this package.
 - [`IconButton`](#iconbutton)
 - [`KeyValue`](#keyvalue)
 - [`Layer`](#layer)
+- [`List`](#list) ([`ListItem`](#listitem))
 - [`MultiColumnList`](#multicolumnlist) ([`MultiColumnListCell`](#multicolumnlistcell))
-- [`Pane`](#pane)
+- [`MultiSelect`](#multiselect) ([`MultiSelectOption](#multiselectoption))
+- [`Pane`](#pane) ([`PaneHeader`](#paneheader))
 - [`RadioButton`](#radiobutton)
+- [`RichTextEditor`](#richtexteditor)
 - [`SearchField`](#searchField)
 - [`Select`](#select)
 - [`TextArea`](#textarea)
@@ -266,7 +269,7 @@ Datepicker('Start Date').is({ visible: true });
 - `warning`: _boolean_ = `true` if in a warning state
 - `error`: _boolean_ = `true` if in an error state
 - `inputValue`: _string_ = the value in input
-- `inputDay`: _int_ = the day that is in the input
+- `inputDay`: _number_ = the day that is in the input
 - `today`: _boolean_ = `true` if the date in the input is today's date
 - `empty`: _boolean_ = `true` if the date in the input is cleared
 - `visible`: _boolean_ = `true` if the input is visible
@@ -438,6 +441,60 @@ None.
 - `focused`: _boolean_ = `true` if the keyboard focus is anywhere
   inside this layer
 
+#### List
+
+##### List (Container)
+
+The list element
+
+###### Synopsis
+
+```js
+import { List } from '@folio/stripes-testing';
+List('list-id').is({ count: 10 });
+```
+
+###### Locator
+
+The List is able to be located by the `id` due the structural nature of the element.
+
+```js
+List('list-id').exists();
+```
+
+###### Actions
+
+None.
+
+###### Filters
+
+- `count`: _number_ = the number of items in the List, counting from 0, e.g. `Array.length`
+
+##### ListItem
+
+###### Synopsis
+
+```js
+import { ListItem } from '@folio/stripes-testing';
+ListItem('list-id').has({ index: 10 });
+```
+
+###### Locator
+
+The ListItem is located by the text content.
+
+```js
+ListItem('Jane Doe').exists();
+```
+
+###### Actions
+
+- `click()`: clicks the list item
+
+###### Filters
+
+- `index`: _number_ = find an item within a list based on the index
+
 #### MultiColumnList
 
 The MultiColumnList element contains two interactors: an interactor for the overall container, `MultiColumnList`, and an interactor that let's you target specific cells, `MultiColumnListCell`.
@@ -478,10 +535,10 @@ MultiColumnList().exists();
   in tests since it is not a user-facing value
 - `columns`: [_string_, _string_, ...] = an array of strings representing each column header text
 - `headerInteractivity`: [_boolean_, _boolean_, ...] = an array of boolean representing if each column header is clickable
-- `columnCount`: _int_ = the number of columns in the MCL
-- `rowCount`: _int_ = the number of rows in the MCL, counting from 0, e.g. `Array.length`
-- `height`: _int_ = the container height, e.g. `el.offsetHeight`
-- `width`: _int_ = the container width, e.g. `el.offsetWidth`
+- `columnCount`: _number_ = the number of columns in the MCL
+- `rowCount`: _number_ = the number of rows in the MCL, counting from 0, e.g. `Array.length`
+- `height`: _number_ = the container height, e.g. `el.offsetHeight`
+- `width`: _number_ = the container width, e.g. `el.offsetWidth`
 - `visible`: _boolean_ = `true` if the button is visible
 
 ##### MultiColumnListCell
@@ -508,17 +565,48 @@ MultiColumnListCell('Jane Doe').is({ selected: true });
 ###### Filters
 
 - `content`: _string_ = the content within a cell
-- `row`: _int_ = find a cell within a row based on the index
+- `row`: _number_ = find a cell within a row based on the index
 - `column`: _string_ = find a cell within a column, preferred over `columnIndex`
-- `columnIndex`: _int_ = find a cell within a column based on the index, prefer use of `column` as that is user facing
+- `columnIndex`: _number_ = find a cell within a column based on the index, prefer use of `column` as that is user facing
 - `selected`: _boolean_ = `true` if the cell is selected
 - `measured`: _boolean_ = if the width of the cell has been measured
 
+#### MultiSelect
+
+The MultiSelect element with autocompletion
+
+##### Synopsis
+
+```js
+import { MultiSelect } from '@folio/stripes-testing';
+MultiSelect('Tags').select(['important', 'urgent'])
+```
+
+##### Locator
+
+The MultiSelect is located by the label.
+
+```js
+MultiSelect('Tags')
+```
+
+##### Actions
+
+- `open`: opens the menu with all available values
+- `fillIn(string)`: filters values for selection by substring
+- `select(string[])`: selects multiple values from a menu
+
+##### Filters
+
+- `selected`: _string[]_ = the current selected values
+
 #### Pane
+
+##### Pane (Container)
 
 The pane element
 
-##### Synopsis
+###### Synopsis
 
 ```js
 import { Pane } from '@folio/stripes-testing';
@@ -526,7 +614,7 @@ import { Pane } from '@folio/stripes-testing';
 Pane('Search Result').is({ visible: true });
 ```
 
-##### Locator
+###### Locator
 
 Panes are identified by their title. For example:
 
@@ -534,13 +622,13 @@ Panes are identified by their title. For example:
 Pane('Search Result').exists();
 ```
 
-##### Actions
+###### Actions
 
 - `dismiss`: clicks on close button on the selected pane
 - `focus`: focuses the pane
 - `blurs`: blurs (removes focus of) the pane
 
-##### Filters
+###### Filters
 
 - `id`: _string_ = the DOM element id of this pane. The `id`
   filter is provided for debugging, but should not generally be used
@@ -554,6 +642,26 @@ Pane('Search Result').exists();
 - `index`: _number_ = the 0 based index of this pane with in a
   pane set. So for example `Pane('Users').has({ index: 2 })`
   would assert that the "Users" pane was 3rd in its pane set.
+
+##### PaneHeader
+
+The header element of Pane
+
+###### Synopsis
+
+```js
+import { PaneHeader } from '@folio/stripes-testing';
+
+PaneHeader('EBSCO').is({ visible: true });
+```
+
+###### Locator
+
+Headers are identified by their title. For example:
+
+```js
+Pane('EBSCO').exists();
+```
 
 #### RadioButton
 
@@ -600,6 +708,34 @@ RadioButton('Label').exists();
 - `feedbackText`: _string_ = the text related to the validation warning or error
 - `hasWarning`: _boolean_ = `true` if the radio button has a warning [class]
 - `hasError`: _boolean_ = `true` if the radio button has an error [class]
+
+#### RichTextEditor
+
+The Rich text editor component
+
+##### Synopsis
+
+```js
+import { RichTextEditor } from '@folio/stripes-testing';
+
+RichTextEditor('Body').has({ text: 'Note body' });
+```
+
+##### Locator
+
+A RichTextEditor is identified by the label. For example:
+
+```js
+RichTextEditor('Body').exists();
+```
+
+##### Actions
+
+- `fillIn(string): fills in the editor with a given value
+
+##### Filters
+
+- `value`: _string_ = the current value of the editor
 
 #### SearchField
 
@@ -735,7 +871,7 @@ TextField('First Name').exists();
 
 ##### Locator
 
-Text fields are located by their label:
+Text fields are located by their label or by the `aria-label` attribute overwise:
 
 ```js
 TextField('First Name').has({ label: 'First Name' });

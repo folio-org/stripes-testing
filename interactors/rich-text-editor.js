@@ -7,9 +7,12 @@ function label(el) {
 export default HTML.extend('rich text editor')
   .selector('[class^=inputGroup]')
   .locator(label)
+  .filters({
+    value: (element) => element.querySelector('.ql-editor').textContent
+  })
   .actions({
     fillIn: ({ perform }, value) => perform(element => {
       const editor = element.querySelector('.ql-editor');
-      if (editor) editor.innerHTML = value;
+      if (editor) editor.innerText = value;
     })
   });

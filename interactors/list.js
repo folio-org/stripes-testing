@@ -1,4 +1,4 @@
-import { HTML } from '@bigtest/interactor';
+import { createInteractor, HTML } from '@bigtest/interactor';
 
 const childIndex = el => [...el.parentElement.children].indexOf(el);
 
@@ -8,7 +8,7 @@ export const ListItem = HTML.extend('list item')
     index: childIndex
   });
 
-export default HTML.extend('list')
+export default createInteractor('list')
   .selector('ul[class^=list-]')
   .locator(el => el.id)
   .filters({

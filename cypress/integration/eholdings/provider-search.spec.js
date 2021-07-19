@@ -1,4 +1,4 @@
-import { Button, Checkbox, List, MultiSelect, MultiSelectOption } from '../../../interactors';
+import { Button, Checkbox, List, MultiSelect } from '../../../interactors';
 
 describe('ui-eholdings: Search providers', () => {
   beforeEach('navigates to eHoldings', () => {
@@ -21,8 +21,7 @@ describe('ui-eholdings: Search providers', () => {
       cy.do([
         Button('Tags').click(),
         Checkbox('Search by tags only').click(),
-        MultiSelect().click(),
-        MultiSelectOption('important').click()
+        MultiSelect().select(['important']),
       ]);
     });
 
@@ -37,9 +36,7 @@ describe('ui-eholdings: Search providers', () => {
       cy.do([
         Button('Tags').click(),
         Checkbox('Search by tags only').click(),
-        MultiSelect().click(),
-        MultiSelectOption('important').click(),
-        MultiSelectOption('urgent').click(),
+        MultiSelect().select(['important', 'urgent']),
       ]);
     });
 

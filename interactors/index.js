@@ -17,7 +17,7 @@ export { default as Layer } from './layer';
 export { default as List, ListItem } from './list';
 export { default as Modal } from './modal';
 export { MultiColumnList, MultiColumnListCell } from './multi-column-list';
-export { default as MultiSelect, MultiSelectOption } from './multi-select';
+export { default as MultiSelect } from './multi-select';
 export { default as Pane, PaneHeader } from './pane';
 export { default as RadioButton } from './radio-button';
 export { default as RichEditor } from './rich-text-editor';
