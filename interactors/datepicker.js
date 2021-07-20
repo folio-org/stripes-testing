@@ -54,8 +54,8 @@ const CalendarDays = HTML.extend('calendar days')
     }
   });
 
-  const MonthField = Select.extend('month select')
-    .selector('[class^=monthField');
+const MonthField = Select.extend('month select')
+  .selector('[class^=monthField');
 
 export const Calendar = createInteractor('calendar widget')
   .selector('[class^=calendar-]')
@@ -99,7 +99,7 @@ export const Calendar = createInteractor('calendar widget')
   })
   .actions({
     clickDay: (interactor, value) => interactor.find(CalendarDays(value)).click(),
-    clickMonth: (interactor, value) => interactor.find(MonthField()).click(),
+    clickMonth: (interactor) => interactor.find(MonthField()).click(),
     focusDay: (interactor, value) => interactor.find(CalendarDays(value)).focus(),
     setYear: (interactor, value) => interactor.find(TextField())
       .perform((el) => {
@@ -107,6 +107,5 @@ export const Calendar = createInteractor('calendar widget')
         property.set.call(el, value);
         el.dispatchEvent(new InputEvent('input', { inputType: 'insertFromPaste', bubbles: true, cancelable: false }));
       }),
-    
   });
 

@@ -1,5 +1,4 @@
-import { isVisible } from '@bigtest/interactor';
-import { HTML } from '@bigtest/interactor';
+import { isVisible, HTML } from '@bigtest/interactor';
 
 const childIndex = el => [...el.parentElement.children].indexOf(el);
 
