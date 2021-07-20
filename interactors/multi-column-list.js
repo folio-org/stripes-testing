@@ -1,3 +1,4 @@
+import { isVisible } from '@bigtest/interactor';
 import { HTML } from '@bigtest/interactor';
 
 const childIndex = el => [...el.parentElement.children].indexOf(el);
@@ -13,7 +14,8 @@ export const MultiColumnListCell = HTML.extend('multi column list cell')
     column: (el) => el.textContent,
     columnIndex: childIndex,
     selected: (el) => !!el.parentElement.className.match(/mclSelected/),
-    measured: (el) => el.style && el.style.width !== ''
+    measured: (el) => el.style && el.style.width !== '',
+    visible: (el) => isVisible(el)
   });
 
 const MultiColumnListHeader = HTML.extend('multi column list header')
@@ -36,7 +38,8 @@ export const MultiColumnList = HTML.extend('multi column list')
     rowCount: el => el.querySelectorAll('[class*=mclRow-]').length,
     height: el => el.offsetHeight,
     width: el => el.offsetWidth,
-    headerInteractivity: (el) => [...el.querySelectorAll('div[class*=mclHeader-]')].map((d) => !!d.querySelector('[data-test-clickable-header]'))
+    headerInteractivity: (el) => [...el.querySelectorAll('div[class*=mclHeader-]')].map((d) => !!d.querySelector('[data-test-clickable-header]')),
+    visible: (el) => isVisible(el)
   })
   .actions({
     clickHeader: (interactor, header) => interactor.find(MultiColumnListHeader(header)).click(),
