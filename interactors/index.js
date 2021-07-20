@@ -1,7 +1,7 @@
 import * as Bigtest from '@bigtest/interactor';
 
 export { Bigtest };
-export { HTML, including, matching, and, or, not, some, every } from '@bigtest/interactor';
+export { HTML, including, matching, and, or, not, some, every, isVisible } from '@bigtest/interactor';
 export { default as converge } from './converge';
 
 export { default as Accordion } from './accordion';
