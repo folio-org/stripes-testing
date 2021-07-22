@@ -64,13 +64,13 @@ export const MultiColumnList = HTML.extend('multi column list')
       const columnSearch = !column ? { columnIndex: 0 } : { column };
       return interactor.find(MultiColumnListCell({ row, ...columnSearch })).click();
     },
-    clickNextPagingButton: (interactor, label="Next") => {
+    clickNextPagingButton: (interactor, label = 'Next') => {
       return interactor.find(Button(label)).click();
     },
-    clickPreviousPagingButton: (interactor, label="Previous") => {
+    clickPreviousPagingButton: (interactor, label = 'Previous') => {
       return interactor.find(Button(label)).click();
     },
-    clickLoadMoreButton: (interactor, label="Load more") => {
+    clickLoadMoreButton: (interactor, label = 'Load more') => {
       return interactor.find(Button(label)).click();
     }
   });
