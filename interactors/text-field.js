@@ -25,9 +25,9 @@ export default HTML.extend('text field')
   })
   .actions({
     blur: ({ perform }) => perform((el) => el.querySelector('input').blur()),
-    clear: async ({ find, focus }) => {
-      await focus();
-      await find(IconButton({ icon: 'times-circle-solid' })).click();
+    clear: async (interactor) => {
+      await interactor.focus();
+      await interactor.find(IconButton({ icon: 'times-circle-solid' })).click();
     },
     fillIn: ({ find }, value) => find(TextField()).fillIn(value),
     focus: ({ perform }) => perform((el) => el.querySelector('input').focus()),
