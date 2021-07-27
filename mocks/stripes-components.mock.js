@@ -1,6 +1,12 @@
 import React from 'react';
 
 jest.mock('@folio/stripes/components', () => ({
+  Accordion: jest.fn(({ children, ...rest }) => (
+    <span {...rest}>{children}</span>
+  )),
+  AccordionSet: jest.fn(({ children, ...rest }) => (
+    <span {...rest}>{children}</span>
+  )),
   Badge: jest.fn((props) => (
     <span>
       <span>{props.children}</span>
@@ -13,35 +19,21 @@ jest.mock('@folio/stripes/components', () => ({
       </span>
     </button>
   )),
-  Col: jest.fn(({ children }) => <div className="col">{ children }</div>),
-  ExpandAllButton: jest.fn(({ children, ...rest }) => (
-    <span {...rest}>{children}</span>
-  )),
-  AccordionSet: jest.fn(({ children, ...rest }) => (
-    <span {...rest}>{children}</span>
-  )),
-  Accordion: jest.fn(({ children, ...rest }) => (
-    <span {...rest}>{children}</span>
-  )),
   Callout: jest.fn(({ children, ...rest }) => (
     <span {...rest}>{children}</span>
   )),
-  HasCommand: jest.fn(({ children, ...rest }) => (
-    <span {...rest}>{children}</span>
-  )),
-  KeyValue: jest.fn(({ label, children, value }) => (
-    <>
-      <span>{label}</span>
-      <span>{value || children}</span>
-    </>
-  )),
-  NoValue: jest.fn(({ ariaLabel }) => (<span>{ariaLabel}</span>)),
-  Loading: () => <div>Loading</div>,
+  Col: jest.fn(({ children }) => <div className="col">{ children }</div>),
   Datepicker: jest.fn(({ ref, children, ...rest }) => (
     <div ref={ref} {...rest}>
       {children}
       <input type="text" />
     </div>
+  )),
+  ExpandAllButton: jest.fn(({ children, ...rest }) => (
+    <span {...rest}>{children}</span>
+  )),
+  HasCommand: jest.fn(({ children, ...rest }) => (
+    <span {...rest}>{children}</span>
   )),
   Headline: jest.fn(({ children }) => <div>{ children }</div>),
   Icon: jest.fn((props) => (props && props.children ? props.children : <span />)),
@@ -55,9 +47,16 @@ jest.mock('@folio/stripes/components', () => ({
       <span {...rest} />
     </button>
   )),
+  KeyValue: jest.fn(({ label, children, value }) => (
+    <>
+      <span>{label}</span>
+      <span>{value || children}</span>
+    </>
+  )),
   Label: jest.fn(({ children, ...rest }) => (
     <span {...rest}>{children}</span>
   )),
+  Loading: () => <div>Loading</div>,
   // oy, dismissible. we need to pull it out of props so it doesn't
   // get applied to the div as an attribute, which must have a string-value,
   // which will shame you in the console:
@@ -108,6 +107,7 @@ jest.mock('@folio/stripes/components', () => ({
   NavListSection: jest.fn(({ children, className, ...rest }) => (
     <div className={className} {...rest}>{children}</div>
   )),
+  NoValue: jest.fn(({ ariaLabel }) => (<span>{ariaLabel}</span>)),
   Pane: jest.fn(({ children, className, defaultWidth, paneTitle, firstMenu, lastMenu, actionMenu, ...rest }) => {
     return (
       <div className={className} {...rest} style={{ width: defaultWidth }}>
@@ -121,6 +121,7 @@ jest.mock('@folio/stripes/components', () => ({
       </div>
     );
   }),
+  PaneBackLink: jest.fn(() => <span />),
   PaneFooter: jest.fn(({ ref, children, ...rest }) => (
     <div ref={ref} {...rest}>{children}</div>
   )),
@@ -132,7 +133,6 @@ jest.mock('@folio/stripes/components', () => ({
       {lastMenu ?? null}
     </div>
   )),
-  PaneBackLink: jest.fn(() => <span />),
   PaneMenu: jest.fn((props) => <div>{props.children}</div>),
   RadioButton: jest.fn(({ label, name, ...rest }) => (
     <div>

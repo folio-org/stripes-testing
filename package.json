@@ -26,10 +26,12 @@
     "@bigtest/cypress": "^0.0.4",
     "@bigtest/interactor": "^0.28.1",
     "@folio/eslint-config-stripes": "^5.0.0",
+    "@jest/globals": "^26.6.2",
     "bigtest": "0.13.3",
     "cypress": "^6.8.0",
     "eslint": "^7.15.0",
     "eslint-plugin-cypress": "^2.11.2",
+    "jest": "^26.6.3",
     "localforage": "^1.9.0"
   },
   "resolutions": {
