@@ -1,5 +1,9 @@
 # Change history for stripes-testing
 
+## 3.1.0 (IN PROGRESS)
+
+* Export mocks for consumption in functional tests by apps. Refs UITEST-81.
+
 ## [3.0.0](https://github.com/folio-org/stripes-testing/tree/v3.0.0) (2021-03-18)
 [Full Changelog](https://github.com/folio-org/stripes-testing/compare/v2.0.1...v3.0.0)
 
