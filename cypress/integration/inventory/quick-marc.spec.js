@@ -11,7 +11,7 @@ describe('ui-inventory: MARC', () => {
   });
 
   describe('deriving a MARC record', () => {
-    // FIXME: No results
+    // FIXME: Test expects at least one MARC record with `Robert C. Klove papers.` query, but API returns nothing
     it('should find MARC source records', () => {
       cy.expect(MultiColumnList().has({ rowCount: not(0) }));
     });
@@ -21,7 +21,8 @@ describe('ui-inventory: MARC', () => {
         cy.do([
           MultiColumnList().click({ row: 0, column: 'Robert C. Klove papers.' }),
           Pane(including('Instance')).find(Button('Actions')).click(),
-          Button('Derive new MARC bibliographic record').click() // FIXME: is disabled for unknown reason
+          // FIXME: This button is disabled for unknown reason
+          Button('Derive new MARC bibliographic record').click()
         ]);
       });
 
@@ -42,7 +43,8 @@ describe('ui-inventory: MARC', () => {
       cy.do([
         MultiColumnList().click({ row: 0, column: 'Robert C. Klove papers.' }),
         Pane(including('Instance')).find(Button('Actions')).click(),
-        Button('Edit in quickMARC').click() // FIXME: is disabled for unknown reason
+        // FIXME: This button is disabled for unknown reason
+        Button('Edit in quickMARC').click()
       ]);
     });
 
@@ -51,7 +53,6 @@ describe('ui-inventory: MARC', () => {
         cy.expect(Page.has({ url: matching(/\/inventory\/quick-marc\/edit/) }));
       });
 
-      // FIXME: I can't open edit page because of disabled edit button to rewrite by using interactors
       describe('adding a new field', () => {
         let newField;
 
@@ -90,7 +91,6 @@ describe('ui-inventory: MARC', () => {
 
     describe('editing the 006/00 field', () => {
       beforeEach('and adding a 006/00 field', () => {
-        // FIXME: I can't open edit page because of disabled edit button to rewrite by using interactors
         cy.get('.quickMarcEditorAddField:last').click();
 
         cy.get('[class*="quickMarcEditorRow--"]:last-child').find('input')

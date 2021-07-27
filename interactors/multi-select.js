@@ -3,7 +3,7 @@ import Button from './button';
 
 const open = (el) => el.getAttribute('aria-expanded') === 'true';
 
-const control = (shouldOpen = true) => async interactor => {
+const control = ({ shouldOpen = true } = {}) => async interactor => {
   let isOpen;
   await interactor.perform(el => {
     isOpen = open(el);
@@ -26,7 +26,10 @@ export default createInteractor('multi select')
   .filters({
     open,
     selected: (element) => {
-      const valueList = element.querySelector('ul[class^=multiSelectValueList-]') || [];
+      const valueList = element.querySelector('ul[class^=multiSelectValueList-]');
+
+      if (!valueList) return [];
+
       return Array.from(valueList.querySelectorAll('[class^=valueChipValue-]'))
         .map(valueChip => valueChip.textContent || '')
         .filter(Boolean);
@@ -34,8 +37,8 @@ export default createInteractor('multi select')
   })
   .actions({
     toggle: ({ find }) => find(Button({ ariaLabel: 'open menu' })).click(),
-    open: control(true),
-    close: control(false),
+    open: control(),
+    close: control({ shouldOpen: false }),
     fillIn: ({ find }, value) => find(TextField({ className: including('multiSelectFilterField-') })).fillIn(value),
     select: async (interactor, values) => {
       await interactor.open();

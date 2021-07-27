@@ -90,18 +90,23 @@ describe('ui-eholdings: Notes', () => {
       });
     });
 
+    // FIXME: The search results contain notes with only one assign
+    // Every note should have at least one assign and can't be completely unassigned
+    // Because test creates a note and that note has only one assign to EBSCO provider
+    // And the results don't have any other notes those are returned from the backend API
+    // These tests below are broken
     describe('searching unassigned notes', () => {
       beforeEach(() => {
         cy.do([
           Checkbox('Assigned').click(),
-          Checkbox('Assign / Unassign all notes').click(), // FIXME: This checkbox is disabled
+          // FIXME: Notes with only one assign can't be unassigned, so that checkbox is disabled
+          Checkbox('Assign / Unassign all notes').click(),
           Button('Save').click(),
           Button('Assign / Unassign').click(),
           Checkbox('Unassigned').click()
         ]);
       });
 
-      // FIXME: This test should fail because notes can't be unassigned
       it('should show not empty result list', () => {
         cy.expect(Modal().find(MultiColumnList()).has({ rowCount: not(0) }));
       });
@@ -113,7 +118,7 @@ describe('ui-eholdings: Notes', () => {
           cy.do([
             Modal()
               .find(MultiColumnListCell({ row: 0, columnIndex: 0 }))
-              .find(Checkbox('Assign / Unassign note')) // FIXME: This checkbox is disabled
+              .find(Checkbox('Assign / Unassign note'))
               .click(),
             Modal()
               .find(MultiColumnListCell({ row: 0, columnIndex: 1 }))

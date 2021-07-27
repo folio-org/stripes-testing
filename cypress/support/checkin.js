@@ -17,6 +17,5 @@ Cypress.Commands.add('checkInItem', barcode => {
 });
 
 Cypress.Commands.add('verifyItemCheckIn', () => {
-  // There is a lot of preparation stuff to do to check this
   cy.expect(MultiColumnList({ id: 'list-items-checked-in' }).exists());
 });
