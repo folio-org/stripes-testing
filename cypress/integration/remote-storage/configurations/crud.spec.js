@@ -27,8 +27,9 @@ describe('Configurations CRUD', () => {
   });
 
   it('should provide happy path', function () {
-    const NAME = 'CS1';
-    const NAME_EDITED = 'CS2';
+    const NAME = 'Test name 1';
+    const NAME_EDITED = 'Test name 2 - edited';
+
     const PROVIDER = 'Dematic EMS';
     const PROVIDER_CODE = 'DEMATIC_EMS';
 
@@ -107,7 +108,7 @@ describe('Configurations CRUD', () => {
         KeyValue('Remote storage name').has({ value: NAME_EDITED }),
       ]);
 
-    // Update
+    // Delete
     cy.do(Button('Actions').click())
       .expect(Button('Delete').exists())
 
