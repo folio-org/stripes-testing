@@ -3,7 +3,6 @@ import { Link } from '@bigtest/interactor';
 import {
   Button,
   KeyValue,
-  Layer,
   Modal,
   MultiColumnList,
   MultiColumnListCell,
@@ -14,7 +13,7 @@ import {
 
 bigtestGlobals.defaultInteractorTimeout = 10000;
 
-describe('Configurations CRUD', () => {
+describe('making CRUD', () => {
   before(() => {
     cy.visit('/');
 
@@ -36,7 +35,7 @@ describe('Configurations CRUD', () => {
     // Create
     cy.do(Button('+ New').click())
       .expect([
-        Layer('Create configuration').exists(),
+        Pane('Create configuration').exists(),
         TextField('Remote storage name\n*').is({ focused: true, value: '' }),
         Select('Provider name\n*').has({ value: '' }),
         Button('Cancel').exists(),
@@ -50,14 +49,14 @@ describe('Configurations CRUD', () => {
       ])
       .expect([
         Modal('Create configuration').exists(),
-        Button('Cancel').exists(),
-        Button('Save').exists(),
+        Modal('Create configuration').find(Button('Cancel')).exists(),
+        Modal('Create configuration').find(Button('Save')).exists(),
       ])
 
       .do(Button('Save').click())
       .expect([
         Modal('Create configuration').absent(),
-        Layer('Create configuration').absent(),
+        Pane('Create configuration').absent(),
         MultiColumnList('storages-list').exists(),
         MultiColumnListCell(NAME).exists(),
       ]);
@@ -66,7 +65,7 @@ describe('Configurations CRUD', () => {
     cy.do(MultiColumnListCell(NAME).click())
       .expect([
         Pane(NAME).exists(),
-        Button('Actions').exists(),
+        Pane(NAME).find(Button('Actions')).exists(),
         KeyValue('Remote storage name').has({ value: NAME }),
         KeyValue('Provider name').has({ value: PROVIDER }),
       ]);
@@ -77,7 +76,7 @@ describe('Configurations CRUD', () => {
 
       .do(Button('Edit').click())
       .expect([
-        Layer(`Edit ${NAME}`).exists(),
+        Pane(`Edit ${NAME}`).exists(),
         TextField('Remote storage name\n*').is({ focused: true, value: NAME }),
         Select('Provider name\n*').has({ value: PROVIDER_CODE }),
         Button('Cancel').exists(),
@@ -90,14 +89,14 @@ describe('Configurations CRUD', () => {
       ])
       .expect([
         Modal(`Edit ${NAME}`).exists(),
-        Button('Cancel').exists(),
-        Button('Save').exists(),
+        Modal(`Edit ${NAME}`).find(Button('Cancel')).exists(),
+        Modal(`Edit ${NAME}`).find(Button('Save')).exists(),
       ])
 
       .do(Button('Save').click())
       .expect([
         Modal(`Edit ${NAME}`).absent(),
-        Layer(`Edit ${NAME}`).absent(),
+        Pane(`Edit ${NAME}`).absent(),
         MultiColumnListCell(NAME).absent(),
         MultiColumnListCell(NAME_EDITED).exists(),
       ])
@@ -105,7 +104,7 @@ describe('Configurations CRUD', () => {
       .do(MultiColumnListCell(NAME_EDITED).click())
       .expect([
         Pane(NAME_EDITED).exists(),
-        KeyValue('Remote storage name').has({ value: NAME_EDITED }),
+        Pane(NAME_EDITED).find(KeyValue('Remote storage name')).has({ value: NAME_EDITED }),
       ]);
 
     // Delete
@@ -115,14 +114,14 @@ describe('Configurations CRUD', () => {
       .do(Button('Delete').click())
       .expect([
         Modal(`Remove ${NAME_EDITED}`).exists(),
-        Button('Cancel').exists(),
-        Button('Delete').exists(),
+        Modal(`Remove ${NAME_EDITED}`).find(Button('Cancel')).exists(),
+        Modal(`Remove ${NAME_EDITED}`).find(Button('Delete')).exists(),
       ])
 
       .do(Button('Delete').click())
       .expect([
         Modal(`Remove ${NAME_EDITED}`).absent(),
-        MultiColumnListCell(NAME_EDITED).exists(),
+        MultiColumnListCell(NAME_EDITED).absent(),
       ]);
   });
 });
