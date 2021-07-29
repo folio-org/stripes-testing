@@ -17,8 +17,8 @@ describe('making CRUD', () => {
     const PROVIDER = 'Dematic EMS';
 
     // Create
-
     cy.findByRole('button', { name: /new/i }).click();
+
     cy.findByRole('dialog', { name: /create configuration/i }).within(() => {
       cy.findByRole('textbox', { name: /remote storage name/i }).should('be.empty').and('have.focus');
       cy.findByRole('combobox', { name: /provider name/i }).should('not.have.value');
@@ -38,24 +38,20 @@ describe('making CRUD', () => {
     });
 
     cy.findAllByRole('dialog').should('not.exist');
-
     cy.findByRole('grid')
       .findByRole('gridcell', { name: NAME })
       .scrollIntoView()
       .click();
 
     // Read
-
     cy.findByRole('heading', { name: NAME }).should('be.visible');
     cy.findByRole('button', { name: /actions/i }).should('be.visible').as('actions');
-
     cy.findByRole('region', { name: /general information/i }).within(() => {
       cy.findByText(NAME).should('be.visible');
       cy.findByText(PROVIDER).should('be.visible');
     });
 
     // Update
-
     cy.get('@actions').click();
     cy.findByRole('button', { name: /edit/i }).click();
 
@@ -93,7 +89,6 @@ describe('making CRUD', () => {
       .should('be.visible');
 
     // Delete
-
     cy.get('@actions').click();
     cy.findByRole('button', { name: /delete/i }).click();
 
