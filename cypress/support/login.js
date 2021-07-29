@@ -1,7 +1,4 @@
 import localforage from 'localforage';
-import { TextField } from 'bigtest';
-
-import { Button, Dropdown } from '../../interactors';
 
 Cypress.Commands.add('login', (username, password) => {
   // We use a behind-the-scenes method of ensuring we are logged
@@ -15,11 +12,9 @@ Cypress.Commands.add('login', (username, password) => {
   cy.visit('');
   cy.contains('Log in');
 
-  cy.do([
-    TextField('Username').fillIn(username),
-    TextField('Password').fillIn(password),
-    Button('Log in').click(),
-  ]);
+  cy.findByRole('textbox', { name: /username/i }).type(username);
+  cy.findByLabelText(/password/i).type(password);
+  cy.findByRole('button', { name: /log in/i }).click();
 
   // Login can be too slow for the default 4-second timeout
   cy.contains('Welcome', { timeout: 10000 });
@@ -32,8 +27,6 @@ Cypress.Commands.add('login', (username, password) => {
 });
 
 Cypress.Commands.add('logout', () => {
-  cy.do([
-    Dropdown(Cypress.env('defaultServicePoint').name).open(),
-    Button('Log out').click(),
-  ]);
+  cy.findByRole('button', { name: /my profile/i }).click();
+  cy.findByRole('button', { name: /log out/i }).click();
 });

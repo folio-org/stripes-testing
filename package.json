@@ -26,8 +26,9 @@
     "@bigtest/cypress": "^0.0.4",
     "@bigtest/interactor": "^0.28.1",
     "@folio/eslint-config-stripes": "^5.0.0",
+    "@testing-library/cypress": "^8.0.0",
     "bigtest": "0.13.3",
-    "cypress": "^6.8.0",
+    "cypress": "^8.0.0",
     "eslint": "^7.15.0",
     "eslint-plugin-cypress": "^2.11.2",
     "localforage": "^1.9.0"

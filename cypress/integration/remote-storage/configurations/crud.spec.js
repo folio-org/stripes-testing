@@ -1,18 +1,3 @@
-import { bigtestGlobals } from '@bigtest/globals';
-import { Link } from '@bigtest/interactor';
-import {
-  Button,
-  KeyValue,
-  Modal,
-  MultiColumnList,
-  MultiColumnListCell,
-  Pane,
-  Select,
-  TextField
-} from '../../../../interactors';
-
-bigtestGlobals.defaultInteractorTimeout = 10000;
-
 describe('making CRUD', () => {
   before(() => {
     cy.visit('/');
@@ -22,7 +7,7 @@ describe('making CRUD', () => {
     // We rely here on Settings routing,
     // but navigate inside our own module-under-test using UI
     cy.visit('/settings/remote-storage');
-    cy.do(Link('Configurations').click());
+    cy.findByRole('link', { name: /configurations/i }).click();
   });
 
   it('should provide happy path', function () {
@@ -30,98 +15,96 @@ describe('making CRUD', () => {
     const NAME_EDITED = 'Test name 2 - edited';
 
     const PROVIDER = 'Dematic EMS';
-    const PROVIDER_CODE = 'DEMATIC_EMS';
 
     // Create
-    cy.do(Button('+ New').click())
-      .expect([
-        Pane('Create configuration').exists(),
-        TextField('Remote storage name\n*').is({ focused: true, value: '' }),
-        Select('Provider name\n*').has({ value: '' }),
-        Button('Cancel').exists(),
-        Button('Save & close').exists(),
-      ])
 
-      .do([
-        TextField('Remote storage name\n*').fillIn(NAME),
-        Select('Provider name\n*').choose(PROVIDER),
-        Button('Save & close').click(),
-      ])
-      .expect([
-        Modal('Create configuration').exists(),
-        Modal('Create configuration').find(Button('Cancel')).exists(),
-        Modal('Create configuration').find(Button('Save')).exists(),
-      ])
+    cy.findByRole('button', { name: /new/i }).click();
+    cy.findByRole('dialog', { name: /create configuration/i }).within(() => {
+      cy.findByRole('textbox', { name: /remote storage name/i }).should('be.empty').and('have.focus');
+      cy.findByRole('combobox', { name: /provider name/i }).should('not.have.value');
+      cy.findByRole('button', { name: /cancel/i }).should('be.visible');
+      cy.findByRole('button', { name: /save/i }).should('be.visible');
+    });
 
-      .do(Button('Save').click())
-      .expect([
-        Modal('Create configuration').absent(),
-        Pane('Create configuration').absent(),
-        MultiColumnList('storages-list').exists(),
-        MultiColumnListCell(NAME).exists(),
-      ]);
+    cy.findByRole('textbox', { name: /remote storage name/i }).type(NAME);
+    cy.findByRole('combobox', { name: /provider name/i }).select(PROVIDER);
+    cy.findByRole('button', { name: /save/i }).click();
+
+    cy.findAllByRole('dialog').find(':contains(Are you sure)').within(() => {
+      cy.findByRole('button', { name: /cancel/i }).should('be.enabled');
+      cy.findByRole('button', { name: /save/i })
+        .should('be.enabled')
+        .click();
+    });
+
+    cy.findAllByRole('dialog').should('not.exist');
+
+    cy.findByRole('grid')
+      .findByRole('gridcell', { name: NAME })
+      .scrollIntoView()
+      .click();
 
     // Read
-    cy.do(MultiColumnListCell(NAME).click())
-      .expect([
-        Pane(NAME).exists(),
-        Pane(NAME).find(Button('Actions')).exists(),
-        KeyValue('Remote storage name').has({ value: NAME }),
-        KeyValue('Provider name').has({ value: PROVIDER }),
-      ]);
+
+    cy.findByRole('heading', { name: NAME }).should('be.visible');
+    cy.findByRole('button', { name: /actions/i }).should('be.visible').as('actions');
+
+    cy.findByRole('region', { name: /general information/i }).within(() => {
+      cy.findByText(NAME).should('be.visible');
+      cy.findByText(PROVIDER).should('be.visible');
+    });
 
     // Update
-    cy.do(Button('Actions').click())
-      .expect(Button('Edit').exists())
 
-      .do(Button('Edit').click())
-      .expect([
-        Pane(`Edit ${NAME}`).exists(),
-        TextField('Remote storage name\n*').is({ focused: true, value: NAME }),
-        Select('Provider name\n*').has({ value: PROVIDER_CODE }),
-        Button('Cancel').exists(),
-        Button('Save & close').exists(),
-      ])
+    cy.get('@actions').click();
+    cy.findByRole('button', { name: /edit/i }).click();
 
-      .do([
-        TextField('Remote storage name\n*').fillIn(NAME_EDITED),
-        Button('Save & close').click(),
-      ])
-      .expect([
-        Modal(`Edit ${NAME}`).exists(),
-        Modal(`Edit ${NAME}`).find(Button('Cancel')).exists(),
-        Modal(`Edit ${NAME}`).find(Button('Save')).exists(),
-      ])
+    cy.findByRole('dialog', { name: `Edit ${NAME}` })
+      .as('editor')
+      .within(() => {
+        cy.findByRole('textbox', { name: /remote storage name/i })
+          .as('name')
+          .should('have.value', NAME)
+          .and('have.focus');
+        cy.findByRole('combobox', { name: /provider name/i })
+          .findByRole('option', { name: PROVIDER })
+          .should('be.selected');
+        cy.findByRole('button', { name: /cancel/i }).should('be.visible');
+        cy.findByRole('button', { name: /save/i }).should('be.visible').as('save');
+      });
 
-      .do(Button('Save').click())
-      .expect([
-        Modal(`Edit ${NAME}`).absent(),
-        Pane(`Edit ${NAME}`).absent(),
-        MultiColumnListCell(NAME).absent(),
-        MultiColumnListCell(NAME_EDITED).exists(),
-      ])
+    cy.get('@name').clear().type(NAME_EDITED);
+    cy.get('@save').click();
 
-      .do(MultiColumnListCell(NAME_EDITED).click())
-      .expect([
-        Pane(NAME_EDITED).exists(),
-        Pane(NAME_EDITED).find(KeyValue('Remote storage name')).has({ value: NAME_EDITED }),
-      ]);
+    cy.findAllByRole('dialog').find(':contains(Are you sure)').within(() => {
+      cy.findByRole('button', { name: /cancel/i }).should('be.enabled');
+      cy.findByRole('button', { name: /save/i })
+        .should('be.enabled')
+        .click();
+    });
+
+    cy.findAllByRole('dialog').should('not.exist');
+    cy.findByRole('gridcell', { name: NAME }).should('not.exist');
+    cy.findByRole('gridcell', { name: NAME_EDITED }).scrollIntoView().click();
+
+    cy.findByRole('heading', { name: NAME_EDITED }).should('be.visible');
+    cy.findByRole('region', { name: /general information/i })
+      .findByText(NAME_EDITED)
+      .should('be.visible');
 
     // Delete
-    cy.do(Button('Actions').click())
-      .expect(Button('Delete').exists())
 
-      .do(Button('Delete').click())
-      .expect([
-        Modal(`Remove ${NAME_EDITED}`).exists(),
-        Modal(`Remove ${NAME_EDITED}`).find(Button('Cancel')).exists(),
-        Modal(`Remove ${NAME_EDITED}`).find(Button('Delete')).exists(),
-      ])
+    cy.get('@actions').click();
+    cy.findByRole('button', { name: /delete/i }).click();
 
-      .do(Button('Delete').click())
-      .expect([
-        Modal(`Remove ${NAME_EDITED}`).absent(),
-        MultiColumnListCell(NAME_EDITED).absent(),
-      ]);
+    cy.findAllByRole('dialog').find(':contains(Are you sure)').within(() => {
+      cy.findByRole('button', { name: /cancel/i }).should('be.enabled');
+      cy.findByRole('button', { name: /delete/i })
+        .should('be.enabled')
+        .click();
+    });
+
+    cy.findByRole('dialog').should('not.exist');
+    cy.findByRole('gridcell', { name: NAME_EDITED }).should('not.exist');
   });
 });

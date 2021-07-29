@@ -1,4 +1,4 @@
-import '@bigtest/cypress';
+import '@testing-library/cypress/add-commands';
 
 import './stripes';
 
