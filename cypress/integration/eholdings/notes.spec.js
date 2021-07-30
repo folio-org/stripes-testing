@@ -1,142 +1,134 @@
+import { Accordion, Button, Checkbox, HTML, including, Link, matching, Modal, MultiColumnList, MultiColumnListCell, not, Page, RichEditor, TextField } from '../../../interactors';
+
 describe('ui-eholdings: Notes', () => {
-  before('logs in and navigates to eHoldings', () => {
+  beforeEach('navigates to EBSCO eHolding provider', () => {
     cy.login('diku_admin', 'admin');
     cy.visit('/eholdings');
+    cy.search('EBSCO');
+    cy.do(Link(including('EBSCO\n')).click());
   });
 
   describe('creating a Note', () => {
-    before('searching and opening provider', () => {
-      cy.search('EBSCO');
-      cy.get('#search-results-content li:first-child').click();
+    beforeEach(() => {
+      cy.do(Accordion('Notes').find(Button('New')).click());
     });
 
-    describe('clicking on note create button', () => {
-      before(() => {
-        cy.get('#providerShowNotes #note-create-button').click();
+    it('should open Note create page', () => {
+      cy.expect(Page.has({ url: including('eholdings/notes/new') }));
+    });
+
+    describe('filling in data', () => {
+      const noteTitle = `[e2e] Note created at ${Date.now()}`;
+
+      beforeEach(() => {
+        cy.do([
+          TextField(including('Note title')).fillIn(noteTitle),
+          RichEditor('Details').fillIn('Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor.'),
+          Button('Save & close').click()
+        ]);
       });
 
-      it('should open Note create page', () => {
-        cy.location().should(loc => {
-          expect(loc.href).to.match(/\/eholdings\/notes\/new/);
-        });
+      it('should redirect to Provider show page', () => {
+        cy.expect(Page.has({ url: matching(/\/eholdings\/providers\/\d+/) }));
       });
 
-      describe('filling in data', () => {
-        const noteTitle = `[e2e] Note created at ${Date.now()}`;
+      it('should display newly created note', () => {
+        cy.expect(MultiColumnListCell(including(noteTitle)));
+      });
+    });
+  });
 
-        before(() => {
-          cy.get('input[name="title"]').type(noteTitle);
-          cy.get('.ql-editor')
-            .type('Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aenean commodo ligula eget dolor.');
+  describe('editing a note', () => {
+    beforeEach(() => {
+      cy.do([
+        MultiColumnList().click({ row: 0 }),
+        Button('Actions').click(),
+        Button('Edit').click()
+      ]);
+    });
 
-          cy.get('button[type="submit"]').click();
-        });
+    it('should redirect to note edit page', () => {
+      cy.expect(Page.has({ url: matching(/\/eholdings\/notes\/[0-9a-z-]+\/edit/) }));
+    });
 
-        it('should redirect to Provider show page', () => {
-          cy.location().should(loc => {
-            expect(loc.href).to.match(/\/eholdings\/providers\/\d+/);
-          });
-        });
+    describe('making changes to note details', () => {
+      const noteEdit = `edited at ${Date.now()}`;
 
-        it('should display newly created note', () => {
-          cy.contains(noteTitle);
-        });
+      beforeEach(() => {
+        cy.do([
+          RichEditor('Details').fillIn(noteEdit),
+          Button('Save & close').click()
+        ]);
+      });
+
+      it('should redirect to note view page with edited details', () => {
+        cy.expect(Page.has({ url: matching(/\/eholdings\/notes\/[0-9a-z-]+/) }));
+        cy.expect(HTML(noteEdit).exists());
+      });
+    });
+  });
+
+  describe('assigning a note', () => {
+    beforeEach(() => {
+      cy.do(Button('Assign / Unassign').click());
+    });
+
+    it('should open note modal', () => {
+      cy.expect(Modal('Assign / Unassign note').exists());
+    });
+
+    describe('searching for notes by name', () => {
+      beforeEach(() => {
+        cy.do([
+          TextField('Note search').fillIn('e2e'),
+          Button('Search').click()
+        ]);
+      });
+
+      it('should show not empty result list', () => {
+        cy.expect(Modal().find(MultiColumnList()).has({ rowCount: not(0) }));
       });
     });
 
-    describe('editing a note', () => {
-      before(() => {
-        cy.get('#providerShowNotes [class*="mclRowFormatterContainer--"]:first-child').click();
-        cy.get('[class*="actionMenuToggle--"]').click();
-        cy.get('#note-edit-button').click();
+    // FIXME: The search results contain notes with only one assign
+    // Every note should have at least one assign and can't be completely unassigned
+    // Because test creates a note and that note has only one assign to EBSCO provider
+    // And the results don't have any other notes those are returned from the backend API
+    // These tests below are broken
+    describe('searching unassigned notes', () => {
+      beforeEach(() => {
+        cy.do([
+          Checkbox('Assigned').click(),
+          // FIXME: Notes with only one assign can't be unassigned, so that checkbox is disabled
+          Checkbox('Assign / Unassign all notes').click(),
+          Button('Save').click(),
+          Button('Assign / Unassign').click(),
+          Checkbox('Unassigned').click()
+        ]);
       });
 
-      it('should redirect to note edit page', () => {
-        cy.location().should(loc => {
-          expect(loc.href).to.match(/\/eholdings\/notes\/[0-9a-z-]+\/edit/);
-        });
+      it('should show not empty result list', () => {
+        cy.expect(Modal().find(MultiColumnList()).has({ rowCount: not(0) }));
       });
 
-      describe('making changes to note details', () => {
-        const noteEdit = `edited at ${Date.now()}`;
+      describe('assigning a note', () => {
+        let noteTitle;
 
-        before(() => {
-          cy.get('.ql-editor')
-            .type(noteEdit);
-
-          cy.get('button[type="submit"]').click();
+        beforeEach(() => {
+          cy.do([
+            Modal()
+              .find(MultiColumnListCell({ row: 0, columnIndex: 0 }))
+              .find(Checkbox('Assign / Unassign note'))
+              .click(),
+            Modal()
+              .find(MultiColumnListCell({ row: 0, columnIndex: 1 }))
+              .perform(element => { noteTitle = element.innerText; }),
+            Button('Save').click(),
+          ]);
         });
 
-        it('should redirect to note view page', () => {
-          cy.location().should(loc => {
-            expect(loc.href).to.match(/\/eholdings\/notes\/[0-9a-z-]+/);
-          });
-        });
-
-        it('should have edited details', () => {
-          cy.contains(noteEdit);
-        });
-      });
-    });
-
-    describe('assigning a note', () => {
-      before(() => {
-        cy.visit('/eholdings');
-        cy.search('EBSCO');
-        cy.get('#search-results-content li:first-child').click();
-        cy.get('#note-assign-button').click();
-      });
-
-      it('should open note modal', () => {
-        cy.get('#notes-modal').then(div => expect(div).not.to.be.undefined);
-      });
-
-      describe('searching for notes by name', () => {
-        before(() => {
-          cy.get('input[name="query"]').type('e2e');
-          cy.get('#notes-modal button[type="submit"]').click();
-        });
-
-        it('should show not empty result list', () => {
-          cy.get('#notes-modal-notes-list [class*="mclRowFormatterContainer--"]')
-            .then(rows => expect(rows).to.not.have.length(0));
-        });
-      });
-
-      describe('searching unassigned notes', () => {
-        before(() => {
-          cy.get('#clickable-filter-notesStatus-assigned').click();
-
-          cy.get('#notes-select-all-checkbox').click();
-          cy.get('#notes-modal-save-button').click();
-          cy.get('#note-assign-button').click();
-
-          cy.get('#clickable-filter-notesStatus-unassigned').click();
-        });
-
-        it('should show not empty result list', () => {
-          cy.get('#notes-modal-notes-list [class*="mclRowFormatterContainer--"]')
-            .then(rows => expect(rows).to.not.have.length(0));
-        });
-
-        describe('assigning a note', () => {
-          let noteTitle;
-
-          before(() => {
-            cy.get('.notes-assign-checkbox').then(checkboxes => {
-              cy.wrap(checkboxes[0]).click();
-            });
-            noteTitle = cy.get('#notes-modal-notes-list .note-title')
-              .then(titles => {
-                noteTitle = titles[0].innerText;
-              });
-
-            cy.get('#notes-modal-save-button').click();
-          });
-
-          it('should show assigned note', () => {
-            cy.contains(noteTitle);
-          });
+        it('should show assigned note', () => {
+          cy.expect(MultiColumnListCell(including(noteTitle)));
         });
       });
     });

@@ -1,9 +1,8 @@
-import {
-  Button,
-} from '../../interactors';
+import { Button, TextField } from '../../interactors';
 
 Cypress.Commands.add('search', (name) => {
-  cy.get('#eholdings-search').type(name);
-  cy.do(Button('Search').click());
-  cy.get('#search-form').submit();
+  cy.do([
+    TextField('Enter your search').fillIn(name),
+    Button('Search').click(),
+  ]);
 });

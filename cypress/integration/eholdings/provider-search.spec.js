@@ -1,5 +1,7 @@
+import { Button, Checkbox, List, MultiSelect } from '../../../interactors';
+
 describe('ui-eholdings: Search providers', () => {
-  before('logs in and navigates to eHoldings', () => {
+  beforeEach('navigates to eHoldings', () => {
     cy.login('diku_admin', 'admin');
     cy.visit('/eholdings');
   });
@@ -10,48 +12,37 @@ describe('ui-eholdings: Search providers', () => {
     });
 
     it('should display two results', () => {
-      cy.get('#search-results-content').find('li').should(li => expect(li).to.have.length(2));
+      cy.expect(List().has({ count: 2 }));
     });
   });
 
   describe('searching by single tag', () => {
     beforeEach(() => {
-      cy.get('#accordion-toggle-button-accordionTagFilter').click();
-      cy.get('#accordionTagFilter input[type="checkbox"]').click();
-
-      cy.get('#selectTagFilter-input').type('important');
-      cy.get('#accordionTagFilter li[class*="multiSelectOption--"]:first-child').click();
+      cy.do([
+        Button('Tags').click(),
+        Checkbox('Search by tags only').click(),
+        MultiSelect().select(['important']),
+      ]);
     });
 
+    // FIXME: There are no results
     it('should display list of providers with important tag', () => {
-      cy.get('#search-results-content').find('li').should(li => expect(li).to.have.length(2));
-    });
-
-    afterEach(() => {
-      cy.get('#accordionTagFilter button[icon="times-circle-solid"').click();
-      cy.reload();
+      cy.expect(List().has({ count: 2 }));
     });
   });
 
   describe('searching by multiple tags', () => {
     beforeEach(() => {
-      cy.get('#accordion-toggle-button-accordionTagFilter').click();
-      cy.get('#accordionTagFilter input[type="checkbox"]').click();
-
-      cy.get('#selectTagFilter-input').type('important');
-      cy.get('#accordionTagFilter li[class*="multiSelectOption--"]:first-child').click();
-
-      cy.get('#selectTagFilter-input').type('urgent');
-      cy.get('#accordionTagFilter li[class*="multiSelectOption--"]:first-child').click();
+      cy.do([
+        Button('Tags').click(),
+        Checkbox('Search by tags only').click(),
+        MultiSelect().select(['important', 'urgent']),
+      ]);
     });
 
+    // FIXME: There are no results
     it('should display list of providers with important and urgent tags', () => {
-      cy.get('#search-results-content').find('li').should(li => expect(li).to.have.length(3));
-    });
-
-    afterEach(() => {
-      cy.get('#accordionTagFilter button[icon="times-circle-solid"').click();
-      cy.reload();
+      cy.expect(List().has({ count: 3 }));
     });
   });
 });
