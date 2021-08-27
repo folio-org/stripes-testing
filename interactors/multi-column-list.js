@@ -1,13 +1,13 @@
 import { isVisible, HTML, Button } from '@bigtest/interactor';
+import BaseHTML from './baseHTML';
 
 const childIndex = el => [...el.parentElement.children].indexOf(el);
 
 const content = el => el.textContent;
 
-export const MultiColumnListRow = HTML.extend('multi column list row')
+export const MultiColumnListRow = BaseHTML.extend('multi column list row')
   .selector('[data-row-inner]')
   .filters({
-    clientTop: el => el.getBoundingClientRect().top,
     selected: el => el.className.match(/mclSelected/),
     cellCount: el => [...el.querySelectorAll('div[class*=mclCell-]')].length,
     index: el => parseInt(el.getAttribute('data-row-inner'), 10),
@@ -24,7 +24,6 @@ export const MultiColumnListCell = HTML.extend('multi column list cell')
     selected: (el) => !!el.parentElement.className.match(/mclSelected/),
     measured: (el) => el.style && el.style.width !== '',
     visible: (el) => isVisible(el),
-    clientTop: el => el.getBoundingClientRect().top,
   });
 
 const MultiColumnListHeader = HTML.extend('multi column list header')
