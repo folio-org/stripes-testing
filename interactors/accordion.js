@@ -1,5 +1,6 @@
-import { Button, HTML } from '@bigtest/interactor';
+import { Button } from '@bigtest/interactor';
 import { isVisible } from 'element-is-visible';
+import HTML from './baseHTML';
 
 function label(element) {
   return element.querySelector('[class^=labelArea]').textContent.trim();

@@ -1,11 +1,11 @@
-import { isVisible, HTML, Button } from '@bigtest/interactor';
-import BaseHTML from './baseHTML';
+import { isVisible, Button } from '@bigtest/interactor';
+import HTML from './baseHTML';
 
 const childIndex = el => [...el.parentElement.children].indexOf(el);
 
 const content = el => el.textContent;
 
-export const MultiColumnListRow = BaseHTML.extend('multi column list row')
+export const MultiColumnListRow = HTML.extend('multi column list row')
   .selector('[data-row-inner]')
   .filters({
     selected: el => el.className.match(/mclSelected/),

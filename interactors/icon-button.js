@@ -1,4 +1,4 @@
-import { HTML } from '@bigtest/interactor';
+import HTML from './baseHTML';
 
 const ariaLabel = el => el.ariaLabel;
 

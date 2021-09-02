@@ -1,4 +1,5 @@
-import { HTML, TextField } from '@bigtest/interactor';
+import { TextField } from '@bigtest/interactor';
+import HTML from './baseHTML';
 
 import IconButton from './icon-button';
 

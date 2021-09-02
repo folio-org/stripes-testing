@@ -1,7 +1,8 @@
-import { createInteractor, TextField, HTML, Select } from '@bigtest/interactor';
+import { createInteractor, TextField, Select } from '@bigtest/interactor';
 import { isVisible } from 'element-is-visible';
 import { format, parseISO } from 'date-fns';
 import IconButton from './icon-button';
+import HTML from './baseHTML';
 
 export default HTML.extend('datepicker')
   .selector('[data-test-datepicker-container]')
