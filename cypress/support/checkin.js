@@ -8,7 +8,7 @@ import {
 
 Cypress.Commands.add('checkInItem', barcode => {
   cy.do([
-    TextField({ id: 'input-item-barcode' }).fillIn(barcode),
+    TextField('Item ID').fillIn(barcode),
     Button('Enter').click(),
     Modal('Confirm multipiece check in').find(Button('Check in')).click(),
     Checkbox('Print slip').click(),

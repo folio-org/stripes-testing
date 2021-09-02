@@ -3,7 +3,8 @@ import { isVisible } from 'element-is-visible';
 import HTML from './baseHTML';
 
 function label(element) {
-  return element.querySelector('[class^=labelArea]').textContent.trim();
+  const labelEl = element.querySelector('[class^=labelArea]');
+  return labelEl ? labelEl.textContent.trim() : '';
 }
 
 export default HTML.extend('accordion')

@@ -1,19 +1,10 @@
-import { bigtestGlobals } from '@bigtest/globals';
-
-bigtestGlobals.defaultInteractorTimeout = 10000;
-
 describe('Check In', () => {
   let ITEM_BARCODE;
-
-  before(() => {
-    cy.visit('/');
-
-    cy.login('diku_admin', 'admin');
-  });
 
   beforeEach(() => {
     ITEM_BARCODE = Number(new Date()).toString();
 
+    cy.login('diku_admin', 'admin');
     cy.getToken('diku_admin', 'admin')
       .then(() => {
         cy.getLoanTypes({ limit: 1 });
@@ -56,10 +47,6 @@ describe('Check In', () => {
           servicePointId: Cypress.env('userServicePoints')[0].id,
         });
       });
-  });
-
-  after(() => {
-    cy.logout();
   });
 
   it('Basic flow', function () {
