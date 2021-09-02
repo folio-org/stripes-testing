@@ -10,5 +10,6 @@ import './checkin';
 import './checkout';
 import './eholdings';
 import './inventory';
+import './users';
 
 bigtestGlobals.defaultInteractorTimeout = 10000;
