@@ -1,5 +1,4 @@
 import HTML from './baseHTML';
-// import { Button } from '@bigtest/interactor';
 
 const ariaLabel = el => el.ariaLabel;
 
