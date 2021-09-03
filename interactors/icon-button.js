@@ -1,4 +1,5 @@
 import HTML from './baseHTML';
+// import { Button } from '@bigtest/interactor';
 
 const ariaLabel = el => el.ariaLabel;
 
@@ -12,4 +13,7 @@ export default HTML.extend('icon button')
     button: (el) => el.tagName.toLowerCase() === 'button',
     anchor: (el) => el.tagName.toLowerCase() === 'a',
     ariaLabel
+  })
+  .actions({
+    click: ({ perform }) => perform(el => el.click()),
   });

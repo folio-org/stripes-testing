@@ -28,8 +28,8 @@ export default HTML.extend('text field')
   })
   .actions({
     blur: ({ find }) => find(TextField()).blur(),
-    clear: async ({ find, focus }) => {
-      await focus();
+    clear: async ({ perform, find }) => {
+      await perform(el => el.querySelector('input').focus());
       await find(IconButton({ icon: 'times-circle-solid' })).click();
     },
     fillIn: ({ find }, value) => find(TextField()).fillIn(value),
