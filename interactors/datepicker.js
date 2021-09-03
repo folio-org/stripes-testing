@@ -1,7 +1,8 @@
-import { createInteractor, TextField, HTML } from '@bigtest/interactor';
+import { createInteractor, TextField, Select } from '@bigtest/interactor';
 import { isVisible } from 'element-is-visible';
 import { format, parseISO } from 'date-fns';
 import IconButton from './icon-button';
+import HTML from './baseHTML';
 
 export default HTML.extend('datepicker')
   .selector('[data-test-datepicker-container]')
@@ -54,6 +55,9 @@ const CalendarDays = HTML.extend('calendar days')
     }
   });
 
+const MonthField = Select.extend('month select')
+  .selector('[class^=monthField');
+
 export const Calendar = createInteractor('calendar widget')
   .selector('[class^=calendar-]')
   .filters({
@@ -96,12 +100,13 @@ export const Calendar = createInteractor('calendar widget')
   })
   .actions({
     clickDay: (interactor, value) => interactor.find(CalendarDays(value)).click(),
+    clickMonth: (interactor) => interactor.find(MonthField()).click(),
     focusDay: (interactor, value) => interactor.find(CalendarDays(value)).focus(),
     setYear: (interactor, value) => interactor.find(TextField())
       .perform((el) => {
         const property = Object.getOwnPropertyDescriptor(Object.getPrototypeOf(el), 'value');
         property.set.call(el, value);
         el.dispatchEvent(new InputEvent('input', { inputType: 'insertFromPaste', bubbles: true, cancelable: false }));
-      })
+      }),
   });
 

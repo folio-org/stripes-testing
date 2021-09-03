@@ -1,4 +1,5 @@
-import { CheckBox, HTML } from '@bigtest/interactor';
+import { CheckBox } from '@bigtest/interactor';
+import HTML from './baseHTML';
 
 export default HTML.extend('checkbox')
   .selector('div[class^=checkbox-]')
@@ -31,6 +32,7 @@ export default HTML.extend('checkbox')
     // an svg element instead, it is still clickable, but in reality not visible
     clickInput: ({ find }) => find(CheckBox({ visible: false })).click(),
     clickAndBlur: ({ perform }) => perform((el) => {
+      el.querySelector('input').focus();
       el.querySelector('input').click();
       el.querySelector('input').blur();
     }),

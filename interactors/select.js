@@ -1,4 +1,5 @@
-import { HTML, Select } from '@bigtest/interactor';
+import { Select } from '@bigtest/interactor';
+import HTML from './baseHTML';
 
 function label(el) {
   return el.querySelector('label').innerText;

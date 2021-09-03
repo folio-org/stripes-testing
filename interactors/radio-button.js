@@ -1,4 +1,4 @@
-import { HTML } from '@bigtest/interactor';
+import HTML from './baseHTML';
 
 export default HTML.extend('radio button')
   .selector('div[class^=radioButton]')
