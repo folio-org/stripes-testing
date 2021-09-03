@@ -1,10 +1,10 @@
-import { Button, Select, TextField } from "../../interactors";
+import { Button, Select, TextField, including } from "../../interactors";
 
 Cypress.Commands.add('createUser', (userLastName, patronGroup, email) => {
   cy.do([
-    TextField('Last name\n*').fillIn(userLastName),
-    Select('Patron group\n*').choose(patronGroup),
-    TextField('Email\n*').fillIn(email),
+    TextField(including('Last name')).fillIn(userLastName),
+    Select(including('Patron group')).choose(patronGroup),
+    TextField(including('Email')).fillIn(email),
     Button('Save & close').click(),
   ]);
 });
