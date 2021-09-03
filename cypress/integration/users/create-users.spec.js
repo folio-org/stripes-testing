@@ -12,7 +12,7 @@ describe('Creating user', () => {
       });
   });
 
-  it('should be possible', function () {
+  it('should be possible by filling the "Create user" form and submitting it', function () {
     const userGroupOption = Cypress.env('userGroups')[0].group + ' (' + Cypress.env('userGroups')[0].desc + ')';
 
     cy.visit('/users/create');
