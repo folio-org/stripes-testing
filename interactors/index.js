@@ -1,7 +1,7 @@
 import * as Bigtest from '@bigtest/interactor';
 
 export { Bigtest };
-export { Heading, HTML, including, Link, matching, and, or, not, some, every, Page } from '@bigtest/interactor';
+export { Heading, HTML, including, Link, matching, and, or, not, some, every, isVisible, Page } from '@bigtest/interactor';
 export { default as converge } from './converge';
 
 export { default as Accordion } from './accordion';
@@ -16,7 +16,7 @@ export { default as Label } from './label';
 export { default as Layer } from './layer';
 export { default as List, ListItem } from './list';
 export { default as Modal } from './modal';
-export { MultiColumnList, MultiColumnListCell } from './multi-column-list';
+export { MultiColumnList, MultiColumnListRow, MultiColumnListCell } from './multi-column-list';
 export { default as MultiSelect } from './multi-select';
 export { default as Pane, PaneHeader } from './pane';
 export { default as RadioButton } from './radio-button';

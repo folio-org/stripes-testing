@@ -1,5 +1,5 @@
-import { HTML } from '@bigtest/interactor';
 import Button from './button';
+import HTML from './baseHTML';
 
 function title(el) { return el.querySelector('[class^=modalHeader]').textContent; }
 

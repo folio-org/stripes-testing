@@ -1,8 +1,17 @@
-import { HTML } from '@bigtest/interactor';
+import { isVisible, Button } from '@bigtest/interactor';
+import HTML from './baseHTML';
 
 const childIndex = el => [...el.parentElement.children].indexOf(el);
 
 const content = el => el.textContent;
+
+export const MultiColumnListRow = HTML.extend('multi column list row')
+  .selector('[data-row-inner]')
+  .filters({
+    selected: el => el.className.match(/mclSelected/),
+    cellCount: el => [...el.querySelectorAll('div[class*=mclCell-]')].length,
+    index: el => parseInt(el.getAttribute('data-row-inner'), 10),
+  });
 
 export const MultiColumnListCell = HTML.extend('multi column list cell')
   .selector('div[class*=mclCell-]')
@@ -13,7 +22,8 @@ export const MultiColumnListCell = HTML.extend('multi column list cell')
     column: (el) => el.textContent,
     columnIndex: childIndex,
     selected: (el) => !!el.parentElement.className.match(/mclSelected/),
-    measured: (el) => el.style && el.style.width !== ''
+    measured: (el) => el.style && el.style.width !== '',
+    visible: (el) => isVisible(el),
   });
 
 const MultiColumnListHeader = HTML.extend('multi column list header')
@@ -36,7 +46,9 @@ export const MultiColumnList = HTML.extend('multi column list')
     rowCount: el => el.querySelectorAll('[class*=mclRow-]').length,
     height: el => el.offsetHeight,
     width: el => el.offsetWidth,
-    headerInteractivity: (el) => [...el.querySelectorAll('div[class*=mclHeader-]')].map((d) => !!d.querySelector('[data-test-clickable-header]'))
+    scrollTop: el => el.querySelector('div[class^=mclScrollable-').scrollTop,
+    headerInteractivity: (el) => [...el.querySelectorAll('div[class*=mclHeader-]')].map((d) => !!d.querySelector('[data-test-clickable-header]')),
+    visible: (el) => isVisible(el)
   })
   .actions({
     clickHeader: (interactor, header) => interactor.find(MultiColumnListHeader(header)).click(),
@@ -50,6 +62,15 @@ export const MultiColumnList = HTML.extend('multi column list')
     click: (interactor, { row = 0, column }) => {
       const columnSearch = !column ? { columnIndex: 0 } : { column };
       return interactor.find(MultiColumnListCell({ row, ...columnSearch })).click();
+    },
+    clickNextPagingButton: (interactor, label = 'Next') => {
+      return interactor.find(Button(label)).click();
+    },
+    clickPreviousPagingButton: (interactor, label = 'Previous') => {
+      return interactor.find(Button(label)).click();
+    },
+    clickLoadMoreButton: (interactor, label = 'Load more') => {
+      return interactor.find(Button(label)).click();
     }
   });
 

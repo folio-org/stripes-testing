@@ -10,6 +10,7 @@ export default createInteractor('keyboard (requires window to have focus)')
     arrowDown: press('ArrowDown'),
     arrowLeft: press('ArrowLeft'),
     arrowRight: press('ArrowRight'),
+    control: press('Control'),
     // next/prevOption and increment/decrementNumber are workarounds
     // as we want to use the default browser implementation,
     // but it doesn't trigger the built-in browser functions
@@ -46,7 +47,8 @@ export default createInteractor('keyboard (requires window to have focus)')
     enter: press('Enter'),
     escape: press('Escape'),
     alt: press('AltLeft'),
-    altLeft: press('AltLeft')
+    altLeft: press('AltLeft'),
+    pressKey: (value) => press(value),
   })();
 
 const KEY_CODES = {
