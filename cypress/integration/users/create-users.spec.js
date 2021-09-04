@@ -1,6 +1,6 @@
 import {
   Pane,
-} from "../../../interactors";
+} from '../../../interactors';
 
 describe('Creating user', () => {
   beforeEach(() => {
