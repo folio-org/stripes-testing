@@ -32,3 +32,11 @@ Cypress.Commands.add('getUserGroups', (searchParams) => {
       Cypress.env('userGroups', body.usergroups);
     });
 });
+
+Cypress.Commands.add('deleteUser', (userId) => {
+  cy
+    .okapiRequest({
+      method: 'DELETE',
+      path: `bl-users/by-id/${userId}`,
+    });
+});
