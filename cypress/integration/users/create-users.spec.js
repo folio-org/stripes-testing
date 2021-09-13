@@ -4,28 +4,31 @@ import {
 } from '../../../interactors';
 
 describe('Creating user', () => {
-  beforeEach(() => {
-    cy.login('diku_admin', 'admin');
+  const lastName = 'Test123' + Number(new Date()).toString();
 
-    cy.getToken('diku_admin', 'admin')
-      .then(() => {
-        cy.getUserGroups({ limit: 1 });
-      });
+  before(() => {
+    cy.login('diku_admin', 'admin');
+    cy.getToken('diku_admin', 'admin');
   });
 
-  it('should be possible by filling the "Create user" form and submitting it', function () {
-    const lastName = 'Test123' + Number(new Date()).toString();
-    const userGroupOption = Cypress.env('userGroups')[0].group + ' (' + Cypress.env('userGroups')[0].desc + ')';
+  beforeEach(() => {
+    cy.getUserGroups({ limit: 1 });
+  });
 
-    cy.visit('/users/create');
-    cy.createUser(lastName, userGroupOption, 'test@folio.org');
-    cy.expect(Pane(including(lastName)).is({ visible: true, index: 2 }));
-
+  afterEach(() => {
     cy.getUsers({ query: `personal.lastName="${lastName}"` })
       .then(() => {
         Cypress.env('users').forEach(user => {
           cy.deleteUser(user.id);
         });
       });
+  });
+
+  it('should be possible by filling the "Create user" form and submitting it', function () {
+    const userGroupOption = Cypress.env('userGroups')[0].group + ' (' + Cypress.env('userGroups')[0].desc + ')';
+
+    cy.visit('/users/create');
+    cy.createUser(lastName, userGroupOption, 'test@folio.org');
+    cy.expect(Pane(including(lastName)).is({ visible: true, index: 2 }));
   });
 });
