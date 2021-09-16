@@ -21,3 +21,22 @@ Cypress.Commands.add('getUserServicePoints', (userId) => {
       Cypress.env('userServicePoints', body.servicePointsUsers);
     });
 });
+
+Cypress.Commands.add('getUserGroups', (searchParams) => {
+  cy
+    .okapiRequest({
+      path: 'groups',
+      searchParams,
+    })
+    .then(({ body }) => {
+      Cypress.env('userGroups', body.usergroups);
+    });
+});
+
+Cypress.Commands.add('deleteUser', (userId) => {
+  cy
+    .okapiRequest({
+      method: 'DELETE',
+      path: `bl-users/by-id/${userId}`,
+    });
+});
