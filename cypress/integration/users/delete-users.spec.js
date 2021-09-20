@@ -1,6 +1,7 @@
 import {
   Button,
   including,
+  KeyValue,
   Pane,
 } from '../../../interactors';
 
@@ -67,6 +68,6 @@ describe('Deleting user', () => {
     ]);
 
     cy.visit(`/users/preview/${id}`);
-    cy.expect(ResultsPane.has({ id: 'pane-userdetails' }));
+    cy.expect(KeyValue().exists({ value: lastName }));
   });
 });
