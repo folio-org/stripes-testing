@@ -68,6 +68,6 @@ describe('Deleting user', () => {
     ]);
 
     cy.visit(`/users/preview/${id}`);
-    cy.expect(KeyValue().exists({ value: lastName }));
+    cy.expect(KeyValue({ value: lastName }).exists());
   });
 });
