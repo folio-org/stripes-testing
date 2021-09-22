@@ -1,4 +1,4 @@
-import { createInteractor } from '@bigtest/interactor';
+import { createInteractor } from '@interactors/html';
 
 export default createInteractor('key value')
   .selector('[class^=kvRoot]')

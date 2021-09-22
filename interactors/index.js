@@ -1,7 +1,7 @@
-import * as Bigtest from '@bigtest/interactor';
+import * as Bigtest from '@interactors/html';
 
 export { Bigtest };
-export { Heading, HTML, including, Link, matching, and, or, not, some, every, isVisible, Page } from '@bigtest/interactor';
+export { Heading, HTML, including, Link, matching, and, or, not, some, every, isVisible, Page } from '@interactors/html';
 export { default as converge } from './converge';
 
 export { default as Accordion } from './accordion';

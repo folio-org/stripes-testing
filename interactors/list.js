@@ -1,4 +1,4 @@
-import { createInteractor, HTML } from '@bigtest/interactor';
+import { createInteractor, HTML } from '@interactors/html';
 
 const childIndex = el => [...el.parentElement.children].indexOf(el);
 
