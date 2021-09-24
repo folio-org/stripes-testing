@@ -1,6 +1,5 @@
 import {
   Button,
-  including,
   KeyValue,
   Pane,
 } from '../../../interactors';
@@ -8,8 +7,6 @@ import {
 describe('Deleting user', () => {
   const lastName = 'Test123' + Number(new Date()).toString();
   const ResultsPane = Pane({ index: 2 });
-  const ActionsMenu = ResultsPane.find(Button({ className: including('actionMenuToggle') }));
-  const DeleteButton = Button({ id: 'clickable-checkdeleteuser' });
   const ModalButtonYes = Button({ id: 'delete-user-button' });
   const ModalButtonNo = Button({ id: 'close-delete-user-button' });
 
@@ -48,8 +45,7 @@ describe('Deleting user', () => {
 
     cy.visit(`/users/preview/${id}`);
     cy.do([
-      ActionsMenu.click(),
-      DeleteButton.click(),
+      ResultsPane.clickAction({ id: 'clickable-checkdeleteuser' }),
       ModalButtonYes.click(),
     ]);
 
@@ -62,8 +58,7 @@ describe('Deleting user', () => {
 
     cy.visit(`/users/preview/${id}`);
     cy.do([
-      ActionsMenu.click(),
-      DeleteButton.click(),
+      ResultsPane.clickAction({ id: 'clickable-checkdeleteuser' }),
       ModalButtonNo.click(),
     ]);
 

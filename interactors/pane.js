@@ -1,4 +1,5 @@
 import { isVisible } from 'element-is-visible';
+import { including } from '@bigtest/interactor';
 import Button from './button';
 import HTML from './baseHTML';
 
@@ -33,4 +34,8 @@ export default HTML.extend('pane')
   })
   .actions({
     dismiss: (interactor) => interactor.find(Button({ ariaLabel: 'Close ' })).click(),
+    clickAction: async (interactor, action) => {
+      await interactor.find(Button({ className: including('actionMenuToggle') })).click();
+      await Button(action).click();
+    },
   });
