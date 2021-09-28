@@ -1,5 +1,12 @@
 # Change history for stripes-testing
 
+## [4.0.0](https://github.com/folio-org/stripes-testing/tree/v4.0.0) (2021-09-27)
+[Full Changelog](https://github.com/folio-org/stripes-testing/compare/v3.0.0...v4.0.0)
+
+* Introduce Cypress e2e tests with new BigTest. FOLIO-2946.
+* Introduce e2e tests with Cypress. FAT-899.
+* Write e2e tests with interactors.
+
 ## [3.0.0](https://github.com/folio-org/stripes-testing/tree/v3.0.0) (2021-03-18)
 [Full Changelog](https://github.com/folio-org/stripes-testing/compare/v2.0.1...v3.0.0)
 
