@@ -1,6 +1,7 @@
 import {
   Button,
   KeyValue,
+  Modal,
   Pane,
 } from '../../../interactors';
 
@@ -13,6 +14,8 @@ describe('Deleting user', () => {
   before(() => {
     cy.login('diku_admin', 'admin');
     cy.getToken('diku_admin', 'admin');
+    cy.getServicePoints({ limit: 1, query: 'pickupLocation=="true"' });
+    cy.getCancellationReasons({ limit: 1 });
   });
 
   beforeEach(() => {
@@ -64,5 +67,39 @@ describe('Deleting user', () => {
 
     cy.visit(`/users/preview/${id}`);
     cy.expect(KeyValue({ value: lastName }).exists());
+  });
+
+  it('should be unable in case the user has an open requests', function () {
+    const { id: userId } = Cypress.env('user');
+    cy
+      .getItems({ limit: 1, query: 'status.name=="Available"' })
+      .then(() => {
+        cy.postRequest({
+          requestType: 'Page',
+          fulfilmentPreference: 'Hold Shelf',
+          itemId: Cypress.env('items')[0].id,
+          requesterId: userId,
+          pickupServicePointId: Cypress.env('servicePoints')[0].id,
+          requestDate: '2021-09-20T18:36:56Z',
+        });
+      })
+      .then(() => {
+        cy.visit(`/users/preview/${userId}`);
+        cy.do(
+          ResultsPane.clickAction({ id: 'clickable-checkdeleteuser' })
+        );
+
+        cy.expect(
+          Modal().find(ModalButtonYes).absent()
+        );
+
+        cy.putRequest({
+          ...Cypress.env('request'),
+          status: 'Closed - Cancelled',
+          cancelledByUserId: userId,
+          cancellationReasonId: Cypress.env('cancellationReasons')[0].id,
+          cancelledDate: '2021-09-30T16:14:50.444Z',
+        });
+      });
   });
 });
