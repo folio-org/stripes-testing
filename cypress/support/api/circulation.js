@@ -12,3 +12,11 @@ Cypress.Commands.add('createItemCheckout', (checkout) => {
     }
   });
 });
+
+Cypress.Commands.add('postItemCheckin', (data) => {
+  cy.okapiRequest({
+    method: 'POST',
+    path: 'circulation/check-in-by-barcode',
+    body: data,
+  });
+});

@@ -1,3 +1,5 @@
+import uuid from 'uuid';
+
 import {
   Button,
   KeyValue,
@@ -6,10 +8,21 @@ import {
 } from '../../../interactors';
 
 describe('Deleting user', () => {
-  const lastName = 'Test123' + Number(new Date()).toString();
+  const lastName = 'Test-' + uuid();
   const ResultsPane = Pane({ index: 2 });
   const ModalButtonYes = Button({ id: 'delete-user-button' });
   const ModalButtonNo = Button({ id: 'close-delete-user-button' });
+
+  function verifyUserDeleteImpossible(id) {
+    cy.visit(`/users/preview/${id}`);
+    cy.do(
+      ResultsPane.clickAction({ id: 'clickable-checkdeleteuser' })
+    );
+
+    cy.expect(
+      Modal().find(ModalButtonYes).absent()
+    );
+  }
 
   before(() => {
     cy.login('diku_admin', 'admin');
@@ -22,6 +35,7 @@ describe('Deleting user', () => {
     cy.getUserGroups({ limit: 1 }).then(() => {
       const userData = {
         active: true,
+        barcode: uuid(),
         personal: {
           preferredContactTypeId: '002',
           lastName,
@@ -69,7 +83,7 @@ describe('Deleting user', () => {
     cy.expect(KeyValue({ value: lastName }).exists());
   });
 
-  it('should be unable in case the user has an open requests', function () {
+  it('should be unable in case the user has open requests', function () {
     const { id: userId } = Cypress.env('user');
     cy
       .getItems({ limit: 1, query: 'status.name=="Available"' })
@@ -84,14 +98,7 @@ describe('Deleting user', () => {
         });
       })
       .then(() => {
-        cy.visit(`/users/preview/${userId}`);
-        cy.do(
-          ResultsPane.clickAction({ id: 'clickable-checkdeleteuser' })
-        );
-
-        cy.expect(
-          Modal().find(ModalButtonYes).absent()
-        );
+        verifyUserDeleteImpossible(userId);
 
         cy.putRequest({
           ...Cypress.env('request'),
@@ -99,6 +106,62 @@ describe('Deleting user', () => {
           cancelledByUserId: userId,
           cancellationReasonId: Cypress.env('cancellationReasons')[0].id,
           cancelledDate: '2021-09-30T16:14:50.444Z',
+        });
+      });
+  });
+
+  it('should be unable in case the user has open loans', function () {
+    const ITEM_BARCODE = Number(new Date()).toString();
+    // const { id: userId, barcode: userBarcode } = Cypress.env('user');
+    const user = Cypress.env('user');
+    const servicePoint = Cypress.env('servicePoints')[0];
+
+    cy
+      .then(() => {
+        cy.getLoanTypes({ limit: 1 });
+        cy.getMaterialTypes({ limit: 1 });
+        cy.getLocations({ limit: 1 });
+        cy.getHoldingTypes({ limit: 1 });
+        cy.getHoldingSources({ limit: 1 });
+        cy.getInstanceTypes({ limit: 1 });
+      })
+      .then(() => {
+        cy.createInstance({
+          instance: {
+            instanceTypeId: Cypress.env('instanceTypes')[0].id,
+            title: `Pre-checkout instance ${Number(new Date())}`,
+          },
+          holdings: [{
+            holdingsTypeId: Cypress.env('holdingsTypes')[0].id,
+            permanentLocationId: Cypress.env('locations')[0].id,
+            sourceId: Cypress.env('holdingSources')[0].id,
+          }],
+          items: [
+            [{
+              barcode: ITEM_BARCODE,
+              missingPieces: '3',
+              numberOfMissingPieces: '3',
+              status: { name: 'Available' },
+              permanentLoanType: { id: Cypress.env('loanTypes')[0].id },
+              materialType: { id: Cypress.env('materialTypes')[0].id },
+            }],
+          ],
+        });
+      })
+      .then(() => {
+        cy.createItemCheckout({
+          itemBarcode: ITEM_BARCODE,
+          userBarcode: user.barcode,
+          servicePointId: servicePoint.id,
+        });
+      })
+      .then(() => {
+        verifyUserDeleteImpossible(user.id);
+
+        cy.postItemCheckin({
+          itemBarcode: ITEM_BARCODE,
+          servicePointId: servicePoint.id,
+          checkInDate:  '2021-09-30T16:14:50.444Z',
         });
       });
   });
