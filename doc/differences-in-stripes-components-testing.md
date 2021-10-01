@@ -4,7 +4,7 @@
 * [Waiting on elements instead of delays](#waiting-on-elements-instead-of-delays)
 * [Using Karma instead of Nightmare](#using-karma-instead-of-nightmare)
 * [Using `@bigtest/mocha` instead of regular Mocha](#using-bigtestmocha-instead-of-regular-mocha)
-* [Using `@bigtest/interactor` to provide short-cuts](#using-bigtestinteractor-to-provide-short-cuts)
+* [Using `@interactors/html` to provide short-cuts](#using-interactorshtml-to-provide-short-cuts)
 * [Starting tests with `stripes test`](#starting-tests-with-stripes-test)
 
 
@@ -47,12 +47,11 @@ On the positive side, this allows `.wait` actions to be omitted altogether. On t
 
 I'm not convinced that the unpredictable cost of this approach is necessarily worth the gain. We can consider whether to shift to using `@bigtest/mocha`, but it's not an obvious move.
 
+## Using `@interactors/html` to provide short-cuts
 
-## Using `@bigtest/interactor` to provide short-cuts
+[`@interactors/html`](https://github.com/thefrontside/interactors) is another part of Frontside's "BigTest" suite, providing useful short-cuts for some browser automation sequences, and the ability to define and use re-usable "macros".
 
-[`@bigtestjs/interactor`](https://github.com/bigtestjs/interactor) is another part of Frontside's "BigTest" suite, providing useful short-cuts for some browser automation sequences, and the ability to define and use re-usable "macros".
-
-This looks like a powerful way to build tests of UIs, and may well be worth adopting: see the `logIn` example at the start of [the top-level README](https://github.com/bigtestjs/interactor/blob/master/README.md).
+This looks like a powerful way to build tests of UIs, and may well be worth adopting: see the `logIn` example at the start of [the top-level README](https://github.com/thefrontside/interactors/blob/master/README.md).
 
 But using interactors requires the "convergent" style and so may imply or necessitate the use of `@bigtest/mocha`. Also, it may require using Karma instead of Nightmare, which is a switch we may not want to make -- or not yet.
 

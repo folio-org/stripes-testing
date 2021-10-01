@@ -1,4 +1,4 @@
-import { TextField, Select } from '@bigtest/interactor';
+import { TextField, Select } from '@interactors/html';
 import HTML from './baseHTML';
 
 const label = (el) => {

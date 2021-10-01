@@ -1,4 +1,4 @@
-import { createInteractor, HTML, including, TextField } from '@bigtest/interactor';
+import { createInteractor, HTML, including, TextField } from '@interactors/html';
 import Button from './button';
 
 const open = (el) => el.getAttribute('aria-expanded') === 'true';

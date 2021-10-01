@@ -1,4 +1,4 @@
-import { createInteractor, TextField, Select } from '@bigtest/interactor';
+import { createInteractor, TextField, Select } from '@interactors/html';
 import { isVisible } from 'element-is-visible';
 import { format, parseISO } from 'date-fns';
 import IconButton from './icon-button';
