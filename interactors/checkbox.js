@@ -1,4 +1,4 @@
-import { CheckBox } from '@bigtest/interactor';
+import { CheckBox } from '@interactors/html';
 import HTML from './baseHTML';
 
 export default HTML.extend('checkbox')

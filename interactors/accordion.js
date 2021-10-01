@@ -1,4 +1,4 @@
-import { Button } from '@bigtest/interactor';
+import { Button } from '@interactors/html';
 import { isVisible } from 'element-is-visible';
 import HTML from './baseHTML';
 

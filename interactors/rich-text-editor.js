@@ -1,4 +1,4 @@
-import { HTML } from '@bigtest/interactor';
+import { HTML } from '@interactors/html';
 
 function label(el) {
   return el.querySelector('label').innerText;

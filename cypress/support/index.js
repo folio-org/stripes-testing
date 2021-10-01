@@ -1,5 +1,5 @@
 import { bigtestGlobals } from '@bigtest/globals';
-import '@bigtest/cypress';
+import '@interactors/with-cypress';
 
 import './stripes';
 

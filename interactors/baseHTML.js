@@ -1,4 +1,4 @@
-import { HTML as BaseHTML } from '@bigtest/interactor';
+import { HTML as BaseHTML } from '@interactors/html';
 
 export default BaseHTML
   .filters({
