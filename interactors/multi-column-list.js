@@ -1,4 +1,4 @@
-import { isVisible, Button } from '@bigtest/interactor';
+import { isVisible, Button } from '@interactors/html';
 import HTML from './baseHTML';
 
 const childIndex = el => [...el.parentElement.children].indexOf(el);

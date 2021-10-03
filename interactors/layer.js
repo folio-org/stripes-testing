@@ -1,4 +1,4 @@
-import { createInteractor, focused } from '@bigtest/interactor';
+import { createInteractor, focused } from '@interactors/html';
 import { isVisible } from 'element-is-visible';
 
 export default createInteractor('layer')

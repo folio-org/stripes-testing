@@ -1,6 +1,6 @@
 /* eslint-disable no-use-before-define */
 
-import { createInteractor, Select } from '@bigtest/interactor';
+import { createInteractor, Select } from '@interactors/html';
 
 
 export default createInteractor('keyboard (requires window to have focus)')
