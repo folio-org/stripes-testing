@@ -1,5 +1,5 @@
 import { isVisible } from 'element-is-visible';
-import { including } from '@bigtest/interactor';
+import { including } from '@interactors/html';
 import Button from './button';
 import HTML from './baseHTML';
 
