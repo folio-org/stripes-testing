@@ -7,6 +7,7 @@ export { default as converge } from './converge';
 export { default as Accordion } from './accordion';
 export { default as AutoSuggest } from './autosuggest';
 export { default as Avatar } from './avatar';
+export { default as Badge } from './badge';
 export { default as Button } from './button';
 export { default as Checkbox } from './checkbox';
 export { default as Datepicker, Calendar } from './datepicker';
