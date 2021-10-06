@@ -84,6 +84,9 @@ and make a pull request to this package.
 ### Table of Contents
 
 - [`Accordion`](#accordion)
+- [`AutoSuggest`](#autosuggest)
+- [`Avatar`](#avatar)
+- [`Badge`](#badge)
 - [`Button`](#button)
 - [`Checkbox`](#checkbox)
 - [`Dropdown`](#dropdown)
@@ -143,6 +146,82 @@ Accordion('Categories').exists();
   pane set. So for example `Accordion('Users').has({ index: 2 })`
   would assert that the "Users" accordion was 3rd in its accordion
   set.
+
+#### AutoSuggest
+
+Type-ahead suggestion list component using a text field.
+
+##### Synopsis
+
+```js
+// find via visible label
+AutoSuggest('country').exists();
+// fill in value to the field
+AutoSuggest.fillIn('blue');
+```
+
+##### Locator
+
+Located via the visible label text.
+
+##### Filters
+
+- `open`: _boolean_ = `true` if the avatar is rendering its fallback svg graphic.
+- `selected`: _string_ = filter by the selected option from the suggestion list.
+- `value`: _string_ = filter/assert by the value of the text input.
+
+##### Actions
+
+- `fillIn`: _string_ = fills in the text field with a value.
+- `select`: _string_ = clicks the suggestion labeled with the provided string.
+
+#### Avatar
+
+Avatar component used for displaying a profile picture.
+
+##### Synopsis
+
+```js
+// interact with a single Avatar instance...
+Avatar().exists();
+// interact with an avatar instance containing image with filename containing 'pic'
+Avatar(including('pic')).exists();
+```
+
+##### Locator
+
+A specific avatar can be located via the image filename, via `including` or `matches`.
+
+##### Filters
+
+- `placeholder`: _boolean_ = `true` if the avatar is rendering its fallback svg graphic.
+- `image`: _boolean_ = `true` if the avatar is rendering an `<img>` tag.
+
+#### Badge
+
+Renders a circular icon with small text content (a number/count).
+
+##### Locator
+
+Locate via the containing text ('1').
+
+##### Synopsis
+
+```js
+// interact with a single Badge instance...
+Badge().exists();
+// badge containing the number 2...
+Badge('2');
+// assert value....
+Badge.has({ value: 2 });
+```
+
+##### Locator
+Locate via the text content/number within the badge.
+
+##### Filters
+- `color`: _string_ = one of `primary`, `red`, `default`
+- `value`: _string_ = text rendered within the badge.
 
 #### Button
 
