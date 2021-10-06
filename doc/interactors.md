@@ -172,7 +172,8 @@ Located via the visible label text.
 
 ##### Actions
 
-- `fillIn`: _string_ = fills in the text field with a value.
+- `fillIn`: _string_ = focuses, fills, blurs the text field.
+- `enterFilter`: _string_ = focuses, and fills the text field with a string (opens suggestion list).
 - `select`: _string_ = clicks the suggestion labeled with the provided string.
 
 #### Avatar
@@ -220,7 +221,7 @@ Badge.has({ value: 2 });
 Locate via the text content/number within the badge.
 
 ##### Filters
-- `color`: _string_ = one of `primary`, `red`, `default`
+- `color`: _string_ = one of `primary`, `red`, `default` - use with `including` or `matches`
 - `value`: _string_ = text rendered within the badge.
 
 #### Button

@@ -1,7 +1,6 @@
 import HTML from './baseHTML';
 
-const color = (element, value) => element.className.includes(value) || '';
-
+const color = (element) => element.className;
 
 export default HTML.extend('badge')
   .selector('[class^=badge-]')
