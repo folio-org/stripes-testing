@@ -1,5 +1,5 @@
 export function dispatchChange(element) {
-  let Event = element.ownerDocument.defaultView?.Event || window.Event;
+  const Event = element.ownerDocument.defaultView ? element.ownerDocument.defaultView.Event = element.ownerDocument.defaultView.Event : window.Event;
   return element.dispatchEvent(new Event('change', { bubbles: true, cancelable: false }));
 }
 
