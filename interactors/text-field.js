@@ -1,4 +1,5 @@
 import { TextField } from '@interactors/html';
+import { dispatchFocusout } from './util';
 import HTML from './baseHTML';
 
 import IconButton from './icon-button';
@@ -27,7 +28,7 @@ export default HTML.extend('text field')
     valid: el => el.querySelector('input').getAttribute('aria-invalid') !== 'true'
   })
   .actions({
-    blur: ({ find }) => find(TextField()).blur(),
+    blur: ({ find }) => find(TextField()).perform(dispatchFocusout),
     clear: async ({ perform, find }) => {
       await perform(el => el.querySelector('input').focus());
       await find(IconButton({ icon: 'times-circle-solid' })).click();

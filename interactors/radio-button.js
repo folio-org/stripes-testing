@@ -1,4 +1,5 @@
 import { RadioButton } from '@interactors/html';
+import { dispatchFocusout } from './util';
 import HTML from './baseHTML';
 
 export default HTML.extend('radio button')
@@ -23,10 +24,6 @@ export default HTML.extend('radio button')
     click: ({ find }) => find(RadioButton()).choose(),
     focus: ({ find }) => find(RadioButton()).perform(el => el.focus()),
     blur: ({ find }) => {
-      find(RadioButton()).perform(el => el.dispatchEvent(
-        new Event('focusout', {
-          bubbles: true
-        })
-      ));
+      find(RadioButton()).perform(dispatchFocusout);
     }
   });

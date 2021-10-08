@@ -1,4 +1,5 @@
 import { Select } from '@interactors/html';
+import { dispatchFocusout } from './util';
 import HTML from './baseHTML';
 
 function label(el) {
@@ -26,9 +27,5 @@ export default HTML.extend('select')
   })
   .actions({
     choose: ({ find }, value) => find(Select()).choose(value),
-    blur: ({ perform }) => perform(el => el.dispatchEvent(
-      new Event('focusout', {
-        bubbles: true
-      })
-    ))
+    blur: ({ perform }) => perform(dispatchFocusout)
   });

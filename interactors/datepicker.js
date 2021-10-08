@@ -2,6 +2,7 @@ import { createInteractor, TextField, Select } from '@interactors/html';
 import { isVisible } from 'element-is-visible';
 import { format, parseISO } from 'date-fns';
 import IconButton from './icon-button';
+import { dispatchFocusout } from './util';
 import HTML from './baseHTML';
 
 export default HTML.extend('datepicker')
@@ -42,7 +43,7 @@ export default HTML.extend('datepicker')
     click: ({ perform }) => perform((el) => { el.click(); }),
     fillIn: (interactor, value) => interactor.find(TextField()).fillIn(value),
     focus: (interactor) => interactor.find(TextField()).focus(),
-    blur: (interactor) => interactor.find(TextField()).blur(),
+    blur: (interactor) => interactor.find(TextField()).perform(dispatchFocusout),
   });
 
 const CalendarDays = HTML.extend('calendar days')
