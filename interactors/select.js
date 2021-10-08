@@ -25,5 +25,10 @@ export default HTML.extend('select')
     valid: el => el.querySelector('select').getAttribute('aria-invalid') !== 'true'
   })
   .actions({
-    choose: ({ find }, value) => find(Select()).choose(value)
+    choose: ({ find }, value) => find(Select()).choose(value),
+    blur: ({ perform }) => perform(el => el.dispatchEvent(
+      new Event('focusout', {
+        bubbles: true
+      })
+    ))
   });

@@ -20,7 +20,13 @@ export default HTML.extend('radio button')
     },
   })
   .actions({
-    click: ({ perform }) => perform((el) => { el.querySelector('label').click(); }),
-    focus: ({ find }) => { find(RadioButton()).focus(); },
-    blur: ({ find }) => { find(RadioButton()).blur(); },
+    click: ({ find }) => find(RadioButton()).choose(),
+    focus: ({ find }) => find(RadioButton()).perform(el => el.focus()),
+    blur: ({ find }) => {
+      find(RadioButton()).perform(el => el.dispatchEvent(
+        new Event('focusout', {
+          bubbles: true
+        })
+      ));
+    }
   });
