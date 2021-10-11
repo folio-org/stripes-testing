@@ -1,9 +1,16 @@
 import { Select } from '@interactors/html';
+import { dispatchFocusout } from './util';
 import HTML from './baseHTML';
 
 function label(el) {
-  return el.querySelector('label').innerText;
+  const container = el.querySelector('label');
+  return container ? container.innerText : undefined;
 }
+
+const choose = (intr, value) => intr.find(Select()).choose(value);
+
+const blur = (intr) => intr.perform(dispatchFocusout);
+const focus = (intr) => intr.perform((el) => el.querySelector('select').focus());
 
 export default HTML.extend('select')
   .selector('[class^=select-]')
@@ -22,8 +29,15 @@ export default HTML.extend('select')
       const feedbackWarning = el.querySelector('[class^=feedbackWarning]');
       return feedbackWarning ? feedbackWarning.innerText : undefined;
     },
-    valid: el => el.querySelector('select').getAttribute('aria-invalid') !== 'true'
+    valid: el => el.querySelector('select').getAttribute('aria-invalid') !== 'true',
   })
   .actions({
-    choose: ({ find }, value) => find(Select()).choose(value)
+    choose,
+    blur,
+    focus,
+    chooseAndBlur: (...args) => {
+      focus(...args);
+      choose(...args);
+      return blur(...args);
+    }
   });
