@@ -25,7 +25,12 @@ export default HTML.extend('text field')
     endControl: (el) => el.querySelector('[class^=endControls').textContent,
     error: (el) => (el.querySelector('[class*=feedbackError-]') || {}).textContent,
     warning: (el) => (el.querySelector('[class*=feedbackWarning-]') || {}).textContent,
-    valid: el => el.querySelector('input').getAttribute('aria-invalid') !== 'true'
+    valid: el => el.querySelector('input').getAttribute('aria-invalid') !== 'true',
+    clearButton: el => {
+      const clearBtn = [...el.querySelectorAll('[class^=iconButton]')]
+        .filter(I => I.getAttribute('icon') === 'clear');
+      return clearBtn.length === 1;
+    }
   })
   .actions({
     blur: ({ find }) => find(TextField()).perform(dispatchFocusout),
