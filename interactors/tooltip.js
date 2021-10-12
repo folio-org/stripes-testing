@@ -4,11 +4,11 @@ import { isVisible } from 'element-is-visible';
 export const Tooltip = createInteractor('tooltip')
   .selector('[class^=tooltip], [data-test-tooltip-proximity-element]')
   .locator((el) => {
-    return el.querySelector('[class^=text], span[role=tooltip]').textContent;
+    return el.querySelector('[class^=text], span[role=tooltip]').innerText;
   })
   .filters({
-    text: (el) => el.querySelector('[class^=text]').textContent,
-    subtext: (el) => el.querySelector('[class^=sub]').textContent,
+    text: (el) => el.querySelector('[class^=text]').innerText,
+    subtext: (el) => el.querySelector('[class^=sub]').innerText,
     visible: isVisible,
     proximity: {
       apply: (el) => el.getAttribute('data-test-tooltip-proximity-element') === 'true',
@@ -19,8 +19,8 @@ export const Tooltip = createInteractor('tooltip')
 export const TooltipProximity = createInteractor('tooltip proximity element')
   .selector('[role^=tooltip]')
   .locator([
-    (el) => el.querySelector('[class^=text]').textContent,
+    (el) => el.querySelector('[class^=text]').innerText,
   ])
   .filters({
-    text: (el) => el.querySelector('[class^=text]').textContent,
+    text: (el) => el.querySelector('[class^=text]').innerText,
   });

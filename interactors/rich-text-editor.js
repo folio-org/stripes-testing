@@ -8,7 +8,7 @@ export default HTML.extend('rich text editor')
   .selector('[class^=inputGroup]')
   .locator(label)
   .filters({
-    value: (element) => element.querySelector('.ql-editor').textContent
+    value: (element) => element.querySelector('.ql-editor').innerText
   })
   .actions({
     fillIn: ({ perform }, value) => perform(element => {

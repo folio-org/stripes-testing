@@ -15,12 +15,12 @@ const control = ({ shouldOpen = true } = {}) => async interactor => {
 
 const MultiSelectOption = HTML.extend('multi select option')
   .selector('[class^=multiSelectOption-]')
-  .locator(el => el.querySelector('[class^=valueChipValue-]').textContent || '');
+  .locator(el => el.querySelector('[class^=valueChipValue-]').innerText || '');
 
 export default createInteractor('multi select')
   .locator(el => {
     const label = document.getElementById(el.getAttribute('aria-labelledby'));
-    return (label && label.textContent) || '';
+    return (label && label.innerText) || '';
   })
   .selector('[role=application][class^=multiSelectContainer-]')
   .filters({
@@ -31,7 +31,7 @@ export default createInteractor('multi select')
       if (!valueList) return [];
 
       return Array.from(valueList.querySelectorAll('[class^=valueChipValue-]'))
-        .map(valueChip => valueChip.textContent || '')
+        .map(valueChip => valueChip.innerText || '')
         .filter(Boolean);
     }
   })

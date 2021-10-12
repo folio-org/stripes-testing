@@ -2,7 +2,7 @@ import { isVisible } from 'element-is-visible';
 import Button from './button';
 import HTML from './baseHTML';
 
-function title(el) { return el.querySelector('[class^=paneTitle]').textContent; }
+function title(el) { return el.querySelector('[class^=paneTitle]').innerText; }
 
 export const PaneHeader = HTML.extend('pane header')
   .selector('[class^=paneHeader-]')
@@ -13,7 +13,7 @@ export default HTML.extend('pane')
   .locator(title)
   .filters({
     title,
-    subtitle: (el) => el.querySelector('[class^=paneSub]').textContent,
+    subtitle: (el) => el.querySelector('[class^=paneSub]').innerText,
     visible: {
       apply: (el) => isVisible(el) || (el.labels && Array.from(el.labels).some(isVisible)),
       default: true

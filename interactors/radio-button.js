@@ -4,15 +4,15 @@ import HTML from './baseHTML';
 
 export default HTML.extend('radio button')
   .selector('div[class^=radioButton]')
-  .locator((el) => el.querySelector('[class^=labelText]').textContent)
+  .locator((el) => el.querySelector('[class^=labelText]').innerText)
   .filters({
     title: (el) => el.querySelector('input').title,
     id: (el) => el.querySelector('input').id,
     valid: (el) => el.querySelector('input').validity.valid,
     checked: (el) => el.querySelector('input').checked,
     value: (el) => el.querySelector('input').value,
-    label: (el) => el.textContent,
-    feedbackText: (el) => el.querySelector('[class^=radioFeedback]').textContent,
+    label: (el) => el.innerText,
+    feedbackText: (el) => el.querySelector('[class^=radioFeedback]').innerText,
     hasWarning: (el) => !!el.className.match(/hasWarning/),
     hasError: (el) => !!el.className.match(/hasError/),
     disabled: {
