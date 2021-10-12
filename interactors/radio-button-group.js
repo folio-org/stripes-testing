@@ -1,21 +1,23 @@
-import { perform, RadioButton } from '@interactors/html';
+import { RadioButton } from '@interactors/html';
 import { dispatchFocusout } from './util';
 import HTML from './baseHTML';
+
+const getByLabel = (el, label) => {
+  const radio = [...el.querySelectorAll('[class^=labelText]')]
+    .filter((e) => e.textContent === label);
+  const input = radio ? radio.closest('[class^=radioButton]').querySelector('input[type=radio]') : undefined;
+  return input;
+};
 
 export default HTML.extend('radio button group')
   .selector('fieldset[class^=groupRoot]')
   .locator((el) => el.querySelector('legend').textContent)
   .filters({
     id: (el) => el.id,
-    option: (el, index) => {
-      return [...el.querySelectorAll('input[type=radio]')]
-        .filter((e, i) => i === index)[0];
-    },
-    checkedOption: (el, label) => {
-      const radio = [...el.querySelectorAll('[class^=labelText]')]
-        .filter((e, i) => e.textContent === label);
-      const input = radio.closest('[class^=radioButton]').querySelector('input[type=radio]');
-      return input.chedked;
+    option: getByLabel,
+    checkedOption: (...args) => {
+      const input = getByLabel(...args);
+      return input.checked;
     },
     feedbackText: (el) => el.querySelector('[class^=radioFeedback]').textContent,
   })

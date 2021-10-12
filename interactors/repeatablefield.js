@@ -20,7 +20,7 @@ export const RepeatableFieldInteractor = HTML.extend('repeatable field')
   .filters({
     id: (el) => el.id,
     emptyMessage: (el) => el.querySelector('[class^=emptyMessage]').textContent,
-    deleteButton: (el) => !!el.querySelector('[data-test-repeatable-field-remove-item-button]'),
+    removeButton: (el) => !!el.querySelector('[data-test-repeatable-field-remove-item-button]'),
     addButton: (el) => !!el.querySelector('[data-test-repeatable-field-add-item-button]'),
     addButtonId: (el) => el.querySelector('[data-test-repeatable-field-add-item-button]').id,
     addDisabled: {
