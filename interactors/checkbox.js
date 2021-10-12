@@ -1,4 +1,5 @@
 import { CheckBox } from '@interactors/html';
+import { dispatchFocusout } from './util';
 import HTML from './baseHTML';
 
 export default HTML.extend('checkbox')
@@ -34,6 +35,6 @@ export default HTML.extend('checkbox')
     clickAndBlur: ({ perform }) => perform((el) => {
       el.querySelector('input').focus();
       el.querySelector('input').click();
-      el.querySelector('input').blur();
+      dispatchFocusout(el.querySelector('input'));
     }),
   });
