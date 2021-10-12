@@ -14,10 +14,10 @@ export default HTML.extend('checkbox')
     checked: (el) => el.querySelector('input').checked,
     valid: (el) => el.querySelector('input').validity.valid,
     value: (el) => el.querySelector('input').value,
-    label: (el) => el.textContent,
+    label: (el) => el.innerText,
     ariaLabel: (el) => el.querySelector('input').ariaLabel,
     ariaInvalid: (el) => el.querySelector('input').getAttribute('aria-invalid') === 'true',
-    feedbackText: (el) => el.querySelector('[role=alert]').textContent,
+    feedbackText: (el) => el.querySelector('[role=alert]').innerText,
     hasWarning: (el) => !!el.className.match(/hasWarning/),
     hasError: (el) => !!el.className.match(/hasError/),
     disabled: {

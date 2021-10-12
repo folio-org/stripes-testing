@@ -24,7 +24,7 @@ export { default as MultiSelect } from './multi-select';
 export { default as Pane, PaneHeader } from './pane';
 export { default as RadioButton } from './radio-button';
 export { default as RadioButtonGroup } from './radio-button-group';
-export { RepeatableFieldInteractor, RepeatableFieldAddButtonInteractor, RepeatableFieldDeleteButtonInteractor } from './repeatablefield';
+export { RepeatableField, RepeatableFieldAddButton, RepeatableFieldRemoveButton } from './repeatablefield';
 export { default as RichEditor } from './rich-text-editor';
 export { default as SearchField } from './search-field';
 export { default as Select } from './select';

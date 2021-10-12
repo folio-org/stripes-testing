@@ -7,13 +7,13 @@ import HTML from './baseHTML';
 
 export default HTML.extend('datepicker')
   .selector('[data-test-datepicker-container]')
-  .locator((el) => el.querySelector('label').textContent)
+  .locator((el) => el.querySelector('label').innerText)
   .filters({
     id: (el) => el.querySelector('input').id,
     inputValue: (el) => el.querySelector('div[class^=textField] input').value,
     inputDay: (el) => Date(el.querySelector('div[class^=textField] input').value).getDay(),
     placeholder: (el) => el.querySelector('div[class^=textField] input').placeholder,
-    label: (el) => el.querySelector('label').textContent,
+    label: (el) => el.querySelector('label').innerText,
     warning: (el) => (
       !el.querySelector('[role=alert] div')
         ? false
@@ -49,10 +49,10 @@ export default HTML.extend('datepicker')
 const CalendarDays = HTML.extend('calendar days')
   .selector('[class^=calendar-] td')
   .locator((el) => {
-    if (el.textContent.length === 1) {
-      return `0${el.textContent}`;
+    if (el.innerText.length === 1) {
+      return `0${el.innerText}`;
     } else {
-      return el.textContent;
+      return el.innerText;
     }
   });
 
@@ -71,14 +71,14 @@ export const Calendar = createInteractor('calendar widget')
     today: (el) => format(parseISO(el.querySelector('td[tabindex="0"]').getAttribute('data-day')), 'yyyy-MM-dd') === format(new Date(), 'yyyy-MM-dd'),
     month: (el) => el.querySelector('select').selectedOptions[0].label || '',
     year: (el) => el.querySelector('input').value,
-    day: (el) => (!el.querySelector('[class^=selected-]') ? '' : el.querySelector('[class^=selected-]').textContent),
+    day: (el) => (!el.querySelector('[class^=selected-]') ? '' : el.querySelector('[class^=selected-]').innerText),
     days: (el) => Array.from(el.querySelectorAll('td')).reduce(
       (days, node) => {
         if (node.getAttribute('data-excluded') !== 'true') {
           if (node.querySelector('[class*=muted-]')) {
-            return days.concat([`_${node.textContent}_`]);
+            return days.concat([`_${node.innerText}_`]);
           } else {
-            return days.concat([node.textContent]);
+            return days.concat([node.innerText]);
           }
         } else {
           return days;
@@ -89,9 +89,9 @@ export const Calendar = createInteractor('calendar widget')
       (days, node) => {
         if (node.getAttribute('data-excluded') === 'true') {
           if (node.querySelector('[class*=muted-]')) {
-            return days.concat([`_${node.textContent}_`]);
+            return days.concat([`_${node.innerText}_`]);
           } else {
-            return days.concat([node.textContent]);
+            return days.concat([node.innerText]);
           }
         } else {
           return days;

@@ -27,11 +27,11 @@ const clearInput = (element) => {
 
 const AutoSuggestOption = HTML.extend('auto-suggest option')
   .selector('[role=option]')
-  .locator(el => el.textContent || '');
+  .locator(el => el.innerText || '');
 
 export default HTML.extend('auto-suggest')
   .selector('[class^=downshift-]')
-  .locator(el => el.querySelector('label').textContent)
+  .locator(el => el.querySelector('label').innerText)
   .filters({
     open,
     selected: (element) => {
@@ -40,7 +40,7 @@ export default HTML.extend('auto-suggest')
       if (!valueList) return [];
 
       return Array.from(valueList.querySelectorAll('[role=option]'))
-        .map(option => option.textContent || '')
+        .map(option => option.innerText || '')
         .filter(Boolean);
     },
     value: (el => el.querySelector('input').value),

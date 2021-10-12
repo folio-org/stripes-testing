@@ -21,10 +21,10 @@ export default HTML.extend('text field')
     value: (el) => el.querySelector('input').value,
     focused: (el) => el.querySelector('input').contains(el.ownerDocument.activeElement),
     readOnly: (el) => el.querySelector('input').hasAttribute('readOnly'),
-    startControl: (el) => el.querySelector('[class^=startControls').textContent,
-    endControl: (el) => el.querySelector('[class^=endControls').textContent,
-    error: (el) => (el.querySelector('[class*=feedbackError-]') || {}).textContent,
-    warning: (el) => (el.querySelector('[class*=feedbackWarning-]') || {}).textContent,
+    startControl: (el) => el.querySelector('[class^=startControls').innerText,
+    endControl: (el) => el.querySelector('[class^=endControls').innerText,
+    error: (el) => (el.querySelector('[class*=feedbackError-]') || {}).innerText,
+    warning: (el) => (el.querySelector('[class*=feedbackWarning-]') || {}).innerText,
     valid: el => el.querySelector('input').getAttribute('aria-invalid') !== 'true',
     clearButton: el => {
       const clearBtn = [...el.querySelectorAll('[class^=iconButton]')]

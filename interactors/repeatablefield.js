@@ -1,25 +1,25 @@
 import { Button } from '@interactors/html';
 import HTML from './baseHTML';
 
-export const RepeatableFieldAddButtonInteractor = Button.extend('repeatable field add button')
+export const RepeatableFieldAddButton = Button.extend('repeatable field add button')
   .selector('[data-test-repeatable-field-add-item-button]');
 
-export const RepeatableFieldDeleteButtonInteractor = Button.extend('repeatable field remove button')
+export const RepeatableFieldRemoveButton = Button.extend('repeatable field remove button')
   .selector('[data-test-repeatable-field-remove-item-button]');
 
-const FieldListInteractor = HTML.extend('repeatable field list')
+const FieldList = HTML.extend('repeatable field list')
   .selector('[data-test-repeatable-field-list]')
   .locator((el, index) => (
     [...el.querySelectorAll('li')].map((li, i) => !!i === index)
   ));
 
 // find by legend
-export const RepeatableFieldInteractor = HTML.extend('repeatable field')
+export const RepeatableField = HTML.extend('repeatable field')
   .selector('fieldset[data-test-repeatable-field')
-  .locator(el => el.querySelector('legend').textContent)
+  .locator(el => el.querySelector('legend').innerText)
   .filters({
     id: (el) => el.id,
-    emptyMessage: (el) => el.querySelector('[class^=emptyMessage]').textContent,
+    emptyMessage: (el) => el.querySelector('[class^=emptyMessage]').innerText,
     removeButton: (el) => !!el.querySelector('[data-test-repeatable-field-remove-item-button]'),
     addButton: (el) => !!el.querySelector('[data-test-repeatable-field-add-item-button]'),
     addButtonId: (el) => el.querySelector('[data-test-repeatable-field-add-item-button]').id,
@@ -36,12 +36,12 @@ export const RepeatableFieldInteractor = HTML.extend('repeatable field')
     headLabels: (el) => !!el.querySelector('[data-test-repeatable-field-list-item-labels]'),
   })
   .actions({
-    clickAddButton: ({ find }) => find(RepeatableFieldAddButtonInteractor()).click(),
+    clickAddButton: ({ find }) => find(RepeatableFieldAddButton()).click(),
     clickRemoveButton: ({ perform }, index) => {
       return perform((el) => {
         const button = [...el.querySelectorAll('button[data-test-repeatable-field-remove-item-button]')].filter((b, i) => i === index)[0];
         return button ? button.click() : '';
       });
     },
-    fillItem: (interactor, { index, fillFn }) => fillFn(interactor.find(FieldListInteractor(index)))
+    fillItem: (interactor, { index, fillFn }) => fillFn(interactor.find(FieldList(index)))
   });
