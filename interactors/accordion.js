@@ -4,7 +4,7 @@ import HTML from './baseHTML';
 
 function label(element) {
   const labelEl = element.querySelector('[class^=labelArea]');
-  return labelEl ? labelEl.innerText.trim() : '';
+  return labelEl ? labelEl.textContent.trim() : '';
 }
 
 export default HTML.extend('accordion')

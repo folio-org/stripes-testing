@@ -4,8 +4,8 @@ const color = (element) => element.className;
 
 export default HTML.extend('badge')
   .selector('[class^=badge-]')
-  .locator(element => element.querySelector('[class^=label-]').innerText)
+  .locator(element => element.querySelector('[class^=label-]').textContent)
   .filters({
     color,
-    value: (element) => element.querySelector('[class^=label-]').innerText
+    value: (element) => element.querySelector('[class^=label-]').textContent
   });

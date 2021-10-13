@@ -4,7 +4,7 @@ import HTML from './baseHTML';
 
 function label(el) {
   const container = el.querySelector('label');
-  return container ? container.innerText : undefined;
+  return container ? container.textContent : undefined;
 }
 
 const choose = (intr, value) => intr.find(Select()).choose(value);
@@ -23,11 +23,11 @@ export default HTML.extend('select')
     value: el => el.querySelector('select').value,
     error: el => {
       const feedbackError = el.querySelector('[class^=feedbackError]');
-      return feedbackError ? feedbackError.innerText : undefined;
+      return feedbackError ? feedbackError.textContent : undefined;
     },
     warning: el => {
       const feedbackWarning = el.querySelector('[class^=feedbackWarning]');
-      return feedbackWarning ? feedbackWarning.innerText : undefined;
+      return feedbackWarning ? feedbackWarning.textContent : undefined;
     },
     valid: el => el.querySelector('select').getAttribute('aria-invalid') !== 'true',
   })

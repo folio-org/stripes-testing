@@ -7,17 +7,17 @@ export default HTML.extend('checkbox')
   .locator((el) => {
     const labelText = el.querySelector('[class^=labelText]');
     const input = el.querySelector('input');
-    return labelText ? labelText.innerText : input.getAttribute('aria-label') || '';
+    return labelText ? labelText.textContent : input.getAttribute('aria-label') || '';
   })
   .filters({
     id: (el) => el.querySelector('input').id,
     checked: (el) => el.querySelector('input').checked,
     valid: (el) => el.querySelector('input').validity.valid,
     value: (el) => el.querySelector('input').value,
-    label: (el) => el.innerText,
+    label: (el) => el.textContent,
     ariaLabel: (el) => el.querySelector('input').ariaLabel,
     ariaInvalid: (el) => el.querySelector('input').getAttribute('aria-invalid') === 'true',
-    feedbackText: (el) => el.querySelector('[role=alert]').innerText,
+    feedbackText: (el) => el.querySelector('[role=alert]').textContent,
     hasWarning: (el) => !!el.className.match(/hasWarning/),
     hasError: (el) => !!el.className.match(/hasError/),
     disabled: {
