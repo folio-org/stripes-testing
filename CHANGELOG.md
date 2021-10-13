@@ -6,6 +6,7 @@
 * Introduce Cypress e2e tests with new BigTest. FOLIO-2946.
 * Introduce e2e tests with Cypress. FAT-899.
 * Write e2e tests with interactors.
+* Use element.textContent over element.innerText due to lack of compatibility with JS-DOM.
 
 ## [3.0.0](https://github.com/folio-org/stripes-testing/tree/v3.0.0) (2021-03-18)
 [Full Changelog](https://github.com/folio-org/stripes-testing/compare/v2.0.1...v3.0.0)
