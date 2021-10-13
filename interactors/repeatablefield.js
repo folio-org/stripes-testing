@@ -16,10 +16,10 @@ const FieldList = HTML.extend('repeatable field list')
 // find by legend
 export const RepeatableField = HTML.extend('repeatable field')
   .selector('fieldset[data-test-repeatable-field')
-  .locator(el => el.querySelector('legend').innerText)
+  .locator(el => el.querySelector('legend').textContent)
   .filters({
     id: (el) => el.id,
-    emptyMessage: (el) => el.querySelector('[class^=emptyMessage]').innerText,
+    emptyMessage: (el) => el.querySelector('[class^=emptyMessage]').textContent,
     removeButton: (el) => !!el.querySelector('[data-test-repeatable-field-remove-item-button]'),
     addButton: (el) => !!el.querySelector('[data-test-repeatable-field-add-item-button]'),
     addButtonId: (el) => el.querySelector('[data-test-repeatable-field-add-item-button]').id,

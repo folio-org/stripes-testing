@@ -4,7 +4,7 @@ import HTML from './baseHTML';
 
 const label = (el) => {
   const labelText = el.querySelector('label');
-  return labelText ? labelText.innerText : undefined;
+  return labelText ? labelText.textContent : undefined;
 };
 
 export default HTML.extend('text area')
@@ -14,8 +14,8 @@ export default HTML.extend('text area')
     id: el => el.querySelector('textarea').getAttribute('id'),
     label,
     value: el => el.querySelector('textarea').value,
-    warning: el => el.querySelector('[class^=feedbackWarning-]').innerText,
-    error: el => el.querySelector('[class^=feedbackError-]').innerText,
+    warning: el => el.querySelector('[class^=feedbackWarning-]').textContent,
+    error: el => el.querySelector('[class^=feedbackError-]').textContent,
     valid: el => el.querySelector('textarea').getAttribute('aria-invalid') !== 'true'
   })
   .actions({

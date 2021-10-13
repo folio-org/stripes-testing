@@ -3,7 +3,7 @@ import HTML from './baseHTML';
 
 const childIndex = el => [...el.parentElement.children].indexOf(el);
 
-const content = el => el.innerText;
+const content = el => el.textContent;
 
 export const MultiColumnListRow = HTML.extend('multi column list row')
   .selector('[data-row-inner]')
@@ -19,7 +19,7 @@ export const MultiColumnListCell = HTML.extend('multi column list cell')
   .filters({
     content,
     row: el => +el.parentElement.getAttribute('data-row-inner'),
-    column: (el) => el.innerText,
+    column: (el) => el.textContent,
     columnIndex: childIndex,
     selected: (el) => !!el.parentElement.className.match(/mclSelected/),
     measured: (el) => el.style && el.style.width !== '',
@@ -35,7 +35,7 @@ const MultiColumnListHeader = HTML.extend('multi column list header')
     click: ({ perform }) => perform(el => el.querySelector('[role=button]').click()),
   });
 
-const columns = el => [...el.querySelectorAll('[class*=mclHeader-]')].map(x => x.innerText);
+const columns = el => [...el.querySelectorAll('[class*=mclHeader-]')].map(x => x.textContent);
 
 export const MultiColumnList = HTML.extend('multi column list')
   .selector('div[class*=mclContainer-]')

@@ -8,7 +8,7 @@ const label = (el) => {
   let labelEl = el.querySelector('label');
   const input = el.querySelector('input');
   if (!labelEl) labelEl = input ? (input.labels || [])[0] : null;
-  return labelEl ? labelEl.innerText : input.getAttribute('aria-label') || '';
+  return labelEl ? labelEl.textContent : input.getAttribute('aria-label') || '';
 };
 
 export default HTML.extend('text field')
@@ -21,10 +21,10 @@ export default HTML.extend('text field')
     value: (el) => el.querySelector('input').value,
     focused: (el) => el.querySelector('input').contains(el.ownerDocument.activeElement),
     readOnly: (el) => el.querySelector('input').hasAttribute('readOnly'),
-    startControl: (el) => el.querySelector('[class^=startControls').innerText,
-    endControl: (el) => el.querySelector('[class^=endControls').innerText,
-    error: (el) => (el.querySelector('[class*=feedbackError-]') || {}).innerText,
-    warning: (el) => (el.querySelector('[class*=feedbackWarning-]') || {}).innerText,
+    startControl: (el) => el.querySelector('[class^=startControls').textContent,
+    endControl: (el) => el.querySelector('[class^=endControls').textContent,
+    error: (el) => (el.querySelector('[class*=feedbackError-]') || {}).textContent,
+    warning: (el) => (el.querySelector('[class*=feedbackWarning-]') || {}).textContent,
     valid: el => el.querySelector('input').getAttribute('aria-invalid') !== 'true',
     clearButton: el => {
       const clearBtn = [...el.querySelectorAll('[class^=iconButton]')]

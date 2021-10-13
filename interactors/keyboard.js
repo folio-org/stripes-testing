@@ -19,14 +19,14 @@ export default createInteractor('keyboard (requires window to have focus)')
       const nextValue = parseInt(el.value, 10) === options.length - 1
         ? '0'
         : `${parseInt(el.value, 10) + 1}`;
-      await Select().choose(options.item(nextValue).innerText);
+      await Select().choose(options.item(nextValue).textContent);
     }),
     prevOption: ({ perform }) => perform(async (el) => {
       const options = el.querySelectorAll('option');
       const nextValue = parseInt(el.value, 10) === 0
         ? `${options.length() - 1}`
         : `${parseInt(el.value, 10) - 1}`;
-      await Select().choose(options.item(nextValue).innerText);
+      await Select().choose(options.item(nextValue).textContent);
     }),
     incrementNumber: ({ perform }) => perform(async (el) => {
       const value = `${parseInt(el.value, 10) + 1}`;
