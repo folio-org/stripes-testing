@@ -228,6 +228,8 @@ describe('Deleting user', () => {
       .then(() => {
         verifyUserDeleteImpossible(userId);
         cy.deleteFeesFines(Cypress.env('feesFines').id);
+        cy.deleteFeesFinesType(Cypress.env('feesFinesType').id);
+        cy.deleteOwner(Cypress.env('owner').id);
       });
   });
 });
