@@ -111,7 +111,6 @@ describe('Deleting user', () => {
 
   it('should be unable in case the user has open loans', function () {
     const ITEM_BARCODE = Number(new Date()).toString();
-    // const { id: userId, barcode: userBarcode } = Cypress.env('user');
     const user = Cypress.env('user');
     const servicePoint = Cypress.env('servicePoints')[0];
 
