@@ -20,9 +20,6 @@ export const RepeatableField = HTML.extend('repeatable field')
   .filters({
     id: (el) => el.id,
     emptyMessage: (el) => el.querySelector('[class^=emptyMessage]').textContent,
-    removeButton: (el) => !!el.querySelector('[data-test-repeatable-field-remove-item-button]'),
-    addButton: (el) => !!el.querySelector('[data-test-repeatable-field-add-item-button]'),
-    addButtonId: (el) => el.querySelector('[data-test-repeatable-field-add-item-button]').id,
     addDisabled: {
       apply: (el) => {
         const addButton = el.querySelector('[data-test-repeatable-field-add-item-button]');
@@ -33,11 +30,10 @@ export const RepeatableField = HTML.extend('repeatable field')
     },
     removeDisabled: (el) => el.querySelector('[data-test-repeatable-field-remove-item-button]').disabled,
     itemCount: (el) => el.querySelectorAll('li').length,
-    headLabels: (el) => !!el.querySelector('[data-test-repeatable-field-list-item-labels]'),
   })
   .actions({
-    clickAddButton: ({ find }) => find(RepeatableFieldAddButton()).click(),
-    clickRemoveButton: ({ perform }, index) => {
+    clickAdd: ({ find }) => find(RepeatableFieldAddButton()).click(),
+    clickRemove: ({ perform }, index) => {
       return perform((el) => {
         const button = [...el.querySelectorAll('button[data-test-repeatable-field-remove-item-button]')].filter((b, i) => i === index)[0];
         return button ? button.click() : '';
