@@ -1,7 +1,7 @@
 import { HTML } from '@interactors/html';
 
 function label(el) {
-  return el.querySelector('label').innerText;
+  return el.querySelector('label').textContent;
 }
 
 export default HTML.extend('rich text editor')
@@ -13,6 +13,6 @@ export default HTML.extend('rich text editor')
   .actions({
     fillIn: ({ perform }, value) => perform(element => {
       const editor = element.querySelector('.ql-editor');
-      if (editor) editor.innerText = value;
+      if (editor) editor.textContent = value;
     })
   });
