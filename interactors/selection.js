@@ -1,4 +1,4 @@
-import { Button, TextField } from '@interactors/html';
+import { Button, TextField, isVisible } from '@interactors/html';
 import HTML from './baseHTML';
 
 const toggle = (el) => el.querySelector('button').click();
@@ -9,7 +9,8 @@ export const SelectionList = HTML.extend('selection list')
     optionCount: (el) => [...el.querySelectorAll('li')].length,
   })
   .actions({
-    filter: ({ find }, value) => find(TextField()).fillIn(value)
+    filter: ({ find }, value) => find(TextField()).fillIn(value),
+    focusFilter: ({ perform }) => perform(el => el.querySelector('[class^=selectionFilter]').focus()),
   });
 
 export const SelectionOption = HTML.extend('selection option')
@@ -45,16 +46,25 @@ export default HTML.extend('selection')
   })
   .actions({
     toggle: ({ perform }) => perform(toggle),
-    filterOptions: (interactor, value) => {
-      if (interactor.has({ open: false })) {
-        interactor.perform(toggle);
+    filterOptions: async ({ perform }, value) => {
+      const optionsList = document.querySelector('[class^=selectionListRoot]');
+      if (optionsList && isVisible(optionsList)) {
+        return perform(() => SelectionList().filter(value));
+      } else {
+        await perform(toggle);
+        return perform(() => SelectionList().filter(value));
       }
-      return interactor.perform(() => SelectionList().filter(value));
     },
-    choose: (interactor, value) => {
-      if (interactor.has({ open: false })) {
-        interactor.perform(toggle);
-      }
-      SelectionList().find(SelectionOption(value)).click();
-    }
+    choose: ({ perform }, value) => {
+      perform(async () => {
+        const optionsList = document.querySelector('[class^=selectionListRoot]');
+        if (optionsList && isVisible(optionsList)) {
+          return SelectionList().find(SelectionOption(value)).click();
+        } else {
+          await perform(toggle);
+          return SelectionList().find(SelectionOption(value)).click();
+        }
+      });
+    },
+    focus: ({ perform }) => perform((el) => el.querySelector('button').focus())
   });
