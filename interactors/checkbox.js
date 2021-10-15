@@ -1,4 +1,5 @@
 import { CheckBox } from '@interactors/html';
+import { dispatchFocusout } from './util';
 import HTML from './baseHTML';
 
 export default HTML.extend('checkbox')
@@ -6,7 +7,7 @@ export default HTML.extend('checkbox')
   .locator((el) => {
     const labelText = el.querySelector('[class^=labelText]');
     const input = el.querySelector('input');
-    return labelText ? labelText.innerText : input.getAttribute('aria-label') || '';
+    return labelText ? labelText.textContent : input.getAttribute('aria-label') || '';
   })
   .filters({
     id: (el) => el.querySelector('input').id,
@@ -34,6 +35,6 @@ export default HTML.extend('checkbox')
     clickAndBlur: ({ perform }) => perform((el) => {
       el.querySelector('input').focus();
       el.querySelector('input').click();
-      el.querySelector('input').blur();
+      dispatchFocusout(el.querySelector('input'));
     }),
   });

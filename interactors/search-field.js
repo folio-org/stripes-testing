@@ -3,7 +3,7 @@ import HTML from './baseHTML';
 
 const label = (el) => {
   const labelText = el.querySelector('label');
-  return labelText ? labelText.innerText : undefined;
+  return labelText ? labelText.textContent : undefined;
 };
 
 export default HTML.extend('search field')

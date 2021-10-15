@@ -84,6 +84,9 @@ and make a pull request to this package.
 ### Table of Contents
 
 - [`Accordion`](#accordion)
+- [`AutoSuggest`](#autosuggest)
+- [`Avatar`](#avatar)
+- [`Badge`](#badge)
 - [`Button`](#button)
 - [`Checkbox`](#checkbox)
 - [`Dropdown`](#dropdown)
@@ -143,6 +146,83 @@ Accordion('Categories').exists();
   pane set. So for example `Accordion('Users').has({ index: 2 })`
   would assert that the "Users" accordion was 3rd in its accordion
   set.
+
+#### AutoSuggest
+
+Type-ahead suggestion list component using a text field.
+
+##### Synopsis
+
+```js
+// find via visible label
+AutoSuggest('country').exists();
+// fill in value to the field
+AutoSuggest.fillIn('blue');
+```
+
+##### Locator
+
+Located via the visible label text.
+
+##### Filters
+
+- `open`: _boolean_ = `true` if the avatar is rendering its fallback svg graphic.
+- `selected`: _string_ = filter by the selected option from the suggestion list.
+- `value`: _string_ = filter/assert by the value of the text input.
+
+##### Actions
+
+- `fillIn`: _string_ = focuses, fills, blurs the text field.
+- `enterFilter`: _string_ = focuses, and fills the text field with a string (opens suggestion list).
+- `select`: _string_ = clicks the suggestion labeled with the provided string.
+
+#### Avatar
+
+Avatar component used for displaying a profile picture.
+
+##### Synopsis
+
+```js
+// interact with a single Avatar instance...
+Avatar().exists();
+// interact with an avatar instance containing image with filename containing 'pic'
+Avatar(including('pic')).exists();
+```
+
+##### Locator
+
+A specific avatar can be located via the image filename, via `including` or `matches`.
+
+##### Filters
+
+- `placeholder`: _boolean_ = `true` if the avatar is rendering its fallback svg graphic.
+- `image`: _boolean_ = `true` if the avatar is rendering an `<img>` tag.
+
+#### Badge
+
+Renders a circular icon with small text content (a number/count).
+
+##### Locator
+
+Locate via the containing text ('1').
+
+##### Synopsis
+
+```js
+// interact with a single Badge instance...
+Badge().exists();
+// badge containing the number 2...
+Badge('2');
+// assert value....
+Badge.has({ value: 2 });
+```
+
+##### Locator
+Locate via the text content/number within the badge.
+
+##### Filters
+- `color`: _string_ = one of `primary`, `red`, `default` - use with `including` or `matches`
+- `value`: _string_ = text rendered within the badge.
 
 #### Button
 
@@ -708,6 +788,74 @@ RadioButton('Label').exists();
 - `feedbackText`: _string_ = the text related to the validation warning or error
 - `hasWarning`: _boolean_ = `true` if the radio button has a warning [class]
 - `hasError`: _boolean_ = `true` if the radio button has an error [class]
+
+#### RadioButtonGroup
+
+Wrapper component for set of RadioButton components.
+
+```js
+RadioButtonGroup('Label').exists();
+// set an option (labeled 'Blue') in a RadioButtonGroup
+RadioButtonGroup('Label').choose('Blue');
+```
+
+##### Locator
+
+RadioButtonGroups are primarily selected from their `label` prop (rendered as a `<legend>`)
+
+##### Filters
+
+- `id`: _string_ = Dom element id of RadioButtonGroup
+- `option`: _string_ = interact with the corresponding labeled option within the RadioButtonGroup
+- `checkedOption`: _string_ = interact with given option (label), if checked
+- `feedbackText`: _string_ = interact/assert against error text.
+
+##### Actions
+- `choose`: _string_ = chooses option at corresponding label.
+- `focus`: _string_ = focuses the radio button at the corresponding label.
+- `blur`: blurs the focus from the currently focused radio button.
+
+#### RepeatableField
+
+Field component for list of objects containing the same fields/properties. Users can add or remove individual items.
+
+##### Synopsis
+
+```js
+// a RepeatableField can be located via its level/legend
+const rf = RepeatableField('Modes of Issuance').exists();
+// assert against the item count
+rf.has({ itemCount: 2 });
+// click the add button
+rf.clickAddButton();
+// since item fields can vary, an item can be filled in via a function...
+const fillFields = (interactor) => {
+  interactor.find(TextField('name')).fillIn('Thomas');
+  interactor.find(Select('honorific')).chooseAndBlur('Mr');
+};
+rf.fillItem({ index: 1, fillFn: fillFields });
+```
+
+##### Locator
+
+A RepeatableField can be located via its level/legend innerText.
+
+##### Filters
+
+- `id`: _string_ = Dom element id of the RepeatableField's fieldset.
+- `emptyMessage`: _string_ = the empty message of the repeatable field, if present.
+- `removeButton`: _boolean_ = whether or not the delete button is present
+- `addButton`: _boolean_ = whether or not the add button is present
+- `addDisabled`: _boolean_ = whether or not the add button is disabled.
+- `remvoeDisabled`: _boolean_ = whether or not the remove button(s) is/are disabled.
+- `itemCount`: _number_ = filter/assert against an item count.
+- `headLabels`: _boolean_ = head labels present.
+
+##### Actions
+
+- `clickAddButton`: clicks the add button, adding a blank item.
+- `clickRemoveButton`: _number_ = clicks the remove button on an item at the supplied index.
+- `fillItem`: `index`-_number_, `fillFn`-_function_ = fills fields within an item via the `fillFn` function - use additional interactors for fields.
 
 #### RichTextEditor
 
