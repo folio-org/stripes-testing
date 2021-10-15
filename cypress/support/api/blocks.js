@@ -1,4 +1,4 @@
-Cypress.Commands.add('postBlock', (block) => {
+Cypress.Commands.add('createBlockApi', (block) => {
   cy
     .okapiRequest({
       method: 'POST',
@@ -10,7 +10,7 @@ Cypress.Commands.add('postBlock', (block) => {
     });
 });
 
-Cypress.Commands.add('deleteBlock', (blockId) => {
+Cypress.Commands.add('deleteBlockApi', (blockId) => {
   cy
     .okapiRequest({
       method: 'DELETE',

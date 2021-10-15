@@ -1,4 +1,4 @@
-Cypress.Commands.add('postFeesFines', (feesFines) => {
+Cypress.Commands.add('createFeesFinesApi', (feesFines) => {
   cy
     .okapiRequest({
       method: 'POST',
@@ -10,7 +10,7 @@ Cypress.Commands.add('postFeesFines', (feesFines) => {
     });
 });
 
-Cypress.Commands.add('deleteFeesFines', (feesFinesId) => {
+Cypress.Commands.add('deleteFeesFinesApi', (feesFinesId) => {
   cy
     .okapiRequest({
       method: 'DELETE',
@@ -18,7 +18,7 @@ Cypress.Commands.add('deleteFeesFines', (feesFinesId) => {
     });
 });
 
-Cypress.Commands.add('postFeesFinesType', (feesFinesType) => {
+Cypress.Commands.add('createFeesFinesTypeApi', (feesFinesType) => {
   cy
     .okapiRequest({
       method: 'POST',
@@ -30,7 +30,7 @@ Cypress.Commands.add('postFeesFinesType', (feesFinesType) => {
     });
 });
 
-Cypress.Commands.add('deleteFeesFinesType', (feesFinesTypeId) => {
+Cypress.Commands.add('deleteFeesFinesTypeApi', (feesFinesTypeId) => {
   cy
     .okapiRequest({
       method: 'DELETE',

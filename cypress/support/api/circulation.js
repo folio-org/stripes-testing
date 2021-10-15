@@ -13,7 +13,7 @@ Cypress.Commands.add('createItemCheckout', (checkout) => {
   });
 });
 
-Cypress.Commands.add('postItemCheckin', (data) => {
+Cypress.Commands.add('createItemCheckinApi', (data) => {
   cy.okapiRequest({
     method: 'POST',
     path: 'circulation/check-in-by-barcode',

@@ -1,4 +1,4 @@
-Cypress.Commands.add('getRequests', (searchParams) => {
+Cypress.Commands.add('getItemRequestsApi', (searchParams) => {
   cy
     .okapiRequest({
       path: 'circulation/requests',
@@ -9,7 +9,7 @@ Cypress.Commands.add('getRequests', (searchParams) => {
     });
 });
 
-Cypress.Commands.add('postRequest', (data) => {
+Cypress.Commands.add('createItemRequestApi', (data) => {
   cy
     .okapiRequest({
       method: 'POST',
@@ -21,7 +21,7 @@ Cypress.Commands.add('postRequest', (data) => {
     });
 });
 
-Cypress.Commands.add('putRequest', (request) => {
+Cypress.Commands.add('changeItemRequestApi', (request) => {
   cy
     .okapiRequest({
       method: 'PUT',
@@ -33,7 +33,7 @@ Cypress.Commands.add('putRequest', (request) => {
     });
 });
 
-Cypress.Commands.add('getCancellationReasons', (searchParams) => {
+Cypress.Commands.add('getCancellationReasonsApi', (searchParams) => {
   cy
     .okapiRequest({
       path: 'cancellation-reason-storage/cancellation-reasons',

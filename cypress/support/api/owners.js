@@ -1,4 +1,4 @@
-Cypress.Commands.add('postOwner', (owner) => {
+Cypress.Commands.add('createOwnerApi', (owner) => {
   cy
     .okapiRequest({
       method: 'POST',
@@ -10,7 +10,7 @@ Cypress.Commands.add('postOwner', (owner) => {
     });
 });
 
-Cypress.Commands.add('deleteOwner', (ownerId) => {
+Cypress.Commands.add('deleteOwnerApi', (ownerId) => {
   cy
     .okapiRequest({
       method: 'DELETE',

@@ -1,4 +1,4 @@
-Cypress.Commands.add('getServicePoints', (searchParams) => {
+Cypress.Commands.add('getServicePointsApi', (searchParams) => {
   cy
     .okapiRequest({
       path: 'service-points',

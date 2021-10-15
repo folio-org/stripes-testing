@@ -41,7 +41,7 @@ Cypress.Commands.add('deleteUser', (userId) => {
     });
 });
 
-Cypress.Commands.add('postUser', (user) => {
+Cypress.Commands.add('createUserApi', (user) => {
   cy
     .okapiRequest({
       method: 'POST',

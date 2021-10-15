@@ -1,4 +1,4 @@
-Cypress.Commands.add('postProxy', (proxy) => {
+Cypress.Commands.add('createProxyApi', (proxy) => {
   cy
     .okapiRequest({
       method: 'POST',
@@ -10,7 +10,7 @@ Cypress.Commands.add('postProxy', (proxy) => {
     });
 });
 
-Cypress.Commands.add('deleteProxy', (proxyId) => {
+Cypress.Commands.add('deleteProxyApi', (proxyId) => {
   cy
     .okapiRequest({
       method: 'DELETE',
