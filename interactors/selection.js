@@ -9,7 +9,13 @@ export const SelectionList = HTML.extend('selection list')
     optionCount: (el) => [...el.querySelectorAll('li')].length,
   })
   .actions({
-    filter: ({ find }, value) => find(TextField()).fillIn(value),
+    filter: ({ find }, value) => find(TextField())
+      .perform((el) => {
+        el.focus();
+        const property = Object.getOwnPropertyDescriptor(Object.getPrototypeOf(el), 'value');
+        property.set.call(el, value);
+        el.dispatchEvent(new InputEvent('input', { inputType: 'insertFromPaste', bubbles: true, cancelable: false }));
+      }),
     focusFilter: ({ perform }) => perform(el => el.querySelector('[class^=selectionFilter]').focus()),
   });
 
