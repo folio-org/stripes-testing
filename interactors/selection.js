@@ -1,4 +1,4 @@
-import { Button, TextField, isVisible } from '@interactors/html';
+import { TextField, isVisible } from '@interactors/html';
 import HTML from './baseHTML';
 
 const toggle = (el) => el.querySelector('button').click();
