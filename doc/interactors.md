@@ -965,6 +965,30 @@ Select('Country').exists();
   select. If there is no warning, then this will be undefined
 - `valid`: _boolean_ = is this select valid?
 
+#### Selection
+
+Stripes-components Select substitute with filterable options list.
+
+##### Locator
+
+Selection components are located via their label.
+
+##### Filters
+
+- `id`: _string_ = DOM element id of the button which the user interacts with.
+- `value`: _string_ = the inner text of the button, set as the value of the component.
+- `error`: _string_ = text of the error associated with this control.
+- `warning`: _string_ = text of the warning associated with this control.
+- `open`: _boolean_ = whether or not the options list is open.
+- `focused`: _boolean_ = whether or not the control is in focus.
+
+##### Actions
+
+- `toggle`: open/close the options list.
+- `filterOptions`: _string_ = conditionally open the list (if closed) and enter a string into the filter field.
+- `choose`: _string_ = conditionally open the options list and choose an item corresponding to the provided label.
+- `focus`: focuses the control.
+
 #### TextArea
 
 Stripes TextArea component wraps a standard `textarea` element,
