@@ -17,10 +17,3 @@ Cypress.Commands.add('deleteProxyApi', (proxyId) => {
       path: `proxiesfor/${proxyId}`,
     });
 });
-
-
-
-
-
-
-
