@@ -9,6 +9,8 @@ export { default as AutoSuggest } from './autosuggest';
 export { default as Avatar } from './avatar';
 export { default as Badge } from './badge';
 export { default as Button } from './button';
+export { default as ButtonGroup } from './buttongroup';
+export { default as Callout } from './callout';
 export { default as Checkbox } from './checkbox';
 export { default as Datepicker, Calendar } from './datepicker';
 export { default as Dropdown } from './dropdown';
