@@ -262,6 +262,63 @@ Button('Click Me').has({ text: 'Click Me' });
 - `visible`: _boolean_ = `true` if the button is visible
 - `focused`: _boolean_ = `true` if the button is in-focus
 
+##### ButtonGroup
+
+Component used for styling a set of buttons.
+
+##### Synopsis
+
+```js
+// click the button with the label 'holdings'
+ButtonGroup().click('holdings');
+```
+
+##### Filters
+
+- `buttonCount`: _number_ = number of child buttons in buttonGroup.
+
+##### Actions
+
+- `click`: _string_ = click the child button with the provided label.
+
+#### Callout
+
+User notification component. Informs on success/failure of actions within the system.
+
+##### Synopsis
+
+```js
+Callout('There was a problem').exists();
+// check type of callout
+Callout.has({ type: calloutType.error });
+```
+
+##### Filters
+
+- `id`: _string_ = the id of the callout element.
+- `type`: _string_ = one of 'success', 'error', 'info', 'warning' - different callout types that set corresponding styles to the callout.
+
+##### Actions
+
+- `dismiss`: clicks the dismiss (X) button in the callout.
+
+#### Card
+
+Card is a presentational component representing a box of related information.
+
+##### Synopsis
+```js
+Card().exists();
+// card with certain text exists...
+Card('Card content text').exists();
+```
+
+##### Filters
+
+- `headerStart`: _string_= text contained in 'header start' element of the card.
+- `headerEnd`: _string_= text contained in the 'header end' element of the card.
+- `style`: _string_= style of the card. One of 'default' 'positive' 'negative'
+
 #### Checkbox
 
 The checkbox element
