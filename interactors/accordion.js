@@ -12,6 +12,7 @@ export default HTML.extend('accordion')
   .locator(label)
   .filters({
     label,
+    id: el => el.id,
     open: el => isVisible(el.querySelector('[class^=content-region]')),
     contentHeight: el => el.querySelector('[class^=content-region]').offsetHeight,
     contentId: el => {

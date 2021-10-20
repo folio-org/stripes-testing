@@ -15,7 +15,7 @@ const control = ({ shouldOpen = true } = {}) => async interactor => {
 
 const MultiSelectOption = HTML.extend('multi select option')
   .selector('[class^=multiSelectOption-]')
-  .locator(el => el.querySelector('[class^=valueChipValue-]').textContent || '');
+  .locator(el => el.querySelector('[class^=optionSegment-]').textContent || '');
 
 export default createInteractor('multi select')
   .locator(el => {
@@ -25,6 +25,7 @@ export default createInteractor('multi select')
   .selector('[role=application][class^=multiSelectContainer-]')
   .filters({
     open,
+    id: el => el.parentElement.id,
     selected: (element) => {
       const valueList = element.querySelector('ul[class^=multiSelectValueList-]');
 
@@ -36,7 +37,7 @@ export default createInteractor('multi select')
     }
   })
   .actions({
-    toggle: ({ find }) => find(Button({ ariaLabel: 'open menu' })).click(),
+    toggle: ({ find }) => find(Button({ className: including('multiSelectToggleButton-') })).click(),
     open: control(),
     close: control({ shouldOpen: false }),
     fillIn: ({ find }, value) => find(TextField({ className: including('multiSelectFilterField-') })).fillIn(value),
