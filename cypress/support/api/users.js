@@ -40,3 +40,15 @@ Cypress.Commands.add('deleteUser', (userId) => {
       path: `bl-users/by-id/${userId}`,
     });
 });
+
+Cypress.Commands.add('createUserApi', (user) => {
+  cy
+    .okapiRequest({
+      method: 'POST',
+      path: 'users',
+      body: user,
+    })
+    .then(({ body }) => {
+      Cypress.env('user', body);
+    });
+});
