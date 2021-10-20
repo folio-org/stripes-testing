@@ -127,3 +127,14 @@ Cypress.Commands.add('createItem', (item) => {
     }
   });
 });
+
+Cypress.Commands.add('getItems', (searchParams) => {
+  cy
+    .okapiRequest({
+      path: 'inventory/items',
+      searchParams,
+    })
+    .then(({ body }) => {
+      Cypress.env('items', body.items);
+    });
+});
