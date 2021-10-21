@@ -33,6 +33,17 @@ Cypress.Commands.add('getLedgersApi', (searchParams) => {
     });
 });
 
+Cypress.Commands.add('getFiscalYearsApi', (searchParams) => {
+  cy
+    .okapiRequest({
+      path: 'finance/fiscal-years',
+      searchParams,
+    })
+    .then(({ body }) => {
+      Cypress.env('fiscalYears', body.fiscalYears);
+    });
+});
+
 Cypress.Commands.add('createFundApi', ({ groupIds = [], ...fund }) => {
   const fundId = uuid();
 
@@ -53,5 +64,25 @@ Cypress.Commands.add('deleteFundApi', (id) => {
   cy.okapiRequest({
     method: 'DELETE',
     path: `finance/funds/${id}`,
+  });
+});
+
+Cypress.Commands.add('createLedgerApi', (ledger) => {
+  const ledgerId = uuid();
+
+  cy.okapiRequest({
+    method: 'POST',
+    path: 'finance/ledgers',
+    body: {
+      id: ledgerId,
+      ...ledger,
+    },
+  });
+});
+
+Cypress.Commands.add('deleteLedgerApi', (id) => {
+  cy.okapiRequest({
+    method: 'DELETE',
+    path: `finance/ledgers/${id}`,
   });
 });
