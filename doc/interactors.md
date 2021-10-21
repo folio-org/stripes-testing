@@ -34,7 +34,7 @@ runners that runs tests in a remote runtime environment that does not
 include the DOM under test such as Selenium, or Nightmare.
 
 See the [general guide for working with
-interactors](https://frontside.com/bigtest/docs/interactors) for more information
+interactors](https://frontside.com/interactors) for more information
 
 
 ### How do I write interactors for my own application?
