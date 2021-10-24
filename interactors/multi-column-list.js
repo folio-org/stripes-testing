@@ -42,6 +42,7 @@ export const MultiColumnList = HTML.extend('multi column list')
   .locator(el => el.id)
   .filters({
     columns,
+    id: el => el.id,
     columnCount: el => columns(el).length,
     rowCount: el => el.querySelectorAll('[class*=mclRow-]').length,
     height: el => el.offsetHeight,
