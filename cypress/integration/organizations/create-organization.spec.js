@@ -28,9 +28,7 @@ describe('Creating organization', () => {
     cy.visit('/organizations/create');
 
     cy.createOrganization({ name, code, status: 'Active' });
-    cy.do(Checkbox({ id: 'clickable-filter-status-active' }).click());
 
     cy.expect(Pane(including(name)).is({ visible: true, index: 2 }));
-    cy.expect(MultiColumnListCell({ content: name }).exists());
   });
 });
