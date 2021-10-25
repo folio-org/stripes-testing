@@ -2,11 +2,9 @@ import uuid from 'uuid';
 import {
   Pane,
   including,
-  Checkbox,
-  MultiColumnListCell
 } from '../../../interactors';
 
-describe('Creating organization', () => {
+describe('ui-organizations: Creating organization', () => {
   const name = 'Test-' + uuid();
   const code = 'Test-' + uuid();
 
