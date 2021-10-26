@@ -1,3 +1,5 @@
+import axe from 'axe-core';
+
 export const axeModuleConfig = {
   runOnly: ['wcag2a', 'wcag2aa'],
   rules: {
