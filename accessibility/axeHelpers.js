@@ -45,10 +45,10 @@ export function runAxeTest(options = {}) {
 
             return (
               `\x1b[1m Issue #${i + 1}: \x1b[3m\x1b[91m${v.id} -\x1b[0m\x1b[1m\x1b[31m ${v.help}
-  ${generalKeys}
-  \x1b[1m\x1b[31m  Sample issue (1 of ${v.nodes.length} detections)
-  ${detailKeys}
-  ${failureSummary}`
+${generalKeys}
+\x1b[1m\x1b[31m  Sample issue (1 of ${v.nodes.length} detections)
+${detailKeys}
+${failureSummary}`
             );
 
           }).join('\n\n')
