@@ -11,12 +11,13 @@ function printKeys(o, excludes = [], indentLevel = 0) {
   let tabs = '';
   for (let i = 0; i < indentLevel; i++) {
     tabs += '  ';
-  };
+  }
   return Object.keys(o)
     .map(k => {
       if (!excludes.includes(k)) {
-        return `${tabs}\x1b[1m\x1b[31m${k}: \x1b[0m\x1b[37m${o[k]}\n`
+        return `${tabs}\x1b[1m\x1b[31m${k}: \x1b[0m\x1b[37m${o[k]}\n`;
       }
+      return '';
     }).filter(Boolean);
 }
 
@@ -50,8 +51,8 @@ ${generalKeys}
 ${detailKeys}
 ${failureSummary}`
             );
-
-          }).join('\n\n')
+          }
+        ).join('\n\n');
         throw new Error(`\x1b[1m \x1b[31mAxe violation(s): \n${violationString}\n`);
       }
     });
