@@ -19,7 +19,7 @@
   "dependencies": {
     "@interactors/html": "^0.33.0",
     "date-fns": "^2.16.1",
-    "axe-core": "^4.3.4",
+    "axe-core": "4.3.3",
     "debug": "^4.0.1",
     "element-is-visible": "^1.0.0",
     "uuid": "^3.0.1"
