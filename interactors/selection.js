@@ -17,6 +17,9 @@ export const SelectionList = HTML.extend('selection list')
         el.dispatchEvent(new InputEvent('input', { inputType: 'insertFromPaste', bubbles: true, cancelable: false }));
       }),
     focusFilter: ({ perform }) => perform(el => el.querySelector('[class^=selectionFilter]').focus()),
+    select: async (interactor, value) => {
+      await interactor.find(SelectionOption(value)).click();
+    }
   });
 
 export const SelectionOption = HTML.extend('selection option')
@@ -38,7 +41,7 @@ export default HTML.extend('selection')
     return label ? label.textContent : '';
   })
   .filters({
-    id: (el) => el.querySelector('button').id,
+    id: (el) => el.querySelector('[class^=selectionControl-]').id,
     value: (el) => el.querySelector('button').textContent,
     error: (el) => el.querySelector('[class^=feedbackError]').textContent,
     warning: (el) => el.querySelector('[class^=feedbackWarning]').textContent,
@@ -51,7 +54,7 @@ export default HTML.extend('selection')
     focused: (el) => !!el.querySelector('button:focused'),
   })
   .actions({
-    toggle: ({ perform }) => perform(toggle),
+    open: ({ perform }) => perform(toggle),
     filterOptions: async ({ perform }, value) => {
       const optionsList = document.querySelector('[class^=selectionListRoot]');
       if (optionsList && isVisible(optionsList)) {
@@ -74,3 +77,4 @@ export default HTML.extend('selection')
     },
     focus: ({ perform }) => perform((el) => el.querySelector('button').focus())
   });
+});
