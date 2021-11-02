@@ -77,4 +77,3 @@ export default HTML.extend('selection')
     },
     focus: ({ perform }) => perform((el) => el.querySelector('button').focus())
   });
-});
