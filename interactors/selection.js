@@ -3,6 +3,18 @@ import HTML from './baseHTML';
 
 const toggle = (el) => el.querySelector('button').click();
 
+export const SelectionOption = HTML.extend('selection option')
+  .selector('li[class^=option]')
+  .locator((el) => el.textContent)
+  .filters({
+    index: (el) => {
+      return [...el.parentNode.querySelectorAll('li')].filter((o => o === el)).length;
+    }
+  })
+  .actions({
+    click: ({ perform }) => perform((el) => el.click()),
+  });
+
 export const SelectionList = HTML.extend('selection list')
   .selector('[class^=selectionListRoot]')
   .filters({
@@ -20,18 +32,6 @@ export const SelectionList = HTML.extend('selection list')
     select: async (interactor, value) => {
       await interactor.find(SelectionOption(value)).click();
     }
-  });
-
-export const SelectionOption = HTML.extend('selection option')
-  .selector('li[class^=option]')
-  .locator((el) => el.textContent)
-  .filters({
-    index: (el) => {
-      return [...el.parentNode.querySelectorAll('li')].filter((o => o === el)).length;
-    }
-  })
-  .actions({
-    click: ({ perform }) => perform((el) => el.click()),
   });
 
 export default HTML.extend('selection')
