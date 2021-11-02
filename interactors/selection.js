@@ -18,6 +18,7 @@ export const SelectionOption = HTML.extend('selection option')
 export const SelectionList = HTML.extend('selection list')
   .selector('[class^=selectionListRoot]')
   .filters({
+    id: el => el.parentElement.id,
     optionCount: (el) => [...el.querySelectorAll('li')].length,
   })
   .actions({
