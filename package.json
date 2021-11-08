@@ -1,6 +1,6 @@
 {
   "name": "@folio/stripes-testing",
-  "version": "4.1.0",
+  "version": "4.2.0",
   "description": "Regression tests for FOLIO UI",
   "repository": "folio-org/stripes-testing",
   "publishConfig": {
@@ -14,11 +14,13 @@
     "test:cypress:local": "stripes serve --port 3001 & wait-on http://localhost:3001 && cypress run && kill $!",
     "test:cypress:yakbak": "stripes serve --port 3001 --okapi http://localhost:3002 & pid1=$! && yakbak-proxy -v -i -n https://folio-snapshot-okapi.dev.folio.org & pid2=$! && wait-on http://localhost:3001 && cypress run && kill $pid1 $pid2",
     "regenerate": "stripes serve --port 3001 --okapi http://localhost:3002 & pid1=$! && rm -rf tapes && yakbak-proxy -v -i https://folio-snapshot-okapi.dev.folio.org & pid2=$! && wait-on http://localhost:3001 && cypress run && kill $pid1 $pid2",
-    "lint": "eslint ."
+    "lint": "eslint .",
+    "build-mod-descriptor": "stripes mod descriptor --full --strict | jq '.[]' > module-descriptor.json "
   },
   "dependencies": {
     "@interactors/html": "^0.33.0",
     "date-fns": "^2.16.1",
+    "axe-core": "4.3.3",
     "debug": "^4.0.1",
     "element-is-visible": "^1.0.0",
     "uuid": "^3.0.1"
