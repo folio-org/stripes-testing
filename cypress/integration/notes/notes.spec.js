@@ -1,12 +1,8 @@
 /// <reference types="cypress" />
 
+import {Agreements} from '../../support/fragments/agreements/Agreements';
+import { TopMenu } from '../../support/fragments/TopMenu';
 
-//import bigtestGlobals from '@bigtest/globals';
-import Agreements from '../../support/fragments/agreements/Agreements';
-import TopMenu from '../../support/fragments/TopMenu';
-
-
-//bigtestGlobals.defaultInteractorTimeout = 30000;
 
 describe('Note creation', () => {
   before(() => {

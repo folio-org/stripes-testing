@@ -1,12 +1,10 @@
-class TopMenu{
-   static #rootCss = 'div[class*="appList"]';
-   static #agreementsButtonCss = `${this.#rootCss} a[id="app-list-item-clickable-agreements-module"]`; 
+import {Button} from '../../../interactors';
+
+export class TopMenu{
+   static #agreements = Button('Agreements');
 
    static  openAgreements(){
-         //TODO: redesign to interactors to provide more common steps descriptions into cypress report
-         cy.get(TopMenu.#agreementsButtonCss).click()
+         cy.do(this.#agreements.click());
    } 
 
 }
-
-export default TopMenu
