@@ -6,7 +6,7 @@ describe('ui-inventory: actions', () => {
     cy.visit('/inventory');
   });
 
-  it('verifies action menu options before any search is conducted', () => {
+  it('verifies action menu options before any search is conducted trId: 196752', () => {
     cy.do(Button('Actions').click());
 
     cy.get('#dropdown-clickable-get-items-uiids')
