@@ -1,4 +1,4 @@
-import { Button } from "@interactors/html";
+import {Button} from '../../../../interactors';
 import {NewAgreement} from "./newAgreement";
 
 export class Agreements{
