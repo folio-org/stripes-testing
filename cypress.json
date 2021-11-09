@@ -1,8 +1,12 @@
 {
-  "baseUrl": "https://folio-snapshot.dev.folio.org",
+  "baseUrl": "http://localhost:3000/",
   "viewportWidth": 1920,
   "viewportHeight": 1080,
   "video": false,
   "defaultCommandTimeout": 11000,
-  "pageLoadTimeout": 120000
+  "pageLoadTimeout": 120000,
+  "env": {
+    "OKAPI_HOST": "localhost:9130",
+    "OKAPI_TENANT": "diku"  
+  }
 }
