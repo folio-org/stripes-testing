@@ -1,32 +1,26 @@
 /// <reference types="cypress" />
 
-import {Agreements} from '../../support/fragments/agreements/Agreements';
-import { TopMenu } from '../../support/fragments/TopMenu';
+import Agreements from '../../support/fragments/agreements/agreements';
+import AgreementDetails from '../../support/fragments/agreements/agreementsDetails';
+import TopMenu from '../../support/fragments/topMenu';
+
 
 
 describe('Note creation', () => {
-  before(() => {
+  it('C1296 Create into Agreement', () => {
+    // TODO: add support of special permissions in special account
     cy.login('diku_admin', 'admin');
-  });
-  beforeEach(() => {
-    cy.getToken('diku_admin', 'admin')
-      .then(() => {
-        cy.getLoanTypes({ limit: 1 });
-        cy.getMaterialTypes({ limit: 1 });
-        cy.getLocations({ limit: 1 });
-        cy.getHoldingTypes({ limit: 1 });
-        cy.getHoldingSources({ limit: 1 });
-        cy.getInstanceTypes({ limit: 1 });
-        cy.getUsers({ limit: 1, query: '"personal.firstName"="checkin-all" and "active"="true"' });
-      });
-  });
-  it('Create in Agreements', () => {
+    // TODO: move agreement creation into api requests
     TopMenu.openAgreements();
-    Agreements.create();   
-    //TODO: add notes management
-  })
-
-  after(() => {
-    cy.logout();
+    Agreements.create();
+    Agreements.selectRecord();
+    AgreementDetails.openNotesSection();
+    AgreementDetails.createNote();
+    Agreements.selectRecord();
+    AgreementDetails.checkNotesCount(1);
+    AgreementDetails.openNotesSection();
+    AgreementDetails.specialNotePresented();
+    // TODO: add support of delete through api
+    AgreementDetails.remove();
   });
 });

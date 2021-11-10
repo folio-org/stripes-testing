@@ -1,9 +1,9 @@
-import { Button } from "@interactors/html";
-import { getCurrentDate } from "../../../plugins/dateTools";
-import { getRandomPostfix } from "../../../plugins/stringTools";
+import { Button } from '@interactors/html';
+import { getCurrentDate } from '../../../plugins/dateTools';
+import { getRandomPostfix } from '../../../plugins/stringTools';
 
-export class NewAgreement{
-
+export default class NewAgreement {
+    // TODO: start to use interactors instead of selectors
     static #rootCss = 'section[id="pane-agreement-form"]'
     static #nameCss = `${this.#rootCss} input[name="name"]`;
     static #statusCss = `${this.#rootCss} select[id="edit-agreement-status"]`;
@@ -11,37 +11,37 @@ export class NewAgreement{
     static #saveButton = Button('Save & close');
 
     static #statusValue = {
-        closed: 'Closed',
-        draft: 'Draft',
-        requested: 'Requested',
-        inNegotiation: 'In negotiation',
-        active: 'Active',
+      closed: 'Closed',
+      draft: 'Draft',
+      requested: 'Requested',
+      inNegotiation: 'In negotiation',
+      active: 'Active',
     }
-    
+
     static #defaultAgreement = {
-        name: `autotest_agreement_${getRandomPostfix()}`,
-        status: this.#statusValue.draft,
-        startDate: getCurrentDate()
+      name: `autotest_agreement_${getRandomPostfix()}`,
+      status: this.#statusValue.draft,
+      startDate: getCurrentDate()
     }
 
-    static get defaultAgreement(){
-        return this.#defaultAgreement;
+    static get defaultAgreement() {
+      return this.#defaultAgreement;
     }
 
 
-    static fill(specialAgreement = this.#defaultAgreement){
-        cy.get(this.#nameCss).type(specialAgreement.name);
-        cy.get(this.#statusCss)
+    static fill(specialAgreement = this.#defaultAgreement) {
+      cy.get(this.#nameCss).type(specialAgreement.name);
+      cy.get(this.#statusCss)
         .select(specialAgreement.status)
         .should('have.value', specialAgreement.status.toLowerCase());
-        cy.get(this.#startDateCss).type(specialAgreement.startDate);
+      cy.get(this.#startDateCss).type(specialAgreement.startDate);
     }
 
-    static save(){
-        cy.do(this.#saveButton.click());
+    static save() {
+      cy.do(this.#saveButton.click());
     }
 
-    static waitLoading(){
-        cy.get(this.#nameCss).should('exist');
+    static waitLoading() {
+      cy.get(this.#nameCss).should('exist');
     }
 }

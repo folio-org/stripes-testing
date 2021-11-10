@@ -1,10 +1,9 @@
-import {Button} from '../../../interactors';
+import { Button } from '../../../interactors';
 
-export class TopMenu{
+export default class TopMenu {
    static #agreements = Button('Agreements');
 
-   static  openAgreements(){
-         cy.do(this.#agreements.click());
-   } 
-
+   static openAgreements() {
+     cy.do(this.#agreements.click());
+   }
 }
