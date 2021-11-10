@@ -1,6 +1,6 @@
 import { Button } from '@interactors/html';
-import { getCurrentDate } from '../../../plugins/dateTools';
-import { getRandomPostfix } from '../../../plugins/stringTools';
+import getCurrentDate from '../../../plugins/dateTools';
+import getRandomPostfix from '../../../plugins/stringTools';
 
 export default class NewAgreement {
     // TODO: start to use interactors instead of selectors

@@ -27,9 +27,9 @@ export default class AgreementDetails {
     cy.expect(this.#newNoteButton.exists());
   }
 
-  static createNote() {
+  static createNote(specialNote = NewNote.defaultNote) {
     cy.do(this.#newNoteButton.click());
-    NewNote.fill();
+    NewNote.fill(specialNote);
     NewNote.save();
   }
 
