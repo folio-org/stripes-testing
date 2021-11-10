@@ -7,8 +7,8 @@ export default class AgreementDetails {
   static #noteBadgeXpath = `${this.#rootXpath}//section[@id="notes"]//span[contains(@class,"label")]/span`;
   static #notesSectionXpath = `${this.#rootXpath}//section[@id="notes"]`;
   static #noteTitleXpath = `${this.#notesSectionXpath}//strong[contains(.,'Title')]/..`;
+  static #notesAccordionXpath = `${this.#notesSectionXpath}//button[@id="accordion-toggle-button-notes"]`;
 
-  static #notesListButton = Button('Notes');
   static #assignUnassignNotButton = Button('Assign / Unassign');
   static #newNoteButton = Button('New', { id: 'note-create-button' });
   static #actionsButton = Button('Actions');
@@ -21,7 +21,8 @@ export default class AgreementDetails {
   }
 
   static openNotesSection() {
-    cy.do(this.#notesListButton.click());
+    // TODO: resolve the issue with flaky step with accordion interactor
+    cy.xpath(this.#notesAccordionXpath).click();
 
     cy.expect(this.#assignUnassignNotButton.exists());
     cy.expect(this.#newNoteButton.exists());
@@ -44,8 +45,9 @@ export default class AgreementDetails {
   }
 
   static remove() {
-    cy.do([this.#actionsButton.click(),
-      this.#deleteButton.click(),
-      this.#deleteButtonInConfirmation.click()]);
+    cy.do(this.#actionsButton.click());
+    cy.do(this.#deleteButton.click());
+    cy.expect(this.#deleteButtonInConfirmation.exists());
+    cy.do(this.#deleteButtonInConfirmation.click());
   }
 }
