@@ -1,6 +1,6 @@
 /// <reference types="cypress" />
 
-import Agreements from '../../support/fragments/agreements/agreements';
+import Agreements from '../../support/fragments/agreements/Agreements';
 import AgreementDetails from '../../support/fragments/agreements/agreementsDetails';
 import TopMenu from '../../support/fragments/topMenu';
 import NewNote from '../../support/fragments/notes/newNote';
@@ -17,7 +17,7 @@ describe('Note creation', () => {
     // TODO: add support of special permissions in special account
     cy.login(Cypress.env('diku_login'), Cypress.env('diku_password'));
     // TODO: move agreement creation into api requests
-    TopMenu.openAgreements();
+    cy.visit(TopMenu.agreementsPath);
     Agreements.create();
     Agreements.selectRecord();
     AgreementDetails.openNotesSection();
