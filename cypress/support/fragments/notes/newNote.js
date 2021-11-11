@@ -1,5 +1,5 @@
 import { RichEditor, TextField, Button } from '../../../../interactors';
-import getRandomPostfix from '../../../plugins/stringTools';
+import getRandomPostfix from '../../utils/stringTools';
 
 export default class NewNote {
   static #titleTextField = TextField('Note title*');
