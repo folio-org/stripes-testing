@@ -2,7 +2,7 @@ import { Button } from '../../../../interactors';
 import NewAgreement from './newAgreement';
 import AgreementDetails from './agreementsDetails';
 
-export default class Agreements {
+class Agreements {
   static #rootXpath = '//div[@id="agreements-module-display"]';
   static #rowXpath = `${this.#rootXpath}//div[contains(@class,'mclRow')][@role='row']`;
   static #labelCellXpath = `${this.#rowXpath}//span[contains(@class,label)]/div`;
@@ -32,3 +32,5 @@ export default class Agreements {
     AgreementDetails.waitLoading();
   }
 }
+
+export default Agreements;

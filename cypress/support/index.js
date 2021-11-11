@@ -15,4 +15,4 @@ import './users';
 
 bigtestGlobals.defaultInteractorTimeout = 10000;
 
-require('cypress-xpath')
+require('cypress-xpath');
