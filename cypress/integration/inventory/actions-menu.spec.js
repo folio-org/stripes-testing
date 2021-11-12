@@ -14,7 +14,7 @@ describe('ui-inventory: actions', () => {
       .invoke('prop', 'disabled')
       .should('eq', true);
 
-    cy.get(Actions.saveSQLQueryOption)
+    cy.get(Actions.saveCQLQueryOption)
       .invoke('prop', 'disabled')
       .should('eq', true);
 
