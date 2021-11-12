@@ -1,27 +1,28 @@
-import { Button } from '../../../interactors';
+import TopMenu from "../../support/fragments/topMenu";
+import Actions from "../../support/fragments/inventory/actions";
 
 describe('ui-inventory: actions', () => {
-  beforeEach('navigates to Inventory', () => {
-    cy.login('diku_admin', 'admin');
-    cy.visit('/inventory');
+  beforeEach('navigates to Actions', () => {
+    cy.login(Cypress.env('diku_login'), Cypress.env('diku_password'));
+    cy.visit(TopMenu.inventoryPath);
   });
 
-  it('verifies action menu options before any search is conducted trId: 196752', () => {
-    cy.do(Button('Actions').click());
+  it('C196752 verifies action menu options before any search is conducted', () => {
+    cy.do(Actions.openActions());
 
-    cy.get('#dropdown-clickable-get-items-uiids')
+    cy.get(Actions.saveUUIDOption)
       .invoke('prop', 'disabled')
       .should('eq', true);
 
-    cy.get('#dropdown-clickable-get-cql-query')
+    cy.get(Actions.saveSQLQueryOption)
       .invoke('prop', 'disabled')
       .should('eq', true);
 
-    cy.get('#dropdown-clickable-export-marc')
+    cy.get(Actions.exportMARCOption)
       .invoke('prop', 'disabled')
       .should('eq', true);
 
-    cy.get('#dropdown-clickable-show-selected-records')
+    cy.get(Actions.showSelectedRecordsOption)
       .invoke('prop', 'disabled')
       .should('eq', true);
   });
