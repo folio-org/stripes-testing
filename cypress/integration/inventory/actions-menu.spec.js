@@ -1,5 +1,7 @@
-import TopMenu from "../../support/fragments/topMenu";
-import Actions from "../../support/fragments/inventory/actions";
+import TopMenu from '../../support/fragments/topMenu';
+import Actions from '../../support/fragments/inventory/actions';
+import InventorySearchPanel from '../../support/fragments/inventory/InventorySearchPanel';
+import { Checkbox } from '../../../interactors';
 
 describe('ui-inventory: actions', () => {
   beforeEach('navigates to Actions', () => {
@@ -14,35 +16,18 @@ describe('ui-inventory: actions', () => {
     Actions.optionIsDisabled(Actions.saveCQLQueryOption, true);
     Actions.optionIsDisabled(Actions.exportMARCOption, true);
     Actions.optionIsDisabled(Actions.showSelectedRecordsOption, true);
-import { Button, MultiSelect, Checkbox } from '../../../interactors';
-
-describe('ui-inventory: actions menu', () => {
-  beforeEach('navigates to Inventory', () => {
-    cy.login('diku_admin', 'admin');
-    cy.visit('/inventory');
   });
 
-  it('verifies the action menu options after searching and selecting result', () => {
+  it.only('C196753 verifies the action menu options after searching and selecting result', () => {
     cy.do([
-      MultiSelect({ 'id': 'multiselect-6' }).select(['Main Library']),
+      InventorySearchPanel.effectiveLocationInput.select([InventorySearchPanel.effectiveLocationValues.mainLibrary]),
       Checkbox({ 'id': 'checkbox-154' }).click(),
-      Button('Actions').click()
+      Actions.actionsBtn.click()
     ]);
 
-    cy.get('#dropdown-clickable-get-items-uiids')
-      .invoke('prop', 'disabled')
-      .should('eq', false);
-
-    cy.get('#dropdown-clickable-get-cql-query')
-      .invoke('prop', 'disabled')
-      .should('eq', false);
-
-    cy.get('#dropdown-clickable-export-marc')
-      .invoke('prop', 'disabled')
-      .should('eq', false);
-
-    cy.get('#dropdown-clickable-show-selected-records')
-      .invoke('prop', 'disabled')
-      .should('eq', false);
+    Actions.optionIsDisabled(Actions.saveUUIDOption, false);
+    Actions.optionIsDisabled(Actions.saveCQLQueryOption, false);
+    Actions.optionIsDisabled(Actions.exportMARCOption, false);
+    Actions.optionIsDisabled(Actions.showSelectedRecordsOption, false);
   });
 });
