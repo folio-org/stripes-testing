@@ -1,7 +1,7 @@
 import * as Bigtest from '@interactors/html';
 
 export { Bigtest };
-export { Heading, HTML, including, Link, matching, and, or, not, some, every, isVisible, Page } from '@interactors/html';
+export { Heading, TextField as TextInput, HTML, including, Link, matching, and, or, not, some, every, isVisible, Page } from '@interactors/html';
 export { default as converge } from './converge';
 
 export { default as Accordion } from './accordion';
@@ -9,6 +9,9 @@ export { default as AutoSuggest } from './autosuggest';
 export { default as Avatar } from './avatar';
 export { default as Badge } from './badge';
 export { default as Button } from './button';
+export { default as ButtonGroup } from './buttongroup';
+export { default as Callout, calloutTypes } from './callout';
+export { default as Card, cardStyles } from './card';
 export { default as Checkbox } from './checkbox';
 export { default as Datepicker, Calendar } from './datepicker';
 export { default as Dropdown } from './dropdown';
@@ -29,7 +32,8 @@ export { RepeatableField, RepeatableFieldAddButton, RepeatableFieldRemoveButton 
 export { default as RichEditor } from './rich-text-editor';
 export { default as SearchField } from './search-field';
 export { default as Select } from './select';
-export { default as Selection, SelectionList } from './selection';
+export { default as Selection, SelectionList, SelectionOption } from './selection';
 export { default as TextField } from './text-field';
 export { default as TextArea } from './textarea';
 export { Tooltip, TooltipProximity } from './tooltip';
+export { dispatchFocusout } from './util';

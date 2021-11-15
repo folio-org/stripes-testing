@@ -49,6 +49,8 @@ export default createInteractor('keyboard (requires window to have focus)')
     escape: press('Escape'),
     alt: press('AltLeft'),
     altLeft: press('AltLeft'),
+    tab: press('Tab'),
+    space: press('Space'),
     pressKey: (value) => press(value),
   })();
 
@@ -64,7 +66,9 @@ const KEY_CODES = {
   End: 35,
   Enter: 13,
   Escape: 27,
-  AltLeft: 18
+  AltLeft: 18,
+  Space: 32,
+  Tab: 9
 };
 
 

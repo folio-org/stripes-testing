@@ -1,26 +1,80 @@
-import { createInteractor, HTML, including } from '@interactors/html';
-import Button from './button';
+import { TextField, isVisible } from '@interactors/html';
+import HTML from './baseHTML';
 
-const SelectionOption = HTML.extend('selection option')
-  .selector('[class^=optionSegment-]')
-  .locator(el => el.textContent || '');
+const toggle = (el) => el.querySelector('button').click();
 
-export const SelectionList = HTML.extend('selection options')
-  .selector('[class^=selectionList-]')
+export const SelectionOption = HTML.extend('selection option')
+  .selector('li[class^=option]')
+  .locator((el) => el.textContent)
   .filters({
-    id: el => el.parentElement.id,
+    index: (el) => {
+      return [...el.parentNode.querySelectorAll('li')].filter((o => o === el)).length;
+    }
   })
   .actions({
-    select: async (interactor, value) => {
-      await interactor.find(SelectionOption(value)).click();
-    },
+    click: ({ perform }) => perform((el) => el.click()),
   });
 
-export default createInteractor('selection')
-  .selector('[class^=selectionControlContainer-]')
+export const SelectionList = HTML.extend('selection list')
+  .selector('[class^=selectionListRoot]')
   .filters({
-    id: el => el.querySelector('[class^=selectionControl-]').getAttribute('id'),
+    id: el => el.id,
+    optionCount: (el) => [...el.querySelectorAll('li')].length,
   })
   .actions({
-    open: ({ find }) => find(Button({ className: including('selectionControl-') })).click(),
+    filter: ({ find }, value) => find(TextField())
+      .perform((el) => {
+        el.focus();
+        const property = Object.getOwnPropertyDescriptor(Object.getPrototypeOf(el), 'value');
+        property.set.call(el, value);
+        el.dispatchEvent(new InputEvent('input', { inputType: 'insertFromPaste', bubbles: true, cancelable: false }));
+      }),
+    focusFilter: ({ perform }) => perform(el => el.querySelector('[class^=selectionFilter]').focus()),
+    select: async (interactor, value) => {
+      await interactor.find(SelectionOption(value)).click();
+    }
+  });
+
+export default HTML.extend('selection')
+  .selector('[class^=selectionControlContainer]')
+  .locator((el) => {
+    const label = el.parentNode.querySelector('label');
+    return label ? label.textContent : '';
+  })
+  .filters({
+    id: (el) => el.querySelector('[class^=selectionControl-]').id,
+    value: (el) => el.querySelector('button').textContent,
+    error: (el) => el.querySelector('[class^=feedbackError]').textContent,
+    warning: (el) => el.querySelector('[class^=feedbackWarning]').textContent,
+    open: (el) => {
+      if (el.querySelector('button').getAttribute('aria-expanded') === 'true') {
+        return !!document.querySelector('[class^=selectionListRoot]');
+      }
+      return false;
+    },
+    focused: (el) => !!el.querySelector('button:focused'),
+  })
+  .actions({
+    open: ({ perform }) => perform(toggle),
+    filterOptions: async ({ perform }, value) => {
+      const optionsList = document.querySelector('[class^=selectionListRoot]');
+      if (optionsList && isVisible(optionsList)) {
+        return perform(() => SelectionList().filter(value));
+      } else {
+        await perform(toggle);
+        return perform(() => SelectionList().filter(value));
+      }
+    },
+    choose: ({ perform }, value) => {
+      perform(async () => {
+        const optionsList = document.querySelector('[class^=selectionListRoot]');
+        if (optionsList && isVisible(optionsList)) {
+          return SelectionList().find(SelectionOption(value)).click();
+        } else {
+          await perform(toggle);
+          return SelectionList().find(SelectionOption(value)).click();
+        }
+      });
+    },
+    focus: ({ perform }) => perform((el) => el.querySelector('button').focus())
   });
