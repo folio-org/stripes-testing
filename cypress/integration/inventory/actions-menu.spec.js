@@ -8,22 +8,11 @@ describe('ui-inventory: actions', () => {
   });
 
   it('C196752 verifies action menu options before any search is conducted', () => {
-    cy.do(Actions.openActions());
+    Actions.openActions();
 
-    cy.get(Actions.saveUUIDOption)
-      .invoke('prop', 'disabled')
-      .should('eq', true);
-
-    cy.get(Actions.saveCQLQueryOption)
-      .invoke('prop', 'disabled')
-      .should('eq', true);
-
-    cy.get(Actions.exportMARCOption)
-      .invoke('prop', 'disabled')
-      .should('eq', true);
-
-    cy.get(Actions.showSelectedRecordsOption)
-      .invoke('prop', 'disabled')
-      .should('eq', true);
+    Actions.optionIsDisabled(Actions.saveUUIDOption, true);
+    Actions.optionIsDisabled(Actions.saveCQLQueryOption, true);
+    Actions.optionIsDisabled(Actions.exportMARCOption, true);
+    Actions.optionIsDisabled(Actions.showSelectedRecordsOption, true);
   });
 });
