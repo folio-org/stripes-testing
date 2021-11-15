@@ -1,6 +1,7 @@
 import { Button } from '../../../../interactors';
 import NewAgreement from './newAgreement';
 import AgreementDetails from './agreementsDetails';
+import getLongDelay from '../../utils/cypressTools';
 
 export default class Agreements {
   static #rootXpath = '//div[@id="agreements-module-display"]';
@@ -10,7 +11,8 @@ export default class Agreements {
   static #newButton = Button('New');
 
   static create(specialAgreement = NewAgreement.defaultAgreement) {
-    cy.do(this.#newButton.click());
+    // related with long initial loding and fluky behavior
+    cy.do(this.#newButton.click(), getLongDelay());
     NewAgreement.waitLoading();
     NewAgreement.fill(specialAgreement);
     NewAgreement.save();
@@ -22,8 +24,9 @@ export default class Agreements {
   }
 
   static waitLoading() {
-    cy.xpath(this.#rowXpath)
+    cy.xpath(this.#rowXpath, getLongDelay())
       .should('be.visible');
+    cy.expect(this.#newButton.exists());
   }
 
   static selectRecord(recordName = NewAgreement.defaultAgreement.name) {

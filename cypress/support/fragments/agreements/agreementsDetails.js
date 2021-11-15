@@ -3,11 +3,14 @@ import NewNote from '../notes/newNote';
 
 export default class AgreementDetails {
   static #rootXpath = '//section[@id="pane-view-agreement"]';
+  static #rootCss = 'section[id=pane-view-agreement]';
   static #headerXpath = `${this.#rootXpath}//div[@id="pane-view-agreement-content"]//h2`;
   static #noteBadgeXpath = `${this.#rootXpath}//section[@id="notes"]//span[contains(@class,"label")]/span`;
   static #notesSectionXpath = `${this.#rootXpath}//section[@id="notes"]`;
   static #noteTitleXpath = `${this.#notesSectionXpath}//strong[contains(.,'Title')]/..`;
   static #notesAccordionXpath = `${this.#notesSectionXpath}//button[@id="accordion-toggle-button-notes"]`;
+  static #notesAccordionJQuery = 'button#accordion-toggle-button-notes';
+
 
   static #assignUnassignNotButton = Button('Assign / Unassign');
   static #newNoteButton = Button('New', { id: 'note-create-button' });
@@ -16,13 +19,34 @@ export default class AgreementDetails {
   static #deleteButtonInConfirmation = Button('Delete', { id: 'clickable-delete-agreement-confirmation-confirm' });
 
   static waitLoading() {
-    cy.xpath(this.#headerXpath)
-      .should('be.visible');
+    cy.xpath(this.#headerXpath).should('be.visible');
+    cy.xpath(this.#notesAccordionXpath).should('be.visible');
   }
 
+  static waitLoadingWithExistingNote(title) {
+    this.waitLoading();
+    cy.xpath('//section[@id="notes"]//div[@id="notes-list"]//div[@role="gridcell"]//div/strong[contains(.,"Details")]/../span/p')
+      .should('be.exist');
+    cy.xpath('//section[@id="notes"]//div[@id="notes-list"]//div[@role="gridcell"]//div/strong[contains(.,"Title")]/..')
+      .contains(title);
+    // wait until controls count will be expected
+  }
+
+
   static openNotesSection() {
-    // TODO: resolve the issue with flaky step with accordion interactor
-    cy.xpath(this.#notesAccordionXpath).click();
+    cy.xpath(this.#notesAccordionXpath).should('be.visible');
+    // related with issue with element keeping in DOM
+    const elementsCount = Cypress.$(this.#notesAccordionJQuery).length;
+
+    cy.log(`Notes accordion in DOM count = ${elementsCount}`);
+    if (elementsCount === 0) {
+      cy.reload();
+      cy.log(`Notes accordion in DOM count(after page refresh ) = ${elementsCount}`);
+    }
+
+    cy.xpath(this.#notesAccordionXpath)
+      .should('be.visible')
+      .click();
 
     cy.expect(this.#assignUnassignNotButton.exists());
     cy.expect(this.#newNoteButton.exists());
@@ -49,5 +73,10 @@ export default class AgreementDetails {
     cy.do(this.#deleteButton.click());
     cy.expect(this.#deleteButtonInConfirmation.exists());
     cy.do(this.#deleteButtonInConfirmation.click());
+  }
+
+  static close() {
+    cy.xpath(`${this.#rootXpath}//button[@icon='times']`).click();
+    cy.get(this.#rootCss).should('not.exist');
   }
 }

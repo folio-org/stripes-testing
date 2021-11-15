@@ -1,6 +1,7 @@
 import localforage from 'localforage';
 
 import { Button, Dropdown, Heading, including, TextField } from '../../interactors';
+import getLongDelay from './utils/cypressTools';
 
 Cypress.Commands.add('login', (username, password) => {
   // We use a behind-the-scenes method of ensuring we are logged
@@ -11,13 +12,17 @@ Cypress.Commands.add('login', (username, password) => {
 
   cy.visit('/');
 
-  cy.do([
-    TextField('Username').fillIn(username),
-    TextField('Password').fillIn(password),
-    Button('Log in').click(),
-  ]);
+  cy.expect(TextField('Username').exists(), getLongDelay());
+  cy.do(TextField('Username').fillIn(username));
+  cy.do(TextField('Password').fillIn(password));
+  cy.do(Button('Log in').click());
 
-  cy.expect(Heading(including('Welcome')).exists());
+  // TODO: find the way how customize waiter timeout in case of interactors(cy.wrap may be)
+  // https://stackoverflow.com/questions/57464806/set-timeout-for-cypress-expect-assertion
+  // https://docs.cypress.io/api/commands/wrap#Requirements
+
+  // cy.expect(Heading(including('Welcome')).exists());
+  cy.get('h1[class*=frontTitle]', getLongDelay());
 
   // There seems to be a race condition here: sometimes there is
   // re-render that happens so quickly that following actions like
