@@ -1,4 +1,4 @@
-import {Button} from "../../../../interactors";
+import { Button } from '../../../../interactors';
 
 export default class Actions {
   static #actions = Button('Actions');

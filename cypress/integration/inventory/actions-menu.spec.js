@@ -1,5 +1,5 @@
-import TopMenu from "../../support/fragments/topMenu";
-import Actions from "../../support/fragments/inventory/actions";
+import TopMenu from '../../support/fragments/topMenu';
+import Actions from '../../support/fragments/inventory/actions';
 
 describe('ui-inventory: actions', () => {
   beforeEach('navigates to Actions', () => {
