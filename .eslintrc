@@ -3,6 +3,7 @@
   "plugins": [
     "cypress"
   ],
+  "parser": "babel-eslint",
   "env": {
     "mocha": true,
     "cypress/globals": true
