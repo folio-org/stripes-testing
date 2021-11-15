@@ -10,6 +10,7 @@ export default createInteractor('keyboard (requires window to have focus)')
     arrowDown: press('ArrowDown'),
     arrowLeft: press('ArrowLeft'),
     arrowRight: press('ArrowRight'),
+    backspace: press('Backspace'),
     control: press('Control'),
     // next/prevOption and increment/decrementNumber are workarounds
     // as we want to use the default browser implementation,
@@ -58,6 +59,7 @@ const KEY_CODES = {
   ArrowUp: 38,
   ArrowLeft: 37,
   ArrowRight: 39,
+  Backspace: 8,
   PageUp: 33,
   PageDown: 34,
   Home: 36,
