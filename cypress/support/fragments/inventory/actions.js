@@ -8,12 +8,12 @@ export default class Actions {
   static showSelectedRecordsOption = '#dropdown-clickable-show-selected-records';
 
 
-  static openActions() {
-    cy.do(this.#actions.click());
+  static open() {
+    return cy.do(this.#actions.click());
   }
 
   static optionIsDisabled(selector, disabled) {
-    cy.get(selector)
+    return cy.get(selector)
       .invoke('prop', 'disabled')
       .should('eq', disabled);
   }
