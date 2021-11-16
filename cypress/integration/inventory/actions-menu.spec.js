@@ -10,12 +10,17 @@ describe('ui-inventory: actions', () => {
   });
 
   it('C196752 verifies action menu options before any search is conducted', () => {
-    Actions.openActions();
+    const optionsShouldDisabled = [
+      Actions.saveUUIDOption,
+      Actions.saveCQLQueryOption,
+      Actions.exportMARCOption,
+      Actions.showSelectedRecordsOption
+    ];
 
-    Actions.optionIsDisabled(Actions.saveUUIDOption, true);
-    Actions.optionIsDisabled(Actions.saveCQLQueryOption, true);
-    Actions.optionIsDisabled(Actions.exportMARCOption, true);
-    Actions.optionIsDisabled(Actions.showSelectedRecordsOption, true);
+    Actions.open()
+      .then(() => {
+        optionsShouldDisabled.forEach(option => Actions.optionIsDisabled(option, true));
+      });
   });
 
   it.only('C196753 verifies the action menu options after searching and selecting result', () => {
