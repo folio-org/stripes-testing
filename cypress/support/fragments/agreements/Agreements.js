@@ -1,11 +1,12 @@
 import { Button } from '../../../../interactors';
 import NewAgreement from './newAgreement';
 import AgreementDetails from './agreementsDetails';
-import getLongDelay from '../../utils/cypressTools';
+import { getLongDelay } from '../../utils/cypressTools';
 
 export default class Agreements {
   static #rootXpath = '//div[@id="agreements-module-display"]';
   static #rowXpath = `${this.#rootXpath}//div[contains(@class,'mclRow')][@role='row']`;
+  static #noRowsXpath = `${this.#rootXpath}//div[contains(@class,"noResultsMessageLabel")]`;
   static #labelCellXpath = `${this.#rowXpath}//span[contains(@class,label)]/div`;
 
   static #newButton = Button('New');
@@ -24,7 +25,7 @@ export default class Agreements {
   }
 
   static waitLoading() {
-    cy.xpath(this.#rowXpath, getLongDelay())
+    cy.xpath(`${this.#rowXpath}|${this.#noRowsXpath}`, getLongDelay())
       .should('be.visible');
     cy.expect(this.#newButton.exists());
   }

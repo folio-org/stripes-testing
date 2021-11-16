@@ -1,7 +1,7 @@
 import localforage from 'localforage';
 
 import { Button, Dropdown, Heading, including, TextField } from '../../interactors';
-import getLongDelay from './utils/cypressTools';
+import { getLongDelay } from './utils/cypressTools';
 
 Cypress.Commands.add('login', (username, password) => {
   // We use a behind-the-scenes method of ensuring we are logged
@@ -12,7 +12,8 @@ Cypress.Commands.add('login', (username, password) => {
 
   cy.visit('/');
 
-  cy.expect(TextField('Username').exists(), getLongDelay());
+  // Todo: find the way to wrap interactor to cy chainable object
+  cy.get('input[name=username]', getLongDelay()).should('be.visible');
   cy.do(TextField('Username').fillIn(username));
   cy.do(TextField('Password').fillIn(password));
   cy.do(Button('Log in').click());

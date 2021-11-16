@@ -1,5 +1,6 @@
 import { Button } from '../../../../interactors';
 import NewNote from '../notes/newNote';
+import { waitDifficultElement } from '../../utils/cypressTools';
 
 export default class AgreementDetails {
   static #rootXpath = '//section[@id="pane-view-agreement"]';
@@ -29,20 +30,12 @@ export default class AgreementDetails {
       .should('be.exist');
     cy.xpath('//section[@id="notes"]//div[@id="notes-list"]//div[@role="gridcell"]//div/strong[contains(.,"Title")]/..')
       .contains(title);
-    // wait until controls count will be expected
   }
 
 
   static openNotesSection() {
     cy.xpath(this.#notesAccordionXpath).should('be.visible');
-    // related with issue with element keeping in DOM
-    const elementsCount = Cypress.$(this.#notesAccordionJQuery).length;
-
-    cy.log(`Notes accordion in DOM count = ${elementsCount}`);
-    if (elementsCount === 0) {
-      cy.reload();
-      cy.log(`Notes accordion in DOM count(after page refresh ) = ${elementsCount}`);
-    }
+    waitDifficultElement(this.#notesAccordionJQuery);
 
     cy.xpath(this.#notesAccordionXpath)
       .should('be.visible')
