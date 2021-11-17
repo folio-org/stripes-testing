@@ -1,7 +1,6 @@
 import TopMenu from '../../support/fragments/topMenu';
 import Actions from '../../support/fragments/inventory/actions';
 import InventorySearchPanel from '../../support/fragments/inventory/InventorySearchPanel';
-import { Checkbox } from '../../../interactors';
 
 describe('ui-inventory: actions', () => {
   beforeEach('navigates to Actions', () => {
@@ -23,16 +22,17 @@ describe('ui-inventory: actions', () => {
       });
   });
 
-  it.only('C196753 verifies the action menu options after searching and selecting result', () => {
-    cy.do([
-      InventorySearchPanel.effectiveLocationInput.select([InventorySearchPanel.effectiveLocationValues.mainLibrary]),
-      Checkbox({ 'id': 'checkbox-154' }).click(),
-      Actions.actionsBtn.click()
-    ]);
+  it('C196753 verifies action menu options after searching and selecting result', () => {
+    const optionsShouldEnabled = [
+      Actions.saveUUIDOption,
+      Actions.saveCQLQueryOption,
+      Actions.exportMARCOption,
+      Actions.showSelectedRecordsOption,
+    ];
 
-    Actions.optionIsDisabled(Actions.saveUUIDOption, false);
-    Actions.optionIsDisabled(Actions.saveCQLQueryOption, false);
-    Actions.optionIsDisabled(Actions.exportMARCOption, false);
-    Actions.optionIsDisabled(Actions.showSelectedRecordsOption, false);
+    cy.do(InventorySearchPanel.effectiveLocationInput.select([InventorySearchPanel.effectiveLocationValues.mainLibrary]))
+      .then(() => InventorySearchPanel.selectAllCheckboxResult())
+      .then(() => Actions.open())
+      .then(() => optionsShouldEnabled.forEach(option => Actions.optionIsDisabled(option, false)));
   });
 });
