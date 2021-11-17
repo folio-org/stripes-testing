@@ -1,6 +1,6 @@
 import TopMenu from '../../support/fragments/topMenu';
 import Actions from '../../support/fragments/inventory/actions';
-import InventorySearchPanel from '../../support/fragments/inventory/InventorySearchPanel';
+import InventorySearchPanel from '../../support/fragments/inventory/inventorySearchPanel';
 
 describe('ui-inventory: actions', () => {
   beforeEach('navigates to Actions', () => {

@@ -1,4 +1,4 @@
-import {Checkbox, MultiSelect} from '../../../../interactors';
+import { MultiSelect } from '../../../../interactors';
 
 export default class InventorySearchPanel {
   static effectiveLocationInput = MultiSelect({ 'id': 'multiselect-6' });
