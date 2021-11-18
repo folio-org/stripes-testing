@@ -26,6 +26,9 @@ function printKeys(o, excludes = [], indentLevel = 0) {
 // usage:
 // it('has no axe errors', runAxeTest);
 // it('has no axe errors', () => runAxeTest({ config: localConfigVar }));
+class AxeError extends Error {
+  name = 'AxeError';
+}
 
 export async function runAxeTest(options = {}) {
   const rootNode = document.getElementById('root');
@@ -51,7 +54,7 @@ export async function runAxeTest(options = {}) {
   ${failureSummary}`;
             }
           ).join('\n\n');
-          throw new Error(`\x1b[1m \x1b[31mAxe violation(s): \n${violationString}\n`);
+          throw new AxeError(`\x1b[1m \x1b[31mAxe violation(s): \n${violationString}\n`);
         }
       });
   } catch (error) { throw error; }
