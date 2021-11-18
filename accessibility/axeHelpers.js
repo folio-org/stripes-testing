@@ -27,11 +27,11 @@ function printKeys(o, excludes = [], indentLevel = 0) {
 // it('has no axe errors', runAxeTest);
 // it('has no axe errors', () => runAxeTest({ config: localConfigVar }));
 
-export function runAxeTest(options = {}) {
+export async function runAxeTest(options = {}) {
   const rootNode = document.getElementById('root');
   // eslint-disable-next-line
   try {
-    return axe.run(
+    return await axe.run(
       options.rootNode || rootNode,
       options.config || axeModuleConfig
     )
