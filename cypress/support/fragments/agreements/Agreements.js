@@ -13,7 +13,7 @@ export default class Agreements {
 
   static create(specialAgreement = NewAgreement.defaultAgreement) {
     // related with long initial loding and fluky behavior
-    cy.do(this.#newButton.click(), getLongDelay());
+    cy.do(this.#newButton.click());
     NewAgreement.waitLoading();
     NewAgreement.fill(specialAgreement);
     NewAgreement.save();
@@ -34,6 +34,11 @@ export default class Agreements {
     cy.xpath(`${this.#labelCellXpath}[.='${recordName}']`)
       .click();
     AgreementDetails.waitLoading();
+  }
+
+  static agreementNotVisible(agreementTitle) {
+    cy.xpath((`${this.#labelCellXpath}[.='${agreementTitle}']`), getLongDelay())
+      .should('not.be.visible');
   }
 }
 

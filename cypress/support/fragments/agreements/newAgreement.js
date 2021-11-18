@@ -1,6 +1,7 @@
-import { Button } from '@interactors/html';
 import getCurrentDate from '../../utils/dateTools';
 import getRandomPostfix from '../../utils/stringTools';
+import { Button } from '../../../../interactors';
+import { getLongDelay } from '../../utils/cypressTools';
 
 export default class NewAgreement {
     // TODO: start to use interactors instead of selectors
@@ -42,6 +43,6 @@ export default class NewAgreement {
     }
 
     static waitLoading() {
-      cy.get(this.#nameCss).should('exist');
+      cy.get(this.#nameCss, getLongDelay()).should('exist');
     }
 }

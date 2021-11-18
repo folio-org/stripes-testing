@@ -1,6 +1,9 @@
 import { Button } from '../../../../interactors';
 import NewNote from '../notes/newNote';
-import { waitDifficultElement } from '../../utils/cypressTools';
+import { getLongDelay, waitDifficultElement } from '../../utils/cypressTools';
+import ExistingNoteEdit from '../notes/existingNoteEdit';
+import Agreements from './agreements';
+import NewAgreement from './newAgreement';
 
 export default class AgreementDetails {
   static #rootXpath = '//section[@id="pane-view-agreement"]';
@@ -37,7 +40,7 @@ export default class AgreementDetails {
     cy.xpath(this.#notesAccordionXpath).should('be.visible');
     waitDifficultElement(this.#notesAccordionJQuery);
 
-    cy.xpath(this.#notesAccordionXpath)
+    cy.xpath(this.#notesAccordionXpath, getLongDelay())
       .should('be.visible')
       .click();
 
@@ -61,15 +64,27 @@ export default class AgreementDetails {
       .should('contains.text', noteTitle);
   }
 
-  static remove() {
+  static remove(agreementTitle = NewAgreement.defaultAgreement.name) {
     cy.do(this.#actionsButton.click());
     cy.do(this.#deleteButton.click());
     cy.expect(this.#deleteButtonInConfirmation.exists());
     cy.do(this.#deleteButtonInConfirmation.click());
+    cy.get(this.#rootCss, getLongDelay()).should('not.be.visible');
+    Agreements.agreementNotVisible(agreementTitle);
+    Agreements.waitLoading();
   }
 
   static close() {
     cy.xpath(`${this.#rootXpath}//button[@icon='times']`).click();
     cy.get(this.#rootCss).should('not.exist');
+  }
+
+  static editNote(originalNoteTitle, newNote) {
+    cy.log(`${this.#noteTitleXpath}/../div[contains(.,'${originalNoteTitle}')]/../div/button`);
+    cy.xpath(`${this.#noteTitleXpath}/../div[contains(.,'${originalNoteTitle}')]/../div/button`)
+      .click();
+    // ExistingNoteView.gotoEdit();
+    ExistingNoteEdit.fill(newNote);
+    ExistingNoteEdit.save();
   }
 }

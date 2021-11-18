@@ -16,3 +16,8 @@ import './users';
 bigtestGlobals.defaultInteractorTimeout = 10000;
 
 require('cypress-xpath');
+
+//try to fix the issue with cached location in cypress
+Cypress.on('window:before:load', window => {
+  Object.defineProperty(window.navigator, 'language', { value: 'en' });
+});
