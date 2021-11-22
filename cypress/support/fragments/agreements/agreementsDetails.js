@@ -1,6 +1,6 @@
 import { Button } from '../../../../interactors';
 import NewNote from '../notes/newNote';
-import { getLongDelay, waitDifficultElement } from '../../utils/cypressTools';
+import { getLongDelay } from '../../utils/cypressTools';
 import ExistingNoteEdit from '../notes/existingNoteEdit';
 import Agreements from './agreements';
 import NewAgreement from './newAgreement';
