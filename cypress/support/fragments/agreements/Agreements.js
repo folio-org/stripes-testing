@@ -38,7 +38,7 @@ export default class Agreements {
 
   static agreementNotVisible(agreementTitle) {
     cy.xpath((`${this.#labelCellXpath}[.='${agreementTitle}']`), getLongDelay())
-      .should('not.be.visible');
+      .should('not.exist');
   }
 }
 

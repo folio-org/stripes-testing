@@ -37,9 +37,6 @@ export default class AgreementDetails {
 
 
   static openNotesSection() {
-    cy.xpath(this.#notesAccordionXpath).should('be.visible');
-    waitDifficultElement(this.#notesAccordionJQuery);
-
     cy.xpath(this.#notesAccordionXpath, getLongDelay())
       .should('be.visible')
       .click();
@@ -67,11 +64,10 @@ export default class AgreementDetails {
   static remove(agreementTitle = NewAgreement.defaultAgreement.name) {
     cy.do(this.#actionsButton.click());
     cy.do(this.#deleteButton.click());
-    cy.expect(this.#deleteButtonInConfirmation.exists());
     cy.do(this.#deleteButtonInConfirmation.click());
-    cy.get(this.#rootCss, getLongDelay()).should('not.be.visible');
-    Agreements.agreementNotVisible(agreementTitle);
+    cy.get(this.#rootCss, getLongDelay()).should('not.exist');
     Agreements.waitLoading();
+    Agreements.agreementNotVisible(agreementTitle);
   }
 
   static close() {
@@ -83,7 +79,6 @@ export default class AgreementDetails {
     cy.log(`${this.#noteTitleXpath}/../div[contains(.,'${originalNoteTitle}')]/../div/button`);
     cy.xpath(`${this.#noteTitleXpath}/../div[contains(.,'${originalNoteTitle}')]/../div/button`)
       .click();
-    // ExistingNoteView.gotoEdit();
     ExistingNoteEdit.fill(newNote);
     ExistingNoteEdit.save();
   }

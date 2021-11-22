@@ -1,4 +1,6 @@
-import { bigtestGlobals } from '@bigtest/globals';
+import { setInteractorTimeout } from '@interactors/globals';
+
+// adding of methods do and expect
 import '@interactors/with-cypress';
 
 import './stripes';
@@ -13,11 +15,12 @@ import './inventory';
 import './organizations';
 import './users';
 
-bigtestGlobals.defaultInteractorTimeout = 10000;
+setInteractorTimeout(20_000);
+
 
 require('cypress-xpath');
 
-//try to fix the issue with cached location in cypress
+// try to fix the issue with cached location in cypress
 Cypress.on('window:before:load', window => {
   Object.defineProperty(window.navigator, 'language', { value: 'en' });
 });
