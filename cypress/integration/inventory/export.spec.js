@@ -1,7 +1,6 @@
 import TopMenu from '../../support/fragments/topMenu';
-import { Button } from '../../../interactors';
 import Actions from '../../support/fragments/inventory/actions';
-import InventorySearchPanel from "../../support/fragments/inventory/inventorySearchPanel";
+import InventorySearchPanel from '../../support/fragments/inventory/inventorySearchPanel';
 
 
 const downloadsFolder = Cypress.config('downloadsFolder');
@@ -17,7 +16,7 @@ describe('inventory / actions: export UUIDs', () => {
     cy.do([
       InventorySearchPanel.effectiveLocationInput.select([InventorySearchPanel.effectiveLocationValues.mainLibrary]),
       Actions.open(),
-      Button('Save instances UUIDs').click() // Replace  this to fragment
+      Actions.saveUUIDsOption().click()
     ]);
 
     cy.intercept('/search/instances/ids**').as('getIds');
