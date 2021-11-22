@@ -1,13 +1,13 @@
-import { MultiSelect } from '../../../../interactors';
+import { Checkbox, MultiColumnListCell, MultiSelect } from '../../../../interactors';
 
 export default class InventorySearchPanel {
   static effectiveLocationInput = MultiSelect({ 'id': 'multiselect-6' });
   static effectiveLocationValues = {
     'mainLibrary': 'Main Library'
   }
+  static #firstResultCheckbox = MultiColumnListCell({ 'row': 0, 'columnIndex': 0 }).find(Checkbox());
 
-
-  static selectAllCheckboxResult() {
-    return cy.get('[aria-label="Select instance"]').click({ multiple: true })
+  static firstResultCheckbox() {
+    return this.#firstResultCheckbox;
   }
 }

@@ -1,21 +1,31 @@
 import { Button } from '../../../../interactors';
 
 export default class Actions {
-  static actionsBtn = Button('Actions');
-  static saveUUIDOption = '#dropdown-clickable-get-items-uiids';
-  static saveCQLQueryOption = '#dropdown-clickable-get-cql-query';
-  static exportMARCOption = '#dropdown-clickable-export-marc';
-  static showSelectedRecordsOption = '#dropdown-clickable-show-selected-records';
+  static #actions = Button('Actions');
+  static #saveUUIDsOption = Button('Save instances UUIDs');
+  static #saveCQLQueryOption = Button('Save instances CQL query');
+  static #exportMARCOption = Button('Export instances (MARC)');
+  static #showSelectedRecordsOption = Button('Show selected records');
 
 
   static open() {
-    return this.actionsBtn.click();
+    return this.#actions.click();
   }
 
-  static optionIsDisabled(selector, disabled) {
-    return cy.get(selector)
-      .invoke('prop', 'disabled')
-      .should('eq', disabled);
+  static saveUUIDsOption() {
+    return this.#saveUUIDsOption;
+  }
+
+  static saveCQLQueryOption() {
+    return this.#saveCQLQueryOption;
+  }
+
+  static exportMARCOption() {
+    return this.#exportMARCOption;
+  }
+
+  static showSelectedRecordsOption() {
+    return this.#showSelectedRecordsOption;
   }
 
   static verifySaveUUIDsFileName(actualName) {
