@@ -1,6 +1,6 @@
 import localforage from 'localforage';
 
-import { Button, Dropdown, Heading, including, TextField } from '../../interactors';
+import { Button, Dropdown, TextField} from '../../interactors';
 import { getLongDelay } from './utils/cypressTools';
 
 Cypress.Commands.add('login', (username, password) => {
