@@ -21,9 +21,10 @@ export { default as Keyboard } from './keyboard';
 export { default as Label } from './label';
 export { default as Layer } from './layer';
 export { default as List, ListItem } from './list';
+export { default as MessageBanner, MessageBannerTypes } from './messagebanner';
 export { default as Modal } from './modal';
 export { MultiColumnList, MultiColumnListRow, MultiColumnListCell } from './multi-column-list';
-export { default as MultiSelect } from './multi-select';
+export { default as MultiSelect, MultiSelectMenu, MultiSelectOption } from './multi-select';
 export { default as Pane, PaneHeader } from './pane';
 export { default as RadioButton } from './radio-button';
 export { default as RadioButtonGroup } from './radio-button-group';
@@ -35,3 +36,4 @@ export { default as Selection, SelectionList, SelectionOption } from './selectio
 export { default as TextField } from './text-field';
 export { default as TextArea } from './textarea';
 export { Tooltip, TooltipProximity } from './tooltip';
+export { dispatchFocusout } from './util';
