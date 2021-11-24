@@ -1,6 +1,6 @@
 import localforage from 'localforage';
 
-import { Button, Dropdown, TextField} from '../../interactors';
+import { Button, Dropdown, TextField } from '../../interactors';
 import { getLongDelay } from './utils/cypressTools';
 
 Cypress.Commands.add('login', (username, password) => {
@@ -13,10 +13,11 @@ Cypress.Commands.add('login', (username, password) => {
   cy.visit('/');
 
   // Todo: find the way to wrap interactor to cy chainable object
-  cy.get('input[name=username]', getLongDelay()).should('be.visible');
-  cy.do(TextField('Username').fillIn(username));
-  cy.do(TextField('Password').fillIn(password));
-  cy.do(Button('Log in').click());
+  cy.do([
+    TextField('Username').fillIn(username),
+    TextField('Password').fillIn(password),
+    Button('Log in').click()
+  ]);
 
   // TODO: find the way how customize waiter timeout in case of interactors(cy.wrap may be)
   // https://stackoverflow.com/questions/57464806/set-timeout-for-cypress-expect-assertion

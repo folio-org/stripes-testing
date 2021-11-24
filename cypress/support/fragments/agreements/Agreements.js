@@ -12,7 +12,6 @@ export default class Agreements {
   static #newButton = Button('New');
 
   static create(specialAgreement = NewAgreement.defaultAgreement) {
-    // related with long initial loding and fluky behavior
     cy.do(this.#newButton.click());
     NewAgreement.waitLoading();
     NewAgreement.fill(specialAgreement);

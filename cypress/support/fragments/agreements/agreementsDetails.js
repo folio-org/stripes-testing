@@ -1,4 +1,4 @@
-import { Accordion, Button, including, HTML, MultiColumnListCell } from '../../../../interactors';
+import { Accordion, Button, including, HTML } from '../../../../interactors';
 import NewNote from '../notes/newNote';
 import { getLongDelay } from '../../utils/cypressTools';
 import ExistingNoteEdit from '../notes/existingNoteEdit';
@@ -23,6 +23,7 @@ export default class AgreementDetails {
   static #showMoreLink = Button('Show more');
   static #notesAccordion = Accordion({ id: 'notes' });
 
+  // TODO: think to move changedHTML into /interactorsp
   static #changedHTML = HTML.extend('details')
     .filters({ tagName: el => el.tagName });
 
@@ -100,15 +101,15 @@ export default class AgreementDetails {
   }
 
   static openNoteView(specialNote) {
+    // TODO: the issue on interactor side, in process of investigation by Fronside
+
     // cy.do(this.#notesAccordion
-    //   .find(HTML(including(specialNote.getShortDetails())))
-    //   .click());
+    // .find(HTML(including(specialNote.getShortDetails()), { classList: including(including('mclRow')) }))
+    // .click());
 
     cy.do(this.#notesAccordion
       .find(this.#changedHTML({ text: specialNote.details,
         tagName: 'P' }))
       .click());
-
-    // cy.do(MultiColumnListCell(specialNote.getShortDetails()).click());
   }
 }
