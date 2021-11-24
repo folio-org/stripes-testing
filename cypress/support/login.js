@@ -1,7 +1,6 @@
 import localforage from 'localforage';
 
-import { Button, Dropdown, TextField } from '../../interactors';
-import { getLongDelay } from './utils/cypressTools';
+import { Button, Dropdown, TextField, Heading, including } from '../../interactors';
 
 Cypress.Commands.add('login', (username, password) => {
   // We use a behind-the-scenes method of ensuring we are logged
@@ -23,8 +22,7 @@ Cypress.Commands.add('login', (username, password) => {
   // https://stackoverflow.com/questions/57464806/set-timeout-for-cypress-expect-assertion
   // https://docs.cypress.io/api/commands/wrap#Requirements
 
-  // cy.expect(Heading(including('Welcome')).exists());
-  cy.get('h1[class*=frontTitle]', getLongDelay());
+  cy.expect(Heading(including('Welcome')).exists());
 
   // There seems to be a race condition here: sometimes there is
   // re-render that happens so quickly that following actions like
