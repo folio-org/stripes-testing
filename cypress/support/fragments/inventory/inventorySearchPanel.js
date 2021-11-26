@@ -5,6 +5,7 @@ export default class InventorySearchPanel {
   static effectiveLocationValues = {
     'mainLibrary': 'Main Library'
   }
+
   static #firstResultCheckbox = MultiColumnListCell({ 'row': 0, 'columnIndex': 0 }).find(Checkbox());
 
   static firstResultCheckbox() {
