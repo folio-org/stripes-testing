@@ -1,6 +1,6 @@
 import TopMenu from '../../support/fragments/topMenu';
-import Actions from '../../support/fragments/inventory/actions';
-import InventorySearchPanel from '../../support/fragments/inventory/inventorySearchPanel';
+import InventoryActions from '../../support/fragments/inventory/inventoryActions';
+import InventorySearch from '../../support/fragments/inventory/inventorySearch';
 
 describe('ui-inventory: actions', () => {
   beforeEach('navigates to actions', () => {
@@ -9,28 +9,30 @@ describe('ui-inventory: actions', () => {
   });
 
   it('C196752 verifies action menu options before any search is conducted', () => {
-    cy.do(Actions.open());
+    cy.do(InventoryActions.open());
 
-    cy.expect([
-      Actions.saveUUIDsOption().is({ disabled: true }),
-      Actions.saveCQLQueryOption().is({ disabled: true }),
-      Actions.exportMARCOption().is({ disabled: true }),
-      Actions.showSelectedRecordsOption().is({ disabled: true }),
+    cy.expect(InventorySearch.getResults().absent());
+
+    InventoryActions.optionsIsDisabled([
+      InventoryActions.saveUUIDsOption(),
+      InventoryActions.saveCQLQueryOption(),
+      InventoryActions.exportMARCOption(),
+      InventoryActions.showSelectedRecordsOption()
     ]);
   });
 
   it('C196753 verifies action menu options after searching and selecting result', () => {
     cy.do([
-      InventorySearchPanel.effectiveLocationInput.select([InventorySearchPanel.effectiveLocationValues.mainLibrary]),
-      InventorySearchPanel.firstResultCheckbox().click(),
-      Actions.open()
+      InventorySearch.byEffectiveLocation([InventorySearch.effectiveLocation.mainLibrary]),
+      InventorySearch.getFirstResultCheckbox().click(),
+      InventoryActions.open()
     ]);
 
-    cy.expect([
-      Actions.saveUUIDsOption().is({ disabled: false }),
-      Actions.saveCQLQueryOption().is({ disabled: false }),
-      Actions.exportMARCOption().is({ disabled: false }),
-      Actions.showSelectedRecordsOption().is({ disabled: false }),
+    InventoryActions.optionsIsEnabled([
+      InventoryActions.saveUUIDsOption(),
+      InventoryActions.saveCQLQueryOption(),
+      InventoryActions.exportMARCOption(),
+      InventoryActions.showSelectedRecordsOption()
     ]);
   });
 });

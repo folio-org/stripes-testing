@@ -28,6 +28,18 @@ export default class Actions {
     return this.#showSelectedRecordsOption;
   }
 
+  static optionsIsDisabled(array) {
+    return array.forEach((element) => {
+      cy.expect(element.is({ disabled: true }));
+    });
+  }
+
+  static optionsIsEnabled(array) {
+    return array.forEach((element) => {
+      cy.expect(element.is({ disabled: false }));
+    });
+  }
+
   static verifySaveUUIDsFileName(actualName) {
     const expectedFileNameMask = /SearchInstanceUUIDs\d{4}-\d{2}-\d{2}T\d{2}_\d{2}_\d{2}\+\d{2}_\d{2}\.csv/gm;
     const isCorrectFilename = expectedFileNameMask.test(actualName);
