@@ -5,6 +5,7 @@ export default class NewInventoryInstance {
     static #validOCLC = '176116217';
 
     static #rootCss = 'section[id=pane-instancedetails]';
+    // TODO: rewrite to interactor with filter by id
     static #actionsCss = `${this.#rootCss} button[class*=actionMenuToggle]`;
     static #identifiers = MultiColumnList({ id:'list-identifiers' });
     static #editMARCBibRecordButton = Button({ id:'edit-instance-marc' });

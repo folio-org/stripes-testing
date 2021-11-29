@@ -37,3 +37,4 @@ export { default as TextField } from './text-field';
 export { default as TextArea } from './textarea';
 export { Tooltip, TooltipProximity } from './tooltip';
 export { dispatchFocusout } from './util';
+export { default as QuickMarkEditorRow } from './quickMarcEditorRow';
