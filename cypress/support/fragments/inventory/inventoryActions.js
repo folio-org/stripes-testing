@@ -1,6 +1,6 @@
 import { Button } from '../../../../interactors';
 
-export default class Actions {
+export default class InventoryActions {
   static #actions = Button('Actions');
   static #saveUUIDsOption = Button('Save instances UUIDs');
   static #saveCQLQueryOption = Button('Save instances CQL query');
