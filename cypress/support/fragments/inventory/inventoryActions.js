@@ -46,7 +46,7 @@ export default class Actions {
     expect(isCorrectFilename).to.eq(true);
   }
 
-  static verifySaveUUIDsInsideFile(actualUUIDs, expectedUUIDs) {
+  static verifySavedUUIDs(actualUUIDs, expectedUUIDs) {
     const formattedActualUUIDs = actualUUIDs.replaceAll('"', '').split('\n');
     for (let i = 0; i < expectedUUIDs.length; i++) {
       expect(expectedUUIDs[i]).to.eq(formattedActualUUIDs[i]);

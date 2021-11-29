@@ -1,6 +1,6 @@
 import TopMenu from '../../support/fragments/topMenu';
-import Actions from '../../support/fragments/inventory/actions';
-import InventorySearchPanel from '../../support/fragments/inventory/inventorySearchPanel';
+import InventorySearch from '../../support/fragments/inventory/inventorySearch';
+import Actions from '../../support/fragments/inventory/inventoryActions';
 
 
 const downloadsFolder = Cypress.config('downloadsFolder');
@@ -14,7 +14,7 @@ describe('inventory / actions: export UUIDs', () => {
 
   it('C9284 verifies export UUIDs instances', () => {
     cy.do([
-      InventorySearchPanel.effectiveLocationInput.select([InventorySearchPanel.effectiveLocationValues.mainLibrary]),
+      InventorySearch.byEffectiveLocation([InventorySearch.effectiveLocation.mainLibrary]),
       Actions.open(),
       Actions.saveUUIDsOption().click()
     ]);
@@ -34,7 +34,7 @@ describe('inventory / actions: export UUIDs', () => {
 
           cy.readFile(downloadedFilename)
             .then((actualUUIDs) => {
-              Actions.verifySaveUUIDsInsideFile(actualUUIDs, expectedUUIDs);
+              Actions.verifySavedUUIDs(actualUUIDs, expectedUUIDs);
             });
         });
     });
