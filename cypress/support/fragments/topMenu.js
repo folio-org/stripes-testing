@@ -6,6 +6,7 @@ export default class TopMenu {
   // direct paths to folio apps to use in cy.visit() into initial steps of our scenarios
   // TODO: methods like openAgreements() with interactors and selectors should be used into separated scenarios related with TopMenu implementation
   static agreementsPath = '/erm/agreements';
+  static inventoryPath = '/inventory';
 
   static openAgreements() {
     cy.do(this.#agreements.click());
