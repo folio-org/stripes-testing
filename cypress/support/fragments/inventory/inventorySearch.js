@@ -3,6 +3,7 @@ import { MultiColumnList, Checkbox, MultiColumnListCell, MultiSelect } from '../
 export default class InventorySearch {
   static #effectiveLocationInput = MultiSelect({ 'id': 'multiselect-6' });
   static effectiveLocation = {
+    // add new effective location inputs as needed
     'mainLibrary': 'Main Library'
   }
 
@@ -12,11 +13,11 @@ export default class InventorySearch {
     return this.#firstResultCheckbox;
   }
 
-  static getResults() {
+  static getSearchResults() {
     return MultiColumnList();
   }
 
-  static byEffectiveLocation(values) {
+  static byEffectiveLocation(values = [this.effectiveLocation.mainLibrary]) {
     return InventorySearch.#effectiveLocationInput.select(values);
   }
 }

@@ -11,7 +11,7 @@ describe('ui-inventory: actions', () => {
   it('C196752 verifies action menu options before any search is conducted', () => {
     cy.do(InventoryActions.open());
 
-    cy.expect(InventorySearch.getResults().absent());
+    cy.expect(InventorySearch.getSearchResults().absent());
 
     InventoryActions.optionsIsDisabled([
       InventoryActions.saveUUIDsOption(),
@@ -23,7 +23,7 @@ describe('ui-inventory: actions', () => {
 
   it('C196753 verifies action menu options after searching and selecting result', () => {
     cy.do([
-      InventorySearch.byEffectiveLocation([InventorySearch.effectiveLocation.mainLibrary]),
+      InventorySearch.byEffectiveLocation(),
       InventorySearch.getFirstResultCheckbox().click(),
       InventoryActions.open()
     ]);
