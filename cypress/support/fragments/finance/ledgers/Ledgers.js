@@ -8,13 +8,14 @@ export default class Ledgers {
   static #newButton = Button('New');
 
   static createDefaultLedger(defaultLedger = NewLedger.defaultLedger) {
+    cy.expect(this.#newButton.exists());
     cy.do(this.#newButton.click());
     NewLedger.waitLoading();
     NewLedger.fillMandatoryFields(defaultLedger);
     NewLedger.save();
     this.waitForLedgerDetailsLoading();
     // TODO: check ability to work through interactors
-    this.checkCreatedLedgerName(defaultLedger)
+    this.checkCreatedLedgerName(defaultLedger);
   }
 
   static waitForLedgerDetailsLoading() {

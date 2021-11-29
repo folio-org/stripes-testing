@@ -1,14 +1,7 @@
-import uuid from 'uuid';
 import Ledgers from '../../../support/fragments/finance/ledgers/Ledgers';
 
 import {
-  Accordion,
-  Checkbox,
-  MultiColumnList,
-  SearchField,
-  Selection,
-  Button,
-  SelectionList,
+  Button
 } from '../../../../interactors';
 
 describe('ui-finance: Ledger list search and filters', () => {
@@ -21,6 +14,13 @@ describe('ui-finance: Ledger list search and filters', () => {
   });
 
   it('should create new ledger if mandatory fields are filled', function () {
-    cy.do(Ledgers.createDefaultLedger());
-  });
+    // create and verify Ledger via UI
+    Ledgers.createDefaultLedger();
+    // delete created Ledger
+    cy.do([
+        Button('Actions').click(),
+        Button('Delete').click(),
+        Button('Delete', {id:"clickable-ledger-remove-confirmation-confirm"}).click()
+      ]);
+    });
 });
