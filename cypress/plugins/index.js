@@ -1,11 +1,9 @@
 const globby = require('globby');
 const { rmdir } = require('fs');
 
-// eslint-disable-next-line no-unused-vars
 module.exports = (on, config) => {
   on('task', {
-    // a task to find one file matching the given mask
-    // returns just the first matching file
+    // a task to find files matching the given mask
     async findFiles(mask) {
       if (!mask) {
         throw new Error('Missing a file mask to search');
@@ -17,17 +15,13 @@ module.exports = (on, config) => {
         return null;
       }
 
-      return list[0];
+      return list;
     },
 
     deleteFolder(folderName) {
-      console.log('deleting folder %s', folderName);
-
       return new Promise((resolve, reject) => {
         rmdir(folderName, { maxRetries: 10, recursive: true }, (err) => {
           if (err && err.code !== 'ENOENT') {
-            console.error(err);
-
             return reject(err);
           }
 

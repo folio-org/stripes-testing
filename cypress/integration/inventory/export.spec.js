@@ -14,7 +14,7 @@ describe('inventory / actions: export UUIDs', () => {
 
   it('C9284 verifies export UUIDs instances', () => {
     cy.do([
-      InventorySearch.byEffectiveLocation([InventorySearch.effectiveLocation.mainLibrary]),
+      InventorySearch.byEffectiveLocation(),
       Actions.open(),
       Actions.saveUUIDsOption().click()
     ]);
@@ -29,7 +29,8 @@ describe('inventory / actions: export UUIDs', () => {
       cy.wait(3000);
 
       cy.task('findFiles', `${downloadsFolder}/*.csv`)
-        .then((downloadedFilename) => {
+        .then((downloadedFilenames) => {
+          const downloadedFilename = downloadedFilenames[0];
           Actions.verifySaveUUIDsFileName(downloadedFilename);
 
           cy.readFile(downloadedFilename)
