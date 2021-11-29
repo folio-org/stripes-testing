@@ -1,6 +1,7 @@
 import {
   Button, including, matching, MultiColumnList, not, Page, Pane,
 } from '../../../interactors';
+import getLongDelay from '../../support/utils/cypressTools';
 
 
 describe('ui-inventory: MARC', () => {
@@ -78,8 +79,8 @@ describe('ui-inventory: MARC', () => {
 
             cy.do(Button('Save & close').click());
 
-            cy.get('#pane-instancedetails [class*="actionMenuToggle--"]', { timeout: 10000 }).click();
-            cy.get('#clickable-view-source', { timeout: 10000 }).click();
+            cy.get('#pane-instancedetails [class*="actionMenuToggle--"]', getLongDelay()).click();
+            cy.get('#clickable-view-source', getLongDelay()).click();
           });
 
           it('should show updated data in View MARC record', () => {

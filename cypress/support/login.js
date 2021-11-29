@@ -1,6 +1,6 @@
 import localforage from 'localforage';
 
-import { Button, Dropdown, Heading, including, TextField } from '../../interactors';
+import { Button, Dropdown, TextField, Heading, including } from '../../interactors';
 
 Cypress.Commands.add('login', (username, password) => {
   // We use a behind-the-scenes method of ensuring we are logged
@@ -11,11 +11,16 @@ Cypress.Commands.add('login', (username, password) => {
 
   cy.visit('/');
 
+  // Todo: find the way to wrap interactor to cy chainable object
   cy.do([
     TextField('Username').fillIn(username),
     TextField('Password').fillIn(password),
-    Button('Log in').click(),
+    Button('Log in').click()
   ]);
+
+  // TODO: find the way how customize waiter timeout in case of interactors(cy.wrap may be)
+  // https://stackoverflow.com/questions/57464806/set-timeout-for-cypress-expect-assertion
+  // https://docs.cypress.io/api/commands/wrap#Requirements
 
   cy.expect(Heading(including('Welcome')).exists());
 

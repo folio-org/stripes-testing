@@ -9,7 +9,8 @@ export default class NewNote {
 
   static #defaultNote = {
     title: `autotest_title_${getRandomPostfix()}`,
-    details: `autotest_details_${getRandomPostfix()}`
+    details: `autotest_details_${getRandomPostfix()}`,
+    getShortDetails() { return this.details.substring(0, 255); }
   }
 
   static get defaultNote() {
