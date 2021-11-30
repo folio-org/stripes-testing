@@ -1,6 +1,6 @@
 import TopMenu from '../../support/fragments/topMenu';
-import { getAllSearchResults, searchByEffectiveLocation, getSearchResult } from '../../support/fragments/inventory/inventorySearch';
-import { openActions, options, optionsIsDisabled, optionsIsEnabled } from '../../support/fragments/inventory/inventoryActions';
+import * as InventorySearch from '../../support/fragments/inventory/inventorySearch';
+import * as Actions from '../../support/fragments/inventory/inventoryActions';
 import { Checkbox } from '../../../interactors';
 
 describe('ui-inventory: actions', () => {
@@ -10,30 +10,30 @@ describe('ui-inventory: actions', () => {
   });
 
   it('C196752 verifies action menu options before any search is conducted', () => {
-    cy.do(openActions());
+    cy.do(Actions.open());
 
-    cy.expect(getAllSearchResults().absent());
+    cy.expect(InventorySearch.getAllSearchResults().absent());
 
-    optionsIsDisabled([
-      options.saveUUIDs,
-      options.saveCQLQuery,
-      options.exportMARC,
-      options.showSelectedRecords
+    Actions.optionsIsDisabled([
+      Actions.options.saveUUIDs,
+      Actions.options.saveCQLQuery,
+      Actions.options.exportMARC,
+      Actions.options.showSelectedRecords
     ]);
   });
 
   it('C196753 verifies action menu options after searching and selecting result', () => {
     cy.do([
-      searchByEffectiveLocation(),
-      getSearchResult().find(Checkbox()).click(),
-      openActions()
+      InventorySearch.searchByEffectiveLocation(),
+      InventorySearch.getSearchResult().find(Checkbox()).click(),
+      Actions.open()
     ]);
 
-    optionsIsEnabled([
-      options.saveUUIDs,
-      options.saveCQLQuery,
-      options.exportMARC,
-      options.showSelectedRecords
+    Actions.optionsIsEnabled([
+      Actions.options.saveUUIDs,
+      Actions.options.saveCQLQuery,
+      Actions.options.exportMARC,
+      Actions.options.showSelectedRecords
     ]);
   });
 });

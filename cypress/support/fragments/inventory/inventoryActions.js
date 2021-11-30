@@ -1,7 +1,7 @@
 import { Button } from '../../../../interactors';
 
 
-export const openActions = () => { return Button('Actions').click(); };
+export const open = () => { return Button('Actions').click(); };
 export const options = {
   saveUUIDs: Button('Save instances UUIDs'),
   saveCQLQuery: Button('Save instances CQL query'),
