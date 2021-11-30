@@ -46,7 +46,7 @@ export default class InventoryActions {
   }
 
   static import(specialOCLCWorldCatidentifier = NewInventoryInstance.validOCLC) {
-    this.open();
+    cy.do(this.open());
     cy.do(this.#importButtonInActions.click());
 
     if (Cypress.env('is_kiwi_release')) {

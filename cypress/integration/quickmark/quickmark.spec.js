@@ -2,7 +2,7 @@
 /// <reference types="cypress" />
 
 import TopMenu from '../../support/fragments/topMenu';
-import Actions from '../../support/fragments/inventory/actions';
+import InventoryActions from '../../support/fragments/inventory/inventoryActions';
 import NewInventoryInstance from '../../support/fragments/inventory/newInventoryInstance';
 import QuickMarcEditor from '../../support/fragments/quickMarcEditor';
 
@@ -13,7 +13,7 @@ describe('Manage records ', () => {
     cy.visit(TopMenu.inventoryPath);
   });
   it('C10950 Edit and save a MARC record in quickMARC', () => {
-    Actions.import();
+    InventoryActions.import();
     NewInventoryInstance.goToEditMARCBiblRecord();
     QuickMarcEditor.addNewLine();
   });

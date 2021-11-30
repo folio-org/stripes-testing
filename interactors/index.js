@@ -38,3 +38,4 @@ export { default as TextArea } from './textarea';
 export { Tooltip, TooltipProximity } from './tooltip';
 export { dispatchFocusout } from './util';
 export { default as QuickMarkEditorRow } from './quickMarcEditorRow';
+export { default as QuickMarkEditor } from './quickMarcEditor';
