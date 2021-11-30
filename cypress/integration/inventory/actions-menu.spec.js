@@ -24,7 +24,7 @@ describe('ui-inventory: actions', () => {
   it('C196753 verifies action menu options after searching and selecting result', () => {
     cy.do([
       InventorySearch.byEffectiveLocation(),
-      InventorySearch.getFirstResultCheckbox().click(),
+      InventorySearch.firstResultCheckbox().click(),
       InventoryActions.open()
     ]);
 
