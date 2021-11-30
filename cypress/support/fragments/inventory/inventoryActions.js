@@ -1,27 +1,48 @@
-import { Button, Select, TextField, TextInput } from '../../../../interactors';
+import { Button , Select, TextField, TextInput} from '../../../../interactors';
 import NewInventoryInstance from './newInventoryInstance';
 
-export default class Actions {
+export default class InventoryActions {
   static #actions = Button('Actions');
-  static saveUUIDOption = '#dropdown-clickable-get-items-uiids';
-  static saveCQLQueryOption = '#dropdown-clickable-get-cql-query';
-  static exportMARCOption = '#dropdown-clickable-export-marc';
-  static showSelectedRecordsOption = '#dropdown-clickable-show-selected-records';
+  static #saveUUIDsOption = Button('Save instances UUIDs');
+  static #saveCQLQueryOption = Button('Save instances CQL query');
+  static #exportMARCOption = Button('Export instances (MARC)');
+  static #showSelectedRecordsOption = Button('Show selected records');
   static #importButtonInActions = Button({ id: 'dropdown-clickable-import-record' });
   static #importButtonInModal = Button('Import');
   static #OCLWorldCatIdentifierTextField = TextField('Enter OCLC WorldCat identifier');
   static #importTypeSelect = Select({ name :'externalIdentifierType' });
 
 
-
   static open() {
-    return cy.do(this.#actions.click());
+    return this.#actions.click();
   }
 
-  static optionIsDisabled(selector, disabled) {
-    return cy.get(selector)
-      .invoke('prop', 'disabled')
-      .should('eq', disabled);
+  static saveUUIDsOption() {
+    return this.#saveUUIDsOption;
+  }
+
+  static saveCQLQueryOption() {
+    return this.#saveCQLQueryOption;
+  }
+
+  static exportMARCOption() {
+    return this.#exportMARCOption;
+  }
+
+  static showSelectedRecordsOption() {
+    return this.#showSelectedRecordsOption;
+  }
+
+  static optionsIsDisabled(array) {
+    return array.forEach((element) => {
+      cy.expect(element.is({ disabled: true }));
+    });
+  }
+
+  static optionsIsEnabled(array) {
+    return array.forEach((element) => {
+      cy.expect(element.is({ disabled: false }));
+    });
   }
 
   static import(specialOCLCWorldCatidentifier = NewInventoryInstance.validOCLC) {
