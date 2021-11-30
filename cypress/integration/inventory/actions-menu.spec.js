@@ -1,6 +1,7 @@
 import TopMenu from '../../support/fragments/topMenu';
-import InventoryActions from '../../support/fragments/inventory/inventoryActions';
-import InventorySearch from '../../support/fragments/inventory/inventorySearch';
+import { getAllSearchResults, searchByEffectiveLocation, getSearchResult } from '../../support/fragments/inventory/inventorySearch';
+import { openActions, options, optionsIsDisabled, optionsIsEnabled } from '../../support/fragments/inventory/inventoryActions';
+import { Checkbox } from '../../../interactors';
 
 describe('ui-inventory: actions', () => {
   beforeEach('navigates to actions', () => {
@@ -9,30 +10,30 @@ describe('ui-inventory: actions', () => {
   });
 
   it('C196752 verifies action menu options before any search is conducted', () => {
-    cy.do(InventoryActions.open());
+    cy.do(openActions());
 
-    cy.expect(InventorySearch.getSearchResults().absent());
+    cy.expect(getAllSearchResults().absent());
 
-    InventoryActions.optionsIsDisabled([
-      InventoryActions.saveUUIDsOption(),
-      InventoryActions.saveCQLQueryOption(),
-      InventoryActions.exportMARCOption(),
-      InventoryActions.showSelectedRecordsOption()
+    optionsIsDisabled([
+      options.saveUUIDs,
+      options.saveCQLQuery,
+      options.exportMARC,
+      options.showSelectedRecords
     ]);
   });
 
   it('C196753 verifies action menu options after searching and selecting result', () => {
     cy.do([
-      InventorySearch.byEffectiveLocation(),
-      InventorySearch.firstResultCheckbox().click(),
-      InventoryActions.open()
+      searchByEffectiveLocation(),
+      getSearchResult().find(Checkbox()).click(),
+      openActions()
     ]);
 
-    InventoryActions.optionsIsEnabled([
-      InventoryActions.saveUUIDsOption(),
-      InventoryActions.saveCQLQueryOption(),
-      InventoryActions.exportMARCOption(),
-      InventoryActions.showSelectedRecordsOption()
+    optionsIsEnabled([
+      options.saveUUIDs,
+      options.saveCQLQuery,
+      options.exportMARC,
+      options.showSelectedRecords
     ]);
   });
 });

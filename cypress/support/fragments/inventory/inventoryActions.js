@@ -1,42 +1,23 @@
 import { Button } from '../../../../interactors';
 
-export default class InventoryActions {
-  static #actions = Button('Actions');
-  static #saveUUIDsOption = Button('Save instances UUIDs');
-  static #saveCQLQueryOption = Button('Save instances CQL query');
-  static #exportMARCOption = Button('Export instances (MARC)');
-  static #showSelectedRecordsOption = Button('Show selected records');
+
+export const openActions = () => { return Button('Actions').click(); };
+export const options = {
+  saveUUIDs: Button('Save instances UUIDs'),
+  saveCQLQuery: Button('Save instances CQL query'),
+  exportMARC: Button('Export instances (MARC)'),
+  showSelectedRecords: Button('Show selected records'),
+};
+
+export const optionsIsDisabled = (array) => {
+  return array.forEach((element) => {
+    cy.expect(element.is({ disabled: true }));
+  });
+};
 
 
-  static open() {
-    return this.#actions.click();
-  }
-
-  static saveUUIDsOption() {
-    return this.#saveUUIDsOption;
-  }
-
-  static saveCQLQueryOption() {
-    return this.#saveCQLQueryOption;
-  }
-
-  static exportMARCOption() {
-    return this.#exportMARCOption;
-  }
-
-  static showSelectedRecordsOption() {
-    return this.#showSelectedRecordsOption;
-  }
-
-  static optionsIsDisabled(array) {
-    return array.forEach((element) => {
-      cy.expect(element.is({ disabled: true }));
-    });
-  }
-
-  static optionsIsEnabled(array) {
-    return array.forEach((element) => {
-      cy.expect(element.is({ disabled: false }));
-    });
-  }
-}
+export const optionsIsEnabled = (array) => {
+  return array.forEach((element) => {
+    cy.expect(element.is({ disabled: false }));
+  });
+};
