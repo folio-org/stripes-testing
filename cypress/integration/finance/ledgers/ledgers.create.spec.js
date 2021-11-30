@@ -1,4 +1,4 @@
-import Ledgers from '../../../support/fragments/finance/ledgers/Ledgers';
+import { createDefaultLedger } from '../../../support/fragments/finance/ledgers/Ledgers';
 
 import {
   Button
@@ -6,20 +6,18 @@ import {
 
 describe('ui-finance: Ledger list search and filters', () => {
   before(() => {
-    cy.login('diku_admin', 'admin')
-    .then(() => {
+    cy.login(Cypress.env('diku_login'), Cypress.env('diku_password'))
+      .then(() => {
         cy.visit('/finance/ledger');
-    });
+      });
   });
 
-  it('should create new ledger if mandatory fields are filled', function () {
-    // create and verify Ledger via UI
-    Ledgers.createDefaultLedger();
-    // delete created Ledger
+  it('C4053 should create new ledger if mandatory fields are filled', function () {
+    createDefaultLedger();
     cy.do([
-            Button('Actions').click(),
-            Button('Delete').click(),
-            Button('Delete', {id:"clickable-ledger-remove-confirmation-confirm"}).click()
-        ]);
-    });
+      Button('Actions').click(),
+      Button('Delete').click(),
+      Button('Delete', { id:'clickable-ledger-remove-confirmation-confirm' }).click()
+    ]);
+  });
 });

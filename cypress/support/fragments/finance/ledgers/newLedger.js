@@ -35,7 +35,7 @@ export default class NewLedger {
       cy.get(this.#codeCss).type(newLedger.code);
       // status is set as 'active by default
       cy.get(this.#fiscalYearCss)
-        .select(newLedger.fiscalYear)
+        .select(newLedger.fiscalYear);
     }
 
     static save() {
@@ -43,7 +43,7 @@ export default class NewLedger {
     }
 
     static waitLoading() {
-        cy.get(this.#codeCss).should('be.enabled');
-        cy.get(this.#nameCss).should('be.enabled');
+      cy.get(this.#codeCss).should('be.enabled');
+      cy.get(this.#nameCss).should('be.enabled');
     }
 }
