@@ -1,13 +1,17 @@
-import { MultiColumnList, Checkbox, MultiColumnListCell, MultiSelect } from '../../../../interactors';
+import { MultiColumnList, MultiColumnListCell, MultiSelect } from '../../../../interactors';
 
-const effectiveLocation = {
-  // add new effective location inputs as needed
-  mainLibrary: 'Main Library'
-};
+
 const effectiveLocationInput = MultiSelect({ id: 'multiselect-6' });
 
 export default {
-  firstResultCheckbox : () => MultiColumnListCell({ row: 0, columnIndex: 0 }).find(Checkbox()),
-  getSearchResults : () => MultiColumnList(),
-  byEffectiveLocation: (values) => effectiveLocationInput.select(values ?? [effectiveLocation.mainLibrary])
+  effectiveLocation: {
+    // add new effective location inputs as needed
+    mainLibrary: 'Main Library'
+  },
+  getAllSearchResults: () => MultiColumnList(),
+  getSearchResult: (row, col) => MultiColumnListCell({ 'row': row ?? 0, 'columnIndex': col ?? 0 }),
+
+  searchByEffectiveLocation(values) {
+    return effectiveLocationInput.select(values ?? [this.effectiveLocation.mainLibrary]);
+  },
 };
