@@ -11,6 +11,8 @@ export default class NewLedger {
     static #fiscalYearCss = `${this.#rootCss} select[name^="fiscalYearOneId"]`;
     static #acquisitionUnitsCss = `${this.#rootCss} select[id="ledger-acq-units"]`;
     static #saveButton = Button('Save & Close');
+    static #cancelButton = Button('Cancel');
+    static #closeWithoutSavingButton = Button('Close without saving');
 
     static #statusValue = {
       active: 'Active',
@@ -38,8 +40,19 @@ export default class NewLedger {
         .select(newLedger.fiscalYear);
     }
 
+    static fillOnlyNameAndCode(name) {
+      cy.get(this.#nameCss).type(name);
+      cy.do(this.#saveButton.click());
+      cy.get(this.#codeCss).type('testCode');
+    }
+
     static save() {
       cy.do(this.#saveButton.click());
+    }
+
+    static closeWithoutSaving() {
+      cy.do(this.#cancelButton.click());
+      cy.do(this.#closeWithoutSavingButton.click());
     }
 
     static waitLoading() {

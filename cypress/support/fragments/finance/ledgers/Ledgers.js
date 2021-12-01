@@ -1,15 +1,24 @@
-import { Button } from '../../../../../interactors';
+import { Button, SearchField } from '../../../../../interactors';
 import NewLedger from './newLedger';
 
 const rootLedgerDetailsXpath = '//*[@id="pane-ledger-details"]';
 const createdLedgerNameXpath = '//*[@id="paneHeaderpane-ledger-details-pane-title"]/h2/span';
+const numberOfSearchResultsHeader = '//*[@id="paneHeaderledger-results-pane-subtitle"]/span';
 
 const newButton = Button('New');
+
+const zeroResultsFoundText = '0 records found';
 
 export default {
   waitForLedgerDetailsLoading : () => {
     cy.xpath(rootLedgerDetailsXpath)
       .should('be.visible');
+  },
+
+  checkZeroSearchResultsHeader : () => {
+    cy.xpath(numberOfSearchResultsHeader)
+      .should('be.visible')
+      .and('have.text', zeroResultsFoundText);
   },
 
   checkCreatedLedgerName : (ledger) => {
@@ -27,6 +36,23 @@ export default {
     this.waitForLedgerDetailsLoading();
     // TODO: check ability to work through interactors
     this.checkCreatedLedgerName(defaultLedger);
+  },
+
+  searchLedgerByName : (ledgerName) => {
+    cy.do([
+      SearchField({ id: 'input-record-search' }).selectIndex('Name'),
+      SearchField({ id: 'input-record-search' }).fillIn(ledgerName),
+      Button('Search').click(),
+    ]);
+  },
+
+  tryToCreateLedgerWithoutMandatoryFields(ledgerName) {
+    cy.expect(newButton.exists());
+    cy.do(newButton.click());
+    NewLedger.waitLoading();
+    NewLedger.fillOnlyNameAndCode(ledgerName);
+    NewLedger.save();
+    NewLedger.closeWithoutSaving();
   },
 
   deleteLedgerViaActions: () => {
