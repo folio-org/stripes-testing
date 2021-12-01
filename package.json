@@ -18,8 +18,9 @@
     "build-mod-descriptor": "stripes mod descriptor --full --strict | jq '.[]' > module-descriptor.json "
   },
   "dependencies": {
-    "@interactors/html": "^0.33.0",
+    "@interactors/html": "^0.36.0",
     "axe-core": "4.3.3",
+    "cypress-react-selector": "^2.3.13",
     "date-fns": "^2.16.1",
     "debug": "^4.0.1",
     "element-is-visible": "^1.0.0",
@@ -27,11 +28,12 @@
   },
   "devDependencies": {
     "@babel/eslint-parser": "^7.16.3",
+    "@cypress/request": "2.88.7",
     "@folio/eslint-config-stripes": "^5.0.0",
-    "@interactors/with-cypress": "^0.1.3",
+    "@interactors/with-cypress": "^0.2.1",
     "babel-eslint": "^10.1.0",
     "bigtest": "^0.14.0",
-    "cypress": "^9.0.0",
+    "cypress": "^9.1.0",
     "cypress-xpath": "^1.6.2",
     "eslint": "^7.15.0",
     "eslint-plugin-cypress": "^2.11.2",
