@@ -8,6 +8,7 @@ export default class TopMenu {
   static agreementsPath = '/erm/agreements';
   static inventoryPath = '/inventory';
   static financePath = '/finance';
+  static ledgerPath = '/finance/ledger';
 
   static openAgreements() {
     cy.do(this.#agreements.click());

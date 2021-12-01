@@ -1,4 +1,5 @@
 import Ledgers from '../../../support/fragments/finance/ledgers/ledgers';
+import TopMenu from '../../../support/fragments/topMenu';
 
 describe('ui-finance: Ledger list search and filters', () => {
   const timestamp = (new Date()).getTime();
@@ -6,7 +7,7 @@ describe('ui-finance: Ledger list search and filters', () => {
   before(() => {
     cy.login(Cypress.env('diku_login'), Cypress.env('diku_password'))
       .then(() => {
-        cy.visit('/finance/ledger');
+        cy.visit(TopMenu.ledgerPath);
       });
   });
 
