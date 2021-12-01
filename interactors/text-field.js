@@ -11,7 +11,7 @@ const label = (el) => {
   return labelEl ? labelEl.textContent : input.getAttribute('aria-label') || '';
 };
 
-export default HTML.extend('text field')
+;export default HTML.extend('text field')
   .selector('div[class^=textField-]')
   .locator(label)
   .filters({
@@ -26,6 +26,7 @@ export default HTML.extend('text field')
     error: (el) => (el.querySelector('[class*=feedbackError-]') || {}).textContent,
     warning: (el) => (el.querySelector('[class*=feedbackWarning-]') || {}).textContent,
     valid: el => el.querySelector('input').getAttribute('aria-invalid') !== 'true',
+    name: el => el.querySelector('input').name,
     clearButton: el => {
       const clearBtn = [...el.querySelectorAll('[class^=iconButton]')]
         .filter(I => I.getAttribute('icon') === 'clear');

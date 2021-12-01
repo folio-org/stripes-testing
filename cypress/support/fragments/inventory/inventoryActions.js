@@ -1,4 +1,4 @@
-import { Button , Select, TextField, TextInput} from '../../../../interactors';
+import { Button, Select, TextField, TextInput } from '../../../../interactors';
 import NewInventoryInstance from './newInventoryInstance';
 
 export default class InventoryActions {
@@ -45,10 +45,11 @@ export default class InventoryActions {
     });
   }
 
-  static import(specialOCLCWorldCatidentifier = NewInventoryInstance.validOCLC) {
+  static import(specialOCLCWorldCatidentifier = NewInventoryInstance.validOCLC.id) {
     cy.do(this.open());
     cy.do(this.#importButtonInActions.click());
 
+    // TODO: remove in the future, now related with differenes in our environments
     if (Cypress.env('is_kiwi_release')) {
       const oclcWorldCat = { text:'OCLC WorldCat',
         value : '6f171ee7-7a0a-4dd4-8959-bd67ec07cc88' };

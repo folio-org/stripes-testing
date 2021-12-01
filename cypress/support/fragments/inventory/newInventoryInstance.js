@@ -2,13 +2,18 @@ import { MultiColumnList, HTML, including, Button } from '../../../../interactor
 import { getLongDelay } from '../../utils/cypressTools';
 
 export default class NewInventoryInstance {
-    static #validOCLC = '176116217';
+    static #validOCLC = { id:'176116217',
+    // TODO: hardcoded count related with interactors getters issue. Redesign to cy.then(QuickMarkEditor().rowsCount()).then(rowsCount => {...}
+      initialRecordsCount: 32,
+      getLastRowNumber:() => 31 };
 
     static #rootCss = 'section[id=pane-instancedetails]';
     // TODO: rewrite to interactor with filter by id
     static #actionsCss = `${this.#rootCss} button[class*=actionMenuToggle]`;
     static #identifiers = MultiColumnList({ id:'list-identifiers' });
     static #editMARCBibRecordButton = Button({ id:'edit-instance-marc' });
+    static #viewSourceButton = Button({ id:'clickable-view-source' });
+
 
     static get validOCLC() {
       return this.#validOCLC;
@@ -21,5 +26,10 @@ export default class NewInventoryInstance {
     static goToEditMARCBiblRecord() {
       cy.get(this.#actionsCss, getLongDelay()).click();
       cy.do(this.#editMARCBibRecordButton.click());
+    }
+
+    static viewSource() {
+      cy.get(this.#actionsCss, getLongDelay()).click();
+      cy.do(this.#viewSourceButton.click());
     }
 }
