@@ -7,6 +7,7 @@ export default class TopMenu {
   // TODO: methods like openAgreements() with interactors and selectors should be used into separated scenarios related with TopMenu implementation
   static agreementsPath = '/erm/agreements';
   static inventoryPath = '/inventory';
+  static settingsDataImportPath = '/settings/data-import/mapping-profiles';
 
   static openAgreements() {
     cy.do(this.#agreements.click());
