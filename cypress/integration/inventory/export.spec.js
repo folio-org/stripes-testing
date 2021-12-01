@@ -1,22 +1,20 @@
 import TopMenu from '../../support/fragments/topMenu';
 import InventorySearch from '../../support/fragments/inventory/inventorySearch';
 import InventoryActions from '../../support/fragments/inventory/inventoryActions';
+import FileManager from '../../support/utils/fileManager';
 
-
-const downloadsFolder = Cypress.config('downloadsFolder');
 
 describe('inventory / actions: export UUIDs', () => {
   beforeEach('navigates to Inventory and delete downloads folder', () => {
-    cy.task('deleteFolder', downloadsFolder);
     cy.login(Cypress.env('diku_login'), Cypress.env('diku_password'));
     cy.visit(TopMenu.inventoryPath);
   });
 
   it('C9284 verifies export UUIDs instances', () => {
     cy.do([
-      InventorySearch.byEffectiveLocation(),
+      InventorySearch.searchByEffectiveLocation(),
       InventoryActions.open(),
-      InventoryActions.saveUUIDsOption().click()
+      InventoryActions.options.saveUUIDs.click()
     ]);
 
     cy.intercept('/search/instances/ids**').as('getIds');
@@ -24,16 +22,15 @@ describe('inventory / actions: export UUIDs', () => {
       const expectedUUIDs = [];
       obj.response.body.ids.forEach((elem) => { expectedUUIDs.push(elem.id); });
 
-      // This from official cypress examples https://github.com/cypress-io/cypress-example-recipes/tree/master/examples
-      // Need time for download file
+      // Need time for download file TODO: think about how it can be fixed
       cy.wait(3000);
 
-      cy.task('findFiles', `${downloadsFolder}/*.csv`)
+      FileManager.findDownloadedFilesByMask('SearchInstanceUUIDs*')
         .then((downloadedFilenames) => {
-          const downloadedFilename = downloadedFilenames[0];
-          InventoryActions.verifySaveUUIDsFileName(downloadedFilename);
+          const lastDownloadedFilename = downloadedFilenames.sort()[downloadedFilenames.length - 1];
+          InventoryActions.verifySaveUUIDsFileName(lastDownloadedFilename);
 
-          cy.readFile(downloadedFilename)
+          FileManager.readFile(lastDownloadedFilename)
             .then((actualUUIDs) => {
               InventoryActions.verifySavedUUIDs(actualUUIDs, expectedUUIDs);
             });
