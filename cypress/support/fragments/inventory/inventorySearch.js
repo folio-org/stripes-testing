@@ -1,23 +1,17 @@
-import { MultiColumnList, Checkbox, MultiColumnListCell, MultiSelect } from '../../../../interactors';
+import { MultiColumnList, MultiColumnListCell, MultiSelect } from '../../../../interactors';
 
-export default class InventorySearch {
-  static #effectiveLocationInput = MultiSelect({ 'id': 'multiselect-6' });
-  static effectiveLocation = {
+
+const effectiveLocationInput = MultiSelect({ id: 'multiselect-6' });
+
+export default {
+  effectiveLocation: {
     // add new effective location inputs as needed
-    'mainLibrary': 'Main Library'
-  }
+    mainLibrary: 'Main Library'
+  },
+  getAllSearchResults: () => MultiColumnList(),
+  getSearchResult: (row, col) => MultiColumnListCell({ 'row': row ?? 0, 'columnIndex': col ?? 0 }),
 
-  static #firstResultCheckbox = MultiColumnListCell({ 'row': 0, 'columnIndex': 0 }).find(Checkbox());
-
-  static getFirstResultCheckbox() {
-    return this.#firstResultCheckbox;
-  }
-
-  static getSearchResults() {
-    return MultiColumnList();
-  }
-
-  static byEffectiveLocation(values = [this.effectiveLocation.mainLibrary]) {
-    return InventorySearch.#effectiveLocationInput.select(values);
-  }
-}
+  searchByEffectiveLocation(values) {
+    return effectiveLocationInput.select(values ?? [this.effectiveLocation.mainLibrary]);
+  },
+};
