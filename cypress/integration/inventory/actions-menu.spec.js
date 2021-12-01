@@ -1,6 +1,6 @@
 import TopMenu from '../../support/fragments/topMenu';
-import * as InventorySearch from '../../support/fragments/inventory/inventorySearch';
-import * as Actions from '../../support/fragments/inventory/inventoryActions';
+import inventorySearch from '../../support/fragments/inventory/inventorySearch';
+import inventoryActions from '../../support/fragments/inventory/inventoryActions';
 import { Checkbox } from '../../../interactors';
 
 describe('ui-inventory: actions', () => {
@@ -10,30 +10,29 @@ describe('ui-inventory: actions', () => {
   });
 
   it('C196752 verifies action menu options before any search is conducted', () => {
-    cy.do(Actions.open());
+    cy.do(inventoryActions.open());
 
-    cy.expect(InventorySearch.getAllSearchResults().absent());
-
-    Actions.optionsIsDisabled([
-      Actions.options.saveUUIDs,
-      Actions.options.saveCQLQuery,
-      Actions.options.exportMARC,
-      Actions.options.showSelectedRecords
+    cy.expect(inventorySearch.getAllSearchResults().absent());
+    inventoryActions.optionsIsDisabled([
+      inventoryActions.options.saveUUIDs,
+      inventoryActions.options.saveCQLQuery,
+      inventoryActions.options.exportMARC,
+      inventoryActions.options.showSelectedRecords
     ]);
   });
 
   it('C196753 verifies action menu options after searching and selecting result', () => {
     cy.do([
-      InventorySearch.searchByEffectiveLocation(),
-      InventorySearch.getSearchResult().find(Checkbox()).click(),
-      Actions.open()
+      inventorySearch.searchByEffectiveLocation(),
+      inventorySearch.getSearchResult().find(Checkbox()).click(),
+      inventoryActions.open()
     ]);
 
-    Actions.optionsIsEnabled([
-      Actions.options.saveUUIDs,
-      Actions.options.saveCQLQuery,
-      Actions.options.exportMARC,
-      Actions.options.showSelectedRecords
+    inventoryActions.optionsIsEnabled([
+      inventoryActions.options.saveUUIDs,
+      inventoryActions.options.saveCQLQuery,
+      inventoryActions.options.exportMARC,
+      inventoryActions.options.showSelectedRecords
     ]);
   });
 });
