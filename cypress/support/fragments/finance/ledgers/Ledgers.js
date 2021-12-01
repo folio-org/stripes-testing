@@ -6,24 +6,34 @@ const createdLedgerNameXpath = '//*[@id="paneHeaderpane-ledger-details-pane-titl
 
 const newButton = Button('New');
 
-export const waitForLedgerDetailsLoading = () => {
-  cy.xpath(rootLedgerDetailsXpath)
-    .should('be.visible');
-};
+export default {
+  waitForLedgerDetailsLoading : () => {
+    cy.xpath(rootLedgerDetailsXpath)
+      .should('be.visible');
+  },
 
-export const checkCreatedLedgerName = (ledger) => {
-  cy.xpath(createdLedgerNameXpath)
-    .should('be.visible')
-    .and('have.text', ledger.name);
-};
+  checkCreatedLedgerName : (ledger) => {
+    cy.xpath(createdLedgerNameXpath)
+      .should('be.visible')
+      .and('have.text', ledger.name);
+  },
 
-export const createDefaultLedger = (defaultLedger = NewLedger.defaultLedger) => {
-  cy.expect(newButton.exists());
-  cy.do(newButton.click());
-  NewLedger.waitLoading();
-  NewLedger.fillMandatoryFields(defaultLedger);
-  NewLedger.save();
-  waitForLedgerDetailsLoading();
-  // TODO: check ability to work through interactors
-  checkCreatedLedgerName(defaultLedger);
+  createDefaultLedger : (defaultLedger = NewLedger.defaultLedger) => {
+    cy.expect(newButton.exists());
+    cy.do(newButton.click());
+    NewLedger.waitLoading();
+    NewLedger.fillMandatoryFields(defaultLedger);
+    NewLedger.save();
+    this.waitForLedgerDetailsLoading();
+    // TODO: check ability to work through interactors
+    this.checkCreatedLedgerName(defaultLedger);
+  },
+
+  deleteLedgerViaActions: () => {
+    cy.do([
+      Button('Actions').click(),
+      Button('Delete').click(),
+      Button('Delete', { id:'clickable-ledger-remove-confirmation-confirm' }).click()
+    ]);
+  }
 };

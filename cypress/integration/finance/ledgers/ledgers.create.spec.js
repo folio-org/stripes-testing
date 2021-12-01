@@ -1,8 +1,4 @@
-import { createDefaultLedger } from '../../../support/fragments/finance/ledgers/Ledgers';
-
-import {
-  Button
-} from '../../../../interactors';
+import Ledgers from '../../../support/fragments/finance/ledgers/ledgers';
 
 describe('ui-finance: Ledger list search and filters', () => {
   before(() => {
@@ -13,11 +9,7 @@ describe('ui-finance: Ledger list search and filters', () => {
   });
 
   it('C4053 should create new ledger if mandatory fields are filled', function () {
-    createDefaultLedger();
-    cy.do([
-      Button('Actions').click(),
-      Button('Delete').click(),
-      Button('Delete', { id:'clickable-ledger-remove-confirmation-confirm' }).click()
-    ]);
+    Ledgers.createDefaultLedger();
+    Ledgers.deleteLedgerViaActions();
   });
 });
