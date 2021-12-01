@@ -18,7 +18,7 @@ export default {
       .and('have.text', ledger.name);
   },
 
-  createDefaultLedger : (defaultLedger = NewLedger.defaultLedger) => {
+  createDefaultLedger(defaultLedger = NewLedger.defaultLedger) {
     cy.expect(newButton.exists());
     cy.do(newButton.click());
     NewLedger.waitLoading();
