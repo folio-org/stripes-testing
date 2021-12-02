@@ -1,6 +1,7 @@
 import Ledgers from '../../../support/fragments/finance/ledgers/ledgers';
 import TopMenu from '../../../support/fragments/topMenu';
 import NewLedger from '../../../support/fragments/finance/ledgers/newLedger';
+import getRandomPostfix from '../../../support/utils/stringTools';
 
 describe('ui-finance: Ledger creation', () => {
   before(() => {
@@ -9,7 +10,6 @@ describe('ui-finance: Ledger creation', () => {
   });
 
   it('C4053 should create new ledger if mandatory fields are filled', () => {
-    const timestamp = (new Date()).getTime();
     const defaultLedger = NewLedger.defaultLedger;
 
     Ledgers.createDefaultLedger(defaultLedger);
@@ -17,7 +17,7 @@ describe('ui-finance: Ledger creation', () => {
     Ledgers.checkCreatedLedgerName(defaultLedger);
 
     // should not create new ledger if mandatory fields are not filled
-    const testLedgerName = `E2E ledger ${timestamp}`;
+    const testLedgerName = `autotest_ledger_${getRandomPostfix()}`;
     Ledgers.tryToCreateLedgerWithoutMandatoryFields(testLedgerName);
     Ledgers.searchByName(testLedgerName);
     Ledgers.checkZeroSearchResultsHeader();

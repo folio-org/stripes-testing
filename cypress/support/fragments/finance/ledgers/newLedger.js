@@ -1,15 +1,13 @@
 import { Button } from '../../../../../interactors';
-import { getRandomPostfix, getPreviousFiscalYearCode } from '../../../utils/stringTools';
+import getRandomPostfix from '../../../utils/stringTools';
+import { getPreviousFiscalYearCode } from '../../../utils/dateTools';
 
 export default class NewLedger {
     // TODO: start to use interactors instead of selectors
     static #rootCss = 'div[id="pane-ledger-form-content"]'
     static #nameCss = `${this.#rootCss} input[name="name"]`;
     static #codeCss = `${this.#rootCss} input[name="code"]`;
-    static #descriptionCss = `${this.#rootCss} textarea[id="textarea-input-56"]`;
-    static #statusCss = `${this.#rootCss} div[class^=selectionControlContainer]`;
     static #fiscalYearCss = `${this.#rootCss} select[name^="fiscalYearOneId"]`;
-    static #acquisitionUnitsCss = `${this.#rootCss} select[id="ledger-acq-units"]`;
     static #saveButton = Button('Save & Close');
     static #cancelButton = Button('Cancel');
     static #closeWithoutSavingButton = Button('Close without saving');
