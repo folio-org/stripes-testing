@@ -28,7 +28,6 @@ export default {
   },
 
   createDefaultLedger(defaultLedger) {
-    cy.expect(newButton.exists());
     cy.do(newButton.click());
     NewLedger.waitLoading();
     NewLedger.fillMandatoryFields(defaultLedger);
