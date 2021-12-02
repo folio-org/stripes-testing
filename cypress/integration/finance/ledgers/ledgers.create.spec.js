@@ -19,7 +19,7 @@ describe('ui-finance: Ledger list search and filters', () => {
     // should not create new ledger if mandatory fields are not filled
     const testLedgerName = `E2E ledger ${timestamp}`;
     Ledgers.tryToCreateLedgerWithoutMandatoryFields(testLedgerName);
-    Ledgers.searchLedgerByName(testLedgerName);
+    Ledgers.searchByName(testLedgerName);
     Ledgers.checkZeroSearchResultsHeader();
   });
 });

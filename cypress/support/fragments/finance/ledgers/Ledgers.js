@@ -36,7 +36,7 @@ export default {
     this.waitForLedgerDetailsLoading();
   },
 
-  searchLedgerByName : (ledgerName) => {
+  searchByName : (ledgerName) => {
     cy.do([
       SearchField({ id: 'input-record-search' }).selectIndex('Name'),
       SearchField({ id: 'input-record-search' }).fillIn(ledgerName),
