@@ -27,8 +27,8 @@ describe('Manage records ', () => {
 
     NewInventoryInstance.viewSource();
 
-    // InventoryViewSource.contains(expectedInSourceRow1);
-    // inventoryViewSource.contains(expectedInSourceRow2);
+    InventoryViewSource.contains(expectedInSourceRow1);
+    //inventoryViewSource.contains(expectedInSourceRow2);
     // InventoryViewSource.notContains('948\t   \t‡h NO HOLDINGS IN PAOLF - 43 OTHER HOLDINGS ');
   });
 });
