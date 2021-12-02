@@ -17,18 +17,20 @@ describe('Manage records ', () => {
     InventoryActions.import();
     NewInventoryInstance.goToEditMARCBiblRecord();
 
-    const expectedInSourceRow1 = QuickMarcEditor.addNewField();
+    const expectedInSourceRow = QuickMarcEditor.addNewField();
     // TODO: add return value to validate the result by value too. As minimum add catching from response. The best way - through interactors
     QuickMarcEditor.deletePenaltField();
-    const expectedInSourceRow2 = QuickMarcEditor.addNewFieldWithSubField();
+    const expectedInSourceRowWithSubfield = QuickMarcEditor.addNewFieldWithSubField();
     QuickMarcEditor.pressSaveAndClose();
     QuickMarcEditor.deleteConfirmationPresented();
     QuickMarcEditor.confirmDelete();
 
     NewInventoryInstance.viewSource();
 
-    InventoryViewSource.contains(expectedInSourceRow1);
-    //inventoryViewSource.contains(expectedInSourceRow2);
+    // TODO: see not clear behavior with adding of subfield $a
+    // InventoryViewSource.contains(expectedInSourceRow1);
+    InventoryViewSource.contains(expectedInSourceRowWithSubfield);
+    // TODO: add assertion of absence of deleted row
     // InventoryViewSource.notContains('948\t   \t‡h NO HOLDINGS IN PAOLF - 43 OTHER HOLDINGS ');
   });
 });
