@@ -1,5 +1,4 @@
 import { setInteractorTimeout } from '@interactors/globals';
-import FileManager from './utils/fileManager';
 
 // adding of methods do and expect
 import '@interactors/with-cypress';
@@ -24,8 +23,4 @@ require('cypress-xpath');
 // try to fix the issue with cached location in cypress
 Cypress.on('window:before:load', window => {
   Object.defineProperty(window.navigator, 'language', { value: 'en' });
-});
-
-after(() => {
-  FileManager.deleteFolder(Cypress.config('downloadsFolder'));
 });

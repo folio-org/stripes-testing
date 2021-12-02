@@ -5,25 +5,22 @@ import FileManager from '../../support/utils/fileManager';
 
 
 describe('inventory / actions: export UUIDs', () => {
-  beforeEach('navigates to Inventory and delete downloads folder', () => {
+  beforeEach('navigates to Inventory', () => {
     cy.login(Cypress.env('diku_login'), Cypress.env('diku_password'));
     cy.visit(TopMenu.inventoryPath);
   });
 
   it('C9284 verifies export UUIDs instances', () => {
-    cy.do([
-      InventorySearch.searchByEffectiveLocation(),
-      InventoryActions.open(),
-      InventoryActions.options.saveUUIDs.click()
-    ]);
+    cy.do(InventorySearch.searchByEffectiveLocation());
+    InventoryActions.saveUUIDs();
 
+    // TODO: think about move it to separate func
     cy.intercept('/search/instances/ids**').as('getIds');
     cy.wait('@getIds').then((obj) => {
-      const expectedUUIDs = [];
-      obj.response.body.ids.forEach((elem) => { expectedUUIDs.push(elem.id); });
+      const expectedUUIDs = InventorySearch.getUUIDsFromRequest(obj);
 
       // Need time for download file TODO: think about how it can be fixed
-      cy.wait(3000);
+      cy.wait(Cypress.env('downloadTimeout'));
 
       FileManager.findDownloadedFilesByMask('SearchInstanceUUIDs*')
         .then((downloadedFilenames) => {
