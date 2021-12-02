@@ -1,15 +1,15 @@
 {
-  "baseUrl": "https://bugfest-kiwi.folio.ebsco.com",
+  "baseUrl": "https://folio-snapshot.dev.folio.org",
   "viewportWidth": 1920,
   "viewportHeight": 1080,
   "video": false,
   "defaultCommandTimeout": 21000,
   "pageLoadTimeout": 120000,
   "env": {
-    "OKAPI_HOST": "bugfest-kiwi.folio.ebsco.com",
-    "OKAPI_TENANT": "folio",
-    "diku_login": "folio",
-    "diku_password": "folio",
+    "OKAPI_HOST": "folio-snapshot.dev.folio.org",
+    "OKAPI_TENANT": "diku",
+    "diku_login": "diku_admin",
+    "diku_password": "admin",
     "is_kiwi_release": true
 
     }
