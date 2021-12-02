@@ -12,6 +12,7 @@ describe('ui-data-import: MARC file import with creating of the new instance, ho
 
     collectionOfMappingProfiles.forEach(mappingProfile => {
         it('create a mapping profile for Instance', () => {
+//
             const specialMappingProfile = {... NewMappingProfile.defaultMappingProfile};
             specialMappingProfile.folioRecordType = mappingProfile;
             

@@ -44,20 +44,6 @@ export default class NewMappingProfile {
             .choose(specialMappingProfile.folioRecordType));
     }
 
-    
-
-    /*collectionOfMappingProfiles.add();
-    collectionOfMappingProfiles.array.forEach(element => {
-        static fill(specialMappingProfile = this.#defaultMappingProfile) {
-            cy.do([this.#nameProfileField.fillIn(specialMappingProfile.profileName)]);
-            cy.do(this.#nameIncomingRecordTypeSelect
-            .choose(specialMappingProfile.incomingRecordType));
-            cy.do(this.#nameFolioRecordTypeSelect
-                .choose(specialMappingProfile.folioRecordType));
-        }
-    });*/
-
-
     static saveAndClose() {
         cy.do(this.#saveButton.click());
     }
