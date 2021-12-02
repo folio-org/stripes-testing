@@ -39,4 +39,3 @@ export { Tooltip, TooltipProximity } from './tooltip';
 export { dispatchFocusout } from './util';
 export { default as QuickMarkEditorRow } from './quickMarcEditorRow';
 export { default as QuickMarkEditor } from './quickMarcEditor';
-export { default as MarcBibSourceView } from './marcBibSourceView';

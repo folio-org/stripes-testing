@@ -11,7 +11,7 @@ const label = (el) => {
   return labelEl ? labelEl.textContent : input.getAttribute('aria-label') || '';
 };
 
-;export default HTML.extend('text field')
+export default HTML.extend('text field')
   .selector('div[class^=textField-]')
   .locator(label)
   .filters({

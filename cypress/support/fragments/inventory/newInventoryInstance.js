@@ -4,7 +4,6 @@ import { getLongDelay } from '../../utils/cypressTools';
 export default class NewInventoryInstance {
     static #validOCLC = { id:'176116217',
     // TODO: hardcoded count related with interactors getters issue. Redesign to cy.then(QuickMarkEditor().rowsCount()).then(rowsCount => {...}
-      initialRecordsCount: 32,
       getLastRowNumber:() => 31 };
 
     static #rootCss = 'section[id=pane-instancedetails]';

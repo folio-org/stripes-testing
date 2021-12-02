@@ -34,8 +34,6 @@ const _addNewField = (fieldContent, tag) => {
   return `${tagValue}\t   \t${defaultFieldValues.getSourceContent(content)}`;
 };
 
-
-
 export default {
   addNewField: () => {
     return _addNewField(defaultFieldValues.content);
