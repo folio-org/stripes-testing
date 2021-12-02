@@ -51,7 +51,7 @@ export default createInteractor('keyboard (requires window to have focus)')
     altLeft: press('AltLeft'),
     tab: press('Tab'),
     space: press('Space'),
-    pressKey: (value) => press(value),
+    pressKey: (interactor, value, options) => press(value)(interactor, options)
   })();
 
 const KEY_CODES = {
