@@ -1,4 +1,4 @@
-import getCurrentDate from '../../utils/dateTools';
+import { getCurrentDate } from '../../utils/dateTools';
 import getRandomPostfix from '../../utils/stringTools';
 import { Button, TextField } from '../../../../interactors';
 
