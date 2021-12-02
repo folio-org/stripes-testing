@@ -2,7 +2,7 @@ import Ledgers from '../../../support/fragments/finance/ledgers/ledgers';
 import TopMenu from '../../../support/fragments/topMenu';
 import NewLedger from '../../../support/fragments/finance/ledgers/newLedger';
 
-describe('ui-finance: Ledger list search and filters', () => {
+describe('ui-finance: Ledger creation', () => {
   before(() => {
     cy.login(Cypress.env('diku_login'), Cypress.env('diku_password'));
     cy.visit(TopMenu.ledgerPath);
