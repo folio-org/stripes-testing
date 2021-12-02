@@ -1,7 +1,11 @@
-import { Button } from "@interactors/html";
+import { TextField, Button, Select} from '../../../../interactors';
 
-export default class NewFieldMappingProfile {
-    static #saveButton = Button('Save & close');
+export default class NewMappingProfile {
+    static #nameProfileField = TextField('Name*');
+    static #nameIncomingRecordTypeSelect = Select({name: 'profile.incomingRecordType'});
+    static #nameFolioRecordTypeSelect = Select({name: 'profile.existingRecordType'});
+
+    static #saveButton = Button('Save as profile & Close');
 
     static #profileName = {
         instanceName: 'Instance',
@@ -23,7 +27,7 @@ export default class NewFieldMappingProfile {
     }
 
     static #defaultMappingProfile = {
-        profileName: 'autotest FAT-742: Mapping profile for' + this.#profileName.instanceName,
+        profileName: 'autotest FAT-742: ' + this.#profileName.instanceName + ' mapping profile',
         incomingRecordType: this.#incomingRecordTypeValue.marcBib,
         folioRecordType: this.#folioRecordTypeValue.instance,
     }
@@ -33,20 +37,28 @@ export default class NewFieldMappingProfile {
     }
 
     static fill(specialMappingProfile = this.#defaultMappingProfile) {
-        cy.get('input[name="profile.name"]').type(this.#profileName.instanceName)
-        
-        /*.should('have.value', profileName.instanceName);
-        cy.get('input[name="profile.incomingRecordType"]')
-            .select(specialMappingProfile.incomingRecordType)
-            .should('have.value', specialMappingProfile.incomingRecordType);
-        cy.get('input[name="profile.existingRecordType"]')
-            .select(specialMappingProfil.folioRecordType)
-            .should('have.value', specialMappingProfile.folioRecordType);*/
+        cy.do([this.#nameProfileField.fillIn(specialMappingProfile.profileName)]);
+        cy.do(this.#nameIncomingRecordTypeSelect
+        .choose(specialMappingProfile.incomingRecordType));
+        cy.do(this.#nameFolioRecordTypeSelect
+            .choose(specialMappingProfile.folioRecordType));
     }
+
+    
+
+    /*collectionOfMappingProfiles.add();
+    collectionOfMappingProfiles.array.forEach(element => {
+        static fill(specialMappingProfile = this.#defaultMappingProfile) {
+            cy.do([this.#nameProfileField.fillIn(specialMappingProfile.profileName)]);
+            cy.do(this.#nameIncomingRecordTypeSelect
+            .choose(specialMappingProfile.incomingRecordType));
+            cy.do(this.#nameFolioRecordTypeSelect
+                .choose(specialMappingProfile.folioRecordType));
+        }
+    });*/
+
 
     static saveAndClose() {
-        cy.code(this.#saveButton.click());
+        cy.do(this.#saveButton.click());
     }
-
-
 }

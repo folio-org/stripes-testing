@@ -5,7 +5,6 @@ export default class CreateMappingProfile{
     static #actionsButton = Button('Actions');
 
     static clickActionButton() {
-        //cy.get('[class="paneHeaderButtonsArea---kidF+ last---Va9aW"]').do(this.#actionsButton.click());
         cy.get('[class="paneHeaderButtonsArea---kidF+ last---Va9aW"]')
         .contains('Actions')
         .click();
