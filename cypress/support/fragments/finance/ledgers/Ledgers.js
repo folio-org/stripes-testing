@@ -27,15 +27,13 @@ export default {
       .and('have.text', ledger.name);
   },
 
-  createDefaultLedger(defaultLedger = NewLedger.defaultLedger) {
+  createDefaultLedger(defaultLedger) {
     cy.expect(newButton.exists());
     cy.do(newButton.click());
     NewLedger.waitLoading();
     NewLedger.fillMandatoryFields(defaultLedger);
     NewLedger.save();
     this.waitForLedgerDetailsLoading();
-    // TODO: check ability to work through interactors
-    this.checkCreatedLedgerName(defaultLedger);
   },
 
   searchLedgerByName : (ledgerName) => {

@@ -1,5 +1,5 @@
-import { Button } from '@interactors/html';
-import getRandomPostfix from '../../../utils/stringTools';
+import { Button } from '../../../../../interactors';
+import { getRandomPostfix, getPreviousFiscalYearCode } from '../../../utils/stringTools';
 
 export default class NewLedger {
     // TODO: start to use interactors instead of selectors
@@ -24,7 +24,7 @@ export default class NewLedger {
       name: `autotest_ledger_${getRandomPostfix()}`,
       status: this.#statusValue.active,
       code: `test_automation_code_${getRandomPostfix()}`,
-      fiscalYear: 'FY2020',
+      fiscalYear: getPreviousFiscalYearCode(),
       description: 'This is ledger created by E2E test automation script'
     }
 
