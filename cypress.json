@@ -11,6 +11,6 @@
     "diku_login": "folio",
     "diku_password": "folio",
     "is_kiwi_release": true,
-    "downloadTimeout": 1000
+    "downloadTimeout": 10000
     }
 }

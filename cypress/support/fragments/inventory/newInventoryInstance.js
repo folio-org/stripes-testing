@@ -22,5 +22,6 @@ export default {
   viewSource: () => {
     cy.do(actionsButton.click());
     cy.do(viewSourceButton.click());
-  }
+  },
+  waitLoading:() => cy.expect(actionsButton.exists())
 };

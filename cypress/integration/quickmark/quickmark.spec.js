@@ -38,5 +38,15 @@ describe('Manage records ', () => {
     NewInventoryInstance.goToEditMARCBiblRecord();
     QuickMarcEditor.addRow();
     QuickMarcEditor.checkInitialContent();
+    const expectedInSourceRow = QuickMarcEditor.fillAllAvailableValues();
+
+    QuickMarcEditor.pressSaveAndClose();
+    NewInventoryInstance.waitLoading();
+    NewInventoryInstance.viewSource();
+    InventoryViewSource.contains(expectedInSourceRow);
+    InventoryViewSource.close();
+
+    NewInventoryInstance.goToEditMARCBiblRecord();
+    QuickMarcEditor.checkContent();
   });
 });
