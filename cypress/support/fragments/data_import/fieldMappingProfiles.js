@@ -1,6 +1,6 @@
 import { Button } from '../../../../interactors';
 
-export default class CreateMappingProfile {
+export default class fieldMappingProfiles {
     static #actionsButton = Button('Actions');
 
     static clickActionButton() {

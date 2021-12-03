@@ -11,12 +11,15 @@ describe('ui-data-import: MARC file import with creating of the new instance, ho
     cy.visit(TopMenu.settingsDataImportPath);
   });
 
-  const collectionOfMappingProfiles = [NewMappingProfile.defaultMappingProfile.folioRecordType, NewMappingProfile.defaultMappingProfile.folioRecordType, NewMappingProfile.defaultMappingProfile.folioRecordType];
+  const collectionOfMappingProfiles = [NewMappingProfile.folioRecordTypeValue.instance,
+    NewMappingProfile.folioRecordTypeValue.holdings,
+    NewMappingProfile.folioRecordTypeValue.item];
 
   collectionOfMappingProfiles.forEach(mappingProfile => {
-    it(`C343334 create a mapping profile for ${mappingProfile}`, () => {
+    it(`C343334 MARC file import with creating of the new ${mappingProfile}`, () => {
       const specialMappingProfile = { ...NewMappingProfile.defaultMappingProfile };
       specialMappingProfile.folioRecordType = mappingProfile;
+      specialMappingProfile.profileName = `autotest FAT-742: ${mappingProfile} mapping profile`;
 
       fieldMappingProfiles.clickActionButton();
       fieldMappingProfiles.createNewMappingProfile();

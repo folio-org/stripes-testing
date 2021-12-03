@@ -17,18 +17,16 @@ export default class NewMappingProfile {
       marcBib: 'MARC Bibliographic',
     }
 
-    static #folioRecordTypeValue = {
+    static folioRecordTypeValue = {
       instance: 'Instance',
       holdings: 'Holdings',
       item: 'Item',
-      invoice: 'Invoice',
-      marcBib: 'MARC Bibliographic',
     }
 
     static #defaultMappingProfile = {
       profileName: 'autotest FAT-742: ' + this.#profileName.instanceName + ' mapping profile',
       incomingRecordType: this.#incomingRecordTypeValue.marcBib,
-      folioRecordType: this.#folioRecordTypeValue.instance,
+      folioRecordType: this.folioRecordTypeValue.instance,
     }
 
     static get defaultMappingProfile() {
