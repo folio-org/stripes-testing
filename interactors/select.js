@@ -17,6 +17,7 @@ export default HTML.extend('select')
   .locator(label)
   .filters({
     id: el => el.querySelector('select').id,
+    name: el => el.querySelector('select').name,
     label,
     ariaLabelledBy: el => el.querySelector('select').getAttribute('aria-labelledby'),
     placeholder: el => el.querySelector('select').getAttribute('placeholder'),
