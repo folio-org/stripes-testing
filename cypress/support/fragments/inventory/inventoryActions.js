@@ -1,4 +1,4 @@
-import { Button, Select, TextField, TextInput } from '../../../../interactors';
+import { Button, Select, TextField } from '../../../../interactors';
 import NewInventoryInstance from './newInventoryInstance';
 
 const importButtonInActions = Button({ id: 'dropdown-clickable-import-record' });

@@ -9,11 +9,13 @@ const continueWithSaveButton = Modal().find(Button({ id: 'clickable-quick-marc-c
 
 const defaultFieldValues = {
   content:'qwe',
-  contentWithSubfield:'$a qwe',
+  initialSubField: '$a ',
   // just enumerate a few free to use tags  which can be applyied in test one by one with small reserve
   freeTagsIterator: new Set(['996', '997', '998']).values(),
   getSourceContent: (contentInQuickMarcEditor) => contentInQuickMarcEditor.replace('$', '‡')
 };
+defaultFieldValues.contentWithSubfield = `${defaultFieldValues.initialSubField}${defaultFieldValues.content}`;
+
 
 const _getRowInteractor = (specialRowNumber) => QuickMarkEditor()
   .find(QuickMarkEditorRow({ index: specialRowNumber }));
@@ -22,8 +24,9 @@ const _addNewField = (fieldContent, tag) => {
   const lastRowNumber = NewInventoryInstance.validOCLC.getLastRowNumber();
   const contentTextArea = TextArea({ name: `records[${lastRowNumber + 1}].content` });
   const tagTextField = TextField({ name: `records[${lastRowNumber + 1}].tag` });
+  const separator = '\t   \t';
 
-  cy.do(_getRowInteractor(lastRowNumber).find(addFieldButton).click());
+  this.addRow(lastRowNumber);
 
   const tagValue = tag ?? defaultFieldValues.freeTagsIterator.next().value;
   const content = fieldContent ?? defaultFieldValues.content;
@@ -31,20 +34,18 @@ const _addNewField = (fieldContent, tag) => {
   cy.do(_getRowInteractor(lastRowNumber + 1).find(contentTextArea).fillIn(content));
   cy.do(_getRowInteractor(lastRowNumber + 1).find(tagTextField).fillIn(tagValue));
 
-  return `${tagValue}\t   \t${defaultFieldValues.getSourceContent(content)}`;
+  return `${tagValue}${separator}${defaultFieldValues.getSourceContent(content)}`;
 };
 
-export default {
-  addNewField: () => {
-    return _addNewField(defaultFieldValues.content);
-  },
+const getInitialRowsCount = () => NewInventoryInstance.validOCLC.getLastRowNumber();
 
-  addNewFieldWithSubField() {
-    return _addNewField(defaultFieldValues.contentWithSubfield);
-  },
+export default {
+  addNewField: () => _addNewField(defaultFieldValues.content),
+
+  addNewFieldWithSubField: () => _addNewField(defaultFieldValues.contentWithSubfield),
 
   deletePenaltField: () => {
-    const lastRowNumber = NewInventoryInstance.validOCLC.getLastRowNumber();
+    const lastRowNumber = getInitialRowsCount();
     cy.do(_getRowInteractor(lastRowNumber - 1).find(deleteFieldButton).click());
   },
 
@@ -52,5 +53,15 @@ export default {
 
   deleteConfirmationPresented: () => cy.expect(confirmationModal.exists()),
 
-  confirmDelete: () => cy.do(continueWithSaveButton.click())
+  confirmDelete: () => cy.do(continueWithSaveButton.click()),
+
+  getContentFromRow: (row) => row.split(this.separator)[1],
+
+  addRow: (rowNumber) => cy.do(_getRowInteractor(rowNumber ?? getInitialRowsCount() + 1).find(addFieldButton).click()),
+
+  checkInitialContent: (rowNumber) => cy.expect(
+    _getRowInteractor(rowNumber ?? getInitialRowsCount() + 2)
+      .find(TextArea({ name: `records[${rowNumber ?? getInitialRowsCount() + 2}].content` }))
+      .has({ value: defaultFieldValues.initialSubField })
+  )
 };

@@ -1,4 +1,3 @@
-/* eslint-disable no-only-tests/no-only-tests */
 /// <reference types="cypress" />
 
 import TopMenu from '../../support/fragments/topMenu';
@@ -32,5 +31,12 @@ describe('Manage records ', () => {
     InventoryViewSource.contains(expectedInSourceRowWithSubfield);
     // TODO: add assertion of absence of deleted row
     // InventoryViewSource.notContains('948\t   \t‡h NO HOLDINGS IN PAOLF - 43 OTHER HOLDINGS ');
+  });
+
+  it.only('C10924 Add a field to a record using quickMARC', () => {
+    InventoryActions.import();
+    NewInventoryInstance.goToEditMARCBiblRecord();
+    QuickMarcEditor.addRow();
+    QuickMarcEditor.checkInitialContent();
   });
 });
