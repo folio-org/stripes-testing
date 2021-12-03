@@ -10,6 +10,7 @@
     "OKAPI_TENANT": "folio",
     "diku_login": "folio",
     "diku_password": "folio",
-    "is_kiwi_release": true
+    "is_kiwi_release": true,
+    "downloadTimeout": 1000
     }
 }
