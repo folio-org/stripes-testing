@@ -35,11 +35,5 @@ export default {
     for (let i = 0; i < expectedUUIDs.length; i++) {
       expect(expectedUUIDs[i]).to.eq(formattedActualUUIDs[i]);
     }
-  },
-  saveUUIDs() {
-    return cy.do([
-      this.open(),
-      this.options.saveUUIDs.click()
-    ]);
   }
 };

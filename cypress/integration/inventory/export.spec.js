@@ -11,8 +11,11 @@ describe('inventory / actions: export UUIDs', () => {
   });
 
   it('C9284 verifies export UUIDs instances', () => {
-    cy.do(InventorySearch.searchByEffectiveLocation());
-    InventoryActions.saveUUIDs();
+    cy.do([
+      InventorySearch.searchByEffectiveLocation(),
+      InventoryActions.open(),
+      InventoryActions.options.saveUUIDs.click()
+    ]);
 
     // TODO: think about move it to separate func
     cy.intercept('/search/instances/ids**').as('getIds');
