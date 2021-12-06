@@ -58,23 +58,17 @@ export default HTML.extend('selection')
     open: ({ perform }) => perform(toggle),
     filterOptions: async ({ perform }, value) => {
       const optionsList = document.querySelector('[class^=selectionListRoot]');
-      if (optionsList && isVisible(optionsList)) {
-        return perform(() => SelectionList().filter(value));
-      } else {
+      if (!(optionsList && isVisible(optionsList))) {
         await perform(toggle);
-        return perform(() => SelectionList().filter(value));
       }
+      return perform(() => SelectionList().filter(value));
     },
-    choose: ({ perform }, value) => {
-      perform(async () => {
-        const optionsList = document.querySelector('[class^=selectionListRoot]');
-        if (optionsList && isVisible(optionsList)) {
-          return SelectionList().find(SelectionOption(value)).click();
-        } else {
-          await perform(toggle);
-          return SelectionList().find(SelectionOption(value)).click();
-        }
-      });
+    choose: async ({ perform }, value) => {
+      const optionsList = document.querySelector('[class^=selectionListRoot]');
+      if (!(optionsList && isVisible(optionsList))) {
+        await perform(toggle);
+      }
+      return perform(() => SelectionList().find(SelectionOption(value)).click());
     },
     focus: ({ perform }) => perform((el) => el.querySelector('button').focus())
   });
