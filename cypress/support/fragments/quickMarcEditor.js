@@ -1,4 +1,4 @@
-import { QuickMarcEditor, QuickMarcEditorRow, TextArea, Button, Modal, TextField } from '../../../interactors';
+import { QuickMarcEditor, QuickMarcEditorRow, TextArea, Button, Modal, TextField, and, some } from '../../../interactors';
 import NewInventoryInstance from './inventory/newInventoryInstance';
 
 const addFieldButton = Button({ ariaLabel : 'Add a new field' });
@@ -17,6 +17,8 @@ const defaultFieldValues = {
 defaultFieldValues.initialSubField = `${defaultFieldValues.subfieldPrefixInEditor}a `;
 defaultFieldValues.contentWithSubfield = `${defaultFieldValues.initialSubField}${defaultFieldValues.content}`;
 defaultFieldValues.getSourceContent = (contentInQuickMarcEditor) => contentInQuickMarcEditor.replace(defaultFieldValues.subfieldPrefixInEditor, defaultFieldValues.subfieldPrefixInSource);
+
+const requiredRowsTags = ['LDR', '001', '005', '008', '999'];
 
 const _getRowInteractor = (specialRowNumber) => QuickMarcEditor()
   .find(QuickMarcEditorRow({ index: specialRowNumber }));
@@ -78,23 +80,43 @@ export default {
     }
   },
   checkRequiredFields: () => {
-    //1
+    // 1
     // cy.then(() => QuickMarkEditor().requiredRows())
     //   .then(requiredRows => {
     //     assert.isNotEmpty(requiredRows);
     //   });
 
-    //2
+    // 2
     // cy.then(QuickMarkEditorRow({ required : true }).exists());
-    
 
-    //3!!
-    cy.then(() => QuickMarcEditorRow().required()).then(requiredRow => {
-      requiredRow.find(deleteFieldButton).absence();
-    });
 
-    //4
+    // 3!!
+    // cy.then(() => QuickMarcEditorRow().required()).then(requiredRow => {
+    //   requiredRow.find(deleteFieldButton).absence();
+    // });
+
+    // 4
     // cy.expect(QuickMarkEditor().requiredRows().find(deleteFieldButton).absence());
 
+    // 5
+    // ideally -> grab {tag,isDeleteButtonPresented} and process collection of such objects into this fragment
+    cy.expect(QuickMarcEditor().has({
+      presentedFiledsTags: and(...requiredRowsTags.map(field => some(field)))
+    }));
+
+    // 6
+    // cy.expect(QuickMarcEditor().has({
+    //   // presentedRequiredRows: and(...['LDR', '001', '005', '008', '999'].map(field => some(field)))
+    //   presentedRequiredRows: and(some('LDR'),
+    //   )
+    // }));
+
+    // 7
+    cy.then(() => QuickMarcEditor().presentedRequiredRows())
+      .then(presentedRequiredRow => {
+        if (requiredRowsTags.includes(presentedRequiredRow.tag)) {
+          assert.isFalse(presentedRequiredRow.isDeleteButtonExistArray);
+        }
+      });
   }
 };
