@@ -33,7 +33,7 @@ describe('Manage records ', () => {
     // InventoryViewSource.notContains('948\t   \t‡h NO HOLDINGS IN PAOLF - 43 OTHER HOLDINGS ');
   });
 
-  it.only('C10924 Add a field to a record using quickMARC', () => {
+  it('C10924 Add a field to a record using quickMARC', () => {
     InventoryActions.import();
     NewInventoryInstance.goToEditMARCBiblRecord();
     QuickMarcEditor.addRow();
@@ -48,5 +48,24 @@ describe('Manage records ', () => {
 
     NewInventoryInstance.goToEditMARCBiblRecord();
     QuickMarcEditor.checkContent();
+  });
+
+  it('C10928 Delete a field(s) from a record in quickMARC', () => {
+    InventoryActions.import();
+    NewInventoryInstance.goToEditMARCBiblRecord();
+    // TODO: add return value to validate the result by value too. As minimum add catching from response. The best way - through interactors
+    QuickMarcEditor.deletePenaltField();
+    QuickMarcEditor.pressSaveAndClose();
+    QuickMarcEditor.deleteConfirmationPresented();
+    QuickMarcEditor.confirmDelete();
+    NewInventoryInstance.viewSource();
+    // TODO: add assertion of absence of deleted row
+    // InventoryViewSource.notContains('948\t   \t‡h NO HOLDINGS IN PAOLF - 43 OTHER HOLDINGS ');
+  });
+
+  it.only('C10957 Attempt to delete a required field', () => {
+    InventoryActions.import();
+    NewInventoryInstance.goToEditMARCBiblRecord();
+    QuickMarcEditor.checkRequiredFields();
   });
 });

@@ -5,7 +5,6 @@ const identifiers = MultiColumnList({ id:'list-identifiers' });
 const editMARCBibRecordButton = Button({ id:'edit-instance-marc' });
 const viewSourceButton = Button({ id:'clickable-view-source' });
 
-
 export default {
   validOCLC : { id:'176116217',
   // TODO: hardcoded count related with interactors getters issue. Redesign to cy.then(QuickMarkEditor().rowsCount()).then(rowsCount => {...}

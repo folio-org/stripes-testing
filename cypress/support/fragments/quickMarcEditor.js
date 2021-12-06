@@ -1,4 +1,4 @@
-import { QuickMarkEditor, QuickMarkEditorRow, TextArea, Button, Modal, TextField } from '../../../interactors';
+import { QuickMarcEditor, QuickMarcEditorRow, TextArea, Button, Modal, TextField } from '../../../interactors';
 import NewInventoryInstance from './inventory/newInventoryInstance';
 
 const addFieldButton = Button({ ariaLabel : 'Add a new field' });
@@ -18,10 +18,8 @@ defaultFieldValues.initialSubField = `${defaultFieldValues.subfieldPrefixInEdito
 defaultFieldValues.contentWithSubfield = `${defaultFieldValues.initialSubField}${defaultFieldValues.content}`;
 defaultFieldValues.getSourceContent = (contentInQuickMarcEditor) => contentInQuickMarcEditor.replace(defaultFieldValues.subfieldPrefixInEditor, defaultFieldValues.subfieldPrefixInSource);
 
-
-
-const _getRowInteractor = (specialRowNumber) => QuickMarkEditor()
-  .find(QuickMarkEditorRow({ index: specialRowNumber }));
+const _getRowInteractor = (specialRowNumber) => QuickMarcEditor()
+  .find(QuickMarcEditorRow({ index: specialRowNumber }));
 
 const _addNewField = (fieldContent, tag) => {
   const lastRowNumber = NewInventoryInstance.validOCLC.getLastRowNumber();
@@ -78,5 +76,25 @@ export default {
     } else {
       return `${tagValue}${separator}${defaultFieldValues.getSourceContent(content)}`;
     }
+  },
+  checkRequiredFields: () => {
+    //1
+    // cy.then(() => QuickMarkEditor().requiredRows())
+    //   .then(requiredRows => {
+    //     assert.isNotEmpty(requiredRows);
+    //   });
+
+    //2
+    // cy.then(QuickMarkEditorRow({ required : true }).exists());
+    
+
+    //3!!
+    cy.then(() => QuickMarcEditorRow().required()).then(requiredRow => {
+      requiredRow.find(deleteFieldButton).absence();
+    });
+
+    //4
+    // cy.expect(QuickMarkEditor().requiredRows().find(deleteFieldButton).absence());
+
   }
 };
