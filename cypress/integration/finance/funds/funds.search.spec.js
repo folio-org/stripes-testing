@@ -11,6 +11,7 @@ import {
   SelectionList,
 } from '../../../../interactors';
 
+// TODO: refactoring needed in order to have 1-1 relation between smoke tests in Test Rail and TAF
 describe('ui-finance: Funds list search and filter', () => {
   const timestamp = (new Date()).getTime();
 
@@ -58,7 +59,7 @@ describe('ui-finance: Funds list search and filter', () => {
     ]);
   });
 
-  it('should return funds according to fund filters', function () {
+  it('C4059 should return funds according to fund filters', function () {
     cy.do([
       Accordion({ id: 'ledgerId' }).clickHeader(),
       Selection({ id: 'ledgerId-selection' }).open(),
@@ -86,7 +87,7 @@ describe('ui-finance: Funds list search and filter', () => {
     cy.expect(MultiColumnList({ id: 'funds-list' }).has({ rowCount: 1 }));
   });
 
-  it('should return funds according to search by name', () => {
+  it('C4059 should return funds according to search by name', () => {
     cy.do([
       SearchField({ id: 'input-record-search' }).selectIndex('Name'),
       SearchField({ id: 'input-record-search' }).fillIn(fund.name),
@@ -96,7 +97,7 @@ describe('ui-finance: Funds list search and filter', () => {
     cy.expect(MultiColumnList({ id: 'funds-list' }).has({ rowCount: 1 }));
   });
 
-  it('should return funds according to search by code', () => {
+  it('C4059 should return funds according to search by code', () => {
     cy.do([
       SearchField({ id: 'input-record-search' }).selectIndex('Code'),
       SearchField({ id: 'input-record-search' }).fillIn(fund.code),
@@ -106,7 +107,7 @@ describe('ui-finance: Funds list search and filter', () => {
     cy.expect(MultiColumnList({ id: 'funds-list' }).has({ rowCount: 1 }));
   });
 
-  it('should return funds according to search by external account number', () => {
+  it('C4059 should return funds according to search by external account number', () => {
     cy.do([
       SearchField({ id: 'input-record-search' }).selectIndex('External account number'),
       SearchField({ id: 'input-record-search' }).fillIn(fund.externalAccountNo),
