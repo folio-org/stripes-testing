@@ -123,7 +123,7 @@ describe('ui-finance: Funds list search and filter', () => {
     ['Code', fund.code],
     ['External account number', fund.externalAccountNo],
   ].forEach(([key, value]) => {
-    it(`should return funds according to search by All (${key})`, () => {
+    it(`C4059 should return funds according to search by All (${key})`, () => {
       cy.do([
         SearchField({ id: 'input-record-search' }).fillIn(value),
         Button('Search').click(),
