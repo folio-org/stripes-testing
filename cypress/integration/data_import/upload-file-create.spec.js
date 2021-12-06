@@ -1,6 +1,7 @@
 /// <reference types="cypress" />
 
-import fieldMappingProfiles from '../../support/fragments/data_import/fieldMappingProfiles';
+import FieldMappingProfile from '../../support/fragments/data_import/fieldMappingProfile';
+import FieldMappingProfiles from '../../support/fragments/data_import/fieldMappingProfiles';
 import NewMappingProfile from '../../support/fragments/data_import/newMappingProfile';
 import TopMenu from '../../support/fragments/topMenu';
 
@@ -21,10 +22,18 @@ describe('ui-data-import: MARC file import with creating of the new instance, ho
       specialMappingProfile.folioRecordType = mappingProfile;
       specialMappingProfile.profileName = `autotest FAT-742: ${mappingProfile} mapping profile`;
 
-      fieldMappingProfiles.clickActionButton();
-      fieldMappingProfiles.createNewMappingProfile();
+      FieldMappingProfiles.clickActionButton();
+      FieldMappingProfiles.createNewMappingProfile();
       NewMappingProfile.fill(specialMappingProfile);
       NewMappingProfile.saveAndClose();
+      FieldMappingProfiles.waitLoadingList();
+      FieldMappingProfiles.specialMappingProfilePresented(specialMappingProfile.profileName);
+
+      // FieldMappingProfiles.searchMappingProfile();
+      // FieldMappingProfiles.waitLoadingMappingProfile();
+      // FieldMappingProfiles.searchMappingProfile(specialMappingProfile.profileName);
+      // FieldMappingProfile.clickActionButton();
+      // FieldMappingProfile.deleteMappingProfile();
     });
   });
 });
