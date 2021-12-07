@@ -4,7 +4,7 @@ import NewFund from '../../../support/fragments/finance/funds/newFund';
 import Funds from '../../../support/fragments/finance/funds/funds';
 
 
-describe('ui-finance: Ledger list search and filters', () => {
+describe('ui-finance: Fund creation', () => {
   const ledger = {
     id: uuid(),
     name: `autotest_ledger_${getRandomPostfix()}`,
@@ -43,8 +43,15 @@ describe('ui-finance: Ledger list search and filters', () => {
 
   it('C4052 should create new fund', function () {
     const defaultFund = NewFund.defaultFund;
-    defaultFund.ledgerName = ledger.ledgerName;
+    defaultFund.ledgerName = ledger.name;
     Funds.createDefaultFund(defaultFund);
+    Funds.checkCreatedFund(defaultFund.name);
     Funds.deleteFundViaActions();
+
+    // should not create fund without mandatory fields
+    const testFundName = `autotest_fund_${getRandomPostfix()}`;
+    Funds.tryToCreateFundWithoutMandatoryFields(testFundName);
+    Funds.searchByName(testFundName);
+    Funds.checkZeroSearchResultsHeader();
   });
 });

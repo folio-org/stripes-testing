@@ -1,16 +1,6 @@
-import { Button } from '../../../../../interactors';
 import getRandomPostfix from '../../../utils/stringTools';
 
 export default class NewLedger {
-    // TODO: start to use interactors instead of selectors
-    static #rootCss = 'div[id="pane-ledger-form-content"]'
-    static #nameCss = `${this.#rootCss} input[name="name"]`;
-    static #codeCss = `${this.#rootCss} input[name="code"]`;
-    static #fiscalYearCss = `${this.#rootCss} select[name^="fiscalYearOneId"]`;
-    static #saveButton = Button('Save & Close');
-    static #cancelButton = Button('Cancel');
-    static #closeWithoutSavingButton = Button('Close without saving');
-
     static #statusValue = {
       active: 'Active',
       frozen: 'Frozen',
@@ -28,21 +18,5 @@ export default class NewLedger {
 
     static get defaultFund() {
       return this.#defaultFund;
-    }
-
-    static fillMandatoryFields() {
-    }
-
-    static fillOnlyNameAndCode() {
-    }
-
-    static save() {
-    }
-
-    static closeWithoutSaving() {
-
-    }
-
-    static waitLoading() {
     }
 }

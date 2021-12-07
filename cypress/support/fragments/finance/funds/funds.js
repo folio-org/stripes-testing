@@ -1,8 +1,9 @@
-import { Button, TextField, Select } from '../../../../../interactors';
+import { Button, TextField, Selection, SelectionList, SearchField } from '../../../../../interactors';
 
 const rootFundDetailsXpath = '//*[@id="pane-fund-details"]';
-
-const newButton = Button('New');
+const createdFundNameXpath = '//*[@id="paneHeaderpane-fund-details-pane-title"]/h2/span';
+const numberOfSearchResultsHeader = '//*[@id="paneHeaderfund-results-pane-subtitle"]/span';
+const zeroResultsFoundText = '0 records found';
 
 export default {
   waitForFundDetailsLoading : () => {
@@ -12,21 +13,56 @@ export default {
 
   createDefaultFund(fund) {
     cy.do([
-      newButton.click(),
+      Button('New').click(),
       TextField('Name*').fillIn(fund.name),
       TextField('Code*').fillIn(fund.code),
       TextField('External account*').fillIn(fund.externalAccount),
-      Select('Ledger').choose(fund.ledgerName),
+      Selection('Ledger*').open(),
+      SelectionList().select(fund.ledgerName),
+      Button('Save & Close').click()
     ]);
     this.waitForFundDetailsLoading();
   },
 
+  checkCreatedFund: (fundName) => {
+    cy.xpath(createdFundNameXpath)
+      .should('be.visible')
+      .and('have.text', fundName);
+  },
+
+  tryToCreateFundWithoutMandatoryFields: (fundName) => {
+    cy.do([
+      Button('New').click(),
+      TextField('Name*').fillIn(fundName),
+      Button('Save & Close').click(),
+      TextField('Code*').fillIn('some code'),
+      Button('Save & Close').click(),
+      TextField('External account*').fillIn('some account'),
+      Button('Save & Close').click(),
+      Button('Cancel').click(),
+      Button('Close without saving').click()
+    ]);
+  },
+
+  searchByName : (fundName) => {
+    cy.do([
+      SearchField({ id: 'input-record-search' }).selectIndex('Name'),
+      SearchField({ id: 'input-record-search' }).fillIn(fundName),
+      Button('Search').click(),
+    ]);
+  },
+
+  checkZeroSearchResultsHeader: () => {
+    cy.xpath(numberOfSearchResultsHeader)
+      .should('be.visible')
+      .and('have.text', zeroResultsFoundText);
+  },
 
   deleteFundViaActions: () => {
     cy.do([
       Button('Actions').click(),
       Button('Delete').click(),
-      Button('Delete', { id:'clickable-ledger-remove-confirmation-confirm' }).click()
+      Button('Delete', { id:'clickable-fund-remove-confirmation-confirm' }).click()
     ]);
   }
 };
