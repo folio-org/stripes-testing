@@ -113,9 +113,9 @@ export default {
 
     // 7
     cy.then(() => QuickMarcEditor().presentedRequiredRows())
-      .then(presentedRequiredRow => {
-        if (requiredRowsTags.includes(presentedRequiredRow.tag)) {
-          assert.isFalse(presentedRequiredRow.isDeleteButtonExistArray);
+      .then(presentedRequiredRows => {
+        if(requiredRowsTags.every((tag) => presentedRequiredRows.find((row) => row.tag === tag && !row.isDeleteButtonExistArray))) {
+          assert.fail('test');
         }
       });
   }
