@@ -5,7 +5,7 @@ import FileManager from '../../support/utils/fileManager';
 import Checkbox from '../../../interactors/checkbox';
 
 
-describe('inventory / actions: export UUIDs', () => {
+describe('inventory: exports', () => {
   beforeEach('navigates to Inventory', () => {
     cy.login(Cypress.env('diku_login'), Cypress.env('diku_password'));
     cy.visit(TopMenu.inventoryPath);
