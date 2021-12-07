@@ -12,9 +12,9 @@ export default HTML.extend('quickMarcEditor')
     presentedRequiredRows:
       el => {
         const parsedRows = [];
-        el.querySelectorAll('div>div>div>div').forEach(row => parsedRows.push({
+        el.querySelectorAll('div>div>div>div[class*="quickMarcEditorRow-"]').forEach(row => parsedRows.push({
           tag : row.querySelector('input[name*=".tag"]')?.getAttribute('value'),
-          isDeleteButtonExist: Boolean(row.querySelector('button[icon=trash]'))
+          isDeleteButtonExist: Boolean(row.querySelector('button[icon="trash"]'))
         }));
 
         return parsedRows;
