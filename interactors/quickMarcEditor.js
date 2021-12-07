@@ -1,30 +1,24 @@
 import HTML from './baseHTML';
+import {quickMarcEditorRowSelector, quickMarcEditorTagInRowSelector, quickMarcEditorDeleteIconInRowSelector} from './quickMarcEditorRow';
 
 export default HTML.extend('quickMarcEditor')
   .selector('section[id=quick-marc-editor-pane]')
   .filters({
-    rowsCount: (el) => [...el.querySelectorAll('div>div>div>div')].length,
-    presentedFiledsTags:
+    rowsCount: (el) => [...el.querySelectorAll(quickMarcEditorRowSelector)].length,
+    presentedFieldsTags:
+    // TODO: clarify how to use apply and default
     // {apply:
-      el => [...el.querySelectorAll('input[name*=".tag"]')].map(tag => tag.getAttribute('value')),
+      el => [...el.querySelectorAll(quickMarcEditorTagInRowSelector)].map(tag => tag.getAttribute('value')),
     // default: and(['LDR', '001', '005', '008', '999'].map(field => some(field))
     // }
-    presentedRequiredRows:
+    presentedRowsProperties:
       el => {
         const parsedRows = [];
-        el.querySelectorAll('div>div>div>div[class*="quickMarcEditorRow-"]').forEach(row => parsedRows.push({
-          tag : row.querySelector('input[name*=".tag"]')?.getAttribute('value'),
-          isDeleteButtonExist: Boolean(row.querySelector('button[icon="trash"]'))
+        el.querySelectorAll(quickMarcEditorRowSelector).forEach(row => parsedRows.push({
+          tag : row.querySelector(quickMarcEditorTagInRowSelector)?.getAttribute('value'),
+          isDeleteButtonExist: Boolean(row.querySelector(quickMarcEditorDeleteIconInRowSelector))
         }));
-
         return parsedRows;
-
-        // const tags = [...el.querySelectorAll('input[name*=".tag"]').map(tag => tag.getAttribute('value'))];
-        // const isDeleteButtonExistArray = [...Boolean(el.querySelectorAll('button[icon=trash]'))];
-        // return tags.map((specialTag, i) => ({
-        //   tag: specialTag,
-        //   isDeletedButtonExist: isDeleteButtonExistArray[i]
-        // }));
       }
 
   });

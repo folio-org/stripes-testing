@@ -1,5 +1,5 @@
 import { QuickMarcEditor, QuickMarcEditorRow, TextArea, Button, Modal, TextField, and, some } from '../../../interactors';
-import NewInventoryInstance from './inventory/newInventoryInstance';
+import InventoryInstance from './inventory/inventoryInstance';
 
 const addFieldButton = Button({ ariaLabel : 'Add a new field' });
 const deleteFieldButton = Button({ ariaLabel : 'Delete this field' });
@@ -24,12 +24,12 @@ const _getRowInteractor = (specialRowNumber) => QuickMarcEditor()
   .find(QuickMarcEditorRow({ index: specialRowNumber }));
 
 const _addNewField = (fieldContent, tag) => {
-  const lastRowNumber = NewInventoryInstance.validOCLC.getLastRowNumber();
+  const lastRowNumber = InventoryInstance.validOCLC.getLastRowNumber();
   this.addRow(lastRowNumber);
   return this.fillAllAvailableValues(fieldContent, tag);
 };
 
-const getInitialRowsCount = () => NewInventoryInstance.validOCLC.getLastRowNumber();
+const getInitialRowsCount = () => InventoryInstance.validOCLC.getLastRowNumber();
 
 export default {
   addNewField: () => _addNewField(defaultFieldValues.content),
@@ -62,7 +62,7 @@ export default {
       .has({ value: content ?? defaultFieldValues.contentWithSubfield })
   ),
   fillAllAvailableValues:(fieldContent, tag) => {
-    const initialRowsCount = NewInventoryInstance.validOCLC.getLastRowNumber();
+    const initialRowsCount = InventoryInstance.validOCLC.getLastRowNumber();
     const contentTextArea = TextArea({ name: `records[${initialRowsCount + 2}].content` });
     const tagTextField = TextField({ name: `records[${initialRowsCount + 2}].tag` });
     const separator = '\t   \t';
@@ -80,42 +80,14 @@ export default {
     }
   },
   checkRequiredFields: () => {
-    // 1
-    // cy.then(() => QuickMarkEditor().requiredRows())
-    //   .then(requiredRows => {
-    //     assert.isNotEmpty(requiredRows);
-    //   });
-
-    // 2
-    // cy.then(QuickMarkEditorRow({ required : true }).exists());
-
-
-    // 3!!
-    // cy.then(() => QuickMarcEditorRow().required()).then(requiredRow => {
-    //   requiredRow.find(deleteFieldButton).absence();
-    // });
-
-    // 4
-    // cy.expect(QuickMarkEditor().requiredRows().find(deleteFieldButton).absence());
-
-    // 5
-    // ideally -> grab {tag,isDeleteButtonPresented} and process collection of such objects into this fragment
     cy.expect(QuickMarcEditor().has({
-      presentedFiledsTags: and(...requiredRowsTags.map(field => some(field)))
+      presentedFieldsTags: and(...requiredRowsTags.map(field => some(field)))
     }));
-
-    // 6
-    // cy.expect(QuickMarcEditor().has({
-    //   // presentedRequiredRows: and(...['LDR', '001', '005', '008', '999'].map(field => some(field)))
-    //   presentedRequiredRows: and(some('LDR'),
-    //   )
-    // }));
-
-    // 7
-    cy.then(() => QuickMarcEditor().presentedRequiredRows())
-      .then(presentedRequiredRows => {
-        if(requiredRowsTags.every((tag) => presentedRequiredRows.find((row) => row.tag === tag && !row.isDeleteButtonExistArray))) {
-          assert.fail('test');
+    cy.then(() => QuickMarcEditor().presentedRowsProperties())
+      .then(presentedRowsProperties => {
+        // TODO: move comparing logic into custome interactors matcher
+        if (!requiredRowsTags.every((tag) => presentedRowsProperties.find((rowProperties) => rowProperties.tag === tag && !rowProperties.isDeleteButtonExist))) {
+          assert.fail('Button Delete is presented into required row');
         }
       });
   }

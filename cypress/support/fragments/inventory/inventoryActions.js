@@ -1,9 +1,9 @@
 import { Button, Select, TextField } from '../../../../interactors';
-import NewInventoryInstance from './newInventoryInstance';
+import InventoryInstance from './inventoryInstance';
 
 const importButtonInActions = Button({ id: 'dropdown-clickable-import-record' });
 const importButtonInModal = Button('Import');
-const OCLWorldCatIdentifierTextField = TextField('Enter OCLC WorldCat identifier');
+const OCLWorldCatIdentifierTextField = TextField({ name: 'externalIdentifier' });
 const importTypeSelect = Select({ name :'externalIdentifierType' });
 
 export default {
@@ -25,10 +25,18 @@ export default {
     });
   },
 
-  import(specialOCLCWorldCatidentifier = NewInventoryInstance.validOCLC.id) {
+  import(specialOCLCWorldCatidentifier = InventoryInstance.getValidOCLC().id) {
     cy.do(this.open());
     cy.do(importButtonInActions.click());
+    this.fillImportFields(specialOCLCWorldCatidentifier);
 
+    this.pressImportInModal();
+    InventoryInstance.checkExpectedOCLCPresence(specialOCLCWorldCatidentifier);
+    InventoryInstance.checkExpectedMARCSource();
+  },
+
+  // the same steps can be used in Overlay Source Bibliographic Record
+  fillImportFields(specialOCLCWorldCatidentifier = InventoryInstance.validOCLC.id) {
     // TODO: remove in the future, now related with differenes in our environments
     if (Cypress.env('is_kiwi_release')) {
       const oclcWorldCat = { text:'OCLC WorldCat',
@@ -39,10 +47,12 @@ export default {
     }
 
     cy.do(OCLWorldCatIdentifierTextField.fillIn(specialOCLCWorldCatidentifier));
-    cy.do(importButtonInModal.click());
-
-    NewInventoryInstance.checkExpectedOCLCPresence(specialOCLCWorldCatidentifier);
   },
+
+  pressImportInModal() {
+    cy.do(importButtonInModal.click());
+  },
+
   verifySaveUUIDsFileName(actualName) {
     // Check naming mask
     const expectedFileNameMask = /SearchInstanceUUIDs\d{4}-\d{2}-\d{2}T\d{2}_\d{2}_\d{2}\+\d{2}_\d{2}\.csv/gm;
