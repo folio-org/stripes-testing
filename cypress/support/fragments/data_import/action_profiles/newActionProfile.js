@@ -1,4 +1,4 @@
-import { TextField, Select, Button } from '@interactors/html';
+import { TextField, Select, Button, Modal } from '@interactors/html';
 
 export default class NewActionProfile {
     static #nameProfileField = TextField('Name*');
@@ -6,6 +6,7 @@ export default class NewActionProfile {
     static #nameFolioRecordTypeSelect = Select({ name: 'profile.folioRecord' });
 
     static #saveButton = Button('Save as profile & Close');
+    static #linkProfileButton = Button('Link Profile');
 
     static #profileName = {
       instanceName: 'Instance',
@@ -40,6 +41,16 @@ export default class NewActionProfile {
       cy.do(this.#nameFolioRecordTypeSelect
         .choose(specialActionProfile.folioRecordType));
     }
+
+    static linkMappingProfile() {
+      cy.do(this.#linkProfileButton.click());
+    }
+
+    static selectMappingProfile() {
+      Modal('Field Mapping Profiles').find('').click();
+    }
+
+
 
     static saveAndClose() {
       cy.do(this.#saveButton.click());

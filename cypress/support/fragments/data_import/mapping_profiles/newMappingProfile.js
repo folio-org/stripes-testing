@@ -1,4 +1,4 @@
-import { TextField, Button, Select } from '../../../../interactors';
+import { TextField, Button, Select } from '../../../../../interactors';
 
 export default class NewMappingProfile {
     static #nameProfileField = TextField('Name*');

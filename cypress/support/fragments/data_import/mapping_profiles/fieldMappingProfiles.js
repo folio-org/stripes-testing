@@ -1,5 +1,5 @@
-import { Button, SearchField } from '../../../../interactors';
-import { getLongDelay } from '../../utils/cypressTools';
+import { Button, SearchField } from '../../../../../interactors';
+import { getLongDelay } from '../../../utils/cypressTools';
 import NewMappingProfile from './newMappingProfile';
 
 export default class FieldMappingProfiles {
@@ -39,5 +39,7 @@ export default class FieldMappingProfiles {
         SearchField({ id: 'input-search-mapping-profiles-field' }).fillIn(mappingProfileTitle),
         Button('Search').click(),
       ]);
-    } */
+    }
+
+    Modal('Confirm multipiece check out').find(Button('Check out')).click(), */
 }
