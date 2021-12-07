@@ -10,6 +10,7 @@ import {
   SelectionList,
 } from '../../../../interactors';
 
+// TODO: refactoring needed in order to have 1-1 relation between smoke tests in Test Rail and TAF
 describe('ui-finance: Ledger list search and filters', () => {
   const timestamp = (new Date()).getTime();
 
@@ -53,7 +54,7 @@ describe('ui-finance: Ledger list search and filters', () => {
     ]);
   });
 
-  it('should return ledgers according to ledgers filters and search by all indexes', function () {
+  it('C4061 should return ledgers according to ledgers filters and search by all indexes', function () {
     cy.do([
       Accordion({ id: 'ledgerStatus' }).clickHeader(),
       Checkbox({ id: 'clickable-filter-ledgerStatus-frozen' }).click(),
@@ -69,7 +70,7 @@ describe('ui-finance: Ledger list search and filters', () => {
     cy.expect(MultiColumnList({ id: 'ledgers-list' }).has({ rowCount: 1 }));
   });
 
-  it('should return ledgers according to search by name', () => {
+  it('C4061 should return ledgers according to search by name', () => {
     cy.do([
       SearchField({ id: 'input-record-search' }).selectIndex('Name'),
       SearchField({ id: 'input-record-search' }).fillIn(ledger.name),
@@ -79,7 +80,7 @@ describe('ui-finance: Ledger list search and filters', () => {
     cy.expect(MultiColumnList({ id: 'ledgers-list' }).has({ rowCount: 1 }));
   });
 
-  it('should return ledgers according to search by code', () => {
+  it('C4061 should return ledgers according to search by code', () => {
     cy.do([
       SearchField({ id: 'input-record-search' }).selectIndex('Code'),
       SearchField({ id: 'input-record-search' }).fillIn(ledger.code),
