@@ -37,3 +37,7 @@ export { default as TextField } from './text-field';
 export { default as TextArea } from './textarea';
 export { Tooltip, TooltipProximity } from './tooltip';
 export { dispatchFocusout } from './util';
+
+
+// Stripes-smart-component interactors
+export { AddressList, AddressEdit, AddressItem } from './address-edit-list';
