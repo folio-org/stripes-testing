@@ -51,8 +51,8 @@ export default {
 
   pressImportInModal() {
     cy.do(importButtonInModal.click());
+    NewInventoryInstance.checkExpectedOCLCPresence(specialOCLCWorldCatidentifier);
   },
-
   verifySaveUUIDsFileName(actualName) {
     // Check naming mask
     const expectedFileNameMask = /SearchInstanceUUIDs\d{4}-\d{2}-\d{2}T\d{2}_\d{2}_\d{2}\+\d{2}_\d{2}\.csv/gm;

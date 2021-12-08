@@ -22,7 +22,7 @@ describe('ui-organizations: Creating organization', () => {
       });
   });
 
-  it('should be possible by filling the "Create organization" form and submitting it', function () {
+  it('C675 should be possible by filling the "Create organization" form and submitting it', function () {
     cy.visit('/organizations/create');
 
     cy.createOrganization({ name, code, status: 'Active' });

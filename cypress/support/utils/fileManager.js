@@ -1,4 +1,3 @@
-// downloadsFolder - cypress variable, it's value = "cypress/downloads"
 const downloadsFolder = Cypress.config('downloadsFolder');
 
 export default {
