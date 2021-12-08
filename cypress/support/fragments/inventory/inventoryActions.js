@@ -25,7 +25,7 @@ export default {
     });
   },
 
-  import(specialOCLCWorldCatidentifier = InventoryInstance.getValidOCLC().id) {
+  import(specialOCLCWorldCatidentifier = InventoryInstance.validOCLC.id) {
     cy.do(this.open());
     cy.do(importButtonInActions.click());
     this.fillImportFields(specialOCLCWorldCatidentifier);

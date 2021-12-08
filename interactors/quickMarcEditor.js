@@ -1,5 +1,5 @@
 import HTML from './baseHTML';
-import {quickMarcEditorRowSelector, quickMarcEditorTagInRowSelector, quickMarcEditorDeleteIconInRowSelector} from './quickMarcEditorRow';
+import { quickMarcEditorRowSelector, quickMarcEditorTagInRowSelector, quickMarcEditorDeleteIconInRowSelector } from './quickMarcEditorRow';
 
 export default HTML.extend('quickMarcEditor')
   .selector('section[id=quick-marc-editor-pane]')
@@ -20,5 +20,4 @@ export default HTML.extend('quickMarcEditor')
         }));
         return parsedRows;
       }
-
   });

@@ -8,7 +8,7 @@ import InventoryViewSource from '../../support/fragments/inventory/inventoryView
 import InventoryInstanceEdit from '../../support/fragments/inventory/InventoryInstanceEdit';
 
 describe('Manage records ', () => {
-  before(() => {
+  beforeEach(() => {
     // TODO: add support of special permissions in special account
     cy.login(Cypress.env('diku_login'), Cypress.env('diku_password'));
     cy.visit(TopMenu.inventoryPath);
@@ -27,8 +27,7 @@ describe('Manage records ', () => {
 
     InventoryInstance.viewSource();
 
-    // TODO: see not clear behavior with adding of subfield $a
-    // InventoryViewSource.contains(expectedInSourceRow1);
+    InventoryViewSource.contains(expectedInSourceRow);
     InventoryViewSource.contains(expectedInSourceRowWithSubfield);
     // TODO: add assertion of absence of deleted row
     // InventoryViewSource.notContains('948\t   \t‡h NO HOLDINGS IN PAOLF - 43 OTHER HOLDINGS ');
@@ -70,7 +69,7 @@ describe('Manage records ', () => {
     QuickMarcEditor.checkRequiredFields();
   });
 
-  it.only('C10951 Add a 5XX field to a marc record in quickMARC', () => {
+  it('C10951 Add a 5XX field to a marc record in quickMARC', () => {
     InventoryActions.import();
     InventoryInstance.overlaySourceBibRecord();
 
@@ -95,5 +94,34 @@ describe('Manage records ', () => {
     InventoryViewSource.close();
 
     InventoryInstance.checkInstanceNotes(testRecord.tagMeaning, testRecord.content);
+  });
+
+  it('C345388 Derive a MARC bib record', () => {
+    InventoryActions.import();
+    // TODO: check the issue with reading in new version of interactors
+    InventoryInstance.getAssignedHRID()
+      .then(instanceHRID => {
+        InventoryInstance.deriveNewMarcBib();
+        const expectedCreatedValue = QuickMarcEditor.addNewField();
+
+        // TODO: add return value to validate the result by value too. As minimum add catching from response. The best way - through interactors
+        QuickMarcEditor.deletePenaltField();
+
+        const expectedUpdatedValue = QuickMarcEditor.updateExistingField();
+
+        QuickMarcEditor.pressSaveAndClose();
+        QuickMarcEditor.deleteConfirmationPresented();
+        QuickMarcEditor.confirmDelete();
+
+        InventoryInstance.checkUpdatedHRID(instanceHRID);
+        InventoryInstance.checkExpectedMARCSource();
+        // TODO: find correct tag to new field in record which presented into Inventory Instance
+        InventoryInstance.checkPresentedText(expectedUpdatedValue);
+
+        InventoryInstance.viewSource();
+        InventoryViewSource.contains(expectedCreatedValue);
+        InventoryViewSource.contains(expectedUpdatedValue);
+        // TODO: add check of absence of deleted field
+      });
   });
 });

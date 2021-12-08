@@ -1,5 +1,6 @@
 import { QuickMarcEditor, QuickMarcEditorRow, TextArea, Button, Modal, TextField, and, some } from '../../../interactors';
 import InventoryInstance from './inventory/inventoryInstance';
+import getRandomPostfix from '../utils/stringTools';
 
 const addFieldButton = Button({ ariaLabel : 'Add a new field' });
 const deleteFieldButton = Button({ ariaLabel : 'Delete this field' });
@@ -12,7 +13,7 @@ const defaultFieldValues = {
   subfieldPrefixInEditor: '$',
   subfieldPrefixInSource: '‡',
   // just enumerate a few free to use tags  which can be applyied in test one by one with small reserve
-  freeTagsIterator: new Set(['996', '997', '998']).values()
+  freeTags: ['996', '997', '998']
 };
 defaultFieldValues.initialSubField = `${defaultFieldValues.subfieldPrefixInEditor}a `;
 defaultFieldValues.contentWithSubfield = `${defaultFieldValues.initialSubField}${defaultFieldValues.content}`;
@@ -23,18 +24,38 @@ const requiredRowsTags = ['LDR', '001', '005', '008', '999'];
 const _getRowInteractor = (specialRowNumber) => QuickMarcEditor()
   .find(QuickMarcEditorRow({ index: specialRowNumber }));
 
-const _addNewField = (fieldContent, tag) => {
-  const lastRowNumber = InventoryInstance.getValidOCLC().getLastRowNumber();
-  this.addRow(lastRowNumber);
-  return this.fillAllAvailableValues(fieldContent, tag);
+const getInitialRowsCount = () => InventoryInstance.validOCLC.getLastRowNumber();
+
+const addRow = (rowNumber) => cy.do(_getRowInteractor(rowNumber ?? getInitialRowsCount() + 1).find(addFieldButton).click());
+
+const fillAllAvailableValues = (fieldContent, tag) => {
+  const initialRowsCount = InventoryInstance.validOCLC.getLastRowNumber();
+  const contentTextArea = TextArea({ name: `records[${initialRowsCount + 2}].content` });
+  const tagTextField = TextField({ name: `records[${initialRowsCount + 2}].tag` });
+  const separator = '\t   \t';
+  const tagValue = tag ?? defaultFieldValues.freeTags[0];
+  const content = fieldContent ?? defaultFieldValues.content;
+
+  cy.do(_getRowInteractor(initialRowsCount + 2).find(contentTextArea).fillIn(content));
+  cy.do(_getRowInteractor(initialRowsCount + 2).find(tagTextField).fillIn(tagValue));
+
+  if (!content.match(/^\$\w/)) {
+    return `${tagValue}${separator}${defaultFieldValues.getSourceContent(`${defaultFieldValues.initialSubField}${content}`)}`;
+  } else {
+    return `${tagValue}${separator}${defaultFieldValues.getSourceContent(content)}`;
+  }
 };
 
-const getInitialRowsCount = () => InventoryInstance.getValidOCLC().getLastRowNumber();
+const addNewField = (fieldContent = defaultFieldValues.content, tag) => {
+  addRow();
+  return fillAllAvailableValues(fieldContent, tag);
+};
+
 
 export default {
-  addNewField: () => _addNewField(defaultFieldValues.content),
+  addNewField,
 
-  addNewFieldWithSubField: () => _addNewField(defaultFieldValues.contentWithSubfield),
+  addNewFieldWithSubField: () => addNewField(defaultFieldValues.contentWithSubfield),
 
   deletePenaltField: () => {
     const lastRowNumber = getInitialRowsCount();
@@ -49,7 +70,7 @@ export default {
 
   getContentFromRow: (row) => row.split(this.separator)[1],
 
-  addRow: (rowNumber) => cy.do(_getRowInteractor(rowNumber ?? getInitialRowsCount() + 1).find(addFieldButton).click()),
+  addRow,
 
   checkInitialContent: (rowNumber) => cy.expect(
     _getRowInteractor(rowNumber ?? getInitialRowsCount() + 2)
@@ -61,24 +82,7 @@ export default {
       .find(TextArea({ name: `records[${rowNumber ?? getInitialRowsCount() + 2}].content` }))
       .has({ value: content ?? defaultFieldValues.contentWithSubfield })
   ),
-  fillAllAvailableValues:(fieldContent, tag) => {
-    const initialRowsCount = InventoryInstance.getValidOCLC().getLastRowNumber();
-    const contentTextArea = TextArea({ name: `records[${initialRowsCount + 2}].content` });
-    const tagTextField = TextField({ name: `records[${initialRowsCount + 2}].tag` });
-    const separator = '\t   \t';
-    const tagValue = tag ?? defaultFieldValues.freeTagsIterator.next().value;
-    const content = fieldContent ?? defaultFieldValues.content;
-
-    cy.do(_getRowInteractor(initialRowsCount + 2).find(contentTextArea).fillIn(content));
-    cy.do(_getRowInteractor(initialRowsCount + 2).find(tagTextField).fillIn(tagValue));
-
-    // content in editor doesn't have subfield marker
-    if (!content.match(/^$\w/)) {
-      return `${tagValue}${separator}${defaultFieldValues.getSourceContent(`${defaultFieldValues.initialSubField}${content}`)}`;
-    } else {
-      return `${tagValue}${separator}${defaultFieldValues.getSourceContent(content)}`;
-    }
-  },
+  fillAllAvailableValues,
   checkRequiredFields: () => {
     cy.expect(QuickMarcEditor().has({
       presentedFieldsTags: and(...requiredRowsTags.map(field => some(field)))
@@ -90,5 +94,10 @@ export default {
           assert.fail('Button Delete is presented into required row');
         }
       });
+  },
+  updateExistingField:(tag = InventoryInstance.validOCLC.existingTag) => {
+    const newContent = `newContent${getRandomPostfix()}`;
+    cy.do(QuickMarcEditorRow({ tagValue: tag }).find(TextArea()).fillIn(newContent));
+    return newContent;
   }
 };
