@@ -1,5 +1,7 @@
 import { MultiColumnList, HTML, including, Button, Section } from '../../../../interactors';
 import inventoryActions from './inventoryActions';
+import { getLongDelay } from '../../utils/cypressTools';
+import InventoryInstanceEdit from './InventoryInstanceEdit';
 
 const _section = Section({ id: 'pane-instancedetails' });
 const actionsButton = _section.find(Button('Actions'));
@@ -49,5 +51,14 @@ export default {
   editInstance:() => {
     cy.do(actionsButton.click());
     cy.do(editInstanceButton.click());
+    InventoryInstanceEdit.waitLoading();
+  },
+  // TODO: add id to section with Instance notes and redesign to interactors
+  checkInstanceNotes:(noteType, noteContent) => {
+    const instanceNotesXpath = '//div[.="Instance notes"]';
+    cy.xpath(instanceNotesXpath, getLongDelay()).should('be.exist');
+    const instatnceNotesValuesXpath = `${instanceNotesXpath}/../../../../../..`;
+    cy.xpath(`${instatnceNotesValuesXpath}//div[@role="columnheader"][.="${noteType}"]`).should('be.exist');
+    cy.xpath(`${instatnceNotesValuesXpath}//div[@role="gridcell"][.="${noteContent}"]`).should('be.exist');
   }
 };

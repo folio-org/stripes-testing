@@ -80,8 +80,8 @@ describe('Manage records ', () => {
 
     InventoryInstance.editInstance();
     // TODO: add assert to readonly fields
-
     InventoryInstanceEdit.close();
+
     InventoryInstance.goToEditMARCBiblRecord();
     QuickMarcEditor.addRow();
     QuickMarcEditor.checkInitialContent();
@@ -92,8 +92,8 @@ describe('Manage records ', () => {
 
     InventoryInstance.viewSource();
     InventoryViewSource.contains(expectedInSourceRow);
-
     InventoryViewSource.close();
 
+    InventoryInstance.checkInstanceNotes(testRecord.tagMeaning, testRecord.content);
   });
 });

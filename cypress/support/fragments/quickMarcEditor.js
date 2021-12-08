@@ -24,12 +24,12 @@ const _getRowInteractor = (specialRowNumber) => QuickMarcEditor()
   .find(QuickMarcEditorRow({ index: specialRowNumber }));
 
 const _addNewField = (fieldContent, tag) => {
-  const lastRowNumber = InventoryInstance.validOCLC.getLastRowNumber();
+  const lastRowNumber = InventoryInstance.getValidOCLC().getLastRowNumber();
   this.addRow(lastRowNumber);
   return this.fillAllAvailableValues(fieldContent, tag);
 };
 
-const getInitialRowsCount = () => InventoryInstance.validOCLC.getLastRowNumber();
+const getInitialRowsCount = () => InventoryInstance.getValidOCLC().getLastRowNumber();
 
 export default {
   addNewField: () => _addNewField(defaultFieldValues.content),
@@ -62,7 +62,7 @@ export default {
       .has({ value: content ?? defaultFieldValues.contentWithSubfield })
   ),
   fillAllAvailableValues:(fieldContent, tag) => {
-    const initialRowsCount = InventoryInstance.validOCLC.getLastRowNumber();
+    const initialRowsCount = InventoryInstance.getValidOCLC().getLastRowNumber();
     const contentTextArea = TextArea({ name: `records[${initialRowsCount + 2}].content` });
     const tagTextField = TextField({ name: `records[${initialRowsCount + 2}].tag` });
     const separator = '\t   \t';
