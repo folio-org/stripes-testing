@@ -8,9 +8,11 @@ export const AddressEdit = HTML.extend('address edit')
   })
   .actions({
     fillFields: async ({ find }, criteria) => {
+      const interactions = [];
       for (const k in criteria) { // eslint-disable-line guard-for-in
-        await find(TextField(k)).fillIn(criteria[k]);
+        interactions.push(find(TextField(k)).fillIn(criteria[k]));
       }
+      return Promise.all(interactions);
     },
     cancel: ({ find }) => find(Button(/cancel/i)).click(),
     save: ({ find }) => find(Button(/save/i)).click(),
