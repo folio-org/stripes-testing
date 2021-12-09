@@ -2,9 +2,10 @@ import TopMenu from '../../support/fragments/topMenu';
 import InventorySearch from '../../support/fragments/inventory/inventorySearch';
 import InventoryActions from '../../support/fragments/inventory/inventoryActions';
 import FileManager from '../../support/utils/fileManager';
+import Checkbox from '../../../interactors/checkbox';
 
 
-describe('inventory / actions: export UUIDs', () => {
+describe('inventory: exports', () => {
   beforeEach('navigates to Inventory', () => {
     cy.login(Cypress.env('diku_login'), Cypress.env('diku_password'));
     cy.visit(TopMenu.inventoryPath);
@@ -36,5 +37,15 @@ describe('inventory / actions: export UUIDs', () => {
             });
         });
     });
+  });
+
+  it('C196755 verifies search result counts and selected counts', () => {
+    cy.do([
+      InventorySearch.searchByEffectiveLocation(),
+      InventorySearch.getSearchResult(0).find(Checkbox()).click(),
+      InventorySearch.getSearchResult(2).find(Checkbox()).click(),
+    ]);
+
+    InventorySearch.verifySelectedRecords(2);
   });
 });
