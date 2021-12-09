@@ -1,9 +1,8 @@
 import {
   Button,
-  MultiColumnListCell,
   MultiColumnList,
-  including
 } from '../../interactors';
+import { getLongDelay } from './utils/cypressTools';
 
 Cypress.Commands.add('uploadFile', (pathToFile) => {
   cy.get('#pane-jobs-title-content > div.upload---2-sT\\+ > input[type=file]')
@@ -17,5 +16,5 @@ Cypress.Commands.add('uploadFile', (pathToFile) => {
     Button('Run').click()
   ]);
 
-  cy.expect(MultiColumnListCell(including(pathToFile)));
+  cy.get('[class*="job---ogB1P"]', getLongDelay()).should('exist');
 });
