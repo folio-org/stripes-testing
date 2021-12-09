@@ -1,12 +1,6 @@
 import { TextField, Button, Select } from '../../../../../interactors';
 
 export default class NewMappingProfile {
-    static #nameProfileField = TextField('Name*');
-    static #nameIncomingRecordTypeSelect = Select({ name: 'profile.incomingRecordType' });
-    static #nameFolioRecordTypeSelect = Select({ name: 'profile.existingRecordType' });
-
-    static #saveButton = Button('Save as profile & Close');
-
     static #profileName = {
       instanceName: 'Instance',
       holdingsName: 'Holdings',
@@ -23,10 +17,17 @@ export default class NewMappingProfile {
       item: 'Item',
     }
 
+    // TODO: add to mapping profile for holdings
+    static permanentLocation = {
+      location: '"location name aeCWa (location code dIZbi)"',
+    }
+
+
+
     static #defaultMappingProfile = {
       profileName: 'autotest FAT-742: ' + this.#profileName.instanceName + ' mapping profile',
       incomingRecordType: this.#incomingRecordTypeValue.marcBib,
-      folioRecordType: this.folioRecordTypeValue.instance,
+      folioRecordTypeMapping: this.folioRecordTypeValue.instance,
     }
 
     static get defaultMappingProfile() {
@@ -34,14 +35,14 @@ export default class NewMappingProfile {
     }
 
     static fill(specialMappingProfile = this.#defaultMappingProfile) {
-      cy.do([this.#nameProfileField.fillIn(specialMappingProfile.profileName)]);
-      cy.do(this.#nameIncomingRecordTypeSelect
-        .choose(specialMappingProfile.incomingRecordType));
-      cy.do(this.#nameFolioRecordTypeSelect
-        .choose(specialMappingProfile.folioRecordType));
+      cy.do([
+        TextField({ name:'profile.name' }).fillIn(specialMappingProfile.profileName),
+        Select({ name:'profile.incomingRecordType' }).choose(specialMappingProfile.incomingRecordType),
+        Select({ name:'profile.existingRecordType' }).choose(specialMappingProfile.folioRecordTypeMapping)
+      ]);
     }
 
     static saveAndClose() {
-      cy.do(this.#saveButton.click());
+      cy.do(Button('Save as profile & Close').click());
     }
 }

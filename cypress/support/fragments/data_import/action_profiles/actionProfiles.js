@@ -1,23 +1,22 @@
-import { Button } from '@interactors/html';
 import { getLongDelay } from '../../../utils/cypressTools';
+import { Button } from '../../../../../interactors';
 
 export default class ActionProfiles {
-    static #actionsButton = Button('Actions');
+  static createNewActionProfile() {
+    cy.do([
+      Button('Actions').click(),
+      Button('New action profile').click()
+    ]);
+  }
 
-    static clickActionButton() {
-      cy.do([Button('Actions')
-        .click()]);
-    }
+  static waitLoadingList() {
+    cy.get('[id="action-profiles-list"]', getLongDelay())
+      .should('be.visible');
+    cy.expect(Button('Actions').exists());
+  }
 
-    static createNewActionProfile() {
-      cy.get('[class="DropdownMenu---x9lIp"]')
-        .contains('New action profile')
-        .click();
-    }
-
-    static waitLoadingList() {
-      cy.get('[id="mapping-profiles-list"]', getLongDelay())
-        .should('be.visible');
-      cy.expect(this.#actionsButton.exists());
-    }
+  static specialActionProfilePresented(actionProfileTitle) {
+    cy.get('[id="action-profiles-list"]')
+      .should('contains.text', actionProfileTitle);
+  }
 }

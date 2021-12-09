@@ -1,13 +1,7 @@
-import { TextField, Select, Button, Modal } from '@interactors/html';
+import { TextField, Button, Select } from '../../../../../interactors';
+import { getLongDelay } from '../../../utils/cypressTools';
 
 export default class NewActionProfile {
-    static #nameProfileField = TextField('Name*');
-    static #nameActionSelect = Select({ name: 'profile.action' });
-    static #nameFolioRecordTypeSelect = Select({ name: 'profile.folioRecord' });
-
-    static #saveButton = Button('Save as profile & Close');
-    static #linkProfileButton = Button('Link Profile');
-
     static #profileName = {
       instanceName: 'Instance',
       holdingsName: 'Holdings',
@@ -27,7 +21,7 @@ export default class NewActionProfile {
     static #defaultActionProfile = {
       profileName: 'autotest FAT-742: ' + this.#profileName.instanceName + ' action profile',
       actionType: this.#action.create,
-      folioRecordType: this.folioRecordTypeValue.instance,
+      folioRecordTypeAction: this.folioRecordTypeValue.instance,
     }
 
     static get defaultActionProfile() {
@@ -35,24 +29,38 @@ export default class NewActionProfile {
     }
 
     static fill(specialActionProfile = this.#defaultActionProfile) {
-      cy.do([this.#nameProfileField.fillIn(specialActionProfile.profileName)]);
-      cy.do(this.#nameActionSelect
-        .choose(specialActionProfile.actionType));
-      cy.do(this.#nameFolioRecordTypeSelect
-        .choose(specialActionProfile.folioRecordType));
+      cy.do([
+        TextField({ name:'profile.name' }).fillIn(specialActionProfile.profileName),
+        Select({ name:'profile.action' }).choose(this.#action.create),
+        Select({ name:'profile.folioRecord' }).choose(this.folioRecordTypeValue.instance),
+      ]);
     }
 
     static linkMappingProfile() {
-      cy.do(this.#linkProfileButton.click());
+      cy.do([
+        Button('Link Profile').click(),
+      ]);
     }
 
-    static selectMappingProfile() {
-      Modal('Field Mapping Profiles').find('').click();
+    /* static linkedMappingProfilePresented(mappingProfileTitle) {
+      cy.get('[data-row-index="row-0"]')
+        .should('contains.text', mappingProfileTitle);
+    } */
+    static waitSelectingMappingProfile() {
+      /* cy.get({ id:'actionProfileFormAssociatedMappingProfileAccordion' })
+        .should('be.visible');
+      cy.expect(Button('Close').exists());
+      cy.get({ id:'actionProfileFormAssociatedMappingProfileAccordion' })
+        .invoke('Link Profile', 'disabled'); */
+      cy.get('[class="button---ZXtl+ interactionStyles---SDwDu default---SzGl0 marginBottom0---KlEVc"]').should('have.value', 'disabled');
     }
 
-
+    static linkedMappingProfilePresented() {
+      cy.get('[data-row-index="row-0"]')
+        .contains({ title:'Unlink this profile' }).should('be.visible');
+    }
 
     static saveAndClose() {
-      cy.do(this.#saveButton.click());
+      cy.do(Button('Save as profile & Close').click());
     }
 }
