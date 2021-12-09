@@ -14,4 +14,10 @@ export default {
   searchByEffectiveLocation(values) {
     return effectiveLocationInput.select(values ?? [this.effectiveLocation.mainLibrary]);
   },
+
+  getUUIDsFromRequest(req) {
+    const expectedUUIDs = [];
+    req.response.body.ids.forEach((elem) => { expectedUUIDs.push(elem.id); });
+    return expectedUUIDs;
+  },
 };

@@ -16,7 +16,8 @@ export default HTML.extend('text area')
     value: el => el.querySelector('textarea').value,
     warning: el => el.querySelector('[class^=feedbackWarning-]').textContent,
     error: el => el.querySelector('[class^=feedbackError-]').textContent,
-    valid: el => el.querySelector('textarea').getAttribute('aria-invalid') !== 'true'
+    valid: el => el.querySelector('textarea').getAttribute('aria-invalid') !== 'true',
+    name: el => el.querySelector('textarea').getAttribute('name'),
   })
   .actions({
     blur: ({ find }) => find(TextField()).perform(dispatchFocusout),
