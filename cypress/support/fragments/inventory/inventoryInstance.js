@@ -2,7 +2,6 @@ import { MultiColumnList, HTML, including, Button, Section, QuickMarcEditor, Key
 import inventoryActions from './inventoryActions';
 import { getLongDelay } from '../../utils/cypressTools';
 import InventoryInstanceEdit from './InventoryInstanceEdit';
-import section from '../../../../interactors/section';
 
 const _section = Section({ id: 'pane-instancedetails' });
 const actionsButton = _section.find(Button('Actions'));
