@@ -1,6 +1,6 @@
 import getRandomPostfix from '../../../utils/stringTools';
 
-export default class NewLedger {
+export default class NewFund {
     static #statusValue = {
       active: 'Active',
       frozen: 'Frozen',

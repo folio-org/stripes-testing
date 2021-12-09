@@ -39,6 +39,9 @@ export default {
       Button('Save & Close').click(),
       TextField('External account*').fillIn('some account'),
       Button('Save & Close').click(),
+      // try to navigate without saving
+      Button('Agreements').click(),
+      Button('Keep editing').click,
       Button('Cancel').click(),
       Button('Close without saving').click()
     ]);

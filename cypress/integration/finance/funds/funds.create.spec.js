@@ -41,8 +41,8 @@ describe('ui-finance: Fund creation', () => {
     cy.deleteLedgerApi(ledger.id);
   });
 
-  it('C4052 should create new fund', function () {
-    const defaultFund = NewFund.defaultFund;
+  it('C4052 should create new fund', () => {
+    const defaultFund = { ...NewFund.defaultFund };
     defaultFund.ledgerName = ledger.name;
     Funds.createDefaultFund(defaultFund);
     Funds.checkCreatedFund(defaultFund.name);
