@@ -1,5 +1,6 @@
 import { TextField, Button, Select } from '../../../../../interactors';
 import { getLongDelay } from '../../../utils/cypressTools';
+import ModalSelectProfile from './modalSelectProfile';
 
 export default class NewActionProfile {
     static #profileName = {
@@ -36,28 +37,21 @@ export default class NewActionProfile {
       ]);
     }
 
-    static linkMappingProfile() {
+    static linkMappingProfile(specialMappingProfile) {
       cy.do([
         Button('Link Profile').click(),
       ]);
+      ModalSelectProfile.searchMappingProfileByName(specialMappingProfile.profileName);
+
+      ModalSelectProfile.selectMappingProfile();
+      NewActionProfile.waitUntilLinkingFinished();
+      NewActionProfile.saveAndClose();
     }
 
-    /* static linkedMappingProfilePresented(mappingProfileTitle) {
-      cy.get('[data-row-index="row-0"]')
-        .should('contains.text', mappingProfileTitle);
-    } */
-    static waitSelectingMappingProfile() {
-      /* cy.get({ id:'actionProfileFormAssociatedMappingProfileAccordion' })
-        .should('be.visible');
-      cy.expect(Button('Close').exists());
-      cy.get({ id:'actionProfileFormAssociatedMappingProfileAccordion' })
-        .invoke('Link Profile', 'disabled'); */
-      cy.get('[class="button---ZXtl+ interactionStyles---SDwDu default---SzGl0 marginBottom0---KlEVc"]').should('have.value', 'disabled');
-    }
-
-    static linkedMappingProfilePresented() {
-      cy.get('[data-row-index="row-0"]')
-        .contains({ title:'Unlink this profile' }).should('be.visible');
+    static waitUntilLinkingFinished() {
+      // TODO: redesign to interactors(Section)
+      cy.get('section[id=actionProfileFormAssociatedMappingProfileAccordion] div[class*=searchControl]>button[disabled]',
+        getLongDelay()).should('be.visible');
     }
 
     static saveAndClose() {

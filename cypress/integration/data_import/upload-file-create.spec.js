@@ -42,14 +42,7 @@ describe('ui-data-import: MARC file import with creating of the new instance, ho
       SettingsDataImport.goToActionProfile();
       ActionProfiles.createNewActionProfile();
       NewActionProfile.fill(specialActionProfile);
-      NewActionProfile.linkMappingProfile();
-      ModalSelectProfile.searchMappingProfileByName(specialMappingProfile.profileName);
-
-      ModalSelectProfile.selectMappingProfile();
-      NewActionProfile.waitSelectingMappingProfile();
-      NewActionProfile.linkedMappingProfilePresented(specialMappingProfile.profileName);
-
-      NewActionProfile.saveAndClose();
+      NewActionProfile.linkMappingProfile(specialMappingProfile);
 
       ActionProfiles.specialActionProfilePresented(specialActionProfile.profileName);
     });
