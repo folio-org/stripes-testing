@@ -49,9 +49,9 @@ export default {
     cy.do(OCLWorldCatIdentifierTextField.fillIn(specialOCLCWorldCatidentifier));
   },
 
-  pressImportInModal() {
+  pressImportInModal(specialOCLCWorldCatidentifier = InventoryInstance.validOCLC.id) {
     cy.do(importButtonInModal.click());
-    NewInventoryInstance.checkExpectedOCLCPresence(specialOCLCWorldCatidentifier);
+    InventoryInstance.checkExpectedOCLCPresence(specialOCLCWorldCatidentifier);
   },
   verifySaveUUIDsFileName(actualName) {
     // Check naming mask

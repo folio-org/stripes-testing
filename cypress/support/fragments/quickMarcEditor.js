@@ -26,18 +26,18 @@ const _getRowInteractor = (specialRowNumber) => QuickMarcEditor()
 
 const getInitialRowsCount = () => InventoryInstance.validOCLC.getLastRowNumber();
 
-const addRow = (rowNumber) => cy.do(_getRowInteractor(rowNumber ?? getInitialRowsCount() + 1).find(addFieldButton).click());
+const addRow = (rowNumber) => cy.do(_getRowInteractor(rowNumber ?? getInitialRowsCount()).find(addFieldButton).click());
 
 const fillAllAvailableValues = (fieldContent, tag) => {
   const initialRowsCount = InventoryInstance.validOCLC.getLastRowNumber();
-  const contentTextArea = TextArea({ name: `records[${initialRowsCount + 2}].content` });
-  const tagTextField = TextField({ name: `records[${initialRowsCount + 2}].tag` });
+  const contentTextArea = TextArea({ name: `records[${initialRowsCount + 1}].content` });
+  const tagTextField = TextField({ name: `records[${initialRowsCount + 1}].tag` });
   const separator = '\t   \t';
   const tagValue = tag ?? defaultFieldValues.freeTags[0];
   const content = fieldContent ?? defaultFieldValues.content;
 
-  cy.do(_getRowInteractor(initialRowsCount + 2).find(contentTextArea).fillIn(content));
-  cy.do(_getRowInteractor(initialRowsCount + 2).find(tagTextField).fillIn(tagValue));
+  cy.do(_getRowInteractor(initialRowsCount + 1).find(contentTextArea).fillIn(content));
+  cy.do(_getRowInteractor(initialRowsCount + 1).find(tagTextField).fillIn(tagValue));
 
   if (!content.match(/^\$\w/)) {
     return `${tagValue}${separator}${defaultFieldValues.getSourceContent(`${defaultFieldValues.initialSubField}${content}`)}`;
@@ -73,13 +73,13 @@ export default {
   addRow,
 
   checkInitialContent: (rowNumber) => cy.expect(
-    _getRowInteractor(rowNumber ?? getInitialRowsCount() + 2)
-      .find(TextArea({ name: `records[${rowNumber ?? getInitialRowsCount() + 2}].content` }))
+    _getRowInteractor(rowNumber ?? getInitialRowsCount() + 1)
+      .find(TextArea({ name: `records[${rowNumber ?? getInitialRowsCount() + 1}].content` }))
       .has({ value: defaultFieldValues.initialSubField })
   ),
   checkContent: (content, rowNumber) => cy.expect(
-    _getRowInteractor(rowNumber ?? getInitialRowsCount() + 2)
-      .find(TextArea({ name: `records[${rowNumber ?? getInitialRowsCount() + 2}].content` }))
+    _getRowInteractor(rowNumber ?? getInitialRowsCount() + 1)
+      .find(TextArea({ name: `records[${rowNumber ?? getInitialRowsCount() + 1}].content` }))
       .has({ value: content ?? defaultFieldValues.contentWithSubfield })
   ),
   fillAllAvailableValues,

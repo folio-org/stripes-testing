@@ -1,5 +1,5 @@
 {
-  "baseUrl": "https://bugfest-kiwi.folio.ebsco.com",
+  "baseUrl": "https://folio-snapshot.dev.folio.org",
   "viewportWidth": 1920,
   "viewportHeight": 1080,
   "video": false,
