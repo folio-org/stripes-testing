@@ -1,15 +1,13 @@
+import { TextField, Select, Button } from '../../../../../interactors';
 
-
-export default class NewActionProfile {
-    static #saveButton = Button('Save as profile & Close');
-
-    static #acceptedDataType {
-      marc: 'MARC)',
+export default class NewJobProfile {
+    static acceptedDatatype = {
+      dataType: 'MARC',
     }
 
     static #defaultJobProfile = {
       profileName: 'autotest FAT-742: Job profile',
-      acceptedDataType: this.#acceptedDataType,
+      acceptedDataType: this.acceptedDatatype.dataType,
     }
 
     static get defaultJobProfile() {
@@ -18,8 +16,20 @@ export default class NewActionProfile {
 
     static fill(specialJobProfile = this.#defaultJobProfile) {
       cy.do([
-        TextField('Name*').fillIn(specialJobProfile.profileName),
-        Select('Accepted data type*').choose(this.#action.create),
+        TextField({ name:'profile.name' }).fillIn(specialJobProfile.profileName),
+        Select({ name:'profile.dataType' }).choose(specialJobProfile.acceptedDataType),
       ]);
+    }
+
+    /* static selectActionProfile() {
+      cy.do([
+        cy.get('div[id="type-selector-dropdown-linker-root"]').click()
+      ]);
+      cy.do([
+      Button('Click here to get started').click()
+    } */
+
+    static clickSaveAndClose() {
+      cy.do(Button('Save as profile & Close').click());
     }
 }

@@ -45,7 +45,7 @@ export default class NewActionProfile {
 
       ModalSelectProfile.selectMappingProfile();
       NewActionProfile.waitUntilLinkingFinished();
-      NewActionProfile.saveAndClose();
+      NewActionProfile.clickSaveAndClose();
     }
 
     static waitUntilLinkingFinished() {
@@ -54,7 +54,7 @@ export default class NewActionProfile {
         getLongDelay()).should('be.visible');
     }
 
-    static saveAndClose() {
+    static clickSaveAndClose() {
       cy.do(Button('Save as profile & Close').click());
     }
 }

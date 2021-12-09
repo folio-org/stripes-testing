@@ -5,7 +5,8 @@ import NewActionProfile from '../../support/fragments/data_import/action_profile
 import NewMappingProfile from '../../support/fragments/data_import/mapping_profiles/newMappingProfile';
 import ActionProfiles from '../../support/fragments/data_import/action_profiles/actionProfiles';
 import SettingsDataImport from '../../support/fragments/data_import/settingsDataImport';
-import ModalSelectProfile from '../../support/fragments/data_import/action_profiles/modalSelectProfile';
+import JobProfiles from '../../support/fragments/data_import/job_profiles/jobProfiles';
+import NewJobProfile from '../../support/fragments/data_import/job_profiles/newJobProfile';
 
 
 describe('ui-data-import: MARC file import with creating of the new instance, holding and item', () => {
@@ -15,7 +16,8 @@ describe('ui-data-import: MARC file import with creating of the new instance, ho
 
   const collectionOfProfiles = [
     { mappingProfile: NewMappingProfile.folioRecordTypeValue.instance,
-      actionProfile: NewActionProfile.folioRecordTypeValue.instance },
+      actionProfile: NewActionProfile.folioRecordTypeValue.instance,
+      jobProfile: NewJobProfile.acceptedDatatype.dataType },
     /* { mappingProfile: NewMappingProfile.folioRecordTypeValue.holdings,
       actionProfile: NewActionProfile.folioRecordTypeValue.holdings },
     { mappingProfile: NewMappingProfile.folioRecordTypeValue.item,
@@ -32,6 +34,9 @@ describe('ui-data-import: MARC file import with creating of the new instance, ho
       specialActionProfile.folioRecordTypeAction = profile.actionProfile;
       specialActionProfile.profileName = `autotest FAT-742: ${profile.actionProfile} action profile`;
 
+      const specialJobProfile = { ...NewJobProfile.defaultJobProfile };
+      specialJobProfile.acceptedDataType = profile.jobProfile;
+
       SettingsDataImport.goToMappingProfile();
       FieldMappingProfiles.createNewMappingProfile();
       NewMappingProfile.fill(specialMappingProfile);
@@ -43,8 +48,15 @@ describe('ui-data-import: MARC file import with creating of the new instance, ho
       ActionProfiles.createNewActionProfile();
       NewActionProfile.fill(specialActionProfile);
       NewActionProfile.linkMappingProfile(specialMappingProfile);
-
       ActionProfiles.specialActionProfilePresented(specialActionProfile.profileName);
+
+      SettingsDataImport.goToJobProfile();
+      JobProfiles.clickButton();
+      JobProfiles.createNewJobProfile();
+      NewJobProfile.fill(specialJobProfile);
+      NewJobProfile.clickSaveAndClose();
+      JobProfiles.waitLoadingList();
+      JobProfiles.specialJobProfilePresented(specialJobProfile.profileName);
     });
   });
 });
