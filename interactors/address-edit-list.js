@@ -5,15 +5,9 @@ export const AddressEdit = HTML.extend('address edit')
   .locator((el) => el.id.replace('addressEdit-', ''))
   .filters({
     index: (el) => [...el.closest('ul').querySelectorAll('fieldset[data-test-address-edit]')].indexOf(el),
+    error: TextField().error()
   })
   .actions({
-    fillFields: async ({ find }, criteria) => {
-      const interactions = [];
-      for (const k in criteria) { // eslint-disable-line guard-for-in
-        interactions.push(find(TextField(k)).fillIn(criteria[k]));
-      }
-      return Promise.all(interactions);
-    },
     cancel: ({ find }) => find(Button(/cancel/i)).click(),
     save: ({ find }) => find(Button(/save/i)).click(),
     delete: ({ find }) => find(Button(/remove/i)).click()
