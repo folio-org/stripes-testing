@@ -34,9 +34,6 @@ describe('ui-data-import: MARC file import with creating of the new instance, ho
       specialActionProfile.folioRecordTypeAction = profile.actionProfile;
       specialActionProfile.profileName = `autotest FAT-742: ${profile.actionProfile} action profile`;
 
-      const specialJobProfile = { ...NewJobProfile.defaultJobProfile };
-      specialJobProfile.acceptedDataType = profile.jobProfile;
-
       SettingsDataImport.goToMappingProfile();
       FieldMappingProfiles.createNewMappingProfile();
       NewMappingProfile.fill(specialMappingProfile);
@@ -49,16 +46,22 @@ describe('ui-data-import: MARC file import with creating of the new instance, ho
       NewActionProfile.fill(specialActionProfile);
       NewActionProfile.linkMappingProfile(specialMappingProfile);
       ActionProfiles.specialActionProfilePresented(specialActionProfile.profileName);
-
-      SettingsDataImport.goToJobProfile();
-      JobProfiles.clickButton();
-      JobProfiles.createNewJobProfile();
-      NewJobProfile.fill(specialJobProfile);
-      NewJobProfile.selectActionProfile(specialActionProfile);
-      cy.pause();
-      NewJobProfile.clickSaveAndClose();
-      JobProfiles.waitLoadingList();
-      JobProfiles.specialJobProfilePresented(specialJobProfile.profileName);
     });
+  });
+
+  const jobProfile = NewJobProfile.acceptedDatatype.dataType;
+
+  it(`C343334 MARC file import with creating a new ${jobProfile} job profile`, () => {
+    const specialJobProfile = { ...NewJobProfile.defaultJobProfile };
+    specialJobProfile.acceptedDataType = jobProfile;
+
+    SettingsDataImport.goToJobProfile();
+    JobProfiles.clickButton();
+    JobProfiles.createNewJobProfile();
+    NewJobProfile.fill(specialJobProfile);
+    NewJobProfile.selectActionProfile(NewActionProfile.specialActionProfile.profileName);
+    NewJobProfile.clickSaveAndClose();
+    JobProfiles.waitLoadingList();
+    JobProfiles.specialJobProfilePresented(specialJobProfile.profileName);
   });
 });
