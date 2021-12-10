@@ -94,8 +94,9 @@ export default {
     cy.do(actionsButton.click());
     cy.do(addMarcHoldingRecordButton.click());
     QuickMarcEditorFragment.waitLoading();
-
-    
+    QuickMarcEditorFragment.updateExistingField('852', QuickMarcEditorFragment.getExistingLocation());
+    QuickMarcEditorFragment.addRequiredBackslashes('852');
+    QuickMarcEditorFragment.pressSaveAndClose();
   }
 
 };
