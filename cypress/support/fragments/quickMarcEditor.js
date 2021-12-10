@@ -1,4 +1,4 @@
-import { QuickMarcEditor, QuickMarcEditorRow, TextArea, Button, Modal, TextField, and, some } from '../../../interactors';
+import { QuickMarcEditor, QuickMarcEditorRow, TextArea, Button, Modal, TextField, and, some, Pane } from '../../../interactors';
 import InventoryInstance from './inventory/inventoryInstance';
 import getRandomPostfix from '../utils/stringTools';
 
@@ -99,5 +99,8 @@ export default {
     const newContent = `newContent${getRandomPostfix()}`;
     cy.do(QuickMarcEditorRow({ tagValue: tag }).find(TextArea()).fillIn(newContent));
     return newContent;
+  },
+  waitLoading:() => {
+    cy.expect(Pane({ id: 'quick-marc-editor-pane' }).exists());
   }
 };

@@ -1,4 +1,5 @@
 import { MultiColumnList, HTML, including, Button, Section, QuickMarcEditor, KeyValue } from '../../../../interactors';
+import QuickMarcEditorFragment from '../quickMarcEditor';
 import inventoryActions from './inventoryActions';
 import { getLongDelay } from '../../utils/cypressTools';
 import InventoryInstanceEdit from './InventoryInstanceEdit';
@@ -12,6 +13,8 @@ const editInstanceButton = Button({ id:'edit-instance' });
 const viewSourceButton = Button({ id:'clickable-view-source' });
 const overlaySourceBibRecord = Button({ id:'dropdown-clickable-reimport-record' });
 const deriveNewMarcBibRecord = Button({ id:'duplicate-instance-marc' });
+const addMarcHoldingRecordButton = Button({ id:'create-holdings-marc' });
+
 
 const instanceHRID = 'Instance HRID';
 
@@ -85,6 +88,14 @@ export default {
 
   checkPresentedText: (expectedText) => {
     cy.expect(_section.find(HTML(including(expectedText))).exists());
+  },
+
+  addMarcHoldingRecord:() => {
+    cy.do(actionsButton.click());
+    cy.do(addMarcHoldingRecordButton.click());
+    QuickMarcEditorFragment.waitLoading();
+
+    
   }
 
 };
