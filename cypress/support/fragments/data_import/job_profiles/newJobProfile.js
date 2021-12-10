@@ -1,4 +1,5 @@
 import { TextField, Select, Button } from '../../../../../interactors';
+import ModalSelectActionProfile from './modalSelectActionProfile';
 
 export default class NewJobProfile {
     static acceptedDatatype = {
@@ -21,13 +22,14 @@ export default class NewJobProfile {
       ]);
     }
 
-    /* static selectActionProfile() {
+    static selectActionProfile(specialActionProfile) {
+      cy.get('[id="type-selector-dropdown-linker-root"]').click();
       cy.do([
-        cy.get('div[id="type-selector-dropdown-linker-root"]').click()
+        Button('Action').click(),
       ]);
-      cy.do([
-      Button('Click here to get started').click()
-    } */
+      ModalSelectActionProfile.searchActionProfileByName(specialActionProfile.profileName);
+      ModalSelectActionProfile.selectActionProfile();
+    }
 
     static clickSaveAndClose() {
       cy.do(Button('Save as profile & Close').click());

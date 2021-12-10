@@ -18,10 +18,10 @@ describe('ui-data-import: MARC file import with creating of the new instance, ho
     { mappingProfile: NewMappingProfile.folioRecordTypeValue.instance,
       actionProfile: NewActionProfile.folioRecordTypeValue.instance,
       jobProfile: NewJobProfile.acceptedDatatype.dataType },
-    /* { mappingProfile: NewMappingProfile.folioRecordTypeValue.holdings,
+    { mappingProfile: NewMappingProfile.folioRecordTypeValue.holdings,
       actionProfile: NewActionProfile.folioRecordTypeValue.holdings },
     { mappingProfile: NewMappingProfile.folioRecordTypeValue.item,
-      actionProfile: NewActionProfile.folioRecordTypeValue.item } */
+      actionProfile: NewActionProfile.folioRecordTypeValue.item }
   ];
 
   collectionOfProfiles.forEach(profile => {
@@ -54,6 +54,8 @@ describe('ui-data-import: MARC file import with creating of the new instance, ho
       JobProfiles.clickButton();
       JobProfiles.createNewJobProfile();
       NewJobProfile.fill(specialJobProfile);
+      NewJobProfile.selectActionProfile(specialActionProfile);
+      cy.pause();
       NewJobProfile.clickSaveAndClose();
       JobProfiles.waitLoadingList();
       JobProfiles.specialJobProfilePresented(specialJobProfile.profileName);

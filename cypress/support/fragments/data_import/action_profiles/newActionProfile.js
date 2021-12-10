@@ -1,6 +1,6 @@
 import { TextField, Button, Select } from '../../../../../interactors';
 import { getLongDelay } from '../../../utils/cypressTools';
-import ModalSelectProfile from './modalSelectProfile';
+import ModalSelectMappingProfile from './modalSelectMappingProfile';
 
 export default class NewActionProfile {
     static #profileName = {
@@ -41,9 +41,9 @@ export default class NewActionProfile {
       cy.do([
         Button('Link Profile').click(),
       ]);
-      ModalSelectProfile.searchMappingProfileByName(specialMappingProfile.profileName);
+      ModalSelectMappingProfile.searchMappingProfileByName(specialMappingProfile.profileName);
 
-      ModalSelectProfile.selectMappingProfile();
+      ModalSelectMappingProfile.selectMappingProfile();
       NewActionProfile.waitUntilLinkingFinished();
       NewActionProfile.clickSaveAndClose();
     }
