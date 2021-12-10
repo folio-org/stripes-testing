@@ -1,4 +1,4 @@
-import { TextField, Button, Select } from '../../../../../interactors';
+import { TextField, Button, Select, Accordion, HTML, including, Dropdown } from '../../../../../interactors';
 import FieldMappingProfiles from './fieldMappingProfiles';
 
 export default class NewMappingProfile {
@@ -18,8 +18,7 @@ export default class NewMappingProfile {
       item: 'Item',
     }
 
-    // TODO: add to mapping profile for holdings
-    static #permanentLocation = {
+    static permanentLocation = {
       location: '"Annex (KU/CC/DI/A)"',
     }
 
@@ -35,48 +34,7 @@ export default class NewMappingProfile {
       status: 'In process',
     }
 
-    /* static #defaultInstanceMappingProfile = {
-      profileName: 'autotest FAT-742: ' + this.#profileName.instanceName + ' mapping profile',
-      incomingRecordType: this.#incomingRecordTypeValue.marcBib,
-      folioRecordTypeMapping: this.folioRecordTypeValue.instance,
-    }
-
-    static get defaultInstanceMappingProfile() {
-      return this.#defaultInstanceMappingProfile;
-    }
-
-    static fillInstanceMappingProfile(specialInstanceMappingProfile = this.#defaultInstanceMappingProfile) {
-      cy.do([
-        TextField({ name:'profile.name' }).fillIn(specialInstanceMappingProfile.profileName),
-        Select({ name:'profile.incomingRecordType' }).choose(specialInstanceMappingProfile.incomingRecordType),
-        Select({ name:'profile.existingRecordType' }).choose(specialInstanceMappingProfile.folioRecordTypeMapping)
-      ]);
-    }
-
-    // TODO create holdings mapping profile
-    static #defaultHoldingsMappingProfile = {
-      profileName: 'autotest FAT-742: ' + this.#profileName.holdingsName + ' mapping profile',
-      incomingRecordType: this.#incomingRecordTypeValue.marcBib,
-      folioRecordTypeMapping: this.folioRecordTypeValue.holdings,
-      permanentLocation: this.#permanentLocation,
-    }
-
-    static get defaultHoldingsMappingProfile() {
-      return this.#defaultHoldingsMappingProfile;
-    }
-
-    static fillHoldingsMappingProfile(specialHoldingsMappingProfile = this.#defaultHoldingsMappingProfile) {
-      cy.do([
-        TextField({ name:'profile.name' }).fillIn(specialHoldingsMappingProfile.profileName),
-        Select({ name:'profile.incomingRecordType' }).choose(specialHoldingsMappingProfile.incomingRecordType),
-        Select({ name:'profile.existingRecordType' }).choose(specialHoldingsMappingProfile.folioRecordTypeMapping),
-        Button('Accepted values').click(),
-        // Button(#permanentLocation.location).click()
-      ]);
-    } */
-
-    // TODO create item mapping profile
-
+    // Instance mapping profile
     static #defaultMappingProfile = {
       name: 'autotest FAT-742: ' + this.#profileName.instanceName + ' mapping profile',
       typeValue: this.folioRecordTypeValue.instance,
@@ -86,7 +44,7 @@ export default class NewMappingProfile {
       return this.#defaultMappingProfile;
     }
 
-    static fill(specialMappingProfile = this.#defaultMappingProfile) {
+    static fillMappingProfile(specialMappingProfile = this.#defaultMappingProfile) {
       cy.do([
         TextField({ name:'profile.name' }).fillIn(specialMappingProfile.name),
         Select({ name:'profile.incomingRecordType' }).choose(this.#incomingRecordTypeValue.marcBib),
@@ -94,7 +52,60 @@ export default class NewMappingProfile {
       ]);
     }
 
-    static saveAndClose() {
+    // Holdings mapping profile
+    static #defaultHoldingsMappingProfile = {
+      profileName: 'autotest FAT-742: ' + this.#profileName.holdingsName + ' mapping profile',
+      incomingRecordType: this.#incomingRecordTypeValue.marcBib,
+      folioRecordTypeMapping: this.folioRecordTypeValue.holdings,
+      permanentLocation: this.permanentLocation,
+    }
+
+    static get defaultHoldingsMappingProfile() {
+      return this.#defaultHoldingsMappingProfile;
+    }
+
+    static fillHoldingsMappingProfile(specialHoldingsMappingProfile = this.#defaultHoldingsMappingProfile) {
+      cy.do([
+        TextField({ name:'profile.name' }).fillIn(specialHoldingsMappingProfile.name),
+        Select({ name:'profile.incomingRecordType' }).choose(this.#incomingRecordTypeValue.marcBib),
+        Select({ name:'profile.existingRecordType' }).choose(specialHoldingsMappingProfile.typeValue),
+      ]);
+      NewMappingProfile.clickButtonForSelectOption();
+    }
+
+    static clickButtonForSelectOption() {
+      cy.do(Accordion('Location').find(HTML(including('Permanent'))));
+      cy.do(Dropdown('Accepted values').choose('Annex (KU/CC/DI/A)'));
+      // .find(HTML(including('Annex (KU/CC/DI/A)'))).click());
+      // cy.do(Button('Accepted values').click());
+      cy.do(Button('Annex (KU/CC/DI/A)').click());
+    }
+
+    // Item mapping profile
+    static #defaultItemMappingProfile = {
+      profileName: 'autotest FAT-742: ' + this.#profileName.itemName + ' mapping profile',
+      incomingRecordType: this.#incomingRecordTypeValue.marcBib,
+      folioRecordTypeMapping: this.folioRecordTypeValue.item,
+      material: this.#materialType,
+      loan: this.#permanentLoanType,
+      status: this.#status,
+    }
+
+    static get defaultItemMappingProfile() {
+      return this.#defaultItemMappingProfile;
+    }
+
+    static fillItemMappingProfile(specialItemMappingProfile = this.#defaultItemMappingProfile) {
+      cy.do([
+        TextField({ name:'profile.name' }).fillIn(specialItemMappingProfile.profileName),
+        Select({ name:'profile.incomingRecordType' }).choose(specialItemMappingProfile.incomingRecordType),
+        Select({ name:'profile.existingRecordType' }).choose(specialItemMappingProfile.folioRecordTypeMapping),
+        Button('Accepted values').click(),
+        // Button(#permanentLocation.location).click()
+      ]);
+    }
+
+    static clickSaveAndCloseButton() {
       cy.do(Button('Save as profile & Close').click());
       FieldMappingProfiles.waitLoadingList();
     }

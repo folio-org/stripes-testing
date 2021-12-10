@@ -16,7 +16,7 @@ export default class NewJobProfile {
       return this.#defaultJobProfile;
     }
 
-    static fill(specialJobProfile = this.#defaultJobProfile) {
+    static fillJobProfile(specialJobProfile = this.#defaultJobProfile) {
       cy.do([
         TextField({ name:'profile.name' }).fillIn(specialJobProfile.profileName),
         Select({ name:'profile.dataType' }).choose(specialJobProfile.acceptedDataType),
@@ -33,7 +33,7 @@ export default class NewJobProfile {
       cy.expect(Accordion('Overview').find(HTML(including(specialActionProfile.name))).exists());
     }
 
-    static clickSaveAndClose() {
+    static clickSaveAndCloseButton() {
       cy.do(Button('Save as profile & Close').click());
     }
 }

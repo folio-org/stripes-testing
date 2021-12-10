@@ -15,7 +15,7 @@ export default class FieldMappingProfiles {
     cy.expect(Button('Actions').exists());
   }
 
-  static specialMappingProfilePresented(mappingProfile) {
+  static checkMappingProfilePresented(mappingProfile) {
     cy.get('[id="pane-results-content"]')
       .should('contains.text', mappingProfile.name);
   }
@@ -25,13 +25,4 @@ export default class FieldMappingProfiles {
       .should('be.visible');
     cy.expect(Button('Actions').exists());
   }
-
-  /* static searchMappingProfile(mappingProfileTitle) {
-      cy.do([
-        SearchField({ id: 'input-search-mapping-profiles-field' }).fillIn(mappingProfileTitle),
-        Button('Search').click(),
-      ]);
-    }
-
-    Modal('Confirm multipiece check out').find(Button('Check out')).click(), */
 }

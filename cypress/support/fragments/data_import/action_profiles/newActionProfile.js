@@ -28,7 +28,7 @@ export default class NewActionProfile {
       return this.#defaultActionProfile;
     }
 
-    static fill(specialActionProfile = this.#defaultActionProfile) {
+    static fillActionProfile(specialActionProfile = this.#defaultActionProfile) {
       cy.do([
         TextField({ name:'profile.name' }).fillIn(specialActionProfile.name),
         Select({ name:'profile.action' }).choose(this.#action.create),
