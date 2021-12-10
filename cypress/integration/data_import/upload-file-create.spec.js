@@ -7,6 +7,7 @@ import ActionProfiles from '../../support/fragments/data_import/action_profiles/
 import SettingsDataImport from '../../support/fragments/data_import/settingsDataImport';
 import JobProfiles from '../../support/fragments/data_import/job_profiles/jobProfiles';
 import NewJobProfile from '../../support/fragments/data_import/job_profiles/newJobProfile';
+import getRandomPostfix from '../../support/utils/stringTools';
 
 
 describe('ui-data-import: MARC file import with creating of the new instance, holding and item', () => {
@@ -14,54 +15,64 @@ describe('ui-data-import: MARC file import with creating of the new instance, ho
     cy.login(Cypress.env('diku_login'), Cypress.env('diku_password'));
   });
 
-  const collectionOfProfiles = [
-    { mappingProfile: NewMappingProfile.folioRecordTypeValue.instance,
-      actionProfile: NewActionProfile.folioRecordTypeValue.instance,
-      jobProfile: NewJobProfile.acceptedDatatype.dataType },
-    { mappingProfile: NewMappingProfile.folioRecordTypeValue.holdings,
-      actionProfile: NewActionProfile.folioRecordTypeValue.holdings },
-    { mappingProfile: NewMappingProfile.folioRecordTypeValue.item,
-      actionProfile: NewActionProfile.folioRecordTypeValue.item }
-  ];
+  it('C343334 MARC file import with creating a new mapping profile and action profile', () => {
+    const collectionOfProfiles = [
+      { mappingProfile: { typeValue : NewMappingProfile.folioRecordTypeValue.instance,
+        name: `autotest${NewMappingProfile.folioRecordTypeValue.instance}${getRandomPostfix()}` },
+      actionProfile: { typeValue: NewActionProfile.folioRecordTypeValue.instance,
+        name: `autotest${NewActionProfile.folioRecordTypeValue.instance}${getRandomPostfix()}` } },
+      { mappingProfile: { typeValue : NewMappingProfile.folioRecordTypeValue.holdings,
+        name: `autotest${NewMappingProfile.folioRecordTypeValue.holdings}${getRandomPostfix()}` },
+      actionProfile:{ typeValue: NewActionProfile.folioRecordTypeValue.holdings,
+        name: `autotest${NewActionProfile.folioRecordTypeValue.holdings}${getRandomPostfix()}` } },
+      { mappingProfile: { typeValue : NewMappingProfile.folioRecordTypeValue.item,
+        name: `autotest${NewMappingProfile.folioRecordTypeValue.item}${getRandomPostfix()}` },
+      actionProfile: { typeValue: NewActionProfile.folioRecordTypeValue.item,
+        name: `autotest${NewActionProfile.folioRecordTypeValue.item}${getRandomPostfix()}` } }
 
-  collectionOfProfiles.forEach(profile => {
-    it(`C343334 MARC file import with creating a new ${profile.mappingProfile} mapping profile and ${profile.actionProfile} action profile`, () => {
-      const specialMappingProfile = { ...NewMappingProfile.defaultMappingProfile };
-      specialMappingProfile.folioRecordTypeMapping = profile.mappingProfile;
-      specialMappingProfile.profileName = `autotest FAT-742: ${profile.mappingProfile} mapping profile`;
+    ];
 
-      const specialActionProfile = { ...NewActionProfile.defaultActionProfile };
-      specialActionProfile.folioRecordTypeAction = profile.actionProfile;
-      specialActionProfile.profileName = `autotest FAT-742: ${profile.actionProfile} action profile`;
+    collectionOfProfiles.forEach(profile => {
+      // const specialMappingProfile = { ...NewMappingProfile.defaultMappingProfile };
+      // specialMappingProfile.folioRecordTypeMapping = profile.mappingProfile;
+      // specialMappingProfile.profileName = `autotest FAT-742: ${profile.mappingProfile} mapping profile`;
+
+      // const specialActionProfile = { ...NewActionProfile.defaultActionProfile };
+      // specialActionProfile.folioRecordTypeAction = profile.actionProfile;
+      // specialActionProfile.profileName = `autotest FAT-742: ${profile.actionProfile} action profile`;
 
       SettingsDataImport.goToMappingProfile();
       FieldMappingProfiles.createNewMappingProfile();
-      NewMappingProfile.fill(specialMappingProfile);
+      NewMappingProfile.fill(profile.mappingProfile);
       NewMappingProfile.saveAndClose();
-      FieldMappingProfiles.waitLoadingList();
-      FieldMappingProfiles.specialMappingProfilePresented(specialMappingProfile.profileName);
+      FieldMappingProfiles.specialMappingProfilePresented(profile.mappingProfile);
 
       SettingsDataImport.goToActionProfile();
       ActionProfiles.createNewActionProfile();
-      NewActionProfile.fill(specialActionProfile);
-      NewActionProfile.linkMappingProfile(specialMappingProfile);
-      ActionProfiles.specialActionProfilePresented(specialActionProfile.profileName);
+      NewActionProfile.fill(profile.actionProfile);
+      NewActionProfile.linkMappingProfile(profile.mappingProfile);
+      ActionProfiles.specialActionProfilePresented(profile.actionProfile);
     });
-  });
 
-  const jobProfile = NewJobProfile.acceptedDatatype.dataType;
-
-  it(`C343334 MARC file import with creating a new ${jobProfile} job profile`, () => {
     const specialJobProfile = { ...NewJobProfile.defaultJobProfile };
+    const jobProfile = NewJobProfile.acceptedDatatype.dataType;
     specialJobProfile.acceptedDataType = jobProfile;
 
     SettingsDataImport.goToJobProfile();
     JobProfiles.clickButton();
     JobProfiles.createNewJobProfile();
     NewJobProfile.fill(specialJobProfile);
-    NewJobProfile.selectActionProfile(NewActionProfile.specialActionProfile.profileName);
+    collectionOfProfiles.map(element => element.actionProfile).forEach(actionProfile => {
+      NewJobProfile.selectActionProfile(actionProfile);
+    });
     NewJobProfile.clickSaveAndClose();
     JobProfiles.waitLoadingList();
     JobProfiles.specialJobProfilePresented(specialJobProfile.profileName);
   });
+
+
+
+  // it(`C343334 MARC file import with creating a new ${jobProfile} job profile`, () => {
+
+  // });
 });

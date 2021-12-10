@@ -1,4 +1,5 @@
 import { TextField, Button, Select } from '../../../../../interactors';
+import FieldMappingProfiles from './fieldMappingProfiles';
 
 export default class NewMappingProfile {
     static #profileName = {
@@ -77,9 +78,8 @@ export default class NewMappingProfile {
     // TODO create item mapping profile
 
     static #defaultMappingProfile = {
-      profileName: 'autotest FAT-742: ' + this.#profileName.instanceName + ' mapping profile',
-      incomingRecordType: this.#incomingRecordTypeValue.marcBib,
-      folioRecordTypeMapping: this.folioRecordTypeValue.instance,
+      name: 'autotest FAT-742: ' + this.#profileName.instanceName + ' mapping profile',
+      typeValue: this.folioRecordTypeValue.instance,
     }
 
     static get defaultMappingProfile() {
@@ -88,13 +88,14 @@ export default class NewMappingProfile {
 
     static fill(specialMappingProfile = this.#defaultMappingProfile) {
       cy.do([
-        TextField({ name:'profile.name' }).fillIn(specialMappingProfile.profileName),
-        Select({ name:'profile.incomingRecordType' }).choose(specialMappingProfile.incomingRecordType),
-        Select({ name:'profile.existingRecordType' }).choose(specialMappingProfile.folioRecordTypeMapping)
+        TextField({ name:'profile.name' }).fillIn(specialMappingProfile.name),
+        Select({ name:'profile.incomingRecordType' }).choose(this.#incomingRecordTypeValue.marcBib),
+        Select({ name:'profile.existingRecordType' }).choose(specialMappingProfile.typeValue)
       ]);
     }
 
     static saveAndClose() {
       cy.do(Button('Save as profile & Close').click());
+      FieldMappingProfiles.waitLoadingList();
     }
 }

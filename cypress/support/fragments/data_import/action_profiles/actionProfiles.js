@@ -15,8 +15,8 @@ export default class ActionProfiles {
     cy.expect(Button('Actions').exists());
   }
 
-  static specialActionProfilePresented(actionProfileTitle) {
+  static specialActionProfilePresented(actionProfile) {
     cy.get('[id="action-profiles-list"]')
-      .should('contains.text', actionProfileTitle);
+      .should('contains.text', actionProfile.name);
   }
 }

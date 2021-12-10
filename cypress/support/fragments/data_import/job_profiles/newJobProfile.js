@@ -1,4 +1,5 @@
-import { TextField, Select, Button } from '../../../../../interactors';
+import { TextField, Select, Button, Accordion, HTML, including } from '../../../../../interactors';
+import getRandomPostfix from '../../../utils/stringTools';
 import ModalSelectActionProfile from './modalSelectActionProfile';
 
 export default class NewJobProfile {
@@ -7,7 +8,7 @@ export default class NewJobProfile {
     }
 
     static #defaultJobProfile = {
-      profileName: 'autotest FAT-742: Job profile',
+      profileName:  `autotestJobProfile${getRandomPostfix()}`,
       acceptedDataType: this.acceptedDatatype.dataType,
     }
 
@@ -27,8 +28,9 @@ export default class NewJobProfile {
       cy.do([
         Button('Action').click(),
       ]);
-      ModalSelectActionProfile.searchActionProfileByName(specialActionProfile.profileName);
-      ModalSelectActionProfile.selectActionProfile();
+      ModalSelectActionProfile.searchActionProfileByName(specialActionProfile.name);
+      ModalSelectActionProfile.selectActionProfile(specialActionProfile.name);
+      cy.expect(Accordion('Overview').find(HTML(including(specialActionProfile.name))).exists());
     }
 
     static clickSaveAndClose() {

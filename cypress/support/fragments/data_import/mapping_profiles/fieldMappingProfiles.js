@@ -15,9 +15,9 @@ export default class FieldMappingProfiles {
     cy.expect(Button('Actions').exists());
   }
 
-  static specialMappingProfilePresented(mappingProfileTitle) {
+  static specialMappingProfilePresented(mappingProfile) {
     cy.get('[id="pane-results-content"]')
-      .should('contains.text', mappingProfileTitle);
+      .should('contains.text', mappingProfile.name);
   }
 
   static waitLoadingMappingProfile() {
