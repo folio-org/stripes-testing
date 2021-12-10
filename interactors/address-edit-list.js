@@ -1,11 +1,11 @@
-import { Button, HTML, TextField } from '@interactors/html';
+import { Button, HTML } from '@interactors/html';
 
 export const AddressEdit = HTML.extend('address edit')
   .selector('fieldset[data-test-address-edit]')
   .locator((el) => el.id.replace('addressEdit-', ''))
   .filters({
     index: (el) => [...el.closest('ul').querySelectorAll('fieldset[data-test-address-edit]')].indexOf(el),
-    error: TextField().error()
+    error: (el) => Boolean(el.querySelector('[aria-invalid]'))
   })
   .actions({
     cancel: ({ find }) => find(Button(/cancel/i)).click(),

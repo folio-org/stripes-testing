@@ -18,7 +18,7 @@
     "build-mod-descriptor": "stripes mod descriptor --full --strict | jq '.[]' > module-descriptor.json "
   },
   "dependencies": {
-    "@interactors/html": "^0.37.0",
+    "@interactors/html": "^0.36.0",
     "axe-core": "4.3.3",
     "date-fns": "^2.16.1",
     "debug": "^4.0.1",
