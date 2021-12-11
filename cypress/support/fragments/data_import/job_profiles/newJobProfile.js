@@ -3,13 +3,13 @@ import getRandomPostfix from '../../../utils/stringTools';
 import ModalSelectActionProfile from './modalSelectActionProfile';
 
 export default class NewJobProfile {
-    static acceptedDatatype = {
+    static acceptedDataType = {
       dataType: 'MARC',
     }
 
     static #defaultJobProfile = {
       profileName:  `autotestJobProfile${getRandomPostfix()}`,
-      acceptedDataType: this.acceptedDatatype.dataType,
+      acceptedDataType: this.acceptedDataType.dataType,
     }
 
     static get defaultJobProfile() {
