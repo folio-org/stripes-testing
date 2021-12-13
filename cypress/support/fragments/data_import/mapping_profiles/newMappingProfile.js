@@ -27,7 +27,7 @@ export default class NewMappingProfile {
     }
 
     static permanentLoanType = {
-      type: '"permanent loan type name AYCai"',
+      type: '"Selected"',
     }
 
     static status = {

@@ -16,21 +16,6 @@ describe('ui-data-import: MARC file import with creating of the new instance, ho
   });
 
   it('C343334 MARC file import with creating a new mapping profile and action profile', () => {
-    /* const collectionOfProfiles = [
-        { mappingProfile: { typeValue : NewMappingProfile.folioRecordTypeValue.instance,
-          name: `autotest${NewMappingProfile.folioRecordTypeValue.instance}${getRandomPostfix()}` },
-        actionProfile: { typeValue: NewActionProfile.folioRecordTypeValue.instance,
-          name: `autotest${NewActionProfile.folioRecordTypeValue.instance}${getRandomPostfix()}` } },
-       { mappingProfile: { typeValue : NewMappingProfile.folioRecordTypeValue.holdings,
-          name: `autotest${NewMappingProfile.folioRecordTypeValue.holdings}${getRandomPostfix()}` },
-        actionProfile:{ typeValue: NewActionProfile.folioRecordTypeValue.holdings,
-          name: `autotest${NewActionProfile.folioRecordTypeValue.holdings}${getRandomPostfix()}` } },
-        { mappingProfile: { typeValue : NewMappingProfile.folioRecordTypeValue.item,
-          name: `autotest${NewMappingProfile.folioRecordTypeValue.item}${getRandomPostfix()}` },
-        actionProfile: { typeValue: NewActionProfile.folioRecordTypeValue.item,
-          name: `autotest${NewActionProfile.folioRecordTypeValue.item}${getRandomPostfix()}` } }
-      ]; */
-
     const collectionOfProfiles = [
       { mappingProfile: { typeValue : NewMappingProfile.folioRecordTypeValue.instance,
         name: `autotest${NewMappingProfile.folioRecordTypeValue.instance}${getRandomPostfix()}` },
@@ -65,14 +50,6 @@ describe('ui-data-import: MARC file import with creating of the new instance, ho
       NewActionProfile.linkMappingProfile(profile.mappingProfile);
       ActionProfiles.checkActionProfilePresented(profile.actionProfile);
     });
-
-    /* collectionOfProfiles.forEach(profile => {
-      SettingsDataImport.goToActionProfile();
-      ActionProfiles.createNewActionProfile();
-      NewActionProfile.fillActionProfile(profile.actionProfile);
-      NewActionProfile.linkMappingProfile(profile.mappingProfile);
-      ActionProfiles.checkActionProfilePresented(profile.actionProfile);
-    }); */
 
     SettingsDataImport.goToJobProfile();
     JobProfiles.createNewJobProfile();
