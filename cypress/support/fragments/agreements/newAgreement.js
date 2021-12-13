@@ -1,13 +1,13 @@
-import { Button } from '@interactors/html';
-import getCurrentDate from '../../utils/dateTools';
+import { getCurrentDate } from '../../utils/dateTools';
 import getRandomPostfix from '../../utils/stringTools';
+import { Button, TextField } from '../../../../interactors';
 
 export default class NewAgreement {
     // TODO: start to use interactors instead of selectors
     static #rootCss = 'section[id="pane-agreement-form"]'
-    static #nameCss = `${this.#rootCss} input[name="name"]`;
     static #statusCss = `${this.#rootCss} select[id="edit-agreement-status"]`;
-    static #startDateCss = `${this.#rootCss} input[id="period-start-date-0"]`;
+    static #nameField = TextField({ id: 'edit-agreement-name' });
+    static #startDateField = TextField({ id: 'period-start-date-0' });
     static #saveButton = Button('Save & close');
 
     static #statusValue = {
@@ -30,11 +30,11 @@ export default class NewAgreement {
 
 
     static fill(specialAgreement = this.#defaultAgreement) {
-      cy.get(this.#nameCss).type(specialAgreement.name);
+      cy.do(this.#nameField.fillIn(specialAgreement.name));
       cy.get(this.#statusCss)
         .select(specialAgreement.status)
         .should('have.value', specialAgreement.status.toLowerCase());
-      cy.get(this.#startDateCss).type(specialAgreement.startDate);
+      cy.do(this.#startDateField.fillIn(specialAgreement.startDate));
     }
 
     static save() {
@@ -42,6 +42,6 @@ export default class NewAgreement {
     }
 
     static waitLoading() {
-      cy.get(this.#nameCss).should('exist');
+      cy.expect(this.#nameField.exists());
     }
 }

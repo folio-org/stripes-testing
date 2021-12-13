@@ -16,7 +16,7 @@ export const SelectionOption = HTML.extend('selection option')
   });
 
 export const SelectionList = HTML.extend('selection list')
-  .selector('[class^=selectionListRoot]')
+  .selector('[class^=selectionListRoot]:not([hidden])')
   .filters({
     id: el => el.id,
     optionCount: (el) => [...el.querySelectorAll('li')].length,
