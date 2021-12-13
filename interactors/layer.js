@@ -1,7 +1,7 @@
-import { createInteractor, focused } from '@interactors/html';
+import { HTML } from '@interactors/html';
 import { isVisible } from 'element-is-visible';
 
-export default createInteractor('layer')
+export default HTML.extend('layer')
   .selector('[class^=LayerRoot]')
   .locator((el) => el.ariaLabel)
   .filters({
@@ -9,6 +9,5 @@ export default createInteractor('layer')
     visible: {
       apply: (el) => isVisible(el) || (el.labels && Array.from(el.labels).some(isVisible)),
       default: true
-    },
-    focused
+    }
   });

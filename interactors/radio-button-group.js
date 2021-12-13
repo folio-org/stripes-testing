@@ -25,7 +25,5 @@ export default HTML.extend('radio button group')
     choose: ({ find }, label) => find(RadioButton(label)).choose(),
     click: ({ find }) => find(RadioButton()).choose(),
     focus: ({ find }, label) => find(RadioButton(label)).perform(el => el.focus()),
-    blur: ({ find }) => {
-      find(RadioButton(':focused')).perform(dispatchFocusout);
-    }
+    blur: ({ find }) => find(RadioButton({ focused: true })).perform(dispatchFocusout),
   });
