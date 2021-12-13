@@ -30,7 +30,6 @@ export const AddressList = HTML.extend('address list')
   })
   .actions({
     toggleMore: ({ perform }) => perform(el => el.querySelector('[data-test-addressList-toggle]')),
-    fillAddress: ({ find }, opts) => find(AddressEdit({ index: opts.index })).fillFields(opts.address),
     clickEdit: ({ find }, index) => find(AddressItem({ index })).edit(),
     addAddress: ({ find }) => find(Button('New')).click(),
     deleteAddress: ({ find }, index) => find(AddressEdit({ index })).delete()
