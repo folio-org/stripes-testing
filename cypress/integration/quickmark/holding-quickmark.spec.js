@@ -3,38 +3,33 @@
 import TopMenu from '../../support/fragments/topMenu';
 import InventoryActions from '../../support/fragments/inventory/inventoryActions';
 import InventoryInstance from '../../support/fragments/inventory/inventoryInstance';
+import HoldingsRecordView from '../../support/fragments/inventory/holdingsRecordView';
 import QuickMarcEditor from '../../support/fragments/quickMarcEditor';
-import InventoryViewSource from '../../support/fragments/inventory/inventoryViewSource';
+import holdingViewSource from '../../support/fragments/inventory/holdingViewSource';
 
 describe('Manage holding records through quickmarc editor', () => {
   before(() => {
     // TODO: add support of special permissions in special account
     cy.login(Cypress.env('diku_login'), Cypress.env('diku_password'));
     cy.visit(TopMenu.inventoryPath);
+    // TODO: redesign to api step
     InventoryActions.import();
   });
   beforeEach(() => {
+    // TODO: redesign to api step
     InventoryInstance.addMarcHoldingRecord();
   });
   it('C345390 Add a field to a record using quickMARC', () => {
+    HoldingsRecordView.gotoEditInQuickMarc();
 
+    // TODO: redesign to dynamic reading of rows count
+    QuickMarcEditor.addRow(HoldingsRecordView.newHolding.rowsCountInQuickMarcEditor);
+    QuickMarcEditor.checkInitialContent(HoldingsRecordView.newHolding.rowsCountInQuickMarcEditor + 1);
+    const expectedInSourceRow = QuickMarcEditor.fillAllAvailableValues(undefined, undefined, HoldingsRecordView.newHolding.rowsCountInQuickMarcEditor);
+    QuickMarcEditor.pressSaveAndClose();
+    HoldingsRecordView.waitLoading();
 
-    //
-    // InventoryInstance.goToEditMARCBiblRecord();
-
-    // const expectedInSourceRow = QuickMarcEditor.addNewField();
-    // // TODO: add return value to validate the result by value too. As minimum add catching from response. The best way - through interactors
-    // QuickMarcEditor.deletePenaltField();
-    // const expectedInSourceRowWithSubfield = QuickMarcEditor.addNewFieldWithSubField();
-    // QuickMarcEditor.pressSaveAndClose();
-    // QuickMarcEditor.deleteConfirmationPresented();
-    // QuickMarcEditor.confirmDelete();
-
-    // InventoryInstance.viewSource();
-
-    // InventoryViewSource.contains(expectedInSourceRow);
-    // InventoryViewSource.contains(expectedInSourceRowWithSubfield);
-    // TODO: add assertion of absence of deleted row
-    // InventoryViewSource.notContains('948\t   \t‡h NO HOLDINGS IN PAOLF - 43 OTHER HOLDINGS ');
+    HoldingsRecordView.viewSource();
+    holdingViewSource.contains(expectedInSourceRow);
   });
 });

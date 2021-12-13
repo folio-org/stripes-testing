@@ -3,6 +3,7 @@ import QuickMarcEditorFragment from '../quickMarcEditor';
 import inventoryActions from './inventoryActions';
 import { getLongDelay } from '../../utils/cypressTools';
 import InventoryInstanceEdit from './InventoryInstanceEdit';
+import HoldingsRecordView from './holdingsRecordView';
 
 const _section = Section({ id: 'pane-instancedetails' });
 const actionsButton = _section.find(Button('Actions'));
@@ -13,6 +14,7 @@ const viewSourceButton = Button({ id:'clickable-view-source' });
 const overlaySourceBibRecord = Button({ id:'dropdown-clickable-reimport-record' });
 const deriveNewMarcBibRecord = Button({ id:'duplicate-instance-marc' });
 const addMarcHoldingRecordButton = Button({ id:'create-holdings-marc' });
+const viewHoldingsButton = Button('View holdings');
 
 
 const instanceHRID = 'Instance HRID';
@@ -94,8 +96,13 @@ export default {
     cy.do(addMarcHoldingRecordButton.click());
     QuickMarcEditorFragment.waitLoading();
     QuickMarcEditorFragment.updateExistingField('852', QuickMarcEditorFragment.getExistingLocation());
-    QuickMarcEditorFragment.addRequiredBackslashes('852');
     QuickMarcEditorFragment.pressSaveAndClose();
+    HoldingsRecordView.waitLoading();
+  },
+
+  goToHoldingView: () => {
+    cy.do(viewHoldingsButton.click());
+    HoldingsRecordView.waitLoading();
   }
 
 };
