@@ -102,10 +102,5 @@ export default {
   waitLoading:() => {
     cy.expect(Pane({ id: 'quick-marc-editor-pane' }).exists());
   },
-  getExistingLocation:() => defaultFieldValues.existingLocation,
-  // TODO: remove after bugfix, it's temporary method
-  addRequiredBackslashes:(tag = InventoryInstance.validOCLC.existingTag) => {
-    cy.do(QuickMarcEditorRow({ tagValue: tag }).find(TextField({ name: 'records[5].indicators[0]' })).fillIn('\\'));
-    cy.do(QuickMarcEditorRow({ tagValue: tag }).find(TextField({ name: 'records[5].indicators[1]' })).fillIn('\\'));
-  }
+  getExistingLocation:() => defaultFieldValues.existingLocation
 };
