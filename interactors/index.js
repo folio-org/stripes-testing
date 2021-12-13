@@ -37,8 +37,9 @@ export { default as TextField } from './text-field';
 export { default as TextArea } from './textarea';
 export { Tooltip, TooltipProximity } from './tooltip';
 export { dispatchFocusout } from './util';
-export { default as QuickMarkEditorRow } from './quickMarcEditorRow';
-export { default as QuickMarkEditor } from './quickMarcEditor';
+export { default as QuickMarcEditorRow } from './quickMarcEditorRow';
+export { default as QuickMarcEditor } from './quickMarcEditor';
+export { default as Section } from './section';
 
 // Stripes-smart-component interactors
 export { AddressList, AddressEdit, AddressItem } from './address-edit-list';
