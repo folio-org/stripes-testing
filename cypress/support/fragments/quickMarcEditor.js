@@ -1,4 +1,4 @@
-import { QuickMarcEditor, QuickMarcEditorRow, TextArea, Button, Modal, TextField, and, some, Pane, HTML, including } from '../../../interactors';
+import { QuickMarcEditor, QuickMarcEditorRow, TextArea, Button, Modal, TextField, and, some } from '../../../interactors';
 import InventoryInstance from './inventory/inventoryInstance';
 import getRandomPostfix from '../utils/stringTools';
 

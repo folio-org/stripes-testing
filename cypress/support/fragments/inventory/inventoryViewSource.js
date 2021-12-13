@@ -1,8 +1,8 @@
 import { HTML, including } from '@interactors/html';
-import {Button} from '../../../../interactors'
+import { Button } from '../../../../interactors';
 
 const title = 'MARC bibliographic record';
-const closeButton = Button({icon: 'times'});
+const closeButton = Button({ icon: 'times' });
 
 export default {
   contains:(expectedText) => {
