@@ -5,7 +5,7 @@ import InventoryActions from '../../support/fragments/inventory/inventoryActions
 import InventoryInstance from '../../support/fragments/inventory/inventoryInstance';
 import HoldingsRecordView from '../../support/fragments/inventory/holdingsRecordView';
 import QuickMarcEditor from '../../support/fragments/quickMarcEditor';
-import holdingViewSource from '../../support/fragments/inventory/holdingViewSource';
+import InventoryViewSource from '../../support/fragments/inventory/inventoryViewSource';
 
 describe('Manage holding records through quickmarc editor', () => {
   before(() => {
@@ -30,6 +30,6 @@ describe('Manage holding records through quickmarc editor', () => {
     HoldingsRecordView.waitLoading();
 
     HoldingsRecordView.viewSource();
-    holdingViewSource.contains(expectedInSourceRow);
+    InventoryViewSource.contains(expectedInSourceRow);
   });
 });

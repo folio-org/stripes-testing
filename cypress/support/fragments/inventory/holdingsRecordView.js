@@ -1,7 +1,7 @@
 import inventoryInstance from './inventoryInstance';
 import { Button, Layer } from '../../../../interactors';
 import QuickMarcEditor from '../quickMarcEditor';
-import HoldingViewSource from './holdingViewSource';
+import InventoryViewSource from './inventoryViewSource';
 
 const root = Layer('View holdings record');
 const actionsButton = root.find(Button('Actions'));
@@ -29,6 +29,6 @@ export default {
   viewSource: () => {
     cy.do(actionsButton.click());
     cy.do(viewSourceButton.click());
-    HoldingViewSource.waitLoading();
+    InventoryViewSource.waitHoldingLoading();
   }
 };
