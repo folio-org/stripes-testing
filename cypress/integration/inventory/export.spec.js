@@ -1,6 +1,6 @@
 import TopMenu from '../../support/fragments/topMenu';
 import InventorySearch from '../../support/fragments/inventory/inventorySearch';
-import InventoryInstances from '../../support/fragments/inventory/InventoryInstances';
+import InventoryActions from '../../support/fragments/inventory/InventoryActions';
 import FileManager from '../../support/utils/fileManager';
 
 
@@ -25,11 +25,11 @@ describe('inventory: exports', () => {
       FileManager.findDownloadedFilesByMask('SearchInstanceUUIDs*')
         .then((downloadedFilenames) => {
           const lastDownloadedFilename = downloadedFilenames.sort()[downloadedFilenames.length - 1];
-          InventoryInstances.verifySaveUUIDsFileName(lastDownloadedFilename);
+          InventoryActions.verifySaveUUIDsFileName(lastDownloadedFilename);
 
           FileManager.readFile(lastDownloadedFilename)
             .then((actualUUIDs) => {
-              InventoryInstances.verifySavedUUIDs(actualUUIDs, expectedUUIDs);
+              InventoryActions.verifySavedUUIDs(actualUUIDs, expectedUUIDs);
             });
         });
     });
@@ -55,11 +55,11 @@ describe('inventory: exports', () => {
     FileManager.findDownloadedFilesByMask('SearchInstanceCQLQuery*')
       .then((downloadedFilenames) => {
         const lastDownloadedFilename = downloadedFilenames.sort()[downloadedFilenames.length - 1];
-        InventoryInstances.verifySaveSQLQueryFileName(lastDownloadedFilename);
+        InventoryActions.verifySaveSQLQueryFileName(lastDownloadedFilename);
 
         FileManager.readFile(lastDownloadedFilename)
           .then((actualCQLQuery) => {
-            InventoryInstances.verifySaveSQLQuery(actualCQLQuery, '*', 'eng');
+            InventoryActions.verifySaveSQLQuery(actualCQLQuery, '*', 'eng');
           });
       });
   });
