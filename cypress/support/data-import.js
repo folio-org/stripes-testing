@@ -1,20 +1,25 @@
-import {
-  Button,
-  MultiColumnList,
-} from '../../interactors';
+import TopMenu from './fragments/topMenu';
+import { Button } from '../../interactors';
 import { getLongDelay } from './utils/cypressTools';
 
-Cypress.Commands.add('uploadFile', (pathToFile) => {
-  cy.get('#pane-jobs-title-content > div.upload---2-sT\\+ > input[type=file]')
-    .attachFile(pathToFile);
+Cypress.Commands.add('uploadFile', (name, jobProfileToRun = 'Default - Create instance and SRS MARC Bib') => {
+  cy.visit(TopMenu.dataImportPath);
 
-  cy.expect(MultiColumnList({ id: 'job-profiles-list' }).has({ rowCount: 3 }));
-  cy.get('[data-row-index="row-0"]').click();
+  // path to the sample MARC file in fixtures to upload.
+  const pathToSampleFile = 'CatShip.mrc';
+
+  // before uploading file, change file name with the given unique name.
+  cy.get('#pane-jobs-title-content input[type=file]', getLongDelay()).attachFile({ filePath: pathToSampleFile, fileName: name });
+
+  // run file with given jobProfile
+  cy.get('#job-profiles-list').contains(jobProfileToRun).click();
   cy.do([
     Button('Actions').click(),
     Button('Run').click(),
     Button('Run').click()
   ]);
 
-  cy.get('[class*="job---ogB1P"]', getLongDelay()).should('exist');
+  // wait until uploaded file is displayed in the list
+  cy.get('#job-logs-list', { timeout: 60000 }).contains(name, { timeout: 60000 });
 });
+
