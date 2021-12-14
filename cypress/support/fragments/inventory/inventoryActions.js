@@ -49,6 +49,7 @@ export default {
     NewInventoryInstance.checkExpectedOCLCPresence(specialOCLCWorldCatidentifier);
   },
   verifySaveUUIDsFileName(actualName) {
+    // valid name example: SearchInstanceUUIDs2021-11-18T16_39_59+03_00.csv
     const expectedFileNameMask = /SearchInstanceUUIDs\d{4}-\d{2}-\d{2}T\d{2}_\d{2}_\d{2}\+\d{2}_\d{2}\.csv/gm;
     expect(actualName).to.match(expectedFileNameMask);
 
@@ -65,6 +66,7 @@ export default {
   },
 
   verifySaveSQLQueryFileName(actualName) {
+    // valid name example: SearchInstanceCQLQuery2021-12-09T14_45_54+03_00.cql
     const expectedFileNameMask = /SearchInstanceCQLQuery\d{4}-\d{2}-\d{2}T\d{2}_\d{2}_\d{2}\+\d{2}_\d{2}\.cql/gm;
     expect(actualName).to.match(expectedFileNameMask);
 

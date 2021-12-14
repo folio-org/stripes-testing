@@ -15,26 +15,24 @@ describe('inventory: exports', () => {
     InventorySearch.saveUUIDs();
 
     // TODO: think about move it to separate func
-    cy.intercept('/search/instances/ids**')
-      .as('getIds');
-    cy.wait('@getIds')
-      .then((obj) => {
-        const expectedUUIDs = InventorySearch.getUUIDsFromRequest(obj);
+    cy.intercept('/search/instances/ids**').as('getIds');
+    cy.wait('@getIds').then((req) => {
+      const expectedUUIDs = InventorySearch.getUUIDsFromRequest(req);
 
-        // Need time for download file TODO: think about how it can be fixed
-        cy.wait(Cypress.env('downloadTimeout'));
+      // Need time for download file TODO: think about how it can be fixed
+      cy.wait(Cypress.env('downloadTimeout'));
 
-        FileManager.findDownloadedFilesByMask('SearchInstanceUUIDs*')
-          .then((downloadedFilenames) => {
-            const lastDownloadedFilename = FileManager.getLastDownloadedFileName(downloadedFilenames);
-            InventoryActions.verifySaveUUIDsFileName(lastDownloadedFilename);
+      FileManager.findDownloadedFilesByMask('SearchInstanceUUIDs*')
+        .then((downloadedFilenames) => {
+          const lastDownloadedFilename = FileManager.getLastDownloadedFileName(downloadedFilenames);
+          InventoryActions.verifySaveUUIDsFileName(lastDownloadedFilename);
 
-            FileManager.readFile(lastDownloadedFilename)
-              .then((actualUUIDs) => {
-                InventoryActions.verifySavedUUIDs(actualUUIDs, expectedUUIDs);
-              });
-          });
-      });
+          FileManager.readFile(lastDownloadedFilename)
+            .then((actualUUIDs) => {
+              InventoryActions.verifySavedUUIDs(actualUUIDs, expectedUUIDs);
+            });
+        });
+    });
   });
 
   it('C196755 verifies search result counts and selected counts', () => {
