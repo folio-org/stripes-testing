@@ -1,9 +1,9 @@
 import { Button, Select, TextField } from '../../../../interactors';
-import NewInventoryInstance from './newInventoryInstance';
+import InventoryInstance from './inventoryInstance';
 
 const importButtonInActions = Button({ id: 'dropdown-clickable-import-record' });
 const importButtonInModal = Button('Import');
-const OCLWorldCatIdentifierTextField = TextField('Enter OCLC WorldCat identifier');
+const OCLWorldCatIdentifierTextField = TextField({ name: 'externalIdentifier' });
 const importTypeSelect = Select({ name :'externalIdentifierType' });
 
 export default {
@@ -24,10 +24,19 @@ export default {
       cy.expect(element.is({ disabled: false }));
     });
   },
-  import(specialOCLCWorldCatidentifier = NewInventoryInstance.validOCLC.id) {
+
+  import(specialOCLCWorldCatidentifier = InventoryInstance.validOCLC.id) {
     cy.do(this.open());
     cy.do(importButtonInActions.click());
+    this.fillImportFields(specialOCLCWorldCatidentifier);
 
+    this.pressImportInModal();
+    InventoryInstance.checkExpectedOCLCPresence(specialOCLCWorldCatidentifier);
+    InventoryInstance.checkExpectedMARCSource();
+  },
+
+  // the same steps can be used in Overlay Source Bibliographic Record
+  fillImportFields(specialOCLCWorldCatidentifier = InventoryInstance.validOCLC.id) {
     // TODO: remove in the future, now related with differenes in our environments
     if (Cypress.env('is_kiwi_release')) {
       const oclcWorldCat = { text:'OCLC WorldCat',
@@ -38,9 +47,11 @@ export default {
     }
 
     cy.do(OCLWorldCatIdentifierTextField.fillIn(specialOCLCWorldCatidentifier));
-    cy.do(importButtonInModal.click());
+  },
 
-    NewInventoryInstance.checkExpectedOCLCPresence(specialOCLCWorldCatidentifier);
+  pressImportInModal(specialOCLCWorldCatidentifier = InventoryInstance.validOCLC.id) {
+    cy.do(importButtonInModal.click());
+    InventoryInstance.checkExpectedOCLCPresence(specialOCLCWorldCatidentifier);
   },
   verifySaveUUIDsFileName(actualName) {
     // Check naming mask
@@ -53,10 +64,8 @@ export default {
     expect(actualDate).to.be.greaterThan(Date.now() - 100000);
     expect(actualDate).to.be.lessThan(Date.now() + 100000);
   },
+  // TODO: check work in test cypress\integration\inventory\export.spec.js
   verifySavedUUIDs(actualUUIDs, expectedUUIDs) {
-    const formattedActualUUIDs = actualUUIDs.replaceAll('"', '').split('\n');
-    for (let i = 0; i < expectedUUIDs.length; i++) {
-      expect(expectedUUIDs[i]).to.eq(formattedActualUUIDs[i]);
-    }
+    expect(actualUUIDs.replaceAll('"', '').split('\n')).to.eql(expectedUUIDs);
   }
 };
