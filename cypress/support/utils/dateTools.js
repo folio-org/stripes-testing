@@ -7,6 +7,10 @@ export default {
 
   getPreviousFiscalYearCode: () => {
     return 'FY' + (new Date().getFullYear() - 1).toString();
+  },
+
+  getCurrentFiscalYearCode: () => {
+    return 'FY' + (new Date().getFullYear()).toString();
   }
 
 };
