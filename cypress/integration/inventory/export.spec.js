@@ -2,7 +2,6 @@ import TopMenu from '../../support/fragments/topMenu';
 import InventorySearch from '../../support/fragments/inventory/inventorySearch';
 import InventoryActions from '../../support/fragments/inventory/inventoryActions';
 import FileManager from '../../support/utils/fileManager';
-import Checkbox from '../../../interactors/checkbox';
 
 
 describe('inventory: exports', () => {
@@ -12,16 +11,13 @@ describe('inventory: exports', () => {
   });
 
   it('C9284 verifies export UUIDs instances', () => {
-    cy.do([
-      InventorySearch.searchByEffectiveLocation(),
-      InventoryActions.open(),
-      InventoryActions.options.saveUUIDs.click()
-    ]);
+    InventorySearch.byEffectiveLocation();
+    InventorySearch.saveUUIDs();
 
     // TODO: think about move it to separate func
     cy.intercept('/search/instances/ids**').as('getIds');
-    cy.wait('@getIds').then((obj) => {
-      const expectedUUIDs = InventorySearch.getUUIDsFromRequest(obj);
+    cy.wait('@getIds').then((req) => {
+      const expectedUUIDs = InventorySearch.getUUIDsFromRequest(req);
 
       // Need time for download file TODO: think about how it can be fixed
       cy.wait(Cypress.env('downloadTimeout'));
@@ -40,12 +36,31 @@ describe('inventory: exports', () => {
   });
 
   it('C196755 verifies search result counts and selected counts', () => {
-    cy.do([
-      InventorySearch.searchByEffectiveLocation(),
-      InventorySearch.getSearchResult(0).find(Checkbox()).click(),
-      InventorySearch.getSearchResult(2).find(Checkbox()).click(),
-    ]);
+    const checkedResult = 2;
 
-    InventorySearch.verifySelectedRecords(2);
+    InventorySearch.byEffectiveLocation();
+    InventorySearch.selectResultCheckboxes(checkedResult);
+    InventorySearch.verifySelectedRecords(checkedResult);
+  });
+
+  it('C9287 verifies export CQL instances', () => {
+    InventorySearch.byLanguage();
+    InventorySearch.byKeywords();
+    InventorySearch.byEffectiveLocation();
+    InventorySearch.saveCQLQuery();
+
+    // Need time for download file TODO: think about how it can be fixed
+    cy.wait(Cypress.env('downloadTimeout'));
+
+    FileManager.findDownloadedFilesByMask('SearchInstanceCQLQuery*')
+      .then((downloadedFilenames) => {
+        const lastDownloadedFilename = downloadedFilenames.sort()[downloadedFilenames.length - 1];
+        InventoryActions.verifySaveCQLQueryFileName(lastDownloadedFilename);
+
+        FileManager.readFile(lastDownloadedFilename)
+          .then((actualCQLQuery) => {
+            InventoryActions.verifySaveCQLQuery(actualCQLQuery, '*', 'eng');
+          });
+      });
   });
 });
