@@ -1,5 +1,5 @@
 import { MultiColumnList, MultiColumnListCell, Pane, Accordion, Checkbox, TextField } from '../../../../interactors';
-import InventoryActions from './inventoryActions';
+import InventoryActions from './InventoryInstances';
 
 
 const effectiveLocationInput = Accordion({ id: 'effectiveLocation' });
@@ -32,6 +32,7 @@ export default {
   },
 
   byLanguage(lang) {
+    // lang: language object. Example: language.eng
     return cy.do([
       languageInput.clickHeader(),
       languageInput.find(Checkbox(lang ?? this.language.eng)).click()
@@ -46,6 +47,13 @@ export default {
     return cy.do([
       InventoryActions.open(),
       InventoryActions.options.saveUUIDs.click()
+    ]);
+  },
+
+  saveCQLQuery() {
+    return cy.do([
+      InventoryActions.open(),
+      InventoryActions.options.saveCQLQuery.click()
     ]);
   },
 

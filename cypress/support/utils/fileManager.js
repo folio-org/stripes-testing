@@ -7,11 +7,6 @@ export default {
     return cy.task('findFiles', `${downloadsFolder}/${mask}`);
   },
 
-  getLastDownloadedFileName(downloadedFilenames) {
-    // returns only one last downloaded file from array of files
-    return downloadedFilenames.sort()[downloadedFilenames.length - 1];
-  },
-
   deleteFolder(pathToFolder) {
     return cy.task('deleteFolder', pathToFolder);
   },

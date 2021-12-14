@@ -1,6 +1,6 @@
 import TopMenu from '../../support/fragments/topMenu';
 import InventorySearch from '../../support/fragments/inventory/inventorySearch';
-import InventoryActions from '../../support/fragments/inventory/inventoryActions';
+import InventoryInstances from '../../support/fragments/inventory/InventoryInstances';
 import FileManager from '../../support/utils/fileManager';
 
 
@@ -24,44 +24,42 @@ describe('inventory: exports', () => {
 
       FileManager.findDownloadedFilesByMask('SearchInstanceUUIDs*')
         .then((downloadedFilenames) => {
-          const lastDownloadedFilename = FileManager.getLastDownloadedFileName(downloadedFilenames);
-          InventoryActions.verifySaveUUIDsFileName(lastDownloadedFilename);
+          const lastDownloadedFilename = downloadedFilenames.sort()[downloadedFilenames.length - 1];
+          InventoryInstances.verifySaveUUIDsFileName(lastDownloadedFilename);
 
           FileManager.readFile(lastDownloadedFilename)
             .then((actualUUIDs) => {
-              InventoryActions.verifySavedUUIDs(actualUUIDs, expectedUUIDs);
+              InventoryInstances.verifySavedUUIDs(actualUUIDs, expectedUUIDs);
             });
         });
     });
   });
 
   it('C196755 verifies search result counts and selected counts', () => {
+    const checkedResult = 2;
+
     InventorySearch.byEffectiveLocation();
-    InventorySearch.selectResultCheckboxes(2);
-    InventorySearch.verifySelectedRecords(2);
+    InventorySearch.selectResultCheckboxes(checkedResult);
+    InventorySearch.verifySelectedRecords(checkedResult);
   });
 
   it('C9287 verifies export CQL instances', () => {
     InventorySearch.byLanguage();
     InventorySearch.byKeywords();
     InventorySearch.byEffectiveLocation();
-
-    cy.do([
-      InventoryActions.open(),
-      InventoryActions.options.saveCQLQuery.click()
-    ]);
+    InventorySearch.saveCQLQuery();
 
     // Need time for download file TODO: think about how it can be fixed
     cy.wait(Cypress.env('downloadTimeout'));
 
     FileManager.findDownloadedFilesByMask('SearchInstanceCQLQuery*')
       .then((downloadedFilenames) => {
-        const lastDownloadedFilename = FileManager.getLastDownloadedFileName(downloadedFilenames);
-        InventoryActions.verifySaveSQLQueryFileName(lastDownloadedFilename);
+        const lastDownloadedFilename = downloadedFilenames.sort()[downloadedFilenames.length - 1];
+        InventoryInstances.verifySaveSQLQueryFileName(lastDownloadedFilename);
 
         FileManager.readFile(lastDownloadedFilename)
           .then((actualCQLQuery) => {
-            InventoryActions.verifySaveSQLQuery(actualCQLQuery, '*', 'eng');
+            InventoryInstances.verifySaveSQLQuery(actualCQLQuery, '*', 'eng');
           });
       });
   });
