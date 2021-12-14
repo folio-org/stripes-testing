@@ -83,11 +83,13 @@ and make a pull request to this package.
 
 ### Table of Contents
 
+#### Stripes-components
 - [`Accordion`](#accordion)
 - [`AutoSuggest`](#autosuggest)
 - [`Avatar`](#avatar)
 - [`Badge`](#badge)
 - [`Button`](#button)
+- [`ButtonGroup`](#buttongroup)
 - [`Checkbox`](#checkbox)
 - [`Dropdown`](#dropdown)
 - [`Datepicker`](#datepicker) ([`Calendar Widget`](#calendar-widget))
@@ -102,9 +104,14 @@ and make a pull request to this package.
 - [`RichTextEditor`](#richtexteditor)
 - [`SearchField`](#searchField)
 - [`Select`](#select)
+- [`Selection`](#selection)
 - [`TextArea`](#textarea)
 - [`TextField`](#textfield)
 - [`Tooltip`](#tooltip)
+
+#### Stripes-smart-components
+-[`AddressList`](#addresslist)
+-[`AddressEdit`](#addressedit)
 
 #### Accordion
 
@@ -146,6 +153,65 @@ Accordion('Categories').exists();
   pane set. So for example `Accordion('Users').has({ index: 2 })`
   would assert that the "Users" accordion was 3rd in its accordion
   set.
+
+#### AddressList
+Renders a fieldgroup of common address form fields.
+
+Related: [AddressEdit](#addressedit), [AddressView](#addressview)
+
+##### Synopsis
+
+```js
+import { AddressList } from '@folio/stripes-testing';
+
+// expand collapsed address list
+AddressList().toggleMore();
+
+// add address to address list...
+AddressList().addAddress();
+
+// assert that Address list displays 2 addresses
+AddressList().has({ count: 3});
+```
+
+##### actions
+
+- `toggleMore`: clicks the expansions 
+- `clickEdit`: _number_ - clicks the edit button at the given index
+- `addAddress`: clicks the add button, exposes a new address form
+- `deleteAddress`: _number_ - deletes the address at a given index
+
+##### filters
+
+count: number of visible address views in the list
+
+#### AddressEdit
+
+##### Synopsis
+
+```js
+import { AddressEdit } from '@folio/stripes-testing';
+
+// find address form at index 1
+AddressEdit({ index: 1 });
+
+// find address form with validation errors
+AddressEdit({ error: true });
+
+// save the values (click the save button on the address form)
+AddressEdit().save()
+```
+
+##### Actions
+
+- `save` - Clicks the save button
+- `cancel` - Clicks the cancel button
+- `delete` - Clicks the delete button
+
+##### Filters
+
+- `index`: _number_ - filters by index.
+- `error`: _boolean_ - whether or not the form contains an error.
 
 #### AutoSuggest
 
