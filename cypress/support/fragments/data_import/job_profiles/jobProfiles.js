@@ -1,4 +1,4 @@
-import { Button, TextField, MultiColumnListCell, Modal } from '@interactors/html';
+import { Button, TextField, MultiColumnListCell, Modal } from '../../../../../interactors';
 import { getLongDelay } from '../../../utils/cypressTools';
 
 export default class JobProfiles {
@@ -23,8 +23,8 @@ export default class JobProfiles {
   }
 
   static searchJobProfileForImport(jobProfileTitle) {
-    cy.get(({ id: 'job-profiles-list' }).find(TextField({ id:'input-search-job-profiles-field' })).fillIn(jobProfileTitle));
-    cy.get(({ id: 'job-profiles-list' }).find(Button('Search')).click());
+    cy.do(TextField({ id:'input-search-job-profiles-field' }).fillIn(jobProfileTitle));
+    cy.do(Button('Search').click());
     cy.expect(MultiColumnListCell(jobProfileTitle).exists());
   }
 

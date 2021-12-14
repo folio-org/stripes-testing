@@ -4,7 +4,9 @@ export default class ModalSelectMappingProfile {
   static searchMappingProfileByName(mappingProfileName) {
     cy.do(Modal('Select Field Mapping Profiles').find(TextField({ name: 'query' })).fillIn(mappingProfileName));
     cy.do(Modal('Select Field Mapping Profiles').find(Button('Search')).click());
+    cy.pause();
     cy.expect(MultiColumnListCell(mappingProfileName).exists());
+    cy.pause();
   }
 
   static selectMappingProfile() {

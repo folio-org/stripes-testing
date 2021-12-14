@@ -27,7 +27,7 @@ export default class NewMappingProfile {
     }
 
     static permanentLoanType = {
-      type: '"Selected"',
+      type: '"Can circulate"',
     }
 
     static status = {

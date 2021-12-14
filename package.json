@@ -20,6 +20,7 @@
   "dependencies": {
     "@interactors/html": "^0.36.0",
     "axe-core": "4.3.3",
+    "cypress-file-upload": "^5.0.8",
     "cypress-react-selector": "^2.3.13",
     "date-fns": "^2.16.1",
     "debug": "^4.0.1",
