@@ -1,5 +1,5 @@
 import { MultiColumnList, MultiColumnListCell, Pane, Accordion, Checkbox, TextField } from '../../../../interactors';
-import InventoryActions from './InventoryActions';
+import InventoryActions from './inventoryActions';
 
 
 const effectiveLocationInput = Accordion({ id: 'effectiveLocation' });

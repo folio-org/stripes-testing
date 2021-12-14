@@ -1,6 +1,6 @@
 import TopMenu from '../../support/fragments/topMenu';
 import InventorySearch from '../../support/fragments/inventory/inventorySearch';
-import InventoryActions from '../../support/fragments/inventory/InventoryActions';
+import InventoryActions from '../../support/fragments/inventory/inventoryActions';
 import { Checkbox } from '../../../interactors';
 
 describe('ui-inventory: actions', () => {
