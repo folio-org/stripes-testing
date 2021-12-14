@@ -55,11 +55,11 @@ describe('inventory: exports', () => {
     FileManager.findDownloadedFilesByMask('SearchInstanceCQLQuery*')
       .then((downloadedFilenames) => {
         const lastDownloadedFilename = downloadedFilenames.sort()[downloadedFilenames.length - 1];
-        InventoryActions.verifySaveSQLQueryFileName(lastDownloadedFilename);
+        InventoryActions.verifySaveCQLQueryFileName(lastDownloadedFilename);
 
         FileManager.readFile(lastDownloadedFilename)
           .then((actualCQLQuery) => {
-            InventoryActions.verifySaveSQLQuery(actualCQLQuery, '*', 'eng');
+            InventoryActions.verifySaveCQLQuery(actualCQLQuery, '*', 'eng');
           });
       });
   });

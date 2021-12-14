@@ -76,7 +76,7 @@ export default {
     expect(expectedUUIDs).to.deep.equal(formattedActualUUIDs);
   },
 
-  verifySaveSQLQueryFileName(actualName) {
+  verifySaveCQLQueryFileName(actualName) {
     // valid name example: SearchInstanceCQLQuery2021-12-09T14_45_54+03_00.cql
     const expectedFileNameMask = /SearchInstanceCQLQuery\d{4}-\d{2}-\d{2}T\d{2}_\d{2}_\d{2}\+\d{2}_\d{2}\.cql/gm;
     expect(actualName).to.match(expectedFileNameMask);
@@ -86,7 +86,7 @@ export default {
     verifyFileNameDate(actualDate);
   },
 
-  verifySaveSQLQuery(actualQuery, kw, lang) {
+  verifySaveCQLQuery(actualQuery, kw, lang) {
     cy.url().then((url) => {
       const params = new URLSearchParams(url.split('?')[1]);
       const effectiveLocationId = /\w{8}-\w{4}-\w{4}-\w{4}-\w{12}/gm.exec(params.get('filters'))[0];
