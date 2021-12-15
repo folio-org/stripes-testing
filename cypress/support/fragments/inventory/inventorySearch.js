@@ -57,6 +57,13 @@ export default {
     ]);
   },
 
+  showSelectedRecords() {
+    cy.do([
+      InventoryActions.open(),
+      InventoryActions.options.showSelectedRecords.click()
+    ]);
+  },
+
   getUUIDsFromRequest(req) {
     const expectedUUIDs = [];
     req.response.body.ids.forEach((elem) => { expectedUUIDs.push(elem.id); });
