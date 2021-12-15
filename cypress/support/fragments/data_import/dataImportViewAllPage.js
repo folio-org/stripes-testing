@@ -21,4 +21,15 @@ export default {
   checkRowsCount(rowCount) {
     return cy.expect(MultiColumnList({ id: 'list-data-import' }).has({ rowCount }));
   },
+
+  getJobLogs(searchParams) {
+    return cy
+      .okapiRequest({
+        path: 'metadata-provider/jobExecutions',
+        searchParams,
+      })
+      .then(({ body }) => {
+        Cypress.env('viewAllJobLogs', body.jobExecutions);
+      });
+  }
 };

@@ -12,5 +12,3 @@ import './blocks';
 import './owners';
 import './fees-fines';
 import './organizations';
-import './data-import';
-

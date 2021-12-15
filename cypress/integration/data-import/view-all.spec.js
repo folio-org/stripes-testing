@@ -17,15 +17,15 @@ describe('ui-data-import: "View all" log screen', () => {
     // create dynamically file with given name in fixtures
     fileManager.createFile(`cypress/fixtures/${uniqueFileName}`);
 
-    // upload generated file
+    // remove generated test file from fixtures after uploading
     cy.uploadFile(uniqueFileName);
+    fileManager.deleteFile(`cypress/fixtures/${uniqueFileName}`);
+
     DataImportViewAllPage.gotoViewAllPage();
 
+    // fetch dynamic data from server
     const query = '((status any "COMMITTED ERROR")) sortby completedDate/sort.descending';
-    cy.getJobLogs({ limit: 1, query });
-
-    // remove generated test file from fixtures after uploading
-    fileManager.deleteFile(`cypress/fixtures/${uniqueFileName}`);
+    DataImportViewAllPage.getJobLogs({ limit: 1, query });
   });
 
   it('C11112 allows to search with "Keyword"', () => {
@@ -38,7 +38,7 @@ describe('ui-data-import: "View all" log screen', () => {
     DataImportViewAllPage.checkRowsCount(1);
 
     // search by id
-    searchTerm = `${Cypress.env('jobLogs')[0].hrId}`;
+    searchTerm = `${Cypress.env('viewAllJobLogs')[0].hrId}`;
     DataImportViewAllPage.searchWithTerm(searchTerm);
 
     DataImportViewAllPage.checkRowsCount(1);
@@ -46,7 +46,8 @@ describe('ui-data-import: "View all" log screen', () => {
 
 
   it('C11112 allows to search with only "ID"', () => {
-    const searchTerm = `${Cypress.env('jobLogs')[0].hrId}`;
+    const jobLog = Cypress.env('viewAllJobLogs').find(job => job.fileName === uniqueFileName);
+    const searchTerm = `${jobLog.hrId}`;
     DataImportViewAllPage.selectOption('ID');
     DataImportViewAllPage.searchWithTerm(searchTerm);
 
