@@ -4,11 +4,11 @@ import TopMenu from '../topMenu';
 export default {
   gotoViewAllPage() {
     cy.visit(TopMenu.dataImportPath);
-    cy.do([Button('View all').click()]);
+    cy.do(Button('View all').click());
   },
 
   selectOption(option) {
-    return cy.do([Select({ id: 'input-job-logs-search-qindex' }).choose(option)]);
+    return cy.do(Select({ id: 'input-job-logs-search-qindex' }).choose(option));
   },
 
   searchWithTerm(term) {
