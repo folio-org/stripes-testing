@@ -2,7 +2,8 @@ import DataImportViewAllPage from '../../support/fragments/data_import/dataImpor
 import getRandomPostfix from '../../support/utils/stringTools';
 import fileManager from '../../support/utils/fileManager';
 
-describe('ui-data-import: "View all" log screen', () => {
+describe('ui-data-import: Search the "View all" log screen', () => {
+  let jobLog;
   // Create unique file name with given type to upload
   const fileType = 'mrc';
   const uniqueFileName = `test${getRandomPostfix()}.${fileType}`;
@@ -21,43 +22,40 @@ describe('ui-data-import: "View all" log screen', () => {
     cy.uploadFile(uniqueFileName);
     fileManager.deleteFile(`cypress/fixtures/${uniqueFileName}`);
 
-    DataImportViewAllPage.gotoViewAllPage();
-
     // fetch dynamic data from server
     const query = '((status any "COMMITTED ERROR")) sortby completedDate/sort.descending';
     DataImportViewAllPage.getJobLogs({ limit: 1, query });
   });
 
-  it('C11112 allows to search with "Keyword"', () => {
+  beforeEach(() => {
+    jobLog = Cypress.env('viewAllJobLogs').find(job => job.fileName === uniqueFileName);
+  });
+
+  it('C11112 Search the "View all" log screen', () => {
+    DataImportViewAllPage.gotoViewAllPage();
+
+    // Search by "Keyword"
     DataImportViewAllPage.selectOption('Keyword (ID, File name)');
 
-    // search by name
-    let searchTerm = uniqueFileName;
-    DataImportViewAllPage.searchWithTerm(searchTerm);
+    // by file name
+    DataImportViewAllPage.searchWithTerm(uniqueFileName);
 
     DataImportViewAllPage.checkRowsCount(1);
 
-    // search by id
-    searchTerm = `${Cypress.env('viewAllJobLogs')[0].hrId}`;
-    DataImportViewAllPage.searchWithTerm(searchTerm);
+    // by id
+    DataImportViewAllPage.searchWithTerm(`${jobLog.hrId}`);
 
     DataImportViewAllPage.checkRowsCount(1);
-  });
 
-
-  it('C11112 allows to search with only "ID"', () => {
-    const jobLog = Cypress.env('viewAllJobLogs').find(job => job.fileName === uniqueFileName);
-    const searchTerm = `${jobLog.hrId}`;
+    // Search by only "ID"
     DataImportViewAllPage.selectOption('ID');
-    DataImportViewAllPage.searchWithTerm(searchTerm);
+    DataImportViewAllPage.searchWithTerm(`${jobLog.hrId}`);
 
     DataImportViewAllPage.checkRowsCount(1);
-  });
 
-  it('C11112 allows to search with only "File name"', () => {
-    const searchTerm = uniqueFileName;
+    // Search by only "File name"
     DataImportViewAllPage.selectOption('File name');
-    DataImportViewAllPage.searchWithTerm(searchTerm);
+    DataImportViewAllPage.searchWithTerm(uniqueFileName);
 
     DataImportViewAllPage.checkRowsCount(1);
   });

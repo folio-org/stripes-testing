@@ -1,9 +1,7 @@
 import { Button, MultiColumnList, Select, TextField } from '../../../../interactors';
-import TopMenu from '../topMenu';
 
 export default {
   gotoViewAllPage() {
-    cy.visit(TopMenu.dataImportPath);
     cy.do(Button('View all').click());
   },
 
