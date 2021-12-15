@@ -35,15 +35,7 @@ describe('inventory: exports', () => {
     });
   });
 
-  it('C196755 verifies search result counts and selected counts', () => {
-    const checkedResult = 2;
-
-    InventorySearch.byEffectiveLocation();
-    InventorySearch.selectResultCheckboxes(checkedResult);
-    InventorySearch.verifySelectedRecords(checkedResult);
-  });
-
-  it('C9287 verifies export CQL instances', () => {
+  it('C9287 verifies export CQL query', () => {
     InventorySearch.byLanguage();
     InventorySearch.byKeywords();
     InventorySearch.byEffectiveLocation();
