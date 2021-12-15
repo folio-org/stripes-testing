@@ -5,6 +5,7 @@ export default class SettingsDataImport {
   }
 
   static uploadFile() {
-    cy.get('[multiple type="file"]').attachFile('FAT-742.mrc');
+    // TODO using fabrica
+    cy.get('[type="file"]').attachFile('FAT-742.mrc');
   }
 }

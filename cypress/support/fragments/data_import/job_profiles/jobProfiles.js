@@ -37,7 +37,7 @@ export default class JobProfiles {
     cy.do([
       Button('Actions').click(),
       Button('Run').click(),
-      Modal('Are you sure you want to run this job?').find(Button('Run').click()),
+      Modal('Are you sure you want to run this job?').find(Button('Run')).click(),
     ]);
   }
 }

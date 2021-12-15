@@ -1,6 +1,5 @@
 import { TextField, Button, Select } from '../../../../../interactors';
 import { getLongDelay } from '../../../utils/cypressTools';
-import ModalSelectActionProfile from '../job_profiles/modalSelectActionProfile';
 import ModalSelectMappingProfile from './modalSelectMappingProfile';
 
 export default class NewActionProfile {

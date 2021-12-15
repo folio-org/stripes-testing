@@ -1,3 +1,4 @@
+
 /// <reference types="cypress" />
 
 import FieldMappingProfiles from '../../support/fragments/data_import/mapping_profiles/fieldMappingProfiles';
@@ -10,12 +11,10 @@ import NewJobProfile from '../../support/fragments/data_import/job_profiles/newJ
 import getRandomPostfix from '../../support/utils/stringTools';
 import DataImport from '../../support/fragments/data_import/dataImport';
 
-
 describe('ui-data-import: MARC file import with creating of the new instance, holding and item', () => {
   before('navigates to Settings', () => {
     cy.login(Cypress.env('diku_login'), Cypress.env('diku_password'));
   });
-
   it('C343334 MARC file import with creating a new mapping profile and action profile', () => {
     const collectionOfProfiles = [
       { mappingProfile: { typeValue : NewMappingProfile.folioRecordTypeValue.instance,
@@ -69,3 +68,4 @@ describe('ui-data-import: MARC file import with creating of the new instance, ho
     JobProfiles.runImportFile();
   });
 });
+
