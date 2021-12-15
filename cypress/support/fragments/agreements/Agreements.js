@@ -18,7 +18,7 @@ export default class Agreements {
     NewAgreement.save();
     this.waitLoading();
 
-    // TODO: check ability to wirk through interactors
+    // TODO: rewrite to ID to get ability to wirk through interactors
     cy.xpath(`${this.#labelCellXpath}[.='${specialAgreement.name}']`)
       .should('be.visible');
   }
