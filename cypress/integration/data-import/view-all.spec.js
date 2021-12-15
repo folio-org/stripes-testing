@@ -1,5 +1,6 @@
-import ViewAllView from '../../support/fragments/data_import/viewAllView';
+import DataImportViewAllPage from '../../support/fragments/data_import/dataImportViewAllPage';
 import getRandomPostfix from '../../support/utils/stringTools';
+import fileManager from '../../support/utils/fileManager';
 
 describe('ui-data-import: "View all" log screen', () => {
   // Create unique file name with given type to upload
@@ -13,44 +14,50 @@ describe('ui-data-import: "View all" log screen', () => {
     );
     cy.getToken('diku_admin', 'admin');
 
+    // create dynamically file with given name in fixtures
+    fileManager.createFile(`cypress/fixtures/${uniqueFileName}`);
 
+    // upload generated file
     cy.uploadFile(uniqueFileName);
-    ViewAllView.gotoViewAllPage();
+    DataImportViewAllPage.gotoViewAllPage();
 
     const query = '((status any "COMMITTED ERROR")) sortby completedDate/sort.descending';
     cy.getJobLogs({ limit: 1, query });
+
+    // remove generated test file from fixtures after uploading
+    fileManager.deleteFile(`cypress/fixtures/${uniqueFileName}`);
   });
 
-  it('C11112 allows to search with "File name" or "ID"', () => {
-    ViewAllView.selectOption('Keyword (ID, File name)');
+  it('C11112 allows to search with "Keyword"', () => {
+    DataImportViewAllPage.selectOption('Keyword (ID, File name)');
 
     // search by name
-    let searchTerm = `${Cypress.env('jobLogs')[0].fileName}`;
-    ViewAllView.searchWithTerm(searchTerm);
+    let searchTerm = uniqueFileName;
+    DataImportViewAllPage.searchWithTerm(searchTerm);
 
-    ViewAllView.checkRowsCount(1);
+    DataImportViewAllPage.checkRowsCount(1);
 
     // search by id
     searchTerm = `${Cypress.env('jobLogs')[0].hrId}`;
-    ViewAllView.searchWithTerm(searchTerm);
+    DataImportViewAllPage.searchWithTerm(searchTerm);
 
-    ViewAllView.checkRowsCount(1);
+    DataImportViewAllPage.checkRowsCount(1);
   });
 
 
   it('C11112 allows to search with only "ID"', () => {
     const searchTerm = `${Cypress.env('jobLogs')[0].hrId}`;
-    ViewAllView.selectOption('ID');
-    ViewAllView.searchWithTerm(searchTerm);
+    DataImportViewAllPage.selectOption('ID');
+    DataImportViewAllPage.searchWithTerm(searchTerm);
 
-    ViewAllView.checkRowsCount(1);
+    DataImportViewAllPage.checkRowsCount(1);
   });
 
   it('C11112 allows to search with only "File name"', () => {
-    const searchTerm = `${Cypress.env('jobLogs')[0].fileName}`;
-    ViewAllView.selectOption('File name');
-    ViewAllView.searchWithTerm(searchTerm);
+    const searchTerm = uniqueFileName;
+    DataImportViewAllPage.selectOption('File name');
+    DataImportViewAllPage.searchWithTerm(searchTerm);
 
-    ViewAllView.checkRowsCount(1);
+    DataImportViewAllPage.checkRowsCount(1);
   });
 });

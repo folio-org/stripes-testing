@@ -1,5 +1,5 @@
 const globby = require('globby');
-const { rmdir } = require('fs');
+const { rmdir, unlink } = require('fs');
 
 module.exports = (on, config) => {
   on('task', {
@@ -21,6 +21,18 @@ module.exports = (on, config) => {
     deleteFolder(folderName) {
       return new Promise((resolve, reject) => {
         rmdir(folderName, { maxRetries: 10, recursive: true }, (err) => {
+          if (err && err.code !== 'ENOENT') {
+            return reject(err);
+          }
+
+          resolve(null);
+        });
+      });
+    },
+
+    deleteFile(pathToFile) {
+      return new Promise((resolve, reject) => {
+        unlink(pathToFile, (err) => {
           if (err && err.code !== 'ENOENT') {
             return reject(err);
           }
