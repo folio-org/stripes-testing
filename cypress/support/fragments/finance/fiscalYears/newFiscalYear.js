@@ -1,10 +1,10 @@
 import getRandomPostfix from '../../../utils/stringTools';
-import { getCurrentDate, getPreviousDayDate } from '../../../utils/dateTools';
+import { getCurrentDate, getPreviousDayDate, getRandomFiscalYearCode } from '../../../utils/dateTools';
 
 export default class NewFiscalYear {
     static #defaultFiscalYear = {
       name: `autotest_year_${getRandomPostfix()}`,
-      code: `autotest_year_code_${getRandomPostfix()}`,
+      code: getRandomFiscalYearCode(1000, 9999),
       acquisitionUnits: '',
       periodBeginDate: getPreviousDayDate(),
       periodEndDate: getCurrentDate(),
