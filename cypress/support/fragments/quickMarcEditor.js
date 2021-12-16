@@ -1,4 +1,4 @@
-import { QuickMarcEditor, QuickMarcEditorRow, TextArea, Button, Modal, TextField, and, some } from '../../../interactors';
+import { QuickMarcEditor, QuickMarcEditorRow, TextArea, Button, Modal, TextField, and, some, Pane } from '../../../interactors';
 import InventoryInstance from './inventory/inventoryInstance';
 import getRandomPostfix from '../utils/stringTools';
 
@@ -13,7 +13,8 @@ const defaultFieldValues = {
   subfieldPrefixInEditor: '$',
   subfieldPrefixInSource: '‡',
   // just enumerate a few free to use tags  which can be applyied in test one by one with small reserve
-  freeTags: ['996', '997', '998']
+  freeTags: ['996', '997', '998'],
+  existingLocation: '$b E'
 };
 defaultFieldValues.initialSubField = `${defaultFieldValues.subfieldPrefixInEditor}a `;
 defaultFieldValues.contentWithSubfield = `${defaultFieldValues.initialSubField}${defaultFieldValues.content}`;
@@ -28,8 +29,7 @@ const getInitialRowsCount = () => InventoryInstance.validOCLC.getLastRowNumber()
 
 const addRow = (rowNumber) => cy.do(_getRowInteractor(rowNumber ?? getInitialRowsCount()).find(addFieldButton).click());
 
-const fillAllAvailableValues = (fieldContent, tag) => {
-  const initialRowsCount = InventoryInstance.validOCLC.getLastRowNumber();
+const fillAllAvailableValues = (fieldContent, tag, initialRowsCount = InventoryInstance.validOCLC.getLastRowNumber()) => {
   const contentTextArea = TextArea({ name: `records[${initialRowsCount + 1}].content` });
   const tagTextField = TextField({ name: `records[${initialRowsCount + 1}].tag` });
   const separator = '\t   \t';
@@ -95,9 +95,12 @@ export default {
         }
       });
   },
-  updateExistingField:(tag = InventoryInstance.validOCLC.existingTag) => {
-    const newContent = `newContent${getRandomPostfix()}`;
+  updateExistingField:(tag = InventoryInstance.validOCLC.existingTag, newContent = `newContent${getRandomPostfix()}`) => {
     cy.do(QuickMarcEditorRow({ tagValue: tag }).find(TextArea()).fillIn(newContent));
     return newContent;
-  }
+  },
+  waitLoading:() => {
+    cy.expect(Pane({ id: 'quick-marc-editor-pane' }).exists());
+  },
+  getExistingLocation:() => defaultFieldValues.existingLocation
 };

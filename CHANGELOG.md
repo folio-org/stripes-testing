@@ -4,6 +4,7 @@
 * Implement e-2-e automation of test case C4061. Refs FAT-807.
 * Export `dispatchFocusout` from `util` so that other Interactors can make use of it. Refs STSMACOM-541.
 * Add `AddressEdit, AddressList` interactors. Refs STSMACOM-608.
+* Implement e-2-e automation of test case C11112. Refs FAT-758.
 
 ## [4.0.0](https://github.com/folio-org/stripes-testing/tree/v4.0.0) (2021-09-27)
 [Full Changelog](https://github.com/folio-org/stripes-testing/compare/v3.0.0...v4.0.0)
