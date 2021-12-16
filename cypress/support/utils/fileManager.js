@@ -2,8 +2,11 @@ const downloadsFolder = Cypress.config('downloadsFolder');
 
 export default {
   findDownloadedFilesByMask(mask) {
-    // more about masks: https://github.com/isaacs/minimatch#usage
-    // returns array with all files matched to mask
+    /*
+    more about masks: https://github.com/isaacs/minimatch#usage
+    returns array with all files matched to mask
+    */
+
     return cy.task('findFiles', `${downloadsFolder}/${mask}`);
   },
 
@@ -16,8 +19,11 @@ export default {
   },
 
   createFile(pathToFile) {
-    // passing an empty string as data because,
-    // cypress-file-upload plugin doesn't allow empty files
+    /*
+    passing an empty string as data because,
+    cypress-file-upload plugin doesn't allow empty files
+    */
+
     return cy.writeFile(pathToFile, ' ');
   },
 
@@ -26,10 +32,12 @@ export default {
   },
 
   verifyFile(verifyNameFunc, fileNameMask, verifyContentFunc, args = []) {
-    // verifyNameFunc: function for verifying file name
-    // verifyContentFunc: function for verifying file content
-    // fileMask: mask for searching file in downloads folder
-    // args: array. Arguments for verify content function if needed
+    /*
+    verifyNameFunc: function for verifying file name
+    verifyContentFunc: function for verifying file content
+    fileMask: mask for searching file in downloads folder
+    args: array. Arguments for verify content function if needed
+    */
 
     // Need time for download file TODO: think about how it can be fixed
     cy.wait(Cypress.env('downloadTimeout'));
