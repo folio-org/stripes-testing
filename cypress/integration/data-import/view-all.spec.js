@@ -3,7 +3,7 @@ import getRandomPostfix from '../../support/utils/stringTools';
 import fileManager from '../../support/utils/fileManager';
 
 describe('ui-data-import: Search the "View all" log screen', () => {
-  let jobLog;
+  let hrId;
   // Create unique file name with given type to upload
   const fileType = 'mrc';
   const uniqueFileName = `test${getRandomPostfix()}.${fileType}`;
@@ -13,7 +13,10 @@ describe('ui-data-import: Search the "View all" log screen', () => {
       Cypress.env('diku_login'),
       Cypress.env('diku_password')
     );
-    cy.getToken('diku_admin', 'admin');
+    cy.getToken(
+      Cypress.env('diku_login'),
+      Cypress.env('diku_password')
+    );
 
     // create dynamically file with given name in fixtures
     fileManager.createFile(`cypress/fixtures/${uniqueFileName}`);
@@ -21,42 +24,32 @@ describe('ui-data-import: Search the "View all" log screen', () => {
     // remove generated test file from fixtures after uploading
     cy.uploadFile(uniqueFileName);
     fileManager.deleteFile(`cypress/fixtures/${uniqueFileName}`);
-
-    // fetch dynamic data from server
-    const query = '((status any "COMMITTED ERROR")) sortby completedDate/sort.descending';
-    DataImportViewAllPage.getJobLogs({ limit: 1, query });
   });
 
   beforeEach(() => {
-    jobLog = Cypress.env('viewAllJobLogs').find(job => job.fileName === uniqueFileName);
+    // fetch dynamic data from server
+    const query = '((status any "COMMITTED ERROR")) sortby completedDate/sort.descending';
+    cy
+      .okapiRequest({
+        path: 'metadata-provider/jobExecutions',
+        searchParams: { limit: 1, query },
+      })
+      .then(({ body }) => {
+        hrId = body.jobExecutions[0].hrId;
+      });
   });
 
   it('C11112 Search the "View all" log screen', () => {
     DataImportViewAllPage.gotoViewAllPage();
 
-    // Search by "Keyword"
-    DataImportViewAllPage.selectOption('Keyword (ID, File name)');
+    DataImportViewAllPage.options.forEach((option) => {
+      DataImportViewAllPage.selectOption(option);
+      // when option is "ID", search with hrId otherwise, with file name
+      const term = option === 'ID' ? `${hrId}` : uniqueFileName;
 
-    // by file name
-    DataImportViewAllPage.searchWithTerm(uniqueFileName);
+      DataImportViewAllPage.searchWithTerm(term);
 
-    DataImportViewAllPage.checkRowsCount(1);
-
-    // by id
-    DataImportViewAllPage.searchWithTerm(`${jobLog.hrId}`);
-
-    DataImportViewAllPage.checkRowsCount(1);
-
-    // Search by only "ID"
-    DataImportViewAllPage.selectOption('ID');
-    DataImportViewAllPage.searchWithTerm(`${jobLog.hrId}`);
-
-    DataImportViewAllPage.checkRowsCount(1);
-
-    // Search by only "File name"
-    DataImportViewAllPage.selectOption('File name');
-    DataImportViewAllPage.searchWithTerm(uniqueFileName);
-
-    DataImportViewAllPage.checkRowsCount(1);
+      DataImportViewAllPage.checkRowsCount(1);
+    });
   });
 });

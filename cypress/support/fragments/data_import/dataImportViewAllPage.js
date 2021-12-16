@@ -1,4 +1,4 @@
-import { Button, MultiColumnList, Select, TextField } from '../../../../interactors';
+import { Button, MultiColumnList, Select } from '../../../../interactors';
 
 export default {
   gotoViewAllPage() {
@@ -6,28 +6,17 @@ export default {
   },
 
   selectOption(option) {
-    return cy.do(Select({ id: 'input-job-logs-search-qindex' }).choose(option));
+    return cy.do([Select({ id: 'input-job-logs-search-qindex' }).choose(option)]);
   },
 
   searchWithTerm(term) {
-    return cy.do([
-      TextField('Search ').fillIn(term),
-      Button('Search').click(),
-    ]);
+    cy.get('#input-job-logs-search').clear().type(term);
+    cy.do(Button('Search').click());
   },
 
   checkRowsCount(rowCount) {
     return cy.expect(MultiColumnList({ id: 'list-data-import' }).has({ rowCount }));
   },
 
-  getJobLogs(searchParams) {
-    return cy
-      .okapiRequest({
-        path: 'metadata-provider/jobExecutions',
-        searchParams,
-      })
-      .then(({ body }) => {
-        Cypress.env('viewAllJobLogs', body.jobExecutions);
-      });
-  }
+  options: ['Keyword (ID, File name)', 'ID', 'File name'],
 };
