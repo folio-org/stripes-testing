@@ -23,6 +23,6 @@ export default class Logs {
   }
 
   static checkCreatedItems() {
-    cy.get(MultiColumnListCell({ 'row': 0, 'columnIndex': 3 })).should('have.value', 'Created');
+    cy.expect(MultiColumnListCell({ 'row': 0, 'columnIndex': 3 }).has({ value: 'Created' }));
   }
 }

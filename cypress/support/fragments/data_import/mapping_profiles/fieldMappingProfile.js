@@ -1,16 +1,14 @@
 import { Button } from '@interactors/html';
 
-export default class FieldMappingProfile {
-    static #actionsButton = Button('Actions');
+export default {
+  clickActionButton() {
+    cy.do(Button('Actions')
+      .click());
+  },
 
-    static clickActionButton() {
-      cy.do(this.#actionsButton)
-        .click();
-    }
-
-    static deleteMappingProfile() {
-      cy.get('[class="DropdownMenu---x9lIp"]')
-        .contains('Delete')
-        .click();
-    }
-}
+  deleteMappingProfile() {
+    cy.get('[class="DropdownMenu---x9lIp"]')
+      .contains('Delete')
+      .click();
+  }
+};

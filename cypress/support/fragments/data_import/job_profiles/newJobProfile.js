@@ -2,38 +2,38 @@ import { TextField, Select, Button, Accordion, HTML, including } from '../../../
 import getRandomPostfix from '../../../utils/stringTools';
 import ModalSelectActionProfile from './modalSelectActionProfile';
 
-export default class NewJobProfile {
-    static acceptedDataType = {
-      dataType: 'MARC',
-    }
+const acceptedDataType = {
+  dataType: 'MARC',
+};
 
-    static #defaultJobProfile = {
-      profileName:  `autotestJobProfile${getRandomPostfix()}`,
-      acceptedDataType: this.acceptedDataType.dataType,
-    }
+const defaultJobProfile = {
+  profileName:  `autotestJobProfile${getRandomPostfix()}`,
+  acceptedDataType: acceptedDataType.dataType,
+};
 
-    static get defaultJobProfile() {
-      return this.#defaultJobProfile;
-    }
+export default {
+  acceptedDataType,
 
-    static fillJobProfile(specialJobProfile = this.#defaultJobProfile) {
-      cy.do([
-        TextField({ name:'profile.name' }).fillIn(specialJobProfile.profileName),
-        Select({ name:'profile.dataType' }).choose(specialJobProfile.acceptedDataType),
-      ]);
-    }
+  defaultJobProfile,
 
-    static selectActionProfile(specialActionProfile) {
-      cy.get('[id="type-selector-dropdown-linker-root"]').click();
-      cy.do([
-        Button('Action').click(),
-      ]);
-      ModalSelectActionProfile.searchActionProfileByName(specialActionProfile.name);
-      ModalSelectActionProfile.selectActionProfile(specialActionProfile.name);
-      cy.expect(Accordion('Overview').find(HTML(including(specialActionProfile.name))).exists());
-    }
+  fillJobProfile: (specialJobProfile = defaultJobProfile) => {
+    cy.do([
+      TextField({ name:'profile.name' }).fillIn(specialJobProfile.profileName),
+      Select({ name:'profile.dataType' }).choose(specialJobProfile.acceptedDataType),
+    ]);
+  },
 
-    static clickSaveAndCloseButton() {
-      cy.do(Button('Save as profile & Close').click());
-    }
-}
+  selectActionProfile(specialActionProfile) {
+    cy.get('[id="type-selector-dropdown-linker-root"]').click();
+    cy.do([
+      Button('Action').click(),
+    ]);
+    ModalSelectActionProfile.searchActionProfileByName(specialActionProfile.name);
+    ModalSelectActionProfile.selectActionProfile(specialActionProfile.name);
+    cy.expect(Accordion('Overview').find(HTML(including(specialActionProfile.name))).exists());
+  },
+
+  clickSaveAndCloseButton: () => {
+    cy.do(Button('Save as profile & Close').click());
+  }
+};

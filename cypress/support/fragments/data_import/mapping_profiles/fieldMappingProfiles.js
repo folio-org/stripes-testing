@@ -1,28 +1,28 @@
 import { Button } from '../../../../../interactors';
 import { getLongDelay } from '../../../utils/cypressTools';
 
-export default class FieldMappingProfiles {
-  static createNewMappingProfile() {
+export default {
+  createNewMappingProfile:() => {
     cy.do([
       Button('Actions').click(),
       Button('New field mapping profile').click()
     ]);
-  }
+  },
 
-  static waitLoadingList() {
+  waitLoadingList:() => {
     cy.get('[id="mapping-profiles-list"]', getLongDelay())
       .should('be.visible');
     cy.expect(Button('Actions').exists());
-  }
+  },
 
-  static checkMappingProfilePresented(mappingProfile) {
+  checkMappingProfilePresented: (mappingProfile) => {
     cy.get('[id="pane-results-content"]')
       .should('contains.text', mappingProfile.name);
-  }
+  },
 
-  static waitLoadingMappingProfile() {
+  waitLoadingMappingProfile:() => {
     cy.get('[id="full-screen-view-content"]', getLongDelay())
       .should('be.visible');
     cy.expect(Button('Actions').exists());
   }
-}
+};

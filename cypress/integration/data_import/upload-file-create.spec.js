@@ -31,7 +31,7 @@ describe('ui-data-import: MARC file import with creating of the new instance, ho
         name: `autotest${NewMappingProfile.folioRecordTypeValue.item}${getRandomPostfix()}`,
         material: NewMappingProfile.materialType.materialType,
         loan: NewMappingProfile.permanentLoanType.type,
-        status: NewMappingProfile.status.status },
+        status: NewMappingProfile.statusField.status },
       actionProfile: { typeValue: NewActionProfile.folioRecordTypeValue.item,
         name: `autotest${NewActionProfile.folioRecordTypeValue.item}${getRandomPostfix()}` } }];
 
