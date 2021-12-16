@@ -9,6 +9,10 @@ export default {
     return 'FY' + (new Date().getFullYear() - 1).toString();
   },
 
+  getCurrentFiscalYearCode: () => {
+    return 'FY' + (new Date().getFullYear()).toString();
+  },
+
   fileNames: {
     'saveSQLQuery': [22, 41],
     'saveUUIDs': [19, 38]
