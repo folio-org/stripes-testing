@@ -11,6 +11,15 @@ export default {
 
   getCurrentFiscalYearCode: () => {
     return 'FY' + (new Date().getFullYear()).toString();
-  }
+  },
 
+  fileNames: {
+    'saveSQLQuery': [22, 41],
+    'saveUUIDs': [19, 38]
+  },
+  parseDateFromFilename(dateString, fileNameType) {
+    // fileNameType: array of 2 values for slicing string for getting Date
+    const sliceValue = fileNameType ?? this.fileNames.saveUUIDs;
+    return Date.parse(dateString[dateString.length - 1].slice(...sliceValue).replaceAll('_', ':'));
+  }
 };

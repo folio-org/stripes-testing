@@ -1,7 +1,8 @@
 import { HTML, including } from '@interactors/html';
 import { Button } from '../../../../interactors';
 
-const title = 'MARC bibliographic record';
+const instanceTitle = 'MARC bibliographic record';
+const holdingTitle = 'Holdings record';
 const closeButton = Button({ icon: 'times' });
 
 export default {
@@ -11,8 +12,11 @@ export default {
   notContains:(notExpectedText) => {
     cy.expect(HTML(including(notExpectedText)).absent());
   },
-  waitLoading: () => {
-    cy.expect(HTML(including(title)).exists());
+  waitInstanceLoading: () => {
+    cy.expect(HTML(including(instanceTitle)).exists());
+  },
+  waitHoldingLoading: () => {
+    cy.expect(HTML(including(holdingTitle)).exists());
   },
   close: () => cy.do(closeButton.click())
 };
