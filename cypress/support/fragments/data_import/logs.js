@@ -11,7 +11,8 @@ export default {
   },
 
   checkStatusOfJobProfile() {
-    cy.get('[data-row-index="row-0"]').should('contain.text', 'Completed');
+    cy.expect(MultiColumnListCell({ 'row': 0, 'columnIndex': 2 }).has({ value: 'Completed' }));
+    // cy.get('[data-row-index="row-0"]').should('contain.text', 'Completed');
   },
 
   waitUntilSearchJobProfile(jobProfileName) {

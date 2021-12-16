@@ -10,7 +10,7 @@ export default {
   },
 
   waitLoadingList: () => {
-    cy.get('[id="action-profiles-list"]', getLongDelay())
+    cy.get('[id="pane-results-content"]', 1000000)
       .should('be.visible');
     cy.expect(Button('Actions').exists());
   },
