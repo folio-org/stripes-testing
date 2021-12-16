@@ -19,19 +19,12 @@ describe('inventory: exports', () => {
     cy.wait('@getIds').then((req) => {
       const expectedUUIDs = InventorySearch.getUUIDsFromRequest(req);
 
-      // Need time for download file TODO: think about how it can be fixed
-      cy.wait(Cypress.env('downloadTimeout'));
-
-      FileManager.findDownloadedFilesByMask('SearchInstanceUUIDs*')
-        .then((downloadedFilenames) => {
-          const lastDownloadedFilename = downloadedFilenames.sort()[downloadedFilenames.length - 1];
-          InventoryActions.verifySaveUUIDsFileName(lastDownloadedFilename);
-
-          FileManager.readFile(lastDownloadedFilename)
-            .then((actualUUIDs) => {
-              InventoryActions.verifySavedUUIDs(actualUUIDs, expectedUUIDs);
-            });
-        });
+      FileManager.verifyFile(
+        InventoryActions.verifySaveUUIDsFileName,
+        'SearchInstanceUUIDs*',
+        InventoryActions.verifySavedUUIDs,
+        [expectedUUIDs]
+      );
     });
   });
 
@@ -49,18 +42,10 @@ describe('inventory: exports', () => {
     InventorySearch.byEffectiveLocation();
     InventorySearch.saveCQLQuery();
 
-    // Need time for download file TODO: think about how it can be fixed
-    cy.wait(Cypress.env('downloadTimeout'));
-
-    FileManager.findDownloadedFilesByMask('SearchInstanceCQLQuery*')
-      .then((downloadedFilenames) => {
-        const lastDownloadedFilename = downloadedFilenames.sort()[downloadedFilenames.length - 1];
-        InventoryActions.verifySaveCQLQueryFileName(lastDownloadedFilename);
-
-        FileManager.readFile(lastDownloadedFilename)
-          .then((actualCQLQuery) => {
-            InventoryActions.verifySaveCQLQuery(actualCQLQuery, '*', 'eng');
-          });
-      });
+    FileManager.verifyFile(
+      InventoryActions.verifySaveCQLQueryFileName,
+      'SearchInstanceCQLQuery*',
+      InventoryActions.verifySaveCQLQuery
+    );
   });
 });
