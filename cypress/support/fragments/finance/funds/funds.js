@@ -1,9 +1,10 @@
-import { Button, TextField, Selection, SelectionList, SearchField } from '../../../../../interactors';
+import { Button, TextField, Selection, SelectionList, SearchField, Accordion, Modal } from '../../../../../interactors';
 
 const rootFundDetailsXpath = '//*[@id="pane-fund-details"]';
 const createdFundNameXpath = '//*[@id="paneHeaderpane-fund-details-pane-title"]/h2/span';
 const numberOfSearchResultsHeader = '//*[@id="paneHeaderfund-results-pane-subtitle"]/span';
 const zeroResultsFoundText = '0 records found';
+const budgetTitleXpath = '//*[@id="paneHeaderpane-budget-pane-title"]/h2/span';
 
 export default {
   waitForFundDetailsLoading : () => {
@@ -67,5 +68,31 @@ export default {
       Button('Delete').click(),
       Button('Delete', { id:'clickable-fund-remove-confirmation-confirm' }).click()
     ]);
-  }
+  },
+
+  addBudget: (allocatedQuantity) => {
+    cy.do(Accordion('Current budget').find(Button('New')).click());
+    cy.expect(Modal('Current budget').exists());
+    cy.do([
+      Modal('Current budget').find(TextField({ name: 'allocated' })).fillIn(allocatedQuantity.toString()),
+      Button('Save').click()
+    ]);
+  },
+
+  checkCreatedBudget: (fundCode, fiscalYear) => {
+    cy.expect(Accordion('Budget summary').exists());
+    cy.expect(Accordion('Budget information').exists());
+    cy.xpath(budgetTitleXpath)
+      .should('be.visible')
+      .and('have.text', fundCode.concat('-', fiscalYear));
+  },
+
+  deleteBudgetViaActions() {
+    cy.do([
+      Button('Actions').click(),
+      Button('Delete').click(),
+      Button('Delete', { id:'clickable-budget-remove-confirmation-confirm' }).click()
+    ]);
+    this.waitForFundDetailsLoading();
+  },
 };
