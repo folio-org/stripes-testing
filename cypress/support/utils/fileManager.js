@@ -1,5 +1,3 @@
-import InventoryActions from '../fragments/inventory/inventoryActions';
-
 const downloadsFolder = Cypress.config('downloadsFolder');
 
 export default {
