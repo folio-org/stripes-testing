@@ -1,14 +1,14 @@
 
-export default class SettingsDataImport {
-  static goToMappingProfile() {
+export default {
+  goToMappingProfile() {
     cy.visit('/settings/data-import/mapping-profiles');
-  }
+  },
 
-  static goToActionProfile() {
+  goToActionProfile() {
     cy.visit('/settings/data-import/action-profiles');
-  }
+  },
 
-  static goToJobProfile() {
+  goToJobProfile() {
     cy.visit('/settings/data-import/job-profiles');
   }
-}
+};

@@ -2,57 +2,44 @@ import { TextField, Button, Select } from '../../../../../interactors';
 import { getLongDelay } from '../../../utils/cypressTools';
 import ModalSelectMappingProfile from './modalSelectMappingProfile';
 
-export default class NewActionProfile {
-    static #profileName = {
-      instanceName: 'Instance',
-      holdingsName: 'Holdings',
-      itemName: 'Item',
-    }
+const profileName = {
+  instanceName: 'Instance',
+  holdingsName: 'Holdings',
+  itemName: 'Item',
+};
 
-    static #action = {
-      create: 'Create (all record types)',
-    }
+const action = {
+  create: 'Create (all record types)',
+};
 
-    static folioRecordTypeValue = {
-      instance: 'Instance',
-      holdings: 'Holdings',
-      item: 'Item',
-    }
+const folioRecordTypeValue = {
+  instance: 'Instance',
+  holdings: 'Holdings',
+  item: 'Item',
+};
 
-    static #defaultActionProfile = {
-      name: 'autotest FAT-742: ' + this.#profileName.instanceName + ' action profile',
-      typeValue: this.folioRecordTypeValue.instance,
-    }
+const defaultActionProfile = {
+  name: 'autotest FAT-742: ' + profileName.instanceName + ' action profile',
+  typeValue: folioRecordTypeValue.instance,
+};
 
-    static get defaultActionProfile() {
-      return this.#defaultActionProfile;
-    }
+export default {
+  folioRecordTypeValue,
 
-    static fillActionProfile(specialActionProfile = this.#defaultActionProfile) {
-      cy.do([
-        TextField({ name:'profile.name' }).fillIn(specialActionProfile.name),
-        Select({ name:'profile.action' }).choose(this.#action.create),
-        Select({ name:'profile.folioRecord' }).choose(specialActionProfile.typeValue),
-      ]);
-    }
+  fillActionProfile: (specialActionProfile = defaultActionProfile) => {
+    cy.do([
+      TextField({ name:'profile.name' }).fillIn(specialActionProfile.name),
+      Select({ name:'profile.action' }).choose(action.create),
+      Select({ name:'profile.folioRecord' }).choose(specialActionProfile.typeValue),
+    ]);
+  },
 
-    static linkMappingProfile(specialMappingProfile) {
-      cy.do([
-        Button('Link Profile').click(),
-      ]);
-      ModalSelectMappingProfile.searchMappingProfileByName(specialMappingProfile.name);
-      ModalSelectMappingProfile.selectMappingProfile();
-      NewActionProfile.waitUntilLinkingFinished();
-      NewActionProfile.clickSaveAndClose();
-    }
-
-    static waitUntilLinkingFinished() {
-      // TODO: redesign to interactors(Section)
-      cy.get('section[id=actionProfileFormAssociatedMappingProfileAccordion] div[class*=searchControl]>button[disabled]',
-        getLongDelay()).should('be.visible');
-    }
-
-    static clickSaveAndClose() {
-      cy.do(Button('Save as profile & Close').click());
-    }
-}
+  linkMappingProfile: (specialMappingProfile) => {
+    cy.do(Button('Link Profile').click());
+    ModalSelectMappingProfile.searchMappingProfileByName(specialMappingProfile.name);
+    ModalSelectMappingProfile.selectMappingProfile();
+    cy.get('section[id=actionProfileFormAssociatedMappingProfileAccordion] div[class*=searchControl]>button[disabled]',
+      getLongDelay()).should('be.visible');
+    cy.do(Button('Save as profile & Close').click());
+  }
+};

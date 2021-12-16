@@ -1,28 +1,28 @@
 import { Button, TextField, MultiColumnListCell } from '../../../../interactors';
 
-export default class Logs {
-  static clickViewAllButton() {
+export default {
+  clickViewAllButton() {
     cy.do(Button('View all').click());
-  }
+  },
 
-  static searchJobProfileByName() {
+  searchJobProfileByName() {
     cy.do(TextField({ id: 'input-job-logs-search' }).fillIn('FAT-742'));
     cy.do(Button('Search').click());
-  }
+  },
 
-  static checkStatusOfJobProfile() {
+  checkStatusOfJobProfile() {
     cy.get('[data-row-index="row-0"]').should('contain.text', 'Completed');
-  }
+  },
 
-  static waitUntilSearchJobProfile(jobProfileName) {
+  waitUntilSearchJobProfile(jobProfileName) {
     cy.expect(MultiColumnListCell(jobProfileName).exists());
-  }
+  },
 
-  static selectJobProfile() {
+  selectJobProfile() {
     cy.get(MultiColumnListCell({ 'row': 0, 'columnIndex': 0 })).click();
-  }
+  },
 
-  static checkCreatedItems() {
+  checkCreatedItems() {
     cy.expect(MultiColumnListCell({ 'row': 0, 'columnIndex': 3 }).has({ value: 'Created' }));
   }
-}
+};

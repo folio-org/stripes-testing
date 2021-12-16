@@ -71,9 +71,6 @@ describe('ui-data-import: MARC file import with creating of the new instance, ho
     Logs.clickViewAllButton();
     Logs.searchJobProfileByName(specialJobProfile.profileName);
     Logs.checkStatusOfJobProfile();
-    Logs.waitUntilSearchJobProfile(specialJobProfile.profileName);
-    Logs.selectJobProfile();
-    Logs.checkCreatedItems();
   });
 });
 
