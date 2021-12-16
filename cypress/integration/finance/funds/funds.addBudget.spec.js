@@ -41,7 +41,6 @@ describe('ui-finance: Add budget to fund', () => {
       .then(({ body }) => {
         fiscalYears = body.fiscalYears;
       });
-
   });
 
   beforeEach(() => {
