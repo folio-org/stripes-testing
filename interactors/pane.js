@@ -31,6 +31,7 @@ export default HTML.extend('pane')
 
       return undefined;
     },
+    id: el => el.getAttribute('id')
   })
   .actions({
     dismiss: (interactor) => interactor.find(Button({ ariaLabel: 'Close ' })).click(),

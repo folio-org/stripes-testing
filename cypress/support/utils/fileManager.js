@@ -13,5 +13,16 @@ export default {
 
   readFile(pathToFile) {
     return cy.readFile(pathToFile);
+  },
+
+  createFile(pathToFile) {
+    /* passing an empty string as data because,
+    cypress-file-upload` plugin doesn't allow empty files
+     */
+    return cy.writeFile(pathToFile, ' ');
+  },
+
+  deleteFile(pathToFile) {
+    return cy.task('deleteFile', pathToFile);
   }
 };
