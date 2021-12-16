@@ -6,6 +6,9 @@ import { getCurrentFiscalYearCode } from '../../../support/utils/dateTools';
 
 
 describe('ui-finance: Add budget to fund', () => {
+  let aUnits;
+  let fiscalYears;
+
   const ledger = {
     id: uuid(),
     name: `autotest_ledger_${getRandomPostfix()}`,
@@ -19,22 +22,33 @@ describe('ui-finance: Add budget to fund', () => {
 
   before(() => {
     cy.login(Cypress.env('diku_login'), Cypress.env('diku_password'));
+    cy.getToken(Cypress.env('diku_login'), Cypress.env('diku_password'));
 
-    cy.getToken(Cypress.env('diku_login'), Cypress.env('diku_password'))
-      .then(() => {
-        cy.getAcqUnitsApi({ limit: 1 });
-        cy.getFiscalYearsApi({ limit: 1 });
+    cy
+      .okapiRequest({
+        path: 'acquisitions-units/units',
+        limit: 1,
       })
-      .then(() => {
-        cy.visit('/finance/fund');
+      .then(({ body }) => {
+        aUnits = body.acquisitionsUnits;
       });
+
+    cy
+      .okapiRequest({
+        path: 'finance/fiscal-years',
+        limit: 1,
+      })
+      .then(({ body }) => {
+        fiscalYears = body.fiscalYears;
+      });
+
   });
 
   beforeEach(() => {
     cy.createLedgerApi({
       ...ledger,
-      acqUnitIds: [Cypress.env('acqUnits')[0].id],
-      fiscalYearOneId: Cypress.env('fiscalYears')[0].id,
+      acqUnitIds: [aUnits[0].id],
+      fiscalYearOneId: fiscalYears[0].id,
     });
   });
 
@@ -45,6 +59,7 @@ describe('ui-finance: Add budget to fund', () => {
   it('C4057 should add budget for a new fund', () => {
     const defaultFund = { ...NewFund.defaultFund };
     defaultFund.ledgerName = ledger.name;
+    cy.visit('/finance/fund');
     Funds.createDefaultFund(defaultFund);
     Funds.checkCreatedFund(defaultFund.name);
     Funds.addBudget(0);
