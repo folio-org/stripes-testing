@@ -1,4 +1,4 @@
-import { TextField, Button, Select, HTML, including } from '../../../../../interactors';
+import { TextField, Button, Select } from '../../../../../interactors';
 import FieldMappingProfiles from './fieldMappingProfiles';
 
 export default class NewMappingProfile {
@@ -60,7 +60,7 @@ export default class NewMappingProfile {
         cy.do([
           TextField('Material type').fillIn(specialMappingProfile.material),
           // TODO create waiter
-          // cy.wait(5000),
+          cy.wait(5000),
           TextField('Permanent loan type').fillIn(specialMappingProfile.loan),
           TextField('Status').fillIn(specialMappingProfile.status),
         ]);

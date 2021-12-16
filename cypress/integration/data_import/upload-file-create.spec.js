@@ -10,6 +10,7 @@ import JobProfiles from '../../support/fragments/data_import/job_profiles/jobPro
 import NewJobProfile from '../../support/fragments/data_import/job_profiles/newJobProfile';
 import getRandomPostfix from '../../support/utils/stringTools';
 import DataImport from '../../support/fragments/data_import/dataImport';
+import Logs from '../../support/fragments/data_import/logs';
 
 describe('ui-data-import: MARC file import with creating of the new instance, holding and item', () => {
   before('navigates to Settings', () => {
@@ -66,6 +67,13 @@ describe('ui-data-import: MARC file import with creating of the new instance, ho
     JobProfiles.searchJobProfileForImport(specialJobProfile.profileName);
     JobProfiles.selectJobProfile(specialJobProfile.profileName);
     JobProfiles.runImportFile();
+
+    Logs.clickViewAllButton();
+    Logs.searchJobProfileByName(specialJobProfile.profileName);
+    Logs.checkStatusOfJobProfile();
+    Logs.waitUntilSearchJobProfile(specialJobProfile.profileName);
+    Logs.selectJobProfile();
+    Logs.checkCreatedItems();
   });
 });
 

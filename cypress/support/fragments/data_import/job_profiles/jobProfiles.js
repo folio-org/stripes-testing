@@ -3,12 +3,10 @@ import { getLongDelay } from '../../../utils/cypressTools';
 
 export default class JobProfiles {
   static createNewJobProfile() {
-    cy.do(
-      Button('Actions').click()
-    );
-    cy.get('[class="DropdownMenu---x9lIp"]')
-      .contains('New job profile')
-      .click();
+    cy.do([
+      Button('Actions').click(),
+      Button('New job profile').click(),
+    ]);
   }
 
   static waitLoadingList() {
