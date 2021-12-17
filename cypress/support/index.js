@@ -21,6 +21,7 @@ setInteractorTimeout(20_000);
 
 
 require('cypress-xpath');
+require('cypress-grep')();
 
 // try to fix the issue with cached location in cypress
 Cypress.on('window:before:load', window => {
