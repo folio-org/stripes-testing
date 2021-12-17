@@ -43,4 +43,4 @@ export { default as Section } from './section';
 
 // Stripes-smart-component interactors
 export { AddressList, AddressEdit, AddressItem } from './address-edit-list';
-export { EditableList, EditableListRow } from './editablelist';
+export { EditableList, EditableListRow, ColumnHeader } from './editablelist';
