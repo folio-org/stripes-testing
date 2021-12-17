@@ -86,11 +86,11 @@ export default {
     verifyFileNameDate(actualDate);
   },
 
-  verifySaveCQLQuery(actualQuery, kw, lang) {
+  verifySaveCQLQuery(actualQuery, kw = '*', lang = 'eng') {
     cy.url().then((url) => {
       const params = new URLSearchParams(url.split('?')[1]);
       const effectiveLocationId = /\w{8}-\w{4}-\w{4}-\w{4}-\w{12}/gm.exec(params.get('filters'))[0];
-      const expectedText = `((keyword all "${kw ?? '*'}") and languages=="${lang ?? 'eng'}" and items.effectiveLocationId=="${effectiveLocationId}") sortby title`;
+      const expectedText = `((keyword all "${kw}") and languages=="${lang}" and items.effectiveLocationId=="${effectiveLocationId}") sortby title`;
       expect(actualQuery).to.eq(expectedText);
     });
   },
