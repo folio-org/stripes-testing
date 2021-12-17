@@ -38,7 +38,7 @@ export default {
 
   tryToCreateFiscalYearWithoutMandatoryFields: (fiscalYearName) => {
     cy.do([
-      agreements.click(),
+      buttonNew.click(),
       TextField('Name*').fillIn(fiscalYearName),
       saveAndClose.click(),
       TextField('Code*').fillIn('some code'),
