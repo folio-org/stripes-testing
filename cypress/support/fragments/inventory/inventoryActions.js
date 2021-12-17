@@ -1,10 +1,18 @@
 import { Button, Select, TextField } from '../../../../interactors';
-import NewInventoryInstance from './newInventoryInstance';
+import DateTools from '../../utils/dateTools';
+import InventoryInstance from './inventoryInstance';
 
 const importButtonInActions = Button({ id: 'dropdown-clickable-import-record' });
 const importButtonInModal = Button('Import');
-const OCLWorldCatIdentifierTextField = TextField('Enter OCLC WorldCat identifier');
+const OCLWorldCatIdentifierTextField = TextField({ name: 'externalIdentifier' });
 const importTypeSelect = Select({ name :'externalIdentifierType' });
+
+function verifyFileNameDate(actualDate) {
+  const timeInterval = 60000;
+  expect(actualDate).to.be.greaterThan(Date.now() - timeInterval);
+  expect(actualDate).to.be.lessThan(Date.now() + timeInterval);
+}
+
 
 export default {
   open: () => { return Button('Actions').click(); },
@@ -24,10 +32,19 @@ export default {
       cy.expect(element.is({ disabled: false }));
     });
   },
-  import(specialOCLCWorldCatidentifier = NewInventoryInstance.validOCLC.id) {
+
+  import(specialOCLCWorldCatidentifier = InventoryInstance.validOCLC.id) {
     cy.do(this.open());
     cy.do(importButtonInActions.click());
+    this.fillImportFields(specialOCLCWorldCatidentifier);
 
+    this.pressImportInModal();
+    InventoryInstance.checkExpectedOCLCPresence(specialOCLCWorldCatidentifier);
+    InventoryInstance.checkExpectedMARCSource();
+  },
+
+  // the same steps can be used in Overlay Source Bibliographic Record
+  fillImportFields(specialOCLCWorldCatidentifier = InventoryInstance.validOCLC.id) {
     // TODO: remove in the future, now related with differenes in our environments
     if (Cypress.env('is_kiwi_release')) {
       const oclcWorldCat = { text:'OCLC WorldCat',
@@ -38,25 +55,43 @@ export default {
     }
 
     cy.do(OCLWorldCatIdentifierTextField.fillIn(specialOCLCWorldCatidentifier));
-    cy.do(importButtonInModal.click());
+  },
 
-    NewInventoryInstance.checkExpectedOCLCPresence(specialOCLCWorldCatidentifier);
+  pressImportInModal(specialOCLCWorldCatidentifier = InventoryInstance.validOCLC.id) {
+    cy.do(importButtonInModal.click());
+    InventoryInstance.checkExpectedOCLCPresence(specialOCLCWorldCatidentifier);
   },
   verifySaveUUIDsFileName(actualName) {
-    // Check naming mask
+    // valid name example: SearchInstanceUUIDs2021-11-18T16_39_59+03_00.csv
     const expectedFileNameMask = /SearchInstanceUUIDs\d{4}-\d{2}-\d{2}T\d{2}_\d{2}_\d{2}\+\d{2}_\d{2}\.csv/gm;
     expect(actualName).to.match(expectedFileNameMask);
 
-    // Check date value
-    const dateString = actualName.split('/');
-    const actualDate = Date.parse(dateString[dateString.length - 1].slice(19, 38).replaceAll('_', ':'));
-    expect(actualDate).to.be.greaterThan(Date.now() - 100000);
-    expect(actualDate).to.be.lessThan(Date.now() + 100000);
+    const stringWithDate = actualName.split('/');
+    const actualDate = DateTools.parseDateFromFilename(stringWithDate, DateTools.fileNames.saveUUIDs);
+    verifyFileNameDate(actualDate);
   },
+
   verifySavedUUIDs(actualUUIDs, expectedUUIDs) {
     const formattedActualUUIDs = actualUUIDs.replaceAll('"', '').split('\n');
-    for (let i = 0; i < expectedUUIDs.length; i++) {
-      expect(expectedUUIDs[i]).to.eq(formattedActualUUIDs[i]);
-    }
-  }
+    expect(expectedUUIDs).to.deep.equal(formattedActualUUIDs);
+  },
+
+  verifySaveCQLQueryFileName(actualName) {
+    // valid name example: SearchInstanceCQLQuery2021-12-09T14_45_54+03_00.cql
+    const expectedFileNameMask = /SearchInstanceCQLQuery\d{4}-\d{2}-\d{2}T\d{2}_\d{2}_\d{2}\+\d{2}_\d{2}\.cql/gm;
+    expect(actualName).to.match(expectedFileNameMask);
+
+    const stringWithDate = actualName.split('/');
+    const actualDate = DateTools.parseDateFromFilename(stringWithDate, DateTools.fileNames.saveSQLQuery);
+    verifyFileNameDate(actualDate);
+  },
+
+  verifySaveCQLQuery(actualQuery, kw, lang) {
+    cy.url().then((url) => {
+      const params = new URLSearchParams(url.split('?')[1]);
+      const effectiveLocationId = /\w{8}-\w{4}-\w{4}-\w{4}-\w{12}/gm.exec(params.get('filters'))[0];
+      const expectedText = `((keyword all "${kw ?? '*'}") and languages=="${lang ?? 'eng'}" and items.effectiveLocationId=="${effectiveLocationId}") sortby title`;
+      expect(actualQuery).to.eq(expectedText);
+    });
+  },
 };

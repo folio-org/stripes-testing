@@ -1,22 +1,21 @@
 import { Button, TextField, MultiColumnListCell } from '../../../../interactors';
 
 export default {
-  clickViewAllButton() {
-    cy.do(Button('View all').click());
-  },
-
-  searchJobProfileByName() {
-    cy.do(TextField({ id: 'input-job-logs-search' }).fillIn('FAT-742'));
-    cy.do(Button('Search').click());
-  },
-
-  checkStatusOfJobProfile() {
-    cy.expect(MultiColumnListCell({ 'row': 0, 'columnIndex': 2 }).has({ value: 'Completed' }));
-    // cy.get('[data-row-index="row-0"]').should('contain.text', 'Completed');
+  // TODO search file by id
+  searchJobProfileByName(fileName) {
+    cy.do([
+      Button('View all').click(),
+      TextField({ id: 'input-job-logs-search' }).fillIn(fileName),
+      Button('Search').click()
+    ]);
   },
 
   waitUntilSearchJobProfile(jobProfileName) {
     cy.expect(MultiColumnListCell(jobProfileName).exists());
+  },
+
+  checkStatusOfJobProfile() {
+    cy.expect(MultiColumnListCell({ 'row': 0, 'columnIndex': 2 }).has({ value: 'Completed' }));
   },
 
   selectJobProfile() {

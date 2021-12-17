@@ -1,4 +1,4 @@
-import { Button } from '../../../../../interactors';
+import { Button, MultiColumnListCell, Section } from '../../../../../interactors';
 import { getLongDelay } from '../../../utils/cypressTools';
 
 export default {
@@ -16,8 +16,11 @@ export default {
   },
 
   checkMappingProfilePresented: (mappingProfile) => {
-    cy.get('[id="pane-results-content"]')
-      .should('contains.text', mappingProfile.name);
+    cy.expect(Section({ id: 'pane-results' }).find(MultiColumnListCell(mappingProfile.name)).exists());
+  },
+
+  closeViewModeForMappingProfile() {
+    cy.do(Button('Close'));
   },
 
   waitLoadingMappingProfile:() => {

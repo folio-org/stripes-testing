@@ -43,8 +43,9 @@ describe('ui-data-import: MARC file import with creating of the new instance, ho
       SettingsDataImport.goToMappingProfile();
       FieldMappingProfiles.createNewMappingProfile();
       NewMappingProfile.fillMappingProfile(profile.mappingProfile);
+      FieldMappingProfiles.closeViewModeForMappingProfile();
+      FieldMappingProfiles.waitLoadingMappingProfile();
       FieldMappingProfiles.checkMappingProfilePresented(profile.mappingProfile);
-
       SettingsDataImport.goToActionProfile();
       ActionProfiles.createNewActionProfile();
       NewActionProfile.fillActionProfile(profile.actionProfile);
@@ -64,13 +65,18 @@ describe('ui-data-import: MARC file import with creating of the new instance, ho
 
     DataImport.goToDataImport();
     DataImport.uploadFile();
+    cy.wait(10000);
+
     JobProfiles.searchJobProfileForImport(specialJobProfile.profileName);
     JobProfiles.selectJobProfile(specialJobProfile.profileName);
-    JobProfiles.runImportFile();
 
-    Logs.clickViewAllButton();
-    Logs.searchJobProfileByName(specialJobProfile.profileName);
+    JobProfiles.runImportFile();
+    cy.wait(10000);
+    Logs.searchJobProfileByName(DataImport.uniqueFileName);
+    Logs.waitUntilSearchJobProfile();
     Logs.checkStatusOfJobProfile();
+    Logs.selectJobProfile();
+    Logs.checkCreatedItems();
   });
 });
 

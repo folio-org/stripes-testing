@@ -1,4 +1,5 @@
 import { TextField, Button, Select } from '../../../../../interactors';
+import FieldMappingProfiles from './fieldMappingProfiles';
 
 const profileName = {
   instanceName: 'Instance',
@@ -61,7 +62,6 @@ export default {
     if (specialMappingProfile.typeValue === 'Holdings') {
       cy.do([
         TextField('Permanent').fillIn(specialMappingProfile.location),
-        Button('Save as profile & Close').click(),
       ]);
     } else if (specialMappingProfile.typeValue === 'Item') {
       cy.do([
@@ -70,10 +70,10 @@ export default {
         cy.wait(5000),
         TextField('Permanent loan type').fillIn(specialMappingProfile.loan),
         TextField('Status').fillIn(specialMappingProfile.status),
-        Button('Save as profile & Close').click(),
       ]);
-    } else {
-      cy.do(Button('Save as profile & Close').click());
     }
+    cy.do(Button('Save as profile & Close').click());
+    cy.expect(Button('Actions').exists());
+    FieldMappingProfiles.waitLoadingMappingProfile();
   }
 };

@@ -6,4 +6,5 @@ export default class TopMenu {
   static settingsPath = '/settings';
   static financePath = '/finance';
   static ledgerPath = '/finance/ledger';
+  static dataImportPath = '/data-import';
 }

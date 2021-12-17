@@ -15,6 +15,7 @@ import './inventory';
 import './organizations';
 import './users';
 import 'cypress-file-upload';
+import './data-import';
 
 setInteractorTimeout(20_000);
 

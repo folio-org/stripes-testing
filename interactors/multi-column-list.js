@@ -47,7 +47,7 @@ export const MultiColumnList = HTML.extend('multi column list')
     rowCount: el => el.querySelectorAll('[class*=mclRow-]').length,
     height: el => el.offsetHeight,
     width: el => el.offsetWidth,
-    scrollTop: el => el.querySelector('div[class^=mclScrollable-').scrollTop,
+    scrollTop: el => el.querySelector('div[class^=mclScrollable-]').scrollTop,
     headerInteractivity: (el) => [...el.querySelectorAll('div[class*=mclHeader-]')].map((d) => !!d.querySelector('[data-test-clickable-header]')),
     visible: (el) => isVisible(el)
   })
@@ -55,7 +55,7 @@ export const MultiColumnList = HTML.extend('multi column list')
     clickHeader: (interactor, header) => interactor.find(MultiColumnListHeader(header)).click(),
     scrollBy: (interactor, value) => interactor.perform(
       async (el) => {
-        const scrollable = el.querySelector('div[class^=mclScrollable-');
+        const scrollable = el.querySelector('div[class^=mclScrollable-]');
         const fired = scrollable.dispatchEvent(new CustomEvent('scroll'));
         if (fired) await scrollable.scrollBy({ top: value });
       }

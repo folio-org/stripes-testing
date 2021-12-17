@@ -1,5 +1,6 @@
-import { QuickMarkEditor, QuickMarkEditorRow, TextArea, Button, Modal, TextField } from '../../../interactors';
-import NewInventoryInstance from './inventory/newInventoryInstance';
+import { QuickMarcEditor, QuickMarcEditorRow, TextArea, Button, Modal, TextField, and, some, Pane } from '../../../interactors';
+import InventoryInstance from './inventory/inventoryInstance';
+import getRandomPostfix from '../utils/stringTools';
 
 const addFieldButton = Button({ ariaLabel : 'Add a new field' });
 const deleteFieldButton = Button({ ariaLabel : 'Delete this field' });
@@ -9,42 +10,55 @@ const continueWithSaveButton = Modal().find(Button({ id: 'clickable-quick-marc-c
 
 const defaultFieldValues = {
   content:'qwe',
-  contentWithSubfield:'$a qwe',
+  subfieldPrefixInEditor: '$',
+  subfieldPrefixInSource: '‡',
   // just enumerate a few free to use tags  which can be applyied in test one by one with small reserve
-  freeTagsIterator: new Set(['996', '997', '998']).values(),
-  getSourceContent: (contentInQuickMarcEditor) => contentInQuickMarcEditor.replace('$', '‡')
+  freeTags: ['996', '997', '998'],
+  existingLocation: '$b E'
 };
+defaultFieldValues.initialSubField = `${defaultFieldValues.subfieldPrefixInEditor}a `;
+defaultFieldValues.contentWithSubfield = `${defaultFieldValues.initialSubField}${defaultFieldValues.content}`;
+defaultFieldValues.getSourceContent = (contentInQuickMarcEditor) => contentInQuickMarcEditor.replace(defaultFieldValues.subfieldPrefixInEditor, defaultFieldValues.subfieldPrefixInSource);
 
-const _getRowInteractor = (specialRowNumber) => QuickMarkEditor()
-  .find(QuickMarkEditorRow({ index: specialRowNumber }));
+const requiredRowsTags = ['LDR', '001', '005', '008', '999'];
 
-const _addNewField = (fieldContent, tag) => {
-  const lastRowNumber = NewInventoryInstance.validOCLC.getLastRowNumber();
-  const contentTextArea = TextArea({ name: `records[${lastRowNumber + 1}].content` });
-  const tagTextField = TextField({ name: `records[${lastRowNumber + 1}].tag` });
+const _getRowInteractor = (specialRowNumber) => QuickMarcEditor()
+  .find(QuickMarcEditorRow({ index: specialRowNumber }));
 
-  cy.do(_getRowInteractor(lastRowNumber).find(addFieldButton).click());
+const getInitialRowsCount = () => InventoryInstance.validOCLC.getLastRowNumber();
 
-  const tagValue = tag ?? defaultFieldValues.freeTagsIterator.next().value;
+const addRow = (rowNumber) => cy.do(_getRowInteractor(rowNumber ?? getInitialRowsCount()).find(addFieldButton).click());
+
+const fillAllAvailableValues = (fieldContent, tag, initialRowsCount = InventoryInstance.validOCLC.getLastRowNumber()) => {
+  const contentTextArea = TextArea({ name: `records[${initialRowsCount + 1}].content` });
+  const tagTextField = TextField({ name: `records[${initialRowsCount + 1}].tag` });
+  const separator = '\t   \t';
+  const tagValue = tag ?? defaultFieldValues.freeTags[0];
   const content = fieldContent ?? defaultFieldValues.content;
 
-  cy.do(_getRowInteractor(lastRowNumber + 1).find(contentTextArea).fillIn(content));
-  cy.do(_getRowInteractor(lastRowNumber + 1).find(tagTextField).fillIn(tagValue));
+  cy.do(_getRowInteractor(initialRowsCount + 1).find(contentTextArea).fillIn(content));
+  cy.do(_getRowInteractor(initialRowsCount + 1).find(tagTextField).fillIn(tagValue));
 
-  return `${tagValue}\t   \t${defaultFieldValues.getSourceContent(content)}`;
+  if (!content.match(/^\$\w/)) {
+    return `${tagValue}${separator}${defaultFieldValues.getSourceContent(`${defaultFieldValues.initialSubField}${content}`)}`;
+  } else {
+    return `${tagValue}${separator}${defaultFieldValues.getSourceContent(content)}`;
+  }
 };
 
-export default {
-  addNewField: () => {
-    return _addNewField(defaultFieldValues.content);
-  },
+const addNewField = (fieldContent = defaultFieldValues.content, tag) => {
+  addRow();
+  return fillAllAvailableValues(fieldContent, tag);
+};
 
-  addNewFieldWithSubField() {
-    return _addNewField(defaultFieldValues.contentWithSubfield);
-  },
+
+export default {
+  addNewField,
+
+  addNewFieldWithSubField: () => addNewField(defaultFieldValues.contentWithSubfield),
 
   deletePenaltField: () => {
-    const lastRowNumber = NewInventoryInstance.validOCLC.getLastRowNumber();
+    const lastRowNumber = getInitialRowsCount();
     cy.do(_getRowInteractor(lastRowNumber - 1).find(deleteFieldButton).click());
   },
 
@@ -52,5 +66,41 @@ export default {
 
   deleteConfirmationPresented: () => cy.expect(confirmationModal.exists()),
 
-  confirmDelete: () => cy.do(continueWithSaveButton.click())
+  confirmDelete: () => cy.do(continueWithSaveButton.click()),
+
+  getContentFromRow: (row) => row.split(this.separator)[1],
+
+  addRow,
+
+  checkInitialContent: (rowNumber) => cy.expect(
+    _getRowInteractor(rowNumber ?? getInitialRowsCount() + 1)
+      .find(TextArea({ name: `records[${rowNumber ?? getInitialRowsCount() + 1}].content` }))
+      .has({ value: defaultFieldValues.initialSubField })
+  ),
+  checkContent: (content, rowNumber) => cy.expect(
+    _getRowInteractor(rowNumber ?? getInitialRowsCount() + 1)
+      .find(TextArea({ name: `records[${rowNumber ?? getInitialRowsCount() + 1}].content` }))
+      .has({ value: content ?? defaultFieldValues.contentWithSubfield })
+  ),
+  fillAllAvailableValues,
+  checkRequiredFields: () => {
+    cy.expect(QuickMarcEditor().has({
+      presentedFieldsTags: and(...requiredRowsTags.map(field => some(field)))
+    }));
+    cy.then(() => QuickMarcEditor().presentedRowsProperties())
+      .then(presentedRowsProperties => {
+        // TODO: move comparing logic into custome interactors matcher
+        if (!requiredRowsTags.every((tag) => presentedRowsProperties.find((rowProperties) => rowProperties.tag === tag && !rowProperties.isDeleteButtonExist))) {
+          assert.fail('Button Delete is presented into required row');
+        }
+      });
+  },
+  updateExistingField:(tag = InventoryInstance.validOCLC.existingTag, newContent = `newContent${getRandomPostfix()}`) => {
+    cy.do(QuickMarcEditorRow({ tagValue: tag }).find(TextArea()).fillIn(newContent));
+    return newContent;
+  },
+  waitLoading:() => {
+    cy.expect(Pane({ id: 'quick-marc-editor-pane' }).exists());
+  },
+  getExistingLocation:() => defaultFieldValues.existingLocation
 };
