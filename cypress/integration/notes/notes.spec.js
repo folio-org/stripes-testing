@@ -27,7 +27,7 @@ describe('Note creation', () => {
     Agreements.selectRecord();
     AgreementDetails.openNotesSection();
   });
-  it('C1296 Create a note', () => {
+  it('C1296 Create a note', { tags: '@smoke' }, () => {
     AgreementDetails.createNote(longNote);
     Agreements.selectRecord();
     AgreementDetails.waitLoadingWithExistingNote(longNote.title);
