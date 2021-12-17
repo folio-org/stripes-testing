@@ -1,8 +1,11 @@
 const globby = require('globby');
 const { rmdir, unlink } = require('fs');
+const cypressGrep = require('cypress-grep/src/plugin');
 
 // eslint-disable-next-line no-unused-vars
 module.exports = (on, config) => {
+  cypressGrep(config);
+
   on('task', {
     // a task to find files matching the given mask
     async findFiles(mask) {
@@ -45,4 +48,6 @@ module.exports = (on, config) => {
       });
     }
   });
+
+  return config;
 };
