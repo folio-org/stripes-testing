@@ -4,6 +4,13 @@ const rootFiscalYearDetailsXpath = '//*[@id="pane-fiscal-year-details"]';
 const createdFiscalYearNameXpath = '//*[@id="paneHeaderpane-fiscal-year-details-pane-title"]/h2/span';
 const numberOfSearchResultsHeader = '//*[@id="paneHeaderfiscal-year-results-pane-subtitle"]/span';
 const zeroResultsFoundText = '0 records found';
+// TODO: move all same buttons to one place related to Finance module
+const saveAndClose = Button('Save & Close');
+const agreements = Button('Agreements');
+const buttonNew = Button('New');
+const actions = Button('Actions');
+const deleteButton = Button('Delete');
+const searchField = SearchField({ id: 'input-record-search' });
 
 export default {
   waitForFiscalYearDetailsLoading : () => {
@@ -13,12 +20,12 @@ export default {
 
   createDefaultFiscalYear(fiscalYear) {
     cy.do([
-      Button('New').click(),
+      buttonNew.click(),
       TextField('Name*').fillIn(fiscalYear.name),
       TextField('Code*').fillIn(fiscalYear.code),
       TextField('Period Begin Date*').fillIn(fiscalYear.periodBeginDate),
       TextField('Period End Date*').fillIn(fiscalYear.periodEndDate),
-      Button('Save & Close').click()
+      saveAndClose.click()
     ]);
     this.waitForFiscalYearDetailsLoading();
   },
@@ -31,16 +38,16 @@ export default {
 
   tryToCreateFiscalYearWithoutMandatoryFields: (fiscalYearName) => {
     cy.do([
-      Button('New').click(),
+      agreements.click(),
       TextField('Name*').fillIn(fiscalYearName),
-      Button('Save & Close').click(),
+      saveAndClose.click(),
       TextField('Code*').fillIn('some code'),
-      Button('Save & Close').click(),
+      saveAndClose.click(),
       TextField('Period Begin Date*').fillIn('05/05/2021'),
-      Button('Save & Close').click(),
+      saveAndClose.click(),
       // try to navigate without saving
-      Button('Agreements').click(),
-      Button('Keep editing').click,
+      agreements.click(),
+      Button('Keep editing').click(),
       Button('Cancel').click(),
       Button('Close without saving').click()
     ]);
@@ -48,8 +55,8 @@ export default {
 
   searchByName : (fiscalYearName) => {
     cy.do([
-      SearchField({ id: 'input-record-search' }).selectIndex('Name'),
-      SearchField({ id: 'input-record-search' }).fillIn(fiscalYearName),
+      searchField.selectIndex('Name'),
+      searchField.fillIn(fiscalYearName),
       Button('Search').click(),
     ]);
   },
@@ -62,8 +69,8 @@ export default {
 
   deleteFiscalYearViaActions: () => {
     cy.do([
-      Button('Actions').click(),
-      Button('Delete').click(),
+      actions.click(),
+      deleteButton.click(),
       Button('Delete', { id:'clickable-fiscal-year-remove-confirmation-confirm' }).click()
     ]);
   }
