@@ -36,6 +36,7 @@
     "bigtest": "^0.14.0",
     "cypress": "^9.1.1",
     "cypress-file-upload": "^5.0.8",
+    "cypress-grep": "^2.12.0",
     "cypress-xpath": "^1.6.2",
     "eslint": "^7.15.0",
     "eslint-plugin-cypress": "^2.11.2",
