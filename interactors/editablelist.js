@@ -1,3 +1,16 @@
+/* EditableList Interactor
+*  This interactor helps with tests involving the Editable List - used commonly within the ControlledVocab smart component.
+*
+*  // Ex: Asserting a column header is present:
+*  EditableList().find(ColumnHeader('name')).exists();
+*
+*  // Asserting editing is disabled on rows:
+*  EditableList().has({ editDisabled: true });
+*
+*  // Filling in a text field:
+*  EditableListRow().find(TextField(including('name'))).fillIn('test');
+*/
+
 import { including } from '@interactors/html';
 import HTML from './baseHTML';
 import { MultiColumnListRow, MultiColumnList } from './multi-column-list';
