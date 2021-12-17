@@ -14,7 +14,7 @@ export default {
     eng: { id: 'clickable-filter-language-english' }
   },
   getAllSearchResults: () => MultiColumnList(),
-  getSearchResult: (row, col) => MultiColumnListCell({ 'row': row ?? 0, 'columnIndex': col ?? 0 }),
+  getSearchResult: (row = 0, col = 0) => MultiColumnListCell({ 'row': row, 'columnIndex': col }),
 
   selectResultCheckboxes(count) {
     const clickActions = [];
@@ -39,8 +39,8 @@ export default {
     ]);
   },
 
-  byKeywords(kw) {
-    return cy.do(keywordInput.fillIn(kw ?? '*'));
+  byKeywords(kw = '*') {
+    return cy.do(keywordInput.fillIn(kw));
   },
 
   saveUUIDs() {
@@ -54,6 +54,13 @@ export default {
     return cy.do([
       InventoryActions.open(),
       InventoryActions.options.saveCQLQuery.click()
+    ]);
+  },
+
+  showSelectedRecords() {
+    cy.do([
+      InventoryActions.open(),
+      InventoryActions.options.showSelectedRecords.click()
     ]);
   },
 
