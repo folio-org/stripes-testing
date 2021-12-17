@@ -31,12 +31,12 @@ export default {
     return cy.task('deleteFile', pathToFile);
   },
 
-  verifyFile(verifyNameFunc, fileNameMask, verifyContentFunc, args = []) {
+  verifyFile(verifyNameFunc, fileNameMask, verifyContentFunc, verifyContentFuncArgs = []) {
     /*
     verifyNameFunc: function for verifying file name
     verifyContentFunc: function for verifying file content
     fileMask: mask for searching file in downloads folder
-    args: array. Arguments for verify content function if needed
+    verifyContentFuncArgs: array. Arguments for verify content function if needed
     */
 
     // Need time for download file TODO: think about how it can be fixed
@@ -49,7 +49,7 @@ export default {
 
         this.readFile(lastDownloadedFilename)
           .then((actualContent) => {
-            verifyContentFunc(actualContent, ...args);
+            verifyContentFunc(actualContent, ...verifyContentFuncArgs);
           });
       });
   }
