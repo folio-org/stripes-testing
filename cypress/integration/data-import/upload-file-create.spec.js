@@ -60,6 +60,8 @@ describe('ui-data-import: MARC file import with creating of the new instance, ho
     NewJobProfile.clickSaveAndCloseButton();
     JobProfiles.waitLoadingList();
     JobProfiles.checkJobProfilePresented(specialJobProfile.profileName);
+
+    // TODO delete created data
   });
 });
 
