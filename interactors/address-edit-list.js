@@ -1,4 +1,4 @@
-import { Button, HTML } from '@interactors/html';
+import { Button, HTML, including } from '@interactors/html';
 
 export const AddressEdit = HTML.extend('address edit')
   .selector('fieldset[data-test-address-edit]')
@@ -29,7 +29,7 @@ export const AddressList = HTML.extend('address list')
     count: (el) => el.querySelectorAll('role=tabpanel').length,
   })
   .actions({
-    toggleMore: ({ perform }) => perform(el => el.querySelector('[data-test-addressList-toggle]')),
+    toggleMore: ({ find }) => find(Button(including('Show'))).click(),
     clickEdit: ({ find }, index) => find(AddressItem({ index })).edit(),
     addAddress: ({ find }) => find(Button('New')).click(),
     deleteAddress: ({ find }, index) => find(AddressEdit({ index })).delete()
