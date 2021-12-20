@@ -3,6 +3,7 @@ import getRandomPostfix from '../../../support/utils/stringTools';
 import NewFund from '../../../support/fragments/finance/funds/newFund';
 import Funds from '../../../support/fragments/finance/funds/funds';
 import { getCurrentFiscalYearCode } from '../../../support/utils/dateTools';
+import { testType } from '../../../support/utils/tagTools';
 
 
 describe('ui-finance: Add budget to fund', () => {
@@ -55,7 +56,7 @@ describe('ui-finance: Add budget to fund', () => {
     cy.deleteLedgerApi(ledger.id);
   });
 
-  it('C4057 should add budget for a new fund', () => {
+  it('C4057 should add budget for a new fund', { tags: [testType.smoke] }, () => {
     const defaultFund = { ...NewFund.defaultFund };
     defaultFund.ledgerName = ledger.name;
     cy.visit('/finance/fund');

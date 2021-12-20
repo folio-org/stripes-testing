@@ -2,6 +2,7 @@ import TopMenu from '../../support/fragments/topMenu';
 import InventorySearch from '../../support/fragments/inventory/inventorySearch';
 import InventoryActions from '../../support/fragments/inventory/inventoryActions';
 import FileManager from '../../support/utils/fileManager';
+import { testType } from '../../support/utils/tagTools';
 
 
 describe('inventory: exports', () => {
@@ -10,7 +11,7 @@ describe('inventory: exports', () => {
     cy.visit(TopMenu.inventoryPath);
   });
 
-  it('C9284 verifies export UUIDs instances', () => {
+  it('C9284 verifies export UUIDs instances', { tags: [testType.smoke] }, () => {
     InventorySearch.byEffectiveLocation();
     InventorySearch.saveUUIDs();
 
@@ -28,7 +29,7 @@ describe('inventory: exports', () => {
     });
   });
 
-  it('C9287 verifies export CQL query', () => {
+  it('C9287 verifies export CQL query', { tags: [testType.smoke] }, () => {
     InventorySearch.byLanguage();
     InventorySearch.byKeywords();
     InventorySearch.byEffectiveLocation();
