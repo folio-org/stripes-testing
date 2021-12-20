@@ -112,6 +112,8 @@ and make a pull request to this package.
 #### Stripes-smart-components
 -[`AddressList`](#addresslist)
 -[`AddressEdit`](#addressedit)
+-['EditableList'](#editablelist)
+-['EditableListRow'](#editablelistrow)
 
 #### Accordion
 
@@ -541,6 +543,57 @@ Dropdown('Menu').exists();
 - `visible`: _boolean_ = `true` if the dropdown is visible
 - `label`: _string_ = the user identifying text of this
   dropdown. This is the same value as the locator.
+
+#### EditableList
+
+Editable table component.
+
+##### Synopsis
+
+```js
+import { EditableList, ColumnHeader, TextField } from '@folio/stripes-testing';
+
+// Assert that a particular column is present
+EditableList().find(ColumnHeader('name')).exists();
+
+// Assert that editing is disabled on rows
+EditableList().has({ editDisabled: true });
+
+// Fill in a value...
+EditableListRow().find(TextField(including('name'))).fillIn('test');
+```
+##### Filters
+
+- `rowCount`: _number_ the number of rows in the table (includes editable rows)
+- `addDisabled`: _boolean_ Whether or not the add button is disabled
+- `editDisabled`: _boolean_ Whether or not the row-level edit buttons are disabled
+- `deleteDisabled`: _boolean_ Whether or not the row-level delete buttons are disabled
+- `addButton`: _boolean_ Whether or not the Add button is present.
+- `editButtons`: _boolean_ Whether or not the Edit buttons are present.
+- `deleteButtons`: _boolean_ Whether or not the Delete buttons are present.
+
+##### Actions
+- `add`: clicks the add button, addint an item to the list.
+
+#### EditableListRow
+For use within the Editable list...
+
+```
+// Fill in a value...
+EditableListRow().find(TextField(including('name'))).fillIn('test');
+```
+
+##### Filters
+
+- `index`: _number_ the number of the row - 0-based. Defaults to 0.
+- `saveDisabled`: _boolean_ Whether or not the save button is disabled.
+
+##### Actions
+
+- `edit`: clicks the edit button on a non-edit row, activating edit mode.
+- `delete`: clicks the delete button on a non-edit row.
+- `cancel`: clicks the cancel button on a row in edit mode.
+- `save`: clicks the save button on a row in edit mode.
 
 #### IconButton
 
