@@ -1,18 +1,20 @@
 import { getLongDelay } from '../../../utils/cypressTools';
 import { Button } from '../../../../../interactors';
 
+const actionsButton = Button('Actions');
+
 export default {
   createNewActionProfile: () => {
     cy.do([
-      Button('Actions').click(),
+      actionsButton.click(),
       Button('New action profile').click()
     ]);
   },
 
   waitLoadingList: () => {
-    cy.get('[id="pane-results-content"]', 1000000)
+    cy.get('[id="pane-results-content"]', getLongDelay)
       .should('be.visible');
-    cy.expect(Button('Actions').exists());
+    cy.expect(actionsButton.exists());
   },
 
   checkActionProfilePresented: (actionProfile) => {

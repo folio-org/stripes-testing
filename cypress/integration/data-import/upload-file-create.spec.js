@@ -3,7 +3,7 @@
 
 import FieldMappingProfiles from '../../support/fragments/data_import/mapping_profiles/fieldMappingProfiles';
 import NewActionProfile from '../../support/fragments/data_import/action_profiles/newActionProfile';
-import NewMappingProfile from '../../support/fragments/data_import/mapping_profiles/newMappingProfile';
+import NewFieldMappingProfile from '../../support/fragments/data_import/mapping_profiles/newMappingProfile';
 import ActionProfiles from '../../support/fragments/data_import/action_profiles/actionProfiles';
 import SettingsDataImport from '../../support/fragments/data_import/settingsDataImport';
 import JobProfiles from '../../support/fragments/data_import/job_profiles/jobProfiles';
@@ -16,33 +16,29 @@ describe('ui-data-import: MARC file import with creating of the new instance, ho
   });
   it('C343334 MARC file import with creating a new mapping profile and action profile', () => {
     const collectionOfProfiles = [
-      { mappingProfile: { typeValue : NewMappingProfile.folioRecordTypeValue.instance,
-        name: `autotest${NewMappingProfile.folioRecordTypeValue.instance}${getRandomPostfix()}` },
+      { mappingProfile: { typeValue : NewFieldMappingProfile.folioRecordTypeValue.instance,
+        name: `autotest${NewFieldMappingProfile.folioRecordTypeValue.instance}${getRandomPostfix()}` },
       actionProfile: { typeValue: NewActionProfile.folioRecordTypeValue.instance,
         name: `autotest${NewActionProfile.folioRecordTypeValue.instance}${getRandomPostfix()}` } },
-      { mappingProfile: { typeValue : NewMappingProfile.folioRecordTypeValue.holdings,
-        name: `autotest${NewMappingProfile.folioRecordTypeValue.holdings}${getRandomPostfix()}`,
-        location: NewMappingProfile.permanentLocation.location },
+      { mappingProfile: { typeValue : NewFieldMappingProfile.folioRecordTypeValue.holdings,
+        name: `autotest${NewFieldMappingProfile.folioRecordTypeValue.holdings}${getRandomPostfix()}`,
+        location: NewFieldMappingProfile.permanentLocation.location },
       actionProfile: { typeValue: NewActionProfile.folioRecordTypeValue.holdings,
         name: `autotest${NewActionProfile.folioRecordTypeValue.holdings}${getRandomPostfix()}` } },
-      { mappingProfile: { typeValue : NewMappingProfile.folioRecordTypeValue.item,
-        name: `autotest${NewMappingProfile.folioRecordTypeValue.item}${getRandomPostfix()}`,
-        material: NewMappingProfile.materialType.materialType,
-        loan: NewMappingProfile.permanentLoanType.type,
-        status: NewMappingProfile.statusField.status },
+      { mappingProfile: { typeValue : NewFieldMappingProfile.folioRecordTypeValue.item,
+        name: `autotest${NewFieldMappingProfile.folioRecordTypeValue.item}${getRandomPostfix()}`,
+        material: NewFieldMappingProfile.materialType.materialType,
+        loan: NewFieldMappingProfile.permanentLoanType.type,
+        status: NewFieldMappingProfile.statusField.status },
       actionProfile: { typeValue: NewActionProfile.folioRecordTypeValue.item,
         name: `autotest${NewActionProfile.folioRecordTypeValue.item}${getRandomPostfix()}` } }];
 
     const specialJobProfile = { ...NewJobProfile.defaultJobProfile };
-    const jobProfile = NewJobProfile.acceptedDataType.dataType;
-    specialJobProfile.acceptedDataType = jobProfile;
+    specialJobProfile.acceptedDataType = NewJobProfile.acceptedDataType.dataType;
 
     collectionOfProfiles.forEach(profile => {
       SettingsDataImport.goToMappingProfile();
-      FieldMappingProfiles.createNewMappingProfile();
-      NewMappingProfile.fillMappingProfile(profile.mappingProfile);
-      FieldMappingProfiles.closeViewModeForMappingProfile();
-      FieldMappingProfiles.waitLoadingMappingProfile();
+      FieldMappingProfiles.create(profile.mappingProfile);
       FieldMappingProfiles.checkMappingProfilePresented(profile.mappingProfile);
       SettingsDataImport.goToActionProfile();
       ActionProfiles.createNewActionProfile();

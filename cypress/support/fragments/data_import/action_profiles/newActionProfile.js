@@ -2,15 +2,7 @@ import { TextField, Button, Select } from '../../../../../interactors';
 import { getLongDelay } from '../../../utils/cypressTools';
 import ModalSelectMappingProfile from './modalSelectMappingProfile';
 
-const profileName = {
-  instanceName: 'Instance',
-  holdingsName: 'Holdings',
-  itemName: 'Item',
-};
-
-const action = {
-  create: 'Create (all record types)',
-};
+const action = 'Create (all record types)';
 
 const folioRecordTypeValue = {
   instance: 'Instance',
@@ -19,7 +11,7 @@ const folioRecordTypeValue = {
 };
 
 const defaultActionProfile = {
-  name: 'autotest FAT-742: ' + profileName.instanceName + ' action profile',
+  name: 'autotest action profile',
   typeValue: folioRecordTypeValue.instance,
 };
 
@@ -29,7 +21,7 @@ export default {
   fillActionProfile: (specialActionProfile = defaultActionProfile) => {
     cy.do([
       TextField({ name:'profile.name' }).fillIn(specialActionProfile.name),
-      Select({ name:'profile.action' }).choose(action.create),
+      Select({ name:'profile.action' }).choose(action),
       Select({ name:'profile.folioRecord' }).choose(specialActionProfile.typeValue),
     ]);
   },
