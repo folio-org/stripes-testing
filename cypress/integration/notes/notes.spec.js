@@ -1,4 +1,3 @@
-/* eslint-disable no-only-tests/no-only-tests */
 /// <reference types="cypress" />
 
 import Agreements from '../../support/fragments/agreements/agreements';
