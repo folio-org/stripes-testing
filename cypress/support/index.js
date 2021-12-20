@@ -1,5 +1,4 @@
 import { setInteractorTimeout } from '@interactors/globals';
-import 'cypress-file-upload';
 
 // adding of methods do and expect
 import '@interactors/with-cypress';
@@ -15,6 +14,7 @@ import './eholdings';
 import './inventory';
 import './organizations';
 import './users';
+import 'cypress-file-upload';
 import './data-import';
 
 setInteractorTimeout(20_000);
