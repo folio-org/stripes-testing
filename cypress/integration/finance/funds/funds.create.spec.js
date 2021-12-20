@@ -5,7 +5,6 @@ import Funds from '../../../support/fragments/finance/funds/funds';
 import { testType } from '../../../support/utils/tagTools';
 
 
-
 describe('ui-finance: Fund creation', () => {
   const ledger = {
     id: uuid(),
