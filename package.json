@@ -20,8 +20,6 @@
   "dependencies": {
     "@interactors/html": "^1.0.0-rc1.0",
     "axe-core": "4.3.3",
-    "cypress-file-upload": "^5.0.8",
-    "cypress-react-selector": "^2.3.13",
     "date-fns": "^2.16.1",
     "debug": "^4.0.1",
     "element-is-visible": "^1.0.0",
@@ -29,7 +27,6 @@
   },
   "devDependencies": {
     "@babel/eslint-parser": "^7.16.3",
-    "@cypress/request": "2.88.7",
     "@folio/eslint-config-stripes": "^5.0.0",
     "@interactors/with-cypress": "^1.0.0-rc1.0",
     "babel-eslint": "^10.1.0",

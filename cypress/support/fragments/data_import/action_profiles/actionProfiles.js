@@ -17,6 +17,7 @@ export default {
     cy.expect(actionsButton.exists());
   },
 
+  // TODO create search action profile
   checkActionProfilePresented: (actionProfile) => {
     cy.get('[id="action-profiles-list"]')
       .should('contains.text', actionProfile.name);
