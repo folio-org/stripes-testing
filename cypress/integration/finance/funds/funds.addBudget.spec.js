@@ -5,7 +5,6 @@ import Funds from '../../../support/fragments/finance/funds/funds';
 import { getCurrentFiscalYearCode } from '../../../support/utils/dateTools';
 import { testType } from '../../../support/utils/tagTools';
 
-
 describe('ui-finance: Add budget to fund', () => {
   let aUnits;
   let fiscalYears;
