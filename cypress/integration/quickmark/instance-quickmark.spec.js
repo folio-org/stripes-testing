@@ -7,7 +7,7 @@ import QuickMarcEditor from '../../support/fragments/quickMarcEditor';
 import InventoryViewSource from '../../support/fragments/inventory/inventoryViewSource';
 import InventoryInstanceEdit from '../../support/fragments/inventory/InventoryInstanceEdit';
 
-describe('Manage records ', () => {
+describe('Manage inventory Bib records with quickMarc editor', () => {
   beforeEach(() => {
     // TODO: add support of special permissions in special account
     cy.login(Cypress.env('diku_login'), Cypress.env('diku_password'));
