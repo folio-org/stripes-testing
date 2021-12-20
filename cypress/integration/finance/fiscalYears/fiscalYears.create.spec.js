@@ -4,7 +4,6 @@ import FiscalYears from '../../../support/fragments/finance/fiscalYears/fiscalYe
 import getRandomPostfix from '../../../support/utils/stringTools';
 import { testType } from '../../../support/utils/tagTools';
 
-
 describe('ui-finance: Fiscal Year creation', () => {
   before(() => {
     cy.login(Cypress.env('diku_login'), Cypress.env('diku_password'));
