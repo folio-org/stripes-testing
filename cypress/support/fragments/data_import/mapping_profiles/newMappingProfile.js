@@ -1,5 +1,6 @@
 import { TextField, Button, Select } from '../../../../../interactors';
 import FieldMappingProfiles from './fieldMappingProfiles';
+import getRandomPostfix from '../../../utils/stringTools';
 
 const marcBib = 'MARC Bibliographic';
 
@@ -18,7 +19,7 @@ const permanentLoanType = '"Can circulate"';
 const status = '"In process"';
 
 const defaultMappingProfile = {
-  name: 'autotest mapping profile',
+  name: `autotest${folioRecordTypeValue.instance}${getRandomPostfix()}`,
   typeValue: folioRecordTypeValue.instance,
   location: permanentLocation,
   material: materialType,
