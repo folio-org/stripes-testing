@@ -9,7 +9,7 @@ import {
   SearchField,
   Selection,
   SelectionList,
-} from '../../../../interactors'; 
+} from '../../../../interactors';
 import { testType } from '../../../support/utils/tagTools';
 
 // TODO: refactoring needed in order to have 1-1 relation between smoke tests in Test Rail and TAF
