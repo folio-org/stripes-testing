@@ -26,7 +26,7 @@ export const MultiColumnListCell = HTML.extend('multi column list cell')
     visible: (el) => isVisible(el),
   });
 
-const MultiColumnListHeader = HTML.extend('multi column list header')
+export const MultiColumnListHeader = HTML.extend('multi column list header')
   .selector('div[class*=mclHeader-]')
   .filters({
     index: childIndex,
