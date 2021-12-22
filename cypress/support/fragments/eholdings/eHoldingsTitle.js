@@ -14,12 +14,12 @@ export default {
 
   filterPackagesStatuses,
 
-  filterPackages: (selectionStatus) => {
+  filterPackages: (selectionStatus = filterPackagesStatuses.notSelected) => {
     const selectionStatusAccordion = packageFilterModal.find(Accordion({ id: 'filter-packages-selected' }));
     cy.do(packagesSection.find(Button({ icon: 'search' })).click());
     cy.expect(packageFilterModal.exists());
     cy.do(selectionStatusAccordion
-      .find(RadioButton(selectionStatus ?? filterPackagesStatuses.notSelected)).click());
+      .find(RadioButton(selectionStatus)).click());
     cy.do(packageFilterModal.find(Button('Search')).click());
     cy.expect(packageFilterModal.absent());
   }

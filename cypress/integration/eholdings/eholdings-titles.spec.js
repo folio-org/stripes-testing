@@ -21,6 +21,7 @@ describe('eHoldings titles management', () => {
   });
   it.only('C16994 Add a title in a package to holdings', { tags:  [testType.smoke, feature.eHoldings] }, () => {
     eHoldingsTitles.openTitle();
+    // TODO: think to add fresh package before test
     eHoldingsTitle.filterPackages();
   });
 });
