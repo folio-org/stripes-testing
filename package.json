@@ -23,6 +23,7 @@
     "date-fns": "^2.16.1",
     "debug": "^4.0.1",
     "element-is-visible": "^1.0.0",
+    "mocha": "^9.0.0",
     "uuid": "^3.0.1"
   },
   "devDependencies": {
