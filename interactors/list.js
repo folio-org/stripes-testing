@@ -5,7 +5,8 @@ const childIndex = el => [...el.parentElement.children].indexOf(el);
 export const ListItem = HTML.extend('list item')
   .selector('li[class^=list-item-]')
   .filters({
-    index: childIndex
+    index: childIndex,
+    headerValue: el => el.querySelector('a[href]>h3').textContent
   });
 
 export default createInteractor('list')
