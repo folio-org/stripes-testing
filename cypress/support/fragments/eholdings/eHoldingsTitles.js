@@ -12,7 +12,8 @@ export default {
   },
   openTitle: (rowNumber = 1) => {
     const specialRow = resultSection.find(ListItem({ index: rowNumber }));
-    cy.then(() => specialRow.headerValue())
+
+    cy.then(() => specialRow.h3Value())
       .then(title => {
         cy.do(resultSection
           .find(ListItem({ index: rowNumber })

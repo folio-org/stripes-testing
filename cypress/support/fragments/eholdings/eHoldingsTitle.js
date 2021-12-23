@@ -1,4 +1,5 @@
-import { Accordion, Button, Modal, Section, RadioButton, including } from '../../../../interactors';
+import { Accordion, Button, Modal, Section, RadioButton, ListItem, HTML, including, Pane } from '../../../../interactors';
+import eHoldingsResource from './eHoldingsResource';
 
 const packagesSection = Section({ id: 'titleShowPackages' });
 const packageFilterModal = Modal({ id : 'package-filter-modal' });
@@ -22,5 +23,31 @@ export default {
       .find(RadioButton(selectionStatus)).click());
     cy.do(packageFilterModal.find(Button('Search')).click());
     cy.expect(packageFilterModal.absent());
+  },
+  waitPackagesLoading: () => {
+    cy.expect(packagesSection
+      .find(ListItem({ index: 0 })
+        .find(Button())).exists());
+  },
+  openPackage:(packageNumber = 0) => {
+    cy.then(() => packagesSection
+      .find(ListItem({ index: packageNumber })).h4Value())
+      .then(packageName => {
+        cy.then(() => Pane().title())
+          .then(titleName => {
+            cy.do(packagesSection
+              .find(ListItem({ index: packageNumber })
+                .find(Button())).click());
+            eHoldingsResource.waitLoading();
+            eHoldingsResource.checkNames(packageName, titleName);
+          });
+      });
+  },
+  checkPackagesSelectionStatus: (expectedSelectionStatus) => {
+    for (const status in filterPackagesStatuses) {
+      if (filterPackagesStatuses[status] !== expectedSelectionStatus) {
+        cy.expect(packagesSection.find(HTML(including(filterPackagesStatuses[status]))).absent());
+      }
+    }
   }
 };
