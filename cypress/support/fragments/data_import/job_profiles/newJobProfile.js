@@ -2,13 +2,11 @@ import { TextField, Select, Button, Accordion, HTML, including } from '../../../
 import getRandomPostfix from '../../../utils/stringTools';
 import ModalSelectActionProfile from './modalSelectActionProfile';
 
-const acceptedDataType = {
-  dataType: 'MARC',
-};
+const acceptedDataType = 'MARC';
 
 const defaultJobProfile = {
   profileName:  `autotestJobProfile${getRandomPostfix()}`,
-  acceptedDataType: acceptedDataType.dataType,
+  dataType: acceptedDataType,
 };
 
 export default {
@@ -19,7 +17,7 @@ export default {
   fillJobProfile: (specialJobProfile = defaultJobProfile) => {
     cy.do([
       TextField({ name:'profile.name' }).fillIn(specialJobProfile.profileName),
-      Select({ name:'profile.dataType' }).choose(specialJobProfile.acceptedDataType),
+      Select({ name:'profile.dataType' }).choose(acceptedDataType),
     ]);
   },
 

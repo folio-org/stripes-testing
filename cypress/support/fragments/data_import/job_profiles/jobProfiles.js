@@ -38,6 +38,5 @@ export default {
       Modal('Are you sure you want to run this job?').find(Button('Run')).click(),
     ]);
   },
-
   // проверить ид
 };

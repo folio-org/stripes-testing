@@ -1,15 +1,8 @@
 import { TextField, Button, Select } from '../../../../../interactors';
 import FieldMappingProfiles from './fieldMappingProfiles';
+import getRandomPostfix from '../../../utils/stringTools';
 
-const profileName = {
-  instanceName: 'Instance',
-  holdingsName: 'Holdings',
-  itemName: 'Item',
-};
-
-const incomingRecordTypeValue = {
-  marcBib: 'MARC Bibliographic',
-};
+const marcBib = 'MARC Bibliographic';
 
 const folioRecordTypeValue = {
   instance: 'Instance',
@@ -17,29 +10,22 @@ const folioRecordTypeValue = {
   item: 'Item',
 };
 
-const permanentLocation = {
-  location: '"Annex (KU/CC/DI/A)"',
-};
+const permanentLocation = '"Annex (KU/CC/DI/A)"';
 
-const materialType = {
-  materialType: '"book"',
-};
+const materialType = '"book"';
 
-const permanentLoanType = {
-  type: '"Can circulate"',
-};
+const permanentLoanType = '"Can circulate"';
 
-const statusField = {
-  status: '"In process"',
-};
+const status = '"In process"';
 
 const defaultMappingProfile = {
-  name: 'autotest FAT-742: ' + profileName.instanceName + ' mapping profile',
+  name: `autotest${folioRecordTypeValue.instance}${getRandomPostfix()}`,
+
   typeValue: folioRecordTypeValue.instance,
   location: permanentLocation,
   material: materialType,
   loan: permanentLoanType,
-  status: statusField,
+  statusField: status,
 };
 
 export default {
@@ -51,25 +37,23 @@ export default {
 
   permanentLoanType,
 
-  statusField,
-
   fillMappingProfile:(specialMappingProfile = defaultMappingProfile) => {
     cy.do([
       TextField({ name:'profile.name' }).fillIn(specialMappingProfile.name),
-      Select({ name:'profile.incomingRecordType' }).choose(incomingRecordTypeValue.marcBib),
+      Select({ name:'profile.incomingRecordType' }).choose(marcBib),
       Select({ name:'profile.existingRecordType' }).choose(specialMappingProfile.typeValue)
     ]);
     if (specialMappingProfile.typeValue === 'Holdings') {
       cy.do([
-        TextField('Permanent').fillIn(specialMappingProfile.location),
+        TextField('Permanent').fillIn(permanentLocation),
       ]);
     } else if (specialMappingProfile.typeValue === 'Item') {
       cy.do([
-        TextField('Material type').fillIn(specialMappingProfile.material),
+        TextField('Material type').fillIn(materialType),
         // TODO create waiter
         cy.wait(5000),
-        TextField('Permanent loan type').fillIn(specialMappingProfile.loan),
-        TextField('Status').fillIn(specialMappingProfile.status),
+        TextField('Permanent loan type').fillIn(permanentLoanType),
+        TextField('Status').fillIn(status),
       ]);
     }
     cy.do(Button('Save as profile & Close').click());
