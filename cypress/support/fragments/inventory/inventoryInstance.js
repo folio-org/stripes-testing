@@ -1,7 +1,6 @@
-import { MultiColumnList, HTML, including, Button, Section, QuickMarcEditor, KeyValue } from '../../../../interactors';
+import { MultiColumnList, HTML, including, Button, Section, QuickMarcEditor, KeyValue, MultiColumnListHeader, MultiColumnListCell } from '../../../../interactors';
 import QuickMarcEditorFragment from '../quickMarcEditor';
 import inventoryActions from './inventoryActions';
-import { getLongDelay } from '../../utils/cypressTools';
 import InventoryInstanceEdit from './InventoryInstanceEdit';
 import HoldingsRecordView from './holdingsRecordView';
 
@@ -15,11 +14,9 @@ const overlaySourceBibRecord = Button({ id:'dropdown-clickable-reimport-record' 
 const deriveNewMarcBibRecord = Button({ id:'duplicate-instance-marc' });
 const addMarcHoldingRecordButton = Button({ id:'create-holdings-marc' });
 const viewHoldingsButton = Button('View holdings');
-
+const notesSection = Section({ id: 'instance-details-notes' });
 
 const instanceHRID = 'Instance HRID';
-
-
 const validOCLC = { id:'176116217',
   // TODO: hardcoded count related with interactors getters issue. Redesign to cy.then(QuickMarkEditor().rowsCount()).then(rowsCount => {...}
   getLastRowNumber:() => 31,
@@ -64,13 +61,10 @@ export default {
     cy.do(editInstanceButton.click());
     InventoryInstanceEdit.waitLoading();
   },
-  // TODO: add id to section with Instance notes and redesign to interactors
   checkInstanceNotes:(noteType, noteContent) => {
-    const instanceNotesXpath = '//div[.="Instance notes"]';
-    cy.xpath(instanceNotesXpath, getLongDelay()).should('be.exist');
-    const instatnceNotesValuesXpath = `${instanceNotesXpath}/../../../../../..`;
-    cy.xpath(`${instatnceNotesValuesXpath}//div[@role="columnheader"][.="${noteType}"]`).should('be.exist');
-    cy.xpath(`${instatnceNotesValuesXpath}//div[@role="gridcell"][.="${noteContent}"]`).should('be.exist');
+    cy.expect(Button({ id: 'accordion-toggle-button-instance-details-notes' }).exists());
+    cy.expect(notesSection.find(MultiColumnListHeader(noteType)).exists());
+    cy.expect(notesSection.find(MultiColumnListCell(noteContent)).exists());
   },
 
   deriveNewMarcBib:() => {

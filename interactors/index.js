@@ -23,7 +23,7 @@ export { default as Layer } from './layer';
 export { default as List, ListItem } from './list';
 export { default as MessageBanner, MessageBannerTypes } from './messagebanner';
 export { default as Modal } from './modal';
-export { MultiColumnList, MultiColumnListRow, MultiColumnListCell } from './multi-column-list';
+export { MultiColumnList, MultiColumnListRow, MultiColumnListCell, MultiColumnListHeader } from './multi-column-list';
 export { default as MultiSelect, MultiSelectMenu, MultiSelectOption } from './multi-select';
 export { default as Pane, PaneHeader } from './pane';
 export { default as RadioButton } from './radio-button';

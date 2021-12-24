@@ -1,6 +1,7 @@
 import DataImportViewAllPage from '../../support/fragments/data_import/dataImportViewAllPage';
 import getRandomPostfix from '../../support/utils/stringTools';
 import fileManager from '../../support/utils/fileManager';
+import { testType } from '../../support/utils/tagTools';
 
 describe('ui-data-import: Search the "View all" log screen', () => {
   let hrId;
@@ -39,7 +40,7 @@ describe('ui-data-import: Search the "View all" log screen', () => {
       });
   });
 
-  it('C11112 Search the "View all" log screen', () => {
+  it('C11112 Search the "View all" log screen', { tags: [testType.smoke] }, () => {
     DataImportViewAllPage.gotoViewAllPage();
 
     DataImportViewAllPage.options.forEach((option) => {
