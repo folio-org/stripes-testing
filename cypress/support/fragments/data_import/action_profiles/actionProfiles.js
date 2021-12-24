@@ -1,5 +1,5 @@
 import { getLongDelay } from '../../../utils/cypressTools';
-import { Button } from '../../../../../interactors';
+import { Button, TextField, MultiColumnListCell } from '../../../../../interactors';
 
 const actionsButton = Button('Actions');
 
@@ -17,9 +17,15 @@ export default {
     cy.expect(actionsButton.exists());
   },
 
-  // TODO create search action profile
   checkActionProfilePresented: (actionProfile) => {
+    cy.do(TextField({ id:'input-search-action-profiles-field' }).fillIn(actionProfile));
+    cy.do(Button('Search').click());
+    cy.expect(MultiColumnListCell(actionProfile).exists());
+  }
+
+  // TODO create search action profile
+  /* checkActionProfilePresented: (actionProfile) => {
     cy.get('[id="action-profiles-list"]')
       .should('contains.text', actionProfile.name);
-  }
+  } */
 };

@@ -20,7 +20,6 @@ const status = '"In process"';
 
 const defaultMappingProfile = {
   name: `autotest${folioRecordTypeValue.instance}${getRandomPostfix()}`,
-
   typeValue: folioRecordTypeValue.instance,
   location: permanentLocation,
   material: materialType,
@@ -36,6 +35,8 @@ export default {
   materialType,
 
   permanentLoanType,
+
+  statusField: status,
 
   fillMappingProfile:(specialMappingProfile = defaultMappingProfile) => {
     cy.do([

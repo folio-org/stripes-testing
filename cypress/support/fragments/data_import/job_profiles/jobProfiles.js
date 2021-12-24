@@ -21,8 +21,9 @@ export default {
   },
 
   searchJobProfileForImport:(jobProfileTitle) => {
-    cy.do(TextField({ id:'input-search-job-profiles-field' }).fillIn(jobProfileTitle));
-    cy.do(Button('Search').click());
+    cy.do([
+      TextField({ id:'input-search-job-profiles-field' }).fillIn(jobProfileTitle),
+      Button('Search').click()]);
     cy.expect(MultiColumnListCell(jobProfileTitle).exists());
   },
 

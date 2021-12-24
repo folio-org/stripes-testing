@@ -1,4 +1,3 @@
-
 /// <reference types="cypress" />
 
 import FieldMappingProfiles from '../../support/fragments/data_import/mapping_profiles/fieldMappingProfiles';
@@ -9,13 +8,13 @@ import SettingsDataImport from '../../support/fragments/data_import/settingsData
 import JobProfiles from '../../support/fragments/data_import/job_profiles/jobProfiles';
 import NewJobProfile from '../../support/fragments/data_import/job_profiles/newJobProfile';
 import getRandomPostfix from '../../support/utils/stringTools';
-import { testType } from '../../support/utils/tagTools';
+import dataImport from '../../support/fragments/data_import/dataImport';
 
 describe('ui-data-import: MARC file import with creating of the new instance, holding and item', () => {
   before('navigates to Settings', () => {
     cy.login(Cypress.env('diku_login'), Cypress.env('diku_password'));
   });
-  it('C343334 MARC file import with creating a new mapping profile and action profile', { tags: [testType.smoke] }, () => {
+  it('C343334 MARC file import with creating a new mapping profile and action profile', () => {
     const collectionOfProfiles = [
       { mappingProfile: { typeValue : NewFieldMappingProfile.folioRecordTypeValue.instance },
         actionProfile: { typeValue: NewActionProfile.folioRecordTypeValue.instance } },
@@ -55,7 +54,11 @@ describe('ui-data-import: MARC file import with creating of the new instance, ho
     JobProfiles.waitLoadingList();
     JobProfiles.checkJobProfilePresented(specialJobProfile.profileName);
 
+    dataImport.goToDataImport();
+    dataImport.uploadFile();
+    JobProfiles.selectJobProfile();
+    JobProfiles.runImportFile();
+
     // TODO delete created data
   });
 });
-
