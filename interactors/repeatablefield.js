@@ -5,17 +5,27 @@ export const RepeatableFieldAddButton = Button.extend('repeatable field add butt
   .selector('[data-test-repeatable-field-add-item-button]');
 
 export const RepeatableFieldRemoveButton = Button.extend('repeatable field remove button')
-  .selector('[data-test-repeatable-field-remove-item-button]');
+  .selector('[data-test-repeatable-field-remove-item-button],[class*=repeatableFieldRemoveItem]');
 
-const FieldList = HTML.extend('repeatable field list')
-  .selector('[data-test-repeatable-field-list]')
+export const FieldList = HTML.extend('repeatable field list')
+  .selector('[data-test-repeatable-field-list],ul[class*=repeatableFieldList]')
   .locator((el, index) => (
-    [...el.querySelectorAll('li')].map((li, i) => !!i === index)
-  ));
+    [...el.querySelectorAll('li')].map((li, i) => !!i === index)))
+  .filters({
+    itemsCount: (el) => el.querySelectorAll('li').length
+  })
+  .actions({
+    clickRemove: ({ perform }, index) => {
+      return perform((el) => {
+        const button = [...el.querySelectorAll('button[icon=trash]')].filter((b, i) => i === index)[0];
+        return button.click();
+      });
+    }
+  });
 
 // find by legend
 export const RepeatableField = HTML.extend('repeatable field')
-  .selector('fieldset[data-test-repeatable-field')
+  .selector('fieldset[data-test-repeatable-field],')
   .locator(el => el.querySelector('legend').textContent)
   .filters({
     id: (el) => el.id,

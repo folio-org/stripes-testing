@@ -1,5 +1,5 @@
 import { Accordion, Button, Modal, Section, RadioButton, ListItem, HTML, including, Pane } from '../../../../interactors';
-import eHoldingsResource from './eHoldingsResource';
+import eHoldingsResourceView from './eHoldingsResourceView';
 
 const packagesSection = Section({ id: 'titleShowPackages' });
 const packageFilterModal = Modal({ id : 'package-filter-modal' });
@@ -29,7 +29,7 @@ export default {
       .find(ListItem({ index: 0 })
         .find(Button())).exists());
   },
-  openPackage:(packageNumber = 0) => {
+  openResource:(packageNumber = 0) => {
     cy.then(() => packagesSection
       .find(ListItem({ index: packageNumber })).h4Value())
       .then(packageName => {
@@ -38,8 +38,8 @@ export default {
             cy.do(packagesSection
               .find(ListItem({ index: packageNumber })
                 .find(Button())).click());
-            eHoldingsResource.waitLoading();
-            eHoldingsResource.checkNames(packageName, titleName);
+            eHoldingsResourceView.waitLoading();
+            eHoldingsResourceView.checkNames(packageName, titleName);
           });
       });
   },

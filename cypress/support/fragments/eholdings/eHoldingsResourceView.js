@@ -1,4 +1,6 @@
 import { Section, Pane, HTML, including, Button, Label } from '../../../../interactors';
+import eHoldingResourceEdit from './eHoldingResourceEdit';
+import { getLongDelay } from '../../utils/cypressTools';
 
 const holdingStatusSection = Section({ id: 'resourceShowHoldingStatus' });
 
@@ -20,5 +22,19 @@ export default {
       Label({ for: 'resource-show-toggle-switch' },
         including('Selected'))
     ).exists());
+  },
+  goToEdit:() => {
+    return cy.then(() => Pane().id())
+      .then(resourceId => {
+        cy.do(Section({ id: resourceId }).find(Button('Actions')).click());
+        cy.do(Button('Edit').click());
+
+        cy.intercept('/eholdings/resources**').as('getResource');
+        cy.wait('@getResource', getLongDelay()).then((req) => {
+          eHoldingResourceEdit.waitLoading();
+          cy.log(JSON.stringify(req.response?.body));
+          return req?.response?.body?.attributes?.customCoverages.length;
+        });
+      });
   }
 };
