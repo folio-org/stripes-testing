@@ -1,4 +1,4 @@
-import { Section, Pane, HTML, including, Button, Label } from '../../../../interactors';
+import { Section, Pane, HTML, including, Button, Label, KeyValue } from '../../../../interactors';
 import eHoldingResourceEdit from './eHoldingResourceEdit';
 import { getLongDelay } from '../../utils/cypressTools';
 
@@ -28,13 +28,15 @@ export default {
       .then(resourceId => {
         cy.do(Section({ id: resourceId }).find(Button('Actions')).click());
         cy.do(Button('Edit').click());
-
-        cy.intercept('/eholdings/resources**').as('getResource');
-        cy.wait('@getResource', getLongDelay()).then((req) => {
-          eHoldingResourceEdit.waitLoading();
-          cy.log(JSON.stringify(req.response?.body));
-          return req?.response?.body?.attributes?.customCoverages.length;
-        });
+        eHoldingResourceEdit.waitLoading();
       });
+  },
+  checkCustomPeriods:(expectedPeriods) => {
+    let expectedRangesString = '';
+    const separator = ', ';
+    expectedPeriods.forEach(period => {
+      expectedRangesString += `${period.startDay} - ${period.endDay}${separator}`;
+    });
+    cy.expect(KeyValue('Custom coverage dates', { value:  expectedRangesString.slice(0, -separator.length) }).exists());
   }
 };

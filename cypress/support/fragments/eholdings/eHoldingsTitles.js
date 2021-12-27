@@ -10,7 +10,7 @@ export default {
       .find(ListItem({ index: 1 })
         .find(Button())).exists());
   },
-  openTitle: (rowNumber = 1) => {
+  openTitle: (rowNumber = 0) => {
     const specialRow = resultSection.find(ListItem({ index: rowNumber }));
 
     cy.then(() => specialRow.h3Value())

@@ -1,7 +1,10 @@
-import { TextField, Button, RadioButton, FieldList } from '../../../../interactors';
+import { TextField, Button, RadioButton } from '../../../../interactors';
 
 const addNewRange = () => {
   cy.do(Button('Add date range').click());
+};
+const saveAndClose = () => {
+  cy.do(Button('Save & close').click());
 };
 
 const customCoveredDatesRadioButton = RadioButton('Custom coverage dates (enter multiple date ranges in descending order)');
@@ -21,19 +24,12 @@ export default {
     cy.do(TextField('Start date', { id: `begin-coverage-${rangeNumber}` }).fillIn(range.startDay));
     cy.do(TextField('End date', { id: `end-coverage-${rangeNumber}` }).fillIn(range.endDay));
   },
-  saveAndClose:() => {
-    cy.do(Button('Save & close').click());
-  },
+  saveAndClose,
   swicthToCustomCoverageDates:() => {
     cy.do(customCoveredDatesRadioButton.click());
   },
-  removeExistingCustomeCoverageDates:(rangeCount) => {
-    let deletedRowsCount = 0;
-
-    while (deletedRowsCount !== rangeCount) {
-      cy.do(customCoveredDatesRadioButton.find(FieldList()).clickRemove(0));
-      deletedRowsCount++;
-      cy.expect(customCoveredDatesRadioButton.find(FieldList()).has({ itemsCount: rangeCount - deletedRowsCount }));
-    }
+  removeExistingCustomeCoverageDates:() => {
+    cy.do(RadioButton('Managed coverage dates').click());
+    saveAndClose();
   }
 };

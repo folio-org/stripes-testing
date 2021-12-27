@@ -1,4 +1,4 @@
-import { Accordion, Button, Modal, Section, RadioButton, ListItem, HTML, including, Pane } from '../../../../interactors';
+import { Accordion, Button, Modal, Section, RadioButton, ListItem, HTML, including, Pane, MultiSelect } from '../../../../interactors';
 import eHoldingsResourceView from './eHoldingsResourceView';
 
 const packagesSection = Section({ id: 'titleShowPackages' });
@@ -15,14 +15,18 @@ export default {
 
   filterPackagesStatuses,
 
-  filterPackages: (selectionStatus = filterPackagesStatuses.notSelected) => {
-    const selectionStatusAccordion = packageFilterModal.find(Accordion({ id: 'filter-packages-selected' }));
+  filterPackages: (selectionStatus = filterPackagesStatuses.notSelected, packageName) => {
     cy.do(packagesSection.find(Button({ icon: 'search' })).click());
+    const selectionStatusAccordion = packageFilterModal.find(Accordion({ id: 'filter-packages-selected' }));
+
     cy.expect(packageFilterModal.exists());
+    cy.do(packageFilterModal.find(MultiSelect({ id:'packageFilterSelect' })).select(packageName));
     cy.do(selectionStatusAccordion
       .find(RadioButton(selectionStatus)).click());
     cy.do(packageFilterModal.find(Button('Search')).click());
     cy.expect(packageFilterModal.absent());
+    cy.expect(packagesSection.find(ListItem({ index: 0 })
+      .find(Button()).find(HTML(including(packageName)))).exists());
   },
   waitPackagesLoading: () => {
     cy.expect(packagesSection
@@ -37,17 +41,7 @@ export default {
           .then(titleName => {
             cy.do(packagesSection
               .find(ListItem({ index: packageNumber })
-                .find(Button())).click())
-              .then(() => {
-                cy.intercept('/eholdings/resources**').as('getResource');
-                cy.wait('@getResource').then((req) => {
-                  cy.log(JSON.stringify(req.response?.body));
-                });
-
-              // return req?.response?.body?.attributes?.customCoverages.length;
-              });
-
-
+                .find(Button())).click());
             eHoldingsResourceView.waitLoading();
             eHoldingsResourceView.checkNames(packageName, titleName);
           });

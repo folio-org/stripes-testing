@@ -43,42 +43,41 @@ describe('eHoldings titles management', () => {
       });
   });
   it.only('C700 Title: Add or Edit custom coverage', { tags:  [testType.smoke, feature.eHoldings] }, () => {
-    eHoldingSearch.bySubject('*');
-    eHoldingSearch.byPublicationType('Streaming Audio');
+    // test related with special data from Ebsco
+    const selectedResource = {
+      title: 'Preparative biochemistry & biotechnology : an international journal for rapid communications',
+      publicationType: 'Journal',
+      // TODO: issue with filtering by package with symbols '('  and ')'
+      // package: 'ProQuest Agricultural Science (DRAA)'
+      package: 'Taylor & Francis'
+    };
+    eHoldingSearch.byTitle(selectedResource.title);
+    eHoldingSearch.byPublicationType(selectedResource.publicationType);
     eHoldingSearch.bySelectionStatus(eHoldingsTitle.filterPackagesStatuses.selected);
     eHoldingsTitles.openTitle();
     eHoldingsTitle.waitPackagesLoading();
-    eHoldingsTitle.filterPackages(eHoldingsTitle.filterPackagesStatuses.selected);
+    eHoldingsTitle.filterPackages(eHoldingsTitle.filterPackagesStatuses.selected, selectedResource.package);
     eHoldingsTitle.waitPackagesLoading();
     eHoldingsTitle.openResource();
-    // cy.then(() => Pane().id())
-    //   .then(resourceId => {
-    //     cy.do(Section({ id: resourceId }).find(Button('Actions')).click());
-    //     cy.do(Button('Edit').click());
+    eHoldingsResourceView.goToEdit();
+    eHoldingsResourceEdit.swicthToCustomCoverageDates();
 
-    //     cy.intercept('/eholdings/resources**').as('getResource');
-    //     cy.wait('@getResource').then((req) => {
-    //       eHoldingsResourceEdit.waitLoading();
-    //       cy.log(JSON.stringify(req.response?.body));
-    //       return req?.response?.body?.attributes?.customCoverages.length;
-    //     });
-    //   });
-    //const rangesCount = eHoldingsResourceView.goToEdit();
+    let addedRangesCount = 0;
+    const dateRanges = dateTools.getDateRanges(2).map(range => ({
+      startDay : `${range.startDay.getMonth() + 1}/${range.startDay.getDate()}/${range.startDay.getFullYear()}`,
+      endDay : `${range.endDay.getMonth() + 1}/${range.endDay.getDate()}/${range.endDay.getFullYear()}`
+    }));
+    dateRanges.forEach(range => {
+      eHoldingsResourceEdit.setCustomCoverageDates(range, addedRangesCount);
+      addedRangesCount++;
+    });
+    eHoldingsResourceEdit.saveAndClose();
+    eHoldingsResourceView.waitLoading();
+    eHoldingsResourceView.checkCustomPeriods(dateRanges);
 
-    // eHoldingsResourceEdit.swicthToCustomCoverageDates();
-    // if (rangesCount > 0) {
-    //   eHoldingsResourceEdit.removeExistingCustomeCoverageDates(rangesCount);
-    // }
-
-    // let addedRangesCount = 0;
-    // dateTools.getDateRanges(2, true).map(range => ({
-    //   startDay : `${range.startDay.getMonth() + 1}/${range.startDay.getDate()}/${range.startDay.getFullYear()}`,
-    //   endDay : `${range.endDay.getMonth() + 1}/${range.endDay.getDate()}/${range.endDay.getFullYear()}`
-    // })).forEach(range => {
-    //   eHoldingsResourceEdit.setCustomCoverageDates(range, addedRangesCount);
-    //   addedRangesCount++;
-    // });
-    // eHoldingsResourceEdit.saveAndClose();
-    // eHoldingsResourceView.waitLoading();
+    // revert test data
+    // TODO: redesign to api requests
+    eHoldingsResourceView.goToEdit();
+    eHoldingsResourceEdit.removeExistingCustomeCoverageDates();
   });
 });
