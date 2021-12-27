@@ -51,22 +51,34 @@ describe('eHoldings titles management', () => {
     eHoldingsTitle.filterPackages(eHoldingsTitle.filterPackagesStatuses.selected);
     eHoldingsTitle.waitPackagesLoading();
     eHoldingsTitle.openResource();
-    const rangesCount = eHoldingsResourceView.goToEdit();
+    // cy.then(() => Pane().id())
+    //   .then(resourceId => {
+    //     cy.do(Section({ id: resourceId }).find(Button('Actions')).click());
+    //     cy.do(Button('Edit').click());
 
-    eHoldingsResourceEdit.swicthToCustomCoverageDates();
-    if (rangesCount > 0) {
-      eHoldingsResourceEdit.removeExistingCustomeCoverageDates(rangesCount);
-    }
+    //     cy.intercept('/eholdings/resources**').as('getResource');
+    //     cy.wait('@getResource').then((req) => {
+    //       eHoldingsResourceEdit.waitLoading();
+    //       cy.log(JSON.stringify(req.response?.body));
+    //       return req?.response?.body?.attributes?.customCoverages.length;
+    //     });
+    //   });
+    //const rangesCount = eHoldingsResourceView.goToEdit();
 
-    let addedRangesCount = 0;
-    dateTools.getDateRanges(2, true).map(range => ({
-      startDay : `${range.startDay.getMonth() + 1}/${range.startDay.getDate()}/${range.startDay.getFullYear()}`,
-      endDay : `${range.endDay.getMonth() + 1}/${range.endDay.getDate()}/${range.endDay.getFullYear()}`
-    })).forEach(range => {
-      eHoldingsResourceEdit.setCustomCoverageDates(range, addedRangesCount);
-      addedRangesCount++;
-    });
-    eHoldingsResourceEdit.saveAndClose();
-    eHoldingsResourceView.waitLoading();
+    // eHoldingsResourceEdit.swicthToCustomCoverageDates();
+    // if (rangesCount > 0) {
+    //   eHoldingsResourceEdit.removeExistingCustomeCoverageDates(rangesCount);
+    // }
+
+    // let addedRangesCount = 0;
+    // dateTools.getDateRanges(2, true).map(range => ({
+    //   startDay : `${range.startDay.getMonth() + 1}/${range.startDay.getDate()}/${range.startDay.getFullYear()}`,
+    //   endDay : `${range.endDay.getMonth() + 1}/${range.endDay.getDate()}/${range.endDay.getFullYear()}`
+    // })).forEach(range => {
+    //   eHoldingsResourceEdit.setCustomCoverageDates(range, addedRangesCount);
+    //   addedRangesCount++;
+    // });
+    // eHoldingsResourceEdit.saveAndClose();
+    // eHoldingsResourceView.waitLoading();
   });
 });

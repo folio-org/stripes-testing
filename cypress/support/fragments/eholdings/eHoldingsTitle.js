@@ -37,7 +37,17 @@ export default {
           .then(titleName => {
             cy.do(packagesSection
               .find(ListItem({ index: packageNumber })
-                .find(Button())).click());
+                .find(Button())).click())
+              .then(() => {
+                cy.intercept('/eholdings/resources**').as('getResource');
+                cy.wait('@getResource').then((req) => {
+                  cy.log(JSON.stringify(req.response?.body));
+                });
+
+              // return req?.response?.body?.attributes?.customCoverages.length;
+              });
+
+
             eHoldingsResourceView.waitLoading();
             eHoldingsResourceView.checkNames(packageName, titleName);
           });
