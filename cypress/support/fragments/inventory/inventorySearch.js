@@ -57,6 +57,13 @@ export default {
     ]);
   },
 
+  saveMARC() {
+    return cy.do([
+      InventoryActions.open(),
+      InventoryActions.options.exportMARC.click()
+    ]);
+  },
+
   showSelectedRecords() {
     cy.do([
       InventoryActions.open(),
@@ -68,6 +75,10 @@ export default {
     const expectedUUIDs = [];
     req.response.body.ids.forEach((elem) => { expectedUUIDs.push(elem.id); });
     return expectedUUIDs;
+  },
+
+  getIDsFromRequest(req) {
+    return req.request.body.uuids;
   },
 
   verifySelectedRecords(selected) {

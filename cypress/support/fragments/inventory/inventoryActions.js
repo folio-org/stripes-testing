@@ -67,7 +67,7 @@ export default {
     expect(actualName).to.match(expectedFileNameMask);
 
     const stringWithDate = actualName.split('/');
-    const actualDate = DateTools.parseDateFromFilename(stringWithDate, DateTools.fileNames.saveUUIDs);
+    const actualDate = DateTools.parseDateFromFilename(stringWithDate);
     verifyFileNameDate(actualDate);
   },
 
@@ -82,7 +82,7 @@ export default {
     expect(actualName).to.match(expectedFileNameMask);
 
     const stringWithDate = actualName.split('/');
-    const actualDate = DateTools.parseDateFromFilename(stringWithDate, DateTools.fileNames.saveSQLQuery);
+    const actualDate = DateTools.parseDateFromFilename(stringWithDate);
     verifyFileNameDate(actualDate);
   },
 
@@ -94,4 +94,19 @@ export default {
       expect(actualQuery).to.eq(expectedText);
     });
   },
+
+  verifyInstancesMARCFileName(actualName) {
+    // valid name example: QuickInstanceExport2021-12-24T14_05_53+03_00.csv
+    const expectedFileNameMask = /QuickInstanceExport\d{4}-\d{2}-\d{2}T\d{2}_\d{2}_\d{2}\+\d{2}_\d{2}\.csv/gm;
+    expect(actualName).to.match(expectedFileNameMask);
+
+    const stringWithDate = actualName.split('/');
+    const actualDate = DateTools.parseDateFromFilename(stringWithDate);
+    verifyFileNameDate(actualDate);
+  },
+
+  verifyInstancesMARC(actualIDs, expectedIDs) {
+    const formattedActualUUIDs = actualIDs.replaceAll('"', '').split('\n');
+    expect(expectedIDs).to.deep.equal(formattedActualUUIDs);
+  }
 };
