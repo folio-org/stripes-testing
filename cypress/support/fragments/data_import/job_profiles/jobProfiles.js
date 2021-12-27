@@ -1,10 +1,12 @@
 import { Button, TextField, MultiColumnListCell, Modal } from '../../../../../interactors';
 import { getLongDelay } from '../../../utils/cypressTools';
 
+const actionsButton = Button('Actions');
+
 export default {
   createNewJobProfile: () => {
     cy.do([
-      Button('Actions').click(),
+      actionsButton.click(),
       Button('New job profile').click(),
     ]);
   },
@@ -12,7 +14,7 @@ export default {
   waitLoadingList:() => {
     cy.get('[id="job-profiles-list"]', getLongDelay())
       .should('be.visible');
-    cy.expect(Button('Actions').exists());
+    cy.expect(actionsButton.exists());
   },
 
   checkJobProfilePresented:(jobProfileTitle) => {
@@ -21,23 +23,21 @@ export default {
   },
 
   searchJobProfileForImport:(jobProfileTitle) => {
-    cy.do([
-      TextField({ id:'input-search-job-profiles-field' }).fillIn(jobProfileTitle),
-      Button('Search').click()]);
+    cy.do(TextField({ id:'input-search-job-profiles-field' }).fillIn(jobProfileTitle));
+    cy.do(Button('Search').click());
     cy.expect(MultiColumnListCell(jobProfileTitle).exists());
   },
 
   selectJobProfile:(nameProfile) => {
     cy.do(MultiColumnListCell(nameProfile).click());
-    cy.expect(Button('Actions').exists());
+    cy.expect(actionsButton.exists());
   },
 
   runImportFile:() => {
     cy.do([
-      Button('Actions').click(),
+      actionsButton.click(),
       Button('Run').click(),
       Modal('Are you sure you want to run this job?').find(Button('Run')).click(),
     ]);
   },
-  // проверить ид
 };

@@ -1,5 +1,4 @@
-import { Button, MultiColumnListCell, Section } from '../../../../../interactors';
-import { getLongDelay } from '../../../utils/cypressTools';
+import { Button, MultiColumnListCell, TextField } from '../../../../../interactors';
 import newMappingProfile from './newMappingProfile';
 
 const actionsButton = Button('Actions');
@@ -12,34 +11,22 @@ const openNewMappingProfileForm = () => {
 };
 
 const closeViewModeForMappingProfile = () => {
-  cy.do(Button('Close'));
-};
-
-// TODO create search mapping profile instead wait
-const waitLoadingMappingProfile = () => {
-  cy.get('[id="full-screen-view-content"]', getLongDelay())
-    .should('be.visible');
-  cy.expect(actionsButton.exists());
-};
-
-const waitLoadingList = () => {
-  cy.get('[id="mapping-profiles-list"]', getLongDelay())
-    .should('be.visible');
-  cy.expect(actionsButton.exists());
+  // cy.do(Button('Close'));
+  cy.get('[aria-label="Close "]').click();
 };
 
 export default {
-  waitLoadingMappingProfile,
 
-  create:(mappingProfile) => {
+  createMappingProfile:(mappingProfile) => {
     openNewMappingProfileForm();
     newMappingProfile.fillMappingProfile(mappingProfile);
-    waitLoadingMappingProfile();
     closeViewModeForMappingProfile();
-    waitLoadingList();
+    cy.expect(actionsButton.exists());
   },
 
   checkMappingProfilePresented: (mappingProfile) => {
-    cy.expect(Section({ id: 'pane-results' }).find(MultiColumnListCell(mappingProfile.name)).exists());
+    cy.do(TextField({ id:'input-search-mapping-profiles-field' }).fillIn(mappingProfile));
+    cy.do(Button('Search').click());
+    cy.expect(MultiColumnListCell(mappingProfile).exists());
   },
 };

@@ -1,5 +1,4 @@
 import { TextField, Button, Select } from '../../../../../interactors';
-import FieldMappingProfiles from './fieldMappingProfiles';
 import getRandomPostfix from '../../../utils/stringTools';
 
 const marcBib = 'MARC Bibliographic';
@@ -45,9 +44,7 @@ export default {
       Select({ name:'profile.existingRecordType' }).choose(specialMappingProfile.typeValue)
     ]);
     if (specialMappingProfile.typeValue === 'Holdings') {
-      cy.do([
-        TextField('Permanent').fillIn(permanentLocation),
-      ]);
+      cy.do(TextField('Permanent').fillIn(permanentLocation));
     } else if (specialMappingProfile.typeValue === 'Item') {
       cy.do([
         TextField('Material type').fillIn(materialType),
@@ -58,7 +55,5 @@ export default {
       ]);
     }
     cy.do(Button('Save as profile & Close').click());
-    cy.expect(Button('Actions').exists());
-    FieldMappingProfiles.waitLoadingMappingProfile();
   }
 };

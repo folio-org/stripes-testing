@@ -1,12 +1,11 @@
-import { Button, TextField, MultiColumnListCell } from '../../../../interactors';
+import { Button, MultiColumnListCell, Selection } from '../../../../interactors';
 
 export default {
-  // TODO search file by id
-  searchJobProfileByName(fileName) {
+  checkImportFile:(fileName) => {
     cy.do([
       Button('View all').click(),
-      TextField({ id: 'input-job-logs-search' }).fillIn(fileName),
-      Button('Search').click()
+      Button('Choose job profile').click(),
+      Selection({ role: 'listbox' }).choose(fileName),
     ]);
   },
 

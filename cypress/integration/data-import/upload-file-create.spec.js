@@ -5,10 +5,11 @@ import NewActionProfile from '../../support/fragments/data_import/action_profile
 import NewFieldMappingProfile from '../../support/fragments/data_import/mapping_profiles/newMappingProfile';
 import ActionProfiles from '../../support/fragments/data_import/action_profiles/actionProfiles';
 import SettingsDataImport from '../../support/fragments/data_import/settingsDataImport';
-import JobProfiles from '../../support/fragments/data_import/job_profiles/jobProfiles';
 import NewJobProfile from '../../support/fragments/data_import/job_profiles/newJobProfile';
 import getRandomPostfix from '../../support/utils/stringTools';
 import dataImport from '../../support/fragments/data_import/dataImport';
+import logs from '../../support/fragments/data_import/logs';
+import jobProfiles from '../../support/fragments/data_import/job_profiles/jobProfiles';
 
 describe('ui-data-import: MARC file import with creating of the new instance, holding and item', () => {
   before('navigates to Settings', () => {
@@ -35,29 +36,31 @@ describe('ui-data-import: MARC file import with creating of the new instance, ho
       profile.actionProfile.name = `autotest${profile.actionProfile.typeValue}${getRandomPostfix()}`;
 
       SettingsDataImport.goToMappingProfile();
-      FieldMappingProfiles.create(profile.mappingProfile);
-      FieldMappingProfiles.checkMappingProfilePresented(profile.mappingProfile);
+      FieldMappingProfiles.createMappingProfile(profile.mappingProfile);
+      FieldMappingProfiles.checkMappingProfilePresented(profile.mappingProfile.name);
       SettingsDataImport.goToActionProfile();
-      ActionProfiles.createNewActionProfile();
-      NewActionProfile.fillActionProfile(profile.actionProfile);
-      NewActionProfile.linkMappingProfile(profile.mappingProfile);
-      ActionProfiles.checkActionProfilePresented(profile.actionProfile);
+      ActionProfiles.createActionProfile(profile.actionProfile, profile.mappingProfile);
+      ActionProfiles.checkActionProfilePresented(profile.actionProfile.name);
     });
 
     SettingsDataImport.goToJobProfile();
-    JobProfiles.createNewJobProfile();
+    jobProfiles.createNewJobProfile();
     NewJobProfile.fillJobProfile(specialJobProfile);
     collectionOfProfiles.map(element => element.actionProfile).forEach(actionProfile => {
       NewJobProfile.selectActionProfile(actionProfile);
     });
     NewJobProfile.clickSaveAndCloseButton();
-    JobProfiles.waitLoadingList();
-    JobProfiles.checkJobProfilePresented(specialJobProfile.profileName);
+    jobProfiles.waitLoadingList();
+    jobProfiles.checkJobProfilePresented(specialJobProfile.profileName);
 
     dataImport.goToDataImport();
     dataImport.uploadFile();
-    JobProfiles.selectJobProfile();
-    JobProfiles.runImportFile();
+    jobProfiles.searchJobProfileForImport(specialJobProfile.profileName);
+    jobProfiles.runImportFile();
+    logs.checkImportFile(specialJobProfile.profileName);
+    logs.waitUntilSearchJobProfile();
+    logs.checkStatusOfJobProfile();
+    logs.selectJobProfile();
 
     // TODO delete created data
   });
