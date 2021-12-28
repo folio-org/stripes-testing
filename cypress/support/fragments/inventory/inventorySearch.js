@@ -57,7 +57,7 @@ export default {
     ]);
   },
 
-  saveMARC() {
+  exportInstanceAsMarc() {
     return cy.do([
       InventoryActions.open(),
       InventoryActions.options.exportMARC.click()

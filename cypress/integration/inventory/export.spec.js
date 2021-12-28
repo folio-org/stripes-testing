@@ -46,7 +46,7 @@ describe('inventory: exports', () => {
   it('C196757 verifies export instances (MARC)', { tags: [testType.smoke] }, () => {
     InventorySearch.byEffectiveLocation();
     cy.do(InventorySearch.getSearchResult().find(Checkbox()).click());
-    InventorySearch.saveMARC();
+    InventorySearch.exportInstanceAsMarc();
 
     cy.intercept('/data-export/quick-export').as('getIds');
     cy.wait('@getIds').then((req) => {
