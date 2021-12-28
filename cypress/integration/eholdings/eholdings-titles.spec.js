@@ -41,8 +41,6 @@ describe('eHoldings titles management', () => {
     const selectedResource = {
       title: 'Preparative biochemistry & biotechnology : an international journal for rapid communications',
       publicationType: 'Journal',
-      // TODO: issue with filtering by package with symbols '('  and ')'
-      // package: 'ProQuest Agricultural Science (DRAA)'
       package: 'Taylor & Francis'
     };
     eHoldingSearch.byTitle(selectedResource.title);
