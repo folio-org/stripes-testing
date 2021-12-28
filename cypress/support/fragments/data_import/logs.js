@@ -1,11 +1,15 @@
 import { Accordion, Button, MultiColumnListCell, Selection, TextField } from '../../../../interactors';
 
+const collectionOfColumns = [MultiColumnListCell({ row: 0, columnIndex: 2 }), MultiColumnListCell({ row: 0, columnIndex: 3 }),
+  MultiColumnListCell({ row: 0, columnIndex: 4 }), MultiColumnListCell({ row: 0, columnIndex: 5 })];
+
 export default {
   checkImportFile:(fileName) => {
     cy.do(Button('View all').click());
     cy.expect(TextField({ id:'input-job-logs-search' }).exists());
     cy.do(TextField({ id: 'input-job-logs-search' }).fillIn('oneMarcBib.mrc'));
-    // cy.wait(10000);
+    // TODO delete after fix by developers
+    cy.wait(10000);
     cy.do(Button('Search').click());
     cy.expect(Accordion({ id: 'jobProfileInfo' }).find(Button({ id: 'accordion-toggle-button-jobProfileInfo' })).exists());
     cy.do(Accordion({ id: 'jobProfileInfo' }).find(Button({ id: 'accordion-toggle-button-jobProfileInfo' })).click());
@@ -30,12 +34,10 @@ export default {
   },
 
   checkCreatedItems:() => {
-    for (let columnIndex = 2; columnIndex < 5; columnIndex++) {
-      cy.do(
-        MultiColumnListCell({ row: 0, columnIndex: 0 }).perform(element => {
-          expect(element).to.have.text('Created');
-        })
-      );
-    }
-  }
+    collectionOfColumns.forEach(column => {
+      cy.do(column.perform(element => {
+        expect(element).to.have.text('Created');
+      }));
+    });
+  },
 };
