@@ -2,6 +2,7 @@ import TopMenu from '../../support/fragments/topMenu';
 import InventorySearch from '../../support/fragments/inventory/inventorySearch';
 import InventoryActions from '../../support/fragments/inventory/inventoryActions';
 import FileManager from '../../support/utils/fileManager';
+import DataExportResults from '../../support/fragments/data-export/dataExportResults';
 import { testType } from '../../support/utils/tagTools';
 import { Checkbox } from '../../../interactors';
 
@@ -16,20 +17,17 @@ describe('inventory: exports', () => {
     InventorySearch.byEffectiveLocation();
     InventorySearch.saveUUIDs();
 
-    // TODO: think about move it to separate func
-    cy.intercept('/search/instances/ids**')
-      .as('getIds');
-    cy.wait('@getIds')
-      .then((req) => {
-        const expectedUUIDs = InventorySearch.getUUIDsFromRequest(req);
+    cy.intercept('/search/instances/ids**').as('getIds');
+    cy.wait('@getIds').then((req) => {
+      const expectedUUIDs = InventorySearch.getUUIDsFromRequest(req);
 
-        FileManager.verifyFile(
-          InventoryActions.verifySaveUUIDsFileName,
-          'SearchInstanceUUIDs*',
-          InventoryActions.verifySavedUUIDs,
-          [expectedUUIDs]
-        );
-      });
+      FileManager.verifyFile(
+        InventoryActions.verifySaveUUIDsFileName,
+        'SearchInstanceUUIDs*',
+        InventoryActions.verifySavedUUIDs,
+        [expectedUUIDs]
+      );
+    });
   });
 
   it('C9287 verifies export CQL query', { tags: [testType.smoke] }, () => {
@@ -45,24 +43,24 @@ describe('inventory: exports', () => {
     );
   });
 
-  it.only('C196757 verifies export instances (MARC)', { tags: [testType.smoke] }, () => {
+  it('C196757 verifies export instances (MARC)', { tags: [testType.smoke] }, () => {
     InventorySearch.byEffectiveLocation();
     cy.do(InventorySearch.getSearchResult().find(Checkbox()).click());
     InventorySearch.saveMARC();
 
-    // TODO: think about move it to separate func
     cy.intercept('/data-export/quick-export').as('getIds');
-    cy.wait('@getIds')
-      .then((req) => {
-        const expectedIDs = InventorySearch.getIDsFromRequest(req);
+    cy.wait('@getIds').then((req) => {
+      const expectedIDs = req.request.body.uuids;
 
-        FileManager.verifyFile(
-          InventoryActions.verifyInstancesMARCFileName,
-          'QuickInstanceExport*',
-          InventoryActions.verifyInstancesMARC,
-          [expectedIDs]
-        );
-      });
+      FileManager.verifyFile(
+        InventoryActions.verifyInstancesMARCFileName,
+        'QuickInstanceExport*',
+        InventoryActions.verifyInstancesMARC,
+        [expectedIDs]
+      );
+    });
+
     cy.visit(TopMenu.dataExport);
+    DataExportResults.verifyQuickExportResult();
   });
 });

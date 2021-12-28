@@ -77,10 +77,6 @@ export default {
     return expectedUUIDs;
   },
 
-  getIDsFromRequest(req) {
-    return req.request.body.uuids;
-  },
-
   verifySelectedRecords(selected) {
     cy.get('div[data-row-index]').then((el) => {
       const overall = el.length;
