@@ -11,7 +11,7 @@ export default {
         expect(element.innerText).to.match(quickExportFileNameMask);
       }),
       InventorySearch.getSearchResult(0, 4).perform(element => {
-        expect(element.innerText).to.equals(defaultJobProfile);
+        expect(element).to.have.text(defaultJobProfile);
       }),
     ]);
   }
