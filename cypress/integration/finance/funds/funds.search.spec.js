@@ -10,6 +10,7 @@ import {
   Selection,
   SelectionList,
 } from '../../../../interactors';
+import { testType } from '../../../support/utils/tagTools';
 
 // TODO: refactoring needed in order to have 1-1 relation between smoke tests in Test Rail and TAF
 describe('ui-finance: Funds list search and filter', () => {
@@ -59,7 +60,7 @@ describe('ui-finance: Funds list search and filter', () => {
     ]);
   });
 
-  it('C4059 should return funds according to fund filters', function () {
+  it('C4059 should return funds according to fund filters', { tags: [testType.smoke] }, function () {
     cy.do([
       Accordion({ id: 'ledgerId' }).clickHeader(),
       Selection({ id: 'ledgerId-selection' }).open(),
@@ -87,7 +88,7 @@ describe('ui-finance: Funds list search and filter', () => {
     cy.expect(MultiColumnList({ id: 'funds-list' }).has({ rowCount: 1 }));
   });
 
-  it('C4059 should return funds according to search by name', () => {
+  it('C4059 should return funds according to search by name', { tags: [testType.smoke] }, () => {
     cy.do([
       SearchField({ id: 'input-record-search' }).selectIndex('Name'),
       SearchField({ id: 'input-record-search' }).fillIn(fund.name),
@@ -97,7 +98,7 @@ describe('ui-finance: Funds list search and filter', () => {
     cy.expect(MultiColumnList({ id: 'funds-list' }).has({ rowCount: 1 }));
   });
 
-  it('C4059 should return funds according to search by code', () => {
+  it('C4059 should return funds according to search by code', { tags: [testType.smoke] }, () => {
     cy.do([
       SearchField({ id: 'input-record-search' }).selectIndex('Code'),
       SearchField({ id: 'input-record-search' }).fillIn(fund.code),
@@ -107,7 +108,7 @@ describe('ui-finance: Funds list search and filter', () => {
     cy.expect(MultiColumnList({ id: 'funds-list' }).has({ rowCount: 1 }));
   });
 
-  it('C4059 should return funds according to search by external account number', () => {
+  it('C4059 should return funds according to search by external account number', { tags: [testType.smoke] }, () => {
     cy.do([
       SearchField({ id: 'input-record-search' }).selectIndex('External account number'),
       SearchField({ id: 'input-record-search' }).fillIn(fund.externalAccountNo),
@@ -123,7 +124,7 @@ describe('ui-finance: Funds list search and filter', () => {
     ['Code', fund.code],
     ['External account number', fund.externalAccountNo],
   ].forEach(([key, value]) => {
-    it(`C4059 should return funds according to search by All (${key})`, () => {
+    it(`C4059 should return funds according to search by All (${key})`, { tags: [testType.smoke] }, () => {
       cy.do([
         SearchField({ id: 'input-record-search' }).fillIn(value),
         Button('Search').click(),

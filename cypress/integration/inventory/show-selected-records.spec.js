@@ -1,6 +1,7 @@
 import TopMenu from '../../support/fragments/topMenu';
 import InventorySearch from '../../support/fragments/inventory/inventorySearch';
 import InventoryModals from '../../support/fragments/inventory/inventoryModals';
+import { testType } from '../../support/utils/tagTools';
 
 describe('inventory: selecting records', () => {
   beforeEach('navigates to Inventory', () => {
@@ -8,7 +9,7 @@ describe('inventory: selecting records', () => {
     cy.visit(TopMenu.inventoryPath);
   });
 
-  it('C196755 verifies search result counts and selected counts', () => {
+  it('C196755 verifies search result counts and selected counts', { tags: [testType.smoke] }, () => {
     const selectedRecords = 2;
 
     InventorySearch.byEffectiveLocation();
@@ -16,7 +17,7 @@ describe('inventory: selecting records', () => {
     InventorySearch.verifySelectedRecords(selectedRecords);
   });
 
-  it('C196754 verify show selected records', () => {
+  it('C196754 verify show selected records', { tags: [testType.smoke] }, () => {
     const selectedRecords = 3;
 
     InventorySearch.byEffectiveLocation();

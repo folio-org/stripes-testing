@@ -1,5 +1,4 @@
 import { setInteractorTimeout } from '@interactors/globals';
-import 'cypress-file-upload';
 
 // adding of methods do and expect
 import '@interactors/with-cypress';
@@ -15,12 +14,14 @@ import './eholdings';
 import './inventory';
 import './organizations';
 import './users';
+import 'cypress-file-upload';
 import './data-import';
 
 setInteractorTimeout(20_000);
 
 
 require('cypress-xpath');
+require('cypress-grep')();
 
 // try to fix the issue with cached location in cypress
 Cypress.on('window:before:load', window => {

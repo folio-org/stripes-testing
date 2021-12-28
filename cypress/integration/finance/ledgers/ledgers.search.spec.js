@@ -11,6 +11,7 @@ import {
   Selection,
   SelectionList,
 } from '../../../../interactors';
+import { testType } from '../../../support/utils/tagTools';
 
 describe('ui-finance: Ledger list search and filters', () => {
   let aUnits;
@@ -62,7 +63,11 @@ describe('ui-finance: Ledger list search and filters', () => {
     cy.deleteLedgerApi(ledger.id);
   });
 
+<<<<<<< HEAD
   it('C4061 should return ledgers according to ledgers filters and search by different indexes', function () {
+=======
+  it('C4061 should return ledgers according to ledgers filters and search by all indexes', { tags: [testType.smoke] }, function () {
+>>>>>>> origin/master
     cy.do([
       Accordion({ id: 'ledgerStatus' }).clickHeader(),
       Checkbox({ id: 'clickable-filter-ledgerStatus-frozen' }).click(),
@@ -76,10 +81,32 @@ describe('ui-finance: Ledger list search and filters', () => {
     ]);
 
     cy.expect(MultiColumnList({ id: 'ledgers-list' }).has({ rowCount: 1 }));
+<<<<<<< HEAD
+=======
+  });
+
+  it('C4061 should return ledgers according to search by name', { tags: [testType.smoke] }, () => {
+    cy.do([
+      SearchField({ id: 'input-record-search' }).selectIndex('Name'),
+      SearchField({ id: 'input-record-search' }).fillIn(ledger.name),
+      Button('Search').click(),
+    ]);
+>>>>>>> origin/master
 
     // search by name
     Ledgers.searchByName(ledger.name);
     cy.expect(MultiColumnList({ id: 'ledgers-list' }).has({ rowCount: 1 }));
+<<<<<<< HEAD
+=======
+  });
+
+  it('C4061 should return ledgers according to search by code', { tags: [testType.smoke] }, () => {
+    cy.do([
+      SearchField({ id: 'input-record-search' }).selectIndex('Code'),
+      SearchField({ id: 'input-record-search' }).fillIn(ledger.code),
+      Button('Search').click(),
+    ]);
+>>>>>>> origin/master
 
     // search by code
     Ledgers.searchByCode(ledger.code);

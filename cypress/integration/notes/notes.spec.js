@@ -1,4 +1,3 @@
-/* eslint-disable no-only-tests/no-only-tests */
 /// <reference types="cypress" />
 
 import Agreements from '../../support/fragments/agreements/agreements';
@@ -6,6 +5,7 @@ import AgreementDetails from '../../support/fragments/agreements/agreementsDetai
 import TopMenu from '../../support/fragments/topMenu';
 import NewNote from '../../support/fragments/notes/newNote';
 import ExistingNoteView from '../../support/fragments/notes/existingNoteView';
+import { testType, feature } from '../../support/utils/tagTools';
 
 describe('Note creation', () => {
   const longNote = { ...NewNote.defaultNote };
@@ -27,7 +27,7 @@ describe('Note creation', () => {
     Agreements.selectRecord();
     AgreementDetails.openNotesSection();
   });
-  it('C1296 Create a note', () => {
+  it('C1296 Create a note', { tags: [testType.smoke, feature.notes] }, () => {
     AgreementDetails.createNote(longNote);
     Agreements.selectRecord();
     AgreementDetails.waitLoadingWithExistingNote(longNote.title);
@@ -36,7 +36,7 @@ describe('Note creation', () => {
     AgreementDetails.specialNotePresented(longNote.title);
   });
 
-  it('C1299 Edit a note', () => {
+  it('C1299 Edit a note', { tags: [testType.smoke, feature.notes] }, () => {
     const specialNote = NewNote.defaultNote;
     AgreementDetails.createNote(specialNote);
     Agreements.selectRecord();
@@ -55,7 +55,7 @@ describe('Note creation', () => {
     AgreementDetails.specialNotePresented(updatedNote.title);
   });
 
-  it('C16992 View a note', () => {
+  it('C16992 View a note', { tags: [testType.smoke, feature.notes] }, () => {
     AgreementDetails.createNote(longNote);
     Agreements.selectRecord();
     AgreementDetails.waitLoadingWithExistingNote(longNote.title);

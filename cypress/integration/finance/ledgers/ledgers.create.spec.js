@@ -2,6 +2,7 @@ import Ledgers from '../../../support/fragments/finance/ledgers/ledgers';
 import TopMenu from '../../../support/fragments/topMenu';
 import NewLedger from '../../../support/fragments/finance/ledgers/newLedger';
 import getRandomPostfix from '../../../support/utils/stringTools';
+import { testType } from '../../../support/utils/tagTools';
 
 describe('ui-finance: Ledger creation', () => {
   before(() => {
@@ -9,7 +10,7 @@ describe('ui-finance: Ledger creation', () => {
     cy.visit(TopMenu.ledgerPath);
   });
 
-  it('C4053 should create new ledger if mandatory fields are filled', () => {
+  it('C4053 should create new ledger if mandatory fields are filled', { tags: [testType.smoke] }, () => {
     const defaultLedger = NewLedger.defaultLedger;
 
     Ledgers.createDefaultLedger(defaultLedger);
