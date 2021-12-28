@@ -37,8 +37,18 @@ export default {
 
   searchByName : (ledgerName) => {
     cy.do([
+      Button({ id: 'reset-ledgers-filters' }).click(),
       SearchField({ id: 'input-record-search' }).selectIndex('Name'),
       SearchField({ id: 'input-record-search' }).fillIn(ledgerName),
+      Button('Search').click(),
+    ]);
+  },
+
+  searchByCode : (ledgerCode) => {
+    cy.do([
+      Button({ id: 'reset-ledgers-filters' }).click(),
+      SearchField({ id: 'input-record-search' }).selectIndex('Code'),
+      SearchField({ id: 'input-record-search' }).fillIn(ledgerCode),
       Button('Search').click(),
     ]);
   },
