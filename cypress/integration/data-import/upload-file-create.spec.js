@@ -58,10 +58,9 @@ describe('ui-data-import: MARC file import with creating of the new instance, ho
     jobProfiles.searchJobProfileForImport(specialJobProfile.profileName);
     jobProfiles.runImportFile();
     logs.checkImportFile(specialJobProfile.profileName);
-    logs.waitUntilSearchJobProfile();
     logs.checkStatusOfJobProfile();
-    logs.selectJobProfile();
-
+    logs.openJobProfile();
+    logs.checkCreatedItems();
     // TODO delete created data
   });
 });

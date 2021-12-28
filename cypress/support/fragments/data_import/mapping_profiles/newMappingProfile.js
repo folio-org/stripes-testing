@@ -49,7 +49,7 @@ export default {
       cy.do([
         TextField('Material type').fillIn(materialType),
         // TODO create waiter
-        cy.wait(5000),
+        cy.wait(2000),
         TextField('Permanent loan type').fillIn(permanentLoanType),
         TextField('Status').fillIn(status),
       ]);

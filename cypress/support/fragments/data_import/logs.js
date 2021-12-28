@@ -1,27 +1,41 @@
-import { Button, MultiColumnListCell, Selection } from '../../../../interactors';
+import { Accordion, Button, MultiColumnListCell, Selection, TextField } from '../../../../interactors';
 
 export default {
   checkImportFile:(fileName) => {
-    cy.do([
-      Button('View all').click(),
-      Button('Choose job profile').click(),
-      Selection({ role: 'listbox' }).choose(fileName),
-    ]);
+    cy.do(Button('View all').click());
+    cy.expect(TextField({ id:'input-job-logs-search' }).exists());
+    cy.do(TextField({ id: 'input-job-logs-search' }).fillIn('oneMarcBib.mrc'));
+    // cy.wait(10000);
+    cy.do(Button('Search').click());
+    cy.expect(Accordion({ id: 'jobProfileInfo' }).find(Button({ id: 'accordion-toggle-button-jobProfileInfo' })).exists());
+    cy.do(Accordion({ id: 'jobProfileInfo' }).find(Button({ id: 'accordion-toggle-button-jobProfileInfo' })).click());
+    cy.expect(Accordion({ id: 'jobProfileInfo' }).find(Selection()).exists());
+    cy.do(Accordion({ id: 'jobProfileInfo' }).find(Selection()).choose(fileName));
   },
 
-  waitUntilSearchJobProfile(jobProfileName) {
+  waitUntilSearchJobProfile:(jobProfileName) => {
     cy.expect(MultiColumnListCell(jobProfileName).exists());
   },
 
-  checkStatusOfJobProfile() {
-    cy.expect(MultiColumnListCell({ 'row': 0, 'columnIndex': 2 }).has({ value: 'Completed' }));
+  checkStatusOfJobProfile:() => {
+    cy.do(
+      MultiColumnListCell({ row: 0, columnIndex: 1 }).perform(element => {
+        expect(element).to.have.text('Completed');
+      })
+    );
   },
 
-  selectJobProfile() {
-    cy.get(MultiColumnListCell({ 'row': 0, 'columnIndex': 0 })).click();
+  openJobProfile:() => {
+    cy.do(MultiColumnListCell({ row: 0, columnIndex: 0 }).find(Button('oneMarcBib.mrc')).click());
   },
 
-  checkCreatedItems() {
-    cy.expect(MultiColumnListCell({ 'row': 0, 'columnIndex': 3 }).has({ value: 'Created' }));
+  checkCreatedItems:() => {
+    for (let columnIndex = 2; columnIndex < 5; columnIndex++) {
+      cy.do(
+        MultiColumnListCell({ row: 0, columnIndex: 0 }).perform(element => {
+          expect(element).to.have.text('Created');
+        })
+      );
+    }
   }
 };
