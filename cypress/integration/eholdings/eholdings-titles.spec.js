@@ -18,12 +18,6 @@ describe('eHoldings titles management', () => {
     cy.visit(TopMenu.eholding);
     eHoldingSearch.switchToTitles();
   });
-  it('C684 Title Search: Search titles for chemical engineering. Then filter results to journals.', { tags:  [testType.smoke, feature.eHoldings] }, () => {
-    eHoldingSearch.bySubject('chemical engineering');
-    eHoldingSearch.byPublicationType('Journal');
-    eHoldingsTitles.openTitle();
-    // TODO: the issue with filtering by subject, continue after issue UIEH-1225 solving
-  });
   it('C16994 Add a title in a package to holdings', { tags:  [testType.smoke, feature.eHoldings] }, () => {
     eHoldingSearch.bySubject('chemical engineering');
     eHoldingSearch.byPublicationType('Journal');
@@ -92,5 +86,9 @@ describe('eHoldings titles management', () => {
     eHoldingsTitle.openResource();
     eHoldingsResourceView.checkHoldingStatus(eHoldingsTitle.filterPackagesStatuses.selected);
     eHoldingsResourceView.removeTitleFromHolding();
+  });
+
+  it('C693 Create a custom title.', { tags:  [testType.smoke, feature.eHoldings] }, () => {
+    eHoldingsTitles.create();
   });
 });

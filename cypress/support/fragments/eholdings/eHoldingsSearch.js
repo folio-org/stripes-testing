@@ -40,5 +40,8 @@ export default {
     cy.do(selectionStatusAccordion
       .find(RadioButton(selectionStatus)).click());
     eHoldingsTitles.waitLoading();
+  },
+  switchToPackages: () => {
+    cy.do(Button({ id: 'packages-tab' }).click());
   }
 };
