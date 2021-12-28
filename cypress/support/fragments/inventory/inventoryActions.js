@@ -1,6 +1,7 @@
 import { Button, Select, TextField } from '../../../../interactors';
 import DateTools from '../../utils/dateTools';
 import InventoryInstance from './inventoryInstance';
+import FileManager from '../../utils/fileManager';
 
 const importButtonInActions = Button({ id: 'dropdown-clickable-import-record' });
 const importButtonInModal = Button('Import');
@@ -66,8 +67,7 @@ export default {
     const expectedFileNameMask = /SearchInstanceUUIDs\d{4}-\d{2}-\d{2}T\d{2}_\d{2}_\d{2}\+\d{2}_\d{2}\.csv/gm;
     expect(actualName).to.match(expectedFileNameMask);
 
-    const stringWithDate = actualName.split('/');
-    const actualDate = DateTools.parseDateFromFilename(stringWithDate);
+    const actualDate = DateTools.parseDateFromFilename(FileManager.getFileNameFromFilePath(actualName));
     verifyFileNameDate(actualDate);
   },
 
@@ -81,8 +81,7 @@ export default {
     const expectedFileNameMask = /SearchInstanceCQLQuery\d{4}-\d{2}-\d{2}T\d{2}_\d{2}_\d{2}\+\d{2}_\d{2}\.cql/gm;
     expect(actualName).to.match(expectedFileNameMask);
 
-    const stringWithDate = actualName.split('/');
-    const actualDate = DateTools.parseDateFromFilename(stringWithDate);
+    const actualDate = DateTools.parseDateFromFilename(FileManager.getFileNameFromFilePath(actualName));
     verifyFileNameDate(actualDate);
   },
 
@@ -100,8 +99,7 @@ export default {
     const expectedFileNameMask = /QuickInstanceExport\d{4}-\d{2}-\d{2}T\d{2}_\d{2}_\d{2}\+\d{2}_\d{2}\.csv/gm;
     expect(actualName).to.match(expectedFileNameMask);
 
-    const stringWithDate = actualName.split('/');
-    const actualDate = DateTools.parseDateFromFilename(stringWithDate);
+    const actualDate = DateTools.parseDateFromFilename(FileManager.getFileNameFromFilePath(actualName));
     verifyFileNameDate(actualDate);
   },
 

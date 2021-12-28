@@ -26,8 +26,7 @@ export default {
 
   parseDateFromFilename(dateString) {
     const dateFormat = /\d{4}-\d{2}-\d{2}T\d{2}_\d{2}_\d{2}\+\d{2}_\d{2}/gm;
-    // const sliceValue = fileNameType ?? this.fileNames.saveUUIDs;
-    const date = dateString[dateString.length - 1].match(dateFormat)[0];
+    const date = dateString.match(dateFormat)[0];
     return Date.parse(date.replaceAll('_', ':'));
   }
 };
