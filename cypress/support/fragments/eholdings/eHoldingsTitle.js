@@ -54,5 +54,6 @@ export default {
   checkPackagesSelectionStatus: (expectedSelectionStatus) => {
     Object.values(filterPackagesStatuses)
       .filter(packageStatus => packageStatus !== expectedSelectionStatus)
-      .forEach(notExpectedStatus => cy.expect(packagesSection.find(HTML(including(filterPackagesStatuses[notExpectedStatus]))).absent()));}
+      .forEach(notExpectedStatus => cy.expect(packagesSection.find(HTML(including(filterPackagesStatuses[notExpectedStatus]))).absent()));
+  }
 };
