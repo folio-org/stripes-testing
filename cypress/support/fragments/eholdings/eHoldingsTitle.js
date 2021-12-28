@@ -20,13 +20,17 @@ export default {
     const selectionStatusAccordion = packageFilterModal.find(Accordion({ id: 'filter-packages-selected' }));
 
     cy.expect(packageFilterModal.exists());
-    cy.do(packageFilterModal.find(MultiSelect({ id:'packageFilterSelect' })).select(packageName));
+    if (packageName) {
+      cy.do(packageFilterModal.find(MultiSelect({ id:'packageFilterSelect' })).select(packageName));
+    }
     cy.do(selectionStatusAccordion
       .find(RadioButton(selectionStatus)).click());
     cy.do(packageFilterModal.find(Button('Search')).click());
     cy.expect(packageFilterModal.absent());
-    cy.expect(packagesSection.find(ListItem({ index: 0 })
-      .find(Button()).find(HTML(including(packageName)))).exists());
+    if (packageName) {
+      cy.expect(packagesSection.find(ListItem({ index: 0 })
+        .find(Button()).find(HTML(including(packageName)))).exists());
+    }
   },
   waitPackagesLoading: () => {
     cy.expect(packagesSection
@@ -48,10 +52,7 @@ export default {
       });
   },
   checkPackagesSelectionStatus: (expectedSelectionStatus) => {
-    for (const status in filterPackagesStatuses) {
-      if (filterPackagesStatuses[status] !== expectedSelectionStatus) {
-        cy.expect(packagesSection.find(HTML(including(filterPackagesStatuses[status]))).absent());
-      }
-    }
-  }
+    Object.values(filterPackagesStatuses)
+      .filter(packageStatus => packageStatus !== expectedSelectionStatus)
+      .forEach(notExpectedStatus => cy.expect(packagesSection.find(HTML(including(filterPackagesStatuses[notExpectedStatus]))).absent()));}
 };

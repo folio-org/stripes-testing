@@ -1,8 +1,23 @@
-import { Section, Pane, HTML, including, Button, Label, KeyValue } from '../../../../interactors';
+import { Section, Pane, HTML, including, Button, Label, KeyValue, Modal } from '../../../../interactors';
 import eHoldingResourceEdit from './eHoldingResourceEdit';
-import { getLongDelay } from '../../utils/cypressTools';
+import eHoldingsTitle from './eHoldingsTitle';
 
 const holdingStatusSection = Section({ id: 'resourceShowHoldingStatus' });
+const addToHoldingButton = holdingStatusSection.find(Button('Add to holdings'));
+
+const checkHoldingStatus = (holdingStatus) => {
+  cy.expect(holdingStatusSection.find(
+    Label({ for: 'resource-show-toggle-switch' },
+      including(holdingStatus))
+  ).exists());
+};
+
+const openActionsMenu = () => {
+  cy.then(() => Pane().id())
+    .then(resourceId => {
+      cy.do(Section({ id: resourceId }).find(Button('Actions')).click());
+    });
+};
 
 export default {
   waitLoading: () => {
@@ -17,19 +32,13 @@ export default {
       .find(HTML(including(titleName, { class: 'headline' }))).exists());
   },
   addToHoldings:() => {
-    cy.do(holdingStatusSection.find(Button('Add to holdings')).click());
-    cy.expect(holdingStatusSection.find(
-      Label({ for: 'resource-show-toggle-switch' },
-        including('Selected'))
-    ).exists());
+    cy.do(addToHoldingButton.click());
+    checkHoldingStatus(eHoldingsTitle.filterPackagesStatuses.selected);
   },
   goToEdit:() => {
-    return cy.then(() => Pane().id())
-      .then(resourceId => {
-        cy.do(Section({ id: resourceId }).find(Button('Actions')).click());
-        cy.do(Button('Edit').click());
-        eHoldingResourceEdit.waitLoading();
-      });
+    openActionsMenu();
+    cy.do(Button('Edit').click());
+    eHoldingResourceEdit.waitLoading();
   },
   checkCustomPeriods:(expectedPeriods) => {
     let expectedRangesString = '';
@@ -38,5 +47,22 @@ export default {
       expectedRangesString += `${period.startDay} - ${period.endDay}${separator}`;
     });
     cy.expect(KeyValue('Custom coverage dates', { value:  expectedRangesString.slice(0, -separator.length) }).exists());
+  },
+  checkHoldingStatus,
+  removeTitleFromHolding: () => {
+    cy.then(() => Pane().id())
+      .then(resourceId => {
+        cy.do(Section({ id: resourceId }).find(Button('Actions')).click());
+        cy.do(Button('Remove title from holdings').click());
+      });
+    const confirmationModal = Modal({ id:'eholdings-resource-deselection-confirmation-modal' });
+
+    cy.expect(confirmationModal.exists());
+    cy.do(confirmationModal.find(Button('Yes, remove')).click());
+    cy.expect(confirmationModal.absent());
+    checkHoldingStatus(eHoldingsTitle.filterPackagesStatuses.notSelected);
+    cy.expect(addToHoldingButton.exists());
+    openActionsMenu();
+    cy.expect(Button('Add to holdings').exists());
   }
 };

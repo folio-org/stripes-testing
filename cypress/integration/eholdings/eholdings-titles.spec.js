@@ -42,7 +42,7 @@ describe('eHoldings titles management', () => {
         cy.expect(Button('Remove title from holdings').exists());
       });
   });
-  it.only('C700 Title: Add or Edit custom coverage', { tags:  [testType.smoke, feature.eHoldings] }, () => {
+  it('C700 Title: Add or Edit custom coverage', { tags:  [testType.smoke, feature.eHoldings] }, () => {
     // test related with special data from Ebsco
     const selectedResource = {
       title: 'Preparative biochemistry & biotechnology : an international journal for rapid communications',
@@ -79,5 +79,18 @@ describe('eHoldings titles management', () => {
     // TODO: redesign to api requests
     eHoldingsResourceView.goToEdit();
     eHoldingsResourceEdit.removeExistingCustomeCoverageDates();
+  });
+  it('C691 Remove a title in a package from your holdings', { tags:  [testType.smoke, feature.eHoldings] }, () => {
+    eHoldingSearch.bySubject('chemical engineering');
+    eHoldingSearch.byPublicationType('Journal');
+    eHoldingSearch.bySelectionStatus(eHoldingsTitle.filterPackagesStatuses.selected);
+    eHoldingsTitles.openTitle();
+    eHoldingsTitle.waitPackagesLoading();
+    eHoldingsTitle.filterPackages(eHoldingsTitle.filterPackagesStatuses.selected);
+    eHoldingsTitle.waitPackagesLoading();
+    eHoldingsTitle.checkPackagesSelectionStatus(eHoldingsTitle.filterPackagesStatuses.selected);
+    eHoldingsTitle.openResource();
+    eHoldingsResourceView.checkHoldingStatus(eHoldingsTitle.filterPackagesStatuses.selected);
+    eHoldingsResourceView.removeTitleFromHolding();
   });
 });
