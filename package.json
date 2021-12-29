@@ -31,7 +31,7 @@
     "@interactors/with-cypress": "^1.0.0-rc1.0",
     "babel-eslint": "^10.1.0",
     "bigtest": "^0.14.0",
-    "cypress": "9.2.0",
+    "cypress": "^9.1.1",
     "cypress-file-upload": "^5.0.8",
     "cypress-grep": "^2.12.0",
     "cypress-xpath": "^1.6.2",
