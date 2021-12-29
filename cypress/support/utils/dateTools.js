@@ -54,4 +54,9 @@ export default {
     }
     return resultRanges;
   }
+  parseDateFromFilename(dateString) {
+    const dateFormat = /\d{4}-\d{2}-\d{2}T\d{2}_\d{2}_\d{2}\+\d{2}_\d{2}/gm;
+    const date = dateString.match(dateFormat)[0];
+    return Date.parse(date.replaceAll('_', ':'));
+  }
 };
