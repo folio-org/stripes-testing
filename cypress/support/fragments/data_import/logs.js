@@ -9,8 +9,9 @@ export default {
     cy.expect(TextField({ id:'input-job-logs-search' }).exists());
     cy.do(TextField({ id: 'input-job-logs-search' }).fillIn('oneMarcBib.mrc'));
     // TODO delete after fix by developers
-    cy.wait(10000);
+    cy.wait(20000);
     cy.do(Button('Search').click());
+    cy.wait(20000);
     cy.expect(Accordion({ id: 'jobProfileInfo' }).find(Button({ id: 'accordion-toggle-button-jobProfileInfo' })).exists());
     cy.do(Accordion({ id: 'jobProfileInfo' }).find(Button({ id: 'accordion-toggle-button-jobProfileInfo' })).click());
     cy.expect(Accordion({ id: 'jobProfileInfo' }).find(Selection()).exists());

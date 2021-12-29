@@ -11,7 +11,6 @@ const openNewMappingProfileForm = () => {
 };
 
 const closeViewModeForMappingProfile = () => {
-  // cy.do(Button('Close'));
   cy.get('[aria-label="Close "]').click();
 };
 
