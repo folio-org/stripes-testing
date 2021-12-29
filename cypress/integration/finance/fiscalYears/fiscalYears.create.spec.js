@@ -3,6 +3,7 @@ import NewFiscalYear from '../../../support/fragments/finance/fiscalYears/newFis
 import FiscalYears from '../../../support/fragments/finance/fiscalYears/fiscalYears';
 import getRandomPostfix from '../../../support/utils/stringTools';
 import { testType } from '../../../support/utils/tagTools';
+import FinanceHelp from '../../../support/fragments/finance/financeHelper';
 
 describe('ui-finance: Fiscal Year creation', () => {
   before(() => {
@@ -17,9 +18,9 @@ describe('ui-finance: Fiscal Year creation', () => {
     FiscalYears.deleteFiscalYearViaActions();
 
     // should not create fund without mandatory fields
-    const testFundName = `autotest_fund_${getRandomPostfix()}`;
-    FiscalYears.tryToCreateFiscalYearWithoutMandatoryFields(testFundName);
-    FiscalYears.searchByName(testFundName);
+    const testFiscalYearName = `autotest_year_${getRandomPostfix()}`;
+    FiscalYears.tryToCreateFiscalYearWithoutMandatoryFields(testFiscalYearName);
+    FinanceHelp.searchByName(testFiscalYearName);
     FiscalYears.checkZeroSearchResultsHeader();
   });
 });

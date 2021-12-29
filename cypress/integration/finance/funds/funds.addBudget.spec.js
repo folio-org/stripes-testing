@@ -4,6 +4,7 @@ import NewFund from '../../../support/fragments/finance/funds/newFund';
 import Funds from '../../../support/fragments/finance/funds/funds';
 import { getCurrentFiscalYearCode } from '../../../support/utils/dateTools';
 import { testType } from '../../../support/utils/tagTools';
+import FinanceHelp from '../../../support/fragments/finance/financeHelper';
 
 describe('ui-finance: Add budget to fund', () => {
   let aUnits;
@@ -65,7 +66,7 @@ describe('ui-finance: Add budget to fund', () => {
     Funds.checkCreatedBudget(defaultFund.code, getCurrentFiscalYearCode());
     Funds.deleteBudgetViaActions();
     Funds.deleteFundViaActions();
-    Funds.searchByName(defaultFund.name);
+    FinanceHelp.searchByName(defaultFund.name);
     Funds.checkZeroSearchResultsHeader();
   });
 });

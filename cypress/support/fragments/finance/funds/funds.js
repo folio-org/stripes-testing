@@ -1,4 +1,4 @@
-import { Button, TextField, Selection, SelectionList, SearchField, Accordion, Modal } from '../../../../../interactors';
+import { Button, TextField, Selection, SelectionList, Accordion, Modal, Checkbox, MultiSelect } from '../../../../../interactors';
 
 const rootFundDetailsXpath = '//*[@id="pane-fund-details"]';
 const createdFundNameXpath = '//*[@id="paneHeaderpane-fund-details-pane-title"]/h2/span';
@@ -48,14 +48,6 @@ export default {
     ]);
   },
 
-  searchByName : (fundName) => {
-    cy.do([
-      SearchField({ id: 'input-record-search' }).selectIndex('Name'),
-      SearchField({ id: 'input-record-search' }).fillIn(fundName),
-      Button('Search').click(),
-    ]);
-  },
-
   checkZeroSearchResultsHeader: () => {
     cy.xpath(numberOfSearchResultsHeader)
       .should('be.visible')
@@ -94,5 +86,52 @@ export default {
       Button('Delete', { id:'clickable-budget-remove-confirmation-confirm' }).click()
     ]);
     this.waitForFundDetailsLoading();
+  },
+
+  resetFundFilters: () => {
+    cy.do([
+      Button({ id: 'reset-funds-filters' }).click(),
+    ]);
+  },
+
+  selectStatusInSearch: (fundStatus) => {
+    cy.do(Accordion({ id: 'fundStatus' }).clickHeader());
+    switch (fundStatus) {
+      case 'frozen':
+        cy.do(Checkbox({ id: 'clickable-filter-fundStatus-frozen' }).click());
+        break;
+      case 'active':
+        cy.do(Checkbox({ id: 'clickable-filter-fundStatus-active' }).click());
+        break;
+      case 'inactive':
+        cy.do(Checkbox({ id: 'clickable-filter-fundStatus-inactive' }).click());
+        break;
+      default:
+        cy.log('No such status like ' + fundStatus + '. Please use frozen, active or inactive');
+    }
+  },
+
+  checkFundFilters(ledgerName, fundType, fundStatus, aUnits, tags, groupName) {
+    this.selectStatusInSearch(fundStatus);
+    cy.do([
+      Accordion({ id: 'ledgerId' }).clickHeader(),
+      Selection({ id: 'ledgerId-selection' }).open(),
+      SelectionList({ id: 'sl-container-ledgerId-selection' }).select(ledgerName),
+
+      Accordion({ id: 'fundTypeId' }).clickHeader(),
+      Selection({ id: 'fundTypeId-selection' }).open(),
+      SelectionList({ id: 'sl-container-fundTypeId-selection' }).select(fundType),
+
+      Accordion({ id: 'groupFundFY.groupId' }).clickHeader(),
+      Selection({ id: 'groupFundFY.groupId-selection' }).open(),
+      SelectionList({ id: 'sl-container-groupFundFY.groupId-selection' }).select(groupName),
+
+      Accordion({ id: 'acqUnitIds' }).clickHeader(),
+      Selection({ id: 'acqUnitIds-selection' }).open(),
+      SelectionList({ id: 'sl-container-acqUnitIds-selection' }).select(aUnits),
+
+      Accordion({ id: 'tags' }).clickHeader(),
+      MultiSelect({ id: 'acq-tags-filter' }).select(tags)
+    ]);
   },
 };

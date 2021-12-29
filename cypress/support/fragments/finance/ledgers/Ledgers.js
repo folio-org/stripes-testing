@@ -1,4 +1,4 @@
-import { Button, SearchField } from '../../../../../interactors';
+import { Button, Accordion, Checkbox, SelectionList, Selection, SearchField } from '../../../../../interactors';
 import NewLedger from './newLedger';
 
 const rootLedgerDetailsXpath = '//*[@id="pane-ledger-details"]';
@@ -35,22 +35,8 @@ export default {
     this.waitForLedgerDetailsLoading();
   },
 
-  searchByName : (ledgerName) => {
-    cy.do([
-      Button({ id: 'reset-ledgers-filters' }).click(),
-      SearchField({ id: 'input-record-search' }).selectIndex('Name'),
-      SearchField({ id: 'input-record-search' }).fillIn(ledgerName),
-      Button('Search').click(),
-    ]);
-  },
-
-  searchByCode : (ledgerCode) => {
-    cy.do([
-      Button({ id: 'reset-ledgers-filters' }).click(),
-      SearchField({ id: 'input-record-search' }).selectIndex('Code'),
-      SearchField({ id: 'input-record-search' }).fillIn(ledgerCode),
-      Button('Search').click(),
-    ]);
+  resetFilters: () => {
+    cy.do(Button({ id: 'reset-ledgers-filters' }).click());
   },
 
   tryToCreateLedgerWithoutMandatoryFields(ledgerName) {
@@ -68,5 +54,33 @@ export default {
       Button('Delete').click(),
       Button('Delete', { id:'clickable-ledger-remove-confirmation-confirm' }).click()
     ]);
+  },
+
+  searchByStatusUnitsAndName(status, acquisitionUnitsName, ledgerName) {
+    this.selectStatusInSearch(status);
+    cy.do([
+      Accordion({ id: 'acqUnitIds' }).clickHeader(),
+      Selection({ id: 'acqUnitIds-selection' }).open(),
+      SelectionList({ id: 'sl-container-acqUnitIds-selection' }).select(acquisitionUnitsName),
+      SearchField({ id: 'input-record-search' }).fillIn(ledgerName),
+      Button('Search').click(),
+    ]);
+  },
+
+  selectStatusInSearch: (ledgerStatus) => {
+    cy.do(Accordion({ id: 'ledgerStatus' }).clickHeader());
+    switch (ledgerStatus) {
+      case 'frozen':
+        cy.do(Checkbox({ id: 'clickable-filter-ledgerStatus-frozen' }).click());
+        break;
+      case 'active':
+        cy.do(Checkbox({ id: 'clickable-filter-ledgerStatus-active' }).click());
+        break;
+      case 'inactive':
+        cy.do(Checkbox({ id: 'clickable-filter-ledgerStatus-inactive' }).click());
+        break;
+      default:
+        cy.log('No such status like ' + ledgerStatus + '. Please use frozen, active or inactive');
+    }
   }
 };

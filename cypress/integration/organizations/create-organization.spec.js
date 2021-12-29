@@ -1,4 +1,4 @@
-import uuid from 'uuid';
+import getRandomPostfix from '../../../support/utils/stringTools';
 import {
   Pane,
   including,
@@ -6,12 +6,12 @@ import {
 import { testType } from '../../support/utils/tagTools';
 
 describe('ui-organizations: Creating organization', () => {
-  const name = 'Test-' + uuid();
-  const code = 'Test-' + uuid();
+  const name = 'orgName-' + getRandomPostfix();
+  const code = 'orgCode-' + getRandomPostfix();
 
   before(() => {
-    cy.login('diku_admin', 'admin');
-    cy.getToken('diku_admin', 'admin');
+    cy.login(Cypress.env('diku_login'), Cypress.env('diku_password'));
+    cy.getToken(Cypress.env('diku_login'), Cypress.env('diku_password'));
   });
 
   afterEach(() => {

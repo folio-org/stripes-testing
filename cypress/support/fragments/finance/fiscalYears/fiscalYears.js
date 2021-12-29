@@ -1,4 +1,4 @@
-import { Button, TextField, SearchField } from '../../../../../interactors';
+import { Button, TextField } from '../../../../../interactors';
 
 const rootFiscalYearDetailsXpath = '//*[@id="pane-fiscal-year-details"]';
 const createdFiscalYearNameXpath = '//*[@id="paneHeaderpane-fiscal-year-details-pane-title"]/h2/span';
@@ -10,7 +10,6 @@ const agreements = Button('Agreements');
 const buttonNew = Button('New');
 const actions = Button('Actions');
 const deleteButton = Button('Delete');
-const searchField = SearchField({ id: 'input-record-search' });
 
 export default {
   waitForFiscalYearDetailsLoading : () => {
@@ -50,14 +49,6 @@ export default {
       Button('Keep editing').click(),
       Button('Cancel').click(),
       Button('Close without saving').click()
-    ]);
-  },
-
-  searchByName : (fiscalYearName) => {
-    cy.do([
-      searchField.selectIndex('Name'),
-      searchField.fillIn(fiscalYearName),
-      Button('Search').click(),
     ]);
   },
 

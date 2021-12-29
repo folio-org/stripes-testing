@@ -3,9 +3,12 @@ import getRandomPostfix from '../../../support/utils/stringTools';
 import NewFund from '../../../support/fragments/finance/funds/newFund';
 import Funds from '../../../support/fragments/finance/funds/funds';
 import { testType } from '../../../support/utils/tagTools';
-
+import FinanceHelp from '../../../support/fragments/finance/financeHelper';
 
 describe('ui-finance: Fund creation', () => {
+  let aUnits;
+  let fiscalYears;
+
   const ledger = {
     id: uuid(),
     name: `autotest_ledger_${getRandomPostfix()}`,
@@ -19,22 +22,24 @@ describe('ui-finance: Fund creation', () => {
 
   before(() => {
     cy.login(Cypress.env('diku_login'), Cypress.env('diku_password'));
+    cy.getToken(Cypress.env('diku_login'), Cypress.env('diku_password'));
 
-    cy.getToken(Cypress.env('diku_login'), Cypress.env('diku_password'))
-      .then(() => {
-        cy.getAcqUnitsApi({ limit: 1 });
-        cy.getFiscalYearsApi({ limit: 1 });
-      })
-      .then(() => {
-        cy.visit('/finance/fund');
+    cy.getAcqUnitsApi({ limit: 1 })
+      .then(({ body }) => {
+        aUnits = body.acquisitionsUnits;
+      });
+
+    cy.getFiscalYearsApi({ limit: 1 })
+      .then(({ body }) => {
+        fiscalYears = body.fiscalYears;
       });
   });
 
   beforeEach(() => {
     cy.createLedgerApi({
       ...ledger,
-      acqUnitIds: [Cypress.env('acqUnits')[0].id],
-      fiscalYearOneId: Cypress.env('fiscalYears')[0].id,
+      acqUnitIds: [aUnits[0].id],
+      fiscalYearOneId: fiscalYears[0].id,
     });
   });
 
@@ -52,7 +57,7 @@ describe('ui-finance: Fund creation', () => {
     // should not create fund without mandatory fields
     const testFundName = `autotest_fund_${getRandomPostfix()}`;
     Funds.tryToCreateFundWithoutMandatoryFields(testFundName);
-    Funds.searchByName(testFundName);
+    FinanceHelp.searchByName(testFundName);
     Funds.checkZeroSearchResultsHeader();
   });
 });

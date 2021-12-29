@@ -1,16 +1,9 @@
 import uuid from 'uuid';
 import getRandomPostfix from '../../../support/utils/stringTools';
 import Ledgers from '../../../support/fragments/finance/ledgers/ledgers';
-
-import {
-  Accordion,
-  Button,
-  Checkbox,
-  MultiColumnList,
-  SearchField,
-  Selection,
-  SelectionList,
-} from '../../../../interactors';
+import FinanceHelp from '../../../support/fragments/finance/financeHelper';
+import TopMenu from '../../../support/fragments/topMenu';
+import { MultiColumnList } from '../../../../interactors';
 import { testType } from '../../../support/utils/tagTools';
 
 describe('ui-finance: Ledger list search and filters', () => {
@@ -32,23 +25,17 @@ describe('ui-finance: Ledger list search and filters', () => {
     cy.login(Cypress.env('diku_login'), Cypress.env('diku_password'));
     cy.getToken(Cypress.env('diku_login'), Cypress.env('diku_password'));
 
-    cy
-      .okapiRequest({
-        path: 'acquisitions-units/units',
-        limit: 1,
-      })
+    cy.getAcqUnitsApi({ limit: 1 })
       .then(({ body }) => {
         aUnits = body.acquisitionsUnits;
       });
 
-    cy
-      .okapiRequest({
-        path: 'finance/fiscal-years',
-        limit: 1,
-      })
+    cy.getFiscalYearsApi({ limit: 1 })
       .then(({ body }) => {
         fiscalYears = body.fiscalYears;
       });
+
+    cy.visit(TopMenu.ledgerPath);
   });
 
   beforeEach(() => {
@@ -63,53 +50,21 @@ describe('ui-finance: Ledger list search and filters', () => {
     cy.deleteLedgerApi(ledger.id);
   });
 
-<<<<<<< HEAD
-  it('C4061 should return ledgers according to ledgers filters and search by different indexes', function () {
-=======
   it('C4061 should return ledgers according to ledgers filters and search by all indexes', { tags: [testType.smoke] }, function () {
->>>>>>> origin/master
-    cy.do([
-      Accordion({ id: 'ledgerStatus' }).clickHeader(),
-      Checkbox({ id: 'clickable-filter-ledgerStatus-frozen' }).click(),
+    FinanceHelp.checkZeroSearchResultsMessageLabel();
 
-      Accordion({ id: 'acqUnitIds' }).clickHeader(),
-      Selection({ id: 'acqUnitIds-selection' }).open(),
-      SelectionList({ id: 'sl-container-acqUnitIds-selection' }).select(aUnits[0].name),
-
-      SearchField({ id: 'input-record-search' }).fillIn(ledger.name),
-      Button('Search').click(),
-    ]);
-
+    // search by acquisition units, name and status
+    Ledgers.searchByStatusUnitsAndName('frozen', aUnits[0].name, ledger.name);
     cy.expect(MultiColumnList({ id: 'ledgers-list' }).has({ rowCount: 1 }));
-<<<<<<< HEAD
-=======
-  });
 
-  it('C4061 should return ledgers according to search by name', { tags: [testType.smoke] }, () => {
-    cy.do([
-      SearchField({ id: 'input-record-search' }).selectIndex('Name'),
-      SearchField({ id: 'input-record-search' }).fillIn(ledger.name),
-      Button('Search').click(),
-    ]);
->>>>>>> origin/master
-
-    // search by name
-    Ledgers.searchByName(ledger.name);
+    // search by name only
+    Ledgers.resetFilters();
+    FinanceHelp.searchByName(ledger.name);
     cy.expect(MultiColumnList({ id: 'ledgers-list' }).has({ rowCount: 1 }));
-<<<<<<< HEAD
-=======
-  });
 
-  it('C4061 should return ledgers according to search by code', { tags: [testType.smoke] }, () => {
-    cy.do([
-      SearchField({ id: 'input-record-search' }).selectIndex('Code'),
-      SearchField({ id: 'input-record-search' }).fillIn(ledger.code),
-      Button('Search').click(),
-    ]);
->>>>>>> origin/master
-
-    // search by code
-    Ledgers.searchByCode(ledger.code);
+    // search by code only
+    Ledgers.resetFilters();
+    FinanceHelp.searchByCode(ledger.code);
     cy.expect(MultiColumnList({ id: 'ledgers-list' }).has({ rowCount: 1 }));
   });
 });
