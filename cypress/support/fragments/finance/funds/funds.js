@@ -1,4 +1,4 @@
-import { Button, TextField, Selection, SelectionList, Accordion, Modal, Checkbox, MultiSelect } from '../../../../../interactors';
+import { Button, TextField, Selection, SelectionList, Accordion, Modal, Checkbox, MultiSelect, SearchField } from '../../../../../interactors';
 
 const rootFundDetailsXpath = '//*[@id="pane-fund-details"]';
 const createdFundNameXpath = '//*[@id="paneHeaderpane-fund-details-pane-title"]/h2/span';
@@ -111,7 +111,7 @@ export default {
     }
   },
 
-  checkFundFilters(ledgerName, fundType, fundStatus, aUnits, tags, groupName) {
+  checkFundFilters(ledgerName, fundType, fundStatus, aUnits, tags, groupName, fundName) {
     this.selectStatusInSearch(fundStatus);
     cy.do([
       Accordion({ id: 'ledgerId' }).clickHeader(),
@@ -131,7 +131,10 @@ export default {
       SelectionList({ id: 'sl-container-acqUnitIds-selection' }).select(aUnits),
 
       Accordion({ id: 'tags' }).clickHeader(),
-      MultiSelect({ id: 'acq-tags-filter' }).select(tags)
+      MultiSelect({ id: 'acq-tags-filter' }).select(tags),
+
+      SearchField({ id: 'input-record-search' }).fillIn(fundName),
+      Button('Search').click(),
     ]);
   },
 };

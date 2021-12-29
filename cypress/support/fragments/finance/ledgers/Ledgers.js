@@ -1,13 +1,12 @@
-import { Button, Accordion, Checkbox, SelectionList, Selection, SearchField } from '../../../../../interactors';
-import NewLedger from './newLedger';
+import { Button, Accordion, Checkbox, SelectionList, Selection, SearchField, TextField } from '../../../../../interactors';
 
 const rootLedgerDetailsXpath = '//*[@id="pane-ledger-details"]';
 const createdLedgerNameXpath = '//*[@id="paneHeaderpane-ledger-details-pane-title"]/h2/span';
 const numberOfSearchResultsHeader = '//*[@id="paneHeaderledger-results-pane-subtitle"]/span';
 
-const newButton = Button('New');
-
 const zeroResultsFoundText = '0 records found';
+const fiscalYearCss = 'select[name^="fiscalYearOneId"]';
+
 
 export default {
   waitForLedgerDetailsLoading : () => {
@@ -28,10 +27,15 @@ export default {
   },
 
   createDefaultLedger(defaultLedger) {
-    cy.do(newButton.click());
-    NewLedger.waitLoading();
-    NewLedger.fillMandatoryFields(defaultLedger);
-    NewLedger.save();
+    cy.do([
+      Button('New').click(),
+      TextField('Name*').fillIn(defaultLedger.name),
+      TextField('Code*').fillIn(defaultLedger.code),
+    ]);
+    // TODO: check ability to work through interactors
+    cy.get(fiscalYearCss)
+      .select(defaultLedger.fiscalYear);
+    cy.do(Button('Save & Close').click());
     this.waitForLedgerDetailsLoading();
   },
 
@@ -40,12 +44,18 @@ export default {
   },
 
   tryToCreateLedgerWithoutMandatoryFields(ledgerName) {
-    cy.expect(newButton.exists());
-    cy.do(newButton.click());
-    NewLedger.waitLoading();
-    NewLedger.fillOnlyNameAndCode(ledgerName);
-    NewLedger.save();
-    NewLedger.closeWithoutSaving();
+    cy.do([
+      Button('New').click(),
+      TextField('Name*').fillIn(ledgerName),
+      Button('Save & Close').click(),
+      TextField('Code*').fillIn('some code'),
+      Button('Save & Close').click(),
+      // try to navigate without saving
+      Button('Agreements').click(),
+      Button('Keep editing').click,
+      Button('Cancel').click(),
+      Button('Close without saving').click()
+    ]);
   },
 
   deleteLedgerViaActions: () => {

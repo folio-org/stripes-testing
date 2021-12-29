@@ -69,7 +69,7 @@ describe('ui-finance: Funds list search and filter', () => {
     FinanceHelp.checkZeroSearchResultsMessageLabel();
 
     Funds.checkFundFilters(ledgers[0].name, fundTypes[0].name, 'active', aUnits[0].name,
-      tags[0].label, groups[0].name);
+      tags[0].label, groups[0].name, fund.name);
     cy.expect(MultiColumnList({ id: 'funds-list' }).has({ rowCount: 1 }));
 
     // search by name

@@ -4,6 +4,7 @@ import NewFund from '../../../support/fragments/finance/funds/newFund';
 import Funds from '../../../support/fragments/finance/funds/funds';
 import { testType } from '../../../support/utils/tagTools';
 import FinanceHelp from '../../../support/fragments/finance/financeHelper';
+import TopMenu from '../../../support/fragments/topMenu';
 
 describe('ui-finance: Fund creation', () => {
   let aUnits;
@@ -33,6 +34,8 @@ describe('ui-finance: Fund creation', () => {
       .then(({ body }) => {
         fiscalYears = body.fiscalYears;
       });
+
+    cy.visit(TopMenu.fundPath);
   });
 
   beforeEach(() => {

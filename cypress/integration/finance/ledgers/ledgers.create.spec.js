@@ -15,8 +15,8 @@ describe('ui-finance: Ledger creation', () => {
     const defaultLedger = NewLedger.defaultLedger;
 
     Ledgers.createDefaultLedger(defaultLedger);
-    Ledgers.deleteLedgerViaActions(defaultLedger);
     Ledgers.checkCreatedLedgerName(defaultLedger);
+    Ledgers.deleteLedgerViaActions(defaultLedger);
 
     // should not create new ledger if mandatory fields are not filled
     const testLedgerName = `autotest_ledger_${getRandomPostfix()}`;

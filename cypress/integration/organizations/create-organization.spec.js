@@ -1,4 +1,4 @@
-import getRandomPostfix from '../../../support/utils/stringTools';
+import getRandomPostfix from '../../support/utils/stringTools';
 import {
   Pane,
   including,
