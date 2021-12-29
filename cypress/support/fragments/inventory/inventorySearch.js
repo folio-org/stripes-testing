@@ -57,6 +57,13 @@ export default {
     ]);
   },
 
+  exportInstanceAsMarc() {
+    return cy.do([
+      InventoryActions.open(),
+      InventoryActions.options.exportMARC.click()
+    ]);
+  },
+
   showSelectedRecords() {
     cy.do([
       InventoryActions.open(),
