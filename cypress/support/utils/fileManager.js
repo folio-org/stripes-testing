@@ -52,5 +52,10 @@ export default {
             verifyContentFunc(actualContent, ...verifyContentFuncArgs);
           });
       });
-  }
+  },
+
+  getFileNameFromFilePath(path) {
+    const fullPathToFile = path.split('/');
+    return fullPathToFile[fullPathToFile.length - 1];
+  },
 };
