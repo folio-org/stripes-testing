@@ -24,17 +24,6 @@ export default {
     return 'FY' + Math.floor((Math.random() * (Math.floor(max) - Math.ceil(min)) + Math.ceil(min))).toString();
   },
 
-  fileNames: {
-    'saveSQLQuery': [22, 41],
-    'saveUUIDs': [19, 38]
-  },
-
-  parseDateFromFilename(dateString, fileNameType) {
-    // fileNameType: array of 2 values for slicing string for getting Date
-    const sliceValue = fileNameType ?? this.fileNames.saveUUIDs;
-    return Date.parse(dateString[dateString.length - 1].slice(...sliceValue).replaceAll('_', ':'));
-  },
-
   getDateRanges: (rangesCount = 1, isInDifferentYears = false) => {
     const resultRanges = [];
     const currentDate = new Date();
@@ -53,7 +42,8 @@ export default {
       }
     }
     return resultRanges;
-  }
+  },
+
   parseDateFromFilename(dateString) {
     const dateFormat = /\d{4}-\d{2}-\d{2}T\d{2}_\d{2}_\d{2}\+\d{2}_\d{2}/gm;
     const date = dateString.match(dateFormat)[0];
