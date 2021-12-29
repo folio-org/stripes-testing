@@ -3,4 +3,5 @@ export const testType = { smoke:'smoke',
   extendedPath: 'extendedPath' };
 
 export const feature = { quickMarcEditor: 'quickMarcEditor',
-  notes: 'notes' };
+  notes: 'notes',
+  eHoldings:'eHoldings' };
