@@ -18,19 +18,16 @@ describe('Manage inventory Bib records with quickMarc editor', () => {
     InventoryInstance.goToEditMARCBiblRecord();
 
     const expectedInSourceRow = QuickMarcEditor.addNewField();
-    // TODO: add return value to validate the result by value too. As minimum add catching from response. The best way - through interactors
-    QuickMarcEditor.deletePenaltField();
-    const expectedInSourceRowWithSubfield = QuickMarcEditor.addNewFieldWithSubField();
-    QuickMarcEditor.pressSaveAndClose();
-    QuickMarcEditor.deleteConfirmationPresented();
-    QuickMarcEditor.confirmDelete();
-
-    InventoryInstance.viewSource();
-
-    InventoryViewSource.contains(expectedInSourceRow);
-    InventoryViewSource.contains(expectedInSourceRowWithSubfield);
-    // TODO: add assertion of absence of deleted row
-    // InventoryViewSource.notContains('948\t   \t‡h NO HOLDINGS IN PAOLF - 43 OTHER HOLDINGS ');
+    QuickMarcEditor.deletePenaltField().then(deletedTag => {
+      const expectedInSourceRowWithSubfield = QuickMarcEditor.addNewFieldWithSubField();
+      QuickMarcEditor.pressSaveAndClose();
+      QuickMarcEditor.deleteConfirmationPresented();
+      QuickMarcEditor.confirmDelete();
+      InventoryInstance.viewSource();
+      InventoryViewSource.contains(expectedInSourceRow);
+      InventoryViewSource.contains(expectedInSourceRowWithSubfield);
+      InventoryViewSource.notContains(deletedTag);
+    });
   });
 
   it('C10924 Add a field to a record using quickMARC', () => {
@@ -53,14 +50,13 @@ describe('Manage inventory Bib records with quickMarc editor', () => {
   it('C10928 Delete a field(s) from a record in quickMARC', () => {
     InventoryActions.import();
     InventoryInstance.goToEditMARCBiblRecord();
-    // TODO: add return value to validate the result by value too. As minimum add catching from response. The best way - through interactors
-    QuickMarcEditor.deletePenaltField();
-    QuickMarcEditor.pressSaveAndClose();
-    QuickMarcEditor.deleteConfirmationPresented();
-    QuickMarcEditor.confirmDelete();
-    InventoryInstance.viewSource();
-    // TODO: add assertion of absence of deleted row
-    // InventoryViewSource.notContains('948\t   \t‡h NO HOLDINGS IN PAOLF - 43 OTHER HOLDINGS ');
+    QuickMarcEditor.deletePenaltField().then(deletedTag => {
+      QuickMarcEditor.pressSaveAndClose();
+      QuickMarcEditor.deleteConfirmationPresented();
+      QuickMarcEditor.confirmDelete();
+      InventoryInstance.viewSource();
+      InventoryViewSource.notContains(deletedTag);
+    });
   });
 
   it('C10957 Attempt to delete a required field', () => {
@@ -104,24 +100,23 @@ describe('Manage inventory Bib records with quickMarc editor', () => {
         InventoryInstance.deriveNewMarcBib();
         const expectedCreatedValue = QuickMarcEditor.addNewField();
 
-        // TODO: add return value to validate the result by value too. As minimum add catching from response. The best way - through interactors
-        QuickMarcEditor.deletePenaltField();
+        QuickMarcEditor.deletePenaltField().then(deletedTag => {
+          const expectedUpdatedValue = QuickMarcEditor.updateExistingField();
 
-        const expectedUpdatedValue = QuickMarcEditor.updateExistingField();
+          QuickMarcEditor.pressSaveAndClose();
+          QuickMarcEditor.deleteConfirmationPresented();
+          QuickMarcEditor.confirmDelete();
 
-        QuickMarcEditor.pressSaveAndClose();
-        QuickMarcEditor.deleteConfirmationPresented();
-        QuickMarcEditor.confirmDelete();
+          InventoryInstance.checkUpdatedHRID(instanceHRID);
+          InventoryInstance.checkExpectedMARCSource();
+          // TODO: find correct tag to new field in record which presented into Inventory Instance
+          InventoryInstance.checkPresentedText(expectedUpdatedValue);
 
-        InventoryInstance.checkUpdatedHRID(instanceHRID);
-        InventoryInstance.checkExpectedMARCSource();
-        // TODO: find correct tag to new field in record which presented into Inventory Instance
-        InventoryInstance.checkPresentedText(expectedUpdatedValue);
-
-        InventoryInstance.viewSource();
-        InventoryViewSource.contains(expectedCreatedValue);
-        InventoryViewSource.contains(expectedUpdatedValue);
-        // TODO: add check of absence of deleted field
+          InventoryInstance.viewSource();
+          InventoryViewSource.contains(expectedCreatedValue);
+          InventoryViewSource.contains(expectedUpdatedValue);
+          InventoryViewSource.notContains(deletedTag);
+        });
       });
   });
 });

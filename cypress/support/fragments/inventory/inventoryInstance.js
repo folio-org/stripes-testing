@@ -3,6 +3,7 @@ import QuickMarcEditorFragment from '../quickMarcEditor';
 import inventoryActions from './inventoryActions';
 import InventoryInstanceEdit from './InventoryInstanceEdit';
 import HoldingsRecordView from './holdingsRecordView';
+import inventoryViewSource from './inventoryViewSource';
 
 const _section = Section({ id: 'pane-instancedetails' });
 const actionsButton = _section.find(Button('Actions'));
@@ -43,6 +44,7 @@ export default {
   viewSource: () => {
     cy.do(actionsButton.click());
     cy.do(viewSourceButton.click());
+    inventoryViewSource.waitLoading();
   },
 
   waitLoading:() => cy.expect(actionsButton.exists()),
