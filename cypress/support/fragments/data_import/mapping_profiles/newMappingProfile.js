@@ -1,5 +1,4 @@
 import { TextField, Button, Select } from '../../../../../interactors';
-import FieldMappingProfiles from './fieldMappingProfiles';
 import getRandomPostfix from '../../../utils/stringTools';
 
 const marcBib = 'MARC Bibliographic';
@@ -17,6 +16,10 @@ const materialType = '"book"';
 const permanentLoanType = '"Can circulate"';
 
 const status = '"In process"';
+
+const holdingsType = 'Holdings';
+
+const itemType = 'Item';
 
 const defaultMappingProfile = {
   name: `autotest${folioRecordTypeValue.instance}${getRandomPostfix()}`,
@@ -44,21 +47,17 @@ export default {
       Select({ name:'profile.incomingRecordType' }).choose(marcBib),
       Select({ name:'profile.existingRecordType' }).choose(specialMappingProfile.typeValue)
     ]);
-    if (specialMappingProfile.typeValue === 'Holdings') {
-      cy.do([
-        TextField('Permanent').fillIn(permanentLocation),
-      ]);
-    } else if (specialMappingProfile.typeValue === 'Item') {
+    if (specialMappingProfile.typeValue === holdingsType) {
+      cy.do(TextField('Permanent').fillIn(permanentLocation));
+    } else if (specialMappingProfile.typeValue === itemType) {
       cy.do([
         TextField('Material type').fillIn(materialType),
         // TODO create waiter
-        cy.wait(5000),
+        cy.wait(1500),
         TextField('Permanent loan type').fillIn(permanentLoanType),
         TextField('Status').fillIn(status),
       ]);
     }
     cy.do(Button('Save as profile & Close').click());
-    cy.expect(Button('Actions').exists());
-    FieldMappingProfiles.waitLoadingMappingProfile();
   }
 };
