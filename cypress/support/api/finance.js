@@ -1,35 +1,26 @@
 import uuid from 'uuid';
 
 Cypress.Commands.add('getFundTypesApi', (searchParams) => {
-  cy
+  return cy
     .okapiRequest({
       path: 'finance/fund-types',
       searchParams,
-    })
-    .then(({ body }) => {
-      Cypress.env('fundTypes', body.fundTypes);
     });
 });
 
 Cypress.Commands.add('getGroupsApi', (searchParams) => {
-  cy
+  return cy
     .okapiRequest({
       path: 'finance/groups',
       searchParams,
-    })
-    .then(({ body }) => {
-      Cypress.env('groups', body.groups);
     });
 });
 
 Cypress.Commands.add('getLedgersApi', (searchParams) => {
-  cy
+  return cy
     .okapiRequest({
       path: 'finance/ledgers',
       searchParams,
-    })
-    .then(({ body }) => {
-      Cypress.env('ledgers', body.ledgers);
     });
 });
 
@@ -38,9 +29,6 @@ Cypress.Commands.add('getFiscalYearsApi', (searchParams) => {
     .okapiRequest({
       path: 'finance/fiscal-years',
       searchParams,
-    })
-    .then(({ body }) => {
-      Cypress.env('fiscalYears', body.fiscalYears);
     });
 });
 
