@@ -1,25 +1,26 @@
-import { getLongDelay } from '../../../utils/cypressTools';
-import { Button } from '../../../../../interactors';
+import { Button, TextField, MultiColumnListCell } from '../../../../../interactors';
+import newActionProfile from './newActionProfile';
 
 const actionsButton = Button('Actions');
 
+const openNewActionProfileForm = () => {
+  cy.do([
+    actionsButton.click(),
+    Button('New action profile').click()
+  ]);
+};
+
 export default {
-  createNewActionProfile: () => {
-    cy.do([
-      actionsButton.click(),
-      Button('New action profile').click()
-    ]);
+
+  createActionProfile:(actionProfile, mappingProfile) => {
+    openNewActionProfileForm();
+    newActionProfile.fillActionProfile(actionProfile);
+    newActionProfile.linkMappingProfile(mappingProfile);
   },
 
-  waitLoadingList: () => {
-    cy.get('[id="pane-results-content"]', getLongDelay)
-      .should('be.visible');
-    cy.expect(actionsButton.exists());
-  },
-
-  // TODO create search action profile
   checkActionProfilePresented: (actionProfile) => {
-    cy.get('[id="action-profiles-list"]')
-      .should('contains.text', actionProfile.name);
-  }
+    cy.do(TextField({ id:'input-search-action-profiles-field' }).fillIn(actionProfile));
+    cy.do(Button('Search').click());
+    cy.expect(MultiColumnListCell(actionProfile).exists());
+  },
 };

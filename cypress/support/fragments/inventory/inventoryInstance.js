@@ -1,8 +1,9 @@
 import { MultiColumnList, HTML, including, Button, Section, QuickMarcEditor, KeyValue, MultiColumnListHeader, MultiColumnListCell } from '../../../../interactors';
 import QuickMarcEditorFragment from '../quickMarcEditor';
-import inventoryActions from './inventoryActions';
+import InventoryActions from './inventoryActions';
 import InventoryInstanceEdit from './InventoryInstanceEdit';
 import HoldingsRecordView from './holdingsRecordView';
+import InventoryViewSource from './inventoryViewSource';
 
 const _section = Section({ id: 'pane-instancedetails' });
 const actionsButton = _section.find(Button('Actions'));
@@ -43,6 +44,7 @@ export default {
   viewSource: () => {
     cy.do(actionsButton.click());
     cy.do(viewSourceButton.click());
+    InventoryViewSource.waitLoading();
   },
 
   waitLoading:() => cy.expect(actionsButton.exists()),
@@ -50,9 +52,9 @@ export default {
   overlaySourceBibRecord:(specialOCLCWorldCatidentifier = validOCLC.id) => {
     cy.do(actionsButton.click());
     cy.do(overlaySourceBibRecord.click());
-    inventoryActions.fillImportFields(specialOCLCWorldCatidentifier);
+    InventoryActions.fillImportFields(specialOCLCWorldCatidentifier);
     const startTime = Date.now();
-    inventoryActions.pressImportInModal();
+    InventoryActions.pressImportInModal();
     return startTime;
   },
 
