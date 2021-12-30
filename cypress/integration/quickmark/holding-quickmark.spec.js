@@ -6,6 +6,7 @@ import InventoryInstance from '../../support/fragments/inventory/inventoryInstan
 import HoldingsRecordView from '../../support/fragments/inventory/holdingsRecordView';
 import QuickMarcEditor from '../../support/fragments/quickMarcEditor';
 import InventoryViewSource from '../../support/fragments/inventory/inventoryViewSource';
+import { testType, feature } from '../../support/utils/tagTools';
 
 describe('Manage holding records through quickmarc editor', () => {
   before(() => {
@@ -19,7 +20,7 @@ describe('Manage holding records through quickmarc editor', () => {
     // TODO: redesign to api step
     InventoryInstance.addMarcHoldingRecord();
   });
-  it('C345390 Add a field to a record using quickMARC', () => {
+  it('C345390 Add a field to a record using quickMARC', { tags: [testType.smoke, feature.quickMarcEditor] }, () => {
     HoldingsRecordView.gotoEditInQuickMarc();
 
     // TODO: redesign to dynamic reading of rows count

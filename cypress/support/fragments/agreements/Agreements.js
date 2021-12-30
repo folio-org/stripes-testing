@@ -1,43 +1,35 @@
-import { Button } from '../../../../interactors';
+import { Button, MultiColumnListCell, MultiColumnListRow, Section, or, including, HTML } from '../../../../interactors';
 import NewAgreement from './newAgreement';
 import AgreementDetails from './agreementsDetails';
-import { getLongDelay } from '../../utils/cypressTools';
 
-export default class Agreements {
-  static #rootXpath = '//div[@id="agreements-module-display"]';
-  static #rowXpath = `${this.#rootXpath}//div[contains(@class,'mclRow')][@role='row']`;
-  static #noRowsXpath = `${this.#rootXpath}//div[contains(@class,"noResultsMessageLabel")]`;
-  static #labelCellXpath = `${this.#rowXpath}//span[contains(@class,label)]/div`;
+const section = Section({ id: 'pane-agreement-list' });
+const newButton = Button('New');
+const waitLoading = () => {
+  cy.expect(or(
+    section.find(MultiColumnListRow()).exists(),
+    section.find(HTML(including('No results found. Please check your filters.'))).exists()
+  ));
+  cy.expect(newButton.exists());
+};
 
-  static #newButton = Button('New');
+export default {
+  waitLoading,
 
-  static create(specialAgreement = NewAgreement.defaultAgreement) {
-    cy.do(this.#newButton.click());
+  create: (specialAgreement = NewAgreement.defaultAgreement) => {
+    cy.do(newButton.click());
     NewAgreement.waitLoading();
     NewAgreement.fill(specialAgreement);
     NewAgreement.save();
-    this.waitLoading();
+    waitLoading();
 
-    // TODO: check ability to wirk through interactors
-    cy.xpath(`${this.#labelCellXpath}[.='${specialAgreement.name}']`)
-      .should('be.visible');
-  }
+    cy.do(section.find(MultiColumnListCell(specialAgreement.name)).click());
+  },
 
-  static waitLoading() {
-    cy.xpath(`${this.#rowXpath}|${this.#noRowsXpath}`, getLongDelay())
-      .should('be.visible');
-    cy.expect(this.#newButton.exists());
-  }
-
-  static selectRecord(recordName = NewAgreement.defaultAgreement.name) {
-    cy.xpath(`${this.#labelCellXpath}[.='${recordName}']`)
-      .click();
+  selectRecord: (agreementTitle = NewAgreement.defaultAgreement.name) => {
+    cy.do(section.find(MultiColumnListCell(agreementTitle)).click());
     AgreementDetails.waitLoading();
-  }
+  },
 
-  static agreementNotVisible(agreementTitle) {
-    cy.xpath((`${this.#labelCellXpath}[.='${agreementTitle}']`), getLongDelay())
-      .should('not.exist');
-  }
-}
+  agreementNotVisible: (agreementTitle) => cy.expect(section.find(MultiColumnListCell(agreementTitle)).absent())
+};
 
