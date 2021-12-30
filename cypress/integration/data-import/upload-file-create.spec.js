@@ -10,12 +10,13 @@ import getRandomPostfix from '../../support/utils/stringTools';
 import dataImport from '../../support/fragments/data_import/dataImport';
 import logs from '../../support/fragments/data_import/logs';
 import jobProfiles from '../../support/fragments/data_import/job_profiles/jobProfiles';
+import { testType } from '../../support/utils/tagTools';
 
 describe('ui-data-import: MARC file import with creating of the new instance, holding and item', () => {
   before('navigates to Settings', () => {
     cy.login(Cypress.env('diku_login'), Cypress.env('diku_password'));
   });
-  it('C343334 MARC file import with creating a new mapping profile and action profile', () => {
+  it('C343334 MARC file import with creating a new mapping profiles, action profiles and job profile', { tags: [testType.smoke] }, () => {
     const collectionOfProfiles = [
       { mappingProfile: { typeValue : NewFieldMappingProfile.folioRecordTypeValue.instance },
         actionProfile: { typeValue: NewActionProfile.folioRecordTypeValue.instance } },

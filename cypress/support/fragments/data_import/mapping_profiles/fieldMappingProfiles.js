@@ -3,6 +3,8 @@ import newMappingProfile from './newMappingProfile';
 
 const actionsButton = Button('Actions');
 
+const iconButton = Button({ icon: 'times' });
+
 const openNewMappingProfileForm = () => {
   cy.do([
     actionsButton.click(),
@@ -11,7 +13,7 @@ const openNewMappingProfileForm = () => {
 };
 
 const closeViewModeForMappingProfile = () => {
-  cy.get('[aria-label="Close "]').click();
+  cy.do(iconButton.click());
 };
 
 export default {

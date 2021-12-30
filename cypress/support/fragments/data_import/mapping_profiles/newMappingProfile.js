@@ -17,6 +17,10 @@ const permanentLoanType = '"Can circulate"';
 
 const status = '"In process"';
 
+const holdingsType = 'Holdings';
+
+const itemType = 'Item';
+
 const defaultMappingProfile = {
   name: `autotest${folioRecordTypeValue.instance}${getRandomPostfix()}`,
   typeValue: folioRecordTypeValue.instance,
@@ -43,9 +47,9 @@ export default {
       Select({ name:'profile.incomingRecordType' }).choose(marcBib),
       Select({ name:'profile.existingRecordType' }).choose(specialMappingProfile.typeValue)
     ]);
-    if (specialMappingProfile.typeValue === 'Holdings') {
+    if (specialMappingProfile.typeValue === holdingsType) {
       cy.do(TextField('Permanent').fillIn(permanentLocation));
-    } else if (specialMappingProfile.typeValue === 'Item') {
+    } else if (specialMappingProfile.typeValue === itemType) {
       cy.do([
         TextField('Material type').fillIn(materialType),
         // TODO create waiter

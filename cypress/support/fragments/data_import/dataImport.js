@@ -1,11 +1,12 @@
-export default {
+import { getLongDelay } from '../../utils/cypressTools';
+import { Button } from '../../../../interactors';
 
+export default {
   goToDataImport:() => {
     cy.visit('/data-import');
   },
 
   uploadFile() {
-    // TODO using fabrica
-    cy.get('[type="file"]').attachFile('oneMarcBib.mrc');
+    cy.get('#pane-jobs-title-content input[type=file]', getLongDelay()).attachFile('oneMarcBib.mrc');
   }
 };
