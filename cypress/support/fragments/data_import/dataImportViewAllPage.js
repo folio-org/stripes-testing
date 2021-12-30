@@ -23,10 +23,17 @@ export default {
 
   errorsInImportFilters: ['error', 'committed'],
 
-  singleRecordImports: ['yes', 'no'],
+  singleRecordImports: ['no', 'yes'],
 
   resetAllFilters() {
     return cy.get('#clickable-reset-all').click();
+  },
+
+  sortByCompletedDateInDescendingOrder() {
+    cy.get('#list-column-completeddate').dblclick();
+    cy.get('#list-column-completeddate')
+      .invoke('attr', 'aria-sort')
+      .should('equal', 'descending');
   },
 
   getErrorsQuery({ filter }) {
@@ -51,16 +58,16 @@ export default {
 
   getSingleRecordImportsQuery({ isSingleRecord }) {
     if (isSingleRecord === 'yes') {
-      return `(jobProfileInfo="\\“id\\“==d0ebb7b0-2f0f-11eb-adc1-0242ac120002")
-      OR (jobProfileInfo="\\“id\\“==91f9b8d6-d80e-4727-9783-73fb53e3c786")
-      sortby completedDate/sort.descending`;
+      return '(jobProfileInfo="\\“id\\“==d0ebb7b0-2f0f-11eb-adc1-0242ac120002") ' +
+        'OR (jobProfileInfo="\\“id\\“==91f9b8d6-d80e-4727-9783-73fb53e3c786") ' +
+        'sortby completedDate';
     }
 
-    return `(jobProfileInfo="\\“id\\“=="
-    NOT jobProfileInfo="\\“id\\“=="d0ebb7b0-2f0f-11eb-adc1-0242ac120002")
-    AND (jobProfileInfo="\\“id\\“=="
-    NOT jobProfileInfo="\\“id\\“=="91f9b8d6-d80e-4727-9783-73fb53e3c786"")
-    sortby completedDate/sort.descending`;
+    return '(jobProfileInfo="\\“id\\“==" ' +
+      'NOT jobProfileInfo="\\“id\\“=="d0ebb7b0-2f0f-11eb-adc1-0242ac120002") ' +
+      'AND (jobProfileInfo="\\“id\\“==" ' +
+      'NOT jobProfileInfo="\\“id\\“=="91f9b8d6-d80e-4727-9783-73fb53e3c786"") ' +
+      'sortby completedDate/sort.descending';
   },
 
   filterJobsByErrors(filter) {
@@ -72,21 +79,18 @@ export default {
     cy.get('[name="startDate"]').type(from);
     cy.get('[name="endDate"]').type(end);
     cy.do(Button('Apply').click());
-    cy.get('#accordion-toggle-button-completedDate').click();
   },
 
   filterJobsByJobProfile(jobProfile) {
     cy.get('#accordion-toggle-button-jobProfileInfo').click();
     cy.contains('Choose job profile').click();
     cy.get('[class*="selectionListRoot"]').contains(jobProfile).click();
-    cy.get('#accordion-toggle-button-jobProfileInfo').click();
   },
 
   filterJobsByUser(user) {
     cy.get('#accordion-toggle-button-userId').click();
     cy.contains('Choose user').click();
     cy.get('[class*="selectionListRoot"]').contains(user).click();
-    cy.get('#accordion-toggle-button-userId').click();
   },
 
   filterJobsBySingleRecordImports(filter) {

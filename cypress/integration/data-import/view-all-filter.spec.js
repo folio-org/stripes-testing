@@ -1,118 +1,136 @@
 import DataImportViewAllPage from '../../support/fragments/data_import/dataImportViewAllPage';
-import TopMenu from '../../support/fragments/topMenu';
+import fileManager from '../../support/utils/fileManager';
+import getRandomPostfix from '../../support/utils/stringTools';
 
 describe('ui-data-import: Filter the "View all" log screen', () => {
+  // Create unique name for a MARC file
+  const uniqueFileName = `test${getRandomPostfix()}.mrc`;
+  let query;
+
   before(() => {
     cy.login(
       Cypress.env('diku_login'),
       Cypress.env('diku_password')
     );
+
     cy.getToken(
       Cypress.env('diku_login'),
       Cypress.env('diku_password')
     );
-  });
 
-  beforeEach(() => {
-    cy.visit(TopMenu.dataImportPath);
+    // create dynamically file with given name in fixtures
+    fileManager.createFile(`cypress/fixtures/${uniqueFileName}`);
+
+    // remove generated test file from fixtures after uploading
+    cy.uploadFile(uniqueFileName);
+    fileManager.deleteFile(`cypress/fixtures/${uniqueFileName}`);
   });
 
   it('C11113 Filter the "View all" log screen', () => {
     DataImportViewAllPage.gotoViewAllPage();
 
-    // filter by "Errors in Import"
+    // FILTER By "Errors in Import"
     DataImportViewAllPage.errorsInImportFilters.forEach((filter) => {
       DataImportViewAllPage.filterJobsByErrors(filter);
 
       // fetch matched jobs from server
-      const query = DataImportViewAllPage.getErrorsQuery({ filter });
+      query = DataImportViewAllPage.getErrorsQuery({ filter });
       DataImportViewAllPage.getNumberOfMatchedJobs({ query }).then(count => {
         DataImportViewAllPage.checkRowsCount(count);
 
         DataImportViewAllPage.resetAllFilters();
+        DataImportViewAllPage.sortByCompletedDateInDescendingOrder();
       });
     });
 
-    // filter by "Date"
-    {
-      const startedDate = new Date();
-      // const completedDate = startedDate;
-      const completedDate = startedDate;
-      // format date as YYYY-MM-DD
-      const formattedStart = DataImportViewAllPage.getFormattedDate({ date: startedDate });
-      // filter with start and end date
-      DataImportViewAllPage.filterJobsByDate({ from: formattedStart, end: formattedStart });
 
-      // api endpoint expects completedDate increased by 1 day
-      completedDate.setDate(completedDate.getDate() + 1);
-      const formattedEnd = DataImportViewAllPage.getFormattedDate({ date: completedDate });
-      const query = DataImportViewAllPage.getDateQuery({ from: formattedStart, end: formattedEnd });
+    // FILTER By "Date"
+    const startedDate = new Date();
+    const completedDate = startedDate;
+    // format date as YYYY-MM-DD
+    const formattedStart = DataImportViewAllPage.getFormattedDate({ date: startedDate });
+    // filter with start and end date
+    DataImportViewAllPage.filterJobsByDate({ from: formattedStart, end: formattedStart });
 
-      // fetch matched jobs from server
-      DataImportViewAllPage.getNumberOfMatchedJobs({ query }).then(count => {
-        DataImportViewAllPage.checkRowsCount(count);
+    // api endpoint expects completedDate increased by 1 day
+    completedDate.setDate(completedDate.getDate() + 1);
+    const formattedEnd = DataImportViewAllPage.getFormattedDate({ date: completedDate });
+    query = DataImportViewAllPage.getDateQuery({ from: formattedStart, end: formattedEnd });
 
-        DataImportViewAllPage.resetAllFilters();
-      });
-    }
+    // fetch matched jobs from server
+    DataImportViewAllPage.getNumberOfMatchedJobs({ query }).then(count => {
+      DataImportViewAllPage.checkRowsCount(count);
 
-    // filter by "Job profile"
+      DataImportViewAllPage.resetAllFilters();
+      DataImportViewAllPage.sortByCompletedDateInDescendingOrder();
+    });
+
+
+    // FILTER By "Job profile"
     DataImportViewAllPage.getSingleJobProfile().then(({ jobProfileInfo: profile }) => {
       DataImportViewAllPage.filterJobsByJobProfile(profile.name);
 
       // fetch matched jobs from server
-      const query = DataImportViewAllPage.getJobProfileQuery({ jobProfileId: profile.id });
+      query = DataImportViewAllPage.getJobProfileQuery({ jobProfileId: profile.id });
       DataImportViewAllPage.getNumberOfMatchedJobs({ query }).then(count => {
         DataImportViewAllPage.checkRowsCount(count);
 
         DataImportViewAllPage.resetAllFilters();
+        DataImportViewAllPage.sortByCompletedDateInDescendingOrder();
       });
     });
 
-    // filter by "User"
+
+    // FILTER By "User"
     DataImportViewAllPage.getSingleJobProfile().then(({ runBy, userId }) => {
       const userName = `${runBy.firstName} ${runBy.lastName}`;
       DataImportViewAllPage.filterJobsByUser(userName);
 
       // fetch matched jobs from server
-      const query = DataImportViewAllPage.getUserQuery({ userId });
+      query = DataImportViewAllPage.getUserQuery({ userId });
       DataImportViewAllPage.getNumberOfMatchedJobs({ query }).then(count => {
         DataImportViewAllPage.checkRowsCount(count);
 
         DataImportViewAllPage.resetAllFilters();
+        DataImportViewAllPage.sortByCompletedDateInDescendingOrder();
       });
     });
 
-    // filter by "Inventory single record imports"
-    // FIX ME: for some reason, when toggling "Inventory single record imports" filter
-    // ui will not change, so we have sort by one of MultiColumnList headers before filtering
-    cy.get('#clickable-list-column-filename').click();
+
+    // FILTER By "Inventory single record imports"
     cy.get('#accordion-toggle-button-singleRecordImports').click();
     DataImportViewAllPage.singleRecordImports.forEach(filter => {
       DataImportViewAllPage.filterJobsBySingleRecordImports(filter);
 
-      const query = DataImportViewAllPage.getSingleRecordImportsQuery({ isSingleRecord: filter });
+      query = DataImportViewAllPage.getSingleRecordImportsQuery({ isSingleRecord: filter });
       DataImportViewAllPage.getNumberOfMatchedJobs({ query }).then(count => {
         DataImportViewAllPage.checkRowsCount(count);
       });
 
       DataImportViewAllPage.resetAllFilters();
+      DataImportViewAllPage.sortByCompletedDateInDescendingOrder();
     });
 
-    // filter by more than one filter
+
+    // FILTER By more than one filter
     // E.g. in this case, filter by "User" and "Errors in Import"
     DataImportViewAllPage.getSingleJobProfile().then(({ runBy, userId }) => {
+      // close opened User accordion before search
+      // because filterJobsByUser method opens it
+      cy.get('#accordion-toggle-button-userId').click();
+
       const userName = `${runBy.firstName} ${runBy.lastName}`;
       const status = DataImportViewAllPage.errorsInImportFilters[0];
       DataImportViewAllPage.filterJobsByUser(userName);
       DataImportViewAllPage.filterJobsByErrors(status);
 
       // fetch matched jobs from server
-      const query = DataImportViewAllPage.getMixedQuery({ status, userId });
+      query = DataImportViewAllPage.getMixedQuery({ status, userId });
       DataImportViewAllPage.getNumberOfMatchedJobs({ query }).then(count => {
         DataImportViewAllPage.checkRowsCount(count);
 
         DataImportViewAllPage.resetAllFilters();
+        DataImportViewAllPage.sortByCompletedDateInDescendingOrder();
       });
     });
   });
