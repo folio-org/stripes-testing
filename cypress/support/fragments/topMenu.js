@@ -8,6 +8,6 @@ export default class TopMenu {
   static ledgerPath = '/finance/ledger';
   static dataImportPath = '/data-import';
   static fiscalYearPath = '/finance/fiscalyear';
-  static eholding = '/eholdings';
+  static eholdings = '/eholdings';
   static dataExport = '/data-export';
 }
