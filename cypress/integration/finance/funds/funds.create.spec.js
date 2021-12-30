@@ -7,9 +7,6 @@ import FinanceHelp from '../../../support/fragments/finance/financeHelper';
 import TopMenu from '../../../support/fragments/topMenu';
 
 describe('ui-finance: Fund creation', () => {
-  let aUnits;
-  let fiscalYears;
-
   const ledger = {
     id: uuid(),
     name: `autotest_ledger_${getRandomPostfix()}`,
@@ -19,6 +16,8 @@ describe('ui-finance: Fund creation', () => {
     currency: 'USD',
     restrictEncumbrance: false,
     restrictExpenditures: false,
+    acqUnitIds: '',
+    fiscalYearOneId: ''
   };
 
   before(() => {
@@ -27,12 +26,12 @@ describe('ui-finance: Fund creation', () => {
 
     cy.getAcqUnitsApi({ limit: 1 })
       .then(({ body }) => {
-        aUnits = body.acquisitionsUnits;
+        ledger.acqUnitIds = [body.acquisitionsUnits[0].id];
       });
 
     cy.getFiscalYearsApi({ limit: 1 })
       .then(({ body }) => {
-        fiscalYears = body.fiscalYears;
+        ledger.fiscalYearOneId = body.fiscalYears[0].id;
       });
 
     cy.visit(TopMenu.fundPath);
@@ -40,9 +39,7 @@ describe('ui-finance: Fund creation', () => {
 
   beforeEach(() => {
     cy.createLedgerApi({
-      ...ledger,
-      acqUnitIds: [aUnits[0].id],
-      fiscalYearOneId: fiscalYears[0].id,
+      ...ledger
     });
   });
 

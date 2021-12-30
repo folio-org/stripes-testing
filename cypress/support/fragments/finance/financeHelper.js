@@ -5,6 +5,11 @@ const noResultsMessageLabel = '//span[contains(@class,"noResultsMessageLabel")]'
 const chooseAFilterMessage = 'Choose a filter or enter a search query to show results.';
 
 export default {
+
+  statusActive : 'Active',
+  statusFrozen : 'Frozen',
+  statusInactive : 'Inactive',
+
   searchByName : (name) => {
     cy.do([
       searchField.selectIndex('Name'),

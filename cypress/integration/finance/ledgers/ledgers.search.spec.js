@@ -7,8 +7,7 @@ import { MultiColumnList } from '../../../../interactors';
 import { testType } from '../../../support/utils/tagTools';
 
 describe('ui-finance: Ledger list search and filters', () => {
-  let aUnits;
-  let fiscalYears;
+  let aUnit;
 
   const ledger = {
     id: uuid(),
@@ -19,6 +18,8 @@ describe('ui-finance: Ledger list search and filters', () => {
     currency: 'USD',
     restrictEncumbrance: false,
     restrictExpenditures: false,
+    acqUnitIds: [],
+    fiscalYearOneId: ''
   };
 
   before(() => {
@@ -27,12 +28,13 @@ describe('ui-finance: Ledger list search and filters', () => {
 
     cy.getAcqUnitsApi({ limit: 1 })
       .then(({ body }) => {
-        aUnits = body.acquisitionsUnits;
+        ledger.acqUnitIds = [body.acquisitionsUnits[0].id];
+        aUnit = body.acquisitionsUnits[0];
       });
 
     cy.getFiscalYearsApi({ limit: 1 })
       .then(({ body }) => {
-        fiscalYears = body.fiscalYears;
+        ledger.fiscalYearOneId = body.fiscalYears[0].id;
       });
 
     cy.visit(TopMenu.ledgerPath);
@@ -40,9 +42,7 @@ describe('ui-finance: Ledger list search and filters', () => {
 
   beforeEach(() => {
     cy.createLedgerApi({
-      ...ledger,
-      acqUnitIds: [aUnits[0].id],
-      fiscalYearOneId: fiscalYears[0].id,
+      ...ledger
     });
   });
 
@@ -54,7 +54,7 @@ describe('ui-finance: Ledger list search and filters', () => {
     FinanceHelp.checkZeroSearchResultsMessageLabel();
 
     // search by acquisition units, name and status
-    Ledgers.searchByStatusUnitsAndName('frozen', aUnits[0].name, ledger.name);
+    Ledgers.searchByStatusUnitsAndName('Frozen', aUnit.name, ledger.name);
     cy.expect(MultiColumnList({ id: 'ledgers-list' }).has({ rowCount: 1 }));
 
     // search by name only

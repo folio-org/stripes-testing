@@ -7,11 +7,11 @@ import { MultiColumnList } from '../../../../interactors';
 import { testType } from '../../../support/utils/tagTools';
 
 describe('ui-finance: Funds list search and filter', () => {
-  let aUnits;
-  let tags;
-  let ledgers;
-  let groups;
-  let fundTypes;
+  let aUnit;
+  let tag;
+  let ledger;
+  let group;
+  let fundType;
 
   const fund = {
     id: uuid(),
@@ -28,23 +28,23 @@ describe('ui-finance: Funds list search and filter', () => {
 
     cy.getFundTypesApi({ limit: 1 })
       .then(({ body }) => {
-        fundTypes = body.fundTypes;
+        fundType = body.fundTypes[0];
       });
     cy.getTagsApi({ limit: 1 })
       .then(({ body }) => {
-        tags = body.tags;
+        tag = body.tags[0];
       });
     cy.getAcqUnitsApi({ limit: 1 })
       .then(({ body }) => {
-        aUnits = body.acquisitionsUnits;
+        aUnit = body.acquisitionsUnits[0];
       });
     cy.getLedgersApi({ limit: 1 })
       .then(({ body }) => {
-        ledgers = body.ledgers;
+        ledger = body.ledgers[0];
       });
     cy.getGroupsApi({ limit: 1 })
       .then(({ body }) => {
-        groups = body.groups;
+        group = body.groups[0];
       });
 
     cy.visit(TopMenu.fundPath);
@@ -53,11 +53,11 @@ describe('ui-finance: Funds list search and filter', () => {
   beforeEach(() => {
     cy.createFundApi({
       ...fund,
-      acqUnitIds: [aUnits[0].id],
-      ledgerId: ledgers[0].id,
-      fundTypeId: fundTypes[0].id,
-      tags: { tagList: [tags[0].label] },
-      groupIds: [groups[0].id]
+      acqUnitIds: [aUnit.id],
+      ledgerId: ledger.id,
+      fundTypeId: fundType.id,
+      tags: { tagList: [tag.label] },
+      groupIds: [group.id]
     });
   });
 
@@ -68,8 +68,8 @@ describe('ui-finance: Funds list search and filter', () => {
   it('C4059 should return funds according to fund filters', { tags: [testType.smoke] }, function () {
     FinanceHelp.checkZeroSearchResultsMessageLabel();
 
-    Funds.checkFundFilters(ledgers[0].name, fundTypes[0].name, 'active', aUnits[0].name,
-      tags[0].label, groups[0].name, fund.name);
+    Funds.checkFundFilters(ledger.name, fundType.name, 'Active', aUnit.name,
+      tag.label, group.name, fund.name);
     cy.expect(MultiColumnList({ id: 'funds-list' }).has({ rowCount: 1 }));
 
     // search by name

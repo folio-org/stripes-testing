@@ -1,11 +1,12 @@
 import getRandomPostfix from '../../../utils/stringTools';
 import { getPreviousFiscalYearCode } from '../../../utils/dateTools';
+import { statusActive, statusInactive, statusFrozen } from '../financeHelper';
 
 export default class NewLedger {
     static #statusValue = {
-      active: 'Active',
-      frozen: 'Frozen',
-      inactive: 'Inactive'
+      active: statusActive,
+      frozen: statusFrozen,
+      inactive: statusInactive
     }
 
     static #defaultLedger = {

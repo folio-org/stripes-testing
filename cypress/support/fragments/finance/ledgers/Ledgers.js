@@ -1,6 +1,6 @@
-import { Button, Accordion, Checkbox, SelectionList, Selection, SearchField, TextField } from '../../../../../interactors';
+import { Button, Accordion, Checkbox, SelectionList, Selection, SearchField, TextField, Section } from '../../../../../interactors';
+import { statusActive, statusInactive, statusFrozen } from '../financeHelper';
 
-const rootLedgerDetailsXpath = '//*[@id="pane-ledger-details"]';
 const createdLedgerNameXpath = '//*[@id="paneHeaderpane-ledger-details-pane-title"]/h2/span';
 const numberOfSearchResultsHeader = '//*[@id="paneHeaderledger-results-pane-subtitle"]/span';
 
@@ -10,8 +10,7 @@ const fiscalYearCss = 'select[name^="fiscalYearOneId"]';
 
 export default {
   waitForLedgerDetailsLoading : () => {
-    cy.xpath(rootLedgerDetailsXpath)
-      .should('be.visible');
+    cy.do(Section({ id: 'pane-ledger-details' }).visible);
   },
 
   checkZeroSearchResultsHeader : () => {
@@ -80,13 +79,13 @@ export default {
   selectStatusInSearch: (ledgerStatus) => {
     cy.do(Accordion({ id: 'ledgerStatus' }).clickHeader());
     switch (ledgerStatus) {
-      case 'frozen':
+      case statusFrozen:
         cy.do(Checkbox({ id: 'clickable-filter-ledgerStatus-frozen' }).click());
         break;
-      case 'active':
+      case statusActive:
         cy.do(Checkbox({ id: 'clickable-filter-ledgerStatus-active' }).click());
         break;
-      case 'inactive':
+      case statusInactive:
         cy.do(Checkbox({ id: 'clickable-filter-ledgerStatus-inactive' }).click());
         break;
       default:

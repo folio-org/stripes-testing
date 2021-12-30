@@ -1,6 +1,5 @@
-import { Button, TextField } from '../../../../../interactors';
+import { Button, TextField, Pane } from '../../../../../interactors';
 
-const rootFiscalYearDetailsXpath = '//*[@id="pane-fiscal-year-details"]';
 const createdFiscalYearNameXpath = '//*[@id="paneHeaderpane-fiscal-year-details-pane-title"]/h2/span';
 const numberOfSearchResultsHeader = '//*[@id="paneHeaderfiscal-year-results-pane-subtitle"]/span';
 const zeroResultsFoundText = '0 records found';
@@ -13,8 +12,7 @@ const deleteButton = Button('Delete');
 
 export default {
   waitForFiscalYearDetailsLoading : () => {
-    cy.xpath(rootFiscalYearDetailsXpath)
-      .should('be.visible');
+    cy.do(Pane({ id: 'pane-fiscal-year-details' }).exists);
   },
 
   createDefaultFiscalYear(fiscalYear) {

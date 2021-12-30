@@ -1,6 +1,6 @@
-import { Button, TextField, Selection, SelectionList, Accordion, Modal, Checkbox, MultiSelect, SearchField } from '../../../../../interactors';
+import { Button, TextField, Selection, SelectionList, Accordion, Modal, Checkbox, MultiSelect, SearchField, Section } from '../../../../../interactors';
+import { statusActive, statusInactive, statusFrozen } from '../financeHelper';
 
-const rootFundDetailsXpath = '//*[@id="pane-fund-details"]';
 const createdFundNameXpath = '//*[@id="paneHeaderpane-fund-details-pane-title"]/h2/span';
 const numberOfSearchResultsHeader = '//*[@id="paneHeaderfund-results-pane-subtitle"]/span';
 const zeroResultsFoundText = '0 records found';
@@ -8,8 +8,7 @@ const budgetTitleXpath = '//*[@id="paneHeaderpane-budget-pane-title"]/h2/span';
 
 export default {
   waitForFundDetailsLoading : () => {
-    cy.xpath(rootFundDetailsXpath)
-      .should('be.visible');
+    cy.do(Section({ id: 'pane-fund-details' }).visible());
   },
 
   createDefaultFund(fund) {
@@ -56,6 +55,7 @@ export default {
 
   deleteFundViaActions: () => {
     cy.do([
+      cy.expect(Button('Actions').exists()),
       Button('Actions').click(),
       Button('Delete').click(),
       Button('Delete', { id:'clickable-fund-remove-confirmation-confirm' }).click()
@@ -97,13 +97,13 @@ export default {
   selectStatusInSearch: (fundStatus) => {
     cy.do(Accordion({ id: 'fundStatus' }).clickHeader());
     switch (fundStatus) {
-      case 'frozen':
+      case statusFrozen:
         cy.do(Checkbox({ id: 'clickable-filter-fundStatus-frozen' }).click());
         break;
-      case 'active':
+      case statusActive:
         cy.do(Checkbox({ id: 'clickable-filter-fundStatus-active' }).click());
         break;
-      case 'inactive':
+      case statusInactive:
         cy.do(Checkbox({ id: 'clickable-filter-fundStatus-inactive' }).click());
         break;
       default:
