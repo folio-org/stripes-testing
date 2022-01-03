@@ -57,9 +57,19 @@ export default {
 
   addNewFieldWithSubField: () => addNewField(defaultFieldValues.contentWithSubfield),
 
-  deletePenaltField: () => {
-    const lastRowNumber = getInitialRowsCount();
-    cy.do(_getRowInteractor(lastRowNumber - 1).find(deleteFieldButton).click());
+  deletePenaltField:  () => {
+    const shouldBeRemovedRowNumber = getInitialRowsCount() - 1;
+
+    cy.expect(QuickMarcEditor().exists())
+      .then(() => {
+        cy.then(() => QuickMarcEditor().presentedRowsProperties())
+          .then(presentedRowsProperties => {
+            const shouldBeDeletedRowTag = presentedRowsProperties[shouldBeRemovedRowNumber].tag;
+            cy.do(_getRowInteractor(shouldBeRemovedRowNumber).find(deleteFieldButton).click());
+            cy.wrap(shouldBeDeletedRowTag).as('specialTag');
+          });
+      });
+    return cy.get('@specialTag');
   },
 
   pressSaveAndClose: () => cy.do(saveAndCloseButton.click()),
