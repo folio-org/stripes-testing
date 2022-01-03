@@ -57,8 +57,6 @@ export default {
         // if job logs are sorted by default in reverse chronological order
         // the dates and sortedDates should be equal
         expect(dates).to.deep.equal(sortedDates);
-
-        console.log({ dates, sortedDates });
       });
   },
 
