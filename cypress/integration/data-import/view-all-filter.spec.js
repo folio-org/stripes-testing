@@ -1,10 +1,15 @@
 import DataImportViewAllPage from '../../support/fragments/data_import/dataImportViewAllPage';
 import fileManager from '../../support/utils/fileManager';
+import DateTools from '../../support/utils/dateTools';
+import { Accordion } from '../../../interactors';
 import getRandomPostfix from '../../support/utils/stringTools';
 
 describe('ui-data-import: Filter the "View all" log screen', () => {
-  // Create unique name for a MARC file
-  const uniqueFileName = `test${getRandomPostfix()}.mrc`;
+  // Path to static file in fixtures
+  const pathToStaticFile = 'oneMarcBib.mrc';
+  // Create unique names for MARC files
+  const uniqueFileNameForErrorsStatus = `test${getRandomPostfix()}.mrc`;
+  const uniqueFileNameForCompletedStatus = `test${getRandomPostfix()}.mrc`;
   let query;
 
   before(() => {
@@ -18,28 +23,39 @@ describe('ui-data-import: Filter the "View all" log screen', () => {
       Cypress.env('diku_password')
     );
 
-    // create dynamically file with given name in fixtures
-    fileManager.createFile(`cypress/fixtures/${uniqueFileName}`);
+    // Create files dynamically with given name and content in fixtures
+    fileManager.createFile(`cypress/fixtures/${uniqueFileNameForErrorsStatus}`);
+    // read contents of static file in fixtures
+    cy.readFile(`cypress/fixtures/${pathToStaticFile}`).then(content => {
+      // and write its contents to the file with completed status
+      fileManager.createFile(`cypress/fixtures/${uniqueFileNameForCompletedStatus}`, content);
+    });
 
-    // remove generated test file from fixtures after uploading
-    cy.uploadFile(uniqueFileName);
-    fileManager.deleteFile(`cypress/fixtures/${uniqueFileName}`);
+    // Upload files
+    // this file completes with errors
+    cy.uploadFile(uniqueFileNameForErrorsStatus);
+    // this file completes successfully
+    cy.uploadFile(uniqueFileNameForCompletedStatus);
+
+    // Remove generated test files from fixtures after uploading
+    fileManager.deleteFile(`cypress/fixtures/${uniqueFileNameForCompletedStatus}`);
+    fileManager.deleteFile(`cypress/fixtures/${uniqueFileNameForErrorsStatus}`);
   });
 
   it('C11113 Filter the "View all" log screen', () => {
     DataImportViewAllPage.gotoViewAllPage();
+    DataImportViewAllPage.checkForReverseChronologicalOrder();
 
     // FILTER By "Errors in Import"
-    DataImportViewAllPage.errorsInImportFilters.forEach((filter) => {
+    DataImportViewAllPage.errorsInImportStatuses.forEach((filter) => {
       DataImportViewAllPage.filterJobsByErrors(filter);
 
-      // fetch matched jobs from server
       query = DataImportViewAllPage.getErrorsQuery({ filter });
       DataImportViewAllPage.getNumberOfMatchedJobs({ query }).then(count => {
         DataImportViewAllPage.checkRowsCount(count);
+        DataImportViewAllPage.checkForImportErrorStatuses(filter);
 
         DataImportViewAllPage.resetAllFilters();
-        DataImportViewAllPage.sortByCompletedDateInDescendingOrder();
       });
     });
 
@@ -47,22 +63,22 @@ describe('ui-data-import: Filter the "View all" log screen', () => {
     // FILTER By "Date"
     const startedDate = new Date();
     const completedDate = startedDate;
+
     // format date as YYYY-MM-DD
-    const formattedStart = DataImportViewAllPage.getFormattedDate({ date: startedDate });
+    const formattedStart = DateTools.getFormattedDate({ date: startedDate });
+
     // filter with start and end date
     DataImportViewAllPage.filterJobsByDate({ from: formattedStart, end: formattedStart });
 
     // api endpoint expects completedDate increased by 1 day
     completedDate.setDate(completedDate.getDate() + 1);
-    const formattedEnd = DataImportViewAllPage.getFormattedDate({ date: completedDate });
-    query = DataImportViewAllPage.getDateQuery({ from: formattedStart, end: formattedEnd });
+    const formattedEnd = DateTools.getFormattedDate({ date: completedDate });
 
-    // fetch matched jobs from server
+    query = DataImportViewAllPage.getDateQuery({ from: formattedStart, end: formattedEnd });
     DataImportViewAllPage.getNumberOfMatchedJobs({ query }).then(count => {
       DataImportViewAllPage.checkRowsCount(count);
 
       DataImportViewAllPage.resetAllFilters();
-      DataImportViewAllPage.sortByCompletedDateInDescendingOrder();
     });
 
 
@@ -70,13 +86,11 @@ describe('ui-data-import: Filter the "View all" log screen', () => {
     DataImportViewAllPage.getSingleJobProfile().then(({ jobProfileInfo: profile }) => {
       DataImportViewAllPage.filterJobsByJobProfile(profile.name);
 
-      // fetch matched jobs from server
       query = DataImportViewAllPage.getJobProfileQuery({ jobProfileId: profile.id });
       DataImportViewAllPage.getNumberOfMatchedJobs({ query }).then(count => {
         DataImportViewAllPage.checkRowsCount(count);
 
         DataImportViewAllPage.resetAllFilters();
-        DataImportViewAllPage.sortByCompletedDateInDescendingOrder();
       });
     });
 
@@ -86,20 +100,18 @@ describe('ui-data-import: Filter the "View all" log screen', () => {
       const userName = `${runBy.firstName} ${runBy.lastName}`;
       DataImportViewAllPage.filterJobsByUser(userName);
 
-      // fetch matched jobs from server
       query = DataImportViewAllPage.getUserQuery({ userId });
       DataImportViewAllPage.getNumberOfMatchedJobs({ query }).then(count => {
         DataImportViewAllPage.checkRowsCount(count);
 
         DataImportViewAllPage.resetAllFilters();
-        DataImportViewAllPage.sortByCompletedDateInDescendingOrder();
       });
     });
 
 
     // FILTER By "Inventory single record imports"
-    cy.get('#accordion-toggle-button-singleRecordImports').click();
-    DataImportViewAllPage.singleRecordImports.forEach(filter => {
+    cy.do(Accordion({ id: 'singleRecordImports' }).clickHeader());
+    DataImportViewAllPage.singleRecordImportsStatuses.forEach(filter => {
       DataImportViewAllPage.filterJobsBySingleRecordImports(filter);
 
       query = DataImportViewAllPage.getSingleRecordImportsQuery({ isSingleRecord: filter });
@@ -108,7 +120,6 @@ describe('ui-data-import: Filter the "View all" log screen', () => {
       });
 
       DataImportViewAllPage.resetAllFilters();
-      DataImportViewAllPage.sortByCompletedDateInDescendingOrder();
     });
 
 
@@ -117,20 +128,19 @@ describe('ui-data-import: Filter the "View all" log screen', () => {
     DataImportViewAllPage.getSingleJobProfile().then(({ runBy, userId }) => {
       // close opened User accordion before search
       // because filterJobsByUser method opens it
-      cy.get('#accordion-toggle-button-userId').click();
+      cy.do(Accordion({ id: 'userId' }).clickHeader());
 
       const userName = `${runBy.firstName} ${runBy.lastName}`;
-      const status = DataImportViewAllPage.errorsInImportFilters[0];
-      DataImportViewAllPage.filterJobsByUser(userName);
-      DataImportViewAllPage.filterJobsByErrors(status);
+      const status = DataImportViewAllPage.errorsInImportStatuses[0];
 
-      // fetch matched jobs from server
+      DataImportViewAllPage.filterJobsByErrors(status);
+      DataImportViewAllPage.filterJobsByUser(userName);
+
       query = DataImportViewAllPage.getMixedQuery({ status, userId });
       DataImportViewAllPage.getNumberOfMatchedJobs({ query }).then(count => {
         DataImportViewAllPage.checkRowsCount(count);
 
         DataImportViewAllPage.resetAllFilters();
-        DataImportViewAllPage.sortByCompletedDateInDescendingOrder();
       });
     });
   });

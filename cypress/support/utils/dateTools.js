@@ -48,5 +48,11 @@ export default {
     const dateFormat = /\d{4}-\d{2}-\d{2}T\d{2}_\d{2}_\d{2}\+\d{2}_\d{2}/gm;
     const date = dateString.match(dateFormat)[0];
     return Date.parse(date.replaceAll('_', ':'));
-  }
+  },
+
+  // Formats date as YYYY-MM-DD
+  getFormattedDate({ date }) {
+    const padWithZero = value => String(value).padStart(2, '0');
+    return `${date.getFullYear()}-${padWithZero(date.getMonth() + 1)}-${padWithZero(date.getDate())}`;
+  },
 };

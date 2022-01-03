@@ -1,4 +1,14 @@
-import { Button, MultiColumnList, Select } from '../../../../interactors';
+import { CheckBox } from '@interactors/html';
+import {
+  Accordion,
+  Button,
+  MultiColumnList,
+  MultiColumnListHeader,
+  Select,
+  Selection,
+  SelectionList,
+  TextField
+} from '../../../../interactors';
 
 export default {
   gotoViewAllPage() {
@@ -21,23 +31,78 @@ export default {
 
   options: ['Keyword (ID, File name)', 'ID', 'File name'],
 
-  errorsInImportFilters: ['error', 'committed'],
+  errorsInImportStatuses: ['No', 'Yes'],
 
-  singleRecordImports: ['no', 'yes'],
+  singleRecordImportsStatuses: ['No', 'Yes'],
 
-  resetAllFilters() {
-    return cy.get('#clickable-reset-all').click();
+  checkForReverseChronologicalOrder() {
+    const dates = [];
+
+    // get MultiColumnList rows and loop over
+    cy.get('[data-row-index]').each($row => {
+      // from each row, choose Date cell
+      cy.get('[class^="mclCell"]:nth-child(5)', { withinSubject: $row })
+        // extract its text content
+        .invoke('text')
+        .then($date => {
+          // convert its content to Date object
+          // add resulting date object to the dates array
+          dates.push(new Date($date));
+        });
+    })
+      .then(() => {
+        // sort the dates array in descending order
+        const sortedDates = dates.slice().sort((a, b) => b - a);
+
+        // if job logs are sorted by default in reverse chronological order
+        // the dates and sortedDates should be equal
+        expect(dates).to.deep.equal(sortedDates);
+
+        console.log({ dates, sortedDates });
+      });
   },
 
-  sortByCompletedDateInDescendingOrder() {
-    cy.get('#list-column-completeddate').dblclick();
-    cy.get('#list-column-completeddate')
-      .invoke('attr', 'aria-sort')
-      .should('equal', 'descending');
+  checkForImportErrorStatuses(status) {
+    const errorStatuses = ['Failed', 'Completed with errors'];
+    const completedStatuses = ['Completed'];
+    const statuses = [];
+
+    // get MultiColumnList rows and loop over
+    cy.get('[data-row-index]').each($row => {
+      // from each row, choose Status cell
+      cy.get('[class^="mclCell"]:nth-child(2)', { withinSubject: $row })
+        // extract its text content
+        .invoke('text')
+        .then(jobStatus => {
+          // add status text to the statuses array
+          statuses.push(jobStatus);
+        });
+    })
+      .then(() => {
+        // if status is 'Yes', then check for error statuses otherwise, completed statuses
+        const expectedStatuses = status === 'Yes' ? errorStatuses : completedStatuses;
+
+        // eslint-disable-next-line array-callback-return
+        statuses.forEach(jobStatus => {
+          expect(expectedStatuses).to.include(jobStatus);
+        });
+      });
+  },
+
+  resetAllFilters() {
+    cy.do(Button('Reset all').click());
+
+    // After resetting all filters, we need to sort MultiColumnList
+    // Otherwise, server cannot parse request params and returns error with 422 status
+    // In this case, sort by completed date in ascending order
+    cy.do(MultiColumnListHeader('Ended running').click());
   },
 
   getErrorsQuery({ filter }) {
-    return `status==${filter.toUpperCase()}`;
+    if (filter === 'Yes') {
+      return 'status==ERROR';
+    }
+    return 'status==COMMITTED';
   },
 
   getDateQuery({ from, end }) {
@@ -53,11 +118,11 @@ export default {
   },
 
   getMixedQuery({ status, userId }) {
-    return `(status=="${status}" and (status any "COMMITTED ERROR") AND userId=="${userId}") sortby completedDate/sort.descending`;
+    return `(status=="${status === 'Yes' ? 'ERROR' : 'COMMITTED'}" and (status any "COMMITTED ERROR") AND userId=="${userId}") sortby completedDate/sort.descending`;
   },
 
   getSingleRecordImportsQuery({ isSingleRecord }) {
-    if (isSingleRecord === 'yes') {
+    if (isSingleRecord === 'Yes') {
       return '(jobProfileInfo="\\“id\\“==d0ebb7b0-2f0f-11eb-adc1-0242ac120002") ' +
         'OR (jobProfileInfo="\\“id\\“==91f9b8d6-d80e-4727-9783-73fb53e3c786") ' +
         'sortby completedDate';
@@ -71,35 +136,44 @@ export default {
   },
 
   filterJobsByErrors(filter) {
-    return cy.get(`[for="clickable-filter-status-${filter}"]`).click();
+    if (filter === 'Yes') {
+      cy.do(CheckBox({ id: 'clickable-filter-status-error' }).click());
+    } else if (filter === 'No') {
+      cy.do(CheckBox({ id: 'clickable-filter-status-committed' }).click());
+    }
   },
 
   filterJobsByDate({ from, end }) {
-    cy.get('#accordion-toggle-button-completedDate').click();
-    cy.get('[name="startDate"]').type(from);
-    cy.get('[name="endDate"]').type(end);
-    cy.do(Button('Apply').click());
+    cy.do([
+      Accordion({ id: 'completedDate' }).clickHeader(),
+      TextField({ label: 'From' }).fillIn(from),
+      TextField({ label: 'To' }).fillIn(end),
+      Button('Apply').click()
+    ]);
   },
 
   filterJobsByJobProfile(jobProfile) {
-    cy.get('#accordion-toggle-button-jobProfileInfo').click();
-    cy.contains('Choose job profile').click();
-    cy.get('[class*="selectionListRoot"]').contains(jobProfile).click();
+    cy.do([
+      Accordion({ id: 'jobProfileInfo' }).clickHeader(),
+      Selection({ value: 'Choose job profile' }).open(),
+      SelectionList().select(jobProfile)
+    ]);
   },
 
   filterJobsByUser(user) {
-    cy.get('#accordion-toggle-button-userId').click();
-    cy.contains('Choose user').click();
-    cy.get('[class*="selectionListRoot"]').contains(user).click();
+    cy.do([
+      Accordion({ id: 'userId' }).clickHeader(),
+      Selection({ value: 'Choose user' }).open(),
+      SelectionList().select(user)
+    ]);
   },
 
   filterJobsBySingleRecordImports(filter) {
-    return cy.get(`input[id="clickable-filter-singleRecordImports-${filter}"]`).check();
-  },
-
-  getFormattedDate({ date }) {
-    const padWithZero = value => String(value).padStart(2, '0');
-    return `${date.getFullYear()}-${padWithZero(date.getMonth() + 1)}-${padWithZero(date.getDate())}`;
+    if (filter === 'Yes') {
+      cy.do(CheckBox({ id: 'clickable-filter-singleRecordImports-yes' }).click());
+    } else if (filter === 'No') {
+      cy.do(CheckBox({ id: 'clickable-filter-singleRecordImports-no' }).click());
+    }
   },
 
   getNumberOfMatchedJobs({ query }) {
