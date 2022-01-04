@@ -89,6 +89,7 @@ describe('ui-data-import: Filter the "View all" log screen', () => {
       query = DataImportViewAllPage.getJobProfileQuery({ jobProfileId: profile.id });
       DataImportViewAllPage.getNumberOfMatchedJobs({ query }).then(count => {
         DataImportViewAllPage.checkRowsCount(count);
+        DataImportViewAllPage.checkForJobProfileName(profile.name);
 
         DataImportViewAllPage.resetAllFilters();
       });
@@ -103,6 +104,7 @@ describe('ui-data-import: Filter the "View all" log screen', () => {
       query = DataImportViewAllPage.getUserQuery({ userId });
       DataImportViewAllPage.getNumberOfMatchedJobs({ query }).then(count => {
         DataImportViewAllPage.checkRowsCount(count);
+        DataImportViewAllPage.checkForUserName(userName);
 
         DataImportViewAllPage.resetAllFilters();
       });
@@ -117,9 +119,9 @@ describe('ui-data-import: Filter the "View all" log screen', () => {
       query = DataImportViewAllPage.getSingleRecordImportsQuery({ isSingleRecord: filter });
       DataImportViewAllPage.getNumberOfMatchedJobs({ query }).then(count => {
         DataImportViewAllPage.checkRowsCount(count);
-      });
 
-      DataImportViewAllPage.resetAllFilters();
+        DataImportViewAllPage.resetAllFilters();
+      });
     });
 
 
@@ -139,6 +141,8 @@ describe('ui-data-import: Filter the "View all" log screen', () => {
       query = DataImportViewAllPage.getMixedQuery({ status, userId });
       DataImportViewAllPage.getNumberOfMatchedJobs({ query }).then(count => {
         DataImportViewAllPage.checkRowsCount(count);
+        DataImportViewAllPage.checkForUserName(userName);
+        DataImportViewAllPage.checkForImportErrorStatuses(status);
 
         DataImportViewAllPage.resetAllFilters();
       });

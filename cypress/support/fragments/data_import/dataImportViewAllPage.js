@@ -87,6 +87,50 @@ export default {
       });
   },
 
+  checkForJobProfileName(expectedProfile) {
+    const jobProfiles = [];
+
+    // get MultiColumnList rows and loop over
+    cy.get('[data-row-index]').each($row => {
+      // from each row, choose Job profile cell
+      cy.get('[class^="mclCell"]:nth-child(4)', { withinSubject: $row })
+        // extract its text content
+        .invoke('text')
+        .then(jobProfile => {
+          // add profile name to the jobProfiles array
+          jobProfiles.push(jobProfile);
+        });
+    })
+      .then(() => {
+        // eslint-disable-next-line array-callback-return
+        jobProfiles.forEach(jobProfile => {
+          expect(expectedProfile).to.equal(jobProfile);
+        });
+      });
+  },
+
+  checkForUserName(expectedUserName) {
+    const userNames = [];
+
+    // get MultiColumnList rows and loop over
+    cy.get('[data-row-index]').each($row => {
+      // from each row, choose Run by cell
+      cy.get('[class^="mclCell"]:nth-child(6)', { withinSubject: $row })
+        // extract its text content
+        .invoke('text')
+        .then(username => {
+          // add username to the userNames array
+          userNames.push(username);
+        });
+    })
+      .then(() => {
+        // eslint-disable-next-line array-callback-return
+        userNames.forEach(username => {
+          expect(expectedUserName).to.equal(username);
+        });
+      });
+  },
+
   resetAllFilters() {
     cy.do(Button('Reset all').click());
 
