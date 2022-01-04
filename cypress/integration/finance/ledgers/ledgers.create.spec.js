@@ -3,6 +3,7 @@ import TopMenu from '../../../support/fragments/topMenu';
 import NewLedger from '../../../support/fragments/finance/ledgers/newLedger';
 import getRandomPostfix from '../../../support/utils/stringTools';
 import { testType } from '../../../support/utils/tagTools';
+import FinanceHelp from '../../../support/fragments/finance/financeHelper';
 
 describe('ui-finance: Ledger creation', () => {
   before(() => {
@@ -14,13 +15,13 @@ describe('ui-finance: Ledger creation', () => {
     const defaultLedger = NewLedger.defaultLedger;
 
     Ledgers.createDefaultLedger(defaultLedger);
-    Ledgers.deleteLedgerViaActions(defaultLedger);
     Ledgers.checkCreatedLedgerName(defaultLedger);
+    Ledgers.deleteLedgerViaActions(defaultLedger);
 
     // should not create new ledger if mandatory fields are not filled
     const testLedgerName = `autotest_ledger_${getRandomPostfix()}`;
     Ledgers.tryToCreateLedgerWithoutMandatoryFields(testLedgerName);
-    Ledgers.searchByName(testLedgerName);
+    FinanceHelp.searchByName(testLedgerName);
     Ledgers.checkZeroSearchResultsHeader();
   });
 });

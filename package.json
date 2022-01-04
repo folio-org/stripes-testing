@@ -27,6 +27,7 @@
   },
   "devDependencies": {
     "@babel/eslint-parser": "^7.16.3",
+    "@cypress/request": "2.88.7",
     "@folio/eslint-config-stripes": "^5.0.0",
     "@interactors/with-cypress": "^1.0.0-rc1.0",
     "babel-eslint": "^10.1.0",

@@ -1,136 +1,101 @@
 import uuid from 'uuid';
-
-import {
-  Accordion,
-  Button,
-  Checkbox,
-  MultiColumnList,
-  MultiSelect,
-  SearchField,
-  Selection,
-  SelectionList,
-} from '../../../../interactors';
+import getRandomPostfix from '../../../support/utils/stringTools';
+import TopMenu from '../../../support/fragments/topMenu';
+import Funds from '../../../support/fragments/finance/funds/funds';
+import FinanceHelp from '../../../support/fragments/finance/financeHelper';
+import { MultiColumnList } from '../../../../interactors';
 import { testType } from '../../../support/utils/tagTools';
 
-// TODO: refactoring needed in order to have 1-1 relation between smoke tests in Test Rail and TAF
 describe('ui-finance: Funds list search and filter', () => {
-  const timestamp = (new Date()).getTime();
+  let aUnit;
+  let tag;
+  let ledger;
+  let group;
+  let fundType;
 
   const fund = {
     id: uuid(),
-    code: `E2ETFC${timestamp}`,
+    code: `E2ETFC${getRandomPostfix()}`,
     fundStatus: 'Active',
-    name: `E2E fund ${timestamp}`,
-    description: `E2E fund description ${timestamp}`,
-    externalAccountNo: `fund external  ${timestamp}`,
+    name: `E2E fund ${getRandomPostfix()}`,
+    description: `E2E fund description ${getRandomPostfix()}`,
+    externalAccountNo: `fund external  ${getRandomPostfix()}`,
   };
 
   before(() => {
-    cy.login('diku_admin', 'admin');
+    cy.login(Cypress.env('diku_login'), Cypress.env('diku_password'));
+    cy.getToken(Cypress.env('diku_login'), Cypress.env('diku_password'));
 
-    cy.getToken('diku_admin', 'admin')
-      .then(() => {
-        cy.getFundTypesApi({ limit: 1 });
-        cy.getTagsApi({ limit: 1 });
-        cy.getAcqUnitsApi({ limit: 1 });
-        cy.getLedgersApi({ limit: 1 });
-        cy.getGroupsApi({ limit: 1 });
-      })
-      .then(() => {
-        cy.visit('/finance/fund');
+    cy.getFundTypesApi({ limit: 1 })
+      .then(({ body }) => {
+        fundType = body.fundTypes[0];
       });
+    cy.getTagsApi({ limit: 1 })
+      .then(({ body }) => {
+        tag = body.tags[0];
+      });
+    cy.getAcqUnitsApi({ limit: 1 })
+      .then(({ body }) => {
+        aUnit = body.acquisitionsUnits[0];
+      });
+    cy.getLedgersApi({ limit: 1 })
+      .then(({ body }) => {
+        ledger = body.ledgers[0];
+      });
+    cy.getGroupsApi({ limit: 1 })
+      .then(({ body }) => {
+        group = body.groups[0];
+      });
+
+    cy.visit(TopMenu.fundPath);
   });
 
   beforeEach(() => {
     cy.createFundApi({
       ...fund,
-      acqUnitIds: [Cypress.env('acqUnits')[0].id],
-      ledgerId: Cypress.env('ledgers')[0].id,
-      fundTypeId: Cypress.env('fundTypes')[0].id,
-      tags: { tagList: [Cypress.env('tags')[0].label] },
-      groupIds: [Cypress.env('groups')[0].id]
+      acqUnitIds: [aUnit.id],
+      ledgerId: ledger.id,
+      fundTypeId: fundType.id,
+      tags: { tagList: [tag.label] },
+      groupIds: [group.id]
     });
   });
 
   afterEach(() => {
     cy.deleteFundApi(fund.id);
-
-    cy.do([
-      Button({ id: 'reset-funds-filters' }).click(),
-    ]);
   });
 
   it('C4059 should return funds according to fund filters', { tags: [testType.smoke] }, function () {
-    cy.do([
-      Accordion({ id: 'ledgerId' }).clickHeader(),
-      Selection({ id: 'ledgerId-selection' }).open(),
-      SelectionList({ id: 'sl-container-ledgerId-selection' }).select(Cypress.env('ledgers')[0].name),
+    FinanceHelp.checkZeroSearchResultsMessageLabel();
 
-      Accordion({ id: 'fundStatus' }).clickHeader(),
-      Checkbox({ id: 'clickable-filter-fundStatus-active' }).click(),
-
-      Accordion({ id: 'fundTypeId' }).clickHeader(),
-      Selection({ id: 'fundTypeId-selection' }).open(),
-      SelectionList({ id: 'sl-container-fundTypeId-selection' }).select(Cypress.env('fundTypes')[0].name),
-
-      Accordion({ id: 'groupFundFY.groupId' }).clickHeader(),
-      Selection({ id: 'groupFundFY.groupId-selection' }).open(),
-      SelectionList({ id: 'sl-container-groupFundFY.groupId-selection' }).select(Cypress.env('groups')[0].name),
-
-      Accordion({ id: 'acqUnitIds' }).clickHeader(),
-      Selection({ id: 'acqUnitIds-selection' }).open(),
-      SelectionList({ id: 'sl-container-acqUnitIds-selection' }).select(Cypress.env('acqUnits')[0].name),
-
-      Accordion({ id: 'tags' }).clickHeader(),
-      MultiSelect({ id: 'acq-tags-filter' }).select([Cypress.env('tags')[0].label]),
-    ]);
-
+    Funds.checkFundFilters(ledger.name, fundType.name, 'Active', aUnit.name,
+      tag.label, group.name, fund.name);
     cy.expect(MultiColumnList({ id: 'funds-list' }).has({ rowCount: 1 }));
-  });
 
-  it('C4059 should return funds according to search by name', { tags: [testType.smoke] }, () => {
-    cy.do([
-      SearchField({ id: 'input-record-search' }).selectIndex('Name'),
-      SearchField({ id: 'input-record-search' }).fillIn(fund.name),
-      Button('Search').click(),
-    ]);
-
+    // search by name
+    Funds.resetFundFilters();
+    FinanceHelp.searchByName(fund.name);
     cy.expect(MultiColumnList({ id: 'funds-list' }).has({ rowCount: 1 }));
-  });
 
-  it('C4059 should return funds according to search by code', { tags: [testType.smoke] }, () => {
-    cy.do([
-      SearchField({ id: 'input-record-search' }).selectIndex('Code'),
-      SearchField({ id: 'input-record-search' }).fillIn(fund.code),
-      Button('Search').click(),
-    ]);
-
+    // search by code
+    Funds.resetFundFilters();
+    FinanceHelp.searchByCode(fund.code);
     cy.expect(MultiColumnList({ id: 'funds-list' }).has({ rowCount: 1 }));
-  });
 
-  it('C4059 should return funds according to search by external account number', { tags: [testType.smoke] }, () => {
-    cy.do([
-      SearchField({ id: 'input-record-search' }).selectIndex('External account number'),
-      SearchField({ id: 'input-record-search' }).fillIn(fund.externalAccountNo),
-      Button('Search').click(),
-    ]);
-
+    // search by external accounts
+    Funds.resetFundFilters();
+    FinanceHelp.searchByExternalAccount(fund.externalAccountNo);
     cy.expect(MultiColumnList({ id: 'funds-list' }).has({ rowCount: 1 }));
-  });
 
-  [
-    ['Name', fund.name],
-    ['Description', fund.description],
-    ['Code', fund.code],
-    ['External account number', fund.externalAccountNo],
-  ].forEach(([key, value]) => {
-    it(`C4059 should return funds according to search by All (${key})`, { tags: [testType.smoke] }, () => {
-      cy.do([
-        SearchField({ id: 'input-record-search' }).fillIn(value),
-        Button('Search').click(),
-      ]);
-
-      cy.expect(MultiColumnList({ id: 'funds-list' }).has({ rowCount: 1 }));
-    });
+    // search by all
+    Funds.resetFundFilters();
+    FinanceHelp.searchByAll(fund.name);
+    cy.expect(MultiColumnList({ id: 'funds-list' }).has({ rowCount: 1 }));
+    Funds.resetFundFilters();
+    FinanceHelp.searchByAll(fund.code);
+    cy.expect(MultiColumnList({ id: 'funds-list' }).has({ rowCount: 1 }));
+    Funds.resetFundFilters();
+    FinanceHelp.searchByAll(fund.description);
+    cy.expect(MultiColumnList({ id: 'funds-list' }).has({ rowCount: 1 }));
   });
 });

@@ -1,22 +1,26 @@
 import { HTML, including } from '@interactors/html';
-import { Button } from '../../../../interactors';
+import { Button, Section } from '../../../../interactors';
 
 const instanceTitle = 'MARC bibliographic record';
 const holdingTitle = 'Holdings record';
 const closeButton = Button({ icon: 'times' });
+const rootSection = Section({ id: 'marc-view-pane' });
 
 export default {
   contains:(expectedText) => {
-    cy.expect(HTML(including(expectedText)).exists());
+    cy.expect(rootSection.find(HTML(including(expectedText))).exists());
   },
   notContains:(notExpectedText) => {
-    cy.expect(HTML(including(notExpectedText)).absent());
+    cy.expect(rootSection.find(HTML(including(notExpectedText))).absent());
   },
   waitInstanceLoading: () => {
-    cy.expect(HTML(including(instanceTitle)).exists());
+    cy.expect(rootSection.find(HTML(including(instanceTitle))).exists());
   },
   waitHoldingLoading: () => {
-    cy.expect(HTML(including(holdingTitle)).exists());
+    cy.expect(rootSection.find(HTML(including(holdingTitle))).exists());
   },
-  close: () => cy.do(closeButton.click())
+  close: () => cy.do(closeButton.click()),
+  waitLoading:() => {
+    cy.do(rootSection.exists());
+  }
 };

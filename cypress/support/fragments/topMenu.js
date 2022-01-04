@@ -6,6 +6,7 @@ export default class TopMenu {
   static settingsPath = '/settings';
   static financePath = '/finance';
   static ledgerPath = '/finance/ledger';
+  static fundPath = '/finance/fund';
   static dataImportPath = '/data-import';
   static fiscalYearPath = '/finance/fiscalyear';
   static eholding = '/eholdings';
