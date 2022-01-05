@@ -1,9 +1,19 @@
 Cypress.Commands.add('createMappingProfileApi', (mappingProfile) => {
-  cy.okapiRequest({
+  return cy.okapiRequest({
     method: 'POST',
     path: 'data-import-profiles/mappingProfiles',
     body: {
-      ...mappingProfile,
+      profile: { ...mappingProfile }
+    },
+  });
+});
+
+Cypress.Commands.add('createActionProfileApi', (actionProfile) => {
+  return cy.okapiRequest({
+    method: 'POST',
+    path: 'data-import-profiles/actionProfiles',
+    body: {
+      ...actionProfile
     },
   });
 });
