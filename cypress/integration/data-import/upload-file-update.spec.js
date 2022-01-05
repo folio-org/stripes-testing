@@ -3,31 +3,45 @@
 
 import { testType } from '../../support/utils/tagTools';
 import getRandomPostfix from '../../support/utils/stringTools';
+import settingsDataImport from '../../support/fragments/data_import/settingsDataImport';
+import newJobProfile from '../../support/fragments/data_import/job_profiles/newJobProfile';
+import jobProfiles from '../../support/fragments/data_import/job_profiles/jobProfiles';
 
 describe('ui-data-import: MARC file upload with the update of instance, holding, and items', () => {
-  const instanceMappingProfile = {
+  const collectionOfMappingProfiles = [{
     id: '',
     name: `autotest_instance_mapping_profile_${getRandomPostfix()}`,
     incomingRecordType: 'MARC_BIBLIOGRAPHIC',
     existingRecordType: 'INSTANCE',
-  };
-
-  const holdingsMappingProfile = {
+  },
+  {
     id: '',
     name: `autotest_holdings_mapping_profile_${getRandomPostfix()}`,
     incomingRecordType: 'MARC_BIBLIOGRAPHIC',
     existingRecordType: 'HOLDINGS',
-  };
-
-  const itemMappingProfile = {
+    mappingDetails: { mappingFields: [{ name: 'permanentLocationId',
+      path: 'holdings.permanentLocationId',
+      value: '"Annex (KU/CC/DI/A)"' }] }
+  },
+  {
     id: '',
     name: `autotest_item_mapping_profile_${getRandomPostfix()}`,
     incomingRecordType: 'MARC_BIBLIOGRAPHIC',
     existingRecordType: 'ITEM',
-  };
+    mappingDetails: { mappingFields: [
+      { name: 'materialType.id',
+        path: 'item.materialType.id',
+        value: '"book"' },
+      { name: 'permanentLoanType.id',
+        path: 'item.permanentLoanType.id',
+        value: '"Can circulate"' },
+      { name: 'status.name',
+        path: 'item.status.name',
+        value: '"In process"' }] }
+  }];
 
-  const instanceActionProfile = {
-    profile: {
+  const collectionOfActionProfiles = [
+    { profile: {
       id: '',
       name: `autotest_instance_action_profile_${getRandomPostfix()}`,
       action: 'CREATE',
@@ -41,11 +55,8 @@ describe('ui-data-import: MARC file upload with the update of instance, holding,
         detailProfileType: 'MAPPING_PROFILE'
       }
     ],
-    deletedRelations: []
-  };
-
-  const holdingsActionProfile = {
-    profile: {
+    deletedRelations: [] },
+    { profile: {
       id: '',
       name: `autotest_holdings_action_profile_${getRandomPostfix()}`,
       action: 'CREATE',
@@ -59,11 +70,8 @@ describe('ui-data-import: MARC file upload with the update of instance, holding,
         detailProfileType: 'MAPPING_PROFILE'
       }
     ],
-    deletedRelations: []
-  };
-
-  const itemActionProfile = {
-    profile: {
+    deletedRelations: [] },
+    { profile: {
       id: '',
       name: `autotest_item_action_profile_${getRandomPostfix()}`,
       action: 'CREATE',
@@ -77,8 +85,7 @@ describe('ui-data-import: MARC file upload with the update of instance, holding,
         detailProfileType: 'MAPPING_PROFILE'
       }
     ],
-    deletedRelations: []
-  };
+    deletedRelations: [] }];
 
   before('navigates to application', () => {
     cy.login(Cypress.env('diku_login'), Cypress.env('diku_password'));
@@ -86,35 +93,29 @@ describe('ui-data-import: MARC file upload with the update of instance, holding,
   });
 
   beforeEach(() => {
-    cy.createMappingProfileApi({
-      ...instanceMappingProfile,
-    }).then(({ body }) => {
-      instanceActionProfile.addedRelations[0].detailProfileId = body.id;
-      cy.createActionProfileApi({
-        ...instanceActionProfile
-      });
-    });
-
-    cy.createMappingProfileApi({
-      ...holdingsMappingProfile,
-    }).then(({ body }) => {
-      holdingsActionProfile.addedRelations[0].detailProfileId = body.id;
-      cy.createActionProfileApi({
-        ...holdingsActionProfile
-      });
-    });
-
-    cy.createMappingProfileApi({
-      ...itemMappingProfile,
-    }).then(({ body }) => {
-      itemActionProfile.addedRelations[0].detailProfileId = body.id;
-      cy.createActionProfileApi({
-        ...itemActionProfile
+    collectionOfMappingProfiles.forEach(mappingProfile => {
+      cy.createMappingProfileApi({
+        ...mappingProfile,
+      }).then(({ body }) => {
+        collectionOfActionProfiles.forEach(actionProfile => {
+          actionProfile.addedRelations[0].detailProfileId = body.id;
+          cy.createActionProfileApi({
+            ...actionProfile
+          });
+        });
       });
     });
   });
 
-  it('C343335 Create a new mapping and action profiles', { tags: [testType.smoke] }, () => {
+  it('C343335 ', { tags: [testType.smoke] }, () => {
+    const specialJobProfile = { ...newJobProfile.defaultJobProfile };
+    specialJobProfile.acceptedDataType = newJobProfile.acceptedDataType.dataType;
 
+    settingsDataImport.goToJobProfile();
+    jobProfiles.createNewJobProfile();
+    newJobProfile.fillJobProfile(specialJobProfile);
+    collectionOfActionProfiles.map(element => element.actionProfile).forEach(actionProfile => {
+      newJobProfile.selectActionProfile(actionProfile);
+    });
   });
 });
