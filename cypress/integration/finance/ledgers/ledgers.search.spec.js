@@ -1,93 +1,70 @@
 import uuid from 'uuid';
-
-import {
-  Accordion,
-  Button,
-  Checkbox,
-  MultiColumnList,
-  SearchField,
-  Selection,
-  SelectionList,
-} from '../../../../interactors';
+import getRandomPostfix from '../../../support/utils/stringTools';
+import Ledgers from '../../../support/fragments/finance/ledgers/ledgers';
+import FinanceHelp from '../../../support/fragments/finance/financeHelper';
+import TopMenu from '../../../support/fragments/topMenu';
+import { MultiColumnList } from '../../../../interactors';
 import { testType } from '../../../support/utils/tagTools';
 
-// TODO: refactoring needed in order to have 1-1 relation between smoke tests in Test Rail and TAF
 describe('ui-finance: Ledger list search and filters', () => {
-  const timestamp = (new Date()).getTime();
+  let aUnit;
 
   const ledger = {
     id: uuid(),
-    name: `E2E ledger ${timestamp}`,
-    code: `E2ELC${timestamp}`,
-    description: `E2E ledger description ${timestamp}`,
+    name: `E2E ledger ${getRandomPostfix()}`,
+    code: `E2ELC${getRandomPostfix()}`,
+    description: `E2E ledger description ${getRandomPostfix()}`,
     ledgerStatus: 'Frozen',
     currency: 'USD',
     restrictEncumbrance: false,
     restrictExpenditures: false,
+    acqUnitIds: [],
+    fiscalYearOneId: ''
   };
 
   before(() => {
-    cy.login('diku_admin', 'admin');
+    cy.login(Cypress.env('diku_login'), Cypress.env('diku_password'));
+    cy.getToken(Cypress.env('diku_login'), Cypress.env('diku_password'));
 
-    cy.getToken('diku_admin', 'admin')
-      .then(() => {
-        cy.getAcqUnitsApi({ limit: 1 });
-        cy.getFiscalYearsApi({ limit: 1 });
-      })
-      .then(() => {
-        cy.visit('/finance/ledger');
+    cy.getAcqUnitsApi({ limit: 1 })
+      .then(({ body }) => {
+        ledger.acqUnitIds = [body.acquisitionsUnits[0].id];
+        aUnit = body.acquisitionsUnits[0];
       });
+
+    cy.getFiscalYearsApi({ limit: 1 })
+      .then(({ body }) => {
+        ledger.fiscalYearOneId = body.fiscalYears[0].id;
+      });
+
+    cy.visit(TopMenu.ledgerPath);
   });
 
   beforeEach(() => {
     cy.createLedgerApi({
-      ...ledger,
-      acqUnitIds: [Cypress.env('acqUnits')[0].id],
-      fiscalYearOneId: Cypress.env('fiscalYears')[0].id,
+      ...ledger
     });
   });
 
   afterEach(() => {
     cy.deleteLedgerApi(ledger.id);
-
-    cy.do([
-      Button({ id: 'reset-ledgers-filters' }).click(),
-    ]);
   });
 
   it('C4061 should return ledgers according to ledgers filters and search by all indexes', { tags: [testType.smoke] }, function () {
-    cy.do([
-      Accordion({ id: 'ledgerStatus' }).clickHeader(),
-      Checkbox({ id: 'clickable-filter-ledgerStatus-frozen' }).click(),
+    FinanceHelp.checkZeroSearchResultsMessageLabel();
 
-      Accordion({ id: 'acqUnitIds' }).clickHeader(),
-      Selection({ id: 'acqUnitIds-selection' }).open(),
-      SelectionList({ id: 'sl-container-acqUnitIds-selection' }).select(Cypress.env('acqUnits')[0].name),
-
-      SearchField({ id: 'input-record-search' }).fillIn(ledger.name),
-      Button('Search').click(),
-    ]);
-
+    // search by acquisition units, name and status
+    Ledgers.searchByStatusUnitsAndName('Frozen', aUnit.name, ledger.name);
     cy.expect(MultiColumnList({ id: 'ledgers-list' }).has({ rowCount: 1 }));
-  });
 
-  it('C4061 should return ledgers according to search by name', { tags: [testType.smoke] }, () => {
-    cy.do([
-      SearchField({ id: 'input-record-search' }).selectIndex('Name'),
-      SearchField({ id: 'input-record-search' }).fillIn(ledger.name),
-      Button('Search').click(),
-    ]);
-
+    // search by name only
+    Ledgers.resetFilters();
+    FinanceHelp.searchByName(ledger.name);
     cy.expect(MultiColumnList({ id: 'ledgers-list' }).has({ rowCount: 1 }));
-  });
 
-  it('C4061 should return ledgers according to search by code', { tags: [testType.smoke] }, () => {
-    cy.do([
-      SearchField({ id: 'input-record-search' }).selectIndex('Code'),
-      SearchField({ id: 'input-record-search' }).fillIn(ledger.code),
-      Button('Search').click(),
-    ]);
-
+    // search by code only
+    Ledgers.resetFilters();
+    FinanceHelp.searchByCode(ledger.code);
     cy.expect(MultiColumnList({ id: 'ledgers-list' }).has({ rowCount: 1 }));
   });
 });

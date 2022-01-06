@@ -1,10 +1,11 @@
 import getRandomPostfix from '../../../utils/stringTools';
+import { statusActive, statusInactive, statusFrozen } from '../financeHelper';
 
 export default class NewFund {
     static #statusValue = {
-      active: 'Active',
-      frozen: 'Frozen',
-      inactive: 'Inactive'
+      active: statusActive,
+      frozen: statusFrozen,
+      inactive: statusInactive
     }
 
     static #defaultFund = {

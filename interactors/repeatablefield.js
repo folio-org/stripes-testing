@@ -15,7 +15,7 @@ const FieldList = HTML.extend('repeatable field list')
 
 // find by legend
 export const RepeatableField = HTML.extend('repeatable field')
-  .selector('fieldset[data-test-repeatable-field')
+  .selector('fieldset[data-test-repeatable-field]')
   .locator(el => el.querySelector('legend').textContent)
   .filters({
     id: (el) => el.id,
