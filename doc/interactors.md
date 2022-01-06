@@ -99,6 +99,7 @@ and make a pull request to this package.
 - [`List`](#list) ([`ListItem`](#listitem))
 - [`MultiColumnList`](#multicolumnlist) ([`MultiColumnListCell`](#multicolumnlistcell))
 - [`MultiSelect`](#multiselect) ([`MultiSelectOption](#multiselectoption))
+- [`NavList`](#navlist)
 - [`Pane`](#pane) ([`PaneHeader`](#paneheader))
 - [`RadioButton`](#radiobutton)
 - [`RichTextEditor`](#richtexteditor)
@@ -114,6 +115,7 @@ and make a pull request to this package.
 -[`AddressEdit`](#addressedit)
 -['EditableList'](#editablelist)
 -['EditableListRow'](#editablelistrow)
+-['EntryManager](#entrymanager)
 
 #### Accordion
 
