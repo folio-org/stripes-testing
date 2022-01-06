@@ -111,11 +111,11 @@ and make a pull request to this package.
 - [`Tooltip`](#tooltip)
 
 #### Stripes-smart-components
--[`AddressList`](#addresslist)
--[`AddressEdit`](#addressedit)
--['EditableList'](#editablelist)
--['EditableListRow'](#editablelistrow)
--['EntryManager](#entrymanager)
+- [`AddressList`](#addresslist)
+- [`AddressEdit`](#addressedit)
+- ['EditableList'](#editablelist)
+- ['EditableListRow'](#editablelistrow)
+- ['EntryManager](#entrymanager)
 
 #### Accordion
 
