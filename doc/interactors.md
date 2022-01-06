@@ -113,9 +113,9 @@ and make a pull request to this package.
 #### Stripes-smart-components
 - [`AddressList`](#addresslist)
 - [`AddressEdit`](#addressedit)
-- ['EditableList'](#editablelist)
-- ['EditableListRow'](#editablelistrow)
-- ['EntryManager](#entrymanager)
+- [`EditableList`](#editablelist)
+- [`EditableListRow`](#editablelistrow)
+- [`EntryManager`](#entrymanager-smart-component)
 
 #### Accordion
 
