@@ -99,6 +99,7 @@ and make a pull request to this package.
 - [`List`](#list) ([`ListItem`](#listitem))
 - [`MultiColumnList`](#multicolumnlist) ([`MultiColumnListCell`](#multicolumnlistcell))
 - [`MultiSelect`](#multiselect) ([`MultiSelectOption](#multiselectoption))
+- [`NavList`](#navlist)
 - [`Pane`](#pane) ([`PaneHeader`](#paneheader))
 - [`RadioButton`](#radiobutton)
 - [`RichTextEditor`](#richtexteditor)
@@ -110,10 +111,11 @@ and make a pull request to this package.
 - [`Tooltip`](#tooltip)
 
 #### Stripes-smart-components
--[`AddressList`](#addresslist)
--[`AddressEdit`](#addressedit)
--['EditableList'](#editablelist)
--['EditableListRow'](#editablelistrow)
+- [`AddressList`](#addresslist)
+- [`AddressEdit`](#addressedit)
+- [`EditableList`](#editablelist)
+- [`EditableListRow`](#editablelistrow)
+- [`EntryManager`](#entrymanager-smart-component)
 
 #### Accordion
 
@@ -544,7 +546,7 @@ Dropdown('Menu').exists();
 - `label`: _string_ = the user identifying text of this
   dropdown. This is the same value as the locator.
 
-#### EditableList
+#### EditableList (Smart component)
 
 Editable table component.
 
@@ -594,6 +596,35 @@ EditableListRow().find(TextField(including('name'))).fillIn('test');
 - `delete`: clicks the delete button on a non-edit row.
 - `cancel`: clicks the cancel button on a row in edit mode.
 - `save`: clicks the save button on a row in edit mode.
+
+#### EntryManager (Smart Component)
+
+Creates a hierarchical navigation view with links, detail pages and edit forms.
+Includes additional interactors for EntryForm and EntryDetails. Additional tests and
+assertions can also be performed using the Button and Link interactors.
+
+##### Synopsis
+
+```js
+import { EntryManager, EntryDetails, EntryForm } from '@folio/stripes-testing';
+
+// Click the link with the 'Central Office' text
+EntryManager().navTo('Central Office');
+
+// Assert that the Entry Detail page is present.
+EntryDetails(including('Central Office')).exists();
+
+// click the save button on an EntryForm
+EntryForm('Central Office').save();
+```
+
+##### Actions
+###### EntryManager
+- navTo: _string_ clicks the link in the EntryManager's navigation list with the supplied text.
+- createEntry: clicks the button to create a new entry.
+
+###### EntryForm
+- save: clicks the EntryForm's 'save' button.
 
 #### IconButton
 
@@ -855,6 +886,29 @@ MultiSelect('Tags')
 ##### Filters
 
 - `selected`: _string[]_ = the current selected values
+
+#### NavList
+
+Renders a list of links or buttons.
+
+###### Synopsis
+
+```js
+import { NavList } from '@folio/stripes-testing';
+
+Navlist().has({ id: 'myNavListId' });
+
+// assert that NavList contains 5 items
+Navlist().has({ count: 5 });
+```
+
+##### Filters
+
+- `count`: _number_ -number of links in the list
+
+##### Actions
+
+- `navTo`: _string_ -clicks a link the link with the supplied string.
 
 #### Pane
 
