@@ -27,7 +27,7 @@ export default {
 
   checkRowsCount(rowCount) {
     if (rowCount === 0) {
-      cy.expect(MultiColumnList({ id: 'list-data-import' }).is({ visible: false }));
+      cy.expect(MultiColumnList().absent());
     } else {
       cy.expect(MultiColumnList({ id: 'list-data-import' }).has({ rowCount }));
     }
@@ -57,9 +57,9 @@ export default {
 
   filterJobsByErrors(filter) {
     if (filter === 'Yes') {
-      return cy.do(CheckBox({ id: 'clickable-filter-statusAny-error' }).click());
+      cy.do(CheckBox({ id: 'clickable-filter-statusAny-error' }).click());
     } else {
-      return cy.do(CheckBox({ id: 'clickable-filter-statusAny-committed' }).click());
+      cy.do(CheckBox({ id: 'clickable-filter-statusAny-committed' }).click());
     }
   },
 
@@ -102,7 +102,7 @@ export default {
     // because, API may return response faster while ui is being filtered
 
     // eslint-disable-next-line cypress/no-unnecessary-waiting
-    return cy.wait(1800);
+    return cy.wait(1500);
   },
 
   getMultiColumnListCellsValues(cell) {
@@ -127,7 +127,7 @@ export default {
       const dates = cells.map(cell => new Date(cell));
 
       // create new array from the dates and sort this array in descending order
-      const sortedDates = dates.slice(0).sort((a, b) => b - a);
+      const sortedDates = [...dates].sort((a, b) => b - a);
 
       // if job logs are sorted by default in reverse chronological order
       // the dates and sortedDates should be equal
@@ -145,8 +145,6 @@ export default {
 
       // eslint-disable-next-line no-unused-expressions
       expect(isFilteredByErrorStatus).to.be.true;
-
-      this.resetAllFilters();
     });
   },
 
@@ -155,8 +153,6 @@ export default {
     this.getNumberOfMatchedJobs(queryString).then(count => {
       // ensure MultiColumnList is filtered by Date
       this.checkRowsCount(count);
-
-      this.resetAllFilters();
     });
   },
 
@@ -168,8 +164,6 @@ export default {
 
       // eslint-disable-next-line no-unused-expressions
       expect(isFilteredByProfile).to.be.true;
-
-      this.resetAllFilters();
     });
   },
 
@@ -181,8 +175,6 @@ export default {
 
       // eslint-disable-next-line no-unused-expressions
       expect(isFilteredByUser).to.be.true;
-
-      this.resetAllFilters();
     });
   },
 
@@ -209,8 +201,6 @@ export default {
       } else {
         this.checkRowsCount(0);
       }
-
-      this.resetAllFilters();
     });
   },
 
@@ -226,8 +216,6 @@ export default {
         expect(isFilteredByErrorStatus).to.be.true;
         // eslint-disable-next-line no-unused-expressions
         expect(isFilteredByUser).to.be.true;
-
-        this.resetAllFilters();
       });
     });
   },

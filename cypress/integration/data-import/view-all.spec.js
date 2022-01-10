@@ -2,6 +2,7 @@ import DataImportViewAllPage from '../../support/fragments/data_import/dataImpor
 import getRandomPostfix from '../../support/utils/stringTools';
 import fileManager from '../../support/utils/fileManager';
 import { testType } from '../../support/utils/tagTools';
+import TopMenu from '../../support/fragments/topMenu';
 
 describe('ui-data-import: Search the "View all" log screen', () => {
   let id;
@@ -18,6 +19,8 @@ describe('ui-data-import: Search the "View all" log screen', () => {
       Cypress.env('diku_login'),
       Cypress.env('diku_password')
     );
+
+    cy.visit(TopMenu.dataImportPath);
 
     // create dynamically file with given name in fixtures
     fileManager.createFile(`cypress/fixtures/${uniqueFileName}`);
