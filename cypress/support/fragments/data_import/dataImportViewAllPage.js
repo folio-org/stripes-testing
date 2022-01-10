@@ -30,6 +30,13 @@ export default {
     return cy.expect(MultiColumnList({ id: 'list-data-import' }).has({ rowCount }));
   },
 
+  checkById({ id }) {
+    const queryString = UrlParams.getSearchByIdQueryString({ id });
+    this.getNumberOfMatchedJobs(queryString).then(count => {
+      this.checkRowsCount(count);
+    });
+  },
+
   options: ['Keyword (ID, File name)', 'ID', 'File name'],
 
   errorsInImportStatuses: ['No', 'Yes'],
