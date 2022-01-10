@@ -19,7 +19,7 @@ export default {
     return 'FY' + (new Date().getFullYear()).toString();
   },
 
- getRandomFiscalYearCode: (min, max) => {
+  getRandomFiscalYearCode: (min, max) => {
     // returns random 4 digit code for the Fiscal Year
     return 'FY' + Math.floor((Math.random() * (Math.floor(max) - Math.ceil(min)) + Math.ceil(min))).toString();
   },
