@@ -26,8 +26,11 @@ export default {
   },
 
   checkRowsCount(rowCount) {
-    if (rowCount === 0) return cy.get('#list-data-import').should('not.exist');
-    return cy.expect(MultiColumnList({ id: 'list-data-import' }).has({ rowCount }));
+    if (rowCount === 0) {
+      MultiColumnList({ id: 'list-data-import' }).is({ visible: false });
+    } else {
+      cy.expect(MultiColumnList({ id: 'list-data-import' }).has({ rowCount }));
+    }
   },
 
   checkById({ id }) {

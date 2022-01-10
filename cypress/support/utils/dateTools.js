@@ -1,14 +1,14 @@
+const padWithZero = value => String(value).padStart(2, '0');
+
 export default {
   getCurrentDate: () => {
     const currentDate = new Date();
-    const replacer = (val) => String(val).padStart(2, 0);
-    return `${replacer(currentDate.getMonth() + 1)}/${replacer(currentDate.getDate())}/${currentDate.getFullYear()}`;
+    return `${padWithZero(currentDate.getMonth() + 1)}/${padWithZero(currentDate.getDate())}/${currentDate.getFullYear()}`;
   },
 
   getPreviousDayDate: () => {
     const currentDate = new Date();
-    const replacer = (val) => String(val).padStart(2, 0);
-    return `${replacer(currentDate.getMonth() + 1)}/${replacer(currentDate.getDate() - 1)}/${currentDate.getFullYear()}`;
+    return `${padWithZero(currentDate.getMonth() + 1)}/${padWithZero(currentDate.getDate() - 1)}/${currentDate.getFullYear()}`;
   },
 
   getPreviousFiscalYearCode: () => {
@@ -19,7 +19,7 @@ export default {
     return 'FY' + (new Date().getFullYear()).toString();
   },
 
-  getRandomFiscalYearCode: (min, max) => {
+ getRandomFiscalYearCode: (min, max) => {
     // returns random 4 digit code for the Fiscal Year
     return 'FY' + Math.floor((Math.random() * (Math.floor(max) - Math.ceil(min)) + Math.ceil(min))).toString();
   },
@@ -52,7 +52,6 @@ export default {
 
   // Formats date as YYYY-MM-DD
   getFormattedDate({ date }) {
-    const padWithZero = value => String(value).padStart(2, '0');
     return `${date.getFullYear()}-${padWithZero(date.getMonth() + 1)}-${padWithZero(date.getDate())}`;
   },
 };
