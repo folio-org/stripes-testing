@@ -13,6 +13,8 @@ describe('ui-data-import: Filter the "View all" log screen', () => {
   const fileNameForSuccessfulImport = `test${getRandomPostfix()}.mrc`;
   let userName;
   let jobProfileName;
+  let userNameId;
+  let profileId;
 
   before(() => {
     cy.login(
@@ -46,9 +48,11 @@ describe('ui-data-import: Filter the "View all" log screen', () => {
   });
 
   beforeEach(() => {
-    DataImportViewAllPage.getSingleJobProfile().then(({ jobProfileInfo, runBy }) => {
+    DataImportViewAllPage.getSingleJobProfile().then(({ jobProfileInfo, runBy, userId }) => {
       jobProfileName = jobProfileInfo.name;
       userName = `${runBy.firstName} ${runBy.lastName}`;
+      userNameId = userId;
+      profileId = jobProfileInfo.id;
     });
   });
 
@@ -81,12 +85,12 @@ describe('ui-data-import: Filter the "View all" log screen', () => {
 
     // FILTER By "Job profile"
     DataImportViewAllPage.filterJobsByJobProfile(jobProfileName);
-    DataImportViewAllPage.checkByJobProfileName({ jobProfileName });
+    DataImportViewAllPage.checkByJobProfileName({ jobProfileName, profileId });
     DataImportViewAllPage.resetAllFilters();
 
     // FILTER By "User"
     DataImportViewAllPage.filterJobsByUser(userName);
-    DataImportViewAllPage.checkByUserName({ userName });
+    DataImportViewAllPage.checkByUserName({ userName, userId: userNameId });
     DataImportViewAllPage.resetAllFilters();
 
     // FILTER By "Inventory single record imports"
@@ -107,7 +111,7 @@ describe('ui-data-import: Filter the "View all" log screen', () => {
 
     DataImportViewAllPage.filterJobsByErrors(filter);
     DataImportViewAllPage.filterJobsByUser(userName);
-    DataImportViewAllPage.checkByErrorsInImportAndUser({ filter, userName });
+    DataImportViewAllPage.checkByErrorsInImportAndUser({ filter, userName, userId: userNameId });
     DataImportViewAllPage.resetAllFilters();
   });
 });
