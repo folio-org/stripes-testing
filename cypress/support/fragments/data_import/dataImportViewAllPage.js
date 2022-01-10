@@ -77,7 +77,7 @@ export default {
     ]);
   },
 
-  filterJobsBySingleRecordImports(filter) {
+  filterJobsByInventorySingleRecordImports(filter) {
     if (filter === 'Yes') {
       cy.do(CheckBox({ id: 'clickable-filter-singleRecordImports-yes' }).click());
     } else {
@@ -130,7 +130,7 @@ export default {
     this.getMultiColumnListCellsValues(2).then(statuses => {
       // if filter is 'Yes', then check for error otherwise, completed status
       const expectedStatuses = filter === 'Yes' ? ['Failed', 'Completed with errors'] : ['Completed'];
-      // each filter in the statuses array should be in the expectedStatuses array
+      // each status in the statuses array should be in the expectedStatuses array
       const isFilteredByErrorStatus = statuses.every(jobStatus => expectedStatuses.includes(jobStatus));
 
       // eslint-disable-next-line no-unused-expressions

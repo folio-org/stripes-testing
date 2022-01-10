@@ -82,7 +82,7 @@ describe('ui-data-import: Filter the "View all" log screen', () => {
     // FILTER By "Inventory single record imports"
     cy.do(Accordion({ id: 'singleRecordImports' }).clickHeader());
     DataImportViewAllPage.singleRecordImportsStatuses.forEach(filter => {
-      DataImportViewAllPage.filterJobsBySingleRecordImports(filter);
+      DataImportViewAllPage.filterJobsByInventorySingleRecordImports(filter);
       DataImportViewAllPage.checkByInventorySingleRecord({ filter });
     });
 
