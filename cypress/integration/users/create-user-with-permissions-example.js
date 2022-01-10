@@ -14,7 +14,6 @@ describe('Creating user with some permissions', () => {
   };
 
   before(() => {
-    cy.login(Cypress.env('diku_login'), Cypress.env('diku_password'));
     cy.getToken(Cypress.env('diku_login'), Cypress.env('diku_password'));
     cy.getUserGroups({ limit: 1 });
   });
@@ -53,9 +52,12 @@ describe('Creating user with some permissions', () => {
   });
 
   afterEach(() => {
+    // delete created user after test
     cy.deleteUser(userPermissionData.userId);
   });
 
   it('should be possible to create a new user with specific permissions', function () {
+    cy.login(userCreds.username, userCreds.password);
+    // some test logic
   });
 });
