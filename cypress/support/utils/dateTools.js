@@ -1,14 +1,14 @@
+const padWithZero = value => String(value).padStart(2, '0');
+
 export default {
   getCurrentDate: () => {
     const currentDate = new Date();
-    const replacer = (val) => String(val).padStart(2, 0);
-    return `${replacer(currentDate.getMonth() + 1)}/${replacer(currentDate.getDate())}/${currentDate.getFullYear()}`;
+    return `${padWithZero(currentDate.getMonth() + 1)}/${padWithZero(currentDate.getDate())}/${currentDate.getFullYear()}`;
   },
 
   getPreviousDayDate: () => {
     const currentDate = new Date();
-    const replacer = (val) => String(val).padStart(2, 0);
-    return `${replacer(currentDate.getMonth() + 1)}/${replacer(currentDate.getDate() - 1)}/${currentDate.getFullYear()}`;
+    return `${padWithZero(currentDate.getMonth() + 1)}/${padWithZero(currentDate.getDate() - 1)}/${currentDate.getFullYear()}`;
   },
 
   getPreviousFiscalYearCode: () => {
@@ -48,5 +48,10 @@ export default {
     const dateFormat = /\d{4}-\d{2}-\d{2}T\d{2}_\d{2}_\d{2}\+\d{2}_\d{2}/gm;
     const date = dateString.match(dateFormat)[0];
     return Date.parse(date.replaceAll('_', ':'));
-  }
+  },
+
+  // Formats date as YYYY-MM-DD
+  getFormattedDate({ date }) {
+    return `${date.getFullYear()}-${padWithZero(date.getMonth() + 1)}-${padWithZero(date.getDate())}`;
+  },
 };

@@ -2,9 +2,10 @@ import DataImportViewAllPage from '../../support/fragments/data_import/dataImpor
 import getRandomPostfix from '../../support/utils/stringTools';
 import fileManager from '../../support/utils/fileManager';
 import { testType } from '../../support/utils/tagTools';
+import TopMenu from '../../support/fragments/topMenu';
 
 describe('ui-data-import: Search the "View all" log screen', () => {
-  let hrId;
+  let id;
   // Create unique file name with given type to upload
   const fileType = 'mrc';
   const uniqueFileName = `test${getRandomPostfix()}.${fileType}`;
@@ -19,6 +20,8 @@ describe('ui-data-import: Search the "View all" log screen', () => {
       Cypress.env('diku_password')
     );
 
+    cy.visit(TopMenu.dataImportPath);
+
     // create dynamically file with given name in fixtures
     fileManager.createFile(`cypress/fixtures/${uniqueFileName}`);
 
@@ -29,15 +32,9 @@ describe('ui-data-import: Search the "View all" log screen', () => {
 
   beforeEach(() => {
     // fetch dynamic data from server
-    const query = '((status any "COMMITTED ERROR")) sortby completedDate/sort.descending';
-    cy
-      .okapiRequest({
-        path: 'metadata-provider/jobExecutions',
-        searchParams: { limit: 1, query },
-      })
-      .then(({ body }) => {
-        hrId = body.jobExecutions[0].hrId;
-      });
+    DataImportViewAllPage.getSingleJobProfile().then(({ hrId }) => {
+      id = hrId;
+    });
   });
 
   it('C11112 Search the "View all" log screen', { tags: [testType.smoke] }, () => {
@@ -46,11 +43,17 @@ describe('ui-data-import: Search the "View all" log screen', () => {
     DataImportViewAllPage.options.forEach((option) => {
       DataImportViewAllPage.selectOption(option);
       // when option is "ID", search with hrId otherwise, with file name
-      const term = option === 'ID' ? `${hrId}` : uniqueFileName;
+      const term = option === 'ID' ? `${id}` : uniqueFileName;
 
       DataImportViewAllPage.searchWithTerm(term);
 
-      DataImportViewAllPage.checkRowsCount(1);
+      if (option === 'ID') {
+        DataImportViewAllPage.checkById({ id });
+      } else {
+        // file name is always unique
+        // so, there is always one row
+        DataImportViewAllPage.checkRowsCount(1);
+      }
     });
   });
 });
