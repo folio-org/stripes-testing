@@ -36,7 +36,7 @@ describe('eHoldings titles management', () => {
         cy.expect(Button('Remove title from holdings').exists());
       });
   });
-  it.only('C700 Title: Add or Edit custom coverage', { tags:  [testType.smoke, feature.eHoldings] }, () => {
+  it('C700 Title: Add or Edit custom coverage', { tags:  [testType.smoke, feature.eHoldings] }, () => {
     // test related with special data from Ebsco
     const selectedResource = {
       title: 'Preparative biochemistry & biotechnology : an international journal for rapid communications',

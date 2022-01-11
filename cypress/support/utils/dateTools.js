@@ -55,4 +55,7 @@ export default {
   getFormattedDate({ date }) {
     return `${date.getFullYear()}-${padWithZero(date.getMonth() + 1)}-${padWithZero(date.getDate())}`;
   },
+  clearPaddingZero(initialString) {
+    return initialString.replaceAll(/0([1-9])\//g, '$1/');
+  }
 };
