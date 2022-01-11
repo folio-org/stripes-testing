@@ -1,6 +1,7 @@
 const padWithZero = value => String(value).padStart(2, '0');
 
 export default {
+  padWithZero,
   getCurrentDate: () => {
     const currentDate = new Date();
     return `${padWithZero(currentDate.getMonth() + 1)}/${padWithZero(currentDate.getDate())}/${currentDate.getFullYear()}`;

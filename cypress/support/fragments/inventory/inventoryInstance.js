@@ -38,7 +38,9 @@ export default {
 
   goToEditMARCBiblRecord:() => {
     cy.do(actionsButton.click());
+    cy.expect(editMARCBibRecordButton.exists());
     cy.do(editMARCBibRecordButton.click());
+    quickMarcEditor.waitLoading();
   },
 
   viewSource: () => {

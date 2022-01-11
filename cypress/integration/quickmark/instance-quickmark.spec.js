@@ -19,9 +19,9 @@ describe('Manage inventory Bib records with quickMarc editor', () => {
     InventoryActions.import();
     InventoryInstance.goToEditMARCBiblRecord();
 
-    const expectedInSourceRow = QuickMarcEditor.addNewField();
+    const expectedInSourceRow = QuickMarcEditor.addNewField(QuickMarcEditor.getFreeTags()[0]);
     QuickMarcEditor.deletePenaltField().then(deletedTag => {
-      const expectedInSourceRowWithSubfield = QuickMarcEditor.addNewFieldWithSubField();
+      const expectedInSourceRowWithSubfield = QuickMarcEditor.addNewFieldWithSubField(QuickMarcEditor.getFreeTags()[1]);
       QuickMarcEditor.pressSaveAndClose();
       QuickMarcEditor.deleteConfirmationPresented();
       QuickMarcEditor.confirmDelete();
@@ -44,6 +44,7 @@ describe('Manage inventory Bib records with quickMarc editor', () => {
     InventoryInstance.viewSource();
     InventoryViewSource.contains(expectedInSourceRow);
     InventoryViewSource.close();
+    InventoryInstance.waitLoading();
 
     InventoryInstance.goToEditMARCBiblRecord();
     QuickMarcEditor.checkContent();
