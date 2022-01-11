@@ -12,14 +12,11 @@ export default {
     cy.do(Button('View all').click());
     cy.expect(TextField({ id:'input-job-logs-search' }).exists());
     cy.do(TextField({ id: 'input-job-logs-search' }).fillIn('oneMarcBib.mrc'));
-    // TODO delete wait after fix by developers
-    cy.wait(20000);
     cy.do(Button('Search').click());
-    cy.wait(20000);
-    cy.expect(Accordion({ id: 'jobProfileInfo' }).find(Button({ id: 'accordion-toggle-button-jobProfileInfo' })).exists());
-    cy.do(Accordion({ id: 'jobProfileInfo' }).find(Button({ id: 'accordion-toggle-button-jobProfileInfo' })).click());
-    cy.expect(Accordion({ id: 'jobProfileInfo' }).find(Selection()).exists());
-    cy.do(Accordion({ id: 'jobProfileInfo' }).find(Selection()).choose(fileName));
+    cy.expect(Accordion({ id: 'profileIdAny' }).find(Button({ id: 'accordion-toggle-button-profileIdAny' })).exists());
+    cy.do(Accordion({ id: 'profileIdAny' }).find(Button({ id: 'accordion-toggle-button-profileIdAny' })).click());
+    cy.expect(Accordion({ id: 'profileIdAny' }).find(Selection()).exists());
+    cy.do(Accordion({ id: 'profileIdAny' }).find(Selection()).choose(fileName));
     waitUntilSearchJobProfile(fileName);
   },
 
