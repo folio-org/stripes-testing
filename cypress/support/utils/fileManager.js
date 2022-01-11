@@ -18,13 +18,11 @@ export default {
     return cy.readFile(pathToFile);
   },
 
-  createFile(pathToFile) {
-    /*
-    passing an empty string as data because,
-    cypress-file-upload plugin doesn't allow empty files
-    */
+  createFile(pathToFile, content = ' ') {
+    // default value for content is a string with an empty space character
+    // because, cypress-file-upload plugin doesn't allow empty files
 
-    return cy.writeFile(pathToFile, ' ');
+    return cy.writeFile(pathToFile, content);
   },
 
   deleteFile(pathToFile) {

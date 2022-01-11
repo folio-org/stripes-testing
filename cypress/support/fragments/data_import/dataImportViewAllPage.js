@@ -1,4 +1,15 @@
-import { Button, MultiColumnList, Select } from '../../../../interactors';
+import { CheckBox } from '@interactors/html';
+import {
+  Accordion,
+  Button,
+  MultiColumnList,
+  MultiColumnListHeader,
+  Select,
+  Selection,
+  SelectionList,
+  TextField
+} from '../../../../interactors';
+import UrlParams from './url-params';
 
 export default {
   gotoViewAllPage() {
@@ -15,116 +26,245 @@ export default {
   },
 
   checkRowsCount(rowCount) {
-    if (rowCount === 0) return cy.get('#list-data-import').should('not.exist');
-    return cy.expect(MultiColumnList({ id: 'list-data-import' }).has({ rowCount }));
+    if (rowCount === 0) {
+      cy.expect(MultiColumnList().absent());
+    } else {
+      cy.expect(MultiColumnList({ id: 'list-data-import' }).has({ rowCount }));
+    }
+  },
+
+  checkById({ id }) {
+    const queryString = UrlParams.getSearchByIdQueryString({ id });
+    this.getNumberOfMatchedJobs(queryString).then(count => {
+      this.checkRowsCount(count);
+    });
   },
 
   options: ['Keyword (ID, File name)', 'ID', 'File name'],
 
-  errorsInImportFilters: ['error', 'committed'],
+  errorsInImportStatuses: ['No', 'Yes'],
 
-  singleRecordImports: ['no', 'yes'],
+  singleRecordImportsStatuses: ['No', 'Yes'],
 
   resetAllFilters() {
-    return cy.get('#clickable-reset-all').click();
-  },
+    cy.do(Button('Reset all').click());
 
-  sortByCompletedDateInDescendingOrder() {
-    cy.get('#list-column-completeddate').dblclick();
-    cy.get('#list-column-completeddate')
-      .invoke('attr', 'aria-sort')
-      .should('equal', 'descending');
-  },
-
-  getErrorsQuery({ filter }) {
-    return `status==${filter.toUpperCase()}`;
-  },
-
-  getDateQuery({ from, end }) {
-    return `((status any "COMMITTED ERROR") AND completedDate>="${from}" and (status any "COMMITTED ERROR") AND completedDate<="${end}")`;
-  },
-
-  getJobProfileQuery({ jobProfileId }) {
-    return `(status any "COMMITTED ERROR") AND jobProfileInfo.id=="${jobProfileId}"`;
-  },
-
-  getUserQuery({ userId }) {
-    return `((status any "COMMITTED ERROR") AND userId=="${userId}") sortby completedDate/sort.descending`;
-  },
-
-  getMixedQuery({ status, userId }) {
-    return `(status=="${status}" and (status any "COMMITTED ERROR") AND userId=="${userId}") sortby completedDate/sort.descending`;
-  },
-
-  getSingleRecordImportsQuery({ isSingleRecord }) {
-    if (isSingleRecord === 'yes') {
-      return '(jobProfileInfo="\\“id\\“==d0ebb7b0-2f0f-11eb-adc1-0242ac120002") ' +
-        'OR (jobProfileInfo="\\“id\\“==91f9b8d6-d80e-4727-9783-73fb53e3c786") ' +
-        'sortby completedDate';
-    }
-
-    return '(jobProfileInfo="\\“id\\“==" ' +
-      'NOT jobProfileInfo="\\“id\\“=="d0ebb7b0-2f0f-11eb-adc1-0242ac120002") ' +
-      'AND (jobProfileInfo="\\“id\\“==" ' +
-      'NOT jobProfileInfo="\\“id\\“=="91f9b8d6-d80e-4727-9783-73fb53e3c786"") ' +
-      'sortby completedDate/sort.descending';
+    // After resetting all filters, we need to sort MultiColumnList
+    // Otherwise, server cannot parse request params and returns error with 422 status
+    // In this case, sort by completed date in ascending order
+    cy.do(MultiColumnListHeader('Ended running').click());
   },
 
   filterJobsByErrors(filter) {
-    return cy.get(`[for="clickable-filter-status-${filter}"]`).click();
+    if (filter === 'Yes') {
+      cy.do(CheckBox({ id: 'clickable-filter-statusAny-error' }).click());
+    } else {
+      cy.do(CheckBox({ id: 'clickable-filter-statusAny-committed' }).click());
+    }
   },
 
   filterJobsByDate({ from, end }) {
-    cy.get('#accordion-toggle-button-completedDate').click();
-    cy.get('[name="startDate"]').type(from);
-    cy.get('[name="endDate"]').type(end);
-    cy.do(Button('Apply').click());
+    cy.do([
+      Accordion({ id: 'completedDate' }).clickHeader(),
+      TextField({ label: 'From' }).fillIn(from),
+      TextField({ label: 'To' }).fillIn(end),
+      Button('Apply').click()
+    ]);
   },
 
   filterJobsByJobProfile(jobProfile) {
-    cy.get('#accordion-toggle-button-jobProfileInfo').click();
-    cy.contains('Choose job profile').click();
-    cy.get('[class*="selectionListRoot"]').contains(jobProfile).click();
+    cy.do([
+      Accordion({ id: 'profileIdAny' }).clickHeader(),
+      Selection({ value: 'Choose job profile' }).open(),
+      SelectionList().select(jobProfile)
+    ]);
   },
 
   filterJobsByUser(user) {
-    cy.get('#accordion-toggle-button-userId').click();
-    cy.contains('Choose user').click();
-    cy.get('[class*="selectionListRoot"]').contains(user).click();
+    cy.do([Accordion({ id: 'userId' }).clickHeader(),
+      Selection({ value: 'Choose user' }).open(),
+      SelectionList().select(user)
+    ]);
   },
 
-  filterJobsBySingleRecordImports(filter) {
-    return cy.get(`input[id="clickable-filter-singleRecordImports-${filter}"]`).check();
+  filterJobsByInventorySingleRecordImports(filter) {
+    if (filter === 'Yes') {
+      cy.do(CheckBox({ id: 'clickable-filter-singleRecordImports-yes' }).click());
+    } else {
+      cy.do(CheckBox({ id: 'clickable-filter-singleRecordImports-no' }).click());
+    }
   },
 
-  getFormattedDate({ date }) {
-    const padWithZero = value => String(value).padStart(2, '0');
-    return `${date.getFullYear()}-${padWithZero(date.getMonth() + 1)}-${padWithZero(date.getDate())}`;
+  getMultiColumnListCellsValues(cell) {
+    const cells = [];
+
+    // get MultiColumnList rows and loop over
+    return cy.get('[data-row-index]').each($row => {
+      // from each row, choose specific cell
+      cy.get(`[class*="mclCell-"]:nth-child(${cell})`, { withinSubject: $row })
+        // extract its text content
+        .invoke('text')
+        .then(cellValue => {
+          cells.push(cellValue);
+        });
+    })
+      .then(() => cells);
   },
 
-  getNumberOfMatchedJobs({ query }) {
-    return cy
-      .okapiRequest({
-        path: 'metadata-provider/jobExecutions',
-        searchParams: { limit: 100, query },
-      })
-      .then(({ body }) => {
-        return body.jobExecutions.length;
-      });
+  checkByReverseChronologicalOrder() {
+    this.getMultiColumnListCellsValues(5).then(cells => {
+      // convert each cell value to Date object
+      const dates = cells.map(cell => new Date(cell));
+
+      // create new array from the dates and sort this array in descending order
+      const sortedDates = [...dates].sort((a, b) => b - a);
+
+      // if job logs are sorted by default in reverse chronological order
+      // the dates and sortedDates should be equal
+      expect(dates).to.deep.equal(sortedDates);
+    });
   },
 
-  // the method is used to get the job profile info from a random job log
-  // It is used to filter by "job Profile"
+  checkByErrorsInImport({ filter }) {
+    const queryString = UrlParams.getErrorsInImportQueryString({ filter });
+    this.getNumberOfMatchedJobs(queryString).then(count => {
+      cy.get('[data-row-index]')
+        .should('have.length', count)
+        .then(() => {
+          this.getMultiColumnListCellsValues(2).then(statuses => {
+          // if filter is 'Yes', then check for error otherwise, completed status
+            const expectedStatuses = filter === 'Yes' ? ['Failed', 'Completed with errors'] : ['Completed'];
+            // each status in the statuses array should be in the expectedStatuses array
+            const isFilteredByErrorStatus = statuses.every(jobStatus => expectedStatuses.includes(jobStatus));
+
+            // eslint-disable-next-line no-unused-expressions
+            expect(isFilteredByErrorStatus).to.be.true;
+          });
+        });
+    });
+  },
+
+  checkByDate({ from, end }) {
+    const queryString = UrlParams.getDateQueryString({ from, end });
+    this.getNumberOfMatchedJobs(queryString).then(count => {
+      // ensure MultiColumnList is filtered by Date
+      this.checkRowsCount(count);
+    });
+  },
+
+  checkByJobProfileName({ jobProfileName, profileId }) {
+    const queryString = UrlParams.getJobProfileQueryString({ profileId });
+    this.getNumberOfMatchedJobs(queryString).then(count => {
+      cy.get('[data-row-index]')
+        .should('have.length', count)
+        .then(() => {
+          this.getMultiColumnListCellsValues(4).then(jobProfiles => {
+            // each profile name in the jobProfiles array should be equal to jobProfileName
+            const isFilteredByProfile = jobProfiles.every(name => name === jobProfileName);
+
+            // eslint-disable-next-line no-unused-expressions
+            expect(isFilteredByProfile).to.be.true;
+          });
+        });
+    });
+  },
+
+  checkByUserName({ userName, userId }) {
+    const queryString = UrlParams.getUserQueryString({ userId });
+    this.getNumberOfMatchedJobs(queryString).then(count => {
+      cy.get('[data-row-index]')
+        .should('have.length', count)
+        .then(() => {
+          this.getMultiColumnListCellsValues(6).then(userNames => {
+            // each name in the userNames array should be equal to the userName
+            const isFilteredByUser = userNames.every(name => name === userName);
+
+            // eslint-disable-next-line no-unused-expressions
+            expect(isFilteredByUser).to.be.true;
+          });
+        });
+    });
+  },
+
+  checkByInventorySingleRecord({ filter }) {
+    const queryString = UrlParams.getInventorySingleRecordImportsQueryString({ filter });
+    this.getNumberOfMatchedJobs(queryString).then(count => {
+      if (!count) {
+        cy.expect(MultiColumnList().absent());
+      } else {
+        cy.get('[data-row-index]')
+          .should('have.length', count)
+          .then(() => {
+            this.getMultiColumnListCellsValues(4).then(profiles => {
+              const inventorySingleRecordProfiles = [
+                'Inventory Single Record - Default Create Instance',
+                'Inventory Single Record - Default Update Instance'
+              ];
+
+              if (filter === 'Yes') {
+                const isInventorySingleRecord = profiles.every(profile => inventorySingleRecordProfiles.includes(profile));
+                // eslint-disable-next-line no-unused-expressions
+                expect(isInventorySingleRecord).to.be.true;
+              } else {
+                const isNotInventorySingleRecord = profiles.every(profile => !inventorySingleRecordProfiles.includes(profile));
+                // eslint-disable-next-line no-unused-expressions
+                expect(isNotInventorySingleRecord).to.be.true;
+              }
+            });
+          });
+      }
+    });
+  },
+
+  checkByErrorsInImportAndUser({ filter, userName, userId }) {
+    const queryString = UrlParams.getErrorsInImportAndUserQueryString({ filter, userId });
+    this.getNumberOfMatchedJobs(queryString).then(count => {
+      cy.get('[data-row-index]')
+        .should('have.length', count)
+        .then(() => {
+          this.getMultiColumnListCellsValues(2).then(statuses => {
+            this.getMultiColumnListCellsValues(6).then(names => {
+              const expectedStatuses = filter === 'Yes' ? ['Failed', 'Completed with errors'] : ['Completed'];
+              const isFilteredByErrorStatus = statuses.every(jobStatus => expectedStatuses.includes(jobStatus));
+              const isFilteredByUser = names.every(name => name === userName);
+
+              // eslint-disable-next-line no-unused-expressions
+              expect(isFilteredByErrorStatus).to.be.true;
+              // eslint-disable-next-line no-unused-expressions
+              expect(isFilteredByUser).to.be.true;
+            });
+          });
+        });
+    });
+  },
+
+  getNumberOfMatchedJobs(queryString) {
+    return cy.request({
+      method: 'GET',
+      url: `${Cypress.env('OKAPI_HOST')}/metadata-provider/jobExecutions?${queryString}`,
+      headers: {
+        'x-okapi-tenant': Cypress.env('OKAPI_TENANT'),
+        'x-okapi-token': Cypress.env('token'),
+      },
+    }).then(({ body }) => {
+      return body.jobExecutions.length;
+    });
+  },
+
+  // This method is used to get the first job profile from job logs list
+  // it is used to filter by "job Profile"
   getSingleJobProfile() {
-    const query = '((status any "COMMITTED ERROR")) sortby completedDate/sort.descending';
-    return cy
-      .okapiRequest({
-        path: 'metadata-provider/jobExecutions',
-        searchParams: { limit: 1, query },
-      })
-      .then(({ body }) => {
-        return body.jobExecutions[0];
-      });
+    const queryString = UrlParams.getSingleJobProfileQueryString();
+    return cy.request({
+      method: 'GET',
+      url: `${Cypress.env('OKAPI_HOST')}/metadata-provider/jobExecutions?${queryString}`,
+      headers: {
+        'x-okapi-tenant': Cypress.env('OKAPI_TENANT'),
+        'x-okapi-token': Cypress.env('token'),
+      },
+    }).then(({ body }) => {
+      return body.jobExecutions[0];
+    });
   },
 };
 

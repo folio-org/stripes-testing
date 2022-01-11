@@ -25,6 +25,7 @@ export { default as MessageBanner, MessageBannerTypes } from './messagebanner';
 export { default as Modal } from './modal';
 export { MultiColumnList, MultiColumnListRow, MultiColumnListCell, MultiColumnListHeader } from './multi-column-list';
 export { default as MultiSelect, MultiSelectMenu, MultiSelectOption } from './multi-select';
+export { default as NavList } from './navlist';
 export { default as Pane, PaneHeader } from './pane';
 export { default as RadioButton } from './radio-button';
 export { default as RadioButtonGroup } from './radio-button-group';
@@ -44,3 +45,4 @@ export { default as Section } from './section';
 // Stripes-smart-component interactors
 export { AddressList, AddressEdit, AddressItem } from './address-edit-list';
 export { EditableList, EditableListRow, ColumnHeader } from './editablelist';
+export { EntryManager, EntryForm, EntryDetails } from './entrymanager';

@@ -24,7 +24,7 @@ export const AddressItem = HTML.extend('address item')
 
 
 export const AddressList = HTML.extend('address list')
-  .selector('[data-test-addressList-container]')
+  .selector('[data-test-address-list-container]')
   .filters({
     count: (el) => el.querySelectorAll('role=tabpanel').length,
   })
