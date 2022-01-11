@@ -1,5 +1,6 @@
 import { Accordion, Button, RadioButton, Select, TextField } from '../../../../interactors';
 import eHoldingsTitles from './eHoldingsTitles';
+import eHoldingsProviders from './eHoldingsProviders';
 
 const publicationTypeAccordion = Accordion({ id:'filter-titles-type' });
 const selectionStatusAccordion = Accordion({ id: 'filter-titles-selected' });
@@ -43,5 +44,10 @@ export default {
   },
   switchToPackages: () => {
     cy.do(Button({ id: 'packages-tab' }).click());
+  },
+  byProvider(provider) {
+    cy.do(TextField({ id: 'eholdings-search' }).fillIn(provider));
+    cy.do(Button('Search').click());
+    eHoldingsProviders.waitLoading();
   }
 };

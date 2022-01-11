@@ -13,3 +13,12 @@ Cypress.Commands.add('getToken', (username, password) => {
       Cypress.env('defaultServicePoint', defaultServicePoint);
     });
 });
+
+Cypress.Commands.add('setUserPassword', (userCredentials) => {
+  cy
+    .okapiRequest({
+      method: 'POST',
+      path: 'authn/credentials',
+      body: userCredentials,
+    });
+});
