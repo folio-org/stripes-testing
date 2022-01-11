@@ -75,33 +75,34 @@ describe('ui-data-import: MARC file upload with the update of instance, holding,
     deletedRelations: []
   };
 
-  const testDateMappingProfile = {
-    instanceMappingProfile : {
-      id: '',
-      name: `autotest_instance_mapping_profile_${getRandomPostfix()}`,
-      incomingRecordType: 'MARC_BIBLIOGRAPHIC',
-      existingRecordType: 'INSTANCE',
-    }
+  const specialMappingProfile = {
+    name: `autotest_instance_mapping_profile_${getRandomPostfix()}`,
+    incomingRecordType: 'MARC_BIBLIOGRAPHIC',
+    existingRecordType: 'INSTANCE',
+
   };
 
-  const testDateActionProfile = {
-    instanceActionProfile : {
-      profile: {
-        id: '',
-        name: `autotest_instance_action_profile_${getRandomPostfix()}`,
-        action: 'CREATE',
-        folioRecord: 'INSTANCE'
-      },
-      addedRelations: [
-        {
-          masterProfileId: null,
-          masterProfileType: 'ACTION_PROFILE',
-          detailProfileId: '',
-          detailProfileType: 'MAPPING_PROFILE'
-        }
-      ],
-      deletedRelations: []
-    }
+  const specialActionProfile = {
+    profile: {
+      name: `autotest_instance_action_profile_${getRandomPostfix()}`,
+      action: 'CREATE',
+      folioRecord: 'INSTANCE'
+    },
+    addedRelations: [
+      {
+        masterProfileId: null,
+        masterProfileType: 'ACTION_PROFILE',
+        detailProfileId: '',
+        detailProfileType: 'MAPPING_PROFILE'
+      }
+    ],
+    deletedRelations: []
+
+  };
+
+  const testData = {
+    specialMappingProfile,
+    specialActionProfile
   };
 
 
@@ -111,39 +112,8 @@ describe('ui-data-import: MARC file upload with the update of instance, holding,
   });
 
   beforeEach(() => {
-    cy.createMappingProfileApi({
-      ...holdingsMappingProfile,
-    }).then(({ body }) => {
-      holdingsActionProfile.addedRelations[0].detailProfileId = body.id;
-      cy.log('body id: ' + body.id);
-      collectionIdOfMappingProfiles.push(body.id);
-      cy.log('collectionIdOfMappingProfiles: ' + collectionIdOfMappingProfiles);
-      holdingsMappingProfile.name = body.name;
-      cy.createActionProfileApi({
-        ...holdingsActionProfile
-      }).then(({ body }) => {
-        holdingsActionProfile.id = body.id;
-        collectionIdOfActionProfiles.push(body.id);
-        holdingsActionProfile.name = body.name;
-        collectionNamesOfActionProfiles.push(body.name);
-      });
-    });
-
-    cy.createMappingProfileApi({
-      ...itemMappingProfile,
-    }).then(({ body }) => {
-      itemActionProfile.addedRelations[0].detailProfileId = body.id;
-      collectionIdOfMappingProfiles.push(body.id);
-      itemMappingProfile.name = body.name;
-      cy.createActionProfileApi({
-        ...itemActionProfile
-      }).then(({ body }) => {
-        itemActionProfile.id = body.id;
-        collectionIdOfActionProfiles.push(body.id);
-        itemActionProfile.name = body.name;
-        collectionNamesOfActionProfiles.push(body.name);
-        cy.log('collectionNamesOfActionProfiles: ' + collectionNamesOfActionProfiles);
-      });
+    cy.createLinkedMappingAndActionProfiles(testData).then(() => {
+      cy.log('After:' + JSON.stringify(testData));
     });
   });
 

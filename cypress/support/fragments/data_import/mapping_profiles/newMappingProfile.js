@@ -59,24 +59,5 @@ export default {
       ]);
     }
     cy.do(Button('Save as profile & Close').click());
-  },
-
-  // create profiles by API
-  createMappingProfileByApi:(testDateMappingProfile, testDateActionProfile) => {
-    cy.createMappingProfileApi({
-      ...testDateMappingProfile.instanceMappingProfile,
-    }).then(({ body }) => {
-      testDateMappingProfile.instanceActionProfile.addedRelations[0].detailProfileId = body.id;
-      testDateMappingProfile.collectionIdOfMappingProfiles.push(body.id);
-      testDateMappingProfile.instanceMappingProfile.name = body.name;
-      cy.createActionProfileApi({
-        ...testDateActionProfile.instanceActionProfile
-      }).then(({ body }) => {
-        testDateActionProfile.instanceActionProfile.id = body.id;
-        testDateActionProfile.collectionIdOfActionProfiles.push(body.id);
-        testDateActionProfile.instanceActionProfile.name = body.name;
-        testDateActionProfile.collectionNamesOfActionProfiles.push(body.name);
-      });
-    });
   }
 };
