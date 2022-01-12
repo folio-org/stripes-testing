@@ -66,6 +66,7 @@ export default {
   },
 
   searchByStatusUnitsAndName(status, acquisitionUnitsName, ledgerName) {
+    // TODO: check how it can be achieved with interactors
     cy.xpath('//*[@id="accordion-toggle-button-ledgerStatus"]').should('be.visible');
     this.selectStatusInSearch(status);
     cy.do([
