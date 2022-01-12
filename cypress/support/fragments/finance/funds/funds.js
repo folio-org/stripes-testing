@@ -112,7 +112,11 @@ export default {
   },
 
   checkFundFilters(ledgerName, fundType, fundStatus, aUnits, tags, groupName, fundName) {
+    // TODO: check how it can be achieved with interactors
+    cy.xpath('//*[@id="accordion-toggle-button-fundStatus"]').should('be.visible');
     this.selectStatusInSearch(fundStatus);
+    // TODO: check how it can be achieved with interactors
+    cy.xpath('//*[@id="accordion-toggle-button-ledgerId"]').should('be.visible');
     cy.do([
       Accordion({ id: 'ledgerId' }).clickHeader(),
       Selection({ id: 'ledgerId-selection' }).open(),
