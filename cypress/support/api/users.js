@@ -33,6 +33,15 @@ Cypress.Commands.add('getUserGroups', (searchParams) => {
     });
 });
 
+Cypress.Commands.add('getFirstUserGroupId', (searchParams) => {
+  cy.okapiRequest({
+    path: 'groups',
+    searchParams,
+  }).then((response) => {
+    return response.body.usergroups[0].id;
+  });
+});
+
 Cypress.Commands.add('deleteUser', (userId) => {
   cy
     .okapiRequest({
