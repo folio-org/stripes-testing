@@ -1,10 +1,11 @@
-import { Button, TextField, Selection, SelectionList, Accordion, Modal, Checkbox, MultiSelect, SearchField, Section } from '../../../../../interactors';
+import { Button, TextField, Selection, SelectionList, Accordion, Modal, Checkbox, MultiSelect, SearchField, Section, HTML, including } from '../../../../../interactors';
 import { statusActive, statusInactive, statusFrozen } from '../financeHelper';
 
 const createdFundNameXpath = '//*[@id="paneHeaderpane-fund-details-pane-title"]/h2/span';
 const numberOfSearchResultsHeader = '//*[@id="paneHeaderfund-results-pane-subtitle"]/span';
 const zeroResultsFoundText = '0 records found';
 const budgetTitleXpath = '//*[@id="paneHeaderpane-budget-pane-title"]/h2/span';
+const noItemsMessage = 'The list contains no items';
 
 export default {
   waitForFundDetailsLoading : () => {
@@ -86,6 +87,12 @@ export default {
       Button('Delete', { id:'clickable-budget-remove-confirmation-confirm' }).click()
     ]);
     this.waitForFundDetailsLoading();
+  },
+
+  checkDeletedBudget: (budgetSectionId) => {
+    cy.expect(
+      Section({ id: budgetSectionId }).find(HTML(including(noItemsMessage))).exists()
+    );
   },
 
   resetFundFilters: () => {
