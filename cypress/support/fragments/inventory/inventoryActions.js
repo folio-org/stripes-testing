@@ -37,6 +37,7 @@ export default {
   import(specialOCLCWorldCatidentifier = InventoryInstance.validOCLC.id) {
     cy.do(this.open());
     cy.do(importButtonInActions.click());
+    cy.expect(OCLWorldCatIdentifierTextField.exists());
     this.fillImportFields(specialOCLCWorldCatidentifier);
 
     this.pressImportInModal();
