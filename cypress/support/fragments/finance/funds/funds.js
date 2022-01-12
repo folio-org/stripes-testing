@@ -112,7 +112,9 @@ export default {
   },
 
   checkFundFilters(ledgerName, fundType, fundStatus, aUnits, tags, groupName, fundName) {
+    cy.xpath('//*[@id="accordion-toggle-button-fundStatus"]/div/div').should('be.visible');
     this.selectStatusInSearch(fundStatus);
+    cy.xpath('//*[@id="accordion-toggle-button-ledgerId"]/div/div').should('be.visible');
     cy.do([
       Accordion({ id: 'ledgerId' }).clickHeader(),
       Selection({ id: 'ledgerId-selection' }).open(),
