@@ -78,7 +78,7 @@ export default {
   },
 
   verifySelectedRecords(selected) {
-    cy.get('div[data-row-index]').then((el) => {
+    cy.get('#list-inventory div[data-row-index]').then((el) => {
       const overall = el.length;
       cy.expect(Pane('Inventory').is({ subtitle: `${overall} records found${selected} records selected` }));
     });
