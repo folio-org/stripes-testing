@@ -1,4 +1,5 @@
 import { Section, Pane, HTML, including, Button, Label, KeyValue, Modal } from '../../../../interactors';
+import dateTools from '../../utils/dateTools';
 import eHoldingResourceEdit from './eHoldingResourceEdit';
 import eHoldingsTitle from './eHoldingsTitle';
 
@@ -46,6 +47,8 @@ export default {
     expectedPeriods.forEach(period => {
       expectedRangesString += `${period.startDay} - ${period.endDay}${separator}`;
     });
+    // TODO: update ater fix of https://issues.folio.org/browse/UIEH-1227
+    expectedRangesString = dateTools.clearPaddingZero(expectedRangesString);
     cy.expect(KeyValue('Custom coverage dates', { value:  expectedRangesString.slice(0, -separator.length) }).exists());
   },
   checkHoldingStatus,
