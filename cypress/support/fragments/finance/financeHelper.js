@@ -45,5 +45,9 @@ export default {
     cy.xpath(noResultsMessageLabel)
       .should('be.visible')
       .and('have.text', chooseAFilterMessage);
+  },
+
+  clickOnCloseIconButton: () => {
+    cy.do(Button({ icon: 'times' }).click());
   }
 };

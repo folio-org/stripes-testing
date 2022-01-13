@@ -1,4 +1,4 @@
-import { Button, TextField, Selection, SelectionList, Accordion, Modal, Checkbox, MultiSelect, SearchField, Section, HTML, including } from '../../../../../interactors';
+import { Button, TextField, Selection, SelectionList, Accordion, Modal, Checkbox, MultiSelect, SearchField, Section, HTML, including, KeyValue, Pane } from '../../../../../interactors';
 import { statusActive, statusInactive, statusFrozen } from '../financeHelper';
 
 const createdFundNameXpath = '//*[@id="paneHeaderpane-fund-details-pane-title"]/h2/span';
@@ -6,6 +6,7 @@ const numberOfSearchResultsHeader = '//*[@id="paneHeaderfund-results-pane-subtit
 const zeroResultsFoundText = '0 records found';
 const budgetTitleXpath = '//*[@id="paneHeaderpane-budget-pane-title"]/h2/span';
 const noItemsMessage = 'The list contains no items';
+const viewTransactionsLinkXpath = '//a[text()="View transactions"]';
 
 export default {
   waitForFundDetailsLoading : () => {
@@ -78,6 +79,30 @@ export default {
     cy.xpath(budgetTitleXpath)
       .should('be.visible')
       .and('have.text', fundCode.concat('-', fiscalYear));
+  },
+
+  checkBudgetQuantity: (quantityValue) => {
+    cy.expect(
+      Section({ id: 'pane-budget' }).find(HTML(including('Cash balance: $' + quantityValue.toFixed(2)))).exists()
+    );
+    cy.expect(
+      Section({ id: 'pane-budget' }).find(HTML(including('Available balance: $' + quantityValue.toFixed(2)))).exists()
+    );
+  },
+
+  openTransactions: () => {
+    cy.expect(Section({ id: 'information' }).find(KeyValue('Transactions')).exists());
+    // TODO: refactor via using interactors. Simple click() doesn't work, need to find a way to work with child
+    cy.xpath(viewTransactionsLinkXpath).click();
+  },
+
+  checkTransaction: (value, fundCode) => {
+    cy.expect(
+      Pane({ id: 'transaction-results-pane' }).find(HTML(including('$' + value.toFixed(2)))).exists()
+    );
+    cy.expect(
+      Section({ id: 'transaction-results-pane' }).find(HTML(including(fundCode))).exists()
+    );
   },
 
   deleteBudgetViaActions() {
