@@ -11,7 +11,8 @@ import eHoldingsPackage from '../../support/fragments/eholdings/eHoldingsPackage
 
 describe('eHoldings packages management', () => {
   let userId = '';
-  beforeEach(() => {
+
+  it('C688 Add a title in a package to holdings', { tags:  [testType.smoke, feature.eHoldings] }, () => {
     cy.createTempUser(['eHoldings: Can edit providers, packages, titles detail records',
       'eHoldings: Can view providers, packages, titles detail records',
       ' eHoldings: Can select/unselect packages and titles to/from your holdings']).then(userProperties => {
@@ -20,19 +21,29 @@ describe('eHoldings packages management', () => {
       cy.visit(TopMenu.eholdings);
       eHoldingSearch.switchToPackages();
       eHoldingsPackages.waitLoading();
+      eHoldingsPackagesSearch.bySelectionStatus(eHoldingsTitle.filterPackagesStatuses.notSelected);
+      eHoldingsPackagesSearch.byName();
+      eHoldingsPackages.openPackage();
+      eHoldingsPackage.addToHodlings();
+      eHoldingsPackage.verifyHoldingStatus();
+      eHoldingsPackage.filterTitles(eHoldingsPackage.filterTitlesStatuses.notSelected);
+      eHoldingsPackage.checkEmptyTitlesList();
+      // reset test data
+      eHoldingsPackage.removeFromHoldings();
     });
   });
 
-  it('C688 Add a title in a package to holdings', { tags:  [testType.smoke, feature.eHoldings] }, () => {
-    eHoldingsPackagesSearch.bySelectionStatus(eHoldingsTitle.filterPackagesStatuses.notSelected);
-    eHoldingsPackagesSearch.byName();
-    eHoldingsPackages.openPackage();
-    eHoldingsPackage.addToHodlings();
-    eHoldingsPackage.verifyHoldingStatus();
-    eHoldingsPackage.filterTitles(eHoldingsPackage.filterTitlesStatuses.notSelected);
-    eHoldingsPackage.checkEmptyTitlesList();
-    // reset test data
-    eHoldingsPackage.removeFromHoldings();
+  it.only('C3463 Add two tags to package [Edinburgh Scholarship Online]', { tags:  [testType.smoke, feature.eHoldings] }, () => {
+    cy.createTempUser(['eHoldings: Can edit providers, packages, titles detail records',
+      'Tags: All permissions']).then(userProperties => {
+      userId = userProperties.userId;
+      cy.login(userProperties.username, userProperties.password);
+      cy.visit(TopMenu.eholdings);
+      eHoldingSearch.switchToPackages();
+      eHoldingsPackages.waitLoading();
+      eHoldingsPackagesSearch.byName();
+      eHoldingsPackages.openPackage();
+    });
   });
 
   afterEach(() => {
