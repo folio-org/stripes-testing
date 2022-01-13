@@ -84,6 +84,7 @@ export default {
   },
 
   checkBudgetQuantity: (quantityValue) => {
+    // TODO: refactor using interactors (Mutli column list)
     cy.expect(
       Section({ id: budgetPaneId }).find(HTML(including('Cash balance: $' + quantityValue.toFixed(2)))).exists()
     );
@@ -99,6 +100,7 @@ export default {
   },
 
   checkTransaction: (value, fundCode) => {
+    // TODO: refactor using interactors (Mutli column list)
     cy.expect(
       Pane({ id: transactionResultPaneId }).find(HTML(including('$' + value.toFixed(2)))).exists()
     );

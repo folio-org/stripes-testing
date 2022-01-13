@@ -1,12 +1,13 @@
 import uuid from 'uuid';
 import getRandomPostfix from '../../../support/utils/stringTools';
-import NewFund from '../../../support/fragments/finance/funds/newFund';
 import Funds from '../../../support/fragments/finance/funds/funds';
 import { testType } from '../../../support/utils/tagTools';
 import FinanceHelp from '../../../support/fragments/finance/financeHelper';
 import TopMenu from '../../../support/fragments/topMenu';
+import newFund from '../../../support/fragments/finance/funds/newFund';
 
 describe('ui-finance: Fund creation', () => {
+  const fundDto = newFund.defaultFund;
   const ledger = {
     id: uuid(),
     name: `autotest_ledger_${getRandomPostfix()}`,
@@ -25,14 +26,10 @@ describe('ui-finance: Fund creation', () => {
     cy.getToken(Cypress.env('diku_login'), Cypress.env('diku_password'));
 
     cy.getAcqUnitsApi({ limit: 1 })
-      .then(({ body }) => {
-        ledger.acqUnitIds = [body.acquisitionsUnits[0].id];
-      });
+      .then(({ body }) => { ledger.acqUnitIds = [body.acquisitionsUnits[0].id]; });
 
     cy.getFiscalYearsApi({ limit: 1 })
-      .then(({ body }) => {
-        ledger.fiscalYearOneId = body.fiscalYears[0].id;
-      });
+      .then(({ body }) => { ledger.fiscalYearOneId = body.fiscalYears[0].id; });
 
     cy.visit(TopMenu.fundPath);
   });
@@ -41,6 +38,7 @@ describe('ui-finance: Fund creation', () => {
     cy.createLedgerApi({
       ...ledger
     });
+    fundDto.ledgerName = ledger.name;
   });
 
   afterEach(() => {
@@ -48,10 +46,8 @@ describe('ui-finance: Fund creation', () => {
   });
 
   it('C4052 should create new fund', { tags: [testType.smoke] }, () => {
-    const defaultFund = { ...NewFund.defaultFund };
-    defaultFund.ledgerName = ledger.name;
-    Funds.createFundViaUi(defaultFund);
-    Funds.checkCreatedFund(defaultFund.name);
+    Funds.createFundViaUi(fundDto);
+    Funds.checkCreatedFund(fundDto.name);
     Funds.deleteFundViaActions();
 
     // should not create fund without mandatory fields
