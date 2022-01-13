@@ -5,6 +5,7 @@ import Funds from '../../../support/fragments/finance/funds/funds';
 import { getCurrentFiscalYearCode } from '../../../support/utils/dateTools';
 import { testType } from '../../../support/utils/tagTools';
 import FinanceHelp from '../../../support/fragments/finance/financeHelper';
+import TopMenu from '../../../support/fragments/topMenu';
 
 describe('ui-finance: Delete budget from fund', () => {
   const currentBudgetSectionId = 'currentBudget';
@@ -54,34 +55,32 @@ describe('ui-finance: Delete budget from fund', () => {
     cy.deleteLedgerApi(ledger.id);
   });
 
-  it('C343211 should delete budget for a new fund', { tags: [testType.smoke] }, () => {
+  it('C343211 delete budget', { tags: [testType.smoke] }, () => {
     const defaultFund = { ...NewFund.defaultFund };
-    const zeroQuantity = 0;
-    const hundredQuantity = 100;
+    const quantityArray = [0, 100];
     defaultFund.ledgerName = ledger.name;
 
-    cy.visit('/finance/fund');
-    Funds.createDefaultFund(defaultFund);
+    cy.visit(TopMenu.fundPath);
+    Funds.createFundViaUi(defaultFund);
     Funds.checkCreatedFund(defaultFund.name);
 
-    Funds.addBudget(zeroQuantity);
-    Funds.checkCreatedBudget(defaultFund.code, getCurrentFiscalYearCode());
-    Funds.checkBudgetQuantity(zeroQuantity);
-    Funds.openTransactions();
-    // check empty transaction
-    FinanceHelp.checkZeroSearchResultsMessageLabel();
-    FinanceHelp.clickOnCloseIconButton();
-    Funds.deleteBudgetViaActions();
-    Funds.checkDeletedBudget(currentBudgetSectionId);
-
-    Funds.addBudget(hundredQuantity);
-    Funds.checkCreatedBudget(defaultFund.code, getCurrentFiscalYearCode());
-    Funds.checkBudgetQuantity(hundredQuantity);
-    Funds.openTransactions();
-    Funds.checkTransaction(hundredQuantity, defaultFund.code);
-    FinanceHelp.clickOnCloseIconButton();
-    Funds.deleteBudgetViaActions();
-    Funds.checkDeletedBudget(currentBudgetSectionId);
+    quantityArray.forEach(
+      quantity => {
+        Funds.addBudget(quantity);
+        Funds.checkCreatedBudget(defaultFund.code, getCurrentFiscalYearCode());
+        Funds.checkBudgetQuantity(quantity);
+        Funds.openTransactions();
+        if (quantity === 0) {
+          // check empty transaction
+          FinanceHelp.checkZeroSearchResultsMessage();
+        } else {
+          Funds.checkTransaction(quantity, defaultFund.code);
+        }
+        FinanceHelp.clickOnCloseIconButton();
+        Funds.deleteBudgetViaActions();
+        Funds.checkDeletedBudget(currentBudgetSectionId);
+      }
+    );
 
     Funds.deleteFundViaActions();
     FinanceHelp.searchByName(defaultFund.name);

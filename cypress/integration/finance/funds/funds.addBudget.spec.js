@@ -5,6 +5,7 @@ import Funds from '../../../support/fragments/finance/funds/funds';
 import { getCurrentFiscalYearCode } from '../../../support/utils/dateTools';
 import { testType } from '../../../support/utils/tagTools';
 import FinanceHelp from '../../../support/fragments/finance/financeHelper';
+import TopMenu from '../../../support/fragments/topMenu';
 
 describe('ui-finance: Add budget to fund', () => {
   const ledger = {
@@ -56,8 +57,8 @@ describe('ui-finance: Add budget to fund', () => {
   it('C4057 should add budget for a new fund', { tags: [testType.smoke] }, () => {
     const defaultFund = { ...NewFund.defaultFund };
     defaultFund.ledgerName = ledger.name;
-    cy.visit('/finance/fund');
-    Funds.createDefaultFund(defaultFund);
+    cy.visit(TopMenu.fundPath);
+    Funds.createFundViaUi(defaultFund);
     Funds.checkCreatedFund(defaultFund.name);
     Funds.addBudget(0);
     Funds.checkCreatedBudget(defaultFund.code, getCurrentFiscalYearCode());

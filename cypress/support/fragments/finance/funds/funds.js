@@ -7,13 +7,15 @@ const zeroResultsFoundText = '0 records found';
 const budgetTitleXpath = '//*[@id="paneHeaderpane-budget-pane-title"]/h2/span';
 const noItemsMessage = 'The list contains no items';
 const viewTransactionsLinkXpath = '//a[text()="View transactions"]';
+const budgetPaneId = 'pane-budget';
+const transactionResultPaneId = 'transaction-results-pane';
 
 export default {
   waitForFundDetailsLoading : () => {
     cy.do(Section({ id: 'pane-fund-details' }).visible());
   },
 
-  createDefaultFund(fund) {
+  createFundViaUi(fund) {
     cy.do([
       Button('New').click(),
       TextField('Name*').fillIn(fund.name),
@@ -83,10 +85,10 @@ export default {
 
   checkBudgetQuantity: (quantityValue) => {
     cy.expect(
-      Section({ id: 'pane-budget' }).find(HTML(including('Cash balance: $' + quantityValue.toFixed(2)))).exists()
+      Section({ id: budgetPaneId }).find(HTML(including('Cash balance: $' + quantityValue.toFixed(2)))).exists()
     );
     cy.expect(
-      Section({ id: 'pane-budget' }).find(HTML(including('Available balance: $' + quantityValue.toFixed(2)))).exists()
+      Section({ id: budgetPaneId }).find(HTML(including('Available balance: $' + quantityValue.toFixed(2)))).exists()
     );
   },
 
@@ -98,10 +100,10 @@ export default {
 
   checkTransaction: (value, fundCode) => {
     cy.expect(
-      Pane({ id: 'transaction-results-pane' }).find(HTML(including('$' + value.toFixed(2)))).exists()
+      Pane({ id: transactionResultPaneId }).find(HTML(including('$' + value.toFixed(2)))).exists()
     );
     cy.expect(
-      Section({ id: 'transaction-results-pane' }).find(HTML(including(fundCode))).exists()
+      Section({ id: transactionResultPaneId }).find(HTML(including(fundCode))).exists()
     );
   },
 

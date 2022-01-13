@@ -41,7 +41,7 @@ export default {
     ]);
   },
 
-  checkZeroSearchResultsMessageLabel : () => {
+  checkZeroSearchResultsMessage : () => {
     cy.xpath(noResultsMessageLabel)
       .should('be.visible')
       .and('have.text', chooseAFilterMessage);

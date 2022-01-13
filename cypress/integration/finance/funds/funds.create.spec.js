@@ -50,7 +50,7 @@ describe('ui-finance: Fund creation', () => {
   it('C4052 should create new fund', { tags: [testType.smoke] }, () => {
     const defaultFund = { ...NewFund.defaultFund };
     defaultFund.ledgerName = ledger.name;
-    Funds.createDefaultFund(defaultFund);
+    Funds.createFundViaUi(defaultFund);
     Funds.checkCreatedFund(defaultFund.name);
     Funds.deleteFundViaActions();
 

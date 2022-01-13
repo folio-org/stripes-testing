@@ -66,7 +66,7 @@ describe('ui-finance: Funds list search and filter', () => {
   });
 
   it('C4059 should return funds according to fund filters', { tags: [testType.smoke] }, function () {
-    FinanceHelp.checkZeroSearchResultsMessageLabel();
+    FinanceHelp.checkZeroSearchResultsMessage();
 
     Funds.checkFundFilters(ledger.name, fundType.name, 'Active', aUnit.name,
       tag.label, group.name, fund.name);
