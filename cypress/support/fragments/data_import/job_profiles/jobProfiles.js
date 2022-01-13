@@ -4,7 +4,7 @@ import { getLongDelay } from '../../../utils/cypressTools';
 const actionsButton = Button('Actions');
 
 export default {
-  createNewJobProfile: () => {
+  openNewJobProfileForm: () => {
     cy.do([
       actionsButton.click(),
       Button('New job profile').click(),
@@ -33,11 +33,13 @@ export default {
     cy.expect(actionsButton.exists());
   },
 
-  runImportFile:() => {
+  runImportFile:(fileName) => {
     cy.do([
       actionsButton.click(),
       Button('Run').click(),
       Modal('Are you sure you want to run this job?').find(Button('Run')).click(),
     ]);
+
+    cy.expect(MultiColumnListCell(fileName).exists());
   },
 };

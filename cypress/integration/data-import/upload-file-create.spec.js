@@ -13,9 +13,16 @@ import jobProfiles from '../../support/fragments/data_import/job_profiles/jobPro
 import { testType } from '../../support/utils/tagTools';
 
 describe('ui-data-import: MARC file import with creating of the new instance, holding and item', () => {
+  // unique file name to upload
+  const fileName = `autoTest.${getRandomPostfix()}.mrc`;
+
   before('navigates to Settings', () => {
-    cy.login(Cypress.env('diku_login'), Cypress.env('diku_password'));
+    cy.login(
+      Cypress.env('diku_login'),
+      Cypress.env('diku_password')
+    );
   });
+
   it('C343334 MARC file import with creating a new mapping profiles, action profiles and job profile', { tags: [testType.smoke] }, () => {
     const collectionOfProfiles = [
       { mappingProfile: { typeValue : NewFieldMappingProfile.folioRecordTypeValue.instance },
@@ -45,19 +52,19 @@ describe('ui-data-import: MARC file import with creating of the new instance, ho
     });
 
     SettingsDataImport.goToJobProfile();
-    jobProfiles.createNewJobProfile();
+    jobProfiles.openNewJobProfileForm();
     NewJobProfile.fillJobProfile(specialJobProfile);
     collectionOfProfiles.map(element => element.actionProfile).forEach(actionProfile => {
-      NewJobProfile.selectActionProfile(actionProfile);
+      NewJobProfile.linkActionProfile(actionProfile);
     });
     NewJobProfile.clickSaveAndCloseButton();
     jobProfiles.waitLoadingList();
     jobProfiles.checkJobProfilePresented(specialJobProfile.profileName);
 
     dataImport.goToDataImport();
-    dataImport.uploadFile();
+    dataImport.uploadFile(fileName);
     jobProfiles.searchJobProfileForImport(specialJobProfile.profileName);
-    jobProfiles.runImportFile();
+    jobProfiles.runImportFile(fileName);
     logs.checkImportFile(specialJobProfile.profileName);
     logs.checkStatusOfJobProfile();
     logs.openJobProfile();
