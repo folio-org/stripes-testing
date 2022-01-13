@@ -5,7 +5,7 @@ import getRandomPostfix from '../utils/stringTools';
 const addFieldButton = Button({ ariaLabel : 'Add a new field' });
 const deleteFieldButton = Button({ ariaLabel : 'Delete this field' });
 const saveAndCloseButton = Button({ id:'quick-marc-record-save' });
-const confirmationModal = Modal({ id: 'quick-marc-confirm-modal', title:'Delete fields' });
+const confirmationModal = Modal({ id: 'quick-marc-confirm-modal' });
 const continueWithSaveButton = Modal().find(Button({ id: 'clickable-quick-marc-confirm-modal-confirm' }));
 
 const defaultFieldValues = {
@@ -46,7 +46,7 @@ const fillAllAvailableValues = (fieldContent, tag, initialRowsCount = InventoryI
   }
 };
 
-const addNewField = (fieldContent = defaultFieldValues.content, tag) => {
+const addNewField = (tag = defaultFieldValues.freeTags[0], fieldContent = defaultFieldValues.content) => {
   addRow();
   return fillAllAvailableValues(fieldContent, tag);
 };
@@ -55,7 +55,7 @@ const addNewField = (fieldContent = defaultFieldValues.content, tag) => {
 export default {
   addNewField,
 
-  addNewFieldWithSubField: () => addNewField(defaultFieldValues.contentWithSubfield),
+  addNewFieldWithSubField: (tag) => addNewField(tag, defaultFieldValues.contentWithSubfield),
 
   deletePenaltField:  () => {
     const shouldBeRemovedRowNumber = getInitialRowsCount() - 1;
@@ -112,5 +112,6 @@ export default {
   waitLoading:() => {
     cy.expect(Pane({ id: 'quick-marc-editor-pane' }).exists());
   },
-  getExistingLocation:() => defaultFieldValues.existingLocation
+  getExistingLocation:() => defaultFieldValues.existingLocation,
+  getFreeTags:() => defaultFieldValues.freeTags
 };
