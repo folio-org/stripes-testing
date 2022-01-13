@@ -1,6 +1,6 @@
 import TopMenu from '../../support/fragments/topMenu';
 import { testType } from '../../support/utils/tagTools';
-import eHoldingsSearch from '../../support/fragments/eholdings/eHoldingsSearch';
+import eHoldingsProvidersSearch from '../../support/fragments/eholdings/eHoldingsProvidersSearch';
 import eHoldingsProviders from '../../support/fragments/eholdings/eHoldingsProviders';
 import eHoldingsProviderView from '../../support/fragments/eholdings/eHoldingsProviderView';
 import eHoldingsProviderEdit from '../../support/fragments/eholdings/eHoldingsProviderEdit';
@@ -13,7 +13,7 @@ describe('ui-eholdings: Provider manage', () => {
   });
   it('C696 Edit proxy setting', { tags: [testType.smoke] }, () => {
     const specialProvider = 'Johns Hopkins University Press';
-    eHoldingsSearch.byProvider(specialProvider);
+    eHoldingsProvidersSearch.byProvider(specialProvider);
     eHoldingsProviders.viewProvider();
     eHoldingsProviderView.edit(specialProvider);
     eHoldingsProviderEdit.changeProxy().then(newProxy => {
