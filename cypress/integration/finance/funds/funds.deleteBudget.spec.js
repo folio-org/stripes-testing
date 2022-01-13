@@ -26,10 +26,8 @@ describe('ui-finance: Delete budget from fund', () => {
   before(() => {
     cy.login(Cypress.env('diku_login'), Cypress.env('diku_password'));
     cy.getToken(Cypress.env('diku_login'), Cypress.env('diku_password'));
-
     cy.getAcqUnitsApi({ limit: 1 })
       .then(({ body }) => { ledger.acqUnitIds = [body.acquisitionsUnits[0].id]; });
-
     cy.getFiscalYearsApi({ limit: 1 })
       .then(({ body }) => { ledger.fiscalYearOneId = body.fiscalYears[0].id; });
   });
@@ -47,11 +45,9 @@ describe('ui-finance: Delete budget from fund', () => {
 
   it('C343211 delete budget', { tags: [testType.smoke] }, () => {
     const quantityArray = [0, 100];
-
     cy.visit(TopMenu.fundPath);
     Funds.createFundViaUi(fundDto);
     Funds.checkCreatedFund(fundDto.name);
-
     quantityArray.forEach(
       quantity => {
         Funds.addBudget(quantity);
@@ -69,7 +65,6 @@ describe('ui-finance: Delete budget from fund', () => {
         Funds.checkDeletedBudget(currentBudgetSectionId);
       }
     );
-
     Funds.deleteFundViaActions();
     FinanceHelp.searchByName(fundDto.name);
     Funds.checkZeroSearchResultsHeader();

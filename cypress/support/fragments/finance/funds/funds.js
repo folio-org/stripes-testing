@@ -85,12 +85,8 @@ export default {
 
   checkBudgetQuantity: (quantityValue) => {
     // TODO: refactor using interactors (Mutli column list)
-    cy.expect(
-      Section({ id: budgetPaneId }).find(HTML(including('Cash balance: $' + quantityValue.toFixed(2)))).exists()
-    );
-    cy.expect(
-      Section({ id: budgetPaneId }).find(HTML(including('Available balance: $' + quantityValue.toFixed(2)))).exists()
-    );
+    cy.expect(Section({ id: budgetPaneId }).find(HTML(including('Cash balance: $' + quantityValue.toFixed(2)))).exists());
+    cy.expect(Section({ id: budgetPaneId }).find(HTML(including('Available balance: $' + quantityValue.toFixed(2)))).exists());
   },
 
   openTransactions: () => {
@@ -101,12 +97,8 @@ export default {
 
   checkTransaction: (value, fundCode) => {
     // TODO: refactor using interactors (Mutli column list)
-    cy.expect(
-      Pane({ id: transactionResultPaneId }).find(HTML(including('$' + value.toFixed(2)))).exists()
-    );
-    cy.expect(
-      Section({ id: transactionResultPaneId }).find(HTML(including(fundCode))).exists()
-    );
+    cy.expect(Pane({ id: transactionResultPaneId }).find(HTML(including('$' + value.toFixed(2)))).exists());
+    cy.expect(Section({ id: transactionResultPaneId }).find(HTML(including(fundCode))).exists());
   },
 
   deleteBudgetViaActions() {
