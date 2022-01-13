@@ -19,7 +19,10 @@ export default {
 
   addToHodlings: () => {
     cy.do(packageHoldingStatusSection.find(Button('Add package to holdings')).click());
+    //cy.pause();
     cy.do(confirmationModal.find(Button('Add package (all titles) to holdings')).click());
+    //cy.pause();
+    
     cy.expect(confirmationModal.absent());
   },
   filterTitles: (selectionStatus = filterTitlesStatuses.notSelected) => {

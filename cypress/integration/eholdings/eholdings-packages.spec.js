@@ -10,17 +10,21 @@ import eHoldingsPackage from '../../support/fragments/eholdings/eHoldingsPackage
 
 
 describe('eHoldings packages management', () => {
-  let userId = '';
+  // let userId = '';
   beforeEach(() => {
-    cy.createTempUser(['eHoldings: Can edit providers, packages, titles detail records',
-      'eHoldings: Can view providers, packages, titles detail records',
-      ' eHoldings: Can select/unselect packages and titles to/from your holdings']).then(userProperties => {
-      userId = userProperties.userId;
-      cy.login(userProperties.username, userProperties.password);
-      cy.visit(TopMenu.eholdings);
-      eHoldingSearch.switchToPackages();
-      eHoldingsPackages.waitLoading();
-    });
+    // cy.createTempUser(['eHoldings: Can edit providers, packages, titles detail records',
+    //   'eHoldings: Can view providers, packages, titles detail records',
+    //   ' eHoldings: Can select/unselect packages and titles to/from your holdings']).then(userProperties => {
+    //   userId = userProperties.userId;
+    //   cy.login(userProperties.username, userProperties.password);
+    //   cy.visit(TopMenu.eholdings);
+    //   eHoldingSearch.switchToPackages();
+    //   eHoldingsPackages.waitLoading();
+    // });
+    cy.login(Cypress.env('diku_login'), Cypress.env('diku_password'));
+    cy.visit(TopMenu.eholdings);
+    eHoldingSearch.switchToPackages();
+    eHoldingsPackages.waitLoading();
   });
 
   it('C688 Add a title in a package to holdings', { tags:  [testType.smoke, feature.eHoldings] }, () => {
@@ -35,7 +39,7 @@ describe('eHoldings packages management', () => {
     eHoldingsPackage.removeFromHoldings();
   });
 
-  afterEach(() => {
-    cy.deleteUser(userId);
-  });
+  // afterEach(() => {
+  //   cy.deleteUser(userId);
+  // });
 });
