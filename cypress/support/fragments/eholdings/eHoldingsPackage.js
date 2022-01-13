@@ -19,19 +19,19 @@ export default {
 
   addToHodlings: () => {
     cy.do(packageHoldingStatusSection.find(Button('Add package to holdings')).click());
-    //cy.pause();
+    cy.expect(confirmationModal.exists());
+    // TODO: remove static waiters after fix of https://issues.folio.org/browse/UIEH-1228
+    cy.wait(1000);
     cy.do(confirmationModal.find(Button('Add package (all titles) to holdings')).click());
-    //cy.pause();
-    
     cy.expect(confirmationModal.absent());
   },
   filterTitles: (selectionStatus = filterTitlesStatuses.notSelected) => {
     cy.do(titlesSection.find(Button({ icon: 'search' })).click());
-    const selectionStatusAccordion = titlesFilterModal.find(Accordion({ id: 'filter-titles-selected' }));
-
     cy.expect(titlesFilterModal.exists());
-    cy.do(selectionStatusAccordion
-      .find(RadioButton(selectionStatus)).click());
+    const selectionStatusAccordion = titlesFilterModal.find(Accordion({ id: 'filter-titles-selected' }));
+    const selectionStatusButton = selectionStatusAccordion.find(Button({ id: 'accordion-toggle-button-filter-titles-selected' }));
+    cy.do(selectionStatusButton.click());
+    cy.do(selectionStatusAccordion.find(RadioButton(selectionStatus)).click());
     cy.do(titlesFilterModal.find(Button('Search')).click());
     cy.expect(titlesFilterModal.absent());
   },
@@ -46,6 +46,8 @@ export default {
   removeFromHoldings:() => {
     cy.do(Button('Actions').click());
     cy.do(Button('Remove from holdings').click());
-    cy.do(confirmationModal.find(Button('Yes, remove')));
+    cy.expect(confirmationModal.exists());
+    cy.do(confirmationModal.find(Button('Yes, remove')).click());
+    cy.expect(confirmationModal.absent());
   }
 };
