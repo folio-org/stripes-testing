@@ -8,6 +8,8 @@ import {
 } from '../../../../interactors';
 import DataImportViewAllPage from './dataImportViewAllPage';
 import DateTools from '../../utils/dateTools';
+import FileManager from '../../utils/fileManager';
+import getRandomPostfix from '../../utils/stringTools';
 
 
 const getInstanceHRID = () => {
@@ -71,10 +73,26 @@ const checkInstanceDetails = () => {
   cy.expect(instanceStatusCode.has({ value: expectedStatus }));
 };
 
+const fileNameForExport = `test${getRandomPostfix()}.csv`;
 
 export default {
   getInstanceHRID,
   gotoInventory,
   searchInstanceByHRID,
   checkInstanceDetails,
+
+  createFileForExport() {
+    // Need time for download file TODO: think about how it can be fixed
+    cy.wait(Cypress.env('downloadTimeout'));
+
+    FileManager.findDownloadedFilesByMask('SearchInstanceUUIDs*')
+      .then((downloadedFilenames) => {
+        const lastDownloadedFilename = downloadedFilenames.sort()[downloadedFilenames.length - 1];
+
+        FileManager.readFile(lastDownloadedFilename)
+          .then((actualContent) => {
+            FileManager.createFile(`cypress/fixtures/${fileNameForExport}`, actualContent);
+          });
+      });
+  },
 };

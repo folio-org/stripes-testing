@@ -13,6 +13,7 @@ export default {
     cy.do(Button('Search').click());
     cy.expect(Accordion({ id: 'profileIdAny' }).find(Button({ id: 'accordion-toggle-button-profileIdAny' })).exists());
     cy.do(Accordion({ id: 'profileIdAny' }).find(Button({ id: 'accordion-toggle-button-profileIdAny' })).click());
+    // cy.wait(20000);
     cy.expect(Accordion({ id: 'profileIdAny' }).find(Selection()).exists());
     cy.do(Accordion({ id: 'profileIdAny' }).find(Selection()).choose(fileName));
     waitUntilSearchJobProfile(fileName);
@@ -24,5 +25,5 @@ export default {
 
   openJobProfile:() => {
     cy.do(MultiColumnListCell({ row: 0, columnIndex: 0 }).find(Button('oneMarcBib.mrc')).click());
-  }
+  },
 };

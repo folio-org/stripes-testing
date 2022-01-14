@@ -8,6 +8,8 @@ import jobProfiles from '../../support/fragments/data_import/job_profiles/jobPro
 import logs from '../../support/fragments/data_import/logs';
 import createdRecord from '../../support/fragments/data_import/createdRecord';
 import SearchInventory from '../../support/fragments/data_import/searchInventory';
+import inventorySearch from '../../support/fragments/inventory/inventorySearch';
+import TopMenu from '../../support/fragments/topMenu';
 
 describe('ui-data-import: MARC file upload with the update of instance, holding, and items', () => {
   const instanceMappingProfile = {
@@ -156,7 +158,7 @@ describe('ui-data-import: MARC file upload with the update of instance, holding,
     cy.createLinkedProfiles(testData);
   });
 
-  it('C343335 MARC file upload with the update of instance, holding, and items', { tags: [testType.smoke] }, () => {
+  it('C343335 MARC file upload with the update of instance, holding, and items', { tags: '@smoke' }, () => {
     dataImport.goToDataImport();
     dataImport.uploadFile();
     jobProfiles.searchJobProfileForImport(testData.jobProfile.profile.name);
@@ -167,11 +169,14 @@ describe('ui-data-import: MARC file upload with the update of instance, holding,
     createdRecord.checkCreatedItems();
 
     // open job profile and get Instance HRID using API
-    logs.openJobProfile(fileName);
     SearchInventory.getInstanceHRID().then(id => {
       SearchInventory.gotoInventory();
       SearchInventory.searchInstanceByHRID(id);
-      SearchInventory.checkInstanceDetails();
+
+      inventorySearch.saveUUIDs();
+      SearchInventory.createFileForExport();
+      cy.visit(TopMenu.dataExport);
+      dataImport.uploadFile();
     });
   });
 });
