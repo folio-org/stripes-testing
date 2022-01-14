@@ -2,7 +2,7 @@ import uuid from 'uuid';
 import getRandomPostfix from '../../../support/utils/stringTools';
 import NewFund from '../../../support/fragments/finance/funds/newFund';
 import Funds from '../../../support/fragments/finance/funds/funds';
-import { testType } from '../../../support/utils/tagTools';
+import testTypes from '../../../support/dictionary/testTypes';
 import FinanceHelp from '../../../support/fragments/finance/financeHelper';
 import TopMenu from '../../../support/fragments/topMenu';
 
@@ -47,7 +47,7 @@ describe('ui-finance: Fund creation', () => {
     cy.deleteLedgerApi(ledger.id);
   });
 
-  it('C4052 should create new fund', { tags: [testType.smoke] }, () => {
+  it('C4052 should create new fund', { tags: [testTypes.smoke] }, () => {
     const defaultFund = { ...NewFund.defaultFund };
     defaultFund.ledgerName = ledger.name;
     Funds.createDefaultFund(defaultFund);
