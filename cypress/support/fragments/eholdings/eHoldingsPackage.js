@@ -1,7 +1,6 @@
-import { Accordion, Button, Modal, Section, RadioButton, ListItem, HTML, including, Pane, MultiSelect, KeyValue, TextInput, MultiSelectOption } from '../../../../interactors';
+import { Accordion, Button, Modal, Section, RadioButton, HTML, including, MultiSelect, KeyValue, MultiSelectOption } from '../../../../interactors';
 import getRandomPostfix from '../../utils/stringTools';
 
-// const packagesSection = Section({ id: 'titleShowPackages' });
 const titlesFilterModal = Modal({ id : 'eholdings-details-view-search-modal' });
 const tagsSection = Section({ id: 'packageShowTags' });
 
