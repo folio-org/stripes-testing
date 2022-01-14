@@ -27,6 +27,8 @@ export default {
           .find(ListItem({ index: rowNumber })
             .find(Button())).click());
         eHoldingsPackage.waitLoading(specialPackage);
+        cy.wrap(specialPackage).as('selectedPackage');
       });
+    return cy.get('@selectedPackage');
   },
 };

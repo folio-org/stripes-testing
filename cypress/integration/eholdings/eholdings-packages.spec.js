@@ -33,16 +33,23 @@ describe('eHoldings packages management', () => {
     });
   });
 
-  it.only('C3463 Add two tags to package [Edinburgh Scholarship Online]', { tags:  [testType.smoke, feature.eHoldings] }, () => {
+  it('C3463 Add two tags to package [Edinburgh Scholarship Online]', { tags:  [testType.smoke, feature.eHoldings] }, () => {
     cy.createTempUser(['eHoldings: Can edit providers, packages, titles detail records',
       'Tags: All permissions']).then(userProperties => {
       userId = userProperties.userId;
       cy.login(userProperties.username, userProperties.password);
       cy.visit(TopMenu.eholdings);
       eHoldingSearch.switchToPackages();
-      eHoldingsPackages.waitLoading();
       eHoldingsPackagesSearch.byName();
-      eHoldingsPackages.openPackage();
+      eHoldingsPackages.openPackage()
+        .then(selectedPackage => {
+          const addedTag1 = eHoldingsPackage.addTag();
+          const addedTag2 = eHoldingsPackage.addTag();
+          eHoldingsPackage.close(selectedPackage);
+          eHoldingsPackagesSearch.byName(selectedPackage);
+          eHoldingsPackages.openPackage();
+          eHoldingsPackage.verifyExistingTags(addedTag1, addedTag2);
+        });
     });
   });
 
