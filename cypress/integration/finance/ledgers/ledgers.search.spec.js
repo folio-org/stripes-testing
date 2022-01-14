@@ -51,7 +51,7 @@ describe('ui-finance: Ledger list search and filters', () => {
   });
 
   it('C4061 should return ledgers according to ledgers filters and search by all indexes', { tags: [testTypes.smoke] }, function () {
-    FinanceHelp.checkZeroSearchResultsMessageLabel();
+    FinanceHelp.checkZeroSearchResultsMessage();
 
     // search by acquisition units, name and status
     Ledgers.searchByStatusUnitsAndName('Frozen', aUnit.name, ledger.name);
