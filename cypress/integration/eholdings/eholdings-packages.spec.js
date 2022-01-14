@@ -1,21 +1,24 @@
 /// <reference types="cypress" />
 
-import { testType, feature } from '../../support/utils/tagTools';
+import testType from '../../support/dictionary/testTypes';
 import TopMenu from '../../support/fragments/topMenu';
 import eHoldingsPackages from '../../support/fragments/eholdings/eHoldingsPackages';
 import eHoldingsTitle from '../../support/fragments/eholdings/eHoldingsTitle';
 import eHoldingSearch from '../../support/fragments/eholdings/eHoldingsSearch';
 import eHoldingsPackagesSearch from '../../support/fragments/eholdings/eHoldingsPackagesSearch';
 import eHoldingsPackage from '../../support/fragments/eholdings/eHoldingsPackage';
+import permissions from '../../support/dictionary/permissions';
+import features from '../../support/dictionary/features';
 
 
 describe('eHoldings packages management', () => {
   let userId = '';
 
-  it('C688 Add a title in a package to holdings', { tags:  [testType.smoke, feature.eHoldings] }, () => {
-    cy.createTempUser(['eHoldings: Can edit providers, packages, titles detail records',
-      'eHoldings: Can view providers, packages, titles detail records',
-      ' eHoldings: Can select/unselect packages and titles to/from your holdings']).then(userProperties => {
+  it('C688 Add a title in a package to holdings', { tags:  [testType.smoke, features.eHoldings] }, () => {
+    cy.createTempUser([permissions.uieHoldingsRecordsEdit.gui,
+      permissions.uieHoldingsPackageTitleSelectUnselect.gui,
+      permissions.moduleeHoldingsEnabled.gui
+    ]).then(userProperties => {
       userId = userProperties.userId;
       cy.login(userProperties.username, userProperties.password);
       cy.visit(TopMenu.eholdings);
@@ -33,7 +36,7 @@ describe('eHoldings packages management', () => {
     });
   });
 
-  it('C3463 Add two tags to package [Edinburgh Scholarship Online]', { tags:  [testType.smoke, feature.eHoldings] }, () => {
+  it('C3463 Add two tags to package [Edinburgh Scholarship Online]', { tags:  [testType.smoke, features.eHoldings] }, () => {
     cy.createTempUser(['eHoldings: Can edit providers, packages, titles detail records',
       'Tags: All permissions']).then(userProperties => {
       userId = userProperties.userId;

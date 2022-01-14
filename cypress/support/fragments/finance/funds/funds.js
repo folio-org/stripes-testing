@@ -1,17 +1,21 @@
-import { Button, TextField, Selection, SelectionList, Accordion, Modal, Checkbox, MultiSelect, SearchField, Section } from '../../../../../interactors';
+import { Button, TextField, Selection, SelectionList, Accordion, Modal, Checkbox, MultiSelect, SearchField, Section, HTML, including, KeyValue, Pane } from '../../../../../interactors';
 import { statusActive, statusInactive, statusFrozen } from '../financeHelper';
 
 const createdFundNameXpath = '//*[@id="paneHeaderpane-fund-details-pane-title"]/h2/span';
 const numberOfSearchResultsHeader = '//*[@id="paneHeaderfund-results-pane-subtitle"]/span';
 const zeroResultsFoundText = '0 records found';
 const budgetTitleXpath = '//*[@id="paneHeaderpane-budget-pane-title"]/h2/span';
+const noItemsMessage = 'The list contains no items';
+const viewTransactionsLinkXpath = '//a[text()="View transactions"]';
+const budgetPaneId = 'pane-budget';
+const transactionResultPaneId = 'transaction-results-pane';
 
 export default {
   waitForFundDetailsLoading : () => {
     cy.do(Section({ id: 'pane-fund-details' }).visible());
   },
 
-  createDefaultFund(fund) {
+  createFundViaUi(fund) {
     cy.do([
       Button('New').click(),
       TextField('Name*').fillIn(fund.name),
@@ -79,6 +83,24 @@ export default {
       .and('have.text', fundCode.concat('-', fiscalYear));
   },
 
+  checkBudgetQuantity: (quantityValue) => {
+    // TODO: refactor using interactors (Mutli column list)
+    cy.expect(Section({ id: budgetPaneId }).find(HTML(including('Cash balance: $' + quantityValue.toFixed(2)))).exists());
+    cy.expect(Section({ id: budgetPaneId }).find(HTML(including('Available balance: $' + quantityValue.toFixed(2)))).exists());
+  },
+
+  openTransactions: () => {
+    cy.expect(Section({ id: 'information' }).find(KeyValue('Transactions')).exists());
+    // TODO: refactor via using interactors. Simple click() doesn't work, need to find a way to work with child
+    cy.xpath(viewTransactionsLinkXpath).click();
+  },
+
+  checkTransaction: (value, fundCode) => {
+    // TODO: refactor using interactors (Mutli column list)
+    cy.expect(Pane({ id: transactionResultPaneId }).find(HTML(including('$' + value.toFixed(2)))).exists());
+    cy.expect(Section({ id: transactionResultPaneId }).find(HTML(including(fundCode))).exists());
+  },
+
   deleteBudgetViaActions() {
     cy.do([
       Button('Actions').click(),
@@ -86,6 +108,12 @@ export default {
       Button('Delete', { id:'clickable-budget-remove-confirmation-confirm' }).click()
     ]);
     this.waitForFundDetailsLoading();
+  },
+
+  checkDeletedBudget: (budgetSectionId) => {
+    cy.expect(
+      Section({ id: budgetSectionId }).find(HTML(including(noItemsMessage))).exists()
+    );
   },
 
   resetFundFilters: () => {

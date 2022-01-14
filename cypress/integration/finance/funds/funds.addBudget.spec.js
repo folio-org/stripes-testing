@@ -1,12 +1,14 @@
 import uuid from 'uuid';
 import getRandomPostfix from '../../../support/utils/stringTools';
-import NewFund from '../../../support/fragments/finance/funds/newFund';
+import newFund from '../../../support/fragments/finance/funds/newFund';
 import Funds from '../../../support/fragments/finance/funds/funds';
 import { getCurrentFiscalYearCode } from '../../../support/utils/dateTools';
-import { testType } from '../../../support/utils/tagTools';
 import FinanceHelp from '../../../support/fragments/finance/financeHelper';
+import testTypes from '../../../support/dictionary/testTypes';
+import TopMenu from '../../../support/fragments/topMenu';
 
 describe('ui-finance: Add budget to fund', () => {
+  const fundDto = newFund.defaultFund;
   const ledger = {
     id: uuid(),
     name: `autotest_ledger_${getRandomPostfix()}`,
@@ -47,23 +49,22 @@ describe('ui-finance: Add budget to fund', () => {
     cy.createLedgerApi({
       ...ledger
     });
+    fundDto.ledgerName = ledger.name;
   });
 
   afterEach(() => {
     cy.deleteLedgerApi(ledger.id);
   });
 
-  it('C4057 should add budget for a new fund', { tags: [testType.smoke] }, () => {
-    const defaultFund = { ...NewFund.defaultFund };
-    defaultFund.ledgerName = ledger.name;
-    cy.visit('/finance/fund');
-    Funds.createDefaultFund(defaultFund);
-    Funds.checkCreatedFund(defaultFund.name);
+  it('C4057 should add budget for a new fund', { tags: [testTypes.smoke] }, () => {
+    cy.visit(TopMenu.fundPath);
+    Funds.createFundViaUi(fundDto);
+    Funds.checkCreatedFund(fundDto.name);
     Funds.addBudget(0);
-    Funds.checkCreatedBudget(defaultFund.code, getCurrentFiscalYearCode());
+    Funds.checkCreatedBudget(fundDto.code, getCurrentFiscalYearCode());
     Funds.deleteBudgetViaActions();
     Funds.deleteFundViaActions();
-    FinanceHelp.searchByName(defaultFund.name);
+    FinanceHelp.searchByName(fundDto.name);
     Funds.checkZeroSearchResultsHeader();
   });
 });

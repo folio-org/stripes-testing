@@ -4,7 +4,7 @@ import TopMenu from '../../../support/fragments/topMenu';
 import Funds from '../../../support/fragments/finance/funds/funds';
 import FinanceHelp from '../../../support/fragments/finance/financeHelper';
 import { MultiColumnList } from '../../../../interactors';
-import { testType } from '../../../support/utils/tagTools';
+import testTypes from '../../../support/dictionary/testTypes';
 
 describe('ui-finance: Funds list search and filter', () => {
   let aUnit;
@@ -65,8 +65,8 @@ describe('ui-finance: Funds list search and filter', () => {
     cy.deleteFundApi(fund.id);
   });
 
-  it('C4059 should return funds according to fund filters', { tags: [testType.smoke] }, function () {
-    FinanceHelp.checkZeroSearchResultsMessageLabel();
+  it('C4059 should return funds according to fund filters', { tags: [testTypes.smoke] }, function () {
+    FinanceHelp.checkZeroSearchResultsMessage();
 
     Funds.checkFundFilters(ledger.name, fundType.name, 'Active', aUnit.name,
       tag.label, group.name, fund.name);
