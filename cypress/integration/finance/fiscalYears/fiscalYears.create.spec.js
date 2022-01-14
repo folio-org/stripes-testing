@@ -2,7 +2,7 @@ import TopMenu from '../../../support/fragments/topMenu';
 import NewFiscalYear from '../../../support/fragments/finance/fiscalYears/newFiscalYear';
 import FiscalYears from '../../../support/fragments/finance/fiscalYears/fiscalYears';
 import getRandomPostfix from '../../../support/utils/stringTools';
-import { testType } from '../../../support/utils/tagTools';
+import testTypes from '../../../support/dictionary/testTypes';
 import FinanceHelp from '../../../support/fragments/finance/financeHelper';
 
 describe('ui-finance: Fiscal Year creation', () => {
@@ -11,7 +11,7 @@ describe('ui-finance: Fiscal Year creation', () => {
     cy.visit(TopMenu.fiscalYearPath);
   });
 
-  it('C4051 should create new fiscal year', { tags: [testType.smoke] }, () => {
+  it('C4051 should create new fiscal year', { tags: [testTypes.smoke] }, () => {
     const defaultFiscalYear = { ...NewFiscalYear.defaultFiscalYear };
     FiscalYears.createDefaultFiscalYear(defaultFiscalYear);
     FiscalYears.checkCreatedFiscalYear(defaultFiscalYear.name);
