@@ -1,6 +1,5 @@
-import { Accordion, Button, Modal, Section, RadioButton, ListItem, HTML, including, Pane, MultiSelect, KeyValue } from '../../../../interactors';
+import { Accordion, Button, Modal, Section, RadioButton, HTML, including, KeyValue } from '../../../../interactors';
 
-// const packagesSection = Section({ id: 'titleShowPackages' });
 const titlesFilterModal = Modal({ id : 'eholdings-details-view-search-modal' });
 
 const filterTitlesStatuses = { all: 'All',

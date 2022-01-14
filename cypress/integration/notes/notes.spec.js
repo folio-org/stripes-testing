@@ -5,7 +5,8 @@ import AgreementDetails from '../../support/fragments/agreements/agreementsDetai
 import TopMenu from '../../support/fragments/topMenu';
 import NewNote from '../../support/fragments/notes/newNote';
 import ExistingNoteView from '../../support/fragments/notes/existingNoteView';
-import { testType, feature } from '../../support/utils/tagTools';
+import testTypes from '../../support/dictionary/testTypes';
+import features from '../../support/dictionary/features';
 
 describe('Note creation', () => {
   const longNote = { ...NewNote.defaultNote };
@@ -27,7 +28,7 @@ describe('Note creation', () => {
     Agreements.selectRecord();
     AgreementDetails.openNotesSection();
   });
-  it('C1296 Create a note', { tags: [testType.smoke, feature.notes] }, () => {
+  it('C1296 Create a note', { tags: [testTypes.smoke, features.notes] }, () => {
     AgreementDetails.createNote(longNote);
     Agreements.selectRecord();
     AgreementDetails.waitLoadingWithExistingNote(longNote.title);
@@ -36,7 +37,7 @@ describe('Note creation', () => {
     AgreementDetails.specialNotePresented(longNote.title);
   });
 
-  it('C1299 Edit a note', { tags: [testType.smoke, feature.notes] }, () => {
+  it('C1299 Edit a note', { tags: [testTypes.smoke, features.notes] }, () => {
     const specialNote = NewNote.defaultNote;
     AgreementDetails.createNote(specialNote);
     Agreements.selectRecord();
@@ -55,7 +56,7 @@ describe('Note creation', () => {
     AgreementDetails.specialNotePresented(updatedNote.title);
   });
 
-  it('C16992 View a note', { tags: [testType.smoke, feature.notes] }, () => {
+  it('C16992 View a note', { tags: [testTypes.smoke, features.notes] }, () => {
     AgreementDetails.createNote(longNote);
     Agreements.selectRecord();
     AgreementDetails.waitLoadingWithExistingNote(longNote.title);

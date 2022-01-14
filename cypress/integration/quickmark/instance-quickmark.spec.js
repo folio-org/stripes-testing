@@ -6,7 +6,8 @@ import InventoryInstance from '../../support/fragments/inventory/inventoryInstan
 import QuickMarcEditor from '../../support/fragments/quickMarcEditor';
 import InventoryViewSource from '../../support/fragments/inventory/inventoryViewSource';
 import InventoryInstanceEdit from '../../support/fragments/inventory/InventoryInstanceEdit';
-import { testType, feature } from '../../support/utils/tagTools';
+import testTypes from '../../support/dictionary/testTypes';
+import features from '../../support/dictionary/features';
 
 // TODO: redesign test to exclude repeated steps
 describe('Manage inventory Bib records with quickMarc editor', () => {
@@ -15,7 +16,7 @@ describe('Manage inventory Bib records with quickMarc editor', () => {
     cy.login(Cypress.env('diku_login'), Cypress.env('diku_password'));
     cy.visit(TopMenu.inventoryPath);
   });
-  it('C10950 Edit and save a MARC record in quickMARC', { tags: [testType.smoke, feature.quickMarcEditor] }, () => {
+  it('C10950 Edit and save a MARC record in quickMARC', { tags: [testTypes.smoke, features.quickMarcEditor] }, () => {
     InventoryActions.import();
     InventoryInstance.goToEditMARCBiblRecord();
 
@@ -32,7 +33,7 @@ describe('Manage inventory Bib records with quickMarc editor', () => {
     });
   });
 
-  it('C10924 Add a field to a record using quickMARC', { tags: [testType.smoke, feature.quickMarcEditor] }, () => {
+  it('C10924 Add a field to a record using quickMARC', { tags: [testTypes.smoke, features.quickMarcEditor] }, () => {
     InventoryActions.import();
     InventoryInstance.goToEditMARCBiblRecord();
     QuickMarcEditor.addRow();
@@ -50,7 +51,7 @@ describe('Manage inventory Bib records with quickMarc editor', () => {
     QuickMarcEditor.checkContent();
   });
 
-  it('C10928 Delete a field(s) from a record in quickMARC', { tags: [testType.smoke, feature.quickMarcEditor] }, () => {
+  it('C10928 Delete a field(s) from a record in quickMARC', { tags: [testTypes.smoke, features.quickMarcEditor] }, () => {
     InventoryActions.import();
     InventoryInstance.goToEditMARCBiblRecord();
     QuickMarcEditor.deletePenaltField().then(deletedTag => {
@@ -62,13 +63,13 @@ describe('Manage inventory Bib records with quickMarc editor', () => {
     });
   });
 
-  it('C10957 Attempt to delete a required field', { tags: [testType.smoke, feature.quickMarcEditor] }, () => {
+  it('C10957 Attempt to delete a required field', { tags: [testTypes.smoke, features.quickMarcEditor] }, () => {
     InventoryActions.import();
     InventoryInstance.goToEditMARCBiblRecord();
     QuickMarcEditor.checkRequiredFields();
   });
 
-  it('C10951 Add a 5XX field to a marc record in quickMARC', { tags: [testType.smoke, feature.quickMarcEditor] }, () => {
+  it('C10951 Add a 5XX field to a marc record in quickMARC', { tags: [testTypes.smoke, features.quickMarcEditor] }, () => {
     InventoryActions.import();
     InventoryInstance.overlaySourceBibRecord();
 
@@ -95,7 +96,7 @@ describe('Manage inventory Bib records with quickMarc editor', () => {
     InventoryInstance.checkInstanceNotes(testRecord.tagMeaning, testRecord.content);
   });
 
-  it('C345388 Derive a MARC bib record', { tags: [testType.smoke, feature.quickMarcEditor] }, () => {
+  it('C345388 Derive a MARC bib record', { tags: [testTypes.smoke, features.quickMarcEditor] }, () => {
     InventoryActions.import();
     // TODO: check the issue with reading in new version of interactors
     InventoryInstance.getAssignedHRID()
