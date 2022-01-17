@@ -14,7 +14,7 @@ import { testType } from '../../support/utils/tagTools';
 
 describe('ui-data-import: MARC file import with creating of the new instance, holding and item', () => {
   // unique file name to upload
-  const fileName = `autoTest.${getRandomPostfix()}.mrc`;
+  const fileName = `autotestFile.${getRandomPostfix()}.mrc`;
 
   before('navigates to Settings', () => {
     cy.login(
@@ -25,19 +25,29 @@ describe('ui-data-import: MARC file import with creating of the new instance, ho
 
   it('C343334 MARC file import with creating a new mapping profiles, action profiles and job profile', { tags: [testType.smoke] }, () => {
     const collectionOfProfiles = [
-      { mappingProfile: { typeValue : NewFieldMappingProfile.folioRecordTypeValue.instance },
-        actionProfile: { typeValue: NewActionProfile.folioRecordTypeValue.instance } },
-      { mappingProfile: { typeValue : NewFieldMappingProfile.folioRecordTypeValue.holdings,
-        location: NewFieldMappingProfile.permanentLocation.permanentLocation },
-      actionProfile: { typeValue: NewActionProfile.folioRecordTypeValue.holdings } },
-      { mappingProfile: { typeValue : NewFieldMappingProfile.folioRecordTypeValue.item,
-        material: NewFieldMappingProfile.materialType.materialType,
-        loan: NewFieldMappingProfile.permanentLoanType.type,
-        status: NewFieldMappingProfile.statusField.status },
-      actionProfile: { typeValue: NewActionProfile.folioRecordTypeValue.item } }];
+      {
+        mappingProfile: { typeValue : NewFieldMappingProfile.folioRecordTypeValue.instance },
+        actionProfile: { typeValue: NewActionProfile.folioRecordTypeValue.instance }
+      },
+      {
+        mappingProfile: {
+          typeValue : NewFieldMappingProfile.folioRecordTypeValue.holdings,
+          location: NewFieldMappingProfile.permanentLocation.permanentLocation
+        },
+        actionProfile: { typeValue: NewActionProfile.folioRecordTypeValue.holdings }
+      },
+      {
+        mappingProfile: {
+          typeValue : NewFieldMappingProfile.folioRecordTypeValue.item,
+          material: NewFieldMappingProfile.materialType.materialType,
+          loan: NewFieldMappingProfile.permanentLoanType.type,
+          status: NewFieldMappingProfile.statusField.status
+        },
+        actionProfile: { typeValue: NewActionProfile.folioRecordTypeValue.item }
+      }
+    ];
 
     const specialJobProfile = { ...NewJobProfile.defaultJobProfile };
-    specialJobProfile.acceptedDataType = NewJobProfile.acceptedDataType.dataType;
 
     collectionOfProfiles.forEach(profile => {
       profile.mappingProfile.name = `autotest${profile.mappingProfile.typeValue}${getRandomPostfix()}`;
@@ -54,7 +64,7 @@ describe('ui-data-import: MARC file import with creating of the new instance, ho
     SettingsDataImport.goToJobProfile();
     jobProfiles.openNewJobProfileForm();
     NewJobProfile.fillJobProfile(specialJobProfile);
-    collectionOfProfiles.map(element => element.actionProfile).forEach(actionProfile => {
+    collectionOfProfiles.forEach(({ actionProfile }) => {
       NewJobProfile.linkActionProfile(actionProfile);
     });
     NewJobProfile.clickSaveAndCloseButton();
@@ -67,7 +77,7 @@ describe('ui-data-import: MARC file import with creating of the new instance, ho
     jobProfiles.runImportFile(fileName);
     logs.checkImportFile(specialJobProfile.profileName);
     logs.checkStatusOfJobProfile();
-    logs.openJobProfile();
+    logs.openJobProfile(fileName);
     logs.checkCreatedItems();
     // TODO delete created data
   });

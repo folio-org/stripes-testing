@@ -6,7 +6,7 @@ const acceptedDataType = 'MARC';
 
 const defaultJobProfile = {
   profileName:  `autotestJobProfile${getRandomPostfix()}`,
-  dataType: acceptedDataType,
+  acceptedDataType,
 };
 
 export default {
@@ -17,7 +17,7 @@ export default {
   fillJobProfile: (specialJobProfile = defaultJobProfile) => {
     cy.do([
       TextField({ name:'profile.name' }).fillIn(specialJobProfile.profileName),
-      Select({ name:'profile.dataType' }).choose(acceptedDataType),
+      Select({ name:'profile.dataType' }).choose(specialJobProfile.acceptedDataType),
     ]);
   },
 

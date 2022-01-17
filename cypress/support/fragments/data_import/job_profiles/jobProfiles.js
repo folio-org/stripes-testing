@@ -1,7 +1,23 @@
 import { Button, TextField, MultiColumnListCell, Modal } from '../../../../../interactors';
 import { getLongDelay } from '../../../utils/cypressTools';
+import SettingsDataImport from '../settingsDataImport';
 
 const actionsButton = Button('Actions');
+
+const deleteJobProfile = (profileName) => {
+  SettingsDataImport.goToJobProfile();
+  cy.do(MultiColumnListCell(profileName).click());
+  cy.get('[data-pane-header-actions-dropdown]')
+    .should('have.length', 2)
+    .eq(1)
+    .click();
+  cy.do([
+    Button('Delete').click(),
+    Modal(`Delete "${profileName}" job profile?`).find(Button('Delete')).click(),
+  ]);
+
+  cy.expect(MultiColumnListCell(profileName).absent());
+};
 
 export default {
   openNewJobProfileForm: () => {
@@ -28,11 +44,6 @@ export default {
     cy.expect(MultiColumnListCell(jobProfileTitle).exists());
   },
 
-  selectJobProfile:(nameProfile) => {
-    cy.do(MultiColumnListCell(nameProfile).click());
-    cy.expect(actionsButton.exists());
-  },
-
   runImportFile:(fileName) => {
     cy.do([
       actionsButton.click(),
@@ -40,6 +51,9 @@ export default {
       Modal('Are you sure you want to run this job?').find(Button('Run')).click(),
     ]);
 
-    cy.expect(MultiColumnListCell(fileName).exists());
+    // wait until uploaded file is displayed in the list
+    cy.get('#job-logs-list', getLongDelay()).contains(fileName, getLongDelay());
   },
+
+  deleteJobProfile,
 };

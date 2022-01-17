@@ -4,24 +4,22 @@ import NewFieldMappingProfile from '../../support/fragments/data_import/mapping_
 import ActionProfiles from '../../support/fragments/data_import/action_profiles/actionProfiles';
 import SettingsDataImport from '../../support/fragments/data_import/settingsDataImport';
 import NewJobProfile from '../../support/fragments/data_import/job_profiles/newJobProfile';
-import getRandomPostfix from '../../support/utils/stringTools';
+import MatchProfiles from '../../support/fragments/data_import/match_profiles/match-profiles';
+import SearchInventory from '../../support/fragments/data_import/searchInventory';
 import dataImport from '../../support/fragments/data_import/dataImport';
 import logs from '../../support/fragments/data_import/logs';
 import jobProfiles from '../../support/fragments/data_import/job_profiles/jobProfiles';
-import { testType } from '../../support/utils/tagTools';
-import DataImportViewAllPage from '../../support/fragments/data_import/dataImportViewAllPage';
 import TopMenu from '../../support/fragments/topMenu';
-import MatchProfiles from '../../support/fragments/data_import/match_profiles/match-profiles';
-import SearchInventory from '../../support/fragments/data_import/searchInventory';
-
+import getRandomPostfix from '../../support/utils/stringTools';
+import { testType } from '../../support/utils/tagTools';
 
 describe('ui-data-import: MARC file import with matching for 999 ff field', () => {
   // unique file name to upload
-  const fileName = `autoTest.${getRandomPostfix()}.mrc`;
-  const mappingProfileName = `autotestMapping.${getRandomPostfix()}`;
-  const matchProfileName = `autotestMatch.${getRandomPostfix()}`;
-  const actionProfileName = `autotestAction.${getRandomPostfix()}`;
-  const jobProfileName = `autotestJob.${getRandomPostfix()}`;
+  const fileName = `autotestFile.${getRandomPostfix()}.mrc`;
+  const mappingProfileName = `autotestMappingProf.${getRandomPostfix()}`;
+  const matchProfileName = `autotestMatchProf.${getRandomPostfix()}`;
+  const actionProfileName = `autotestActionProf.${getRandomPostfix()}`;
+  const jobProfileName = `autotestJobProf.${getRandomPostfix()}`;
 
   before(() => {
     cy.login(
@@ -32,14 +30,28 @@ describe('ui-data-import: MARC file import with matching for 999 ff field', () =
       Cypress.env('diku_login'),
       Cypress.env('diku_password')
     );
-
-    cy.visit(TopMenu.dataImportPath);
   });
 
   it('C343343 MARC file import with matching for 999 ff field', { tags: testType.smoke }, () => {
     // create Match profile
+    const matchProfile = {
+      profileName: matchProfileName,
+      incomingRecordFields: {
+        field: '999',
+        in1: 'f',
+        in2: 'f',
+        subfield: 's'
+      },
+      existingRecordFields: {
+        field: '999',
+        in1: 'f',
+        in2: 'f',
+        subfield: 's'
+      },
+      matchCriterion: 'Exactly matches',
+    };
     SettingsDataImport.goToMatchProfile();
-    MatchProfiles.createMatchProfile(matchProfileName);
+    MatchProfiles.createMatchProfile(matchProfile);
 
     // create Field mapping profile
     const mappingProfile = {
@@ -78,14 +90,21 @@ describe('ui-data-import: MARC file import with matching for 999 ff field', () =
     jobProfiles.searchJobProfileForImport(jobProfileName);
     jobProfiles.runImportFile(fileName);
     logs.checkImportFile(jobProfileName);
-    logs.checkStatusOfJobProfile();
 
-    // open job profile and get Instance HRID using API
-    logs.openJobProfile(fileName);
-    SearchInventory.getInstanceHRID().then(id => {
-      SearchInventory.gotoInventory();
-      SearchInventory.searchInstanceByHRID(id);
-      SearchInventory.checkInstanceDetails();
-    });
+    // get Instance HRID through API
+    SearchInventory
+      .getInstanceHRID()
+      .then(id => {
+        SearchInventory.gotoInventory();
+        SearchInventory.searchInstanceByHRID(id);
+        // ensure the fields created in Field mapping profile exists in inventory
+        SearchInventory.checkInstanceDetails();
+
+        // clean up generated profiles
+        jobProfiles.deleteJobProfile(jobProfileName);
+        MatchProfiles.deleteMatchProfile(matchProfileName);
+        ActionProfiles.deleteActionProfile(actionProfileName);
+        FieldMappingProfiles.deleteFieldMappingProfile(mappingProfileName);
+      });
   });
 });

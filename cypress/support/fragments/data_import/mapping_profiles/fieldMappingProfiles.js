@@ -1,5 +1,6 @@
-import { Button, MultiColumnListCell, TextField } from '../../../../../interactors';
+import { Button, Modal, MultiColumnListCell, TextField } from '../../../../../interactors';
 import newMappingProfile from './newMappingProfile';
+import SettingsDataImport from '../settingsDataImport';
 
 const actionsButton = Button('Actions');
 
@@ -16,8 +17,22 @@ const closeViewModeForMappingProfile = () => {
   cy.do(iconButton.click());
 };
 
-export default {
+const deleteFieldMappingProfile = (profileName) => {
+  SettingsDataImport.goToMappingProfile();
+  cy.do(MultiColumnListCell(profileName).click());
+  cy.get('[data-pane-header-actions-dropdown]')
+    .should('have.length', 2)
+    .eq(1)
+    .click();
+  cy.do([
+    Button('Delete').click(),
+    Modal(`Delete "${profileName}" field mapping profile?`).find(Button('Delete')).click(),
+  ]);
 
+  cy.expect(MultiColumnListCell(profileName).absent());
+};
+
+export default {
   createMappingProfile:(mappingProfile) => {
     openNewMappingProfileForm();
     newMappingProfile.fillMappingProfile(mappingProfile);
@@ -30,4 +45,6 @@ export default {
     cy.do(Button('Search').click());
     cy.expect(MultiColumnListCell(mappingProfile).exists());
   },
+
+  deleteFieldMappingProfile
 };
