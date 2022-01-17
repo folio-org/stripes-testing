@@ -4,7 +4,7 @@ import Ledgers from '../../../support/fragments/finance/ledgers/ledgers';
 import FinanceHelp from '../../../support/fragments/finance/financeHelper';
 import TopMenu from '../../../support/fragments/topMenu';
 import { MultiColumnList } from '../../../../interactors';
-import { testType } from '../../../support/utils/tagTools';
+import testTypes from '../../../support/dictionary/testTypes';
 
 describe('ui-finance: Ledger list search and filters', () => {
   let aUnit;
@@ -50,8 +50,8 @@ describe('ui-finance: Ledger list search and filters', () => {
     cy.deleteLedgerApi(ledger.id);
   });
 
-  it('C4061 should return ledgers according to ledgers filters and search by all indexes', { tags: [testType.smoke] }, function () {
-    FinanceHelp.checkZeroSearchResultsMessageLabel();
+  it('C4061 should return ledgers according to ledgers filters and search by all indexes', { tags: [testTypes.smoke] }, function () {
+    FinanceHelp.checkZeroSearchResultsMessage();
 
     // search by acquisition units, name and status
     Ledgers.searchByStatusUnitsAndName('Frozen', aUnit.name, ledger.name);

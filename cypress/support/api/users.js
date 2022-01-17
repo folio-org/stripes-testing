@@ -1,3 +1,6 @@
+import uuid from 'uuid';
+import getRandomPostfix from '../utils/stringTools';
+
 Cypress.Commands.add('getUsers', (searchParams) => {
   cy
     .okapiRequest({
@@ -33,6 +36,15 @@ Cypress.Commands.add('getUserGroups', (searchParams) => {
     });
 });
 
+Cypress.Commands.add('getFirstUserGroupId', (searchParams) => {
+  cy.okapiRequest({
+    path: 'groups',
+    searchParams,
+  }).then((response) => {
+    return response.body.usergroups[0].id;
+  });
+});
+
 Cypress.Commands.add('deleteUser', (userId) => {
   cy
     .okapiRequest({
@@ -51,4 +63,50 @@ Cypress.Commands.add('createUserApi', (user) => {
     .then(({ body }) => {
       Cypress.env('user', body);
     });
+});
+
+Cypress.Commands.add('createTempUser', (permissions) => {
+  const userProperties = {
+    username: `cypressTestUser${getRandomPostfix()}`,
+    password: `Password${getRandomPostfix()}`,
+    userId:''
+  };
+
+  cy.getToken(Cypress.env('diku_login'), Cypress.env('diku_password'));
+
+  cy.getFirstUserGroupId({ limit: 1 })
+    .then((userGroupdId) => {
+      const userData = {
+        username: userProperties.username,
+        active: true,
+        barcode: uuid(),
+        personal: {
+          preferredContactTypeId: '002',
+          firstName: 'testPermFirst',
+          lastName: userProperties.username,
+          email: 'test@folio.org',
+        },
+        patronGroup: userGroupdId,
+        departments: []
+      };
+
+      const queryField = 'displayName';
+      cy.getPermissionsApi({ query: `(${queryField}="${permissions.join(`")or(${queryField}="`)}"))"` })
+        .then((permissionsResponse) => {
+          // Can be used to collect pairs of ui and backend permission names
+          // cy.log('Initial permissions=' + permissions);
+          // cy.log('internalPermissions=' + [...permissionsResponse.body.permissions.map(permission => permission.permissionName)]);
+          cy.createUserApi(userData)
+            .then((userCreateResponse) => {
+              userProperties.userId = userCreateResponse.body.id;
+              cy.setUserPassword(userProperties);
+              cy.addPermissionsToNewUserApi({
+                userId: userProperties.userId,
+                permissions : [...permissionsResponse.body.permissions.map(permission => permission.permissionName)]
+              });
+              cy.wrap(userProperties).as('userProperties');
+            });
+        });
+    });
+  return cy.get('@userProperties');
 });

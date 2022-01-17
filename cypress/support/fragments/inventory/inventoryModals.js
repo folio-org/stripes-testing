@@ -24,5 +24,15 @@ export default {
   verifyButtons() {
     buttonIsEnabled('Cancel');
     buttonIsEnabled('Save & close');
+  },
+
+  clickOnCheckboxes(count) {
+    for (let i = 0; i < count; i++) {
+      cy.do(getModalCheckboxByRow(i).click());
+    }
+  },
+
+  save() {
+    return cy.do(Modal().find(Button('Save & close')).click());
   }
 };
