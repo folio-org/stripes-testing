@@ -9,9 +9,8 @@ import SearchInventory from '../../support/fragments/data_import/searchInventory
 import dataImport from '../../support/fragments/data_import/dataImport';
 import logs from '../../support/fragments/data_import/logs';
 import jobProfiles from '../../support/fragments/data_import/job_profiles/jobProfiles';
-import TopMenu from '../../support/fragments/topMenu';
 import getRandomPostfix from '../../support/utils/stringTools';
-import { testType } from '../../support/utils/tagTools';
+import testTypes from '../../support/dictionary/testTypes';
 
 describe('ui-data-import: MARC file import with matching for 999 ff field', () => {
   // unique file name to upload
@@ -32,7 +31,7 @@ describe('ui-data-import: MARC file import with matching for 999 ff field', () =
     );
   });
 
-  it('C343343 MARC file import with matching for 999 ff field', { tags: testType.smoke }, () => {
+  it('C343343 MARC file import with matching for 999 ff field', { tags: testTypes.smoke }, () => {
     // create Match profile
     const matchProfile = {
       profileName: matchProfileName,

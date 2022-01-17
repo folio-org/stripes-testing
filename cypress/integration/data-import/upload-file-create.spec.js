@@ -23,7 +23,7 @@ describe('ui-data-import: MARC file import with creating of the new instance, ho
     );
   });
 
-  it('C343334 MARC file import with creating a new mapping profiles, action profiles and job profile', { tags: [testType.smoke] }, () => {
+  it('C343334 MARC file import with creating a new mapping profiles, action profiles and job profile', { tags: [testTypes.smoke] }, () => {
     const collectionOfProfiles = [
       {
         mappingProfile: { typeValue : NewFieldMappingProfile.folioRecordTypeValue.instance },
