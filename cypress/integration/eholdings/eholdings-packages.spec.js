@@ -36,7 +36,7 @@ describe('eHoldings packages management', () => {
     });
   });
 
-  it.only('C3463 Add two tags to package [Edinburgh Scholarship Online]', { tags:  [testType.smoke, features.eHoldings] }, () => {
+  it('C3463 Add two tags to package [Edinburgh Scholarship Online]', { tags:  [testType.smoke, features.eHoldings] }, () => {
     // TODO: "Tags: All permissions" doesn't have displayName. It's the reason why there is related permission name in response, see https://issues.folio.org/browse/UITAG-51
     cy.createTempUser([permissions.uieHoldingsRecordsEdit.gui,
       permissions.uiTagsPermissionAll.gui]).then(userProperties => {
