@@ -10,6 +10,7 @@ import createdRecord from '../../support/fragments/data_import/createdRecord';
 import SearchInventory from '../../support/fragments/data_import/searchInventory';
 import inventorySearch from '../../support/fragments/inventory/inventorySearch';
 import exportFile from '../../support/fragments/data-export/exportFile';
+import dataExportLogs from '../../support/fragments/data-export/dataExportLogs';
 import TopMenu from '../../support/fragments/topMenu';
 
 describe('ui-data-import: MARC file upload with the update of instance, holding, and items', () => {
@@ -180,7 +181,8 @@ describe('ui-data-import: MARC file upload with the update of instance, holding,
       SearchInventory.createFileForExport(fileNameForExport);
       cy.visit(TopMenu.dataExport);
       exportFile.uploadFile(fileNameForExport);
-      exportFile.exportWithDefaultInstancesJobProfile(fileNameForExport);
+      exportFile.exportWithDefaultInstancesJobProfile();
+      dataExportLogs.saveMarcFileForImport(fileNameForExport);
     });
   });
 });
