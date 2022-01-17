@@ -2,7 +2,7 @@ import uuid from 'uuid';
 import getRandomPostfix from '../../../support/utils/stringTools';
 import Funds from '../../../support/fragments/finance/funds/funds';
 import { getCurrentFiscalYearCode } from '../../../support/utils/dateTools';
-import { testType } from '../../../support/utils/tagTools';
+import testTypes from '../../../support/dictionary/testTypes';
 import FinanceHelp from '../../../support/fragments/finance/financeHelper';
 import TopMenu from '../../../support/fragments/topMenu';
 import newFund from '../../../support/fragments/finance/funds/newFund';
@@ -43,7 +43,7 @@ describe('ui-finance: Delete budget from fund', () => {
     cy.deleteLedgerApi(ledger.id);
   });
 
-  it('C343211 delete budget', { tags: [testType.smoke] }, () => {
+  it('C343211 delete budget', { tags: [testTypes.smoke] }, () => {
     const quantityArray = [0, 100];
     cy.visit(TopMenu.fundPath);
     Funds.createFundViaUi(fundDto);

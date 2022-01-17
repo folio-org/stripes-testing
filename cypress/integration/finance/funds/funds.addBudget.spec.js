@@ -3,8 +3,8 @@ import getRandomPostfix from '../../../support/utils/stringTools';
 import newFund from '../../../support/fragments/finance/funds/newFund';
 import Funds from '../../../support/fragments/finance/funds/funds';
 import { getCurrentFiscalYearCode } from '../../../support/utils/dateTools';
-import { testType } from '../../../support/utils/tagTools';
 import FinanceHelp from '../../../support/fragments/finance/financeHelper';
+import testTypes from '../../../support/dictionary/testTypes';
 import TopMenu from '../../../support/fragments/topMenu';
 
 describe('ui-finance: Add budget to fund', () => {
@@ -56,7 +56,7 @@ describe('ui-finance: Add budget to fund', () => {
     cy.deleteLedgerApi(ledger.id);
   });
 
-  it('C4057 should add budget for a new fund', { tags: [testType.smoke] }, () => {
+  it('C4057 should add budget for a new fund', { tags: [testTypes.smoke] }, () => {
     cy.visit(TopMenu.fundPath);
     Funds.createFundViaUi(fundDto);
     Funds.checkCreatedFund(fundDto.name);

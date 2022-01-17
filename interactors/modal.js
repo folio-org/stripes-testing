@@ -8,6 +8,7 @@ export default HTML.extend('modal')
   .locator(title)
   .filters({
     title,
+    id: (el) => el.getAttribute('id')
   })
   .actions({
     dismiss: (interactor) => interactor.find(Button({ ariaLabel: 'Dismiss modal' })).click(),
