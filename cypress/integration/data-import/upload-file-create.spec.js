@@ -8,7 +8,7 @@ import SettingsDataImport from '../../support/fragments/data_import/settingsData
 import NewJobProfile from '../../support/fragments/data_import/job_profiles/newJobProfile';
 import getRandomPostfix from '../../support/utils/stringTools';
 import dataImport from '../../support/fragments/data_import/dataImport';
-import logs from '../../support/fragments/data_import/logs';
+import dataImportLogs from '../../support/fragments/data_import/logs';
 import jobProfiles from '../../support/fragments/data_import/job_profiles/jobProfiles';
 import { testType } from '../../support/utils/tagTools';
 
@@ -58,10 +58,10 @@ describe('ui-data-import: MARC file import with creating of the new instance, ho
     dataImport.uploadFile();
     jobProfiles.searchJobProfileForImport(specialJobProfile.profileName);
     jobProfiles.runImportFile();
-    logs.checkImportFile(specialJobProfile.profileName);
-    logs.checkStatusOfJobProfile();
-    logs.openJobProfile();
-    logs.checkCreatedItems();
+    dataImportLogs.checkImportFile(specialJobProfile.profileName);
+    dataImportLogs.checkStatusOfJobProfile();
+    dataImportLogs.openJobProfile();
+    dataImportLogs.checkCreatedItems();
     // TODO delete created data
   });
 });

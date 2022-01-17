@@ -73,7 +73,7 @@ const checkInstanceDetails = () => {
   cy.expect(instanceStatusCode.has({ value: expectedStatus }));
 };
 
-const fileNameForExport = `test${getRandomPostfix()}.csv`;
+
 
 export default {
   getInstanceHRID,
@@ -81,7 +81,7 @@ export default {
   searchInstanceByHRID,
   checkInstanceDetails,
 
-  createFileForExport() {
+  createFileForExport(fileNameForExport) {
     // Need time for download file TODO: think about how it can be fixed
     cy.wait(Cypress.env('downloadTimeout'));
 

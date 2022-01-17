@@ -5,10 +5,11 @@ import { testType } from '../../support/utils/tagTools';
 import getRandomPostfix from '../../support/utils/stringTools';
 import dataImport from '../../support/fragments/data_import/dataImport';
 import jobProfiles from '../../support/fragments/data_import/job_profiles/jobProfiles';
-import logs from '../../support/fragments/data_import/logs';
+import dataImportLogs from '../../support/fragments/data_import/dataImportLogs';
 import createdRecord from '../../support/fragments/data_import/createdRecord';
 import SearchInventory from '../../support/fragments/data_import/searchInventory';
 import inventorySearch from '../../support/fragments/inventory/inventorySearch';
+import exportFile from '../../support/fragments/data-export/exportFile';
 import TopMenu from '../../support/fragments/topMenu';
 
 describe('ui-data-import: MARC file upload with the update of instance, holding, and items', () => {
@@ -149,6 +150,8 @@ describe('ui-data-import: MARC file upload with the update of instance, holding,
     jobProfile,
   };
 
+  const fileNameForExport = `test${getRandomPostfix()}.csv`;
+
   before('navigates to application', () => {
     cy.login(Cypress.env('diku_login'), Cypress.env('diku_password'));
     cy.getToken(Cypress.env('diku_login'), Cypress.env('diku_password'));
@@ -158,25 +161,26 @@ describe('ui-data-import: MARC file upload with the update of instance, holding,
     cy.createLinkedProfiles(testData);
   });
 
-  it('C343335 MARC file upload with the update of instance, holding, and items', { tags: '@smoke' }, () => {
+  it('C343335 MARC file upload with the update of instance, holding, and items', { tags: [testType.smoke] }, () => {
     dataImport.goToDataImport();
-    dataImport.uploadFile();
+    dataImport.uploadFile('oneMarcBib.mrc');
     jobProfiles.searchJobProfileForImport(testData.jobProfile.profile.name);
     jobProfiles.runImportFile();
-    logs.checkImportFile(testData.jobProfile.profile.name);
-    logs.checkStatusOfJobProfile();
-    logs.openJobProfile();
+    dataImportLogs.checkImportFile(testData.jobProfile.profile.name);
+    dataImportLogs.checkStatusOfJobProfile();
+    dataImportLogs.openJobProfile();
     createdRecord.checkCreatedItems();
 
     // open job profile and get Instance HRID using API
     SearchInventory.getInstanceHRID().then(id => {
-      SearchInventory.gotoInventory();
+      cy.visit(TopMenu.inventoryPath);
       SearchInventory.searchInstanceByHRID(id);
 
       inventorySearch.saveUUIDs();
-      SearchInventory.createFileForExport();
+      SearchInventory.createFileForExport(fileNameForExport);
       cy.visit(TopMenu.dataExport);
-      dataImport.uploadFile();
+      exportFile.uploadFile(fileNameForExport);
+      exportFile.exportWithDefaultInstancesJobProfile(fileNameForExport);
     });
   });
 });
