@@ -57,6 +57,25 @@ describe('eHoldings packages management', () => {
     });
   });
 
+  it('C690 Remove a package from your holdings', { tags:  [testType.smoke, features.eHoldings] }, () => {
+    cy.createTempUser([permissions.uieHoldingsRecordsEdit.gui,
+      permissions.uieHoldingsPackageTitleSelectUnselect.gui]).then(userProperties => {
+      userId = userProperties.userId;
+      cy.login(userProperties.username, userProperties.password);
+      cy.visit(TopMenu.eholdings);
+      eHoldingSearch.switchToPackages();
+      eHoldingsPackagesSearch.bySelectionStatus(eHoldingsTitle.filterPackagesStatuses.selected);
+      eHoldingsPackagesSearch.byName();
+      eHoldingsPackages.openPackage();
+      eHoldingsPackage.removeFromHoldings();
+      eHoldingsPackage.verifyHoldingStatus(eHoldingsPackage.filterTitlesStatuses.notSelected);
+      eHoldingsPackage.filterTitles(eHoldingsPackage.filterTitlesStatuses.selected);
+      eHoldingsPackage.checkEmptyTitlesList();
+      // reset test data
+      eHoldingsPackage.addToHodlings();
+    });
+  });
+
   afterEach(() => {
     cy.deleteUser(userId);
   });
