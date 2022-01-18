@@ -15,7 +15,7 @@ export default {
     cy.do(Section({ id: 'pane-fund-details' }).visible());
   },
 
-  createFundViaUi(fund) {
+  createFund(fund) {
     cy.do([
       Button('New').click(),
       TextField('Name*').fillIn(fund.name),
@@ -101,6 +101,22 @@ export default {
     cy.expect(Section({ id: transactionResultPaneId }).find(HTML(including(fundCode))).exists());
   },
 
+  transferAmount: (amount, fundFrom, fundTo) => {
+    cy.do([
+      Button('Actions').click(),
+      Button('Transfer').click()
+    ]);
+    cy.expect(Modal('Transfer').exists());
+    cy.do([
+      TextField('Amount*').fillIn(amount.toString()),
+      Selection('From').open(),
+      SelectionList().select((fundFrom.name).concat(' ', '(', fundFrom.code, ')')),
+      Selection('To').open(),
+      SelectionList().select((fundTo.name).concat(' ', '(', fundTo.code, ')')),
+      Button('Confirm').click()
+    ]);
+  },
+
   deleteBudgetViaActions() {
     cy.do([
       Button('Actions').click(),
@@ -108,6 +124,15 @@ export default {
       Button('Delete', { id:'clickable-budget-remove-confirmation-confirm' }).click()
     ]);
     this.waitForFundDetailsLoading();
+  },
+
+  tryToDeleteBudgetWithTransaction() {
+    cy.do([
+      Button('Actions').click(),
+      Button('Delete').click(),
+      Button('Delete', { id:'clickable-budget-remove-confirmation-confirm' }).click()
+    ]);
+    cy.expect(Section({ id: 'summary' }).exists());
   },
 
   checkDeletedBudget: (budgetSectionId) => {
