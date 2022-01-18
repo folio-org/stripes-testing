@@ -73,7 +73,6 @@ Cypress.Commands.add('createFundViaUI', (fund) => {
     acqUnitIds: '',
     fiscalYearOneId: ''
   };
-
   cy.getToken(Cypress.env('diku_login'), Cypress.env('diku_password'));
   cy.getAcqUnitsApi({ limit: 1 })
     .then(({ body }) => { ledger.acqUnitIds = [body.acquisitionsUnits[0].id]; });
@@ -87,7 +86,6 @@ Cypress.Commands.add('createFundViaUI', (fund) => {
   fund.ledgerName = ledger.name;
   cy.login(Cypress.env('diku_login'), Cypress.env('diku_password'));
   cy.visit(TopMenu.fundPath);
-  // create second fund + assign budget 0
   Funds.createFund(fund);
   Funds.checkCreatedFund(fund.name);
   cy.wrap(ledger).as('createdLedger');
