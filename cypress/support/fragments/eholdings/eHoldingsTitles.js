@@ -2,7 +2,6 @@ import { Button, ListItem, Section } from '../../../../interactors';
 import eHoldingsTitle from './eHoldingsTitle';
 import getRandomPostfix from '../../utils/stringTools';
 import eHoldingsNewCustomTitle from './eHoldingsNewCustomTitle';
-import eHoldingsResourceView from './eHoldingsResourceView';
 
 const resultSection = Section({ id: 'search-results' });
 const defaultPackage = 'e-book';
@@ -30,8 +29,7 @@ export default {
     eHoldingsNewCustomTitle.waitLoading();
     eHoldingsNewCustomTitle.fillInRequiredProperties(packageName, titleName);
     eHoldingsNewCustomTitle.saveAndClose();
-    eHoldingsResourceView.checkNames(packageName, titleName);
-
     return titleName;
-  }
+  },
+  defaultPackage
 };
