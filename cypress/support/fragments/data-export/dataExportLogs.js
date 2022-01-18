@@ -1,7 +1,9 @@
-import { MultiColumnListCell, Button, including } from '../../../../interactors';
+import { MultiColumnListCell, Button } from '../../../../interactors';
 
 export default {
-  saveMarcFileForImport:(fileName) => {
-    cy.do(MultiColumnListCell({ row: 0, columnIndex: 0 }).find(Button({ text: including(fileName) })).click());
+  saveMarcFileForImport:() => {
+    cy.do(MultiColumnListCell({ 'row': 0, 'columnIndex': 0 })
+      .find(Button())
+      .click());
   },
 };

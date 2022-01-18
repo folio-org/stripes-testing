@@ -13,7 +13,8 @@ export default {
     cy.do(Button('Search').click());
     cy.expect(Accordion({ id: 'profileIdAny' }).find(Button({ id: 'accordion-toggle-button-profileIdAny' })).exists());
     cy.do(Accordion({ id: 'profileIdAny' }).find(Button({ id: 'accordion-toggle-button-profileIdAny' })).click());
-    // cy.wait(20000);
+    // when the file is first imported, information is displayed for a very long time due to the architectural decision
+    cy.wait(20000);
     cy.expect(Accordion({ id: 'profileIdAny' }).find(Selection()).exists());
     cy.do(Accordion({ id: 'profileIdAny' }).find(Selection()).choose(fileName));
     waitUntilSearchJobProfile(fileName);

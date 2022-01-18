@@ -1,7 +1,7 @@
 
 /// <reference types="cypress" />
 
-import { testType } from '../../support/utils/tagTools';
+import testTypes from '../../support/dictionary/testTypes';
 import getRandomPostfix from '../../support/utils/stringTools';
 import dataImport from '../../support/fragments/data_import/dataImport';
 import jobProfiles from '../../support/fragments/data_import/job_profiles/jobProfiles';
@@ -162,8 +162,8 @@ describe('ui-data-import: MARC file upload with the update of instance, holding,
     cy.createLinkedProfiles(testData);
   });
 
-  it('C343335 MARC file upload with the update of instance, holding, and items', { tags: [testType.smoke] }, () => {
-    dataImport.goToDataImport();
+  it('C343335 MARC file upload with the update of instance, holding, and items', { tags: [testTypes.smoke] }, () => {
+    cy.visit(TopMenu.dataImportPath);
     dataImport.uploadFile('oneMarcBib.mrc');
     jobProfiles.searchJobProfileForImport(testData.jobProfile.profile.name);
     jobProfiles.runImportFile();
@@ -176,13 +176,18 @@ describe('ui-data-import: MARC file upload with the update of instance, holding,
     SearchInventory.getInstanceHRID().then(id => {
       cy.visit(TopMenu.inventoryPath);
       SearchInventory.searchInstanceByHRID(id);
-
-      inventorySearch.saveUUIDs();
-      SearchInventory.createFileForExport(fileNameForExport);
-      cy.visit(TopMenu.dataExport);
-      exportFile.uploadFile(fileNameForExport);
-      exportFile.exportWithDefaultInstancesJobProfile();
-      dataExportLogs.saveMarcFileForImport(fileNameForExport);
     });
+
+    inventorySearch.saveUUIDs();
+    // export .csv file
+    SearchInventory.createFileForExport(fileNameForExport);
+    cy.visit(TopMenu.dataExport);
+
+    // create .mrc file
+    exportFile.uploadFile(fileNameForExport);
+    exportFile.exportWithDefaultInstancesJobProfile();
+    dataExportLogs.saveMarcFileForImport();
+
+    
   });
 });

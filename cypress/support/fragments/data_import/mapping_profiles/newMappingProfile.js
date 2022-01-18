@@ -21,6 +21,15 @@ const holdingsType = 'Holdings';
 
 const itemType = 'Item';
 
+const defaultMapiingProfile = {
+  incomingRecordType:
+
+};
+
+const instanceMapiingProfile = {...defaultMapiingProfile};
+
+
+
 const defaultMappingProfile = {
   name: `autotest${folioRecordTypeValue.instance}${getRandomPostfix()}`,
   typeValue: folioRecordTypeValue.instance,
