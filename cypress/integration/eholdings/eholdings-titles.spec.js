@@ -3,6 +3,7 @@
 import eHoldingSearch from '../../support/fragments/eholdings/eHoldingsSearch';
 import eHoldingsTitle from '../../support/fragments/eholdings/eHoldingsTitle';
 import eHoldingsTitles from '../../support/fragments/eholdings/eHoldingsTitles';
+import eHoldingsTitlesSearch from '../../support/fragments/eholdings/eHoldingsTitlesSearch';
 import eHoldingsResourceView from '../../support/fragments/eholdings/eHoldingsResourceView';
 import TopMenu from '../../support/fragments/topMenu';
 import { Pane, Section, Button } from '../../../interactors';
@@ -21,9 +22,9 @@ describe('eHoldings titles management', () => {
     eHoldingSearch.switchToTitles();
   });
   it('C16994 Add a title in a package to holdings', { tags:  [testTypes.smoke, features.eHoldings] }, () => {
-    eHoldingSearch.bySubject('chemical engineering');
-    eHoldingSearch.byPublicationType('Journal');
-    eHoldingSearch.bySelectionStatus(eHoldingsTitle.filterPackagesStatuses.notSelected);
+    eHoldingsTitlesSearch.bySubject('chemical engineering');
+    eHoldingsTitlesSearch.byPublicationType('Journal');
+    eHoldingsTitlesSearch.bySelectionStatus(eHoldingsTitle.filterPackagesStatuses.notSelected);
     eHoldingsTitles.openTitle();
     eHoldingsTitle.waitPackagesLoading();
     eHoldingsTitle.filterPackages();
@@ -45,9 +46,9 @@ describe('eHoldings titles management', () => {
       publicationType: 'Journal',
       package: 'Taylor & Francis'
     };
-    eHoldingSearch.byTitle(selectedResource.title);
-    eHoldingSearch.byPublicationType(selectedResource.publicationType);
-    eHoldingSearch.bySelectionStatus(eHoldingsTitle.filterPackagesStatuses.selected);
+    eHoldingsTitlesSearch.byTitle(selectedResource.title);
+    eHoldingsTitlesSearch.byPublicationType(selectedResource.publicationType);
+    eHoldingsTitlesSearch.bySelectionStatus(eHoldingsTitle.filterPackagesStatuses.selected);
     eHoldingsTitles.openTitle();
     eHoldingsTitle.waitPackagesLoading();
     eHoldingsTitle.filterPackages(eHoldingsTitle.filterPackagesStatuses.selected, selectedResource.package);
@@ -75,9 +76,9 @@ describe('eHoldings titles management', () => {
     eHoldingsResourceEdit.removeExistingCustomeCoverageDates();
   });
   it('C691 Remove a title in a package from your holdings', { tags:  [testTypes.smoke, features.eHoldings] }, () => {
-    eHoldingSearch.bySubject('chemical engineering');
-    eHoldingSearch.byPublicationType('Journal');
-    eHoldingSearch.bySelectionStatus(eHoldingsTitle.filterPackagesStatuses.selected);
+    eHoldingsTitlesSearch.bySubject('chemical engineering');
+    eHoldingsTitlesSearch.byPublicationType('Journal');
+    eHoldingsTitlesSearch.bySelectionStatus(eHoldingsTitle.filterPackagesStatuses.selected);
     eHoldingsTitles.openTitle();
     eHoldingsTitle.waitPackagesLoading();
     eHoldingsTitle.filterPackages(eHoldingsTitle.filterPackagesStatuses.selected);
@@ -89,6 +90,7 @@ describe('eHoldings titles management', () => {
   });
 
   it('C693 Create a custom title.', { tags:  [testTypes.smoke, features.eHoldings] }, () => {
-    eHoldingsTitles.create();
+    const title = eHoldingsTitles.create();
+    eHoldingsResourceView.checkNames(eHoldingsTitles.defaultPackage, title);
   });
 });
