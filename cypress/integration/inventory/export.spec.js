@@ -3,7 +3,7 @@ import InventorySearch from '../../support/fragments/inventory/inventorySearch';
 import InventoryActions from '../../support/fragments/inventory/inventoryActions';
 import FileManager from '../../support/utils/fileManager';
 import DataExportResults from '../../support/fragments/data-export/dataExportResults';
-import { testType } from '../../support/utils/tagTools';
+import testTypes from '../../support/dictionary/testTypes';
 import { Checkbox } from '../../../interactors';
 
 
@@ -13,7 +13,7 @@ describe('inventory: exports', () => {
     cy.visit(TopMenu.inventoryPath);
   });
 
-  it('C9284 verifies export UUIDs instances', { tags: [testType.smoke] }, () => {
+  it('C9284 verifies export UUIDs instances', { tags: [testTypes.smoke] }, () => {
     InventorySearch.byEffectiveLocation();
     InventorySearch.saveUUIDs();
 
@@ -30,7 +30,7 @@ describe('inventory: exports', () => {
     });
   });
 
-  it('C9287 verifies export CQL query', { tags: [testType.smoke] }, () => {
+  it('C9287 verifies export CQL query', { tags: [testTypes.smoke] }, () => {
     InventorySearch.byLanguage();
     InventorySearch.byKeywords();
     InventorySearch.byEffectiveLocation();
@@ -43,7 +43,7 @@ describe('inventory: exports', () => {
     );
   });
 
-  it('C196757 verifies export instances (MARC)', { tags: [testType.smoke] }, () => {
+  it('C196757 verifies export instances (MARC)', { tags: [testTypes.smoke] }, () => {
     InventorySearch.byEffectiveLocation();
     cy.do(InventorySearch.getSearchResult().find(Checkbox()).click());
     InventorySearch.exportInstanceAsMarc();

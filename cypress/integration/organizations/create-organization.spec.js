@@ -3,7 +3,7 @@ import {
   Pane,
   including,
 } from '../../../interactors';
-import { testType } from '../../support/utils/tagTools';
+import testTypes from '../../support/dictionary/testTypes';
 
 describe('ui-organizations: Creating organization', () => {
   const name = 'orgName-' + getRandomPostfix();
@@ -23,7 +23,7 @@ describe('ui-organizations: Creating organization', () => {
       });
   });
 
-  it('C675 should be possible by filling the "Create organization" form and submitting it', { tags: [testType.smoke] }, function () {
+  it('C675 should be possible by filling the "Create organization" form and submitting it', { tags: [testTypes.smoke] }, function () {
     cy.visit('/organizations/create');
 
     cy.createOrganization({ name, code, status: 'Active' });

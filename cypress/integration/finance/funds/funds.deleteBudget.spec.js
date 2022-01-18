@@ -1,6 +1,6 @@
 import Funds from '../../../support/fragments/finance/funds/funds';
 import { getCurrentFiscalYearCode } from '../../../support/utils/dateTools';
-import { testType } from '../../../support/utils/tagTools';
+import testType from '../../../support/dictionary/testTypes';
 import FinanceHelp from '../../../support/fragments/finance/financeHelper';
 import newFund from '../../../support/fragments/finance/funds/newFund';
 

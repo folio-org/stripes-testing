@@ -1,6 +1,6 @@
 import getRandomPostfix from '../../../support/utils/stringTools';
 import Funds from '../../../support/fragments/finance/funds/funds';
-import { testType } from '../../../support/utils/tagTools';
+import testType from '../../../support/dictionary/testTypes';
 import FinanceHelp from '../../../support/fragments/finance/financeHelper';
 import newFund from '../../../support/fragments/finance/funds/newFund';
 
@@ -16,7 +16,6 @@ describe('ui-finance: Fund creation', () => {
     cy.createFundViaUI(fund)
       .then(createdLedger => { createdLedgerId = createdLedger.id; });
     Funds.deleteFundViaActions();
-
     // should not create fund without mandatory fields
     const testFundName = `autotest_fund_${getRandomPostfix()}`;
     Funds.tryToCreateFundWithoutMandatoryFields(testFundName);
