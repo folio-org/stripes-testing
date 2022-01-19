@@ -1,7 +1,7 @@
 import { TextField, Button, Select } from '../../../../../interactors';
 import getRandomPostfix from '../../../utils/stringTools';
 
-const marcBib = 'MARC Bibliographic';
+// const marcBib = 'MARC Bibliographic';
 
 const folioRecordTypeValue = {
   instance: 'Instance',
@@ -21,12 +21,32 @@ const holdingsType = 'Holdings';
 
 const itemType = 'Item';
 
-const defaultMapiingProfile = {
-  incomingRecordType:
+// const defaultMapiingProfile = {
+//   incomingRecordType:
+
+// };
+
+const defaultInstanceMappingProfile = {
+  requiredFields:{
+    typeValue : folioRecordTypeValue.instance,
+    name: `autotest_${folioRecordTypeValue.instance}${getRandomPostfix()}`,
+    incomingRecordType: ['MARC Bibliographic', ''],
+    catalogedDate: '###TODAY###',
+    instanceStatusTerm:  '"Batch Loaded"',
+  }
+};
+//
+get
+
+const defaultHoldingsMappingProfile = {
+  requiredFields:{
+    typeValue : folioRecordTypeValue.holdings,
+    name: `autotest${folioRecordTypeValue.holdings}${getRandomPostfix()}`,
+    incomingRecordType: 'MARC Bibliographic'
+  },
 
 };
 
-const instanceMapiingProfile = {...defaultMapiingProfile};
 
 
 
