@@ -58,6 +58,7 @@ describe('ui-data-import: Filter the "View all" log screen', () => {
 
   it('C11113 Filter the "View all" log screen', { tags: '@smoke' }, () => {
     DataImportViewAllPage.gotoViewAllPage();
+    cy.pause();
     DataImportViewAllPage.checkByReverseChronologicalOrder();
 
     // FILTER By "Errors in Import"

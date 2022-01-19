@@ -3,7 +3,6 @@ import {
   Button,
   KeyValue,
   MultiColumnListCell,
-  Select,
   TextField
 } from '../../../../interactors';
 import DataImportViewAllPage from './dataImportViewAllPage';
@@ -49,8 +48,9 @@ const gotoInventory = () => {
 };
 
 const searchInstanceByHRID = (id) => {
+  cy.get('#input-inventory-search-qindex').select('Instance HRID');
   cy.do([
-    Select({ id: 'input-inventory-search-qindex' }).choose('Instance HRID'),
+    // Select({ id: 'input-inventory-search-qindex' }).choose('Instance HRID'),
     TextField({ id: 'input-inventory-search' }).fillIn(id),
     Button('Search').click()
   ]);
@@ -74,7 +74,6 @@ const checkInstanceDetails = () => {
   cy.expect(instanceStatusTerm.has({ value: expectedStatusTerm }));
   cy.expect(instanceStatusCode.has({ value: expectedStatusCode }));
 };
-
 
 export default {
   getInstanceHRID,

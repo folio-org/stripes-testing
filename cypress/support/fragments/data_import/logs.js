@@ -13,6 +13,11 @@ const createdItemsColumns = [
   MultiColumnListCell({ row: 0, columnIndex: 5 })
 ];
 
+const checkIsInstanceCreated = () => {
+  cy.do(createdItemsColumns[0].perform(element => {
+    expect(element).to.have.text('Created');
+  }));
+};
 
 export default {
   checkImportFile(jobProfileName) {
@@ -40,4 +45,6 @@ export default {
       }));
     });
   },
+
+  checkIsInstanceCreated,
 };
