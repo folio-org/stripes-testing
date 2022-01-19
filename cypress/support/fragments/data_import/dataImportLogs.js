@@ -25,6 +25,7 @@ export default {
   },
 
   openJobProfile:() => {
+    cy.wait(20000);
     cy.do(MultiColumnListCell({ row: 0, columnIndex: 0 }).find(Button('oneMarcBib.mrc')).click());
   },
 };

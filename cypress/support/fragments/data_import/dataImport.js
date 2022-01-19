@@ -6,6 +6,6 @@ export default {
   },
 
   uploadFile(fileName) {
-    cy.get('#pane-jobs-title-content input[type=file]', getLongDelay()).attachFile(fileName);
+    cy.get('input[type=file]', getLongDelay()).attachFile({ filePath: 'oneMarcBib.mrc', fileName });
   }
 };
