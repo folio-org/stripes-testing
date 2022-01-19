@@ -1,5 +1,20 @@
 import uuid from 'uuid';
-import { Button, TextField, Selection, SelectionList, Accordion, Modal, Checkbox, MultiSelect, SearchField, Section, HTML, including, KeyValue, Pane, Callout, calloutTypes } from '../../../../../interactors';
+import {
+  Button,
+  TextField,
+  Selection,
+  SelectionList,
+  Accordion,
+  Modal,
+  Checkbox,
+  MultiSelect,
+  SearchField,
+  Section,
+  HTML,
+  including,
+  KeyValue,
+  Pane
+} from '../../../../../interactors';
 import { statusActive, statusInactive, statusFrozen } from '../financeHelper';
 import TopMenu from '../../topMenu';
 import getRandomPostfix from '../../../utils/stringTools';
