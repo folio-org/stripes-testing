@@ -19,6 +19,7 @@ export default HTML.extend('select')
     id: el => el.querySelector('select').id,
     name: el => el.querySelector('select').name,
     label,
+    ariaLabel: el => el.querySelector('select').getAttribute('aria-label'),
     ariaLabelledBy: el => el.querySelector('select').getAttribute('aria-labelledby'),
     placeholder: el => el.querySelector('select').getAttribute('placeholder'),
     value: el => el.querySelector('select').value,

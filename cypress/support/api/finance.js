@@ -25,7 +25,7 @@ Cypress.Commands.add('getLedgersApi', (searchParams) => {
 });
 
 Cypress.Commands.add('getFiscalYearsApi', (searchParams) => {
-  cy
+  return cy
     .okapiRequest({
       path: 'finance/fiscal-years',
       searchParams,
