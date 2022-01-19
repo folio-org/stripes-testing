@@ -1,8 +1,4 @@
-import uuid from 'uuid';
-import { Button, MultiColumnListRow, SearchField } from '../../../../interactors';
-import TopMenu from '../topMenu';
-import Funds from './funds/funds';
-import getRandomPostfix from '../../utils/stringTools';
+import { Button, MultiColumnListRow, SearchField, Callout } from '../../../../interactors';
 
 const searchField = SearchField({ id: 'input-record-search' });
 const noResultsMessageLabel = '//span[contains(@class,"noResultsMessageLabel")]';
@@ -57,37 +53,10 @@ export default {
 
   clickOnCloseIconButton: () => {
     cy.do(Button({ icon: 'times' }).click());
+  },
+
+  checkCalloutMessage: (text, calloutType) => {
+    cy.expect(Callout({ type: calloutType }).exists());
+    cy.expect(Callout({ type: calloutType }).is({ textContent: text }));
   }
 };
-
-Cypress.Commands.add('createFundViaUI', (fund) => {
-  const ledger = {
-    id: uuid(),
-    name: `autotest_ledger_${getRandomPostfix()}`,
-    code: `autotest_code_${getRandomPostfix()}`,
-    description: `autotest_ledger_ description_${getRandomPostfix()}`,
-    ledgerStatus: 'Frozen',
-    currency: 'USD',
-    restrictEncumbrance: false,
-    restrictExpenditures: false,
-    acqUnitIds: '',
-    fiscalYearOneId: ''
-  };
-  cy.getToken(Cypress.env('diku_login'), Cypress.env('diku_password'));
-  cy.getAcqUnitsApi({ limit: 1 })
-    .then(({ body }) => { ledger.acqUnitIds = [body.acquisitionsUnits[0].id]; });
-  cy.getFiscalYearsApi({ limit: 1 })
-    .then(({ body }) => {
-      ledger.fiscalYearOneId = body.fiscalYears[0].id;
-      cy.createLedgerApi({
-        ...ledger
-      });
-    });
-  fund.ledgerName = ledger.name;
-  cy.login(Cypress.env('diku_login'), Cypress.env('diku_password'));
-  cy.visit(TopMenu.fundPath);
-  Funds.createFund(fund);
-  Funds.checkCreatedFund(fund.name);
-  cy.wrap(ledger).as('createdLedger');
-  return cy.get('@createdLedger');
-});

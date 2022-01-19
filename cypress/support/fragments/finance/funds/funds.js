@@ -1,5 +1,8 @@
-import { Button, TextField, Selection, SelectionList, Accordion, Modal, Checkbox, MultiSelect, SearchField, Section, HTML, including, KeyValue, Pane } from '../../../../../interactors';
+import uuid from 'uuid';
+import { Button, TextField, Selection, SelectionList, Accordion, Modal, Checkbox, MultiSelect, SearchField, Section, HTML, including, KeyValue, Pane, Callout, calloutTypes } from '../../../../../interactors';
 import { statusActive, statusInactive, statusFrozen } from '../financeHelper';
+import TopMenu from '../../topMenu';
+import getRandomPostfix from '../../../utils/stringTools';
 
 const createdFundNameXpath = '//*[@id="paneHeaderpane-fund-details-pane-title"]/h2/span';
 const numberOfSearchResultsHeader = '//*[@id="paneHeaderfund-results-pane-subtitle"]/span';
@@ -9,6 +12,8 @@ const noItemsMessage = 'The list contains no items';
 const viewTransactionsLinkXpath = '//a[text()="View transactions"]';
 const budgetPaneId = 'pane-budget';
 const transactionResultPaneId = 'transaction-results-pane';
+const actionsButtonName = 'Actions';
+
 
 export default {
   waitForFundDetailsLoading : () => {
@@ -59,8 +64,8 @@ export default {
 
   deleteFundViaActions: () => {
     cy.do([
-      cy.expect(Button('Actions').exists()),
-      Button('Actions').click(),
+      cy.expect(Button(actionsButtonName).exists()),
+      Button(actionsButtonName).click(),
       Button('Delete').click(),
       Button('Delete', { id:'clickable-fund-remove-confirmation-confirm' }).click()
     ]);
@@ -103,7 +108,7 @@ export default {
 
   transferAmount: (amount, fundFrom, fundTo) => {
     cy.do([
-      Button('Actions').click(),
+      Button(actionsButtonName).click(),
       Button('Transfer').click()
     ]);
     cy.expect(Modal('Transfer').exists());
@@ -119,7 +124,7 @@ export default {
 
   deleteBudgetViaActions() {
     cy.do([
-      Button('Actions').click(),
+      Button(actionsButtonName).click(),
       Button('Delete').click(),
       Button('Delete', { id:'clickable-budget-remove-confirmation-confirm' }).click()
     ]);
@@ -128,7 +133,7 @@ export default {
 
   tryToDeleteBudgetWithTransaction() {
     cy.do([
-      Button('Actions').click(),
+      Button(actionsButtonName).click(),
       Button('Delete').click(),
       Button('Delete', { id:'clickable-budget-remove-confirmation-confirm' }).click()
     ]);
@@ -194,4 +199,41 @@ export default {
       Button('Search').click(),
     ]);
   },
+
+  createFundViaUI(fund) {
+    const ledger = {
+      id: uuid(),
+      name: `autotest_ledger_${getRandomPostfix()}`,
+      code: `autotest_code_${getRandomPostfix()}`,
+      description: `autotest_ledger_ description_${getRandomPostfix()}`,
+      ledgerStatus: 'Frozen',
+      currency: 'USD',
+      restrictEncumbrance: false,
+      restrictExpenditures: false,
+      acqUnitIds: '',
+      fiscalYearOneId: ''
+    };
+    cy.getToken(Cypress.env('diku_login'), Cypress.env('diku_password'));
+    cy.getAcqUnitsApi({ limit: 1 })
+      .then(
+        ({ body }) => {
+          ledger.acqUnitIds = [body.acquisitionsUnits[0].id];
+          cy.getFiscalYearsApi({ limit: 1 })
+            .then((response) => {
+              ledger.fiscalYearOneId = response.body.fiscalYears[0].id;
+              cy.createLedgerApi({
+                ...ledger
+              });
+              fund.ledgerName = ledger.name;
+              cy.login(Cypress.env('diku_login'), Cypress.env('diku_password'));
+              cy.visit(TopMenu.fundPath);
+              this.createFund(fund);
+              this.checkCreatedFund(fund.name);
+              cy.wrap(ledger).as('createdLedger');
+              return cy.get('@createdLedger');
+            });
+        }
+      );
+    return cy.get('@createdLedger');
+  }
 };

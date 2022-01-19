@@ -12,14 +12,18 @@ describe('ui-finance: Add budget to fund', () => {
     cy.deleteLedgerApi(createdLedgerId);
   });
 
-  it('C4057 should add budget for a new fund', { tags: [testType.smoke] }, () => {
-    cy.createFundViaUI(fund)
-      .then(createdLedger => { createdLedgerId = createdLedger.id; });
-    Funds.addBudget(0);
-    Funds.checkCreatedBudget(fund.code, getCurrentFiscalYearCode());
-    Funds.deleteBudgetViaActions();
-    Funds.deleteFundViaActions();
-    FinanceHelp.searchByName(fund.name);
-    Funds.checkZeroSearchResultsHeader();
+  it('C4057 Add budget to a fund', { tags: [testType.smoke] }, () => {
+    Funds.createFundViaUI(fund)
+      .then(
+        createdLedger => {
+          createdLedgerId = createdLedger.id;
+          Funds.addBudget(0);
+          Funds.checkCreatedBudget(fund.code, getCurrentFiscalYearCode());
+          Funds.deleteBudgetViaActions();
+          Funds.deleteFundViaActions();
+          FinanceHelp.searchByName(fund.name);
+          Funds.checkZeroSearchResultsHeader();
+        }
+      );
   });
 });
