@@ -9,13 +9,13 @@ import SearchInventory from '../../support/fragments/data_import/searchInventory
 import dataImport from '../../support/fragments/data_import/dataImport';
 import logs from '../../support/fragments/data_import/logs';
 import jobProfiles from '../../support/fragments/data_import/job_profiles/jobProfiles';
-import getRandomPostfix from '../../support/utils/stringTools';
 import testTypes from '../../support/dictionary/testTypes';
 import inventorySearch from '../../support/fragments/inventory/inventorySearch';
-import TopMenu from '../../support/fragments/topMenu';
 import exportFile from '../../support/fragments/data-export/exportFile';
 import ExportMarcFile from '../../support/fragments/data-export/export-marc-file';
 import FileManager from '../../support/utils/fileManager';
+import TopMenu from '../../support/fragments/topMenu';
+import getRandomPostfix from '../../support/utils/stringTools';
 
 describe('ui-data-import: MARC file import with matching for 999 ff field', () => {
   // unique file name to upload
@@ -59,7 +59,8 @@ describe('ui-data-import: MARC file import with matching for 999 ff field', () =
     SettingsDataImport.goToActionProfile();
     ActionProfiles.createActionProfile(actionProfileForExport, mappingProfileForExport);
     ActionProfiles.checkActionProfilePresented(actionProfileNameForExport);
-    // create Job profile for export
+
+    // create job profile for export
     const jobProfileForExport = {
       ...NewJobProfile.defaultJobProfile,
       profileName: jobProfileNameForExport
@@ -72,7 +73,7 @@ describe('ui-data-import: MARC file import with matching for 999 ff field', () =
     jobProfiles.waitLoadingList();
     jobProfiles.checkJobProfilePresented(jobProfileNameForExport);
 
-    // upload a marc file
+    // upload a marc file for export
     dataImport.goToDataImport();
     dataImport.uploadFile(nameForMarcFile);
     jobProfiles.searchJobProfileForImport(jobProfileNameForExport);
@@ -90,7 +91,8 @@ describe('ui-data-import: MARC file import with matching for 999 ff field', () =
         inventorySearch.saveUUIDs();
         ExportMarcFile.downloadCSVFile(nameForCSVFile, 'SearchInstanceUUIDs*');
         cy.visit(TopMenu.dataExport);
-        // download .mrc file
+
+        // download exported marc file
         exportFile.uploadFile(nameForCSVFile);
         exportFile.exportWithDefaultInstancesJobProfile(nameForCSVFile);
         ExportMarcFile.downloadExportedMarcFile(nameForExportedMarcFile);
@@ -148,7 +150,7 @@ describe('ui-data-import: MARC file import with matching for 999 ff field', () =
         jobProfiles.waitLoadingList();
         jobProfiles.checkJobProfilePresented(jobProfileName);
 
-        // upload a marc file with 999.f.f.s fields
+        // upload the exported marc file with 999.f.f.s fields
         dataImport.goToDataImport();
         dataImport.uploadFile(nameForExportedMarcFile);
         jobProfiles.searchJobProfileForImport(jobProfileName);
@@ -160,6 +162,7 @@ describe('ui-data-import: MARC file import with matching for 999 ff field', () =
           .then(hrId => {
             SearchInventory.gotoInventory();
             SearchInventory.searchInstanceByHRID(hrId);
+
             // ensure the fields created in Field mapping profile exists in inventory
             SearchInventory.checkInstanceDetails();
 
@@ -171,6 +174,7 @@ describe('ui-data-import: MARC file import with matching for 999 ff field', () =
             ActionProfiles.deleteActionProfile(actionProfileNameForExport);
             FieldMappingProfiles.deleteFieldMappingProfile(mappingProfileName);
             FieldMappingProfiles.deleteFieldMappingProfile(mappingProfileNameForExport);
+
             // delete downloads folder
             FileManager.deleteFolder(Cypress.config('downloadsFolder'));
           });
