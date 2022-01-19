@@ -36,7 +36,7 @@ describe('eHoldings packages management', () => {
     });
   });
 
-  it('C3463 Add two tags to package [Edinburgh Scholarship Online]', { tags:  [testType.smoke, features.eHoldings] }, () => {
+  it.only('C3463 Add two tags to package [Edinburgh Scholarship Online]', { tags:  [testType.smoke, features.eHoldings] }, () => {
     // TODO: "Tags: All permissions" doesn't have displayName. It's the reason why there is related permission name in response, see https://issues.folio.org/browse/UITAG-51
     cy.createTempUser([permissions.uieHoldingsRecordsEdit.gui,
       permissions.uiTagsPermissionAll.gui]).then(userProperties => {
@@ -54,6 +54,25 @@ describe('eHoldings packages management', () => {
           eHoldingsPackages.openPackage();
           eHoldingsPackage.verifyExistingTags(addedTag1, addedTag2);
         });
+    });
+  });
+
+  it('C690 Remove a package from your holdings', { tags:  [testType.smoke, features.eHoldings] }, () => {
+    cy.createTempUser([permissions.uieHoldingsRecordsEdit.gui,
+      permissions.uieHoldingsPackageTitleSelectUnselect.gui]).then(userProperties => {
+      userId = userProperties.userId;
+      cy.login(userProperties.username, userProperties.password);
+      cy.visit(TopMenu.eholdings);
+      eHoldingSearch.switchToPackages();
+      eHoldingsPackagesSearch.bySelectionStatus(eHoldingsTitle.filterPackagesStatuses.selected);
+      eHoldingsPackagesSearch.byName();
+      eHoldingsPackages.openPackage();
+      eHoldingsPackage.removeFromHoldings();
+      eHoldingsPackage.verifyHoldingStatus(eHoldingsPackage.filterTitlesStatuses.notSelected);
+      eHoldingsPackage.filterTitles(eHoldingsPackage.filterTitlesStatuses.selected);
+      eHoldingsPackage.checkEmptyTitlesList();
+      // reset test data
+      eHoldingsPackage.addToHodlings();
     });
   });
 

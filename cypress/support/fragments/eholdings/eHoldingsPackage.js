@@ -39,10 +39,12 @@ export default {
     cy.do(titlesFilterModal.find(Button('Search')).click());
     cy.expect(titlesFilterModal.absent());
   },
-  verifyHoldingStatus:() => {
-    cy.expect(packageHoldingStatusSection.find(HTML(including(filterTitlesStatuses.selected))).exists());
-    cy.expect(titlesSection.find(HTML(including(filterTitlesStatuses.selected))).exists());
-    cy.expect(titlesSection.find(HTML(including(filterTitlesStatuses.notSelected))).absent());
+  verifyHoldingStatus:(expectedStatus = filterTitlesStatuses.selected) => {
+    cy.expect(packageHoldingStatusSection.find(HTML(including(expectedStatus))).exists());
+    cy.expect(titlesSection.find(HTML(including(expectedStatus))).exists());
+    [filterTitlesStatuses.selected, filterTitlesStatuses.selected.notSelected]
+      .filter(filterTitlesStatus => filterTitlesStatus !== expectedStatus)
+      .forEach(restStatus => cy.expect(titlesSection.find(HTML(including(restStatus))).absent()));
   },
   checkEmptyTitlesList:() => {
     cy.expect(titlesSection.find(KeyValue('Records found', { value:'0' })));
