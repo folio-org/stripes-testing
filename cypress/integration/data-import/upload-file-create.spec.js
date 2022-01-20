@@ -8,11 +8,15 @@ import SettingsDataImport from '../../support/fragments/data_import/settingsData
 import NewJobProfile from '../../support/fragments/data_import/job_profiles/newJobProfile';
 import getRandomPostfix from '../../support/utils/stringTools';
 import dataImport from '../../support/fragments/data_import/dataImport';
-import dataImportLogs from '../../support/fragments/data_import/logs';
+import dataImportLogs from '../../support/fragments/data_import/dataImportLogs';
 import jobProfiles from '../../support/fragments/data_import/job_profiles/jobProfiles';
 import { testType } from '../../support/utils/tagTools';
+import createdRecord from '../../support/fragments/data_import/createdRecord';
 
 describe('ui-data-import: MARC file import with creating of the new instance, holding and item', () => {
+// unique file name to upload
+  const nameForMarcFile = `autotestFile${getRandomPostfix()}.mrc`;
+
   before('navigates to Settings', () => {
     cy.login(Cypress.env('diku_login'), Cypress.env('diku_password'));
   });
@@ -55,13 +59,13 @@ describe('ui-data-import: MARC file import with creating of the new instance, ho
     jobProfiles.checkJobProfilePresented(specialJobProfile.profileName);
 
     dataImport.goToDataImport();
-    dataImport.uploadFile();
+    dataImport.uploadFile(nameForMarcFile);
     jobProfiles.searchJobProfileForImport(specialJobProfile.profileName);
-    jobProfiles.runImportFile();
+    jobProfiles.runImportFile(nameForMarcFile);
     dataImportLogs.checkImportFile(specialJobProfile.profileName);
     dataImportLogs.checkStatusOfJobProfile();
-    dataImportLogs.openJobProfile();
-    dataImportLogs.checkCreatedItems();
+    dataImportLogs.openJobProfile(nameForMarcFile);
+    createdRecord.checkCreatedItems();
     // TODO delete created data
   });
 });
