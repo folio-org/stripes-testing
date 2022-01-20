@@ -21,16 +21,12 @@ describe('ui-data-import: MARC file import with creating of the new instance, ho
   });
   it('C343334 MARC file import with creating a new mapping profiles, action profiles and job profile', { tags: [testTypes.smoke] }, () => {
     const collectionOfProfiles = [
-      { mappingProfile: { typeValue : newMappingProfile.folioRecordTypeValue.instance },
+      { mappingProfile: { typeValue: newMappingProfile.folioRecordTypeValue.instance },
         actionProfile: { typeValue: newActionProfile.folioRecordTypeValue.instance } },
-      { mappingProfile: { typeValue : newMappingProfile.folioRecordTypeValue.holdings,
-        location: newMappingProfile.permanentLocation.permanentLocation },
-      actionProfile: { typeValue: newActionProfile.folioRecordTypeValue.holdings } },
-      { mappingProfile: { typeValue : newMappingProfile.folioRecordTypeValue.item,
-        material: newMappingProfile.materialType.materialType,
-        loan: newMappingProfile.permanentLoanType.type,
-        status: newMappingProfile.statusField.status },
-      actionProfile: { typeValue: newActionProfile.folioRecordTypeValue.item } }];
+      { mappingProfile: { typeValue: newMappingProfile.folioRecordTypeValue.holdings },
+        actionProfile: { typeValue: newActionProfile.folioRecordTypeValue.holdings } },
+      { mappingProfile: { typeValue: newMappingProfile.folioRecordTypeValue.item },
+        actionProfile: { typeValue: newActionProfile.folioRecordTypeValue.item } }];
 
     const specialJobProfile = { ...newJobProfile.defaultJobProfile };
     specialJobProfile.acceptedDataType = newJobProfile.acceptedDataType.dataType;

@@ -14,8 +14,7 @@ const defaultInstanceMappingProfile = {
   catalogedDate: '###TODAY###',
   instanceStatusTerm: '"Batch Loaded"',
   statisticalCodes: 'Add these to existing',
-  statisticalCode: '"ARL (Collection stats): books - Book, print (books)"',
-  isUpdate: true
+  statisticalCode: '"ARL (Collection stats): books - Book, print (books)"'
 };
 
 const defaultHoldingsMappingProfile = {
@@ -48,74 +47,74 @@ export default {
 
   folioRecordTypeValue,
 
-  fillInstanceMappingProfileForCreate:(specialInstanceMappingProfile = defaultInstanceMappingProfile) => {
+  fillInstanceMappingProfileForCreate:(specialMappingProfile = defaultInstanceMappingProfile) => {
     cy.do([
-      TextField({ name: 'profile.name' }).fillIn(specialInstanceMappingProfile.name),
-      Select({ name: 'profile.incomingRecordType' }).choose(specialInstanceMappingProfile.incomingRecordType),
-      Select({ name: 'profile.existingRecordType' }).choose(specialInstanceMappingProfile.typeValue),
+      TextField({ name: 'profile.name' }).fillIn(specialMappingProfile.name),
+      Select({ name: 'profile.incomingRecordType' }).choose('MARC Bibliographic'),
+      Select({ name: 'profile.existingRecordType' }).choose(specialMappingProfile.typeValue),
     ]);
-    if ('isUpdate' in specialInstanceMappingProfile) {
+    if ('isUpdate' in specialMappingProfile) {
       cy.do([
-        TextField('Cataloged date').fillIn(specialInstanceMappingProfile.catalogedDate),
-        TextField('Instance status term').fillIn(specialInstanceMappingProfile.instanceStatusTerm),
+        TextField('Cataloged date').fillIn(specialMappingProfile.catalogedDate),
+        TextField('Instance status term').fillIn(specialMappingProfile.instanceStatusTerm),
       ]);
-      cy.get('[name="profile.mappingDetails.mappingFields[8].repeatableFieldAction"]').select(specialInstanceMappingProfile.statisticalCodes);
+      cy.get('[name="profile.mappingDetails.mappingFields[8].repeatableFieldAction"]').select(specialMappingProfile.statisticalCodes);
       cy.do([
         Button('Add statistical code').click(),
-        TextField('Statistical code').fillIn(specialInstanceMappingProfile.statisticalCode),
+        TextField('Statistical code').fillIn(specialMappingProfile.statisticalCode),
       ]);
     }
     cy.do(Button('Save as profile & Close').click());
   },
 
-  fillHoldingsMappingProfileForCreate:(specialHoldingsMappingProfile = defaultHoldingsMappingProfile) => {
+  fillHoldingsMappingProfileForCreate:(specialMappingProfile = defaultHoldingsMappingProfile) => {
     cy.do([
-      TextField({ name: 'profile.name' }).fillIn(specialHoldingsMappingProfile.name),
-      Select({ name: 'profile.incomingRecordType' }).choose(specialHoldingsMappingProfile.incomingRecordType),
-      Select({ name: 'profile.existingRecordType' }).choose(specialHoldingsMappingProfile.typeValue),
-      TextField('Permanent').fillIn(specialHoldingsMappingProfile.permanentLocation.value1),
+      TextField({ name: 'profile.name' }).fillIn(specialMappingProfile.name),
+      Select({ name: 'profile.incomingRecordType' }).choose(specialMappingProfile.incomingRecordType),
+      Select({ name: 'profile.existingRecordType' }).choose(specialMappingProfile.typeValue),
+      TextField('Permanent').fillIn(specialMappingProfile.permanentLocation.value1),
     ]);
-    if ('isUpdate' in specialHoldingsMappingProfile) {
+    if ('isUpdate' in specialMappingProfile) {
       cy.do([
-        TextField('Permanent').fillIn(specialHoldingsMappingProfile.permanentLocation.value2),
-        TextField('Holdings type').fillIn(specialHoldingsMappingProfile.holdingsType),
-        TextField('Call number type').fillIn(specialHoldingsMappingProfile.callNumberType),
-        TextField('Call number').fillIn(specialHoldingsMappingProfile.callNnumber),
+        TextField('Permanent').fillIn(specialMappingProfile.permanentLocation.value2),
+        TextField('Holdings type').fillIn(specialMappingProfile.holdingsType),
+        TextField('Call number type').fillIn(specialMappingProfile.callNumberType),
+        TextField('Call number').fillIn(specialMappingProfile.callNnumber),
       ]);
-      cy.get('[name="profile.mappingDetails.mappingFields[22].repeatableFieldAction"]').select(specialHoldingsMappingProfile.electronicAccess);
+      cy.get('[name="profile.mappingDetails.mappingFields[22].repeatableFieldAction"]').select(specialMappingProfile.electronicAccess);
       cy.do([
         Button('Add electronic access').click(),
-        TextField('Relationship').fillIn(specialHoldingsMappingProfile.relationship),
-        TextField('URI').fillIn(specialHoldingsMappingProfile.uri),
+        TextField('Relationship').fillIn(specialMappingProfile.relationship),
+        TextField('URI').fillIn(specialMappingProfile.uri),
       ]);
     }
     cy.do(Button('Save as profile & Close').click());
   },
 
-  fillItemMappingProfileForCreate:(specialItemMappingProfile = defaultItemMappingProfile) => {
+  fillItemMappingProfileForCreate:(specialMappingProfile = defaultItemMappingProfile) => {
     cy.do([
-      TextField({ name: 'profile.name' }).fillIn(specialItemMappingProfile.name),
-      Select({ name: 'profile.incomingRecordType' }).choose(specialItemMappingProfile.incomingRecordType),
-      Select({ name: 'profile.existingRecordType' }).choose(specialItemMappingProfile.typeValue),
-      TextField('Material type').fillIn(specialItemMappingProfile.materialType.value1),
+      TextField({ name: 'profile.name' }).fillIn(specialMappingProfile.name),
+      Select({ name: 'profile.incomingRecordType' }).choose(specialMappingProfile.incomingRecordType),
+      Select({ name: 'profile.existingRecordType' }).choose(specialMappingProfile.typeValue),
+      TextField('Material type').fillIn(specialMappingProfile.materialType.value1),
       // TODO create waiter
       cy.wait(1500),
-      TextField('Permanent loan type').fillIn(specialItemMappingProfile.permanentLoanType.value1),
-      TextField('Status').fillIn(specialItemMappingProfile.status.value1),
+      TextField('Permanent loan type').fillIn(specialMappingProfile.permanentLoanType.value1),
+      TextField('Status').fillIn(specialMappingProfile.status.value1),
     ]);
-    if ('isUpdate' in specialItemMappingProfile) {
+    if ('isUpdate' in specialMappingProfile) {
       cy.do([
-        TextField('Material type').fillIn(specialItemMappingProfile.materialType.value2),
-        TextField('Permanent loan type').fillIn(specialItemMappingProfile.permanentLoanType.value2),
-        TextField('Status').fillIn(specialItemMappingProfile.status.value2),
+        TextField('Material type').fillIn(specialMappingProfile.materialType.value2),
+        TextField('Permanent loan type').fillIn(specialMappingProfile.permanentLoanType.value2),
+        TextField('Status').fillIn(specialMappingProfile.status.value2),
       ]);
-      cy.get('[name="profile.mappingDetails.mappingFields[24].repeatableFieldAction"]').select(specialItemMappingProfile.itemNotes);
+      cy.get('[name="profile.mappingDetails.mappingFields[24].repeatableFieldAction"]').select(specialMappingProfile.itemNotes);
       cy.do([
         Button('Add item note').click(),
-        TextField('Note type').fillIn(specialItemMappingProfile.noteType),
-        TextField('Note').fillIn(specialItemMappingProfile.note),
+        TextField('Note type').fillIn(specialMappingProfile.noteType),
+        TextField('Note').fillIn(specialMappingProfile.note),
       ]);
-      cy.get('[name="profile.mappingDetails.mappingFields[24].subfields[0].fields[2].booleanFieldAction"]').select(specialItemMappingProfile.staffOnly);
+      cy.get('[name="profile.mappingDetails.mappingFields[24].subfields[0].fields[2].booleanFieldAction"]').select(specialMappingProfile.staffOnly);
     }
     cy.do(Button('Save as profile & Close').click());
   },
