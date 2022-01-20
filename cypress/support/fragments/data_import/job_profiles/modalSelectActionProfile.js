@@ -1,16 +1,17 @@
 import { Button, Modal, TextField, MultiColumnListCell } from '../../../../../interactors';
 
-const modalSelectProfile = Modal('Select Action Profiles');
 
 export default {
-  searchActionProfileByName: (actionProfileName) => {
+  searchActionProfileByName: (profileName, type) => {
+    const modalSelectProfile = Modal(type === 'match' ? 'Select Match Profiles' : 'Select Action Profiles');
     cy.do([
-      modalSelectProfile.find(TextField({ name: 'query' })).fillIn(actionProfileName),
+      modalSelectProfile.find(TextField({ name: 'query' })).fillIn(profileName),
       modalSelectProfile.find(Button('Search')).click()]);
-    cy.expect(MultiColumnListCell(actionProfileName).exists());
+    cy.expect(MultiColumnListCell(profileName).exists());
   },
 
-  selectActionProfile: (name) => {
+  selectActionProfile: (name, type) => {
+    const modalSelectProfile = Modal(type === 'match' ? 'Select Match Profiles' : 'Select Action Profiles');
     cy.do(MultiColumnListCell(name).click());
     cy.expect(MultiColumnListCell(name).absent());
     cy.expect(modalSelectProfile.absent());

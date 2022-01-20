@@ -3,8 +3,37 @@ import { getLongDelay } from '../../../utils/cypressTools';
 
 const actionsButton = Button('Actions');
 
+const deleteJobProfile = (profileName) => {
+  // get all job profiles
+  cy
+    .okapiRequest({
+      path: 'data-import-profiles/jobProfiles',
+      searchParams: {
+        query:'cql.allRecords=1   ',
+        limit: 1000
+      },
+    })
+    .then(({ body: { jobProfiles } }) => {
+      // find profile to delete
+      const profileToDelete = jobProfiles.find(profile => profile.name === profileName);
+
+      // delete profile with its id
+      cy
+        .okapiRequest({
+          method: 'DELETE',
+          path: `data-import-profiles/jobProfiles/${profileToDelete.id}`,
+          searchParams: {
+            query:'cql.allRecords=1   sortBy name',
+          },
+        })
+        .then(({ status }) => {
+          if (status === 204) cy.log('###DELETED JOB PROFILE###');
+        });
+    });
+};
+
 export default {
-  createNewJobProfile: () => {
+  openNewJobProfileForm: () => {
     cy.do([
       actionsButton.click(),
       Button('New job profile').click(),
@@ -28,16 +57,16 @@ export default {
     cy.expect(MultiColumnListCell(jobProfileTitle).exists());
   },
 
-  selectJobProfile:(nameProfile) => {
-    cy.do(MultiColumnListCell(nameProfile).click());
-    cy.expect(actionsButton.exists());
-  },
-
-  runImportFile:() => {
+  runImportFile:(fileName) => {
     cy.do([
       actionsButton.click(),
       Button('Run').click(),
       Modal('Are you sure you want to run this job?').find(Button('Run')).click(),
     ]);
+
+    // wait until uploaded file is displayed in the list
+    cy.get('#job-logs-list', getLongDelay()).contains(fileName, getLongDelay());
   },
+
+  deleteJobProfile,
 };

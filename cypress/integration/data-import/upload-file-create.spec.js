@@ -13,24 +13,41 @@ import jobProfiles from '../../support/fragments/data_import/job_profiles/jobPro
 import testTypes from '../../support/dictionary/testTypes';
 
 describe('ui-data-import: MARC file import with creating of the new instance, holding and item', () => {
+  // unique file name to upload
+  const fileName = `autotestFile.${getRandomPostfix()}.mrc`;
+
   before('navigates to Settings', () => {
-    cy.login(Cypress.env('diku_login'), Cypress.env('diku_password'));
+    cy.login(
+      Cypress.env('diku_login'),
+      Cypress.env('diku_password')
+    );
   });
+
   it('C343334 MARC file import with creating a new mapping profiles, action profiles and job profile', { tags: [testTypes.smoke] }, () => {
     const collectionOfProfiles = [
-      { mappingProfile: { typeValue : NewFieldMappingProfile.folioRecordTypeValue.instance },
-        actionProfile: { typeValue: NewActionProfile.folioRecordTypeValue.instance } },
-      { mappingProfile: { typeValue : NewFieldMappingProfile.folioRecordTypeValue.holdings,
-        location: NewFieldMappingProfile.permanentLocation.permanentLocation },
-      actionProfile: { typeValue: NewActionProfile.folioRecordTypeValue.holdings } },
-      { mappingProfile: { typeValue : NewFieldMappingProfile.folioRecordTypeValue.item,
-        material: NewFieldMappingProfile.materialType.materialType,
-        loan: NewFieldMappingProfile.permanentLoanType.type,
-        status: NewFieldMappingProfile.statusField.status },
-      actionProfile: { typeValue: NewActionProfile.folioRecordTypeValue.item } }];
+      {
+        mappingProfile: { typeValue : NewFieldMappingProfile.folioRecordTypeValue.instance },
+        actionProfile: { typeValue: NewActionProfile.folioRecordTypeValue.instance }
+      },
+      {
+        mappingProfile: {
+          typeValue : NewFieldMappingProfile.folioRecordTypeValue.holdings,
+          location: NewFieldMappingProfile.permanentLocation.permanentLocation
+        },
+        actionProfile: { typeValue: NewActionProfile.folioRecordTypeValue.holdings }
+      },
+      {
+        mappingProfile: {
+          typeValue : NewFieldMappingProfile.folioRecordTypeValue.item,
+          material: NewFieldMappingProfile.materialType.materialType,
+          loan: NewFieldMappingProfile.permanentLoanType.type,
+          status: NewFieldMappingProfile.statusField.status
+        },
+        actionProfile: { typeValue: NewActionProfile.folioRecordTypeValue.item }
+      }
+    ];
 
     const specialJobProfile = { ...NewJobProfile.defaultJobProfile };
-    specialJobProfile.acceptedDataType = NewJobProfile.acceptedDataType.dataType;
 
     collectionOfProfiles.forEach(profile => {
       profile.mappingProfile.name = `autotest${profile.mappingProfile.typeValue}${getRandomPostfix()}`;
@@ -45,22 +62,22 @@ describe('ui-data-import: MARC file import with creating of the new instance, ho
     });
 
     SettingsDataImport.goToJobProfile();
-    jobProfiles.createNewJobProfile();
+    jobProfiles.openNewJobProfileForm();
     NewJobProfile.fillJobProfile(specialJobProfile);
-    collectionOfProfiles.map(element => element.actionProfile).forEach(actionProfile => {
-      NewJobProfile.selectActionProfile(actionProfile);
+    collectionOfProfiles.forEach(({ actionProfile }) => {
+      NewJobProfile.linkActionProfile(actionProfile);
     });
     NewJobProfile.clickSaveAndCloseButton();
     jobProfiles.waitLoadingList();
     jobProfiles.checkJobProfilePresented(specialJobProfile.profileName);
 
     dataImport.goToDataImport();
-    dataImport.uploadFile();
+    dataImport.uploadFile(fileName);
     jobProfiles.searchJobProfileForImport(specialJobProfile.profileName);
-    jobProfiles.runImportFile();
+    jobProfiles.runImportFile(fileName);
     logs.checkImportFile(specialJobProfile.profileName);
     logs.checkStatusOfJobProfile();
-    logs.openJobProfile();
+    logs.openJobProfile(fileName);
     logs.checkCreatedItems();
     // TODO delete created data
   });
