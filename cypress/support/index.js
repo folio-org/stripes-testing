@@ -23,6 +23,7 @@ setInteractorTimeout(30_000);
 
 require('cypress-xpath');
 require('cypress-grep')();
+require('@shelex/cypress-allure-plugin');
 
 // try to fix the issue with cached location in cypress
 Cypress.on('window:before:load', window => {
