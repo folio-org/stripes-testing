@@ -16,8 +16,33 @@ const closeViewModeForMappingProfile = () => {
   cy.do(iconButton.click());
 };
 
-export default {
+const deleteFieldMappingProfile = (profileName) => {
+  // get all mapping profiles
+  cy
+    .okapiRequest({
+      path: 'data-import-profiles/mappingProfiles',
+      searchParams: {
+        query: '(cql.allRecords=1) sortby name',
+        limit: 1000
+      },
+    })
+    .then(({ body: { mappingProfiles } }) => {
+      // find profile to delete
+      const profileToDelete = mappingProfiles.find(profile => profile.name === profileName);
 
+      // delete profile with its id
+      cy
+        .okapiRequest({
+          method: 'DELETE',
+          path: `data-import-profiles/mappingProfiles/${profileToDelete.id}`,
+        });
+    })
+    .then(({ status }) => {
+      if (status === 204) cy.log('###DELETED MAPPING PROFILE###');
+    });
+};
+
+export default {
   createMappingProfile:(mappingProfile) => {
     openNewMappingProfileForm();
     newMappingProfile.fillMappingProfile(mappingProfile);
@@ -30,4 +55,6 @@ export default {
     cy.do(Button('Search').click());
     cy.expect(MultiColumnListCell(mappingProfile).exists());
   },
+
+  deleteFieldMappingProfile
 };

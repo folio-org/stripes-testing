@@ -1,6 +1,7 @@
 const globby = require('globby');
 const { rmdir, unlink } = require('fs');
 const cypressGrep = require('cypress-grep/src/plugin');
+const { downloadFile } = require('cypress-downloadfile/lib/addPlugin');
 
 // eslint-disable-next-line no-unused-vars
 module.exports = (on, config) => {
@@ -21,6 +22,7 @@ module.exports = (on, config) => {
 
       return list;
     },
+    downloadFile,
 
     deleteFolder(folderName) {
       return new Promise((resolve, reject) => {
@@ -51,3 +53,4 @@ module.exports = (on, config) => {
 
   return config;
 };
+

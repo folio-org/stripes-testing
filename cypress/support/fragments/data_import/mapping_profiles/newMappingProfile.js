@@ -21,6 +21,12 @@ const holdingsType = 'Holdings';
 
 const itemType = 'Item';
 
+const statisticalCode = '"ARL (Collection stats): books - Book, print (books)"';
+
+const catalogedDate = '###TODAY###';
+
+const instanceStatusTerm = '"Cataloged"';
+
 const defaultMappingProfile = {
   name: `autotest${folioRecordTypeValue.instance}${getRandomPostfix()}`,
   typeValue: folioRecordTypeValue.instance,
@@ -53,11 +59,29 @@ export default {
       cy.do([
         TextField('Material type').fillIn(materialType),
         // TODO create waiter
-        cy.wait(1500),
+        // eslint-disable-next-line cypress/no-unnecessary-waiting
+        cy.wait(1200),
         TextField('Permanent loan type').fillIn(permanentLoanType),
         TextField('Status').fillIn(status),
       ]);
+    } else if (specialMappingProfile.typeValue === folioRecordTypeValue.instance) {
+      if ('update' in specialMappingProfile) {
+        cy.do([
+          TextField('Cataloged date').fillIn(catalogedDate),
+          TextField('Instance status term').fillIn(instanceStatusTerm),
+        ]);
+      }
+
+      cy
+        .get('[name="profile.mappingDetails.mappingFields[8].repeatableFieldAction"]')
+        .select('Add these to existing');
+
+      cy.do([
+        Button('Add statistical code').click(),
+        TextField('Statistical code').fillIn(statisticalCode)
+      ]);
     }
+
     cy.do(Button('Save as profile & Close').click());
   }
 };

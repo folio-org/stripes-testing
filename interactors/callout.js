@@ -13,7 +13,8 @@ export default HTML.extend('callout')
   .locator((el) => el.textContent)
   .filters({
     id: (el) => el.id,
-    type: (el) => calloutTypes.keys()
+    textContent: (el) => el.querySelector('[class^=message-]').textContent,
+    type: (el) => ['success', 'info', 'error', 'warning']
       .filter((t) => el.className.includes(t))[0]
   })
   .actions({
