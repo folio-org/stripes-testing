@@ -1,22 +1,35 @@
 import { Button, TextField, MultiColumnListCell, Modal } from '../../../../../interactors';
 import { getLongDelay } from '../../../utils/cypressTools';
-import SettingsDataImport from '../settingsDataImport';
 
 const actionsButton = Button('Actions');
 
 const deleteJobProfile = (profileName) => {
-  SettingsDataImport.goToJobProfile();
-  cy.do(MultiColumnListCell(profileName).click());
-  cy.get('[data-pane-header-actions-dropdown]')
-    .should('have.length', 2)
-    .eq(1)
-    .click();
-  cy.do([
-    Button('Delete').click(),
-    Modal(`Delete "${profileName}" job profile?`).find(Button('Delete')).click(),
-  ]);
+  // get all job profiles
+  cy
+    .okapiRequest({
+      path: 'data-import-profiles/jobProfiles',
+      searchParams: {
+        query:'cql.allRecords=1   ',
+        limit: 1000
+      },
+    })
+    .then(({ body: { jobProfiles } }) => {
+      // find profile to delete
+      const profileToDelete = jobProfiles.find(profile => profile.name === profileName);
 
-  cy.expect(MultiColumnListCell(profileName).absent());
+      // delete profile with its id
+      cy
+        .okapiRequest({
+          method: 'DELETE',
+          path: `data-import-profiles/jobProfiles/${profileToDelete.id}`,
+          searchParams: {
+            query:'cql.allRecords=1   sortBy name',
+          },
+        })
+        .then(({ status }) => {
+          if (status === 204) cy.log('###DELETED JOB PROFILE###');
+        });
+    });
 };
 
 export default {

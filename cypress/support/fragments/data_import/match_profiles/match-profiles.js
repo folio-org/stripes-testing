@@ -1,5 +1,4 @@
-import { Button, Modal, MultiColumnListCell, Select, TextField } from '../../../../../interactors';
-import SettingsDataImport from '../settingsDataImport';
+import { Button, MultiColumnListCell, Select, TextField } from '../../../../../interactors';
 
 const openNewMatchProfileForm = () => {
   cy.do([
@@ -40,18 +39,29 @@ const fillMatchProfileForm = ({
 };
 
 const deleteMatchProfile = (profileName) => {
-  SettingsDataImport.goToMatchProfile();
-  cy.do(MultiColumnListCell(profileName).click());
-  cy.get('[data-pane-header-actions-dropdown]')
-    .should('have.length', 2)
-    .eq(1)
-    .click();
-  cy.do([
-    Button('Delete').click(),
-    Modal(`Delete "${profileName}" match profile?`).find(Button('Delete')).click(),
-  ]);
+  // get all match profiles
+  cy
+    .okapiRequest({
+      path: 'data-import-profiles/matchProfiles',
+      searchParams: {
+        query: '(cql.allRecords=1) sortby name',
+        limit: 30
+      },
+    })
+    .then(({ body: { matchProfiles } }) => {
+      // find profile to delete
+      const profileToDelete = matchProfiles.find(profile => profile.name === profileName);
 
-  cy.expect(MultiColumnListCell(profileName).absent());
+      // delete profile with its id
+      cy
+        .okapiRequest({
+          method: 'DELETE',
+          path: `data-import-profiles/matchProfiles/${profileToDelete.id}`,
+        })
+        .then(({ status }) => {
+          if (status === 204) cy.log('###DELETED MATCH PROFILE###');
+        });
+    });
 };
 
 export default {

@@ -1,6 +1,5 @@
-import { Button, Modal, MultiColumnListCell, TextField } from '../../../../../interactors';
+import { Button, MultiColumnListCell, TextField } from '../../../../../interactors';
 import newMappingProfile from './newMappingProfile';
-import SettingsDataImport from '../settingsDataImport';
 
 const actionsButton = Button('Actions');
 
@@ -18,18 +17,29 @@ const closeViewModeForMappingProfile = () => {
 };
 
 const deleteFieldMappingProfile = (profileName) => {
-  SettingsDataImport.goToMappingProfile();
-  cy.do(MultiColumnListCell(profileName).click());
-  cy.get('[data-pane-header-actions-dropdown]')
-    .should('have.length', 2)
-    .eq(1)
-    .click();
-  cy.do([
-    Button('Delete').click(),
-    Modal(`Delete "${profileName}" field mapping profile?`).find(Button('Delete')).click(),
-  ]);
+  // get all mapping profiles
+  cy
+    .okapiRequest({
+      path: 'data-import-profiles/mappingProfiles',
+      searchParams: {
+        query: '(cql.allRecords=1) sortby name',
+        limit: 1000
+      },
+    })
+    .then(({ body: { mappingProfiles } }) => {
+      // find profile to delete
+      const profileToDelete = mappingProfiles.find(profile => profile.name === profileName);
 
-  cy.expect(MultiColumnListCell(profileName).absent());
+      // delete profile with its id
+      cy
+        .okapiRequest({
+          method: 'DELETE',
+          path: `data-import-profiles/mappingProfiles/${profileToDelete.id}`,
+        });
+    })
+    .then(({ status }) => {
+      if (status === 204) cy.log('###DELETED MAPPING PROFILE###');
+    });
 };
 
 export default {

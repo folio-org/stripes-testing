@@ -65,10 +65,12 @@ export default {
         TextField('Status').fillIn(status),
       ]);
     } else if (specialMappingProfile.typeValue === folioRecordTypeValue.instance) {
-      cy.do([
-        TextField('Cataloged date').fillIn(catalogedDate),
-        TextField('Instance status term').fillIn(instanceStatusTerm),
-      ]);
+      if ('update' in specialMappingProfile) {
+        cy.do([
+          TextField('Cataloged date').fillIn(catalogedDate),
+          TextField('Instance status term').fillIn(instanceStatusTerm),
+        ]);
+      }
 
       cy
         .get('[name="profile.mappingDetails.mappingFields[8].repeatableFieldAction"]')

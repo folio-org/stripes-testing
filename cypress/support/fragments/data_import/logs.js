@@ -14,7 +14,7 @@ const createdItemsColumns = [
 ];
 
 const checkIsInstanceCreated = () => {
-  cy.do(createdItemsColumns[0].perform(element => {
+  cy.do(createdItemsColumns[1].perform(element => {
     expect(element).to.have.text('Created');
   }));
 };

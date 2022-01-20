@@ -123,6 +123,7 @@ describe('ui-data-import: MARC file import with matching for 999 ff field', () =
         const mappingProfile = {
           name: mappingProfileName,
           typeValue : NewFieldMappingProfile.folioRecordTypeValue.instance,
+          update: true
         };
         SettingsDataImport.goToMappingProfile();
         FieldMappingProfiles.createMappingProfile(mappingProfile);
