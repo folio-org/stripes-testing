@@ -176,8 +176,10 @@ describe('ui-data-import: MARC file import with matching for 999 ff field', () =
             FieldMappingProfiles.deleteFieldMappingProfile(mappingProfileName);
             FieldMappingProfiles.deleteFieldMappingProfile(mappingProfileNameForExport);
 
-            // delete downloads folder
+            // delete downloads folder and created files in fixtures
             FileManager.deleteFolder(Cypress.config('downloadsFolder'));
+            FileManager.deleteFile(`cypress/fixtures/${nameForExportedMarcFile}`);
+            FileManager.deleteFile(`cypress/fixtures/${nameForCSVFile}`);
           });
       });
   });
