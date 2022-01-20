@@ -1,4 +1,4 @@
-import { MultiColumnListCell, Modal, Button, Select, including } from '../../../../interactors';
+import { Modal, Button, Select } from '../../../../interactors';
 import { getLongDelay } from '../../utils/cypressTools';
 
 export default {
@@ -6,7 +6,7 @@ export default {
     cy.get('#data-export-module-display input[type=file]', getLongDelay()).attachFile(fileName);
   },
 
-  exportWithDefaultInstancesJobProfile:(fileName) => {
+  exportWithDefaultInstancesJobProfile:() => {
     // TODO by interactors and stabilize it
     // cy.do(MultiColumnListCell({ row: 1, columnIndex: 2 }).click());
     cy.wait(2000);
@@ -14,7 +14,6 @@ export default {
     cy.do([
       Modal({ id: 'choose-job-profile-confirmation-modal' }).find(Select()).choose('Instances'),
       Button('Run').click(),
-      MultiColumnListCell({ row: 0, columnIndex: 0 }).find(Button({ text: including(fileName) })).click()
     ]);
   },
 };

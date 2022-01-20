@@ -5,6 +5,10 @@ const actionsButton = Button('Actions');
 
 const iconButton = Button({ icon: 'times' });
 
+const instanceType = 'Instance';
+
+const holdingsType = 'Holdings';
+
 const openNewMappingProfileForm = () => {
   cy.do([
     actionsButton.click(),
@@ -20,7 +24,13 @@ export default {
 
   createMappingProfile:(mappingProfile) => {
     openNewMappingProfileForm();
-    newMappingProfile.fillMappingProfile(mappingProfile);
+    if (mappingProfile.typeValue === instanceType) {
+      newMappingProfile.fillInstanceMappingProfileForCreate(mappingProfile);
+    } else if (mappingProfile.typeValue === holdingsType) {
+      newMappingProfile.fillHoldingsMappingProfileForCreate(mappingProfile);
+    } else {
+      newMappingProfile.fillItemMappingProfileForCreate(mappingProfile);
+    }
     closeViewModeForMappingProfile();
     cy.expect(actionsButton.exists());
   },

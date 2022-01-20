@@ -2,7 +2,7 @@ import Ledgers from '../../../support/fragments/finance/ledgers/ledgers';
 import TopMenu from '../../../support/fragments/topMenu';
 import NewLedger from '../../../support/fragments/finance/ledgers/newLedger';
 import getRandomPostfix from '../../../support/utils/stringTools';
-import { testType } from '../../../support/utils/tagTools';
+import testType from '../../../support/dictionary/testTypes';
 import FinanceHelp from '../../../support/fragments/finance/financeHelper';
 
 describe('ui-finance: Ledger creation', () => {

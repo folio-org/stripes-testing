@@ -2,7 +2,7 @@ import TopMenu from '../../../support/fragments/topMenu';
 import NewFiscalYear from '../../../support/fragments/finance/fiscalYears/newFiscalYear';
 import FiscalYears from '../../../support/fragments/finance/fiscalYears/fiscalYears';
 import getRandomPostfix from '../../../support/utils/stringTools';
-import { testType } from '../../../support/utils/tagTools';
+import testType from '../../../support/dictionary/testTypes';
 import FinanceHelp from '../../../support/fragments/finance/financeHelper';
 
 describe('ui-finance: Fiscal Year creation', () => {

@@ -4,7 +4,7 @@ import Ledgers from '../../../support/fragments/finance/ledgers/ledgers';
 import FinanceHelp from '../../../support/fragments/finance/financeHelper';
 import TopMenu from '../../../support/fragments/topMenu';
 import { MultiColumnList } from '../../../../interactors';
-import { testType } from '../../../support/utils/tagTools';
+import testType from '../../../support/dictionary/testTypes';
 
 describe('ui-finance: Ledger list search and filters', () => {
   let aUnit;

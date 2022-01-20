@@ -1,8 +1,8 @@
 import DataImportViewAllPage from '../../support/fragments/data_import/dataImportViewAllPage';
 import getRandomPostfix from '../../support/utils/stringTools';
 import fileManager from '../../support/utils/fileManager';
-import { testType } from '../../support/utils/tagTools';
 import TopMenu from '../../support/fragments/topMenu';
+import testTypes from '../../support/dictionary/testTypes';
 
 describe('ui-data-import: Search the "View all" log screen', () => {
   let id;
@@ -37,7 +37,7 @@ describe('ui-data-import: Search the "View all" log screen', () => {
     });
   });
 
-  it('C11112 Search the "View all" log screen', { tags: [testType.smoke] }, () => {
+  it('C11112 Search the "View all" log screen', { tags: [testTypes.smoke] }, () => {
     DataImportViewAllPage.gotoViewAllPage();
 
     DataImportViewAllPage.options.forEach((option) => {

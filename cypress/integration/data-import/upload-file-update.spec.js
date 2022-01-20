@@ -1,7 +1,7 @@
 
 /// <reference types="cypress" />
 
-import { testType } from '../../support/utils/tagTools';
+import testTypes from '../../support/dictionary/testTypes';
 import getRandomPostfix from '../../support/utils/stringTools';
 import dataImport from '../../support/fragments/data_import/dataImport';
 import jobProfiles from '../../support/fragments/data_import/job_profiles/jobProfiles';
@@ -10,7 +10,13 @@ import createdRecord from '../../support/fragments/data_import/createdRecord';
 import SearchInventory from '../../support/fragments/data_import/searchInventory';
 import inventorySearch from '../../support/fragments/inventory/inventorySearch';
 import exportFile from '../../support/fragments/data-export/exportFile';
+import dataExportLogs from '../../support/fragments/data-export/dataExportLogs';
 import TopMenu from '../../support/fragments/topMenu';
+import newMappingProfile from '../../support/fragments/data_import/mapping_profiles/newMappingProfile';
+import newActionProfile from '../../support/fragments/data_import/action_profiles/newActionProfile';
+import settingsDataImport from '../../support/fragments/data_import/settingsDataImport';
+import fieldMappingProfiles from '../../support/fragments/data_import/mapping_profiles/fieldMappingProfiles';
+import actionProfiles from '../../support/fragments/data_import/action_profiles/actionProfiles';
 
 describe('ui-data-import: MARC file upload with the update of instance, holding, and items', () => {
   const instanceMappingProfile = {
@@ -161,8 +167,19 @@ describe('ui-data-import: MARC file upload with the update of instance, holding,
     cy.createLinkedProfiles(testData);
   });
 
-  it('C343335 MARC file upload with the update of instance, holding, and items', { tags: [testType.smoke] }, () => {
-    dataImport.goToDataImport();
+  it('C343335 MARC file upload with the update of instance, holding, and items', { tags: [testTypes.smoke] }, () => {
+    const collectionOfProfiles = [
+      { mappingProfile: { typeValue : newMappingProfile.folioRecordTypeValue.instance,
+        isUpdate: true },
+      actionProfile: { typeValue: newActionProfile.folioRecordTypeValue.instance } },
+      { mappingProfile: { typeValue : newMappingProfile.folioRecordTypeValue.holdings,
+        isUpdate: true },
+      actionProfile: { typeValue: newActionProfile.folioRecordTypeValue.holdings } },
+      { mappingProfile: { typeValue : newMappingProfile.folioRecordTypeValue.item,
+        isUpdate: true },
+      actionProfile: { typeValue: newActionProfile.folioRecordTypeValue.item } }];
+
+    cy.visit(TopMenu.dataImportPath);
     dataImport.uploadFile('oneMarcBib.mrc');
     jobProfiles.searchJobProfileForImport(testData.jobProfile.profile.name);
     jobProfiles.runImportFile();
@@ -175,12 +192,28 @@ describe('ui-data-import: MARC file upload with the update of instance, holding,
     SearchInventory.getInstanceHRID().then(id => {
       cy.visit(TopMenu.inventoryPath);
       SearchInventory.searchInstanceByHRID(id);
+    });
 
-      inventorySearch.saveUUIDs();
-      SearchInventory.createFileForExport(fileNameForExport);
-      cy.visit(TopMenu.dataExport);
-      exportFile.uploadFile(fileNameForExport);
-      exportFile.exportWithDefaultInstancesJobProfile(fileNameForExport);
+    inventorySearch.saveUUIDs();
+    // export .csv file
+    SearchInventory.createFileForExport(fileNameForExport);
+    cy.visit(TopMenu.dataExport);
+
+    // create .mrc file
+    exportFile.uploadFile(fileNameForExport);
+    exportFile.exportWithDefaultInstancesJobProfile();
+    dataExportLogs.saveMarcFileForImport();
+
+    collectionOfProfiles.forEach(profile => {
+      profile.mappingProfile.name = `autotest${profile.mappingProfile.typeValue}${getRandomPostfix()}`;
+      profile.actionProfile.name = `autotest${profile.actionProfile.typeValue}${getRandomPostfix()}`;
+
+      settingsDataImport.goToMappingProfile();
+      fieldMappingProfiles.createMappingProfile(profile.mappingProfile);
+      fieldMappingProfiles.checkMappingProfilePresented(profile.mappingProfile.name);
+      settingsDataImport.goToActionProfile();
+      actionProfiles.createActionProfile(profile.actionProfile, profile.mappingProfile);
+      actionProfiles.checkActionProfilePresented(profile.actionProfile.name);
     });
   });
 });
