@@ -1,8 +1,8 @@
-import { Button, MultiColumnListCell, Select, TextField, SelectionList, Selection } from '../../../../../interactors';
+import { Button, MultiColumnListCell, Select, TextField, SelectionList, Section } from '../../../../../interactors';
 
 const openNewMatchProfileForm = () => {
   cy.do([
-    Button('Actions').click(),
+    Section({ id: 'pane-results' }).find(Button('Actions')).click(),
     Button('New match profile').click()
   ]);
 };
@@ -41,33 +41,25 @@ const fillMatchProfileForm = ({
 }) => {
   cy.do(TextField('Name*').fillIn(profileName));
   // select existing record type
-  cy.get(`[data-id="${existingRecordType}"]`).click();
+  cy.wait(5000);
+  cy.get(`[data-id="${existingRecordType}"]`).last().click();
   // fill MARC Bibliographic field in incoming
   fillIncomingRecordFields(incomingRecordFields);
   // choose match criterion
   cy.do(Select('Match criterion').choose(matchCriterion));
-
-
-
   if (existingRecordType === 'MARC_BIBLIOGRAPHIC') {
     // fill MARC Bibliographic field in existing
     fillExistingRecordFields(existingRecordFields);
   } else if (existingRecordType === 'HOLDINGS') {
-    // cy.xpath('//button[@id="criterion-value-type"]').click({ force: true });
+    cy.do(Button({ id:'criterion-value-type' }).click());
+    cy.expect(SelectionList({ id: 'sl-container-criterion-value-type' }).exists());
+    cy.do(SelectionList({ id: 'sl-container-criterion-value-type' }).select('Admin data: Holdings HRID'));
+  } else {
     cy.do(Button({ id:'criterion-value-type' }).click());
     cy.expect(SelectionList({ id: 'sl-container-criterion-value-type' }).exists());
     cy.do(SelectionList({ id: 'sl-container-criterion-value-type' }).select('Admin data: Item HRID'));
   }
 };
-
-
-
-/* else {
-    cy.do(Selection({ id: 'criterion-value-type' }).open());
-    cy.get('').type('Admin data: Item HRID');
-    cy.do(SelectionList({ id: '' }).select('Admin data: Item HRID'));
-  } */
-
 
 const deleteMatchProfile = (profileName) => {
   // get all match profiles

@@ -158,7 +158,7 @@ describe('ui-data-import: MARC file upload with the update of instance, holding,
   const nameMarcFileForImportCreate = `autotestFile.${getRandomPostfix()}.mrc`;
   const nameForCSVFile = `autotestFile${getRandomPostfix()}.csv`;
   const nameForExportedMarcFile = `autotestFile${getRandomPostfix()}.mrc`;
-  const matchProfileName = `autotestMatchProf${getRandomPostfix()}`;
+  
 
   before('navigates to application', () => {
     cy.login(Cypress.env('diku_login'), Cypress.env('diku_password'));
@@ -195,36 +195,47 @@ describe('ui-data-import: MARC file upload with the update of instance, holding,
         ExportMarcFile.downloadExportedMarcFile(nameForExportedMarcFile);
 
         cy.log('#####End Of Export#####');
-      });
+      }); */
 
     // create Match profile
-    const matchProfile = {
-      profileName: matchProfileName,
-      incomingRecordFields: {
-        field: '001'
+    const collectionOfMatchProfiles = [
+      {
+        matchProfile: { profileName: '',
+          incomingRecordFields: {
+            field: '001'
+          },
+          existingRecordFields: {
+            field: '001'
+          },
+          matchCriterion: 'Exactly matches',
+          existingRecordType: 'MARC_BIBLIOGRAPHIC' }
       },
-      existingRecordFields: {
-        field: '001'
+      {
+        matchProfile: { profileName: '',
+          incomingRecordFields: {
+            field: '901',
+            subfield: 'a'
+          },
+          matchCriterion: 'Exactly matches',
+          existingRecordType: 'HOLDINGS' }
       },
-      matchCriterion: 'Exactly matches',
-      existingRecordType: 'MARC_BIBLIOGRAPHIC',
-    }; */
-
-    const matchProfile1 = {
-      profileName: matchProfileName,
-      incomingRecordFields: {
-        field: '901',
-        subfield: 'a'
-      },
-      matchCriterion: 'Exactly matches',
-      existingRecordType: 'HOLDINGS',
-    };
+      {
+        matchProfile: { profileName: '',
+          incomingRecordFields: {
+            field: '902',
+            subfield: 'a'
+          },
+          matchCriterion: 'Exactly matches',
+          existingRecordType: 'ITEM' }
+      }
+    ];
 
     settingsDataImport.goToMatchProfile();
-    // MatchProfiles.createMatchProfile(matchProfile);
-    settingsDataImport.goToMatchProfile();
-    MatchProfiles.createMatchProfile(matchProfile1);
-/*
+    collectionOfMatchProfiles.forEach(profile => {
+      profile.matchProfile.profileName = `autotestMatchProf${getRandomPostfix()}`;
+      MatchProfiles.createMatchProfile(profile.matchProfile);
+    });
+    /*
     const collectionOfProfiles = [
       {
         mappingProfile: { typeValue : NewMappingProfile.folioRecordTypeValue.instance },
