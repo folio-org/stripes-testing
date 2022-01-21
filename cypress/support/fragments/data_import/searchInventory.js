@@ -59,10 +59,10 @@ const searchInstanceByHRID = (id) => {
 // when creating mapping profile we choose status cataloged date as today
 // in inventory, it will be in YYYY-MM-DD format
 const expectedCatalogedDate = DateTools.getFormattedDate({ date: new Date() });
-// when creating mapping profile we choose instance status term as "Cataloged"
-// in inventory, this will be "cat" for status code and "Cataloged" for status term
-const expectedStatusTerm = 'Cataloged';
-const expectedStatusCode = 'cat';
+// when creating mapping profile we choose instance status term as "Batch Loaded"
+// in inventory, this will be "batch" for status code and "Batch Loaded" for status term
+const expectedStatusTerm = 'Batch Loaded';
+const expectedStatusCode = 'batch';
 
 const checkInstanceDetails = () => {
   cy.do(MultiColumnListCell({ row: 0, columnIndex: 1 }).click());

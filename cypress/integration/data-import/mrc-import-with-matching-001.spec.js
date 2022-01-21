@@ -14,6 +14,7 @@ import ActionProfiles from '../../support/fragments/data_import/action_profiles/
 import NewJobProfile from '../../support/fragments/data_import/job_profiles/newJobProfile';
 import exportFile from '../../support/fragments/data-export/exportFile';
 import ExportMarcFile from '../../support/fragments/data-export/export-marc-file';
+import FileManager from '../../support/utils/fileManager';
 
 describe('ui-data-import: Test MARC-MARC matching for 001 field', () => {
   before(() => {
@@ -30,38 +31,43 @@ describe('ui-data-import: Test MARC-MARC matching for 001 field', () => {
   });
 
   it('C17044: MARC-MARC matching for 001 field', () => {
-    const nameForMarcFile = `autotestFile${getRandomPostfix()}.mrc`;
-    const nameForExportedMarcFile = `autotestFile${getRandomPostfix()}.mrc`;
-    const nameForCSVFile = `autotestFile${getRandomPostfix()}.csv`;
+    // unique file name to upload
+    const nameForMarcFile = `autoTestFile${getRandomPostfix()}.mrc`;
+    const nameForExportedMarcFile = `autoTestFile${getRandomPostfix()}.mrc`;
+    const nameForCSVFile = `autoTestFile${getRandomPostfix()}.csv`;
 
-    const matchProfileName = `autotestMatchProf.${getRandomPostfix()}`;
-    const mappingProfileName = `autotestMappingProf.${getRandomPostfix()}`;
-    const actionProfileName = `autotestActionProf.${getRandomPostfix()}`;
-    const jobProfileName = `autotestJobProf.${getRandomPostfix()}`;
+    // unique name for profiles
+    const matchProfileName = `autoTestMatchProf.${getRandomPostfix()}`;
+    const mappingProfileName = `autoTestMappingProf.${getRandomPostfix()}`;
+    const actionProfileName = `autoTestActionProf.${getRandomPostfix()}`;
+    const jobProfileName = `autoTestJobProf.${getRandomPostfix()}`;
 
+    // upload a marc file for export
     dataImport.uploadFile(nameForMarcFile);
     jobProfiles.searchJobProfileForImport('Default - Create instance and SRS MARC Bib');
     jobProfiles.runImportFile(nameForMarcFile);
     logs.openJobProfile(nameForMarcFile);
     logs.checkIsInstanceCreated();
 
+    // get Instance HRID through API
     SearchInventory
       .getInstanceHRID()
       .then(id => {
         // download .csv file
-        cy.log(JSON.stringify(id));
-            SearchInventory.gotoInventory();
-        cy.pause();
+        SearchInventory.gotoInventory();
         SearchInventory.searchInstanceByHRID(id);
         inventorySearch.saveUUIDs();
         ExportMarcFile.downloadCSVFile(nameForCSVFile, 'SearchInstanceUUIDs*');
+        FileManager.deleteFolder(Cypress.config('downloadsFolder'));
         cy.visit(TopMenu.dataExport);
 
         // download exported marc file
         exportFile.uploadFile(nameForCSVFile);
         exportFile.exportWithDefaultInstancesJobProfile(nameForCSVFile);
         ExportMarcFile.downloadExportedMarcFile(nameForExportedMarcFile);
+        FileManager.deleteFolder(Cypress.config('downloadsFolder'));
 
+        // create Match profile
         const matchProfile = {
           profileName: matchProfileName,
           incomingRecordFields: {
@@ -76,16 +82,18 @@ describe('ui-data-import: Test MARC-MARC matching for 001 field', () => {
         SettingsDataImport.goToMatchProfile();
 
         MatchProfiles.createMatchProfile(matchProfile);
-    
+
+        // create Field mapping profile
         const mappingProfile = {
           name: mappingProfileName,
           typeValue : NewFieldMappingProfile.folioRecordTypeValue.instance,
           update: true
         };
-    
+
         SettingsDataImport.goToMappingProfile();
         FieldMappingProfiles.createMappingProfile(mappingProfile);
-    
+
+        // create Action profile and link it to Field mapping profile
         const actionProfile = {
           typeValue : NewActionProfile.folioRecordTypeValue.instance,
           name: actionProfileName,
@@ -94,7 +102,8 @@ describe('ui-data-import: Test MARC-MARC matching for 001 field', () => {
         SettingsDataImport.goToActionProfile();
         ActionProfiles.createActionProfile(actionProfile, mappingProfile);
         ActionProfiles.checkActionProfilePresented(actionProfileName);
-    
+
+        // create Job profile
         const jobProfile = {
           ...NewJobProfile.defaultJobProfile,
           profileName: jobProfileName
@@ -107,24 +116,29 @@ describe('ui-data-import: Test MARC-MARC matching for 001 field', () => {
         jobProfiles.waitLoadingList();
         jobProfiles.checkJobProfilePresented(jobProfile.profileName);
 
+        // upload the exported marc file with 001 field
         dataImport.goToDataImport();
-        dataImport.uploadFile(nameForExportedMarcFile);
+        dataImport.uploadExportedFile(nameForExportedMarcFile);
         jobProfiles.searchJobProfileForImport(jobProfileName);
         jobProfiles.runImportFile(nameForExportedMarcFile);
-
         logs.openJobProfile(nameForExportedMarcFile);
+        logs.checkIsInstanceUpdated();
 
-        SearchInventory
-          .getInstanceHRID()
-          .then(hrId => {
-            cy.log(JSON.stringify(hrId));
-            SearchInventory.gotoInventory();
-            cy.pause();
-            SearchInventory.searchInstanceByHRID(hrId);
+        SearchInventory.gotoInventory();
+        SearchInventory.searchInstanceByHRID(id);
 
-            // ensure the fields created in Field mapping profile exists in inventory
-            SearchInventory.checkInstanceDetails();
-          });
+        // ensure the fields created in Field mapping profile exists in inventory
+        SearchInventory.checkInstanceDetails();
+
+        // clean up generated profiles
+        jobProfiles.deleteJobProfile(jobProfileName);
+        MatchProfiles.deleteMatchProfile(matchProfileName);
+        ActionProfiles.deleteActionProfile(actionProfileName);
+        FieldMappingProfiles.deleteFieldMappingProfile(mappingProfileName);
+
+        // delete created files in fixtures
+        FileManager.deleteFile(`cypress/fixtures/${nameForExportedMarcFile}`);
+        FileManager.deleteFile(`cypress/fixtures/${nameForCSVFile}`);
       });
   });
 });

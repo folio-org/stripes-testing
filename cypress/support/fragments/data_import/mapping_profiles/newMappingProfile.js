@@ -21,11 +21,9 @@ const holdingsType = 'Holdings';
 
 const itemType = 'Item';
 
-const statisticalCode = '"ARL (Collection stats): books - Book, print (books)"';
-
 const catalogedDate = '###TODAY###';
 
-const instanceStatusTerm = '"Cataloged"';
+const instanceStatusTerm = '"Batch Loaded"';
 
 const defaultMappingProfile = {
   name: `autotest${folioRecordTypeValue.instance}${getRandomPostfix()}`,
@@ -70,18 +68,11 @@ export default {
           TextField('Cataloged date').fillIn(catalogedDate),
           TextField('Instance status term').fillIn(instanceStatusTerm),
         ]);
+        // wait accepted values to be filled
+        // eslint-disable-next-line cypress/no-unnecessary-waiting
+        cy.wait(1800);
       }
-
-      cy
-        .get('[name="profile.mappingDetails.mappingFields[8].repeatableFieldAction"]')
-        .select('Add these to existing');
-
-      cy.do([
-        Button('Add statistical code').click(),
-        TextField('Statistical code').fillIn(statisticalCode)
-      ]);
     }
-
     cy.do(Button('Save as profile & Close').click());
   }
 };
