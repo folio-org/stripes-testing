@@ -90,12 +90,14 @@ describe('ui-data-import: MARC file import with matching for 999 ff field', () =
         SearchInventory.searchInstanceByHRID(id);
         inventorySearch.saveUUIDs();
         ExportMarcFile.downloadCSVFile(nameForCSVFile, 'SearchInstanceUUIDs*');
+        FileManager.deleteFolder(Cypress.config('downloadsFolder'));
         cy.visit(TopMenu.dataExport);
 
         // download exported marc file
         exportFile.uploadFile(nameForCSVFile);
         exportFile.exportWithDefaultInstancesJobProfile(nameForCSVFile);
         ExportMarcFile.downloadExportedMarcFile(nameForExportedMarcFile);
+        FileManager.deleteFolder(Cypress.config('downloadsFolder'));
 
         cy.log('#####End Of Export#####');
 
@@ -132,7 +134,8 @@ describe('ui-data-import: MARC file import with matching for 999 ff field', () =
         // create Action profile and link it to Field mapping profile
         const actionProfile = {
           typeValue : NewActionProfile.folioRecordTypeValue.instance,
-          name: actionProfileName
+          name: actionProfileName,
+          action: 'Update (all record types except Orders)'
         };
         SettingsDataImport.goToActionProfile();
         ActionProfiles.createActionProfile(actionProfile, mappingProfile);
@@ -153,9 +156,11 @@ describe('ui-data-import: MARC file import with matching for 999 ff field', () =
 
         // upload the exported marc file with 999.f.f.s fields
         dataImport.goToDataImport();
-        dataImport.uploadFile(nameForExportedMarcFile);
+        dataImport.uploadExportedFile(nameForExportedMarcFile);
         jobProfiles.searchJobProfileForImport(jobProfileName);
         jobProfiles.runImportFile(nameForExportedMarcFile);
+        logs.openJobProfile(nameForExportedMarcFile);
+        logs.checkIsInstanceUpdated();
 
         // get Instance HRID through API
         SearchInventory
@@ -176,8 +181,7 @@ describe('ui-data-import: MARC file import with matching for 999 ff field', () =
             FieldMappingProfiles.deleteFieldMappingProfile(mappingProfileName);
             FieldMappingProfiles.deleteFieldMappingProfile(mappingProfileNameForExport);
 
-            // delete downloads folder and created files in fixtures
-            FileManager.deleteFolder(Cypress.config('downloadsFolder'));
+            // delete created files in fixtures
             FileManager.deleteFile(`cypress/fixtures/${nameForExportedMarcFile}`);
             FileManager.deleteFile(`cypress/fixtures/${nameForCSVFile}`);
           });
