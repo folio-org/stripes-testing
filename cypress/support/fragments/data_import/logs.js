@@ -22,12 +22,11 @@ const checkIsInstanceCreated = () => {
 export default {
   checkImportFile(jobProfileName) {
     cy.do(Button('View all').click());
-    cy.do(Accordion({ id: 'profileIdAny' }).clickHeader());
-    cy.wait(20000);
-    cy.do(Selection({ value: 'Choose job profile' }).open());
-    cy.wait(40000);
-    cy.expect(Accordion({ id: 'profileIdAny' }).find(Button({ id: 'accordion-toggle-button-profileIdAny' })).exists());
-    cy.do(SelectionList().select(jobProfileName));
+    cy.do([
+      Accordion({ id: 'profileIdAny' }).clickHeader(),
+      Selection({ value: 'Choose job profile' }).open(),
+      SelectionList().select(jobProfileName)
+    ]);
     cy.expect(MultiColumnListCell(jobProfileName).exists());
   },
 

@@ -5,10 +5,6 @@ const actionsButton = Button('Actions');
 
 const iconButton = Button({ icon: 'times' });
 
-const instanceType = 'Instance';
-
-const holdingsType = 'Holdings';
-
 const openNewMappingProfileForm = () => {
   cy.do([
     actionsButton.click(),
@@ -20,17 +16,36 @@ const closeViewModeForMappingProfile = () => {
   cy.do(iconButton.click());
 };
 
-export default {
+const deleteFieldMappingProfile = (profileName) => {
+  // get all mapping profiles
+  cy
+    .okapiRequest({
+      path: 'data-import-profiles/mappingProfiles',
+      searchParams: {
+        query: '(cql.allRecords=1) sortby name',
+        limit: 1000
+      },
+    })
+    .then(({ body: { mappingProfiles } }) => {
+      // find profile to delete
+      const profileToDelete = mappingProfiles.find(profile => profile.name === profileName);
 
+      // delete profile with its id
+      cy
+        .okapiRequest({
+          method: 'DELETE',
+          path: `data-import-profiles/mappingProfiles/${profileToDelete.id}`,
+        });
+    })
+    .then(({ status }) => {
+      if (status === 204) cy.log('###DELETED MAPPING PROFILE###');
+    });
+};
+
+export default {
   createMappingProfile:(mappingProfile) => {
     openNewMappingProfileForm();
-    if (mappingProfile.typeValue === instanceType) {
-      newMappingProfile.fillInstanceMappingProfileForCreate(mappingProfile);
-    } else if (mappingProfile.typeValue === holdingsType) {
-      newMappingProfile.fillHoldingsMappingProfileForCreate(mappingProfile);
-    } else {
-      newMappingProfile.fillItemMappingProfileForCreate(mappingProfile);
-    }
+    newMappingProfile.fillMappingProfile(mappingProfile);
     closeViewModeForMappingProfile();
     cy.expect(actionsButton.exists());
   },
@@ -40,4 +55,6 @@ export default {
     cy.do(Button('Search').click());
     cy.expect(MultiColumnListCell(mappingProfile).exists());
   },
+
+  deleteFieldMappingProfile
 };

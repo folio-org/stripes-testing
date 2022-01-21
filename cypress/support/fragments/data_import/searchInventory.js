@@ -3,13 +3,10 @@ import {
   Button,
   KeyValue,
   MultiColumnListCell,
-  Select,
   TextField
 } from '../../../../interactors';
 import DataImportViewAllPage from './dataImportViewAllPage';
 import DateTools from '../../utils/dateTools';
-import FileManager from '../../utils/fileManager';
-import getRandomPostfix from '../../utils/stringTools';
 
 
 const getInstanceHRID = () => {
@@ -51,8 +48,9 @@ const gotoInventory = () => {
 };
 
 const searchInstanceByHRID = (id) => {
+  cy.get('#input-inventory-search-qindex').select('Instance HRID');
   cy.do([
-    Select({ id: 'input-inventory-search-qindex' }).choose('Instance HRID'),
+    // Select({ id: 'input-inventory-search-qindex' }).choose('Instance HRID'),
     TextField({ id: 'input-inventory-search' }).fillIn(id),
     Button('Search').click()
   ]);
@@ -61,38 +59,25 @@ const searchInstanceByHRID = (id) => {
 // when creating mapping profile we choose status cataloged date as today
 // in inventory, it will be in YYYY-MM-DD format
 const expectedCatalogedDate = DateTools.getFormattedDate({ date: new Date() });
-// when creating mapping profile we choose status "cataloged"
-// in inventory, this will be "cat"
-const expectedStatus = 'cat';
+// when creating mapping profile we choose instance status term as "Cataloged"
+// in inventory, this will be "cat" for status code and "Cataloged" for status term
+const expectedStatusTerm = 'Cataloged';
+const expectedStatusCode = 'cat';
+
 const checkInstanceDetails = () => {
   cy.do(MultiColumnListCell({ row: 0, columnIndex: 1 }).click());
   const catalogedDate = KeyValue('Cataloged date');
+  const instanceStatusTerm = KeyValue('Instance status term');
   const instanceStatusCode = KeyValue('Instance status code');
 
   cy.expect(catalogedDate.has({ value: expectedCatalogedDate }));
-  cy.expect(instanceStatusCode.has({ value: expectedStatus }));
+  cy.expect(instanceStatusTerm.has({ value: expectedStatusTerm }));
+  cy.expect(instanceStatusCode.has({ value: expectedStatusCode }));
 };
-
-
 
 export default {
   getInstanceHRID,
   gotoInventory,
   searchInstanceByHRID,
   checkInstanceDetails,
-
-  createFileForExport(fileNameForExport) {
-    // Need time for download file TODO: think about how it can be fixed
-    cy.wait(Cypress.env('downloadTimeout'));
-
-    FileManager.findDownloadedFilesByMask('SearchInstanceUUIDs*')
-      .then((downloadedFilenames) => {
-        const lastDownloadedFilename = downloadedFilenames.sort()[downloadedFilenames.length - 1];
-
-        FileManager.readFile(lastDownloadedFilename)
-          .then((actualContent) => {
-            FileManager.createFile(`cypress/fixtures/${fileNameForExport}`, actualContent);
-          });
-      });
-  },
 };
