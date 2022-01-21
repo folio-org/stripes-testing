@@ -49,7 +49,9 @@ describe('ui-data-import: Test MARC-MARC matching for 001 field', () => {
       .getInstanceHRID()
       .then(id => {
         // download .csv file
-        SearchInventory.gotoInventory();
+        cy.log(JSON.stringify(id));
+            SearchInventory.gotoInventory();
+        cy.pause();
         SearchInventory.searchInstanceByHRID(id);
         inventorySearch.saveUUIDs();
         ExportMarcFile.downloadCSVFile(nameForCSVFile, 'SearchInstanceUUIDs*');
@@ -59,8 +61,6 @@ describe('ui-data-import: Test MARC-MARC matching for 001 field', () => {
         exportFile.uploadFile(nameForCSVFile);
         exportFile.exportWithDefaultInstancesJobProfile(nameForCSVFile);
         ExportMarcFile.downloadExportedMarcFile(nameForExportedMarcFile);
-
-        cy.log('#####End Of Export#####');
 
         const matchProfile = {
           profileName: matchProfileName,
@@ -112,10 +112,14 @@ describe('ui-data-import: Test MARC-MARC matching for 001 field', () => {
         jobProfiles.searchJobProfileForImport(jobProfileName);
         jobProfiles.runImportFile(nameForExportedMarcFile);
 
+        logs.openJobProfile(nameForExportedMarcFile);
+
         SearchInventory
           .getInstanceHRID()
           .then(hrId => {
+            cy.log(JSON.stringify(hrId));
             SearchInventory.gotoInventory();
+            cy.pause();
             SearchInventory.searchInstanceByHRID(hrId);
 
             // ensure the fields created in Field mapping profile exists in inventory
