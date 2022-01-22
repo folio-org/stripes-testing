@@ -85,7 +85,6 @@ export default {
     openNewMatchProfileForm();
     fillMatchProfileForm(profile);
     // save profile
-    cy.pause();
     cy.do(Button('Save as profile & Close').click());
     // wait till profile appears in profiles list
     cy.expect(MultiColumnListCell(profile.profileName).exists());
