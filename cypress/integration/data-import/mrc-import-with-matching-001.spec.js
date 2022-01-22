@@ -79,7 +79,7 @@ describe('ui-data-import: Test MARC-MARC matching for 001 field', () => {
           matchCriterion: 'Exactly matches',
         };
 
-        SettingsDataImport.goToMatchProfile();
+        SettingsDataImport.goToMatchProfiles();
 
         MatchProfiles.createMatchProfile(matchProfile);
 
@@ -90,7 +90,7 @@ describe('ui-data-import: Test MARC-MARC matching for 001 field', () => {
           update: true
         };
 
-        SettingsDataImport.goToMappingProfile();
+        SettingsDataImport.goToMappingProfiles();
         FieldMappingProfiles.createMappingProfile(mappingProfile);
 
         // create Action profile and link it to Field mapping profile
@@ -99,7 +99,7 @@ describe('ui-data-import: Test MARC-MARC matching for 001 field', () => {
           name: actionProfileName,
           action: 'Update (all record types except Orders)',
         };
-        SettingsDataImport.goToActionProfile();
+        SettingsDataImport.goToActionProfiles();
         ActionProfiles.createActionProfile(actionProfile, mappingProfile);
         ActionProfiles.checkActionProfilePresented(actionProfileName);
 
@@ -108,12 +108,8 @@ describe('ui-data-import: Test MARC-MARC matching for 001 field', () => {
           ...NewJobProfile.defaultJobProfile,
           profileName: jobProfileName
         };
-        SettingsDataImport.goToJobProfile();
-        jobProfiles.openNewJobProfileForm();
-        NewJobProfile.fillJobProfile(jobProfile);
-        NewJobProfile.linkMatchAndActionProfiles(matchProfileName, actionProfileName);
-        NewJobProfile.clickSaveAndCloseButton();
-        jobProfiles.waitLoadingList();
+        SettingsDataImport.goToJobProfiles();
+        jobProfiles.createJobProfile(jobProfile, actionProfileName, matchProfileName);
         jobProfiles.checkJobProfilePresented(jobProfile.profileName);
 
         // upload the exported marc file with 001 field

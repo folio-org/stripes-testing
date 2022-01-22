@@ -8,24 +8,28 @@ const openNewMatchProfileForm = () => {
 };
 
 const fillExistingRecordFields = ({ field, in1, in2, subfield }) => {
-  if(!in1 && !in2 && !subfield) {
-    cy.get('[name="profile.matchDetails[0].existingMatchExpression.fields[0].value"]').type(field);
+  if (!in1 && !in2 && !subfield) {
+    cy.do(TextField({ name: 'profile.matchDetails[0].existingMatchExpression.fields[0].value' }).fillIn(field));
   } else {
-    cy.get('[name="profile.matchDetails[0].existingMatchExpression.fields[0].value"]').type(field);
-    cy.get('[name="profile.matchDetails[0].existingMatchExpression.fields[1].value"]').type(in1);
-    cy.get('[name="profile.matchDetails[0].existingMatchExpression.fields[2].value"]').type(in2);
-    cy.get('[name="profile.matchDetails[0].existingMatchExpression.fields[3].value"]').type(subfield);
+    cy.do([
+      TextField({ name: 'profile.matchDetails[0].existingMatchExpression.fields[0].value' }).fillIn(field),
+      TextField({ name: 'profile.matchDetails[0].existingMatchExpression.fields[1].value' }).fillIn(in1),
+      TextField({ name: 'profile.matchDetails[0].existingMatchExpression.fields[2].value' }).fillIn(in2),
+      TextField({ name: 'profile.matchDetails[0].existingMatchExpression.fields[3].value' }).fillIn(subfield)
+    ]);
   }
 };
 
 const fillIncomingRecordFields = ({ field, in1, in2, subfield }) => {
-  if(!in1 && !in2 && !subfield) {
-    cy.get('[name="profile.matchDetails[0].incomingMatchExpression.fields[0].value"]').type(field);
+  if (!in1 && !in2 && !subfield) {
+    cy.do(TextField({ name: 'profile.matchDetails[0].incomingMatchExpression.fields[0].value' }).fillIn(field));
   } else {
-    cy.get('[name="profile.matchDetails[0].incomingMatchExpression.fields[0].value"]').type(field);
-    cy.get('[name="profile.matchDetails[0].incomingMatchExpression.fields[1].value"]').type(in1);
-    cy.get('[name="profile.matchDetails[0].incomingMatchExpression.fields[2].value"]').type(in2);
-    cy.get('[name="profile.matchDetails[0].incomingMatchExpression.fields[3].value"]').type(subfield);
+    cy.do([
+      TextField({ name: 'profile.matchDetails[0].incomingMatchExpression.fields[0].value' }).fillIn(field),
+      TextField({ name: 'profile.matchDetails[0].incomingMatchExpression.fields[1].value' }).fillIn(in1),
+      TextField({ name: 'profile.matchDetails[0].incomingMatchExpression.fields[2].value' }).fillIn(in2),
+      TextField({ name: 'profile.matchDetails[0].incomingMatchExpression.fields[3].value' }).fillIn(subfield)
+    ]);
   }
 };
 
@@ -81,6 +85,7 @@ export default {
     openNewMatchProfileForm();
     fillMatchProfileForm(profile);
     // save profile
+    cy.pause();
     cy.do(Button('Save as profile & Close').click());
     // wait till profile appears in profiles list
     cy.expect(MultiColumnListCell(profile.profileName).exists());
