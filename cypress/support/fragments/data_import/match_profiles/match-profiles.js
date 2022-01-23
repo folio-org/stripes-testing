@@ -8,28 +8,32 @@ const openNewMatchProfileForm = () => {
 };
 
 const fillExistingRecordFields = ({ field, in1, in2, subfield }) => {
-  if (!in1 && !in2 && !subfield) {
+  if (field) {
     cy.do(TextField({ name: 'profile.matchDetails[0].existingMatchExpression.fields[0].value' }).fillIn(field));
-  } else {
-    cy.do([
-      TextField({ name: 'profile.matchDetails[0].existingMatchExpression.fields[0].value' }).fillIn(field),
-      TextField({ name: 'profile.matchDetails[0].existingMatchExpression.fields[1].value' }).fillIn(in1),
-      TextField({ name: 'profile.matchDetails[0].existingMatchExpression.fields[2].value' }).fillIn(in2),
-      TextField({ name: 'profile.matchDetails[0].existingMatchExpression.fields[3].value' }).fillIn(subfield)
-    ]);
+  }
+  if (in1) {
+    cy.do(TextField({ name: 'profile.matchDetails[0].existingMatchExpression.fields[1].value' }).fillIn(in1));
+  }
+  if (in2) {
+    cy.do(TextField({ name: 'profile.matchDetails[0].existingMatchExpression.fields[2].value' }).fillIn(in2));
+  }
+  if (subfield) {
+    cy.do(TextField({ name: 'profile.matchDetails[0].existingMatchExpression.fields[3].value' }).fillIn(subfield));
   }
 };
 
 const fillIncomingRecordFields = ({ field, in1, in2, subfield }) => {
-  if (!in1 && !in2 && !subfield) {
+  if (field) {
     cy.do(TextField({ name: 'profile.matchDetails[0].incomingMatchExpression.fields[0].value' }).fillIn(field));
-  } else {
-    cy.do([
-      TextField({ name: 'profile.matchDetails[0].incomingMatchExpression.fields[0].value' }).fillIn(field),
-      TextField({ name: 'profile.matchDetails[0].incomingMatchExpression.fields[1].value' }).fillIn(in1),
-      TextField({ name: 'profile.matchDetails[0].incomingMatchExpression.fields[2].value' }).fillIn(in2),
-      TextField({ name: 'profile.matchDetails[0].incomingMatchExpression.fields[3].value' }).fillIn(subfield)
-    ]);
+  }
+  if (in1) {
+    cy.do(TextField({ name: 'profile.matchDetails[0].incomingMatchExpression.fields[1].value' }).fillIn(in1));
+  }
+  if (in2) {
+    cy.do(TextField({ name: 'profile.matchDetails[0].incomingMatchExpression.fields[2].value' }).fillIn(in2));
+  }
+  if (subfield) {
+    cy.do(TextField({ name: 'profile.matchDetails[0].incomingMatchExpression.fields[3].value' }).fillIn(subfield));
   }
 };
 
