@@ -1,18 +1,18 @@
 
 export default {
-  goToMappingProfile() {
+  goToMappingProfiles() {
     cy.visit('/settings/data-import/mapping-profiles');
   },
 
-  goToMatchProfile() {
+  goToMatchProfiles() {
     cy.visit('/settings/data-import/match-profiles');
   },
 
-  goToActionProfile() {
+  goToActionProfiles() {
     cy.visit('/settings/data-import/action-profiles');
   },
 
-  goToJobProfile() {
+  goToJobProfiles() {
     cy.visit('/settings/data-import/job-profiles');
   }
 };
