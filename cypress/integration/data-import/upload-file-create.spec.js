@@ -80,8 +80,11 @@ describe('ui-data-import: MARC file import with creating of the new instance, ho
     logs.openJobProfile(fileName);
     logs.checkCreatedItems();
 
+    // delete generated profiles
     jobProfiles.deleteJobProfile(specialJobProfile.profileName);
-    
-    
+    collectionOfProfiles.forEach(profile => {
+      FieldMappingProfiles.deleteFieldMappingProfile(profile.mappingProfile.profileName);
+      ActionProfiles.deleteActionProfile(profile.actionProfile.profileName);
+    });
   });
 });

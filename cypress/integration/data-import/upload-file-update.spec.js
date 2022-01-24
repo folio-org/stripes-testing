@@ -16,6 +16,7 @@ import NewMappingProfile from '../../support/fragments/data_import/mapping_profi
 import NewActionProfile from '../../support/fragments/data_import/action_profiles/newActionProfile';
 import FieldMappingProfiles from '../../support/fragments/data_import/mapping_profiles/fieldMappingProfiles';
 import ActionProfiles from '../../support/fragments/data_import/action_profiles/actionProfiles';
+import NewJobProfile from '../../support/fragments/data_import/job_profiles/newJobProfile';
 
 describe('ui-data-import: MARC file upload with the update of instance, holding, and items', () => {
   const instanceMappingProfile = {
@@ -152,12 +153,13 @@ describe('ui-data-import: MARC file upload with the update of instance, holding,
     holdingsActionProfile,
     itemMappingProfile,
     itemActionProfile,
-    jobProfile,
+    jobProfileForCreate: jobProfile,
   };
 
   const nameMarcFileForImportCreate = `autotestFile.${getRandomPostfix()}.mrc`;
   const nameForCSVFile = `autotestFile${getRandomPostfix()}.csv`;
   const nameForExportedMarcFile = `autotestFile${getRandomPostfix()}.mrc`;
+  const jobProfileName = `autotestJobProf${getRandomPostfix()}`;
 
   before('navigates to application', () => {
     cy.login(Cypress.env('diku_login'), Cypress.env('diku_password'));
@@ -170,9 +172,9 @@ describe('ui-data-import: MARC file upload with the update of instance, holding,
 
   it('C343335 MARC file upload with the update of instance, holding, and items', { tags: [testTypes.smoke] }, () => {
     // upload a marc file for creating of the new instance, holding and item
-    /* cy.visit(TopMenu.dataImportPath);
+    cy.visit(TopMenu.dataImportPath);
     dataImport.uploadFile(nameMarcFileForImportCreate);
-    jobProfiles.searchJobProfileForImport(testData.jobProfile.profile.name);
+    jobProfiles.searchJobProfileForImport(testData.jobProfileForCreate.profile.name);
     jobProfiles.runImportFile(nameMarcFileForImportCreate);
     logs.openJobProfile(nameMarcFileForImportCreate);
     logs.checkCreatedItems();
@@ -194,7 +196,7 @@ describe('ui-data-import: MARC file upload with the update of instance, holding,
         ExportMarcFile.downloadExportedMarcFile(nameForExportedMarcFile);
 
         cy.log('#####End Of Export#####');
-      }); */
+      });
 
     const collectionOfProfiles = [
       {
@@ -262,7 +264,21 @@ describe('ui-data-import: MARC file upload with the update of instance, holding,
       MatchProfiles.createMatchProfile(profile.matchProfile);
     });
 
+    // create Job profile
+    const jobProfileForUpload = {
+      ...NewJobProfile.defaultJobProfile,
+      profileName: jobProfileName
+    };
+    settingsDataImport.goToJobProfile();
+    jobProfiles.openNewJobProfileForm();
+    NewJobProfile.fillJobProfile(jobProfileForUpload);
+    
 
+
+    // NewJobProfile.linkMatchAndActionProfiles(matchProfileName, actionProfileName);
+    NewJobProfile.clickSaveAndCloseButton();
+    jobProfiles.waitLoadingList();
+    jobProfiles.checkJobProfilePresented(jobProfileName);
 
     /* collectionOfMatchProfiles.forEach(profile => {
       MatchProfiles.deleteMatchProfile(profile.matchProfile.profileName);
