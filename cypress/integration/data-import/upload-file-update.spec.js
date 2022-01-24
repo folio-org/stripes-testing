@@ -161,12 +161,15 @@ describe('ui-data-import: MARC file upload with the update of instance, holding,
   const nameForExportedMarcFile = `autotestFile${getRandomPostfix()}.mrc`;
   // profile names
   const jobProfileName = `autotestJobProf${getRandomPostfix()}`;
-  const actionProfileNameForInstance = `autotestInstance${getRandomPostfix()}`;
-  const actionProfileNameForHoldings = `autotestHoldings${getRandomPostfix()}`;
-  const actionProfileNameForItem = `autotestItem${getRandomPostfix()}`;
+  const actionProfileNameForInstance = `autotestActionInstance${getRandomPostfix()}`;
+  const actionProfileNameForHoldings = `autotestActionHoldings${getRandomPostfix()}`;
+  const actionProfileNameForItem = `autotestActionItem${getRandomPostfix()}`;
   const matchProfileNameForInstance = `autotestMatchInstance${getRandomPostfix()}`;
   const matchProfileNameForHoldings = `autotestMatchHoldings${getRandomPostfix()}`;
   const matchProfileNameForItem = `autotestMatchProf${getRandomPostfix()}`;
+  const mappingProfileNameForInstance = `autotestMappingInstance${getRandomPostfix()}`;
+  const mappingProfileNameForHoldings = `autotestMappingHoldings${getRandomPostfix()}`;
+  const mappingProfileNameForItem = `autotestMappingItem${getRandomPostfix()}`;
 
   before('navigates to application', () => {
     cy.login(Cypress.env('diku_login'), Cypress.env('diku_password'));
@@ -207,22 +210,23 @@ describe('ui-data-import: MARC file upload with the update of instance, holding,
 
     const collectionOfProfiles = [
       {
-        mappingProfile: { typeValue : NewMappingProfile.folioRecordTypeValue.instance },
+        mappingProfile: { typeValue : NewMappingProfile.folioRecordTypeValue.instance,
+          name: mappingProfileNameForInstance },
         actionProfile: { typeValue: NewActionProfile.folioRecordTypeValue.instance, name: actionProfileNameForInstance }
       },
       {
-        mappingProfile: { typeValue : NewMappingProfile.folioRecordTypeValue.holdings },
+        mappingProfile: { typeValue : NewMappingProfile.folioRecordTypeValue.holdings,
+          name: mappingProfileNameForHoldings },
         actionProfile: { typeValue: NewActionProfile.folioRecordTypeValue.holdings, name: actionProfileNameForHoldings }
       },
       {
-        mappingProfile: { typeValue : NewMappingProfile.folioRecordTypeValue.item },
+        mappingProfile: { typeValue : NewMappingProfile.folioRecordTypeValue.item,
+          name: mappingProfileNameForItem },
         actionProfile: { typeValue: NewActionProfile.folioRecordTypeValue.item, name: actionProfileNameForItem }
       }
     ];
 
     collectionOfProfiles.forEach(profile => {
-      profile.mappingProfile.name = `autotest${profile.mappingProfile.typeValue}${getRandomPostfix()}`;
-
       settingsDataImport.goToMappingProfile();
       FieldMappingProfiles.createMappingProfileForUpdate(profile.mappingProfile);
       FieldMappingProfiles.checkMappingProfilePresented(profile.mappingProfile.name);
@@ -286,8 +290,22 @@ describe('ui-data-import: MARC file upload with the update of instance, holding,
     jobProfiles.waitLoadingList();
     jobProfiles.checkJobProfilePresented(jobProfileName);
 
-    /* collectionOfMatchProfiles.forEach(profile => {
+    // upload the exported marc file
+    dataImport.goToDataImport();
+    dataImport.uploadFile(nameForExportedMarcFile);
+    jobProfiles.searchJobProfileForImport(jobProfileName);
+    jobProfiles.runImportFile(nameForExportedMarcFile);
+    logs.openJobProfile(nameForExportedMarcFile);
+    logs.checkIsInstanceUpdated();
+
+    // delete generated profiles
+    jobProfiles.deleteJobProfile(jobProfileForUpload.profileName);
+    collectionOfMatchProfiles.forEach(profile => {
       MatchProfiles.deleteMatchProfile(profile.matchProfile.profileName);
-    }); */
+    });
+    collectionOfProfiles.forEach(profile => {
+      FieldMappingProfiles.deleteFieldMappingProfile(profile.mappingProfile.profileName);
+      ActionProfiles.deleteActionProfile(profile.actionProfile.profileName);
+    });
   });
 });
