@@ -11,7 +11,6 @@ import features from '../../support/dictionary/features';
 
 describe('Manage holding records through quickmarc editor', () => {
   before(() => {
-    // TODO: add support of special permissions in special account
     cy.login(Cypress.env('diku_login'), Cypress.env('diku_password'));
     cy.visit(TopMenu.inventoryPath);
     // TODO: redesign to api step

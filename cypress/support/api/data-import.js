@@ -45,7 +45,6 @@ Cypress.Commands.add('createLinkedProfiles', (testData) => {
       ...testData.instanceActionProfile
     }).then((bodyWithActionProfile) => {
       testData.jobProfile.addedRelations[0].detailProfileId = bodyWithActionProfile.body.id;
-      // testData.instanceActionProfile.id = bodyWithActionProfile.id;
     });
   });
 
@@ -57,7 +56,6 @@ Cypress.Commands.add('createLinkedProfiles', (testData) => {
       ...testData.holdingsActionProfile
     }).then((bodyWithActionProfile) => {
       testData.jobProfile.addedRelations[1].detailProfileId = bodyWithActionProfile.body.id;
-      // testData.holdingsActionProfile.id = bodyWithActionProfile.id;
     });
   });
 
@@ -69,7 +67,6 @@ Cypress.Commands.add('createLinkedProfiles', (testData) => {
       ...testData.itemActionProfile
     }).then((bodyWithActionProfile) => {
       testData.jobProfile.addedRelations[2].detailProfileId = bodyWithActionProfile.body.id;
-      // testData.itemActionProfile.id = bodyWithActionProfile.id;
     });
   });
 
@@ -79,8 +76,3 @@ Cypress.Commands.add('createLinkedProfiles', (testData) => {
     testData.jobProfile.id = bodyWithjobProfile.body.id;
   });
 });
-
-/*
-const collectionIdOfMappingProfiles = [];
-const collectionIdOfActionProfiles = [];
-const collectionNamesOfActionProfiles = []; */

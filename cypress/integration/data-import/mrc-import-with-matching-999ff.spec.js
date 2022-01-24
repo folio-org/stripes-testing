@@ -47,7 +47,7 @@ describe('ui-data-import: MARC file import with matching for 999 ff field', () =
       name: mappingProfileNameForExport,
       typeValue : NewFieldMappingProfile.folioRecordTypeValue.instance,
     };
-    SettingsDataImport.goToMappingProfile();
+    SettingsDataImport.goToMappingProfiles();
     FieldMappingProfiles.createMappingProfile(mappingProfileForExport);
     FieldMappingProfiles.checkMappingProfilePresented(mappingProfileNameForExport);
 
@@ -56,7 +56,7 @@ describe('ui-data-import: MARC file import with matching for 999 ff field', () =
       typeValue : NewActionProfile.folioRecordTypeValue.instance,
       name: actionProfileNameForExport
     };
-    SettingsDataImport.goToActionProfile();
+    SettingsDataImport.goToActionProfiles();
     ActionProfiles.createActionProfile(actionProfileForExport, mappingProfileForExport);
     ActionProfiles.checkActionProfilePresented(actionProfileNameForExport);
 
@@ -65,12 +65,8 @@ describe('ui-data-import: MARC file import with matching for 999 ff field', () =
       ...NewJobProfile.defaultJobProfile,
       profileName: jobProfileNameForExport
     };
-    SettingsDataImport.goToJobProfile();
-    jobProfiles.openNewJobProfileForm();
-    NewJobProfile.fillJobProfile(jobProfileForExport);
-    NewJobProfile.linkActionProfile(actionProfileForExport);
-    NewJobProfile.clickSaveAndCloseButton();
-    jobProfiles.waitLoadingList();
+    SettingsDataImport.goToJobProfiles();
+    jobProfiles.createJobProfile(jobProfileForExport, actionProfileForExport);
     jobProfiles.checkJobProfilePresented(jobProfileNameForExport);
 
     // upload a marc file for export
@@ -90,12 +86,14 @@ describe('ui-data-import: MARC file import with matching for 999 ff field', () =
         SearchInventory.searchInstanceByHRID(id);
         inventorySearch.saveUUIDs();
         ExportMarcFile.downloadCSVFile(nameForCSVFile, 'SearchInstanceUUIDs*');
+        FileManager.deleteFolder(Cypress.config('downloadsFolder'));
         cy.visit(TopMenu.dataExport);
 
         // download exported marc file
         exportFile.uploadFile(nameForCSVFile);
         exportFile.exportWithDefaultInstancesJobProfile(nameForCSVFile);
         ExportMarcFile.downloadExportedMarcFile(nameForExportedMarcFile);
+        FileManager.deleteFolder(Cypress.config('downloadsFolder'));
 
         cy.log('#####End Of Export#####');
 
@@ -116,7 +114,7 @@ describe('ui-data-import: MARC file import with matching for 999 ff field', () =
           },
           matchCriterion: 'Exactly matches',
         };
-        SettingsDataImport.goToMatchProfile();
+        SettingsDataImport.goToMatchProfiles();
         MatchProfiles.createMatchProfile(matchProfile);
 
         // create Field mapping profile
@@ -125,16 +123,17 @@ describe('ui-data-import: MARC file import with matching for 999 ff field', () =
           typeValue : NewFieldMappingProfile.folioRecordTypeValue.instance,
           update: true
         };
-        SettingsDataImport.goToMappingProfile();
+        SettingsDataImport.goToMappingProfiles();
         FieldMappingProfiles.createMappingProfile(mappingProfile);
         FieldMappingProfiles.checkMappingProfilePresented(mappingProfileName);
 
         // create Action profile and link it to Field mapping profile
         const actionProfile = {
           typeValue : NewActionProfile.folioRecordTypeValue.instance,
-          name: actionProfileName
+          name: actionProfileName,
+          action: 'Update (all record types except Orders)'
         };
-        SettingsDataImport.goToActionProfile();
+        SettingsDataImport.goToActionProfiles();
         ActionProfiles.createActionProfile(actionProfile, mappingProfile);
         ActionProfiles.checkActionProfilePresented(actionProfileName);
 
@@ -143,19 +142,17 @@ describe('ui-data-import: MARC file import with matching for 999 ff field', () =
           ...NewJobProfile.defaultJobProfile,
           profileName: jobProfileName
         };
-        SettingsDataImport.goToJobProfile();
-        jobProfiles.openNewJobProfileForm();
-        NewJobProfile.fillJobProfile(jobProfile);
-        NewJobProfile.linkMatchAndActionProfiles(matchProfileName, actionProfileName);
-        NewJobProfile.clickSaveAndCloseButton();
-        jobProfiles.waitLoadingList();
+        SettingsDataImport.goToJobProfiles();
+        jobProfiles.createJobProfile(jobProfile, actionProfileName, matchProfileName);
         jobProfiles.checkJobProfilePresented(jobProfileName);
 
         // upload the exported marc file with 999.f.f.s fields
         dataImport.goToDataImport();
-        dataImport.uploadFile(nameForExportedMarcFile);
+        dataImport.uploadExportedFile(nameForExportedMarcFile);
         jobProfiles.searchJobProfileForImport(jobProfileName);
         jobProfiles.runImportFile(nameForExportedMarcFile);
+        logs.openJobProfile(nameForExportedMarcFile);
+        logs.checkIsInstanceUpdated();
 
         // get Instance HRID through API
         SearchInventory
@@ -176,8 +173,7 @@ describe('ui-data-import: MARC file import with matching for 999 ff field', () =
             FieldMappingProfiles.deleteFieldMappingProfile(mappingProfileName);
             FieldMappingProfiles.deleteFieldMappingProfile(mappingProfileNameForExport);
 
-            // delete downloads folder and created files in fixtures
-            FileManager.deleteFolder(Cypress.config('downloadsFolder'));
+            // delete created files in fixtures
             FileManager.deleteFile(`cypress/fixtures/${nameForExportedMarcFile}`);
             FileManager.deleteFile(`cypress/fixtures/${nameForCSVFile}`);
           });

@@ -9,6 +9,7 @@
 * Implement e-2-e automation of test case C11113. Refs FAT-759.
 * Add `AdvancedSearch` interactor. Refs UITEST-89.
 * Implement e-2-e automation of test case C343343. Refs FAT-757.
+* Implement e-2-e automation of test case C17044. Refs FAT-756.
 
 ## [4.0.0](https://github.com/folio-org/stripes-testing/tree/v4.0.0) (2021-09-27)
 [Full Changelog](https://github.com/folio-org/stripes-testing/compare/v3.0.0...v4.0.0)
