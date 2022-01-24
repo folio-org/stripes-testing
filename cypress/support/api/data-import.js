@@ -30,8 +30,11 @@ Cypress.Commands.add('createJobProfileApi', (jobProfile) => {
 
 Cypress.Commands.add('getId', () => {
   return cy.okapiRequest({
-    method: 'GET',
-    path: 'data-import/uploadDefinitions?query=(status%3D%3D(%22NEW%22%20OR%20%22IN_PROGRESS%22%20OR%20%22LOADED%22))%20sortBy%20createdDate%2Fsort.descending&limit=1'
+    path: 'data-import/uploadDefinitions',
+    searchParams: {
+      query: '(status==("NEW" OR "IN_PROGRESS" OR "LOADED")) sortBy createdDate/sort.descending',
+      limit: 1
+    },
   });
 });
 

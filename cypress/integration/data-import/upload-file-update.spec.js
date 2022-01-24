@@ -5,18 +5,19 @@ import getRandomPostfix from '../../support/utils/stringTools';
 import dataImport from '../../support/fragments/data_import/dataImport';
 import jobProfiles from '../../support/fragments/data_import/job_profiles/jobProfiles';
 import logs from '../../support/fragments/data_import/logs';
-import SearchInventory from '../../support/fragments/data_import/searchInventory';
+import searchInventory from '../../support/fragments/data_import/searchInventory';
 import inventorySearch from '../../support/fragments/inventory/inventorySearch';
 import exportFile from '../../support/fragments/data-export/exportFile';
-import TopMenu from '../../support/fragments/topMenu';
-import ExportMarcFile from '../../support/fragments/data-export/export-marc-file';
+import topMenu from '../../support/fragments/topMenu';
+import exportMarcFile from '../../support/fragments/data-export/export-marc-file';
 import settingsDataImport from '../../support/fragments/data_import/settingsDataImport';
-import MatchProfiles from '../../support/fragments/data_import/match_profiles/match-profiles';
-import NewMappingProfile from '../../support/fragments/data_import/mapping_profiles/newMappingProfile';
-import NewActionProfile from '../../support/fragments/data_import/action_profiles/newActionProfile';
-import FieldMappingProfiles from '../../support/fragments/data_import/mapping_profiles/fieldMappingProfiles';
-import ActionProfiles from '../../support/fragments/data_import/action_profiles/actionProfiles';
-import NewJobProfile from '../../support/fragments/data_import/job_profiles/newJobProfile';
+import matchProfiles from '../../support/fragments/data_import/match_profiles/match-profiles';
+import newMappingProfile from '../../support/fragments/data_import/mapping_profiles/newMappingProfile';
+import newActionProfile from '../../support/fragments/data_import/action_profiles/newActionProfile';
+import fieldMappingProfiles from '../../support/fragments/data_import/mapping_profiles/fieldMappingProfiles';
+import actionProfiles from '../../support/fragments/data_import/action_profiles/actionProfiles';
+import newJobProfile from '../../support/fragments/data_import/job_profiles/newJobProfile';
+import fileManager from '../../support/utils/fileManager';
 
 describe('ui-data-import: MARC file upload with the update of instance, holding, and items', () => {
   const instanceMappingProfile = {
@@ -182,7 +183,7 @@ describe('ui-data-import: MARC file upload with the update of instance, holding,
 
   it('C343335 MARC file upload with the update of instance, holding, and items', { tags: [testTypes.smoke] }, () => {
     // upload a marc file for creating of the new instance, holding and item
-    cy.visit(TopMenu.dataImportPath);
+    cy.visit(topMenu.dataImportPath);
     dataImport.uploadFile(nameMarcFileForImportCreate);
     jobProfiles.searchJobProfileForImport(testData.jobProfileForCreate.profile.name);
     jobProfiles.runImportFile(nameMarcFileForImportCreate);
@@ -190,49 +191,47 @@ describe('ui-data-import: MARC file upload with the update of instance, holding,
     logs.checkCreatedItems();
 
     // get Instance HRID through API
-    SearchInventory
+    searchInventory
       .getInstanceHRID()
       .then(id => {
         // download .csv file
-        SearchInventory.gotoInventory();
-        SearchInventory.searchInstanceByHRID(id);
+        searchInventory.gotoInventory();
+        searchInventory.searchInstanceByHRID(id);
         inventorySearch.saveUUIDs();
-        ExportMarcFile.downloadCSVFile(nameForCSVFile, 'SearchInstanceUUIDs*');
-        cy.visit(TopMenu.dataExport);
+        exportMarcFile.downloadCSVFile(nameForCSVFile, 'SearchInstanceUUIDs*');
+        cy.visit(topMenu.dataExport);
 
         // download exported marc file
         exportFile.uploadFile(nameForCSVFile);
         exportFile.exportWithDefaultInstancesJobProfile(nameForCSVFile);
-        ExportMarcFile.downloadExportedMarcFile(nameForExportedMarcFile);
-
-        cy.log('#####End Of Export#####');
+        exportMarcFile.downloadExportedMarcFile(nameForExportedMarcFile);
       });
 
     const collectionOfProfiles = [
       {
-        mappingProfile: { typeValue : NewMappingProfile.folioRecordTypeValue.instance,
+        mappingProfile: { typeValue : newMappingProfile.folioRecordTypeValue.instance,
           name: mappingProfileNameForInstance },
-        actionProfile: { typeValue: NewActionProfile.folioRecordTypeValue.instance, name: actionProfileNameForInstance }
+        actionProfile: { typeValue: newActionProfile.folioRecordTypeValue.instance, name: actionProfileNameForInstance }
       },
       {
-        mappingProfile: { typeValue : NewMappingProfile.folioRecordTypeValue.holdings,
+        mappingProfile: { typeValue : newMappingProfile.folioRecordTypeValue.holdings,
           name: mappingProfileNameForHoldings },
-        actionProfile: { typeValue: NewActionProfile.folioRecordTypeValue.holdings, name: actionProfileNameForHoldings }
+        actionProfile: { typeValue: newActionProfile.folioRecordTypeValue.holdings, name: actionProfileNameForHoldings }
       },
       {
-        mappingProfile: { typeValue : NewMappingProfile.folioRecordTypeValue.item,
+        mappingProfile: { typeValue : newMappingProfile.folioRecordTypeValue.item,
           name: mappingProfileNameForItem },
-        actionProfile: { typeValue: NewActionProfile.folioRecordTypeValue.item, name: actionProfileNameForItem }
+        actionProfile: { typeValue: newActionProfile.folioRecordTypeValue.item, name: actionProfileNameForItem }
       }
     ];
 
     collectionOfProfiles.forEach(profile => {
       settingsDataImport.goToMappingProfile();
-      FieldMappingProfiles.createMappingProfileForUpdate(profile.mappingProfile);
-      FieldMappingProfiles.checkMappingProfilePresented(profile.mappingProfile.name);
+      fieldMappingProfiles.createMappingProfileForUpdate(profile.mappingProfile);
+      fieldMappingProfiles.checkMappingProfilePresented(profile.mappingProfile.name);
       settingsDataImport.goToActionProfile();
-      ActionProfiles.createActionProfile(profile.actionProfile, profile.mappingProfile);
-      ActionProfiles.checkActionProfilePresented(profile.actionProfile.name);
+      actionProfiles.createActionProfile(profile.actionProfile, profile.mappingProfile);
+      actionProfiles.checkActionProfilePresented(profile.actionProfile.name);
     });
 
     // create Match profile
@@ -272,21 +271,21 @@ describe('ui-data-import: MARC file upload with the update of instance, holding,
 
     settingsDataImport.goToMatchProfile();
     collectionOfMatchProfiles.forEach(profile => {
-      MatchProfiles.createMatchProfile(profile.matchProfile);
+      matchProfiles.createMatchProfile(profile.matchProfile);
     });
 
     // create Job profile
     const jobProfileForUpload = {
-      ...NewJobProfile.defaultJobProfile,
+      ...newJobProfile.defaultJobProfile,
       profileName: jobProfileName
     };
     settingsDataImport.goToJobProfile();
     jobProfiles.openNewJobProfileForm();
-    NewJobProfile.fillJobProfile(jobProfileForUpload);
-    NewJobProfile.linkMatchAndActionProfiles(matchProfileNameForInstance, actionProfileNameForInstance);
-    NewJobProfile.linkMatchAndActionProfiles(matchProfileNameForHoldings, actionProfileNameForHoldings);
-    NewJobProfile.linkMatchAndActionProfiles(matchProfileNameForItem, actionProfileNameForItem);
-    NewJobProfile.clickSaveAndCloseButton();
+    newJobProfile.fillJobProfile(jobProfileForUpload);
+    newJobProfile.linkMatchAndActionProfiles(matchProfileNameForInstance, actionProfileNameForInstance);
+    newJobProfile.linkMatchAndActionProfiles(matchProfileNameForHoldings, actionProfileNameForHoldings);
+    newJobProfile.linkMatchAndActionProfiles(matchProfileNameForItem, actionProfileNameForItem);
+    newJobProfile.clickSaveAndCloseButton();
     jobProfiles.waitLoadingList();
     jobProfiles.checkJobProfilePresented(jobProfileName);
 
@@ -301,11 +300,16 @@ describe('ui-data-import: MARC file upload with the update of instance, holding,
     // delete generated profiles
     jobProfiles.deleteJobProfile(jobProfileForUpload.profileName);
     collectionOfMatchProfiles.forEach(profile => {
-      MatchProfiles.deleteMatchProfile(profile.matchProfile.profileName);
+      matchProfiles.deleteMatchProfile(profile.matchProfile.profileName);
     });
     collectionOfProfiles.forEach(profile => {
-      FieldMappingProfiles.deleteFieldMappingProfile(profile.mappingProfile.profileName);
-      ActionProfiles.deleteActionProfile(profile.actionProfile.profileName);
+      fieldMappingProfiles.deleteFieldMappingProfile(profile.mappingProfile.profileName);
+      actionProfiles.deleteActionProfile(profile.actionProfile.profileName);
     });
+
+    // delete downloads folder and created files in fixtures
+    fileManager.deleteFolder(Cypress.config('downloadsFolder'));
+    fileManager.deleteFile(`cypress/fixtures/${nameForExportedMarcFile}`);
+    fileManager.deleteFile(`cypress/fixtures/${nameForCSVFile}`);
   });
 });
