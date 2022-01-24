@@ -15,6 +15,7 @@ import NewJobProfile from '../../support/fragments/data_import/job_profiles/newJ
 import exportFile from '../../support/fragments/data-export/exportFile';
 import ExportMarcFile from '../../support/fragments/data-export/export-marc-file';
 import FileManager from '../../support/utils/fileManager';
+import testTypes from '../../support/dictionary/testTypes';
 
 describe('ui-data-import: Test MARC-MARC matching for 001 field', () => {
   before(() => {
@@ -30,7 +31,7 @@ describe('ui-data-import: Test MARC-MARC matching for 001 field', () => {
     cy.visit(TopMenu.dataImportPath);
   });
 
-  it('C17044: MARC-MARC matching for 001 field', () => {
+  it('C17044: MARC-MARC matching for 001 field', { tags: testTypes.smoke }, () => {
     // unique file name to upload
     const nameForMarcFile = `autoTestFile${getRandomPostfix()}.mrc`;
     const nameForExportedMarcFile = `autoTestFile${getRandomPostfix()}.mrc`;
