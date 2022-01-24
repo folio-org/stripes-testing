@@ -1,3 +1,4 @@
+/// <reference types="cypress" />
 Cypress.Commands.add('createMappingProfileApi', (mappingProfile) => {
   return cy.okapiRequest({
     method: 'POST',
@@ -38,7 +39,17 @@ Cypress.Commands.add('getId', () => {
   });
 });
 
-
+/**
+ * @name cy.createLinkedProfiles
+ * @param {Object} testData - Test data to create and link mapping, action and job profiles.
+ * @param {Object} testData.instanceMappingProfile
+ * @param {Object} testData.instanceActionProfile
+ * @param {Object} testData.holdingsMappingProfile
+ * @param {Object} testData.holdingsActionProfile
+ * @param {Object} testData.itemMappingProfile
+ * @param {Object} testData.itemActionProfile
+ * @param {Object} testData.jobProfileForCreate
+ */
 Cypress.Commands.add('createLinkedProfiles', (testData) => {
   cy.createMappingProfileApi({
     ...testData.instanceMappingProfile,
