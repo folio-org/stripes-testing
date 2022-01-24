@@ -158,7 +158,6 @@ describe('ui-data-import: MARC file upload with the update of instance, holding,
   const nameMarcFileForImportCreate = `autotestFile.${getRandomPostfix()}.mrc`;
   const nameForCSVFile = `autotestFile${getRandomPostfix()}.csv`;
   const nameForExportedMarcFile = `autotestFile${getRandomPostfix()}.mrc`;
-  
 
   before('navigates to application', () => {
     cy.login(Cypress.env('diku_login'), Cypress.env('diku_password'));
@@ -196,6 +195,33 @@ describe('ui-data-import: MARC file upload with the update of instance, holding,
 
         cy.log('#####End Of Export#####');
       }); */
+
+    const collectionOfProfiles = [
+      {
+        mappingProfile: { typeValue : NewMappingProfile.folioRecordTypeValue.instance },
+        actionProfile: { typeValue: NewActionProfile.folioRecordTypeValue.instance }
+      },
+      {
+        mappingProfile: { typeValue : NewMappingProfile.folioRecordTypeValue.holdings },
+        actionProfile: { typeValue: NewActionProfile.folioRecordTypeValue.holdings }
+      },
+      {
+        mappingProfile: { typeValue : NewMappingProfile.folioRecordTypeValue.item },
+        actionProfile: { typeValue: NewActionProfile.folioRecordTypeValue.item }
+      }
+    ];
+
+    collectionOfProfiles.forEach(profile => {
+      profile.mappingProfile.name = `autotest${profile.mappingProfile.typeValue}${getRandomPostfix()}`;
+      profile.actionProfile.name = `autotest${profile.actionProfile.typeValue}${getRandomPostfix()}`;
+
+      settingsDataImport.goToMappingProfile();
+      FieldMappingProfiles.createMappingProfileForUpdate(profile.mappingProfile);
+      FieldMappingProfiles.checkMappingProfilePresented(profile.mappingProfile.name);
+      settingsDataImport.goToActionProfile();
+      ActionProfiles.createActionProfile(profile.actionProfile, profile.mappingProfile);
+      ActionProfiles.checkActionProfilePresented(profile.actionProfile.name);
+    });
 
     // create Match profile
     const collectionOfMatchProfiles = [
@@ -235,33 +261,11 @@ describe('ui-data-import: MARC file upload with the update of instance, holding,
       profile.matchProfile.profileName = `autotestMatchProf${getRandomPostfix()}`;
       MatchProfiles.createMatchProfile(profile.matchProfile);
     });
-    /*
-    const collectionOfProfiles = [
-      {
-        mappingProfile: { typeValue : NewMappingProfile.folioRecordTypeValue.instance },
-        actionProfile: { typeValue: NewActionProfile.folioRecordTypeValue.instance }
-      },
-      {
-        mappingProfile: { typeValue : NewMappingProfile.folioRecordTypeValue.holdings },
-        actionProfile: { typeValue: NewActionProfile.folioRecordTypeValue.holdings }
-      },
-      {
-        mappingProfile: { typeValue : NewMappingProfile.folioRecordTypeValue.item },
-        actionProfile: { typeValue: NewActionProfile.folioRecordTypeValue.item }
-      }
-    ];
 
-    collectionOfProfiles.forEach(profile => {
-      profile.mappingProfile.name = `autotest${profile.mappingProfile.typeValue}${getRandomPostfix()}`;
-      profile.actionProfile.name = `autotest${profile.actionProfile.typeValue}${getRandomPostfix()}`;
 
-      settingsDataImport.goToMappingProfile();
-      FieldMappingProfiles.createMappingProfile(profile.mappingProfile);
-      NewMappingProfile.fillMappingProfileForUpdate(profile.mappingProfile);
-      FieldMappingProfiles.checkMappingProfilePresented(profile.mappingProfile.name);
-      settingsDataImport.goToActionProfile();
-      ActionProfiles.createActionProfile(profile.actionProfile, profile.mappingProfile);
-      ActionProfiles.checkActionProfilePresented(profile.actionProfile.name);
+
+    /* collectionOfMatchProfiles.forEach(profile => {
+      MatchProfiles.deleteMatchProfile(profile.matchProfile.profileName);
     }); */
   });
 });
