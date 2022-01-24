@@ -119,34 +119,6 @@ describe('ui-data-import: MARC file upload with the update of instance, holding,
     deletedRelations: []
   };
 
-  const jobProfile = {
-    profile: {
-      id: '',
-      name: `autotest_job_profile_${getRandomPostfix()}`,
-      dataType: 'MARC'
-    },
-    addedRelations: [
-      {
-        detailProfileId: '',
-        order: 0,
-        masterProfileType: 'JOB_PROFILE',
-        detailProfileType: 'ACTION_PROFILE'
-      },
-      {
-        detailProfileId: '',
-        order: 1,
-        masterProfileType: 'JOB_PROFILE',
-        detailProfileType: 'ACTION_PROFILE'
-      }, {
-        detailProfileId: '',
-        order: 2,
-        masterProfileType: 'JOB_PROFILE',
-        detailProfileType: 'ACTION_PROFILE'
-      }
-    ],
-    deletedRelations: []
-  };
-
   const testData = {
     instanceMappingProfile,
     instanceActionProfile,
@@ -154,7 +126,6 @@ describe('ui-data-import: MARC file upload with the update of instance, holding,
     holdingsActionProfile,
     itemMappingProfile,
     itemActionProfile,
-    jobProfileForCreate: jobProfile,
   };
 
   const nameMarcFileForImportCreate = `autotestFile.${getRandomPostfix()}.mrc`;
