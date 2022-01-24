@@ -159,7 +159,14 @@ describe('ui-data-import: MARC file upload with the update of instance, holding,
   const nameMarcFileForImportCreate = `autotestFile.${getRandomPostfix()}.mrc`;
   const nameForCSVFile = `autotestFile${getRandomPostfix()}.csv`;
   const nameForExportedMarcFile = `autotestFile${getRandomPostfix()}.mrc`;
+  // profile names
   const jobProfileName = `autotestJobProf${getRandomPostfix()}`;
+  const actionProfileNameForInstance = `autotestInstance${getRandomPostfix()}`;
+  const actionProfileNameForHoldings = `autotestHoldings${getRandomPostfix()}`;
+  const actionProfileNameForItem = `autotestItem${getRandomPostfix()}`;
+  const matchProfileNameForInstance = `autotestMatchInstance${getRandomPostfix()}`;
+  const matchProfileNameForHoldings = `autotestMatchHoldings${getRandomPostfix()}`;
+  const matchProfileNameForItem = `autotestMatchProf${getRandomPostfix()}`;
 
   before('navigates to application', () => {
     cy.login(Cypress.env('diku_login'), Cypress.env('diku_password'));
@@ -201,21 +208,20 @@ describe('ui-data-import: MARC file upload with the update of instance, holding,
     const collectionOfProfiles = [
       {
         mappingProfile: { typeValue : NewMappingProfile.folioRecordTypeValue.instance },
-        actionProfile: { typeValue: NewActionProfile.folioRecordTypeValue.instance }
+        actionProfile: { typeValue: NewActionProfile.folioRecordTypeValue.instance, name: actionProfileNameForInstance }
       },
       {
         mappingProfile: { typeValue : NewMappingProfile.folioRecordTypeValue.holdings },
-        actionProfile: { typeValue: NewActionProfile.folioRecordTypeValue.holdings }
+        actionProfile: { typeValue: NewActionProfile.folioRecordTypeValue.holdings, name: actionProfileNameForHoldings }
       },
       {
         mappingProfile: { typeValue : NewMappingProfile.folioRecordTypeValue.item },
-        actionProfile: { typeValue: NewActionProfile.folioRecordTypeValue.item }
+        actionProfile: { typeValue: NewActionProfile.folioRecordTypeValue.item, name: actionProfileNameForItem }
       }
     ];
 
     collectionOfProfiles.forEach(profile => {
       profile.mappingProfile.name = `autotest${profile.mappingProfile.typeValue}${getRandomPostfix()}`;
-      profile.actionProfile.name = `autotest${profile.actionProfile.typeValue}${getRandomPostfix()}`;
 
       settingsDataImport.goToMappingProfile();
       FieldMappingProfiles.createMappingProfileForUpdate(profile.mappingProfile);
@@ -228,7 +234,7 @@ describe('ui-data-import: MARC file upload with the update of instance, holding,
     // create Match profile
     const collectionOfMatchProfiles = [
       {
-        matchProfile: { profileName: '',
+        matchProfile: { profileName: matchProfileNameForInstance,
           incomingRecordFields: {
             field: '001'
           },
@@ -239,7 +245,7 @@ describe('ui-data-import: MARC file upload with the update of instance, holding,
           existingRecordType: 'MARC_BIBLIOGRAPHIC' }
       },
       {
-        matchProfile: { profileName: '',
+        matchProfile: { profileName: matchProfileNameForHoldings,
           incomingRecordFields: {
             field: '901',
             subfield: 'a'
@@ -248,19 +254,20 @@ describe('ui-data-import: MARC file upload with the update of instance, holding,
           existingRecordType: 'HOLDINGS' }
       },
       {
-        matchProfile: { profileName: '',
+        matchProfile: {
+          profileName: matchProfileNameForItem,
           incomingRecordFields: {
             field: '902',
             subfield: 'a'
           },
           matchCriterion: 'Exactly matches',
-          existingRecordType: 'ITEM' }
+          existingRecordType: 'ITEM'
+        }
       }
     ];
 
     settingsDataImport.goToMatchProfile();
     collectionOfMatchProfiles.forEach(profile => {
-      profile.matchProfile.profileName = `autotestMatchProf${getRandomPostfix()}`;
       MatchProfiles.createMatchProfile(profile.matchProfile);
     });
 
@@ -272,10 +279,9 @@ describe('ui-data-import: MARC file upload with the update of instance, holding,
     settingsDataImport.goToJobProfile();
     jobProfiles.openNewJobProfileForm();
     NewJobProfile.fillJobProfile(jobProfileForUpload);
-    
-
-
-    // NewJobProfile.linkMatchAndActionProfiles(matchProfileName, actionProfileName);
+    NewJobProfile.linkMatchAndActionProfiles(matchProfileNameForInstance, actionProfileNameForInstance);
+    NewJobProfile.linkMatchAndActionProfiles(matchProfileNameForHoldings, actionProfileNameForHoldings);
+    NewJobProfile.linkMatchAndActionProfiles(matchProfileNameForItem, actionProfileNameForItem);
     NewJobProfile.clickSaveAndCloseButton();
     jobProfiles.waitLoadingList();
     jobProfiles.checkJobProfilePresented(jobProfileName);
