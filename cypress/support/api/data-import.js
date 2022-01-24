@@ -1,4 +1,7 @@
 /// <reference types="cypress" />
+
+import getRandomPostfix from '../utils/stringTools';
+
 Cypress.Commands.add('createMappingProfileApi', (mappingProfile) => {
   return cy.okapiRequest({
     method: 'POST',
@@ -23,9 +26,7 @@ Cypress.Commands.add('createJobProfileApi', (jobProfile) => {
   return cy.okapiRequest({
     method: 'POST',
     path: 'data-import-profiles/jobProfiles',
-    body: {
-      ...jobProfile
-    },
+    body: jobProfile
   });
 });
 
@@ -50,43 +51,62 @@ Cypress.Commands.add('getId', () => {
  * @param {Object} testData.itemActionProfile
  * @param {Object} testData.jobProfileForCreate
  */
-Cypress.Commands.add('createLinkedProfiles', (testData) => {
-  cy.createMappingProfileApi({
-    ...testData.instanceMappingProfile,
-  }).then((bodyWithMappingProfile) => {
-    testData.instanceActionProfile.addedRelations[0].detailProfileId = bodyWithMappingProfile.body.id;
-    cy.createActionProfileApi({
-      ...testData.instanceActionProfile
-    }).then((bodyWithActionProfile) => {
-      testData.jobProfile.addedRelations[0].detailProfileId = bodyWithActionProfile.body.id;
-    });
-  });
+Cypress.Commands.add('createLinkedProfiles', (testData, jobProfilesCount, jobPrfileName = `autotest_job_profile_${getRandomPostfix()}`) => {
+  const masterProfileTypeDefaultValue = 'JOB_PROFILE';
+  const detailProfileTypeDefaulValue = 'ACTION_PROFILE';
+  const defaultJobProfileRelation = {
+    masterProfileType: masterProfileTypeDefaultValue,
+    detailProfileType: detailProfileTypeDefaulValue
+  };
 
-  cy.createMappingProfileApi({
-    ...testData.holdingsMappingProfile,
-  }).then((bodyWithMappingProfile) => {
+  const jobProfile = {
+    profile: {
+      name: jobPrfileName,
+      dataType: 'MARC'
+    },
+    addedRelations: [],
+    deletedRelations: []
+  };
+
+  testData.jobProfileForCreate = jobProfile;
+
+
+
+  cy.createMappingProfileApi(testData.instanceMappingProfile)
+    .then((bodyWithMappingProfile) => {
+      testData.instanceActionProfile.detailProfileId = bodyWithMappingProfile.body.id;
+
+      cy.createActionProfileApi(testData.instanceActionProfile)
+        .then((bodyWithActionProfile) => {
+          const newJobProfileRelation = { ...defaultJobProfileRelation };
+          newJobProfileRelation.order = 0;
+          newJobProfileRelation.detailProfileId = bodyWithActionProfile.body.id;
+          testData.jobProfileForCreate.addedRelations.push(newJobProfileRelation);
+        });
+    });
+
+  cy.createMappingProfileApi(testData.holdingsMappingProfile).then((bodyWithMappingProfile) => {
     testData.holdingsActionProfile.addedRelations[0].detailProfileId = bodyWithMappingProfile.body.id;
-    cy.createActionProfileApi({
-      ...testData.holdingsActionProfile
-    }).then((bodyWithActionProfile) => {
-      testData.jobProfile.addedRelations[1].detailProfileId = bodyWithActionProfile.body.id;
+    cy.createActionProfileApi(testData.holdingsActionProfile).then((bodyWithActionProfile) => {
+      const newJobProfileRelation = { ...defaultJobProfileRelation };
+      newJobProfileRelation.order = 1;
+      newJobProfileRelation.detailProfileId = bodyWithActionProfile.body.id;
+      testData.jobProfileForCreate.addedRelations.push(newJobProfileRelation);
     });
   });
 
-  cy.createMappingProfileApi({
-    ...testData.itemMappingProfile,
-  }).then((bodyWithMappingProfile) => {
+  cy.createMappingProfileApi(testData.itemMappingProfile).then((bodyWithMappingProfile) => {
     testData.itemActionProfile.addedRelations[0].detailProfileId = bodyWithMappingProfile.body.id;
-    cy.createActionProfileApi({
-      ...testData.itemActionProfile
-    }).then((bodyWithActionProfile) => {
-      testData.jobProfile.addedRelations[2].detailProfileId = bodyWithActionProfile.body.id;
+    cy.createActionProfileApi(testData.itemActionProfile).then((bodyWithActionProfile) => {
+      const newJobProfileRelation = { ...defaultJobProfileRelation };
+      newJobProfileRelation.order = 2;
+      newJobProfileRelation.detailProfileId = bodyWithActionProfile.body.id;
+      testData.jobProfileForCreate.addedRelations.push(newJobProfileRelation);
     });
   });
 
-  cy.createJobProfileApi({
-    ...testData.jobProfile
-  }).then((bodyWithjobProfile) => {
-    testData.jobProfile.id = bodyWithjobProfile.body.id;
-  });
+  cy.createJobProfileApi(testData.jobProfileForCreate)
+    .then((bodyWithjobProfile) => {
+      testData.jobProfile.id = bodyWithjobProfile.body.id;
+    });
 });
