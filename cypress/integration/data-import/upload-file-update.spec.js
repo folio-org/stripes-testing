@@ -119,42 +119,23 @@ describe('ui-data-import: MARC file upload with the update of instance, holding,
     deletedRelations: []
   };
 
-  const jobProfile = {
-    profile: {
-      id: '',
-      name: `autotest_job_profile_${getRandomPostfix()}`,
-      dataType: 'MARC'
-    },
-    addedRelations: [
-      {
-        detailProfileId: '',
-        order: 0,
-        masterProfileType: 'JOB_PROFILE',
-        detailProfileType: 'ACTION_PROFILE'
-      },
-      {
-        detailProfileId: '',
-        order: 1,
-        masterProfileType: 'JOB_PROFILE',
-        detailProfileType: 'ACTION_PROFILE'
-      }, {
-        detailProfileId: '',
-        order: 2,
-        masterProfileType: 'JOB_PROFILE',
-        detailProfileType: 'ACTION_PROFILE'
-      }
-    ],
-    deletedRelations: []
-  };
-  const testData = {
-    instanceMappingProfile,
-    instanceActionProfile,
-    holdingsMappingProfile,
-    holdingsActionProfile,
-    itemMappingProfile,
-    itemActionProfile,
-    jobProfileForCreate: jobProfile,
-  };
+  // const testData = {
+  //   instancePair: { instanceMappingProfile,
+  //     instanceActionProfile },
+  //   holdingsPair: { holdingsMappingProfile,
+  //     holdingsActionProfile },
+  //   itemPair: { itemMappingProfile,
+  //     itemActionProfile },
+  // };
+
+  const testData = [
+    { instanceMappingProfile,
+      instanceActionProfile },
+    { holdingsMappingProfile,
+      holdingsActionProfile },
+    { itemMappingProfile,
+      itemActionProfile },
+  ];
 
   const nameMarcFileForImportCreate = `autotestFile.${getRandomPostfix()}.mrc`;
   const nameForCSVFile = `autotestFile${getRandomPostfix()}.csv`;
@@ -183,7 +164,28 @@ describe('ui-data-import: MARC file upload with the update of instance, holding,
   });
 
   beforeEach(() => {
-    cy.createLinkedProfiles(testData);
+    // cy.createLinkedProfiles(testData);
+
+    const jobProfile = {
+      profile: {
+        name: `autotest_job_profile_${getRandomPostfix()}`,
+        dataType: 'MARC'
+      },
+      addedRelations: [],
+      deletedRelations: []
+    };
+
+    testData.jobProfileForCreate = jobProfile;
+
+    testData.forEach(specialPair => {
+      const jobId = cy.createOnePairMappingAndActionProfiles(specialPair.instanceMappingProfile, specialPair.instanceActionProfile);
+      cy.addJobProfileRelation(testData.jobProfileForCreate.addedRelations, jobId);
+    });
+
+    cy.createJobProfileApi(testData.jobProfileForCreate)
+      .then((bodyWithjobProfile) => {
+        testData.jobProfile.id = bodyWithjobProfile.body.id;
+      });
   });
 
   it('C343335 MARC file upload with the update of instance, holding, and items', { tags: [testTypes.smoke] }, () => {
