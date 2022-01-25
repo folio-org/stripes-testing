@@ -71,7 +71,7 @@ export default {
 
   deleteJobProfile,
 
-  createJobProfile: (jobProfile, actionProfileName, matchProfileName) => {
+  createJobProfileWithLinkingProfiles: (jobProfile, actionProfileName, matchProfileName) => {
     openNewJobProfileForm();
     NewJobProfile.fillJobProfile(jobProfile);
     if (!matchProfileName) {
@@ -81,5 +81,10 @@ export default {
     }
     NewJobProfile.clickSaveAndCloseButton();
     waitLoadingList();
+  },
+
+  createJobProfile: (jobProfile) => {
+    openNewJobProfileForm();
+    NewJobProfile.fillJobProfile(jobProfile);
   },
 };

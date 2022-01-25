@@ -16,8 +16,21 @@ describe('ui-data-import: MARC file import with creating of the new instance, ho
   // unique file name to upload
   const fileName = `autotestFile.${getRandomPostfix()}.mrc`;
 
+  // unique profile names
+  const jobProfileName = `autotestJobProf${getRandomPostfix()}`;
+  const actionProfileNameForInstance = `autotestActionInstance${getRandomPostfix()}`;
+  const actionProfileNameForHoldings = `autotestActionHoldings${getRandomPostfix()}`;
+  const actionProfileNameForItem = `autotestActionItem${getRandomPostfix()}`;
+  const mappingProfileNameForInstance = `autotestMappingInstance${getRandomPostfix()}`;
+  const mappingProfileNameForHoldings = `autotestMappingHoldings${getRandomPostfix()}`;
+  const mappingProfileNameForItem = `autotestMappingItem${getRandomPostfix()}`;
+
   before('navigates to Settings', () => {
     cy.login(
+      Cypress.env('diku_login'),
+      Cypress.env('diku_password')
+    );
+    cy.getToken(
       Cypress.env('diku_login'),
       Cypress.env('diku_password')
     );
@@ -26,33 +39,29 @@ describe('ui-data-import: MARC file import with creating of the new instance, ho
   it('C343334 MARC file import with creating a new mapping profiles, action profiles and job profile', { tags: [testTypes.smoke] }, () => {
     const collectionOfProfiles = [
       {
-        mappingProfile: { typeValue : newMappingProfile.folioRecordTypeValue.instance },
-        actionProfile: { typeValue: newActionProfile.folioRecordTypeValue.instance }
+        mappingProfile: { typeValue : newMappingProfile.folioRecordTypeValue.instance,
+          name: mappingProfileNameForInstance },
+        actionProfile: { typeValue: newActionProfile.folioRecordTypeValue.instance,
+          name: actionProfileNameForInstance }
       },
       {
-        mappingProfile: {
-          typeValue : newMappingProfile.folioRecordTypeValue.holdings,
-          location: newMappingProfile.permanentLocation.permanentLocation
-        },
-        actionProfile: { typeValue: newActionProfile.folioRecordTypeValue.holdings }
+        mappingProfile: { typeValue : newMappingProfile.folioRecordTypeValue.holdings,
+          name: mappingProfileNameForHoldings },
+        actionProfile: { typeValue: newActionProfile.folioRecordTypeValue.holdings,
+          name: actionProfileNameForHoldings }
       },
       {
-        mappingProfile: {
-          typeValue : newMappingProfile.folioRecordTypeValue.item,
-          material: newMappingProfile.materialType.materialType,
-          loan: newMappingProfile.permanentLoanType.type,
-          status: newMappingProfile.statusField.status
-        },
-        actionProfile: { typeValue: newActionProfile.folioRecordTypeValue.item }
+        mappingProfile: { typeValue : newMappingProfile.folioRecordTypeValue.item,
+          name: mappingProfileNameForItem },
+        actionProfile: { typeValue: newActionProfile.folioRecordTypeValue.item,
+          name: actionProfileNameForItem }
       }
     ];
 
-    const specialJobProfile = { ...newJobProfile.defaultJobProfile };
+    const specialJobProfile = { ...newJobProfile.defaultJobProfile,
+      profileName: jobProfileName };
 
     collectionOfProfiles.forEach(profile => {
-      profile.mappingProfile.name = `autotest${profile.mappingProfile.typeValue}${getRandomPostfix()}`;
-      profile.actionProfile.name = `autotest${profile.actionProfile.typeValue}${getRandomPostfix()}`;
-
       settingsDataImport.goToMappingProfiles();
       fieldMappingProfiles.createMappingProfile(profile.mappingProfile);
       fieldMappingProfiles.checkMappingProfilePresented(profile.mappingProfile.name);
@@ -62,13 +71,11 @@ describe('ui-data-import: MARC file import with creating of the new instance, ho
     });
 
     settingsDataImport.goToJobProfiles();
-    jobProfiles.openNewJobProfileForm();
-    newJobProfile.fillJobProfile(specialJobProfile);
-    collectionOfProfiles.forEach(({ actionProfile }) => {
-      newJobProfile.linkActionProfile(actionProfile);
+    jobProfiles.createJobProfile(specialJobProfile);
+    collectionOfProfiles.forEach(profile => {
+      newJobProfile.linkActionProfile(profile.actionProfile.name);
     });
     newJobProfile.clickSaveAndCloseButton();
-    jobProfiles.waitLoadingList();
     jobProfiles.checkJobProfilePresented(specialJobProfile.profileName);
 
     dataImport.goToDataImport();
@@ -81,10 +88,10 @@ describe('ui-data-import: MARC file import with creating of the new instance, ho
     logs.checkCreatedItems();
 
     // delete generated profiles
-    jobProfiles.deleteJobProfile(specialJobProfile.profileName);
+    jobProfiles.deleteJobProfile(jobProfileName);
     collectionOfProfiles.forEach(profile => {
-      fieldMappingProfiles.deleteFieldMappingProfile(profile.mappingProfile.profileName);
-      actionProfiles.deleteActionProfile(profile.actionProfile.profileName);
+      actionProfiles.deleteActionProfile(profile.actionProfile.name);
+      fieldMappingProfiles.deleteFieldMappingProfile(profile.mappingProfile.name);
     });
   });
 });

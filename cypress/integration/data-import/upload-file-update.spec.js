@@ -146,7 +146,6 @@ describe('ui-data-import: MARC file upload with the update of instance, holding,
     ],
     deletedRelations: []
   };
-
   const testData = {
     instanceMappingProfile,
     instanceActionProfile,
@@ -172,9 +171,15 @@ describe('ui-data-import: MARC file upload with the update of instance, holding,
   const mappingProfileNameForHoldings = `autotestMappingHoldings${getRandomPostfix()}`;
   const mappingProfileNameForItem = `autotestMappingItem${getRandomPostfix()}`;
 
-  before('navigates to application', () => {
-    cy.login(Cypress.env('diku_login'), Cypress.env('diku_password'));
-    cy.getToken(Cypress.env('diku_login'), Cypress.env('diku_password'));
+  before('navigates to Settings', () => {
+    cy.login(
+      Cypress.env('diku_login'),
+      Cypress.env('diku_password')
+    );
+    cy.getToken(
+      Cypress.env('diku_login'),
+      Cypress.env('diku_password')
+    );
   });
 
   beforeEach(() => {
@@ -207,7 +212,7 @@ describe('ui-data-import: MARC file upload with the update of instance, holding,
         exportMarcFile.downloadExportedMarcFile(nameForExportedMarcFile);
       });
 
-    const collectionOfProfiles = [
+    const collectionOfMappingAndActionProfiles = [
       {
         mappingProfile: { typeValue : newMappingProfile.folioRecordTypeValue.instance,
           name: mappingProfileNameForInstance },
@@ -225,11 +230,11 @@ describe('ui-data-import: MARC file upload with the update of instance, holding,
       }
     ];
 
-    collectionOfProfiles.forEach(profile => {
-      settingsDataImport.goToMappingProfile();
+    collectionOfMappingAndActionProfiles.forEach(profile => {
+      settingsDataImport.goToMappingProfiles();
       fieldMappingProfiles.createMappingProfileForUpdate(profile.mappingProfile);
       fieldMappingProfiles.checkMappingProfilePresented(profile.mappingProfile.name);
-      settingsDataImport.goToActionProfile();
+      settingsDataImport.goToActionProfiles();
       actionProfiles.createActionProfile(profile.actionProfile, profile.mappingProfile);
       actionProfiles.checkActionProfilePresented(profile.actionProfile.name);
     });
@@ -269,7 +274,7 @@ describe('ui-data-import: MARC file upload with the update of instance, holding,
       }
     ];
 
-    settingsDataImport.goToMatchProfile();
+    settingsDataImport.goToMatchProfiles();
     collectionOfMatchProfiles.forEach(profile => {
       matchProfiles.createMatchProfile(profile.matchProfile);
     });
@@ -279,15 +284,22 @@ describe('ui-data-import: MARC file upload with the update of instance, holding,
       ...newJobProfile.defaultJobProfile,
       profileName: jobProfileName
     };
-    settingsDataImport.goToJobProfile();
-    jobProfiles.openNewJobProfileForm();
-    newJobProfile.fillJobProfile(jobProfileForUpload);
-    newJobProfile.linkMatchAndActionProfiles(matchProfileNameForInstance, actionProfileNameForInstance);
-    newJobProfile.linkMatchAndActionProfiles(matchProfileNameForHoldings, actionProfileNameForHoldings);
-    newJobProfile.linkMatchAndActionProfiles(matchProfileNameForItem, actionProfileNameForItem);
+
+    settingsDataImport.goToJobProfiles();
+    jobProfiles.createJobProfile(jobProfileForUpload);
+    // TODO create job profile with linked action and match profiles
+    collectionOfProfiles.forEach(profile => {
+      newJobProfile.linkActionProfile(profile.actionProfile.name);
+    });
     newJobProfile.clickSaveAndCloseButton();
-    jobProfiles.waitLoadingList();
-    jobProfiles.checkJobProfilePresented(jobProfileName);
+    jobProfiles.checkJobProfilePresented(jobProfileForUpload.profileName);
+
+    settingsDataImport.goToJobProfiles();
+    jobProfiles.createJobProfile(jobProfileForUpload, actionProfileNameForInstance, matchProfileNameForInstance);
+    jobProfiles.createJobProfile(jobProfileForUpload, actionProfileNameForHoldings, matchProfileNameForHoldings);
+    jobProfiles.createJobProfile(jobProfileForUpload, actionProfileNameForItem, matchProfileNameForItem);
+    jobProfiles.checkJobProfilePresented(jobProfileForUpload);
+    // ======
 
     // upload the exported marc file
     dataImport.goToDataImport();
@@ -298,13 +310,13 @@ describe('ui-data-import: MARC file upload with the update of instance, holding,
     logs.checkIsInstanceUpdated();
 
     // delete generated profiles
-    jobProfiles.deleteJobProfile(jobProfileForUpload.profileName);
+    jobProfiles.deleteJobProfile(jobProfileName);
     collectionOfMatchProfiles.forEach(profile => {
       matchProfiles.deleteMatchProfile(profile.matchProfile.profileName);
     });
-    collectionOfProfiles.forEach(profile => {
-      fieldMappingProfiles.deleteFieldMappingProfile(profile.mappingProfile.profileName);
-      actionProfiles.deleteActionProfile(profile.actionProfile.profileName);
+    collectionOfMappingAndActionProfiles.forEach(profile => {
+      actionProfiles.deleteActionProfile(profile.actionProfile.name);
+      fieldMappingProfiles.deleteFieldMappingProfile(profile.mappingProfile.name);
     });
 
     // delete downloads folder and created files in fixtures

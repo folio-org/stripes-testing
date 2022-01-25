@@ -21,14 +21,14 @@ export default {
     ]);
   },
 
-  linkActionProfile(specialActionProfile) {
+  linkActionProfile(actionProfile) {
     cy.get('[id="type-selector-dropdown-linker-root"]').click();
     cy.do([
       Button('Action').click(),
     ]);
-    ModalSelectActionProfile.searchActionProfileByName(specialActionProfile.name);
-    ModalSelectActionProfile.selectActionProfile(specialActionProfile.name);
-    cy.expect(Accordion('Overview').find(HTML(including(specialActionProfile.name))).exists());
+    ModalSelectActionProfile.searchActionProfileByName(actionProfile);
+    ModalSelectActionProfile.selectActionProfile(actionProfile);
+    cy.expect(Accordion('Overview').find(HTML(including(actionProfile))).exists());
   },
 
   linkMatchAndActionProfiles(matchProfileName, actionProfileName) {
