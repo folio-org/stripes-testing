@@ -3,6 +3,7 @@ import { Button, Layer } from '../../../../interactors';
 import QuickMarcEditor from '../quickMarcEditor';
 import InventoryViewSource from './inventoryViewSource';
 
+// TODO: with interactor after solving of https://issues.folio.org/browse/UIIN-1907
 const root = Layer('View holdings record');
 const actionsButton = root.find(Button('Actions'));
 const closeButton = root.find(Button({ icon: 'times' }));

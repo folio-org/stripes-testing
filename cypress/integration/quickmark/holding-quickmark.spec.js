@@ -33,7 +33,9 @@ describe('Manage holding records through quickmarc editor', () => {
     HoldingsRecordView.viewSource();
     InventoryViewSource.contains(expectedInSourceRow);
   });
-  //TODO: clarify current OQs from FAT-1171
-  it.only('C345391 Delete several fields from a record in quickMARC', { tags: [testTypes.smoke, features.quickMarcEditor] }, () => {
+  it.only('C345398 Add/Edit MARC 008', { tags: [testTypes.smoke, features.quickMarcEditor] }, () => {
+    HoldingsRecordView.gotoEditInQuickMarc();
+    QuickMarcEditor.checkInitial008TagValueFromHoldingsRecord();
+    QuickMarcEditor.checkNotExpectedByteLabelsInHoldingsRecordTag008();
   });
 });
