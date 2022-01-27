@@ -30,7 +30,7 @@ describe('inventory: selecting / changing records', () => {
     InventoryModals.verifyButtons();
   });
 
-  it('C196756 verify selected records after changing selection', () => {
+  it('C196756 verify selected records after changing selection', { tags: [testTypes.smoke] }, () => {
     const selectedRecords = 3;
     const unselectedRecords = 1;
 

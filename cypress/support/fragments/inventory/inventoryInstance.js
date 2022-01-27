@@ -1,9 +1,24 @@
-import { MultiColumnList, HTML, including, Button, Section, QuickMarcEditor, KeyValue, MultiColumnListHeader, MultiColumnListCell } from '../../../../interactors';
+import {
+  MultiColumnList,
+  HTML,
+  including,
+  Button,
+  Section,
+  QuickMarcEditor,
+  KeyValue,
+  MultiColumnListHeader,
+  MultiColumnListCell,
+  Accordion,
+  Modal,
+  Dropdown,
+  Checkbox, MultiColumnListRow,
+} from '../../../../interactors';
 import QuickMarcEditorFragment from '../quickMarcEditor';
 import InventoryActions from './inventoryActions';
 import InventoryInstanceEdit from './InventoryInstanceEdit';
 import HoldingsRecordView from './holdingsRecordView';
 import InventoryViewSource from './inventoryViewSource';
+import callout from '../../../../interactors/callout';
 
 const _section = Section({ id: 'pane-instancedetails' });
 const actionsButton = _section.find(Button('Actions'));
@@ -16,6 +31,10 @@ const deriveNewMarcBibRecord = Button({ id:'duplicate-instance-marc' });
 const addMarcHoldingRecordButton = Button({ id:'create-holdings-marc' });
 const viewHoldingsButton = Button('View holdings');
 const notesSection = Section({ id: 'instance-details-notes' });
+const moveItemsButton = Button({ id: 'move-instance-items' });
+const firstHolding = Accordion({ label: including('Holdings: Main Library') });
+const secondHolding = Accordion({ label: including('Holdings: Annex') });
+
 
 const instanceHRID = 'Instance HRID';
 const validOCLC = { id:'176116217',
@@ -101,6 +120,43 @@ export default {
   goToHoldingView: () => {
     cy.do(viewHoldingsButton.click());
     HoldingsRecordView.waitLoading();
+  },
+
+  openHoldings: () => {
+    cy.do([
+      firstHolding.clickHeader(),
+      secondHolding.clickHeader()
+    ]);
+  },
+
+  verifySuccessCalloutMovingMessage(count) {
+    cy.expect(callout().is({ textContent: `${count} item has been successfully moved.` }));
+  },
+
+  moveItemToAnotherHolding() {
+    this.openHoldings();
+
+    cy.do([
+      firstHolding.find(MultiColumnListRow()).find(Checkbox()).click(),
+      firstHolding.find(Dropdown({ label: 'Move to' })).choose(including('Annex K1')),
+    ]);
+  },
+
+  returnItemToFirstHolding() {
+    this.openHoldings();
+
+    cy.do([
+      secondHolding.find(MultiColumnListRow()).find(Checkbox()).click(),
+      secondHolding.find(Dropdown({ label: 'Move to' })).choose(including('Main Library K1')),
+      Modal().find(Button('Continue')).click()
+    ]);
+  },
+
+  openMoveItemsWithinAnInstance: () => {
+    return cy.do([
+      actionsButton.click(),
+      moveItemsButton.click()
+    ]);
   }
 
 };
