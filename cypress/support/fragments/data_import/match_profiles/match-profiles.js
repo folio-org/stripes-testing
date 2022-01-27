@@ -48,6 +48,7 @@ const fillMatchProfileForm = ({
   // select existing record type
   // TODO create waiting of upload .json files
   cy.wait(5000);
+  // TODO think about how to use interactor
   cy.get(`[data-id="${existingRecordType}"]`).last().click();
   // fill MARC Bibliographic field in incoming
   fillIncomingRecordFields(incomingRecordFields);

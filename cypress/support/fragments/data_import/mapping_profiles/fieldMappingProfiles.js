@@ -52,7 +52,7 @@ export default {
 
   createMappingProfileForUpdate:(mappingProfile) => {
     openNewMappingProfileForm();
-    newMappingProfile.fillMappingProfile(mappingProfile);
+    newMappingProfile.fillMappingProfileForUpdate(mappingProfile);
     closeViewModeForMappingProfile();
     cy.expect(actionsButton.exists());
   },

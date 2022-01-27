@@ -73,10 +73,10 @@ Cypress.Commands.add('addJobProfileRelation', (expectedRelations, actionProfileI
  * @param {Object} testData.itemActionProfile
  * @param {Object} testData.jobProfileForCreate
  */
-Cypress.Commands.add('createLinkedProfiles', (testData, jobPrfileName = `autotest_job_profile_${getRandomPostfix()}`) => {
+Cypress.Commands.add('createLinkedProfiles', (testData) => {
   const jobProfile = {
     profile: {
-      name: jobPrfileName,
+      name: `autotest_job_profile_${getRandomPostfix()}`,
       dataType: 'MARC'
     },
     addedRelations: [],
@@ -118,7 +118,8 @@ Cypress.Commands.add('createOnePairMappingAndActionProfiles', (mappingProfile, a
   cy.createMappingProfileApi(mappingProfile).then((bodyWithMappingProfile) => {
     actionProfile.addedRelations[0].detailProfileId = bodyWithMappingProfile.body.id;
     cy.createActionProfileApi(actionProfile).then((bodyWithActionProfile) => {
-      return bodyWithActionProfile.body.id;
+      cy.wrap(bodyWithActionProfile.body.id).as('idActionProfile');
     });
   });
+  return cy.get('@idActionProfile');
 });

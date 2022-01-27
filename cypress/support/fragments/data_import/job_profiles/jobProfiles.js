@@ -1,6 +1,6 @@
 import { Button, TextField, MultiColumnListCell, Modal } from '../../../../../interactors';
 import { getLongDelay } from '../../../utils/cypressTools';
-import NewJobProfile from './newJobProfile';
+import newJobProfile from './newJobProfile';
 
 const actionsButton = Button('Actions');
 
@@ -46,6 +46,11 @@ const deleteJobProfile = (profileName) => {
     });
 };
 
+const createJobProfile = (jobProfile) => {
+  openNewJobProfileForm();
+  newJobProfile.fillJobProfile(jobProfile);
+};
+
 export default {
   checkJobProfilePresented:(jobProfileTitle) => {
     cy.get('[id="job-profiles-list"]')
@@ -70,21 +75,22 @@ export default {
   },
 
   deleteJobProfile,
+  openNewJobProfileForm,
 
   createJobProfileWithLinkingProfiles: (jobProfile, actionProfileName, matchProfileName) => {
     openNewJobProfileForm();
-    NewJobProfile.fillJobProfile(jobProfile);
+    newJobProfile.fillJobProfile(jobProfile);
     if (!matchProfileName) {
-      NewJobProfile.linkActionProfile(actionProfileName);
+      newJobProfile.linkActionProfile(actionProfileName);
     } else {
-      NewJobProfile.linkMatchAndActionProfiles(matchProfileName, actionProfileName);
+      newJobProfile.linkMatchAndActionProfiles(matchProfileName, actionProfileName);
     }
-    NewJobProfile.clickSaveAndCloseButton();
+    newJobProfile.clickSaveAndCloseButton();
     waitLoadingList();
   },
 
-  createJobProfile: (jobProfile) => {
+  createJobProfileWithLinkingProfilesForUpdate: (jobProfile) => {
     openNewJobProfileForm();
-    NewJobProfile.fillJobProfile(jobProfile);
+    newJobProfile.fillJobProfile(jobProfile);
   },
 };

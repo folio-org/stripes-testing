@@ -119,22 +119,14 @@ describe('ui-data-import: MARC file upload with the update of instance, holding,
     deletedRelations: []
   };
 
-  // const testData = {
-  //   instancePair: { instanceMappingProfile,
-  //     instanceActionProfile },
-  //   holdingsPair: { holdingsMappingProfile,
-  //     holdingsActionProfile },
-  //   itemPair: { itemMappingProfile,
-  //     itemActionProfile },
-  // };
-
+  // TODO redesine classes inherites
   const testData = [
-    { instanceMappingProfile,
-      instanceActionProfile },
-    { holdingsMappingProfile,
-      holdingsActionProfile },
-    { itemMappingProfile,
-      itemActionProfile },
+    { mappingProfile: instanceMappingProfile,
+      actionProfile: instanceActionProfile },
+    { mappingProfile: holdingsMappingProfile,
+      actionProfile: holdingsActionProfile },
+    { mappingProfile: itemMappingProfile,
+      actionProfile: itemActionProfile },
   ];
 
   const nameMarcFileForImportCreate = `autotestFile.${getRandomPostfix()}.mrc`;
@@ -147,7 +139,7 @@ describe('ui-data-import: MARC file upload with the update of instance, holding,
   const actionProfileNameForItem = `autotestActionItem${getRandomPostfix()}`;
   const matchProfileNameForInstance = `autotestMatchInstance${getRandomPostfix()}`;
   const matchProfileNameForHoldings = `autotestMatchHoldings${getRandomPostfix()}`;
-  const matchProfileNameForItem = `autotestMatchProf${getRandomPostfix()}`;
+  const matchProfileNameForItem = `autotestMatchItem${getRandomPostfix()}`;
   const mappingProfileNameForInstance = `autotestMappingInstance${getRandomPostfix()}`;
   const mappingProfileNameForHoldings = `autotestMappingHoldings${getRandomPostfix()}`;
   const mappingProfileNameForItem = `autotestMappingItem${getRandomPostfix()}`;
@@ -164,8 +156,6 @@ describe('ui-data-import: MARC file upload with the update of instance, holding,
   });
 
   beforeEach(() => {
-    // cy.createLinkedProfiles(testData);
-
     const jobProfile = {
       profile: {
         name: `autotest_job_profile_${getRandomPostfix()}`,
@@ -178,13 +168,13 @@ describe('ui-data-import: MARC file upload with the update of instance, holding,
     testData.jobProfileForCreate = jobProfile;
 
     testData.forEach(specialPair => {
-      const jobId = cy.createOnePairMappingAndActionProfiles(specialPair.instanceMappingProfile, specialPair.instanceActionProfile);
-      cy.addJobProfileRelation(testData.jobProfileForCreate.addedRelations, jobId);
+      cy.createOnePairMappingAndActionProfiles(specialPair.mappingProfile, specialPair.actionProfile).then(idActionProfile => {
+        cy.addJobProfileRelation(testData.jobProfileForCreate.addedRelations, idActionProfile);
+      });
     });
-
     cy.createJobProfileApi(testData.jobProfileForCreate)
       .then((bodyWithjobProfile) => {
-        testData.jobProfile.id = bodyWithjobProfile.body.id;
+        testData.jobProfileForCreate.id = bodyWithjobProfile.body.id;
       });
   });
 
@@ -217,18 +207,27 @@ describe('ui-data-import: MARC file upload with the update of instance, holding,
     const collectionOfMappingAndActionProfiles = [
       {
         mappingProfile: { typeValue : newMappingProfile.folioRecordTypeValue.instance,
-          name: mappingProfileNameForInstance },
-        actionProfile: { typeValue: newActionProfile.folioRecordTypeValue.instance, name: actionProfileNameForInstance }
+          name: mappingProfileNameForInstance,
+          fillProfile: newMappingProfile.fillInstanceMappingProfile },
+        actionProfile: { typeValue: newActionProfile.folioRecordTypeValue.instance,
+          name: actionProfileNameForInstance,
+          action: 'Update (all record types except Orders)' }
       },
       {
         mappingProfile: { typeValue : newMappingProfile.folioRecordTypeValue.holdings,
-          name: mappingProfileNameForHoldings },
-        actionProfile: { typeValue: newActionProfile.folioRecordTypeValue.holdings, name: actionProfileNameForHoldings }
+          name: mappingProfileNameForHoldings,
+          fillProfile: newMappingProfile.fillHoldingsMappingProfile },
+        actionProfile: { typeValue: newActionProfile.folioRecordTypeValue.holdings,
+          name: actionProfileNameForHoldings,
+          action: 'Update (all record types except Orders)' }
       },
       {
         mappingProfile: { typeValue : newMappingProfile.folioRecordTypeValue.item,
-          name: mappingProfileNameForItem },
-        actionProfile: { typeValue: newActionProfile.folioRecordTypeValue.item, name: actionProfileNameForItem }
+          name: mappingProfileNameForItem,
+          fillProfile: newMappingProfile.fillItemMappingProfile },
+        actionProfile: { typeValue: newActionProfile.folioRecordTypeValue.item,
+          name: actionProfileNameForItem,
+          action: 'Update (all record types except Orders)' }
       }
     ];
 
@@ -282,26 +281,17 @@ describe('ui-data-import: MARC file upload with the update of instance, holding,
     });
 
     // create Job profile
-    const jobProfileForUpload = {
+    const jobProfileForUpdate = {
       ...newJobProfile.defaultJobProfile,
       profileName: jobProfileName
     };
 
     settingsDataImport.goToJobProfiles();
-    jobProfiles.createJobProfile(jobProfileForUpload);
-    // TODO create job profile with linked action and match profiles
-    collectionOfProfiles.forEach(profile => {
-      newJobProfile.linkActionProfile(profile.actionProfile.name);
-    });
+    jobProfiles.createJobProfileWithLinkingProfilesForUpdate(jobProfileForUpdate);
+    newJobProfile.linkMatchAndActionProfilesForInstance(actionProfileNameForInstance, matchProfileNameForInstance, 0);
+    newJobProfile.linkMatchAndActionProfilesForHoldings(actionProfileNameForHoldings, matchProfileNameForHoldings, 2);
+    newJobProfile.linkMatchAndActionProfilesForItem(actionProfileNameForItem, matchProfileNameForItem, 4);
     newJobProfile.clickSaveAndCloseButton();
-    jobProfiles.checkJobProfilePresented(jobProfileForUpload.profileName);
-
-    settingsDataImport.goToJobProfiles();
-    jobProfiles.createJobProfile(jobProfileForUpload, actionProfileNameForInstance, matchProfileNameForInstance);
-    jobProfiles.createJobProfile(jobProfileForUpload, actionProfileNameForHoldings, matchProfileNameForHoldings);
-    jobProfiles.createJobProfile(jobProfileForUpload, actionProfileNameForItem, matchProfileNameForItem);
-    jobProfiles.checkJobProfilePresented(jobProfileForUpload);
-    // ======
 
     // upload the exported marc file
     dataImport.goToDataImport();

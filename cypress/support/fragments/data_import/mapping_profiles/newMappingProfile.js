@@ -76,47 +76,53 @@ export default {
     cy.do(Button('Save as profile & Close').click());
   },
 
+  fillInstanceMappingProfile() {
+    cy.do([
+      TextField('Cataloged date').fillIn(catalogedDate),
+      TextField('Instance status term').fillIn(instanceStatusTerm)]);
+    cy.wait(1800);
+    cy.get('[name="profile.mappingDetails.mappingFields[8].repeatableFieldAction"]').select('Add these to existing');
+    cy.do(Button('Add statistical code').click());
+    cy.do(TextField('Statistical code').fillIn('"ARL (Collection stats): books - Book, print (books)"'));
+  },
+
+  fillHoldingsMappingProfile() {
+    cy.do([TextField('Permanent').fillIn('"Online (E)"'),
+      TextField('Holdings type').fillIn('"Electronic"'),
+      TextField('Call number type').fillIn('"Library of Congress classification"'),
+      TextField('Call number').fillIn('050$a " " 050$b'),
+    ]);
+    cy.get('[name="profile.mappingDetails.mappingFields[22].repeatableFieldAction"]').select('Add these to existing');
+    cy.do([
+      Button('Add electronic access').click(),
+      TextField('Relationship').fillIn('"Resource"'),
+      TextField('URI').fillIn('856$u'),
+    ]);
+  },
+
+  fillItemMappingProfile() {
+    cy.do([
+      TextField('Material type').fillIn('"electronic resource"'),
+      TextField('Permanent loan type').fillIn('"Can circulate"'),
+      TextField('Status').fillIn('"Available"'),
+    ]);
+    cy.get('[name="profile.mappingDetails.mappingFields[24].repeatableFieldAction"]').select('Add these to existing');
+    cy.do([
+      Button('Add item note').click(),
+      TextField('Note type').fillIn('"Electronic bookplate"'),
+      TextField('Note').fillIn('"Smith Family Foundation"'),
+    ]);
+    cy.get('[name="profile.mappingDetails.mappingFields[24].subfields[0].fields[2].booleanFieldAction"]').select('Mark for all affected records');
+  },
+
   fillMappingProfileForUpdate:(specialMappingProfile = defaultMappingProfile) => {
     cy.do([
       TextField({ name:'profile.name' }).fillIn(specialMappingProfile.name),
       Select({ name:'profile.incomingRecordType' }).choose(marcBib),
       Select({ name:'profile.existingRecordType' }).choose(specialMappingProfile.typeValue)
     ]);
-    if (specialMappingProfile.typeValue === folioRecordTypeValue.instance) {
-      cy.do([
-        TextField('Cataloged date').fillIn(catalogedDate),
-        TextField('Instance status term').fillIn(instanceStatusTerm)]);
-      cy.get('[name="profile.mappingDetails.mappingFields[8].repeatableFieldAction"]').select('Add these to existing');
-      cy.do([
-        Button('Add statistical code').click(),
-        TextField('Statistical code').fillIn('"Serial status: ASER - Active serial"'),
-      ]);
-    } else if (specialMappingProfile.typeValue === holdingsType) {
-      cy.do([TextField('Permanent').fillIn('"Online (E)"'),
-        TextField('Holdings type').fillIn('"electronic"'),
-        TextField('Call number type').fillIn('"Library of Congress classification"'),
-        TextField('Call number').fillIn('050$a " " 050$b'),
-      ]);
-      cy.get('[name="profile.mappingDetails.mappingFields[22].repeatableFieldAction"]').select('Add these to existing');
-      cy.do([
-        Button('Add electronic access').click(),
-        TextField('Relationship').fillIn('"Resource"'),
-        TextField('URI').fillIn('856$u'),
-      ]);
-    } else if (specialMappingProfile.typeValue === itemType) {
-      cy.do([
-        TextField('Material type').fillIn('"electronic resource"'),
-        TextField('Permanent loan type').fillIn('"Can circulate"'),
-        TextField('Status').fillIn('"Available"'),
-      ]);
-      cy.get('[name="profile.mappingDetails.mappingFields[24].repeatableFieldAction"]').select('Add these to existing');
-      cy.do([
-        Button('Add item note').click(),
-        TextField('Note type').fillIn('"Electronic bookplate"'),
-        TextField('Note').fillIn('"Smith Family Foundation"'),
-      ]);
-      cy.get('[name="profile.mappingDetails.mappingFields[24].subfields[0].fields[2].booleanFieldAction"]').select('Mark for all affected records');
-    }
+    specialMappingProfile.fillProfile();
     cy.do(Button('Save as profile & Close').click());
+    cy.expect(Button('Save as profile & Close').absent());
   }
 };
