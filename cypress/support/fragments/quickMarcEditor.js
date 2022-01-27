@@ -1,6 +1,7 @@
 import { QuickMarcEditor, QuickMarcEditorRow, TextArea, Button, Modal, TextField, and, some, Pane } from '../../../interactors';
 import InventoryInstance from './inventory/inventoryInstance';
 import getRandomPostfix from '../utils/stringTools';
+import holdingsRecordView from './inventory/holdingsRecordView';
 
 const addFieldButton = Button({ ariaLabel : 'Add a new field' });
 const deleteFieldButton = Button({ ariaLabel : 'Delete this field' });
@@ -8,38 +9,24 @@ const saveAndCloseButton = Button({ id:'quick-marc-record-save' });
 const confirmationModal = Modal({ id: 'quick-marc-confirm-modal' });
 const continueWithSaveButton = Modal().find(Button({ id: 'clickable-quick-marc-confirm-modal-confirm' }));
 
-// tag008
-const tag008HoldingsRecordFields = {
-  acqStatusTextField : TextField('AcqStatus'),
-  acqMethodTextField : TextField('AcqMethod'),
-  acqEndDateTextField : TextField('AcqEndDate'),
-  genRetTextField : TextField('Gen ret'),
-  specRetTextField0: TextField('Spec ret', { name:'records[3].content.Spec ret[0]' }),
-  specRetTextField1: TextField('Spec ret', { name:'records[3].content.Spec ret[1]' }),
-  specRetTextField2: TextField('Spec ret', { name:'records[3].content.Spec ret[2]' }),
-  complTextField : TextField('Compl'),
-  copiesTextField : TextField('Copies'),
-  lendTextField : TextField('Lend'),
-  reproTextField : TextField('Repro'),
-  langTextField : TextField('Lang'),
-  sepCompTextField : TextField('Sep/comp'),
-  reptDateTextField : TextField('Rept date')
-};
-const tag008HoldingsDefaultValues = {
-  acqStatus : '0',
-  acqMethod : 'u',
-  acqEndDate : '////',
-  genRet : '',
-  specRet:{ specRet0: '/',
-    specRet1: '/',
-    specRet2: '/' },
-  compl : '0',
-  copies : '///',
-  lend : 'u',
-  repro : 'u',
-  lang : 'eng',
-  sepComp : '0',
-  reptDate : '//////'
+// TODO: redesign to classes
+const tag008HoldingsBytesProperties = {
+  // TODO: default value has  symbols '/', expected - '\', see UIQM-203
+  acqStatus : { interactor:TextField('AcqStatus'), defaultValue:'0', newValue:'v', voidValue:'', replacedVoidValue:'\\' },
+  acqMethod :{ interactor:TextField('AcqMethod'), defaultValue:'u', newValue:'v', voidValue:'', replacedVoidValue:'\\' },
+  acqEndDate :{ interactor:TextField('AcqEndDate'), defaultValue:'////', newValue:'vvvv', voidValue:'', replacedVoidValue:'\\\\\\\\' },
+  // TODO: voidValueInEditor is void instead of '\' now. New story will be added by Khalilah
+  genRet : { interactor:TextField('Gen ret'), defaultValue:'', newValue:'v', voidValue:'', replacedVoidValue:'' },
+  specRet0: { interactor:TextField('Spec ret', { name:'records[3].content.Spec ret[0]' }), defaultValue:'/', newValue:'v', voidValue:'', replacedVoidValue:'\\' },
+  specRet1: { interactor:TextField('Spec ret', { name:'records[3].content.Spec ret[1]' }), defaultValue:'/', newValue:'v', voidValue:'', replacedVoidValue:'\\' },
+  specRet2: { interactor:TextField('Spec ret', { name:'records[3].content.Spec ret[2]' }), defaultValue:'/', newValue:'v', voidValue:'', replacedVoidValue:'\\' },
+  compl : { interactor:TextField('Compl'), defaultValue:'0', newValue:'9', voidValue:'0', replacedVoidValue:'\\' },
+  copies :{ interactor:TextField('Copies'), defaultValue:'///', newValue:'vvv', voidValue:'', replacedVoidValue:'\\' },
+  lend : { interactor:TextField('Lend'), defaultValue:'u', newValue:'v', voidValue:'', replacedVoidValue:'\\' },
+  repro : { interactor:TextField('Repro'), defaultValue:'u', newValue:'v', voidValue:'', replacedVoidValue:'\\' },
+  lang : { interactor:TextField('Lang'), defaultValue:'eng', newValue:'vvv', voidValue:'', replacedVoidValue:'\\' },
+  sepComp : { interactor:TextField('Sep/comp'), defaultValue:'0', newValue:'v', voidValue:'', replacedVoidValue:'\\' },
+  reptDate :{ interactor:TextField('Rept date'), defaultValue:'//////', newValue:'vvvvvv', voidValue:'', replacedVoidValue:'\\' },
 };
 
 const defaultFieldValues = {
@@ -85,6 +72,7 @@ const addNewField = (tag = defaultFieldValues.freeTags[0], fieldContent = defaul
   return fillAllAvailableValues(fieldContent, tag);
 };
 
+const pressSaveAndClose = () => cy.do(saveAndCloseButton.click());
 
 export default {
   addNewField,
@@ -106,7 +94,7 @@ export default {
     return cy.get('@specialTag');
   },
 
-  pressSaveAndClose: () => cy.do(saveAndCloseButton.click()),
+  pressSaveAndClose,
 
   deleteConfirmationPresented: () => cy.expect(confirmationModal.exists()),
 
@@ -149,22 +137,9 @@ export default {
   getExistingLocation:() => defaultFieldValues.existingLocation,
   getFreeTags:() => defaultFieldValues.freeTags,
   checkInitial008TagValueFromHoldingsRecord: () => {
-    cy.expect([
-      tag008HoldingsRecordFields.acqStatusTextField.has({ value: tag008HoldingsDefaultValues.acqStatus }),
-      tag008HoldingsRecordFields.acqMethodTextField.has({ value: tag008HoldingsDefaultValues.acqMethod }),
-      tag008HoldingsRecordFields.acqEndDateTextField.has({ value: tag008HoldingsDefaultValues.acqEndDate }),
-      tag008HoldingsRecordFields.genRetTextField.has({ value: tag008HoldingsDefaultValues.genRet }),
-      tag008HoldingsRecordFields.specRetTextField0.has({ value: tag008HoldingsDefaultValues.specRet.specRet0 }),
-      tag008HoldingsRecordFields.specRetTextField1.has({ value: tag008HoldingsDefaultValues.specRet.specRet1 }),
-      tag008HoldingsRecordFields.specRetTextField2.has({ value: tag008HoldingsDefaultValues.specRet.specRet2 }),
-      tag008HoldingsRecordFields.complTextField.has({ value: tag008HoldingsDefaultValues.compl }),
-      tag008HoldingsRecordFields.copiesTextField.has({ value: tag008HoldingsDefaultValues.copies }),
-      tag008HoldingsRecordFields.lendTextField.has({ value: tag008HoldingsDefaultValues.lend }),
-      tag008HoldingsRecordFields.reproTextField.has({ value: tag008HoldingsDefaultValues.repro }),
-      tag008HoldingsRecordFields.langTextField.has({ value: tag008HoldingsDefaultValues.lang }),
-      tag008HoldingsRecordFields.sepCompTextField.has({ value: tag008HoldingsDefaultValues.sepComp }),
-      tag008HoldingsRecordFields.reptDateTextField.has({ value: tag008HoldingsDefaultValues.reptDate })
-    ]);
+    Object.values(tag008HoldingsBytesProperties).forEach(specialByte => {
+      cy.expect(specialByte.interactor.has({ value: specialByte.defaultValue }));
+    });
   },
 
   // should be used only with default value of tag 008
@@ -172,9 +147,11 @@ export default {
     cy.then(() => QuickMarcEditor().presentedRowsProperties()).then(rowsProperties => {
       let actualJoinedFieldNames = rowsProperties.filter(rowProperty => rowProperty.tag === '008').map(rowProperty => rowProperty.content)[0].toLowerCase();
 
-      Object.keys(tag008HoldingsDefaultValues).forEach(fieldName => {
+      Object.keys(tag008HoldingsBytesProperties).forEach(fieldName => {
         switch (fieldName) {
-          case 'specRet': {
+          case 'specRet0':
+          case 'specRet1':
+          case 'specRet2': {
             actualJoinedFieldNames = actualJoinedFieldNames.replace('spec ret', '');
             break;
           }
@@ -194,8 +171,31 @@ export default {
           }
         }
       });
+
       // eslint-disable-next-line no-unused-expressions
       expect(actualJoinedFieldNames).to.be.empty;
+    });
+  },
+  updateAllDefaultValuesIn008Tag: () => {
+    Object.values(tag008HoldingsBytesProperties).forEach(byteProperty => {
+      cy.do(QuickMarcEditorRow({ tagValue: '008' }).find(byteProperty.interactor).fillIn(byteProperty.newValue));
+    });
+
+    pressSaveAndClose();
+    holdingsRecordView.waitLoading();
+    return Object.values(tag008HoldingsBytesProperties).map(property => property.newValues).join('');
+  },
+  clearTag008:() => {
+    Object.values(tag008HoldingsBytesProperties).forEach(byteProperty => {
+      cy.do(QuickMarcEditorRow({ tagValue: '008' }).find(byteProperty.interactor).clear());
+    });
+    pressSaveAndClose();
+    holdingsRecordView.waitLoading();
+    return Object.values(tag008HoldingsBytesProperties).map(property => property.voidValue).join('');
+  },
+  checkReplacedVoidValuesInTag008:() => {
+    Object.values(tag008HoldingsBytesProperties).forEach(byteProperty => {
+      cy.expect(QuickMarcEditorRow({ tagValue: '008' }).find(byteProperty.interactor).has({ value: byteProperty.replacedVoidValue }));
     });
   }
 };
