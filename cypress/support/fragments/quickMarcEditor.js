@@ -12,21 +12,21 @@ const continueWithSaveButton = Modal().find(Button({ id: 'clickable-quick-marc-c
 // TODO: redesign to classes
 const tag008HoldingsBytesProperties = {
   // TODO: default value has  symbols '/', expected - '\', see UIQM-203
-  acqStatus : { interactor:TextField('AcqStatus'), defaultValue:'0', newValue:'v', voidValue:'', replacedVoidValue:'\\' },
-  acqMethod :{ interactor:TextField('AcqMethod'), defaultValue:'u', newValue:'v', voidValue:'', replacedVoidValue:'\\' },
-  acqEndDate :{ interactor:TextField('AcqEndDate'), defaultValue:'////', newValue:'vvvv', voidValue:'', replacedVoidValue:'\\\\\\\\' },
-  // TODO: voidValueInEditor is void instead of '\' now. New story will be added by Khalilah
-  genRet : { interactor:TextField('Gen ret'), defaultValue:'', newValue:'v', voidValue:'', replacedVoidValue:'' },
-  specRet0: { interactor:TextField('Spec ret', { name:'records[3].content.Spec ret[0]' }), defaultValue:'/', newValue:'v', voidValue:'', replacedVoidValue:'\\' },
-  specRet1: { interactor:TextField('Spec ret', { name:'records[3].content.Spec ret[1]' }), defaultValue:'/', newValue:'v', voidValue:'', replacedVoidValue:'\\' },
-  specRet2: { interactor:TextField('Spec ret', { name:'records[3].content.Spec ret[2]' }), defaultValue:'/', newValue:'v', voidValue:'', replacedVoidValue:'\\' },
+  acqStatus : { interactor:TextField('AcqStatus'), defaultValue:'0', newValue:'v', voidValue:' ', replacedVoidValue:'\\' },
+  acqMethod :{ interactor:TextField('AcqMethod'), defaultValue:'u', newValue:'v', voidValue:' ', replacedVoidValue:'\\' },
+  acqEndDate :{ interactor:TextField('AcqEndDate'), defaultValue:'////', newValue:'vvvv', voidValue:' ', replacedVoidValue:'\\\\\\\\' },
+  // TODO: voidValueInEditor is void instead of '0' now. see UIQM-203
+  genRet : { interactor:TextField('Gen ret'), defaultValue:'', newValue:'v', voidValue:' ', replacedVoidValue:'' },
+  specRet0: { interactor:TextField('Spec ret', { name:'records[3].content.Spec ret[0]' }), defaultValue:'/', newValue:'v', voidValue:' ', replacedVoidValue:'\\' },
+  specRet1: { interactor:TextField('Spec ret', { name:'records[3].content.Spec ret[1]' }), defaultValue:'/', newValue:'v', voidValue:' ', replacedVoidValue:'\\' },
+  specRet2: { interactor:TextField('Spec ret', { name:'records[3].content.Spec ret[2]' }), defaultValue:'/', newValue:'v', voidValue:' ', replacedVoidValue:'\\' },
   compl : { interactor:TextField('Compl'), defaultValue:'0', newValue:'9', voidValue:'0', replacedVoidValue:'\\' },
-  copies :{ interactor:TextField('Copies'), defaultValue:'///', newValue:'vvv', voidValue:'', replacedVoidValue:'\\' },
-  lend : { interactor:TextField('Lend'), defaultValue:'u', newValue:'v', voidValue:'', replacedVoidValue:'\\' },
-  repro : { interactor:TextField('Repro'), defaultValue:'u', newValue:'v', voidValue:'', replacedVoidValue:'\\' },
-  lang : { interactor:TextField('Lang'), defaultValue:'eng', newValue:'vvv', voidValue:'', replacedVoidValue:'\\' },
-  sepComp : { interactor:TextField('Sep/comp'), defaultValue:'0', newValue:'v', voidValue:'', replacedVoidValue:'\\' },
-  reptDate :{ interactor:TextField('Rept date'), defaultValue:'//////', newValue:'vvvvvv', voidValue:'', replacedVoidValue:'\\' },
+  copies :{ interactor:TextField('Copies'), defaultValue:'///', newValue:'vvv', voidValue:' ', replacedVoidValue:'\\' },
+  lend : { interactor:TextField('Lend'), defaultValue:'u', newValue:'v', voidValue:' ', replacedVoidValue:'\\' },
+  repro : { interactor:TextField('Repro'), defaultValue:'u', newValue:'v', voidValue:' ', replacedVoidValue:'\\' },
+  lang : { interactor:TextField('Lang'), defaultValue:'eng', newValue:'vvv', voidValue:' ', replacedVoidValue:'\\' },
+  sepComp : { interactor:TextField('Sep/comp'), defaultValue:'0', newValue:'v', voidValue:' ', replacedVoidValue:'\\' },
+  reptDate :{ interactor:TextField('Rept date'), defaultValue:'//////', newValue:'vvvvvv', voidValue:' ', replacedVoidValue:'\\' },
 };
 
 const defaultFieldValues = {
