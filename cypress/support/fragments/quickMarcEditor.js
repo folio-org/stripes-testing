@@ -13,7 +13,6 @@ const specRetInputNames = ['records[3].content.Spec ret[0]',
   'records[3].content.Spec ret[1]',
   'records[3].content.Spec ret[2]'];
 
-// TODO: redesign to classes
 const tag008HoldingsBytesProperties = {
   // TODO: default value has  symbols '/', expected - '\', see UIQM-203
   acqStatus : { interactor:TextField('AcqStatus'), defaultValue:'0', newValue:'v', voidValue:' ', replacedVoidValue:'\\' },
