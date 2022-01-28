@@ -9,25 +9,47 @@ const saveAndCloseButton = Button({ id:'quick-marc-record-save' });
 const confirmationModal = Modal({ id: 'quick-marc-confirm-modal' });
 const continueWithSaveButton = Modal().find(Button({ id: 'clickable-quick-marc-confirm-modal-confirm' }));
 
+const specRetInputNames = ['records[3].content.Spec ret[0]',
+  'records[3].content.Spec ret[1]',
+  'records[3].content.Spec ret[2]'];
+
 // TODO: redesign to classes
 const tag008HoldingsBytesProperties = {
   // TODO: default value has  symbols '/', expected - '\', see UIQM-203
   acqStatus : { interactor:TextField('AcqStatus'), defaultValue:'0', newValue:'v', voidValue:' ', replacedVoidValue:'\\' },
   acqMethod :{ interactor:TextField('AcqMethod'), defaultValue:'u', newValue:'v', voidValue:' ', replacedVoidValue:'\\' },
   acqEndDate :{ interactor:TextField('AcqEndDate'), defaultValue:'////', newValue:'vvvv', voidValue:' ', replacedVoidValue:'\\\\\\\\' },
-  // TODO: voidValueInEditor is void instead of '0' now. see UIQM-203
-  genRet : { interactor:TextField('Gen ret'), defaultValue:'', newValue:'v', voidValue:' ', replacedVoidValue:'' },
-  specRet0: { interactor:TextField('Spec ret', { name:'records[3].content.Spec ret[0]' }), defaultValue:'/', newValue:'v', voidValue:' ', replacedVoidValue:'\\' },
-  specRet1: { interactor:TextField('Spec ret', { name:'records[3].content.Spec ret[1]' }), defaultValue:'/', newValue:'v', voidValue:' ', replacedVoidValue:'\\' },
-  specRet2: { interactor:TextField('Spec ret', { name:'records[3].content.Spec ret[2]' }), defaultValue:'/', newValue:'v', voidValue:' ', replacedVoidValue:'\\' },
+  // TODO: default value is void instead of '0' now. see UIQM-203
+  // TODO: change newValue to 'v' after fix of UIQM-204
+  genRet : { interactor:TextField('Gen ret'), defaultValue:'', newValue:'0', voidValue:' ', replacedVoidValue:'' },
+  specRet0: { interactor:TextField('Spec ret', { name:specRetInputNames[0] }), defaultValue:'/', newValue:'v', voidValue:' ', replacedVoidValue:'\\' },
+  specRet1: { interactor:TextField('Spec ret', { name:specRetInputNames[1] }), defaultValue:'/', newValue:'v', voidValue:' ', replacedVoidValue:'\\' },
+  specRet2: { interactor:TextField('Spec ret', { name:specRetInputNames[2] }), defaultValue:'/', newValue:'v', voidValue:' ', replacedVoidValue:'\\' },
   compl : { interactor:TextField('Compl'), defaultValue:'0', newValue:'9', voidValue:'0', replacedVoidValue:'\\' },
-  copies :{ interactor:TextField('Copies'), defaultValue:'///', newValue:'vvv', voidValue:' ', replacedVoidValue:'\\' },
+  copies :{ interactor:TextField('Copies'), defaultValue:'///', newValue:'vvv', voidValue:' ', replacedVoidValue:'\\\\\\' },
   lend : { interactor:TextField('Lend'), defaultValue:'u', newValue:'v', voidValue:' ', replacedVoidValue:'\\' },
   repro : { interactor:TextField('Repro'), defaultValue:'u', newValue:'v', voidValue:' ', replacedVoidValue:'\\' },
-  lang : { interactor:TextField('Lang'), defaultValue:'eng', newValue:'vvv', voidValue:' ', replacedVoidValue:'\\' },
+  lang : { interactor:TextField('Lang'), defaultValue:'eng', newValue:'vvv', voidValue:' ', replacedVoidValue:'\\\\\\' },
   sepComp : { interactor:TextField('Sep/comp'), defaultValue:'0', newValue:'v', voidValue:' ', replacedVoidValue:'\\' },
-  reptDate :{ interactor:TextField('Rept date'), defaultValue:'//////', newValue:'vvvvvv', voidValue:' ', replacedVoidValue:'\\' },
+  reptDate :{ interactor:TextField('Rept date'), defaultValue:'//////', newValue:'vvvvvv', voidValue:' ', replacedVoidValue:'\\\\\\\\\\\\' },
+  getUsualProperties:() => {
+    return [tag008HoldingsBytesProperties.acqStatus,
+      tag008HoldingsBytesProperties.acqMethod,
+      tag008HoldingsBytesProperties.acqEndDate,
+      tag008HoldingsBytesProperties.genRet,
+      tag008HoldingsBytesProperties.compl,
+      tag008HoldingsBytesProperties.copies,
+      tag008HoldingsBytesProperties.lend,
+      tag008HoldingsBytesProperties.repro,
+      tag008HoldingsBytesProperties.lang,
+      tag008HoldingsBytesProperties.sepComp,
+      tag008HoldingsBytesProperties.reptDate];
+  },
+  getAllProperties:() => {
+    return Object.values(tag008HoldingsBytesProperties).filter(objectProperty => typeof objectProperty !== 'function');
+  }
 };
+
 
 const defaultFieldValues = {
   content:'qwe',
@@ -137,7 +159,7 @@ export default {
   getExistingLocation:() => defaultFieldValues.existingLocation,
   getFreeTags:() => defaultFieldValues.freeTags,
   checkInitial008TagValueFromHoldingsRecord: () => {
-    Object.values(tag008HoldingsBytesProperties).forEach(specialByte => {
+    tag008HoldingsBytesProperties.getAllProperties().forEach(specialByte => {
       cy.expect(specialByte.interactor.has({ value: specialByte.defaultValue }));
     });
   },
@@ -177,24 +199,29 @@ export default {
     });
   },
   updateAllDefaultValuesIn008Tag: () => {
-    Object.values(tag008HoldingsBytesProperties).forEach(byteProperty => {
+    tag008HoldingsBytesProperties.getUsualProperties().forEach(byteProperty => {
       cy.do(QuickMarcEditorRow({ tagValue: '008' }).find(byteProperty.interactor).fillIn(byteProperty.newValue));
     });
-
-    pressSaveAndClose();
-    holdingsRecordView.waitLoading();
-    return Object.values(tag008HoldingsBytesProperties).map(property => property.newValues).join('');
-  },
-  clearTag008:() => {
-    Object.values(tag008HoldingsBytesProperties).forEach(byteProperty => {
-      cy.do(QuickMarcEditorRow({ tagValue: '008' }).find(byteProperty.interactor).clear());
+    // additional steps related with Spec ret
+    specRetInputNames.forEach(name => {
+      // TODO: redesign to interactors
+      cy.get(`input[name="${name}"]`).click();
+      cy.get(`input[name="${name}"]`).type(`{backspace}{backspace}${tag008HoldingsBytesProperties.specRet0.newValue}`);
     });
     pressSaveAndClose();
     holdingsRecordView.waitLoading();
-    return Object.values(tag008HoldingsBytesProperties).map(property => property.voidValue).join('');
+    return tag008HoldingsBytesProperties.getAllProperties().map(property => property.newValue).join('');
+  },
+  clearTag008:() => {
+    tag008HoldingsBytesProperties.getAllProperties().forEach(byteProperty => {
+      cy.do(QuickMarcEditorRow({ tagValue: '008' }).find(byteProperty.interactor).fillIn(''));
+    });
+    pressSaveAndClose();
+    holdingsRecordView.waitLoading();
+    return tag008HoldingsBytesProperties.getAllProperties().map(property => property.voidValue).join('');
   },
   checkReplacedVoidValuesInTag008:() => {
-    Object.values(tag008HoldingsBytesProperties).forEach(byteProperty => {
+    tag008HoldingsBytesProperties.getAllProperties().forEach(byteProperty => {
       cy.expect(QuickMarcEditorRow({ tagValue: '008' }).find(byteProperty.interactor).has({ value: byteProperty.replacedVoidValue }));
     });
   }

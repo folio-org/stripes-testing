@@ -33,10 +33,11 @@ describe('Manage holding records through quickmarc editor', () => {
     HoldingsRecordView.viewSource();
     InventoryViewSource.contains(expectedInSourceRow);
   });
-  it.only('C345398 Add/Edit MARC 008', { tags: [testTypes.smoke, features.quickMarcEditor] }, () => {
+  it('C345398 Add/Edit MARC 008', { tags: [testTypes.smoke, features.quickMarcEditor] }, () => {
     HoldingsRecordView.gotoEditInQuickMarc();
     QuickMarcEditor.checkInitial008TagValueFromHoldingsRecord();
     QuickMarcEditor.checkNotExpectedByteLabelsInHoldingsRecordTag008();
+
     const changed008TagValue = QuickMarcEditor.updateAllDefaultValuesIn008Tag();
     HoldingsRecordView.viewSource();
     InventoryViewSource.contains(changed008TagValue);
@@ -47,7 +48,6 @@ describe('Manage holding records through quickmarc editor', () => {
     HoldingsRecordView.viewSource();
     InventoryViewSource.contains(cleared008TagValue);
     InventoryViewSource.close();
-
     HoldingsRecordView.gotoEditInQuickMarc();
     QuickMarcEditor.checkReplacedVoidValuesInTag008();
   });
