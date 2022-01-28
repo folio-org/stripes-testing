@@ -4,9 +4,6 @@ Cypress.Commands.add('getOrganizationsApi', (searchParams) => {
       path: 'organizations/organizations',
       searchParams,
     });
-  // .then(({ body }) => {
-  //   Cypress.env('organizations', body.organizations);
-  // });
 });
 
 Cypress.Commands.add('deleteOrganizationApi', (organizationId) => {
