@@ -1,7 +1,11 @@
+/// <reference types="@shelex/cypress-allure-plugin" />
+
 const globby = require('globby');
 const { rmdir, unlink } = require('fs');
 const cypressGrep = require('cypress-grep/src/plugin');
 const { downloadFile } = require('cypress-downloadfile/lib/addPlugin');
+const allureWriter = require('@shelex/cypress-allure-plugin/writer');
+// import allureWriter from "@shelex/cypress-allure-plugin/writer";
 
 // eslint-disable-next-line no-unused-vars
 module.exports = (on, config) => {
@@ -48,9 +52,9 @@ module.exports = (on, config) => {
           resolve(null);
         });
       });
-    }
+    },
   });
-
+  allureWriter(on, config);
   return config;
 };
 
