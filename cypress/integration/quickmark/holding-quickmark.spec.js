@@ -33,4 +33,20 @@ describe('Manage holding records through quickmarc editor', () => {
     HoldingsRecordView.viewSource();
     InventoryViewSource.contains(expectedInSourceRow);
   });
+  it.only('C345408 MARC instance record + FOLIO holdings record (Regression)', { tags: [testTypes.smoke, features.quickMarcEditor] }, () => {
+    //HoldingsRecordView
+    
+    
+    // HoldingsRecordView.gotoEditInQuickMarc();
+
+    // // TODO: redesign to dynamic reading of rows count
+    // QuickMarcEditor.addRow(HoldingsRecordView.newHolding.rowsCountInQuickMarcEditor);
+    // QuickMarcEditor.checkInitialContent(HoldingsRecordView.newHolding.rowsCountInQuickMarcEditor + 1);
+    // const expectedInSourceRow = QuickMarcEditor.fillAllAvailableValues(undefined, undefined, HoldingsRecordView.newHolding.rowsCountInQuickMarcEditor);
+    // QuickMarcEditor.pressSaveAndClose();
+    // HoldingsRecordView.waitLoading();
+
+    // HoldingsRecordView.viewSource();
+    // InventoryViewSource.contains(expectedInSourceRow);
+  });
 });
