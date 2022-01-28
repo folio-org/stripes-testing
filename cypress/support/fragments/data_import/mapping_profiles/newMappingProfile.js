@@ -21,8 +21,6 @@ const holdingsType = 'Holdings';
 
 const itemType = 'Item';
 
-const statisticalCode = '"ARL (Collection stats): books - Book, print (books)"';
-
 const catalogedDate = '###TODAY###';
 
 const instanceStatusTerm = '"Batch Loaded"';
