@@ -1,12 +1,12 @@
 Cypress.Commands.add('getOrganizationsApi', (searchParams) => {
-  cy
+  return cy
     .okapiRequest({
       path: 'organizations/organizations',
       searchParams,
-    })
-    .then(({ body }) => {
-      Cypress.env('organizations', body.organizations);
     });
+  // .then(({ body }) => {
+  //   Cypress.env('organizations', body.organizations);
+  // });
 });
 
 Cypress.Commands.add('deleteOrganizationApi', (organizationId) => {
