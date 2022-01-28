@@ -106,9 +106,15 @@ export default {
   checkHoldingsTable: (locationName, rowNumber, caption, barcode, status) => {
     const accordionHeader = `Holdings: ${locationName} >`;
     const indexRowumber = `row-${rowNumber}`;
+    // wait for data to be loaded
+    cy.intercept(
+      {
+        method: 'GET',
+        url: '/inventory/items?*',
+      }
+    ).as('getItems');
+    cy.wait('@getItems');
     cy.do([
-      // wait needed in order to get data loaded
-      cy.wait(3000),
       Accordion(accordionHeader).clickHeader(),
     ]);
 
