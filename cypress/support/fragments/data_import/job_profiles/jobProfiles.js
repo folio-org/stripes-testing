@@ -75,7 +75,7 @@ export default {
   },
 
   deleteJobProfile,
-  openNewJobProfileForm,
+  createJobProfile,
 
   createJobProfileWithLinkingProfiles: (jobProfile, actionProfileName, matchProfileName) => {
     openNewJobProfileForm();

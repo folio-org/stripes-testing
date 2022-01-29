@@ -2,9 +2,7 @@ import { TextField, Button, Select } from '../../../../../interactors';
 import { getLongDelay } from '../../../utils/cypressTools';
 import ModalSelectMappingProfile from './modalSelectMappingProfile';
 
-const actionCreate = 'Create (all record types)';
-
-const actionUpdate = 'Update (all record types except Orders)';
+const action = 'Create (all record types)';
 
 const folioRecordTypeValue = {
   instance: 'Instance',

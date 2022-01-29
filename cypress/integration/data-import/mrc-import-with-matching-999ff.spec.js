@@ -113,6 +113,7 @@ describe('ui-data-import: MARC file import with matching for 999 ff field', () =
             subfield: 's'
           },
           matchCriterion: 'Exactly matches',
+          existingRecordType: 'MARC_BIBLIOGRAPHIC'
         };
         SettingsDataImport.goToMatchProfiles();
         MatchProfiles.createMatchProfile(matchProfile);

@@ -21,14 +21,14 @@ export default {
     ]);
   },
 
-  linkActionProfile(actionProfile) {
+  linkActionProfile(specialActionProfile) {
     cy.get('[id="type-selector-dropdown-linker-root"]').click();
     cy.do([
       Button('Action').click(),
     ]);
-    ModalSelectActionProfile.searchActionProfileByName(actionProfile);
-    ModalSelectActionProfile.selectActionProfile(actionProfile);
-    cy.expect(Accordion('Overview').find(HTML(including(actionProfile))).exists());
+    ModalSelectActionProfile.searchActionProfileByName(specialActionProfile.name);
+    ModalSelectActionProfile.selectActionProfile(specialActionProfile.name);
+    cy.expect(Accordion('Overview').find(HTML(including(specialActionProfile.name))).exists());
   },
 
   linkMatchAndActionProfiles(matchProfileName, actionProfileName) {
@@ -50,8 +50,6 @@ export default {
     cy.expect(Accordion('Overview').find(HTML(including(actionProfileName))).exists());
   },
 
-
-  // variable 
   linkMatchAndActionProfilesForInstance(actionProfileName, matchProfileName, buttonIndex = 0) {
     // link match profile to job profile
     cy.get('[id="type-selector-dropdown-linker-root"]').click();

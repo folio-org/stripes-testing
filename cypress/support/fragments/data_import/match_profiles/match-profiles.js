@@ -46,8 +46,14 @@ const fillMatchProfileForm = ({
 }) => {
   cy.do(TextField('Name*').fillIn(profileName));
   // select existing record type
-  // TODO create waiting of upload .json files
-  cy.wait(5000);
+  // wait for data to be loaded
+  cy.intercept(
+    {
+      method: 'GET',
+      url: '/_/jsonSchemas?path=raml-util/schemas/metadata.schema',
+    }
+  ).as('getJson');
+  cy.wait('@getJson');
   // TODO think about how to use interactor
   cy.get(`[data-id="${existingRecordType}"]`).last().click();
   // fill MARC Bibliographic field in incoming

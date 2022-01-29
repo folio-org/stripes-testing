@@ -131,7 +131,7 @@ describe('ui-data-import: MARC file upload with the update of instance, holding,
 
   const nameMarcFileForImportCreate = `autotestFile.${getRandomPostfix()}.mrc`;
   const nameForCSVFile = `autotestFile${getRandomPostfix()}.csv`;
-  const nameForExportedMarcFile = `autotestFile${getRandomPostfix()}.mrc`;
+  const nameMarcFileForImportUpdate = `autotestFile${getRandomPostfix()}.mrc`;
   // profile names
   const jobProfileName = `autotestJobProf${getRandomPostfix()}`;
   const actionProfileNameForInstance = `autotestActionInstance${getRandomPostfix()}`;
@@ -181,7 +181,7 @@ describe('ui-data-import: MARC file upload with the update of instance, holding,
   it('C343335 MARC file upload with the update of instance, holding, and items', { tags: [testTypes.smoke] }, () => {
     // upload a marc file for creating of the new instance, holding and item
     cy.visit(topMenu.dataImportPath);
-    dataImport.uploadFile(nameMarcFileForImportCreate);
+    dataImport.uploadFileWithout999Field(nameMarcFileForImportCreate);
     jobProfiles.searchJobProfileForImport(testData.jobProfileForCreate.profile.name);
     jobProfiles.runImportFile(nameMarcFileForImportCreate);
     logs.openJobProfile(nameMarcFileForImportCreate);
@@ -196,12 +196,13 @@ describe('ui-data-import: MARC file upload with the update of instance, holding,
         searchInventory.searchInstanceByHRID(id);
         inventorySearch.saveUUIDs();
         exportMarcFile.downloadCSVFile(nameForCSVFile, 'SearchInstanceUUIDs*');
+        fileManager.deleteFolder(Cypress.config('downloadsFolder'));
         cy.visit(topMenu.dataExport);
 
         // download exported marc file
         exportFile.uploadFile(nameForCSVFile);
         exportFile.exportWithDefaultInstancesJobProfile(nameForCSVFile);
-        exportMarcFile.downloadExportedMarcFile(nameForExportedMarcFile);
+        exportMarcFile.downloadExportedMarcFile(nameMarcFileForImportUpdate);
       });
 
     const collectionOfMappingAndActionProfiles = [
@@ -295,10 +296,10 @@ describe('ui-data-import: MARC file upload with the update of instance, holding,
 
     // upload the exported marc file
     dataImport.goToDataImport();
-    dataImport.uploadFile(nameForExportedMarcFile);
-    jobProfiles.searchJobProfileForImport(jobProfileName);
-    jobProfiles.runImportFile(nameForExportedMarcFile);
-    logs.openJobProfile(nameForExportedMarcFile);
+    dataImport.uploadExportedFile(nameMarcFileForImportUpdate);
+    jobProfiles.searchJobProfileForImport(jobProfileForUpdate.profileName);
+    jobProfiles.runImportFile(nameMarcFileForImportUpdate);
+    logs.openJobProfile(nameMarcFileForImportUpdate);
     logs.checkIsInstanceUpdated();
 
     // delete generated profiles
@@ -313,7 +314,7 @@ describe('ui-data-import: MARC file upload with the update of instance, holding,
 
     // delete downloads folder and created files in fixtures
     fileManager.deleteFolder(Cypress.config('downloadsFolder'));
-    fileManager.deleteFile(`cypress/fixtures/${nameForExportedMarcFile}`);
+    fileManager.deleteFile(`cypress/fixtures/${nameMarcFileForImportUpdate}`);
     fileManager.deleteFile(`cypress/fixtures/${nameForCSVFile}`);
   });
 });

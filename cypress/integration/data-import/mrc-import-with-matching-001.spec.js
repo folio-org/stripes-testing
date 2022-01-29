@@ -78,6 +78,7 @@ describe('ui-data-import: Test MARC-MARC matching for 001 field', () => {
             field: '001',
           },
           matchCriterion: 'Exactly matches',
+          existingRecordType: 'MARC_BIBLIOGRAPHIC'
         };
 
         SettingsDataImport.goToMatchProfiles();
@@ -110,7 +111,7 @@ describe('ui-data-import: Test MARC-MARC matching for 001 field', () => {
           profileName: jobProfileName
         };
         SettingsDataImport.goToJobProfiles();
-        jobProfiles.createJobProfile(jobProfile, actionProfileName, matchProfileName);
+        jobProfiles.createJobProfileWithLinkingProfiles(jobProfile, actionProfileName, matchProfileName);
         jobProfiles.checkJobProfilePresented(jobProfile.profileName);
 
         // upload the exported marc file with 001 field
