@@ -1,7 +1,21 @@
 import { Button, TextField, MultiColumnListCell, Modal } from '../../../../../interactors';
 import { getLongDelay } from '../../../utils/cypressTools';
+import NewJobProfile from './newJobProfile';
 
 const actionsButton = Button('Actions');
+
+const openNewJobProfileForm = () => {
+  cy.do([
+    actionsButton.click(),
+    Button('New job profile').click(),
+  ]);
+};
+
+const waitLoadingList = () => {
+  cy.get('[id="job-profiles-list"]', getLongDelay())
+    .should('be.visible');
+  cy.expect(actionsButton.exists());
+};
 
 const deleteJobProfile = (profileName) => {
   // get all job profiles
@@ -70,4 +84,16 @@ export default {
   },
 
   deleteJobProfile,
+
+  createJobProfile: (jobProfile, actionProfileName, matchProfileName) => {
+    openNewJobProfileForm();
+    NewJobProfile.fillJobProfile(jobProfile);
+    if (!matchProfileName) {
+      NewJobProfile.linkActionProfile(actionProfileName);
+    } else {
+      NewJobProfile.linkMatchAndActionProfiles(matchProfileName, actionProfileName);
+    }
+    NewJobProfile.clickSaveAndCloseButton();
+    waitLoadingList();
+  },
 };

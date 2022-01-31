@@ -11,6 +11,7 @@ export default HTML.extend('checkbox')
   })
   .filters({
     id: (el) => el.querySelector('input').id,
+    name: (el) => el.querySelector('input').name,
     checked: (el) => el.querySelector('input').checked,
     valid: (el) => el.querySelector('input').validity.valid,
     value: (el) => el.querySelector('input').value,

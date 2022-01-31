@@ -53,15 +53,15 @@ describe('ui-data-import: MARC file import with creating of the new instance, ho
       profile.mappingProfile.name = `autotest${profile.mappingProfile.typeValue}${getRandomPostfix()}`;
       profile.actionProfile.name = `autotest${profile.actionProfile.typeValue}${getRandomPostfix()}`;
 
-      SettingsDataImport.goToMappingProfile();
+      SettingsDataImport.goToMappingProfiles();
       FieldMappingProfiles.createMappingProfile(profile.mappingProfile);
       FieldMappingProfiles.checkMappingProfilePresented(profile.mappingProfile.name);
-      SettingsDataImport.goToActionProfile();
+      SettingsDataImport.goToActionProfiles();
       ActionProfiles.createActionProfile(profile.actionProfile, profile.mappingProfile);
       ActionProfiles.checkActionProfilePresented(profile.actionProfile.name);
     });
 
-    SettingsDataImport.goToJobProfile();
+    SettingsDataImport.goToJobProfiles();
     jobProfiles.openNewJobProfileForm();
     NewJobProfile.fillJobProfile(specialJobProfile);
     collectionOfProfiles.forEach(({ actionProfile }) => {

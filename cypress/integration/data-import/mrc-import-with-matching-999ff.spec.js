@@ -47,7 +47,7 @@ describe('ui-data-import: MARC file import with matching for 999 ff field', () =
       name: mappingProfileNameForExport,
       typeValue : NewFieldMappingProfile.folioRecordTypeValue.instance,
     };
-    SettingsDataImport.goToMappingProfile();
+    SettingsDataImport.goToMappingProfiles();
     FieldMappingProfiles.createMappingProfile(mappingProfileForExport);
     FieldMappingProfiles.checkMappingProfilePresented(mappingProfileNameForExport);
 
@@ -56,7 +56,7 @@ describe('ui-data-import: MARC file import with matching for 999 ff field', () =
       typeValue : NewActionProfile.folioRecordTypeValue.instance,
       name: actionProfileNameForExport
     };
-    SettingsDataImport.goToActionProfile();
+    SettingsDataImport.goToActionProfiles();
     ActionProfiles.createActionProfile(actionProfileForExport, mappingProfileForExport);
     ActionProfiles.checkActionProfilePresented(actionProfileNameForExport);
 
@@ -65,12 +65,8 @@ describe('ui-data-import: MARC file import with matching for 999 ff field', () =
       ...NewJobProfile.defaultJobProfile,
       profileName: jobProfileNameForExport
     };
-    SettingsDataImport.goToJobProfile();
-    jobProfiles.openNewJobProfileForm();
-    NewJobProfile.fillJobProfile(jobProfileForExport);
-    NewJobProfile.linkActionProfile(actionProfileForExport);
-    NewJobProfile.clickSaveAndCloseButton();
-    jobProfiles.waitLoadingList();
+    SettingsDataImport.goToJobProfiles();
+    jobProfiles.createJobProfile(jobProfileForExport, actionProfileForExport);
     jobProfiles.checkJobProfilePresented(jobProfileNameForExport);
 
     // upload a marc file for export
@@ -118,7 +114,7 @@ describe('ui-data-import: MARC file import with matching for 999 ff field', () =
           },
           matchCriterion: 'Exactly matches',
         };
-        SettingsDataImport.goToMatchProfile();
+        SettingsDataImport.goToMatchProfiles();
         MatchProfiles.createMatchProfile(matchProfile);
 
         // create Field mapping profile
@@ -127,7 +123,7 @@ describe('ui-data-import: MARC file import with matching for 999 ff field', () =
           typeValue : NewFieldMappingProfile.folioRecordTypeValue.instance,
           update: true
         };
-        SettingsDataImport.goToMappingProfile();
+        SettingsDataImport.goToMappingProfiles();
         FieldMappingProfiles.createMappingProfile(mappingProfile);
         FieldMappingProfiles.checkMappingProfilePresented(mappingProfileName);
 
@@ -137,7 +133,7 @@ describe('ui-data-import: MARC file import with matching for 999 ff field', () =
           name: actionProfileName,
           action: 'Update (all record types except Orders)'
         };
-        SettingsDataImport.goToActionProfile();
+        SettingsDataImport.goToActionProfiles();
         ActionProfiles.createActionProfile(actionProfile, mappingProfile);
         ActionProfiles.checkActionProfilePresented(actionProfileName);
 
@@ -146,12 +142,8 @@ describe('ui-data-import: MARC file import with matching for 999 ff field', () =
           ...NewJobProfile.defaultJobProfile,
           profileName: jobProfileName
         };
-        SettingsDataImport.goToJobProfile();
-        jobProfiles.openNewJobProfileForm();
-        NewJobProfile.fillJobProfile(jobProfile);
-        NewJobProfile.linkMatchAndActionProfiles(matchProfileName, actionProfileName);
-        NewJobProfile.clickSaveAndCloseButton();
-        jobProfiles.waitLoadingList();
+        SettingsDataImport.goToJobProfiles();
+        jobProfiles.createJobProfile(jobProfile, actionProfileName, matchProfileName);
         jobProfiles.checkJobProfilePresented(jobProfileName);
 
         // upload the exported marc file with 999.f.f.s fields

@@ -41,7 +41,7 @@ export default {
     ]);
   },
 
-  selectFromResultsList: (rowNumber) => {
+  selectFromResultsList: (rowNumber = 0) => {
     cy.do(MultiColumnListRow({ index: rowNumber }).click());
   },
 
@@ -58,5 +58,9 @@ export default {
   checkCalloutMessage: (text, calloutType) => {
     cy.expect(Callout({ type: calloutType }).exists());
     cy.expect(Callout({ type: calloutType }).is({ textContent: text }));
+  },
+
+  getRandomBarcode: () => {
+    return (Math.floor(100000 + Math.random() * 900000)).toString();
   }
 };
