@@ -1,4 +1,18 @@
-import { MultiColumnList, HTML, including, Button, Section, QuickMarcEditor, KeyValue, MultiColumnListHeader, MultiColumnListCell, Accordion, MultiColumnListRow } from '../../../../interactors';
+import {
+  MultiColumnList,
+  HTML,
+  including,
+  Button,
+  Section,
+  QuickMarcEditor,
+  KeyValue,
+  MultiColumnListHeader,
+  MultiColumnListCell,
+  Accordion,
+  Modal,
+  Dropdown,
+  Checkbox, MultiColumnListRow,
+} from '../../../../interactors';
 import QuickMarcEditorFragment from '../quickMarcEditor';
 import InventoryActions from './inventoryActions';
 import InventoryInstanceEdit from './InventoryInstanceEdit';
@@ -16,6 +30,8 @@ const deriveNewMarcBibRecord = Button({ id:'duplicate-instance-marc' });
 const addMarcHoldingRecordButton = Button({ id:'create-holdings-marc' });
 const viewHoldingsButton = Button('View holdings');
 const notesSection = Section({ id: 'instance-details-notes' });
+const moveItemsButton = Button({ id: 'move-instance-items' });
+
 
 const instanceHRID = 'Instance HRID';
 const validOCLC = { id:'176116217',
@@ -128,6 +144,40 @@ export default {
     cy.expect(Accordion(accordionHeader)
       .find(MultiColumnListRow({ indexRow: indexRowumber }))
       .find(MultiColumnListCell({ content: status })).exists());
+  },
+
+  openHoldings(holdingToBeOpened) {
+    const openActions = [];
+    for (let i = 0; i < holdingToBeOpened.length; i++) {
+      openActions.push(Accordion({ label: including(`Holdings: ${holdingToBeOpened[i]}`) }).clickHeader());
+    }
+    return cy.do(openActions);
+  },
+
+  moveItemToAnotherHolding(firstHoldingName, secondHoldingName) {
+    this.openHoldings([firstHoldingName, secondHoldingName]);
+
+    cy.do([
+      Accordion({ label: including(`Holdings: ${firstHoldingName}`) }).find(MultiColumnListRow()).find(Checkbox()).click(),
+      Accordion({ label: including(`Holdings: ${firstHoldingName}`) }).find(Dropdown({ label: 'Move to' })).choose(including(secondHoldingName)),
+    ]);
+  },
+
+  returnItemToFirstHolding(firstHoldingName, secondHoldingName) {
+    this.openHoldings([firstHoldingName, secondHoldingName]);
+
+    cy.do([
+      Accordion({ label: including(`Holdings: ${secondHoldingName}`) }).find(MultiColumnListRow()).find(Checkbox()).click(),
+      Accordion({ label: including(`Holdings: ${secondHoldingName}`) }).find(Dropdown({ label: 'Move to' })).choose(including(firstHoldingName)),
+      Modal().find(Button('Continue')).click()
+    ]);
+  },
+
+  openMoveItemsWithinAnInstance: () => {
+    return cy.do([
+      actionsButton.click(),
+      moveItemsButton.click()
+    ]);
   }
 
 };

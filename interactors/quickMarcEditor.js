@@ -1,5 +1,5 @@
 import HTML from './baseHTML';
-import { quickMarcEditorRowSelector, quickMarcEditorTagInRowSelector, quickMarcEditorDeleteIconInRowSelector } from './quickMarcEditorRow';
+import { quickMarcEditorRowSelector, quickMarcEditorTagInRowSelector, quickMarcEditorDeleteIconInRowSelector, quickMarcEditorRowContentSelector } from './quickMarcEditorRow';
 
 export default HTML.extend('quickMarcEditor')
   .selector('section[id=quick-marc-editor-pane]')
@@ -16,6 +16,7 @@ export default HTML.extend('quickMarcEditor')
         const parsedRows = [];
         el.querySelectorAll(quickMarcEditorRowSelector).forEach(row => parsedRows.push({
           tag : row.querySelector(quickMarcEditorTagInRowSelector)?.getAttribute('value'),
+          content: row.querySelector(quickMarcEditorRowContentSelector)?.textContent,
           isDeleteButtonExist: Boolean(row.querySelector(quickMarcEditorDeleteIconInRowSelector))
         }));
         return parsedRows;

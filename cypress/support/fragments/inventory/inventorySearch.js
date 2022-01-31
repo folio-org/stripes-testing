@@ -24,6 +24,10 @@ export default {
     return cy.do(clickActions);
   },
 
+  selectSearchResultItem(indexRow = 0) {
+    return cy.do(this.getSearchResult(indexRow, 0).click());
+  },
+
   byEffectiveLocation(values) {
     return cy.do([
       effectiveLocationInput.clickHeader(),
