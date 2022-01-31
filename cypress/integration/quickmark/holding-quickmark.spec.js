@@ -8,29 +8,18 @@ import QuickMarcEditor from '../../support/fragments/quickMarcEditor';
 import InventoryViewSource from '../../support/fragments/inventory/inventoryViewSource';
 import testTypes from '../../support/dictionary/testTypes';
 import features from '../../support/dictionary/features';
-import DataImport from '../../support/fragments/data_import/dataImport';
-import SearchInventory from '../../support/fragments/data_import/searchInventory';
-import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
-import NewHoldingsRecord from '../../support/fragments/inventory/newHoldingsRecord';
 
 describe('Manage holding records through quickmarc editor', () => {
   beforeEach(() => {
     cy.login(Cypress.env('diku_login'), Cypress.env('diku_password'));
-    // required with special tests, but when step into test I see 403 some time in /metadata-provider/jobExecutions request
-    // TODO: split tests to 2 spec files
-    cy.getToken(
-      Cypress.env('diku_login'),
-      Cypress.env('diku_password')
-    );
-  });
-  it('C345390 Add a field to a record using quickMARC', { tags: [testTypes.smoke, features.quickMarcEditor] }, () => {
     cy.visit(TopMenu.inventoryPath);
     // TODO: redesign to api step
     InventoryActions.import();
     // TODO: redesign to api step
     InventoryInstance.addMarcHoldingRecord();
     HoldingsRecordView.gotoEditInQuickMarc();
-
+  });
+  it('C345390 Add a field to a record using quickMARC', { tags: [testTypes.smoke, features.quickMarcEditor] }, () => {
     // TODO: redesign to dynamic reading of rows count
     QuickMarcEditor.addRow(HoldingsRecordView.newHolding.rowsCountInQuickMarcEditor);
     QuickMarcEditor.checkInitialContent(HoldingsRecordView.newHolding.rowsCountInQuickMarcEditor + 1);
@@ -43,7 +32,6 @@ describe('Manage holding records through quickmarc editor', () => {
   });
 
   it('C345398 Add/Edit MARC 008', { tags: [testTypes.smoke, features.quickMarcEditor] }, () => {
-    HoldingsRecordView.gotoEditInQuickMarc();
     QuickMarcEditor.checkInitial008TagValueFromHoldingsRecord();
     QuickMarcEditor.checkNotExpectedByteLabelsInHoldingsRecordTag008();
 
@@ -59,22 +47,5 @@ describe('Manage holding records through quickmarc editor', () => {
     InventoryViewSource.close();
     HoldingsRecordView.gotoEditInQuickMarc();
     QuickMarcEditor.checkReplacedVoidValuesInTag008();
-  });
-
-  it('C345408 MARC instance record + FOLIO holdings record (Regression)', { tags: [testTypes.smoke, features.quickMarcEditor] }, () => {
-    DataImport.uploadMarcBib().then(instanceRecordHrId => {
-      cy.visit(TopMenu.inventoryPath);
-      SearchInventory.searchInstanceByHRID(instanceRecordHrId);
-      InventoryInstances.selectSpecialInstance();
-      InventoryInstance.waitLoading();
-      InventoryInstance.createHoldingsRecord();
-      InventoryInstance.goToHoldingView();
-      HoldingsRecordView.checkActionsMenuOptionsInFolioSource();
-      // TODO: add verification of readonly fields - FAT-1135
-      HoldingsRecordView.tryToDelete();
-      HoldingsRecordView.duplicate();
-      NewHoldingsRecord.checkSource();
-      //TODO: clarify what is "Verify that you are able to add or access an item" and "Behavior is no different than what FOLIO currently supports" in TestRail
-    });
   });
 });
