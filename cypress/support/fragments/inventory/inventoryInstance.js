@@ -40,7 +40,6 @@ const validOCLC = { id:'176116217',
   // it should be presented in marc bib one time to correct work(applicable in update of record)
   existingTag: '100' };
 
-
 export default {
   validOCLC,
 
@@ -118,6 +117,33 @@ export default {
   goToHoldingView: () => {
     cy.do(viewHoldingsButton.click());
     HoldingsRecordView.waitLoading();
+  },
+
+  checkHoldingsTable: (locationName, rowNumber, caption, barcode, status) => {
+    const accordionHeader = `Holdings: ${locationName} >`;
+    const indexRowumber = `row-${rowNumber}`;
+    // wait for data to be loaded
+    cy.intercept(
+      {
+        method: 'GET',
+        url: '/inventory/items?*',
+      }
+    ).as('getItems');
+    cy.wait('@getItems');
+    cy.do([
+      Accordion(accordionHeader).clickHeader(),
+    ]);
+
+    cy.expect(Accordion(accordionHeader)
+      .find(MultiColumnListRow({ indexRow: indexRowumber }))
+      .find(MultiColumnListCell({ content: barcode })).exists());
+    // TODO: uncomment once MODORDERS-569 will be implemented
+    // cy.expect(Accordion(accordionHeader)
+    //   .find(MultiColumnListRow({ rowNumber }))
+    //   .find(MultiColumnListCell({ content: caption })).exists());
+    cy.expect(Accordion(accordionHeader)
+      .find(MultiColumnListRow({ indexRow: indexRowumber }))
+      .find(MultiColumnListCell({ content: status })).exists());
   },
 
   openHoldings(holdingToBeOpened) {

@@ -1,4 +1,4 @@
-import { MultiColumnList, MultiColumnListCell, Pane, Accordion, Checkbox, TextField } from '../../../../interactors';
+import { MultiColumnList, MultiColumnListCell, Pane, Accordion, Checkbox, TextField, Button, SearchField } from '../../../../interactors';
 import InventoryActions from './inventoryActions';
 
 
@@ -87,4 +87,13 @@ export default {
       cy.expect(Pane('Inventory').is({ subtitle: `${overall} records found${selected} records selected` }));
     });
   },
+
+  searchItemByParameter: (parameter, value) => {
+    cy.do([
+      Button('Item').click(),
+      SearchField({ id: 'input-inventory-search' }).selectIndex(parameter),
+      SearchField({ id: 'input-inventory-search' }).fillIn(value),
+      Button('Search').click(),
+    ]);
+  }
 };
