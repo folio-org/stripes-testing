@@ -7,6 +7,7 @@ import {
 } from '../../../../interactors';
 import DataImportViewAllPage from './dataImportViewAllPage';
 import DateTools from '../../utils/dateTools';
+import InventoryInstances from '../inventory/inventoryInstances';
 
 
 const getInstanceHRID = () => {
@@ -50,6 +51,7 @@ const searchInstanceByHRID = (id) => {
     TextField({ id: 'input-inventory-search' }).fillIn(id),
     Button('Search').click()
   ]);
+  InventoryInstances.waitLoading();
 };
 
 // when creating mapping profile we choose status cataloged date as today

@@ -11,6 +11,8 @@ import features from '../../support/dictionary/features';
 import DataImport from '../../support/fragments/data_import/dataImport';
 import SearchInventory from '../../support/fragments/data_import/searchInventory';
 import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
+import NewHoldingsRecord from '../../support/fragments/inventory/newHoldingsRecord';
+import HoldingsRecordView from '../../support/fragments/inventory/holdingsRecordView';
 
 describe('Manage holding records through quickmarc editor', () => {
   beforeEach(() => {
@@ -41,8 +43,12 @@ describe('Manage holding records through quickmarc editor', () => {
     );
     DataImport.uploadMarcBib().then(instanceRecordHrId => {
       cy.visit(TopMenu.inventoryPath);
-      SearchInventory.searchInstanceByHRID(instanceRecordHrId+'123');
-      InventoryInstances.waitLoading();
+      SearchInventory.searchInstanceByHRID(instanceRecordHrId);
+      InventoryInstances.selectSpecialInstance();
+      InventoryInstance.waitLoading();
+      InventoryInstance.createHoldingsRecord();
+      InventoryInstance.goToHoldingView();
+      //HoldingsRecordView.
     });
   });
 });
