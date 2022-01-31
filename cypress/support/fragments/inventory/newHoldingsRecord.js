@@ -1,7 +1,10 @@
-import { Button, including, HTML, Selection } from '../../../../interactors';
+import { Button, including, HTML, Selection, Select } from '../../../../interactors';
 
 // TODO: rewrite class to holdingsForm instead of holingsForm
 const rootForm = HTML({ className: including('holingsForm-') });
+const sourceValues = {
+  folio:'f32d531e-df79-46b3-8932-cdd35f7a2264'
+};
 
 export default {
   fillRequiredFields : () => {
@@ -13,5 +16,8 @@ export default {
   },
   waitLoading: () => {
     cy.expect(rootForm.exists());
+  },
+  checkSource:(expectedSource = sourceValues.folio) => {
+    cy.expect(Select('Source').has({ value:expectedSource }));
   }
 };
