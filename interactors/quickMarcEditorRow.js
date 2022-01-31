@@ -2,6 +2,7 @@ import HTML from './baseHTML';
 
 export const quickMarcEditorRowSelector = 'div[id=quick-marc-editor-rows]>div[class*=quickMarcEditorRow]';
 export const quickMarcEditorTagInRowSelector = 'input[name*=".tag"]';
+export const quickMarcEditorRowContentSelector = 'div[class*=quickMarcEditorRowContent]';
 export const quickMarcEditorDeleteIconInRowSelector = 'button[icon=trash]';
 
 export default HTML.extend('quickMarcEditorRow')
