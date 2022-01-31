@@ -41,7 +41,7 @@ export default {
     ]);
   },
 
-  selectFromResultsList: (rowNumber) => {
+  selectFromResultsList: (rowNumber = 0) => {
     cy.do(MultiColumnListRow({ index: rowNumber }).click());
   },
 

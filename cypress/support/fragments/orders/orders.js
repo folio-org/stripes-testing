@@ -1,14 +1,13 @@
 import { Button, SearchField, PaneHeader, Pane } from '../../../../interactors';
 
-const actionsButtonName = 'Actions';
+const actionsButton = Button('Actions');
+const orderDetailsPane = Pane({ id: 'order-details' });
 
 export default {
 
   createOrderWithOrderLineViaApi(order, orderLine) {
-    cy.getToken(Cypress.env('diku_login'), Cypress.env('diku_password'));
     cy.createOrderApi(order)
       .then((response) => {
-        cy.log('po id: ' + response.body.poNumber);
         cy.wrap(response.body.poNumber).as('orderNumber');
         cy.getAcquisitionMethodsApi({ query: 'value="Other"' })
           .then(({ body }) => {
@@ -30,9 +29,9 @@ export default {
 
   openOrderViaActions: () => {
     cy.do([
-      Pane({ id: 'order-details' })
+      orderDetailsPane
         .find(PaneHeader({ id: 'paneHeaderorder-details' })
-          .find(Button(actionsButtonName))).click(),
+          .find(actionsButton)).click(),
       Button('Open').click(),
       Button('Submit').click()
     ]);
@@ -40,9 +39,9 @@ export default {
 
   receiveOrderViaActions: () => {
     cy.do([
-      Pane({ id: 'order-details' })
+      orderDetailsPane
         .find(PaneHeader({ id: 'paneHeaderorder-details' })
-          .find(Button(actionsButtonName))).click(),
+          .find(actionsButton)).click(),
       Button('Receive').click(),
       PaneHeader('Receiving').is({ visible: true })
     ]);

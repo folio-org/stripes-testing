@@ -8,7 +8,7 @@ import {
 } from '../../../../interactors';
 import Helper from '../finance/financeHelper';
 
-const actionsButtonName = 'Actions';
+const actionsButton = Button('Actions');
 const receivingSuccessful = 'Receiving successful';
 
 export default {
@@ -17,7 +17,7 @@ export default {
     const recievingFieldName = `receivedItems[${rowNumber}]`;
     cy.expect(Accordion({ id: 'expected' }).exists());
     cy.do([
-      Accordion({ id: 'expected' }).find(Button(actionsButtonName)).click(),
+      Accordion({ id: 'expected' }).find(actionsButton).click(),
       Button('Receive').click(),
       Checkbox({ name: `${recievingFieldName}.checked` }).clickInput(),
       TextField({ name: `${recievingFieldName}.caption` }).fillIn(caption),
