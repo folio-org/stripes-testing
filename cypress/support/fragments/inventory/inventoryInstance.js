@@ -18,7 +18,6 @@ import InventoryActions from './inventoryActions';
 import InventoryInstanceEdit from './InventoryInstanceEdit';
 import HoldingsRecordView from './holdingsRecordView';
 import InventoryViewSource from './inventoryViewSource';
-import callout from '../../../../interactors/callout';
 
 const _section = Section({ id: 'pane-instancedetails' });
 const actionsButton = _section.find(Button('Actions'));
@@ -32,8 +31,6 @@ const addMarcHoldingRecordButton = Button({ id:'create-holdings-marc' });
 const viewHoldingsButton = Button('View holdings');
 const notesSection = Section({ id: 'instance-details-notes' });
 const moveItemsButton = Button({ id: 'move-instance-items' });
-const firstHolding = Accordion({ label: including('Holdings: Main Library') });
-const secondHolding = Accordion({ label: including('Holdings: Annex') });
 
 
 const instanceHRID = 'Instance HRID';
@@ -42,6 +39,7 @@ const validOCLC = { id:'176116217',
   getLastRowNumber:() => 31,
   // it should be presented in marc bib one time to correct work(applicable in update of record)
   existingTag: '100' };
+
 
 export default {
   validOCLC,
@@ -122,32 +120,29 @@ export default {
     HoldingsRecordView.waitLoading();
   },
 
-  openHoldings: () => {
+  openHoldings(holdingToBeOpened) {
+    const openActions = [];
+    for (let i = 0; i < holdingToBeOpened.length; i++) {
+      openActions.push(Accordion({ label: including(`Holdings: ${holdingToBeOpened[i]}`) }).clickHeader());
+    }
+    return cy.do(openActions);
+  },
+
+  moveItemToAnotherHolding(firstHoldingName, secondHoldingName) {
+    this.openHoldings([firstHoldingName, secondHoldingName]);
+
     cy.do([
-      firstHolding.clickHeader(),
-      secondHolding.clickHeader()
+      Accordion({ label: including(`Holdings: ${firstHoldingName}`) }).find(MultiColumnListRow()).find(Checkbox()).click(),
+      Accordion({ label: including(`Holdings: ${firstHoldingName}`) }).find(Dropdown({ label: 'Move to' })).choose(including(secondHoldingName)),
     ]);
   },
 
-  verifySuccessCalloutMovingMessage(count) {
-    cy.expect(callout().is({ textContent: `${count} item has been successfully moved.` }));
-  },
-
-  moveItemToAnotherHolding() {
-    this.openHoldings();
+  returnItemToFirstHolding(firstHoldingName, secondHoldingName) {
+    this.openHoldings([firstHoldingName, secondHoldingName]);
 
     cy.do([
-      firstHolding.find(MultiColumnListRow()).find(Checkbox()).click(),
-      firstHolding.find(Dropdown({ label: 'Move to' })).choose(including('Annex K1')),
-    ]);
-  },
-
-  returnItemToFirstHolding() {
-    this.openHoldings();
-
-    cy.do([
-      secondHolding.find(MultiColumnListRow()).find(Checkbox()).click(),
-      secondHolding.find(Dropdown({ label: 'Move to' })).choose(including('Main Library K1')),
+      Accordion({ label: including(`Holdings: ${secondHoldingName}`) }).find(MultiColumnListRow()).find(Checkbox()).click(),
+      Accordion({ label: including(`Holdings: ${secondHoldingName}`) }).find(Dropdown({ label: 'Move to' })).choose(including(firstHoldingName)),
       Modal().find(Button('Continue')).click()
     ]);
   },
