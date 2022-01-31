@@ -34,7 +34,7 @@ describe('orders: Receive piece from Order', () => {
 
   it('C735 Receiving pieces from an order for physical material that is set to create Items in inventory', { tags: [testType.smoke] }, () => {
     // TODO: update test case in test rail to reflect business actions
-    const barcode = (Math.floor(100000 + Math.random() * 900000)).toString();
+    const barcode = Helper.getRandomBarcode();
     const caption = 'autotestCaption';
     Orders.createOrderWithOrderLineViaApi(order, orderLine)
       .then(orderNumber => {
