@@ -13,3 +13,4 @@ import './owners';
 import './fees-fines';
 import './organizations';
 import './permissions';
+import './orders';

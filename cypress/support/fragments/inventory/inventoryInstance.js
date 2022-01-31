@@ -1,4 +1,4 @@
-import { MultiColumnList, HTML, including, Button, Section, QuickMarcEditor, KeyValue, MultiColumnListHeader, MultiColumnListCell } from '../../../../interactors';
+import { MultiColumnList, HTML, including, Button, Section, QuickMarcEditor, KeyValue, MultiColumnListHeader, MultiColumnListCell, Accordion, MultiColumnListRow } from '../../../../interactors';
 import QuickMarcEditorFragment from '../quickMarcEditor';
 import InventoryActions from './inventoryActions';
 import InventoryInstanceEdit from './InventoryInstanceEdit';
@@ -101,6 +101,33 @@ export default {
   goToHoldingView: () => {
     cy.do(viewHoldingsButton.click());
     HoldingsRecordView.waitLoading();
+  },
+
+  checkHoldingsTable: (locationName, rowNumber, caption, barcode, status) => {
+    const accordionHeader = `Holdings: ${locationName} >`;
+    const indexRowumber = `row-${rowNumber}`;
+    // wait for data to be loaded
+    cy.intercept(
+      {
+        method: 'GET',
+        url: '/inventory/items?*',
+      }
+    ).as('getItems');
+    cy.wait('@getItems');
+    cy.do([
+      Accordion(accordionHeader).clickHeader(),
+    ]);
+
+    cy.expect(Accordion(accordionHeader)
+      .find(MultiColumnListRow({ indexRow: indexRowumber }))
+      .find(MultiColumnListCell({ content: barcode })).exists());
+    // TODO: uncomment once MODORDERS-569 will be implemented
+    // cy.expect(Accordion(accordionHeader)
+    //   .find(MultiColumnListRow({ rowNumber }))
+    //   .find(MultiColumnListCell({ content: caption })).exists());
+    cy.expect(Accordion(accordionHeader)
+      .find(MultiColumnListRow({ indexRow: indexRowumber }))
+      .find(MultiColumnListCell({ content: status })).exists());
   }
 
 };

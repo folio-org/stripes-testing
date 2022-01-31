@@ -11,4 +11,5 @@ export default class TopMenu {
   static fiscalYearPath = '/finance/fiscalyear';
   static eholdings = '/eholdings';
   static dataExport = '/data-export';
+  static ordersPath = '/orders';
 }
