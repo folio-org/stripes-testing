@@ -33,6 +33,7 @@ const deleteJobProfile = (profileName) => {
 };
 
 export default {
+  defaultInstanceAndSRSMarcBib:'Default - Create instance and SRS MARC Bib',
   openNewJobProfileForm: () => {
     cy.do([
       actionsButton.click(),

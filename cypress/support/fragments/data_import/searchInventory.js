@@ -43,10 +43,6 @@ const getInstanceHRID = () => {
     });
 };
 
-const gotoInventory = () => {
-  cy.visit(TopMenu.inventoryPath);
-};
-
 const searchInstanceByHRID = (id) => {
   cy.get('#input-inventory-search-qindex').select('Instance HRID');
   cy.do([
@@ -76,8 +72,10 @@ const checkInstanceDetails = () => {
 };
 
 export default {
+  // TODO: move to existing InventorySearch fragment
   getInstanceHRID,
-  gotoInventory,
+  // TODO: move to existing InventorySearch fragment
   searchInstanceByHRID,
+  // TODO: move to existing  inventory fragment
   checkInstanceDetails,
 };
