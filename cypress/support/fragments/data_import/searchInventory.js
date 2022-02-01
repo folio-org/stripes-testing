@@ -1,4 +1,3 @@
-import TopMenu from '../topMenu';
 import {
   Button,
   KeyValue,
