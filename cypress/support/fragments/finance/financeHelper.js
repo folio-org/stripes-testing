@@ -62,5 +62,9 @@ export default {
 
   getRandomBarcode: () => {
     return (Math.floor(100000 + Math.random() * 900000)).toString();
+  },
+
+  getRandomInvoiceNumber: () => {
+    return (Math.floor(100000000 + Math.random() * 900000)).toString();
   }
 };
