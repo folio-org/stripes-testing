@@ -12,4 +12,5 @@ export default class TopMenu {
   static eholdingsPath = '/eholdings';
   static dataExportPath = '/data-export';
   static ordersPath = '/orders';
+  static invoicesPath = '/invoice';
 }
