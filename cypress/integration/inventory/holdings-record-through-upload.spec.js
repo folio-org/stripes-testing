@@ -10,7 +10,7 @@ import SearchInventory from '../../support/fragments/data_import/searchInventory
 import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
 import NewHoldingsRecord from '../../support/fragments/inventory/newHoldingsRecord';
 
-describe('Manage holding records through quickmarc editor', () => {
+describe('Manage holding records of instance records created through marc file upload', () => {
   beforeEach(() => {
     cy.login(Cypress.env('diku_login'), Cypress.env('diku_password'));
     // required with special tests, but when step into test I see 403 some time in /metadata-provider/jobExecutions request
@@ -20,7 +20,7 @@ describe('Manage holding records through quickmarc editor', () => {
     );
   });
 
-  it('C345408 MARC instance record + FOLIO holdings record (Regression)', { tags: [testTypes.smoke, features.quickMarcEditor] }, () => {
+  it('C345408 MARC instance record + FOLIO holdings record (Regression)', { tags: [testTypes.smoke, features.holdingsRecord] }, () => {
     DataImport.uploadMarcBib().then(instanceRecordHrId => {
       cy.visit(TopMenu.inventoryPath);
       SearchInventory.searchInstanceByHRID(instanceRecordHrId);

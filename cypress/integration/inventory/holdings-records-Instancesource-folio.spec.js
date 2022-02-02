@@ -9,13 +9,13 @@ import InventoryInstances from '../../support/fragments/inventory/inventoryInsta
 import NewHoldingsRecord from '../../support/fragments/inventory/newHoldingsRecord';
 
 
-describe('Manage holding records through quickmarc editor', () => {
+describe('Manage holding records with FOLIO source', () => {
   beforeEach(() => {
     cy.login(Cypress.env('diku_login'), Cypress.env('diku_password'));
     cy.visit(TopMenu.inventoryPath);
     InventoryInstances.add();
   });
-  it('C345406 FOLIO instance record + FOLIO holdings record (Regression)', { tags: [testTypes.smoke, features.quickMarcEditor] }, () => {
+  it('C345406 FOLIO instance record + FOLIO holdings record (Regression)', { tags: [testTypes.smoke, features.holdingsRecord] }, () => {
     InventoryInstance.createHoldingsRecord();
     InventoryInstance.goToHoldingView();
     HoldingsRecordView.checkSource('FOLIO');
