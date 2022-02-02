@@ -1,3 +1,4 @@
 export default { quickMarcEditor: 'quickMarcEditor',
   notes: 'notes',
-  eHoldings:'eHoldings' };
+  eHoldings:'eHoldings',
+  tags: 'tags' };

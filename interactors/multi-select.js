@@ -36,6 +36,14 @@ export const MultiSelectOption = HTML.extend('multi select option')
     selected: (el) => el.className.includes('selected'),
   });
 
+export const ValueChipRoot = HTML.extend('value chip root')
+  .selector('[class^=valueChipRoot-]')
+  .locator(el => {
+    let str = el.textContent || '';
+    str = str.replace(/[+-]$/, '');
+    return str;
+  });
+
 const select = async (interactor, values) => {
   await interactor.open();
   let valuesParam = values;

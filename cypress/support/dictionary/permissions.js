@@ -21,5 +21,5 @@ export default {
   inventoryAll: { internal: ['inventory.all', 'ui-inventory.all-permissions.TEMPORARY'], gui: 'Inventory: All permissions' },
   uiInventorySingleRecordImport: { internal: 'ui-inventory.single-record-import', gui: 'Inventory: Import single bibliographic records' },
   // Tags
-  uiTagsPermissionAll: { internal: 'ui-tags.permission.all', gui:'Tags: All permissions' },
+  uiTagsPermissionAll: { internal: 'ui-tags.permission.all', gui:'Tags: All permissions' }
 };
