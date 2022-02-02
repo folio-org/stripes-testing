@@ -95,5 +95,5 @@ export default {
       SearchField({ id: 'input-inventory-search' }).fillIn(value),
       Button('Search').click(),
     ]);
-  }
+  },
 };
