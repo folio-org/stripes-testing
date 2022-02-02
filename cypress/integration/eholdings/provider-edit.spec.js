@@ -14,7 +14,7 @@ describe('ui-eholdings: Provider manage', () => {
       permissions.moduleeHoldingsEnabled.gui]).then(userProperties => {
       userId = userProperties.userId;
       cy.login(userProperties.username, userProperties.password);
-      cy.visit(TopMenu.eholdings);
+      cy.visit(TopMenu.eholdingsPath);
     });
   });
   it('C696 Edit proxy setting', { tags: [testTypes.smoke] }, () => {

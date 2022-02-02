@@ -60,7 +60,7 @@ describe('ui-data-import: Test MARC-MARC matching for 001 field', () => {
         inventorySearch.saveUUIDs();
         ExportMarcFile.downloadCSVFile(nameForCSVFile, 'SearchInstanceUUIDs*');
         FileManager.deleteFolder(Cypress.config('downloadsFolder'));
-        cy.visit(TopMenu.dataExport);
+        cy.visit(TopMenu.dataExportPath);
 
         // download exported marc file
         exportFile.uploadFile(nameForCSVFile);
