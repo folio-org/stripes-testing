@@ -60,7 +60,7 @@ describe('inventory: exports', () => {
       );
     });
 
-    cy.visit(TopMenu.dataExport);
+    cy.visit(TopMenu.dataExportPath);
     DataExportResults.verifyQuickExportResult();
   });
 });

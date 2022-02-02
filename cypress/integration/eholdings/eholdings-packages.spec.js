@@ -21,7 +21,7 @@ describe('eHoldings packages management', () => {
     ]).then(userProperties => {
       userId = userProperties.userId;
       cy.login(userProperties.username, userProperties.password);
-      cy.visit(TopMenu.eholdings);
+      cy.visit(TopMenu.eholdingsPath);
       eHoldingSearch.switchToPackages();
       eHoldingsPackages.waitLoading();
       eHoldingsPackagesSearch.bySelectionStatus(eHoldingsTitle.filterPackagesStatuses.notSelected);
@@ -42,7 +42,7 @@ describe('eHoldings packages management', () => {
       permissions.uiTagsPermissionAll.gui]).then(userProperties => {
       userId = userProperties.userId;
       cy.login(userProperties.username, userProperties.password);
-      cy.visit(TopMenu.eholdings);
+      cy.visit(TopMenu.eholdingsPath);
       eHoldingSearch.switchToPackages();
       eHoldingsPackagesSearch.byName();
       eHoldingsPackages.openPackage()
@@ -62,7 +62,7 @@ describe('eHoldings packages management', () => {
       permissions.uieHoldingsPackageTitleSelectUnselect.gui]).then(userProperties => {
       userId = userProperties.userId;
       cy.login(userProperties.username, userProperties.password);
-      cy.visit(TopMenu.eholdings);
+      cy.visit(TopMenu.eholdingsPath);
       eHoldingSearch.switchToPackages();
       eHoldingsPackagesSearch.bySelectionStatus(eHoldingsTitle.filterPackagesStatuses.selected);
       eHoldingsPackagesSearch.byName();
