@@ -1,4 +1,4 @@
-import { Checkbox, Button, Modal, TextField } from '../../../../../interactors';
+import { Checkbox, Button, Modal, TextField, MultiColumnListCell } from '../../../../../interactors';
 
 export default {
   searchItemTransformationsByName: (name) => {
@@ -7,9 +7,12 @@ export default {
 
   selectHoldingsTransformations:() => {
     cy.do(Checkbox({ ariaLabel: 'Select field' }).click());
-    cy.do(Modal('Select transformations').find(TextField({name: ''}).then => names[]))
-  
-    
+    cy.then(() => Modal('Select transformations').find(MultiColumnListCell({ row: 0, columnIndex: 0 })).find(TextField()).names())
+      .then(inputFieldNames => {
+        cy.log(JSON.stringify(inputFieldNames));
+      });
+
+
     // cy.get('section[class^=pane-] input[placeholder="900"]').type('901');
     // cy.xpath('//input[contains(@name,"subfield")]').type('$a');
     cy.do(Modal('Select transformations').find(Button('Save & close')).click());
