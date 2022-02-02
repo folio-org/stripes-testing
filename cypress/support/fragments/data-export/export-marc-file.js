@@ -3,6 +3,7 @@ import FileManager from '../../utils/fileManager';
 
 const downloadCSVFile = (fileName, mask) => {
   // retry until file has been downloaded
+  // TODO: add into best practicies in wiki
   recurse(
     () => FileManager.findDownloadedFilesByMask(mask),
     (x) => typeof (x) === 'object' && !!x,

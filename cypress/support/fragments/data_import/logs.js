@@ -14,6 +14,7 @@ const createdItemsColumns = [
 ];
 
 const checkIsInstanceCreated = () => {
+  // TODO: redesign from perform to regular cy.expect
   cy.do(createdItemsColumns[1].perform(element => {
     expect(element).to.have.text('Created');
   }));
