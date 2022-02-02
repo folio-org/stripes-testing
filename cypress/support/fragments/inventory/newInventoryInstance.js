@@ -1,32 +1,26 @@
-import { MultiColumnList, HTML, including, Button, Section } from '../../../../interactors';
+import { MultiColumnList, HTML, including, Button, Section, Select, TextArea } from '../../../../interactors';
+import getRandomPostfix from '../../utils/stringTools';
+import inventoryInstance from './inventoryInstance';
 
-const rootSection = Section({ id:'pane-instancedetails' });
-const actionsButton = rootSection.find(Button('Actions'));
+const rootSection = Section({ id:'inventoryform-addinventory' });
 const identifiers = MultiColumnList({ id:'list-identifiers' });
-const editMARCBibRecordButton = Button({ id:'edit-instance-marc' });
-const viewSourceButton = Button({ id:'clickable-view-source' });
+
+const deafultResouceType = 'text';
 
 
 export default {
-  validOCLC : { id:'176116217',
-    getLastRowNumber:() => 31 },
   checkExpectedOCLCPresence: (OCLCNumber) => {
     cy.expect(identifiers.find(HTML(including(OCLCNumber))).exists());
   },
-
-  goToEditMARCBiblRecord:() => {
-    cy.do(actionsButton.click());
-    cy.do(editMARCBibRecordButton.click());
-  },
-
-  viewSource: () => {
-    cy.do(actionsButton.click());
-    cy.do(viewSourceButton.click());
-  },
   waitLoading: () => {
-    cy.expect(actionsButton.exists());
+    cy.expect(rootSection.exists());
   },
-  fillRequiredValues:() => {
-
+  fillRequiredValues:(resourceTitle = `autoTestTitle${getRandomPostfix()}`, resourceType = deafultResouceType) => {
+    cy.do(TextArea('Resource title*').fillIn(resourceTitle));
+    cy.do(Select('Resource type*').choose(resourceType));
+  },
+  save:() => {
+    cy.do(Button('Save and close').click());
+    inventoryInstance.waitLoading();
   }
 };

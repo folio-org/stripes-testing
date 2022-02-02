@@ -28,6 +28,7 @@ describe('Manage holding records through quickmarc editor', () => {
       InventoryInstance.waitLoading();
       InventoryInstance.createHoldingsRecord();
       InventoryInstance.goToHoldingView();
+      HoldingsRecordView.checkSource('FOLIO');
       HoldingsRecordView.checkActionsMenuOptionsInFolioSource();
       // TODO: add verification of readonly fields - FAT-1135
       HoldingsRecordView.tryToDelete();

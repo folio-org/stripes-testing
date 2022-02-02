@@ -19,5 +19,7 @@ export default {
     cy.do(actionsButton.click());
     cy.do(Button('New').click());
     NewInventoryInstance.waitLoading();
+    NewInventoryInstance.fillRequiredValues();
+    NewInventoryInstance.save();
   }
 };

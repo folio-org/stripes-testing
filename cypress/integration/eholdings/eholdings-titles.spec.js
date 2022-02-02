@@ -23,7 +23,7 @@ describe('eHoldings titles management', () => {
       permissions.uieHoldingsPackageTitleSelectUnselect.gui]).then(userProperties => {
       userId = userProperties.userId;
       cy.login(userProperties.username, userProperties.password);
-      cy.visit(TopMenu.eholdings);
+      cy.visit(TopMenu.eholdingsPath);
       eHoldingSearch.switchToTitles();
       eHoldingsTitlesSearch.bySubject('chemical engineering');
       eHoldingsTitlesSearch.byPublicationType('Journal');
@@ -48,7 +48,7 @@ describe('eHoldings titles management', () => {
     cy.createTempUser([permissions.uieHoldingsRecordsEdit.gui]).then(userProperties => {
       userId = userProperties.userId;
       cy.login(userProperties.username, userProperties.password);
-      cy.visit(TopMenu.eholdings);
+      cy.visit(TopMenu.eholdingsPath);
       eHoldingSearch.switchToTitles();
 
       // test related with special data from Ebsco
@@ -92,7 +92,7 @@ describe('eHoldings titles management', () => {
       permissions.uieHoldingsPackageTitleSelectUnselect.gui]).then(userProperties => {
       userId = userProperties.userId;
       cy.login(userProperties.username, userProperties.password);
-      cy.visit(TopMenu.eholdings);
+      cy.visit(TopMenu.eholdingsPath);
       eHoldingSearch.switchToTitles();
 
       eHoldingsTitlesSearch.bySubject('chemical engineering');
@@ -114,7 +114,7 @@ describe('eHoldings titles management', () => {
       permissions.uieHoldingsTitlesPackagesCreateDelete.gui]).then(userProperties => {
       userId = userProperties.userId;
       cy.login(userProperties.username, userProperties.password);
-      cy.visit(TopMenu.eholdings);
+      cy.visit(TopMenu.eholdingsPath);
       eHoldingSearch.switchToTitles();
 
       const title = eHoldingsTitles.create();
