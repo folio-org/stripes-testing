@@ -69,7 +69,6 @@ export default {
       Button('Run').click(),
       Modal('Are you sure you want to run this job?').find(Button('Run')).click(),
     ]);
-
     // wait until uploaded file is displayed in the list
     cy.get('#job-logs-list', getLongDelay()).contains(fileName, getLongDelay());
   },

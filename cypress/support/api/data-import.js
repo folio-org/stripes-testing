@@ -85,14 +85,19 @@ Cypress.Commands.add('createLinkedProfiles', (testData) => {
 
   testData.jobProfileForCreate = jobProfile;
 
-  cy.createMappingProfileApi(testData.instanceMappingProfile)
-    .then((bodyWithMappingProfile) => {
-      testData.instanceActionProfile.addedRelations[0].detailProfileId = bodyWithMappingProfile.body.id;
-      cy.createActionProfileApi(testData.instanceActionProfile)
-        .then((bodyWithActionProfile) => {
-          addJobProfileRelation(testData.jobProfileForCreate.addedRelations, bodyWithActionProfile.body.id);
-        });
+  cy.createMappingProfileApi(testData.marcBibMappingProfile).then((bodyWithMappingProfile) => {
+    testData.marcBibActionProfile.addedRelations[0].detailProfileId = bodyWithMappingProfile.body.id;
+    cy.createActionProfileApi(testData.marcBibActionProfile).then((bodyWithActionProfile) => {
+      addJobProfileRelation(testData.jobProfileForCreate.addedRelations, bodyWithActionProfile.body.id);
     });
+  });
+
+  cy.createMappingProfileApi(testData.instanceMappingProfile).then((bodyWithMappingProfile) => {
+    testData.instanceActionProfile.addedRelations[0].detailProfileId = bodyWithMappingProfile.body.id;
+    cy.createActionProfileApi(testData.instanceActionProfile).then((bodyWithActionProfile) => {
+      addJobProfileRelation(testData.jobProfileForCreate.addedRelations, bodyWithActionProfile.body.id);
+    });
+  });
 
   cy.createMappingProfileApi(testData.holdingsMappingProfile).then((bodyWithMappingProfile) => {
     testData.holdingsActionProfile.addedRelations[0].detailProfileId = bodyWithMappingProfile.body.id;

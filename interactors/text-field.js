@@ -27,6 +27,7 @@ export default HTML.extend('text field')
     warning: (el) => (el.querySelector('[class*=feedbackWarning-]') || {}).textContent,
     valid: el => el.querySelector('input').getAttribute('aria-invalid') !== 'true',
     name: el => el.querySelector('input').name,
+    names: el => [...el.querySelector('input').name],
     clearButton: el => {
       const clearBtn = [...el.querySelectorAll('[class^=iconButton]')]
         .filter(I => I.getAttribute('icon') === 'clear');

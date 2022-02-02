@@ -55,11 +55,17 @@ export default {
     if (specialMappingProfile.typeValue === holdingsType) {
       cy.do(TextField('Permanent').fillIn(permanentLocation));
     } else if (specialMappingProfile.typeValue === itemType) {
+// TODO
+      cy.intercept(
+        {
+          method: 'GET',
+          url: '?*',
+        }
+      ).as('get');
+      cy.do(TextField('Material type').fillIn(materialType));
+      cy.wait('@get');
+      // TODO
       cy.do([
-        TextField('Material type').fillIn(materialType),
-        // TODO create waiter
-        // eslint-disable-next-line cypress/no-unnecessary-waiting
-        cy.wait(1200),
         TextField('Permanent loan type').fillIn(permanentLoanType),
         TextField('Status').fillIn(status),
       ]);
@@ -92,6 +98,7 @@ export default {
     cy.do(Button('Add statistical code').click());
     cy.wait('@getTypes');
     cy.do(TextField('Statistical code').fillIn('"ARL (Collection stats): books - Book, print (books)"'));
+    cy.wait(2000);
   },
 
   fillHoldingsMappingProfile() {

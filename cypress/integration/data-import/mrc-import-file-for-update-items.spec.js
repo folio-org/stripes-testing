@@ -18,18 +18,55 @@ import fieldMappingProfiles from '../../support/fragments/data_import/mapping_pr
 import actionProfiles from '../../support/fragments/data_import/action_profiles/actionProfiles';
 import newJobProfile from '../../support/fragments/data_import/job_profiles/newJobProfile';
 import fileManager from '../../support/utils/fileManager';
+import settingsDataExport from '../../support/fragments/data-export/settingsDataExport';
+import exportFieldMappingProfiles from '../../support/fragments/data-export/exportMappingProfile/exportFieldMappingProfiles';
+import exportJobProfiles from '../../support/fragments/data-export/exportJobProfile/exportJobProfiles';
 
 describe('ui-data-import: MARC file upload with the update of instance, holding, and items', () => {
+  // profile names
+  const nameMarcBibMappingProfile = `autotest_marcBib_mapping_profile_${getRandomPostfix()}`;
+  const nameInstanceMappingProfile = `autotest_instance_mapping_profile_${getRandomPostfix()}`;
+  const nameHoldingsMappingProfile = `autotest_holdings_mapping_profile_${getRandomPostfix()}`;
+  const nameItemMappingProfile = `autotest_item_mapping_profile_${getRandomPostfix()}`;
+  const nameMarcBibActionProfile = `autotest_marcBib_action_profile_${getRandomPostfix()}`;
+  const nameInstanceActionProfile = `autotest_instance_action_profile_${getRandomPostfix()}`;
+  const nameHoldingsActionProfile = `autotest_holdings_action_profile_${getRandomPostfix()}`;
+  const nameItemActionProfile = `autotest_item_action_profile_${getRandomPostfix()}`;
+
+  const marcBibMappingProfile = {
+    id: '',
+    name: nameMarcBibMappingProfile,
+    incomingRecordType: 'MARC_BIBLIOGRAPHIC',
+    existingRecordType: 'MARC_BIBLIOGRAPHIC',
+    mappingDetails: { name: 'holdings',
+      recordType: 'MARC_BIBLIOGRAPHIC',
+      marcMappingDetails: [{
+        order: 0,
+        action: 'ADD',
+        field: {
+          field: '650',
+          indicator2: '4',
+          subfields: [{
+            subfield: 'a',
+            data: {
+              text: 'Test update'
+            }
+          }]
+        }
+      }],
+      'marcMappingOption' : 'MODIFY' }
+  };
+
   const instanceMappingProfile = {
     id: '',
-    name: `autotest_instance_mapping_profile_${getRandomPostfix()}`,
+    name: nameInstanceMappingProfile,
     incomingRecordType: 'MARC_BIBLIOGRAPHIC',
     existingRecordType: 'INSTANCE',
   };
 
   const holdingsMappingProfile = {
     id: '',
-    name: `autotest_holdings_mapping_profile_${getRandomPostfix()}`,
+    name: nameHoldingsMappingProfile,
     incomingRecordType: 'MARC_BIBLIOGRAPHIC',
     existingRecordType: 'HOLDINGS',
     mappingDetails: { name: 'holdings',
@@ -43,7 +80,7 @@ describe('ui-data-import: MARC file upload with the update of instance, holding,
 
   const itemMappingProfile = {
     id: '',
-    name: `autotest_item_mapping_profile_${getRandomPostfix()}`,
+    name: nameItemMappingProfile,
     incomingRecordType: 'MARC_BIBLIOGRAPHIC',
     existingRecordType: 'ITEM',
     mappingDetails: { name: 'item',
@@ -65,10 +102,27 @@ describe('ui-data-import: MARC file upload with the update of instance, holding,
           value: '"In process"' }] }
   };
 
+  const marcBibActionProfile = {
+    profile: {
+      id: '',
+      name: nameMarcBibActionProfile,
+      action: 'MODIFY',
+      folioRecord: 'MARC_BIBLIOGRAPHIC'
+    },
+    addedRelations: [
+      {
+        masterProfileType: 'ACTION_PROFILE',
+        detailProfileId: '',
+        detailProfileType: 'MAPPING_PROFILE'
+      }
+    ],
+    deletedRelations: []
+  };
+
   const instanceActionProfile = {
     profile: {
       id: '',
-      name: `autotest_instance_action_profile_${getRandomPostfix()}`,
+      name: nameInstanceActionProfile,
       action: 'CREATE',
       folioRecord: 'INSTANCE'
     },
@@ -86,7 +140,7 @@ describe('ui-data-import: MARC file upload with the update of instance, holding,
   const holdingsActionProfile = {
     profile: {
       id: '',
-      name: `autotest_holdings_action_profile_${getRandomPostfix()}`,
+      name: nameHoldingsActionProfile,
       action: 'CREATE',
       folioRecord: 'HOLDINGS'
     },
@@ -104,7 +158,7 @@ describe('ui-data-import: MARC file upload with the update of instance, holding,
   const itemActionProfile = {
     profile: {
       id: '',
-      name: `autotest_item_action_profile_${getRandomPostfix()}`,
+      name: nameItemActionProfile,
       action: 'CREATE',
       folioRecord: 'ITEM'
     },
@@ -121,6 +175,8 @@ describe('ui-data-import: MARC file upload with the update of instance, holding,
 
   // TODO redesine classes inherites
   const testData = [
+    { mappingProfile: marcBibMappingProfile,
+      actionProfile: marcBibActionProfile },
     { mappingProfile: instanceMappingProfile,
       actionProfile: instanceActionProfile },
     { mappingProfile: holdingsMappingProfile,
@@ -129,6 +185,7 @@ describe('ui-data-import: MARC file upload with the update of instance, holding,
       actionProfile: itemActionProfile },
   ];
 
+  // file names
   const nameMarcFileForImportCreate = `autotestFile.${getRandomPostfix()}.mrc`;
   const nameForCSVFile = `autotestFile${getRandomPostfix()}.csv`;
   const nameMarcFileForImportUpdate = `autotestFile${getRandomPostfix()}.mrc`;
@@ -143,6 +200,8 @@ describe('ui-data-import: MARC file upload with the update of instance, holding,
   const mappingProfileNameForInstance = `autotestMappingInstance${getRandomPostfix()}`;
   const mappingProfileNameForHoldings = `autotestMappingHoldings${getRandomPostfix()}`;
   const mappingProfileNameForItem = `autotestMappingItem${getRandomPostfix()}`;
+  const mappingProfileNameForExport = `autoTestMappingProf.${getRandomPostfix()}`;
+  const jobProfileNameForExport = `autoTestJobProf.${getRandomPostfix()}`;
 
   before('navigates to Settings', () => {
     cy.login(
@@ -185,7 +244,7 @@ describe('ui-data-import: MARC file upload with the update of instance, holding,
     jobProfiles.searchJobProfileForImport(testData.jobProfileForCreate.profile.name);
     jobProfiles.runImportFile(nameMarcFileForImportCreate);
     logs.openJobProfile(nameMarcFileForImportCreate);
-    logs.checkCreatedItems();
+    // logs.checkCreatedItems();
 
     // get Instance HRID through API
     searchInventory
@@ -199,9 +258,22 @@ describe('ui-data-import: MARC file upload with the update of instance, holding,
         fileManager.deleteFolder(Cypress.config('downloadsFolder'));
         cy.visit(topMenu.dataExport);
 
+        // create Field mapping profile for export
+        const exportMappingProfile = {
+          name: mappingProfileNameForExport,
+        };
+
+        settingsDataExport.goToMappingProfiles();
+        exportFieldMappingProfiles.createMappingProfile(exportMappingProfile);
+
+        settingsDataExport.goToJobProfiles();
+        exportJobProfiles.createJobProfile(jobProfileNameForExport, mappingProfileNameForExport);
+        // jobProfiles.checkJobProfilePresented(jobProfile.profileName);
+
         // download exported marc file
+        cy.visit(topMenu.dataExport);
         exportFile.uploadFile(nameForCSVFile);
-        exportFile.exportWithDefaultInstancesJobProfile(nameForCSVFile);
+        exportFile.exportWithCreatedJobProfile(nameForCSVFile, jobProfileNameForExport);
         exportMarcFile.downloadExportedMarcFile(nameMarcFileForImportUpdate);
       });
 
