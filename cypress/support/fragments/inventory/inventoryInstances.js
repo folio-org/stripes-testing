@@ -1,7 +1,9 @@
-import { HTML, including, Section, or, MultiColumnList } from '../../../../interactors';
+import { HTML, including, Section, or, MultiColumnList, Button } from '../../../../interactors';
+import NewInventoryInstance from './newInventoryInstance';
 
 const rootSection = Section({ id: 'pane-results' });
 const inventoriesList = rootSection.find(MultiColumnList({ id: 'list-inventory' }));
+const actionsButton = rootSection.find(Button('Actions'));
 
 export default {
   waitLoading:() => {
@@ -12,5 +14,10 @@ export default {
   },
   selectSpecialInstance:(rowNumber = 0) => {
     cy.do(inventoriesList.click({ row: rowNumber }));
+  },
+  add: () => {
+    cy.do(actionsButton.click());
+    cy.do(Button('New').click());
+    NewInventoryInstance.waitLoading();
   }
 };

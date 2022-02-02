@@ -1,6 +1,7 @@
 import { MultiColumnList, HTML, including, Button, Section } from '../../../../interactors';
 
-const actionsButton = Section({ id:'pane-instancedetails' }).find(Button('Actions'));
+const rootSection = Section({ id:'pane-instancedetails' });
+const actionsButton = rootSection.find(Button('Actions'));
 const identifiers = MultiColumnList({ id:'list-identifiers' });
 const editMARCBibRecordButton = Button({ id:'edit-instance-marc' });
 const viewSourceButton = Button({ id:'clickable-view-source' });
@@ -21,5 +22,11 @@ export default {
   viewSource: () => {
     cy.do(actionsButton.click());
     cy.do(viewSourceButton.click());
+  },
+  waitLoading: () => {
+    cy.expect(actionsButton.exists());
+  },
+  fillRequiredValues:() => {
+
   }
 };
