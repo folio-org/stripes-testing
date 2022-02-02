@@ -10,19 +10,16 @@ import testTypes from '../../support/dictionary/testTypes';
 import features from '../../support/dictionary/features';
 
 describe('Manage holding records through quickmarc editor', () => {
-  before(() => {
+  beforeEach(() => {
     cy.login(Cypress.env('diku_login'), Cypress.env('diku_password'));
     cy.visit(TopMenu.inventoryPath);
     // TODO: redesign to api step
     InventoryActions.import();
-  });
-  beforeEach(() => {
     // TODO: redesign to api step
     InventoryInstance.addMarcHoldingRecord();
+    HoldingsRecordView.gotoEditInQuickMarc();
   });
   it('C345390 Add a field to a record using quickMARC', { tags: [testTypes.smoke, features.quickMarcEditor] }, () => {
-    HoldingsRecordView.gotoEditInQuickMarc();
-
     // TODO: redesign to dynamic reading of rows count
     QuickMarcEditor.addRow(HoldingsRecordView.newHolding.rowsCountInQuickMarcEditor);
     QuickMarcEditor.checkInitialContent(HoldingsRecordView.newHolding.rowsCountInQuickMarcEditor + 1);
@@ -33,8 +30,8 @@ describe('Manage holding records through quickmarc editor', () => {
     HoldingsRecordView.viewSource();
     InventoryViewSource.contains(expectedInSourceRow);
   });
+
   it('C345398 Add/Edit MARC 008', { tags: [testTypes.smoke, features.quickMarcEditor] }, () => {
-    HoldingsRecordView.gotoEditInQuickMarc();
     QuickMarcEditor.checkInitial008TagValueFromHoldingsRecord();
     QuickMarcEditor.checkNotExpectedByteLabelsInHoldingsRecordTag008();
 

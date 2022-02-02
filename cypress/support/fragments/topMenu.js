@@ -9,7 +9,8 @@ export default class TopMenu {
   static fundPath = '/finance/fund';
   static dataImportPath = '/data-import';
   static fiscalYearPath = '/finance/fiscalyear';
-  static eholdings = '/eholdings';
-  static dataExport = '/data-export';
+  static eholdingsPath = '/eholdings';
+  static dataExportPath = '/data-export';
   static ordersPath = '/orders';
+  static invoicesPath = '/invoice';
 }

@@ -14,3 +14,4 @@ import './fees-fines';
 import './organizations';
 import './permissions';
 import './orders';
+import './batch-groups';
