@@ -1,4 +1,6 @@
-import { Checkbox, Button, Modal, TextField, MultiColumnListCell } from '../../../../../interactors';
+import { Checkbox, Button, Modal, TextField, MultiColumnListCell, MultiColumnListRow } from '../../../../../interactors';
+
+const modalWindow = Modal('Select transformations');
 
 export default {
   searchItemTransformationsByName: (name) => {
@@ -6,16 +8,17 @@ export default {
   },
 
   selectHoldingsTransformations:() => {
+    const cellInteractor = modalWindow
+      .find(MultiColumnListRow())
+      .find(MultiColumnListCell({ columnIndex: 2 }));
+
     cy.do(Checkbox({ ariaLabel: 'Select field' }).click());
-    cy.then(() => Modal('Select transformations').find(MultiColumnListCell({ row: 0, columnIndex: 0 })).find(TextField()).names())
+    cy.then(() => cellInteractor.inputTextFieldNames())
       .then(inputFieldNames => {
-        cy.log(JSON.stringify(inputFieldNames));
+        cy.do(cellInteractor.find(TextField({ name: inputFieldNames[0] })).fillIn('901'));
+        cy.do(cellInteractor.find(TextField({ name: inputFieldNames[3] })).fillIn('$a'));
+        cy.do(modalWindow.find(Button('Save & close')).click());
       });
-
-
-    // cy.get('section[class^=pane-] input[placeholder="900"]').type('901');
-    // cy.xpath('//input[contains(@name,"subfield")]').type('$a');
-    cy.do(Modal('Select transformations').find(Button('Save & close')).click());
   },
 
   selectItemTransformations:() => {

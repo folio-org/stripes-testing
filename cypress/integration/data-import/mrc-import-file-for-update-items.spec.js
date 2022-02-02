@@ -239,7 +239,7 @@ describe('ui-data-import: MARC file upload with the update of instance, holding,
 
   it('C343335 MARC file upload with the update of instance, holding, and items', { tags: [testTypes.smoke] }, () => {
     // upload a marc file for creating of the new instance, holding and item
-    /*cy.visit(topMenu.dataImportPath);
+    /* cy.visit(topMenu.dataImportPath);
     dataImport.uploadFileWithout999Field(nameMarcFileForImportCreate);
     jobProfiles.searchJobProfileForImport(testData.jobProfileForCreate.profile.name);
     jobProfiles.runImportFile(nameMarcFileForImportCreate);
@@ -256,27 +256,27 @@ describe('ui-data-import: MARC file upload with the update of instance, holding,
         inventorySearch.saveUUIDs();
         exportMarcFile.downloadCSVFile(nameForCSVFile, 'SearchInstanceUUIDs*');
         fileManager.deleteFolder(Cypress.config('downloadsFolder'));
-      });*/
-        cy.visit(topMenu.dataExport);
+      }); */
+    cy.visit(topMenu.dataExport);
 
-        // create Field mapping profile for export
-        const exportMappingProfile = {
-          name: mappingProfileNameForExport,
-        };
+    // create Field mapping profile for export
+    const exportMappingProfile = {
+      name: mappingProfileNameForExport,
+    };
 
-        settingsDataExport.goToMappingProfiles();
-        exportFieldMappingProfiles.createMappingProfile(exportMappingProfile);
+    settingsDataExport.goToMappingProfiles();
+    exportFieldMappingProfiles.createMappingProfile(exportMappingProfile);
 
-        settingsDataExport.goToJobProfiles();
-        exportJobProfiles.createJobProfile(jobProfileNameForExport, mappingProfileNameForExport);
-        // jobProfiles.checkJobProfilePresented(jobProfile.profileName);
+    settingsDataExport.goToJobProfiles();
+    exportJobProfiles.createJobProfile(jobProfileNameForExport, mappingProfileNameForExport);
+    // jobProfiles.checkJobProfilePresented(jobProfile.profileName);
 
-        // download exported marc file
-        cy.visit(topMenu.dataExport);
-        exportFile.uploadFile(nameForCSVFile);
-        exportFile.exportWithCreatedJobProfile(nameForCSVFile, jobProfileNameForExport);
-        exportMarcFile.downloadExportedMarcFile(nameMarcFileForImportUpdate);
-      
+    // download exported marc file
+    cy.visit(topMenu.dataExport);
+    exportFile.uploadFile(nameForCSVFile);
+    exportFile.exportWithCreatedJobProfile(nameForCSVFile, jobProfileNameForExport);
+    exportMarcFile.downloadExportedMarcFile(nameMarcFileForImportUpdate);
+
 
     const collectionOfMappingAndActionProfiles = [
       {
