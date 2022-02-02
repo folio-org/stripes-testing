@@ -2,7 +2,7 @@ import TopMenu from '../../support/fragments/topMenu';
 import InventorySearch from '../../support/fragments/inventory/inventorySearch';
 import TestTypes from '../../support/dictionary/testTypes';
 import FileManager from '../../support/utils/fileManager';
-import FileHelper from '../../support/fragments/data-export/export-marc-file';
+import DownloadHelper from '../../support/fragments/data-export/export-marc-file';
 import ExportFileHelper from '../../support/fragments/data-export/exportFile';
 import DataExportResults from '../../support/fragments/data-export/dataExportResults';
 import getRandomPostfix from '../../support/utils/stringTools';
@@ -20,7 +20,7 @@ describe('export instance records', () => {
     cy.visit(TopMenu.inventoryPath);
     InventorySearch.byEffectiveLocation();
     InventorySearch.saveUUIDs();
-    FileHelper.downloadCSVFile(fileName, 'SearchInstanceUUIDs*');
+    DownloadHelper.downloadCSVFile(fileName, 'SearchInstanceUUIDs*');
 
     // export file with UUIDs
     cy.visit(TopMenu.dataExport);
