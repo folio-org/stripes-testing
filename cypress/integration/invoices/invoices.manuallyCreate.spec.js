@@ -2,11 +2,11 @@ import TopMenu from '../../support/fragments/topMenu';
 import NewInvoice from '../../support/fragments/invoices/newInvoice';
 import Invoices from '../../support/fragments/invoices/invoices';
 import testType from '../../support/dictionary/testTypes';
-import vendorAddress from '../../support/fragments/invoices/vendorAddress';
+import VendorAddress from '../../support/fragments/invoices/vendorAddress';
 
 describe('ui-invoices: Invoice creation', () => {
   const invoice = { ...NewInvoice.defaultUiInvoice };
-  const vendorPrimaryAddress = { ...vendorAddress };
+  const vendorPrimaryAddress = { ...VendorAddress.vendorAddress };
 
   before(() => {
     cy.getToken(Cypress.env('diku_login'), Cypress.env('diku_password'));
