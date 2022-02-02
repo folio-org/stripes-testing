@@ -18,6 +18,7 @@ import InventoryActions from './inventoryActions';
 import InventoryInstanceEdit from './InventoryInstanceEdit';
 import HoldingsRecordView from './holdingsRecordView';
 import InventoryViewSource from './inventoryViewSource';
+import NewHoldingsRecord from './newHoldingsRecord';
 
 const _section = Section({ id: 'pane-instancedetails' });
 const actionsButton = _section.find(Button('Actions'));
@@ -40,9 +41,16 @@ const validOCLC = { id:'176116217',
   // it should be presented in marc bib one time to correct work(applicable in update of record)
   existingTag: '100' };
 
+const pressAddHoldingsButton = () => {
+  cy.do(Button({ id:'clickable-new-holdings-record' }).click());
+  NewHoldingsRecord.waitLoading();
+};
+const waitLoading = () => cy.expect(actionsButton.exists());
+
 export default {
   validOCLC,
-
+  pressAddHoldingsButton,
+  waitLoading,
   checkExpectedOCLCPresence: (OCLCNumber = validOCLC.id) => {
     cy.expect(identifiers.find(HTML(including(OCLCNumber))).exists());
   },
@@ -64,9 +72,6 @@ export default {
     cy.do(viewSourceButton.click());
     InventoryViewSource.waitLoading();
   },
-
-  waitLoading:() => cy.expect(actionsButton.exists()),
-
   overlaySourceBibRecord:(specialOCLCWorldCatidentifier = validOCLC.id) => {
     cy.do(actionsButton.click());
     cy.do(overlaySourceBibRecord.click());
@@ -75,7 +80,6 @@ export default {
     InventoryActions.pressImportInModal();
     return startTime;
   },
-
   editInstance:() => {
     cy.do(actionsButton.click());
     cy.do(editInstanceButton.click());
@@ -117,6 +121,12 @@ export default {
   goToHoldingView: () => {
     cy.do(viewHoldingsButton.click());
     HoldingsRecordView.waitLoading();
+  },
+  createHoldingsRecord:() => {
+    pressAddHoldingsButton();
+    NewHoldingsRecord.fillRequiredFields();
+    NewHoldingsRecord.saveAndClose();
+    waitLoading();
   },
 
   checkHoldingsTable: (locationName, rowNumber, caption, barcode, status) => {
@@ -179,5 +189,4 @@ export default {
       moveItemsButton.click()
     ]);
   }
-
 };
