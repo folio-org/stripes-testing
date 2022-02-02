@@ -1,4 +1,3 @@
-import TopMenu from '../topMenu';
 import {
   Button,
   KeyValue,
@@ -7,6 +6,7 @@ import {
 } from '../../../../interactors';
 import DataImportViewAllPage from './dataImportViewAllPage';
 import DateTools from '../../utils/dateTools';
+import InventoryInstances from '../inventory/inventoryInstances';
 
 
 const getInstanceHRID = () => {
@@ -43,10 +43,6 @@ const getInstanceHRID = () => {
     });
 };
 
-const gotoInventory = () => {
-  cy.visit(TopMenu.inventoryPath);
-};
-
 const searchInstanceByHRID = (id) => {
   cy.get('#input-inventory-search-qindex').select('Instance HRID');
   cy.do([
@@ -54,6 +50,7 @@ const searchInstanceByHRID = (id) => {
     TextField({ id: 'input-inventory-search' }).fillIn(id),
     Button('Search').click()
   ]);
+  InventoryInstances.waitLoading();
 };
 
 // when creating mapping profile we choose status cataloged date as today
@@ -76,8 +73,10 @@ const checkInstanceDetails = () => {
 };
 
 export default {
+  // TODO: move to existing InventorySearch fragment
   getInstanceHRID,
-  gotoInventory,
+  // TODO: move to existing InventorySearch fragment
   searchInstanceByHRID,
+  // TODO: move to existing  inventory fragment
   checkInstanceDetails,
 };
