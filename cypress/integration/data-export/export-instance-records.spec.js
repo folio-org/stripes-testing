@@ -23,7 +23,7 @@ describe('export instance records', () => {
     DownloadHelper.downloadCSVFile(fileName, 'SearchInstanceUUIDs*');
 
     // export file with UUIDs
-    cy.visit(TopMenu.dataExport);
+    cy.visit(TopMenu.dataExportPath);
     ExportFileHelper.uploadFile(fileName);
     ExportFileHelper.exportWithDefaultInstancesJobProfile(fileName);
 
