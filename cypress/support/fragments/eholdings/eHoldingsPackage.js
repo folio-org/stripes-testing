@@ -24,8 +24,6 @@ export default {
   addToHodlings: () => {
     cy.do(packageHoldingStatusSection.find(Button('Add package to holdings')).click());
     cy.expect(confirmationModal.exists());
-    // TODO: remove static waiters after fix of https://issues.folio.org/browse/UIEH-1228
-    cy.wait(1000);
     cy.do(confirmationModal.find(Button('Add package (all titles) to holdings')).click());
     cy.expect(confirmationModal.absent());
   },
