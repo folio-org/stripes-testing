@@ -76,7 +76,7 @@ describe('eHoldings packages management', () => {
     });
   });
 
-  it('C756 Remove a tag from a package record', { tags:  [testType.smoke, features.eHoldings, features.tags] }, () => {
+  it('C756 Remove a tag from a package record', { tags:  [testType.extendedPath, features.eHoldings, features.tags] }, () => {
     cy.createTempUser([permissions.uieHoldingsRecordsEdit.gui, permissions.uiTagsPermissionAll.gui]).then(userProperties => {
       userId = userProperties.userId;
       cy.login(userProperties.username, userProperties.password);
