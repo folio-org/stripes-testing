@@ -1,5 +1,5 @@
 import inventoryInstance from './inventoryInstance';
-import { Button, Modal, Section } from '../../../../interactors';
+import { Button, KeyValue, Modal, Section } from '../../../../interactors';
 import QuickMarcEditor from '../quickMarcEditor';
 import InventoryViewSource from './inventoryViewSource';
 import NewHoldingsRecord from './newHoldingsRecord';
@@ -53,5 +53,8 @@ export default {
     cy.do(actionsButton.click());
     cy.do(duplicateButton.click());
     NewHoldingsRecord.waitLoading();
+  },
+  checkSource:(sourceValue) => {
+    cy.expect(KeyValue('Source', { value:sourceValue }).exists());
   }
 };
