@@ -32,7 +32,7 @@ describe('ui-data-import: MARC file upload with the update of instance, holding,
   const nameInstanceActionProfile = `autotest_instance_action_profile_${getRandomPostfix()}`;
   const nameHoldingsActionProfile = `autotest_holdings_action_profile_${getRandomPostfix()}`;
   const nameItemActionProfile = `autotest_item_action_profile_${getRandomPostfix()}`;
-  const jobProfileNameCreate = `autotest_item_action_profile_${getRandomPostfix()}`;
+  const jobProfileNameCreate = `autotest_job_profile_${getRandomPostfix()}`;
 
   const marcBibMappingProfile = {
     id: '',

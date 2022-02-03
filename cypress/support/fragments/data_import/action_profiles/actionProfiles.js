@@ -43,10 +43,10 @@ export default {
     newActionProfile.linkMappingProfile(mappingProfile);
   },
 
-  checkActionProfilePresented: (actionProfile) => {
-    cy.do(TextField({ id:'input-search-action-profiles-field' }).fillIn(actionProfile));
+  checkActionProfilePresented: (actionProfileName) => {
+    cy.do(TextField({ id:'input-search-action-profiles-field' }).fillIn(actionProfileName));
     cy.do(Button('Search').click());
-    cy.expect(MultiColumnListCell(actionProfile).exists());
+    cy.expect(MultiColumnListCell(actionProfileName).exists());
   },
 
   deleteActionProfile,
