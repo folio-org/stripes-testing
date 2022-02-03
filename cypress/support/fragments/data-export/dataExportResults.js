@@ -42,8 +42,6 @@ export default {
       resultRow.fileName.perform(element => {
         expect(element.innerText).to.equal(resultFileName);
         expect(element.innerText).to.include(`-${jobId}.mrc`);
-        console.log(element);
-        cy.pause();
       })
     );
 
