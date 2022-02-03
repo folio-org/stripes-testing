@@ -245,8 +245,8 @@ describe('ui-data-import: MARC file upload with the update of instance, holding,
     jobProfiles.searchJobProfileForImport(testData.jobProfileForCreate.profile.name);
     jobProfiles.runImportFile(nameMarcFileForImportCreate);
     logs.openJobProfile(nameMarcFileForImportCreate);
-    // logs.checkIsSrsUpdated();
-    // logs.checkCreatedItems();
+    logs.checkIsSrsUpdated();
+    logs.checkCreatedItems();
 
     // get Instance HRID through API
     searchInventory
