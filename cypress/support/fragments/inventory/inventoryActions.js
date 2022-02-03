@@ -8,12 +8,6 @@ const importButtonInModal = Button('Import');
 const OCLWorldCatIdentifierTextField = TextField({ name: 'externalIdentifier' });
 const importTypeSelect = Select({ name :'externalIdentifierType' });
 
-function verifyFileNameDate(actualDate) {
-  const timeInterval = 60000;
-  expect(actualDate).to.be.greaterThan(Date.now() - timeInterval);
-  expect(actualDate).to.be.lessThan(Date.now() + timeInterval);
-}
-
 
 export default {
   open: () => { return Button('Actions').click(); },
@@ -69,7 +63,7 @@ export default {
     expect(actualName).to.match(expectedFileNameMask);
 
     const actualDate = DateTools.parseDateFromFilename(FileManager.getFileNameFromFilePath(actualName));
-    verifyFileNameDate(actualDate);
+    DateTools.verifyDate(actualDate);
   },
 
   verifySavedUUIDs(actualUUIDs, expectedUUIDs) {
@@ -83,7 +77,7 @@ export default {
     expect(actualName).to.match(expectedFileNameMask);
 
     const actualDate = DateTools.parseDateFromFilename(FileManager.getFileNameFromFilePath(actualName));
-    verifyFileNameDate(actualDate);
+    DateTools.verifyDate(actualDate);
   },
 
   verifySaveCQLQuery(actualQuery, kw = '*', lang = 'eng') {
@@ -101,7 +95,7 @@ export default {
     expect(actualName).to.match(expectedFileNameMask);
 
     const actualDate = DateTools.parseDateFromFilename(FileManager.getFileNameFromFilePath(actualName));
-    verifyFileNameDate(actualDate);
+    DateTools.verifyDate(actualDate);
   },
 
   verifyInstancesMARC(actualIDs, expectedIDs) {
