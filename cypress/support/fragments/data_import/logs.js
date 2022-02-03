@@ -25,6 +25,12 @@ const checkIsInstanceUpdated = () => {
   }));
 };
 
+const checkIsSrsUpdated = () => {
+  cy.do(createdItemsColumns[0].perform(element => {
+    expect(element).to.have.text('Updated');
+  }));
+};
+
 export default {
   checkImportFile(jobProfileName) {
     cy.do(Button('View all').click());
@@ -54,4 +60,5 @@ export default {
 
   checkIsInstanceCreated,
   checkIsInstanceUpdated,
+  checkIsSrsUpdated,
 };

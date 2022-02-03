@@ -3,17 +3,17 @@ import modalSelectTransformations from './modalSelectTransformations';
 
 const outputFormat = 'MARC';
 
-const defaultMappingProfile = {
-  name: '',
-  outputFormat: 'MARC',
-  folioRecordType: '',
-};
+const holdingsMarcField = '901';
+
+const itemMarcField = '902';
+
+const subfield = '$a';
 
 const addTransformationsButton = Button('Add transformations');
 
 export default {
-  fillMappingProfile:(specialMappingProfile = defaultMappingProfile) => {
-    cy.do([TextField({ name:'name' }).fillIn(specialMappingProfile.name),
+  fillMappingProfile:(profileName) => {
+    cy.do([TextField({ name:'name' }).fillIn(profileName),
       Select({ name:'outputFormat' }).choose(outputFormat),
       Checkbox('Source record storage (entire record)').click(),
       Checkbox('Holdings').click(),
@@ -21,10 +21,10 @@ export default {
       addTransformationsButton.click(),
     ]);
     modalSelectTransformations.searchItemTransformationsByName('Holdings - HRID');
-    modalSelectTransformations.selectHoldingsTransformations();
+    modalSelectTransformations.selectTransformations(holdingsMarcField, subfield);
     cy.do(addTransformationsButton.click());
     modalSelectTransformations.searchItemTransformationsByName('Item - HRID');
-    modalSelectTransformations.selectItemTransformations();
+    modalSelectTransformations.selectTransformations(itemMarcField, subfield);
     cy.do(Button('Save & close').click());
     cy.expect(Button('Save & close').absent());
   },

@@ -23,7 +23,7 @@ import exportFieldMappingProfiles from '../../support/fragments/data-export/expo
 import exportJobProfiles from '../../support/fragments/data-export/exportJobProfile/exportJobProfiles';
 
 describe('ui-data-import: MARC file upload with the update of instance, holding, and items', () => {
-  // profile names
+  // profile names for creating
   const nameMarcBibMappingProfile = `autotest_marcBib_mapping_profile_${getRandomPostfix()}`;
   const nameInstanceMappingProfile = `autotest_instance_mapping_profile_${getRandomPostfix()}`;
   const nameHoldingsMappingProfile = `autotest_holdings_mapping_profile_${getRandomPostfix()}`;
@@ -32,6 +32,7 @@ describe('ui-data-import: MARC file upload with the update of instance, holding,
   const nameInstanceActionProfile = `autotest_instance_action_profile_${getRandomPostfix()}`;
   const nameHoldingsActionProfile = `autotest_holdings_action_profile_${getRandomPostfix()}`;
   const nameItemActionProfile = `autotest_item_action_profile_${getRandomPostfix()}`;
+  const jobProfileNameCreate = `autotest_item_action_profile_${getRandomPostfix()}`;
 
   const marcBibMappingProfile = {
     id: '',
@@ -54,7 +55,7 @@ describe('ui-data-import: MARC file upload with the update of instance, holding,
           }]
         }
       }],
-      'marcMappingOption' : 'MODIFY' }
+      marcMappingOption: 'MODIFY' }
   };
 
   const instanceMappingProfile = {
@@ -189,8 +190,8 @@ describe('ui-data-import: MARC file upload with the update of instance, holding,
   const nameMarcFileForImportCreate = `autotestFile.${getRandomPostfix()}.mrc`;
   const nameForCSVFile = `autotestFile${getRandomPostfix()}.csv`;
   const nameMarcFileForImportUpdate = `autotestFile${getRandomPostfix()}.mrc`;
-  // profile names
-  const jobProfileName = `autotestJobProf${getRandomPostfix()}`;
+  // profile names for updating
+  const jobProfileNameUpdate = `autotestJobProf${getRandomPostfix()}`;
   const actionProfileNameForInstance = `autotestActionInstance${getRandomPostfix()}`;
   const actionProfileNameForHoldings = `autotestActionHoldings${getRandomPostfix()}`;
   const actionProfileNameForItem = `autotestActionItem${getRandomPostfix()}`;
@@ -217,7 +218,7 @@ describe('ui-data-import: MARC file upload with the update of instance, holding,
   beforeEach(() => {
     const jobProfile = {
       profile: {
-        name: `autotest_job_profile_${getRandomPostfix()}`,
+        name: jobProfileNameCreate,
         dataType: 'MARC'
       },
       addedRelations: [],
@@ -244,6 +245,7 @@ describe('ui-data-import: MARC file upload with the update of instance, holding,
     jobProfiles.searchJobProfileForImport(testData.jobProfileForCreate.profile.name);
     jobProfiles.runImportFile(nameMarcFileForImportCreate);
     logs.openJobProfile(nameMarcFileForImportCreate);
+    // logs.checkIsSrsUpdated();
     // logs.checkCreatedItems();
 
     // get Instance HRID through API
@@ -264,11 +266,10 @@ describe('ui-data-import: MARC file upload with the update of instance, holding,
         };
 
         settingsDataExport.goToMappingProfiles();
-        exportFieldMappingProfiles.createMappingProfile(exportMappingProfile);
+        exportFieldMappingProfiles.createMappingProfile(exportMappingProfile.name);
 
         settingsDataExport.goToJobProfiles();
         exportJobProfiles.createJobProfile(jobProfileNameForExport, mappingProfileNameForExport);
-        // jobProfiles.checkJobProfilePresented(jobProfile.profileName);
 
         // download exported marc file
         cy.visit(topMenu.dataExport);
@@ -356,7 +357,7 @@ describe('ui-data-import: MARC file upload with the update of instance, holding,
     // create Job profile
     const jobProfileForUpdate = {
       ...newJobProfile.defaultJobProfile,
-      profileName: jobProfileName
+      profileName: jobProfileNameUpdate
     };
 
     settingsDataImport.goToJobProfiles();
@@ -375,7 +376,7 @@ describe('ui-data-import: MARC file upload with the update of instance, holding,
     logs.checkIsInstanceUpdated();
 
     // delete generated profiles
-    jobProfiles.deleteJobProfile(jobProfileName);
+    jobProfiles.deleteJobProfile(jobProfileNameUpdate);
     collectionOfMatchProfiles.forEach(profile => {
       matchProfiles.deleteMatchProfile(profile.matchProfile.profileName);
     });
@@ -383,6 +384,15 @@ describe('ui-data-import: MARC file upload with the update of instance, holding,
       actionProfiles.deleteActionProfile(profile.actionProfile.name);
       fieldMappingProfiles.deleteFieldMappingProfile(profile.mappingProfile.name);
     });
+    jobProfiles.deleteJobProfile(jobProfileNameCreate);
+    actionProfiles.deleteActionProfile(nameMarcBibActionProfile);
+    actionProfiles.deleteActionProfile(nameInstanceActionProfile);
+    actionProfiles.deleteActionProfile(nameHoldingsActionProfile);
+    actionProfiles.deleteActionProfile(nameItemActionProfile);
+    fieldMappingProfiles.deleteFieldMappingProfile(nameMarcBibMappingProfile);
+    fieldMappingProfiles.deleteFieldMappingProfile(nameInstanceMappingProfile);
+    fieldMappingProfiles.deleteFieldMappingProfile(nameHoldingsMappingProfile);
+    fieldMappingProfiles.deleteFieldMappingProfile(nameItemMappingProfile);
 
     // delete downloads folder and created files in fixtures
     fileManager.deleteFolder(Cypress.config('downloadsFolder'));

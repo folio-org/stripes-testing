@@ -25,7 +25,7 @@ describe('ui-data-import: MARC file import with creating of the new instance, ho
   const mappingProfileNameForHoldings = `autotestMappingHoldings${getRandomPostfix()}`;
   const mappingProfileNameForItem = `autotestMappingItem${getRandomPostfix()}`;
 
-  before('navigates to Settings', () => {
+  before(() => {
     cy.login(
       Cypress.env('diku_login'),
       Cypress.env('diku_password')
