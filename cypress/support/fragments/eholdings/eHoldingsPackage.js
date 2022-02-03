@@ -1,8 +1,9 @@
-import { Accordion, Button, Modal, Section, RadioButton, HTML, including, MultiSelect, KeyValue, MultiSelectOption } from '../../../../interactors';
+import { Accordion, Button, Modal, Section, RadioButton, HTML, including, MultiSelect, KeyValue, MultiSelectOption, ValueChipRoot } from '../../../../interactors';
 import getRandomPostfix from '../../utils/stringTools';
 
 const titlesFilterModal = Modal({ id : 'eholdings-details-view-search-modal' });
 const tagsSection = Section({ id: 'packageShowTags' });
+const closeButton = Button({ icon: 'times' });
 
 const filterTitlesStatuses = { all: 'All',
   selected: 'Selected',
@@ -59,7 +60,6 @@ export default {
     cy.then(() => tagsSection.find(MultiSelect()).selected())
       .then(selectedTags => {
         cy.do(tagsSection.find(MultiSelect()).fillIn(newTag));
-        cy.do(tagsSection.find(MultiSelect()).focus());
         cy.do(MultiSelectOption(`Add tag for: ${newTag}`).click());
         cy.expect(tagsSection.find(MultiSelect({ selected: [...selectedTags, newTag].sort() })).exists());
       });
@@ -75,6 +75,21 @@ export default {
   verifyExistingTags:(...expectedTags) => {
     expectedTags.forEach(tag => {
       cy.expect(tagsSection.find(HTML(including(tag))).exists());
+    });
+  },
+  removeExistingTags: () => {
+    cy.then(() => tagsSection.find(MultiSelect()).selected())
+      .then(selectedTags => {
+        selectedTags.forEach(selectedTag => {
+          const specialTagElement = tagsSection.find(ValueChipRoot(selectedTag));
+          cy.do(specialTagElement.find(closeButton).click());
+          cy.expect(specialTagElement.absent());
+        });
+      });
+  },
+  verifyDeletedTags:(...expectedTags) => {
+    expectedTags.forEach(tag => {
+      cy.expect(tagsSection.find(HTML(including(tag))).absent());
     });
   }
 };
