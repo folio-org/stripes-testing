@@ -21,7 +21,7 @@ describe('eHoldings packages management', () => {
     ]).then(userProperties => {
       userId = userProperties.userId;
       cy.login(userProperties.username, userProperties.password);
-      cy.visit(TopMenu.eholdings);
+      cy.visit(TopMenu.eholdingsPath);
       eHoldingSearch.switchToPackages();
       eHoldingsPackages.waitLoading();
       eHoldingsPackagesSearch.bySelectionStatus(eHoldingsTitle.filterPackagesStatuses.notSelected);
@@ -36,13 +36,13 @@ describe('eHoldings packages management', () => {
     });
   });
 
-  it('C3463 Add two tags to package [Edinburgh Scholarship Online]', { tags:  [testType.smoke, features.eHoldings] }, () => {
+  it('C3463 Add two tags to package [Edinburgh Scholarship Online]', { tags:  [testType.smoke, features.eHoldings, features.tags] }, () => {
     // TODO: "Tags: All permissions" doesn't have displayName. It's the reason why there is related permission name in response, see https://issues.folio.org/browse/UITAG-51
     cy.createTempUser([permissions.uieHoldingsRecordsEdit.gui,
       permissions.uiTagsPermissionAll.gui]).then(userProperties => {
       userId = userProperties.userId;
       cy.login(userProperties.username, userProperties.password);
-      cy.visit(TopMenu.eholdings);
+      cy.visit(TopMenu.eholdingsPath);
       eHoldingSearch.switchToPackages();
       eHoldingsPackagesSearch.byName();
       eHoldingsPackages.openPackage()
@@ -62,7 +62,7 @@ describe('eHoldings packages management', () => {
       permissions.uieHoldingsPackageTitleSelectUnselect.gui]).then(userProperties => {
       userId = userProperties.userId;
       cy.login(userProperties.username, userProperties.password);
-      cy.visit(TopMenu.eholdings);
+      cy.visit(TopMenu.eholdingsPath);
       eHoldingSearch.switchToPackages();
       eHoldingsPackagesSearch.bySelectionStatus(eHoldingsTitle.filterPackagesStatuses.selected);
       eHoldingsPackagesSearch.byName();
@@ -73,6 +73,33 @@ describe('eHoldings packages management', () => {
       eHoldingsPackage.checkEmptyTitlesList();
       // reset test data
       eHoldingsPackage.addToHodlings();
+    });
+  });
+
+  it('C756 Remove a tag from a package record', { tags:  [testType.smoke, features.eHoldings, features.tags] }, () => {
+    cy.createTempUser([permissions.uieHoldingsRecordsEdit.gui, permissions.uiTagsPermissionAll.gui]).then(userProperties => {
+      userId = userProperties.userId;
+      cy.login(userProperties.username, userProperties.password);
+      cy.visit(TopMenu.eholdings);
+      eHoldingSearch.switchToPackages();
+      eHoldingsPackagesSearch.byName();
+      eHoldingsPackages.openPackage()
+        .then(selectedPackageName => {
+          // existing test data clearing
+          eHoldingsPackage.removeExistingTags();
+
+          const addedTag = eHoldingsPackage.addTag();
+          eHoldingsPackage.close(selectedPackageName);
+          eHoldingsPackagesSearch.byTag(addedTag);
+          eHoldingsPackages.openPackage();
+          eHoldingsPackage.verifyExistingTags(addedTag);
+          eHoldingsPackage.removeExistingTags();
+          eHoldingsPackage.close(selectedPackageName);
+          eHoldingsPackagesSearch.resetTagFilter();
+          eHoldingsPackagesSearch.byName(selectedPackageName);
+          eHoldingsPackages.openPackage();
+          eHoldingsPackage.verifyExistingTags();
+        });
     });
   });
 
