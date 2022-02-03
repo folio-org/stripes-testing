@@ -1,11 +1,14 @@
-import { Button, TextField, Selection, SelectionList, SearchField, KeyValue, Accordion, Pane, PaneHeader } from '../../../../interactors';
+import { Button, TextField, Selection, SelectionList, SearchField, KeyValue, Accordion, Pane, PaneHeader, MultiColumnListCell } from '../../../../interactors';
 import Helper from '../finance/financeHelper';
 
 
 const buttonNew = Button('New');
 const saveAndClose = Button('Save & close');
 const invoiceCreatedMessage = 'Invoice has been saved';
+const invoiceLineCreatedMessage = 'Invoice line has been saved';
+const success = 'success';
 const vendorDetailsAccordionId = 'vendorDetails';
+const invoiceLinesAccordionId = 'invoiceLines';
 const actionsButton = Button('Actions');
 
 export default {
@@ -26,7 +29,7 @@ export default {
     ]);
     this.checkVendorPrimaryAddress(vendorPrimaryAddress);
     cy.do(saveAndClose.click());
-    Helper.checkCalloutMessage(invoiceCreatedMessage, 'success');
+    Helper.checkCalloutMessage(invoiceCreatedMessage, success);
   },
 
   selectVendorOnUi: (organizationName) => {
@@ -59,7 +62,7 @@ export default {
     cy.expect(Accordion({ id: vendorDetailsAccordionId }).find(KeyValue({ value: invoice.accountingCode })).exists());
   },
 
-  deleteBudgetViaActions() {
+  deleteInvoiceViaActions() {
     cy.do([
       PaneHeader({ id: 'paneHeaderpane-invoiceDetails' })
         .find(actionsButton).click(),
@@ -67,4 +70,27 @@ export default {
       Button('Delete', { id:'clickable-delete-invoice-confirmation-confirm' }).click()
     ]);
   },
+
+  createInvoiceLine: (invoiceLine, isFromPol) => {
+    cy.do(Accordion({ id: invoiceLinesAccordionId }).find(actionsButton).click());
+    if (isFromPol) {
+      cy.do(Button('Add line from POL').click());
+    } else {
+      cy.do(Button('New blank line').click());
+    }
+    cy.do([
+      TextField('Description*').fillIn(invoiceLine.description),
+      TextField('Quantity*').fillIn(invoiceLine.quantity.toString()),
+      TextField('Sub-total*').fillIn(invoiceLine.subTotal.toString()),
+      saveAndClose.click()
+    ]);
+    Helper.checkCalloutMessage(invoiceLineCreatedMessage, success);
+  },
+
+  checkInvoiceLine: (invoiceLine) => {
+    cy.expect(Accordion({ id: invoiceLinesAccordionId }).exists());
+    cy.expect(Accordion({ id: invoiceLinesAccordionId }).find(MultiColumnListCell({ content: invoiceLine.description })).exists());
+    cy.expect(Accordion({ id: invoiceLinesAccordionId }).find(MultiColumnListCell({ content: invoiceLine.quantity.toString() })).exists());
+    cy.expect(Accordion({ id: invoiceLinesAccordionId }).find(MultiColumnListCell({ content: `$${invoiceLine.subTotal.toFixed(2)}` })).exists());
+  }
 };
