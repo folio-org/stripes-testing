@@ -64,14 +64,7 @@ Cypress.Commands.add('addJobProfileRelation', (expectedRelations, actionProfileI
 
 /**
  * @name cy.createLinkedProfiles
- * @param {Object} testData - Test data to create and link mapping, action and job profiles.
- * @param {Object} testData.instanceMappingProfile
- * @param {Object} testData.instanceActionProfile
- * @param {Object} testData.holdingsMappingProfile
- * @param {Object} testData.holdingsActionProfile
- * @param {Object} testData.itemMappingProfile
- * @param {Object} testData.itemActionProfile
- * @param {Object} testData.jobProfileForCreate
+ * @param {Object[]} testData - Test data create and link mapping, action and job profiles.
  */
 Cypress.Commands.add('createLinkedProfiles', (testData) => {
   const jobProfile = {

@@ -11,16 +11,15 @@ const uploadFile = (fileName) => {
   cy.get('input[type=file]', getLongDelay()).attachFile({ filePath: 'oneMarcBib.mrc', fileName });
 };
 
-<<<<<<< HEAD
-  uploadFileWithout999Field(fileName) {
-    cy.get('input[type=file]', getLongDelay()).attachFile({ filePath: 'oneMarcBibWithout999Field.mrc', fileName });
-  },
+const uploadFileWithout999Field = (fileName) => {
+  cy.get('input[type=file]', getLongDelay()).attachFile({ filePath: 'oneMarcBibWithout999Field.mrc', fileName });
+};
 
-=======
 export default {
   goToDataImport,
   uploadFile,
->>>>>>> 56b1f17b6db5eec29fc99f4add4f4ade31eb8262
+  uploadFileWithout999Field,
+
   uploadExportedFile(fileName) {
     cy.get('input[type=file]', getLongDelay()).attachFile(fileName);
   },
