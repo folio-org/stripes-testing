@@ -51,6 +51,11 @@ export default {
     return Date.parse(date.replaceAll('_', ':'));
   },
 
+  verifyDate(actualDate, timeInterval = 60000) {
+    expect(actualDate).to.be.greaterThan(Date.now() - timeInterval);
+    expect(actualDate).to.be.lessThan(Date.now() + timeInterval);
+  },
+
   // Formats date as YYYY-MM-DD
   getFormattedDate({ date }) {
     return `${date.getFullYear()}-${padWithZero(date.getMonth() + 1)}-${padWithZero(date.getDate())}`;

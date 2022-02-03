@@ -1,5 +1,6 @@
-import { Modal, Button, Select } from '../../../../interactors';
+import { Modal, Button, Select, MultiColumnListCell } from '../../../../interactors';
 import { getLongDelay } from '../../utils/cypressTools';
+import DataExportResults from './dataExportResults';
 
 export default {
   uploadFile:(fileName) => {
@@ -9,8 +10,8 @@ export default {
   exportWithDefaultInstancesJobProfile:(fileName) => {
     // eslint-disable-next-line cypress/no-unnecessary-waiting
     cy.wait(2000);
-    cy.get('[data-row-inner="1"]').click();
     cy.do([
+      MultiColumnListCell({ content: DataExportResults.defaultJobProfile, columnIndex: 0 }).click(),
       Modal({ id: 'choose-job-profile-confirmation-modal' }).find(Select()).choose('Instances'),
       Button('Run').click(),
     ]);

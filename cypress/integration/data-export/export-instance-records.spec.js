@@ -27,7 +27,16 @@ describe('export instance records', () => {
     ExportFileHelper.uploadFile(fileName);
     ExportFileHelper.exportWithDefaultInstancesJobProfile(fileName);
 
-    DataExportResults.verifySuccessExportResultCells();
+    // collect expected results and verify actual result
+    cy.intercept(/\/data-export\/job-executions\?query=status=\(COMPLETED/).as('getInfo');
+    cy.wait('@getInfo', { requestTimeout: 300000 }).then((interception) => {
+      const job = interception.response.body.jobExecutions[0];
+      const resultFileName = job.exportedFiles[0].fileName;
+      const recordsCount = job.progress.total;
+      const jobId = job.hrId;
+
+      DataExportResults.verifySuccessExportResultCells(resultFileName, recordsCount, jobId);
+    });
 
     // delete created files
     FileManager.deleteFile(`cypress/fixtures/${fileName}`);
