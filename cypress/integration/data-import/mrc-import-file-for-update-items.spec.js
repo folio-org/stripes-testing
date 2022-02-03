@@ -258,25 +258,25 @@ describe('ui-data-import: MARC file upload with the update of instance, holding,
         inventorySearch.saveUUIDs();
         exportMarcFile.downloadCSVFile(nameForCSVFile, 'SearchInstanceUUIDs*');
         fileManager.deleteFolder(Cypress.config('downloadsFolder'));
-        cy.visit(topMenu.dataExport);
-
-        // create Field mapping profile for export
-        const exportMappingProfile = {
-          name: mappingProfileNameForExport,
-        };
-
-        settingsDataExport.goToMappingProfiles();
-        exportFieldMappingProfiles.createMappingProfile(exportMappingProfile.name);
-
-        settingsDataExport.goToJobProfiles();
-        exportJobProfiles.createJobProfile(jobProfileNameForExport, mappingProfileNameForExport);
-
-        // download exported marc file
-        cy.visit(topMenu.dataExport);
-        exportFile.uploadFile(nameForCSVFile);
-        exportFile.exportWithCreatedJobProfile(nameForCSVFile, jobProfileNameForExport);
-        exportMarcFile.downloadExportedMarcFile(nameMarcFileForImportUpdate);
       });
+    cy.visit(topMenu.dataExport);
+
+    // create Field mapping profile for export
+    const exportMappingProfile = {
+      name: mappingProfileNameForExport,
+    };
+
+    settingsDataExport.goToMappingProfiles();
+    exportFieldMappingProfiles.createMappingProfile(exportMappingProfile.name);
+
+    settingsDataExport.goToJobProfiles();
+    exportJobProfiles.createJobProfile(jobProfileNameForExport, mappingProfileNameForExport);
+
+    // download exported marc file
+    cy.visit(topMenu.dataExport);
+    exportFile.uploadFile(nameForCSVFile);
+    exportFile.exportWithCreatedJobProfile(nameForCSVFile, jobProfileNameForExport);
+    exportMarcFile.downloadExportedMarcFile(nameMarcFileForImportUpdate);
 
     const collectionOfMappingAndActionProfiles = [
       {
