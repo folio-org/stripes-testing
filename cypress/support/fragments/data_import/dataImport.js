@@ -1,19 +1,43 @@
 import { getLongDelay } from '../../utils/cypressTools';
+import getRandomPostfix from '../../utils/stringTools';
+import TopMenu from '../topMenu';
+import JobProfiles from './job_profiles/jobProfiles';
+import SearchInventory from './searchInventory';
 
-export default {
-  goToDataImport:() => {
-    cy.visit('/data-import');
-  },
+const goToDataImport = () => {
+  cy.visit(TopMenu.dataImportPath);
+};
+const uploadFile = (fileName) => {
+  cy.get('input[type=file]', getLongDelay()).attachFile({ filePath: 'oneMarcBib.mrc', fileName });
+};
 
-  uploadFile(fileName) {
-    cy.get('input[type=file]', getLongDelay()).attachFile({ filePath: 'oneMarcBib.mrc', fileName });
-  },
-
+<<<<<<< HEAD
   uploadFileWithout999Field(fileName) {
     cy.get('input[type=file]', getLongDelay()).attachFile({ filePath: 'oneMarcBibWithout999Field.mrc', fileName });
   },
 
+=======
+export default {
+  goToDataImport,
+  uploadFile,
+>>>>>>> 56b1f17b6db5eec29fc99f4add4f4ade31eb8262
   uploadExportedFile(fileName) {
     cy.get('input[type=file]', getLongDelay()).attachFile(fileName);
+  },
+  uploadMarcBib: () => {
+    // unique file name to upload
+    const nameForMarcFileWithBib = `autotest1Bib${getRandomPostfix()}.mrc`;
+    // upload a marc file for export
+    goToDataImport();
+    uploadFile(nameForMarcFileWithBib);
+    JobProfiles.searchJobProfileForImport(JobProfiles.defaultInstanceAndSRSMarcBib);
+    JobProfiles.runImportFile(nameForMarcFileWithBib);
+
+    // get Instance HRID through API
+    SearchInventory.getInstanceHRID()
+      .then(id => {
+        cy.wrap(id).as('requestedHrId');
+      });
+    return cy.get('@requestedHrId');
   }
 };

@@ -52,6 +52,20 @@ const createJobProfile = (jobProfile) => {
 };
 
 export default {
+  defaultInstanceAndSRSMarcBib:'Default - Create instance and SRS MARC Bib',
+  openNewJobProfileForm: () => {
+    cy.do([
+      actionsButton.click(),
+      Button('New job profile').click(),
+    ]);
+  },
+
+  waitLoadingList:() => {
+    cy.get('[id="job-profiles-list"]', getLongDelay())
+      .should('be.visible');
+    cy.expect(actionsButton.exists());
+  },
+
   checkJobProfilePresented:(jobProfileTitle) => {
     cy.get('[id="job-profiles-list"]')
       .should('contains.text', jobProfileTitle);

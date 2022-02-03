@@ -8,3 +8,11 @@ Cypress.Commands.add('createOrganization', ({ name, code, status }) => {
     Button({ id: 'organization-form-save' }).click(),
   ]);
 });
+
+Cypress.Commands.add('getOrganizationApi', (searchParams) => {
+  return cy
+    .okapiRequest({
+      path: 'organizations/organizations',
+      searchParams
+    });
+});

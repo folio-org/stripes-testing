@@ -11,6 +11,8 @@ export const MultiColumnListRow = HTML.extend('multi column list row')
     selected: el => el.className.match(/mclSelected/),
     cellCount: el => [...el.querySelectorAll('div[class*=mclCell-]')].length,
     index: el => parseInt(el.getAttribute('data-row-inner'), 10),
+    // indexRow filter is a workaround for folio parts where we have data-row-inner=true (for some reason)
+    indexRow: el => el.parentElement.getAttribute('data-row-index'),
   });
 
 export const MultiColumnListCell = HTML.extend('multi column list cell')
