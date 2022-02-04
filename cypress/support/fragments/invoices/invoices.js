@@ -12,6 +12,8 @@ const success = 'success';
 const vendorDetailsAccordionId = 'vendorDetails';
 const invoiceLinesAccordionId = 'invoiceLines';
 const actionsButton = Button('Actions');
+const submitButton = Button('Submit');
+const searchButton = Button('Search');
 
 export default {
   createDefaultInvoiceViaUi(invoice, vendorPrimaryAddress) {
@@ -38,7 +40,7 @@ export default {
     cy.do([
       Button({ id: 'vendorId-plugin' }).click(),
       SearchField({ id: 'input-record-search' }).fillIn(organizationName),
-      Button('Search').click()
+      searchButton.click()
     ]);
     Helper.selectFromResultsList();
   },
@@ -115,7 +117,7 @@ export default {
       PaneHeader({ id: 'paneHeaderpane-invoiceDetails' })
         .find(actionsButton).click(),
       Button('Approve').click(),
-      Button('Submit').click()
+      submitButton.click()
     ]);
     Helper.checkCalloutMessage(InvoiceApprovedMessage, success);
   },
@@ -124,7 +126,7 @@ export default {
     cy.do([
       SearchField({ id: 'input-record-search' }).selectIndex('Vendor invoice number'),
       SearchField({ id: 'input-record-search' }).fillIn(invoiceNumber),
-      Button('Search').click(),
+      searchButton.click(),
     ]);
   },
 
@@ -133,7 +135,7 @@ export default {
       PaneHeader({ id: 'paneHeaderpane-invoiceDetails' })
         .find(actionsButton).click(),
       Button('Pay').click(),
-      Button('Submit').click()
+      submitButton.click()
     ]);
     Helper.checkCalloutMessage(InvoicePaidMessage, success);
   }
