@@ -19,10 +19,8 @@ export default {
   folioRecordTypeValue,
 
   fillActionProfile: (specialActionProfile = defaultActionProfile) => {
-    cy.log(JSON.stringify(specialActionProfile));
     cy.do([
       TextField({ name:'profile.name' }).fillIn(specialActionProfile.name),
-
       Select({ name:'profile.action' }).choose(specialActionProfile.action || action),
       Select({ name:'profile.folioRecord' }).choose(specialActionProfile.typeValue),
     ]);

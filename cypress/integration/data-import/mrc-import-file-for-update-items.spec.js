@@ -253,13 +253,13 @@ describe('ui-data-import: MARC file upload with the update of instance, holding,
       .getInstanceHRID()
       .then(id => {
         // download .csv file
-        searchInventory.gotoInventory();
+        cy.visit(topMenu.inventoryPath);
         searchInventory.searchInstanceByHRID(id);
         inventorySearch.saveUUIDs();
         exportMarcFile.downloadCSVFile(nameForCSVFile, 'SearchInstanceUUIDs*');
         fileManager.deleteFolder(Cypress.config('downloadsFolder'));
       });
-    cy.visit(topMenu.dataExport);
+    cy.visit(topMenu.dataExportPath);
 
     // create Field mapping profile for export
     const exportMappingProfile = {
@@ -273,7 +273,7 @@ describe('ui-data-import: MARC file upload with the update of instance, holding,
     exportJobProfiles.createJobProfile(jobProfileNameForExport, mappingProfileNameForExport);
 
     // download exported marc file
-    cy.visit(topMenu.dataExport);
+    cy.visit(topMenu.dataExportPath);
     exportFile.uploadFile(nameForCSVFile);
     exportFile.exportWithCreatedJobProfile(nameForCSVFile, jobProfileNameForExport);
     exportMarcFile.downloadExportedMarcFile(nameMarcFileForImportUpdate);
@@ -316,37 +316,9 @@ describe('ui-data-import: MARC file upload with the update of instance, holding,
 
     // create Match profile
     const collectionOfMatchProfiles = [
-      {
-        matchProfile: { profileName: matchProfileNameForInstance,
-          incomingRecordFields: {
-            field: '001'
-          },
-          existingRecordFields: {
-            field: '001'
-          },
-          matchCriterion: 'Exactly matches',
-          existingRecordType: 'MARC_BIBLIOGRAPHIC' }
-      },
-      {
-        matchProfile: { profileName: matchProfileNameForHoldings,
-          incomingRecordFields: {
-            field: '901',
-            subfield: 'a'
-          },
-          matchCriterion: 'Exactly matches',
-          existingRecordType: 'HOLDINGS' }
-      },
-      {
-        matchProfile: {
-          profileName: matchProfileNameForItem,
-          incomingRecordFields: {
-            field: '902',
-            subfield: 'a'
-          },
-          matchCriterion: 'Exactly matches',
-          existingRecordType: 'ITEM'
-        }
-      }
+      { matchProfile: { profileName: matchProfileNameForInstance } },
+      { matchProfile: { profileName: matchProfileNameForHoldings } },
+      { matchProfile: { profileName: matchProfileNameForItem } }
     ];
 
     settingsDataImport.goToMatchProfiles();
@@ -393,6 +365,8 @@ describe('ui-data-import: MARC file upload with the update of instance, holding,
     fieldMappingProfiles.deleteFieldMappingProfile(nameInstanceMappingProfile);
     fieldMappingProfiles.deleteFieldMappingProfile(nameHoldingsMappingProfile);
     fieldMappingProfiles.deleteFieldMappingProfile(nameItemMappingProfile);
+    exportJobProfiles.deleteJobProfile(jobProfileNameForExport);
+    exportFieldMappingProfiles.deleteFieldMappingProfile(exportMappingProfile.name);
 
     // delete downloads folder and created files in fixtures
     fileManager.deleteFolder(Cypress.config('downloadsFolder'));
