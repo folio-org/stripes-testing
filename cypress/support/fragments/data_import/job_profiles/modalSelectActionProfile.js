@@ -1,6 +1,5 @@
 import { Button, Modal, TextField, MultiColumnListCell } from '../../../../../interactors';
 
-
 export default {
   searchActionProfileByName: (profileName, type) => {
     const modalSelectProfile = Modal(type === 'match' ? 'Select Match Profiles' : 'Select Action Profiles');
