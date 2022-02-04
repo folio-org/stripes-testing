@@ -38,7 +38,14 @@ export default HTML.extend('accordion')
       }
 
       return undefined;
-    }
+    },
+    // related with common checks of accordion elements(disabled for example)
+    textareaNames: el => [...el.querySelectorAll('textarea')].map(textarea => textarea.getAttribute('name')),
+    selectNames: el => [...el.querySelectorAll('select')].map(select => select.getAttribute('name')),
+    buttonAriaLabels: el => [...el.querySelectorAll('>div[class^=content-] button')].map(button => button.getAttribute('aria-label')),
+    buttonIds: el => [...el.querySelectorAll('>div[class^=content-] button')].map(button => button.getAttribute('id')),
+    buttonContainsText: el => [...el.querySelectorAll('>div[class^=content-] button')].map(button => button.textContent),
+    inputNames: el => [...el.querySelectorAll('input')].map(input => input.getAttribute('name')),
   })
   .actions({
     clickHeader: ({ perform }) => perform(el => el.querySelector('[class^=labelArea-]').click()),

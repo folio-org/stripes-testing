@@ -77,7 +77,7 @@ describe('Manage inventory Bib records with quickMarc editor', () => {
     QuickMarcEditor.checkRequiredFields();
   });
 
-  it('C10951 Add a 5XX field to a marc record in quickMARC', { tags: [testTypes.smoke, features.quickMarcEditor] }, () => {
+  it.only('C10951 Add a 5XX field to a marc record in quickMARC', { tags: [testTypes.smoke, features.quickMarcEditor] }, () => {
     InventoryInstance.overlaySourceBibRecord();
 
     // TODO: add id to div with update datetime and verification of this value
@@ -86,21 +86,22 @@ describe('Manage inventory Bib records with quickMarc editor', () => {
 
     InventoryInstance.editInstance();
     // TODO: add assert to readonly fields
-    InventoryInstanceEdit.close();
+    InventoryInstanceEdit.checkReadOnlyFields();
+    // InventoryInstanceEdit.close();
 
-    InventoryInstance.goToEditMARCBiblRecord();
-    QuickMarcEditor.addRow();
-    QuickMarcEditor.checkInitialContent();
+    // InventoryInstance.goToEditMARCBiblRecord();
+    // QuickMarcEditor.addRow();
+    // QuickMarcEditor.checkInitialContent();
 
-    const testRecord = { content: 'testContent', tag: '505', tagMeaning: 'Formatted Contents Note' };
-    const expectedInSourceRow = QuickMarcEditor.fillAllAvailableValues(testRecord.content, testRecord.tag);
-    QuickMarcEditor.pressSaveAndClose();
+    // const testRecord = { content: 'testContent', tag: '505', tagMeaning: 'Formatted Contents Note' };
+    // const expectedInSourceRow = QuickMarcEditor.fillAllAvailableValues(testRecord.content, testRecord.tag);
+    // QuickMarcEditor.pressSaveAndClose();
 
-    InventoryInstance.viewSource();
-    InventoryViewSource.contains(expectedInSourceRow);
-    InventoryViewSource.close();
+    // InventoryInstance.viewSource();
+    // InventoryViewSource.contains(expectedInSourceRow);
+    // InventoryViewSource.close();
 
-    InventoryInstance.checkInstanceNotes(testRecord.tagMeaning, testRecord.content);
+    // InventoryInstance.checkInstanceNotes(testRecord.tagMeaning, testRecord.content);
   });
 
   it('C345388 Derive a MARC bib record', { tags: [testTypes.smoke, features.quickMarcEditor] }, () => {
