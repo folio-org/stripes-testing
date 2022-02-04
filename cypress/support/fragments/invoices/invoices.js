@@ -4,10 +4,12 @@ import Helper from '../finance/financeHelper';
 
 const buttonNew = Button('New');
 const saveAndClose = Button('Save & close');
-const invoiceCreatedMessage = 'Invoice has been saved';
-const invoiceLineCreatedMessage = 'Invoice line has been saved';
-const InvoiceApprovedMessage = 'Invoice has been approved successfully';
-const InvoicePaidMessage = 'Invoice has been paid successfully';
+const invoiceStates = {
+  invoiceCreatedMessage: 'Invoice has been saved',
+  invoiceLineCreatedMessage: 'Invoice line has been saved',
+  InvoiceApprovedMessage: 'Invoice has been approved successfully',
+  InvoicePaidMessage: 'Invoice has been paid successfully'
+};
 const success = 'success';
 const vendorDetailsAccordionId = 'vendorDetails';
 const invoiceLinesAccordionId = 'invoiceLines';
@@ -33,7 +35,7 @@ export default {
     ]);
     this.checkVendorPrimaryAddress(vendorPrimaryAddress);
     cy.do(saveAndClose.click());
-    Helper.checkCalloutMessage(invoiceCreatedMessage, success);
+    Helper.checkCalloutMessage(invoiceStates.invoiceCreatedMessage, success);
   },
 
   selectVendorOnUi: (organizationName) => {
@@ -89,7 +91,7 @@ export default {
       TextField('Quantity*').fillIn(invoiceLine.quantity.toString()),
       saveAndClose.click()
     ]);
-    Helper.checkCalloutMessage(invoiceLineCreatedMessage, success);
+    Helper.checkCalloutMessage(invoiceStates.invoiceLineCreatedMessage, success);
   },
 
   checkInvoiceLine: (invoiceLine) => {
@@ -109,7 +111,7 @@ export default {
       SelectionList().select((fund.name).concat(' ', '(', fund.code, ')')),
       saveAndClose.click()
     ]);
-    Helper.checkCalloutMessage(invoiceLineCreatedMessage, success);
+    Helper.checkCalloutMessage(invoiceStates.invoiceLineCreatedMessage, success);
   },
 
   approveInvoice: () => {
@@ -119,7 +121,7 @@ export default {
       Button('Approve').click(),
       submitButton.click()
     ]);
-    Helper.checkCalloutMessage(InvoiceApprovedMessage, success);
+    Helper.checkCalloutMessage(invoiceStates.InvoiceApprovedMessage, success);
   },
 
   searchByNumber: (invoiceNumber) => {
@@ -137,6 +139,6 @@ export default {
       Button('Pay').click(),
       submitButton.click()
     ]);
-    Helper.checkCalloutMessage(InvoicePaidMessage, success);
+    Helper.checkCalloutMessage(invoiceStates.InvoicePaidMessage, success);
   }
 };

@@ -118,24 +118,11 @@ export default {
   },
 
   checkTransaction: (rowNumber, transaction) => {
-    cy.expect(Pane({ id: transactionResultPaneId })
-      .find(MultiColumnListRow({ index: rowNumber }))
-      .find(MultiColumnListCell({ content: transaction.from })).exists());
-    cy.expect(Pane({ id: transactionResultPaneId })
-      .find(MultiColumnListRow({ index: rowNumber }))
-      .find(MultiColumnListCell({ content: transaction.to })).exists());
-    cy.expect(Pane({ id: transactionResultPaneId })
-      .find(MultiColumnListRow({ index: rowNumber }))
-      .find(MultiColumnListCell({ content: transaction.source })).exists());
-    cy.expect(Pane({ id: transactionResultPaneId })
-      .find(MultiColumnListRow({ index: rowNumber }))
-      .find(MultiColumnListCell({ content: transaction.type })).exists());
-    cy.expect(Pane({ id: transactionResultPaneId })
-      .find(MultiColumnListRow({ index: rowNumber }))
-      .find(MultiColumnListCell({ content: transaction.amount })).exists());
-    cy.expect(Pane({ id: transactionResultPaneId })
-      .find(MultiColumnListRow({ index: rowNumber }))
-      .find(MultiColumnListCell({ content: transaction.tags })).exists());
+    for (const value of Object.values(transaction)) {
+      cy.expect(Pane({ id: transactionResultPaneId })
+        .find(MultiColumnListRow({ index: rowNumber }))
+        .find(MultiColumnListCell({ content: value })).exists());
+    }
   },
 
   transferAmount: (amount, fundFrom, fundTo) => {

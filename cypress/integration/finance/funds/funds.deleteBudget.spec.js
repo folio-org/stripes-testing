@@ -1,20 +1,20 @@
 import Funds from '../../../support/fragments/finance/funds/funds';
 import { getCurrentFiscalYearCode } from '../../../support/utils/dateTools';
-import testType from '../../../support/dictionary/testTypes';
+import TestType from '../../../support/dictionary/testTypes';
 import FinanceHelp from '../../../support/fragments/finance/financeHelper';
-import newFund from '../../../support/fragments/finance/funds/newFund';
+import NewFund from '../../../support/fragments/finance/funds/newFund';
 import Transaction from '../../../support/fragments/finance/fabrics/newTransaction';
 
 describe('ui-finance: Delete budget from fund', () => {
   const currentBudgetSectionId = 'currentBudget';
-  const fund = { ...newFund.defaultFund };
+  const fund = { ...NewFund.defaultFund };
   let createdLedgerId;
 
   afterEach(() => {
     cy.deleteLedgerApi(createdLedgerId);
   });
 
-  it('C343211 Delete Budget', { tags: [testType.smoke] }, () => {
+  it('C343211 Delete Budget', { tags: [TestType.smoke] }, () => {
     const quantityArray = [0, 100];
     Funds.createFundViaUI(fund)
       .then(

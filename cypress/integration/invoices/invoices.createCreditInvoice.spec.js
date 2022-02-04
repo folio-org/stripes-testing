@@ -2,9 +2,9 @@ import TopMenu from '../../support/fragments/topMenu';
 import NewInvoice from '../../support/fragments/invoices/newInvoice';
 import NewInvoiceLine from '../../support/fragments/invoices/newInvoiceLine';
 import Invoices from '../../support/fragments/invoices/invoices';
-import testType from '../../support/dictionary/testTypes';
+import TestType from '../../support/dictionary/testTypes';
 import VendorAddress from '../../support/fragments/invoices/vendorAddress';
-import newFund from '../../support/fragments/finance/funds/newFund';
+import NewFund from '../../support/fragments/finance/funds/newFund';
 import Funds from '../../support/fragments/finance/funds/funds';
 import { getCurrentFiscalYearCode } from '../../support/utils/dateTools';
 import Helper from '../../support/fragments/finance/financeHelper';
@@ -14,7 +14,7 @@ describe('ui-invoices: Credit Invoice creation', () => {
   const invoice = { ...NewInvoice.defaultUiInvoice };
   const vendorPrimaryAddress = { ...VendorAddress.vendorAddress };
   const invoiceLine = { ...NewInvoiceLine.defaultUiInvoiceLine };
-  const fund = { ...newFund.defaultFund };
+  const fund = { ...NewFund.defaultFund };
   const subtotalValue = 100;
 
   before(() => {
@@ -40,7 +40,7 @@ describe('ui-invoices: Credit Invoice creation', () => {
     cy.visit(TopMenu.invoicesPath);
   });
 
-  it('C343209 Create a credit invoice', { tags: [testType.smoke] }, () => {
+  it('C343209 Create a credit invoice', { tags: [TestType.smoke] }, () => {
     Invoices.createDefaultInvoiceViaUi(invoice, vendorPrimaryAddress);
     Invoices.createInvoiceLine(invoiceLine, false);
     Invoices.addFundDistributionToLine(invoiceLine, fund);
