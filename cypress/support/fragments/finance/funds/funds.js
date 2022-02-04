@@ -13,7 +13,9 @@ import {
   HTML,
   including,
   KeyValue,
-  Pane
+  Pane,
+  MultiColumnListRow,
+  MultiColumnListCell
 } from '../../../../../interactors';
 import { statusActive, statusInactive, statusFrozen } from '../financeHelper';
 import TopMenu from '../../topMenu';
@@ -115,10 +117,19 @@ export default {
     cy.xpath(viewTransactionsLinkXpath).click();
   },
 
-  checkTransaction: (value, fundCode) => {
-    // TODO: refactor using interactors (Mutli column list)
-    cy.expect(Pane({ id: transactionResultPaneId }).find(HTML(including('$' + value.toFixed(2)))).exists());
-    cy.expect(Section({ id: transactionResultPaneId }).find(HTML(including(fundCode))).exists());
+  checkTransaction: (rowNumber, transaction) => {
+    cy.expect(Pane({ id: transactionResultPaneId })
+      .find(MultiColumnListRow({ index: rowNumber }))
+      .find(MultiColumnListCell({ content: transaction.from })).exists());
+    cy.expect(Pane({ id: transactionResultPaneId })
+      .find(MultiColumnListRow({ index: rowNumber }))
+      .find(MultiColumnListCell({ content: transaction.source })).exists());
+    cy.expect(Pane({ id: transactionResultPaneId })
+      .find(MultiColumnListRow({ index: rowNumber }))
+      .find(MultiColumnListCell({ content: transaction.type })).exists());
+    cy.expect(Pane({ id: transactionResultPaneId })
+      .find(MultiColumnListRow({ index: rowNumber }))
+      .find(MultiColumnListCell({ content: transaction.amount })).exists());
   },
 
   transferAmount: (amount, fundFrom, fundTo) => {
@@ -250,5 +261,11 @@ export default {
         }
       );
     return cy.get('@createdLedger');
+  },
+
+  openBudgetDetails: (fundCode, fiscalYear) => {
+    cy.do([
+      Accordion({ id: 'currentBudget' }).find(MultiColumnListCell({ content: fundCode.concat('-', fiscalYear) })).click()
+    ]);
   }
 };
