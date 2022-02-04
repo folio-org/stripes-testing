@@ -1,6 +1,6 @@
 import { Button, TextField, MultiColumnListCell, Modal } from '../../../../../interactors';
 import { getLongDelay } from '../../../utils/cypressTools';
-import NewJobProfile from './newJobProfile';
+import newJobProfile from './newJobProfile';
 
 const actionsButton = Button('Actions');
 
@@ -46,6 +46,11 @@ const deleteJobProfile = (profileName) => {
     });
 };
 
+const createJobProfile = (jobProfile) => {
+  openNewJobProfileForm();
+  newJobProfile.fillJobProfile(jobProfile);
+};
+
 export default {
   defaultInstanceAndSRSMarcBib:'Default - Create instance and SRS MARC Bib',
   openNewJobProfileForm: () => {
@@ -78,22 +83,27 @@ export default {
       Button('Run').click(),
       Modal('Are you sure you want to run this job?').find(Button('Run')).click(),
     ]);
-
     // wait until uploaded file is displayed in the list
     cy.get('#job-logs-list', getLongDelay()).contains(fileName, getLongDelay());
   },
 
   deleteJobProfile,
+  createJobProfile,
 
-  createJobProfile: (jobProfile, actionProfileName, matchProfileName) => {
+  createJobProfileWithLinkingProfiles: (jobProfile, actionProfileName, matchProfileName) => {
     openNewJobProfileForm();
-    NewJobProfile.fillJobProfile(jobProfile);
+    newJobProfile.fillJobProfile(jobProfile);
     if (!matchProfileName) {
-      NewJobProfile.linkActionProfile(actionProfileName);
+      newJobProfile.linkActionProfile(actionProfileName);
     } else {
-      NewJobProfile.linkMatchAndActionProfiles(matchProfileName, actionProfileName);
+      newJobProfile.linkMatchAndActionProfiles(matchProfileName, actionProfileName);
     }
-    NewJobProfile.clickSaveAndCloseButton();
+    newJobProfile.clickSaveAndCloseButton();
     waitLoadingList();
+  },
+
+  createJobProfileWithLinkingProfilesForUpdate: (jobProfile) => {
+    openNewJobProfileForm();
+    newJobProfile.fillJobProfile(jobProfile);
   },
 };

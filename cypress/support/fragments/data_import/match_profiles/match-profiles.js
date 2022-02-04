@@ -1,8 +1,8 @@
-import { Button, MultiColumnListCell, Select, TextField } from '../../../../../interactors';
+import { Button, MultiColumnListCell, Select, TextField, SelectionList, Section } from '../../../../../interactors';
 
 const openNewMatchProfileForm = () => {
   cy.do([
-    Button('Actions').click(),
+    Section({ id: 'pane-results' }).find(Button('Actions')).click(),
     Button('New match profile').click()
   ]);
 };
@@ -41,17 +41,37 @@ const fillMatchProfileForm = ({
   profileName,
   incomingRecordFields,
   existingRecordFields,
-  matchCriterion
+  matchCriterion,
+  existingRecordType
 }) => {
   cy.do(TextField('Name*').fillIn(profileName));
   // select existing record type
-  cy.get('[data-id="MARC_BIBLIOGRAPHIC"]').click();
+  // wait for data to be loaded
+  cy.intercept(
+    {
+      method: 'GET',
+      url: '/_/jsonSchemas?path=raml-util/schemas/metadata.schema',
+    }
+  ).as('getJson');
+  cy.wait('@getJson');
+  // TODO think about how to use interactor
+  cy.get(`[data-id="${existingRecordType}"]`).last().click();
   // fill MARC Bibliographic field in incoming
   fillIncomingRecordFields(incomingRecordFields);
   // choose match criterion
   cy.do(Select('Match criterion').choose(matchCriterion));
-  // fill MARC Bibliographic field in existing
-  fillExistingRecordFields(existingRecordFields);
+  if (existingRecordType === 'MARC_BIBLIOGRAPHIC') {
+    // fill MARC Bibliographic field in existing
+    fillExistingRecordFields(existingRecordFields);
+  } else if (existingRecordType === 'HOLDINGS') {
+    cy.do(Button({ id:'criterion-value-type' }).click());
+    cy.expect(SelectionList({ id: 'sl-container-criterion-value-type' }).exists());
+    cy.do(SelectionList({ id: 'sl-container-criterion-value-type' }).select('Admin data: Holdings HRID'));
+  } else {
+    cy.do(Button({ id:'criterion-value-type' }).click());
+    cy.expect(SelectionList({ id: 'sl-container-criterion-value-type' }).exists());
+    cy.do(SelectionList({ id: 'sl-container-criterion-value-type' }).select('Admin data: Item HRID'));
+  }
 };
 
 const deleteMatchProfile = (profileName) => {

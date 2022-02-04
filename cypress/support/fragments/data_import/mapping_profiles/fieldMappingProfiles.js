@@ -50,6 +50,13 @@ export default {
     cy.expect(actionsButton.exists());
   },
 
+  createMappingProfileForUpdate:(mappingProfile) => {
+    openNewMappingProfileForm();
+    newMappingProfile.fillMappingProfileForUpdate(mappingProfile);
+    closeViewModeForMappingProfile();
+    cy.expect(actionsButton.exists());
+  },
+
   checkMappingProfilePresented: (mappingProfile) => {
     cy.do(TextField({ id:'input-search-mapping-profiles-field' }).fillIn(mappingProfile));
     cy.do(Button('Search').click());

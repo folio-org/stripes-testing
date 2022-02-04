@@ -15,3 +15,4 @@ import './organizations';
 import './permissions';
 import './orders';
 import './batch-groups';
+import './data-import';
