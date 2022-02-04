@@ -123,6 +123,9 @@ export default {
       .find(MultiColumnListCell({ content: transaction.from })).exists());
     cy.expect(Pane({ id: transactionResultPaneId })
       .find(MultiColumnListRow({ index: rowNumber }))
+      .find(MultiColumnListCell({ content: transaction.to })).exists());
+    cy.expect(Pane({ id: transactionResultPaneId })
+      .find(MultiColumnListRow({ index: rowNumber }))
       .find(MultiColumnListCell({ content: transaction.source })).exists());
     cy.expect(Pane({ id: transactionResultPaneId })
       .find(MultiColumnListRow({ index: rowNumber }))
@@ -130,6 +133,9 @@ export default {
     cy.expect(Pane({ id: transactionResultPaneId })
       .find(MultiColumnListRow({ index: rowNumber }))
       .find(MultiColumnListCell({ content: transaction.amount })).exists());
+    cy.expect(Pane({ id: transactionResultPaneId })
+      .find(MultiColumnListRow({ index: rowNumber }))
+      .find(MultiColumnListCell({ content: transaction.tags })).exists());
   },
 
   transferAmount: (amount, fundFrom, fundTo) => {
