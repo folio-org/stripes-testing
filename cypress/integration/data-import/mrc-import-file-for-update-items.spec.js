@@ -204,7 +204,7 @@ describe('ui-data-import: MARC file upload with the update of instance, holding,
   const mappingProfileNameForExport = `autoTestMappingProf.${getRandomPostfix()}`;
   const jobProfileNameForExport = `autoTestJobProf.${getRandomPostfix()}`;
 
-  before('navigates to Settings', () => {
+  before(() => {
     cy.login(
       Cypress.env('diku_login'),
       Cypress.env('diku_password')
@@ -316,9 +316,37 @@ describe('ui-data-import: MARC file upload with the update of instance, holding,
 
     // create Match profile
     const collectionOfMatchProfiles = [
-      { matchProfile: { profileName: matchProfileNameForInstance } },
-      { matchProfile: { profileName: matchProfileNameForHoldings } },
-      { matchProfile: { profileName: matchProfileNameForItem } }
+      {
+        matchProfile: { profileName: matchProfileNameForInstance,
+          incomingRecordFields: {
+            field: '001'
+          },
+          existingRecordFields: {
+            field: '001'
+          },
+          matchCriterion: 'Exactly matches',
+          existingRecordType: 'MARC_BIBLIOGRAPHIC' }
+      },
+      {
+        matchProfile: { profileName: matchProfileNameForHoldings,
+          incomingRecordFields: {
+            field: '901',
+            subfield: 'a'
+          },
+          matchCriterion: 'Exactly matches',
+          existingRecordType: 'HOLDINGS' }
+      },
+      {
+        matchProfile: {
+          profileName: matchProfileNameForItem,
+          incomingRecordFields: {
+            field: '902',
+            subfield: 'a'
+          },
+          matchCriterion: 'Exactly matches',
+          existingRecordType: 'ITEM'
+        }
+      }
     ];
 
     settingsDataImport.goToMatchProfiles();

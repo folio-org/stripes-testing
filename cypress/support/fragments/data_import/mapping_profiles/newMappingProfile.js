@@ -1,4 +1,4 @@
-import { TextField, Button, Select } from '../../../../../interactors';
+import { TextField, Button, Select, TextArea } from '../../../../../interactors';
 import getRandomPostfix from '../../../utils/stringTools';
 
 const marcBib = 'MARC Bibliographic';
@@ -153,5 +153,23 @@ export default {
     specialMappingProfile.fillProfile();
     cy.do(Button('Save as profile & Close').click());
     cy.expect(Button('Save as profile & Close').absent());
-  }
+  },
+
+  fillModifyMappingProfile(specialMappingProfile = defaultMappingProfile) {
+    cy.do([
+      TextField({ name:'profile.name' }).fillIn(specialMappingProfile.name),
+      Select({ name:'profile.incomingRecordType' }).choose(marcBib),
+      Select({ name:'profile.existingRecordType' }).choose(marcBib),
+      Select({ name:'profile.mappingDetails.marcMappingOption' }).choose('Modifications'),
+      Select({ name:'profile.mappingDetails.marcMappingDetails[0].action' }).choose('Add'),
+      TextField({ name:'profile.mappingDetails.marcMappingDetails[0].field.field' }).fillIn('947'),
+      TextField({ name:'profile.mappingDetails.marcMappingDetails[0].field.subfields[0].subfield' }).fillIn('a'),
+      Select({ name:'profile.mappingDetails.marcMappingDetails[0].field.subfields[0].subaction' }).choose('Add subfield'),
+      TextArea({ name:'profile.mappingDetails.marcMappingDetails[0].field.subfields[0].data.text' }).fillIn('Test'),
+      TextField({ name:'profile.mappingDetails.marcMappingDetails[0].field.subfields[1].subfield' }).fillIn('b'),
+      TextArea({ name:'profile.mappingDetails.marcMappingDetails[0].field.subfields[1].data.text' }).fillIn('Addition'),
+      Button('Save as profile & Close').click(),
+    ]);
+    cy.expect(Button('Save as profile & Close').absent());
+  },
 };

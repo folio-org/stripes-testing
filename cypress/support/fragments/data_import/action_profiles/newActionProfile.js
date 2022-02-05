@@ -4,6 +4,8 @@ import ModalSelectMappingProfile from './modalSelectMappingProfile';
 
 const action = 'Create (all record types)';
 
+const typeValue = 'MARC Bibliographic';
+
 const folioRecordTypeValue = {
   instance: 'Instance',
   holdings: 'Holdings',
@@ -22,7 +24,7 @@ export default {
     cy.do([
       TextField({ name:'profile.name' }).fillIn(specialActionProfile.name),
       Select({ name:'profile.action' }).choose(specialActionProfile.action || action),
-      Select({ name:'profile.folioRecord' }).choose(specialActionProfile.typeValue),
+      Select({ name:'profile.folioRecord' }).choose(specialActionProfile.typeValue || typeValue),
     ]);
   },
 
