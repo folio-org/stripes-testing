@@ -32,7 +32,7 @@ export default HTML.extend('select')
       return feedbackWarning ? feedbackWarning.textContent : undefined;
     },
     valid: el => el.querySelector('select').getAttribute('aria-invalid') !== 'true',
-    disabled: el => el.querySelector('select').getAttribute('disabled'),
+    disabled: el => el.querySelector('select').disabled,
   })
   .actions({
     choose,
