@@ -6,7 +6,7 @@ import TestType from '../../support/dictionary/testTypes';
 import VendorAddress from '../../support/fragments/invoices/vendorAddress';
 import NewFund from '../../support/fragments/finance/funds/newFund';
 import Funds from '../../support/fragments/finance/funds/funds';
-import { getCurrentFiscalYearCode } from '../../support/utils/dateTools';
+import DateTools from '../../support/utils/dateTools';
 import Helper from '../../support/fragments/finance/financeHelper';
 import Transaction from '../../support/fragments/finance/fabrics/newTransaction';
 
@@ -33,7 +33,7 @@ describe('ui-invoices: Credit Invoice creation', () => {
       .then(
         () => {
           Funds.addBudget(100);
-          Funds.checkCreatedBudget(fund.code, getCurrentFiscalYearCode());
+          Funds.checkCreatedBudget(fund.code, DateTools.getCurrentFiscalYearCode());
         }
       );
     invoiceLine.subTotal = -subtotalValue;
@@ -49,7 +49,7 @@ describe('ui-invoices: Credit Invoice creation', () => {
     cy.visit(TopMenu.fundPath);
     Helper.searchByName(fund.name);
     Helper.selectFromResultsList();
-    Funds.openBudgetDetails(fund.code, getCurrentFiscalYearCode());
+    Funds.openBudgetDetails(fund.code, DateTools.getCurrentFiscalYearCode());
     Funds.openTransactions();
     const valueInTransactionTable = `$${subtotalValue.toFixed(2)}`;
     const pendingPaymentTransaction = new Transaction('Pending payment', valueInTransactionTable, fund.code, '', 'Invoice', '');
@@ -63,7 +63,7 @@ describe('ui-invoices: Credit Invoice creation', () => {
     cy.visit(TopMenu.fundPath);
     Helper.searchByName(fund.name);
     Helper.selectFromResultsList();
-    Funds.openBudgetDetails(fund.code, getCurrentFiscalYearCode());
+    Funds.openBudgetDetails(fund.code, DateTools.getCurrentFiscalYearCode());
     Funds.openTransactions();
     const creditTransaction = new Transaction('Credit', valueInTransactionTable, fund.code, '', 'Invoice', '');
     Funds.checkTransaction(1, creditTransaction);

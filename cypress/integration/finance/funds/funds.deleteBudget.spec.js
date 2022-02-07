@@ -1,5 +1,5 @@
 import Funds from '../../../support/fragments/finance/funds/funds';
-import { getCurrentFiscalYearCode } from '../../../support/utils/dateTools';
+import DateTools from '../../../support/utils/dateTools';
 import TestType from '../../../support/dictionary/testTypes';
 import FinanceHelp from '../../../support/fragments/finance/financeHelper';
 import NewFund from '../../../support/fragments/finance/funds/newFund';
@@ -23,7 +23,7 @@ describe('ui-finance: Delete budget from fund', () => {
           quantityArray.forEach(
             quantity => {
               Funds.addBudget(quantity);
-              Funds.checkCreatedBudget(fund.code, getCurrentFiscalYearCode());
+              Funds.checkCreatedBudget(fund.code, DateTools.getCurrentFiscalYearCode());
               Funds.checkBudgetQuantity(quantity);
               Funds.openTransactions();
               if (quantity === 0) {
