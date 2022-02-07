@@ -41,6 +41,7 @@ describe('ui-invoices: Credit Invoice creation', () => {
   });
 
   it('C343209 Create a credit invoice', { tags: [TestType.smoke] }, () => {
+    const transactionFactory = new Transaction();
     Invoices.createDefaultInvoiceViaUi(invoice, vendorPrimaryAddress);
     Invoices.createInvoiceLine(invoiceLine, false);
     Invoices.addFundDistributionToLine(invoiceLine, fund);
@@ -52,8 +53,7 @@ describe('ui-invoices: Credit Invoice creation', () => {
     Funds.openBudgetDetails(fund.code, DateTools.getCurrentFiscalYearCode());
     Funds.openTransactions();
     const valueInTransactionTable = `$${subtotalValue.toFixed(2)}`;
-    const pendingPaymentTransaction = new Transaction('Pending payment', valueInTransactionTable, fund.code, '', 'Invoice', '');
-    Funds.checkTransaction(1, pendingPaymentTransaction);
+    Funds.checkTransaction(1, transactionFactory.create('pending', valueInTransactionTable, fund.code, '', 'Invoice', ''));
     // pay invoice
     cy.visit(TopMenu.invoicesPath);
     Invoices.searchByNumber(invoice.invoiceNumber);
@@ -65,7 +65,6 @@ describe('ui-invoices: Credit Invoice creation', () => {
     Helper.selectFromResultsList();
     Funds.openBudgetDetails(fund.code, DateTools.getCurrentFiscalYearCode());
     Funds.openTransactions();
-    const creditTransaction = new Transaction('Credit', valueInTransactionTable, fund.code, '', 'Invoice', '');
-    Funds.checkTransaction(1, creditTransaction);
+    Funds.checkTransaction(1, transactionFactory.create('credit', valueInTransactionTable, fund.code, '', 'Invoice', ''));
   });
 });

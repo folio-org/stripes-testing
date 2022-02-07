@@ -20,6 +20,7 @@ import {
 import { statusActive, statusInactive, statusFrozen } from '../financeHelper';
 import TopMenu from '../../topMenu';
 import getRandomPostfix from '../../../utils/stringTools';
+import Describer from '../../../utils/describer';
 
 const createdFundNameXpath = '//*[@id="paneHeaderpane-fund-details-pane-title"]/h2/span';
 const numberOfSearchResultsHeader = '//*[@id="paneHeaderfund-results-pane-subtitle"]/span';
@@ -118,11 +119,12 @@ export default {
   },
 
   checkTransaction: (rowNumber, transaction) => {
-    for (const value of Object.values(transaction)) {
-      cy.expect(Pane({ id: transactionResultPaneId })
-        .find(MultiColumnListRow({ index: rowNumber }))
-        .find(MultiColumnListCell({ content: value })).exists());
-    }
+    Describer.getProperties(transaction)
+      .forEach(function (val) {
+        cy.expect(Pane({ id: transactionResultPaneId })
+          .find(MultiColumnListRow({ index: rowNumber }))
+          .find(MultiColumnListCell({ content: transaction[val] })).exists());
+      });
   },
 
   transferAmount: (amount, fundFrom, fundTo) => {

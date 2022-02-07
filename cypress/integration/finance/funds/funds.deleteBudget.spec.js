@@ -16,6 +16,7 @@ describe('ui-finance: Delete budget from fund', () => {
 
   it('C343211 Delete Budget', { tags: [TestType.smoke] }, () => {
     const quantityArray = [0, 100];
+    const transactionFactory = new Transaction();
     Funds.createFundViaUI(fund)
       .then(
         createdLedger => {
@@ -30,8 +31,7 @@ describe('ui-finance: Delete budget from fund', () => {
                 // check empty transaction
                 FinanceHelp.checkZeroSearchResultsMessage();
               } else {
-                const allocationTransaction = new Transaction('Allocation', `$${quantity.toFixed(2)}`, fund.code, '', 'User', '');
-                Funds.checkTransaction(0, allocationTransaction);
+                Funds.checkTransaction(0, transactionFactory.create('allocation', `$${quantity.toFixed(2)}`, fund.code, '', 'User', ''));
               }
               FinanceHelp.clickOnCloseIconButton();
               Funds.deleteBudgetViaActions();
