@@ -66,7 +66,7 @@ describe('ui-data-import: MARC file import with matching for 999 ff field', () =
       profileName: jobProfileNameForExport
     };
     SettingsDataImport.goToJobProfiles();
-    jobProfiles.createJobProfile(jobProfileForExport, actionProfileForExport);
+    jobProfiles.createJobProfileWithLinkingProfiles(jobProfileForExport, actionProfileForExport);
     jobProfiles.checkJobProfilePresented(jobProfileNameForExport);
 
     // upload a marc file for export
@@ -113,6 +113,7 @@ describe('ui-data-import: MARC file import with matching for 999 ff field', () =
             subfield: 's'
           },
           matchCriterion: 'Exactly matches',
+          existingRecordType: 'MARC_BIBLIOGRAPHIC'
         };
         SettingsDataImport.goToMatchProfiles();
         MatchProfiles.createMatchProfile(matchProfile);
@@ -143,7 +144,7 @@ describe('ui-data-import: MARC file import with matching for 999 ff field', () =
           profileName: jobProfileName
         };
         SettingsDataImport.goToJobProfiles();
-        jobProfiles.createJobProfile(jobProfile, actionProfileName, matchProfileName);
+        jobProfiles.createJobProfileWithLinkingProfiles(jobProfile, actionProfileName, matchProfileName);
         jobProfiles.checkJobProfilePresented(jobProfileName);
 
         // upload the exported marc file with 999.f.f.s fields

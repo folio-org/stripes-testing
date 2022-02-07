@@ -32,6 +32,7 @@ const defaultMappingProfile = {
   material: materialType,
   loan: permanentLoanType,
   statusField: status,
+  fillProfile:''
 };
 
 export default {
@@ -54,11 +55,15 @@ export default {
     if (specialMappingProfile.typeValue === holdingsType) {
       cy.do(TextField('Permanent').fillIn(permanentLocation));
     } else if (specialMappingProfile.typeValue === itemType) {
+      cy.intercept(
+        {
+          method: 'GET',
+          url: 'loan-types?*',
+        }
+      ).as('getType');
+      cy.do(TextField('Material type').fillIn(materialType));
+      cy.wait('@getType');
       cy.do([
-        TextField('Material type').fillIn(materialType),
-        // TODO create waiter
-        // eslint-disable-next-line cypress/no-unnecessary-waiting
-        cy.wait(1200),
         TextField('Permanent loan type').fillIn(permanentLoanType),
         TextField('Status').fillIn(status),
       ]);
@@ -74,5 +79,79 @@ export default {
       }
     }
     cy.do(Button('Save as profile & Close').click());
+  },
+
+  fillInstanceMappingProfile() {
+    cy.do([
+      TextField('Cataloged date').fillIn(catalogedDate),
+      TextField('Instance status term').fillIn(instanceStatusTerm)]);
+    cy.get('[name="profile.mappingDetails.mappingFields[8].repeatableFieldAction"]').select('Add these to existing');
+    // wait for data to be loaded
+    cy.intercept(
+      {
+        method: 'GET',
+        url: '/statistical-code-types?*',
+      }
+    ).as('getTypes');
+    cy.do(Button('Add statistical code').click());
+    cy.wait('@getTypes');
+    cy.do(TextField('Statistical code').fillIn('"ARL (Collection stats): books - Book, print (books)"'));
+  },
+
+  fillHoldingsMappingProfile() {
+    // wait for data to be loaded
+    cy.intercept(
+      {
+        method: 'GET',
+        url: '/locations?*',
+      }
+    ).as('getField');
+    cy.do(TextField('Permanent').fillIn('"Online (E)"'));
+    cy.wait('@getField');
+    cy.do(TextField('Holdings type').fillIn('"Electronic"'));
+    cy.do(TextField('Call number type').fillIn('"Library of Congress classification"'));
+    cy.do(TextField('Call number').fillIn('050$a " " 050$b'));
+    cy.get('[name="profile.mappingDetails.mappingFields[22].repeatableFieldAction"]').select('Add these to existing');
+    cy.do(Button('Add electronic access').click());
+    cy.do(TextField('Relationship').fillIn('"Resource"'));
+    cy.do(TextField('URI').fillIn('856$u'));
+  },
+
+  fillItemMappingProfile() {
+    // wait for data to be loaded
+    cy.intercept(
+      {
+        method: 'GET',
+        url: '/locations?*',
+      }
+    ).as('getField');
+    cy.do(TextField('Material type').fillIn('"electronic resource"'));
+    cy.wait('@getField');
+    cy.do(TextField('Permanent loan type').fillIn('"Can circulate"'));
+    cy.do(TextField('Status').fillIn('"Available"'));
+    cy.get('[name="profile.mappingDetails.mappingFields[24].repeatableFieldAction"]').select('Add these to existing');
+    // wait for data to be loaded
+    cy.intercept(
+      {
+        method: 'GET',
+        url: '/item-note-types?*',
+      }
+    ).as('getType');
+    cy.do(Button('Add item note').click());
+    cy.wait('@getType');
+    cy.do(TextField('Note type').fillIn('"Electronic bookplate"'));
+    cy.do(TextField('Note').fillIn('"Smith Family Foundation"'));
+    cy.get('[name="profile.mappingDetails.mappingFields[24].subfields[0].fields[2].booleanFieldAction"]').select('Mark for all affected records');
+  },
+
+  fillMappingProfileForUpdate:(specialMappingProfile = defaultMappingProfile) => {
+    cy.do([
+      TextField({ name:'profile.name' }).fillIn(specialMappingProfile.name),
+      Select({ name:'profile.incomingRecordType' }).choose(marcBib),
+      Select({ name:'profile.existingRecordType' }).choose(specialMappingProfile.typeValue)
+    ]);
+    specialMappingProfile.fillProfile();
+    cy.do(Button('Save as profile & Close').click());
+    cy.expect(Button('Save as profile & Close').absent());
   }
 };
