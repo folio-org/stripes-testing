@@ -1,5 +1,4 @@
-import { FieldSet } from '@interactors/html';
-import { Accordion, Button, Section, Select, TextArea, TextField, TextInput } from '../../../../interactors';
+import { Accordion, Button, Section, Select, TextArea, TextField, TextInput, FieldSet } from '../../../../interactors';
 
 const closeButton = Button({ icon: 'times' });
 const rootSection = Section({ id: 'instance-form' });
@@ -35,14 +34,15 @@ export default {
 
     const readonlyFieldsets = {
       physicalDescriptions : rootSection.find(FieldSet('Physical descriptions')),
-      formats:rootSection.find(FieldSet('Format')),
+      formats:rootSection.find(FieldSet('Formats')),
       languages:rootSection.find(FieldSet('Languages')),
       publications: rootSection.find(FieldSet('Publications')),
       publicationFrequency: rootSection.find(FieldSet('Publication frequency')),
       publicationRange: rootSection.find(FieldSet('Publication range')),
       notes: rootSection.find(FieldSet('Notes')),
       electronicAccess: rootSection.find(FieldSet('Electronic access')),
-      subjects: rootSection.find(FieldSet('Subjects')),
+      // TODO: add legend value to this fieldset. It's void actually
+      // subjects: rootSection.find(FieldSet('Subjects')),
       classifications: rootSection.find(FieldSet('Classification')),
       precedingTitles: rootSection.find(FieldSet('Preceding titles')),
       succeedingTitles: rootSection.find(FieldSet('Succeeding titles')),
@@ -67,6 +67,7 @@ export default {
     readonlyButtons.getRegularElements().forEach(element => {
       cy.expect(element.has({ disabled: true }));
     });
+    // TODO: add button Delete
     readonlyAccordions.getRegularElements().forEach(accordion => {
       // check textareas
       cy.then(() => accordion.textareaNames()).then(textareaNames => {
@@ -95,6 +96,33 @@ export default {
         .then(inputNames => {
           inputNames.forEach(inputName => cy.expect(accordion.find(TextField({ name: inputName })).has({ disabled: true })));
         });
+    });
+    // TODO: add checkboxes
+    // TODO: add button delete
+    readonlyFieldsets.getRegularElements().forEach(fieldset => {
+      // check textfields
+      cy.then(() => fieldset.inputNames())
+        .then(inputNames => {
+          inputNames.forEach(inputName => cy.expect(fieldset.find(TextField({ name: inputName })).has({ disabled: true })));
+        })
+        // check selects
+        .then(() => fieldset.selectNames()).then(selectNames => {
+          selectNames.forEach(selectName => cy.expect(fieldset.find(Select({ name: selectName })).has({ disabled: true })));
+        })
+      // check buttons
+      // // TODO: add special unique attribute to each delete button
+      // .then(() => accordion.buttonAriaLabels())
+        // .then(buttonAriaLabels => {
+        //   buttonAriaLabels.forEach(buttonAriaLabel => cy.expect(accordion.find(Button({ ariaLabel: buttonAriaLabel })).has({ disabled: true })));
+        // })
+        .then(() => fieldset.buttonIds())
+        .then(buttonIds => {
+          buttonIds.forEach(buttonId => cy.expect(fieldset.find(Button({ id: buttonId })).has({ disabled: true })));
+        });
+      // check textareas
+      cy.then(() => fieldset.textareaNames()).then(textareaNames => {
+        textareaNames.forEach(textareaName => cy.expect(fieldset.find(TextArea({ name: textareaName })).has({ disabled: true })));
+      });
     });
   }
 };
