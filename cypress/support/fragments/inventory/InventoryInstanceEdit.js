@@ -1,4 +1,4 @@
-import { Accordion, Button, Section, Select, TextArea, TextField, TextInput, FieldSet, Checkbox, FieldInFieldset } from '../../../../interactors';
+import { Accordion, Button, Section, Select, TextArea, TextField, FieldSet } from '../../../../interactors';
 import InteractorsTools from '../../utils/interactorsTools';
 
 const closeButton = Button({ icon: 'times' });
