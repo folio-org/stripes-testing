@@ -14,6 +14,7 @@ export default HTML.extend('text area')
     id: el => el.querySelector('textarea').getAttribute('id'),
     label,
     value: el => el.querySelector('textarea').value,
+    textContent: el => el.querySelector('textarea').textContent,
     warning: el => el.querySelector('[class^=feedbackWarning-]').textContent,
     error: el => el.querySelector('[class^=feedbackError-]').textContent,
     valid: el => el.querySelector('textarea').getAttribute('aria-invalid') !== 'true',

@@ -55,6 +55,7 @@ export default {
     cy.do(Button({ icon: 'times' }).click());
   },
 
+  // TODO: move to common code
   checkCalloutMessage: (text, calloutType) => {
     cy.expect(Callout({ type: calloutType }).exists());
     cy.expect(Callout({ type: calloutType }).is({ textContent: text }));

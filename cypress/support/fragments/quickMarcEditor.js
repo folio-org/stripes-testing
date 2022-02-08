@@ -64,12 +64,12 @@ defaultFieldValues.getSourceContent = (contentInQuickMarcEditor) => contentInQui
 
 const requiredRowsTags = ['LDR', '001', '005', '008', '999'];
 
-const _getRowInteractor = (specialRowNumber) => QuickMarcEditor()
+const getRowInteractor = (specialRowNumber) => QuickMarcEditor()
   .find(QuickMarcEditorRow({ index: specialRowNumber }));
 
 const getInitialRowsCount = () => InventoryInstance.validOCLC.getLastRowNumber();
 
-const addRow = (rowNumber) => cy.do(_getRowInteractor(rowNumber ?? getInitialRowsCount()).find(addFieldButton).click());
+const addRow = (rowNumber) => cy.do(getRowInteractor(rowNumber ?? getInitialRowsCount()).find(addFieldButton).click());
 
 const fillAllAvailableValues = (fieldContent, tag, initialRowsCount = InventoryInstance.validOCLC.getLastRowNumber()) => {
   const contentTextArea = TextArea({ name: `records[${initialRowsCount + 1}].content` });
@@ -78,8 +78,8 @@ const fillAllAvailableValues = (fieldContent, tag, initialRowsCount = InventoryI
   const tagValue = tag ?? defaultFieldValues.freeTags[0];
   const content = fieldContent ?? defaultFieldValues.content;
 
-  cy.do(_getRowInteractor(initialRowsCount + 1).find(contentTextArea).fillIn(content));
-  cy.do(_getRowInteractor(initialRowsCount + 1).find(tagTextField).fillIn(tagValue));
+  cy.do(getRowInteractor(initialRowsCount + 1).find(contentTextArea).fillIn(content));
+  cy.do(getRowInteractor(initialRowsCount + 1).find(tagTextField).fillIn(tagValue));
 
   if (!content.match(/^\$\w/)) {
     return `${tagValue}${separator}${defaultFieldValues.getSourceContent(`${defaultFieldValues.initialSubField}${content}`)}`;
@@ -108,7 +108,7 @@ export default {
         cy.then(() => QuickMarcEditor().presentedRowsProperties())
           .then(presentedRowsProperties => {
             const shouldBeDeletedRowTag = presentedRowsProperties[shouldBeRemovedRowNumber].tag;
-            cy.do(_getRowInteractor(shouldBeRemovedRowNumber).find(deleteFieldButton).click());
+            cy.do(getRowInteractor(shouldBeRemovedRowNumber).find(deleteFieldButton).click());
             cy.wrap(shouldBeDeletedRowTag).as('specialTag');
           });
       });
@@ -126,12 +126,12 @@ export default {
   addRow,
 
   checkInitialContent: (rowNumber) => cy.expect(
-    _getRowInteractor(rowNumber ?? getInitialRowsCount() + 1)
+    getRowInteractor(rowNumber ?? getInitialRowsCount() + 1)
       .find(TextArea({ name: `records[${rowNumber ?? getInitialRowsCount() + 1}].content` }))
       .has({ value: defaultFieldValues.initialSubField })
   ),
   checkContent: (content, rowNumber) => cy.expect(
-    _getRowInteractor(rowNumber ?? getInitialRowsCount() + 1)
+    getRowInteractor(rowNumber ?? getInitialRowsCount() + 1)
       .find(TextArea({ name: `records[${rowNumber ?? getInitialRowsCount() + 1}].content` }))
       .has({ value: content ?? defaultFieldValues.contentWithSubfield })
   ),
@@ -208,7 +208,7 @@ export default {
       cy.get(`input[name="${name}"]`).type(`{backspace}{backspace}${tag008HoldingsBytesProperties.specRet0.newValue}`);
     });
     pressSaveAndClose();
-    holdingsRecordView.waitLoading();
+    InventoryInstance.holdingsRecordView.waitLoading();
     return tag008HoldingsBytesProperties.getAllProperties().map(property => property.newValue).join('');
   },
   clearTag008:() => {
@@ -216,12 +216,20 @@ export default {
       cy.do(QuickMarcEditorRow({ tagValue: '008' }).find(byteProperty.interactor).fillIn(''));
     });
     pressSaveAndClose();
-    holdingsRecordView.waitLoading();
+    InventoryInstance.holdingsRecordView.waitLoading();
     return tag008HoldingsBytesProperties.getAllProperties().map(property => property.voidValue).join('');
   },
   checkReplacedVoidValuesInTag008:() => {
     tag008HoldingsBytesProperties.getAllProperties().forEach(byteProperty => {
       cy.expect(QuickMarcEditorRow({ tagValue: '008' }).find(byteProperty.interactor).has({ value: byteProperty.replacedVoidValue }));
     });
+  },
+  getRegularTagContent: (tag) => {
+    cy.then(() => QuickMarcEditorRow({ tagValue: tag }).find(TextArea()).textContent())
+      .then(content => cy.wrap(content).as('tagContent'));
+    return cy.get('@tagContent');
+  },
+  deleteTag: (tag) =>{
+    cy.do(QuickMarcEditorRow({ tagValue: tag }).find(deleteFieldButton).click());
   }
 };

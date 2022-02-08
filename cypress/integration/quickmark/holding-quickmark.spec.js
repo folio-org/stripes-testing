@@ -8,6 +8,7 @@ import QuickMarcEditor from '../../support/fragments/quickMarcEditor';
 import InventoryViewSource from '../../support/fragments/inventory/inventoryViewSource';
 import testTypes from '../../support/dictionary/testTypes';
 import features from '../../support/dictionary/features';
+import { Button } from '../../../interactors';
 
 describe('Manage holding records through quickmarc editor', () => {
   beforeEach(() => {
@@ -47,5 +48,29 @@ describe('Manage holding records through quickmarc editor', () => {
     InventoryViewSource.close();
     HoldingsRecordView.gotoEditInQuickMarc();
     QuickMarcEditor.checkReplacedVoidValuesInTag008();
+  });
+
+  it.only('C345400 Attempt to save a record without a MARC 852', { tags: [testTypes.smoke, features.quickMarcEditor] }, () => {
+    QuickMarcEditor.getRegularTagContent('852')
+      .then(initialTagContent => {
+        cy.log(initialTagContent);
+        QuickMarcEditor.deleteTag('852');
+        QuickMarcEditor.pressSaveAndClose();
+        QuickMarcEditor.confirmDelete();
+        cy.expect(Button('asd').exists());
+      });
+
+
+    // HoldingsRecordView.viewSource();
+    // InventoryViewSource.contains(changed008TagValue);
+    // InventoryViewSource.close();
+    // HoldingsRecordView.gotoEditInQuickMarc();
+
+    // const cleared008TagValue = QuickMarcEditor.clearTag008();
+    // HoldingsRecordView.viewSource();
+    // InventoryViewSource.contains(cleared008TagValue);
+    // InventoryViewSource.close();
+    // HoldingsRecordView.gotoEditInQuickMarc();
+    // QuickMarcEditor.checkReplacedVoidValuesInTag008();
   });
 });
