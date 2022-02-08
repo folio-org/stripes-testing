@@ -85,7 +85,7 @@ describe('Manage inventory Bib records with quickMarc editor', () => {
     InventoryInstance.checkExpectedMARCSource();
 
     InventoryInstance.editInstance();
-    // TODO: add assert to readonly fields
+    InventoryInstanceEdit.checkReadOnlyFields();
     InventoryInstanceEdit.close();
 
     InventoryInstance.goToEditMARCBiblRecord();
