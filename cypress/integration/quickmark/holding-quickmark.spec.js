@@ -8,7 +8,8 @@ import QuickMarcEditor from '../../support/fragments/quickMarcEditor';
 import InventoryViewSource from '../../support/fragments/inventory/inventoryViewSource';
 import testTypes from '../../support/dictionary/testTypes';
 import features from '../../support/dictionary/features';
-import { Button } from '../../../interactors';
+import { calloutTypes } from '../../../interactors';
+import InteractorsTools from '../../support/utils/interactorsTools';
 
 describe('Manage holding records through quickmarc editor', () => {
   beforeEach(() => {
@@ -57,20 +58,10 @@ describe('Manage holding records through quickmarc editor', () => {
         QuickMarcEditor.deleteTag('852');
         QuickMarcEditor.pressSaveAndClose();
         QuickMarcEditor.confirmDelete();
-        cy.expect(Button('asd').exists());
+        InteractorsTools.checkCalloutMessage('Record cannot be saved. An 852 is required.', calloutTypes.error);
+        QuickMarcEditor.closeWithoutSaving();
+        HoldingsRecordView.viewSource();
+        InventoryViewSource.contains(QuickMarcEditor.getSourceContent(initialTagContent));
       });
-
-
-    // HoldingsRecordView.viewSource();
-    // InventoryViewSource.contains(changed008TagValue);
-    // InventoryViewSource.close();
-    // HoldingsRecordView.gotoEditInQuickMarc();
-
-    // const cleared008TagValue = QuickMarcEditor.clearTag008();
-    // HoldingsRecordView.viewSource();
-    // InventoryViewSource.contains(cleared008TagValue);
-    // InventoryViewSource.close();
-    // HoldingsRecordView.gotoEditInQuickMarc();
-    // QuickMarcEditor.checkReplacedVoidValuesInTag008();
   });
 });

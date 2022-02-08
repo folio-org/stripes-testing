@@ -1,7 +1,7 @@
 import { QuickMarcEditor, QuickMarcEditorRow, TextArea, Button, Modal, TextField, and, some, Pane } from '../../../interactors';
 import InventoryInstance from './inventory/inventoryInstance';
 import getRandomPostfix from '../utils/stringTools';
-import holdingsRecordView from './inventory/holdingsRecordView';
+import HoldingsRecordView from './inventory/holdingsRecordView';
 
 const addFieldButton = Button({ ariaLabel : 'Add a new field' });
 const deleteFieldButton = Button({ ariaLabel : 'Delete this field' });
@@ -208,7 +208,7 @@ export default {
       cy.get(`input[name="${name}"]`).type(`{backspace}{backspace}${tag008HoldingsBytesProperties.specRet0.newValue}`);
     });
     pressSaveAndClose();
-    InventoryInstance.holdingsRecordView.waitLoading();
+    HoldingsRecordView.waitLoading();
     return tag008HoldingsBytesProperties.getAllProperties().map(property => property.newValue).join('');
   },
   clearTag008:() => {
@@ -216,7 +216,7 @@ export default {
       cy.do(QuickMarcEditorRow({ tagValue: '008' }).find(byteProperty.interactor).fillIn(''));
     });
     pressSaveAndClose();
-    InventoryInstance.holdingsRecordView.waitLoading();
+    HoldingsRecordView.waitLoading();
     return tag008HoldingsBytesProperties.getAllProperties().map(property => property.voidValue).join('');
   },
   checkReplacedVoidValuesInTag008:() => {
@@ -229,7 +229,12 @@ export default {
       .then(content => cy.wrap(content).as('tagContent'));
     return cy.get('@tagContent');
   },
-  deleteTag: (tag) =>{
+  deleteTag: (tag) => {
     cy.do(QuickMarcEditorRow({ tagValue: tag }).find(deleteFieldButton).click());
-  }
+  },
+  closeWithoutSaving: () => {
+    cy.do(Button('Cancel').click());
+    HoldingsRecordView.waitLoading();
+  },
+  getSourceContent: (quickmarcTagValue) => defaultFieldValues.getSourceContent(quickmarcTagValue),
 };

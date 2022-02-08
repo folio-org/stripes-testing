@@ -6,7 +6,7 @@ import {
   MultiColumnListRow,
   MultiColumnListCell
 } from '../../../../interactors';
-import Helper from '../finance/financeHelper';
+import InteractorsTools from '../../utils/interactorsTools';
 
 const actionsButton = Button('Actions');
 const receivingSuccessful = 'Receiving successful';
@@ -27,7 +27,7 @@ export default {
       TextField({ name: `${recievingFieldName}.barcode` }).fillIn(barcode),
       Button('Receive').click(),
     ]);
-    Helper.checkCalloutMessage(receivingSuccessful, 'success');
+    InteractorsTools.checkCalloutMessage(receivingSuccessful);
   },
 
   checkReceivedPiece: (rowNumber, caption, barcode) => {
@@ -51,7 +51,7 @@ export default {
       Checkbox({ name: `${recievingFieldName}.checked` }).clickInput(),
       Button('Unreceive').click(),
     ]);
-    Helper.checkCalloutMessage(unreceivingSuccessful, 'success');
+    InteractorsTools.checkCalloutMessage(unreceivingSuccessful);
   },
 
   checkUnreceivedPiece: (rowNumber = 0, caption) => {
