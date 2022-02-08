@@ -15,10 +15,35 @@ const uploadFileWithout999Field = (fileName) => {
   cy.get('input[type=file]', getLongDelay()).attachFile({ filePath: 'oneMarcBibWithout999Field.mrc', fileName });
 };
 
+const uploadFileModifyMarcBib = (fileName) => {
+  cy.get('input[type=file]', getLongDelay()).attachFile({ filePath: 'modifyMarcBib.mrc', fileName });
+};
+
+const deleteRecordSrsMarcFromStorage = () => {
+  cy
+    .okapiRequest({
+      path: 'source-storage/records',
+    })
+    .then(({ body: { records } }) => {
+      const recordToDelete = records[0].id;
+
+      cy
+        .okapiRequest({
+          method: 'DELETE',
+          path: `source-storage/records/${recordToDelete}`,
+        })
+        .then(({ status }) => {
+          if (status === 204) cy.log('###DELETED###');
+        });
+    });
+};
+
 export default {
   goToDataImport,
   uploadFile,
   uploadFileWithout999Field,
+  uploadFileModifyMarcBib,
+  deleteRecordSrsMarcFromStorage,
 
   uploadExportedFile(fileName) {
     cy.get('input[type=file]', getLongDelay()).attachFile(fileName);

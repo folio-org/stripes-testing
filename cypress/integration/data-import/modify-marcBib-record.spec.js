@@ -81,12 +81,20 @@ describe('ui-data-import: Verify the possibility to modify MARC Bibliographic re
 
     // upload a marc file for creating of the new instance, holding and item
     cy.visit(topMenu.dataImportPath);
-    dataImport.uploadFileWithout999Field(nameMarcFileForUpload);
-    //dataImport.uploadFile(nameMarcFileForUpload);
+    dataImport.uploadFileModifyMarcBib(nameMarcFileForUpload);
     jobProfiles.searchJobProfileForImport(jobProfile.profileName);
     jobProfiles.runImportFile(nameMarcFileForUpload);
     logs.checkImportFile(jobProfile.profileName);
-    // logs.checkStatusOfJobProfile();
+    logs.checkStatusOfJobProfile();
     logs.openJobProfile(nameMarcFileForUpload);
+    logs.checkUpdatedSrsAndInstance();
+
+    // delete profiles
+    jobProfiles.deleteJobProfile(jobProfileName);
+    matchProfiles.deleteMatchProfile(matchProfileName);
+    actionProfiles.deleteActionProfile(actionProfileName);
+    fieldMappingProfiles.deleteFieldMappingProfile(mappingProfileName);
+
+    dataImport.deleteRecordSrsMarcFromStorage();
   });
 });

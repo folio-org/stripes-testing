@@ -245,8 +245,7 @@ describe('ui-data-import: MARC file upload with the update of instance, holding,
     jobProfiles.searchJobProfileForImport(testData.jobProfileForCreate.profile.name);
     jobProfiles.runImportFile(nameMarcFileForImportCreate);
     logs.openJobProfile(nameMarcFileForImportCreate);
-    logs.checkIsSrsUpdated();
-    logs.checkCreatedItems();
+    logs.checkUpdatedCreatedItems();
 
     // get Instance HRID through API
     searchInventory
@@ -373,7 +372,7 @@ describe('ui-data-import: MARC file upload with the update of instance, holding,
     jobProfiles.searchJobProfileForImport(jobProfileForUpdate.profileName);
     jobProfiles.runImportFile(nameMarcFileForImportUpdate);
     logs.openJobProfile(nameMarcFileForImportUpdate);
-    logs.checkIsInstanceUpdated();
+    logs.checkUpdatedItems();
 
     // delete generated profiles
     jobProfiles.deleteJobProfile(jobProfileNameUpdate);
@@ -393,8 +392,6 @@ describe('ui-data-import: MARC file upload with the update of instance, holding,
     fieldMappingProfiles.deleteFieldMappingProfile(nameInstanceMappingProfile);
     fieldMappingProfiles.deleteFieldMappingProfile(nameHoldingsMappingProfile);
     fieldMappingProfiles.deleteFieldMappingProfile(nameItemMappingProfile);
-    exportJobProfiles.deleteJobProfile(jobProfileNameForExport);
-    exportFieldMappingProfiles.deleteFieldMappingProfile(exportMappingProfile.name);
 
     // delete downloads folder and created files in fixtures
     fileManager.deleteFolder(Cypress.config('downloadsFolder'));
