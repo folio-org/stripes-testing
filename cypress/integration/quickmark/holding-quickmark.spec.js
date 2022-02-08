@@ -51,10 +51,9 @@ describe('Manage holding records through quickmarc editor', () => {
     QuickMarcEditor.checkReplacedVoidValuesInTag008();
   });
 
-  it.only('C345400 Attempt to save a record without a MARC 852', { tags: [testTypes.smoke, features.quickMarcEditor] }, () => {
+  it('C345400 Attempt to save a record without a MARC 852', { tags: [testTypes.smoke, features.quickMarcEditor] }, () => {
     QuickMarcEditor.getRegularTagContent('852')
       .then(initialTagContent => {
-        cy.log(initialTagContent);
         QuickMarcEditor.deleteTag('852');
         QuickMarcEditor.pressSaveAndClose();
         QuickMarcEditor.confirmDelete();
