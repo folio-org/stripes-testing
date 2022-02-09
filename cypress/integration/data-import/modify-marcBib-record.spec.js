@@ -27,7 +27,6 @@ describe('ui-data-import: Verify the possibility to modify MARC Bibliographic re
   afterEach(() => {
     cy.getRecordApi()
       .then(({ body }) => {
-        cy.log(body.records[body.records.length - 1].id);
         cy.deleteRecordFromStorageApi(body.records[body.records.length - 1].id);
       });
   });
