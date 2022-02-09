@@ -63,10 +63,11 @@ export default {
       ).as('getType');
       cy.do(TextField('Material type').fillIn(materialType));
       cy.wait('@getType');
-      cy.do([
-        TextField('Permanent loan type').fillIn(permanentLoanType),
-        TextField('Status').fillIn(status),
-      ]);
+      cy.do(TextField('Permanent loan type').fillIn(permanentLoanType));
+      // wait accepted values to be filled
+      // eslint-disable-next-line cypress/no-unnecessary-waiting
+      cy.wait(1800);
+      cy.do(TextField('Status').fillIn(status));
     } else if (specialMappingProfile.typeValue === folioRecordTypeValue.instance) {
       if ('update' in specialMappingProfile) {
         cy.do([
@@ -127,7 +128,10 @@ export default {
     ).as('getField');
     cy.do(TextField('Material type').fillIn('"electronic resource"'));
     cy.wait('@getField');
-    cy.do(TextField('Permanent loan type').fillIn('"Can circulate"'));
+    cy.do(TextField('Permanent loan type').fillIn(permanentLoanType));
+    // wait accepted values to be filled
+    // eslint-disable-next-line cypress/no-unnecessary-waiting
+    cy.wait(1800);
     cy.do(TextField('Status').fillIn('"Available"'));
     cy.get('[name="profile.mappingDetails.mappingFields[24].repeatableFieldAction"]').select('Add these to existing');
     // wait for data to be loaded
