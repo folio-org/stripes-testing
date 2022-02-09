@@ -1,4 +1,5 @@
 import { Button, TextField, Selection, SelectionList, SearchField, KeyValue, Accordion, Pane, PaneHeader, MultiColumnListCell } from '../../../../interactors';
+import InteractorsTools from '../../utils/interactorsTools';
 import Helper from '../finance/financeHelper';
 
 
@@ -10,7 +11,6 @@ const invoiceStates = {
   InvoiceApprovedMessage: 'Invoice has been approved successfully',
   InvoicePaidMessage: 'Invoice has been paid successfully'
 };
-const success = 'success';
 const vendorDetailsAccordionId = 'vendorDetails';
 const invoiceLinesAccordionId = 'invoiceLines';
 const actionsButton = Button('Actions');
@@ -35,7 +35,7 @@ export default {
     ]);
     this.checkVendorPrimaryAddress(vendorPrimaryAddress);
     cy.do(saveAndClose.click());
-    Helper.checkCalloutMessage(invoiceStates.invoiceCreatedMessage, success);
+    InteractorsTools.checkCalloutMessage(invoiceStates.invoiceCreatedMessage);
   },
 
   selectVendorOnUi: (organizationName) => {
@@ -91,7 +91,7 @@ export default {
       TextField('Quantity*').fillIn(invoiceLine.quantity.toString()),
       saveAndClose.click()
     ]);
-    Helper.checkCalloutMessage(invoiceStates.invoiceLineCreatedMessage, success);
+    InteractorsTools.checkCalloutMessage(invoiceStates.invoiceLineCreatedMessage);
   },
 
   checkInvoiceLine: (invoiceLine) => {
@@ -111,7 +111,7 @@ export default {
       SelectionList().select((fund.name).concat(' ', '(', fund.code, ')')),
       saveAndClose.click()
     ]);
-    Helper.checkCalloutMessage(invoiceStates.invoiceLineCreatedMessage, success);
+    InteractorsTools.checkCalloutMessage(invoiceStates.invoiceLineCreatedMessage);
   },
 
   approveInvoice: () => {
@@ -121,7 +121,7 @@ export default {
       Button('Approve').click(),
       submitButton.click()
     ]);
-    Helper.checkCalloutMessage(invoiceStates.InvoiceApprovedMessage, success);
+    InteractorsTools.checkCalloutMessage(invoiceStates.InvoiceApprovedMessage);
   },
 
   searchByNumber: (invoiceNumber) => {
@@ -139,6 +139,6 @@ export default {
       Button('Pay').click(),
       submitButton.click()
     ]);
-    Helper.checkCalloutMessage(invoiceStates.InvoicePaidMessage, success);
+    InteractorsTools.checkCalloutMessage(invoiceStates.InvoicePaidMessage);
   }
 };
