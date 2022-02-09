@@ -1,4 +1,4 @@
-import { Button, TextField, Selection, SelectionList, SearchField, KeyValue, Accordion, Pane, PaneHeader, MultiColumnListCell } from '../../../../interactors';
+import { Button, TextField, Selection, SelectionList, SearchField, KeyValue, Accordion, Pane, PaneHeader, MultiColumnListCell, Modal, Checkbox } from '../../../../interactors';
 import InteractorsTools from '../../utils/interactorsTools';
 import Helper from '../finance/financeHelper';
 
@@ -9,16 +9,19 @@ const invoiceStates = {
   invoiceCreatedMessage: 'Invoice has been saved',
   invoiceLineCreatedMessage: 'Invoice line has been saved',
   InvoiceApprovedMessage: 'Invoice has been approved successfully',
-  InvoicePaidMessage: 'Invoice has been paid successfully'
+  InvoicePaidMessage: 'Invoice has been paid successfully',
+  InvoiceDeletedMessage: 'Invoice has been deleted'
 };
 const vendorDetailsAccordionId = 'vendorDetails';
 const invoiceLinesAccordionId = 'invoiceLines';
 const actionsButton = Button('Actions');
 const submitButton = Button('Submit');
 const searchButton = Button('Search');
+const invoiceDetailsPaneId = 'paneHeaderpane-invoiceDetails';
 
 export default {
   createDefaultInvoiceViaUi(invoice, vendorPrimaryAddress) {
+    cy.expect(buttonNew.exists());
     cy.do([
       buttonNew.click(),
       Selection('Status*').open(),
@@ -70,20 +73,17 @@ export default {
 
   deleteInvoiceViaActions() {
     cy.do([
-      PaneHeader({ id: 'paneHeaderpane-invoiceDetails' })
+      PaneHeader({ id: invoiceDetailsPaneId })
         .find(actionsButton).click(),
       Button('Delete').click(),
       Button('Delete', { id:'clickable-delete-invoice-confirmation-confirm' }).click()
     ]);
+    InteractorsTools.checkCalloutMessage(invoiceStates.InvoiceDeletedMessage);
   },
 
-  createInvoiceLine: (invoiceLine, isFromPol) => {
+  createInvoiceLine: (invoiceLine) => {
     cy.do(Accordion({ id: invoiceLinesAccordionId }).find(actionsButton).click());
-    if (isFromPol) {
-      cy.do(Button('Add line from POL').click());
-    } else {
-      cy.do(Button('New blank line').click());
-    }
+    cy.do(Button('New blank line').click());
     // TODO: update using interactors once we will be able to pass negative value into text field
     cy.xpath('//*[@id="subTotal"]').type(invoiceLine.subTotal);
     cy.do([
@@ -94,11 +94,26 @@ export default {
     InteractorsTools.checkCalloutMessage(invoiceStates.invoiceLineCreatedMessage);
   },
 
-  checkInvoiceLine: (invoiceLine) => {
+  createInvoiceLineFromPol: (orderNumber, rowNumber = 0) => {
+    const checkBoxLabel = `record ${rowNumber} checkbox`;
+    cy.do([
+      Accordion({ id: invoiceLinesAccordionId }).find(actionsButton).click(),
+      Button('Add line from POL').click()
+    ]);
+    cy.expect(Modal('Select order lines').exists());
+    cy.do([
+      Modal('Select order lines').find(SearchField({ id: 'input-record-search' })).fillIn(orderNumber),
+      Modal('Select order lines').find(searchButton).click(),
+      Checkbox({ ariaLabel: checkBoxLabel }).clickInput(),
+      Button('Save').click()
+    ]);
+  },
+
+  checkInvoiceLine: (invoiceLine, currency = '$') => {
     cy.expect(Accordion({ id: invoiceLinesAccordionId }).exists());
     cy.expect(Accordion({ id: invoiceLinesAccordionId }).find(MultiColumnListCell({ content: invoiceLine.description })).exists());
     cy.expect(Accordion({ id: invoiceLinesAccordionId }).find(MultiColumnListCell({ content: invoiceLine.quantity.toString() })).exists());
-    cy.expect(Accordion({ id: invoiceLinesAccordionId }).find(MultiColumnListCell({ content: `$${invoiceLine.subTotal.toFixed(2)}` })).exists());
+    cy.expect(Accordion({ id: invoiceLinesAccordionId }).find(MultiColumnListCell({ content: currency.concat(invoiceLine.subTotal.toFixed(2)) })).exists());
   },
 
   addFundDistributionToLine: (invoiceLine, fund) => {
@@ -116,7 +131,7 @@ export default {
 
   approveInvoice: () => {
     cy.do([
-      PaneHeader({ id: 'paneHeaderpane-invoiceDetails' })
+      PaneHeader({ id: invoiceDetailsPaneId })
         .find(actionsButton).click(),
       Button('Approve').click(),
       submitButton.click()
@@ -134,11 +149,28 @@ export default {
 
   payInvoice: () => {
     cy.do([
-      PaneHeader({ id: 'paneHeaderpane-invoiceDetails' })
+      PaneHeader({ id: invoiceDetailsPaneId })
         .find(actionsButton).click(),
       Button('Pay').click(),
       submitButton.click()
     ]);
     InteractorsTools.checkCalloutMessage(invoiceStates.InvoicePaidMessage);
+  },
+
+  updateCurrency: (currency) => {
+    cy.do([
+      PaneHeader({ id: invoiceDetailsPaneId })
+        .find(actionsButton).click(),
+      Button('Edit').click(),
+      Selection('Currency*').open(),
+      SelectionList().select(currency),
+      saveAndClose.click()
+    ]);
+    InteractorsTools.checkCalloutMessage(invoiceStates.invoiceCreatedMessage);
+  },
+
+  checkAndApplyConfirmationalPopup: () => {
+    cy.expect(Modal({ id: 'invoice-line-currency-confirmation' }).exists());
+    cy.do(Button('Confirm').click());
   }
 };
