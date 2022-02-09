@@ -21,6 +21,7 @@ export default HTML.extend('text field')
     value: (el) => el.querySelector('input').value,
     focused: (el) => el.querySelector('input').contains(el.ownerDocument.activeElement),
     readOnly: (el) => el.querySelector('input').hasAttribute('readOnly'),
+    disabled: (el) => el.querySelector('input').hasAttribute('disabled'),
     startControl: (el) => el.querySelector('[class^=startControls').textContent,
     endControl: (el) => el.querySelector('[class^=endControls').textContent,
     error: (el) => (el.querySelector('[class*=feedbackError-]') || {}).textContent,
