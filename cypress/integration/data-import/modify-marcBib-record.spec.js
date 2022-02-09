@@ -24,6 +24,14 @@ describe('ui-data-import: Verify the possibility to modify MARC Bibliographic re
     );
   });
 
+  afterEach(() => {
+    cy.getRecordApi()
+      .then(({ body }) => {
+        cy.log(body.records[body.records.length - 1].id);
+        cy.deleteRecordFromStorageApi(body.records[body.records.length - 1].id);
+      });
+  });
+
   it('C345423 Verify the possibility to modify MARC Bibliographic record', { tags: [testTypes.smoke] }, () => {
     // unique name for profiles
     const mappingProfileName = `autoTestMappingProf.${getRandomPostfix()}`;
@@ -94,7 +102,5 @@ describe('ui-data-import: Verify the possibility to modify MARC Bibliographic re
     matchProfiles.deleteMatchProfile(matchProfileName);
     actionProfiles.deleteActionProfile(actionProfileName);
     fieldMappingProfiles.deleteFieldMappingProfile(mappingProfileName);
-
-    dataImport.deleteRecordSrsMarcFromStorage();
   });
 });
