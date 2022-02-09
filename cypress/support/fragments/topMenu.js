@@ -13,4 +13,5 @@ export default class TopMenu {
   static dataExportPath = '/data-export';
   static ordersPath = '/orders';
   static invoicesPath = '/invoice';
+  static circulationLogPath = '/circulation-log';
 }

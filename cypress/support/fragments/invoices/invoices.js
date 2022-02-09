@@ -4,12 +4,18 @@ import Helper from '../finance/financeHelper';
 
 const buttonNew = Button('New');
 const saveAndClose = Button('Save & close');
-const invoiceCreatedMessage = 'Invoice has been saved';
-const invoiceLineCreatedMessage = 'Invoice line has been saved';
+const invoiceStates = {
+  invoiceCreatedMessage: 'Invoice has been saved',
+  invoiceLineCreatedMessage: 'Invoice line has been saved',
+  InvoiceApprovedMessage: 'Invoice has been approved successfully',
+  InvoicePaidMessage: 'Invoice has been paid successfully'
+};
 const success = 'success';
 const vendorDetailsAccordionId = 'vendorDetails';
 const invoiceLinesAccordionId = 'invoiceLines';
 const actionsButton = Button('Actions');
+const submitButton = Button('Submit');
+const searchButton = Button('Search');
 
 export default {
   createDefaultInvoiceViaUi(invoice, vendorPrimaryAddress) {
@@ -29,14 +35,14 @@ export default {
     ]);
     this.checkVendorPrimaryAddress(vendorPrimaryAddress);
     cy.do(saveAndClose.click());
-    Helper.checkCalloutMessage(invoiceCreatedMessage, success);
+    Helper.checkCalloutMessage(invoiceStates.invoiceCreatedMessage, success);
   },
 
   selectVendorOnUi: (organizationName) => {
     cy.do([
       Button({ id: 'vendorId-plugin' }).click(),
       SearchField({ id: 'input-record-search' }).fillIn(organizationName),
-      Button('Search').click()
+      searchButton.click()
     ]);
     Helper.selectFromResultsList();
   },
@@ -78,13 +84,14 @@ export default {
     } else {
       cy.do(Button('New blank line').click());
     }
+    // TODO: update using interactors once we will be able to pass negative value into text field
+    cy.xpath('//*[@id="subTotal"]').type(invoiceLine.subTotal);
     cy.do([
       TextField('Description*').fillIn(invoiceLine.description),
       TextField('Quantity*').fillIn(invoiceLine.quantity.toString()),
-      TextField('Sub-total*').fillIn(invoiceLine.subTotal.toString()),
       saveAndClose.click()
     ]);
-    Helper.checkCalloutMessage(invoiceLineCreatedMessage, success);
+    Helper.checkCalloutMessage(invoiceStates.invoiceLineCreatedMessage, success);
   },
 
   checkInvoiceLine: (invoiceLine) => {
@@ -92,5 +99,46 @@ export default {
     cy.expect(Accordion({ id: invoiceLinesAccordionId }).find(MultiColumnListCell({ content: invoiceLine.description })).exists());
     cy.expect(Accordion({ id: invoiceLinesAccordionId }).find(MultiColumnListCell({ content: invoiceLine.quantity.toString() })).exists());
     cy.expect(Accordion({ id: invoiceLinesAccordionId }).find(MultiColumnListCell({ content: `$${invoiceLine.subTotal.toFixed(2)}` })).exists());
+  },
+
+  addFundDistributionToLine: (invoiceLine, fund) => {
+    cy.do([
+      Accordion({ id: invoiceLinesAccordionId }).find(MultiColumnListCell({ content: invoiceLine.description })).click(),
+      actionsButton.click(),
+      Button('Edit').click(),
+      Button({ id: 'fundDistributions-add-button' }).click(),
+      Selection('Fund ID*').open(),
+      SelectionList().select((fund.name).concat(' ', '(', fund.code, ')')),
+      saveAndClose.click()
+    ]);
+    Helper.checkCalloutMessage(invoiceStates.invoiceLineCreatedMessage, success);
+  },
+
+  approveInvoice: () => {
+    cy.do([
+      PaneHeader({ id: 'paneHeaderpane-invoiceDetails' })
+        .find(actionsButton).click(),
+      Button('Approve').click(),
+      submitButton.click()
+    ]);
+    Helper.checkCalloutMessage(invoiceStates.InvoiceApprovedMessage, success);
+  },
+
+  searchByNumber: (invoiceNumber) => {
+    cy.do([
+      SearchField({ id: 'input-record-search' }).selectIndex('Vendor invoice number'),
+      SearchField({ id: 'input-record-search' }).fillIn(invoiceNumber),
+      searchButton.click(),
+    ]);
+  },
+
+  payInvoice: () => {
+    cy.do([
+      PaneHeader({ id: 'paneHeaderpane-invoiceDetails' })
+        .find(actionsButton).click(),
+      Button('Pay').click(),
+      submitButton.click()
+    ]);
+    Helper.checkCalloutMessage(invoiceStates.InvoicePaidMessage, success);
   }
 };

@@ -13,11 +13,14 @@ import {
   HTML,
   including,
   KeyValue,
-  Pane
+  Pane,
+  MultiColumnListRow,
+  MultiColumnListCell
 } from '../../../../../interactors';
 import { statusActive, statusInactive, statusFrozen } from '../financeHelper';
 import TopMenu from '../../topMenu';
 import getRandomPostfix from '../../../utils/stringTools';
+import Describer from '../../../utils/describer';
 
 const createdFundNameXpath = '//*[@id="paneHeaderpane-fund-details-pane-title"]/h2/span';
 const numberOfSearchResultsHeader = '//*[@id="paneHeaderfund-results-pane-subtitle"]/span';
@@ -115,10 +118,13 @@ export default {
     cy.xpath(viewTransactionsLinkXpath).click();
   },
 
-  checkTransaction: (value, fundCode) => {
-    // TODO: refactor using interactors (Mutli column list)
-    cy.expect(Pane({ id: transactionResultPaneId }).find(HTML(including('$' + value.toFixed(2)))).exists());
-    cy.expect(Section({ id: transactionResultPaneId }).find(HTML(including(fundCode))).exists());
+  checkTransaction: (rowNumber, transaction) => {
+    Describer.getProperties(transaction)
+      .forEach(function (val) {
+        cy.expect(Pane({ id: transactionResultPaneId })
+          .find(MultiColumnListRow({ index: rowNumber }))
+          .find(MultiColumnListCell({ content: transaction[val] })).exists());
+      });
   },
 
   transferAmount: (amount, fundFrom, fundTo) => {
@@ -250,5 +256,11 @@ export default {
         }
       );
     return cy.get('@createdLedger');
+  },
+
+  openBudgetDetails: (fundCode, fiscalYear) => {
+    cy.do([
+      Accordion({ id: 'currentBudget' }).find(MultiColumnListCell({ content: fundCode.concat('-', fiscalYear) })).click()
+    ]);
   }
 };

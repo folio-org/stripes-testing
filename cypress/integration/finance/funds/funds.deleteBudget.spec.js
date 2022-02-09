@@ -1,20 +1,22 @@
 import Funds from '../../../support/fragments/finance/funds/funds';
-import { getCurrentFiscalYearCode } from '../../../support/utils/dateTools';
-import testType from '../../../support/dictionary/testTypes';
+import DateTools from '../../../support/utils/dateTools';
+import TestType from '../../../support/dictionary/testTypes';
 import FinanceHelp from '../../../support/fragments/finance/financeHelper';
-import newFund from '../../../support/fragments/finance/funds/newFund';
+import NewFund from '../../../support/fragments/finance/funds/newFund';
+import Transaction from '../../../support/fragments/finance/fabrics/newTransaction';
 
 describe('ui-finance: Delete budget from fund', () => {
   const currentBudgetSectionId = 'currentBudget';
-  const fund = { ...newFund.defaultFund };
+  const fund = { ...NewFund.defaultFund };
   let createdLedgerId;
 
   afterEach(() => {
     cy.deleteLedgerApi(createdLedgerId);
   });
 
-  it('C343211 Delete Budget', { tags: [testType.smoke] }, () => {
+  it('C343211 Delete Budget', { tags: [TestType.smoke] }, () => {
     const quantityArray = [0, 100];
+    const transactionFactory = new Transaction();
     Funds.createFundViaUI(fund)
       .then(
         createdLedger => {
@@ -22,14 +24,14 @@ describe('ui-finance: Delete budget from fund', () => {
           quantityArray.forEach(
             quantity => {
               Funds.addBudget(quantity);
-              Funds.checkCreatedBudget(fund.code, getCurrentFiscalYearCode());
+              Funds.checkCreatedBudget(fund.code, DateTools.getCurrentFiscalYearCode());
               Funds.checkBudgetQuantity(quantity);
               Funds.openTransactions();
               if (quantity === 0) {
                 // check empty transaction
                 FinanceHelp.checkZeroSearchResultsMessage();
               } else {
-                Funds.checkTransaction(quantity, fund.code);
+                Funds.checkTransaction(0, transactionFactory.create('allocation', `$${quantity.toFixed(2)}`, fund.code, '', 'User', ''));
               }
               FinanceHelp.clickOnCloseIconButton();
               Funds.deleteBudgetViaActions();
