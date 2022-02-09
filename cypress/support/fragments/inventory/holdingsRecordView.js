@@ -4,7 +4,6 @@ import NewHoldingsRecord from './newHoldingsRecord';
 
 const root = Section({ id: 'ui-inventory.holdingsRecordView' });
 const actionsButton = root.find(Button('Actions'));
-// const closeButton = root.find(Button({ icon: 'times' }));
 const editInQuickMarcButton = Button({ id: 'clickable-edit-marc-holdings' });
 const viewSourceButton = Button({ id: 'clickable-view-source' });
 const deleteButton = Button({ id: 'clickable-delete-holdingsrecord' });
