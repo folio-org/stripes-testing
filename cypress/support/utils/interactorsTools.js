@@ -1,4 +1,12 @@
-import { TextArea, Select, Button, FieldSet, FieldInFieldset, TextField, Checkbox } from '../../../interactors';
+import { TextArea,
+  Select,
+  Button,
+  FieldSet,
+  FieldInFieldset,
+  TextField,
+  Checkbox,
+  Callout,
+  calloutTypes } from '../../../interactors';
 
 
 const deleteButton = Button({ ariaLabel: 'remove fields for ' });
@@ -76,5 +84,9 @@ export default {
     elements.forEach(element => {
       cy.expect(element.has({ disabled: true }));
     });
-  }
+  },
+  checkCalloutMessage: (text, calloutType = calloutTypes.success) => {
+    cy.expect(Callout({ type: calloutType }).exists());
+    cy.expect(Callout({ type: calloutType }).is({ textContent: text }));
+  },
 };

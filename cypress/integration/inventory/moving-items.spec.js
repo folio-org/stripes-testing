@@ -1,9 +1,8 @@
 import TopMenu from '../../support/fragments/topMenu';
 import InventorySearch from '../../support/fragments/inventory/inventorySearch';
 import testTypes from '../../support/dictionary/testTypes';
-import Helper from '../../support/fragments/finance/financeHelper';
-import { calloutTypes } from '../../../interactors';
 import InventoryInstance from '../../support/fragments/inventory/inventoryInstance';
+import InteractorsTools from '../../support/utils/interactorsTools';
 
 const successCalloutMessage = '1 item has been successfully moved.';
 
@@ -24,9 +23,9 @@ describe('inventory: moving items', () => {
     InventoryInstance.openMoveItemsWithinAnInstance();
 
     InventoryInstance.moveItemToAnotherHolding(firstHolding, secondHolding);
-    Helper.checkCalloutMessage(successCalloutMessage, calloutTypes.success);
+    InteractorsTools.checkCalloutMessage(successCalloutMessage);
 
     InventoryInstance.returnItemToFirstHolding(firstHolding, secondHolding);
-    Helper.checkCalloutMessage(successCalloutMessage, calloutTypes.success);
+    InteractorsTools.checkCalloutMessage(successCalloutMessage);
   });
 });

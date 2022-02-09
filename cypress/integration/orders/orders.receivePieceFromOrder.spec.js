@@ -7,6 +7,7 @@ import TopMenu from '../../support/fragments/topMenu';
 import Helper from '../../support/fragments/finance/financeHelper';
 import InventorySearch from '../../support/fragments/inventory/inventorySearch';
 import InventoryInstance from '../../support/fragments/inventory/inventoryInstance';
+import InteractorsTools from '../../support/utils/interactorsTools';
 
 describe('orders: Receive piece from Order', () => {
   const order = { ...newOrder.defaultOrder };
@@ -42,7 +43,7 @@ describe('orders: Receive piece from Order', () => {
         Orders.searchByParameter('PO number', orderNumber);
         Helper.selectFromResultsList();
         Orders.openOrderViaActions();
-        Helper.checkCalloutMessage(`The Purchase order - ${orderNumber} has been successfully opened`, 'success');
+        InteractorsTools.checkCalloutMessage(`The Purchase order - ${orderNumber} has been successfully opened`);
         Orders.receiveOrderViaActions();
         // Receiving part
         Helper.selectFromResultsList();

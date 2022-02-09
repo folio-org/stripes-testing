@@ -8,6 +8,8 @@ import QuickMarcEditor from '../../support/fragments/quickMarcEditor';
 import InventoryViewSource from '../../support/fragments/inventory/inventoryViewSource';
 import testTypes from '../../support/dictionary/testTypes';
 import features from '../../support/dictionary/features';
+import { calloutTypes } from '../../../interactors';
+import InteractorsTools from '../../support/utils/interactorsTools';
 
 describe('Manage holding records through quickmarc editor', () => {
   beforeEach(() => {
@@ -47,5 +49,18 @@ describe('Manage holding records through quickmarc editor', () => {
     InventoryViewSource.close();
     HoldingsRecordView.gotoEditInQuickMarc();
     QuickMarcEditor.checkReplacedVoidValuesInTag008();
+  });
+
+  it('C345400 Attempt to save a record without a MARC 852', { tags: [testTypes.smoke, features.quickMarcEditor] }, () => {
+    QuickMarcEditor.getRegularTagContent('852')
+      .then(initialTagContent => {
+        QuickMarcEditor.deleteTag('852');
+        QuickMarcEditor.pressSaveAndClose();
+        QuickMarcEditor.confirmDelete();
+        InteractorsTools.checkCalloutMessage('Record cannot be saved. An 852 is required.', calloutTypes.error);
+        QuickMarcEditor.closeWithoutSaving();
+        HoldingsRecordView.viewSource();
+        InventoryViewSource.contains(QuickMarcEditor.getSourceContent(initialTagContent));
+      });
   });
 });
