@@ -26,4 +26,9 @@ describe('navigate to circulation log', () => {
 
     SearchPane.verifyResultCells();
   });
+
+  it('C16976 Filter circulation log by date', { tags: [TestTypes.smoke] }, () => {
+    SearchPane.filterByLastWeek();
+    SearchPane.verifyResultCells();
+  });
 });
