@@ -13,7 +13,6 @@ import {
   Dropdown,
   Checkbox, MultiColumnListRow,
 } from '../../../../interactors';
-import QuickMarcEditorFragment from '../quickMarcEditor';
 import InventoryActions from './inventoryActions';
 import InventoryInstanceEdit from './InventoryInstanceEdit';
 import HoldingsRecordView from './holdingsRecordView';
@@ -37,7 +36,7 @@ const moveItemsButton = Button({ id: 'move-instance-items' });
 const instanceHRID = 'Instance HRID';
 const validOCLC = { id:'176116217',
   // TODO: hardcoded count related with interactors getters issue. Redesign to cy.then(QuickMarkEditor().rowsCount()).then(rowsCount => {...}
-  getLastRowNumber:() => 31,
+  lastRowNumber: 31,
   // it should be presented in marc bib one time to correct work(applicable in update of record)
   existingTag: '100' };
 
@@ -62,9 +61,7 @@ export default {
 
   goToEditMARCBiblRecord:() => {
     cy.do(actionsButton.click());
-    cy.expect(editMARCBibRecordButton.exists());
     cy.do(editMARCBibRecordButton.click());
-    QuickMarcEditorFragment.waitLoading();
   },
 
   viewSource: () => {
@@ -109,13 +106,9 @@ export default {
     cy.expect(_section.find(HTML(including(expectedText))).exists());
   },
 
-  addMarcHoldingRecord:() => {
+  runMarcHoldingRecordAdding:() => {
     cy.do(actionsButton.click());
     cy.do(addMarcHoldingRecordButton.click());
-    QuickMarcEditorFragment.waitLoading();
-    QuickMarcEditorFragment.updateExistingField('852', QuickMarcEditorFragment.getExistingLocation());
-    QuickMarcEditorFragment.pressSaveAndClose();
-    HoldingsRecordView.waitLoading();
   },
 
   goToHoldingView: () => {
