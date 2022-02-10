@@ -33,6 +33,13 @@ export default {
     // close openned Actions
     cy.do(actionsButton.click());
   },
+  checkActionsMenuOptionsInMarcSource:() => {
+    cy.do(actionsButton.click());
+    cy.expect(viewSourceButton.exists());
+    cy.expect(editInQuickMarcButton.exists());
+    // close openned Actions
+    cy.do(actionsButton.click());
+  },
   tryToDelete:() => {
     cy.do(actionsButton.click());
     cy.do(deleteButton.click());
