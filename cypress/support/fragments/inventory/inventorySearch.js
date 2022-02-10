@@ -88,12 +88,17 @@ export default {
     });
   },
 
-  searchItemByParameter: (parameter, value) => {
+  searchByParameter: (parameter, value) => {
     cy.do([
-      Button('Item').click(),
       SearchField({ id: 'input-inventory-search' }).selectIndex(parameter),
       SearchField({ id: 'input-inventory-search' }).fillIn(value),
       Button('Search').click(),
     ]);
+  },
+  switchToItem: () => {
+    cy.do(Button({ id: 'segment-navigation-items' }).click());
+  },
+  switchToHoldings: () => {
+    cy.do(Button({ id: 'segment-navigation-holdings' }).click());
   }
 };
