@@ -10,6 +10,7 @@ import testTypes from '../../support/dictionary/testTypes';
 import features from '../../support/dictionary/features';
 import { calloutTypes } from '../../../interactors';
 import InteractorsTools from '../../support/utils/interactorsTools';
+import InventorySteps from '../../support/fragments/inventory/inventorySteps';
 
 describe('Manage holding records through quickmarc editor', () => {
   beforeEach(() => {
@@ -18,8 +19,9 @@ describe('Manage holding records through quickmarc editor', () => {
     // TODO: redesign to api step
     InventoryActions.import();
     // TODO: redesign to api step
-    InventoryInstance.addMarcHoldingRecord();
+    InventorySteps.addMarcHoldingRecord();
     HoldingsRecordView.gotoEditInQuickMarc();
+    QuickMarcEditor.waitLoading();
   });
   it('C345390 Add a field to a record using quickMARC', { tags: [testTypes.smoke, features.quickMarcEditor] }, () => {
     // TODO: redesign to dynamic reading of rows count
@@ -42,12 +44,14 @@ describe('Manage holding records through quickmarc editor', () => {
     InventoryViewSource.contains(changed008TagValue);
     InventoryViewSource.close();
     HoldingsRecordView.gotoEditInQuickMarc();
+    QuickMarcEditor.waitLoading();
 
     const cleared008TagValue = QuickMarcEditor.clearTag008();
     HoldingsRecordView.viewSource();
     InventoryViewSource.contains(cleared008TagValue);
     InventoryViewSource.close();
     HoldingsRecordView.gotoEditInQuickMarc();
+    QuickMarcEditor.waitLoading();
     QuickMarcEditor.checkReplacedVoidValuesInTag008();
   });
 

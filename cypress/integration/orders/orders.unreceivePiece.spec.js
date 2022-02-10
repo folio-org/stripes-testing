@@ -53,7 +53,8 @@ describe('orders: Unreceive piece from Order', () => {
         Receiving.checkUnreceivedPiece(1, caption);
         // inventory part
         cy.visit(TopMenu.inventoryPath);
-        InventorySearch.searchItemByParameter('Barcode', barcode);
+        InventorySearch.switchToItem();
+        InventorySearch.searchByParameter('Barcode', barcode);
         Helper.selectFromResultsList();
         InventoryInstance.checkHoldingsTable(locationName, 0, caption, barcode, 'On order');
       });

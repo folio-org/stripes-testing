@@ -51,7 +51,8 @@ describe('orders: Receive piece from Order', () => {
         Receiving.checkReceivedPiece(0, caption, barcode);
         // inventory part
         cy.visit(TopMenu.inventoryPath);
-        InventorySearch.searchItemByParameter('Barcode', barcode);
+        InventorySearch.switchToItem();
+        InventorySearch.searchByParameter('Barcode', barcode);
         Helper.selectFromResultsList();
         InventoryInstance.checkHoldingsTable(locationName, 0, caption, barcode, 'In process');
       });

@@ -30,6 +30,7 @@ describe('Manage inventory Bib records with quickMarc editor', () => {
   });
   it('C10950 Edit and save a MARC record in quickMARC', { tags: [testTypes.smoke, features.quickMarcEditor] }, () => {
     InventoryInstance.goToEditMARCBiblRecord();
+    QuickMarcEditor.waitLoading();
 
     const expectedInSourceRow = QuickMarcEditor.addNewField(QuickMarcEditor.getFreeTags()[0]);
     QuickMarcEditor.deletePenaltField().then(deletedTag => {
@@ -46,6 +47,7 @@ describe('Manage inventory Bib records with quickMarc editor', () => {
 
   it('C10924 Add a field to a record using quickMARC', { tags: [testTypes.smoke, features.quickMarcEditor] }, () => {
     InventoryInstance.goToEditMARCBiblRecord();
+    QuickMarcEditor.waitLoading();
     QuickMarcEditor.addRow();
     QuickMarcEditor.checkInitialContent();
     const expectedInSourceRow = QuickMarcEditor.fillAllAvailableValues();
@@ -58,11 +60,13 @@ describe('Manage inventory Bib records with quickMarc editor', () => {
     InventoryInstance.waitLoading();
 
     InventoryInstance.goToEditMARCBiblRecord();
+    QuickMarcEditor.waitLoading();
     QuickMarcEditor.checkContent();
   });
 
   it('C10928 Delete a field(s) from a record in quickMARC', { tags: [testTypes.smoke, features.quickMarcEditor] }, () => {
     InventoryInstance.goToEditMARCBiblRecord();
+    QuickMarcEditor.waitLoading();
     QuickMarcEditor.deletePenaltField().then(deletedTag => {
       QuickMarcEditor.pressSaveAndClose();
       QuickMarcEditor.deleteConfirmationPresented();
@@ -74,6 +78,7 @@ describe('Manage inventory Bib records with quickMarc editor', () => {
 
   it('C10957 Attempt to delete a required field', { tags: [testTypes.smoke, features.quickMarcEditor] }, () => {
     InventoryInstance.goToEditMARCBiblRecord();
+    QuickMarcEditor.waitLoading();
     QuickMarcEditor.checkRequiredFields();
   });
 
@@ -89,6 +94,7 @@ describe('Manage inventory Bib records with quickMarc editor', () => {
     InventoryInstanceEdit.close();
 
     InventoryInstance.goToEditMARCBiblRecord();
+    QuickMarcEditor.waitLoading();
     QuickMarcEditor.addRow();
     QuickMarcEditor.checkInitialContent();
 
