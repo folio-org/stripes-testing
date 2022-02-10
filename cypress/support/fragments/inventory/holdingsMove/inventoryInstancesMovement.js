@@ -1,4 +1,4 @@
-import { KeyValue, Button, DropdownMenu, Checkbox, Modal, HTML } from '../../../../../interactors';
+import { KeyValue, Button, DropdownMenu, Modal, HTML } from '../../../../../interactors';
 
 export default {
   waitLoading(currentinstanceHrId, instanceHrIdNew) {
@@ -7,7 +7,6 @@ export default {
   },
   // TODO: redesign to elements attributes with id
   move() {
-    cy.do(Checkbox('Select/unselect item for movement').click());
     cy.do(Button('Move to').click());
     cy.do(DropdownMenu().find(Button()).click());
     cy.do(Modal('Confirm move').find(Button('Continue')).click());

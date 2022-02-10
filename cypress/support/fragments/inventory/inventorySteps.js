@@ -1,13 +1,15 @@
 import holdingsRecordView from './holdingsRecordView';
-import inventoryInstance from './inventoryInstance';
+import InventoryInstance from './inventoryInstance';
 import QuickMarcEditor from '../quickMarcEditor';
 import interactorsTools from '../../utils/interactorsTools';
 
 export default {
+
   addMarcHoldingRecord:() => {
-    inventoryInstance.goToMarcHoldingRecordAdding();
+    InventoryInstance.goToMarcHoldingRecordAdding();
     QuickMarcEditor.waitLoading();
-    QuickMarcEditor.updateExistingField('852', QuickMarcEditor.getExistingLocation());
+    const quickmarcEditor = new QuickMarcEditor(InventoryInstance.validOCLC);
+    quickmarcEditor.updateExistingField('852', QuickMarcEditor.getExistingLocation());
     QuickMarcEditor.pressSaveAndClose();
     interactorsTools.closeCalloutMessage();
     holdingsRecordView.waitLoading();

@@ -16,6 +16,7 @@ export default {
     rowsCountInQuickMarcEditor : 6
   },
   waitLoading: () => cy.expect(actionsButton.exists()),
+  close: () => cy.do(Button({ icon: 'times' }).click()),
   gotoEditInQuickMarc: () => {
     cy.do(actionsButton.click());
     cy.do(editInQuickMarcButton.click());
