@@ -34,7 +34,7 @@ describe('inventory: moving items', () => {
     InventoryInstance.returnItemToFirstHolding(firstHolding, secondHolding);
     InteractorsTools.checkCalloutMessage(successCalloutMessage);
   });
-  it.only('C345404 Move holdings record with Source = MARC to an instance record with source = MARC', { tags:  [TestTypes.smoke, Features.eHoldings] }, () => {
+  it('C345404 Move holdings record with Source = MARC to an instance record with source = MARC', { tags:  [TestTypes.smoke, Features.eHoldings] }, () => {
     InventoryActions.import();
     InventoryInstance.getAssignedHRID().then(initialInstanceHrId => {
       // additional instance record which will linked with holdings record initially

@@ -2,7 +2,6 @@
 
 import TopMenu from '../../support/fragments/topMenu';
 import InventoryActions from '../../support/fragments/inventory/inventoryActions';
-import InventoryInstance from '../../support/fragments/inventory/inventoryInstance';
 import HoldingsRecordView from '../../support/fragments/inventory/holdingsRecordView';
 import QuickMarcEditor from '../../support/fragments/quickMarcEditor';
 import InventoryViewSource from '../../support/fragments/inventory/inventoryViewSource';
