@@ -41,7 +41,7 @@ module.exports.doCoverage = function coverage(nightmare, dirname) {
       // handle the data passed back to us from browser scope
       const strCoverage = JSON.stringify(cov);
       if (strCoverage != null) {
-        const hash = crypto.createHmac('sha256', '')
+        const hash = crypto.createHash('sha256')
           .update(strCoverage)
           .digest('hex');
         const fileName = dirname + 'coverage-' + hash + '.json';
