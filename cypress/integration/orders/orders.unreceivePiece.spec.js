@@ -1,17 +1,17 @@
-import newOrder from '../../support/fragments/orders/newOrder';
-import newOrderLine from '../../support/fragments/orders/newOrderLine';
-import testType from '../../support/dictionary/testTypes';
+import NewOrder from '../../support/fragments/orders/newOrder';
+import NewOrderLine from '../../support/fragments/orders/newOrderLine';
+import TestType from '../../support/dictionary/testTypes';
 import Orders from '../../support/fragments/orders/orders';
 import Receiving from '../../support/fragments/receiving/receiving';
 import TopMenu from '../../support/fragments/topMenu';
 import Helper from '../../support/fragments/finance/financeHelper';
 import InventorySearch from '../../support/fragments/inventory/inventorySearch';
 import InventoryInstance from '../../support/fragments/inventory/inventoryInstance';
-import interactorsTools from '../../support/utils/interactorsTools';
+import InteractorsTools from '../../support/utils/interactorsTools';
 
 describe('orders: Unreceive piece from Order', () => {
-  const order = { ...newOrder.defaultOrder };
-  const orderLine = { ...newOrderLine.defaultOrderLine };
+  const order = { ...NewOrder.defaultOrder };
+  const orderLine = { ...NewOrderLine.defaultOrderLine };
   const locationName = 'Main Library';
 
   before(() => {
@@ -33,7 +33,7 @@ describe('orders: Unreceive piece from Order', () => {
     cy.login(Cypress.env('diku_login'), Cypress.env('diku_password'));
   });
 
-  it('C10925 Unreceive piece', { tags: [testType.smoke] }, () => {
+  it('C10925 Unreceive piece', { tags: [TestType.smoke] }, () => {
     const barcode = Helper.getRandomBarcode();
     const caption = 'autotestCaption';
     Orders.createOrderWithOrderLineViaApi(order, orderLine)
@@ -42,7 +42,7 @@ describe('orders: Unreceive piece from Order', () => {
         Orders.searchByParameter('PO number', orderNumber);
         Helper.selectFromResultsList();
         Orders.openOrderViaActions();
-        interactorsTools.checkCalloutMessage(`The Purchase order - ${orderNumber} has been successfully opened`);
+        InteractorsTools.checkCalloutMessage(`The Purchase order - ${orderNumber} has been successfully opened`);
         Orders.receiveOrderViaActions();
         // Receive piece
         Helper.selectFromResultsList();
