@@ -8,16 +8,15 @@ const trashIconButton = Button({ icon: 'trash' });
 const editIconButton = Button({ icon: 'edit' });
 
 export default {
-  settings: {
-    approvals: 'Approvals',
-    adjustments: 'Adjustments',
-    batchGroups: 'Batch groups',
-    batchGroupConfiguration: 'Batch group configuration',
-    voucherNumber: 'Voucher number'
+  settingsInvoicePath: {
+    approvals: '/approvals',
+    adjustments: '/adjustments',
+    batchGroups:  '/batch-groups',
+    batchGroupConfiguration: '/batch-group-configuration',
+    voucherNumber: '/invoice/voucher-number'
   },
 
-  selectSetting: (setting) => {
-    cy.do(NavListItem(setting).click());
+  waitBatchGroupsLoading: () => {
     cy.expect(MultiColumnListHeader({ id: 'list-column-name' }).exists());
   },
 

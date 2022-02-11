@@ -7,11 +7,11 @@ describe('ui-invoices-settings: Batch Group creation', () => {
   const batchGroup = { ...NewBatchGroup.defaultUiBatchGroup };
   before(() => {
     cy.login(Cypress.env('diku_login'), Cypress.env('diku_password'));
-    cy.visit(TopMenu.settingsInvoice);
+    cy.visit(`${TopMenu.settingsInvoice}${SettingsInvoices.settingsInvoicePath.batchGroups}`);
   });
 
   it('C343345 Create and edit Batch groups', { tags: [TestType.smoke] }, () => {
-    SettingsInvoices.selectSetting(SettingsInvoices.settings.batchGroups);
+    SettingsInvoices.waitBatchGroupsLoading();
     SettingsInvoices.createNewBatchGroup(batchGroup);
     SettingsInvoices.checkBatchGroup(batchGroup);
     batchGroup.name += 'updated';
