@@ -1,13 +1,11 @@
 import { Button, TextField, NavListItem, MultiColumnListHeader, EditableListRow, MultiColumnListCell } from '../../../../interactors';
 import InteractorsTools from '../../utils/interactorsTools';
+import DateTools from '../../utils/dateTools';
 
-const settings = {
-  approvals: 'Approvals',
-  adjustments: 'Adjustments',
-  batchGroups: 'Batch groups',
-  batchGroupConfiguration: 'Batch group configuration',
-  voucherNumber: 'Voucher number'
-};
+const saveButton = Button('Save');
+const deleteButton = Button('Delete');
+const trashIconButton = Button({ icon: 'trash' });
+const editIconButton = Button({ icon: 'edit' });
 
 export default {
   settings: {
@@ -23,39 +21,45 @@ export default {
     cy.expect(MultiColumnListHeader({ id: 'list-column-name' }).exists());
   },
 
-  createNewBatchGroup: (batchGroup) => {
-    cy.expect(Button({ id: 'clickable-add-batch-groups' }).exists());
+  fillRequiredFields: (batchGroup) => {
     cy.do([
-      Button({ id: 'clickable-add-batch-groups' }).click(),
       TextField({ placeholder: 'name' }).fillIn(batchGroup.name),
       TextField({ placeholder: 'description' }).fillIn(batchGroup.description),
-      Button('Save').click()
+      saveButton.click()
     ]);
   },
 
-  editBatchGroup: (batchGroup, rowNumber = 0) => {
-    cy.do([
-      EditableListRow({ index: rowNumber })
-        .find(Button({ icon: 'edit' })).click(),
-      TextField({ placeholder: 'name' }).fillIn(batchGroup.name),
-      TextField({ placeholder: 'description' }).fillIn(batchGroup.description),
-      Button('Save').click()
-    ]);
+  createNewBatchGroup(batchGroup) {
+    cy.do(Button({ id: 'clickable-add-batch-groups' }).click());
+    this.fillRequiredFields(batchGroup);
+  },
+
+  editBatchGroup(batchGroup, rowNumber = 0) {
+    cy.do(EditableListRow({ index: rowNumber }).find(editIconButton).click());
+    this.fillRequiredFields(batchGroup);
   },
 
   checkBatchGroup: (batchGroup, rowNumber = 0) => {
-    cy.expect(EditableListRow({ index: rowNumber })
-      .find(MultiColumnListCell({ content: batchGroup.name })).exists());
+    const createdByAdmin = `${DateTools.getFormattedDateWithSlashes({ date: new Date() })} by ADMINISTRATOR, DIKU`;
 
     cy.expect(EditableListRow({ index: rowNumber })
-      .find(MultiColumnListCell({ content: batchGroup.description })).exists());
+      .find(MultiColumnListCell({ columnIndex: 0 }))
+      .has({ content: batchGroup.name }));
+
+    cy.expect(EditableListRow({ index: rowNumber })
+      .find(MultiColumnListCell({ columnIndex: 1 }))
+      .has({ content: batchGroup.description }));
+
+    cy.expect(EditableListRow({ index: rowNumber })
+      .find(MultiColumnListCell({ columnIndex: 2 }))
+      .has({ content: createdByAdmin }));
   },
 
   deleteBatchGroup: (batchGroup, rowNumber = 0) => {
     cy.do([
       EditableListRow({ index: rowNumber })
-        .find(Button({ icon: 'trash' })).click(),
-      Button('Delete').click()
+        .find(trashIconButton).click(),
+      deleteButton.click()
     ]);
     InteractorsTools.checkCalloutMessage(`The Batch group ${batchGroup.name} was successfully deleted`);
   }
