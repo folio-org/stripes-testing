@@ -4,16 +4,6 @@ import DateTools from '../../utils/dateTools';
 
 
 export default {
-  getLastWeekSearchParam() {
-    const lastWeek = DateTools.getLastWeekDate();
-    return `${DateTools.padWithZero(lastWeek.getMonth() + 1)}/${DateTools.padWithZero(lastWeek.getDate())}/${lastWeek.getFullYear()}`;
-  },
-
-  getTodaySearchParam() {
-    const today = new Date();
-    return `${DateTools.padWithZero(today.getMonth() + 1)}/${DateTools.padWithZero(today.getDate())}/${today.getFullYear()}`;
-  },
-
   searchByItemBarcode(barcode) {
     return cy.do([
       TextField({ name: 'itemBarcode' }).fillIn(barcode),
@@ -59,7 +49,7 @@ export default {
           cy.do(
             resultRow.date.perform(el => {
               const actualDate = new Date(el.textContent);
-              const lastWeek = DateTools.getLastWeekDate();
+              const lastWeek = DateTools.getLastWeekDateObj();
               const today = new Date();
 
               const isActualDateCorrect = lastWeek <= actualDate <= today;
@@ -72,9 +62,12 @@ export default {
   },
 
   filterByLastWeek() {
+    const lastWeek = DateTools.getLastWeekDateObj();
+    const today = new Date();
+
     return cy.do([
-      TextField({ name: 'endDate' }).fillIn(this.getTodaySearchParam()),
-      TextField({ name: 'startDate' }).fillIn(this.getLastWeekSearchParam()),
+      TextField({ name: 'endDate' }).fillIn(DateTools.getFormattedDate({ date: today }, 'MM/DD/YYYY')),
+      TextField({ name: 'startDate' }).fillIn(DateTools.getFormattedDate({ date: lastWeek }, 'MM/DD/YYYY')),
       Accordion({ id: 'date' }).find(Button('Apply')).click()
     ]);
   },

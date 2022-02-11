@@ -56,18 +56,19 @@ export default {
     expect(actualDate).to.be.lessThan(Date.now() + timeInterval);
   },
 
-  // Formats date as YYYY-MM-DD
-  getFormattedDate({ date }) {
+  // Formats date as YYYY-MM-DD or MM/DD/YYYY
+  getFormattedDate({ date }, type = 'YYYY-MM-DD') {
+    if (type === 'MM/DD/YYYY') {
+      return `${padWithZero(date.getMonth() + 1)}/${padWithZero(date.getDate())}/${date.getFullYear()}`;
+    }
     return `${date.getFullYear()}-${padWithZero(date.getMonth() + 1)}-${padWithZero(date.getDate())}`;
   },
   clearPaddingZero(initialString) {
     return initialString.replaceAll(/0([1-9])\//g, '$1/');
   },
 
-  // returns Date object with current date - 7 days
-  // example of usage: cypress/support/fragments/circulation-log/searchPane.js
-  getLastWeekDate() {
+  getLastWeekDateObj() {
     const today = new Date();
     return new Date(today.getFullYear(), today.getMonth(), today.getDate() - 7);
-  }
+  },
 };
