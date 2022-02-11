@@ -44,7 +44,7 @@ describe('inventory: moving items', () => {
       HoldingsRecordView.getHoldingsHrId().then(holdingsRecordhrId => {
         HoldingsRecordView.close();
         InventoryInstance.waitLoading();
-        // TODO: issue with moving presented, see XXX, related with fail ath the end of test execution
+        // TODO: issue with moving presented, see UIIN-1929, related with fail ath the end of test execution
         InventoryInstance.moveHoldingsToAnotherInstance(initialInstanceHrId);
         cy.visit(TopMenu.inventoryPath);
         InventorySearch.searchByParameter('Instance HRID', initialInstanceHrId);
@@ -53,7 +53,7 @@ describe('inventory: moving items', () => {
         InventoryInstance.goToHoldingView();
         HoldingsRecordView.checkHrId(holdingsRecordhrId);
         HoldingsRecordView.viewSource();
-        // TODO: clarify the reason of issue with old value keeping
+        // TODO: recheck after fix of UIIN-1929
         InventoryViewSource.contains(`004\t${initialInstanceHrId}`);
       });
     });
