@@ -73,8 +73,7 @@ export default {
 
   deleteInvoiceViaActions() {
     cy.do([
-      PaneHeader({ id: invoiceDetailsPaneId })
-        .find(actionsButton).click(),
+      PaneHeader({ id: invoiceDetailsPaneId }).find(actionsButton).click(),
       Button('Delete').click(),
       Button('Delete', { id:'clickable-delete-invoice-confirmation-confirm' }).click()
     ]);
@@ -95,7 +94,6 @@ export default {
   },
 
   createInvoiceLineFromPol: (orderNumber, rowNumber = 0) => {
-    const checkBoxLabel = `record ${rowNumber} checkbox`;
     cy.do([
       Accordion({ id: invoiceLinesAccordionId }).find(actionsButton).click(),
       Button('Add line from POL').click()
@@ -104,7 +102,7 @@ export default {
     cy.do([
       Modal('Select order lines').find(SearchField({ id: 'input-record-search' })).fillIn(orderNumber),
       Modal('Select order lines').find(searchButton).click(),
-      Checkbox({ ariaLabel: checkBoxLabel }).clickInput(),
+      Checkbox({ ariaLabel: `record ${rowNumber} checkbox` }).clickInput(),
       Button('Save').click()
     ]);
   },
@@ -169,8 +167,25 @@ export default {
     InteractorsTools.checkCalloutMessage(invoiceStates.invoiceCreatedMessage);
   },
 
-  checkAndApplyConfirmationalPopup: () => {
+  checkConfirmationalPopup: () => {
     cy.expect(Modal({ id: 'invoice-line-currency-confirmation' }).exists());
+  },
+
+  applyConfirmationalPopup: () => {
     cy.do(Button('Confirm').click());
+  },
+
+  checkInvoiceCurrency: (currencyShortName) => {
+    switch (currencyShortName) {
+      // TODO: add other currencies if needed
+      case 'USD':
+        cy.expect(Accordion({ id: 'extendedInformation' }).find(KeyValue({ value: 'US Dollar' })).exists());
+        break;
+      case 'EUR':
+        cy.expect(Accordion({ id: 'extendedInformation' }).find(KeyValue({ value: 'Euro' })).exists());
+        break;
+      default:
+        cy.log(`No such currency short name like ${currencyShortName}`);
+    }
   }
 };

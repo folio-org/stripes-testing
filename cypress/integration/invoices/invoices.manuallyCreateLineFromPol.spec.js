@@ -22,12 +22,13 @@ describe('ui-invoices: Invoice Line creation - based on POL', () => {
     cy.getToken(Cypress.env('diku_login'), Cypress.env('diku_password'));
     cy.getOrganizationApi({ query: `name=${invoice.vendorName}` })
       .then(({ body }) => {
-        invoice.accountingCode = body.organizations[0].erpCode;
+        const orgRecord = body.organizations[0];
+        invoice.accountingCode = orgRecord.erpCode;
         Object.assign(vendorPrimaryAddress,
-          body.organizations[0].addresses.find(address => address.isPrimary === true));
-        order.vendor = body.organizations[0].id;
-        orderLine.physical.materialSupplier = body.organizations[0].id;
-        orderLine.eresource.accessProvider = body.organizations[0].id;
+          orgRecord.addresses.find(address => address.isPrimary === true));
+        order.vendor = orgRecord.id;
+        orderLine.physical.materialSupplier = orgRecord.id;
+        orderLine.eresource.accessProvider = orgRecord.id;
       });
     cy.getBatchGroups()
       .then(({ body }) => {
@@ -53,12 +54,14 @@ describe('ui-invoices: Invoice Line creation - based on POL', () => {
       .then(orderNumber => {
         cy.visit(TopMenu.invoicesPath);
         Invoices.createDefaultInvoiceViaUi(invoice, vendorPrimaryAddress);
+        Invoices.checkInvoiceCurrency(orderLine.cost.currency);
         Invoices.createInvoiceLineFromPol(orderNumber);
         Invoices.checkInvoiceLine(invoiceLine);
         // check different currency case
         Invoices.updateCurrency(euroCurrency);
         Invoices.createInvoiceLineFromPol(orderNumber);
-        Invoices.checkAndApplyConfirmationalPopup();
+        Invoices.checkConfirmationalPopup();
+        Invoices.applyConfirmationalPopup();
         Invoices.checkInvoiceLine(invoiceLine, euroSign);
         Invoices.deleteInvoiceViaActions();
       });
