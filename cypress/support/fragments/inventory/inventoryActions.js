@@ -1,16 +1,17 @@
-import { Button, Select, TextField } from '../../../../interactors';
+import { Button, Section, Select, TextField } from '../../../../interactors';
 import DateTools from '../../utils/dateTools';
 import InventoryInstance from './inventoryInstance';
 import FileManager from '../../utils/fileManager';
+import InteractorsTools from '../../utils/interactorsTools';
 
 const importButtonInActions = Button({ id: 'dropdown-clickable-import-record' });
 const importButtonInModal = Button('Import');
 const OCLWorldCatIdentifierTextField = TextField({ name: 'externalIdentifier' });
 const importTypeSelect = Select({ name :'externalIdentifierType' });
 
-
+// TODO: merge inventoryACtions and InventoryInstances
 export default {
-  open: () => { return Button('Actions').click(); },
+  open: () => { return Section({ id:'pane-results' }).find(Button('Actions')).click(); },
   options: {
     saveUUIDs: Button('Save instances UUIDs'),
     saveCQLQuery: Button('Save instances CQL query'),
@@ -35,7 +36,7 @@ export default {
     this.fillImportFields(specialOCLCWorldCatidentifier);
 
     this.pressImportInModal();
-    InventoryInstance.checkExpectedOCLCPresence(specialOCLCWorldCatidentifier);
+    InteractorsTools.closeCalloutMessage();
     InventoryInstance.checkExpectedMARCSource();
   },
 

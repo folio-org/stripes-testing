@@ -2,7 +2,7 @@ import { Button, Checkbox, List, MultiSelect } from '../../../interactors';
 
 describe('ui-eholdings: Search providers', () => {
   beforeEach('navigates to eHoldings', () => {
-    cy.login('diku_admin', 'admin');
+    cy.login(Cypress.env('diku_login'), Cypress.env('diku_password'));
     cy.visit('/eholdings');
   });
 

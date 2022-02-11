@@ -13,6 +13,7 @@ import permissions from '../../support/dictionary/permissions';
 // TODO: redesign test to exclude repeated steps
 describe('Manage inventory Bib records with quickMarc editor', () => {
   let userId = '';
+  const quickmarcEditor = new QuickMarcEditor(InventoryInstance.validOCLC);
 
   beforeEach(() => {
     // TODO: discuss with Khalilah required set of quickmarc permissions
@@ -30,10 +31,11 @@ describe('Manage inventory Bib records with quickMarc editor', () => {
   });
   it('C10950 Edit and save a MARC record in quickMARC', { tags: [testTypes.smoke, features.quickMarcEditor] }, () => {
     InventoryInstance.goToEditMARCBiblRecord();
+    QuickMarcEditor.waitLoading();
 
-    const expectedInSourceRow = QuickMarcEditor.addNewField(QuickMarcEditor.getFreeTags()[0]);
-    QuickMarcEditor.deletePenaltField().then(deletedTag => {
-      const expectedInSourceRowWithSubfield = QuickMarcEditor.addNewFieldWithSubField(QuickMarcEditor.getFreeTags()[1]);
+    const expectedInSourceRow = quickmarcEditor.addNewField(QuickMarcEditor.getFreeTags()[0]);
+    quickmarcEditor.deletePenaltField().then(deletedTag => {
+      const expectedInSourceRowWithSubfield = quickmarcEditor.addNewFieldWithSubField(QuickMarcEditor.getFreeTags()[1]);
       QuickMarcEditor.pressSaveAndClose();
       QuickMarcEditor.deleteConfirmationPresented();
       QuickMarcEditor.confirmDelete();
@@ -46,9 +48,10 @@ describe('Manage inventory Bib records with quickMarc editor', () => {
 
   it('C10924 Add a field to a record using quickMARC', { tags: [testTypes.smoke, features.quickMarcEditor] }, () => {
     InventoryInstance.goToEditMARCBiblRecord();
-    QuickMarcEditor.addRow();
-    QuickMarcEditor.checkInitialContent();
-    const expectedInSourceRow = QuickMarcEditor.fillAllAvailableValues();
+    QuickMarcEditor.waitLoading();
+    quickmarcEditor.addRow();
+    quickmarcEditor.checkInitialContent();
+    const expectedInSourceRow = quickmarcEditor.fillAllAvailableValues();
 
     QuickMarcEditor.pressSaveAndClose();
     InventoryInstance.waitLoading();
@@ -58,12 +61,14 @@ describe('Manage inventory Bib records with quickMarc editor', () => {
     InventoryInstance.waitLoading();
 
     InventoryInstance.goToEditMARCBiblRecord();
-    QuickMarcEditor.checkContent();
+    QuickMarcEditor.waitLoading();
+    quickmarcEditor.checkContent();
   });
 
   it('C10928 Delete a field(s) from a record in quickMARC', { tags: [testTypes.smoke, features.quickMarcEditor] }, () => {
     InventoryInstance.goToEditMARCBiblRecord();
-    QuickMarcEditor.deletePenaltField().then(deletedTag => {
+    QuickMarcEditor.waitLoading();
+    quickmarcEditor.deletePenaltField().then(deletedTag => {
       QuickMarcEditor.pressSaveAndClose();
       QuickMarcEditor.deleteConfirmationPresented();
       QuickMarcEditor.confirmDelete();
@@ -74,6 +79,7 @@ describe('Manage inventory Bib records with quickMarc editor', () => {
 
   it('C10957 Attempt to delete a required field', { tags: [testTypes.smoke, features.quickMarcEditor] }, () => {
     InventoryInstance.goToEditMARCBiblRecord();
+    QuickMarcEditor.waitLoading();
     QuickMarcEditor.checkRequiredFields();
   });
 
@@ -89,11 +95,12 @@ describe('Manage inventory Bib records with quickMarc editor', () => {
     InventoryInstanceEdit.close();
 
     InventoryInstance.goToEditMARCBiblRecord();
-    QuickMarcEditor.addRow();
-    QuickMarcEditor.checkInitialContent();
+    QuickMarcEditor.waitLoading();
+    quickmarcEditor.addRow();
+    quickmarcEditor.checkInitialContent();
 
     const testRecord = { content: 'testContent', tag: '505', tagMeaning: 'Formatted Contents Note' };
-    const expectedInSourceRow = QuickMarcEditor.fillAllAvailableValues(testRecord.content, testRecord.tag);
+    const expectedInSourceRow = quickmarcEditor.fillAllAvailableValues(testRecord.content, testRecord.tag);
     QuickMarcEditor.pressSaveAndClose();
 
     InventoryInstance.viewSource();
@@ -108,10 +115,10 @@ describe('Manage inventory Bib records with quickMarc editor', () => {
     InventoryInstance.getAssignedHRID()
       .then(instanceHRID => {
         InventoryInstance.deriveNewMarcBib();
-        const expectedCreatedValue = QuickMarcEditor.addNewField();
+        const expectedCreatedValue = quickmarcEditor.addNewField();
 
-        QuickMarcEditor.deletePenaltField().then(deletedTag => {
-          const expectedUpdatedValue = QuickMarcEditor.updateExistingField();
+        quickmarcEditor.deletePenaltField().then(deletedTag => {
+          const expectedUpdatedValue = quickmarcEditor.updateExistingField();
 
           QuickMarcEditor.pressSaveAndClose();
           QuickMarcEditor.deleteConfirmationPresented();
