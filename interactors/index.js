@@ -25,7 +25,7 @@ export { default as MessageBanner, MessageBannerTypes } from './messagebanner';
 export { default as Modal } from './modal';
 export { MultiColumnList, MultiColumnListRow, MultiColumnListCell, MultiColumnListHeader } from './multi-column-list';
 export { default as MultiSelect, MultiSelectMenu, MultiSelectOption, ValueChipRoot } from './multi-select';
-export { default as NavList } from './navlist';
+export { default as NavList, NavListItem } from './navlist';
 export { default as Pane, PaneHeader } from './pane';
 export { default as RadioButton } from './radio-button';
 export { default as RadioButtonGroup } from './radio-button-group';
