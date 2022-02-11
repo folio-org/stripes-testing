@@ -62,5 +62,12 @@ export default {
   },
   clearPaddingZero(initialString) {
     return initialString.replaceAll(/0([1-9])\//g, '$1/');
+  },
+
+  // returns Date object with current date - 7 days
+  // example of usage: cypress/support/fragments/circulation-log/searchPane.js
+  getLastWeekDate() {
+    const today = new Date();
+    return new Date(today.getFullYear(), today.getMonth(), today.getDate() - 7);
   }
 };

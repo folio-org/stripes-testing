@@ -1,21 +1,11 @@
-import { Accordion, Button, Checkbox, MultiColumnListCell, TextField } from '../../../../interactors';
+import { matching } from 'bigtest';
+import { Accordion, Button, MultiColumnListCell, TextField } from '../../../../interactors';
 import DateTools from '../../utils/dateTools';
 
 
-const loanTab = Accordion({ id: 'loan' });
-
 export default {
-
-  searchByLoan() {
-    return cy.do([
-      loanTab.clickHeader(),
-      loanTab.find(Checkbox({ label: 'Changed due date' })).click()
-    ]);
-  },
-
   getLastWeekSearchParam() {
-    const today = new Date();
-    const lastWeek = new Date(today.getFullYear(), today.getMonth(), today.getDate() - 7);
+    const lastWeek = DateTools.getLastWeekDate();
     return `${DateTools.padWithZero(lastWeek.getMonth() + 1)}/${DateTools.padWithZero(lastWeek.getDate())}/${lastWeek.getFullYear()}`;
   },
 
@@ -35,43 +25,48 @@ export default {
     cy.do(Button({ id: 'reset-receiving-filters' }).click());
   },
 
-  verifyResultCells() {
+  verifyResultCells(verifyDate = false) {
+    const dateRegEx = /\d{1,2}\/\d{1,2}\/\d{4},\s\d{1,2}:\d{2}\s\w{2}/gm;
+
     function getResultRowByRowNumber(rowNumber) {
       return {
-        userBarcode: MultiColumnListCell({ row: rowNumber, columnIndex: 0 }),
-        itemBarcode: MultiColumnListCell({ row: rowNumber, columnIndex: 1 }),
-        object: MultiColumnListCell({ row: rowNumber, columnIndex: 2 }),
-        circAction: MultiColumnListCell({ row: rowNumber, columnIndex: 3 }),
-        date: MultiColumnListCell({ row: rowNumber, columnIndex: 4 }),
-        servicePoint: MultiColumnListCell({ row: rowNumber, columnIndex: 5 }),
-        source: MultiColumnListCell({ row: rowNumber, columnIndex: 6 }),
-        description: MultiColumnListCell({ row: rowNumber, columnIndex: 7 })
+        userBarcode: MultiColumnListCell({ row: rowNumber, columnIndex: 0, column: matching(/\d|/) }),
+        itemBarcode: MultiColumnListCell({ row: rowNumber, columnIndex: 1, column: matching(/\d/) }),
+        object: MultiColumnListCell({ row: rowNumber, columnIndex: 2, column: matching(/\w|-/) }),
+        circAction: MultiColumnListCell({ row: rowNumber, columnIndex: 3, column: matching(/\w/) }),
+        date: MultiColumnListCell({ row: rowNumber, columnIndex: 4, column: matching(dateRegEx) }),
+        servicePoint: MultiColumnListCell({ row: rowNumber, columnIndex: 5, column: matching(/\w|/) }),
+        source: MultiColumnListCell({ row: rowNumber, columnIndex: 6, column: matching(/\w/) }),
+        description: MultiColumnListCell({ row: rowNumber, columnIndex: 7, column: matching(/\w/) })
       };
     }
 
-    const dateRegEx = /\d{1,2}\/\d{1,2}\/\d{4},\s\d{1,2}:\d{2}\s\w{2}/gm;
-
+    // TODO: rework with interactor (now we don't have interactor for this)
     return cy.get('#circulation-log-list').then(element => {
-      let resultCount = element.attr('data-total-count');
-
       // only 30 records shows on every page
-      if (resultCount > 29) {
-        resultCount = 29;
-      }
+      const resultCount = element.attr('data-total-count') > 29 ? 29 : element.attr('data-total-count');
 
       // verify every string in result table
       for (let i = 0; i < resultCount; i++) {
         const resultRow = getResultRowByRowNumber(i);
-        cy.do([
-          resultRow.userBarcode.perform(el => expect(el.textContent).to.match(/\d|/)),
-          resultRow.itemBarcode.perform(el => expect(el.textContent).to.match(/\d/)),
-          resultRow.object.perform(el => expect(el.textContent).to.match(/\w|-/)),
-          resultRow.circAction.perform(el => expect(el.textContent).to.match(/\w/)),
-          resultRow.date.perform(el => expect(el.textContent).to.match(dateRegEx)),
-          resultRow.servicePoint.perform(el => expect(el.textContent).to.match(/\w|/)),
-          resultRow.source.perform(el => expect(el.textContent).to.match(/\w/)),
-          resultRow.description.perform(el => expect(el.textContent).to.match(/\w/))
-        ]);
+
+        // eslint-disable-next-line guard-for-in
+        for (const prop in resultRow) {
+          cy.expect(resultRow[prop].exists());
+        }
+
+        if (verifyDate) {
+          cy.do(
+            resultRow.date.perform(el => {
+              const actualDate = new Date(el.textContent);
+              const lastWeek = DateTools.getLastWeekDate();
+              const today = new Date();
+
+              const isActualDateCorrect = lastWeek <= actualDate <= today;
+              expect(isActualDateCorrect).to.be.true;
+            })
+          );
+        }
       }
     });
   },
