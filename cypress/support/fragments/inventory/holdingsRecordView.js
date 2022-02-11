@@ -9,14 +9,14 @@ const viewSourceButton = Button({ id: 'clickable-view-source' });
 const deleteButton = Button({ id: 'clickable-delete-holdingsrecord' });
 const duplicateButton = Button({ id: 'copy-holdings' });
 const deleteConfirmationModal = Modal({ id:'delete-confirmation-modal' });
+const holdingHrIdKeyValue = root.find(KeyValue('Holdings HRID'));
 
 export default {
   newHolding : {
     rowsCountInQuickMarcEditor : 6
   },
-  waitLoading: () => {
-    cy.expect(actionsButton.exists());
-  },
+  waitLoading: () => cy.expect(actionsButton.exists()),
+  close: () => cy.do(Button({ icon: 'times' }).click()),
   gotoEditInQuickMarc: () => {
     cy.do(actionsButton.click());
     cy.do(editInQuickMarcButton.click());
@@ -45,7 +45,8 @@ export default {
     cy.do(duplicateButton.click());
     NewHoldingsRecord.waitLoading();
   },
-  checkSource:(sourceValue) => {
-    cy.expect(KeyValue('Source', { value:sourceValue }).exists());
-  }
+  checkSource:sourceValue => cy.expect(KeyValue('Source', { value:sourceValue }).exists()),
+  getHoldingsHrId: () => cy.then(() => holdingHrIdKeyValue.value()),
+  checkInstanceHrId:expectedInstanceHrdId => cy.expect(root.find(KeyValue('Instance HRID')).has({ value:expectedInstanceHrdId })),
+  checkHrId: expectedHrId => cy.expect(holdingHrIdKeyValue.has({ value: expectedHrId }))
 };

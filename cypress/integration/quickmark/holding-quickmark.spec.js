@@ -2,7 +2,6 @@
 
 import TopMenu from '../../support/fragments/topMenu';
 import InventoryActions from '../../support/fragments/inventory/inventoryActions';
-import InventoryInstance from '../../support/fragments/inventory/inventoryInstance';
 import HoldingsRecordView from '../../support/fragments/inventory/holdingsRecordView';
 import QuickMarcEditor from '../../support/fragments/quickMarcEditor';
 import InventoryViewSource from '../../support/fragments/inventory/inventoryViewSource';
@@ -10,6 +9,8 @@ import TestTypes from '../../support/dictionary/testTypes';
 import Features from '../../support/dictionary/features';
 import { calloutTypes } from '../../../interactors';
 import InteractorsTools from '../../support/utils/interactorsTools';
+import InventorySteps from '../../support/fragments/inventory/inventorySteps';
+import InventoryInstance from '../../support/fragments/inventory/inventoryInstance';
 
 describe('Manage holding records through quickmarc editor', () => {
   const quickmarcEditor = new QuickMarcEditor(InventoryInstance.validOCLC);
@@ -20,11 +21,7 @@ describe('Manage holding records through quickmarc editor', () => {
     // TODO: redesign to api step
     InventoryActions.import();
     // TODO: redesign to api step
-    InventoryInstance.runMarcHoldingRecordAdding();
-    QuickMarcEditor.waitLoading();
-    quickmarcEditor.updateExistingField('852', QuickMarcEditor.getExistingLocation());
-    QuickMarcEditor.pressSaveAndClose();
-    HoldingsRecordView.waitLoading();
+    InventorySteps.addMarcHoldingRecord();
     HoldingsRecordView.gotoEditInQuickMarc();
     QuickMarcEditor.waitLoading();
   });

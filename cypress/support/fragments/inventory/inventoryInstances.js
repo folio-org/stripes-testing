@@ -12,7 +12,7 @@ export default {
     cy.expect(or(inventoriesList.exists()),
       rootSection.find(HTML(including('No results found'))).exists());
   },
-  selectSpecialInstance:(rowNumber = 0) => {
+  selectInstance:(rowNumber = 0) => {
     cy.do(inventoriesList.click({ row: rowNumber }));
   },
   add: () => {
