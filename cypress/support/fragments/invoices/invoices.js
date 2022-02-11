@@ -75,8 +75,11 @@ export default {
     cy.do([
       PaneHeader({ id: invoiceDetailsPaneId }).find(actionsButton).click(),
       Button('Delete').click(),
-      Button('Delete', { id:'clickable-delete-invoice-confirmation-confirm' }).click()
     ]);
+  },
+
+  confirmInvoiceDeletion: () => {
+    cy.do(Button('Delete', { id:'clickable-delete-invoice-confirmation-confirm' }).click());
     InteractorsTools.checkCalloutMessage(invoiceStates.InvoiceDeletedMessage);
   },
 

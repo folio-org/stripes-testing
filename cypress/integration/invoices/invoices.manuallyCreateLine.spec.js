@@ -31,5 +31,6 @@ describe('ui-invoices: Invoice Line creation', () => {
     Invoices.createInvoiceLine(invoiceLine);
     Invoices.checkInvoiceLine(invoiceLine);
     Invoices.deleteInvoiceViaActions();
+    Invoices.confirmInvoiceDeletion();
   });
 });

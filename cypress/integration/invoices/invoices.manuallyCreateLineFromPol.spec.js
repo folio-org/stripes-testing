@@ -64,6 +64,7 @@ describe('ui-invoices: Invoice Line creation - based on POL', () => {
         Invoices.applyConfirmationalPopup();
         Invoices.checkInvoiceLine(invoiceLine, euroSign);
         Invoices.deleteInvoiceViaActions();
+        Invoices.confirmInvoiceDeletion();
       });
   });
 });

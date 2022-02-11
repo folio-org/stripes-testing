@@ -28,5 +28,6 @@ describe('ui-invoices: Invoice creation', () => {
     Invoices.createDefaultInvoiceViaUi(invoice, vendorPrimaryAddress);
     Invoices.checkCreatedInvoice(invoice, vendorPrimaryAddress);
     Invoices.deleteInvoiceViaActions();
+    Invoices.confirmInvoiceDeletion();
   });
 });
