@@ -63,6 +63,10 @@ export default {
     }
     return `${date.getFullYear()}-${padWithZero(date.getMonth() + 1)}-${padWithZero(date.getDate())}`;
   },
+  // Formats date as MM/DD/YYYY without zeros - used in settings
+  getFormattedDateWithSlashes({ date }) {
+    return `${date.getMonth() + 1}/${date.getDate()}/${date.getFullYear()}`;
+  },
   clearPaddingZero(initialString) {
     return initialString.replaceAll(/0([1-9])\//g, '$1/');
   },
