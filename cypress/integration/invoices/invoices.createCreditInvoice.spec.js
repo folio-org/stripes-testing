@@ -20,15 +20,13 @@ describe('ui-invoices: Credit Invoice creation', () => {
   before(() => {
     cy.getToken(Cypress.env('diku_login'), Cypress.env('diku_password'));
     cy.getOrganizationApi({ query: `name=${invoice.vendorName}` })
-      .then(({ body }) => {
-        invoice.accountingCode = body.organizations[0].erpCode;
+      .then(organization => {
+        invoice.accountingCode = organization.erpCode;
         Object.assign(vendorPrimaryAddress,
-          body.organizations[0].addresses.find(address => address.isPrimary === true));
+          organization.addresses.find(address => address.isPrimary === true));
       });
     cy.getBatchGroups()
-      .then(({ body }) => {
-        invoice.batchGroup = body.batchGroups[0].name;
-      });
+      .then(batchGroup => { invoice.batchGroup = batchGroup.name; });
     Funds.createFundViaUI(fund)
       .then(
         () => {
@@ -43,7 +41,7 @@ describe('ui-invoices: Credit Invoice creation', () => {
   it('C343209 Create a credit invoice', { tags: [TestType.smoke] }, () => {
     const transactionFactory = new Transaction();
     Invoices.createDefaultInvoiceViaUi(invoice, vendorPrimaryAddress);
-    Invoices.createInvoiceLine(invoiceLine, false);
+    Invoices.createInvoiceLine(invoiceLine);
     Invoices.addFundDistributionToLine(invoiceLine, fund);
     Invoices.approveInvoice();
     // check transactions after approve
