@@ -16,7 +16,10 @@ export default {
     rowsCountInQuickMarcEditor : 6
   },
   waitLoading: () => cy.expect(actionsButton.exists()),
-  close: () => cy.do(Button({ icon: 'times' }).click()),
+  close: () => {
+    cy.do(Button({ icon: 'times' }).click());
+    cy.expect(root.absent());
+  },
   gotoEditInQuickMarc: () => {
     cy.do(actionsButton.click());
     cy.do(editInQuickMarcButton.click());
@@ -30,6 +33,13 @@ export default {
     cy.do(actionsButton.click());
     cy.expect(viewSourceButton.absent());
     cy.expect(editInQuickMarcButton.absent());
+    // close openned Actions
+    cy.do(actionsButton.click());
+  },
+  checkActionsMenuOptionsInMarcSource:() => {
+    cy.do(actionsButton.click());
+    cy.expect(viewSourceButton.exists());
+    cy.expect(editInQuickMarcButton.exists());
     // close openned Actions
     cy.do(actionsButton.click());
   },
@@ -48,5 +58,10 @@ export default {
   checkSource:sourceValue => cy.expect(KeyValue('Source', { value:sourceValue }).exists()),
   getHoldingsHrId: () => cy.then(() => holdingHrIdKeyValue.value()),
   checkInstanceHrId:expectedInstanceHrdId => cy.expect(root.find(KeyValue('Instance HRID')).has({ value:expectedInstanceHrdId })),
-  checkHrId: expectedHrId => cy.expect(holdingHrIdKeyValue.has({ value: expectedHrId }))
+  checkHrId: expectedHrId => cy.expect(holdingHrIdKeyValue.has({ value: expectedHrId })),
+  getId:() => {
+    // parse hodling record id from current url
+    cy.url().then(url => cy.wrap(url.split('?')[0].split('/').at(-1)).as('holdingsRecorId'));
+    return cy.get('@holdingsRecorId');
+  }
 };

@@ -1,7 +1,6 @@
 import { Button, including, HTML, Selection, Select } from '../../../../interactors';
 
-// TODO: rewrite class to holdingsForm instead of holingsForm
-const rootForm = HTML({ className: including('holingsForm-') });
+const rootForm = HTML({ className: including('holdingsForm-') });
 const sourceValues = {
   folio:'f32d531e-df79-46b3-8932-cdd35f7a2264'
 };
