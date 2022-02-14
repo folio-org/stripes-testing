@@ -21,27 +21,20 @@ describe('ui-invoices: Invoice Line creation - based on POL', () => {
   before(() => {
     cy.getToken(Cypress.env('diku_login'), Cypress.env('diku_password'));
     cy.getOrganizationApi({ query: `name=${invoice.vendorName}` })
-      .then(({ body }) => {
-        const orgRecord = body.organizations[0];
-        invoice.accountingCode = orgRecord.erpCode;
+      .then(organization => {
+        invoice.accountingCode = organization.erpCode;
         Object.assign(vendorPrimaryAddress,
-          orgRecord.addresses.find(address => address.isPrimary === true));
-        order.vendor = orgRecord.id;
-        orderLine.physical.materialSupplier = orgRecord.id;
-        orderLine.eresource.accessProvider = orgRecord.id;
+          organization.addresses.find(address => address.isPrimary === true));
+        order.vendor = organization.id;
+        orderLine.physical.materialSupplier = organization.id;
+        orderLine.eresource.accessProvider = organization.id;
       });
     cy.getBatchGroups()
-      .then(({ body }) => {
-        invoice.batchGroup = body.batchGroups[0].name;
-      });
+      .then(batchGroup => { invoice.batchGroup = batchGroup.name; });
     cy.getLocations({ query: `name="${locationName}"` })
-      .then(({ body }) => {
-        orderLine.locations[0].locationId = body.locations[0].id;
-      });
+      .then(location => { orderLine.locations[0].locationId = location.id; });
     cy.getMaterialTypes({ query: 'name="book"' })
-      .then(({ body }) => {
-        orderLine.physical.materialType = body.mtypes[0].id;
-      });
+      .then(materialType => { orderLine.physical.materialType = materialType.id; });
     cy.login(Cypress.env('diku_login'), Cypress.env('diku_password'));
     // set up invoice Line object
     invoiceLine.description = orderLine.titleOrPackage;

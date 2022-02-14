@@ -10,9 +10,8 @@ Cypress.Commands.add('createOrganization', ({ name, code, status }) => {
 });
 
 Cypress.Commands.add('getOrganizationApi', (searchParams) => {
-  return cy
-    .okapiRequest({
-      path: 'organizations/organizations',
-      searchParams
-    });
+  cy.okapiRequest({
+    path: 'organizations/organizations',
+    searchParams
+  }).then(response => { return response.body.organizations[0]; });
 });
