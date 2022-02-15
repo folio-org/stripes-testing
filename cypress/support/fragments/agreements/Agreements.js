@@ -21,8 +21,6 @@ export default {
     NewAgreement.fill(specialAgreement);
     NewAgreement.save();
     waitLoading();
-
-    cy.do(section.find(MultiColumnListCell(specialAgreement.name)).click());
   },
 
   selectRecord: (agreementTitle = NewAgreement.defaultAgreement.name) => {

@@ -12,7 +12,6 @@
     "diku_password": "admin",
     "is_kiwi_release": false,
     "downloadTimeout": 1000,
-    "allureResultsPath": "reports/allure/results",
     "allure": "true"
   }
 }
