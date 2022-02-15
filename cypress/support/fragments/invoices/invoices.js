@@ -1,4 +1,16 @@
-import { Button, TextField, Selection, SelectionList, SearchField, KeyValue, Accordion, Pane, PaneHeader, MultiColumnListCell, Modal, Checkbox } from '../../../../interactors';
+import { Button,
+  TextField,
+  Selection,
+  SelectionList,
+  SearchField,
+  KeyValue,
+  Accordion,
+  Pane,
+  PaneHeader,
+  MultiColumnListCell,
+  Modal,
+  Checkbox,
+  MultiColumnList } from '../../../../interactors';
 import InteractorsTools from '../../utils/interactorsTools';
 import Helper from '../finance/financeHelper';
 
@@ -18,6 +30,7 @@ const actionsButton = Button('Actions');
 const submitButton = Button('Submit');
 const searchButton = Button('Search');
 const invoiceDetailsPaneId = 'paneHeaderpane-invoiceDetails';
+const searhInputId = 'input-record-search';
 
 export default {
   createDefaultInvoiceViaUi(invoice, vendorPrimaryAddress) {
@@ -44,7 +57,7 @@ export default {
   selectVendorOnUi: (organizationName) => {
     cy.do([
       Button({ id: 'vendorId-plugin' }).click(),
-      SearchField({ id: 'input-record-search' }).fillIn(organizationName),
+      SearchField({ id: searhInputId }).fillIn(organizationName),
       searchButton.click()
     ]);
     Helper.selectFromResultsList();
@@ -103,7 +116,7 @@ export default {
     ]);
     cy.expect(Modal('Select order lines').exists());
     cy.do([
-      Modal('Select order lines').find(SearchField({ id: 'input-record-search' })).fillIn(orderNumber),
+      Modal('Select order lines').find(SearchField({ id: searhInputId })).fillIn(orderNumber),
       Modal('Select order lines').find(searchButton).click(),
       Checkbox({ ariaLabel: `record ${rowNumber} checkbox` }).clickInput(),
       Button('Save').click()
@@ -142,8 +155,8 @@ export default {
 
   searchByNumber: (invoiceNumber) => {
     cy.do([
-      SearchField({ id: 'input-record-search' }).selectIndex('Vendor invoice number'),
-      SearchField({ id: 'input-record-search' }).fillIn(invoiceNumber),
+      SearchField({ id: searhInputId }).selectIndex('Vendor invoice number'),
+      SearchField({ id: searhInputId }).fillIn(invoiceNumber),
       searchButton.click(),
     ]);
   },
@@ -190,5 +203,30 @@ export default {
       default:
         cy.log(`No such currency short name like ${currencyShortName}`);
     }
+  },
+
+  openPolSearchPlugin: () => {
+    cy.do([
+      Accordion({ id: invoiceLinesAccordionId }).find(actionsButton).click(),
+      Button('Add line from POL').click()
+    ]);
+    cy.expect(Modal('Select order lines').exists());
+  },
+
+  checkSearchPolPlugin: (key, value, titleOrPackage) => {
+    cy.do([
+      Modal('Select order lines').find(SearchField({ id: searhInputId })).selectIndex(key),
+      Modal('Select order lines').find(SearchField({ id: searhInputId })).fillIn(value),
+      Modal('Select order lines').find(searchButton).click()
+    ]);
+    // verify that first row in the result list contains related order line title
+    cy.expect(MultiColumnList({ id: 'list-plugin-find-records' })
+      .find(MultiColumnListCell({ columnIndex: 2 }))
+      .has({ content: titleOrPackage }));
+    cy.do(Button({ id: 'reset-find-records-filters' }).click());
+  },
+
+  closeSearchPlugin: () => {
+    cy.do(Button('Close').click());
   }
 };

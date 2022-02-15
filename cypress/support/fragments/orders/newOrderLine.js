@@ -8,7 +8,12 @@ export default {
     acquisitionMethod: '',
     alerts: [],
     claims: [],
-    contributors: [],
+    contributors: [{
+      contributor: `Autotest Contributor_${getRandomPostfix()}`,
+      contributorNameTypeId: uuid()
+    }],
+    requester: `Autotest requester_${getRandomPostfix()}`,
+    donor: `Autotest donor_${getRandomPostfix()}`,
     cost: {
       listUnitPrice: 1.0,
       currency: 'USD',
@@ -17,7 +22,11 @@ export default {
       poLineEstimatedPrice: 1.0
     },
     details: {
-      productIds: [],
+      productIds: [{
+        productId: '9780552142359',
+        productIdType: '',
+        qualifier: '(paperback)'
+      }],
       subscriptionInterval: 0
     },
     fundDistribution : [],
@@ -35,8 +44,10 @@ export default {
       createInventory: 'Instance, Holding, Item',
       materialType: '',
       materialSupplier: '',
-      volumes: []
+      volumes: ['test vol. 1']
     },
+    selector: `Autotest selector_${getRandomPostfix()}`,
+    publisher: `Autotest Publishing_${getRandomPostfix()}`,
     eresource: {
       activated: false,
       createInventory: 'None',
@@ -49,8 +60,16 @@ export default {
     source: 'User',
     titleOrPackage: `autotest_line_${getRandomPostfix()}`,
     vendorDetail: {
-      instructions: '',
-      vendorAccount: '1234'
-    }
+      instructions: `autotest instructions_${getRandomPostfix()}`,
+      noteFromVendor: `autotest note_${getRandomPostfix()}`,
+      referenceNumbers: [
+        {
+          refNumber: '123456-78',
+          refNumberType: 'Vendor title number',
+          vendorDetailsSource: 'OrderLine'
+        }
+      ],
+      vendorAccount: '8910-10'
+    },
   }
 };
