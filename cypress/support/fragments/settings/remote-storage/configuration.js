@@ -11,7 +11,7 @@ function deleteRemoteStorage(name) {
     MultiColumnListCell({ content: name }).click(),
     Pane({ title: name }).find(Button('Actions')).click(),
     Button({ id: 'clickable-delete-storage' }).click(),
-    Modal({ title: 'Remove ' + name }).find(Button('Delete')).click()
+    Modal({ title: `Remove ${name}` }).find(Button('Delete')).click()
   ]);
   InteractorsTools.checkCalloutMessage(successfulDeleteCalloutMessage);
   cy.expect(configurationPane.find(MultiColumnListCell({ content: name })).absent());
@@ -92,7 +92,7 @@ export default {
       TextField({ name: 'name' }).fillIn(testName),
       Button('Save & close').click(),
       Modal().find(Button('Cancel')).click(),
-      Pane({ title: 'Edit ' + name }).find(Button({ icon: 'times' })).click(),
+      Pane({ title: `Edit ${name}` }).find(Button({ icon: 'times' })).click(),
       Button('Close without saving').click(),
     ]);
   },
