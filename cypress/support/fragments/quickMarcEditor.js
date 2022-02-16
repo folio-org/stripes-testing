@@ -15,8 +15,7 @@ const tag008HoldingsBytesProperties = {
   acqStatus : { interactor:TextField('AcqStatus'), defaultValue:'0', newValue:'v', voidValue:' ', replacedVoidValue:'\\' },
   acqMethod :{ interactor:TextField('AcqMethod'), defaultValue:'u', newValue:'v', voidValue:' ', replacedVoidValue:'\\' },
   acqEndDate :{ interactor:TextField('AcqEndDate'), defaultValue:'\\\\\\\\', newValue:'vvvv', voidValue:' ', replacedVoidValue:'\\\\\\\\' },
-  // TODO: change newValue to 'v' after fix of UIQM-204
-  genRet : { interactor:TextField('Gen ret'), defaultValue:'0', newValue:'0', voidValue:' ', replacedVoidValue:'\\' },
+  genRet : { interactor:TextField('Gen ret'), defaultValue:'0', newValue:'v', voidValue:' ', replacedVoidValue:'\\' },
   specRet0: { interactor:TextField('Spec ret', { name:specRetInputNames[0] }), defaultValue:'\\', newValue:'v', voidValue:' ', replacedVoidValue:'\\' },
   specRet1: { interactor:TextField('Spec ret', { name:specRetInputNames[1] }), defaultValue:'\\', newValue:'v', voidValue:' ', replacedVoidValue:'\\' },
   specRet2: { interactor:TextField('Spec ret', { name:specRetInputNames[2] }), defaultValue:'\\', newValue:'v', voidValue:' ', replacedVoidValue:'\\' },
