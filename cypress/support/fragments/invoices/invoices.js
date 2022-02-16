@@ -225,7 +225,11 @@ export default {
       .find(MultiColumnListRow({ index: 0 }))
       .find(MultiColumnListCell({ columnIndex: 2 }))
       .has({ content: titleOrPackage }));
-    cy.do(Button({ id: 'reset-find-records-filters' }).click());
+    cy.do([
+      Button({ id: 'reset-find-records-filters' }).click()
+    ]);
+    // TODO: remove waiter - currenty it's a workaround for incorrect selection from search list
+    cy.wait(1000);
   },
 
   closeSearchPlugin: () => {
