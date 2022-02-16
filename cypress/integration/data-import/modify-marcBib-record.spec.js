@@ -25,9 +25,9 @@ describe('ui-data-import: Verify the possibility to modify MARC Bibliographic re
   });
 
   afterEach(() => {
-    cy.getRecordApi()
+    cy.getSrsRecordApi()
       .then(({ body }) => {
-        cy.deleteRecordFromStorageApi(body.records[body.records.length - 1].id);
+        cy.deleteSrsRecordFromStorageApi(body.records[body.records.length - 1].id);
       });
   });
 
@@ -88,7 +88,7 @@ describe('ui-data-import: Verify the possibility to modify MARC Bibliographic re
 
     // upload a marc file for creating of the new instance, holding and item
     cy.visit(topMenu.dataImportPath);
-    dataImport.uploadFileModifyMarcBib(nameMarcFileForUpload);
+    dataImport.uploadFile('oneMarcBib_changed001field.mrc', nameMarcFileForUpload);
     jobProfiles.searchJobProfileForImport(jobProfile.profileName);
     jobProfiles.runImportFile(nameMarcFileForUpload);
     logs.checkImportFile(jobProfile.profileName);

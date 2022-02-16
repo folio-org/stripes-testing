@@ -37,10 +37,10 @@ describe('ui-data-import: Filter the "View all" log screen', () => {
     cy.visit(TopMenu.dataImportPath);
     // Upload files
     // runs with errors
-    cy.uploadFile(fileNameForFailedImport);
+    cy.uploadFileWithDefaultJobProfile(fileNameForFailedImport);
     cy.reload();
     // runs successfully
-    cy.uploadFile(fileNameForSuccessfulImport);
+    cy.uploadFileWithDefaultJobProfile(fileNameForSuccessfulImport);
 
     // Remove generated test files from fixtures after uploading
     fileManager.deleteFile(`cypress/fixtures/${fileNameForSuccessfulImport}`);

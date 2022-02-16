@@ -241,7 +241,7 @@ describe('ui-data-import: MARC file upload with the update of instance, holding,
   it('C343335 MARC file upload with the update of instance, holding, and items', { tags: [testTypes.smoke] }, () => {
     // upload a marc file for creating of the new instance, holding and item
     cy.visit(topMenu.dataImportPath);
-    dataImport.uploadFileWithout999Field(nameMarcFileForImportCreate);
+    dataImport.uploadFile('oneMarcBib.mrc', nameMarcFileForImportCreate);
     jobProfiles.searchJobProfileForImport(testData.jobProfileForCreate.profile.name);
     jobProfiles.runImportFile(nameMarcFileForImportCreate);
     logs.openJobProfile(nameMarcFileForImportCreate);

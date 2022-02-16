@@ -35,6 +35,17 @@ const defaultMappingProfile = {
   fillProfile:''
 };
 
+const mappingProfileFieldsForModify = {
+  marcMappingOption: 'Modifications',
+  action: 'Add',
+  addFieldNumber: '947',
+  subfieldInFirstField: 'a',
+  subaction: 'Add subfield',
+  subfieldTextInFirstField: 'Test',
+  subfieldInSecondField: 'b',
+  subfieldTextInSecondField: 'Addition',
+};
+
 export default {
   folioRecordTypeValue,
 
@@ -62,8 +73,8 @@ export default {
         }
       ).as('getType');
       cy.do(TextField('Material type').fillIn(materialType));
-      cy.wait('@getType');
       cy.do(TextField('Permanent loan type').fillIn(permanentLoanType));
+      cy.wait('@getType');
       // wait accepted values to be filled
       // eslint-disable-next-line cypress/no-unnecessary-waiting
       cy.wait(1800);
@@ -123,15 +134,12 @@ export default {
     cy.intercept(
       {
         method: 'GET',
-        url: '/locations?*',
+        url: '/loan-types?*',
       }
-    ).as('getField');
+    ).as('getType');
+    cy.wait('@getType');
     cy.do(TextField('Material type').fillIn('"electronic resource"'));
-    cy.wait('@getField');
     cy.do(TextField('Permanent loan type').fillIn(permanentLoanType));
-    // wait accepted values to be filled
-    // eslint-disable-next-line cypress/no-unnecessary-waiting
-    cy.wait(1800);
     cy.do(TextField('Status').fillIn('"Available"'));
     cy.get('[name="profile.mappingDetails.mappingFields[24].repeatableFieldAction"]').select('Add these to existing');
     // wait for data to be loaded
@@ -159,19 +167,19 @@ export default {
     cy.expect(Button('Save as profile & Close').absent());
   },
 
-  fillModifyMappingProfile(specialMappingProfile = defaultMappingProfile) {
+  fillModifyMappingProfile(specialMappingProfile = defaultMappingProfile, properties = mappingProfileFieldsForModify) {
     cy.do([
       TextField({ name:'profile.name' }).fillIn(specialMappingProfile.name),
       Select({ name:'profile.incomingRecordType' }).choose(marcBib),
       Select({ name:'profile.existingRecordType' }).choose(marcBib),
-      Select({ name:'profile.mappingDetails.marcMappingOption' }).choose('Modifications'),
-      Select({ name:'profile.mappingDetails.marcMappingDetails[0].action' }).choose('Add'),
-      TextField({ name:'profile.mappingDetails.marcMappingDetails[0].field.field' }).fillIn('947'),
-      TextField({ name:'profile.mappingDetails.marcMappingDetails[0].field.subfields[0].subfield' }).fillIn('a'),
-      Select({ name:'profile.mappingDetails.marcMappingDetails[0].field.subfields[0].subaction' }).choose('Add subfield'),
-      TextArea({ name:'profile.mappingDetails.marcMappingDetails[0].field.subfields[0].data.text' }).fillIn('Test'),
-      TextField({ name:'profile.mappingDetails.marcMappingDetails[0].field.subfields[1].subfield' }).fillIn('b'),
-      TextArea({ name:'profile.mappingDetails.marcMappingDetails[0].field.subfields[1].data.text' }).fillIn('Addition'),
+      Select({ name:'profile.mappingDetails.marcMappingOption' }).choose(properties.marcMappingOption),
+      Select({ name:'profile.mappingDetails.marcMappingDetails[0].action' }).choose(properties.action),
+      TextField({ name:'profile.mappingDetails.marcMappingDetails[0].field.field' }).fillIn(properties.addFieldNumber),
+      TextField({ name:'profile.mappingDetails.marcMappingDetails[0].field.subfields[0].subfield' }).fillIn(properties.subfieldInFirstField),
+      Select({ name:'profile.mappingDetails.marcMappingDetails[0].field.subfields[0].subaction' }).choose(properties.subaction),
+      TextArea({ name:'profile.mappingDetails.marcMappingDetails[0].field.subfields[0].data.text' }).fillIn(properties.subfieldTextInFirstField),
+      TextField({ name:'profile.mappingDetails.marcMappingDetails[0].field.subfields[1].subfield' }).fillIn(properties.subfieldInSecondField),
+      TextArea({ name:'profile.mappingDetails.marcMappingDetails[0].field.subfields[1].data.text' }).fillIn(properties.subfieldTextInSecondField),
       Button('Save as profile & Close').click(),
     ]);
     cy.expect(Button('Save as profile & Close').absent());
