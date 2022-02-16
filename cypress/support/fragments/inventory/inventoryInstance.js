@@ -11,7 +11,8 @@ import {
   Accordion,
   Modal,
   Dropdown,
-  Checkbox, MultiColumnListRow,
+  Checkbox,
+  MultiColumnListRow,
 } from '../../../../interactors';
 import InventoryActions from './inventoryActions';
 import InventoryInstanceEdit from './InventoryInstanceEdit';
@@ -126,7 +127,7 @@ export default {
 
   checkHoldingsTable: (locationName, rowNumber, caption, barcode, status) => {
     const accordionHeader = `Holdings: ${locationName} >`;
-    const indexRowumber = `row-${rowNumber}`;
+    const indexRowNumber = `row-${rowNumber}`;
     // wait for data to be loaded
     cy.intercept(
       {
@@ -140,14 +141,14 @@ export default {
     ]);
 
     cy.expect(Accordion(accordionHeader)
-      .find(MultiColumnListRow({ indexRow: indexRowumber }))
+      .find(MultiColumnListRow({ indexRow: indexRowNumber }))
       .find(MultiColumnListCell({ content: barcode })).exists());
     // TODO: uncomment once MODORDERS-569 will be implemented
     // cy.expect(Accordion(accordionHeader)
     //   .find(MultiColumnListRow({ rowNumber }))
     //   .find(MultiColumnListCell({ content: caption })).exists());
     cy.expect(Accordion(accordionHeader)
-      .find(MultiColumnListRow({ indexRow: indexRowumber }))
+      .find(MultiColumnListRow({ indexRow: indexRowNumber }))
       .find(MultiColumnListCell({ content: status })).exists());
   },
 

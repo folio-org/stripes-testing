@@ -12,7 +12,6 @@ import './checkin';
 import './checkout';
 import './eholdings';
 import './inventory';
-import './organizations';
 import './users';
 import 'cypress-file-upload';
 import './data-import';
