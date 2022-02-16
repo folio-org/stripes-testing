@@ -1,4 +1,4 @@
-import { Button, TextField, Select, SelectionList, KeyValue, Accordion, Pane } from '../../../../interactors';
+import { Button, TextField, Select, KeyValue, Accordion, Pane } from '../../../../interactors';
 
 const buttonNew = Button('New');
 const saveAndClose = Button('Save & close');
