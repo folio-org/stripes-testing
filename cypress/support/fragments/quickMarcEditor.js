@@ -81,15 +81,12 @@ export default class QuickmarcEditor {
 
   deletePenaltField() {
     const shouldBeRemovedRowNumber = this.getInitialRowsCount() - 1;
-
-    cy.expect(QuickMarcEditor().exists())
-      .then(() => {
-        cy.then(() => QuickMarcEditor().presentedRowsProperties())
-          .then(presentedRowsProperties => {
-            const shouldBeDeletedRowTag = presentedRowsProperties[shouldBeRemovedRowNumber].tag;
-            cy.do(getRowInteractor(shouldBeRemovedRowNumber).find(deleteFieldButton).click());
-            cy.wrap(shouldBeDeletedRowTag).as('specialTag');
-          });
+    cy.expect(getRowInteractor(shouldBeRemovedRowNumber).exists());
+    cy.then(() => QuickMarcEditor().presentedRowsProperties())
+      .then(presentedRowsProperties => {
+        const shouldBeDeletedRowTag = presentedRowsProperties[shouldBeRemovedRowNumber].tag;
+        cy.do(getRowInteractor(shouldBeRemovedRowNumber).find(deleteFieldButton).click());
+        cy.wrap(shouldBeDeletedRowTag).as('specialTag');
       });
     return cy.get('@specialTag');
   }
