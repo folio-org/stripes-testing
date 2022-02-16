@@ -7,4 +7,5 @@ cypress/screenshots
 
 .DS_Store
 
-allure-results
+reports/allure
+/allure-results
