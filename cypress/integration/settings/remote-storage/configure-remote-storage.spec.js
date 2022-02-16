@@ -1,5 +1,5 @@
 import TopMenu from '../../../support/fragments/topMenu';
-import RemoteStorageHelper from '../../../support/fragments/settings/remote-storage/configuration';
+import RemoteStorageHelper from '../../../support/fragments/settings/remote-storage/remote-storage-configuration';
 import getRandomPostfix from '../../../support/utils/stringTools';
 import testTypes from '../../../support/dictionary/testTypes';
 
@@ -11,18 +11,19 @@ describe('export instance records', () => {
 
   // parametrized providers
   [
-    RemoteStorageHelper.providers.CaiaSoft,
-    RemoteStorageHelper.providers.DematicEMS,
-    RemoteStorageHelper.providers.DematicStagingDirector
-  ].forEach(provider => {
+    RemoteStorageHelper.configurations.CaiaSoft,
+    RemoteStorageHelper.configurations.DematicEMS,
+    RemoteStorageHelper.configurations.DematicStagingDirector
+  ].forEach(configuration => {
     it('C163919 configure remote storage', { tags: [testTypes.smoke] }, () => {
-      const name = `TestName${getRandomPostfix()}`;
+      const name = `AutotestConfigurationName${getRandomPostfix()}`;
 
-      provider.create(name);
-      RemoteStorageHelper.verifyCreatedRemoteStorage(name, provider);
-      RemoteStorageHelper.tryToEditRemoteStorage(name);
-      RemoteStorageHelper.verifyCreatedRemoteStorage(name, provider);
-      provider.delete(name);
+      configuration.create(name);
+      RemoteStorageHelper.verifyCreatedConfiguration(name, configuration);
+      RemoteStorageHelper.editConfiguration(name);
+      RemoteStorageHelper.closeWithoutSaving();
+      RemoteStorageHelper.verifyCreatedConfiguration(name, configuration);
+      RemoteStorageHelper.deleteRemoteStorage(name, configuration);
     });
   });
 });
