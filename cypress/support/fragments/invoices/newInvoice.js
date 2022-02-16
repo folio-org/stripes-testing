@@ -1,15 +1,15 @@
 import uuid from 'uuid';
-import { getCurrentDate } from '../../utils/dateTools';
-import { getRandomInvoiceNumber } from '../finance/financeHelper';
+import DateTools from '../../utils/dateTools';
+import FinanceHelper from '../finance/financeHelper';
 
 export default {
   defaultUiInvoice : {
     id: uuid(),
     status: 'Open',
-    invoiceDate: getCurrentDate(),
+    invoiceDate: DateTools.getCurrentDate(),
     vendorName: 'Amazon.com',
     accountingCode: '',
     batchGroup: '',
-    invoiceNumber: getRandomInvoiceNumber()
+    invoiceNumber: FinanceHelper.getRandomInvoiceNumber()
   }
 };
