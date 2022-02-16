@@ -58,9 +58,8 @@ describe('ui-invoices: test POL search plugin', () => {
           .set('Donor', orderLine.donor)
           .set('Selector', orderLine.selector)
           .set('Volumes', orderLine.physical.volumes[0])
-          .set('Product ID', orderLine.details.productIds[0].productId);
-        // TODO: uncomment once bug UINV-355 will be fixed
-        // .set('Product ID ISBN', orderLine.details.productIds[0].productId);
+          .set('Product ID', orderLine.donor)
+          .set('Product ID ISBN', orderLine.details.productIds[0].productId);
         Invoices.createDefaultInvoiceViaUi(invoice, vendorPrimaryAddress);
         Invoices.checkCreatedInvoice(invoice, vendorPrimaryAddress);
         Invoices.openPolSearchPlugin();

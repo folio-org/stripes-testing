@@ -10,7 +10,8 @@ import { Button,
   MultiColumnListCell,
   Modal,
   Checkbox,
-  MultiColumnList } from '../../../../interactors';
+  MultiColumnList,
+  MultiColumnListRow } from '../../../../interactors';
 import InteractorsTools from '../../utils/interactorsTools';
 import Helper from '../finance/financeHelper';
 
@@ -221,6 +222,7 @@ export default {
     ]);
     // verify that first row in the result list contains related order line title
     cy.expect(MultiColumnList({ id: 'list-plugin-find-records' })
+      .find(MultiColumnListRow({ index: 0 }))
       .find(MultiColumnListCell({ columnIndex: 2 }))
       .has({ content: titleOrPackage }));
     cy.do(Button({ id: 'reset-find-records-filters' }).click());
