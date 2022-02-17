@@ -32,6 +32,17 @@ describe('ui-data-import: Verify the possibility to modify MARC Bibliographic re
   });
 
   it('C345423 Verify the possibility to modify MARC Bibliographic record', { tags: [testTypes.smoke] }, () => {
+    const mappingProfileFieldsForModify = {
+      marcMappingOption: 'Modifications',
+      action: 'Add',
+      addFieldNumber: '947',
+      subfieldInFirstField: 'a',
+      subaction: 'Add subfield',
+      subfieldTextInFirstField: 'Test',
+      subfieldInSecondField: 'b',
+      subfieldTextInSecondField: 'Addition',
+    };
+
     // unique name for profiles
     const mappingProfileName = `autoTestMappingProf.${getRandomPostfix()}`;
     const actionProfileName = `autoTestActionProf.${getRandomPostfix()}`;
@@ -42,12 +53,8 @@ describe('ui-data-import: Verify the possibility to modify MARC Bibliographic re
     const nameMarcFileForUpload = `autotestFile.${getRandomPostfix()}.mrc`;
 
     // create Field mapping profile
-    const mappingProfile = {
-      name: mappingProfileName
-    };
-
     settingsDataImport.goToMappingProfiles();
-    fieldMappingProfiles.createModifyMappingProfile(mappingProfile);
+    fieldMappingProfiles.createModifyMappingProfile(mappingProfileName, mappingProfileFieldsForModify);
     fieldMappingProfiles.checkMappingProfilePresented(mappingProfileName);
 
     // create Action profile and link it to Field mapping profile
@@ -58,7 +65,7 @@ describe('ui-data-import: Verify the possibility to modify MARC Bibliographic re
     };
 
     settingsDataImport.goToActionProfiles();
-    actionProfiles.createActionProfile(actionProfile, mappingProfile);
+    actionProfiles.createActionProfile(actionProfile, mappingProfileName);
     actionProfiles.checkActionProfilePresented(actionProfileName);
 
     // create Match profile

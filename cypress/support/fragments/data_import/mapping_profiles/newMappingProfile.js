@@ -35,17 +35,6 @@ const defaultMappingProfile = {
   fillProfile:''
 };
 
-const mappingProfileFieldsForModify = {
-  marcMappingOption: 'Modifications',
-  action: 'Add',
-  addFieldNumber: '947',
-  subfieldInFirstField: 'a',
-  subaction: 'Add subfield',
-  subfieldTextInFirstField: 'Test',
-  subfieldInSecondField: 'b',
-  subfieldTextInSecondField: 'Addition',
-};
-
 export default {
   folioRecordTypeValue,
 
@@ -167,9 +156,9 @@ export default {
     cy.expect(Button('Save as profile & Close').absent());
   },
 
-  fillModifyMappingProfile(specialMappingProfile = defaultMappingProfile, properties = mappingProfileFieldsForModify) {
+  fillModifyMappingProfile(specialMappingProfileName = defaultMappingProfile.name, properties) {
     cy.do([
-      TextField({ name:'profile.name' }).fillIn(specialMappingProfile.name),
+      TextField({ name:'profile.name' }).fillIn(specialMappingProfileName),
       Select({ name:'profile.incomingRecordType' }).choose(marcBib),
       Select({ name:'profile.existingRecordType' }).choose(marcBib),
       Select({ name:'profile.mappingDetails.marcMappingOption' }).choose(properties.marcMappingOption),

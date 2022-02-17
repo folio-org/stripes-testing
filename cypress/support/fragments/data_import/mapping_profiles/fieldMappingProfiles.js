@@ -57,9 +57,9 @@ export default {
     cy.expect(actionsButton.exists());
   },
 
-  createModifyMappingProfile:(mappingProfile) => {
+  createModifyMappingProfile:(mappingProfile, properties) => {
     openNewMappingProfileForm();
-    newMappingProfile.fillModifyMappingProfile(mappingProfile);
+    newMappingProfile.fillModifyMappingProfile(mappingProfile, properties);
     closeViewModeForMappingProfile();
     cy.expect(actionsButton.exists());
   },

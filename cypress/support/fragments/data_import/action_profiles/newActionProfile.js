@@ -28,9 +28,9 @@ export default {
     ]);
   },
 
-  linkMappingProfile: (specialMappingProfile) => {
+  linkMappingProfile: (specialMappingProfileName) => {
     cy.do(Button('Link Profile').click());
-    ModalSelectMappingProfile.searchMappingProfileByName(specialMappingProfile.name);
+    ModalSelectMappingProfile.searchMappingProfileByName(specialMappingProfileName);
     ModalSelectMappingProfile.selectMappingProfile();
     cy.get('section[id=actionProfileFormAssociatedMappingProfileAccordion] div[class*=searchControl]>button[disabled]',
       getLongDelay()).should('be.visible');
