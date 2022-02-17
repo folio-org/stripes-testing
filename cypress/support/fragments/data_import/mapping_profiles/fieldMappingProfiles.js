@@ -57,10 +57,17 @@ export default {
     cy.expect(actionsButton.exists());
   },
 
-  checkMappingProfilePresented: (mappingProfile) => {
-    cy.do(TextField({ id:'input-search-mapping-profiles-field' }).fillIn(mappingProfile));
+  createModifyMappingProfile:(mappingProfile, properties) => {
+    openNewMappingProfileForm();
+    newMappingProfile.fillModifyMappingProfile(mappingProfile, properties);
+    closeViewModeForMappingProfile();
+    cy.expect(actionsButton.exists());
+  },
+
+  checkMappingProfilePresented: (mappingProfileName) => {
+    cy.do(TextField({ id:'input-search-mapping-profiles-field' }).fillIn(mappingProfileName));
     cy.do(Button('Search').click());
-    cy.expect(MultiColumnListCell(mappingProfile).exists());
+    cy.expect(MultiColumnListCell(mappingProfileName).exists());
   },
 
   deleteFieldMappingProfile

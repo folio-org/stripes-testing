@@ -1,7 +1,7 @@
 import { Button } from '../../interactors';
 import { getLongDelay } from './utils/cypressTools';
 
-Cypress.Commands.add('uploadFile', (name, jobProfileToRun = 'Default - Create instance and SRS MARC Bib') => {
+Cypress.Commands.add('uploadFileWithDefaultJobProfile', (name, jobProfileToRun = 'Default - Create instance and SRS MARC Bib') => {
   // upload generated file with given unique name
   cy.get('input[type=file]', getLongDelay()).attachFile(name);
 

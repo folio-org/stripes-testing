@@ -13,6 +13,12 @@ const createdItemsColumns = [
   MultiColumnListCell({ row: 0, columnIndex: 5 })
 ];
 
+const checkIsSrsUpdated = () => {
+  cy.do(createdItemsColumns[0].perform(element => {
+    expect(element).to.have.text('Updated');
+  }));
+};
+
 const checkIsInstanceCreated = () => {
   // TODO: redesign from perform to regular cy.expect
   cy.do(createdItemsColumns[1].perform(element => {
@@ -26,9 +32,15 @@ const checkIsInstanceUpdated = () => {
   }));
 };
 
-const checkIsSrsUpdated = () => {
-  cy.do(createdItemsColumns[0].perform(element => {
-    expect(element).to.have.text('Updated');
+const checkIsHoldingsCreated = () => {
+  cy.do(createdItemsColumns[2].perform(element => {
+    expect(element).to.have.text('Created');
+  }));
+};
+
+const checkIsItemCreated = () => {
+  cy.do(createdItemsColumns[3].perform(element => {
+    expect(element).to.have.text('Created');
   }));
 };
 
@@ -59,7 +71,26 @@ export default {
     });
   },
 
+  checkUpdatedItems:() => {
+    createdItemsColumns.forEach(column => {
+      cy.do(column.perform(element => {
+        expect(element).to.have.text('Updated');
+      }));
+    });
+  },
+
+  checkUpdatedCreatedItems:() => {
+    checkIsSrsUpdated();
+    checkIsInstanceCreated();
+    checkIsHoldingsCreated();
+    checkIsItemCreated();
+  },
+
+  checkUpdatedSrsAndInstance:() => {
+    checkIsSrsUpdated();
+    checkIsInstanceUpdated();
+  },
+
   checkIsInstanceCreated,
   checkIsInstanceUpdated,
-  checkIsSrsUpdated,
 };
