@@ -1,5 +1,5 @@
 import DataImportViewAllPage from '../../support/fragments/data_import/dataImportViewAllPage';
-import fileManager from '../../support/utils/fileManager';
+import FileManager from '../../support/utils/fileManager';
 import DateTools from '../../support/utils/dateTools';
 import { Accordion } from '../../../interactors';
 import getRandomPostfix from '../../support/utils/stringTools';
@@ -27,11 +27,11 @@ describe('ui-data-import: Filter the "View all" log screen', () => {
     );
 
     // Create files dynamically with given name and content in fixtures
-    fileManager.createFile(`cypress/fixtures/${fileNameForFailedImport}`);
+    FileManager.createFile(`cypress/fixtures/${fileNameForFailedImport}`);
     // read contents of static file in fixtures
     cy.readFile(`cypress/fixtures/${pathToStaticFile}`).then(content => {
     // and write its contents to the file which runs successfully and create it
-      fileManager.createFile(`cypress/fixtures/${fileNameForSuccessfulImport}`, content);
+      FileManager.createFile(`cypress/fixtures/${fileNameForSuccessfulImport}`, content);
     });
 
     cy.visit(TopMenu.dataImportPath);
@@ -43,8 +43,8 @@ describe('ui-data-import: Filter the "View all" log screen', () => {
     cy.uploadFileWithDefaultJobProfile(fileNameForSuccessfulImport);
 
     // Remove generated test files from fixtures after uploading
-    fileManager.deleteFile(`cypress/fixtures/${fileNameForSuccessfulImport}`);
-    fileManager.deleteFile(`cypress/fixtures/${fileNameForFailedImport}`);
+    FileManager.deleteFile(`cypress/fixtures/${fileNameForSuccessfulImport}`);
+    FileManager.deleteFile(`cypress/fixtures/${fileNameForFailedImport}`);
   });
 
   beforeEach(() => {

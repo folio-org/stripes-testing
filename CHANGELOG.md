@@ -1,5 +1,8 @@
 # Change history for stripes-testing
 
+## [4.2.0](https://github.com/folio-org/stripes-testing/tree/v4.2.0) (2022-02-11)
+[Full Changelog](https://github.com/folio-org/stripes-testing/compare/v4.0.0...v4.2.0)
+
 * Implement e-2-e automation of test case C4059. Refs FAT-810.
 * Implement e-2-e automation of test case C4061. Refs FAT-807.
 * Export `dispatchFocusout` from `util` so that other Interactors can make use of it. Refs STSMACOM-541.

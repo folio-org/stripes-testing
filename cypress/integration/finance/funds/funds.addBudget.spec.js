@@ -1,6 +1,6 @@
 import newFund from '../../../support/fragments/finance/funds/newFund';
 import Funds from '../../../support/fragments/finance/funds/funds';
-import { getCurrentFiscalYearCode } from '../../../support/utils/dateTools';
+import DateTools from '../../../support/utils/dateTools';
 import FinanceHelp from '../../../support/fragments/finance/financeHelper';
 import testType from '../../../support/dictionary/testTypes';
 
@@ -18,7 +18,7 @@ describe('ui-finance: Add budget to fund', () => {
         createdLedger => {
           createdLedgerId = createdLedger.id;
           Funds.addBudget(0);
-          Funds.checkCreatedBudget(fund.code, getCurrentFiscalYearCode());
+          Funds.checkCreatedBudget(fund.code, DateTools.getCurrentFiscalYearCode());
           Funds.deleteBudgetViaActions();
           Funds.deleteFundViaActions();
           FinanceHelp.searchByName(fund.name);

@@ -14,4 +14,6 @@ export default class TopMenu {
   static ordersPath = '/orders';
   static invoicesPath = '/invoice';
   static circulationLogPath = '/circulation-log';
+  static settingsInvoice = 'settings/invoice';
+  static organizationsPath = '/organizations';
 }

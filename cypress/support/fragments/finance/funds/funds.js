@@ -17,7 +17,7 @@ import {
   MultiColumnListRow,
   MultiColumnListCell
 } from '../../../../../interactors';
-import { statusActive, statusInactive, statusFrozen } from '../financeHelper';
+import FinanceHelp from '../financeHelper';
 import TopMenu from '../../topMenu';
 import getRandomPostfix from '../../../utils/stringTools';
 import Describer from '../../../utils/describer';
@@ -176,13 +176,13 @@ export default {
   selectStatusInSearch: (fundStatus) => {
     cy.do(Accordion({ id: 'fundStatus' }).clickHeader());
     switch (fundStatus) {
-      case statusFrozen:
+      case FinanceHelp.statusFrozen:
         cy.do(Checkbox({ id: 'clickable-filter-fundStatus-frozen' }).click());
         break;
-      case statusActive:
+      case FinanceHelp.statusActive:
         cy.do(Checkbox({ id: 'clickable-filter-fundStatus-active' }).click());
         break;
-      case statusInactive:
+      case FinanceHelp.statusInactive:
         cy.do(Checkbox({ id: 'clickable-filter-fundStatus-inactive' }).click());
         break;
       default:
