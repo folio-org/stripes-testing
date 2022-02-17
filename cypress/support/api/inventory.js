@@ -18,25 +18,29 @@ Cypress.Commands.add('getLoanTypes', (searchParams) => {
     });
 });
 
+// TODO: update tests where cypress env is still used
 Cypress.Commands.add('getMaterialTypes', (searchParams) => {
   cy
     .okapiRequest({
       path: 'material-types',
       searchParams,
     })
-    .then(({ body }) => {
-      Cypress.env('materialTypes', body.mtypes);
+    .then(response => {
+      Cypress.env('materialTypes', response.body.mtypes);
+      return response.body.mtypes[0];
     });
 });
 
+// TODO: update tests where cypress env is still used
 Cypress.Commands.add('getLocations', (searchParams) => {
   cy
     .okapiRequest({
       path: 'locations',
       searchParams,
     })
-    .then(({ body }) => {
-      Cypress.env('locations', body.locations);
+    .then(response => {
+      Cypress.env('locations', response.body.locations);
+      return response.body.locations[0];
     });
 });
 
@@ -136,5 +140,16 @@ Cypress.Commands.add('getItems', (searchParams) => {
     })
     .then(({ body }) => {
       Cypress.env('items', body.items);
+    });
+});
+
+Cypress.Commands.add('getProductIdTypes', (searchParams) => {
+  cy
+    .okapiRequest({
+      path: 'identifier-types',
+      searchParams,
+    })
+    .then(response => {
+      return response.body.identifierTypes[0];
     });
 });

@@ -7,6 +7,7 @@ import TopMenu from '../../support/fragments/topMenu';
 import Helper from '../../support/fragments/finance/financeHelper';
 import InventorySearch from '../../support/fragments/inventory/inventorySearch';
 import InventoryInstance from '../../support/fragments/inventory/inventoryInstance';
+import InteractorsTools from '../../support/utils/interactorsTools';
 
 describe('orders: Receive piece from Order', () => {
   const order = { ...newOrder.defaultOrder };
@@ -16,19 +17,15 @@ describe('orders: Receive piece from Order', () => {
   before(() => {
     cy.getToken(Cypress.env('diku_login'), Cypress.env('diku_password'));
     cy.getOrganizationApi({ query: 'name="Amazon.com"' })
-      .then(({ body }) => {
-        order.vendor = body.organizations[0].id;
-        orderLine.physical.materialSupplier = body.organizations[0].id;
-        orderLine.eresource.accessProvider = body.organizations[0].id;
+      .then(organization => {
+        order.vendor = organization.id;
+        orderLine.physical.materialSupplier = organization.id;
+        orderLine.eresource.accessProvider = organization.id;
       });
     cy.getLocations({ query: `name="${locationName}"` })
-      .then(({ body }) => {
-        orderLine.locations[0].locationId = body.locations[0].id;
-      });
+      .then(location => { orderLine.locations[0].locationId = location.id; });
     cy.getMaterialTypes({ query: 'name="book"' })
-      .then(({ body }) => {
-        orderLine.physical.materialType = body.mtypes[0].id;
-      });
+      .then(materialType => { orderLine.physical.materialType = materialType.id; });
     cy.login(Cypress.env('diku_login'), Cypress.env('diku_password'));
   });
 
@@ -42,7 +39,7 @@ describe('orders: Receive piece from Order', () => {
         Orders.searchByParameter('PO number', orderNumber);
         Helper.selectFromResultsList();
         Orders.openOrderViaActions();
-        Helper.checkCalloutMessage(`The Purchase order - ${orderNumber} has been successfully opened`, 'success');
+        InteractorsTools.checkCalloutMessage(`The Purchase order - ${orderNumber} has been successfully opened`);
         Orders.receiveOrderViaActions();
         // Receiving part
         Helper.selectFromResultsList();
@@ -50,7 +47,8 @@ describe('orders: Receive piece from Order', () => {
         Receiving.checkReceivedPiece(0, caption, barcode);
         // inventory part
         cy.visit(TopMenu.inventoryPath);
-        InventorySearch.searchItemByParameter('Barcode', barcode);
+        InventorySearch.switchToItem();
+        InventorySearch.searchByParameter('Barcode', barcode);
         Helper.selectFromResultsList();
         InventoryInstance.checkHoldingsTable(locationName, 0, caption, barcode, 'In process');
       });

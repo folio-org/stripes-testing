@@ -1,4 +1,4 @@
-import { Button, MultiColumnListRow, SearchField, Callout } from '../../../../interactors';
+import { Button, MultiColumnListRow, SearchField } from '../../../../interactors';
 
 const searchField = SearchField({ id: 'input-record-search' });
 const noResultsMessageLabel = '//span[contains(@class,"noResultsMessageLabel")]';
@@ -53,11 +53,6 @@ export default {
 
   clickOnCloseIconButton: () => {
     cy.do(Button({ icon: 'times' }).click());
-  },
-
-  checkCalloutMessage: (text, calloutType) => {
-    cy.expect(Callout({ type: calloutType }).exists());
-    cy.expect(Callout({ type: calloutType }).is({ textContent: text }));
   },
 
   getRandomBarcode: () => {

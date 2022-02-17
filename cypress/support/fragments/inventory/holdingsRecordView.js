@@ -1,34 +1,28 @@
-import inventoryInstance from './inventoryInstance';
 import { Button, KeyValue, Modal, Section } from '../../../../interactors';
-import QuickMarcEditor from '../quickMarcEditor';
 import InventoryViewSource from './inventoryViewSource';
 import NewHoldingsRecord from './newHoldingsRecord';
 
 const root = Section({ id: 'ui-inventory.holdingsRecordView' });
 const actionsButton = root.find(Button('Actions'));
-const closeButton = root.find(Button({ icon: 'times' }));
 const editInQuickMarcButton = Button({ id: 'clickable-edit-marc-holdings' });
 const viewSourceButton = Button({ id: 'clickable-view-source' });
 const deleteButton = Button({ id: 'clickable-delete-holdingsrecord' });
 const duplicateButton = Button({ id: 'copy-holdings' });
 const deleteConfirmationModal = Modal({ id:'delete-confirmation-modal' });
+const holdingHrIdKeyValue = root.find(KeyValue('Holdings HRID'));
 
 export default {
   newHolding : {
     rowsCountInQuickMarcEditor : 6
   },
-  waitLoading: () => {
-    cy.expect(actionsButton.exists());
-  },
+  waitLoading: () => cy.expect(actionsButton.exists()),
   close: () => {
-    cy.do(closeButton.click());
-    cy.expect(actionsButton.absent());
-    inventoryInstance.waitLoading();
+    cy.do(Button({ icon: 'times' }).click());
+    cy.expect(root.absent());
   },
   gotoEditInQuickMarc: () => {
     cy.do(actionsButton.click());
     cy.do(editInQuickMarcButton.click());
-    QuickMarcEditor.waitLoading();
   },
   viewSource: () => {
     cy.do(actionsButton.click());
@@ -39,6 +33,13 @@ export default {
     cy.do(actionsButton.click());
     cy.expect(viewSourceButton.absent());
     cy.expect(editInQuickMarcButton.absent());
+    // close openned Actions
+    cy.do(actionsButton.click());
+  },
+  checkActionsMenuOptionsInMarcSource:() => {
+    cy.do(actionsButton.click());
+    cy.expect(viewSourceButton.exists());
+    cy.expect(editInQuickMarcButton.exists());
     // close openned Actions
     cy.do(actionsButton.click());
   },
@@ -54,7 +55,13 @@ export default {
     cy.do(duplicateButton.click());
     NewHoldingsRecord.waitLoading();
   },
-  checkSource:(sourceValue) => {
-    cy.expect(KeyValue('Source', { value:sourceValue }).exists());
+  checkSource:sourceValue => cy.expect(KeyValue('Source', { value:sourceValue }).exists()),
+  getHoldingsHrId: () => cy.then(() => holdingHrIdKeyValue.value()),
+  checkInstanceHrId:expectedInstanceHrdId => cy.expect(root.find(KeyValue('Instance HRID')).has({ value:expectedInstanceHrdId })),
+  checkHrId: expectedHrId => cy.expect(holdingHrIdKeyValue.has({ value: expectedHrId })),
+  getId:() => {
+    // parse hodling record id from current url
+    cy.url().then(url => cy.wrap(url.split('?')[0].split('/').at(-1)).as('holdingsRecorId'));
+    return cy.get('@holdingsRecorId');
   }
 };

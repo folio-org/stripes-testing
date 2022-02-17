@@ -11,20 +11,23 @@ import {
   Accordion,
   Modal,
   Dropdown,
-  Checkbox, MultiColumnListRow,
+  Checkbox,
+  MultiColumnListRow,
 } from '../../../../interactors';
-import QuickMarcEditorFragment from '../quickMarcEditor';
 import InventoryActions from './inventoryActions';
 import InventoryInstanceEdit from './InventoryInstanceEdit';
 import HoldingsRecordView from './holdingsRecordView';
 import InventoryViewSource from './inventoryViewSource';
 import NewHoldingsRecord from './newHoldingsRecord';
+import InventoryInstanceSelectInstanceModal from './holdingsMove/inventoryInstanceSelectInstanceModal';
+import InventoryInstancesMovement from './holdingsMove/inventoryInstancesMovement';
 
-const _section = Section({ id: 'pane-instancedetails' });
-const actionsButton = _section.find(Button('Actions'));
+const section = Section({ id: 'pane-instancedetails' });
+const actionsButton = section.find(Button('Actions'));
 const identifiers = MultiColumnList({ id:'list-identifiers' });
 const editMARCBibRecordButton = Button({ id:'edit-instance-marc' });
 const editInstanceButton = Button({ id:'edit-instance' });
+const moveHoldingsToAnotherInstanceButton = Button({ id:'move-instance' });
 const viewSourceButton = Button({ id:'clickable-view-source' });
 const overlaySourceBibRecord = Button({ id:'dropdown-clickable-reimport-record' });
 const deriveNewMarcBibRecord = Button({ id:'duplicate-instance-marc' });
@@ -37,7 +40,7 @@ const moveItemsButton = Button({ id: 'move-instance-items' });
 const instanceHRID = 'Instance HRID';
 const validOCLC = { id:'176116217',
   // TODO: hardcoded count related with interactors getters issue. Redesign to cy.then(QuickMarkEditor().rowsCount()).then(rowsCount => {...}
-  getLastRowNumber:() => 31,
+  lastRowNumber: 31,
   // it should be presented in marc bib one time to correct work(applicable in update of record)
   existingTag: '100' };
 
@@ -56,15 +59,13 @@ export default {
   },
 
   checkExpectedMARCSource: () => {
-    cy.expect(_section.find(HTML(including('MARC'))).exists());
-    cy.expect(_section.find(HTML(including('FOLIO'))).absent());
+    cy.expect(section.find(HTML(including('MARC'))).exists());
+    cy.expect(section.find(HTML(including('FOLIO'))).absent());
   },
 
   goToEditMARCBiblRecord:() => {
     cy.do(actionsButton.click());
-    cy.expect(editMARCBibRecordButton.exists());
     cy.do(editMARCBibRecordButton.click());
-    QuickMarcEditorFragment.waitLoading();
   },
 
   viewSource: () => {
@@ -75,6 +76,7 @@ export default {
   overlaySourceBibRecord:(specialOCLCWorldCatidentifier = validOCLC.id) => {
     cy.do(actionsButton.click());
     cy.do(overlaySourceBibRecord.click());
+    // TODO: merge InventoryACtions into InventoryInstances
     InventoryActions.fillImportFields(specialOCLCWorldCatidentifier);
     const startTime = Date.now();
     InventoryActions.pressImportInModal();
@@ -97,25 +99,19 @@ export default {
     cy.expect(QuickMarcEditor().exists());
   },
 
-  getAssignedHRID:() => {
-    return cy.then(() => KeyValue(instanceHRID).value());
-  },
+  getAssignedHRID:() => cy.then(() => KeyValue(instanceHRID).value()),
 
   checkUpdatedHRID: (oldHRID) => {
     cy.expect(KeyValue(instanceHRID, { value: oldHRID }).absent());
   },
 
   checkPresentedText: (expectedText) => {
-    cy.expect(_section.find(HTML(including(expectedText))).exists());
+    cy.expect(section.find(HTML(including(expectedText))).exists());
   },
 
-  addMarcHoldingRecord:() => {
+  goToMarcHoldingRecordAdding:() => {
     cy.do(actionsButton.click());
     cy.do(addMarcHoldingRecordButton.click());
-    QuickMarcEditorFragment.waitLoading();
-    QuickMarcEditorFragment.updateExistingField('852', QuickMarcEditorFragment.getExistingLocation());
-    QuickMarcEditorFragment.pressSaveAndClose();
-    HoldingsRecordView.waitLoading();
   },
 
   goToHoldingView: () => {
@@ -131,7 +127,7 @@ export default {
 
   checkHoldingsTable: (locationName, rowNumber, caption, barcode, status) => {
     const accordionHeader = `Holdings: ${locationName} >`;
-    const indexRowumber = `row-${rowNumber}`;
+    const indexRowNumber = `row-${rowNumber}`;
     // wait for data to be loaded
     cy.intercept(
       {
@@ -145,14 +141,14 @@ export default {
     ]);
 
     cy.expect(Accordion(accordionHeader)
-      .find(MultiColumnListRow({ indexRow: indexRowumber }))
+      .find(MultiColumnListRow({ indexRow: indexRowNumber }))
       .find(MultiColumnListCell({ content: barcode })).exists());
     // TODO: uncomment once MODORDERS-569 will be implemented
     // cy.expect(Accordion(accordionHeader)
     //   .find(MultiColumnListRow({ rowNumber }))
     //   .find(MultiColumnListCell({ content: caption })).exists());
     cy.expect(Accordion(accordionHeader)
-      .find(MultiColumnListRow({ indexRow: indexRowumber }))
+      .find(MultiColumnListRow({ indexRow: indexRowNumber }))
       .find(MultiColumnListCell({ content: status })).exists());
   },
 
@@ -188,5 +184,16 @@ export default {
       actionsButton.click(),
       moveItemsButton.click()
     ]);
+  },
+  moveHoldingsToAnotherInstance:(newInstanceHrId) => {
+    cy.do(actionsButton.click());
+    cy.do(moveHoldingsToAnotherInstanceButton.click());
+    InventoryInstanceSelectInstanceModal.waitLoading();
+    InventoryInstanceSelectInstanceModal.searchByHrId(newInstanceHrId);
+    InventoryInstanceSelectInstanceModal.selectInstance();
+    InventoryInstancesMovement.move();
+  },
+  checkAddItem:(holdingsRecrodId) => {
+    cy.expect(section.find(Section({ id:holdingsRecrodId })).find(Button({ id: `clickable-new-item-${holdingsRecrodId}` })).exists());
   }
 };
