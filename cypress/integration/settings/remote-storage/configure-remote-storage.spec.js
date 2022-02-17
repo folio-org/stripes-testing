@@ -1,9 +1,9 @@
 import TopMenu from '../../../support/fragments/topMenu';
 import RemoteStorageHelper from '../../../support/fragments/settings/remote-storage/remote-storage-configuration';
 import getRandomPostfix from '../../../support/utils/stringTools';
-import testTypes from '../../../support/dictionary/testTypes';
+import TestTypes from '../../../support/dictionary/testTypes';
 
-describe('export instance records', () => {
+describe('navigate to remote storage configuration', () => {
   beforeEach('login', () => {
     cy.login(Cypress.env('diku_login'), Cypress.env('diku_password'));
     cy.visit(TopMenu.remoteStorageConfigurationPath);
@@ -15,15 +15,15 @@ describe('export instance records', () => {
     RemoteStorageHelper.configurations.DematicEMS,
     RemoteStorageHelper.configurations.DematicStagingDirector
   ].forEach(configuration => {
-    it('C163919 configure remote storage', { tags: [testTypes.smoke] }, () => {
+    it('C163919 configure remote storage', { tags: [TestTypes.smoke] }, () => {
       const name = `AutotestConfigurationName${getRandomPostfix()}`;
 
       configuration.create(name);
       RemoteStorageHelper.verifyCreatedConfiguration(name, configuration);
-      RemoteStorageHelper.editConfiguration(name);
+      RemoteStorageHelper.editConfiguration(name, { nameInput: 'newAutotestConfigurationName' });
       RemoteStorageHelper.closeWithoutSaving();
       RemoteStorageHelper.verifyCreatedConfiguration(name, configuration);
-      RemoteStorageHelper.deleteRemoteStorage(name, configuration);
+      RemoteStorageHelper.deleteRemoteStorage(name);
     });
   });
 });
