@@ -33,6 +33,7 @@ export const MultiColumnListHeader = HTML.extend('multi column list header')
   .selector('div[class*=mclHeader-]')
   .filters({
     index: childIndex,
+    id: el => el.getAttribute('id')
   })
   .actions({
     click: ({ perform }) => perform(el => el.querySelector('[role=button]').click()),

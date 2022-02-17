@@ -8,5 +8,5 @@ export default class AllocationTransaction {
     this.to = to;
     this.source = source;
     this.tags = tags;
-}
+  }
 }

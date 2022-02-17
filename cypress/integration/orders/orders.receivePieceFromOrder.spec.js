@@ -17,19 +17,15 @@ describe('orders: Receive piece from Order', () => {
   before(() => {
     cy.getToken(Cypress.env('diku_login'), Cypress.env('diku_password'));
     cy.getOrganizationApi({ query: 'name="Amazon.com"' })
-      .then(({ body }) => {
-        order.vendor = body.organizations[0].id;
-        orderLine.physical.materialSupplier = body.organizations[0].id;
-        orderLine.eresource.accessProvider = body.organizations[0].id;
+      .then(organization => {
+        order.vendor = organization.id;
+        orderLine.physical.materialSupplier = organization.id;
+        orderLine.eresource.accessProvider = organization.id;
       });
     cy.getLocations({ query: `name="${locationName}"` })
-      .then(({ body }) => {
-        orderLine.locations[0].locationId = body.locations[0].id;
-      });
+      .then(location => { orderLine.locations[0].locationId = location.id; });
     cy.getMaterialTypes({ query: 'name="book"' })
-      .then(({ body }) => {
-        orderLine.physical.materialType = body.mtypes[0].id;
-      });
+      .then(materialType => { orderLine.physical.materialType = materialType.id; });
     cy.login(Cypress.env('diku_login'), Cypress.env('diku_password'));
   });
 
@@ -51,7 +47,8 @@ describe('orders: Receive piece from Order', () => {
         Receiving.checkReceivedPiece(0, caption, barcode);
         // inventory part
         cy.visit(TopMenu.inventoryPath);
-        InventorySearch.searchItemByParameter('Barcode', barcode);
+        InventorySearch.switchToItem();
+        InventorySearch.searchByParameter('Barcode', barcode);
         Helper.selectFromResultsList();
         InventoryInstance.checkHoldingsTable(locationName, 0, caption, barcode, 'In process');
       });

@@ -21,6 +21,6 @@ export default {
   },
   close: () => cy.do(closeButton.click()),
   waitLoading:() => {
-    cy.do(rootSection.exists());
+    cy.expect(rootSection.exists());
   }
 };

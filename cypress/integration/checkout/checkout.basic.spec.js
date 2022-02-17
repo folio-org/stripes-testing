@@ -4,7 +4,7 @@ describe('Check Out', () => {
   beforeEach(() => {
     ITEM_BARCODE = Number(new Date()).toString();
 
-    cy.login('diku_admin', 'admin');
+    cy.login(Cypress.env('diku_login'), Cypress.env('diku_password'));
     cy.getToken('diku_admin', 'admin')
       .then(() => {
         cy.getLoanTypes({ limit: 1 });

@@ -3,13 +3,13 @@ import TopMenu from '../../../support/fragments/topMenu';
 import DateTools from '../../../support/utils/dateTools';
 import TestType from '../../../support/dictionary/testTypes';
 import FinanceHelp from '../../../support/fragments/finance/financeHelper';
-import newFund from '../../../support/fragments/finance/funds/newFund';
+import NewFund from '../../../support/fragments/finance/funds/newFund';
 import { calloutTypes } from '../../../../interactors';
 import InteractorsTools from '../../../support/utils/interactorsTools';
 
 describe('ui-finance: Delete budget with transfer transaction from fund', () => {
-  const fundFrom = { ...newFund.defaultFund };
-  const fundTo = { ...newFund.defaultFund };
+  const fundFrom = { ...NewFund.defaultFund };
+  const fundTo = { ...NewFund.defaultFund };
 
   it('C343240 delete budget with transfer transaction', { tags: [TestType.smoke] }, () => {
     // TODO: update test in testrail - it should contain rather business actions than buttons clicks etc.

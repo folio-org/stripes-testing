@@ -12,7 +12,7 @@ describe('navigate to circulation log', () => {
 
 
   it('C15484 Filter circulation log on item barcode', { tags: [TestTypes.smoke] }, () => {
-    SearchPane.searchByLoan();
+    SearchPane.filterByLastWeek();
 
     cy.do(
       // get existing item barcode from results
@@ -25,5 +25,12 @@ describe('navigate to circulation log', () => {
     );
 
     SearchPane.verifyResultCells();
+  });
+
+  it('C16976 Filter circulation log by date', { tags: [TestTypes.smoke] }, () => {
+    const verifyDate = true;
+
+    SearchPane.filterByLastWeek();
+    SearchPane.verifyResultCells(verifyDate);
   });
 });

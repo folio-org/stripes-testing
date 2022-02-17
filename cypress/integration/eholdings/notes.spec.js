@@ -2,7 +2,7 @@ import { Accordion, Button, Checkbox, HTML, including, Link, matching, Modal, Mu
 
 describe('ui-eholdings: Notes', () => {
   beforeEach('navigates to EBSCO eHolding provider', () => {
-    cy.login('diku_admin', 'admin');
+    cy.login(Cypress.env('diku_login'), Cypress.env('diku_password'));
     cy.visit('/eholdings');
     cy.search('EBSCO');
     cy.do(Link(including('EBSCO\n')).click());

@@ -7,7 +7,7 @@ describe('Creating user', () => {
   const lastName = 'Test123' + Number(new Date()).toString();
 
   before(() => {
-    cy.login('diku_admin', 'admin');
+    cy.login(Cypress.env('diku_login'), Cypress.env('diku_password'));
     cy.getToken('diku_admin', 'admin');
   });
 
