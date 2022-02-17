@@ -46,7 +46,7 @@ describe('ui-invoices: Invoice Line creation - based on POL', () => {
     Orders.createOrderWithOrderLineViaApi(order, orderLine)
       .then(orderNumber => {
         cy.visit(TopMenu.invoicesPath);
-        Invoices.createDefaultInvoiceViaUi(invoice, vendorPrimaryAddress);
+        Invoices.createDefaultInvoice(invoice, vendorPrimaryAddress);
         Invoices.checkInvoiceCurrency(orderLine.cost.currency);
         Invoices.createInvoiceLineFromPol(orderNumber);
         Invoices.checkInvoiceLine(invoiceLine);

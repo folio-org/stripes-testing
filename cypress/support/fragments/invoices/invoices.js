@@ -12,6 +12,7 @@ import { Button,
   Checkbox,
   MultiColumnList,
   MultiColumnListRow } from '../../../../interactors';
+import { quickMarcEditorDeleteIconInRowSelector } from '../../../../interactors/quickMarcEditorRow';
 import InteractorsTools from '../../utils/interactorsTools';
 import Helper from '../finance/financeHelper';
 
@@ -34,7 +35,7 @@ const invoiceDetailsPaneId = 'paneHeaderpane-invoiceDetails';
 const searhInputId = 'input-record-search';
 
 export default {
-  createDefaultInvoiceViaUi(invoice, vendorPrimaryAddress) {
+  createDefaultInvoice(invoice, vendorPrimaryAddress) {
     cy.expect(buttonNew.exists());
     cy.do([
       buttonNew.click(),
@@ -214,25 +215,45 @@ export default {
     cy.expect(Modal('Select order lines').exists());
   },
 
-  checkSearchPolPlugin: (key, value, titleOrPackage) => {
-    cy.do([
-      Modal('Select order lines').find(SearchField({ id: searhInputId })).selectIndex(key),
-      Modal('Select order lines').find(SearchField({ id: searhInputId })).fillIn(value),
-      Modal('Select order lines').find(searchButton).click()
-    ]);
-    // verify that first row in the result list contains related order line title
-    cy.expect(MultiColumnList({ id: 'list-plugin-find-records' })
-      .find(MultiColumnListRow({ index: 0 }))
-      .find(MultiColumnListCell({ columnIndex: 2 }))
-      .has({ content: titleOrPackage }));
-    cy.do([
-      Button({ id: 'reset-find-records-filters' }).click()
-    ]);
-    // TODO: remove waiter - currenty it's a workaround for incorrect selection from search list
-    cy.wait(1000);
+  checkSearchPolPlugin: (searchParamsMap, titleOrPackage) => {
+    for (const [key, value] of searchParamsMap.entries()) {
+      cy.do([
+        Modal('Select order lines').find(SearchField({ id: searhInputId })).selectIndex(key),
+        Modal('Select order lines').find(SearchField({ id: searhInputId })).fillIn(value),
+        Modal('Select order lines').find(searchButton).click()
+      ]);
+      // verify that first row in the result list contains related order line title
+      cy.expect(MultiColumnList({ id: 'list-plugin-find-records' })
+        .find(MultiColumnListRow({ index: 0 }))
+        .find(MultiColumnListCell({ columnIndex: 2 }))
+        .has({ content: titleOrPackage }));
+      cy.do([
+        Button({ id: 'reset-find-records-filters' }).click()
+      ]);
+      // TODO: remove waiter - currenty it's a workaround for incorrect selection from search list
+      cy.wait(1000);
+    }
   },
 
   closeSearchPlugin: () => {
     cy.do(Button('Close').click());
+  },
+
+  getSearchParamsMap(orderNumber, orderLine) {
+    const searchParamsMap = new Map();
+    searchParamsMap.set('Keyword', orderNumber)
+      .set('Contributor', orderLine.contributors[0].contributor)
+      .set('PO line number', orderNumber.toString().concat('-1'))
+      .set('Requester', orderLine.requester)
+      .set('Title or package name', orderLine.titleOrPackage)
+      .set('Publisher', orderLine.publisher)
+      .set('Vendor account', orderLine.vendorDetail.vendorAccount)
+      .set('Vendor reference number', orderLine.vendorDetail.referenceNumbers[0].refNumber)
+      .set('Donor', orderLine.donor)
+      .set('Selector', orderLine.selector)
+      .set('Volumes', orderLine.physical.volumes[0])
+      .set('Product ID', orderLine.details.productIds[0].productId)
+      .set('Product ID ISBN', orderLine.details.productIds[0].productId);
+    return searchParamsMap;
   }
 };
