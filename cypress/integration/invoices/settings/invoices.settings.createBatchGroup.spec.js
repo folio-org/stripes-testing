@@ -5,6 +5,7 @@ import TestType from '../../../support/dictionary/testTypes';
 
 describe('ui-invoices-settings: Batch Group creation', () => {
   const batchGroup = { ...NewBatchGroup.defaultUiBatchGroup };
+  const newBatchGroup = { ...NewBatchGroup.defaultUiBatchGroup };
   before(() => {
     cy.login(Cypress.env('diku_login'), Cypress.env('diku_password'));
     cy.visit(`${TopMenu.settingsInvoice}${SettingsInvoices.settingsInvoicePath.batchGroups}`);
@@ -14,10 +15,10 @@ describe('ui-invoices-settings: Batch Group creation', () => {
     SettingsInvoices.waitBatchGroupsLoading();
     SettingsInvoices.createNewBatchGroup(batchGroup);
     SettingsInvoices.checkBatchGroup(batchGroup);
-    batchGroup.name += 'updated';
-    batchGroup.description += 'updated';
-    SettingsInvoices.editBatchGroup(batchGroup);
-    SettingsInvoices.checkBatchGroup(batchGroup);
-    SettingsInvoices.deleteBatchGroup(batchGroup);
+    newBatchGroup.name += 'updated';
+    newBatchGroup.description += 'updated';
+    SettingsInvoices.editBatchGroup(newBatchGroup, batchGroup.name);
+    SettingsInvoices.checkBatchGroup(newBatchGroup);
+    SettingsInvoices.deleteBatchGroup(newBatchGroup);
   });
 });

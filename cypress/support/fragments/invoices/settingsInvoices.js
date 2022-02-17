@@ -33,33 +33,54 @@ export default {
     this.fillRequiredFields(batchGroup);
   },
 
-  editBatchGroup(batchGroup, rowNumber = 0) {
-    cy.do(EditableListRow({ index: rowNumber }).find(editIconButton).click());
-    this.fillRequiredFields(batchGroup);
+  editBatchGroup(batchGroup, oldBatchGroupName) {
+    cy.do(MultiColumnListCell({ content: oldBatchGroupName }).perform(
+      element => {
+        const rowNumber = element.parentElement.parentElement.getAttribute('data-row-index');
+        cy.do(EditableListRow({ index: +rowNumber.split('-')[1] }).find(editIconButton).click());
+        this.fillRequiredFields(batchGroup);
+      }
+    ));
   },
 
-  checkBatchGroup: (batchGroup, rowNumber = 0) => {
-    const createdByAdmin = `${DateTools.getFormattedDateWithSlashes({ date: new Date() })} by ADMINISTRATOR, DIKU`;
-
-    cy.expect(EditableListRow({ index: rowNumber })
-      .find(MultiColumnListCell({ columnIndex: 0 }))
-      .has({ content: batchGroup.name }));
-
-    cy.expect(EditableListRow({ index: rowNumber })
-      .find(MultiColumnListCell({ columnIndex: 1 }))
-      .has({ content: batchGroup.description }));
-
-    cy.expect(EditableListRow({ index: rowNumber })
-      .find(MultiColumnListCell({ columnIndex: 2 }))
-      .has({ content: createdByAdmin }));
+  checkBatchGroup: (batchGroup) => {
+    cy.do(MultiColumnListCell({ content: batchGroup.name }).perform(
+      element => {
+        const rowNumber = element.parentElement.parentElement.getAttribute('data-row-index');
+        const createdByAdmin = `${DateTools.getFormattedDateWithSlashes({ date: new Date() })} by ADMINISTRATOR, DIKU`;
+        cy.expect(EditableListRow({ index: +rowNumber.split('-')[1] })
+          .find(MultiColumnListCell({ columnIndex: 0 }))
+          .has({ content: batchGroup.name }));
+        cy.expect(EditableListRow({ index: +rowNumber.split('-')[1] })
+          .find(MultiColumnListCell({ columnIndex: 1 }))
+          .has({ content: batchGroup.description }));
+        cy.expect(EditableListRow({ index: +rowNumber.split('-')[1] })
+          .find(MultiColumnListCell({ columnIndex: 2 }))
+          .has({ content: createdByAdmin }));
+      }
+    ));
   },
 
-  deleteBatchGroup: (batchGroup, rowNumber = 0) => {
-    cy.do([
-      EditableListRow({ index: rowNumber })
-        .find(trashIconButton).click(),
-      deleteButton.click()
-    ]);
+  deleteBatchGroup: (batchGroup) => {
+    cy.do(MultiColumnListCell({ content: batchGroup.name }).perform(
+      element => {
+        const rowNumber = element.parentElement.parentElement.getAttribute('data-row-index');
+        cy.do([
+          EditableListRow({ index: +rowNumber.split('-')[1] })
+            .find(trashIconButton).click(),
+          deleteButton.click()
+        ]);
+      }
+    ));
     InteractorsTools.checkCalloutMessage(`The Batch group ${batchGroup.name} was successfully deleted`);
+  },
+
+  checkThatSystemBatchGroupCantBeDeleted: (batchGroupName) => {
+    cy.do(MultiColumnListCell({ content: batchGroupName }).perform(
+      element => {
+        const rowNumber = element.parentElement.parentElement.getAttribute('data-row-index');
+        expect(EditableListRow({ index: +rowNumber.split('-')[1] }).find(trashIconButton).absent());
+      }
+    ));
   }
 };
