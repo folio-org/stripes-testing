@@ -142,3 +142,14 @@ Cypress.Commands.add('getItems', (searchParams) => {
       Cypress.env('items', body.items);
     });
 });
+
+Cypress.Commands.add('getProductIdTypes', (searchParams) => {
+  cy
+    .okapiRequest({
+      path: 'identifier-types',
+      searchParams,
+    })
+    .then(response => {
+      return response.body.identifierTypes[0];
+    });
+});

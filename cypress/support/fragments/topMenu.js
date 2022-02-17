@@ -16,4 +16,5 @@ export default class TopMenu {
   static circulationLogPath = '/circulation-log';
   static settingsInvoice = 'settings/invoice';
   static remoteStorageConfigurationPath = 'settings/remote-storage/configurations'
+  static organizationsPath = '/organizations';
 }

@@ -23,7 +23,7 @@ describe('ui-invoices: Invoice creation', () => {
   });
 
   it('C2299 Manually Create Invoice', { tags: [testType.smoke] }, () => {
-    Invoices.createDefaultInvoiceViaUi(invoice, vendorPrimaryAddress);
+    Invoices.createDefaultInvoice(invoice, vendorPrimaryAddress);
     Invoices.checkCreatedInvoice(invoice, vendorPrimaryAddress);
     Invoices.deleteInvoiceViaActions();
     Invoices.confirmInvoiceDeletion();
