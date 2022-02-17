@@ -204,7 +204,7 @@ describe('ui-data-import: MARC file upload with the update of instance, holding,
   const mappingProfileNameForExport = `autoTestMappingProf.${getRandomPostfix()}`;
   const jobProfileNameForExport = `autoTestJobProf.${getRandomPostfix()}`;
 
-  before('navigates to Settings', () => {
+  before(() => {
     cy.login(
       Cypress.env('diku_login'),
       Cypress.env('diku_password')
@@ -241,12 +241,11 @@ describe('ui-data-import: MARC file upload with the update of instance, holding,
   it('C343335 MARC file upload with the update of instance, holding, and items', { tags: [testTypes.smoke] }, () => {
     // upload a marc file for creating of the new instance, holding and item
     cy.visit(topMenu.dataImportPath);
-    dataImport.uploadFileWithout999Field(nameMarcFileForImportCreate);
+    dataImport.uploadFile('oneMarcBib.mrc', nameMarcFileForImportCreate);
     jobProfiles.searchJobProfileForImport(testData.jobProfileForCreate.profile.name);
     jobProfiles.runImportFile(nameMarcFileForImportCreate);
     logs.openJobProfile(nameMarcFileForImportCreate);
-    logs.checkIsSrsUpdated();
-    logs.checkCreatedItems();
+    logs.checkUpdatedCreatedItems();
 
     // get Instance HRID through API
     searchInventory
@@ -316,9 +315,37 @@ describe('ui-data-import: MARC file upload with the update of instance, holding,
 
     // create Match profile
     const collectionOfMatchProfiles = [
-      { matchProfile: { profileName: matchProfileNameForInstance } },
-      { matchProfile: { profileName: matchProfileNameForHoldings } },
-      { matchProfile: { profileName: matchProfileNameForItem } }
+      {
+        matchProfile: { profileName: matchProfileNameForInstance,
+          incomingRecordFields: {
+            field: '001'
+          },
+          existingRecordFields: {
+            field: '001'
+          },
+          matchCriterion: 'Exactly matches',
+          existingRecordType: 'MARC_BIBLIOGRAPHIC' }
+      },
+      {
+        matchProfile: { profileName: matchProfileNameForHoldings,
+          incomingRecordFields: {
+            field: '901',
+            subfield: 'a'
+          },
+          matchCriterion: 'Exactly matches',
+          existingRecordType: 'HOLDINGS' }
+      },
+      {
+        matchProfile: {
+          profileName: matchProfileNameForItem,
+          incomingRecordFields: {
+            field: '902',
+            subfield: 'a'
+          },
+          matchCriterion: 'Exactly matches',
+          existingRecordType: 'ITEM'
+        }
+      }
     ];
 
     settingsDataImport.goToMatchProfiles();
@@ -345,7 +372,7 @@ describe('ui-data-import: MARC file upload with the update of instance, holding,
     jobProfiles.searchJobProfileForImport(jobProfileForUpdate.profileName);
     jobProfiles.runImportFile(nameMarcFileForImportUpdate);
     logs.openJobProfile(nameMarcFileForImportUpdate);
-    logs.checkIsInstanceUpdated();
+    logs.checkUpdatedItems();
 
     // delete generated profiles
     jobProfiles.deleteJobProfile(jobProfileNameUpdate);
@@ -365,8 +392,6 @@ describe('ui-data-import: MARC file upload with the update of instance, holding,
     fieldMappingProfiles.deleteFieldMappingProfile(nameInstanceMappingProfile);
     fieldMappingProfiles.deleteFieldMappingProfile(nameHoldingsMappingProfile);
     fieldMappingProfiles.deleteFieldMappingProfile(nameItemMappingProfile);
-    exportJobProfiles.deleteJobProfile(jobProfileNameForExport);
-    exportFieldMappingProfiles.deleteFieldMappingProfile(exportMappingProfile.name);
 
     // delete downloads folder and created files in fixtures
     fileManager.deleteFolder(Cypress.config('downloadsFolder'));

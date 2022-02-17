@@ -37,10 +37,10 @@ const deleteActionProfile = (profileName) => {
 };
 
 export default {
-  createActionProfile:(actionProfile, mappingProfile) => {
+  createActionProfile:(actionProfile, mappingProfileName) => {
     openNewActionProfileForm();
     newActionProfile.fillActionProfile(actionProfile);
-    newActionProfile.linkMappingProfile(mappingProfile);
+    newActionProfile.linkMappingProfile(mappingProfileName);
   },
 
   checkActionProfilePresented: (actionProfileName) => {
