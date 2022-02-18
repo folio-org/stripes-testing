@@ -5,6 +5,7 @@ import testTypes from '../../../support/dictionary/testTypes';
 
 describe('export instance records', () => {
   beforeEach('login', () => {
+    // TODO: need to clarify about permissions at FAT-1196
     cy.login(Cypress.env('diku_login'), Cypress.env('diku_password'));
     cy.visit(TopMenu.remoteStorageConfigurationPath);
   });
