@@ -9,7 +9,7 @@ export default {
     name: `Test_notice_${getRandomPostfix()}`,
     description: 'Created by autotest team',
   },
-  create(patronNoticePolicy) {
+  createPolicy(patronNoticePolicy) {
     cy.do(Button({ id: 'clickable-create-entry' }).click());
     this.fillGeneralInformation(patronNoticePolicy);
   },
@@ -21,10 +21,16 @@ export default {
       Button({ id: 'footer-save-entity' }).click(),
     ]);
   },
-  check: (patronNoticePolicy) => {
+  checkPolicy: (patronNoticePolicy) => {
     cy.expect(NavListItem(patronNoticePolicy.name));
   },
-  edit(patronNoticePolicy) {
+  closePolicy: () => {
+    cy.do(Button({ icon: 'times' }).click());
+  },
+  choosePolicy: (patronNoticePolicy) => {
+    cy.do(NavListItem(patronNoticePolicy.name).click());
+  },
+  editPolicy(patronNoticePolicy) {
     cy.do([
       NavListItem(patronNoticePolicy.name).click(),
       actionsButton.click(),
@@ -32,15 +38,15 @@ export default {
     ]);
     this.fillGeneralInformation(patronNoticePolicy);
   },
-  duplicate: () => {
+  duplicatePolicy: () => {
     cy.do([
       actionsButton.click(),
       Button({ id: 'dropdown-clickable-duplicate-item' }).click(),
-      TextField({ id: 'notice_policy_name' }).fillIn('DUPLICATE'),
+      nameField.fillIn('DUPLICATE'),
       Button({ id: 'footer-save-entity' }).click(),
     ]);
   },
-  delete: () => {
+  deletePolicy: () => {
     cy.do([
       actionsButton.click(),
       Button({ id: 'dropdown-clickable-delete-item' }).click(),
