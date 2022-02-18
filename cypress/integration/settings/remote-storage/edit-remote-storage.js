@@ -25,8 +25,8 @@ describe('navigate to remote storage configuration', () => {
 
     // edit and verify timing
     RemoteStorageHelper.editConfiguration(name, { timingInput: timingToEdit });
-    RemoteStorageHelper.closeWithSaving();
-    RemoteStorageHelper.verifyEditedConfiguration(name, { timingInput: timingToEdit });
+    RemoteStorageHelper.closeWithoutSaving();
+    RemoteStorageHelper.editConfiguration(name, { urlInput: urlToEdit, timingInput: '1' });
 
     // delete created configuration
     RemoteStorageHelper.deleteRemoteStorage(name);
