@@ -19,13 +19,11 @@ export default {
       Checkbox({ id: 'notice_policy_active' }).click(),
       TextArea({ id: 'notice_policy_description' }).fillIn(patronNoticePolicy.description),
       Button({ id: 'footer-save-entity' }).click(),
+      Button({ icon: 'times' }).click(),
     ]);
   },
-  checkPolicy: (patronNoticePolicy) => {
-    cy.expect(NavListItem(patronNoticePolicy.name));
-  },
-  closePolicy: () => {
-    cy.do(Button({ icon: 'times' }).click());
+  checkPolicy: (patronNoticePolicyName) => {
+    cy.expect(NavListItem(patronNoticePolicyName).exists());
   },
   choosePolicy: (patronNoticePolicy) => {
     cy.do(NavListItem(patronNoticePolicy.name).click());

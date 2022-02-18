@@ -12,11 +12,9 @@ describe('ui-circulation-settings: create patron notice policies', () => {
   it('C6530 Create notice policy', { tags: [TestType.smoke] }, () => {
     NewPatronNoticePolicies.createPolicy(patronNoticePolicy);
     NewPatronNoticePolicies.checkPolicy(patronNoticePolicy.name);
-    NewPatronNoticePolicies.closePolicy(patronNoticePolicy);
     NewPatronNoticePolicies.choosePolicy(patronNoticePolicy);
     NewPatronNoticePolicies.duplicatePolicy(patronNoticePolicy);
     NewPatronNoticePolicies.deletePolicy(patronNoticePolicy);
-    NewPatronNoticePolicies.closePolicy(patronNoticePolicy);
     NewPatronNoticePolicies.choosePolicy(patronNoticePolicy);
     NewPatronNoticePolicies.editPolicy(patronNoticePolicy);
     NewPatronNoticePolicies.checkPolicy(patronNoticePolicy.name);
