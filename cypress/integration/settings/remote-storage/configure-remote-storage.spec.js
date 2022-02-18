@@ -5,6 +5,7 @@ import TestTypes from '../../../support/dictionary/testTypes';
 
 describe('navigate to remote storage configuration', () => {
   beforeEach('login', () => {
+    // TODO: need to clarify about permissions at FAT-1196
     cy.login(Cypress.env('diku_login'), Cypress.env('diku_password'));
     cy.visit(TopMenu.remoteStorageConfigurationPath);
   });
