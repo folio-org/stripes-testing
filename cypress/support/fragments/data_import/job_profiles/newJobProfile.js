@@ -1,11 +1,21 @@
 import { TextField, Select, Button, Accordion, HTML, including } from '../../../../../interactors';
 import ModalSelectActionProfile from './modalSelectActionProfile';
 
-const acceptedDataType = 'MARC';
+// const acceptedDataType = 'MARC';
+
+const acceptedDataType = {
+  marc:'MARC',
+  edifact:'EDIFACT'
+};
+
+/*const defaultJobProfile = {
+  profileName:  '',
+  acceptedDataType,
+};*/
 
 const defaultJobProfile = {
   profileName:  '',
-  acceptedDataType,
+  acceptedType: acceptedDataType.marc,
 };
 
 const actionsButton = Button('Action');
@@ -13,14 +23,16 @@ const actionsButton = Button('Action');
 const matchButton = Button('Match');
 
 export default {
-  acceptedDataType,
+  //acceptedDataType,
 
   defaultJobProfile,
+
+  acceptedDataType,
 
   fillJobProfile: (specialJobProfile = defaultJobProfile) => {
     cy.do([
       TextField({ name:'profile.name' }).fillIn(specialJobProfile.profileName),
-      Select({ name:'profile.dataType' }).choose(specialJobProfile.acceptedDataType),
+      Select({ name:'profile.dataType' }).choose(specialJobProfile.acceptedType),
     ]);
   },
 

@@ -7,23 +7,14 @@ import SearchInventory from './searchInventory';
 const goToDataImport = () => {
   cy.visit(TopMenu.dataImportPath);
 };
-const uploadFile = (fileName) => {
-  cy.get('input[type=file]', getLongDelay()).attachFile({ filePath: 'oneMarcBib.mrc', fileName });
-};
 
-const uploadFileWithout999Field = (fileName) => {
-  cy.get('input[type=file]', getLongDelay()).attachFile({ filePath: 'oneMarcBibWithout999Field.mrc', fileName });
-};
-
-const uploadFileModifyMarcBib = (fileName) => {
-  cy.get('input[type=file]', getLongDelay()).attachFile({ filePath: 'modifyMarcBib.mrc', fileName });
+const uploadFile = (filePathName, fileName) => {
+  cy.get('input[type=file]', getLongDelay()).attachFile({ filePath: filePathName, fileName });
 };
 
 export default {
   goToDataImport,
   uploadFile,
-  uploadFileWithout999Field,
-  uploadFileModifyMarcBib,
 
   uploadExportedFile(fileName) {
     cy.get('input[type=file]', getLongDelay()).attachFile(fileName);

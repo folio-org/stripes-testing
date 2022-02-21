@@ -1,5 +1,7 @@
-import { TextField, Button, Select, TextArea } from '../../../../../interactors';
+import { TextField, Button, Select, TextArea, Modal, HTML, including, MultiColumnListCell } from '../../../../../interactors';
 import getRandomPostfix from '../../../utils/stringTools';
+
+const saveButton = Button('Save as profile & Close');
 
 const marcBib = 'MARC Bibliographic';
 
@@ -35,6 +37,15 @@ const defaultMappingProfile = {
   fillProfile:''
 };
 
+const selectOrganizationByName = () => {
+  cy.do([
+    Modal('Select Organization').find(TextField({ id: 'input-record-search' })).fillIn('GOBI Library Solutions'),
+    Modal('Select Organization').find(Button('Search')).click(),
+    Modal('Select Organization').find(HTML(including('1 record found'))).exists(),
+    MultiColumnListCell('GOBI Library Solutions').click({ row: 0, columnIndex: 0 }),
+  ]);
+};
+
 export default {
   folioRecordTypeValue,
 
@@ -62,11 +73,12 @@ export default {
         }
       ).as('getType');
       cy.do(TextField('Material type').fillIn(materialType));
+      cy.do(TextField('Permanent loan type').fillIn(permanentLoanType));
       cy.wait('@getType');
-      cy.do([
-        TextField('Permanent loan type').fillIn(permanentLoanType),
-        TextField('Status').fillIn(status),
-      ]);
+      // wait accepted values to be filled
+      // eslint-disable-next-line cypress/no-unnecessary-waiting
+      cy.wait(1800);
+      cy.do(TextField('Status').fillIn(status));
     } else if (specialMappingProfile.typeValue === folioRecordTypeValue.instance) {
       if ('update' in specialMappingProfile) {
         cy.do([
@@ -78,7 +90,7 @@ export default {
         cy.wait(1800);
       }
     }
-    cy.do(Button('Save as profile & Close').click());
+    cy.do(saveButton.click());
   },
 
   fillInstanceMappingProfile() {
@@ -122,12 +134,12 @@ export default {
     cy.intercept(
       {
         method: 'GET',
-        url: '/locations?*',
+        url: '/loan-types?*',
       }
-    ).as('getField');
+    ).as('getType');
+    cy.wait('@getType');
     cy.do(TextField('Material type').fillIn('"electronic resource"'));
-    cy.wait('@getField');
-    cy.do(TextField('Permanent loan type').fillIn('"Can circulate"'));
+    cy.do(TextField('Permanent loan type').fillIn(permanentLoanType));
     cy.do(TextField('Status').fillIn('"Available"'));
     cy.get('[name="profile.mappingDetails.mappingFields[24].repeatableFieldAction"]').select('Add these to existing');
     // wait for data to be loaded
@@ -151,25 +163,40 @@ export default {
       Select({ name:'profile.existingRecordType' }).choose(specialMappingProfile.typeValue)
     ]);
     specialMappingProfile.fillProfile();
-    cy.do(Button('Save as profile & Close').click());
-    cy.expect(Button('Save as profile & Close').absent());
+    cy.do(saveButton.click());
+    cy.expect(saveButton.absent());
   },
 
-  fillModifyMappingProfile(specialMappingProfile = defaultMappingProfile) {
+  fillModifyMappingProfile(specialMappingProfileName = defaultMappingProfile.name, properties) {
     cy.do([
-      TextField({ name:'profile.name' }).fillIn(specialMappingProfile.name),
+      TextField({ name:'profile.name' }).fillIn(specialMappingProfileName),
       Select({ name:'profile.incomingRecordType' }).choose(marcBib),
       Select({ name:'profile.existingRecordType' }).choose(marcBib),
-      Select({ name:'profile.mappingDetails.marcMappingOption' }).choose('Modifications'),
-      Select({ name:'profile.mappingDetails.marcMappingDetails[0].action' }).choose('Add'),
-      TextField({ name:'profile.mappingDetails.marcMappingDetails[0].field.field' }).fillIn('947'),
-      TextField({ name:'profile.mappingDetails.marcMappingDetails[0].field.subfields[0].subfield' }).fillIn('a'),
-      Select({ name:'profile.mappingDetails.marcMappingDetails[0].field.subfields[0].subaction' }).choose('Add subfield'),
-      TextArea({ name:'profile.mappingDetails.marcMappingDetails[0].field.subfields[0].data.text' }).fillIn('Test'),
-      TextField({ name:'profile.mappingDetails.marcMappingDetails[0].field.subfields[1].subfield' }).fillIn('b'),
-      TextArea({ name:'profile.mappingDetails.marcMappingDetails[0].field.subfields[1].data.text' }).fillIn('Addition'),
-      Button('Save as profile & Close').click(),
+      Select({ name:'profile.mappingDetails.marcMappingOption' }).choose(properties.marcMappingOption),
+      Select({ name:'profile.mappingDetails.marcMappingDetails[0].action' }).choose(properties.action),
+      TextField({ name:'profile.mappingDetails.marcMappingDetails[0].field.field' }).fillIn(properties.addFieldNumber),
+      TextField({ name:'profile.mappingDetails.marcMappingDetails[0].field.subfields[0].subfield' }).fillIn(properties.subfieldInFirstField),
+      Select({ name:'profile.mappingDetails.marcMappingDetails[0].field.subfields[0].subaction' }).choose(properties.subaction),
+      TextArea({ name:'profile.mappingDetails.marcMappingDetails[0].field.subfields[0].data.text' }).fillIn(properties.subfieldTextInFirstField),
+      TextField({ name:'profile.mappingDetails.marcMappingDetails[0].field.subfields[1].subfield' }).fillIn(properties.subfieldInSecondField),
+      TextArea({ name:'profile.mappingDetails.marcMappingDetails[0].field.subfields[1].data.text' }).fillIn(properties.subfieldTextInSecondField),
+      saveButton.click(),
     ]);
-    cy.expect(Button('Save as profile & Close').absent());
+    cy.expect(saveButton.absent());
+  },
+
+  fillMappingProfileForInvoice:(specialMappingProfileName = defaultMappingProfile.name) => {
+    cy.do([
+      TextField({ name:'profile.name' }).fillIn(specialMappingProfileName),
+      Select({ name:'profile.incomingRecordType' }).choose('EDIFACT invoice'),
+      Select({ name:'profile.existingRecordType' }).choose('Invoice'),
+      TextArea({ name:'profile.description' }).fillIn(''),
+      TextField('Batch group*').fillIn('"FOLIO"'),
+      Button('Organization look-up').click()
+    ]);
+    selectOrganizationByName();
+    cy.do([TextField('Payment method*').fillIn('"Credit Card"'),
+      saveButton.click(),
+    ]);
   },
 };

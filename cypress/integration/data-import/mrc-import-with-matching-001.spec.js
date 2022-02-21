@@ -44,7 +44,7 @@ describe('ui-data-import: Test MARC-MARC matching for 001 field', () => {
     const jobProfileName = `autoTestJobProf.${getRandomPostfix()}`;
 
     // upload a marc file for export
-    dataImport.uploadFile(nameForMarcFile);
+    dataImport.uploadFile('oneMarcBib.mrc', nameForMarcFile);
     jobProfiles.searchJobProfileForImport('Default - Create instance and SRS MARC Bib');
     jobProfiles.runImportFile(nameForMarcFile);
     logs.openJobProfile(nameForMarcFile);
@@ -108,7 +108,8 @@ describe('ui-data-import: Test MARC-MARC matching for 001 field', () => {
         // create Job profile
         const jobProfile = {
           ...NewJobProfile.defaultJobProfile,
-          profileName: jobProfileName
+          profileName: jobProfileName,
+          acceptedType: NewJobProfile.acceptedDataType.marc
         };
         SettingsDataImport.goToJobProfiles();
         jobProfiles.createJobProfileWithLinkingProfiles(jobProfile, actionProfileName, matchProfileName);

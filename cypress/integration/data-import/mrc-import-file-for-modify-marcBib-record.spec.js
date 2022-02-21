@@ -25,14 +25,24 @@ describe('ui-data-import: Verify the possibility to modify MARC Bibliographic re
   });
 
   afterEach(() => {
-    cy.getRecordApi()
+    cy.getSrsRecordApi()
       .then(({ body }) => {
-        cy.log(body.records[body.records.length - 1].id);
-        cy.deleteRecordFromStorageApi(body.records[body.records.length - 1].id);
+        cy.deleteSrsRecordFromStorageApi(body.records[body.records.length - 1].id);
       });
   });
 
   it('C345423 Verify the possibility to modify MARC Bibliographic record', { tags: [testTypes.smoke] }, () => {
+    const mappingProfileFieldsForModify = {
+      marcMappingOption: 'Modifications',
+      action: 'Add',
+      addFieldNumber: '947',
+      subfieldInFirstField: 'a',
+      subaction: 'Add subfield',
+      subfieldTextInFirstField: 'Test',
+      subfieldInSecondField: 'b',
+      subfieldTextInSecondField: 'Addition',
+    };
+
     // unique name for profiles
     const mappingProfileName = `autoTestMappingProf.${getRandomPostfix()}`;
     const actionProfileName = `autoTestActionProf.${getRandomPostfix()}`;
@@ -43,12 +53,8 @@ describe('ui-data-import: Verify the possibility to modify MARC Bibliographic re
     const nameMarcFileForUpload = `autotestFile.${getRandomPostfix()}.mrc`;
 
     // create Field mapping profile
-    const mappingProfile = {
-      name: mappingProfileName
-    };
-
     settingsDataImport.goToMappingProfiles();
-    fieldMappingProfiles.createModifyMappingProfile(mappingProfile);
+    fieldMappingProfiles.createModifyMappingProfile(mappingProfileName, mappingProfileFieldsForModify);
     fieldMappingProfiles.checkMappingProfilePresented(mappingProfileName);
 
     // create Action profile and link it to Field mapping profile
@@ -59,7 +65,7 @@ describe('ui-data-import: Verify the possibility to modify MARC Bibliographic re
     };
 
     settingsDataImport.goToActionProfiles();
-    actionProfiles.createActionProfile(actionProfile, mappingProfile);
+    actionProfiles.createActionProfile(actionProfile, mappingProfileName);
     actionProfiles.checkActionProfilePresented(actionProfileName);
 
     // create Match profile
@@ -81,7 +87,8 @@ describe('ui-data-import: Verify the possibility to modify MARC Bibliographic re
     // create Job profile
     const jobProfile = {
       ...newJobProfile.defaultJobProfile,
-      profileName: jobProfileName
+      profileName: jobProfileName,
+      acceptedType: newJobProfile.acceptedDataType.marc
     };
     settingsDataImport.goToJobProfiles();
     jobProfiles.createJobProfileWithLinkingProfiles(jobProfile, actionProfileName, matchProfileName);
@@ -89,7 +96,7 @@ describe('ui-data-import: Verify the possibility to modify MARC Bibliographic re
 
     // upload a marc file for creating of the new instance, holding and item
     cy.visit(topMenu.dataImportPath);
-    dataImport.uploadFileModifyMarcBib(nameMarcFileForUpload);
+    dataImport.uploadFile('oneMarcBib_changed001field.mrc', nameMarcFileForUpload);
     jobProfiles.searchJobProfileForImport(jobProfile.profileName);
     jobProfiles.runImportFile(nameMarcFileForUpload);
     logs.checkImportFile(jobProfile.profileName);

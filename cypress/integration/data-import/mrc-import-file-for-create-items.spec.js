@@ -59,7 +59,8 @@ describe('ui-data-import: MARC file import with creating of the new instance, ho
     ];
 
     const specialJobProfile = { ...newJobProfile.defaultJobProfile,
-      profileName: jobProfileName };
+      profileName: jobProfileName,
+      acceptedType: newJobProfile.acceptedDataType.marc };
 
     collectionOfProfiles.forEach(profile => {
       settingsDataImport.goToMappingProfiles();
@@ -79,7 +80,7 @@ describe('ui-data-import: MARC file import with creating of the new instance, ho
     jobProfiles.checkJobProfilePresented(specialJobProfile.profileName);
 
     dataImport.goToDataImport();
-    dataImport.uploadFile(fileName);
+    dataImport.uploadFile('oneMarcBib.mrc', fileName);
     jobProfiles.searchJobProfileForImport(specialJobProfile.profileName);
     jobProfiles.runImportFile(fileName);
     logs.checkImportFile(specialJobProfile.profileName);
