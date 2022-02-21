@@ -1,17 +1,10 @@
 import { TextField, Select, Button, Accordion, HTML, including } from '../../../../../interactors';
 import ModalSelectActionProfile from './modalSelectActionProfile';
 
-// const acceptedDataType = 'MARC';
-
 const acceptedDataType = {
   marc:'MARC',
   edifact:'EDIFACT'
 };
-
-/*const defaultJobProfile = {
-  profileName:  '',
-  acceptedDataType,
-};*/
 
 const defaultJobProfile = {
   profileName:  '',
@@ -23,8 +16,6 @@ const actionsButton = Button('Action');
 const matchButton = Button('Match');
 
 export default {
-  //acceptedDataType,
-
   defaultJobProfile,
 
   acceptedDataType,
