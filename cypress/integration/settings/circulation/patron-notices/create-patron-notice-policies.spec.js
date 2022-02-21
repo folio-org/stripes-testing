@@ -1,12 +1,12 @@
 import TestType from '../../../../support/dictionary/testTypes';
-import CirculationMenu from '../../../../support/fragments/circulation/circulationsMenu';
 import NewPatronNoticePolicies from '../../../../support/fragments/circulation/newPatronNoticePolicies';
+import SettingsMenu from '../../../../support/fragments/settingsMenu';
 
 describe('ui-circulation-settings: create patron notice policies', () => {
   const patronNoticePolicy = { ...NewPatronNoticePolicies.defaultUiPatronNoticePolicies };
   beforeEach('login', () => {
     cy.login(Cypress.env('diku_login'), Cypress.env('diku_password'));
-    cy.visit(`${CirculationMenu.patronNoticePolicies}`);
+    cy.visit(`${SettingsMenu.circulationPatronNoticePoliciesPath}`);
   });
 
   it('C6530 Create notice policy', { tags: [TestType.smoke] }, () => {
@@ -17,7 +17,6 @@ describe('ui-circulation-settings: create patron notice policies', () => {
     NewPatronNoticePolicies.deletePolicy(patronNoticePolicy);
     NewPatronNoticePolicies.choosePolicy(patronNoticePolicy);
     NewPatronNoticePolicies.editPolicy(patronNoticePolicy);
-    NewPatronNoticePolicies.checkPolicy(patronNoticePolicy.name);
     NewPatronNoticePolicies.deletePolicy(patronNoticePolicy);
   });
 });

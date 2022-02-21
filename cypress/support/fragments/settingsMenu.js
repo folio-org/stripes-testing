@@ -1,33 +1,49 @@
-export default class SettingsMenu {
-    // direct paths to folio apps to use in cy.visit() into initial steps of our scenarios
-    // TODO: add separated scenarios related with SettingsMenu implementation
-    static acquisitionUnitsPath = 'settings/acquisition-units';
-    static agreementsPath = 'settings/erm';
-    static calendarPath = 'settings/calendar';
-    static circulationPath = 'settings/circulation';
-    static coursesPath = 'settings/cr';
-    static dashboardPath = 'settings/dashboard';
-    static dataExportPath = 'settings/data-export';
-    static dataImportPath = 'settings/data-import';
-    static developerPath = 'settings/developer';
-    static eHoldingsPath = 'settings/eholdings';
-    static ermComparisonsPath = 'settings/comparisons-erm';
-    static eUsagePath = 'settings/eusage';
-    static financePath = 'settings/finance';
-    static innReachPath = 'settings/innreach';
-    static inventoryPath = 'settings/inventory';
-    static invoicePath = 'settings/invoice';
-    static ldpPath = 'settings/ldp';
-    static licensesPath = 'settings/licenses';
-    static localKbAdminPath = 'settings/local-kb-admin';
-    static myProfilePath = 'settings/myprofile';
-    static notesPath = 'settings/notes';
-    static oaiPmhPath = 'settings/oai-pmh';
-    static openAccessPath = 'settings/oa';
-    static ordersPath = 'settings/orders';
-    static organizationsPath = 'settings/organizations';
-    static remoteStoragePath = 'settings/remote-storage';
-    static tagsPath = 'settings/tags';
-    static tenantPath = 'settings/tenant-settings';
-    static usersPath = 'settings/users';
-}
+export default {
+  // direct paths to folio apps to use in cy.visit() into initial steps of our scenarios
+  // TODO: add separated scenarios related with SettingsMenu implementation
+  acquisitionUnitsPath: 'settings/acquisition-units',
+  agreementsPath: 'settings/erm',
+  calendarPath: 'settings/calendar',
+  circulationPath: 'settings/circulation',
+  circulationRulesPath: 'settings/circulation/rules',
+  circulationOtherSettingsPath: 'settings/circulation/checkout',
+  circulationStaffSlipsPath: 'settings/circulation/staffslips',
+  circulationFixedDueDateSchedulesPath: 'settings/circulation/fixed-due-date-schedules',
+  circulationLoanHistoryPath: 'settings/circulation/loan-history',
+  circulationLoanPoliciesPath: 'settings/circulation/loan-policies',
+  circulationoVerdueFinePoliciesPath: 'settings/circulation/fine-policies',
+  circulationLostItemFeePolicyPath: 'settings/circulation/lost-item-fee-policy',
+  circulationPatronNoticePoliciesPath: 'settings/circulation/notice-policies',
+  circulationPatronNoticeTemplatesPath: 'settings/circulation/patron-notices',
+  circulationRequestCancellationReasonsPath: 'settings/circulation/cancellation-reasons',
+  circulationRequestPoliciesPath: 'settings/circulation/request-policies',
+  circulationTitleLevelRequestsPath: 'settings/circulation/title-level-requests',
+  coursesPath: 'settings/cr',
+  dashboardPath: 'settings/dashboard',
+  dataExportPath: 'settings/data-export',
+  dataImportPath: 'settings/data-import',
+  developerPath: 'settings/developer',
+  eHoldingsPath: 'settings/eholdings',
+  ermComparisonsPath: 'settings/comparisons-erm',
+  innReachPath: 'settings/innreach',
+  inventoryPath: 'settings/inventory',
+  invoicePath: 'settings/invoice',
+  invoiceApprovalsPath: 'settings/invoice/approvals',
+  invoiceAdjustmentsPath: 'settings/invoice/adjustments',
+  invoiceBatchGroupsPath: 'settings/invoice/batch-groups',
+  invoiceBGConfigPath: 'settings/invoice/batch-group-configuration',
+  invoiceVoucherPath: 'settings/invoice/voucher-number',
+  ldpPath: 'settings/ldp',
+  licensesPath: 'settings/licenses',
+  localKbAdminPath: 'settings/local-kb-admin',
+  myProfilePath: 'settings/myprofile',
+  notesPath: 'settings/notes',
+  oaiPmhPath: 'settings/oai-pmh',
+  openAccessPath: 'settings/oa',
+  ordersPath: 'settings/orders',
+  organizationsPath: 'settings/organizations',
+  remoteStoragePath: 'settings/remote-storage',
+  tagsPath: 'settings/tags',
+  tenantPath: 'settings/tenant-settings',
+  usersPath: 'settings/users',
+};
