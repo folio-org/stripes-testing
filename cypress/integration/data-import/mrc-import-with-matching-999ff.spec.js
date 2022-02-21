@@ -141,7 +141,8 @@ describe('ui-data-import: MARC file import with matching for 999 ff field', () =
         // create Job profile
         const jobProfile = {
           ...NewJobProfile.defaultJobProfile,
-          profileName: jobProfileName
+          profileName: jobProfileName,
+          acceptedType: NewJobProfile.acceptedDataType.marc
         };
         SettingsDataImport.goToJobProfiles();
         jobProfiles.createJobProfileWithLinkingProfiles(jobProfile, actionProfileName, matchProfileName);

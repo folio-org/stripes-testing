@@ -356,7 +356,8 @@ describe('ui-data-import: MARC file upload with the update of instance, holding,
     // create Job profile
     const jobProfileForUpdate = {
       ...newJobProfile.defaultJobProfile,
-      profileName: jobProfileNameUpdate
+      profileName: jobProfileNameUpdate,
+      acceptedType: newJobProfile.acceptedDataType.marc
     };
 
     settingsDataImport.goToJobProfiles();
