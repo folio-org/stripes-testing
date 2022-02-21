@@ -12,7 +12,7 @@ import logs from '../../support/fragments/data_import/logs';
 import topMenu from '../../support/fragments/topMenu';
 import fileDetails from '../../support/fragments/data_import/fileDetails';
 
-describe('ui-data-import: Verify the possibility to modify MARC Bibliographic record', () => {
+describe('ui-data-import: EDIFACT file import with creating of new invoice record', () => {
   before(() => {
     cy.login(
       Cypress.env('diku_login'),
