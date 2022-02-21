@@ -6,6 +6,7 @@ const saveButton = Button('Save');
 const deleteButton = Button('Delete');
 const trashIconButton = Button({ icon: 'trash' });
 const editIconButton = Button({ icon: 'edit' });
+function getEditableListRow(rowNumber) { return EditableListRow({ index: +rowNumber.split('-')[1] }); }
 
 export default {
   settingsInvoicePath: {
@@ -37,7 +38,7 @@ export default {
     cy.do(MultiColumnListCell({ content: oldBatchGroupName }).perform(
       element => {
         const rowNumber = element.parentElement.parentElement.getAttribute('data-row-index');
-        cy.do(EditableListRow({ index: +rowNumber.split('-')[1] }).find(editIconButton).click());
+        cy.do(getEditableListRow(rowNumber).find(editIconButton).click());
         this.fillRequiredFields(batchGroup);
       }
     ));
@@ -48,13 +49,13 @@ export default {
       element => {
         const rowNumber = element.parentElement.parentElement.getAttribute('data-row-index');
         const createdByAdmin = `${DateTools.getFormattedDateWithSlashes({ date: new Date() })} by ADMINISTRATOR, DIKU`;
-        cy.expect(EditableListRow({ index: +rowNumber.split('-')[1] })
+        cy.expect(getEditableListRow(rowNumber)
           .find(MultiColumnListCell({ columnIndex: 0 }))
           .has({ content: batchGroup.name }));
-        cy.expect(EditableListRow({ index: +rowNumber.split('-')[1] })
+        cy.expect(getEditableListRow(rowNumber)
           .find(MultiColumnListCell({ columnIndex: 1 }))
           .has({ content: batchGroup.description }));
-        cy.expect(EditableListRow({ index: +rowNumber.split('-')[1] })
+        cy.expect(getEditableListRow(rowNumber)
           .find(MultiColumnListCell({ columnIndex: 2 }))
           .has({ content: createdByAdmin }));
       }
@@ -66,7 +67,7 @@ export default {
       element => {
         const rowNumber = element.parentElement.parentElement.getAttribute('data-row-index');
         cy.do([
-          EditableListRow({ index: +rowNumber.split('-')[1] })
+          getEditableListRow(rowNumber)
             .find(trashIconButton).click(),
           deleteButton.click()
         ]);
@@ -75,11 +76,11 @@ export default {
     InteractorsTools.checkCalloutMessage(`The Batch group ${batchGroup.name} was successfully deleted`);
   },
 
-  checkThatSystemBatchGroupCantBeDeleted: (batchGroupName) => {
+  checkNotDeletingGroup: (batchGroupName) => {
     cy.do(MultiColumnListCell({ content: batchGroupName }).perform(
       element => {
         const rowNumber = element.parentElement.parentElement.getAttribute('data-row-index');
-        expect(EditableListRow({ index: +rowNumber.split('-')[1] }).find(trashIconButton).absent());
+        expect(getEditableListRow(rowNumber).find(trashIconButton).absent());
       }
     ));
   }
