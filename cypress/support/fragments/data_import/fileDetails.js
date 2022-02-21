@@ -2,13 +2,14 @@ import { MultiColumnListCell, Section, including, KeyValue } from '../../../../i
 import invoices from '../invoices/invoices';
 import TopMenu from '../topMenu';
 
+const vendorInvoiceNumber = '49072';
 const expectedInvoiceDate = '10/15/2021';
 const expectedInvoiceStatus = 'Open';
 const expectedInvoiceSource = 'EDI';
 
 export default {
   checkInvoiceDetails:() => {
-    cy.do(Section().find(MultiColumnListCell(including('49072'))).perform(element => {
+    cy.do(Section().find(MultiColumnListCell(including(vendorInvoiceNumber))).perform(element => {
       const invoiceNumber = element.innerText.split('-')[0];
 
       cy.visit(TopMenu.invoicesPath);

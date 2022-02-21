@@ -95,7 +95,7 @@ export default {
     cy.expect(Accordion('Overview').find(HTML(including(actionProfileName))).exists());
   },
 
-  clickSaveAndCloseButton: () => {
+  saveAndClose: () => {
     cy.do(Button('Save as profile & Close').click());
     cy.expect(Button('Save as profile & Close').absent());
   },

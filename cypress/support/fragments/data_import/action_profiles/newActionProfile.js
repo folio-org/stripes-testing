@@ -13,7 +13,7 @@ const folioRecordTypeValue = {
 };
 
 const defaultActionProfile = {
-  name: '',
+  name: 'autotest action profile',
   typeValue: folioRecordTypeValue.instance,
 };
 

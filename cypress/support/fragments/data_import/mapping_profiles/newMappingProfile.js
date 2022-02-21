@@ -3,6 +3,8 @@ import getRandomPostfix from '../../../utils/stringTools';
 
 const saveButton = Button('Save as profile & Close');
 
+const organizationModal = Modal('Select Organization');
+
 const marcBib = 'MARC Bibliographic';
 
 const folioRecordTypeValue = {
@@ -39,9 +41,9 @@ const defaultMappingProfile = {
 
 const selectOrganizationByName = () => {
   cy.do([
-    Modal('Select Organization').find(TextField({ id: 'input-record-search' })).fillIn('GOBI Library Solutions'),
-    Modal('Select Organization').find(Button('Search')).click(),
-    Modal('Select Organization').find(HTML(including('1 record found'))).exists(),
+    organizationModal.find(TextField({ id: 'input-record-search' })).fillIn('GOBI Library Solutions'),
+    organizationModal.find(Button('Search')).click(),
+    organizationModal.find(HTML(including('1 record found'))).exists(),
     MultiColumnListCell('GOBI Library Solutions').click({ row: 0, columnIndex: 0 }),
   ]);
 };
@@ -195,7 +197,8 @@ export default {
       Button('Organization look-up').click()
     ]);
     selectOrganizationByName();
-    cy.do([TextField('Payment method*').fillIn('"Credit Card"'),
+    cy.do([
+      TextField('Payment method*').fillIn('"Credit Card"'),
       saveButton.click(),
     ]);
   },

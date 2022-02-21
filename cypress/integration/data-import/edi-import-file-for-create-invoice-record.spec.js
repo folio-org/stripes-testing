@@ -58,7 +58,7 @@ describe('ui-data-import: EDIFACT file import with creating of new invoice recor
     settingsDataImport.goToJobProfiles();
     jobProfiles.createJobProfile(jobProfile);
     newJobProfile.linkActionProfile(actionProfile);
-    newJobProfile.clickSaveAndCloseButton();
+    newJobProfile.saveAndClose();
     jobProfiles.checkJobProfilePresented(jobProfileName);
 
     // upload a marc file for creating of the new instance, holding and item

@@ -45,9 +45,7 @@ const checkIsItemCreated = () => {
 };
 
 const checkIsInvoiceCreated = () => {
-  cy.do(MultiColumnListCell({ row: 0, columnIndex: 7 }).perform(element => {
-    expect(element).to.have.text('Created');
-  }));
+  cy.expect(MultiColumnListCell({ row: 0, column: 'Created' }).exists());
 };
 
 export default {
