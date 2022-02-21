@@ -4,6 +4,8 @@ import ModalSelectMappingProfile from './modalSelectMappingProfile';
 
 const action = 'Create (all record types)';
 
+const typeValue = 'MARC Bibliographic';
+
 const folioRecordTypeValue = {
   instance: 'Instance',
   holdings: 'Holdings',
@@ -22,13 +24,13 @@ export default {
     cy.do([
       TextField({ name:'profile.name' }).fillIn(specialActionProfile.name),
       Select({ name:'profile.action' }).choose(specialActionProfile.action || action),
-      Select({ name:'profile.folioRecord' }).choose(specialActionProfile.typeValue),
+      Select({ name:'profile.folioRecord' }).choose(specialActionProfile.typeValue || typeValue),
     ]);
   },
 
-  linkMappingProfile: (specialMappingProfile) => {
+  linkMappingProfile: (specialMappingProfileName) => {
     cy.do(Button('Link Profile').click());
-    ModalSelectMappingProfile.searchMappingProfileByName(specialMappingProfile.name);
+    ModalSelectMappingProfile.searchMappingProfileByName(specialMappingProfileName);
     ModalSelectMappingProfile.selectMappingProfile();
     cy.get('section[id=actionProfileFormAssociatedMappingProfileAccordion] div[class*=searchControl]>button[disabled]',
       getLongDelay()).should('be.visible');

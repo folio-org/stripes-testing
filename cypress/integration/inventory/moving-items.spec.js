@@ -20,6 +20,7 @@ describe('inventory: moving items', () => {
     cy.visit(TopMenu.inventoryPath);
   });
 
+  // TODO: redesign test, add test data generation/delete
   it('C15185 Move multiple items from one holdings to another holdings within an instance', { tags: [TestTypes.smoke] }, () => {
     const firstHolding = 'Main Library';
     const secondHolding = 'Annex';

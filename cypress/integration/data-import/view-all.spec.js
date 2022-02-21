@@ -26,7 +26,7 @@ describe('ui-data-import: Search the "View all" log screen', () => {
     fileManager.createFile(`cypress/fixtures/${uniqueFileName}`);
 
     // remove generated test file from fixtures after uploading
-    cy.uploadFile(uniqueFileName);
+    cy.uploadFileWithDefaultJobProfile(uniqueFileName);
     fileManager.deleteFile(`cypress/fixtures/${uniqueFileName}`);
   });
 
