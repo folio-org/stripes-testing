@@ -1,6 +1,6 @@
 import getRandomPostfix from '../../utils/stringTools';
 import { Button, TextField, TextArea, NavListItem, Checkbox } from '../../../../interactors';
-// TO DO: update test with duplicate and edit methods, after PO will review test case.
+
 const actionsButton = Button('Actions');
 const nameField = TextField({ id: 'notice_policy_name' });
 
@@ -18,6 +18,10 @@ export default {
       nameField.fillIn(patronNoticePolicy.name),
       Checkbox({ id: 'notice_policy_active' }).click(),
       TextArea({ id: 'notice_policy_description' }).fillIn(patronNoticePolicy.description),
+    ]);
+  },
+  savePolicy: () => {
+    cy.do([
       Button({ id: 'footer-save-entity' }).click(),
       Button({ icon: 'times' }).click(),
     ]);
