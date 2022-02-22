@@ -6,8 +6,8 @@ export default {
   searchMappingProfileByName: (mappingProfileName) => {
     cy.do([
       modalSelectProfile.find(TextField({ name: 'query' })).fillIn(mappingProfileName),
-      modalSelectProfile.find(Button('Search')).click(),
-      modalSelectProfile.find(HTML(including('1 record found'))).exists()]);
+      modalSelectProfile.find(Button('Search')).click()]);
+    cy.expect(modalSelectProfile.find(HTML(including('1 record found'))).exists());
   },
 
   selectMappingProfile: () => {
