@@ -44,6 +44,10 @@ const checkIsItemCreated = () => {
   }));
 };
 
+const checkIsInvoiceCreated = () => {
+  cy.expect(MultiColumnListCell({ row: 0, column: 'Created' }).exists());
+};
+
 export default {
   checkImportFile(jobProfileName) {
     cy.do(Button('View all').click());
@@ -93,4 +97,5 @@ export default {
 
   checkIsInstanceCreated,
   checkIsInstanceUpdated,
+  checkIsInvoiceCreated,
 };

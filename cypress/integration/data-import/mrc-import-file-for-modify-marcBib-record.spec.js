@@ -87,7 +87,8 @@ describe('ui-data-import: Verify the possibility to modify MARC Bibliographic re
     // create Job profile
     const jobProfile = {
       ...newJobProfile.defaultJobProfile,
-      profileName: jobProfileName
+      profileName: jobProfileName,
+      acceptedType: newJobProfile.acceptedDataType.marc
     };
     settingsDataImport.goToJobProfiles();
     jobProfiles.createJobProfileWithLinkingProfiles(jobProfile, actionProfileName, matchProfileName);
