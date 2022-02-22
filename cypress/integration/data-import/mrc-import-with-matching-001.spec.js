@@ -108,7 +108,8 @@ describe('ui-data-import: Test MARC-MARC matching for 001 field', () => {
         // create Job profile
         const jobProfile = {
           ...NewJobProfile.defaultJobProfile,
-          profileName: jobProfileName
+          profileName: jobProfileName,
+          acceptedType: NewJobProfile.acceptedDataType.marc
         };
         SettingsDataImport.goToJobProfiles();
         jobProfiles.createJobProfileWithLinkingProfiles(jobProfile, actionProfileName, matchProfileName);

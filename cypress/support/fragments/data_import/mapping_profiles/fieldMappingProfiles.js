@@ -1,4 +1,4 @@
-import { Button, MultiColumnListCell, TextField } from '../../../../../interactors';
+import { Button, MultiColumnListCell, TextField, Pane } from '../../../../../interactors';
 import newMappingProfile from './newMappingProfile';
 
 const actionsButton = Button('Actions');
@@ -42,6 +42,19 @@ const deleteFieldMappingProfile = (profileName) => {
     });
 };
 
+const searchMappingProfileForDuplicate = (nameForSearch) => {
+  cy.do([TextField({ id:'input-search-mapping-profiles-field' }).fillIn(nameForSearch),
+    Button('Search').click()
+  ]);
+};
+
+const duplicateMappingProfile = () => {
+  cy.do([
+    Pane({ id:'full-screen-view' }).find(actionsButton).click(),
+    Button('Duplicate').click()
+  ]);
+};
+
 export default {
   createMappingProfile:(mappingProfile) => {
     openNewMappingProfileForm();
@@ -68,6 +81,21 @@ export default {
     cy.do(TextField({ id:'input-search-mapping-profiles-field' }).fillIn(mappingProfileName));
     cy.do(Button('Search').click());
     cy.expect(MultiColumnListCell(mappingProfileName).exists());
+  },
+
+  createInvoiceMappingProfile:(mappingProfileName) => {
+    cy.intercept(
+      {
+        method: 'GET',
+        url: '/tags?*',
+      }
+    ).as('getTag');
+    searchMappingProfileForDuplicate('GOBI monograph invoice');
+    cy.wait('@getTag');
+    duplicateMappingProfile();
+    newMappingProfile.fillMappingProfileForInvoice(mappingProfileName);
+    closeViewModeForMappingProfile();
+    cy.expect(actionsButton.exists());
   },
 
   deleteFieldMappingProfile

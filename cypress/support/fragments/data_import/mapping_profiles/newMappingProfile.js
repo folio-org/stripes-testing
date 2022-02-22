@@ -1,5 +1,9 @@
-import { TextField, Button, Select, TextArea } from '../../../../../interactors';
+import { TextField, Button, Select, TextArea, Modal, HTML, including, MultiColumnListCell } from '../../../../../interactors';
 import getRandomPostfix from '../../../utils/stringTools';
+
+const saveButton = Button('Save as profile & Close');
+
+const organizationModal = Modal('Select Organization');
 
 const marcBib = 'MARC Bibliographic';
 
@@ -33,6 +37,15 @@ const defaultMappingProfile = {
   loan: permanentLoanType,
   statusField: status,
   fillProfile:''
+};
+
+const selectOrganizationByName = () => {
+  cy.do([
+    organizationModal.find(TextField({ id: 'input-record-search' })).fillIn('GOBI Library Solutions'),
+    organizationModal.find(Button('Search')).click(),
+    organizationModal.find(HTML(including('1 record found'))).exists(),
+    MultiColumnListCell('GOBI Library Solutions').click({ row: 0, columnIndex: 0 }),
+  ]);
 };
 
 export default {
@@ -79,7 +92,7 @@ export default {
         cy.wait(1800);
       }
     }
-    cy.do(Button('Save as profile & Close').click());
+    cy.do(saveButton.click());
   },
 
   fillInstanceMappingProfile() {
@@ -152,8 +165,8 @@ export default {
       Select({ name:'profile.existingRecordType' }).choose(specialMappingProfile.typeValue)
     ]);
     specialMappingProfile.fillProfile();
-    cy.do(Button('Save as profile & Close').click());
-    cy.expect(Button('Save as profile & Close').absent());
+    cy.do(saveButton.click());
+    cy.expect(saveButton.absent());
   },
 
   fillModifyMappingProfile(specialMappingProfileName = defaultMappingProfile.name, properties) {
@@ -169,8 +182,24 @@ export default {
       TextArea({ name:'profile.mappingDetails.marcMappingDetails[0].field.subfields[0].data.text' }).fillIn(properties.subfieldTextInFirstField),
       TextField({ name:'profile.mappingDetails.marcMappingDetails[0].field.subfields[1].subfield' }).fillIn(properties.subfieldInSecondField),
       TextArea({ name:'profile.mappingDetails.marcMappingDetails[0].field.subfields[1].data.text' }).fillIn(properties.subfieldTextInSecondField),
-      Button('Save as profile & Close').click(),
+      saveButton.click(),
     ]);
-    cy.expect(Button('Save as profile & Close').absent());
+    cy.expect(saveButton.absent());
+  },
+
+  fillMappingProfileForInvoice:(specialMappingProfileName = defaultMappingProfile.name) => {
+    cy.do([
+      TextField({ name:'profile.name' }).fillIn(specialMappingProfileName),
+      Select({ name:'profile.incomingRecordType' }).choose('EDIFACT invoice'),
+      Select({ name:'profile.existingRecordType' }).choose('Invoice'),
+      TextArea({ name:'profile.description' }).fillIn(''),
+      TextField('Batch group*').fillIn('"FOLIO"'),
+      Button('Organization look-up').click()
+    ]);
+    selectOrganizationByName();
+    cy.do([
+      TextField('Payment method*').fillIn('"Credit Card"'),
+      saveButton.click(),
+    ]);
   },
 };
