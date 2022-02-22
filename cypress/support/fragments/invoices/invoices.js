@@ -12,7 +12,6 @@ import { Button,
   Checkbox,
   MultiColumnList,
   MultiColumnListRow } from '../../../../interactors';
-import { quickMarcEditorDeleteIconInRowSelector } from '../../../../interactors/quickMarcEditorRow';
 import InteractorsTools from '../../utils/interactorsTools';
 import Helper from '../finance/financeHelper';
 
