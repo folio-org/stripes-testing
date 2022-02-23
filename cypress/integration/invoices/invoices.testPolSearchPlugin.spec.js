@@ -4,7 +4,7 @@ import Invoices from '../../support/fragments/invoices/invoices';
 import testType from '../../support/dictionary/testTypes';
 import VendorAddress from '../../support/fragments/invoices/vendorAddress';
 import newOrder from '../../support/fragments/orders/newOrder';
-import newOrderLine from '../../support/fragments/orders/newOrderLine';
+import newOrderLine from '../../support/fragments/orders/enchancedOrderLine';
 import Orders from '../../support/fragments/orders/orders';
 
 describe('ui-invoices: test POL search plugin', () => {
