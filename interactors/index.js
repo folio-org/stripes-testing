@@ -22,6 +22,7 @@ export { default as Label } from './label';
 export { default as Layer } from './layer';
 export { default as List, ListItem } from './list';
 export { default as MessageBanner, MessageBannerTypes } from './messagebanner';
+export { default as MetaSection } from './metasection';
 export { default as Modal } from './modal';
 export { MultiColumnList, MultiColumnListRow, MultiColumnListCell, MultiColumnListHeader } from './multi-column-list';
 export { default as MultiSelect, MultiSelectMenu, MultiSelectOption, ValueChipRoot } from './multi-select';
