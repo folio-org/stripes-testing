@@ -67,7 +67,7 @@ describe('ui-data-import: MARC file import with creating of the new instance, ho
       fieldMappingProfiles.createMappingProfile(profile.mappingProfile);
       fieldMappingProfiles.checkMappingProfilePresented(profile.mappingProfile.name);
       settingsDataImport.goToActionProfiles();
-      actionProfiles.createActionProfile(profile.actionProfile, profile.mappingProfile);
+      actionProfiles.createActionProfile(profile.actionProfile, profile.mappingProfile.name);
       actionProfiles.checkActionProfilePresented(profile.actionProfile.name);
     });
 
