@@ -102,7 +102,7 @@ describe('ui-data-import: Test MARC-MARC matching for 001 field', () => {
           action: 'Update (all record types except Orders)',
         };
         SettingsDataImport.goToActionProfiles();
-        ActionProfiles.createActionProfile(actionProfile, mappingProfile);
+        ActionProfiles.createActionProfile(actionProfile, mappingProfile.name);
         ActionProfiles.checkActionProfilePresented(actionProfileName);
 
         // create Job profile

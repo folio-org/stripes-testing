@@ -57,7 +57,7 @@ describe('ui-data-import: MARC file import with matching for 999 ff field', () =
       name: actionProfileNameForExport
     };
     SettingsDataImport.goToActionProfiles();
-    ActionProfiles.createActionProfile(actionProfileForExport, mappingProfileForExport);
+    ActionProfiles.createActionProfile(actionProfileForExport, mappingProfileForExport.name);
     ActionProfiles.checkActionProfilePresented(actionProfileNameForExport);
 
     // create job profile for export
@@ -135,7 +135,7 @@ describe('ui-data-import: MARC file import with matching for 999 ff field', () =
           action: 'Update (all record types except Orders)'
         };
         SettingsDataImport.goToActionProfiles();
-        ActionProfiles.createActionProfile(actionProfile, mappingProfile);
+        ActionProfiles.createActionProfile(actionProfile, mappingProfile.name);
         ActionProfiles.checkActionProfilePresented(actionProfileName);
 
         // create Job profile
