@@ -58,10 +58,10 @@ export default {
     return cy.do(keywordInput.fillIn(kw));
   },
 
-  selectCallNumberBrowse() {
+  selectBrowseCallNumbers() {
     // cypress can't draw selected option without wait
     cy.wait(1000);
-    return cy.do(Select('Search field index').choose('Browse call numbers'));
+    cy.do(Select('Search field index').choose('Browse call numbers'));
   },
 
   showsOnlyEffectiveLocation() {

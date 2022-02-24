@@ -11,7 +11,7 @@ describe('verify call number browse feature', () => {
 
   it('C347902 Verify "Browse call numbers" option on the Instances tab', { tags: [TestTypes.smoke] }, () => {
     InventorySearch.verifyKeywordsAsDefault();
-    InventorySearch.selectCallNumberBrowse();
+    InventorySearch.selectBrowseCallNumbers();
     InventorySearch.verifyCallNumberBrowseEmptyPane();
     InventoryActions.actionsIsAbsent();
     InventorySearch.showsOnlyEffectiveLocation();
