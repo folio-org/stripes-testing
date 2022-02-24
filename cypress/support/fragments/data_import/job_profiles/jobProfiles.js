@@ -14,7 +14,6 @@ const openNewJobProfileForm = () => {
 const waitLoadingList = () => {
   cy.get('[id="job-profiles-list"]', getLongDelay())
     .should('be.visible');
-  cy.expect(actionsButton.exists());
 };
 
 const deleteJobProfile = (profileName) => {
@@ -60,11 +59,7 @@ export default {
     ]);
   },
 
-  waitLoadingList:() => {
-    cy.get('[id="job-profiles-list"]', getLongDelay())
-      .should('be.visible');
-    cy.expect(actionsButton.exists());
-  },
+  waitLoadingList,
 
   checkJobProfilePresented:(jobProfileTitle) => {
     cy.get('[id="job-profiles-list"]')
@@ -105,5 +100,8 @@ export default {
   createJobProfileWithLinkingProfilesForUpdate: (jobProfile) => {
     openNewJobProfileForm();
     newJobProfile.fillJobProfile(jobProfile);
+  },
+  select:(jobProfileTitle) => {
+    cy.do(MultiColumnListCell(jobProfileTitle).click());
   },
 };

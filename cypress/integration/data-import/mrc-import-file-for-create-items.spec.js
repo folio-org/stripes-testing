@@ -11,6 +11,7 @@ import dataImport from '../../support/fragments/data_import/dataImport';
 import logs from '../../support/fragments/data_import/logs';
 import jobProfiles from '../../support/fragments/data_import/job_profiles/jobProfiles';
 import testTypes from '../../support/dictionary/testTypes';
+import TopMenu from '../../support/fragments/topMenu';
 
 describe('ui-data-import: MARC file import with creating of the new instance, holding and item', () => {
   // unique file name to upload
@@ -79,7 +80,7 @@ describe('ui-data-import: MARC file import with creating of the new instance, ho
     newJobProfile.clickSaveAndCloseButton();
     jobProfiles.checkJobProfilePresented(specialJobProfile.profileName);
 
-    dataImport.goToDataImport();
+    cy.visit(TopMenu.dataImportPath);
     dataImport.uploadFile('oneMarcBib.mrc', fileName);
     jobProfiles.searchJobProfileForImport(specialJobProfile.profileName);
     jobProfiles.runImportFile(fileName);

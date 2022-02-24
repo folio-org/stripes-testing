@@ -1,7 +1,7 @@
 import SettingsDataImport from '../../support/fragments/data_import/settingsDataImport';
 import dataImport from '../../support/fragments/data_import/dataImport';
 import jobProfiles from '../../support/fragments/data_import/job_profiles/jobProfiles';
-import topMenu from '../../support/fragments/topMenu';
+import TopMenu from '../../support/fragments/topMenu';
 import MatchProfiles from '../../support/fragments/data_import/match_profiles/match-profiles';
 import logs from '../../support/fragments/data_import/logs';
 import inventorySearch from '../../support/fragments/inventory/inventorySearch';
@@ -28,7 +28,7 @@ describe('ui-data-import: Test MARC-MARC matching for 001 field', () => {
       Cypress.env('diku_password')
     );
 
-    cy.visit(topMenu.dataImportPath);
+    cy.visit(TopMenu.dataImportPath);
   });
 
   it('C17044: MARC-MARC matching for 001 field', { tags: testTypes.smoke }, () => {
@@ -55,12 +55,12 @@ describe('ui-data-import: Test MARC-MARC matching for 001 field', () => {
       .getInstanceHRID()
       .then(id => {
         // download .csv file
-        cy.visit(topMenu.inventoryPath);
+        cy.visit(TopMenu.inventoryPath);
         SearchInventory.searchInstanceByHRID(id);
         inventorySearch.saveUUIDs();
         ExportMarcFile.downloadCSVFile(nameForCSVFile, 'SearchInstanceUUIDs*');
         FileManager.deleteFolder(Cypress.config('downloadsFolder'));
-        cy.visit(topMenu.dataExportPath);
+        cy.visit(TopMenu.dataExportPath);
 
         // download exported marc file
         exportFile.uploadFile(nameForCSVFile);
@@ -116,14 +116,14 @@ describe('ui-data-import: Test MARC-MARC matching for 001 field', () => {
         jobProfiles.checkJobProfilePresented(jobProfile.profileName);
 
         // upload the exported marc file with 001 field
-        dataImport.goToDataImport();
+        cy.visit(TopMenu.dataImportPath);
         dataImport.uploadExportedFile(nameForExportedMarcFile);
         jobProfiles.searchJobProfileForImport(jobProfileName);
         jobProfiles.runImportFile(nameForExportedMarcFile);
         logs.openJobProfile(nameForExportedMarcFile);
         logs.checkIsInstanceUpdated();
 
-        cy.visit(topMenu.inventoryPath);
+        cy.visit(TopMenu.inventoryPath);
         SearchInventory.searchInstanceByHRID(id);
 
         // ensure the fields created in Field mapping profile exists in inventory

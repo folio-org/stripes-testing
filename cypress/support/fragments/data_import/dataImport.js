@@ -4,16 +4,11 @@ import TopMenu from '../topMenu';
 import JobProfiles from './job_profiles/jobProfiles';
 import SearchInventory from './searchInventory';
 
-const goToDataImport = () => {
-  cy.visit(TopMenu.dataImportPath);
-};
-
 const uploadFile = (filePathName, fileName) => {
   cy.get('input[type=file]', getLongDelay()).attachFile({ filePath: filePathName, fileName });
 };
 
 export default {
-  goToDataImport,
   uploadFile,
 
   uploadExportedFile(fileName) {
@@ -23,7 +18,7 @@ export default {
     // unique file name to upload
     const nameForMarcFileWithBib = `autotest1Bib${getRandomPostfix()}.mrc`;
     // upload a marc file for export
-    goToDataImport();
+    cy.visit(TopMenu.dataImportPath);
     uploadFile(nameForMarcFileWithBib);
     JobProfiles.searchJobProfileForImport(JobProfiles.defaultInstanceAndSRSMarcBib);
     JobProfiles.runImportFile(nameForMarcFileWithBib);
