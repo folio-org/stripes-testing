@@ -1,5 +1,16 @@
-import { MultiColumnList, MultiColumnListCell, Pane, Accordion, Checkbox, TextField, Button, SearchField } from '../../../../interactors';
+import {
+  MultiColumnList,
+  MultiColumnListCell,
+  Pane,
+  Accordion,
+  Checkbox,
+  TextField,
+  Button,
+  SearchField,
+  Select
+} from '../../../../interactors';
 import InventoryActions from './inventoryActions';
+import { HTML, including } from '@interactors/html';
 
 
 const effectiveLocationInput = Accordion({ id: 'effectiveLocation' });
@@ -45,6 +56,42 @@ export default {
 
   byKeywords(kw = '*') {
     return cy.do(keywordInput.fillIn(kw));
+  },
+
+  selectCallNumberBrowse() {
+    // cypress can't draw selected option without wait
+    cy.wait(1000);
+    return cy.do(Select('Search field index').choose('Browse call numbers'));
+  },
+
+  showsOnlyEffectiveLocation() {
+    cy.expect(Accordion({ id: 'effectiveLocation' }).exists());
+    cy.expect(Accordion({ id: 'language' }).absent());
+    cy.expect(Accordion({ id: 'resource' }).absent());
+    cy.expect(Accordion({ id: 'format' }).absent());
+    cy.expect(Accordion({ id: 'mode' }).absent());
+    cy.expect(Accordion({ id: 'natureOfContent' }).absent());
+    cy.expect(Accordion({ id: 'staffSuppress' }).absent());
+    cy.expect(Accordion({ id: 'instancesDiscoverySuppress' }).absent());
+    cy.expect(Accordion({ id: 'statisticalCodeIds' }).absent());
+    cy.expect(Accordion({ id: 'createdDate' }).absent());
+    cy.expect(Accordion({ id: 'updatedDate' }).absent());
+    cy.expect(Accordion({ id: 'source' }).absent());
+    cy.expect(Accordion({ id: 'instancesTags' }).absent());
+  },
+
+  verifyKeywordsAsDefault() {
+    cy.get('#input-inventory-search-qindex').then(elem => {
+      expect(elem.text()).to.include('Keyword (title, contributor, identifier)');
+      expect(elem).to.be.visible;
+    });
+  },
+
+  verifyCallNumberBrowseEmptyPane() {
+    const callNumberBrowsePane = Pane({ title: 'Browse inventory' });
+    cy.expect(callNumberBrowsePane.exists());
+    cy.expect(callNumberBrowsePane.has({ subtitle: 'Enter search criteria to start browsing' }));
+    cy.expect(HTML(including('Browse for results entering a query or choosing a filter.')).exists());
   },
 
   saveUUIDs() {
