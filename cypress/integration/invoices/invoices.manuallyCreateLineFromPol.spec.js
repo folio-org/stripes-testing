@@ -5,7 +5,7 @@ import Invoices from '../../support/fragments/invoices/invoices';
 import testType from '../../support/dictionary/testTypes';
 import VendorAddress from '../../support/fragments/invoices/vendorAddress';
 import newOrder from '../../support/fragments/orders/newOrder';
-import newOrderLine from '../../support/fragments/orders/newOrderLine';
+import basicOrderLine from '../../support/fragments/orders/basicOrderLine';
 import Orders from '../../support/fragments/orders/orders';
 
 describe('ui-invoices: Invoice Line creation - based on POL', () => {
@@ -13,7 +13,7 @@ describe('ui-invoices: Invoice Line creation - based on POL', () => {
   const vendorPrimaryAddress = { ...VendorAddress.vendorAddress };
   const invoiceLine = { ...NewInvoiceLine.defaultUiInvoiceLine };
   const order = { ...newOrder.defaultOrder };
-  const orderLine = { ...newOrderLine.defaultOrderLine };
+  const orderLine = { ...basicOrderLine.defaultOrderLine };
   const locationName = 'Main Library';
   const euroCurrency = 'Euro (EUR)';
   const euroSign = '€';

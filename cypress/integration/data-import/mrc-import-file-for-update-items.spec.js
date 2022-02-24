@@ -309,7 +309,7 @@ describe('ui-data-import: MARC file upload with the update of instance, holding,
       fieldMappingProfiles.createMappingProfileForUpdate(profile.mappingProfile);
       fieldMappingProfiles.checkMappingProfilePresented(profile.mappingProfile.name);
       settingsDataImport.goToActionProfiles();
-      actionProfiles.createActionProfile(profile.actionProfile, profile.mappingProfile);
+      actionProfiles.createActionProfile(profile.actionProfile, profile.mappingProfile.name);
       actionProfiles.checkActionProfilePresented(profile.actionProfile.name);
     });
 

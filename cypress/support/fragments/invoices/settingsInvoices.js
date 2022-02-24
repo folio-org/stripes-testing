@@ -6,6 +6,7 @@ const saveButton = Button('Save');
 const deleteButton = Button('Delete');
 const trashIconButton = Button({ icon: 'trash' });
 const editIconButton = Button({ icon: 'edit' });
+function getEditableListRow(rowNumber) { return EditableListRow({ index: +rowNumber.split('-')[1] }); }
 
 export default {
   settingsInvoicePath: {
@@ -33,33 +34,54 @@ export default {
     this.fillRequiredFields(batchGroup);
   },
 
-  editBatchGroup(batchGroup, rowNumber = 0) {
-    cy.do(EditableListRow({ index: rowNumber }).find(editIconButton).click());
-    this.fillRequiredFields(batchGroup);
+  editBatchGroup(batchGroup, oldBatchGroupName) {
+    cy.do(MultiColumnListCell({ content: oldBatchGroupName }).perform(
+      element => {
+        const rowNumber = element.parentElement.parentElement.getAttribute('data-row-index');
+        cy.do(getEditableListRow(rowNumber).find(editIconButton).click());
+        this.fillRequiredFields(batchGroup);
+      }
+    ));
   },
 
-  checkBatchGroup: (batchGroup, rowNumber = 0) => {
-    const createdByAdmin = `${DateTools.getFormattedDateWithSlashes({ date: new Date() })} by ADMINISTRATOR, DIKU`;
-
-    cy.expect(EditableListRow({ index: rowNumber })
-      .find(MultiColumnListCell({ columnIndex: 0 }))
-      .has({ content: batchGroup.name }));
-
-    cy.expect(EditableListRow({ index: rowNumber })
-      .find(MultiColumnListCell({ columnIndex: 1 }))
-      .has({ content: batchGroup.description }));
-
-    cy.expect(EditableListRow({ index: rowNumber })
-      .find(MultiColumnListCell({ columnIndex: 2 }))
-      .has({ content: createdByAdmin }));
+  checkBatchGroup: (batchGroup) => {
+    cy.do(MultiColumnListCell({ content: batchGroup.name }).perform(
+      element => {
+        const rowNumber = element.parentElement.parentElement.getAttribute('data-row-index');
+        const createdByAdmin = `${DateTools.getFormattedDateWithSlashes({ date: new Date() })} by ADMINISTRATOR, DIKU`;
+        cy.expect(getEditableListRow(rowNumber)
+          .find(MultiColumnListCell({ columnIndex: 0 }))
+          .has({ content: batchGroup.name }));
+        cy.expect(getEditableListRow(rowNumber)
+          .find(MultiColumnListCell({ columnIndex: 1 }))
+          .has({ content: batchGroup.description }));
+        cy.expect(getEditableListRow(rowNumber)
+          .find(MultiColumnListCell({ columnIndex: 2 }))
+          .has({ content: createdByAdmin }));
+      }
+    ));
   },
 
-  deleteBatchGroup: (batchGroup, rowNumber = 0) => {
-    cy.do([
-      EditableListRow({ index: rowNumber })
-        .find(trashIconButton).click(),
-      deleteButton.click()
-    ]);
+  deleteBatchGroup: (batchGroup) => {
+    cy.do(MultiColumnListCell({ content: batchGroup.name }).perform(
+      element => {
+        const rowNumber = element.parentElement.parentElement.getAttribute('data-row-index');
+        cy.do([
+          getEditableListRow(rowNumber)
+            .find(trashIconButton).click(),
+          deleteButton.click()
+        ]);
+      }
+    ));
     InteractorsTools.checkCalloutMessage(`The Batch group ${batchGroup.name} was successfully deleted`);
+  },
+
+  checkNotDeletingGroup: (batchGroupName) => {
+    cy.do(MultiColumnListCell({ content: batchGroupName }).perform(
+      element => {
+        const rowNumber = element.parentElement.parentElement.getAttribute('data-row-index');
+        expect(getEditableListRow(rowNumber).find(trashIconButton).absent());
+      }
+    ));
   }
 };
