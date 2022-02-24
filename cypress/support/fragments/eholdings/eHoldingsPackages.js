@@ -31,4 +31,7 @@ export default {
       });
     return cy.get('@selectedPackage');
   },
+  getPackageName:(rowNumber = 0) => {
+    return cy.then(() => resultSection.find(ListItem({ index: rowNumber })).h3Value());
+  }
 };
