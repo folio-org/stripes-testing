@@ -4,7 +4,6 @@ import getRandomPostfix from '../../utils/stringTools';
 import eHoldingsNewCustomTitle from './eHoldingsNewCustomTitle';
 
 const resultSection = Section({ id: 'search-results' });
-const defaultPackage = 'e-book';
 
 export default {
 
@@ -24,12 +23,11 @@ export default {
         eHoldingsTitle.waitLoading(title);
       });
   },
-  create: (packageName = defaultPackage, titleName = `title_${getRandomPostfix()}`) => {
+  create: (packageName, titleName = `title_${getRandomPostfix()}`) => {
     cy.do(resultSection.find(Button('New')).click());
     eHoldingsNewCustomTitle.waitLoading();
     eHoldingsNewCustomTitle.fillInRequiredProperties(packageName, titleName);
     eHoldingsNewCustomTitle.saveAndClose();
     return titleName;
-  },
-  defaultPackage
+  }
 };
