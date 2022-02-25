@@ -1,3 +1,4 @@
+import { Button } from '../../../../interactors';
 import { getLongDelay } from '../../utils/cypressTools';
 import getRandomPostfix from '../../utils/stringTools';
 import TopMenu from '../topMenu';
@@ -29,5 +30,6 @@ export default {
         cy.wrap(id).as('requestedHrId');
       });
     return cy.get('@requestedHrId');
-  }
+  },
+  getLinkToAuthority: (title) => cy.then(() => Button(title).href())
 };

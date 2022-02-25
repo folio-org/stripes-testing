@@ -9,10 +9,12 @@ import JobProfiles from '../../support/fragments/data_import/job_profiles/jobPro
 import MarcAuthoritiesSearch from '../../support/fragments/marcAuthority/marcAuthoritiesSearch';
 import MarcAuthorities from '../../support/fragments/marcAuthority/marcAuthorities';
 import QuickMarcEditor from '../../support/fragments/quickMarcEditor';
+import { getLongDelay } from '../../support/utils/cypressTools';
 
 describe('MARC Authority management', () => {
   let userId = '';
   const fileName = `autotestFile.${getRandomPostfix()}.mrc`;
+  let internalAuthorityId;
 
   before(() => {
     cy.createTempUser([
@@ -32,6 +34,20 @@ describe('MARC Authority management', () => {
       JobProfiles.waitLoadingList();
       JobProfiles.select(MarcAuthority.defaultJobProfile);
       JobProfiles.runImportFile(fileName);
+      JobProfiles.openFileRecords(fileName);
+      DataImport.getLinkToAuthority(MarcAuthority.defaultMarcFile.headingReference).then(link => {
+        const jobLogEntryId = link.split('/').at(-2);
+        const recordId = link.split('/').at(-1);
+
+        cy.intercept({
+          method: 'GET',
+          url: `/metadata-provider/jobLogEntries/${jobLogEntryId}/records/${recordId}`,
+        }).as('getRecord');
+
+        cy.wait('@getRecord', getLongDelay()).then(response => {
+          internalAuthorityId = response.relatedAuthorityInfo.idList[0];
+        });
+      });
     });
   });
 
@@ -39,7 +55,7 @@ describe('MARC Authority management', () => {
   it('C350572 Edit an Authority record', { tags:  [TestTypes.smoke, Features.authority] }, () => {
     cy.visit(TopMenu.marcAuthorities);
     MarcAuthoritiesSearch.searchBy('Uniform title', MarcAuthority.defaultMarcFile.headingReference);
-    MarcAuthorities.select(MarcAuthority.defaultMarcFile.headingReference);
+    MarcAuthorities.select(MarcAuthority.defaultMarcFile.headingReference, internalAuthorityId);
     MarcAuthority.waitLoading();
     MarcAuthority.edit();
     QuickMarcEditor.waitLoading();

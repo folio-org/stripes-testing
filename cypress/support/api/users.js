@@ -65,6 +65,20 @@ Cypress.Commands.add('createUserApi', (user) => {
     });
 });
 
+Cypress.Commands.add('overrideLocalSettings', (userId) => {
+  const body = { module: '@folio/stripes-core',
+    configName: 'localeSettings',
+    enabled: true,
+    value: '{"locale":"en-US","timezone":"UTC","currency":"USD"}',
+    userId };
+
+  cy.okapiRequest({
+    method: 'POST',
+    path: 'configurations/entries',
+    body,
+  });
+});
+
 Cypress.Commands.add('createTempUser', (permissions) => {
   const userProperties = {
     username: `cypressTestUser${getRandomPostfix()}`,
@@ -104,6 +118,7 @@ Cypress.Commands.add('createTempUser', (permissions) => {
                 userId: userProperties.userId,
                 permissions : [...permissionsResponse.body.permissions.map(permission => permission.permissionName)]
               });
+              cy.overrideLocalSettings(userProperties.userId);
               cy.wrap(userProperties).as('userProperties');
             });
         });

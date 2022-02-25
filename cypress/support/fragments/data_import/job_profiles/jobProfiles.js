@@ -1,4 +1,4 @@
-import { Button, TextField, MultiColumnListCell, Modal } from '../../../../../interactors';
+import { Button, TextField, MultiColumnListCell, Modal, Section } from '../../../../../interactors';
 import { getLongDelay } from '../../../utils/cypressTools';
 import newJobProfile from './newJobProfile';
 
@@ -104,4 +104,8 @@ export default {
   select:(jobProfileTitle) => {
     cy.do(MultiColumnListCell(jobProfileTitle).click());
   },
+  openFileRecords:(fileName) => {
+    cy.do(Button(fileName).click());
+    cy.expect(Section({ id:'pane-results' }).exists());
+  }
 };
