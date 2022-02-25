@@ -19,9 +19,9 @@ import getRandomPostfix from '../../support/utils/stringTools';
 
 describe('ui-data-import: MARC file import with matching for 999 ff field', () => {
   // unique file name to upload
-  const nameForMarcFile = `autotestFile${getRandomPostfix()}.mrc`;
-  const nameForExportedMarcFile = `autotestFile${getRandomPostfix()}.mrc`;
-  const nameForCSVFile = `autotestFile${getRandomPostfix()}.csv`;
+  const nameForMarcFile = `C343343autotestFile${getRandomPostfix()}.mrc`;
+  const nameForExportedMarcFile = `C343343autotestFile${getRandomPostfix()}.mrc`;
+  const nameForCSVFile = `C343343autotestFile${getRandomPostfix()}.csv`;
   const mappingProfileName = `autotestMappingProf${getRandomPostfix()}`;
   const matchProfileName = `autotestMatchProf${getRandomPostfix()}`;
   const actionProfileName = `autotestActionProf${getRandomPostfix()}`;

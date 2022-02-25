@@ -8,7 +8,7 @@ describe('ui-data-import: Search the "View all" log screen', () => {
   let id;
   // Create unique file name with given type to upload
   const fileType = 'mrc';
-  const uniqueFileName = `test${getRandomPostfix()}.${fileType}`;
+  const uniqueFileName = `C11112test${getRandomPostfix()}.${fileType}`;
 
   before(() => {
     cy.login(
