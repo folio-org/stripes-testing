@@ -50,7 +50,7 @@ describe('ui-data-import: Verify the possibility to modify MARC Bibliographic re
     const jobProfileName = `autoTestJobProf.${getRandomPostfix()}`;
 
     // file name
-    const nameMarcFileForUpload = `autotestFile.${getRandomPostfix()}.mrc`;
+    const nameMarcFileForUpload = `C345423autotestFile.${getRandomPostfix()}.mrc`;
 
     // create Field mapping profile
     settingsDataImport.goToMappingProfiles();
