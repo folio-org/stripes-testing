@@ -1,5 +1,5 @@
 import NewOrder from '../../support/fragments/orders/newOrder';
-import NewOrderLine from '../../support/fragments/orders/newOrderLine';
+import basicOrderLine from '../../support/fragments/orders/basicOrderLine';
 import TestType from '../../support/dictionary/testTypes';
 import Orders from '../../support/fragments/orders/orders';
 import Receiving from '../../support/fragments/receiving/receiving';
@@ -11,7 +11,7 @@ import InteractorsTools from '../../support/utils/interactorsTools';
 
 describe('orders: Unreceive piece from Order', () => {
   const order = { ...NewOrder.defaultOrder };
-  const orderLine = { ...NewOrderLine.defaultOrderLine };
+  const orderLine = { ...basicOrderLine.defaultOrderLine };
   const locationName = 'Main Library';
 
   before(() => {

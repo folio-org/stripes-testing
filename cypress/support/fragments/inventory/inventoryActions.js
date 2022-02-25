@@ -102,5 +102,9 @@ export default {
   verifyInstancesMARC(actualIDs, expectedIDs) {
     const formattedActualUUIDs = actualIDs.replaceAll('"', '').split('\n');
     expect(expectedIDs).to.deep.equal(formattedActualUUIDs);
+  },
+
+  actionsIsAbsent() {
+    return cy.expect(Button('Actions').absent());
   }
 };

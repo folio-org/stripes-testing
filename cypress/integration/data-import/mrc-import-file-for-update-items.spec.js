@@ -365,7 +365,7 @@ describe('ui-data-import: MARC file upload with the update of instance, holding,
     newJobProfile.linkMatchAndActionProfilesForInstance(actionProfileNameForInstance, matchProfileNameForInstance, 0);
     newJobProfile.linkMatchAndActionProfilesForHoldings(actionProfileNameForHoldings, matchProfileNameForHoldings, 2);
     newJobProfile.linkMatchAndActionProfilesForItem(actionProfileNameForItem, matchProfileNameForItem, 4);
-    newJobProfile.clickSaveAndCloseButton();
+    newJobProfile.saveAndClose();
 
     // upload the exported marc file
     dataImport.goToDataImport();
