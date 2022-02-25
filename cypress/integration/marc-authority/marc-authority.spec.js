@@ -43,9 +43,11 @@ describe('MARC Authority management', () => {
           method: 'GET',
           url: `/metadata-provider/jobLogEntries/${jobLogEntryId}/records/${recordId}`,
         }).as('getRecord');
+        cy.visit(link);
 
         cy.wait('@getRecord', getLongDelay()).then(response => {
-          internalAuthorityId = response.relatedAuthorityInfo.idList[0];
+          cy.log('relatedAuthorityInfo = ' + JSON.stringify(response.response.body.relatedAuthorityInfo));
+          internalAuthorityId = response.response.body.relatedAuthorityInfo.idList[0];
         });
       });
     });
@@ -55,7 +57,7 @@ describe('MARC Authority management', () => {
   it('C350572 Edit an Authority record', { tags:  [TestTypes.smoke, Features.authority] }, () => {
     cy.visit(TopMenu.marcAuthorities);
     MarcAuthoritiesSearch.searchBy('Uniform title', MarcAuthority.defaultMarcFile.headingReference);
-    MarcAuthorities.select(MarcAuthority.defaultMarcFile.headingReference, internalAuthorityId);
+    MarcAuthorities.select(internalAuthorityId);
     MarcAuthority.waitLoading();
     MarcAuthority.edit();
     QuickMarcEditor.waitLoading();
