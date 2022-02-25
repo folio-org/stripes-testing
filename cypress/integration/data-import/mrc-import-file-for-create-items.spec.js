@@ -15,7 +15,7 @@ import TopMenu from '../../support/fragments/topMenu';
 
 describe('ui-data-import: MARC file import with creating of the new instance, holding and item', () => {
   // unique file name to upload
-  const fileName = `autotestFile.${getRandomPostfix()}.mrc`;
+  const fileName = `C343334autotestFile.${getRandomPostfix()}.mrc`;
 
   // unique profile names
   const jobProfileName = `autotestJobProf${getRandomPostfix()}`;
@@ -77,7 +77,7 @@ describe('ui-data-import: MARC file import with creating of the new instance, ho
     collectionOfProfiles.forEach(profile => {
       newJobProfile.linkActionProfile(profile.actionProfile);
     });
-    newJobProfile.clickSaveAndCloseButton();
+    newJobProfile.saveAndClose();
     jobProfiles.checkJobProfilePresented(specialJobProfile.profileName);
 
     cy.visit(TopMenu.dataImportPath);

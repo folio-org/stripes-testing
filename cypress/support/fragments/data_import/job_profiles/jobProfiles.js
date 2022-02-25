@@ -93,7 +93,7 @@ export default {
     } else {
       newJobProfile.linkMatchAndActionProfiles(matchProfileName, actionProfileName);
     }
-    newJobProfile.clickSaveAndCloseButton();
+    newJobProfile.saveAndClose();
     waitLoadingList();
   },
 
