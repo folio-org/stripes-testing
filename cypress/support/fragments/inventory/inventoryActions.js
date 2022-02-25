@@ -1,4 +1,4 @@
-import { Button, Section, Select, TextField } from '../../../../interactors';
+import { Button, Section, Select, TextArea, TextField } from '../../../../interactors';
 import DateTools from '../../utils/dateTools';
 import InventoryInstance from './inventoryInstance';
 import FileManager from '../../utils/fileManager';
@@ -13,6 +13,7 @@ const importTypeSelect = Select({ name :'externalIdentifierType' });
 export default {
   open: () => { return Section({ id:'pane-results' }).find(Button('Actions')).click(); },
   options: {
+    new: Button('New'),
     saveUUIDs: Button('Save instances UUIDs'),
     saveCQLQuery: Button('Save instances CQL query'),
     exportMARC: Button('Export instances (MARC)'),
@@ -106,5 +107,15 @@ export default {
 
   actionsIsAbsent() {
     return cy.expect(Button('Actions').absent());
+  },
+
+  createNewItem(title = 'test123', resType = 'cartographic dataset') {
+    cy.do([
+      this.open(),
+      this.options.exportMARC.click(),
+      TextArea({ id: 'input_instance_title' }).fillIn(title),
+      Select('Resource type').choose(resType),
+      Button('Save and close').click()
+    ]);
   }
 };
