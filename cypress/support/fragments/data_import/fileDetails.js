@@ -2,8 +2,8 @@ import { MultiColumnListCell, Section, including, KeyValue } from '../../../../i
 import invoices from '../invoices/invoices';
 import TopMenu from '../topMenu';
 
-const vendorInvoiceNumber = '49072';
-const expectedInvoiceDate = '10/15/2021';
+const vendorInvoiceNumber = '94999';
+const expectedInvoiceDate = '11/24/2021';
 const expectedInvoiceStatus = 'Open';
 const expectedInvoiceSource = 'EDI';
 

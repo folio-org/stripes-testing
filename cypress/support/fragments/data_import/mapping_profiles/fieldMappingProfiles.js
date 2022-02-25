@@ -98,5 +98,20 @@ export default {
     cy.expect(actionsButton.exists());
   },
 
+  createLargeInvoiceMappingProfile:(mappingProfileName) => {
+    cy.intercept(
+      {
+        method: 'GET',
+        url: '/tags?*',
+      }
+    ).as('getTag');
+    searchMappingProfileForDuplicate('Default - Harrassowitz serials invoice');
+    cy.wait('@getTag');
+    duplicateMappingProfile();
+    newMappingProfile.fillMappingProfileForLargeInvoice(mappingProfileName);
+    closeViewModeForMappingProfile();
+    cy.expect(actionsButton.exists());
+  },
+
   deleteFieldMappingProfile
 };

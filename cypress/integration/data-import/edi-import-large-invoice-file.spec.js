@@ -12,7 +12,7 @@ import logs from '../../support/fragments/data_import/logs';
 import topMenu from '../../support/fragments/topMenu';
 import fileDetails from '../../support/fragments/data_import/fileDetails';
 
-describe('ui-data-import: EDIFACT file import with creating of new invoice record', () => {
+describe('ui-data-import: Import a large EDIFACT invoice file', () => {
   before(() => {
     cy.login(
       Cypress.env('diku_login'),
@@ -24,15 +24,7 @@ describe('ui-data-import: EDIFACT file import with creating of new invoice recor
     );
   });
 
-  afterEach(() => {
-    const invoiceNumberFromEdifactFile = '94999';
-    cy.getInvoiceApi({ query: `vendorInvoiceNo="${invoiceNumberFromEdifactFile}"` })
-      .then(({ body }) => {
-        cy.deleteInvoiceFromStorageApi(body.invoices[body.invoices.length - 1].id);
-      });
-  });
-
-  it('C343338 EDIFACT file import with creating of new invoice record', { tags: [testTypes.smoke] }, () => {
+  it('C347615 Import a large EDIFACT invoice file', { tags: [testTypes.smoke] }, () => {
     // unique name for profiles
     const mappingProfileName = `autoTestMappingProf.${getRandomPostfix()}`;
     const actionProfileName = `autoTestActionProf.${getRandomPostfix()}`;
@@ -43,7 +35,7 @@ describe('ui-data-import: EDIFACT file import with creating of new invoice recor
 
     // create Field mapping profile
     settingsDataImport.goToMappingProfiles();
-    fieldMappingProfiles.createInvoiceMappingProfile(mappingProfileName);
+    fieldMappingProfiles.createLargeInvoiceMappingProfile(mappingProfileName);
     fieldMappingProfiles.checkMappingProfilePresented(mappingProfileName);
 
     // create Action profile and link it to Field mapping profile
@@ -71,19 +63,12 @@ describe('ui-data-import: EDIFACT file import with creating of new invoice recor
 
     // upload a marc file for creating of the new instance, holding and item
     cy.visit(topMenu.dataImportPath);
-    dataImport.uploadFile('invoice.edi', fileName);
+    dataImport.uploadFile('largeInvoice.edi', fileName);
     jobProfiles.searchJobProfileForImport(jobProfile.profileName);
     jobProfiles.runImportFile(fileName);
     logs.checkImportFile(jobProfile.profileName);
     logs.checkStatusOfJobProfile();
     logs.openJobProfile(fileName);
     logs.checkIsInvoiceCreated();
-
-    fileDetails.checkInvoiceDetails();
-
-    // clean up generated profiles
-    jobProfiles.deleteJobProfile(jobProfileName);
-    actionProfiles.deleteActionProfile(actionProfileName);
-    fieldMappingProfiles.deleteFieldMappingProfile(mappingProfileName);
   });
 });
