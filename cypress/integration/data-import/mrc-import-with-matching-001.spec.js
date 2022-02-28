@@ -33,9 +33,9 @@ describe('ui-data-import: Test MARC-MARC matching for 001 field', () => {
 
   it('C17044: MARC-MARC matching for 001 field', { tags: testTypes.smoke }, () => {
     // unique file name to upload
-    const nameForMarcFile = `autoTestFile${getRandomPostfix()}.mrc`;
-    const nameForExportedMarcFile = `autoTestFile${getRandomPostfix()}.mrc`;
-    const nameForCSVFile = `autoTestFile${getRandomPostfix()}.csv`;
+    const nameForMarcFile = `C17044autoTestFile${getRandomPostfix()}.mrc`;
+    const nameForExportedMarcFile = `C17044autoTestFile${getRandomPostfix()}.mrc`;
+    const nameForCSVFile = `C17044autoTestFile${getRandomPostfix()}.csv`;
 
     // unique name for profiles
     const matchProfileName = `autoTestMatchProf.${getRandomPostfix()}`;
@@ -102,7 +102,7 @@ describe('ui-data-import: Test MARC-MARC matching for 001 field', () => {
           action: 'Update (all record types except Orders)',
         };
         SettingsDataImport.goToActionProfiles();
-        ActionProfiles.createActionProfile(actionProfile, mappingProfile);
+        ActionProfiles.createActionProfile(actionProfile, mappingProfile.name);
         ActionProfiles.checkActionProfilePresented(actionProfileName);
 
         // create Job profile

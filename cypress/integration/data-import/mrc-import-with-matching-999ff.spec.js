@@ -19,9 +19,9 @@ import getRandomPostfix from '../../support/utils/stringTools';
 
 describe('ui-data-import: MARC file import with matching for 999 ff field', () => {
   // unique file name to upload
-  const nameForMarcFile = `autotestFile${getRandomPostfix()}.mrc`;
-  const nameForExportedMarcFile = `autotestFile${getRandomPostfix()}.mrc`;
-  const nameForCSVFile = `autotestFile${getRandomPostfix()}.csv`;
+  const nameForMarcFile = `C343343autotestFile${getRandomPostfix()}.mrc`;
+  const nameForExportedMarcFile = `C343343autotestFile${getRandomPostfix()}.mrc`;
+  const nameForCSVFile = `C343343autotestFile${getRandomPostfix()}.csv`;
   const mappingProfileName = `autotestMappingProf${getRandomPostfix()}`;
   const matchProfileName = `autotestMatchProf${getRandomPostfix()}`;
   const actionProfileName = `autotestActionProf${getRandomPostfix()}`;
@@ -57,7 +57,7 @@ describe('ui-data-import: MARC file import with matching for 999 ff field', () =
       name: actionProfileNameForExport
     };
     SettingsDataImport.goToActionProfiles();
-    ActionProfiles.createActionProfile(actionProfileForExport, mappingProfileForExport);
+    ActionProfiles.createActionProfile(actionProfileForExport, mappingProfileForExport.name);
     ActionProfiles.checkActionProfilePresented(actionProfileNameForExport);
 
     // create job profile for export
@@ -135,7 +135,7 @@ describe('ui-data-import: MARC file import with matching for 999 ff field', () =
           action: 'Update (all record types except Orders)'
         };
         SettingsDataImport.goToActionProfiles();
-        ActionProfiles.createActionProfile(actionProfile, mappingProfile);
+        ActionProfiles.createActionProfile(actionProfile, mappingProfile.name);
         ActionProfiles.checkActionProfilePresented(actionProfileName);
 
         // create Job profile

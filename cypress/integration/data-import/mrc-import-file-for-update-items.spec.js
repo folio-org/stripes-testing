@@ -187,7 +187,7 @@ describe('ui-data-import: MARC file upload with the update of instance, holding,
   ];
 
   // file names
-  const nameMarcFileForImportCreate = `autotestFile.${getRandomPostfix()}.mrc`;
+  const nameMarcFileForImportCreate = `C343335autotestFile.${getRandomPostfix()}.mrc`;
   const nameForCSVFile = `autotestFile${getRandomPostfix()}.csv`;
   const nameMarcFileForImportUpdate = `autotestFile${getRandomPostfix()}.mrc`;
   // profile names for updating
@@ -309,7 +309,7 @@ describe('ui-data-import: MARC file upload with the update of instance, holding,
       fieldMappingProfiles.createMappingProfileForUpdate(profile.mappingProfile);
       fieldMappingProfiles.checkMappingProfilePresented(profile.mappingProfile.name);
       settingsDataImport.goToActionProfiles();
-      actionProfiles.createActionProfile(profile.actionProfile, profile.mappingProfile);
+      actionProfiles.createActionProfile(profile.actionProfile, profile.mappingProfile.name);
       actionProfiles.checkActionProfilePresented(profile.actionProfile.name);
     });
 
@@ -365,7 +365,7 @@ describe('ui-data-import: MARC file upload with the update of instance, holding,
     newJobProfile.linkMatchAndActionProfilesForInstance(actionProfileNameForInstance, matchProfileNameForInstance, 0);
     newJobProfile.linkMatchAndActionProfilesForHoldings(actionProfileNameForHoldings, matchProfileNameForHoldings, 2);
     newJobProfile.linkMatchAndActionProfilesForItem(actionProfileNameForItem, matchProfileNameForItem, 4);
-    newJobProfile.clickSaveAndCloseButton();
+    newJobProfile.saveAndClose();
 
     // upload the exported marc file
     dataImport.goToDataImport();

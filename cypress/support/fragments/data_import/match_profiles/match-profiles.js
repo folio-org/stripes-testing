@@ -1,4 +1,5 @@
 import { Button, MultiColumnListCell, Select, TextField, SelectionList, Section } from '../../../../../interactors';
+import { getLongDelay } from '../../../utils/cypressTools';
 
 const openNewMatchProfileForm = () => {
   cy.do([
@@ -53,7 +54,7 @@ const fillMatchProfileForm = ({
       url: '/_/jsonSchemas?path=raml-util/schemas/metadata.schema',
     }
   ).as('getJson');
-  cy.wait('@getJson');
+  cy.wait('@getJson', getLongDelay());
   // TODO think about how to use interactor
   cy.get(`[data-id="${existingRecordType}"]`).last().click();
   // fill MARC Bibliographic field in incoming
