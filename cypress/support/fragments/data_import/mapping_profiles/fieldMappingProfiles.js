@@ -1,4 +1,4 @@
-import { Button, MultiColumnListCell, TextField, Pane } from '../../../../../interactors';
+import { Button, MultiColumnListCell, TextField, Pane, MultiColumnList, MultiColumnListRow } from '../../../../../interactors';
 import newMappingProfile from './newMappingProfile';
 
 const actionsButton = Button('Actions');
@@ -97,6 +97,6 @@ export default {
     closeViewModeForMappingProfile();
     cy.expect(actionsButton.exists());
   },
-
-  deleteFieldMappingProfile
+  deleteFieldMappingProfile,
+  waitLoading: () => cy.expect(MultiColumnListRow({ index:0 }).exists())
 };

@@ -1,4 +1,4 @@
-import { Button, Modal, TextField, HTML, including } from '../../../../../interactors';
+import { Button, Modal, TextField, HTML, including, MultiColumnListCell } from '../../../../../interactors';
 
 const modalSelectProfile = Modal('Select Field Mapping Profiles');
 
@@ -10,7 +10,7 @@ export default {
     cy.expect(modalSelectProfile.find(HTML(including('1 record found'))).exists());
   },
 
-  selectMappingProfile: () => {
-    cy.get('[data-row-index="row-0"]').click();
+  selectMappingProfile: (specialMappingProfileName) => {
+    cy.do(modalSelectProfile.find(MultiColumnListCell(specialMappingProfileName)).click());
   }
 };

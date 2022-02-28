@@ -35,6 +35,7 @@ describe('ui-data-import: EDIFACT file import with creating of new invoice recor
 
     // create Field mapping profile
     settingsDataImport.goToMappingProfiles();
+    fieldMappingProfiles.waitLoading();
     fieldMappingProfiles.createInvoiceMappingProfile(mappingProfileName);
     fieldMappingProfiles.checkMappingProfilePresented(mappingProfileName);
 
@@ -45,6 +46,7 @@ describe('ui-data-import: EDIFACT file import with creating of new invoice recor
     };
 
     settingsDataImport.goToActionProfiles();
+    // TODO: issue with mapping of action and mapping profiles
     actionProfiles.createActionProfile(actionProfile, mappingProfileName);
     actionProfiles.checkActionProfilePresented(actionProfileName);
 
@@ -63,7 +65,7 @@ describe('ui-data-import: EDIFACT file import with creating of new invoice recor
 
     // upload a marc file for creating of the new instance, holding and item
     cy.visit(topMenu.dataImportPath);
-    dataImport.uploadFile('invoice.edit', fileName);
+    dataImport.uploadFile('invoice.edi', fileName);
     jobProfiles.searchJobProfileForImport(jobProfile.profileName);
     jobProfiles.runImportFile(fileName);
     logs.checkImportFile(jobProfile.profileName);

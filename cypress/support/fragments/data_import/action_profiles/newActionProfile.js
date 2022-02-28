@@ -1,5 +1,4 @@
-import { TextField, Button, Select } from '../../../../../interactors';
-import { getLongDelay } from '../../../utils/cypressTools';
+import { TextField, Button, Select, Section } from '../../../../../interactors';
 import ModalSelectMappingProfile from './modalSelectMappingProfile';
 
 const action = 'Create (all record types)';
@@ -31,9 +30,8 @@ export default {
   linkMappingProfile: (specialMappingProfileName) => {
     cy.do(Button('Link Profile').click());
     ModalSelectMappingProfile.searchMappingProfileByName(specialMappingProfileName);
-    ModalSelectMappingProfile.selectMappingProfile();
-    cy.get('section[id=actionProfileFormAssociatedMappingProfileAccordion] div[class*=searchControl]>button[disabled]',
-      getLongDelay()).should('be.visible');
+    ModalSelectMappingProfile.selectMappingProfile(specialMappingProfileName);
+    cy.expect(Section({ id:'actionProfileFormAssociatedMappingProfileAccordion' }).find(Button('Link Profile')).exists());
     cy.do(Button('Save as profile & Close').click());
   }
 };
