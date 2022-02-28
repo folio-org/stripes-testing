@@ -37,7 +37,7 @@ describe('ui-data-import: Search the "View all" log screen', () => {
     });
   });
 
-  it.only('C11112 Search the "View all" log screen', { tags: [testTypes.smoke] }, () => {
+  it('C11112 Search the "View all" log screen', { tags: [testTypes.smoke] }, () => {
     DataImportViewAllPage.gotoViewAllPage();
 
     DataImportViewAllPage.options.forEach((option) => {
