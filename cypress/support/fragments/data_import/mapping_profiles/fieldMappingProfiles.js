@@ -1,4 +1,4 @@
-import { Button, MultiColumnListCell, TextField, Pane, MultiColumnList, MultiColumnListRow } from '../../../../../interactors';
+import { Button, MultiColumnListCell, TextField, Pane, MultiColumnListRow } from '../../../../../interactors';
 import newMappingProfile from './newMappingProfile';
 
 const actionsButton = Button('Actions');
