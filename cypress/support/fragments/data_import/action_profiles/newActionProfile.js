@@ -31,7 +31,7 @@ export default {
     cy.do(Button('Link Profile').click());
     ModalSelectMappingProfile.searchMappingProfileByName(specialMappingProfileName);
     ModalSelectMappingProfile.selectMappingProfile(specialMappingProfileName);
-    cy.expect(Section({ id:'actionProfileFormAssociatedMappingProfileAccordion' }).find(Button('Link Profile')).exists());
+    cy.expect(Section({ id:'actionProfileFormAssociatedMappingProfileAccordion' }).find(Button('Link Profile')).has({ disabled : true }));
     cy.do(Button('Save as profile & Close').click());
   }
 };
