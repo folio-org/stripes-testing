@@ -95,6 +95,7 @@ export default {
     }
   },
 
+  // TODO: redesign to interactors
   getMultiColumnListCellsValues(cell) {
     const cells = [];
 

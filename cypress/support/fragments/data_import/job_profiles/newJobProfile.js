@@ -28,7 +28,7 @@ export default {
   },
 
   linkActionProfile(specialActionProfile) {
-    cy.get('[id="type-selector-dropdown-linker-root"]').click();
+    cy.do(HTML({ className: including('linker-button'), id:'type-selector-dropdown-linker-root' }).find(Button()).click());
     cy.do(actionsButton.click());
     ModalSelectActionProfile.searchActionProfileByName(specialActionProfile.name);
     ModalSelectActionProfile.selectActionProfile(specialActionProfile.name);
