@@ -1,5 +1,5 @@
 import newOrder from '../../support/fragments/orders/newOrder';
-import newOrderLine from '../../support/fragments/orders/newOrderLine';
+import basicOrderLine from '../../support/fragments/orders/basicOrderLine';
 import testType from '../../support/dictionary/testTypes';
 import Orders from '../../support/fragments/orders/orders';
 import Receiving from '../../support/fragments/receiving/receiving';
@@ -11,7 +11,7 @@ import InteractorsTools from '../../support/utils/interactorsTools';
 
 describe('orders: Receive piece from Order', () => {
   const order = { ...newOrder.defaultOrder };
-  const orderLine = { ...newOrderLine.defaultOrderLine };
+  const orderLine = { ...basicOrderLine.defaultOrderLine };
   const locationName = 'Main Library';
 
   before(() => {

@@ -76,7 +76,7 @@ describe('ui-data-import: MARC file import with creating of the new instance, ho
     collectionOfProfiles.forEach(profile => {
       newJobProfile.linkActionProfile(profile.actionProfile);
     });
-    newJobProfile.clickSaveAndCloseButton();
+    newJobProfile.saveAndClose();
     jobProfiles.checkJobProfilePresented(specialJobProfile.profileName);
 
     dataImport.goToDataImport();

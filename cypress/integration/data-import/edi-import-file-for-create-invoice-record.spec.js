@@ -65,7 +65,7 @@ describe('ui-data-import: EDIFACT file import with creating of new invoice recor
 
     // upload a marc file for creating of the new instance, holding and item
     cy.visit(topMenu.dataImportPath);
-    dataImport.uploadFile('invoice.edi', fileName);
+    dataImport.uploadFile('invoice.edit', fileName);
     jobProfiles.searchJobProfileForImport(jobProfile.profileName);
     jobProfiles.runImportFile(fileName);
     logs.checkImportFile(jobProfile.profileName);
