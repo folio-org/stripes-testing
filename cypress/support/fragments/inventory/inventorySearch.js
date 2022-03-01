@@ -1,3 +1,4 @@
+import { HTML, including } from '@interactors/html';
 import {
   MultiColumnList,
   MultiColumnListCell,
@@ -10,7 +11,6 @@ import {
   Select
 } from '../../../../interactors';
 import InventoryActions from './inventoryActions';
-import { HTML, including } from '@interactors/html';
 
 
 const effectiveLocationInput = Accordion({ id: 'effectiveLocation' });
@@ -62,6 +62,10 @@ export default {
     // cypress can't draw selected option without wait
     cy.wait(1000);
     cy.do(Select('Search field index').choose('Browse call numbers'));
+  },
+
+  browseCallNumberIsAbsent() {
+    cy.expect(HTML('Browse call numbers').absent());
   },
 
   showsOnlyEffectiveLocation() {

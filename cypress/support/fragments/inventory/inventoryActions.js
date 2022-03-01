@@ -36,7 +36,8 @@ export default {
     this.fillImportFields(specialOCLCWorldCatidentifier);
 
     this.pressImportInModal();
-    InteractorsTools.closeCalloutMessage();
+    // TODO: see issues in cypress tests run related with this step and awaiting of holdingsRecordView
+    // InteractorsTools.closeCalloutMessage();
     InventoryInstance.checkExpectedMARCSource();
   },
 
