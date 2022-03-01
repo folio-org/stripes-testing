@@ -68,7 +68,9 @@ describe('ui-data-import: Import a large EDIFACT invoice file', () => {
     jobProfiles.runImportFile(fileName);
     logs.checkImportFile(jobProfile.profileName);
     logs.checkStatusOfJobProfile();
+    logs.checkQuantityRecordsInFile();
     logs.openJobProfile(fileName);
     logs.checkIsInvoiceCreated();
+    fileDetails.checkQuantityInvoiceLinesInRecord();
   });
 });

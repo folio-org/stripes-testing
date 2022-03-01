@@ -83,6 +83,10 @@ export default {
     });
   },
 
+  checkQuantityRecordsInFile:() => {
+    cy.do(MultiColumnListCell({ row: 0, column: '18' }).exists());
+  },
+
   checkUpdatedCreatedItems:() => {
     checkIsSrsUpdated();
     checkIsInstanceCreated();

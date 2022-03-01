@@ -1,4 +1,4 @@
-import { MultiColumnListCell, Section, including, KeyValue } from '../../../../interactors';
+import { MultiColumnListCell, Section, including, KeyValue, Pane, HTML } from '../../../../interactors';
 import invoices from '../invoices/invoices';
 import TopMenu from '../topMenu';
 
@@ -24,5 +24,9 @@ export default {
       cy.expect(invoiceStatus.has({ value: expectedInvoiceStatus }));
       cy.expect(invoiceSource.has({ value: expectedInvoiceSource }));
     }));
+  },
+
+  checkQuantityInvoiceLinesInRecord:() => {
+    cy.expect(Pane().find(HTML(including('1 record found'))).exists());
   },
 };

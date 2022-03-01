@@ -11,6 +11,11 @@ import matchProfiles from '../../support/fragments/data_import/match_profiles/ma
 import dataImport from '../../support/fragments/data_import/dataImport';
 import topMenu from '../../support/fragments/topMenu';
 import logs from '../../support/fragments/data_import/logs';
+import searchInventory from '../../support/fragments/data_import/searchInventory';
+import inventorySearch from '../../support/fragments/inventory/inventorySearch';
+import exportMarcFile from '../../support/fragments/data-export/export-marc-file';
+import fileManager from '../../support/utils/fileManager';
+import exportFile from '../../support/fragments/data-export/exportFile';
 
 describe('ui-data-import: Verify the possibility to modify MARC Bibliographic record', () => {
   before(() => {
@@ -48,9 +53,38 @@ describe('ui-data-import: Verify the possibility to modify MARC Bibliographic re
     const actionProfileName = `autoTestActionProf.${getRandomPostfix()}`;
     const matchProfileName = `autoTestMatchProf.${getRandomPostfix()}`;
     const jobProfileName = `autoTestJobProf.${getRandomPostfix()}`;
+    const jobProfileNameForExport = `autoTestJobProf.${getRandomPostfix()}`;
 
     // file name
+    const nameMarcFileForCreate = `C343335autotestFile.${getRandomPostfix()}.mrc`;
+    const nameForCSVFile = `autotestFile${getRandomPostfix()}.csv`;
     const nameMarcFileForUpload = `C345423autotestFile.${getRandomPostfix()}.mrc`;
+
+    // upload a marc file for creating of the new instance, holding and item
+    cy.visit(topMenu.dataImportPath);
+    dataImport.uploadFile('oneMarcBib.mrc', nameMarcFileForCreate);
+    jobProfiles.searchJobProfileForImport('Default - Create instance and SRS MARC Bib');
+    jobProfiles.runImportFile(nameMarcFileForCreate);
+    logs.openJobProfile(nameMarcFileForCreate);
+    // logs.checkCreatedItems();
+
+    // get Instance HRID through API
+    searchInventory
+      .getInstanceHRID()
+      .then(id => {
+        // download .csv file
+        cy.visit(topMenu.inventoryPath);
+        searchInventory.searchInstanceByHRID(id);
+        inventorySearch.saveUUIDs();
+        exportMarcFile.downloadCSVFile(nameForCSVFile, 'SearchInstanceUUIDs*');
+        fileManager.deleteFolder(Cypress.config('downloadsFolder'));
+      });
+    // download exported marc file
+    cy.visit(topMenu.dataExportPath);
+    exportFile.uploadFile(nameForCSVFile);
+    exportFile.exportWithDefaultInstancesJobProfile(nameForCSVFile);
+    exportMarcFile.downloadExportedMarcFile(jobProfileNameForExport);
+    fileManager.deleteFolder(Cypress.config('downloadsFolder'));
 
     // create Field mapping profile
     settingsDataImport.goToMappingProfiles();
@@ -96,7 +130,7 @@ describe('ui-data-import: Verify the possibility to modify MARC Bibliographic re
 
     // upload a marc file for creating of the new instance, holding and item
     cy.visit(topMenu.dataImportPath);
-    dataImport.uploadFile('oneMarcBib_changed001field.mrc', nameMarcFileForUpload);
+    dataImport.uploadFile(nameMarcFileForUpload);
     jobProfiles.searchJobProfileForImport(jobProfile.profileName);
     jobProfiles.runImportFile(nameMarcFileForUpload);
     logs.checkImportFile(jobProfile.profileName);
@@ -109,5 +143,10 @@ describe('ui-data-import: Verify the possibility to modify MARC Bibliographic re
     matchProfiles.deleteMatchProfile(matchProfileName);
     actionProfiles.deleteActionProfile(actionProfileName);
     fieldMappingProfiles.deleteFieldMappingProfile(mappingProfileName);
+
+    // delete downloads folder and created files in fixtures
+    fileManager.deleteFolder(Cypress.config('downloadsFolder'));
+    fileManager.deleteFile(`cypress/fixtures/${nameMarcFileForUpload}`);
+    fileManager.deleteFile(`cypress/fixtures/${nameForCSVFile}`);
   });
 });
