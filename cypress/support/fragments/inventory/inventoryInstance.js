@@ -1,19 +1,7 @@
-import {
-  MultiColumnList,
-  HTML,
-  including,
-  Button,
-  Section,
-  QuickMarcEditor,
-  KeyValue,
-  MultiColumnListHeader,
-  MultiColumnListCell,
-  Accordion,
-  Modal,
-  Dropdown,
-  Checkbox,
-  MultiColumnListRow,
-} from '../../../../interactors';
+import { Link } from '@interactors/html';
+import { MultiColumnList, HTML, including, Button, Section, QuickMarcEditor, KeyValue, MultiColumnListHeader,
+  MultiColumnListCell, Accordion, Modal, Dropdown, Checkbox, MultiColumnListRow, TextArea, Select, Pane,
+  Selection, TextField, Badge } from '../../../../interactors';
 import InventoryActions from './inventoryActions';
 import InventoryInstanceEdit from './InventoryInstanceEdit';
 import HoldingsRecordView from './holdingsRecordView';
@@ -35,6 +23,8 @@ const addMarcHoldingRecordButton = Button({ id:'create-holdings-marc' });
 const viewHoldingsButton = Button('View holdings');
 const notesSection = Section({ id: 'instance-details-notes' });
 const moveItemsButton = Button({ id: 'move-instance-items' });
+const saveAndCloseBtn = Button('Save and close');
+const instancePane = Pane({ title: including('Instance ') });
 
 
 const instanceHRID = 'Instance HRID';
@@ -195,5 +185,49 @@ export default {
   },
   checkAddItem:(holdingsRecrodId) => {
     cy.expect(section.find(Section({ id:holdingsRecrodId })).find(Button({ id: `clickable-new-item-${holdingsRecrodId}` })).exists());
+  },
+  createNewInventoryInstance(title, resType = 'cartographic dataset') {
+    cy.do([
+      InventoryActions.open(),
+      InventoryActions.options.new.click(),
+      TextArea({ id: 'input_instance_title' }).fillIn(title),
+      Select('Resource type*').choose(resType),
+      saveAndCloseBtn.click()
+    ]);
+  },
+  addHoldingToInventoryInstance(holding = 'Annex') {
+    const addLocation = Selection({ id: 'additem_permanentlocation' });
+    cy.do([
+      instancePane.find(Button('Add holdings')).click(),
+      addLocation.open(),
+      addLocation.choose(including(holding)),
+      saveAndCloseBtn.click()
+    ]);
+  },
+  addItemToInventoryInstance(barcode) {
+    cy.do([
+      instancePane.find(Button('Add item')).click(),
+      TextField({ label: 'Barcode' }).fillIn(barcode),
+      Select('Material type*').choose('book'),
+      Select('Permanent loan type*').choose('Can circulate'),
+      saveAndCloseBtn.click()
+    ]);
+    cy.expect(Accordion(including('Annex')).find(Badge('1')).exists());
+  },
+  addRequestForItem(itemBarcode, holding = 'Annex') {
+    this.openHoldings([holding]);
+    cy.do([
+      Accordion({ label: including(`Holdings: ${holding}`) }).find(Link(itemBarcode)).click(),
+      Pane({ title: including('Item ') }).find(Button('Actions')).click(),
+      InventoryActions.options.newRequest.click(),
+      Button({ id: 'clickable-select-item' }).click(),
+      TextField({ name: 'requester.barcode' }).fillIn('1646100156441704855'),
+      Button({ id: 'clickable-select-requester' }).click(),
+    ]);
+    cy.expect(Select('Pickup service point*').exists());
+    cy.do(Select('Pickup service point*').choose(including('1')));
+    cy.pause();
+    cy.do(Button('Save & close').click());
+    cy.pause();
   }
 };
