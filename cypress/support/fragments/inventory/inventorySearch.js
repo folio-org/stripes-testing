@@ -65,8 +65,6 @@ export default {
   },
 
   browseCallNumberIsAbsent() {
-    // select can be opened only with this  construction
-    cy.get('#input-inventory-search-qindex').then(elem => elem.click());
     cy.expect(HTML('Browse call numbers').absent());
   },
 
