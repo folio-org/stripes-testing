@@ -62,11 +62,11 @@ const requiredRowsTags = ['LDR', '001', '005', '008', '999'];
 const getRowInteractor = (specialRowNumber) => QuickMarcEditor()
   .find(QuickMarcEditorRow({ index: specialRowNumber }));
 export default class QuickmarcEditor {
-  constructor(validOCLC) {
-    this.validOCLC = validOCLC;
+  constructor(validRecord) {
+    this.validRecord = validRecord;
   }
 
-  getInitialRowsCount() { return this.validOCLC.lastRowNumber; }
+  getInitialRowsCount() { return this.validRecord.lastRowNumber; }
 
 
   addNewField(tag = defaultFieldValues.freeTags[0], fieldContent = defaultFieldValues.content) {
@@ -112,7 +112,7 @@ export default class QuickmarcEditor {
       .has({ value: content ?? defaultFieldValues.contentWithSubfield }));
   }
 
-  fillAllAvailableValues(fieldContent, tag, initialRowsCount = this.validOCLC.lastRowNumber) {
+  fillAllAvailableValues(fieldContent, tag, initialRowsCount = this.validRecord.lastRowNumber) {
     const contentTextArea = TextArea({ name: `records[${initialRowsCount + 1}].content` });
     const tagTextField = TextField({ name: `records[${initialRowsCount + 1}].tag` });
     const separator = '\t   \t';
@@ -142,7 +142,7 @@ export default class QuickmarcEditor {
       });
   }
 
-  updateExistingField(tag = this.validOCLC.existingTag, newContent = `newContent${getRandomPostfix()}`) {
+  updateExistingField(tag = this.validRecord.existingTag, newContent = `newContent${getRandomPostfix()}`) {
     cy.do(QuickMarcEditorRow({ tagValue: tag }).find(TextArea()).fillIn(newContent));
     return newContent;
   }

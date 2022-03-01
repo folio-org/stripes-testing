@@ -17,25 +17,26 @@ describe('MARC Authority management', () => {
   let internalAuthorityId;
 
   before(() => {
+    // TODO: verify final set of permissions with PO
     cy.createTempUser([
-      'View MARC authority record',
-      'Edit MARC authority record',
-      'Data Import File Upload - all permissions',
-      'Data import: all permissions',
-      'erm.jobs.manage',
-      'Data Import Converter Storage - all permissions',
-      'inventory storage module - all authorities permissions'
+      Permissions.uiTenantSettingsSettingsLocation,
+      Permissions.uiMarcAuthoritiesAuthorityRecordView,
+      Permissions.uiMarcAuthoritiesAuthorityRecordEdit,
+      Permissions.dataImportUploadAll,
+      Permissions.moduleDataImportEnabled,
+      Permissions.converterStorageAll,
+      Permissions.inventoryStorageAuthoritiesAll
     ]).then(userProperties => {
       userId = userProperties.userId;
       cy.login(userProperties.username, userProperties.password);
       cy.visit(TopMenu.dataImportPath);
 
-      DataImport.uploadFile(MarcAuthority.defaultMarcFile.name, fileName);
+      DataImport.uploadFile(MarcAuthority.defaultAuthority.name, fileName);
       JobProfiles.waitLoadingList();
       JobProfiles.select(MarcAuthority.defaultJobProfile);
       JobProfiles.runImportFile(fileName);
       JobProfiles.openFileRecords(fileName);
-      DataImport.getLinkToAuthority(MarcAuthority.defaultMarcFile.headingReference).then(link => {
+      DataImport.getLinkToAuthority(MarcAuthority.defaultAuthority.headingReference).then(link => {
         const jobLogEntryId = link.split('/').at(-2);
         const recordId = link.split('/').at(-1);
 
@@ -53,14 +54,25 @@ describe('MARC Authority management', () => {
     });
   });
 
-
   it('C350572 Edit an Authority record', { tags:  [TestTypes.smoke, Features.authority] }, () => {
     cy.visit(TopMenu.marcAuthorities);
-    MarcAuthoritiesSearch.searchBy('Uniform title', MarcAuthority.defaultMarcFile.headingReference);
+    MarcAuthoritiesSearch.searchBy('Uniform title', MarcAuthority.defaultAuthority.headingReference);
     MarcAuthorities.select(internalAuthorityId);
     MarcAuthority.waitLoading();
     MarcAuthority.edit();
     QuickMarcEditor.waitLoading();
+
+    const quickmarcEditor = new QuickMarcEditor(MarcAuthority.defaultAuthority);
+    const updatedInSourceRow = quickmarcEditor.addNewField();
+    const addedInSourceRow = quickmarcEditor.updateExistingField();
+    QuickMarcEditor.pressSaveAndClose();
+    MarcAuthority.waitLoading();
+    MarcAuthority.contains(updatedInSourceRow);
+    MarcAuthority.contains(addedInSourceRow);
+
+    MarcAuthoritiesSearch.searchBy('Uniform title', addedInSourceRow);
+    MarcAuthorities.checkRow(addedInSourceRow);
+    MarcAuthorities.checkRowsCount(1);
   });
 
   afterEach(() => {
