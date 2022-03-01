@@ -16,4 +16,10 @@ describe('verify call number browse feature', () => {
     InventoryActions.actionsIsAbsent();
     InventorySearch.showsOnlyEffectiveLocation();
   });
+
+  it('C347903 Verify "Browse call numbers" option on Holdings tab', { tags: [TestTypes.smoke] }, () => {
+    InventorySearch.switchToHoldings();
+    InventorySearch.verifyKeywordsAsDefault();
+    InventorySearch.browseCallNumberIsAbsent();
+  });
 });
