@@ -24,7 +24,7 @@ describe('Manage holding records of instance records created through marc file u
     DataImport.uploadMarcBib().then(instanceRecordHrId => {
       cy.visit(TopMenu.inventoryPath);
       SearchInventory.searchInstanceByHRID(instanceRecordHrId);
-      InventoryInstances.selectSpecialInstance();
+      InventoryInstances.selectInstance();
       InventoryInstance.waitLoading();
       InventoryInstance.createHoldingsRecord();
       InventoryInstance.goToHoldingView();

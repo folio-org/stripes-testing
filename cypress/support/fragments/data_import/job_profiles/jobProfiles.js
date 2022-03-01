@@ -1,4 +1,4 @@
-import { Button, TextField, MultiColumnListCell, Modal, Section } from '../../../../../interactors';
+import { Button, TextField, MultiColumnListCell, Modal, HTML, including, Section } from '../../../../../interactors';
 import { getLongDelay } from '../../../utils/cypressTools';
 import newJobProfile from './newJobProfile';
 
@@ -9,6 +9,7 @@ const openNewJobProfileForm = () => {
     actionsButton.click(),
     Button('New job profile').click(),
   ]);
+  cy.expect(HTML({ className: including('form-'), id:'job-profiles-form' }).exists());
 };
 
 const waitLoadingList = () => {
