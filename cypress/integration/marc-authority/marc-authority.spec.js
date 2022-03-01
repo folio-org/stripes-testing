@@ -19,13 +19,13 @@ describe('MARC Authority management', () => {
   before(() => {
     // TODO: verify final set of permissions with PO
     cy.createTempUser([
-      Permissions.uiTenantSettingsSettingsLocation,
-      Permissions.uiMarcAuthoritiesAuthorityRecordView,
-      Permissions.uiMarcAuthoritiesAuthorityRecordEdit,
-      Permissions.dataImportUploadAll,
-      Permissions.moduleDataImportEnabled,
-      Permissions.converterStorageAll,
-      Permissions.inventoryStorageAuthoritiesAll
+      Permissions.uiTenantSettingsSettingsLocation.gui,
+      Permissions.uiMarcAuthoritiesAuthorityRecordView.gui,
+      Permissions.uiMarcAuthoritiesAuthorityRecordEdit.gui,
+      Permissions.dataImportUploadAll.gui,
+      Permissions.moduleDataImportEnabled.gui,
+      Permissions.converterStorageAll.gui,
+      Permissions.inventoryStorageAuthoritiesAll.gui
     ]).then(userProperties => {
       userId = userProperties.userId;
       cy.login(userProperties.username, userProperties.password);
