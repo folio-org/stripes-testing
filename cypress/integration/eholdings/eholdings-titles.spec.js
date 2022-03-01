@@ -3,6 +3,8 @@
 import eHoldingSearch from '../../support/fragments/eholdings/eHoldingsSearch';
 import eHoldingsTitle from '../../support/fragments/eholdings/eHoldingsTitle';
 import eHoldingsTitles from '../../support/fragments/eholdings/eHoldingsTitles';
+import eHoldingsPackages from '../../support/fragments/eholdings/eHoldingsPackages';
+import eHoldingsPackagesSearch from '../../support/fragments/eholdings/eHoldingsPackagesSearch';
 import eHoldingsTitlesSearch from '../../support/fragments/eholdings/eHoldingsTitlesSearch';
 import eHoldingsResourceView from '../../support/fragments/eholdings/eHoldingsResourceView';
 import TopMenu from '../../support/fragments/topMenu';
@@ -115,10 +117,13 @@ describe('eHoldings titles management', () => {
       userId = userProperties.userId;
       cy.login(userProperties.username, userProperties.password);
       cy.visit(TopMenu.eholdingsPath);
-      eHoldingSearch.switchToTitles();
-
-      const title = eHoldingsTitles.create();
-      eHoldingsResourceView.checkNames(eHoldingsTitles.defaultPackage, title);
+      eHoldingSearch.switchToPackages();
+      eHoldingsPackagesSearch.byName();
+      eHoldingsPackages.getPackageName().then(packageName => {
+        eHoldingSearch.switchToTitles();
+        const title = eHoldingsTitles.create(packageName);
+        eHoldingsResourceView.checkNames(packageName, title);
+      });
     });
   });
 

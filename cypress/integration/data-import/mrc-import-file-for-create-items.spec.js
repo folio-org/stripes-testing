@@ -14,7 +14,7 @@ import testTypes from '../../support/dictionary/testTypes';
 
 describe('ui-data-import: MARC file import with creating of the new instance, holding and item', () => {
   // unique file name to upload
-  const fileName = `autotestFile.${getRandomPostfix()}.mrc`;
+  const fileName = `C343334autotestFile.${getRandomPostfix()}.mrc`;
 
   // unique profile names
   const jobProfileName = `autotestJobProf${getRandomPostfix()}`;
@@ -67,7 +67,7 @@ describe('ui-data-import: MARC file import with creating of the new instance, ho
       fieldMappingProfiles.createMappingProfile(profile.mappingProfile);
       fieldMappingProfiles.checkMappingProfilePresented(profile.mappingProfile.name);
       settingsDataImport.goToActionProfiles();
-      actionProfiles.createActionProfile(profile.actionProfile, profile.mappingProfile);
+      actionProfiles.createActionProfile(profile.actionProfile, profile.mappingProfile.name);
       actionProfiles.checkActionProfilePresented(profile.actionProfile.name);
     });
 
@@ -76,7 +76,7 @@ describe('ui-data-import: MARC file import with creating of the new instance, ho
     collectionOfProfiles.forEach(profile => {
       newJobProfile.linkActionProfile(profile.actionProfile);
     });
-    newJobProfile.clickSaveAndCloseButton();
+    newJobProfile.saveAndClose();
     jobProfiles.checkJobProfilePresented(specialJobProfile.profileName);
 
     dataImport.goToDataImport();

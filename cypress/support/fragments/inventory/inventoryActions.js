@@ -36,7 +36,8 @@ export default {
     this.fillImportFields(specialOCLCWorldCatidentifier);
 
     this.pressImportInModal();
-    InteractorsTools.closeCalloutMessage();
+    // TODO: see issues in cypress tests run related with this step and awaiting of holdingsRecordView
+    // InteractorsTools.closeCalloutMessage();
     InventoryInstance.checkExpectedMARCSource();
   },
 
@@ -102,5 +103,9 @@ export default {
   verifyInstancesMARC(actualIDs, expectedIDs) {
     const formattedActualUUIDs = actualIDs.replaceAll('"', '').split('\n');
     expect(expectedIDs).to.deep.equal(formattedActualUUIDs);
+  },
+
+  actionsIsAbsent() {
+    return cy.expect(Button('Actions').absent());
   }
 };
