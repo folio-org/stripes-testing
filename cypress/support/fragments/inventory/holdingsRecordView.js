@@ -5,6 +5,7 @@ import NewHoldingsRecord from './newHoldingsRecord';
 const root = Section({ id: 'ui-inventory.holdingsRecordView' });
 const actionsButton = root.find(Button('Actions'));
 const editInQuickMarcButton = Button({ id: 'clickable-edit-marc-holdings' });
+const editButton = Button({ id: 'edit-holdings' });
 const viewSourceButton = Button({ id: 'clickable-view-source' });
 const deleteButton = Button({ id: 'clickable-delete-holdingsrecord' });
 const duplicateButton = Button({ id: 'copy-holdings' });
@@ -20,7 +21,7 @@ export default {
     cy.do(Button({ icon: 'times' }).click());
     cy.expect(root.absent());
   },
-  gotoEditInQuickMarc: () => {
+  editInQuickMarc: () => {
     cy.do(actionsButton.click());
     cy.do(editInQuickMarcButton.click());
   },
@@ -63,5 +64,10 @@ export default {
     // parse hodling record id from current url
     cy.url().then(url => cy.wrap(url.split('?')[0].split('/').at(-1)).as('holdingsRecorId'));
     return cy.get('@holdingsRecorId');
+  },
+  checkReadOnlyFields:() => {},
+  edit:() => {
+    cy.do(actionsButton.click());
+    cy.do(editButton.click());
   }
 };
