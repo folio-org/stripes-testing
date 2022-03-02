@@ -11,8 +11,15 @@ import dataImport from '../../support/fragments/data_import/dataImport';
 import logs from '../../support/fragments/data_import/logs';
 import topMenu from '../../support/fragments/topMenu';
 import fileDetails from '../../support/fragments/data_import/fileDetails';
+import newMappingProfile from '../../support/fragments/data_import/mapping_profiles/newMappingProfile';
 
 describe('ui-data-import: Import a large EDIFACT invoice file', () => {
+// unique name for profiles
+  const mappingProfileName = `autoTestMappingProf.${getRandomPostfix()}`;
+  const actionProfileName = `autoTestActionProf.${getRandomPostfix()}`;
+  const jobProfileName = `autoTestJobProf.${getRandomPostfix()}`;
+
+
   before(() => {
     cy.login(
       Cypress.env('diku_login'),
@@ -24,18 +31,20 @@ describe('ui-data-import: Import a large EDIFACT invoice file', () => {
     );
   });
 
-  it('C347615 Import a large EDIFACT invoice file', { tags: [testTypes.smoke] }, () => {
-    // unique name for profiles
-    const mappingProfileName = `autoTestMappingProf.${getRandomPostfix()}`;
-    const actionProfileName = `autoTestActionProf.${getRandomPostfix()}`;
-    const jobProfileName = `autoTestJobProf.${getRandomPostfix()}`;
+  afterEach(() => {
+    // clean up generated profiles
+    jobProfiles.deleteJobProfile(jobProfileName);
+    actionProfiles.deleteActionProfile(actionProfileName);
+    fieldMappingProfiles.deleteFieldMappingProfile(mappingProfileName);
+  });
 
+  it('C347615 Import a large EDIFACT invoice file', { tags: [testTypes.smoke] }, () => {
     // unique file name to upload
     const fileName = `autotestFile.${getRandomPostfix()}.edi`;
 
     // create Field mapping profile
     settingsDataImport.goToMappingProfiles();
-    fieldMappingProfiles.createLargeInvoiceMappingProfile(mappingProfileName);
+    fieldMappingProfiles.createInvoiceMappingProfile(mappingProfileName, fieldMappingProfiles.mappingProfileForDuplicate.harrassowitz, newMappingProfile.organization.harrassowitz);
     fieldMappingProfiles.checkMappingProfilePresented(mappingProfileName);
 
     // create Action profile and link it to Field mapping profile
@@ -68,7 +77,7 @@ describe('ui-data-import: Import a large EDIFACT invoice file', () => {
     jobProfiles.runImportFile(fileName);
     logs.checkImportFile(jobProfile.profileName);
     logs.checkStatusOfJobProfile();
-    logs.checkQuantityRecordsInFile();
+    logs.checkQuantityRecordsInFile(logs.quantityRecordsInInvoice.firstQuantity);
     logs.openJobProfile(fileName);
     logs.checkIsInvoiceCreated();
     fileDetails.checkQuantityInvoiceLinesInRecord();

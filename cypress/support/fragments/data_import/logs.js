@@ -48,6 +48,10 @@ const checkIsInvoiceCreated = () => {
   cy.expect(MultiColumnListCell({ row: 0, column: 'Created' }).exists());
 };
 
+const quantityRecordsInInvoice = {
+  firstQuantity: '18',
+};
+
 export default {
   checkImportFile(jobProfileName) {
     cy.do(Button('View all').click());
@@ -83,8 +87,8 @@ export default {
     });
   },
 
-  checkQuantityRecordsInFile:() => {
-    cy.do(MultiColumnListCell({ row: 0, column: '18' }).exists());
+  checkQuantityRecordsInFile:(quantityRecords) => {
+    cy.do(MultiColumnListCell({ row: 0, column: quantityRecords }).exists());
   },
 
   checkUpdatedCreatedItems:() => {
@@ -102,4 +106,5 @@ export default {
   checkIsInstanceCreated,
   checkIsInstanceUpdated,
   checkIsInvoiceCreated,
+  quantityRecordsInInvoice,
 };

@@ -11,6 +11,7 @@ import dataImport from '../../support/fragments/data_import/dataImport';
 import logs from '../../support/fragments/data_import/logs';
 import topMenu from '../../support/fragments/topMenu';
 import fileDetails from '../../support/fragments/data_import/fileDetails';
+import newMappingProfile from '../../support/fragments/data_import/mapping_profiles/newMappingProfile';
 
 describe('ui-data-import: EDIFACT file import with creating of new invoice record', () => {
   before(() => {
@@ -28,7 +29,7 @@ describe('ui-data-import: EDIFACT file import with creating of new invoice recor
     const invoiceNumberFromEdifactFile = '94999';
     cy.getInvoiceApi({ query: `vendorInvoiceNo="${invoiceNumberFromEdifactFile}"` })
       .then(({ body }) => {
-        cy.deleteInvoiceFromStorageApi(body.invoices[body.invoices.length - 1].id);
+        cy.deleteInvoiceFromStorageApi(body.invoices.at(-1).id);
       });
   });
 
@@ -44,7 +45,7 @@ describe('ui-data-import: EDIFACT file import with creating of new invoice recor
     // create Field mapping profile
     settingsDataImport.goToMappingProfiles();
     fieldMappingProfiles.waitLoading();
-    fieldMappingProfiles.createInvoiceMappingProfile(mappingProfileName);
+    fieldMappingProfiles.createInvoiceMappingProfile(mappingProfileName, fieldMappingProfiles.mappingProfileForDuplicate.gobi, newMappingProfile.organization.gobiLibrary);
     fieldMappingProfiles.checkMappingProfilePresented(mappingProfileName);
 
     // create Action profile and link it to Field mapping profile

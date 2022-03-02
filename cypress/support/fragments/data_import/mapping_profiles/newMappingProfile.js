@@ -65,6 +65,7 @@ export default {
   materialType,
   permanentLoanType,
   statusField: status,
+  organization,
 
   fillMappingProfile:(specialMappingProfile = defaultMappingProfile) => {
     cy.do([
@@ -194,7 +195,7 @@ export default {
     cy.expect(saveButton.absent());
   },
 
-  fillMappingProfileForInvoice:(specialMappingProfileName = defaultMappingProfile.name) => {
+  fillMappingProfileForInvoice:(specialMappingProfileName = defaultMappingProfile.name, organizationName) => {
     cy.do([
       TextField({ name:'profile.name' }).fillIn(specialMappingProfileName),
       Select({ name:'profile.incomingRecordType' }).choose(incomingRecordType.edifact),
@@ -203,23 +204,7 @@ export default {
       TextField('Batch group*').fillIn('"FOLIO"'),
       Button('Organization look-up').click()
     ]);
-    selectOrganizationByName(organization.gobiLibrary);
-    cy.do([
-      TextField('Payment method*').fillIn('"Credit Card"'),
-      saveButton.click(),
-    ]);
-  },
-
-  fillMappingProfileForLargeInvoice:(specialMappingProfileName = defaultMappingProfile.name) => {
-    cy.do([
-      TextField({ name:'profile.name' }).fillIn(specialMappingProfileName),
-      Select({ name:'profile.incomingRecordType' }).choose(incomingRecordType.edifact),
-      Select({ name:'profile.existingRecordType' }).choose(folioRecordTypeValue.invoice),
-      TextArea({ name:'profile.description' }).fillIn(''),
-      TextField('Batch group*').fillIn('"FOLIO"'),
-      Button('Organization look-up').click()
-    ]);
-    selectOrganizationByName(organization.harrassowitz);
+    selectOrganizationByName(organizationName);
     cy.do([
       TextField('Payment method*').fillIn('"Cash"'),
       saveButton.click(),

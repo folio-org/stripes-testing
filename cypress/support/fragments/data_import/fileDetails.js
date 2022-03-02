@@ -27,6 +27,6 @@ export default {
   },
 
   checkQuantityInvoiceLinesInRecord:() => {
-    cy.expect(Pane().find(HTML(including('1 record found'))).exists());
+    cy.expect(Pane({ id:'pane-results' }).find(HTML(including('1,104 records found'))).exists());
   },
 };
