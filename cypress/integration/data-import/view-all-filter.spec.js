@@ -1,9 +1,9 @@
-import logsViewAll from '../../support/fragments/data_import/logs/logsViewAll';
+import LogsViewAll from '../../support/fragments/data_import/logs/logsViewAll';
 import FileManager from '../../support/utils/fileManager';
 import DateTools from '../../support/utils/dateTools';
 import { Accordion } from '../../../interactors';
 import getRandomPostfix from '../../support/utils/stringTools';
-import settingsMenu from '../../support/fragments/settingsMenu';
+import SettingsMenu from '../../support/fragments/settingsMenu';
 
 describe('ui-data-import: Filter the "View all" log screen', () => {
   // Path to static file in fixtures
@@ -34,7 +34,7 @@ describe('ui-data-import: Filter the "View all" log screen', () => {
       FileManager.createFile(`cypress/fixtures/${fileNameForSuccessfulImport}`, content);
     });
 
-    cy.visit(`${settingsMenu.dataImportPath}`);
+    cy.visit(SettingsMenu.dataImportPath);
     // Upload files
     // runs with errors
     cy.uploadFileWithDefaultJobProfile(fileNameForFailedImport);
@@ -48,7 +48,7 @@ describe('ui-data-import: Filter the "View all" log screen', () => {
   });
 
   beforeEach(() => {
-    logsViewAll.getSingleJobProfile().then(({ jobProfileInfo, runBy, userId }) => {
+    LogsViewAll.getSingleJobProfile().then(({ jobProfileInfo, runBy, userId }) => {
       jobProfileName = jobProfileInfo.name;
       userName = `${runBy.firstName} ${runBy.lastName}`;
       userNameId = userId;
@@ -57,14 +57,14 @@ describe('ui-data-import: Filter the "View all" log screen', () => {
   });
 
   it('C11113 Filter the "View all" log screen', { tags: '@smoke' }, () => {
-    logsViewAll.gotoViewAllPage();
-    logsViewAll.checkByReverseChronologicalOrder();
+    LogsViewAll.gotoViewAllPage();
+    LogsViewAll.checkByReverseChronologicalOrder();
 
     // FILTER By "Errors in Import"
-    logsViewAll.errorsInImportStatuses.forEach((filter) => {
-      logsViewAll.filterJobsByErrors(filter);
-      logsViewAll.checkByErrorsInImport({ filter });
-      logsViewAll.resetAllFilters();
+    LogsViewAll.errorsInImportStatuses.forEach((filter) => {
+      LogsViewAll.filterJobsByErrors(filter);
+      LogsViewAll.checkByErrorsInImport({ filter });
+      LogsViewAll.resetAllFilters();
     });
 
     // FILTER By "Date"
@@ -77,28 +77,28 @@ describe('ui-data-import: Filter the "View all" log screen', () => {
     // api endpoint expects completedDate increased by 1 day
     completedDate.setDate(completedDate.getDate() + 1);
 
-    logsViewAll.filterJobsByDate({ from: formattedStart, end: formattedStart });
+    LogsViewAll.filterJobsByDate({ from: formattedStart, end: formattedStart });
 
     const formattedEnd = DateTools.getFormattedDate({ date: completedDate });
-    logsViewAll.checkByDate({ from: formattedStart, end: formattedEnd });
-    logsViewAll.resetAllFilters();
+    LogsViewAll.checkByDate({ from: formattedStart, end: formattedEnd });
+    LogsViewAll.resetAllFilters();
 
     // FILTER By "Job profile"
-    logsViewAll.filterJobsByJobProfile(jobProfileName);
-    logsViewAll.checkByJobProfileName({ jobProfileName, profileId });
-    logsViewAll.resetAllFilters();
+    LogsViewAll.filterJobsByJobProfile(jobProfileName);
+    LogsViewAll.checkByJobProfileName({ jobProfileName, profileId });
+    LogsViewAll.resetAllFilters();
 
     // FILTER By "User"
-    logsViewAll.filterJobsByUser(userName);
-    logsViewAll.checkByUserName({ userName, userId: userNameId });
-    logsViewAll.resetAllFilters();
+    LogsViewAll.filterJobsByUser(userName);
+    LogsViewAll.checkByUserName({ userName, userId: userNameId });
+    LogsViewAll.resetAllFilters();
 
     // FILTER By "Inventory single record imports"
     cy.do(Accordion({ id: 'singleRecordImports' }).clickHeader());
-    logsViewAll.singleRecordImportsStatuses.forEach(filter => {
-      logsViewAll.filterJobsByInventorySingleRecordImports(filter);
-      logsViewAll.checkByInventorySingleRecord({ filter });
-      logsViewAll.resetAllFilters();
+    LogsViewAll.singleRecordImportsStatuses.forEach(filter => {
+      LogsViewAll.filterJobsByInventorySingleRecordImports(filter);
+      LogsViewAll.checkByInventorySingleRecord({ filter });
+      LogsViewAll.resetAllFilters();
     });
 
     // FILTER By more than one filter
@@ -107,11 +107,11 @@ describe('ui-data-import: Filter the "View all" log screen', () => {
     // close opened User accordion before search
     // because filterJobsByUser method opens it
     cy.do(Accordion({ id: 'userId' }).clickHeader());
-    const filter = logsViewAll.errorsInImportStatuses[0];
+    const filter = LogsViewAll.errorsInImportStatuses[0];
 
-    logsViewAll.filterJobsByErrors(filter);
-    logsViewAll.filterJobsByUser(userName);
-    logsViewAll.checkByErrorsInImportAndUser({ filter, userName, userId: userNameId });
-    logsViewAll.resetAllFilters();
+    LogsViewAll.filterJobsByErrors(filter);
+    LogsViewAll.filterJobsByUser(userName);
+    LogsViewAll.checkByErrorsInImportAndUser({ filter, userName, userId: userNameId });
+    LogsViewAll.resetAllFilters();
   });
 });

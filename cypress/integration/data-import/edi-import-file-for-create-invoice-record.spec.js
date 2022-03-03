@@ -1,17 +1,16 @@
 /// <reference types="cypress" />
 
-import testTypes from '../../support/dictionary/testTypes';
-import fieldMappingProfiles from '../../support/fragments/data_import/mapping_profiles/fieldMappingProfiles';
+import TestTypes from '../../support/dictionary/testTypes';
+import FieldMappingProfiles from '../../support/fragments/data_import/mapping_profiles/fieldMappingProfiles';
 import getRandomPostfix from '../../support/utils/stringTools';
-import actionProfiles from '../../support/fragments/data_import/action_profiles/actionProfiles';
-import newJobProfile from '../../support/fragments/data_import/job_profiles/newJobProfile';
-import jobProfiles from '../../support/fragments/data_import/job_profiles/jobProfiles';
-import dataImport from '../../support/fragments/data_import/dataImport';
-import logs from '../../support/fragments/data_import/logs/logs';
-import fileDetails from '../../support/fragments/invoices/invoiceView';
-import newMappingProfile from '../../support/fragments/data_import/mapping_profiles/newMappingProfile';
-import settingsMenu from '../../support/fragments/settingsMenu';
-import topMenu from '../../support/fragments/topMenu';
+import ActionProfiles from '../../support/fragments/data_import/action_profiles/actionProfiles';
+import NewJobProfile from '../../support/fragments/data_import/job_profiles/newJobProfile';
+import JobProfiles from '../../support/fragments/data_import/job_profiles/jobProfiles';
+import DataImport from '../../support/fragments/data_import/dataImport';
+import Logs from '../../support/fragments/data_import/logs/logs';
+import FileDetails from '../../support/fragments/invoices/invoiceView';
+import SettingsMenu from '../../support/fragments/settingsMenu';
+import TopMenu from '../../support/fragments/topMenu';
 
 describe('ui-data-import: EDIFACT file import with creating of new invoice record', () => {
   before(() => {
@@ -31,7 +30,7 @@ describe('ui-data-import: EDIFACT file import with creating of new invoice recor
       .then(id => cy.deleteInvoiceFromStorageApi(id));
   });
 
-  it('C343338 EDIFACT file import with creating of new invoice record', { tags: [testTypes.smoke] }, () => {
+  it('C343338 EDIFACT file import with creating of new invoice record', { tags: [TestTypes.smoke] }, () => {
     // unique name for profiles
     const mappingProfileName = `autoTestMappingProf.${getRandomPostfix()}`;
     const actionProfileName = `autoTestActionProf.${getRandomPostfix()}`;
@@ -41,10 +40,10 @@ describe('ui-data-import: EDIFACT file import with creating of new invoice recor
     const fileName = `C345423autotestFile.${getRandomPostfix()}.edi`;
 
     // create Field mapping profile
-    cy.visit(`${settingsMenu.mappingProfilePath}`);
-    fieldMappingProfiles.waitLoading();
-    fieldMappingProfiles.createInvoiceMappingProfile(mappingProfileName, fieldMappingProfiles.mappingProfileForDuplicate.gobi, newMappingProfile.organization.gobiLibrary);
-    fieldMappingProfiles.checkMappingProfilePresented(mappingProfileName);
+    cy.visit(SettingsMenu.mappingProfilePath);
+    FieldMappingProfiles.waitLoading();
+    FieldMappingProfiles.createInvoiceMappingProfile(mappingProfileName, FieldMappingProfiles.mappingProfileForDuplicate.gobi, newMappingProfile.organization.gobiLibrary);
+    FieldMappingProfiles.checkMappingProfilePresented(mappingProfileName);
 
     // create Action profile and link it to Field mapping profile
     const actionProfile = {
@@ -52,39 +51,39 @@ describe('ui-data-import: EDIFACT file import with creating of new invoice recor
       typeValue: 'Invoice',
     };
 
-    cy.visit(`${settingsMenu.actionProfilePath}`);
+    cy.visit(SettingsMenu.actionProfilePath);
     // TODO: issue with mapping of action and mapping profiles
-    actionProfiles.createActionProfile(actionProfile, mappingProfileName);
-    actionProfiles.checkActionProfilePresented(actionProfileName);
+    ActionProfiles.createActionProfile(actionProfile, mappingProfileName);
+    ActionProfiles.checkActionProfilePresented(actionProfileName);
 
     // create Job profile
     const jobProfile = {
-      ...newJobProfile.defaultJobProfile,
+      ...NewJobProfile.defaultJobProfile,
       profileName: jobProfileName,
-      acceptedType: newJobProfile.acceptedDataType.edifact
+      acceptedType: NewJobProfile.acceptedDataType.edifact
     };
 
-    cy.visit(`${settingsMenu.jobProfilePath}`);
-    jobProfiles.createJobProfile(jobProfile);
-    newJobProfile.linkActionProfile(actionProfile);
-    newJobProfile.saveAndClose();
-    jobProfiles.checkJobProfilePresented(jobProfileName);
+    cy.visit(SettingsMenu.jobProfilePath);
+    JobProfiles.createJobProfile(jobProfile);
+    NewJobProfile.linkActionProfile(actionProfile);
+    NewJobProfile.saveAndClose();
+    JobProfiles.checkJobProfilePresented(jobProfileName);
 
     // upload a marc file for creating of the new instance, holding and item
-    cy.visit(`${topMenu.dataImportPath}`);
-    dataImport.uploadFile('invoice.edi', fileName);
-    jobProfiles.searchJobProfileForImport(jobProfile.profileName);
-    jobProfiles.runImportFile(fileName);
-    logs.checkImportFile(jobProfile.profileName);
-    logs.checkStatusOfJobProfile();
-    logs.openFileDetails(fileName);
-    fileDetails.checkIsInvoiceCreated();
+    cy.visit(TopMenu.dataImportPath);
+    DataImport.uploadFile('invoice.edi', fileName);
+    JobProfiles.searchJobProfileForImport(jobProfile.profileName);
+    JobProfiles.runImportFile(fileName);
+    Logs.checkImportFile(jobProfile.profileName);
+    Logs.checkStatusOfJobProfile();
+    Logs.openFileDetails(fileName);
+    FileDetails.checkIsInvoiceCreated();
 
-    fileDetails.checkInvoiceDetails();
+    FileDetails.checkInvoiceDetails();
 
     // clean up generated profiles
-    jobProfiles.deleteJobProfile(jobProfileName);
-    actionProfiles.deleteActionProfile(actionProfileName);
-    fieldMappingProfiles.deleteFieldMappingProfile(mappingProfileName);
+    JobProfiles.deleteJobProfile(jobProfileName);
+    ActionProfiles.deleteActionProfile(actionProfileName);
+    FieldMappingProfiles.deleteFieldMappingProfile(mappingProfileName);
   });
 });

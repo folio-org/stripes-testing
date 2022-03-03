@@ -1,8 +1,8 @@
-import logsViewAll from '../../support/fragments/data_import/logs/logsViewAll';
+import LogsViewAll from '../../support/fragments/data_import/logs/logsViewAll';
 import getRandomPostfix from '../../support/utils/stringTools';
-import fileManager from '../../support/utils/fileManager';
-import testTypes from '../../support/dictionary/testTypes';
-import settingsMenu from '../../support/fragments/settingsMenu';
+import FileManager from '../../support/utils/fileManager';
+import TestTypes from '../../support/dictionary/testTypes';
+import TopMenu from '../../support/fragments/topMenu';
 
 describe('ui-data-import: Search the "View all" log screen', () => {
   let id;
@@ -20,38 +20,38 @@ describe('ui-data-import: Search the "View all" log screen', () => {
       Cypress.env('diku_password')
     );
 
-    cy.visit(`${settingsMenu.dataImportPath}`);
+    cy.visit(TopMenu.dataImportPath);
     // create dynamically file with given name in fixtures
-    fileManager.createFile(`cypress/fixtures/${uniqueFileName}`);
+    FileManager.createFile(`cypress/fixtures/${uniqueFileName}`);
 
     // remove generated test file from fixtures after uploading
     cy.uploadFileWithDefaultJobProfile(uniqueFileName);
-    fileManager.deleteFile(`cypress/fixtures/${uniqueFileName}`);
+    FileManager.deleteFile(`cypress/fixtures/${uniqueFileName}`);
   });
 
   beforeEach(() => {
     // fetch dynamic data from server
-    logsViewAll.getSingleJobProfile().then(({ hrId }) => {
+    LogsViewAll.getSingleJobProfile().then(({ hrId }) => {
       id = hrId;
     });
   });
 
-  it('C11112 Search the "View all" log screen', { tags: [testTypes.smoke] }, () => {
-    logsViewAll.gotoViewAllPage();
+  it('C11112 Search the "View all" log screen', { tags: [TestTypes.smoke] }, () => {
+    LogsViewAll.gotoViewAllPage();
 
-    logsViewAll.options.forEach((option) => {
-      logsViewAll.selectOption(option);
+    LogsViewAll.options.forEach((option) => {
+      LogsViewAll.selectOption(option);
       // when option is "ID", search with hrId otherwise, with file name
       const term = option === 'ID' ? `${id}` : uniqueFileName;
 
-      logsViewAll.searchWithTerm(term);
+      LogsViewAll.searchWithTerm(term);
 
       if (option === 'ID') {
-        logsViewAll.checkById({ id });
+        LogsViewAll.checkById({ id });
       } else {
         // file name is always unique
         // so, there is always one row
-        logsViewAll.checkRowsCount(1);
+        LogsViewAll.checkRowsCount(1);
       }
     });
   });

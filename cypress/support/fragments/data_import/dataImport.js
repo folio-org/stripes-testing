@@ -19,7 +19,7 @@ export default {
     // unique file name to upload
     const nameForMarcFileWithBib = `autotest1Bib${getRandomPostfix()}.mrc`;
     // upload a marc file for export
-    cy.visit(`${topMenu.dataImportPath}`);
+    cy.visit(topMenu.dataImportPath);
     uploadFile('oneMarcBib.mrc', nameForMarcFileWithBib);
     JobProfiles.searchJobProfileForImport(JobProfiles.defaultInstanceAndSRSMarcBib);
     JobProfiles.runImportFile(nameForMarcFileWithBib);
