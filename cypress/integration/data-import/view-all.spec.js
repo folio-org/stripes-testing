@@ -1,8 +1,9 @@
-import DataImportViewAllPage from '../../support/fragments/data_import/dataImportViewAllPage';
+import logsViewAll from '../../support/fragments/data_import/logs/logsViewAll';
 import getRandomPostfix from '../../support/utils/stringTools';
 import fileManager from '../../support/utils/fileManager';
 import TopMenu from '../../support/fragments/topMenu';
 import testTypes from '../../support/dictionary/testTypes';
+import settingsMenu from '../../support/fragments/settingsMenu';
 
 describe('ui-data-import: Search the "View all" log screen', () => {
   let id;
@@ -20,7 +21,7 @@ describe('ui-data-import: Search the "View all" log screen', () => {
       Cypress.env('diku_password')
     );
 
-    cy.visit(TopMenu.dataImportPath);
+    cy.visit(`${settingsMenu.dataImportPath}`);
 
     // create dynamically file with given name in fixtures
     fileManager.createFile(`cypress/fixtures/${uniqueFileName}`);
@@ -32,27 +33,27 @@ describe('ui-data-import: Search the "View all" log screen', () => {
 
   beforeEach(() => {
     // fetch dynamic data from server
-    DataImportViewAllPage.getSingleJobProfile().then(({ hrId }) => {
+    logsViewAll.getSingleJobProfile().then(({ hrId }) => {
       id = hrId;
     });
   });
 
   it('C11112 Search the "View all" log screen', { tags: [testTypes.smoke] }, () => {
-    DataImportViewAllPage.gotoViewAllPage();
+    logsViewAll.gotoViewAllPage();
 
-    DataImportViewAllPage.options.forEach((option) => {
-      DataImportViewAllPage.selectOption(option);
+    logsViewAll.options.forEach((option) => {
+      logsViewAll.selectOption(option);
       // when option is "ID", search with hrId otherwise, with file name
       const term = option === 'ID' ? `${id}` : uniqueFileName;
 
-      DataImportViewAllPage.searchWithTerm(term);
+      logsViewAll.searchWithTerm(term);
 
       if (option === 'ID') {
-        DataImportViewAllPage.checkById({ id });
+        logsViewAll.checkById({ id });
       } else {
         // file name is always unique
         // so, there is always one row
-        DataImportViewAllPage.checkRowsCount(1);
+        logsViewAll.checkRowsCount(1);
       }
     });
   });

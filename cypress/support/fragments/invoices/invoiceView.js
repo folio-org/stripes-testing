@@ -1,5 +1,5 @@
 import { MultiColumnListCell, Section, including, KeyValue, Pane, HTML } from '../../../../interactors';
-import invoices from '../invoices/invoices';
+import invoices from './invoices';
 import TopMenu from '../topMenu';
 
 const vendorInvoiceNumber = '94999';

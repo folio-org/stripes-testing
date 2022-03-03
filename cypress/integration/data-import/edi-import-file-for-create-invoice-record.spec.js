@@ -8,9 +8,9 @@ import actionProfiles from '../../support/fragments/data_import/action_profiles/
 import newJobProfile from '../../support/fragments/data_import/job_profiles/newJobProfile';
 import jobProfiles from '../../support/fragments/data_import/job_profiles/jobProfiles';
 import dataImport from '../../support/fragments/data_import/dataImport';
-import logs from '../../support/fragments/data_import/logs';
+import logs from '../../support/fragments/data_import/logs/logs';
 import topMenu from '../../support/fragments/topMenu';
-import fileDetails from '../../support/fragments/data_import/fileDetails';
+import fileDetails from '../../support/fragments/invoices/invoiceView';
 import newMappingProfile from '../../support/fragments/data_import/mapping_profiles/newMappingProfile';
 
 describe('ui-data-import: EDIFACT file import with creating of new invoice record', () => {
@@ -27,10 +27,8 @@ describe('ui-data-import: EDIFACT file import with creating of new invoice recor
 
   afterEach(() => {
     const invoiceNumberFromEdifactFile = '94999';
-    cy.getInvoiceApi({ query: `vendorInvoiceNo="${invoiceNumberFromEdifactFile}"` })
-      .then(({ body }) => {
-        cy.deleteInvoiceFromStorageApi(body.invoices.at(-1).id);
-      });
+    cy.getInvoiceIdApi({ query: `vendorInvoiceNo="${invoiceNumberFromEdifactFile}"` })
+      .then(id => cy.deleteInvoiceFromStorageApi(id));
   });
 
   it('C343338 EDIFACT file import with creating of new invoice record', { tags: [testTypes.smoke] }, () => {

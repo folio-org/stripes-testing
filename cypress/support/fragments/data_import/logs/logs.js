@@ -4,7 +4,7 @@ import {
   MultiColumnListCell,
   Selection,
   SelectionList,
-} from '../../../../interactors';
+} from '../../../../../interactors';
 
 const createdItemsColumns = [
   MultiColumnListCell({ row: 0, columnIndex: 2 }),
