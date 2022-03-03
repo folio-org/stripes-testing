@@ -70,7 +70,7 @@ describe('ui-data-import: MARC file import with matching for 999 ff field', () =
     jobProfiles.checkJobProfilePresented(jobProfileNameForExport);
 
     // upload a marc file for export
-    dataImport.goToDataImport();
+    cy.visit(TopMenu.dataImportPath);
     dataImport.uploadFile('oneMarcBib.mrc', nameForMarcFile);
     jobProfiles.searchJobProfileForImport(jobProfileNameForExport);
     jobProfiles.runImportFile(nameForMarcFile);
@@ -149,7 +149,7 @@ describe('ui-data-import: MARC file import with matching for 999 ff field', () =
         jobProfiles.checkJobProfilePresented(jobProfileName);
 
         // upload the exported marc file with 999.f.f.s fields
-        dataImport.goToDataImport();
+        cy.visit(TopMenu.dataImportPath);
         dataImport.uploadExportedFile(nameForExportedMarcFile);
         jobProfiles.searchJobProfileForImport(jobProfileName);
         jobProfiles.runImportFile(nameForExportedMarcFile);
