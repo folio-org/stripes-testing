@@ -22,7 +22,6 @@ export default {
   dashboardPath: 'settings/dashboard',
   dataExportPath: 'settings/data-export',
   dataImportSettingsPath: 'settings/data-import',
-  dataImportPath: 'data-import',
   developerPath: 'settings/developer',
   eHoldingsPath: 'settings/eholdings',
   ermComparisonsPath: 'settings/comparisons-erm',

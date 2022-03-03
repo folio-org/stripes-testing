@@ -11,6 +11,7 @@ import logs from '../../support/fragments/data_import/logs/logs';
 import fileDetails from '../../support/fragments/invoices/invoiceView';
 import newMappingProfile from '../../support/fragments/data_import/mapping_profiles/newMappingProfile';
 import settingsMenu from '../../support/fragments/settingsMenu';
+import topMenu from '../../support/fragments/topMenu';
 
 describe('ui-data-import: EDIFACT file import with creating of new invoice record', () => {
   before(() => {
@@ -70,14 +71,14 @@ describe('ui-data-import: EDIFACT file import with creating of new invoice recor
     jobProfiles.checkJobProfilePresented(jobProfileName);
 
     // upload a marc file for creating of the new instance, holding and item
-    cy.visit(`${settingsMenu.dataImportPath}`);
+    cy.visit(`${topMenu.dataImportPath}`);
     dataImport.uploadFile('invoice.edi', fileName);
     jobProfiles.searchJobProfileForImport(jobProfile.profileName);
     jobProfiles.runImportFile(fileName);
     logs.checkImportFile(jobProfile.profileName);
     logs.checkStatusOfJobProfile();
     logs.openFileDetails(fileName);
-    logs.checkIsInvoiceCreated();
+    fileDetails.checkIsInvoiceCreated();
 
     fileDetails.checkInvoiceDetails();
 

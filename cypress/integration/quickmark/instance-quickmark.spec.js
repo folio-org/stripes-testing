@@ -22,8 +22,6 @@ describe('Manage inventory Bib records with quickMarc editor', () => {
       permissions.uiQuickMarcQuickMarcBibliographicEditorAll.gui,
       permissions.inventoryAll.gui,
       permissions.uiInventorySingleRecordImport.gui,
-      // TODO: remove after fix of https://issues.folio.org/browse/UIQM-208
-      'Settings (Data import): Can view, create, edit, and remove'
     ]).then(userProperties => {
       userId = userProperties.userId;
       cy.login(userProperties.username, userProperties.password);

@@ -16,6 +16,7 @@ import fileManager from '../../support/utils/fileManager';
 import exportFile from '../../support/fragments/data-export/exportFile';
 import settingsMenu from '../../support/fragments/settingsMenu';
 import fileDetails from '../../support/fragments/data_import/logs/fileDetails';
+import topMenu from '../../support/fragments/topMenu';
 
 describe('ui-data-import: Verify the possibility to modify MARC Bibliographic record', () => {
   before(() => {
@@ -61,7 +62,7 @@ describe('ui-data-import: Verify the possibility to modify MARC Bibliographic re
     const nameMarcFileForUpload = `C345423autotestFile.${getRandomPostfix()}.mrc`;
 
     // upload a marc file for creating of the new instance, holding and item
-    cy.visit(`${settingsMenu.dataImportPath}`);
+    cy.visit(`${topMenu.dataImportPath}`);
     dataImport.uploadFile('oneMarcBib.mrc', nameMarcFileForCreate);
     jobProfiles.searchJobProfileForImport('Default - Create instance and SRS MARC Bib');
     jobProfiles.runImportFile(nameMarcFileForCreate);
@@ -129,14 +130,14 @@ describe('ui-data-import: Verify the possibility to modify MARC Bibliographic re
     jobProfiles.checkJobProfilePresented(jobProfile.profileName);
 
     // upload a marc file for creating of the new instance, holding and item
-    cy.visit(`${settingsMenu.dataImportPath}`);
+    cy.visit(`${topMenu.dataImportPath}`);
     dataImport.uploadFile(nameMarcFileForUpload);
     jobProfiles.searchJobProfileForImport(jobProfile.profileName);
     jobProfiles.runImportFile(nameMarcFileForUpload);
     logs.checkImportFile(jobProfile.profileName);
     logs.checkStatusOfJobProfile();
     logs.openFileDetails(nameMarcFileForUpload);
-    logs.checkUpdatedSrsAndInstance();
+    fileDetails.checkUpdatedSrsAndInstance();
 
     // delete profiles
     jobProfiles.deleteJobProfile(jobProfileName);

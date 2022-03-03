@@ -11,6 +11,7 @@ import logs from '../../support/fragments/data_import/logs/logs';
 import fileDetails from '../../support/fragments/invoices/invoiceView';
 import newMappingProfile from '../../support/fragments/data_import/mapping_profiles/newMappingProfile';
 import settingsMenu from '../../support/fragments/settingsMenu';
+import topMenu from '../../support/fragments/topMenu';
 
 describe('ui-data-import: Import a large EDIFACT invoice file', () => {
 // unique name for profiles
@@ -70,7 +71,7 @@ describe('ui-data-import: Import a large EDIFACT invoice file', () => {
     jobProfiles.checkJobProfilePresented(jobProfileName);
 
     // upload a marc file for creating of the new instance, holding and item
-    cy.visit(`${settingsMenu.dataImportPath}`);
+    cy.visit(`${topMenu.dataImportPath}`);
     dataImport.uploadFile('largeInvoice.edi', fileName);
     jobProfiles.searchJobProfileForImport(jobProfile.profileName);
     jobProfiles.runImportFile(fileName);
@@ -78,7 +79,7 @@ describe('ui-data-import: Import a large EDIFACT invoice file', () => {
     logs.checkStatusOfJobProfile();
     logs.checkQuantityRecordsInFile(logs.quantityRecordsInInvoice.firstQuantity);
     logs.openFileDetails(fileName);
-    logs.checkIsInvoiceCreated();
+    fileDetails.checkIsInvoiceCreated();
     fileDetails.checkQuantityInvoiceLinesInRecord();
   });
 });

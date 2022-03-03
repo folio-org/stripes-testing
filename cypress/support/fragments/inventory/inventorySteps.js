@@ -1,7 +1,6 @@
 import holdingsRecordView from './holdingsRecordView';
 import InventoryInstance from './inventoryInstance';
 import QuickMarcEditor from '../quickMarcEditor';
-import interactorsTools from '../../utils/interactorsTools';
 
 export default {
 

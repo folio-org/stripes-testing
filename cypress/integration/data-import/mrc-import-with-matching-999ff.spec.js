@@ -16,6 +16,7 @@ import FileManager from '../../support/utils/fileManager';
 import getRandomPostfix from '../../support/utils/stringTools';
 import settingsMenu from '../../support/fragments/settingsMenu';
 import fileDetails from '../../support/fragments/data_import/logs/fileDetails';
+import topMenu from '../../support/fragments/topMenu';
 
 describe('ui-data-import: MARC file import with matching for 999 ff field', () => {
   // unique file name to upload
@@ -70,7 +71,7 @@ describe('ui-data-import: MARC file import with matching for 999 ff field', () =
     jobProfiles.checkJobProfilePresented(jobProfileNameForExport);
 
     // upload a marc file for export
-    cy.visit(`${settingsMenu.dataImportPath}`);
+    cy.visit(topMenu.dataImportPath);
     dataImport.uploadFile('oneMarcBib.mrc', nameForMarcFile);
     jobProfiles.searchJobProfileForImport(jobProfileNameForExport);
     jobProfiles.runImportFile(nameForMarcFile);
@@ -149,7 +150,7 @@ describe('ui-data-import: MARC file import with matching for 999 ff field', () =
         jobProfiles.checkJobProfilePresented(jobProfileName);
 
         // upload the exported marc file with 999.f.f.s fields
-        cy.visit(`${settingsMenu.dataImportPath}`);
+        cy.visit(topMenu.dataImportPath);
         dataImport.uploadExportedFile(nameForExportedMarcFile);
         jobProfiles.searchJobProfileForImport(jobProfileName);
         jobProfiles.runImportFile(nameForExportedMarcFile);

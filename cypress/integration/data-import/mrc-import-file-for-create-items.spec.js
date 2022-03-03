@@ -12,6 +12,7 @@ import jobProfiles from '../../support/fragments/data_import/job_profiles/jobPro
 import testTypes from '../../support/dictionary/testTypes';
 import settingsMenu from '../../support/fragments/settingsMenu';
 import fileDetails from '../../support/fragments/data_import/logs/fileDetails';
+import topMenu from '../../support/fragments/topMenu';
 
 describe('ui-data-import: MARC file import with creating of the new instance, holding and item', () => {
   // unique file name to upload
@@ -37,7 +38,8 @@ describe('ui-data-import: MARC file import with creating of the new instance, ho
     );
   });
 
-  it('C343334 MARC file import with creating a new mapping profiles, action profiles and job profile', { tags: [testTypes.smoke] }, () => {    const collectionOfProfiles = [
+  it('C343334 MARC file import with creating a new mapping profiles, action profiles and job profile', { tags: [testTypes.smoke] }, () => {
+    const collectionOfProfiles = [
       {
         mappingProfile: { typeValue : newMappingProfile.folioRecordTypeValue.instance,
           name: mappingProfileNameForInstance },
@@ -79,14 +81,14 @@ describe('ui-data-import: MARC file import with creating of the new instance, ho
     newJobProfile.saveAndClose();
     jobProfiles.checkJobProfilePresented(specialJobProfile.profileName);
 
-    cy.visit(`${settingsMenu.dataImportPath}`);
+    cy.visit(topMenu.dataImportPath);
     dataImport.uploadFile('oneMarcBib.mrc', fileName);
     jobProfiles.searchJobProfileForImport(specialJobProfile.profileName);
     jobProfiles.runImportFile(fileName);
     logs.checkImportFile(specialJobProfile.profileName);
     logs.checkStatusOfJobProfile();
     logs.openFileDetails(fileName);
-    logs.checkCreatedItems();
+    fileDetails.checkCreatedItems();
 
     // delete generated profiles
     jobProfiles.deleteJobProfile(specialJobProfile.profileName);
