@@ -9,6 +9,7 @@ import DataImport from '../../support/fragments/data_import/dataImport';
 import SearchInventory from '../../support/fragments/data_import/searchInventory';
 import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
 import NewHoldingsRecord from '../../support/fragments/inventory/newHoldingsRecord';
+import HoldingsRecordEdit from '../../support/fragments/inventory/holdingsRecordEdit';
 
 describe('Manage holding records of instance records created through marc file upload', () => {
   beforeEach(() => {
@@ -30,7 +31,11 @@ describe('Manage holding records of instance records created through marc file u
       InventoryInstance.goToHoldingView();
       HoldingsRecordView.checkSource('FOLIO');
       HoldingsRecordView.checkActionsMenuOptionsInFolioSource();
-      // TODO: add verification of readonly fields - FAT-1135
+      HoldingsRecordView.edit();
+      HoldingsRecordEdit.waitLoading();
+      HoldingsRecordEdit.checkReadOnlyFields();
+      HoldingsRecordEdit.closeWithoutSave();
+      HoldingsRecordView.checkReadOnlyFields();
       HoldingsRecordView.tryToDelete();
       HoldingsRecordView.duplicate();
       NewHoldingsRecord.checkSource();
