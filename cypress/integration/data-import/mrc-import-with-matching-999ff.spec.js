@@ -2,20 +2,20 @@ import FieldMappingProfiles from '../../support/fragments/data_import/mapping_pr
 import NewActionProfile from '../../support/fragments/data_import/action_profiles/newActionProfile';
 import NewFieldMappingProfile from '../../support/fragments/data_import/mapping_profiles/newMappingProfile';
 import ActionProfiles from '../../support/fragments/data_import/action_profiles/actionProfiles';
-import SettingsDataImport from '../../support/fragments/data_import/settingsDataImport';
 import NewJobProfile from '../../support/fragments/data_import/job_profiles/newJobProfile';
 import MatchProfiles from '../../support/fragments/data_import/match_profiles/match-profiles';
 import SearchInventory from '../../support/fragments/data_import/searchInventory';
 import dataImport from '../../support/fragments/data_import/dataImport';
-import logs from '../../support/fragments/data_import/logs';
+import logs from '../../support/fragments/data_import/logs/logs';
 import jobProfiles from '../../support/fragments/data_import/job_profiles/jobProfiles';
 import testTypes from '../../support/dictionary/testTypes';
 import inventorySearch from '../../support/fragments/inventory/inventorySearch';
 import exportFile from '../../support/fragments/data-export/exportFile';
 import ExportMarcFile from '../../support/fragments/data-export/export-marc-file';
 import FileManager from '../../support/utils/fileManager';
-import TopMenu from '../../support/fragments/topMenu';
 import getRandomPostfix from '../../support/utils/stringTools';
+import settingsMenu from '../../support/fragments/settingsMenu';
+import fileDetails from '../../support/fragments/data_import/logs/fileDetails';
 
 describe('ui-data-import: MARC file import with matching for 999 ff field', () => {
   // unique file name to upload
@@ -47,7 +47,7 @@ describe('ui-data-import: MARC file import with matching for 999 ff field', () =
       name: mappingProfileNameForExport,
       typeValue : NewFieldMappingProfile.folioRecordTypeValue.instance,
     };
-    SettingsDataImport.goToMappingProfiles();
+    cy.visit(`${settingsMenu.mappingProfilePath}`);
     FieldMappingProfiles.createMappingProfile(mappingProfileForExport);
     FieldMappingProfiles.checkMappingProfilePresented(mappingProfileNameForExport);
 
@@ -56,7 +56,7 @@ describe('ui-data-import: MARC file import with matching for 999 ff field', () =
       typeValue : NewActionProfile.folioRecordTypeValue.instance,
       name: actionProfileNameForExport
     };
-    SettingsDataImport.goToActionProfiles();
+    cy.visit(`${settingsMenu.actionProfilePath}`);
     ActionProfiles.createActionProfile(actionProfileForExport, mappingProfileForExport.name);
     ActionProfiles.checkActionProfilePresented(actionProfileNameForExport);
 
@@ -65,29 +65,29 @@ describe('ui-data-import: MARC file import with matching for 999 ff field', () =
       ...NewJobProfile.defaultJobProfile,
       profileName: jobProfileNameForExport
     };
-    SettingsDataImport.goToJobProfiles();
+    cy.visit(`${settingsMenu.jobProfilePath}`);
     jobProfiles.createJobProfileWithLinkingProfiles(jobProfileForExport, actionProfileForExport);
     jobProfiles.checkJobProfilePresented(jobProfileNameForExport);
 
     // upload a marc file for export
-    dataImport.goToDataImport();
+    cy.visit(`${settingsMenu.dataImportPath}`);
     dataImport.uploadFile('oneMarcBib.mrc', nameForMarcFile);
     jobProfiles.searchJobProfileForImport(jobProfileNameForExport);
     jobProfiles.runImportFile(nameForMarcFile);
-    logs.openJobProfile(nameForMarcFile);
-    logs.checkIsInstanceCreated();
+    logs.openFileDetails(nameForMarcFile);
+    fileDetails.checkIsInstanceCreated();
 
     // get Instance HRID through API
     SearchInventory
       .getInstanceHRID()
       .then(id => {
         // download .csv file
-        cy.visit(TopMenu.inventoryPath);
+        cy.visit(`${settingsMenu.inventoryPath}`);
         SearchInventory.searchInstanceByHRID(id);
         inventorySearch.saveUUIDs();
         ExportMarcFile.downloadCSVFile(nameForCSVFile, 'SearchInstanceUUIDs*');
         FileManager.deleteFolder(Cypress.config('downloadsFolder'));
-        cy.visit(TopMenu.dataExportPath);
+        cy.visit(`${settingsMenu.dataExportPath}`);
 
         // download exported marc file
         exportFile.uploadFile(nameForCSVFile);
@@ -115,7 +115,7 @@ describe('ui-data-import: MARC file import with matching for 999 ff field', () =
           matchCriterion: 'Exactly matches',
           existingRecordType: 'MARC_BIBLIOGRAPHIC'
         };
-        SettingsDataImport.goToMatchProfiles();
+        cy.visit(`${settingsMenu.matchProfilePath}`);
         MatchProfiles.createMatchProfile(matchProfile);
 
         // create Field mapping profile
@@ -124,7 +124,7 @@ describe('ui-data-import: MARC file import with matching for 999 ff field', () =
           typeValue : NewFieldMappingProfile.folioRecordTypeValue.instance,
           update: true
         };
-        SettingsDataImport.goToMappingProfiles();
+        cy.visit(`${settingsMenu.mappingProfilePath}`);
         FieldMappingProfiles.createMappingProfile(mappingProfile);
         FieldMappingProfiles.checkMappingProfilePresented(mappingProfileName);
 
@@ -134,7 +134,7 @@ describe('ui-data-import: MARC file import with matching for 999 ff field', () =
           name: actionProfileName,
           action: 'Update (all record types except Orders)'
         };
-        SettingsDataImport.goToActionProfiles();
+        cy.visit(`${settingsMenu.actionProfilePath}`);
         ActionProfiles.createActionProfile(actionProfile, mappingProfile.name);
         ActionProfiles.checkActionProfilePresented(actionProfileName);
 
@@ -144,23 +144,23 @@ describe('ui-data-import: MARC file import with matching for 999 ff field', () =
           profileName: jobProfileName,
           acceptedType: NewJobProfile.acceptedDataType.marc
         };
-        SettingsDataImport.goToJobProfiles();
+        cy.visit(`${settingsMenu.jobProfilePath}`);
         jobProfiles.createJobProfileWithLinkingProfiles(jobProfile, actionProfileName, matchProfileName);
         jobProfiles.checkJobProfilePresented(jobProfileName);
 
         // upload the exported marc file with 999.f.f.s fields
-        dataImport.goToDataImport();
+        cy.visit(`${settingsMenu.dataImportPath}`);
         dataImport.uploadExportedFile(nameForExportedMarcFile);
         jobProfiles.searchJobProfileForImport(jobProfileName);
         jobProfiles.runImportFile(nameForExportedMarcFile);
-        logs.openJobProfile(nameForExportedMarcFile);
-        logs.checkIsInstanceUpdated();
+        logs.openFileDetails(nameForExportedMarcFile);
+        fileDetails.checkIsInstanceUpdated();
 
         // get Instance HRID through API
         SearchInventory
           .getInstanceHRID()
           .then(hrId => {
-            cy.visit(TopMenu.inventoryPath);
+            cy.visit(`${settingsMenu.inventoryPath}`);
             SearchInventory.searchInstanceByHRID(hrId);
 
             // ensure the fields created in Field mapping profile exists in inventory

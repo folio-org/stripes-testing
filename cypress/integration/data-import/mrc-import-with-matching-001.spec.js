@@ -1,9 +1,7 @@
-import SettingsDataImport from '../../support/fragments/data_import/settingsDataImport';
 import dataImport from '../../support/fragments/data_import/dataImport';
 import jobProfiles from '../../support/fragments/data_import/job_profiles/jobProfiles';
-import topMenu from '../../support/fragments/topMenu';
 import MatchProfiles from '../../support/fragments/data_import/match_profiles/match-profiles';
-import logs from '../../support/fragments/data_import/logs';
+import logs from '../../support/fragments/data_import/logs/logs';
 import inventorySearch from '../../support/fragments/inventory/inventorySearch';
 import SearchInventory from '../../support/fragments/data_import/searchInventory';
 import getRandomPostfix from '../../support/utils/stringTools';
@@ -16,6 +14,8 @@ import exportFile from '../../support/fragments/data-export/exportFile';
 import ExportMarcFile from '../../support/fragments/data-export/export-marc-file';
 import FileManager from '../../support/utils/fileManager';
 import testTypes from '../../support/dictionary/testTypes';
+import settingsMenu from '../../support/fragments/settingsMenu';
+import fileDetails from '../../support/fragments/data_import/logs/fileDetails';
 
 describe('ui-data-import: Test MARC-MARC matching for 001 field', () => {
   before(() => {
@@ -28,7 +28,7 @@ describe('ui-data-import: Test MARC-MARC matching for 001 field', () => {
       Cypress.env('diku_password')
     );
 
-    cy.visit(topMenu.dataImportPath);
+    cy.visit(`${settingsMenu.dataImportPath}`);
   });
 
   it('C17044: MARC-MARC matching for 001 field', { tags: testTypes.smoke }, () => {
@@ -47,7 +47,7 @@ describe('ui-data-import: Test MARC-MARC matching for 001 field', () => {
     dataImport.uploadFile('oneMarcBib.mrc', nameForMarcFile);
     jobProfiles.searchJobProfileForImport('Default - Create instance and SRS MARC Bib');
     jobProfiles.runImportFile(nameForMarcFile);
-    logs.openJobProfile(nameForMarcFile);
+    logs.openFileDetails(nameForMarcFile);
     logs.checkIsInstanceCreated();
 
     // get Instance HRID through API
@@ -55,12 +55,12 @@ describe('ui-data-import: Test MARC-MARC matching for 001 field', () => {
       .getInstanceHRID()
       .then(id => {
         // download .csv file
-        cy.visit(topMenu.inventoryPath);
+        cy.visit(`${settingsMenu.inventoryPath}`);
         SearchInventory.searchInstanceByHRID(id);
         inventorySearch.saveUUIDs();
         ExportMarcFile.downloadCSVFile(nameForCSVFile, 'SearchInstanceUUIDs*');
         FileManager.deleteFolder(Cypress.config('downloadsFolder'));
-        cy.visit(topMenu.dataExportPath);
+        cy.visit(`${settingsMenu.dataExportPath}`);
 
         // download exported marc file
         exportFile.uploadFile(nameForCSVFile);
@@ -81,8 +81,7 @@ describe('ui-data-import: Test MARC-MARC matching for 001 field', () => {
           existingRecordType: 'MARC_BIBLIOGRAPHIC'
         };
 
-        SettingsDataImport.goToMatchProfiles();
-
+        cy.visit(`${settingsMenu.matchProfilePath}`);
         MatchProfiles.createMatchProfile(matchProfile);
 
         // create Field mapping profile
@@ -92,7 +91,7 @@ describe('ui-data-import: Test MARC-MARC matching for 001 field', () => {
           update: true
         };
 
-        SettingsDataImport.goToMappingProfiles();
+        cy.visit(`${settingsMenu.mappingProfilePath}`);
         FieldMappingProfiles.createMappingProfile(mappingProfile);
 
         // create Action profile and link it to Field mapping profile
@@ -101,7 +100,7 @@ describe('ui-data-import: Test MARC-MARC matching for 001 field', () => {
           name: actionProfileName,
           action: 'Update (all record types except Orders)',
         };
-        SettingsDataImport.goToActionProfiles();
+        cy.visit(`${settingsMenu.actionProfilePath}`);
         ActionProfiles.createActionProfile(actionProfile, mappingProfile.name);
         ActionProfiles.checkActionProfilePresented(actionProfileName);
 
@@ -111,19 +110,19 @@ describe('ui-data-import: Test MARC-MARC matching for 001 field', () => {
           profileName: jobProfileName,
           acceptedType: NewJobProfile.acceptedDataType.marc
         };
-        SettingsDataImport.goToJobProfiles();
+        cy.visit(`${settingsMenu.jobProfilePath}`);
         jobProfiles.createJobProfileWithLinkingProfiles(jobProfile, actionProfileName, matchProfileName);
         jobProfiles.checkJobProfilePresented(jobProfile.profileName);
 
         // upload the exported marc file with 001 field
-        dataImport.goToDataImport();
+        cy.visit(`${settingsMenu.dataImportPath}`);
         dataImport.uploadExportedFile(nameForExportedMarcFile);
         jobProfiles.searchJobProfileForImport(jobProfileName);
         jobProfiles.runImportFile(nameForExportedMarcFile);
-        logs.openJobProfile(nameForExportedMarcFile);
-        logs.checkIsInstanceUpdated();
+        logs.openFileDetails(nameForExportedMarcFile);
+        fileDetails.checkIsInstanceUpdated();
 
-        cy.visit(topMenu.inventoryPath);
+        cy.visit(`${settingsMenu.inventoryPath}`);
         SearchInventory.searchInstanceByHRID(id);
 
         // ensure the fields created in Field mapping profile exists in inventory

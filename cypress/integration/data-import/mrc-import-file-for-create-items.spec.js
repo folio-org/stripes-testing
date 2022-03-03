@@ -4,13 +4,14 @@ import fieldMappingProfiles from '../../support/fragments/data_import/mapping_pr
 import newActionProfile from '../../support/fragments/data_import/action_profiles/newActionProfile';
 import newMappingProfile from '../../support/fragments/data_import/mapping_profiles/newMappingProfile';
 import actionProfiles from '../../support/fragments/data_import/action_profiles/actionProfiles';
-import settingsDataImport from '../../support/fragments/data_import/settingsDataImport';
 import newJobProfile from '../../support/fragments/data_import/job_profiles/newJobProfile';
 import getRandomPostfix from '../../support/utils/stringTools';
 import dataImport from '../../support/fragments/data_import/dataImport';
-import logs from '../../support/fragments/data_import/logs';
+import logs from '../../support/fragments/data_import/logs/logs';
 import jobProfiles from '../../support/fragments/data_import/job_profiles/jobProfiles';
 import testTypes from '../../support/dictionary/testTypes';
+import settingsMenu from '../../support/fragments/settingsMenu';
+import fileDetails from '../../support/fragments/data_import/logs/fileDetails';
 
 describe('ui-data-import: MARC file import with creating of the new instance, holding and item', () => {
   // unique file name to upload
@@ -36,8 +37,7 @@ describe('ui-data-import: MARC file import with creating of the new instance, ho
     );
   });
 
-  it('C343334 MARC file import with creating a new mapping profiles, action profiles and job profile', { tags: [testTypes.smoke] }, () => {
-    const collectionOfProfiles = [
+  it('C343334 MARC file import with creating a new mapping profiles, action profiles and job profile', { tags: [testTypes.smoke] }, () => {    const collectionOfProfiles = [
       {
         mappingProfile: { typeValue : newMappingProfile.folioRecordTypeValue.instance,
           name: mappingProfileNameForInstance },
@@ -63,15 +63,15 @@ describe('ui-data-import: MARC file import with creating of the new instance, ho
       acceptedType: newJobProfile.acceptedDataType.marc };
 
     collectionOfProfiles.forEach(profile => {
-      settingsDataImport.goToMappingProfiles();
+      cy.visit(`${settingsMenu.mappingProfilePath}`);
       fieldMappingProfiles.createMappingProfile(profile.mappingProfile);
       fieldMappingProfiles.checkMappingProfilePresented(profile.mappingProfile.name);
-      settingsDataImport.goToActionProfiles();
+      cy.visit(`${settingsMenu.actionProfilePath}`);
       actionProfiles.createActionProfile(profile.actionProfile, profile.mappingProfile.name);
       actionProfiles.checkActionProfilePresented(profile.actionProfile.name);
     });
 
-    settingsDataImport.goToJobProfiles();
+    cy.visit(`${settingsMenu.jobProfilePath}`);
     jobProfiles.createJobProfile(specialJobProfile);
     collectionOfProfiles.forEach(profile => {
       newJobProfile.linkActionProfile(profile.actionProfile);
@@ -79,13 +79,13 @@ describe('ui-data-import: MARC file import with creating of the new instance, ho
     newJobProfile.saveAndClose();
     jobProfiles.checkJobProfilePresented(specialJobProfile.profileName);
 
-    dataImport.goToDataImport();
+    cy.visit(`${settingsMenu.dataImportPath}`);
     dataImport.uploadFile('oneMarcBib.mrc', fileName);
     jobProfiles.searchJobProfileForImport(specialJobProfile.profileName);
     jobProfiles.runImportFile(fileName);
     logs.checkImportFile(specialJobProfile.profileName);
     logs.checkStatusOfJobProfile();
-    logs.openJobProfile(fileName);
+    logs.openFileDetails(fileName);
     logs.checkCreatedItems();
 
     // delete generated profiles

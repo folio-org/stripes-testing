@@ -1,7 +1,6 @@
 /// <reference types="cypress" />
 
 import testTypes from '../../support/dictionary/testTypes';
-import settingsDataImport from '../../support/fragments/data_import/settingsDataImport';
 import fieldMappingProfiles from '../../support/fragments/data_import/mapping_profiles/fieldMappingProfiles';
 import getRandomPostfix from '../../support/utils/stringTools';
 import actionProfiles from '../../support/fragments/data_import/action_profiles/actionProfiles';
@@ -9,9 +8,9 @@ import newJobProfile from '../../support/fragments/data_import/job_profiles/newJ
 import jobProfiles from '../../support/fragments/data_import/job_profiles/jobProfiles';
 import dataImport from '../../support/fragments/data_import/dataImport';
 import logs from '../../support/fragments/data_import/logs/logs';
-import topMenu from '../../support/fragments/topMenu';
 import fileDetails from '../../support/fragments/invoices/invoiceView';
 import newMappingProfile from '../../support/fragments/data_import/mapping_profiles/newMappingProfile';
+import settingsMenu from '../../support/fragments/settingsMenu';
 
 describe('ui-data-import: EDIFACT file import with creating of new invoice record', () => {
   before(() => {
@@ -41,7 +40,7 @@ describe('ui-data-import: EDIFACT file import with creating of new invoice recor
     const fileName = `C345423autotestFile.${getRandomPostfix()}.edi`;
 
     // create Field mapping profile
-    settingsDataImport.goToMappingProfiles();
+    cy.visit(`${settingsMenu.mappingProfilePath}`);
     fieldMappingProfiles.waitLoading();
     fieldMappingProfiles.createInvoiceMappingProfile(mappingProfileName, fieldMappingProfiles.mappingProfileForDuplicate.gobi, newMappingProfile.organization.gobiLibrary);
     fieldMappingProfiles.checkMappingProfilePresented(mappingProfileName);
@@ -52,7 +51,7 @@ describe('ui-data-import: EDIFACT file import with creating of new invoice recor
       typeValue: 'Invoice',
     };
 
-    settingsDataImport.goToActionProfiles();
+    cy.visit(`${settingsMenu.actionProfilePath}`);
     // TODO: issue with mapping of action and mapping profiles
     actionProfiles.createActionProfile(actionProfile, mappingProfileName);
     actionProfiles.checkActionProfilePresented(actionProfileName);
@@ -64,20 +63,20 @@ describe('ui-data-import: EDIFACT file import with creating of new invoice recor
       acceptedType: newJobProfile.acceptedDataType.edifact
     };
 
-    settingsDataImport.goToJobProfiles();
+    cy.visit(`${settingsMenu.jobProfilePath}`);
     jobProfiles.createJobProfile(jobProfile);
     newJobProfile.linkActionProfile(actionProfile);
     newJobProfile.saveAndClose();
     jobProfiles.checkJobProfilePresented(jobProfileName);
 
     // upload a marc file for creating of the new instance, holding and item
-    cy.visit(topMenu.dataImportPath);
+    cy.visit(`${settingsMenu.dataImportPath}`);
     dataImport.uploadFile('invoice.edi', fileName);
     jobProfiles.searchJobProfileForImport(jobProfile.profileName);
     jobProfiles.runImportFile(fileName);
     logs.checkImportFile(jobProfile.profileName);
     logs.checkStatusOfJobProfile();
-    logs.openJobProfile(fileName);
+    logs.openFileDetails(fileName);
     logs.checkIsInvoiceCreated();
 
     fileDetails.checkInvoiceDetails();

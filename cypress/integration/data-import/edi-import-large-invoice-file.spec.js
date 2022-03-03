@@ -1,17 +1,16 @@
 /// <reference types="cypress" />
 
 import testTypes from '../../support/dictionary/testTypes';
-import settingsDataImport from '../../support/fragments/data_import/settingsDataImport';
 import fieldMappingProfiles from '../../support/fragments/data_import/mapping_profiles/fieldMappingProfiles';
 import getRandomPostfix from '../../support/utils/stringTools';
 import actionProfiles from '../../support/fragments/data_import/action_profiles/actionProfiles';
 import newJobProfile from '../../support/fragments/data_import/job_profiles/newJobProfile';
 import jobProfiles from '../../support/fragments/data_import/job_profiles/jobProfiles';
 import dataImport from '../../support/fragments/data_import/dataImport';
-import logs from '../../support/fragments/data_import/logs';
-import topMenu from '../../support/fragments/topMenu';
-import fileDetails from '../../support/fragments/data_import/fileDetails';
+import logs from '../../support/fragments/data_import/logs/logs';
+import fileDetails from '../../support/fragments/invoices/invoiceView';
 import newMappingProfile from '../../support/fragments/data_import/mapping_profiles/newMappingProfile';
+import settingsMenu from '../../support/fragments/settingsMenu';
 
 describe('ui-data-import: Import a large EDIFACT invoice file', () => {
 // unique name for profiles
@@ -43,7 +42,7 @@ describe('ui-data-import: Import a large EDIFACT invoice file', () => {
     const fileName = `autotestFile.${getRandomPostfix()}.edi`;
 
     // create Field mapping profile
-    settingsDataImport.goToMappingProfiles();
+    cy.visit(`${settingsMenu.mappingProfilePath}`);
     fieldMappingProfiles.createInvoiceMappingProfile(mappingProfileName, fieldMappingProfiles.mappingProfileForDuplicate.harrassowitz, newMappingProfile.organization.harrassowitz);
     fieldMappingProfiles.checkMappingProfilePresented(mappingProfileName);
 
@@ -53,7 +52,7 @@ describe('ui-data-import: Import a large EDIFACT invoice file', () => {
       typeValue: 'Invoice',
     };
 
-    settingsDataImport.goToActionProfiles();
+    cy.visit(`${settingsMenu.actionProfilePath}`);
     actionProfiles.createActionProfile(actionProfile, mappingProfileName);
     actionProfiles.checkActionProfilePresented(actionProfileName);
 
@@ -64,21 +63,21 @@ describe('ui-data-import: Import a large EDIFACT invoice file', () => {
       acceptedType: newJobProfile.acceptedDataType.edifact
     };
 
-    settingsDataImport.goToJobProfiles();
+    cy.visit(`${settingsMenu.jobProfilePath}`);
     jobProfiles.createJobProfile(jobProfile);
     newJobProfile.linkActionProfile(actionProfile);
     newJobProfile.saveAndClose();
     jobProfiles.checkJobProfilePresented(jobProfileName);
 
     // upload a marc file for creating of the new instance, holding and item
-    cy.visit(topMenu.dataImportPath);
+    cy.visit(`${settingsMenu.dataImportPath}`);
     dataImport.uploadFile('largeInvoice.edi', fileName);
     jobProfiles.searchJobProfileForImport(jobProfile.profileName);
     jobProfiles.runImportFile(fileName);
     logs.checkImportFile(jobProfile.profileName);
     logs.checkStatusOfJobProfile();
     logs.checkQuantityRecordsInFile(logs.quantityRecordsInInvoice.firstQuantity);
-    logs.openJobProfile(fileName);
+    logs.openFileDetails(fileName);
     logs.checkIsInvoiceCreated();
     fileDetails.checkQuantityInvoiceLinesInRecord();
   });

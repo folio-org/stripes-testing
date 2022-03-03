@@ -21,7 +21,8 @@ export default {
   coursesPath: 'settings/cr',
   dashboardPath: 'settings/dashboard',
   dataExportPath: 'settings/data-export',
-  dataImportPath: 'settings/data-import',
+  dataImportSettingsPath: 'settings/data-import',
+  dataImportPath: 'data-import',
   developerPath: 'settings/developer',
   eHoldingsPath: 'settings/eholdings',
   ermComparisonsPath: 'settings/comparisons-erm',
@@ -46,4 +47,8 @@ export default {
   tagsPath: 'settings/tags',
   tenantPath: 'settings/tenant-settings',
   usersPath: 'settings/users',
+  mappingProfilePath: 'settings/data-import/mapping-profiles',
+  actionProfilePath: 'settings/data-import/action-profiles',
+  matchProfilePath: 'settings/data-import/match-profiles',
+  jobProfilePath: 'settings/data-import/job-profiles',
 };

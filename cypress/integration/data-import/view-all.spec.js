@@ -1,7 +1,6 @@
 import logsViewAll from '../../support/fragments/data_import/logs/logsViewAll';
 import getRandomPostfix from '../../support/utils/stringTools';
 import fileManager from '../../support/utils/fileManager';
-import TopMenu from '../../support/fragments/topMenu';
 import testTypes from '../../support/dictionary/testTypes';
 import settingsMenu from '../../support/fragments/settingsMenu';
 
@@ -22,7 +21,6 @@ describe('ui-data-import: Search the "View all" log screen', () => {
     );
 
     cy.visit(`${settingsMenu.dataImportPath}`);
-
     // create dynamically file with given name in fixtures
     fileManager.createFile(`cypress/fixtures/${uniqueFileName}`);
 

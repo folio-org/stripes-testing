@@ -4,13 +4,11 @@ import testTypes from '../../support/dictionary/testTypes';
 import getRandomPostfix from '../../support/utils/stringTools';
 import dataImport from '../../support/fragments/data_import/dataImport';
 import jobProfiles from '../../support/fragments/data_import/job_profiles/jobProfiles';
-import logs from '../../support/fragments/data_import/logs';
+import logs from '../../support/fragments/data_import/logs/logs';
 import searchInventory from '../../support/fragments/data_import/searchInventory';
 import inventorySearch from '../../support/fragments/inventory/inventorySearch';
 import exportFile from '../../support/fragments/data-export/exportFile';
-import topMenu from '../../support/fragments/topMenu';
 import exportMarcFile from '../../support/fragments/data-export/export-marc-file';
-import settingsDataImport from '../../support/fragments/data_import/settingsDataImport';
 import matchProfiles from '../../support/fragments/data_import/match_profiles/match-profiles';
 import newMappingProfile from '../../support/fragments/data_import/mapping_profiles/newMappingProfile';
 import newActionProfile from '../../support/fragments/data_import/action_profiles/newActionProfile';
@@ -18,9 +16,10 @@ import fieldMappingProfiles from '../../support/fragments/data_import/mapping_pr
 import actionProfiles from '../../support/fragments/data_import/action_profiles/actionProfiles';
 import newJobProfile from '../../support/fragments/data_import/job_profiles/newJobProfile';
 import fileManager from '../../support/utils/fileManager';
-import settingsDataExport from '../../support/fragments/data-export/settingsDataExport';
 import exportFieldMappingProfiles from '../../support/fragments/data-export/exportMappingProfile/exportFieldMappingProfiles';
 import exportJobProfiles from '../../support/fragments/data-export/exportJobProfile/exportJobProfiles';
+import settingsMenu from '../../support/fragments/settingsMenu';
+import fileDetails from '../../support/fragments/data_import/logs/fileDetails';
 
 describe('ui-data-import: MARC file upload with the update of instance, holding, and items', () => {
   // profile names for creating
@@ -240,11 +239,11 @@ describe('ui-data-import: MARC file upload with the update of instance, holding,
 
   it('C343335 MARC file upload with the update of instance, holding, and items', { tags: [testTypes.smoke] }, () => {
     // upload a marc file for creating of the new instance, holding and item
-    cy.visit(topMenu.dataImportPath);
+    cy.visit(`${settingsMenu.dataImportPath}`);
     dataImport.uploadFile('oneMarcBib.mrc', nameMarcFileForImportCreate);
     jobProfiles.searchJobProfileForImport(testData.jobProfileForCreate.profile.name);
     jobProfiles.runImportFile(nameMarcFileForImportCreate);
-    logs.openJobProfile(nameMarcFileForImportCreate);
+    logs.openFileDetails(nameMarcFileForImportCreate);
     logs.checkUpdatedCreatedItems();
 
     // get Instance HRID through API
@@ -252,27 +251,27 @@ describe('ui-data-import: MARC file upload with the update of instance, holding,
       .getInstanceHRID()
       .then(id => {
         // download .csv file
-        cy.visit(topMenu.inventoryPath);
+        cy.visit(`${settingsMenu.inventoryPath}`);
         searchInventory.searchInstanceByHRID(id);
         inventorySearch.saveUUIDs();
         exportMarcFile.downloadCSVFile(nameForCSVFile, 'SearchInstanceUUIDs*');
         fileManager.deleteFolder(Cypress.config('downloadsFolder'));
       });
-    cy.visit(topMenu.dataExportPath);
+    cy.visit(`${settingsMenu.dataExportPath}`);
 
     // create Field mapping profile for export
     const exportMappingProfile = {
       name: mappingProfileNameForExport,
     };
 
-    settingsDataExport.goToMappingProfiles();
+    cy.visit(`${settingsMenu.mappingProfilePath}`);
     exportFieldMappingProfiles.createMappingProfile(exportMappingProfile.name);
 
-    settingsDataExport.goToJobProfiles();
+    cy.visit(`${settingsMenu.jobProfilePath}`);
     exportJobProfiles.createJobProfile(jobProfileNameForExport, mappingProfileNameForExport);
 
     // download exported marc file
-    cy.visit(topMenu.dataExportPath);
+    cy.visit(`${settingsMenu.dataImportPath}`);
     exportFile.uploadFile(nameForCSVFile);
     exportFile.exportWithCreatedJobProfile(nameForCSVFile, jobProfileNameForExport);
     exportMarcFile.downloadExportedMarcFile(nameMarcFileForImportUpdate);
@@ -305,10 +304,10 @@ describe('ui-data-import: MARC file upload with the update of instance, holding,
     ];
 
     collectionOfMappingAndActionProfiles.forEach(profile => {
-      settingsDataImport.goToMappingProfiles();
+      cy.visit(`${settingsMenu.mappingProfilePath}`);
       fieldMappingProfiles.createMappingProfileForUpdate(profile.mappingProfile);
       fieldMappingProfiles.checkMappingProfilePresented(profile.mappingProfile.name);
-      settingsDataImport.goToActionProfiles();
+      cy.visit(`${settingsMenu.actionProfilePath}`);
       actionProfiles.createActionProfile(profile.actionProfile, profile.mappingProfile.name);
       actionProfiles.checkActionProfilePresented(profile.actionProfile.name);
     });
@@ -348,7 +347,7 @@ describe('ui-data-import: MARC file upload with the update of instance, holding,
       }
     ];
 
-    settingsDataImport.goToMatchProfiles();
+    cy.visit(`${settingsMenu.matchProfilePath}`);
     collectionOfMatchProfiles.forEach(profile => {
       matchProfiles.createMatchProfile(profile.matchProfile);
     });
@@ -360,7 +359,7 @@ describe('ui-data-import: MARC file upload with the update of instance, holding,
       acceptedType: newJobProfile.acceptedDataType.marc
     };
 
-    settingsDataImport.goToJobProfiles();
+    cy.visit(`${settingsMenu.jobProfilePath}`);
     jobProfiles.createJobProfileWithLinkingProfilesForUpdate(jobProfileForUpdate);
     newJobProfile.linkMatchAndActionProfilesForInstance(actionProfileNameForInstance, matchProfileNameForInstance, 0);
     newJobProfile.linkMatchAndActionProfilesForHoldings(actionProfileNameForHoldings, matchProfileNameForHoldings, 2);
@@ -368,12 +367,12 @@ describe('ui-data-import: MARC file upload with the update of instance, holding,
     newJobProfile.saveAndClose();
 
     // upload the exported marc file
-    dataImport.goToDataImport();
+    cy.visit(`${settingsMenu.dataImportPath}`);
     dataImport.uploadExportedFile(nameMarcFileForImportUpdate);
     jobProfiles.searchJobProfileForImport(jobProfileForUpdate.profileName);
     jobProfiles.runImportFile(nameMarcFileForImportUpdate);
-    logs.openJobProfile(nameMarcFileForImportUpdate);
-    logs.checkUpdatedItems();
+    logs.openFileDetails(nameMarcFileForImportUpdate);
+    fileDetails.checkUpdatedItems();
 
     // delete generated profiles
     jobProfiles.deleteJobProfile(jobProfileNameUpdate);
