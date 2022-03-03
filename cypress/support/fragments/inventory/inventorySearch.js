@@ -151,5 +151,13 @@ export default {
   },
   switchToHoldings: () => {
     cy.do(Button({ id: 'segment-navigation-holdings' }).click());
+  },
+
+  instanceTabIsDefault() {
+    cy.do(
+      Button({ id: 'segment-navigation-instances' }).perform(element => {
+        expect(element.classList[2]).to.include('primary');
+      })
+    );
   }
 };

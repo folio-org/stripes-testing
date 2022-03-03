@@ -22,4 +22,11 @@ describe('verify call number browse feature', () => {
     InventorySearch.verifyKeywordsAsDefault();
     InventorySearch.browseCallNumberIsAbsent();
   });
+
+  it('C347923 Verify "Browse call numbers" option on Item tab', { tags: [TestTypes.smoke] }, () => {
+    InventorySearch.instanceTabIsDefault();
+    InventorySearch.switchToItem();
+    InventorySearch.verifyKeywordsAsDefault();
+    InventorySearch.browseCallNumberIsAbsent();
+  });
 });
