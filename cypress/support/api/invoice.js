@@ -5,7 +5,6 @@ Cypress.Commands.add('getInvoiceIdApi', (searchParams) => {
       searchParams,
     })
     .then(responce => {
-      cy.pause();
       return responce.body.invoices.at(-1).id;
     });
 });
