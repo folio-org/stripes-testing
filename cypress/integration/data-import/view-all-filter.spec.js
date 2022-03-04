@@ -3,7 +3,7 @@ import FileManager from '../../support/utils/fileManager';
 import DateTools from '../../support/utils/dateTools';
 import { Accordion } from '../../../interactors';
 import getRandomPostfix from '../../support/utils/stringTools';
-import SettingsMenu from '../../support/fragments/settingsMenu';
+import TopMenu from '../../support/fragments/topMenu';
 
 describe('ui-data-import: Filter the "View all" log screen', () => {
   // Path to static file in fixtures
@@ -34,7 +34,7 @@ describe('ui-data-import: Filter the "View all" log screen', () => {
       FileManager.createFile(`cypress/fixtures/${fileNameForSuccessfulImport}`, content);
     });
 
-    cy.visit(SettingsMenu.dataImportPath);
+    cy.visit(TopMenu.dataImportPath);
     // Upload files
     // runs with errors
     cy.uploadFileWithDefaultJobProfile(fileNameForFailedImport);

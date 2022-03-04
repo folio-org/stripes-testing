@@ -7,9 +7,10 @@ const createdItemsColumns = [
   MultiColumnListCell({ row: 0, columnIndex: 5 })
 ];
 
-const checkIsSrsUpdated = () => {
+const checkIsSrsCreated = () => {
+  // TODO: redesign from perform to regular cy.expect
   cy.do(createdItemsColumns[0].perform(element => {
-    expect(element).to.have.text('Updated');
+    expect(element).to.have.text('Created');
   }));
 };
 
@@ -20,15 +21,21 @@ const checkIsInstanceCreated = () => {
   }));
 };
 
-const checkIsInstanceUpdated = () => {
-  cy.do(createdItemsColumns[1].perform(element => {
+const checkIsHoldingsCreated = () => {
+  cy.do(createdItemsColumns[2].perform(element => {
+    expect(element).to.have.text('Created');
+  }));
+};
+
+const checkIsSrsUpdated = () => {
+  cy.do(createdItemsColumns[0].perform(element => {
     expect(element).to.have.text('Updated');
   }));
 };
 
-const checkIsHoldingsCreated = () => {
-  cy.do(createdItemsColumns[2].perform(element => {
-    expect(element).to.have.text('Created');
+const checkIsInstanceUpdated = () => {
+  cy.do(createdItemsColumns[1].perform(element => {
+    expect(element).to.have.text('Updated');
   }));
 };
 
@@ -41,6 +48,8 @@ const checkIsItemCreated = () => {
 const checkIsInvoiceCreated = () => {
   cy.expect(MultiColumnListCell({ row: 0, column: 'Created' }).exists());
 };
+
+const invoiceNumberFromEdifactFile = '94999';
 
 export default {
   checkCreatedItems:() => {
@@ -71,8 +80,13 @@ export default {
     checkIsInstanceUpdated();
   },
 
+  checkCreatedSrsAndInstance:() => {
+    checkIsSrsCreated();
+    checkIsInstanceCreated();
+  },
+
   checkIsInstanceCreated,
   checkIsInstanceUpdated,
   checkIsInvoiceCreated,
+  invoiceNumberFromEdifactFile,
 };
-

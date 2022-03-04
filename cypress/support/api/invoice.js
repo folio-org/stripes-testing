@@ -4,8 +4,8 @@ Cypress.Commands.add('getInvoiceIdApi', (searchParams) => {
       path: 'invoice/invoices',
       searchParams,
     })
-    .then(responce => {
-      return responce.body.invoices.at(-1).id;
+    .then(response => {
+      return response.body.invoices.at(-1).id;
     });
 });
 

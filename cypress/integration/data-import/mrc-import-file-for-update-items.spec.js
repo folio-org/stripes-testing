@@ -264,10 +264,10 @@ describe('ui-data-import: MARC file upload with the update of instance, holding,
       name: mappingProfileNameForExport,
     };
 
-    cy.visit(SettingsMenu.mappingProfilePath);
+    cy.visit(SettingsMenu.exportMappingProfilePath);
     ExportFieldMappingProfiles.createMappingProfile(exportMappingProfile.name);
 
-    cy.visit(SettingsMenu.jobProfilePath);
+    cy.visit(SettingsMenu.exportJobProfilePath);
     ExportJobProfiles.createJobProfile(jobProfileNameForExport, mappingProfileNameForExport);
 
     // download exported marc file

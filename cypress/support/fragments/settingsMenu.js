@@ -50,4 +50,6 @@ export default {
   actionProfilePath: 'settings/data-import/action-profiles',
   matchProfilePath: 'settings/data-import/match-profiles',
   jobProfilePath: 'settings/data-import/job-profiles',
+  exportMappingProfilePath: 'settings/data-export/mapping-profiles',
+  exportJobProfilePath: 'settings/data-export/job-profiles',
 };

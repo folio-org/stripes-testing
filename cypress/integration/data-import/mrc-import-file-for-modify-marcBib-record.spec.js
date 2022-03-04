@@ -67,7 +67,7 @@ describe('ui-data-import: Verify the possibility to modify MARC Bibliographic re
     JobProfiles.searchJobProfileForImport('Default - Create instance and SRS MARC Bib');
     JobProfiles.runImportFile(nameMarcFileForCreate);
     Logs.openFileDetails(nameMarcFileForCreate);
-    FileDetails.checkCreatedItems();
+    FileDetails.checkCreatedSrsAndInstance();
 
     // get Instance HRID through API
     SearchInventory

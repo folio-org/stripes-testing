@@ -26,8 +26,7 @@ describe('ui-data-import: EDIFACT file import with creating of new invoice recor
   });
 
   afterEach(() => {
-    const invoiceNumberFromEdifactFile = '94999';
-    cy.getInvoiceIdApi({ query: `vendorInvoiceNo="${invoiceNumberFromEdifactFile}"` })
+    cy.getInvoiceIdApi({ query: `vendorInvoiceNo="${FileDetails.invoiceNumberFromEdifactFile}"` })
       .then(id => cy.deleteInvoiceFromStorageApi(id));
   });
 
@@ -78,8 +77,6 @@ describe('ui-data-import: EDIFACT file import with creating of new invoice recor
     Logs.checkImportFile(jobProfile.profileName);
     Logs.checkStatusOfJobProfile();
     Logs.openFileDetails(fileName);
-    FileDetails.checkIsInvoiceCreated();
-
     FileDetails.checkInvoiceDetails();
 
     // clean up generated profiles

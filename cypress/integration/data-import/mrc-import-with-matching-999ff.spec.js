@@ -83,12 +83,12 @@ describe('ui-data-import: MARC file import with matching for 999 ff field', () =
       .getInstanceHRID()
       .then(id => {
         // download .csv file
-        cy.visit(SettingsMenu.inventoryPath);
+        cy.visit(TopMenu.inventoryPath);
         SearchInventory.searchInstanceByHRID(id);
         InventorySearch.saveUUIDs();
         ExportMarcFile.downloadCSVFile(nameForCSVFile, 'SearchInstanceUUIDs*');
         FileManager.deleteFolder(Cypress.config('downloadsFolder'));
-        cy.visit(SettingsMenu.dataExportPath);
+        cy.visit(TopMenu.dataExportPath);
 
         // download exported marc file
         ExportFile.uploadFile(nameForCSVFile);
