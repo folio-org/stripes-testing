@@ -4,9 +4,7 @@ Cypress.Commands.add('getInvoiceIdApi', (searchParams) => {
       path: 'invoice/invoices',
       searchParams,
     })
-    .then(response => {
-      return response.body.invoices.at(-1).id;
-    });
+    .then(response => response.body.invoices.at(-1).id);
 });
 
 Cypress.Commands.add('deleteInvoiceFromStorageApi', (id) => {

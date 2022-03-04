@@ -8,7 +8,7 @@ import NewJobProfile from '../../support/fragments/data_import/job_profiles/newJ
 import JobProfiles from '../../support/fragments/data_import/job_profiles/jobProfiles';
 import DataImport from '../../support/fragments/data_import/dataImport';
 import Logs from '../../support/fragments/data_import/logs/logs';
-import FileDetails from '../../support/fragments/invoices/invoiceView';
+import FileDetails from '../../support/fragments/data_import/logs/fileDetails';
 import SettingsMenu from '../../support/fragments/settingsMenu';
 import TopMenu from '../../support/fragments/topMenu';
 import NewMappingProfile from '../../support/fragments/data_import/mapping_profiles/newMappingProfile';
@@ -77,7 +77,7 @@ describe('ui-data-import: EDIFACT file import with creating of new invoice recor
     Logs.checkImportFile(jobProfile.profileName);
     Logs.checkStatusOfJobProfile();
     Logs.openFileDetails(fileName);
-    FileDetails.checkInvoiceDetails();
+    FileDetails.checkIsInvoiceCreated();
 
     // clean up generated profiles
     JobProfiles.deleteJobProfile(jobProfileName);
