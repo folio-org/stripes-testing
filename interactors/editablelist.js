@@ -13,7 +13,7 @@
 
 import { including } from '@interactors/html';
 import HTML from './baseHTML';
-import { MultiColumnListRow, MultiColumnList } from './multi-column-list';
+import { MultiColumnListRow, MultiColumnList, MultiColumnListCell } from './multi-column-list';
 import Button from './button';
 
 export const ColumnHeader = HTML.extend('column header')
@@ -37,6 +37,7 @@ export const EditableListRow = MultiColumnListRow.extend('editable list row')
 
 export const EditableList = MultiColumnList.extend('editable list')
   .selector('form')
+  .locator(el => el.querySelector('[class^=mclContainer-]').id)
   .filters({
     rowCount: (el) => el.querySelectorAll('[class^=editListRow-]').length,
     addDisabled: Button({ text: including('+'), disabled: true }).exists(),
@@ -49,3 +50,14 @@ export const EditableList = MultiColumnList.extend('editable list')
   .actions({
     add: ({ find }) => find(Button(including('+'))).click()
   });
+
+// const content = el => el.textContent;
+
+// export const EditableListCell = MultiColumnListCell.extend('editable list cell')
+//   .selector('div[class*=mclCell-]')
+//   .locator(content)
+//   .filters({
+//     row: el => +el.parentElement.getAttribute('aria-rowindex'),
+//     column: content,
+//     columnIndex: el => [...el.parentElement.children].indexOf(el),
+//   });
