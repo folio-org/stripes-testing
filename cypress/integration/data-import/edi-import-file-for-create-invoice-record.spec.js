@@ -11,6 +11,7 @@ import Logs from '../../support/fragments/data_import/logs/logs';
 import FileDetails from '../../support/fragments/invoices/invoiceView';
 import SettingsMenu from '../../support/fragments/settingsMenu';
 import TopMenu from '../../support/fragments/topMenu';
+import NewMappingProfile from '../../support/fragments/data_import/mapping_profiles/newMappingProfile';
 
 describe('ui-data-import: EDIFACT file import with creating of new invoice record', () => {
   before(() => {
@@ -42,7 +43,7 @@ describe('ui-data-import: EDIFACT file import with creating of new invoice recor
     // create Field mapping profile
     cy.visit(SettingsMenu.mappingProfilePath);
     FieldMappingProfiles.waitLoading();
-    FieldMappingProfiles.createInvoiceMappingProfile(mappingProfileName, FieldMappingProfiles.mappingProfileForDuplicate.gobi, newMappingProfile.organization.gobiLibrary);
+    FieldMappingProfiles.createInvoiceMappingProfile(mappingProfileName, FieldMappingProfiles.mappingProfileForDuplicate.gobi, NewMappingProfile.organization.gobiLibrary);
     FieldMappingProfiles.checkMappingProfilePresented(mappingProfileName);
 
     // create Action profile and link it to Field mapping profile

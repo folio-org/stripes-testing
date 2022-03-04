@@ -11,6 +11,7 @@ import Logs from '../../support/fragments/data_import/logs/logs';
 import FileDetails from '../../support/fragments/invoices/invoiceView';
 import SettingsMenu from '../../support/fragments/settingsMenu';
 import TopMenu from '../../support/fragments/topMenu';
+import NewMappingProfile from '../../support/fragments/data_import/mapping_profiles/newMappingProfile';
 
 describe('ui-data-import: Import a large EDIFACT invoice file', () => {
 // unique name for profiles
@@ -43,7 +44,7 @@ describe('ui-data-import: Import a large EDIFACT invoice file', () => {
 
     // create Field mapping profile
     cy.visit(SettingsMenu.mappingProfilePath);
-    FieldMappingProfiles.createInvoiceMappingProfile(mappingProfileName, FieldMappingProfiles.mappingProfileForDuplicate.harrassowitz, newMappingProfile.organization.harrassowitz);
+    FieldMappingProfiles.createInvoiceMappingProfile(mappingProfileName, FieldMappingProfiles.mappingProfileForDuplicate.harrassowitz, NewMappingProfile.organization.harrassowitz);
     FieldMappingProfiles.checkMappingProfilePresented(mappingProfileName);
 
     // create Action profile and link it to Field mapping profile
