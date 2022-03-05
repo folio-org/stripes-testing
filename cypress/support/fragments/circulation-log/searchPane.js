@@ -7,7 +7,6 @@ export default {
   searchByItemBarcode(barcode) {
     cy.do([
       TextField({ name: 'itemBarcode' }).fillIn(barcode),
-      // Accordion({ id: 'accordion_136' }).find(Button('Apply')).click()
     ]);
     cy.get('[class^="button-"][type="submit"]').first().click();
   },
