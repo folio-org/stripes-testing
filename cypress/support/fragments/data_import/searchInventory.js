@@ -4,13 +4,13 @@ import {
   MultiColumnListCell,
   TextField
 } from '../../../../interactors';
-import DataImportViewAllPage from './dataImportViewAllPage';
+import logsViewAll from './logs/logsViewAll';
 import DateTools from '../../utils/dateTools';
 import InventoryInstances from '../inventory/inventoryInstances';
 
-
+// TODO replace to Inventory/inventorySearch
 const getInstanceHRID = () => {
-  return DataImportViewAllPage
+  return logsViewAll
     .getSingleJobProfile() // get the first job id from job logs list
     .then(({ id }) => {
       // then, make request with the job id

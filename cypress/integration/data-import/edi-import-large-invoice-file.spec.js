@@ -8,12 +8,18 @@ import NewJobProfile from '../../support/fragments/data_import/job_profiles/newJ
 import JobProfiles from '../../support/fragments/data_import/job_profiles/jobProfiles';
 import DataImport from '../../support/fragments/data_import/dataImport';
 import Logs from '../../support/fragments/data_import/logs/logs';
-import FileDetails from '../../support/fragments/data_import/logs/fileDetails';
+import FileDetails from '../../support/fragments/invoices/invoiceView';
 import SettingsMenu from '../../support/fragments/settingsMenu';
 import TopMenu from '../../support/fragments/topMenu';
 import NewMappingProfile from '../../support/fragments/data_import/mapping_profiles/newMappingProfile';
 
-describe('ui-data-import: EDIFACT file import with creating of new invoice record', () => {
+describe('ui-data-import: Import a large EDIFACT invoice file', () => {
+// unique name for profiles
+  const mappingProfileName = `autoTestMappingProf.${getRandomPostfix()}`;
+  const actionProfileName = `autoTestActionProf.${getRandomPostfix()}`;
+  const jobProfileName = `autoTestJobProf.${getRandomPostfix()}`;
+
+
   before(() => {
     cy.login(
       Cypress.env('diku_login'),
@@ -25,24 +31,13 @@ describe('ui-data-import: EDIFACT file import with creating of new invoice recor
     );
   });
 
-  afterEach(() => {
-    cy.getInvoiceIdApi({ query: `vendorInvoiceNo="${FileDetails.invoiceNumberFromEdifactFile}"` })
-      .then(id => cy.deleteInvoiceFromStorageApi(id));
-  });
-
-  it('C343338 EDIFACT file import with creating of new invoice record', { tags: [TestTypes.smoke] }, () => {
-    // unique name for profiles
-    const mappingProfileName = `autoTestMappingProf.${getRandomPostfix()}`;
-    const actionProfileName = `autoTestActionProf.${getRandomPostfix()}`;
-    const jobProfileName = `autoTestJobProf.${getRandomPostfix()}`;
-
+  it('C347615 Import a large EDIFACT invoice file', { tags: [TestTypes.smoke] }, () => {
     // unique file name to upload
-    const fileName = `C345423autotestFile.${getRandomPostfix()}.edi`;
+    const fileName = `autotestFile.${getRandomPostfix()}.edi`;
 
     // create Field mapping profile
     cy.visit(SettingsMenu.mappingProfilePath);
-    FieldMappingProfiles.waitLoading();
-    FieldMappingProfiles.createInvoiceMappingProfile(mappingProfileName, FieldMappingProfiles.mappingProfileForDuplicate.gobi, NewMappingProfile.organization.gobiLibrary);
+    FieldMappingProfiles.createInvoiceMappingProfile(mappingProfileName, FieldMappingProfiles.mappingProfileForDuplicate.harrassowitz, NewMappingProfile.organization.harrassowitz);
     FieldMappingProfiles.checkMappingProfilePresented(mappingProfileName);
 
     // create Action profile and link it to Field mapping profile
@@ -52,7 +47,6 @@ describe('ui-data-import: EDIFACT file import with creating of new invoice recor
     };
 
     cy.visit(SettingsMenu.actionProfilePath);
-    // TODO: issue with mapping of action and mapping profiles
     ActionProfiles.createActionProfile(actionProfile, mappingProfileName);
     ActionProfiles.checkActionProfilePresented(actionProfileName);
 
@@ -71,13 +65,15 @@ describe('ui-data-import: EDIFACT file import with creating of new invoice recor
 
     // upload a marc file for creating of the new instance, holding and item
     cy.visit(TopMenu.dataImportPath);
-    DataImport.uploadFile('invoice.edi', fileName);
+    DataImport.uploadFile('largeInvoice.edi', fileName);
     JobProfiles.searchJobProfileForImport(jobProfile.profileName);
     JobProfiles.runImportFile(fileName);
     Logs.checkImportFile(jobProfile.profileName);
     Logs.checkStatusOfJobProfile();
+    Logs.checkQuantityRecordsInFile(Logs.quantityRecordsInInvoice.firstQuantity);
     Logs.openFileDetails(fileName);
-    FileDetails.checkIsInvoiceCreated();
+    FileDetails.checkInvoiceDetails();
+    FileDetails.checkQuantityInvoiceLinesInRecord();
 
     // clean up generated profiles
     JobProfiles.deleteJobProfile(jobProfileName);
