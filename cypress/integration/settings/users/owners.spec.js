@@ -12,25 +12,31 @@ describe('Management of n fee/fine owners and service points', () => {
   it('C441 Verify that you can create/edit/delete associations between fee/fine owners and service points', { tags: [TestType.smoke] }, () => {
     createRegularUser().then(firstUserProperties => {
       users.push(firstUserProperties);
+
       cy.allure().startStep('Login and open Owners settings by user1');
       cy.login(firstUserProperties.username, firstUserProperties.password, { path: SettingsMenu.usersOwnersPath, waiter: UsersOwners.waitLoading });
       cy.allure().endStep();
+
       // clarify should be service points be shared between existing users
       cy.allure().startStep('Check presented owners and related service points');
       UsersOwners.getUsedServicePoints().then(usedServicePoints => {
         addedServicePoints.push(UsersOwners.defaultServicePoints.filter(servicePoint => !usedServicePoints?.includes(servicePoint))[0]);
         cy.allure().endStep();
+
         cy.allure().startStep('Add new owner, related with current user and not used service point');
         UsersOwners.startNewLineAdding();
         UsersOwners.fill(users[0].username, addedServicePoints.at(-1));
         UsersOwners.save(users[0].username);
         cy.allure().endStep();
+
         cy.allure().startStep('Verify values in Associated service points.');
         UsersOwners.startNewLineAdding();
         UsersOwners.checkUsedServicePoints(addedServicePoints);
         cy.allure().endStep();
+
         createRegularUser().then(secondUserProperties => {
           users.push(secondUserProperties);
+
           cy.allure().startStep('Login and open Owners settings by user2');
           cy.login(secondUserProperties.username, secondUserProperties.password, { path: SettingsMenu.usersOwnersPath, waiter: UsersOwners.waitLoading });
           cy.allure().endStep();
