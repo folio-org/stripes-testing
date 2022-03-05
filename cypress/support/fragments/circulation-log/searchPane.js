@@ -72,4 +72,7 @@ export default {
       Accordion({ id: 'date' }).find(Button('Apply')).click()
     ]);
   },
+  resetResults() {
+    cy.do(Button('Reset all').click());
+  }
 };
