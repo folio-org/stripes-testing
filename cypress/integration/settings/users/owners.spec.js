@@ -9,7 +9,7 @@ describe('Management of n fee/fine owners and service points', () => {
   const createRegularUser = () => cy.createTempUser([Permissions.uiUsersSettingsOwners.gui,
     Permissions.uiUsersEdituserservicepoints.gui]);
 
-  it('C441  Only one Fee/Fine Owner is allowed to be associated to a Service Point', { tags: [TestType.smoke] }, () => {
+  it('C441 Verify that you can create/edit/delete associations between fee/fine owners and service points', { tags: [TestType.smoke] }, () => {
     createRegularUser().then(firstUserProperties => {
       users.push(firstUserProperties);
       cy.login(firstUserProperties.username, firstUserProperties.password, { path: SettingsMenu.usersOwnersPath, waiter: UsersOwners.waitLoading });
@@ -24,11 +24,13 @@ describe('Management of n fee/fine owners and service points', () => {
         createRegularUser().then(secondUserProperties => {
           users.push(secondUserProperties);
           cy.login(secondUserProperties.username, secondUserProperties.password, { path: SettingsMenu.usersOwnersPath, waiter: UsersOwners.waitLoading });
+
           UsersOwners.startNewLineAdding();
           UsersOwners.checkUsedServicePoints(addedServicePoints);
 
           cy.login(firstUserProperties.username, firstUserProperties.password, { path: SettingsMenu.usersOwnersPath, waiter: UsersOwners.waitLoading });
           UsersOwners.unselectExistingServicePoint(addedServicePoints.at(-1));
+
           cy.login(secondUserProperties.username, secondUserProperties.password, { path: SettingsMenu.usersOwnersPath, waiter: UsersOwners.waitLoading });
           UsersOwners.startNewLineAdding();
           UsersOwners.checkFreeServicePointPresence(addedServicePoints.at(-1));
@@ -39,8 +41,6 @@ describe('Management of n fee/fine owners and service points', () => {
   });
 
   afterEach(() => {
-    cy.visit(SettingsMenu.usersOwnersPath);
-    UsersOwners.waitLoading();
     addedServicePoints.forEach(addedServicePoint => {
       UsersOwners.delete(addedServicePoint);
     });
