@@ -7,10 +7,21 @@ const organizationModal = Modal('Select Organization');
 
 const marcBib = 'MARC Bibliographic';
 
+const incomingRecordType = {
+  marcBib: 'MARC Bibliographic',
+  edifact: 'EDIFACT invoice',
+};
+
 const folioRecordTypeValue = {
   instance: 'Instance',
   holdings: 'Holdings',
   item: 'Item',
+  invoice: 'Invoice',
+};
+
+const organization = {
+  gobiLibrary: 'GOBI Library Solutions',
+  harrassowitz: 'Otto Harrassowitz GmbH & Co. KG',
 };
 
 const permanentLocation = '"Annex (KU/CC/DI/A)"';
@@ -39,30 +50,27 @@ const defaultMappingProfile = {
   fillProfile:''
 };
 
-const selectOrganizationByName = () => {
+const selectOrganizationByName = (organizationName) => {
   cy.do([
-    organizationModal.find(TextField({ id: 'input-record-search' })).fillIn('GOBI Library Solutions'),
+    organizationModal.find(TextField({ id: 'input-record-search' })).fillIn(organizationName),
     organizationModal.find(Button('Search')).click(),
     organizationModal.find(HTML(including('1 record found'))).exists(),
-    MultiColumnListCell('GOBI Library Solutions').click({ row: 0, columnIndex: 0 }),
+    MultiColumnListCell(organizationName).click({ row: 0, columnIndex: 0 }),
   ]);
 };
 
 export default {
   folioRecordTypeValue,
-
   permanentLocation,
-
   materialType,
-
   permanentLoanType,
-
   statusField: status,
+  organization,
 
   fillMappingProfile:(specialMappingProfile = defaultMappingProfile) => {
     cy.do([
       TextField({ name:'profile.name' }).fillIn(specialMappingProfile.name),
-      Select({ name:'profile.incomingRecordType' }).choose(marcBib),
+      Select({ name:'profile.incomingRecordType' }).choose(incomingRecordType.marcBib),
       Select({ name:'profile.existingRecordType' }).choose(specialMappingProfile.typeValue)
     ]);
     if (specialMappingProfile.typeValue === holdingsType) {
@@ -161,7 +169,7 @@ export default {
   fillMappingProfileForUpdate:(specialMappingProfile = defaultMappingProfile) => {
     cy.do([
       TextField({ name:'profile.name' }).fillIn(specialMappingProfile.name),
-      Select({ name:'profile.incomingRecordType' }).choose(marcBib),
+      Select({ name:'profile.incomingRecordType' }).choose(incomingRecordType.marcBib),
       Select({ name:'profile.existingRecordType' }).choose(specialMappingProfile.typeValue)
     ]);
     specialMappingProfile.fillProfile();
@@ -172,7 +180,7 @@ export default {
   fillModifyMappingProfile(specialMappingProfileName = defaultMappingProfile.name, properties) {
     cy.do([
       TextField({ name:'profile.name' }).fillIn(specialMappingProfileName),
-      Select({ name:'profile.incomingRecordType' }).choose(marcBib),
+      Select({ name:'profile.incomingRecordType' }).choose(incomingRecordType.marcBib),
       Select({ name:'profile.existingRecordType' }).choose(marcBib),
       Select({ name:'profile.mappingDetails.marcMappingOption' }).choose(properties.marcMappingOption),
       Select({ name:'profile.mappingDetails.marcMappingDetails[0].action' }).choose(properties.action),
@@ -187,18 +195,18 @@ export default {
     cy.expect(saveButton.absent());
   },
 
-  fillMappingProfileForInvoice:(specialMappingProfileName = defaultMappingProfile.name) => {
+  fillMappingProfileForInvoice:(specialMappingProfileName = defaultMappingProfile.name, organizationName) => {
     cy.do([
       TextField({ name:'profile.name' }).fillIn(specialMappingProfileName),
-      Select({ name:'profile.incomingRecordType' }).choose('EDIFACT invoice'),
-      Select({ name:'profile.existingRecordType' }).choose('Invoice'),
+      Select({ name:'profile.incomingRecordType' }).choose(incomingRecordType.edifact),
+      Select({ name:'profile.existingRecordType' }).choose(folioRecordTypeValue.invoice),
       TextArea({ name:'profile.description' }).fillIn(''),
       TextField('Batch group*').fillIn('"FOLIO"'),
       Button('Organization look-up').click()
     ]);
-    selectOrganizationByName();
+    selectOrganizationByName(organizationName);
     cy.do([
-      TextField('Payment method*').fillIn('"Credit Card"'),
+      TextField('Payment method*').fillIn('"Cash"'),
       saveButton.click(),
     ]);
   },

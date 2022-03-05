@@ -1,9 +1,9 @@
-import { MultiColumnListCell, Section, including, KeyValue } from '../../../../interactors';
-import invoices from '../invoices/invoices';
+import { MultiColumnListCell, Section, including, KeyValue, Pane, HTML } from '../../../../interactors';
+import invoices from './invoices';
 import TopMenu from '../topMenu';
 
-const vendorInvoiceNumber = '49072';
-const expectedInvoiceDate = '10/15/2021';
+const vendorInvoiceNumber = '94999';
+const expectedInvoiceDate = '11/24/2021';
 const expectedInvoiceStatus = 'Open';
 const expectedInvoiceSource = 'EDI';
 
@@ -24,5 +24,9 @@ export default {
       cy.expect(invoiceStatus.has({ value: expectedInvoiceStatus }));
       cy.expect(invoiceSource.has({ value: expectedInvoiceSource }));
     }));
+  },
+
+  checkQuantityInvoiceLinesInRecord:() => {
+    cy.expect(Pane({ id:'pane-results' }).find(HTML(including('1,104 records found'))).exists());
   },
 };
