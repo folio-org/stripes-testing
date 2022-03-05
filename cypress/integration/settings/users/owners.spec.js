@@ -5,6 +5,7 @@ import UsersOwners from '../../../support/fragments/settings/users/usersOwners';
 
 describe('Management of n fee/fine owners and service points', () => {
   const users = [];
+  const addedServicePoints = [];
   // beforeEach(() => {
 
   // });
@@ -14,10 +15,11 @@ describe('Management of n fee/fine owners and service points', () => {
       'Users: Can assign and unassign service points to users']).then(firstUserProperties => {
       users.push(firstUserProperties);
       cy.login(firstUserProperties.username, firstUserProperties.password, { path: SettingsMenu.usersOwnersPath, waiter: UsersOwners.waitLoading });
-      UsersOwners.addNewLine();
+      // clarify should be service points be shared between existing users
       UsersOwners.getUsedServicePoints().then(usedServicePoints => {
-        const freeServicePoint = usedServicePoints.filter(servicePoint => !usedServicePoints.contains(servicePoint))[0];
-        UsersOwners.fill(users[0].userName, UsersOwners.defaultServicePoints.filter(freeServicePoint));
+        addedServicePoints.push(UsersOwners.defaultServicePoints.filter(servicePoint => !usedServicePoints?.includes(servicePoint))[0]);
+        UsersOwners.addNewLine();
+        UsersOwners.fill(users[0].username, addedServicePoints.at(-1));
         UsersOwners.save();
       });
     });
@@ -29,6 +31,12 @@ describe('Management of n fee/fine owners and service points', () => {
 
 
   afterEach(() => {
+    cy.visit(SettingsMenu.usersOwnersPath);
+    UsersOwners.waitLoading();
+    addedServicePoints.forEach(addedServicePoint => {
+      UsersOwners.delete(addedServicePoint);
+    });
+
     users.forEach(user => cy.deleteUser(user.userId));
   });
 });

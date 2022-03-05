@@ -13,7 +13,7 @@
 
 import { including } from '@interactors/html';
 import HTML from './baseHTML';
-import { MultiColumnListRow, MultiColumnList, MultiColumnListCell } from './multi-column-list';
+import { MultiColumnListRow, MultiColumnList } from './multi-column-list';
 import Button from './button';
 
 export const ColumnHeader = HTML.extend('column header')
@@ -46,18 +46,8 @@ export const EditableList = MultiColumnList.extend('editable list')
     addButton: Button(including('+')).exists(),
     editButtons: Button({ icon: 'edit' }).exists(),
     deleteButtons: Button({ icon: 'trash' }).exists(),
+    isPresented: (el) => !!el.querySelector('[class^=mclContainer-]'),
   })
   .actions({
     add: ({ find }) => find(Button(including('+'))).click()
   });
-
-// const content = el => el.textContent;
-
-// export const EditableListCell = MultiColumnListCell.extend('editable list cell')
-//   .selector('div[class*=mclCell-]')
-//   .locator(content)
-//   .filters({
-//     row: el => +el.parentElement.getAttribute('aria-rowindex'),
-//     column: content,
-//     columnIndex: el => [...el.parentElement.children].indexOf(el),
-//   });
