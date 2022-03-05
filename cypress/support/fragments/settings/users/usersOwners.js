@@ -1,4 +1,4 @@
-import { PaneHeader, Button, MultiColumnListCell, TextField, MultiSelect, PaneSet, EditableList, EditableListRow, Modal } from '../../../../../interactors';
+import { PaneHeader, Button, MultiColumnListCell, TextField, MultiSelect, PaneSet, EditableList, EditableListRow, Modal, MultiSelectOption, ValueChipRoot, HTML, including } from '../../../../../interactors';
 import { getLongDelay } from '../../../utils/cypressTools';
 
 const rootPaneset = PaneSet({ id:'settings-owners' });
@@ -11,6 +11,12 @@ const defaultServicePoints = ['Circ Desk 1',
 
 const startRowIndex = 2;
 
+const save = (ownerName, rowNumber = 0) => {
+  cy.do(rootPaneset.find(Button({ id:`clickable-save-settings-owners-${rowNumber}` })).click());
+  cy.expect(addButton.has({ disabled: false }));
+  cy.expect(cy.expect(tableWithOwners.find(MultiColumnListCell(ownerName)).exists()));
+};
+
 export default {
   waitLoading:() => {
     cy.intercept(
@@ -22,11 +28,9 @@ export default {
     cy.wait('@getServicePoints', getLongDelay());
     cy.expect(PaneHeader('Fee/fine: Owners').exists());
     cy.expect(addButton.exists());
+    cy.expect(rootPaneset.find(HTML({ className: including('spinner') })).absent());
   },
-  addNewLine: () => {
-    cy.do(addButton.click());
-    cy.expect(tableWithOwners.exists());
-  },
+  startNewLineAdding: () => cy.do(addButton.click()),
   defaultServicePoints,
   getUsedServicePoints: () => {
     cy.then(() => rootPaneset.find(EditableList()).isPresented()).then(isPresented => {
@@ -54,7 +58,7 @@ export default {
     cy.do(tableWithOwners.find(TextField({ name:'items[0].owner' })).fillIn(userName));
     cy.do(tableWithOwners.find(MultiSelect({ ariaLabelledby: 'associated-service-point-label' })).select(servicePoint));
   },
-  save:(rowNumber = 0) => cy.do(rootPaneset.find(Button({ id:`clickable-save-settings-owners-${rowNumber}` })).click()),
+  save,
   delete: (selectedDervicePoint) => {
     cy.then(() => tableWithOwners.find(MultiColumnListCell(selectedDervicePoint)).row())
       .then(rowNumber => {
@@ -63,5 +67,27 @@ export default {
         cy.do(Modal('Delete Fee/fine owner').find(Button('Delete')).click());
         cy.expect(Modal('Delete Fee/fine owner').absent());
       });
+  },
+  checkUsedServicePoints:(usedServicePoints) => {
+    cy.do(tableWithOwners.find(MultiSelect({ ariaLabelledby: 'associated-service-point-label' })).open());
+    usedServicePoints.forEach(userServicePoint => cy.expect(MultiSelectOption(userServicePoint).absent()));
+  },
+  unselectExistingServicePoint:(usedServicePoint) => {
+    cy.then(() => tableWithOwners.find(MultiColumnListCell(usedServicePoint)).row())
+      .then(rowNumber => {
+        const currentRow = tableWithOwners.find(EditableListRow({ index:rowNumber - startRowIndex }));
+        // filter index implemented based on parent-child relations. aria-rowindex calculated started from 2. Need to count it.
+        cy.do(currentRow.find(Button({ icon:'edit' })).click());
+        cy.do(currentRow.find(ValueChipRoot(usedServicePoint)).find(Button({ icon: 'times' })).click());
+        cy.do(currentRow.find(Button('Save')).click());
+      });
+  },
+  checkFreeServicePointPresence:(freeServicePoint) => {
+    cy.do(tableWithOwners.find(MultiSelect({ ariaLabelledby: 'associated-service-point-label' })).open());
+    cy.expect(MultiSelectOption(freeServicePoint).exists());
+  },
+  cancelAdding:(rowNumber = 0) => {
+    cy.do(rootPaneset.find(Button({ id:`clickable-cancel-settings-owners-${rowNumber}` })).click());
+    cy.expect(addButton.has({ disabled: false }));
   }
 };
