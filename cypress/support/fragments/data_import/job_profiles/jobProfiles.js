@@ -1,4 +1,4 @@
-import { Button, TextField, MultiColumnListCell, Modal } from '../../../../../interactors';
+import { Button, TextField, MultiColumnListCell, Modal, HTML, including, Section } from '../../../../../interactors';
 import { getLongDelay } from '../../../utils/cypressTools';
 import newJobProfile from './newJobProfile';
 
@@ -9,12 +9,12 @@ const openNewJobProfileForm = () => {
     actionsButton.click(),
     Button('New job profile').click(),
   ]);
+  cy.expect(HTML({ className: including('form-'), id:'job-profiles-form' }).exists());
 };
 
 const waitLoadingList = () => {
   cy.get('[id="job-profiles-list"]', getLongDelay())
     .should('be.visible');
-  cy.expect(actionsButton.exists());
 };
 
 const deleteJobProfile = (profileName) => {
@@ -60,11 +60,7 @@ export default {
     ]);
   },
 
-  waitLoadingList:() => {
-    cy.get('[id="job-profiles-list"]', getLongDelay())
-      .should('be.visible');
-    cy.expect(actionsButton.exists());
-  },
+  waitLoadingList,
 
   checkJobProfilePresented:(jobProfileTitle) => {
     cy.get('[id="job-profiles-list"]')
@@ -106,4 +102,11 @@ export default {
     openNewJobProfileForm();
     newJobProfile.fillJobProfile(jobProfile);
   },
+  select:(jobProfileTitle) => {
+    cy.do(MultiColumnListCell(jobProfileTitle).click());
+  },
+  openFileRecords:(fileName) => {
+    cy.do(Button(fileName).click());
+    cy.expect(Section({ id:'pane-results' }).exists());
+  }
 };

@@ -9,8 +9,8 @@ describe('ui-data-import: Filter the "View all" log screen', () => {
   // Path to static file in fixtures
   const pathToStaticFile = 'oneMarcBib.mrc';
   // Create unique names for MARC files
-  const fileNameForFailedImport = `test${getRandomPostfix()}.mrc`;
-  const fileNameForSuccessfulImport = `test${getRandomPostfix()}.mrc`;
+  const fileNameForFailedImport = `C11113test${getRandomPostfix()}.mrc`;
+  const fileNameForSuccessfulImport = `C11113test${getRandomPostfix()}.mrc`;
   let userName;
   let jobProfileName;
   let userNameId;

@@ -31,10 +31,11 @@ describe('ui-data-import: EDIFACT file import with creating of new invoice recor
     const jobProfileName = `autoTestJobProf.${getRandomPostfix()}`;
 
     // unique file name to upload
-    const fileName = `autotestFile.${getRandomPostfix()}.edi`;
+    const fileName = `C345423autotestFile.${getRandomPostfix()}.edi`;
 
     // create Field mapping profile
     settingsDataImport.goToMappingProfiles();
+    fieldMappingProfiles.waitLoading();
     fieldMappingProfiles.createInvoiceMappingProfile(mappingProfileName);
     fieldMappingProfiles.checkMappingProfilePresented(mappingProfileName);
 
@@ -45,6 +46,7 @@ describe('ui-data-import: EDIFACT file import with creating of new invoice recor
     };
 
     settingsDataImport.goToActionProfiles();
+    // TODO: issue with mapping of action and mapping profiles
     actionProfiles.createActionProfile(actionProfile, mappingProfileName);
     actionProfiles.checkActionProfilePresented(actionProfileName);
 

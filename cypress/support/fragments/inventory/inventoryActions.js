@@ -2,7 +2,6 @@ import { Button, Section, Select, TextField } from '../../../../interactors';
 import DateTools from '../../utils/dateTools';
 import InventoryInstance from './inventoryInstance';
 import FileManager from '../../utils/fileManager';
-import InteractorsTools from '../../utils/interactorsTools';
 
 const importButtonInActions = Button({ id: 'dropdown-clickable-import-record' });
 const importButtonInModal = Button('Import');
@@ -38,7 +37,8 @@ export default {
     this.fillImportFields(specialOCLCWorldCatidentifier);
 
     this.pressImportInModal();
-    InteractorsTools.closeCalloutMessage();
+    // TODO: see issues in cypress tests run related with this step and awaiting of holdingsRecordView
+    // InteractorsTools.closeCalloutMessage();
     InventoryInstance.checkExpectedMARCSource();
   },
 

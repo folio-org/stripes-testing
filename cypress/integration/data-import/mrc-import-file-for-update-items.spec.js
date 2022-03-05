@@ -8,7 +8,7 @@ import logs from '../../support/fragments/data_import/logs';
 import searchInventory from '../../support/fragments/data_import/searchInventory';
 import inventorySearch from '../../support/fragments/inventory/inventorySearch';
 import exportFile from '../../support/fragments/data-export/exportFile';
-import topMenu from '../../support/fragments/topMenu';
+import TopMenu from '../../support/fragments/topMenu';
 import exportMarcFile from '../../support/fragments/data-export/export-marc-file';
 import settingsDataImport from '../../support/fragments/data_import/settingsDataImport';
 import matchProfiles from '../../support/fragments/data_import/match_profiles/match-profiles';
@@ -187,7 +187,7 @@ describe('ui-data-import: MARC file upload with the update of instance, holding,
   ];
 
   // file names
-  const nameMarcFileForImportCreate = `autotestFile.${getRandomPostfix()}.mrc`;
+  const nameMarcFileForImportCreate = `C343335autotestFile.${getRandomPostfix()}.mrc`;
   const nameForCSVFile = `autotestFile${getRandomPostfix()}.csv`;
   const nameMarcFileForImportUpdate = `autotestFile${getRandomPostfix()}.mrc`;
   // profile names for updating
@@ -240,7 +240,7 @@ describe('ui-data-import: MARC file upload with the update of instance, holding,
 
   it('C343335 MARC file upload with the update of instance, holding, and items', { tags: [testTypes.smoke] }, () => {
     // upload a marc file for creating of the new instance, holding and item
-    cy.visit(topMenu.dataImportPath);
+    cy.visit(TopMenu.dataImportPath);
     dataImport.uploadFile('oneMarcBib.mrc', nameMarcFileForImportCreate);
     jobProfiles.searchJobProfileForImport(testData.jobProfileForCreate.profile.name);
     jobProfiles.runImportFile(nameMarcFileForImportCreate);
@@ -252,13 +252,13 @@ describe('ui-data-import: MARC file upload with the update of instance, holding,
       .getInstanceHRID()
       .then(id => {
         // download .csv file
-        cy.visit(topMenu.inventoryPath);
+        cy.visit(TopMenu.inventoryPath);
         searchInventory.searchInstanceByHRID(id);
         inventorySearch.saveUUIDs();
         exportMarcFile.downloadCSVFile(nameForCSVFile, 'SearchInstanceUUIDs*');
         fileManager.deleteFolder(Cypress.config('downloadsFolder'));
       });
-    cy.visit(topMenu.dataExportPath);
+    cy.visit(TopMenu.dataExportPath);
 
     // create Field mapping profile for export
     const exportMappingProfile = {
@@ -272,7 +272,7 @@ describe('ui-data-import: MARC file upload with the update of instance, holding,
     exportJobProfiles.createJobProfile(jobProfileNameForExport, mappingProfileNameForExport);
 
     // download exported marc file
-    cy.visit(topMenu.dataExportPath);
+    cy.visit(TopMenu.dataExportPath);
     exportFile.uploadFile(nameForCSVFile);
     exportFile.exportWithCreatedJobProfile(nameForCSVFile, jobProfileNameForExport);
     exportMarcFile.downloadExportedMarcFile(nameMarcFileForImportUpdate);
@@ -368,7 +368,7 @@ describe('ui-data-import: MARC file upload with the update of instance, holding,
     newJobProfile.saveAndClose();
 
     // upload the exported marc file
-    dataImport.goToDataImport();
+    cy.visit(TopMenu.dataImportPath);
     dataImport.uploadExportedFile(nameMarcFileForImportUpdate);
     jobProfiles.searchJobProfileForImport(jobProfileForUpdate.profileName);
     jobProfiles.runImportFile(nameMarcFileForImportUpdate);

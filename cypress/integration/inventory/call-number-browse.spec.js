@@ -16,4 +16,18 @@ describe('verify call number browse feature', () => {
     InventoryActions.actionsIsAbsent();
     InventorySearch.showsOnlyEffectiveLocation();
   });
+
+  it('C347903 Verify "Browse call numbers" option on Holdings tab', { tags: [TestTypes.smoke] }, () => {
+    InventorySearch.switchToHoldings();
+    InventorySearch.verifyKeywordsAsDefault();
+    InventorySearch.browseCallNumberIsAbsent();
+  });
+
+  // TODO: Think about creating new user with minimal permissions
+  it('C347923 Verify "Browse call numbers" option on Item tab', { tags: [TestTypes.smoke] }, () => {
+    InventorySearch.instanceTabIsDefault();
+    InventorySearch.switchToItem();
+    InventorySearch.verifyKeywordsAsDefault();
+    InventorySearch.browseCallNumberIsAbsent();
+  });
 });

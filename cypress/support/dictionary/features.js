@@ -3,4 +3,5 @@ export default { quickMarcEditor: 'quickMarcEditor',
   eHoldings:'eHoldings',
   tags: 'tags',
   holdingsRecord: 'holdingsRecord',
-  instanceRecord: 'instanceRecord' };
+  instanceRecord: 'instanceRecord',
+  authority: 'MARC Authority' };
