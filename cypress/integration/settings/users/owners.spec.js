@@ -63,6 +63,9 @@ describe('Management of n fee/fine owners and service points', () => {
           UsersOwners.checkFreeServicePointPresence(addedServicePoints.at(-1));
           cy.allure().endStep();
           UsersOwners.cancelAdding();
+          // clearing of test data collector from outdated information
+          addedServicePoints.pop();
+          UsersOwners.deleteOwner();
         });
       });
     });
@@ -70,7 +73,7 @@ describe('Management of n fee/fine owners and service points', () => {
 
   afterEach(() => {
     addedServicePoints.forEach(addedServicePoint => {
-      UsersOwners.delete(addedServicePoint);
+      UsersOwners.deleteOwnerWithServicePoint(addedServicePoint);
     });
     users.forEach(user => cy.deleteUser(user.userId));
   });

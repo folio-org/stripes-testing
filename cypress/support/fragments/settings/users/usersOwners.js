@@ -17,6 +17,13 @@ const save = (ownerName, rowNumber = 0) => {
   cy.expect(cy.expect(tableWithOwners.find(MultiColumnListCell(ownerName)).exists()));
 };
 
+// filter index implemented based on parent-child relations. aria-rowindex calculated started from 2. Need to count it.
+const deleteOwner = (rowNumber = 2) => {
+  cy.do(tableWithOwners.find(EditableListRow({ index:rowNumber - startRowIndex })).find(Button({ icon:'trash' })).click());
+  cy.do(Modal('Delete Fee/fine owner').find(Button('Delete')).click());
+  cy.expect(Modal('Delete Fee/fine owner').absent());
+};
+
 export default {
   waitLoading:() => {
     cy.intercept(
@@ -59,15 +66,13 @@ export default {
     cy.do(tableWithOwners.find(MultiSelect({ ariaLabelledby: 'associated-service-point-label' })).select(servicePoint));
   },
   save,
-  delete: (selectedDervicePoint) => {
+  deleteOwnerWithServicePoint: (selectedDervicePoint) => {
     cy.then(() => tableWithOwners.find(MultiColumnListCell(selectedDervicePoint)).row())
       .then(rowNumber => {
-        // filter index implemented based on parent-child relations. aria-rowindex calculated started from 2. Need to count it.
-        cy.do(tableWithOwners.find(EditableListRow({ index:rowNumber - startRowIndex })).find(Button({ icon:'trash' })).click());
-        cy.do(Modal('Delete Fee/fine owner').find(Button('Delete')).click());
-        cy.expect(Modal('Delete Fee/fine owner').absent());
+        deleteOwner(rowNumber);
       });
   },
+  deleteOwner,
   checkUsedServicePoints:(usedServicePoints) => {
     cy.do(tableWithOwners.find(MultiSelect({ ariaLabelledby: 'associated-service-point-label' })).open());
     usedServicePoints.forEach(userServicePoint => cy.expect(MultiSelectOption(userServicePoint).absent()));
