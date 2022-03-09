@@ -15,11 +15,11 @@ export default {
   selectInstance:(rowNumber = 0) => {
     cy.do(inventoriesList.click({ row: rowNumber }));
   },
-  add: () => {
+  add: (title) => {
     cy.do(actionsButton.click());
     cy.do(Button('New').click());
     NewInventoryInstance.waitLoading();
-    NewInventoryInstance.fillRequiredValues();
+    NewInventoryInstance.fillRequiredValues(title);
     NewInventoryInstance.save();
   }
 };

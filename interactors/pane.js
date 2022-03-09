@@ -9,6 +9,12 @@ export const PaneHeader = HTML.extend('pane header')
   .selector('[class^=paneHeader-]')
   .locator(title);
 
+export const PaneSet = HTML.extend('pane set')
+  .selector('[class^=paneset-]')
+  .filters({
+    id: el => el.getAttribute('id')
+  });
+
 export default HTML.extend('pane')
   .selector('[class^=pane-]')
   .locator(title)
