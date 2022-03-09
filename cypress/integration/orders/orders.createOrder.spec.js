@@ -12,9 +12,12 @@ describe('ui-orders: create an order', () => {
     cy.visit(TopMenu.ordersPath);
   });
 
+  afterEach(() => {
+    Orders.deleteOrderViaActions();
+  });
+
   it('C660 Create an order', { tags: [testType.smoke] }, () => {
     Orders.createOrder(order);
     Orders.checkCreatedOrder(order);
-    Orders.deleteOrderViaActions();
   });
 });
