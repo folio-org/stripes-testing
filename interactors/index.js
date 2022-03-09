@@ -28,7 +28,7 @@ export { MultiColumnList, MultiColumnListRow, MultiColumnListCell, MultiColumnLi
 export { default as MultiSelect, MultiSelectMenu, MultiSelectOption, ValueChipRoot } from './multi-select';
 export { default as NavList, NavListItem } from './navlist';
 export { default as NoValue } from './no-value';
-export { default as Pane, PaneHeader } from './pane';
+export { default as Pane, PaneHeader, PaneSet } from './pane';
 export { default as RadioButton } from './radio-button';
 export { default as RadioButtonGroup } from './radio-button-group';
 export { RepeatableField, RepeatableFieldAddButton, RepeatableFieldRemoveButton } from './repeatablefield';
