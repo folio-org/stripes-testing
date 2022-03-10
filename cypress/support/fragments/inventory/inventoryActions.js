@@ -12,10 +12,12 @@ const importTypeSelect = Select({ name :'externalIdentifierType' });
 export default {
   open: () => { return Section({ id:'pane-results' }).find(Button('Actions')).click(); },
   options: {
+    new: Button('New'),
     saveUUIDs: Button('Save instances UUIDs'),
     saveCQLQuery: Button('Save instances CQL query'),
     exportMARC: Button('Export instances (MARC)'),
     showSelectedRecords: Button('Show selected records'),
+    newRequest: Button('New Request')
   },
   optionsIsDisabled: (array) => {
     return array.forEach((element) => {
@@ -106,5 +108,5 @@ export default {
 
   actionsIsAbsent() {
     return cy.expect(Button('Actions').absent());
-  }
+  },
 };
