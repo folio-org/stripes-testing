@@ -12,10 +12,6 @@ const orderDetailsAccordionId = 'purchaseOrder';
 const createdByAdmin = 'ADMINISTRATOR, DIKU ';
 
 export default {
-  statusClosed : 'Closed',
-  statusOpen : 'Open',
-  statusPending : 'Pending',
-
   createOrderWithOrderLineViaApi(order, orderLine) {
     cy.createOrderApi(order)
       .then((response) => {
