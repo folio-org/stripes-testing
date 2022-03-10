@@ -5,10 +5,10 @@ import DateTools from '../../utils/dateTools';
 
 export default {
   searchByItemBarcode(barcode) {
-    return cy.do([
+    cy.do([
       TextField({ name: 'itemBarcode' }).fillIn(barcode),
-      Accordion({ id: 'accordion_5' }).find(Button('Apply')).click()
     ]);
+    cy.get('[class^="button-"][type="submit"]').first().click();
   },
 
   resetFilters() {
@@ -71,4 +71,7 @@ export default {
       Accordion({ id: 'date' }).find(Button('Apply')).click()
     ]);
   },
+  resetResults() {
+    cy.do(Button('Reset all').click());
+  }
 };
