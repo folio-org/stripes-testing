@@ -6,7 +6,7 @@ const childIndex = el => [...el.parentElement.children].indexOf(el);
 const content = el => el.textContent;
 
 export const MultiColumnListRow = HTML.extend('multi column list row')
-  .selector('[data-row-inner]')
+  .selector('[data-row-inner],[class^=mclRowFormatterContainer-]')
   .filters({
     selected: el => el.className.match(/mclSelected/),
     cellCount: el => [...el.querySelectorAll('div[class*=mclCell-]')].length,
@@ -20,13 +20,14 @@ export const MultiColumnListCell = HTML.extend('multi column list cell')
   .locator(content)
   .filters({
     content,
-    row: el => +el.parentElement.getAttribute('data-row-inner'),
+    row: (el) => (+el.parentElement.getAttribute('data-row-inner') ? +el.parentElement.getAttribute('data-row-inner') : +el.parentElement.getAttribute('aria-rowindex')),
     column: (el) => el.textContent,
     columnIndex: childIndex,
     selected: (el) => !!el.parentElement.className.match(/mclSelected/),
     measured: (el) => el.style && el.style.width !== '',
     visible: (el) => isVisible(el),
     inputTextFieldNames: (el) => [...el.querySelectorAll('input')].map(input => input.name),
+    liValues: (el) => [...el.querySelectorAll('li')].map(li => li.textContent)
   });
 
 export const MultiColumnListHeader = HTML.extend('multi column list header')

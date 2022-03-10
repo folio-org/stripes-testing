@@ -9,6 +9,7 @@ const editIconButton = Button({ icon: 'edit' });
 function getEditableListRow(rowNumber) { return EditableListRow({ index: +rowNumber.split('-')[1] }); }
 
 export default {
+  // TODO: redesign to SettingsMenu
   settingsInvoicePath: {
     approvals: '/approvals',
     adjustments: '/adjustments',

@@ -4,13 +4,13 @@ import {
   MultiColumnListCell,
   TextField
 } from '../../../../interactors';
-import DataImportViewAllPage from './dataImportViewAllPage';
+import logsViewAll from './logs/logsViewAll';
 import DateTools from '../../utils/dateTools';
 import InventoryInstances from '../inventory/inventoryInstances';
 
-
+// TODO replace to Inventory/inventorySearch
 const getInstanceHRID = () => {
-  return DataImportViewAllPage
+  return logsViewAll
     .getSingleJobProfile() // get the first job id from job logs list
     .then(({ id }) => {
       // then, make request with the job id
@@ -53,6 +53,14 @@ const searchInstanceByHRID = (id) => {
   InventoryInstances.waitLoading();
 };
 
+const searchInstanceByTitle = (title) => {
+  cy.do([
+    TextField({ id: 'input-inventory-search' }).fillIn(title),
+    Button('Search').click()
+  ]);
+  InventoryInstances.waitLoading();
+};
+
 // when creating mapping profile we choose status cataloged date as today
 // in inventory, it will be in YYYY-MM-DD format
 const expectedCatalogedDate = DateTools.getFormattedDate({ date: new Date() });
@@ -79,4 +87,5 @@ export default {
   searchInstanceByHRID,
   // TODO: move to existing  inventory fragment
   checkInstanceDetails,
+  searchInstanceByTitle,
 };

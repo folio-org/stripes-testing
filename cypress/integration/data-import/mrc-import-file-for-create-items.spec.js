@@ -1,16 +1,17 @@
 /// <reference types="cypress" />
 
-import fieldMappingProfiles from '../../support/fragments/data_import/mapping_profiles/fieldMappingProfiles';
-import newActionProfile from '../../support/fragments/data_import/action_profiles/newActionProfile';
-import newMappingProfile from '../../support/fragments/data_import/mapping_profiles/newMappingProfile';
-import actionProfiles from '../../support/fragments/data_import/action_profiles/actionProfiles';
-import settingsDataImport from '../../support/fragments/data_import/settingsDataImport';
-import newJobProfile from '../../support/fragments/data_import/job_profiles/newJobProfile';
+import FieldMappingProfiles from '../../support/fragments/data_import/mapping_profiles/fieldMappingProfiles';
+import NewActionProfile from '../../support/fragments/data_import/action_profiles/newActionProfile';
+import NewMappingProfile from '../../support/fragments/data_import/mapping_profiles/newMappingProfile';
+import ActionProfiles from '../../support/fragments/data_import/action_profiles/actionProfiles';
+import NewJobProfile from '../../support/fragments/data_import/job_profiles/newJobProfile';
 import getRandomPostfix from '../../support/utils/stringTools';
-import dataImport from '../../support/fragments/data_import/dataImport';
-import logs from '../../support/fragments/data_import/logs';
-import jobProfiles from '../../support/fragments/data_import/job_profiles/jobProfiles';
-import testTypes from '../../support/dictionary/testTypes';
+import DataImport from '../../support/fragments/data_import/dataImport';
+import Logs from '../../support/fragments/data_import/logs/logs';
+import JobProfiles from '../../support/fragments/data_import/job_profiles/jobProfiles';
+import TestTypes from '../../support/dictionary/testTypes';
+import SettingsMenu from '../../support/fragments/settingsMenu';
+import FileDetails from '../../support/fragments/data_import/logs/fileDetails';
 import TopMenu from '../../support/fragments/topMenu';
 
 describe('ui-data-import: MARC file import with creating of the new instance, holding and item', () => {
@@ -37,63 +38,63 @@ describe('ui-data-import: MARC file import with creating of the new instance, ho
     );
   });
 
-  it('C343334 MARC file import with creating a new mapping profiles, action profiles and job profile', { tags: [testTypes.smoke] }, () => {
+  it('C343334 MARC file import with creating a new mapping profiles, action profiles and job profile', { tags: [TestTypes.smoke] }, () => {
     const collectionOfProfiles = [
       {
-        mappingProfile: { typeValue : newMappingProfile.folioRecordTypeValue.instance,
+        mappingProfile: { typeValue: NewMappingProfile.folioRecordTypeValue.instance,
           name: mappingProfileNameForInstance },
-        actionProfile: { typeValue: newActionProfile.folioRecordTypeValue.instance,
+        actionProfile: { typeValue: NewActionProfile.folioRecordTypeValue.instance,
           name: actionProfileNameForInstance }
       },
       {
-        mappingProfile: { typeValue : newMappingProfile.folioRecordTypeValue.holdings,
+        mappingProfile: { typeValue: NewMappingProfile.folioRecordTypeValue.holdings,
           name: mappingProfileNameForHoldings },
-        actionProfile: { typeValue: newActionProfile.folioRecordTypeValue.holdings,
+        actionProfile: { typeValue: NewActionProfile.folioRecordTypeValue.holdings,
           name: actionProfileNameForHoldings }
       },
       {
-        mappingProfile: { typeValue : newMappingProfile.folioRecordTypeValue.item,
+        mappingProfile: { typeValue: NewMappingProfile.folioRecordTypeValue.item,
           name: mappingProfileNameForItem },
-        actionProfile: { typeValue: newActionProfile.folioRecordTypeValue.item,
+        actionProfile: { typeValue: NewActionProfile.folioRecordTypeValue.item,
           name: actionProfileNameForItem }
       }
     ];
 
-    const specialJobProfile = { ...newJobProfile.defaultJobProfile,
+    const specialJobProfile = { ...NewJobProfile.defaultJobProfile,
       profileName: jobProfileName,
-      acceptedType: newJobProfile.acceptedDataType.marc };
+      acceptedType: NewJobProfile.acceptedDataType.marc };
 
     collectionOfProfiles.forEach(profile => {
-      settingsDataImport.goToMappingProfiles();
-      fieldMappingProfiles.createMappingProfile(profile.mappingProfile);
-      fieldMappingProfiles.checkMappingProfilePresented(profile.mappingProfile.name);
-      settingsDataImport.goToActionProfiles();
-      actionProfiles.createActionProfile(profile.actionProfile, profile.mappingProfile.name);
-      actionProfiles.checkActionProfilePresented(profile.actionProfile.name);
+      cy.visit(SettingsMenu.mappingProfilePath);
+      FieldMappingProfiles.createMappingProfile(profile.mappingProfile);
+      FieldMappingProfiles.checkMappingProfilePresented(profile.mappingProfile.name);
+      cy.visit(SettingsMenu.actionProfilePath);
+      ActionProfiles.createActionProfile(profile.actionProfile, profile.mappingProfile.name);
+      ActionProfiles.checkActionProfilePresented(profile.actionProfile.name);
     });
 
-    settingsDataImport.goToJobProfiles();
-    jobProfiles.createJobProfile(specialJobProfile);
+    cy.visit(SettingsMenu.jobProfilePath);
+    JobProfiles.createJobProfile(specialJobProfile);
     collectionOfProfiles.forEach(profile => {
-      newJobProfile.linkActionProfile(profile.actionProfile);
+      NewJobProfile.linkActionProfile(profile.actionProfile);
     });
-    newJobProfile.saveAndClose();
-    jobProfiles.checkJobProfilePresented(specialJobProfile.profileName);
+    NewJobProfile.saveAndClose();
+    JobProfiles.checkJobProfilePresented(specialJobProfile.profileName);
 
     cy.visit(TopMenu.dataImportPath);
-    dataImport.uploadFile('oneMarcBib.mrc', fileName);
-    jobProfiles.searchJobProfileForImport(specialJobProfile.profileName);
-    jobProfiles.runImportFile(fileName);
-    logs.checkImportFile(specialJobProfile.profileName);
-    logs.checkStatusOfJobProfile();
-    logs.openJobProfile(fileName);
-    logs.checkCreatedItems();
+    DataImport.uploadFile('oneMarcBib.mrc', fileName);
+    JobProfiles.searchJobProfileForImport(specialJobProfile.profileName);
+    JobProfiles.runImportFile(fileName);
+    Logs.checkImportFile(specialJobProfile.profileName);
+    Logs.checkStatusOfJobProfile();
+    Logs.openFileDetails(fileName);
+    FileDetails.checkCreatedItems();
 
     // delete generated profiles
-    jobProfiles.deleteJobProfile(specialJobProfile.profileName);
+    JobProfiles.deleteJobProfile(specialJobProfile.profileName);
     collectionOfProfiles.forEach(profile => {
-      actionProfiles.deleteActionProfile(profile.actionProfile.name);
-      fieldMappingProfiles.deleteFieldMappingProfile(profile.mappingProfile.name);
+      ActionProfiles.deleteActionProfile(profile.actionProfile.name);
+      FieldMappingProfiles.deleteFieldMappingProfile(profile.mappingProfile.name);
     });
   });
 });

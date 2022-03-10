@@ -16,6 +16,11 @@ const closeViewModeForMappingProfile = () => {
   cy.do(iconButton.click());
 };
 
+const mappingProfileForDuplicate = {
+  gobi: 'GOBI monograph invoice',
+  harrassowitz: 'Default - Harrassowitz serials invoice',
+};
+
 const deleteFieldMappingProfile = (profileName) => {
   // get all mapping profiles
   cy
@@ -83,20 +88,22 @@ export default {
     cy.expect(MultiColumnListCell(mappingProfileName).exists());
   },
 
-  createInvoiceMappingProfile:(mappingProfileName) => {
+  createInvoiceMappingProfile:(mappingProfileName, defaultProfile, organizationName) => {
     cy.intercept(
       {
         method: 'GET',
         url: '/tags?*',
       }
     ).as('getTag');
-    searchMappingProfileForDuplicate('GOBI monograph invoice');
+    searchMappingProfileForDuplicate(defaultProfile);
     cy.wait('@getTag');
     duplicateMappingProfile();
-    newMappingProfile.fillMappingProfileForInvoice(mappingProfileName);
+    newMappingProfile.fillMappingProfileForInvoice(mappingProfileName, organizationName);
     closeViewModeForMappingProfile();
     cy.expect(actionsButton.exists());
   },
+
   deleteFieldMappingProfile,
+  mappingProfileForDuplicate,
   waitLoading: () => cy.expect(MultiColumnListRow({ index:0 }).exists())
 };

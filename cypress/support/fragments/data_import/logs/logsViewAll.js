@@ -8,8 +8,8 @@ import {
   Selection,
   SelectionList,
   TextField
-} from '../../../../interactors';
-import UrlParams from './url-params';
+} from '../../../../../interactors';
+import UrlParams from '../url-params';
 
 export default {
   gotoViewAllPage() {
