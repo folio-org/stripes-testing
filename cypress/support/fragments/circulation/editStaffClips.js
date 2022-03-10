@@ -3,6 +3,7 @@ import { Button, TextArea, NavListItem, Checkbox, Modal } from '../../../../inte
 const editButton = Button({ id: 'clickable-edit-item' });
 const staffClipsDescripton = TextArea({ id: 'input-staff-slip-description' });
 const textCheck = 'The Wines of Italyc.2';
+const saveButton = Button('Save & close');
 
 export default {
   defaultUiEditStaffClips : {
@@ -39,20 +40,21 @@ export default {
       Checkbox('item.title').click(),
       Checkbox('item.copy').click(),
       Button('Add token').click(),
+      saveButton.click()
     ]);
   },
-  saveStaffClips: () => {
-    cy.do(Button('Save & close').click());
-  },
   previewStaffClips: () => {
-    cy.do(Button('Preview').click());
-    cy.do(Button('Close').click());
+    cy.do([
+      Button('Preview').click(),
+      Button('Close').click(),
+    ]);
+    cy.expect(Modal({ id: 'preview-modal' }).exists(textCheck));
   },
   clearStaffClips: () => {
-    cy.get('.col-xs-8---BIyvu .ql-editor').click().type('{selectAll}{backspace}');
-      cy.do(staffClipsDescripton.type('{selectAll}{backspace}');
-  },
-  checkStaffClips: () => {
-    cy.expect(Modal({ id: 'preview-modal' }).exists(textCheck));
+    cy.do([
+      Button('.ql-bold ql-active').click().type('{selectAll}{backspace}'),
+      staffClipsDescripton.type('{selectAll}{backspace}'),
+      saveButton.click()
+    ]);
   },
 };
