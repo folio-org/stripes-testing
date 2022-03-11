@@ -131,5 +131,28 @@ export default {
 
   closeThirdPane: () => {
     cy.do(PaneHeader({ id: 'paneHeaderorder-details' }).find(Button({ icon: 'times' })).click());
-  }
+  },
+
+  getSearchParamsMap(orderNumber, currentDate) {
+    const searchParamsMap = new Map();
+    searchParamsMap.set('PO number', orderNumber)
+      .set('Keyword', orderNumber)
+      .set('Date created', currentDate);
+    return searchParamsMap;
+  },
+
+  checkPoSearch(searchParamsMap, orderNumber) {
+    for (const [key, value] of searchParamsMap.entries()) {
+      cy.do([
+        SearchField({ id: 'input-record-search' }).selectIndex(key),
+        SearchField({ id: 'input-record-search' }).fillIn(value),
+        Button('Search').click(),
+      ]);
+      // verify that first row in the result list contains related order line title
+      this.checkSearchResults(orderNumber);
+      this.resetFilters();
+      // TODO: remove waiter - currenty it's a workaround for incorrect selection from search list
+      cy.wait(1000);
+    }
+  },
 };
