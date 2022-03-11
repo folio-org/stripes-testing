@@ -22,7 +22,7 @@ describe('Manage holding records through quickmarc editor', () => {
     InventoryActions.import();
     // TODO: redesign to api step
     InventorySteps.addMarcHoldingRecord();
-    HoldingsRecordView.gotoEditInQuickMarc();
+    HoldingsRecordView.editInQuickMarc();
     QuickMarcEditor.waitLoading();
   });
   it('C345390 Add a field to a record using quickMARC', { tags: [TestTypes.smoke, Features.quickMarcEditor] }, () => {
@@ -46,7 +46,7 @@ describe('Manage holding records through quickmarc editor', () => {
     HoldingsRecordView.viewSource();
     InventoryViewSource.contains(changed008TagValue);
     InventoryViewSource.close();
-    HoldingsRecordView.gotoEditInQuickMarc();
+    HoldingsRecordView.editInQuickMarc();
     QuickMarcEditor.waitLoading();
 
     const cleared008TagValue = QuickMarcEditor.clearTag008();
@@ -54,7 +54,7 @@ describe('Manage holding records through quickmarc editor', () => {
     HoldingsRecordView.viewSource();
     InventoryViewSource.contains(cleared008TagValue);
     InventoryViewSource.close();
-    HoldingsRecordView.gotoEditInQuickMarc();
+    HoldingsRecordView.editInQuickMarc();
     QuickMarcEditor.waitLoading();
     QuickMarcEditor.checkReplacedVoidValuesInTag008();
   });
