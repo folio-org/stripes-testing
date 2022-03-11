@@ -7,6 +7,7 @@ import testTypes from '../../support/dictionary/testTypes';
 import features from '../../support/dictionary/features';
 import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
 import NewHoldingsRecord from '../../support/fragments/inventory/newHoldingsRecord';
+import HoldingsRecordEdit from '../../support/fragments/inventory/holdingsRecordEdit';
 
 
 describe('Manage holding records with FOLIO source', () => {
@@ -20,7 +21,10 @@ describe('Manage holding records with FOLIO source', () => {
     InventoryInstance.goToHoldingView();
     HoldingsRecordView.checkSource('FOLIO');
     HoldingsRecordView.checkActionsMenuOptionsInFolioSource();
-    // // TODO: add verification of readonly fields - FAT-1135
+    HoldingsRecordView.edit();
+    HoldingsRecordEdit.waitLoading();
+    HoldingsRecordEdit.checkReadOnlyFields();
+    HoldingsRecordEdit.closeWithoutSave();
     HoldingsRecordView.tryToDelete();
     HoldingsRecordView.duplicate();
     NewHoldingsRecord.checkSource();

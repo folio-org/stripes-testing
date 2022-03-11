@@ -1,4 +1,4 @@
-import DataImportViewAllPage from '../../support/fragments/data_import/dataImportViewAllPage';
+import LogsViewAll from '../../support/fragments/data_import/logs/logsViewAll';
 import FileManager from '../../support/utils/fileManager';
 import DateTools from '../../support/utils/dateTools';
 import { Accordion } from '../../../interactors';
@@ -48,7 +48,7 @@ describe('ui-data-import: Filter the "View all" log screen', () => {
   });
 
   beforeEach(() => {
-    DataImportViewAllPage.getSingleJobProfile().then(({ jobProfileInfo, runBy, userId }) => {
+    LogsViewAll.getSingleJobProfile().then(({ jobProfileInfo, runBy, userId }) => {
       jobProfileName = jobProfileInfo.name;
       userName = `${runBy.firstName} ${runBy.lastName}`;
       userNameId = userId;
@@ -57,14 +57,14 @@ describe('ui-data-import: Filter the "View all" log screen', () => {
   });
 
   it('C11113 Filter the "View all" log screen', { tags: '@smoke' }, () => {
-    DataImportViewAllPage.gotoViewAllPage();
-    DataImportViewAllPage.checkByReverseChronologicalOrder();
+    LogsViewAll.gotoViewAllPage();
+    LogsViewAll.checkByReverseChronologicalOrder();
 
     // FILTER By "Errors in Import"
-    DataImportViewAllPage.errorsInImportStatuses.forEach((filter) => {
-      DataImportViewAllPage.filterJobsByErrors(filter);
-      DataImportViewAllPage.checkByErrorsInImport({ filter });
-      DataImportViewAllPage.resetAllFilters();
+    LogsViewAll.errorsInImportStatuses.forEach((filter) => {
+      LogsViewAll.filterJobsByErrors(filter);
+      LogsViewAll.checkByErrorsInImport({ filter });
+      LogsViewAll.resetAllFilters();
     });
 
     // FILTER By "Date"
@@ -77,28 +77,28 @@ describe('ui-data-import: Filter the "View all" log screen', () => {
     // api endpoint expects completedDate increased by 1 day
     completedDate.setDate(completedDate.getDate() + 1);
 
-    DataImportViewAllPage.filterJobsByDate({ from: formattedStart, end: formattedStart });
+    LogsViewAll.filterJobsByDate({ from: formattedStart, end: formattedStart });
 
     const formattedEnd = DateTools.getFormattedDate({ date: completedDate });
-    DataImportViewAllPage.checkByDate({ from: formattedStart, end: formattedEnd });
-    DataImportViewAllPage.resetAllFilters();
+    LogsViewAll.checkByDate({ from: formattedStart, end: formattedEnd });
+    LogsViewAll.resetAllFilters();
 
     // FILTER By "Job profile"
-    DataImportViewAllPage.filterJobsByJobProfile(jobProfileName);
-    DataImportViewAllPage.checkByJobProfileName({ jobProfileName, profileId });
-    DataImportViewAllPage.resetAllFilters();
+    LogsViewAll.filterJobsByJobProfile(jobProfileName);
+    LogsViewAll.checkByJobProfileName({ jobProfileName, profileId });
+    LogsViewAll.resetAllFilters();
 
     // FILTER By "User"
-    DataImportViewAllPage.filterJobsByUser(userName);
-    DataImportViewAllPage.checkByUserName({ userName, userId: userNameId });
-    DataImportViewAllPage.resetAllFilters();
+    LogsViewAll.filterJobsByUser(userName);
+    LogsViewAll.checkByUserName({ userName, userId: userNameId });
+    LogsViewAll.resetAllFilters();
 
     // FILTER By "Inventory single record imports"
     cy.do(Accordion({ id: 'singleRecordImports' }).clickHeader());
-    DataImportViewAllPage.singleRecordImportsStatuses.forEach(filter => {
-      DataImportViewAllPage.filterJobsByInventorySingleRecordImports(filter);
-      DataImportViewAllPage.checkByInventorySingleRecord({ filter });
-      DataImportViewAllPage.resetAllFilters();
+    LogsViewAll.singleRecordImportsStatuses.forEach(filter => {
+      LogsViewAll.filterJobsByInventorySingleRecordImports(filter);
+      LogsViewAll.checkByInventorySingleRecord({ filter });
+      LogsViewAll.resetAllFilters();
     });
 
     // FILTER By more than one filter
@@ -107,11 +107,11 @@ describe('ui-data-import: Filter the "View all" log screen', () => {
     // close opened User accordion before search
     // because filterJobsByUser method opens it
     cy.do(Accordion({ id: 'userId' }).clickHeader());
-    const filter = DataImportViewAllPage.errorsInImportStatuses[0];
+    const filter = LogsViewAll.errorsInImportStatuses[0];
 
-    DataImportViewAllPage.filterJobsByErrors(filter);
-    DataImportViewAllPage.filterJobsByUser(userName);
-    DataImportViewAllPage.checkByErrorsInImportAndUser({ filter, userName, userId: userNameId });
-    DataImportViewAllPage.resetAllFilters();
+    LogsViewAll.filterJobsByErrors(filter);
+    LogsViewAll.filterJobsByUser(userName);
+    LogsViewAll.checkByErrorsInImportAndUser({ filter, userName, userId: userNameId });
+    LogsViewAll.resetAllFilters();
   });
 });
