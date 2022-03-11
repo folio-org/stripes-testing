@@ -1,5 +1,5 @@
 import { Button, SearchField, PaneHeader, Pane, Select, Accordion, KeyValue, Checkbox, MultiColumnList, MultiColumnListCell, MultiColumnListRow } from '../../../../interactors';
-import Helper from '../finance/financeHelper';
+import SearchHelper from '../finance/financeHelper';
 import InteractorsTools from '../../utils/interactorsTools';
 
 const actionsButton = Button('Actions');
@@ -84,7 +84,7 @@ export default {
       SearchField({ id: searhInputId }).fillIn(organizationName),
       searchButton.click()
     ]);
-    Helper.selectFromResultsList();
+    SearchHelper.selectFromResultsList();
   },
 
   checkCreatedOrder: (order) => {

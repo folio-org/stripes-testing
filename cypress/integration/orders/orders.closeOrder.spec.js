@@ -1,13 +1,13 @@
-import newOrder from '../../support/fragments/orders/newOrder';
-import basicOrderLine from '../../support/fragments/orders/basicOrderLine';
-import testType from '../../support/dictionary/testTypes';
+import NewOrder from '../../support/fragments/orders/newOrder';
+import BasicOrderLine from '../../support/fragments/orders/basicOrderLine';
+import TestType from '../../support/dictionary/testTypes';
 import Orders from '../../support/fragments/orders/orders';
 import TopMenu from '../../support/fragments/topMenu';
 import Helper from '../../support/fragments/finance/financeHelper';
 
 describe('orders: Close Order', () => {
-  const order = { ...newOrder.defaultOrder };
-  const orderLine = { ...basicOrderLine.defaultOrderLine };
+  const order = { ...NewOrder.defaultOrder };
+  const orderLine = { ...BasicOrderLine.defaultOrderLine };
   const locationName = 'Main Library';
 
   before(() => {
@@ -25,7 +25,7 @@ describe('orders: Close Order', () => {
     cy.login(Cypress.env('diku_login'), Cypress.env('diku_password'));
   });
 
-  it('C667 Close an existing order', { tags: [testType.smoke] }, () => {
+  it('C667 Close an existing order', { tags: [TestType.smoke] }, () => {
     Orders.createOrderWithOrderLineViaApi(order, orderLine)
       .then(orderNumber => {
         cy.visit(TopMenu.ordersPath);
