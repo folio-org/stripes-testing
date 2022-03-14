@@ -195,5 +195,14 @@ export default {
   },
   checkAddItem:(holdingsRecrodId) => {
     cy.expect(section.find(Section({ id:holdingsRecrodId })).find(Button({ id: `clickable-new-item-${holdingsRecrodId}` })).exists());
-  }
+  },
+
+  checkInstanceIdentifier: () => {
+    const expectedResourceIdentifierType = 'ASIN';
+
+    cy.expect(Accordion('Identifiers').find(MultiColumnList({ id: 'list-identifiers' })
+      .find(MultiColumnListRow({ index: 0 })))
+      .find(MultiColumnListCell({ columnIndex: 0 }))
+      .has({ content: expectedResourceIdentifierType }));
+  },
 };

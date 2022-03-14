@@ -19,7 +19,6 @@ describe('ui-data-import: Import a large EDIFACT invoice file', () => {
   const actionProfileName = `autoTestActionProf.${getRandomPostfix()}`;
   const jobProfileName = `autoTestJobProf.${getRandomPostfix()}`;
 
-
   before(() => {
     cy.login(
       Cypress.env('diku_login'),
