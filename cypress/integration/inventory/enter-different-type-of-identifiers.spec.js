@@ -28,7 +28,10 @@ describe('enter different type of identifiers', () => {
   });
 
   afterEach(() => {
-
+    cy.getInstanceIdApi()
+      .then(({ body }) => {
+        cy.deleteInstanceApi(body.instances[body.instances.length - 1].id);
+      });
   });
 
   [
@@ -42,7 +45,7 @@ describe('enter different type of identifiers', () => {
       inventoryInstance.editInstance();
       InventoryInstanceEdit.addIdentifier(identifier);
       InventorySearch.searchByParameter('Identifier (all)', identifier);
-      inventoryInstance.checkInstanceIdentifier();
+      inventoryInstance.checkInstanceIdentifier(identifier);
     });
   });
 });
