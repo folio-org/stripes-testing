@@ -1,4 +1,4 @@
-import { Button, TextField, MultiColumnListCell, Modal, HTML, including, Section } from '../../../../../interactors';
+import { Button, TextField, MultiColumnListCell, Modal, HTML, including, Section, PaneHeader } from '../../../../../interactors';
 import { getLongDelay } from '../../../utils/cypressTools';
 import newJobProfile from './newJobProfile';
 
@@ -117,5 +117,6 @@ export default {
   openFileRecords:(fileName) => {
     cy.do(Button(fileName).click());
     cy.expect(Section({ id:'pane-results' }).exists());
+    cy.expect(PaneHeader(fileName).exists());
   }
 };
