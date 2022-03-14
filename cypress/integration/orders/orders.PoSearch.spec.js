@@ -5,11 +5,11 @@ import Orders from '../../support/fragments/orders/orders';
 import TopMenu from '../../support/fragments/topMenu';
 import DateTools from '../../support/utils/dateTools';
 import SearchHelper from '../../support/fragments/finance/financeHelper';
+import OrdersHelper from '../../support/fragments/orders/ordersHelper';
 
 describe('orders: Test PO search', () => {
   const order = { ...NewOrder.defaultOrder };
   const orderLine = { ...BasicOrderLine.defaultOrderLine };
-  const locationName = 'Main Library';
 
   before(() => {
     cy.getToken(Cypress.env('diku_login'), Cypress.env('diku_password'));
@@ -19,7 +19,7 @@ describe('orders: Test PO search', () => {
         orderLine.physical.materialSupplier = organization.id;
         orderLine.eresource.accessProvider = organization.id;
       });
-    cy.getLocations({ query: `name="${locationName}"` })
+    cy.getLocations({ query: `name="${OrdersHelper.mainLibraryLocation}"` })
       .then(location => { orderLine.locations[0].locationId = location.id; });
     cy.getMaterialTypes({ query: 'name="book"' })
       .then(materialType => { orderLine.physical.materialType = materialType.id; });
@@ -41,7 +41,7 @@ describe('orders: Test PO search', () => {
         // open order to check 'date opened' search
         Orders.searchByParameter('PO number', orderNumber);
         SearchHelper.selectFromResultsList();
-        Orders.openOrderViaActions();
+        Orders.openOrder();
         Orders.closeThirdPane();
         Orders.resetFilters();
         Orders.searchByParameter('Date opened', DateTools.getFormattedDate({ date: today }, 'MM/DD/YYYY'));
