@@ -34,9 +34,9 @@ export default {
     ]);
   },
   fillStaffClips: (editStaffClipsHold) => {
-    cy.get('#toolbar .ql-token ').click();
     cy.do([
       staffClipsDescripton.fillIn(editStaffClipsHold.description),
+      Button({ className: 'ql-token' }).click(),
       Checkbox('item.title').click(),
       Checkbox('item.copy').click(),
       Button('Add token').click(),
@@ -50,11 +50,31 @@ export default {
     ]);
     cy.expect(Modal({ id: 'preview-modal' }).exists(textCheck));
   },
+  fillAndPreviewTemplate() {
+    this.fillStaffClips();
+    this.previewStaffClips();
+  },
   clearStaffClips: () => {
+    cy.get('.ql-editor').type('{selectAll}{backspace}');
     cy.do([
-      Button('.ql-bold ql-active').click().type('{selectAll}{backspace}'),
       staffClipsDescripton.type('{selectAll}{backspace}'),
-      saveButton.click()
+      saveButton.click(),
     ]);
+  },
+  editAndClearHold() {
+    this.editHold();
+    this.clearStaffClips();
+  },
+  editAndClearPickslip() {
+    this.editPickslip();
+    this.clearStaffClips();
+  },
+  editAndClearRequestDelivery() {
+    this.editRequestDelivery();
+    this.clearStaffClips();
+  },
+  editAndClearTransit() {
+    this.editTransit();
+    this.clearStaffClips();
   },
 };

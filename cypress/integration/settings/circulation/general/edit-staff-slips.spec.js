@@ -1,7 +1,7 @@
 import TestType from '../../../../support/dictionary/testTypes';
 import EditStaffClips from '../../../../support/fragments/circulation/editStaffClips';
 import SettingsMenu from '../../../../support/fragments/settingsMenu';
-// TO DO: update test with duplicate and edit methods, after PO will review test case.
+
 describe('ui-circulation-settings: Edit Staff slip settings', () => {
   const editStaffClipsHold = { ...EditStaffClips.defaultUiEditStaffClips };
   beforeEach('login', () => {
@@ -9,26 +9,18 @@ describe('ui-circulation-settings: Edit Staff slip settings', () => {
     cy.visit(`${SettingsMenu.circulationStaffSlipsPath}`);
   });
 
-  it('C347901 Staff slip settings', { tags: [TestType.smoke] }, () => {
+  it('C347901 Staff clips settings', { tags: [TestType.smoke] }, () => {
     EditStaffClips.editHold(editStaffClipsHold);
-    EditStaffClips.fillStaffClips();
-    EditStaffClips.previewStaffClips();
+    EditStaffClips.fillAndPreviewTemplate();
     EditStaffClips.editPickslip(editStaffClipsHold);
-    EditStaffClips.fillStaffClips();
-    EditStaffClips.previewStaffClips();
+    EditStaffClips.fillAndPreviewTemplate();
     EditStaffClips.editRequestDelivery(editStaffClipsHold);
-    EditStaffClips.fillStaffClips();
-    EditStaffClips.previewStaffClips();
+    EditStaffClips.fillAndPreviewTemplate();
     EditStaffClips.editTransit(editStaffClipsHold);
-    EditStaffClips.fillStaffClips();
-    EditStaffClips.previewStaffClips();
-    EditStaffClips.editHold(editStaffClipsHold);
-    EditStaffClips.clearStaffClips();
-    EditStaffClips.editPickslip(editStaffClipsHold);
-    EditStaffClips.clearStaffClips();
-    EditStaffClips.editRequestDelivery(editStaffClipsHold);
-    EditStaffClips.clearStaffClips();
-    EditStaffClips.editTransit(editStaffClipsHold);
-    EditStaffClips.clearStaffClips();
+    EditStaffClips.fillAndPreviewTemplate();
+    EditStaffClips.editAndClearHold();
+    EditStaffClips.editAndClearPickslip();
+    EditStaffClips.editAndClearRequestDelivery();
+    EditStaffClips.editAndClearTransit();
   });
 });
