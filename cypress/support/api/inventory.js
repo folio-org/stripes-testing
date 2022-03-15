@@ -77,6 +77,17 @@ Cypress.Commands.add('getInstanceTypes', (searchParams) => {
     });
 });
 
+Cypress.Commands.add('getInstanceIdentifierTypes', (searchParams) => {
+  cy
+    .okapiRequest({
+      path: 'identifier-types',
+      searchParams,
+    })
+    .then(({ body }) => {
+      Cypress.env('identifierTypes', body.identifierTypes);
+    });
+});
+
 Cypress.Commands.add('createInstance', ({ instance, holdings = [], items = [] }) => {
   const instanceId = uuid();
 

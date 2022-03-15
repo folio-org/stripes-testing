@@ -9,6 +9,7 @@ describe('ui-orders: create an order', () => {
   before(() => {
     cy.login(Cypress.env('diku_login'), Cypress.env('diku_password'));
     order.vendor = 'Amazon.com';
+    order.orderType = 'One-time';
     cy.visit(TopMenu.ordersPath);
   });
 

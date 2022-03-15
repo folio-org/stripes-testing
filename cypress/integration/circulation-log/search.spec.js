@@ -9,7 +9,8 @@ describe('Circulation log filters', () => {
   before('create inventory instance', () => {
     cy.login(Cypress.env('diku_login'), Cypress.env('diku_password'));
     cy.visit(TopMenu.circulationLogPath);
-    cy.getToken('diku_admin', 'admin')
+    cy.getToken(Cypress.env('diku_login'),
+      Cypress.env('diku_password'))
       .then(() => {
         cy.getLoanTypes({ limit: 1 });
         cy.getMaterialTypes({ limit: 1 });
