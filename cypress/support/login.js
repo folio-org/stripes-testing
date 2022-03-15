@@ -2,14 +2,14 @@ import localforage from 'localforage';
 
 import { Button, Dropdown, TextField, Heading, including } from '../../interactors';
 
-Cypress.Commands.add('login', (username, password) => {
+Cypress.Commands.add('login', (username, password, visitPath = { path: '/', waiter: () => cy.expect(Heading(including('Welcome')).exists()) }) => {
   // We use a behind-the-scenes method of ensuring we are logged
   // out, rather than using the UI, in accordance with the Best
   // Practices guidance at
   // https://docs.cypress.io/guides/references/best-practices.html#Organizing-Tests-Logging-In-Controlling-State
   localforage.removeItem('okapiSess');
 
-  cy.visit('/');
+  cy.visit(visitPath.path);
 
   // Todo: find the way to wrap interactor to cy chainable object
   cy.do([
@@ -22,7 +22,7 @@ Cypress.Commands.add('login', (username, password) => {
   // https://stackoverflow.com/questions/57464806/set-timeout-for-cypress-expect-assertion
   // https://docs.cypress.io/api/commands/wrap#Requirements
 
-  cy.expect(Heading(including('Welcome')).exists());
+  visitPath.waiter();
 
   // There seems to be a race condition here: sometimes there is
   // re-render that happens so quickly that following actions like

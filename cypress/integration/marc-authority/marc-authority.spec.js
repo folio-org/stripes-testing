@@ -13,10 +13,10 @@ import { getLongDelay } from '../../support/utils/cypressTools';
 
 describe('MARC Authority management', () => {
   let userId = '';
-  const fileName = `autotestFile.${getRandomPostfix()}.mrc`;
-  let internalAuthorityId;
 
-  before(() => {
+  beforeEach(() => {
+    const fileName = `autotestFile.${getRandomPostfix()}.mrc`;
+
     // TODO: verify final set of permissions with PO
     cy.createTempUser([
       Permissions.uiTenantSettingsSettingsLocation.gui,
@@ -39,29 +39,25 @@ describe('MARC Authority management', () => {
       DataImport.getLinkToAuthority(MarcAuthority.defaultAuthority.headingReference).then(link => {
         const jobLogEntryId = link.split('/').at(-2);
         const recordId = link.split('/').at(-1);
-
         cy.intercept({
           method: 'GET',
           url: `/metadata-provider/jobLogEntries/${jobLogEntryId}/records/${recordId}`,
         }).as('getRecord');
         cy.visit(link);
-
         cy.wait('@getRecord', getLongDelay()).then(response => {
-          cy.log('relatedAuthorityInfo = ' + JSON.stringify(response.response.body.relatedAuthorityInfo));
-          internalAuthorityId = response.response.body.relatedAuthorityInfo.idList[0];
+          const internalAuthorityId = response.response.body.relatedAuthorityInfo.idList[0];
+          cy.visit(TopMenu.marcAuthorities);
+          MarcAuthoritiesSearch.searchBy('Uniform title', MarcAuthority.defaultAuthority.headingReference);
+          MarcAuthorities.select(internalAuthorityId);
+          MarcAuthority.waitLoading();
+          MarcAuthority.edit();
+          QuickMarcEditor.waitLoading();
         });
       });
     });
   });
 
   it('C350572 Edit an Authority record', { tags:  [TestTypes.smoke, Features.authority] }, () => {
-    cy.visit(TopMenu.marcAuthorities);
-    MarcAuthoritiesSearch.searchBy('Uniform title', MarcAuthority.defaultAuthority.headingReference);
-    MarcAuthorities.select(internalAuthorityId);
-    MarcAuthority.waitLoading();
-    MarcAuthority.edit();
-    QuickMarcEditor.waitLoading();
-
     const quickmarcEditor = new QuickMarcEditor(MarcAuthority.defaultAuthority);
     const updatedInSourceRow = quickmarcEditor.addNewField();
     const addedInSourceRow = quickmarcEditor.updateExistingField();
@@ -73,6 +69,10 @@ describe('MARC Authority management', () => {
     MarcAuthoritiesSearch.searchBy('Uniform title', addedInSourceRow);
     MarcAuthorities.checkRow(addedInSourceRow);
     MarcAuthorities.checkRowsCount(1);
+  });
+
+  it('C350575  MARC Authority fields LEADER and 008 can not be deleted', { tags:  [TestTypes.smoke, Features.authority] }, () => {
+    QuickMarcEditor.checkNotDeletableTags('008', 'LDR');
   });
 
   afterEach(() => {

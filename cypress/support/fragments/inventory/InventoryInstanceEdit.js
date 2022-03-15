@@ -1,9 +1,10 @@
 import { Accordion, Button, Section, Select, TextArea, TextField, FieldSet } from '../../../../interactors';
 import InteractorsTools from '../../utils/interactorsTools';
+import getRandomPostfix from '../../utils/stringTools';
 
 const closeButton = Button({ icon: 'times' });
 const rootSection = Section({ id: 'instance-form' });
-
+const value = `test.${getRandomPostfix()}`;
 
 export default {
   close:() => cy.do(closeButton.click()),
@@ -64,5 +65,13 @@ export default {
     InteractorsTools.checkAccordionDisabledElements(Object.values(readonlyAccordions));
     InteractorsTools.checkFieldSetDisibledElements(Object.values(readonlyFieldsets));
     InteractorsTools.checkSimpleDisabledElements(getRegularElements(readonlyTextFields, readonlyButtons, readonlyTextAreas, readonlySelects));
-  }
+  },
+
+  addIdentifier:(identifier) => {
+    cy.do([
+      Button('Add identifier').click(),
+      Accordion('Identifier').find(Select({ name:'identifiers[0].identifierTypeId' })).choose(identifier),
+      TextField({ name:'identifiers[0].value' }).fillIn(value),
+      Button('Save and close').click()]);
+  },
 };

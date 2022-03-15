@@ -37,6 +37,7 @@ export const EditableListRow = MultiColumnListRow.extend('editable list row')
 
 export const EditableList = MultiColumnList.extend('editable list')
   .selector('form')
+  .locator(el => el.querySelector('[class^=mclContainer-]').id)
   .filters({
     rowCount: (el) => el.querySelectorAll('[class^=editListRow-]').length,
     addDisabled: Button({ text: including('+'), disabled: true }).exists(),
@@ -45,6 +46,7 @@ export const EditableList = MultiColumnList.extend('editable list')
     addButton: Button(including('+')).exists(),
     editButtons: Button({ icon: 'edit' }).exists(),
     deleteButtons: Button({ icon: 'trash' }).exists(),
+    isPresented: (el) => !!el.querySelector('[class^=mclContainer-]'),
   })
   .actions({
     add: ({ find }) => find(Button(including('+'))).click()
