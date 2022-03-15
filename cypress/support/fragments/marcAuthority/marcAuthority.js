@@ -1,5 +1,4 @@
-import { TextField } from 'bigtest';
-import { Section, Button, HTML, including } from '../../../../interactors';
+import { Section, Button, HTML, including, TextField } from '../../../../interactors';
 
 const defaultJobProfile = 'Default - Create SRS MARC Authority';
 const rootSection = Section({ id: 'marc-view-pane' });
@@ -36,21 +35,16 @@ const defaultAuthority = { id:'176116217',
       return Object.values(defaultAuthority.tag008AuthorityBytesProperties).filter(objectProperty => typeof objectProperty !== 'function');
     },
     convertToSource:(properties) => {
-      properties.splice(11, 0, '          ');
-      properties.splice(23, 0, ' ');
-      properties.splice(27, 0, '    ');
+      const changedProperties = [...properties];
+      changedProperties.splice(12, 0, '          ');
+      changedProperties.splice(15, 0, ' ');
+      changedProperties.splice(19, 0, '    ');
+      return changedProperties;
     },
-    getNewValueSourceLine: () => {
-      const newValues = defaultAuthority.tag008AuthorityBytesProperties.getAllProperties().map(property => property.newValue);
-      cy.log('init newValues='+ newValues);
-      defaultAuthority.tag008AuthorityBytesProperties.convertToSource(newValues);
-      cy.log('newValues='+newValues);
-      cy.log('newValues line='+newValues.join());
-      return newValues.join();
-    }
+    getNewValueSourceLine: () => defaultAuthority.tag008AuthorityBytesProperties.convertToSource(
+      defaultAuthority.tag008AuthorityBytesProperties.getAllProperties().map(property => property.newValue)
+    ).join('')
   } };
-
-
 
 export default {
   defaultAuthority,

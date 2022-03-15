@@ -215,11 +215,7 @@ export default class QuickmarcEditor {
   }
 
   updateAllDefaultValuesIn008TagInAuthority() {
-    // cy.log(JSON.stringify(TextField('Geo Subd')));
-    // cy.do(QuickMarcEditorRow({ tagValue: '008' }).find(TextField('Geo Subd')).fillIn('v'));
-    // cy.pause();
     this.validRecord.tag008AuthorityBytesProperties.getAllProperties().forEach(byteProperty => {
-      cy.log(JSON.stringify(byteProperty.interactor));
       cy.do(QuickMarcEditorRow({ tagValue: '008' }).find(byteProperty.interactor).fillIn(byteProperty.newValue));
     });
     QuickmarcEditor.pressSaveAndClose();
