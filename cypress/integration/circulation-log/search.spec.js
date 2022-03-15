@@ -37,7 +37,7 @@ describe('Circulation log filters', () => {
             cy.createInstance({
               instance: {
                 instanceTypeId: Cypress.env('instanceTypes')[0].id,
-                title: `Checkout instance ${Number(new Date())}`,
+                title: `Barcode search test ${Number(new Date())}`,
               },
               holdings: [{
                 holdingsTypeId: Cypress.env('holdingsTypes')[0].id,
@@ -70,12 +70,18 @@ describe('Circulation log filters', () => {
     SearchPane.resetResults();
   });
 
-  after('check-in and delete user', () => {
+  after('Delete all data', () => {
     cy.createItemCheckinApi({
       itemBarcode: ITEM_BARCODE,
       servicePointId: Cypress.env('servicePoints')[0].id,
       checkInDate: '2021-09-30T16:14:50.444Z',
     });
+    cy.getInstances({ limit: 1, expandAll: true, query: `"items.barcode"=="${ITEM_BARCODE}"` })
+      .then(() => {
+        cy.deleteItem(Cypress.env('instances')[0].items[0].id);
+        cy.deleteHoldingRecord(Cypress.env('instances')[0].holdings[0].id);
+        cy.deleteInstanceApi(Cypress.env('instances')[0].id);
+      });
     cy.deleteUser(userId);
   });
 
