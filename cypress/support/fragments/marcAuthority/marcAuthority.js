@@ -1,3 +1,4 @@
+import { TextField } from 'bigtest';
 import { Section, Button, HTML, including } from '../../../../interactors';
 
 const defaultJobProfile = 'Default - Create SRS MARC Authority';
@@ -10,7 +11,46 @@ const defaultAuthority = { id:'176116217',
   // it should be presented in marc bib one time to correct work(applicable in update of record)
   existingTag: '130',
   headingReference: 'Congress and foreign policy series',
-  name: 'oneMarcAuthority.mrc' };
+  name: 'oneMarcAuthority.mrc',
+  tag008AuthorityBytesProperties : {
+    geoSubd : { interactor:TextField('Geo Subd'), defaultValue:'n', newValue:'v' },
+    roman :{ interactor:TextField('Roman'), defaultValue:'|', newValue:'v' },
+    lang :{ interactor:TextField('Lang'), defaultValue:'\\', newValue:'v' },
+    kindRec : { interactor:TextField('Kind rec'), defaultValue:'a', newValue:'v' },
+    catRules: { interactor:TextField('CatRules'), defaultValue:'c', newValue:'v' },
+    sHSys: { interactor:TextField('SH Sys'), defaultValue:'a', newValue:'v' },
+    series : { interactor:TextField('Series'), defaultValue:'n', newValue:'v' },
+    numbSeries :{ interactor:TextField('Numb Series'), defaultValue:'n', newValue:'v' },
+    mainUse : { interactor:TextField('Main use'), defaultValue:'a', newValue:'v' },
+    subjUse : { interactor:TextField('Subj use'), defaultValue:'a', newValue:'v' },
+    seriesUse : { interactor:TextField('Series use'), defaultValue:'b', newValue:'v' },
+    subdType : { interactor:TextField('Subd type'), defaultValue:'n', newValue:'v' },
+    govtAg: { interactor:TextField('Govt Ag'), defaultValue:'|', newValue:'v' },
+    refEval: { interactor:TextField('RefEval'), defaultValue:'a', newValue:'v' },
+    recUpd: { interactor:TextField('RecUpd'), defaultValue:'a', newValue:'v' },
+    persName: { interactor:TextField('Pers Name'), defaultValue:'a', newValue:'v' },
+    levelEst: { interactor:TextField('Level Est'), defaultValue:'a', newValue:'v' },
+    modRecEst: { interactor:TextField('Mod Rec Est'), defaultValue:'\\', newValue:'v' },
+    source: { interactor:TextField('Source'), defaultValue:'\\', newValue:'v' },
+    getAllProperties:() => {
+      return Object.values(defaultAuthority.tag008AuthorityBytesProperties).filter(objectProperty => typeof objectProperty !== 'function');
+    },
+    convertToSource:(properties) => {
+      properties.splice(11, 0, '          ');
+      properties.splice(23, 0, ' ');
+      properties.splice(27, 0, '    ');
+    },
+    getNewValueSourceLine: () => {
+      const newValues = defaultAuthority.tag008AuthorityBytesProperties.getAllProperties().map(property => property.newValue);
+      cy.log('init newValues='+ newValues);
+      defaultAuthority.tag008AuthorityBytesProperties.convertToSource(newValues);
+      cy.log('newValues='+newValues);
+      cy.log('newValues line='+newValues.join());
+      return newValues.join();
+    }
+  } };
+
+
 
 export default {
   defaultAuthority,
