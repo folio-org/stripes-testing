@@ -1,4 +1,5 @@
 import uuid from 'uuid';
+import testType from '../../support/dictionary/testTypes';
 import TopMenu from '../../support/fragments/topMenu';
 import Requests from '../../support/fragments/requests/requests';
 import NewRequest from '../../support/fragments/requests/newRequest';
@@ -46,7 +47,7 @@ describe('Assign Tags to Request', () => {
       });
   });
 
-  it('C747 Assign Tags to Request', () => {
+  it('C747 Assign Tags to Request', { tags:  [testType.smoke] }, () => {
     const requestRecord = {
       itemBarcode: Cypress.env('items')[0].barcode,
       itemTitle: Cypress.env('items')[0].title,
