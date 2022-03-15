@@ -4,7 +4,7 @@ export default {
   acquisitionUnitsPath: 'settings/acquisition-units',
   agreementsPath: 'settings/erm',
   calendarPath: 'settings/calendar',
-  circulationPath: 'settings/circulation',
+  // Circulation
   circulationRulesPath: 'settings/circulation/rules',
   circulationOtherSettingsPath: 'settings/circulation/checkout',
   circulationStaffSlipsPath: 'settings/circulation/staffslips',
@@ -27,12 +27,13 @@ export default {
   ermComparisonsPath: 'settings/comparisons-erm',
   innReachPath: 'settings/innreach',
   inventoryPath: 'settings/inventory',
-  invoicePath: 'settings/invoice',
+  // Invoice
   invoiceApprovalsPath: 'settings/invoice/approvals',
   invoiceAdjustmentsPath: 'settings/invoice/adjustments',
   invoiceBatchGroupsPath: 'settings/invoice/batch-groups',
   invoiceBGConfigPath: 'settings/invoice/batch-group-configuration',
   invoiceVoucherPath: 'settings/invoice/voucher-number',
+
   ldpPath: 'settings/ldp',
   licensesPath: 'settings/licenses',
   localKbAdminPath: 'settings/local-kb-admin',
@@ -45,6 +46,8 @@ export default {
   remoteStoragePath: 'settings/remote-storage',
   tagsPath: 'settings/tags',
   tenantPath: 'settings/tenant-settings',
+  // Users
+  usersOwnersPath: 'settings/users/owners',
   usersPath: 'settings/users',
   mappingProfilePath: 'settings/data-import/mapping-profiles',
   actionProfilePath: 'settings/data-import/action-profiles',

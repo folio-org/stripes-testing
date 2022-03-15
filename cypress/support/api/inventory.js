@@ -77,6 +77,17 @@ Cypress.Commands.add('getInstanceTypes', (searchParams) => {
     });
 });
 
+Cypress.Commands.add('getInstanceIdentifierTypes', (searchParams) => {
+  cy
+    .okapiRequest({
+      path: 'identifier-types',
+      searchParams,
+    })
+    .then(({ body }) => {
+      Cypress.env('identifierTypes', body.identifierTypes);
+    });
+});
+
 Cypress.Commands.add('createInstance', ({ instance, holdings = [], items = [] }) => {
   const instanceId = uuid();
 
@@ -119,6 +130,13 @@ Cypress.Commands.add('createHolding', ({ holding, items = [] }) => {
     });
 });
 
+Cypress.Commands.add('deleteHoldingRecord', (holdingsRecordId) => {
+  cy.okapiRequest({
+    method: 'DELETE',
+    path: `holdings-storage/holdings/${holdingsRecordId}`,
+  });
+});
+
 Cypress.Commands.add('createItem', (item) => {
   const itemId = uuid();
 
@@ -141,6 +159,13 @@ Cypress.Commands.add('getItems', (searchParams) => {
     .then(({ body }) => {
       Cypress.env('items', body.items);
     });
+});
+
+Cypress.Commands.add('deleteItem', (itemId) => {
+  cy.okapiRequest({
+    method: 'DELETE',
+    path: `inventory/items/${itemId}`,
+  });
 });
 
 Cypress.Commands.add('getProductIdTypes', (searchParams) => {

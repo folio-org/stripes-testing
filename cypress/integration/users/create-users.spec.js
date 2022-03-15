@@ -8,7 +8,8 @@ describe('Creating user', () => {
 
   before(() => {
     cy.login(Cypress.env('diku_login'), Cypress.env('diku_password'));
-    cy.getToken('diku_admin', 'admin');
+    cy.getToken(Cypress.env('diku_login'),
+      Cypress.env('diku_password'));
   });
 
   beforeEach(() => {
