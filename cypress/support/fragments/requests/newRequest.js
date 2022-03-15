@@ -1,5 +1,4 @@
-import { Button, Select, TextField } from '../../../../interactors';
-
+import { Button, TextField } from '../../../../interactors';
 
 const actionsButton = Button('Actions');
 const newRequestButton = Button('New');
@@ -27,8 +26,6 @@ export default {
   },
 
   choosepickupServicePoint(pickupServicePoint) {
-    // eslint-disable-next-line cypress/no-unnecessary-waiting
-    // cy.wait(2000);
     cy.do(cy.get('[name="pickupServicePointId"]').select(pickupServicePoint));
   },
 

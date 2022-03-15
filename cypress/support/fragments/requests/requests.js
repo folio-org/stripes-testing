@@ -1,8 +1,4 @@
-import { Button, MultiColumnListCell, MultiSelect, Pane, IconButton, TextField } from '../../../../interactors';
-
-const closePaneButton = IconButton({ ariaLabel: 'Close ' });
-const searchRequestTextField = TextField({ id: 'input-request-search' });
-const searchRequestButton = Pane({ title: 'Search & filter' }).find(Button('Search'));
+import { Button, MultiColumnListCell, MultiSelect, Pane, IconButton, TextArea, ValueChipRoot } from '../../../../interactors';
 
 export default {
 
@@ -10,12 +6,14 @@ export default {
     cy.do([
       Pane({ title: 'Request Detail' }).find(Button('Actions')).click(),
       Button({ id: 'clickable-cancel-request' }).click(),
+      TextArea('Additional information for patron *').fillIn('test'),
+      Button('Confirm').click(),
     ]);
   },
 
   findCreatedRequest(title) {
     cy.do(cy.get('#input-request-search').type(title));
-    cy.do(searchRequestButton.click());
+    cy.do(Pane({ title: 'Search & filter' }).find(Button('Search')).click());
   },
 
   selectAwaitingDeliveryRequest() {
@@ -58,10 +56,10 @@ export default {
   },
 
   closePane(title) {
-    cy.do(Pane({ title }).find(closePaneButton).click());
+    cy.do(Pane({ title }).find(IconButton({ ariaLabel: 'Close ' })).click());
   },
 
   verifyAssignedTags() {
-    cy.expect(cy.get('#multiselect-input-input-tag').should('have.value', 'urgent'));
+    cy.expect(Pane({ title: 'Tags' }).find(ValueChipRoot('urgent')).exists());
   },
 };
