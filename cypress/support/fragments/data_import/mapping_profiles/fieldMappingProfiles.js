@@ -1,4 +1,5 @@
 import { Button, MultiColumnListCell, TextField, Pane, MultiColumnListRow } from '../../../../../interactors';
+import { getLongDelay } from '../../../utils/cypressTools';
 import newMappingProfile from './newMappingProfile';
 
 const actionsButton = Button('Actions');
@@ -48,9 +49,17 @@ const deleteFieldMappingProfile = (profileName) => {
 };
 
 const searchMappingProfileForDuplicate = (nameForSearch) => {
-  cy.do([TextField({ id:'input-search-mapping-profiles-field' }).fillIn(nameForSearch),
-    Button('Search').click()
-  ]);
+  // wait for data to be loaded
+  cy.intercept(
+    {
+      method: 'GET',
+      url: '/data-import-profiles/mappingProfiles?*',
+    }
+  ).as('getProfiles');
+  cy.do(TextField({ id:'input-search-mapping-profiles-field' }).fillIn(nameForSearch));
+  cy.wait('@getProfiles', getLongDelay());
+  cy.expect(Button('Search').has({ disabled:false }));
+  cy.do(Button('Search').click(), getLongDelay());
 };
 
 const duplicateMappingProfile = () => {
