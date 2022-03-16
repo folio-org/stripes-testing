@@ -31,7 +31,7 @@ describe('ui-data-import: MARC file import with matching for 999 ff field', () =
   const actionProfileNameForExport = `autotestActionProf${getRandomPostfix()}`;
   const jobProfileNameForExport = `autotestJobProf${getRandomPostfix()}`;
 
-  before(() => {
+  beforeEach(() => {
     cy.login(
       Cypress.env('diku_login'),
       Cypress.env('diku_password')
@@ -40,6 +40,12 @@ describe('ui-data-import: MARC file import with matching for 999 ff field', () =
       Cypress.env('diku_login'),
       Cypress.env('diku_password')
     );
+
+    DataImport.cleanUploadFile();
+  });
+
+  afterEach(() => {
+    DataImport.cleanUploadFile();
   });
 
   it('C343343 MARC file import with matching for 999 ff field', { tags: TestTypes.smoke }, () => {

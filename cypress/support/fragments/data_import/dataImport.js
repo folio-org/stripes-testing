@@ -4,6 +4,7 @@ import getRandomPostfix from '../../utils/stringTools';
 import JobProfiles from './job_profiles/jobProfiles';
 import SearchInventory from './searchInventory';
 import topMenu from '../topMenu';
+import DataImportUploadFile from '../../../../interactors/dataImportUploadFile';
 
 const uploadFile = (filePathName, fileName) => {
   cy.get('input[type=file]', getLongDelay()).attachFile({ filePath: filePathName, fileName });
@@ -15,6 +16,7 @@ export default {
   uploadExportedFile(fileName) {
     cy.get('input[type=file]', getLongDelay()).attachFile(fileName);
   },
+
   uploadMarcBib: () => {
     // unique file name to upload
     const nameForMarcFileWithBib = `autotest1Bib${getRandomPostfix()}.mrc`;
@@ -31,5 +33,14 @@ export default {
       });
     return cy.get('@requestedHrId');
   },
-  getLinkToAuthority: (title) => cy.then(() => Button(title).href())
+
+  getLinkToAuthority: (title) => cy.then(() => Button(title).href()),
+
+  cleanUploadFile:() => {
+    cy.then(() => DataImportUploadFile().deleteFilesButtonExists).then(isDeleteFilesButtonExists => {
+      if (isDeleteFilesButtonExists) {
+        cy.do(Button('Delete files').click());
+      }
+    });
+  }
 };

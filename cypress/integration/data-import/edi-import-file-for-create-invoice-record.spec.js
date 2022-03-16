@@ -12,9 +12,10 @@ import FileDetails from '../../support/fragments/data_import/logs/fileDetails';
 import SettingsMenu from '../../support/fragments/settingsMenu';
 import TopMenu from '../../support/fragments/topMenu';
 import NewMappingProfile from '../../support/fragments/data_import/mapping_profiles/newMappingProfile';
+import InvoiceView from '../../support/fragments/invoices/invoiceView';
 
 describe('ui-data-import: EDIFACT file import with creating of new invoice record', () => {
-  before(() => {
+  beforeEach(() => {
     cy.login(
       Cypress.env('diku_login'),
       Cypress.env('diku_password')
@@ -23,11 +24,15 @@ describe('ui-data-import: EDIFACT file import with creating of new invoice recor
       Cypress.env('diku_login'),
       Cypress.env('diku_password')
     );
+
+    DataImport.cleanUploadFile();
   });
 
   afterEach(() => {
     cy.getInvoiceIdApi({ query: `vendorInvoiceNo="${FileDetails.invoiceNumberFromEdifactFile}"` })
       .then(id => cy.deleteInvoiceFromStorageApi(id));
+
+    DataImport.cleanUploadFile();
   });
 
   it('C343338 EDIFACT file import with creating of new invoice record', { tags: [TestTypes.smoke] }, () => {
@@ -78,6 +83,7 @@ describe('ui-data-import: EDIFACT file import with creating of new invoice recor
     Logs.checkStatusOfJobProfile();
     Logs.openFileDetails(fileName);
     FileDetails.checkIsInvoiceCreated();
+    InvoiceView.checkInvoiceDetails(InvoiceView.vendorInvoiceNumber);
 
     // clean up generated profiles
     JobProfiles.deleteJobProfile(jobProfileName);
