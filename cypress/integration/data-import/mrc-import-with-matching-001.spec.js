@@ -19,7 +19,7 @@ import SettingsMenu from '../../support/fragments/settingsMenu';
 import FileDetails from '../../support/fragments/data_import/logs/fileDetails';
 
 describe('ui-data-import: Test MARC-MARC matching for 001 field', () => {
-  before(() => {
+  beforeEach(() => {
     cy.login(
       Cypress.env('diku_login'),
       Cypress.env('diku_password')
@@ -30,6 +30,12 @@ describe('ui-data-import: Test MARC-MARC matching for 001 field', () => {
     );
 
     cy.visit(TopMenu.dataImportPath);
+
+    DataImport.checkUploadState();
+  });
+
+  afterEach(() => {
+    DataImport.checkUploadState();
   });
 
   it('C17044: MARC-MARC matching for 001 field', { tags: TestTypes.smoke }, () => {

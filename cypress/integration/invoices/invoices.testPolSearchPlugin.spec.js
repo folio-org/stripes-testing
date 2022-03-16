@@ -6,13 +6,13 @@ import VendorAddress from '../../support/fragments/invoices/vendorAddress';
 import newOrder from '../../support/fragments/orders/newOrder';
 import newOrderLine from '../../support/fragments/orders/enchancedOrderLine';
 import Orders from '../../support/fragments/orders/orders';
+import OrdersHelper from '../../support/fragments/orders/ordersHelper';
 
 describe('ui-invoices: test POL search plugin', () => {
   const invoice = { ...NewInvoice.defaultUiInvoice };
   const vendorPrimaryAddress = { ...VendorAddress.vendorAddress };
   const order = { ...newOrder.defaultOrder };
   const orderLine = { ...newOrderLine.defaultOrderLine };
-  const locationName = 'Main Library';
   let createdOrderNumber;
 
   before(() => {
@@ -28,7 +28,7 @@ describe('ui-invoices: test POL search plugin', () => {
       });
     cy.getBatchGroups()
       .then(batchGroup => { invoice.batchGroup = batchGroup.name; });
-    cy.getLocations({ query: `name="${locationName}"` })
+    cy.getLocations({ query: `name="${OrdersHelper.mainLibraryLocation}"` })
       .then(location => { orderLine.locations[0].locationId = location.id; });
     cy.getMaterialTypes({ query: 'name="book"' })
       .then(materialType => { orderLine.physical.materialType = materialType.id; });

@@ -8,11 +8,11 @@ import Helper from '../../support/fragments/finance/financeHelper';
 import InventorySearch from '../../support/fragments/inventory/inventorySearch';
 import InventoryInstance from '../../support/fragments/inventory/inventoryInstance';
 import InteractorsTools from '../../support/utils/interactorsTools';
+import OrdersHelper from '../../support/fragments/orders/ordersHelper';
 
 describe('orders: Receive piece from Order', () => {
   const order = { ...newOrder.defaultOrder };
   const orderLine = { ...basicOrderLine.defaultOrderLine };
-  const locationName = 'Main Library';
 
   before(() => {
     cy.getToken(Cypress.env('diku_login'), Cypress.env('diku_password'));
@@ -22,7 +22,7 @@ describe('orders: Receive piece from Order', () => {
         orderLine.physical.materialSupplier = organization.id;
         orderLine.eresource.accessProvider = organization.id;
       });
-    cy.getLocations({ query: `name="${locationName}"` })
+    cy.getLocations({ query: `name="${OrdersHelper.mainLibraryLocation}"` })
       .then(location => { orderLine.locations[0].locationId = location.id; });
     cy.getMaterialTypes({ query: 'name="book"' })
       .then(materialType => { orderLine.physical.materialType = materialType.id; });
@@ -38,7 +38,7 @@ describe('orders: Receive piece from Order', () => {
         cy.visit(TopMenu.ordersPath);
         Orders.searchByParameter('PO number', orderNumber);
         Helper.selectFromResultsList();
-        Orders.openOrderViaActions();
+        Orders.openOrder();
         InteractorsTools.checkCalloutMessage(`The Purchase order - ${orderNumber} has been successfully opened`);
         Orders.receiveOrderViaActions();
         // Receiving part
@@ -50,7 +50,7 @@ describe('orders: Receive piece from Order', () => {
         InventorySearch.switchToItem();
         InventorySearch.searchByParameter('Barcode', barcode);
         Helper.selectFromResultsList();
-        InventoryInstance.checkHoldingsTable(locationName, 0, caption, barcode, 'In process');
+        InventoryInstance.checkHoldingsTable(OrdersHelper.mainLibraryLocation, 0, caption, barcode, 'In process');
       });
   });
 });

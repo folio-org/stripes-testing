@@ -10,6 +10,7 @@ const newButton = Button('New');
 const saveAndClose = Button('Save & close');
 const orderDetailsAccordionId = 'purchaseOrder';
 const createdByAdmin = 'ADMINISTRATOR, DIKU ';
+const searchField = SearchField({ id: 'input-record-search' });
 
 export default {
   createOrderWithOrderLineViaApi(order, orderLine) {
@@ -34,7 +35,7 @@ export default {
     ]);
   },
 
-  openOrderViaActions: () => {
+  openOrder: () => {
     cy.do([
       orderDetailsPane
         .find(PaneHeader({ id: 'paneHeaderorder-details' })
@@ -44,7 +45,7 @@ export default {
     ]);
   },
 
-  closeOrderViaActions: (reason) => {
+  closeOrder: (reason) => {
     cy.do([
       orderDetailsPane
         .find(PaneHeader({ id: 'paneHeaderorder-details' })
@@ -131,5 +132,29 @@ export default {
 
   closeThirdPane: () => {
     cy.do(PaneHeader({ id: 'paneHeaderorder-details' }).find(Button({ icon: 'times' })).click());
-  }
+  },
+
+  getSearchParamsMap(orderNumber, currentDate) {
+    const searchParamsMap = new Map();
+    // 'date opened' parameter verified separately due to different condition
+    searchParamsMap.set('PO number', orderNumber)
+      .set('Keyword', orderNumber)
+      .set('Date created', currentDate);
+    return searchParamsMap;
+  },
+
+  checkPoSearch(searchParamsMap, orderNumber) {
+    for (const [key, value] of searchParamsMap.entries()) {
+      cy.do([
+        searchField.selectIndex(key),
+        searchField.fillIn(value),
+        Button('Search').click(),
+      ]);
+      // verify that first row in the result list contains related order line title
+      this.checkSearchResults(orderNumber);
+      this.resetFilters();
+      // TODO: remove waiter - currenty it's a workaround for incorrect selection from search list
+      cy.wait(1000);
+    }
+  },
 };
