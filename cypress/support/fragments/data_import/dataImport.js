@@ -3,7 +3,7 @@ import { getLongDelay } from '../../utils/cypressTools';
 import getRandomPostfix from '../../utils/stringTools';
 import JobProfiles from './job_profiles/jobProfiles';
 import SearchInventory from './searchInventory';
-import topMenu from '../topMenu';
+import TopMenu from '../topMenu';
 import DataImportUploadFile from '../../../../interactors/dataImportUploadFile';
 
 const uploadFile = (filePathName, fileName) => {
@@ -21,7 +21,7 @@ export default {
     // unique file name to upload
     const nameForMarcFileWithBib = `autotest1Bib${getRandomPostfix()}.mrc`;
     // upload a marc file for export
-    cy.visit(topMenu.dataImportPath);
+    cy.visit(TopMenu.dataImportPath);
     uploadFile('oneMarcBib.mrc', nameForMarcFileWithBib);
     JobProfiles.searchJobProfileForImport(JobProfiles.defaultInstanceAndSRSMarcBib);
     JobProfiles.runImportFile(nameForMarcFileWithBib);
@@ -36,11 +36,16 @@ export default {
 
   getLinkToAuthority: (title) => cy.then(() => Button(title).href()),
 
-  cleanUploadFile:() => {
+  // delete file if it hangs unimported before test
+  checkUploadState:() => {
+    cy.allure().startStep('Delete files before upload file');
+    cy.visit(TopMenu.dataImportPath);
     cy.then(() => DataImportUploadFile().deleteFilesButtonExists).then(isDeleteFilesButtonExists => {
       if (isDeleteFilesButtonExists) {
         cy.do(Button('Delete files').click());
       }
     });
+    cy.expect(Button('or choose files').exists());
+    cy.allure().endStep();
   }
 };

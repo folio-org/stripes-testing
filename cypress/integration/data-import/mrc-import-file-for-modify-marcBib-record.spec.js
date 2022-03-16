@@ -29,7 +29,7 @@ describe('ui-data-import: Verify the possibility to modify MARC Bibliographic re
       Cypress.env('diku_password')
     );
 
-    DataImport.cleanUploadFile();
+    DataImport.checkUploadState();
   });
 
   afterEach(() => {
@@ -38,7 +38,7 @@ describe('ui-data-import: Verify the possibility to modify MARC Bibliographic re
         cy.deleteSrsRecordFromStorageApi(body.records[body.records.length - 1].id);
       });
 
-    DataImport.cleanUploadFile();
+    DataImport.checkUploadState();
   });
 
   it('C345423 Verify the possibility to modify MARC Bibliographic record', { tags: [TestTypes.smoke] }, () => {
@@ -60,9 +60,9 @@ describe('ui-data-import: Verify the possibility to modify MARC Bibliographic re
     const jobProfileName = `autoTestJobProf.${getRandomPostfix()}`;
 
     // file name
-    const nameMarcFileForCreate = `autotestFile.${getRandomPostfix()}.mrc`;
-    const nameForCSVFile = `autotestFile${getRandomPostfix()}.csv`;
-    const nameMarcFileForUpload = `autotestFile.${getRandomPostfix()}.mrc`;
+    const nameMarcFileForCreate = `C345423autotestFile.${getRandomPostfix()}.mrc`;
+    const nameForCSVFile = `C345423autotestFile${getRandomPostfix()}.csv`;
+    const nameMarcFileForUpload = `C345423autotestFile.${getRandomPostfix()}.mrc`;
 
     // upload a marc file for creating of the new instance, holding and item
     cy.visit(TopMenu.dataImportPath);

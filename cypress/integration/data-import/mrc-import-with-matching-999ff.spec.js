@@ -41,11 +41,11 @@ describe('ui-data-import: MARC file import with matching for 999 ff field', () =
       Cypress.env('diku_password')
     );
 
-    DataImport.cleanUploadFile();
+    DataImport.checkUploadState();
   });
 
   afterEach(() => {
-    DataImport.cleanUploadFile();
+    DataImport.checkUploadState();
   });
 
   it('C343343 MARC file import with matching for 999 ff field', { tags: TestTypes.smoke }, () => {

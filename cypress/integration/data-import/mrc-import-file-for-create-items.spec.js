@@ -37,11 +37,11 @@ describe('ui-data-import: MARC file import with creating of the new instance, ho
       Cypress.env('diku_password')
     );
 
-    DataImport.cleanUploadFile();
+    DataImport.checkUploadState();
   });
 
   afterEach(() => {
-    DataImport.cleanUploadFile();
+    DataImport.checkUploadState();
   });
 
   it('C343334 MARC file import with creating a new mapping profiles, action profiles and job profile', { tags: [TestTypes.smoke] }, () => {

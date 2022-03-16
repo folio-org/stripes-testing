@@ -164,7 +164,7 @@ export default {
     this.openHoldings([firstHoldingName, secondHoldingName]);
 
     cy.do([
-      Accordion({ label: including(`Holdings: ${firstHoldingName}`) }).find(MultiColumnListRow()).find(Checkbox()).click(),
+      Accordion({ label: including(`Holdings: ${firstHoldingName}`) }).find(MultiColumnListRow({ indexRow: 'row-0' })).find(Checkbox()).click(),
       Accordion({ label: including(`Holdings: ${firstHoldingName}`) }).find(Dropdown({ label: 'Move to' })).choose(including(secondHoldingName)),
     ]);
   },
@@ -173,7 +173,7 @@ export default {
     this.openHoldings([firstHoldingName, secondHoldingName]);
 
     cy.do([
-      Accordion({ label: including(`Holdings: ${secondHoldingName}`) }).find(MultiColumnListRow()).find(Checkbox()).click(),
+      Accordion({ label: including(`Holdings: ${secondHoldingName}`) }).find(MultiColumnListRow({ indexRow: 'row-0' })).find(Checkbox()).click(),
       Accordion({ label: including(`Holdings: ${secondHoldingName}`) }).find(Dropdown({ label: 'Move to' })).choose(including(firstHoldingName)),
       Modal().find(Button('Continue')).click()
     ]);

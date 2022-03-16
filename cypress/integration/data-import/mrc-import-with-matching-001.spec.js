@@ -31,11 +31,11 @@ describe('ui-data-import: Test MARC-MARC matching for 001 field', () => {
 
     cy.visit(TopMenu.dataImportPath);
 
-    DataImport.cleanUploadFile();
+    DataImport.checkUploadState();
   });
 
   afterEach(() => {
-    DataImport.cleanUploadFile();
+    DataImport.checkUploadState();
   });
 
   it('C17044: MARC-MARC matching for 001 field', { tags: TestTypes.smoke }, () => {

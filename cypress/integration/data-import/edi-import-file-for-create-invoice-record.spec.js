@@ -25,14 +25,14 @@ describe('ui-data-import: EDIFACT file import with creating of new invoice recor
       Cypress.env('diku_password')
     );
 
-    DataImport.cleanUploadFile();
+    DataImport.checkUploadState();
   });
 
   afterEach(() => {
     cy.getInvoiceIdApi({ query: `vendorInvoiceNo="${FileDetails.invoiceNumberFromEdifactFile}"` })
       .then(id => cy.deleteInvoiceFromStorageApi(id));
 
-    DataImport.cleanUploadFile();
+    DataImport.checkUploadState();
   });
 
   it('C343338 EDIFACT file import with creating of new invoice record', { tags: [TestTypes.smoke] }, () => {
@@ -42,7 +42,7 @@ describe('ui-data-import: EDIFACT file import with creating of new invoice recor
     const jobProfileName = `autoTestJobProf.${getRandomPostfix()}`;
 
     // unique file name to upload
-    const fileName = `C345423autotestFile.${getRandomPostfix()}.edi`;
+    const fileName = `C343338autotestFile.${getRandomPostfix()}.edi`;
 
     // create Field mapping profile
     cy.visit(SettingsMenu.mappingProfilePath);

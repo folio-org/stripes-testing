@@ -29,16 +29,16 @@ describe('ui-data-import: Import a large EDIFACT invoice file', () => {
       Cypress.env('diku_password')
     );
 
-    DataImport.cleanUploadFile();
+    DataImport.checkUploadState();
   });
 
   afterEach(() => {
-    DataImport.cleanUploadFile();
+    DataImport.checkUploadState();
   });
 
   it('C347615 Import a large EDIFACT invoice file', { tags: [TestTypes.smoke] }, () => {
     // unique file name to upload
-    const fileName = `autotestFile.${getRandomPostfix()}.edi`;
+    const fileName = `C347615autotestFile.${getRandomPostfix()}.edi`;
 
     // create Field mapping profile
     cy.visit(SettingsMenu.mappingProfilePath);

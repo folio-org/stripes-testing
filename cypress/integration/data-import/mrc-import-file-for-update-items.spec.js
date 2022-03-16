@@ -189,7 +189,7 @@ describe('ui-data-import: MARC file upload with the update of instance, holding,
   // file names
   const nameMarcFileForImportCreate = `C343335autotestFile.${getRandomPostfix()}.mrc`;
   const nameForCSVFile = `autotestFile${getRandomPostfix()}.csv`;
-  const nameMarcFileForImportUpdate = `autotestFile${getRandomPostfix()}.mrc`;
+  const nameMarcFileForImportUpdate = `C343335autotestFile${getRandomPostfix()}.mrc`;
   // profile names for updating
   const jobProfileNameUpdate = `autotestJobProf${getRandomPostfix()}`;
   const actionProfileNameForInstance = `autotestActionInstance${getRandomPostfix()}`;
@@ -214,7 +214,7 @@ describe('ui-data-import: MARC file upload with the update of instance, holding,
       Cypress.env('diku_password')
     );
 
-    DataImport.cleanUploadFile();
+    DataImport.checkUploadState();
 
     const jobProfile = {
       profile: {
@@ -239,7 +239,7 @@ describe('ui-data-import: MARC file upload with the update of instance, holding,
   });
 
   afterEach(() => {
-    DataImport.cleanUploadFile();
+    DataImport.checkUploadState();
   });
 
   it('C343335 MARC file upload with the update of instance, holding, and items', { tags: [TestTypes.smoke] }, () => {

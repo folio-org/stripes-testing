@@ -3,7 +3,7 @@ import getRandomPostfix from '../../support/utils/stringTools';
 import FileManager from '../../support/utils/fileManager';
 import TestTypes from '../../support/dictionary/testTypes';
 import TopMenu from '../../support/fragments/topMenu';
-import DataImport from '../../support/data-import';
+import DataImport from '../../support/fragments/data_import/dataImport';
 
 describe('ui-data-import: Search the "View all" log screen', () => {
   let id;
@@ -36,11 +36,11 @@ describe('ui-data-import: Search the "View all" log screen', () => {
       id = hrId;
     });
 
-    DataImport.cleanUploadFile();
+    DataImport.checkUploadState();
   });
 
   afterEach(() => {
-    DataImport.cleanUploadFile();
+    DataImport.checkUploadState();
   });
 
   it('C11112 Search the "View all" log screen', { tags: [TestTypes.smoke] }, () => {
