@@ -243,4 +243,9 @@ export default class QuickmarcEditor {
   }
 
   static getSourceContent(quickmarcTagValue) { return defaultFieldValues.getSourceContent(quickmarcTagValue); }
+  static checkNotDeletableTags(...tags) {
+    cy.then(() => QuickMarcEditor().presentedRowsProperties())
+      .then(presentedRowsProperties => presentedRowsProperties.filter(rowProperties => tags.includes(rowProperties.tag))
+        .forEach(specialRowsProperties => cy.expect(specialRowsProperties.isDeleteButtonExist).to.be.false));
+  }
 }

@@ -27,7 +27,7 @@ describe('Manage holding records with MARC source', () => {
       HoldingsRecordView.tryToDelete();
       HoldingsRecordView.viewSource();
       InventoryViewSource.close();
-      HoldingsRecordView.gotoEditInQuickMarc();
+      HoldingsRecordView.editInQuickMarc();
       QuickmarcEditor.waitLoading();
       QuickmarcEditor.closeWithoutSaving();
       HoldingsRecordView.duplicate();
