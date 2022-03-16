@@ -75,7 +75,7 @@ describe('MARC Authority management', () => {
     QuickMarcEditor.checkNotDeletableTags('008', 'LDR');
   });
 
-  it.only('C350575  Update 008 of Authority record', { tags:  [TestTypes.smoke, Features.authority] }, () => {
+  it('C350575  Update 008 of Authority record', { tags:  [TestTypes.smoke, Features.authority] }, () => {
     const quickmarcEditor = new QuickMarcEditor(MarcAuthority.defaultAuthority);
 
     const changedValueInSourceRow = quickmarcEditor.updateAllDefaultValuesIn008TagInAuthority();
