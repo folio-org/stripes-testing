@@ -4,6 +4,7 @@ import DateTools from '../../support/utils/dateTools';
 import { Accordion } from '../../../interactors';
 import getRandomPostfix from '../../support/utils/stringTools';
 import TopMenu from '../../support/fragments/topMenu';
+import DataImport from '../../support/fragments/data_import/dataImport';
 
 describe('ui-data-import: Filter the "View all" log screen', () => {
   // Path to static file in fixtures
@@ -54,6 +55,8 @@ describe('ui-data-import: Filter the "View all" log screen', () => {
       userNameId = userId;
       profileId = jobProfileInfo.id;
     });
+
+    DataImport.checkUploadState();
   });
 
   it('C11113 Filter the "View all" log screen', { tags: '@smoke' }, () => {

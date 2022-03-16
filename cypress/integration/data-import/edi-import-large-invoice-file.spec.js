@@ -8,10 +8,10 @@ import NewJobProfile from '../../support/fragments/data_import/job_profiles/newJ
 import JobProfiles from '../../support/fragments/data_import/job_profiles/jobProfiles';
 import DataImport from '../../support/fragments/data_import/dataImport';
 import Logs from '../../support/fragments/data_import/logs/logs';
-import FileDetails from '../../support/fragments/invoices/invoiceView';
 import SettingsMenu from '../../support/fragments/settingsMenu';
 import TopMenu from '../../support/fragments/topMenu';
 import NewMappingProfile from '../../support/fragments/data_import/mapping_profiles/newMappingProfile';
+import InvoiceView from '../../support/fragments/invoices/invoiceView';
 
 describe('ui-data-import: Import a large EDIFACT invoice file', () => {
 // unique name for profiles
@@ -19,7 +19,7 @@ describe('ui-data-import: Import a large EDIFACT invoice file', () => {
   const actionProfileName = `autoTestActionProf.${getRandomPostfix()}`;
   const jobProfileName = `autoTestJobProf.${getRandomPostfix()}`;
 
-  before(() => {
+  beforeEach(() => {
     cy.login(
       Cypress.env('diku_login'),
       Cypress.env('diku_password')
@@ -28,12 +28,17 @@ describe('ui-data-import: Import a large EDIFACT invoice file', () => {
       Cypress.env('diku_login'),
       Cypress.env('diku_password')
     );
+
+    DataImport.checkUploadState();
   });
 
-  // TODO: https://issues.folio.org/browse/MODSOURMAN-722
+  afterEach(() => {
+    DataImport.checkUploadState();
+  });
+
   it('C347615 Import a large EDIFACT invoice file', { tags: [TestTypes.smoke] }, () => {
     // unique file name to upload
-    const fileName = `autotestFile.${getRandomPostfix()}.edi`;
+    const fileName = `C347615autotestFile.${getRandomPostfix()}.edi`;
 
     // create Field mapping profile
     cy.visit(SettingsMenu.mappingProfilePath);
@@ -72,8 +77,7 @@ describe('ui-data-import: Import a large EDIFACT invoice file', () => {
     Logs.checkStatusOfJobProfile();
     Logs.checkQuantityRecordsInFile(Logs.quantityRecordsInInvoice.firstQuantity);
     Logs.openFileDetails(fileName);
-    FileDetails.checkInvoiceDetails();
-    FileDetails.checkQuantityInvoiceLinesInRecord();
+    InvoiceView.checkQuantityInvoiceLinesInRecord();
 
     // clean up generated profiles
     JobProfiles.deleteJobProfile(jobProfileName);
