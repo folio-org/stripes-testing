@@ -1,5 +1,5 @@
 import getRandomPostfix from '../../utils/stringTools';
-import { Button, TextField, TextArea, NavListItem } from '../../../../interactors';
+import { Button, TextField, TextArea, KeyValue } from '../../../../interactors';
 
 const actionsButton = Button('Actions');
 const nameField = TextField({ id: 'input-patron-notice-name' });
@@ -17,15 +17,22 @@ export default {
     cy.do(Button({ id: 'footer-save-entity' }).click());
   },
   fillGeneralInformation: (patronNoticeTemplate) => {
-    cy.get('#template-editor').type(patronNoticeTemplate.body);
+    cy.get('#template-editor')
+      .type('{selectAll}')
+      .type(patronNoticeTemplate.body);
     cy.do([
       nameField.fillIn(patronNoticeTemplate.name),
       TextArea({ id: 'input-patron-notice-description' }).fillIn(patronNoticeTemplate.description),
       TextField({ id: 'input-patron-notice-subject' }).fillIn(patronNoticeTemplate.subject),
     ]);
   },
-  checkTemplate: (patronNoticeTemplateName) => {
-    cy.expect(NavListItem(patronNoticeTemplateName).exists());
+  checkTemplate: (patronNoticeTemplate) => {
+    cy.expect([
+      KeyValue({ value: patronNoticeTemplate.name }).exists(),
+      KeyValue({ value: patronNoticeTemplate.description }).exists(),
+      KeyValue({ value: patronNoticeTemplate.subject }).exists(),
+      KeyValue({ value: patronNoticeTemplate.body }).exists(),
+    ]);
   },
   deleteTemplate: () => {
     cy.do([

@@ -11,7 +11,7 @@ describe('ui-circulation-settings: create patron notice template', () => {
 
   it('C199656 Create notice template', { tags: [TestType.smoke] }, () => {
     NewPatronNoticeTemplate.createTemplate(patronNoticeTemplate);
-    NewPatronNoticeTemplate.checkTemplate(patronNoticeTemplate.name);
-    NewPatronNoticeTemplate.deleteTemplate(patronNoticeTemplate);
+    NewPatronNoticeTemplate.checkTemplate(patronNoticeTemplate);
+    NewPatronNoticeTemplate.deleteTemplate();
   });
 });
