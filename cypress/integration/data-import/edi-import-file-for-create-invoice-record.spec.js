@@ -34,7 +34,7 @@ describe('ui-data-import: EDIFACT file import with creating of new invoice recor
 
     DataImport.checkUploadState();
   });
-  // TODO: https://issues.folio.org/browse/MODSOURMAN-722
+
   it('C343338 EDIFACT file import with creating of new invoice record', { tags: [TestTypes.smoke] }, () => {
     // unique name for profiles
     const mappingProfileName = `autoTestMappingProf.${getRandomPostfix()}`;
