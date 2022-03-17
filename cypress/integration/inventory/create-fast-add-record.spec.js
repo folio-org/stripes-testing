@@ -1,60 +1,53 @@
 import TopMenu from '../../support/fragments/topMenu';
 import testTypes from '../../support/dictionary/testTypes';
 import InventoryActions from '../../support/fragments/inventory/inventoryActions';
-import { PaneHeader } from '../../../interactors';
 import FastAddNewRecord from '../../support/fragments/inventory/fastAddNewRecord';
 import InventorySearch from '../../support/fragments/inventory/inventorySearch';
 import ItemRecordView from '../../support/fragments/inventory/itemRecordView';
 import InstanceRecordView from '../../support/fragments/inventory/instanceRecordView';
 import InteractorsTools from '../../support/utils/interactorsTools';
 import { getLongDelay } from '../../support/utils/cypressTools';
+import permissions from '../../support/dictionary/permissions';
 
 describe('ui-inventory: Create fast add record', () => {
   const timeStamp = {
     start: null,
     end: null,
   };
+  let userId;
 
-  before(() => {
-    cy.login(
-      Cypress.env('diku_login'),
-      Cypress.env('diku_password')
-    );
+  beforeEach(() => {
+    cy
+      .createTempUser([
+        permissions.inventoryAll.gui,
+        permissions.uiInventorySettingsFastAdd.gui
+      ])
+      .then(userProperties => {
+        userId = userProperties.userId;
+        cy.login(userProperties.username, userProperties.password);
 
-    cy.intercept('POST', '/inventory/instances').as('createInstance');
-    cy.intercept('POST', '/holdings-storage/holdings').as('createHolding');
-    cy.intercept('POST', '/inventory/items').as('createItem');
+        cy.intercept('POST', '/inventory/instances').as('createInstance');
+        cy.intercept('POST', '/holdings-storage/holdings').as('createHolding');
+        cy.intercept('POST', '/inventory/items').as('createItem');
 
-    cy.visit(TopMenu.inventorySettingsFastAddPath);
-    FastAddNewRecord.setDefaultInstanceStatus(
-      FastAddNewRecord.fastAddNewRecordFormDetails.instanceStatusCodeOption
-    );
-    FastAddNewRecord.saveFastAddSettings();
-    InteractorsTools.checkCalloutMessage(
-      FastAddNewRecord.calloutMessages.SETTING_UPDATE_SUCCESS
-    );
-    cy.visit(TopMenu.inventoryPath);
+        FastAddNewRecord.updateInventoryFastAddSetting(
+          FastAddNewRecord.fastAddNewRecordFormDetails.instanceStatusCodeOption
+        );
+        cy.visit(TopMenu.inventoryPath);
+      });
   });
 
   afterEach('reset "Fast add" setting', () => {
-    cy.visit(TopMenu.inventorySettingsFastAddPath);
-    FastAddNewRecord.setDefaultInstanceStatus(
+    FastAddNewRecord.updateInventoryFastAddSetting(
       FastAddNewRecord.fastAddNewRecordFormDetails.defaultInstanceStatusCodeOption
     );
-    FastAddNewRecord.saveFastAddSettings();
-    InteractorsTools.checkCalloutMessage(
-      FastAddNewRecord.calloutMessages.SETTING_UPDATE_SUCCESS
-    );
+    cy.deleteUser(userId);
   });
 
   it('C15850 Create a fast add record from Inventory. Monograph.', { tags: [testTypes.smoke] }, () => {
-    cy.do([
-      InventoryActions.open(),
-      InventoryActions.options.newFastAddRecord.click()
-    ]);
-
-    // ensure "New fast add record" form is open
-    cy.expect(PaneHeader('New fast add record').exists());
+    InventoryActions.open();
+    InventoryActions.openNewFastAddRecordForm();
+    FastAddNewRecord.waitLoading();
     FastAddNewRecord.fillFastAddNewRecordForm(FastAddNewRecord.fastAddNewRecordFormDetails);
 
     // set starting timestamp right before saving

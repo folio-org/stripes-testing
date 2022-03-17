@@ -6,17 +6,12 @@ import {
   SelectionList,
   TextField,
   KeyValue,
-  Section,
+  Section, PaneHeader,
 } from '../../../../interactors';
 import getRandomPostfix from '../../utils/stringTools';
+import TopMenu from '../topMenu';
+import InteractorsTools from '../../utils/interactorsTools';
 
-const setDefaultInstanceStatus = (statusCode) => {
-  cy.do(Select({ name: 'instanceStatusCode' }).choose(statusCode));
-};
-
-const saveFastAddSettings = () => {
-  cy.do(Button('Save').click());
-};
 
 const calloutMessages = {
   INVENTORY_RECORDS_CREATE_SUCCESS: 'Inventory records have been created successfully',
@@ -35,6 +30,14 @@ const fastAddNewRecordFormDetails = {
   materialType: 'text',
   permanentLoanType: 'Course reserves',
   note: 'note for monograph',
+};
+
+const updateInventoryFastAddSetting = (statusCode) => {
+  cy.visit(TopMenu.inventorySettingsFastAddPath);
+  cy.do(Select({ name: 'instanceStatusCode' }).choose(statusCode));
+  cy.do(Button('Save').click());
+
+  InteractorsTools.checkCalloutMessage(calloutMessages.SETTING_UPDATE_SUCCESS);
 };
 
 const fillFastAddNewRecordForm = ({
@@ -65,6 +68,10 @@ const saveAndClose = () => {
   cy.expect(Section({ id: 'pane-results' }).find(Button('Actions')).exists());
 };
 
+const waitLoading = () => {
+  cy.expect(PaneHeader('New fast add record').exists());
+};
+
 const openRecordDetails = (row = 0) => {
   cy.do(MultiColumnListCell({ row, columnIndex: 1 }).click());
 
@@ -83,6 +90,8 @@ const verifyRecordCreatedDate = ({ start, end }) => {
 
       // since created date is displayed in UTC time in UI,
       // current timestamps need to be converted to UTC time
+      startedDate.setDate(startedDate.getUTCDate());
+      completedDate.setDate(completedDate.getUTCDate());
       startedDate.setHours(startedDate.getUTCHours(), startedDate.getUTCMinutes(), 0, 0);
       completedDate.setHours(completedDate.getUTCHours(), completedDate.getUTCMinutes(), 0, 0);
 
@@ -108,10 +117,10 @@ const closeHoldingsRecordView = () => {
 export default {
   calloutMessages,
   fastAddNewRecordFormDetails,
-  setDefaultInstanceStatus,
-  saveFastAddSettings,
+  updateInventoryFastAddSetting,
   fillFastAddNewRecordForm,
   saveAndClose,
+  waitLoading,
   openRecordDetails,
   verifyRecordCreatedDate,
   viewHoldings,
