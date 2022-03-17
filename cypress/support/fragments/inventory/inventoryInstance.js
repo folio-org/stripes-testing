@@ -40,7 +40,7 @@ const moveItemsButton = Button({ id: 'move-instance-items' });
 const instanceHRID = 'Instance HRID';
 const validOCLC = { id:'176116217',
   // TODO: hardcoded count related with interactors getters issue. Redesign to cy.then(QuickMarkEditor().rowsCount()).then(rowsCount => {...}
-  lastRowNumber: 31,
+  lastRowNumber: 30,
   // it should be presented in marc bib one time to correct work(applicable in update of record)
   existingTag: '100' };
 
@@ -164,7 +164,7 @@ export default {
     this.openHoldings([firstHoldingName, secondHoldingName]);
 
     cy.do([
-      Accordion({ label: including(`Holdings: ${firstHoldingName}`) }).find(MultiColumnListRow()).find(Checkbox()).click(),
+      Accordion({ label: including(`Holdings: ${firstHoldingName}`) }).find(MultiColumnListRow({ indexRow: 'row-0' })).find(Checkbox()).click(),
       Accordion({ label: including(`Holdings: ${firstHoldingName}`) }).find(Dropdown({ label: 'Move to' })).choose(including(secondHoldingName)),
     ]);
   },
@@ -173,7 +173,7 @@ export default {
     this.openHoldings([firstHoldingName, secondHoldingName]);
 
     cy.do([
-      Accordion({ label: including(`Holdings: ${secondHoldingName}`) }).find(MultiColumnListRow()).find(Checkbox()).click(),
+      Accordion({ label: including(`Holdings: ${secondHoldingName}`) }).find(MultiColumnListRow({ indexRow: 'row-0' })).find(Checkbox()).click(),
       Accordion({ label: including(`Holdings: ${secondHoldingName}`) }).find(Dropdown({ label: 'Move to' })).choose(including(firstHoldingName)),
       Modal().find(Button('Continue')).click()
     ]);
