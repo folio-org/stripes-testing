@@ -44,7 +44,6 @@ const tag008HoldingsBytesProperties = {
   }
 };
 
-
 const defaultFieldValues = {
   content:'qwe',
   subfieldPrefixInEditor: '$',
@@ -159,14 +158,14 @@ export default class QuickmarcEditor {
     return defaultFieldValues.freeTags;
   }
 
-  static checkInitial008TagValueFromHoldingsRecord() {
+  static checkInitial008TagValueFromHoldings() {
     tag008HoldingsBytesProperties.getAllProperties().forEach(specialByte => {
       cy.expect(specialByte.interactor.has({ value: specialByte.defaultValue }));
     });
   }
 
   // should be used only with default value of tag 008
-  static checkNotExpectedByteLabelsInHoldingsRecordTag008() {
+  static checkNotExpectedByteLabelsInTag008Holdings() {
     cy.then(() => QuickMarcEditor().presentedRowsProperties()).then(rowsProperties => {
       let actualJoinedFieldNames = rowsProperties.filter(rowProperty => rowProperty.tag === '008').map(rowProperty => rowProperty.content)[0].toLowerCase();
 
@@ -200,7 +199,8 @@ export default class QuickmarcEditor {
     });
   }
 
-  static updateAllDefaultValuesIn008Tag() {
+  // TODO: redesign. move tag008HoldingsBytesProperties to InventoryInstance.validOCLC
+  static updateAllDefaultValuesIn008TagInHoldings() {
     tag008HoldingsBytesProperties.getUsualProperties().forEach(byteProperty => {
       cy.do(QuickMarcEditorRow({ tagValue: '008' }).find(byteProperty.interactor).fillIn(byteProperty.newValue));
     });
@@ -214,7 +214,15 @@ export default class QuickmarcEditor {
     return tag008HoldingsBytesProperties.getAllProperties().map(property => property.newValue).join('');
   }
 
-  static clearTag008() {
+  updateAllDefaultValuesIn008TagInAuthority() {
+    this.validRecord.tag008AuthorityBytesProperties.getAllProperties().forEach(byteProperty => {
+      cy.do(QuickMarcEditorRow({ tagValue: '008' }).find(byteProperty.interactor).fillIn(byteProperty.newValue));
+    });
+    QuickmarcEditor.pressSaveAndClose();
+    return this.validRecord.tag008AuthorityBytesProperties.getNewValueSourceLine();
+  }
+
+  static clearTag008Holdings() {
     tag008HoldingsBytesProperties.getAllProperties().forEach(byteProperty => {
       cy.do(QuickMarcEditorRow({ tagValue: '008' }).find(byteProperty.interactor).fillIn(''));
     });
@@ -222,7 +230,7 @@ export default class QuickmarcEditor {
     return tag008HoldingsBytesProperties.getAllProperties().map(property => property.voidValue).join('');
   }
 
-  static checkReplacedVoidValuesInTag008() {
+  static checkReplacedVoidValuesInTag008Holdings() {
     tag008HoldingsBytesProperties.getAllProperties().forEach(byteProperty => {
       cy.expect(QuickMarcEditorRow({ tagValue: '008' }).find(byteProperty.interactor).has({ value: byteProperty.replacedVoidValue }));
     });
