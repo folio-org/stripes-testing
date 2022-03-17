@@ -189,7 +189,7 @@ describe('ui-data-import: MARC file upload with the update of instance, holding,
   // file names
   const nameMarcFileForImportCreate = `C343335autotestFile.${getRandomPostfix()}.mrc`;
   const nameForCSVFile = `autotestFile${getRandomPostfix()}.csv`;
-  const nameMarcFileForImportUpdate = `autotestFile${getRandomPostfix()}.mrc`;
+  const nameMarcFileForImportUpdate = `C343335autotestFile${getRandomPostfix()}.mrc`;
   // profile names for updating
   const jobProfileNameUpdate = `autotestJobProf${getRandomPostfix()}`;
   const actionProfileNameForInstance = `autotestActionInstance${getRandomPostfix()}`;
@@ -204,7 +204,7 @@ describe('ui-data-import: MARC file upload with the update of instance, holding,
   const mappingProfileNameForExport = `autoTestMappingProf.${getRandomPostfix()}`;
   const jobProfileNameForExport = `autoTestJobProf.${getRandomPostfix()}`;
 
-  before(() => {
+  beforeEach(() => {
     cy.login(
       Cypress.env('diku_login'),
       Cypress.env('diku_password')
@@ -213,9 +213,9 @@ describe('ui-data-import: MARC file upload with the update of instance, holding,
       Cypress.env('diku_login'),
       Cypress.env('diku_password')
     );
-  });
 
-  beforeEach(() => {
+    DataImport.checkUploadState();
+
     const jobProfile = {
       profile: {
         name: jobProfileNameCreate,
@@ -236,6 +236,10 @@ describe('ui-data-import: MARC file upload with the update of instance, holding,
       .then((bodyWithjobProfile) => {
         testData.jobProfileForCreate.id = bodyWithjobProfile.body.id;
       });
+  });
+
+  afterEach(() => {
+    DataImport.checkUploadState();
   });
 
   it('C343335 MARC file upload with the update of instance, holding, and items', { tags: [TestTypes.smoke] }, () => {

@@ -45,6 +45,7 @@ export { default as QuickMarcEditor } from './quickMarcEditor';
 export { default as Section } from './section';
 export { AdvancedSearch, AdvancedSearchRow } from './advanced-search';
 export { FieldSet, FieldInFieldset } from './fieldset';
+export { default as DataImportUploadFile } from './dataImportUploadFile';
 
 // Stripes-smart-component interactors
 export { AddressList, AddressEdit, AddressItem } from './address-edit-list';

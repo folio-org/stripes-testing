@@ -19,7 +19,7 @@ import FileDetails from '../../support/fragments/data_import/logs/fileDetails';
 import TopMenu from '../../support/fragments/topMenu';
 
 describe('ui-data-import: Verify the possibility to modify MARC Bibliographic record', () => {
-  before(() => {
+  beforeEach(() => {
     cy.login(
       Cypress.env('diku_login'),
       Cypress.env('diku_password')
@@ -28,6 +28,8 @@ describe('ui-data-import: Verify the possibility to modify MARC Bibliographic re
       Cypress.env('diku_login'),
       Cypress.env('diku_password')
     );
+
+    DataImport.checkUploadState();
   });
 
   afterEach(() => {
@@ -35,6 +37,8 @@ describe('ui-data-import: Verify the possibility to modify MARC Bibliographic re
       .then(({ body }) => {
         cy.deleteSrsRecordFromStorageApi(body.records[body.records.length - 1].id);
       });
+
+    DataImport.checkUploadState();
   });
 
   it('C345423 Verify the possibility to modify MARC Bibliographic record', { tags: [TestTypes.smoke] }, () => {
@@ -54,11 +58,10 @@ describe('ui-data-import: Verify the possibility to modify MARC Bibliographic re
     const actionProfileName = `autoTestActionProf.${getRandomPostfix()}`;
     const matchProfileName = `autoTestMatchProf.${getRandomPostfix()}`;
     const jobProfileName = `autoTestJobProf.${getRandomPostfix()}`;
-    const jobProfileNameForExport = `autoTestJobProf.${getRandomPostfix()}`;
 
     // file name
-    const nameMarcFileForCreate = `C343335autotestFile.${getRandomPostfix()}.mrc`;
-    const nameForCSVFile = `autotestFile${getRandomPostfix()}.csv`;
+    const nameMarcFileForCreate = `C345423autotestFile.${getRandomPostfix()}.mrc`;
+    const nameForCSVFile = `C345423autotestFile${getRandomPostfix()}.csv`;
     const nameMarcFileForUpload = `C345423autotestFile.${getRandomPostfix()}.mrc`;
 
     // upload a marc file for creating of the new instance, holding and item
@@ -84,7 +87,7 @@ describe('ui-data-import: Verify the possibility to modify MARC Bibliographic re
     cy.visit(TopMenu.dataExportPath);
     ExportFile.uploadFile(nameForCSVFile);
     ExportFile.exportWithDefaultInstancesJobProfile(nameForCSVFile);
-    ExportMarcFile.downloadExportedMarcFile(jobProfileNameForExport);
+    ExportMarcFile.downloadExportedMarcFile(nameMarcFileForUpload);
     FileManager.deleteFolder(Cypress.config('downloadsFolder'));
 
     // create Field mapping profile
