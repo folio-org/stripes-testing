@@ -27,7 +27,7 @@ describe('ui-data-import: MARC file import with creating of the new instance, ho
   const mappingProfileNameForHoldings = `autotestMappingHoldings${getRandomPostfix()}`;
   const mappingProfileNameForItem = `autotestMappingItem${getRandomPostfix()}`;
 
-  before(() => {
+  beforeEach(() => {
     cy.login(
       Cypress.env('diku_login'),
       Cypress.env('diku_password')
@@ -36,6 +36,12 @@ describe('ui-data-import: MARC file import with creating of the new instance, ho
       Cypress.env('diku_login'),
       Cypress.env('diku_password')
     );
+
+    DataImport.checkUploadState();
+  });
+
+  afterEach(() => {
+    DataImport.checkUploadState();
   });
 
   it('C343334 MARC file import with creating a new mapping profiles, action profiles and job profile', { tags: [TestTypes.smoke] }, () => {
