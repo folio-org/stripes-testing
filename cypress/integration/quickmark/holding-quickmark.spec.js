@@ -39,9 +39,9 @@ describe('Manage holding records through quickmarc editor', () => {
 
   it('C345398 Add/Edit MARC 008', { tags: [TestTypes.smoke, Features.quickMarcEditor] }, () => {
     QuickMarcEditor.checkInitial008TagValueFromHoldingsRecord();
-    QuickMarcEditor.checkNotExpectedByteLabelsInHoldingsRecordTag008();
+    QuickMarcEditor.checkNotExpectedByteLabelsInTag008Holdings();
 
-    const changed008TagValue = QuickMarcEditor.updateAllDefaultValuesIn008Tag();
+    const changed008TagValue = QuickMarcEditor.updateAllDefaultValuesIn008TagInHoldings();
     HoldingsRecordView.waitLoading();
     HoldingsRecordView.viewSource();
     InventoryViewSource.contains(changed008TagValue);
@@ -56,7 +56,7 @@ describe('Manage holding records through quickmarc editor', () => {
     InventoryViewSource.close();
     HoldingsRecordView.editInQuickMarc();
     QuickMarcEditor.waitLoading();
-    QuickMarcEditor.checkReplacedVoidValuesInTag008();
+    QuickMarcEditor.checkReplacedVoidValuesInTag008Holdings();
   });
 
   it('C345400 Attempt to save a record without a MARC 852', { tags: [TestTypes.smoke, Features.quickMarcEditor] }, () => {
