@@ -1,4 +1,4 @@
-import { Button, TextField, MultiColumnListCell, Modal, HTML, including, Section, PaneHeader } from '../../../../../interactors';
+import { Button, TextField, MultiColumnListCell, Modal, HTML, including, Section, PaneHeader, MultiColumnList } from '../../../../../interactors';
 import { getLongDelay } from '../../../utils/cypressTools';
 import newJobProfile from './newJobProfile';
 
@@ -89,7 +89,9 @@ export default {
       Modal('Are you sure you want to run this job?').find(runButton).click(),
     ]);
     // wait until uploaded file is displayed in the list
-    cy.get('#job-logs-list', getLongDelay()).contains(fileName, getLongDelay());
+    // Try to get more stable execution through interactors
+    // cy.get('#job-logs-list', getLongDelay()).contains(fileName, getLongDelay());
+    cy.expect(MultiColumnList({ id:'job-logs-list' }).find(Button(fileName)).exists());
   },
 
   deleteJobProfile,
