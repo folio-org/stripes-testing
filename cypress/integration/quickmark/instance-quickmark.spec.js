@@ -72,6 +72,7 @@ describe('Manage inventory Bib records with quickMarc editor', () => {
       QuickMarcEditor.pressSaveAndClose();
       QuickMarcEditor.deleteConfirmationPresented();
       QuickMarcEditor.confirmDelete();
+      InventoryInstance.waitLoading();
       InventoryInstance.viewSource();
       InventoryViewSource.notContains(deletedTag);
     });

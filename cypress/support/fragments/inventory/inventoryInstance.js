@@ -40,7 +40,7 @@ const moveItemsButton = Button({ id: 'move-instance-items' });
 const instanceHRID = 'Instance HRID';
 const validOCLC = { id:'176116217',
   // TODO: hardcoded count related with interactors getters issue. Redesign to cy.then(QuickMarkEditor().rowsCount()).then(rowsCount => {...}
-  lastRowNumber: 31,
+  lastRowNumber: 30,
   // it should be presented in marc bib one time to correct work(applicable in update of record)
   existingTag: '100' };
 
