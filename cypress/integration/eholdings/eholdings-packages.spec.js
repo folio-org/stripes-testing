@@ -3,7 +3,6 @@
 import testType from '../../support/dictionary/testTypes';
 import TopMenu from '../../support/fragments/topMenu';
 import eHoldingsPackages from '../../support/fragments/eholdings/eHoldingsPackages';
-import eHoldingsTitle from '../../support/fragments/eholdings/eHoldingsTitle';
 import eHoldingSearch from '../../support/fragments/eholdings/eHoldingsSearch';
 import eHoldingsPackagesSearch from '../../support/fragments/eholdings/eHoldingsPackagesSearch';
 import eHoldingsPackage from '../../support/fragments/eholdings/eHoldingsPackage';
@@ -24,12 +23,12 @@ describe('eHoldings packages management', () => {
       cy.visit(TopMenu.eholdingsPath);
       eHoldingSearch.switchToPackages();
       eHoldingsPackages.waitLoading();
-      eHoldingsPackagesSearch.bySelectionStatus(eHoldingsTitle.filterPackagesStatuses.notSelected);
+      eHoldingsPackagesSearch.bySelectionStatus(eHoldingsPackage.filterStatuses.notSelected);
       eHoldingsPackagesSearch.byName();
       eHoldingsPackages.openPackage();
       eHoldingsPackage.addToHodlings();
       eHoldingsPackage.verifyHoldingStatus();
-      eHoldingsPackage.filterTitles(eHoldingsPackage.filterTitlesStatuses.notSelected);
+      eHoldingsPackage.filterTitles(eHoldingsPackage.filterStatuses.notSelected);
       eHoldingsPackage.checkEmptyTitlesList();
       // reset test data
       eHoldingsPackage.removeFromHoldings();
@@ -57,6 +56,7 @@ describe('eHoldings packages management', () => {
     });
   });
 
+  // TODO: https://issues.folio.org/browse/UIEH-1255
   it('C690 Remove a package from your holdings', { tags:  [testType.smoke, features.eHoldings] }, () => {
     cy.createTempUser([permissions.uieHoldingsRecordsEdit.gui,
       permissions.uieHoldingsPackageTitleSelectUnselect.gui]).then(userProperties => {
@@ -64,12 +64,12 @@ describe('eHoldings packages management', () => {
       cy.login(userProperties.username, userProperties.password);
       cy.visit(TopMenu.eholdingsPath);
       eHoldingSearch.switchToPackages();
-      eHoldingsPackagesSearch.bySelectionStatus(eHoldingsTitle.filterPackagesStatuses.selected);
+      eHoldingsPackagesSearch.bySelectionStatus(eHoldingsPackage.filterStatuses.selected);
       eHoldingsPackagesSearch.byName();
       eHoldingsPackages.openPackage();
       eHoldingsPackage.removeFromHoldings();
-      eHoldingsPackage.verifyHoldingStatus(eHoldingsPackage.filterTitlesStatuses.notSelected);
-      eHoldingsPackage.filterTitles(eHoldingsPackage.filterTitlesStatuses.selected);
+      eHoldingsPackage.verifyHoldingStatus(eHoldingsPackage.filterStatuses.notSelected);
+      eHoldingsPackage.filterTitles(eHoldingsPackage.filterStatuses.selected);
       eHoldingsPackage.checkEmptyTitlesList();
       // reset test data
       eHoldingsPackage.addToHodlings();
@@ -80,7 +80,7 @@ describe('eHoldings packages management', () => {
     cy.createTempUser([permissions.uieHoldingsRecordsEdit.gui, permissions.uiTagsPermissionAll.gui]).then(userProperties => {
       userId = userProperties.userId;
       cy.login(userProperties.username, userProperties.password);
-      cy.visit(TopMenu.eholdings);
+      cy.visit(TopMenu.eholdingsPath);
       eHoldingSearch.switchToPackages();
       eHoldingsPackagesSearch.byName();
       eHoldingsPackages.openPackage()
