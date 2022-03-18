@@ -6,6 +6,7 @@ import permissions from '../../support/dictionary/permissions';
 import InventoryInstance from '../../support/fragments/inventory/inventoryInstance';
 import HoldingsRecordView from '../../support/fragments/inventory/holdingsRecordView';
 import getRandomPostfix from '../../support/utils/stringTools';
+import testTypes from '../../support/dictionary/testTypes';
 
 describe('ui-inventory: Create a Holdings record as another user than the one that created the Instance', () => {
   let firstUser;
@@ -38,7 +39,7 @@ describe('ui-inventory: Create a Holdings record as another user than the one th
     cy.deleteUser(secondUser.userId);
   });
 
-  it('C1294: Create a Holdings record as another user than the one that created the Instance', () => {
+  it('C1294: Create a Holdings record as another user than the one that created the Instance', { tags: [testTypes.smoke] }, () => {
     InventoryInstances.add(recordsData.instanceTitle);
     searchInventory.searchInstanceByTitle(recordsData.instanceTitle);
     cy.expect(MultiColumnListCell({ row: 0, column: recordsData.instanceTitle }).exists());
