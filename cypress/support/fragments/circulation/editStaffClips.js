@@ -50,30 +50,31 @@ export default {
     ]);
     cy.expect(Modal({ id: 'preview-modal' }).exists(textCheck));
   },
-  fillAndPreviewTemplate() {
-    this.fillStaffClips();
+  fillAndPreviewTemplate(editStaffClipsHold) {
+    this.fillStaffClips(editStaffClipsHold);
     this.previewStaffClips();
   },
   clearStaffClips: () => {
-    cy.get('.ql-editor').type('{selectAll}{backspace}');
-    cy.do([
-      staffClipsDescripton.type('{selectAll}{backspace}'),
-      saveButton.click(),
-    ]);
+    cy.get('#template-editor').type('{selectAll}{backspace}');
+    cy.get('#input-staff-slip-description').type('{selectAll}{backspace}');
+    cy.do(saveButton.click());
   },
   editAndClearHold() {
     this.editHold();
     this.clearStaffClips();
   },
   editAndClearPickslip() {
+    cy.do(Button({ icon: 'times' }).click());
     this.editPickslip();
     this.clearStaffClips();
   },
   editAndClearRequestDelivery() {
+    cy.do(Button({ icon: 'times' }).click());
     this.editRequestDelivery();
     this.clearStaffClips();
   },
   editAndClearTransit() {
+    cy.do(Button({ icon: 'times' }).click());
     this.editTransit();
     this.clearStaffClips();
   },
