@@ -118,9 +118,9 @@ export default {
     cy.do(viewHoldingsButton.click());
     HoldingsRecordView.waitLoading();
   },
-  createHoldingsRecord:() => {
+  createHoldingsRecord:(permanentLocation) => {
     pressAddHoldingsButton();
-    NewHoldingsRecord.fillRequiredFields();
+    NewHoldingsRecord.fillRequiredFields(permanentLocation);
     NewHoldingsRecord.saveAndClose();
     waitLoading();
   },
