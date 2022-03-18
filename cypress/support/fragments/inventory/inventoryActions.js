@@ -8,17 +8,19 @@ const importButtonInModal = Button('Import');
 const OCLWorldCatIdentifierTextField = TextField({ name: 'externalIdentifier' });
 const importTypeSelect = Select({ name :'externalIdentifierType' });
 
-// TODO: merge inventoryACtions and InventoryInstances
+// TODO: merge inventoryActions and InventoryInstances
 export default {
-  open: () => { return Section({ id:'pane-results' }).find(Button('Actions')).click(); },
+  open: () => cy.do(Section({ id:'pane-results' }).find(Button('Actions')).click()),
   options: {
     new: Button('New'),
     saveUUIDs: Button('Save instances UUIDs'),
     saveCQLQuery: Button('Save instances CQL query'),
     exportMARC: Button('Export instances (MARC)'),
     showSelectedRecords: Button('Show selected records'),
-    newRequest: Button('New Request')
+    newRequest: Button('New Request'),
+    newFastAddRecord: Button('New Fast Add Record'),
   },
+  openNewFastAddRecordForm() { cy.do(this.options.newFastAddRecord.click()); },
   optionsIsDisabled: (array) => {
     return array.forEach((element) => {
       cy.expect(element.is({ disabled: true }));
