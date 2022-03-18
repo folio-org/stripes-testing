@@ -19,7 +19,6 @@ describe('ui-data-import: Import a large EDIFACT invoice file', () => {
   const actionProfileName = `autoTestActionProf.${getRandomPostfix()}`;
   const jobProfileName = `autoTestJobProf.${getRandomPostfix()}`;
 
-
   before(() => {
     cy.login(
       Cypress.env('diku_login'),
@@ -31,6 +30,7 @@ describe('ui-data-import: Import a large EDIFACT invoice file', () => {
     );
   });
 
+  // TODO: https://issues.folio.org/browse/MODSOURMAN-722
   it('C347615 Import a large EDIFACT invoice file', { tags: [TestTypes.smoke] }, () => {
     // unique file name to upload
     const fileName = `autotestFile.${getRandomPostfix()}.edi`;
