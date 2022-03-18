@@ -35,6 +35,8 @@ describe('inventory: moving items', () => {
     InventoryInstance.returnItemToFirstHolding(OrdersHelper.mainLibraryLocation, secondHolding);
     InteractorsTools.checkCalloutMessage(successCalloutMessage);
   });
+
+  // TODO: https://issues.folio.org/browse/UIIN-1963
   it('C345404 Move holdings record with Source = MARC to an instance record with source = MARC', { tags:  [TestTypes.smoke, Features.eHoldings] }, () => {
     InventoryActions.import();
     InventoryInstance.getAssignedHRID().then(initialInstanceHrId => {
