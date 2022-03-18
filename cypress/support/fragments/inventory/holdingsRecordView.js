@@ -58,8 +58,9 @@ export default {
   },
   checkSource:sourceValue => cy.expect(KeyValue('Source', { value:sourceValue }).exists()),
   getHoldingsHrId: () => cy.then(() => holdingHrIdKeyValue.value()),
-  checkInstanceHrId:expectedInstanceHrdId => cy.expect(root.find(KeyValue('Instance HRID')).has({ value:expectedInstanceHrdId })),
+  checkInstanceHrId: expectedInstanceHrId => cy.expect(root.find(KeyValue('Instance HRID')).has({ value:expectedInstanceHrId })),
   checkHrId: expectedHrId => cy.expect(holdingHrIdKeyValue.has({ value: expectedHrId })),
+  checkPermanentLocation: expectedLocation => cy.expect(KeyValue('Permanent', { value: expectedLocation }).exists()),
   getId:() => {
     // parse hodling record id from current url
     cy.url().then(url => cy.wrap(url.split('?')[0].split('/').at(-1)).as('holdingsRecorId'));
