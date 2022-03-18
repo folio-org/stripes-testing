@@ -1,5 +1,5 @@
 import TopMenu from '../../support/fragments/topMenu';
-import testTypes from '../../support/dictionary/testTypes';
+import TestTypes from '../../support/dictionary/testTypes';
 import InventoryActions from '../../support/fragments/inventory/inventoryActions';
 import FastAddNewRecord from '../../support/fragments/inventory/fastAddNewRecord';
 import InventorySearch from '../../support/fragments/inventory/inventorySearch';
@@ -44,7 +44,7 @@ describe('ui-inventory: Create fast add record', () => {
     cy.deleteUser(userId);
   });
 
-  it('C15850 Create a fast add record from Inventory. Monograph.', { tags: [testTypes.smoke] }, () => {
+  it('C15850 Create a fast add record from Inventory. Monograph.', { tags: [TestTypes.smoke] }, () => {
     InventoryActions.open();
     InventoryActions.openNewFastAddRecordForm();
     FastAddNewRecord.waitLoading();
