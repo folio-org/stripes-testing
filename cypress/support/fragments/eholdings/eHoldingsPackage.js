@@ -1,5 +1,6 @@
 import { Accordion, Button, Modal, Section, RadioButton, HTML, including, MultiSelect, KeyValue, MultiSelectOption, ValueChipRoot } from '../../../../interactors';
 import getRandomPostfix from '../../utils/stringTools';
+import { getLongDelay } from '../../utils/cypressTools';
 
 const titlesFilterModal = Modal({ id : 'eholdings-details-view-search-modal' });
 const tagsSection = Section({ id: 'packageShowTags' });
@@ -40,10 +41,16 @@ export default {
   },
   verifyHoldingStatus:(expectedStatus = filterStatuses.selected) => {
     cy.expect(packageHoldingStatusSection.find(HTML(including(expectedStatus))).exists());
-    cy.expect(titlesSection.find(HTML(including(expectedStatus))).exists());
-    [filterStatuses.selected, filterStatuses.selected.notSelected]
-      .filter(filterTitlesStatus => filterTitlesStatus !== expectedStatus)
-      .forEach(restStatus => cy.expect(titlesSection.find(HTML(including(restStatus))).absent()));
+    cy.url().then(url => {
+      const packageId = url.split('?')[0].split('/').at(-1);
+      cy.intercept(`eholdings/packages/${packageId}/resources?**`).as('getTitles');
+      cy.wait('@getTitles', getLongDelay());
+
+      cy.expect(titlesSection.find(HTML(including(expectedStatus))).exists());
+      [filterStatuses.selected, filterStatuses.selected.notSelected]
+        .filter(filterTitlesStatus => filterTitlesStatus !== expectedStatus)
+        .forEach(restStatus => cy.expect(titlesSection.find(HTML(including(restStatus))).absent()));
+    });
   },
   checkEmptyTitlesList:() => {
     cy.expect(titlesSection.find(KeyValue('Records found', { value:'0' })));
