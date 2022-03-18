@@ -45,7 +45,6 @@ describe('ui-inventory: Create fast add record', () => {
   });
 
   it('C15850 Create a fast add record from Inventory. Monograph.', { tags: [TestTypes.smoke] }, () => {
-    InventoryActions.open();
     InventoryActions.openNewFastAddRecordForm();
     FastAddNewRecord.waitLoading();
     FastAddNewRecord.fillFastAddNewRecordForm(FastAddNewRecord.fastAddNewRecordFormDetails);
