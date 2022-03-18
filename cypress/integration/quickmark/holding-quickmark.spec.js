@@ -37,7 +37,7 @@ describe('Manage holding records through quickmarc editor', () => {
     InventoryViewSource.contains(expectedInSourceRow);
   });
 
-  //TODO: https://issues.folio.org/browse/UIEH-1261
+  // TODO: https://issues.folio.org/browse/UIEH-1261
   it('C345398 Add/Edit MARC 008', { tags: [TestTypes.smoke, Features.quickMarcEditor] }, () => {
     QuickMarcEditor.checkInitial008TagValueFromHoldings();
     QuickMarcEditor.checkNotExpectedByteLabelsInTag008Holdings();
