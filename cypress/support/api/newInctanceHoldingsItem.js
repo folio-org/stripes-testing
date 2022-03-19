@@ -1,6 +1,6 @@
 import uuid from 'uuid';
-import getRandomPostfix from '../../utils/stringTools';
-import NewServicePoint from '../service_point/newServicePoint';
+import getRandomPostfix from '../utils/stringTools';
+import NewServicePoint from './newServicePoint';
 
 export default {
 

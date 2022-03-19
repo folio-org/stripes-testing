@@ -1,8 +1,13 @@
-import { Button, TextField, MultiColumnListCell } from '../../../../interactors';
-import NewInctanceHoldingsItem from '../inventory/newInctanceHoldingsItem';
+import { Button, Pane, including, TextField, MultiColumnListCell } from '../../../../interactors';
+import NewInctanceHoldingsItem from '../../api/newInctanceHoldingsItem';
+import NewUser from '../../api/newUser';
+
+const loadDetailsButton = Button('Loan details');
+const patronDetailsButton = Button('Patron details');
+const itemDetailsButton = Button('Item details');
+const newFeeFineButton = Button('New Fee/Fine');
 
 export default {
-
   checkInItem: () => {
     cy.do(Button('Check in').click());
     cy.do(TextField({ id: 'input-item-barcode' }).fillIn(NewInctanceHoldingsItem.itemBarcode));
@@ -10,8 +15,30 @@ export default {
     cy.expect(MultiColumnListCell('Available').exists());
     cy.do(Button({ id: 'available-actions-button-0' }).click());
   },
-  returnCheckIn: () => {
+  existsFormColomns:() => {
+    cy.expect([
+      loadDetailsButton.exists(),
+      patronDetailsButton.exists(),
+      itemDetailsButton.exists(),
+      newFeeFineButton.exists(),
+    ]);
+  },
+  returnCheckIn() {
     cy.do(Button('Check in').click());
     cy.do(Button({ id: 'available-actions-button-0' }).click());
-  }
+  },
+  existsItemsInForm() {
+    cy.do(loadDetailsButton.click());
+    cy.expect(Pane(including(NewUser.userName)).exists());
+    this.returnCheckIn();
+    cy.do(patronDetailsButton.click());
+    cy.expect(Pane({ title: NewUser.userName }).exists());
+    this.returnCheckIn();
+    cy.do(itemDetailsButton.click());
+    cy.expect(Pane(including(NewInctanceHoldingsItem.itemBarcode)).exists());
+    this.returnCheckIn();
+    cy.do(newFeeFineButton.click());
+    cy.expect(Pane({ title:  'New fee/fine' }).exists());
+    this.returnCheckIn();
+  },
 };

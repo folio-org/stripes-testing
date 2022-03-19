@@ -1,7 +1,7 @@
 import uuid from 'uuid';
-import getRandomPostfix from '../../utils/stringTools';
-import NewInctanceHoldingsItem from '../inventory/newInctanceHoldingsItem';
-import NewServicePoint from '../service_point/newServicePoint';
+import getRandomPostfix from '../utils/stringTools';
+import NewInctanceHoldingsItem from './newInctanceHoldingsItem';
+import NewServicePoint from './newServicePoint';
 
 export default {
   patronGroupId:uuid(),

@@ -1,5 +1,5 @@
-import NewServicePoint from './newServicePoint';
-import NewUser from '../user/newUser';
+import NewServicePoint from '../../api/newServicePoint';
+import NewUser from '../../api/newUser';
 import { TextField, Dropdown, MultiColumnList, Button, Pane, Select } from '../../../../interactors';
 
 

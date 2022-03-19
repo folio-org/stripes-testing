@@ -1,14 +1,9 @@
-import NewServicePoint from '../../support/fragments/service_point/newServicePoint';
-import NewInctanceHoldingsItem from '../../support/fragments/inventory/newInctanceHoldingsItem';
-import { Button, Pane, including } from '../../../interactors';
-import testTypes from '../../support/dictionary/testTypes';
-// import TopMenu from '../../topMenu';
-import NewUser from '../../support/fragments/user/newUser';
+import NewServicePoint from '../../support/api/newServicePoint';
+import NewInctanceHoldingsItem from '../../support/api/newInctanceHoldingsItem';
+import TestTypes from '../../support/dictionary/testTypes';
+import NewUser from '../../support/api/newUser';
 import SwitchServicePoint from '../../support/fragments/service_point/switchServicePoint';
 import CheckInActions from '../../support/fragments/check-in-actions/checkInActions';
-
-
-
 
 describe('Check In - Actions ', () => {
   before('Create New Service point, Item, User and Check out item', () => {
@@ -28,27 +23,10 @@ describe('Check In - Actions ', () => {
     NewUser.deleteUser();
   });
 
-
-  it('Check In - Actions', { tags: [testTypes.smoke] }, () => {
+  it('C347631 Check in: Basic check in', { tags: [TestTypes.smoke] }, () => {
     CheckInActions.checkInItem();
-    cy.expect([
-      Button('Loan details').exists(),
-      Button('Patron details').exists(),
-      Button('Item details').exists(),
-      Button('New Fee/Fine').exists(),
-    ]);
-    cy.do(Button('Loan details').click());
-    cy.expect(Pane(including(NewUser.userName)).exists());
-    CheckInActions.returnCheckIn();
-    cy.do(Button('Patron details').click());
-    cy.expect(Pane({ title: NewUser.userName }).exists());
-    CheckInActions.returnCheckIn();
-    cy.do(Button('Item details').click());
-    cy.expect(Pane(including(NewInctanceHoldingsItem.itemBarcode)).exists());
-    CheckInActions.returnCheckIn();
-    cy.do(Button('New Fee/Fine').click());
-    cy.expect(Pane({ title:  'New fee/fine' }).exists());
-    CheckInActions.returnCheckIn();
+    CheckInActions.existsFormColomns();
+    CheckInActions.existsItemsInForm();
   });
 });
 
