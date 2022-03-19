@@ -5,6 +5,7 @@ import FileManager from '../../support/utils/fileManager';
 import DataExportResults from '../../support/fragments/data-export/dataExportResults';
 import testTypes from '../../support/dictionary/testTypes';
 import { Checkbox } from '../../../interactors';
+import { getLongDelay } from '../../support/utils/cypressTools';
 
 
 describe('inventory: exports', () => {
@@ -18,7 +19,7 @@ describe('inventory: exports', () => {
     InventorySearch.saveUUIDs();
 
     cy.intercept('/search/instances/ids**').as('getIds');
-    cy.wait('@getIds', { requestTimeout: 20000 }).then((req) => {
+    cy.wait('@getIds', getLongDelay()).then((req) => {
       const expectedUUIDs = InventorySearch.getUUIDsFromRequest(req);
 
       FileManager.verifyFile(
@@ -49,7 +50,7 @@ describe('inventory: exports', () => {
     InventorySearch.exportInstanceAsMarc();
 
     cy.intercept('/data-export/quick-export').as('getIds');
-    cy.wait('@getIds', { requestTimeout: 20000 }).then((req) => {
+    cy.wait('@getIds', getLongDelay()).then((req) => {
       const expectedIDs = req.request.body.uuids;
 
       FileManager.verifyFile(
