@@ -18,7 +18,7 @@ describe('inventory: exports', () => {
     InventorySearch.saveUUIDs();
 
     cy.intercept('/search/instances/ids**').as('getIds');
-    cy.wait('@getIds').then((req) => {
+    cy.wait('@getIds', { requestTimeout: 20000 }).then((req) => {
       const expectedUUIDs = InventorySearch.getUUIDsFromRequest(req);
 
       FileManager.verifyFile(
@@ -49,7 +49,7 @@ describe('inventory: exports', () => {
     InventorySearch.exportInstanceAsMarc();
 
     cy.intercept('/data-export/quick-export').as('getIds');
-    cy.wait('@getIds').then((req) => {
+    cy.wait('@getIds', { requestTimeout: 20000 }).then((req) => {
       const expectedIDs = req.request.body.uuids;
 
       FileManager.verifyFile(
