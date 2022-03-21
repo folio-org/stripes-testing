@@ -74,6 +74,10 @@ export default {
     cy.expect(HTML('Browse call numbers').absent());
   },
 
+  browseSubjectIsAbsent() {
+    cy.expect(HTML('Browse subjects').absent());
+  },
+
   showsOnlyEffectiveLocation() {
     cy.expect(Accordion({ id: 'effectiveLocation' }).exists());
     cy.expect(Accordion({ id: 'language' }).absent());

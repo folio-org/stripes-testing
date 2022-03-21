@@ -44,4 +44,11 @@ describe('Browse call number feature', () => {
     InventorySearch.verifyCallNumberBrowseEmptyPane();
     InventorySearch.filtersIsAbsent();
   });
+
+  it('C350378 Verify the "Browse subjects" search option on the Holdings tab', { tags: [TestTypes.smoke] }, () => {
+    InventorySearch.instanceTabIsDefault();
+    InventorySearch.verifyKeywordsAsDefault();
+    InventorySearch.switchToHoldings();
+    InventorySearch.browseSubjectIsAbsent();
+  });
 });
