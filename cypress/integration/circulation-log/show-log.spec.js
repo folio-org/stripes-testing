@@ -3,7 +3,7 @@ import TestTypes from '../../support/dictionary/testTypes';
 import { Pane } from '../../../interactors';
 
 
-describe('ui-circulation log filters', () => {
+describe('ui-circulation-log: filters', () => {
   beforeEach('login', () => {
     cy.login(Cypress.env('diku_login'), Cypress.env('diku_password'));
   });
