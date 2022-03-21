@@ -6,7 +6,7 @@ import inventoryInstances from '../../support/fragments/inventory/inventoryInsta
 import inventoryInstance from '../../support/fragments/inventory/inventoryInstance';
 import InventoryInstanceEdit from '../../support/fragments/inventory/InventoryInstanceEdit';
 
-describe('enter different type of identifiers', () => {
+describe('ui-inventory: Enter different type of identifiers', () => {
   const instanceTitle = `autoTestInstanceTitle.${getRandomPostfix()}`;
 
   beforeEach('navigate to inventory', () => {
