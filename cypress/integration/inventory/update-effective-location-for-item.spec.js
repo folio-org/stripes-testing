@@ -1,6 +1,5 @@
-import { Selection, SelectionList } from '../../../interactors';
+import TestTypes from '../../support/dictionary/testTypes';
 import HoldingsRecordEdit from '../../support/fragments/inventory/holdingsRecordEdit';
-
 import HoldingsRecordView from '../../support/fragments/inventory/holdingsRecordView';
 import InventoryInstance from '../../support/fragments/inventory/inventoryInstance';
 import InventorySearch from '../../support/fragments/inventory/inventorySearch';
@@ -8,7 +7,7 @@ import ItemRecordView from '../../support/fragments/inventory/itemRecordView';
 import TopMenu from '../../support/fragments/topMenu';
 import getRandomPostfix from '../../support/utils/stringTools';
 
-describe('test describe', () => {
+describe('Update the effective location for the item', () => {
   const instanceTitle = `autoTestInstanceTitle.${getRandomPostfix()}`;
   const anotherPermanentLocation = 'Main Library';
   const ITEM_BARCODE = Number(new Date()).toString();
@@ -46,10 +45,10 @@ describe('test describe', () => {
           ],
         });
       });
+    cy.visit(TopMenu.inventoryPath);
   });
 
-  it('test it', () => {
-    cy.visit(TopMenu.inventoryPath);
+  it('C3501 Update the effective location for the item', { tags: [TestTypes.smoke] }, () => {
     InventorySearch.searchByParameter('Keyword (title, contributor, identifier)', instanceTitle);
     InventorySearch.selectSearchResultItem();
     InventoryInstance.goToHoldingView();
@@ -57,11 +56,8 @@ describe('test describe', () => {
     HoldingsRecordEdit.changePermanentLocation(anotherPermanentLocation);
     HoldingsRecordEdit.saveAndClose();
     HoldingsRecordView.close();
-
     InventoryInstance.openHoldings([anotherPermanentLocation]);
-
     InventoryInstance.openItemView(ITEM_BARCODE);
-
-    ItemRecordView.checkPermanentLocation(anotherPermanentLocation);
+    ItemRecordView.verifyPermanentLocation(anotherPermanentLocation);
   });
 });
