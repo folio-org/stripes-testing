@@ -1,7 +1,7 @@
-import NewServicePoint from '../../support/api/newServicePoint';
-import NewInctanceHoldingsItem from '../../support/api/newInctanceHoldingsItem';
+import NewServicePoint from '../../support/fragments/service_point/newServicePoint';
+import NewInctanceHoldingsItem from '../../support/fragments/inventory/newInctanceHoldingsItem';
 import TestTypes from '../../support/dictionary/testTypes';
-import NewUser from '../../support/api/newUser';
+import NewUser from '../../support/fragments/user/newUser';
 import SwitchServicePoint from '../../support/fragments/service_point/switchServicePoint';
 import CheckInActions from '../../support/fragments/check-in-actions/checkInActions';
 

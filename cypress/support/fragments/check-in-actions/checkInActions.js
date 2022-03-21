@@ -1,6 +1,6 @@
 import { Button, Pane, including, TextField, MultiColumnListCell } from '../../../../interactors';
-import NewInctanceHoldingsItem from '../../api/newInctanceHoldingsItem';
-import NewUser from '../../api/newUser';
+import NewInctanceHoldingsItem from '../inventory/newInctanceHoldingsItem';
+import NewUser from '../user/newUser';
 
 const loadDetailsButton = Button('Loan details');
 const patronDetailsButton = Button('Patron details');
