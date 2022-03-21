@@ -31,7 +31,8 @@ describe('Browse call number feature', () => {
     InventorySearch.browseCallNumberIsAbsent();
   });
 
-  it('C350377 Verify the "Browse subjects" search option on the Instances tab', { tags: [TestTypes.smoke] }, () => {
+  // TODO: unskip after fix bug UIIN-1965
+  it.skip('C350377 Verify the "Browse subjects" search option on the Instances tab', { tags: [TestTypes.smoke] }, () => {
     InventorySearch.instanceTabIsDefault();
     InventorySearch.verifyKeywordsAsDefault();
     InventorySearch.selectBrowseSubjects();
