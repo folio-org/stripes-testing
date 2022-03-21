@@ -1,16 +1,24 @@
+import { Selection, SelectionList } from '../../../interactors';
+import HoldingsRecordEdit from '../../support/fragments/inventory/holdingsRecordEdit';
+
 import HoldingsRecordView from '../../support/fragments/inventory/holdingsRecordView';
 import InventoryInstance from '../../support/fragments/inventory/inventoryInstance';
 import InventorySearch from '../../support/fragments/inventory/inventorySearch';
+import ItemRecordView from '../../support/fragments/inventory/itemRecordView';
 import TopMenu from '../../support/fragments/topMenu';
 import getRandomPostfix from '../../support/utils/stringTools';
 
 describe('test describe', () => {
   const instanceTitle = `autoTestInstanceTitle.${getRandomPostfix()}`;
+  const anotherPermanentLocation = 'Main Library';
+  const ITEM_BARCODE = Number(new Date()).toString();
 
   before(() => {
     cy.login(Cypress.env('diku_login'), Cypress.env('diku_password'));
     cy.getToken(Cypress.env('diku_login'), Cypress.env('diku_password'))
       .then(() => {
+        cy.getLoanTypes({ limit: 1 });
+        cy.getMaterialTypes({ limit: 1 });
         cy.getInstanceTypes({ limit: 1 });
         cy.getLocations({ limit: 1 });
         cy.getHoldingTypes({ limit: 1 });
@@ -24,21 +32,36 @@ describe('test describe', () => {
             source: 'FOLIO',
           },
           holdings: [{
-            holdingsTypeId: Cypress.env('holdingsTypes')[0].id,
             permanentLocationId: Cypress.env('locations')[0].id,
-            sourceId: Cypress.env('holdingSources')[0].id,
           }],
+          items: [
+            [{
+              barcode: ITEM_BARCODE,
+              missingPieces: '3',
+              numberOfMissingPieces: '3',
+              status: { name: 'Available' },
+              permanentLoanType: { id: Cypress.env('loanTypes')[0].id },
+              materialType: { id: Cypress.env('materialTypes')[0].id },
+            }],
+          ],
         });
       });
   });
 
   it('test it', () => {
     cy.visit(TopMenu.inventoryPath);
-    cy.log(`---LOCATIONS--- ${JSON.stringify(Cypress.env('locations')[0])}`);
     InventorySearch.searchByParameter('Keyword (title, contributor, identifier)', instanceTitle);
     InventorySearch.selectSearchResultItem();
     InventoryInstance.goToHoldingView();
     HoldingsRecordView.edit();
-    cy.log('----Success!----');
+    HoldingsRecordEdit.changePermanentLocation(anotherPermanentLocation);
+    HoldingsRecordEdit.saveAndClose();
+    HoldingsRecordView.close();
+
+    InventoryInstance.openHoldings([anotherPermanentLocation]);
+
+    InventoryInstance.openItemView(ITEM_BARCODE);
+
+    ItemRecordView.checkPermanentLocation(anotherPermanentLocation);
   });
 });
