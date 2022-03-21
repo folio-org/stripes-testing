@@ -1,7 +1,6 @@
 import { Section, Pane, HTML, including, Button, Label, KeyValue, Modal } from '../../../../interactors';
 import dateTools from '../../utils/dateTools';
 import eHoldingResourceEdit from './eHoldingResourceEdit';
-import eHoldingsTitle from './eHoldingsTitle';
 
 const holdingStatusSection = Section({ id: 'resourceShowHoldingStatus' });
 const addToHoldingButton = holdingStatusSection.find(Button('Add to holdings'));
@@ -34,7 +33,6 @@ export default {
   },
   addToHoldings:() => {
     cy.do(addToHoldingButton.click());
-    checkHoldingStatus(eHoldingsTitle.filterPackagesStatuses.selected);
   },
   goToEdit:() => {
     openActionsMenu();
@@ -63,7 +61,6 @@ export default {
     cy.expect(confirmationModal.exists());
     cy.do(confirmationModal.find(Button('Yes, remove')).click());
     cy.expect(confirmationModal.absent());
-    checkHoldingStatus(eHoldingsTitle.filterPackagesStatuses.notSelected);
     cy.expect(addToHoldingButton.exists());
     openActionsMenu();
     cy.expect(Button('Add to holdings').exists());

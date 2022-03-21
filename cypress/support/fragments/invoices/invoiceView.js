@@ -8,12 +8,12 @@ const expectedInvoiceStatus = 'Open';
 const expectedInvoiceSource = 'EDI';
 
 export default {
-  checkInvoiceDetails:() => {
-    cy.do(Section().find(MultiColumnListCell(including(vendorInvoiceNumber))).perform(element => {
-      const invoiceNumber = element.innerText.split('-')[0];
+  checkInvoiceDetails:(invoiceNumber) => {
+    cy.do(Section().find(MultiColumnListCell(including(invoiceNumber))).perform(element => {
+      const invoiceOfNumber = element.innerText.split('-')[0];
 
       cy.visit(TopMenu.invoicesPath);
-      invoices.searchByNumber(invoiceNumber);
+      invoices.searchByNumber(invoiceOfNumber);
       cy.do(MultiColumnListCell({ row: 0, columnIndex: 0 }).click());
 
       const invoiceDate = KeyValue('Invoice date');
@@ -29,4 +29,6 @@ export default {
   checkQuantityInvoiceLinesInRecord:() => {
     cy.expect(Pane({ id:'pane-results' }).find(HTML(including('1,104 records found'))).exists());
   },
+
+  vendorInvoiceNumber,
 };

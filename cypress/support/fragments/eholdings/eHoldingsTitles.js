@@ -1,4 +1,4 @@
-import { Button, ListItem, Section } from '../../../../interactors';
+import { Button, ListItem, Section, PaneHeader } from '../../../../interactors';
 import eHoldingsTitle from './eHoldingsTitle';
 import getRandomPostfix from '../../utils/stringTools';
 import eHoldingsNewCustomTitle from './eHoldingsNewCustomTitle';
@@ -8,6 +8,7 @@ const resultSection = Section({ id: 'search-results' });
 export default {
 
   waitLoading: () => {
+    cy.expect(resultSection.find(PaneHeader('Loading...')).absent());
     cy.expect(resultSection
       .find(ListItem({ index: 1 })
         .find(Button())).exists());

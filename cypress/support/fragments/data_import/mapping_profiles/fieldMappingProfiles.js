@@ -49,15 +49,7 @@ const deleteFieldMappingProfile = (profileName) => {
 };
 
 const searchMappingProfileForDuplicate = (nameForSearch) => {
-  // wait for data to be loaded
-  cy.intercept(
-    {
-      method: 'GET',
-      url: '/data-import-profiles/mappingProfiles?*',
-    }
-  ).as('getProfiles');
   cy.do(TextField({ id:'input-search-mapping-profiles-field' }).fillIn(nameForSearch));
-  cy.wait('@getProfiles', getLongDelay());
   cy.expect(Button('Search').has({ disabled:false }));
   cy.do(Button('Search').click(), getLongDelay());
 };
