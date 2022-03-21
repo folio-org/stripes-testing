@@ -8,7 +8,7 @@ import { Checkbox } from '../../../interactors';
 import { getLongDelay } from '../../support/utils/cypressTools';
 
 
-describe('inventory: exports', () => {
+describe('ui-inventory: exports', () => {
   beforeEach('navigates to Inventory', () => {
     cy.login(Cypress.env('diku_login'), Cypress.env('diku_password'));
     cy.visit(TopMenu.inventoryPath);
