@@ -1,4 +1,4 @@
-import { Accordion, Button, including, HTML, Section, MultiColumnListCell, Badge } from '../../../../interactors';
+import { Accordion, Button, including, HTML, Section, MultiColumnListCell, Badge, Modal } from '../../../../interactors';
 import NewNote from '../notes/newNote';
 import { getLongDelay } from '../../utils/cypressTools';
 import ExistingNoteEdit from '../notes/existingNoteEdit';
@@ -19,6 +19,7 @@ const deleteButton = Button('Delete');
 const deleteButtonInConfirmation = Button('Delete', { id: 'clickable-delete-agreement-confirmation-confirm' });
 const showMoreLink = Button('Show more');
 const notesAccordion = rootSection.find(Accordion({ id: 'notes' }));
+const deleteConfirmationModal = Modal({ id: 'delete-agreement-confirmation' });
 
 function waitLoading() {
   cy.xpath(headerXpath).should('be.visible');
@@ -50,7 +51,8 @@ export default {
   remove() {
     cy.do(actionsButton.click());
     cy.do(deleteButton.click());
-    cy.do(deleteButtonInConfirmation.click());
+    cy.expect(deleteConfirmationModal.exists());
+    cy.do(deleteConfirmationModal.find(deleteButtonInConfirmation).click());
     cy.get(rootCss, getLongDelay()).should('not.exist');
   },
   close() {

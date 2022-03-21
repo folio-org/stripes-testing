@@ -3,17 +3,16 @@ const DEFAULT_SEARCH_PARAMS = {
   query: 'cql.allRecords=1',
 };
 
-Cypress.Commands.add('okapiRequest', ({
-  method = 'GET',
+Cypress.Commands.add('okapiRequest', ({ method = 'GET',
   path,
   searchParams = {},
   body,
-}) => {
-  const queryString = (new URLSearchParams({
-    ...DEFAULT_SEARCH_PARAMS,
-    ...searchParams,
-  })).toString();
-
+  isDefaultSearchParamsRequired = true }) => {
+  const initialParams = new URLSearchParams({ ...searchParams });
+  if (isDefaultSearchParamsRequired) {
+    Object.entries(DEFAULT_SEARCH_PARAMS).forEach(([key, value]) => initialParams.append(key, value));
+  }
+  const queryString = (initialParams).toString();
   cy.request({
     method,
     url: `${Cypress.env('OKAPI_HOST')}/${path}?${queryString}`,

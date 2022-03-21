@@ -17,5 +17,6 @@ export default {
   remoteStorageConfigurationPath : 'settings/remote-storage/configurations',
   organizationsPath : '/organizations',
   marcAuthorities: '/marc-authorities',
-  requestsPath: '/requests'
+  inventorySettingsFastAddPath: '/settings/inventory/fastAdd',
+  requestsPath: '/requests',
 };
