@@ -12,7 +12,8 @@ Cypress.Commands.add('getInstances', (searchParams) => {
   cy.okapiRequest({
     method: 'GET',
     path: 'search/instances',
-    searchParams
+    searchParams,
+    isDefaultSearchParamsRequired: false
   }).then(({ body }) => {
     Cypress.env('instances', body.instances);
   });
