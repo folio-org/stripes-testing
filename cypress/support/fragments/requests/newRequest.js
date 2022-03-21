@@ -1,4 +1,4 @@
-import { Button, TextField } from '../../../../interactors';
+import { Button, TextField, Pane } from '../../../../interactors';
 
 const actionsButton = Button('Actions');
 const newRequestButton = Button('New');
@@ -33,10 +33,15 @@ export default {
     cy.do(saveAndCloseButton.click());
   },
 
+  waitLoading() {
+    cy.expect(Pane({ title: 'Request Detail' }).exists());
+  },
+
   createNewRequest(newRequest) {
     this.openNewRequestPane();
     this.fillRequiredFields(newRequest);
     this.choosepickupServicePoint(newRequest.pickupServicePoint);
     this.saveRequestAndClose();
+    this.waitLoading();
   }
 };

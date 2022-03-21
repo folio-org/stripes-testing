@@ -8,32 +8,41 @@ import NewRequest from '../../support/fragments/requests/newRequest';
 describe('Assign Tags to Request', () => {
   const barcode = uuid();
   const lastName = `Test-${uuid()}`;
+  const tag = 'urgent';
+  const requestRecord = {
+    itemBarcode: null,
+    itemTitle: null,
+    requesterBarcode: barcode,
+    pickupServicePoint: 'Circ Desk 1',
+  };
 
   before(() => {
     cy.login(Cypress.env('diku_login'), Cypress.env('diku_password'));
     cy.getToken('diku_admin', 'admin');
-
-    cy.getServicePointsApi({ limit: 1, query: 'pickupLocation=="true"' });
-    cy.getUserGroups({ limit: 1 });
-
     cy.visit(TopMenu.requestsPath);
   });
 
   beforeEach(() => {
-    const userData = {
-      active: true,
-      barcode,
-      personal: {
-        preferredContactTypeId: '002',
-        lastName,
-        email: 'test@folio.org',
-      },
-      patronGroup: Cypress.env('userGroups')[0].id,
-      departments: []
-    };
-    cy.createUserApi(userData);
+    cy.getServicePointsApi({ limit: 1, query: 'pickupLocation=="true"' });
+    cy.getUserGroups({ limit: 1 }).then((patronGroup) => {
+      const userData = {
+        active: true,
+        barcode,
+        personal: {
+          preferredContactTypeId: '002',
+          lastName,
+          email: 'test@folio.org',
+        },
+        patronGroup,
+        departments: []
+      };
+      cy.createUserApi(userData);
+    });
 
-    cy.getItems({ limit: 1, query: 'status.name=="Available"' });
+    cy.getItems({ limit: 1, query: 'status.name=="Available"' }).then((item) => {
+      requestRecord.itemBarcode = item.barcode;
+      requestRecord.itemTitle = item.title;
+    });
   });
 
   afterEach(() => {
@@ -48,27 +57,20 @@ describe('Assign Tags to Request', () => {
   });
 
   it('C747 Assign Tags to Request', { tags:  [testType.smoke] }, () => {
-    const requestRecord = {
-      itemBarcode: Cypress.env('items')[0].barcode,
-      itemTitle: Cypress.env('items')[0].title,
-      requesterBarcode: barcode,
-      pickupServicePoint: 'Circ Desk 1',
-    };
-
     NewRequest.createNewRequest(requestRecord);
 
-    Requests.selectAllOpenRequests();
+    Requests.selectNotYetFilledRequest();
     Requests.findCreatedRequest(requestRecord.itemTitle);
-    Requests.selectFirstRequest();
+    Requests.selectFirstRequest(requestRecord.itemTitle);
     Requests.openTagsPane();
-    Requests.selectTags();
+    Requests.selectTags(tag).then(() => {
+      Requests.closePane('Tags');
+      Requests.closePane('Request Detail');
 
-    Requests.closePane('Tags');
-    Requests.closePane('Request Detail');
+      Requests.selectFirstRequest(requestRecord.itemTitle);
+      Requests.openTagsPane();
 
-    Requests.selectFirstRequest();
-    Requests.openTagsPane();
-
-    Requests.verifyAssignedTags();
+      Requests.verifyAssignedTags(tag);
+    });
   });
 });

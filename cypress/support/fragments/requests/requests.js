@@ -1,4 +1,4 @@
-import { Button, MultiColumnListCell, MultiSelect, Pane, IconButton, TextArea, ValueChipRoot } from '../../../../interactors';
+import { Button, MultiColumnListCell, MultiSelect, Pane, IconButton, TextArea, ValueChipRoot, Checkbox, TextField, Badge } from '../../../../interactors';
 
 export default {
 
@@ -12,24 +12,24 @@ export default {
   },
 
   findCreatedRequest(title) {
-    cy.do(cy.get('#input-request-search').type(title));
+    cy.do(TextField({ id: 'input-request-search' }).fillIn(title));
     cy.do(Pane({ title: 'Search & filter' }).find(Button('Search')).click());
   },
 
   selectAwaitingDeliveryRequest() {
-    cy.get('[name="Open - Awaiting delivery"]').click();
+    cy.do(Checkbox({ name: 'Open - Awaiting delivery' }).click());
   },
 
   selectAwaitingPickupRequest() {
-    cy.get('[name="Open - Awaiting pickup"]').click();
+    cy.do(Checkbox({ name: 'Open - Awaiting pickup' }).click());
   },
 
   selectInTransitRequest() {
-    cy.get('[name="Open - In transit"]').click();
+    cy.do(Checkbox({ name: 'Open - In transit' }).click());
   },
 
   selectNotYetFilledRequest() {
-    cy.get('[name="Open - Not yet filled"]').click();
+    cy.do(Checkbox({ name: 'Open - Not yet filled' }).click());
   },
 
   selectAllOpenRequests() {
@@ -39,27 +39,24 @@ export default {
     this.selectNotYetFilledRequest();
   },
 
-  selectFirstRequest() {
-    cy.do(MultiColumnListCell({ row: 0, columnIndex: 1 }).click());
+  selectFirstRequest(title) {
+    cy.do(Pane({ title: 'Requests' }).find(MultiColumnListCell({ row: 0, column: title })).click());
   },
 
   openTagsPane() {
     cy.do(Button({ id: 'clickable-show-tags' }).click());
   },
 
-  selectTags() {
-    // eslint-disable-next-line cypress/no-unnecessary-waiting
-    cy.wait(1800);
-    cy.do(Pane({ title: 'Tags' }).find(MultiSelect()).select(['urgent']));
-    // eslint-disable-next-line cypress/no-unnecessary-waiting
-    cy.wait(3000);
+  async selectTags(tag) {
+    await cy.do(Pane({ title: 'Tags' }).find(MultiSelect()).select(tag));
   },
 
   closePane(title) {
     cy.do(Pane({ title }).find(IconButton({ ariaLabel: 'Close ' })).click());
   },
 
-  verifyAssignedTags() {
-    cy.expect(Pane({ title: 'Tags' }).find(ValueChipRoot('urgent')).exists());
+  verifyAssignedTags(tag) {
+    cy.expect(Button({ id: 'clickable-show-tags' }).find(Badge()).has({ value: '1' }));
+    cy.expect(Pane({ title: 'Tags' }).find(ValueChipRoot(tag)).exists());
   },
 };
