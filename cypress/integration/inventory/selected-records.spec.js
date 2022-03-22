@@ -3,7 +3,7 @@ import InventorySearch from '../../support/fragments/inventory/inventorySearch';
 import InventoryModals from '../../support/fragments/inventory/inventoryModals';
 import testTypes from '../../support/dictionary/testTypes';
 
-describe('inventory: selecting / changing records', () => {
+describe('ui-inventory: selecting / changing records', () => {
   beforeEach('navigates to Inventory', () => {
     cy.login(Cypress.env('diku_login'), Cypress.env('diku_password'));
     cy.visit(TopMenu.inventoryPath);
