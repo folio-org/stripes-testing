@@ -3,7 +3,7 @@ import TestTypes from '../../support/dictionary/testTypes';
 import InventorySearch from '../../support/fragments/inventory/inventorySearch';
 import InventoryActions from '../../support/fragments/inventory/inventoryActions';
 
-describe('Browse call number feature', () => {
+describe('ui-inventory: browse call numbers', () => {
   beforeEach('navigate to inventory', () => {
     cy.login(Cypress.env('diku_login'), Cypress.env('diku_password'));
     cy.visit(TopMenu.inventoryPath);

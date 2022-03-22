@@ -33,6 +33,7 @@ Cypress.Commands.add('getUserGroups', (searchParams) => {
     })
     .then(({ body }) => {
       Cypress.env('userGroups', body.usergroups);
+      return body.usergroups[0].id;
     });
 });
 

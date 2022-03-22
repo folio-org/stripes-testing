@@ -14,7 +14,7 @@ import OrdersHelper from '../../support/fragments/orders/ordersHelper';
 const successCalloutMessage = '1 item has been successfully moved.';
 
 
-describe('inventory: moving items', () => {
+describe('ui-inventory: moving items', () => {
   beforeEach('navigates to Inventory', () => {
     // TODO: replace this user with all permissions to user with only needed permission for moving items
     cy.login(Cypress.env('diku_login'), Cypress.env('diku_password'));

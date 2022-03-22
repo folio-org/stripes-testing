@@ -7,6 +7,7 @@
 * Implement e-2-e automation of test case C598. Refs FAT-812.
 * Implement e-2-e automation of test case C1294. Refs FAT-817.
 * Implement e-2-e automation of test case C15850. Refs FAT-823.
+* Implement e-2-e automation of test case C747. Refs FAT-890.
 * Implement e-2-e automation of test case C3501. Refs FAT-821.
 
 ## [4.2.0](https://github.com/folio-org/stripes-testing/tree/v4.2.0) (2022-02-11)
