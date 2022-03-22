@@ -63,14 +63,13 @@ describe('Assign Tags to Request', () => {
     Requests.findCreatedRequest(requestRecord.itemTitle);
     Requests.selectFirstRequest(requestRecord.itemTitle);
     Requests.openTagsPane();
-    Requests.selectTags(tag).then(() => {
-      Requests.closePane('Tags');
-      Requests.closePane('Request Detail');
+    Requests.selectTags(tag);
+    Requests.closePane('Tags');
+    Requests.closePane('Request Detail');
 
-      Requests.selectFirstRequest(requestRecord.itemTitle);
-      Requests.openTagsPane();
+    Requests.selectFirstRequest(requestRecord.itemTitle);
+    Requests.openTagsPane();
 
-      Requests.verifyAssignedTags(tag);
-    });
+    Requests.verifyAssignedTags(tag);
   });
 });

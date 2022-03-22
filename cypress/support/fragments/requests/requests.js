@@ -47,8 +47,9 @@ export default {
     cy.do(Button({ id: 'clickable-show-tags' }).click());
   },
 
-  async selectTags(tag) {
-    await cy.do(Pane({ title: 'Tags' }).find(MultiSelect()).select(tag));
+  selectTags(tag) {
+    this.waitLoadingTags();
+    cy.do(Pane({ title: 'Tags' }).find(MultiSelect()).select(tag));
   },
 
   closePane(title) {
@@ -58,5 +59,14 @@ export default {
   verifyAssignedTags(tag) {
     cy.expect(Button({ id: 'clickable-show-tags' }).find(Badge()).has({ value: '1' }));
     cy.expect(Pane({ title: 'Tags' }).find(ValueChipRoot(tag)).exists());
+  },
+
+  waitLoadingTags() {
+    cy.expect(Pane({ title: 'Tags' }).exists());
+    cy.intercept({
+      method: 'GET',
+      url: '/tags?limit=10000',
+    }).as('getTags');
+    cy.wait('@getTags');
   },
 };
