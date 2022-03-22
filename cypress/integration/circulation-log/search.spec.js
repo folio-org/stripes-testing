@@ -7,7 +7,7 @@ import permissions from '../../support/dictionary/permissions';
 const ITEM_BARCODE = `123${getRandomPostfix()}`;
 let userId = '';
 
-describe('ui-circulation-log: filters', () => {
+describe('ui-circulation-log: filters', { retries: 1 }, () => {
   before('create inventory instance', () => {
     cy.createTempUser([
       permissions.inventoryAll.gui,
