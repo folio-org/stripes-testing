@@ -7,6 +7,8 @@ import permissions from '../../support/dictionary/permissions';
 const ITEM_BARCODE = `123${getRandomPostfix()}`;
 let userId = '';
 
+
+// TODO: think about another way about retry
 describe('ui-circulation-log: filters', { retries: 1 }, () => {
   before('create inventory instance', () => {
     cy.createTempUser([

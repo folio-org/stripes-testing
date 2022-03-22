@@ -8,6 +8,7 @@ import { Checkbox } from '../../../interactors';
 import { getLongDelay } from '../../support/utils/cypressTools';
 
 
+// TODO: think about another way about retry
 describe('ui-inventory: exports', { retries: 1 }, () => {
   beforeEach('navigates to Inventory', () => {
     cy.login(Cypress.env('diku_login'), Cypress.env('diku_password'));
