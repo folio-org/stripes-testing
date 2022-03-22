@@ -1,11 +1,12 @@
 import { Accordion, Button, Modal, Section, RadioButton, HTML, including, MultiSelect, KeyValue, MultiSelectOption, ValueChipRoot } from '../../../../interactors';
 import getRandomPostfix from '../../utils/stringTools';
+import { getLongDelay } from '../../utils/cypressTools';
 
 const titlesFilterModal = Modal({ id : 'eholdings-details-view-search-modal' });
 const tagsSection = Section({ id: 'packageShowTags' });
 const closeButton = Button({ icon: 'times' });
 
-const filterTitlesStatuses = { all: 'All',
+const filterStatuses = { all: 'All',
   selected: 'Selected',
   notSelected: 'Not selected' };
 
@@ -16,7 +17,7 @@ const confirmationModal = Modal({ id:'eholdings-confirmation-modal' });
 const getElementIdByName = (packageName) => packageName.replaceAll(' ', '-').toLowerCase();
 
 export default {
-  filterTitlesStatuses,
+  filterStatuses,
   waitLoading: (specialPackage) => {
     cy.expect(Section({ id : getElementIdByName(specialPackage) }).exists());
     cy.expect(tagsSection.find(MultiSelect()).exists());
@@ -28,7 +29,7 @@ export default {
     cy.do(confirmationModal.find(Button('Add package (all titles) to holdings')).click());
     cy.expect(confirmationModal.absent());
   },
-  filterTitles: (selectionStatus = filterTitlesStatuses.notSelected) => {
+  filterTitles: (selectionStatus = filterStatuses.notSelected) => {
     cy.do(titlesSection.find(Button({ icon: 'search' })).click());
     cy.expect(titlesFilterModal.exists());
     const selectionStatusAccordion = titlesFilterModal.find(Accordion({ id: 'filter-titles-selected' }));
@@ -38,12 +39,21 @@ export default {
     cy.do(titlesFilterModal.find(Button('Search')).click());
     cy.expect(titlesFilterModal.absent());
   },
-  verifyHoldingStatus:(expectedStatus = filterTitlesStatuses.selected) => {
+  verifyHoldingStatus:(expectedStatus = filterStatuses.selected) => {
     cy.expect(packageHoldingStatusSection.find(HTML(including(expectedStatus))).exists());
-    cy.expect(titlesSection.find(HTML(including(expectedStatus))).exists());
-    [filterTitlesStatuses.selected, filterTitlesStatuses.selected.notSelected]
-      .filter(filterTitlesStatus => filterTitlesStatus !== expectedStatus)
-      .forEach(restStatus => cy.expect(titlesSection.find(HTML(including(restStatus))).absent()));
+    cy.url().then(url => {
+      const packageId = url.split('?')[0].split('/').at(-1);
+      cy.intercept(`eholdings/packages/${packageId}/resources?**`).as('getTitles');
+      cy.wait('@getTitles', getLongDelay());
+
+      // related with delay of status changing of package related titles
+      cy.wait(3000);
+
+      cy.expect(titlesSection.find(HTML(including(expectedStatus))).exists());
+      [filterStatuses.selected, filterStatuses.selected.notSelected]
+        .filter(filterTitlesStatus => filterTitlesStatus !== expectedStatus)
+        .forEach(restStatus => cy.expect(titlesSection.find(HTML(including(restStatus))).absent()));
+    });
   },
   checkEmptyTitlesList:() => {
     cy.expect(titlesSection.find(KeyValue('Records found', { value:'0' })));

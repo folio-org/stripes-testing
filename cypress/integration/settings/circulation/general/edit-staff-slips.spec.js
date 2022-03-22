@@ -11,13 +11,13 @@ describe('ui-circulation-settings: Edit Staff slip settings', () => {
 
   it('C347901 Staff clips settings', { tags: [TestType.smoke] }, () => {
     EditStaffClips.editHold(editStaffClipsHold);
-    EditStaffClips.fillAndPreviewTemplate();
+    EditStaffClips.fillAndPreviewTemplate(editStaffClipsHold);
     EditStaffClips.editPickslip(editStaffClipsHold);
-    EditStaffClips.fillAndPreviewTemplate();
+    EditStaffClips.fillAndPreviewTemplate(editStaffClipsHold);
     EditStaffClips.editRequestDelivery(editStaffClipsHold);
-    EditStaffClips.fillAndPreviewTemplate();
+    EditStaffClips.fillAndPreviewTemplate(editStaffClipsHold);
     EditStaffClips.editTransit(editStaffClipsHold);
-    EditStaffClips.fillAndPreviewTemplate();
+    EditStaffClips.fillAndPreviewTemplate(editStaffClipsHold);
     EditStaffClips.editAndClearHold();
     EditStaffClips.editAndClearPickslip();
     EditStaffClips.editAndClearRequestDelivery();

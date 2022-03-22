@@ -9,6 +9,7 @@ import TestTypes from '../../support/dictionary/testTypes';
 import Features from '../../support/dictionary/features';
 import Permissions from '../../support/dictionary/permissions';
 import NewAgreement from '../../support/fragments/agreements/newAgreement';
+import { getLongDelay } from '../../support/utils/cypressTools';
 
 describe('Note creation', () => {
   let userId = '';
@@ -54,6 +55,7 @@ describe('Note creation', () => {
     const specialNote = NewNote.defaultNote;
     AgreementDetails.createNote(specialNote);
     Agreements.selectRecord();
+    AgreementDetails.checkNotesCount(1);
     AgreementDetails.openNotesSection();
     AgreementDetails.waitLoadingWithExistingNote(specialNote.title);
 
@@ -65,6 +67,7 @@ describe('Note creation', () => {
     ExistingNoteView.checkProperties(updatedNote);
 
     ExistingNoteView.close();
+    AgreementDetails.checkNotesCount(1);
     AgreementDetails.openNotesSection();
     AgreementDetails.specialNotePresented(updatedNote.title);
   });
@@ -77,6 +80,7 @@ describe('Note creation', () => {
 
     AgreementDetails.createNote(longNote);
     Agreements.selectRecord();
+    AgreementDetails.checkNotesCount(1);
     AgreementDetails.openNotesSection();
     AgreementDetails.waitLoadingWithExistingNote(longNote.title);
 
@@ -87,6 +91,11 @@ describe('Note creation', () => {
     ExistingNoteView.waitLoading();
     ExistingNoteView.checkProperties(longNote);
     ExistingNoteView.close();
+    cy.intercept('note-types?**').as('noteTypesLoading');
+    cy.intercept('note-links/domain/agreements/type/agreement/id/**').as('notesLoading');
+    AgreementDetails.checkNotesCount(1);
+    cy.wait('@notesLoading', getLongDelay());
+    cy.wait('@noteTypesLoading', getLongDelay());
   });
 
   afterEach(() => {
