@@ -102,6 +102,7 @@ describe('MARC Authority management', () => {
 
     cy.visit(TopMenu.marcAuthorities);
     MarcAuthorities.switchToBrowse();
+    MarcAuthorityBrowse.checkFiltersInitialState();
     MarcAuthorityBrowse.waitLoading();
     MarcAuthorityBrowse.searchBy('None', '*');
     MarcAuthorityBrowse.waitLoading();
