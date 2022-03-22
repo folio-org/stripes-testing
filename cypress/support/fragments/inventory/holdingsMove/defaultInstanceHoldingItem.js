@@ -53,7 +53,7 @@ export default {
       name: `autotest_name_${getRandomPostfix()}`,
     }
   },
-  defaultUicreateItem : {
+  defaultUiCreateItem : {
     body: {
       id: uuid(),
       barcode: `2134456_${getRandomPostfix()}`,

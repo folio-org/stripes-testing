@@ -9,7 +9,7 @@ describe('Check In - Actions ', () => {
   before('Create New Service point, Item, User and Check out item', () => {
     cy.login(Cypress.env('diku_login'), Cypress.env('diku_password'));
     cy.getToken(Cypress.env('diku_login'), Cypress.env('diku_password'));
-    NewServicePoint.servicePoint();
+    NewServicePoint.createServicePoint();
     NewInctanceHoldingsItem.createItem();
     NewUser.createUser();
     SwitchServicePoint.addServicePointPermissions();
