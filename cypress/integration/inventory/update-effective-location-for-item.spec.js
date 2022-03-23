@@ -49,7 +49,8 @@ describe('Update the effective location for the item', () => {
   });
 
   it('C3501 Update the effective location for the item', { tags: [TestTypes.smoke] }, () => {
-    InventorySearch.searchByParameter('Keyword (title, contributor, identifier)', instanceTitle);
+    InventorySearch.switchToItem();
+    InventorySearch.searchByParameter('Barcode', ITEM_BARCODE);
     InventorySearch.selectSearchResultItem();
     InventoryInstance.goToHoldingView();
     HoldingsRecordView.edit();
