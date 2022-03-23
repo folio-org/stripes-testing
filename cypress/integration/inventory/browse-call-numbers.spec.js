@@ -51,4 +51,11 @@ describe('ui-inventory: browse call numbers', () => {
     InventorySearch.switchToHoldings();
     InventorySearch.browseSubjectIsAbsent();
   });
+
+  it('C350379 Verify the "Browse subjects" search option on the Item tab', { tags: [TestTypes.smoke] }, () => {
+    InventorySearch.instanceTabIsDefault();
+    InventorySearch.verifyKeywordsAsDefault();
+    InventorySearch.switchToItem();
+    InventorySearch.browseSubjectIsAbsent();
+  });
 });
