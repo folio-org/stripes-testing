@@ -102,9 +102,9 @@ describe('MARC Authority management', () => {
 
     cy.visit(TopMenu.marcAuthorities);
     MarcAuthorities.switchToBrowse();
+    MarcAuthorityBrowse.waitEmptyTable();
     MarcAuthorityBrowse.checkFiltersInitialState();
-    MarcAuthorityBrowse.waitLoading();
-    MarcAuthorityBrowse.searchBy('None', '*');
+    MarcAuthorityBrowse.searchBy('None', MarcAuthority.defaultAuthority.headingReference);
     MarcAuthorityBrowse.waitLoading();
     MarcAuthorityBrowse.checkPresentedColumns();
   });
