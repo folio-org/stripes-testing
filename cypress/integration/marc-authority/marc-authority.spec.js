@@ -90,7 +90,7 @@ describe('MARC Authority management', () => {
     MarcAuthority.contains(changedValueInSourceRow);
   });
 
-  it.only('C350578 Browse existing Authorities', { tags:  [TestTypes.smoke, Features.authority] }, () => {
+  it('C350578 Browse existing Authorities', { tags:  [TestTypes.smoke, Features.authority] }, () => {
     // make one more import to get 2 marc authorities to check browse functionality
     const secondFileName = `autotestFile.${getRandomPostfix()}_second.mrc`;
     cy.visit(TopMenu.dataImportPath);
