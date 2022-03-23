@@ -6,7 +6,6 @@ const presentedColumns = ['Authorized/Reference', 'Heading/Reference', 'Type of 
 const rootPaneAuthoritiesFilters = Section({ id: 'pane-authorities-filters' });
 const defaultMainFilterValue = { htmlValue:'none', visibleValue: 'None' };
 const searchButton = rootPaneAuthoritiesFilters.find(Button({ id: 'submit-authorities-search' }));
-// const mainFilter = rootPaneAuthoritiesFilters.find(Select({ id: 'textarea-authorities-search-qindex' }));
 const mainFilter = rootPaneAuthoritiesFilters.find(SearchField({ id:'textarea-authorities-search' }));
 const getFirstLineIndexRow = (zeroIndex) => `row-${zeroIndex + 52}`;
 
