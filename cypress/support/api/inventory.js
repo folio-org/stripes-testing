@@ -108,7 +108,9 @@ Cypress.Commands.add('createInstance', ({ instance, holdings = [], items = [] })
           holding: { ...holding, instanceId },
           items: items[i],
         }));
+      cy.wrap(instanceId).as('instanceId');
     });
+  return cy.get('@instanceId');
 });
 
 Cypress.Commands.add('createHolding', ({ holding, items = [] }) => {
