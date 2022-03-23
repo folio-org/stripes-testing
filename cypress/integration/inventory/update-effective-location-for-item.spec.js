@@ -13,6 +13,7 @@ describe('Update the effective location for the item', () => {
   const ITEM_BARCODE = Number(new Date()).toString();
 
   before(() => {
+    cy.log(ITEM_BARCODE);
     cy.login(Cypress.env('diku_login'), Cypress.env('diku_password'));
     cy.getToken(Cypress.env('diku_login'), Cypress.env('diku_password'))
       .then(() => {
@@ -46,6 +47,15 @@ describe('Update the effective location for the item', () => {
         });
       });
     cy.visit(TopMenu.inventoryPath);
+  });
+
+  afterEach(() => {
+    cy.getInstances({ limit: 1, expandAll: true, query: `"items.barcode"=="${ITEM_BARCODE}"` })
+      .then(() => {
+        cy.deleteItem(Cypress.env('instances')[0].items[0].id);
+        cy.deleteHoldingRecord(Cypress.env('instances')[0].holdings[0].id);
+        cy.deleteInstanceApi(Cypress.env('instances')[0].id);
+      });
   });
 
   it('C3501 Update the effective location for the item', { tags: [TestTypes.smoke] }, () => {
