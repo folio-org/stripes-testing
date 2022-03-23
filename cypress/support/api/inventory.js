@@ -108,7 +108,9 @@ Cypress.Commands.add('createInstance', ({ instance, holdings = [], items = [] })
           holding: { ...holding, instanceId },
           items: items[i],
         }));
+      cy.wrap(instanceId).as('instanceId');
     });
+  return cy.get('@instanceId');
 });
 
 Cypress.Commands.add('createHolding', ({ holding, items = [] }) => {
@@ -158,6 +160,7 @@ Cypress.Commands.add('getItems', (searchParams) => {
     })
     .then(({ body }) => {
       Cypress.env('items', body.items);
+      return body.items[0];
     });
 });
 

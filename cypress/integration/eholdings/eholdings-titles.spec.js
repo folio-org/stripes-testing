@@ -5,7 +5,6 @@ import eHoldingsTitle from '../../support/fragments/eholdings/eHoldingsTitle';
 import eHoldingsPackage from '../../support/fragments/eholdings/eHoldingsPackage';
 import eHoldingsTitles from '../../support/fragments/eholdings/eHoldingsTitles';
 import eHoldingsPackages from '../../support/fragments/eholdings/eHoldingsPackages';
-import eHoldingsPackagesSearch from '../../support/fragments/eholdings/eHoldingsPackagesSearch';
 import eHoldingsTitlesSearch from '../../support/fragments/eholdings/eHoldingsTitlesSearch';
 import eHoldingsResourceView from '../../support/fragments/eholdings/eHoldingsResourceView';
 import TopMenu from '../../support/fragments/topMenu';
@@ -121,12 +120,9 @@ describe('eHoldings titles management', () => {
     cy.createTempUser([permissions.uieHoldingsRecordsEdit.gui,
       permissions.uieHoldingsTitlesPackagesCreateDelete.gui]).then(userProperties => {
       userId = userProperties.userId;
-      cy.login(userProperties.username, userProperties.password);
-      cy.visit(TopMenu.eholdingsPath);
-      eHoldingSearch.switchToPackages();
-      eHoldingsPackagesSearch.byName();
-      eHoldingsPackagesSearch.bySelectionStatus(eHoldingsPackage.filterStatuses.selected);
-      eHoldingsPackages.getPackageName().then(packageName => {
+      eHoldingsPackages.getCustomPackageViaApi().then(packageName => {
+        cy.login(userProperties.username, userProperties.password);
+        cy.visit(TopMenu.eholdingsPath);
         eHoldingSearch.switchToTitles();
         const title = eHoldingsTitles.create(packageName);
         eHoldingsResourceView.checkNames(packageName, title);

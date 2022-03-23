@@ -6,6 +6,7 @@ import DownloadHelper from '../../support/fragments/data-export/export-marc-file
 import ExportFileHelper from '../../support/fragments/data-export/exportFile';
 import DataExportResults from '../../support/fragments/data-export/dataExportResults';
 import getRandomPostfix from '../../support/utils/stringTools';
+import { getLongDelay } from '../../support/utils/cypressTools';
 
 
 describe('export instance records', () => {
@@ -29,7 +30,7 @@ describe('export instance records', () => {
 
     // collect expected results and verify actual result
     cy.intercept(/\/data-export\/job-executions\?query=status=\(COMPLETED/).as('getInfo');
-    cy.wait('@getInfo', { requestTimeout: 30000 }).then((interception) => {
+    cy.wait('@getInfo', getLongDelay()).then((interception) => {
       const job = interception.response.body.jobExecutions[0];
       const resultFileName = job.exportedFiles[0].fileName;
       const recordsCount = job.progress.total;

@@ -5,9 +5,11 @@ import FileManager from '../../support/utils/fileManager';
 import DataExportResults from '../../support/fragments/data-export/dataExportResults';
 import testTypes from '../../support/dictionary/testTypes';
 import { Checkbox } from '../../../interactors';
+import { getLongDelay } from '../../support/utils/cypressTools';
 
 
-describe('inventory: exports', () => {
+// TODO: think about another way about retry
+describe('ui-inventory: exports', { retries: 1 }, () => {
   beforeEach('navigates to Inventory', () => {
     cy.login(Cypress.env('diku_login'), Cypress.env('diku_password'));
     cy.visit(TopMenu.inventoryPath);
@@ -18,7 +20,7 @@ describe('inventory: exports', () => {
     InventorySearch.saveUUIDs();
 
     cy.intercept('/search/instances/ids**').as('getIds');
-    cy.wait('@getIds').then((req) => {
+    cy.wait('@getIds', getLongDelay()).then((req) => {
       const expectedUUIDs = InventorySearch.getUUIDsFromRequest(req);
 
       FileManager.verifyFile(
@@ -49,7 +51,7 @@ describe('inventory: exports', () => {
     InventorySearch.exportInstanceAsMarc();
 
     cy.intercept('/data-export/quick-export').as('getIds');
-    cy.wait('@getIds').then((req) => {
+    cy.wait('@getIds', getLongDelay()).then((req) => {
       const expectedIDs = req.request.body.uuids;
 
       FileManager.verifyFile(

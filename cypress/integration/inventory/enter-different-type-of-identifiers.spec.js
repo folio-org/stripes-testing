@@ -8,6 +8,7 @@ import InventoryInstanceEdit from '../../support/fragments/inventory/InventoryIn
 
 describe('ui-inventory: Enter different type of identifiers', () => {
   const instanceTitle = `autoTestInstanceTitle.${getRandomPostfix()}`;
+  let instanceId;
 
   beforeEach('navigate to inventory', () => {
     cy.login(Cypress.env('diku_login'), Cypress.env('diku_password'));
@@ -23,15 +24,12 @@ describe('ui-inventory: Enter different type of identifiers', () => {
             title: instanceTitle,
             source: 'FOLIO',
           },
-        });
+        }).then(specialInstanceId => { instanceId = specialInstanceId; });
       });
   });
 
   afterEach(() => {
-    cy.getInstanceIdApi()
-      .then(({ body }) => {
-        cy.deleteInstanceApi(body.instances[body.instances.length - 1].id);
-      });
+    cy.deleteInstanceApi(instanceId);
   });
 
   [

@@ -29,6 +29,8 @@ describe('Manage inventory Bib records with quickMarc editor', () => {
       InventoryActions.import();
     });
   });
+
+  // TODO: https://issues.folio.org/browse/MODQM-211
   it('C10950 Edit and save a MARC record in quickMARC', { tags: [testTypes.smoke, features.quickMarcEditor] }, () => {
     InventoryInstance.goToEditMARCBiblRecord();
     QuickMarcEditor.waitLoading();

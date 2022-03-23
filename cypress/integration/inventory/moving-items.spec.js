@@ -14,7 +14,7 @@ import OrdersHelper from '../../support/fragments/orders/ordersHelper';
 const successCalloutMessage = '1 item has been successfully moved.';
 
 
-describe('inventory: moving items', () => {
+describe('ui-inventory: moving items', () => {
   beforeEach('navigates to Inventory', () => {
     // TODO: replace this user with all permissions to user with only needed permission for moving items
     cy.login(Cypress.env('diku_login'), Cypress.env('diku_password'));
@@ -35,6 +35,8 @@ describe('inventory: moving items', () => {
     InventoryInstance.returnItemToFirstHolding(OrdersHelper.mainLibraryLocation, secondHolding);
     InteractorsTools.checkCalloutMessage(successCalloutMessage);
   });
+
+  // TODO: https://issues.folio.org/browse/UIIN-1963
   it('C345404 Move holdings record with Source = MARC to an instance record with source = MARC', { tags:  [TestTypes.smoke, Features.eHoldings] }, () => {
     InventoryActions.import();
     InventoryInstance.getAssignedHRID().then(initialInstanceHrId => {
