@@ -37,8 +37,9 @@ describe('Manage holding records through quickmarc editor', () => {
     InventoryViewSource.contains(expectedInSourceRow);
   });
 
+  // TODO: https://issues.folio.org/browse/UIEH-1261
   it('C345398 Add/Edit MARC 008', { tags: [TestTypes.smoke, Features.quickMarcEditor] }, () => {
-    QuickMarcEditor.checkInitial008TagValueFromHoldingsRecord();
+    QuickMarcEditor.checkInitial008TagValueFromHoldings();
     QuickMarcEditor.checkNotExpectedByteLabelsInTag008Holdings();
 
     const changed008TagValue = QuickMarcEditor.updateAllDefaultValuesIn008TagInHoldings();
@@ -49,7 +50,7 @@ describe('Manage holding records through quickmarc editor', () => {
     HoldingsRecordView.editInQuickMarc();
     QuickMarcEditor.waitLoading();
 
-    const cleared008TagValue = QuickMarcEditor.clearTag008();
+    const cleared008TagValue = QuickMarcEditor.clearTag008Holdings();
     HoldingsRecordView.waitLoading();
     HoldingsRecordView.viewSource();
     InventoryViewSource.contains(cleared008TagValue);

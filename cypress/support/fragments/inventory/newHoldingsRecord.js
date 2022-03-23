@@ -6,8 +6,8 @@ const sourceValues = {
 };
 
 export default {
-  fillRequiredFields : () => {
-    cy.do(Selection('Permanent*').choose('Annex (KU/CC/DI/A) Remote'));
+  fillRequiredFields : (permanentLocation = 'Annex (KU/CC/DI/A) Remote') => {
+    cy.do(Selection('Permanent*').choose(permanentLocation));
   },
   saveAndClose : () => {
     cy.do(rootForm.find(Button('Save and close')).click());

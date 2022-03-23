@@ -160,6 +160,7 @@ Cypress.Commands.add('getItems', (searchParams) => {
     })
     .then(({ body }) => {
       Cypress.env('items', body.items);
+      return body.items[0];
     });
 });
 

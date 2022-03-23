@@ -50,6 +50,7 @@ describe('Management of n fee/fine owners and service points', () => {
           cy.login(firstUserProperties.username, firstUserProperties.password, { path: SettingsMenu.usersOwnersPath, waiter: UsersOwners.waitLoading });
           cy.allure().endStep();
 
+          // TODO:  can be not stable, review in the future
           cy.allure().startStep('Edit last created owner, uncheck already selected service point and save changed owner  ');
           UsersOwners.unselectExistingServicePoint(addedServicePoints.at(-1));
           cy.allure().endStep();
@@ -72,9 +73,6 @@ describe('Management of n fee/fine owners and service points', () => {
   });
 
   afterEach(() => {
-    addedServicePoints.forEach(addedServicePoint => {
-      UsersOwners.deleteOwnerWithServicePoint(addedServicePoint);
-    });
     users.forEach(user => cy.deleteUser(user.userId));
   });
 });
