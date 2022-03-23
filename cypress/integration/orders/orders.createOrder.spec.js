@@ -1,9 +1,9 @@
 import TopMenu from '../../support/fragments/topMenu';
 import NewOrder from '../../support/fragments/orders/newOrder';
 import Orders from '../../support/fragments/orders/orders';
-import testType from '../../support/dictionary/testTypes';
+import TestType from '../../support/dictionary/testTypes';
 
-describe('ui-orders: create an order', () => {
+describe('orders: create an order', () => {
   const order = { ...NewOrder.defaultOrder };
 
   before(() => {
@@ -17,7 +17,7 @@ describe('ui-orders: create an order', () => {
     Orders.deleteOrderViaActions();
   });
 
-  it('C660 Create an order', { tags: [testType.smoke] }, () => {
+  it('C660 Create an order', { tags: [TestType.smoke] }, () => {
     Orders.createOrder(order);
     Orders.checkCreatedOrder(order);
   });

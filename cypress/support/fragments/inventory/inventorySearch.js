@@ -64,12 +64,38 @@ export default {
     cy.do(Select('Search field index').choose('Browse call numbers'));
   },
 
+  selectBrowseSubjects() {
+    // cypress can't draw selected option without wait
+    cy.wait(1000);
+    cy.do(Select('Search field index').choose('Browse subjects'));
+  },
+
   browseCallNumberIsAbsent() {
     cy.expect(HTML('Browse call numbers').absent());
   },
 
+  browseSubjectIsAbsent() {
+    cy.expect(HTML('Browse subjects').absent());
+  },
+
   showsOnlyEffectiveLocation() {
     cy.expect(Accordion({ id: 'effectiveLocation' }).exists());
+    cy.expect(Accordion({ id: 'language' }).absent());
+    cy.expect(Accordion({ id: 'resource' }).absent());
+    cy.expect(Accordion({ id: 'format' }).absent());
+    cy.expect(Accordion({ id: 'mode' }).absent());
+    cy.expect(Accordion({ id: 'natureOfContent' }).absent());
+    cy.expect(Accordion({ id: 'staffSuppress' }).absent());
+    cy.expect(Accordion({ id: 'instancesDiscoverySuppress' }).absent());
+    cy.expect(Accordion({ id: 'statisticalCodeIds' }).absent());
+    cy.expect(Accordion({ id: 'createdDate' }).absent());
+    cy.expect(Accordion({ id: 'updatedDate' }).absent());
+    cy.expect(Accordion({ id: 'source' }).absent());
+    cy.expect(Accordion({ id: 'instancesTags' }).absent());
+  },
+
+  filtersIsAbsent() {
+    cy.expect(Accordion({ id: 'effectiveLocation' }).absent());
     cy.expect(Accordion({ id: 'language' }).absent());
     cy.expect(Accordion({ id: 'resource' }).absent());
     cy.expect(Accordion({ id: 'format' }).absent());
@@ -159,5 +185,12 @@ export default {
         expect(element.classList[2]).to.include('primary');
       })
     );
-  }
+  },
+
+  browseSubjectsSearch(searchString = 'test123') {
+    cy.do([
+      TextField({ id: 'input-inventory-search' }).fillIn(searchString),
+      Button('Browse').click()
+    ]);
+  },
 };
