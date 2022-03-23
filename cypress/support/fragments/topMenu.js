@@ -16,5 +16,7 @@ export default {
   circulationLogPath : '/circulation-log',
   remoteStorageConfigurationPath : 'settings/remote-storage/configurations',
   organizationsPath : '/organizations',
-  marcAuthorities: '/marc-authorities'
+  marcAuthorities: '/marc-authorities',
+  inventorySettingsFastAddPath: '/settings/inventory/fastAdd',
+  requestsPath: '/requests',
 };

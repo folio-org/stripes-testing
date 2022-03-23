@@ -3,10 +3,11 @@ import BasicOrderLine from '../../support/fragments/orders/basicOrderLine';
 import TestType from '../../support/dictionary/testTypes';
 import Orders from '../../support/fragments/orders/orders';
 import TopMenu from '../../support/fragments/topMenu';
-import Helper from '../../support/fragments/finance/financeHelper';
+import DateTools from '../../support/utils/dateTools';
+import SearchHelper from '../../support/fragments/finance/financeHelper';
 import OrdersHelper from '../../support/fragments/orders/ordersHelper';
 
-describe('orders: Close Order', () => {
+describe('orders: Test PO search', () => {
   const order = { ...NewOrder.defaultOrder };
   const orderLine = { ...BasicOrderLine.defaultOrderLine };
 
@@ -25,17 +26,25 @@ describe('orders: Close Order', () => {
     cy.login(Cypress.env('diku_login'), Cypress.env('diku_password'));
   });
 
-  it('C667 Close an existing order', { tags: [TestType.smoke] }, () => {
+  afterEach(() => {
+    SearchHelper.selectFromResultsList();
+    Orders.deleteOrderViaActions();
+  });
+
+  it('C6717 Test the PO searches', { tags: [TestType.smoke] }, () => {
     Orders.createOrderWithOrderLineViaApi(order, orderLine)
       .then(orderNumber => {
+        const today = new Date();
         cy.visit(TopMenu.ordersPath);
+        Orders.checkPoSearch(Orders.getSearchParamsMap(orderNumber, DateTools.getFormattedDate({ date: today }, 'MM/DD/YYYY')),
+          orderNumber);
+        // open order to check 'date opened' search
         Orders.searchByParameter('PO number', orderNumber);
-        Helper.selectFromResultsList();
+        SearchHelper.selectFromResultsList();
         Orders.openOrder();
-        Orders.closeOrder('Cancelled');
         Orders.closeThirdPane();
         Orders.resetFilters();
-        Orders.selectStatusInSearch('Closed');
+        Orders.searchByParameter('Date opened', DateTools.getFormattedDate({ date: today }, 'MM/DD/YYYY'));
         Orders.checkSearchResults(orderNumber);
       });
   });

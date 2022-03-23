@@ -37,11 +37,12 @@ describe('Manage holding records through quickmarc editor', () => {
     InventoryViewSource.contains(expectedInSourceRow);
   });
 
+  // TODO: https://issues.folio.org/browse/UIEH-1261
   it('C345398 Add/Edit MARC 008', { tags: [TestTypes.smoke, Features.quickMarcEditor] }, () => {
-    QuickMarcEditor.checkInitial008TagValueFromHoldingsRecord();
-    QuickMarcEditor.checkNotExpectedByteLabelsInHoldingsRecordTag008();
+    QuickMarcEditor.checkInitial008TagValueFromHoldings();
+    QuickMarcEditor.checkNotExpectedByteLabelsInTag008Holdings();
 
-    const changed008TagValue = QuickMarcEditor.updateAllDefaultValuesIn008Tag();
+    const changed008TagValue = QuickMarcEditor.updateAllDefaultValuesIn008TagInHoldings();
     HoldingsRecordView.waitLoading();
     HoldingsRecordView.viewSource();
     InventoryViewSource.contains(changed008TagValue);
@@ -49,14 +50,14 @@ describe('Manage holding records through quickmarc editor', () => {
     HoldingsRecordView.editInQuickMarc();
     QuickMarcEditor.waitLoading();
 
-    const cleared008TagValue = QuickMarcEditor.clearTag008();
+    const cleared008TagValue = QuickMarcEditor.clearTag008Holdings();
     HoldingsRecordView.waitLoading();
     HoldingsRecordView.viewSource();
     InventoryViewSource.contains(cleared008TagValue);
     InventoryViewSource.close();
     HoldingsRecordView.editInQuickMarc();
     QuickMarcEditor.waitLoading();
-    QuickMarcEditor.checkReplacedVoidValuesInTag008();
+    QuickMarcEditor.checkReplacedVoidValuesInTag008Holdings();
   });
 
   it('C345400 Attempt to save a record without a MARC 852', { tags: [TestTypes.smoke, Features.quickMarcEditor] }, () => {

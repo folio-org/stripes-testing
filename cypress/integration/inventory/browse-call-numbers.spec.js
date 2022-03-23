@@ -3,7 +3,7 @@ import TestTypes from '../../support/dictionary/testTypes';
 import InventorySearch from '../../support/fragments/inventory/inventorySearch';
 import InventoryActions from '../../support/fragments/inventory/inventoryActions';
 
-describe('verify call number browse feature', () => {
+describe('ui-inventory: browse call numbers', () => {
   beforeEach('navigate to inventory', () => {
     cy.login(Cypress.env('diku_login'), Cypress.env('diku_password'));
     cy.visit(TopMenu.inventoryPath);
@@ -29,5 +29,26 @@ describe('verify call number browse feature', () => {
     InventorySearch.switchToItem();
     InventorySearch.verifyKeywordsAsDefault();
     InventorySearch.browseCallNumberIsAbsent();
+  });
+
+  // TODO: unskip after fix bug UIIN-1965
+  it.skip('C350377 Verify the "Browse subjects" search option on the Instances tab', { tags: [TestTypes.smoke] }, () => {
+    InventorySearch.instanceTabIsDefault();
+    InventorySearch.verifyKeywordsAsDefault();
+    InventorySearch.selectBrowseSubjects();
+    InventorySearch.verifyCallNumberBrowseEmptyPane();
+    InventoryActions.actionsIsAbsent();
+    InventorySearch.filtersIsAbsent();
+    InventorySearch.browseSubjectsSearch();
+    cy.reload();
+    InventorySearch.verifyCallNumberBrowseEmptyPane();
+    InventorySearch.filtersIsAbsent();
+  });
+
+  it('C350378 Verify the "Browse subjects" search option on the Holdings tab', { tags: [TestTypes.smoke] }, () => {
+    InventorySearch.instanceTabIsDefault();
+    InventorySearch.verifyKeywordsAsDefault();
+    InventorySearch.switchToHoldings();
+    InventorySearch.browseSubjectIsAbsent();
   });
 });
