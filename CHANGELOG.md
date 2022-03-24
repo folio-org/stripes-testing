@@ -1,6 +1,7 @@
 # Change history for stripes-testing
 
-## [4.3.0](IN PROGRESS)
+## [4.2.1](https://github.com/folio-org/stripes-testing/tree/v4.2.1) (2022-03-24)
+[Full Changelog](https://github.com/folio-org/stripes-testing/compare/v4.2.0...v4.2.1)
 
 * Fix AdvancedSearch search option select interactor. Refs UITEST-89.
 
