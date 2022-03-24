@@ -87,12 +87,12 @@ describe('ui-circulation-log', () => {
   });
 
 
-  it('C15484 Filter circulation log on item barcode', { retries: 1, tags: [TestTypes.smoke] }, () => {
+  it('C15484 Filter circulation log on item barcode', { retries: 3, tags: [TestTypes.smoke] }, () => {
     SearchPane.searchByItemBarcode(ITEM_BARCODE);
     SearchPane.verifyResultCells();
   });
 
-  it('C16976 Filter circulation log by date', { retries: 1, tags: [TestTypes.smoke] }, () => {
+  it('C16976 Filter circulation log by date', { retries: 3, tags: [TestTypes.smoke] }, () => {
     const verifyDate = true;
 
     SearchPane.filterByLastWeek();
