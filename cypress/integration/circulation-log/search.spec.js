@@ -8,8 +8,7 @@ const ITEM_BARCODE = `123${getRandomPostfix()}`;
 let userId = '';
 
 
-// TODO: think about another way about retry
-describe('ui-circulation-log: filters', { retries: 1 }, () => {
+describe('ui-circulation-log', () => {
   before('create inventory instance', () => {
     cy.createTempUser([
       permissions.inventoryAll.gui,
@@ -88,12 +87,12 @@ describe('ui-circulation-log: filters', { retries: 1 }, () => {
   });
 
 
-  it('C15484 Filter circulation log on item barcode', { tags: [TestTypes.smoke] }, () => {
+  it('C15484 Filter circulation log on item barcode', { retries: 3, tags: [TestTypes.smoke] }, () => {
     SearchPane.searchByItemBarcode(ITEM_BARCODE);
     SearchPane.verifyResultCells();
   });
 
-  it('C16976 Filter circulation log by date', { tags: [TestTypes.smoke] }, () => {
+  it('C16976 Filter circulation log by date', { retries: 3, tags: [TestTypes.smoke] }, () => {
     const verifyDate = true;
 
     SearchPane.filterByLastWeek();
