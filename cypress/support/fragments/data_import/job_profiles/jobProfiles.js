@@ -89,9 +89,6 @@ export default {
       Modal('Are you sure you want to run this job?').find(runButton).click(),
     ]);
     // wait until uploaded file is displayed in the list
-    // Try to get more stable execution through interactors
-    //cy.get('#job-logs-list', getLongDelay()).contains(fileName, getLongDelay());
-    cy.wait(25000);
     cy.expect(MultiColumnList({ id:'job-logs-list' }).find(Button(fileName)).exists());
   },
 

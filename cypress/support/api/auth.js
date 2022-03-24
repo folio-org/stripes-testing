@@ -4,6 +4,7 @@ Cypress.Commands.add('getToken', (username, password) => {
       method: 'POST',
       path: 'bl-users/login',
       body: { username, password },
+      isDefaultSearchParamsRequired: false,
     })
     .then(({ body, headers }) => {
       const defaultServicePoint = body.servicePointsUser.servicePoints

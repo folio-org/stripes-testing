@@ -15,7 +15,7 @@ Cypress.Commands.add('okapiRequest', ({ method = 'GET',
   const queryString = (initialParams).toString();
   cy.request({
     method,
-    url: `${Cypress.env('OKAPI_HOST')}/${path}?${queryString}`,
+    url: queryString ? `${Cypress.env('OKAPI_HOST')}/${path}?${queryString}` : `${Cypress.env('OKAPI_HOST')}/${path}`,
     headers: {
       'x-okapi-tenant': Cypress.env('OKAPI_TENANT'),
       'x-okapi-token': Cypress.env('token'),
