@@ -32,6 +32,7 @@ export const MultiColumnListCell = HTML.extend('multi column list cell')
 
 export const MultiColumnListHeader = HTML.extend('multi column list header')
   .selector('div[class*=mclHeader-]')
+  .locator(content)
   .filters({
     index: childIndex,
     id: el => el.getAttribute('id')
