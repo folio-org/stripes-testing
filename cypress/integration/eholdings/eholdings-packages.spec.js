@@ -13,7 +13,7 @@ import features from '../../support/dictionary/features';
 describe('eHoldings packages management', () => {
   let userId = '';
 
-  it('C688 Add a title in a package to holdings', { tags:  [testType.smoke, features.eHoldings] }, () => {
+  it('C688 Add all titles in a package to your holdings', { tags:  [testType.smoke, features.eHoldings] }, () => {
     cy.createTempUser([permissions.uieHoldingsRecordsEdit.gui,
       permissions.uieHoldingsPackageTitleSelectUnselect.gui,
       permissions.moduleeHoldingsEnabled.gui
