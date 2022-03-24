@@ -6,25 +6,28 @@ import InventorySearch from '../../support/fragments/inventory/inventorySearch';
 import ItemRecordView from '../../support/fragments/inventory/itemRecordView';
 import TopMenu from '../../support/fragments/topMenu';
 import getRandomPostfix from '../../support/utils/stringTools';
+import generateItemBarcode from '../../support/utils/generateItemBarcode';
+import permissions from '../../support/dictionary/permissions';
 
 describe('Update the effective location for the item', () => {
   const instanceTitle = `autoTestInstanceTitle.${getRandomPostfix()}`;
   const anotherPermanentLocation = 'Main Library';
-  const ITEM_BARCODE = Number(new Date()).toString();
+  const ITEM_BARCODE = generateItemBarcode();
+  let userId = '';
 
-  before(() => {
-    cy.log(ITEM_BARCODE);
-    cy.login(Cypress.env('diku_login'), Cypress.env('diku_password'));
-    cy.getToken(Cypress.env('diku_login'), Cypress.env('diku_password'))
-      .then(() => {
+  beforeEach(() => {
+    cy.createTempUser([
+      permissions.inventoryAll.gui,
+    ])
+      .then(userProperties => {
+        userId = userProperties.userId;
+        cy.getToken(Cypress.env('diku_login'), Cypress.env('diku_password'));
         cy.getLoanTypes({ limit: 1 });
         cy.getMaterialTypes({ limit: 1 });
         cy.getInstanceTypes({ limit: 1 });
         cy.getLocations({ limit: 1 });
         cy.getHoldingTypes({ limit: 1 });
         cy.getHoldingSources({ limit: 1 });
-      })
-      .then(() => {
         cy.createInstance({
           instance: {
             instanceTypeId: Cypress.env('instanceTypes')[0].id,
@@ -45,6 +48,7 @@ describe('Update the effective location for the item', () => {
             }],
           ],
         });
+        cy.login(userProperties.username, userProperties.password);
       });
     cy.visit(TopMenu.inventoryPath);
   });
@@ -56,19 +60,23 @@ describe('Update the effective location for the item', () => {
         cy.deleteHoldingRecord(Cypress.env('instances')[0].holdings[0].id);
         cy.deleteInstanceApi(Cypress.env('instances')[0].id);
       });
+    cy.deleteUser(userId);
   });
 
-  it('C3501 Update the effective location for the item', { tags: [TestTypes.smoke] }, () => {
-    InventorySearch.switchToItem();
-    InventorySearch.searchByParameter('Barcode', ITEM_BARCODE);
-    InventorySearch.selectSearchResultItem();
-    InventoryInstance.goToHoldingView();
-    HoldingsRecordView.edit();
-    HoldingsRecordEdit.changePermanentLocation(anotherPermanentLocation);
-    HoldingsRecordEdit.saveAndClose();
-    HoldingsRecordView.close();
-    InventoryInstance.openHoldings([anotherPermanentLocation]);
-    InventoryInstance.openItemView(ITEM_BARCODE);
-    ItemRecordView.verifyPermanentLocation(anotherPermanentLocation);
-  });
+  it('C3501 An item is being moved from one library location to another. Update the effective location for the item',
+    { tags: [TestTypes.smoke] },
+    () => {
+      InventorySearch.switchToItem();
+      InventorySearch.searchByParameter('Barcode', ITEM_BARCODE);
+      InventorySearch.selectSearchResultItem();
+      InventoryInstance.goToHoldingView();
+      HoldingsRecordView.edit();
+      HoldingsRecordEdit.changePermanentLocation(anotherPermanentLocation);
+      HoldingsRecordEdit.saveAndClose();
+      HoldingsRecordView.waitLoading();
+      HoldingsRecordView.close();
+      InventoryInstance.openHoldings([anotherPermanentLocation]);
+      InventoryInstance.openItemView(ITEM_BARCODE);
+      ItemRecordView.verifyPermanentLocation(anotherPermanentLocation);
+    });
 });
