@@ -11,6 +11,13 @@ export default {
     cy.get('[class^="button-"][type="submit"]').first().click();
   },
 
+  searchByUserBarcode(barcode) {
+    cy.do([
+      TextField({ name: 'userBarcode' }).fillIn(barcode),
+    ]);
+    cy.get('[class^="button-"][type="submit"]').first().click();
+  },
+
   resetFilters() {
     cy.do(Button({ id: 'reset-receiving-filters' }).click());
   },
