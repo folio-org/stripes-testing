@@ -10,7 +10,7 @@ const location = { ...NewServicePoint.defaultUiLocations };
 
 export default {
 
-  servicePoint: () => {
+  createServicePoint: () => {
     cy.getServicePointsApi({ method: 'POST', body: servicePoint.body })
       .then((resp) => {
         expect(resp.body).property('id');

@@ -1,12 +1,11 @@
 import NewServicePoint from './newServicePoint';
 import NewUser from '../user/newUser';
 import { TextField, Dropdown, MultiColumnList, Button, Pane, Select } from '../../../../interactors';
-
-
+import TopMenu from '../topMenu';
 
 export default {
   addServicePointPermissions: () => {
-    cy.visit('/users');
+    cy.visit(TopMenu.usersPath);
     cy.do(TextField({ id: 'input-user-search' }).fillIn(NewUser.userName));
     cy.do(Button('Search').click());
     cy.do(MultiColumnList().click({ row: 0, column: 'Active' }));
@@ -33,7 +32,7 @@ export default {
   },
   // we can remove the service point if it is not Preference
   changeServicePointPreference: () => {
-    cy.visit('/users');
+    cy.visit(TopMenu.usersPath);
     cy.do(TextField({ id: 'input-user-search' }).fillIn(NewUser.userName));
     cy.do(Button('Search').click());
     cy.do(MultiColumnList().click({ row: 0, column: 'Active' }));
