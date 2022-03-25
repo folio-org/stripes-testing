@@ -80,18 +80,17 @@ describe('ui-circulation-log', () => {
       servicePointId: Cypress.env('servicePoints')[0].id,
       checkInDate: '2021-09-30T16:14:50.444Z',
     });
-    cy.getInstances({ limit: 1, expandAll: true, query: `"items.barcode"=="${ITEM_BARCODE}"` })
-      .then(() => {
-        cy.deleteItem(Cypress.env('instances')[0].items[0].id);
-        cy.deleteHoldingRecord(Cypress.env('instances')[0].holdings[0].id);
-        cy.deleteInstanceApi(Cypress.env('instances')[0].id);
+    cy.getInstance({ limit: 1, expandAll: true, query: `"items.barcode"=="${ITEM_BARCODE}"` })
+      .then((instance) => {
+        cy.deleteItem(instance.items[0].id);
+        cy.deleteHoldingRecord(instance.holdings[0].id);
+        cy.deleteInstanceApi(instance.id);
       });
     cy.getBlockApi(userId).then(() => {
       cy.deleteBlockApi(Cypress.env('blockIds')[0].id);
     });
     cy.deleteUser(userId);
   });
-
 
   it('C15484 Filter circulation log on item barcode', { retries: 3, tags: [TestTypes.smoke] }, () => {
     SearchPane.searchByItemBarcode(ITEM_BARCODE);
