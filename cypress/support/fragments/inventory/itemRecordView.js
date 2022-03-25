@@ -17,9 +17,17 @@ const verifyNote = value => {
   cy.expect(KeyValue('Check in note').has({ value }));
 };
 
+const verifyPermanentLocation = location => {
+  // TODO: Try to add ID for div.row- for better interaction with KeyValue
+  cy.expect(Accordion({ label: 'Location' })
+    .find(KeyValue('Effective location for item'))
+    .has({ value: location }));
+};
+
 export default {
   viewItem,
   verifyItemBarcode,
   verifyPermanentLoanType,
   verifyNote,
+  verifyPermanentLocation,
 };
