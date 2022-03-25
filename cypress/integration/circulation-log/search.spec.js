@@ -97,4 +97,11 @@ describe('ui-circulation-log', () => {
     SearchPane.filterByLastWeek();
     SearchPane.verifyResultCells(verifyDate);
   });
+
+  it('C15485 Filter circulation log on user barcode', { tags: [TestTypes.smoke] }, () => {
+    const userBarcode = Cypress.env('users')[0].barcode;
+
+    SearchPane.searchByUserBarcode(userBarcode);
+    SearchPane.verifyResultCells();
+  });
 });
