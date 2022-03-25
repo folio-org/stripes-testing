@@ -3,6 +3,8 @@ import TestTypes from '../../support/dictionary/testTypes';
 import SearchPane from '../../support/fragments/circulation-log/searchPane';
 import getRandomPostfix from '../../support/utils/stringTools';
 import permissions from '../../support/dictionary/permissions';
+import usersSearchPane from '../../support/fragments/users/usersSearchPane';
+import usersCard from '../../support/fragments/users/usersCard';
 
 const ITEM_BARCODE = `123${getRandomPostfix()}`;
 let userId = '';
@@ -12,7 +14,8 @@ describe('ui-circulation-log', () => {
   before('create inventory instance', () => {
     cy.createTempUser([
       permissions.inventoryAll.gui,
-      permissions.circulationLogAll.gui
+      permissions.circulationLogAll.gui,
+      permissions.usersViewRequests.gui
     ])
       .then(userProperties => {
         userId = userProperties.userId;
@@ -83,6 +86,9 @@ describe('ui-circulation-log', () => {
         cy.deleteHoldingRecord(Cypress.env('instances')[0].holdings[0].id);
         cy.deleteInstanceApi(Cypress.env('instances')[0].id);
       });
+    cy.getBlockApi(userId).then(() => {
+      cy.deleteBlockApi(Cypress.env('blockIds')[0].id);
+    });
     cy.deleteUser(userId);
   });
 
@@ -103,6 +109,31 @@ describe('ui-circulation-log', () => {
     const userBarcode = Cypress.env('users')[0].barcode;
 
     SearchPane.searchByUserBarcode(userBarcode);
+    SearchPane.verifyResultCells();
+  });
+
+  it('C15853 Filter circulation log on description', { tags: [TestTypes.smoke] }, () => {
+    // login with user that has all permissions
+    cy.login(Cypress.env('diku_login'), Cypress.env('diku_password'));
+    cy.visit(TopMenu.usersPath);
+
+    // find user
+    usersSearchPane.searchByStatus('Active');
+    usersSearchPane.searchByKeywords(userId);
+    usersSearchPane.openUser(userId);
+
+    // create patron block
+    const searchString = `${getRandomPostfix()}`;
+    const testDescription = `test ${searchString} description filter`;
+
+    usersCard.openPatronBlocks();
+    usersCard.createPatronBlock();
+    usersCard.fillDescription(testDescription);
+    usersCard.saveAndClose();
+
+    // verify circulation logs result
+    cy.visit(TopMenu.circulationLogPath);
+    SearchPane.searchByDescription(searchString);
     SearchPane.verifyResultCells();
   });
 });

@@ -5,16 +5,17 @@ import DateTools from '../../utils/dateTools';
 
 export default {
   searchByItemBarcode(barcode) {
-    cy.do([
-      TextField({ name: 'itemBarcode' }).fillIn(barcode),
-    ]);
+    cy.do(TextField({ name: 'itemBarcode' }).fillIn(barcode));
     cy.get('[class^="button-"][type="submit"]').first().click();
   },
 
   searchByUserBarcode(barcode) {
-    cy.do([
-      TextField({ name: 'userBarcode' }).fillIn(barcode),
-    ]);
+    cy.do(TextField({ name: 'userBarcode' }).fillIn(barcode));
+    cy.get('[class^="button-"][type="submit"]').first().click();
+  },
+
+  searchByDescription(desc) {
+    cy.do(TextField({ name: 'description' }).fillIn(desc));
     cy.get('[class^="button-"][type="submit"]').first().click();
   },
 
