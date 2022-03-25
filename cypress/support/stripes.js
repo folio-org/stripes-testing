@@ -9,13 +9,14 @@ Cypress.Commands.add('okapiRequest', ({ method = 'GET',
   body,
   isDefaultSearchParamsRequired = true }) => {
   const initialParams = new URLSearchParams({ ...searchParams });
+  const cypressEnvPath = `${Cypress.env('OKAPI_HOST')}/${path}`;
   if (isDefaultSearchParamsRequired) {
     Object.entries(DEFAULT_SEARCH_PARAMS).forEach(([key, value]) => initialParams.append(key, value));
   }
   const queryString = (initialParams).toString();
   cy.request({
     method,
-    url: `${Cypress.env('OKAPI_HOST')}/${path}?${queryString}`,
+    url: queryString ? cypressEnvPath`?${queryString}` : cypressEnvPath,
     headers: {
       'x-okapi-tenant': Cypress.env('OKAPI_TENANT'),
       'x-okapi-token': Cypress.env('token'),
