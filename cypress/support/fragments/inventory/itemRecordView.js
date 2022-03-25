@@ -18,7 +18,7 @@ const verifyNote = value => {
 };
 
 const verifyPermanentLocation = location => {
-  cy.expect(KeyValue('Effective location for item', { value: location }).exists());
+  // TODO: Try to add ID for div.row- for better interaction with KeyValue
   cy.expect(Accordion({ label: 'Location' })
     .find(KeyValue('Effective location for item'))
     .has({ value: location }));
