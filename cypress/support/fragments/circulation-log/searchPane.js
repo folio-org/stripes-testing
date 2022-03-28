@@ -3,20 +3,26 @@ import { Accordion, Button, MultiColumnListCell, TextField } from '../../../../i
 import DateTools from '../../utils/dateTools';
 
 
+// TODO: will rework to interactor when we get section id
+function clickApplyMainFilter() {
+  cy.get('[class^="button-"][type="submit"]').first().click();
+}
+
+
 export default {
   searchByItemBarcode(barcode) {
     cy.do(TextField({ name: 'itemBarcode' }).fillIn(barcode));
-    cy.get('[class^="button-"][type="submit"]').first().click();
+    clickApplyMainFilter();
   },
 
   searchByUserBarcode(barcode) {
     cy.do(TextField({ name: 'userBarcode' }).fillIn(barcode));
-    cy.get('[class^="button-"][type="submit"]').first().click();
+    clickApplyMainFilter();
   },
 
   searchByDescription(desc) {
     cy.do(TextField({ name: 'description' }).fillIn(desc));
-    cy.get('[class^="button-"][type="submit"]').first().click();
+    clickApplyMainFilter();
   },
 
   resetFilters() {
