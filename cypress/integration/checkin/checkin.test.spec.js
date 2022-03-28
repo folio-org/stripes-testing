@@ -4,7 +4,7 @@ import TestTypes from '../../support/dictionary/testTypes';
 import NewUser from '../../support/fragments/user/newUser';
 import SwitchServicePoint from '../../support/fragments/service_point/switchServicePoint';
 import CheckInActions from '../../support/fragments/check-in-actions/checkInActions';
-// TODO: We need to move all api methods to fragments.
+// TODO: We need to move all api methods to fragments. https://issues.folio.org/browse/FAT-1624
 describe('Check In - Actions ', () => {
   before('Create New Service point, Item, User and Check out item', () => {
     cy.login(Cypress.env('diku_login'), Cypress.env('diku_password'));

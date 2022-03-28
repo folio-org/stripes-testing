@@ -2,32 +2,26 @@
 import uuid from 'uuid';
 import NewServicePoint from './defaultServicePoint';
 
-const servicePoint = { ...NewServicePoint.defaultUiServicePoint };
-const institution = { ...NewServicePoint.defaultUiInstitutions };
-const librarie = { ...NewServicePoint.defaultUiLibraries };
-const campuse = { ...NewServicePoint.defaultUiCampuses };
-const location = { ...NewServicePoint.defaultUiLocations };
-
 export default {
 
   createServicePoint: () => {
-    cy.getServicePointsApi({ method: 'POST', body: servicePoint.body })
+    cy.getServicePointsApi({ method: 'POST', body: NewServicePoint.defaultUiServicePoint.body })
       .then((resp) => {
         expect(resp.body).property('id');
       });
-    cy.getInstitutionApi({ method: 'POST', body: institution.body })
+    cy.getInstitutionApi({ method: 'POST', body: NewServicePoint.defaultUiInstitutions.body })
       .then((resp) => {
         expect(resp.body).property('id');
       });
-    cy.getCampusesApi({ method: 'POST', body:campuse.body })
+    cy.getCampusesApi({ method: 'POST', body:NewServicePoint.defaultUiCampuses.body })
       .then((resp) => {
         expect(resp.body).property('id');
       });
-    cy.getLibrariesApi({ method: 'POST', body: librarie.body })
+    cy.getLibrariesApi({ method: 'POST', body: NewServicePoint.defaultUiLibraries.body })
       .then((resp) => {
         expect(resp.body).property('id');
       });
-    cy.getLocations({ method: 'POST', bodu: location.body })
+    cy.getLocations({ method: 'POST', bodu: NewServicePoint.defaultUiLocations.body })
       .then((resp) => {
         expect(resp.body).property('id');
       });

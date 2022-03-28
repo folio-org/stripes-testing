@@ -1,38 +1,30 @@
 import uuid from 'uuid';
 import NewInstanceHoldingItem from './holdingsMove/defaultInstanceHoldingItem';
 
-const instanceType = NewInstanceHoldingItem.defaultUiInstanceType;
-const holdingsSources = NewInstanceHoldingItem.defaultUiHoldingsSources;
-const instance = NewInstanceHoldingItem.defaultUiInstance;
-const holding = NewInstanceHoldingItem.defaultUiHolding;
-const materialTypes = NewInstanceHoldingItem.defaultUiMaterialTypes;
-const loanTypes = NewInstanceHoldingItem.defaultUiLoanTypes;
-const createItem = NewInstanceHoldingItem.defaultUicreateItem;
-
 export default {
   createItem: () => {
-    cy.getInstanceTypes({ method: 'POST', body: instanceType.body })
+    cy.getInstanceTypes({ method: 'POST', body: NewInstanceHoldingItem.defaultUiInstanceType.body })
       .then((resp) => {
         expect(resp.body).property('id');
       });
-    cy.getHoldingSources({ method: 'POST', body: holdingsSources.body })
+    cy.getHoldingSources({ method: 'POST', body: NewInstanceHoldingItem.defaultUiHoldingsSources.body })
       .then((resp) => {
         expect(resp.body).property('id');
       });
-    cy.createInstance({ method: 'POST', body: instance.body });
-    cy.createHolding({ method: 'POST', body: holding.body })
+    cy.createInstance({ method: 'POST', body: NewInstanceHoldingItem.defaultUiInstance.body });
+    cy.createHolding({ method: 'POST', body: NewInstanceHoldingItem.defaultUiHolding.body })
       .then((resp) => {
         expect(resp.body).property('id');
       });
-    cy.getMaterialTypes({ method: 'POST', body: materialTypes.body })
+    cy.getMaterialTypes({ method: 'POST', body: NewInstanceHoldingItem.defaultUiMaterialTypes.body })
       .then((resp) => {
         expect(resp.body).property('id');
       });
-    cy.getLoanTypes({ method: 'POST', body: loanTypes.body })
+    cy.getLoanTypes({ method: 'POST', body: NewInstanceHoldingItem.defaultUiLoanTypes.body })
       .then((resp) => {
         expect(resp.body).property('id');
       });
-    cy.createItem({ method: 'POST', body: createItem.body })
+    cy.createItem({ method: 'POST', body: NewInstanceHoldingItem.defaultUiCreateItem.body })
       .then((resp) => {
         expect(resp.body).property('barcode');
       });
