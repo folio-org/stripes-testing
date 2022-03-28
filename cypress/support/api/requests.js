@@ -47,17 +47,6 @@ Cypress.Commands.add('getCancellationReasonsApi', (searchParams) => {
     });
 });
 
-Cypress.Commands.add('deleteItemRequestApi', (requestId) => {
-  cy
-    .okapiRequest({
-      method: 'DELETE',
-      path: `circulation/requests/${requestId}`,
-    })
-    .then((res) => {
-      return cy.wrap(res);
-    });
-});
-
 // Creates a request for any item from the given instance ID
 Cypress.Commands.add('createRequest', (data) => {
   cy
