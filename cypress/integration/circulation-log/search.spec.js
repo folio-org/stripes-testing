@@ -8,8 +8,7 @@ const ITEM_BARCODE = `123${getRandomPostfix()}`;
 let userId = '';
 
 
-// TODO: think about another way about retry
-describe('ui-circulation-log: filters', { retries: 1 }, () => {
+describe('ui-circulation-log', () => {
   before('create inventory instance', () => {
     cy.createTempUser([
       permissions.inventoryAll.gui,
@@ -78,25 +77,31 @@ describe('ui-circulation-log: filters', { retries: 1 }, () => {
       servicePointId: Cypress.env('servicePoints')[0].id,
       checkInDate: '2021-09-30T16:14:50.444Z',
     });
-    cy.getInstances({ limit: 1, expandAll: true, query: `"items.barcode"=="${ITEM_BARCODE}"` })
-      .then(() => {
-        cy.deleteItem(Cypress.env('instances')[0].items[0].id);
-        cy.deleteHoldingRecord(Cypress.env('instances')[0].holdings[0].id);
-        cy.deleteInstanceApi(Cypress.env('instances')[0].id);
+    cy.getInstance({ limit: 1, expandAll: true, query: `"items.barcode"=="${ITEM_BARCODE}"` })
+      .then((instance) => {
+        cy.deleteItem(instance.items[0].id);
+        cy.deleteHoldingRecord(instance.holdings[0].id);
+        cy.deleteInstanceApi(instance.id);
       });
     cy.deleteUser(userId);
   });
 
-
-  it('C15484 Filter circulation log on item barcode', { tags: [TestTypes.smoke] }, () => {
+  it('C15484 Filter circulation log on item barcode', { retries: 3, tags: [TestTypes.smoke] }, () => {
     SearchPane.searchByItemBarcode(ITEM_BARCODE);
     SearchPane.verifyResultCells();
   });
 
-  it('C16976 Filter circulation log by date', { tags: [TestTypes.smoke] }, () => {
+  it('C16976 Filter circulation log by date', { retries: 3, tags: [TestTypes.smoke] }, () => {
     const verifyDate = true;
 
     SearchPane.filterByLastWeek();
     SearchPane.verifyResultCells(verifyDate);
+  });
+
+  it('C15485 Filter circulation log on user barcode', { tags: [TestTypes.smoke] }, () => {
+    const userBarcode = Cypress.env('users')[0].barcode;
+
+    SearchPane.searchByUserBarcode(userBarcode);
+    SearchPane.verifyResultCells();
   });
 });

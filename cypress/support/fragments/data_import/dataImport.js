@@ -13,7 +13,6 @@ const uploadFile = (filePathName, fileName) => {
 const wailtLoading = () => {
   cy.expect(Section({ id: 'pane-jobs-title' }).exists());
   cy.expect(Section({ id: 'pane-jobs-title' }).find(HTML(including('Loading'))).absent());
-
   cy.expect(Section({ id: 'pane-logs-title' }).find(Button('View all')).exists());
 };
 

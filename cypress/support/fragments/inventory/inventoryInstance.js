@@ -13,6 +13,7 @@ import {
   Dropdown,
   Checkbox,
   MultiColumnListRow,
+  Link,
 } from '../../../../interactors';
 import InventoryActions from './inventoryActions';
 import InventoryInstanceEdit from './InventoryInstanceEdit';
@@ -202,5 +203,8 @@ export default {
       .find(MultiColumnListRow({ index: 0 })))
       .find(MultiColumnListCell({ columnIndex: 0 }))
       .has({ content: identifier }));
+  },
+  openItemView: (itemBarcode) => {
+    cy.do(Link(including(itemBarcode)).click());
   },
 };

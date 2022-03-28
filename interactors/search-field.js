@@ -13,6 +13,7 @@ export default HTML.extend('search field')
     id: el => el.querySelector('input, textarea').getAttribute('id'),
     readOnly: el => el.querySelector('input, textarea').hasAttribute('readOnly'),
     value: el => el.querySelector('input, textarea').value,
+    selectedFilter: el => el.querySelector('select').value,
     placeholder: el => el.querySelector('input, textarea').placeholder,
     disabled: el => el.querySelector('select').disabled,
   })
