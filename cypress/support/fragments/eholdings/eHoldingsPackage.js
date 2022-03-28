@@ -44,15 +44,9 @@ export default {
     cy.url().then(url => {
       const packageId = url.split('?')[0].split('/').at(-1);
       cy.intercept(`eholdings/packages/${packageId}/resources?**`).as('getTitles');
-      cy.wait('@getTitles', getLongDelay());
-
-      // related with delay of status changing of package related titles
-      cy.wait(3000);
-
-      cy.expect(titlesSection.find(HTML(including(expectedStatus))).exists());
-      [filterStatuses.selected, filterStatuses.selected.notSelected]
-        .filter(filterTitlesStatus => filterTitlesStatus !== expectedStatus)
-        .forEach(restStatus => cy.expect(titlesSection.find(HTML(including(restStatus))).absent()));
+      cy.wait('@getTitles', getLongDelay()).then(() => {
+        cy.expect(titlesSection.find(HTML(including(expectedStatus))).exists());
+      });
     });
   },
   checkEmptyTitlesList:() => {

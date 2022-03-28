@@ -92,7 +92,6 @@ describe('eHoldings titles management', () => {
     });
   });
 
-  // TODO: https://issues.folio.org/browse/UIEH-1255
   it('C691 Remove a title in a package from your holdings', { tags:  [testTypes.smoke, features.eHoldings] }, () => {
     cy.createTempUser([permissions.uieHoldingsRecordsEdit.gui,
       permissions.uieHoldingsPackageTitleSelectUnselect.gui]).then(userProperties => {

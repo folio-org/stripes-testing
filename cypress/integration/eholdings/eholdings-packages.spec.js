@@ -56,7 +56,6 @@ describe('eHoldings packages management', () => {
     });
   });
 
-  // TODO: https://issues.folio.org/browse/UIEH-1255
   it('C690 Remove a package from your holdings', { tags:  [testType.smoke, features.eHoldings] }, () => {
     cy.createTempUser([permissions.uieHoldingsRecordsEdit.gui,
       permissions.uieHoldingsPackageTitleSelectUnselect.gui]).then(userProperties => {
