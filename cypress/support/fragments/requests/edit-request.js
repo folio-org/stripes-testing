@@ -1,7 +1,6 @@
 import { including } from '@interactors/html';
 import { Button, KeyValue, Section, Select, TextField } from '../../../../interactors';
 import Requests from './requests';
-import { getLongDelay } from '../../utils/cypressTools';
 
 const paneResultsSection = Section({ id: 'pane-results' });
 const requestPreviewSection = Section({ id: 'instance-details' });
@@ -16,7 +15,6 @@ const holdShelfExpirationDateInput = TextField({ name: 'holdShelfExpirationDate'
 const requestExpirationDateKeyValue = KeyValue('Request expiration date');
 const holdShelfExpirationDateKeyValue = KeyValue('Hold shelf expiration date');
 const pickupServicePointKeyValue = KeyValue('Pickup service point');
-const requestsOnItemKeyValue = KeyValue('Requests on item');
 
 export default {
   servicePoint: 'Circ Desk 1',
@@ -95,7 +93,6 @@ export default {
   editAndCheckNotFilledRequest(instanceRecordData) {
     Requests.selectNotYetFilledRequest();
     this.findAndOpenCreatedRequest(instanceRecordData);
-    this.waitRequestEditFormLoad();
     this.checkIsRequestExpirationDateEditable(true);
     this.checkIsFulfillmentPreferenceEditable(true);
     this.checkIsPickupServicePointIdEditable(true);
@@ -109,7 +106,6 @@ export default {
   editAndCheckInTransitRequest(instanceRecordData) {
     Requests.selectInTransitRequest();
     this.findAndOpenCreatedRequest(instanceRecordData);
-    this.waitRequestEditFormLoad();
     this.checkIsRequestExpirationDateEditable(true);
     this.checkIsFulfillmentPreferenceEditable(true);
     this.checkIsPickupServicePointIdEditable(true);
@@ -123,7 +119,6 @@ export default {
   editAndCheckAwaitingPickupRequest(instanceRecordData) {
     Requests.selectAwaitingPickupRequest();
     this.findAndOpenCreatedRequest(instanceRecordData);
-    this.waitRequestEditFormLoad();
     this.checkIsHoldShelfExpirationDateEditable(true);
     this.checkIsRequestExpirationDateEditable(true);
     this.checkIsFulfillmentPreferenceEditable(false);
@@ -137,10 +132,9 @@ export default {
     this.verifyHoldShelfExpirationDate(this.expirationDates[3].uiValue);
   },
 
-  editAndCheckAwaitingDeliveryRequest(instanceRecordData) {
+  editAndCheckAwaitingDeliveryRequest(instanceRecordData, request) {
     Requests.selectAwaitingDeliveryRequest();
-    this.findAndOpenCreatedRequest(instanceRecordData);
-    this.waitRequestEditFormLoad();
+    this.findAndOpenCreatedRequest(instanceRecordData, request);
     this.checkIsRequestExpirationDateEditable(true);
     this.checkIsFulfillmentPreferenceEditable(false);
     this.checkIsPickupServicePointIdEditable(true);
@@ -156,6 +150,7 @@ export default {
     Requests.findCreatedRequest(instanceRecordData.instanceTitle);
     Requests.selectFirstRequest(instanceRecordData.instanceTitle);
     this.openRequestEditForm();
+    this.waitRequestEditFormLoad();
   },
 
   openRequestEditForm() {
@@ -216,9 +211,12 @@ export default {
   },
 
   waitRequestEditFormLoad() {
-    cy.intercept('GET', '/users*').as('getUserDetails');
-    cy.wait('@getUserDetails', getLongDelay());
-    cy.expect(requestsOnItemKeyValue.has({ value: '1' }));
+    // before submitting request form, some waiting is needed,
+    // otherwise, "Submit Validation Failed" error is thrown
+    // the error may be coming from the below
+    // see: https://github.com/folio-org/ui-requests/blob/ba8f70d89a23601f8c888a6e664f2ecd8cada239/src/ViewRequest.js#L211
+    // eslint-disable-next-line cypress/no-unnecessary-waiting
+    cy.wait(1000);
   },
 
   resetFiltersAndReloadPage() {
