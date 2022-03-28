@@ -4,7 +4,7 @@ import eHoldingsResourceView from './eHoldingsResourceView';
 const packagesSection = Section({ id: 'titleShowPackages' });
 const packageFilterModal = Modal({ id : 'package-filter-modal' });
 
-const filterPackagesStatuses = { all: 'All',
+const filterStatuses = { all: 'All',
   selected: 'Selected',
   notSelected: 'Not selected' };
 
@@ -13,9 +13,9 @@ export default {
     cy.expect(Section({ id : specialTitle.replaceAll(' ', '-').toLowerCase() }).exists());
   },
 
-  filterPackagesStatuses,
+  filterStatuses,
 
-  filterPackages: (selectionStatus = filterPackagesStatuses.notSelected, packageName) => {
+  filterPackages: (selectionStatus = filterStatuses.notSelected, packageName) => {
     cy.do(packagesSection.find(Button({ icon: 'search' })).click());
     const selectionStatusAccordion = packageFilterModal.find(Accordion({ id: 'filter-packages-selected' }));
 
@@ -52,8 +52,8 @@ export default {
       });
   },
   checkPackagesSelectionStatus: (expectedSelectionStatus) => {
-    Object.values(filterPackagesStatuses)
+    Object.values(filterStatuses)
       .filter(packageStatus => packageStatus !== expectedSelectionStatus)
-      .forEach(notExpectedStatus => cy.expect(packagesSection.find(HTML(including(filterPackagesStatuses[notExpectedStatus]))).absent()));
+      .forEach(notExpectedStatus => cy.expect(packagesSection.find(HTML(including(filterStatuses[notExpectedStatus]))).absent()));
   }
 };

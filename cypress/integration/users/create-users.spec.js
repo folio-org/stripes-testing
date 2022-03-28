@@ -3,12 +3,15 @@ import {
   including,
 } from '../../../interactors';
 
+import generateItemBarcode from '../../support/utils/generateItemBarcode';
+
 describe('Creating user', () => {
-  const lastName = 'Test123' + Number(new Date()).toString();
+  const lastName = 'Test123' + generateItemBarcode();
 
   before(() => {
     cy.login(Cypress.env('diku_login'), Cypress.env('diku_password'));
-    cy.getToken('diku_admin', 'admin');
+    cy.getToken(Cypress.env('diku_login'),
+      Cypress.env('diku_password'));
   });
 
   beforeEach(() => {

@@ -15,7 +15,7 @@ export const AdvancedSearchRow = HTML.extend('advanced search row')
     fillQuery: ({ find }, value) => find(TextField({ label: 'Search for' })).fillIn(value),
     selectBoolean: ({ find }, rowIndex, value) => find(Select({ id: `advanced-search-bool-${rowIndex}` }))
       .choose(value),
-    selectSearchOption: ({ find }, value) => find(Select({ ariaLabel: 'Search options' })).choose(value),
+    selectSearchOption: ({ find }, rowIndex, value) => find(Select({ id: `advanced-search-option-${rowIndex}` })).choose(value),
   });
 
 const rows = el => [...el.querySelectorAll('[class*=AdvancedSearchRow-]')];

@@ -9,7 +9,7 @@ import permissions from '../../support/dictionary/permissions';
 describe('ui-eholdings: Provider manage', () => {
   let userId = '';
 
-  before(() => {
+  beforeEach(() => {
     cy.createTempUser([permissions.uieHoldingsRecordsEdit.gui,
       permissions.moduleeHoldingsEnabled.gui]).then(userProperties => {
       userId = userProperties.userId;
@@ -17,11 +17,13 @@ describe('ui-eholdings: Provider manage', () => {
       cy.visit(TopMenu.eholdingsPath);
     });
   });
+  // TODO: https://issues.folio.org/browse/UIEH-1260
   it('C696 Edit proxy setting', { tags: [testTypes.smoke] }, () => {
     const specialProvider = 'Johns Hopkins University Press';
     eHoldingsProvidersSearch.byProvider(specialProvider);
     eHoldingsProviders.viewProvider();
     eHoldingsProviderView.edit(specialProvider);
+    eHoldingsProviderEdit.waitLoading(specialProvider);
     eHoldingsProviderEdit.changeProxy().then(newProxy => {
       eHoldingsProviderEdit.saveAndClose();
       eHoldingsProviderView.checkProxy(newProxy);

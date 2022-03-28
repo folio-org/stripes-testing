@@ -15,8 +15,7 @@ const tag008HoldingsBytesProperties = {
   acqStatus : { interactor:TextField('AcqStatus'), defaultValue:'0', newValue:'v', voidValue:' ', replacedVoidValue:'\\' },
   acqMethod :{ interactor:TextField('AcqMethod'), defaultValue:'u', newValue:'v', voidValue:' ', replacedVoidValue:'\\' },
   acqEndDate :{ interactor:TextField('AcqEndDate'), defaultValue:'\\\\\\\\', newValue:'vvvv', voidValue:' ', replacedVoidValue:'\\\\\\\\' },
-  // TODO: change newValue to 'v' after fix of UIQM-204
-  genRet : { interactor:TextField('Gen ret'), defaultValue:'0', newValue:'0', voidValue:' ', replacedVoidValue:'\\' },
+  genRet : { interactor:TextField('Gen ret'), defaultValue:'0', newValue:'v', voidValue:' ', replacedVoidValue:'\\' },
   specRet0: { interactor:TextField('Spec ret', { name:specRetInputNames[0] }), defaultValue:'\\', newValue:'v', voidValue:' ', replacedVoidValue:'\\' },
   specRet1: { interactor:TextField('Spec ret', { name:specRetInputNames[1] }), defaultValue:'\\', newValue:'v', voidValue:' ', replacedVoidValue:'\\' },
   specRet2: { interactor:TextField('Spec ret', { name:specRetInputNames[2] }), defaultValue:'\\', newValue:'v', voidValue:' ', replacedVoidValue:'\\' },
@@ -45,7 +44,6 @@ const tag008HoldingsBytesProperties = {
   }
 };
 
-
 const defaultFieldValues = {
   content:'qwe',
   subfieldPrefixInEditor: '$',
@@ -63,11 +61,11 @@ const requiredRowsTags = ['LDR', '001', '005', '008', '999'];
 const getRowInteractor = (specialRowNumber) => QuickMarcEditor()
   .find(QuickMarcEditorRow({ index: specialRowNumber }));
 export default class QuickmarcEditor {
-  constructor(validOCLC) {
-    this.validOCLC = validOCLC;
+  constructor(validRecord) {
+    this.validRecord = validRecord;
   }
 
-  getInitialRowsCount() { return this.validOCLC.lastRowNumber; }
+  getInitialRowsCount() { return this.validRecord.lastRowNumber; }
 
 
   addNewField(tag = defaultFieldValues.freeTags[0], fieldContent = defaultFieldValues.content) {
@@ -81,15 +79,12 @@ export default class QuickmarcEditor {
 
   deletePenaltField() {
     const shouldBeRemovedRowNumber = this.getInitialRowsCount() - 1;
-
-    cy.expect(QuickMarcEditor().exists())
-      .then(() => {
-        cy.then(() => QuickMarcEditor().presentedRowsProperties())
-          .then(presentedRowsProperties => {
-            const shouldBeDeletedRowTag = presentedRowsProperties[shouldBeRemovedRowNumber].tag;
-            cy.do(getRowInteractor(shouldBeRemovedRowNumber).find(deleteFieldButton).click());
-            cy.wrap(shouldBeDeletedRowTag).as('specialTag');
-          });
+    cy.expect(getRowInteractor(shouldBeRemovedRowNumber).exists());
+    cy.then(() => QuickMarcEditor().presentedRowsProperties())
+      .then(presentedRowsProperties => {
+        const shouldBeDeletedRowTag = presentedRowsProperties[shouldBeRemovedRowNumber].tag;
+        cy.do(getRowInteractor(shouldBeRemovedRowNumber).find(deleteFieldButton).click());
+        cy.wrap(shouldBeDeletedRowTag).as('specialTag');
       });
     return cy.get('@specialTag');
   }
@@ -116,7 +111,7 @@ export default class QuickmarcEditor {
       .has({ value: content ?? defaultFieldValues.contentWithSubfield }));
   }
 
-  fillAllAvailableValues(fieldContent, tag, initialRowsCount = this.validOCLC.lastRowNumber) {
+  fillAllAvailableValues(fieldContent, tag, initialRowsCount = this.validRecord.lastRowNumber) {
     const contentTextArea = TextArea({ name: `records[${initialRowsCount + 1}].content` });
     const tagTextField = TextField({ name: `records[${initialRowsCount + 1}].tag` });
     const separator = '\t   \t';
@@ -146,7 +141,7 @@ export default class QuickmarcEditor {
       });
   }
 
-  updateExistingField(tag = this.validOCLC.existingTag, newContent = `newContent${getRandomPostfix()}`) {
+  updateExistingField(tag = this.validRecord.existingTag, newContent = `newContent${getRandomPostfix()}`) {
     cy.do(QuickMarcEditorRow({ tagValue: tag }).find(TextArea()).fillIn(newContent));
     return newContent;
   }
@@ -163,14 +158,14 @@ export default class QuickmarcEditor {
     return defaultFieldValues.freeTags;
   }
 
-  static checkInitial008TagValueFromHoldingsRecord() {
+  static checkInitial008TagValueFromHoldings() {
     tag008HoldingsBytesProperties.getAllProperties().forEach(specialByte => {
       cy.expect(specialByte.interactor.has({ value: specialByte.defaultValue }));
     });
   }
 
   // should be used only with default value of tag 008
-  static checkNotExpectedByteLabelsInHoldingsRecordTag008() {
+  static checkNotExpectedByteLabelsInTag008Holdings() {
     cy.then(() => QuickMarcEditor().presentedRowsProperties()).then(rowsProperties => {
       let actualJoinedFieldNames = rowsProperties.filter(rowProperty => rowProperty.tag === '008').map(rowProperty => rowProperty.content)[0].toLowerCase();
 
@@ -204,7 +199,8 @@ export default class QuickmarcEditor {
     });
   }
 
-  static updateAllDefaultValuesIn008Tag() {
+  // TODO: redesign. move tag008HoldingsBytesProperties to InventoryInstance.validOCLC
+  static updateAllDefaultValuesIn008TagInHoldings() {
     tag008HoldingsBytesProperties.getUsualProperties().forEach(byteProperty => {
       cy.do(QuickMarcEditorRow({ tagValue: '008' }).find(byteProperty.interactor).fillIn(byteProperty.newValue));
     });
@@ -218,7 +214,15 @@ export default class QuickmarcEditor {
     return tag008HoldingsBytesProperties.getAllProperties().map(property => property.newValue).join('');
   }
 
-  static clearTag008() {
+  updateAllDefaultValuesIn008TagInAuthority() {
+    this.validRecord.tag008AuthorityBytesProperties.getAllProperties().forEach(byteProperty => {
+      cy.do(QuickMarcEditorRow({ tagValue: '008' }).find(byteProperty.interactor).fillIn(byteProperty.newValue));
+    });
+    QuickmarcEditor.pressSaveAndClose();
+    return this.validRecord.tag008AuthorityBytesProperties.getNewValueSourceLine();
+  }
+
+  static clearTag008Holdings() {
     tag008HoldingsBytesProperties.getAllProperties().forEach(byteProperty => {
       cy.do(QuickMarcEditorRow({ tagValue: '008' }).find(byteProperty.interactor).fillIn(''));
     });
@@ -226,7 +230,7 @@ export default class QuickmarcEditor {
     return tag008HoldingsBytesProperties.getAllProperties().map(property => property.voidValue).join('');
   }
 
-  static checkReplacedVoidValuesInTag008() {
+  static checkReplacedVoidValuesInTag008Holdings() {
     tag008HoldingsBytesProperties.getAllProperties().forEach(byteProperty => {
       cy.expect(QuickMarcEditorRow({ tagValue: '008' }).find(byteProperty.interactor).has({ value: byteProperty.replacedVoidValue }));
     });
@@ -247,4 +251,9 @@ export default class QuickmarcEditor {
   }
 
   static getSourceContent(quickmarcTagValue) { return defaultFieldValues.getSourceContent(quickmarcTagValue); }
+  static checkNotDeletableTags(...tags) {
+    cy.then(() => QuickMarcEditor().presentedRowsProperties())
+      .then(presentedRowsProperties => presentedRowsProperties.filter(rowProperties => tags.includes(rowProperties.tag))
+        .forEach(specialRowsProperties => cy.expect(specialRowsProperties.isDeleteButtonExist).to.be.false));
+  }
 }

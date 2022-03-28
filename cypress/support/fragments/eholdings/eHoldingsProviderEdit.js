@@ -1,4 +1,5 @@
-import { Select, Section, Button } from '../../../../interactors';
+import { Select, Section, Button, HTML, including } from '../../../../interactors';
+import { getLongDelay } from '../../utils/cypressTools';
 import eHoldingsProviderView from './eHoldingsProviderView';
 
 const availableProxies = [
@@ -10,22 +11,23 @@ const proxySelect = Select('Proxy');
 
 export default {
   waitLoading: (providerName) => {
-    cy.expect(Section({ id : providerName.replaceAll(' ', '-').toLowerCase() }).exists());
-    cy.expect(proxySelect.exists());
+    cy.intercept('eholdings/providers/**').as('getProviderProperties');
+    cy.wait('@getProviderProperties', getLongDelay()).then(request => {
+      cy.expect(Section({ id : providerName.replaceAll(' ', '-').toLowerCase() }).exists());
+      cy.expect(proxySelect.find(HTML(including(request.response.body.data.attributes.proxy.id))).exists());
+    });
   },
   changeProxy: () => {
     return cy.then(() => proxySelect.value())
       .then(selectedProxy => {
         const notSelectedProxy = availableProxies.filter(availableProxy => availableProxy.toLowerCase() !== selectedProxy)[0];
         cy.do(proxySelect.choose(notSelectedProxy));
+        cy.expect(proxySelect.find(HTML(including(notSelectedProxy))).exists());
         return cy.wrap(notSelectedProxy);
       });
   },
   saveAndClose:() => {
     cy.do(Button('Save & close').click());
-    // TODO: need to wait proxy update and make extra page refresh. Need to clarify the reason with developers and change static waiter to dynamic waiter
-    cy.wait(5000);
-    cy.reload();
     eHoldingsProviderView.waitLoading();
   }
 };

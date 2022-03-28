@@ -7,6 +7,8 @@ import {
   Pane,
 } from '../../../interactors';
 
+import generateItemBarcode from '../../support/utils/generateItemBarcode';
+
 describe('Deleting user', () => {
   const lastName = 'Test-' + uuid();
   const ResultsPane = Pane({ index: 2 });
@@ -26,7 +28,8 @@ describe('Deleting user', () => {
 
   before(() => {
     cy.login(Cypress.env('diku_login'), Cypress.env('diku_password'));
-    cy.getToken('diku_admin', 'admin');
+    cy.getToken(Cypress.env('diku_login'),
+      Cypress.env('diku_password'));
     cy.getServicePointsApi({ limit: 1, query: 'pickupLocation=="true"' });
     cy.getCancellationReasonsApi({ limit: 1 });
     cy.getUserGroups({ limit: 1 });
@@ -110,7 +113,7 @@ describe('Deleting user', () => {
   });
 
   it('should be unable in case the user has open loans', function () {
-    const ITEM_BARCODE = Number(new Date()).toString();
+    const ITEM_BARCODE = generateItemBarcode();
     const user = Cypress.env('user');
     const servicePoint = Cypress.env('servicePoints')[0];
 

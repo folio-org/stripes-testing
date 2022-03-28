@@ -31,4 +31,18 @@ export default {
       });
     return cy.get('@selectedPackage');
   },
+  getPackageName:(rowNumber = 0) => {
+    return cy.then(() => resultSection.find(ListItem({ index: rowNumber })).h3Value());
+  },
+  getCustomPackageViaApi:() => {
+    cy.okapiRequest({ path: 'eholdings/packages',
+      searchParams: { 'filter[custom]':true, count:10, pageSize:10 },
+      isDefaultSearchParamsRequired : false }).then(({ body }) => {
+      const initialPackageNames = body.data.filter(specialPackage => specialPackage?.attributes?.isCustom)
+        .map(customePackage => customePackage.attributes?.name)
+        .filter(name => name);
+      cy.wrap([...new Set(initialPackageNames)][0]).as('customePackageName');
+    });
+    return cy.get('@customePackageName');
+  }
 };

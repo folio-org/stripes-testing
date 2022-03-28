@@ -25,7 +25,7 @@ describe('ui-invoices: Invoice Line creation', () => {
   });
 
   it('C2326 Manually create invoice line', { tags: [testType.smoke] }, () => {
-    Invoices.createDefaultInvoiceViaUi(invoice, vendorPrimaryAddress);
+    Invoices.createDefaultInvoice(invoice, vendorPrimaryAddress);
     Invoices.createInvoiceLine(invoiceLine);
     Invoices.checkInvoiceLine(invoiceLine);
     Invoices.deleteInvoiceViaActions();

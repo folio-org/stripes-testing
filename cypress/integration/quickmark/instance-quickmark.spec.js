@@ -29,6 +29,7 @@ describe('Manage inventory Bib records with quickMarc editor', () => {
       InventoryActions.import();
     });
   });
+
   it('C10950 Edit and save a MARC record in quickMARC', { tags: [testTypes.smoke, features.quickMarcEditor] }, () => {
     InventoryInstance.goToEditMARCBiblRecord();
     QuickMarcEditor.waitLoading();
@@ -72,6 +73,7 @@ describe('Manage inventory Bib records with quickMarc editor', () => {
       QuickMarcEditor.pressSaveAndClose();
       QuickMarcEditor.deleteConfirmationPresented();
       QuickMarcEditor.confirmDelete();
+      InventoryInstance.waitLoading();
       InventoryInstance.viewSource();
       InventoryViewSource.notContains(deletedTag);
     });

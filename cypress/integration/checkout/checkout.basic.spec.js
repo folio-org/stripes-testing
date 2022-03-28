@@ -1,11 +1,14 @@
+import generateItemBarcode from '../../support/utils/generateItemBarcode';
+
 describe('Check Out', () => {
   let ITEM_BARCODE;
 
   beforeEach(() => {
-    ITEM_BARCODE = Number(new Date()).toString();
+    ITEM_BARCODE = generateItemBarcode();
 
     cy.login(Cypress.env('diku_login'), Cypress.env('diku_password'));
-    cy.getToken('diku_admin', 'admin')
+    cy.getToken(Cypress.env('diku_login'),
+      Cypress.env('diku_password'))
       .then(() => {
         cy.getLoanTypes({ limit: 1 });
         cy.getMaterialTypes({ limit: 1 });
