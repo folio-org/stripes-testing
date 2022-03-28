@@ -16,6 +16,10 @@ export default {
     cy.do(Pane({ title: 'Search & filter' }).find(Button('Search')).click());
   },
 
+  resetAllFilters() {
+    cy.do(Button('Reset all').click());
+  },
+
   selectAwaitingDeliveryRequest() {
     cy.do(Checkbox({ name: 'Open - Awaiting delivery' }).click());
   },

@@ -15,6 +15,7 @@ Cypress.Commands.add('getLoanTypes', (searchParams) => {
     })
     .then(({ body }) => {
       Cypress.env('loanTypes', body.loantypes);
+      return body.loantypes;
     });
 });
 
@@ -52,6 +53,7 @@ Cypress.Commands.add('getHoldingTypes', (searchParams) => {
     })
     .then(({ body }) => {
       Cypress.env('holdingsTypes', body.holdingsTypes);
+      return body.holdingsTypes;
     });
 });
 
@@ -63,6 +65,7 @@ Cypress.Commands.add('getHoldingSources', (searchParams) => {
     })
     .then(({ body }) => {
       Cypress.env('holdingSources', body.holdingsRecordsSources);
+      return body.holdingsRecordsSources;
     });
 });
 
@@ -74,6 +77,7 @@ Cypress.Commands.add('getInstanceTypes', (searchParams) => {
     })
     .then(({ body }) => {
       Cypress.env('instanceTypes', body.instanceTypes);
+      return body.instanceTypes;
     });
 });
 

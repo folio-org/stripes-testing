@@ -8,6 +8,7 @@ Cypress.Commands.add('getServicePointsApi', (searchParams) => {
     })
     .then(({ body }) => {
       Cypress.env('servicePoints', body.servicepoints);
+      return body.servicepoints;
     });
 });
 

@@ -63,6 +63,7 @@ Cypress.Commands.add('createUserApi', (user) => {
     })
     .then(({ body }) => {
       Cypress.env('user', body);
+      return body;
     });
 });
 

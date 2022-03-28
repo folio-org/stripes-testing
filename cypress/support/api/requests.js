@@ -18,6 +18,7 @@ Cypress.Commands.add('createItemRequestApi', (data) => {
     })
     .then(({ body }) => {
       Cypress.env('request', body);
+      return body;
     });
 });
 
@@ -30,6 +31,7 @@ Cypress.Commands.add('changeItemRequestApi', (request) => {
     })
     .then(({ body }) => {
       Cypress.env('request', body);
+      return body;
     });
 });
 
@@ -41,5 +43,30 @@ Cypress.Commands.add('getCancellationReasonsApi', (searchParams) => {
     })
     .then(({ body }) => {
       Cypress.env('cancellationReasons', body.cancellationReasons);
+      return body.cancellationReasons;
+    });
+});
+
+Cypress.Commands.add('deleteItemRequestApi', (requestId) => {
+  cy
+    .okapiRequest({
+      method: 'DELETE',
+      path: `circulation/requests/${requestId}`,
+    })
+    .then((res) => {
+      return cy.wrap(res);
+    });
+});
+
+// Creates a request for any item from the given instance ID
+Cypress.Commands.add('createRequest', (data) => {
+  cy
+    .okapiRequest({
+      method: 'POST',
+      path: 'circulation/requests/instances',
+      body: data,
+    })
+    .then(({ body }) => {
+      return body;
     });
 });
