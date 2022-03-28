@@ -34,52 +34,16 @@ export default {
     { formValue: '2050-01-05', uiValue: '1/5/2050' },
   ],
 
-  createInstance({
-    instanceTypeId,
-    instanceTitle,
-    holdingsTypeId,
-    permanentLocationId,
-    sourceId,
-    itemBarcode,
-    permanentLoanTypeId,
-    materialTypeId
-  }) {
-    return cy.createInstance({
-      instance: {
-        instanceTypeId,
-        title: instanceTitle,
-      },
-      holdings: [{
-        holdingsTypeId,
-        permanentLocationId,
-        sourceId,
-      }],
-      items: [
-        [{
-          barcode: itemBarcode,
-          status: { name: 'Available' },
-          permanentLoanType: { id: permanentLoanTypeId },
-          materialType: { id:  materialTypeId },
-        }],
-      ],
-    });
-  },
-
-  createRequest(requestData) {
-    return cy.createRequest(requestData);
-  },
-
-  updateRequest(requestData, status) {
+  updateRequestApi(requestData, status) {
     return cy.changeItemRequestApi({ ...requestData, status });
   },
 
   checkIsEditsBeingSaved(requestData, instanceRecordData, status) {
-    this.updateRequest(requestData, status).then(() => {
+    this.updateRequestApi(requestData, status).then(() => {
       switch (status) {
         case this.requestStatuses.NOT_YET_FILLED:
-          return this.editAndCheckNotFilledRequest(instanceRecordData);
         case this.requestStatuses.IN_TRANSIT:
-          return this.editAndCheckInTransitRequest(instanceRecordData);
+          return this.editAndCheckNotFilledAndInTransitRequest(instanceRecordData, status);
         case this.requestStatuses.AWAITING_PICKUP:
           return this.editAndCheckAwaitingPickupRequest(instanceRecordData);
         case this.requestStatuses.AWAITING_DELIVERY:
@@ -90,60 +54,52 @@ export default {
     });
   },
 
-  editAndCheckNotFilledRequest(instanceRecordData) {
-    Requests.selectNotYetFilledRequest();
+  editAndCheckNotFilledAndInTransitRequest(instanceRecordData, status) {
+    const isTransit = status === this.requestStatuses.IN_TRANSIT ? 1 : 0;
+    if (isTransit === 1) {
+      Requests.selectInTransitRequest();
+    } else {
+      Requests.selectNotYetFilledRequest();
+    }
     this.findAndOpenCreatedRequest(instanceRecordData);
-    this.checkIsRequestExpirationDateEditable(true);
-    this.checkIsFulfillmentPreferenceEditable(true);
-    this.checkIsPickupServicePointIdEditable(true);
-    this.updateRequestExpirationDate(this.expirationDates[0].formValue);
-    this.updatePickupServicePoint(this.servicePoint);
+    cy.expect(requestExpirationDateInput.has({ disabled: false }));
+    cy.expect(fulfillmentPreferenceSelect.has({ disabled: false }));
+    cy.expect(pickupServicePointSelect.has({ disabled: false }));
+    cy.do(requestExpirationDateInput.fillIn(this.expirationDates[isTransit].formValue));
+    cy.do(pickupServicePointSelect.choose(this.servicePoint));
     this.saveAndClose();
-    this.verifyRequestExpirationDate(this.expirationDates[0].uiValue);
-    this.verifyPickupServicePoint(this.servicePoint);
-  },
-
-  editAndCheckInTransitRequest(instanceRecordData) {
-    Requests.selectInTransitRequest();
-    this.findAndOpenCreatedRequest(instanceRecordData);
-    this.checkIsRequestExpirationDateEditable(true);
-    this.checkIsFulfillmentPreferenceEditable(true);
-    this.checkIsPickupServicePointIdEditable(true);
-    this.updatePickupServicePoint(this.servicePoint);
-    this.updateRequestExpirationDate(this.expirationDates[1].formValue);
-    this.saveAndClose();
-    this.verifyRequestExpirationDate(this.expirationDates[1].uiValue);
-    this.verifyPickupServicePoint(this.servicePoint);
+    cy.expect(requestExpirationDateKeyValue.has({ value: this.expirationDates[isTransit].uiValue }));
+    cy.expect(pickupServicePointKeyValue.has({ value: this.servicePoint }));
   },
 
   editAndCheckAwaitingPickupRequest(instanceRecordData) {
     Requests.selectAwaitingPickupRequest();
     this.findAndOpenCreatedRequest(instanceRecordData);
-    this.checkIsHoldShelfExpirationDateEditable(true);
-    this.checkIsRequestExpirationDateEditable(true);
-    this.checkIsFulfillmentPreferenceEditable(false);
-    this.checkIsPickupServicePointIdEditable(true);
-    this.updatePickupServicePoint(this.servicePoint);
-    this.updateRequestExpirationDate(this.expirationDates[2].formValue);
-    this.updateHoldShelfExpirationDate(this.expirationDates[3].formValue);
+    cy.expect(holdShelfExpirationDateInput.has({ disabled: false }));
+    cy.expect(requestExpirationDateInput.has({ disabled: false }));
+    cy.expect(fulfillmentPreferenceSelect.has({ disabled: true }));
+    cy.expect(pickupServicePointSelect.has({ disabled: false }));
+    cy.do(pickupServicePointSelect.choose(this.servicePoint));
+    cy.do(requestExpirationDateInput.fillIn(this.expirationDates[2].formValue));
+    cy.do(holdShelfExpirationDateInput.fillIn(this.expirationDates[3].formValue));
     this.saveAndClose();
-    this.verifyPickupServicePoint(this.servicePoint);
-    this.verifyRequestExpirationDate(this.expirationDates[2].uiValue);
-    this.verifyHoldShelfExpirationDate(this.expirationDates[3].uiValue);
+    cy.expect(pickupServicePointKeyValue.has({ value: this.servicePoint }));
+    cy.expect(requestExpirationDateKeyValue.has({ value: this.expirationDates[2].uiValue }));
+    cy.expect(holdShelfExpirationDateKeyValue.has({ value: including(this.expirationDates[3].uiValue) }));
   },
 
   editAndCheckAwaitingDeliveryRequest(instanceRecordData, request) {
     Requests.selectAwaitingDeliveryRequest();
     this.findAndOpenCreatedRequest(instanceRecordData, request);
-    this.checkIsRequestExpirationDateEditable(true);
-    this.checkIsFulfillmentPreferenceEditable(false);
-    this.checkIsPickupServicePointIdEditable(true);
-    this.checkIsHoldShelfExpirationDateNotSet();
-    this.updatePickupServicePoint(this.servicePoint);
-    this.updateRequestExpirationDate(this.expirationDates[4].formValue);
+    cy.expect(requestExpirationDateInput.has({ disabled: false }));
+    cy.expect(fulfillmentPreferenceSelect.has({ disabled: true }));
+    cy.expect(pickupServicePointSelect.has({ disabled: false }));
+    cy.expect(holdShelfExpirationDateKeyValue.has({ value: '-' }));
+    cy.do(pickupServicePointSelect.choose(this.servicePoint));
+    cy.do(requestExpirationDateInput.fillIn(this.expirationDates[4].formValue));
     this.saveAndClose();
-    this.verifyPickupServicePoint(this.servicePoint);
-    this.verifyRequestExpirationDate(this.expirationDates[4].uiValue);
+    cy.expect(pickupServicePointKeyValue.has({ value: this.servicePoint }));
+    cy.expect(requestExpirationDateKeyValue.has({ value: this.expirationDates[4].uiValue }));
   },
 
   findAndOpenCreatedRequest(instanceRecordData) {
@@ -166,63 +122,18 @@ export default {
     cy.do(closeButton.click());
   },
 
-  checkIsRequestExpirationDateEditable(isEditable) {
-    cy.expect(requestExpirationDateInput.has({ disabled: !isEditable }));
-  },
-
-  checkIsFulfillmentPreferenceEditable(isEditable) {
-    cy.expect(fulfillmentPreferenceSelect.has({ disabled: !isEditable }));
-  },
-
-  checkIsPickupServicePointIdEditable(isEditable) {
-    cy.expect(pickupServicePointSelect.has({ disabled: !isEditable }));
-  },
-
-  checkIsHoldShelfExpirationDateEditable(isEditable) {
-    cy.expect(holdShelfExpirationDateInput.has({ disabled: !isEditable }));
-  },
-
-  checkIsHoldShelfExpirationDateNotSet() {
-    cy.expect(holdShelfExpirationDateKeyValue.has({ value: '-' }));
-  },
-
-  updateRequestExpirationDate(dateString) {
-    cy.do(requestExpirationDateInput.fillIn(dateString));
-  },
-
-  updateHoldShelfExpirationDate(value) {
-    cy.do(holdShelfExpirationDateInput.fillIn(value));
-  },
-
-  updatePickupServicePoint(value) {
-    cy.do(pickupServicePointSelect.choose(value));
-  },
-
-  verifyRequestExpirationDate(value) {
-    cy.expect(requestExpirationDateKeyValue.has({ value }));
-  },
-
-  verifyPickupServicePoint(value) {
-    cy.expect(pickupServicePointKeyValue.has({ value }));
-  },
-
-  verifyHoldShelfExpirationDate(value) {
-    cy.expect(holdShelfExpirationDateKeyValue.has({ value: including(value) }));
-  },
-
   waitRequestEditFormLoad() {
     // before submitting request form, some waiting is needed,
     // otherwise, "Submit Validation Failed" error is thrown
     // the error may be coming from the below
     // see: https://github.com/folio-org/ui-requests/blob/ba8f70d89a23601f8c888a6e664f2ecd8cada239/src/ViewRequest.js#L211
     // eslint-disable-next-line cypress/no-unnecessary-waiting
-    cy.wait(1000);
+    cy.wait(1200);
   },
 
   resetFiltersAndReloadPage() {
     this.closeRequestPreview();
     Requests.resetAllFilters();
-
     // since changes doesn't show up automatically
     // after updating request via API, reloading page is necessary
     cy.reload();
