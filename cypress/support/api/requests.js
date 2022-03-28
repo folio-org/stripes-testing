@@ -1,5 +1,4 @@
 import uuid from 'uuid';
-import TopMenu from '../fragments/topMenu';
 
 Cypress.Commands.add('getItemRequestsApi', (searchParams) => {
   cy
