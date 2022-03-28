@@ -75,7 +75,7 @@ export default {
   filterJobsByJobProfile(jobProfile) {
     cy.do([
       Accordion({ id: 'profileIdAny' }).clickHeader(),
-      Selection({ value: 'Choose job profile' }).open(),
+      Selection({ value: 'Select controlChoose job profile' }).open(),
       SelectionList().select(jobProfile)
     ]);
   },

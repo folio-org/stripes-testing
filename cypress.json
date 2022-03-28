@@ -4,7 +4,7 @@
   "viewportHeight": 1080,
   "video": false,
   "defaultCommandTimeout": 151000,
-  "pageLoadTimeout": 120000,
+  "pageLoadTimeout": 151000,
   "env": {
     "OKAPI_HOST": "https://cypress-okapi.ci.folio.org",
     "OKAPI_TENANT": "diku",
