@@ -104,7 +104,7 @@ describe('MARC Authority management', () => {
     MarcAuthorities.switchToBrowse();
     MarcAuthorityBrowse.waitEmptyTable();
     MarcAuthorityBrowse.checkFiltersInitialState();
-    MarcAuthorityBrowse.searchBy('None', MarcAuthority.defaultAuthority.headingReference);
+    MarcAuthorityBrowse.searchBy('Uniform title', MarcAuthority.defaultAuthority.headingReference);
     MarcAuthorityBrowse.waitLoading();
     MarcAuthorityBrowse.checkPresentedColumns();
   });

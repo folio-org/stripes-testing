@@ -4,7 +4,7 @@ import { Accordion, Button, MultiColumnListHeader, SearchField, Section, HTML, i
 const rootSection = Section({ id: 'authority-search-results-pane' });
 const presentedColumns = ['Authorized/Reference', 'Heading/Reference', 'Type of heading'];
 const rootPaneAuthoritiesFilters = Section({ id: 'pane-authorities-filters' });
-const defaultMainFilterValue = { htmlValue:'none', visibleValue: 'None' };
+const defaultMainFilterValue = { htmlValue:'', visibleValue: 'Select a browse option' };
 const searchButton = rootPaneAuthoritiesFilters.find(Button({ id: 'submit-authorities-search' }));
 const mainFilter = rootPaneAuthoritiesFilters.find(SearchField({ id:'textarea-authorities-search' }));
 // TODO: initially first line has data-row-index = 52. Currently it's 0, clarify the reason in case if start index will changed once again
