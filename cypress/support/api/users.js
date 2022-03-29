@@ -127,3 +127,22 @@ Cypress.Commands.add('createTempUser', (permissions) => {
     });
   return cy.get('@userProperties');
 });
+
+Cypress.Commands.add('getAddressTypesApi', (searchParams) => {
+  cy.okapiRequest({
+    path: 'addresstypes',
+    searchParams,
+  }).then(({ body }) => {
+    return body.addressTypes;
+  });
+});
+
+Cypress.Commands.add('createUserRequestPreferencesApi', (data) => {
+  cy.okapiRequest({
+    method: 'POST',
+    path: 'request-preference-storage/request-preference',
+    body: data,
+  }).then(({ body }) => {
+    return body;
+  });
+});

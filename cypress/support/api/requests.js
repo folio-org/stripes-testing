@@ -60,9 +60,19 @@ Cypress.Commands.add('createRequestApi', () => {
       preferredContactTypeId: '002',
       lastName: `testUser-${uuid()}`,
       email: 'test@folio.org',
+      addresses: [{ addressTypeId: null, primaryAddress: true }]
     },
     departments: [],
     patronGroup: null,
+  };
+  const userRequestPreferences = {
+    defaultDeliveryAddressTypeId: null,
+    defaultServicePointId: null,
+    delivery: true,
+    fulfillment: 'Delivery',
+    holdShelf: true,
+    id: uuid(),
+    userId: null,
   };
   const requestData = {
     'requestLevel': 'Item',
@@ -89,6 +99,10 @@ Cypress.Commands.add('createRequestApi', () => {
     .then(() => {
       cy.getServicePointsApi({ limit: 1, query: 'pickupLocation=="true"' }).then(servicePoints => {
         requestData.pickupServicePointId = servicePoints[0].id;
+      });
+      cy.getAddressTypesApi({ limit: 1 }).then(addressTypes => {
+        userData.personal.addresses[0].addressTypeId = addressTypes[0].id;
+        userRequestPreferences.defaultDeliveryAddressTypeId = addressTypes[0].id;
       });
       cy.getUserGroups({ limit: 1 }).then(patronGroup => {
         userData.patronGroup = patronGroup;
@@ -119,7 +133,11 @@ Cypress.Commands.add('createRequestApi', () => {
       cy.createUserApi(userData).then(user => {
         requestData.requesterId = user.id;
         createdUser = user;
+        userRequestPreferences.userId = user.id;
       });
+    })
+    .then(() => {
+      cy.createUserRequestPreferencesApi(userRequestPreferences);
     })
     .then(() => {
       cy.createInstance({

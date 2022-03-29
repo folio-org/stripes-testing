@@ -12,12 +12,19 @@ const requestExpirationDateInput = TextField({ id: 'requestExpirationDate' });
 const fulfillmentPreferenceSelect = Select({ name: 'fulfilmentPreference' });
 const pickupServicePointSelect = Select({ name: 'pickupServicePointId' });
 const holdShelfExpirationDateInput = TextField({ name: 'holdShelfExpirationDate' });
+const deliveryTypeAddressTypeId = Select({ name: 'deliveryAddressTypeId' });
 const requestExpirationDateKeyValue = KeyValue('Request expiration date');
 const holdShelfExpirationDateKeyValue = KeyValue('Hold shelf expiration date');
 const pickupServicePointKeyValue = KeyValue('Pickup service point');
 
+
 export default {
   servicePoint: 'Circ Desk 1',
+
+  fulfillmentPreference: {
+    HOLD_SHELF: 'Hold Shelf',
+    DELIVERY: 'Delivery'
+  },
 
   requestStatuses: {
     NOT_YET_FILLED: 'Open - Not yet filled',
@@ -65,6 +72,9 @@ export default {
     cy.expect(requestExpirationDateInput.has({ disabled: false }));
     cy.expect(fulfillmentPreferenceSelect.has({ disabled: false }));
     cy.expect(pickupServicePointSelect.has({ disabled: false }));
+    cy.do(fulfillmentPreferenceSelect.choose(this.fulfillmentPreference.DELIVERY));
+    cy.expect(deliveryTypeAddressTypeId.has({ disabled: false }));
+    cy.do(fulfillmentPreferenceSelect.choose(this.fulfillmentPreference.HOLD_SHELF));
     cy.do(requestExpirationDateInput.fillIn(this.expirationDates[isTransit].formValue));
     cy.do(pickupServicePointSelect.choose(this.servicePoint));
     this.saveAndClose();
