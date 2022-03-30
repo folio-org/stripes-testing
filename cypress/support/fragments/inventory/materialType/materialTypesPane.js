@@ -3,12 +3,14 @@ import SettingsMenu from '../../settingsMenu';
 import ModalDeleteMaterialType from './modalDeleteMaterialType';
 import InteractorsTools from '../../../utils/interactorsTools';
 
+const pane = Pane('Material types');
+
 const verifyMaterialTypeIsPresented = (materialTypeName) => {
-  cy.expect(Pane('Material types').find(HTML(including(materialTypeName))).exists());
+  cy.expect(pane.find(HTML(including(materialTypeName))).exists());
 };
 
-const verifyMaterialTypeIsDeleted = (materialTypeName) => {
-  cy.expect(Pane('Material types').find(HTML(including(materialTypeName))).absent());
+const verifyMaterialTypeIsDeleted = (newMaterialTypeName) => {
+  cy.expect(pane.find(HTML(including(newMaterialTypeName))).absent());
 };
 
 export default {
