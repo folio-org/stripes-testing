@@ -46,7 +46,7 @@ export default {
     return cy.get('@customePackageName');
   },
   getNotCustomSelectedPackageIdViaApi:() => {
-    // TODO: add issue related with filter[selected]
+    // TODO: issue related with filter[selected] https://issues.folio.org/browse/MODKBEKBJ-630
     cy.okapiRequest({ path: 'eholdings/packages',
       searchParams: { 'filter[selected]':true, count:100, pageSize:100 },
       isDefaultSearchParamsRequired : false }).then(({ body }) => {
