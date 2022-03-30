@@ -49,10 +49,18 @@ Cypress.Commands.add('getCancellationReasonsApi', (searchParams) => {
     });
 });
 
-// Creates a request for any item from the given instance ID
-// Creates Instance and user
-// Returns created User, Instance and Request details
-Cypress.Commands.add('createRequestApi', () => {
+/**
+ * Creates a request with associated item (instance) and user.
+ * Returns created request, item (instance) and user details.
+ * @param {string} itemStatus - {@link https://s3.amazonaws.com/foliodocs/api/mod-inventory/inventory.html#inventory_items_post}
+ * @param {('Page'|'Hold'|'Recall')} requestType
+ * @param {'Item'|'Title'} requestLevel
+  */
+Cypress.Commands.add('createRequestApi', (
+  itemStatus = 'Available',
+  requestType = 'Page',
+  requestLevel = 'Item',
+) => {
   const userData = {
     active: true,
     barcode: uuid(),
@@ -66,31 +74,38 @@ Cypress.Commands.add('createRequestApi', () => {
     patronGroup: null,
   };
   const userRequestPreferences = {
+    id: uuid(),
+    fulfillment: 'Delivery',
     defaultDeliveryAddressTypeId: null,
     defaultServicePointId: null,
     delivery: true,
-    fulfillment: 'Delivery',
     holdShelf: true,
-    id: uuid(),
     userId: null,
-  };
-  const requestData = {
-    'requestLevel': 'Item',
-    'requestDate': new Date().toISOString(),
-    'requestExpirationDate': new Date().toISOString(),
-    'requesterId': null,
-    'instanceId': null,
-    'pickupServicePointId': null,
   };
   const instanceRecordData = {
     instanceTitle : `instanceTitle-${uuid()}`,
     itemBarcode : `item-barcode-${uuid()}`,
+    instanceId: uuid(),
+    itemId: uuid(),
+    holdingId: uuid(),
     instanceTypeId: null,
     holdingsTypeId: null,
     permanentLocationId: null,
     sourceId: null,
     permanentLoanTypeId: null,
     materialTypeId: null
+  };
+  const requestData = {
+    id: uuid(),
+    requestType,
+    requesterId: null,
+    holdingsRecordId: instanceRecordData.holdingId,
+    instanceId: instanceRecordData.instanceId,
+    requestLevel,
+    itemId: instanceRecordData.itemId,
+    requestDate: new Date().toISOString(),
+    fulfilmentPreference: 'Hold Shelf',
+    pickupServicePointId: null,
   };
   let createdUser;
   let cancellationReasonId;
@@ -131,8 +146,8 @@ Cypress.Commands.add('createRequestApi', () => {
     })
     .then(() => {
       cy.createUserApi(userData).then(user => {
-        requestData.requesterId = user.id;
         createdUser = user;
+        requestData.requesterId = user.id;
         userRequestPreferences.userId = user.id;
       });
     })
@@ -142,34 +157,30 @@ Cypress.Commands.add('createRequestApi', () => {
     .then(() => {
       cy.createInstance({
         instance: {
+          instanceId: instanceRecordData.instanceId,
           instanceTypeId: instanceRecordData.instanceTypeId,
           title: instanceRecordData.instanceTitle,
         },
         holdings: [{
+          holdingId: instanceRecordData.holdingId,
           holdingsTypeId: instanceRecordData.holdingsTypeId,
           permanentLocationId: instanceRecordData.permanentLocationId,
           sourceId: instanceRecordData.sourceId,
         }],
         items: [
           [{
+            itemId: instanceRecordData.itemId,
             barcode: instanceRecordData.itemBarcode,
-            status: { name: 'Available' },
+            status: { name: itemStatus },
             permanentLoanType: { id: instanceRecordData.permanentLoanTypeId },
             materialType: { id:  instanceRecordData.materialTypeId },
           }],
         ],
       });
     })
-    .then((instanceId) => {
-      requestData.instanceId = instanceId;
-      cy
-        .okapiRequest({
-          method: 'POST',
-          path: 'circulation/requests/instances',
-          body: requestData,
-        })
-        .then(({ body: createdRequest }) => {
-          return { createdUser, createdRequest, instanceRecordData, cancellationReasonId };
-        });
+    .then(() => {
+      cy.createItemRequestApi(requestData).then(createdRequest => {
+        return { createdUser, createdRequest, instanceRecordData, cancellationReasonId };
+      });
     });
 });
