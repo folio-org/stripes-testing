@@ -1,40 +1,28 @@
-import uuid from 'uuid';
 import TestTypes from '../../support/dictionary/testTypes';
 import permissions from '../../support/dictionary/permissions';
-import TopMenu from '../../support/fragments/topMenu';
 import SettingsMenu from '../../support/fragments/settingsMenu';
 import getRandomPostfix from '../../support/utils/stringTools';
+import InventorySettings from '../../support/fragments/inventory/inventorySettings';
+import MaterialTypesPane from '../../support/fragments/inventory/materialType/materialTypesPane';
 
 describe('ui-inventory: Create, edit, delete material types', () => {
   let userId = '';
-  const materialTypeId = uuid;
-
   const materialTypeName = `autoTestMaterialType.${getRandomPostfix()}`;
+  const newMaterialTypeName = `autoTestMaterialType.${getRandomPostfix()}`;
 
-  const materialType = {
-    id: materialTypeId,
-    name: materialTypeName,
-    source: 'local',
-  };
-
-  beforeEach(() => {
-    cy.createTempUser(permissions.uiCreateEditDeleteMaterialTypes.gui).then(userProperties => {
+  before(() => {
+    cy.createTempUser([permissions.uiCreateEditDeleteMaterialTypes.gui]).then(userProperties => {
       userId = userProperties.userId;
       cy.login(userProperties.username, userProperties.password);
-      cy.visit(TopMenu.eholdingsPath);
+      cy.visit(SettingsMenu.inventoryPath);
     });
-
-    cy.createMaterialTypeApi({
-      ...materialType
-    });
-  });
-
-  afterEach(() => {
-    cy.deleteMaterialTypeApi(materialType.id);
   });
 
   it('C505 Settings (Inventory): Create, edit, delete material types', { tags: [TestTypes.smoke] }, () => {
-    cy.visit(SettingsMenu.materialTypePath);
+    InventorySettings.checkMaterialTypesMenuOptionIsPresent();
+    MaterialTypesPane.createNewMaterialType(materialTypeName);
+    MaterialTypesPane.editMaterialType(newMaterialTypeName);
+    MaterialTypesPane.deleteMaterialType(newMaterialTypeName);
   });
 });
 
