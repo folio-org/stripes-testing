@@ -46,8 +46,6 @@ export default {
   },
 
   checkIsEditsBeingSaved(requestData, instanceRecordData, status) {
-    console.log({ requestData });
-    cy.pause();
     this.updateRequestApi(requestData, status).then(() => {
       switch (status) {
         case this.requestStatuses.NOT_YET_FILLED:
