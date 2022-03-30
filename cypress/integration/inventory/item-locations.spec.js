@@ -69,6 +69,7 @@ describe('ui-inventory: location', () => {
             });
           });
       });
+    cy.visit(TopMenu.inventoryPath);
   });
 
 
@@ -88,8 +89,6 @@ describe('ui-inventory: location', () => {
     const toBeEditedLocationName = Cypress.env('locations')[0].name;
     const editedLocationName = Cypress.env('locations')[1].name;
 
-    cy.visit(TopMenu.inventoryPath);
-
     // select instance
     InventorySearch.switchToItem();
     InventorySearch.searchByParameter('Barcode', ITEM_BARCODE);
@@ -99,7 +98,36 @@ describe('ui-inventory: location', () => {
 
     // edit instance
     InventoryInstance.openEditItemPage();
-    InventoryInstanceEdit.chooseLocation(editedLocationName);
+    InventoryInstanceEdit.chooseTemporaryLocation(editedLocationName);
+    InventoryInstanceEdit.saveAndClose();
+    InventoryInstance.closeInstancePage();
+
+    // verify results
+    InventoryInstance.checkHoldingsTable(
+      toBeEditedLocationName,
+      0,
+      '',
+      ITEM_BARCODE,
+      'Available',
+      editedLocationName
+    );
+  });
+
+  // TODO: test failed, bug UIIN-1988
+  it('C163924 Change a remote storage location to standard location', { tags: [TestTypes.smoke] }, () => {
+    const toBeEditedLocationName = Cypress.env('locations')[1].name;
+    const editedLocationName = Cypress.env('locations')[0].name;
+
+    // select instance
+    InventorySearch.switchToItem();
+    InventorySearch.searchByParameter('Barcode', ITEM_BARCODE);
+    InventoryInstances.selectInstance();
+    InventoryInstance.openHoldings([editedLocationName]);
+    InventoryInstance.openItemView(ITEM_BARCODE);
+
+    // edit instance
+    InventoryInstance.openEditItemPage();
+    InventoryInstanceEdit.choosePermanentLocation(editedLocationName);
     InventoryInstanceEdit.saveAndClose();
     InventoryInstance.closeInstancePage();
 

@@ -84,10 +84,16 @@ export default {
       TextField({ name:'identifiers[0].value' }).fillIn(value),
       Button('Save and close').click()]);
   },
-  chooseLocation(locationName) {
+  choosePermanentLocation(locationName) {
     cy.do([
       Selection('Permanent').open(),
       Selection('Permanent').choose(including(locationName))
+    ]);
+  },
+  chooseTemporaryLocation(locationName) {
+    cy.do([
+      Selection('Temporary').open(),
+      Selection('Temporary').choose(including(locationName))
     ]);
   },
   saveAndClose: () => {
