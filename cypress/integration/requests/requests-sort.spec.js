@@ -13,32 +13,33 @@ describe('Filter Requests by Request data', () => {
     cy.getToken('diku_admin', 'admin');
   });
 
-  // beforeEach(() => {
-  //   for (let i = 0; i < 3; i++) {
-  //     cy.createRequestApi().then(({
-  //       createdUser,
-  //       createdRequest,
-  //       cancellationReasonId
-  //     }) => {
-  //       usersData.push(createdUser);
-  //       requestsData.push(createdRequest);
-  //       cancellationReasons.push(cancellationReasonId);
-  //     });
-  //   }
-  // });
+  beforeEach(() => {
+    Requests.requestTypes.forEach((requestType) => {
+      const itemStatus = requestType === 'Page' ? 'Available' : 'Checked out';
+      cy.createRequestApi(itemStatus, requestType).then(({
+        createdUser,
+        createdRequest,
+        cancellationReasonId
+      }) => {
+        usersData.push(createdUser);
+        requestsData.push(createdRequest);
+        cancellationReasons.push(cancellationReasonId);
+      });
+    });
+  });
 
-  // afterEach(() => {
-  //   for (let i = 0; i < 3; i++) {
-  //     cy.changeItemRequestApi({
-  //       ...requestsData[i],
-  //       status: 'Closed - Cancelled',
-  //       cancelledByUserId: requestsData[i].requesterId,
-  //       cancellationReasonId: cancellationReasons[i],
-  //       cancelledDate: new Date().toISOString(),
-  //     });
-  //     cy.deleteUser(usersData[i].id);
-  //   }
-  // });
+  afterEach(() => {
+    Requests.requestTypes.forEach((_, i) => {
+      cy.changeItemRequestApi({
+        ...requestsData[i],
+        status: 'Closed - Cancelled',
+        cancelledByUserId: requestsData[i].requesterId,
+        cancellationReasonId: cancellationReasons[i],
+        cancelledDate: new Date().toISOString(),
+      });
+      cy.deleteUser(usersData[i].id);
+    });
+  });
 
   it('should check all the request types', { tags: [testType.smoke] }, () => {
     cy.visit(TopMenu.requestsPath);

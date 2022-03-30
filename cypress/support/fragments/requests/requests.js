@@ -98,6 +98,8 @@ export default {
     }
   ],
 
+  requestTypes: ['Page', 'Hold', 'Recall'],
+
   checkAllRequestTypes() {
     cy.get('#clickable-filter-requestType-hold').check();
     cy.get('#clickable-filter-requestType-page').check();
