@@ -19,19 +19,16 @@ describe('eHoldings packages management', () => {
       permissions.moduleeHoldingsEnabled.gui
     ]).then(userProperties => {
       userId = userProperties.userId;
-      cy.login(userProperties.username, userProperties.password);
-      cy.visit(TopMenu.eholdingsPath);
-      eHoldingSearch.switchToPackages();
-      eHoldingsPackages.waitLoading();
-      eHoldingsPackagesSearch.bySelectionStatus(eHoldingsPackage.filterStatuses.notSelected);
-      eHoldingsPackagesSearch.byName();
-      eHoldingsPackages.openPackage();
-      eHoldingsPackage.addToHodlings();
-      eHoldingsPackage.verifyHoldingStatus();
-      eHoldingsPackage.filterTitles(eHoldingsPackage.filterStatuses.notSelected);
-      eHoldingsPackage.checkEmptyTitlesList();
-      // reset test data
-      eHoldingsPackage.removeFromHoldings();
+      eHoldingsPackages.getNotSelectedPackageIdViaApi().then(specialPackage => {
+        cy.login(userProperties.username, userProperties.password,
+          { path: `${TopMenu.eholdingsPath}/packages/${specialPackage.id}`, waiter: () => eHoldingsPackage.waitLoading(specialPackage.name) });
+        eHoldingsPackage.addToHodlings();
+        eHoldingsPackage.verifyHoldingStatus();
+        eHoldingsPackage.filterTitles();
+        eHoldingsPackage.checkEmptyTitlesList();
+        // reset test data
+        eHoldingsPackage.removeFromHoldings();
+      });
     });
   });
 
@@ -60,18 +57,17 @@ describe('eHoldings packages management', () => {
     cy.createTempUser([permissions.uieHoldingsRecordsEdit.gui,
       permissions.uieHoldingsPackageTitleSelectUnselect.gui]).then(userProperties => {
       userId = userProperties.userId;
-      cy.login(userProperties.username, userProperties.password);
-      cy.visit(TopMenu.eholdingsPath);
-      eHoldingSearch.switchToPackages();
-      eHoldingsPackagesSearch.bySelectionStatus(eHoldingsPackage.filterStatuses.selected);
-      eHoldingsPackagesSearch.byName();
-      eHoldingsPackages.openPackage();
-      eHoldingsPackage.removeFromHoldings();
-      eHoldingsPackage.verifyHoldingStatus(eHoldingsPackage.filterStatuses.notSelected);
-      eHoldingsPackage.filterTitles(eHoldingsPackage.filterStatuses.selected);
-      eHoldingsPackage.checkEmptyTitlesList();
-      // reset test data
-      eHoldingsPackage.addToHodlings();
+      eHoldingsPackages.getNotCustomSelectedPackageIdViaApi().then(specialPackage => {
+        cy.login(userProperties.username, userProperties.password,
+          { path: `${TopMenu.eholdingsPath}/packages/${specialPackage.id}`, waiter: () => eHoldingsPackage.waitLoading(specialPackage.name) });
+
+        eHoldingsPackage.removeFromHoldings();
+        eHoldingsPackage.verifyHoldingStatus(eHoldingsPackage.filterStatuses.notSelected);
+        eHoldingsPackage.filterTitles(eHoldingsPackage.filterStatuses.notSelected);
+        eHoldingsPackage.checkEmptyTitlesList();
+        // reset test data
+        eHoldingsPackage.addToHodlings();
+      });
     });
   });
 

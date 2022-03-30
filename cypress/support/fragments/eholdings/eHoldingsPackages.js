@@ -44,5 +44,35 @@ export default {
       cy.wrap([...new Set(initialPackageNames)][0]).as('customePackageName');
     });
     return cy.get('@customePackageName');
+  },
+  getNotCustomSelectedPackageIdViaApi:() => {
+    // TODO: add issue related with filter[selected]
+    cy.okapiRequest({ path: 'eholdings/packages',
+      searchParams: { 'filter[selected]':true, count:100, pageSize:100 },
+      isDefaultSearchParamsRequired : false }).then(({ body }) => {
+      const initialPackageIds = body.data.filter(specialPackage => !specialPackage?.attributes?.isCustom
+        && specialPackage?.attributes?.name
+        && specialPackage.attributes?.packageType !== 'Complete'
+        // TODO: potencial issue with this package
+        && !['123Library eBooks'].includes(specialPackage?.attributes?.name))
+        .map(customePackage => ({ id: customePackage.id, name: customePackage.attributes.name }));
+      cy.wrap([...new Set(initialPackageIds)][0]).as('packageId');
+    });
+    return cy.get('@packageId');
+  },
+  getNotSelectedPackageIdViaApi:() => {
+    // TODO: add issue related with filter[selected]
+    cy.okapiRequest({ path: 'eholdings/packages',
+      searchParams: { 'filter[selected]':false, count:100, pageSize:100 },
+      isDefaultSearchParamsRequired : false }).then(({ body }) => {
+      const initialPackageIds = body.data.filter(specialPackage => !specialPackage?.attributes?.isCustom
+        && specialPackage?.attributes?.name
+        && specialPackage.attributes?.packageType !== 'Complete'
+        // TODO: potencial issue with this package
+        && !['123Library eBooks'].includes(specialPackage?.attributes?.name))
+        .map(customePackage => ({ id: customePackage.id, name: customePackage.attributes.name }));
+      cy.wrap([...new Set(initialPackageIds)][0]).as('packageId');
+    });
+    return cy.get('@packageId');
   }
 };
