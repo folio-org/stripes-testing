@@ -18,6 +18,10 @@ describe('ui-inventory: Create, edit, delete material types', () => {
     });
   });
 
+  after(() => {
+    cy.deleteUser(userId);
+  });
+
   it('C505 Settings (Inventory): Create, edit, delete material types', { tags: [TestTypes.smoke] }, () => {
     InventorySettings.checkMaterialTypesMenuOptionIsPresent();
     MaterialTypesPane.createNewMaterialType(materialTypeName);
