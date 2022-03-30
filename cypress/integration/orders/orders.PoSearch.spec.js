@@ -6,6 +6,7 @@ import TopMenu from '../../support/fragments/topMenu';
 import DateTools from '../../support/utils/dateTools';
 import SearchHelper from '../../support/fragments/finance/financeHelper';
 import OrdersHelper from '../../support/fragments/orders/ordersHelper';
+import NewInvoice from '../../support/fragments/invoices/newInvoice';
 
 describe('orders: Test PO search', () => {
   const order = { ...NewOrder.defaultOrder };
@@ -46,6 +47,18 @@ describe('orders: Test PO search', () => {
         Orders.resetFilters();
         Orders.searchByParameter('Date opened', DateTools.getFormattedDate({ date: today }, 'MM/DD/YYYY'));
         Orders.checkSearchResults(orderNumber);
+      });
+  });
+  it('C6718 Test the PO filters [except tags]', { tags: [TestType.smoke] }, () => {
+    Orders.createOrderWithOrderLineViaApi(order, orderLine)
+      .then(orderNumber => {
+        cy.visit(TopMenu.ordersPath);
+        Orders.selectFiltersSearch(NewInvoice.defaultUiInvoice);
+        Orders.checkSearchResults(orderNumber);
+        SearchHelper.selectFromResultsList();
+        Orders.openOrder();
+        Orders.closeThirdPane();
+        Orders.resetFilters();
       });
   });
 });

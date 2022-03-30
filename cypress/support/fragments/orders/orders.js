@@ -1,4 +1,4 @@
-import { Button, SearchField, PaneHeader, Pane, Select, Accordion, KeyValue, Checkbox, MultiColumnList, MultiColumnListCell, MultiColumnListRow } from '../../../../interactors';
+import { Button, SearchField, PaneHeader, Pane, Select, Accordion, KeyValue, Checkbox, MultiColumnList, MultiColumnListCell, MultiColumnListRow, Modal } from '../../../../interactors';
 import SearchHelper from '../finance/financeHelper';
 import InteractorsTools from '../../utils/interactorsTools';
 
@@ -143,6 +143,20 @@ export default {
     return searchParamsMap;
   },
 
+  selectFiltersSearch: (invoice) => {
+    cy.do([
+      Checkbox('Pending').click(),
+      Button({ id: 'accordion-toggle-button-approved' }).click(),
+      Checkbox('No').click(),
+      Button({ id: 'accordion-toggle-button-orderType' }).click(),
+      Checkbox('One-time').click(),
+      Button({ id: 'accordion-toggle-button-filter-vendor' }).click(),
+      Button({ id: 'filter-vendor-button' }).click(),
+      Modal('Select Organization').find(SearchField({ id: searhInputId })).fillIn(invoice.vendorName),
+      searchButton.click(),
+    ]);
+    SearchHelper.selectFromResultsList();
+  },
   checkPoSearch(searchParamsMap, orderNumber) {
     for (const [key, value] of searchParamsMap.entries()) {
       cy.do([
