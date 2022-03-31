@@ -14,36 +14,15 @@ export default {
       cy.createUserApi(specialPatron);
 
       // current state
-      this.newRequestPrefStorage();
-      this.newPermissions();
-      this.createNewPassword();
-      this.checkOutItem();
+      cy.getRequestPreference(requestPrefStorage.body);
+      cy.getPermissionsApi(permissions.body);
+      cy.setUserPassword(newPassword.body);
+      cy.createItemCheckout(checkOutItem.body);
     });
   },
   deleteUser() {
     this.deleteNewPatron();
     this.deletePatronGroup();
-  },
-  newRequestPrefStorage() {
-    cy.getRequestPreference({ method: 'POST', body: requestPrefStorage.body })
-      .then((resp) => {
-        expect(resp.body).property('id');
-      });
-  },
-  newPermissions() {
-    cy.getPermissionsApi({ method: 'POST', body: permissions.body })
-      .then((resp) => {
-        expect(resp.body).property('id');
-      });
-  },
-  checkOutItem() {
-    cy.createItemCheckout({ method: 'POST', body: checkOutItem.body })
-      .then((resp) => {
-        expect(resp.body).property('id');
-      });
-  },
-  createNewPassword() {
-    cy.setUserPassword({ method: 'POST', body: newPassword.body });
   },
   deleteNewPatron() {
     return cy.okapiRequest({
