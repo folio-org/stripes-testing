@@ -30,5 +30,15 @@ export default {
     eHoldingsNewCustomTitle.fillInRequiredProperties(packageName, titleName);
     eHoldingsNewCustomTitle.saveAndClose();
     return titleName;
+  },
+  getSelectedNotCustomTitleViaApi:(subject) => {
+    cy.okapiRequest({ path: 'eholdings/titles',
+      searchParams: { 'filter[selected]':true, searchfield:subject, 'filter[subject]': subject, 'filter[custom]': false },
+      isDefaultSearchParamsRequired : false }).then(({ body }) => {
+      const initialTitles = body.data.filter(specialTitle => specialTitle?.attributes?.name)
+        .map(title => ({ id: title.id, name: title.attributes.name }));
+      cy.wrap([...new Set(initialTitles)][0]).as('title');
+    });
+    return cy.get('@title');
   }
 };

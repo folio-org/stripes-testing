@@ -1,9 +1,10 @@
 import testType from '../../support/dictionary/testTypes';
 import TopMenu from '../../support/fragments/topMenu';
 import Requests from '../../support/fragments/requests/requests';
+import EditRequest from '../../support/fragments/requests/edit-request';
 import { MultiColumnListHeader } from '../../../interactors';
 
-describe('Filter Requests by Request data', () => {
+describe('ui-requests: sort requests', () => {
   const usersData = [];
   const requestsData = [];
   const cancellationReasons = [];
@@ -16,7 +17,7 @@ describe('Filter Requests by Request data', () => {
   beforeEach(() => {
     Requests.requestTypes.forEach((requestType) => {
       const itemStatus = requestType === 'Page' ? 'Available' : 'Checked out';
-      cy.createRequestApi(itemStatus, requestType).then(({
+      Requests.createRequestApi(itemStatus, requestType).then(({
         createdUser,
         createdRequest,
         cancellationReasonId
@@ -30,7 +31,7 @@ describe('Filter Requests by Request data', () => {
 
   afterEach(() => {
     Requests.requestTypes.forEach((_, i) => {
-      cy.changeItemRequestApi({
+      EditRequest.updateRequestApi({
         ...requestsData[i],
         status: 'Closed - Cancelled',
         cancelledByUserId: requestsData[i].requesterId,
@@ -41,7 +42,7 @@ describe('Filter Requests by Request data', () => {
     });
   });
 
-  it('should check all the request types', { tags: [testType.smoke] }, () => {
+  it('should check all the request types and validate sorting', { tags: [testType.smoke] }, () => {
     cy.visit(TopMenu.requestsPath);
 
     Requests.checkAllRequestTypes();
@@ -54,22 +55,26 @@ describe('Filter Requests by Request data', () => {
 
     // Click column header Request Date to verify that they reverse sort
     cy.do(MultiColumnListHeader('Request Date').click());
-    cy.wait('@getRequests');
+    Requests.waitLoadingRequests();
     Requests.validateRequestsDateSortingOrder();
 
     /*
-      *** Flakey tests
+      *** Flaky ***
+      - Known Issues: Sort of patron information (name, barcode, etc.)
+      - and item information (title, barcode, etc.) may not behave as expected.
+      - This is a known issue. Do not fail the test.
     */
     Requests.sortingColumns.forEach(column => {
+      // Validate sort
       cy.do(MultiColumnListHeader(column.title).click());
-      Requests.validateRequestsSortingOrder({ headerTitle: column.id, columnIndex: column.columnIndex });
+      Requests.validateRequestsSortingOrder({ headerId: column.id, columnIndex: column.columnIndex });
 
       // Validate reverse sorting
       cy.do(MultiColumnListHeader(column.title).click());
-      Requests.validateRequestsSortingOrder({ headerTitle: column.id, columnIndex: column.columnIndex });
+      Requests.validateRequestsSortingOrder({ headerId: column.id, columnIndex: column.columnIndex });
     });
     /*
-      *** Flakey tests
+      *** Flaky ***
     */
   });
 });
