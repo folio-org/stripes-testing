@@ -4,7 +4,7 @@ import Requests from '../../support/fragments/requests/requests';
 import EditRequest from '../../support/fragments/requests/edit-request';
 import { MultiColumnListHeader } from '../../../interactors';
 
-describe('ui-requests: sort requests', () => {
+describe('ui-requests: Sort requests', () => {
   const usersData = [];
   const requestsData = [];
   const cancellationReasons = [];
