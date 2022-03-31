@@ -14,6 +14,9 @@ import {
   Checkbox,
   MultiColumnListRow,
   Link,
+  MultiSelect,
+  PaneHeader,
+  Pane
 } from '../../../../interactors';
 import InventoryActions from './inventoryActions';
 import InventoryInstanceEdit from './InventoryInstanceEdit';
@@ -36,7 +39,7 @@ const addMarcHoldingRecordButton = Button({ id:'create-holdings-marc' });
 const viewHoldingsButton = Button('View holdings');
 const notesSection = Section({ id: 'instance-details-notes' });
 const moveItemsButton = Button({ id: 'move-instance-items' });
-
+const tagName = 'urgent';
 
 const instanceHRID = 'Instance HRID';
 const validOCLC = { id:'176116217',
@@ -221,5 +224,31 @@ export default {
   closeInstancePage() {
     cy.do(Button({ ariaLabel: 'Close ' }).click());
     cy.expect(section.exists());
-  }
+  },
+  addTag:() => {
+    // wait for data to be loaded
+    cy.intercept(
+      {
+        method: 'GET',
+        url: '/remote-storage/mappings?*',
+      }
+    ).as('getMap');
+    cy.do(Button({ icon: 'tag' }).click());
+    cy.wait('@getMap');
+    cy.do(MultiSelect().select([tagName]));
+    cy.do(PaneHeader('Tags').find(Button({ icon: 'times' })).click());
+    cy.do(Button({ ariaLabel: 'Close ' }).click());
+  },
+  resetAll:() => {
+    cy.do(Pane('Search & filter').find(Button('Reset all')).click());
+  },
+  searchByTag:(instanceTitle) => {
+    cy.do(Button({ id:'accordion-toggle-button-instancesTags' }).click());
+    cy.do(Checkbox(tagName).click());
+    cy.expect(MultiColumnListRow().find(HTML(including(instanceTitle))).exists());
+  },
+  checkAddedTag:() => {
+   
+    
+  },
 };

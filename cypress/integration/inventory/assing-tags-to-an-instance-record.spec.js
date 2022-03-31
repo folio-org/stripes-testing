@@ -1,16 +1,15 @@
 import TestTypes from '../../support/dictionary/testTypes';
-import getRandomPostfix from '../../support/utils/stringTools';
 import TopMenu from '../../support/fragments/topMenu';
+import getRandomPostfix from '../../support/utils/stringTools';
 import InventorySearch from '../../support/fragments/inventory/inventorySearch';
 import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
 import InventoryInstance from '../../support/fragments/inventory/inventoryInstance';
-import InventoryInstanceEdit from '../../support/fragments/inventory/InventoryInstanceEdit';
 
-describe('ui-inventory: Enter different type of identifiers', () => {
+describe('ui-inventory: Assign tags to an Instance record', () => {
   const instanceTitle = `autoTestInstanceTitle.${getRandomPostfix()}`;
   let instanceId;
 
-  beforeEach('navigate to inventory', () => {
+  beforeEach(() => {
     cy.login(Cypress.env('diku_login'), Cypress.env('diku_password'));
     cy.getToken(Cypress.env('diku_login'), Cypress.env('diku_password'))
       .then(() => {
@@ -28,22 +27,18 @@ describe('ui-inventory: Enter different type of identifiers', () => {
       });
   });
 
-  afterEach(() => {
+  after(() => {
     cy.deleteInstanceApi(instanceId);
   });
 
-  [
-    'ASIN',
-    'BNB',
-  ].forEach((identifier) => {
-    it('C609 In Accordion Identifiers --> enter different type of identifiers', { tags: [TestTypes.smoke] }, () => {
-      cy.visit(TopMenu.inventoryPath);
-      InventorySearch.searchByParameter('Title (all)', instanceTitle);
-      InventoryInstances.selectInstance();
-      InventoryInstance.editInstance();
-      InventoryInstanceEdit.addIdentifier(identifier);
-      InventorySearch.searchByParameter('Identifier (all)', identifier);
-      InventoryInstance.checkInstanceIdentifier(identifier);
-    });
+  it('C196769 Assign tags to an Instance record', { tags: [TestTypes.smoke] }, () => {
+    cy.visit(TopMenu.inventoryPath);
+    InventorySearch.searchByParameter('Title (all)', instanceTitle);
+    InventoryInstances.selectInstance();
+    //InventoryInstances.waitLoading();
+    InventoryInstance.addTag();
+    InventoryInstance.resetAll();
+    InventoryInstance.searchByTag(instanceTitle);
+    InventorySearch.searchByParameter('Title (all)', instanceTitle);
   });
 });
