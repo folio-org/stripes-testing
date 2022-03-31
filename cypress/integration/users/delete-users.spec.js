@@ -8,7 +8,7 @@ import {
 } from '../../../interactors';
 
 import generateItemBarcode from '../../support/utils/generateItemBarcode';
-import EditRequest from "../../support/fragments/requests/edit-request";
+import EditRequest from '../../support/fragments/requests/edit-request';
 
 describe('Deleting user', () => {
   const lastName = 'Test-' + uuid();
