@@ -12,13 +12,12 @@ import './checkin';
 import './checkout';
 import './eholdings';
 import './inventory';
-import './organizations';
 import './users';
 import 'cypress-file-upload';
 import './data-import';
 import './commands';
 
-setInteractorTimeout(30_000);
+setInteractorTimeout(60_000);
 
 
 require('cypress-xpath');

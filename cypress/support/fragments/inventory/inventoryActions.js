@@ -2,21 +2,29 @@ import { Button, Section, Select, TextField } from '../../../../interactors';
 import DateTools from '../../utils/dateTools';
 import InventoryInstance from './inventoryInstance';
 import FileManager from '../../utils/fileManager';
-import InteractorsTools from '../../utils/interactorsTools';
 
 const importButtonInActions = Button({ id: 'dropdown-clickable-import-record' });
 const importButtonInModal = Button('Import');
 const OCLWorldCatIdentifierTextField = TextField({ name: 'externalIdentifier' });
 const importTypeSelect = Select({ name :'externalIdentifierType' });
 
-// TODO: merge inventoryACtions and InventoryInstances
+// TODO: merge inventoryActions and InventoryInstances
 export default {
-  open: () => { return Section({ id:'pane-results' }).find(Button('Actions')).click(); },
+  open: () => Section({ id:'pane-results' }).find(Button('Actions')).click(),
   options: {
+    new: Button('New'),
     saveUUIDs: Button('Save instances UUIDs'),
     saveCQLQuery: Button('Save instances CQL query'),
     exportMARC: Button('Export instances (MARC)'),
     showSelectedRecords: Button('Show selected records'),
+    newRequest: Button('New Request'),
+    newFastAddRecord: Button('New Fast Add Record'),
+  },
+  openNewFastAddRecordForm() {
+    cy.do([
+      this.open(),
+      this.options.newFastAddRecord.click()
+    ]);
   },
   optionsIsDisabled: (array) => {
     return array.forEach((element) => {
@@ -36,7 +44,8 @@ export default {
     this.fillImportFields(specialOCLCWorldCatidentifier);
 
     this.pressImportInModal();
-    InteractorsTools.closeCalloutMessage();
+    // TODO: see issues in cypress tests run related with this step and awaiting of holdingsRecordView
+    // InteractorsTools.closeCalloutMessage();
     InventoryInstance.checkExpectedMARCSource();
   },
 
@@ -102,5 +111,9 @@ export default {
   verifyInstancesMARC(actualIDs, expectedIDs) {
     const formattedActualUUIDs = actualIDs.replaceAll('"', '').split('\n');
     expect(expectedIDs).to.deep.equal(formattedActualUUIDs);
-  }
+  },
+
+  actionsIsAbsent() {
+    return cy.expect(Button('Actions').absent());
+  },
 };

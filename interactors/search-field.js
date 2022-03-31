@@ -10,10 +10,11 @@ export default HTML.extend('search field')
   .selector('[class^=searchField]')
   .locator(label)
   .filters({
-    id: el => el.querySelector('input').getAttribute('id'),
-    readOnly: el => el.querySelector('input').hasAttribute('readOnly'),
-    value: el => el.querySelector('input').value,
-    placeholder: el => el.querySelector('input').placeholder,
+    id: el => el.querySelector('input, textarea').getAttribute('id'),
+    readOnly: el => el.querySelector('input, textarea').hasAttribute('readOnly'),
+    value: el => el.querySelector('input, textarea').value,
+    selectedFilter: el => el.querySelector('select').value,
+    placeholder: el => el.querySelector('input, textarea').placeholder,
     disabled: el => el.querySelector('select').disabled,
   })
   .actions({

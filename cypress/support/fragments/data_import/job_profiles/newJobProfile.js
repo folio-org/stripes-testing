@@ -1,11 +1,14 @@
 import { TextField, Select, Button, Accordion, HTML, including } from '../../../../../interactors';
 import ModalSelectActionProfile from './modalSelectActionProfile';
 
-const acceptedDataType = 'MARC';
+const acceptedDataType = {
+  marc:'MARC',
+  edifact:'EDIFACT'
+};
 
 const defaultJobProfile = {
   profileName:  '',
-  acceptedDataType,
+  acceptedType: acceptedDataType.marc,
 };
 
 const actionsButton = Button('Action');
@@ -13,19 +16,19 @@ const actionsButton = Button('Action');
 const matchButton = Button('Match');
 
 export default {
-  acceptedDataType,
-
   defaultJobProfile,
+
+  acceptedDataType,
 
   fillJobProfile: (specialJobProfile = defaultJobProfile) => {
     cy.do([
       TextField({ name:'profile.name' }).fillIn(specialJobProfile.profileName),
-      Select({ name:'profile.dataType' }).choose(specialJobProfile.acceptedDataType),
+      Select({ name:'profile.dataType' }).choose(specialJobProfile.acceptedType),
     ]);
   },
 
   linkActionProfile(specialActionProfile) {
-    cy.get('[id="type-selector-dropdown-linker-root"]').click();
+    cy.do(HTML({ className: including('linker-button'), id:'type-selector-dropdown-linker-root' }).find(Button()).click());
     cy.do(actionsButton.click());
     ModalSelectActionProfile.searchActionProfileByName(specialActionProfile.name);
     ModalSelectActionProfile.selectActionProfile(specialActionProfile.name);
@@ -92,7 +95,7 @@ export default {
     cy.expect(Accordion('Overview').find(HTML(including(actionProfileName))).exists());
   },
 
-  clickSaveAndCloseButton: () => {
+  saveAndClose: () => {
     cy.do(Button('Save as profile & Close').click());
     cy.expect(Button('Save as profile & Close').absent());
   },

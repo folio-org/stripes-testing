@@ -40,7 +40,7 @@ describe('ui-invoices: Credit Invoice creation', () => {
 
   it('C343209 Create a credit invoice', { tags: [TestType.smoke] }, () => {
     const transactionFactory = new Transaction();
-    Invoices.createDefaultInvoiceViaUi(invoice, vendorPrimaryAddress);
+    Invoices.createDefaultInvoice(invoice, vendorPrimaryAddress);
     Invoices.createInvoiceLine(invoiceLine);
     Invoices.addFundDistributionToLine(invoiceLine, fund);
     Invoices.approveInvoice();

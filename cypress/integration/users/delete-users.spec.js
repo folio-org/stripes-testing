@@ -8,6 +8,8 @@ import {
 } from '../../../interactors';
 import servicePoints from '../../support/fragments/settings/tenant/servicePoints';
 
+import generateItemBarcode from '../../support/utils/generateItemBarcode';
+
 describe('Deleting user', () => {
   const lastName = 'Test-' + uuid();
   const ResultsPane = Pane({ index: 2 });
@@ -27,8 +29,14 @@ describe('Deleting user', () => {
 
   before(() => {
     cy.login(Cypress.env('diku_login'), Cypress.env('diku_password'));
+<<<<<<< HEAD
     cy.getToken('diku_admin', 'admin');
     servicePoints.getServicePointsApi({ limit: 1, query: 'pickupLocation=="true"' });
+=======
+    cy.getToken(Cypress.env('diku_login'),
+      Cypress.env('diku_password'));
+    cy.getServicePointsApi({ limit: 1, query: 'pickupLocation=="true"' });
+>>>>>>> 40e342e830c9bb0e7684f70854c2130a97561ff0
     cy.getCancellationReasonsApi({ limit: 1 });
     cy.getUserGroups({ limit: 1 });
   });
@@ -111,7 +119,7 @@ describe('Deleting user', () => {
   });
 
   it('should be unable in case the user has open loans', function () {
-    const ITEM_BARCODE = Number(new Date()).toString();
+    const ITEM_BARCODE = generateItemBarcode();
     const user = Cypress.env('user');
     const servicePoint = Cypress.env('servicePoints')[0];
 

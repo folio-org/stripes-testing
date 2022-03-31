@@ -22,7 +22,7 @@ describe('Manage holding records through quickmarc editor', () => {
     InventoryActions.import();
     // TODO: redesign to api step
     InventorySteps.addMarcHoldingRecord();
-    HoldingsRecordView.gotoEditInQuickMarc();
+    HoldingsRecordView.editInQuickMarc();
     QuickMarcEditor.waitLoading();
   });
   it('C345390 Add a field to a record using quickMARC', { tags: [TestTypes.smoke, Features.quickMarcEditor] }, () => {
@@ -38,25 +38,25 @@ describe('Manage holding records through quickmarc editor', () => {
   });
 
   it('C345398 Add/Edit MARC 008', { tags: [TestTypes.smoke, Features.quickMarcEditor] }, () => {
-    QuickMarcEditor.checkInitial008TagValueFromHoldingsRecord();
-    QuickMarcEditor.checkNotExpectedByteLabelsInHoldingsRecordTag008();
+    QuickMarcEditor.checkInitial008TagValueFromHoldings();
+    QuickMarcEditor.checkNotExpectedByteLabelsInTag008Holdings();
 
-    const changed008TagValue = QuickMarcEditor.updateAllDefaultValuesIn008Tag();
+    const changed008TagValue = QuickMarcEditor.updateAllDefaultValuesIn008TagInHoldings();
     HoldingsRecordView.waitLoading();
     HoldingsRecordView.viewSource();
     InventoryViewSource.contains(changed008TagValue);
     InventoryViewSource.close();
-    HoldingsRecordView.gotoEditInQuickMarc();
+    HoldingsRecordView.editInQuickMarc();
     QuickMarcEditor.waitLoading();
 
-    const cleared008TagValue = QuickMarcEditor.clearTag008();
+    const cleared008TagValue = QuickMarcEditor.clearTag008Holdings();
     HoldingsRecordView.waitLoading();
     HoldingsRecordView.viewSource();
     InventoryViewSource.contains(cleared008TagValue);
     InventoryViewSource.close();
-    HoldingsRecordView.gotoEditInQuickMarc();
+    HoldingsRecordView.editInQuickMarc();
     QuickMarcEditor.waitLoading();
-    QuickMarcEditor.checkReplacedVoidValuesInTag008();
+    QuickMarcEditor.checkReplacedVoidValuesInTag008Holdings();
   });
 
   it('C345400 Attempt to save a record without a MARC 852', { tags: [TestTypes.smoke, Features.quickMarcEditor] }, () => {

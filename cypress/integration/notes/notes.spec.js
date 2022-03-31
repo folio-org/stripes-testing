@@ -5,12 +5,15 @@ import AgreementDetails from '../../support/fragments/agreements/agreementsDetai
 import TopMenu from '../../support/fragments/topMenu';
 import NewNote from '../../support/fragments/notes/newNote';
 import ExistingNoteView from '../../support/fragments/notes/existingNoteView';
-import testTypes from '../../support/dictionary/testTypes';
-import features from '../../support/dictionary/features';
-import permissions from '../../support/dictionary/permissions';
+import TestTypes from '../../support/dictionary/testTypes';
+import Features from '../../support/dictionary/features';
+import Permissions from '../../support/dictionary/permissions';
+import NewAgreement from '../../support/fragments/agreements/newAgreement';
+import { getLongDelay } from '../../support/utils/cypressTools';
 
 describe('Note creation', () => {
   let userId = '';
+  const agreementTitle = NewAgreement.defaultAgreement.name;
 
   const longNote = { ...NewNote.defaultNote };
   //  title that is more than 65 characters but less than 250 characters
@@ -31,29 +34,30 @@ describe('Note creation', () => {
       AgreementDetails.openNotesSection();
     });
   };
-  it('C1296 Create a note', { tags: [testTypes.smoke, features.notes] }, () => {
-    initPrepairing([permissions.uiNotesItemCreate.gui, permissions.uiNotesItemView,
+  it('C1296 Create a note', { tags: [TestTypes.smoke, Features.notes] }, () => {
+    initPrepairing([Permissions.uiNotesItemCreate.gui, Permissions.uiNotesItemView,
       // need access to special application( agreements in this case)
-      permissions.uiAgreementsAgreementsEdit.gui]);
+      Permissions.uiAgreementsAgreementsEdit.gui, Permissions.uiAgreementsAgreementsDelete.gui]);
     AgreementDetails.createNote(longNote);
     Agreements.selectRecord();
-    AgreementDetails.waitLoadingWithExistingNote(longNote.title);
     AgreementDetails.checkNotesCount(1);
     AgreementDetails.openNotesSection();
+    AgreementDetails.waitLoadingWithExistingNote(longNote.title);
     AgreementDetails.specialNotePresented(longNote.title);
   });
 
-  it('C1299 Edit a note', { tags: [testTypes.smoke, features.notes] }, () => {
-    initPrepairing([permissions.uiNotesItemCreate.gui,
-      permissions.uiNotesItemView.gui,
-      permissions.uiNotesItemEdit.gui,
+  it('C1299 Edit a note', { tags: [TestTypes.smoke, Features.notes] }, () => {
+    initPrepairing([Permissions.uiNotesItemCreate.gui,
+      Permissions.uiNotesItemView.gui,
+      Permissions.uiNotesItemEdit.gui,
       // need access to special application( agreements in this case)
-      permissions.uiAgreementsAgreementsEdit.gui]);
+      Permissions.uiAgreementsAgreementsEdit.gui, Permissions.uiAgreementsAgreementsDelete.gui]);
     const specialNote = NewNote.defaultNote;
     AgreementDetails.createNote(specialNote);
     Agreements.selectRecord();
-    AgreementDetails.waitLoadingWithExistingNote(specialNote.title);
+    AgreementDetails.checkNotesCount(1);
     AgreementDetails.openNotesSection();
+    AgreementDetails.waitLoadingWithExistingNote(specialNote.title);
 
     const updatedNote = { ...specialNote };
     updatedNote.title = `changed_${specialNote.title}`;
@@ -63,20 +67,22 @@ describe('Note creation', () => {
     ExistingNoteView.checkProperties(updatedNote);
 
     ExistingNoteView.close();
+    AgreementDetails.checkNotesCount(1);
     AgreementDetails.openNotesSection();
     AgreementDetails.specialNotePresented(updatedNote.title);
   });
 
-  it('C16992 View a note', { tags: [testTypes.smoke, features.notes] }, () => {
-    initPrepairing([permissions.uiNotesItemCreate.gui,
-      permissions.uiNotesItemView.gui,
+  it('C16992 View a note', { tags: [TestTypes.smoke, Features.notes] }, () => {
+    initPrepairing([Permissions.uiNotesItemCreate.gui,
+      Permissions.uiNotesItemView.gui,
       // need access to special application( agreements in this case)
-      permissions.uiAgreementsAgreementsEdit.gui]);
+      Permissions.uiAgreementsAgreementsEdit.gui, Permissions.uiAgreementsAgreementsDelete.gui]);
 
     AgreementDetails.createNote(longNote);
     Agreements.selectRecord();
-    AgreementDetails.waitLoadingWithExistingNote(longNote.title);
+    AgreementDetails.checkNotesCount(1);
     AgreementDetails.openNotesSection();
+    AgreementDetails.waitLoadingWithExistingNote(longNote.title);
 
     AgreementDetails.checkShortedNoteDetails(longNote.getShortDetails());
     AgreementDetails.checkNoteShowMoreLink(longNote.details);
@@ -85,11 +91,18 @@ describe('Note creation', () => {
     ExistingNoteView.waitLoading();
     ExistingNoteView.checkProperties(longNote);
     ExistingNoteView.close();
+    cy.intercept('note-types?**').as('noteTypesLoading');
+    cy.intercept('note-links/domain/agreements/type/agreement/id/**').as('notesLoading');
+    AgreementDetails.checkNotesCount(1);
+    cy.wait('@notesLoading', getLongDelay());
+    cy.wait('@noteTypesLoading', getLongDelay());
   });
 
   afterEach(() => {
     // TODO: add support of delete through api
     AgreementDetails.remove();
+    Agreements.waitLoading();
+    Agreements.agreementNotVisible(agreementTitle);
     cy.deleteUser(userId);
   });
 });

@@ -3,12 +3,26 @@ import { Accordion, Button, MultiColumnListCell, TextField } from '../../../../i
 import DateTools from '../../utils/dateTools';
 
 
+// TODO: will rework to interactor when we get section id
+function clickApplyMainFilter() {
+  cy.get('[class^="button-"][type="submit"]').first().click();
+}
+
+
 export default {
   searchByItemBarcode(barcode) {
-    return cy.do([
-      TextField({ name: 'itemBarcode' }).fillIn(barcode),
-      Accordion({ id: 'accordion_5' }).find(Button('Apply')).click()
-    ]);
+    cy.do(TextField({ name: 'itemBarcode' }).fillIn(barcode));
+    clickApplyMainFilter();
+  },
+
+  searchByUserBarcode(barcode) {
+    cy.do(TextField({ name: 'userBarcode' }).fillIn(barcode));
+    clickApplyMainFilter();
+  },
+
+  searchByDescription(desc) {
+    cy.do(TextField({ name: 'description' }).fillIn(desc));
+    clickApplyMainFilter();
   },
 
   resetFilters() {
@@ -21,7 +35,7 @@ export default {
     function getResultRowByRowNumber(rowNumber) {
       return {
         userBarcode: MultiColumnListCell({ row: rowNumber, columnIndex: 0, column: matching(/\d|/) }),
-        itemBarcode: MultiColumnListCell({ row: rowNumber, columnIndex: 1, column: matching(/\d/) }),
+        itemBarcode: MultiColumnListCell({ row: rowNumber, columnIndex: 1, column: matching(/\d|/) }),
         object: MultiColumnListCell({ row: rowNumber, columnIndex: 2, column: matching(/\w|-/) }),
         circAction: MultiColumnListCell({ row: rowNumber, columnIndex: 3, column: matching(/\w/) }),
         date: MultiColumnListCell({ row: rowNumber, columnIndex: 4, column: matching(dateRegEx) }),
@@ -71,4 +85,7 @@ export default {
       Accordion({ id: 'date' }).find(Button('Apply')).click()
     ]);
   },
+  resetResults() {
+    cy.do(Button('Reset all').click());
+  }
 };

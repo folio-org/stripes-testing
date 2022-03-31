@@ -1,6 +1,6 @@
 {
   "name": "@folio/stripes-testing",
-  "version": "4.2.0",
+  "version": "4.3.0",
   "description": "Regression tests for FOLIO UI",
   "repository": "folio-org/stripes-testing",
   "publishConfig": {
@@ -22,8 +22,7 @@
     "axe-core": "4.3.3",
     "date-fns": "^2.16.1",
     "debug": "^4.0.1",
-    "element-is-visible": "^1.0.0",
-    "uuid": "^3.0.1"
+    "element-is-visible": "^1.0.0"
   },
   "devDependencies": {
     "@babel/eslint-parser": "^7.16.3",
@@ -43,7 +42,8 @@
     "eslint-plugin-cypress": "^2.11.2",
     "fs-extra": "7.0.1",
     "globby": "9.1.0",
-    "localforage": "^1.9.0"
+    "localforage": "^1.9.0",
+    "uuid": "^3.4.0"
   },
   "resolutions": {
     "cypress": "^6.8.0"

@@ -5,16 +5,16 @@ import Invoices from '../../support/fragments/invoices/invoices';
 import testType from '../../support/dictionary/testTypes';
 import VendorAddress from '../../support/fragments/invoices/vendorAddress';
 import newOrder from '../../support/fragments/orders/newOrder';
-import newOrderLine from '../../support/fragments/orders/newOrderLine';
+import basicOrderLine from '../../support/fragments/orders/basicOrderLine';
 import Orders from '../../support/fragments/orders/orders';
+import OrdersHelper from '../../support/fragments/orders/ordersHelper';
 
 describe('ui-invoices: Invoice Line creation - based on POL', () => {
   const invoice = { ...NewInvoice.defaultUiInvoice };
   const vendorPrimaryAddress = { ...VendorAddress.vendorAddress };
   const invoiceLine = { ...NewInvoiceLine.defaultUiInvoiceLine };
   const order = { ...newOrder.defaultOrder };
-  const orderLine = { ...newOrderLine.defaultOrderLine };
-  const locationName = 'Main Library';
+  const orderLine = { ...basicOrderLine.defaultOrderLine };
   const euroCurrency = 'Euro (EUR)';
   const euroSign = '€';
 
@@ -31,7 +31,7 @@ describe('ui-invoices: Invoice Line creation - based on POL', () => {
       });
     cy.getBatchGroups()
       .then(batchGroup => { invoice.batchGroup = batchGroup.name; });
-    cy.getLocations({ query: `name="${locationName}"` })
+    cy.getLocations({ query: `name="${OrdersHelper.mainLibraryLocation}"` })
       .then(location => { orderLine.locations[0].locationId = location.id; });
     cy.getMaterialTypes({ query: 'name="book"' })
       .then(materialType => { orderLine.physical.materialType = materialType.id; });
@@ -46,7 +46,7 @@ describe('ui-invoices: Invoice Line creation - based on POL', () => {
     Orders.createOrderWithOrderLineViaApi(order, orderLine)
       .then(orderNumber => {
         cy.visit(TopMenu.invoicesPath);
-        Invoices.createDefaultInvoiceViaUi(invoice, vendorPrimaryAddress);
+        Invoices.createDefaultInvoice(invoice, vendorPrimaryAddress);
         Invoices.checkInvoiceCurrency(orderLine.cost.currency);
         Invoices.createInvoiceLineFromPol(orderNumber);
         Invoices.checkInvoiceLine(invoiceLine);

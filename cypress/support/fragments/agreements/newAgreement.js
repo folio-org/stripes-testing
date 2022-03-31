@@ -1,4 +1,4 @@
-import { getCurrentDate } from '../../utils/dateTools';
+import DateTools from '../../utils/dateTools';
 import getRandomPostfix from '../../utils/stringTools';
 import { Button, TextField } from '../../../../interactors';
 
@@ -21,7 +21,7 @@ export default class NewAgreement {
     static #defaultAgreement = {
       name: `autotest_agreement_${getRandomPostfix()}`,
       status: this.#statusValue.draft,
-      startDate: getCurrentDate()
+      startDate: DateTools.getCurrentDate()
     }
 
     static get defaultAgreement() {

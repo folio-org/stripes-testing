@@ -33,6 +33,7 @@ Cypress.Commands.add('getUserGroups', (searchParams) => {
     })
     .then(({ body }) => {
       Cypress.env('userGroups', body.usergroups);
+      return body.usergroups[0].id;
     });
 });
 
@@ -63,6 +64,20 @@ Cypress.Commands.add('createUserApi', (user) => {
     .then(({ body }) => {
       Cypress.env('user', body);
     });
+});
+
+Cypress.Commands.add('overrideLocalSettings', (userId) => {
+  const body = { module: '@folio/stripes-core',
+    configName: 'localeSettings',
+    enabled: true,
+    value: '{"locale":"en-US","timezone":"UTC","currency":"USD"}',
+    userId };
+
+  cy.okapiRequest({
+    method: 'POST',
+    path: 'configurations/entries',
+    body,
+  });
 });
 
 Cypress.Commands.add('createTempUser', (permissions) => {
@@ -104,6 +119,7 @@ Cypress.Commands.add('createTempUser', (permissions) => {
                 userId: userProperties.userId,
                 permissions : [...permissionsResponse.body.permissions.map(permission => permission.permissionName)]
               });
+              cy.overrideLocalSettings(userProperties.userId);
               cy.wrap(userProperties).as('userProperties');
             });
         });

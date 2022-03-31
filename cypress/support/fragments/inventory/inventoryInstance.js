@@ -11,7 +11,9 @@ import {
   Accordion,
   Modal,
   Dropdown,
-  Checkbox, MultiColumnListRow,
+  Checkbox,
+  MultiColumnListRow,
+  Link,
 } from '../../../../interactors';
 import InventoryActions from './inventoryActions';
 import InventoryInstanceEdit from './InventoryInstanceEdit';
@@ -39,7 +41,7 @@ const moveItemsButton = Button({ id: 'move-instance-items' });
 const instanceHRID = 'Instance HRID';
 const validOCLC = { id:'176116217',
   // TODO: hardcoded count related with interactors getters issue. Redesign to cy.then(QuickMarkEditor().rowsCount()).then(rowsCount => {...}
-  lastRowNumber: 31,
+  lastRowNumber: 30,
   // it should be presented in marc bib one time to correct work(applicable in update of record)
   existingTag: '100' };
 
@@ -117,16 +119,16 @@ export default {
     cy.do(viewHoldingsButton.click());
     HoldingsRecordView.waitLoading();
   },
-  createHoldingsRecord:() => {
+  createHoldingsRecord:(permanentLocation) => {
     pressAddHoldingsButton();
-    NewHoldingsRecord.fillRequiredFields();
+    NewHoldingsRecord.fillRequiredFields(permanentLocation);
     NewHoldingsRecord.saveAndClose();
     waitLoading();
   },
 
   checkHoldingsTable: (locationName, rowNumber, caption, barcode, status) => {
     const accordionHeader = `Holdings: ${locationName} >`;
-    const indexRowumber = `row-${rowNumber}`;
+    const indexRowNumber = `row-${rowNumber}`;
     // wait for data to be loaded
     cy.intercept(
       {
@@ -140,14 +142,14 @@ export default {
     ]);
 
     cy.expect(Accordion(accordionHeader)
-      .find(MultiColumnListRow({ indexRow: indexRowumber }))
+      .find(MultiColumnListRow({ indexRow: indexRowNumber }))
       .find(MultiColumnListCell({ content: barcode })).exists());
     // TODO: uncomment once MODORDERS-569 will be implemented
     // cy.expect(Accordion(accordionHeader)
     //   .find(MultiColumnListRow({ rowNumber }))
     //   .find(MultiColumnListCell({ content: caption })).exists());
     cy.expect(Accordion(accordionHeader)
-      .find(MultiColumnListRow({ indexRow: indexRowumber }))
+      .find(MultiColumnListRow({ indexRow: indexRowNumber }))
       .find(MultiColumnListCell({ content: status })).exists());
   },
 
@@ -163,7 +165,7 @@ export default {
     this.openHoldings([firstHoldingName, secondHoldingName]);
 
     cy.do([
-      Accordion({ label: including(`Holdings: ${firstHoldingName}`) }).find(MultiColumnListRow()).find(Checkbox()).click(),
+      Accordion({ label: including(`Holdings: ${firstHoldingName}`) }).find(MultiColumnListRow({ indexRow: 'row-0' })).find(Checkbox()).click(),
       Accordion({ label: including(`Holdings: ${firstHoldingName}`) }).find(Dropdown({ label: 'Move to' })).choose(including(secondHoldingName)),
     ]);
   },
@@ -172,7 +174,7 @@ export default {
     this.openHoldings([firstHoldingName, secondHoldingName]);
 
     cy.do([
-      Accordion({ label: including(`Holdings: ${secondHoldingName}`) }).find(MultiColumnListRow()).find(Checkbox()).click(),
+      Accordion({ label: including(`Holdings: ${secondHoldingName}`) }).find(MultiColumnListRow({ indexRow: 'row-0' })).find(Checkbox()).click(),
       Accordion({ label: including(`Holdings: ${secondHoldingName}`) }).find(Dropdown({ label: 'Move to' })).choose(including(firstHoldingName)),
       Modal().find(Button('Continue')).click()
     ]);
@@ -194,5 +196,15 @@ export default {
   },
   checkAddItem:(holdingsRecrodId) => {
     cy.expect(section.find(Section({ id:holdingsRecrodId })).find(Button({ id: `clickable-new-item-${holdingsRecrodId}` })).exists());
-  }
+  },
+
+  checkInstanceIdentifier: (identifier) => {
+    cy.expect(Accordion('Identifiers').find(MultiColumnList({ id: 'list-identifiers' })
+      .find(MultiColumnListRow({ index: 0 })))
+      .find(MultiColumnListCell({ columnIndex: 0 }))
+      .has({ content: identifier }));
+  },
+  openItemView: (itemBarcode) => {
+    cy.do(Link(including(itemBarcode)).click());
+  },
 };

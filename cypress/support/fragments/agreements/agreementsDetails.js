@@ -1,115 +1,80 @@
-import { Accordion, Button, including, HTML } from '../../../../interactors';
+import { Accordion, Button, including, HTML, Section, MultiColumnListCell, Badge, Modal } from '../../../../interactors';
 import NewNote from '../notes/newNote';
 import { getLongDelay } from '../../utils/cypressTools';
 import ExistingNoteEdit from '../notes/existingNoteEdit';
-import Agreements from './agreements';
-import NewAgreement from './newAgreement';
-
-export default class AgreementDetails {
-  static #rootXpath = '//section[@id="pane-view-agreement"]';
-  static #rootCss = 'section[id=pane-view-agreement]';
-  static #headerXpath = `${this.#rootXpath}//div[@id="pane-view-agreement-content"]//h2`;
-  static #noteBadgeXpath = `${this.#rootXpath}//section[@id="notes"]//span[contains(@class,"label")]/span`;
-  static #notesSectionXpath = `${this.#rootXpath}//section[@id="notes"]`;
-  static #noteTitleXpath = `${this.#notesSectionXpath}//strong[contains(.,'Title')]/..`;
-  static #notesAccordionXpath = `${this.#notesSectionXpath}//button[@id="accordion-toggle-button-notes"]`;
 
 
-  static #assignUnassignNotButton = Button('Assign / Unassign');
-  static #newNoteButton = Button('New', { id: 'note-create-button' });
-  static #actionsButton = Button('Actions');
-  static #deleteButton = Button('Delete');
-  static #deleteButtonInConfirmation = Button('Delete', { id: 'clickable-delete-agreement-confirmation-confirm' });
-  static #showMoreLink = Button('Show more');
-  static #notesAccordion = Accordion({ id: 'notes' });
-
-  // TODO: think to move changedHTML into /interactorsp
-  static #changedHTML = HTML.extend('details')
-    .filters({ tagName: el => el.tagName });
+const rootXpath = '//section[@id="pane-view-agreement"]';
+const rootSection = Section({ id : 'pane-view-agreement' });
+const headerXpath = `${rootXpath}//div[@id="pane-view-agreement-content"]//h2`;
+const rootCss = 'section[id=pane-view-agreement]';
+const notesSectionXpath = `${rootXpath}//section[@id="notes"]`;
+const noteTitleXpath = `${notesSectionXpath}//strong[contains(.,'Title')]/..`;
+const notesAccordionXpath = `${notesSectionXpath}//button[@id="accordion-toggle-button-notes"]`;
 
 
-  static waitLoading() {
-    cy.xpath(this.#headerXpath).should('be.visible');
-    cy.xpath(this.#notesAccordionXpath).should('be.visible');
-  }
+const newNoteButton = Button('New', { id: 'note-create-button' });
+const actionsButton = Button('Actions');
+const deleteButton = Button('Delete');
+const deleteButtonInConfirmation = Button('Delete', { id: 'clickable-delete-agreement-confirmation-confirm' });
+const showMoreLink = Button('Show more');
+const notesAccordion = rootSection.find(Accordion({ id: 'notes' }));
+const deleteConfirmationModal = Modal({ id: 'delete-agreement-confirmation' });
 
-  static waitLoadingWithExistingNote(title) {
-    this.waitLoading();
-    cy.xpath('//section[@id="notes"]//div[@id="notes-list"]//div[@role="gridcell"]//div/strong[contains(.,"Details")]/../span/p')
-      .should('be.exist');
-    cy.xpath('//section[@id="notes"]//div[@id="notes-list"]//div[@role="gridcell"]//div/strong[contains(.,"Title")]/..')
-      .contains(title);
-  }
+function waitLoading() {
+  cy.xpath(headerXpath).should('be.visible');
+  cy.xpath(notesAccordionXpath).should('be.visible');
+}
 
-
-  static openNotesSection() {
-    cy.xpath(this.#notesAccordionXpath, getLongDelay())
-      .should('be.visible')
-      .click();
-
-    cy.expect(this.#assignUnassignNotButton.exists());
-    cy.expect(this.#newNoteButton.exists());
-  }
-
-  static createNote(specialNote = NewNote.defaultNote) {
-    cy.do(this.#newNoteButton.click());
+export default {
+  waitLoading,
+  waitLoadingWithExistingNote(title) {
+    waitLoading();
+    cy.expect(rootSection.find(Section({ id: 'notes' })).find(MultiColumnListCell({ columnIndex:1 })).find(HTML(including(title))).exists());
+  },
+  openNotesSection() {
+    cy.do(rootSection.find(Section({ id :'notes' })).find(Button({ id:'accordion-toggle-button-notes' })).click());
+    cy.expect(rootSection.find(newNoteButton).exists());
+  },
+  createNote(specialNote = NewNote.defaultNote) {
+    cy.do(newNoteButton.click());
     NewNote.fill(specialNote);
     NewNote.save();
-  }
-
-  static checkNotesCount(notesCount) {
-    cy.xpath(this.#noteBadgeXpath)
-      .should('have.text', notesCount);
-  }
-
-  static specialNotePresented(noteTitle = NewNote.defaultNote.title) {
-    cy.xpath(this.#noteTitleXpath)
+  },
+  checkNotesCount(notesCount) {
+    cy.expect(rootSection.find(Section({ id: 'notes' }).find(Badge())).has({ value: notesCount.toString() }));
+  },
+  specialNotePresented(noteTitle = NewNote.defaultNote.title) {
+    cy.xpath(noteTitleXpath)
       .should('contains.text', noteTitle);
-  }
-
-  static remove(agreementTitle = NewAgreement.defaultAgreement.name) {
-    cy.do(this.#actionsButton.click());
-    cy.do(this.#deleteButton.click());
-    cy.do(this.#deleteButtonInConfirmation.click());
-    cy.get(this.#rootCss, getLongDelay()).should('not.exist');
-    Agreements.waitLoading();
-    Agreements.agreementNotVisible(agreementTitle);
-  }
-
-  static close() {
-    cy.xpath(`${this.#rootXpath}//button[@icon='times']`).click();
-    cy.get(this.#rootCss).should('not.exist');
-  }
-
-  static editNote(originalNoteTitle, newNote) {
-    cy.log(`${this.#noteTitleXpath}/../div[contains(.,'${originalNoteTitle}')]/../div/button`);
-    cy.xpath(`${this.#noteTitleXpath}/../div[contains(.,'${originalNoteTitle}')]/../div/button`)
+  },
+  remove() {
+    cy.do(actionsButton.click());
+    cy.do(deleteButton.click());
+    cy.expect(deleteConfirmationModal.exists());
+    cy.do(deleteConfirmationModal.find(deleteButtonInConfirmation).click());
+    cy.get(rootCss, getLongDelay()).should('not.exist');
+  },
+  close() {
+    cy.xpath(`${rootXpath}//button[@icon='times']`).click();
+    cy.get(rootCss).should('not.exist');
+  },
+  editNote(originalNoteTitle, newNote) {
+    cy.xpath(`${noteTitleXpath}/../div[contains(.,'${originalNoteTitle}')]/../div/button`)
       .click();
     ExistingNoteEdit.fill(newNote);
     ExistingNoteEdit.save();
-  }
-
-  static checkNoteShowMoreLink(specialNoteDetails) {
-    cy.do(this.#showMoreLink.click());
-    cy.expect(this.#notesAccordion
+  },
+  checkNoteShowMoreLink(specialNoteDetails) {
+    cy.do(showMoreLink.click());
+    cy.expect(notesAccordion
       .find(HTML(including(specialNoteDetails))).exists());
-  }
-
-  static checkShortedNoteDetails(specialShortNoteDetails) {
-    cy.expect(this.#notesAccordion
+  },
+  checkShortedNoteDetails(specialShortNoteDetails) {
+    cy.expect(notesAccordion
       .find(HTML(including(specialShortNoteDetails))).exists());
+  },
+  openNoteView(specialNote) {
+    cy.do(notesAccordion.find(MultiColumnListCell(including(specialNote.details))).click());
   }
-
-  static openNoteView(specialNote) {
-    // TODO: the issue on interactor side, in process of investigation by Fronside
-
-    // cy.do(this.#notesAccordion
-    // .find(HTML(including(specialNote.getShortDetails()), { classList: including(including('mclRow')) }))
-    // .click());
-
-    cy.do(this.#notesAccordion
-      .find(this.#changedHTML({ text: specialNote.details,
-        tagName: 'P' }))
-      .click());
-  }
-}
+};
