@@ -69,7 +69,15 @@ export default {
   },
 
   searchJobProfileForImport:(jobProfileTitle) => {
+    // wait for data to be loaded
+    cy.intercept(
+      {
+        method: 'GET',
+        url: '/data-import-profiles/jobProfiles?*',
+      }
+    ).as('getJob');
     cy.do(TextField({ id:'input-search-job-profiles-field' }).fillIn(jobProfileTitle));
+    cy.wait('@getJob');
     cy.do(Button('Search').click());
     // wait for data to be loaded
     cy.intercept(
