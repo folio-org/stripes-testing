@@ -5,7 +5,10 @@ import {
   Select,
   TextArea,
   TextField,
-  FieldSet
+  FieldSet,
+  Selection,
+  including,
+  Pane,
 } from '../../../../interactors';
 import InteractorsTools from '../../utils/interactorsTools';
 import getRandomPostfix from '../../utils/stringTools';
@@ -104,4 +107,20 @@ export default {
   saveAndClose:() => {
     cy.do(saveAndCloseButton.click());
   },
+  choosePermanentLocation(locationName) {
+    cy.do([
+      Selection('Permanent').open(),
+      Selection('Permanent').choose(including(locationName))
+    ]);
+  },
+  chooseTemporaryLocation(locationName) {
+    cy.do([
+      Selection('Temporary').open(),
+      Selection('Temporary').choose(including(locationName))
+    ]);
+  },
+  saveAndClose: () => {
+    cy.do(Button({ id: 'clickable-save-item' }).click());
+    cy.expect(Pane({ title: including('Item') }).exists());
+  }
 };
