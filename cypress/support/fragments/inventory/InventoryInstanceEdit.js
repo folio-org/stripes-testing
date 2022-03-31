@@ -9,6 +9,7 @@ import {
 } from '../../../../interactors';
 import InteractorsTools from '../../utils/interactorsTools';
 import getRandomPostfix from '../../utils/stringTools';
+import InventoryInstanceModal from './holdingsMove/inventoryInstanceSelectInstanceModal';
 
 const closeButton = Button({ icon: 'times' });
 const saveAndCloseButton = Button('Save and close');
@@ -92,6 +93,13 @@ export default {
       TextField({ name: `${fieldNamePref}.isbn` }).fillIn(isbn),
       TextField({ name: `${fieldNamePref}.issn` }).fillIn(issn),
     ]);
+  },
+  addExistingPrecedingTitle:(precedingTitle) => {
+    cy.do([
+      Button({ id: 'find-instance-trigger' }).click(),
+    ]);
+    InventoryInstanceModal.searchByTitle(precedingTitle);
+    InventoryInstanceModal.selectInstance();
   },
   saveAndClose:() => {
     cy.do(saveAndCloseButton.click());

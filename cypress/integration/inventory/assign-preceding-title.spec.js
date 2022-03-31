@@ -16,22 +16,21 @@ describe('ui-inventory: Assign a Preceding title for an instance', () => {
     cy.login(Cypress.env('diku_login'), Cypress.env('diku_password'));
     cy.getToken(Cypress.env('diku_login'), Cypress.env('diku_password'))
       .then(() => {
-        cy.createInstance({
-          instance: {
+        cy.getInstanceTypes({ limit: 1 });
+        cy.getInstanceIdentifierTypes({ limit: 1 });
+      })
+      .then(() => {
+        cy.wrap([
+          {
             instanceTypeId: Cypress.env('instanceTypes')[0].id,
             title: instanceTitle,
             source: 'FOLIO',
-          },
-        });
-      })
-      .then(() => {
-        cy.createInstance({
-          instance: {
+          }, {
             instanceTypeId: Cypress.env('instanceTypes')[0].id,
             title: instanceTitle2,
             source: 'FOLIO',
-          },
-        });
+          }
+        ]).each(instance => cy.createInstance({ instance }));
       });
 
     cy.visit(TopMenu.inventoryPath);
@@ -45,5 +44,9 @@ describe('ui-inventory: Assign a Preceding title for an instance', () => {
     InventoryInstanceEdit.saveAndClose();
     InventoryInstance.waitLoading();
     InventoryInstance.checkPrecedingTitle(0, precedingTitleValue, isbnValue, issnValue);
+    InventoryInstance.editInstance();
+    InventoryInstanceEdit.addExistingPrecedingTitle(instanceTitle2);
+    InventoryInstanceEdit.saveAndClose();
+    InventoryInstance.checkPrecedingTitle(0, instanceTitle2, '', '');
   });
 });
