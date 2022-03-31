@@ -9,7 +9,7 @@ import getRandomPostfix from '../../support/utils/stringTools';
 import { getLongDelay } from '../../support/utils/cypressTools';
 
 
-describe('export instance records', () => {
+describe('data-export', () => {
   beforeEach('login', () => {
     cy.login(Cypress.env('diku_login'), Cypress.env('diku_password'));
   });

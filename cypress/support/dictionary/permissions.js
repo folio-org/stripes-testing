@@ -40,4 +40,8 @@ export default {
   inventoryStorageAuthoritiesAll:{ internal: 'inventory-storage.authorities.all', gui:'inventory storage module - all authorities permissions' },
   // Circulation log
   circulationLogAll: { internal: 'inn-reach.all', gui: 'Circulation log: All' },
+  // Users
+  usersViewRequests: { internal: '', gui: 'Users: View requests' },
+  // Remote Storage
+  remoteStorageCRUD: { internal: '', gui: 'Settings (Remote storage): Can create, edit, delete remote storage settings' }
 };
