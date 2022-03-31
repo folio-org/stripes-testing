@@ -1,4 +1,5 @@
 import uuid from 'uuid';
+import { HTML, including } from '@interactors/html';
 import {
   Button,
   MultiColumnListCell,
@@ -9,8 +10,10 @@ import {
   ValueChipRoot,
   Checkbox,
   TextField,
-  Badge
+  Badge, Section
 } from '../../../../interactors';
+
+const requestsResultsSection = Section({ id: 'pane-results' });
 
 /**
  * Creates a request with associated item (instance) and user.
@@ -154,9 +157,17 @@ const createRequestApi = (
     });
 };
 
+const deleteRequestApi = (requestId) => {
+  return cy.okapiRequest({
+    method: 'DELETE',
+    path: `circulation/requests/${requestId}`,
+    isDefaultSearchParamsRequired: false,
+  });
+};
 
 export default {
   createRequestApi,
+  deleteRequestApi,
 
   removeCreatedRequest() {
     cy.do([
@@ -228,5 +239,47 @@ export default {
       url: '/tags?limit=10000',
     }).as('getTags');
     cy.wait('@getTags');
+  },
+
+  requestTypes: { PAGE: 'Page', HOLD: 'Hold', RECALL: 'Recall' },
+
+  selectHoldsRequestType() {
+    cy.do(Checkbox({ name: 'Hold' }).click());
+  },
+
+  selectPagesRequestType() {
+    cy.do(Checkbox({ name: 'Page' }).click());
+  },
+
+  selectRecallsRequestType() {
+    cy.do(Checkbox({ name: 'Recall' }).click());
+  },
+
+  verifyFilteredResults(requestType) {
+    const values = [];
+    cy.get('[data-row-index]').each($row => {
+      cy.get(`[class*="mclCell-"]:nth-child(${5})`, { withinSubject: $row })
+        .invoke('text')
+        .then(cellValue => {
+          values.push(cellValue);
+        });
+    })
+      .then(() => {
+        const isFiltered = values.every(value => value === requestType);
+        expect(isFiltered).to.equal(true);
+      });
+  },
+
+  waitUIFilteredByRequestType() {
+    cy.intercept('GET', 'circulation/requests*').as('getFilteredRequests');
+    cy.wait('@getFilteredRequests');
+  },
+
+  verifyCreatedRequest(title) {
+    cy.expect(Pane({ title: 'Requests' }).find(MultiColumnListCell({ row: 0, column: title })).exists());
+  },
+
+  verifyNoResultMessage(noResultMessage) {
+    cy.expect(requestsResultsSection.find(HTML(including(noResultMessage))).exists());
   },
 };
