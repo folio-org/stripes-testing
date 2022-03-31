@@ -100,11 +100,11 @@ describe('Deleting user', () => {
           requestDate: '2021-09-20T18:36:56Z',
         });
       })
-      .then(() => {
+      .then((request) => {
         verifyUserDeleteImpossible(userId);
 
         EditRequest.updateRequestApi({
-          ...Cypress.env('request'),
+          ...request,
           status: 'Closed - Cancelled',
           cancelledByUserId: userId,
           cancellationReasonId: Cypress.env('cancellationReasons')[0].id,

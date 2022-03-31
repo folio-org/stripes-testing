@@ -52,7 +52,6 @@ export default {
         body: requestData,
       })
       .then(({ body }) => {
-        Cypress.env('request', body);
         return body;
       });
   },
