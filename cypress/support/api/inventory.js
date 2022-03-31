@@ -15,6 +15,7 @@ Cypress.Commands.add('getLoanTypes', (searchParams) => {
     })
     .then(({ body }) => {
       Cypress.env('loanTypes', body.loantypes);
+      return body.loantypes;
     });
 });
 
@@ -52,6 +53,7 @@ Cypress.Commands.add('getHoldingTypes', (searchParams) => {
     })
     .then(({ body }) => {
       Cypress.env('holdingsTypes', body.holdingsTypes);
+      return body.holdingsTypes;
     });
 });
 
@@ -63,6 +65,7 @@ Cypress.Commands.add('getHoldingSources', (searchParams) => {
     })
     .then(({ body }) => {
       Cypress.env('holdingSources', body.holdingsRecordsSources);
+      return body.holdingsRecordsSources;
     });
 });
 
@@ -74,6 +77,7 @@ Cypress.Commands.add('getInstanceTypes', (searchParams) => {
     })
     .then(({ body }) => {
       Cypress.env('instanceTypes', body.instanceTypes);
+      return body.instanceTypes;
     });
 });
 
@@ -89,8 +93,8 @@ Cypress.Commands.add('getInstanceIdentifierTypes', (searchParams) => {
 });
 
 Cypress.Commands.add('createInstance', ({ instance, holdings = [], items = [] }) => {
-  const instanceId = uuid();
-
+  const { instanceId = uuid() } = instance;
+  delete instance.instanceId;
   cy
     .okapiRequest({
       method: 'POST',
@@ -114,8 +118,8 @@ Cypress.Commands.add('createInstance', ({ instance, holdings = [], items = [] })
 });
 
 Cypress.Commands.add('createHolding', ({ holding, items = [] }) => {
-  const holdingId = uuid();
-
+  const { holdingId = uuid() } = holding;
+  delete holding.holdingId;
   cy
     .okapiRequest({
       method: 'POST',
@@ -140,8 +144,8 @@ Cypress.Commands.add('deleteHoldingRecord', (holdingsRecordId) => {
 });
 
 Cypress.Commands.add('createItem', (item) => {
-  const itemId = uuid();
-
+  const { itemId = uuid() } = item;
+  delete item.itemId;
   cy.okapiRequest({
     method: 'POST',
     path: 'inventory/items',
