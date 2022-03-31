@@ -21,20 +21,6 @@ export default {
       name: `autotest_name_${getRandomPostfix()}`,
     }
   },
-  defaultUiLocations : {
-    body: {
-      campusId: uuid(),
-      code: `autotest_code_${getRandomPostfix()}`,
-      discoveryDisplayName: `autotest_discovery_display_name_${getRandomPostfix()}`,
-      id: uuid(),
-      institutionId: uuid(),
-      isActive: true,
-      libraryId: uuid(),
-      name: `autotest_name_${getRandomPostfix()}`,
-      primaryServicePoint: uuid(),
-      servicePointIds: uuid(),
-    }
-  },
 
   deleteServicePoint() {
     this.deleteLocations();

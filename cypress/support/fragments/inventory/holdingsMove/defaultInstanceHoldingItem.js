@@ -47,12 +47,6 @@ export default {
       source: 'local',
     }
   },
-  defaultUiLoanTypes : {
-    body: {
-      id: uuid(),
-      name: `autotest_name_${getRandomPostfix()}`,
-    }
-  },
   defaultUiCreateItem : {
     body: {
       id: uuid(),

@@ -15,6 +15,7 @@ Cypress.Commands.add('getLoanTypes', (searchParams) => {
     })
     .then(({ body }) => {
       Cypress.env('loanTypes', body.loantypes);
+      return body.loantypes;
     });
 });
 
@@ -63,6 +64,7 @@ Cypress.Commands.add('getHoldingSources', (searchParams) => {
     })
     .then(({ body }) => {
       Cypress.env('holdingSources', body.holdingsRecordsSources);
+      return body;
     });
 });
 
@@ -74,6 +76,20 @@ Cypress.Commands.add('getInstanceTypes', (searchParams) => {
     })
     .then(({ body }) => {
       Cypress.env('instanceTypes', body.instanceTypes);
+    });
+});
+
+// TODO: move to related fragment
+Cypress.Commands.add('createInstanceType', (specialInstanceType) => {
+  cy
+    .okapiRequest({
+      method:'POST',
+      path: 'instance-types',
+      body: specialInstanceType,
+    })
+    .then(({ body }) => {
+      Cypress.env('instanceTypes', body.instanceTypes);
+      return body;
     });
 });
 

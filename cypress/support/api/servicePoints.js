@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 // Cypress.Commands.add('getServicePointsApi', (searchParams) => {
 //   cy
 //     .okapiRequest({
@@ -9,7 +8,6 @@
 //       Cypress.env('servicePoints', body.servicepoints);
 //     });
 // });
-=======
 import { v4 as uuidv4 } from 'uuid';
 
 Cypress.Commands.add('getServicePointsApi', (searchParams) => {
@@ -35,4 +33,3 @@ Cypress.Commands.add('addServicePointToUser', (servicePointId, userId) => {
     }
   });
 });
->>>>>>> 40e342e830c9bb0e7684f70854c2130a97561ff0

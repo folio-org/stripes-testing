@@ -21,17 +21,21 @@ describe('Check In - Actions ', () => {
     cy.login(Cypress.env('diku_login'), Cypress.env('diku_password'));
     cy.getToken(Cypress.env('diku_login'), Cypress.env('diku_password'));
     ServicePoints.createViaApi(NewServicePoint.defaultUiServicePoint.body);
-    // cy.getInstitutionApi({ method: 'POST', body: NewServicePoint.defaultUiInstitutions.body });
     institutions.createViaApi(institutions.defaultUiInstitutions.body);
-    // cy.getCampusesApi({ method: 'POST', body: NewServicePoint.defaultUiCampuses.body });
-    campuses.createViaApi(campuses.defaultUiCampuses.body);
-    // cy.getLibrariesApi({ method: 'POST', body: NewServicePoint.defaultUiLibraries.body });
-    libraries.createViaApi(libraries.defaultUiLibraries.body);
-    cy.getLocations({ method: 'POST', body: NewServicePoint.defaultUiLocations.body });
-    NewInctanceHoldingsItem.createItem();
-    NewUser.createUser();
-    SwitchServicePoint.addServicePointPermissions();
-    SwitchServicePoint.logOutLogIn();
+    const specialCampuse = { ...campuses.defaultUiCampuses.body };
+    specialCampuse.institutionId = institutions.defaultUiInstitutions.body.id;
+    campuses.createViaApi(specialCampuse);
+
+    const specialLibrary = { ...libraries.defaultUiLibraries.body };
+    specialLibrary.campusId = specialCampuse.id;
+
+    libraries.createViaApi(specialLibrary);
+    cy.getLocations().then(location => {
+      NewInctanceHoldingsItem.createItem(location.id);
+      NewUser.createUser();
+      SwitchServicePoint.addServicePointPermissions();
+      SwitchServicePoint.logOutLogIn();
+    });
   });
 
   // after('Delete New Service point, Item and User', () => {

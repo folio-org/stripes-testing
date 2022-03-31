@@ -4,13 +4,13 @@ import NewInctanceHoldingsItem from '../inventory/newInctanceHoldingsItem';
 import NewServicePoint from '../service_point/newServicePoint';
 
 export default {
-  defaultUiPatronGroup : {
-    body: {
-      desc: `autotest_name_${getRandomPostfix()}`,
-      group: `autotest_group_${getRandomPostfix()}`,
-      id: uuid(),
-    }
-  },
+  // defaultUiPatronGroup : {
+  //   body: {
+  //     desc: `autotest_name_${getRandomPostfix()}`,
+  //     group: `autotest_group_${getRandomPostfix()}`,
+  //     id: uuid(),
+  //   }
+  // },
   defaultUiPatron : {
     body: {
       active: true,

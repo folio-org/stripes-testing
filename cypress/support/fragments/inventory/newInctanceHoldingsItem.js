@@ -2,32 +2,28 @@ import uuid from 'uuid';
 import NewInstanceHoldingItem from './holdingsMove/defaultInstanceHoldingItem';
 
 export default {
-  createItem: () => {
-    cy.getInstanceTypes({ method: 'POST', body: NewInstanceHoldingItem.defaultUiInstanceType.body })
-      .then((resp) => {
-        expect(resp.body).property('id');
+  createItem: (locationId) => {
+    cy.createInstanceType(NewInstanceHoldingItem.defaultUiInstanceType.body);
+    cy.getHoldingSources().then(holdingSources => {
+      const specialInstance = { ...NewInstanceHoldingItem.defaultUiInstance.body };
+      specialInstance.instanceTypeId = NewInstanceHoldingItem.defaultUiInstanceType.body.id;
+
+      cy.createInstance({ instance: specialInstance });
+      const specialHolding = { ...NewInstanceHoldingItem.defaultUiHolding.body };
+      specialHolding.permanentLocationId = locationId;
+      specialHolding.instanceId = specialInstance.id;
+      specialHolding.sourceId = holdingSources.holdingsRecordsSources[0].id;
+      cy.createHolding({ holding: specialHolding });
+      cy.getMaterialTypes().then(materialType => {
+        cy.getLoanTypes().then(loanTypes => {
+          const specialItem = { ...NewInstanceHoldingItem.defaultUiCreateItem.body };
+          specialItem.holdingsRecordId = specialHolding.id;
+          specialItem.permanentLoanType.id = loanTypes[0].id;
+          specialItem.materialType.id = materialType.id;
+          cy.createItem(specialItem);
+        });
       });
-    cy.getHoldingSources({ method: 'POST', body: NewInstanceHoldingItem.defaultUiHoldingsSources.body })
-      .then((resp) => {
-        expect(resp.body).property('id');
-      });
-    cy.createInstance({ method: 'POST', body: NewInstanceHoldingItem.defaultUiInstance.body });
-    cy.createHolding({ method: 'POST', body: NewInstanceHoldingItem.defaultUiHolding.body })
-      .then((resp) => {
-        expect(resp.body).property('id');
-      });
-    cy.getMaterialTypes({ method: 'POST', body: NewInstanceHoldingItem.defaultUiMaterialTypes.body })
-      .then((resp) => {
-        expect(resp.body).property('id');
-      });
-    cy.getLoanTypes({ method: 'POST', body: NewInstanceHoldingItem.defaultUiLoanTypes.body })
-      .then((resp) => {
-        expect(resp.body).property('id');
-      });
-    cy.createItem({ method: 'POST', body: NewInstanceHoldingItem.defaultUiCreateItem.body })
-      .then((resp) => {
-        expect(resp.body).property('barcode');
-      });
+    });
   },
 
   deleteItem() {
