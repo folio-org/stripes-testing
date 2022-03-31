@@ -58,7 +58,7 @@ export default {
         return body;
       });
   },
-  // yyyy-MM-dd
+
   checkIsEditsBeingSaved(requestData, instanceRecordData, status) {
     this.updateRequestApi({ ...requestData, status }).then(() => {
       switch (status) {

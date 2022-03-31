@@ -229,5 +229,4 @@ export default {
     }).as('getTags');
     cy.wait('@getTags');
   },
-
 };
