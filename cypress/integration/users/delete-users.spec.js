@@ -6,6 +6,7 @@ import {
   Modal,
   Pane,
 } from '../../../interactors';
+import servicePoints from '../../support/fragments/settings/tenant/servicePoints';
 
 describe('Deleting user', () => {
   const lastName = 'Test-' + uuid();
@@ -27,7 +28,7 @@ describe('Deleting user', () => {
   before(() => {
     cy.login(Cypress.env('diku_login'), Cypress.env('diku_password'));
     cy.getToken('diku_admin', 'admin');
-    cy.getServicePointsApi({ limit: 1, query: 'pickupLocation=="true"' });
+    servicePoints.getServicePointsApi({ limit: 1, query: 'pickupLocation=="true"' });
     cy.getCancellationReasonsApi({ limit: 1 });
     cy.getUserGroups({ limit: 1 });
   });

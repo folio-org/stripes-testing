@@ -10,8 +10,8 @@ const newPassword = { ...DefaultUser.defaultUiCreateNewPassword };
 
 export default {
   createUser() {
-    this.newPatronGroup();
-    this.newPatron();
+    cy.getUserGroups({ method: 'POST', body: patronGroup.body });
+    cy.createUserApi({ method: 'POST', body: patron.body });
     this.newRequestPrefStorage();
     this.newPermissions();
     this.createNewPassword();
