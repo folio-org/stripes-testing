@@ -2,9 +2,6 @@ import uuid from 'uuid';
 import DefaultUser from './defaultUser';
 
 const requestPrefStorage = { ...DefaultUser.defaultUiRequestPrefStorage };
-const permissions = { ...DefaultUser.defaultUiPermissions };
-const checkOutItem = { ...DefaultUser.defaultUiChekhOutItem };
-const newPassword = { ...DefaultUser.defaultUiCreateNewPassword };
 
 export default {
   createUser() {
@@ -12,13 +9,20 @@ export default {
       const specialPatron = { ...DefaultUser.defaultUiPatron.body };
       specialPatron.patronGroup = patronGroupId;
       cy.createUserApi(specialPatron);
-
-      // current state
       cy.getRequestPreference(requestPrefStorage.body);
-      cy.getPermissionsApi(permissions.body);
-      cy.setUserPassword(newPassword.body);
-      cy.createItemCheckout(checkOutItem.body);
+
+      const permissions = { ...DefaultUser.defaultUiPermissions };
+      permissions.userId = specialPatron.id;
+
+      cy.addPermissionsToNewUserApi(permissions.body);
+      const newPassword = { ...DefaultUser.defaultUiCreateNewPassword.body };
+      newPassword.userId = specialPatron.userId;
+      newPassword.username = specialPatron.username;
+      cy.setUserPassword(newPassword);
+      cy.createItemCheckout(DefaultUser.defaultUiChekhOutItem.body);
+      cy.wrap({ userName: newPassword.username, password: newPassword.password }).as('userProperties');
     });
+    return cy.get('@userProperties');
   },
   deleteUser() {
     this.deleteNewPatron();

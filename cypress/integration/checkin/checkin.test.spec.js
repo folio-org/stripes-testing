@@ -32,9 +32,10 @@ describe('Check In - Actions ', () => {
     libraries.createViaApi(specialLibrary);
     cy.getLocations().then(location => {
       NewInctanceHoldingsItem.createItem(location.id);
-      NewUser.createUser();
-      SwitchServicePoint.addServicePointPermissions();
-      SwitchServicePoint.logOutLogIn();
+      NewUser.createUser().then(userProperties => {
+        SwitchServicePoint.addServicePointPermissions(userProperties.userName);
+        SwitchServicePoint.logOutLogIn(userProperties);
+      });
     });
   });
 
