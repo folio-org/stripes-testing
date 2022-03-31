@@ -1,7 +1,7 @@
 import { Pane, NavListItem } from '../../../../interactors';
 
 export default {
-  checkMaterialTypesMenuOptionIsPresent:() => {
+  checkAvailableOptions:() => {
     cy.expect(Pane('Inventory').find(NavListItem('Material types')).exists());
   },
 };

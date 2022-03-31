@@ -4,37 +4,37 @@ import InteractorsTools from '../../../utils/interactorsTools';
 
 const pane = Pane('Material types');
 
-const verifyMaterialTypeIsPresented = (materialTypeName) => {
+const isPresented = (materialTypeName) => {
   cy.expect(pane.find(HTML(including(materialTypeName))).exists());
 };
 
-const verifyMaterialTypeIsDeleted = (newMaterialTypeName) => {
+const isDeleted = (newMaterialTypeName) => {
   cy.expect(pane.find(HTML(including(newMaterialTypeName))).absent());
 };
 
-const verifyMessageOfDetetedMaterialType = (newMaterialTypeName) => {
+const verifyMessageOfDeteted = (newMaterialTypeName) => {
   InteractorsTools.checkCalloutMessage(`The Material type ${newMaterialTypeName} was successfully deleted`);
   InteractorsTools.closeCalloutMessage();
 };
 
 export default {
-  verifyMaterialTypeIsPresented,
-  verifyMaterialTypeIsDeleted,
-  verifyMessageOfDetetedMaterialType,
+  isPresented,
+  isDeleted,
+  verifyMessageOfDeteted,
 
-  createNewMaterialType:(materialTypeName) => {
+  create:(materialTypeName) => {
     cy.do(Button('+ New').click());
     cy.do(TextField({ placeholder: 'name' }).fillIn(materialTypeName));
     cy.do(Button('Save').click());
   },
 
-  editMaterialType:(newMaterialTypeName) => {
+  edit:(newMaterialTypeName) => {
     cy.do(MultiColumnListRow({ rowIndexInParent: 'row-0' }).find(Button({ icon: 'edit' })).click());
     cy.do(TextField({ placeholder: 'name' }).fillIn(newMaterialTypeName));
     cy.do(Button('Save').click());
   },
 
-  deleteMaterialType:() => {
+  delete:() => {
     cy.do(MultiColumnListRow({ rowIndexInParent: 'row-0' }).find(Button({ icon: 'trash' })).click());
     ModalDeleteMaterialType.deleteMaterialType();
   },
