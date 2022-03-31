@@ -27,8 +27,6 @@ const expirationDates = [...new Array(5)].map((_, i) => {
   };
 });
 
-console.log({ expirationDates });
-
 export default {
   servicePoint: 'Circ Desk 1',
 
