@@ -1,9 +1,10 @@
 import TestTypes from '../../support/dictionary/testTypes';
 import EditRequest from '../../support/fragments/requests/edit-request';
 import TopMenu from '../../support/fragments/topMenu';
+import Requests from '../../support/fragments/requests/requests';
 
 describe('ui-requests: Request: Edit requests. Make sure that edits are being saved.', () => {
-  let userData;
+  let userId;
   let requestData;
   let instanceData;
   let cancellationReason;
@@ -14,13 +15,13 @@ describe('ui-requests: Request: Edit requests. Make sure that edits are being sa
   });
 
   beforeEach(() => {
-    cy.createRequestApi().then(({
+    Requests.createRequestApi().then(({
       createdUser,
       createdRequest,
       instanceRecordData,
       cancellationReasonId
     }) => {
-      userData = createdUser;
+      userId = createdUser.id;
       requestData = createdRequest;
       instanceData = instanceRecordData;
       cancellationReason = cancellationReasonId;
@@ -28,14 +29,14 @@ describe('ui-requests: Request: Edit requests. Make sure that edits are being sa
   });
 
   afterEach(() => {
-    cy.changeItemRequestApi({
+    EditRequest.updateRequestApi({
       ...requestData,
       status: 'Closed - Cancelled',
       cancelledByUserId: requestData.requesterId,
       cancellationReasonId: cancellationReason,
       cancelledDate: new Date().toISOString(),
     });
-    cy.deleteUser(userData.id);
+    cy.deleteUser(userId);
   });
 
   it('C556 Request: Edit requests. Make sure that edits are being saved.', { tags: [TestTypes.smoke] }, () => {

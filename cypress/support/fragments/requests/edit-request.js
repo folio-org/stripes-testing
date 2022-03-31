@@ -1,6 +1,8 @@
+import add from 'date-fns/add';
 import { including } from '@interactors/html';
 import { Button, KeyValue, Section, Select, TextField } from '../../../../interactors';
 import Requests from './requests';
+import DateTools from '../../utils/dateTools';
 
 const paneResultsSection = Section({ id: 'pane-results' });
 const requestPreviewSection = Section({ id: 'instance-details' });
@@ -12,11 +14,20 @@ const requestExpirationDateInput = TextField({ id: 'requestExpirationDate' });
 const fulfillmentPreferenceSelect = Select({ name: 'fulfilmentPreference' });
 const pickupServicePointSelect = Select({ name: 'pickupServicePointId' });
 const holdShelfExpirationDateInput = TextField({ name: 'holdShelfExpirationDate' });
-const deliveryTypeAddressTypeId = Select({ name: 'deliveryAddressTypeId' });
+const deliveryTypeAddressTypeSelect = Select({ name: 'deliveryAddressTypeId' });
 const requestExpirationDateKeyValue = KeyValue('Request expiration date');
 const holdShelfExpirationDateKeyValue = KeyValue('Hold shelf expiration date');
 const pickupServicePointKeyValue = KeyValue('Pickup service point');
 
+const expirationDates = [...new Array(5)].map((_, i) => {
+  const date = add(new Date(), { years: 1, days: i + 1 });
+  return {
+    formValue: DateTools.getFormattedDate({ date }),
+    uiValue: DateTools.getFormattedDateWithSlashes({ date })
+  };
+});
+
+console.log({ expirationDates });
 
 export default {
   servicePoint: 'Circ Desk 1',
@@ -33,20 +44,23 @@ export default {
     AWAITING_DELIVERY: 'Open - Awaiting delivery',
   },
 
-  expirationDates: [
-    { formValue: '2050-01-01', uiValue: '1/1/2050' },
-    { formValue: '2050-01-02', uiValue: '1/2/2050' },
-    { formValue: '2050-01-03', uiValue: '1/3/2050' },
-    { formValue: '2050-01-04', uiValue: '1/4/2050' },
-    { formValue: '2050-01-05', uiValue: '1/5/2050' },
-  ],
+  expirationDates,
 
-  updateRequestApi(requestData, status) {
-    return cy.changeItemRequestApi({ ...requestData, status });
+  updateRequestApi(requestData) {
+    return cy
+      .okapiRequest({
+        method: 'PUT',
+        path: `circulation/requests/${requestData.id}`,
+        body: requestData,
+      })
+      .then(({ body }) => {
+        Cypress.env('request', body);
+        return body;
+      });
   },
-
+  // yyyy-MM-dd
   checkIsEditsBeingSaved(requestData, instanceRecordData, status) {
-    this.updateRequestApi(requestData, status).then(() => {
+    this.updateRequestApi({ ...requestData, status }).then(() => {
       switch (status) {
         case this.requestStatuses.NOT_YET_FILLED:
         case this.requestStatuses.IN_TRANSIT:
@@ -73,7 +87,7 @@ export default {
     cy.expect(fulfillmentPreferenceSelect.has({ disabled: false }));
     cy.expect(pickupServicePointSelect.has({ disabled: false }));
     cy.do(fulfillmentPreferenceSelect.choose(this.fulfillmentPreference.DELIVERY));
-    cy.expect(deliveryTypeAddressTypeId.has({ disabled: false }));
+    cy.expect(deliveryTypeAddressTypeSelect.has({ disabled: false }));
     cy.do(fulfillmentPreferenceSelect.choose(this.fulfillmentPreference.HOLD_SHELF));
     cy.do(requestExpirationDateInput.fillIn(this.expirationDates[isTransit].formValue));
     cy.do(pickupServicePointSelect.choose(this.servicePoint));
@@ -135,7 +149,7 @@ export default {
   waitRequestEditFormLoad() {
     // before submitting request form, some waiting is needed,
     // otherwise, "Submit Validation Failed" error is thrown
-    // the error may be coming from the below
+    // the error might be coming from the below
     // see: https://github.com/folio-org/ui-requests/blob/ba8f70d89a23601f8c888a6e664f2ecd8cada239/src/ViewRequest.js#L211
     // eslint-disable-next-line cypress/no-unnecessary-waiting
     cy.wait(1200);
