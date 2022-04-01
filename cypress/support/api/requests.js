@@ -18,18 +18,7 @@ Cypress.Commands.add('createItemRequestApi', (data) => {
     })
     .then(({ body }) => {
       Cypress.env('request', body);
-    });
-});
-
-Cypress.Commands.add('changeItemRequestApi', (request) => {
-  cy
-    .okapiRequest({
-      method: 'PUT',
-      path: `circulation/requests/${request.id}`,
-      body: request,
-    })
-    .then(({ body }) => {
-      Cypress.env('request', body);
+      return body;
     });
 });
 
@@ -41,5 +30,6 @@ Cypress.Commands.add('getCancellationReasonsApi', (searchParams) => {
     })
     .then(({ body }) => {
       Cypress.env('cancellationReasons', body.cancellationReasons);
+      return body.cancellationReasons;
     });
 });

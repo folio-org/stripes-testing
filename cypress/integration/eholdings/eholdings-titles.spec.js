@@ -96,22 +96,19 @@ describe('eHoldings titles management', () => {
     cy.createTempUser([permissions.uieHoldingsRecordsEdit.gui,
       permissions.uieHoldingsPackageTitleSelectUnselect.gui]).then(userProperties => {
       userId = userProperties.userId;
-      cy.login(userProperties.username, userProperties.password);
-      cy.visit(TopMenu.eholdingsPath);
-      eHoldingSearch.switchToTitles();
 
-      eHoldingsTitlesSearch.bySubject('chemical engineering');
-      eHoldingsTitlesSearch.byPublicationType('Journal');
-      eHoldingsTitlesSearch.bySelectionStatus(eHoldingsTitle.filterStatuses.selected);
-      eHoldingsTitles.openTitle();
-      eHoldingsTitle.waitPackagesLoading();
-      eHoldingsTitle.filterPackages(eHoldingsPackage.filterStatuses.selected);
-      eHoldingsTitle.waitPackagesLoading();
-      eHoldingsTitle.checkPackagesSelectionStatus(eHoldingsPackage.filterStatuses.selected);
-      eHoldingsTitle.openResource();
-      eHoldingsResourceView.checkHoldingStatus(eHoldingsTitle.filterStatuses.selected);
-      eHoldingsResourceView.removeTitleFromHolding();
-      eHoldingsResourceView.checkHoldingStatus(eHoldingsTitle.filterStatuses.notSelected);
+      eHoldingsTitles.getSelectedNotCustomTitleViaApi('chemical engineering').then(specialTitle => {
+        cy.login(userProperties.username, userProperties.password,
+          { path: `${TopMenu.eholdingsPath}/titles/${specialTitle.id}`, waiter: () => eHoldingsTitle.waitLoading(specialTitle.name) });
+        eHoldingsTitle.waitPackagesLoading();
+        eHoldingsTitle.filterPackages(eHoldingsPackage.filterStatuses.selected);
+        eHoldingsTitle.waitPackagesLoading();
+        eHoldingsTitle.checkPackagesSelectionStatus(eHoldingsPackage.filterStatuses.selected);
+        eHoldingsTitle.openResource();
+        eHoldingsResourceView.checkHoldingStatus(eHoldingsTitle.filterStatuses.selected);
+        eHoldingsResourceView.removeTitleFromHolding();
+        eHoldingsResourceView.checkHoldingStatus(eHoldingsTitle.filterStatuses.notSelected);
+      });
     });
   });
 

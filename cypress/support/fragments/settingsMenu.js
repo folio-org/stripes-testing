@@ -26,7 +26,9 @@ export default {
   eHoldingsPath: 'settings/eholdings',
   ermComparisonsPath: 'settings/comparisons-erm',
   innReachPath: 'settings/innreach',
+  // Inventory
   inventoryPath: 'settings/inventory',
+  materialTypePath: '/settings/inventory/materialtypes',
   // Invoice
   invoiceApprovalsPath: 'settings/invoice/approvals',
   invoiceAdjustmentsPath: 'settings/invoice/adjustments',

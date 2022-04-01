@@ -126,7 +126,7 @@ export default {
     waitLoading();
   },
 
-  checkHoldingsTable: (locationName, rowNumber, caption, barcode, status) => {
+  checkHoldingsTable: (locationName, rowNumber, caption, barcode, status, effectiveLocation = null) => {
     const accordionHeader = `Holdings: ${locationName} >`;
     const indexRowNumber = `row-${rowNumber}`;
     // wait for data to be loaded
@@ -151,6 +151,11 @@ export default {
     cy.expect(Accordion(accordionHeader)
       .find(MultiColumnListRow({ indexRow: indexRowNumber }))
       .find(MultiColumnListCell({ content: status })).exists());
+    if (effectiveLocation) {
+      cy.expect(Accordion(accordionHeader)
+        .find(MultiColumnListRow({ indexRow: indexRowNumber }))
+        .find(MultiColumnListCell({ content: effectiveLocation })).exists());
+    }
   },
 
   openHoldings(holdingToBeOpened) {
@@ -207,4 +212,14 @@ export default {
   openItemView: (itemBarcode) => {
     cy.do(Link(including(itemBarcode)).click());
   },
+  openEditItemPage() {
+    cy.do([
+      Button('Actions').click(),
+      Button('Edit').click(),
+    ]);
+  },
+  closeInstancePage() {
+    cy.do(Button({ ariaLabel: 'Close ' }).click());
+    cy.expect(section.exists());
+  }
 };
