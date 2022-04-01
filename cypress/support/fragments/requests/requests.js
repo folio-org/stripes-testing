@@ -262,9 +262,10 @@ export default {
   requestTypes: ['Page', 'Hold', 'Recall'],
 
   checkAllRequestTypes() {
-    cy.get('#clickable-filter-requestType-hold').check();
-    cy.get('#clickable-filter-requestType-page').check();
-    cy.get('#clickable-filter-requestType-recall').check();
+    this.requestTypes.forEach(requestType => {
+      cy.do(Checkbox({ name: requestType }).click());
+      cy.wait('@getRequests');
+    });
   },
 
   validateRequestTypes() {
@@ -332,13 +333,11 @@ export default {
     })).then(() => order);
   },
 
-  validateRequestsDateSortingOrder() {
-    this.getSortOrder('requestdate').then(order => {
-      this.getMultiColumnListCellsValues(1).then(cells => {
-        const dates = cells.map(cell => new Date(cell));
-        if (order === 'ascending') this.validateNumsAscendingOrder(dates);
-        else if (order === 'descending') this.validateNumsDescendingOrder(dates);
-      });
+  validateRequestsDateSortingOrder(order) {
+    this.getMultiColumnListCellsValues(1).then(cells => {
+      const dates = cells.map(cell => new Date(cell));
+      if (order === 'ascending') this.validateNumsAscendingOrder(dates);
+      else if (order === 'descending') this.validateNumsDescendingOrder(dates);
     });
   },
 
@@ -357,14 +356,14 @@ export default {
     cy.wait('@getRequests');
     /*
       ***
-      - REASON: cy.wait(300)
-      It awaits for the api to resolve but as previous MultiColumnCellValues are already present
-      It does not wait for UI to update cellValues and some test fails randomly.
-      with cy.wait(300) It awaits UI for ui to update and tests work.
+        - REASON: cy.wait(300)
+        It awaits for the api to resolve but as previous MultiColumnCellValues are already present
+        It does not wait for UI to update cellValues and some test fails randomly.
+        cy.wait(300) awaits for UI to update.
       ***
     */
 
     // eslint-disable-next-line cypress/no-unnecessary-waiting
-    cy.wait(300);
+    cy.wait(800);
   }
 };

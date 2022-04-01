@@ -9,12 +9,10 @@ describe('ui-requests: Sort requests', () => {
   const requestsData = [];
   const cancellationReasons = [];
 
-  before(() => {
+  beforeEach(() => {
     cy.login(Cypress.env('diku_login'), Cypress.env('diku_password'));
     cy.getToken('diku_admin', 'admin');
-  });
 
-  beforeEach(() => {
     Requests.requestTypes.forEach((requestType) => {
       const itemStatus = requestType === 'Page' ? 'Available' : 'Checked out';
       Requests.createRequestApi(itemStatus, requestType).then(({
@@ -42,28 +40,22 @@ describe('ui-requests: Sort requests', () => {
     });
   });
 
-  it('should check all the request types and validate sorting', { tags: [testType.smoke] }, () => {
+  it('should implement e-2-e automation of test case C2379: Test Request app sorting', { tags: [testType.smoke] }, () => {
     cy.visit(TopMenu.requestsPath);
+
+    cy.intercept('GET', '/circulation/requests*').as('getRequests');
 
     Requests.checkAllRequestTypes();
     Requests.validateRequestTypes();
 
     // Validate that the requests are sorted by Request date (oldest at top) by default
-    Requests.validateRequestsDateSortingOrder();
-
-    cy.intercept('GET', '/circulation/requests?*').as('getRequests');
+    Requests.validateRequestsDateSortingOrder('ascending');
 
     // Click column header Request Date to verify that they reverse sort
     cy.do(MultiColumnListHeader('Request Date').click());
     Requests.waitLoadingRequests();
-    Requests.validateRequestsDateSortingOrder();
+    Requests.validateRequestsDateSortingOrder('descending');
 
-    /*
-      *** Flaky ***
-      - Known Issues: Sort of patron information (name, barcode, etc.)
-      - and item information (title, barcode, etc.) may not behave as expected.
-      - This is a known issue. Do not fail the test.
-    */
     Requests.sortingColumns.forEach(column => {
       // Validate sort
       cy.do(MultiColumnListHeader(column.title).click());
@@ -73,8 +65,5 @@ describe('ui-requests: Sort requests', () => {
       cy.do(MultiColumnListHeader(column.title).click());
       Requests.validateRequestsSortingOrder({ headerId: column.id, columnIndex: column.columnIndex });
     });
-    /*
-      *** Flaky ***
-    */
   });
 });
