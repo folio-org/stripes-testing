@@ -1,6 +1,5 @@
 import NewServicePoint from './newServicePoint';
-import NewUser from '../user/newUser';
-import { TextField, Checkbox, Dropdown, MultiColumnList, Button, Pane, Select, Modal, SearchField, Accordion, HTML, including, MultiColumnListCell } from '../../../../interactors';
+import { TextField, Dropdown, MultiColumnList, Button, Pane, Select, Modal, Accordion, HTML, including, MultiColumnListCell } from '../../../../interactors';
 import TopMenu from '../topMenu';
 import defaultUser from '../user/defaultUser';
 import permissions from '../../dictionary/permissions';
@@ -16,8 +15,6 @@ export default {
       Button({ id: 'clickable-edituser' }).click()]);
     cy.intercept('/configurations/entries?query=(module==USERS%20and%20configName==custom_fields_label)').as('getPermissions1');
     cy.intercept('/perms/permissions?length=10000&query=(visible==true)').as('getPermissions2');
-
-
     cy.wait(['@getPermissions1', '@getPermissions2']);
     cy.do([Button({ id: 'accordion-toggle-button-servicePoints' }).click(),
       Button({ id: 'add-service-point-btn' }).click(),
@@ -28,10 +25,8 @@ export default {
       Select({ id: 'servicePointPreference' }).choose(NewServicePoint.defaultUiServicePoint.body.name),
       Button({ id: 'accordion-toggle-button-permissions' }).click(),
       Button({ id: 'clickable-add-permission' }).click(),
-      // Button({ id: 'clickable-list-column-selected' }).click(),
       Modal({ id: 'permissions-modal' }).find(TextField({ type: 'search' })).fillIn(permissions.uiCheckinAll.gui),
       Modal({ id: 'permissions-modal' }).find(Button('Search')).click(),
-      // MultiColumnList().click({ tabindex: 0 })]);
       Modal({ id: 'permissions-modal' }).find(MultiColumnListCell(permissions.uiCheckinAll.gui)).click()]);
     cy.expect(Modal({ id: 'permissions-modal' }).find(HTML(including('Total selected: 1'))));
     cy.do(Button({ id: 'clickable-permissions-modal-save' }).click());

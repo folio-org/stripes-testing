@@ -1,4 +1,3 @@
-import uuid from 'uuid';
 import DefaultUser from './defaultUser';
 
 const requestPrefStorage = { ...DefaultUser.defaultUiRequestPrefStorage };

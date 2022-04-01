@@ -1,4 +1,3 @@
-import uuid from 'uuid';
 import NewInstanceHoldingItem from './holdingsMove/defaultInstanceHoldingItem';
 
 export default {

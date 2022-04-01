@@ -1,7 +1,5 @@
-
 import uuid from 'uuid';
 import getRandomPostfix from '../../../utils/stringTools';
-
 
 export default {
   createViaApi: (campusesProperties) => {
