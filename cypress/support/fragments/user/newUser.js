@@ -24,14 +24,15 @@ export default {
     });
     return cy.get('@userProperties');
   },
+  // Before using the "delete" method, check that it works!
   deleteUserWithSameParams() {
     cy.okapiRequest({
       method: 'DELETE',
-      path: `users/${uuid()}`,
+      path: `users/${DefaultUser.defaultUiPatron.body.id}`,
     });
     cy.okapiRequest({
       method: 'DELETE',
-      path: `groups/${uuid()}`,
+      path: `groups/${DefaultUser.defaultUiPatron.body.patronGroup}`,
     });
   },
 };

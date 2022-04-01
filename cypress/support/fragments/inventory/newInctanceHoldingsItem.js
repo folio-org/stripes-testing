@@ -24,35 +24,35 @@ export default {
       });
     });
   },
-
+  // Before using the "delete" method, check that it works!
   deleteItemWithSameParams() {
     cy.okapiRequest({
       method: 'DELETE',
-      path: `inventory/items/${uuid()}`,
+      path: `inventory/items/${NewInstanceHoldingItem.defaultUiCreateItem.body.id}`,
     });
     cy.okapiRequest({
       method: 'DELETE',
-      path: `loan-types/${uuid()}`,
+      path: `loan-types/${NewInstanceHoldingItem.defaultUiCreateItem.body.permanentLoanType.id}`,
     });
     cy.okapiRequest({
       method: 'DELETE',
-      path: `material-types/${uuid()}`,
+      path: `material-types/${NewInstanceHoldingItem.defaultUiCreateItem.body.materialType.id}`,
     });
     cy.okapiRequest({
       method: 'DELETE',
-      path: `holdings-storage/holdings/${uuid()}`,
+      path: `holdings-storage/holdings/${NewInstanceHoldingItem.defaultUiMaterialTypes.body.id}`,
     });
     cy.okapiRequest({
       method: 'DELETE',
-      path: `inventory/instances/${uuid()}`,
+      path: `inventory/instances/${NewInstanceHoldingItem.defaultUiInstance.body.id}`,
     });
     cy.okapiRequest({
       method: 'DELETE',
-      path: `holdings-sources/${uuid()}`,
+      path: `holdings-sources/${NewInstanceHoldingItem.defaultUiHoldingsSources.body.id}`,
     });
     cy.okapiRequest({
       method: 'DELETE',
-      path: `instance-types/${uuid()}`,
+      path: `instance-types/${NewInstanceHoldingItem.defaultUiInstanceType.body.id}`,
     });
   },
 };

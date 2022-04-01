@@ -1,5 +1,8 @@
 import uuid from 'uuid';
 import getRandomPostfix from '../../utils/stringTools';
+import DefaultInstanceHoldingItem from '../inventory/holdingsMove/defaultInstanceHoldingItem';
+import Campuses from '../settings/tenant/campuses';
+import Institutions from '../settings/tenant/institutions';
 
 export default {
 
@@ -19,27 +22,27 @@ export default {
       name: `autotest_name_${getRandomPostfix()}`,
     }
   },
-
+  // Before using the "delete" method, check that it works!
   deleteServicePointViaApi() {
     cy.okapiRequest({
       method: 'DELETE',
-      path: `locations/${uuid()}`,
+      path: `locations/${DefaultInstanceHoldingItem.defaultUiHolding.body.permanentLocationId}`,
     });
     cy.okapiRequest({
       method: 'DELETE',
-      path: `location-units/libraries/${uuid()}`,
+      path: `location-units/libraries/${this.defaultUiLibraries.body.id}`,
     });
     cy.okapiRequest({
       method: 'DELETE',
-      path: `location-units/campuses/${uuid()}`,
+      path: `location-units/campuses/${Campuses.defaultUiCampuses.body.id}`,
     });
     cy.okapiRequest({
       method: 'DELETE',
-      path: `location-units/institutions/${uuid()}`,
+      path: `location-units/institutions/${Institutions.defaultUiInstitutions.body.id}`,
     });
     cy.okapiRequest({
       method: 'DELETE',
-      path: `service-points/${uuid()}`,
+      path: `service-points/${this.defaultUiServicePoint.body.id}`,
     });
   },
 };

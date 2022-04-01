@@ -1,13 +1,3 @@
-// Cypress.Commands.add('getServicePointsApi', (searchParams) => {
-//   cy
-//     .okapiRequest({
-//       path: 'service-points',
-//       searchParams,
-//     })
-//     .then(({ body }) => {
-//       Cypress.env('servicePoints', body.servicepoints);
-//     });
-// });
 import { v4 as uuidv4 } from 'uuid';
 
 Cypress.Commands.add('getServicePointsApi', (searchParams) => {
