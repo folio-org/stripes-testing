@@ -107,6 +107,7 @@ describe('MARC Authority management', () => {
     MarcAuthorityBrowse.searchBy('Uniform title', MarcAuthority.defaultAuthority.headingReference);
     MarcAuthorityBrowse.waitLoading();
     MarcAuthorityBrowse.checkPresentedColumns();
+    // TODO: add checking of records order
   });
 
   afterEach(() => {
