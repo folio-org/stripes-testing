@@ -1,8 +1,9 @@
 import NewServicePoint from './newServicePoint';
 import NewUser from '../user/newUser';
-import { TextField, Checkbox, Dropdown, MultiColumnList, Button, Pane, Select, Modal, SearchField, Accordion } from '../../../../interactors';
+import { TextField, Checkbox, Dropdown, MultiColumnList, Button, Pane, Select, Modal, SearchField, Accordion, HTML, including, MultiColumnListCell } from '../../../../interactors';
 import TopMenu from '../topMenu';
 import defaultUser from '../user/defaultUser';
+import permissions from '../../dictionary/permissions';
 
 export default {
   addServicePointPermissions: (username) => {
@@ -12,8 +13,13 @@ export default {
       Button('Search').click(),
       MultiColumnList().click({ row: 0, column: 'Active' }),
       Pane({ id: 'pane-userdetails' }).find(Button('Actions')).click(),
-      Button({ id: 'clickable-edituser' }).click(),
-      Button({ id: 'accordion-toggle-button-servicePoints' }).click(),
+      Button({ id: 'clickable-edituser' }).click()]);
+    cy.intercept('/configurations/entries?query=(module==USERS%20and%20configName==custom_fields_label)').as('getPermissions1');
+    cy.intercept('/perms/permissions?length=10000&query=(visible==true)').as('getPermissions2');
+
+
+    cy.wait(['@getPermissions1', '@getPermissions2']);
+    cy.do([Button({ id: 'accordion-toggle-button-servicePoints' }).click(),
       Button({ id: 'add-service-point-btn' }).click(),
     ]);
     cy.get('#list-column-selected').click();
@@ -23,17 +29,16 @@ export default {
       Button({ id: 'accordion-toggle-button-permissions' }).click(),
       Button({ id: 'clickable-add-permission' }).click(),
       // Button({ id: 'clickable-list-column-selected' }).click(),
-      Modal({ id: 'permissions-modal' }).find(TextField({ type: 'search' })).fillIn('check in'),
-      Button('Search').click(),
-      MultiColumnList().click({ tabindex: 0 }),
-      Button({ id: 'clickable-permissions-modal-save' }).click(),
-      // Button({ id: 'accordion-toggle-button-permissions' }).click(),
-    ]);
-    cy.wait(3000);
+      Modal({ id: 'permissions-modal' }).find(TextField({ type: 'search' })).fillIn(permissions.uiCheckinAll.gui),
+      Modal({ id: 'permissions-modal' }).find(Button('Search')).click(),
+      // MultiColumnList().click({ tabindex: 0 })]);
+      Modal({ id: 'permissions-modal' }).find(MultiColumnListCell(permissions.uiCheckinAll.gui)).click()]);
+    cy.expect(Modal({ id: 'permissions-modal' }).find(HTML(including('Total selected: 1'))));
+    cy.do(Button({ id: 'clickable-permissions-modal-save' }).click());
+    cy.expect(Modal({ id: 'permissions-modal' }).absent());
+    cy.expect(Accordion({ id: 'permissions' }).find(HTML(including(permissions.uiCheckinAll.gui))).exists());
     cy.do(Button('Save & close').click());
-    cy.wait(3000);
     cy.do(Button('User permissions').click());
-    cy.wait(3000);
   },
 
   logOutLogIn: ({ userName, password }) => {

@@ -42,4 +42,6 @@ export default {
   circulationLogAll: { internal: 'inn-reach.all', gui: 'Circulation log: All' },
   // Users
   usersViewRequests: { internal: '', gui: 'Users: View requests' },
+  // Rest
+  uiCheckinAll: { internal:'ui-checkin.all', gui:'Check in: All permissions' }
 };
