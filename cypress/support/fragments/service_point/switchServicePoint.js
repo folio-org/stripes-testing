@@ -41,7 +41,7 @@ export default {
     cy.do(Button('User permissions').click());
   },
 
-  logOutLogIn: ({ userName, password }) => {
+  logOutAndLogIn: ({ userName, password }) => {
     cy.do([
       Dropdown('My profile').open(),
       Button('Log out').click(),

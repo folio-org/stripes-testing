@@ -1,11 +1,9 @@
-
 import uuid from 'uuid';
 import getRandomPostfix from '../../utils/stringTools';
 
-
 export default {
 
-  defaultUiServicePoint : {
+  defaultUiServicePoint: {
     body: {
       code: `autotest_code_${getRandomPostfix()}`,
       discoveryDisplayName: `autotest_discovery_display_name_${getRandomPostfix()}`,
@@ -13,7 +11,7 @@ export default {
       name: `autotest_service_${getRandomPostfix()}`,
     }
   },
-  defaultUiLibraries : {
+  defaultUiLibraries: {
     body: {
       campusId: uuid(),
       code: `autotest_code_${getRandomPostfix()}`,
@@ -22,40 +20,24 @@ export default {
     }
   },
 
-  deleteServicePoint() {
-    this.deleteLocations();
-    this.deleteLibraries();
-    this.deleteCampuses();
-    this.deleteInstitutions();
-    this.deleteNewServicePoint();
-  },
-
-  deleteLocations() {
-    return cy.okapiRequest({
+  deleteServicePointViaApi() {
+    cy.okapiRequest({
       method: 'DELETE',
       path: `locations/${uuid()}`,
     });
-  },
-  deleteLibraries() {
-    return cy.okapiRequest({
+    cy.okapiRequest({
       method: 'DELETE',
       path: `location-units/libraries/${uuid()}`,
     });
-  },
-  deleteCampuses() {
-    return cy.okapiRequest({
+    cy.okapiRequest({
       method: 'DELETE',
       path: `location-units/campuses/${uuid()}`,
     });
-  },
-  deleteInstitutions() {
-    return cy.okapiRequest({
+    cy.okapiRequest({
       method: 'DELETE',
       path: `location-units/institutions/${uuid()}`,
     });
-  },
-  deleteNewServicePoint() {
-    return cy.okapiRequest({
+    cy.okapiRequest({
       method: 'DELETE',
       path: `service-points/${uuid()}`,
     });

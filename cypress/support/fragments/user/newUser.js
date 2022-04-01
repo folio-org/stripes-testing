@@ -4,7 +4,7 @@ import DefaultUser from './defaultUser';
 const requestPrefStorage = { ...DefaultUser.defaultUiRequestPrefStorage };
 
 export default {
-  createUser() {
+  createUserWithSameParams() {
     cy.getUserGroups().then(patronGroupId => {
       const specialPatron = { ...DefaultUser.defaultUiPatron.body };
       specialPatron.patronGroup = patronGroupId;
@@ -24,21 +24,14 @@ export default {
     });
     return cy.get('@userProperties');
   },
-  deleteUser() {
-    this.deleteNewPatron();
-    this.deletePatronGroup();
-  },
-  deleteNewPatron() {
-    return cy.okapiRequest({
+  deleteUserWithSameParams() {
+    cy.okapiRequest({
       method: 'DELETE',
       path: `users/${uuid()}`,
     });
-  },
-  deletePatronGroup() {
-    return cy.okapiRequest({
+    cy.okapiRequest({
       method: 'DELETE',
       path: `groups/${uuid()}`,
     });
-  }
+  },
 };
-

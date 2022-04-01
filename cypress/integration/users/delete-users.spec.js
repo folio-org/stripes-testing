@@ -1,13 +1,10 @@
 import uuid from 'uuid';
-
 import {
   Button,
   KeyValue,
   Modal,
   Pane,
 } from '../../../interactors';
-import servicePoints from '../../support/fragments/settings/tenant/servicePoints';
-
 import generateItemBarcode from '../../support/utils/generateItemBarcode';
 import EditRequest from '../../support/fragments/requests/edit-request';
 

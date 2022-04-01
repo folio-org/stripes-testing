@@ -27,19 +27,19 @@ describe('Check In - Actions ', () => {
 
     libraries.createViaApi(specialLibrary);
     cy.getLocations().then(location => {
-      NewInctanceHoldingsItem.createItem(location.id);
-      NewUser.createUser().then(userProperties => {
+      NewInctanceHoldingsItem.createItemWithSameParams(location.id);
+      NewUser.createUserWithSameParams().then(userProperties => {
         SwitchServicePoint.addServicePointPermissions(userProperties.userName);
-        SwitchServicePoint.logOutLogIn(userProperties);
+        SwitchServicePoint.logOutAndLogIn(userProperties);
       });
     });
   });
 
   after('Delete New Service point, Item and User', () => {
     SwitchServicePoint.changeServicePointPreference();
-    NewInctanceHoldingsItem.deleteItem();
-    NewServicePoint.deleteServicePoint();
-    NewUser.deleteUser();
+    NewInctanceHoldingsItem.deleteItemWithSameParams();
+    NewServicePoint.deleteServicePointViaApi();
+    NewUser.deleteUserWithSameParams();
   });
 
   it('C347631 Check in: Basic check in', { tags: [TestTypes.smoke] }, () => {
