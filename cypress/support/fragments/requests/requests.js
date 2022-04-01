@@ -14,6 +14,7 @@ import {
 } from '../../../../interactors';
 
 const requestsResultsSection = Section({ id: 'pane-results' });
+const appsButton = Button({ id: 'app-list-dropdown-toggle' });
 
 /**
  * Creates a request with associated item (instance) and user.
@@ -282,4 +283,8 @@ export default {
   verifyNoResultMessage(noResultMessage) {
     cy.expect(requestsResultsSection.find(HTML(including(noResultMessage))).exists());
   },
+
+  navigateToApp(appName) {
+    cy.do([appsButton.click(), Button(appName).click()]);
+  }
 };
