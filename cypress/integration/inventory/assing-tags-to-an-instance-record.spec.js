@@ -28,7 +28,7 @@ describe('ui-inventory: Assign tags to an Instance record', () => {
   });
 
   after(() => {
-    cy.deleteInstanceApi(instanceId);
+    //cy.deleteInstanceApi(instanceId);
   });
 
   it('C196769 Assign tags to an Instance record', { tags: [TestTypes.smoke] }, () => {
@@ -40,5 +40,6 @@ describe('ui-inventory: Assign tags to an Instance record', () => {
     InventoryInstance.resetAll();
     InventoryInstance.searchByTag(instanceTitle);
     InventorySearch.searchByParameter('Title (all)', instanceTitle);
+    InventoryInstance.checkAddedTag(instanceTitle);
   });
 });

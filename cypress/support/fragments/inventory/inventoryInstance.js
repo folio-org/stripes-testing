@@ -242,13 +242,12 @@ export default {
   resetAll:() => {
     cy.do(Pane('Search & filter').find(Button('Reset all')).click());
   },
-  searchByTag:(instanceTitle) => {
+  searchByTag:() => {
     cy.do(Button({ id:'accordion-toggle-button-instancesTags' }).click());
     cy.do(Checkbox(tagName).click());
-    cy.expect(MultiColumnListRow().find(HTML(including(instanceTitle))).exists());
   },
-  checkAddedTag:() => {
-   
-    
+  checkAddedTag:(instanceTitle) => {
+    // cy.do(MultiColumnListRow({ rowIndexInParent: 'row-0' }).find(HTML(including(instanceTitle))).click());
+    cy.do(MultiColumnListRow({ rowIndexInParent: 'row-0' }).find(MultiColumnListCell({ row: 0, columnIndex: 1 })).find(HTML(including(instanceTitle))).click());
   },
 };
