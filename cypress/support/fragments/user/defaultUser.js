@@ -23,13 +23,6 @@ const defaultUiPatron = {
 
 export default {
   defaultUiPatron,
-  // defaultUiPatronGroup : {
-  //   body: {
-  //     desc: `autotest_name_${getRandomPostfix()}`,
-  //     group: `autotest_group_${getRandomPostfix()}`,
-  //     id: uuid(),
-  //   }
-  // },
   defaultUiRequestPrefStorage : {
     body: {
       defaultDeliveryAddressTypeId: null,
