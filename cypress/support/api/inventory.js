@@ -91,6 +91,20 @@ Cypress.Commands.add('getInstanceTypes', (searchParams) => {
     });
 });
 
+// TODO: move to related fragment
+Cypress.Commands.add('createInstanceType', (specialInstanceType) => {
+  cy
+    .okapiRequest({
+      method:'POST',
+      path: 'instance-types',
+      body: specialInstanceType,
+    })
+    .then(({ body }) => {
+      Cypress.env('instanceTypes', body.instanceTypes);
+      return body;
+    });
+});
+
 Cypress.Commands.add('getInstanceIdentifierTypes', (searchParams) => {
   cy
     .okapiRequest({
