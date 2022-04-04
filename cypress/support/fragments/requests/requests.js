@@ -24,11 +24,11 @@ const appsButton = Button({ id: 'app-list-dropdown-toggle' });
  * @param {('Item'|'Title')} [requestLevel=Item]
  * @returns {Object}
  */
-const createRequestApi = (
+function createRequestApi(
   itemStatus = 'Available',
   requestType = 'Page',
   requestLevel = 'Item',
-) => {
+) {
   const userData = {
     active: true,
     barcode: uuid(),
@@ -156,19 +156,66 @@ const createRequestApi = (
         };
       });
     });
-};
+}
 
-const deleteRequestApi = (requestId) => {
+function deleteRequestApi(requestId) {
   return cy.okapiRequest({
     method: 'DELETE',
     path: `circulation/requests/${requestId}`,
     isDefaultSearchParamsRequired: false,
   });
-};
+}
+
+function updateCirculationRulesApi(ruleText) {
+  return cy.okapiRequest({
+    method: 'PUT',
+    path: 'circulation/rules',
+    body: { rulesAsText: ruleText },
+    isDefaultSearchParamsRequired: false,
+  });
+}
+
+function setRequestPolicyApi(requestTypes = ['Page', 'Hold', 'Recall']) {
+  /**
+   * rule comes in bespoke text format, and we need to update 'r <someId>' part.
+   * rulesAsText: "priority: number-of-criteria, criterium (t, s, c, b, a, m, g), last-line\n
+                  fallback-policy: ... r 334e5a9e-94f9-4673-8d1d-ab552863886b ..."
+   */
+  const regexp = /(?<=\s)r\s+[a-zA-Z0-9-]+(?=\s)/;
+  let oldRulesAsText;
+
+  return cy.okapiRequest({
+    path: 'circulation/rules',
+    isDefaultSearchParamsRequired: false,
+  })
+    .then(({ body: rule }) => {
+      oldRulesAsText = rule.rulesAsText;
+      cy.okapiRequest({
+        method: 'POST',
+        path: 'request-policy-storage/request-policies',
+        body: { id: uuid(), name: `test_all_${uuid().slice(0, 6)}`, requestTypes },
+      })
+        .then(({ body: policy }) => {
+          rule.rulesAsText = rule.rulesAsText.replace(regexp, `r ${policy.id}`);
+          updateCirculationRulesApi(rule.rulesAsText).then(() => ({ oldRulesAsText, policy }));
+        });
+    });
+}
+
+function deleteRequestPolicyApi(policyId) {
+  return cy.okapiRequest({
+    method: 'DELETE',
+    path: `request-policy-storage/request-policies/${policyId}`,
+    isDefaultSearchParamsRequired: false,
+  });
+}
 
 export default {
   createRequestApi,
   deleteRequestApi,
+  setRequestPolicyApi,
+  deleteRequestPolicyApi,
+  updateCirculationRulesApi,
 
   removeCreatedRequest() {
     cy.do([
@@ -286,5 +333,25 @@ export default {
 
   navigateToApp(appName) {
     cy.do([appsButton.click(), Button(appName).click()]);
+  },
+
+  checkRequestType(requestType) {
+    if (requestType === this.requestTypes.PAGE) {
+      this.selectPagesRequestType();
+    } else if (requestType === this.requestTypes.HOLD) {
+      this.selectHoldsRequestType();
+    } else if (requestType === this.requestTypes.RECALL) {
+      this.selectRecallsRequestType();
+    }
+  },
+
+  verifyRequestTypeChecked(requestType) {
+    if (requestType === this.requestTypes.PAGE) {
+      cy.expect(Checkbox({ name: 'Page' }).has({ checked: true }));
+    } else if (requestType === this.requestTypes.HOLD) {
+      cy.expect(Checkbox({ name: 'Hold' }).has({ checked: true }));
+    } else if (requestType === this.requestTypes.RECALL) {
+      cy.expect(Checkbox({ name: 'Recall' }).has({ checked: true }));
+    }
   }
 };

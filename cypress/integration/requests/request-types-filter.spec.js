@@ -2,22 +2,27 @@ import uuid from 'uuid';
 import TestTypes from '../../support/dictionary/testTypes';
 import Requests from '../../support/fragments/requests/requests';
 import TopMenu from '../../support/fragments/topMenu';
-import { Checkbox, Pane } from '../../../interactors';
+import { Pane } from '../../../interactors';
 
 describe('ui-requests: Make sure that request type filters are working properly', () => {
   const requests = [];
   const instances = [];
   const userIds = [];
+  let oldRulesText;
+  let requestPolicyId;
   const resetFiltersMessage = 'Choose a filter or enter a search query to show results.';
   const doesNotExistRequest = `notExist-${uuid()}`;
   const getNoResultMessage = term => `No results found for "${term}". Please check your spelling and filters.`;
 
-  before(() => {
+  beforeEach(() => {
     cy.login(Cypress.env('diku_login'), Cypress.env('diku_password'));
     cy.getToken(Cypress.env('diku_login'), Cypress.env('diku_password'));
-  });
 
-  beforeEach(() => {
+    Requests.setRequestPolicyApi().then(({ oldRulesAsText, policy }) => {
+      oldRulesText = oldRulesAsText;
+      requestPolicyId = policy.id;
+    });
+
     Object.values(Requests.requestTypes).forEach(requestType => {
       const itemStatus = requestType === 'Page' ? 'Available' : 'Checked out';
       Requests
@@ -42,20 +47,15 @@ describe('ui-requests: Make sure that request type filters are working properly'
     userIds.forEach(id => {
       cy.deleteUser(id);
     });
+    Requests.updateCirculationRulesApi(oldRulesText);
+    Requests.deleteRequestPolicyApi(requestPolicyId);
   });
 
   it('C540 Make sure that request type filters are working properly', { tags: [TestTypes.smoke] }, () => {
     cy.visit(TopMenu.requestsPath);
-
     // Apply filters and test that the appropriate results display
     requests.forEach(({ requestType }) => {
-      if (requestType === Requests.requestTypes.PAGE) {
-        Requests.selectPagesRequestType();
-      } else if (requestType === Requests.requestTypes.HOLD) {
-        Requests.selectHoldsRequestType();
-      } else if (requestType === Requests.requestTypes.RECALL) {
-        Requests.selectRecallsRequestType();
-      }
+      Requests.checkRequestType(requestType);
       Requests.waitUIFilteredByRequestType();
       Requests.verifyFilteredResults(requestType);
       Requests.resetAllFilters();
@@ -68,28 +68,29 @@ describe('ui-requests: Make sure that request type filters are working properly'
     Requests.resetAllFilters();
 
     // Navigate to other apps and back to ensure the filters are saved
-    Requests.selectPagesRequestType();
-    Requests.waitUIFilteredByRequestType();
-    Requests.verifyFilteredResults(Requests.requestTypes.PAGE);
-    Requests.navigateToApp('Data export');
-    cy.expect(Pane({ title: 'Logs' }).exists());
-    Requests.navigateToApp('Requests');
-    cy.expect(Checkbox({ name: 'Page' }).has({ checked: true }));
-    Requests.verifyFilteredResults(Requests.requestTypes.PAGE);
+    requests.forEach(({ requestType }) => {
+      Requests.checkRequestType(requestType);
+      Requests.waitUIFilteredByRequestType();
+      Requests.verifyFilteredResults(requestType);
+      Requests.navigateToApp('Data export');
+      cy.expect(Pane({ title: 'Logs' }).exists());
+      Requests.navigateToApp('Requests');
+      Requests.verifyRequestTypeChecked(requestType);
+      Requests.verifyFilteredResults(requestType);
+      Requests.resetAllFilters();
+    });
 
     // Test reset all button
-    Requests.resetAllFilters();
-    Requests.verifyNoResultMessage(resetFiltersMessage);
+    requests.forEach(({ requestType }) => {
+      Requests.checkRequestType(requestType);
+      Requests.resetAllFilters();
+      Requests.verifyNoResultMessage(resetFiltersMessage);
+    });
+
 
     // Test that filters and search terms work well together
     requests.forEach(({ requestType, instance: { title } }) => {
-      if (requestType === Requests.requestTypes.PAGE) {
-        Requests.selectPagesRequestType();
-      } else if (requestType === Requests.requestTypes.HOLD) {
-        Requests.selectHoldsRequestType();
-      } else if (requestType === Requests.requestTypes.RECALL) {
-        Requests.selectRecallsRequestType();
-      }
+      Requests.checkRequestType(requestType);
       Requests.waitUIFilteredByRequestType();
       Requests.findCreatedRequest(title);
       Requests.verifyCreatedRequest(title);
