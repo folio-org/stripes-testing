@@ -114,7 +114,7 @@ Cypress.Commands.add('createTempUser', (permissions) => {
           // cy.log('internalPermissions=' + [...permissionsResponse.body.permissions.map(permission => permission.permissionName)]);
           cy.createUserApi(userData)
             .then((userCreateResponse) => {
-              userProperties.userId = userCreateResponse.body.id;
+              userProperties.userId = userCreateResponse.id;
               cy.setUserPassword(userProperties);
               cy.addPermissionsToNewUserApi({
                 userId: userProperties.userId,
