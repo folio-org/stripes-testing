@@ -1,4 +1,14 @@
-import { Accordion, Button, Section, Select, TextArea, TextField, FieldSet } from '../../../../interactors';
+import {
+  Accordion,
+  Button,
+  Section,
+  Select,
+  TextArea,
+  TextField,
+  FieldSet,
+  Selection,
+  including, Pane
+} from '../../../../interactors';
 import InteractorsTools from '../../utils/interactorsTools';
 import getRandomPostfix from '../../utils/stringTools';
 
@@ -74,4 +84,20 @@ export default {
       TextField({ name:'identifiers[0].value' }).fillIn(value),
       Button('Save and close').click()]);
   },
+  choosePermanentLocation(locationName) {
+    cy.do([
+      Selection('Permanent').open(),
+      Selection('Permanent').choose(including(locationName))
+    ]);
+  },
+  chooseTemporaryLocation(locationName) {
+    cy.do([
+      Selection('Temporary').open(),
+      Selection('Temporary').choose(including(locationName))
+    ]);
+  },
+  saveAndClose: () => {
+    cy.do(Button({ id: 'clickable-save-item' }).click());
+    cy.expect(Pane({ title: including('Item') }).exists());
+  }
 };
