@@ -155,9 +155,18 @@ const createRequestApi = (
     });
 };
 
+const deleteRequestApi = (requestId) => {
+  return cy.okapiRequest({
+    method: 'DELETE',
+    path: `circulation/requests/${requestId}`,
+    isDefaultSearchParamsRequired: false,
+  });
+};
+
 
 export default {
   createRequestApi,
+  deleteRequestApi,
 
   removeCreatedRequest() {
     cy.do([
@@ -259,16 +268,16 @@ export default {
     },
   ],
 
-  requestTypes: ['Page', 'Hold', 'Recall'],
+  requestTypes: { PAGE: 'Page', HOLD: 'Hold', RECALL: 'Recall' },
 
   checkAllRequestTypes() {
-    this.requestTypes.forEach(requestType => {
+    Object.values(this.requestTypes).forEach(requestType => {
       cy.do(Checkbox({ name: requestType }).click());
       cy.wait('@getRequests');
     });
   },
 
-  validateRequestTypes() {
+  validateRequestTypesChecked() {
     cy.expect(Checkbox({ name: 'Recall' }).checked);
     cy.expect(Checkbox({ name: 'Page' }).checked);
     cy.expect(Checkbox({ name: 'Hold' }).checked);
@@ -364,6 +373,6 @@ export default {
     */
 
     // eslint-disable-next-line cypress/no-unnecessary-waiting
-    cy.wait(800);
+    cy.wait(1000);
   }
 };
