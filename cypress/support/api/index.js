@@ -16,5 +16,6 @@ import './permissions';
 import './orders';
 import './batch-groups';
 import './data-import';
+import './request-preference-storage';
 import './invoice';
 import './instance';
