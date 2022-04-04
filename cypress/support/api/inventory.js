@@ -7,6 +7,16 @@ const DEFAULT_INSTANCE = {
   previouslyHeld: false,
 };
 
+Cypress.Commands.add('getInstanceById', (instanceId) => {
+  return cy
+    .okapiRequest({
+      path: `inventory/instances/${instanceId}`,
+    })
+    .then(({ body }) => {
+      return body;
+    });
+});
+
 Cypress.Commands.add('getLoanTypes', (searchParams) => {
   cy
     .okapiRequest({
@@ -113,6 +123,19 @@ Cypress.Commands.add('createInstance', ({ instance, holdings = [], items = [] })
           items: items[i],
         }));
       cy.wrap(instanceId).as('instanceId');
+    });
+  return cy.get('@instanceId');
+});
+
+Cypress.Commands.add('updateInstance', requestData => {
+  cy
+    .okapiRequest({
+      method: 'PUT',
+      path: `inventory/instances/${requestData.id}`,
+      body: requestData
+    })
+    .then(({ body }) => {
+      return body;
     });
   return cy.get('@instanceId');
 });

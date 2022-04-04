@@ -4,6 +4,8 @@ import {
 
 
 const rootModal = Modal('Select instance');
+const searchField = SearchField('Search field index');
+const searchButton = Button('Search');
 
 export default {
   waitLoading() {
@@ -19,9 +21,9 @@ export default {
   searchByTitle(title) {
     cy.expect(rootModal.find(HTML(including('Choose a filter or enter a search query to show result'))).exists());
     cy.do([
-      rootModal.find(SearchField('Search field index')).selectIndex('Title (all)'),
-      rootModal.find(SearchField('Search field index')).fillIn(title),
-      rootModal.find(Button('Search')).click(),
+      rootModal.find(searchField).selectIndex('Title (all)'),
+      rootModal.find(searchField).fillIn(title),
+      rootModal.find(searchButton).click(),
     ]);
     cy.expect(rootModal.find(MultiColumnList()).has({ rowCount:1 }));
   },

@@ -6,11 +6,12 @@ import InventoryInstance from '../../support/fragments/inventory/inventoryInstan
 import InventoryInstanceEdit from '../../support/fragments/inventory/InventoryInstanceEdit';
 
 describe('ui-inventory: Assign a Preceding title for an instance', () => {
+  const instanceIds = [];
   const instanceTitle = `autoTestInstanceTitle.${getRandomPostfix()}`;
   const instanceTitle2 = `autoTestInstanceTitle.${getRandomPostfix()}`;
-  const precedingTitleValue = 'Preceding title test value';
-  const isbnValue = 'ISBN test value';
-  const issnValue = 'ISSN test value';
+  const precedingTitleValue = `Preceding title test value ${getRandomPostfix()}`;
+  const isbnValue = `ISBN test value ${getRandomPostfix()}`;
+  const issnValue = `ISSN test value ${getRandomPostfix()}`;
 
   before('navigate to Inventory', () => {
     cy.login(Cypress.env('diku_login'), Cypress.env('diku_password'));
@@ -30,10 +31,24 @@ describe('ui-inventory: Assign a Preceding title for an instance', () => {
             title: instanceTitle2,
             source: 'FOLIO',
           }
-        ]).each(instance => cy.createInstance({ instance }));
+        ]).each((instance, i) => cy.createInstance({ instance }).then(specialInstanceId => { instanceIds[i] = specialInstanceId; }));
       });
 
     cy.visit(TopMenu.inventoryPath);
+  });
+
+  after(() => {
+    cy.getInstanceById(instanceIds[0])
+      .then(body => {
+        const requestBody = body;
+        requestBody.precedingTitles = [];
+
+        // reset precedingTitles to get rid of tables dependencies and be able to delete the instances
+        cy.updateInstance(requestBody);
+      })
+      .then(() => {
+        instanceIds.forEach(instanceId => cy.deleteInstanceApi(instanceId));
+      });
   });
 
   it('C9215 In Accordion Title --> Test assigning a Preceding title', () => {
@@ -42,7 +57,6 @@ describe('ui-inventory: Assign a Preceding title for an instance', () => {
     InventoryInstance.editInstance();
     InventoryInstanceEdit.addPrecedingTitle(0, precedingTitleValue, isbnValue, issnValue);
     InventoryInstanceEdit.saveAndClose();
-    InventoryInstance.waitLoading();
     InventoryInstance.checkPrecedingTitle(0, precedingTitleValue, isbnValue, issnValue);
     InventoryInstance.editInstance();
     InventoryInstanceEdit.addExistingPrecedingTitle(instanceTitle2);

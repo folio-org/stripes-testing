@@ -8,7 +8,6 @@ import {
   FieldSet,
   Selection,
   including,
-  Pane,
 } from '../../../../interactors';
 import InteractorsTools from '../../utils/interactorsTools';
 import getRandomPostfix from '../../utils/stringTools';
@@ -17,6 +16,7 @@ import InventoryInstanceModal from './holdingsMove/inventoryInstanceSelectInstan
 const closeButton = Button({ icon: 'times' });
 const saveAndCloseButton = Button('Save and close');
 const rootSection = Section({ id: 'instance-form' });
+const actionsButton = Button('Actions');
 const value = `test.${getRandomPostfix()}`;
 
 export default {
@@ -98,14 +98,9 @@ export default {
     ]);
   },
   addExistingPrecedingTitle:(precedingTitle) => {
-    cy.do([
-      Button({ id: 'find-instance-trigger' }).click(),
-    ]);
+    cy.do(Button({ id: 'find-instance-trigger' }).click());
     InventoryInstanceModal.searchByTitle(precedingTitle);
     InventoryInstanceModal.selectInstance();
-  },
-  saveAndClose:() => {
-    cy.do(saveAndCloseButton.click());
   },
   choosePermanentLocation(locationName) {
     cy.do([
@@ -120,7 +115,7 @@ export default {
     ]);
   },
   saveAndClose: () => {
-    cy.do(Button({ id: 'clickable-save-item' }).click());
-    cy.expect(Pane({ title: including('Item') }).exists());
+    cy.do(saveAndCloseButton.click());
+    cy.expect(actionsButton.exists());
   }
 };
