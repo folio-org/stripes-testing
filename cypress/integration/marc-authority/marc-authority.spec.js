@@ -18,15 +18,13 @@ describe('MARC Authority management', () => {
   beforeEach(() => {
     const fileName = `autotestFile.${getRandomPostfix()}.mrc`;
 
-    // TODO: verify final set of permissions with PO
     cy.createTempUser([
-      Permissions.uiTenantSettingsSettingsLocation.gui,
-      Permissions.uiMarcAuthoritiesAuthorityRecordView.gui,
-      Permissions.uiMarcAuthoritiesAuthorityRecordEdit.gui,
-      Permissions.dataImportUploadAll.gui,
       Permissions.moduleDataImportEnabled.gui,
-      Permissions.converterStorageAll.gui,
-      Permissions.inventoryStorageAuthoritiesAll.gui
+      Permissions.uiMarcAuthoritiesAuthorityRecordEdit.gui,
+      Permissions.uiMarcAuthoritiesAuthorityRecordView.gui,
+      Permissions.uiQuickMarcQuickMarcAuthoritiesEditorAll.gui,
+      // TODO: clarify why TCs doesn't have this permission in precondition(C350666)
+      Permissions.dataImportUploadAll.gui,
     ]).then(userProperties => {
       userId = userProperties.userId;
       cy.login(userProperties.username, userProperties.password);
