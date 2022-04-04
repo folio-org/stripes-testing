@@ -12,12 +12,41 @@ import QuickMarcEditor from '../../support/fragments/quickMarcEditor';
 import { getLongDelay } from '../../support/utils/cypressTools';
 import MarcAuthorityBrowse from '../../support/fragments/marcAuthority/MarcAuthorityBrowse';
 
+const importFile = (profileName) => {
+  cy.log('profile name=' + profileName);
+  const uniqueFileName = `autotestFile.${getRandomPostfix()}.mrc`;
+  cy.visit(TopMenu.dataImportPath);
+
+  DataImport.uploadFile(MarcAuthority.defaultAuthority.name, uniqueFileName);
+  JobProfiles.waitLoadingList();
+  JobProfiles.select(profileName);
+  JobProfiles.runImportFile(uniqueFileName);
+  JobProfiles.openFileRecords(uniqueFileName);
+  DataImport.getLinkToAuthority(MarcAuthority.defaultAuthority.headingReference).then(link => {
+    cy.pause('link=' + link);
+    const jobLogEntryId = link.split('/').at(-2);
+    const recordId = link.split('/').at(-1);
+    cy.intercept({
+      method: 'GET',
+      url: `/metadata-provider/jobLogEntries/${jobLogEntryId}/records/${recordId}`,
+    }).as('getRecord');
+    cy.visit(link);
+    cy.wait('@getRecord', getLongDelay()).then(response => {
+      cy.pause(JSON.stringify(response.response.body));
+      const internalAuthorityId = response.response.body.relatedAuthorityInfo.idList[0];
+      cy.log('internalAuthorityId=' + internalAuthorityId);
+      cy.visit(TopMenu.marcAuthorities);
+      MarcAuthoritiesSearch.searchBy('Uniform title', MarcAuthority.defaultAuthority.headingReference);
+      MarcAuthorities.select(internalAuthorityId);
+      MarcAuthority.waitLoading();
+    });
+  });
+};
+
 describe('MARC Authority management', () => {
   let userId = '';
 
   beforeEach(() => {
-    const fileName = `autotestFile.${getRandomPostfix()}.mrc`;
-
     cy.createTempUser([
       Permissions.moduleDataImportEnabled.gui,
       Permissions.uiMarcAuthoritiesAuthorityRecordEdit.gui,
@@ -28,29 +57,7 @@ describe('MARC Authority management', () => {
     ]).then(userProperties => {
       userId = userProperties.userId;
       cy.login(userProperties.username, userProperties.password);
-      cy.visit(TopMenu.dataImportPath);
-
-      DataImport.uploadFile(MarcAuthority.defaultAuthority.name, fileName);
-      JobProfiles.waitLoadingList();
-      JobProfiles.select(MarcAuthority.defaultJobProfile);
-      JobProfiles.runImportFile(fileName);
-      JobProfiles.openFileRecords(fileName);
-      DataImport.getLinkToAuthority(MarcAuthority.defaultAuthority.headingReference).then(link => {
-        const jobLogEntryId = link.split('/').at(-2);
-        const recordId = link.split('/').at(-1);
-        cy.intercept({
-          method: 'GET',
-          url: `/metadata-provider/jobLogEntries/${jobLogEntryId}/records/${recordId}`,
-        }).as('getRecord');
-        cy.visit(link);
-        cy.wait('@getRecord', getLongDelay()).then(response => {
-          const internalAuthorityId = response.response.body.relatedAuthorityInfo.idList[0];
-          cy.visit(TopMenu.marcAuthorities);
-          MarcAuthoritiesSearch.searchBy('Uniform title', MarcAuthority.defaultAuthority.headingReference);
-          MarcAuthorities.select(internalAuthorityId);
-          MarcAuthority.waitLoading();
-        });
-      });
+      importFile(MarcAuthority.defaultCreateJobProfile);
     });
   });
 
@@ -59,16 +66,37 @@ describe('MARC Authority management', () => {
     QuickMarcEditor.waitLoading();
 
     const quickmarcEditor = new QuickMarcEditor(MarcAuthority.defaultAuthority);
-    const updatedInSourceRow = quickmarcEditor.addNewField();
-    const addedInSourceRow = quickmarcEditor.updateExistingField();
+    const addedInSourceRow = quickmarcEditor.addNewField();
+    const updatedInSourceRow = quickmarcEditor.updateExistingField();
     QuickMarcEditor.pressSaveAndClose();
     MarcAuthority.waitLoading();
-    MarcAuthority.contains(updatedInSourceRow);
     MarcAuthority.contains(addedInSourceRow);
+    MarcAuthority.contains(updatedInSourceRow);
 
-    MarcAuthoritiesSearch.searchBy('Uniform title', addedInSourceRow);
-    MarcAuthorities.checkRow(addedInSourceRow);
+    MarcAuthoritiesSearch.searchBy('Uniform title', updatedInSourceRow);
+    MarcAuthorities.checkRow(updatedInSourceRow);
     MarcAuthorities.checkRowsCount(1);
+  });
+
+  it.only('C350667 Update a MARC authority record via data import. Record match with 010 $a', { tags:  [TestTypes.smoke, Features.authority] }, () => {
+    MarcAuthority.edit();
+    QuickMarcEditor.waitLoading();
+
+    const quickmarcEditor = new QuickMarcEditor(MarcAuthority.defaultAuthority);
+    const addedInSourceRow = quickmarcEditor.addNewField();
+    const updatedInSourceRow = quickmarcEditor.updateExistingField();
+    QuickMarcEditor.pressSaveAndClose();
+
+    cy.visit(TopMenu.dataImportPath);
+
+    importFile(MarcAuthority.defaultUpdateJobProfile);
+    MarcAuthority.notContains(addedInSourceRow);
+    MarcAuthority.notContains(updatedInSourceRow);
+
+    // change 010 tag to future runs ability
+    MarcAuthority.edit();
+    QuickMarcEditor.waitLoading();
+    quickmarcEditor.updateExistingField('010', getRandomPostfix());
   });
 
   it('C350575  MARC Authority fields LEADER and 008 can not be deleted', { tags:  [TestTypes.smoke, Features.authority] }, () => {
@@ -95,7 +123,7 @@ describe('MARC Authority management', () => {
 
     DataImport.uploadFile(MarcAuthority.defaultAuthority.name, secondFileName);
     JobProfiles.waitLoadingList();
-    JobProfiles.select(MarcAuthority.defaultJobProfile);
+    JobProfiles.select(MarcAuthority.defaulCretJobProfile);
     JobProfiles.runImportFile(secondFileName);
 
     cy.visit(TopMenu.marcAuthorities);

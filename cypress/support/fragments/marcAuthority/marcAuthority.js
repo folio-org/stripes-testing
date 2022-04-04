@@ -1,6 +1,7 @@
 import { Section, Button, HTML, including, TextField } from '../../../../interactors';
 
-const defaultJobProfile = 'Default - Create SRS MARC Authority';
+const defaultCreateJobProfile = 'Default - Create SRS MARC Authority';
+const defaultUpdateJobProfile = 'Update authority by matching 010';
 const rootSection = Section({ id: 'marc-view-pane' });
 
 // related with cypress\fixtures\oneMarcAuthority.mrc
@@ -48,8 +49,11 @@ const defaultAuthority = { id:'176116217',
 
 export default {
   defaultAuthority,
-  defaultJobProfile,
+  defaultCreateJobProfile,
+  defaultUpdateJobProfile,
   waitLoading: () => cy.expect(rootSection.exists()),
   edit:() => cy.do(rootSection.find(Button('Edit')).click()),
-  contains: (expectedText) => cy.expect(rootSection.find(HTML(including(expectedText))).exists())
+  contains: (expectedText) => cy.expect(rootSection.find(HTML(including(expectedText))).exists()),
+  notContains: (expectedText) => cy.expect(rootSection.find(HTML(including(expectedText))).absent())
+
 };
