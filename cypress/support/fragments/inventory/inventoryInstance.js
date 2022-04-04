@@ -25,6 +25,7 @@ import InventoryViewSource from './inventoryViewSource';
 import NewHoldingsRecord from './newHoldingsRecord';
 import InventoryInstanceSelectInstanceModal from './holdingsMove/inventoryInstanceSelectInstanceModal';
 import InventoryInstancesMovement from './holdingsMove/inventoryInstancesMovement';
+import InventoryInstances from './inventoryInstances';
 
 const section = Section({ id: 'pane-instancedetails' });
 const actionsButton = section.find(Button('Actions'));
@@ -39,7 +40,6 @@ const addMarcHoldingRecordButton = Button({ id:'create-holdings-marc' });
 const viewHoldingsButton = Button('View holdings');
 const notesSection = Section({ id: 'instance-details-notes' });
 const moveItemsButton = Button({ id: 'move-instance-items' });
-const tagName = 'urgent';
 
 const instanceHRID = 'Instance HRID';
 const validOCLC = { id:'176116217',
@@ -225,7 +225,7 @@ export default {
     cy.do(Button({ ariaLabel: 'Close ' }).click());
     cy.expect(section.exists());
   },
-  addTag:() => {
+  addTag:(tagName) => {
     // wait for data to be loaded
     cy.intercept(
       {
@@ -242,12 +242,15 @@ export default {
   resetAll:() => {
     cy.do(Pane('Search & filter').find(Button('Reset all')).click());
   },
-  searchByTag:() => {
+  searchByTag:(tagName) => {
     cy.do(Button({ id:'accordion-toggle-button-instancesTags' }).click());
+    cy.do(Section({ id:'instancesTags' }).find(TextField()).fillIn(tagName));
+    cy.wait(5000);
     cy.do(Checkbox(tagName).click());
   },
-  checkAddedTag:(instanceTitle) => {
-    // cy.do(MultiColumnListRow({ rowIndexInParent: 'row-0' }).find(HTML(including(instanceTitle))).click());
-    cy.do(MultiColumnListRow({ rowIndexInParent: 'row-0' }).find(MultiColumnListCell({ row: 0, columnIndex: 1 })).find(HTML(including(instanceTitle))).click());
+
+  checkAddedTag:() => {
+    InventoryInstances.selectInstance();
+    cy.do(Button({ icon: 'tag' }).click());
   },
 };

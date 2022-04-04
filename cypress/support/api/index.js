@@ -18,3 +18,4 @@ import './batch-groups';
 import './data-import';
 import './invoice';
 import './instance';
+import './tag';

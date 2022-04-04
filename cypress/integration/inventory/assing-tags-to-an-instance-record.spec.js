@@ -7,7 +7,9 @@ import InventoryInstance from '../../support/fragments/inventory/inventoryInstan
 
 describe('ui-inventory: Assign tags to an Instance record', () => {
   const instanceTitle = `autoTestInstanceTitle.${getRandomPostfix()}`;
+  const tagName = `autotesttagname.${getRandomPostfix()}`;
   let instanceId;
+  let tagId;
 
   beforeEach(() => {
     cy.login(Cypress.env('diku_login'), Cypress.env('diku_password'));
@@ -25,20 +27,26 @@ describe('ui-inventory: Assign tags to an Instance record', () => {
           },
         }).then(specialInstanceId => { instanceId = specialInstanceId; });
       });
+
+    cy.createTagApi({
+      description: tagName,
+      label: tagName
+    }).then(specialTagId => { tagId = specialTagId; });
   });
 
   after(() => {
     //cy.deleteInstanceApi(instanceId);
+    //cy.deleteTagApi(tagId);
   });
 
   it('C196769 Assign tags to an Instance record', { tags: [TestTypes.smoke] }, () => {
     cy.visit(TopMenu.inventoryPath);
     InventorySearch.searchByParameter('Title (all)', instanceTitle);
     InventoryInstances.selectInstance();
-    //InventoryInstances.waitLoading();
-    InventoryInstance.addTag();
+    // InventoryInstances.waitLoading();
+    InventoryInstance.addTag(tagName);
     InventoryInstance.resetAll();
-    InventoryInstance.searchByTag(instanceTitle);
+    InventoryInstance.searchByTag(tagName);
     InventorySearch.searchByParameter('Title (all)', instanceTitle);
     InventoryInstance.checkAddedTag(instanceTitle);
   });
