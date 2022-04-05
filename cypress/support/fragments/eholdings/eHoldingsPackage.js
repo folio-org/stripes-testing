@@ -1,4 +1,4 @@
-import { Accordion, Button, Modal, Section, RadioButton, HTML, including, MultiSelect, KeyValue, MultiSelectOption, ValueChipRoot } from '../../../../interactors';
+import { Accordion, Button, Modal, Section, RadioButton, HTML, including, MultiSelect, KeyValue, MultiSelectOption, ValueChipRoot, Spinner } from '../../../../interactors';
 import getRandomPostfix from '../../utils/stringTools';
 import { getLongDelay } from '../../utils/cypressTools';
 
@@ -15,6 +15,12 @@ const titlesSection = Section({ id: 'packageShowTitles' });
 const confirmationModal = Modal({ id:'eholdings-confirmation-modal' });
 
 const getElementIdByName = (packageName) => packageName.replaceAll(' ', '-').toLowerCase();
+
+const waitTitlesLoading = () => cy.url().then(url => {
+  const packageId = url.split('?')[0].split('/').at(-1);
+  cy.intercept(`eholdings/packages/${packageId}/resources?**`).as('getTitles');
+  cy.wait('@getTitles', getLongDelay());
+});
 
 export default {
   filterStatuses,
@@ -38,21 +44,21 @@ export default {
     cy.do(selectionStatusAccordion.find(RadioButton(selectionStatus)).click());
     cy.do(titlesFilterModal.find(Button('Search')).click());
     cy.expect(titlesFilterModal.absent());
+    waitTitlesLoading().then(() => {
+      cy.expect(Spinner().absent());
+    });
   },
   verifyHoldingStatus:(expectedStatus = filterStatuses.selected) => {
     cy.expect(packageHoldingStatusSection.find(HTML(including(expectedStatus))).exists());
+    // TODO: request dynamic loading of titles
+    // need to load changed state of titles
+    cy.reload();
     cy.url().then(url => {
       const packageId = url.split('?')[0].split('/').at(-1);
       cy.intercept(`eholdings/packages/${packageId}/resources?**`).as('getTitles');
-      cy.wait('@getTitles', getLongDelay());
-
-      // related with delay of status changing of package related titles
-      cy.wait(3000);
-
-      cy.expect(titlesSection.find(HTML(including(expectedStatus))).exists());
-      [filterStatuses.selected, filterStatuses.selected.notSelected]
-        .filter(filterTitlesStatus => filterTitlesStatus !== expectedStatus)
-        .forEach(restStatus => cy.expect(titlesSection.find(HTML(including(restStatus))).absent()));
+      cy.wait('@getTitles', getLongDelay()).then(() => {
+        cy.expect(titlesSection.find(HTML(including(expectedStatus))).exists());
+      });
     });
   },
   checkEmptyTitlesList:() => {

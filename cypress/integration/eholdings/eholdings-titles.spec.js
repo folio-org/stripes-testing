@@ -47,7 +47,6 @@ describe('eHoldings titles management', () => {
     });
   });
 
-  // TODO: https://issues.folio.org/browse/UIEH-1256
   it('C700 Title: Add or Edit custom coverage', { tags:  [testTypes.smoke, features.eHoldings] }, () => {
     cy.createTempUser([permissions.uieHoldingsRecordsEdit.gui]).then(userProperties => {
       userId = userProperties.userId;
@@ -92,27 +91,23 @@ describe('eHoldings titles management', () => {
     });
   });
 
-  // TODO: https://issues.folio.org/browse/UIEH-1255
   it('C691 Remove a title in a package from your holdings', { tags:  [testTypes.smoke, features.eHoldings] }, () => {
     cy.createTempUser([permissions.uieHoldingsRecordsEdit.gui,
       permissions.uieHoldingsPackageTitleSelectUnselect.gui]).then(userProperties => {
       userId = userProperties.userId;
-      cy.login(userProperties.username, userProperties.password);
-      cy.visit(TopMenu.eholdingsPath);
-      eHoldingSearch.switchToTitles();
 
-      eHoldingsTitlesSearch.bySubject('chemical engineering');
-      eHoldingsTitlesSearch.byPublicationType('Journal');
-      eHoldingsTitlesSearch.bySelectionStatus(eHoldingsTitle.filterStatuses.selected);
-      eHoldingsTitles.openTitle();
-      eHoldingsTitle.waitPackagesLoading();
-      eHoldingsTitle.filterPackages(eHoldingsPackage.filterStatuses.selected);
-      eHoldingsTitle.waitPackagesLoading();
-      eHoldingsTitle.checkPackagesSelectionStatus(eHoldingsPackage.filterStatuses.selected);
-      eHoldingsTitle.openResource();
-      eHoldingsResourceView.checkHoldingStatus(eHoldingsTitle.filterStatuses.selected);
-      eHoldingsResourceView.removeTitleFromHolding();
-      eHoldingsResourceView.checkHoldingStatus(eHoldingsTitle.filterStatuses.notSelected);
+      eHoldingsTitles.getSelectedNotCustomTitleViaApi('chemical engineering').then(specialTitle => {
+        cy.login(userProperties.username, userProperties.password,
+          { path: `${TopMenu.eholdingsPath}/titles/${specialTitle.id}`, waiter: () => eHoldingsTitle.waitLoading(specialTitle.name) });
+        eHoldingsTitle.waitPackagesLoading();
+        eHoldingsTitle.filterPackages(eHoldingsPackage.filterStatuses.selected);
+        eHoldingsTitle.waitPackagesLoading();
+        eHoldingsTitle.checkPackagesSelectionStatus(eHoldingsPackage.filterStatuses.selected);
+        eHoldingsTitle.openResource();
+        eHoldingsResourceView.checkHoldingStatus(eHoldingsTitle.filterStatuses.selected);
+        eHoldingsResourceView.removeTitleFromHolding();
+        eHoldingsResourceView.checkHoldingStatus(eHoldingsTitle.filterStatuses.notSelected);
+      });
     });
   });
 
