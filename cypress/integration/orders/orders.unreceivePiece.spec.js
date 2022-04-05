@@ -8,7 +8,6 @@ import Helper from '../../support/fragments/finance/financeHelper';
 import InventorySearch from '../../support/fragments/inventory/inventorySearch';
 import InventoryInstance from '../../support/fragments/inventory/inventoryInstance';
 import InteractorsTools from '../../support/utils/interactorsTools';
-import OrdersHelper from '../../support/fragments/orders/ordersHelper';
 
 describe('orders: Unreceive piece from Order', () => {
   const order = { ...NewOrder.defaultOrder };
@@ -22,7 +21,7 @@ describe('orders: Unreceive piece from Order', () => {
         orderLine.physical.materialSupplier = organization.id;
         orderLine.eresource.accessProvider = organization.id;
       });
-    cy.getLocations({ query: `name="${OrdersHelper.mainLibraryLocation}"` })
+    cy.getLocations({ query: `name="${InventorySearch.getEffectiveLocation().name}"` })
       .then(location => { orderLine.locations[0].locationId = location.id; });
     cy.getMaterialTypes({ query: 'name="book"' })
       .then(materialType => { orderLine.physical.materialType = materialType.id; });
@@ -52,7 +51,7 @@ describe('orders: Unreceive piece from Order', () => {
         InventorySearch.switchToItem();
         InventorySearch.searchByParameter('Barcode', barcode);
         Helper.selectFromResultsList();
-        InventoryInstance.checkHoldingsTable(OrdersHelper.mainLibraryLocation, 0, caption, barcode, 'On order');
+        InventoryInstance.checkHoldingsTable(InventorySearch.getEffectiveLocation().name, 0, caption, barcode, 'On order');
       });
   });
 });

@@ -16,11 +16,17 @@ import InventoryActions from './inventoryActions';
 const effectiveLocationInput = Accordion({ id: 'effectiveLocation' });
 const languageInput = Accordion({ id: 'language' });
 const keywordInput = TextField({ id: 'input-inventory-search' });
+// TODO: move to tenant settings
+// TODO: redesign to test data generation
+const effectiveLocation = {
+  mainLibrary: { id: 'clickable-filter-effectiveLocation-main-library', name: 'Main Library' },
+  effectiveLocationInBugfest: { id: 'clickable-filter-effectiveLocation-uc-hp-jrl-gen', name: 'UC/HP/JRL/Gen' }
+};
+
+const getEffectiveLocation = () => (Cypress.env('OKAPI_HOST').includes('bugfest') ? effectiveLocation.effectiveLocationInBugfest : effectiveLocation.mainLibrary);
 
 export default {
-  effectiveLocation: {
-    mainLibrary: { id: 'clickable-filter-effectiveLocation-main-library' }
-  },
+  getEffectiveLocation,
   language: {
     eng: { id: 'clickable-filter-language-english' }
   },
@@ -42,7 +48,7 @@ export default {
   byEffectiveLocation(values) {
     return cy.do([
       effectiveLocationInput.clickHeader(),
-      effectiveLocationInput.find(Checkbox(values ?? this.effectiveLocation.mainLibrary)).click()
+      effectiveLocationInput.find(Checkbox(values ?? getEffectiveLocation().name)).click()
     ]);
   },
 
