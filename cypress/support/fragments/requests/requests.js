@@ -303,10 +303,11 @@ export default {
     cy.do(Checkbox({ name: 'Recall' }).click());
   },
 
-  verifyFilteredResults(requestType) {
+  REQUEST_TYPE_CELL: { columnIndex: 5 },
+  verifyIsFilteredByRequestType(requestType) {
     const values = [];
     cy.get('[data-row-index]').each($row => {
-      cy.get(`[class*="mclCell-"]:nth-child(${5})`, { withinSubject: $row })
+      cy.get(`[class*="mclCell-"]:nth-child(${this.REQUEST_TYPE_CELL.columnIndex})`, { withinSubject: $row })
         .invoke('text')
         .then(cellValue => {
           values.push(cellValue);

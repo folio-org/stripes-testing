@@ -35,7 +35,7 @@ describe('ui-requests: Make sure that request type filters are working properly'
     });
   });
 
-  after(() => {
+  afterEach(() => {
     instances.forEach(instance => {
       cy.deleteItem(instance.itemId);
       cy.deleteHoldingRecord(instance.holdingId);
@@ -57,7 +57,7 @@ describe('ui-requests: Make sure that request type filters are working properly'
     requests.forEach(({ requestType }) => {
       Requests.checkRequestType(requestType);
       Requests.waitUIFilteredByRequestType();
-      Requests.verifyFilteredResults(requestType);
+      Requests.verifyIsFilteredByRequestType(requestType);
       Requests.resetAllFilters();
     });
 
@@ -73,12 +73,12 @@ describe('ui-requests: Make sure that request type filters are working properly'
     requests.forEach(({ requestType }) => {
       Requests.checkRequestType(requestType);
       Requests.waitUIFilteredByRequestType();
-      Requests.verifyFilteredResults(requestType);
+      Requests.verifyIsFilteredByRequestType(requestType);
       Requests.navigateToApp('Data export');
       cy.expect(Pane({ title: 'Logs' }).exists());
       Requests.navigateToApp('Requests');
       Requests.verifyRequestTypeChecked(requestType);
-      Requests.verifyFilteredResults(requestType);
+      Requests.verifyIsFilteredByRequestType(requestType);
       Requests.resetAllFilters();
     });
 
