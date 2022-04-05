@@ -16,7 +16,6 @@ import {
   Link,
   MultiSelect,
   PaneHeader,
-  Pane
 } from '../../../../interactors';
 import InventoryActions from './inventoryActions';
 import InventoryInstanceEdit from './InventoryInstanceEdit';
@@ -53,6 +52,8 @@ const pressAddHoldingsButton = () => {
   NewHoldingsRecord.waitLoading();
 };
 const waitLoading = () => cy.expect(actionsButton.exists());
+const tagButton = Button({ icon: 'tag' });
+const closeTag = Button({ icon: 'times' });
 
 export default {
   validOCLC,
@@ -225,6 +226,7 @@ export default {
     cy.do(Button({ ariaLabel: 'Close ' }).click());
     cy.expect(section.exists());
   },
+
   addTag:(tagName) => {
     // wait for data to be loaded
     cy.intercept(
@@ -233,24 +235,38 @@ export default {
         url: '/remote-storage/mappings?*',
       }
     ).as('getMap');
-    cy.do(Button({ icon: 'tag' }).click());
+    cy.do(tagButton.click());
     cy.wait('@getMap');
     cy.do(MultiSelect().select([tagName]));
-    cy.do(PaneHeader('Tags').find(Button({ icon: 'times' })).click());
+    cy.do(PaneHeader('Tags').find(closeTag).click());
     cy.do(Button({ ariaLabel: 'Close ' }).click());
   },
-  resetAll:() => {
-    cy.do(Pane('Search & filter').find(Button('Reset all')).click());
-  },
-  searchByTag:(tagName) => {
-    cy.do(Button({ id:'accordion-toggle-button-instancesTags' }).click());
-    cy.do(Section({ id:'instancesTags' }).find(TextField()).fillIn(tagName));
-    cy.wait(5000);
-    cy.do(Checkbox(tagName).click());
+
+  checkAddedTag:(tagName) => {
+    InventoryInstances.selectInstance();
+    cy.do(tagButton.click());
+    // wait for data to be loaded
+    cy.intercept(
+      {
+        method: 'GET',
+        url: '/remote-storage/mappings?*',
+      }
+    ).as('getMap');
+    cy.expect(MultiSelect().exists(tagName));
+    cy.wait('@getMap');
   },
 
-  checkAddedTag:() => {
-    InventoryInstances.selectInstance();
-    cy.do(Button({ icon: 'tag' }).click());
+  deleteTag:(tagName) => {
+    // wait for data to be loaded
+    cy.intercept(
+      {
+        method: 'GET',
+        url: '/inventory/instances?*',
+      }
+    ).as('getInstance');
+    cy.do(MultiSelect().find(closeTag).click());
+    cy.expect(MultiSelect().find(HTML(including(tagName))).absent());
+    cy.expect(tagButton.find(HTML(including('0'))).exists());
+    cy.wait('@getInstance');
   },
 };

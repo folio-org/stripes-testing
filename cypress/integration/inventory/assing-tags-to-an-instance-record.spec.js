@@ -9,7 +9,6 @@ describe('ui-inventory: Assign tags to an Instance record', () => {
   const instanceTitle = `autoTestInstanceTitle.${getRandomPostfix()}`;
   const tagName = `autotesttagname.${getRandomPostfix()}`;
   let instanceId;
-  let tagId;
 
   beforeEach(() => {
     cy.login(Cypress.env('diku_login'), Cypress.env('diku_password'));
@@ -31,23 +30,23 @@ describe('ui-inventory: Assign tags to an Instance record', () => {
     cy.createTagApi({
       description: tagName,
       label: tagName
-    }).then(specialTagId => { tagId = specialTagId; });
+    });
   });
 
   after(() => {
     //cy.deleteInstanceApi(instanceId);
-    //cy.deleteTagApi(tagId);
+    //cy.deleteTagApi(Cypress.env('tagId'));
   });
 
   it('C196769 Assign tags to an Instance record', { tags: [TestTypes.smoke] }, () => {
     cy.visit(TopMenu.inventoryPath);
-    InventorySearch.searchByParameter('Title (all)', instanceTitle);
+    InventorySearch.searchInstanceByParameter('Title (all)', instanceTitle);
     InventoryInstances.selectInstance();
-    // InventoryInstances.waitLoading();
     InventoryInstance.addTag(tagName);
-    InventoryInstance.resetAll();
-    InventoryInstance.searchByTag(tagName);
-    InventorySearch.searchByParameter('Title (all)', instanceTitle);
-    InventoryInstance.checkAddedTag(instanceTitle);
+    InventoryInstances.resetAllFilters();
+    InventoryInstances.searchByTag(tagName);
+    InventorySearch.searchInstanceByParameter('Title (all)', instanceTitle);
+    InventoryInstance.checkAddedTag(tagName);
+    InventoryInstance.deleteTag(tagName);
   });
 });

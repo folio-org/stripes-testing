@@ -1,4 +1,4 @@
-import { HTML, including, Section, or, MultiColumnList, Button } from '../../../../interactors';
+import { HTML, including, Section, or, MultiColumnList, Button, Pane, TextField, Checkbox } from '../../../../interactors';
 import NewInventoryInstance from './newInventoryInstance';
 
 const rootSection = Section({ id: 'pane-results' });
@@ -21,5 +21,25 @@ export default {
     NewInventoryInstance.waitLoading();
     NewInventoryInstance.fillRequiredValues(title);
     NewInventoryInstance.save();
-  }
+  },
+
+  resetAllFilters:() => {
+    cy.do(Pane('Search & filter').find(Button('Reset all')).click());
+  },
+
+  searchByTag:(tagName) => {
+    cy.do(Button({ id:'accordion-toggle-button-instancesTags' }).click());
+    // wait for data to be loaded
+    cy.intercept(
+      {
+        method: 'GET',
+        url: '/search/instances/facets?*',
+      }
+    ).as('getInstance');
+    cy.do(Section({ id:'instancesTags' }).find(TextField()).fillIn(tagName));
+    cy.wait('@getInstance');
+    cy.get('#instancesTags input').type('{enter}');
+    cy.do(Checkbox(tagName).click());
+    cy.wait('@getInstance');
+  },
 };

@@ -165,7 +165,7 @@ export default {
     });
   },
 
-  searchByParameter: (parameter, value) => {
+  searchInstanceByParameter: (parameter, value) => {
     cy.do([
       SearchField({ id: 'input-inventory-search' }).selectIndex(parameter),
       SearchField({ id: 'input-inventory-search' }).fillIn(value),
