@@ -355,6 +355,7 @@ export default {
     } else if (requestType === this.requestTypes.RECALL) {
       cy.expect(Checkbox({ name: 'Recall' }).has({ checked: true }));
     }
+  },
 
   sortingColumns: [
     {
