@@ -47,7 +47,6 @@ describe('eHoldings titles management', () => {
     });
   });
 
-  // TODO: https://issues.folio.org/browse/UIEH-1256
   it('C700 Title: Add or Edit custom coverage', { tags:  [testTypes.smoke, features.eHoldings] }, () => {
     cy.createTempUser([permissions.uieHoldingsRecordsEdit.gui]).then(userProperties => {
       userId = userProperties.userId;
