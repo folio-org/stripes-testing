@@ -10,6 +10,7 @@ import MarcAuthoritiesSearch from '../../support/fragments/marcAuthority/marcAut
 import MarcAuthorities from '../../support/fragments/marcAuthority/marcAuthorities';
 import QuickMarcEditor from '../../support/fragments/quickMarcEditor';
 import { getLongDelay } from '../../support/utils/cypressTools';
+import MarcAuthorityBrowse from '../../support/fragments/marcAuthority/MarcAuthorityBrowse';
 
 describe('MARC Authority management', () => {
   let userId = '';
@@ -17,15 +18,13 @@ describe('MARC Authority management', () => {
   beforeEach(() => {
     const fileName = `autotestFile.${getRandomPostfix()}.mrc`;
 
-    // TODO: verify final set of permissions with PO
     cy.createTempUser([
-      Permissions.uiTenantSettingsSettingsLocation.gui,
-      Permissions.uiMarcAuthoritiesAuthorityRecordView.gui,
-      Permissions.uiMarcAuthoritiesAuthorityRecordEdit.gui,
-      Permissions.dataImportUploadAll.gui,
       Permissions.moduleDataImportEnabled.gui,
-      Permissions.converterStorageAll.gui,
-      Permissions.inventoryStorageAuthoritiesAll.gui
+      Permissions.uiMarcAuthoritiesAuthorityRecordEdit.gui,
+      Permissions.uiMarcAuthoritiesAuthorityRecordView.gui,
+      Permissions.uiQuickMarcQuickMarcAuthoritiesEditorAll.gui,
+      // TODO: clarify why TCs doesn't have this permission in precondition(C350666)
+      Permissions.dataImportUploadAll.gui,
     ]).then(userProperties => {
       userId = userProperties.userId;
       cy.login(userProperties.username, userProperties.password);
@@ -50,14 +49,15 @@ describe('MARC Authority management', () => {
           MarcAuthoritiesSearch.searchBy('Uniform title', MarcAuthority.defaultAuthority.headingReference);
           MarcAuthorities.select(internalAuthorityId);
           MarcAuthority.waitLoading();
-          MarcAuthority.edit();
-          QuickMarcEditor.waitLoading();
         });
       });
     });
   });
 
   it('C350572 Edit an Authority record', { tags:  [TestTypes.smoke, Features.authority] }, () => {
+    MarcAuthority.edit();
+    QuickMarcEditor.waitLoading();
+
     const quickmarcEditor = new QuickMarcEditor(MarcAuthority.defaultAuthority);
     const updatedInSourceRow = quickmarcEditor.addNewField();
     const addedInSourceRow = quickmarcEditor.updateExistingField();
@@ -72,15 +72,40 @@ describe('MARC Authority management', () => {
   });
 
   it('C350575  MARC Authority fields LEADER and 008 can not be deleted', { tags:  [TestTypes.smoke, Features.authority] }, () => {
+    MarcAuthority.edit();
+    QuickMarcEditor.waitLoading();
     QuickMarcEditor.checkNotDeletableTags('008', 'LDR');
   });
 
   it('C350575  Update 008 of Authority record', { tags:  [TestTypes.smoke, Features.authority] }, () => {
+    MarcAuthority.edit();
+    QuickMarcEditor.waitLoading();
+
     const quickmarcEditor = new QuickMarcEditor(MarcAuthority.defaultAuthority);
 
     const changedValueInSourceRow = quickmarcEditor.updateAllDefaultValuesIn008TagInAuthority();
     MarcAuthority.waitLoading();
     MarcAuthority.contains(changedValueInSourceRow);
+  });
+
+  it('C350578 Browse existing Authorities', { tags:  [TestTypes.smoke, Features.authority] }, () => {
+    // make one more import to get 2 marc authorities to check browse functionality
+    const secondFileName = `autotestFile.${getRandomPostfix()}_second.mrc`;
+    cy.visit(TopMenu.dataImportPath);
+
+    DataImport.uploadFile(MarcAuthority.defaultAuthority.name, secondFileName);
+    JobProfiles.waitLoadingList();
+    JobProfiles.select(MarcAuthority.defaultJobProfile);
+    JobProfiles.runImportFile(secondFileName);
+
+    cy.visit(TopMenu.marcAuthorities);
+    MarcAuthorities.switchToBrowse();
+    MarcAuthorityBrowse.waitEmptyTable();
+    MarcAuthorityBrowse.checkFiltersInitialState();
+    MarcAuthorityBrowse.searchBy('Uniform title', MarcAuthority.defaultAuthority.headingReference);
+    MarcAuthorityBrowse.waitLoading();
+    MarcAuthorityBrowse.checkPresentedColumns();
+    // TODO: add checking of records order
   });
 
   afterEach(() => {

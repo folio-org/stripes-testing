@@ -1,11 +1,12 @@
 import uuid from 'uuid';
-
 import {
   Button,
   KeyValue,
   Modal,
   Pane,
 } from '../../../interactors';
+import generateItemBarcode from '../../support/utils/generateItemBarcode';
+import EditRequest from '../../support/fragments/requests/edit-request';
 
 describe('Deleting user', () => {
   const lastName = 'Test-' + uuid();
@@ -97,11 +98,11 @@ describe('Deleting user', () => {
           requestDate: '2021-09-20T18:36:56Z',
         });
       })
-      .then(() => {
+      .then((request) => {
         verifyUserDeleteImpossible(userId);
 
-        cy.changeItemRequestApi({
-          ...Cypress.env('request'),
+        EditRequest.updateRequestApi({
+          ...request,
           status: 'Closed - Cancelled',
           cancelledByUserId: userId,
           cancellationReasonId: Cypress.env('cancellationReasons')[0].id,
@@ -111,7 +112,7 @@ describe('Deleting user', () => {
   });
 
   it('should be unable in case the user has open loans', function () {
-    const ITEM_BARCODE = Number(new Date()).toString();
+    const ITEM_BARCODE = generateItemBarcode();
     const user = Cypress.env('user');
     const servicePoint = Cypress.env('servicePoints')[0];
 

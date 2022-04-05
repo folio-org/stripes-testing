@@ -1,4 +1,4 @@
-import { Button, including, HTML, TextField, Select } from '../../../../interactors';
+import { Button, including, HTML, TextField, Select, Selection, SelectionList } from '../../../../interactors';
 
 const rootForm = HTML({ className: including('holdingsForm-') });
 const holdingsHrId = rootForm.find(TextField({ name: 'hrid' }));
@@ -14,5 +14,12 @@ export default {
     cy.expect(rootForm.exists());
   },
   checkReadOnlyFields:() => readonlyFields.forEach(element => cy.expect(element.has({ disabled: true }))),
-  closeWithoutSave : () => cy.do(rootForm.find(Button('Cancel')).click())
+  closeWithoutSave : () => cy.do(rootForm.find(Button('Cancel')).click()),
+  changePermanentLocation: (location) => {
+    cy.do([
+      Selection({ id: 'additem_permanentlocation' }).open(),
+      SelectionList().filter(location),
+      SelectionList().select(including(location)),
+    ]);
+  },
 };

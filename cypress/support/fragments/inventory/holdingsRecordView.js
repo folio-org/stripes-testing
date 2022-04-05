@@ -60,7 +60,10 @@ export default {
   getHoldingsHrId: () => cy.then(() => holdingHrIdKeyValue.value()),
   checkInstanceHrId: expectedInstanceHrId => cy.expect(root.find(KeyValue('Instance HRID')).has({ value:expectedInstanceHrId })),
   checkHrId: expectedHrId => cy.expect(holdingHrIdKeyValue.has({ value: expectedHrId })),
-  checkPermanentLocation: expectedLocation => cy.expect(KeyValue('Permanent', { value: expectedLocation }).exists()),
+  checkPermanentLocation: expectedLocation => {
+    // https://issues.folio.org/browse/UIIN-1980
+    cy.expect(KeyValue('Permanent', { value: expectedLocation }).exists());
+  },
   getId:() => {
     // parse hodling record id from current url
     cy.url().then(url => cy.wrap(url.split('?')[0].split('/').at(-1)).as('holdingsRecorId'));
