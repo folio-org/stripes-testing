@@ -7,7 +7,7 @@ const DEFAULT_INSTANCE = {
   previouslyHeld: false,
 };
 
-Cypress.Commands.add('getInstanceById', (instanceId) => {
+Cypress.Commands.add('getInstanceById', instanceId => {
   return cy
     .okapiRequest({
       path: `inventory/instances/${instanceId}`,
