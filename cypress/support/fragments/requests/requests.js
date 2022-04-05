@@ -193,7 +193,7 @@ function setRequestPolicyApi(requestTypes = ['Page', 'Hold', 'Recall']) {
       cy.okapiRequest({
         method: 'POST',
         path: 'request-policy-storage/request-policies',
-        body: { id: uuid(), name: `test_all_${uuid().slice(0, 6)}`, requestTypes },
+        body: { id: uuid(), name: `test_all_${uuid().substring(0, 6)}`, requestTypes },
       })
         .then(({ body: policy }) => {
           rule.rulesAsText = rule.rulesAsText.replace(regexp, `r ${policy.id}`);

@@ -2,7 +2,7 @@ import uuid from 'uuid';
 import TestTypes from '../../support/dictionary/testTypes';
 import Requests from '../../support/fragments/requests/requests';
 import TopMenu from '../../support/fragments/topMenu';
-import { Pane } from '../../../interactors';
+import { MultiColumnList, Pane } from '../../../interactors';
 
 describe('ui-requests: Make sure that request type filters are working properly', () => {
   const requests = [];
@@ -62,10 +62,12 @@ describe('ui-requests: Make sure that request type filters are working properly'
     });
 
     // Verify good message displayed when no results found
-    Requests.selectRecallsRequestType();
-    Requests.findCreatedRequest(doesNotExistRequest);
-    Requests.verifyNoResultMessage(getNoResultMessage(doesNotExistRequest));
-    Requests.resetAllFilters();
+    requests.forEach(({ requestType }) => {
+      Requests.checkRequestType(requestType);
+      Requests.findCreatedRequest(doesNotExistRequest);
+      Requests.verifyNoResultMessage(getNoResultMessage(doesNotExistRequest));
+      Requests.resetAllFilters();
+    });
 
     // Navigate to other apps and back to ensure the filters are saved
     requests.forEach(({ requestType }) => {
