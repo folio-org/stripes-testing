@@ -6,7 +6,7 @@ import TestType from '../../../support/dictionary/testTypes';
 describe('ui-invoices-settings: System Batch Group deletion', () => {
   const batchGroup = { ...NewBatchGroup.defaultUiBatchGroup };
   const systemBatchGroup = { ...NewBatchGroup.defaultUiBatchGroup };
-  const systemBatchGroupName = 'FOLIO';
+  const systemBatchGroupName = '000autotest_group_442.8974220083648736';
   const systemBatchGroupDescription = 'System default';
   before(() => {
     cy.login(Cypress.env('diku_login'), Cypress.env('diku_password'));
