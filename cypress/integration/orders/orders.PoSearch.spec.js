@@ -5,7 +5,7 @@ import Orders from '../../support/fragments/orders/orders';
 import TopMenu from '../../support/fragments/topMenu';
 import DateTools from '../../support/utils/dateTools';
 import SearchHelper from '../../support/fragments/finance/financeHelper';
-import OrdersHelper from '../../support/fragments/orders/ordersHelper';
+import InventorySearch from '../../support/fragments/inventory/inventorySearch';
 
 describe('orders: Test PO search', () => {
   const order = { ...NewOrder.defaultOrder };
@@ -19,7 +19,7 @@ describe('orders: Test PO search', () => {
         orderLine.physical.materialSupplier = organization.id;
         orderLine.eresource.accessProvider = organization.id;
       });
-    cy.getLocations({ query: `name="${OrdersHelper.mainLibraryLocation}"` })
+    cy.getLocations({ query: `name="${InventorySearch.getEffectiveLocation().name}"` })
       .then(location => { orderLine.locations[0].locationId = location.id; });
     cy.getMaterialTypes({ query: 'name="book"' })
       .then(materialType => { orderLine.physical.materialType = materialType.id; });

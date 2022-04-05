@@ -9,7 +9,6 @@ import HoldingsRecordView from '../../support/fragments/inventory/holdingsRecord
 import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
 import InventoryViewSource from '../../support/fragments/inventory/inventoryViewSource';
 import Features from '../../support/dictionary/features';
-import OrdersHelper from '../../support/fragments/orders/ordersHelper';
 
 const successCalloutMessage = '1 item has been successfully moved.';
 
@@ -29,10 +28,10 @@ describe('ui-inventory: moving items', () => {
     InventorySearch.selectSearchResultItem();
     InventoryInstance.openMoveItemsWithinAnInstance();
 
-    InventoryInstance.moveItemToAnotherHolding(OrdersHelper.mainLibraryLocation, secondHolding);
+    InventoryInstance.moveItemToAnotherHolding(InventorySearch.getEffectiveLocation().name, secondHolding);
     InteractorsTools.checkCalloutMessage(successCalloutMessage);
 
-    InventoryInstance.returnItemToFirstHolding(OrdersHelper.mainLibraryLocation, secondHolding);
+    InventoryInstance.returnItemToFirstHolding(InventorySearch.getEffectiveLocation().name, secondHolding);
     InteractorsTools.checkCalloutMessage(successCalloutMessage);
   });
 
