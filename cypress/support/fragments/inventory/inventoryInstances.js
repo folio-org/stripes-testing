@@ -13,7 +13,16 @@ export default {
       rootSection.find(HTML(including('No results found'))).exists());
   },
   selectInstance:(rowNumber = 0) => {
+    cy.intercept('/holdings-storage/holdings?limit=1000&query=instanceId**').as('getHoldings');
+    cy.intercept('/remote-storage/mappings?*').as('getMap');
+    cy.intercept('/copycat/profiles?**').as('getCopycat');
+    cy.intercept('/orders/titles?**').as('getTitles');
+    cy.intercept('/copycat/profiles?**').as('getCopycat');
+
     cy.do(inventoriesList.click({ row: rowNumber }));
+
+    cy.wait(['@getHoldings', '@getMap']);
+    cy.wait(['@getTitles', '@getCopycat']);
   },
   add: (title) => {
     cy.do(actionsButton.click());

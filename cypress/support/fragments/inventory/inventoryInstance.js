@@ -1,3 +1,4 @@
+import { TextField } from '@interactors/html';
 import {
   MultiColumnList,
   HTML,
@@ -17,7 +18,7 @@ import {
   MultiSelect,
   Pane,
   MultiSelectMenu,
-  TextField,
+  Spinner,
 } from '../../../../interactors';
 import InventoryActions from './inventoryActions';
 import InventoryInstanceEdit from './InventoryInstanceEdit';
@@ -231,19 +232,21 @@ export default {
   },
 
   addTag:(tagName) => {
-    // wait for data to be loaded
-    cy.intercept(
-      {
-        method: 'GET',
-        url: '/remote-storage/mappings?*',
-      }
-    ).as('getMap');
+    cy.intercept('/tags?limit=10000').as('getTags');
     cy.do(tagButton.click());
-    cy.wait('@getMap');
+    cy.wait(['@getTags']);
+    // TODO: clarify with developers what should be waited
+    cy.wait(1000);
 
     cy.do(tagsPane.find(TextField({ id:'input-tag-input' })).click());
     cy.expect(tagsPane.find(MultiSelectMenu()).exists());
+    cy.expect(tagsPane.find(MultiSelectMenu()).find(HTML(including(tagName))).exists());
+
+    cy.expect(Pane({ id: 'pane-instancedetails' }).find(Spinner()).absent());
+
+
     cy.do(tagsPane.find(MultiSelect({ id:'input-tag' })).select(tagName));
+
     cy.expect(tagsPane.find(MultiSelect({ id:'input-tag' })).has({ selectedCount:1 }));
     cy.do(tagsPane.find(closeTag).click());
     cy.do(Button({ ariaLabel: 'Close ' }).click());
