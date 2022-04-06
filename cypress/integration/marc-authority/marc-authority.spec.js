@@ -12,8 +12,12 @@ import QuickMarcEditor from '../../support/fragments/quickMarcEditor';
 import { getLongDelay } from '../../support/utils/cypressTools';
 import MarcAuthorityBrowse from '../../support/fragments/marcAuthority/MarcAuthorityBrowse';
 
+
+let userId = '';
+const marcAuthorityIds = new Set();
+
+
 const importFile = (profileName) => {
-  cy.log('profile name=' + profileName);
   const uniqueFileName = `autotestFile.${getRandomPostfix()}.mrc`;
   cy.visit(TopMenu.dataImportPath);
 
@@ -23,7 +27,6 @@ const importFile = (profileName) => {
   JobProfiles.runImportFile(uniqueFileName);
   JobProfiles.openFileRecords(uniqueFileName);
   DataImport.getLinkToAuthority(MarcAuthority.defaultAuthority.headingReference).then(link => {
-    cy.pause('link=' + link);
     const jobLogEntryId = link.split('/').at(-2);
     const recordId = link.split('/').at(-1);
     cy.intercept({
@@ -32,9 +35,9 @@ const importFile = (profileName) => {
     }).as('getRecord');
     cy.visit(link);
     cy.wait('@getRecord', getLongDelay()).then(response => {
-      cy.pause(JSON.stringify(response.response.body));
       const internalAuthorityId = response.response.body.relatedAuthorityInfo.idList[0];
-      cy.log('internalAuthorityId=' + internalAuthorityId);
+
+      marcAuthorityIds.add(MarcAuthority.defaultAuthority.libraryOfCongressControlNumber);
       cy.visit(TopMenu.marcAuthorities);
       MarcAuthoritiesSearch.searchBy('Uniform title', MarcAuthority.defaultAuthority.headingReference);
       MarcAuthorities.select(internalAuthorityId);
@@ -44,8 +47,6 @@ const importFile = (profileName) => {
 };
 
 describe('MARC Authority management', () => {
-  let userId = '';
-
   beforeEach(() => {
     cy.createTempUser([
       Permissions.moduleDataImportEnabled.gui,
@@ -61,7 +62,7 @@ describe('MARC Authority management', () => {
     });
   });
 
-  it('C350572 Edit an Authority record', { tags:  [TestTypes.smoke, Features.authority] }, () => {
+  it.only('C350572 Edit an Authority record', { tags:  [TestTypes.smoke, Features.authority] }, () => {
     MarcAuthority.edit();
     QuickMarcEditor.waitLoading();
 
@@ -78,7 +79,7 @@ describe('MARC Authority management', () => {
     MarcAuthorities.checkRowsCount(1);
   });
 
-  it.only('C350667 Update a MARC authority record via data import. Record match with 010 $a', { tags:  [TestTypes.smoke, Features.authority] }, () => {
+  it('C350667 Update a MARC authority record via data import. Record match with 010 $a', { tags:  [TestTypes.smoke, Features.authority] }, () => {
     MarcAuthority.edit();
     QuickMarcEditor.waitLoading();
 
@@ -93,10 +94,10 @@ describe('MARC Authority management', () => {
     MarcAuthority.notContains(addedInSourceRow);
     MarcAuthority.notContains(updatedInSourceRow);
 
-    // change 010 tag to future runs ability
-    MarcAuthority.edit();
-    QuickMarcEditor.waitLoading();
-    quickmarcEditor.updateExistingField('010', getRandomPostfix());
+    // // change 010 tag to future runs ability
+    // MarcAuthority.edit();
+    // QuickMarcEditor.waitLoading();
+    // quickmarcEditor.updateExistingField('010', getRandomPostfix());
   });
 
   it('C350575  MARC Authority fields LEADER and 008 can not be deleted', { tags:  [TestTypes.smoke, Features.authority] }, () => {
@@ -137,6 +138,7 @@ describe('MARC Authority management', () => {
   });
 
   afterEach(() => {
+    marcAuthorityIds.forEach(marcAuthorityId => MarcAuthority.deleteViaAPI(marcAuthorityId));
     cy.deleteUser(userId);
   });
 });

@@ -10,6 +10,7 @@ const defaultAuthority = { id:'176116217',
   lastRowNumber: 18,
   // it should be presented in marc bib one time to correct work(applicable in update of record)
   existingTag: '130',
+  libraryOfCongressControlNumber: '42008104',
   headingReference: 'Congress and foreign policy series',
   name: 'oneMarcAuthority.mrc',
   tag008AuthorityBytesProperties : {
@@ -54,6 +55,14 @@ export default {
   waitLoading: () => cy.expect(rootSection.exists()),
   edit:() => cy.do(rootSection.find(Button('Edit')).click()),
   contains: (expectedText) => cy.expect(rootSection.find(HTML(including(expectedText))).exists()),
-  notContains: (expectedText) => cy.expect(rootSection.find(HTML(including(expectedText))).absent())
+  notContains: (expectedText) => cy.expect(rootSection.find(HTML(including(expectedText))).absent()),
+  deleteViaAPI:(internalAuthorityId) => {
+    cy.okapiRequest({
+      method: 'DELETE',
+      isDefaultSearchParamsRequired : false,
+      path: 'authority-storage/authorities',
+      searchParams: { authorityId: internalAuthorityId }
+    });
+  }
 
 };
