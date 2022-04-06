@@ -1,4 +1,5 @@
 import uuid from 'uuid';
+import { HTML, including } from '@interactors/html';
 import {
   Button,
   MultiColumnListCell,
@@ -10,8 +11,11 @@ import {
   ValueChipRoot,
   Checkbox,
   TextField,
-  Badge
+  Badge, Section
 } from '../../../../interactors';
+
+const requestsResultsSection = Section({ id: 'pane-results' });
+const appsButton = Button({ id: 'app-list-dropdown-toggle' });
 
 /**
  * Creates a request with associated item (instance) and user.
@@ -21,11 +25,11 @@ import {
  * @param {('Item'|'Title')} [requestLevel=Item]
  * @returns {Object}
  */
-const createRequestApi = (
+function createRequestApi(
   itemStatus = 'Available',
   requestType = 'Page',
   requestLevel = 'Item',
-) => {
+) {
   const userData = {
     active: true,
     barcode: uuid(),
@@ -153,20 +157,66 @@ const createRequestApi = (
         };
       });
     });
-};
+}
 
-const deleteRequestApi = (requestId) => {
+function deleteRequestApi(requestId) {
   return cy.okapiRequest({
     method: 'DELETE',
     path: `circulation/requests/${requestId}`,
     isDefaultSearchParamsRequired: false,
   });
-};
+}
 
+function updateCirculationRulesApi(ruleText) {
+  return cy.okapiRequest({
+    method: 'PUT',
+    path: 'circulation/rules',
+    body: { rulesAsText: ruleText },
+    isDefaultSearchParamsRequired: false,
+  });
+}
+
+function setRequestPolicyApi(requestTypes = ['Page', 'Hold', 'Recall']) {
+  /**
+   * rule comes in bespoke text format, and we need to update 'r <someId>' part.
+   * rulesAsText: "priority: number-of-criteria, criterium (t, s, c, b, a, m, g), last-line\n
+                  fallback-policy: ... r 334e5a9e-94f9-4673-8d1d-ab552863886b ..."
+   */
+  const regexp = /(?<=\s)r\s+[a-zA-Z0-9-]+(?=\s)/;
+  let oldRulesAsText;
+
+  return cy.okapiRequest({
+    path: 'circulation/rules',
+    isDefaultSearchParamsRequired: false,
+  })
+    .then(({ body: rule }) => {
+      oldRulesAsText = rule.rulesAsText;
+      cy.okapiRequest({
+        method: 'POST',
+        path: 'request-policy-storage/request-policies',
+        body: { id: uuid(), name: `test_all_${uuid().substring(0, 6)}`, requestTypes },
+      })
+        .then(({ body: policy }) => {
+          rule.rulesAsText = rule.rulesAsText.replace(regexp, `r ${policy.id}`);
+          updateCirculationRulesApi(rule.rulesAsText).then(() => ({ oldRulesAsText, policy }));
+        });
+    });
+}
+
+function deleteRequestPolicyApi(policyId) {
+  return cy.okapiRequest({
+    method: 'DELETE',
+    path: `request-policy-storage/request-policies/${policyId}`,
+    isDefaultSearchParamsRequired: false,
+  });
+}
 
 export default {
   createRequestApi,
   deleteRequestApi,
+  setRequestPolicyApi,
+  deleteRequestPolicyApi,
+  updateCirculationRulesApi,
 
   removeCreatedRequest() {
     cy.do([
@@ -240,6 +290,73 @@ export default {
     cy.wait('@getTags');
   },
 
+  requestTypes: { PAGE: 'Page', HOLD: 'Hold', RECALL: 'Recall' },
+
+  selectHoldsRequestType() {
+    cy.do(Checkbox({ name: 'Hold' }).click());
+  },
+
+  selectPagesRequestType() {
+    cy.do(Checkbox({ name: 'Page' }).click());
+  },
+
+  selectRecallsRequestType() {
+    cy.do(Checkbox({ name: 'Recall' }).click());
+  },
+
+  REQUEST_TYPE_CELL: { columnIndex: 5 },
+  verifyIsFilteredByRequestType(requestType) {
+    const values = [];
+    cy.get('[data-row-index]').each($row => {
+      cy.get(`[class*="mclCell-"]:nth-child(${this.REQUEST_TYPE_CELL.columnIndex})`, { withinSubject: $row })
+        .invoke('text')
+        .then(cellValue => {
+          values.push(cellValue);
+        });
+    })
+      .then(() => {
+        const isFiltered = values.every(value => value === requestType);
+        expect(isFiltered).to.equal(true);
+      });
+  },
+
+  waitUIFilteredByRequestType() {
+    cy.intercept('GET', 'circulation/requests*').as('getFilteredRequests');
+    cy.wait('@getFilteredRequests');
+  },
+
+  verifyCreatedRequest(title) {
+    cy.expect(Pane({ title: 'Requests' }).find(MultiColumnListCell({ row: 0, column: title })).exists());
+  },
+
+  verifyNoResultMessage(noResultMessage) {
+    cy.expect(requestsResultsSection.find(HTML(including(noResultMessage))).exists());
+  },
+
+  navigateToApp(appName) {
+    cy.do([appsButton.click(), Button(appName).click()]);
+  },
+
+  checkRequestType(requestType) {
+    if (requestType === this.requestTypes.PAGE) {
+      this.selectPagesRequestType();
+    } else if (requestType === this.requestTypes.HOLD) {
+      this.selectHoldsRequestType();
+    } else if (requestType === this.requestTypes.RECALL) {
+      this.selectRecallsRequestType();
+    }
+  },
+
+  verifyRequestTypeChecked(requestType) {
+    if (requestType === this.requestTypes.PAGE) {
+      cy.expect(Checkbox({ name: 'Page' }).has({ checked: true }));
+    } else if (requestType === this.requestTypes.HOLD) {
+      cy.expect(Checkbox({ name: 'Hold' }).has({ checked: true }));
+    } else if (requestType === this.requestTypes.RECALL) {
+      cy.expect(Checkbox({ name: 'Recall' }).has({ checked: true }));
+    }
+  },
+
   sortingColumns: [
     {
       title: 'Title',
@@ -267,8 +384,6 @@ export default {
       columnIndex: 9,
     },
   ],
-
-  requestTypes: { PAGE: 'Page', HOLD: 'Hold', RECALL: 'Recall' },
 
   checkAllRequestTypes() {
     Object.values(this.requestTypes).forEach(requestType => {
