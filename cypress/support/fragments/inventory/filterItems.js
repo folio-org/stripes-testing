@@ -1,19 +1,32 @@
-import { Checkbox, Button, Accordion, MultiColumnListCell } from '../../../../interactors';
+import { Checkbox, Button, Accordion, MultiColumnListCell, MultiColumnList, TextField } from '../../../../interactors';
 
 export default {
+  itemStatuses: ['Available', 'Checked out', 'On order', 'In process', 'Awaiting pickup', 'Awaiting delivery', 'In transit', 'Missing', 'Withdrawn', 'Claimed returned', 'Declared lost', 'Lost and paid', 'Paged', 'Order closed'],
+
   toggleStatus(statusName) {
+    cy.do(TextField({ label: 'itemStatus-field' }).fillIn(statusName));
     cy.do(Checkbox(statusName).click());
   },
-  switchToItem: () => {
-    cy.do(Button({ id: 'segment-navigation-items' }).click());
-  },
+
   toggleItemStatusAccordion() {
     cy.do(Accordion('Item status').clickHeader());
   },
-  selectFirstItem() {
-    cy.do(MultiColumnListCell({ row: 0, columnIndex: 0 }).click());
+
+  selectInstance(title) {
+    cy.do(MultiColumnListCell(title).click());
   },
-  waitLoading() {
-    cy.wait('@getInstanceRelationshipTypes');
-  }
+
+  toggleAccordionItemsButton(holdingId) {
+    cy.do(Button({ id: `accordion-toggle-button-${holdingId}` }).click());
+  },
+
+  verifyItemWithStatusExists(holdingId, status) {
+    cy.expect(MultiColumnList({ id: `list-items-${holdingId}` }).find(MultiColumnListCell(status)).exists());
+  },
+
+  waitItemsLoading() {
+    cy.wait(['@getItems', '@getTitles', '@getHoldings']);
+  },
 };
+
+
