@@ -33,13 +33,12 @@ export default {
     cy.intercept(
       {
         method: 'GET',
-        url: '/search/instances/facets?*',
+        url: '/search/instances/facets?facet=instanceTags**',
       }
-    ).as('getInstance');
+    ).as('getTags');
+    cy.do(Section({ id:'instancesTags' }).find(TextField()).click());
     cy.do(Section({ id:'instancesTags' }).find(TextField()).fillIn(tagName));
-    cy.wait('@getInstance');
-    cy.get('#instancesTags input').type('{enter}');
+    cy.wait('@getTags');
     cy.do(Checkbox(tagName).click());
-    cy.wait('@getInstance');
   },
 };

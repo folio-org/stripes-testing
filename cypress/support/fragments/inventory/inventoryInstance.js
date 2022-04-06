@@ -15,7 +15,9 @@ import {
   MultiColumnListRow,
   Link,
   MultiSelect,
-  PaneHeader,
+  Pane,
+  MultiSelectMenu,
+  TextField,
 } from '../../../../interactors';
 import InventoryActions from './inventoryActions';
 import InventoryInstanceEdit from './InventoryInstanceEdit';
@@ -54,6 +56,7 @@ const pressAddHoldingsButton = () => {
 const waitLoading = () => cy.expect(actionsButton.exists());
 const tagButton = Button({ icon: 'tag' });
 const closeTag = Button({ icon: 'times' });
+const tagsPane = Pane('Tags');
 
 export default {
   validOCLC,
@@ -237,8 +240,12 @@ export default {
     ).as('getMap');
     cy.do(tagButton.click());
     cy.wait('@getMap');
-    cy.do(MultiSelect().select([tagName]));
-    cy.do(PaneHeader('Tags').find(closeTag).click());
+
+    cy.do(tagsPane.find(TextField({ id:'input-tag-input' })).click());
+    cy.expect(tagsPane.find(MultiSelectMenu()).exists());
+    cy.do(tagsPane.find(MultiSelect({ id:'input-tag' })).select(tagName));
+    cy.expect(tagsPane.find(MultiSelect({ id:'input-tag' })).has({ selectedCount:1 }));
+    cy.do(tagsPane.find(closeTag).click());
     cy.do(Button({ ariaLabel: 'Close ' }).click());
   },
 
