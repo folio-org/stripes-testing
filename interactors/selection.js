@@ -44,6 +44,7 @@ export default HTML.extend('selection')
   .filters({
     id: (el) => el.querySelector('[class^=selectionControl-]').id,
     value: (el) => el.querySelector('button').textContent,
+    singleValue:(el) => el.querySelector('button [class^=singleValue-]').textContent,
     error: (el) => el.querySelector('[class^=feedbackError]').textContent,
     warning: (el) => el.querySelector('[class^=feedbackWarning]').textContent,
     open: (el) => {
