@@ -9,7 +9,6 @@ import HoldingsRecordView from '../../support/fragments/inventory/holdingsRecord
 import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
 import InventoryViewSource from '../../support/fragments/inventory/inventoryViewSource';
 import Features from '../../support/dictionary/features';
-import OrdersHelper from '../../support/fragments/orders/ordersHelper';
 
 const successCalloutMessage = '1 item has been successfully moved.';
 
@@ -29,14 +28,13 @@ describe('ui-inventory: moving items', () => {
     InventorySearch.selectSearchResultItem();
     InventoryInstance.openMoveItemsWithinAnInstance();
 
-    InventoryInstance.moveItemToAnotherHolding(OrdersHelper.mainLibraryLocation, secondHolding);
+    InventoryInstance.moveItemToAnotherHolding(InventorySearch.getEffectiveLocation().name, secondHolding);
     InteractorsTools.checkCalloutMessage(successCalloutMessage);
 
-    InventoryInstance.returnItemToFirstHolding(OrdersHelper.mainLibraryLocation, secondHolding);
+    InventoryInstance.returnItemToFirstHolding(InventorySearch.getEffectiveLocation().name, secondHolding);
     InteractorsTools.checkCalloutMessage(successCalloutMessage);
   });
 
-  // TODO: https://issues.folio.org/browse/UIIN-1963
   it('C345404 Move holdings record with Source = MARC to an instance record with source = MARC', { tags:  [TestTypes.smoke, Features.eHoldings] }, () => {
     InventoryActions.import();
     InventoryInstance.getAssignedHRID().then(initialInstanceHrId => {
