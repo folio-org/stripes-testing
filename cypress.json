@@ -3,7 +3,7 @@
   "viewportWidth": 1920,
   "viewportHeight": 1080,
   "video": false,
-  "defaultCommandTimeout": 151000,
+  "defaultCommandTimeout": 31000,
   "pageLoadTimeout": 120000,
   "env": {
     "OKAPI_HOST": "https://folio-snapshot-okapi.dev.folio.org",
