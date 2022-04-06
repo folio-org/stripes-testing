@@ -8,14 +8,14 @@ Cypress.Commands.add('getInstanceIdApi', (searchParams) => {
     });
 });
 
-Cypress.Commands.add('getInstance', (searchParams) => {
+Cypress.Commands.add('getInstances', (searchParams) => {
   cy.okapiRequest({
     method: 'GET',
     path: 'search/instances',
     searchParams,
     isDefaultSearchParamsRequired: false
   }).then(({ body }) => {
-    return body.instances[0];
+    Cypress.env('instances', body.instances);
   });
 });
 
