@@ -20,7 +20,9 @@ const keywordInput = TextField({ id: 'input-inventory-search' });
 // TODO: redesign to test data generation
 const effectiveLocation = {
   mainLibrary: { id: 'clickable-filter-effectiveLocation-main-library', name: 'Main Library' },
-  effectiveLocationInBugfest: { id: 'clickable-filter-effectiveLocation-uc-hp-jrl-gen', name: 'UC/HP/JRL/Gen' }
+  // current test bugfest has the same effective locations as snapshot
+  // effectiveLocationInBugfest: { id: 'clickable-filter-effectiveLocation-uc-hp-jrl-gen', name: 'UC/HP/JRL/Gen' }
+  effectiveLocationInBugfest: { id:'clickable-filter-effectiveLocation-main-library', name: 'Main Library' }
 };
 
 const getEffectiveLocation = () => (Cypress.env('OKAPI_HOST').includes('bugfest') ? effectiveLocation.effectiveLocationInBugfest : effectiveLocation.mainLibrary);
