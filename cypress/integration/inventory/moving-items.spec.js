@@ -73,7 +73,7 @@ describe('ui-inventory: moving items', () => {
               ],
             });
           });
-      }).then(() => { console.log(Cypress.env('locations')); console.log(ITEM_BARCODE); });
+      });
   });
 
   after('Delete all data', () => {
