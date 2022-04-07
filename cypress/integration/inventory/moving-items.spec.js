@@ -76,19 +76,19 @@ describe('ui-inventory: moving items', () => {
       });
   });
 
-  // after('Delete all data', () => {
-  //   cy.getInstance({ limit: 1, expandAll: true, query: `"items.barcode"=="${ITEM_BARCODE}"` })
-  //     .then(() => {
-  //       cy.deleteItem(Cypress.env('instances')[0].items[0].id);
-  //       cy.deleteHoldingRecord(Cypress.env('instances')[0].holdings[0].id);
-  //       cy.deleteHoldingRecord(Cypress.env('instances')[0].holdings[1].id);
-  //       cy.deleteInstanceApi(Cypress.env('instances')[0].id);
-  //     });
-  //   cy.deleteUser(userId);
-  // });
+  after('Delete all data', () => {
+    cy.getInstance({ limit: 1, expandAll: true, query: `"items.barcode"=="${ITEM_BARCODE}"` })
+      .then(() => {
+        cy.deleteItem(Cypress.env('instances')[0].items[0].id);
+        cy.deleteHoldingRecord(Cypress.env('instances')[0].holdings[0].id);
+        cy.deleteHoldingRecord(Cypress.env('instances')[0].holdings[1].id);
+        cy.deleteInstanceApi(Cypress.env('instances')[0].id);
+      });
+    cy.deleteUser(userId);
+  });
 
 
-  it.only('C15185 Move multiple items from one holdings to another holdings within an instance', { tags: [TestTypes.smoke] }, () => {
+  it('C15185 Move multiple items from one holdings to another holdings within an instance', { tags: [TestTypes.smoke] }, () => {
     InventorySearch.switchToItem();
     InventorySearch.searchByParameter('Barcode', ITEM_BARCODE);
     InventorySearch.selectSearchResultItem();
