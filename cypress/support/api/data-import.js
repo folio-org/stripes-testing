@@ -9,6 +9,7 @@ Cypress.Commands.add('createMappingProfileApi', (mappingProfile) => {
     body: {
       profile: { ...mappingProfile }
     },
+    isDefaultSearchParamsRequired: false
   });
 });
 
@@ -134,5 +135,55 @@ Cypress.Commands.add('deleteSrsRecordFromStorageApi', (id) => {
   cy.okapiRequest({
     method: 'DELETE',
     path: `source-storage/records/${id}`,
+  });
+});
+
+Cypress.Commands.add('deleteMappingProfileApi', (id) => {
+  cy.okapiRequest({
+    method: 'DELETE',
+    path: `data-import-profiles/mappingProfiles/${id}`,
+    isDefaultSearchParamsRequired: false
+  });
+});
+
+Cypress.Commands.add('deleteActionProfileApi', (id) => {
+  cy.okapiRequest({
+    method: 'DELETE',
+    path: `data-import-profiles/actionProfiles/${id}`,
+    isDefaultSearchParamsRequired: false
+  });
+});
+
+Cypress.Commands.add('unlinkMappingProfileFromActionProfileApi', (id, linkedMappingProfile) => {
+  cy.okapiRequest({
+    method: 'PUT',
+    path: `data-import-profiles/mappingProfiles/${id}`,
+    body: linkedMappingProfile,
+    isDefaultSearchParamsRequired: false
+  });
+});
+
+Cypress.Commands.add('createMatchProfileApi', (matchProfile) => {
+  cy.okapiRequest({
+    method: 'POST',
+    path: 'data-import-profiles/matchProfiles',
+    body: matchProfile,
+    isDefaultSearchParamsRequired: false
+  });
+});
+
+Cypress.Commands.add('deleteMatchProfileApi', (id) => {
+  cy.okapiRequest({
+    method: 'DELETE',
+    path: `data-import-profiles/matchProfiles/${id}`,
+    isDefaultSearchParamsRequired: false
+  });
+});
+
+Cypress.Commands.add('deleteJobProfileApi', (id) => {
+  cy.okapiRequest({
+    method: 'DELETE',
+    path: `data-import-profiles/jobProfiles/${id}`,
+    isDefaultSearchParamsRequired: false
   });
 });

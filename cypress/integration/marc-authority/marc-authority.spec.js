@@ -62,7 +62,7 @@ describe('MARC Authority management', () => {
     });
   });
 
-  it.only('C350572 Edit an Authority record', { tags:  [TestTypes.smoke, Features.authority] }, () => {
+  it('C350572 Edit an Authority record', { tags:  [TestTypes.smoke, Features.authority] }, () => {
     MarcAuthority.edit();
     QuickMarcEditor.waitLoading();
 
@@ -79,25 +79,158 @@ describe('MARC Authority management', () => {
     MarcAuthorities.checkRowsCount(1);
   });
 
-  it('C350667 Update a MARC authority record via data import. Record match with 010 $a', { tags:  [TestTypes.smoke, Features.authority] }, () => {
-    MarcAuthority.edit();
-    QuickMarcEditor.waitLoading();
+  it.only('C350667 Update a MARC authority record via data import. Record match with 010 $a', { tags:  [TestTypes.smoke, Features.authority] }, () => {
+    // preparing
 
-    const quickmarcEditor = new QuickMarcEditor(MarcAuthority.defaultAuthority);
-    const addedInSourceRow = quickmarcEditor.addNewField();
-    const updatedInSourceRow = quickmarcEditor.updateExistingField();
-    QuickMarcEditor.pressSaveAndClose();
+    const mappingProfile = {
+      'name': `Update MARC authority records mapping profile${getRandomPostfix()}`,
+      'incomingRecordType': 'MARC_AUTHORITY',
+      'existingRecordType': 'MARC_AUTHORITY',
+      'mappingDetails': {
+        'name': 'marcAuthority',
+        'recordType': 'MARC_AUTHORITY',
+        'marcMappingOption': 'UPDATE',
+        'mappingFields': [
+          {
+            'name': 'discoverySuppress',
+            'enabled': true,
+            'path': 'marcAuthority.discoverySuppress',
+            'value': null,
+            'booleanFieldAction': 'IGNORE',
+            'subfields': []
+          },
+          {
+            'name': 'hrid',
+            'enabled': true,
+            'path': 'marcAuthority.hrid',
+            'value': '',
+            'subfields': []
+          }
+        ]
+      }
+    };
 
-    cy.visit(TopMenu.dataImportPath);
+    cy.createMappingProfileApi(mappingProfile).then(mappingProfileResponse => {
+      cy.createActionProfileApi({
+        'profile': {
+          'name': `Use this one to update MARC authority records - action profile${getRandomPostfix()}`,
+          'action': 'UPDATE',
+          'folioRecord': 'MARC_AUTHORITY'
+        },
+        'addedRelations': [
+          {
+            'masterProfileId': null,
+            'masterProfileType': 'ACTION_PROFILE',
+            'detailProfileId': mappingProfileResponse.body.id,
+            'detailProfileType': 'MAPPING_PROFILE'
+          }
+        ]
+      }).then(actionProfileResponse => {
+        cy.createMatchProfileApi({
+          'profile': {
+            'name': `Update MARC authority record -  Match Profile 010 $a${getRandomPostfix()}`,
+            'incomingRecordType': 'MARC_AUTHORITY',
+            'matchDetails': [
+              {
+                'incomingRecordType': 'MARC_AUTHORITY',
+                'incomingMatchExpression': {
+                  'fields': [
+                    {
+                      'label': 'field',
+                      'value': '010'
+                    },
+                    {
+                      'label': 'recordSubfield',
+                      'value': 'a'
+                    }
+                  ],
+                },
+                'existingRecordType': 'MARC_AUTHORITY',
+                'existingMatchExpression': {
+                  'fields': [
+                    {
+                      'label': 'field',
+                      'value': '010'
+                    },
+                    {
+                      'label': 'recordSubfield',
+                      'value': 'a'
+                    }
+                  ],
+                },
+                'matchCriterion': 'EXACTLY_MATCHES'
+              }
+            ],
+            'existingRecordType': 'MARC_AUTHORITY'
+          },
+        }).then(matchProfileResponse => {
+          cy.createJobProfileApi({
+            'profile': {
+              'name': `Update MARC authority records - 010 $a${getRandomPostfix()}`,
+              'dataType': 'MARC'
+            },
+            'addedRelations': [
+              {
+                'masterProfileId': null,
+                'masterProfileType': 'JOB_PROFILE',
+                'detailProfileId': matchProfileResponse.body.id,
+                'detailProfileType': 'MATCH_PROFILE'
+              },
+              {
+                'masterProfileId': matchProfileResponse.body.id,
+                'masterProfileType': 'MATCH_PROFILE',
+                'detailProfileId': actionProfileResponse.body.id,
+                'detailProfileType': 'ACTION_PROFILE',
+                'reactTo': 'MATCH'
+              }
+            ]
+          }).then(jobProfileResponse => {
+            MarcAuthority.edit();
+            QuickMarcEditor.waitLoading();
 
-    importFile(MarcAuthority.defaultUpdateJobProfile);
-    MarcAuthority.notContains(addedInSourceRow);
-    MarcAuthority.notContains(updatedInSourceRow);
+            const quickmarcEditor = new QuickMarcEditor(MarcAuthority.defaultAuthority);
+            const addedInSourceRow = quickmarcEditor.addNewField();
+            const updatedInSourceRow = quickmarcEditor.updateExistingField();
+            QuickMarcEditor.pressSaveAndClose();
 
-    // // change 010 tag to future runs ability
-    // MarcAuthority.edit();
-    // QuickMarcEditor.waitLoading();
-    // quickmarcEditor.updateExistingField('010', getRandomPostfix());
+            cy.visit(TopMenu.dataImportPath);
+
+            importFile(jobProfileResponse.body.profile.name);
+            MarcAuthority.notContains(addedInSourceRow);
+            MarcAuthority.notContains(updatedInSourceRow);
+
+            // // change 010 tag to future runs ability
+            // MarcAuthority.edit();
+            // QuickMarcEditor.waitLoading();
+            // quickmarcEditor.updateExistingField('010', getRandomPostfix());
+
+
+
+
+            cy.deleteJobProfileApi(jobProfileResponse.body.id);
+
+            cy.deleteMatchProfileApi(matchProfileResponse.body.id);
+            // unlink mpaang profile and action profile
+            const linkedMappingProfile = { id: mappingProfileResponse.body.id,
+              profile:{ ...mappingProfile } };
+            linkedMappingProfile.profile.id = mappingProfileResponse.body.id;
+            linkedMappingProfile.addedRelations = [];
+            linkedMappingProfile.deletedRelations = [
+              {
+                'masterProfileId': actionProfileResponse.body.id,
+                'masterProfileType': 'ACTION_PROFILE',
+                'detailProfileId': mappingProfileResponse.body.id,
+                'detailProfileType': 'MAPPING_PROFILE'
+              }];
+
+
+            cy.unlinkMappingProfileFromActionProfileApi(mappingProfileResponse.body.id, linkedMappingProfile);
+            cy.deleteMappingProfileApi(mappingProfileResponse.body.id);
+            cy.deleteActionProfileApi(actionProfileResponse.body.id);
+          });
+        });
+      });
+    });
   });
 
   it('C350575  MARC Authority fields LEADER and 008 can not be deleted', { tags:  [TestTypes.smoke, Features.authority] }, () => {
