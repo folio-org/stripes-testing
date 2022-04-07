@@ -9,7 +9,7 @@ const searchButton = Button('Search');
 const newButton = Button('New');
 const saveAndClose = Button('Save & close');
 const orderDetailsAccordionId = 'purchaseOrder';
-const createdByAdmin = 'ADMINISTRATOR, DIKU ';
+const createdByAdmin = 'admin, admin ';
 const searchField = SearchField({ id: 'input-record-search' });
 
 export default {
