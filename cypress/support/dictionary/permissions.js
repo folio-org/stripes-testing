@@ -44,5 +44,7 @@ export default {
   // Users
   usersViewRequests: { internal: '', gui: 'Users: View requests' },
   // Remote Storage
-  remoteStorageCRUD: { internal: '', gui: 'Settings (Remote storage): Can create, edit, delete remote storage settings' }
+  remoteStorageCRUD: { internal: '', gui: 'Settings (Remote storage): Can create, edit, delete remote storage settings' },
+  // Data Export
+  dataExportAll: { internal: '', gui: 'Data Export - all permissions' },
 };
