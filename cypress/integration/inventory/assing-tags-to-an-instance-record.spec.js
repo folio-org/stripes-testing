@@ -34,8 +34,8 @@ describe('ui-inventory: Assign tags to an Instance record', () => {
   });
 
   after(() => {
-    // cy.deleteInstanceApi(instanceId);
-    // cy.deleteTagApi(Cypress.env('tagId'));
+    cy.deleteInstanceApi(instanceId);
+    cy.deleteTagApi(Cypress.env('tagId'));
   });
 
   it('C196769 Assign tags to an Instance record', { tags: [TestTypes.smoke] }, () => {

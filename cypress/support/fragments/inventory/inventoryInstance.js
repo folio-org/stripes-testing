@@ -237,16 +237,11 @@ export default {
     cy.wait(['@getTags']);
     // TODO: clarify with developers what should be waited
     cy.wait(1000);
-
     cy.do(tagsPane.find(TextField({ id:'input-tag-input' })).click());
     cy.expect(tagsPane.find(MultiSelectMenu()).exists());
     cy.expect(tagsPane.find(MultiSelectMenu()).find(HTML(including(tagName))).exists());
-
     cy.expect(Pane({ id: 'pane-instancedetails' }).find(Spinner()).absent());
-
-
     cy.do(tagsPane.find(MultiSelect({ id:'input-tag' })).select(tagName));
-
     cy.expect(tagsPane.find(MultiSelect({ id:'input-tag' })).has({ selectedCount:1 }));
     cy.do(tagsPane.find(closeTag).click());
     cy.do(Button({ ariaLabel: 'Close ' }).click());
@@ -256,24 +251,14 @@ export default {
     InventoryInstances.selectInstance();
     cy.do(tagButton.click());
     // wait for data to be loaded
-    cy.intercept(
-      {
-        method: 'GET',
-        url: '/remote-storage/mappings?*',
-      }
-    ).as('getMap');
+    cy.intercept('/remote-storage/mappings?*').as('getMap');
     cy.expect(MultiSelect().exists(tagName));
     cy.wait('@getMap');
   },
 
   deleteTag:(tagName) => {
     // wait for data to be loaded
-    cy.intercept(
-      {
-        method: 'GET',
-        url: '/inventory/instances?*',
-      }
-    ).as('getInstance');
+    cy.intercept('/inventory/instances?*').as('getInstance');
     cy.do(MultiSelect().find(closeTag).click());
     cy.expect(MultiSelect().find(HTML(including(tagName))).absent());
     cy.expect(tagButton.find(HTML(including('0'))).exists());
