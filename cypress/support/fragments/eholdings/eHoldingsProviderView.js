@@ -1,11 +1,14 @@
-import { Button, KeyValue, Section } from '../../../../interactors';
+import { Button, KeyValue, Section, Spinner } from '../../../../interactors';
 
 const waitLoading = () => {
   cy.expect(Section({ id: 'providerShowProviderSettings' }).exists());
+  cy.expect(Spinner().absent());
 };
 
 export default {
   waitLoading,
   edit:() => cy.do(Button({ id:'provider-edit-link' }).click()),
-  checkProxy:(proxyName) => cy.expect(KeyValue('Proxy', { value: proxyName }).exists())
+  checkProxy:(proxyName) => {
+    cy.expect(KeyValue('Proxy', { value: proxyName }).exists());
+  }
 };
