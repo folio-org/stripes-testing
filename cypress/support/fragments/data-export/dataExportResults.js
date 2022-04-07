@@ -27,15 +27,19 @@ export default {
       runBy: MultiColumnListCell({ 'row': 0, columnIndex: 6 }),
       id: MultiColumnListCell({ 'row': 0, columnIndex: 7 }),
     };
-
-    cy.do([
-      resultRow.status.is({ content: 'Completed' }),
-      resultRow.total.is({ content: recordsCount.toString() }),
-      resultRow.failed.is({ content: '' }),
-      resultRow.jobProfile.is({ content: this.defaultJobProfile }),
-      resultRow.runBy.is({ content: 'DIKU ADMINISTRATOR' }),
-      resultRow.id.is({ content: jobId.toString() })
-    ]);
+    cy.getToken(Cypress.env('diku_login'), Cypress.env('diku_password')).then(() => {
+      cy.getUsers({ limit: 1, query: `username=${Cypress.env('diku_login')}` }).then(() => {
+        const userName = `${Cypress.env('users')[0].personal.firstName} ${Cypress.env('users')[0].personal.lastName}`;
+        cy.do([
+          resultRow.status.is({ content: 'Completed' }),
+          resultRow.total.is({ content: recordsCount.toString() }),
+          resultRow.failed.is({ content: '' }),
+          resultRow.jobProfile.is({ content: this.defaultJobProfile }),
+          resultRow.runBy.is({ content: userName }),
+          resultRow.id.is({ content: jobId.toString() })
+        ]);
+      });
+    });
 
     // verify file name
     cy.do(
