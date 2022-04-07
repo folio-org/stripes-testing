@@ -4,6 +4,7 @@ import { getLongDelay } from '../../../utils/cypressTools';
 const rootPaneset = PaneSet({ id:'settings-owners' });
 const addButton = rootPaneset.find(Button({ id:'clickable-add-settings-owners' }));
 const tableWithOwners = rootPaneset.find(EditableList('editList-settings-owners'));
+const servicePointMultiSelect = tableWithOwners.find(MultiSelect({ ariaLabelledby: 'owner-service-point-label' }));
 
 const defaultServicePoints = ['Circ Desk 1',
   'Circ Desk 2',
@@ -63,7 +64,8 @@ export default {
   },
   fill: (userName, servicePoint) => {
     cy.do(tableWithOwners.find(TextField({ name:'items[0].owner' })).fillIn(userName));
-    cy.do(tableWithOwners.find(MultiSelect({ ariaLabelledby: 'associated-service-point-label' })).select(servicePoint));
+    cy.do(servicePointMultiSelect.open());
+    cy.do(MultiSelectOption(servicePoint).click());
   },
   save,
   deleteOwnerWithServicePoint: (selectedDervicePoint) => {
@@ -74,7 +76,7 @@ export default {
   },
   deleteOwner,
   checkUsedServicePoints:(usedServicePoints) => {
-    cy.do(tableWithOwners.find(MultiSelect({ ariaLabelledby: 'associated-service-point-label' })).open());
+    cy.do(servicePointMultiSelect.open());
     usedServicePoints.forEach(userServicePoint => cy.expect(MultiSelectOption(userServicePoint).absent()));
   },
   unselectExistingServicePoint:(usedServicePoint) => {
@@ -88,7 +90,7 @@ export default {
       });
   },
   checkFreeServicePointPresence:(freeServicePoint) => {
-    cy.do(tableWithOwners.find(MultiSelect({ ariaLabelledby: 'associated-service-point-label' })).open());
+    cy.do(servicePointMultiSelect.open());
     cy.expect(MultiSelectOption(freeServicePoint).exists());
   },
   cancelAdding:(rowNumber = 0) => {

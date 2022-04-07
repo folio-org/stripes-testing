@@ -44,7 +44,7 @@ describe('orders: Test PO search', () => {
         Orders.openOrder();
         Orders.closeThirdPane();
         Orders.resetFilters();
-        Orders.searchByParameter('Date opened', DateTools.getFormattedDate({ date: today }, 'MM/DD/YYYY'));
+        Orders.searchByParameter('Date ordered', DateTools.getFormattedDate({ date: today }, 'MM/DD/YYYY'));
         Orders.checkSearchResults(orderNumber);
       });
   });

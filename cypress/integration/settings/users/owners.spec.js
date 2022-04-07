@@ -20,7 +20,7 @@ describe('Management of n fee/fine owners and service points', () => {
       // clarify should be service points be shared between existing users
       cy.allure().startStep('Check presented owners and related service points');
       UsersOwners.getUsedServicePoints().then(usedServicePoints => {
-        addedServicePoints.push(UsersOwners.defaultServicePoints.filter(servicePoint => !usedServicePoints?.includes(servicePoint))[0]);
+        addedServicePoints.push(...UsersOwners.defaultServicePoints.filter(servicePoint => !usedServicePoints?.includes(servicePoint)));
         cy.allure().endStep();
 
         cy.allure().startStep('Add new owner, related with current user and not used service point');
@@ -51,7 +51,7 @@ describe('Management of n fee/fine owners and service points', () => {
           cy.allure().endStep();
 
           // TODO:  can be not stable, review in the future
-          cy.allure().startStep('Edit last created owner, uncheck already selected service point and save changed owner  ');
+          cy.allure().startStep('Edit last created owner, uncheck already selected service point and save changed owner');
           UsersOwners.unselectExistingServicePoint(addedServicePoints.at(-1));
           cy.allure().endStep();
 
