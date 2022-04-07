@@ -64,12 +64,8 @@ export default {
   },
   fill: (userName, servicePoint) => {
     cy.do(tableWithOwners.find(TextField({ name:'items[0].owner' })).fillIn(userName));
-    // cy.do(servicePointMultiSelect.fillIn(servicePoint));
     cy.do(servicePointMultiSelect.open());
-
-    // cy.expect(MultiSelectOption(servicePoint).exists());
     cy.do(MultiSelectOption(servicePoint).click());
-    // cy.expect(MultiSelectOption(servicePoint).absent());
   },
   save,
   deleteOwnerWithServicePoint: (selectedDervicePoint) => {
