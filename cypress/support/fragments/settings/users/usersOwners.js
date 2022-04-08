@@ -65,6 +65,7 @@ export default {
   fill: (userName, servicePoint) => {
     cy.do(tableWithOwners.find(TextField({ name:'items[0].owner' })).fillIn(userName));
     cy.do(servicePointMultiSelect.open());
+    cy.expect(MultiSelectOption(servicePoint).exists());
     cy.do(MultiSelectOption(servicePoint).click());
   },
   save,
