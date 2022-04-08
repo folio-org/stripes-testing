@@ -1,4 +1,13 @@
-import { Button, TextField, MultiColumnListCell, Modal, HTML, including, Section, PaneHeader, MultiColumnList } from '../../../../../interactors';
+import { Button,
+  TextField,
+  MultiColumnListCell,
+  Modal,
+  HTML,
+  including,
+  Section,
+  PaneHeader,
+  MultiColumnList,
+  Pane } from '../../../../../interactors';
 import { getLongDelay } from '../../../utils/cypressTools';
 import newJobProfile from './newJobProfile';
 
@@ -80,6 +89,7 @@ export default {
     ).as('getJob');
     cy.expect(MultiColumnListCell(jobProfileTitle).exists());
     cy.wait('@getJob');
+    cy.expect(Pane(jobProfileTitle).exists());
   },
 
   runImportFile:(fileName) => {
