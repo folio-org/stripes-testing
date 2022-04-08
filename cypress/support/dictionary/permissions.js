@@ -26,6 +26,7 @@ export default {
   uiInventorySingleRecordImport: { internal: 'ui-inventory.single-record-import', gui: 'Inventory: Import single bibliographic records' },
   uiInventorySettingsFastAdd: { internal: 'ui-inventory.settings.fast-add', gui: 'Settings (Inventory): Edit fast add settings' },
   uiInventoryMoveItems: { internal: '', gui: 'Inventory: Move items' },
+  inventoryHoldingsMoveItemPost: { internal: 'inventory.holdings.move.item.post', gui: 'Inventory: Move holdings' },
   // Tags
   uiTagsPermissionAll: { internal: 'ui-tags.permission.all', gui:'Tags: All permissions' },
   // Settings->Owners

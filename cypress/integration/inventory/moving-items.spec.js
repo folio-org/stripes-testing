@@ -22,6 +22,14 @@ describe('ui-inventory: moving items', () => {
   before('create inventory instance', () => {
     cy.createTempUser([
       permissions.inventoryAll.gui,
+      permissions.uiInventoryMoveItems.gui,
+
+      permissions.uiQuickMarcQuickMarcAuthoritiesEditorAll.gui,
+      permissions.uiQuickMarcQuickMarcEditorDuplicate.gui,
+      permissions.uiQuickMarcQuickMarcBibliographicEditorAll.gui,
+      permissions.uiInventorySingleRecordImport.gui,
+      permissions.uiQuickMarcQuickMarcHoldingsEditorCreate.gui,
+      permissions.inventoryHoldingsMoveItemPost.gui,
       permissions.uiInventoryMoveItems.gui
     ])
       .then(userProperties => {
