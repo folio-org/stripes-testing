@@ -1,35 +1,9 @@
 /// <reference types="cypress" />
 
+import dataImportSettingsActionProfiles from '../fragments/settings/dataImport/dataImportSettingsActionProfiles';
+import dataImportSettingsJobProfiles from '../fragments/settings/dataImport/dataImportSettingsJobProfiles';
+import dataImportSettingsMappingProfiles from '../fragments/settings/dataImport/dataImportSettingsMappingProfiles';
 import getRandomPostfix from '../utils/stringTools';
-
-Cypress.Commands.add('createMappingProfileApi', (mappingProfile) => {
-  return cy.okapiRequest({
-    method: 'POST',
-    path: 'data-import-profiles/mappingProfiles',
-    body: {
-      profile: { ...mappingProfile }
-    },
-    isDefaultSearchParamsRequired: false
-  });
-});
-
-Cypress.Commands.add('createActionProfileApi', (actionProfile) => {
-  return cy.okapiRequest({
-    method: 'POST',
-    path: 'data-import-profiles/actionProfiles',
-    body: {
-      ...actionProfile
-    },
-  });
-});
-
-Cypress.Commands.add('createJobProfileApi', (jobProfile) => {
-  return cy.okapiRequest({
-    method: 'POST',
-    path: 'data-import-profiles/jobProfiles',
-    body: jobProfile
-  });
-});
 
 Cypress.Commands.add('getId', () => {
   return cy.okapiRequest({
@@ -79,44 +53,44 @@ Cypress.Commands.add('createLinkedProfiles', (testData) => {
 
   testData.jobProfileForCreate = jobProfile;
 
-  cy.createMappingProfileApi(testData.marcBibMappingProfile).then((bodyWithMappingProfile) => {
+  dataImportSettingsMappingProfiles.createMappingProfileApi(testData.marcBibMappingProfile).then((bodyWithMappingProfile) => {
     testData.marcBibActionProfile.addedRelations[0].detailProfileId = bodyWithMappingProfile.body.id;
-    cy.createActionProfileApi(testData.marcBibActionProfile).then((bodyWithActionProfile) => {
+    dataImportSettingsActionProfiles.createActionProfileApi(testData.marcBibActionProfile).then((bodyWithActionProfile) => {
       addJobProfileRelation(testData.jobProfileForCreate.addedRelations, bodyWithActionProfile.body.id);
     });
   });
 
-  cy.createMappingProfileApi(testData.instanceMappingProfile).then((bodyWithMappingProfile) => {
+  dataImportSettingsMappingProfiles.createMappingProfileApi(testData.instanceMappingProfile).then((bodyWithMappingProfile) => {
     testData.instanceActionProfile.addedRelations[0].detailProfileId = bodyWithMappingProfile.body.id;
-    cy.createActionProfileApi(testData.instanceActionProfile).then((bodyWithActionProfile) => {
+    dataImportSettingsActionProfiles.createActionProfileApi(testData.instanceActionProfile).then((bodyWithActionProfile) => {
       addJobProfileRelation(testData.jobProfileForCreate.addedRelations, bodyWithActionProfile.body.id);
     });
   });
 
-  cy.createMappingProfileApi(testData.holdingsMappingProfile).then((bodyWithMappingProfile) => {
+  dataImportSettingsMappingProfiles.createMappingProfileApi(testData.holdingsMappingProfile).then((bodyWithMappingProfile) => {
     testData.holdingsActionProfile.addedRelations[0].detailProfileId = bodyWithMappingProfile.body.id;
-    cy.createActionProfileApi(testData.holdingsActionProfile).then((bodyWithActionProfile) => {
+    dataImportSettingsActionProfiles.createActionProfileApi(testData.holdingsActionProfile).then((bodyWithActionProfile) => {
       addJobProfileRelation(testData.jobProfileForCreate.addedRelations, bodyWithActionProfile.body.id);
     });
   });
 
-  cy.createMappingProfileApi(testData.itemMappingProfile).then((bodyWithMappingProfile) => {
+  dataImportSettingsMappingProfiles.createMappingProfileApi(testData.itemMappingProfile).then((bodyWithMappingProfile) => {
     testData.itemActionProfile.addedRelations[0].detailProfileId = bodyWithMappingProfile.body.id;
-    cy.createActionProfileApi(testData.itemActionProfile).then((bodyWithActionProfile) => {
+    dataImportSettingsActionProfiles.createActionProfileApi(testData.itemActionProfile).then((bodyWithActionProfile) => {
       addJobProfileRelation(testData.jobProfileForCreate.addedRelations, bodyWithActionProfile.body.id);
     });
   });
 
-  cy.createJobProfileApi(testData.jobProfileForCreate)
+  dataImportSettingsJobProfiles.createJobProfileApi(testData.jobProfileForCreate)
     .then((bodyWithjobProfile) => {
       testData.jobProfileForCreate.id = bodyWithjobProfile.body.id;
     });
 });
 
 Cypress.Commands.add('createOnePairMappingAndActionProfiles', (mappingProfile, actionProfile) => {
-  cy.createMappingProfileApi(mappingProfile).then((bodyWithMappingProfile) => {
+  dataImportSettingsMappingProfiles.createMappingProfileApi(mappingProfile).then((bodyWithMappingProfile) => {
     actionProfile.addedRelations[0].detailProfileId = bodyWithMappingProfile.body.id;
-    cy.createActionProfileApi(actionProfile).then((bodyWithActionProfile) => {
+    dataImportSettingsActionProfiles.createActionProfileApi(actionProfile).then((bodyWithActionProfile) => {
       cy.wrap(bodyWithActionProfile.body.id).as('idActionProfile');
     });
   });
@@ -138,52 +112,4 @@ Cypress.Commands.add('deleteSrsRecordFromStorageApi', (id) => {
   });
 });
 
-Cypress.Commands.add('deleteMappingProfileApi', (id) => {
-  cy.okapiRequest({
-    method: 'DELETE',
-    path: `data-import-profiles/mappingProfiles/${id}`,
-    isDefaultSearchParamsRequired: false
-  });
-});
 
-Cypress.Commands.add('deleteActionProfileApi', (id) => {
-  cy.okapiRequest({
-    method: 'DELETE',
-    path: `data-import-profiles/actionProfiles/${id}`,
-    isDefaultSearchParamsRequired: false
-  });
-});
-
-Cypress.Commands.add('unlinkMappingProfileFromActionProfileApi', (id, linkedMappingProfile) => {
-  cy.okapiRequest({
-    method: 'PUT',
-    path: `data-import-profiles/mappingProfiles/${id}`,
-    body: linkedMappingProfile,
-    isDefaultSearchParamsRequired: false
-  });
-});
-
-Cypress.Commands.add('createMatchProfileApi', (matchProfile) => {
-  cy.okapiRequest({
-    method: 'POST',
-    path: 'data-import-profiles/matchProfiles',
-    body: matchProfile,
-    isDefaultSearchParamsRequired: false
-  });
-});
-
-Cypress.Commands.add('deleteMatchProfileApi', (id) => {
-  cy.okapiRequest({
-    method: 'DELETE',
-    path: `data-import-profiles/matchProfiles/${id}`,
-    isDefaultSearchParamsRequired: false
-  });
-});
-
-Cypress.Commands.add('deleteJobProfileApi', (id) => {
-  cy.okapiRequest({
-    method: 'DELETE',
-    path: `data-import-profiles/jobProfiles/${id}`,
-    isDefaultSearchParamsRequired: false
-  });
-});

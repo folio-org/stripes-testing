@@ -11,6 +11,10 @@ import MarcAuthorities from '../../support/fragments/marcAuthority/marcAuthoriti
 import QuickMarcEditor from '../../support/fragments/quickMarcEditor';
 import { getLongDelay } from '../../support/utils/cypressTools';
 import MarcAuthorityBrowse from '../../support/fragments/marcAuthority/MarcAuthorityBrowse';
+import dataImportSettingsActionProfiles from '../../support/fragments/settings/dataImport/dataImportSettingsActionProfiles';
+import dataImportSettingsMatchProfiles from '../../support/fragments/settings/dataImport/dataImportSettingsMatchProfiles';
+import dataImportSettingMappingProfiles from '../../support/fragments/settings/dataImport/dataImportSettingsMappingProfiles';
+import dataImportSettingsJobProfiles from '../../support/fragments/settings/dataImport/dataImportSettingsJobProfiles';
 
 
 let userId = '';
@@ -26,6 +30,7 @@ const importFile = (profileName) => {
   JobProfiles.select(profileName);
   JobProfiles.runImportFile(uniqueFileName);
   JobProfiles.openFileRecords(uniqueFileName);
+  cy.pause('openFileRecords');
   DataImport.getLinkToAuthority(MarcAuthority.defaultAuthority.headingReference).then(link => {
     const jobLogEntryId = link.split('/').at(-2);
     const recordId = link.split('/').at(-1);
@@ -35,6 +40,8 @@ const importFile = (profileName) => {
     }).as('getRecord');
     cy.visit(link);
     cy.wait('@getRecord', getLongDelay()).then(response => {
+      cy.log(JSON.stringify(response.response.body.relatedAuthorityInfo));
+      cy.pause();
       const internalAuthorityId = response.response.body.relatedAuthorityInfo.idList[0];
 
       marcAuthorityIds.add(MarcAuthority.defaultAuthority.libraryOfCongressControlNumber);
@@ -80,111 +87,18 @@ describe('MARC Authority management', () => {
   });
 
   it.only('C350667 Update a MARC authority record via data import. Record match with 010 $a', { tags:  [TestTypes.smoke, Features.authority] }, () => {
-    // preparing
+    // profiles preparing
+    dataImportSettingMappingProfiles.createMappingProfileApi().then(mappingProfileResponse => {
+      const specialActionProfile = { ...dataImportSettingsActionProfiles.marcAuthorityUpdateActionProfile };
+      specialActionProfile.addedRelations[0].detailProfileId = mappingProfileResponse.body.id;
+      dataImportSettingsActionProfiles.createActionProfileApi(specialActionProfile).then(actionProfileResponse => {
+        dataImportSettingsMatchProfiles.createMatchProfileApi().then(matchProfileResponse => {
+          const specialJobProfile = { ...dataImportSettingsJobProfiles.marcAuthorityUpdateJobProfile };
+          specialJobProfile.addedRelations[0].detailProfileId = matchProfileResponse.body.id;
+          specialJobProfile.addedRelations[1].masterProfileId = matchProfileResponse.body.id;
+          specialJobProfile.addedRelations[1].detailProfileId = actionProfileResponse.body.id;
 
-    const mappingProfile = {
-      'name': `Update MARC authority records mapping profile${getRandomPostfix()}`,
-      'incomingRecordType': 'MARC_AUTHORITY',
-      'existingRecordType': 'MARC_AUTHORITY',
-      'mappingDetails': {
-        'name': 'marcAuthority',
-        'recordType': 'MARC_AUTHORITY',
-        'marcMappingOption': 'UPDATE',
-        'mappingFields': [
-          {
-            'name': 'discoverySuppress',
-            'enabled': true,
-            'path': 'marcAuthority.discoverySuppress',
-            'value': null,
-            'booleanFieldAction': 'IGNORE',
-            'subfields': []
-          },
-          {
-            'name': 'hrid',
-            'enabled': true,
-            'path': 'marcAuthority.hrid',
-            'value': '',
-            'subfields': []
-          }
-        ]
-      }
-    };
-
-    cy.createMappingProfileApi(mappingProfile).then(mappingProfileResponse => {
-      cy.createActionProfileApi({
-        'profile': {
-          'name': `Use this one to update MARC authority records - action profile${getRandomPostfix()}`,
-          'action': 'UPDATE',
-          'folioRecord': 'MARC_AUTHORITY'
-        },
-        'addedRelations': [
-          {
-            'masterProfileId': null,
-            'masterProfileType': 'ACTION_PROFILE',
-            'detailProfileId': mappingProfileResponse.body.id,
-            'detailProfileType': 'MAPPING_PROFILE'
-          }
-        ]
-      }).then(actionProfileResponse => {
-        cy.createMatchProfileApi({
-          'profile': {
-            'name': `Update MARC authority record -  Match Profile 010 $a${getRandomPostfix()}`,
-            'incomingRecordType': 'MARC_AUTHORITY',
-            'matchDetails': [
-              {
-                'incomingRecordType': 'MARC_AUTHORITY',
-                'incomingMatchExpression': {
-                  'fields': [
-                    {
-                      'label': 'field',
-                      'value': '010'
-                    },
-                    {
-                      'label': 'recordSubfield',
-                      'value': 'a'
-                    }
-                  ],
-                },
-                'existingRecordType': 'MARC_AUTHORITY',
-                'existingMatchExpression': {
-                  'fields': [
-                    {
-                      'label': 'field',
-                      'value': '010'
-                    },
-                    {
-                      'label': 'recordSubfield',
-                      'value': 'a'
-                    }
-                  ],
-                },
-                'matchCriterion': 'EXACTLY_MATCHES'
-              }
-            ],
-            'existingRecordType': 'MARC_AUTHORITY'
-          },
-        }).then(matchProfileResponse => {
-          cy.createJobProfileApi({
-            'profile': {
-              'name': `Update MARC authority records - 010 $a${getRandomPostfix()}`,
-              'dataType': 'MARC'
-            },
-            'addedRelations': [
-              {
-                'masterProfileId': null,
-                'masterProfileType': 'JOB_PROFILE',
-                'detailProfileId': matchProfileResponse.body.id,
-                'detailProfileType': 'MATCH_PROFILE'
-              },
-              {
-                'masterProfileId': matchProfileResponse.body.id,
-                'masterProfileType': 'MATCH_PROFILE',
-                'detailProfileId': actionProfileResponse.body.id,
-                'detailProfileType': 'ACTION_PROFILE',
-                'reactTo': 'MATCH'
-              }
-            ]
-          }).then(jobProfileResponse => {
+          dataImportSettingsJobProfiles.createJobProfileApi(specialJobProfile).then(jobProfileResponse => {
             MarcAuthority.edit();
             QuickMarcEditor.waitLoading();
 
@@ -199,20 +113,12 @@ describe('MARC Authority management', () => {
             MarcAuthority.notContains(addedInSourceRow);
             MarcAuthority.notContains(updatedInSourceRow);
 
-            // // change 010 tag to future runs ability
-            // MarcAuthority.edit();
-            // QuickMarcEditor.waitLoading();
-            // quickmarcEditor.updateExistingField('010', getRandomPostfix());
+            dataImportSettingsJobProfiles.deleteJobProfileApi(jobProfileResponse.body.id);
 
-
-
-
-            cy.deleteJobProfileApi(jobProfileResponse.body.id);
-
-            cy.deleteMatchProfileApi(matchProfileResponse.body.id);
+            dataImportSettingsMatchProfiles.deleteMatchProfileApi(matchProfileResponse.body.id);
             // unlink mpaang profile and action profile
             const linkedMappingProfile = { id: mappingProfileResponse.body.id,
-              profile:{ ...mappingProfile } };
+              profile:{ ...dataImportSettingMappingProfiles.marcAuthorityUpdateMappingProfile } };
             linkedMappingProfile.profile.id = mappingProfileResponse.body.id;
             linkedMappingProfile.addedRelations = [];
             linkedMappingProfile.deletedRelations = [
@@ -223,10 +129,9 @@ describe('MARC Authority management', () => {
                 'detailProfileType': 'MAPPING_PROFILE'
               }];
 
-
-            cy.unlinkMappingProfileFromActionProfileApi(mappingProfileResponse.body.id, linkedMappingProfile);
-            cy.deleteMappingProfileApi(mappingProfileResponse.body.id);
-            cy.deleteActionProfileApi(actionProfileResponse.body.id);
+            dataImportSettingMappingProfiles.unlinkMappingProfileFromActionProfileApi(mappingProfileResponse.body.id, linkedMappingProfile);
+            dataImportSettingMappingProfiles.deleteMappingProfileApi(mappingProfileResponse.body.id);
+            dataImportSettingsActionProfiles.deleteActionProfileApi(actionProfileResponse.body.id);
           });
         });
       });
