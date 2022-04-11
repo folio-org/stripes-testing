@@ -1,4 +1,4 @@
-import { Button, SearchField, PaneHeader, Pane, Select, Accordion, KeyValue, Checkbox, MultiColumnList, MultiColumnListCell, MultiColumnListRow, Modal, TextField, Selection, SelectionOption } from '../../../../interactors';
+import { Button, SearchField, PaneHeader, Pane, Select, Accordion, KeyValue, Checkbox, MultiColumnList, MultiColumnListCell, MultiColumnListRow, Modal, TextField, SelectionOption } from '../../../../interactors';
 import SearchHelper from '../finance/financeHelper';
 import InteractorsTools from '../../utils/interactorsTools';
 
@@ -156,28 +156,6 @@ export default {
       cy.wait(1000);
     }
   },
-  createSpecialOrderViaActions: (rowNumber = 0) => {
-    cy.do([
-      actionsButton.click(),
-      newButton.click(),
-      Select('Prefix').choose('pref'),
-      Select('Suffix').choose('suf'),
-      Button({ id: 'vendor-plugin' }).click(),
-      SearchField({ id: searhInputId }).fillIn('Amazon'),
-      searchButton.click(),
-      MultiColumnListRow({ index: rowNumber }).click(),
-      Select('Order type*').choose('One-time'),
-      Button({ id: 'clickable-plugin-find-user' }).click(),
-      TextField({ name: 'query' }).fillIn(admin),
-      searchButton.click(),
-      MultiColumnListRow({ index: rowNumber }).click(),
-      // Selection('Bill to').open(),
-      // SelectionOption('Main Bill to').click(),
-      Checkbox('Approved').click(),
-      Checkbox({ name: 'manualPo' }).click(),
-      saveAndClose.click(),
-    ]);
-  },
   selectOpenStatusFilter: () => {
     cy.do(Checkbox('Open').click());
   },
@@ -245,8 +223,5 @@ export default {
       Button({ id: 'billTo-selection' }).click(),
       SelectionOption({ id: 'option-billTo-selection-0-72e1b584-d345-43e4-964c-d7bbb59d1f02' }).click(),
     ]);
-  },
-  applyFilter: (filter) => {
-    return filter;
   },
 };

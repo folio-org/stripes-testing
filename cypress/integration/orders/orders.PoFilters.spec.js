@@ -12,7 +12,7 @@ describe('orders: Test PO search', () => {
   const orderLine = { ...BasicOrderLine.defaultOrderLine };
   const invoice = { ...NewInvoice.defaultUiInvoice };
 
-  beforeEach(() => {
+  before(() => {
     cy.getToken(Cypress.env('diku_login'), Cypress.env('diku_password'));
     cy.getOrganizationApi({ query: 'name="Amazon.com"' })
       .then(organization => {
