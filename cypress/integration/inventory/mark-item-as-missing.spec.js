@@ -86,7 +86,6 @@ describe('ui-inventory: Mark an item as Missing', () => {
 
     cy.visit(TopMenu.requestsPath);
     MarkItemAsMissing.getItemsToCreateRequests(createdItems).forEach(item => {
-      console.log({ status: item.status.name });
       Requests.findCreatedRequest(item.barcode);
       Requests.selectFirstRequest(item.barcode);
       MarkItemAsMissing.verifyRequestStatus('Open - Not yet filled');
