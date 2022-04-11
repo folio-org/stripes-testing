@@ -178,8 +178,8 @@ export default {
       saveAndClose.click(),
     ]);
   },
-  selectPendingStatusFilter: () => {
-    cy.do(Checkbox('Pending').click());
+  selectOpenStatusFilter: () => {
+    cy.do(Checkbox('Open').click());
   },
   selectPrefixFilter: () => {
     cy.do([

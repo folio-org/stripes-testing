@@ -33,21 +33,21 @@ describe('orders: Test PO search', () => {
   });
 
   [
-    { filterActions: Orders.selectPendingStatusFilter },
+    { filterActions: Orders.selectOpenStatusFilter },
     { filterActions: Orders.selectPrefixFilter },
-    { filterActions: Orders.selectAssignedToFilter },
+    { filterActions: Orders.selectReEncumberFilter },
     { filterActions: Orders.selectOrderTypeFilter },
     { filterActions: () => { Orders.selectVendorFilter(invoice); } },
-    { filterActions: Orders.selectReasonForClosureFilter },
-    { filterActions: Orders.selectReEncumberFilter },
-    { filterActions: Orders.selectRenewalDateFilter },
-    { filterActions: Orders.selectBillToFilter },
   ].forEach((filter) => {
-    it('C6717 Test the PO searches', { tags: [TestType.smoke] }, () => {
+    it('C6718 Test the PO filters with open Order ', { tags: [TestType.smoke] }, () => {
       Orders.createOrderWithOrderLineViaApi(order, orderLine)
         .then(orderNumber => {
           cy.visit(TopMenu.ordersPath);
-          // open order to check 'date opened' search
+          Orders.searchByParameter('PO number', orderNumber);
+          SearchHelper.selectFromResultsList();
+          Orders.openOrder();
+          Orders.closeThirdPane();
+          Orders.resetFilters();
           filter.filterActions();
           Orders.checkSearchResults(orderNumber);
           Orders.resetFilters();
