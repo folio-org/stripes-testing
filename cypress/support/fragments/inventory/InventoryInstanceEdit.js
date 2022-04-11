@@ -7,13 +7,16 @@ import {
   TextField,
   FieldSet,
   Selection,
-  including, Pane
+  including,
 } from '../../../../interactors';
 import InteractorsTools from '../../utils/interactorsTools';
 import getRandomPostfix from '../../utils/stringTools';
+import InventoryInstanceModal from './holdingsMove/inventoryInstanceSelectInstanceModal';
 
 const closeButton = Button({ icon: 'times' });
+const saveAndCloseButton = Button('Save and close');
 const rootSection = Section({ id: 'instance-form' });
+const actionsButton = Button('Actions');
 const value = `test.${getRandomPostfix()}`;
 
 export default {
@@ -82,7 +85,22 @@ export default {
       Button('Add identifier').click(),
       Accordion('Identifier').find(Select({ name:'identifiers[0].identifierTypeId' })).choose(identifier),
       TextField({ name:'identifiers[0].value' }).fillIn(value),
-      Button('Save and close').click()]);
+      saveAndCloseButton.click()]);
+  },
+  addPrecedingTitle:(fieldIndex, precedingTitle, isbn, issn) => {
+    const fieldNamePref = `precedingTitles[${fieldIndex}]`;
+
+    cy.do([
+      Button('Add preceding title').click(),
+      TextArea({ name:  `${fieldNamePref}.title` }).fillIn(precedingTitle),
+      TextField({ name: `${fieldNamePref}.isbn` }).fillIn(isbn),
+      TextField({ name: `${fieldNamePref}.issn` }).fillIn(issn),
+    ]);
+  },
+  addExistingPrecedingTitle:(precedingTitle) => {
+    cy.do(Button({ id: 'find-instance-trigger' }).click());
+    InventoryInstanceModal.searchByTitle(precedingTitle);
+    InventoryInstanceModal.selectInstance();
   },
   choosePermanentLocation(locationName) {
     cy.do([
@@ -97,7 +115,7 @@ export default {
     ]);
   },
   saveAndClose: () => {
-    cy.do(Button({ id: 'clickable-save-item' }).click());
-    cy.expect(Pane({ title: including('Item') }).exists());
+    cy.do(saveAndCloseButton.click());
+    cy.expect(actionsButton.exists());
   }
 };
