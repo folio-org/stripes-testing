@@ -15,39 +15,40 @@ const confirmItemMissingModal = Modal('Confirm item status: Missing');
 const itemStatusKeyValue = KeyValue('Item status');
 
 export default {
-  itemStatuses: [
+  itemsToMarkAsMissing: [
     'Available',
-    'On order',
     'In process',
-    'Checked out',
-    'In transit',
-    'Awaiting pickup',
-    'Claimed returned',
-    'Declared lost',
-    'Lost and paid',
     'Paged',
+    'Awaiting pickup',
     'Awaiting delivery',
-    'Order closed',
-    'Withdrawn',
+    'In transit',
+    'Withdrawn'
   ],
 
-  itemsToNotMarkAsMissing: [
+  itemsNotToMarkAsMissing: [
     'On order',
-    'In process',
     'Checked out',
     'Claimed returned',
     'Declared lost',
     'Order closed',
   ],
-
-  getItemsToMarkAsMissing(items) {
-    return items.filter(item => !this.itemsToNotMarkAsMissing.includes(item.status.name));
-  },
 
   itemToRequestMap: {
     'Awaiting pickup': 'Open - awaiting pickup',
     'Awaiting delivery': 'Open - awaiting delivery',
     'In transit': 'Open - in transit'
+  },
+
+  getItemsToCreateRequests(items) {
+    return items.filter(({ status: { name } }) => name in this.itemToRequestMap);
+  },
+
+  getItemsToMarkAsMissing(items) {
+    return items.filter(({ status: { name } }) => this.itemsToMarkAsMissing.includes(name));
+  },
+
+  getItemsNotToMarkAsMissing(items) {
+    return items.filter(({ status: { name } }) => this.itemsNotToMarkAsMissing.includes(name));
   },
 
   createItemsForGivenStatusesApi() {
@@ -85,7 +86,10 @@ export default {
         instanceRecordData.instanceTypeId = instanceTypes[0].id;
       });
     }).then(() => {
-      const items = this.itemStatuses.map(status => ({
+      const items = [
+        ...this.itemsToMarkAsMissing,
+        ...this.itemsNotToMarkAsMissing
+      ].map(status => ({
         itemId: uuid(),
         barcode: uuid(),
         status: { name: status },
@@ -138,24 +142,27 @@ export default {
       pickupServicePointId: null,
       status: requestStatus,
     };
-    return cy.wrap(Promise.resolve(true)).then(() => {
-      cy.getServicePointsApi({ limit: 1, query: 'pickupLocation=="true"' }).then(servicePoints => {
-        requestData.pickupServicePointId = servicePoints[0].id;
+    return cy.wrap(Promise.resolve(true))
+      .then(() => {
+        cy.getServicePointsApi({ limit: 1, query: 'pickupLocation=="true"' }).then(servicePoints => {
+          requestData.pickupServicePointId = servicePoints[0].id;
+        });
+        cy.getUserGroups({ limit: 1 }).then(patronGroup => {
+          userData.patronGroup = patronGroup;
+        });
+      })
+      .then(() => {
+        cy.createUserApi(userData).then(user => {
+          createdUserId = user.id;
+          requestData.requesterId = user.id;
+        });
+      })
+      .then(() => {
+        cy.createItemRequestApi(requestData).then(({ id }) => {
+          createdRequestId = id;
+          return { createdUserId, createdRequestId };
+        });
       });
-      cy.getUserGroups({ limit: 1 }).then(patronGroup => {
-        userData.patronGroup = patronGroup;
-      });
-    }).then(() => {
-      cy.createUserApi(userData).then(user => {
-        createdUserId = user.id;
-        requestData.requesterId = user.id;
-      });
-    }).then(() => {
-      cy.createItemRequestApi(requestData).then(({ id }) => {
-        createdRequestId = id;
-        return { createdUserId, createdRequestId };
-      });
-    });
   },
 
   findAndOpenInstance(instanceTitle) {
@@ -192,6 +199,8 @@ export default {
   checkIsConfirmItemMissingModalExist(instanceTitle, itemBarcode, materialType) {
     const modalContent = `${instanceTitle} (${materialType}) (Barcode: ${itemBarcode})'s item status will be marked as Missing.`;
     cy.expect(confirmItemMissingModal.find(HTML(including(modalContent))).exists());
+    cy.expect(confirmItemMissingModal.find(Button('Cancel')).exists());
+    cy.expect(confirmItemMissingModal.find(Button('Confirm')).exists());
   },
 
   cancelModal() {
@@ -211,17 +220,28 @@ export default {
   },
 
   verifyItemStatusUpdatedDate() {
-    const now = new Date();
-    now.setHours(now.getUTCHours(), now.getUTCMinutes(), now.getUTCSeconds(), now.getUTCMilliseconds());
     this.getStatusUpdatedValue().then(value => {
+      const now = new Date();
+      now.setHours(
+        now.getUTCHours(),
+        now.getUTCMinutes(),
+        now.getUTCSeconds(),
+        now.getUTCMilliseconds()
+      );
+
       const statusDateInMs = new Date(value).getTime();
       const nowInUTCMs = now.getTime();
-      // check is updated status is close to +/- 1 minute from now
-      expect(statusDateInMs).to.be.closeTo(nowInUTCMs, 30000);
+
+      // check is updated status is close to +/- 2 minute from now
+      expect(statusDateInMs).to.be.closeTo(nowInUTCMs, 120_000);
     });
   },
 
   closeItemView() {
     cy.do(Button({ icon: 'times' }).click());
+  },
+
+  verifyRequestStatus(value) {
+    cy.expect(KeyValue('Request status').has({ value }));
   }
 };

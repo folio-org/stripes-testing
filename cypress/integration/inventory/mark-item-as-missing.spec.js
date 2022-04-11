@@ -6,39 +6,51 @@ import TopMenu from '../../support/fragments/topMenu';
 
 
 describe('ui-inventory: Mark an item as Missing', () => {
-  let userId = '';
+  let user = {};
+  let defaultServicePointId = '';
   const requesterIds = [];
   let instanceData = {};
   const createdRequestsIds = [];
   let createdItems = [];
   let materialType = '';
   beforeEach(() => {
-    cy.createTempUser([
-      permissions.uiInventoryMarkAsMissing.gui,
-      permissions.uiRequestsView.gui,
-    ]).then(userProperties => {
-      userId = userProperties.userId;
-      cy.login(userProperties.username, userProperties.password);
-      cy.getToken(Cypress.env('diku_login'), Cypress.env('diku_password'));
-    }).then(() => {
-      MarkItemAsMissing
-        .createItemsForGivenStatusesApi()
-        .then(({ items, instanceRecordData, materialTypeValue }) => {
-          createdItems = items;
-          instanceData = instanceRecordData;
-          materialType = materialTypeValue;
-          const itemsToCreateRequests = items.filter(({ status: { name } }) => (name in MarkItemAsMissing.itemToRequestMap));
-          itemsToCreateRequests.forEach(item => {
-            const requestStatus = MarkItemAsMissing.itemToRequestMap[item.status.name];
-            MarkItemAsMissing
-              .createRequestForGivenItemApi(item, instanceRecordData, requestStatus)
-              .then(({ createdUserId, createdRequestId }) => {
-                createdRequestsIds.push(createdRequestId);
-                requesterIds.push(createdUserId);
-              });
-          });
+    cy.getToken(Cypress.env('diku_login'), Cypress.env('diku_password'))
+      .then(() => {
+        cy.getServicePointsApi({ limit: 1, query: 'pickupLocation=="true"' }).then(servicePoints => {
+          defaultServicePointId = servicePoints[0].id;
         });
-    });
+      })
+      .then(() => {
+        cy.createTempUser([
+          permissions.uiInventoryMarkAsMissing.gui,
+          permissions.uiRequestsView.gui,
+        ]);
+      })
+      .then(userProperties => {
+        user = userProperties;
+        cy.addServicePointToUser(defaultServicePointId, user.userId);
+      })
+      .then(() => {
+        cy.login(user.username, user.password);
+      })
+      .then(() => {
+        MarkItemAsMissing
+          .createItemsForGivenStatusesApi()
+          .then(({ items, instanceRecordData, materialTypeValue }) => {
+            createdItems = items;
+            instanceData = instanceRecordData;
+            materialType = materialTypeValue;
+            MarkItemAsMissing.getItemsToCreateRequests(createdItems).forEach(item => {
+              const requestStatus = MarkItemAsMissing.itemToRequestMap[item.status.name];
+              MarkItemAsMissing
+                .createRequestForGivenItemApi(item, instanceRecordData, requestStatus)
+                .then(({ createdUserId, createdRequestId }) => {
+                  createdRequestsIds.push(createdRequestId);
+                  requesterIds.push(createdUserId);
+                });
+            });
+          });
+      });
   });
 
   afterEach(() => {
@@ -50,12 +62,11 @@ describe('ui-inventory: Mark an item as Missing', () => {
     createdRequestsIds.forEach(id => {
       Requests.deleteRequestApi(id);
     });
-    cy.deleteUser(userId);
+    cy.deleteUser(user.userId);
     requesterIds.forEach(id => cy.deleteUser(id));
   });
 
   it('C714 Mark an item as Missing', { tags: [TestTypes.smoke] }, () => {
-    cy.pause();
     cy.visit(TopMenu.inventoryPath);
     MarkItemAsMissing.findAndOpenInstance(instanceData.instanceTitle);
     MarkItemAsMissing.getItemsToMarkAsMissing(createdItems).forEach(item => {
@@ -70,6 +81,23 @@ describe('ui-inventory: Mark an item as Missing', () => {
       MarkItemAsMissing.confirmModal();
       MarkItemAsMissing.verifyItemStatus('Missing');
       MarkItemAsMissing.verifyItemStatusUpdatedDate();
+      MarkItemAsMissing.closeItemView();
+    });
+
+    cy.visit(TopMenu.requestsPath);
+    MarkItemAsMissing.getItemsToCreateRequests(createdItems).forEach(item => {
+      console.log({ status: item.status.name });
+      Requests.findCreatedRequest(item.barcode);
+      Requests.selectFirstRequest(item.barcode);
+      MarkItemAsMissing.verifyRequestStatus('Open - Not yet filled');
+    });
+
+    cy.visit(TopMenu.inventoryPath);
+    MarkItemAsMissing.findAndOpenInstance(instanceData.instanceTitle);
+    MarkItemAsMissing.getItemsNotToMarkAsMissing(createdItems).forEach(item => {
+      MarkItemAsMissing.openHoldingsAccordion(instanceData.holdingId);
+      MarkItemAsMissing.openItem(item.barcode);
+      MarkItemAsMissing.checkIsMarkAsMissingExist(false);
       MarkItemAsMissing.closeItemView();
     });
   });
