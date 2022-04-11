@@ -2,6 +2,9 @@ import TopMenu from '../../../support/fragments/topMenu';
 import RemoteStorageHelper from '../../../support/fragments/settings/remote-storage/remote-storage-configuration';
 import getRandomPostfix from '../../../support/utils/stringTools';
 import TestTypes from '../../../support/dictionary/testTypes';
+import settingsMenu from '../../../support/fragments/settingsMenu';
+import CreateLocationsPage from '../../../support/fragments/settings/tenant/locations/createLocationsPage';
+import Locations from '../../../support/fragments/settings/tenant/locations/locations';
 
 describe('remote-storage-configuration', () => {
   beforeEach('login', () => {
@@ -49,5 +52,27 @@ describe('remote-storage-configuration', () => {
 
     // delete created configuration
     RemoteStorageHelper.deleteRemoteStorage(name);
+  });
+
+  it('C163922 Flag a location as remote storage', { tags: [TestTypes.smoke] }, () => {
+    cy.visit(settingsMenu.locationsPath);
+    const locationName = `loc_${getRandomPostfix()}`;
+
+    // fill location data
+    Locations.selectInstitution();
+    Locations.selectCampus();
+    Locations.selectLibrary();
+    Locations.createNewLocation();
+
+    // creating location
+    CreateLocationsPage.fillFolioName(locationName);
+    CreateLocationsPage.fillCode();
+    CreateLocationsPage.fillDiscoveryDisplayName();
+    CreateLocationsPage.selectRemoteStorage();
+    CreateLocationsPage.selectServicePoint();
+    CreateLocationsPage.saveAndClose();
+
+    Locations.verifyRemoteStorageValue();
+    Locations.deleteLocation(locationName);
   });
 });
