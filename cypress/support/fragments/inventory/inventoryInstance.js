@@ -209,6 +209,20 @@ export default {
       .find(MultiColumnListCell({ columnIndex: 0 }))
       .has({ content: identifier }));
   },
+  checkPrecedingTitle:(rowNumber, title, isbn, issn) => {
+    cy.expect(MultiColumnList({ id: 'precedingTitles' })
+      .find(MultiColumnListRow({ index: rowNumber }))
+      .find(MultiColumnListCell({ content: title }))
+      .exists());
+    cy.expect(MultiColumnList({ id: 'precedingTitles' })
+      .find(MultiColumnListRow({ index: rowNumber }))
+      .find(MultiColumnListCell({ content: isbn }))
+      .exists());
+    cy.expect(MultiColumnList({ id: 'precedingTitles' })
+      .find(MultiColumnListRow({ index: rowNumber }))
+      .find(MultiColumnListCell({ content: issn }))
+      .exists());
+  },
   openItemView: (itemBarcode) => {
     cy.do(Link(including(itemBarcode)).click());
   },
