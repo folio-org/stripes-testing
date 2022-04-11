@@ -6,7 +6,6 @@ import TopMenu from '../../support/fragments/topMenu';
 import DateTools from '../../support/utils/dateTools';
 import SearchHelper from '../../support/fragments/finance/financeHelper';
 import OrdersHelper from '../../support/fragments/orders/ordersHelper';
-import NewInvoice from '../../support/fragments/invoices/newInvoice';
 
 describe('orders: Test PO search', () => {
   const order = { ...NewOrder.defaultOrder };
