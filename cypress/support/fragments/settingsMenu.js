@@ -48,7 +48,7 @@ export default {
   remoteStoragePath: 'settings/remote-storage',
   tagsPath: 'settings/tags',
   tenantPath: 'settings/tenant-settings',
-  locationsPath: 'settings/tenant-settings/location-locations',
+  tenantLocationsPath: 'settings/tenant-settings/location-locations',
   // Users
   usersOwnersPath: 'settings/users/owners',
   usersPath: 'settings/users',

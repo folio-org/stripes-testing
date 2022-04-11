@@ -55,7 +55,7 @@ describe('remote-storage-configuration', () => {
   });
 
   it('C163922 Flag a location as remote storage', { tags: [TestTypes.smoke] }, () => {
-    cy.visit(settingsMenu.locationsPath);
+    cy.visit(settingsMenu.tenantLocationsPath);
     const locationName = `loc_${getRandomPostfix()}`;
 
     // fill location data
