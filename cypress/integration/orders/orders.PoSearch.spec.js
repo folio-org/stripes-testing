@@ -49,16 +49,4 @@ describe('orders: Test PO search', () => {
         Orders.checkSearchResults(orderNumber);
       });
   });
-  it('C6718 Test the PO filters [except tags]', { tags: [TestType.smoke] }, () => {
-    Orders.createOrderWithOrderLineViaApi(order, orderLine)
-      .then(orderNumber => {
-        cy.visit(TopMenu.ordersPath);
-        Orders.selectFiltersSearch(NewInvoice.defaultUiInvoice);
-        Orders.checkSearchResults(orderNumber);
-        SearchHelper.selectFromResultsList();
-        Orders.openOrder();
-        Orders.closeThirdPane();
-        Orders.resetFilters();
-      });
-  });
 });
