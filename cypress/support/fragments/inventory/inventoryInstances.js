@@ -13,16 +13,7 @@ export default {
       rootSection.find(HTML(including('No results found'))).exists());
   },
   selectInstance:(rowNumber = 0) => {
-    cy.intercept('/holdings-storage/holdings?limit=1000&query=instanceId**').as('getHoldings');
-    cy.intercept('/remote-storage/mappings?*').as('getMap');
-    cy.intercept('/copycat/profiles?**').as('getCopycat');
-    cy.intercept('/orders/titles?**').as('getTitles');
-    cy.intercept('/copycat/profiles?**').as('getCopycat');
-
     cy.do(inventoriesList.click({ row: rowNumber }));
-
-    cy.wait(['@getHoldings', '@getMap']);
-    cy.wait(['@getTitles', '@getCopycat']);
   },
   add: (title) => {
     cy.do(actionsButton.click());
@@ -39,12 +30,7 @@ export default {
   searchByTag:(tagName) => {
     cy.do(Button({ id:'accordion-toggle-button-instancesTags' }).click());
     // wait for data to be loaded
-    cy.intercept(
-      {
-        method: 'GET',
-        url: '/search/instances/facets?facet=instanceTags**',
-      }
-    ).as('getTags');
+    cy.intercept('/search/instances/facets?facet=instanceTags**').as('getTags');
     cy.do(Section({ id:'instancesTags' }).find(TextField()).click());
     cy.do(Section({ id:'instancesTags' }).find(TextField()).fillIn(tagName));
     cy.wait('@getTags');

@@ -22,6 +22,14 @@ Cypress.Commands.add('createTagApi', (tag) => {
     });
 });
 
+Cypress.Commands.add('getTagIdApi', (searchParams) => {
+  return cy
+    .okapiRequest({
+      path: 'tags',
+      searchParams,
+    });
+});
+
 Cypress.Commands.add('deleteTagApi', (tagId) => {
   cy.okapiRequest({
     method: 'DELETE',

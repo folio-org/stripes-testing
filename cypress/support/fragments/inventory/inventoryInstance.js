@@ -19,6 +19,7 @@ import {
   Pane,
   MultiSelectMenu,
   Spinner,
+
 } from '../../../../interactors';
 import InventoryActions from './inventoryActions';
 import InventoryInstanceEdit from './InventoryInstanceEdit';
@@ -243,25 +244,20 @@ export default {
     cy.expect(Pane({ id: 'pane-instancedetails' }).find(Spinner()).absent());
     cy.do(tagsPane.find(MultiSelect({ id:'input-tag' })).select(tagName));
     cy.expect(tagsPane.find(MultiSelect({ id:'input-tag' })).has({ selectedCount:1 }));
-    cy.do(tagsPane.find(closeTag).click());
-    cy.do(Button({ ariaLabel: 'Close ' }).click());
   },
 
   checkAddedTag:(tagName) => {
-    InventoryInstances.selectInstance();
-    cy.do(tagButton.click());
     // wait for data to be loaded
-    cy.intercept('/remote-storage/mappings?*').as('getMap');
+    cy.intercept('/holdings-storage/holdings?*').as('getHoldings');
+    InventoryInstances.selectInstance();
+    cy.wait('@getHoldings');
+    cy.do(tagButton.click());
     cy.expect(MultiSelect().exists(tagName));
-    cy.wait('@getMap');
   },
 
   deleteTag:(tagName) => {
-    // wait for data to be loaded
-    cy.intercept('/inventory/instances?*').as('getInstance');
     cy.do(MultiSelect().find(closeTag).click());
     cy.expect(MultiSelect().find(HTML(including(tagName))).absent());
     cy.expect(tagButton.find(HTML(including('0'))).exists());
-    cy.wait('@getInstance');
   },
 };
