@@ -33,6 +33,9 @@ export default {
       .find(MultiColumnListRow({ index: 0 }))
       .click());
   },
+  expectcolorFromList: () => {
+    cy.get('.mclRow---e3WhT:first-child').should('have.css', 'background-color', 'rgba(0, 0, 0, 0.08)');
+  },
   checkOpenOrganizationInfo: () => {
     cy.expect(Pane({ id: 'pane-organization-details' }).exists());
   }

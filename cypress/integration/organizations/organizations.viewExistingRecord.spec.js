@@ -13,6 +13,7 @@ describe('ui-organizations: View organization', () => {
     Organizations.selectActiveStatus();
     Organizations.checkOrganizationFilter();
     Organizations.chooseOrganizationFromList();
+    Organizations.expectcolorFromList();
     Organizations.checkOpenOrganizationInfo();
   });
 });
