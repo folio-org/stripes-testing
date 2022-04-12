@@ -1,4 +1,4 @@
-import { Button, TextField, Select, KeyValue, Accordion, Pane } from '../../../../interactors';
+import { Button, TextField, Select, KeyValue, Accordion, Pane, Checkbox, MultiColumnList, MultiColumnListRow } from '../../../../interactors';
 
 const buttonNew = Button('New');
 const saveAndClose = Button('Save & close');
@@ -20,5 +20,20 @@ export default {
     cy.expect(Pane({ id: 'pane-organization-details' }).exists());
     cy.expect(Accordion({ id: summaryAccordionId }).find(KeyValue({ value: organization.name })).exists());
     cy.expect(Accordion({ id: summaryAccordionId }).find(KeyValue({ value: organization.code })).exists());
+  },
+
+  selectActiveStatus: () => {
+    cy.do(Checkbox('Active').click());
+  },
+  checkOrganizationFilter: () => {
+    cy.expect(MultiColumnList({ id: 'organizations-list' }).exists());
+  },
+  chooseOrganizationFromList: () => {
+    cy.do(MultiColumnList({ id: 'organizations-list' })
+      .find(MultiColumnListRow({ index: 0 }))
+      .click());
+  },
+  checkOpenOrganizationInfo: () => {
+    cy.expect(Pane({ id: 'pane-organization-details' }).exists());
   }
 };
