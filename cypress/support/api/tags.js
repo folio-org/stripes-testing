@@ -13,20 +13,11 @@ Cypress.Commands.add('createTagApi', (tag) => {
     method: 'POST',
     path: 'tags',
     body: {
-      id: uuid(),
       ...tag,
     }
   })
-    .then(({ body }) => {
-      Cypress.env('tagId', body.id);
-    });
-});
-
-Cypress.Commands.add('getTagIdApi', (searchParams) => {
-  return cy
-    .okapiRequest({
-      path: 'tags',
-      searchParams,
+    .then(response => {
+      return response.body.id;
     });
 });
 

@@ -252,12 +252,10 @@ export default {
     cy.wait(['@getTags']);
     // TODO: clarify with developers what should be waited
     cy.wait(1000);
+    cy.do(tagsPane.find(TextField({ id:'input-tag-input' })).fillIn(tagName));
     cy.do(tagsPane.find(TextField({ id:'input-tag-input' })).click());
-    cy.expect(tagsPane.find(MultiSelectMenu()).exists());
-    cy.expect(tagsPane.find(MultiSelectMenu()).find(HTML(including(tagName))).exists());
     cy.expect(Pane({ id: 'pane-instancedetails' }).find(Spinner()).absent());
-    cy.do(tagsPane.find(MultiSelect({ id:'input-tag' })).select(tagName));
-    cy.expect(tagsPane.find(MultiSelect({ id:'input-tag' })).has({ selectedCount:1 }));
+    cy.do(MultiSelect().select([including('Add tag for:')]));
   },
 
   checkAddedTag:(tagName) => {

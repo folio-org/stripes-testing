@@ -1,3 +1,4 @@
+import uuid from 'uuid';
 import TestTypes from '../../support/dictionary/testTypes';
 import TopMenu from '../../support/fragments/topMenu';
 import getRandomPostfix from '../../support/utils/stringTools';
@@ -7,7 +8,11 @@ import InventoryInstance from '../../support/fragments/inventory/inventoryInstan
 
 describe('ui-inventory: Assign tags to an Instance record', () => {
   const instanceTitle = `autoTestInstanceTitle.${getRandomPostfix()}`;
-  const tagName = 'autotag';
+  const tag = {
+    id: uuid(),
+    description: 'autotag',
+    label: 'autotag'
+  };
   let instanceId;
 
   beforeEach(() => {
@@ -27,14 +32,11 @@ describe('ui-inventory: Assign tags to an Instance record', () => {
         }).then(specialInstanceId => { instanceId = specialInstanceId; });
       });
 
-    cy.createTagApi({
-      description: tagName,
-      label: tagName
-    });
+    cy.createTagApi(tag).then(tagId => { tag.id = tagId; });
   });
 
   after(() => {
-    cy.deleteTagApi(Cypress.env('tagId'));
+    cy.deleteTagApi(tag.id);
     cy.deleteInstanceApi(instanceId);
   });
 
@@ -42,11 +44,11 @@ describe('ui-inventory: Assign tags to an Instance record', () => {
     cy.visit(TopMenu.inventoryPath);
     InventorySearch.searchInstanceByParameter('Title (all)', instanceTitle);
     InventoryInstances.selectInstance();
-    InventoryInstance.addTag(tagName);
+    InventoryInstance.addTag(tag.label);
     InventoryInstances.resetAllFilters();
-    InventoryInstances.searchByTag(tagName);
+    InventoryInstances.searchByTag(tag.label);
     InventorySearch.searchInstanceByParameter('Title (all)', instanceTitle);
-    InventoryInstance.checkAddedTag(tagName);
-    InventoryInstance.deleteTag(tagName);
+    InventoryInstance.checkAddedTag(tag.label);
+    InventoryInstance.deleteTag(tag.label);
   });
 });
