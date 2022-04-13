@@ -27,6 +27,7 @@ export default {
   uiInventorySettingsFastAdd: { internal: 'ui-inventory.settings.fast-add', gui: 'Settings (Inventory): Edit fast add settings' },
   uiCreateEditDeleteMaterialTypes: { internal: 'ui-inventory.settings.materialtypes', gui: 'Settings (Inventory): Create, edit, delete material types' },
   uiInventoryMarkAsMissing: { internal: 'ui-inventory.item.markasmissing', gui: 'Inventory: View, create, edit, mark missing items' },
+  uiInventoryMoveItems: { internal: '', gui: 'Inventory: Move items' },
   // Tags
   uiTagsPermissionAll: { internal: 'ui-tags.permission.all', gui:'Tags: All permissions' },
   // Settings->Owners
@@ -48,4 +49,6 @@ export default {
   remoteStorageCRUD: { internal: '', gui: 'Settings (Remote storage): Can create, edit, delete remote storage settings' },
   // Requests
   uiRequestsView: { internal: 'ui-requests.view', gui: 'Requests: View' },
+  // Data Export
+  dataExportAll: { internal: '', gui: 'Data Export - all permissions' },
 };

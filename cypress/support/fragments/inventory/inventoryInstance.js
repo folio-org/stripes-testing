@@ -10,7 +10,6 @@ import {
   MultiColumnListHeader,
   MultiColumnListCell,
   Accordion,
-  Modal,
   Dropdown,
   Checkbox,
   MultiColumnListRow,
@@ -187,8 +186,7 @@ export default {
 
     cy.do([
       Accordion({ label: including(`Holdings: ${secondHoldingName}`) }).find(MultiColumnListRow({ indexRow: 'row-0' })).find(Checkbox()).click(),
-      Accordion({ label: including(`Holdings: ${secondHoldingName}`) }).find(Dropdown({ label: 'Move to' })).choose(including(firstHoldingName)),
-      Modal().find(Button('Continue')).click()
+      Accordion({ label: including(`Holdings: ${secondHoldingName}`) }).find(Dropdown({ label: 'Move to' })).choose(including(firstHoldingName))
     ]);
   },
 
