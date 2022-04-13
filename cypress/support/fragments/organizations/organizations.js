@@ -1,4 +1,4 @@
-import { Button, TextField, Select, KeyValue, Accordion, Pane, Checkbox, MultiColumnList, MultiColumnListRow } from '../../../../interactors';
+import { Button, TextField, Select, KeyValue, Accordion, Pane, Checkbox, MultiColumnList, MultiColumnListCell } from '../../../../interactors';
 
 const buttonNew = Button('New');
 const saveAndClose = Button('Save & close');
@@ -25,18 +25,24 @@ export default {
   selectActiveStatus: () => {
     cy.do(Checkbox('Active').click());
   },
+
   checkOrganizationFilter: () => {
     cy.expect(MultiColumnList({ id: 'organizations-list' }).exists());
   },
-  chooseOrganizationFromList: () => {
+
+  chooseOrganizationFromList: (organization) => {
     cy.do(MultiColumnList({ id: 'organizations-list' })
-      .find(MultiColumnListRow({ index: 0 }))
+      .find(MultiColumnListCell({ content: organization.name }))
       .click());
   },
+
   expectcolorFromList: () => {
     cy.get('.mclRow---e3WhT:first-child').should('have.css', 'background-color', 'rgba(0, 0, 0, 0.08)');
   },
-  checkOpenOrganizationInfo: () => {
+
+  checkOpenOrganizationInfo: (organization) => {
     cy.expect(Pane({ id: 'pane-organization-details' }).exists());
-  }
+    cy.expect(Accordion({ id: summaryAccordionId }).find(KeyValue({ value: organization.name })).exists());
+    cy.expect(Accordion({ id: summaryAccordionId }).find(KeyValue({ value: organization.code })).exists());
+  },
 };
