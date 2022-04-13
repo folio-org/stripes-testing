@@ -25,6 +25,9 @@ export default {
   inventoryAll: { internal: ['inventory.all', 'ui-inventory.all-permissions.TEMPORARY'], gui: 'Inventory: All permissions' },
   uiInventorySingleRecordImport: { internal: 'ui-inventory.single-record-import', gui: 'Inventory: Import single bibliographic records' },
   uiInventorySettingsFastAdd: { internal: 'ui-inventory.settings.fast-add', gui: 'Settings (Inventory): Edit fast add settings' },
+  uiInventoryMarkItemWithdrawn: { internal: 'ui-inventory.items.mark-items-withdrawn', gui: 'Inventory: View, create, edit, Mark items withdrawn' },
+  uiInventoryViewInstances: { internal: 'ui-inventory.instance.view', gui: 'Inventory: View instances, holdings, and items' },
+
   uiCreateEditDeleteMaterialTypes: { internal: 'ui-inventory.settings.materialtypes', gui: 'Settings (Inventory): Create, edit, delete material types' },
   // Tags
   uiTagsPermissionAll: { internal: 'ui-tags.permission.all', gui:'Tags: All permissions' },
@@ -44,5 +47,7 @@ export default {
   // Users
   usersViewRequests: { internal: '', gui: 'Users: View requests' },
   // Remote Storage
-  remoteStorageCRUD: { internal: '', gui: 'Settings (Remote storage): Can create, edit, delete remote storage settings' }
+  remoteStorageCRUD: { internal: '', gui: 'Settings (Remote storage): Can create, edit, delete remote storage settings' },
+  // Requests
+  uiRequestsCreate: { internal: 'ui-requests.create', gui: 'Requests: View, create' },
 };
