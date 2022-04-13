@@ -1,4 +1,14 @@
-import { HTML, including, Section, or, MultiColumnList, Button, Pane, TextField, Checkbox } from '../../../../interactors';
+import {
+  HTML,
+  including,
+  Section,
+  or,
+  MultiColumnList,
+  Button,
+  Pane,
+  TextField,
+  Checkbox
+} from '../../../../interactors';
 import NewInventoryInstance from './newInventoryInstance';
 
 const rootSection = Section({ id: 'pane-results' });

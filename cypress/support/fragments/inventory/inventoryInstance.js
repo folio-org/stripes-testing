@@ -17,9 +17,7 @@ import {
   Link,
   MultiSelect,
   Pane,
-  MultiSelectMenu,
   Spinner,
-
 } from '../../../../interactors';
 import InventoryActions from './inventoryActions';
 import InventoryInstanceEdit from './InventoryInstanceEdit';

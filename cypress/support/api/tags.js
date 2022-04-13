@@ -1,5 +1,3 @@
-import uuid from 'uuid';
-
 Cypress.Commands.add('getTagsApi', (searchParams) => {
   return cy
     .okapiRequest({
