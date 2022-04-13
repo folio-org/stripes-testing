@@ -6,6 +6,7 @@ Cypress.Commands.add('getUsers', (searchParams) => {
     .okapiRequest({
       path: 'users',
       searchParams,
+      isDefaultSearchParamsRequired: false
     })
     .then(({ body }) => {
       Cypress.env('users', body.users);
