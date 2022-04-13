@@ -9,7 +9,6 @@ import {
   MultiColumnListHeader,
   MultiColumnListCell,
   Accordion,
-  Modal,
   Dropdown,
   Checkbox,
   MultiColumnListRow,
