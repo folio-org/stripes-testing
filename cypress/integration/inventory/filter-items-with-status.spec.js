@@ -72,7 +72,7 @@ describe('ui-inventory: items with status', () => {
     cy.deleteUser(userId);
   });
 
-  it('should implement e-2-e automation of test case C11081: Verify item status filters retrieve items with that item status', () => {
+  it('C11081: Verify item status filters retrieve items with that item status', () => {
     cy.intercept('GET', '/inventory/items?*').as('getItems');
     cy.intercept('GET', '/search/instances?*').as('getInstances');
     cy.intercept('GET', '/orders/titles?*').as('getTitles');
