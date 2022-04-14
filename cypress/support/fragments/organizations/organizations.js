@@ -6,6 +6,7 @@ const summaryAccordionId = 'summarySection';
 const organizationDetails = Pane({ id: 'pane-organization-details' });
 const organizationsList = MultiColumnList({ id: 'organizations-list' });
 const blueColor = 'rgba(0, 0, 0, 0)';
+const summarySection = Accordion({ id: summaryAccordionId });
 
 export default {
   createOrganizationViaUi: (organization) => {
@@ -21,8 +22,8 @@ export default {
 
   checkCreatedOrganization: (organization) => {
     cy.expect(organizationDetails.exists());
-    cy.expect(Accordion({ id: summaryAccordionId }).find(KeyValue({ value: organization.name })).exists());
-    cy.expect(Accordion({ id: summaryAccordionId }).find(KeyValue({ value: organization.code })).exists());
+    cy.expect(summarySection.find(KeyValue({ value: organization.name })).exists());
+    cy.expect(summarySection.find(KeyValue({ value: organization.code })).exists());
   },
 
   selectActiveStatus: () => {
@@ -45,7 +46,7 @@ export default {
 
   checkOpenOrganizationInfo: (organization) => {
     cy.expect(organizationDetails.exists());
-    cy.expect(Accordion({ id: summaryAccordionId }).find(KeyValue({ value: organization.name })).exists());
-    cy.expect(Accordion({ id: summaryAccordionId }).find(KeyValue({ value: organization.code })).exists());
+    cy.expect(summarySection.find(KeyValue({ value: organization.name })).exists());
+    cy.expect(summarySection.find(KeyValue({ value: organization.code })).exists());
   },
 };
