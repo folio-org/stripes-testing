@@ -3,6 +3,9 @@ import { Button, TextField, Select, KeyValue, Accordion, Pane, Checkbox, MultiCo
 const buttonNew = Button('New');
 const saveAndClose = Button('Save & close');
 const summaryAccordionId = 'summarySection';
+const organizationDetails = Pane({ id: 'pane-organization-details' });
+const organizationsList = MultiColumnList({ id: 'organizations-list' });
+const blueColor = 'rgba(0, 0, 0, 0)';
 
 export default {
   createOrganizationViaUi: (organization) => {
@@ -17,7 +20,7 @@ export default {
   },
 
   checkCreatedOrganization: (organization) => {
-    cy.expect(Pane({ id: 'pane-organization-details' }).exists());
+    cy.expect(organizationDetails.exists());
     cy.expect(Accordion({ id: summaryAccordionId }).find(KeyValue({ value: organization.name })).exists());
     cy.expect(Accordion({ id: summaryAccordionId }).find(KeyValue({ value: organization.code })).exists());
   },
@@ -27,21 +30,21 @@ export default {
   },
 
   checkOrganizationFilter: () => {
-    cy.expect(MultiColumnList({ id: 'organizations-list' }).exists());
+    cy.expect(organizationsList.exists());
   },
 
   chooseOrganizationFromList: (organization) => {
-    cy.do(MultiColumnList({ id: 'organizations-list' })
+    cy.do(organizationsList
       .find(MultiColumnListCell({ content: organization.name }))
       .click());
   },
 
-  expectcolorFromList: () => {
-    cy.get('.mclRow---e3WhT:first-child').should('have.css', 'background-color', 'rgba(0, 0, 0, 0.08)');
+  expectColorFromList: () => {
+    cy.get('#organizations-list').should('have.css', 'background-color', blueColor);
   },
 
   checkOpenOrganizationInfo: (organization) => {
-    cy.expect(Pane({ id: 'pane-organization-details' }).exists());
+    cy.expect(organizationDetails.exists());
     cy.expect(Accordion({ id: summaryAccordionId }).find(KeyValue({ value: organization.name })).exists());
     cy.expect(Accordion({ id: summaryAccordionId }).find(KeyValue({ value: organization.code })).exists());
   },
