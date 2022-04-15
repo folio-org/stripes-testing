@@ -75,6 +75,7 @@ describe('ui-inventory: exports', () => {
         cy.deleteInstanceApi(instance.id);
       });
     cy.deleteUser(userId);
+    FileManager.deleteFolder(Cypress.config('downloadsFolder'));
   });
 
   it('C9284 verifies export UUIDs instances', { tags: [testTypes.smoke] }, () => {
