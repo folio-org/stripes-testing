@@ -1,16 +1,22 @@
+import uuid from 'uuid';
 import TestTypes from '../../support/dictionary/testTypes';
-import getRandomPostfix from '../../support/utils/stringTools';
 import TopMenu from '../../support/fragments/topMenu';
+import getRandomPostfix from '../../support/utils/stringTools';
 import InventorySearch from '../../support/fragments/inventory/inventorySearch';
 import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
 import InventoryInstance from '../../support/fragments/inventory/inventoryInstance';
-import InventoryInstanceEdit from '../../support/fragments/inventory/InventoryInstanceEdit';
 
-describe('ui-inventory: Enter different type of identifiers', () => {
+describe('ui-inventory: Assign tags to an Instance record', () => {
   const instanceTitle = `autoTestInstanceTitle.${getRandomPostfix()}`;
+  const tag = {
+    id: uuid(),
+    // TODO: bug UIIN-1994
+    description: `auto-test-tag-name-${uuid()}`,
+    label: `auto-test-tag-name-${uuid()}`
+  };
   let instanceId;
 
-  beforeEach('navigate to inventory', () => {
+  beforeEach(() => {
     cy.login(Cypress.env('diku_login'), Cypress.env('diku_password'));
     cy.getToken(Cypress.env('diku_login'), Cypress.env('diku_password'))
       .then(() => {
@@ -26,24 +32,24 @@ describe('ui-inventory: Enter different type of identifiers', () => {
           },
         }).then(specialInstanceId => { instanceId = specialInstanceId; });
       });
+
+    cy.createTagApi(tag).then(tagId => { tag.id = tagId; });
   });
 
-  afterEach(() => {
+  after(() => {
+    cy.deleteTagApi(tag.id);
     cy.deleteInstanceApi(instanceId);
   });
 
-  [
-    'ASIN',
-    'BNB',
-  ].forEach((identifier) => {
-    it('C609 In Accordion Identifiers --> enter different type of identifiers', { tags: [TestTypes.smoke] }, () => {
-      cy.visit(TopMenu.inventoryPath);
-      InventorySearch.searchByParameter('Title (all)', instanceTitle);
-      InventoryInstances.selectInstance();
-      InventoryInstance.editInstance();
-      InventoryInstanceEdit.addIdentifier(identifier);
-      InventorySearch.searchByParameter('Identifier (all)', identifier);
-      InventoryInstance.checkInstanceIdentifier(identifier);
-    });
+  it('C196769 Assign tags to an Instance record', { tags: [TestTypes.smoke] }, () => {
+    cy.visit(TopMenu.inventoryPath);
+    InventorySearch.searchByParameter('Title (all)', instanceTitle);
+    InventoryInstances.selectInstance();
+    InventoryInstance.addTag(tag.label);
+    InventoryInstances.resetAllFilters();
+    InventoryInstances.searchByTag(tag.label);
+    InventorySearch.searchByParameter('Title (all)', instanceTitle);
+    InventoryInstance.checkAddedTag(tag.label, instanceTitle);
+    InventoryInstance.deleteTag(tag.label);
   });
 });
