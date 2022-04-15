@@ -10,8 +10,9 @@ describe('ui-inventory: Assign tags to an Instance record', () => {
   const instanceTitle = `autoTestInstanceTitle.${getRandomPostfix()}`;
   const tag = {
     id: uuid(),
-    description: 'autotag',
-    label: 'autotag'
+    // TODO: bug UIIN-1994
+    description: `auto-test-tag-name-${uuid()}`,
+    label: `auto-test-tag-name-${uuid()}`
   };
   let instanceId;
 
@@ -42,13 +43,13 @@ describe('ui-inventory: Assign tags to an Instance record', () => {
 
   it('C196769 Assign tags to an Instance record', { tags: [TestTypes.smoke] }, () => {
     cy.visit(TopMenu.inventoryPath);
-    InventorySearch.searchInstanceByParameter('Title (all)', instanceTitle);
+    InventorySearch.searchByParameter('Title (all)', instanceTitle);
     InventoryInstances.selectInstance();
     InventoryInstance.addTag(tag.label);
     InventoryInstances.resetAllFilters();
     InventoryInstances.searchByTag(tag.label);
-    InventorySearch.searchInstanceByParameter('Title (all)', instanceTitle);
-    InventoryInstance.checkAddedTag(tag.label);
+    InventorySearch.searchByParameter('Title (all)', instanceTitle);
+    InventoryInstance.checkAddedTag(tag.label, instanceTitle);
     InventoryInstance.deleteTag(tag.label);
   });
 });

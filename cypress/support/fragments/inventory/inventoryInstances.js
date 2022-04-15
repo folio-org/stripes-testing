@@ -44,6 +44,10 @@ export default {
     cy.do(Section({ id:'instancesTags' }).find(TextField()).click());
     cy.do(Section({ id:'instancesTags' }).find(TextField()).fillIn(tagName));
     cy.wait('@getTags');
+    // TODO: clarify with developers what should be waited
+    cy.wait(1000);
+    cy.do(Section({ id:'instancesTags' }).find(TextField()).focus());
+    cy.do(Section({ id:'instancesTags' }).find(TextField()).click());
     cy.do(Checkbox(tagName).click());
   },
 };

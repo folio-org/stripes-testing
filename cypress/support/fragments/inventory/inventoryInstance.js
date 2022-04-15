@@ -255,11 +255,8 @@ export default {
     cy.do(MultiSelect().select([including('Add tag for:')]));
   },
 
-  checkAddedTag:(tagName) => {
-    // wait for data to be loaded
-    cy.intercept('/holdings-storage/holdings?*').as('getHoldings');
-    InventoryInstances.selectInstance();
-    cy.wait('@getHoldings');
+  checkAddedTag:(tagName, instanceTitle) => {
+    cy.do(MultiColumnListCell(instanceTitle).click());
     cy.do(tagButton.click());
     cy.expect(MultiSelect().exists(tagName));
   },
