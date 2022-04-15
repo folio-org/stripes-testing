@@ -12,3 +12,12 @@ Cypress.Commands.add('getOrganizationApi', (searchParams) => {
     searchParams
   }).then(response => { return response.body.organizations[0]; });
 });
+
+Cypress.Commands.add('createOrganizationApi', (organization) => {
+  cy
+    .okapiRequest({
+      method: 'POST',
+      path: 'organizations/organizations',
+      body: organization,
+    });
+});

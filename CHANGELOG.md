@@ -12,6 +12,7 @@
 * Implement e-2-e automation of test case C556. Refs FAT-889.
 * Implement e-2-e automation of test case C9215. Refs FAT-816.
 * Implement e-2-e automation of test case C2379. Refs FAT-891.
+* Implement e-2-e automation of test case C11081: Refs FAT-820.
 * Implement e-2-e automation of test case C540. Refs FAT-887.
 * Implement e-2-e automation of test case C714. Refs FAT-818.
 * Implement e-2-e automation of test case C10930. Refs FAT-819.
