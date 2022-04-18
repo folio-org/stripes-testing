@@ -124,10 +124,16 @@ export default {
     }
   },
 
-  checkSearchResults: (orderNumber) => {
+  checkSearchResults: (orderLine) => {
     cy.expect(MultiColumnList({ id: 'orders-list' })
       .find(MultiColumnListRow({ index: 0 }))
       .find(MultiColumnListCell({ columnIndex: 0 }))
+      .has({ content: orderLine }));
+  },
+  checkOrderlineSearchResults: (orderNumber) => {
+    cy.expect(MultiColumnList({ id: 'order-line-list' })
+      .find(MultiColumnListRow({ index: 0 }))
+      .find(MultiColumnListCell({ columnIndex: 2 }))
       .has({ content: orderNumber }));
   },
   closeThirdPane: () => {
@@ -224,4 +230,10 @@ export default {
       SelectionOption({ id: 'option-billTo-selection-0-72e1b584-d345-43e4-964c-d7bbb59d1f02' }).click(),
     ]);
   },
+  selectOrderLines: () => {
+    cy.do(Button('Order lines').click());
+  },
+  selectOrders: () => {
+    cy.do(Button('Orders').click());
+  }
 };
