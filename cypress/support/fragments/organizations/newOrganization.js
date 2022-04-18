@@ -22,5 +22,8 @@ export default {
       description: 'alias_description',
       value: 'alias'
     }],
+    addresses: [{
+      country: 'USA'
+    }],
   }
 };

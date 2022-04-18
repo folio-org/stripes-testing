@@ -1,4 +1,4 @@
-import { Button, TextField, Select, KeyValue, Accordion, Pane, Checkbox, MultiColumnList, MultiColumnListCell, SearchField, MultiColumnListRow } from '../../../../interactors';
+import { Button, TextField, Select, KeyValue, Accordion, Pane, Checkbox, MultiColumnList, MultiColumnListCell, SearchField, MultiColumnListRow, SelectionOption } from '../../../../interactors';
 
 const buttonNew = Button('New');
 const saveAndClose = Button('Save & close');
@@ -68,4 +68,33 @@ export default {
       .find(MultiColumnListCell({ columnIndex: 0 }))
       .has({ content: organization.name }));
   },
+  selectYesInIsVendor: () => {
+    cy.do([
+      Button({ id: 'accordion-toggle-button-org-filter-isVendor' }).click(),
+      Checkbox('Yes').click(),
+    ]);
+  },
+
+  selectCountryFilter: () => {
+    cy.do([
+      Button({ id: 'accordion-toggle-button-org-filter-addresses' }).click(),
+      Button({ id: 'addresses-selection' }).click(),
+      SelectionOption('United States').click(),
+    ]);
+  },
+
+  selectLanguageFilter: () => {
+    cy.do([
+      Button({ id: 'accordion-toggle-button-org-filter-language' }).click(),
+      Button({ id: 'language-selection' }).click(),
+      SelectionOption('English').click(),
+    ]);
+  },
+  selectCashInPaymentMethod: () => {
+    cy.do([
+      Button({ id: 'accordion-toggle-button-org-filter-paymentMethod' }).click(),
+      Checkbox('Cash').click(),
+    ]);
+  },
+
 };
