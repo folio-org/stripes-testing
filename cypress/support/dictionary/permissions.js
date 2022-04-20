@@ -54,5 +54,11 @@ export default {
   uiRequestsCreate: { internal: 'ui-requests.create', gui: 'Requests: View, create' },
   uiRequestsView: { internal: 'ui-requests.view', gui: 'Requests: View' },
   // Data Export
-  dataExportAll: { internal: '', gui: 'Data Export - all permissions' },
+  dataExportAll: { internal: 'data-export.all', gui: 'Data Export - all permissions' },
+  // Loans
+  loansAll: { internal: 'ui-users.loans.all', gui: 'Users: User loans view, change due date, renew' },
+  // Checkout
+  checkoutAll: { internal: '', gui: 'Check out: All permissions' },
+  // Checkin
+  checkinAll: { internal: '', gui: 'Check in: All permissions' }
 };
