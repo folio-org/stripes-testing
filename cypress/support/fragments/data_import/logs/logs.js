@@ -6,6 +6,7 @@ const quantityRecordsInInvoice = {
 
 export default {
   checkImportFile(jobProfileName) {
+    cy.do(Button('Actions').click());
     cy.do(Button('View all').click());
     cy.do([
       Accordion({ id: 'profileIdAny' }).clickHeader(),
