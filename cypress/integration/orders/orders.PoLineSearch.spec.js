@@ -40,7 +40,7 @@ describe('orders: Test Po line search', () => {
   [
     { nameOfSearch: 'Keyword', valueOfLine: orderLine.titleOrPackage },
     { nameOfSearch: 'Contributor', valueOfLine: orderLine.contributors[0].contributor },
-    { nameOfSearch: 'PO line number', valueOfLine: orderNumberValue },
+    // { nameOfSearch: 'PO line number', valueOfLine: orderNumberValue },
     { nameOfSearch: 'Requester', valueOfLine: orderLine.requester },
     { nameOfSearch: 'Title or package name', valueOfLine: orderLine.titleOrPackage },
     { nameOfSearch: 'Publisher', valueOfLine: orderLine.publisher },
