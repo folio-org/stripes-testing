@@ -55,4 +55,13 @@ export default {
   uiRequestsView: { internal: 'ui-requests.view', gui: 'Requests: View' },
   // Data Export
   dataExportAll: { internal: '', gui: 'Data Export - all permissions' },
+  // Orders
+  uiCreateOrder:{ internal:'', gui: 'Orders: Create orders' },
+  uiCreateOrderLine:{ internal:'', gui: 'Orders: Create order lines' },
+  uiEditOrder:{ internal:'', gui: 'Orders: Edit orders' },
+  uiApproveOrder:{ internal:'', gui: 'Approve purchase orders' },
+  // Check in
+  uiCheckInAll:{ internal:'', gui: 'Check in: All permissions' },
+  // Receiving
+  uiReceivingViewEditCreate:{ internal:'', gui:'Receiving: View, edit, create' },
 };

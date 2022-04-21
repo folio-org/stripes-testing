@@ -11,6 +11,8 @@ import InventoryInstances from '../../support/fragments/inventory/inventoryInsta
 import InventoryInstance from '../../support/fragments/inventory/inventoryInstance';
 import ItemVeiw from '../../support/fragments/inventory/itemVeiw';
 import Receiving from '../../support/fragments/receiving/receiving';
+import permissions from '../../support/dictionary/permissions';
+import markItemAsMissing from '../../support/fragments/inventory/markItemAsMissing';
 
 describe('ui-inventory: Item status date updates', () => {
   const order = { ...NewOrder.specialOrder };
@@ -67,36 +69,60 @@ describe('ui-inventory: Item status date updates', () => {
   };
   let createdOrderNumber;
   const instanceTitle = orderLine.titleOrPackage;
+  let userId = '';
+  let itemLocation = '';
+
+  
 
   before(() => {
-    cy.getToken(Cypress.env('diku_login'), Cypress.env('diku_password'))
-      .then(() => {
-        cy.getServicePointsApi({ limit: 1, query: 'pickupLocation=="true"' })
+    cy.createTempUser([
+      permissions.inventoryAll.gui,
+      permissions.uiCreateOrder.gui,
+      permissions.uiCreateOrderLine.gui,
+      permissions.uiApproveOrder.gui,
+      permissions.uiEditOrder.gui,
+      permissions.uiCheckInAll.gui,
+      permissions.uiReceivingViewEditCreate.gui,
+    ])
+      .then(userProperties => {
+        userId = userProperties.userId;
+        cy.login(userProperties.username, userProperties.password);
+        cy.visit(TopMenu.ordersPath);
+        cy.getToken(Cypress.env('diku_login'), Cypress.env('diku_password'))
           .then(() => {
+            cy.getOrganizationApi({ query: 'name="Amazon.com"' })
+              .then(organization => {
+                order.vendor = organization.id;
+                orderLine.physical.materialSupplier = organization.id;
+                orderLine.eresource.accessProvider = organization.id;
+              });
+            cy.getMaterialTypes({ query: 'name="book"' })
+              .then(materialType => { orderLine.physical.materialType = materialType.id; });
             cy.getLocations({ limit: 1 })
-              .then(location => { orderLine.locations[0].locationId = location.id; });
+              .then(location => {
+                orderLine.locations[0].locationId = location.id;
+                itemLocation = location.name;
+                console.log(itemLocation);
+              });
+            cy.getServicePointsApi({ limit: 1, query: 'pickupLocation=="true"' });
+            cy.getUsers({
+              limit: 1,
+              query: `"personal.lastName"="${userProperties.username}" and "active"="true"`
+            });
+          })
+          .then(() => {
+            cy.addServicePointToUser(Cypress.env('servicePoints')[0].id, userId);
+            cy.getUserServicePoints(Cypress.env('users')[0].id);
+            Orders.createOrderWithOrderLineViaApi(order, orderLine)
+              .then(orderNumber => {
+                createdOrderNumber = orderNumber;
+              });
           });
-      });
-    // create order
-    cy.getOrganizationApi({ query: 'name="Amazon.com"' })
-      .then(organization => {
-        order.vendor = organization.id;
-        orderLine.physical.materialSupplier = organization.id;
-        orderLine.eresource.accessProvider = organization.id;
-      });
-
-    cy.getMaterialTypes({ query: 'name="book"' })
-      .then(materialType => { orderLine.physical.materialType = materialType.id; });
-    cy.login(Cypress.env('diku_login'), Cypress.env('diku_password'));
-
-    Orders.createOrderWithOrderLineViaApi(order, orderLine)
-      .then(orderNumber => {
-        createdOrderNumber = orderNumber;
       });
   });
 
   after(() => {
-
+    // cy.deleteUser(userId);
   });
 
   it('C9200 Item status date updates', { tags: [TestTypes.smoke] }, () => {
@@ -114,10 +140,11 @@ describe('ui-inventory: Item status date updates', () => {
     cy.visit(TopMenu.inventoryPath);
     InventorySearch.searchByParameter('Title (all)', instanceTitle);
     InventoryInstances.selectInstance();
-    InventoryInstance.openHoldings(['Main Library']);
+    InventoryInstance.openHoldings([itemLocation]);
+
     InventoryInstance.openItemView('No barcode');
     ItemVeiw.verifyUpdatedItemDate();
-    ItemVeiw.verifyItemStatus('On order');
+    ItemVeiw.verifyItemStatus(ItemVeiw.itemStatuses.onOrder);
 
     // receive item
     cy.visit(TopMenu.ordersPath);
@@ -131,10 +158,10 @@ describe('ui-inventory: Item status date updates', () => {
     cy.visit(TopMenu.inventoryPath);
     InventorySearch.searchByParameter('Title (all)', instanceTitle);
     InventoryInstances.selectInstance();
-    InventoryInstance.openHoldings(['Main Library']);
+    InventoryInstance.openHoldings([itemLocation]);
     InventoryInstance.openItemView(barcode);
     ItemVeiw.verifyUpdatedItemDate();
-    ItemVeiw.verifyItemStatus('In process');
+    ItemVeiw.verifyItemStatus(ItemVeiw.itemStatuses.inProcess);
 
     cy.visit(TopMenu.checkInPath);
     cy.checkInItem(barcode);
@@ -142,9 +169,9 @@ describe('ui-inventory: Item status date updates', () => {
     cy.visit(TopMenu.inventoryPath);
     InventorySearch.searchByParameter('Title (all)', instanceTitle);
     InventoryInstances.selectInstance();
-    InventoryInstance.openHoldings(['Main Library']);
+    InventoryInstance.openHoldings([itemLocation]);
     InventoryInstance.openItemView(barcode);
     ItemVeiw.verifyUpdatedItemDate();
-    ItemVeiw.verifyItemStatus('Is Available');
+    ItemVeiw.verifyItemStatus(ItemVeiw.itemStatuses.available);
   });
 });

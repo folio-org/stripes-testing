@@ -1,7 +1,16 @@
 import { Accordion, KeyValue } from '../../../../interactors';
 import dateTools from '../../utils/dateTools';
 
+const itemStatuses = {
+  onOrder: 'On order',
+  inProcess: 'In process',
+  available: 'Available',
+
+};
+
 export default {
+  itemStatuses,
+
   verifyUpdatedItemDate:() => {
     cy.do(Accordion('Loan and availability').find(KeyValue('Item status')).perform(element => {
       const rawDate = element.innerText;
@@ -14,4 +23,6 @@ export default {
   verifyItemStatus(status) {
     cy.expect(Accordion('Loan and availability').find(KeyValue({ value: status })).exists());
   },
+
+
 };
