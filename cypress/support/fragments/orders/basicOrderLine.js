@@ -76,7 +76,8 @@ export default {
     },
     details: {
       productIds: [{
-        productId: uuid(),
+        productId: '9781868885015',
+        productIdType: '8261054f-be78-422d-bd51-4ed9f33c3422'
       }],
       subscriptionInterval: 0
     },
