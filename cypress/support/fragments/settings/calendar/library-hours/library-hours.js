@@ -13,20 +13,20 @@ const initialEventName = 'Initial event name';
 const editedEventName = 'Edited event name';
 const nameAttributeValue = 'periodName';
 
-const selectors = {
-  eventInfo: '.new-period',
-  calendarFirstCell: '.rbc-day-bg:first-child',
-  servicePoint: '[class^=navListSectionControl] [href^="/settings/calendar/library-hours/"]',
-};
 const iconsSet = {
   calendar: 'calendar',
   edit: 'edit',
+};
+const selectors = {
+  eventInfo: '.new-period',
+  calendarFirstCell: '.rbc-day-bg:first-child',
+  calendar: `[icon=${iconsSet.calendar}]`,
+  servicePoint: '[class^=navListSectionControl] [href^="/settings/calendar/library-hours/"]',
 };
 const pageHeaders = {
   createEvent: 'New: Regular Library Hours Validity Period',
   modifyEvent: 'Modify: Regular Library Hours Validity Period',
   deleteEvent: 'Delete regular library hours',
-  calendar: `[icon=${iconsSet.calendar}]`,
 };
 const buttonLabels = {
   new: 'New',
