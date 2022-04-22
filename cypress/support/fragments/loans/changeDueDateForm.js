@@ -1,11 +1,11 @@
 import { HTML } from '@interactors/html';
-import { Button, TextField } from '../../../../interactors';
+import { Button, TextField, Modal, MultiColumnListCell } from '../../../../interactors';
 
 export default {
   fillDate(dateString) {
     // dateString format MM/DD/YYYY
     cy.do(TextField('Date').fillIn(dateString));
-    // wait is necessary because TextField fill very quickly
+    // wait is necessary because TextField fills very quickly
     cy.wait(1000);
   },
   verifyWarning(textString) {
@@ -13,8 +13,11 @@ export default {
   },
   saveAndClose() {
     cy.do([
-      Button('Save and close').click(),
-      Button('Close').click()
+      Modal().find(Button('Save and close')).click(),
+      Modal().find(Button('Close')).click()
     ]);
+  },
+  verifyRequestsCount(contentValue) {
+    cy.expect(MultiColumnListCell({ content: contentValue }).exists());
   }
 };

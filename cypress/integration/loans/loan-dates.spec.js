@@ -7,22 +7,27 @@ import UsersCard from '../../support/fragments/users/usersCard';
 import LoansPage from '../../support/fragments/loans/loansPage';
 import ChangeDueDateForm from '../../support/fragments/loans/changeDueDateForm';
 import CheckOutActions from '../../support/fragments/check-out-actions/check-out-actions';
+import DateTools from '../../support/utils/dateTools';
+import NewRequest from '../../support/fragments/requests/newRequest';
 
-const ITEM_BARCODE = `123${getRandomPostfix()}`;
-let user;
+const item = {
+  barcode: `123${getRandomPostfix()}`,
+  title: `Loans test ${Number(new Date())}`
+};
+let checkOutUser;
+const checkInUser = {};
+const expirationUserDate = DateTools.getFutureWeekDateObj();
 
 
 describe('loan dates', () => {
   before('create inventory instance', () => {
     cy.createTempUser([
-      permissions.inventoryAll.gui,
-      permissions.circulationLogAll.gui,
       permissions.loansAll.gui,
       permissions.checkoutAll.gui,
-      permissions.checkinAll.gui,
+      permissions.requestsAll.gui,
     ])
       .then(userProperties => {
-        user = userProperties;
+        checkOutUser = userProperties;
         cy.getToken(Cypress.env('diku_login'), Cypress.env('diku_password'))
           .then(() => {
             cy.getLoanTypes({ limit: 1 });
@@ -43,7 +48,7 @@ describe('loan dates', () => {
             cy.createInstance({
               instance: {
                 instanceTypeId: Cypress.env('instanceTypes')[0].id,
-                title: `Barcode search test ${Number(new Date())}`,
+                title: item.title,
               },
               holdings: [{
                 holdingsTypeId: Cypress.env('holdingsTypes')[0].id,
@@ -52,7 +57,7 @@ describe('loan dates', () => {
               }],
               items: [
                 [{
-                  barcode: ITEM_BARCODE,
+                  barcode: item.barcode,
                   missingPieces: '3',
                   numberOfMissingPieces: '3',
                   status: { name: 'Available' },
@@ -64,32 +69,39 @@ describe('loan dates', () => {
           })
           .then(() => {
             cy.login(userProperties.username, userProperties.password);
-            CheckOutActions.checkOutItem(Cypress.env('users')[0].barcode, ITEM_BARCODE);
+            CheckOutActions.checkOutItem(Cypress.env('users')[0].barcode, item.barcode);
+            cy.updateUser({ ...Cypress.env('users')[0], expirationDate: DateTools.getFormattedDate({ date: expirationUserDate }) });
+          })
+          .then(() => {
+            cy.getUsers({ limit: 1, query: '"barcode"="" and "active"="true"' })
+              .then((users) => {
+                checkInUser.barcode = users[0].barcode;
+              });
           });
       });
   });
 
   after('Delete all data', () => {
     cy.createItemCheckinApi({
-      itemBarcode: ITEM_BARCODE,
+      itemBarcode: item.barcode,
       servicePointId: Cypress.env('servicePoints')[0].id,
       checkInDate: '2021-09-30T16:14:50.444Z',
     });
-    cy.getInstance({ limit: 1, expandAll: true, query: `"items.barcode"=="${ITEM_BARCODE}"` })
+    cy.getInstance({ limit: 1, expandAll: true, query: `"items.barcode"=="${item.barcode}"` })
       .then((instance) => {
         cy.deleteItem(instance.items[0].id);
         cy.deleteHoldingRecord(instance.holdings[0].id);
         cy.deleteInstanceApi(instance.id);
       });
-    cy.deleteUser(user.userId);
+    cy.deleteUser(checkOutUser.userId);
   });
 
   it('C1566 Loan: Change due date warnings and alerts', { tags: [TestTypes.smoke] }, () => {
     cy.visit(TopMenu.usersPath);
-
+    cy.pause();
     // show open loans
-    UsersSearchPane.searchByKeywords(user.username);
-    UsersSearchPane.openUser(user.userId);
+    UsersSearchPane.searchByKeywords(checkOutUser.username);
+    UsersSearchPane.openUser(checkOutUser.userId);
     UsersCard.openLoans();
     UsersCard.showOpenedLoans();
 
@@ -99,10 +111,32 @@ describe('loan dates', () => {
     ChangeDueDateForm.verifyWarning('New due date is in the past.');
     ChangeDueDateForm.saveAndClose();
 
-    // change date to date after patron's expiration
+    // change date to date after patron's expiration and verify warning
+    const loanDateAfterExpirationUser = new Date(expirationUserDate.getFullYear(), expirationUserDate.getMonth(), expirationUserDate.getDate() + 7);
     LoansPage.openChangeDueDateForm();
-    ChangeDueDateForm.fillDate('04/19/9999');
-    // ChangeDueDateForm.verifyWarning('New due date is in the past.');
-    // ChangeDueDateForm.saveAndClose();
+    ChangeDueDateForm.fillDate(DateTools.getFormattedDate({ date: loanDateAfterExpirationUser }, 'MM/DD/YYYY'));
+    ChangeDueDateForm.verifyWarning('New due date is after patron\'s expiration.');
+    ChangeDueDateForm.saveAndClose();
+    LoansPage.closePage();
+
+    // create request
+    cy.visit(TopMenu.requestsPath);
+    NewRequest.createNewRequest({
+      itemBarcode: item.barcode,
+      itemTitle: item.title,
+      requesterBarcode: checkInUser.barcode,
+      pickupServicePoint: 'Circ Desk 1',
+    });
+
+    // go to changing due date and verify warning
+    cy.visit(TopMenu.usersPath);
+    UsersSearchPane.searchByKeywords(checkOutUser.username);
+    UsersSearchPane.openUser(checkOutUser.userId);
+    UsersCard.openLoans();
+    UsersCard.showOpenedLoans();
+    LoansPage.openChangeDueDateForm();
+    ChangeDueDateForm.verifyRequestsCount('1');
+    // Bug UIU-2586
+    // ChangeDueDateForm.verifyWarning('Item has been recalled');
   });
 });
