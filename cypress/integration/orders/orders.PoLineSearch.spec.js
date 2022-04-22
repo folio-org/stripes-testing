@@ -8,7 +8,21 @@ import basicOrderLine from '../../support/fragments/orders/basicOrderLine';
 describe('orders: Test Po line search', () => {
   const order = { ...NewOrder.defaultOrder };
   const orderLine = { ...basicOrderLine.specialOrderLine };
-  let orderNumberValue;
+  let orderLineNumber;
+  const searchers = [
+    { nameOfSearch: 'Keyword', valueOfLine: orderLine.titleOrPackage },
+    // { nameOfSearch: 'Contributor', valueOfLine: orderLine.contributors[0].contributor },
+    // { nameOfSearch: 'Requester', valueOfLine: orderLine.requester },
+    // { nameOfSearch: 'Title or package name', valueOfLine: orderLine.titleOrPackage },
+    // { nameOfSearch: 'Publisher', valueOfLine: orderLine.publisher },
+    // { nameOfSearch: 'Vendor account', valueOfLine: orderLine.vendorDetail.vendorAccount },
+    // { nameOfSearch: 'Vendor reference number', valueOfLine: orderLine.vendorDetail.referenceNumbers[0].refNumber },
+    // { nameOfSearch: 'Donor', valueOfLine: orderLine.donor },
+    // { nameOfSearch: 'Selector', valueOfLine: orderLine.selector },
+    // { nameOfSearch: 'Volumes', valueOfLine: orderLine.physical.volumes },
+    // { nameOfSearch: 'Product ID', valueOfLine: orderLine.details.productIds[0].productId },
+    // { nameOfSearch: 'Product ID ISBN', valueOfLine: orderLine.details.productIds[0].productId },
+  ];
 
   before(() => {
     cy.getToken(Cypress.env('diku_login'), Cypress.env('diku_password'));
@@ -23,11 +37,19 @@ describe('orders: Test Po line search', () => {
     cy.getMaterialTypes({ query: 'name="book"' })
       .then(materialType => { orderLine.physical.materialType = materialType.id; });
     cy.login(Cypress.env('diku_login'), Cypress.env('diku_password'));
-    Orders.createOrderWithOrderLineViaApi(order, orderLine)
-      .then(orderNumber => {
-        console.log(orderNumber);
-        orderNumberValue = orderNumber;
-        console.log(orderNumberValue);
+    cy.createOrderApi(order)
+      .then(() => {
+        cy.getAcquisitionMethodsApi({ query: 'value="Other"' })
+          .then(({ body }) => {
+            orderLine.acquisitionMethod = body.acquisitionMethods[0].id;
+            orderLine.purchaseOrderId = order.id;
+            cy.createOrderLineApi(orderLine)
+              .then((response) => {
+                orderLineNumber = response.body.poLineNumber;
+                searchers.push({ nameOfSearch: 'PO line number', valueOfLine: orderLineNumber });
+                console.log(searchers);
+              });
+          });
       });
     cy.visit(TopMenu.ordersPath);
     Orders.selectOrderLines();
@@ -37,31 +59,12 @@ describe('orders: Test Po line search', () => {
     cy.deleteOrderApi(order.id);
   });
 
-  [
-    { nameOfSearch: 'Keyword', valueOfLine: orderLine.titleOrPackage },
-    { nameOfSearch: 'Contributor', valueOfLine: orderLine.contributors[0].contributor },
-    // { nameOfSearch: 'PO line number', valueOfLine: orderNumberValue },
-    { nameOfSearch: 'Requester', valueOfLine: orderLine.requester },
-    { nameOfSearch: 'Title or package name', valueOfLine: orderLine.titleOrPackage },
-    { nameOfSearch: 'Publisher', valueOfLine: orderLine.publisher },
-    { nameOfSearch: 'Vendor account', valueOfLine: orderLine.vendorDetail.vendorAccount },
-    { nameOfSearch: 'Vendor reference number', valueOfLine: orderLine.vendorDetail.referenceNumbers[0].refNumber },
-    { nameOfSearch: 'Donor', valueOfLine: orderLine.donor },
-    { nameOfSearch: 'Selector', valueOfLine: orderLine.selector },
-    { nameOfSearch: 'Volumes', valueOfLine: orderLine.physical.volumes },
-    { nameOfSearch: 'Product ID', valueOfLine: orderLine.details.productIds[0].productId },
-    { nameOfSearch: 'Product ID ISBN', valueOfLine: orderLine.details.productIds[0].productId },
-  ].forEach((searcher) => {
+  searchers.forEach((searcher) => {
     it('C6719 Test the POL searches', { tags: [TestType.smoke] }, () => {
       Orders.searchByParameter(searcher.nameOfSearch, searcher.valueOfLine);
       Orders.checkOrderlineSearchResults(orderLine.titleOrPackage);
       Orders.resetFilters();
     });
-  });
-  it('C6719 Test the POL searches', { tags: [TestType.smoke] }, () => {
-    Orders.searchByParameter('PO line number', orderNumberValue);
-    Orders.checkOrderlineSearchResults(orderLine.titleOrPackage);
-    Orders.resetFilters();
   });
 });
 
