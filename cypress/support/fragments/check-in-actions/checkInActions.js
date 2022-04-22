@@ -41,4 +41,13 @@ export default {
     cy.expect(Pane({ title:  'New fee/fine' }).exists());
     this.returnCheckIn();
   },
+  // check in item at service point assigned to its effective location
+  checkInItemWithEffectiveLocation:(barcode) => {
+    cy.intercept('/configurations/entries?*').as('getEntries');
+    cy.do(TextField({ name:'item.barcode' }).fillIn(barcode));
+    cy.wait('@getEntries');
+    cy.intercept('/circulation/requests?*').as('getRequests');
+    cy.do(Button({ id:'clickable-add-item' }).click());
+    cy.wait('@getRequests');
+  },
 };

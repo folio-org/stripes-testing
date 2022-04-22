@@ -54,5 +54,12 @@ export default {
     cy.do(Button({ id: 'accordion-toggle-button-servicePoints' }).click());
     cy.do(Select({ id: 'servicePointPreference' }).choose('None'));
     cy.do(Button({ id: 'clickable-save' }).click());
+  },
+  switchServicePoint:() => {
+    cy.do([
+      Dropdown('My profile').open(),
+      Button('Switch service point').click(),
+      Button({ id:'service-point-btn-0' }).click(),
+    ]);
   }
 };

@@ -9,10 +9,12 @@ import Helper from '../../support/fragments/finance/financeHelper';
 import InventorySearch from '../../support/fragments/inventory/inventorySearch';
 import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
 import InventoryInstance from '../../support/fragments/inventory/inventoryInstance';
-import ItemVeiw from '../../support/fragments/inventory/itemVeiw';
+import ItemVeiw from '../../support/fragments/inventory/inventoryItem/itemVeiw';
 import Receiving from '../../support/fragments/receiving/receiving';
 import permissions from '../../support/dictionary/permissions';
-import markItemAsMissing from '../../support/fragments/inventory/markItemAsMissing';
+import CheckInActions from '../../support/fragments/check-in-actions/checkInActions';
+import ConfirmItemMissingCheckInModal from '../../support/fragments/check-in-actions/confirmItemMissingCheckInModal';
+import SwitchServicePoint from '../../support/fragments/service_point/switchServicePoint';
 
 describe('ui-inventory: Item status date updates', () => {
   const order = { ...NewOrder.specialOrder };
@@ -69,54 +71,59 @@ describe('ui-inventory: Item status date updates', () => {
   };
   let createdOrderNumber;
   const instanceTitle = orderLine.titleOrPackage;
-  let userId = '';
+  const userId = '';
+  let defaultServicePointId = '';
   let itemLocation = '';
+  let user = {};
 
-  
 
   before(() => {
-    cy.createTempUser([
-      permissions.inventoryAll.gui,
-      permissions.uiCreateOrder.gui,
-      permissions.uiCreateOrderLine.gui,
-      permissions.uiApproveOrder.gui,
-      permissions.uiEditOrder.gui,
-      permissions.uiCheckInAll.gui,
-      permissions.uiReceivingViewEditCreate.gui,
-    ])
+    cy.getToken(Cypress.env('diku_login'), Cypress.env('diku_password'))
+      .then(() => {
+        cy.getServicePointsApi({ limit: 2, query: 'pickupLocation=="true"' }).then(servicePoints => {
+          defaultServicePointId = servicePoints[0].id;
+          console.log(servicePoints[0].id);
+        });
+      })
+      .then(() => {
+        cy.createTempUser([
+          permissions.inventoryAll.gui,
+          permissions.uiCreateOrder.gui,
+          permissions.uiCreateOrderLine.gui,
+          permissions.uiApproveOrder.gui,
+          permissions.uiEditOrder.gui,
+          permissions.uiCheckInAll.gui,
+          permissions.uiReceivingViewEditCreate.gui,
+        ]);
+      })
       .then(userProperties => {
-        userId = userProperties.userId;
-        cy.login(userProperties.username, userProperties.password);
-        cy.visit(TopMenu.ordersPath);
-        cy.getToken(Cypress.env('diku_login'), Cypress.env('diku_password'))
-          .then(() => {
-            cy.getOrganizationApi({ query: 'name="Amazon.com"' })
-              .then(organization => {
-                order.vendor = organization.id;
-                orderLine.physical.materialSupplier = organization.id;
-                orderLine.eresource.accessProvider = organization.id;
-              });
-            cy.getMaterialTypes({ query: 'name="book"' })
-              .then(materialType => { orderLine.physical.materialType = materialType.id; });
-            cy.getLocations({ limit: 1 })
-              .then(location => {
-                orderLine.locations[0].locationId = location.id;
-                itemLocation = location.name;
-                console.log(itemLocation);
-              });
-            cy.getServicePointsApi({ limit: 1, query: 'pickupLocation=="true"' });
-            cy.getUsers({
-              limit: 1,
-              query: `"personal.lastName"="${userProperties.username}" and "active"="true"`
-            });
-          })
-          .then(() => {
-            cy.addServicePointToUser(Cypress.env('servicePoints')[0].id, userId);
-            cy.getUserServicePoints(Cypress.env('users')[0].id);
-            Orders.createOrderWithOrderLineViaApi(order, orderLine)
-              .then(orderNumber => {
-                createdOrderNumber = orderNumber;
-              });
+        user = userProperties;
+        cy.addServicePointToUser(defaultServicePointId, user.userId);
+        console.log(defaultServicePointId);
+      })
+      .then(() => {
+        cy.login(user.username, user.password);
+      })
+      .then(() => {
+        cy.getOrganizationApi({ query: 'name="Amazon.com"' })
+          .then(organization => {
+            order.vendor = organization.id;
+            orderLine.physical.materialSupplier = organization.id;
+            orderLine.eresource.accessProvider = organization.id;
+          });
+        cy.getMaterialTypes({ query: 'name="book"' })
+          .then(materialType => { orderLine.physical.materialType = materialType.id; });
+        cy.getLocations({ limit: 1 })
+          .then(location => {
+            orderLine.locations[0].locationId = location.id;
+            itemLocation = location.name;
+            console.log(itemLocation);
+          });
+      })
+      .then(() => {
+        Orders.createOrderWithOrderLineViaApi(order, orderLine)
+          .then(orderNumber => {
+            createdOrderNumber = orderNumber;
           });
       });
   });
@@ -135,16 +142,15 @@ describe('ui-inventory: Item status date updates', () => {
     Helper.selectFromResultsList();
     Orders.openOrder();
     OrdersHelper.verifyOrderDateOpened();
-
-    // open Item
+    // open Item view in Inventory
     cy.visit(TopMenu.inventoryPath);
     InventorySearch.searchByParameter('Title (all)', instanceTitle);
     InventoryInstances.selectInstance();
     InventoryInstance.openHoldings([itemLocation]);
-
     InventoryInstance.openItemView('No barcode');
     ItemVeiw.verifyUpdatedItemDate();
     ItemVeiw.verifyItemStatus(ItemVeiw.itemStatuses.onOrder);
+    cy.log('On order');
 
     // receive item
     cy.visit(TopMenu.ordersPath);
@@ -153,8 +159,7 @@ describe('ui-inventory: Item status date updates', () => {
     Orders.receiveOrderViaActions();
     Helper.selectFromResultsList();
     Receiving.receivePiece(0, caption, barcode);
-
-    // open Item
+    // open Item view in Inventory
     cy.visit(TopMenu.inventoryPath);
     InventorySearch.searchByParameter('Title (all)', instanceTitle);
     InventoryInstances.selectInstance();
@@ -162,10 +167,13 @@ describe('ui-inventory: Item status date updates', () => {
     InventoryInstance.openItemView(barcode);
     ItemVeiw.verifyUpdatedItemDate();
     ItemVeiw.verifyItemStatus(ItemVeiw.itemStatuses.inProcess);
+    cy.log('In process');
 
     cy.visit(TopMenu.checkInPath);
-    cy.checkInItem(barcode);
-
+    //##############
+    SwitchServicePoint.switchServicePoint();
+    cy.pause();
+    CheckInActions.checkInItemWithEffectiveLocation(barcode);
     cy.visit(TopMenu.inventoryPath);
     InventorySearch.searchByParameter('Title (all)', instanceTitle);
     InventoryInstances.selectInstance();
@@ -173,5 +181,57 @@ describe('ui-inventory: Item status date updates', () => {
     InventoryInstance.openItemView(barcode);
     ItemVeiw.verifyUpdatedItemDate();
     ItemVeiw.verifyItemStatus(ItemVeiw.itemStatuses.available);
+    cy.log('Available');
+
+    ItemVeiw.clickMarkAsMissing();
+    ItemVeiw.verifyUpdatedItemDate();
+    ItemVeiw.verifyItemStatus(ItemVeiw.itemStatuses.missing);
+    cy.log('Missing');
+
+    cy.visit(TopMenu.checkInPath);
+    CheckInActions.checkInItemWithEffectiveLocation(barcode);
+    cy.visit(TopMenu.inventoryPath);
+    InventorySearch.searchByParameter('Title (all)', instanceTitle);
+    InventoryInstances.selectInstance();
+    InventoryInstance.openHoldings([itemLocation]);
+    InventoryInstance.openItemView(barcode);
+    ItemVeiw.verifyUpdatedItemDate();
+    ItemVeiw.verifyItemStatus(ItemVeiw.itemStatuses.available);
+    cy.log('Available');
+
+    cy.visit(TopMenu.checkInPath);
+    CheckInActions.checkInItemWithEffectiveLocation(barcode);
+    cy.visit(TopMenu.inventoryPath);
+    InventorySearch.searchByParameter('Title (all)', instanceTitle);
+    InventoryInstances.selectInstance();
+    InventoryInstance.openHoldings([itemLocation]);
+    InventoryInstance.openItemView(barcode);
+    ItemVeiw.verifyUpdatedItemDate();
+    ItemVeiw.verifyItemStatus(ItemVeiw.itemStatuses.available);
+    cy.log('Available');
+
+    // switch to other service point
+    SwitchServicePoint.switchServicePoint();
+    cy.visit(TopMenu.checkInPath);
+    CheckInActions.checkInItemWithEffectiveLocation(barcode);
+    cy.visit(TopMenu.inventoryPath);
+    InventorySearch.searchByParameter('Title (all)', instanceTitle);
+    InventoryInstances.selectInstance();
+    InventoryInstance.openHoldings([itemLocation]);
+    InventoryInstance.openItemView(barcode);
+    ItemVeiw.verifyUpdatedItemDate();
+    // ItemVeiw.verifyItemStatus(ItemVeiw.itemStatuses.inTransit);
+    cy.log('In transit');
+
+    cy.visit(TopMenu.checkInPath);
+    CheckInActions.checkInItemWithEffectiveLocation(barcode);
+    cy.visit(TopMenu.inventoryPath);
+    InventorySearch.searchByParameter('Title (all)', instanceTitle);
+    InventoryInstances.selectInstance();
+    InventoryInstance.openHoldings([itemLocation]);
+    InventoryInstance.openItemView(barcode);
+    ItemVeiw.verifyUpdatedItemDate();
+    // ItemVeiw.verifyItemStatus(ItemVeiw.itemStatuses.inTransit);
+    cy.log('In transit');
   });
 });

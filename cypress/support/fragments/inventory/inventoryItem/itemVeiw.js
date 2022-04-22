@@ -1,11 +1,13 @@
-import { Accordion, KeyValue } from '../../../../interactors';
-import dateTools from '../../utils/dateTools';
+import { Accordion, KeyValue, Button } from '../../../../../interactors';
+import dateTools from '../../../utils/dateTools';
+import ConfirmItemMissingModal from './confirmItemMissingModal';
 
 const itemStatuses = {
   onOrder: 'On order',
   inProcess: 'In process',
   available: 'Available',
-
+  missing: 'Missing',
+  inTransit: 'In transit'
 };
 
 export default {
@@ -24,5 +26,11 @@ export default {
     cy.expect(Accordion('Loan and availability').find(KeyValue({ value: status })).exists());
   },
 
-
+  clickMarkAsMissing() {
+    cy.intercept('organizations/organizations/?*').as('getOrg');
+    cy.wait(['@getOrg']);
+    cy.do(Button('Actions').click());
+    //cy.do(Button('Mark as missing').click());
+    //cy.do(ConfirmItemMissingModal.confirmModal());
+  },
 };
