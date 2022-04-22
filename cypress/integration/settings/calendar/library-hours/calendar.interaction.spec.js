@@ -1,10 +1,20 @@
 import TestType from '../../../../support/dictionary/testTypes';
 import calendarActions from '../../../../support/fragments/settings/calendar/library-hours/library-hours';
+import permissions from '../../../../support/dictionary/permissions';
 
 describe('Calendar', () => {
+  let userId = '';
+
   before(() => {
-    cy.login(Cypress.env('diku_login'), Cypress.env('diku_password'));
-    cy.getToken(Cypress.env('diku_login'), Cypress.env('diku_password'));
+    cy.createTempUser([permissions.calendarAll.gui])
+      .then(userProperties => {
+        userId = userProperties.userId;
+        cy.login(userProperties.username, userProperties.password);
+      });
+  });
+
+  after(() => {
+    cy.deleteUser(userId);
   });
 
   it('C347825 Create, view, and edit calendar events', { tags: [TestType.smoke] }, () => {

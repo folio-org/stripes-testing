@@ -7,8 +7,9 @@ import {
   Modal,
 } from '../../../../../../interactors';
 import settingsMenu from '../../../settingsMenu';
+import dateTools from '../../../../utils/dateTools';
 
-const currentDate = new Date().getDate().toString();
+const currentDate = dateTools.getCurrentDay();
 const initialEventName = 'Initial event name';
 const editedEventName = 'Edited event name';
 const nameAttributeValue = 'periodName';
@@ -44,8 +45,7 @@ export default {
       .visit(settingsMenu.calendarLibraryHoursPath)
       .get(selectors.servicePoint).first().click()
       .do(Button(buttonLabels.new).click())
-      .do(PaneHeader(pageHeaders.createEvent).exists());
-
+      .expect(PaneHeader(pageHeaders.createEvent).exists());
 
     cy.get(selectors.calendar).then(buttons => {
       buttons[datePickerOrder.validFrom].click();
@@ -69,8 +69,9 @@ export default {
   editCalendarEvent() {
     cy
       .do(IconButton({ icon: iconsSet.edit }).click())
-      .do(PaneHeader(pageHeaders.modifyEvent).exists())
-      .do(TextField({ name: nameAttributeValue }).fillIn(editedEventName))
+      .expect(PaneHeader(pageHeaders.modifyEvent).exists());
+
+    cy.do(TextField({ name: nameAttributeValue }).fillIn(editedEventName))
       .do(Button(buttonLabels.saveAndClose).click())
       .get(selectors.eventInfo)
       .contains(editedEventName);
@@ -79,9 +80,11 @@ export default {
   deleteCalendarEvent() {
     cy
       .do(IconButton({ icon: iconsSet.edit }).click())
-      .do(PaneHeader(pageHeaders.modifyEvent).exists())
-      .do(Button(buttonLabels.delete).click())
-      .do(Modal(pageHeaders.deleteEvent).exists())
-      .do(Button({ id: 'clickable-delete-confirmation-confirm' }).click());
+      .expect(PaneHeader(pageHeaders.modifyEvent).exists());
+
+    cy.do(Button(buttonLabels.delete).click())
+      .expect(Modal(pageHeaders.deleteEvent).exists());
+
+    cy.do(Button({ id: 'clickable-delete-confirmation-confirm' }).click());
   },
 };
