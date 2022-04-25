@@ -32,7 +32,8 @@ export default {
     path: 'data-import-profiles/actionProfiles',
     body: {
       ...actionProfile
-    }
+    },
+    isDefaultSearchParamsRequired : false
   }),
   deleteActionProfileApi:  (id) => cy.okapiRequest({
     method: 'DELETE',

@@ -30,7 +30,6 @@ const importFile = (profileName) => {
   JobProfiles.select(profileName);
   JobProfiles.runImportFile(uniqueFileName);
   JobProfiles.openFileRecords(uniqueFileName);
-  cy.pause('openFileRecords');
   DataImport.getLinkToAuthority(MarcAuthority.defaultAuthority.headingReference).then(link => {
     const jobLogEntryId = link.split('/').at(-2);
     const recordId = link.split('/').at(-1);
@@ -40,8 +39,6 @@ const importFile = (profileName) => {
     }).as('getRecord');
     cy.visit(link);
     cy.wait('@getRecord', getLongDelay()).then(response => {
-      cy.log(JSON.stringify(response.response.body.relatedAuthorityInfo));
-      cy.pause();
       const internalAuthorityId = response.response.body.relatedAuthorityInfo.idList[0];
 
       marcAuthorityIds.add(MarcAuthority.defaultAuthority.libraryOfCongressControlNumber);

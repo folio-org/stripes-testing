@@ -30,7 +30,8 @@ export default {
   createJobProfileApi: (jobProfile = marcAuthorityUpdateJobProfile) => cy.okapiRequest({
     method: 'POST',
     path: 'data-import-profiles/jobProfiles',
-    body: jobProfile
+    body: jobProfile,
+    isDefaultSearchParamsRequired: false
   }),
   deleteJobProfileApi: (id) => cy.okapiRequest({
     method: 'DELETE',

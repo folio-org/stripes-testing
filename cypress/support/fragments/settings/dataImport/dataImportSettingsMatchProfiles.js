@@ -7,7 +7,9 @@ const marcAuthorityMatchBy010TagProfile = {
     'matchDetails': [
       {
         'incomingRecordType': 'MARC_AUTHORITY',
+        'existingRecordType' : 'MARC_AUTHORITY',
         'incomingMatchExpression': {
+          'dataValueType' : 'VALUE_FROM_RECORD',
           'fields' : [{
             'label' : 'field',
             'value' : '010'
@@ -22,8 +24,9 @@ const marcAuthorityMatchBy010TagProfile = {
             'value' : 'a'
           }]
         },
-        'existingRecordType': 'MARC_AUTHORITY',
-        'existingMatchExpression': {
+        'matchCriterion' : 'EXACTLY_MATCHES',
+        'existingMatchExpression' : {
+          'dataValueType' : 'VALUE_FROM_RECORD',
           'fields' : [{
             'label' : 'field',
             'value' : '010'
@@ -38,7 +41,6 @@ const marcAuthorityMatchBy010TagProfile = {
             'value' : 'a'
           }]
         },
-        'matchCriterion': 'EXACTLY_MATCHES'
       }
     ],
     'existingRecordType': 'MARC_AUTHORITY'
