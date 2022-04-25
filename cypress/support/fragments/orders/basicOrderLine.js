@@ -1,6 +1,6 @@
 import uuid from 'uuid';
 import getRandomPostfix from '../../utils/stringTools';
-// For comfortable use of the OrderLine in searches or filters, I recommend using specialOrderLine,for else defaultOrderLine.
+// For comfortable use of the OrderLine in searches or filters, I recommend using specialOrderLine,for else defaultOrderLine!
 export default {
   defaultOrderLine: {
     id: uuid(),
