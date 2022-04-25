@@ -16,10 +16,7 @@ describe('ui-data-import: Search the "View all" log screen', () => {
       Cypress.env('diku_login'),
       Cypress.env('diku_password')
     );
-    cy.getToken(
-      Cypress.env('diku_login'),
-      Cypress.env('diku_password')
-    );
+    cy.getAdminToken();
 
     cy.visit(TopMenu.dataImportPath);
     // create dynamically file with given name in fixtures

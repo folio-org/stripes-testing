@@ -9,7 +9,7 @@ describe('ui-invoices: Invoice creation', () => {
   const vendorPrimaryAddress = { ...VendorAddress.vendorAddress };
 
   before(() => {
-    cy.getToken(Cypress.env('diku_login'), Cypress.env('diku_password'));
+    cy.getAdminToken();
     cy.getOrganizationApi({ query: `name=${invoice.vendorName}` })
       .then(organization => {
         invoice.accountingCode = organization.erpCode;

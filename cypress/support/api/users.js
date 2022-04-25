@@ -92,14 +92,14 @@ Cypress.Commands.add('updateUser', (userData) => {
   });
 });
 
-Cypress.Commands.add('createTempUser', (permissions) => {
+Cypress.Commands.add('createTempUser', (permissions = []) => {
   const userProperties = {
     username: `cypressTestUser${getRandomPostfix()}`,
     password: `Password${getRandomPostfix()}`,
     userId:''
   };
 
-  cy.getToken(Cypress.env('diku_login'), Cypress.env('diku_password'));
+  cy.getAdminToken();
 
   cy.getFirstUserGroupId({ limit: 1 })
     .then((userGroupdId) => {
