@@ -48,13 +48,14 @@ export default {
       .do(Button(buttonLabels.new).click())
       .expect(PaneHeader(pageHeaders.createEvent).exists());
 
-    cy.do([
-      TextField(fieldLabels.from).find(Button({ icon: iconsSet.calendar })).click(),
-      Calendar().clickActiveDay(currentDate),
-      TextField(fieldLabels.to).find(Button({ icon: iconsSet.calendar })).click(),
-      Calendar().clickActiveDay(currentDate),
-      TextField({ name: nameAttributeValue }).fillIn(initialEventName)
-    ]);
+    cy
+      .do([
+        TextField(fieldLabels.from).find(Button({ icon: iconsSet.calendar })).click(),
+        Calendar().clickActiveDay(currentDate),
+        TextField(fieldLabels.to).find(Button({ icon: iconsSet.calendar })).click(),
+        Calendar().clickActiveDay(currentDate),
+        TextField({ name: nameAttributeValue }).fillIn(initialEventName)
+      ]);
 
     cy
       .get(selectors.calendarFirstCell).click()
@@ -67,10 +68,11 @@ export default {
       .do(IconButton({ icon: iconsSet.edit }).click())
       .expect(PaneHeader(pageHeaders.modifyEvent).exists());
 
-    cy.do([
-      TextField({ name: nameAttributeValue }).fillIn(editedEventName),
-      Button(buttonLabels.saveAndClose).click()
-    ])
+    cy
+      .do([
+        TextField({ name: nameAttributeValue }).fillIn(editedEventName),
+        Button(buttonLabels.saveAndClose).click()
+      ])
       .expect(KeyValue(currentEventLabel, { value: including(editedEventName) }).exists());
   },
 
@@ -79,7 +81,8 @@ export default {
       .do(IconButton({ icon: iconsSet.edit }).click())
       .expect(PaneHeader(pageHeaders.modifyEvent).exists());
 
-    cy.do(Button(buttonLabels.delete).click())
+    cy
+      .do(Button(buttonLabels.delete).click())
       .expect(Modal(pageHeaders.deleteEvent).exists());
 
     cy.do(Button({ id: 'clickable-delete-confirmation-confirm' }).click());
