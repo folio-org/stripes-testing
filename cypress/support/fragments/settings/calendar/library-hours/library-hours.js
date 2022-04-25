@@ -1,3 +1,4 @@
+import { including } from '@interactors/html';
 import {
   Button,
   IconButton,
@@ -5,6 +6,7 @@ import {
   Calendar,
   PaneHeader,
   Modal,
+  KeyValue,
 } from '../../../../../../interactors';
 import settingsMenu from '../../../settingsMenu';
 import dateTools from '../../../../utils/dateTools';
@@ -13,15 +15,14 @@ const currentDate = dateTools.getCurrentDay();
 const initialEventName = 'Initial event name';
 const editedEventName = 'Edited event name';
 const nameAttributeValue = 'periodName';
+const currentEventLabel = 'Current:';
 
 const iconsSet = {
   calendar: 'calendar',
   edit: 'edit',
 };
 const selectors = {
-  eventInfo: '.new-period',
   calendarFirstCell: '.rbc-day-bg:first-child',
-  calendar: `[icon=${iconsSet.calendar}]`,
   servicePoint: '[class^=navListSectionControl] [href^="/settings/calendar/library-hours/"]',
 };
 const pageHeaders = {
@@ -34,9 +35,9 @@ const buttonLabels = {
   saveAndClose: 'Save & close',
   delete: 'Delete',
 };
-const datePickerOrder = {
-  validFrom: 0,
-  validTo: 1,
+const fieldLabels = {
+  from: 'Valid From:*',
+  to: 'Valid To:*',
 };
 
 export default {
@@ -47,23 +48,18 @@ export default {
       .do(Button(buttonLabels.new).click())
       .expect(PaneHeader(pageHeaders.createEvent).exists());
 
-    cy.get(selectors.calendar).then(buttons => {
-      buttons[datePickerOrder.validFrom].click();
-
-      cy.do(Calendar().clickActiveDay(currentDate));
-    });
-
-    cy.get(selectors.calendar).then(buttons => {
-      buttons[datePickerOrder.validTo].click();
-
-      cy.do(Calendar().clickActiveDay(currentDate));
-    });
+    cy.do([
+      TextField(fieldLabels.from).find(Button({ icon: iconsSet.calendar })).click(),
+      Calendar().clickActiveDay(currentDate),
+      TextField(fieldLabels.to).find(Button({ icon: iconsSet.calendar })).click(),
+      Calendar().clickActiveDay(currentDate),
+      TextField({ name: nameAttributeValue }).fillIn(initialEventName)
+    ]);
 
     cy
-      .do(TextField({ name: nameAttributeValue }).fillIn(initialEventName))
       .get(selectors.calendarFirstCell).click()
       .do(Button(buttonLabels.saveAndClose).click())
-      .get(selectors.eventInfo).contains(initialEventName);
+      .expect(KeyValue(currentEventLabel, { value: including(initialEventName) }).exists());
   },
 
   editCalendarEvent() {
@@ -71,10 +67,11 @@ export default {
       .do(IconButton({ icon: iconsSet.edit }).click())
       .expect(PaneHeader(pageHeaders.modifyEvent).exists());
 
-    cy.do(TextField({ name: nameAttributeValue }).fillIn(editedEventName))
-      .do(Button(buttonLabels.saveAndClose).click())
-      .get(selectors.eventInfo)
-      .contains(editedEventName);
+    cy.do([
+      TextField({ name: nameAttributeValue }).fillIn(editedEventName),
+      Button(buttonLabels.saveAndClose).click()
+    ])
+      .expect(KeyValue(currentEventLabel, { value: including(editedEventName) }).exists());
   },
 
   deleteCalendarEvent() {
