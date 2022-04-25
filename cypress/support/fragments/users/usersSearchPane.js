@@ -1,3 +1,4 @@
+import { including } from '@interactors/html';
 import {
   Accordion,
   Checkbox,
@@ -5,7 +6,6 @@ import {
   Button,
   Link,
 } from '../../../../interactors';
-import { including } from '@interactors/html';
 
 export default {
   searchByStatus(status) {

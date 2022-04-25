@@ -32,4 +32,3 @@ describe('ui-inventory: Create, edit, delete material types', () => {
     MaterialTypesSettings.verifyMessageOfDeteted(newMaterialTypeName);
   });
 });
-
