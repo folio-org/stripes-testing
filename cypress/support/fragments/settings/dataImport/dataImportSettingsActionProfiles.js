@@ -4,7 +4,15 @@ const marcAuthorityUpdateActionProfile = {
   'profile': {
     'name': `Use this one to update MARC authority records - action profile${getRandomPostfix()}`,
     'action': 'UPDATE',
-    'folioRecord': 'MARC_AUTHORITY'
+    'folioRecord': 'MARC_AUTHORITY',
+    'deleted' : false,
+    'userInfo' : {
+      'firstName' : 'admin',
+      'lastName' : 'admin',
+      'userName' : 'admin'
+    },
+    'parentProfiles' : [],
+    'childProfiles' : [],
   },
   'addedRelations': [
     {

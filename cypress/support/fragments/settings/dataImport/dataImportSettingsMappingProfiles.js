@@ -4,10 +4,18 @@ const marcAuthorityUpdateMappingProfile = {
   'name': `Update MARC authority records mapping profile${getRandomPostfix()}`,
   'incomingRecordType': 'MARC_AUTHORITY',
   'existingRecordType': 'MARC_AUTHORITY',
+  'deleted' : false,
+  'userInfo' : {
+    'firstName' : 'admin',
+    'lastName' : 'admin',
+    'userName' : 'admin'
+  },
+  'marcFieldProtectionSettings' : [],
+  'parentProfiles' : [],
+  'childProfiles' : [],
   'mappingDetails': {
     'name': 'marcAuthority',
     'recordType': 'MARC_AUTHORITY',
-    'marcMappingOption': 'UPDATE',
     'mappingFields': [
       {
         'name': 'discoverySuppress',
@@ -24,8 +32,10 @@ const marcAuthorityUpdateMappingProfile = {
         'value': '',
         'subfields': []
       }
-    ]
-  }
+    ],
+    'marcMappingDetails' : [],
+    'marcMappingOption' : 'UPDATE'
+  },
 };
 
 export default {
@@ -34,7 +44,7 @@ export default {
     method: 'POST',
     path: 'data-import-profiles/mappingProfiles',
     body: {
-      profile: { ...mappingProfile }
+      profile: mappingProfile
     },
     isDefaultSearchParamsRequired: false
   }),
