@@ -1,4 +1,4 @@
-import { Accordion, KeyValue, Button } from '../../../../../interactors';
+import { Accordion, KeyValue, Button, Modal } from '../../../../../interactors';
 import dateTools from '../../../utils/dateTools';
 import ConfirmItemMissingModal from './confirmItemMissingModal';
 
@@ -7,7 +7,12 @@ const itemStatuses = {
   inProcess: 'In process',
   available: 'Available',
   missing: 'Missing',
-  inTransit: 'In transit'
+  inTransit: 'In transit',
+  paged: 'Paged',
+  awaitingPickup: 'Awaiting pickup',
+  checkedOut: 'Checked out',
+  declaredLost: 'Declared lost',
+  awaitingDelivery: 'Awaiting delivery'
 };
 
 export default {
@@ -30,7 +35,7 @@ export default {
     cy.intercept('organizations/organizations/?*').as('getOrg');
     cy.wait(['@getOrg']);
     cy.do(Button('Actions').click());
-    //cy.do(Button('Mark as missing').click());
-    //cy.do(ConfirmItemMissingModal.confirmModal());
+    cy.do(Button('Mark as missing').click());
+    ConfirmItemMissingModal.confirmModal();
   },
 };

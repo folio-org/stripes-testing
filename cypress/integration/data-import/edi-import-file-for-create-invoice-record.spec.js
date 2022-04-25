@@ -28,12 +28,12 @@ describe('ui-data-import: EDIFACT file import with creating of new invoice recor
     DataImport.checkUploadState();
   });
 
-  /*afterEach(() => {
+  afterEach(() => {
     cy.getInvoiceIdApi({ query: `vendorInvoiceNo="${FileDetails.invoiceNumberFromEdifactFile}"` })
       .then(id => cy.deleteInvoiceFromStorageApi(id));
 
     DataImport.checkUploadState();
-  });*/
+  });
 
   it('C343338 EDIFACT file import with creating of new invoice record', { tags: [TestTypes.smoke] }, () => {
     // unique name for profiles

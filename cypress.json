@@ -1,15 +1,15 @@
 {
-  "baseUrl": "https://folio-snapshot.dev.folio.org",
+  "baseUrl": "https://bugfest-lotus-aqa.int.aws.folio.org",
   "viewportWidth": 1920,
   "viewportHeight": 1080,
   "video": false,
-  "defaultCommandTimeout": 151000,
+  "defaultCommandTimeout": 16000,
   "pageLoadTimeout": 120000,
   "env": {
-    "OKAPI_HOST": "https://folio-snapshot-okapi.dev.folio.org",
-    "OKAPI_TENANT": "diku",
-    "diku_login": "diku_admin",
-    "diku_password": "admin",
+    "OKAPI_HOST": "https://okapi-bugfest-lotus-aqa.int.aws.folio.org",
+    "OKAPI_TENANT": "fs09000006",
+    "diku_login": "admin",
+    "diku_password": "KlQl7EH1w",
     "is_kiwi_release": false,
     "downloadTimeout": 1000,
     "allure": "true"

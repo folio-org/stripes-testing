@@ -55,11 +55,18 @@ export default {
     cy.do(Select({ id: 'servicePointPreference' }).choose('None'));
     cy.do(Button({ id: 'clickable-save' }).click());
   },
-  switchServicePoint:() => {
+  switchToAssignedServicePoint:() => {
     cy.do([
       Dropdown('My profile').open(),
       Button('Switch service point').click(),
       Button({ id:'service-point-btn-0' }).click(),
+    ]);
+  },
+  switchToNotAssignedServicePoint:() => {
+    cy.do([
+      Dropdown('My profile').open(),
+      Button('Switch service point').click(),
+      Button({ id:'service-point-btn-1' }).click(),
     ]);
   }
 };

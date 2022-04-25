@@ -43,11 +43,11 @@ export default {
   },
   // check in item at service point assigned to its effective location
   checkInItemWithEffectiveLocation:(barcode) => {
-    cy.intercept('/configurations/entries?*').as('getEntries');
-    cy.do(TextField({ name:'item.barcode' }).fillIn(barcode));
-    cy.wait('@getEntries');
     cy.intercept('/circulation/requests?*').as('getRequests');
+    cy.do(TextField({ name:'item.barcode' }).fillIn(barcode));
+    //cy.wait('@getRequests');
+    cy.wait(10000);
     cy.do(Button({ id:'clickable-add-item' }).click());
-    cy.wait('@getRequests');
+    cy.wait(5000);
   },
 };

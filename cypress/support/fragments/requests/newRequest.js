@@ -17,12 +17,10 @@ export default {
   },
 
   fillRequiredFields(newRequest) {
-    cy.do([
-      requesterBarcodeInput.fillIn(newRequest.requesterBarcode),
-      enterRequesterBarcodeButton.click(),
-      itemBarcodeInput.fillIn(newRequest.itemBarcode),
-      enterItemBarcodeButton.click(),
-    ]);
+    cy.do(requesterBarcodeInput.fillIn(newRequest.requesterBarcode));
+    cy.do(enterRequesterBarcodeButton.click());
+    cy.do(itemBarcodeInput.fillIn(newRequest.itemBarcode));
+    cy.do(enterItemBarcodeButton.click());
   },
 
   choosepickupServicePoint(pickupServicePoint) {
