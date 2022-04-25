@@ -11,15 +11,12 @@ import InventoryInstances from '../../support/fragments/inventory/inventoryInsta
 import InventoryInstance from '../../support/fragments/inventory/inventoryInstance';
 import ItemVeiw from '../../support/fragments/inventory/inventoryItem/itemVeiw';
 import Receiving from '../../support/fragments/receiving/receiving';
+import permissions from '../../support/dictionary/permissions';
 import CheckInActions from '../../support/fragments/check-in-actions/checkInActions';
 import ConfirmItemMissingCheckInModal from '../../support/fragments/check-in-actions/confirmItemMissingCheckInModal';
 import SwitchServicePoint from '../../support/fragments/service_point/switchServicePoint';
-import NewRequest from '../../support/fragments/requests/newRequest';
-import Requests from '../../support/fragments/requests/requests';
 
 describe('ui-inventory: Item status date updates', () => {
-  let userId = '';
-  //добавить юзера и баркод ему
   const order = { ...NewOrder.specialOrder };
   const orderLine = {
     id: uuid(),
@@ -74,16 +71,43 @@ describe('ui-inventory: Item status date updates', () => {
   };
   let createdOrderNumber;
   const instanceTitle = orderLine.titleOrPackage;
+  const userId = '';
+  let effectiveLocationServicePointId = '';
+  let effectiveLocationServicePointName = '';
+  let notEffectiveLocationServicePointId = '';
+  let notEffectiveLocationServicePointName = '';
   let itemLocation = '';
+  let user = {};
 
   before(() => {
-    cy.login(
-      Cypress.env('diku_login'),
-      Cypress.env('diku_password')
-    );
     cy.getToken(Cypress.env('diku_login'), Cypress.env('diku_password'))
       .then(() => {
-
+        cy.getServicePointsApi({ limit: 2, query: 'pickupLocation=="true"' }).then(servicePoints => {
+          effectiveLocationServicePointId = servicePoints[0].id;
+          effectiveLocationServicePointName = servicePoints[0].name;
+          notEffectiveLocationServicePointId = servicePoints[1].id;
+          notEffectiveLocationServicePointName = servicePoints[1].name;
+        });
+      })
+      .then(() => {
+        cy.createTempUser([
+          permissions.inventoryAll.gui,
+          permissions.uiCreateOrder.gui,
+          permissions.uiCreateOrderLine.gui,
+          permissions.uiApproveOrder.gui,
+          permissions.uiEditOrder.gui,
+          permissions.uiCheckInAll.gui,
+          permissions.uiReceivingViewEditCreate.gui,
+        ]);
+      })
+      .then(userProperties => {
+        user = userProperties;
+        cy.addServicePointToUser(effectiveLocationServicePointId, user.userId);
+      })
+      .then(() => {
+        cy.login(user.username, user.password);
+      })
+      .then(() => {
         cy.getOrganizationApi({ query: 'name="Amazon.com"' })
           .then(organization => {
             order.vendor = organization.id;
@@ -92,12 +116,13 @@ describe('ui-inventory: Item status date updates', () => {
           });
         cy.getMaterialTypes({ query: 'name="book"' })
           .then(materialType => { orderLine.physical.materialType = materialType.id; });
-        cy.getLocations({ limit: 1 })
+        cy.getLocations({ limit: 1, query: `servicePointIds==["${effectiveLocationServicePointId}"]` })
           .then(location => {
             orderLine.locations[0].locationId = location.id;
             itemLocation = location.name;
           });
-        //cy.getUserServicePoints(Cypress.env('users')[0].id);
+      })
+      .then(() => {
         Orders.createOrderWithOrderLineViaApi(order, orderLine)
           .then(orderNumber => {
             createdOrderNumber = orderNumber;
@@ -105,26 +130,16 @@ describe('ui-inventory: Item status date updates', () => {
       });
   });
 
-  after(() => {
-    
-  });
-
   it('C9200 Item status date updates', { tags: [TestTypes.smoke] }, () => {
     const barcode = Helper.getRandomBarcode();
     const caption = 'autotestCaption';
-    const requestRecord = {
-      itemBarcode: barcode,
-      itemTitle: null,
-      requesterBarcode: userId,
-      pickupServicePoint: 'Circ Desk 1',
-    };
 
     // open order and create Item
     cy.visit(TopMenu.ordersPath);
     Orders.searchByParameter('PO number', createdOrderNumber);
     Helper.selectFromResultsList();
     Orders.openOrder();
-    //==OrdersHelper.verifyOrderDateOpened();
+    // OrdersHelper.verifyOrderDateOpened();
     // open Item view in Inventory
     cy.visit(TopMenu.inventoryPath);
     InventorySearch.searchByParameter('Title (all)', instanceTitle);
@@ -133,153 +148,8 @@ describe('ui-inventory: Item status date updates', () => {
     InventoryInstance.openItemView('No barcode');
     ItemVeiw.verifyUpdatedItemDate();
     ItemVeiw.verifyItemStatus(ItemVeiw.itemStatuses.onOrder);
-    cy.log('###On order###');
+    cy.log('On order');
 
-    // receive item
-    cy.visit(TopMenu.ordersPath);
-    Orders.searchByParameter('PO number', createdOrderNumber);
-    Helper.selectFromResultsList();
-    Orders.receiveOrderViaActions();
-    Helper.selectFromResultsList();
-    Receiving.receivePiece(0, caption, barcode);
-    // open Item view in Inventory
-    cy.visit(TopMenu.inventoryPath);
-    InventorySearch.searchByParameter('Title (all)', instanceTitle);
-    InventoryInstances.selectInstance();
-    InventoryInstance.openHoldings([itemLocation]);
-    InventoryInstance.openItemView(barcode);
-    ItemVeiw.verifyUpdatedItemDate();
-    ItemVeiw.verifyItemStatus(ItemVeiw.itemStatuses.inProcess);
-    cy.log('###In process###');
-
-    cy.visit(TopMenu.checkInPath);
-    // ##############check in item at service point assigned to its effective location ##Available
-    SwitchServicePoint.switchToAssignedServicePoint();
-    CheckInActions.checkInItemWithEffectiveLocation(barcode);
-    cy.visit(TopMenu.inventoryPath);
-    InventorySearch.searchByParameter('Title (all)', instanceTitle);
-    InventoryInstances.selectInstance();
-    InventoryInstance.openHoldings([itemLocation]);
-    InventoryInstance.openItemView(barcode);
-    ItemVeiw.verifyUpdatedItemDate();
-    ItemVeiw.verifyItemStatus(ItemVeiw.itemStatuses.available);
-    cy.log('###Available###');
-
-    // ##############mark item as missing ##Missing
-    /*ItemVeiw.clickMarkAsMissing();
-    ItemVeiw.verifyUpdatedItemDate();
-    ItemVeiw.verifyItemStatus(ItemVeiw.itemStatuses.missing);
-    cy.log('###Missing###');
-
-    cy.visit(TopMenu.checkInPath);
-    // ##############check in item at service point assigned to its effective location ##Available
-    CheckInActions.checkInItemWithEffectiveLocation(barcode);
-    cy.visit(TopMenu.inventoryPath);
-    InventorySearch.searchByParameter('Title (all)', instanceTitle);
-    InventoryInstances.selectInstance();
-    InventoryInstance.openHoldings([itemLocation]);
-    InventoryInstance.openItemView(barcode);
-    ItemVeiw.verifyUpdatedItemDate();
-    //ItemVeiw.verifyItemStatus(ItemVeiw.itemStatuses.available);
-    cy.log('###Available###');
-
-    cy.visit(TopMenu.checkInPath);
-    // ##############check in item at service point assigned to its effective location ##Available
-    CheckInActions.checkInItemWithEffectiveLocation(barcode);
-    cy.visit(TopMenu.inventoryPath);
-    InventorySearch.searchByParameter('Title (all)', instanceTitle);
-    InventoryInstances.selectInstance();
-    InventoryInstance.openHoldings([itemLocation]);
-    InventoryInstance.openItemView(barcode);
-    ItemVeiw.verifyUpdatedItemDate();
-    //ItemVeiw.verifyItemStatus(ItemVeiw.itemStatuses.available);
-    cy.log('###Available###');
-
-    // switch to other service point
-    //SwitchServicePoint.switchToNotAssignedServicePoint();
-    cy.visit(TopMenu.checkInPath);
-    // ##############check in item at service point not assigned to its effective location ##In transit
-    CheckInActions.checkInItemWithEffectiveLocation(barcode);
-    cy.visit(TopMenu.inventoryPath);
-    InventorySearch.searchByParameter('Title (all)', instanceTitle);
-    InventoryInstances.selectInstance();
-    InventoryInstance.openHoldings([itemLocation]);
-    InventoryInstance.openItemView(barcode);
-    ItemVeiw.verifyUpdatedItemDate();
-    //ItemVeiw.verifyItemStatus(ItemVeiw.itemStatuses.inTransit);
-    cy.log('###In transit###');
-
-    cy.visit(TopMenu.checkInPath);
-    // ##############check in item at service point not assigned to its effective location ##In transit
-    CheckInActions.checkInItemWithEffectiveLocation(barcode);
-    cy.visit(TopMenu.inventoryPath);
-    InventorySearch.searchByParameter('Title (all)', instanceTitle);
-    InventoryInstances.selectInstance();
-    InventoryInstance.openHoldings([itemLocation]);
-    InventoryInstance.openItemView(barcode);
-    ItemVeiw.verifyUpdatedItemDate();
-    // ItemVeiw.verifyItemStatus(ItemVeiw.itemStatuses.inTransit);
-    cy.log('###In transit###');
-
-    // switch to other service point
-    //SwitchServicePoint.switchToNotAssignedServicePoint();
-    cy.visit(TopMenu.checkInPath);
-    // ##############check in item at service point assigned to its effective location ##Available
-    CheckInActions.checkInItemWithEffectiveLocation(barcode);
-    cy.visit(TopMenu.inventoryPath);
-    InventorySearch.searchByParameter('Title (all)', instanceTitle);
-    InventoryInstances.selectInstance();
-    InventoryInstance.openHoldings([itemLocation]);
-    InventoryInstance.openItemView(barcode);
-    ItemVeiw.verifyUpdatedItemDate();
-    // ItemVeiw.verifyItemStatus(ItemVeiw.itemStatuses.available);
-    cy.log('###Available###');*/
-
-    // ##############in Requests app, create Page request on an item ##Paged
-    cy.visit(TopMenu.requestsPath);
-    NewRequest.createNewRequest(requestRecord);
     
-    cy.wait(2000);
-    /*cy.visit(TopMenu.inventoryPath);
-    InventorySearch.searchByParameter('Title (all)', instanceTitle);
-    InventoryInstances.selectInstance();
-    InventoryInstance.openHoldings([itemLocation]);
-    cy.wait(60000);
-    InventoryInstance.openItemView(barcode);
-    ItemVeiw.verifyUpdatedItemDate();
-    ItemVeiw.verifyItemStatus(ItemVeiw.itemStatuses.paged);*/
-    cy.log('###Paged###');
-
-    // ##############check in item at a service point other than the pickup service point for the request ##In transit
-    // switch to other service point
-    //SwitchServicePoint.switchToNotAssignedServicePoint();
-    cy.visit(TopMenu.checkInPath);
-    CheckInActions.checkInItemWithEffectiveLocation(barcode);
-    cy.visit(TopMenu.inventoryPath);
-    InventorySearch.searchByParameter('Title (all)', instanceTitle);
-    InventoryInstances.selectInstance();
-    InventoryInstance.openHoldings([itemLocation]);
-    InventoryInstance.openItemView(barcode);
-    ItemVeiw.verifyUpdatedItemDate();
-    ItemVeiw.verifyItemStatus(ItemVeiw.itemStatuses.inTransit);
-    cy.log('###In transit###');
-
-    // ##############check in item at the pickup service point for the page request ##Awaiting pickup
-    // switch to other service point
-    //SwitchServicePoint.switchToNotAssignedServicePoint();
-    cy.visit(TopMenu.checkInPath);
-    CheckInActions.checkInItemWithEffectiveLocation(barcode);
-    cy.visit(TopMenu.inventoryPath);
-    InventorySearch.searchByParameter('Title (all)', instanceTitle);
-    InventoryInstances.selectInstance();
-    InventoryInstance.openHoldings([itemLocation]);
-    InventoryInstance.openItemView(barcode);
-    ItemVeiw.verifyUpdatedItemDate();
-    ItemVeiw.verifyItemStatus(ItemVeiw.itemStatuses.awaitingPickup);
-    cy.log('###Awaiting pickup###');
-
-    // ##############check out item to user for whom page request was created ##Checked out
-
-    // ##############In Users app on loan details for the loan from step 11, declare item lost ##Declared lost
   });
 });
