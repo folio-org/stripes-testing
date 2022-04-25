@@ -22,10 +22,7 @@ export default {
           .then(({ body }) => {
             orderLine.acquisitionMethod = body.acquisitionMethods[0].id;
             orderLine.purchaseOrderId = order.id;
-            cy.createOrderLineApi(orderLine)
-              .then((oredrLineInfo) => {
-                cy.wrap(oredrLineInfo.body.poLineNumber).as('orderLineNumber');
-              });
+            cy.createOrderLineApi(orderLine);
           });
       });
     return cy.get('@orderNumber');

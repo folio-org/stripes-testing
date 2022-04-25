@@ -4,7 +4,7 @@ import Orders from '../../support/fragments/orders/orders';
 import TopMenu from '../../support/fragments/topMenu';
 import OrdersHelper from '../../support/fragments/orders/ordersHelper';
 import basicOrderLine from '../../support/fragments/orders/basicOrderLine';
-
+// TODO:  Rebuild the test after fixing the problem with orderLineNumber definition in its scope.
 describe('orders: Test Po line search', () => {
   const order = { ...NewOrder.defaultOrder };
   const orderLine = { ...basicOrderLine.specialOrderLine };
@@ -40,7 +40,7 @@ describe('orders: Test Po line search', () => {
     cy.createOrderApi(order)
       .then(() => {
         cy.getAcquisitionMethodsApi({ query: 'value="Other"' })
-          .then(body => {
+          .then(({ body }) => {
             orderLine.acquisitionMethod = body.acquisitionMethods[0].id;
             orderLine.purchaseOrderId = order.id;
             cy.createOrderLineApi(orderLine)
