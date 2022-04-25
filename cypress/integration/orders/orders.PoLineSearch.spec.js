@@ -40,7 +40,7 @@ describe('orders: Test Po line search', () => {
     cy.createOrderApi(order)
       .then(() => {
         cy.getAcquisitionMethodsApi({ query: 'value="Other"' })
-          .then(({ body }) => {
+          .then(body => {
             orderLine.acquisitionMethod = body.acquisitionMethods[0].id;
             orderLine.purchaseOrderId = order.id;
             cy.createOrderLineApi(orderLine)
