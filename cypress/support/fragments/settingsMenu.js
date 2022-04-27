@@ -4,6 +4,7 @@ export default {
   acquisitionUnitsPath: 'settings/acquisition-units',
   agreementsPath: 'settings/erm',
   calendarPath: 'settings/calendar',
+  calendarLibraryHoursPath: 'settings/calendar/library-hours',
   // Circulation
   circulationRulesPath: 'settings/circulation/rules',
   circulationOtherSettingsPath: 'settings/circulation/checkout',
