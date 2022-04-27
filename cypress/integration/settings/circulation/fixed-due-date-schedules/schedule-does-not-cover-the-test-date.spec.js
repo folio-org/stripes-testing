@@ -22,13 +22,19 @@ import loans from '../../../../support/fragments/loans/loansPage';
 import topMenu from '../../../../support/fragments/topMenu';
 
 let userId;
+let createdLoanPolicy;
+let materialTypeId;
+let mySchedule;
 let rulesDefaultString;
+let patronGroupId;
+let servicePointId;
 const USER_BARCODE = uuid();
 const ITEM_BARCODE = generateItemBarcode();
 const fromDate = moment.utc().subtract(2, 'days');
 const toDate = moment.utc().add(2, 'days');
 const dueDate = moment.utc().add(2, 'days');
 const newToDate = moment.utc().subtract(1, 'days');
+const dateFallsMessage = 'renewal date falls outside of date ranges in fixed loan policy';
 
 describe('ui-circulation-settings: Fixed due date schedules', () => {
   before(() => {
@@ -40,8 +46,14 @@ describe('ui-circulation-settings: Fixed due date schedules', () => {
         cy.getLocations({ limit: 1 });
         cy.getHoldingSources({ limit: 1 });
         cy.getLoanTypes({ query: `name="${LOAN_TYPE_NAMES.CAN_CIRCULATE}"` });
-        cy.getMaterialTypes({ query: `name="${MATERIAL_TYPE_NAMES.MICROFORM}"` });
-        cy.getUserGroups({ limit: 1 });
+        cy.getMaterialTypes({ query: `name="${MATERIAL_TYPE_NAMES.MICROFORM}"` })
+          .then(materilaTypes => {
+            materialTypeId = materilaTypes.id;
+          });
+        cy.getUserGroups({ limit: 1 })
+          .then(patronGroups => {
+            patronGroupId = patronGroups;
+          });
       })
       .then(() => {
         cy.createUserApi({
@@ -52,7 +64,7 @@ describe('ui-circulation-settings: Fixed due date schedules', () => {
             lastName: `Test user ${getRandomPostfix()}`,
             email: 'test@folio.org',
           },
-          patronGroup: Cypress.env(CY_ENV.USER_GROUPS)[0].id,
+          patronGroup: patronGroupId,
           departments: [],
         })
           .then((user) => {
@@ -72,7 +84,7 @@ describe('ui-circulation-settings: Fixed due date schedules', () => {
             barcode: ITEM_BARCODE,
             status: { name: 'Available' },
             permanentLoanType: { id: Cypress.env(CY_ENV.LOAN_TYPES)[0].id },
-            materialType: { id: Cypress.env(CY_ENV.MATERIAL_TYPES)[0].id },
+            materialType: { id: materialTypeId },
           }]],
         })
           .then(() => {
@@ -83,13 +95,14 @@ describe('ui-circulation-settings: Fixed due date schedules', () => {
                 due: dueDate.format(),
               }],
             })
-              .then(() => {
+              .then((schedule) => {
+                mySchedule = schedule;
+
                 cy.createLoanPolicy({
-                  name: `Automation loan policy ${getRandomPostfix()}`,
                   loanable: true,
                   loansPolicy: {
                     closedLibraryDueDateManagementId: LIBRARY_DUE_DATE_MANAGMENT.CURRENT_DUE_DATE,
-                    fixedDueDateScheduleId: Cypress.env(CY_ENV.FIXED_DUE_DATE_SCHEDULE).id,
+                    fixedDueDateScheduleId: mySchedule.id,
                     profileId: LOAN_PROFILE.FIXED,
                   },
                   renewable: true,
@@ -97,22 +110,28 @@ describe('ui-circulation-settings: Fixed due date schedules', () => {
                     unlimited: true,
                   },
                 })
-                  .then(() => {
-                    cy.getServicePointsApi();
+                  .then((loanPolicy) => {
+                    createdLoanPolicy = loanPolicy;
+
+                    cy.getServicePointsApi({ pickupLocation: true })
+                      .then(servicePoints => {
+                        servicePointId = servicePoints[0].id;
+                      });
                     cy.getRequestPolicy({ query: `name=="${REQUEST_POLICY_NAMES.ALLOW_ALL}"` });
                     cy.getNoticePolicy({ query: `name=="${NOTICE_POLICY_NAMES.SEND_NO_NOTICES}"` });
                     cy.getOverdueFinePolicy({ query: `name=="${OVERDUE_FINE_POLICY_NAMES.OVERDUE_FINE_POLICY}"` });
                     cy.getLostItemFeesPolicy({ query: `name=="${LOST_ITEM_FEES_POLICY_NAMES.LOST_ITEM_FEES_POLICY}"` });
-                    cy.getCirculationRules();
+                    cy.getCirculationRules()
+                      .then(rules => {
+                        rulesDefaultString = rules.rulesAsText;
+                      });
                   })
                   .then(() => {
-                    rulesDefaultString = Cypress.env(CY_ENV.CIRCULATION_RULES).rulesAsText;
-                    const loanPolicyId = Cypress.env(CY_ENV.LOAN_POLICY).id;
                     const requestPolicyId = Cypress.env(CY_ENV.REQUEST_POLICY)[0].id;
                     const noticePolicyId = Cypress.env(CY_ENV.NOTICE_POLICY)[0].id;
                     const overdueFinePolicyId = Cypress.env(CY_ENV.OVERDUE_FINE_POLICY)[0].id;
                     const lostItemFeesPolicyId = Cypress.env(CY_ENV.LOST_ITEM_FEES_POLICY)[0].id;
-                    const newRule = `\nm ${Cypress.env(CY_ENV.MATERIAL_TYPES)[0].id}: l ${loanPolicyId} r ${requestPolicyId} n ${noticePolicyId} o ${overdueFinePolicyId} i ${lostItemFeesPolicyId}`;
+                    const newRule = `\ng ${patronGroupId} + m ${materialTypeId}: l ${createdLoanPolicy.id} r ${requestPolicyId} n ${noticePolicyId} o ${overdueFinePolicyId} i ${lostItemFeesPolicyId}`;
 
                     cy.updateCirculationRules({
                       rulesAsText: rulesDefaultString + newRule,
@@ -120,10 +139,9 @@ describe('ui-circulation-settings: Fixed due date schedules', () => {
                   })
                   .then(() => {
                     cy.createItemCheckout({
-                      servicePointId: Cypress.env(CY_ENV.SERVICE_POINTS)[0].id,
+                      servicePointId,
                       itemBarcode: ITEM_BARCODE,
                       userBarcode: USER_BARCODE,
-                      loanDate: moment.utc(),
                     });
                   });
               });
@@ -134,7 +152,7 @@ describe('ui-circulation-settings: Fixed due date schedules', () => {
   after(() => {
     cy.createItemCheckinApi({
       itemBarcode: ITEM_BARCODE,
-      servicePointId: Cypress.env(CY_ENV.SERVICE_POINTS)[0].id,
+      servicePointId,
       checkInDate: moment.utc().format(),
     })
       .then(() => {
@@ -148,9 +166,9 @@ describe('ui-circulation-settings: Fixed due date schedules', () => {
         cy.updateCirculationRules({
           rulesAsText: rulesDefaultString,
         });
-        cy.deleteLoanPolicy(Cypress.env(CY_ENV.LOAN_POLICY).id)
+        cy.deleteLoanPolicy(createdLoanPolicy.id)
           .then(() => {
-            cy.deleteFixedDueDateSchedule(Cypress.env(CY_ENV.FIXED_DUE_DATE_SCHEDULE).id);
+            cy.deleteFixedDueDateSchedule(mySchedule.id);
           });
       });
   });
@@ -159,19 +177,17 @@ describe('ui-circulation-settings: Fixed due date schedules', () => {
     { tags: [TestTypes.smoke] },
     () => {
       cy.visit(SettingsMenu.circulationFixedDueDateSchedulesPath);
-      fixedDueDateSchedules.editSchedule(Cypress.env(CY_ENV.FIXED_DUE_DATE_SCHEDULE).name, {
-        description: Cypress.env(CY_ENV.FIXED_DUE_DATE_SCHEDULE).description,
+      fixedDueDateSchedules.editSchedule(mySchedule.name, {
+        description: mySchedule.description,
         schedules:[{
-          from: fromDate.format('YYYY/MM/DD'),
-          to: newToDate.format('YYYY/MM/DD'),
-          due: dueDate.format('YYYY/MM/DD'),
+          from: fromDate,
+          to: newToDate,
+          due: dueDate,
         }],
       });
-      cy.contains(`${newToDate.format('M/D/YYYY')}`).should('be.visible');
       cy.visit(topMenu.checkOutPath);
       checkout.checkUserOpenLoans(Cypress.env(CY_ENV.USER));
-      cy.contains(`${Cypress.env(CY_ENV.LOAN_POLICY).name}`).should('be.visible');
-      loans.renewLoan();
-      cy.contains('renewal date falls outside of date ranges in fixed loan policy').should('be.visible');
+      loans.checkLoanPolicy(createdLoanPolicy.name);
+      loans.renewalMessageCheck(dateFallsMessage);
     });
 });

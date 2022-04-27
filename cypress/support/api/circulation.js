@@ -1,4 +1,5 @@
 import uuid from 'uuid';
+import moment from 'moment';
 
 import getRandomPostfix from '../utils/stringTools';
 import {
@@ -14,6 +15,7 @@ Cypress.Commands.add('createItemCheckout', (checkout) => {
     path: 'circulation/check-out-by-barcode',
     body: {
       id: checkoutId,
+      loanDate: moment.utc(),
       ...checkout,
     },
   });
@@ -81,6 +83,7 @@ Cypress.Commands.add('createLoanPolicy', (policy) => {
     path: 'loan-policy-storage/loan-policies',
     body: {
       id: uuid(),
+      name: `Automation loan policy ${getRandomPostfix()}`,
       ...policy,
     },
   })

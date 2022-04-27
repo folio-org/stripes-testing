@@ -12,7 +12,9 @@ export default {
   },
   checkUserOpenLoans({ barcode, id }) {
     this.fillUserBarcode(barcode);
-    cy.wait(5000);
+    // TODO: investigate why "schedule-does-not-cover-the-test-date" test fails without this cy.wait
+    // eslint-disable-next-line cypress/no-unnecessary-waiting
+    cy.wait(3500);
     cy.do(Button({ href: `/users/${id}/loans/open` }).click());
   },
 };

@@ -54,5 +54,5 @@ export default {
       Button({ id: 'dropdown-clickable-delete-item' }).click(),
       Button({ id: 'clickable-delete-item-confirmation-confirm' }).click(),
     ]);
-  }
+  },
 };

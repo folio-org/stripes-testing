@@ -5,6 +5,9 @@ import {
   TextField,
 } from '../../../../interactors';
 
+const createFormat = 'YYYY/MM/DD';
+const detailsFormat = 'M/D/YYYY';
+
 export default {
   fillScheduleInfo(data) {
     cy.do([
@@ -13,11 +16,18 @@ export default {
     ]);
     data.schedules.forEach((schedule, index) => {
       cy.do([
-        TextField({ name: `schedules[${index}].from` }).fillIn(schedule.from),
-        TextField({ name: `schedules[${index}].to` }).fillIn(schedule.to),
-        TextField({ name: `schedules[${index}].due` }).fillIn(schedule.due),
+        TextField({ name: `schedules[${index}].from` }).fillIn(schedule.from.format(createFormat)),
+        TextField({ name: `schedules[${index}].to` }).fillIn(schedule.to.format(createFormat)),
+        TextField({ name: `schedules[${index}].due` }).fillIn(schedule.due.format(createFormat)),
         cy.wait(2000),
       ]);
+    });
+  },
+  checkSchedules(schedules) {
+    schedules.forEach((schedule) => {
+      cy.contains(`${schedule.from.format(detailsFormat)}`).should('be.visible');
+      cy.contains(`${schedule.to.format(detailsFormat)}`).should('be.visible');
+      cy.contains(`${schedule.due.format(detailsFormat)}`).should('be.visible');
     });
   },
   editSchedule(name, newScheduleData) {
@@ -27,5 +37,6 @@ export default {
     ]);
     this.fillScheduleInfo({ name, ...newScheduleData });
     cy.do(Button({ id: 'clickable-save-fixedDueDateSchedule' }).click());
+    this.checkSchedules(newScheduleData.schedules);
   },
 };
