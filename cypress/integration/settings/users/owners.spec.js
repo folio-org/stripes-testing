@@ -9,7 +9,7 @@ describe('Management of n fee/fine owners and service points', () => {
   const createRegularUser = () => cy.createTempUser([Permissions.uiUsersSettingsOwners.gui,
     Permissions.uiUsersEdituserservicepoints.gui]);
 
-  it('C441 Verify that you can create/edit/delete associations between fee/fine owners and service points', { tags: [TestType.smoke] }, () => {
+  it('C441 Verify that you can create/edit/delete associations between fee/fine owners and service points', { tags: [TestType.criticalPath] }, () => {
     createRegularUser().then(firstUserProperties => {
       users.push(firstUserProperties);
 
