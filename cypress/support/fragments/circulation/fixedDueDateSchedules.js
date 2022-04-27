@@ -1,3 +1,5 @@
+import moment from 'moment';
+
 import {
   Button,
   NavListItem,
@@ -16,18 +18,19 @@ export default {
     ]);
     data.schedules.forEach((schedule, index) => {
       cy.do([
-        TextField({ name: `schedules[${index}].from` }).fillIn(schedule.from.format(createFormat)),
-        TextField({ name: `schedules[${index}].to` }).fillIn(schedule.to.format(createFormat)),
-        TextField({ name: `schedules[${index}].due` }).fillIn(schedule.due.format(createFormat)),
+        TextField({ name: `schedules[${index}].from` }).fillIn(moment(schedule.from).format(createFormat)),
+        TextField({ name: `schedules[${index}].to` }).fillIn(moment(schedule.to).format(createFormat)),
+        TextField({ name: `schedules[${index}].due` }).fillIn(moment(schedule.due).format(createFormat)),
+        // eslint-disable-next-line cypress/no-unnecessary-waiting
         cy.wait(2000),
       ]);
     });
   },
   checkSchedules(schedules) {
     schedules.forEach((schedule) => {
-      cy.contains(`${schedule.from.format(detailsFormat)}`).should('be.visible');
-      cy.contains(`${schedule.to.format(detailsFormat)}`).should('be.visible');
-      cy.contains(`${schedule.due.format(detailsFormat)}`).should('be.visible');
+      cy.contains(`${moment(schedule.from).format(detailsFormat)}`).should('be.visible');
+      cy.contains(`${moment(schedule.to).format(detailsFormat)}`).should('be.visible');
+      cy.contains(`${moment(schedule.due).format(detailsFormat)}`).should('be.visible');
     });
   },
   editSchedule(name, newScheduleData) {

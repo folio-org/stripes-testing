@@ -1,6 +1,4 @@
 import { Button, Pane } from '../../../../interactors';
-import { REQUEST_METHOD } from '../../constants';
-import { getLongDelay } from '../../utils/cypressTools';
 
 export default {
   openChangeDueDateForm() {
