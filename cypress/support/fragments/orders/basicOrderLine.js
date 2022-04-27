@@ -2,13 +2,16 @@ import uuid from 'uuid';
 import getRandomPostfix from '../../utils/stringTools';
 
 export default {
-  defaultOrderLine : {
+  defaultOrderLine: {
     id: uuid(),
     checkinItems: false,
     acquisitionMethod: '',
     alerts: [],
     claims: [],
-    contributors: [],
+    contributors: [{
+      contributor: `Autotest Contributor_${getRandomPostfix()}`,
+      contributorNameTypeId: uuid()
+    }],
     cost: {
       listUnitPrice: 1.0,
       currency: 'USD',
@@ -20,7 +23,7 @@ export default {
       productIds: [],
       subscriptionInterval: 0
     },
-    fundDistribution : [],
+    fundDistribution: [],
     isPackage: false,
     locations: [
       {
@@ -52,5 +55,5 @@ export default {
       instructions: '',
       vendorAccount: '1234'
     }
-  }
+  },
 };
