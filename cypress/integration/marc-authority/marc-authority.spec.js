@@ -18,7 +18,7 @@ import dataImportSettingsJobProfiles from '../../support/fragments/settings/data
 
 
 let userId = '';
-const marcAuthorityIds = new Set();
+// const marcAuthorityIds = new Set();
 
 
 const importFile = (profileName) => {
@@ -41,7 +41,7 @@ const importFile = (profileName) => {
     cy.wait('@getRecord', getLongDelay()).then(response => {
       const internalAuthorityId = response.response.body.relatedAuthorityInfo.idList[0];
 
-      marcAuthorityIds.add(MarcAuthority.defaultAuthority.libraryOfCongressControlNumber);
+      // marcAuthorityIds.add(MarcAuthority.defaultAuthority.libraryOfCongressControlNumber);
       cy.visit(TopMenu.marcAuthorities);
       MarcAuthoritiesSearch.searchBy('Uniform title', MarcAuthority.defaultAuthority.headingReference);
       MarcAuthorities.select(internalAuthorityId);
@@ -173,7 +173,7 @@ describe('MARC Authority management', () => {
   });
 
   afterEach(() => {
-    marcAuthorityIds.forEach(marcAuthorityId => MarcAuthority.deleteViaAPI(marcAuthorityId));
+    // marcAuthorityIds.forEach(marcAuthorityId => MarcAuthority.deleteViaAPI(marcAuthorityId));
     cy.deleteUser(userId);
   });
 });
