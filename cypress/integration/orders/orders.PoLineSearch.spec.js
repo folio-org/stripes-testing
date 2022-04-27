@@ -5,6 +5,7 @@ import TopMenu from '../../support/fragments/topMenu';
 import OrdersHelper from '../../support/fragments/orders/ordersHelper';
 import basicOrderLine from '../../support/fragments/orders/basicOrderLine';
 // TODO:  Rebuild the test after fixing the problem with orderLineNumber definition in its scope.
+// TODO: Check the search using the second POLINE,to have a working search on empty env.
 describe('orders: Test Po line search', () => {
   const order = { ...NewOrder.defaultOrder };
   const orderLine = { ...basicOrderLine.specialOrderLine };
@@ -40,8 +41,8 @@ describe('orders: Test Po line search', () => {
     cy.createOrderApi(order)
       .then(() => {
         cy.getAcquisitionMethodsApi({ query: 'value="Other"' })
-          .then(({ body }) => {
-            orderLine.acquisitionMethod = body.acquisitionMethods[0].id;
+          .then((params) => {
+            orderLine.acquisitionMethod = params.body.acquisitionMethods[0].id;
             orderLine.purchaseOrderId = order.id;
             cy.createOrderLineApi(orderLine)
               .then((response) => {
@@ -60,13 +61,13 @@ describe('orders: Test Po line search', () => {
   searchers.forEach((searcher) => {
     it('C6719 Test the POL searches', { tags: [TestType.smoke] }, () => {
       Orders.searchByParameter(searcher.nameOfSearch, searcher.valueOfLine);
-      Orders.checkOrderlineSearchResults(orderLine.titleOrPackage);
+      Orders.checkOrderlineSearchResults(orderLineNumber);
       Orders.resetFilters();
     });
   });
   it('C6719 Test the POL searches(Only test POL name search)', { tags: [TestType.smoke] }, () => {
     Orders.searchByParameter('PO line number', orderLineNumber);
-    Orders.checkOrderlineSearchResults(orderLine.titleOrPackage);
+    Orders.checkOrderlineSearchResults(orderLineNumber);
     Orders.resetFilters();
   });
 });

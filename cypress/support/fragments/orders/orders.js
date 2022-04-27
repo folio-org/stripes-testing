@@ -133,7 +133,7 @@ export default {
   checkOrderlineSearchResults: (orderNumber) => {
     cy.expect(MultiColumnList({ id: 'order-line-list' })
       .find(MultiColumnListRow({ index: 0 }))
-      .find(MultiColumnListCell({ columnIndex: 2 }))
+      .find(MultiColumnListCell({ columnIndex: 0 }))
       .has({ content: orderNumber }));
   },
   closeThirdPane: () => {
