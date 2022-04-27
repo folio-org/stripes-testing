@@ -4,11 +4,44 @@ import Orders from '../../support/fragments/orders/orders';
 import TopMenu from '../../support/fragments/topMenu';
 import OrdersHelper from '../../support/fragments/orders/ordersHelper';
 import basicOrderLine from '../../support/fragments/orders/basicOrderLine';
+import getRandomPostfix from '../../support/utils/stringTools';
 // TODO:  Rebuild the test after fixing the problem with orderLineNumber definition in its scope.
 // TODO: Check the search using the second POLINE,to have a working search on empty env.
 describe('orders: Test Po line search', () => {
   const order = { ...NewOrder.defaultOrder };
-  const orderLine = { ...basicOrderLine.specialOrderLine };
+  const orderLine = {
+    ...basicOrderLine.defaultOrderLine,
+    details: {
+      productIds: [{
+        productId: '9781868885015',
+        productIdType: '8261054f-be78-422d-bd51-4ed9f33c3422'
+      }],
+      subscriptionInterval: 0
+    },
+    donor: `Autotest donor_${getRandomPostfix()}`,
+    publisher: `Autotest Publishing_${getRandomPostfix()}`,
+    requester: `Autotest requester_${getRandomPostfix()}`,
+    selector: `Autotest selector_${getRandomPostfix()}`,
+    fundDistribution: [],
+    physical: {
+      createInventory: 'Instance, Holding, Item',
+      materialType: '',
+      materialSupplier: '',
+      volumes: ['test vol. 1']
+    },
+    vendorDetail: {
+      instructions: `autotest instructions_${getRandomPostfix()}`,
+      noteFromVendor: `autotest note_${getRandomPostfix()}`,
+      referenceNumbers: [
+        {
+          refNumber: '123456-78',
+          refNumberType: 'Vendor title number',
+          vendorDetailsSource: 'OrderLine'
+        }
+      ],
+      vendorAccount: '8910-10'
+    },
+  };
   let orderLineNumber;
   const searchers = [
     { nameOfSearch: 'Keyword', valueOfLine: orderLine.titleOrPackage },
