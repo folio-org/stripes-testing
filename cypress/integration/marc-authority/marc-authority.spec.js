@@ -160,7 +160,7 @@ describe('MARC Authority management', () => {
 
     DataImport.uploadFile(MarcAuthority.defaultAuthority.name, secondFileName);
     JobProfiles.waitLoadingList();
-    JobProfiles.select(MarcAuthority.defaulCretJobProfile);
+    JobProfiles.select(MarcAuthority.defaultCreateJobProfile);
     JobProfiles.runImportFile(secondFileName);
 
     cy.visit(TopMenu.marcAuthorities);
