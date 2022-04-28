@@ -15,10 +15,7 @@ describe('Manage holding records of instance records created through marc file u
   beforeEach(() => {
     cy.login(Cypress.env('diku_login'), Cypress.env('diku_password'));
     // required with special tests, but when step into test I see 403 some time in /metadata-provider/jobExecutions request
-    cy.getToken(
-      Cypress.env('diku_login'),
-      Cypress.env('diku_password')
-    );
+    cy.getAdminToken();
   });
 
   it('C345408 MARC instance record + FOLIO holdings record (Regression)', { tags: [testTypes.smoke, features.holdingsRecord] }, () => {

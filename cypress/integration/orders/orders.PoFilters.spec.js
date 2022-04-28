@@ -13,7 +13,7 @@ describe('orders: Test PO search', () => {
   const invoice = { ...NewInvoice.defaultUiInvoice };
 
   before(() => {
-    cy.getToken(Cypress.env('diku_login'), Cypress.env('diku_password'));
+    cy.getAdminToken();
     cy.getOrganizationApi({ query: 'name="Amazon.com"' })
       .then(organization => {
         order.vendor = organization.id;
