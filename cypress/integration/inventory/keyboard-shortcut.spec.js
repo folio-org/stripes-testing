@@ -8,7 +8,7 @@ describe('ui-inventory: keyboard shortcut', () => {
     cy.visit(TopMenu.inventoryPath);
   });
 
-  it('C196752 verifies action menu options before any search is conducted', { tags: [testTypes.smoke] }, () => {
+  it('C345297 Keyboard Shortcut. Access to drop down menu', { tags: [testTypes.smoke] }, () => {
     InventoryMainButton.verifyInventoryDropdownIsShown('false');
 
     InventoryMainButton.openInventoryMenu();
