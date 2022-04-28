@@ -107,7 +107,7 @@ describe('MARC Authority management', () => {
             cy.visit(TopMenu.dataImportPath);
 
 
-            importFile(jobProfileResponse.body.profile.name);// 'Update MARC authority records - 010 $a - tania');
+            importFile(jobProfileResponse.body.profile.name);
             MarcAuthority.notContains(addedInSourceRow);
             MarcAuthority.notContains(updatedInSourceRow);
 
@@ -175,6 +175,6 @@ describe('MARC Authority management', () => {
 
   afterEach(() => {
     // marcAuthorityIds.forEach(marcAuthorityId => MarcAuthority.deleteViaAPI(marcAuthorityId));
-    // cy.deleteUser(userId);
+    cy.deleteUser(userId);
   });
 });
