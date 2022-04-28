@@ -1,0 +1,37 @@
+import TopMenu from '../../support/fragments/topMenu';
+import TestType from '../../support/dictionary/testTypes';
+import Organizations from '../../support/fragments/organizations/organizations';
+import newOrganization from '../../support/fragments/organizations/newOrganization';
+
+describe('ui-organizations: Filtering organization', () => {
+  const organization = { ...newOrganization.specialOrganization };
+
+  before(() => {
+    cy.login(Cypress.env('diku_login'), Cypress.env('diku_password'));
+    cy.getToken(Cypress.env('diku_login'), Cypress.env('diku_password'));
+    cy.createOrganizationApi(organization);
+  });
+
+  after(() => {
+    cy.getOrganizationApi({ query: `name="${organization.name}"` })
+      .then(returnedOrganization => {
+        cy.deleteOrganizationApi(returnedOrganization.id);
+      });
+  });
+  [
+    { filterActions: Organizations.selectActiveStatus },
+    { filterActions: Organizations.selectYesInIsVendor },
+    { filterActions: Organizations.selectCountryFilter },
+    { filterActions: Organizations.selectLanguageFilter },
+    { filterActions: Organizations.selectCashInPaymentMethod },
+  ].forEach((filter) => {
+    it('C6713: Test the Organizations app filters (except Tags) ', { tags: [TestType.smoke] }, () => {
+      cy.visit(TopMenu.organizationsPath);
+      filter.filterActions();
+      Organizations.checkOrganizationFilter();
+      Organizations.chooseOrganizationFromList(organization);
+      Organizations.checkOpenOrganizationInfo(organization);
+      Organizations.resetFilters();
+    });
+  });
+});

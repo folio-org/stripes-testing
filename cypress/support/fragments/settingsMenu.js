@@ -4,6 +4,7 @@ export default {
   acquisitionUnitsPath: 'settings/acquisition-units',
   agreementsPath: 'settings/erm',
   calendarPath: 'settings/calendar',
+  calendarLibraryHoursPath: 'settings/calendar/library-hours',
   // Circulation
   circulationRulesPath: 'settings/circulation/rules',
   circulationOtherSettingsPath: 'settings/circulation/checkout',
@@ -48,6 +49,7 @@ export default {
   remoteStoragePath: 'settings/remote-storage',
   tagsPath: 'settings/tags',
   tenantPath: 'settings/tenant-settings',
+  tenantLocationsPath: 'settings/tenant-settings/location-locations',
   // Users
   usersOwnersPath: 'settings/users/owners',
   usersPath: 'settings/users',

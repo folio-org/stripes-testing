@@ -1,4 +1,4 @@
-import { Button, SearchField, PaneHeader, Pane, Select, Accordion, KeyValue, Checkbox, MultiColumnList, MultiColumnListCell, MultiColumnListRow } from '../../../../interactors';
+import { Button, SearchField, PaneHeader, Pane, Select, Accordion, KeyValue, Checkbox, MultiColumnList, MultiColumnListCell, MultiColumnListRow, Modal, TextField, SelectionOption } from '../../../../interactors';
 import SearchHelper from '../finance/financeHelper';
 import InteractorsTools from '../../utils/interactorsTools';
 
@@ -11,6 +11,7 @@ const saveAndClose = Button('Save & close');
 const orderDetailsAccordionId = 'purchaseOrder';
 const createdByAdmin = 'ADMINISTRATOR, DIKU ';
 const searchField = SearchField({ id: 'input-record-search' });
+const admin = 'administrator';
 
 export default {
   createOrderWithOrderLineViaApi(order, orderLine) {
@@ -123,13 +124,18 @@ export default {
     }
   },
 
-  checkSearchResults: (orderNumber) => {
+  checkSearchResults: (orderLine) => {
     cy.expect(MultiColumnList({ id: 'orders-list' })
+      .find(MultiColumnListRow({ index: 0 }))
+      .find(MultiColumnListCell({ columnIndex: 0 }))
+      .has({ content: orderLine }));
+  },
+  checkOrderlineSearchResults: (orderNumber) => {
+    cy.expect(MultiColumnList({ id: 'order-line-list' })
       .find(MultiColumnListRow({ index: 0 }))
       .find(MultiColumnListCell({ columnIndex: 0 }))
       .has({ content: orderNumber }));
   },
-
   closeThirdPane: () => {
     cy.do(PaneHeader({ id: 'paneHeaderorder-details' }).find(Button({ icon: 'times' })).click());
   },
@@ -142,7 +148,6 @@ export default {
       .set('Date created', currentDate);
     return searchParamsMap;
   },
-
   checkPoSearch(searchParamsMap, orderNumber) {
     for (const [key, value] of searchParamsMap.entries()) {
       cy.do([
@@ -157,4 +162,78 @@ export default {
       cy.wait(1000);
     }
   },
+  selectOpenStatusFilter: () => {
+    cy.do(Checkbox('Open').click());
+  },
+  selectPrefixFilter: () => {
+    cy.do([
+      Button({ id: 'accordion-toggle-button-poNumberPrefix' }).click(),
+      Button({ id: 'poNumberPrefix-selection' }).click(),
+      SelectionOption({ id: 'option-poNumberPrefix-selection-0-pref' }).click(),
+    ]);
+  },
+  selectApprovedFilter: () => {
+    cy.do([
+      Button({ id: 'accordion-toggle-button-approved' }).click(),
+      Checkbox({ id: 'clickable-filter-approved-true' }).click(),
+    ]);
+  },
+  selectAssignedToFilter: (rowNumber = 0) => {
+    cy.do([
+      Button({ id: 'accordion-toggle-button-assignedTo' }).click(),
+      Button({ id: 'assignedTo-button' }).click(),
+      TextField({ name: 'query' }).fillIn(admin),
+      searchButton.click(),
+      MultiColumnListRow({ index: rowNumber }).click(),
+    ]);
+  },
+  selectOrderTypeFilter: () => {
+    cy.do([
+      Button({ id: 'accordion-toggle-button-orderType' }).click(),
+      Checkbox('One-time').click(),
+    ]);
+  },
+  selectVendorFilter: (invoice) => {
+    cy.do([
+      Button({ id: 'accordion-toggle-button-filter-vendor' }).click(),
+      Button({ id: 'filter-vendor-button' }).click(),
+      Modal('Select Organization').find(SearchField({ id: searhInputId })).fillIn(invoice.vendorName),
+      searchButton.click(),
+    ]);
+    SearchHelper.selectFromResultsList();
+  },
+  selectReasonForClosureFilter: () => {
+    cy.do([
+      Button({ id: 'accordion-toggle-button-ongoing.renewalDate' }).click(),
+      Button({ id: 'closeReason.reason-selection' }).click(),
+      SelectionOption({ id: '' }).click(),
+    ]);
+  },
+  selectReEncumberFilter: () => {
+    cy.do([
+      Button({ id: 'accordion-toggle-button-reEncumber' }).click(),
+      Checkbox({ id: 'clickable-filter-reEncumber-true' }).click(),
+    ]);
+  },
+  selectRenewalDateFilter: () => {
+    cy.do([
+      Button({ id: 'accordion-toggle-button-ongoing.renewalDate' }).click(),
+      Button({ id: 'filter-vendor-button' }).click(),
+      // Modal('Select Organization').find(SearchField({ id: searhInputId })).fillIn(invoice.vendorName),
+      Button('Apply').click(),
+    ]);
+  },
+  selectBillToFilter: () => {
+    cy.do([
+      Button({ id: 'accordion-toggle-button-billTo' }).click(),
+      Button({ id: 'billTo-selection' }).click(),
+      SelectionOption({ id: 'option-billTo-selection-0-72e1b584-d345-43e4-964c-d7bbb59d1f02' }).click(),
+    ]);
+  },
+  selectOrderLines: () => {
+    cy.do(Button('Order lines').click());
+  },
+  selectOrders: () => {
+    cy.do(Button('Orders').click());
+  }
 };

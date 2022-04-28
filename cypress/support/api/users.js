@@ -6,9 +6,11 @@ Cypress.Commands.add('getUsers', (searchParams) => {
     .okapiRequest({
       path: 'users',
       searchParams,
+      isDefaultSearchParamsRequired: false
     })
     .then(({ body }) => {
       Cypress.env('users', body.users);
+      return body.users;
     });
 });
 
@@ -22,6 +24,7 @@ Cypress.Commands.add('getUserServicePoints', (userId) => {
     })
     .then(({ body }) => {
       Cypress.env('userServicePoints', body.servicePointsUsers);
+      return body.servicePointsUsers;
     });
 });
 
@@ -78,6 +81,14 @@ Cypress.Commands.add('overrideLocalSettings', (userId) => {
     method: 'POST',
     path: 'configurations/entries',
     body,
+  });
+});
+
+Cypress.Commands.add('updateUser', (userData) => {
+  cy.okapiRequest({
+    method: 'PUT',
+    path: `users/${userData.id}`,
+    body: userData,
   });
 });
 

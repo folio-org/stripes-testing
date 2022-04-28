@@ -2,6 +2,7 @@ node_modules
 yarn.lock
 .yarnclean
 yarn-error.log
+.idea
 
 cypress/screenshots
 

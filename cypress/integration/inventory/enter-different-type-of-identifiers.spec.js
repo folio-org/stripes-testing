@@ -2,8 +2,8 @@ import TestTypes from '../../support/dictionary/testTypes';
 import getRandomPostfix from '../../support/utils/stringTools';
 import TopMenu from '../../support/fragments/topMenu';
 import InventorySearch from '../../support/fragments/inventory/inventorySearch';
-import inventoryInstances from '../../support/fragments/inventory/inventoryInstances';
-import inventoryInstance from '../../support/fragments/inventory/inventoryInstance';
+import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
+import InventoryInstance from '../../support/fragments/inventory/inventoryInstance';
 import InventoryInstanceEdit from '../../support/fragments/inventory/InventoryInstanceEdit';
 
 describe('ui-inventory: Enter different type of identifiers', () => {
@@ -39,11 +39,11 @@ describe('ui-inventory: Enter different type of identifiers', () => {
     it('C609 In Accordion Identifiers --> enter different type of identifiers', { tags: [TestTypes.smoke] }, () => {
       cy.visit(TopMenu.inventoryPath);
       InventorySearch.searchByParameter('Title (all)', instanceTitle);
-      inventoryInstances.selectInstance();
-      inventoryInstance.editInstance();
+      InventoryInstances.selectInstance();
+      InventoryInstance.editInstance();
       InventoryInstanceEdit.addIdentifier(identifier);
       InventorySearch.searchByParameter('Identifier (all)', identifier);
-      inventoryInstance.checkInstanceIdentifier(identifier);
+      InventoryInstance.checkInstanceIdentifier(identifier);
     });
   });
 });
