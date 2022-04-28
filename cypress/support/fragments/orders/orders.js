@@ -130,11 +130,11 @@ export default {
       .find(MultiColumnListCell({ columnIndex: 0 }))
       .has({ content: orderLine }));
   },
-  checkOrderlineSearchResults: (orderNumber) => {
+  checkOrderlineSearchResults: (orderLineNumber) => {
     cy.expect(MultiColumnList({ id: 'order-line-list' })
       .find(MultiColumnListRow({ index: 0 }))
       .find(MultiColumnListCell({ columnIndex: 0 }))
-      .has({ content: orderNumber }));
+      .has({ content: orderLineNumber }));
   },
   closeThirdPane: () => {
     cy.do(PaneHeader({ id: 'paneHeaderorder-details' }).find(Button({ icon: 'times' })).click());
@@ -235,5 +235,52 @@ export default {
   },
   selectOrders: () => {
     cy.do(Button('Orders').click());
-  }
+  },
+  selectFilterMainLibraryLocationsPOL: () => {
+    cy.do([
+      Button({ id: 'accordion-toggle-button-pol-location-filter' }).click(),
+      Button('Location look-up').click(),
+      Select({ name: 'institutionId' }).choose('Københavns Universitet'),
+      Select({ name: 'campusId' }).choose('City Campus'),
+      Button({ id: 'locationId' }).click(),
+      SelectionOption('Main Library (KU/CC/DI/M) ').click(),
+      Button('Save and close').click(),
+    ]);
+  },
+  selectFilterFundCodeUSHISTPOL: () => {
+    cy.do([
+      Button({ id: 'accordion-toggle-button-fundCode' }).click(),
+      Button({ id: 'fundCode-selection' }).click(),
+      SelectionOption({ id: 'option-fundCode-selection-20-65032151-39a5-4cef-8810-5350eb316300' }).click(),
+    ]);
+  },
+  selectFilterOrderFormatPhysicalResourcePOL: () => {
+    cy.do([
+      Button({ id: 'accordion-toggle-button-orderFormat' }).click(),
+      Checkbox({ id: 'clickable-filter-orderFormat-physical-resource' }).click()
+    ]);
+  },
+  selectFilterVendorPOL: (invoice) => {
+    cy.do([
+      Button({ id: 'accordion-toggle-button-purchaseOrder.vendor' }).click(),
+      Button({ id: 'purchaseOrder.vendor-button' }).click(),
+      Modal('Select Organization').find(SearchField({ id: searhInputId })).fillIn(invoice.vendorName),
+      searchButton.click(),
+    ]);
+    SearchHelper.selectFromResultsList();
+  },
+  selectFilterNoInRushPOL: () => {
+    cy.do([
+      Button({ id: 'accordion-toggle-button-rush' }).click(),
+      Checkbox({ id: 'clickable-filter-rush-false' }).click()
+    ]);
+  },
+  selectFilterSubscriptionFromPOL: (newDate) => {
+    cy.do([
+      Button({ id: 'accordion-toggle-button-subscriptionFrom' }).click(),
+      TextField('From').fillIn(newDate),
+      TextField('To').fillIn(newDate),
+      Button('Apply').click(),
+    ]);
+  },
 };
