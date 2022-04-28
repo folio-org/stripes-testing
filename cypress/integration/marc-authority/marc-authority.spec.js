@@ -61,8 +61,8 @@ describe('MARC Authority management', () => {
       Permissions.dataImportUploadAll.gui,
     ]).then(userProperties => {
       userId = userProperties.userId;
-      cy.login(Cypress.env('diku_login'), Cypress.env('diku_password'));// userProperties.username, userProperties.password);
-       importFile(MarcAuthority.defaultCreateJobProfile);
+      cy.login(userProperties.username, userProperties.password);
+      importFile(MarcAuthority.defaultCreateJobProfile);
     });
   });
 
@@ -83,59 +83,53 @@ describe('MARC Authority management', () => {
     MarcAuthorities.checkRowsCount(1);
   });
 
-  it.only('C350667 Update a MARC authority record via data import. Record match with 010 $a', { tags:  [TestTypes.smoke, Features.authority] }, () => {
+  // https://issues.folio.org/browse/UIMARCAUTH-131
+  it('C350667 Update a MARC authority record via data import. Record match with 010 $a', { tags:  [TestTypes.smoke, Features.authority] }, () => {
     // profiles preparing
     dataImportSettingMappingProfiles.createMappingProfileApi().then(mappingProfileResponse => {
       const specialActionProfile = { ...dataImportSettingsActionProfiles.marcAuthorityUpdateActionProfile };
       specialActionProfile.addedRelations[0].detailProfileId = mappingProfileResponse.body.id;
       dataImportSettingsActionProfiles.createActionProfileApi(specialActionProfile).then(actionProfileResponse => {
         dataImportSettingsMatchProfiles.createMatchProfileApi().then(matchProfileResponse => {
-          // cy.pause('after match profile creation');
-
-
           const specialJobProfile = { ...dataImportSettingsJobProfiles.marcAuthorityUpdateJobProfile };
           specialJobProfile.addedRelations[0].detailProfileId = matchProfileResponse.body.id;
           specialJobProfile.addedRelations[1].masterProfileId = matchProfileResponse.body.id;
           specialJobProfile.addedRelations[1].detailProfileId = actionProfileResponse.body.id;
-
-
           dataImportSettingsJobProfiles.createJobProfileApi(specialJobProfile).then(jobProfileResponse => {
-            // cy.pause(specialJobProfile);
+            MarcAuthority.edit();
+            QuickMarcEditor.waitLoading();
 
-            //  MarcAuthority.edit();
-            //  QuickMarcEditor.waitLoading();
-
-            // const quickmarcEditor = new QuickMarcEditor(MarcAuthority.defaultAuthority);
-            // const addedInSourceRow = quickmarcEditor.addNewField();
-            // const updatedInSourceRow = quickmarcEditor.updateExistingField();
-            // QuickMarcEditor.pressSaveAndClose();
+            const quickmarcEditor = new QuickMarcEditor(MarcAuthority.defaultAuthority);
+            const addedInSourceRow = quickmarcEditor.addNewField();
+            const updatedInSourceRow = quickmarcEditor.updateExistingField();
+            QuickMarcEditor.pressSaveAndClose();
 
             cy.visit(TopMenu.dataImportPath);
 
 
             importFile(jobProfileResponse.body.profile.name);// 'Update MARC authority records - 010 $a - tania');
-            // MarcAuthority.notContains(addedInSourceRow);
-            // MarcAuthority.notContains(updatedInSourceRow);
+            MarcAuthority.notContains(addedInSourceRow);
+            MarcAuthority.notContains(updatedInSourceRow);
 
-            // dataImportSettingsJobProfiles.deleteJobProfileApi(jobProfileResponse.body.id);
+            dataImportSettingsJobProfiles.deleteJobProfileApi(jobProfileResponse.body.id);
+            dataImportSettingsMatchProfiles.deleteMatchProfileApi(matchProfileResponse.body.id);
+            // unlink mapping profile and action profile
+            const linkedMappingProfile = { id: mappingProfileResponse.body.id,
+              profile:{ ...dataImportSettingMappingProfiles.marcAuthorityUpdateMappingProfile.profile } };
+            linkedMappingProfile.profile.id = mappingProfileResponse.body.id;
+            linkedMappingProfile.addedRelations = [];
+            linkedMappingProfile.deletedRelations = [
+              {
+                'masterProfileId': actionProfileResponse.body.id,
+                'masterProfileType': 'ACTION_PROFILE',
+                'detailProfileId': mappingProfileResponse.body.id,
+                'detailProfileType': 'MAPPING_PROFILE'
+              }];
 
-            // dataImportSettingsMatchProfiles.deleteMatchProfileApi(matchProfileResponse.body.id);
-            // // unlink mapping profile and action profile
-            // const linkedMappingProfile = { id: mappingProfileResponse.body.id,
-            //   profile:{ ...dataImportSettingMappingProfiles.marcAuthorityUpdateMappingProfile } };
-            // linkedMappingProfile.profile.id = mappingProfileResponse.body.id;
-            // linkedMappingProfile.addedRelations = [];
-            // linkedMappingProfile.deletedRelations = [
-            //   {
-            //     'masterProfileId': actionProfileResponse.body.id,
-            //     'masterProfileType': 'ACTION_PROFILE',
-            //     'detailProfileId': mappingProfileResponse.body.id,
-            //     'detailProfileType': 'MAPPING_PROFILE'
-            //   }];
+            dataImportSettingMappingProfiles.unlinkMappingProfileFromActionProfileApi(mappingProfileResponse.body.id, linkedMappingProfile);
 
-            // dataImportSettingMappingProfiles.unlinkMappingProfileFromActionProfileApi(mappingProfileResponse.body.id, linkedMappingProfile);
-            // dataImportSettingMappingProfiles.deleteMappingProfileApi(mappingProfileResponse.body.id);
-            // dataImportSettingsActionProfiles.deleteActionProfileApi(actionProfileResponse.body.id);
+            dataImportSettingMappingProfiles.deleteMappingProfileApi(mappingProfileResponse.body.id);
+            dataImportSettingsActionProfiles.deleteActionProfileApi(actionProfileResponse.body.id);
           });
         });
       });
