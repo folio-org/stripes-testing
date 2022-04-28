@@ -245,19 +245,22 @@ export default {
       Button({ id: 'locationId' }).click(),
       SelectionOption('Main Library (KU/CC/DI/M) ').click(),
       Button('Save and close').click(),
+      Button({ id: 'accordion-toggle-button-pol-location-filter' }).click(),
     ]);
   },
   selectFilterFundCodeUSHISTPOL: () => {
     cy.do([
       Button({ id: 'accordion-toggle-button-fundCode' }).click(),
       Button({ id: 'fundCode-selection' }).click(),
-      SelectionOption({ id: 'option-fundCode-selection-20-65032151-39a5-4cef-8810-5350eb316300' }).click(),
+      SelectionOption('USHIST').click(),
+      Button({ id: 'accordion-toggle-button-fundCode' }).click(),
     ]);
   },
   selectFilterOrderFormatPhysicalResourcePOL: () => {
     cy.do([
       Button({ id: 'accordion-toggle-button-orderFormat' }).click(),
-      Checkbox({ id: 'clickable-filter-orderFormat-physical-resource' }).click()
+      Checkbox({ id: 'clickable-filter-orderFormat-physical-resource' }).click(),
+      Button({ id: 'accordion-toggle-button-orderFormat' }).click(),
     ]);
   },
   selectFilterVendorPOL: (invoice) => {
@@ -268,11 +271,13 @@ export default {
       searchButton.click(),
     ]);
     SearchHelper.selectFromResultsList();
+    cy.do(Button({ id: 'accordion-toggle-button-purchaseOrder.vendor' }).click());
   },
   selectFilterNoInRushPOL: () => {
     cy.do([
       Button({ id: 'accordion-toggle-button-rush' }).click(),
-      Checkbox({ id: 'clickable-filter-rush-false' }).click()
+      Checkbox({ id: 'clickable-filter-rush-false' }).click(),
+      Button({ id: 'accordion-toggle-button-rush' }).click(),
     ]);
   },
   selectFilterSubscriptionFromPOL: (newDate) => {
@@ -281,6 +286,7 @@ export default {
       TextField('From').fillIn(newDate),
       TextField('To').fillIn(newDate),
       Button('Apply').click(),
+      Button({ id: 'accordion-toggle-button-subscriptionFrom' }).click(),
     ]);
   },
 };

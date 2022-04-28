@@ -19,7 +19,7 @@ describe('orders: Test Po line filters', () => {
         productId: '9781868885015',
         productIdType: '8261054f-be78-422d-bd51-4ed9f33c3422'
       }],
-      subscriptionFrom: '2022-04-28T00:00:00.000+00:00',
+      subscriptionFrom: `${DateTools.getFormattedDate({ date: today }, 'YYYY-MM-DD')}T00:00:00.000+00:00`,
       subscriptionInterval: 0
     },
     donor: `Autotest donor_${getRandomPostfix()}`,
