@@ -3,48 +3,63 @@ import getRandomPostfix from '../../../utils/stringTools';
 const marcAuthorityMatchBy010TagProfile = {
   'profile': {
     'name': `Update MARC authority record -  Match Profile 010 $a${getRandomPostfix()}`,
+    'description': '',
     'incomingRecordType': 'MARC_AUTHORITY',
     'matchDetails': [
       {
         'incomingRecordType': 'MARC_AUTHORITY',
-        'existingRecordType' : 'MARC_AUTHORITY',
         'incomingMatchExpression': {
-          'dataValueType' : 'VALUE_FROM_RECORD',
-          'fields' : [{
-            'label' : 'field',
-            'value' : '010'
-          }, {
-            'label' : 'indicator1',
-            'value' : ''
-          }, {
-            'label' : 'indicator2',
-            'value' : ''
-          }, {
-            'label' : 'recordSubfield',
-            'value' : 'a'
-          }]
+          'fields': [
+            {
+              'label': 'field',
+              'value': '010'
+            },
+            {
+              'label': 'indicator1',
+              'value': ''
+            },
+            {
+              'label': 'indicator2',
+              'value': ''
+            },
+            {
+              'label': 'recordSubfield',
+              'value': 'a'
+            }
+          ],
+          'staticValueDetails': null,
+          'dataValueType': 'VALUE_FROM_RECORD'
         },
-        'matchCriterion' : 'EXACTLY_MATCHES',
-        'existingMatchExpression' : {
-          'dataValueType' : 'VALUE_FROM_RECORD',
-          'fields' : [{
-            'label' : 'field',
-            'value' : '010'
-          }, {
-            'label' : 'indicator1',
-            'value' : ''
-          }, {
-            'label' : 'indicator2',
-            'value' : ''
-          }, {
-            'label' : 'recordSubfield',
-            'value' : 'a'
-          }]
+        'existingRecordType': 'MARC_AUTHORITY',
+        'existingMatchExpression': {
+          'fields': [
+            {
+              'label': 'field',
+              'value': '010'
+            },
+            {
+              'label': 'indicator1',
+              'value': ''
+            },
+            {
+              'label': 'indicator2',
+              'value': ''
+            },
+            {
+              'label': 'recordSubfield',
+              'value': 'a'
+            }
+          ],
+          'staticValueDetails': null,
+          'dataValueType': 'VALUE_FROM_RECORD'
         },
+        'matchCriterion': 'EXACTLY_MATCHES'
       }
     ],
     'existingRecordType': 'MARC_AUTHORITY'
   },
+  'addedRelations': [],
+  'deletedRelations': []
 };
 
 export default {

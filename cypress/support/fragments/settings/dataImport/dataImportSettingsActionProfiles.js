@@ -3,16 +3,9 @@ import getRandomPostfix from '../../../utils/stringTools';
 const marcAuthorityUpdateActionProfile = {
   'profile': {
     'name': `Use this one to update MARC authority records - action profile${getRandomPostfix()}`,
+    'description': '',
     'action': 'UPDATE',
-    'folioRecord': 'MARC_AUTHORITY',
-    'deleted' : false,
-    'userInfo' : {
-      'firstName' : 'admin',
-      'lastName' : 'admin',
-      'userName' : 'admin'
-    },
-    'parentProfiles' : [],
-    'childProfiles' : [],
+    'folioRecord': 'MARC_AUTHORITY'
   },
   'addedRelations': [
     {
@@ -22,7 +15,8 @@ const marcAuthorityUpdateActionProfile = {
       'detailProfileId': null,
       'detailProfileType': 'MAPPING_PROFILE'
     }
-  ]
+  ],
+  'deletedRelations': []
 };
 
 export default {

@@ -3,6 +3,7 @@ import getRandomPostfix from '../../../utils/stringTools';
 const marcAuthorityUpdateJobProfile = {
   'profile': {
     'name': `Update MARC authority records - 010 $a${getRandomPostfix()}`,
+    'description': '',
     'dataType': 'MARC'
   },
   'addedRelations': [
@@ -11,7 +12,8 @@ const marcAuthorityUpdateJobProfile = {
       'masterProfileType': 'JOB_PROFILE',
       // match profile should be specified
       'detailProfileId': null,
-      'detailProfileType': 'MATCH_PROFILE'
+      'detailProfileType': 'MATCH_PROFILE',
+      'order': 0
     },
     {
       // match profile should be specified
@@ -20,9 +22,11 @@ const marcAuthorityUpdateJobProfile = {
       // action profile should be specified
       'detailProfileId': null,
       'detailProfileType': 'ACTION_PROFILE',
+      'order': 0,
       'reactTo': 'MATCH'
     }
-  ]
+  ],
+  'deletedRelations': []
 };
 
 export default {
@@ -30,8 +34,7 @@ export default {
   createJobProfileApi: (jobProfile = marcAuthorityUpdateJobProfile) => cy.okapiRequest({
     method: 'POST',
     path: 'data-import-profiles/jobProfiles',
-    body: jobProfile,
-    isDefaultSearchParamsRequired: false
+    body: jobProfile
   }),
   deleteJobProfileApi: (id) => cy.okapiRequest({
     method: 'DELETE',
