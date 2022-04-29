@@ -11,7 +11,7 @@ describe('ui-invoices: Invoice Line creation', () => {
   const invoiceLine = { ...NewInvoiceLine.defaultUiInvoiceLine };
 
   before(() => {
-    cy.getToken(Cypress.env('diku_login'), Cypress.env('diku_password'));
+    cy.getAdminToken();
     cy.getOrganizationApi({ query: `name=${invoice.vendorName}` })
       .then(organization => {
         invoice.accountingCode = organization.erpCode;
