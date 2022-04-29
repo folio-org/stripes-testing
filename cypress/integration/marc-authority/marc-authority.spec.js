@@ -14,6 +14,7 @@ import MarcAuthorityBrowse from '../../support/fragments/marcAuthority/MarcAutho
 
 describe('MARC Authority management', () => {
   let userId = '';
+  let authorityIds = [];
 
   beforeEach(() => {
     const fileName = `autotestFile.${getRandomPostfix()}.mrc`;
@@ -45,6 +46,7 @@ describe('MARC Authority management', () => {
         cy.visit(link);
         cy.wait('@getRecord', getLongDelay()).then(response => {
           const internalAuthorityId = response.response.body.relatedAuthorityInfo.idList[0];
+          authorityIds.push(internalAuthorityId);
           cy.visit(TopMenu.marcAuthorities);
           MarcAuthoritiesSearch.searchBy('Uniform title', MarcAuthority.defaultAuthority.headingReference);
           MarcAuthorities.select(internalAuthorityId);
@@ -102,10 +104,30 @@ describe('MARC Authority management', () => {
     MarcAuthorities.switchToBrowse();
     MarcAuthorityBrowse.waitEmptyTable();
     MarcAuthorityBrowse.checkFiltersInitialState();
-    MarcAuthorityBrowse.searchBy('Uniform title', MarcAuthority.defaultAuthority.headingReference);
+    MarcAuthorityBrowse.searchBy(MarcAuthorityBrowse.searchOptions.uniformTitle, MarcAuthority.defaultAuthority.headingReference);
     MarcAuthorityBrowse.waitLoading();
     MarcAuthorityBrowse.checkPresentedColumns();
     // TODO: add checking of records order
+  });
+
+  // TODO: excess steps should be moved into test C350578
+  it.only('C350513 Browse authority - handling for when there is no exact match', { tags:  [TestTypes.smoke, Features.authority] }, () => {
+    //run second import
+    cy.visit(TopMenu.marcAuthorities);
+    MarcAuthorities.switchToBrowse();
+    MarcAuthorityBrowse.waitEmptyTable();
+    // already checked into another tests
+    MarcAuthorityBrowse.checkFiltersInitialState();
+    MarcAuthorityBrowse.checkSearchOptions();
+    MarcAuthorityBrowse.searchBy(MarcAuthorityBrowse.searchOptions.uniformTitle, MarcAuthority.defaultAuthority.headingReference);
+    MarcAuthorityBrowse.checkSelectedSearchOption(MarcAuthorityBrowse.searchOptions.uniformTitle);
+    MarcAuthorityBrowse.waitLoading();
+    // TODO: excess check
+    MarcAuthorityBrowse.checkPresentedColumns();
+
+    // TODO: add checking of records order
+
+    // The sixth result shows an exclamation mark followed by "<<your request>> would be here" and is not a hyperlink.
   });
 
   afterEach(() => {
