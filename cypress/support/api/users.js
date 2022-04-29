@@ -10,6 +10,7 @@ Cypress.Commands.add('getUsers', (searchParams) => {
     })
     .then(({ body }) => {
       Cypress.env('users', body.users);
+      return body.users;
     });
 });
 
@@ -23,6 +24,7 @@ Cypress.Commands.add('getUserServicePoints', (userId) => {
     })
     .then(({ body }) => {
       Cypress.env('userServicePoints', body.servicePointsUsers);
+      return body.servicePointsUsers;
     });
 });
 
@@ -82,14 +84,22 @@ Cypress.Commands.add('overrideLocalSettings', (userId) => {
   });
 });
 
-Cypress.Commands.add('createTempUser', (permissions) => {
+Cypress.Commands.add('updateUser', (userData) => {
+  cy.okapiRequest({
+    method: 'PUT',
+    path: `users/${userData.id}`,
+    body: userData,
+  });
+});
+
+Cypress.Commands.add('createTempUser', (permissions = []) => {
   const userProperties = {
     username: `cypressTestUser${getRandomPostfix()}`,
     password: `Password${getRandomPostfix()}`,
     userId:''
   };
 
-  cy.getToken(Cypress.env('diku_login'), Cypress.env('diku_password'));
+  cy.getAdminToken();
 
   cy.getFirstUserGroupId({ limit: 1 })
     .then((userGroupdId) => {

@@ -209,10 +209,7 @@ describe('ui-data-import: MARC file upload with the update of instance, holding,
       Cypress.env('diku_login'),
       Cypress.env('diku_password')
     );
-    cy.getToken(
-      Cypress.env('diku_login'),
-      Cypress.env('diku_password')
-    );
+    cy.getAdminToken();
 
     DataImport.checkUploadState();
 

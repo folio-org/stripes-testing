@@ -32,10 +32,7 @@ describe('ui-data-import: MARC file import with creating of the new instance, ho
       Cypress.env('diku_login'),
       Cypress.env('diku_password')
     );
-    cy.getToken(
-      Cypress.env('diku_login'),
-      Cypress.env('diku_password')
-    );
+    cy.getAdminToken();
 
     DataImport.checkUploadState();
   });

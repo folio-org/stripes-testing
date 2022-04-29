@@ -16,7 +16,7 @@ import ItemVeiw from '../../support/fragments/inventory/inventoryItem/itemVeiw';
 describe('Check In - Actions ', () => {
   before('Create New Service point, Item, User and Check out item', () => {
     cy.login(Cypress.env('diku_login'), Cypress.env('diku_password'));
-    cy.getToken(Cypress.env('diku_login'), Cypress.env('diku_password'));
+    cy.getAdminToken();
     ServicePoints.createViaApi(NewServicePoint.defaultUiServicePoint.body);
     institutions.createViaApi(institutions.defaultUiInstitutions.body);
     const specialCampuse = { ...campuses.defaultUiCampuses.body };

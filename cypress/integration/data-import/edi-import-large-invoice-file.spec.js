@@ -24,10 +24,7 @@ describe('ui-data-import: Import a large EDIFACT invoice file', () => {
       Cypress.env('diku_login'),
       Cypress.env('diku_password')
     );
-    cy.getToken(
-      Cypress.env('diku_login'),
-      Cypress.env('diku_password')
-    );
+    cy.getAdminToken();
 
     DataImport.checkUploadState();
   });

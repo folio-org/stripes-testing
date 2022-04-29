@@ -12,7 +12,7 @@ describe('ui-inventory: Filter instances by tags', () => {
   const tagsCount = '1';
 
   beforeEach(() => {
-    cy.getToken(Cypress.env('diku_login'), Cypress.env('diku_password'));
+    cy.getAdminToken();
     cy.createTempUser([
       permissions.inventoryAll.gui,
       permissions.uiTagsPermissionAll.gui,

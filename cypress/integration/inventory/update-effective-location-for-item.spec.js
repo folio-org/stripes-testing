@@ -21,7 +21,7 @@ describe('Update the effective location for the item', () => {
     ])
       .then(userProperties => {
         userId = userProperties.userId;
-        cy.getToken(Cypress.env('diku_login'), Cypress.env('diku_password')).then(() => {
+        cy.getAdminToken().then(() => {
           cy.getLoanTypes({ limit: 1 });
           cy.getMaterialTypes({ limit: 1 });
           cy.getInstanceTypes({ limit: 1 });

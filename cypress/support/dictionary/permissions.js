@@ -46,6 +46,8 @@ export default {
   inventoryStorageAuthoritiesAll:{ internal: 'inventory-storage.authorities.all', gui:'inventory storage module - all authorities permissions' },
   // Circulation log
   circulationLogAll: { internal: 'inn-reach.all', gui: 'Circulation log: All' },
+  // Circulation
+  uiCirculationViewCreateEditDelete: { internal: 'ui-circulation.settings.circulation-rules', gui: 'Settings (Circ): Can create, edit and remove circulation rules' },
   // Users
   usersViewRequests: { internal: '', gui: 'Users: View requests' },
   // Remote Storage
@@ -54,7 +56,11 @@ export default {
   uiRequestsAll: { internal: '', gui: 'Requests: All permissions' },
   uiRequestsCreate: { internal: 'ui-requests.create', gui: 'Requests: View, create' },
   uiRequestsView: { internal: 'ui-requests.view', gui: 'Requests: View' },
+  requestsAll: { internal: '', gui: 'Requests: All permissions' },
+  // Calendar
+  calendarAll: { internal: 'ui-calendar.all', gui: 'Settings (Calendar): Can create, view, edit, and remove calendar events' },
   // Data Export
+<<<<<<< HEAD
   dataExportAll: { internal: '', gui: 'Data Export - all permissions' },
   // Orders
   uiCreateOrderAndOrderLine:{ internal:'', gui: 'Orders: Can create new Orders and Order lines' },
@@ -69,4 +75,13 @@ export default {
   uiCheckOutAll:{ internal:'', gui: 'Check out: All permissions' },
   // Loans
   loansAll: { internal: 'ui-users.loans.all', gui: 'Users: User loans view, change due date, renew' },
+=======
+  dataExportAll: { internal: 'data-export.all', gui: 'Data Export - all permissions' },
+  // Loans
+  loansAll: { internal: 'ui-users.loans.all', gui: 'Users: User loans view, change due date, renew' },
+  // Checkout
+  checkoutAll: { internal: '', gui: 'Check out: All permissions' },
+  // Checkin
+  checkinAll: { internal: '', gui: 'Check in: All permissions' }
+>>>>>>> 6b623bdd4abcc05057df92d8366283457c49a20f
 };
