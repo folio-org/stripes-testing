@@ -21,6 +21,7 @@ import ExportFieldMappingProfiles from '../../support/fragments/data-export/expo
 import ExportJobProfiles from '../../support/fragments/data-export/exportJobProfile/exportJobProfiles';
 import SettingsMenu from '../../support/fragments/settingsMenu';
 import FileDetails from '../../support/fragments/data_import/logs/fileDetails';
+import dataImportSettingsJobProfiles from '../../support/fragments/settings/dataImport/dataImportSettingsJobProfiles';
 
 describe('ui-data-import: MARC file upload with the update of instance, holding, and items', () => {
   // profile names for creating
@@ -229,7 +230,7 @@ describe('ui-data-import: MARC file upload with the update of instance, holding,
         cy.addJobProfileRelation(testData.jobProfileForCreate.addedRelations, idActionProfile);
       });
     });
-    cy.createJobProfileApi(testData.jobProfileForCreate)
+    dataImportSettingsJobProfiles.createJobProfileApi(testData.jobProfileForCreate)
       .then((bodyWithjobProfile) => {
         testData.jobProfileForCreate.id = bodyWithjobProfile.body.id;
       });
