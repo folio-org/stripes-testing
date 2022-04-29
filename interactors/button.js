@@ -3,7 +3,8 @@ import HTML from './baseHTML';
 export default HTML.extend('button')
   .selector('a[href],button,input[type=button],input[type=submit],input[type=reset],input[type=image],a[role=button],div[role=button]')
   .filters({
-    href: (el) => el.getAttribute('href'),
+    // some buttons don't have attribute href
+    href: (el) => el.getAttribute('href') ?? '',
     icon: (el) => el.getAttribute('icon'),
     button: (el) => el.tagName === 'BUTTON',
     anchor: (el) => el.tagName === 'A',
