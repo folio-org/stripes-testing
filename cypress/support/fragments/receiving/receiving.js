@@ -4,7 +4,8 @@ import {
   Checkbox,
   TextField,
   MultiColumnListRow,
-  MultiColumnListCell
+  MultiColumnListCell,
+  SearchField
 } from '../../../../interactors';
 import InteractorsTools from '../../utils/interactorsTools';
 
@@ -13,6 +14,8 @@ const receivingSuccessful = 'Receiving successful';
 const unreceivingSuccessful = 'Unreceiving successful';
 const expectedPiecesAccordionId = 'expected';
 const receivedPiecesAccordionId = 'received';
+const receiveButton = Button('Receive');
+const unreceiveButton = Button('Unreceive');
 
 export default {
 
@@ -21,11 +24,11 @@ export default {
     cy.expect(Accordion({ id: expectedPiecesAccordionId }).exists());
     cy.do([
       Accordion({ id: expectedPiecesAccordionId }).find(actionsButton).click(),
-      Button('Receive').click(),
+      receiveButton.click(),
       Checkbox({ name: `${recievingFieldName}.checked` }).clickInput(),
       TextField({ name: `${recievingFieldName}.caption` }).fillIn(caption),
       TextField({ name: `${recievingFieldName}.barcode` }).fillIn(barcode),
-      Button('Receive').click(),
+      receiveButton.click(),
     ]);
     InteractorsTools.checkCalloutMessage(receivingSuccessful);
   },
@@ -47,9 +50,9 @@ export default {
     cy.expect(Accordion({ id: receivedPiecesAccordionId }).exists());
     cy.do([
       Accordion({ id: receivedPiecesAccordionId }).find(actionsButton).click(),
-      Button('Unreceive').click(),
+      unreceiveButton.click(),
       Checkbox({ name: `${recievingFieldName}.checked` }).clickInput(),
-      Button('Unreceive').click(),
+      unreceiveButton.click(),
     ]);
     InteractorsTools.checkCalloutMessage(unreceivingSuccessful);
   },
@@ -60,5 +63,17 @@ export default {
         .find(MultiColumnListRow({ index: rowNumber }))
         .find(MultiColumnListCell({ content: caption })).exists())
     ]);
+  },
+
+  searchByParameter:(parameter, value) => {
+    cy.do([
+      SearchField({ id: 'input-record-search-qindex' }).selectIndex(parameter),
+      SearchField({ id: 'input-record-search' }).fillIn(value),
+      Button('Search').click(),
+    ]);
+  },
+
+  selectReceivingItem:(indexRow = 0) => {
+    cy.do(MultiColumnListCell({ 'row': indexRow, 'columnIndex': 0 }).click());
   }
 };

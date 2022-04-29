@@ -1,4 +1,4 @@
-import { Button, Pane, including, TextField, MultiColumnListCell } from '../../../../interactors';
+import { Button, Pane, including, TextField, MultiColumnListRow, HTML } from '../../../../interactors';
 import NewInctanceHoldingsItem from '../inventory/newInctanceHoldingsItem';
 import NewUser from '../user/newUser';
 
@@ -6,14 +6,24 @@ const loadDetailsButton = Button('Loan details');
 const patronDetailsButton = Button('Patron details');
 const itemDetailsButton = Button('Item details');
 const newFeeFineButton = Button('New Fee/Fine');
+const checkInButton = Button('Check in');
+const itemBarcodeField = TextField({ name:'item.barcode' });
+const addItemButton = Button({ id: 'clickable-add-item' });
 
 export default {
-  checkInItem: () => {
-    cy.do(Button('Check in').click());
-    cy.do(TextField({ id: 'input-item-barcode' }).fillIn(NewInctanceHoldingsItem.itemBarcode));
-    cy.do(Button({ id: 'clickable-add-item' }).click());
-    cy.expect(MultiColumnListCell('Available').exists());
+  checkInItem:(barcode) => {
+    cy.do(checkInButton.click());
+    cy.intercept('/inventory/items?*').as('getItems');
+    cy.do(itemBarcodeField.fillIn(barcode));
+    cy.do(addItemButton.click());
+    cy.wait('@getItems');
+  },
+  openItemRecordInInventory:(status) => {
+    cy.expect(MultiColumnListRow({ indexRow: 'row-0' }).find(HTML(including(status))).exists());
     cy.do(Button({ id: 'available-actions-button-0' }).click());
+    cy.intercept('/inventory/items*').as('getItems');
+    cy.expect(Button('Item details').exists());
+    cy.do(Button('Item details').click());
   },
   existsFormColomns:() => {
     cy.expect([
@@ -24,7 +34,7 @@ export default {
     ]);
   },
   returnCheckIn() {
-    cy.do(Button('Check in').click());
+    cy.do(checkInButton.click());
     cy.do(Button({ id: 'available-actions-button-0' }).click());
   },
   existsItemsInForm() {
@@ -40,14 +50,5 @@ export default {
     cy.do(newFeeFineButton.click());
     cy.expect(Pane({ title:  'New fee/fine' }).exists());
     this.returnCheckIn();
-  },
-  // check in item at service point assigned to its effective location
-  checkInItemWithEffectiveLocation:(barcode) => {
-    cy.intercept('/circulation/requests?*').as('getRequests');
-    cy.do(TextField({ name:'item.barcode' }).fillIn(barcode));
-    //cy.wait('@getRequests');
-    cy.wait(10000);
-    cy.do(Button({ id:'clickable-add-item' }).click());
-    cy.wait(5000);
   },
 };

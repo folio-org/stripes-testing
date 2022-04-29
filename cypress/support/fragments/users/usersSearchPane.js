@@ -1,3 +1,4 @@
+import { including } from '@interactors/html';
 import {
   Accordion,
   Checkbox,
@@ -5,7 +6,6 @@ import {
   Button,
   Link,
 } from '../../../../interactors';
-import { including } from '@interactors/html';
 
 export default {
   searchByStatus(status) {
@@ -20,6 +20,8 @@ export default {
   },
 
   openUser(userId) {
+    cy.intercept('/circulation/loans?*').as('getGroups');
     cy.do(Link({ href: including(userId) }).click());
+    cy.wait('@getGroups');
   },
 };

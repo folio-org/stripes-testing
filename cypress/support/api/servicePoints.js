@@ -12,15 +12,27 @@ Cypress.Commands.add('getServicePointsApi', (searchParams) => {
     });
 });
 
-Cypress.Commands.add('addServicePointToUser', (servicePointId, userId) => {
+Cypress.Commands.add('addServicePointToUser', (servicePointIds, userId, defaultServicePointId) => {
+  const defaultSp = defaultServicePointId ?? servicePointIds[0];
   cy.okapiRequest({
     method: 'POST',
     path: 'service-points-users',
     body: {
       id: uuidv4(),
       userId,
-      servicePointsIds: [servicePointId],
-      defaultServicePointId: servicePointId
+      servicePointsIds: servicePointIds,
+      defaultServicePointId: defaultSp
     }
   });
+});
+
+Cypress.Commands.add('createServicePointApi', (servicePointParameters) => {
+  cy.okapiRequest({
+    path: 'service-points',
+    body: servicePointParameters,
+    method: 'POST',
+  })
+    .then((body) => {
+      return body;
+    });
 });

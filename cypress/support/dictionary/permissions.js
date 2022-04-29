@@ -22,7 +22,7 @@ export default {
   uiMarcAuthoritiesAuthorityRecordEdit:{ internal: 'ui-marc-authorities.authority-record.edit', gui:'Edit MARC authority record' },
   // Inventory
   // TODO: gui name related with several internal names. Clarify the reason
-  inventoryAll: { internal: ['inventory.all', 'ui-inventory.all-permissions.TEMPORARY'], gui: 'Inventory: All permissions' },
+  inventoryAll: { internal: ['inventory.all', 'Inventory: All permissions'], gui: 'Inventory: All permissions' },
   uiInventorySingleRecordImport: { internal: 'ui-inventory.single-record-import', gui: 'Inventory: Import single bibliographic records' },
   uiInventorySettingsFastAdd: { internal: 'ui-inventory.settings.fast-add', gui: 'Settings (Inventory): Edit fast add settings' },
   uiInventoryMarkItemsWithdrawn: { internal: 'ui-inventory.items.mark-items-withdrawn', gui: 'Inventory: Mark items withdrawn' },
@@ -51,17 +51,22 @@ export default {
   // Remote Storage
   remoteStorageCRUD: { internal: '', gui: 'Settings (Remote storage): Can create, edit, delete remote storage settings' },
   // Requests
+  uiRequestsAll: { internal: '', gui: 'Requests: All permissions' },
   uiRequestsCreate: { internal: 'ui-requests.create', gui: 'Requests: View, create' },
   uiRequestsView: { internal: 'ui-requests.view', gui: 'Requests: View' },
   // Data Export
   dataExportAll: { internal: '', gui: 'Data Export - all permissions' },
   // Orders
-  uiCreateOrder:{ internal:'', gui: 'Orders: Create orders' },
-  uiCreateOrderLine:{ internal:'', gui: 'Orders: Create order lines' },
-  uiEditOrder:{ internal:'', gui: 'Orders: Edit orders' },
-  uiApproveOrder:{ internal:'', gui: 'Approve purchase orders' },
+  uiCreateOrderAndOrderLine:{ internal:'', gui: 'Orders: Can create new Orders and Order lines' },
+  uiEditOrderAndOrderLine:{ internal:'', gui: 'Orders: Can edit Orders and Order lines' },
+  uiCanViewOrderAndOrderLine:{ internal:'', gui: 'Orders: Can view Orders and Order lines' },
+  uiApproveOrder:{ internal:'', gui: 'Orders: Approve purchase orders' },
   // Check in
-  uiCheckInAll:{ internal:'', gui: 'Check in: All permissions' },
+  uiCheckInAll:{ internal:'ui-checkin.all', gui: 'Check in: All permissions' },
   // Receiving
   uiReceivingViewEditCreate:{ internal:'', gui:'Receiving: View, edit, create' },
+  // Check out
+  uiCheckOutAll:{ internal:'', gui: 'Check out: All permissions' },
+  // Loans
+  loansAll: { internal: 'ui-users.loans.all', gui: 'Users: User loans view, change due date, renew' },
 };

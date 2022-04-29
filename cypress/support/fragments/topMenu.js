@@ -21,4 +21,6 @@ export default {
   requestsPath: '/requests',
   usersPath: '/users',
   checkInPath: '/checkin',
+  checkOutPath: '/checkout',
+  receivingPath: '/receiving',
 };

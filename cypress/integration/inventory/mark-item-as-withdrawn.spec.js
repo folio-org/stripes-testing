@@ -30,7 +30,7 @@ describe('ui-inventory: Mark items as withdrawn', () => {
       })
       .then(userProperties => {
         user = userProperties;
-        cy.addServicePointToUser(defaultServicePointId, user.userId);
+        cy.addServicePointToUser([defaultServicePointId], user.userId);
       })
       .then(() => {
         cy.login(user.username, user.password);

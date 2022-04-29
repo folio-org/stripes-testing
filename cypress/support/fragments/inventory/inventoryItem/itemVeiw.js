@@ -1,4 +1,4 @@
-import { Accordion, KeyValue, Button, Modal } from '../../../../../interactors';
+import { Accordion, KeyValue, Button, HTML, including } from '../../../../../interactors';
 import dateTools from '../../../utils/dateTools';
 import ConfirmItemMissingModal from './confirmItemMissingModal';
 
@@ -15,11 +15,13 @@ const itemStatuses = {
   awaitingDelivery: 'Awaiting delivery'
 };
 
+const loanAccordion = Accordion('Loan and availability');
+
 export default {
   itemStatuses,
 
   verifyUpdatedItemDate:() => {
-    cy.do(Accordion('Loan and availability').find(KeyValue('Item status')).perform(element => {
+    cy.do(loanAccordion.find(KeyValue('Item status')).perform(element => {
       const rawDate = element.innerText;
       const parsedDate = Date.parse(rawDate.match(/\d{1,2}\/\d{1,2}\/\d{4},\s\d{1,2}:\d{1,2}\s\w{2}/gm)[0]);
       // For local run it needs to add 18000000
@@ -28,12 +30,12 @@ export default {
   },
 
   verifyItemStatus(status) {
-    cy.expect(Accordion('Loan and availability').find(KeyValue({ value: status })).exists());
+    cy.intercept('/orders/pieces?*').as('getPieces');
+    cy.expect(loanAccordion.find(HTML(including(status))).exists());
+    cy.wait('@getPieces');
   },
 
   clickMarkAsMissing() {
-    cy.intercept('organizations/organizations/?*').as('getOrg');
-    cy.wait(['@getOrg']);
     cy.do(Button('Actions').click());
     cy.do(Button('Mark as missing').click());
     ConfirmItemMissingModal.confirmModal();

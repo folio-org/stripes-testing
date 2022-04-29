@@ -25,5 +25,12 @@ export default {
       Button('Delete').click(),
       Button({ id: 'clickable-deletelocation-confirmation-confirm' }).click()
     ]);
-  }
+  },
+
+  createLocationViaApi: (locationParameters) => cy.okapiRequest({
+    path: 'locations',
+    body: locationParameters,
+    method: 'POST',
+  })
+    .then(body => body)
 };

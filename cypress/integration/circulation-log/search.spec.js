@@ -36,7 +36,7 @@ describe('ui-circulation-log', () => {
             });
           })
           .then(() => {
-            cy.addServicePointToUser(Cypress.env('servicePoints')[0].id, userId);
+            cy.addServicePointToUser([Cypress.env('servicePoints')[0].id], userId);
             cy.getUserServicePoints(Cypress.env('users')[0].id);
             cy.createInstance({
               instance: {

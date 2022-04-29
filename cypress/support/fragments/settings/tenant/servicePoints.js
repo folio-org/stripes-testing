@@ -10,9 +10,6 @@ export default {
         return body.servicepoints;
       });
   },
-  createViaApi : (servicePointParameters) => cy.okapiRequest({
-    path: 'service-points',
-    body: servicePointParameters,
-    method: 'POST',
-  })
+
+  createViaApi: (servicePointParameters) => cy.createServicePointApi(servicePointParameters),
 };
