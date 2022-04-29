@@ -48,12 +48,15 @@ export default {
   circulationLogAll: { internal: 'inn-reach.all', gui: 'Circulation log: All' },
   // Users
   usersViewRequests: { internal: '', gui: 'Users: View requests' },
+  uiUsersView: { internal: 'ui-users.view', gui: 'Users: Can view user profile' },
+  uiUserCreate: { internal: 'ui-users.create', gui: 'Users: Create users' },
+  uiUserEdit: { internal: 'ui-users.edit', gui: 'Users: Can edit user profile' },
   // Remote Storage
   remoteStorageCRUD: { internal: '', gui: 'Settings (Remote storage): Can create, edit, delete remote storage settings' },
   // Requests
   uiRequestsCreate: { internal: 'ui-requests.create', gui: 'Requests: View, create' },
   uiRequestsView: { internal: 'ui-requests.view', gui: 'Requests: View' },
-  requestsAll: { internal: '', gui: 'Requests: All permissions' },
+  requestsAll: { internal: 'ui-requests.all', gui: 'Requests: All permissions' },
   // Calendar
   calendarAll: { internal: 'ui-calendar.all', gui: 'Settings (Calendar): Can create, view, edit, and remove calendar events' },
   // Data Export
