@@ -12,6 +12,12 @@ const orderDetailsAccordionId = 'purchaseOrder';
 const createdByAdmin = 'ADMINISTRATOR, DIKU ';
 const searchField = SearchField({ id: 'input-record-search' });
 const admin = 'administrator';
+const buttonLocationFilter = Button({ id: 'accordion-toggle-button-pol-location-filter' });
+const buttonFundCodeFilter = Button({ id: 'accordion-toggle-button-fundCode' });
+const buttonOrderFormatFilter = Button({ id: 'accordion-toggle-button-orderFormat' });
+const buttonFVendorFilter = Button({ id: 'accordion-toggle-button-purchaseOrder.vendor' });
+const buttonRushFilter = Button({ id: 'accordion-toggle-button-rush' });
+const buttonSubscriptionFromFilter = Button({ id: 'accordion-toggle-button-subscriptionFrom' });
 
 export default {
   createOrderWithOrderLineViaApi(order, orderLine) {
@@ -238,54 +244,54 @@ export default {
   },
   selectFilterMainLibraryLocationsPOL: () => {
     cy.do([
-      Button({ id: 'accordion-toggle-button-pol-location-filter' }).click(),
+      buttonLocationFilter.click(),
       Button('Location look-up').click(),
       Select({ name: 'campusId' }).choose('City Campus'),
       Button({ id: 'locationId' }).click(),
       SelectionOption('Main Library (KU/CC/DI/M) ').click(),
       Button('Save and close').click(),
-      Button({ id: 'accordion-toggle-button-pol-location-filter' }).click(),
+      buttonLocationFilter.click(),
     ]);
   },
   selectFilterFundCodeUSHISTPOL: () => {
     cy.do([
-      Button({ id: 'accordion-toggle-button-fundCode' }).click(),
+      buttonFundCodeFilter.click(),
       Button({ id: 'fundCode-selection' }).click(),
       SelectionOption('USHIST').click(),
-      Button({ id: 'accordion-toggle-button-fundCode' }).click(),
+      buttonFundCodeFilter.click(),
     ]);
   },
   selectFilterOrderFormatPhysicalResourcePOL: () => {
     cy.do([
-      Button({ id: 'accordion-toggle-button-orderFormat' }).click(),
+      buttonOrderFormatFilter.click(),
       Checkbox({ id: 'clickable-filter-orderFormat-physical-resource' }).click(),
-      Button({ id: 'accordion-toggle-button-orderFormat' }).click(),
+      buttonOrderFormatFilter.click(),
     ]);
   },
   selectFilterVendorPOL: (invoice) => {
     cy.do([
-      Button({ id: 'accordion-toggle-button-purchaseOrder.vendor' }).click(),
+      buttonFVendorFilter.click(),
       Button({ id: 'purchaseOrder.vendor-button' }).click(),
       Modal('Select Organization').find(SearchField({ id: searhInputId })).fillIn(invoice.vendorName),
       searchButton.click(),
     ]);
     SearchHelper.selectFromResultsList();
-    cy.do(Button({ id: 'accordion-toggle-button-purchaseOrder.vendor' }).click());
+    cy.do(buttonFVendorFilter.click());
   },
   selectFilterNoInRushPOL: () => {
     cy.do([
-      Button({ id: 'accordion-toggle-button-rush' }).click(),
+      buttonRushFilter.click(),
       Checkbox({ id: 'clickable-filter-rush-false' }).click(),
-      Button({ id: 'accordion-toggle-button-rush' }).click(),
+      buttonRushFilter.click(),
     ]);
   },
   selectFilterSubscriptionFromPOL: (newDate) => {
     cy.do([
-      Button({ id: 'accordion-toggle-button-subscriptionFrom' }).click(),
+      buttonSubscriptionFromFilter.click(),
       TextField('From').fillIn(newDate),
       TextField('To').fillIn(newDate),
       Button('Apply').click(),
-      Button({ id: 'accordion-toggle-button-subscriptionFrom' }).click(),
+      buttonSubscriptionFromFilter.click(),
     ]);
   },
 };

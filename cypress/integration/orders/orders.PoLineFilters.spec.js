@@ -1,3 +1,4 @@
+import uuid from 'uuid';
 import NewOrder from '../../support/fragments/orders/newOrder';
 import TestType from '../../support/dictionary/testTypes';
 import Orders from '../../support/fragments/orders/orders';
@@ -10,6 +11,7 @@ import DateTools from '../../support/utils/dateTools';
 
 describe('orders: Test Po line filters', () => {
   const today = new Date();
+  const fundID = '65032151-39a5-4cef-8810-5350eb316300';
   const subcriptionDate = DateTools.getFormattedDate({ date: today }, 'MM/DD/YYYY');
   const order = { ...NewOrder.defaultOrder };
   const orderLine = {
@@ -17,7 +19,7 @@ describe('orders: Test Po line filters', () => {
     details: {
       productIds: [{
         productId: '9781868885015',
-        productIdType: '8261054f-be78-422d-bd51-4ed9f33c3422'
+        productIdType: uuid(),
       }],
       subscriptionFrom: `${DateTools.getFormattedDate({ date: today }, 'YYYY-MM-DD')}T00:00:00.000+00:00`,
       subscriptionInterval: 0
@@ -28,7 +30,7 @@ describe('orders: Test Po line filters', () => {
     selector: `Autotest selector_${getRandomPostfix()}`,
     fundDistribution: [{
       code: 'USHIST',
-      fundId: '65032151-39a5-4cef-8810-5350eb316300',
+      fundId: fundID,
       distributionType: 'percentage',
       value: 100
     }],
