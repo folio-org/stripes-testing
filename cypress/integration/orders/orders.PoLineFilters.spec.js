@@ -11,7 +11,6 @@ import DateTools from '../../support/utils/dateTools';
 
 describe('orders: Test Po line filters', () => {
   const today = new Date();
-  const fundID = '65032151-39a5-4cef-8810-5350eb316300';
   const subcriptionDate = DateTools.getFormattedDate({ date: today }, 'MM/DD/YYYY');
   const order = { ...NewOrder.defaultOrder };
   const orderLine = {
@@ -30,7 +29,7 @@ describe('orders: Test Po line filters', () => {
     selector: `Autotest selector_${getRandomPostfix()}`,
     fundDistribution: [{
       code: 'USHIST',
-      fundId: fundID,
+      fundId: '',
       distributionType: 'percentage',
       value: 100
     }],
@@ -68,21 +67,25 @@ describe('orders: Test Po line filters', () => {
       .then(location => { orderLine.locations[0].locationId = location.id; });
     cy.getMaterialTypes({ query: 'name="book"' })
       .then(materialType => { orderLine.physical.materialType = materialType.id; });
-    cy.login(Cypress.env('diku_login'), Cypress.env('diku_password'));
-    cy.createOrderApi(order)
-      .then(() => {
-        cy.getAcquisitionMethodsApi({ query: 'value="Other"' })
-          .then((params) => {
-            orderLine.acquisitionMethod = params.body.acquisitionMethods[0].id;
-            orderLine.purchaseOrderId = order.id;
-            cy.createOrderLineApi(orderLine)
-              .then((response) => {
-                orderLineNumber = response.body.poLineNumber;
+    cy.getFundsApi({ query: 'code="USHIST"' })
+      .then(funds => {
+        orderLine.fundDistribution[0].fundId = funds[0]?.id;
+        cy.login(Cypress.env('diku_login'), Cypress.env('diku_password'));
+        cy.createOrderApi(order)
+          .then(() => {
+            cy.getAcquisitionMethodsApi({ query: 'value="Other"' })
+              .then(params => {
+                orderLine.acquisitionMethod = params.body.acquisitionMethods[0].id;
+                orderLine.purchaseOrderId = order.id;
+                cy.createOrderLineApi(orderLine)
+                  .then(response => {
+                    orderLineNumber = response.body.poLineNumber;
+                  });
               });
           });
+        cy.visit(TopMenu.ordersPath);
+        Orders.selectOrderLines();
       });
-    cy.visit(TopMenu.ordersPath);
-    Orders.selectOrderLines();
   });
 
   after(() => {
