@@ -60,28 +60,18 @@ export default {
   // Calendar
   calendarAll: { internal: 'ui-calendar.all', gui: 'Settings (Calendar): Can create, view, edit, and remove calendar events' },
   // Data Export
-<<<<<<< HEAD
-  dataExportAll: { internal: '', gui: 'Data Export - all permissions' },
-  // Orders
-  uiCreateOrderAndOrderLine:{ internal:'', gui: 'Orders: Can create new Orders and Order lines' },
-  uiEditOrderAndOrderLine:{ internal:'', gui: 'Orders: Can edit Orders and Order lines' },
-  uiCanViewOrderAndOrderLine:{ internal:'', gui: 'Orders: Can view Orders and Order lines' },
-  uiApproveOrder:{ internal:'', gui: 'Orders: Approve purchase orders' },
-  // Check in
-  uiCheckInAll:{ internal:'ui-checkin.all', gui: 'Check in: All permissions' },
-  // Receiving
-  uiReceivingViewEditCreate:{ internal:'', gui:'Receiving: View, edit, create' },
-  // Check out
-  uiCheckOutAll:{ internal:'', gui: 'Check out: All permissions' },
-  // Loans
-  loansAll: { internal: 'ui-users.loans.all', gui: 'Users: User loans view, change due date, renew' },
-=======
   dataExportAll: { internal: 'data-export.all', gui: 'Data Export - all permissions' },
   // Loans
   loansAll: { internal: 'ui-users.loans.all', gui: 'Users: User loans view, change due date, renew' },
   // Checkout
   checkoutAll: { internal: '', gui: 'Check out: All permissions' },
   // Checkin
-  checkinAll: { internal: '', gui: 'Check in: All permissions' }
->>>>>>> 6b623bdd4abcc05057df92d8366283457c49a20f
+  checkinAll: { internal: '', gui: 'Check in: All permissions' },
+  // Orders
+  uiCreateOrderAndOrderLine:{ internal:'', gui: 'Orders: Can create new Orders and Order lines' },
+  uiEditOrderAndOrderLine:{ internal:'', gui: 'Orders: Can edit Orders and Order lines' },
+  uiCanViewOrderAndOrderLine:{ internal:'', gui: 'Orders: Can view Orders and Order lines' },
+  uiApproveOrder:{ internal:'', gui: 'Orders: Approve purchase orders' },
+  // Receiving
+  uiReceivingViewEditCreate:{ internal:'', gui:'Receiving: View, edit, create' },
 };

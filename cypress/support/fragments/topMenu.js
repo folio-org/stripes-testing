@@ -20,11 +20,7 @@ export default {
   inventorySettingsFastAddPath: '/settings/inventory/fastAdd',
   requestsPath: '/requests',
   usersPath: '/users',
-<<<<<<< HEAD
   checkInPath: '/checkin',
   checkOutPath: '/checkout',
   receivingPath: '/receiving',
-=======
-  checkOutPath: '/checkout'
->>>>>>> 6b623bdd4abcc05057df92d8366283457c49a20f
 };

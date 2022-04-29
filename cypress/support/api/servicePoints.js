@@ -15,10 +15,6 @@ Cypress.Commands.add('getServicePointsApi', (searchParams) => {
     });
 });
 
-<<<<<<< HEAD
-Cypress.Commands.add('addServicePointToUser', (servicePointIds, userId, defaultServicePointId) => {
-  const defaultSp = defaultServicePointId ?? servicePointIds[0];
-=======
 Cypress.Commands.add('createServicePoint', (servicePoint) => {
   const testName = `Autotest service point ${getRandomPostfix()}`;
 
@@ -52,23 +48,17 @@ Cypress.Commands.add('deleteServicePoint', (id) => {
   });
 });
 
-Cypress.Commands.add('addServicePointToUser', (servicePointId, userId) => {
->>>>>>> 6b623bdd4abcc05057df92d8366283457c49a20f
+Cypress.Commands.add('addServicePointToUser', (servicePointIds, userId, defaultServicePointId) => {
+  // servicePointIds is array of ids
   cy.okapiRequest({
     method: 'POST',
     path: 'service-points-users',
     body: {
       id: uuidv4(),
       userId,
-<<<<<<< HEAD
       servicePointsIds: servicePointIds,
-      defaultServicePointId: defaultSp
-    }
-=======
-      servicePointsIds: [servicePointId],
-      defaultServicePointId: servicePointId,
+      defaultServicePointId: defaultServicePointId || servicePointIds[0],
     },
->>>>>>> 6b623bdd4abcc05057df92d8366283457c49a20f
   });
 });
 

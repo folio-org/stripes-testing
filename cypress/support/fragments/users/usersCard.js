@@ -7,15 +7,11 @@ export default {
   },
 
   openLoans() {
-<<<<<<< HEAD
     cy.intercept('/circulation/loans?*').as('getLoans');
     cy.wait(60000);
     cy.do(Accordion({ id : 'loansSection' }).clickHeader());
     cy.wait('@getLoans');
     cy.wait(60000);
-=======
-    cy.do(Accordion({ id : 'loansSection' }).clickHeader());
->>>>>>> 6b623bdd4abcc05057df92d8366283457c49a20f
   },
 
   showOpenedLoans() {

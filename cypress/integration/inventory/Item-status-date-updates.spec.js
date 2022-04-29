@@ -102,9 +102,9 @@ describe('ui-inventory: Item status date updates', () => {
       permissions.uiEditOrderAndOrderLine,
       permissions.uiCanViewOrderAndOrderLine,
       permissions.inventoryAll.gui,
-      permissions.uiCheckInAll.gui,
+      permissions.checkinAll.gui,
       permissions.uiReceivingViewEditCreate.gui,
-      permissions.uiCheckOutAll.gui,
+      permissions.checkoutAll.gui,
       permissions.uiApproveOrder.gui,
       permissions.uiRequestsAll.gui,
       permissions.loansAll.gui,
@@ -122,13 +122,10 @@ describe('ui-inventory: Item status date updates', () => {
             cy.getMaterialTypes({ query: 'name="book"' })
               .then(materialType => { orderLine.physical.materialType = materialType.id; });
           });
-        ServicePoints.createViaApi({
-          ...effectiveLocationServicePoint.body,
-          pickupLocation: true,
-          holdShelfExpiryPeriod: { intervalId: 'Hours', duration: 1 }
-        });
+        ServicePoints.createViaApi(effectiveLocationServicePoint.body);
         ServicePoints.createViaApi(notEffectiveLocationServicePoint.body);
-        cy.addServicePointToUser([effectiveLocationServicePoint.body.id, notEffectiveLocationServicePoint.body.id], user.userId);
+        cy.addServicePointToUser([effectiveLocationServicePoint.body.id, notEffectiveLocationServicePoint.body.id],
+          user.userId, effectiveLocationServicePoint.body.id);
         Locations.createLocationViaApi(effectiveLocation)
           .then(locations => {
             orderLine.locations[0].locationId = locations.body.id;
@@ -149,7 +146,7 @@ describe('ui-inventory: Item status date updates', () => {
   });
 
   afterEach(() => {
-    /*cy.getInstance({ limit: 1, expandAll: true, query: `"items.barcode"=="${itemBarcode}"` })
+    /* cy.getInstance({ limit: 1, expandAll: true, query: `"items.barcode"=="${itemBarcode}"` })
       .then((instance) => {
         instance.items.forEach((item) => {
           cy.deleteItem(item.id);
@@ -158,9 +155,11 @@ describe('ui-inventory: Item status date updates', () => {
         cy.deleteInstanceApi(instance.id);
       });
       cy.deleteOrderApi(order.id);
-      NewServicePoint.deleteServicePointViaApi();
+      servicePoints.forEach(servicePoint => {
+        cy.deleteServicePoint(servicePoint.id);
+      });
     Requests.deleteRequestApi(id);
-    cy.deleteUser(user.userId);*/
+    cy.deleteUser(user.userId); */
   });
 
   it('C9200 Item status date updates', { tags: [TestTypes.smoke] }, () => {
