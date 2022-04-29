@@ -235,5 +235,13 @@ export default {
   },
   selectOrders: () => {
     cy.do(Button('Orders').click());
+  },
+  createPOLineViaActions: () => {
+    cy.do([
+      Accordion({ id: 'POListing' })
+        .find(Button('Actions'))
+        .click(),
+      Button('Add PO line').click()
+    ]);
   }
 };
