@@ -240,7 +240,6 @@ export default {
     cy.do([
       Button({ id: 'accordion-toggle-button-pol-location-filter' }).click(),
       Button('Location look-up').click(),
-      Select({ name: 'institutionId' }).choose('Københavns Universitet'),
       Select({ name: 'campusId' }).choose('City Campus'),
       Button({ id: 'locationId' }).click(),
       SelectionOption('Main Library (KU/CC/DI/M) ').click(),
