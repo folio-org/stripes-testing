@@ -1,6 +1,7 @@
 import { Button, SearchField, PaneHeader, Pane, Select, Accordion, KeyValue, Checkbox, MultiColumnList, MultiColumnListCell, MultiColumnListRow, Modal, TextField, SelectionOption } from '../../../../interactors';
 import SearchHelper from '../finance/financeHelper';
 import InteractorsTools from '../../utils/interactorsTools';
+import getRandomPostfix from '../../utils/stringTools';
 
 const actionsButton = Button('Actions');
 const orderDetailsPane = Pane({ id: 'order-details' });
@@ -243,5 +244,11 @@ export default {
         .click(),
       Button('Add PO line').click()
     ]);
-  }
+  },
+  fillInPOLineInfoViaUi: () => {
+    cy.do([
+      // TextField('Title').fillIn(`Autotest Tetle_${getRandomPostfix()}`),
+      Select('Order format').choose('P/E mix')
+    ]);
+  },
 };

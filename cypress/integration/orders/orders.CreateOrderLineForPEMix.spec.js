@@ -30,5 +30,6 @@ describe('orders: Test PO search', () => {
     Orders.searchByParameter('PO number', orderNumber);
     SearchHelper.selectFromResultsList();
     Orders.createPOLineViaActions();
+    Orders.fillInPOLineInfoViaUi();
   });
 });
