@@ -27,7 +27,7 @@ export default {
       runBy: MultiColumnListCell({ 'row': 0, columnIndex: 6 }),
       id: MultiColumnListCell({ 'row': 0, columnIndex: 7 }),
     };
-    cy.getToken(Cypress.env('diku_login'), Cypress.env('diku_password')).then(() => {
+    cy.getAdminToken().then(() => {
       cy.getUsers({ limit: 1, query: `username=${userName || Cypress.env('diku_login')}` }).then(() => {
         const userNameToVerify = `${Cypress.env('users')[0].personal.firstName} ${Cypress.env('users')[0].personal.lastName}`;
         cy.do([

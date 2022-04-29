@@ -46,6 +46,8 @@ export default {
   inventoryStorageAuthoritiesAll:{ internal: 'inventory-storage.authorities.all', gui:'inventory storage module - all authorities permissions' },
   // Circulation log
   circulationLogAll: { internal: 'inn-reach.all', gui: 'Circulation log: All' },
+  // Circulation
+  uiCirculationViewCreateEditDelete: { internal: 'ui-circulation.settings.circulation-rules', gui: 'Settings (Circ): Can create, edit and remove circulation rules' },
   // Users
   usersViewRequests: { internal: '', gui: 'Users: View requests' },
   uiUsersView: { internal: 'ui-users.view', gui: 'Users: Can view user profile' },

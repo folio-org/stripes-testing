@@ -16,7 +16,7 @@ describe('ui-requests: Make sure that request type filters are working properly'
 
   beforeEach(() => {
     cy.login(Cypress.env('diku_login'), Cypress.env('diku_password'));
-    cy.getToken(Cypress.env('diku_login'), Cypress.env('diku_password'));
+    cy.getAdminToken();
 
     Requests.setRequestPolicyApi().then(({ oldRulesAsText, policy }) => {
       oldRulesText = oldRulesAsText;

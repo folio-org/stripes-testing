@@ -15,7 +15,7 @@ describe('ui-inventory: Mark items as withdrawn', () => {
   let materialType = '';
 
   beforeEach(() => {
-    cy.getToken(Cypress.env('diku_login'), Cypress.env('diku_password'))
+    cy.getAdminToken()
       .then(() => {
         cy.getServicePointsApi({ limit: 1, query: 'pickupLocation=="true"' }).then(servicePoints => {
           defaultServicePointId = servicePoints[0].id;
