@@ -8,7 +8,7 @@ describe('ui-organizations: View organization', () => {
 
   before(() => {
     cy.login(Cypress.env('diku_login'), Cypress.env('diku_password'));
-    cy.getToken(Cypress.env('diku_login'), Cypress.env('diku_password'));
+    cy.getAdminToken();
     cy.createOrganizationApi(organization);
     cy.visit(TopMenu.organizationsPath);
   });

@@ -15,7 +15,7 @@ describe('orders: Unreceive piece from Order', () => {
   const orderLine = { ...basicOrderLine.defaultOrderLine };
 
   before(() => {
-    cy.getToken(Cypress.env('diku_login'), Cypress.env('diku_password'));
+    cy.getAdminToken();
     cy.getOrganizationApi({ query: 'name="Amazon.com"' })
       .then(organization => {
         order.vendor = organization.id;

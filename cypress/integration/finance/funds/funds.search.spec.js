@@ -24,7 +24,7 @@ describe('ui-finance: Funds list search and filter', () => {
 
   before(() => {
     cy.login(Cypress.env('diku_login'), Cypress.env('diku_password'));
-    cy.getToken(Cypress.env('diku_login'), Cypress.env('diku_password'));
+    cy.getAdminToken();
 
     cy.getFundTypesApi({ limit: 1 })
       .then(({ body }) => {

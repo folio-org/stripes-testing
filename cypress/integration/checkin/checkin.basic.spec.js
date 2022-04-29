@@ -7,8 +7,7 @@ describe('Check In', () => {
     ITEM_BARCODE = generateItemBarcode();
 
     cy.login(Cypress.env('diku_login'), Cypress.env('diku_password'));
-    cy.getToken(Cypress.env('diku_login'),
-      Cypress.env('diku_password'))
+    cy.getAdminToken()
       .then(() => {
         cy.getLoanTypes({ limit: 1 });
         cy.getMaterialTypes({ limit: 1 });
