@@ -11,7 +11,7 @@ describe('ui-requests: Request: Edit requests. Make sure that edits are being sa
 
   before(() => {
     cy.login(Cypress.env('diku_login'), Cypress.env('diku_password'));
-    cy.getToken(Cypress.env('diku_login'), Cypress.env('diku_password'));
+    cy.getAdminToken();
   });
 
   beforeEach(() => {

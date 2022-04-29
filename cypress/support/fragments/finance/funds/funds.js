@@ -234,7 +234,7 @@ export default {
       acqUnitIds: '',
       fiscalYearOneId: ''
     };
-    cy.getToken(Cypress.env('diku_login'), Cypress.env('diku_password'));
+    cy.getAdminToken();
     cy.getAcqUnitsApi({ limit: 1 })
       .then(
         ({ body }) => {
