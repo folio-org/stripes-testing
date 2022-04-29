@@ -59,7 +59,7 @@ describe('orders: Test Po line search', () => {
   ];
 
   before(() => {
-    cy.getToken(Cypress.env('diku_login'), Cypress.env('diku_password'));
+    cy.getAdminToken();
     cy.getOrganizationApi({ query: 'name="Amazon.com"' })
       .then(organization => {
         order.vendor = organization.id;

@@ -63,7 +63,10 @@ export default {
   },
   fill: (userName, servicePoint) => {
     cy.do(tableWithOwners.find(TextField({ name:'items[0].owner' })).fillIn(userName));
-    cy.do(tableWithOwners.find(MultiSelect({ ariaLabelledby: 'associated-service-point-label' })).select(servicePoint));
+
+    if (servicePoint) {
+      cy.do(tableWithOwners.find(MultiSelect({ ariaLabelledby: 'associated-service-point-label' })).select(servicePoint));
+    }
   },
   save,
   deleteOwnerWithServicePoint: (selectedDervicePoint) => {
@@ -91,8 +94,14 @@ export default {
     cy.do(tableWithOwners.find(MultiSelect({ ariaLabelledby: 'associated-service-point-label' })).open());
     cy.expect(MultiSelectOption(freeServicePoint).exists());
   },
+  multiCheckFreeServicePointPresence:(servicePoints) => {
+    cy.do(tableWithOwners.find(MultiSelect({ ariaLabelledby: 'associated-service-point-label' })).open());
+    servicePoints.forEach(servicePoint => {
+      cy.expect(MultiSelectOption(servicePoint.name).exists());
+    });
+  },
   cancelAdding:(rowNumber = 0) => {
     cy.do(rootPaneset.find(Button({ id:`clickable-cancel-settings-owners-${rowNumber}` })).click());
     cy.expect(addButton.has({ disabled: false }));
-  }
+  },
 };
