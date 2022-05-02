@@ -3,6 +3,8 @@ import TestType from '../../support/dictionary/testTypes';
 import Orders from '../../support/fragments/orders/orders';
 import TopMenu from '../../support/fragments/topMenu';
 import SearchHelper from '../../support/fragments/finance/financeHelper';
+import interactorsTools from '../../support/utils/interactorsTools';
+import orderLines from '../../support/fragments/orders/orderLines';
 
 describe('orders: Test PO search', () => {
   const order = { ...NewOrder.defaultOrder };
@@ -30,6 +32,7 @@ describe('orders: Test PO search', () => {
     Orders.searchByParameter('PO number', orderNumber);
     SearchHelper.selectFromResultsList();
     Orders.createPOLineViaActions();
-    Orders.fillInPOLineInfoViaUi();
+    orderLines.fillInPOLineInfoViaUi();
+    interactorsTools.checkCalloutMessage('The purchase order line was successfully created');
   });
 });
