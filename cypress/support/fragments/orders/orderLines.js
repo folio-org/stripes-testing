@@ -22,13 +22,14 @@ const physicalUnitPriceTextField = TextField({ name: 'cost.listUnitPrice' });
 const quantityPhysicalTextField = TextField({ name: 'cost.quantityPhysical' });
 const electronicUnitPriceTextField = TextField({ name: 'cost.listUnitPriceElectronic' });
 const quantityElectronicTextField = TextField({ name: 'cost.quantityElectronic' });
+const searchForm = SearchField({ id: 'input-record-search' });
 
 export default {
 
   searchByParameter: (parameter, value) => {
     cy.do([
-      SearchField({ id: 'input-record-search' }).selectIndex(parameter),
-      SearchField({ id: 'input-record-search' }).fillIn(value),
+      searchForm.selectIndex(parameter),
+      searchForm.fillIn(value),
       Button('Search').click(),
     ]);
   },
