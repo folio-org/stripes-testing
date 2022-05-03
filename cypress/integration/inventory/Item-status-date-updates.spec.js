@@ -30,6 +30,14 @@ import OverrideAndRenewModal from '../../support/fragments/users/loans/overrideA
 import ReceivingItemView from '../../support/fragments/receiving/receivingItemView';
 import AddNewPieceModal from '../../support/fragments/receiving/addNewPieceModal';
 import ConfirmMultiplePiecesItemCheckOut from '../../support/fragments/check-out/confirmMultiplePiecesItemCheckOut';
+import {
+  REQUEST_POLICY_NAMES,
+  NOTICE_POLICY_NAMES,
+  OVERDUE_FINE_POLICY_NAMES,
+  CY_ENV,
+  LOAN_POLICY_NAMES,
+  LOST_ITEM_FEES_POLICY_NAMES,
+} from '../../support/constants';
 
 describe('ui-inventory: Item status date updates', () => {
   const order = { ...NewOrder.specialOrder };
@@ -79,7 +87,7 @@ describe('ui-inventory: Item status date updates', () => {
     receiptStatus: 'Pending',
     reportingCodes: [],
     source: 'User',
-    titleOrPackage: instanceTitle,
+    titleOrPackage: `autotest_title_${getRandomPostfix()}`,
     vendorDetail: {
       instructions: '',
       vendorAccount: '1234'
@@ -95,33 +103,40 @@ describe('ui-inventory: Item status date updates', () => {
   let user = {};
   let userBarcode = '';
   const itemBarcode = Helper.getRandomBarcode();
+  let rulesDefaultString;
 
   before(() => {
-    cy.createTempUser([
-      permissions.uiCreateOrderAndOrderLine.gui,
-      permissions.uiEditOrderAndOrderLine,
-      permissions.uiCanViewOrderAndOrderLine,
-      permissions.inventoryAll.gui,
-      permissions.checkinAll.gui,
-      permissions.uiReceivingViewEditCreate.gui,
-      permissions.checkoutAll.gui,
-      permissions.uiApproveOrder.gui,
-      permissions.uiRequestsAll.gui,
-      permissions.loansAll.gui,
-    ])
+    cy.getAdminToken()
+      .then(() => {
+        cy.getOrganizationApi({ query: 'name="Amazon.com"' })
+          .then(organization => {
+            order.vendor = organization.id;
+            orderLine.physical.materialSupplier = organization.id;
+            orderLine.eresource.accessProvider = organization.id;
+          });
+      })
+      .then(() => {
+        cy.getMaterialTypes({ query: 'name="book"' })
+          .then(materialType => {
+            orderLine.physical.materialType = materialType.id;
+          });
+      })
+      .then(() => {
+        cy.createTempUser([
+          permissions.uiCreateOrderAndOrderLine.gui,
+          permissions.uiEditOrderAndOrderLine.gui,
+          permissions.uiCanViewOrderAndOrderLine.gui,
+          permissions.uiApproveOrder.gui,
+          permissions.inventoryAll.gui,
+          permissions.checkinAll.gui,
+          permissions.uiReceivingViewEditCreate.gui,
+          permissions.checkoutAll.gui,
+          permissions.requestsAll.gui,
+          permissions.loansAll.gui,
+        ]);
+      })
       .then(userProperties => {
         user = userProperties;
-        cy.getToken(Cypress.env('diku_login'), Cypress.env('diku_password'))
-          .then(() => {
-            cy.getOrganizationApi({ query: 'name="Amazon.com"' })
-              .then(organization => {
-                order.vendor = organization.id;
-                orderLine.physical.materialSupplier = organization.id;
-                orderLine.eresource.accessProvider = organization.id;
-              });
-            cy.getMaterialTypes({ query: 'name="book"' })
-              .then(materialType => { orderLine.physical.materialType = materialType.id; });
-          });
         ServicePoints.createViaApi(effectiveLocationServicePoint.body);
         ServicePoints.createViaApi(notEffectiveLocationServicePoint.body);
         cy.addServicePointToUser([effectiveLocationServicePoint.body.id, notEffectiveLocationServicePoint.body.id],
@@ -131,17 +146,40 @@ describe('ui-inventory: Item status date updates', () => {
             orderLine.locations[0].locationId = locations.body.id;
             itemLocation = locations.body.name;
           });
-        cy.login(user.username, user.password)
-          .then(() => {
-            Orders.createOrderWithOrderLineViaApi(order, orderLine)
-              .then(orderNumber => {
-                createdOrderNumber = orderNumber;
-              });
+      })
+      .then(() => {
+        cy.login(user.username, user.password);
+        Orders.createOrderWithOrderLineViaApi(order, orderLine)
+          .then(orderNumber => {
+            createdOrderNumber = orderNumber;
           });
         cy.getUsers({ limit: 1, query: `"personal.lastName"="${user.username}" and "active"="true"` })
           .then((users) => {
             userBarcode = Cypress.env('users')[0].barcode;
           });
+      })
+      .then(() => {
+        cy.getRequestPolicy({ query: `name=="${REQUEST_POLICY_NAMES.ALLOW_ALL}"` });
+        cy.getNoticePolicy({ query: `name=="${NOTICE_POLICY_NAMES.SEND_NO_NOTICES}"` });
+        cy.getOverdueFinePolicy({ query: `name=="${OVERDUE_FINE_POLICY_NAMES.OVERDUE_FINE_POLICY}"` });
+        cy.getLostItemFeesPolicy({ query: `name=="${LOST_ITEM_FEES_POLICY_NAMES.LOST_ITEM_FEES_POLICY}"` });
+        cy.getLoanPolicy({ query: `name=="${LOAN_POLICY_NAMES.EXAMPLE_LOAN_POLICY}"` });
+        cy.getCirculationRules()
+          .then(rules => {
+            rulesDefaultString = rules.rulesAsText;
+          });
+      })
+      .then(() => {
+        const requestPolicyId = Cypress.env(CY_ENV.REQUEST_POLICY)[0].id;
+        const noticePolicyId = Cypress.env(CY_ENV.NOTICE_POLICY)[0].id;
+        const overdueFinePolicyId = Cypress.env(CY_ENV.OVERDUE_FINE_POLICY)[0].id;
+        const lostItemFeesPolicyId = Cypress.env(CY_ENV.LOST_ITEM_FEES_POLICY)[0].id;
+        const loanPolicyId = Cypress.env(CY_ENV.LOAN_POLICIES)[0].id;
+        const newRule = `\ng ${user.patronGroup} + m ${orderLine.physical.materialType}: l ${loanPolicyId} r ${requestPolicyId} n ${noticePolicyId} o ${overdueFinePolicyId} i ${lostItemFeesPolicyId}`;
+
+        cy.updateCirculationRules({
+          rulesAsText: rulesDefaultString + newRule,
+        });
       });
   });
 
@@ -154,10 +192,15 @@ describe('ui-inventory: Item status date updates', () => {
         cy.deleteHoldingRecord(instance.holdings[0].id);
         cy.deleteInstanceApi(instance.id);
       });
-      cy.deleteOrderApi(order.id);
-      servicePoints.forEach(servicePoint => {
-        cy.deleteServicePoint(servicePoint.id);
+    cy.deleteOrderApi(order.id);
+    cy.deleteLoanPolicy(createdLoanPolicy.id)
+      .then(() => {
+        cy.deleteFixedDueDateSchedule(mySchedule.id);
       });
+
+     ServicePoints.forEach(servicePoint => {
+      cy.deleteServicePoint(servicePoint.id);
+    });
     Requests.deleteRequestApi(id);
     cy.deleteUser(user.userId); */
   });

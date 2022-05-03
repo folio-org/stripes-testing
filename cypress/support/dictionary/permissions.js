@@ -53,7 +53,6 @@ export default {
   // Remote Storage
   remoteStorageCRUD: { internal: '', gui: 'Settings (Remote storage): Can create, edit, delete remote storage settings' },
   // Requests
-  uiRequestsAll: { internal: '', gui: 'Requests: All permissions' },
   uiRequestsCreate: { internal: 'ui-requests.create', gui: 'Requests: View, create' },
   uiRequestsView: { internal: 'ui-requests.view', gui: 'Requests: View' },
   requestsAll: { internal: '', gui: 'Requests: All permissions' },
@@ -68,10 +67,10 @@ export default {
   // Checkin
   checkinAll: { internal: '', gui: 'Check in: All permissions' },
   // Orders
-  uiCreateOrderAndOrderLine:{ internal:'', gui: 'Orders: Can create new Orders and Order lines' },
-  uiEditOrderAndOrderLine:{ internal:'', gui: 'Orders: Can edit Orders and Order lines' },
-  uiCanViewOrderAndOrderLine:{ internal:'', gui: 'Orders: Can view Orders and Order lines' },
-  uiApproveOrder:{ internal:'', gui: 'Orders: Approve purchase orders' },
+  uiCreateOrderAndOrderLine:{ internal:'ui-orders.orders.create', gui: 'Orders: Can create new Orders and Order lines' },
+  uiEditOrderAndOrderLine:{ internal:'ui-orders.orders.edit', gui: 'Orders: Can edit Orders and Order lines' },
+  uiCanViewOrderAndOrderLine:{ internal:'ui-orders.orders.view', gui: 'Orders: Can view Orders and Order lines' },
+  uiApproveOrder:{ internal:'ui-orders.order.approve', gui: 'Orders: Approve purchase orders' },
   // Receiving
   uiReceivingViewEditCreate:{ internal:'', gui:'Receiving: View, edit, create' },
 };

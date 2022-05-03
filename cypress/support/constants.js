@@ -26,6 +26,10 @@ export const LOAN_TYPE_NAMES = {
   CAN_CIRCULATE: 'Can circulate',
 };
 
+export const LOAN_POLICY_NAMES = {
+  EXAMPLE_LOAN_POLICY: 'Example Loan Policy',
+};
+
 export const MATERIAL_TYPE_NAMES = {
   MICROFORM: 'microform',
 };
@@ -39,6 +43,7 @@ export const CY_ENV = {
   HOLDINGS_TYPES: 'holdingsTypes',
   INSTANCE_TYPES: 'instanceTypes',
   LOAN_POLICY: 'loanPolicy',
+  LOAN_POLICIES: 'loanPolicies',
   LOAN_TYPES: 'loanTypes',
   LOCATION: 'locations',
   LOST_ITEM_FEES_POLICY: 'lostItemFeesPolicy',
