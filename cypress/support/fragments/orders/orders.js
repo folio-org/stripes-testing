@@ -1,7 +1,6 @@
-import { Button, SearchField, PaneHeader, Pane, Select, Accordion, KeyValue, Checkbox, MultiColumnList, MultiColumnListCell, MultiColumnListRow, Modal, TextField, SelectionOption, SelectionList } from '../../../../interactors';
+import { Button, SearchField, PaneHeader, Pane, Select, Accordion, KeyValue, Checkbox, MultiColumnList, MultiColumnListCell, MultiColumnListRow, Modal, TextField, SelectionOption} from '../../../../interactors';
 import SearchHelper from '../finance/financeHelper';
 import InteractorsTools from '../../utils/interactorsTools';
-import getRandomPostfix from '../../utils/stringTools';
 
 
 const actionsButton = Button('Actions');
@@ -20,10 +19,6 @@ const buttonOrderFormatFilter = Button({ id: 'accordion-toggle-button-orderForma
 const buttonFVendorFilter = Button({ id: 'accordion-toggle-button-purchaseOrder.vendor' });
 const buttonRushFilter = Button({ id: 'accordion-toggle-button-rush' });
 const buttonSubscriptionFromFilter = Button({ id: 'accordion-toggle-button-subscriptionFrom' });
-const physicalUnitPrice = '10';
-const quantityPhysical = '5';
-const electronicUnitPrice = '10';
-const quantityElectronic = '5';
 
 export default {
   createOrderWithOrderLineViaApi(order, orderLine) {

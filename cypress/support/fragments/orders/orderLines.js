@@ -1,4 +1,4 @@
-import { Button, SearchField, PaneHeader, Pane, Select, Accordion, KeyValue, Checkbox, MultiColumnList, MultiColumnListCell, MultiColumnListRow, Modal, TextField, SelectionOption, SelectionList } from '../../../../interactors';
+import { Button, SearchField, PaneHeader, Select, Accordion, Checkbox, MultiColumnList, MultiColumnListCell, MultiColumnListRow, Modal, TextField, SelectionOption } from '../../../../interactors';
 import SearchHelper from '../finance/financeHelper';
 import getRandomPostfix from '../../utils/stringTools';
 
@@ -18,6 +18,10 @@ const physicalUnitPrice = '10';
 const quantityPhysical = '5';
 const electronicUnitPrice = '10';
 const quantityElectronic = '5';
+const physicalUnitPriceTextField = TextField({ name: 'cost.listUnitPrice' });
+const quantityPhysicalTextField = TextField({ name: 'cost.quantityPhysical' });
+const electronicUnitPriceTextField = TextField({ name: 'cost.listUnitPriceElectronic' });
+const quantityElectronicTextField = TextField({ name: 'cost.quantityElectronic' });
 
 export default {
 
@@ -83,10 +87,10 @@ export default {
       Button({ id: 'acquisition-method' }).click(),
       SelectionOption('Depository').click(),
       Select({ name: 'checkinItems' }).choose('Independent order and receipt quantity'),
-      TextField({ name: 'cost.listUnitPrice' }).fillIn(physicalUnitPrice),
-      TextField({ name: 'cost.quantityPhysical' }).fillIn(quantityPhysical),
-      TextField({ name: 'cost.listUnitPriceElectronic' }).fillIn(electronicUnitPrice),
-      TextField({ name: 'cost.quantityElectronic' }).fillIn(quantityElectronic),
+      physicalUnitPriceTextField.fillIn(physicalUnitPrice),
+      quantityPhysicalTextField.fillIn(quantityPhysical),
+      electronicUnitPriceTextField.fillIn(electronicUnitPrice),
+      quantityElectronicTextField.fillIn(quantityElectronic),
       Select({ name: 'physical.materialType' }).choose('book'),
       Button('Add location').click(),
       Button('Location look-up').click(),
@@ -96,10 +100,10 @@ export default {
       TextField({ name: 'locations[0].quantityElectronic' }).fillIn(quantityElectronic),
     ]);
     cy.expect([
-      TextField({ name: 'cost.listUnitPrice' }).has({ value: physicalUnitPrice }),
-      TextField({ name: 'cost.quantityPhysical' }).has({ value: quantityPhysical }),
-      TextField({ name: 'cost.listUnitPriceElectronic' }).has({ value: electronicUnitPrice }),
-      TextField({ name: 'cost.quantityElectronic' }).has({ value: quantityElectronic }),
+      physicalUnitPriceTextField.has({ value: physicalUnitPrice }),
+      quantityPhysicalTextField.has({ value: quantityPhysical }),
+      electronicUnitPriceTextField.has({ value: electronicUnitPrice }),
+      quantityElectronicTextField.has({ value: quantityElectronic }),
     ]);
     cy.do(saveAndClose.click());
   },
