@@ -1,6 +1,7 @@
-import { Button, SearchField, PaneHeader, Pane, Select, Accordion, KeyValue, Checkbox, MultiColumnList, MultiColumnListCell, MultiColumnListRow, Modal, TextField, SelectionOption } from '../../../../interactors';
+import { Button, SearchField, PaneHeader, Pane, Select, Accordion, KeyValue, Checkbox, MultiColumnList, MultiColumnListCell, MultiColumnListRow, Modal, TextField, SelectionOption} from '../../../../interactors';
 import SearchHelper from '../finance/financeHelper';
 import InteractorsTools from '../../utils/interactorsTools';
+
 
 const actionsButton = Button('Actions');
 const orderDetailsPane = Pane({ id: 'order-details' });
@@ -18,6 +19,7 @@ const buttonOrderFormatFilter = Button({ id: 'accordion-toggle-button-orderForma
 const buttonFVendorFilter = Button({ id: 'accordion-toggle-button-purchaseOrder.vendor' });
 const buttonRushFilter = Button({ id: 'accordion-toggle-button-rush' });
 const buttonSubscriptionFromFilter = Button({ id: 'accordion-toggle-button-subscriptionFrom' });
+const searchForm = SearchField({ id: 'input-record-search' });
 
 export default {
   createOrderWithOrderLineViaApi(order, orderLine) {
@@ -36,8 +38,8 @@ export default {
 
   searchByParameter: (parameter, value) => {
     cy.do([
-      SearchField({ id: 'input-record-search' }).selectIndex(parameter),
-      SearchField({ id: 'input-record-search' }).fillIn(value),
+      searchForm.selectIndex(parameter),
+      searchForm.fillIn(value),
       Button('Search').click(),
     ]);
   },
@@ -242,6 +244,15 @@ export default {
   selectOrders: () => {
     cy.do(Button('Orders').click());
   },
+  createPOLineViaActions: () => {
+    cy.do([
+      Accordion({ id: 'POListing' })
+        .find(Button('Actions'))
+        .click(),
+      Button('Add PO line').click()
+    ]);
+  },
+  
   selectFilterMainLibraryLocationsPOL: () => {
     cy.do([
       buttonLocationFilter.click(),
@@ -295,3 +306,4 @@ export default {
     ]);
   },
 };
+
