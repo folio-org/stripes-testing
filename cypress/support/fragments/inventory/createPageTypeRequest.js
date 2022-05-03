@@ -2,15 +2,17 @@ import uuid from 'uuid';
 import { including, Link } from '@interactors/html';
 import {
   Button,
-  KeyValue,
   MultiColumnListCell,
   PaneHeader,
   Section,
-  TextField
+  TextField,
+  Modal,
+  Checkbox
 } from '../../../../interactors';
 
 const actionsButton = Button('Actions');
 const newRequestButton = Button('New Request');
+const selectUserModal = Modal('Select User');
 
 export default {
   createItemsForGivenStatusesApi() {
@@ -74,56 +76,6 @@ export default {
     });
   },
 
-  createRequestForGivenItemApi(item, { holdingId, instanceId }, requestStatus) {
-    let createdUserId = '';
-    let createdRequestId = '';
-    const userData = {
-      active: true,
-      barcode: uuid(),
-      personal: {
-        preferredContactTypeId: '002',
-        lastName: `test_user_${uuid()}`,
-        email: 'test@folio.org',
-      },
-      departments: [],
-      patronGroup: null,
-    };
-    const requestData = {
-      id: uuid(),
-      requestType: 'Hold',
-      requesterId: null,
-      holdingsRecordId: holdingId,
-      instanceId,
-      requestLevel: 'Item',
-      itemId: item.itemId,
-      requestDate: new Date().toISOString(),
-      fulfilmentPreference: 'Hold Shelf',
-      pickupServicePointId: null,
-      status: requestStatus,
-    };
-    return cy.wrap(Promise.resolve(true))
-      .then(() => {
-        cy.getServicePointsApi({ limit: 1, query: 'pickupLocation=="true"' }).then(servicePoints => {
-          requestData.pickupServicePointId = servicePoints[0].id;
-        });
-        cy.getUserGroups({ limit: 1 }).then(patronGroup => {
-          userData.patronGroup = patronGroup;
-        });
-      })
-      .then(() => {
-        cy.createUserApi(userData).then(user => {
-          createdUserId = user.id;
-          requestData.requesterId = user.id;
-        });
-      })
-      .then(() => {
-        cy.createItemRequestApi(requestData).then(({ id }) => {
-          createdRequestId = id;
-          return { createdUserId, createdRequestId };
-        });
-      });
-  },
-
   findAndOpenInstance(instanceTitle) {
     cy.do([
       TextField({ id: 'input-inventory-search' }).fillIn(instanceTitle),
@@ -153,7 +105,17 @@ export default {
     cy.do(Button({ icon: 'times' }).click());
   },
 
-  verifyRequestStatus(value) {
-    cy.expect(KeyValue('Request status').has({ value }));
+  clickRequesterLookUp() {
+    cy.do(Button('Requester look-up').click());
+  },
+
+  checkModalExists() {
+    cy.expect(selectUserModal.exists());
+  },
+  filterRequesterLookup() {
+    cy.do([
+      Checkbox('faculty').click(),
+      Checkbox('Active').click()
+    ]);
   }
 };

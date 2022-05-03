@@ -4,13 +4,13 @@ import TopMenu from '../../support/fragments/topMenu';
 import createPageTypeRequest from '../../support/fragments/inventory/createPageTypeRequest';
 
 describe('ui-inventory: Create page type request', () => {
-  let user = {};
-  let defaultServicePointId = '';
+  let user;
+  let defaultServicePointId;
   let instanceData = {};
-  let createdItem = '';
+  let createdItem;
 
   beforeEach(() => {
-    cy.getToken(Cypress.env('diku_login'), Cypress.env('diku_password'))
+    cy.getAdminToken()
       .then(() => {
         cy.getServicePointsApi({ limit: 1, query: 'pickupLocation=="true"' }).then(servicePoints => {
           defaultServicePointId = servicePoints[0].id;
@@ -24,9 +24,10 @@ describe('ui-inventory: Create page type request', () => {
           permissions.uiUserCreate.gui,
           permissions.uiUsersEdituserservicepoints.gui,
           permissions.requestsAll.gui
-        ]);
+        ], 'faculty');
       })
       .then(userProperties => {
+        console.log('userProperties', userProperties);
         user = userProperties;
         cy.addServicePointToUser(defaultServicePointId, user.userId);
       })
@@ -44,7 +45,7 @@ describe('ui-inventory: Create page type request', () => {
   });
 
   afterEach(() => {
-    cy.deleteItem(createdItem);
+    cy.deleteItem(createdItem.itemId);
     cy.deleteHoldingRecord(instanceData.holdingId);
     cy.deleteInstanceApi(instanceData.instanceId);
     cy.deleteUser(user.userId);
@@ -56,5 +57,8 @@ describe('ui-inventory: Create page type request', () => {
     createPageTypeRequest.openHoldingsAccordion(instanceData.holdingId);
     createPageTypeRequest.openItem(createdItem.barcode);
     createPageTypeRequest.clickNewRequest();
+    createPageTypeRequest.clickRequesterLookUp();
+    createPageTypeRequest.checkModalExists();
+    createPageTypeRequest.filterRequesterLookup();
   });
 });
