@@ -29,10 +29,6 @@ describe('ui-users-settings: Owners', () => {
       servicePoints.forEach(servicePoint => {
         cy.deleteServicePoint(servicePoint.id);
       });
-      cy.getOwnerApi({ query: `owner==${ownerName}` })
-        .then(owner => {
-          cy.deleteOwnerApi(owner.id);
-        });
     });
 
     it('C350616 Fee/Fine Owners are not required to have a Service Point', { tags: [TestType.smoke] }, () => {
@@ -44,6 +40,10 @@ describe('ui-users-settings: Owners', () => {
 
       UsersOwners.startNewLineAdding();
       UsersOwners.multiCheckFreeServicePointPresence(servicePoints);
+
+      // testdata clearing
+      UsersOwners.getOwnerViaApi({ query: `owner==${ownerName}` })
+        .then(owner => cy.deleteOwnerApi(owner.id));
     });
   });
 

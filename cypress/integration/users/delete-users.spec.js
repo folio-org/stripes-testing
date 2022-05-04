@@ -7,12 +7,15 @@ import {
 } from '../../../interactors';
 import generateItemBarcode from '../../support/utils/generateItemBarcode';
 import EditRequest from '../../support/fragments/requests/edit-request';
+import UsersOwners from '../../support/fragments/settings/users/usersOwners';
 
 describe('Deleting user', () => {
   const lastName = 'Test-' + uuid();
   const ResultsPane = Pane({ index: 2 });
   const ModalButtonYes = Button({ id: 'delete-user-button' });
   const ModalButtonNo = Button({ id: 'close-delete-user-button' });
+  let specialOwnerId;
+  let specialUserId;
 
   function verifyUserDeleteImpossible(id) {
     cy.visit(`/users/preview/${id}`);
@@ -45,16 +48,11 @@ describe('Deleting user', () => {
       patronGroup: Cypress.env('userGroups')[0].id,
       departments: []
     };
-    cy.createUserApi(userData);
+    cy.createUserApi(userData).then(user => { specialUserId = user.id; });
   });
 
   afterEach(() => {
-    cy.getUsers({ query: `personal.lastName="${lastName}"` })
-      .then(() => {
-        Cypress.env('users').forEach(user => {
-          cy.deleteUser(user.id);
-        });
-      });
+    cy.deleteUser(specialUserId);
   });
 
   it('should be possible by user delete action', function () {
@@ -211,15 +209,18 @@ describe('Deleting user', () => {
 
   it('should be unable in case the user has open fees/fines', function () {
     const { id: userId } = Cypress.env('user');
-    cy.createOwnerApi({ owner: uuid() })
-      .then(() => cy.createFeesFinesTypeApi({
-        feeFineType: uuid(),
-        ownerId: Cypress.env('owner').id,
-      }))
+    UsersOwners.createViaApi({ owner: uuid() })
+      .then(owner => {
+        specialOwnerId = owner.id;
+        cy.createFeesFinesTypeApi({
+          feeFineType: uuid(),
+          ownerId: specialOwnerId,
+        });
+      })
       .then(() => cy.createFeesFinesApi({
         id: uuid(),
         userId,
-        ownerId: Cypress.env('owner').id,
+        ownerId: specialOwnerId,
         feeFineId: Cypress.env('feesFinesType').id,
         amount: '11.00',
         remaining: '11.00',
@@ -229,7 +230,7 @@ describe('Deleting user', () => {
         verifyUserDeleteImpossible(userId);
         cy.deleteFeesFinesApi(Cypress.env('feesFines').id);
         cy.deleteFeesFinesTypeApi(Cypress.env('feesFinesType').id);
-        cy.deleteOwnerApi(Cypress.env('owner').id);
+        cy.deleteOwnerApi(specialOwnerId);
       });
   });
 });
