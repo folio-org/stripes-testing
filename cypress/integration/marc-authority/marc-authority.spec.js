@@ -19,7 +19,7 @@ import dataImportSettingsJobProfiles from '../../support/fragments/settings/data
 describe('MARC Authority management', () => {
   let userId = '';
 
-  const marcAuthorityIds = new Set();
+  const marcAuthorityIds = [];
 
 
   const importFile = (profileName) => {
@@ -42,7 +42,7 @@ describe('MARC Authority management', () => {
       cy.wait('@getRecord', getLongDelay()).then(response => {
         const internalAuthorityId = response.response.body.relatedAuthorityInfo.idList[0];
 
-        marcAuthorityIds.add(internalAuthorityId);
+        marcAuthorityIds.push(internalAuthorityId);
         cy.visit(TopMenu.marcAuthorities);
         MarcAuthoritiesSearch.searchBy('Uniform title', MarcAuthority.defaultAuthority.headingReference);
         MarcAuthorities.select(internalAuthorityId);
@@ -51,166 +51,171 @@ describe('MARC Authority management', () => {
     });
   };
 
-  describe('MARC Authority management', () => {
-    beforeEach(() => {
-      cy.createTempUser([
-        Permissions.moduleDataImportEnabled.gui,
-        Permissions.uiMarcAuthoritiesAuthorityRecordEdit.gui,
-        Permissions.uiMarcAuthoritiesAuthorityRecordView.gui,
-        Permissions.uiQuickMarcQuickMarcAuthoritiesEditorAll.gui,
-        // TODO: clarify why TCs doesn't have this permission in precondition(C350666)
-        Permissions.dataImportUploadAll.gui,
-      ]).then(userProperties => {
-        userId = userProperties.userId;
-        cy.login(userProperties.username, userProperties.password);
-        importFile(MarcAuthority.defaultCreateJobProfile);
-      });
+  beforeEach(() => {
+    cy.createTempUser([
+      // Permissions.moduleDataImportEnabled.gui,
+      // Permissions.uiMarcAuthoritiesAuthorityRecordEdit.gui,
+      // Permissions.uiMarcAuthoritiesAuthorityRecordView.gui,
+      // Permissions.uiQuickMarcQuickMarcAuthoritiesEditorAll.gui,
+      // TODO: clarify why TCs doesn't have this permission in precondition(C350666)
+      //Permissions.dataImportUploadAll.gui
+
+      Permissions.settingsDataImportEnabled.gui,
+      Permissions.moduleDataImportEnabled.gui,
+      'MARC Authority: View MARC authority record',
+      'MARC Authority: Edit MARC authority record'
+    ]).then(userProperties => {
+      userId = userProperties.userId;
+      cy.login(userProperties.username, userProperties.password);
+      importFile(MarcAuthority.defaultCreateJobProfile);
     });
+  });
 
-    it('C350572 Edit an Authority record', { tags:  [TestTypes.smoke, Features.authority] }, () => {
-      MarcAuthority.edit();
-      QuickMarcEditor.waitLoading();
+  it('C350572 Edit an Authority record', { tags:  [TestTypes.smoke, Features.authority] }, () => {
+    MarcAuthority.edit();
+    QuickMarcEditor.waitLoading();
 
-      const quickmarcEditor = new QuickMarcEditor(MarcAuthority.defaultAuthority);
-      const addedInSourceRow = quickmarcEditor.addNewField();
-      const updatedInSourceRow = quickmarcEditor.updateExistingField();
-      QuickMarcEditor.pressSaveAndClose();
-      MarcAuthority.waitLoading();
-      MarcAuthority.contains(addedInSourceRow);
-      MarcAuthority.contains(updatedInSourceRow);
+    const quickmarcEditor = new QuickMarcEditor(MarcAuthority.defaultAuthority);
+    const addedInSourceRow = quickmarcEditor.addNewField();
+    const updatedInSourceRow = quickmarcEditor.updateExistingField();
+    QuickMarcEditor.pressSaveAndClose();
+    MarcAuthority.waitLoading();
+    MarcAuthority.contains(addedInSourceRow);
+    MarcAuthority.contains(updatedInSourceRow);
 
-      MarcAuthoritiesSearch.searchBy('Uniform title', updatedInSourceRow);
-      MarcAuthorities.checkRow(updatedInSourceRow);
-      MarcAuthorities.checkRowsCount(1);
-    });
+    MarcAuthoritiesSearch.searchBy('Uniform title', updatedInSourceRow);
+    MarcAuthorities.checkRow(updatedInSourceRow);
+    MarcAuthorities.checkRowsCount(1);
+  });
 
-    // https://issues.folio.org/browse/UIMARCAUTH-131
-    it('C350667 Update a MARC authority record via data import. Record match with 010 $a', { tags:  [TestTypes.smoke, Features.authority] }, () => {
+  // https://issues.folio.org/browse/UIMARCAUTH-131
+  it('C350667 Update a MARC authority record via data import. Record match with 010 $a', { tags:  [TestTypes.smoke, Features.authority] }, () => {
     // profiles preparing
-      dataImportSettingMappingProfiles.createMappingProfileApi().then(mappingProfileResponse => {
-        const specialActionProfile = { ...dataImportSettingsActionProfiles.marcAuthorityUpdateActionProfile };
-        specialActionProfile.addedRelations[0].detailProfileId = mappingProfileResponse.body.id;
-        dataImportSettingsActionProfiles.createActionProfileApi(specialActionProfile).then(actionProfileResponse => {
-          dataImportSettingsMatchProfiles.createMatchProfileApi().then(matchProfileResponse => {
-            const specialJobProfile = { ...dataImportSettingsJobProfiles.marcAuthorityUpdateJobProfile };
-            specialJobProfile.addedRelations[0].detailProfileId = matchProfileResponse.body.id;
-            specialJobProfile.addedRelations[1].masterProfileId = matchProfileResponse.body.id;
-            specialJobProfile.addedRelations[1].detailProfileId = actionProfileResponse.body.id;
-            dataImportSettingsJobProfiles.createJobProfileApi(specialJobProfile).then(jobProfileResponse => {
-              MarcAuthority.edit();
-              QuickMarcEditor.waitLoading();
+    dataImportSettingMappingProfiles.createMappingProfileApi().then(mappingProfileResponse => {
+      const specialActionProfile = { ...dataImportSettingsActionProfiles.marcAuthorityUpdateActionProfile };
+      specialActionProfile.addedRelations[0].detailProfileId = mappingProfileResponse.body.id;
+      dataImportSettingsActionProfiles.createActionProfileApi(specialActionProfile).then(actionProfileResponse => {
+        dataImportSettingsMatchProfiles.createMatchProfileApi().then(matchProfileResponse => {
+          const specialJobProfile = { ...dataImportSettingsJobProfiles.marcAuthorityUpdateJobProfile };
+          specialJobProfile.addedRelations[0].detailProfileId = matchProfileResponse.body.id;
+          specialJobProfile.addedRelations[1].masterProfileId = matchProfileResponse.body.id;
+          specialJobProfile.addedRelations[1].detailProfileId = actionProfileResponse.body.id;
+          dataImportSettingsJobProfiles.createJobProfileApi(specialJobProfile).then(jobProfileResponse => {
+            MarcAuthority.edit();
+            QuickMarcEditor.waitLoading();
 
-              const quickmarcEditor = new QuickMarcEditor(MarcAuthority.defaultAuthority);
-              const addedInSourceRow = quickmarcEditor.addNewField();
-              const updatedInSourceRow = quickmarcEditor.updateExistingField();
-              QuickMarcEditor.pressSaveAndClose();
+            const quickmarcEditor = new QuickMarcEditor(MarcAuthority.defaultAuthority);
+            const addedInSourceRow = quickmarcEditor.addNewField();
+            const updatedInSourceRow = quickmarcEditor.updateExistingField();
+            QuickMarcEditor.pressSaveAndClose();
 
-              cy.visit(TopMenu.dataImportPath);
+            cy.visit(TopMenu.dataImportPath);
 
 
-              importFile(jobProfileResponse.body.profile.name);
-              MarcAuthority.notContains(addedInSourceRow);
-              MarcAuthority.notContains(updatedInSourceRow);
+            importFile(jobProfileResponse.body.profile.name);
+            MarcAuthority.notContains(addedInSourceRow);
+            MarcAuthority.notContains(updatedInSourceRow);
 
-              dataImportSettingsJobProfiles.deleteJobProfileApi(jobProfileResponse.body.id);
-              dataImportSettingsMatchProfiles.deleteMatchProfileApi(matchProfileResponse.body.id);
-              // unlink mapping profile and action profile
-              const linkedMappingProfile = { id: mappingProfileResponse.body.id,
-                profile:{ ...dataImportSettingMappingProfiles.marcAuthorityUpdateMappingProfile.profile } };
-              linkedMappingProfile.profile.id = mappingProfileResponse.body.id;
-              linkedMappingProfile.addedRelations = [];
-              linkedMappingProfile.deletedRelations = [
-                {
-                  'masterProfileId': actionProfileResponse.body.id,
-                  'masterProfileType': 'ACTION_PROFILE',
-                  'detailProfileId': mappingProfileResponse.body.id,
-                  'detailProfileType': 'MAPPING_PROFILE'
-                }];
+            dataImportSettingsJobProfiles.deleteJobProfileApi(jobProfileResponse.body.id);
+            dataImportSettingsMatchProfiles.deleteMatchProfileApi(matchProfileResponse.body.id);
+            // unlink mapping profile and action profile
+            const linkedMappingProfile = { id: mappingProfileResponse.body.id,
+              profile:{ ...dataImportSettingMappingProfiles.marcAuthorityUpdateMappingProfile.profile } };
+            linkedMappingProfile.profile.id = mappingProfileResponse.body.id;
+            linkedMappingProfile.addedRelations = [];
+            linkedMappingProfile.deletedRelations = [
+              {
+                'masterProfileId': actionProfileResponse.body.id,
+                'masterProfileType': 'ACTION_PROFILE',
+                'detailProfileId': mappingProfileResponse.body.id,
+                'detailProfileType': 'MAPPING_PROFILE'
+              }];
 
-              dataImportSettingMappingProfiles.unlinkMappingProfileFromActionProfileApi(mappingProfileResponse.body.id, linkedMappingProfile);
+            dataImportSettingMappingProfiles.unlinkMappingProfileFromActionProfileApi(mappingProfileResponse.body.id, linkedMappingProfile);
 
-              dataImportSettingMappingProfiles.deleteMappingProfileApi(mappingProfileResponse.body.id);
-              dataImportSettingsActionProfiles.deleteActionProfileApi(actionProfileResponse.body.id);
-            });
+            dataImportSettingMappingProfiles.deleteMappingProfileApi(mappingProfileResponse.body.id);
+            dataImportSettingsActionProfiles.deleteActionProfileApi(actionProfileResponse.body.id);
           });
         });
       });
     });
+  });
 
-    it('C350575  MARC Authority fields LEADER and 008 can not be deleted', { tags:  [TestTypes.smoke, Features.authority] }, () => {
-      MarcAuthority.edit();
-      QuickMarcEditor.waitLoading();
-      QuickMarcEditor.checkNotDeletableTags('008', 'LDR');
-    });
+  it('C350575  MARC Authority fields LEADER and 008 can not be deleted', { tags:  [TestTypes.smoke, Features.authority] }, () => {
+    MarcAuthority.edit();
+    QuickMarcEditor.waitLoading();
+    QuickMarcEditor.checkNotDeletableTags('008', 'LDR');
+  });
 
-    it('C350575  Update 008 of Authority record', { tags:  [TestTypes.smoke, Features.authority] }, () => {
-      MarcAuthority.edit();
-      QuickMarcEditor.waitLoading();
+  it('C350576 Update 008 of Authority record', { tags:  [TestTypes.smoke, Features.authority] }, () => {
+    MarcAuthority.edit();
+    QuickMarcEditor.waitLoading();
 
-      const quickmarcEditor = new QuickMarcEditor(MarcAuthority.defaultAuthority);
+    const quickmarcEditor = new QuickMarcEditor(MarcAuthority.defaultAuthority);
 
-      const changedValueInSourceRow = quickmarcEditor.updateAllDefaultValuesIn008TagInAuthority();
-      MarcAuthority.waitLoading();
-      MarcAuthority.contains(changedValueInSourceRow);
-    });
+    const changedValueInSourceRow = quickmarcEditor.updateAllDefaultValuesIn008TagInAuthority();
+    MarcAuthority.waitLoading();
+    MarcAuthority.contains(changedValueInSourceRow);
+  });
 
-    it('C350578 Browse existing Authorities', { tags:  [TestTypes.smoke, Features.authority] }, () => {
+  it('C350578 Browse existing Authorities', { tags:  [TestTypes.smoke, Features.authority] }, () => {
     // make one more import to get 2 marc authorities to check browse functionality
-      const secondFileName = `autotestFile.${getRandomPostfix()}_second.mrc`;
-      cy.visit(TopMenu.dataImportPath);
+    const secondFileName = `autotestFile.${getRandomPostfix()}_second.mrc`;
+    cy.visit(TopMenu.dataImportPath);
 
-      DataImport.uploadFile(MarcAuthority.defaultAuthority.name, secondFileName);
-      JobProfiles.waitLoadingList();
-      JobProfiles.select(MarcAuthority.defaultCreateJobProfile);
-      JobProfiles.runImportFile(secondFileName);
+    DataImport.uploadFile(MarcAuthority.defaultAuthority.name, secondFileName);
+    JobProfiles.waitLoadingList();
+    JobProfiles.select(MarcAuthority.defaultCreateJobProfile);
+    JobProfiles.runImportFile(secondFileName);
 
-      cy.visit(TopMenu.marcAuthorities);
-      MarcAuthorities.switchToBrowse();
-      MarcAuthorityBrowse.waitEmptyTable();
-      MarcAuthorityBrowse.checkFiltersInitialState();
-      MarcAuthorityBrowse.searchBy(MarcAuthorityBrowse.searchOptions.uniformTitle, MarcAuthority.defaultAuthority.headingReference);
-      MarcAuthorityBrowse.waitLoading();
-      MarcAuthorityBrowse.checkPresentedColumns();
+    cy.visit(TopMenu.marcAuthorities);
+    MarcAuthorities.switchToBrowse();
+    MarcAuthorityBrowse.waitEmptyTable();
+    MarcAuthorityBrowse.checkFiltersInitialState();
+    MarcAuthorityBrowse.searchBy(MarcAuthorityBrowse.searchOptions.uniformTitle.option, MarcAuthority.defaultAuthority.headingReference);
+    MarcAuthorityBrowse.waitLoading();
+    MarcAuthorityBrowse.checkPresentedColumns();
     // TODO: add checking of records order
-    });
+  });
 
-    // TODO: excess steps should be moved into test C350578
-    it.only('C350513 Browse authority - handling for when there is no exact match', { tags:  [TestTypes.smoke, Features.authority] }, () => {
+  // TODO: excess steps should be moved into test C350578
+  it('C350513 Browse authority - handling for when there is no exact match', { tags:  [TestTypes.smoke, Features.authority] }, () => {
     // update created marc authority
-      MarcAuthority.edit();
-      QuickMarcEditor.waitLoading();
+    MarcAuthority.edit();
+    QuickMarcEditor.waitLoading();
 
-      const quickmarcEditor = new QuickMarcEditor(MarcAuthority.defaultAuthority);
-      const randomPrefix = getRandomPostfix();
-      const firstHeadingReference = quickmarcEditor.updateExistingField('130', `A ${randomPrefix}`);
-      QuickMarcEditor.pressSaveAndClose();
+    const quickmarcEditor = new QuickMarcEditor(MarcAuthority.defaultAuthority);
+    // 0 added at the beginning to generate data into the first lines of result of searching into Marc Authority Browse
+    const randomPrefix = `0${getRandomPostfix()}`;
+    // postfixes A and B added to check lines ordering
+    quickmarcEditor.updateExistingField('130', `${randomPrefix} A`);
+    QuickMarcEditor.pressSaveAndClose();
 
-      importFile(MarcAuthority.defaultCreateJobProfile);
-      MarcAuthority.edit();
-      QuickMarcEditor.waitLoading();
+    importFile(MarcAuthority.defaultCreateJobProfile);
+    MarcAuthority.edit();
+    QuickMarcEditor.waitLoading();
 
-      const secondHeadingReference = quickmarcEditor.updateExistingField('130', `B ${randomPrefix}`);
-      QuickMarcEditor.pressSaveAndClose();
+    quickmarcEditor.updateExistingField('130', `${randomPrefix} B`);
+    QuickMarcEditor.pressSaveAndClose();
 
-      MarcAuthorities.switchToBrowse();
-      MarcAuthorityBrowse.waitEmptyTable();
-      // already checked into another tests
-      MarcAuthorityBrowse.checkFiltersInitialState();
-      MarcAuthorityBrowse.checkSearchOptions();
-      MarcAuthorityBrowse.searchBy(MarcAuthorityBrowse.searchOptions.uniformTitle, MarcAuthority.defaultAuthority.headingReference);
-      MarcAuthorityBrowse.checkSelectedSearchOption(MarcAuthorityBrowse.searchOptions.uniformTitle);
-      MarcAuthorityBrowse.waitLoading();
-      // TODO: excess check
-      MarcAuthorityBrowse.checkPresentedColumns();
+    MarcAuthorities.switchToBrowse();
+    MarcAuthorityBrowse.waitEmptyTable();
+    // already checked into another tests
+    MarcAuthorityBrowse.checkFiltersInitialState();
+    MarcAuthorityBrowse.checkSearchOptions();
+    MarcAuthorityBrowse.searchBy(MarcAuthorityBrowse.searchOptions.uniformTitle, randomPrefix);
+    MarcAuthorityBrowse.checkSelectedSearchOption(MarcAuthorityBrowse.searchOptions.uniformTitle);
+    MarcAuthorityBrowse.waitLoading();
+    // TODO: excess check
+    MarcAuthorityBrowse.checkPresentedColumns();
 
-      // TODO: add checking of records order
+    MarcAuthorityBrowse.checkHeadingReferenceInRow(0, MarcAuthorityBrowse.getNotExistingHeadingReferenceValue(randomPrefix), false);
+    MarcAuthorityBrowse.checkHeadingReferenceInRow(1, `${randomPrefix} A`, true);
+    MarcAuthorityBrowse.checkHeadingReferenceInRow(2, `${randomPrefix} B`, true);
+  });
 
-    // The sixth result shows an exclamation mark followed by "<<your request>> would be here" and is not a hyperlink.
-    });
-
-    afterEach(() => {
-    // marcAuthorityIds.forEach(marcAuthorityId => MarcAuthority.deleteViaAPI(marcAuthorityId));
-      cy.deleteUser(userId);
-    });
+  afterEach(() => {
+    // new Set(marcAuthorityIds).forEach(marcAuthorityId => MarcAuthority.deleteViaAPI(marcAuthorityId));
+    // cy.deleteUser(userId);
   });
 });

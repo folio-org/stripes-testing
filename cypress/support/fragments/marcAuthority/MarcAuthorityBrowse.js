@@ -1,16 +1,16 @@
-import { Accordion, Button, MultiColumnListHeader, SearchField, Section, HTML, including, MultiColumnListRow, Select } from '../../../../interactors';
+import { Accordion, Button, MultiColumnListHeader, SearchField, Section, HTML, including, MultiColumnListRow, Select, SelectionOption, MultiColumnListCell } from '../../../../interactors';
 
 
 // TODO: can't see expected in testrail value "Name"
 // TODO: see not presented in testrail value "Uniform title"
-const searchOptions = { selectBrowseOption: 'Select a browse option',
-  personalName: 'Personal name',
-  corporateConferenceName:'Corporate/Conference name',
-  geographicName:'Geographic name',
-  nameTitle: 'Name-title',
-  uniformTitle: 'Uniform title',
-  subject: 'Subject',
-  genre: 'Genre' };
+const searchOptions = { selectBrowseOption: { option: 'Select a browse option' },
+  personalName: { option: 'Personal name', value:'perosnalName' },
+  corporateConferenceName:{ option:'Corporate/Conference name', value: 'corporateNameTitle' },
+  geographicName:{ option:'Geographic name', value: 'geographicName' },
+  nameTitle: { option:'Name-title', value: 'nameTitle' },
+  uniformTitle: { option:'Uniform title', value: 'uniformTitle' },
+  subject: { option:'Subject', value: 'subject' },
+  genre: { option:'Genre', value: 'genre' } };
 
 // TODO: redefine section id
 const rootSection = Section({ id: 'authority-search-results-pane' });
@@ -38,18 +38,27 @@ export default {
     cy.expect(rootPaneAuthoritiesFilters.find(Button({ id:'clickable-reset-all' })).has({ disabled:true }));
     cy.expect(rootPaneAuthoritiesFilters.find(Accordion('References')).exists());
   },
-  searchBy:(parameter, value) => {
-    cy.do(mainFilter.selectIndex(parameter));
+  searchBy:(searchOption, value) => {
+    cy.do(mainFilter.selectIndex(searchOption.option));
     cy.do(mainFilter.fillIn(value));
     cy.do(searchButton.click());
   },
   checkSearchOptions:() => {
-    cy.do(mainFilter.find(Select({ id: 'textarea-authorities-search-qindex' })).click());
-    Object.values(searchOptions).forEach(searchOption => {
-      cy.expect(rootSection.find(searchOption(searchOption)).exists());
-    });
+    // TODO: issue with openning of select by interactors and cypress. Try to find working option
+    cy.get('select>option').should('have.text', Object.values(searchOptions).map(searchOption => searchOption.option).join(''));
   },
-  checkSelectedSearchOption:(expectedOptionName) => {
-    cy.expect(mainFilter.has({ selectedFilter: expectedOptionName }));
+  checkSelectedSearchOption:(searchOption) => {
+    cy.expect(mainFilter.has({ selectedFilter: searchOption.value }));
+  },
+  getNotExistingHeadingReferenceValue:(requestedHeadingReference) => `${requestedHeadingReference}\xa0would be here`,
+  checkHeadingReferenceInRow(rowNumber, headingReferenceValue, isRef) {
+    const specialCell = rootSection.find(MultiColumnListRow({ rowIndexInParent: `row-${rowNumber}` }))
+      .find(MultiColumnListCell({ content: headingReferenceValue }));
+    cy.expect(specialCell.exists());
+    if (isRef) {
+      cy.expect(specialCell.find(Button()).exists());
+    } else {
+      cy.expect(specialCell.find(Button()).absent());
+    }
   }
 };
