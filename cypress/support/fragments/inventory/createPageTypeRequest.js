@@ -7,10 +7,12 @@ import {
   Section,
   TextField,
   Modal,
-  Checkbox
+  Checkbox,
+  Heading,
 } from '../../../../interactors';
 
 const actionsButton = Button('Actions');
+const saveAndCloseButton = Button({ id: 'clickable-save-request' });
 const newRequestButton = Button('New Request');
 const selectUserModal = Modal('Select User');
 
@@ -112,10 +114,38 @@ export default {
   checkModalExists() {
     cy.expect(selectUserModal.exists());
   },
+
   filterRequesterLookup() {
     cy.do([
       Checkbox('faculty').click(),
       Checkbox('Active').click()
     ]);
+  },
+
+  selectUser(username) {
+    cy.do([
+      TextField({ name: 'query' }).fillIn(username),
+      Button('Search').click(),
+      MultiColumnListCell({ row: 0, column: username }).click(),
+    ]);
+  },
+
+  selectPickupServicePoint() {
+    cy.do(cy.get('[name="pickupServicePointId"]').select('Circ Desk 1'));
+  },
+
+  saveAndClose() {
+    cy.do(saveAndCloseButton.click());
+  },
+
+  clickItemBarcodeLink(barcode) {
+    cy.do(Link(barcode).click());
+  },
+
+  verifyPageTypeItem(barcode) {
+    cy.expect(Heading({
+      level: 2,
+      text: `Item • ${barcode} • Paged`,
+    }).exists());
   }
 };

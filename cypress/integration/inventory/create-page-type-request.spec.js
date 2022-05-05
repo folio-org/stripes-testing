@@ -19,6 +19,7 @@ describe('ui-inventory: Create page type request', () => {
       .then(() => {
         cy.createTempUser([
           permissions.inventoryAll.gui,
+          permissions.uiInventoryViewInstances,
           permissions.uiUsersView.gui,
           permissions.uiUserEdit.gui,
           permissions.uiUserCreate.gui,
@@ -27,7 +28,6 @@ describe('ui-inventory: Create page type request', () => {
         ], 'faculty');
       })
       .then(userProperties => {
-        console.log('userProperties', userProperties);
         user = userProperties;
         cy.addServicePointToUser(defaultServicePointId, user.userId);
       })
@@ -40,6 +40,12 @@ describe('ui-inventory: Create page type request', () => {
           .then(({ item, instanceRecordData }) => {
             createdItem = item;
             instanceData = instanceRecordData;
+            cy.intercept('GET', '/circulation/requests?*').as('getRequests');
+            cy.intercept('GET', '/users?*').as('getUsers');
+            cy.intercept('POST', '/circulation/requests').as('postRequest');
+            cy.intercept('GET', '/inventory/items?').as('getItems');
+            cy.intercept('GET', '/holdings-types?*').as('getHoldinsgTypes');
+            cy.intercept('GET', '/instance-relationship-types?*').as('getInstanceRelTypes');
           });
       });
   });
@@ -52,6 +58,7 @@ describe('ui-inventory: Create page type request', () => {
   });
 
   it('C10930: create a new request with page type for an item with status Available', { tags: [TestTypes.smoke] }, () => {
+    console.log(createdItem.barcode);
     cy.visit(TopMenu.inventoryPath);
     createPageTypeRequest.findAndOpenInstance(instanceData.instanceTitle);
     createPageTypeRequest.openHoldingsAccordion(instanceData.holdingId);
@@ -60,5 +67,13 @@ describe('ui-inventory: Create page type request', () => {
     createPageTypeRequest.clickRequesterLookUp();
     createPageTypeRequest.checkModalExists();
     createPageTypeRequest.filterRequesterLookup();
+    createPageTypeRequest.selectUser(user.username);
+    cy.wait('@getUsers');
+    createPageTypeRequest.selectPickupServicePoint();
+    createPageTypeRequest.saveAndClose();
+    cy.wait(['@getUsers', '@postRequest']);
+    createPageTypeRequest.clickItemBarcodeLink(createdItem.barcode);
+    cy.wait(['@getInstanceRelTypes', '@getHoldinsgTypes', '@getRequests']);
+    createPageTypeRequest.verifyPageTypeItem(createdItem.barcode);
   });
 });
