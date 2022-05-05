@@ -1,5 +1,5 @@
 import uuid from 'uuid';
-import { including, Link } from '@interactors/html';
+import { HTML, including } from '@interactors/html';
 import {
   Button,
   MultiColumnListCell,
@@ -9,12 +9,14 @@ import {
   Modal,
   Checkbox,
   Heading,
+  Link,
 } from '../../../../interactors';
 
 const actionsButton = Button('Actions');
 const saveAndCloseButton = Button({ id: 'clickable-save-request' });
 const newRequestButton = Button('New Request');
 const selectUserModal = Modal('Select User');
+const loanAndAvailabilitySection = Section({ id: 'acc06' });
 
 export default {
   createItemsForGivenStatusesApi() {
@@ -147,5 +149,39 @@ export default {
       level: 2,
       text: `Item • ${barcode} • Paged`,
     }).exists());
+  },
+
+  deleteRequestApi(requestId) {
+    return cy.okapiRequest({
+      method: 'DELETE',
+      path: `circulation/requests/${requestId}`,
+      isDefaultSearchParamsRequired: false,
+    });
+  },
+
+  getRequestsCountLink() {
+    let requestsCountLink;
+    return cy.get(Section({ id: 'acc06' }).find(HTML('Requests')).perform(el => {
+      requestsCountLink = el.parentElement.querySelector('a');
+    })).then(() => requestsCountLink);
+  },
+
+  verifyrequestsCountLink() {
+    this.getRequestsCountLink().then(requestsCountLink => {
+      console.log(requestsCountLink);
+      cy.expect(loanAndAvailabilitySection.find(HTML('Requests')).assert(el => {
+        const count = el.parentElement.querySelector('a').textContent;
+        return expect(+count).to.be.greaterThan(0);
+      }));
+    });
+  },
+
+  clickRequestsCountLink() {
+    this.getRequestsCountLink().then(requestsCountLink => {
+      cy.do(loanAndAvailabilitySection.find(HTML('Requests')).perform(el => {
+        el.parentElement.querySelector('a').click();
+      }));
+      requestsCountLink.click();
+    });
   }
 };

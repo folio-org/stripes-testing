@@ -51,6 +51,13 @@ describe('ui-inventory: Create page type request', () => {
   });
 
   afterEach(() => {
+    cy.getItemRequestsApi({
+      query: `"requesterId"="${user.userId}"`
+    }).then(({ body }) => {
+      body.requests?.forEach(request => {
+        createPageTypeRequest.deleteRequestApi(request.id);
+      });
+    });
     cy.deleteItem(createdItem.itemId);
     cy.deleteHoldingRecord(instanceData.holdingId);
     cy.deleteInstanceApi(instanceData.instanceId);
@@ -58,7 +65,6 @@ describe('ui-inventory: Create page type request', () => {
   });
 
   it('C10930: create a new request with page type for an item with status Available', { tags: [TestTypes.smoke] }, () => {
-    console.log(createdItem.barcode);
     cy.visit(TopMenu.inventoryPath);
     createPageTypeRequest.findAndOpenInstance(instanceData.instanceTitle);
     createPageTypeRequest.openHoldingsAccordion(instanceData.holdingId);
@@ -75,5 +81,7 @@ describe('ui-inventory: Create page type request', () => {
     createPageTypeRequest.clickItemBarcodeLink(createdItem.barcode);
     cy.wait(['@getInstanceRelTypes', '@getHoldinsgTypes', '@getRequests']);
     createPageTypeRequest.verifyPageTypeItem(createdItem.barcode);
+    createPageTypeRequest.verifyrequestsCountLink();
+    createPageTypeRequest.clickRequestsCountLink();
   });
 });
