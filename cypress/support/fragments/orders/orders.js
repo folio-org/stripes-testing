@@ -143,7 +143,7 @@ export default {
     cy.expect(MultiColumnList({ id: 'orders-list' })
       .find(MultiColumnListRow({ index: 0 }))
       .find(MultiColumnListCell({ columnIndex: 0 }))
-      .has({ content: `${orderNumber}\u00a0` }));
+      .has({ content: `${orderNumber}\u00a0Canceled` }));
   },
   checkOrderlineSearchResults: (orderLineNumber) => {
     cy.expect(MultiColumnList({ id: 'order-line-list' })
