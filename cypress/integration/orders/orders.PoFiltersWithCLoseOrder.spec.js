@@ -40,11 +40,11 @@ describe('orders: Test PO search', () => {
             Orders.searchByParameter('PO number', orderNumber);
             SearchHelper.selectFromResultsList();
             Orders.openOrder();
+            Orders.closeOrder('Cancelled');
+            Orders.closeThirdPane();
+            Orders.resetFilters();
           });
       });
-      Orders.closeOrder('Cancelled');
-      Orders.closeThirdPane();
-      Orders.resetFilters();
   });
 
   after(() => {
@@ -59,10 +59,8 @@ describe('orders: Test PO search', () => {
     // { filterActions: () => { Orders.selectVendorFilter(invoice); } },
   ].forEach((filter) => {
     it('C6718 Test the PO filters with open Order ', { tags: [TestType.smoke] }, () => {
-    //   cy.visit(TopMenu.ordersPath);
-    //   Orders.resetFilters();
       filter.filterActions();
-      //   Orders.checkSearchResultsWithClosedOrder(orderNumber);
+      Orders.checkSearchResultsWithClosedOrder(orderNumber);
       Orders.resetFilters();
     });
   });

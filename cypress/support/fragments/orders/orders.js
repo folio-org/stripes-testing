@@ -1,6 +1,6 @@
 import { Button, SearchField, PaneHeader, Pane, Select, Accordion, KeyValue, Checkbox, MultiColumnList, MultiColumnListCell, MultiColumnListRow, Modal, TextField, SelectionOption, TextArea} from '../../../../interactors';
 import SearchHelper from '../finance/financeHelper';
-// import InteractorsTools from '../../utils/interactorsTools';
+import InteractorsTools from '../../utils/interactorsTools';
 
 
 const actionsButton = Button('Actions');
@@ -62,9 +62,9 @@ export default {
       Button('Close order').click(),
       Select('Reason').choose(reason),
       Button('Submit').click(),
-      TextArea('Notes').fillIn('Cancelled by admin_Autotest')
+      // TextArea('Notes').fillIn('Cancelled by admin_Autotest')
     ]);
-    // InteractorsTools.checkCalloutMessage('Order was closed');
+    InteractorsTools.checkCalloutMessage('Order was closed');
   },
 
   receiveOrderViaActions: () => {
@@ -143,7 +143,7 @@ export default {
     cy.expect(MultiColumnList({ id: 'orders-list' })
       .find(MultiColumnListRow({ index: 0 }))
       .find(MultiColumnListCell({ columnIndex: 0 }))
-      .has({ content: `${orderNumber} ` }));
+      .has({ content: `${orderNumber}\u00a0` }));
   },
   checkOrderlineSearchResults: (orderLineNumber) => {
     cy.expect(MultiColumnList({ id: 'order-line-list' })
