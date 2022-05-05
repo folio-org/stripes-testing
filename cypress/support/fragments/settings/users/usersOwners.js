@@ -105,14 +105,12 @@ export default {
     cy.expect(addButton.has({ disabled: false }));
   },
   createViaApi: (owner) => {
-    cy.okapiRequest({
+    return cy.okapiRequest({
       method: 'POST',
       path: 'owners',
       body: owner,
-    })
-      .then(({ body }) => {
-        return body;
-      });
+      isDefaultSearchParamsRequired: false
+    });
   },
   getOwnerViaApi: (searchParams) => {
     cy.okapiRequest({
