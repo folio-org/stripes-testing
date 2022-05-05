@@ -20,7 +20,6 @@ export default {
   },
   checkFields:() => {
     cy.do(saveButton.click());
-    cy.wait(3000);
     // message
     cy.expect(nameTextField.has({ error:'Please fill this in to continue' }));
     // red icon
