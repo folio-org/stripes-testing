@@ -56,6 +56,16 @@ const CalendarDays = HTML.extend('calendar days')
     }
   });
 
+const ActiveCalendarDays = HTML.extend('active calendar days')
+  .selector('[class^=calendar-] td div:not([class*=muted])')
+  .locator((el) => {
+    if (el.textContent.length === 1) {
+      return `0${el.textContent}`;
+    } else {
+      return el.textContent;
+    }
+  });
+
 const MonthField = Select.extend('month select')
   .selector('[class^=monthField');
 
@@ -101,6 +111,8 @@ export const Calendar = createInteractor('calendar widget')
   })
   .actions({
     clickDay: (interactor, value) => interactor.find(CalendarDays(value)).click(),
+    clickActiveDay: (interactor, value) => interactor
+      .find(ActiveCalendarDays(value.length > 1 ? value : `0${value}`)).click(),
     clickMonth: (interactor) => interactor.find(MonthField()).click(),
     focusDay: (interactor, value) => interactor.find(CalendarDays(value)).focus(),
     setYear: (interactor, value) => interactor.find(TextField())

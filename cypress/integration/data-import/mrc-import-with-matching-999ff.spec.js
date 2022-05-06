@@ -36,10 +36,7 @@ describe('ui-data-import: MARC file import with matching for 999 ff field', () =
       Cypress.env('diku_login'),
       Cypress.env('diku_password')
     );
-    cy.getToken(
-      Cypress.env('diku_login'),
-      Cypress.env('diku_password')
-    );
+    cy.getAdminToken();
 
     DataImport.checkUploadState();
   });
