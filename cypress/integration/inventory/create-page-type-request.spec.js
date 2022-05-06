@@ -8,6 +8,7 @@ describe('ui-inventory: Create page type request', () => {
   let defaultServicePointId;
   let instanceData = {};
   let createdItem;
+  let facultyUser;
 
   beforeEach(() => {
     cy.getAdminToken()
@@ -19,17 +20,25 @@ describe('ui-inventory: Create page type request', () => {
       .then(() => {
         cy.createTempUser([
           permissions.inventoryAll.gui,
-          permissions.uiInventoryViewInstances,
+          permissions.uiInventoryViewInstances.gui,
           permissions.uiUsersView.gui,
           permissions.uiUserEdit.gui,
           permissions.uiUserCreate.gui,
           permissions.uiUsersEdituserservicepoints.gui,
+          permissions.uiUserAccounts.gui,
+          permissions.uiUserRequestsAll.gui,
           permissions.requestsAll.gui
-        ], 'faculty');
+        ]);
       })
       .then(userProperties => {
         user = userProperties;
         cy.addServicePointToUser(defaultServicePointId, user.userId);
+      })
+      .then(() => {
+        cy.createTempUser([], 'faculty');
+      })
+      .then(facultyUserProperties => {
+        facultyUser = facultyUserProperties;
       })
       .then(() => {
         cy.login(user.username, user.password);
@@ -52,7 +61,7 @@ describe('ui-inventory: Create page type request', () => {
 
   afterEach(() => {
     cy.getItemRequestsApi({
-      query: `"requesterId"="${user.userId}"`
+      query: `"requesterId"="${facultyUser.userId}"`
     }).then(({ body }) => {
       body.requests?.forEach(request => {
         createPageTypeRequest.deleteRequestApi(request.id);
@@ -62,26 +71,20 @@ describe('ui-inventory: Create page type request', () => {
     cy.deleteHoldingRecord(instanceData.holdingId);
     cy.deleteInstanceApi(instanceData.instanceId);
     cy.deleteUser(user.userId);
+    cy.deleteUser(facultyUser.userId);
   });
 
   it('C10930: create a new request with page type for an item with status Available', { tags: [TestTypes.smoke] }, () => {
     cy.visit(TopMenu.inventoryPath);
-    createPageTypeRequest.findAndOpenInstance(instanceData.instanceTitle);
-    createPageTypeRequest.openHoldingsAccordion(instanceData.holdingId);
-    createPageTypeRequest.openItem(createdItem.barcode);
-    createPageTypeRequest.clickNewRequest();
-    createPageTypeRequest.clickRequesterLookUp();
-    createPageTypeRequest.checkModalExists();
-    createPageTypeRequest.filterRequesterLookup();
-    createPageTypeRequest.selectUser(user.username);
-    cy.wait('@getUsers');
-    createPageTypeRequest.selectPickupServicePoint();
+    createPageTypeRequest.findAvailableItem(instanceData, createdItem.barcode);
+    createPageTypeRequest.clickNewRequest(createdItem.barcode);
+    createPageTypeRequest.selectActiveFacultyUser(facultyUser.username);
     createPageTypeRequest.saveAndClose();
-    cy.wait(['@getUsers', '@postRequest']);
     createPageTypeRequest.clickItemBarcodeLink(createdItem.barcode);
-    cy.wait(['@getInstanceRelTypes', '@getHoldinsgTypes', '@getRequests']);
-    createPageTypeRequest.verifyPageTypeItem(createdItem.barcode);
-    createPageTypeRequest.verifyrequestsCountLink();
+    createPageTypeRequest.verifyrequestsCountOnItemRecord();
     createPageTypeRequest.clickRequestsCountLink();
+    createPageTypeRequest.clickRequesterBarcode(facultyUser.username);
+    createPageTypeRequest.verifyOpenRequestCounts();
+    createPageTypeRequest.clickOpenRequestsCountLink();
   });
 });

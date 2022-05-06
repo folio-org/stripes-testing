@@ -53,6 +53,8 @@ export default {
   uiUsersView: { internal: 'ui-users.view', gui: 'Users: Can view user profile' },
   uiUserCreate: { internal: 'ui-users.create', gui: 'Users: Create users' },
   uiUserEdit: { internal: 'ui-users.edit', gui: 'Users: Can edit user profile' },
+  uiUserAccounts: { internal: 'ui-users.accounts', gui: 'Fee/Fine History: Can create, edit and remove accounts' },
+  uiUserRequestsAll: { internal: 'ui-users.requests.all', gui: 'Users: View requests' },
   // Remote Storage
   remoteStorageCRUD: { internal: '', gui: 'Settings (Remote storage): Can create, edit, delete remote storage settings' },
   // Requests

@@ -3,13 +3,15 @@ import { HTML, including } from '@interactors/html';
 import {
   Button,
   MultiColumnListCell,
-  PaneHeader,
   Section,
   TextField,
   Modal,
   Checkbox,
   Heading,
   Link,
+  Pane,
+  Accordion,
+  MultiColumnList,
 } from '../../../../interactors';
 
 const actionsButton = Button('Actions');
@@ -17,6 +19,8 @@ const saveAndCloseButton = Button({ id: 'clickable-save-request' });
 const newRequestButton = Button('New Request');
 const selectUserModal = Modal('Select User');
 const loanAndAvailabilitySection = Section({ id: 'acc06' });
+const inventorySearch = TextField({ id: 'input-inventory-search' });
+const searchButton = Button('Search');
 
 export default {
   createItemsForGivenStatusesApi() {
@@ -82,8 +86,8 @@ export default {
 
   findAndOpenInstance(instanceTitle) {
     cy.do([
-      TextField({ id: 'input-inventory-search' }).fillIn(instanceTitle),
-      Button('Search').click(),
+      inventorySearch.fillIn(instanceTitle),
+      searchButton.click(),
       MultiColumnListCell({ row: 0, column: instanceTitle }).click(),
     ]);
     cy.expect(Section({ id: 'pane-instancedetails' }).exists());
@@ -95,26 +99,6 @@ export default {
 
   openItem(itemBarcode) {
     cy.do(Link(itemBarcode).click());
-  },
-
-  clickNewRequest() {
-    cy.do([actionsButton.click(), newRequestButton.click()]);
-  },
-
-  verifyItemStatus(status) {
-    cy.expect(PaneHeader(including(status)).exists());
-  },
-
-  closeItemView() {
-    cy.do(Button({ icon: 'times' }).click());
-  },
-
-  clickRequesterLookUp() {
-    cy.do(Button('Requester look-up').click());
-  },
-
-  checkModalExists() {
-    cy.expect(selectUserModal.exists());
   },
 
   filterRequesterLookup() {
@@ -136,19 +120,17 @@ export default {
     cy.do(cy.get('[name="pickupServicePointId"]').select('Circ Desk 1'));
   },
 
-  saveAndClose() {
-    cy.do(saveAndCloseButton.click());
-  },
-
-  clickItemBarcodeLink(barcode) {
-    cy.do(Link(barcode).click());
-  },
-
-  verifyPageTypeItem(barcode) {
+  verifyInventoryDetailsPage(barcode) {
     cy.expect(Heading({
       level: 2,
       text: `Item • ${barcode} • Paged`,
     }).exists());
+  },
+
+  clickItemBarcodeLink(barcode) {
+    cy.do(Link(barcode).click());
+    cy.wait(['@getInstanceRelTypes', '@getHoldinsgTypes', '@getRequests']);
+    this.verifyInventoryDetailsPage(barcode);
   },
 
   deleteRequestApi(requestId) {
@@ -166,22 +148,100 @@ export default {
     })).then(() => requestsCountLink);
   },
 
-  verifyrequestsCountLink() {
-    this.getRequestsCountLink().then(requestsCountLink => {
-      console.log(requestsCountLink);
-      cy.expect(loanAndAvailabilitySection.find(HTML('Requests')).assert(el => {
-        const count = el.parentElement.querySelector('a').textContent;
-        return expect(+count).to.be.greaterThan(0);
-      }));
-    });
+  verifyrequestsCountOnItemRecord() {
+    cy.expect(loanAndAvailabilitySection.find(HTML('Requests')).assert(el => {
+      const count = +el.parentElement.querySelector('a').textContent;
+      expect(count).to.be.greaterThan(0);
+    }));
+  },
+
+  verifyUserRecordPage(username) {
+    cy.expect(Heading({ level: 2, text: including(username) }).exists());
+  },
+
+  verifyRequestsPage() {
+    cy.expect(Heading({ level: 2, text: 'Requests' }).exists());
+  },
+
+  verifyNewRequest() {
+    cy.expect(Section({ id: 'item-info' }).find(Link('1')).exists());
+    cy.expect(Section({ id: 'item-info' }).find(HTML('Paged')).exists());
+  },
+
+  verifyRequesterDetailsPopulated(username) {
+    cy.expect(Section({ id: 'new-requester-info' }).find(Link(including(username))).exists());
+    cy.expect(Section({ id: 'new-requester-info' }).find(HTML('faculty')).exists());
+  },
+
+  verifyFulfillmentPreference() {
+    cy.expect(cy.get('[name="fulfilmentPreference"]').find('option:selected').should('have.text', 'Hold Shelf'));
+  },
+
+  checkModalExists(isExist) {
+    if (isExist) {
+      cy.expect(selectUserModal.exists());
+    } else {
+      cy.expect(selectUserModal.absent());
+    }
+  },
+
+  findAvailableItem(instance, itemBarcode) {
+    console.log(instance.instanceTitle);
+    this.findAndOpenInstance(instance.instanceTitle);
+    this.openHoldingsAccordion(instance.holdingId);
+    this.openItem(itemBarcode);
+  },
+
+  verifyItemDetailsPrepopulated(itemBarcode) {
+    cy.expect(Link(itemBarcode).exists());
+    cy.expect(Section({ id: 'new-request-info' }).find(HTML('Page')).exists());
+  },
+
+  clickNewRequest(itemBarcode) {
+    cy.do([actionsButton.click(), newRequestButton.click()]);
+    this.verifyItemDetailsPrepopulated(itemBarcode);
+  },
+
+  selectActiveFacultyUser(username) {
+    cy.do(Button('Requester look-up').click());
+    this.checkModalExists(true);
+    this.filterRequesterLookup();
+    this.selectUser(username);
+    this.checkModalExists(false);
+  },
+
+  saveAndClose() {
+    this.verifyFulfillmentPreference();
+    this.selectPickupServicePoint();
+    cy.do(saveAndCloseButton.click());
+    this.verifyRequestsPage();
+    this.verifyNewRequest();
   },
 
   clickRequestsCountLink() {
-    this.getRequestsCountLink().then(requestsCountLink => {
-      cy.do(loanAndAvailabilitySection.find(HTML('Requests')).perform(el => {
-        el.parentElement.querySelector('a').click();
-      }));
-      requestsCountLink.click();
-    });
-  }
+    cy.do(loanAndAvailabilitySection.find(HTML('Requests')).perform(el => {
+      el.parentElement.querySelector('a').click();
+    }));
+    this.verifyRequestsPage();
+    cy.expect(MultiColumnList().has({ rowCount: 1 }));
+  },
+
+  clickRequesterBarcode(username) {
+    cy.do(MultiColumnListCell({ row: 0, column: including(username) }).click());
+    cy.do(Pane({ id: 'instance-details' }).find(Link(including(username))).click());
+    this.verifyUserRecordPage(username);
+  },
+
+  verifyOpenRequestCounts() {
+    cy.do(Accordion('Requests').clickHeader());
+    cy.expect(Link({ id: 'clickable-viewopenrequests' }).assert(el => {
+      const count = +el.textContent.match(/\d+/)[0];
+      expect(count).to.be.greaterThan(0);
+    }));
+  },
+
+  clickOpenRequestsCountLink() {
+    cy.do(Link({ id: 'clickable-viewopenrequests' }).click());
+    this.verifyRequestsPage();
+  },
 };
