@@ -132,6 +132,7 @@ Cypress.Commands.add('createTempUser', (permissions = []) => {
                 permissions : [...permissionsResponse.body.permissions.map(permission => permission.permissionName)]
               });
               cy.overrideLocalSettings(userProperties.userId);
+              userProperties.barcode = userCreateResponse.barcode;
               cy.wrap(userProperties).as('userProperties');
             });
         });

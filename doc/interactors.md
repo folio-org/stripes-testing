@@ -180,7 +180,7 @@ AddressList().has({ count: 3});
 
 ##### actions
 
-- `toggleMore`: clicks the expansions 
+- `toggleMore`: clicks the expansions
 - `clickEdit`: _number_ - clicks the edit button at the given index
 - `addAddress`: clicks the add button, exposes a new address form
 - `deleteAddress`: _number_ - deletes the address at a given index
@@ -812,7 +812,7 @@ MultiColumnList().exists();
 ###### Actions
 
 - `clickHeader`: clicks on the overall header element
-- `scrollBy(int)`: scrolls the container by the specified pixels entered as an integer, will trigger the related scroll events
+- `scrollBy({direction: string, value: int})`: scrolls the container in selected direction by the specified pixels entered as a value, will trigger the related scroll events
 - `click({row: int, column: string})`: clicks a cell within the MCL with the specified to row and column. Both row and column default to the cell in the first row and first column
 
 ###### Filters

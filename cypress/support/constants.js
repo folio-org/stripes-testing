@@ -28,9 +28,11 @@ export const LOAN_TYPE_NAMES = {
 
 export const MATERIAL_TYPE_NAMES = {
   MICROFORM: 'microform',
+  BOOK: 'book',
 };
 
 export const CY_ENV = {
+  CHECKOUT_ITEM: 'checkoutItem',
   CIRCULATION_RULES: 'circulationRules',
   DIKU_LOGIN: 'diku_login',
   DIKU_PASSWORD: 'diku_password',
@@ -59,4 +61,5 @@ export const LIBRARY_DUE_DATE_MANAGMENT = {
 
 export const LOAN_PROFILE = {
   FIXED: 'Fixed',
+  ROLLING: 'Rolling',
 };
