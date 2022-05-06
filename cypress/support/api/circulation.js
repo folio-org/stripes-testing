@@ -31,8 +31,6 @@ Cypress.Commands.add('createItemCheckinApi', (data) => {
     },
   })
     .then(checkedOutItem => {
-      Cypress.env(CY_ENV.CHECKOUT_ITEM, checkedOutItem.body);
-
       return checkedOutItem.body;
     });
 });

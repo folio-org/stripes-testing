@@ -3,6 +3,7 @@ import moment from 'moment';
 import TestType from '../../support/dictionary/testTypes';
 import renewalActions from '../../support/fragments/loans/renewals';
 import generateItemBarcode from '../../support/utils/generateItemBarcode';
+import handlePromiseException from '../../support/utils/exceptionTools';
 import permissions from '../../support/dictionary/permissions';
 import {
   CY_ENV,
@@ -52,7 +53,7 @@ describe('Renewal', () => {
 
         cy.login(userProperties.username, userProperties.password);
       });
-    cy.getToken(Cypress.env(CY_ENV.DIKU_LOGIN), Cypress.env(CY_ENV.DIKU_PASSWORD))
+    cy.getAdminToken()
       .then(() => {
         cy.getInstanceTypes({ limit: 1 });
         cy.getHoldingTypes({ limit: 1 });
@@ -165,17 +166,7 @@ describe('Renewal', () => {
   });
 
   it('C568 Renewal: failure because loan is not renewable', { tags: [TestType.smoke] }, () => {
-    // reason of usage - https://docs.cypress.io/guides/references/error-messages#Uncaught-exceptions-from-your-application
-    // eslint-disable-next-line consistent-return
-    Cypress.on('uncaught:exception', (err, runnable, promise) => {
-      // when the exception originated from an unhandled promise
-      // rejection from the original code
-      if (promise) {
-        return false;
-      }
-      // we still want to ensure there are no other unexpected
-      // errors, so we let them fail the test
-    });
+    handlePromiseException();
 
     renewalActions.renewWithoutOverrideAccess(loanId, renewUserData.id, itemData);
 

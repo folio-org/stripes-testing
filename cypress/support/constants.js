@@ -32,7 +32,6 @@ export const MATERIAL_TYPE_NAMES = {
 };
 
 export const CY_ENV = {
-  CHECKOUT_ITEM: 'checkoutItem',
   CIRCULATION_RULES: 'circulationRules',
   DIKU_LOGIN: 'diku_login',
   DIKU_PASSWORD: 'diku_password',
