@@ -118,8 +118,9 @@ export default {
       searchParams,
     })
       .then(owner => {
-        return owner.body.owners[0];
+        cy.wrap(owner.body.owners[0]).as('owner');
       });
+    return cy.get('@owner');
   },
   deleteViaApi:  (ownerId) => {
     cy.okapiRequest({

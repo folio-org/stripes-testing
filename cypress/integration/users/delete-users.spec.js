@@ -230,7 +230,7 @@ describe('Deleting user', () => {
         verifyUserDeleteImpossible(userId);
         cy.deleteFeesFinesApi(Cypress.env('feesFines').id);
         cy.deleteFeesFinesTypeApi(Cypress.env('feesFinesType').id);
-        cy.deleteOwnerApi(specialOwnerId);
+        UsersOwners.deleteViaApi(specialOwnerId);
       });
   });
 });

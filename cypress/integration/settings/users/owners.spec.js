@@ -43,7 +43,7 @@ describe('ui-users-settings: Owners', () => {
 
       // testdata clearing
       UsersOwners.getOwnerViaApi({ query: `owner==${ownerName}` })
-        .then(owner => cy.deleteOwnerApi(owner.id));
+        .then(owner => UsersOwners.deleteViaApi(owner.id));
     });
   });
 
