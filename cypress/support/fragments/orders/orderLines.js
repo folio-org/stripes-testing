@@ -1,12 +1,11 @@
-import { Button, SearchField, PaneHeader, Select, Accordion, Checkbox, MultiColumnList, MultiColumnListCell, MultiColumnListRow, Modal, TextField, SelectionOption } from '../../../../interactors';
+import { Button, SearchField, PaneHeader, Select, Accordion, Checkbox, MultiColumnList, MultiColumnListCell, MultiColumnListRow, Modal, TextField, SelectionOption, Pane } from '../../../../interactors';
 import SearchHelper from '../finance/financeHelper';
 import getRandomPostfix from '../../utils/stringTools';
 
 
-
+const actionsButton = Button('Actions');
 const searhInputId = 'input-record-search';
 const searchButton = Button('Search');
-const saveAndClose = Button('Save & close');
 const searchField = SearchField({ id: 'input-record-search' });
 const buttonLocationFilter = Button({ id: 'accordion-toggle-button-pol-location-filter' });
 const buttonFundCodeFilter = Button({ id: 'accordion-toggle-button-fundCode' });
@@ -23,6 +22,7 @@ const quantityPhysicalTextField = TextField({ name: 'cost.quantityPhysical' });
 const electronicUnitPriceTextField = TextField({ name: 'cost.listUnitPriceElectronic' });
 const quantityElectronicTextField = TextField({ name: 'cost.quantityElectronic' });
 const searchForm = SearchField({ id: 'input-record-search' });
+const contibutor = 'Autotest,Contributor_name';
 
 export default {
 
@@ -159,6 +159,30 @@ export default {
       Button('Apply').click(),
       buttonSubscriptionFromFilter.click(),
     ]);
+  },
+  selectPOLInOrder: () => {
+    cy.do(Accordion({ id: 'POListing' })
+      .find(MultiColumnListRow({ index: 0 }))
+      .find(MultiColumnListCell({ columnIndex: 0 }))
+      .click());
+  },
+  editPOLInOrder: () => {
+    cy.do([
+      Pane({ id: 'order-lines-details' })
+        .find(PaneHeader({ id: 'paneHeaderorder-lines-details' })
+          .find(actionsButton)).click(),
+      Button('Edit').click(),
+    ]);
+  },
+  addContributorToPOL: () => {
+    cy.do([
+      Button('Add contributor').click(),
+      TextField('Contributor*').fillIn(contibutor),
+      Select('Contributor type*').choose('Personal name')
+    ]);
+  },
+  saveOrderLine: () => {
+    cy.do(Button({ id: 'clickable-updatePoLine' }).click());
   },
 };
 
