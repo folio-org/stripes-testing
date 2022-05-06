@@ -8,10 +8,8 @@ export default {
 
   openLoans() {
     cy.intercept('/circulation/loans?*').as('getLoans');
-    cy.wait(60000);
     cy.do(Accordion({ id : 'loansSection' }).clickHeader());
     cy.wait('@getLoans');
-    cy.wait(60000);
   },
 
   showOpenedLoans() {

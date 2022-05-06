@@ -1,4 +1,4 @@
-import { Accordion, KeyValue, Button, HTML, including } from '../../../../../interactors';
+import { Accordion, KeyValue, Button, HTML, including, TextField } from '../../../../../interactors';
 import dateTools from '../../../utils/dateTools';
 import ConfirmItemMissingModal from './confirmItemMissingModal';
 
@@ -29,15 +29,20 @@ export default {
     }));
   },
 
-  verifyItemStatus(status) {
+  verifyItemStatus:(status) => {
     cy.intercept('/orders/pieces?*').as('getPieces');
     cy.expect(loanAccordion.find(HTML(including(status))).exists());
     cy.wait('@getPieces');
   },
 
-  clickMarkAsMissing() {
+  clickMarkAsMissing:() => {
     cy.do(Button('Actions').click());
     cy.do(Button('Mark as missing').click());
     ConfirmItemMissingModal.confirmModal();
   },
+
+  addPieceToItem:(numberOfPieces) => {
+    cy.do(TextField({ name:'numberOfPieces' }).fillIn(numberOfPieces));
+    cy.do(Button('Save and close').click());
+  }
 };

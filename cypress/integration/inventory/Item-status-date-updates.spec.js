@@ -27,8 +27,6 @@ import UserLoans from '../../support/fragments/users/loans/userLoans';
 import ConfirmItemStatusModal from '../../support/fragments/users/loans/confirmItemStatusModal';
 import RenewConfirmationModal from '../../support/fragments/users/loans/renewConfirmationModal';
 import OverrideAndRenewModal from '../../support/fragments/users/loans/overrideAndRenewModal';
-import ReceivingItemView from '../../support/fragments/receiving/receivingItemView';
-import AddNewPieceModal from '../../support/fragments/receiving/addNewPieceModal';
 import ConfirmMultiplePiecesItemCheckOut from '../../support/fragments/check-out/confirmMultiplePiecesItemCheckOut';
 import {
   REQUEST_POLICY_NAMES,
@@ -38,6 +36,7 @@ import {
   LOAN_POLICY_NAMES,
   LOST_ITEM_FEES_POLICY_NAMES,
 } from '../../support/constants';
+import Requests from '../../support/fragments/requests/requests';
 
 describe('ui-inventory: Item status date updates', () => {
   const order = { ...NewOrder.specialOrder };
@@ -87,7 +86,7 @@ describe('ui-inventory: Item status date updates', () => {
     receiptStatus: 'Pending',
     reportingCodes: [],
     source: 'User',
-    titleOrPackage: `autotest_title_${getRandomPostfix()}`,
+    titleOrPackage: instanceTitle,
     vendorDetail: {
       instructions: '',
       vendorAccount: '1234'
@@ -101,42 +100,41 @@ describe('ui-inventory: Item status date updates', () => {
   const effectiveLocation = { ...NewLocation.defaultUiLocation.body, servicePointIds: [effectiveLocationServicePoint.body.id], primaryServicePoint: effectiveLocationServicePoint.body.id };
   let itemLocation = '';
   let user = {};
+  const userForDeliveryRequest = {};
   let userBarcode = '';
-  const itemBarcode = Helper.getRandomBarcode();
+  const itemBarcode1 = Helper.getRandomBarcode();
   let rulesDefaultString;
 
   before(() => {
-    cy.getAdminToken()
-      .then(() => {
-        cy.getOrganizationApi({ query: 'name="Amazon.com"' })
-          .then(organization => {
-            order.vendor = organization.id;
-            orderLine.physical.materialSupplier = organization.id;
-            orderLine.eresource.accessProvider = organization.id;
-          });
-      })
-      .then(() => {
-        cy.getMaterialTypes({ query: 'name="book"' })
-          .then(materialType => {
-            orderLine.physical.materialType = materialType.id;
-          });
-      })
-      .then(() => {
-        cy.createTempUser([
-          permissions.uiCreateOrderAndOrderLine.gui,
-          permissions.uiEditOrderAndOrderLine.gui,
-          permissions.uiCanViewOrderAndOrderLine.gui,
-          permissions.uiApproveOrder.gui,
-          permissions.inventoryAll.gui,
-          permissions.checkinAll.gui,
-          permissions.uiReceivingViewEditCreate.gui,
-          permissions.checkoutAll.gui,
-          permissions.requestsAll.gui,
-          permissions.loansAll.gui,
-        ]);
-      })
+    cy.createTempUser([
+      permissions.uiCreateOrderAndOrderLine.gui,
+      permissions.uiEditOrderAndOrderLine.gui,
+      permissions.uiCanViewOrderAndOrderLine.gui,
+      permissions.inventoryAll.gui,
+      permissions.checkinAll.gui,
+      permissions.uiReceivingViewEditCreate.gui,
+      permissions.checkoutAll.gui,
+      permissions.requestsAll.gui,
+      permissions.loansAll.gui,
+      permissions.uiInventoryStorageModule.gui,
+      permissions.usersLoansDeclareLost.gui,
+      permissions.usersLoansRenewThroughOverride.gui
+    ])
       .then(userProperties => {
         user = userProperties;
+        cy.getAdminToken()
+          .then(() => {
+            cy.getOrganizationApi({ query: 'name="Amazon.com"' })
+              .then(organization => {
+                order.vendor = organization.id;
+                orderLine.physical.materialSupplier = organization.id;
+                orderLine.eresource.accessProvider = organization.id;
+              });
+            cy.getMaterialTypes({ query: 'name="book"' })
+              .then(materialType => { orderLine.physical.materialType = materialType.id; });
+            cy.getUsers({ limit: 1, query: '"barcode"="" and "active"="true"' })
+              .then((users) => { userForDeliveryRequest.barcode = users[0].barcode; });
+          });
         ServicePoints.createViaApi(effectiveLocationServicePoint.body);
         ServicePoints.createViaApi(notEffectiveLocationServicePoint.body);
         cy.addServicePointToUser([effectiveLocationServicePoint.body.id, notEffectiveLocationServicePoint.body.id],
@@ -146,45 +144,45 @@ describe('ui-inventory: Item status date updates', () => {
             orderLine.locations[0].locationId = locations.body.id;
             itemLocation = locations.body.name;
           });
-      })
-      .then(() => {
-        cy.login(user.username, user.password);
-        Orders.createOrderWithOrderLineViaApi(order, orderLine)
-          .then(orderNumber => {
-            createdOrderNumber = orderNumber;
+        cy.login(userProperties.username, userProperties.password)
+          .then(() => {
+            Orders.createOrderWithOrderLineViaApi(order, orderLine)
+              .then(orderNumber => {
+                createdOrderNumber = orderNumber;
+              });
+          })
+          .then(() => {
+            cy.getRequestPolicy({ query: `name=="${REQUEST_POLICY_NAMES.ALLOW_ALL}"` });
+            cy.getNoticePolicy({ query: `name=="${NOTICE_POLICY_NAMES.SEND_NO_NOTICES}"` });
+            cy.getOverdueFinePolicy({ query: `name=="${OVERDUE_FINE_POLICY_NAMES.OVERDUE_FINE_POLICY}"` });
+            cy.getLostItemFeesPolicy({ query: `name=="${LOST_ITEM_FEES_POLICY_NAMES.LOST_ITEM_FEES_POLICY}"` });
+            cy.getLoanPolicy({ query: `name=="${LOAN_POLICY_NAMES.EXAMPLE_LOAN_POLICY}"` });
+            cy.getCirculationRules()
+              .then(rules => {
+                rulesDefaultString = rules.rulesAsText;
+              });
+          })
+          .then(() => {
+            const requestPolicyId = Cypress.env(CY_ENV.REQUEST_POLICY)[0].id;
+            const noticePolicyId = Cypress.env(CY_ENV.NOTICE_POLICY)[0].id;
+            const overdueFinePolicyId = Cypress.env(CY_ENV.OVERDUE_FINE_POLICY)[0].id;
+            const lostItemFeesPolicyId = Cypress.env(CY_ENV.LOST_ITEM_FEES_POLICY)[0].id;
+            const loanPolicyId = Cypress.env(CY_ENV.LOAN_POLICIES)[0].id;
+            const newRule = `\ng ${user.patronGroup} + m ${orderLine.physical.materialType}: l ${loanPolicyId} r ${requestPolicyId} n ${noticePolicyId} o ${overdueFinePolicyId} i ${lostItemFeesPolicyId}`;
+
+            cy.updateCirculationRules({
+              rulesAsText: rulesDefaultString + newRule,
+            });
           });
         cy.getUsers({ limit: 1, query: `"personal.lastName"="${user.username}" and "active"="true"` })
           .then((users) => {
             userBarcode = Cypress.env('users')[0].barcode;
           });
-      })
-      .then(() => {
-        cy.getRequestPolicy({ query: `name=="${REQUEST_POLICY_NAMES.ALLOW_ALL}"` });
-        cy.getNoticePolicy({ query: `name=="${NOTICE_POLICY_NAMES.SEND_NO_NOTICES}"` });
-        cy.getOverdueFinePolicy({ query: `name=="${OVERDUE_FINE_POLICY_NAMES.OVERDUE_FINE_POLICY}"` });
-        cy.getLostItemFeesPolicy({ query: `name=="${LOST_ITEM_FEES_POLICY_NAMES.LOST_ITEM_FEES_POLICY}"` });
-        cy.getLoanPolicy({ query: `name=="${LOAN_POLICY_NAMES.EXAMPLE_LOAN_POLICY}"` });
-        cy.getCirculationRules()
-          .then(rules => {
-            rulesDefaultString = rules.rulesAsText;
-          });
-      })
-      .then(() => {
-        const requestPolicyId = Cypress.env(CY_ENV.REQUEST_POLICY)[0].id;
-        const noticePolicyId = Cypress.env(CY_ENV.NOTICE_POLICY)[0].id;
-        const overdueFinePolicyId = Cypress.env(CY_ENV.OVERDUE_FINE_POLICY)[0].id;
-        const lostItemFeesPolicyId = Cypress.env(CY_ENV.LOST_ITEM_FEES_POLICY)[0].id;
-        const loanPolicyId = Cypress.env(CY_ENV.LOAN_POLICIES)[0].id;
-        const newRule = `\ng ${user.patronGroup} + m ${orderLine.physical.materialType}: l ${loanPolicyId} r ${requestPolicyId} n ${noticePolicyId} o ${overdueFinePolicyId} i ${lostItemFeesPolicyId}`;
-
-        cy.updateCirculationRules({
-          rulesAsText: rulesDefaultString + newRule,
-        });
       });
   });
 
   afterEach(() => {
-    /* cy.getInstance({ limit: 1, expandAll: true, query: `"items.barcode"=="${itemBarcode}"` })
+    cy.getInstance({ limit: 1, expandAll: true, query: `"items.barcode"=="${itemBarcode}"` })
       .then((instance) => {
         instance.items.forEach((item) => {
           cy.deleteItem(item.id);
@@ -193,26 +191,15 @@ describe('ui-inventory: Item status date updates', () => {
         cy.deleteInstanceApi(instance.id);
       });
     cy.deleteOrderApi(order.id);
-    cy.deleteLoanPolicy(createdLoanPolicy.id)
-      .then(() => {
-        cy.deleteFixedDueDateSchedule(mySchedule.id);
-      });
-
-     ServicePoints.forEach(servicePoint => {
-      cy.deleteServicePoint(servicePoint.id);
-    });
-    Requests.deleteRequestApi(id);
-    cy.deleteUser(user.userId); */
+    cy.deleteServicePoint(effectiveLocationServicePoint.body.id);
+    cy.deleteServicePoint(notEffectiveLocationServicePoint.body.id);
+    // Requests.deleteRequestApi(id);
+    // cy.deleteUser(user.userId);
   });
 
   it('C9200 Item status date updates', { tags: [TestTypes.smoke] }, () => {
     const caption = 'autotestCaption';
-    const requestRecord = {
-      itemBarcode,
-      itemTitle: null,
-      requesterBarcode: userBarcode,
-      pickupServicePoint: effectiveLocationServicePointName,
-    };
+    const numberOfPieces = '3';
 
     // open order and create Item
     cy.visit(TopMenu.ordersPath);
@@ -236,20 +223,20 @@ describe('ui-inventory: Item status date updates', () => {
     Helper.selectFromResultsList();
     Orders.receiveOrderViaActions();
     Helper.selectFromResultsList();
-    Receiving.receivePiece(0, caption, itemBarcode);
+    Receiving.receivePiece(0, caption, itemBarcode1);
     // open Item view in Inventory
     cy.visit(TopMenu.inventoryPath);
     InventorySearch.searchByParameter('Title (all)', instanceTitle);
     InventoryInstances.selectInstance();
     InventoryInstance.openHoldings([itemLocation]);
-    InventoryInstance.openItemView(itemBarcode);
+    InventoryInstance.openItemView(itemBarcode1);
     ItemVeiw.verifyUpdatedItemDate();
     ItemVeiw.verifyItemStatus(ItemVeiw.itemStatuses.inProcess);
     cy.log('###In process###');
 
     // ##############check in item at service point assigned to its effective location ##Available
     SwitchServicePoint.switchServicePoint(effectiveLocationServicePointName);
-    CheckInActions.checkInItem(itemBarcode);
+    CheckInActions.checkInItem(itemBarcode1);
     CheckInActions.openItemRecordInInventory(ItemVeiw.itemStatuses.available);
     ItemVeiw.verifyUpdatedItemDate();
     ItemVeiw.verifyItemStatus(ItemVeiw.itemStatuses.available);
@@ -262,26 +249,24 @@ describe('ui-inventory: Item status date updates', () => {
     cy.log('###Missing###');
 
     // ##############check in item at service point assigned to its effective location ##Available
-    CheckInActions.checkInItem(itemBarcode);
+    CheckInActions.checkInItem(itemBarcode1);
     ConfirmItemInModal.confirmMissingModal();
-    // CheckInActions.openItemRecordInInventory(ItemVeiw.itemStatuses.available);
     cy.visit(TopMenu.inventoryPath);
     InventorySearch.searchByParameter('Title (all)', instanceTitle);
     InventoryInstances.selectInstance();
     InventoryInstance.openHoldings([itemLocation]);
-    InventoryInstance.openItemView(itemBarcode);
+    InventoryInstance.openItemView(itemBarcode1);
     ItemVeiw.verifyUpdatedItemDate();
     ItemVeiw.verifyItemStatus(ItemVeiw.itemStatuses.available);
     cy.log('###Available###');
 
     // ##############check in item at service point assigned to its effective location ##Available
-    CheckInActions.checkInItem(itemBarcode);
-    // CheckInActions.openItemRecordInInventory(ItemVeiw.itemStatuses.available);
+    CheckInActions.checkInItem(itemBarcode1);
     cy.visit(TopMenu.inventoryPath);
     InventorySearch.searchByParameter('Title (all)', instanceTitle);
     InventoryInstances.selectInstance();
     InventoryInstance.openHoldings([itemLocation]);
-    InventoryInstance.openItemView(itemBarcode);
+    InventoryInstance.openItemView(itemBarcode1);
     ItemVeiw.verifyUpdatedItemDate();
     ItemVeiw.verifyItemStatus(ItemVeiw.itemStatuses.available);
     cy.log('###Available###');
@@ -289,7 +274,7 @@ describe('ui-inventory: Item status date updates', () => {
     // ##############check in item at service point not assigned to its effective location ##In transit
     // switch to other service point
     SwitchServicePoint.switchServicePoint(notEffectiveLocationServicePointName);
-    CheckInActions.checkInItem(itemBarcode);
+    CheckInActions.checkInItem(itemBarcode1);
     ConfirmItemInModal.confirmInTransitModal();
     CheckInActions.openItemRecordInInventory(ItemVeiw.itemStatuses.inTransit);
     ItemVeiw.verifyUpdatedItemDate();
@@ -297,7 +282,7 @@ describe('ui-inventory: Item status date updates', () => {
     cy.log('###In transit###');
 
     // ##############check in item at service point not assigned to its effective location ##In transit
-    CheckInActions.checkInItem(itemBarcode);
+    CheckInActions.checkInItem(itemBarcode1);
     ConfirmItemInModal.confirmInTransitModal();
     CheckInActions.openItemRecordInInventory(ItemVeiw.itemStatuses.inTransit);
     ItemVeiw.verifyUpdatedItemDate();
@@ -307,7 +292,7 @@ describe('ui-inventory: Item status date updates', () => {
     // ##############check in item at service point assigned to its effective location ##Available
     // switch to other service point
     SwitchServicePoint.switchServicePoint(effectiveLocationServicePointName);
-    CheckInActions.checkInItem(itemBarcode);
+    CheckInActions.checkInItem(itemBarcode1);
     CheckInActions.openItemRecordInInventory(ItemVeiw.itemStatuses.available);
     ItemVeiw.verifyUpdatedItemDate();
     ItemVeiw.verifyItemStatus(ItemVeiw.itemStatuses.available);
@@ -315,12 +300,17 @@ describe('ui-inventory: Item status date updates', () => {
 
     // ##############in Requests app, create Page request on an item ##Paged
     cy.visit(TopMenu.requestsPath);
-    NewRequest.createNewRequest(requestRecord);
+    NewRequest.createNewRequest({
+      itemBarcode: itemBarcode1,
+      itemTitle: null,
+      requesterBarcode: userBarcode,
+      pickupServicePoint: effectiveLocationServicePointName,
+    });
     cy.visit(TopMenu.inventoryPath);
     InventorySearch.searchByParameter('Title (all)', instanceTitle);
     InventoryInstances.selectInstance();
     InventoryInstance.openHoldings([itemLocation]);
-    InventoryInstance.openItemView(itemBarcode);
+    InventoryInstance.openItemView(itemBarcode1);
     ItemVeiw.verifyUpdatedItemDate();
     ItemVeiw.verifyItemStatus(ItemVeiw.itemStatuses.paged);
     cy.log('###Paged###');
@@ -328,7 +318,7 @@ describe('ui-inventory: Item status date updates', () => {
     // ##############check in item at a service point other than the pickup service point for the request ##In transit
     // switch to other service point
     SwitchServicePoint.switchServicePoint(notEffectiveLocationServicePointName);
-    CheckInActions.checkInItem(itemBarcode);
+    CheckInActions.checkInItem(itemBarcode1);
     ConfirmItemInModal.confirmInTransitModal();
     CheckInActions.openItemRecordInInventory(ItemVeiw.itemStatuses.inTransit);
     ItemVeiw.verifyUpdatedItemDate();
@@ -338,7 +328,7 @@ describe('ui-inventory: Item status date updates', () => {
     // ##############check in item at the pickup service point for the page request ##Awaiting pickup
     // switch to other service point
     SwitchServicePoint.switchServicePoint(effectiveLocationServicePointName);
-    CheckInActions.checkInItem(itemBarcode);
+    CheckInActions.checkInItem(itemBarcode1);
     ConfirmItemInModal.confirmAvaitingPicupModal();
     CheckInActions.openItemRecordInInventory(ItemVeiw.itemStatuses.awaitingPickup);
     ItemVeiw.verifyUpdatedItemDate();
@@ -347,9 +337,9 @@ describe('ui-inventory: Item status date updates', () => {
 
     // ##############check out item to user for whom page request was created ##Checked out
     cy.visit(TopMenu.checkOutPath);
-    CheckOut.checkOutItem(userBarcode, itemBarcode);
+    CheckOut.checkOutItem(userBarcode, itemBarcode1);
     ConfirmItemInModal.confirmAvaitingPicupCheckInModal();
-    CheckOut.openItemRecordInInventory(itemBarcode);
+    CheckOut.openItemRecordInInventory(itemBarcode1);
     ItemVeiw.verifyUpdatedItemDate();
     ItemVeiw.verifyItemStatus(ItemVeiw.itemStatuses.checkedOut);
     cy.log('###Checked out###');
@@ -363,37 +353,33 @@ describe('ui-inventory: Item status date updates', () => {
     UsersCard.showOpenedLoans();
     UserLoans.declareLoanLost();
     ConfirmItemStatusModal.confirmItemStatus();
-    UserLoans.openItemRecordInInventory(itemBarcode);
+    UserLoans.openItemRecordInInventory(itemBarcode1);
     ItemVeiw.verifyUpdatedItemDate();
     ItemVeiw.verifyItemStatus(ItemVeiw.itemStatuses.declaredLost);
     cy.log('###Declared lost###');
 
     // ##############In Users app on loan details for the loan, renew item (through override) ##Checked out
     cy.visit(TopMenu.usersPath);
-    // show open loans
     UsersSearchPane.searchByKeywords(user.username);
     UsersSearchPane.openUser(user.userId);
     UsersCard.openLoans();
     UsersCard.showOpenedLoans();
-    UserLoans.renewItem(itemBarcode);
-    RenewConfirmationModal.confirmRenewItem();
+    UserLoans.renewItem(itemBarcode1);
+    RenewConfirmationModal.confirmRenewOverrideItem();
     OverrideAndRenewModal.confirmOverrideItem();
-    UserLoans.openItemRecordInInventory(itemBarcode);
+    UserLoans.openItemRecordInInventory(itemBarcode1);
     ItemVeiw.verifyUpdatedItemDate();
     ItemVeiw.verifyItemStatus(ItemVeiw.itemStatuses.checkedOut);
     cy.log('###Checked out###');
 
     // ##############Edit item record so that it has multiple pieces ##Checked out
-    cy.visit(TopMenu.receivingPath);
-    Receiving.searchByParameter('Title (all)', instanceTitle);
-    Receiving.selectReceivingItem();
-    ReceivingItemView.addPiece();
-    AddNewPieceModal.createPiece();
     cy.visit(TopMenu.inventoryPath);
     InventorySearch.searchByParameter('Title (all)', instanceTitle);
     InventoryInstances.selectInstance();
     InventoryInstance.openHoldings([itemLocation]);
-    InventoryInstance.openItemView(itemBarcode);
+    InventoryInstance.openItemView(itemBarcode1);
+    InventoryInstance.openEditItemPage();
+    ItemVeiw.addPieceToItem(numberOfPieces);
     ItemVeiw.verifyUpdatedItemDate();
     ItemVeiw.verifyItemStatus(ItemVeiw.itemStatuses.checkedOut);
     cy.log('###Checked out###');
@@ -401,30 +387,50 @@ describe('ui-inventory: Item status date updates', () => {
     // ##############Create delivery request (hold or recall) on item. Check in item (confirm check in for multiple pieces).
     // When directed to Check Out app, cancel check out when presented with multiple pieces modal. ##Awaiting delivery
     cy.visit(TopMenu.requestsPath);
-    NewRequest.createNewRequest(requestRecord);
-    CheckInActions.checkInItem(itemBarcode);
+    NewRequest.createNewRequest({
+      itemBarcode: itemBarcode1,
+      itemTitle: null,
+      requesterBarcode: userForDeliveryRequest.barcode,
+      pickupServicePoint: effectiveLocationServicePointName,
+    });
+    CheckInActions.checkInItem(itemBarcode1);
     ConfirmItemInModal.confirmMultipieceItemModal();
     cy.visit(TopMenu.checkOutPath);
-    CheckOut.checkOutItem(userBarcode, itemBarcode);
+    CheckOut.checkOutItem(userBarcode, itemBarcode1);
     ConfirmMultiplePiecesItemCheckOut.confirmMultiplePiecesItemModal();
+    cy.visit(TopMenu.inventoryPath);
+    InventorySearch.searchByParameter('Title (all)', instanceTitle);
+    InventoryInstances.selectInstance();
+    InventoryInstance.openHoldings([itemLocation]);
+    InventoryInstance.openItemView(itemBarcode1);
     ItemVeiw.verifyUpdatedItemDate();
     ItemVeiw.verifyItemStatus(ItemVeiw.itemStatuses.awaitingDelivery);
     cy.log('###Awaiting delivery###');
 
     // ##############Check out item to user with delivery request ##Checked out
     cy.visit(TopMenu.checkOutPath);
-    CheckOut.checkOutItem(userBarcode, itemBarcode);
+    CheckOut.checkOutItem(userBarcode, itemBarcode1);
     ConfirmItemInModal.confirmAvaitingPicupCheckInModal();
-    CheckOut.openItemRecordInInventory(itemBarcode);
+    CheckOut.openItemRecordInInventory(itemBarcode1);
+    cy.visit(TopMenu.inventoryPath);
+    InventorySearch.searchByParameter('Title (all)', instanceTitle);
+    InventoryInstances.selectInstance();
+    InventoryInstance.openHoldings([itemLocation]);
+    InventoryInstance.openItemView(itemBarcode1);
     ItemVeiw.verifyUpdatedItemDate();
     ItemVeiw.verifyItemStatus(ItemVeiw.itemStatuses.checkedOut);
     cy.log('###Checked out###');
 
     // ##############In Check In app, backdate check in. Check in item at service point assigned to its effective location. ##Available
     SwitchServicePoint.switchServicePoint(effectiveLocationServicePointName);
-    CheckInActions.checkInItem(itemBarcode);
+    CheckInActions.checkInItem(itemBarcode1);
     ConfirmItemInModal.confirmAvaitingPicupModal();
     CheckInActions.openItemRecordInInventory(ItemVeiw.itemStatuses.available);
+    cy.visit(TopMenu.inventoryPath);
+    InventorySearch.searchByParameter('Title (all)', instanceTitle);
+    InventoryInstances.selectInstance();
+    InventoryInstance.openHoldings([itemLocation]);
+    InventoryInstance.openItemView(itemBarcode1);
     ItemVeiw.verifyUpdatedItemDate();
     ItemVeiw.verifyItemStatus(ItemVeiw.itemStatuses.available);
     cy.log('###Available###');

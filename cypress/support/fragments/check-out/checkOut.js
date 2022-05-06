@@ -1,4 +1,4 @@
-import { TextField, Pane, Button, MultiColumnListRow, including, HTML } from '../../../../interactors';
+import { TextField, Pane, Button, MultiColumnListRow, including, HTML, KeyValue } from '../../../../interactors';
 
 const itemDetailsButton = Button('Item details');
 
@@ -9,6 +9,7 @@ export default {
     cy.wait('@getGroups');
     cy.intercept('/circulation/requests?*').as('getRequests');
     cy.do(Pane('Scan patron card').find(Button('Enter')).click());
+    cy.expect(KeyValue('Borrower').exists());
     cy.wait('@getRequests');
     cy.do(TextField({ name:'item.barcode' }).fillIn(itemBarcode));
     cy.wait('@getRequests');

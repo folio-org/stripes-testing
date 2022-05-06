@@ -1,6 +1,7 @@
 import { Button, Pane, including, TextField, MultiColumnListRow, HTML } from '../../../../interactors';
 import NewInctanceHoldingsItem from '../inventory/newInctanceHoldingsItem';
 import NewUser from '../user/newUser';
+import { getLongDelay } from '../../utils/cypressTools';
 
 const loadDetailsButton = Button('Loan details');
 const patronDetailsButton = Button('Patron details');
@@ -16,12 +17,11 @@ export default {
     cy.intercept('/inventory/items?*').as('getItems');
     cy.do(itemBarcodeField.fillIn(barcode));
     cy.do(addItemButton.click());
-    cy.wait('@getItems');
+    cy.wait('@getItems', getLongDelay());
   },
   openItemRecordInInventory:(status) => {
     cy.expect(MultiColumnListRow({ indexRow: 'row-0' }).find(HTML(including(status))).exists());
     cy.do(Button({ id: 'available-actions-button-0' }).click());
-    cy.intercept('/inventory/items*').as('getItems');
     cy.expect(Button('Item details').exists());
     cy.do(Button('Item details').click());
   },

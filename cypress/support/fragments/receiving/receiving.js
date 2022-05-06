@@ -5,7 +5,8 @@ import {
   TextField,
   MultiColumnListRow,
   MultiColumnListCell,
-  SearchField
+  SearchField,
+  Select
 } from '../../../../interactors';
 import InteractorsTools from '../../utils/interactorsTools';
 
@@ -67,7 +68,7 @@ export default {
 
   searchByParameter:(parameter, value) => {
     cy.do([
-      SearchField({ id: 'input-record-search-qindex' }).selectIndex(parameter),
+      Select({ id: 'input-record-search-qindex' }).choose(parameter),
       SearchField({ id: 'input-record-search' }).fillIn(value),
       Button('Search').click(),
     ]);

@@ -1,4 +1,5 @@
-import { Button, TextField, Pane, Select } from '../../../../interactors';
+import { Button, TextField, Pane, Select, HTML, including } from '../../../../interactors';
+import { getLongDelay } from '../../utils/cypressTools';
 
 const actionsButton = Button('Actions');
 const newRequestButton = Button('New');
@@ -28,10 +29,16 @@ export default {
     cy.intercept('/circulation/loans?*').as('getLoans');
     cy.do(enterItemBarcodeButton.click());
     cy.wait('@getLoans');
+    cy.wait(1500);
   },
 
   choosepickupServicePoint(pickupServicePoint) {
+    cy.intercept('/inventory/items?*').as('getItems');
+    cy.wait('@getItems', getLongDelay());
+    cy.wait(1500);
     cy.do(Select({ name:'pickupServicePointId' }).choose(pickupServicePoint));
+    cy.wait('@getItems');
+    cy.expect(HTML(including(pickupServicePoint)).exists());
   },
 
   saveRequestAndClose() {
