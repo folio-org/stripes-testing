@@ -6,9 +6,12 @@ import TopMenu from '../../support/fragments/topMenu';
 import SearchHelper from '../../support/fragments/finance/financeHelper';
 import OrdersHelper from '../../support/fragments/orders/ordersHelper';
 import NewInvoice from '../../support/fragments/invoices/newInvoice';
+import DateTools from '../../support/utils/dateTools';
 
-describe('orders: Test PO search', () => {
-  const order = { ...NewOrder.specialOrder };
+describe('orders: Test PO filters', () => {
+  const today = new Date();
+  const renewalDate = DateTools.getFormattedDate({ date: today }, 'MM/DD/YYYY');
+  const order = { ...NewOrder.defaultOrder };
   const orderLine = { ...BasicOrderLine.defaultOrderLine };
   const invoice = { ...NewInvoice.defaultUiInvoice };
   let orderNumber;
@@ -39,6 +42,11 @@ describe('orders: Test PO search', () => {
             cy.visit(TopMenu.ordersPath);
             Orders.searchByParameter('PO number', orderNumber);
             SearchHelper.selectFromResultsList();
+            Orders.editOrder();
+            Orders.assignOrderToAdmin();
+            Orders.selectOngoingOrderType();
+            Orders.fillOngoingInformation(renewalDate);
+            Orders.saveEditingOrder();
             Orders.openOrder();
             Orders.closeOrder('Cancelled');
             Orders.closeThirdPane();
@@ -53,12 +61,12 @@ describe('orders: Test PO search', () => {
 
   [
     { filterActions: Orders.selectClosedStatusFilter },
-    // { filterActions: Orders.selectAssignedToFilter },
-    // { filterActions: Orders.selectReasonForClosureFilter },
-    // { filterActions: Orders.selectRenewalDateFilter },
-    // { filterActions: () => { Orders.selectVendorFilter(invoice); } },
+    { filterActions: Orders.selectAssignedToFilter },
+    { filterActions: Orders.selectReasonForClosureFilter },
+    { filterActions: () => { Orders.selectRenewalDateFilter(renewalDate); } },
+    { filterActions: () => { Orders.selectVendorFilter(invoice); } },
   ].forEach((filter) => {
-    it('C6718 Test the PO filters with open Order ', { tags: [TestType.smoke] }, () => {
+    it('C350906 Test the PO filters with closed Order ', { tags: [TestType.smoke] }, () => {
       filter.filterActions();
       Orders.checkSearchResultsWithClosedOrder(orderNumber);
       Orders.resetFilters();
