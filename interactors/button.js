@@ -10,6 +10,7 @@ export default HTML.extend('button')
     anchor: (el) => el.tagName === 'A',
     default: (el) => el.classList.contains('default'),
     ariaLabel: (el) => el.ariaLabel,
+    ariaExpanded: (el) => el.getAttribute('aria-expanded'),
     disabled: {
       apply: (el) => {
         if (el.disabled !== undefined) return el.disabled;
