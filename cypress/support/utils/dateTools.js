@@ -1,3 +1,5 @@
+import moment from 'moment';
+
 const padWithZero = value => String(value).padStart(2, '0');
 
 export default {
@@ -83,5 +85,9 @@ export default {
   getFutureWeekDateObj() {
     const today = new Date();
     return new Date(today.getFullYear(), today.getMonth(), today.getDate() + 7);
-  }
+  },
+
+  getFormattedDateWithTime(date) {
+    return moment.utc(date).format('M/D/YYYY, h:mm A');
+  },
 };
