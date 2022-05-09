@@ -8,10 +8,7 @@ export default {
     acquisitionMethod: '',
     alerts: [],
     claims: [],
-    contributors: [{
-      contributor: `Autotest Contributor_${getRandomPostfix()}`,
-      contributorNameTypeId: uuid()
-    }],
+    contributors: [],
     cost: {
       listUnitPrice: 1.0,
       currency: 'USD',
