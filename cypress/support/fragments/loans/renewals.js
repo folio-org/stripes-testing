@@ -112,46 +112,23 @@ const checkModalTable = (modalTitle, itemData) => {
   ]);
 };
 
-const fillOverrideAndRenewModal = () => {
-  cy.do([
-    TextField(fieldLabels.date).fillIn(overrideData.date),
-    TextField(fieldLabels.time).fillIn(overrideData.time),
-  ]);
-  cy.get('[name=check-all]').click();
-  cy.do([
-    TextArea(fieldLabels.additionalInfo).fillIn(overrideData.additionalInfo),
-    Modal(headers.override).find(Button(buttonLabels.override)).click(),
-  ]);
-};
-
-const checkLoanChanges = ({ firstName, lastName }) => {
-  const firstTableRow = MultiColumnListRow({ index: 0 });
-  const fullOverrideDate = `${overrideData.simplifiedDate}, ${overrideData.time}`;
-
-  cy.expect([
-    KeyValue({ value: loanInfo.renewalNumber }).exists(),
-    KeyValue({ value: fullOverrideDate }).exists(),
-    firstTableRow.find(MultiColumnListCell(loanInfo.overrideRenewed)).exists(),
-    firstTableRow.find(MultiColumnListCell(fullOverrideDate)).exists(),
-    firstTableRow.find(MultiColumnListCell(overrideData.status)).exists(),
-    firstTableRow.find(MultiColumnListCell(`${lastName}, ${firstName}`)).exists(),
-    firstTableRow.find(MultiColumnListCell(overrideData.additionalInfo)).exists(),
-  ]);
-};
+const generateInitialLink = (userId, loanId) => `users/${userId}/loans/view/${loanId}`;
 
 export default {
   renewWithoutOverrideAccess(loanId, userId, itemData) {
-    cy.visit(`users/${userId}/loans/view/${loanId}`);
+    cy.visit(generateInitialLink(userId, loanId));
 
     checkLoansPage();
 
     checkModalTable(headers.renewConfirmation, itemData);
 
+    // todo: Uncomment button check after permission issue fix
+    // cy.expect(Button(buttonLabels.override).exists());
     cy.do(Button(buttonLabels.close).click());
   },
 
-  renewWithOverrideAccess({ loanId, id, firstName, lastName, itemData }) {
-    cy.visit(`users/${id}/loans/view/${loanId}`);
+  renewWithOverrideAccess(loanId, userId, itemData) {
+    cy.visit(generateInitialLink(userId, loanId));
 
     checkLoansPage();
 
@@ -161,7 +138,9 @@ export default {
       Button(buttonLabels.override).exists(),
       Button(buttonLabels.close).exists()
     ]);
+  },
 
+  startOverriding(itemData) {
     cy.do(Button(buttonLabels.override).click());
 
     cy.expect([
@@ -180,9 +159,38 @@ export default {
       Button(buttonLabels.cancel).exists(),
       Button({ text: buttonLabels.override, disabled: true }).exists(),
     ]);
+  },
 
-    fillOverrideAndRenewModal();
+  fillOverrideInfo() {
+    cy.do([
+      TextField(fieldLabels.date).fillIn(overrideData.date),
+      TextField(fieldLabels.time).fillIn(overrideData.time),
+    ]);
+    cy.get('[name=check-all]').click();
+    cy.do(TextArea(fieldLabels.additionalInfo).fillIn(overrideData.additionalInfo));
+  },
 
-    checkLoanChanges({ firstName, lastName });
+  overrideLoan() {
+    const fullOverrideDate = `${overrideData.simplifiedDate}, ${overrideData.time}`;
+
+    cy.do(Modal(headers.override).find(Button(buttonLabels.override)).click());
+
+    cy.expect([
+      KeyValue({ value: loanInfo.renewalNumber }).exists(),
+      KeyValue({ value: fullOverrideDate }).exists(),
+    ]);
+  },
+
+  checkLoanDetails({ firstName, lastName }) {
+    const firstTableRow = MultiColumnListRow({ index: 0 });
+    const fullOverrideDate = `${overrideData.simplifiedDate}, ${overrideData.time}`;
+
+    cy.expect([
+      firstTableRow.find(MultiColumnListCell(loanInfo.overrideRenewed)).exists(),
+      firstTableRow.find(MultiColumnListCell(fullOverrideDate)).exists(),
+      firstTableRow.find(MultiColumnListCell(overrideData.status)).exists(),
+      firstTableRow.find(MultiColumnListCell(`${lastName}, ${firstName}`)).exists(),
+      firstTableRow.find(MultiColumnListCell(overrideData.additionalInfo)).exists(),
+    ]);
   },
 };

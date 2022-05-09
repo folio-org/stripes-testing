@@ -1,6 +1,7 @@
 import { Button, Pane, including, TextField, MultiColumnListCell } from '../../../../interactors';
 import NewInctanceHoldingsItem from '../inventory/newInctanceHoldingsItem';
 import NewUser from '../user/newUser';
+import moment from "moment";
 
 const loadDetailsButton = Button('Loan details');
 const patronDetailsButton = Button('Patron details');
@@ -40,5 +41,12 @@ export default {
     cy.do(newFeeFineButton.click());
     cy.expect(Pane({ title:  'New fee/fine' }).exists());
     this.returnCheckIn();
+  },
+  createItemCheckinApi(itemBarcode, servicePointId) {
+    return cy.createItemCheckinApi({
+      itemBarcode,
+      servicePointId,
+      checkInDate: moment.utc().format(),
+    });
   },
 };

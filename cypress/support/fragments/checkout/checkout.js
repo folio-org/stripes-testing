@@ -17,4 +17,11 @@ export default {
     cy.wait(3500);
     cy.do(Button({ href: `/users/${id}/loans/open` }).click());
   },
+  checkoutItemApi(servicePointId, itemBarcode, userBarcode) {
+    return cy.createItemCheckout({
+      servicePointId,
+      itemBarcode,
+      userBarcode,
+    });
+  },
 };

@@ -1,5 +1,4 @@
 import uuid from 'uuid';
-import moment from 'moment';
 import TestType from '../../support/dictionary/testTypes';
 import renewalActions from '../../support/fragments/loans/renewals';
 import generateItemBarcode from '../../support/utils/generateItemBarcode';
@@ -7,25 +6,31 @@ import handlePromiseException from '../../support/utils/exceptionTools';
 import permissions from '../../support/dictionary/permissions';
 import {
   CY_ENV,
-  LIBRARY_DUE_DATE_MANAGMENT,
-  LOAN_PROFILE,
   LOAN_TYPE_NAMES,
   MATERIAL_TYPE_NAMES,
 } from '../../support/constants';
 import getRandomPostfix from '../../support/utils/stringTools';
+import loanPolicyActions from '../../support/fragments/circulation/loan-policy';
+import checkoutActions from '../../support/fragments/checkout/checkout';
+import checkinActions from '../../support/fragments/check-in-actions/checkInActions';
 
 describe('Renewal', () => {
   let materialTypeId;
   let loanId;
   let servicePointId;
   let initialCircRules;
-  let renewOverrideUserId = '';
   const firstName = 'testPermFirst';
   const renewUserData = {
     firstName,
     lastName: '',
     id: '',
     barcode: '',
+  };
+  const renewOverrideUserData = {
+    firstName,
+    lastName: '',
+    id: '',
+    password: '',
   };
   const LOAN_POLICY_ID = uuid();
   const loanPolicyData = {
@@ -52,6 +57,17 @@ describe('Renewal', () => {
         renewUserData.barcode = userProperties.barcode;
 
         cy.login(userProperties.username, userProperties.password);
+      });
+    // create second user
+    cy.createTempUser([
+      permissions.loansView.gui,
+      permissions.loansRenew.gui,
+      permissions.loansRenewOverride.gui,
+    ])
+      .then(userProperties => {
+        renewOverrideUserData.lastName = userProperties.username;
+        renewOverrideUserData.id = userProperties.userId;
+        renewOverrideUserData.password = userProperties.password;
       });
     cy.getAdminToken()
       .then(() => {
@@ -99,23 +115,7 @@ describe('Renewal', () => {
       })
       // create loan policy
       .then(() => {
-        cy.createLoanPolicy({
-          name: loanPolicyData.name,
-          id: loanPolicyData.id,
-          loanable: true,
-          loansPolicy: {
-            closedLibraryDueDateManagementId: LIBRARY_DUE_DATE_MANAGMENT.CURRENT_DUE_DATE,
-            period: {
-              duration: 3,
-              intervalId: 'Weeks',
-            },
-            profileId: LOAN_PROFILE.ROLLING,
-          },
-          renewable: false,
-          renewalsPolicy: {
-            unlimited: true,
-          },
-        });
+        loanPolicyActions.createLoanableNotRenewableLoanPolicyApi(loanPolicyData);
       })
       // create circulation rules
       .then(() => {
@@ -124,7 +124,8 @@ describe('Renewal', () => {
         const overdueFinePolicyId = Cypress.env(CY_ENV.OVERDUE_FINE_POLICY)[0].id;
         const lostItemFeesPolicyId = Cypress.env(CY_ENV.LOST_ITEM_FEES_POLICY)[0].id;
         const policy = `l ${loanPolicyData.id} r ${requestPolicyId} n ${noticePolicyId} o ${overdueFinePolicyId} i ${lostItemFeesPolicyId}`;
-        const newRule = `priority: number-of-criteria, criterium (t, s, c, b, a, m, g), last-line\nfallback-policy: ${policy}\nm ${materialTypeId}: ${policy}`;
+        const priority = 'priority: number-of-criteria, criterium (t, s, c, b, a, m, g), last-line';
+        const newRule = `${priority}\nfallback-policy: ${policy}\nm ${materialTypeId}: ${policy}`;
 
         cy.updateCirculationRules({
           rulesAsText: newRule,
@@ -132,11 +133,7 @@ describe('Renewal', () => {
       })
       // checkout item
       .then(() => {
-        cy.createItemCheckout({
-          servicePointId,
-          itemBarcode: itemData.barcode,
-          userBarcode: renewUserData.barcode,
-        })
+        checkoutActions.checkoutItemApi(servicePointId, itemData.barcode, renewUserData.barcode)
           .then(checkedItem => {
             loanId = checkedItem.body.id;
           });
@@ -144,14 +141,10 @@ describe('Renewal', () => {
   });
 
   after(() => {
-    cy.createItemCheckinApi({
-      itemBarcode: itemData.barcode,
-      servicePointId,
-      checkInDate: moment.utc().format(),
-    })
+    checkinActions.createItemCheckinApi(itemData.barcode, servicePointId)
       .then(() => {
         cy.deleteUser(renewUserData.id);
-        cy.deleteUser(renewOverrideUserId);
+        cy.deleteUser(renewOverrideUserData.id);
         cy.getInstance({ limit: 1, expandAll: true, query: `"items.barcode"=="${itemData.barcode}"` })
           .then((instance) => {
             cy.deleteItem(instance.items[0].id);
@@ -170,23 +163,20 @@ describe('Renewal', () => {
 
     renewalActions.renewWithoutOverrideAccess(loanId, renewUserData.id, itemData);
 
-    cy.createTempUser([
-      permissions.loansView.gui,
-      permissions.loansRenew.gui,
-      permissions.loansRenewOverride.gui,
-    ])
-      .then(userProperties => {
-        renewOverrideUserId = userProperties.userId;
+    cy.login(renewOverrideUserData.lastName, renewOverrideUserData.password);
 
-        cy.login(userProperties.username, userProperties.password);
+    renewalActions.renewWithOverrideAccess(
+      loanId,
+      renewUserData.id,
+      itemData
+    );
 
-        renewalActions.renewWithOverrideAccess({
-          loanId,
-          firstName,
-          itemData,
-          id: renewUserData.id,
-          lastName: userProperties.username,
-        });
-      });
+    renewalActions.startOverriding(itemData);
+
+    renewalActions.fillOverrideInfo();
+
+    renewalActions.overrideLoan();
+
+    renewalActions.checkLoanDetails({ firstName, lastName: renewOverrideUserData.lastName });
   });
 });
