@@ -21,7 +21,6 @@ describe('orders: Test PO filters', () => {
   let orderNumber;
 
   before(() => {
-    cy.getAdminToken();
     cy.getToken(Cypress.env('diku_login'), Cypress.env('diku_password'));
     cy.getOrganizationApi({ query: 'name="Amazon.com"' })
       .then(organization => {
