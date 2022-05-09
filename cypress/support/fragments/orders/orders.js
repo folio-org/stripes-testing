@@ -64,7 +64,6 @@ export default {
   },
   assignOrderToAdmin: (rowNumber = 0) => {
     cy.do([
-      // Button({ icon: 'times-circle-solid' }).click(),
       Button({ id: 'clickable-plugin-find-user' }).click(),
       TextField({ name: 'query' }).fillIn(admin),
       searchButton.click(),
