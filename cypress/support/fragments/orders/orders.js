@@ -91,7 +91,6 @@ export default {
       Button('Close order').click(),
       Select('Reason').choose(reason),
       Button('Submit').click(),
-      // TextArea('Notes').fillIn('Cancelled by admin_Autotest')
     ]);
     InteractorsTools.checkCalloutMessage('Order was closed');
   },
