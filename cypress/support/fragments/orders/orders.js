@@ -1,6 +1,7 @@
-import { Button, SearchField, PaneHeader, Pane, Select, Accordion, KeyValue, Checkbox, MultiColumnList, MultiColumnListCell, MultiColumnListRow, Modal, TextField, SelectionOption } from '../../../../interactors';
+import { Button, SearchField, PaneHeader, Pane, Select, Accordion, KeyValue, Checkbox, MultiColumnList, MultiColumnListCell, MultiColumnListRow, Modal, TextField, SelectionOption} from '../../../../interactors';
 import SearchHelper from '../finance/financeHelper';
 import InteractorsTools from '../../utils/interactorsTools';
+
 
 const actionsButton = Button('Actions');
 const orderDetailsPane = Pane({ id: 'order-details' });
@@ -12,6 +13,13 @@ const orderDetailsAccordionId = 'purchaseOrder';
 const createdByAdmin = 'ADMINISTRATOR, DIKU ';
 const searchField = SearchField({ id: 'input-record-search' });
 const admin = 'administrator';
+const buttonLocationFilter = Button({ id: 'accordion-toggle-button-pol-location-filter' });
+const buttonFundCodeFilter = Button({ id: 'accordion-toggle-button-fundCode' });
+const buttonOrderFormatFilter = Button({ id: 'accordion-toggle-button-orderFormat' });
+const buttonFVendorFilter = Button({ id: 'accordion-toggle-button-purchaseOrder.vendor' });
+const buttonRushFilter = Button({ id: 'accordion-toggle-button-rush' });
+const buttonSubscriptionFromFilter = Button({ id: 'accordion-toggle-button-subscriptionFrom' });
+const searchForm = SearchField({ id: 'input-record-search' });
 
 export default {
   createOrderWithOrderLineViaApi(order, orderLine) {
@@ -30,8 +38,8 @@ export default {
 
   searchByParameter: (parameter, value) => {
     cy.do([
-      SearchField({ id: 'input-record-search' }).selectIndex(parameter),
-      SearchField({ id: 'input-record-search' }).fillIn(value),
+      searchForm.selectIndex(parameter),
+      searchForm.fillIn(value),
       Button('Search').click(),
     ]);
   },
@@ -130,11 +138,11 @@ export default {
       .find(MultiColumnListCell({ columnIndex: 0 }))
       .has({ content: orderLine }));
   },
-  checkOrderlineSearchResults: (orderNumber) => {
+  checkOrderlineSearchResults: (orderLineNumber) => {
     cy.expect(MultiColumnList({ id: 'order-line-list' })
       .find(MultiColumnListRow({ index: 0 }))
       .find(MultiColumnListCell({ columnIndex: 0 }))
-      .has({ content: orderNumber }));
+      .has({ content: orderLineNumber }));
   },
   closeThirdPane: () => {
     cy.do(PaneHeader({ id: 'paneHeaderorder-details' }).find(Button({ icon: 'times' })).click());
@@ -235,5 +243,67 @@ export default {
   },
   selectOrders: () => {
     cy.do(Button('Orders').click());
-  }
+  },
+  createPOLineViaActions: () => {
+    cy.do([
+      Accordion({ id: 'POListing' })
+        .find(Button('Actions'))
+        .click(),
+      Button('Add PO line').click()
+    ]);
+  },
+  
+  selectFilterMainLibraryLocationsPOL: () => {
+    cy.do([
+      buttonLocationFilter.click(),
+      Button('Location look-up').click(),
+      Select({ name: 'campusId' }).choose('City Campus'),
+      Button({ id: 'locationId' }).click(),
+      SelectionOption('Main Library (KU/CC/DI/M) ').click(),
+      Button('Save and close').click(),
+      buttonLocationFilter.click(),
+    ]);
+  },
+  selectFilterFundCodeUSHISTPOL: () => {
+    cy.do([
+      buttonFundCodeFilter.click(),
+      Button({ id: 'fundCode-selection' }).click(),
+      SelectionOption('USHIST').click(),
+      buttonFundCodeFilter.click(),
+    ]);
+  },
+  selectFilterOrderFormatPhysicalResourcePOL: () => {
+    cy.do([
+      buttonOrderFormatFilter.click(),
+      Checkbox({ id: 'clickable-filter-orderFormat-physical-resource' }).click(),
+      buttonOrderFormatFilter.click(),
+    ]);
+  },
+  selectFilterVendorPOL: (invoice) => {
+    cy.do([
+      buttonFVendorFilter.click(),
+      Button({ id: 'purchaseOrder.vendor-button' }).click(),
+      Modal('Select Organization').find(SearchField({ id: searhInputId })).fillIn(invoice.vendorName),
+      searchButton.click(),
+    ]);
+    SearchHelper.selectFromResultsList();
+    cy.do(buttonFVendorFilter.click());
+  },
+  selectFilterNoInRushPOL: () => {
+    cy.do([
+      buttonRushFilter.click(),
+      Checkbox({ id: 'clickable-filter-rush-false' }).click(),
+      buttonRushFilter.click(),
+    ]);
+  },
+  selectFilterSubscriptionFromPOL: (newDate) => {
+    cy.do([
+      buttonSubscriptionFromFilter.click(),
+      TextField('From').fillIn(newDate),
+      TextField('To').fillIn(newDate),
+      Button('Apply').click(),
+      buttonSubscriptionFromFilter.click(),
+    ]);
+  },
 };
+
