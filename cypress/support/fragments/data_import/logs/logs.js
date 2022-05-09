@@ -21,7 +21,7 @@ export default {
   },
 
   openFileDetails:(fileName) => {
-    cy.do(MultiColumnListCell({ row: 0, columnIndex: 0 }).find(Button(fileName)).click());
+    cy.do(MultiColumnListCell({ row: 0, columnIndex: 1 }).find(Button(fileName)).click());
   },
 
   checkQuantityRecordsInFile:(quantityRecords) => {

@@ -88,8 +88,8 @@ describe('ui-data-import: MARC file import with creating of the new instance, ho
     DataImport.uploadFile('oneMarcBib.mrc', fileName);
     JobProfiles.searchJobProfileForImport(specialJobProfile.profileName);
     JobProfiles.runImportFile(fileName);
-    Logs.checkImportFile(specialJobProfile.profileName);
     Logs.checkStatusOfJobProfile();
+    Logs.checkImportFile(specialJobProfile.profileName);
     Logs.openFileDetails(fileName);
     FileDetails.checkCreatedItems();
 

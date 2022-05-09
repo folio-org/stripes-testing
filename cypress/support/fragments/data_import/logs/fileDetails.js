@@ -1,10 +1,10 @@
-import { MultiColumnListCell } from '../../../../../interactors';
+import { MultiColumnListCell, MultiColumnList } from '../../../../../interactors';
 
 const createdItemsColumns = [
-  MultiColumnListCell({ row: 0, columnIndex: 2 }),
-  MultiColumnListCell({ row: 0, columnIndex: 3 }),
-  MultiColumnListCell({ row: 0, columnIndex: 4 }),
-  MultiColumnListCell({ row: 0, columnIndex: 5 })
+  MultiColumnList({ row: 0, columnIndex: 2 }),
+  MultiColumnList({ row: 0, columnIndex: 3 }),
+  MultiColumnList({ row: 0, columnIndex: 4 }),
+  MultiColumnList({ row: 0, columnIndex: 5 })
 ];
 
 const checkIsSrsCreated = () => {

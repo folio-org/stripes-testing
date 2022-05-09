@@ -13,6 +13,7 @@ import UrlParams from '../url-params';
 
 export default {
   gotoViewAllPage() {
+    cy.do(Button('Actions').click());
     cy.do(Button('View all').click());
   },
 
