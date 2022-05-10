@@ -2,7 +2,7 @@ import { Button, SearchField, PaneHeader, Select, Accordion, Checkbox, MultiColu
 import SearchHelper from '../finance/financeHelper';
 import getRandomPostfix from '../../utils/stringTools';
 
-
+const saveAndClose = Button('Save & close');
 const actionsButton = Button('Actions');
 const searhInputId = 'input-record-search';
 const searchButton = Button('Search');
