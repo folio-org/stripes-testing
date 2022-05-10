@@ -1,3 +1,4 @@
+import uuid from 'uuid';
 import NewOrder from '../../support/fragments/orders/newOrder';
 import TestType from '../../support/dictionary/testTypes';
 import Orders from '../../support/fragments/orders/orders';
@@ -5,6 +6,7 @@ import TopMenu from '../../support/fragments/topMenu';
 import OrdersHelper from '../../support/fragments/orders/ordersHelper';
 import basicOrderLine from '../../support/fragments/orders/basicOrderLine';
 import getRandomPostfix from '../../support/utils/stringTools';
+
 // TODO:  Rebuild the test after fixing the problem with orderLineNumber definition in its scope.
 // TODO: Check the search using the second POLINE,to have a working search on empty env.
 describe('orders: Test Po line search', () => {
@@ -41,6 +43,10 @@ describe('orders: Test Po line search', () => {
       ],
       vendorAccount: '8910-10'
     },
+    contributors: [{
+      contributor: `Autotest Contributor_${getRandomPostfix()}`,
+      contributorNameTypeId: uuid()
+    }],
   };
   let orderLineNumber;
   const searchers = [
@@ -81,10 +87,10 @@ describe('orders: Test Po line search', () => {
               .then((response) => {
                 orderLineNumber = response.body.poLineNumber;
               });
+            cy.visit(TopMenu.ordersPath);
+            Orders.selectOrderLines();
           });
       });
-    cy.visit(TopMenu.ordersPath);
-    Orders.selectOrderLines();
   });
 
   after(() => {
@@ -104,4 +110,3 @@ describe('orders: Test Po line search', () => {
     Orders.resetFilters();
   });
 });
-
