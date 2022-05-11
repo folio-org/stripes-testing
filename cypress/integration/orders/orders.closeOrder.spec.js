@@ -11,7 +11,7 @@ describe('orders: Close Order', () => {
   const orderLine = { ...BasicOrderLine.defaultOrderLine };
 
   before(() => {
-    cy.getToken(Cypress.env('diku_login'), Cypress.env('diku_password'));
+    cy.getAdminToken();
     cy.getOrganizationApi({ query: 'name="Amazon.com"' })
       .then(organization => {
         order.vendor = organization.id;
@@ -25,6 +25,10 @@ describe('orders: Close Order', () => {
     cy.login(Cypress.env('diku_login'), Cypress.env('diku_password'));
   });
 
+  after(() => {
+    cy.deleteOrderApi(order.id);
+  });
+
   it('C667 Close an existing order', { tags: [TestType.smoke] }, () => {
     Orders.createOrderWithOrderLineViaApi(order, orderLine)
       .then(orderNumber => {
@@ -36,7 +40,7 @@ describe('orders: Close Order', () => {
         Orders.closeThirdPane();
         Orders.resetFilters();
         Orders.selectStatusInSearch('Closed');
-        Orders.checkSearchResults(orderNumber);
+        Orders.checkSearchResultsWithClosedOrder(orderNumber);
       });
   });
 });

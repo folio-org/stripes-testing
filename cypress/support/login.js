@@ -39,3 +39,7 @@ Cypress.Commands.add('logout', () => {
 
   cy.expect(Button('Log in', { disabled: true }).exists());
 });
+
+Cypress.Commands.add('loginAsAdmin', (visitPath) => {
+  cy.login(Cypress.env('diku_login'), Cypress.env('diku_password'), visitPath);
+});

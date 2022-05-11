@@ -18,7 +18,7 @@ describe('ui-invoices: Credit Invoice creation', () => {
   const subtotalValue = 100;
 
   before(() => {
-    cy.getToken(Cypress.env('diku_login'), Cypress.env('diku_password'));
+    cy.getAdminToken();
     cy.getOrganizationApi({ query: `name=${invoice.vendorName}` })
       .then(organization => {
         invoice.accountingCode = organization.erpCode;

@@ -22,10 +22,7 @@ describe('ui-data-import: Filter the "View all" log screen', () => {
       Cypress.env('diku_login'),
       Cypress.env('diku_password')
     );
-    cy.getToken(
-      Cypress.env('diku_login'),
-      Cypress.env('diku_password')
-    );
+    cy.getAdminToken();
 
     // Create files dynamically with given name and content in fixtures
     FileManager.createFile(`cypress/fixtures/${fileNameForFailedImport}`);

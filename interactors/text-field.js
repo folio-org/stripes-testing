@@ -44,3 +44,9 @@ export default HTML.extend('text field')
     fillIn: ({ find }, value) => find(TextField()).fillIn(value),
     focus: ({ find }) => find(TextField()).focus(),
   });
+
+export const TextFieldIcon = HTML.extend('text field icon')
+  .selector('div[class^=textFieldIcon-]')
+  .filters({
+    id: (el) => el.querySelector('span').id
+  });

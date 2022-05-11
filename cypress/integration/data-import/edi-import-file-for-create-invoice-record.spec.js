@@ -20,10 +20,7 @@ describe('ui-data-import: EDIFACT file import with creating of new invoice recor
       Cypress.env('diku_login'),
       Cypress.env('diku_password')
     );
-    cy.getToken(
-      Cypress.env('diku_login'),
-      Cypress.env('diku_password')
-    );
+    cy.getAdminToken();
 
     DataImport.checkUploadState();
   });

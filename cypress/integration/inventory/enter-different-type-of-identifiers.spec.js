@@ -12,7 +12,7 @@ describe('ui-inventory: Enter different type of identifiers', () => {
 
   beforeEach('navigate to inventory', () => {
     cy.login(Cypress.env('diku_login'), Cypress.env('diku_password'));
-    cy.getToken(Cypress.env('diku_login'), Cypress.env('diku_password'))
+    cy.getAdminToken()
       .then(() => {
         cy.getInstanceTypes({ limit: 1 });
         cy.getInstanceIdentifierTypes({ limit: 1 });
