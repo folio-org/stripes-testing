@@ -104,4 +104,28 @@ export default {
     cy.do(rootPaneset.find(Button({ id:`clickable-cancel-settings-owners-${rowNumber}` })).click());
     cy.expect(addButton.has({ disabled: false }));
   },
+  createViaApi: (owner) => {
+    return cy.okapiRequest({
+      method: 'POST',
+      path: 'owners',
+      body: owner,
+      isDefaultSearchParamsRequired: false
+    });
+  },
+  getOwnerViaApi: (searchParams) => {
+    cy.okapiRequest({
+      path: 'owners',
+      searchParams,
+    })
+      .then(owner => {
+        cy.wrap(owner.body.owners[0]).as('owner');
+      });
+    return cy.get('@owner');
+  },
+  deleteViaApi:  (ownerId) => {
+    cy.okapiRequest({
+      method: 'DELETE',
+      path: `owners/${ownerId}`,
+    });
+  }
 };

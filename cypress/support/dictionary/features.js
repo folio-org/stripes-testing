@@ -4,4 +4,5 @@ export default { quickMarcEditor: 'quickMarcEditor',
   tags: 'tags',
   holdingsRecord: 'holdingsRecord',
   instanceRecord: 'instanceRecord',
-  authority: 'MARC Authority' };
+  authority: 'MARC Authority',
+  paymentMethod: 'Payment Method' };
