@@ -65,5 +65,5 @@ export default {
   // Checkout
   checkoutAll: { internal: '', gui: 'Check out: All permissions' },
   // Checkin
-  checkinAll: { internal: '', gui: 'Check in: All permissions' },
+  checkinAll: { internal: '', gui: 'Check in: All permissions' }
 };

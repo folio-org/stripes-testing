@@ -1,3 +1,3 @@
 export default {
-  mainLibraryLocation: 'Main Library',
+  mainLibraryLocation: 'Main Library'
 };
