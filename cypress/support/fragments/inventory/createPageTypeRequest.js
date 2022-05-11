@@ -13,6 +13,7 @@ import {
   Accordion,
   MultiColumnList,
 } from '../../../../interactors';
+import getRandomPostfix from '../../utils/stringTools';
 
 const actionsButton = Button('Actions');
 const saveAndCloseButton = Button({ id: 'clickable-save-request' });
@@ -22,11 +23,20 @@ const loanAndAvailabilitySection = Section({ id: 'acc06' });
 const inventorySearch = TextField({ id: 'input-inventory-search' });
 const searchButton = Button('Search');
 
+function deleteRequestApi(requestId) {
+  return cy.okapiRequest({
+    method: 'DELETE',
+    path: `circulation/requests/${requestId}`,
+    isDefaultSearchParamsRequired: false,
+  });
+}
+
 export default {
+  deleteRequestApi,
   createItemsForGivenStatusesApi() {
     let materialTypeValue = '';
     const instanceRecordData = {
-      instanceTitle: `inst_title-${uuid()}`,
+      instanceTitle: `Automation test instance title ${getRandomPostfix()}`,
       instanceId: uuid(),
       holdingId: uuid(),
       instanceTypeId: null,
@@ -88,7 +98,7 @@ export default {
     cy.do([
       inventorySearch.fillIn(instanceTitle),
       searchButton.click(),
-      MultiColumnListCell({ row: 0, column: instanceTitle }).click(),
+      MultiColumnListCell({ row: 0, column: instanceTitle, columnIndex: 1 }).click(),
     ]);
     cy.expect(Section({ id: 'pane-instancedetails' }).exists());
   },
@@ -129,16 +139,7 @@ export default {
 
   clickItemBarcodeLink(barcode) {
     cy.do(Link(barcode).click());
-    cy.wait(['@getInstanceRelTypes', '@getHoldinsgTypes', '@getRequests']);
     this.verifyInventoryDetailsPage(barcode);
-  },
-
-  deleteRequestApi(requestId) {
-    return cy.okapiRequest({
-      method: 'DELETE',
-      path: `circulation/requests/${requestId}`,
-      isDefaultSearchParamsRequired: false,
-    });
   },
 
   getRequestsCountLink() {
@@ -146,6 +147,12 @@ export default {
     return cy.get(Section({ id: 'acc06' }).find(HTML('Requests')).perform(el => {
       requestsCountLink = el.parentElement.querySelector('a');
     })).then(() => requestsCountLink);
+  },
+
+  findAvailableItem(instance, itemBarcode) {
+    this.findAndOpenInstance(instance.instanceTitle);
+    this.openHoldingsAccordion(instance.holdingId);
+    this.openItem(itemBarcode);
   },
 
   verifyrequestsCountOnItemRecord() {
@@ -183,13 +190,6 @@ export default {
     } else {
       cy.expect(selectUserModal.absent());
     }
-  },
-
-  findAvailableItem(instance, itemBarcode) {
-    console.log(instance.instanceTitle);
-    this.findAndOpenInstance(instance.instanceTitle);
-    this.openHoldingsAccordion(instance.holdingId);
-    this.openItem(itemBarcode);
   },
 
   verifyItemDetailsPrepopulated(itemBarcode) {

@@ -2,13 +2,15 @@ import TestTypes from '../../support/dictionary/testTypes';
 import permissions from '../../support/dictionary/permissions';
 import TopMenu from '../../support/fragments/topMenu';
 import createPageTypeRequest from '../../support/fragments/inventory/createPageTypeRequest';
+import Requests from '../../support/fragments/requests/requests';
 
 describe('ui-inventory: Create page type request', () => {
   let user;
   let defaultServicePointId;
   let instanceData = {};
   let createdItem;
-  let facultyUser;
+  let oldRulesText;
+  let requestPolicyId;
 
   beforeEach(() => {
     cy.getAdminToken()
@@ -28,17 +30,11 @@ describe('ui-inventory: Create page type request', () => {
           permissions.uiUserAccounts.gui,
           permissions.uiUserRequestsAll.gui,
           permissions.requestsAll.gui
-        ]);
+        ], 'faculty');
       })
       .then(userProperties => {
         user = userProperties;
         cy.addServicePointToUser(defaultServicePointId, user.userId);
-      })
-      .then(() => {
-        cy.createTempUser([], 'faculty');
-      })
-      .then(facultyUserProperties => {
-        facultyUser = facultyUserProperties;
       })
       .then(() => {
         cy.login(user.username, user.password);
@@ -57,11 +53,16 @@ describe('ui-inventory: Create page type request', () => {
             cy.intercept('GET', '/instance-relationship-types?*').as('getInstanceRelTypes');
           });
       });
+
+    Requests.setRequestPolicyApi().then(({ oldRulesAsText, policy }) => {
+      oldRulesText = oldRulesAsText;
+      requestPolicyId = policy.id;
+    });
   });
 
   afterEach(() => {
     cy.getItemRequestsApi({
-      query: `"requesterId"="${facultyUser.userId}"`
+      query: `"requesterId"="${user.userId}"`
     }).then(({ body }) => {
       body.requests?.forEach(request => {
         createPageTypeRequest.deleteRequestApi(request.id);
@@ -71,19 +72,20 @@ describe('ui-inventory: Create page type request', () => {
     cy.deleteHoldingRecord(instanceData.holdingId);
     cy.deleteInstanceApi(instanceData.instanceId);
     cy.deleteUser(user.userId);
-    cy.deleteUser(facultyUser.userId);
+    Requests.updateCirculationRulesApi(oldRulesText);
+    Requests.deleteRequestPolicyApi(requestPolicyId);
   });
 
   it('C10930: create a new request with page type for an item with status Available', { tags: [TestTypes.smoke] }, () => {
     cy.visit(TopMenu.inventoryPath);
     createPageTypeRequest.findAvailableItem(instanceData, createdItem.barcode);
     createPageTypeRequest.clickNewRequest(createdItem.barcode);
-    createPageTypeRequest.selectActiveFacultyUser(facultyUser.username);
+    createPageTypeRequest.selectActiveFacultyUser(user.username);
     createPageTypeRequest.saveAndClose();
     createPageTypeRequest.clickItemBarcodeLink(createdItem.barcode);
     createPageTypeRequest.verifyrequestsCountOnItemRecord();
     createPageTypeRequest.clickRequestsCountLink();
-    createPageTypeRequest.clickRequesterBarcode(facultyUser.username);
+    createPageTypeRequest.clickRequesterBarcode(user.username);
     createPageTypeRequest.verifyOpenRequestCounts();
     createPageTypeRequest.clickOpenRequestsCountLink();
   });
