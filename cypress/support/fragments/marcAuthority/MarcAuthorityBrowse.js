@@ -39,7 +39,7 @@ export default {
     cy.expect(rootPaneAuthoritiesFilters.find(Accordion('References')).exists());
   },
   searchBy:(searchOption, value) => {
-    cy.do(mainFilter.selectIndex(searchOption.option));
+    cy.do(mainFilter.selectIndex(searchOption));
     cy.do(mainFilter.fillIn(value));
     cy.do(searchButton.click());
   },

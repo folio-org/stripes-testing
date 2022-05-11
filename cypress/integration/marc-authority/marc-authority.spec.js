@@ -61,11 +61,6 @@ describe('MARC Authority management', () => {
       cy.login(userProperties.username, userProperties.password);
       importFile(MarcAuthority.defaultCreateJobProfile);
     });
-
-    // related with checking of UIMARCAUTH-131
-    // cy.loginAsAdmin();
-    // cy.getAdminToken();
-    // importFile(MarcAuthority.defaultCreateJobProfile);
   });
 
   it('C350572 Edit an Authority record', { tags:  [TestTypes.smoke, Features.authority] }, () => {
@@ -200,7 +195,7 @@ describe('MARC Authority management', () => {
     // already checked into another tests
     MarcAuthorityBrowse.checkFiltersInitialState();
     MarcAuthorityBrowse.checkSearchOptions();
-    MarcAuthorityBrowse.searchBy(MarcAuthorityBrowse.searchOptions.uniformTitle, randomPrefix);
+    MarcAuthorityBrowse.searchBy(MarcAuthorityBrowse.searchOptions.uniformTitle.option, randomPrefix);
     MarcAuthorityBrowse.checkSelectedSearchOption(MarcAuthorityBrowse.searchOptions.uniformTitle);
     MarcAuthorityBrowse.waitLoading();
     // TODO: excess check
