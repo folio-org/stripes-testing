@@ -26,12 +26,7 @@ describe('Renewal', () => {
     id: '',
     barcode: '',
   };
-  const renewOverrideUserData = {
-    firstName,
-    lastName: '',
-    id: '',
-    password: '',
-  };
+  const renewOverrideUserData = { ...renewUserData };
   const LOAN_POLICY_ID = uuid();
   const loanPolicyData = {
     id: LOAN_POLICY_ID,
