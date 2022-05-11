@@ -1,15 +1,3 @@
-import { Section, KeyValue } from '../../../../interactors';
-import dateTools from '../../utils/dateTools';
-
 export default {
   mainLibraryLocation: 'Main Library',
-
-  verifyOrderDateOpened:() => {
-    cy.do(Section({ id:'purchaseOrder' }).find(KeyValue('Date opened')).perform(element => {
-      const rawDate = element.innerText;
-      const parsedDate = Date.parse(rawDate.match(/\d{1,2}\/\d{1,2}\/\d{4},\s\d{1,2}:\d{1,2}\s\w{2}/gm)[0]);
-      // For local run it needs to add 18000000
-      dateTools.verifyDate(parsedDate, 18000000);
-    }));
-  },
 };

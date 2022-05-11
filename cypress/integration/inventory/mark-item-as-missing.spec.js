@@ -28,7 +28,7 @@ describe('ui-inventory: Mark an item as Missing', () => {
       })
       .then(userProperties => {
         user = userProperties;
-        cy.addServicePointToUser([defaultServicePointId], user.userId);
+        cy.addServicePointToUser(defaultServicePointId, user.userId);
       })
       .then(() => {
         cy.login(user.username, user.password);

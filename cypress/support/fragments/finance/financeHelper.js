@@ -42,10 +42,7 @@ export default {
   },
 
   selectFromResultsList: (rowNumber = 0) => {
-    cy.intercept('/configurations/entries?*').as('getEntries');
-    // TODO select order with number 
     cy.do(MultiColumnListRow({ index: rowNumber }).click());
-    cy.wait('@getEntries');
   },
 
   checkZeroSearchResultsMessage : () => {

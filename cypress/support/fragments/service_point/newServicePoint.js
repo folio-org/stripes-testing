@@ -5,7 +5,7 @@ import Campuses from '../settings/tenant/campuses';
 import Institutions from '../settings/tenant/institutions';
 
 export default {
-// TODO move to settings fragment
+
   defaultUiServicePoint: {
     body: {
       code: `autotest_code_${getRandomPostfix()}`,
@@ -14,18 +14,6 @@ export default {
       name: `autotest_service_${getRandomPostfix()}`,
     }
   },
-
-  getDefaulServicePoint:() => {
-    return {
-      body: {
-        code: `autotest_code_${getRandomPostfix()}`,
-        discoveryDisplayName: `autotest_discovery_display_name_${getRandomPostfix()}`,
-        id: uuid(),
-        name: `autotest_service_${getRandomPostfix()}`,
-      }
-    };
-  },
-
   defaultUiLibraries: {
     body: {
       campusId: uuid(),

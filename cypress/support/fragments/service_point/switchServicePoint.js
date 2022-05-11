@@ -1,30 +1,15 @@
 import NewServicePoint from './newServicePoint';
-import {
-  TextField,
-  Dropdown,
-  MultiColumnList,
-  Button,
-  Pane,
-  Select,
-  Modal,
-  Accordion,
-  HTML,
-  including,
-  MultiColumnListCell
-} from '../../../../interactors';
+import { TextField, Dropdown, MultiColumnList, Button, Pane, Select, Modal, Accordion, HTML, including, MultiColumnListCell } from '../../../../interactors';
 import TopMenu from '../topMenu';
 import defaultUser from '../user/defaultUser';
 import permissions from '../../dictionary/permissions';
-import SelectServicePointModal from './selectServicePointModal';
-
-const searchButton = Button('Search');
 
 export default {
   addServicePointPermissions: (username) => {
     cy.visit(TopMenu.usersPath);
     cy.do([
       TextField({ id: 'input-user-search' }).fillIn(username),
-      searchButton.click(),
+      Button('Search').click(),
       MultiColumnList().click({ row: 0, column: 'Active' }),
       Pane({ id: 'pane-userdetails' }).find(Button('Actions')).click(),
       Button({ id: 'clickable-edituser' }).click()]);
@@ -41,7 +26,7 @@ export default {
       Button({ id: 'accordion-toggle-button-permissions' }).click(),
       Button({ id: 'clickable-add-permission' }).click(),
       Modal({ id: 'permissions-modal' }).find(TextField({ type: 'search' })).fillIn(permissions.uiCheckinAll.gui),
-      Modal({ id: 'permissions-modal' }).find(searchButton).click(),
+      Modal({ id: 'permissions-modal' }).find(Button('Search')).click(),
       Modal({ id: 'permissions-modal' }).find(MultiColumnListCell(permissions.uiCheckinAll.gui)).click()]);
     cy.expect(Modal({ id: 'permissions-modal' }).find(HTML(including('Total selected: 1'))));
     cy.do(Button({ id: 'clickable-permissions-modal-save' }).click());
@@ -62,19 +47,12 @@ export default {
   changeServicePointPreference: () => {
     cy.visit(TopMenu.usersPath);
     cy.do(TextField({ id: 'input-user-search' }).fillIn(defaultUser.defaultUiPatron.body.userName));
-    cy.do(searchButton.click());
+    cy.do(Button('Search').click());
     cy.do(MultiColumnList().click({ row: 0, column: 'Active' }));
     cy.do(Pane({ id: 'pane-userdetails' }).find(Button('Actions')).click());
     cy.do(Button({ id: 'clickable-edituser' }).click());
     cy.do(Button({ id: 'accordion-toggle-button-servicePoints' }).click());
     cy.do(Select({ id: 'servicePointPreference' }).choose('None'));
     cy.do(Button({ id: 'clickable-save' }).click());
-  },
-  switchServicePoint:(servicePoint) => {
-    cy.do([
-      Dropdown('My profile').open(),
-      Button('Switch service point').click()
-    ]);
-    SelectServicePointModal.selectServicePoint(servicePoint);
   }
 };
