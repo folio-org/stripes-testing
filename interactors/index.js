@@ -37,7 +37,7 @@ export { default as RichEditor } from './rich-text-editor';
 export { default as SearchField } from './search-field';
 export { default as Select } from './select';
 export { default as Selection, SelectionList, SelectionOption } from './selection';
-export { default as TextField } from './text-field';
+export { default as TextField, TextFieldIcon } from './text-field';
 export { default as TextArea } from './textarea';
 export { Tooltip, TooltipProximity } from './tooltip';
 export { dispatchFocusout } from './util';
