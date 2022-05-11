@@ -169,7 +169,6 @@ describe('MARC Authority management', () => {
     MarcAuthorityBrowse.checkPresentedColumns();
   });
 
-  // TODO: excess steps should be moved into test C350578
   it('C350513 Browse authority - handling for when there is no exact match', { tags:  [TestTypes.smoke, Features.authority] }, () => {
     // update created marc authority
     MarcAuthority.edit();
