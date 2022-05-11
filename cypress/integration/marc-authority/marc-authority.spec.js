@@ -18,9 +18,7 @@ import dataImportSettingsJobProfiles from '../../support/fragments/settings/data
 
 describe('MARC Authority management', () => {
   let userId = '';
-
-  const marcAuthorityIds = [];
-
+  let marcAuthorityIds = [];
 
   const importFile = (profileName) => {
     const uniqueFileName = `autotestFile.${getRandomPostfix()}.mrc`;
@@ -53,22 +51,21 @@ describe('MARC Authority management', () => {
 
   beforeEach(() => {
     cy.createTempUser([
-      // Permissions.moduleDataImportEnabled.gui,
-      // Permissions.uiMarcAuthoritiesAuthorityRecordEdit.gui,
-      // Permissions.uiMarcAuthoritiesAuthorityRecordView.gui,
-      // Permissions.uiQuickMarcQuickMarcAuthoritiesEditorAll.gui,
-      // TODO: clarify why TCs doesn't have this permission in precondition(C350666)
-      //Permissions.dataImportUploadAll.gui
-
       Permissions.settingsDataImportEnabled.gui,
       Permissions.moduleDataImportEnabled.gui,
-      'MARC Authority: View MARC authority record',
-      'MARC Authority: Edit MARC authority record'
+      Permissions.uiMarcAuthoritiesAuthorityRecordView.gui,
+      Permissions.uiMarcAuthoritiesAuthorityRecordEdit.gui,
+      Permissions.uiMarcAuthoritiesAuthorityRecordDelete.gui
     ]).then(userProperties => {
       userId = userProperties.userId;
       cy.login(userProperties.username, userProperties.password);
       importFile(MarcAuthority.defaultCreateJobProfile);
     });
+
+    // related with checking of UIMARCAUTH-131
+    // cy.loginAsAdmin();
+    // cy.getAdminToken();
+    // importFile(MarcAuthority.defaultCreateJobProfile);
   });
 
   it('C350572 Edit an Authority record', { tags:  [TestTypes.smoke, Features.authority] }, () => {
@@ -215,7 +212,8 @@ describe('MARC Authority management', () => {
   });
 
   afterEach(() => {
-    // new Set(marcAuthorityIds).forEach(marcAuthorityId => MarcAuthority.deleteViaAPI(marcAuthorityId));
-    // cy.deleteUser(userId);
+    new Set(marcAuthorityIds).forEach(marcAuthorityId => MarcAuthority.deleteViaAPI(marcAuthorityId));
+    marcAuthorityIds = [];
+    cy.deleteUser(userId);
   });
 });
