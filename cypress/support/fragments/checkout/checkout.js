@@ -1,7 +1,10 @@
+import uuid from 'uuid';
+import moment from 'moment';
 import {
   TextField,
   Button,
 } from '../../../../interactors';
+import { REQUEST_METHOD } from '../../constants';
 
 export default {
   fillUserBarcode(barcode) {
@@ -17,11 +20,20 @@ export default {
     cy.wait(3500);
     cy.do(Button({ href: `/users/${id}/loans/open` }).click());
   },
-  checkoutItemApi(servicePointId, itemBarcode, userBarcode) {
-    return cy.createItemCheckout({
-      servicePointId,
-      itemBarcode,
-      userBarcode,
-    });
+  createItemCheckoutApi(body) {
+    const checkoutId = uuid();
+
+    return cy.okapiRequest({
+      method: REQUEST_METHOD.POST,
+      path: 'circulation/check-out-by-barcode',
+      body: {
+        id: checkoutId,
+        loanDate: moment.utc(),
+        ...body,
+      },
+    })
+      .then(checkedOutItem => {
+        return checkedOutItem.body;
+      });
   },
 };

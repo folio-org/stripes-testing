@@ -1,4 +1,5 @@
 import uuid from 'uuid';
+import moment from 'moment';
 import TestType from '../../support/dictionary/testTypes';
 import renewalActions from '../../support/fragments/loans/renewals';
 import generateItemBarcode from '../../support/utils/generateItemBarcode';
@@ -128,15 +129,23 @@ describe('Renewal', () => {
       })
       // checkout item
       .then(() => {
-        checkoutActions.checkoutItemApi(servicePointId, itemData.barcode, renewUserData.barcode)
-          .then(checkedItem => {
-            loanId = checkedItem.body.id;
+        checkoutActions.createItemCheckoutApi({
+          servicePointId,
+          itemBarcode: itemData.barcode,
+          userBarcode: renewUserData.barcode
+        })
+          .then(body => {
+            loanId = body.id;
           });
       });
   });
 
   after(() => {
-    checkinActions.createItemCheckinApi(itemData.barcode, servicePointId)
+    checkinActions.createItemCheckinApi({
+      itemBarcode: itemData.barcode,
+      servicePointId,
+      checkInDate: moment.utc().format(),
+    })
       .then(() => {
         cy.deleteUser(renewUserData.id);
         cy.deleteUser(renewOverrideUserData.id);

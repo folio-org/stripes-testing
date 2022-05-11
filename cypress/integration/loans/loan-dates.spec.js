@@ -9,6 +9,7 @@ import ChangeDueDateForm from '../../support/fragments/loans/changeDueDateForm';
 import CheckOutActions from '../../support/fragments/check-out-actions/check-out-actions';
 import DateTools from '../../support/utils/dateTools';
 import NewRequest from '../../support/fragments/requests/newRequest';
+import checkinActions from '../../support/fragments/check-in-actions/checkInActions';
 
 const item = {
   barcode: `123${getRandomPostfix()}`,
@@ -82,7 +83,7 @@ describe('loan dates', () => {
   });
 
   after('Delete all data', () => {
-    cy.createItemCheckinApi({
+    checkinActions.createItemCheckinApi({
       itemBarcode: item.barcode,
       servicePointId: Cypress.env('servicePoints')[0].id,
       checkInDate: '2021-09-30T16:14:50.444Z',
