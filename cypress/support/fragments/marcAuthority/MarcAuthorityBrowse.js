@@ -1,8 +1,6 @@
 import { Accordion, Button, MultiColumnListHeader, SearchField, Section, HTML, including, MultiColumnListRow, MultiColumnListCell } from '../../../../interactors';
 
 
-// TODO: can't see expected in testrail value "Name"
-// TODO: see not presented in testrail value "Uniform title"
 const searchOptions = { selectBrowseOption: { option: 'Select a browse option' },
   personalName: { option: 'Personal name', value:'perosnalName' },
   corporateConferenceName:{ option:'Corporate/Conference name', value: 'corporateNameTitle' },
@@ -32,6 +30,7 @@ export default {
     cy.expect(rootSection.find(MultiColumnListRow({ indexRow: getFirstLineIndexRow(0) })).exists());
   },
   checkPresentedColumns:() => presentedColumns.forEach(columnName => cy.expect(rootSection.find(MultiColumnListHeader(columnName)).exists())),
+  // TODO: add checing of ""Type of heading" accordion button."
   checkFiltersInitialState:() => {
     cy.expect(mainFilter.has({ selectedFilter:defaultMainFilterValue.htmlValue }));
     cy.expect(searchButton.has({ disabled:true }));

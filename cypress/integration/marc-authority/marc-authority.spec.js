@@ -167,7 +167,6 @@ describe('MARC Authority management', () => {
     MarcAuthorityBrowse.searchBy(MarcAuthorityBrowse.searchOptions.uniformTitle.option, MarcAuthority.defaultAuthority.headingReference);
     MarcAuthorityBrowse.waitLoading();
     MarcAuthorityBrowse.checkPresentedColumns();
-    // TODO: add checking of records order
   });
 
   // TODO: excess steps should be moved into test C350578
@@ -192,14 +191,10 @@ describe('MARC Authority management', () => {
 
     MarcAuthorities.switchToBrowse();
     MarcAuthorityBrowse.waitEmptyTable();
-    // already checked into another tests
-    MarcAuthorityBrowse.checkFiltersInitialState();
     MarcAuthorityBrowse.checkSearchOptions();
     MarcAuthorityBrowse.searchBy(MarcAuthorityBrowse.searchOptions.uniformTitle.option, randomPrefix);
     MarcAuthorityBrowse.checkSelectedSearchOption(MarcAuthorityBrowse.searchOptions.uniformTitle);
     MarcAuthorityBrowse.waitLoading();
-    // TODO: excess check
-    MarcAuthorityBrowse.checkPresentedColumns();
 
     MarcAuthorityBrowse.checkHeadingReferenceInRow(0, MarcAuthorityBrowse.getNotExistingHeadingReferenceValue(randomPrefix), false);
     MarcAuthorityBrowse.checkHeadingReferenceInRow(1, `${randomPrefix} A`, true);
