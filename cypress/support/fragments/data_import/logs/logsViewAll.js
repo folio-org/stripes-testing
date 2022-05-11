@@ -82,8 +82,9 @@ export default {
   },
 
   filterJobsByUser(user) {
-    cy.do([Accordion({ id: 'userId' }).clickHeader(),
-      Selection({ value: 'Choose user' }).open(),
+    cy.do([
+      Accordion({ id: 'userId' }).clickHeader(),
+      Accordion({ id: 'userId' }).find(Selection({ singleValue: 'Choose user' })).open(),
       SelectionList().select(user)
     ]);
   },
@@ -133,7 +134,7 @@ export default {
       cy.get('[data-row-index]')
         .should('have.length', count)
         .then(() => {
-          this.getMultiColumnListCellsValues(2).then(statuses => {
+          this.getMultiColumnListCellsValues(3).then(statuses => {
           // if filter is 'Yes', then check for error otherwise, completed status
             const expectedStatuses = filter === 'Yes' ? ['Failed', 'Completed with errors'] : ['Completed'];
             // each status in the statuses array should be in the expectedStatuses array
@@ -160,7 +161,7 @@ export default {
       cy.get('[data-row-index]')
         .should('have.length', count)
         .then(() => {
-          this.getMultiColumnListCellsValues(4).then(jobProfiles => {
+          this.getMultiColumnListCellsValues(5).then(jobProfiles => {
             // each profile name in the jobProfiles array should be equal to jobProfileName
             const isFilteredByProfile = jobProfiles.every(name => name === jobProfileName);
 
@@ -177,7 +178,7 @@ export default {
       cy.get('[data-row-index]')
         .should('have.length', count)
         .then(() => {
-          this.getMultiColumnListCellsValues(6).then(userNames => {
+          this.getMultiColumnListCellsValues(7).then(userNames => {
             // each name in the userNames array should be equal to the userName
             const isFilteredByUser = userNames.every(name => name === userName);
 
@@ -197,7 +198,7 @@ export default {
         cy.get('[data-row-index]')
           .should('have.length', count)
           .then(() => {
-            this.getMultiColumnListCellsValues(4).then(profiles => {
+            this.getMultiColumnListCellsValues(5).then(profiles => {
               const inventorySingleRecordProfiles = [
                 'Inventory Single Record - Default Create Instance',
                 'Inventory Single Record - Default Update Instance'

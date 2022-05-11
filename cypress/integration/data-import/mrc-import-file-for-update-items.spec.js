@@ -36,72 +36,80 @@ describe('ui-data-import: MARC file upload with the update of instance, holding,
   const jobProfileNameCreate = `autotest_job_profile_${getRandomPostfix()}`;
 
   const marcBibMappingProfile = {
-    id: '',
-    name: nameMarcBibMappingProfile,
-    incomingRecordType: 'MARC_BIBLIOGRAPHIC',
-    existingRecordType: 'MARC_BIBLIOGRAPHIC',
-    mappingDetails: { name: 'holdings',
-      recordType: 'MARC_BIBLIOGRAPHIC',
-      marcMappingDetails: [{
-        order: 0,
-        action: 'ADD',
-        field: {
-          field: '650',
-          indicator2: '4',
-          subfields: [{
-            subfield: 'a',
-            data: {
-              text: 'Test update'
-            }
-          }]
-        }
-      }],
-      marcMappingOption: 'MODIFY' }
+    profile:{
+      id: '',
+      name: nameMarcBibMappingProfile,
+      incomingRecordType: 'MARC_BIBLIOGRAPHIC',
+      existingRecordType: 'MARC_BIBLIOGRAPHIC',
+      mappingDetails: { name: 'holdings',
+        recordType: 'MARC_BIBLIOGRAPHIC',
+        marcMappingDetails: [{
+          order: 0,
+          action: 'ADD',
+          field: {
+            field: '650',
+            indicator2: '4',
+            subfields: [{
+              subfield: 'a',
+              data: {
+                text: 'Test update'
+              }
+            }]
+          }
+        }],
+        marcMappingOption: 'MODIFY' }
+    }
   };
 
   const instanceMappingProfile = {
-    id: '',
-    name: nameInstanceMappingProfile,
-    incomingRecordType: 'MARC_BIBLIOGRAPHIC',
-    existingRecordType: 'INSTANCE',
+    profile:{
+      id: '',
+      name: nameInstanceMappingProfile,
+      incomingRecordType: 'MARC_BIBLIOGRAPHIC',
+      existingRecordType: 'INSTANCE',
+    }
   };
 
   const holdingsMappingProfile = {
-    id: '',
-    name: nameHoldingsMappingProfile,
-    incomingRecordType: 'MARC_BIBLIOGRAPHIC',
-    existingRecordType: 'HOLDINGS',
-    mappingDetails: { name: 'holdings',
-      recordType: 'HOLDINGS',
-      mappingFields: [
-        { name: 'permanentLocationId',
-          enabled: true,
-          path: 'holdings.permanentLocationId',
-          value: '"Annex (KU/CC/DI/A)"' }] }
+    profile:{
+      id: '',
+      name: nameHoldingsMappingProfile,
+      incomingRecordType: 'MARC_BIBLIOGRAPHIC',
+      existingRecordType: 'HOLDINGS',
+      mappingDetails: { name: 'holdings',
+        recordType: 'HOLDINGS',
+        mappingFields: [
+          { name: 'permanentLocationId',
+            enabled: true,
+            path: 'holdings.permanentLocationId',
+            value: '"Annex (KU/CC/DI/A)"' }] }
+    }
   };
 
   const itemMappingProfile = {
-    id: '',
-    name: nameItemMappingProfile,
-    incomingRecordType: 'MARC_BIBLIOGRAPHIC',
-    existingRecordType: 'ITEM',
-    mappingDetails: { name: 'item',
-      recordType: 'ITEM',
-      mappingFields: [
-        { name: 'materialType.id',
-          enabled: true,
-          path: 'item.materialType.id',
-          value: '"book"',
-          acceptedValues: { '1a54b431-2e4f-452d-9cae-9cee66c9a892': 'book' } },
-        { name: 'permanentLoanType.id',
-          enabled: true,
-          path: 'item.permanentLoanType.id',
-          value: '"Can circulate"',
-          acceptedValues: { '2b94c631-fca9-4892-a730-03ee529ffe27': 'Can circulate' } },
-        { name: 'status.name',
-          enabled: true,
-          path: 'item.status.name',
-          value: '"In process"' }] }
+    profile:{
+      id: '',
+      name: nameItemMappingProfile,
+      incomingRecordType: 'MARC_BIBLIOGRAPHIC',
+      existingRecordType: 'ITEM',
+      mappingDetails: { name: 'item',
+        recordType: 'ITEM',
+        mappingFields: [
+          { name: 'materialType.id',
+            enabled: true,
+            path: 'item.materialType.id',
+            value: '"book"',
+            acceptedValues: { '1a54b431-2e4f-452d-9cae-9cee66c9a892': 'book' } },
+          { name: 'permanentLoanType.id',
+            enabled: true,
+            path: 'item.permanentLoanType.id',
+            value: '"Can circulate"',
+            acceptedValues: { '2b94c631-fca9-4892-a730-03ee529ffe27': 'Can circulate' } },
+          { name: 'status.name',
+            enabled: true,
+            path: 'item.status.name',
+            value: '"In process"' }] }
+    }
   };
 
   const marcBibActionProfile = {
@@ -247,7 +255,10 @@ describe('ui-data-import: MARC file upload with the update of instance, holding,
     JobProfiles.searchJobProfileForImport(testData.jobProfileForCreate.profile.name);
     JobProfiles.runImportFile(nameMarcFileForImportCreate);
     Logs.openFileDetails(nameMarcFileForImportCreate);
-    FileDetails.checkUpdatedCreatedItems();
+    FileDetails.checkStatusInColumn(FileDetails.status.updated, FileDetails.columnName.srsMarc);
+    FileDetails.checkStatusInColumn(FileDetails.status.created, FileDetails.columnName.instance);
+    FileDetails.checkStatusInColumn(FileDetails.status.created, FileDetails.columnName.holdings);
+    FileDetails.checkStatusInColumn(FileDetails.status.created, FileDetails.columnName.item);
 
     // get Instance HRID through API
     SearchInventory
@@ -374,7 +385,10 @@ describe('ui-data-import: MARC file upload with the update of instance, holding,
     JobProfiles.searchJobProfileForImport(jobProfileForUpdate.profileName);
     JobProfiles.runImportFile(nameMarcFileForImportUpdate);
     Logs.openFileDetails(nameMarcFileForImportUpdate);
-    FileDetails.checkUpdatedItems();
+    FileDetails.checkStatusInColumn(FileDetails.status.updated, FileDetails.columnName.srsMarc);
+    FileDetails.checkStatusInColumn(FileDetails.status.updated, FileDetails.columnName.instance);
+    FileDetails.checkStatusInColumn(FileDetails.status.updated, FileDetails.columnName.holdings);
+    FileDetails.checkStatusInColumn(FileDetails.status.updated, FileDetails.columnName.item);
 
     // delete generated profiles
     JobProfiles.deleteJobProfile(jobProfileNameUpdate);

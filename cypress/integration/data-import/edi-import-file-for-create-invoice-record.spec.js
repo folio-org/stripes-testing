@@ -32,6 +32,7 @@ describe('ui-data-import: EDIFACT file import with creating of new invoice recor
     DataImport.checkUploadState();
   });
 
+  // TODO: https://issues.folio.org/browse/UIDATIMP-1167
   it('C343338 EDIFACT file import with creating of new invoice record', { tags: [TestTypes.smoke] }, () => {
     // unique name for profiles
     const mappingProfileName = `autoTestMappingProf.${getRandomPostfix()}`;
@@ -79,7 +80,7 @@ describe('ui-data-import: EDIFACT file import with creating of new invoice recor
     Logs.checkImportFile(jobProfile.profileName);
     Logs.checkStatusOfJobProfile();
     Logs.openFileDetails(fileName);
-    FileDetails.checkIsInvoiceCreated();
+    FileDetails.checkStatusInColumn(FileDetails.status.created, FileDetails.columnName.invoice);
     InvoiceView.checkInvoiceDetails(InvoiceView.vendorInvoiceNumber);
 
     // clean up generated profiles

@@ -67,7 +67,8 @@ describe('ui-data-import: Verify the possibility to modify MARC Bibliographic re
     JobProfiles.searchJobProfileForImport('Default - Create instance and SRS MARC Bib');
     JobProfiles.runImportFile(nameMarcFileForCreate);
     Logs.openFileDetails(nameMarcFileForCreate);
-    FileDetails.checkCreatedSrsAndInstance();
+    FileDetails.checkStatusInColumn(FileDetails.status.created, FileDetails.columnName.srsMarc);
+    FileDetails.checkStatusInColumn(FileDetails.status.created, FileDetails.columnName.instance);
 
     // get Instance HRID through API
     SearchInventory
@@ -134,10 +135,11 @@ describe('ui-data-import: Verify the possibility to modify MARC Bibliographic re
     DataImport.uploadFile(nameMarcFileForUpload);
     JobProfiles.searchJobProfileForImport(jobProfile.profileName);
     JobProfiles.runImportFile(nameMarcFileForUpload);
-    Logs.checkImportFile(jobProfile.profileName);
     Logs.checkStatusOfJobProfile();
+    Logs.checkImportFile(jobProfile.profileName);
     Logs.openFileDetails(nameMarcFileForUpload);
-    FileDetails.checkUpdatedSrsAndInstance();
+    FileDetails.checkStatusInColumn(FileDetails.status.updated, FileDetails.columnName.srsMarc);
+    FileDetails.checkStatusInColumn(FileDetails.status.updated, FileDetails.columnName.instance);
 
     // delete profiles
     JobProfiles.deleteJobProfile(jobProfileName);

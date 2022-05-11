@@ -91,7 +91,10 @@ describe('ui-data-import: MARC file import with creating of the new instance, ho
     Logs.checkStatusOfJobProfile();
     Logs.checkImportFile(specialJobProfile.profileName);
     Logs.openFileDetails(fileName);
-    FileDetails.checkCreatedItems();
+    FileDetails.checkStatusInColumn(FileDetails.status.created, FileDetails.columnName.srsMarc);
+    FileDetails.checkStatusInColumn(FileDetails.status.created, FileDetails.columnName.instance);
+    FileDetails.checkStatusInColumn(FileDetails.status.created, FileDetails.columnName.holdings);
+    FileDetails.checkStatusInColumn(FileDetails.status.created, FileDetails.columnName.item);
 
     // delete generated profiles
     JobProfiles.deleteJobProfile(specialJobProfile.profileName);
