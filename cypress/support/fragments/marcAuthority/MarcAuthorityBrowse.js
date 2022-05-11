@@ -1,4 +1,4 @@
-import { Accordion, Button, MultiColumnListHeader, SearchField, Section, HTML, including, MultiColumnListRow, Select, SelectionOption, MultiColumnListCell } from '../../../../interactors';
+import { Accordion, Button, MultiColumnListHeader, SearchField, Section, HTML, including, MultiColumnListRow, MultiColumnListCell } from '../../../../interactors';
 
 
 // TODO: can't see expected in testrail value "Name"
