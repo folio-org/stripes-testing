@@ -42,29 +42,6 @@ describe('Renewal', () => {
   };
 
   before(() => {
-    // create first user
-    cy.createTempUser([
-      permissions.loansView.gui,
-      permissions.loansRenew.gui,
-    ])
-      .then(userProperties => {
-        renewUserData.lastName = userProperties.username;
-        renewUserData.id = userProperties.userId;
-        renewUserData.barcode = userProperties.barcode;
-
-        cy.login(userProperties.username, userProperties.password);
-      });
-    // create second user
-    cy.createTempUser([
-      permissions.loansView.gui,
-      permissions.loansRenew.gui,
-      permissions.loansRenewOverride.gui,
-    ])
-      .then(userProperties => {
-        renewOverrideUserData.lastName = userProperties.username;
-        renewOverrideUserData.id = userProperties.userId;
-        renewOverrideUserData.password = userProperties.password;
-      });
     cy.getAdminToken()
       .then(() => {
         cy.getInstanceTypes({ limit: 1 });
@@ -87,6 +64,31 @@ describe('Renewal', () => {
         cy.getServicePointsApi({ pickupLocation: true })
           .then(servicePoints => {
             servicePointId = servicePoints[0].id;
+          });
+      })
+      .then(() => {
+        // create first user
+        cy.createTempUser([
+          permissions.loansView.gui,
+          permissions.loansRenew.gui,
+        ])
+          .then(userProperties => {
+            renewUserData.lastName = userProperties.username;
+            renewUserData.id = userProperties.userId;
+            renewUserData.barcode = userProperties.barcode;
+
+            cy.login(userProperties.username, userProperties.password);
+          });
+        // create second user
+        cy.createTempUser([
+          permissions.loansView.gui,
+          permissions.loansRenew.gui,
+          permissions.loansRenewOverride.gui,
+        ])
+          .then(userProperties => {
+            renewOverrideUserData.lastName = userProperties.username;
+            renewOverrideUserData.id = userProperties.userId;
+            renewOverrideUserData.password = userProperties.password;
           });
       })
       // create instance
