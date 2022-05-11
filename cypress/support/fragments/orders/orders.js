@@ -1,4 +1,4 @@
-import { Button, SearchField, PaneHeader, Pane, Select, Accordion, KeyValue, Checkbox, MultiColumnList, MultiColumnListCell, MultiColumnListRow, Modal, TextField, SelectionOption} from '../../../../interactors';
+import { Button, SearchField, PaneHeader, Pane, Select, Accordion, KeyValue, Checkbox, MultiColumnList, MultiColumnListCell, MultiColumnListRow, Modal, TextField, SelectionOption } from '../../../../interactors';
 import SearchHelper from '../finance/financeHelper';
 import InteractorsTools from '../../utils/interactorsTools';
 
@@ -54,6 +54,35 @@ export default {
     ]);
   },
 
+  editOrder: () => {
+    cy.do([
+      orderDetailsPane
+        .find(PaneHeader({ id: 'paneHeaderorder-details' })
+          .find(actionsButton)).click(),
+      Button('Edit').click(),
+    ]);
+  },
+  assignOrderToAdmin: (rowNumber = 0) => {
+    cy.do([
+      Button({ id: 'clickable-plugin-find-user' }).click(),
+      TextField({ name: 'query' }).fillIn(admin),
+      searchButton.click(),
+      MultiColumnListRow({ index: rowNumber }).click(),
+    ]);
+  },
+  saveEditingOrder : () => {
+    cy.do(saveAndClose.click());
+  },
+  selectOngoingOrderType: () => {
+    cy.do(Select({ name: 'orderType' }).choose('Ongoing'));
+  },
+  fillOngoingInformation: (newDate) => {
+    cy.do([
+      Checkbox({ name: 'ongoing.isSubscription' }).click(),
+      TextField({ name: 'ongoing.interval' }).fillIn('1'),
+      TextField({ name: 'ongoing.renewalDate' }).fillIn(newDate),
+    ]);
+  },
   closeOrder: (reason) => {
     cy.do([
       orderDetailsPane
@@ -61,7 +90,7 @@ export default {
           .find(actionsButton)).click(),
       Button('Close order').click(),
       Select('Reason').choose(reason),
-      Button('Submit').click()
+      Button('Submit').click(),
     ]);
     InteractorsTools.checkCalloutMessage('Order was closed');
   },
@@ -132,11 +161,17 @@ export default {
     }
   },
 
-  checkSearchResults: (orderLine) => {
+  checkSearchResults: (orderNumber) => {
     cy.expect(MultiColumnList({ id: 'orders-list' })
       .find(MultiColumnListRow({ index: 0 }))
       .find(MultiColumnListCell({ columnIndex: 0 }))
-      .has({ content: orderLine }));
+      .has({ content: orderNumber }));
+  },
+  checkSearchResultsWithClosedOrder: (orderNumber) => {
+    cy.expect(MultiColumnList({ id: 'orders-list' })
+      .find(MultiColumnListRow({ index: 0 }))
+      .find(MultiColumnListCell({ columnIndex: 0 }))
+      .has({ content: `${orderNumber}\u00a0Canceled` }));
   },
   checkOrderlineSearchResults: (orderLineNumber) => {
     cy.expect(MultiColumnList({ id: 'order-line-list' })
@@ -145,7 +180,10 @@ export default {
       .has({ content: orderLineNumber }));
   },
   closeThirdPane: () => {
-    cy.do(PaneHeader({ id: 'paneHeaderorder-details' }).find(Button({ icon: 'times' })).click());
+    cy.do([
+      Button('Collapse all').click(),
+      PaneHeader({ id: 'paneHeaderorder-details' }).find(Button({ icon: 'times' })).click()
+    ]);
   },
 
   getSearchParamsMap(orderNumber, currentDate) {
@@ -172,6 +210,9 @@ export default {
   },
   selectOpenStatusFilter: () => {
     cy.do(Checkbox('Open').click());
+  },
+  selectClosedStatusFilter: () => {
+    cy.do(Checkbox('Closed').click());
   },
   selectPrefixFilter: () => {
     cy.do([
@@ -212,9 +253,9 @@ export default {
   },
   selectReasonForClosureFilter: () => {
     cy.do([
-      Button({ id: 'accordion-toggle-button-ongoing.renewalDate' }).click(),
+      Button({ id: 'accordion-toggle-button-closeReason.reason' }).click(),
       Button({ id: 'closeReason.reason-selection' }).click(),
-      SelectionOption({ id: '' }).click(),
+      SelectionOption({ id: 'option-closeReason.reason-selection-0-Cancelled' }).click(),
     ]);
   },
   selectReEncumberFilter: () => {
@@ -223,11 +264,11 @@ export default {
       Checkbox({ id: 'clickable-filter-reEncumber-true' }).click(),
     ]);
   },
-  selectRenewalDateFilter: () => {
+  selectRenewalDateFilter: (newDate) => {
     cy.do([
       Button({ id: 'accordion-toggle-button-ongoing.renewalDate' }).click(),
-      Button({ id: 'filter-vendor-button' }).click(),
-      // Modal('Select Organization').find(SearchField({ id: searhInputId })).fillIn(invoice.vendorName),
+      TextField('From').fillIn(newDate),
+      TextField('To').fillIn(newDate),
       Button('Apply').click(),
     ]);
   },
@@ -252,7 +293,7 @@ export default {
       Button('Add PO line').click()
     ]);
   },
-  
+
   selectFilterMainLibraryLocationsPOL: () => {
     cy.do([
       buttonLocationFilter.click(),
