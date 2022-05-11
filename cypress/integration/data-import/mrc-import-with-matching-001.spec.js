@@ -24,10 +24,7 @@ describe('ui-data-import: Test MARC-MARC matching for 001 field', () => {
       Cypress.env('diku_login'),
       Cypress.env('diku_password')
     );
-    cy.getToken(
-      Cypress.env('diku_login'),
-      Cypress.env('diku_password')
-    );
+    cy.getAdminToken();
 
     cy.visit(TopMenu.dataImportPath);
 

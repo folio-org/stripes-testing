@@ -21,7 +21,7 @@ describe('ui-circulation-log', () => {
         userId = userProperties.userId;
         cy.login(userProperties.username, userProperties.password);
         cy.visit(TopMenu.circulationLogPath);
-        cy.getToken(Cypress.env('diku_login'), Cypress.env('diku_password'))
+        cy.getAdminToken()
           .then(() => {
             cy.getLoanTypes({ limit: 1 });
             cy.getMaterialTypes({ limit: 1 });

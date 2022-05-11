@@ -23,3 +23,7 @@ Cypress.Commands.add('setUserPassword', (userCredentials) => {
       body: userCredentials,
     });
 });
+
+Cypress.Commands.add('getAdminToken', () => {
+  cy.getToken(Cypress.env('diku_login'), Cypress.env('diku_password'));
+});
