@@ -1,3 +1,4 @@
+import uuid from 'uuid';
 import {
   HTML,
   including,
@@ -50,4 +51,71 @@ export default {
     cy.do(Section({ id:'instancesTags' }).find(TextField()).click());
     cy.do(Checkbox(tagName).click());
   },
+
+  createInstanceViaApi(instanceName, itemBarcode, publisher = null, holdingCallNumber = '1', itemCallNumber = '2') {
+    let alternativeTitleType = '';
+    const instanceId = uuid();
+    cy.getToken(Cypress.env('diku_login'), Cypress.env('diku_password'))
+      .then(() => {
+        cy.getLoanTypes({ limit: 1 });
+        cy.getMaterialTypes({ limit: 1 });
+        cy.getLocations({ limit: 1 });
+        cy.getHoldingTypes({ limit: 1 });
+        cy.getHoldingSources({ limit: 1 });
+        cy.getInstanceTypes({ limit: 1 });
+        cy.getAlternativeTitlesTypes({ limit: 1, query: 'name="Uniform title"' }).then(titleTypes => {
+          alternativeTitleType = titleTypes[0].id;
+        });
+      })
+      .then(() => {
+        cy.createInstance({
+          instance: {
+            instanceTypeId: Cypress.env('instanceTypes')[0].id,
+            title: instanceName,
+            alternativeTitles: [{
+              alternativeTitleTypeId: alternativeTitleType,
+              alternativeTitle: instanceName
+            }],
+            publication: [{ publisher: publisher ?? 'MIT' }],
+            instanceId
+          },
+          holdings: [{
+            holdingsTypeId: Cypress.env('holdingsTypes')[0].id,
+            permanentLocationId: Cypress.env('locations')[0].id,
+            sourceId: Cypress.env('holdingSources')[0].id,
+          }],
+          items: [
+            [{
+              barcode: itemBarcode,
+              missingPieces: '3',
+              numberOfMissingPieces: '3',
+              status: { name: 'Available' },
+              permanentLoanType: { id: Cypress.env('loanTypes')[0].id },
+              materialType: { id: Cypress.env('materialTypes')[0].id },
+              itemLevelCallNumber: itemCallNumber
+            }],
+          ],
+        });
+      })
+      .then(() => {
+        cy.getHoldings({ limit: 1, query: `"instanceId"="${instanceId}"` })
+          .then((holdings) => {
+            console.log(instanceId);
+            console.log(holdings[0]);
+            cy.updateHoldingRecord(holdings[0].id, {
+              ...holdings[0],
+              callNumber: holdingCallNumber
+            });
+          });
+      });
+  },
+
+  deleteInstanceViaApi(itemBarcode) {
+    cy.getInstance({ limit: 1, expandAll: true, query: `"items.barcode"=="${itemBarcode}"` })
+      .then((instance) => {
+        cy.deleteItem(instance.items[0].id);
+        cy.deleteHoldingRecord(instance.holdings[0].id);
+        cy.deleteInstanceApi(instance.id);
+      });
+  }
 };

@@ -74,3 +74,12 @@ Cypress.Commands.add('deleteLedgerApi', (id) => {
     path: `finance/ledgers/${id}`,
   });
 });
+
+Cypress.Commands.add('getFundsApi', (searchParams) => {
+  cy.okapiRequest({
+    path: 'finance/funds',
+    searchParams,
+  }).then(response => {
+    return response.body.funds;
+  });
+});
