@@ -39,7 +39,7 @@ import {
 import Requests from '../../support/fragments/requests/requests';
 
 describe('ui-inventory: Item status date updates', () => {
-  const order = { ...NewOrder.specialOrder };
+  const order = { ...NewOrder.defaultOrder };
   const instanceTitle = `autotest_title_${getRandomPostfix()}`;
   const orderLine = {
     id: uuid(),
@@ -404,7 +404,7 @@ describe('ui-inventory: Item status date updates', () => {
     InventoryInstance.openHoldings([itemLocation]);
     InventoryInstance.openItemView(itemBarcode1);
     ItemVeiw.verifyUpdatedItemDate();
-    ItemVeiw.verifyItemStatus(ItemVeiw.itemStatuses.awaitingDelivery);
+    //ItemVeiw.verifyItemStatus(ItemVeiw.itemStatuses.awaitingDelivery);
     cy.log('###Awaiting delivery###');
 
     // ##############Check out item to user with delivery request ##Checked out
