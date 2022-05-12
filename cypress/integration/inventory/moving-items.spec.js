@@ -22,7 +22,11 @@ describe('ui-inventory: moving items', () => {
   beforeEach('navigates to Inventory', () => {
     cy.createTempUser([
       permissions.inventoryAll.gui,
-      permissions.uiInventoryMoveItems.gui
+      permissions.uiInventoryMoveItems.gui,
+      permissions.uiInventorySingleRecordImport.gui,
+      permissions.uiQuickMarcQuickMarcHoldingsEditorCreate.gui,
+      'Inventory: Move holdings',
+      'quickMARC: View MARC holdings record'
     ])
       .then(userProperties => {
         userId = userProperties.userId;
@@ -77,13 +81,13 @@ describe('ui-inventory: moving items', () => {
   });
 
   after('Delete all data', () => {
-    cy.getInstance({ limit: 1, expandAll: true, query: `"items.barcode"=="${ITEM_BARCODE}"` })
-      .then(() => {
-        cy.deleteItem(Cypress.env('instances')[0].items[0].id);
-        cy.deleteHoldingRecord(Cypress.env('instances')[0].holdings[0].id);
-        cy.deleteHoldingRecord(Cypress.env('instances')[0].holdings[1].id);
-        cy.deleteInstanceApi(Cypress.env('instances')[0].id);
-      });
+    // cy.getInstance({ limit: 1, expandAll: true, query: `"items.barcode"=="${ITEM_BARCODE}"` })
+    //   .then(() => {
+    //     cy.deleteItem(Cypress.env('instances')[0].items[0].id);
+    //     cy.deleteHoldingRecord(Cypress.env('instances')[0].holdings[0].id);
+    //     cy.deleteHoldingRecord(Cypress.env('instances')[0].holdings[1].id);
+    //     cy.deleteInstanceApi(Cypress.env('instances')[0].id);
+    //   });
     cy.deleteUser(userId);
   });
 
@@ -102,7 +106,7 @@ describe('ui-inventory: moving items', () => {
   });
 
   // TODO: https://issues.folio.org/browse/UIIN-1963
-  it('C345404 Move holdings record with Source = MARC to an instance record with source = MARC', { tags:  [TestTypes.smoke, Features.eHoldings] }, () => {
+  it.only('C345404 Move holdings record with Source = MARC to an instance record with source = MARC', { tags:  [TestTypes.smoke, Features.eHoldings] }, () => {
     InventoryActions.import();
     InventoryInstance.getAssignedHRID().then(initialInstanceHrId => {
       // additional instance record which will linked with holdings record initially

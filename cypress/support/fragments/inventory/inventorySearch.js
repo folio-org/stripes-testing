@@ -125,31 +125,23 @@ export default {
   },
 
   saveUUIDs() {
-    return cy.do([
-      InventoryActions.open(),
-      InventoryActions.options.saveUUIDs.click()
-    ]);
+    InventoryActions.open();
+    cy.do(InventoryActions.options.saveUUIDs.click());
   },
 
   saveCQLQuery() {
-    return cy.do([
-      InventoryActions.open(),
-      InventoryActions.options.saveCQLQuery.click()
-    ]);
+    InventoryActions.open();
+    cy.do(InventoryActions.options.saveCQLQuery.click());
   },
 
   exportInstanceAsMarc() {
-    return cy.do([
-      InventoryActions.open(),
-      InventoryActions.options.exportMARC.click()
-    ]);
+    InventoryActions.open();
+    cy.do(InventoryActions.options.exportMARC.click());
   },
 
   showSelectedRecords() {
-    cy.do([
-      InventoryActions.open(),
-      InventoryActions.options.showSelectedRecords.click()
-    ]);
+    InventoryActions.open();
+    cy.do(InventoryActions.options.showSelectedRecords.click());
   },
 
   getUUIDsFromRequest(req) {

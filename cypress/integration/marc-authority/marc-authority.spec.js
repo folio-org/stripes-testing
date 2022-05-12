@@ -201,6 +201,7 @@ describe('MARC Authority management', () => {
   });
 
   afterEach(() => {
+    // https://issues.folio.org/browse/FAT-1680
     new Set(marcAuthorityIds).forEach(marcAuthorityId => MarcAuthority.deleteViaAPI(marcAuthorityId));
     marcAuthorityIds = [];
     cy.deleteUser(userId);

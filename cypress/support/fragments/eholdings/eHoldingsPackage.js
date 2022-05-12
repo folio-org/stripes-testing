@@ -10,7 +10,7 @@ const filterStatuses = { all: 'All',
   selected: 'Selected',
   notSelected: 'Not selected' };
 
-const packageHoldingStatusSection = Section({ id: 'packageHoldingStatus' });
+const packageHoldingStatusSection = Section({ id: 'packageShowHoldingStatus' });
 const titlesSection = Section({ id: 'packageShowTitles' });
 const confirmationModal = Modal({ id:'eholdings-confirmation-modal' });
 
