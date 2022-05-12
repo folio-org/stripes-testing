@@ -1,11 +1,13 @@
 import { MultiColumnListCell, MultiColumnList, MultiColumnListHeader } from '../../../../../interactors';
 
+const resultsList = MultiColumnList({ id:'search-results-list' });
+
 const columnName = {
-  srsMarc: MultiColumnList({ id:'search-results-list' }).find(MultiColumnListHeader({ id:'list-column-srsmarcstatus' })),
-  instance: MultiColumnList({ id:'search-results-list' }).find(MultiColumnListHeader({ id:'list-column-instancestatus' })),
-  holdings: MultiColumnList({ id:'search-results-list' }).find(MultiColumnListHeader({ id:'list-column-holdingsstatus' })),
-  item: MultiColumnList({ id:'search-results-list' }).find(MultiColumnListHeader({ id:'list-column-itemstatus' })),
-  invoice: MultiColumnList({ id:'search-results-list' }).find(MultiColumnListHeader({ id:'list-column-invoicestatus' }))
+  srsMarc: resultsList.find(MultiColumnListHeader({ id:'list-column-srsmarcstatus' })),
+  instance: resultsList.find(MultiColumnListHeader({ id:'list-column-instancestatus' })),
+  holdings: resultsList.find(MultiColumnListHeader({ id:'list-column-holdingsstatus' })),
+  item: resultsList.find(MultiColumnListHeader({ id:'list-column-itemstatus' })),
+  invoice: resultsList.find(MultiColumnListHeader({ id:'list-column-invoicestatus' }))
 };
 
 const status = {
@@ -15,7 +17,7 @@ const status = {
 
 const checkStatusInColumn = (specialStatus, specialColumnName) => {
   cy.then(() => specialColumnName.index())
-    .then((index) => cy.expect(MultiColumnList({ id:'search-results-list' }).find(MultiColumnListCell({ columnIndex: index }))
+    .then((index) => cy.expect(resultsList.find(MultiColumnListCell({ columnIndex: index }))
       .has({ content: specialStatus })));
 };
 
