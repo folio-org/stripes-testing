@@ -30,11 +30,6 @@ describe('ui-data-import: Verify the possibility to modify MARC Bibliographic re
   });
 
   afterEach(() => {
-    cy.getSrsRecordApi()
-      .then(({ body }) => {
-        cy.deleteSrsRecordFromStorageApi(body.records[body.records.length - 1].id);
-      });
-
     DataImport.checkUploadState();
   });
 
@@ -67,8 +62,11 @@ describe('ui-data-import: Verify the possibility to modify MARC Bibliographic re
     JobProfiles.searchJobProfileForImport('Default - Create instance and SRS MARC Bib');
     JobProfiles.runImportFile(nameMarcFileForCreate);
     Logs.openFileDetails(nameMarcFileForCreate);
-    FileDetails.checkStatusInColumn(FileDetails.status.created, FileDetails.columnName.srsMarc);
-    FileDetails.checkStatusInColumn(FileDetails.status.created, FileDetails.columnName.instance);
+    [FileDetails.columnName.srsMarc,
+      FileDetails.columnName.instance,
+    ].forEach(columnName => {
+      FileDetails.checkStatusInColumn(FileDetails.status.created, columnName);
+    });
 
     // get Instance HRID through API
     SearchInventory
@@ -138,6 +136,11 @@ describe('ui-data-import: Verify the possibility to modify MARC Bibliographic re
     Logs.checkStatusOfJobProfile();
     Logs.checkImportFile(jobProfile.profileName);
     Logs.openFileDetails(nameMarcFileForUpload);
+    [FileDetails.columnName.srsMarc,
+      FileDetails.columnName.instance
+    ].forEach(columnName => {
+      FileDetails.checkStatusInColumn(FileDetails.status.updated, columnName);
+    });
     FileDetails.checkStatusInColumn(FileDetails.status.updated, FileDetails.columnName.srsMarc);
     FileDetails.checkStatusInColumn(FileDetails.status.updated, FileDetails.columnName.instance);
 

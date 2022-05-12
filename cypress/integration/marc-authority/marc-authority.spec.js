@@ -16,49 +16,46 @@ import dataImportSettingsMatchProfiles from '../../support/fragments/settings/da
 import dataImportSettingMappingProfiles from '../../support/fragments/settings/dataImport/dataImportSettingsMappingProfiles';
 import dataImportSettingsJobProfiles from '../../support/fragments/settings/dataImport/dataImportSettingsJobProfiles';
 
-
-let userId = '';
-// const marcAuthorityIds = new Set();
-
-
-const importFile = (profileName) => {
-  const uniqueFileName = `autotestFile.${getRandomPostfix()}.mrc`;
-  cy.visit(TopMenu.dataImportPath);
-
-  DataImport.uploadFile(MarcAuthority.defaultAuthority.name, uniqueFileName);
-  JobProfiles.waitLoadingList();
-  JobProfiles.select(profileName);
-  JobProfiles.runImportFile(uniqueFileName);
-  JobProfiles.openFileRecords(uniqueFileName);
-  DataImport.getLinkToAuthority(MarcAuthority.defaultAuthority.headingReference).then(link => {
-    const jobLogEntryId = link.split('/').at(-2);
-    const recordId = link.split('/').at(-1);
-    cy.intercept({
-      method: 'GET',
-      url: `/metadata-provider/jobLogEntries/${jobLogEntryId}/records/${recordId}`,
-    }).as('getRecord');
-    cy.visit(link);
-    cy.wait('@getRecord', getLongDelay()).then(response => {
-      const internalAuthorityId = response.response.body.relatedAuthorityInfo.idList[0];
-
-      // marcAuthorityIds.add(MarcAuthority.defaultAuthority.libraryOfCongressControlNumber);
-      cy.visit(TopMenu.marcAuthorities);
-      MarcAuthoritiesSearch.searchBy('Uniform title', MarcAuthority.defaultAuthority.headingReference);
-      MarcAuthorities.select(internalAuthorityId);
-      MarcAuthority.waitLoading();
-    });
-  });
-};
-
 describe('MARC Authority management', () => {
+  let userId = '';
+  let marcAuthorityIds = [];
+
+  const importFile = (profileName) => {
+    const uniqueFileName = `autotestFile.${getRandomPostfix()}.mrc`;
+    cy.visit(TopMenu.dataImportPath);
+
+    DataImport.uploadFile(MarcAuthority.defaultAuthority.name, uniqueFileName);
+    JobProfiles.waitLoadingList();
+    JobProfiles.select(profileName);
+    JobProfiles.runImportFile(uniqueFileName);
+    JobProfiles.openFileRecords(uniqueFileName);
+    DataImport.getLinkToAuthority(MarcAuthority.defaultAuthority.headingReference).then(link => {
+      const jobLogEntryId = link.split('/').at(-2);
+      const recordId = link.split('/').at(-1);
+      cy.intercept({
+        method: 'GET',
+        url: `/metadata-provider/jobLogEntries/${jobLogEntryId}/records/${recordId}`,
+      }).as('getRecord');
+      cy.visit(link);
+      cy.wait('@getRecord', getLongDelay()).then(response => {
+        const internalAuthorityId = response.response.body.relatedAuthorityInfo.idList[0];
+
+        marcAuthorityIds.push(internalAuthorityId);
+        cy.visit(TopMenu.marcAuthorities);
+        MarcAuthoritiesSearch.searchBy('Uniform title', MarcAuthority.defaultAuthority.headingReference);
+        MarcAuthorities.select(internalAuthorityId);
+        MarcAuthority.waitLoading();
+      });
+    });
+  };
+
   beforeEach(() => {
     cy.createTempUser([
+      Permissions.settingsDataImportEnabled.gui,
       Permissions.moduleDataImportEnabled.gui,
-      Permissions.uiMarcAuthoritiesAuthorityRecordEdit.gui,
       Permissions.uiMarcAuthoritiesAuthorityRecordView.gui,
-      Permissions.uiQuickMarcQuickMarcAuthoritiesEditorAll.gui,
-      // TODO: clarify why TCs doesn't have this permission in precondition(C350666)
-      Permissions.dataImportUploadAll.gui,
+      Permissions.uiMarcAuthoritiesAuthorityRecordEdit.gui,
+      Permissions.uiMarcAuthoritiesAuthorityRecordDelete.gui
     ]).then(userProperties => {
       userId = userProperties.userId;
       cy.login(userProperties.username, userProperties.password);
@@ -142,7 +139,7 @@ describe('MARC Authority management', () => {
     QuickMarcEditor.checkNotDeletableTags('008', 'LDR');
   });
 
-  it('C350575  Update 008 of Authority record', { tags:  [TestTypes.smoke, Features.authority] }, () => {
+  it('C350576 Update 008 of Authority record', { tags:  [TestTypes.smoke, Features.authority] }, () => {
     MarcAuthority.edit();
     QuickMarcEditor.waitLoading();
 
@@ -167,14 +164,45 @@ describe('MARC Authority management', () => {
     MarcAuthorities.switchToBrowse();
     MarcAuthorityBrowse.waitEmptyTable();
     MarcAuthorityBrowse.checkFiltersInitialState();
-    MarcAuthorityBrowse.searchBy('Uniform title', MarcAuthority.defaultAuthority.headingReference);
+    MarcAuthorityBrowse.searchBy(MarcAuthorityBrowse.searchOptions.uniformTitle.option, MarcAuthority.defaultAuthority.headingReference);
     MarcAuthorityBrowse.waitLoading();
     MarcAuthorityBrowse.checkPresentedColumns();
-    // TODO: add checking of records order
+  });
+
+  it('C350513 Browse authority - handling for when there is no exact match', { tags:  [TestTypes.smoke, Features.authority] }, () => {
+    // update created marc authority
+    MarcAuthority.edit();
+    QuickMarcEditor.waitLoading();
+
+    const quickmarcEditor = new QuickMarcEditor(MarcAuthority.defaultAuthority);
+    // 0 added at the beginning to generate data into the first lines of result of searching into Marc Authority Browse
+    const randomPrefix = `0${getRandomPostfix()}`;
+    // postfixes A and B added to check lines ordering
+    quickmarcEditor.updateExistingField('130', `${randomPrefix} A`);
+    QuickMarcEditor.pressSaveAndClose();
+
+    importFile(MarcAuthority.defaultCreateJobProfile);
+    MarcAuthority.edit();
+    QuickMarcEditor.waitLoading();
+
+    quickmarcEditor.updateExistingField('130', `${randomPrefix} B`);
+    QuickMarcEditor.pressSaveAndClose();
+
+    MarcAuthorities.switchToBrowse();
+    MarcAuthorityBrowse.waitEmptyTable();
+    MarcAuthorityBrowse.checkSearchOptions();
+    MarcAuthorityBrowse.searchBy(MarcAuthorityBrowse.searchOptions.uniformTitle.option, randomPrefix);
+    MarcAuthorityBrowse.checkSelectedSearchOption(MarcAuthorityBrowse.searchOptions.uniformTitle);
+    MarcAuthorityBrowse.waitLoading();
+
+    MarcAuthorityBrowse.checkHeadingReferenceInRow(0, MarcAuthorityBrowse.getNotExistingHeadingReferenceValue(randomPrefix), false);
+    MarcAuthorityBrowse.checkHeadingReferenceInRow(1, `${randomPrefix} A`, true);
+    MarcAuthorityBrowse.checkHeadingReferenceInRow(2, `${randomPrefix} B`, true);
   });
 
   afterEach(() => {
-    // marcAuthorityIds.forEach(marcAuthorityId => MarcAuthority.deleteViaAPI(marcAuthorityId));
+    new Set(marcAuthorityIds).forEach(marcAuthorityId => MarcAuthority.deleteViaAPI(marcAuthorityId));
+    marcAuthorityIds = [];
     cy.deleteUser(userId);
   });
 });

@@ -13,8 +13,10 @@ import UrlParams from '../url-params';
 
 export default {
   gotoViewAllPage() {
-    cy.do(Button('Actions').click());
-    cy.do(Button('View all').click());
+    cy.do([
+      Button('Actions').click(),
+      Button('View all').click()
+    ]);
   },
 
   selectOption(option) {
@@ -84,7 +86,7 @@ export default {
   filterJobsByUser(user) {
     cy.do([
       Accordion({ id: 'userId' }).clickHeader(),
-      Accordion({ id: 'userId' }).find(Selection({ singleValue: 'Choose user' })).open(),
+      Selection({ singleValue: 'Choose user' }).open(),
       SelectionList().select(user)
     ]);
   },
@@ -114,8 +116,23 @@ export default {
       .then(() => cells);
   },
 
+  visibleColumns: {
+    FILE_NAME: { columnIndex: 2 },
+    STATUS: { columnIndex: 3 },
+    RECORDS: { columnIndex: 4 },
+    JOB_PROFILE: { columnIndex: 5 },
+    ENDED_RUNNING: { columnIndex: 6 },
+    RUN_BY: { columnIndex: 7 }
+  },
+
+  waitUIToBeFiltered() {
+    // Need some waiting when jobs list is long, UI takes longer to be filtered
+    // eslint-disable-next-line cypress/no-unnecessary-waiting
+    cy.wait(1000);
+  },
+
   checkByReverseChronologicalOrder() {
-    this.getMultiColumnListCellsValues(5).then(cells => {
+    this.getMultiColumnListCellsValues(this.visibleColumns.ENDED_RUNNING.columnIndex).then(cells => {
       // convert each cell value to Date object
       const dates = cells.map(cell => new Date(cell));
 
@@ -129,21 +146,15 @@ export default {
   },
 
   checkByErrorsInImport({ filter }) {
-    const queryString = UrlParams.getErrorsInImportQueryString({ filter });
-    this.getNumberOfMatchedJobs(queryString).then(count => {
-      cy.get('[data-row-index]')
-        .should('have.length', count)
-        .then(() => {
-          this.getMultiColumnListCellsValues(3).then(statuses => {
-          // if filter is 'Yes', then check for error otherwise, completed status
-            const expectedStatuses = filter === 'Yes' ? ['Failed', 'Completed with errors'] : ['Completed'];
-            // each status in the statuses array should be in the expectedStatuses array
-            const isFilteredByErrorStatus = statuses.every(jobStatus => expectedStatuses.includes(jobStatus));
+    this.waitUIToBeFiltered();
+    this.getMultiColumnListCellsValues(this.visibleColumns.STATUS.columnIndex).then(statuses => {
+      // if filter is 'Yes', then check for error otherwise, completed status
+      const expectedStatuses = filter === 'Yes' ? ['Failed', 'Completed with errors'] : ['Completed'];
+      // each status in the statuses array should be in the expectedStatuses array
+      const isFilteredByErrorStatus = statuses.every(jobStatus => expectedStatuses.includes(jobStatus));
 
-            // eslint-disable-next-line no-unused-expressions
-            expect(isFilteredByErrorStatus).to.be.true;
-          });
-        });
+      // eslint-disable-next-line no-unused-expressions
+      expect(isFilteredByErrorStatus).to.be.true;
     });
   },
 
@@ -155,89 +166,67 @@ export default {
     });
   },
 
-  checkByJobProfileName({ jobProfileName, profileId }) {
-    const queryString = UrlParams.getJobProfileQueryString({ profileId });
-    this.getNumberOfMatchedJobs(queryString).then(count => {
-      cy.get('[data-row-index]')
-        .should('have.length', count)
-        .then(() => {
-          this.getMultiColumnListCellsValues(5).then(jobProfiles => {
-            // each profile name in the jobProfiles array should be equal to jobProfileName
-            const isFilteredByProfile = jobProfiles.every(name => name === jobProfileName);
+  checkByJobProfileName({ jobProfileName }) {
+    this.waitUIToBeFiltered();
+    this.getMultiColumnListCellsValues(this.visibleColumns.JOB_PROFILE.columnIndex).then(jobProfiles => {
+      // each profile name in the jobProfiles array should be equal to jobProfileName
+      const isFilteredByProfile = jobProfiles.every(name => name === jobProfileName);
 
-            // eslint-disable-next-line no-unused-expressions
-            expect(isFilteredByProfile).to.be.true;
-          });
-        });
+      // eslint-disable-next-line no-unused-expressions
+      expect(isFilteredByProfile).to.be.true;
     });
   },
 
-  checkByUserName({ userName, userId }) {
-    const queryString = UrlParams.getUserQueryString({ userId });
-    this.getNumberOfMatchedJobs(queryString).then(count => {
-      cy.get('[data-row-index]')
-        .should('have.length', count)
-        .then(() => {
-          this.getMultiColumnListCellsValues(7).then(userNames => {
-            // each name in the userNames array should be equal to the userName
-            const isFilteredByUser = userNames.every(name => name === userName);
+  checkByUserName({ userName }) {
+    this.waitUIToBeFiltered();
+    this.getMultiColumnListCellsValues(this.visibleColumns.RUN_BY.columnIndex).then(userNames => {
+      // each name in the userNames array should be equal to the userName
+      const isFilteredByUser = userNames.every(name => name === userName);
 
-            // eslint-disable-next-line no-unused-expressions
-            expect(isFilteredByUser).to.be.true;
-          });
-        });
+      // eslint-disable-next-line no-unused-expressions
+      expect(isFilteredByUser).to.be.true;
     });
   },
 
   checkByInventorySingleRecord({ filter }) {
-    const queryString = UrlParams.getInventorySingleRecordImportsQueryString({ filter });
-    this.getNumberOfMatchedJobs(queryString).then(count => {
-      if (!count) {
+    this.waitUIToBeFiltered();
+    cy.get('body').then($body => {
+      if ($body.find('#list-data-import').length < 1) {
         cy.expect(MultiColumnList().absent());
       } else {
-        cy.get('[data-row-index]')
-          .should('have.length', count)
-          .then(() => {
-            this.getMultiColumnListCellsValues(5).then(profiles => {
-              const inventorySingleRecordProfiles = [
-                'Inventory Single Record - Default Create Instance',
-                'Inventory Single Record - Default Update Instance'
-              ];
+        this.getMultiColumnListCellsValues(this.visibleColumns.JOB_PROFILE.columnIndex).then(profiles => {
+          const inventorySingleRecordProfiles = [
+            'Inventory Single Record - Default Create Instance',
+            'Inventory Single Record - Default Update Instance'
+          ];
 
-              if (filter === 'Yes') {
-                const isInventorySingleRecord = profiles.every(profile => inventorySingleRecordProfiles.includes(profile));
-                // eslint-disable-next-line no-unused-expressions
-                expect(isInventorySingleRecord).to.be.true;
-              } else {
-                const isNotInventorySingleRecord = profiles.every(profile => !inventorySingleRecordProfiles.includes(profile));
-                // eslint-disable-next-line no-unused-expressions
-                expect(isNotInventorySingleRecord).to.be.true;
-              }
-            });
-          });
+          if (filter === 'Yes') {
+            const isInventorySingleRecord = profiles.every(profile => inventorySingleRecordProfiles.includes(profile));
+            // eslint-disable-next-line no-unused-expressions
+            expect(isInventorySingleRecord).to.be.true;
+          } else {
+            const isNotInventorySingleRecord = profiles.every(profile => !inventorySingleRecordProfiles.includes(profile));
+            // eslint-disable-next-line no-unused-expressions
+            expect(isNotInventorySingleRecord).to.be.true;
+          }
+        });
       }
     });
   },
 
-  checkByErrorsInImportAndUser({ filter, userName, userId }) {
-    const queryString = UrlParams.getErrorsInImportAndUserQueryString({ filter, userId });
-    this.getNumberOfMatchedJobs(queryString).then(count => {
-      cy.get('[data-row-index]')
-        .should('have.length', count)
-        .then(() => {
-          this.getMultiColumnListCellsValues(2).then(statuses => {
-            this.getMultiColumnListCellsValues(6).then(names => {
-              const expectedStatuses = filter === 'Yes' ? ['Failed', 'Completed with errors'] : ['Completed'];
-              const isFilteredByErrorStatus = statuses.every(jobStatus => expectedStatuses.includes(jobStatus));
-              const isFilteredByUser = names.every(name => name === userName);
+  checkByErrorsInImportAndUser({ filter, userName }) {
+    this.waitUIToBeFiltered();
+    this.getMultiColumnListCellsValues(this.visibleColumns.STATUS.columnIndex).then(statuses => {
+      this.getMultiColumnListCellsValues(this.visibleColumns.RUN_BY.columnIndex).then(names => {
+        const expectedStatuses = filter === 'Yes' ? ['Failed', 'Completed with errors'] : ['Completed'];
+        const isFilteredByErrorStatus = statuses.every(jobStatus => expectedStatuses.includes(jobStatus));
+        const isFilteredByUser = names.every(name => name === userName);
 
-              // eslint-disable-next-line no-unused-expressions
-              expect(isFilteredByErrorStatus).to.be.true;
-              // eslint-disable-next-line no-unused-expressions
-              expect(isFilteredByUser).to.be.true;
-            });
-          });
-        });
+        // eslint-disable-next-line no-unused-expressions
+        expect(isFilteredByErrorStatus).to.be.true;
+        // eslint-disable-next-line no-unused-expressions
+        expect(isFilteredByUser).to.be.true;
+      });
     });
   },
 
@@ -270,4 +259,3 @@ export default {
     });
   },
 };
-

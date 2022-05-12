@@ -34,13 +34,14 @@ describe('ui-data-import: MARC file upload with the update of instance, holding,
   const nameHoldingsActionProfile = `autotest_holdings_action_profile_${getRandomPostfix()}`;
   const nameItemActionProfile = `autotest_item_action_profile_${getRandomPostfix()}`;
   const jobProfileNameCreate = `autotest_job_profile_${getRandomPostfix()}`;
+  const recordType = 'MARC_BIBLIOGRAPHIC';
 
   const marcBibMappingProfile = {
     profile:{
       id: '',
       name: nameMarcBibMappingProfile,
-      incomingRecordType: 'MARC_BIBLIOGRAPHIC',
-      existingRecordType: 'MARC_BIBLIOGRAPHIC',
+      incomingRecordType: recordType,
+      existingRecordType: recordType,
       mappingDetails: { name: 'holdings',
         recordType: 'MARC_BIBLIOGRAPHIC',
         marcMappingDetails: [{
@@ -65,7 +66,7 @@ describe('ui-data-import: MARC file upload with the update of instance, holding,
     profile:{
       id: '',
       name: nameInstanceMappingProfile,
-      incomingRecordType: 'MARC_BIBLIOGRAPHIC',
+      incomingRecordType: recordType,
       existingRecordType: 'INSTANCE',
     }
   };
@@ -74,7 +75,7 @@ describe('ui-data-import: MARC file upload with the update of instance, holding,
     profile:{
       id: '',
       name: nameHoldingsMappingProfile,
-      incomingRecordType: 'MARC_BIBLIOGRAPHIC',
+      incomingRecordType: recordType,
       existingRecordType: 'HOLDINGS',
       mappingDetails: { name: 'holdings',
         recordType: 'HOLDINGS',
@@ -90,7 +91,7 @@ describe('ui-data-import: MARC file upload with the update of instance, holding,
     profile:{
       id: '',
       name: nameItemMappingProfile,
-      incomingRecordType: 'MARC_BIBLIOGRAPHIC',
+      incomingRecordType: recordType,
       existingRecordType: 'ITEM',
       mappingDetails: { name: 'item',
         recordType: 'ITEM',
@@ -117,7 +118,7 @@ describe('ui-data-import: MARC file upload with the update of instance, holding,
       id: '',
       name: nameMarcBibActionProfile,
       action: 'MODIFY',
-      folioRecord: 'MARC_BIBLIOGRAPHIC'
+      folioRecord: recordType
     },
     addedRelations: [
       {
