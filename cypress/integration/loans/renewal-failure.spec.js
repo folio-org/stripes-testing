@@ -165,6 +165,7 @@ describe('Renewal', () => {
   });
 
   it('C568 Renewal: failure because loan is not renewable', { tags: [TestType.smoke] }, () => {
+    // todo: Remove exception handler after promise error fix (ticket number UIU-2603)
     handlePromiseException();
 
     renewalActions.renewWithoutOverrideAccess(loanId, renewUserData.id, itemData);
