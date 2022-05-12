@@ -1,36 +1,10 @@
 import uuid from 'uuid';
-import moment from 'moment';
 
 import getRandomPostfix from '../utils/stringTools';
 import {
   CY_ENV,
   REQUEST_METHOD,
 } from '../constants';
-
-Cypress.Commands.add('createItemCheckout', (checkout) => {
-  const checkoutId = uuid();
-
-  cy.okapiRequest({
-    method: REQUEST_METHOD.POST,
-    path: 'circulation/check-out-by-barcode',
-    body: {
-      id: checkoutId,
-      loanDate: moment.utc(),
-      ...checkout,
-    },
-  });
-});
-
-Cypress.Commands.add('createItemCheckinApi', (data) => {
-  cy.okapiRequest({
-    method: REQUEST_METHOD.POST,
-    path: 'circulation/check-in-by-barcode',
-    body: {
-      id: uuid(),
-      ...data,
-    },
-  });
-});
 
 Cypress.Commands.add('createFixedDueDateSchedule', (body) => {
   cy.okapiRequest({

@@ -20,6 +20,7 @@ import fixedDueDateSchedules from '../../../../support/fragments/circulation/fix
 import checkout from '../../../../support/fragments/checkout/checkout';
 import loans from '../../../../support/fragments/loans/loansPage';
 import topMenu from '../../../../support/fragments/topMenu';
+import checkinActions from '../../../../support/fragments/check-in-actions/checkInActions';
 
 let userId;
 let createdLoanPolicy;
@@ -138,7 +139,7 @@ describe('ui-circulation-settings: Fixed due date schedules', () => {
                     });
                   })
                   .then(() => {
-                    cy.createItemCheckout({
+                    checkout.createItemCheckoutApi({
                       servicePointId,
                       itemBarcode: ITEM_BARCODE,
                       userBarcode: USER_BARCODE,
@@ -150,7 +151,7 @@ describe('ui-circulation-settings: Fixed due date schedules', () => {
   });
 
   after(() => {
-    cy.createItemCheckinApi({
+    checkinActions.createItemCheckinApi({
       itemBarcode: ITEM_BARCODE,
       servicePointId,
       checkInDate: moment.utc().format(),
