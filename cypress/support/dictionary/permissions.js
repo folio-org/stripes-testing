@@ -64,6 +64,9 @@ export default {
   dataExportAll: { internal: 'data-export.all', gui: 'Data Export - all permissions' },
   // Loans
   loansAll: { internal: 'ui-users.loans.all', gui: 'Users: User loans view, change due date, renew' },
+  loansView: { internal: 'ui-users.loans.view', gui: 'Users: User loans view' },
+  loansRenew: { internal: 'ui-users.loans.renew', gui: 'Users: User loans renew' },
+  loansRenewOverride: { internal: 'ui-users.loans.renew-override', gui: 'Users: User loans renew through override' },
   // Checkout
   checkoutAll: { internal: '', gui: 'Check out: All permissions' },
   // Checkin
