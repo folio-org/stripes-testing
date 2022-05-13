@@ -86,7 +86,9 @@ describe('Manage inventory Bib records with quickMarc editor', () => {
   });
 
   it('C10951 Add a 5XX field to a marc record in quickMARC', { tags: [testTypes.smoke, features.quickMarcEditor] }, () => {
-    InventoryInstance.overlaySourceBibRecord();
+    InventoryInstance.startOverlaySourceBibRecord();
+    InventoryActions.fillImportFields(InventoryInstance.validOCLC.id);
+    InventoryActions.pressImportInModal();
 
     // TODO: add id to div with update datetime and verification of this value
     InventoryInstance.checkExpectedOCLCPresence();
