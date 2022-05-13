@@ -1,4 +1,4 @@
-import { TextField, Button, Select, Section } from '../../../../../interactors';
+import { TextField, Button, Select, Section, Pane } from '../../../../../interactors';
 import ModalSelectMappingProfile from './modalSelectMappingProfile';
 
 const action = 'Create (all record types)';
@@ -33,5 +33,6 @@ export default {
     ModalSelectMappingProfile.selectMappingProfile(specialMappingProfileName);
     cy.expect(Section({ id:'actionProfileFormAssociatedMappingProfileAccordion' }).find(Button('Link Profile')).has({ disabled : true }));
     cy.do(Button('Save as profile & Close').click());
+    cy.expect(Pane('Action profiles').find(Button('Actions')).exists());
   }
 };
