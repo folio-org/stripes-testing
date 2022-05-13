@@ -18,3 +18,4 @@ import './data-import';
 import './request-preference-storage';
 import './invoice';
 import './instance';
+import './loan-history';
