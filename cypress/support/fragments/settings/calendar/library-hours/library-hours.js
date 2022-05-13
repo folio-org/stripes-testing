@@ -41,10 +41,14 @@ const fieldLabels = {
 };
 
 export default {
-  createCalendarEvent() {
+  openCalendarEvents() {
     cy
       .visit(settingsMenu.calendarLibraryHoursPath)
-      .get(selectors.servicePoint).first().click()
+      .get(selectors.servicePoint).first().click();
+  },
+
+  createCalendarEvent() {
+    cy
       .do(Button(buttonLabels.new).click())
       .expect(PaneHeader(pageHeaders.createEvent).exists());
 
@@ -63,11 +67,13 @@ export default {
       .expect(KeyValue(currentEventLabel, { value: including(initialEventName) }).exists());
   },
 
-  editCalendarEvent() {
+  openEditCalendarPage() {
     cy
       .do(IconButton({ icon: iconsSet.edit }).click())
       .expect(PaneHeader(pageHeaders.modifyEvent).exists());
+  },
 
+  editCalendarEvent() {
     cy
       .do([
         TextField({ name: nameAttributeValue }).fillIn(editedEventName),
@@ -86,5 +92,15 @@ export default {
       .expect(Modal(pageHeaders.deleteEvent).exists());
 
     cy.do(Button({ id: 'clickable-delete-confirmation-confirm' }).click());
+  },
+
+  checkDeleteButtonAbsence() {
+    cy.expect(Button(buttonLabels.delete).absent());
+  },
+
+  clearCreatedEvents() {
+    cy.login(Cypress.env('diku_login'), Cypress.env('diku_password'));
+    this.openCalendarEvents();
+    this.deleteCalendarEvent();
   },
 };

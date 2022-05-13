@@ -57,6 +57,7 @@ export default {
   uiRequestsView: { internal: 'ui-requests.view', gui: 'Requests: View' },
   requestsAll: { internal: '', gui: 'Requests: All permissions' },
   // Calendar
+  calendarEdit: { internal: 'ui-calendar.edit', gui: 'Settings (Calendar): Can create, view, and edit calendar events' },
   calendarAll: { internal: 'ui-calendar.all', gui: 'Settings (Calendar): Can create, view, edit, and remove calendar events' },
   // Data Export
   dataExportAll: { internal: 'data-export.all', gui: 'Data Export - all permissions' },
