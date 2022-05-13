@@ -96,20 +96,3 @@ Cypress.Commands.add('createOnePairMappingAndActionProfiles', (mappingProfile, a
   });
   return cy.get('@idActionProfile');
 });
-
-Cypress.Commands.add('getSrsRecordApi', (searchParams) => {
-  return cy
-    .okapiRequest({
-      path: 'source-storage/records',
-      searchParams,
-    });
-});
-
-Cypress.Commands.add('deleteSrsRecordFromStorageApi', (id) => {
-  cy.okapiRequest({
-    method: 'DELETE',
-    path: `source-storage/records/${id}`,
-  });
-});
-
-

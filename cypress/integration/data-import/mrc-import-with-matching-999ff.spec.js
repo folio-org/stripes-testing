@@ -79,7 +79,7 @@ describe('ui-data-import: MARC file import with matching for 999 ff field', () =
     JobProfiles.searchJobProfileForImport(jobProfileNameForExport);
     JobProfiles.runImportFile(nameForMarcFile);
     Logs.openFileDetails(nameForMarcFile);
-    FileDetails.checkIsInstanceCreated();
+    FileDetails.checkStatusInColumn(FileDetails.status.created, FileDetails.columnName.instance);
 
     // get Instance HRID through API
     SearchInventory
@@ -158,7 +158,7 @@ describe('ui-data-import: MARC file import with matching for 999 ff field', () =
         JobProfiles.searchJobProfileForImport(jobProfileName);
         JobProfiles.runImportFile(nameForExportedMarcFile);
         Logs.openFileDetails(nameForExportedMarcFile);
-        FileDetails.checkIsInstanceUpdated();
+        FileDetails.checkStatusInColumn(FileDetails.status.updated, FileDetails.columnName.instance);
 
         // get Instance HRID through API
         SearchInventory

@@ -28,6 +28,7 @@ export const LOAN_TYPE_NAMES = {
 
 export const MATERIAL_TYPE_NAMES = {
   MICROFORM: 'microform',
+  BOOK: 'book',
 };
 
 export const CY_ENV = {
@@ -59,4 +60,5 @@ export const LIBRARY_DUE_DATE_MANAGMENT = {
 
 export const LOAN_PROFILE = {
   FIXED: 'Fixed',
+  ROLLING: 'Rolling',
 };
