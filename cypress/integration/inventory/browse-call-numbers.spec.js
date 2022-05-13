@@ -31,7 +31,6 @@ describe('ui-inventory: browse call numbers', () => {
     InventorySearch.browseCallNumberIsAbsent();
   });
 
-  // failed, bug UIIN-1965
   it('C350377 Verify the "Browse subjects" search option on the Instances tab', { tags: [TestTypes.smoke] }, () => {
     InventorySearch.instanceTabIsDefault();
     InventorySearch.verifyKeywordsAsDefault();
@@ -41,7 +40,7 @@ describe('ui-inventory: browse call numbers', () => {
     InventorySearch.filtersIsAbsent();
     InventorySearch.browseSubjectsSearch();
     cy.reload();
-    InventorySearch.verifyCallNumberBrowseEmptyPane();
+    InventorySearch.verifyCallNumberBrowsePane();
     InventorySearch.filtersIsAbsent();
   });
 

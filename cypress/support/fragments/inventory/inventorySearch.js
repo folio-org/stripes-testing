@@ -8,7 +8,7 @@ import {
   TextField,
   Button,
   SearchField,
-  Select
+  Select, MultiColumnListHeader
 } from '../../../../interactors';
 import InventoryActions from './inventoryActions';
 
@@ -124,6 +124,11 @@ export default {
     cy.expect(HTML(including('Browse for results entering a query or choosing a filter.')).exists());
   },
 
+  verifyCallNumberBrowsePane() {
+    const callNumberBrowsePane = Pane({ title: 'Browse inventory' });
+    cy.expect(callNumberBrowsePane.exists());
+  },
+
   saveUUIDs() {
     InventoryActions.open();
     cy.do(InventoryActions.options.saveUUIDs.click());
@@ -187,6 +192,7 @@ export default {
       TextField({ id: 'input-inventory-search' }).fillIn(searchString),
       Button('Browse').click()
     ]);
+    cy.expect(Pane({ id:'pane-results' }).find(MultiColumnListHeader()).exists());
   },
 
   verifySearchResult(cellContent) {
