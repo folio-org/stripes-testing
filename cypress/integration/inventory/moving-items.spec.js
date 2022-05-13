@@ -25,8 +25,8 @@ describe('ui-inventory: moving items', () => {
       permissions.uiInventoryMoveItems.gui,
       permissions.uiInventorySingleRecordImport.gui,
       permissions.uiQuickMarcQuickMarcHoldingsEditorCreate.gui,
-      'Inventory: Move holdings',
-      'quickMARC: View MARC holdings record'
+      permissions.uiInventoryHoldingsMove.gui,
+      permissions.uiQuickMarcQuickMarcHoldingsEditorView.gui
     ])
       .then(userProperties => {
         userId = userProperties.userId;
@@ -81,13 +81,13 @@ describe('ui-inventory: moving items', () => {
   });
 
   after('Delete all data', () => {
-    // cy.getInstance({ limit: 1, expandAll: true, query: `"items.barcode"=="${ITEM_BARCODE}"` })
-    //   .then(() => {
-    //     cy.deleteItem(Cypress.env('instances')[0].items[0].id);
-    //     cy.deleteHoldingRecord(Cypress.env('instances')[0].holdings[0].id);
-    //     cy.deleteHoldingRecord(Cypress.env('instances')[0].holdings[1].id);
-    //     cy.deleteInstanceApi(Cypress.env('instances')[0].id);
-    //   });
+    cy.getInstance({ limit: 1, expandAll: true, query: `"items.barcode"=="${ITEM_BARCODE}"` })
+      .then(() => {
+        cy.deleteItem(Cypress.env('instances')[0].items[0].id);
+        cy.deleteHoldingRecord(Cypress.env('instances')[0].holdings[0].id);
+        cy.deleteHoldingRecord(Cypress.env('instances')[0].holdings[1].id);
+        cy.deleteInstanceApi(Cypress.env('instances')[0].id);
+      });
     cy.deleteUser(userId);
   });
 
@@ -105,8 +105,7 @@ describe('ui-inventory: moving items', () => {
     InteractorsTools.checkCalloutMessage(successCalloutMessage);
   });
 
-  // TODO: https://issues.folio.org/browse/UIIN-1963
-  it.only('C345404 Move holdings record with Source = MARC to an instance record with source = MARC', { tags:  [TestTypes.smoke, Features.eHoldings] }, () => {
+  it('C345404 Move holdings record with Source = MARC to an instance record with source = MARC', { tags:  [TestTypes.smoke, Features.eHoldings] }, () => {
     InventoryActions.import();
     InventoryInstance.getAssignedHRID().then(initialInstanceHrId => {
       // additional instance record which will linked with holdings record initially
@@ -116,7 +115,6 @@ describe('ui-inventory: moving items', () => {
       HoldingsRecordView.getHoldingsHrId().then(holdingsRecordhrId => {
         HoldingsRecordView.close();
         InventoryInstance.waitLoading();
-        // TODO: issue with moving presented, see UIIN-1929, related with fail ath the end of test execution
         InventoryInstance.moveHoldingsToAnotherInstance(initialInstanceHrId);
         cy.visit(TopMenu.inventoryPath);
         InventorySearch.searchByParameter('Instance HRID', initialInstanceHrId);
@@ -124,8 +122,8 @@ describe('ui-inventory: moving items', () => {
         InventoryInstances.selectInstance();
         InventoryInstance.goToHoldingView();
         HoldingsRecordView.checkHrId(holdingsRecordhrId);
+        // TODO: view source is not available now, in process of investigation. Can be related with new error
         HoldingsRecordView.viewSource();
-        // TODO: recheck after fix of UIIN-1929
         InventoryViewSource.contains(`004\t${initialInstanceHrId}`);
       });
     });

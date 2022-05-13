@@ -121,8 +121,8 @@ Cypress.Commands.add('createTempUser', (permissions = []) => {
       cy.getPermissionsApi({ query: `(${queryField}="${permissions.join(`")or(${queryField}="`)}"))"` })
         .then((permissionsResponse) => {
           // Can be used to collect pairs of ui and backend permission names
-          cy.log('Initial permissions=' + permissions);
-          cy.log('internalPermissions=' + [...permissionsResponse.body.permissions.map(permission => permission.permissionName)]);
+          // cy.log('Initial permissions=' + permissions);
+          // cy.log('internalPermissions=' + [...permissionsResponse.body.permissions.map(permission => permission.permissionName)]);
           cy.createUserApi(userData)
             .then((userCreateResponse) => {
               userProperties.userId = userCreateResponse.id;
