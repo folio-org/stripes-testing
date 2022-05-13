@@ -122,7 +122,7 @@ describe('ui-inventory: moving items', () => {
         InventoryInstances.selectInstance();
         InventoryInstance.goToHoldingView();
         HoldingsRecordView.checkHrId(holdingsRecordhrId);
-        // TODO: view source is not available now, in process of investigation. Can be related with new error
+        // TODO: view source is not available now, in process of investigation. Can be related with new error. https://issues.folio.org/browse/MODKBEKBJ-642
         HoldingsRecordView.viewSource();
         InventoryViewSource.contains(`004\t${initialInstanceHrId}`);
       });
