@@ -127,18 +127,18 @@ describe('ui-inventory: location', () => {
 
     // edit instance
     InventoryInstance.openEditItemPage();
-    InventoryInstanceEdit.choosePermanentLocation(editedLocationName);
+    InventoryInstanceEdit.choosePermanentLocation(toBeEditedLocationName);
     InventoryInstanceEdit.saveAndClose();
     InventoryInstance.closeInstancePage();
 
     // verify results
     InventoryInstance.checkHoldingsTable(
-      toBeEditedLocationName,
+      editedLocationName,
       0,
       '',
       ITEM_BARCODE,
       'Available',
-      editedLocationName
+      toBeEditedLocationName
     );
   });
 });

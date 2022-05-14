@@ -1,3 +1,8 @@
+export const ITEM_STATUSES = {
+  CHECKED_OUT: 'Checked out',
+  DECLARED_LOST: 'Declared lost',
+};
+
 export const REQUEST_METHOD = {
   DELETE: 'DELETE',
   GET: 'GET',

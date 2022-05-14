@@ -11,7 +11,7 @@ describe('ui-inventory: actions', () => {
   });
 
   it('C196752 verifies action menu options before any search is conducted', { tags: [testTypes.smoke] }, () => {
-    cy.do(InventoryActions.open());
+    InventoryActions.open();
 
     cy.expect(InventorySearch.getAllSearchResults().absent());
     InventoryActions.optionsIsDisabled([

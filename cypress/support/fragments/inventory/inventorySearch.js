@@ -8,7 +8,7 @@ import {
   TextField,
   Button,
   SearchField,
-  Select
+  Select, MultiColumnListHeader
 } from '../../../../interactors';
 import InventoryActions from './inventoryActions';
 
@@ -124,32 +124,29 @@ export default {
     cy.expect(HTML(including('Browse for results entering a query or choosing a filter.')).exists());
   },
 
+  verifyCallNumberBrowsePane() {
+    const callNumberBrowsePane = Pane({ title: 'Browse inventory' });
+    cy.expect(callNumberBrowsePane.exists());
+  },
+
   saveUUIDs() {
-    return cy.do([
-      InventoryActions.open(),
-      InventoryActions.options.saveUUIDs.click()
-    ]);
+    InventoryActions.open();
+    cy.do(InventoryActions.options.saveUUIDs.click());
   },
 
   saveCQLQuery() {
-    return cy.do([
-      InventoryActions.open(),
-      InventoryActions.options.saveCQLQuery.click()
-    ]);
+    InventoryActions.open();
+    cy.do(InventoryActions.options.saveCQLQuery.click());
   },
 
   exportInstanceAsMarc() {
-    return cy.do([
-      InventoryActions.open(),
-      InventoryActions.options.exportMARC.click()
-    ]);
+    InventoryActions.open();
+    cy.do(InventoryActions.options.exportMARC.click());
   },
 
   showSelectedRecords() {
-    cy.do([
-      InventoryActions.open(),
-      InventoryActions.options.showSelectedRecords.click()
-    ]);
+    InventoryActions.open();
+    cy.do(InventoryActions.options.showSelectedRecords.click());
   },
 
   getUUIDsFromRequest(req) {
@@ -195,6 +192,7 @@ export default {
       TextField({ id: 'input-inventory-search' }).fillIn(searchString),
       Button('Browse').click()
     ]);
+    cy.expect(Pane({ id:'pane-results' }).find(MultiColumnListHeader()).exists());
   },
 
   verifySearchResult(cellContent) {

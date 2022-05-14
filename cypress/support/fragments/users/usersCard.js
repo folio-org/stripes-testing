@@ -29,5 +29,14 @@ export default {
   saveAndClose() {
     cy.do(Button({ id: 'patron-block-save-close' }).click());
     cy.expect(Button({ id: 'patron-block-save-close' }).absent());
-  }
+  },
+
+  getApi(userId) {
+    return cy
+      .okapiRequest({
+        method: 'GET',
+        path: `users/${userId}`,
+      })
+      .then(({ body }) => body);
+  },
 };
