@@ -167,6 +167,14 @@ function deleteRequestApi(requestId) {
   });
 }
 
+function getRequestApi(searchParams) {
+  cy
+    .okapiRequest({
+      path: 'circulation/requests',
+      searchParams,
+    });
+}
+
 function updateCirculationRulesApi(ruleText) {
   return cy.okapiRequest({
     method: 'PUT',
@@ -217,6 +225,7 @@ export default {
   setRequestPolicyApi,
   deleteRequestPolicyApi,
   updateCirculationRulesApi,
+  getRequestApi,
 
   removeCreatedRequest() {
     cy.do([

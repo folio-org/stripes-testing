@@ -1,5 +1,6 @@
 import generateItemBarcode from '../../support/utils/generateItemBarcode';
 import checkoutActions from '../../support/fragments/checkout/checkout';
+import TopMenu from '../../support/fragments/topMenu';
 
 describe('Check In', () => {
   let ITEM_BARCODE;
@@ -53,8 +54,7 @@ describe('Check In', () => {
   });
 
   it('Basic flow', function () {
-    cy.visit('/checkin');
-
+    cy.visit(TopMenu.checkInPath);
     cy.checkInItem(ITEM_BARCODE);
     cy.verifyItemCheckIn();
   });

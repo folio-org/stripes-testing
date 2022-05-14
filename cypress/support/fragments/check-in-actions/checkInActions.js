@@ -15,7 +15,6 @@ const addItemButton = Button({ id: 'clickable-add-item' });
 
 export default {
   checkInItem:(barcode) => {
-    cy.do(checkInButton.click());
     cy.intercept('/inventory/items?*').as('getItems');
     cy.do(itemBarcodeField.fillIn(barcode));
     cy.do(addItemButton.click());

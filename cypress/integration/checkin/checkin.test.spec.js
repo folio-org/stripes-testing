@@ -9,6 +9,7 @@ import institutions from '../../support/fragments/settings/tenant/institutions';
 import campuses from '../../support/fragments/settings/tenant/campuses';
 import libraries from '../../support/fragments/settings/tenant/libraries';
 import ItemVeiw from '../../support/fragments/inventory/inventoryItem/itemVeiw';
+import TopMenu from '../../support/fragments/topMenu';
 
 // TODO: We need to move all api methods to fragments. https://issues.folio.org/browse/FAT-1624
 // When bug(https://issues.folio.org/browse/FAT-1637) will be fixed check full run test!!!
@@ -44,6 +45,7 @@ describe('Check In - Actions ', () => {
   });
 
   it('C347631 Check in: Basic check in', { tags: [TestTypes.smoke] }, () => {
+    cy.visit(TopMenu.checkInPath);
     CheckInActions.checkInItem(NewInctanceHoldingsItem.itemBarcode);
     CheckInActions.openItemRecordInInventory(ItemVeiw.itemStatuses.available);
     CheckInActions.existsFormColomns();

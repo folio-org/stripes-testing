@@ -35,7 +35,6 @@ export default {
   choosepickupServicePoint(pickupServicePoint) {
     cy.intercept('/inventory/items?*').as('getItems');
     cy.wait('@getItems', getLongDelay());
-    cy.wait(1500);
     cy.do(Select({ name:'pickupServicePointId' }).choose(pickupServicePoint));
     cy.wait('@getItems');
     cy.expect(HTML(including(pickupServicePoint)).exists());
@@ -53,6 +52,13 @@ export default {
     this.openNewRequestPane();
     this.fillRequiredFields(newRequest);
     this.choosepickupServicePoint(newRequest.pickupServicePoint);
+    this.saveRequestAndClose();
+    this.waitLoading();
+  },
+
+  createDeliveryRequest(newRequest) {
+    this.openNewRequestPane();
+    this.fillRequiredFields(newRequest);
     this.saveRequestAndClose();
     this.waitLoading();
   }
