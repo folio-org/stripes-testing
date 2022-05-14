@@ -14,7 +14,7 @@ const openNewMappingProfileForm = () => {
 };
 
 const closeViewModeForMappingProfile = () => {
-  cy.do(iconButton.click());
+  cy.do(Pane({ title: 'New field mapping profile' }).find(iconButton).click());
 };
 
 const mappingProfileForDuplicate = {
@@ -90,12 +90,7 @@ export default {
   },
 
   createInvoiceMappingProfile:(mappingProfileName, defaultProfile, organizationName) => {
-    cy.intercept(
-      {
-        method: 'GET',
-        url: '/tags?*',
-      }
-    ).as('getTag');
+    cy.intercept('/tags?*').as('getTag');
     searchMappingProfileForDuplicate(defaultProfile);
     cy.wait('@getTag');
     duplicateMappingProfile();

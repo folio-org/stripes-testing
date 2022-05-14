@@ -5,6 +5,8 @@ import getRandomPostfix from '../../support/utils/stringTools';
 import permissions from '../../support/dictionary/permissions';
 import usersSearchPane from '../../support/fragments/users/usersSearchPane';
 import usersCard from '../../support/fragments/users/usersCard';
+import checkinActions from '../../support/fragments/check-in-actions/checkInActions';
+import checkoutActions from '../../support/fragments/checkout/checkout';
 
 const ITEM_BARCODE = `123${getRandomPostfix()}`;
 let userId = '';
@@ -61,7 +63,7 @@ describe('ui-circulation-log', () => {
             });
           })
           .then(() => {
-            cy.createItemCheckout({
+            checkoutActions.createItemCheckoutApi({
               itemBarcode: ITEM_BARCODE,
               userBarcode: Cypress.env('users')[0].barcode,
               servicePointId: Cypress.env('userServicePoints')[0].id,
@@ -75,7 +77,7 @@ describe('ui-circulation-log', () => {
   });
 
   after('Delete all data', () => {
-    cy.createItemCheckinApi({
+    checkinActions.createItemCheckinApi({
       itemBarcode: ITEM_BARCODE,
       servicePointId: Cypress.env('servicePoints')[0].id,
       checkInDate: '2021-09-30T16:14:50.444Z',

@@ -1,92 +1,32 @@
-import { MultiColumnListCell } from '../../../../../interactors';
+import { MultiColumnListCell, MultiColumnList, MultiColumnListHeader } from '../../../../../interactors';
 
-const createdItemsColumns = [
-  MultiColumnListCell({ row: 0, columnIndex: 2 }),
-  MultiColumnListCell({ row: 0, columnIndex: 3 }),
-  MultiColumnListCell({ row: 0, columnIndex: 4 }),
-  MultiColumnListCell({ row: 0, columnIndex: 5 })
-];
+const resultsList = MultiColumnList({ id:'search-results-list' });
 
-const checkIsSrsCreated = () => {
-  // TODO: redesign from perform to regular cy.expect
-  cy.do(createdItemsColumns[0].perform(element => {
-    expect(element).to.have.text('Created');
-  }));
+const columnName = {
+  srsMarc: resultsList.find(MultiColumnListHeader({ id:'list-column-srsmarcstatus' })),
+  instance: resultsList.find(MultiColumnListHeader({ id:'list-column-instancestatus' })),
+  holdings: resultsList.find(MultiColumnListHeader({ id:'list-column-holdingsstatus' })),
+  item: resultsList.find(MultiColumnListHeader({ id:'list-column-itemstatus' })),
+  invoice: resultsList.find(MultiColumnListHeader({ id:'list-column-invoicestatus' }))
 };
 
-const checkIsInstanceCreated = () => {
-  // TODO: redesign from perform to regular cy.expect
-  cy.do(createdItemsColumns[1].perform(element => {
-    expect(element).to.have.text('Created');
-  }));
+const status = {
+  created: 'Created',
+  updated: 'Updated'
 };
 
-const checkIsHoldingsCreated = () => {
-  cy.do(createdItemsColumns[2].perform(element => {
-    expect(element).to.have.text('Created');
-  }));
-};
-
-const checkIsSrsUpdated = () => {
-  cy.do(createdItemsColumns[0].perform(element => {
-    expect(element).to.have.text('Updated');
-  }));
-};
-
-const checkIsInstanceUpdated = () => {
-  cy.do(createdItemsColumns[1].perform(element => {
-    expect(element).to.have.text('Updated');
-  }));
-};
-
-const checkIsItemCreated = () => {
-  cy.do(createdItemsColumns[3].perform(element => {
-    expect(element).to.have.text('Created');
-  }));
-};
-
-const checkIsInvoiceCreated = () => {
-  cy.expect(MultiColumnListCell({ row: 0, column: 'Created' }).exists());
+const checkStatusInColumn = (specialStatus, specialColumnName) => {
+  cy.then(() => specialColumnName.index())
+    .then((index) => cy.expect(resultsList.find(MultiColumnListCell({ columnIndex: index }))
+      .has({ content: specialStatus })));
 };
 
 const invoiceNumberFromEdifactFile = '94999';
 
 export default {
-  checkCreatedItems:() => {
-    createdItemsColumns.forEach(column => {
-      cy.do(column.perform(element => {
-        expect(element).to.have.text('Created');
-      }));
-    });
-  },
+  columnName,
+  status,
+  checkStatusInColumn,
 
-  checkUpdatedItems:() => {
-    createdItemsColumns.forEach(column => {
-      cy.do(column.perform(element => {
-        expect(element).to.have.text('Updated');
-      }));
-    });
-  },
-
-  checkUpdatedCreatedItems:() => {
-    checkIsSrsUpdated();
-    checkIsInstanceCreated();
-    checkIsHoldingsCreated();
-    checkIsItemCreated();
-  },
-
-  checkUpdatedSrsAndInstance:() => {
-    checkIsSrsUpdated();
-    checkIsInstanceUpdated();
-  },
-
-  checkCreatedSrsAndInstance:() => {
-    checkIsSrsCreated();
-    checkIsInstanceCreated();
-  },
-
-  checkIsInstanceCreated,
-  checkIsInstanceUpdated,
-  checkIsInvoiceCreated,
   invoiceNumberFromEdifactFile,
 };
