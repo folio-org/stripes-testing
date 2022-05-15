@@ -55,6 +55,9 @@ export default {
   usersViewRequests: { internal: '', gui: 'Users: View requests' },
   uiUsersViewLoans: { internal: 'ui-users.loans.view', gui: 'Users: User loans view' },
   uiUsersDeclareItemLost: { internal: 'ui-users.loans.declare-item-lost', gui: 'Users: User loans declare lost' },
+  uiUsersEditProfile: { internal: 'ui-users.edit', gui: 'Users: Can edit user profile' },
+  uiUsersViewProfile: { internal: 'ui-users.view', gui: 'Users: Can view user profile' },
+  uiUsersPermissions: { internal: 'ui-users.editperms', gui: 'Users: Can assign and unassign permissions to users' },
   // Remote Storage
   remoteStorageCRUD: { internal: '', gui: 'Settings (Remote storage): Can create, edit, delete remote storage settings' },
   // Requests
