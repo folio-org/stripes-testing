@@ -1,4 +1,5 @@
 import DefaultUser from './defaultUser';
+import checkoutActions from '../checkout/checkout';
 
 const requestPrefStorage = { ...DefaultUser.defaultUiRequestPrefStorage };
 
@@ -18,7 +19,7 @@ export default {
       newPassword.userId = specialPatron.userId;
       newPassword.username = specialPatron.username;
       cy.setUserPassword(newPassword);
-      cy.createItemCheckout(DefaultUser.defaultUiChekhOutItem.body);
+      checkoutActions.createItemCheckoutApi(DefaultUser.defaultUiChekhOutItem.body);
       cy.wrap({ userName: newPassword.username, password: newPassword.password }).as('userProperties');
     });
     return cy.get('@userProperties');

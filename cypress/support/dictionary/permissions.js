@@ -14,12 +14,14 @@ export default {
   // QuickMarc
   uiQuickMarcQuickMarcHoldingsEditorCreate: { internal: 'ui-quick-marc.quick-marc-holdings-editor.create', gui: 'quickMARC: Create a new MARC holdings record' },
   uiQuickMarcQuickMarcEditorDuplicate: { internal: 'ui-quick-marc.quick-marc-editor.duplicate', gui: 'quickMARC: Derive new MARC bibliographic record' },
-  uiQuickMarcQuickMarcAuthoritiesEditorAll: { internal: 'ui-quick-marc.quick-marc-authorities-editor.all', gui: 'quickMARC: View, edit MARC authorities record' },
-  uiQuickMarcQuickMarcHoldingsEditorAll: { internal: 'ui-quick-marc.quick-marc-holdings-editor.all', gui: 'quickMARC: View, edit MARC holdings record' },
   uiQuickMarcQuickMarcBibliographicEditorAll: { internal: 'ui-quick-marc.quick-marc-bibliographic-editor.all', gui: 'quickMARC: View, edit MARC bibliographic record' },
+  uiQuickMarcQuickMarcHoldingsEditorAll: { internal: 'ui-quick-marc.quick-marc-holdings-editor.all', gui: 'quickMARC: View, edit MARC holdings record' },
+  uiQuickMarcQuickMarcHoldingsEditorView:{ internal:'ui-quick-marc.quick-marc-holdings-editor.view', gui:'quickMARC: View MARC holdings record' },
   // Marc Authority record
-  uiMarcAuthoritiesAuthorityRecordView:{ internal: 'ui-marc-authorities.authority-record.view', gui:'View MARC authority record' },
-  uiMarcAuthoritiesAuthorityRecordEdit:{ internal: 'ui-marc-authorities.authority-record.edit', gui:'Edit MARC authority record' },
+  uiQuickMarcQuickMarcAuthoritiesEditorAll: { internal: 'ui-quick-marc.quick-marc-authorities-editor.all', gui: 'quickMARC: View, edit MARC authorities record' },
+  uiMarcAuthoritiesAuthorityRecordView:{ internal: 'ui-marc-authorities.authority-record.view', gui:'MARC Authority: View MARC authority record' },
+  uiMarcAuthoritiesAuthorityRecordEdit:{ internal: 'ui-marc-authorities.authority-record.edit', gui:'MARC Authority: Edit MARC authority record' },
+  uiMarcAuthoritiesAuthorityRecordDelete:{ internal: 'ui-marc-authorities.authority-record.delete', gui: 'MARC Authority: Delete MARC authority record' },
   // Inventory
   // TODO: gui name related with several internal names. Clarify the reason
   inventoryAll: { internal: ['inventory.all', 'ui-inventory.all-permissions.TEMPORARY'], gui: 'Inventory: All permissions' },
@@ -27,7 +29,7 @@ export default {
   uiInventorySettingsFastAdd: { internal: 'ui-inventory.settings.fast-add', gui: 'Settings (Inventory): Edit fast add settings' },
   uiInventoryMarkItemsWithdrawn: { internal: 'ui-inventory.items.mark-items-withdrawn', gui: 'Inventory: Mark items withdrawn' },
   uiInventoryViewInstances: { internal: 'ui-inventory.instance.view', gui: 'Inventory: View instances, holdings, and items' },
-
+  uiInventoryHoldingsMove:{ internal:'ui-inventory.holdings.move', gui:'Inventory: Move holdings' },
   uiCreateEditDeleteMaterialTypes: { internal: 'ui-inventory.settings.materialtypes', gui: 'Settings (Inventory): Create, edit, delete material types' },
   uiInventoryMarkAsMissing: { internal: 'ui-inventory.item.markasmissing', gui: 'Inventory: View, create, edit, mark missing items' },
   uiInventoryMoveItems: { internal: '', gui: 'Inventory: Move items' },
@@ -41,6 +43,7 @@ export default {
   // DataImport
   dataImportUploadAll:{ internal: 'data-import.upload.all', gui:'Data Import File Upload - all permissions' },
   moduleDataImportEnabled:{ internal: 'module.data-import.enabled', gui:'Data import: all permissions' },
+  settingsDataImportEnabled:{ internal: 'settings.data-import.enabled', gui:'Settings (Data import): Can view, create, edit, and remove' },
   // Storage
   converterStorageAll:{ internal: 'converter-storage.all', gui:'Data Import Converter Storage - all permissions' },
   inventoryStorageAuthoritiesAll:{ internal: 'inventory-storage.authorities.all', gui:'inventory storage module - all authorities permissions' },
@@ -50,6 +53,8 @@ export default {
   uiCirculationViewCreateEditDelete: { internal: 'ui-circulation.settings.circulation-rules', gui: 'Settings (Circ): Can create, edit and remove circulation rules' },
   // Users
   usersViewRequests: { internal: '', gui: 'Users: View requests' },
+  uiUsersViewLoans: { internal: 'ui-users.loans.view', gui: 'Users: User loans view' },
+  uiUsersDeclareItemLost: { internal: 'ui-users.loans.declare-item-lost', gui: 'Users: User loans declare lost' },
   // Remote Storage
   remoteStorageCRUD: { internal: '', gui: 'Settings (Remote storage): Can create, edit, delete remote storage settings' },
   // Requests
@@ -63,6 +68,9 @@ export default {
   dataExportAll: { internal: 'data-export.all', gui: 'Data Export - all permissions' },
   // Loans
   loansAll: { internal: 'ui-users.loans.all', gui: 'Users: User loans view, change due date, renew' },
+  loansView: { internal: 'ui-users.loans.view', gui: 'Users: User loans view' },
+  loansRenew: { internal: 'ui-users.loans.renew', gui: 'Users: User loans renew' },
+  loansRenewOverride: { internal: 'ui-users.loans.renew-override', gui: 'Users: User loans renew through override' },
   // Checkout
   checkoutAll: { internal: '', gui: 'Check out: All permissions' },
   // Checkin

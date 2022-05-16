@@ -18,7 +18,6 @@ import {
   Pane,
   Spinner,
 } from '../../../../interactors';
-import InventoryActions from './inventoryActions';
 import InventoryInstanceEdit from './InventoryInstanceEdit';
 import HoldingsRecordView from './holdingsRecordView';
 import InventoryViewSource from './inventoryViewSource';
@@ -80,14 +79,9 @@ export default {
     cy.do(viewSourceButton.click());
     InventoryViewSource.waitLoading();
   },
-  overlaySourceBibRecord:(specialOCLCWorldCatidentifier = validOCLC.id) => {
+  startOverlaySourceBibRecord:() => {
     cy.do(actionsButton.click());
     cy.do(overlaySourceBibRecord.click());
-    // TODO: merge InventoryACtions into InventoryInstances
-    InventoryActions.fillImportFields(specialOCLCWorldCatidentifier);
-    const startTime = Date.now();
-    InventoryActions.pressImportInModal();
-    return startTime;
   },
   editInstance:() => {
     cy.do(actionsButton.click());

@@ -8,6 +8,8 @@ import {
 import generateItemBarcode from '../../support/utils/generateItemBarcode';
 import EditRequest from '../../support/fragments/requests/edit-request';
 import UsersOwners from '../../support/fragments/settings/users/usersOwners';
+import checkinActions from '../../support/fragments/check-in-actions/checkInActions';
+import checkoutActions from '../../support/fragments/checkout/checkout';
 
 describe('Deleting user', () => {
   const lastName = 'Test-' + uuid();
@@ -142,7 +144,7 @@ describe('Deleting user', () => {
         });
       })
       .then(() => {
-        cy.createItemCheckout({
+        checkoutActions.createItemCheckoutApi({
           itemBarcode: ITEM_BARCODE,
           userBarcode: specialUserBarcode,
           servicePointId: servicePoint.id,
@@ -151,7 +153,7 @@ describe('Deleting user', () => {
       .then(() => {
         verifyUserDeleteImpossible(specialUserId);
 
-        cy.createItemCheckinApi({
+        checkinActions.createItemCheckinApi({
           itemBarcode: ITEM_BARCODE,
           servicePointId: servicePoint.id,
           checkInDate: '2021-09-30T16:14:50.444Z',

@@ -1,5 +1,8 @@
+import uuid from 'uuid';
+
 import { PaneHeader, Button, MultiColumnListCell, TextField, MultiSelect, PaneSet, EditableList, EditableListRow, Modal, MultiSelectOption, ValueChipRoot, HTML, including } from '../../../../../interactors';
 import { getLongDelay } from '../../../utils/cypressTools';
+import { getTestEntityValue } from '../../../utils/stringTools';
 
 const rootPaneset = PaneSet({ id:'settings-owners' });
 const addButton = rootPaneset.find(Button({ id:'clickable-add-settings-owners' }));
@@ -23,6 +26,11 @@ const deleteOwner = (rowNumber = 2) => {
   cy.do(Modal('Delete Fee/fine owner').find(Button('Delete')).click());
   cy.expect(Modal('Delete Fee/fine owner').absent());
 };
+
+export const getNewOwner = () => ({
+  owner: getTestEntityValue(),
+  id: uuid(),
+});
 
 export default {
   waitLoading:() => {

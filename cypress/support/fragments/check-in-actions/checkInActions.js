@@ -1,6 +1,8 @@
+import uuid from 'uuid';
 import { Button, Pane, including, TextField, MultiColumnListCell } from '../../../../interactors';
 import NewInctanceHoldingsItem from '../inventory/newInctanceHoldingsItem';
 import NewUser from '../user/newUser';
+import { REQUEST_METHOD } from '../../constants';
 
 const loadDetailsButton = Button('Loan details');
 const patronDetailsButton = Button('Patron details');
@@ -40,5 +42,15 @@ export default {
     cy.do(newFeeFineButton.click());
     cy.expect(Pane({ title:  'New fee/fine' }).exists());
     this.returnCheckIn();
+  },
+  createItemCheckinApi(body) {
+    return cy.okapiRequest({
+      method: REQUEST_METHOD.POST,
+      path: 'circulation/check-in-by-barcode',
+      body: {
+        id: uuid(),
+        ...body,
+      },
+    });
   },
 };

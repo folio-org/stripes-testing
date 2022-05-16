@@ -10,7 +10,7 @@ const importTypeSelect = Select({ name :'externalIdentifierType' });
 
 // TODO: merge inventoryActions and InventoryInstances
 export default {
-  open: () => Section({ id:'pane-results' }).find(Button('Actions')).click(),
+  open: () => cy.do(Section({ id:'pane-results' }).find(Button('Actions')).click()),
   options: {
     new: Button('New'),
     saveUUIDs: Button('Save instances UUIDs'),
@@ -38,7 +38,7 @@ export default {
   },
 
   import(specialOCLCWorldCatidentifier = InventoryInstance.validOCLC.id) {
-    cy.do(this.open());
+    this.open();
     cy.do(importButtonInActions.click());
     cy.expect(OCLWorldCatIdentifierTextField.exists());
     this.fillImportFields(specialOCLCWorldCatidentifier);

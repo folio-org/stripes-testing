@@ -22,7 +22,11 @@ describe('ui-inventory: moving items', () => {
   beforeEach('navigates to Inventory', () => {
     cy.createTempUser([
       permissions.inventoryAll.gui,
-      permissions.uiInventoryMoveItems.gui
+      permissions.uiInventoryMoveItems.gui,
+      permissions.uiInventorySingleRecordImport.gui,
+      permissions.uiQuickMarcQuickMarcHoldingsEditorCreate.gui,
+      permissions.uiInventoryHoldingsMove.gui,
+      permissions.uiQuickMarcQuickMarcHoldingsEditorView.gui
     ])
       .then(userProperties => {
         userId = userProperties.userId;
@@ -101,7 +105,6 @@ describe('ui-inventory: moving items', () => {
     InteractorsTools.checkCalloutMessage(successCalloutMessage);
   });
 
-  // TODO: https://issues.folio.org/browse/UIIN-1963
   it('C345404 Move holdings record with Source = MARC to an instance record with source = MARC', { tags:  [TestTypes.smoke, Features.eHoldings] }, () => {
     InventoryActions.import();
     InventoryInstance.getAssignedHRID().then(initialInstanceHrId => {
@@ -112,7 +115,6 @@ describe('ui-inventory: moving items', () => {
       HoldingsRecordView.getHoldingsHrId().then(holdingsRecordhrId => {
         HoldingsRecordView.close();
         InventoryInstance.waitLoading();
-        // TODO: issue with moving presented, see UIIN-1929, related with fail ath the end of test execution
         InventoryInstance.moveHoldingsToAnotherInstance(initialInstanceHrId);
         cy.visit(TopMenu.inventoryPath);
         InventorySearch.searchByParameter('Instance HRID', initialInstanceHrId);
@@ -120,8 +122,8 @@ describe('ui-inventory: moving items', () => {
         InventoryInstances.selectInstance();
         InventoryInstance.goToHoldingView();
         HoldingsRecordView.checkHrId(holdingsRecordhrId);
+        // TODO: view source is not available now, in process of investigation. Can be related with new error. https://issues.folio.org/browse/UIIN-2044
         HoldingsRecordView.viewSource();
-        // TODO: recheck after fix of UIIN-1929
         InventoryViewSource.contains(`004\t${initialInstanceHrId}`);
       });
     });
