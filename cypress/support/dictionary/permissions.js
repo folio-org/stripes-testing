@@ -53,6 +53,11 @@ export default {
   uiCirculationViewCreateEditDelete: { internal: 'ui-circulation.settings.circulation-rules', gui: 'Settings (Circ): Can create, edit and remove circulation rules' },
   // Users
   usersViewRequests: { internal: '', gui: 'Users: View requests' },
+  uiUsersView: { internal: 'ui-users.view', gui: 'Users: Can view user profile' },
+  uiUserCreate: { internal: 'ui-users.create', gui: 'Users: Create users' },
+  uiUserEdit: { internal: 'ui-users.edit', gui: 'Users: Can edit user profile' },
+  uiUserAccounts: { internal: 'ui-users.accounts', gui: 'Fee/Fine History: Can create, edit and remove accounts' },
+  uiUserRequestsAll: { internal: 'ui-users.requests.all', gui: 'Users: View requests' },
   uiUsersViewLoans: { internal: 'ui-users.loans.view', gui: 'Users: User loans view' },
   uiUsersDeclareItemLost: { internal: 'ui-users.loans.declare-item-lost', gui: 'Users: User loans declare lost' },
   // Remote Storage
@@ -60,7 +65,7 @@ export default {
   // Requests
   uiRequestsCreate: { internal: 'ui-requests.create', gui: 'Requests: View, create' },
   uiRequestsView: { internal: 'ui-requests.view', gui: 'Requests: View' },
-  requestsAll: { internal: '', gui: 'Requests: All permissions' },
+  requestsAll: { internal: 'ui-requests.all', gui: 'Requests: All permissions' },
   // Calendar
   calendarAll: { internal: 'ui-calendar.all', gui: 'Settings (Calendar): Can create, view, edit, and remove calendar events' },
   // Data Export
