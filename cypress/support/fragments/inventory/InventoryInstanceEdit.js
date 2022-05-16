@@ -103,6 +103,8 @@ export default {
     InventoryInstanceModal.selectInstance();
   },
   choosePermanentLocation(locationName) {
+    // wait fixes selection behavior
+    cy.wait(1000);
     cy.do([
       Selection('Permanent').open(),
       Selection('Permanent').choose(including(locationName))

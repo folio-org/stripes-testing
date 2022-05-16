@@ -17,7 +17,6 @@ describe('ui-eholdings: Provider manage', () => {
       cy.visit(TopMenu.eholdingsPath);
     });
   });
-  // TODO: https://issues.folio.org/browse/UIEH-1260
   it('C696 Edit proxy setting', { tags: [testTypes.smoke] }, () => {
     const specialProvider = 'Johns Hopkins University Press';
     eHoldingsProvidersSearch.byProvider(specialProvider);
@@ -26,6 +25,9 @@ describe('ui-eholdings: Provider manage', () => {
     eHoldingsProviderEdit.waitLoading(specialProvider);
     eHoldingsProviderEdit.changeProxy().then(newProxy => {
       eHoldingsProviderEdit.saveAndClose();
+      // additional delay related with update of proxy information in ebsco services
+      cy.wait(1000);
+      cy.reload();
       eHoldingsProviderView.checkProxy(newProxy);
     });
   });

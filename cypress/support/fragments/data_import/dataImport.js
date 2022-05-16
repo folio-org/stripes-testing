@@ -1,4 +1,4 @@
-import { Button, Section, HTML, including } from '../../../../interactors';
+import { Button, Section, HTML, including, PaneHeader } from '../../../../interactors';
 import { getLongDelay } from '../../utils/cypressTools';
 import getRandomPostfix from '../../utils/stringTools';
 import JobProfiles from './job_profiles/jobProfiles';
@@ -15,7 +15,7 @@ const uploadFile = (filePathName, fileName) => {
 const wailtLoading = () => {
   cy.expect(sectionPaneJobsTitle.exists());
   cy.expect(sectionPaneJobsTitle.find(HTML(including('Loading'))).absent());
-  cy.expect(sectionPaneJobsTitle.find(Button('Actions')).exists());
+  cy.expect(PaneHeader({ id:'paneHeaderpane-logs-title' }).find(Button('Actions')).exists());
 };
 
 export default {
