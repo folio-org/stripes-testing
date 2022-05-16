@@ -1,16 +1,13 @@
-import TopMenu from '../../../support/fragments/topMenu';
-import NewInvoice from '../../../support/fragments/invoices/newInvoice';
-import NewInvoiceLine from '../../../support/fragments/invoices/newInvoiceLine';
-import Invoices from '../../../support/fragments/invoices/invoices';
-import TestType from '../../../support/dictionary/testTypes';
-import VendorAddress from '../../../support/fragments/invoices/vendorAddress';
-import NewFund from '../../../support/fragments/finance/funds/newFund';
-import Funds from '../../../support/fragments/finance/funds/funds';
-import DateTools from '../../../support/utils/dateTools';
-// import Helper from '../../support/fragments/finance/financeHelper';
-// import Transaction from '../../support/fragments/finance/fabrics/newTransaction';
-import SettingMenu from '../../../support/fragments/settingsMenu';
-import ExportBatchVoucher from '../../../support/fragments/invoices/exportBatchVoucher';
+import TopMenu from '../../support/fragments/topMenu';
+import NewInvoice from '../../support/fragments/invoices/newInvoice';
+import NewInvoiceLine from '../../support/fragments/invoices/newInvoiceLine';
+import Invoices from '../../support/fragments/invoices/invoices';
+import TestType from '../../support/dictionary/testTypes';
+import VendorAddress from '../../support/fragments/invoices/vendorAddress';
+import NewFund from '../../support/fragments/finance/funds/newFund';
+import Funds from '../../support/fragments/finance/funds/funds';
+import DateTools from '../../support/utils/dateTools';
+import FileManager from '../../support/utils/fileManager';
 
 describe('ui-invoices-settings: Export batch voucher', () => {
   const invoice = { ...NewInvoice.defaultUiInvoice };
@@ -39,16 +36,15 @@ describe('ui-invoices-settings: Export batch voucher', () => {
     invoiceLine.subTotal = -subtotalValue;
     cy.visit(TopMenu.invoicesPath);
   });
-
+  after('Delete storage', () => {
+    FileManager.deleteFolder(Cypress.config('downloadsFolder'));
+  });
   it('C10943 Run batch voucher export manually', { tags: [TestType.smoke] }, () => {
     Invoices.createDefaultInvoice(invoice, vendorPrimaryAddress);
     Invoices.createInvoiceLine(invoiceLine);
     Invoices.addFundDistributionToLine(invoiceLine, fund);
     Invoices.approveInvoice();
     Invoices.voucherExport();
-    // cy.visit(SettingMenu.invoiceBGConfigPath);
-    // ExportBatchVoucher.runManualExport1();
-    cy.verifyDownload('*.json');
-    // ExportBatchVoucher.runManualExport3();
+    FileManager.findDownloadedFilesByMask('*.json');
   });
 });
