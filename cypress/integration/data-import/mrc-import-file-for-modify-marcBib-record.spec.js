@@ -24,10 +24,7 @@ describe('ui-data-import: Verify the possibility to modify MARC Bibliographic re
       Cypress.env('diku_login'),
       Cypress.env('diku_password')
     );
-    cy.getToken(
-      Cypress.env('diku_login'),
-      Cypress.env('diku_password')
-    );
+    cy.getAdminToken();
 
     DataImport.checkUploadState();
   });

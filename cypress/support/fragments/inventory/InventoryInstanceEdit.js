@@ -1,9 +1,22 @@
-import { Accordion, Button, Section, Select, TextArea, TextField, FieldSet } from '../../../../interactors';
+import {
+  Accordion,
+  Button,
+  Section,
+  Select,
+  TextArea,
+  TextField,
+  FieldSet,
+  Selection,
+  including,
+} from '../../../../interactors';
 import InteractorsTools from '../../utils/interactorsTools';
 import getRandomPostfix from '../../utils/stringTools';
+import InventoryInstanceModal from './holdingsMove/inventoryInstanceSelectInstanceModal';
 
 const closeButton = Button({ icon: 'times' });
+const saveAndCloseButton = Button('Save and close');
 const rootSection = Section({ id: 'instance-form' });
+const actionsButton = Button('Actions');
 const value = `test.${getRandomPostfix()}`;
 
 export default {
@@ -72,6 +85,37 @@ export default {
       Button('Add identifier').click(),
       Accordion('Identifier').find(Select({ name:'identifiers[0].identifierTypeId' })).choose(identifier),
       TextField({ name:'identifiers[0].value' }).fillIn(value),
-      Button('Save and close').click()]);
+      saveAndCloseButton.click()]);
   },
+  addPrecedingTitle:(fieldIndex, precedingTitle, isbn, issn) => {
+    const fieldNamePref = `precedingTitles[${fieldIndex}]`;
+
+    cy.do([
+      Button('Add preceding title').click(),
+      TextArea({ name:  `${fieldNamePref}.title` }).fillIn(precedingTitle),
+      TextField({ name: `${fieldNamePref}.isbn` }).fillIn(isbn),
+      TextField({ name: `${fieldNamePref}.issn` }).fillIn(issn),
+    ]);
+  },
+  addExistingPrecedingTitle:(precedingTitle) => {
+    cy.do(Button({ id: 'find-instance-trigger' }).click());
+    InventoryInstanceModal.searchByTitle(precedingTitle);
+    InventoryInstanceModal.selectInstance();
+  },
+  choosePermanentLocation(locationName) {
+    cy.do([
+      Selection('Permanent').open(),
+      Selection('Permanent').choose(including(locationName))
+    ]);
+  },
+  chooseTemporaryLocation(locationName) {
+    cy.do([
+      Selection('Temporary').open(),
+      Selection('Temporary').choose(including(locationName))
+    ]);
+  },
+  saveAndClose: () => {
+    cy.do(saveAndCloseButton.click());
+    cy.expect(actionsButton.exists());
+  }
 };

@@ -1,10 +1,9 @@
 import LogsViewAll from '../../support/fragments/data_import/logs/logsViewAll';
-import FileManager from '../../support/utils/fileManager';
 import DateTools from '../../support/utils/dateTools';
 import { Accordion } from '../../../interactors';
 import getRandomPostfix from '../../support/utils/stringTools';
 import TopMenu from '../../support/fragments/topMenu';
-import DataImport from '../../support/fragments/data_import/dataImport';
+import FileManager from '../../support/utils/fileManager';
 
 describe('ui-data-import: Filter the "View all" log screen', () => {
   // Path to static file in fixtures
@@ -22,16 +21,13 @@ describe('ui-data-import: Filter the "View all" log screen', () => {
       Cypress.env('diku_login'),
       Cypress.env('diku_password')
     );
-    cy.getToken(
-      Cypress.env('diku_login'),
-      Cypress.env('diku_password')
-    );
+    cy.getAdminToken();
 
     // Create files dynamically with given name and content in fixtures
     FileManager.createFile(`cypress/fixtures/${fileNameForFailedImport}`);
     // read contents of static file in fixtures
     cy.readFile(`cypress/fixtures/${pathToStaticFile}`).then(content => {
-    // and write its contents to the file which runs successfully and create it
+      // and write its contents to the file which runs successfully and create it
       FileManager.createFile(`cypress/fixtures/${fileNameForSuccessfulImport}`, content);
     });
 
@@ -55,8 +51,6 @@ describe('ui-data-import: Filter the "View all" log screen', () => {
       userNameId = userId;
       profileId = jobProfileInfo.id;
     });
-
-    DataImport.checkUploadState();
   });
 
   it('C11113 Filter the "View all" log screen', { tags: '@smoke' }, () => {

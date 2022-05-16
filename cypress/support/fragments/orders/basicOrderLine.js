@@ -2,7 +2,7 @@ import uuid from 'uuid';
 import getRandomPostfix from '../../utils/stringTools';
 
 export default {
-  defaultOrderLine : {
+  defaultOrderLine: {
     id: uuid(),
     checkinItems: false,
     acquisitionMethod: '',
@@ -20,7 +20,7 @@ export default {
       productIds: [],
       subscriptionInterval: 0
     },
-    fundDistribution : [],
+    fundDistribution: [],
     isPackage: false,
     locations: [
       {
@@ -52,5 +52,5 @@ export default {
       instructions: '',
       vendorAccount: '1234'
     }
-  }
+  },
 };

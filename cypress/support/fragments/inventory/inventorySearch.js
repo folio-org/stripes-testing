@@ -178,6 +178,9 @@ export default {
   switchToHoldings: () => {
     cy.do(Button({ id: 'segment-navigation-holdings' }).click());
   },
+  switchToInstance: () => {
+    cy.do(Button({ id: 'segment-navigation-instances' }).click());
+  },
 
   instanceTabIsDefault() {
     cy.do(
@@ -193,4 +196,8 @@ export default {
       Button('Browse').click()
     ]);
   },
+
+  verifySearchResult(cellContent) {
+    cy.expect(MultiColumnListCell({ content: cellContent }).exists());
+  }
 };

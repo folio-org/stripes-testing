@@ -6,9 +6,11 @@ Cypress.Commands.add('getUsers', (searchParams) => {
     .okapiRequest({
       path: 'users',
       searchParams,
+      isDefaultSearchParamsRequired: false
     })
     .then(({ body }) => {
       Cypress.env('users', body.users);
+      return body.users;
     });
 });
 
@@ -22,6 +24,7 @@ Cypress.Commands.add('getUserServicePoints', (userId) => {
     })
     .then(({ body }) => {
       Cypress.env('userServicePoints', body.servicePointsUsers);
+      return body.servicePointsUsers;
     });
 });
 
@@ -33,6 +36,7 @@ Cypress.Commands.add('getUserGroups', (searchParams) => {
     })
     .then(({ body }) => {
       Cypress.env('userGroups', body.usergroups);
+      return body.usergroups[0].id;
     });
 });
 
@@ -62,6 +66,7 @@ Cypress.Commands.add('createUserApi', (user) => {
     })
     .then(({ body }) => {
       Cypress.env('user', body);
+      return body;
     });
 });
 
@@ -79,14 +84,22 @@ Cypress.Commands.add('overrideLocalSettings', (userId) => {
   });
 });
 
-Cypress.Commands.add('createTempUser', (permissions) => {
+Cypress.Commands.add('updateUser', (userData) => {
+  cy.okapiRequest({
+    method: 'PUT',
+    path: `users/${userData.id}`,
+    body: userData,
+  });
+});
+
+Cypress.Commands.add('createTempUser', (permissions = []) => {
   const userProperties = {
     username: `cypressTestUser${getRandomPostfix()}`,
     password: `Password${getRandomPostfix()}`,
     userId:''
   };
 
-  cy.getToken(Cypress.env('diku_login'), Cypress.env('diku_password'));
+  cy.getAdminToken();
 
   cy.getFirstUserGroupId({ limit: 1 })
     .then((userGroupdId) => {
@@ -112,16 +125,36 @@ Cypress.Commands.add('createTempUser', (permissions) => {
           // cy.log('internalPermissions=' + [...permissionsResponse.body.permissions.map(permission => permission.permissionName)]);
           cy.createUserApi(userData)
             .then((userCreateResponse) => {
-              userProperties.userId = userCreateResponse.body.id;
+              userProperties.userId = userCreateResponse.id;
               cy.setUserPassword(userProperties);
               cy.addPermissionsToNewUserApi({
                 userId: userProperties.userId,
                 permissions : [...permissionsResponse.body.permissions.map(permission => permission.permissionName)]
               });
               cy.overrideLocalSettings(userProperties.userId);
+              userProperties.barcode = userCreateResponse.barcode;
               cy.wrap(userProperties).as('userProperties');
             });
         });
     });
   return cy.get('@userProperties');
+});
+
+Cypress.Commands.add('getAddressTypesApi', (searchParams) => {
+  cy.okapiRequest({
+    path: 'addresstypes',
+    searchParams,
+  }).then(({ body }) => {
+    return body.addressTypes;
+  });
+});
+
+Cypress.Commands.add('createUserRequestPreferencesApi', (data) => {
+  cy.okapiRequest({
+    method: 'POST',
+    path: 'request-preference-storage/request-preference',
+    body: data,
+  }).then(({ body }) => {
+    return body;
+  });
 });

@@ -6,15 +6,16 @@ import SearchInventory from './searchInventory';
 import TopMenu from '../topMenu';
 import DataImportUploadFile from '../../../../interactors/dataImportUploadFile';
 
+const sectionPaneJobsTitle = Section({ id: 'pane-jobs-title' });
+
 const uploadFile = (filePathName, fileName) => {
   cy.get('input[type=file]', getLongDelay()).attachFile({ filePath: filePathName, fileName });
 };
 
 const wailtLoading = () => {
-  cy.expect(Section({ id: 'pane-jobs-title' }).exists());
-  cy.expect(Section({ id: 'pane-jobs-title' }).find(HTML(including('Loading'))).absent());
-
-  cy.expect(Section({ id: 'pane-logs-title' }).find(Button('View all')).exists());
+  cy.expect(sectionPaneJobsTitle.exists());
+  cy.expect(sectionPaneJobsTitle.find(HTML(including('Loading'))).absent());
+  cy.expect(sectionPaneJobsTitle.find(Button('Actions')).exists());
 };
 
 export default {

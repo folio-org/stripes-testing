@@ -1,4 +1,4 @@
-import { Button, Select } from '../../../../interactors';
+import { Button, Pane, Select } from '../../../../interactors';
 
 export default {
   runManualExport1: () => {
@@ -6,9 +6,10 @@ export default {
   },
   runManualExport2: () => {
     cy.do([
-      // Select({ id: 'select-8' }).choose('FOLIO'),
-      Select({ name: 'format' }).choose('XML'),
-      Button('Save').click(),
+      Pane({ id: 'pane-batch-group-configuration' })
+        .find(Select({ id: 'select-8' }).choose('FOLIO')),
+      // Select({ name: 'format' }).choose('XML'),
+      // Button('Save').click(),
     ]);
   },
   runManualExport3: () => {

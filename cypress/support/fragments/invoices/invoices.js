@@ -1,4 +1,5 @@
-import { Button,
+import {
+  Button,
   TextField,
   Selection,
   SelectionList,
@@ -11,7 +12,9 @@ import { Button,
   Modal,
   Checkbox,
   MultiColumnList,
-  MultiColumnListRow } from '../../../../interactors';
+  MultiColumnListRow,
+  Select
+} from '../../../../interactors';
 import InteractorsTools from '../../utils/interactorsTools';
 import Helper from '../finance/financeHelper';
 
@@ -35,6 +38,7 @@ const searhInputId = 'input-record-search';
 
 export default {
   createDefaultInvoice(invoice, vendorPrimaryAddress) {
+    cy.do(actionsButton.click());
     cy.expect(buttonNew.exists());
     cy.do([
       buttonNew.click(),
@@ -93,7 +97,7 @@ export default {
   },
 
   confirmInvoiceDeletion: () => {
-    cy.do(Button('Delete', { id:'clickable-delete-invoice-confirmation-confirm' }).click());
+    cy.do(Button('Delete', { id: 'clickable-delete-invoice-confirmation-confirm' }).click());
     InteractorsTools.checkCalloutMessage(invoiceStates.InvoiceDeletedMessage);
   },
 
@@ -134,7 +138,8 @@ export default {
   addFundDistributionToLine: (invoiceLine, fund) => {
     cy.do([
       Accordion({ id: invoiceLinesAccordionId }).find(MultiColumnListCell({ content: invoiceLine.description })).click(),
-      actionsButton.click(),
+      PaneHeader({ id: 'paneHeaderpane-invoiceLineDetails' })
+        .find(actionsButton).click(),
       Button('Edit').click(),
       Button({ id: 'fundDistributions-add-button' }).click(),
       Selection('Fund ID*').open(),
@@ -238,6 +243,24 @@ export default {
     cy.do(Button('Close').click());
   },
 
+  voucherExport: () => {
+    cy.do([
+      PaneHeader({ id: 'paneHeaderinvoice-results-pane' })
+        .find(actionsButton).click(),
+      Button('Voucher export').click(),
+      Select().choose('Amherst (AC)'),
+      Button('Run manual export').click(),
+      Button({ id: 'clickable-run-manual-export-confirmation-confirm' }).click(),
+    ]);
+    cy.wait(6000);
+    cy.do([
+      MultiColumnList({ id: 'batch-voucher-exports' })
+        .find(MultiColumnListRow({ index: 0 }))
+        .find(MultiColumnListCell({ columnIndex: 3 }))
+        .find(Button({ icon: 'download' }))
+        .click(),
+    ]);
+  },
   getSearchParamsMap(orderNumber, orderLine) {
     const searchParamsMap = new Map();
     searchParamsMap.set('Keyword', orderNumber)

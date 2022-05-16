@@ -1,12 +1,14 @@
+import generateItemBarcode from '../../support/utils/generateItemBarcode';
+import checkoutActions from '../../support/fragments/checkout/checkout';
+
 describe('Check In', () => {
   let ITEM_BARCODE;
 
   beforeEach(() => {
-    ITEM_BARCODE = Number(new Date()).toString();
+    ITEM_BARCODE = generateItemBarcode();
 
     cy.login(Cypress.env('diku_login'), Cypress.env('diku_password'));
-    cy.getToken(Cypress.env('diku_login'),
-      Cypress.env('diku_password'))
+    cy.getAdminToken()
       .then(() => {
         cy.getLoanTypes({ limit: 1 });
         cy.getMaterialTypes({ limit: 1 });
@@ -42,7 +44,7 @@ describe('Check In', () => {
         });
       })
       .then(() => {
-        cy.createItemCheckout({
+        checkoutActions.createItemCheckoutApi({
           itemBarcode: ITEM_BARCODE,
           userBarcode: Cypress.env('users')[0].barcode,
           servicePointId: Cypress.env('userServicePoints')[0].id,

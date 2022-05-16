@@ -4,6 +4,7 @@ Cypress.Commands.add('getToken', (username, password) => {
       method: 'POST',
       path: 'bl-users/login',
       body: { username, password },
+      isDefaultSearchParamsRequired: false,
     })
     .then(({ body, headers }) => {
       const defaultServicePoint = body.servicePointsUser.servicePoints
@@ -21,4 +22,8 @@ Cypress.Commands.add('setUserPassword', (userCredentials) => {
       path: 'authn/credentials',
       body: userCredentials,
     });
+});
+
+Cypress.Commands.add('getAdminToken', () => {
+  cy.getToken(Cypress.env('diku_login'), Cypress.env('diku_password'));
 });

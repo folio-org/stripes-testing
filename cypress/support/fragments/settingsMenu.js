@@ -4,6 +4,7 @@ export default {
   acquisitionUnitsPath: 'settings/acquisition-units',
   agreementsPath: 'settings/erm',
   calendarPath: 'settings/calendar',
+  calendarLibraryHoursPath: 'settings/calendar/library-hours',
   // Circulation
   circulationRulesPath: 'settings/circulation/rules',
   circulationOtherSettingsPath: 'settings/circulation/checkout',
@@ -26,7 +27,9 @@ export default {
   eHoldingsPath: 'settings/eholdings',
   ermComparisonsPath: 'settings/comparisons-erm',
   innReachPath: 'settings/innreach',
+  // Inventory
   inventoryPath: 'settings/inventory',
+  materialTypePath: '/settings/inventory/materialtypes',
   // Invoice
   invoiceApprovalsPath: 'settings/invoice/approvals',
   invoiceAdjustmentsPath: 'settings/invoice/adjustments',
@@ -46,9 +49,12 @@ export default {
   remoteStoragePath: 'settings/remote-storage',
   tagsPath: 'settings/tags',
   tenantPath: 'settings/tenant-settings',
+  tenantLocationsPath: 'settings/tenant-settings/location-locations',
   // Users
   usersOwnersPath: 'settings/users/owners',
   usersPath: 'settings/users',
+  paymentsPath: 'settings/users/payments',
+  //Data Import
   mappingProfilePath: 'settings/data-import/mapping-profiles',
   actionProfilePath: 'settings/data-import/action-profiles',
   matchProfilePath: 'settings/data-import/match-profiles',

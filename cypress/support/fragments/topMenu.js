@@ -18,4 +18,7 @@ export default {
   organizationsPath : '/organizations',
   marcAuthorities: '/marc-authorities',
   inventorySettingsFastAddPath: '/settings/inventory/fastAdd',
+  requestsPath: '/requests',
+  usersPath: '/users',
+  checkOutPath: '/checkout'
 };

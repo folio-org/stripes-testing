@@ -45,8 +45,10 @@ describe('ui-invoices-settings: Export batch voucher', () => {
     Invoices.createInvoiceLine(invoiceLine);
     Invoices.addFundDistributionToLine(invoiceLine, fund);
     Invoices.approveInvoice();
-    cy.visit(SettingMenu.invoiceBGConfigPath);
-    ExportBatchVoucher.runManualExport1();
-    ExportBatchVoucher.runManualExport3();
+    Invoices.voucherExport();
+    // cy.visit(SettingMenu.invoiceBGConfigPath);
+    // ExportBatchVoucher.runManualExport1();
+    cy.verifyDownload('*.json');
+    // ExportBatchVoucher.runManualExport3();
   });
 });

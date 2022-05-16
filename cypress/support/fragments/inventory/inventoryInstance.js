@@ -1,3 +1,4 @@
+import { TextField } from '@interactors/html';
 import {
   MultiColumnList,
   HTML,
@@ -9,10 +10,13 @@ import {
   MultiColumnListHeader,
   MultiColumnListCell,
   Accordion,
-  Modal,
   Dropdown,
   Checkbox,
   MultiColumnListRow,
+  Link,
+  MultiSelect,
+  Pane,
+  Spinner,
 } from '../../../../interactors';
 import InventoryActions from './inventoryActions';
 import InventoryInstanceEdit from './InventoryInstanceEdit';
@@ -36,7 +40,6 @@ const viewHoldingsButton = Button('View holdings');
 const notesSection = Section({ id: 'instance-details-notes' });
 const moveItemsButton = Button({ id: 'move-instance-items' });
 
-
 const instanceHRID = 'Instance HRID';
 const validOCLC = { id:'176116217',
   // TODO: hardcoded count related with interactors getters issue. Redesign to cy.then(QuickMarkEditor().rowsCount()).then(rowsCount => {...}
@@ -49,6 +52,10 @@ const pressAddHoldingsButton = () => {
   NewHoldingsRecord.waitLoading();
 };
 const waitLoading = () => cy.expect(actionsButton.exists());
+const tagButton = Button({ icon: 'tag' });
+const closeTag = Button({ icon: 'times' });
+const tagsPane = Pane('Tags');
+const textFieldTagInput = TextField({ id:'input-tag-input' });
 
 export default {
   validOCLC,
@@ -125,7 +132,7 @@ export default {
     waitLoading();
   },
 
-  checkHoldingsTable: (locationName, rowNumber, caption, barcode, status) => {
+  checkHoldingsTable: (locationName, rowNumber, caption, barcode, status, effectiveLocation = null) => {
     const accordionHeader = `Holdings: ${locationName} >`;
     const indexRowNumber = `row-${rowNumber}`;
     // wait for data to be loaded
@@ -150,6 +157,11 @@ export default {
     cy.expect(Accordion(accordionHeader)
       .find(MultiColumnListRow({ indexRow: indexRowNumber }))
       .find(MultiColumnListCell({ content: status })).exists());
+    if (effectiveLocation) {
+      cy.expect(Accordion(accordionHeader)
+        .find(MultiColumnListRow({ indexRow: indexRowNumber }))
+        .find(MultiColumnListCell({ content: effectiveLocation })).exists());
+    }
   },
 
   openHoldings(holdingToBeOpened) {
@@ -174,8 +186,7 @@ export default {
 
     cy.do([
       Accordion({ label: including(`Holdings: ${secondHoldingName}`) }).find(MultiColumnListRow({ indexRow: 'row-0' })).find(Checkbox()).click(),
-      Accordion({ label: including(`Holdings: ${secondHoldingName}`) }).find(Dropdown({ label: 'Move to' })).choose(including(firstHoldingName)),
-      Modal().find(Button('Continue')).click()
+      Accordion({ label: including(`Holdings: ${secondHoldingName}`) }).find(Dropdown({ label: 'Move to' })).choose(including(firstHoldingName))
     ]);
   },
 
@@ -202,5 +213,56 @@ export default {
       .find(MultiColumnListRow({ index: 0 })))
       .find(MultiColumnListCell({ columnIndex: 0 }))
       .has({ content: identifier }));
+  },
+  checkPrecedingTitle:(rowNumber, title, isbn, issn) => {
+    cy.expect(MultiColumnList({ id: 'precedingTitles' })
+      .find(MultiColumnListRow({ index: rowNumber }))
+      .find(MultiColumnListCell({ content: title }))
+      .exists());
+    cy.expect(MultiColumnList({ id: 'precedingTitles' })
+      .find(MultiColumnListRow({ index: rowNumber }))
+      .find(MultiColumnListCell({ content: isbn }))
+      .exists());
+    cy.expect(MultiColumnList({ id: 'precedingTitles' })
+      .find(MultiColumnListRow({ index: rowNumber }))
+      .find(MultiColumnListCell({ content: issn }))
+      .exists());
+  },
+  openItemView: (itemBarcode) => {
+    cy.do(Link(including(itemBarcode)).click());
+  },
+  openEditItemPage() {
+    cy.do([
+      Button('Actions').click(),
+      Button('Edit').click(),
+    ]);
+  },
+  closeInstancePage() {
+    cy.do(Button({ ariaLabel: 'Close ' }).click());
+    cy.expect(section.exists());
+  },
+
+  addTag:(tagName) => {
+    cy.intercept('/tags?limit=10000').as('getTags');
+    cy.do(tagButton.click());
+    cy.wait(['@getTags']);
+    // TODO: clarify with developers what should be waited
+    cy.wait(1000);
+    cy.do(tagsPane.find(textFieldTagInput).fillIn(tagName));
+    cy.do(tagsPane.find(textFieldTagInput).click());
+    cy.expect(Pane({ id: 'pane-instancedetails' }).find(Spinner()).absent());
+    cy.do(MultiSelect().select([including('Add tag for:')]));
+  },
+
+  checkAddedTag:(tagName, instanceTitle) => {
+    cy.do(MultiColumnListCell(instanceTitle).click());
+    cy.do(tagButton.click());
+    cy.expect(MultiSelect().exists(tagName));
+  },
+
+  deleteTag:(tagName) => {
+    cy.do(MultiSelect().find(closeTag).click());
+    cy.expect(MultiSelect().find(HTML(including(tagName))).absent());
+    cy.expect(tagButton.find(HTML(including('0'))).exists());
   },
 };
