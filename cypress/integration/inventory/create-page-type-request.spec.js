@@ -3,6 +3,7 @@ import permissions from '../../support/dictionary/permissions';
 import TopMenu from '../../support/fragments/topMenu';
 import createPageTypeRequest from '../../support/fragments/inventory/createPageTypeRequest';
 import Requests from '../../support/fragments/requests/requests';
+import MarkItemAsMissing from '../../support/fragments/inventory/markItemAsMissing';
 
 describe('ui-inventory: Create page type request', () => {
   let user;
@@ -40,10 +41,10 @@ describe('ui-inventory: Create page type request', () => {
         cy.login(user.username, user.password);
       })
       .then(() => {
-        createPageTypeRequest
-          .createItemsForGivenStatusesApi()
-          .then(({ item, instanceRecordData }) => {
-            createdItem = item;
+        MarkItemAsMissing
+          .createItemsForGivenStatusesApi.call(createPageTypeRequest)
+          .then(({ items, instanceRecordData }) => {
+            createdItem = items[0];
             instanceData = instanceRecordData;
             cy.intercept('GET', '/circulation/requests?*').as('getRequests');
             cy.intercept('GET', '/users?*').as('getUsers');
@@ -65,7 +66,7 @@ describe('ui-inventory: Create page type request', () => {
       query: `"requesterId"="${user.userId}"`
     }).then(({ body }) => {
       body.requests?.forEach(request => {
-        createPageTypeRequest.deleteRequestApi(request.id);
+        Requests.deleteRequestApi(request.id);
       });
     });
     cy.deleteItem(createdItem.itemId);
@@ -82,8 +83,9 @@ describe('ui-inventory: Create page type request', () => {
     createPageTypeRequest.clickNewRequest(createdItem.barcode);
     createPageTypeRequest.selectActiveFacultyUser(user.username);
     createPageTypeRequest.saveAndClose();
+    cy.wait(['@postRequest']);
     createPageTypeRequest.clickItemBarcodeLink(createdItem.barcode);
-    createPageTypeRequest.verifyrequestsCountOnItemRecord();
+    createPageTypeRequest.verifyRequestsCountOnItemRecord();
     createPageTypeRequest.clickRequestsCountLink();
     createPageTypeRequest.clickRequesterBarcode(user.username);
     createPageTypeRequest.verifyOpenRequestCounts();
