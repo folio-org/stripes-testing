@@ -80,7 +80,6 @@ describe('MARC Authority management', () => {
     MarcAuthorities.checkRowsCount(1);
   });
 
-  // https://issues.folio.org/browse/UIMARCAUTH-131
   it('C350667 Update a MARC authority record via data import. Record match with 010 $a', { tags:  [TestTypes.smoke, Features.authority] }, () => {
     // profiles preparing
     dataImportSettingMappingProfiles.createMappingProfileApi().then(mappingProfileResponse => {
@@ -201,6 +200,7 @@ describe('MARC Authority management', () => {
   });
 
   afterEach(() => {
+    // https://issues.folio.org/browse/FAT-1680
     new Set(marcAuthorityIds).forEach(marcAuthorityId => MarcAuthority.deleteViaAPI(marcAuthorityId));
     marcAuthorityIds = [];
     cy.deleteUser(userId);
