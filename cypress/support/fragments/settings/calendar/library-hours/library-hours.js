@@ -44,6 +44,7 @@ export default {
   openCalendarEvents() {
     cy
       .visit(settingsMenu.calendarLibraryHoursPath)
+      // todo: Find the approach to use interactors
       .get(selectors.servicePoint).first().click();
   },
 
