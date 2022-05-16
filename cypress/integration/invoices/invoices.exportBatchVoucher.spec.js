@@ -36,9 +36,11 @@ describe('ui-invoices-settings: Export batch voucher', () => {
     invoiceLine.subTotal = -subtotalValue;
     cy.visit(TopMenu.invoicesPath);
   });
+
   after('Delete storage', () => {
     FileManager.deleteFolder(Cypress.config('downloadsFolder'));
   });
+
   it('C10943 Run batch voucher export manually', { tags: [TestType.smoke] }, () => {
     Invoices.createDefaultInvoice(invoice, vendorPrimaryAddress);
     Invoices.createInvoiceLine(invoiceLine);
