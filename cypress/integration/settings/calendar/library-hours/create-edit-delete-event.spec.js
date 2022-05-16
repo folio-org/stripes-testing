@@ -3,18 +3,19 @@ import calendarActions from '../../../../support/fragments/settings/calendar/lib
 import permissions from '../../../../support/dictionary/permissions';
 
 describe('Calendar', () => {
-  let fullAccessUserId;
   const limitedAccessUser = {
     id: '',
     userName: '',
     password: '',
   };
+  const fullAccessUser = { ...limitedAccessUser };
 
   before(() => {
     cy.createTempUser([permissions.calendarAll.gui])
       .then(userProperties => {
-        fullAccessUserId = userProperties.userId;
-        cy.login(userProperties.username, userProperties.password);
+        fullAccessUser.id = userProperties.userId;
+        fullAccessUser.userName = userProperties.username;
+        fullAccessUser.password = userProperties.password;
       });
     cy.createTempUser([permissions.calendarEdit.gui])
       .then(userProperties => {
@@ -25,12 +26,14 @@ describe('Calendar', () => {
   });
 
   after(() => {
-    cy.deleteUser(fullAccessUserId);
+    cy.deleteUser(fullAccessUser.id);
     cy.deleteUser(limitedAccessUser.id);
     calendarActions.clearCreatedEvents();
   });
 
   it('C347825 Create, view, edit and delete calendar events', { tags: [TestType.smoke] }, () => {
+    cy.login(fullAccessUser.userName, fullAccessUser.password);
+
     calendarActions.openCalendarEvents();
     calendarActions.createCalendarEvent();
     calendarActions.openEditCalendarPage();
