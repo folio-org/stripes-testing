@@ -173,10 +173,30 @@ Cypress.Commands.add('createHolding', ({ holding, items = [] }) => {
     });
 });
 
+Cypress.Commands.add('getHoldings', (searchParams) => {
+  cy
+    .okapiRequest({
+      method: 'GET',
+      path: 'holdings-storage/holdings',
+      searchParams
+    })
+    .then(({ body }) => {
+      return body.holdingsRecords;
+    });
+});
+
 Cypress.Commands.add('deleteHoldingRecord', (holdingsRecordId) => {
   cy.okapiRequest({
     method: 'DELETE',
     path: `holdings-storage/holdings/${holdingsRecordId}`,
+  });
+});
+
+Cypress.Commands.add('updateHoldingRecord', (holdingsRecordId, newParams) => {
+  cy.okapiRequest({
+    method: 'PUT',
+    path: `holdings-storage/holdings/${holdingsRecordId}`,
+    body: newParams
   });
 });
 

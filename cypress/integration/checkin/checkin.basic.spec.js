@@ -1,4 +1,5 @@
 import generateItemBarcode from '../../support/utils/generateItemBarcode';
+import checkoutActions from '../../support/fragments/checkout/checkout';
 
 describe('Check In', () => {
   let ITEM_BARCODE;
@@ -43,7 +44,7 @@ describe('Check In', () => {
         });
       })
       .then(() => {
-        cy.createItemCheckout({
+        checkoutActions.createItemCheckoutApi({
           itemBarcode: ITEM_BARCODE,
           userBarcode: Cypress.env('users')[0].barcode,
           servicePointId: Cypress.env('userServicePoints')[0].id,

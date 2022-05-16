@@ -14,7 +14,7 @@ export default {
     cy.intercept('eholdings/providers/**').as('getProviderProperties');
     cy.wait('@getProviderProperties', getLongDelay()).then(request => {
       cy.expect(Section({ id : providerName.replaceAll(' ', '-').toLowerCase() }).exists());
-      cy.expect(proxySelect.find(HTML(including(request.response.body.data.attributes.proxy.id))).exists());
+      cy.expect(proxySelect.has({ value:  request.response.body.data.attributes.proxy.id }));
     });
   },
   changeProxy: () => {

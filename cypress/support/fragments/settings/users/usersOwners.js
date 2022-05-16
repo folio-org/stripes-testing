@@ -1,5 +1,8 @@
+import uuid from 'uuid';
+
 import { PaneHeader, Button, MultiColumnListCell, TextField, MultiSelect, PaneSet, EditableList, EditableListRow, Modal, MultiSelectOption, ValueChipRoot, HTML, including } from '../../../../../interactors';
 import { getLongDelay } from '../../../utils/cypressTools';
+import { getTestEntityValue } from '../../../utils/stringTools';
 
 const rootPaneset = PaneSet({ id:'settings-owners' });
 const addButton = rootPaneset.find(Button({ id:'clickable-add-settings-owners' }));
@@ -23,6 +26,11 @@ const deleteOwner = (rowNumber = 2) => {
   cy.do(Modal('Delete Fee/fine owner').find(Button('Delete')).click());
   cy.expect(Modal('Delete Fee/fine owner').absent());
 };
+
+export const getNewOwner = () => ({
+  owner: getTestEntityValue(),
+  id: uuid(),
+});
 
 export default {
   waitLoading:() => {
@@ -104,4 +112,28 @@ export default {
     cy.do(rootPaneset.find(Button({ id:`clickable-cancel-settings-owners-${rowNumber}` })).click());
     cy.expect(addButton.has({ disabled: false }));
   },
+  createViaApi: (owner) => {
+    return cy.okapiRequest({
+      method: 'POST',
+      path: 'owners',
+      body: owner,
+      isDefaultSearchParamsRequired: false
+    });
+  },
+  getOwnerViaApi: (searchParams) => {
+    cy.okapiRequest({
+      path: 'owners',
+      searchParams,
+    })
+      .then(owner => {
+        cy.wrap(owner.body.owners[0]).as('owner');
+      });
+    return cy.get('@owner');
+  },
+  deleteViaApi:  (ownerId) => {
+    cy.okapiRequest({
+      method: 'DELETE',
+      path: `owners/${ownerId}`,
+    });
+  }
 };

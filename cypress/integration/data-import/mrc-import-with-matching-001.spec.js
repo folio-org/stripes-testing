@@ -52,7 +52,7 @@ describe('ui-data-import: Test MARC-MARC matching for 001 field', () => {
     JobProfiles.searchJobProfileForImport('Default - Create instance and SRS MARC Bib');
     JobProfiles.runImportFile(nameForMarcFile);
     Logs.openFileDetails(nameForMarcFile);
-    FileDetails.checkIsInstanceCreated();
+    FileDetails.checkStatusInColumn(FileDetails.status.created, FileDetails.columnName.instance);
 
     // get Instance HRID through API
     SearchInventory
@@ -124,7 +124,7 @@ describe('ui-data-import: Test MARC-MARC matching for 001 field', () => {
         JobProfiles.searchJobProfileForImport(jobProfileName);
         JobProfiles.runImportFile(nameForExportedMarcFile);
         Logs.openFileDetails(nameForExportedMarcFile);
-        FileDetails.checkIsInstanceUpdated();
+        FileDetails.checkStatusInColumn(FileDetails.status.updated, FileDetails.columnName.instance);
 
         cy.visit(TopMenu.inventoryPath);
         SearchInventory.searchInstanceByHRID(id);

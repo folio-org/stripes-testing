@@ -116,6 +116,7 @@ Cypress.Commands.add('createTempUser', (permissions = [], patronGroup) => {
         personal: {
           preferredContactTypeId: '002',
           firstName: 'testPermFirst',
+          middleName: 'testMiddleName',
           lastName: userProperties.username,
           email: 'test@folio.org',
         },
@@ -132,12 +133,14 @@ Cypress.Commands.add('createTempUser', (permissions = [], patronGroup) => {
           cy.createUserApi(userData)
             .then((userCreateResponse) => {
               userProperties.userId = userCreateResponse.id;
+              userProperties.barcode = userCreateResponse.barcode;
               cy.setUserPassword(userProperties);
               cy.addPermissionsToNewUserApi({
                 userId: userProperties.userId,
                 permissions: [...permissionsResponse.body.permissions.map(permission => permission.permissionName)]
               });
               cy.overrideLocalSettings(userProperties.userId);
+              userProperties.barcode = userCreateResponse.barcode;
               cy.wrap(userProperties).as('userProperties');
             });
         });

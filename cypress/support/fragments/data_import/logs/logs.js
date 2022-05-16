@@ -6,6 +6,7 @@ const quantityRecordsInInvoice = {
 
 export default {
   checkImportFile(jobProfileName) {
+    cy.do(Button('Actions').click());
     cy.do(Button('View all').click());
     cy.do([
       Accordion({ id: 'profileIdAny' }).clickHeader(),
@@ -20,7 +21,7 @@ export default {
   },
 
   openFileDetails:(fileName) => {
-    cy.do(MultiColumnListCell({ row: 0, columnIndex: 0 }).find(Button(fileName)).click());
+    cy.do(MultiColumnListCell({ row: 0, columnIndex: 1 }).find(Button(fileName)).click());
   },
 
   checkQuantityRecordsInFile:(quantityRecords) => {

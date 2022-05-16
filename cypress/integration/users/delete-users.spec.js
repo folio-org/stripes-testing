@@ -7,12 +7,17 @@ import {
 } from '../../../interactors';
 import generateItemBarcode from '../../support/utils/generateItemBarcode';
 import EditRequest from '../../support/fragments/requests/edit-request';
+import UsersOwners from '../../support/fragments/settings/users/usersOwners';
+import checkinActions from '../../support/fragments/check-in-actions/checkInActions';
+import checkoutActions from '../../support/fragments/checkout/checkout';
 
 describe('Deleting user', () => {
   const lastName = 'Test-' + uuid();
   const ResultsPane = Pane({ index: 2 });
   const ModalButtonYes = Button({ id: 'delete-user-button' });
   const ModalButtonNo = Button({ id: 'close-delete-user-button' });
+  let specialOwnerId;
+  let specialUserId;
 
   function verifyUserDeleteImpossible(id) {
     cy.visit(`/users/preview/${id}`);
@@ -45,46 +50,37 @@ describe('Deleting user', () => {
       patronGroup: Cypress.env('userGroups')[0].id,
       departments: []
     };
-    cy.createUserApi(userData);
+    cy.createUserApi(userData).then(user => { specialUserId = user.id; });
   });
 
   afterEach(() => {
-    cy.getUsers({ query: `personal.lastName="${lastName}"` })
-      .then(() => {
-        Cypress.env('users').forEach(user => {
-          cy.deleteUser(user.id);
-        });
-      });
+    // TODO: clarify the reason of issue with 404 responce code
+    cy.deleteUser(specialUserId);
   });
 
   it('should be possible by user delete action', function () {
-    const { id } = Cypress.env('user');
-
-    cy.visit(`/users/preview/${id}`);
+    cy.visit(`/users/preview/${specialUserId}`);
     cy.do([
       ResultsPane.clickAction({ id: 'clickable-checkdeleteuser' }),
       ModalButtonYes.click(),
     ]);
 
-    cy.visit(`/users/preview/${id}`);
+    cy.visit(`/users/preview/${specialUserId}`);
     cy.expect(ResultsPane.has({ id: 'pane-user-not-found' }));
   });
 
   it('should be cancelled when user presses "No" in confirmation modal', function () {
-    const { id } = Cypress.env('user');
-
-    cy.visit(`/users/preview/${id}`);
+    cy.visit(`/users/preview/${specialUserId}`);
     cy.do([
       ResultsPane.clickAction({ id: 'clickable-checkdeleteuser' }),
       ModalButtonNo.click(),
     ]);
 
-    cy.visit(`/users/preview/${id}`);
+    cy.visit(`/users/preview/${specialUserId}`);
     cy.expect(KeyValue({ value: lastName }).exists());
   });
 
   it('should be unable in case the user has open requests', function () {
-    const { id: userId } = Cypress.env('user');
     cy
       .getItems({ limit: 1, query: 'status.name=="Available"' })
       .then(() => {
@@ -92,18 +88,18 @@ describe('Deleting user', () => {
           requestType: 'Page',
           fulfilmentPreference: 'Hold Shelf',
           itemId: Cypress.env('items')[0].id,
-          requesterId: userId,
+          requesterId: specialUserId,
           pickupServicePointId: Cypress.env('servicePoints')[0].id,
           requestDate: '2021-09-20T18:36:56Z',
         });
       })
       .then((request) => {
-        verifyUserDeleteImpossible(userId);
+        verifyUserDeleteImpossible(specialUserId);
 
         EditRequest.updateRequestApi({
           ...request,
           status: 'Closed - Cancelled',
-          cancelledByUserId: userId,
+          cancelledByUserId: specialUserId,
           cancellationReasonId: Cypress.env('cancellationReasons')[0].id,
           cancelledDate: '2021-09-30T16:14:50.444Z',
         });
@@ -112,7 +108,7 @@ describe('Deleting user', () => {
 
   it('should be unable in case the user has open loans', function () {
     const ITEM_BARCODE = generateItemBarcode();
-    const user = Cypress.env('user');
+    const specialUserBarcode = Cypress.env('user').barcode;
     const servicePoint = Cypress.env('servicePoints')[0];
 
     cy
@@ -148,16 +144,16 @@ describe('Deleting user', () => {
         });
       })
       .then(() => {
-        cy.createItemCheckout({
+        checkoutActions.createItemCheckoutApi({
           itemBarcode: ITEM_BARCODE,
-          userBarcode: user.barcode,
+          userBarcode: specialUserBarcode,
           servicePointId: servicePoint.id,
         });
       })
       .then(() => {
-        verifyUserDeleteImpossible(user.id);
+        verifyUserDeleteImpossible(specialUserId);
 
-        cy.createItemCheckinApi({
+        checkinActions.createItemCheckinApi({
           itemBarcode: ITEM_BARCODE,
           servicePointId: servicePoint.id,
           checkInDate: '2021-09-30T16:14:50.444Z',
@@ -166,7 +162,6 @@ describe('Deleting user', () => {
   });
 
   it('should be unable in case the user has open unexpired proxy', function () {
-    const { id: userId } = Cypress.env('user');
     const userProxyData = {
       active: true,
       barcode: uuid(),
@@ -186,50 +181,51 @@ describe('Deleting user', () => {
           requestForSponsor: 'Yes',
           status: 'Active',
           proxyUserId: Cypress.env('user').id,
-          userId,
+          specialUserId,
         };
         cy.createProxyApi(proxy);
       })
       .then(() => {
-        verifyUserDeleteImpossible(userId);
+        verifyUserDeleteImpossible(specialUserId);
         cy.deleteProxyApi(Cypress.env('proxy').id);
       });
   });
 
   it('should be unable in case the user has open blocks', function () {
-    const { id: userId } = Cypress.env('user');
     cy.createBlockApi({
-      userId,
+      specialUserId,
       desc: 'desc',
       borrowing: true,
     })
       .then(() => {
-        verifyUserDeleteImpossible(userId);
+        verifyUserDeleteImpossible(specialUserId);
         cy.deleteBlockApi(Cypress.env('block').id);
       });
   });
 
   it('should be unable in case the user has open fees/fines', function () {
-    const { id: userId } = Cypress.env('user');
-    cy.createOwnerApi({ owner: uuid() })
-      .then(() => cy.createFeesFinesTypeApi({
-        feeFineType: uuid(),
-        ownerId: Cypress.env('owner').id,
-      }))
+    UsersOwners.createViaApi({ owner: uuid() })
+      .then(owner => {
+        specialOwnerId = owner.id;
+        cy.createFeesFinesTypeApi({
+          feeFineType: uuid(),
+          ownerId: specialOwnerId,
+        });
+      })
       .then(() => cy.createFeesFinesApi({
         id: uuid(),
-        userId,
-        ownerId: Cypress.env('owner').id,
+        specialUserId,
+        ownerId: specialOwnerId,
         feeFineId: Cypress.env('feesFinesType').id,
         amount: '11.00',
         remaining: '11.00',
         status: { name: 'Open' },
       }))
       .then(() => {
-        verifyUserDeleteImpossible(userId);
+        verifyUserDeleteImpossible(specialUserId);
         cy.deleteFeesFinesApi(Cypress.env('feesFines').id);
         cy.deleteFeesFinesTypeApi(Cypress.env('feesFinesType').id);
-        cy.deleteOwnerApi(Cypress.env('owner').id);
+        UsersOwners.deleteViaApi(specialOwnerId);
       });
   });
 });
