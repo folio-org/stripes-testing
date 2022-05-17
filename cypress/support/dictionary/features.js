@@ -5,4 +5,6 @@ export default { quickMarcEditor: 'quickMarcEditor',
   holdingsRecord: 'holdingsRecord',
   instanceRecord: 'instanceRecord',
   authority: 'MARC Authority',
-  paymentMethod: 'Payment Method' };
+  paymentMethod: 'Payment Method',
+  // users
+  patronBlocks: 'Patron blocks' };
