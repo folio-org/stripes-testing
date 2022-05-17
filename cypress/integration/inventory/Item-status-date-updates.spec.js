@@ -32,65 +32,22 @@ import {
   REQUEST_POLICY_NAMES,
   NOTICE_POLICY_NAMES,
   OVERDUE_FINE_POLICY_NAMES,
-  CY_ENV,
   LOAN_POLICY_NAMES,
   LOST_ITEM_FEES_POLICY_NAMES,
 } from '../../support/constants';
 import Requests from '../../support/fragments/requests/requests';
+import updateUser from '../../support/fragments/user/updateUser';
+import basicOrderLine from '../../support/fragments/orders/basicOrderLine';
 
 describe('ui-inventory: Item status date updates', () => {
   const order = { ...NewOrder.defaultOrder };
   const instanceTitle = `autotest_title_${getRandomPostfix()}`;
   const orderLine = {
-    id: uuid(),
-    checkinItems: false,
-    acquisitionMethod: '',
-    alerts: [],
-    claims: [],
-    contributors: [],
-    cost: {
-      listUnitPrice: 1.0,
-      currency: 'USD',
-      discountType: 'percentage',
-      quantityPhysical: 1,
-      poLineEstimatedPrice: 1.0
-    },
-    details: {
-      productIds: [],
-      subscriptionInterval: 0
-    },
-    fundDistribution : [],
-    isPackage: false,
-    locations: [
-      {
-        locationId: '',
-        quantity: 1,
-        quantityPhysical: 1
-      }
-    ],
-    orderFormat: 'Physical Resource',
-    paymentStatus: 'Pending',
-    physical: {
-      createInventory: 'Instance, Holding, Item',
-      materialType: '',
-      materialSupplier: '',
-      volumes: []
-    },
-    eresource: {
-      activated: false,
-      createInventory: 'None',
-      trial: false,
-      accessProvider: ''
-    },
-    purchaseOrderId: '',
-    receiptStatus: 'Pending',
-    reportingCodes: [],
-    source: 'User',
-    titleOrPackage: instanceTitle,
-    vendorDetail: {
-      instructions: '',
-      vendorAccount: '1234'
-    }
+    ...basicOrderLine.defaultOrderLine,
+    cost: { ...basicOrderLine.defaultOrderLine.cost, quantityPhysical: 1 },
+    locations: [{ quantity: 1,
+      quantityPhysical: 1 }],
+    titleOrPackage: instanceTitle
   };
   let createdOrderNumber;
   const effectiveLocationServicePoint = NewServicePoint.getDefaulServicePoint();
@@ -114,8 +71,14 @@ describe('ui-inventory: Item status date updates', () => {
     holdShelf: true,
     userId: userForDeliveryRequest.id,
   };
+  let requestPolicyId;
+  let noticePolicyId;
+  let overdueFinePolicyId;
+  let lostItemFeesPolicyId;
+  let loanPolicyId;
 
   before(() => {
+    //* ** */
     cy.createTempUser([
       permissions.uiCreateOrderAndOrderLine.gui,
       permissions.uiEditOrderAndOrderLine.gui,
@@ -160,22 +123,32 @@ describe('ui-inventory: Item status date updates', () => {
               });
           })
           .then(() => {
-            cy.getRequestPolicy({ query: `name=="${REQUEST_POLICY_NAMES.ALLOW_ALL}"` });
-            cy.getNoticePolicy({ query: `name=="${NOTICE_POLICY_NAMES.SEND_NO_NOTICES}"` });
-            cy.getOverdueFinePolicy({ query: `name=="${OVERDUE_FINE_POLICY_NAMES.OVERDUE_FINE_POLICY}"` });
-            cy.getLostItemFeesPolicy({ query: `name=="${LOST_ITEM_FEES_POLICY_NAMES.LOST_ITEM_FEES_POLICY}"` });
-            cy.getLoanPolicy({ query: `name=="${LOAN_POLICY_NAMES.EXAMPLE_LOAN_POLICY}"` });
+            cy.getRequestPolicy({ query: `name=="${REQUEST_POLICY_NAMES.ALLOW_ALL}"` })
+              .then(policies => {
+                requestPolicyId = policies[0].id;
+              });
+            cy.getNoticePolicy({ query: `name=="${NOTICE_POLICY_NAMES.SEND_NO_NOTICES}"` })
+              .then(policies => {
+                noticePolicyId = policies[0].id;
+              });
+            cy.getOverdueFinePolicy({ query: `name=="${OVERDUE_FINE_POLICY_NAMES.OVERDUE_FINE_POLICY}"` })
+              .then(policies => {
+                overdueFinePolicyId = policies[0].id;
+              });
+            cy.getLostItemFeesPolicy({ query: `name=="${LOST_ITEM_FEES_POLICY_NAMES.LOST_ITEM_FEES_POLICY}"` })
+              .then(policies => {
+                lostItemFeesPolicyId = policies[0].id;
+              });
+            cy.getLoanPolicy({ query: `name=="${LOAN_POLICY_NAMES.EXAMPLE_LOAN_POLICY}"` })
+              .then(policies => {
+                loanPolicyId = policies[0].id;
+              });
             cy.getCirculationRules()
               .then(rules => {
                 rulesDefaultString = rules.rulesAsText;
               });
           })
           .then(() => {
-            const requestPolicyId = Cypress.env(CY_ENV.REQUEST_POLICY)[0].id;
-            const noticePolicyId = Cypress.env(CY_ENV.NOTICE_POLICY)[0].id;
-            const overdueFinePolicyId = Cypress.env(CY_ENV.OVERDUE_FINE_POLICY)[0].id;
-            const lostItemFeesPolicyId = Cypress.env(CY_ENV.LOST_ITEM_FEES_POLICY)[0].id;
-            const loanPolicyId = Cypress.env(CY_ENV.LOAN_POLICIES)[0].id;
             const newRule = `\ng ${user.patronGroup} + m ${orderLine.physical.materialType}: l ${loanPolicyId} r ${requestPolicyId} n ${noticePolicyId} o ${overdueFinePolicyId} i ${lostItemFeesPolicyId}`;
 
             cy.updateCirculationRules({
@@ -187,6 +160,7 @@ describe('ui-inventory: Item status date updates', () => {
             userBarcode = users[0].barcode;
           });
       });
+    /** * */
 
     cy.createTempUser([
       permissions.checkoutAll.gui,
@@ -202,15 +176,9 @@ describe('ui-inventory: Item status date updates', () => {
               userRequestPreferences.defaultDeliveryAddressTypeId = addressTypes[0].id;
             })
               .then(() => {
-                cy.updateUser({
-                  ...users[0],
-                  personal: {
-                    lastName: '',
-                    addresses: [{ city: 'New York',
-                      addressTypeId: userRequestPreferences.defaultDeliveryAddressTypeId,
-                      countryId: 'US' }]
-                  }
-                });
+                updateUser.updateUserAddress(users[0], [{ city: 'New York',
+                  addressTypeId: userRequestPreferences.defaultDeliveryAddressTypeId,
+                  countryId: 'US' }]);
                 cy.createUserRequestPreferencesApi(userRequestPreferences);
               });
           });
@@ -230,10 +198,10 @@ describe('ui-inventory: Item status date updates', () => {
     cy.deleteUser(user.userId);
     cy.deleteServicePoint(notEffectiveLocationServicePoint.body.id);
     // cy.deleteServicePoint(effectiveLocationServicePoint.body.id);
-    // Requests.getRequestApi({ limit: 1, query: `"item.barcode"=="${userItemBarcode}"` })
-    // .then(request => {
-    // Requests.deleteRequestApi(request.id);
-    // });
+    Requests.getRequestApi({ limit: 1, query: `"item.barcode"=="${userItemBarcode}"` })
+      .then(request => {
+        Requests.deleteRequestApi(request.id);
+      });
   });
 
   it('C9200 Item status date updates', { tags: [TestTypes.smoke] }, () => {
