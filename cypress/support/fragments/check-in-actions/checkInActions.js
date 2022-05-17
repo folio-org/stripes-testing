@@ -12,19 +12,21 @@ const newFeeFineButton = Button('New Fee/Fine');
 const checkInButton = Button('Check in');
 const itemBarcodeField = TextField({ name:'item.barcode' });
 const addItemButton = Button({ id: 'clickable-add-item' });
+const availableActionsButton = Button({ id: 'available-actions-button-0' });
 
 export default {
-  checkInItem:(barcode) => {
+  checkInItem:(barcode, status) => {
     cy.intercept('/inventory/items?*').as('getItems');
     cy.do(itemBarcodeField.fillIn(barcode));
     cy.do(addItemButton.click());
     cy.wait('@getItems', getLongDelay());
+    cy.expect(MultiColumnListRow({ indexRow: 'row-0' }).find(HTML(including(status))).exists());
   },
   openItemRecordInInventory:(status) => {
     cy.expect(MultiColumnListRow({ indexRow: 'row-0' }).find(HTML(including(status))).exists());
-    cy.do(Button({ id: 'available-actions-button-0' }).click());
-    cy.expect(Button('Item details').exists());
-    cy.do(Button('Item details').click());
+    cy.do(availableActionsButton.click());
+    cy.expect(itemDetailsButton.exists());
+    cy.do(itemDetailsButton.click());
   },
   existsFormColomns:() => {
     cy.expect([
@@ -36,7 +38,7 @@ export default {
   },
   returnCheckIn() {
     cy.do(checkInButton.click());
-    cy.do(Button({ id: 'available-actions-button-0' }).click());
+    cy.do(availableActionsButton.click());
   },
   existsItemsInForm() {
     cy.do(loadDetailsButton.click());

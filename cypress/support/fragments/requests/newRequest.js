@@ -8,6 +8,7 @@ const requesterBarcodeInput = TextField({ name: 'requester.barcode' });
 const enterItemBarcodeButton = Button({ id: 'clickable-select-item' });
 const enterRequesterBarcodeButton = Button({ id: 'clickable-select-requester' });
 const saveAndCloseButton = Button({ id: 'clickable-save-request' });
+const selectServicePoint = Select({ name:'pickupServicePointId' });
 
 export default {
   openNewRequestPane() {
@@ -23,7 +24,7 @@ export default {
     cy.do(requesterBarcodeInput.fillIn(newRequest.requesterBarcode));
     cy.intercept('/proxiesfor?*').as('getUsers');
     cy.do(enterRequesterBarcodeButton.click());
-    cy.expect(Select({ name:'pickupServicePointId' }).exists);
+    cy.expect(selectServicePoint.exists);
     cy.wait('@getUsers');
     cy.do(itemBarcodeInput.fillIn(newRequest.itemBarcode));
     cy.intercept('/circulation/loans?*').as('getLoans');
@@ -35,7 +36,7 @@ export default {
   choosepickupServicePoint(pickupServicePoint) {
     cy.intercept('/inventory/items?*').as('getItems');
     cy.wait('@getItems', getLongDelay());
-    cy.do(Select({ name:'pickupServicePointId' }).choose(pickupServicePoint));
+    cy.do(selectServicePoint.choose(pickupServicePoint));
     cy.wait('@getItems');
     cy.expect(HTML(including(pickupServicePoint)).exists());
   },
@@ -60,6 +61,8 @@ export default {
     this.openNewRequestPane();
     this.fillRequiredFields(newRequest);
     this.saveRequestAndClose();
+    //TODO investigate what to wait
+    cy.wait(1000);
     this.waitLoading();
   }
 };

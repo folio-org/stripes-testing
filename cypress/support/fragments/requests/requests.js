@@ -172,6 +172,9 @@ function getRequestApi(searchParams) {
     .okapiRequest({
       path: 'circulation/requests',
       searchParams,
+    })
+    .then(({ body }) => {
+      return body.requests;
     });
 }
 

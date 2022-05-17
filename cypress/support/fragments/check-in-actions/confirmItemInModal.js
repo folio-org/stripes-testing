@@ -2,6 +2,8 @@ import { Button, Modal, Checkbox } from '../../../../interactors';
 
 const inTransitModal = Modal('In transit');
 const awaitingPickupModal = Modal('Awaiting pickup for a request');
+const closeButton = Button('Close');
+const printSlipCheckbox = Checkbox('Print slip');
 
 export default {
   confirmMissingModal:() => {
@@ -9,17 +11,17 @@ export default {
   },
 
   confirmInTransitModal:() => {
-    cy.do(inTransitModal.find(Checkbox('Print slip')).click());
-    cy.do(inTransitModal.find(Button('Close')).click());
+    cy.do(inTransitModal.find(printSlipCheckbox).click());
+    cy.do(inTransitModal.find(closeButton).click());
   },
 
   confirmAvaitingPicupModal:() => {
-    cy.do(awaitingPickupModal.find(Checkbox('Print slip')).click());
-    cy.do(awaitingPickupModal.find(Button('Close')).click());
+    cy.do(awaitingPickupModal.find(printSlipCheckbox).click());
+    cy.do(awaitingPickupModal.find(closeButton).click());
   },
 
   confirmAvaitingPicupCheckInModal:() => {
-    cy.do(Modal('Items awaiting pickup').find(Button('Close')).click());
+    cy.do(Modal('Items awaiting pickup').find(closeButton).click());
   },
 
   confirmMultipieceItemModal:() => {

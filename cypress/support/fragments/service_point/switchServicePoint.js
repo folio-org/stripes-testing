@@ -18,6 +18,7 @@ import permissions from '../../dictionary/permissions';
 import SelectServicePointModal from './selectServicePointModal';
 
 const searchButton = Button('Search');
+const permissionsModal = Modal({ id: 'permissions-modal' });
 
 export default {
   addServicePointPermissions: (username) => {
@@ -40,12 +41,12 @@ export default {
       Select({ id: 'servicePointPreference' }).choose(NewServicePoint.defaultUiServicePoint.body.name),
       Button({ id: 'accordion-toggle-button-permissions' }).click(),
       Button({ id: 'clickable-add-permission' }).click(),
-      Modal({ id: 'permissions-modal' }).find(TextField({ type: 'search' })).fillIn(permissions.uiCheckinAll.gui),
-      Modal({ id: 'permissions-modal' }).find(searchButton).click(),
-      Modal({ id: 'permissions-modal' }).find(MultiColumnListCell(permissions.uiCheckinAll.gui)).click()]);
-    cy.expect(Modal({ id: 'permissions-modal' }).find(HTML(including('Total selected: 1'))));
+      permissionsModal.find(TextField({ type: 'search' })).fillIn(permissions.uiCheckinAll.gui),
+      permissionsModal.find(searchButton).click(),
+      permissionsModal.find(MultiColumnListCell(permissions.uiCheckinAll.gui)).click()]);
+    cy.expect(permissionsModal.find(HTML(including('Total selected: 1'))));
     cy.do(Button({ id: 'clickable-permissions-modal-save' }).click());
-    cy.expect(Modal({ id: 'permissions-modal' }).absent());
+    cy.expect(permissionsModal.absent());
     cy.expect(Accordion({ id: 'permissions' }).find(HTML(including(permissions.uiCheckinAll.gui))).exists());
     cy.do(Button('Save & close').click());
     cy.do(Button('User permissions').click());
