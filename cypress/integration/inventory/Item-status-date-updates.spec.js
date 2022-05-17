@@ -36,7 +36,7 @@ import Institutions from '../../support/fragments/settings/tenant/institutions';
 import Campuses from '../../support/fragments/settings/tenant/campuses';
 import Libraries from '../../support/fragments/settings/tenant/libraries';
 
-// TODO:
+// TODO: When bug(https://issues.folio.org/browse/MSEARCH-361) will be fixed check full run test!!!
 describe('ui-inventory: Item status date updates', () => {
   const order = { ...NewOrder.defaultOrder };
   const instanceTitle = `autotest_title_${getRandomPostfix()}`;
@@ -213,7 +213,7 @@ describe('ui-inventory: Item status date updates', () => {
 
     SwitchServicePoint.switchServicePoint(effectiveLocationServicePointName);
     cy.visit(TopMenu.checkInPath);
-    CheckInActions.checkInItem(userItemBarcode, ItemVeiw.itemStatuses.available);
+    CheckInActions.checkInItem(userItemBarcode);
     CheckInActions.openItemRecordInInventory(ItemVeiw.itemStatuses.available);
     ItemVeiw.verifyUpdatedItemDate();
     ItemVeiw.verifyItemStatus(ItemVeiw.itemStatuses.available);
@@ -223,28 +223,28 @@ describe('ui-inventory: Item status date updates', () => {
     ItemVeiw.verifyItemStatus(ItemVeiw.itemStatuses.missing);
 
     cy.visit(TopMenu.checkInPath);
-    CheckInActions.checkInItem(userItemBarcode, ItemVeiw.itemStatuses.available);
+    CheckInActions.checkInItem(userItemBarcode);
     ConfirmItemInModal.confirmMissingModal();
     CheckInActions.openItemRecordInInventory(ItemVeiw.itemStatuses.available);
     ItemVeiw.verifyUpdatedItemDate();
     ItemVeiw.verifyItemStatus(ItemVeiw.itemStatuses.available);
 
     cy.visit(TopMenu.checkInPath);
-    CheckInActions.checkInItem(userItemBarcode, ItemVeiw.itemStatuses.available);
+    CheckInActions.checkInItem(userItemBarcode);
     CheckInActions.openItemRecordInInventory(ItemVeiw.itemStatuses.available);
     ItemVeiw.verifyUpdatedItemDate();
     ItemVeiw.verifyItemStatus(ItemVeiw.itemStatuses.available);
 
     SwitchServicePoint.switchServicePoint(notEffectiveLocationServicePointName);
     cy.visit(TopMenu.checkInPath);
-    CheckInActions.checkInItem(userItemBarcode, ItemVeiw.itemStatuses.inTransit);
+    CheckInActions.checkInItem(userItemBarcode);
     ConfirmItemInModal.confirmInTransitModal();
     CheckInActions.openItemRecordInInventory(ItemVeiw.itemStatuses.inTransit);
     ItemVeiw.verifyUpdatedItemDate();
     ItemVeiw.verifyItemStatus(ItemVeiw.itemStatuses.inTransit);
 
     cy.visit(TopMenu.checkInPath);
-    CheckInActions.checkInItem(userItemBarcode, ItemVeiw.itemStatuses.inTransit);
+    CheckInActions.checkInItem(userItemBarcode);
     ConfirmItemInModal.confirmInTransitModal();
     CheckInActions.openItemRecordInInventory(ItemVeiw.itemStatuses.inTransit);
     ItemVeiw.verifyUpdatedItemDate();
@@ -252,7 +252,7 @@ describe('ui-inventory: Item status date updates', () => {
 
     SwitchServicePoint.switchServicePoint(effectiveLocationServicePointName);
     cy.visit(TopMenu.checkInPath);
-    CheckInActions.checkInItem(userItemBarcode, ItemVeiw.itemStatuses.available);
+    CheckInActions.checkInItem(userItemBarcode);
     CheckInActions.openItemRecordInInventory(ItemVeiw.itemStatuses.available);
     ItemVeiw.verifyUpdatedItemDate();
     ItemVeiw.verifyItemStatus(ItemVeiw.itemStatuses.available);
@@ -274,7 +274,7 @@ describe('ui-inventory: Item status date updates', () => {
 
     SwitchServicePoint.switchServicePoint(notEffectiveLocationServicePointName);
     cy.visit(TopMenu.checkInPath);
-    CheckInActions.checkInItem(userItemBarcode, ItemVeiw.itemStatuses.inTransit);
+    CheckInActions.checkInItem(userItemBarcode);
     ConfirmItemInModal.confirmInTransitModal();
     CheckInActions.openItemRecordInInventory(ItemVeiw.itemStatuses.inTransit);
     ItemVeiw.verifyUpdatedItemDate();
@@ -282,7 +282,7 @@ describe('ui-inventory: Item status date updates', () => {
 
     SwitchServicePoint.switchServicePoint(effectiveLocationServicePointName);
     cy.visit(TopMenu.checkInPath);
-    CheckInActions.checkInItem(userItemBarcode, ItemVeiw.itemStatuses.awaitingPickup);
+    CheckInActions.checkInItem(userItemBarcode);
     ConfirmItemInModal.confirmAvaitingPicupModal();
     CheckInActions.openItemRecordInInventory(ItemVeiw.itemStatuses.awaitingPickup);
     ItemVeiw.verifyUpdatedItemDate();
@@ -335,8 +335,7 @@ describe('ui-inventory: Item status date updates', () => {
       requesterBarcode: userForDeliveryRequest.barcode,
     });
     cy.visit(TopMenu.checkInPath);
-    cy.wait(5000);
-    CheckInActions.checkInItem(userItemBarcode, ItemVeiw.itemStatuses.awaitingDelivery);
+    CheckInActions.checkInItem(userItemBarcode);
     ConfirmItemInModal.confirmAvaitingPicupModal();
     cy.visit(TopMenu.checkOutPath);
     CheckOut.checkOutItem(userBarcode, userItemBarcode);
@@ -363,7 +362,7 @@ describe('ui-inventory: Item status date updates', () => {
 
     SwitchServicePoint.switchServicePoint(effectiveLocationServicePointName);
     cy.visit(TopMenu.checkInPath);
-    CheckInActions.checkInItem(userItemBarcode, ItemVeiw.itemStatuses.available);
+    CheckInActions.checkInItem(userItemBarcode);
     ConfirmItemInModal.confirmAvaitingPicupModal();
     CheckInActions.openItemRecordInInventory(ItemVeiw.itemStatuses.available);
     cy.visit(TopMenu.inventoryPath);

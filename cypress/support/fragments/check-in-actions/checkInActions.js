@@ -15,12 +15,11 @@ const addItemButton = Button({ id: 'clickable-add-item' });
 const availableActionsButton = Button({ id: 'available-actions-button-0' });
 
 export default {
-  checkInItem:(barcode, status) => {
+  checkInItem:(barcode) => {
     cy.intercept('/inventory/items?*').as('getItems');
     cy.do(itemBarcodeField.fillIn(barcode));
     cy.do(addItemButton.click());
     cy.wait('@getItems', getLongDelay());
-    cy.expect(MultiColumnListRow({ indexRow: 'row-0' }).find(HTML(including(status))).exists());
   },
   openItemRecordInInventory:(status) => {
     cy.expect(MultiColumnListRow({ indexRow: 'row-0' }).find(HTML(including(status))).exists());
