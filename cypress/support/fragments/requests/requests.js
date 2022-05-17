@@ -11,7 +11,7 @@ import {
   ValueChipRoot,
   Checkbox,
   TextField,
-  Badge, Section
+  Badge, Section, Heading
 } from '../../../../interactors';
 
 const requestsResultsSection = Section({ id: 'pane-results' });
@@ -486,6 +486,14 @@ export default {
         else if (order === 'descending') this.validateStringsDescendingOrder(cells);
       });
     });
+  },
+
+  verifyRequestsPage() {
+    cy.expect(Heading({ level: 2, text: 'Requests' }).exists());
+  },
+
+  verifyFulfillmentPreference() {
+    cy.expect(cy.get('[name="fulfilmentPreference"]').find('option:selected').should('have.text', 'Hold Shelf'));
   },
 
   waitLoadingRequests() {

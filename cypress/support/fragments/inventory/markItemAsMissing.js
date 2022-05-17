@@ -8,6 +8,7 @@ import {
   Section,
   TextField
 } from '../../../../interactors';
+import getRandomPostfix from '../../utils/stringTools';
 
 const actionsButton = Button('Actions');
 const markAsMissingButton = Button('Mark as missing');
@@ -33,6 +34,8 @@ export default {
     'Order closed',
   ],
 
+  itemStatusesToCreate() { return this.itemsToMarkAsMissing.concat(this.itemsNotToMarkAsMissing); },
+
   itemToRequestMap: {
     'Awaiting pickup': 'Open - awaiting pickup',
     'Awaiting delivery': 'Open - awaiting delivery',
@@ -54,7 +57,7 @@ export default {
   createItemsForGivenStatusesApi() {
     let materialTypeValue = '';
     const instanceRecordData = {
-      instanceTitle: `inst_title-${uuid()}`,
+      instanceTitle: `Automation test instance title ${getRandomPostfix()}`,
       instanceId: uuid(),
       holdingId: uuid(),
       instanceTypeId: null,
@@ -86,10 +89,7 @@ export default {
         instanceRecordData.instanceTypeId = instanceTypes[0].id;
       });
     }).then(() => {
-      const items = [
-        ...this.itemsToMarkAsMissing,
-        ...this.itemsNotToMarkAsMissing
-      ].map(status => ({
+      const items = this.itemStatusesToCreate().map(status => ({
         itemId: uuid(),
         barcode: uuid(),
         status: { name: status },
