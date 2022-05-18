@@ -109,6 +109,20 @@ describe('Check Out', () => {
       });
   });
 
+  after('Delete all data', () => {
+    cy.getInstance({ limit: 1, expandAll: true, query: `"items.barcode"=="${FIRST_ITEM_BARCODE}"` })
+      .then(instance => {
+        instance.items.forEach(item => {
+          cy.deleteItem(item.id);
+        });
+        cy.deleteHoldingRecord(instance.holdings[0].id);
+        cy.deleteInstanceApi(instance.id);
+      });
+    SwitchServicePoint.changeServicePointPreference();
+    cy.deleteServicePoint(servicePoint.body.id);
+    cy.deleteUser(user.userId);
+  });
+
   it('C591 Check out: multipiece items', { tags: [TestTypes.smoke] }, () => {
     const dash = '-';
 
