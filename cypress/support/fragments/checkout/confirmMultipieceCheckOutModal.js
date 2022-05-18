@@ -50,6 +50,19 @@ export default {
     cy.expect(descriptionOfMissingPieces.has({ value: description }));
   },
 
+  checkNumberOfMissingPieces:() => {
+    cy.expect(confirmModal.find(numberOfMissingPieces).absent());
+  },
+
+  checkDescriptionOfMissingPieces:() => {
+    cy.expect(confirmModal.find(numberOfMissingPieces).absent());
+  },
+
+  checkIsNotModalConsistOf() {
+    this.checkNumberOfMissingPieces();
+    this.checkDescriptionOfMissingPieces();
+  },
+
   cancelModal:() => {
     cy.do(confirmModal.find(cancelButton).click());
   },

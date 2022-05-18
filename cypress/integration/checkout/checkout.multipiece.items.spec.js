@@ -133,6 +133,7 @@ describe('Check Out', () => {
     CheckOutActions.checkConfirmMultipieceCheckOutModal();
     CheckOutActions.checkOutItem(userBarcode, SECOND_ITEM_BARCODE);
     ConfirmMultipieceCheckOutModal.checkIsModalConsistOf(instanceTitle, quantityPiecesForSecondItem, descriptionOfPiece);
+    ConfirmMultipieceCheckOutModal.checkIsNotModalConsistOf();
     ConfirmMultipieceCheckOutModal.cancelModal();
     CheckOutActions.checkOutItem(userBarcode, SECOND_ITEM_BARCODE);
     ConfirmMultipieceCheckOutModal.checkIsModalConsistOf(instanceTitle, quantityPiecesForSecondItem, descriptionOfPiece);
