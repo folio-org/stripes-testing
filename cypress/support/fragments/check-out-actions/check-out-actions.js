@@ -1,4 +1,4 @@
-import { TextField, Button, KeyValue, Pane } from '../../../../interactors';
+import { TextField, Button, KeyValue, Pane, Modal } from '../../../../interactors';
 
 export default {
   checkOutItem(userBarcode, itemBarcode) {
@@ -24,5 +24,9 @@ export default {
   checkPatronInformation:() => {
     cy.expect(KeyValue('Borrower').exists());
     cy.expect(KeyValue('Status').exists());
+  },
+
+  checkConfirmMultipieceCheckOutModal:() => {
+    cy.expect(Modal('Confirm multipiece check out').absent());
   }
 };
