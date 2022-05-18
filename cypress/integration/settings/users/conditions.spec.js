@@ -5,7 +5,6 @@ import Conditions from '../../../support/fragments/settings/users/conditions';
 import Condition from '../../../support/fragments/settings/users/condition';
 
 describe('ui-users-settings: Conditions in Patron blocks', () => {
-  const isDisabled = true;
   beforeEach(() => {
     cy.loginAsAdmin();
   });
@@ -15,30 +14,31 @@ describe('ui-users-settings: Conditions in Patron blocks', () => {
     Conditions.waitLoading();
     Conditions.conditionsValues.forEach(conditionValue => {
       Conditions.select(conditionValue);
-      Condition.checkInitialState();
-      Object.values(Condition.blockCheckboxes).forEach(specialCheckBox => {
+      const specialCondition = new Condition(conditionValue);
+      specialCondition.checkInitialState();
+      Object.values(specialCondition.blockCheckboxes).forEach(specialCheckBox => {
         // If Borrowing and/or Renewals and/or Requests is check marked, then Message to be displayed
-        Condition.clickByCheckbox(specialCheckBox);
-        Condition.setMessage('');
-        Condition.trySave();
-        Condition.checkRequiredMessageField();
-        Condition.checkEmptyMessageValidation();
+        specialCondition.clickByCheckbox(specialCheckBox);
+        specialCondition.setMessage('');
+        specialCondition.trySave();
+        specialCondition.checkRequiredMessageField();
+        specialCondition.checkEmptyMessageValidation();
         // uncheck special checkbox
-        Condition.clickByCheckbox(specialCheckBox);
+        specialCondition.clickByCheckbox(specialCheckBox);
 
         // If Message to be displayed is entered, then Borrowing and/or Renewals and/or Requests must be set selected;
-        Condition.setMessage('Test message');
-        Condition.trySave();
-        Condition.checkRequiredCheckboxValidation();
+        specialCondition.setMessage('Test message');
+        specialCondition.trySave();
+        specialCondition.checkRequiredCheckboxValidation();
 
         // save change based on validator error message
-        Condition.clickByCheckbox(specialCheckBox);
-        Condition.save(conditionValue);
+        specialCondition.clickByCheckbox(specialCheckBox);
+        specialCondition.save(conditionValue);
 
         // reset condition
-        Condition.setMessage('');
-        Condition.clickByCheckbox(specialCheckBox);
-        Condition.save(conditionValue);
+        specialCondition.setMessage('');
+        specialCondition.clickByCheckbox(specialCheckBox);
+        specialCondition.save(conditionValue);
       });
     });
   });
