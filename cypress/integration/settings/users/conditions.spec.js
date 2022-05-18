@@ -6,12 +6,10 @@ import Condition from '../../../support/fragments/settings/users/condition';
 
 describe('ui-users-settings: Conditions in Patron blocks', () => {
   beforeEach(() => {
-    cy.loginAsAdmin();
+    cy.loginAsAdmin({ path: SettingsMenu.conditionsPath, waiter: Conditions.waitLoading });
   });
 
   it('C11078 Verify that you can select/edit/remove patron block conditions', { tags: [TestType.smoke, Features.patronBlocks] }, () => {
-    cy.visit(SettingsMenu.conditionsPath);
-    Conditions.waitLoading();
     Conditions.conditionsValues.forEach(conditionValue => {
       Conditions.select(conditionValue);
       const specialCondition = new Condition(conditionValue);
