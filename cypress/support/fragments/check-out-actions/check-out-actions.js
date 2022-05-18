@@ -1,9 +1,9 @@
-import TopMenu from '../topMenu';
-import { TextField, Button, Modal, KeyValue, MultiColumnListRow } from '../../../../interactors';
+import { TextField, Button, KeyValue, Pane } from '../../../../interactors';
+
+const expectedStatus = 'Active';
 
 export default {
   checkOutItem(userBarcode, itemBarcode) {
-    cy.visit(TopMenu.checkOutPath);
     cy.do([
       TextField({ name: 'patron.identifier' }).fillIn(userBarcode),
       Button({ id: 'clickable-find-patron' }).click(),
@@ -12,9 +12,25 @@ export default {
     cy.do([
       TextField({ name: 'item.barcode' }).fillIn(itemBarcode),
       Button({ id: 'clickable-add-item' }).click(),
-      Modal().find(Button('Check out')).click(),
-      Button('End session').click()
     ]);
-    cy.expect(MultiColumnListRow().exists());
+  },
+
+  endCheckOutSession:() => {
+    cy.do(Button('End session').click());
+  },
+
+  checkIsInterfacesOpened:() => {
+    cy.expect(Pane('Scan patron card').exists());
+    cy.expect(Pane('Scan items').exists());
+  },
+
+  checkPatronInformation:(userName, userBarcode) => {
+    const borrower = KeyValue('Borrower');
+    const barcode = KeyValue('Barcode');
+    const status = KeyValue('Status');
+
+    //cy.expect(Pane('Scan patron card').find(borrower).has({ value: userName }));
+    cy.expect(barcode.has({ value: userBarcode }));
+    cy.expect(status.has({ value: expectedStatus }));
   }
 };

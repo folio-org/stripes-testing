@@ -48,15 +48,16 @@ Cypress.Commands.add('deleteServicePoint', (id) => {
   });
 });
 
-Cypress.Commands.add('addServicePointToUser', (servicePointId, userId) => {
+Cypress.Commands.add('addServicePointToUser', (servicePointIds, userId, defaultServicePointId) => {
+  // servicePointIds is array of ids
   cy.okapiRequest({
     method: 'POST',
     path: 'service-points-users',
     body: {
       id: uuidv4(),
       userId,
-      servicePointsIds: [servicePointId],
-      defaultServicePointId: servicePointId,
+      servicePointsIds: servicePointIds,
+      defaultServicePointId: defaultServicePointId || servicePointIds[0],
     },
   });
 });

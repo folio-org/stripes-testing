@@ -78,6 +78,7 @@ export default {
   loansRenewOverride: { internal: 'ui-users.loans.renew-override', gui: 'Users: User loans renew through override' },
   // Checkout
   checkoutAll: { internal: '', gui: 'Check out: All permissions' },
+  checkoutCirculatingItems: { internal: 'ui-checkout.circulation', gui: 'Check out: Check out circulating items' },
   // Checkin
   checkinAll: { internal: '', gui: 'Check in: All permissions' }
 };

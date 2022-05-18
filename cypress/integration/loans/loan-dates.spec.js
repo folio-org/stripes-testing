@@ -10,6 +10,7 @@ import CheckOutActions from '../../support/fragments/check-out-actions/check-out
 import DateTools from '../../support/utils/dateTools';
 import NewRequest from '../../support/fragments/requests/newRequest';
 import checkinActions from '../../support/fragments/check-in-actions/checkInActions';
+import ConfirmMultiplePiecesItemCheckOut from '../../support/fragments/checkout/confirmMultiplePiecesItemCheckOut';
 
 const item = {
   barcode: `123${getRandomPostfix()}`,
@@ -44,7 +45,7 @@ describe('loan dates', () => {
             });
           })
           .then(() => {
-            cy.addServicePointToUser(Cypress.env('servicePoints')[0].id, userProperties.userId);
+            cy.addServicePointToUser([Cypress.env('servicePoints')[0].id], userProperties.userId);
             cy.getUserServicePoints(Cypress.env('users')[0].id);
             cy.createInstance({
               instance: {
@@ -70,7 +71,10 @@ describe('loan dates', () => {
           })
           .then(() => {
             cy.login(userProperties.username, userProperties.password);
+            cy.visit(TopMenu.checkOutPath);
             CheckOutActions.checkOutItem(Cypress.env('users')[0].barcode, item.barcode);
+            ConfirmMultiplePiecesItemCheckOut.confirmMultiplePiecesItemModal();
+            CheckOutActions.endCheckOutSession();
             cy.updateUser({ ...Cypress.env('users')[0], expirationDate: DateTools.getFormattedDate({ date: expirationUserDate }) });
           })
           .then(() => {
