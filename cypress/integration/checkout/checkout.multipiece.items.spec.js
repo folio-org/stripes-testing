@@ -8,6 +8,7 @@ import Helper from '../../support/fragments/finance/financeHelper';
 import CheckOutActions from '../../support/fragments/check-out-actions/check-out-actions';
 import NewServicePoint from '../../support/fragments/service_point/newServicePoint';
 import ServicePoints from '../../support/fragments/settings/tenant/servicePoints';
+import ConfirmMultiplePiecesItemCheckOut from '../../support/fragments/checkout/confirmMultiplePiecesItemCheckOut';
 
 describe('Check Out', () => {
   let user = {};
@@ -16,10 +17,10 @@ describe('Check Out', () => {
   const THIRD_ITEM_BARCODE = Helper.getRandomBarcode();
   const FOURTH_ITEM_BARCODE = Helper.getRandomBarcode();
   let userBarcode = '';
+  const instanceTitle = `autotest_instance_title_${getRandomPostfix()}`;
+  const quantityPiecesForSecondItem = '3';
 
   beforeEach(() => {
-    const instanceTitle = `autotest_instance_title_${getRandomPostfix()}`;
-
     cy.createTempUser([
       permissions.checkoutCirculatingItems.gui
     ])
@@ -68,7 +69,7 @@ describe('Check Out', () => {
                   },
                   {
                     barcode: SECOND_ITEM_BARCODE,
-                    numberOfPieces: '3',
+                    numberOfPieces: quantityPiecesForSecondItem,
                     status: { name: 'Available' },
                     permanentLoanType: { id: Cypress.env('loanTypes')[0].id },
                     materialType: { id: Cypress.env('materialTypes')[0].id },
@@ -95,10 +96,17 @@ describe('Check Out', () => {
   });
 
   it('C591 Check out: multipiece items', { tags: [TestTypes.smoke] }, () => {
+    const dash = '-';
+
     cy.visit(TopMenu.checkOutPath);
     CheckOutActions.checkIsInterfacesOpened();
     CheckOutActions.checkOutItem(userBarcode, FIRST_ITEM_BARCODE);
     CheckOutActions.checkPatronInformation(user.username, userBarcode);
     CheckOutActions.checkOutItem(userBarcode, SECOND_ITEM_BARCODE);
+    ConfirmMultiplePiecesItemCheckOut.checkIsModalConsistOf(instanceTitle, quantityPiecesForSecondItem, dash);
+    ConfirmMultiplePiecesItemCheckOut.cancelModal();
+    CheckOutActions.checkOutItem(userBarcode, SECOND_ITEM_BARCODE);
+    ConfirmMultiplePiecesItemCheckOut.checkIsModalConsistOf(instanceTitle, quantityPiecesForSecondItem, dash);
+    ConfirmMultiplePiecesItemCheckOut.confirmMultiplePiecesItemModal();
   });
 });

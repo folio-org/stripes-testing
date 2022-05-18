@@ -1,7 +1,5 @@
 import { TextField, Button, KeyValue, Pane } from '../../../../interactors';
 
-const expectedStatus = 'Active';
-
 export default {
   checkOutItem(userBarcode, itemBarcode) {
     cy.do([
@@ -24,13 +22,8 @@ export default {
     cy.expect(Pane('Scan items').exists());
   },
 
-  checkPatronInformation:(userName, userBarcode) => {
-    const borrower = KeyValue('Borrower');
-    const barcode = KeyValue('Barcode');
-    const status = KeyValue('Status');
-
-    //cy.expect(Pane('Scan patron card').find(borrower).has({ value: userName }));
-    cy.expect(barcode.has({ value: userBarcode }));
-    cy.expect(status.has({ value: expectedStatus }));
+  checkPatronInformation:() => {
+    cy.expect(KeyValue('Borrower').exists());
+    cy.expect(KeyValue('Status').exists());
   }
 };
