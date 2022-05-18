@@ -9,6 +9,7 @@ import CheckOutActions from '../../support/fragments/check-out-actions/check-out
 import NewServicePoint from '../../support/fragments/service_point/newServicePoint';
 import ServicePoints from '../../support/fragments/settings/tenant/servicePoints';
 import ConfirmMultiplePiecesItemCheckOut from '../../support/fragments/checkout/confirmMultiplePiecesItemCheckOut';
+import SwitchServicePoint from '../../support/fragments/service_point/switchServicePoint';
 
 describe('Check Out', () => {
   let user = {};
@@ -19,6 +20,12 @@ describe('Check Out', () => {
   let userBarcode = '';
   const instanceTitle = `autotest_instance_title_${getRandomPostfix()}`;
   const quantityPiecesForSecondItem = '3';
+  const quantityPiecesForThirdItem = '2';
+  const quantityPiecesForFourthItem = '1';
+  const quantityOfMissingPieces = '2';
+  const descriptionOfPiece = `autotest_description_${getRandomPostfix()}`;
+  const missingPieceDescription = `autotest_description_${getRandomPostfix()}`;
+  let servicePoint;
 
   beforeEach(() => {
     cy.createTempUser([
@@ -26,7 +33,7 @@ describe('Check Out', () => {
     ])
       .then(userProperties => {
         user = userProperties;
-        const servicePoint = NewServicePoint.getDefaulServicePoint();
+        servicePoint = NewServicePoint.getDefaulServicePoint();
         ServicePoints.createViaApi(servicePoint.body);
         cy.addServicePointToUser([servicePoint.body.id],
           user.userId, servicePoint.body.id);
@@ -64,6 +71,7 @@ describe('Check Out', () => {
                     barcode: FIRST_ITEM_BARCODE,
                     numberOfPieces: '1',
                     status: { name: 'Available' },
+                    descriptionOfPieces: descriptionOfPiece,
                     permanentLoanType: { id: Cypress.env('loanTypes')[0].id },
                     materialType: { id: Cypress.env('materialTypes')[0].id },
                   },
@@ -71,20 +79,26 @@ describe('Check Out', () => {
                     barcode: SECOND_ITEM_BARCODE,
                     numberOfPieces: quantityPiecesForSecondItem,
                     status: { name: 'Available' },
+                    descriptionOfPieces: descriptionOfPiece,
                     permanentLoanType: { id: Cypress.env('loanTypes')[0].id },
                     materialType: { id: Cypress.env('materialTypes')[0].id },
                   },
                   {
                     barcode: THIRD_ITEM_BARCODE,
-                    numberOfPieces: '2',
+                    numberOfPieces: quantityPiecesForThirdItem,
                     status: { name: 'Available' },
+                    descriptionOfPieces: descriptionOfPiece,
+                    numberOfMissingPieces: quantityOfMissingPieces,
+                    missingPieces: missingPieceDescription,
                     permanentLoanType: { id: Cypress.env('loanTypes')[0].id },
                     materialType: { id: Cypress.env('materialTypes')[0].id },
                   },
                   {
                     barcode: FOURTH_ITEM_BARCODE,
-                    numberOfPieces: '1',
+                    numberOfPieces: quantityPiecesForFourthItem,
                     status: { name: 'Available' },
+                    numberOfMissingPieces: quantityOfMissingPieces,
+                    missingPieces: missingPieceDescription,
                     permanentLoanType: { id: Cypress.env('loanTypes')[0].id },
                     materialType: { id: Cypress.env('materialTypes')[0].id },
                   },
@@ -103,10 +117,18 @@ describe('Check Out', () => {
     CheckOutActions.checkOutItem(userBarcode, FIRST_ITEM_BARCODE);
     CheckOutActions.checkPatronInformation(user.username, userBarcode);
     CheckOutActions.checkOutItem(userBarcode, SECOND_ITEM_BARCODE);
-    ConfirmMultiplePiecesItemCheckOut.checkIsModalConsistOf(instanceTitle, quantityPiecesForSecondItem, dash);
+    ConfirmMultiplePiecesItemCheckOut.checkIsModalConsistOf(instanceTitle, quantityPiecesForSecondItem, descriptionOfPiece);
     ConfirmMultiplePiecesItemCheckOut.cancelModal();
     CheckOutActions.checkOutItem(userBarcode, SECOND_ITEM_BARCODE);
-    ConfirmMultiplePiecesItemCheckOut.checkIsModalConsistOf(instanceTitle, quantityPiecesForSecondItem, dash);
+    ConfirmMultiplePiecesItemCheckOut.checkIsModalConsistOf(instanceTitle, quantityPiecesForSecondItem, descriptionOfPiece);
+    ConfirmMultiplePiecesItemCheckOut.confirmMultiplePiecesItemModal();
+    CheckOutActions.checkOutItem(userBarcode, THIRD_ITEM_BARCODE);
+    ConfirmMultiplePiecesItemCheckOut.checkIsModalConsistOf(instanceTitle, quantityPiecesForThirdItem, descriptionOfPiece);
+    ConfirmMultiplePiecesItemCheckOut.checkMissingPiecesInModal(quantityOfMissingPieces, missingPieceDescription);
+    ConfirmMultiplePiecesItemCheckOut.confirmMultiplePiecesItemModal();
+    CheckOutActions.checkOutItem(userBarcode, FOURTH_ITEM_BARCODE);
+    ConfirmMultiplePiecesItemCheckOut.checkIsModalConsistOf(instanceTitle, quantityPiecesForFourthItem, dash);
+    ConfirmMultiplePiecesItemCheckOut.checkMissingPiecesInModal(quantityOfMissingPieces, missingPieceDescription);
     ConfirmMultiplePiecesItemCheckOut.confirmMultiplePiecesItemModal();
   });
 });

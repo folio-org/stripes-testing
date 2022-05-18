@@ -2,15 +2,14 @@ import { TextField, Button, KeyValue, Pane } from '../../../../interactors';
 
 export default {
   checkOutItem(userBarcode, itemBarcode) {
-    cy.do([
-      TextField({ name: 'patron.identifier' }).fillIn(userBarcode),
-      Button({ id: 'clickable-find-patron' }).click(),
-    ]);
+    cy.do(TextField({ name: 'patron.identifier' }).fillIn(userBarcode));
+    cy.intercept('/circulation/requests?*').as('getRequests');
+    cy.do(Button({ id: 'clickable-find-patron' }).click());
     cy.expect(KeyValue('Borrower').exists());
-    cy.do([
-      TextField({ name: 'item.barcode' }).fillIn(itemBarcode),
-      Button({ id: 'clickable-add-item' }).click(),
-    ]);
+    cy.wait('@getRequests');
+    cy.do(TextField({ name: 'item.barcode' }).fillIn(itemBarcode));
+    cy.wait('@getRequests');
+    cy.do(Button({ id: 'clickable-add-item' }).click());
   },
 
   endCheckOutSession:() => {
