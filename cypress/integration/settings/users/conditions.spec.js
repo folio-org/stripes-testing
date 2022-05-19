@@ -7,6 +7,8 @@ import Condition from '../../../support/fragments/settings/users/condition';
 describe('ui-users-settings: Conditions in Patron blocks', () => {
   beforeEach(() => {
     cy.loginAsAdmin({ path: SettingsMenu.conditionsPath, waiter: Conditions.waitLoading });
+    cy.getAdminToken();
+    Conditions.resetConditions();
   });
 
   it('C11078 Verify that you can select/edit/remove patron block conditions', { tags: [TestType.smoke, Features.patronBlocks] }, () => {
@@ -17,7 +19,6 @@ describe('ui-users-settings: Conditions in Patron blocks', () => {
       Object.values(specialCondition.blockCheckboxes).forEach(specialCheckBox => {
         // If Borrowing and/or Renewals and/or Requests is check marked, then Message to be displayed
         specialCondition.clickByCheckbox(specialCheckBox);
-        specialCondition.setMessage('');
         specialCondition.trySave();
         specialCondition.checkRequiredMessageField();
         specialCondition.checkEmptyMessageValidation();
@@ -33,10 +34,9 @@ describe('ui-users-settings: Conditions in Patron blocks', () => {
         specialCondition.clickByCheckbox(specialCheckBox);
         specialCondition.save(conditionValue);
 
-        // reset condition
-        specialCondition.setMessage('');
-        specialCondition.clickByCheckbox(specialCheckBox);
-        specialCondition.save(conditionValue);
+        // revert changed condition into initial state
+        Conditions.resetCondition(conditionValue);
+        cy.reload();
       });
     });
   });

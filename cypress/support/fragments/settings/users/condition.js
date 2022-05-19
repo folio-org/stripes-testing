@@ -1,5 +1,6 @@
 import { Pane, Checkbox, TextArea, Button } from '../../../../../interactors';
 import Callout from '../../../../../interactors/callout';
+import { REQUEST_METHOD } from '../../../constants';
 
 export default class Condition {
   constructor(conditionName) {
@@ -61,5 +62,30 @@ export default class Condition {
     cy.wait('@getCurrentConditions');
     cy.expect(Callout(`The patron block condition ${specialConditionValue} has been successfully updated.`).absent());
     this.checkSaveButtonState(true);
+  }
+
+  static _defaultCondition = {
+    // required field, should be defined initially
+    id: undefined,
+    // required field, should be defined initially
+    name: undefined,
+    blockBorrowing: false,
+    blockRenewals: false,
+    blockRequests: false,
+    valueType: 'Integer',
+    message: ''
+  }
+
+  static updateViaAPI(conditionId, conditionValue) {
+    const specialCondition = { ...this._defaultCondition };
+    specialCondition.id = conditionId;
+    specialCondition.name = conditionValue;
+
+    cy.okapiRequest({
+      method: REQUEST_METHOD.PUT,
+      path: `patron-block-conditions/${conditionId}`,
+      body: specialCondition,
+      isDefaultSearchParamsRequired: false,
+    });
   }
 }
