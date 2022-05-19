@@ -19,9 +19,7 @@ const resetCondition = (conditionValue) => {
 export default {
   conditionsValues,
   waitLoading:() => conditionsValues.forEach(conditionValue => cy.expect(rootPaneset.find(NavListItem(conditionValue)).exists())),
-  select: (conditionValue = conditionsValues[0]) => {
-    cy.do(rootPaneset.find(NavListItem(conditionValue)).click());
-  },
+  select: (conditionValue = conditionsValues[0]) => cy.do(rootPaneset.find(NavListItem(conditionValue)).click()),
   resetCondition,
   resetConditions:() => conditionsValues.forEach(conditionValue => resetCondition(conditionValue)),
 };
