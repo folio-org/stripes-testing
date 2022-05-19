@@ -3,14 +3,14 @@ import Callout from '../../../../../interactors/callout';
 import { REQUEST_METHOD } from '../../../constants';
 
 export default class Condition {
+  static blockCheckboxes = {
+    borrowing: Checkbox({ id:'blockBorrowing' }),
+    renewals: Checkbox({ id:'blockRenewals' }),
+    requests: Checkbox({ id:'blockRequests' }),
+  }
+
   constructor(conditionName) {
     this._rootPane = Pane(conditionName);
-    this.blockCheckboxes = {
-      borrowing: Checkbox({ id:'blockBorrowing' }),
-      renewals: Checkbox({ id:'blockRenewals' }),
-      requests: Checkbox({ id:'blockRequests' }),
-    };
-
     this._message = this._rootPane.find(TextArea({ id:'message' }));
     this._saveButton = this._rootPane.find(Button('Save'));
   }
@@ -29,7 +29,7 @@ export default class Condition {
 
 
   checkInitialState() {
-    Object.values(this.blockCheckboxes).forEach(blockCheckbox => {
+    Object.values(Condition.blockCheckboxes).forEach(blockCheckbox => {
       cy.expect(this._rootPane.find(blockCheckbox).exists());
       cy.expect(this._rootPane.find(blockCheckbox).has({ disabled: false }));
       cy.expect(this._rootPane.find(blockCheckbox).has({ checked: false }));

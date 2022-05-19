@@ -12,11 +12,12 @@ describe('ui-users-settings: Conditions in Patron blocks', () => {
   });
 
   it('C11078 Verify that you can select/edit/remove patron block conditions', { tags: [TestType.smoke, Features.patronBlocks] }, () => {
-    Conditions.conditionsValues.forEach(conditionValue => {
-      Conditions.select(conditionValue);
-      const specialCondition = new Condition(conditionValue);
-      specialCondition.checkInitialState();
-      Object.values(specialCondition.blockCheckboxes).forEach(specialCheckBox => {
+    Object.values(Condition.blockCheckboxes).forEach(specialCheckBox => {
+      Conditions.conditionsValues.forEach(conditionValue => {
+        Conditions.select(conditionValue);
+        const specialCondition = new Condition(conditionValue);
+        specialCondition.checkInitialState();
+
         // If Borrowing and/or Renewals and/or Requests is check marked, then Message to be displayed
         specialCondition.clickByCheckbox(specialCheckBox);
         specialCondition.trySave();
@@ -36,7 +37,6 @@ describe('ui-users-settings: Conditions in Patron blocks', () => {
 
         // revert changed condition into initial state
         Conditions.resetCondition(conditionValue);
-        cy.reload();
       });
     });
   });
