@@ -124,7 +124,6 @@ describe('ui-circulation-log', () => {
     usersSearchPane.openUser(userId);
 
     // create patron block
-
     const searchString = `${getRandomPostfix()}`;
     const testDescription = `test ${searchString} description filter`;
 
