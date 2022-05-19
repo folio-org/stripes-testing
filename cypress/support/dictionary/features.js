@@ -1,4 +1,5 @@
-export default { quickMarcEditor: 'quickMarcEditor',
+export default {
+  quickMarcEditor: 'quickMarcEditor',
   notes: 'notes',
   eHoldings:'eHoldings',
   tags: 'tags',
@@ -7,4 +8,5 @@ export default { quickMarcEditor: 'quickMarcEditor',
   authority: 'MARC Authority',
   paymentMethod: 'Payment Method',
   // users
-  patronBlocks: 'Patron blocks' };
+  patronBlocks: 'Patron blocks'
+};
