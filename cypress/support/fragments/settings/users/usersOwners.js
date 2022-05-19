@@ -14,8 +14,10 @@ const defaultServicePoints = ['Circ Desk 1',
 
 const startRowIndex = 2;
 
-const save = (ownerName, rowNumber = 0) => {
-  cy.do(rootPaneset.find(Button({ id:`clickable-save-settings-owners-${rowNumber}` })).click());
+const trySave = (rowNumber = 0) => cy.do(rootPaneset.find(Button({ id:`clickable-save-settings-owners-${rowNumber}` })).click());
+
+const save = (ownerName) => {
+  trySave();
   cy.expect(addButton.has({ disabled: false }));
   cy.expect(cy.expect(tableWithOwners.find(MultiColumnListCell(ownerName)).exists()));
 };
@@ -33,6 +35,7 @@ export const getNewOwner = () => ({
 });
 
 export default {
+  trySave,
   waitLoading:() => {
     cy.intercept(
       {
@@ -135,5 +138,8 @@ export default {
       method: 'DELETE',
       path: `owners/${ownerId}`,
     });
+  },
+  checkValidatorError: (ownerName, errorMessage) => {
+    cy.expect(rootPaneset.find(TextField(ownerName)).has({ error: errorMessage }));
   }
 };

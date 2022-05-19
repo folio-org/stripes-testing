@@ -3,7 +3,7 @@ import SettingsMenu from '../../../support/fragments/settingsMenu';
 import UsersOwners from '../../../support/fragments/settings/users/usersOwners';
 import Permissions from '../../../support/dictionary/permissions';
 import getRandomPostfix from '../../../support/utils/stringTools';
-import { CY_ENV } from '../../../support/constants';
+import Features from '../../../support/dictionary/features';
 
 describe('ui-users-settings: Owners', () => {
   describe('Owner creation', () => {
@@ -11,29 +11,26 @@ describe('ui-users-settings: Owners', () => {
     const ownerName = `Automation owner $${getRandomPostfix()}`;
 
     beforeEach(() => {
-      cy.login(Cypress.env(CY_ENV.DIKU_LOGIN), Cypress.env(CY_ENV.DIKU_PASSWORD));
-      cy.getToken(Cypress.env(CY_ENV.DIKU_LOGIN), Cypress.env(CY_ENV.DIKU_PASSWORD))
-        .then(() => {
-          cy.createServicePoint()
-            .then(newServicePoint => {
-              servicePoints.push(newServicePoint);
-            });
-          cy.createServicePoint()
-            .then(newServicePoint => {
-              servicePoints.push(newServicePoint);
-            });
-        });
-    });
-
-    afterEach(() => {
-      servicePoints.forEach(servicePoint => {
-        cy.deleteServicePoint(servicePoint.id);
+      cy.loginAsAdmin({ path: SettingsMenu.usersOwnersPath, waiter: UsersOwners.waitLoading });
+      cy.getAdminToken().then(() => {
+        cy.createServicePoint()
+          .then(newServicePoint => {
+            servicePoints.push(newServicePoint);
+          });
+        cy.createServicePoint()
+          .then(newServicePoint => {
+            servicePoints.push(newServicePoint);
+          });
       });
     });
 
-    it('C350616 Fee/Fine Owners are not required to have a Service Point', { tags: [TestType.smoke] }, () => {
-      cy.visit(SettingsMenu.usersOwnersPath);
+    // afterEach(() => {
+    //   servicePoints.forEach(servicePoint => {
+    //     cy.deleteServicePoint(servicePoint.id);
+    //   });
+    // });
 
+    it('C350616 Fee/Fine Owners are not required to have a Service Point', { tags: [TestType.smoke] }, () => {
       UsersOwners.startNewLineAdding();
       UsersOwners.fill(ownerName);
       UsersOwners.save(ownerName);
@@ -44,6 +41,14 @@ describe('ui-users-settings: Owners', () => {
       // testdata clearing
       UsersOwners.getOwnerViaApi({ query: `owner==${ownerName}` })
         .then(owner => UsersOwners.deleteViaApi(owner.id));
+    });
+
+    it.only('C350615 The "Shared" Fee/Fine Owner is not allowed to have Service Points', { tags: [TestType.smoke, Features.sharedOwner] }, () => {
+      UsersOwners.startNewLineAdding();
+      UsersOwners.fill('Shared', servicePoints.at(-1).name);
+      UsersOwners.trySave();
+
+      UsersOwners.checkValidatorError('Shared', 'Associated service points not allowed for Shared fee/fine owner');
     });
   });
 
