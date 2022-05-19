@@ -29,7 +29,9 @@ describe('Check Out', () => {
 
   beforeEach(() => {
     cy.createTempUser([
-      permissions.checkoutCirculatingItems.gui
+      permissions.checkoutCirculatingItems.gui,
+      permissions.uiUsersView.gui,
+      permissions.uiUserEdit.gui
     ])
       .then(userProperties => {
         user = userProperties;
