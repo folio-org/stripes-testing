@@ -47,6 +47,8 @@ export default {
     cy.expect(PaneHeader('Fee/fine: Owners').exists());
     cy.expect(addButton.exists());
     cy.expect(rootPaneset.find(HTML({ className: including('spinner') })).absent());
+    // TODO: clarify the reason of extra waiting
+    cy.wait(500);
   },
   startNewLineAdding: () => cy.do(addButton.click()),
   defaultServicePoints,
@@ -140,6 +142,6 @@ export default {
     });
   },
   checkValidatorError: (ownerName, errorMessage) => {
-    cy.expect(rootPaneset.find(TextField(ownerName)).has({ error: errorMessage }));
+    cy.expect(rootPaneset.find(TextField({ value: ownerName })).has({ error: errorMessage }));
   }
 };
