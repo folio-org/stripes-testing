@@ -1,5 +1,5 @@
 export default {
-  // bulk edit
+  // bulk edit 
   bulkEditView: { internal: 'ui-bulk-edit.app-view', gui: 'Bulk Edit: In app - View' },
   bulkEditCsvView: { internal: 'ui-bulk-edit.view', gui: 'Bulk Edit: (CSV) View' },
   bulkEditCsvEdit: { internal: 'ui-bulk-edit.edit', gui: 'Bulk Edit: (CSV) Edit' },
