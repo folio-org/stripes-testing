@@ -17,7 +17,7 @@ import 'cypress-file-upload';
 import './data-import';
 import './commands';
 
-setInteractorTimeout(30_000);
+setInteractorTimeout(40_000);
 
 
 require('cypress-xpath');
