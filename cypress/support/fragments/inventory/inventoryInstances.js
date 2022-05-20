@@ -11,6 +11,7 @@ import {
   Checkbox
 } from '../../../../interactors';
 import NewInventoryInstance from './newInventoryInstance';
+import InventorySearch from './inventorySearch';
 
 const rootSection = Section({ id: 'pane-results' });
 const inventoriesList = rootSection.find(MultiColumnList({ id: 'list-inventory' }));
@@ -23,7 +24,7 @@ export default {
     cy.expect(or(inventoriesList.exists()),
       rootSection.find(HTML(including('No results found'))).exists());
   },
-  selectInstance:(rowNumber = 0) => {
+  selectInstance(rowNumber = 0) {
     cy.do(inventoriesList.click({ row: rowNumber }));
   },
   add: (title) => {
@@ -117,5 +118,12 @@ export default {
         cy.deleteHoldingRecord(instance.holdings[0].id);
         cy.deleteInstanceApi(instance.id);
       });
+  },
+
+  openItem(instanceTitle, itemLocation, userItemBarcode) {
+    InventorySearch.searchByParameter('Title (all)', instanceTitle);
+    this.selectInstance();
+    this.openHoldings([itemLocation]);
+    this.openItemView(userItemBarcode);
   }
 };

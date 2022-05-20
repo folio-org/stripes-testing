@@ -1,7 +1,76 @@
 import uuid from 'uuid';
 import getRandomPostfix from '../../utils/stringTools';
+import { REQUEST_METHOD } from '../../constants';
+import NewMaterialType from '../settings/inventory/newMaterialType';
+
+const getDefaultOrderLine = (quantity, title, materialType, location) => {
+  const defaultOrderLine = {
+    id: uuid(),
+    checkinItems: false,
+    acquisitionMethod: '',
+    alerts: [],
+    claims: [],
+    contributors: [],
+    cost: {
+      listUnitPrice: 1.0,
+      currency: 'USD',
+      discountType: 'percentage',
+      quantityPhysical: quantity,
+      poLineEstimatedPrice: 1.0
+    },
+    details: {
+      productIds: [],
+      subscriptionInterval: 0
+    },
+    fundDistribution: [],
+    isPackage: false,
+    locations: [
+      {
+        locationId: location,
+        quantity,
+        quantityPhysical: quantity
+      }
+    ],
+    orderFormat: 'Physical Resource',
+    paymentStatus: 'Pending',
+    physical: {
+      createInventory: 'Instance, Holding, Item',
+      materialType: '',
+      materialSupplier: '',
+      volumes: []
+    },
+    eresource: {
+      activated: false,
+      createInventory: 'None',
+      trial: false,
+      accessProvider: ''
+    },
+    purchaseOrderId: '',
+    receiptStatus: 'Pending',
+    reportingCodes: [],
+    source: 'User',
+    titleOrPackage: title,
+    vendorDetail: {
+      instructions: '',
+      vendorAccount: '1234'
+    }
+  };
+  if (!materialType) {
+    cy.okapiRequest({
+      method: REQUEST_METHOD.POST,
+      path: 'material-types',
+      body: NewMaterialType.getDefaultMaterialType(),
+    })
+      .then(type => {
+        defaultOrderLine.physical.materialType = type.id;
+      });
+  }
+  return defaultOrderLine;
+};
 
 export default {
+  getDefaultOrderLine,
+
   defaultOrderLine: {
     id: uuid(),
     checkinItems: false,
@@ -47,7 +116,7 @@ export default {
     receiptStatus: 'Pending',
     reportingCodes: [],
     source: 'User',
-    titleOrPackage: `autotest_line_${getRandomPostfix()}`,
+    titleOrPackage: `autotest_title_${getRandomPostfix()}`,
     vendorDetail: {
       instructions: '',
       vendorAccount: '1234'

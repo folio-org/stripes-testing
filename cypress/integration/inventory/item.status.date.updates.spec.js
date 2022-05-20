@@ -6,9 +6,6 @@ import NewOrder from '../../support/fragments/orders/newOrder';
 import TopMenu from '../../support/fragments/topMenu';
 import Helper from '../../support/fragments/finance/financeHelper';
 import OrdersHelper from '../../support/fragments/orders/ordersHelper';
-import InventorySearch from '../../support/fragments/inventory/inventorySearch';
-import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
-import InventoryInstance from '../../support/fragments/inventory/inventoryInstance';
 import ItemVeiw from '../../support/fragments/inventory/inventoryItem/itemVeiw';
 import Receiving from '../../support/fragments/receiving/receiving';
 import permissions from '../../support/dictionary/permissions';
@@ -18,8 +15,6 @@ import NewRequest from '../../support/fragments/requests/newRequest';
 import CheckOut from '../../support/fragments/check-out/checkOut';
 import ServicePoints from '../../support/fragments/settings/tenant/servicePoints';
 import NewServicePoint from '../../support/fragments/service_point/newServicePoint';
-import NewLocation from '../../support/fragments/settings/tenant/locations/newLocation';
-import Locations from '../../support/fragments/settings/tenant/locations/locations';
 import UsersSearchPane from '../../support/fragments/users/usersSearchPane';
 import UsersCard from '../../support/fragments/users/usersCard';
 import ConfirmItemInModal from '../../support/fragments/check-in-actions/confirmItemInModal';
@@ -28,32 +23,23 @@ import ConfirmItemStatusModal from '../../support/fragments/users/loans/confirmI
 import RenewConfirmationModal from '../../support/fragments/users/loans/renewConfirmationModal';
 import OverrideAndRenewModal from '../../support/fragments/users/loans/overrideAndRenewModal';
 import ConfirmMultiplePiecesItemCheckOut from '../../support/fragments/check-out/confirmMultiplePiecesItemCheckOut';
-
+import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
+import InventoryInstance from '../../support/fragments/inventory/inventoryInstance';
 import Requests from '../../support/fragments/requests/requests';
 import UpdateUser from '../../support/fragments/user/updateUser';
 import BasicOrderLine from '../../support/fragments/orders/basicOrderLine';
-import Institutions from '../../support/fragments/settings/tenant/institutions';
-import Campuses from '../../support/fragments/settings/tenant/campuses';
-import Libraries from '../../support/fragments/settings/tenant/libraries';
+import Locations from '../../support/fragments/settings/tenant/locations/locations';
 
 // TODO: When bug(https://issues.folio.org/browse/MSEARCH-361) will be fixed check full run test!!!
 describe('ui-inventory: Item status date updates', () => {
-  const order = { ...NewOrder.defaultOrder };
   const instanceTitle = `autotest_title_${getRandomPostfix()}`;
-  const orderLine = {
-    ...BasicOrderLine.defaultOrderLine,
-    cost: { ...BasicOrderLine.defaultOrderLine.cost, quantityPhysical: 1 },
-    locations: [{ quantity: 1,
-      quantityPhysical: 1 }],
-    titleOrPackage: instanceTitle
-  };
-  let createdOrderNumber;
+  const itemQuantity = '1';
+  let orderNumber;
   let effectiveLocationServicePoint;
   let effectiveLocationServicePointName;
   let notEffectiveLocationServicePoint;
   let notEffectiveLocationServicePointName;
-  let effectiveLocation;
-  let itemLocation = '';
+  const effectiveLocation = Locations.getDefaultLocation();
   let user = {};
   let userForDeliveryRequest = {};
   let userBarcode = '';
@@ -77,32 +63,11 @@ describe('ui-inventory: Item status date updates', () => {
     ])
       .then(userProperties => {
         user = userProperties;
-        cy.getAdminToken()
-          .then(() => {
-            cy.getOrganizationApi({ query: 'name="Amazon.com"' })
-              .then(organization => {
-                order.vendor = organization.id;
-                orderLine.physical.materialSupplier = organization.id;
-                orderLine.eresource.accessProvider = organization.id;
-              });
-            cy.getMaterialTypes({ query: 'name="book"' })
-              .then(materialType => { orderLine.physical.materialType = materialType.id; });
-          });
         effectiveLocationServicePoint = NewServicePoint.getDefaulServicePoint();
         effectiveLocationServicePointName = effectiveLocationServicePoint.body.name;
         const effectiveLocationServicePointId = effectiveLocationServicePoint.body.id;
         notEffectiveLocationServicePoint = NewServicePoint.getDefaulServicePoint();
         notEffectiveLocationServicePointName = notEffectiveLocationServicePoint.body.name;
-
-        Institutions.createViaApi(Institutions.defaultUiInstitutions.body);
-        const specialCampuse = { ...Campuses.defaultUiCampuses.body };
-        specialCampuse.institutionId = Institutions.defaultUiInstitutions.body.id;
-        Campuses.createViaApi(specialCampuse);
-        const specialLibrary = { ...Libraries.defaultUiLibraries.body };
-        Libraries.createViaApi(specialLibrary);
-        specialLibrary.campusId = specialCampuse.id;
-
-        effectiveLocation = { ...NewLocation.getDefaultUiLocation(Institutions.defaultUiInstitutions.body.id, specialCampuse.id, specialLibrary.id).body, servicePointIds: [effectiveLocationServicePoint.body.id], primaryServicePoint: effectiveLocationServicePoint.body.id };
 
         userRequestPreferences = {
           id: uuid(),
@@ -118,16 +83,14 @@ describe('ui-inventory: Item status date updates', () => {
         ServicePoints.createViaApi(notEffectiveLocationServicePoint.body);
         cy.addServicePointToUser([effectiveLocationServicePoint.body.id, notEffectiveLocationServicePoint.body.id],
           user.userId, effectiveLocationServicePoint.body.id);
-        Locations.createLocationViaApi(effectiveLocation)
-          .then(locations => {
-            orderLine.locations[0].locationId = locations.body.id;
-            itemLocation = locations.body.name;
-          });
         cy.login(userProperties.username, userProperties.password)
           .then(() => {
-            Orders.createOrderWithOrderLineViaApi(order, orderLine)
-              .then(orderNumber => {
-                createdOrderNumber = orderNumber;
+            Orders.createOrderWithOrderLineViaApi(
+              NewOrder.getDefaultOrder(),
+              BasicOrderLine.getDefaultOrderLine(itemQuantity, instanceTitle, effectiveLocation.id)
+            )
+              .then(order => {
+                orderNumber = order;
               });
           });
         cy.getUsers({ limit: 1, query: `"personal.lastName"="${user.username}" and "active"="true"` })
@@ -168,7 +131,14 @@ describe('ui-inventory: Item status date updates', () => {
         cy.deleteHoldingRecord(instance.holdings[0].id);
         cy.deleteInstanceApi(instance.id);
       });
-    cy.deleteOrderApi(order.id);
+    cy.getOrdersApi({ limit: 1, query: `"poNumber"=="${orderNumber}"` })
+      .then(order => {
+        cy.deleteOrderApi(order[0].id);
+      });
+    cy.getOrganizationApi()
+      .then(organization => {
+        cy.deleteOrganizationApi(organization[0].id);
+      });
     cy.deleteUser(user.userId);
     cy.deleteServicePoint(notEffectiveLocationServicePoint.body.id);
     // TODO delete servicePoints
@@ -181,33 +151,27 @@ describe('ui-inventory: Item status date updates', () => {
   });
 
   it('C9200 Item status date updates', { tags: [TestTypes.smoke] }, () => {
-    const caption = 'autotestCaption';
+    const caption = `autotest_caption_${getRandomPostfix()}`;
     const numberOfPieces = '3';
 
     cy.visit(TopMenu.ordersPath);
-    Orders.searchByParameter('PO number', createdOrderNumber);
+    Orders.searchByParameter('PO number', orderNumber);
     Helper.selectFromResultsList();
     Orders.openOrder();
     OrdersHelper.verifyOrderDateOpened();
     cy.visit(TopMenu.inventoryPath);
-    InventorySearch.searchByParameter('Title (all)', instanceTitle);
-    InventoryInstances.selectInstance();
-    InventoryInstance.openHoldings([itemLocation]);
-    InventoryInstance.openItemView('No barcode');
+    InventoryInstances.openItem(instanceTitle, effectiveLocation.name, 'No barcode');
     ItemVeiw.verifyUpdatedItemDate();
     ItemVeiw.verifyItemStatus(ItemVeiw.itemStatuses.onOrder);
 
     cy.visit(TopMenu.ordersPath);
-    Orders.searchByParameter('PO number', createdOrderNumber);
+    Orders.searchByParameter('PO number', orderNumber);
     Helper.selectFromResultsList();
     Orders.receiveOrderViaActions();
     Helper.selectFromResultsList();
     Receiving.receivePiece(0, caption, userItemBarcode);
     cy.visit(TopMenu.inventoryPath);
-    InventorySearch.searchByParameter('Title (all)', instanceTitle);
-    InventoryInstances.selectInstance();
-    InventoryInstance.openHoldings([itemLocation]);
-    InventoryInstance.openItemView(userItemBarcode);
+    InventoryInstances.openItem(instanceTitle, effectiveLocation.name, userItemBarcode);
     ItemVeiw.verifyUpdatedItemDate();
     ItemVeiw.verifyItemStatus(ItemVeiw.itemStatuses.inProcess);
 
@@ -265,10 +229,7 @@ describe('ui-inventory: Item status date updates', () => {
       pickupServicePoint: effectiveLocationServicePointName,
     });
     cy.visit(TopMenu.inventoryPath);
-    InventorySearch.searchByParameter('Title (all)', instanceTitle);
-    InventoryInstances.selectInstance();
-    InventoryInstance.openHoldings([itemLocation]);
-    InventoryInstance.openItemView(userItemBarcode);
+    InventoryInstances.openItem(instanceTitle, effectiveLocation.name, userItemBarcode);
     ItemVeiw.verifyUpdatedItemDate();
     ItemVeiw.verifyItemStatus(ItemVeiw.itemStatuses.paged);
 
@@ -319,10 +280,7 @@ describe('ui-inventory: Item status date updates', () => {
     ItemVeiw.verifyItemStatus(ItemVeiw.itemStatuses.checkedOut);
 
     cy.visit(TopMenu.inventoryPath);
-    InventorySearch.searchByParameter('Title (all)', instanceTitle);
-    InventoryInstances.selectInstance();
-    InventoryInstance.openHoldings([itemLocation]);
-    InventoryInstance.openItemView(userItemBarcode);
+    InventoryInstances.openItem(instanceTitle, effectiveLocation.name, userItemBarcode);
     InventoryInstance.openEditItemPage();
     ItemVeiw.addPieceToItem(numberOfPieces);
     ItemVeiw.verifyUpdatedItemDate();
@@ -341,10 +299,7 @@ describe('ui-inventory: Item status date updates', () => {
     CheckOut.checkOutItem(userBarcode, userItemBarcode);
     ConfirmMultiplePiecesItemCheckOut.confirmMultiplePiecesItemModal();
     cy.visit(TopMenu.inventoryPath);
-    InventorySearch.searchByParameter('Title (all)', instanceTitle);
-    InventoryInstances.selectInstance();
-    InventoryInstance.openHoldings([itemLocation]);
-    InventoryInstance.openItemView(userItemBarcode);
+    InventoryInstances.openItem(instanceTitle, effectiveLocation.name, userItemBarcode);
     ItemVeiw.verifyUpdatedItemDate();
     ItemVeiw.verifyItemStatus(ItemVeiw.itemStatuses.awaitingDelivery);
 
@@ -353,10 +308,7 @@ describe('ui-inventory: Item status date updates', () => {
     ConfirmItemInModal.confirmAvaitingPicupCheckInModal();
     CheckOut.openItemRecordInInventory(userItemBarcode);
     cy.visit(TopMenu.inventoryPath);
-    InventorySearch.searchByParameter('Title (all)', instanceTitle);
-    InventoryInstances.selectInstance();
-    InventoryInstance.openHoldings([itemLocation]);
-    InventoryInstance.openItemView(userItemBarcode);
+    InventoryInstances.openItem(instanceTitle, effectiveLocation.name, userItemBarcode);
     ItemVeiw.verifyUpdatedItemDate();
     ItemVeiw.verifyItemStatus(ItemVeiw.itemStatuses.checkedOut);
 
@@ -366,10 +318,7 @@ describe('ui-inventory: Item status date updates', () => {
     ConfirmItemInModal.confirmAvaitingPicupModal();
     CheckInActions.openItemRecordInInventory(ItemVeiw.itemStatuses.available);
     cy.visit(TopMenu.inventoryPath);
-    InventorySearch.searchByParameter('Title (all)', instanceTitle);
-    InventoryInstances.selectInstance();
-    InventoryInstance.openHoldings([itemLocation]);
-    InventoryInstance.openItemView(userItemBarcode);
+    InventoryInstances.openItem(instanceTitle, effectiveLocation.name, userItemBarcode);
     ItemVeiw.verifyUpdatedItemDate();
     ItemVeiw.verifyItemStatus(ItemVeiw.itemStatuses.available);
   });
