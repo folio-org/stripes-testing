@@ -30,7 +30,6 @@ describe('ui-users-settings: Owners', () => {
       });
 
       ownerNames.forEach(ownerName => {
-        // testdata clearing
         UsersOwners.getOwnerViaApi({ query: `owner==${ownerName}` })
           .then(owner => UsersOwners.deleteViaApi(owner.id));
       });
