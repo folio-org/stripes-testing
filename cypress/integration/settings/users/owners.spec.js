@@ -5,6 +5,7 @@ import Permissions from '../../../support/dictionary/permissions';
 import getRandomPostfix from '../../../support/utils/stringTools';
 import Features from '../../../support/dictionary/features';
 
+
 describe('ui-users-settings: Owners', () => {
   describe('Owner creation', () => {
     const servicePoints = [];
