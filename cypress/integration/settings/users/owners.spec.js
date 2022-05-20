@@ -8,7 +8,7 @@ import Features from '../../../support/dictionary/features';
 describe('ui-users-settings: Owners', () => {
   describe('Owner creation', () => {
     const servicePoints = [];
-    const ownerName = `Automation owner $${getRandomPostfix()}`;
+    const ownerNames = [];
 
     beforeEach(() => {
       cy.getAdminToken().then(() => {
@@ -28,22 +28,32 @@ describe('ui-users-settings: Owners', () => {
       servicePoints.forEach(servicePoint => {
         cy.deleteServicePoint(servicePoint.id);
       });
+
+      ownerNames.forEach(ownerName => {
+        // testdata clearing
+        UsersOwners.getOwnerViaApi({ query: `owner==${ownerName}` })
+          .then(owner => UsersOwners.deleteViaApi(owner.id));
+      });
     });
 
     it('C350616 Fee/Fine Owners are not required to have a Service Point', { tags: [TestType.smoke] }, () => {
+      const ownerName = `Automation owner $${getRandomPostfix()}`;
+      ownerNames.push(ownerName);
       UsersOwners.startNewLineAdding();
       UsersOwners.fill(ownerName);
       UsersOwners.save(ownerName);
 
       UsersOwners.startNewLineAdding();
       UsersOwners.multiCheckFreeServicePointPresence(servicePoints);
-
-      // testdata clearing
-      UsersOwners.getOwnerViaApi({ query: `owner==${ownerName}` })
-        .then(owner => UsersOwners.deleteViaApi(owner.id));
     });
 
     it('C350615 The "Shared" Fee/Fine Owner is not allowed to have Service Points', { tags: [TestType.smoke, Features.sharedOwner] }, () => {
+      const ownerName = 'Shared';
+      UsersOwners.startNewLineAdding();
+      UsersOwners.fill(ownerName);
+      UsersOwners.save();
+      ownerNames.push(ownerName);
+
       UsersOwners.startNewLineAdding();
       UsersOwners.fill('Shared', servicePoints.at(-1).name);
       UsersOwners.trySave();
