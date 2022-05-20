@@ -17,18 +17,30 @@ describe('ui-inventory: keyboard shortcut', () => {
     cy.visit(TopMenu.inventoryPath);
   });
 
-  after('Delete all data', () => {
+  afterEach('Delete all data', () => {
     cy.deleteUser(userId);
   });
 
-  it('C345297 Keyboard Shortcut. Access to drop down menu', { tags: [testTypes.smoke] }, () => {
+  // it('C345297 Keyboard Shortcut. Access to drop down menu', { tags: [testTypes.smoke] }, () => {
+  //   InventoryMainButton.verifyInventoryDropdownIsShown('false');
+
+  //   InventoryMainButton.openInventoryMenu();
+  //   InventoryMainButton.verifyInventoryDropdownIsShown('true');
+  //   InventoryMainButton.openShortcuts();
+
+  //   InventoryMainButton.waitModalLoading('Keyboard shortcuts');
+  //   InventoryMainButton.verifyInventoryDropdownIsShown('false');
+  // });
+
+  it('C345298 Keyboard Shortcut. Test the functionality of the different shortcut keys', { tags: [testTypes.smoke] }, () => {
     InventoryMainButton.verifyInventoryDropdownIsShown('false');
 
     InventoryMainButton.openInventoryMenu();
-    InventoryMainButton.verifyInventoryDropdownIsShown('true');
     InventoryMainButton.openShortcuts();
 
     InventoryMainButton.waitModalLoading('Keyboard shortcuts');
     InventoryMainButton.verifyInventoryDropdownIsShown('false');
+    InventoryMainButton.createNewRecord();
+    InventoryMainButton.closeShortcuts();
   });
 });

@@ -17,4 +17,10 @@ export default {
   waitModalLoading(modalName) {
     cy.expect(Modal(modalName).exists());
   },
+  createNewRecord() {
+    cy.get('body').type('{alt}N');
+  },
+  closeShortcuts() {
+    cy.do(Modal({ id: 'keyboard-shortcuts-modal' }).find(Button({ id: 'keyboard-shortcuts-modal-close' })).click());
+  }
 };
