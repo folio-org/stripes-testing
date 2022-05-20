@@ -40,12 +40,16 @@ Cypress.Commands.add('getUserGroups', (searchParams) => {
     });
 });
 
-Cypress.Commands.add('getFirstUserGroupId', (searchParams) => {
+Cypress.Commands.add('getFirstUserGroupId', (searchParams, patronGroup) => {
   cy.okapiRequest({
     path: 'groups',
     searchParams,
   }).then((response) => {
-    return response.body.usergroups[0].id;
+    let userGroupIdx = 0;
+    if (patronGroup) {
+      userGroupIdx = response.body.usergroups.findIndex(({ group }) => group === patronGroup) || 0;
+    }
+    return response.body.usergroups[userGroupIdx].id;
   });
 });
 
@@ -71,11 +75,13 @@ Cypress.Commands.add('createUserApi', (user) => {
 });
 
 Cypress.Commands.add('overrideLocalSettings', (userId) => {
-  const body = { module: '@folio/stripes-core',
+  const body = {
+    module: '@folio/stripes-core',
     configName: 'localeSettings',
     enabled: true,
     value: '{"locale":"en-US","timezone":"UTC","currency":"USD"}',
-    userId };
+    userId
+  };
 
   cy.okapiRequest({
     method: 'POST',
@@ -92,16 +98,16 @@ Cypress.Commands.add('updateUser', (userData) => {
   });
 });
 
-Cypress.Commands.add('createTempUser', (permissions = []) => {
+Cypress.Commands.add('createTempUser', (permissions = [], patronGroup) => {
   const userProperties = {
     username: `cypressTestUser${getRandomPostfix()}`,
     password: `Password${getRandomPostfix()}`,
-    userId:''
+    userId: ''
   };
 
   cy.getAdminToken();
 
-  cy.getFirstUserGroupId({ limit: 1 })
+  cy.getFirstUserGroupId({ limit: patronGroup ? 10 : 1 }, patronGroup)
     .then((userGroupdId) => {
       const userData = {
         username: userProperties.username,
@@ -131,7 +137,7 @@ Cypress.Commands.add('createTempUser', (permissions = []) => {
               cy.setUserPassword(userProperties);
               cy.addPermissionsToNewUserApi({
                 userId: userProperties.userId,
-                permissions : [...permissionsResponse.body.permissions.map(permission => permission.permissionName)]
+                permissions: [...permissionsResponse.body.permissions.map(permission => permission.permissionName)]
               });
               cy.overrideLocalSettings(userProperties.userId);
               userProperties.barcode = userCreateResponse.barcode;

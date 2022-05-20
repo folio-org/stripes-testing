@@ -12,7 +12,8 @@ import {
   Modal,
   Checkbox,
   MultiColumnList,
-  MultiColumnListRow
+  MultiColumnListRow,
+  Select
 } from '../../../../interactors';
 import InteractorsTools from '../../utils/interactorsTools';
 import Helper from '../finance/financeHelper';
@@ -242,6 +243,22 @@ export default {
     cy.do(Button('Close').click());
   },
 
+  voucherExport: () => {
+    cy.do([
+      PaneHeader({ id: 'paneHeaderinvoice-results-pane' })
+        .find(actionsButton).click(),
+      Button('Voucher export').click(),
+      Select().choose('FOLIO'),
+      Button('Run manual export').click(),
+      Button({ id: 'clickable-run-manual-export-confirmation-confirm' }).click(),
+    ]);
+    cy.wait(2000);
+    cy.do(MultiColumnList({ id: 'batch-voucher-exports' })
+      .find(MultiColumnListRow({ index: 0 }))
+      .find(MultiColumnListCell({ columnIndex: 3 }))
+      .find(Button({ icon: 'download' }))
+      .click());
+  },
   getSearchParamsMap(orderNumber, orderLine) {
     const searchParamsMap = new Map();
     searchParamsMap.set('Keyword', orderNumber)

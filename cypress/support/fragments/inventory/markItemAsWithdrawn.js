@@ -29,6 +29,8 @@ export default {
     'Checked out',
   ],
 
+  itemStatusesToCreate() { return [...this.itemsToMarkAsMissing, ...this.itemsNotToMarkAsMissing]; },
+
   withdrawItemButton: Button('Mark as withdrawn'),
   newRequestButton: Button('New Request'),
 
