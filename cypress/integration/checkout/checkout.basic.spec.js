@@ -1,10 +1,12 @@
 import generateItemBarcode from '../../support/utils/generateItemBarcode';
+import InventoryHoldings from '../../support/fragments/inventory/holdings/inventoryHoldings';
 
 describe('Check Out', () => {
   let ITEM_BARCODE;
 
   beforeEach(() => {
     ITEM_BARCODE = generateItemBarcode();
+    let source;
 
     cy.login(Cypress.env('diku_login'), Cypress.env('diku_password'));
     cy.getAdminToken()
@@ -13,7 +15,7 @@ describe('Check Out', () => {
         cy.getMaterialTypes({ limit: 1 });
         cy.getLocations({ limit: 1 });
         cy.getHoldingTypes({ limit: 1 });
-        cy.getHoldingSources({ limit: 1 });
+        source = InventoryHoldings.getHoldingSources({ limit: 1 });
         cy.getInstanceTypes({ limit: 1 });
         cy.getUsers({ limit: 1, query: '"personal.firstName"="checkin-all" and "active"="true"' });
       })
@@ -28,7 +30,7 @@ describe('Check Out', () => {
           holdings: [{
             holdingsTypeId: Cypress.env('holdingsTypes')[0].id,
             permanentLocationId: Cypress.env('locations')[0].id,
-            sourceId: Cypress.env('holdingSources')[0].id,
+            sourceId: source.id,
           }],
           items: [
             [{

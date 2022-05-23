@@ -1,5 +1,4 @@
-/// <reference types="cypress" />
-
+import uuid from 'uuid';
 import TestTypes from '../../support/dictionary/testTypes';
 import permissions from '../../support/dictionary/permissions';
 import TopMenu from '../../support/fragments/topMenu';
@@ -10,6 +9,7 @@ import NewServicePoint from '../../support/fragments/service_point/newServicePoi
 import ServicePoints from '../../support/fragments/settings/tenant/servicePoints';
 import ConfirmMultipieceCheckOutModal from '../../support/fragments/checkout/confirmMultipieceCheckOutModal';
 import SwitchServicePoint from '../../support/fragments/service_point/switchServicePoint';
+import InventoryHoldings from '../../support/fragments/inventory/holdings/inventoryHoldings';
 
 describe('Check Out', () => {
   let user = {};
@@ -26,12 +26,13 @@ describe('Check Out', () => {
   const descriptionOfPiece = `autotest_description_${getRandomPostfix()}`;
   const missingPieceDescription = `autotest_description_${getRandomPostfix()}`;
   let servicePoint;
+  let itemIds = [];
 
   beforeEach(() => {
+    let source;
+
     cy.createTempUser([
       permissions.checkoutCirculatingItems.gui,
-      permissions.uiUsersView.gui,
-      permissions.uiUserEdit.gui
     ])
       .then(userProperties => {
         user = userProperties;
@@ -42,14 +43,14 @@ describe('Check Out', () => {
       })
       .then(() => {
         cy.login(user.username, user.password);
-        cy.visit(TopMenu.inventoryPath);
+        cy.visit(TopMenu.checkOutPath);
         cy.getAdminToken()
           .then(() => {
             cy.getLoanTypes({ limit: 1 });
             cy.getMaterialTypes({ limit: 1 });
             cy.getLocations({ limit: 2 });
             cy.getHoldingTypes({ limit: 2 });
-            cy.getHoldingSources({ limit: 2 });
+            source = InventoryHoldings.getHoldingSources({ limit: 1 });
             cy.getInstanceTypes({ limit: 1 });
             cy.getUsers({ limit: 1, query: `"personal.lastName"="${user.username}" and "active"="true"` })
               .then((users) => {
@@ -57,78 +58,86 @@ describe('Check Out', () => {
               });
           })
           .then(() => {
+            const testItems = [
+              [
+                {
+                  id: uuid(),
+                  barcode: FIRST_ITEM_BARCODE,
+                  numberOfPieces: '1',
+                  status: { name: 'Available' },
+                  descriptionOfPieces: descriptionOfPiece,
+                  permanentLoanType: { id: Cypress.env('loanTypes')[0].id },
+                  materialType: { id: Cypress.env('materialTypes')[0].id },
+                },
+                {
+                  id: uuid(),
+                  barcode: SECOND_ITEM_BARCODE,
+                  numberOfPieces: quantityPiecesForSecondItem,
+                  status: { name: 'Available' },
+                  descriptionOfPieces: descriptionOfPiece,
+                  permanentLoanType: { id: Cypress.env('loanTypes')[0].id },
+                  materialType: { id: Cypress.env('materialTypes')[0].id },
+                },
+                {
+                  id: uuid(),
+                  barcode: THIRD_ITEM_BARCODE,
+                  numberOfPieces: quantityPiecesForThirdItem,
+                  status: { name: 'Available' },
+                  descriptionOfPieces: descriptionOfPiece,
+                  numberOfMissingPieces: quantityOfMissingPieces,
+                  missingPieces: missingPieceDescription,
+                  permanentLoanType: { id: Cypress.env('loanTypes')[0].id },
+                  materialType: { id: Cypress.env('materialTypes')[0].id },
+                },
+                {
+                  id: uuid(),
+                  barcode: FOURTH_ITEM_BARCODE,
+                  numberOfPieces: quantityPiecesForFourthItem,
+                  status: { name: 'Available' },
+                  numberOfMissingPieces: quantityOfMissingPieces,
+                  missingPieces: missingPieceDescription,
+                  permanentLoanType: { id: Cypress.env('loanTypes')[0].id },
+                  materialType: { id: Cypress.env('materialTypes')[0].id },
+                },
+              ],
+            ];
+            let testInstanceIds = {
+              instanceId: uuid(),
+              holdingsId: uuid(),
+              itemIds: testItems.map(testItem => testItem.id)
+            };
             cy.createInstance({
               instance: {
+                id: testInstanceIds.instanceId,
                 instanceTypeId: Cypress.env('instanceTypes')[0].id,
                 title: instanceTitle,
               },
               holdings: [{
+                id: testInstanceIds.holdingsId,
                 holdingsTypeId: Cypress.env('holdingsTypes')[0].id,
                 permanentLocationId: Cypress.env('locations')[0].id,
-                sourceId: Cypress.env('holdingSources')[0].id,
+                sourceId: source.id,
               }],
-              items: [
-                [
-                  {
-                    barcode: FIRST_ITEM_BARCODE,
-                    numberOfPieces: '1',
-                    status: { name: 'Available' },
-                    descriptionOfPieces: descriptionOfPiece,
-                    permanentLoanType: { id: Cypress.env('loanTypes')[0].id },
-                    materialType: { id: Cypress.env('materialTypes')[0].id },
-                  },
-                  {
-                    barcode: SECOND_ITEM_BARCODE,
-                    numberOfPieces: quantityPiecesForSecondItem,
-                    status: { name: 'Available' },
-                    descriptionOfPieces: descriptionOfPiece,
-                    permanentLoanType: { id: Cypress.env('loanTypes')[0].id },
-                    materialType: { id: Cypress.env('materialTypes')[0].id },
-                  },
-                  {
-                    barcode: THIRD_ITEM_BARCODE,
-                    numberOfPieces: quantityPiecesForThirdItem,
-                    status: { name: 'Available' },
-                    descriptionOfPieces: descriptionOfPiece,
-                    numberOfMissingPieces: quantityOfMissingPieces,
-                    missingPieces: missingPieceDescription,
-                    permanentLoanType: { id: Cypress.env('loanTypes')[0].id },
-                    materialType: { id: Cypress.env('materialTypes')[0].id },
-                  },
-                  {
-                    barcode: FOURTH_ITEM_BARCODE,
-                    numberOfPieces: quantityPiecesForFourthItem,
-                    status: { name: 'Available' },
-                    numberOfMissingPieces: quantityOfMissingPieces,
-                    missingPieces: missingPieceDescription,
-                    permanentLoanType: { id: Cypress.env('loanTypes')[0].id },
-                    materialType: { id: Cypress.env('materialTypes')[0].id },
-                  },
-                ],
-              ],
+              items: testItems,
             });
           });
       });
   });
 
-  after('Delete all data', () => {
-    cy.getInstance({ limit: 1, expandAll: true, query: `"items.barcode"=="${FIRST_ITEM_BARCODE}"` })
-      .then(instance => {
-        instance.items.forEach(item => {
-          cy.deleteItem(item.id);
+  after(() => {
+        itemIds.forEach(id => {
+          cy.deleteItem(id);
         });
         cy.deleteHoldingRecord(instance.holdings[0].id);
         cy.deleteInstanceApi(instance.id);
       });
-    SwitchServicePoint.changeServicePointPreference();
-    cy.deleteServicePoint(servicePoint.body.id);
+    // TODO delete service
     cy.deleteUser(user.userId);
   });
 
   it('C591 Check out: multipiece items', { tags: [TestTypes.smoke] }, () => {
     const dash = '-';
 
-    cy.visit(TopMenu.checkOutPath);
     CheckOutActions.checkIsInterfacesOpened();
     CheckOutActions.checkOutItem(userBarcode, FIRST_ITEM_BARCODE);
     CheckOutActions.checkPatronInformation(user.username, userBarcode);

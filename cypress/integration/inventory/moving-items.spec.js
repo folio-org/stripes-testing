@@ -11,6 +11,7 @@ import InventoryViewSource from '../../support/fragments/inventory/inventoryView
 import Features from '../../support/dictionary/features';
 import permissions from '../../support/dictionary/permissions';
 import getRandomPostfix from '../../support/utils/stringTools';
+import InventoryHoldings from '../../support/fragments/inventory/holdings/inventoryHoldings';
 
 const successCalloutMessage = '1 item has been successfully moved.';
 let userId = '';
@@ -20,6 +21,8 @@ const ITEM_BARCODE = `test${getRandomPostfix()}`;
 
 describe('ui-inventory: moving items', () => {
   beforeEach('navigates to Inventory', () => {
+    let source;
+
     cy.createTempUser([
       permissions.inventoryAll.gui,
       permissions.uiInventoryMoveItems.gui,
@@ -38,7 +41,10 @@ describe('ui-inventory: moving items', () => {
             cy.getMaterialTypes({ limit: 1 });
             cy.getLocations({ limit: 2 });
             cy.getHoldingTypes({ limit: 2 });
-            cy.getHoldingSources({ limit: 2 });
+            InventoryHoldings.getHoldingSources({ limit: 2 })
+              .then(holdingsSources => {
+                source = holdingsSources;
+              });
             cy.getInstanceTypes({ limit: 1 });
             cy.getServicePointsApi({ limit: 1, query: 'pickupLocation=="true"' });
             cy.getUsers({
@@ -58,12 +64,12 @@ describe('ui-inventory: moving items', () => {
                 {
                   holdingsTypeId: Cypress.env('holdingsTypes')[0].id,
                   permanentLocationId: Cypress.env('locations')[0].id,
-                  sourceId: Cypress.env('holdingSources')[0].id,
+                  sourceId: source[0].id,
                 },
                 {
                   holdingsTypeId: Cypress.env('holdingsTypes')[1].id,
                   permanentLocationId: Cypress.env('locations')[1].id,
-                  sourceId: Cypress.env('holdingSources')[1].id,
+                  sourceId: source[1].id,
                 }],
               items: [
                 [{
@@ -90,7 +96,6 @@ describe('ui-inventory: moving items', () => {
       });
     cy.deleteUser(userId);
   });
-
 
   it('C15185 Move multiple items from one holdings to another holdings within an instance', { tags: [TestTypes.smoke] }, () => {
     InventorySearch.switchToItem();
@@ -129,4 +134,3 @@ describe('ui-inventory: moving items', () => {
     });
   });
 });
-

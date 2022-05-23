@@ -6,14 +6,15 @@ import InventoryInstanceEdit from '../../support/fragments/inventory/InventoryIn
 import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
 import permissions from '../../support/dictionary/permissions';
 import getRandomPostfix from '../../support/utils/stringTools';
-
+import InventoryHoldings from '../../support/fragments/inventory/holdings/inventoryHoldings';
 
 const ITEM_BARCODE = `123${getRandomPostfix()}`;
 let userId = '';
 
-
 describe('ui-inventory: location', () => {
   before('create inventory instance', () => {
+    let source;
+
     cy.createTempUser([
       permissions.inventoryAll.gui,
       permissions.remoteStorageCRUD.gui,
@@ -27,7 +28,7 @@ describe('ui-inventory: location', () => {
             cy.getMaterialTypes({ limit: 1 });
             cy.getLocations({ limit: 2 });
             cy.getHoldingTypes({ limit: 1 });
-            cy.getHoldingSources({ limit: 1 });
+            source = InventoryHoldings.getHoldingSources({ limit: 1 });
             cy.getInstanceTypes({ limit: 1 });
             cy.getServicePointsApi({ limit: 1, query: 'pickupLocation=="true"' });
             cy.getUsers({
@@ -44,7 +45,7 @@ describe('ui-inventory: location', () => {
               holdings: [{
                 holdingsTypeId: Cypress.env('holdingsTypes')[0].id,
                 permanentLocationId: Cypress.env('locations')[0].id,
-                sourceId: Cypress.env('holdingSources')[0].id,
+                sourceId: source.id,
               }],
               items: [
                 [

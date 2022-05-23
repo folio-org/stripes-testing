@@ -7,6 +7,7 @@ import usersSearchPane from '../../support/fragments/users/usersSearchPane';
 import usersCard from '../../support/fragments/users/usersCard';
 import checkinActions from '../../support/fragments/check-in-actions/checkInActions';
 import checkoutActions from '../../support/fragments/checkout/checkout';
+import InventoryHoldings from '../../support/fragments/inventory/holdings/inventoryHoldings';
 
 const ITEM_BARCODE = `123${getRandomPostfix()}`;
 let userId = '';
@@ -14,6 +15,8 @@ let userId = '';
 
 describe('ui-circulation-log', () => {
   before('create inventory instance', () => {
+    let source;
+
     cy.createTempUser([
       permissions.inventoryAll.gui,
       permissions.circulationLogAll.gui,
@@ -29,7 +32,7 @@ describe('ui-circulation-log', () => {
             cy.getMaterialTypes({ limit: 1 });
             cy.getLocations({ limit: 1 });
             cy.getHoldingTypes({ limit: 1 });
-            cy.getHoldingSources({ limit: 1 });
+            source = InventoryHoldings.getHoldingSources({ limit: 1 });
             cy.getInstanceTypes({ limit: 1 });
             cy.getServicePointsApi({ limit: 1, query: 'pickupLocation=="true"' });
             cy.getUsers({
@@ -38,7 +41,7 @@ describe('ui-circulation-log', () => {
             });
           })
           .then(() => {
-            cy.addServicePointToUser(Cypress.env('servicePoints')[0].id, userId);
+            cy.addServicePointToUser([Cypress.env('servicePoints')[0].id], userId);
             cy.getUserServicePoints(Cypress.env('users')[0].id);
             cy.createInstance({
               instance: {
@@ -48,7 +51,7 @@ describe('ui-circulation-log', () => {
               holdings: [{
                 holdingsTypeId: Cypress.env('holdingsTypes')[0].id,
                 permanentLocationId: Cypress.env('locations')[0].id,
-                sourceId: Cypress.env('holdingSources')[0].id,
+                sourceId: source.id,
               }],
               items: [
                 [{
@@ -72,11 +75,11 @@ describe('ui-circulation-log', () => {
       });
   });
 
-  afterEach('reset search results', () => {
+  /*afterEach('reset search results', () => {
     SearchPane.resetResults();
-  });
+  });*/
 
-  after('Delete all data', () => {
+  /*after('Delete all data', () => {
     checkinActions.createItemCheckinApi({
       itemBarcode: ITEM_BARCODE,
       servicePointId: Cypress.env('servicePoints')[0].id,
@@ -92,7 +95,7 @@ describe('ui-circulation-log', () => {
       cy.deleteBlockApi(Cypress.env('blockIds')[0].id);
     });
     cy.deleteUser(userId);
-  });
+  });*/
 
   it('C15484 Filter circulation log on item barcode', { retries: 3, tags: [TestTypes.smoke] }, () => {
     SearchPane.searchByItemBarcode(ITEM_BARCODE);

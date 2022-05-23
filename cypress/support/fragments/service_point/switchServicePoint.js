@@ -44,9 +44,9 @@ export default {
     cy.login(userName, password);
   },
   // we can remove the service point if it is not Preference
-  changeServicePointPreference: () => {
+  changeServicePointPreference: (userName = defaultUser.defaultUiPatron.body.userName) => {
     cy.visit(TopMenu.usersPath);
-    cy.do(TextField({ id: 'input-user-search' }).fillIn(defaultUser.defaultUiPatron.body.userName));
+    cy.do(TextField({ id: 'input-user-search' }).fillIn(userName));
     cy.do(Button('Search').click());
     cy.do(MultiColumnList().click({ row: 0, column: 'Active' }));
     cy.do(Pane({ id: 'pane-userdetails' }).find(Button('Actions')).click());

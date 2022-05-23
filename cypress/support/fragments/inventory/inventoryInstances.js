@@ -100,8 +100,6 @@ export default {
       .then(() => {
         cy.getHoldings({ limit: 1, query: `"instanceId"="${instanceId}"` })
           .then((holdings) => {
-            console.log(instanceId);
-            console.log(holdings[0]);
             cy.updateHoldingRecord(holdings[0].id, {
               ...holdings[0],
               callNumber: holdingCallNumber

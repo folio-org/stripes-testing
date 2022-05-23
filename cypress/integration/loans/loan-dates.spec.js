@@ -10,7 +10,8 @@ import CheckOutActions from '../../support/fragments/check-out-actions/check-out
 import DateTools from '../../support/utils/dateTools';
 import NewRequest from '../../support/fragments/requests/newRequest';
 import checkinActions from '../../support/fragments/check-in-actions/checkInActions';
-import ConfirmMultiplePiecesItemCheckOut from '../../support/fragments/checkout/confirmMultiplePiecesItemCheckOut';
+import ConfirmMultiplePiecesItemCheckOut from '../../support/fragments/checkout/confirmMultipieceCheckOutModal';
+import InventoryHoldings from '../../support/fragments/inventory/holdings/inventoryHoldings';
 
 const item = {
   barcode: `123${getRandomPostfix()}`,
@@ -23,6 +24,8 @@ const expirationUserDate = DateTools.getFutureWeekDateObj();
 
 describe('loan dates', () => {
   before('create inventory instance', () => {
+    let source;
+
     cy.createTempUser([
       permissions.loansAll.gui,
       permissions.checkoutAll.gui,
@@ -36,7 +39,7 @@ describe('loan dates', () => {
             cy.getMaterialTypes({ limit: 1 });
             cy.getLocations({ limit: 1 });
             cy.getHoldingTypes({ limit: 1 });
-            cy.getHoldingSources({ limit: 1 });
+            source = InventoryHoldings.getHoldingSources({ limit: 1 });
             cy.getInstanceTypes({ limit: 1 });
             cy.getServicePointsApi({ limit: 1, query: 'pickupLocation=="true"' });
             cy.getUsers({
@@ -55,7 +58,7 @@ describe('loan dates', () => {
               holdings: [{
                 holdingsTypeId: Cypress.env('holdingsTypes')[0].id,
                 permanentLocationId: Cypress.env('locations')[0].id,
-                sourceId: Cypress.env('holdingSources')[0].id,
+                sourceId: source.id,
               }],
               items: [
                 [{
