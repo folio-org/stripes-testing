@@ -1,9 +1,9 @@
 {
-  "baseUrl": "https://folio-snapshot-2.dev.folio.org",
+  "baseUrl": "https://folio-snapshot.dev.folio.org",
   "viewportWidth": 1920,
   "viewportHeight": 1080,
   "video": false,
-  "defaultCommandTimeout": 5000,
+  "defaultCommandTimeout": 151000,
   "pageLoadTimeout": 120000,
   "env": {
     "OKAPI_HOST": "https://folio-snapshot-okapi.dev.folio.org",

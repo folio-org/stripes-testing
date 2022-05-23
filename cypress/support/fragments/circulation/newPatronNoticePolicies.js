@@ -1,49 +1,62 @@
-import getRandomPostfix from '../../utils/stringTools';
-import { Button, TextField, TextArea, NavListItem, Checkbox, Select } from '../../../../interactors';
+import getRandomPostfix from "../../utils/stringTools";
+import {
+  Button,
+  TextField,
+  TextArea,
+  NavListItem,
+  Checkbox,
+  Select,
+  Section,
+} from "../../../../interactors";
 
-const actionsButton = Button('Actions');
-const addNoticeButton = Button('Add notice')
-const nameField = TextField({ id: 'notice_policy_name' });
-const templateSelect = Select({ id: 'select-45'})
+const actionsButton = Button("Actions");
+const addNoticeButton = Button("Add notice");
+const nameField = TextField({ id: "notice_policy_name" });
+const templateIdSelect = Select({ name: "loanNotices[0].templateId" });
+const formatSelect = Select({ name: "loanNotices[0].format" });
+const actionSelect = Select({ name: "loanNotices[0].sendOptions.sendWhen" });
 
 export default {
-  defaultUiPatronNoticePolicies : {
+  defaultUiPatronNoticePolicies: {
     name: `Test_notice_${getRandomPostfix()}`,
-    description: 'Created by autotest team',
-    template: null,
+    description: "Created by autotest team",
+    templateId: null,
+    action: null,
+    format: null,
   },
 
-  getTemplate(patronNoticePolicy,  template) {
-    return { ...patronNoticePolicy, template }
+  getNotice(patronNoticePolicy, templateId, action) {
+    return { ...patronNoticePolicy, templateId, action };
   },
 
   createPolicy(patronNoticePolicy) {
-    cy.do(Button({ id: 'clickable-create-entry' }).click());
-    addNoticeButton.click()
+    cy.do(Button({ id: "clickable-create-entry" }).click());
     this.fillGeneralInformation(patronNoticePolicy);
   },
 
-  fillPolicyTemplate(patronNoticePolicy) {
+  addNotice(patronNoticePolicy) {
     cy.do([
-      addNoticeButton.click(),
-      cy.log('should find button "Add notice"'),
-      cy.log(patronNoticePolicy.template),
-      templateSelect.select( ` ${patronNoticePolicy.template} `)
-    ])
-    },
+      Section({ id: "editLoanNotices" }).find(addNoticeButton).click(),
+      templateIdSelect.choose(patronNoticePolicy.templateId),
+      formatSelect.choose(patronNoticePolicy.format),
+      actionSelect.choose(patronNoticePolicy.action),
+    ]);
+  },
 
   fillGeneralInformation: (patronNoticePolicy) => {
     cy.do([
       nameField.fillIn(patronNoticePolicy.name),
-      Checkbox({ id: 'notice_policy_active' }).click(),
-      TextArea({ id: 'notice_policy_description' }).fillIn(patronNoticePolicy.description),
+      Checkbox({ id: "notice_policy_active" }).click(),
+      TextArea({ id: "notice_policy_description" }).fillIn(
+        patronNoticePolicy.description
+      ),
     ]);
   },
 
   savePolicy: () => {
     cy.do([
-      Button({ id: 'footer-save-entity' }).click(),
-      Button({ icon: 'times' }).click(),
+      Button({ id: "footer-save-entity" }).click(),
+      Button({ icon: "times" }).click(),
     ]);
   },
 
@@ -59,7 +72,7 @@ export default {
     cy.do([
       NavListItem(patronNoticePolicy.name).click(),
       actionsButton.click(),
-      Button({ id: 'dropdown-clickable-edit-item' }).click(),
+      Button({ id: "dropdown-clickable-edit-item" }).click(),
     ]);
     this.fillGeneralInformation(patronNoticePolicy);
   },
@@ -67,17 +80,17 @@ export default {
   duplicatePolicy: () => {
     cy.do([
       actionsButton.click(),
-      Button({ id: 'dropdown-clickable-duplicate-item' }).click(),
-      nameField.fillIn('DUPLICATE'),
-      Button({ id: 'footer-save-entity' }).click(),
+      Button({ id: "dropdown-clickable-duplicate-item" }).click(),
+      nameField.fillIn("DUPLICATE"),
+      Button({ id: "footer-save-entity" }).click(),
     ]);
   },
 
   deletePolicy: () => {
     cy.do([
       actionsButton.click(),
-      Button({ id: 'dropdown-clickable-delete-item' }).click(),
-      Button({ id: 'clickable-delete-item-confirmation-confirm' }).click(),
+      Button({ id: "dropdown-clickable-delete-item" }).click(),
+      Button({ id: "clickable-delete-item-confirmation-confirm" }).click(),
     ]);
-  }
+  },
 };
