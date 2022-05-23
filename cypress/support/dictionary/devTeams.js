@@ -1,3 +1,3 @@
 export default {
-  firebird: 'Firebird'
+  firebird: 'firebird'
 };
