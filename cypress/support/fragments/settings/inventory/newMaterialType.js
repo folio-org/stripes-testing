@@ -11,11 +11,23 @@ const getDefaultMaterialType = () => {
 };
 
 export default {
+  getDefaultMaterialType,
+
+  createViaApi: (materialTypeProperties) => {
+    return cy
+      .okapiRequest({
+        path: 'material-types',
+        body: materialTypeProperties,
+        method: 'POST'
+      })
+      .then((response) => {
+        return response;
+      });
+  },
+
   defaultMaterialType: {
     id: uuid(),
     name: '',
     source: 'local'
   },
-
-  getDefaultMaterialType,
 };

@@ -158,7 +158,7 @@ export default {
     }
   },
 
-  openHoldings(holdingToBeOpened) {
+  openHoldings(...holdingToBeOpened) {
     const openActions = [];
     for (let i = 0; i < holdingToBeOpened.length; i++) {
       openActions.push(Accordion({ label: including(`Holdings: ${holdingToBeOpened[i]}`) }).clickHeader());

@@ -168,7 +168,7 @@ function deleteRequestApi(requestId) {
 }
 
 function getRequestApi(searchParams) {
-  cy
+  return cy
     .okapiRequest({
       path: 'circulation/requests',
       searchParams,

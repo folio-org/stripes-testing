@@ -28,7 +28,7 @@ import InventoryInstance from '../../support/fragments/inventory/inventoryInstan
 import Requests from '../../support/fragments/requests/requests';
 import UpdateUser from '../../support/fragments/user/updateUser';
 import BasicOrderLine from '../../support/fragments/orders/basicOrderLine';
-import Locations from '../../support/fragments/settings/tenant/locations/locations';
+import NewLocations from '../../support/fragments/settings/tenant/locations/newLocation';
 
 // TODO: When bug(https://issues.folio.org/browse/MSEARCH-361) will be fixed check full run test!!!
 describe('ui-inventory: Item status date updates', () => {
@@ -39,7 +39,7 @@ describe('ui-inventory: Item status date updates', () => {
   let effectiveLocationServicePointName;
   let notEffectiveLocationServicePoint;
   let notEffectiveLocationServicePointName;
-  const effectiveLocation = Locations.getDefaultLocation();
+  let effectiveLocation;
   let user = {};
   let userForDeliveryRequest = {};
   let userBarcode = '';
@@ -59,7 +59,8 @@ describe('ui-inventory: Item status date updates', () => {
       permissions.loansAll.gui,
       permissions.uiInventoryStorageModule.gui,
       permissions.uiUsersDeclareItemLost.gui,
-      permissions.usersLoansRenewThroughOverride.gui
+      permissions.usersLoansRenewThroughOverride.gui,
+      permissions.uiUserEdit.gui
     ])
       .then(userProperties => {
         user = userProperties;
@@ -85,14 +86,20 @@ describe('ui-inventory: Item status date updates', () => {
           user.userId, effectiveLocationServicePoint.body.id);
         cy.login(userProperties.username, userProperties.password)
           .then(() => {
-            Orders.createOrderWithOrderLineViaApi(
-              NewOrder.getDefaultOrder(),
-              BasicOrderLine.getDefaultOrderLine(itemQuantity, instanceTitle, effectiveLocation.id)
-            )
-              .then(order => {
-                orderNumber = order;
+            NewLocations.createViaApi(NewLocations.getDefaultLocation(effectiveLocationServicePointId))
+              .then((location) => {
+                effectiveLocation = location;
+                Orders.createOrderWithOrderLineViaApi(
+                  NewOrder.getDefaultOrder(),
+                  BasicOrderLine.getDefaultOrderLine(itemQuantity, instanceTitle, location.id)
+                )
+                  .then(order => {
+                    orderNumber = order;
+                  });
               });
           });
+
+
         cy.getUsers({ limit: 1, query: `"personal.lastName"="${user.username}" and "active"="true"` })
           .then((users) => {
             userBarcode = users[0].barcode;
@@ -123,14 +130,7 @@ describe('ui-inventory: Item status date updates', () => {
   });
 
   afterEach(() => {
-    cy.getInstance({ limit: 1, expandAll: true, query: `"items.barcode"=="${userItemBarcode}"` })
-      .then((instance) => {
-        instance.items.forEach((item) => {
-          cy.deleteItem(item.id);
-        });
-        cy.deleteHoldingRecord(instance.holdings[0].id);
-        cy.deleteInstanceApi(instance.id);
-      });
+    InventoryInstances.deleteInstanceViaApi(userItemBarcode);
     cy.getOrdersApi({ limit: 1, query: `"poNumber"=="${orderNumber}"` })
       .then(order => {
         cy.deleteOrderApi(order[0].id);
@@ -139,15 +139,15 @@ describe('ui-inventory: Item status date updates', () => {
       .then(organization => {
         cy.deleteOrganizationApi(organization[0].id);
       });
-    cy.deleteUser(user.userId);
     cy.deleteServicePoint(notEffectiveLocationServicePoint.body.id);
-    // TODO delete servicePoints
+    SwitchServicePoint.changeServicePointPreference(user.username);
     Requests.getRequestApi({ limit: 1, query: `"item.barcode"=="${userItemBarcode}"` })
       .then(requests => {
         requests.forEach(request => {
           Requests.deleteRequestApi(request.id);
         });
       });
+    cy.deleteUser(user.userId);
   });
 
   it('C9200 Item status date updates', { tags: [TestTypes.smoke] }, () => {
@@ -159,7 +159,6 @@ describe('ui-inventory: Item status date updates', () => {
     Helper.selectFromResultsList();
     Orders.openOrder();
     OrdersHelper.verifyOrderDateOpened();
-    cy.visit(TopMenu.inventoryPath);
     InventoryInstances.openItem(instanceTitle, effectiveLocation.name, 'No barcode');
     ItemVeiw.verifyUpdatedItemDate();
     ItemVeiw.verifyItemStatus(ItemVeiw.itemStatuses.onOrder);
@@ -170,7 +169,6 @@ describe('ui-inventory: Item status date updates', () => {
     Orders.receiveOrderViaActions();
     Helper.selectFromResultsList();
     Receiving.receivePiece(0, caption, userItemBarcode);
-    cy.visit(TopMenu.inventoryPath);
     InventoryInstances.openItem(instanceTitle, effectiveLocation.name, userItemBarcode);
     ItemVeiw.verifyUpdatedItemDate();
     ItemVeiw.verifyItemStatus(ItemVeiw.itemStatuses.inProcess);
@@ -228,7 +226,6 @@ describe('ui-inventory: Item status date updates', () => {
       requesterBarcode: userBarcode,
       pickupServicePoint: effectiveLocationServicePointName,
     });
-    cy.visit(TopMenu.inventoryPath);
     InventoryInstances.openItem(instanceTitle, effectiveLocation.name, userItemBarcode);
     ItemVeiw.verifyUpdatedItemDate();
     ItemVeiw.verifyItemStatus(ItemVeiw.itemStatuses.paged);
@@ -279,7 +276,6 @@ describe('ui-inventory: Item status date updates', () => {
     ItemVeiw.verifyUpdatedItemDate();
     ItemVeiw.verifyItemStatus(ItemVeiw.itemStatuses.checkedOut);
 
-    cy.visit(TopMenu.inventoryPath);
     InventoryInstances.openItem(instanceTitle, effectiveLocation.name, userItemBarcode);
     InventoryInstance.openEditItemPage();
     ItemVeiw.addPieceToItem(numberOfPieces);
@@ -298,7 +294,6 @@ describe('ui-inventory: Item status date updates', () => {
     cy.visit(TopMenu.checkOutPath);
     CheckOut.checkOutItem(userBarcode, userItemBarcode);
     ConfirmMultiplePiecesItemCheckOut.confirmMultiplePiecesItemModal();
-    cy.visit(TopMenu.inventoryPath);
     InventoryInstances.openItem(instanceTitle, effectiveLocation.name, userItemBarcode);
     ItemVeiw.verifyUpdatedItemDate();
     ItemVeiw.verifyItemStatus(ItemVeiw.itemStatuses.awaitingDelivery);
@@ -307,7 +302,6 @@ describe('ui-inventory: Item status date updates', () => {
     CheckOut.checkOutItem(userBarcode, userItemBarcode);
     ConfirmItemInModal.confirmAvaitingPicupCheckInModal();
     CheckOut.openItemRecordInInventory(userItemBarcode);
-    cy.visit(TopMenu.inventoryPath);
     InventoryInstances.openItem(instanceTitle, effectiveLocation.name, userItemBarcode);
     ItemVeiw.verifyUpdatedItemDate();
     ItemVeiw.verifyItemStatus(ItemVeiw.itemStatuses.checkedOut);
@@ -317,7 +311,6 @@ describe('ui-inventory: Item status date updates', () => {
     CheckInActions.checkInItem(userItemBarcode);
     ConfirmItemInModal.confirmAvaitingPicupModal();
     CheckInActions.openItemRecordInInventory(ItemVeiw.itemStatuses.available);
-    cy.visit(TopMenu.inventoryPath);
     InventoryInstances.openItem(instanceTitle, effectiveLocation.name, userItemBarcode);
     ItemVeiw.verifyUpdatedItemDate();
     ItemVeiw.verifyItemStatus(ItemVeiw.itemStatuses.available);

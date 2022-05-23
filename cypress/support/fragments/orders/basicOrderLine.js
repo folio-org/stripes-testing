@@ -1,9 +1,8 @@
 import uuid from 'uuid';
 import getRandomPostfix from '../../utils/stringTools';
-import { REQUEST_METHOD } from '../../constants';
-import NewMaterialType from '../settings/inventory/newMaterialType';
+import MaterialTypesSettings from '../inventory/materialType/materialTypesSettings';
 
-const getDefaultOrderLine = (quantity, title, materialType, location) => {
+const getDefaultOrderLine = (quantity, title, spesialLocationId, specialMaterialTypeId) => {
   const defaultOrderLine = {
     id: uuid(),
     checkinItems: false,
@@ -26,7 +25,7 @@ const getDefaultOrderLine = (quantity, title, materialType, location) => {
     isPackage: false,
     locations: [
       {
-        locationId: location,
+        locationId: spesialLocationId,
         quantity,
         quantityPhysical: quantity
       }
@@ -35,15 +34,15 @@ const getDefaultOrderLine = (quantity, title, materialType, location) => {
     paymentStatus: 'Pending',
     physical: {
       createInventory: 'Instance, Holding, Item',
-      materialType: '',
-      materialSupplier: '',
+      materialType: specialMaterialTypeId,
+      materialSupplier: null,
       volumes: []
     },
     eresource: {
       activated: false,
       createInventory: 'None',
       trial: false,
-      accessProvider: ''
+      accessProvider: null
     },
     purchaseOrderId: '',
     receiptStatus: 'Pending',
@@ -55,14 +54,11 @@ const getDefaultOrderLine = (quantity, title, materialType, location) => {
       vendorAccount: '1234'
     }
   };
-  if (!materialType) {
-    cy.okapiRequest({
-      method: REQUEST_METHOD.POST,
-      path: 'material-types',
-      body: NewMaterialType.getDefaultMaterialType(),
-    })
-      .then(type => {
-        defaultOrderLine.physical.materialType = type.id;
+  if (!defaultOrderLine.materialType) {
+    MaterialTypesSettings.createApi(MaterialTypesSettings.getDefaultMaterialType())
+      .then(mtypes => {
+        console.log(mtypes);
+        defaultOrderLine.physical.materialType = mtypes.id;
       });
   }
   return defaultOrderLine;

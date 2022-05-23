@@ -12,6 +12,8 @@ import {
 } from '../../../../interactors';
 import NewInventoryInstance from './newInventoryInstance';
 import InventorySearch from './inventorySearch';
+import InventoryInstance from './inventoryInstance';
+import TopMenu from '../topMenu';
 
 const rootSection = Section({ id: 'pane-results' });
 const inventoriesList = rootSection.find(MultiColumnList({ id: 'list-inventory' }));
@@ -101,8 +103,6 @@ export default {
       .then(() => {
         cy.getHoldings({ limit: 1, query: `"instanceId"="${instanceId}"` })
           .then((holdings) => {
-            console.log(instanceId);
-            console.log(holdings[0]);
             cy.updateHoldingRecord(holdings[0].id, {
               ...holdings[0],
               callNumber: holdingCallNumber
@@ -121,9 +121,10 @@ export default {
   },
 
   openItem(instanceTitle, itemLocation, userItemBarcode) {
+    cy.visit(TopMenu.inventoryPath);
     InventorySearch.searchByParameter('Title (all)', instanceTitle);
     this.selectInstance();
-    this.openHoldings([itemLocation]);
-    this.openItemView(userItemBarcode);
+    InventoryInstance.openHoldings(itemLocation);
+    InventoryInstance.openItemView(userItemBarcode);
   }
 };

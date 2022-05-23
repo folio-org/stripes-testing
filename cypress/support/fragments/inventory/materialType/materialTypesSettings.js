@@ -1,5 +1,4 @@
 import uuid from 'uuid';
-
 import { Button, Pane, TextField, HTML, including, MultiColumnListRow } from '../../../../../interactors';
 import ModalDeleteMaterialType from './modalDeleteMaterialType';
 import InteractorsTools from '../../../utils/interactorsTools';
@@ -26,17 +25,20 @@ const verifyMessageOfDeteted = (newMaterialTypeName) => {
   InteractorsTools.closeCalloutMessage();
 };
 
+const getDefaultMaterialType = () => {
+  return defaultMaterialType;
+};
+
 export default {
-  createApi() {
+  createApi(materialTypeProperties) {
     return cy
       .okapiRequest({
         method: 'POST',
         path: 'material-types',
-        body: defaultMaterialType,
+        body: materialTypeProperties,
       })
-      .then(({ body }) => {
-        Cypress.env('materialType', body);
-        return body;
+      .then((response) => {
+        return response.body;
       });
   },
   deleteApi(id) {
@@ -45,6 +47,8 @@ export default {
       path: `material-types/${id}`,
     });
   },
+  getDefaultMaterialType,
+
   isPresented,
   isDeleted,
   verifyMessageOfDeteted,

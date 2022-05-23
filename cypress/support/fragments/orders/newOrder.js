@@ -1,5 +1,4 @@
 import uuid from 'uuid';
-import { REQUEST_METHOD } from '../../constants';
 import NewOrganization from '../organizations/newOrganization';
 
 const getDefaultOrder = (vendorId) => {
@@ -9,11 +8,7 @@ const getDefaultOrder = (vendorId) => {
     orderType: 'One-Time'
   };
   if (!vendorId) {
-    cy.okapiRequest({
-      method: REQUEST_METHOD.POST,
-      path: 'organizations/organizations',
-      body: NewOrganization.specialOrganization,
-    })
+    NewOrganization.createViaApi(NewOrganization.getDefaultOrganization())
       .then(newOrganization => {
         defaultOrder.vendor = newOrganization.id;
       });

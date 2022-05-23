@@ -1,13 +1,38 @@
 import uuid from 'uuid';
 import getRandomPostfix from '../../utils/stringTools';
 
+const getDefaultOrganization = () => {
+  const defaultUiOrganizations = {
+    name: `autotest_name_${getRandomPostfix()}`,
+    status: 'Active',
+    code: `autotest_code_${getRandomPostfix()}`,
+    isVendor: true,
+  };
+  return defaultUiOrganizations;
+};
+
 export default {
+  getDefaultOrganization,
+
   defaultUiOrganizations: {
     name: `autotest_name_${getRandomPostfix()}`,
     status: 'Active',
     code: `autotest_code_${getRandomPostfix()}`,
     isVendor: true,
   },
+
+  createViaApi: (organizationProperties) => {
+    return cy
+      .okapiRequest({
+        path: 'organizations/organizations',
+        body: organizationProperties,
+        method: 'POST'
+      })
+      .then((response) => {
+        return response.body;
+      });
+  },
+
   specialOrganization: {
     name: `autotest_name_${getRandomPostfix()}`,
     status: 'Active',

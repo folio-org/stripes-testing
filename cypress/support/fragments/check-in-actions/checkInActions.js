@@ -16,6 +16,10 @@ const availableActionsButton = Button({ id: 'available-actions-button-0' });
 
 export default {
   checkInItem:(barcode) => {
+    cy.intercept('/service-points?*').as('getServicePoints');
+    cy.wait('@getServicePoints', getLongDelay());
+    // think to add waiter
+    cy.wait(1000);
     cy.intercept('/inventory/items?*').as('getItems');
     cy.do(itemBarcodeField.fillIn(barcode));
     cy.do(addItemButton.click());
