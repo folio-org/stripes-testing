@@ -54,7 +54,8 @@ export default {
   usersOwnersPath: 'settings/users/owners',
   usersPath: 'settings/users',
   paymentsPath: 'settings/users/payments',
-  //Data Import
+  conditionsPath: 'settings/users/conditions',
+  // Data Import
   mappingProfilePath: 'settings/data-import/mapping-profiles',
   actionProfilePath: 'settings/data-import/action-profiles',
   matchProfilePath: 'settings/data-import/match-profiles',

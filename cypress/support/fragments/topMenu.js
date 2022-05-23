@@ -23,4 +23,5 @@ export default {
   checkInPath: '/checkin',
   checkOutPath: '/checkout',
   receivingPath: '/receiving',
+  bulkEditPath: '/bulk-edit'
 };

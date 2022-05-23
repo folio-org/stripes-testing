@@ -1,5 +1,7 @@
-import { Link } from '@interactors/html';
+import { HTML, including, Link } from '@interactors/html';
 import { Accordion, Button, TextArea } from '../../../../interactors';
+
+const permissionAccordion = Accordion({ id: 'permissionsSection' });
 
 export default {
   openPatronBlocks() {
@@ -39,4 +41,11 @@ export default {
       })
       .then(({ body }) => body);
   },
+
+  verifyPermissions(permissions) {
+    cy.do(permissionAccordion.clickHeader());
+    permissions.forEach(permission => {
+      cy.expect(permissionAccordion.find(HTML(including(permission))).exists());
+    });
+  }
 };

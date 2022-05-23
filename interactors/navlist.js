@@ -17,5 +17,6 @@ export default HTML.extend('Nav List')
 export const NavListItem = HTML.extend('Nav List Item')
   .selector('[class^=NavListItem]')
   .filters({
-    label
+    label,
+    href: el => el.getAttribute('href'),
   });
