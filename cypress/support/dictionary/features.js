@@ -7,6 +7,7 @@ export default {
   instanceRecord: 'instanceRecord',
   authority: 'MARC Authority',
   paymentMethod: 'Payment Method',
+  sharedOwner: '"Shared" owner',
   // users
   patronBlocks: 'Patron blocks'
 };
