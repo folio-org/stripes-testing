@@ -61,14 +61,3 @@ Cypress.Commands.add('addServicePointToUser', (servicePointIds, userId, defaultS
     },
   });
 });
-
-Cypress.Commands.add('createServicePointApi', (servicePointParameters) => {
-  cy.okapiRequest({
-    path: 'service-points',
-    body: servicePointParameters,
-    method: 'POST',
-  })
-    .then((body) => {
-      return body;
-    });
-});

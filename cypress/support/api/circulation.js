@@ -101,19 +101,6 @@ Cypress.Commands.add('getNoticePolicy', (searchParams) => {
     });
 });
 
-Cypress.Commands.add('getLoanPolicy', (searchParams) => {
-  cy.okapiRequest({
-    method: REQUEST_METHOD.GET,
-    path: 'loan-policy-storage/loan-policies',
-    searchParams,
-  })
-    .then(policy => {
-      Cypress.env(CY_ENV.LOAN_POLICIES, policy.body.loanPolicies);
-
-      return policy.body.loanPolicies;
-    });
-});
-
 Cypress.Commands.add('getOverdueFinePolicy', (searchParams) => {
   cy.okapiRequest({
     method: REQUEST_METHOD.GET,

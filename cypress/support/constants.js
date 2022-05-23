@@ -31,10 +31,6 @@ export const LOAN_TYPE_NAMES = {
   CAN_CIRCULATE: 'Can circulate',
 };
 
-export const LOAN_POLICY_NAMES = {
-  EXAMPLE_LOAN_POLICY: 'Example Loan Policy',
-};
-
 export const MATERIAL_TYPE_NAMES = {
   MICROFORM: 'microform',
   BOOK: 'book',

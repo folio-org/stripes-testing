@@ -16,7 +16,7 @@ import TopMenu from '../../support/fragments/topMenu';
 
 describe('Check In - Actions ', () => {
   before('Create New Service point, Item, User and Check out item', () => {
-    cy.login(Cypress.env('diku_login'), Cypress.env('diku_password'));
+    cy.login(Cypress.env('diku_login'), Cypress.env('diku_password'), { path: TopMenu.checkInPath, waiter: CheckInActions.waitLoading });
     cy.getAdminToken();
     ServicePoints.createViaApi(NewServicePoint.defaultUiServicePoint.body);
     institutions.createViaApi(institutions.defaultUiInstitutions.body);
@@ -45,7 +45,6 @@ describe('Check In - Actions ', () => {
   });
 
   it('C347631 Check in: Basic check in', { tags: [TestTypes.smoke] }, () => {
-    cy.visit(TopMenu.checkInPath);
     CheckInActions.checkInItem(NewInctanceHoldingsItem.itemBarcode);
     CheckInActions.openItemRecordInInventory(ItemVeiw.itemStatuses.available);
     CheckInActions.existsFormColomns();

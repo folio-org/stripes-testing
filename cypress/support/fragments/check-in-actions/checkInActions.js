@@ -15,10 +15,15 @@ const addItemButton = Button({ id: 'clickable-add-item' });
 const availableActionsButton = Button({ id: 'available-actions-button-0' });
 
 export default {
+  waitLoading:() => {
+    cy.expect(TextField({ name: 'item.barcode' }).exists());
+    cy.expect(Button('End session').exists());
+  },
+
   checkInItem:(barcode) => {
     cy.intercept('/service-points?*').as('getServicePoints');
     cy.wait('@getServicePoints', getLongDelay());
-    // think to add waiter
+    // TODO think to add waiter
     cy.wait(1000);
     cy.intercept('/inventory/items?*').as('getItems');
     cy.do(itemBarcodeField.fillIn(barcode));
