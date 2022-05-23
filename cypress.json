@@ -12,6 +12,8 @@
     "diku_password": "admin",
     "is_kiwi_release": false,
     "downloadTimeout": 1000,
-    "allure": "true"
+    "allure": "true",
+    "grepFilterSpecs": true,
+    "grepOmitFiltered": true
   }
 }
