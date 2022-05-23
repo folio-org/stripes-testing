@@ -21,16 +21,16 @@ describe('ui-inventory: keyboard shortcut', () => {
     cy.deleteUser(userId);
   });
 
-  // it('C345297 Keyboard Shortcut. Access to drop down menu', { tags: [testTypes.smoke] }, () => {
-  //   InventoryMainButton.verifyInventoryDropdownIsShown('false');
+  it('C345297 Keyboard Shortcut. Access to drop down menu', { tags: [testTypes.smoke] }, () => {
+    InventoryMainButton.verifyInventoryDropdownIsShown('false');
 
-  //   InventoryMainButton.openInventoryMenu();
-  //   InventoryMainButton.verifyInventoryDropdownIsShown('true');
-  //   InventoryMainButton.openShortcuts();
+    InventoryMainButton.openInventoryMenu();
+    InventoryMainButton.verifyInventoryDropdownIsShown('true');
+    InventoryMainButton.openShortcuts();
 
-  //   InventoryMainButton.waitModalLoading('Keyboard shortcuts');
-  //   InventoryMainButton.verifyInventoryDropdownIsShown('false');
-  // });
+    InventoryMainButton.waitModalLoading('Keyboard shortcuts');
+    InventoryMainButton.verifyInventoryDropdownIsShown('false');
+  });
 
   it('C345298 Keyboard Shortcut. Test the functionality of the different shortcut keys', { tags: [testTypes.smoke] }, () => {
     InventoryMainButton.verifyInventoryDropdownIsShown('false');
@@ -39,8 +39,15 @@ describe('ui-inventory: keyboard shortcut', () => {
     InventoryMainButton.openShortcuts();
 
     InventoryMainButton.waitModalLoading('Keyboard shortcuts');
-    InventoryMainButton.verifyInventoryDropdownIsShown('false');
-    InventoryMainButton.createNewRecord();
-    InventoryMainButton.closeShortcuts();
+    InventoryMainButton.createNewRecordByShortcuts();
+    InventoryMainButton.closeShortcutsViaUi();
+    InventoryMainButton.fillInstanceInfoViaUi();
+    InventoryMainButton.editInstanceInfoViaUi();
+    InventoryMainButton.editRecordByShortcuts();
+    InventoryMainButton.saveRecordByShortcuts();
+    cy.wait(2000);
+    InventoryMainButton.openShortcutsByHotkey();
+    InventoryMainButton.waitModalLoading('Keyboard shortcuts');
+    InventoryMainButton.closeShortcutsByHotkey();
   });
 });
