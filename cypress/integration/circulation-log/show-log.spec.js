@@ -1,7 +1,7 @@
 import TopMenu from '../../support/fragments/topMenu';
 import TestTypes from '../../support/dictionary/testTypes';
 import { Pane } from '../../../interactors';
-import testTeams from '../../support/dictionary/devTeams';
+import devTeams from '../../support/dictionary/devTeams';
 
 
 describe('ui-circulation-log', () => {
@@ -10,7 +10,7 @@ describe('ui-circulation-log', () => {
   });
 
   // TODO: think about redesign and moving checking inside another test
-  it('C15483 Select and open the Circulation log app', { tags: [TestTypes.smoke, testTeams.firebird] }, () => {
+  it('C15483 Select and open the Circulation log app', { tags: [TestTypes.smoke, devTeams.firebird] }, () => {
     cy.visit(TopMenu.circulationLogPath);
 
     cy.expect(Pane({ title: 'Circulation log' }).exists());

@@ -4,7 +4,7 @@ import permissions from '../../support/dictionary/permissions';
 import UsersSearchPane from '../../support/fragments/users/usersSearchPane';
 import UsersEditPage from '../../support/fragments/users/usersEditPage';
 import UsersCard from '../../support/fragments/users/usersCard';
-import testTeams from '../../support/dictionary/devTeams';
+import devTeams from '../../support/dictionary/devTeams';
 
 let user;
 
@@ -27,7 +27,7 @@ describe('ui-users: BULK EDIT permissions', () => {
   });
 
 
-  it('C350765 Verify BULK EDIT permissions list', { tags: [testTypes.smoke, testTeams.firebird] }, () => {
+  it('C350765 Verify BULK EDIT permissions list', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
     const permissionsToVerify = [
       'Bulk Edit: (CSV) Edit',
       'Bulk Edit: (CSV) View',

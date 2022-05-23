@@ -2,7 +2,7 @@ import TopMenu from '../../support/fragments/topMenu';
 import InventorySearch from '../../support/fragments/inventory/inventorySearch';
 import InventoryModals from '../../support/fragments/inventory/inventoryModals';
 import testTypes from '../../support/dictionary/testTypes';
-import testTeams from '../../support/dictionary/devTeams';
+import devTeams from '../../support/dictionary/devTeams';
 
 describe('ui-inventory: selecting / changing records', () => {
   beforeEach('navigates to Inventory', () => {
@@ -10,7 +10,7 @@ describe('ui-inventory: selecting / changing records', () => {
     cy.visit(TopMenu.inventoryPath);
   });
 
-  it('C196755 verifies search result counts and selected counts', { tags: [testTypes.smoke, testTeams.firebird] }, () => {
+  it('C196755 verifies search result counts and selected counts', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
     const selectedRecords = 2;
 
     InventorySearch.byEffectiveLocation();
@@ -18,7 +18,7 @@ describe('ui-inventory: selecting / changing records', () => {
     InventorySearch.verifySelectedRecords(selectedRecords);
   });
 
-  it('C196754 verify show selected records', { tags: [testTypes.smoke, testTeams.firebird] }, () => {
+  it('C196754 verify show selected records', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
     const selectedRecords = 3;
 
     InventorySearch.byEffectiveLocation();
@@ -31,7 +31,7 @@ describe('ui-inventory: selecting / changing records', () => {
     InventoryModals.verifyButtons();
   });
 
-  it('C196756 verify selected records after changing selection', { tags: [testTypes.smoke, testTeams.firebird] }, () => {
+  it('C196756 verify selected records after changing selection', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
     const selectedRecords = 3;
     const unselectedRecords = 1;
 

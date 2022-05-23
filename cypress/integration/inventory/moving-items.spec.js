@@ -11,7 +11,7 @@ import InventoryViewSource from '../../support/fragments/inventory/inventoryView
 import Features from '../../support/dictionary/features';
 import permissions from '../../support/dictionary/permissions';
 import getRandomPostfix from '../../support/utils/stringTools';
-import testTeams from '../../support/dictionary/devTeams';
+import devTeams from '../../support/dictionary/devTeams';
 
 const successCalloutMessage = '1 item has been successfully moved.';
 let userId = '';
@@ -93,7 +93,7 @@ describe('ui-inventory: moving items', () => {
   });
 
 
-  it('C15185 Move multiple items from one holdings to another holdings within an instance', { tags: [TestTypes.smoke, testTeams.firebird] }, () => {
+  it('C15185 Move multiple items from one holdings to another holdings within an instance', { tags: [TestTypes.smoke, devTeams.firebird] }, () => {
     InventorySearch.switchToItem();
     InventorySearch.searchByParameter('Barcode', ITEM_BARCODE);
     InventorySearch.selectSearchResultItem();

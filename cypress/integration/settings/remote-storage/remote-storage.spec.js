@@ -5,7 +5,7 @@ import TestTypes from '../../../support/dictionary/testTypes';
 import settingsMenu from '../../../support/fragments/settingsMenu';
 import CreateLocationsPage from '../../../support/fragments/settings/tenant/locations/createLocationsPage';
 import Locations from '../../../support/fragments/settings/tenant/locations/locations';
-import testTeams from '../../../support/dictionary/devTeams';
+import devTeams from '../../../support/dictionary/devTeams';
 
 describe('remote-storage-configuration', () => {
   beforeEach('login', () => {
@@ -32,7 +32,7 @@ describe('remote-storage-configuration', () => {
     });
   });
 
-  it('C163920 edit remote storage', { tags: [TestTypes.smoke, testTeams.firebird] }, () => {
+  it('C163920 edit remote storage', { tags: [TestTypes.smoke, devTeams.firebird] }, () => {
     const name = `AutotestConfigurationName${getRandomPostfix()}`;
     const configuration = RemoteStorageHelper.configurations.DematicStagingDirector;
     const urlToEdit = 'newTestUrl';
@@ -55,7 +55,7 @@ describe('remote-storage-configuration', () => {
     RemoteStorageHelper.deleteRemoteStorage(name);
   });
 
-  it('C163922 Flag a location as remote storage', { tags: [TestTypes.smoke, testTeams.firebird] }, () => {
+  it('C163922 Flag a location as remote storage', { tags: [TestTypes.smoke, devTeams.firebird] }, () => {
     cy.visit(settingsMenu.tenantLocationsPath);
     const locationName = `loc_${getRandomPostfix()}`;
 

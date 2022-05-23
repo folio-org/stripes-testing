@@ -3,7 +3,7 @@ import InventorySearch from '../../support/fragments/inventory/inventorySearch';
 import InventoryActions from '../../support/fragments/inventory/inventoryActions';
 import { Checkbox } from '../../../interactors';
 import testTypes from '../../support/dictionary/testTypes';
-import testTeams from '../../support/dictionary/devTeams';
+import devTeams from '../../support/dictionary/devTeams';
 
 describe('ui-inventory: actions', () => {
   beforeEach('navigates to actions', () => {
@@ -11,7 +11,7 @@ describe('ui-inventory: actions', () => {
     cy.visit(TopMenu.inventoryPath);
   });
 
-  it('C196752 verifies action menu options before any search is conducted', { tags: [testTypes.smoke, testTeams.firebird] }, () => {
+  it('C196752 verifies action menu options before any search is conducted', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
     InventoryActions.open();
 
     cy.expect(InventorySearch.getAllSearchResults().absent());
@@ -23,7 +23,7 @@ describe('ui-inventory: actions', () => {
     ]);
   });
 
-  it('C196753 verifies action menu options after searching and selecting result', { tags: [testTypes.smoke, testTeams.firebird] }, () => {
+  it('C196753 verifies action menu options after searching and selecting result', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
     cy.do([
       InventorySearch.byEffectiveLocation(),
       InventorySearch.getSearchResult().find(Checkbox()).click(),
