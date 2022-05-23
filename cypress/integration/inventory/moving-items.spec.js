@@ -19,7 +19,7 @@ let firstHolding = '';
 let secondHolding = '';
 const ITEM_BARCODE = `test${getRandomPostfix()}`;
 
-describe('ui-inventory: moving items', { retries: 3 }, () => {
+describe('ui-inventory: moving items', () => {
   beforeEach('navigates to Inventory', () => {
     cy.createTempUser([
       permissions.inventoryAll.gui,
@@ -83,11 +83,11 @@ describe('ui-inventory: moving items', { retries: 3 }, () => {
 
   after('Delete all data', () => {
     cy.getInstance({ limit: 1, expandAll: true, query: `"items.barcode"=="${ITEM_BARCODE}"` })
-      .then(() => {
-        cy.deleteItem(Cypress.env('instances')[0].items[0].id);
-        cy.deleteHoldingRecord(Cypress.env('instances')[0].holdings[0].id);
-        cy.deleteHoldingRecord(Cypress.env('instances')[0].holdings[1].id);
-        cy.deleteInstanceApi(Cypress.env('instances')[0].id);
+      .then((instances) => {
+        cy.deleteItem(instances[0].items[0].id);
+        cy.deleteHoldingRecord(instances[0].holdings[0].id);
+        cy.deleteHoldingRecord(instances[0].holdings[1].id);
+        cy.deleteInstanceApi(instances[0].id);
       });
     cy.deleteUser(userId);
   });
