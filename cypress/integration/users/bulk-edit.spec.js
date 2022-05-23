@@ -4,7 +4,7 @@ import permissions from '../../support/dictionary/permissions';
 import UsersSearchPane from '../../support/fragments/users/usersSearchPane';
 import UsersEditPage from '../../support/fragments/users/usersEditPage';
 import UsersCard from '../../support/fragments/users/usersCard';
-import testTeams from '../../support/dictionary/testTeams';
+import testTeams from '../../support/dictionary/devTeams';
 
 let user;
 

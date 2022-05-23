@@ -8,7 +8,7 @@ import DataExportResults from '../../support/fragments/data-export/dataExportRes
 import getRandomPostfix from '../../support/utils/stringTools';
 import { getLongDelay } from '../../support/utils/cypressTools';
 import permissions from '../../support/dictionary/permissions';
-import testTeams from '../../support/dictionary/testTeams';
+import testTeams from '../../support/dictionary/devTeams';
 
 
 const ITEM_BARCODE = `123${getRandomPostfix()}`;

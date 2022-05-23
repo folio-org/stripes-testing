@@ -5,7 +5,7 @@ import UsersSearchPane from '../../support/fragments/users/usersSearchPane';
 import UsersEditPage from '../../support/fragments/users/usersEditPage';
 import UsersCard from '../../support/fragments/users/usersCard';
 import BulkEditSearchPane from '../../support/fragments/bulk-edit/bulk-edit-search-pane';
-import testTeams from '../../support/dictionary/testTeams';
+import testTeams from '../../support/dictionary/devTeams';
 
 let userWthViewEditPermissions;
 let userWithViewPermissions;

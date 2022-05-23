@@ -11,7 +11,7 @@ import InventoryViewSource from '../../support/fragments/inventory/inventoryView
 import Features from '../../support/dictionary/features';
 import permissions from '../../support/dictionary/permissions';
 import getRandomPostfix from '../../support/utils/stringTools';
-import testTeams from '../../support/dictionary/testTeams';
+import testTeams from '../../support/dictionary/devTeams';
 
 const successCalloutMessage = '1 item has been successfully moved.';
 let userId = '';

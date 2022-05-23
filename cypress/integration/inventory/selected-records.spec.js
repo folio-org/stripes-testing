@@ -2,7 +2,7 @@ import TopMenu from '../../support/fragments/topMenu';
 import InventorySearch from '../../support/fragments/inventory/inventorySearch';
 import InventoryModals from '../../support/fragments/inventory/inventoryModals';
 import testTypes from '../../support/dictionary/testTypes';
-import testTeams from '../../support/dictionary/testTeams';
+import testTeams from '../../support/dictionary/devTeams';
 
 describe('ui-inventory: selecting / changing records', () => {
   beforeEach('navigates to Inventory', () => {

@@ -1,7 +1,7 @@
 import TopMenu from '../../support/fragments/topMenu';
 import TestTypes from '../../support/dictionary/testTypes';
 import { Pane } from '../../../interactors';
-import testTeams from '../../support/dictionary/testTeams';
+import testTeams from '../../support/dictionary/devTeams';
 
 
 describe('ui-circulation-log', () => {

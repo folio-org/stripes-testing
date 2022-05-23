@@ -8,7 +8,7 @@ import { Checkbox } from '../../../interactors';
 import { getLongDelay } from '../../support/utils/cypressTools';
 import permissions from '../../support/dictionary/permissions';
 import getRandomPostfix from '../../support/utils/stringTools';
-import testTeams from '../../support/dictionary/testTeams';
+import testTeams from '../../support/dictionary/devTeams';
 
 let userId = '';
 const instanceTitle = `Inventory export test ${Number(new Date())}`;

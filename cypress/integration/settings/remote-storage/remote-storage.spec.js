@@ -5,7 +5,7 @@ import TestTypes from '../../../support/dictionary/testTypes';
 import settingsMenu from '../../../support/fragments/settingsMenu';
 import CreateLocationsPage from '../../../support/fragments/settings/tenant/locations/createLocationsPage';
 import Locations from '../../../support/fragments/settings/tenant/locations/locations';
-import testTeams from '../../../support/dictionary/testTeams';
+import testTeams from '../../../support/dictionary/devTeams';
 
 describe('remote-storage-configuration', () => {
   beforeEach('login', () => {

@@ -2,7 +2,7 @@ import TopMenu from '../../support/fragments/topMenu';
 import TestTypes from '../../support/dictionary/testTypes';
 import InventorySearch from '../../support/fragments/inventory/inventorySearch';
 import InventoryActions from '../../support/fragments/inventory/inventoryActions';
-import testTeams from '../../support/dictionary/testTeams';
+import testTeams from '../../support/dictionary/devTeams';
 
 describe('ui-inventory: browse call numbers', () => {
   beforeEach('navigate to inventory', () => {

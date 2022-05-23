@@ -2,7 +2,7 @@ import TopMenu from '../../support/fragments/topMenu';
 import testTypes from '../../support/dictionary/testTypes';
 import InventoryMainButton from '../../support/fragments/inventory/inventoryMainButton';
 import permissions from '../../support/dictionary/permissions';
-import testTeams from '../../support/dictionary/testTeams';
+import testTeams from '../../support/dictionary/devTeams';
 
 let userId = '';
 

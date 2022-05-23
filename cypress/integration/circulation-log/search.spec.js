@@ -7,7 +7,7 @@ import usersSearchPane from '../../support/fragments/users/usersSearchPane';
 import usersCard from '../../support/fragments/users/usersCard';
 import checkinActions from '../../support/fragments/check-in-actions/checkInActions';
 import checkoutActions from '../../support/fragments/checkout/checkout';
-import testTeams from '../../support/dictionary/testTeams';
+import testTeams from '../../support/dictionary/devTeams';
 
 const ITEM_BARCODE = `123${getRandomPostfix()}`;
 let userId = '';

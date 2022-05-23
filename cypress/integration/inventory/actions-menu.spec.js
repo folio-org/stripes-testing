@@ -3,7 +3,7 @@ import InventorySearch from '../../support/fragments/inventory/inventorySearch';
 import InventoryActions from '../../support/fragments/inventory/inventoryActions';
 import { Checkbox } from '../../../interactors';
 import testTypes from '../../support/dictionary/testTypes';
-import testTeams from '../../support/dictionary/testTeams';
+import testTeams from '../../support/dictionary/devTeams';
 
 describe('ui-inventory: actions', () => {
   beforeEach('navigates to actions', () => {

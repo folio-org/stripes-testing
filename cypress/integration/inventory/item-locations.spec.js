@@ -6,7 +6,7 @@ import InventoryInstanceEdit from '../../support/fragments/inventory/InventoryIn
 import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
 import permissions from '../../support/dictionary/permissions';
 import getRandomPostfix from '../../support/utils/stringTools';
-import testTeams from '../../support/dictionary/testTeams';
+import testTeams from '../../support/dictionary/devTeams';
 
 
 const ITEM_BARCODE = `123${getRandomPostfix()}`;
