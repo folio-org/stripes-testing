@@ -1,4 +1,5 @@
-export default { quickMarcEditor: 'quickMarcEditor',
+export default {
+  quickMarcEditor: 'quickMarcEditor',
   notes: 'notes',
   eHoldings:'eHoldings',
   tags: 'tags',
@@ -6,4 +7,7 @@ export default { quickMarcEditor: 'quickMarcEditor',
   instanceRecord: 'instanceRecord',
   authority: 'MARC Authority',
   paymentMethod: 'Payment Method',
-  sharedOwner: '"Shared" owner' };
+  sharedOwner: '"Shared" owner',
+  // users
+  patronBlocks: 'Patron blocks'
+};
