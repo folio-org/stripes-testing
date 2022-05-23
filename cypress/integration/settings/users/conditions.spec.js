@@ -4,7 +4,6 @@ import SettingsMenu from '../../../support/fragments/settingsMenu';
 import Conditions from '../../../support/fragments/settings/users/conditions';
 import Condition from '../../../support/fragments/settings/users/condition';
 
-
 describe('ui-users-settings: Conditions in Patron blocks', () => {
   beforeEach(() => {
     cy.loginAsAdmin({ path: SettingsMenu.conditionsPath, waiter: Conditions.waitLoading });
