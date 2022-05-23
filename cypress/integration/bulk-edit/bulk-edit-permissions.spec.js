@@ -5,6 +5,7 @@ import UsersSearchPane from '../../support/fragments/users/usersSearchPane';
 import UsersEditPage from '../../support/fragments/users/usersEditPage';
 import UsersCard from '../../support/fragments/users/usersCard';
 import BulkEditSearchPane from '../../support/fragments/bulk-edit/bulk-edit-search-pane';
+import testTeams from '../../support/dictionary/testTeams';
 
 let userWthViewEditPermissions;
 let userWithViewPermissions;
@@ -34,7 +35,7 @@ describe('ui-users: BULK EDIT permissions', () => {
   });
 
 
-  it('C350765 Verify BULK EDIT permissions list', { tags: [testTypes.smoke] }, () => {
+  it('C350765 Verify BULK EDIT permissions list', { tags: [testTypes.smoke, testTeams.firebird] }, () => {
     const permissionsToVerify = [
       permissions.bulkEditCsvView.gui,
       permissions.bulkEditCsvEdit.gui,
@@ -51,7 +52,7 @@ describe('ui-users: BULK EDIT permissions', () => {
     UsersCard.verifyPermissions(permissionsToVerify);
   });
 
-  it('C350903 Verify "Bulk Edit: CSV - View" permissions', { tags: [testTypes.smoke] }, () => {
+  it('C350903 Verify "Bulk Edit: CSV - View" permissions', { tags: [testTypes.smoke, testTeams.firebird] }, () => {
     cy.login(userWithViewPermissions.username, userWithViewPermissions.password);
     cy.visit(TopMenu.bulkEditPath);
 

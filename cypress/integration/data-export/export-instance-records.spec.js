@@ -8,6 +8,7 @@ import DataExportResults from '../../support/fragments/data-export/dataExportRes
 import getRandomPostfix from '../../support/utils/stringTools';
 import { getLongDelay } from '../../support/utils/cypressTools';
 import permissions from '../../support/dictionary/permissions';
+import testTeams from '../../support/dictionary/testTeams';
 
 
 const ITEM_BARCODE = `123${getRandomPostfix()}`;
@@ -74,7 +75,7 @@ describe('data-export', () => {
     cy.deleteUser(userId);
   });
 
-  it('C9288 Export small number of instance records - default instance mapping profile', { tags: [TestTypes.smoke] }, () => {
+  it('C9288 Export small number of instance records - default instance mapping profile', { tags: [TestTypes.smoke, testTeams.firebird] }, () => {
     const fileName = `autoTestFile${getRandomPostfix()}.csv`;
 
     // download file with existing UUIDs

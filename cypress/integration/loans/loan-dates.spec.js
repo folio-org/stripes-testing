@@ -97,7 +97,7 @@ describe('loan dates', () => {
     cy.deleteUser(checkOutUser.userId);
   });
 
-  it('C1566 Loan: Change due date warnings and alerts', { tags: [TestTypes.smoke] }, () => {
+  it('C566 Loan: Change due date warnings and alerts', { tags: [TestTypes.smoke] }, () => {
     cy.visit(TopMenu.usersPath);
     // show open loans
     UsersSearchPane.searchByKeywords(checkOutUser.username);
