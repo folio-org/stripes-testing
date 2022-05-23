@@ -8,8 +8,9 @@ import CheckOutActions from '../../support/fragments/check-out-actions/check-out
 import NewServicePoint from '../../support/fragments/service_point/newServicePoint';
 import ServicePoints from '../../support/fragments/settings/tenant/servicePoints';
 import ConfirmMultipieceCheckOutModal from '../../support/fragments/checkout/confirmMultipieceCheckOutModal';
-import SwitchServicePoint from '../../support/fragments/service_point/switchServicePoint';
 import InventoryHoldings from '../../support/fragments/inventory/holdings/inventoryHoldings';
+import UsersEditPage from '../../support/fragments/users/usersEditPage';
+import Checkout from '../../support/fragments/checkout/checkout';
 
 describe('Check Out', () => {
   let user = {};
@@ -31,12 +32,11 @@ describe('Check Out', () => {
         user = userProperties;
         servicePoint = NewServicePoint.getDefaulServicePoint();
         ServicePoints.createViaApi(servicePoint.body);
-        cy.addServicePointToUser([servicePoint.body.id],
+        UsersEditPage.addServicePointToUser(...servicePoint.body.id,
           user.userId, servicePoint.body.id);
       })
       .then(() => {
-        cy.login(user.username, user.password);
-        cy.visit(TopMenu.checkOutPath);
+        cy.login(user.username, user.password, { path: TopMenu.checkOutPath, waiter: Checkout.waitLoading });
         cy.getAdminToken()
           .then(() => {
             cy.getLoanTypes({ limit: 1 });
@@ -51,26 +51,28 @@ describe('Check Out', () => {
               });
           })
           .then(() => {
-            const getTestItem = (specialNumberOfPieces, hasMissingPieces) => {
+            const getTestItem = (specialNumberOfPieces, hasDiscription, hasMissingPieces) => {
               const defaultItem = {
                 id: uuid(),
                 barcode: Helper.getRandomBarcode(),
                 numberOfPieces: specialNumberOfPieces,
                 status: { name: 'Available' },
-                descriptionOfPieces: descriptionOfPiece,
                 permanentLoanType: { id: Cypress.env('loanTypes')[0].id },
                 materialType: { id: Cypress.env('materialTypes')[0].id }
               };
+              if (hasDiscription) {
+                defaultItem.descriptionOfPieces = descriptionOfPiece;
+              }
               if (hasMissingPieces) {
                 defaultItem.numberOfMissingPieces = 2;
                 defaultItem.missingPieces = missingPieceDescription;
               }
               return defaultItem;
             };
-            testItems.push(getTestItem(1, false));
-            testItems.push(getTestItem(3, false));
-            testItems.push(getTestItem(2, true));
-            testItems.push(getTestItem(1, true));
+            testItems.push(getTestItem(1, true, false));
+            testItems.push(getTestItem(3, true, false));
+            testItems.push(getTestItem(2, true, true));
+            testItems.push(getTestItem(1, false, true));
             testInstanceIds = {
               instanceId: uuid(),
               holdingsId: uuid(),
@@ -94,14 +96,13 @@ describe('Check Out', () => {
       });
   });
 
-  after(() => {
+  /*after(() => {
     testInstanceIds.itemIds.forEach(id => cy.deleteItem(id));
     cy.deleteHoldingRecord(testInstanceIds.holdingsId);
     cy.deleteInstanceApi(testInstanceIds.instanceId);
-
     // TODO delete service
     cy.deleteUser(user.userId);
-  });
+  });*/
 
   it('C591 Check out: multipiece items', { tags: [TestTypes.smoke] }, () => {
     const dash = '-';
@@ -127,6 +128,3 @@ describe('Check Out', () => {
     ConfirmMultipieceCheckOutModal.confirmMultiplePiecesItemModal();
   });
 });
-
-
-

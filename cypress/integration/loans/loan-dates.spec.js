@@ -9,9 +9,11 @@ import ChangeDueDateForm from '../../support/fragments/loans/changeDueDateForm';
 import CheckOutActions from '../../support/fragments/check-out-actions/check-out-actions';
 import DateTools from '../../support/utils/dateTools';
 import NewRequest from '../../support/fragments/requests/newRequest';
-import checkinActions from '../../support/fragments/check-in-actions/checkInActions';
+import CheckinActions from '../../support/fragments/check-in-actions/checkInActions';
 import ConfirmMultiplePiecesItemCheckOut from '../../support/fragments/checkout/confirmMultipieceCheckOutModal';
 import InventoryHoldings from '../../support/fragments/inventory/holdings/inventoryHoldings';
+import UsersEditPage from '../../support/fragments/users/usersEditPage';
+import Checkout from '../../support/fragments/checkout/checkout';
 
 const item = {
   barcode: `123${getRandomPostfix()}`,
@@ -48,7 +50,7 @@ describe('loan dates', () => {
             });
           })
           .then(() => {
-            cy.addServicePointToUser([Cypress.env('servicePoints')[0].id], userProperties.userId);
+            UsersEditPage.addServicePointToUser([Cypress.env('servicePoints')[0].id], userProperties.userId);
             cy.getUserServicePoints(Cypress.env('users')[0].id);
             cy.createInstance({
               instance: {
@@ -73,8 +75,7 @@ describe('loan dates', () => {
             });
           })
           .then(() => {
-            cy.login(userProperties.username, userProperties.password);
-            cy.visit(TopMenu.checkOutPath);
+            cy.login(userProperties.username, userProperties.password, { path: TopMenu.checkOutPath, waiter: Checkout.waitLoading });
             CheckOutActions.checkOutItem(Cypress.env('users')[0].barcode, item.barcode);
             ConfirmMultiplePiecesItemCheckOut.confirmMultiplePiecesItemModal();
             CheckOutActions.endCheckOutSession();
@@ -90,7 +91,7 @@ describe('loan dates', () => {
   });
 
   after('Delete all data', () => {
-    checkinActions.createItemCheckinApi({
+    CheckinActions.createItemCheckinApi({
       itemBarcode: item.barcode,
       servicePointId: Cypress.env('servicePoints')[0].id,
       checkInDate: '2021-09-30T16:14:50.444Z',

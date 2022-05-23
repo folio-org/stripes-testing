@@ -75,11 +75,11 @@ describe('ui-circulation-log', () => {
       });
   });
 
-  /*afterEach('reset search results', () => {
+  afterEach('reset search results', () => {
     SearchPane.resetResults();
-  });*/
+  });
 
-  /*after('Delete all data', () => {
+  after('Delete all data', () => {
     checkinActions.createItemCheckinApi({
       itemBarcode: ITEM_BARCODE,
       servicePointId: Cypress.env('servicePoints')[0].id,
@@ -95,7 +95,7 @@ describe('ui-circulation-log', () => {
       cy.deleteBlockApi(Cypress.env('blockIds')[0].id);
     });
     cy.deleteUser(userId);
-  });*/
+  });
 
   it('C15484 Filter circulation log on item barcode', { retries: 3, tags: [TestTypes.smoke] }, () => {
     SearchPane.searchByItemBarcode(ITEM_BARCODE);
