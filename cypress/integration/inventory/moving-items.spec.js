@@ -93,7 +93,7 @@ describe('ui-inventory: moving items', () => {
   });
 
 
-  it('C15185 Move multiple items from one holdings to another holdings within an instance', { tags: [TestTypes.smoke, devTeams.firebird] }, () => {
+  it('C15185 Move multiple items from one holdings to another holdings within an instance', { retries: 3, tags: [TestTypes.smoke, devTeams.firebird] }, () => {
     InventorySearch.switchToItem();
     InventorySearch.searchByParameter('Barcode', ITEM_BARCODE);
     InventorySearch.selectSearchResultItem();
