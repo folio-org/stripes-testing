@@ -17,10 +17,11 @@ const successCalloutMessage = '1 item has been successfully moved.';
 let userId = '';
 let firstHolding = '';
 let secondHolding = '';
-const ITEM_BARCODE = `test${getRandomPostfix()}`;
+let ITEM_BARCODE;
 
 describe('ui-inventory: moving items', () => {
   beforeEach('navigates to Inventory', () => {
+    ITEM_BARCODE = `test${getRandomPostfix()}`;
     cy.createTempUser([
       permissions.inventoryAll.gui,
       permissions.uiInventoryMoveItems.gui,
