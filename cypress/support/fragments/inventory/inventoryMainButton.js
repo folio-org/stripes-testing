@@ -19,20 +19,8 @@ export default {
   waitModalLoading(modalName) {
     cy.expect(Modal(modalName).exists());
   },
-  createNewRecordByShortcuts() {
-    cy.get('body').type('{alt}N');
-  },
-  editRecordByShortcuts() {
-    cy.get('body').type('{ctrl}{alt}E');
-  },
-  saveRecordByShortcuts() {
-    cy.get('body').type('{ctrl}S');
-  },
-  openShortcutsByHotkey() {
-    cy.get('body').type('{ctrl}{alt}K');
-  },
-  closeShortcutsByHotkey() {
-    cy.get('body').type('{esc}');
+  pressHotKey(hotKey) {
+    cy.get('body').type(hotKey);
   },
   closeShortcuts() {
     cy.do(Modal({ id: 'keyboard-shortcuts-modal' }).find(Button({ id: 'keyboard-shortcuts-modal-close' })).click());
