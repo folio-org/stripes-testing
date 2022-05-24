@@ -83,11 +83,11 @@ describe('ui-inventory: moving items', () => {
 
   after('Delete all data', () => {
     cy.getInstance({ limit: 1, expandAll: true, query: `"items.barcode"=="${ITEM_BARCODE}"` })
-      .then((instances) => {
-        cy.deleteItem(instances[0].items[0].id);
-        cy.deleteHoldingRecord(instances[0].holdings[0].id);
-        cy.deleteHoldingRecord(instances[0].holdings[1].id);
-        cy.deleteInstanceApi(instances[0].id);
+      .then((instance) => {
+        cy.deleteItem(instance.items[0].id);
+        cy.deleteHoldingRecord(instance.holdings[0].id);
+        cy.deleteHoldingRecord(instance.holdings[1].id);
+        cy.deleteInstanceApi(instance.id);
       });
     cy.deleteUser(userId);
   });
