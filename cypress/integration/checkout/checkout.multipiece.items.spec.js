@@ -75,8 +75,8 @@ describe('Check Out', () => {
             testItems.push(getTestItem('2', true, true));
             testItems.push(getTestItem('1', false, true));
             testInstanceIds = {
-              instanceId: uuid(),
-              holdingsId: uuid(),
+              //instanceId: uuid(),
+              //holdingsId: uuid(),
               itemIds: testItems.map(testItem => testItem.id)
             };
             cy.createInstance({
@@ -84,12 +84,14 @@ describe('Check Out', () => {
                 id: testInstanceIds.instanceId,
                 instanceTypeId: Cypress.env('instanceTypes')[0].id,
                 title: instanceTitle,
+                instanceId: testInstanceIds.instanceId
               },
               holdings: [{
                 id: testInstanceIds.holdingsId,
                 holdingsTypeId: Cypress.env('holdingsTypes')[0].id,
                 permanentLocationId: Cypress.env('locations')[0].id,
                 sourceId: source.id,
+                holdingId: testInstanceIds.holdingsId,
               }],
               items: [testItems],
             })

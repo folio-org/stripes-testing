@@ -1,4 +1,4 @@
-import uuid from 'uuid';
+import uuid, { stringify } from 'uuid';
 
 const DEFAULT_INSTANCE = {
   source: 'FOLIO',
@@ -106,7 +106,11 @@ Cypress.Commands.add('getInstanceIdentifierTypes', (searchParams) => {
 
 Cypress.Commands.add('createInstance', ({ instance, holdings = [], items = [] }) => {
   const { instanceId = uuid() } = instance;
+  
   delete instance.instanceId;
+
+  const holdingIds = [];
+  
   cy
     .okapiRequest({
       method: 'POST',
@@ -123,10 +127,13 @@ Cypress.Commands.add('createInstance', ({ instance, holdings = [], items = [] })
         .each((holding, i) => cy.createHolding({
           holding: { ...holding, instanceId },
           items: items[i],
-        }));
+        })).then(holdingId =>{
+          holdingIds.push(holdingId);
+        });
       cy.wrap(instanceId).as('instanceId');
     });
   return cy.get('@instanceId');
+  {instanceId, [{holdingId, [itemIds]}]}
 });
 
 Cypress.Commands.add('updateInstance', requestData => {
@@ -144,7 +151,12 @@ Cypress.Commands.add('updateInstance', requestData => {
 
 Cypress.Commands.add('createHolding', ({ holding, items = [] }) => {
   const { holdingId = uuid() } = holding;
+  cy.log('before delete'+ JSON.stringify(holding));
   delete holding.holdingId;
+  cy.log('after delete'+ JSON.stringify(holding));
+
+  const ItemIds = [];
+  
   cy
     .okapiRequest({
       method: 'POST',
@@ -157,8 +169,10 @@ Cypress.Commands.add('createHolding', ({ holding, items = [] }) => {
     .then(() => {
       cy
         .wrap(items)
-        .each(item => cy.createItem({ ...item, holdingsRecordId: holdingId }));
+        .each(item => cy.createItem({ ...item, holdingsRecordId: holdingId }).then(itemId=>ItemIds.push(itemId)));
     });
+
+    {holdingId, [itemIds]}
 });
 
 Cypress.Commands.add('getHoldings', (searchParams) => {
