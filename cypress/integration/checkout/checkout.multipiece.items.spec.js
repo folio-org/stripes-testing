@@ -21,6 +21,7 @@ describe('Check Out', () => {
   const missingPieceDescription = `autotest_description_${getRandomPostfix()}`;
   let servicePoint;
   let testInstanceIds;
+  let instanceId;
 
   beforeEach(() => {
     let source;
@@ -32,7 +33,7 @@ describe('Check Out', () => {
         user = userProperties;
         servicePoint = NewServicePoint.getDefaulServicePoint();
         ServicePoints.createViaApi(servicePoint.body);
-        UsersEditPage.addServicePointToUser(...servicePoint.body.id,
+        UsersEditPage.addServicePointToUser([servicePoint.body.id],
           user.userId, servicePoint.body.id);
       })
       .then(() => {
@@ -64,15 +65,15 @@ describe('Check Out', () => {
                 defaultItem.descriptionOfPieces = descriptionOfPiece;
               }
               if (hasMissingPieces) {
-                defaultItem.numberOfMissingPieces = 2;
+                defaultItem.numberOfMissingPieces = '2';
                 defaultItem.missingPieces = missingPieceDescription;
               }
               return defaultItem;
             };
-            testItems.push(getTestItem(1, true, false));
-            testItems.push(getTestItem(3, true, false));
-            testItems.push(getTestItem(2, true, true));
-            testItems.push(getTestItem(1, false, true));
+            testItems.push(getTestItem('1', true, false));
+            testItems.push(getTestItem('3', true, false));
+            testItems.push(getTestItem('2', true, true));
+            testItems.push(getTestItem('1', false, true));
             testInstanceIds = {
               instanceId: uuid(),
               holdingsId: uuid(),
@@ -90,19 +91,22 @@ describe('Check Out', () => {
                 permanentLocationId: Cypress.env('locations')[0].id,
                 sourceId: source.id,
               }],
-              items: testItems,
-            });
+              items: [testItems],
+            })
+              .then(specialInstanceId => {
+                instanceId = specialInstanceId;
+              });
           });
       });
   });
 
-  /*after(() => {
+  /* after(() => {
     testInstanceIds.itemIds.forEach(id => cy.deleteItem(id));
     cy.deleteHoldingRecord(testInstanceIds.holdingsId);
     cy.deleteInstanceApi(testInstanceIds.instanceId);
     // TODO delete service
     cy.deleteUser(user.userId);
-  });*/
+  }); */
 
   it('C591 Check out: multipiece items', { tags: [TestTypes.smoke] }, () => {
     const dash = '-';
