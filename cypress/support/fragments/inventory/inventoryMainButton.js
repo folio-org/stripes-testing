@@ -44,7 +44,4 @@ export default {
       Button('Save and close').click(),
     ]);
   },
-  editInstanceInfo() {
-    cy.do(TextArea({ name: 'indexTitle' }).fillIn('Test_Edited_Index'));
-  },
 };
