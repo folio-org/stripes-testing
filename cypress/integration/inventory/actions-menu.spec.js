@@ -24,11 +24,9 @@ describe('ui-inventory: actions', () => {
   });
 
   it('C196753 verifies action menu options after searching and selecting result', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
-    cy.do([
-      InventorySearch.byEffectiveLocation(),
-      InventorySearch.getSearchResult().find(Checkbox()).click(),
-      InventoryActions.open()
-    ]);
+    InventorySearch.byKeywords('*');
+    InventorySearch.selectResultCheckboxes(1);
+    InventoryActions.open();
 
     InventoryActions.optionsIsEnabled([
       InventoryActions.options.saveUUIDs,

@@ -13,7 +13,7 @@ describe('ui-inventory: selecting / changing records', () => {
   it('C196755 verifies search result counts and selected counts', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
     const selectedRecords = 2;
 
-    InventorySearch.byEffectiveLocation();
+    InventorySearch.byKeywords('*');
     InventorySearch.selectResultCheckboxes(selectedRecords);
     InventorySearch.verifySelectedRecords(selectedRecords);
   });
@@ -21,7 +21,7 @@ describe('ui-inventory: selecting / changing records', () => {
   it('C196754 verify show selected records', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
     const selectedRecords = 3;
 
-    InventorySearch.byEffectiveLocation();
+    InventorySearch.byKeywords('*');
     InventorySearch.selectResultCheckboxes(selectedRecords);
     InventorySearch.verifySelectedRecords(selectedRecords);
     InventorySearch.showSelectedRecords();
@@ -35,7 +35,7 @@ describe('ui-inventory: selecting / changing records', () => {
     const selectedRecords = 3;
     const unselectedRecords = 1;
 
-    InventorySearch.byEffectiveLocation();
+    InventorySearch.byKeywords('*');
     InventorySearch.selectResultCheckboxes(selectedRecords);
     InventorySearch.verifySelectedRecords(selectedRecords);
     InventorySearch.showSelectedRecords();
