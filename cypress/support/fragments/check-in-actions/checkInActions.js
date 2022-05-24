@@ -21,12 +21,14 @@ export default {
   },
 
   checkInItem:(barcode) => {
-    cy.intercept('/service-points?*').as('getServicePoints');
-    cy.wait('@getServicePoints', getLongDelay());
-    // TODO think to add waiter
-    cy.wait(1000);
+    cy.intercept('/saml/check').as('getCheck');
+    cy.wait('@getCheck', getLongDelay());
+    // Need some waiting when item is changed status
+    cy.wait(9000);
     cy.intercept('/inventory/items?*').as('getItems');
     cy.do(itemBarcodeField.fillIn(barcode));
+    // Need some waiting when item is changed status
+    cy.wait(3000);
     cy.do(addItemButton.click());
     cy.wait('@getItems', getLongDelay());
   },
@@ -34,7 +36,9 @@ export default {
     cy.expect(MultiColumnListRow({ indexRow: 'row-0' }).find(HTML(including(status))).exists());
     cy.do(availableActionsButton.click());
     cy.expect(itemDetailsButton.exists());
+    cy.intercept('/tags?*').as('getTags');
     cy.do(itemDetailsButton.click());
+    cy.wait('@getTags', getLongDelay());
   },
   existsFormColomns:() => {
     cy.expect([
