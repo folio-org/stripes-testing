@@ -34,16 +34,17 @@ export default {
   closeShortcutsByHotkey() {
     cy.get('body').type('{esc}');
   },
-  closeShortcutsViaUi() {
+  closeShortcuts() {
     cy.do(Modal({ id: 'keyboard-shortcuts-modal' }).find(Button({ id: 'keyboard-shortcuts-modal-close' })).click());
   },
-  fillInstanceInfoViaUi:() => {
+  fillInstanceInfo:() => {
     cy.do([
       TextArea({ name: 'title' }).fillIn(instanceTitle),
       Select({ name: 'instanceTypeId' }).choose('other'),
+      Button('Save and close').click(),
     ]);
   },
-  editInstanceInfoViaUi() {
+  editInstanceInfo() {
     cy.do(TextArea({ name: 'indexTitle' }).fillIn('Test_Edited_Index'));
   },
 };
