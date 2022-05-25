@@ -4,13 +4,16 @@ import InventoryKeyboardShortcuts from '../../support/fragments/inventory/invent
 import permissions from '../../support/dictionary/permissions';
 import getRandomPostfix from '../../support/utils/stringTools';
 import InventoryInstanceEdit from '../../support/fragments/inventory/InventoryInstanceEdit';
+import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
 import InventoryHotkeys from '../../support/fragments/inventory/inventoryHotkeys';
+import SearchInventory from '../../support/fragments/data_import/searchInventory';
 
 let userId = '';
 const precedingTitleValue = `Preceding title test value ${getRandomPostfix()}`;
 const isbnValue = `ISBN test value ${getRandomPostfix()}`;
 const issnValue = `ISSN test value ${getRandomPostfix()}`;
 const hotKeys = InventoryHotkeys.hotKeys;
+const instanceTitle = `Instance_Test_Title_${getRandomPostfix()}`;
 
 describe('ui-inventory: keyboard shortcut', () => {
   beforeEach('navigate to inventory', () => {
@@ -48,16 +51,16 @@ describe('ui-inventory: keyboard shortcut', () => {
     InventoryKeyboardShortcuts.waitModalLoading('Keyboard shortcuts');
     InventoryKeyboardShortcuts.pressHotKey(hotKeys.create);
     InventoryKeyboardShortcuts.closeShortcuts();
-    InventoryKeyboardShortcuts.fillInstanceInfo();
-    // TODO: Need to wait for the loading of saving the edited information.Reason: the robot runs quickly and the test drops.4 sec, becouseI checked all time-outs like 1,2,3
-    cy.wait(4000);
-    InventoryKeyboardShortcuts.pressHotKey(hotKeys.edit);
-    InventoryInstanceEdit.addPrecedingTitle(0, precedingTitleValue, isbnValue, issnValue);
-    InventoryKeyboardShortcuts.pressHotKey(hotKeys.save);
+    InventoryKeyboardShortcuts.fillInstanceInfoAndSave(instanceTitle);
     // TODO: Need to wait for the loading of saving the edited information.Reason: the robot runs quickly and the test drops.
-    cy.wait(2000);
+    cy.wait(4000);
+    SearchInventory.searchInstanceByTitle(instanceTitle);
+    InventoryInstances.selectInstance();
     InventoryKeyboardShortcuts.pressHotKey(hotKeys.openShortcutsModal);
     InventoryKeyboardShortcuts.waitModalLoading('Keyboard shortcuts');
     InventoryKeyboardShortcuts.pressHotKey(hotKeys.close);
+    InventoryKeyboardShortcuts.pressHotKey(hotKeys.duplicate);
+    InventoryInstanceEdit.addPrecedingTitle(0, precedingTitleValue, isbnValue, issnValue);
+    InventoryKeyboardShortcuts.pressHotKey(hotKeys.save);
   });
 });

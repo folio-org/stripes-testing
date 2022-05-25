@@ -2,7 +2,7 @@ import { Button, Dropdown, Modal, Select, TextArea } from '../../../../interacto
 import getRandomPostfix from '../../utils/stringTools';
 
 const inventoryApplicationContextDropdown = Dropdown('InventoryApplication context dropdown');
-const instanceTitle = `Instance_Test_Title_${getRandomPostfix()}`;
+
 
 export default {
   verifyInventoryDropdownIsShown(isOpen) {
@@ -25,7 +25,7 @@ export default {
   closeShortcuts() {
     cy.do(Modal({ id: 'keyboard-shortcuts-modal' }).find(Button({ id: 'keyboard-shortcuts-modal-close' })).click());
   },
-  fillInstanceInfo:() => {
+  fillInstanceInfoAndSave:(instanceTitle) => {
     cy.do([
       TextArea({ name: 'title' }).fillIn(instanceTitle),
       Select({ name: 'instanceTypeId' }).choose('other'),
