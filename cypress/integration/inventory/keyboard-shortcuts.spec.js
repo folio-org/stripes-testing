@@ -53,7 +53,7 @@ describe('ui-inventory: keyboard shortcut', () => {
     InventoryKeyboardShortcuts.closeShortcuts();
     InventoryKeyboardShortcuts.fillInstanceInfoAndSave(instanceTitle);
     // TODO: Need to wait for the loading of saving the edited information.Reason: the robot runs quickly and the test drops.
-    cy.wait(4000);
+    cy.wait(6000);
     SearchInventory.searchInstanceByTitle(instanceTitle);
     InventoryInstances.selectInstance();
     InventoryKeyboardShortcuts.pressHotKey(hotKeys.openShortcutsModal);
