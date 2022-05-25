@@ -18,6 +18,7 @@ const saveAndCloseButton = Button('Save and close');
 const rootSection = Section({ id: 'instance-form' });
 const actionsButton = Button('Actions');
 const value = `test.${getRandomPostfix()}`;
+const identifierAccordion = Accordion('Identifier');
 
 export default {
   close:() => cy.do(closeButton.click()),
@@ -81,11 +82,11 @@ export default {
   },
 
   addIdentifier:(identifier) => {
-    cy.expect(Accordion('Identifier').exists());
+    cy.expect(identifierAccordion.exists());
     cy.do(Button('Add identifier').click());
     cy.expect(Select('Type*').exists());
     cy.expect(TextField('Identifier*').exists());
-    cy.do(Accordion('Identifier').find(Select({ name:'identifiers[0].identifierTypeId' })).choose(identifier));
+    cy.do(identifierAccordion.find(Select({ name:'identifiers[0].identifierTypeId' })).choose(identifier));
     cy.do(TextField({ name:'identifiers[0].value' }).fillIn(value));
     cy.do(saveAndCloseButton.click());
   },
