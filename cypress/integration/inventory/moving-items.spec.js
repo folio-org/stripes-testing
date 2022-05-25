@@ -12,22 +12,25 @@ import Features from '../../support/dictionary/features';
 import permissions from '../../support/dictionary/permissions';
 import getRandomPostfix from '../../support/utils/stringTools';
 import devTeams from '../../support/dictionary/devTeams';
+import InventoryInstancesMovement from '../../support/fragments/inventory/holdingsMove/inventoryInstancesMovement';
 
 const successCalloutMessage = '1 item has been successfully moved.';
 let userId = '';
 let firstHolding = '';
 let secondHolding = '';
-const ITEM_BARCODE = `test${getRandomPostfix()}`;
+let ITEM_BARCODE;
 
 describe('ui-inventory: moving items', () => {
   beforeEach('navigates to Inventory', () => {
+    ITEM_BARCODE = `test${getRandomPostfix()}`;
     cy.createTempUser([
       permissions.inventoryAll.gui,
       permissions.uiInventoryMoveItems.gui,
       permissions.uiInventorySingleRecordImport.gui,
       permissions.uiQuickMarcQuickMarcHoldingsEditorCreate.gui,
       permissions.uiInventoryHoldingsMove.gui,
-      permissions.uiQuickMarcQuickMarcHoldingsEditorView.gui
+      permissions.uiQuickMarcQuickMarcHoldingsEditorView.gui,
+      permissions.uiMarcAuthoritiesAuthorityRecordEdit.gui
     ])
       .then(userProperties => {
         userId = userProperties.userId;
@@ -117,13 +120,12 @@ describe('ui-inventory: moving items', () => {
         HoldingsRecordView.close();
         InventoryInstance.waitLoading();
         InventoryInstance.moveHoldingsToAnotherInstance(initialInstanceHrId);
-        cy.visit(TopMenu.inventoryPath);
+        InventoryInstancesMovement.closeInLeftForm();
         InventorySearch.searchByParameter('Instance HRID', initialInstanceHrId);
         InventoryInstances.waitLoading();
         InventoryInstances.selectInstance();
         InventoryInstance.goToHoldingView();
         HoldingsRecordView.checkHrId(holdingsRecordhrId);
-        // TODO: view source is not available now, in process of investigation. Can be related with new error. https://issues.folio.org/browse/UIIN-2044
         HoldingsRecordView.viewSource();
         InventoryViewSource.contains(`004\t${initialInstanceHrId}`);
       });

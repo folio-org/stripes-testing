@@ -88,5 +88,9 @@ export default {
   // Checkout
   checkoutAll: { internal: '', gui: 'Check out: All permissions' },
   // Checkin
-  checkinAll: { internal: '', gui: 'Check in: All permissions' }
+  checkinAll: { internal: '', gui: 'Check in: All permissions' },
+  // Organization
+  viewOrganization:{ internal:'', gui:'Organizations: View' },
+  // Invoice
+  viewEditDeleteInvoiceInvoiceLine:{ internal:'', gui:'Invoice: Can view, edit and delete Invoices and Invoice lines' },
 };
