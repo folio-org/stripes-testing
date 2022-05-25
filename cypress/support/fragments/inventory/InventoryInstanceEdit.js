@@ -81,9 +81,7 @@ export default {
   },
 
   addIdentifier:(identifier) => {
-    //cy.wait(5000);
-    cy.intercept('/users?*').as('getUsers');
-    cy.wait('@getUsers');
+    cy.expect(Accordion('Identifier').exists());
     cy.do(Button('Add identifier').click());
     cy.expect(Select('Type*').exists());
     cy.expect(TextField('Identifier*').exists());
@@ -91,6 +89,7 @@ export default {
     cy.do(TextField({ name:'identifiers[0].value' }).fillIn(value));
     cy.do(saveAndCloseButton.click());
   },
+
   addPrecedingTitle:(fieldIndex, precedingTitle, isbn, issn) => {
     const fieldNamePref = `precedingTitles[${fieldIndex}]`;
 
