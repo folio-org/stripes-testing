@@ -11,6 +11,9 @@ const calloutMessages = {
 };
 
 export default {
+  defaultcirculationPolicy: {
+    'rulesAsText': 'circulation policy'
+  },
   clearCirculationRules() {
     cy.do(CodeMirror().clear());
   },
@@ -67,6 +70,13 @@ export default {
     this.getApi().then((circulationRules) => {
       cy.expect(circulationRules.rulesAsText).to.include(`n ${noticePolicyId}`);
     });
+  },
+  createViaApi(newCirculatiuonPolicy) {
+    cy.okapiRequest({
+      method: 'POST',
+      path: 'rules',
+      body: newCirculatiuonPolicy
+    })
   },
   getApi() {
     return cy.getCirculationRules();

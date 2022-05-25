@@ -20,12 +20,13 @@ export default {
   defaultUiPatronNoticePolicies: {
     name: `Test_notice_${getRandomPostfix()}`,
     description: "Created by autotest team",
+    // optional properties:
     templateId: null,
     action: null,
     format: null,
   },
 
-  getNotice(patronNoticePolicy, templateId, action) {
+  getPatronNoticePolicyTemplate(patronNoticePolicy, templateId, action) {
     return { ...patronNoticePolicy, templateId, action };
   },
 
