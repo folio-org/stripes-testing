@@ -1,29 +1,16 @@
 import TopMenu from '../../support/fragments/topMenu';
 import testTypes from '../../support/dictionary/testTypes';
-import InventoryMainButton from '../../support/fragments/inventory/inventoryMainButton';
+import InventoryMainButton from '../../support/fragments/inventory/inventoryKeyboardShortcuts';
 import permissions from '../../support/dictionary/permissions';
 import getRandomPostfix from '../../support/utils/stringTools';
 import InventoryInstanceEdit from '../../support/fragments/inventory/InventoryInstanceEdit';
+import InventoryHotkeys from '../../support/fragments/inventory/inventoryHotkeys';
 
 let userId = '';
 const precedingTitleValue = `Preceding title test value ${getRandomPostfix()}`;
 const isbnValue = `ISBN test value ${getRandomPostfix()}`;
 const issnValue = `ISSN test value ${getRandomPostfix()}`;
-const hotKeys = {
-  create: '{alt}N',
-  edit: '{ctrl}{alt}E',
-  save: '{ctrl}S',
-  duplicate: '{alt}C',
-  expandAllAccordions: '{ctrl}{alt}B',
-  collapseAllAccordions: '{ctrl}{alt}G',
-  expandOrCollapse: '{backspace}',
-  goToSearchFilterPane: '{ctrl}{alt}H',
-  openShortcutsModal: '{ctrl}{alt}K',
-  close: '{esc}',
-  copy: '{ctrl}C',
-  paste: '{ctrl}V',
-  find: '{ctrl}F',
-};
+const hotKeys = InventoryHotkeys.hotKeys;
 
 describe('ui-inventory: keyboard shortcut', () => {
   beforeEach('navigate to inventory', () => {
@@ -62,12 +49,12 @@ describe('ui-inventory: keyboard shortcut', () => {
     InventoryMainButton.pressHotKey(hotKeys.create);
     InventoryMainButton.closeShortcuts();
     InventoryMainButton.fillInstanceInfo();
-    // TO DO: Need to wait for the loading of saving the edited information.Reason: the robot runs quickly and the test drops.4 sec, becouseI checked all time-outs like 1,2,3
+    // TODO: Need to wait for the loading of saving the edited information.Reason: the robot runs quickly and the test drops.4 sec, becouseI checked all time-outs like 1,2,3
     cy.wait(4000);
     InventoryMainButton.pressHotKey(hotKeys.edit);
     InventoryInstanceEdit.addPrecedingTitle(0, precedingTitleValue, isbnValue, issnValue);
     InventoryMainButton.pressHotKey(hotKeys.save);
-    // TO DO: Need to wait for the loading of saving the edited information.Reason: the robot runs quickly and the test drops.
+    // TODO: Need to wait for the loading of saving the edited information.Reason: the robot runs quickly and the test drops.
     cy.wait(2000);
     InventoryMainButton.pressHotKey(hotKeys.openShortcutsModal);
     InventoryMainButton.waitModalLoading('Keyboard shortcuts');
