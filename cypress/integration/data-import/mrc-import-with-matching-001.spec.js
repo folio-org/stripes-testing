@@ -38,6 +38,7 @@ describe('ui-data-import: Test MARC-MARC matching for 001 field', () => {
 
   after(() => {
     DataImport.checkUploadState();
+    cy.deleteUser(user.userId);
   });
 
   it('C17044: MARC-MARC matching for 001 field', { tags: [TestTypes.smoke] }, () => {
