@@ -40,7 +40,7 @@ describe('ui-requests: Sort requests', () => {
     });
   });
 
-  it('should implement e-2-e automation of test case C2379: Test Request app sorting', { tags: [testType.smoke] }, () => {
+  it('C2379: Test Request app sorting', { tags: [testType.smoke] }, () => {
     cy.visit(TopMenu.requestsPath);
 
     cy.intercept('GET', '/circulation/requests?*').as('getRequests');

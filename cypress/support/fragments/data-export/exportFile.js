@@ -8,14 +8,6 @@ export default {
   },
 
   exportWithDefaultInstancesJobProfile:(fileName) => {
-    // wait for data to be loaded
-    cy.intercept(
-      {
-        method: 'GET',
-        url: '/data-export/job-profiles?*',
-      }
-    ).as('getProfiles');
-    cy.wait('@getProfiles');
     cy.do([
       MultiColumnListCell({ content: DataExportResults.defaultJobProfile, columnIndex: 0 }).click(),
       Modal({ id: 'choose-job-profile-confirmation-modal' }).find(Select()).choose('Instances'),
