@@ -1,6 +1,6 @@
 import TopMenu from '../../support/fragments/topMenu';
 import testTypes from '../../support/dictionary/testTypes';
-import InventoryMainButton from '../../support/fragments/inventory/inventoryKeyboardShortcuts';
+import InventoryKeyboardShortcuts from '../../support/fragments/inventory/inventoryKeyboardShortcuts';
 import permissions from '../../support/dictionary/permissions';
 import getRandomPostfix from '../../support/utils/stringTools';
 import InventoryInstanceEdit from '../../support/fragments/inventory/InventoryInstanceEdit';
@@ -29,35 +29,35 @@ describe('ui-inventory: keyboard shortcut', () => {
   });
 
   it('C345297 Keyboard Shortcut. Access to drop down menu', { tags: [testTypes.smoke] }, () => {
-    InventoryMainButton.verifyInventoryDropdownIsShown('false');
+    InventoryKeyboardShortcuts.verifyInventoryDropdownIsShown('false');
 
-    InventoryMainButton.openInventoryMenu();
-    InventoryMainButton.verifyInventoryDropdownIsShown('true');
-    InventoryMainButton.openShortcuts();
+    InventoryKeyboardShortcuts.openInventoryMenu();
+    InventoryKeyboardShortcuts.verifyInventoryDropdownIsShown('true');
+    InventoryKeyboardShortcuts.openShortcuts();
 
-    InventoryMainButton.waitModalLoading('Keyboard shortcuts');
-    InventoryMainButton.verifyInventoryDropdownIsShown('false');
+    InventoryKeyboardShortcuts.waitModalLoading('Keyboard shortcuts');
+    InventoryKeyboardShortcuts.verifyInventoryDropdownIsShown('false');
   });
 
   it('C345298 Keyboard Shortcut. Test the functionality of the different shortcut keys', { tags: [testTypes.smoke] }, () => {
-    InventoryMainButton.verifyInventoryDropdownIsShown('false');
+    InventoryKeyboardShortcuts.verifyInventoryDropdownIsShown('false');
 
-    InventoryMainButton.openInventoryMenu();
-    InventoryMainButton.openShortcuts();
+    InventoryKeyboardShortcuts.openInventoryMenu();
+    InventoryKeyboardShortcuts.openShortcuts();
 
-    InventoryMainButton.waitModalLoading('Keyboard shortcuts');
-    InventoryMainButton.pressHotKey(hotKeys.create);
-    InventoryMainButton.closeShortcuts();
-    InventoryMainButton.fillInstanceInfo();
+    InventoryKeyboardShortcuts.waitModalLoading('Keyboard shortcuts');
+    InventoryKeyboardShortcuts.pressHotKey(hotKeys.create);
+    InventoryKeyboardShortcuts.closeShortcuts();
+    InventoryKeyboardShortcuts.fillInstanceInfo();
     // TODO: Need to wait for the loading of saving the edited information.Reason: the robot runs quickly and the test drops.4 sec, becouseI checked all time-outs like 1,2,3
     cy.wait(4000);
-    InventoryMainButton.pressHotKey(hotKeys.edit);
+    InventoryKeyboardShortcuts.pressHotKey(hotKeys.edit);
     InventoryInstanceEdit.addPrecedingTitle(0, precedingTitleValue, isbnValue, issnValue);
-    InventoryMainButton.pressHotKey(hotKeys.save);
+    InventoryKeyboardShortcuts.pressHotKey(hotKeys.save);
     // TODO: Need to wait for the loading of saving the edited information.Reason: the robot runs quickly and the test drops.
     cy.wait(2000);
-    InventoryMainButton.pressHotKey(hotKeys.openShortcutsModal);
-    InventoryMainButton.waitModalLoading('Keyboard shortcuts');
-    InventoryMainButton.pressHotKey(hotKeys.close);
+    InventoryKeyboardShortcuts.pressHotKey(hotKeys.openShortcutsModal);
+    InventoryKeyboardShortcuts.waitModalLoading('Keyboard shortcuts');
+    InventoryKeyboardShortcuts.pressHotKey(hotKeys.close);
   });
 });
