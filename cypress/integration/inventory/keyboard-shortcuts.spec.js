@@ -7,6 +7,7 @@ import InventoryInstanceEdit from '../../support/fragments/inventory/InventoryIn
 import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
 import InventoryHotkeys from '../../support/fragments/inventory/inventoryHotkeys';
 import SearchInventory from '../../support/fragments/data_import/searchInventory';
+import devTeams from '../../support/dictionary/devTeams';
 
 let userId = '';
 const precedingTitleValue = `Preceding title test value ${getRandomPostfix()}`;
@@ -33,6 +34,8 @@ describe('ui-inventory: keyboard shortcut', () => {
 
   it('C345297 Keyboard Shortcut. Access to drop down menu', { tags: [testTypes.smoke] }, () => {
     InventoryKeyboardShortcuts.verifyInventoryDropdownIsShown('false');
+  it('C345297 Keyboard Shortcut. Access to drop down menu', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
+    InventoryMainButton.verifyInventoryDropdownIsShown('false');
 
     InventoryKeyboardShortcuts.openInventoryMenu();
     InventoryKeyboardShortcuts.verifyInventoryDropdownIsShown('true');

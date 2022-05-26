@@ -189,7 +189,7 @@ export default {
       firstTableRow.find(MultiColumnListCell(loanInfo.overrideRenewed)).exists(),
       firstTableRow.find(MultiColumnListCell(fullOverrideDate)).exists(),
       firstTableRow.find(MultiColumnListCell(overrideData.status)).exists(),
-      firstTableRow.find(MultiColumnListCell(`${lastName}, ${firstName}`)).exists(),
+      firstTableRow.find(MultiColumnListCell(including(`${lastName}, ${firstName}`))).exists(),
       firstTableRow.find(MultiColumnListCell(overrideData.additionalInfo)).exists(),
     ]);
   },

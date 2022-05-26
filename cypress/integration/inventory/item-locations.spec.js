@@ -6,6 +6,7 @@ import InventoryInstanceEdit from '../../support/fragments/inventory/InventoryIn
 import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
 import permissions from '../../support/dictionary/permissions';
 import getRandomPostfix from '../../support/utils/stringTools';
+import devTeams from '../../support/dictionary/devTeams';
 
 
 const ITEM_BARCODE = `123${getRandomPostfix()}`;
@@ -85,7 +86,7 @@ describe('ui-inventory: location', () => {
   });
 
 
-  it('C163923 Change a location to remote storage', { tags: [TestTypes.smoke] }, () => {
+  it('C163923 Change a location to remote storage', { tags: [TestTypes.smoke, devTeams.firebird] }, () => {
     const toBeEditedLocationName = Cypress.env('locations')[0].name;
     const editedLocationName = Cypress.env('locations')[1].name;
 
@@ -113,8 +114,7 @@ describe('ui-inventory: location', () => {
     );
   });
 
-  // TODO: test failed, bug UIIN-1988
-  it('C163924 Change a remote storage location to standard location', { tags: [TestTypes.smoke] }, () => {
+  it('C163924 Change a remote storage location to standard location', { tags: [TestTypes.smoke, devTeams.firebird] }, () => {
     const toBeEditedLocationName = Cypress.env('locations')[1].name;
     const editedLocationName = Cypress.env('locations')[0].name;
 
