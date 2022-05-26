@@ -1,13 +1,5 @@
 import getRandomPostfix from "../../utils/stringTools";
-import {
-  Button,
-  TextField,
-  TextArea,
-  NavListItem,
-  Checkbox,
-  Select,
-  Section,
-} from "../../../../interactors";
+import { Button, TextField, TextArea, NavListItem, Checkbox, Select, Section, Link } from "../../../../interactors";
 
 const actionsButton = Button("Actions");
 const addNoticeButton = Button("Add notice");
@@ -56,8 +48,7 @@ export default {
 
   savePolicy: () => {
     cy.do([
-      Button({ id: "footer-save-entity" }).click(),
-      Button({ icon: "times" }).click(),
+      Button({ id: "footer-save-entity" }).click()
     ]);
   },
 
@@ -85,6 +76,10 @@ export default {
       nameField.fillIn("DUPLICATE"),
       Button({ id: "footer-save-entity" }).click(),
     ]);
+  },
+
+  openNoticyToSide(patronNoticePolicy) {
+    cy.do(Link(patronNoticePolicy.name).click())
   },
 
   deletePolicy: () => {

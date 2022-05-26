@@ -11,6 +11,15 @@ export default {
             method: 'POST',
             path: 'groups',
             body: defaultPatronGroup
+        }).then(({ body }) => {
+            Cypress.env('patronGroupId', body.id);
+            return body;
+          });
+    },
+    deleteViaApi(patronGroupId) {
+        cy.okapiRequest({
+            method: 'DELETE',
+            path: `groups/${patronGroupId}`
         })
     }
 }

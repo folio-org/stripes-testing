@@ -1,5 +1,5 @@
 import getRandomPostfix from '../../utils/stringTools';
-import { Button, TextField, TextArea, KeyValue, Checkbox } from '../../../../interactors';
+import { Button, TextField, TextArea, KeyValue, Checkbox, Link } from '../../../../interactors';
 
 const tokenName = 'item.title'
 const actionsButton = Button('Actions');
@@ -19,9 +19,9 @@ export default {
     cy.intercept('/patron-notice-policy-storage/patron-notice-policies**').as('request-patron-notice-policies')
     cy.do(Button({ id: 'clickable-create-entry' }).click());
     cy.wait('@request-patron-notice-policies')
+    cy.wait(1000)
     this.fillGeneralInformation(patronNoticeTemplate);
     cy.do(tokenButton.click())
-    cy.wait(2000)
     cy.do(itemTitleCheckbox.click())
     cy.do(addTokenButton.click())
     cy.do(Button({ id: 'footer-save-entity' }).click());
@@ -45,6 +45,9 @@ export default {
       KeyValue({ value: patronNoticeTemplate.subject }).exists(),
       KeyValue({ value: patronNoticeTemplate.body }).exists(),
     ]);
+  },
+  openTemplateToSide(patronNoticeTemplate) {
+    cy.do(Link(patronNoticeTemplate.name).click())
   },
   deleteTemplate: () => {
     cy.do([

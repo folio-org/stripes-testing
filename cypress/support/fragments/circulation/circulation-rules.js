@@ -32,20 +32,20 @@ export default {
     this.fillInPolicy(policyData);
   },
   fillInPolicy({
-    priority,
-    priorityTypeName,
+    priorityType, // 't ', 's ', 'c ', 'b ', 'a ', 'm ', 'g '
     loanPolicyName,
     overdueFinePolicyName,
     lostItemFeePolicyName,
     requestPolicyName,
-    noticePolicyName
+    noticePolicyName,
+    priorityTypeName // materialTypeName, patronGroupName...
   }) {
-    if (priorityTypeName) {
-      priority ? this.fillInCirculationRules(priority) : this.fillInCirculationRules(' m ');
+    if (priorityType) {
+      this.fillInCirculationRules(priorityType);
       this.clickCirculationRulesHintItem(priorityTypeName);
       this.fillInCirculationRules(': ');
     }
-
+    
     this.fillInCirculationRules('l ');
     this.clickCirculationRulesHintItem(loanPolicyName);
     this.fillInCirculationRules('o ');
