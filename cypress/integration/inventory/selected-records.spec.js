@@ -2,6 +2,7 @@ import TopMenu from '../../support/fragments/topMenu';
 import InventorySearch from '../../support/fragments/inventory/inventorySearch';
 import InventoryModals from '../../support/fragments/inventory/inventoryModals';
 import testTypes from '../../support/dictionary/testTypes';
+import devTeams from '../../support/dictionary/devTeams';
 
 describe('ui-inventory: selecting / changing records', () => {
   beforeEach('navigates to Inventory', () => {
@@ -9,18 +10,18 @@ describe('ui-inventory: selecting / changing records', () => {
     cy.visit(TopMenu.inventoryPath);
   });
 
-  it('C196755 verifies search result counts and selected counts', { tags: [testTypes.smoke] }, () => {
+  it('C196755 verifies search result counts and selected counts', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
     const selectedRecords = 2;
 
-    InventorySearch.byEffectiveLocation();
+    InventorySearch.byKeywords('*');
     InventorySearch.selectResultCheckboxes(selectedRecords);
     InventorySearch.verifySelectedRecords(selectedRecords);
   });
 
-  it('C196754 verify show selected records', { tags: [testTypes.smoke] }, () => {
+  it('C196754 verify show selected records', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
     const selectedRecords = 3;
 
-    InventorySearch.byEffectiveLocation();
+    InventorySearch.byKeywords('*');
     InventorySearch.selectResultCheckboxes(selectedRecords);
     InventorySearch.verifySelectedRecords(selectedRecords);
     InventorySearch.showSelectedRecords();
@@ -30,11 +31,11 @@ describe('ui-inventory: selecting / changing records', () => {
     InventoryModals.verifyButtons();
   });
 
-  it('C196756 verify selected records after changing selection', { tags: [testTypes.smoke] }, () => {
+  it('C196756 verify selected records after changing selection', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
     const selectedRecords = 3;
     const unselectedRecords = 1;
 
-    InventorySearch.byEffectiveLocation();
+    InventorySearch.byKeywords('*');
     InventorySearch.selectResultCheckboxes(selectedRecords);
     InventorySearch.verifySelectedRecords(selectedRecords);
     InventorySearch.showSelectedRecords();
