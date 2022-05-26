@@ -1,21 +1,21 @@
 import TopMenu from '../../support/fragments/topMenu';
 import TestType from '../../support/dictionary/testTypes';
 import Organizations from '../../support/fragments/organizations/organizations';
-import newOrganization from '../../support/fragments/organizations/newOrganization';
+import NewOrganization from '../../support/fragments/organizations/newOrganization';
 
 describe('ui-organizations: Filtering organization', () => {
-  const organization = { ...newOrganization.specialOrganization };
+  const organization = { ...NewOrganization.specialOrganization };
 
   before(() => {
     cy.login(Cypress.env('diku_login'), Cypress.env('diku_password'));
     cy.getAdminToken();
-    cy.createOrganizationApi(organization);
+    NewOrganization.createViaApi(organization);
   });
 
   after(() => {
     cy.getOrganizationApi({ query: `name="${organization.name}"` })
       .then(returnedOrganization => {
-        cy.deleteOrganizationApi(returnedOrganization.id);
+        cy.deleteOrganizationApi(returnedOrganization[0].id);
       });
   });
   [
