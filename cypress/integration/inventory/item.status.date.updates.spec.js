@@ -130,7 +130,7 @@ describe('ui-inventory: Item status date updates', () => {
 
   afterEach(() => {
     InventoryInstances.deleteInstanceViaApi(userItemBarcode);
-    cy.getOrdersApi({ limit: 1, query: `"poNumber"=="${orderNumber}"` })
+    Orders.getOrdersApi({ limit: 1, query: `"poNumber"=="${orderNumber}"` })
       .then(order => {
         cy.deleteOrderApi(order[0].id);
       });

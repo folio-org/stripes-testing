@@ -346,5 +346,14 @@ export default {
       buttonSubscriptionFromFilter.click(),
     ]);
   },
+  getOrdersApi: (searchParams) => {
+    return cy
+      .okapiRequest({
+        path: 'orders/composite-orders',
+        searchParams
+      })
+      .then(({ body }) => {
+        return body.purchaseOrders;
+      });
+  },
 };
-

@@ -30,14 +30,3 @@ Cypress.Commands.add('deleteOrderApi', (id) => {
     path: `orders/composite-orders/${id}`,
   });
 });
-
-Cypress.Commands.add('getOrdersApi', (searchParams) => {
-  return cy
-    .okapiRequest({
-      path: 'orders/composite-orders',
-      searchParams
-    })
-    .then(({ body }) => {
-      return body.purchaseOrders;
-    });
-});
