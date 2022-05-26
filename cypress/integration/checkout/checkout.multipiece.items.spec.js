@@ -52,7 +52,7 @@ describe('Check Out', () => {
               });
           })
           .then(() => {
-            const getTestItem = (specialNumberOfPieces, hasDiscription, hasMissingPieces) => {
+            const getTestItem = (specialNumberOfPieces, hasDiscription = descriptionOfPiece, hasMissingPieces) => {
               const defaultItem = {
                 id: uuid(),
                 barcode: Helper.getRandomBarcode(),
@@ -75,9 +75,9 @@ describe('Check Out', () => {
             testItems.push(getTestItem('2', true, true));
             testItems.push(getTestItem('1', false, true));
             testInstanceIds = {
-              //instanceId: uuid(),
-              //holdingsId: uuid(),
-              itemIds: testItems.map(testItem => testItem.id)
+              instanceId: uuid(),
+              holdingsId: uuid(),
+              // itemIds: testItems.map(testItem => testItem.id)
             };
             cy.createInstance({
               instance: {
@@ -114,7 +114,7 @@ describe('Check Out', () => {
     const dash = '-';
 
     CheckOutActions.checkIsInterfacesOpened();
-    CheckOutActions.checkOutItem(userBarcode, testItems[0].barcode);
+    /* CheckOutActions.checkOutItem(userBarcode, testItems[0].barcode);
     CheckOutActions.checkPatronInformation(user.username, userBarcode);
     CheckOutActions.checkConfirmMultipieceCheckOutModal();
     CheckOutActions.checkOutItem(userBarcode, testItems[1].barcode);
@@ -131,6 +131,6 @@ describe('Check Out', () => {
     CheckOutActions.checkOutItem(userBarcode, testItems[3].barcode);
     ConfirmMultipieceCheckOutModal.checkIsModalConsistOf(instanceTitle, testItems[3].numberOfPieces, dash);
     ConfirmMultipieceCheckOutModal.checkMissingPiecesInModal(testItems[3].numberOfMissingPieces, missingPieceDescription);
-    ConfirmMultipieceCheckOutModal.confirmMultiplePiecesItemModal();
+    ConfirmMultipieceCheckOutModal.confirmMultiplePiecesItemModal(); */
   });
 });

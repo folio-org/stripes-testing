@@ -106,11 +106,11 @@ Cypress.Commands.add('getInstanceIdentifierTypes', (searchParams) => {
 
 Cypress.Commands.add('createInstance', ({ instance, holdings = [], items = [] }) => {
   const { instanceId = uuid() } = instance;
-  
+
   delete instance.instanceId;
 
   const holdingIds = [];
-  
+
   cy
     .okapiRequest({
       method: 'POST',
@@ -127,14 +127,30 @@ Cypress.Commands.add('createInstance', ({ instance, holdings = [], items = [] })
         .each((holding, i) => cy.createHolding({
           holding: { ...holding, instanceId },
           items: items[i],
-        })).then(holdingId =>{
+        })).then(holdingId => {
           holdingIds.push(holdingId);
         });
       cy.wrap(instanceId).as('instanceId');
     });
   return cy.get('@instanceId');
-  {instanceId, [{holdingId, [itemIds]}]}
+  // { instanceId, [holdingId, [itemIds]]; }
 });
+
+//--
+function createInstanceWithGivenIds({ instance, holdings = [], items = [] }) {
+  const ids = { instanceId: null, holdingsIds: [], itemsIds: [] };
+  ids.instanceId = instance.instanceId;
+  holdings.forEach(holding => {
+    ids.holdingsIds.push(holding.holdingId);
+  });
+  items.forEach(item => {
+    ids.itemsIds.push(item.itemId);
+  });
+  return cy.createInstance({ instance, holdings, items }).then(() => {
+    return ids;
+  });
+}
+//--
 
 Cypress.Commands.add('updateInstance', requestData => {
   cy
@@ -151,12 +167,13 @@ Cypress.Commands.add('updateInstance', requestData => {
 
 Cypress.Commands.add('createHolding', ({ holding, items = [] }) => {
   const { holdingId = uuid() } = holding;
-  cy.log('before delete'+ JSON.stringify(holding));
+  cy.log('before delete' + JSON.stringify(holding));
   delete holding.holdingId;
-  cy.log('after delete'+ JSON.stringify(holding));
+  cy.log('after delete' + JSON.stringify(holding));
 
-  const ItemIds = [];
-  
+  const itemIds = [];
+  const holdingsIds = [];
+
   cy
     .okapiRequest({
       method: 'POST',
@@ -169,10 +186,14 @@ Cypress.Commands.add('createHolding', ({ holding, items = [] }) => {
     .then(() => {
       cy
         .wrap(items)
-        .each(item => cy.createItem({ ...item, holdingsRecordId: holdingId }).then(itemId=>ItemIds.push(itemId)));
+        .each(item => cy.createItem({ ...item, holdingsRecordId: holdingId })
+          .then(itemId => itemIds.push(itemId)));
+    })
+    .then(() => {
+      cy
+        .wrap(holding)
+        .then(holdingsId => holdingsIds.push(holdingsId));
     });
-
-    {holdingId, [itemIds]}
 });
 
 Cypress.Commands.add('getHoldings', (searchParams) => {
