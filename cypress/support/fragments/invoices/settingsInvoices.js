@@ -1,4 +1,4 @@
-import { Button, TextField, MultiColumnListHeader, EditableListRow, MultiColumnListCell } from '../../../../interactors';
+import { Button, TextField, MultiColumnListHeader, EditableListRow, MultiColumnListCell, Selection, SelectionList } from '../../../../interactors';
 import InteractorsTools from '../../utils/interactorsTools';
 import DateTools from '../../utils/dateTools';
 
@@ -13,7 +13,7 @@ export default {
   settingsInvoicePath: {
     approvals: '/approvals',
     adjustments: '/adjustments',
-    batchGroups:  '/batch-groups',
+    batchGroups: '/batch-groups',
     batchGroupConfiguration: '/batch-group-configuration',
     voucherNumber: '/invoice/voucher-number'
   },
@@ -84,5 +84,13 @@ export default {
         expect(getEditableListRow(rowNumber).find(trashIconButton).absent());
       }
     ));
+  },
+  selectJsonFormatForVaucher: () => {
+    cy.do([
+      Selection('Batch group*').open(),
+      SelectionList().select('Amherst (AC)'),
+      Selection({ name: 'format' }).open(),
+      SelectionList().select('JSON'),
+    ]);
   }
 };
