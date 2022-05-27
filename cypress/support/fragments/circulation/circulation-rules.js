@@ -45,7 +45,6 @@ export default {
       this.clickCirculationRulesHintItem(priorityTypeName);
       this.fillInCirculationRules(': ');
     }
-    
     this.fillInCirculationRules('l ');
     this.clickCirculationRulesHintItem(loanPolicyName);
     this.fillInCirculationRules('o ');
@@ -77,7 +76,7 @@ export default {
       method: 'POST',
       path: 'rules',
       body: newCirculatiuonPolicy
-    })
+    });
   },
   getApi() {
     return cy.getCirculationRules();

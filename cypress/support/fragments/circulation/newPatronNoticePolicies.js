@@ -1,17 +1,17 @@
-import getRandomPostfix from "../../utils/stringTools";
-import { Button, TextField, TextArea, NavListItem, Checkbox, Select, Section, Link } from "../../../../interactors";
+import getRandomPostfix from '../../utils/stringTools';
+import { Button, TextField, TextArea, NavListItem, Checkbox, Select, Section, Link } from '../../../../interactors';
 
-const actionsButton = Button("Actions");
-const addNoticeButton = Button("Add notice");
-const nameField = TextField({ id: "notice_policy_name" });
-const templateIdSelect = Select({ name: "loanNotices[0].templateId" });
-const formatSelect = Select({ name: "loanNotices[0].format" });
-const actionSelect = Select({ name: "loanNotices[0].sendOptions.sendWhen" });
+const actionsButton = Button('Actions');
+const addNoticeButton = Button('Add notice');
+const nameField = TextField({ id: 'notice_policy_name' });
+const templateIdSelect = Select({ name: 'loanNotices[0].templateId' });
+const formatSelect = Select({ name: 'loanNotices[0].format' });
+const actionSelect = Select({ name: 'loanNotices[0].sendOptions.sendWhen' });
 
 export default {
   defaultUiPatronNoticePolicies: {
     name: `Test_notice_${getRandomPostfix()}`,
-    description: "Created by autotest team",
+    description: 'Created by autotest team',
     // optional properties:
     templateId: null,
     action: null,
@@ -23,13 +23,13 @@ export default {
   },
 
   createPolicy(patronNoticePolicy) {
-    cy.do(Button({ id: "clickable-create-entry" }).click());
+    cy.do(Button({ id: 'clickable-create-entry' }).click());
     this.fillGeneralInformation(patronNoticePolicy);
   },
 
   addNotice(patronNoticePolicy) {
     cy.do([
-      Section({ id: "editLoanNotices" }).find(addNoticeButton).click(),
+      Section({ id: 'editLoanNotices' }).find(addNoticeButton).click(),
       templateIdSelect.choose(patronNoticePolicy.templateId),
       formatSelect.choose(patronNoticePolicy.format),
       actionSelect.choose(patronNoticePolicy.action),
@@ -39,8 +39,8 @@ export default {
   fillGeneralInformation: (patronNoticePolicy) => {
     cy.do([
       nameField.fillIn(patronNoticePolicy.name),
-      Checkbox({ id: "notice_policy_active" }).click(),
-      TextArea({ id: "notice_policy_description" }).fillIn(
+      Checkbox({ id: 'notice_policy_active' }).click(),
+      TextArea({ id: 'notice_policy_description' }).fillIn(
         patronNoticePolicy.description
       ),
     ]);
@@ -48,7 +48,7 @@ export default {
 
   savePolicy: () => {
     cy.do([
-      Button({ id: "footer-save-entity" }).click()
+      Button({ id: 'footer-save-entity' }).click()
     ]);
   },
 
@@ -64,7 +64,7 @@ export default {
     cy.do([
       NavListItem(patronNoticePolicy.name).click(),
       actionsButton.click(),
-      Button({ id: "dropdown-clickable-edit-item" }).click(),
+      Button({ id: 'dropdown-clickable-edit-item' }).click(),
     ]);
     this.fillGeneralInformation(patronNoticePolicy);
   },
@@ -72,9 +72,9 @@ export default {
   duplicatePolicy: () => {
     cy.do([
       actionsButton.click(),
-      Button({ id: "dropdown-clickable-duplicate-item" }).click(),
-      nameField.fillIn("DUPLICATE"),
-      Button({ id: "footer-save-entity" }).click(),
+      Button({ id: 'dropdown-clickable-duplicate-item' }).click(),
+      nameField.fillIn('DUPLICATE'),
+      Button({ id: 'footer-save-entity' }).click(),
     ]);
   },
 
@@ -85,8 +85,8 @@ export default {
   deletePolicy: () => {
     cy.do([
       actionsButton.click(),
-      Button({ id: "dropdown-clickable-delete-item" }).click(),
-      Button({ id: "clickable-delete-item-confirmation-confirm" }).click(),
+      Button({ id: 'dropdown-clickable-delete-item' }).click(),
+      Button({ id: 'clickable-delete-item-confirmation-confirm' }).click(),
     ]);
   },
 };
