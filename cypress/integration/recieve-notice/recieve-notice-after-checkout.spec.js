@@ -44,18 +44,18 @@ describe('test name', () => {
             title: `Pre-checkout instance ${Number(new Date())}`,
           },
           holdings: [{
-              holdingsTypeId: Cypress.env('holdingsTypes')[0].id,
-              permanentLocationId: Cypress.env('locations')[0].id,
-              sourceId: Cypress.env('holdingSources')[0].id,
-            }],
+            holdingsTypeId: Cypress.env('holdingsTypes')[0].id,
+            permanentLocationId: Cypress.env('locations')[0].id,
+            sourceId: Cypress.env('holdingSources')[0].id,
+          }],
           items: [[{
-                barcode: ITEM_BARCODE,
-                missingPieces: '3',
-                numberOfMissingPieces: '3',
-                status: { name: 'Available' },
-                permanentLoanType: { id: Cypress.env('loanTypes')[0].id },
-                materialType: { id: Cypress.env('materialTypes')[0].id },
-              }]],
+            barcode: ITEM_BARCODE,
+            missingPieces: '3',
+            numberOfMissingPieces: '3',
+            status: { name: 'Available' },
+            permanentLoanType: { id: Cypress.env('loanTypes')[0].id },
+            materialType: { id: Cypress.env('materialTypes')[0].id },
+            }]],
         });
       });
     materialTypesSettings.createApi();
