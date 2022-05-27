@@ -23,7 +23,6 @@ export default {
       Button({ id: 'clickable-add-item' }).click(),
       Modal().find(Button('Check out')).click(),
     ]);
-  
     if ( cy.do(Heading('Item not checked out').exists())) {
       cy.do([
         Button('Override').click(),
@@ -31,8 +30,9 @@ export default {
           .find(TextArea({ id: 'textarea-input-64' }))
           .fillIn('Test_comment'),
         Button('Save & close').click(),
-      ])}
-    cy.do(Button('End session').click())
+      ]) 
+    };
+    cy.do(Button('End session').click());
     cy.expect(MultiColumnListRow().exists());
   }
 };

@@ -91,7 +91,6 @@ describe('test name', () => {
       noticePolicyName: testPatronNotice.name,
       materialTypeName: defaultMaterialType.name
     });
-      
     circulationRules.fillInPolicy({
       priorityType: 'g ',
       priorityTypeName: testPatronGroup.group,
@@ -101,12 +100,9 @@ describe('test name', () => {
       requestPolicyName: defaultRequestPolicy.name,
       noticePolicyName: testPatronNotice.name
     });
-  
     circulationRules.saveCirculationRules();
-      
     cy.visit('/checkout');
     checkoutActions.checkOutItem(Cypress.env('users')[0].barcode, ITEM_BARCODE);
-
     cy.visit(TopMenu.circulationLogPath);
     const userBarcode = Cypress.env('users')[0].barcode;
     SearchPane.searchByUserBarcode(userBarcode);
