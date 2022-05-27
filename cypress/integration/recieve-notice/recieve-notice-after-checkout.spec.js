@@ -4,20 +4,20 @@ import newPatronNoticePolicies from '../../support/fragments/circulation/newPatr
 import newPatronNoticeTemplate from '../../support/fragments/circulation/newPatronNoticeTemplate';
 import overdueFinePolicy, { defaultOverdueFinePolicy } from '../../support/fragments/circulation/overdue-fine-policy';
 import requestPolicy, { defaultRequestPolicy } from '../../support/fragments/circulation/request-policy';
-import materialTypesSettings, { defaultMaterialType } from '../../support/fragments/inventory/materialType/materialTypesSettings'
+import materialTypesSettings, { defaultMaterialType } from '../../support/fragments/inventory/materialType/materialTypesSettings';
 import patronGroups from '../../support/fragments/settings/users/patronGroups';
 import generateItemBarcode from '../../support/utils/generateItemBarcode';
 import circulationRules from '../../support/fragments/circulation/circulation-rules';
 import settingsMenu from '../../support/fragments/settingsMenu';
-import { checkOutItem, overrideLoanPolicy } from '../../support/fragments/check-out-actions/check-out-actions';
+import { checkOutItem } from '../../support/fragments/check-out-actions/check-out-actions';
 import SearchPane from '../../support/fragments/circulation-log/searchPane';
 import TopMenu from '../../support/fragments/topMenu';
 
 describe('test name', () => {
-  const testPatronGroup = patronGroups.defaultPatronGroup
-  const testPatronNoticeTemplate = newPatronNoticeTemplate.defaultUiPatronNoticeTemplate
-  const testPatronNotice = newPatronNoticePolicies.defaultUiPatronNoticePolicies
-  let ITEM_BARCODE
+  const testPatronGroup = patronGroups.defaultPatronGroup;
+  const testPatronNoticeTemplate = newPatronNoticeTemplate.defaultUiPatronNoticeTemplate;
+  const testPatronNotice = newPatronNoticePolicies.defaultUiPatronNoticePolicies;
+  let ITEM_BARCODE;
 
   beforeEach(() => {
     ITEM_BARCODE = generateItemBarcode();
@@ -58,31 +58,31 @@ describe('test name', () => {
               }]],
         });
       });
-    materialTypesSettings.createApi()
-    loanPolicy.createApi()
-    requestPolicy.createApi()
-    lostItemFeePolicy.createApi()
-    overdueFinePolicy.createApi()
-    patronGroups.createViaApi(testPatronGroup)
+    materialTypesSettings.createApi();
+    loanPolicy.createApi();
+    requestPolicy.createApi();
+    lostItemFeePolicy.createApi();
+    overdueFinePolicy.createApi();
+    patronGroups.createViaApi(testPatronGroup);
     cy.login(Cypress.env('diku_login'), Cypress.env('diku_password'));
-    cy.visit(settingsMenu.circulationPatronNoticeTemplatesPath)
-    newPatronNoticeTemplate.createTemplate(testPatronNoticeTemplate)
-    newPatronNoticeTemplate.checkTemplate(testPatronNoticeTemplate)
-    cy.visit(settingsMenu.circulationPatronNoticePoliciesPath)
-    newPatronNoticePolicies.createPolicy(testPatronNotice)
-    newPatronNoticePolicies.savePolicy()
-    testPatronNotice.templateId = testPatronNoticeTemplate.name
-    testPatronNotice.format = 'Email'
-    testPatronNotice.action = 'Check out'
-    newPatronNoticePolicies.addNotice(testPatronNotice)
-    newPatronNoticePolicies.savePolicy()
-    newPatronNoticePolicies.checkPolicy(testPatronNotice.name)
+    cy.visit(settingsMenu.circulationPatronNoticeTemplatesPath);
+    newPatronNoticeTemplate.createTemplate(testPatronNoticeTemplate);
+    newPatronNoticeTemplate.checkTemplate(testPatronNoticeTemplate);
+    cy.visit(settingsMenu.circulationPatronNoticePoliciesPath);
+    newPatronNoticePolicies.createPolicy(testPatronNotice);
+    newPatronNoticePolicies.savePolicy();
+    testPatronNotice.templateId = testPatronNoticeTemplate.name;
+    testPatronNotice.format = 'Email';
+    testPatronNotice.action = 'Check out';
+    newPatronNoticePolicies.addNotice(testPatronNotice);
+    newPatronNoticePolicies.savePolicy();
+    newPatronNoticePolicies.checkPolicy(testPatronNotice.name);
   });
 
   it('test', () => {
-      cy.visit(settingsMenu.circulationRulesPath)
-      circulationRules.clearCirculationRules()
-      circulationRules.fillInPriority()
+      cy.visit(settingsMenu.circulationRulesPath);
+      circulationRules.clearCirculationRules();
+      circulationRules.fillInPriority();
       circulationRules.fillInFallbackPolicy({
         loanPolicyName: defaultLoanPolicy.name,
         overdueFinePolicyName: defaultOverdueFinePolicy.name,
@@ -115,9 +115,9 @@ describe('test name', () => {
   });
 
   afterEach(() => {
-    cy.visit(settingsMenu.circulationRulesPath)
-    circulationRules.clearCirculationRules()
-    circulationRules.fillInPriority()
+    cy.visit(settingsMenu.circulationRulesPath);
+    circulationRules.clearCirculationRules();
+    circulationRules.fillInPriority();
     circulationRules.fillInFallbackPolicy({
       loanPolicyName:'example-loan-policy',
       overdueFinePolicyName: 'overdue-fine-policy',
@@ -136,17 +136,17 @@ describe('test name', () => {
     });
     circulationRules.saveCirculationRules();
 
-    materialTypesSettings.deleteApi(defaultMaterialType.id)
-    loanPolicy.deleteApi(defaultLoanPolicy.id)
-    requestPolicy.deleteApi(defaultRequestPolicy.id)
-    lostItemFeePolicy.deleteApi(defaultLostItemFeePolicy.id)
-    overdueFinePolicy.deleteApi(defaultOverdueFinePolicy.id)
-    patronGroups.deleteViaApi(Cypress.env('patronGroupId'))
-    cy.visit(settingsMenu.circulationPatronNoticePoliciesPath)
-    newPatronNoticePolicies.openNoticyToSide(testPatronNotice)
-    newPatronNoticePolicies.deletePolicy()
-    cy.visit(settingsMenu.circulationPatronNoticeTemplatesPath)
-    newPatronNoticeTemplate.openTemplateToSide(testPatronNoticeTemplate)
-    newPatronNoticeTemplate.deleteTemplate()
+    materialTypesSettings.deleteApi(defaultMaterialType.id);
+    loanPolicy.deleteApi(defaultLoanPolicy.id);
+    requestPolicy.deleteApi(defaultRequestPolicy.id);
+    lostItemFeePolicy.deleteApi(defaultLostItemFeePolicy.id);
+    overdueFinePolicy.deleteApi(defaultOverdueFinePolicy.id);
+    patronGroups.deleteViaApi(Cypress.env('patronGroupId'));
+    cy.visit(settingsMenu.circulationPatronNoticePoliciesPath);
+    newPatronNoticePolicies.openNoticyToSide(testPatronNotice);
+    newPatronNoticePolicies.deletePolicy();
+    cy.visit(settingsMenu.circulationPatronNoticeTemplatesPath);
+    newPatronNoticeTemplate.openTemplateToSide(testPatronNoticeTemplate);
+    newPatronNoticeTemplate.deleteTemplate();
 });
 });
