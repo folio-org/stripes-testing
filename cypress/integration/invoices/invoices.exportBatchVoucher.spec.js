@@ -8,6 +8,8 @@ import NewFund from '../../support/fragments/finance/funds/newFund';
 import Funds from '../../support/fragments/finance/funds/funds';
 import DateTools from '../../support/utils/dateTools';
 import FileManager from '../../support/utils/fileManager';
+import SettingsMenu from '../../support/fragments/settingsMenu';
+import SettingsInvoices from '../../support/fragments/invoices/settingsInvoices';
 
 describe('ui-invoices-settings: Export batch voucher', () => {
   const invoice = { ...NewInvoice.defaultUiInvoice };
@@ -34,6 +36,8 @@ describe('ui-invoices-settings: Export batch voucher', () => {
         }
       );
     invoiceLine.subTotal = -subtotalValue;
+    cy.visit(SettingsMenu.invoiceBGConfigPath);
+    SettingsInvoices.selectJsonFormatForVaucher();
     cy.visit(TopMenu.invoicesPath);
   });
 

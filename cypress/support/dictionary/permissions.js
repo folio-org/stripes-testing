@@ -98,4 +98,8 @@ export default {
   uiApproveOrder:{ internal:'ui-orders.order.approve', gui: 'Orders: Approve purchase orders' },
   // Receiving
   uiReceivingViewEditCreate:{ internal:'', gui:'Receiving: View, edit, create' },
+  // Organization
+  viewOrganization:{ internal:'', gui:'Organizations: View' },
+  // Invoice
+  viewEditDeleteInvoiceInvoiceLine:{ internal:'', gui:'Invoice: Can view, edit and delete Invoices and Invoice lines' },
 };
