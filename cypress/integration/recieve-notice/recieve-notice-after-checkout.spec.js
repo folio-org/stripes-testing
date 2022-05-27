@@ -103,7 +103,6 @@ describe('test name', () => {
       });
   
       circulationRules.saveCirculationRules();
-
       
       cy.visit('/checkout');
       checkoutActions.checkOutItem(Cypress.env('users')[0].barcode, ITEM_BARCODE);
