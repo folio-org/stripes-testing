@@ -1,19 +1,19 @@
-import loanPolicy, { defaultLoanPolicy } from "../../support/fragments/circulation/loan-policy";
-import lostItemFeePolicy, { defaultLostItemFeePolicy } from "../../support/fragments/circulation/lost-item-fee-policy";
-import newPatronNoticePolicies from "../../support/fragments/circulation/newPatronNoticePolicies";
-import newPatronNoticeTemplate from "../../support/fragments/circulation/newPatronNoticeTemplate";
-import overdueFinePolicy, { defaultOverdueFinePolicy } from "../../support/fragments/circulation/overdue-fine-policy";
-import requestPolicy, { defaultRequestPolicy } from "../../support/fragments/circulation/request-policy";
-import materialTypesSettings, { defaultMaterialType } from "../../support/fragments/inventory/materialType/materialTypesSettings"
-import patronGroups from "../../support/fragments/settings/users/patronGroups";
-import generateItemBarcode from "../../support/utils/generateItemBarcode";
-import circulationRules from "../../support/fragments/circulation/circulation-rules";
-import settingsMenu from "../../support/fragments/settingsMenu";
-import { checkOutItem, overrideLoanPolicy } from "../../support/fragments/check-out-actions/check-out-actions";
-import SearchPane from "../../support/fragments/circulation-log/searchPane";
-import TopMenu from "../../support/fragments/topMenu";
+import loanPolicy, { defaultLoanPolicy } from '../../support/fragments/circulation/loan-policy';
+import lostItemFeePolicy, { defaultLostItemFeePolicy } from '../../support/fragments/circulation/lost-item-fee-policy';
+import newPatronNoticePolicies from '../../support/fragments/circulation/newPatronNoticePolicies';
+import newPatronNoticeTemplate from '../../support/fragments/circulation/newPatronNoticeTemplate';
+import overdueFinePolicy, { defaultOverdueFinePolicy } from '../../support/fragments/circulation/overdue-fine-policy';
+import requestPolicy, { defaultRequestPolicy } from '../../support/fragments/circulation/request-policy';
+import materialTypesSettings, { defaultMaterialType } from '../../support/fragments/inventory/materialType/materialTypesSettings'
+import patronGroups from '../../support/fragments/settings/users/patronGroups';
+import generateItemBarcode from '../../support/utils/generateItemBarcode';
+import circulationRules from '../../support/fragments/circulation/circulation-rules';
+import settingsMenu from '../../support/fragments/settingsMenu';
+import { checkOutItem, overrideLoanPolicy } from '../../support/fragments/check-out-actions/check-out-actions';
+import SearchPane from '../../support/fragments/circulation-log/searchPane';
+import TopMenu from '../../support/fragments/topMenu';
 
-describe("test name", () => {
+describe('test name', () => {
   const testPatronGroup = patronGroups.defaultPatronGroup
   const testPatronNoticeTemplate = newPatronNoticeTemplate.defaultUiPatronNoticeTemplate
   const testPatronNotice = newPatronNoticePolicies.defaultUiPatronNoticePolicies
@@ -36,25 +36,25 @@ describe("test name", () => {
         });
       })
       .then(() => {
-        cy.getUserServicePoints(Cypress.env("users")[0].id);
+        cy.getUserServicePoints(Cypress.env('users')[0].id);
 
         cy.createInstance({
           instance: {
-            instanceTypeId: Cypress.env("instanceTypes")[0].id,
+            instanceTypeId: Cypress.env('instanceTypes')[0].id,
             title: `Pre-checkout instance ${Number(new Date())}`,
           },
           holdings: [{
-              holdingsTypeId: Cypress.env("holdingsTypes")[0].id,
-              permanentLocationId: Cypress.env("locations")[0].id,
-              sourceId: Cypress.env("holdingSources")[0].id,
+              holdingsTypeId: Cypress.env('holdingsTypes')[0].id,
+              permanentLocationId: Cypress.env('locations')[0].id,
+              sourceId: Cypress.env('holdingSources')[0].id,
             }],
           items: [[{
                 barcode: ITEM_BARCODE,
-                missingPieces: "3",
-                numberOfMissingPieces: "3",
-                status: { name: "Available" },
-                permanentLoanType: { id: Cypress.env("loanTypes")[0].id },
-                materialType: { id: Cypress.env("materialTypes")[0].id },
+                missingPieces: '3',
+                numberOfMissingPieces: '3',
+                status: { name: 'Available' },
+                permanentLoanType: { id: Cypress.env('loanTypes')[0].id },
+                materialType: { id: Cypress.env('materialTypes')[0].id },
               }]],
         });
       });
@@ -64,7 +64,7 @@ describe("test name", () => {
     lostItemFeePolicy.createApi()
     overdueFinePolicy.createApi()
     patronGroups.createViaApi(testPatronGroup)
-    cy.login(Cypress.env("diku_login"), Cypress.env("diku_password"));
+    cy.login(Cypress.env('diku_login'), Cypress.env('diku_password'));
     cy.visit(settingsMenu.circulationPatronNoticeTemplatesPath)
     newPatronNoticeTemplate.createTemplate(testPatronNoticeTemplate)
     newPatronNoticeTemplate.checkTemplate(testPatronNoticeTemplate)
@@ -79,7 +79,7 @@ describe("test name", () => {
     newPatronNoticePolicies.checkPolicy(testPatronNotice.name)
   });
 
-  it("test", () => {
+  it('test', () => {
       cy.visit(settingsMenu.circulationRulesPath)
       circulationRules.clearCirculationRules()
       circulationRules.fillInPriority()
@@ -105,11 +105,11 @@ describe("test name", () => {
       circulationRules.saveCirculationRules();
 
       
-      cy.visit("/checkout");
-      checkOutItem(Cypress.env("users")[0].barcode, ITEM_BARCODE);
+      cy.visit('/checkout');
+      checkOutItem(Cypress.env('users')[0].barcode, ITEM_BARCODE);
 
       cy.visit(TopMenu.circulationLogPath);
-      const userBarcode = Cypress.env("users")[0].barcode;
+      const userBarcode = Cypress.env('users')[0].barcode;
       SearchPane.searchByUserBarcode(userBarcode);
       SearchPane.verifyResultCells();
   });
