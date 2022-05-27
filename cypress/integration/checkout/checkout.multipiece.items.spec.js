@@ -11,17 +11,17 @@ import ConfirmMultipieceCheckOutModal from '../../support/fragments/checkout/con
 import InventoryHoldings from '../../support/fragments/inventory/holdings/inventoryHoldings';
 import UsersEditPage from '../../support/fragments/users/usersEditPage';
 import Checkout from '../../support/fragments/checkout/checkout';
+import inventoryInstances from '../../support/fragments/inventory/inventoryInstances';
 
 describe('Check Out', () => {
   let user = {};
   let userBarcode = '';
   const instanceTitle = `autotest_instance_title_${getRandomPostfix()}`;
   const testItems = [];
-  const descriptionOfPiece = `autotest_description_${getRandomPostfix()}`;
+  const defautlDescriptionOfPiece = `autotest_description_${getRandomPostfix()}`;
   const missingPieceDescription = `autotest_description_${getRandomPostfix()}`;
   let servicePoint;
   let testInstanceIds;
-  let instanceId;
 
   beforeEach(() => {
     let source;
@@ -38,67 +38,53 @@ describe('Check Out', () => {
       })
       .then(() => {
         cy.login(user.username, user.password, { path: TopMenu.checkOutPath, waiter: Checkout.waitLoading });
-        cy.getAdminToken()
-          .then(() => {
-            cy.getLoanTypes({ limit: 1 });
-            cy.getMaterialTypes({ limit: 1 });
-            cy.getLocations({ limit: 2 });
-            cy.getHoldingTypes({ limit: 2 });
-            source = InventoryHoldings.getHoldingSources({ limit: 1 });
-            cy.getInstanceTypes({ limit: 1 });
-            cy.getUsers({ limit: 1, query: `"personal.lastName"="${user.username}" and "active"="true"` })
-              .then((users) => {
-                userBarcode = users[0].barcode;
-              });
+        cy.getAdminToken().then(() => {
+          cy.getLoanTypes({ limit: 1 });
+          cy.getMaterialTypes({ limit: 1 });
+          cy.getLocations({ limit: 2 });
+          cy.getHoldingTypes({ limit: 2 });
+          source = InventoryHoldings.getHoldingSources({ limit: 1 });
+          cy.getInstanceTypes({ limit: 1 });
+          cy.getUsers({ limit: 1, query: `"personal.lastName"="${user.username}" and "active"="true"` })
+            .then((users) => {
+              userBarcode = users[0].barcode;
+            });
+        }).then(() => {
+          const getTestItem = (specialNumberOfPieces, discriptionOfPiece = defautlDescriptionOfPiece, hasMissingPieces) => {
+            const defaultItem = {
+              barcode: Helper.getRandomBarcode(),
+              numberOfPieces: specialNumberOfPieces,
+              status: { name: 'Available' },
+              permanentLoanType: { id: Cypress.env('loanTypes')[0].id },
+              materialType: { id: Cypress.env('materialTypes')[0].id },
+              discriptionOfPiece
+            };
+            if (hasMissingPieces) {
+              defaultItem.numberOfMissingPieces = '2';
+              defaultItem.missingPieces = missingPieceDescription;
+            }
+            return defaultItem;
+          };
+          testItems.push(getTestItem('1', true, false));
+          testItems.push(getTestItem('3', true, false));
+          testItems.push(getTestItem('2', true, true));
+          testItems.push(getTestItem('1', false, true));
+          inventoryInstances.createInstanceWithGivenIdsViaApi({
+            instance: {
+              instanceTypeId: Cypress.env('instanceTypes')[0].id,
+              title: instanceTitle
+            },
+            holdings: [{
+              holdingsTypeId: Cypress.env('holdingsTypes')[0].id,
+              permanentLocationId: Cypress.env('locations')[0].id,
+              sourceId: source.id
+            }],
+            items: [testItems],
           })
-          .then(() => {
-            const getTestItem = (specialNumberOfPieces, hasDiscription = descriptionOfPiece, hasMissingPieces) => {
-              const defaultItem = {
-                id: uuid(),
-                barcode: Helper.getRandomBarcode(),
-                numberOfPieces: specialNumberOfPieces,
-                status: { name: 'Available' },
-                permanentLoanType: { id: Cypress.env('loanTypes')[0].id },
-                materialType: { id: Cypress.env('materialTypes')[0].id }
-              };
-              if (hasDiscription) {
-                defaultItem.descriptionOfPieces = descriptionOfPiece;
-              }
-              if (hasMissingPieces) {
-                defaultItem.numberOfMissingPieces = '2';
-                defaultItem.missingPieces = missingPieceDescription;
-              }
-              return defaultItem;
-            };
-            testItems.push(getTestItem('1', true, false));
-            testItems.push(getTestItem('3', true, false));
-            testItems.push(getTestItem('2', true, true));
-            testItems.push(getTestItem('1', false, true));
-            testInstanceIds = {
-              instanceId: uuid(),
-              holdingsId: uuid(),
-              // itemIds: testItems.map(testItem => testItem.id)
-            };
-            cy.createInstance({
-              instance: {
-                id: testInstanceIds.instanceId,
-                instanceTypeId: Cypress.env('instanceTypes')[0].id,
-                title: instanceTitle,
-                instanceId: testInstanceIds.instanceId
-              },
-              holdings: [{
-                id: testInstanceIds.holdingsId,
-                holdingsTypeId: Cypress.env('holdingsTypes')[0].id,
-                permanentLocationId: Cypress.env('locations')[0].id,
-                sourceId: source.id,
-                holdingId: testInstanceIds.holdingsId,
-              }],
-              items: [testItems],
-            })
-              .then(specialInstanceId => {
-                instanceId = specialInstanceId;
-              });
-          });
+            .then(specialInstanceIds => {
+              testInstanceIds = specialInstanceIds;
+            });
+        });
       });
   });
 

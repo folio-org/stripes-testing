@@ -104,6 +104,7 @@ Cypress.Commands.add('getInstanceIdentifierTypes', (searchParams) => {
     });
 });
 
+// Depricated, usecreateInstanceWithGivenIds instead
 Cypress.Commands.add('createInstance', ({ instance, holdings = [], items = [] }) => {
   const { instanceId = uuid() } = instance;
 
@@ -136,22 +137,6 @@ Cypress.Commands.add('createInstance', ({ instance, holdings = [], items = [] })
   // { instanceId, [holdingId, [itemIds]]; }
 });
 
-//--
-function createInstanceWithGivenIds({ instance, holdings = [], items = [] }) {
-  const ids = { instanceId: null, holdingsIds: [], itemsIds: [] };
-  ids.instanceId = instance.instanceId;
-  holdings.forEach(holding => {
-    ids.holdingsIds.push(holding.holdingId);
-  });
-  items.forEach(item => {
-    ids.itemsIds.push(item.itemId);
-  });
-  return cy.createInstance({ instance, holdings, items }).then(() => {
-    return ids;
-  });
-}
-//--
-
 Cypress.Commands.add('updateInstance', requestData => {
   cy
     .okapiRequest({
@@ -165,11 +150,10 @@ Cypress.Commands.add('updateInstance', requestData => {
   return cy.get('@instanceId');
 });
 
+// TODO: move preparing of IDs from createInstanceWithGivenIds into createHolding
 Cypress.Commands.add('createHolding', ({ holding, items = [] }) => {
   const { holdingId = uuid() } = holding;
-  cy.log('before delete' + JSON.stringify(holding));
   delete holding.holdingId;
-  cy.log('after delete' + JSON.stringify(holding));
 
   const itemIds = [];
   const holdingsIds = [];

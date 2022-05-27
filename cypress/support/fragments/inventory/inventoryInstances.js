@@ -115,5 +115,44 @@ export default {
         cy.deleteHoldingRecord(instance.holdings[0].id);
         cy.deleteInstanceApi(instance.id);
       });
+  },
+  createInstanceWithGivenIdsViaApi: ({ instance, holdings = [], items = [] }) => {
+    const ids = {};
+    const instanceWithSpecifiedNewId = { ...instance, id: uuid() };
+    ids.instanceId = instanceWithSpecifiedNewId.id;
+
+    cy.wrap(cy.okapiRequest({
+      method: 'POST',
+      path: 'inventory/instances',
+      body: { instanceWithSpecifiedNewId }
+    })).then(() => {
+      ids.holdingIds = [];
+      cy.wrap(holdings.forEach(holding => {
+        const holdingWithIds = { ...holding, id: uuid(), instanceid: instanceWithSpecifiedNewId.id };
+        cy.wrap(cy.okapiRequest({
+          method: 'POST',
+          path: 'holdings-storage/holdings',
+          body: { holdingWithIds }
+        })).then(() => {
+          const itemIds = [];
+          cy.wrap(items.forEach(item => {
+            const itemWithIds = { ...item, id: uuid(), holdingsRecordId: holdingWithIds.id };
+            itemIds.push(itemWithIds.id);
+
+            cy.okapiRequest({
+              method: 'POST',
+              path: 'inventory/items',
+              body: { itemWithIds }
+            });
+          })).then(() => {
+            ids.holdingIds.push({ id: holdingWithIds.id, itemIds });
+          });
+        });
+      })).then(() => {
+        cy.wrap(ids).as('ids');
+      });
+    });
+    return cy.get('@ids');
   }
+
 };
