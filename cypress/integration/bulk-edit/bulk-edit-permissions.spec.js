@@ -8,7 +8,8 @@ import BulkEditSearchPane from '../../support/fragments/bulk-edit/bulk-edit-sear
 import devTeams from '../../support/dictionary/devTeams';
 
 let userWthViewEditPermissions;
-let userWithViewPermissions;
+let userWithCsvViewPermission;
+let userWithInAppViewPermission;
 
 describe('ui-users: BULK EDIT permissions', () => {
   before('create user', () => {
@@ -17,21 +18,19 @@ describe('ui-users: BULK EDIT permissions', () => {
       permissions.uiUsersViewProfile.gui,
       permissions.uiUsersPermissions.gui,
     ])
-      .then(userProperties => {
-        userWthViewEditPermissions = userProperties;
-      });
+      .then(userProperties => { userWthViewEditPermissions = userProperties; });
 
-    cy.createTempUser([
-      permissions.bulkEditCsvView.gui,
-    ])
-      .then(userProperties => {
-        userWithViewPermissions = userProperties;
-      });
+    cy.createTempUser([permissions.bulkEditCsvView.gui])
+      .then(userProperties => { userWithCsvViewPermission = userProperties; });
+
+    cy.createTempUser([permissions.bulkEditView.gui])
+      .then(userProperties => { userWithInAppViewPermission = userProperties; });
   });
 
   after('Delete all data', () => {
     cy.deleteUser(userWthViewEditPermissions.userId);
-    cy.deleteUser(userWithViewPermissions.userId);
+    cy.deleteUser(userWithCsvViewPermission.userId);
+    cy.deleteUser(userWithInAppViewPermission.userId);
   });
 
 
@@ -53,9 +52,16 @@ describe('ui-users: BULK EDIT permissions', () => {
   });
 
   it('C350903 Verify "Bulk Edit: CSV - View" permissions', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
-    cy.login(userWithViewPermissions.username, userWithViewPermissions.password);
+    cy.login(userWithCsvViewPermission.username, userWithCsvViewPermission.password);
     cy.visit(TopMenu.bulkEditPath);
 
-    BulkEditSearchPane.verifyItemsForOnlyViewPermission();
+    BulkEditSearchPane.verifyCsvViewPermission();
+  });
+
+  it('C350936 Verify "Bulk edit: in app - view" permissions', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
+    cy.login(userWithInAppViewPermission.username, userWithInAppViewPermission.password);
+    cy.visit(TopMenu.bulkEditPath);
+
+    BulkEditSearchPane.verifyInAppViewPermission();
   });
 });
