@@ -15,6 +15,7 @@ export const MultiColumnListRow = HTML.extend('multi column list row')
     rowIndexInParent: el => el.getAttribute('data-row-index'),
     // indexRow filter is a workaround for folio parts where we have data-row-inner=true (for some reason)
     indexRow: el => el.parentElement.getAttribute('data-row-index'),
+    ariaRowIndex: el => +el.getAttribute('aria-rowindex'),
   });
 
 export const MultiColumnListCell = HTML.extend('multi column list cell')
