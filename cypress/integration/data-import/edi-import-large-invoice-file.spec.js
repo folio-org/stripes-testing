@@ -1,5 +1,3 @@
-/// <reference types="cypress" />
-
 import TestTypes from '../../support/dictionary/testTypes';
 import FieldMappingProfiles from '../../support/fragments/data_import/mapping_profiles/fieldMappingProfiles';
 import getRandomPostfix from '../../support/utils/stringTools';
@@ -13,7 +11,6 @@ import TopMenu from '../../support/fragments/topMenu';
 import NewMappingProfile from '../../support/fragments/data_import/mapping_profiles/newMappingProfile';
 import InvoiceView from '../../support/fragments/invoices/invoiceView';
 
-// TODO: https://issues.folio.org/browse/UIDATIMP-1167
 describe('ui-data-import: Import a large EDIFACT invoice file', () => {
 // unique name for profiles
   const mappingProfileName = `autoTestMappingProf.${getRandomPostfix()}`;

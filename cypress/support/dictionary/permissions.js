@@ -1,4 +1,10 @@
 export default {
+  // bulk edit
+  bulkEditView: { internal: 'ui-bulk-edit.app-view', gui: 'Bulk Edit: In app - View' },
+  bulkEditEdit: { internal: 'ui-bulk-edit.app-edit', gui: 'Bulk Edit: In app - Edit' },
+  bulkEditCsvView: { internal: 'ui-bulk-edit.view', gui: 'Bulk Edit: (CSV) View' },
+  bulkEditCsvEdit: { internal: 'ui-bulk-edit.edit', gui: 'Bulk Edit: (CSV) Edit' },
+  bulkEditCsvDelete: { internal: 'ui-bulk-edit.delete', gui: 'Bulk Edit: (CSV) Delete' },
   // eHoldings
   uieHoldingsRecordsEdit: { internal: 'ui-eholdings.records.edit', gui:'eHoldings: Can edit providers, packages, titles detail records' },
   uieHoldingsTitlesPackagesCreateDelete: { internal: 'ui-eholdings.titles-packages.create-delete', gui: 'eHoldings: Can create and delete custom packages and titles' },
@@ -42,7 +48,7 @@ export default {
   uiTenantSettingsSettingsLocation:{ internal: 'ui-tenant-settings.settings.location', gui:'Settings (tenant): Can create, edit and remove locations' },
   // DataImport
   dataImportUploadAll:{ internal: 'data-import.upload.all', gui:'Data Import File Upload - all permissions' },
-  moduleDataImportEnabled:{ internal: 'module.data-import.enabled', gui:'Data import: all permissions' },
+  moduleDataImportEnabled:{ internal: 'module.data-import.enabled', gui:'Data import: Can upload files, import, and view logs' },
   settingsDataImportEnabled:{ internal: 'settings.data-import.enabled', gui:'Settings (Data import): Can view, create, edit, and remove' },
   // Storage
   converterStorageAll:{ internal: 'converter-storage.all', gui:'Data Import Converter Storage - all permissions' },
@@ -60,6 +66,9 @@ export default {
   uiUserRequestsAll: { internal: 'ui-users.requests.all', gui: 'Users: View requests' },
   uiUsersViewLoans: { internal: 'ui-users.loans.view', gui: 'Users: User loans view' },
   uiUsersDeclareItemLost: { internal: 'ui-users.loans.declare-item-lost', gui: 'Users: User loans declare lost' },
+  uiUsersEditProfile: { internal: 'ui-users.edit', gui: 'Users: Can edit user profile' },
+  uiUsersViewProfile: { internal: 'ui-users.view', gui: 'Users: Can view user profile' },
+  uiUsersPermissions: { internal: 'ui-users.editperms', gui: 'Users: Can assign and unassign permissions to users' },
   // Remote Storage
   remoteStorageCRUD: { internal: '', gui: 'Settings (Remote storage): Can create, edit, delete remote storage settings' },
   // Requests
@@ -79,5 +88,9 @@ export default {
   // Checkout
   checkoutAll: { internal: '', gui: 'Check out: All permissions' },
   // Checkin
-  checkinAll: { internal: '', gui: 'Check in: All permissions' }
+  checkinAll: { internal: '', gui: 'Check in: All permissions' },
+  // Organization
+  viewOrganization:{ internal:'', gui:'Organizations: View' },
+  // Invoice
+  viewEditDeleteInvoiceInvoiceLine:{ internal:'', gui:'Invoice: Can view, edit and delete Invoices and Invoice lines' },
 };

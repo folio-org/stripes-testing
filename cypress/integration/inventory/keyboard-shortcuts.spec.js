@@ -2,6 +2,7 @@ import TopMenu from '../../support/fragments/topMenu';
 import testTypes from '../../support/dictionary/testTypes';
 import InventoryMainButton from '../../support/fragments/inventory/inventoryMainButton';
 import permissions from '../../support/dictionary/permissions';
+import devTeams from '../../support/dictionary/devTeams';
 
 let userId = '';
 
@@ -21,7 +22,7 @@ describe('ui-inventory: keyboard shortcut', () => {
     cy.deleteUser(userId);
   });
 
-  it('C345297 Keyboard Shortcut. Access to drop down menu', { tags: [testTypes.smoke] }, () => {
+  it('C345297 Keyboard Shortcut. Access to drop down menu', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
     InventoryMainButton.verifyInventoryDropdownIsShown('false');
 
     InventoryMainButton.openInventoryMenu();

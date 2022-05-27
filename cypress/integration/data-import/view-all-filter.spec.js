@@ -4,6 +4,7 @@ import { Accordion } from '../../../interactors';
 import getRandomPostfix from '../../support/utils/stringTools';
 import TopMenu from '../../support/fragments/topMenu';
 import FileManager from '../../support/utils/fileManager';
+import TestTypes from '../../support/dictionary/testTypes';
 
 describe('ui-data-import: Filter the "View all" log screen', () => {
   // Path to static file in fixtures
@@ -53,7 +54,7 @@ describe('ui-data-import: Filter the "View all" log screen', () => {
     });
   });
 
-  it('C11113 Filter the "View all" log screen', { tags: '@smoke' }, () => {
+  it('C11113 Filter the "View all" log screen', { tags: [TestTypes.smoke] }, () => {
     LogsViewAll.gotoViewAllPage();
     LogsViewAll.checkByReverseChronologicalOrder();
 
