@@ -1,9 +1,18 @@
 import { Button, Modal, RadioButton, Select } from '../../../../interactors';
 
 export default {
-  verifyItemsForOnlyViewPermission() {
+  verifyCsvViewPermission() {
     cy.expect([
       RadioButton('Inventory - items').has({ disabled: true }),
+      Select('Record identifier').has({ disabled: true }),
+      Button('or choose file').has({ disabled: true }),
+      Button('Actions').absent()
+    ]);
+  },
+
+  verifyInAppViewPermission() {
+    cy.expect([
+      RadioButton('Inventory - items').has({ disabled: false }),
       Select('Record identifier').has({ disabled: true }),
       Button('or choose file').has({ disabled: true }),
       Button('Actions').absent()
