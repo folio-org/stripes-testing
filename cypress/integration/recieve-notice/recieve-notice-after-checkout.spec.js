@@ -9,7 +9,7 @@ import patronGroups from '../../support/fragments/settings/users/patronGroups';
 import generateItemBarcode from '../../support/utils/generateItemBarcode';
 import circulationRules from '../../support/fragments/circulation/circulation-rules';
 import settingsMenu from '../../support/fragments/settingsMenu';
-import { checkOutItem } from '../../support/fragments/check-out-actions/check-out-actions';
+import checkoutActions from '../../support/fragments/check-out-actions/check-out-actions';
 import SearchPane from '../../support/fragments/circulation-log/searchPane';
 import TopMenu from '../../support/fragments/topMenu';
 
@@ -106,7 +106,7 @@ describe('test name', () => {
 
       
       cy.visit('/checkout');
-      checkOutItem(Cypress.env('users')[0].barcode, ITEM_BARCODE);
+      checkoutActions.checkOutItem(Cypress.env('users')[0].barcode, ITEM_BARCODE);
 
       cy.visit(TopMenu.circulationLogPath);
       const userBarcode = Cypress.env('users')[0].barcode;
