@@ -55,7 +55,7 @@ describe('test name', () => {
             status: { name: 'Available' },
             permanentLoanType: { id: Cypress.env('loanTypes')[0].id },
             materialType: { id: Cypress.env('materialTypes')[0].id },
-            }]],
+          }]],
         });
       });
     materialTypesSettings.createApi();
@@ -80,37 +80,37 @@ describe('test name', () => {
   });
 
   it('test', () => {
-      cy.visit(settingsMenu.circulationRulesPath);
-      circulationRules.clearCirculationRules();
-      circulationRules.fillInPriority();
-      circulationRules.fillInFallbackPolicy({
-        loanPolicyName: defaultLoanPolicy.name,
-        overdueFinePolicyName: defaultOverdueFinePolicy.name,
-        lostItemFeePolicyName: defaultLostItemFeePolicy.name,
-        requestPolicyName: defaultRequestPolicy.name,
-        noticePolicyName: testPatronNotice.name,
-        materialTypeName: defaultMaterialType.name
-      });
+    cy.visit(settingsMenu.circulationRulesPath);
+    circulationRules.clearCirculationRules();
+    circulationRules.fillInPriority();
+    circulationRules.fillInFallbackPolicy({
+      loanPolicyName: defaultLoanPolicy.name,
+      overdueFinePolicyName: defaultOverdueFinePolicy.name,
+      lostItemFeePolicyName: defaultLostItemFeePolicy.name,
+      requestPolicyName: defaultRequestPolicy.name,
+      noticePolicyName: testPatronNotice.name,
+      materialTypeName: defaultMaterialType.name
+    });
       
-      circulationRules.fillInPolicy({
-        priorityType: 'g ',
-        priorityTypeName: testPatronGroup.group,
-        loanPolicyName: defaultLoanPolicy.name,
-        overdueFinePolicyName: defaultOverdueFinePolicy.name,
-        lostItemFeePolicyName: defaultLostItemFeePolicy.name,
-        requestPolicyName: defaultRequestPolicy.name,
-        noticePolicyName: testPatronNotice.name
-      });
+    circulationRules.fillInPolicy({
+      priorityType: 'g ',
+      priorityTypeName: testPatronGroup.group,
+      loanPolicyName: defaultLoanPolicy.name,
+      overdueFinePolicyName: defaultOverdueFinePolicy.name,
+      lostItemFeePolicyName: defaultLostItemFeePolicy.name,
+      requestPolicyName: defaultRequestPolicy.name,
+      noticePolicyName: testPatronNotice.name
+    });
   
-      circulationRules.saveCirculationRules();
+    circulationRules.saveCirculationRules();
       
-      cy.visit('/checkout');
-      checkoutActions.checkOutItem(Cypress.env('users')[0].barcode, ITEM_BARCODE);
+    cy.visit('/checkout');
+    checkoutActions.checkOutItem(Cypress.env('users')[0].barcode, ITEM_BARCODE);
 
-      cy.visit(TopMenu.circulationLogPath);
-      const userBarcode = Cypress.env('users')[0].barcode;
-      SearchPane.searchByUserBarcode(userBarcode);
-      SearchPane.verifyResultCells();
+    cy.visit(TopMenu.circulationLogPath);
+    const userBarcode = Cypress.env('users')[0].barcode;
+    SearchPane.searchByUserBarcode(userBarcode);
+    SearchPane.verifyResultCells();
   });
 
   afterEach(() => {
@@ -147,5 +147,5 @@ describe('test name', () => {
     cy.visit(settingsMenu.circulationPatronNoticeTemplatesPath);
     newPatronNoticeTemplate.openTemplateToSide(testPatronNoticeTemplate);
     newPatronNoticeTemplate.deleteTemplate();
-});
+  });
 });
