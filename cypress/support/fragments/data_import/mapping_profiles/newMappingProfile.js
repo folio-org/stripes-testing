@@ -108,6 +108,8 @@ export default {
     cy.do(Button('Add statistical code').click());
     cy.wait('@getTypes');
     cy.do(TextField('Statistical code').fillIn('"ARL (Collection stats): books - Book, print (books)"'));
+    // wait will be add uuid for acceptedValues
+    cy.wait(1000);
   },
 
   fillHoldingsMappingProfile() {

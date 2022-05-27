@@ -22,6 +22,7 @@ describe('Manage holding records through quickmarc editor', () => {
     InventoryActions.import();
     // TODO: redesign to api step
     InventorySteps.addMarcHoldingRecord();
+    // TODO: https://issues.folio.org/browse/UIIN-2044
     HoldingsRecordView.editInQuickMarc();
     QuickMarcEditor.waitLoading();
   });

@@ -18,6 +18,7 @@ const saveAndCloseButton = Button('Save and close');
 const rootSection = Section({ id: 'instance-form' });
 const actionsButton = Button('Actions');
 const value = `test.${getRandomPostfix()}`;
+const identifierAccordion = Accordion('Identifier');
 
 export default {
   close:() => cy.do(closeButton.click()),
@@ -81,12 +82,15 @@ export default {
   },
 
   addIdentifier:(identifier) => {
-    cy.do([
-      Button('Add identifier').click(),
-      Accordion('Identifier').find(Select({ name:'identifiers[0].identifierTypeId' })).choose(identifier),
-      TextField({ name:'identifiers[0].value' }).fillIn(value),
-      saveAndCloseButton.click()]);
+    cy.expect(identifierAccordion.exists());
+    cy.do(Button('Add identifier').click());
+    cy.expect(Select('Type*').exists());
+    cy.expect(TextField('Identifier*').exists());
+    cy.do(identifierAccordion.find(Select({ name:'identifiers[0].identifierTypeId' })).choose(identifier));
+    cy.do(TextField({ name:'identifiers[0].value' }).fillIn(value));
+    cy.do(saveAndCloseButton.click());
   },
+
   addPrecedingTitle:(fieldIndex, precedingTitle, isbn, issn) => {
     const fieldNamePref = `precedingTitles[${fieldIndex}]`;
 

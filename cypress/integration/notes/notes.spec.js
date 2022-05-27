@@ -90,12 +90,11 @@ describe('Note creation', () => {
     AgreementDetails.openNoteView(longNote);
     ExistingNoteView.waitLoading();
     ExistingNoteView.checkProperties(longNote);
-    ExistingNoteView.close();
     cy.intercept('note-types?**').as('noteTypesLoading');
     cy.intercept('note-links/domain/agreements/type/agreement/id/**').as('notesLoading');
+    ExistingNoteView.close();
+    cy.wait(['@notesLoading', '@noteTypesLoading'], getLongDelay());
     AgreementDetails.checkNotesCount(1);
-    cy.wait('@notesLoading', getLongDelay());
-    cy.wait('@noteTypesLoading', getLongDelay());
   });
 
   afterEach(() => {
