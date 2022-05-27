@@ -15,7 +15,7 @@ import inventoryInstances from '../../support/fragments/inventory/inventoryInsta
 
 describe('Check Out', () => {
   let user = {};
-  let userBarcode = '';
+  let userBarcode;
   const instanceTitle = `autotest_instance_title_${getRandomPostfix()}`;
   const testItems = [];
   const defautlDescriptionOfPiece = `autotest_description_${getRandomPostfix()}`;
@@ -24,7 +24,46 @@ describe('Check Out', () => {
   let testInstanceIds;
 
   beforeEach(() => {
-    let source;
+    cy.getAdminToken().then(() => {
+      cy.getLoanTypes({ limit: 1 });
+      cy.getMaterialTypes({ limit: 1 });
+      cy.getLocations({ limit: 2 });
+      cy.getHoldingTypes({ limit: 2 });
+      cy.getInstanceTypes({ limit: 1 });
+    }).then(() => {
+      const getTestItem = (specialNumberOfPieces, discriptionOfPiece = defautlDescriptionOfPiece, hasMissingPieces) => {
+        const defaultItem = {
+          barcode: Helper.getRandomBarcode(),
+          numberOfPieces: specialNumberOfPieces,
+          status:  { name: 'Available' },
+          permanentLoanType: { id: Cypress.env('loanTypes')[0].id },
+          materialType: { id: Cypress.env('materialTypes')[0].id },
+          discriptionOfPiece
+        };
+        if (hasMissingPieces) {
+          defaultItem.numberOfMissingPieces = '2';
+          defaultItem.missingPieces = missingPieceDescription;
+        }
+        return defaultItem;
+      };
+      testItems.push(getTestItem('1', true, false));
+      testItems.push(getTestItem('3', true, false));
+      testItems.push(getTestItem('2', true, true));
+      testItems.push(getTestItem('1', false, true));
+      inventoryInstances.createFolioInstanceViaApi({
+        instance: {
+          instanceTypeId: Cypress.env('instanceTypes')[0].id,
+          title: instanceTitle,
+        },
+        holdings: [{
+          holdingsTypeId: Cypress.env('holdingsTypes')[0].id,
+          permanentLocationId: Cypress.env('locations')[0].id,
+        }],
+        items: testItems,
+      }).then(specialInstanceIds => {
+        testInstanceIds = specialInstanceIds;
+      });
+    });
 
     cy.createTempUser([
       permissions.checkoutCirculatingItems.gui,
@@ -37,64 +76,27 @@ describe('Check Out', () => {
           user.userId, servicePoint.body.id);
       })
       .then(() => {
+        cy.getUsers({ limit: 1, query: `"personal.lastName"="${user.username}" and "active"="true"` })
+          .then((users) => {
+            userBarcode = users[0].barcode;
+          });
         cy.login(user.username, user.password, { path: TopMenu.checkOutPath, waiter: Checkout.waitLoading });
-        cy.getAdminToken().then(() => {
-          cy.getLoanTypes({ limit: 1 });
-          cy.getMaterialTypes({ limit: 1 });
-          cy.getLocations({ limit: 2 });
-          cy.getHoldingTypes({ limit: 2 });
-          source = InventoryHoldings.getHoldingSources({ limit: 1 });
-          cy.getInstanceTypes({ limit: 1 });
-          cy.getUsers({ limit: 1, query: `"personal.lastName"="${user.username}" and "active"="true"` })
-            .then((users) => {
-              userBarcode = users[0].barcode;
-            });
-        }).then(() => {
-          const getTestItem = (specialNumberOfPieces, discriptionOfPiece = defautlDescriptionOfPiece, hasMissingPieces) => {
-            const defaultItem = {
-              barcode: Helper.getRandomBarcode(),
-              numberOfPieces: specialNumberOfPieces,
-              status: { name: 'Available' },
-              permanentLoanType: { id: Cypress.env('loanTypes')[0].id },
-              materialType: { id: Cypress.env('materialTypes')[0].id },
-              discriptionOfPiece
-            };
-            if (hasMissingPieces) {
-              defaultItem.numberOfMissingPieces = '2';
-              defaultItem.missingPieces = missingPieceDescription;
-            }
-            return defaultItem;
-          };
-          testItems.push(getTestItem('1', true, false));
-          testItems.push(getTestItem('3', true, false));
-          testItems.push(getTestItem('2', true, true));
-          testItems.push(getTestItem('1', false, true));
-          inventoryInstances.createInstanceWithGivenIdsViaApi({
-            instance: {
-              instanceTypeId: Cypress.env('instanceTypes')[0].id,
-              title: instanceTitle
-            },
-            holdings: [{
-              holdingsTypeId: Cypress.env('holdingsTypes')[0].id,
-              permanentLocationId: Cypress.env('locations')[0].id,
-              sourceId: source.id
-            }],
-            items: [testItems],
-          })
-            .then(specialInstanceIds => {
-              testInstanceIds = specialInstanceIds;
-            });
-        });
       });
   });
 
-  /* after(() => {
-    testInstanceIds.itemIds.forEach(id => cy.deleteItem(id));
-    cy.deleteHoldingRecord(testInstanceIds.holdingsId);
-    cy.deleteInstanceApi(testInstanceIds.instanceId);
+  after(() => {
+    cy.wrap(testInstanceIds.holdingIds.forEach(holdingsId => {
+      cy.wrap(holdingsId.itemIds.forEach(itemId => {
+        cy.deleteItem(itemId);
+      })).then(() => {
+        cy.deleteHoldingRecord(holdingsId.id);
+      });
+    })).then(() => {
+      cy.deleteInstanceApi(testInstanceIds.instanceId);
+    });
     // TODO delete service
     cy.deleteUser(user.userId);
-  }); */
+  });
 
   it('C591 Check out: multipiece items', { tags: [TestTypes.smoke] }, () => {
     const dash = '-';

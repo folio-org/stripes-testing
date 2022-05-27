@@ -1,3 +1,4 @@
+import { source } from 'axe-core';
 import uuid from 'uuid';
 import {
   HTML,
@@ -10,11 +11,28 @@ import {
   TextField,
   Checkbox
 } from '../../../../interactors';
+import InventoryHoldings from './holdings/inventoryHoldings';
 import NewInventoryInstance from './newInventoryInstance';
 
 const rootSection = Section({ id: 'pane-results' });
 const inventoriesList = rootSection.find(MultiColumnList({ id: 'list-inventory' }));
 const actionsButton = rootSection.find(Button('Actions'));
+
+const createInstanceViaAPI = (instanceWithSpecifiedNewId) => cy.okapiRequest({
+  method: 'POST',
+  path: 'inventory/instances',
+  body: instanceWithSpecifiedNewId
+});
+const createHoldingViaAPI = (holdingWithIds) => cy.okapiRequest({
+  method: 'POST',
+  path: 'holdings-storage/holdings',
+  body:  holdingWithIds
+});
+const createItemViaAPI = (itemWithIds) => cy.okapiRequest({
+  method: 'POST',
+  path: 'inventory/items',
+  body:  itemWithIds
+});
 
 export default {
   waitLoading:() => {
@@ -116,40 +134,36 @@ export default {
         cy.deleteInstanceApi(instance.id);
       });
   },
-  createInstanceWithGivenIdsViaApi: ({ instance, holdings = [], items = [] }) => {
-    const ids = {};
-    const instanceWithSpecifiedNewId = { ...instance, id: uuid() };
-    ids.instanceId = instanceWithSpecifiedNewId.id;
-
-    cy.wrap(cy.okapiRequest({
-      method: 'POST',
-      path: 'inventory/instances',
-      body: { instanceWithSpecifiedNewId }
-    })).then(() => {
-      ids.holdingIds = [];
-      cy.wrap(holdings.forEach(holding => {
-        const holdingWithIds = { ...holding, id: uuid(), instanceid: instanceWithSpecifiedNewId.id };
-        cy.wrap(cy.okapiRequest({
-          method: 'POST',
-          path: 'holdings-storage/holdings',
-          body: { holdingWithIds }
-        })).then(() => {
-          const itemIds = [];
-          cy.wrap(items.forEach(item => {
-            const itemWithIds = { ...item, id: uuid(), holdingsRecordId: holdingWithIds.id };
-            itemIds.push(itemWithIds.id);
-
-            cy.okapiRequest({
-              method: 'POST',
-              path: 'inventory/items',
-              body: { itemWithIds }
+  createFolioInstanceViaApi: ({ instance, holdings = [], items = [] }) => {
+    let folioSource;
+    // gett all sources. Expectation - array with 2 items: FOLIO, MARC
+    InventoryHoldings.getHoldingSources().then(holdingsSources => {
+      holdingsSources.forEach(specialSource => {
+        if (specialSource.name === 'FOLIO') {
+          folioSource = specialSource;
+        }
+      });
+    }).then(() => {
+      const ids = {};
+      const instanceWithSpecifiedNewId = { ...instance, id: uuid(), source: folioSource.name };
+      ids.instanceId = instanceWithSpecifiedNewId.id;
+      createInstanceViaAPI(instanceWithSpecifiedNewId).then(() => {
+        ids.holdingIds = [];
+        cy.wrap(holdings.forEach(holding => {
+          const holdingWithIds = { ...holding, id: uuid(), instanceId: instanceWithSpecifiedNewId.id, sourceId: folioSource.id };
+          createHoldingViaAPI(holdingWithIds).then(() => {
+            const itemIds = [];
+            cy.wrap(items.forEach(item => {
+              const itemWithIds = { ...item, id: uuid(), holdingsRecordId: holdingWithIds.id };
+              itemIds.push(itemWithIds.id);
+              createItemViaAPI(itemWithIds);
+            })).then(() => {
+              ids.holdingIds.push({ id: holdingWithIds.id, itemIds });
             });
-          })).then(() => {
-            ids.holdingIds.push({ id: holdingWithIds.id, itemIds });
           });
+        })).then(() => {
+          cy.wrap(ids).as('ids');
         });
-      })).then(() => {
-        cy.wrap(ids).as('ids');
       });
     });
     return cy.get('@ids');
