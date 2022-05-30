@@ -33,7 +33,7 @@ export default {
     cy.do(Button('Save & close').click());
   },
 
-  addServicePointToUser: (servicePointIds, userId, defaultServicePointId) => {
+  addServicePointsToUser: (servicePointIds, userId, defaultServicePointId) => {
     // servicePointIds is array of ids
     cy.okapiRequest({
       method: 'POST',

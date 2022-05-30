@@ -3,12 +3,13 @@ import TestTypes from '../../support/dictionary/testTypes';
 import SearchPane from '../../support/fragments/circulation-log/searchPane';
 import getRandomPostfix from '../../support/utils/stringTools';
 import permissions from '../../support/dictionary/permissions';
-import usersSearchPane from '../../support/fragments/users/usersSearchPane';
-import usersCard from '../../support/fragments/users/usersCard';
-import checkinActions from '../../support/fragments/check-in-actions/checkInActions';
-import checkoutActions from '../../support/fragments/checkout/checkout';
+import UsersSearchPane from '../../support/fragments/users/usersSearchPane';
+import UsersCard from '../../support/fragments/users/usersCard';
+import CheckinActions from '../../support/fragments/check-in-actions/checkInActions';
+import CheckoutActions from '../../support/fragments/checkout/checkout';
 import InventoryHoldings from '../../support/fragments/inventory/holdings/inventoryHoldings';
 import devTeams from '../../support/dictionary/devTeams';
+import UsersEditPage from '../../support/fragments/users/usersEditPage';
 
 const ITEM_BARCODE = `123${getRandomPostfix()}`;
 let userId = '';
@@ -42,7 +43,7 @@ describe('ui-circulation-log', () => {
             });
           })
           .then(() => {
-            cy.addServicePointToUser([Cypress.env('servicePoints')[0].id], userId);
+            UsersEditPage.addServicePointsToUser([Cypress.env('servicePoints')[0].id], userId);
             cy.getUserServicePoints(Cypress.env('users')[0].id);
             cy.createInstance({
               instance: {
@@ -67,7 +68,7 @@ describe('ui-circulation-log', () => {
             });
           })
           .then(() => {
-            checkoutActions.createItemCheckoutApi({
+            CheckoutActions.createItemCheckoutApi({
               itemBarcode: ITEM_BARCODE,
               userBarcode: Cypress.env('users')[0].barcode,
               servicePointId: Cypress.env('userServicePoints')[0].id,
@@ -81,7 +82,7 @@ describe('ui-circulation-log', () => {
   });
 
   after('Delete all data', () => {
-    checkinActions.createItemCheckinApi({
+    CheckinActions.createItemCheckinApi({
       itemBarcode: ITEM_BARCODE,
       servicePointId: Cypress.env('servicePoints')[0].id,
       checkInDate: '2021-09-30T16:14:50.444Z',
@@ -123,18 +124,18 @@ describe('ui-circulation-log', () => {
     cy.visit(TopMenu.usersPath);
 
     // find user
-    usersSearchPane.searchByStatus('Active');
-    usersSearchPane.searchByKeywords(userId);
-    usersSearchPane.openUser(userId);
+    UsersSearchPane.searchByStatus('Active');
+    UsersSearchPane.searchByKeywords(userId);
+    UsersSearchPane.openUser(userId);
 
     // create patron block
     const searchString = `${getRandomPostfix()}`;
     const testDescription = `test ${searchString} description filter`;
 
-    usersCard.openPatronBlocks();
-    usersCard.createPatronBlock();
-    usersCard.fillDescription(testDescription);
-    usersCard.saveAndClose();
+    UsersCard.openPatronBlocks();
+    UsersCard.createPatronBlock();
+    UsersCard.fillDescription(testDescription);
+    UsersCard.saveAndClose();
 
     // verify circulation logs result
     cy.visit(TopMenu.circulationLogPath);

@@ -78,7 +78,7 @@ describe('Check Out', () => {
         user = userProperties;
         servicePoint = NewServicePoint.getDefaulServicePoint();
         ServicePoints.createViaApi(servicePoint.body);
-        UsersEditPage.addServicePointToUser([servicePoint.body.id],
+        UsersEditPage.addServicePointsToUser([servicePoint.body.id],
           user.userId, servicePoint.body.id);
       })
       .then(() => {
