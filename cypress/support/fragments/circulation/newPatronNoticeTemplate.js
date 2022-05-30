@@ -1,9 +1,9 @@
 import getRandomPostfix from '../../utils/stringTools';
 import { Button, TextField, TextArea, KeyValue, Checkbox, Link, Heading } from '../../../../interactors';
 
-const tokenName = 'item.title'
+const tokenName = 'item.title';
 const actionsButton = Button('Actions');
-const tokenButton = Button('{ }')
+const tokenButton = Button('{ }');
 const addTokenButton = Button('Add token');
 const nameField = TextField({ id: 'input-patron-notice-name' });
 const itemTitleCheckbox = Checkbox(`${tokenName}`);
@@ -15,7 +15,7 @@ export default {
     subject: 'Subject_Test',
     body: `Test_email_body {{${tokenName}}}`
   },
-  waitLoading() { cy.expect(Heading('Patron notice templates').exists()) },
+  waitLoading() { cy.expect(Heading('Patron notice templates').exists()); },
 
   createTemplate(patronNoticeTemplate) {
     // cy.intercept('/patron-notice-policy-storage/patron-notice-policies**').as('request-patron-notice-policies')

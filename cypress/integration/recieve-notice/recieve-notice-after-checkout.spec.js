@@ -65,7 +65,6 @@ describe('Recieving notice: Checkout', { tags: [TestTypes.smoke] }, () => {
           departments: [],
         }).then((user) => {
           userLastName = user.personal.lastname
-          userId = user.id;
         });
 
         cy.createInstance({
