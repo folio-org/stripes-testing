@@ -1,37 +1,36 @@
-import uuid from "uuid";
-import generateItemBarcode from "../../support/utils/generateItemBarcode";
-import getRandomPostfix from "../../support/utils/stringTools";
+import uuid from 'uuid';
+import generateItemBarcode from '../../support/utils/generateItemBarcode';
+import getRandomPostfix from '../../support/utils/stringTools';
 
-import TestTypes from "../../support/dictionary/testTypes";
-import TopMenu from "../../support/fragments/topMenu";
-import settingsMenu from "../../support/fragments/settingsMenu";
+import TestTypes from '../../support/dictionary/testTypes';
+import TopMenu from '../../support/fragments/topMenu';
+import settingsMenu from '../../support/fragments/settingsMenu';
 
 import loanPolicy, {
   defaultLoanPolicy,
-} from "../../support/fragments/circulation/loan-policy";
+} from '../../support/fragments/circulation/loan-policy';
 import lostItemFeePolicy, {
   defaultLostItemFeePolicy,
-} from "../../support/fragments/circulation/lost-item-fee-policy";
-import newPatronNoticePolicies from "../../support/fragments/circulation/newPatronNoticePolicies";
-import NewPatronNoticeTemplate from "../../support/fragments/circulation/newPatronNoticeTemplate";
+} from '../../support/fragments/circulation/lost-item-fee-policy';
+import newPatronNoticePolicies from '../../support/fragments/circulation/newPatronNoticePolicies';
+import NewPatronNoticeTemplate from '../../support/fragments/circulation/newPatronNoticeTemplate';
 import overdueFinePolicy, {
   defaultOverdueFinePolicy,
-} from "../../support/fragments/circulation/overdue-fine-policy";
+} from '../../support/fragments/circulation/overdue-fine-policy';
 import requestPolicy, {
   defaultRequestPolicy,
-} from "../../support/fragments/circulation/request-policy";
+} from '../../support/fragments/circulation/request-policy';
 import materialTypesSettings, {
   defaultMaterialType,
-} from "../../support/fragments/inventory/materialType/materialTypesSettings";
-import patronGroups from "../../support/fragments/settings/users/patronGroups";
-import circulationRules from "../../support/fragments/circulation/circulation-rules";
-import checkoutActions from "../../support/fragments/check-out-actions/check-out-actions";
-import SearchPane from "../../support/fragments/circulation-log/searchPane";
+} from '../../support/fragments/inventory/materialType/materialTypesSettings';
+import patronGroups from '../../support/fragments/settings/users/patronGroups';
+import circulationRules from '../../support/fragments/circulation/circulation-rules';
+import checkoutActions from '../../support/fragments/check-out-actions/check-out-actions';
+import SearchPane from '../../support/fragments/circulation-log/searchPane';
 
 // TODO: Add recieving notice in the email box check
-describe("Recieving notice: Checkout", { tags: [TestTypes.smoke] }, () => {
+describe('Recieving notice: Checkout', { tags: [TestTypes.smoke] }, () => {
   let patronGroupId;
-  let userId;
   let userLastName;
 
   const testPatronGroup = patronGroups.defaultPatronGroup;
@@ -58,9 +57,9 @@ describe("Recieving notice: Checkout", { tags: [TestTypes.smoke] }, () => {
           active: true,
           barcode: USER_BARCODE,
           personal: {
-            preferredContactTypeId: "002",
+            preferredContactTypeId: '002',
             lastName: `Test user ${getRandomPostfix()}`,
-            email: "test@folio.org",
+            email: 'test@folio.org',
           },
           patronGroup: patronGroupId,
           departments: [],
@@ -71,23 +70,23 @@ describe("Recieving notice: Checkout", { tags: [TestTypes.smoke] }, () => {
 
         cy.createInstance({
           instance: {
-            instanceTypeId: Cypress.env("instanceTypes")[0].id,
+            instanceTypeId: Cypress.env('instanceTypes')[0].id,
             title: `Automation test instance ${getRandomPostfix()}`,
           },
           holdings: [
             {
-              holdingsTypeId: Cypress.env("holdingsTypes")[0].id,
-              permanentLocationId: Cypress.env("locations")[0].id,
-              sourceId: Cypress.env("holdingSources")[0].id,
+              holdingsTypeId: Cypress.env('holdingsTypes')[0].id,
+              permanentLocationId: Cypress.env('locations')[0].id,
+              sourceId: Cypress.env('holdingSources')[0].id,
             },
           ],
           items: [
             [
               {
                 barcode: ITEM_BARCODE,
-                status: { name: "Available" },
-                permanentLoanType: { id: Cypress.env("loanTypes")[0].id },
-                materialType: { id: Cypress.env("materialTypes")[0].id },
+                status: { name: 'Available' },
+                permanentLoanType: { id: Cypress.env('loanTypes')[0].id },
+                materialType: { id: Cypress.env('materialTypes')[0].id },
               },
             ],
           ],
@@ -111,8 +110,8 @@ describe("Recieving notice: Checkout", { tags: [TestTypes.smoke] }, () => {
     newPatronNoticePolicies.createPolicy(testPatronNotice);
     newPatronNoticePolicies.savePolicy();
     testPatronNotice.templateId = testPatronNoticeTemplate.name;
-    testPatronNotice.format = "Email";
-    testPatronNotice.action = "Check out";
+    testPatronNotice.format = 'Email';
+    testPatronNotice.action = 'Check out';
     newPatronNoticePolicies.addNotice(testPatronNotice);
     newPatronNoticePolicies.savePolicy();
     newPatronNoticePolicies.checkPolicy(testPatronNotice.name);
@@ -131,7 +130,7 @@ describe("Recieving notice: Checkout", { tags: [TestTypes.smoke] }, () => {
       materialTypeName: defaultMaterialType.name,
     });
     circulationRules.fillInPolicy({
-      priorityType: "g ",
+      priorityType: 'g ',
       priorityTypeName: testPatronGroup.group,
       loanPolicyName: defaultLoanPolicy.name,
       overdueFinePolicyName: defaultOverdueFinePolicy.name,
@@ -152,31 +151,31 @@ describe("Recieving notice: Checkout", { tags: [TestTypes.smoke] }, () => {
     circulationRules.clearCirculationRules();
     circulationRules.fillInPriority();
     circulationRules.fillInFallbackPolicy({
-      loanPolicyName: "example-loan-policy",
-      overdueFinePolicyName: "overdue-fine-policy",
-      lostItemFeePolicyName: "lost-item-fee-policy ",
-      requestPolicyName: "allow-all",
-      noticePolicyName: "send-no-notices",
+      loanPolicyName: 'example-loan-policy',
+      overdueFinePolicyName: 'overdue-fine-policy',
+      lostItemFeePolicyName: 'lost-item-fee-policy ',
+      requestPolicyName: 'allow-all',
+      noticePolicyName: 'send-no-notices',
     });
     circulationRules.fillInPolicy({
-      priorityType: "m ",
-      priorityTypeName: "book",
-      loanPolicyName: "one-hour",
-      overdueFinePolicyName: "overdue-fine-policy",
-      lostItemFeePolicyName: "lost-item-fee-policy",
-      requestPolicyName: "allow-all",
-      noticePolicyName: "send-no-notices",
+      priorityType: 'm ',
+      priorityTypeName: 'book',
+      loanPolicyName: 'one-hour',
+      overdueFinePolicyName: 'overdue-fine-policy',
+      lostItemFeePolicyName: 'lost-item-fee-policy',
+      requestPolicyName: 'allow-all',
+      noticePolicyName: 'send-no-notices',
     });
     circulationRules.saveCirculationRules();
-    cy.getUsers({ query: `personal.lastName="${userLastName}"` }).then(() => {
-      Cypress.env("users").forEach((user) => {
+    cy.getUsers({ query: `personal.lastName='${userLastName}'` }).then(() => {
+      Cypress.env('users').forEach((user) => {
         cy.deleteUser(user.id);
       });
     });
     cy.getInstance({
       limit: 1,
       expandAll: true,
-      query: `"items.barcode"=="${ITEM_BARCODE}"`,
+      query: `'items.barcode'=='${ITEM_BARCODE}'`,
     }).then((instance) => {
       cy.deleteItem(instance.items[0].id);
       cy.deleteHoldingRecord(instance.holdings[0].id);
@@ -187,7 +186,7 @@ describe("Recieving notice: Checkout", { tags: [TestTypes.smoke] }, () => {
     requestPolicy.deleteApi(defaultRequestPolicy.id);
     lostItemFeePolicy.deleteApi(defaultLostItemFeePolicy.id);
     overdueFinePolicy.deleteApi(defaultOverdueFinePolicy.id);
-    patronGroups.deleteViaApi(Cypress.env("patronGroupId"));
+    patronGroups.deleteViaApi(Cypress.env('patronGroupId'));
     cy.visit(settingsMenu.circulationPatronNoticePoliciesPath);
     newPatronNoticePolicies.openNoticyToSide(testPatronNotice);
     newPatronNoticePolicies.deletePolicy();
