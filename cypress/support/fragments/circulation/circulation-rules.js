@@ -11,6 +11,9 @@ const calloutMessages = {
 };
 
 export default {
+  defaultcirculationPolicy: {
+    'rulesAsText': 'circulation policy'
+  },
   clearCirculationRules() {
     cy.do(CodeMirror().clear());
   },
@@ -29,19 +32,19 @@ export default {
     this.fillInPolicy(policyData);
   },
   fillInPolicy({
+    priorityType, // 't ', 's ', 'c ', 'b ', 'a ', 'm ', 'g '
     loanPolicyName,
     overdueFinePolicyName,
     lostItemFeePolicyName,
     requestPolicyName,
     noticePolicyName,
-    materialTypeName,
+    priorityTypeName // materialTypeName, patronGroupName...
   }) {
-    if (materialTypeName) {
-      this.fillInCirculationRules('m ');
-      this.clickCirculationRulesHintItem(materialTypeName);
+    if (priorityType) {
+      this.fillInCirculationRules(priorityType);
+      this.clickCirculationRulesHintItem(priorityTypeName);
       this.fillInCirculationRules(': ');
     }
-
     this.fillInCirculationRules('l ');
     this.clickCirculationRulesHintItem(loanPolicyName);
     this.fillInCirculationRules('o ');
@@ -66,6 +69,13 @@ export default {
   checkNoticePolicyAddedToCirculationRules(noticePolicyId) {
     this.getApi().then((circulationRules) => {
       cy.expect(circulationRules.rulesAsText).to.include(`n ${noticePolicyId}`);
+    });
+  },
+  createViaApi(newCirculatiuonPolicy) {
+    cy.okapiRequest({
+      method: 'POST',
+      path: 'rules',
+      body: newCirculatiuonPolicy
     });
   },
   getApi() {

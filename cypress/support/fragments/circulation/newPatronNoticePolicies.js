@@ -1,37 +1,65 @@
 import getRandomPostfix from '../../utils/stringTools';
-import { Button, TextField, TextArea, NavListItem, Checkbox } from '../../../../interactors';
+import { Button, TextField, TextArea, NavListItem, Checkbox, Select, Section, Link } from '../../../../interactors';
 
 const actionsButton = Button('Actions');
+const addNoticeButton = Button('Add notice');
 const nameField = TextField({ id: 'notice_policy_name' });
+const templateIdSelect = Select({ name: 'loanNotices[0].templateId' });
+const formatSelect = Select({ name: 'loanNotices[0].format' });
+const actionSelect = Select({ name: 'loanNotices[0].sendOptions.sendWhen' });
 
 export default {
-  defaultUiPatronNoticePolicies : {
+  defaultUiPatronNoticePolicies: {
     name: `Test_notice_${getRandomPostfix()}`,
     description: 'Created by autotest team',
+    // optional properties:
+    templateId: null,
+    action: null,
+    format: null,
   },
+
+  getPatronNoticePolicyTemplate(patronNoticePolicy, templateId, action) {
+    return { ...patronNoticePolicy, templateId, action };
+  },
+
   createPolicy(patronNoticePolicy) {
     cy.do(Button({ id: 'clickable-create-entry' }).click());
     this.fillGeneralInformation(patronNoticePolicy);
   },
+
+  addNotice(patronNoticePolicy) {
+    cy.do([
+      Section({ id: 'editLoanNotices' }).find(addNoticeButton).click(),
+      templateIdSelect.choose(patronNoticePolicy.templateId),
+      formatSelect.choose(patronNoticePolicy.format),
+      actionSelect.choose(patronNoticePolicy.action),
+    ]);
+  },
+
   fillGeneralInformation: (patronNoticePolicy) => {
     cy.do([
       nameField.fillIn(patronNoticePolicy.name),
       Checkbox({ id: 'notice_policy_active' }).click(),
-      TextArea({ id: 'notice_policy_description' }).fillIn(patronNoticePolicy.description),
+      TextArea({ id: 'notice_policy_description' }).fillIn(
+        patronNoticePolicy.description
+      ),
     ]);
   },
+
   savePolicy: () => {
     cy.do([
-      Button({ id: 'footer-save-entity' }).click(),
-      Button({ icon: 'times' }).click(),
+      Button({ id: 'footer-save-entity' }).click()
     ]);
   },
+
   checkPolicy: (patronNoticePolicyName) => {
     cy.expect(NavListItem(patronNoticePolicyName).exists());
   },
+
   choosePolicy: (patronNoticePolicy) => {
     cy.do(NavListItem(patronNoticePolicy.name).click());
   },
+
   editPolicy(patronNoticePolicy) {
     cy.do([
       NavListItem(patronNoticePolicy.name).click(),
@@ -40,6 +68,7 @@ export default {
     ]);
     this.fillGeneralInformation(patronNoticePolicy);
   },
+
   duplicatePolicy: () => {
     cy.do([
       actionsButton.click(),
@@ -48,11 +77,16 @@ export default {
       Button({ id: 'footer-save-entity' }).click(),
     ]);
   },
+
+  openNoticyToSide(patronNoticePolicy) {
+    cy.do(Link(patronNoticePolicy.name).click())
+  },
+
   deletePolicy: () => {
     cy.do([
       actionsButton.click(),
       Button({ id: 'dropdown-clickable-delete-item' }).click(),
       Button({ id: 'clickable-delete-item-confirmation-confirm' }).click(),
     ]);
-  }
+  },
 };
