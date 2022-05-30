@@ -5,9 +5,11 @@ import UsersSearchPane from '../../support/fragments/users/usersSearchPane';
 import UsersEditPage from '../../support/fragments/users/usersEditPage';
 import UsersCard from '../../support/fragments/users/usersCard';
 import BulkEditSearchPane from '../../support/fragments/bulk-edit/bulk-edit-search-pane';
+import devTeams from '../../support/dictionary/devTeams';
 
 let userWthViewEditPermissions;
-let userWithViewPermissions;
+let userWithCsvViewPermission;
+let userWithInAppViewPermission;
 
 describe('ui-users: BULK EDIT permissions', () => {
   before('create user', () => {
@@ -16,25 +18,23 @@ describe('ui-users: BULK EDIT permissions', () => {
       permissions.uiUsersViewProfile.gui,
       permissions.uiUsersPermissions.gui,
     ])
-      .then(userProperties => {
-        userWthViewEditPermissions = userProperties;
-      });
+      .then(userProperties => { userWthViewEditPermissions = userProperties; });
 
-    cy.createTempUser([
-      permissions.bulkEditCsvView.gui,
-    ])
-      .then(userProperties => {
-        userWithViewPermissions = userProperties;
-      });
+    cy.createTempUser([permissions.bulkEditCsvView.gui])
+      .then(userProperties => { userWithCsvViewPermission = userProperties; });
+
+    cy.createTempUser([permissions.bulkEditView.gui])
+      .then(userProperties => { userWithInAppViewPermission = userProperties; });
   });
 
   after('Delete all data', () => {
     cy.deleteUser(userWthViewEditPermissions.userId);
-    cy.deleteUser(userWithViewPermissions.userId);
+    cy.deleteUser(userWithCsvViewPermission.userId);
+    cy.deleteUser(userWithInAppViewPermission.userId);
   });
 
 
-  it('C350765 Verify BULK EDIT permissions list', { tags: [testTypes.smoke] }, () => {
+  it('C350765 Verify BULK EDIT permissions list', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
     const permissionsToVerify = [
       permissions.bulkEditCsvView.gui,
       permissions.bulkEditCsvEdit.gui,
@@ -51,10 +51,17 @@ describe('ui-users: BULK EDIT permissions', () => {
     UsersCard.verifyPermissions(permissionsToVerify);
   });
 
-  it('C350903 Verify "Bulk Edit: CSV - View" permissions', { tags: [testTypes.smoke] }, () => {
-    cy.login(userWithViewPermissions.username, userWithViewPermissions.password);
+  it('C350903 Verify "Bulk Edit: CSV - View" permissions', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
+    cy.login(userWithCsvViewPermission.username, userWithCsvViewPermission.password);
     cy.visit(TopMenu.bulkEditPath);
 
-    BulkEditSearchPane.verifyItemsForOnlyViewPermission();
+    BulkEditSearchPane.verifyCsvViewPermission();
+  });
+
+  it('C350936 Verify "Bulk edit: in app - view" permissions', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
+    cy.login(userWithInAppViewPermission.username, userWithInAppViewPermission.password);
+    cy.visit(TopMenu.bulkEditPath);
+
+    BulkEditSearchPane.verifyInAppViewPermission();
   });
 });

@@ -9,6 +9,7 @@ import { getLongDelay } from '../../support/utils/cypressTools';
 import permissions from '../../support/dictionary/permissions';
 import getRandomPostfix from '../../support/utils/stringTools';
 import InventoryHoldings from '../../support/fragments/inventory/holdings/inventoryHoldings';
+import devTeams from '../../support/dictionary/devTeams';
 
 let userId = '';
 const instanceTitle = `Inventory export test ${Number(new Date())}`;
@@ -81,7 +82,7 @@ describe('ui-inventory: exports', () => {
     FileManager.deleteFolder(Cypress.config('downloadsFolder'));
   });
 
-  it('C9284 verifies export UUIDs instances', { tags: [testTypes.smoke] }, () => {
+  it('C9284 verifies export UUIDs instances', { retries: 3, tags: [testTypes.smoke, devTeams.firebird] }, () => {
     InventorySearch.searchByParameter('Title (all)', instanceTitle);
     InventorySearch.saveUUIDs();
 
@@ -99,7 +100,7 @@ describe('ui-inventory: exports', () => {
       });
   });
 
-  it('C9287 verifies export CQL query', { tags: [testTypes.smoke] }, () => {
+  it('C9287 verifies export CQL query', { retries: 3, tags: [testTypes.smoke, devTeams.firebird] }, () => {
     InventorySearch.byLanguage();
     InventorySearch.searchByParameter('Keyword (title, contributor, identifier)', instanceTitle);
     InventorySearch.byEffectiveLocation(locationName);
@@ -113,7 +114,7 @@ describe('ui-inventory: exports', () => {
     );
   });
 
-  it('C196757 verifies export instances (MARC)', { tags: [testTypes.smoke] }, () => {
+  it('C196757 verifies export instances (MARC)', { retries: 3, tags: [testTypes.smoke, devTeams.firebird] }, () => {
     InventorySearch.searchByParameter('Title (all)', instanceTitle);
     cy.do(InventorySearch.getSearchResult().find(Checkbox()).click());
     InventorySearch.exportInstanceAsMarc();

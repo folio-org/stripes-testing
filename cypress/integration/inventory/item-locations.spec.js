@@ -7,6 +7,7 @@ import InventoryInstances from '../../support/fragments/inventory/inventoryInsta
 import permissions from '../../support/dictionary/permissions';
 import getRandomPostfix from '../../support/utils/stringTools';
 import InventoryHoldings from '../../support/fragments/inventory/holdings/inventoryHoldings';
+import devTeams from '../../support/dictionary/devTeams';
 
 const ITEM_BARCODE = `123${getRandomPostfix()}`;
 let userId = '';
@@ -73,7 +74,6 @@ describe('ui-inventory: location', () => {
     cy.visit(TopMenu.inventoryPath);
   });
 
-
   after('Delete all data', () => {
     cy.getInstance({ limit: 1, expandAll: true, query: `"items.barcode"=="${ITEM_BARCODE}"` })
       .then((instance) => {
@@ -85,8 +85,7 @@ describe('ui-inventory: location', () => {
     cy.deleteUser(userId);
   });
 
-
-  it('C163923 Change a location to remote storage', { tags: [TestTypes.smoke] }, () => {
+  it('C163923 Change a location to remote storage', { tags: [TestTypes.smoke, devTeams.firebird] }, () => {
     const toBeEditedLocationName = Cypress.env('locations')[0].name;
     const editedLocationName = Cypress.env('locations')[1].name;
 
@@ -114,8 +113,7 @@ describe('ui-inventory: location', () => {
     );
   });
 
-  // TODO: test failed, bug UIIN-1988
-  it('C163924 Change a remote storage location to standard location', { tags: [TestTypes.smoke] }, () => {
+  it('C163924 Change a remote storage location to standard location', { tags: [TestTypes.smoke, devTeams.firebird] }, () => {
     const toBeEditedLocationName = Cypress.env('locations')[1].name;
     const editedLocationName = Cypress.env('locations')[0].name;
 

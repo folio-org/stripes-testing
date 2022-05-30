@@ -1,6 +1,7 @@
 export default {
   // bulk edit
   bulkEditView: { internal: 'ui-bulk-edit.app-view', gui: 'Bulk Edit: In app - View' },
+  bulkEditEdit: { internal: 'ui-bulk-edit.app-edit', gui: 'Bulk Edit: In app - Edit' },
   bulkEditCsvView: { internal: 'ui-bulk-edit.view', gui: 'Bulk Edit: (CSV) View' },
   bulkEditCsvEdit: { internal: 'ui-bulk-edit.edit', gui: 'Bulk Edit: (CSV) Edit' },
   bulkEditCsvDelete: { internal: 'ui-bulk-edit.delete', gui: 'Bulk Edit: (CSV) Delete' },
@@ -88,5 +89,9 @@ export default {
   checkoutAll: { internal: '', gui: 'Check out: All permissions' },
   checkoutCirculatingItems: { internal: 'ui-checkout.circulation', gui: 'Check out: Check out circulating items' },
   // Checkin
-  checkinAll: { internal: '', gui: 'Check in: All permissions' }
+  checkinAll: { internal: '', gui: 'Check in: All permissions' },
+  // Organization
+  viewOrganization:{ internal:'', gui:'Organizations: View' },
+  // Invoice
+  viewEditDeleteInvoiceInvoiceLine:{ internal:'', gui:'Invoice: Can view, edit and delete Invoices and Invoice lines' },
 };
