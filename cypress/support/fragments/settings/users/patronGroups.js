@@ -21,7 +21,7 @@ export default {
       id:uuid(),
       group : patronGroup,
     }
-  }),
+  }).then(response => response.body.id),
   deleteViaApi:(patronGroupId) => {
     cy.okapiRequest({
       method: 'DELETE',

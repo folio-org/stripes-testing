@@ -1,4 +1,4 @@
-import uuid from 'uuid';
+import Users from '../fragments/users/users';
 import getRandomPostfix from '../utils/stringTools';
 
 Cypress.Commands.add('getUsers', (searchParams) => {
@@ -53,6 +53,7 @@ Cypress.Commands.add('getFirstUserGroupId', (searchParams, patronGroup) => {
   });
 });
 
+// Depricated, use delete from cypress\support\fragments\users\users.js
 Cypress.Commands.add('deleteUser', (userId) => {
   cy
     .okapiRequest({
@@ -61,6 +62,7 @@ Cypress.Commands.add('deleteUser', (userId) => {
     });
 });
 
+// Depricated, use createUserViaApi in cypress\support\fragments\users\users.js
 Cypress.Commands.add('createUserApi', (user) => {
   cy
     .okapiRequest({
@@ -109,28 +111,16 @@ Cypress.Commands.add('createTempUser', (permissions = [], patronGroup) => {
 
   cy.getFirstUserGroupId({ limit: patronGroup ? 10 : 1 }, patronGroup)
     .then((userGroupdId) => {
-      const userData = {
-        username: userProperties.username,
-        active: true,
-        barcode: uuid(),
-        personal: {
-          preferredContactTypeId: '002',
-          firstName: 'testPermFirst',
-          middleName: 'testMiddleName',
-          lastName: userProperties.username,
-          email: 'test@folio.org',
-        },
-        patronGroup: userGroupdId,
-        departments: []
-      };
-
       const queryField = 'displayName';
       cy.getPermissionsApi({ query: `(${queryField}="${permissions.join(`")or(${queryField}="`)}"))"` })
         .then((permissionsResponse) => {
           // Can be used to collect pairs of ui and backend permission names
           // cy.log('Initial permissions=' + permissions);
           // cy.log('internalPermissions=' + [...permissionsResponse.body.permissions.map(permission => permission.permissionName)]);
-          cy.createUserApi(userData)
+          cy.createUserApi({
+            ...Users.defaultUser,
+            patronGroup: userGroupdId
+          })
             .then((userCreateResponse) => {
               userProperties.userId = userCreateResponse.id;
               userProperties.barcode = userCreateResponse.barcode;
