@@ -51,7 +51,7 @@ describe('Check Out', () => {
         }
         return defaultItem;
       };
-      testItems.push(getTestItem(1, true, false));
+      testItems.push(getTestItem(1, false, false));
       testItems.push(getTestItem(3, true, false));
       testItems.push(getTestItem(2, true, true));
       testItems.push(getTestItem(1, false, true));
