@@ -1,14 +1,5 @@
 import TopMenu from '../topMenu';
-import {
-  TextField,
-  Button,
-  Modal,
-  KeyValue,
-  MultiColumnListRow,
-  Form,
-  TextArea,
-  Heading
-} from '../../../../interactors';
+import { TextField, Button, Modal, KeyValue, MultiColumnListRow, Form, TextArea, Heading } from '../../../../interactors';
 
 export default {
   checkOutItem(userBarcode, itemBarcode) {
@@ -21,18 +12,19 @@ export default {
     cy.do([
       TextField({ name: 'item.barcode' }).fillIn(itemBarcode),
       Button({ id: 'clickable-add-item' }).click(),
-      Modal().find(Button('Check out')).click(),
     ]);
     if (cy.do(Heading('Item not checked out').exists())) {
       cy.do([
         Button('Override').click(),
         Form({ id: 'override-form' })
-          .find(TextArea({ id: 'textarea-input-64' }))
+          .find(TextArea({ id: 'textarea-input-10' }))
           .fillIn('Test_comment'),
         Button('Save & close').click(),
       ]);
     }
-    cy.do(Button('End session').click());
+    cy.do([
+      Button('End session').click()
+    ]);
     cy.expect(MultiColumnListRow().exists());
   }
 };

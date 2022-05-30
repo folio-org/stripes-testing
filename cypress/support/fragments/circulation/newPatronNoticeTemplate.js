@@ -1,12 +1,12 @@
 import getRandomPostfix from '../../utils/stringTools';
-import { Button, TextField, TextArea, KeyValue, Checkbox, Link } from '../../../../interactors';
+import { Button, TextField, TextArea, KeyValue, Checkbox, Link, Heading } from '../../../../interactors';
 
 const tokenName = 'item.title'
 const actionsButton = Button('Actions');
 const tokenButton = Button('{ }')
-const addTokenButton = Button('Add token')
+const addTokenButton = Button('Add token');
 const nameField = TextField({ id: 'input-patron-notice-name' });
-const itemTitleCheckbox = Checkbox(`${tokenName}`)
+const itemTitleCheckbox = Checkbox(`${tokenName}`);
 
 export default {
   defaultUiPatronNoticeTemplate : {
@@ -15,17 +15,20 @@ export default {
     subject: 'Subject_Test',
     body: `Test_email_body {{${tokenName}}}`
   },
+  waitLoading() { cy.expect(Heading('Patron notice templates').exists()) },
+
   createTemplate(patronNoticeTemplate) {
-    cy.intercept('/patron-notice-policy-storage/patron-notice-policies**').as('request-patron-notice-policies')
+    // cy.intercept('/patron-notice-policy-storage/patron-notice-policies**').as('request-patron-notice-policies')
     cy.do(Button({ id: 'clickable-create-entry' }).click());
-    cy.wait('@request-patron-notice-policies')
-    cy.wait(1000)
+    // cy.wait('@request-patron-notice-policies')
+    // waiting the form to load
+    cy.wait(1000);
     this.fillGeneralInformation(patronNoticeTemplate);
-    cy.do(tokenButton.click())
-    cy.do(itemTitleCheckbox.click())
-    cy.do(addTokenButton.click())
+    cy.do(tokenButton.click());
+    cy.do(itemTitleCheckbox.click());
+    cy.do(addTokenButton.click());
     cy.do(Button({ id: 'footer-save-entity' }).click());
-    cy.wait('@request-patron-notice-policies')
+    // cy.wait('@request-patron-notice-policies')
   },
   fillGeneralInformation: (patronNoticeTemplate) => {
     cy.get('#template-editor')
@@ -47,7 +50,7 @@ export default {
     ]);
   },
   openTemplateToSide(patronNoticeTemplate) {
-    cy.do(Link(patronNoticeTemplate.name).click())
+    cy.do(Link(patronNoticeTemplate.name).click());
   },
   deleteTemplate: () => {
     cy.do([
