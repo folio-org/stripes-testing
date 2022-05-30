@@ -25,13 +25,13 @@ export default {
       Select({ id: 'servicePointPreference' }).choose(NewServicePoint.defaultUiServicePoint.body.name),
       Button({ id: 'accordion-toggle-button-permissions' }).click(),
       Button({ id: 'clickable-add-permission' }).click(),
-      Modal({ id: 'permissions-modal' }).find(TextField({ type: 'search' })).fillIn(permissions.uiCheckinAll.gui),
+      Modal({ id: 'permissions-modal' }).find(TextField({ type: 'search' })).fillIn(permissions.checkinAll.gui),
       Modal({ id: 'permissions-modal' }).find(Button('Search')).click(),
-      Modal({ id: 'permissions-modal' }).find(MultiColumnListCell(permissions.uiCheckinAll.gui)).click()]);
+      Modal({ id: 'permissions-modal' }).find(MultiColumnListCell(permissions.checkinAll.gui)).click()]);
     cy.expect(Modal({ id: 'permissions-modal' }).find(HTML(including('Total selected: 1'))));
     cy.do(Button({ id: 'clickable-permissions-modal-save' }).click());
     cy.expect(Modal({ id: 'permissions-modal' }).absent());
-    cy.expect(Accordion({ id: 'permissions' }).find(HTML(including(permissions.uiCheckinAll.gui))).exists());
+    cy.expect(Accordion({ id: 'permissions' }).find(HTML(including(permissions.checkinAll.gui))).exists());
     cy.do(Button('Save & close').click());
     cy.do(Button('User permissions').click());
   },
