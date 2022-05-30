@@ -17,10 +17,9 @@ describe('Check Out', () => {
   const instanceTitle = `autotest_instance_title_${getRandomPostfix()}`;
   const testItems = [];
   const defautlDescription = `autotest_description_${getRandomPostfix()}`;
-  const mis = { quantity: '2',
-    des: defautlDescription };
   let servicePoint;
   let materialTypeName;
+  let testInstanceIds;
 
   beforeEach(() => {
     cy.getAdminToken().then(() => {
@@ -47,7 +46,7 @@ describe('Check Out', () => {
           defaultItem.descriptionOfPieces = defautlDescription;
         }
         if (hasMissingPieces) {
-          defaultItem.numberOfMissingPieces = '2';
+          defaultItem.numberOfMissingPieces = 2;
           defaultItem.missingPieces = defautlDescription;
         }
         return defaultItem;
@@ -55,7 +54,6 @@ describe('Check Out', () => {
       testItems.push(getTestItem(1, true, false));
       testItems.push(getTestItem(3, true, false));
       testItems.push(getTestItem(2, true, true));
-      testItems.push(getTestItem(1, false, true));
       testItems.push(getTestItem(1, false, true));
       inventoryInstances.createFolioInstanceViaApi({
         instance: {
@@ -67,7 +65,10 @@ describe('Check Out', () => {
           permanentLocationId: Cypress.env('locations')[0].id,
         }],
         items: testItems,
-      });
+      })
+        .then(specialInstanceIds => {
+          testInstanceIds = specialInstanceIds;
+        });
     });
 
     cy.createTempUser([
@@ -89,7 +90,7 @@ describe('Check Out', () => {
       });
   });
 
-  /* after(() => {
+  after(() => {
     cy.wrap(testInstanceIds.holdingIds.forEach(holdingsId => {
       cy.wrap(holdingsId.itemIds.forEach(itemId => {
         cy.deleteItem(itemId);
@@ -99,24 +100,33 @@ describe('Check Out', () => {
     })).then(() => {
       cy.deleteInstanceApi(testInstanceIds.instanceId);
     });
-    // TODO delete service
-    cy.deleteUser(user.userId);
-  }); */
+    // TODO delete service point and user
+  });
 
   it('C591 Check out: multipiece items', { tags: [TestTypes.smoke] }, () => {
-    /* CheckOutActions.checkIsInterfacesOpened();
+    CheckOutActions.checkIsInterfacesOpened();
     CheckOutActions.checkOutItem(userBarcode, testItems[0].barcode);
     CheckOutActions.checkPatronInformation(user.username, userBarcode);
     CheckOutActions.checkConfirmMultipieceCheckOutModal();
+
     CheckOutActions.checkOutItem(userBarcode, testItems[1].barcode);
-    ConfirmMultipieceCheckOutModal.checkContent(instanceTitle, materialTypeName.name, testItems[1].barcode, testItems[1].numberOfPieces, defautlDescription);
+    ConfirmMultipieceCheckOutModal.checkContent(instanceTitle, materialTypeName.name, testItems[1].barcode,
+      { itemPieces : testItems[1].numberOfPieces, description :testItems[1].descriptionOfPieces },
+      { missingitemPieces : testItems[1].numberOfMissingPieces, missingDescription: testItems[1].missingPieces });
     ConfirmMultipieceCheckOutModal.cancelModal();
+
     CheckOutActions.checkOutItem(userBarcode, testItems[1].barcode);
-    ConfirmMultipieceCheckOutModal.checkContent(instanceTitle, materialTypeName.name, testItems[1].barcode, testItems[1].numberOfPieces, defautlDescription);
-    ConfirmMultipieceCheckOutModal.confirmMultipleCheckOut(); */
-    // CheckOutActions.checkOutItem(userBarcode, testItems[2].barcode);
-    // ConfirmMultipieceCheckOutModal.checkContent(instanceTitle, materialTypeName.name, testItems[2].barcode, testItems[2].numberOfPieces, defautlDescription, { quantity, defautlDescription });
-    // ConfirmMultipieceCheckOutModal.confirmMultipleCheckOut();
+    ConfirmMultipieceCheckOutModal.checkContent(instanceTitle, materialTypeName.name, testItems[1].barcode,
+      { itemPieces : testItems[1].numberOfPieces, description :testItems[1].descriptionOfPieces },
+      { missingitemPieces : testItems[1].numberOfMissingPieces, missingDescription: testItems[1].missingPieces });
+    ConfirmMultipieceCheckOutModal.confirmMultipleCheckOut();
+
+    CheckOutActions.checkOutItem(userBarcode, testItems[2].barcode);
+    ConfirmMultipieceCheckOutModal.checkContent(instanceTitle, materialTypeName.name, testItems[2].barcode,
+      { itemPieces : testItems[2].numberOfPieces, description :testItems[2].descriptionOfPieces },
+      { missingitemPieces : testItems[2].numberOfMissingPieces, missingDescription: testItems[2].missingPieces });
+    ConfirmMultipieceCheckOutModal.confirmMultipleCheckOut();
+
     CheckOutActions.checkOutItem(userBarcode, testItems[3].barcode);
     ConfirmMultipieceCheckOutModal.checkContent(instanceTitle, materialTypeName.name, testItems[3].barcode,
       { itemPieces : testItems[3].numberOfPieces, description :testItems[3].descriptionOfPieces },
