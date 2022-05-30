@@ -1,7 +1,22 @@
-import { Button, SearchField, PaneHeader, Pane, Select, Accordion, KeyValue, Checkbox, MultiColumnList, MultiColumnListCell, MultiColumnListRow, Modal, TextField, SelectionOption } from '../../../../interactors';
+import {
+  Button,
+  SearchField,
+  PaneHeader,
+  Pane,
+  Select,
+  Accordion,
+  KeyValue,
+  Checkbox,
+  MultiColumnList,
+  MultiColumnListCell,
+  MultiColumnListRow,
+  Modal,
+  TextField,
+  SelectionOption
+} from '../../../../interactors';
 import SearchHelper from '../finance/financeHelper';
 import InteractorsTools from '../../utils/interactorsTools';
-
+import TopMenu from '../topMenu';
 
 const actionsButton = Button('Actions');
 const orderDetailsPane = Pane({ id: 'order-details' });
@@ -21,7 +36,17 @@ const buttonRushFilter = Button({ id: 'accordion-toggle-button-rush' });
 const buttonSubscriptionFromFilter = Button({ id: 'accordion-toggle-button-subscriptionFrom' });
 const searchForm = SearchField({ id: 'input-record-search' });
 
+const searchByParameter = (parameter, value) => {
+  cy.do([
+    searchForm.selectIndex(parameter),
+    searchForm.fillIn(value),
+    Button('Search').click(),
+  ]);
+};
+
 export default {
+  searchByParameter,
+
   createOrderWithOrderLineViaApi(order, orderLine) {
     cy.createOrderApi(order)
       .then((response) => {
@@ -34,14 +59,6 @@ export default {
           });
       });
     return cy.get('@orderNumber');
-  },
-
-  searchByParameter: (parameter, value) => {
-    cy.do([
-      searchForm.selectIndex(parameter),
-      searchForm.fillIn(value),
-      Button('Search').click(),
-    ]);
   },
 
   openOrder: () => {
@@ -356,4 +373,10 @@ export default {
         return body.purchaseOrders;
       });
   },
+
+  selectOrderWithNumber:(orderNumber) => {
+    cy.visit(TopMenu.ordersPath);
+    searchByParameter('PO number', orderNumber);
+    SearchHelper.selectFromResultsList();
+  }
 };

@@ -153,18 +153,14 @@ describe('ui-inventory: Item status date updates', () => {
     const caption = `autotest_caption_${getRandomPostfix()}`;
     const numberOfPieces = '3';
 
-    cy.visit(TopMenu.ordersPath);
-    Orders.searchByParameter('PO number', orderNumber);
-    Helper.selectFromResultsList();
+    Orders.selectOrderWithNumber(orderNumber);
     Orders.openOrder();
     OrdersHelper.verifyOrderDateOpened();
     InventoryInstances.openItem(instanceTitle, effectiveLocation.name, 'No barcode');
     ItemVeiw.verifyUpdatedItemDate();
     ItemVeiw.verifyItemStatus(ItemVeiw.itemStatuses.onOrder);
 
-    cy.visit(TopMenu.ordersPath);
-    Orders.searchByParameter('PO number', orderNumber);
-    Helper.selectFromResultsList();
+    Orders.selectOrderWithNumber(orderNumber);
     Orders.receiveOrderViaActions();
     Helper.selectFromResultsList();
     Receiving.receivePiece(0, caption, userItemBarcode);
