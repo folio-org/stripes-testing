@@ -6,7 +6,7 @@ import Helper from '../../support/fragments/finance/financeHelper';
 import CheckOutActions from '../../support/fragments/check-out-actions/check-out-actions';
 import NewServicePoint from '../../support/fragments/service_point/newServicePoint';
 import ServicePoints from '../../support/fragments/settings/tenant/servicePoints';
-import ConfirmMultipieceCheckOutModal from '../../support/fragments/checkout/confirmMultipieceCheckOutModal';
+import MultipieceCheckOut from '../../support/fragments/checkout/modals/multipieceCheckOut';
 import UsersEditPage from '../../support/fragments/users/usersEditPage';
 import Checkout from '../../support/fragments/checkout/checkout';
 import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
@@ -107,30 +107,31 @@ describe('Check Out', () => {
     CheckOutActions.checkIsInterfacesOpened();
     CheckOutActions.checkOutItem(userBarcode, testItems[0].barcode);
     CheckOutActions.checkPatronInformation(user.username, userBarcode);
-    CheckOutActions.checkConfirmMultipieceCheckOutModal();
+    CheckOutActions.checkConfirmMultipieceCheckOut();
 
     CheckOutActions.checkOutItem(userBarcode, testItems[1].barcode);
-    ConfirmMultipieceCheckOutModal.checkContent(instanceTitle, materialTypeName.name, testItems[1].barcode,
+    MultipieceCheckOut.checkContent(instanceTitle, materialTypeName.name, testItems[1].barcode,
       { itemPieces : testItems[1].numberOfPieces, description :testItems[1].descriptionOfPieces },
       { missingitemPieces : testItems[1].numberOfMissingPieces, missingDescription: testItems[1].missingPieces });
-    ConfirmMultipieceCheckOutModal.cancelModal();
+    MultipieceCheckOut.cancelModal();
+    CheckOutActions.checkIsItemCheckedOut(testItems[1].barcode);
 
     CheckOutActions.checkOutItem(userBarcode, testItems[1].barcode);
-    ConfirmMultipieceCheckOutModal.checkContent(instanceTitle, materialTypeName.name, testItems[1].barcode,
+    MultipieceCheckOut.checkContent(instanceTitle, materialTypeName.name, testItems[1].barcode,
       { itemPieces : testItems[1].numberOfPieces, description :testItems[1].descriptionOfPieces },
       { missingitemPieces : testItems[1].numberOfMissingPieces, missingDescription: testItems[1].missingPieces });
-    ConfirmMultipieceCheckOutModal.confirmMultipleCheckOut();
+    MultipieceCheckOut.confirmMultipleCheckOut();
 
     CheckOutActions.checkOutItem(userBarcode, testItems[2].barcode);
-    ConfirmMultipieceCheckOutModal.checkContent(instanceTitle, materialTypeName.name, testItems[2].barcode,
+    MultipieceCheckOut.checkContent(instanceTitle, materialTypeName.name, testItems[2].barcode,
       { itemPieces : testItems[2].numberOfPieces, description :testItems[2].descriptionOfPieces },
       { missingitemPieces : testItems[2].numberOfMissingPieces, missingDescription: testItems[2].missingPieces });
-    ConfirmMultipieceCheckOutModal.confirmMultipleCheckOut();
+    MultipieceCheckOut.confirmMultipleCheckOut();
 
     CheckOutActions.checkOutItem(userBarcode, testItems[3].barcode);
-    ConfirmMultipieceCheckOutModal.checkContent(instanceTitle, materialTypeName.name, testItems[3].barcode,
+    MultipieceCheckOut.checkContent(instanceTitle, materialTypeName.name, testItems[3].barcode,
       { itemPieces : testItems[3].numberOfPieces, description :testItems[3].descriptionOfPieces },
       { missingitemPieces : testItems[3].numberOfMissingPieces, missingDescription: testItems[3].missingPieces });
-    ConfirmMultipieceCheckOutModal.confirmMultipleCheckOut();
+    MultipieceCheckOut.confirmMultipleCheckOut();
   });
 });

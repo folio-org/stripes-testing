@@ -1,4 +1,13 @@
-import { TextField, Button, KeyValue, Pane, Modal } from '../../../../interactors';
+import {
+  TextField,
+  Button,
+  KeyValue,
+  Pane,
+  Modal,
+  MultiColumnList,
+  HTML,
+  including
+} from '../../../../interactors';
 
 export default {
   checkOutItem(userBarcode, itemBarcode) {
@@ -26,7 +35,11 @@ export default {
     cy.expect(KeyValue('Status').exists());
   },
 
-  checkConfirmMultipieceCheckOutModal:() => {
+  checkConfirmMultipieceCheckOut:() => {
     cy.expect(Modal('Confirm multipiece check out').absent());
+  },
+
+  checkIsItemCheckedOut:(barcode) => {
+    cy.expect(MultiColumnList().find(HTML(including(barcode))).absent());
   }
 };

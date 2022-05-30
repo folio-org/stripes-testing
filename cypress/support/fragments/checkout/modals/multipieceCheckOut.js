@@ -1,4 +1,4 @@
-import { Button, Modal, MultiColumnListRow, KeyValue, including, HTML } from '../../../../interactors';
+import { Button, Modal, MultiColumnListRow, KeyValue, including, HTML } from '../../../../../interactors';
 
 const confirmModal = Modal('Confirm multipiece check out');
 const checkOutButton = confirmModal.find(Button('Check out'));
