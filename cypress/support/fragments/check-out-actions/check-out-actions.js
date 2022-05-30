@@ -39,7 +39,7 @@ export default {
     cy.expect(Modal('Confirm multipiece check out').absent());
   },
 
-  checkIsItemCheckedOut:(barcode) => {
-    cy.expect(MultiColumnList().find(HTML(including(barcode))).absent());
+  checkItemstatus:(barcode) => {
+    cy.expect(MultiColumnList({ id:'list-items-checked-out' }).find(HTML(including(barcode))).absent());
   }
 };

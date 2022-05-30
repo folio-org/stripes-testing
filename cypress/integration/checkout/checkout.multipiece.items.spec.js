@@ -114,24 +114,24 @@ describe('Check Out', () => {
       { itemPieces : testItems[1].numberOfPieces, description :testItems[1].descriptionOfPieces },
       { missingitemPieces : testItems[1].numberOfMissingPieces, missingDescription: testItems[1].missingPieces });
     MultipieceCheckOut.cancelModal();
-    CheckOutActions.checkIsItemCheckedOut(testItems[1].barcode);
+    CheckOutActions.checkItemstatus(testItems[1].barcode);
 
     CheckOutActions.checkOutItem(userBarcode, testItems[1].barcode);
     MultipieceCheckOut.checkContent(instanceTitle, materialTypeName.name, testItems[1].barcode,
       { itemPieces : testItems[1].numberOfPieces, description :testItems[1].descriptionOfPieces },
       { missingitemPieces : testItems[1].numberOfMissingPieces, missingDescription: testItems[1].missingPieces });
-    MultipieceCheckOut.confirmMultipleCheckOut();
+    MultipieceCheckOut.confirmMultipleCheckOut(testItems[1].barcode);
 
     CheckOutActions.checkOutItem(userBarcode, testItems[2].barcode);
     MultipieceCheckOut.checkContent(instanceTitle, materialTypeName.name, testItems[2].barcode,
       { itemPieces : testItems[2].numberOfPieces, description :testItems[2].descriptionOfPieces },
       { missingitemPieces : testItems[2].numberOfMissingPieces, missingDescription: testItems[2].missingPieces });
-    MultipieceCheckOut.confirmMultipleCheckOut();
+    MultipieceCheckOut.confirmMultipleCheckOut(testItems[2].barcode);
 
     CheckOutActions.checkOutItem(userBarcode, testItems[3].barcode);
     MultipieceCheckOut.checkContent(instanceTitle, materialTypeName.name, testItems[3].barcode,
       { itemPieces : testItems[3].numberOfPieces, description :testItems[3].descriptionOfPieces },
       { missingitemPieces : testItems[3].numberOfMissingPieces, missingDescription: testItems[3].missingPieces });
-    MultipieceCheckOut.confirmMultipleCheckOut();
+    MultipieceCheckOut.confirmMultipleCheckOut(testItems[3].barcode);
   });
 });

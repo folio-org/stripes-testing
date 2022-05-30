@@ -1,4 +1,4 @@
-import { Button, Modal, MultiColumnListRow, KeyValue, including, HTML } from '../../../../../interactors';
+import { Button, Modal, MultiColumnList, KeyValue, including, HTML } from '../../../../../interactors';
 
 const confirmModal = Modal('Confirm multipiece check out');
 const checkOutButton = confirmModal.find(Button('Check out'));
@@ -9,9 +9,9 @@ const numberOfMissingPiecesKeyValue = confirmModal.find(KeyValue('Number of miss
 const descriptionOfMissingPiecesKeyValue = confirmModal.find(KeyValue('Description of missing pieces'));
 
 export default {
-  confirmMultipleCheckOut:() => {
+  confirmMultipleCheckOut:(barcode) => {
     cy.do(checkOutButton.click());
-    cy.expect(MultiColumnListRow().exists());
+    cy.expect(MultiColumnList({ id:'list-items-checked-out' }).find(HTML(including(barcode))).exists());
   },
 
   checkContent:(itemTitle, materialType, barcode, { itemPieces = '-', description = '-' }, { missingitemPieces: missingItemPieces = '-', missingDescription = '-' }) => {
