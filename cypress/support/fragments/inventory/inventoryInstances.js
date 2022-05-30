@@ -1,4 +1,3 @@
-import { source } from 'axe-core';
 import uuid from 'uuid';
 import {
   HTML,
@@ -134,39 +133,32 @@ export default {
         cy.deleteInstanceApi(instance.id);
       });
   },
+
   createFolioInstanceViaApi: ({ instance, holdings = [], items = [] }) => {
-    let folioSource;
-    // gett all sources. Expectation - array with 2 items: FOLIO, MARC
-    InventoryHoldings.getHoldingSources().then(holdingsSources => {
-      holdingsSources.forEach(specialSource => {
-        if (specialSource.name === 'FOLIO') {
-          folioSource = specialSource;
-        }
-      });
-    }).then(() => {
-      const ids = {};
-      const instanceWithSpecifiedNewId = { ...instance, id: uuid(), source: folioSource.name };
-      ids.instanceId = instanceWithSpecifiedNewId.id;
-      createInstanceViaAPI(instanceWithSpecifiedNewId).then(() => {
-        ids.holdingIds = [];
-        cy.wrap(holdings.forEach(holding => {
-          const holdingWithIds = { ...holding, id: uuid(), instanceId: instanceWithSpecifiedNewId.id, sourceId: folioSource.id };
-          createHoldingViaAPI(holdingWithIds).then(() => {
-            const itemIds = [];
-            cy.wrap(items.forEach(item => {
-              const itemWithIds = { ...item, id: uuid(), holdingsRecordId: holdingWithIds.id };
-              itemIds.push(itemWithIds.id);
-              createItemViaAPI(itemWithIds);
-            })).then(() => {
-              ids.holdingIds.push({ id: holdingWithIds.id, itemIds });
+    InventoryHoldings.getHoldingsFolioSource()
+      .then(folioSource => {
+        const ids = {};
+        const instanceWithSpecifiedNewId = { ...instance, id: uuid(), source: folioSource.name };
+        ids.instanceId = instanceWithSpecifiedNewId.id;
+        createInstanceViaAPI(instanceWithSpecifiedNewId).then(() => {
+          ids.holdingIds = [];
+          cy.wrap(holdings.forEach(holding => {
+            const holdingWithIds = { ...holding, id: uuid(), instanceId: instanceWithSpecifiedNewId.id, sourceId: folioSource.id };
+            createHoldingViaAPI(holdingWithIds).then(() => {
+              const itemIds = [];
+              cy.wrap(items.forEach(item => {
+                const itemWithIds = { ...item, id: uuid(), holdingsRecordId: holdingWithIds.id };
+                itemIds.push(itemWithIds.id);
+                createItemViaAPI(itemWithIds);
+              })).then(() => {
+                ids.holdingIds.push({ id: holdingWithIds.id, itemIds });
+              });
             });
+          })).then(() => {
+            cy.wrap(ids).as('ids');
           });
-        })).then(() => {
-          cy.wrap(ids).as('ids');
         });
       });
-    });
     return cy.get('@ids');
   }
-
 };

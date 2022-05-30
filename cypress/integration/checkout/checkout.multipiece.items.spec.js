@@ -1,4 +1,3 @@
-import uuid from 'uuid';
 import TestTypes from '../../support/dictionary/testTypes';
 import permissions from '../../support/dictionary/permissions';
 import TopMenu from '../../support/fragments/topMenu';
@@ -8,7 +7,6 @@ import CheckOutActions from '../../support/fragments/check-out-actions/check-out
 import NewServicePoint from '../../support/fragments/service_point/newServicePoint';
 import ServicePoints from '../../support/fragments/settings/tenant/servicePoints';
 import ConfirmMultipieceCheckOutModal from '../../support/fragments/checkout/confirmMultipieceCheckOutModal';
-import InventoryHoldings from '../../support/fragments/inventory/holdings/inventoryHoldings';
 import UsersEditPage from '../../support/fragments/users/usersEditPage';
 import Checkout from '../../support/fragments/checkout/checkout';
 import inventoryInstances from '../../support/fragments/inventory/inventoryInstances';
@@ -18,37 +16,46 @@ describe('Check Out', () => {
   let userBarcode;
   const instanceTitle = `autotest_instance_title_${getRandomPostfix()}`;
   const testItems = [];
-  const defautlDescriptionOfPiece = `autotest_description_${getRandomPostfix()}`;
-  const missingPieceDescription = `autotest_description_${getRandomPostfix()}`;
+  const defautlDescription = `autotest_description_${getRandomPostfix()}`;
+  const mis = { quantity: '2',
+    des: defautlDescription };
   let servicePoint;
-  let testInstanceIds;
+  let materialTypeName;
 
   beforeEach(() => {
     cy.getAdminToken().then(() => {
       cy.getLoanTypes({ limit: 1 });
-      cy.getMaterialTypes({ limit: 1 });
+      cy.getMaterialTypes({ limit: 1 })
+        .then(({ id, name }) => {
+          materialTypeName = { id, name };
+        });
       cy.getLocations({ limit: 2 });
       cy.getHoldingTypes({ limit: 2 });
       cy.getInstanceTypes({ limit: 1 });
     }).then(() => {
-      const getTestItem = (specialNumberOfPieces, discriptionOfPiece = defautlDescriptionOfPiece, hasMissingPieces) => {
+      const getTestItem = (hasNumberOfPieces, hasDiscription, hasMissingPieces) => {
         const defaultItem = {
           barcode: Helper.getRandomBarcode(),
-          numberOfPieces: specialNumberOfPieces,
           status:  { name: 'Available' },
           permanentLoanType: { id: Cypress.env('loanTypes')[0].id },
-          materialType: { id: Cypress.env('materialTypes')[0].id },
-          discriptionOfPiece
+          materialType: { id: materialTypeName.id },
         };
+        if (hasNumberOfPieces) {
+          defaultItem.numberOfPieces = '-';
+        }
+        if (hasDiscription) {
+          defaultItem.descriptionOfPieces = defautlDescription;
+        }
         if (hasMissingPieces) {
           defaultItem.numberOfMissingPieces = '2';
-          defaultItem.missingPieces = missingPieceDescription;
+          defaultItem.missingPieces = defautlDescription;
         }
         return defaultItem;
       };
       testItems.push(getTestItem('1', true, false));
       testItems.push(getTestItem('3', true, false));
       testItems.push(getTestItem('2', true, true));
+      testItems.push(getTestItem('1', false, true));
       testItems.push(getTestItem('1', false, true));
       inventoryInstances.createFolioInstanceViaApi({
         instance: {
@@ -60,8 +67,6 @@ describe('Check Out', () => {
           permanentLocationId: Cypress.env('locations')[0].id,
         }],
         items: testItems,
-      }).then(specialInstanceIds => {
-        testInstanceIds = specialInstanceIds;
       });
     });
 
@@ -84,7 +89,7 @@ describe('Check Out', () => {
       });
   });
 
-  after(() => {
+  /* after(() => {
     cy.wrap(testInstanceIds.holdingIds.forEach(holdingsId => {
       cy.wrap(holdingsId.itemIds.forEach(itemId => {
         cy.deleteItem(itemId);
@@ -96,29 +101,24 @@ describe('Check Out', () => {
     });
     // TODO delete service
     cy.deleteUser(user.userId);
-  });
+  }); */
 
   it('C591 Check out: multipiece items', { tags: [TestTypes.smoke] }, () => {
-    const dash = '-';
-
-    CheckOutActions.checkIsInterfacesOpened();
-    /* CheckOutActions.checkOutItem(userBarcode, testItems[0].barcode);
+    /* CheckOutActions.checkIsInterfacesOpened();
+    CheckOutActions.checkOutItem(userBarcode, testItems[0].barcode);
     CheckOutActions.checkPatronInformation(user.username, userBarcode);
     CheckOutActions.checkConfirmMultipieceCheckOutModal();
     CheckOutActions.checkOutItem(userBarcode, testItems[1].barcode);
-    ConfirmMultipieceCheckOutModal.checkIsModalConsistOf(instanceTitle, testItems[1].numberOfPieces, descriptionOfPiece);
-    ConfirmMultipieceCheckOutModal.checkIsNotModalConsistOf();
+    ConfirmMultipieceCheckOutModal.checkContent(instanceTitle, materialTypeName.name, testItems[1].barcode, testItems[1].numberOfPieces, defautlDescription);
     ConfirmMultipieceCheckOutModal.cancelModal();
     CheckOutActions.checkOutItem(userBarcode, testItems[1].barcode);
-    ConfirmMultipieceCheckOutModal.checkIsModalConsistOf(instanceTitle, testItems[1].numberOfPieces, descriptionOfPiece);
-    ConfirmMultipieceCheckOutModal.confirmMultiplePiecesItemModal();
-    CheckOutActions.checkOutItem(userBarcode, testItems[2].barcode);
-    ConfirmMultipieceCheckOutModal.checkIsModalConsistOf(instanceTitle, testItems[2].numberOfPieces, descriptionOfPiece);
-    ConfirmMultipieceCheckOutModal.checkMissingPiecesInModal(testItems[2].numberOfMissingPieces, missingPieceDescription);
-    ConfirmMultipieceCheckOutModal.confirmMultiplePiecesItemModal();
+    ConfirmMultipieceCheckOutModal.checkContent(instanceTitle, materialTypeName.name, testItems[1].barcode, testItems[1].numberOfPieces, defautlDescription);
+    ConfirmMultipieceCheckOutModal.confirmMultipleCheckOut(); */
+    // CheckOutActions.checkOutItem(userBarcode, testItems[2].barcode);
+    // ConfirmMultipieceCheckOutModal.checkContent(instanceTitle, materialTypeName.name, testItems[2].barcode, testItems[2].numberOfPieces, defautlDescription, { quantity, defautlDescription });
+    // ConfirmMultipieceCheckOutModal.confirmMultipleCheckOut();
     CheckOutActions.checkOutItem(userBarcode, testItems[3].barcode);
-    ConfirmMultipieceCheckOutModal.checkIsModalConsistOf(instanceTitle, testItems[3].numberOfPieces, dash);
-    ConfirmMultipieceCheckOutModal.checkMissingPiecesInModal(testItems[3].numberOfMissingPieces, missingPieceDescription);
-    ConfirmMultipieceCheckOutModal.confirmMultiplePiecesItemModal(); */
+    ConfirmMultipieceCheckOutModal.checkContent(instanceTitle, materialTypeName.name, testItems[3].barcode, mis.quantity, mis.defautlDescription, testItems[3].numberOfPieces);
+    ConfirmMultipieceCheckOutModal.confirmMultipleCheckOut();
   });
 });
