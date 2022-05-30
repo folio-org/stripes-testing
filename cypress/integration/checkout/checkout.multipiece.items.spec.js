@@ -9,7 +9,7 @@ import ServicePoints from '../../support/fragments/settings/tenant/servicePoints
 import ConfirmMultipieceCheckOutModal from '../../support/fragments/checkout/confirmMultipieceCheckOutModal';
 import UsersEditPage from '../../support/fragments/users/usersEditPage';
 import Checkout from '../../support/fragments/checkout/checkout';
-import inventoryInstances from '../../support/fragments/inventory/inventoryInstances';
+import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
 
 describe('Check Out', () => {
   let user = {};
@@ -55,7 +55,7 @@ describe('Check Out', () => {
       testItems.push(getTestItem(3, true, false));
       testItems.push(getTestItem(2, true, true));
       testItems.push(getTestItem(1, false, true));
-      inventoryInstances.createFolioInstanceViaApi({
+      InventoryInstances.createFolioInstanceViaApi({
         instance: {
           instanceTypeId: Cypress.env('instanceTypes')[0].id,
           title: instanceTitle,
