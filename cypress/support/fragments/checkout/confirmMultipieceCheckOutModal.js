@@ -14,16 +14,21 @@ export default {
     cy.expect(MultiColumnListRow().exists());
   },
 
-  checkContent:(itemTitle, materialType, barcode, itemPieces = '-', description = '-', { missingPiecesProperties }) => {
+  checkContent:(itemTitle, materialType, barcode, { itemPieces = '-', description = '-' }, { missingitemPieces = '-', missingDescription = '-' }) => {
     cy.expect(confirmModal.find(HTML(including(`${itemTitle} (${materialType}) (Barcode: ${barcode}) will be checked out.`))).exists());
-    cy.expect(numberOfPieces.has({ value: itemPieces }));
-    cy.expect(descriptionOfPieces.has({ value: description }));
-    if (missingPiecesProperties) {
-      cy.expect(numberOfMissingPiecesKeyValue.has({ value: { missingPiecesProperties } }));
-      cy.expect(descriptionOfMissingPiecesKeyValue.has({ value: { missingPiecesProperties } }));
+    if (itemPieces === description && itemPieces === '-') {
+      cy.expect(numberOfPieces.absent());
+      cy.expect(descriptionOfPieces.absent());
     } else {
+      cy.expect(numberOfPieces.has({ value: itemPieces.toString() }));
+      cy.expect(descriptionOfPieces.has({ value: description }));
+    }
+    if (missingitemPieces === missingDescription && missingitemPieces === '-') {
       cy.expect(numberOfMissingPiecesKeyValue.absent());
       cy.expect(descriptionOfMissingPiecesKeyValue.absent());
+    } else {
+      cy.expect(numberOfMissingPiecesKeyValue.has({ value: missingitemPieces.toString() }));
+      cy.expect(descriptionOfMissingPiecesKeyValue.has({ value: missingDescription }));
     }
     cy.expect(checkOutButton.exists());
   },

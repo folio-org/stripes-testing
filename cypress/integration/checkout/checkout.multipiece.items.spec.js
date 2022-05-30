@@ -33,15 +33,15 @@ describe('Check Out', () => {
       cy.getHoldingTypes({ limit: 2 });
       cy.getInstanceTypes({ limit: 1 });
     }).then(() => {
-      const getTestItem = (hasNumberOfPieces, hasDiscription, hasMissingPieces) => {
+      const getTestItem = (numberOfPieces, hasDiscription, hasMissingPieces) => {
         const defaultItem = {
           barcode: Helper.getRandomBarcode(),
           status:  { name: 'Available' },
           permanentLoanType: { id: Cypress.env('loanTypes')[0].id },
           materialType: { id: materialTypeName.id },
         };
-        if (hasNumberOfPieces) {
-          defaultItem.numberOfPieces = '-';
+        if (numberOfPieces) {
+          defaultItem.numberOfPieces = numberOfPieces;
         }
         if (hasDiscription) {
           defaultItem.descriptionOfPieces = defautlDescription;
@@ -52,11 +52,11 @@ describe('Check Out', () => {
         }
         return defaultItem;
       };
-      testItems.push(getTestItem('1', true, false));
-      testItems.push(getTestItem('3', true, false));
-      testItems.push(getTestItem('2', true, true));
-      testItems.push(getTestItem('1', false, true));
-      testItems.push(getTestItem('1', false, true));
+      testItems.push(getTestItem(1, true, false));
+      testItems.push(getTestItem(3, true, false));
+      testItems.push(getTestItem(2, true, true));
+      testItems.push(getTestItem(1, false, true));
+      testItems.push(getTestItem(1, false, true));
       inventoryInstances.createFolioInstanceViaApi({
         instance: {
           instanceTypeId: Cypress.env('instanceTypes')[0].id,
@@ -118,7 +118,9 @@ describe('Check Out', () => {
     // ConfirmMultipieceCheckOutModal.checkContent(instanceTitle, materialTypeName.name, testItems[2].barcode, testItems[2].numberOfPieces, defautlDescription, { quantity, defautlDescription });
     // ConfirmMultipieceCheckOutModal.confirmMultipleCheckOut();
     CheckOutActions.checkOutItem(userBarcode, testItems[3].barcode);
-    ConfirmMultipieceCheckOutModal.checkContent(instanceTitle, materialTypeName.name, testItems[3].barcode, mis.quantity, mis.defautlDescription, testItems[3].numberOfPieces);
+    ConfirmMultipieceCheckOutModal.checkContent(instanceTitle, materialTypeName.name, testItems[3].barcode,
+      { itemPieces : testItems[3].numberOfPieces, description :testItems[3].descriptionOfPieces },
+      { missingitemPieces : testItems[3].numberOfMissingPieces, missingDescription: testItems[3].missingPieces });
     ConfirmMultipieceCheckOutModal.confirmMultipleCheckOut();
   });
 });
