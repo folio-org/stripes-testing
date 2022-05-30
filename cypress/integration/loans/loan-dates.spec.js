@@ -50,7 +50,7 @@ describe('loan dates', () => {
             });
           })
           .then(() => {
-            UsersEditPage.addServicePointToUser([Cypress.env('servicePoints')[0].id], userProperties.userId);
+            UsersEditPage.addServicePointToUser(...Cypress.env('servicePoints')[0].id, userProperties.userId);
             cy.getUserServicePoints(Cypress.env('users')[0].id);
             cy.createInstance({
               instance: {

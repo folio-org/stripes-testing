@@ -1,4 +1,4 @@
-import uuid, { stringify } from 'uuid';
+import uuid from 'uuid';
 
 const DEFAULT_INSTANCE = {
   source: 'FOLIO',
@@ -104,7 +104,7 @@ Cypress.Commands.add('getInstanceIdentifierTypes', (searchParams) => {
     });
 });
 
-// Depricated, usecreateInstanceWithGivenIds instead
+// Depricated, use createInstanceWithGivenIds instead
 Cypress.Commands.add('createInstance', ({ instance, holdings = [], items = [] }) => {
   const { instanceId = uuid() } = instance;
 
@@ -134,7 +134,6 @@ Cypress.Commands.add('createInstance', ({ instance, holdings = [], items = [] })
       cy.wrap(instanceId).as('instanceId');
     });
   return cy.get('@instanceId');
-  // { instanceId, [holdingId, [itemIds]]; }
 });
 
 Cypress.Commands.add('updateInstance', requestData => {
@@ -150,6 +149,7 @@ Cypress.Commands.add('updateInstance', requestData => {
   return cy.get('@instanceId');
 });
 
+// Depricated, use createInstanceWithGivenIds instead
 // TODO: move preparing of IDs from createInstanceWithGivenIds into createHolding
 Cypress.Commands.add('createHolding', ({ holding, items = [] }) => {
   const { holdingId = uuid() } = holding;
@@ -207,6 +207,7 @@ Cypress.Commands.add('updateHoldingRecord', (holdingsRecordId, newParams) => {
   });
 });
 
+// Depricated, use createInstanceWithGivenIds instead
 Cypress.Commands.add('createItem', (item) => {
   const { itemId = uuid() } = item;
   delete item.itemId;
