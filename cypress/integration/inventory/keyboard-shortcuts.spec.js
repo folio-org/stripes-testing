@@ -8,6 +8,7 @@ import InventoryInstances from '../../support/fragments/inventory/inventoryInsta
 import InventoryHotkeys from '../../support/fragments/inventory/inventoryHotkeys';
 import SearchInventory from '../../support/fragments/data_import/searchInventory';
 import devTeams from '../../support/dictionary/devTeams';
+import InventoryInstance from '../../support/fragments/inventory/inventoryInstance';
 
 let userId = '';
 const precedingTitleValue = `Preceding title test value ${getRandomPostfix()}`;
@@ -32,10 +33,8 @@ describe('ui-inventory: keyboard shortcut', () => {
     cy.deleteUser(userId);
   });
 
-  it('C345297 Keyboard Shortcut. Access to drop down menu', { tags: [testTypes.smoke] }, () => {
-    InventoryKeyboardShortcuts.verifyInventoryDropdownIsShown('false');
   it('C345297 Keyboard Shortcut. Access to drop down menu', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
-    InventoryMainButton.verifyInventoryDropdownIsShown('false');
+    InventoryKeyboardShortcuts.verifyInventoryDropdownIsShown('false');
 
     InventoryKeyboardShortcuts.openInventoryMenu();
     InventoryKeyboardShortcuts.verifyInventoryDropdownIsShown('true');
@@ -56,6 +55,7 @@ describe('ui-inventory: keyboard shortcut', () => {
     InventoryKeyboardShortcuts.closeShortcuts();
     InventoryKeyboardShortcuts.fillInstanceInfoAndSave(instanceTitle);
     // TODO: Need to wait for the loading of saving the edited information.Reason: the robot runs quickly and the test drops.
+    InventoryKeyboardShortcuts.checkInstance(instanceTitle);
     cy.wait(6000);
     SearchInventory.searchInstanceByTitle(instanceTitle);
     InventoryInstances.selectInstance();
@@ -65,5 +65,6 @@ describe('ui-inventory: keyboard shortcut', () => {
     InventoryKeyboardShortcuts.pressHotKey(hotKeys.duplicate);
     InventoryInstanceEdit.addPrecedingTitle(0, precedingTitleValue, isbnValue, issnValue);
     InventoryKeyboardShortcuts.pressHotKey(hotKeys.save);
+    InventoryInstance.checkPrecedingTitle(0, precedingTitleValue, isbnValue, issnValue);
   });
 });

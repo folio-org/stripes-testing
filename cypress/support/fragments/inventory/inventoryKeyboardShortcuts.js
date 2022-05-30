@@ -1,5 +1,4 @@
-import { Button, Dropdown, Modal, Select, TextArea } from '../../../../interactors';
-import getRandomPostfix from '../../utils/stringTools';
+import { Button, Dropdown, Modal, Pane, HTML, including, Select, TextArea } from '../../../../interactors';
 
 const inventoryApplicationContextDropdown = Dropdown('InventoryApplication context dropdown');
 
@@ -31,5 +30,9 @@ export default {
       Select({ name: 'instanceTypeId' }).choose('other'),
       Button('Save and close').click(),
     ]);
+  },
+  checkInstance:(instanceTitle) => {
+    cy.expect(Pane({ id: 'pane-instancedetails-content' })
+      .find(HTML(including(instanceTitle), { class: 'headline' })).exists());
   },
 };
