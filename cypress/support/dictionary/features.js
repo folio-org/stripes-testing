@@ -9,5 +9,6 @@ export default {
   paymentMethod: 'Payment Method',
   sharedOwner: '"Shared" owner',
   // users
-  patronBlocks: 'Patron blocks'
+  patronBlocks: 'Patron blocks',
+  waiveReasons: 'Waive reasons'
 };

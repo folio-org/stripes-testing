@@ -7,7 +7,7 @@ import { calloutTypes } from '../../../interactors';
 
 let user;
 
-describe('ui-users: BULK EDIT permissions', () => {
+describe('ui-users: file uploading', () => {
   before('create user', () => {
     cy.createTempUser([
       permissions.bulkEditView.gui,
