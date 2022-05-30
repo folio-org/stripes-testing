@@ -55,6 +55,7 @@ export default {
   usersPath: 'settings/users',
   paymentsPath: 'settings/users/payments',
   conditionsPath: 'settings/users/conditions',
+  waiveReasons: 'settings/users/waivereasons',
   // Data Import
   mappingProfilePath: 'settings/data-import/mapping-profiles',
   actionProfilePath: 'settings/data-import/action-profiles',
