@@ -210,6 +210,8 @@ Cypress.Commands.add('createItem', (item) => {
       id: itemId,
       ...item,
     }
+  }).then((res) => {
+    return res;
   });
 });
 

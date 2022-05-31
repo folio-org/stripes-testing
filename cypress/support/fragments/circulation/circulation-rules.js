@@ -86,5 +86,25 @@ export default {
   updateApi(data) {
     return cy.updateCirculationRules(data);
   },
-  waitLoading() { cy.expect(Heading('Patron notice templates').exists()); },
+  addNewRuleApi(priorityId, noticeId) {
+    // TODO add supporting for more options
+    const priority = '\ng ';
+    let defaultRules;
+
+    this.getApi().then((rulesAsText) => { defaultRules = rulesAsText.rulesAsText; }).then(() => {
+      // deault parameters addresses in string
+      // defaultRules.substring(286, 322),
+      // defaultRules.substring(325, 361),
+      // defaultRules.substring(364, 400),
+      // defaultRules.substring(403, 438)
+      const withNewRule = defaultRules + priority + priorityId + defaultRules.substring(281, 440) + 'n ' + noticeId;
+      cy.updateCirculationRules({ rulesAsText: withNewRule });
+    }).then(() => {
+      // TODO: fix - cannot get value from return
+      Cypress.env('defaultRules', defaultRules);
+    });
+  },
+  deleteAddedRuleApi(defaultRules) {
+    return cy.updateCirculationRules({ rulesAsText: defaultRules });
+  }
 };

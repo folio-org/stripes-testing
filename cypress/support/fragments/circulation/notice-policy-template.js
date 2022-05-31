@@ -16,7 +16,7 @@ const defaultNoticeTemplateBody = {
   templateResolver: 'mustache',
 };
 
-const noticeTemplateCategories = {
+export const TEMPLATE_CATEGORIES = {
   loan: 'Loan',
   request: 'Request',
   AutomatedFeeFineCharge: 'Automated fee/fine charge',
@@ -27,7 +27,6 @@ const noticeTemplateCategories = {
 
 export default {
   defaultNoticeTemplateBody,
-  noticeTemplateCategories,
   createViaApi(noticeTemplateCategory) {
     return cy.okapiRequest({ method: 'POST',
       path: 'templates',
@@ -44,8 +43,7 @@ export default {
   },
 
   deleteViaApi(templateId) {
-    return cy.okapiRequest({ 
-      method: 'DELETE',
+    return cy.okapiRequest({ method: 'DELETE',
       path: `templates/${templateId}`,
       searchParams: {
         query: '(cql.allRecords=1) and category=""'
