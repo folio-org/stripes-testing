@@ -5,14 +5,16 @@ import Helper from '../../../../support/fragments/finance/financeHelper';
 import NewServicePoint from '../../../../support/fragments/service_point/newServicePoint';
 import ServicePoints from '../../../../support/fragments/settings/tenant/servicePoints';
 import TopMenu from '../../../../support/fragments/topMenu';
+import InventoryInstances from '../../../../support/fragments/inventory/inventoryInstances';
 
-describe('Check Out', () => {
+describe('ui-users:', () => {
   let user = {};
   let userBarcode = '';
   const itemBarcode = Helper.getRandomBarcode();
   const instanceTitle = `autotest_instance_title_${getRandomPostfix()}`;
   const quantityOfItemPieces = '2';
   let servicePoint;
+  let testInstanceIds;
 
   beforeEach(() => {
     cy.createTempUser([
@@ -46,7 +48,7 @@ describe('Check Out', () => {
               });
           })
           .then(() => {
-            cy.createInstance({
+            InventoryInstances.createFolioInstanceViaApi({
               instance: {
                 instanceTypeId: Cypress.env('instanceTypes')[0].id,
                 title: instanceTitle,
@@ -54,7 +56,6 @@ describe('Check Out', () => {
               holdings: [{
                 holdingsTypeId: Cypress.env('holdingsTypes')[0].id,
                 permanentLocationId: Cypress.env('locations')[0].id,
-                sourceId: Cypress.env('holdingSources')[0].id,
               }],
               items: [
                 [
@@ -67,12 +68,15 @@ describe('Check Out', () => {
                   }
                 ],
               ],
-            });
+            })
+              .then(specialInstanceIds => {
+                testInstanceIds = specialInstanceIds;
+              });
           });
       });
   });
 
-  it('C591 Check out: multipiece items', { tags: [TestTypes.smoke] }, () => {
+  it('C9277 Verify that maximum number of items borrowed for loan type (e.g. course reserve) limit works', { tags: [TestTypes.smoke] }, () => {
 
   });
 });
