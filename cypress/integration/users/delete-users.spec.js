@@ -205,8 +205,8 @@ describe('Deleting user', () => {
 
   it('should be unable in case the user has open fees/fines', function () {
     UsersOwners.createViaApi({ owner: uuid() })
-      .then(owner => {
-        specialOwnerId = owner.id;
+      .then(ownerId => {
+        specialOwnerId = ownerId;
         cy.createFeesFinesTypeApi({
           feeFineType: uuid(),
           ownerId: specialOwnerId,

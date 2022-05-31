@@ -1,12 +1,11 @@
 import topMenu from './topMenu';
 
+const getUserPath = (userId) => `${topMenu.usersPath}/${userId}`;
+
 export default {
   // users
-  getUserPath(userId) {
-    return `${topMenu.usersPath}/${userId}`;
-  },
   getLoansPath(userId) {
-    return `${this.getUserPath(userId)}/loans`;
+    return `${getUserPath(userId)}/loans`;
   },
   getOpenLoansPath(userId) {
     return `${this.getLoansPath(userId)}/open`;
@@ -14,4 +13,6 @@ export default {
   getLoanDetailsPath(userId, loanId) {
     return `${this.getLoansPath(userId)}/view/${loanId}`;
   },
+  getChargePath: (userId) => `${getUserPath(userId)}/charge`,
+  getUserPreviewPath:(userId) => `${topMenu.usersPath}/preview/${userId}`,
 };

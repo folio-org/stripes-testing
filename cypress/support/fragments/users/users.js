@@ -1,9 +1,6 @@
 import uuid from 'uuid';
-import { HTML, including, Link } from '@interactors/html';
-import { Accordion, Button, Section, TextArea } from '../../../../interactors';
 import getRandomPostfix from '../../utils/stringTools';
 
-const rootSection = Section({ id:'users-search-results-pane' });
 const defaultUserName = `AutotestUser${getRandomPostfix()}`;
 const defaultUser = {
   username: defaultUserName,
@@ -28,9 +25,11 @@ export default {
     path: 'users',
     body: user,
     isDefaultSearchParamsRequired: false
-  }).then(response => response.body.id),
+  }).then(response => ({ id: response.body.id,
+    username: response.body.username })),
   deleteViaApi:(userId) => cy.okapiRequest({
     method: 'DELETE',
     path: `bl-users/by-id/${userId}`,
+    isDefaultSearchParamsRequired : false
   })
 };
