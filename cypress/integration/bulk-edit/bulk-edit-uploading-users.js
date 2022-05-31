@@ -4,6 +4,7 @@ import permissions from '../../support/dictionary/permissions';
 import BulkEditSearchPane from '../../support/fragments/bulk-edit/bulk-edit-search-pane';
 import FileManager from '../../support/utils/fileManager';
 import getRandomPostfix from '../../support/utils/stringTools';
+import devTeams from '../../support/dictionary/devTeams';
 
 let user;
 const userUUIDsFileName = `C350905_userUUIDs_${getRandomPostfix()}.csv`;
@@ -28,7 +29,7 @@ describe('ui-users: file uploading', () => {
   });
 
 
-  it('C350905 Negative uploading file with identifiers -- In app approach', { tags: [testTypes.smoke] }, () => {
+  it('C350905 Negative uploading file with identifiers -- In app approach', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
     BulkEditSearchPane.checkUsersRadio();
     BulkEditSearchPane.selectRecordIdentifier('User UUIDs');
 
