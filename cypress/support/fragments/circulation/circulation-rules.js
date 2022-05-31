@@ -76,6 +76,8 @@ export default {
       method: 'POST',
       path: 'rules',
       body: newCirculatiuonPolicy
+    }).then(req => {
+      return req.body;
     });
   },
   getApi() {
@@ -84,4 +86,5 @@ export default {
   updateApi(data) {
     return cy.updateCirculationRules(data);
   },
+  waitLoading() { cy.expect(Heading('Patron notice templates').exists()); },
 };

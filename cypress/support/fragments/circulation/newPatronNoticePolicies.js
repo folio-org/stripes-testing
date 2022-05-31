@@ -1,6 +1,12 @@
 import getRandomPostfix from '../../utils/stringTools';
 import { Button, TextField, TextArea, NavListItem, Checkbox, Select, Section, Link } from '../../../../interactors';
 
+const NOTICE_EMAIL_FORMAT = 'email';
+const NOTICE_ACTIONS = {
+  checkin: 'Check in',
+  checkout: 'Check out'
+  //add rest
+};
 const actionsButton = Button('Actions');
 const addNoticeButton = Button('Add notice');
 const nameField = TextField({ id: 'notice_policy_name' });
@@ -9,17 +15,14 @@ const formatSelect = Select({ name: 'loanNotices[0].format' });
 const actionSelect = Select({ name: 'loanNotices[0].sendOptions.sendWhen' });
 
 export default {
+  NOTICE_ACTIONS,
   defaultUiPatronNoticePolicies: {
+    //remove defaultNoticePolicy
     name: `Test_notice_${getRandomPostfix()}`,
     description: 'Created by autotest team',
-    // optional properties:
-    templateId: null,
-    action: null,
-    format: null,
   },
-
-  getPatronNoticePolicyTemplate(patronNoticePolicy, templateId, action) {
-    return { ...patronNoticePolicy, templateId, action };
+  getNoticePolicyWithLoan(templateId, action = NOTICE_ACTIONS.checkout) {
+    return { ...templateId, NOTICE_EMAIL_FORMAT, action };
   },
 
   createPolicy(patronNoticePolicy) {
@@ -79,7 +82,7 @@ export default {
   },
 
   openNoticyToSide(patronNoticePolicy) {
-    cy.do(Link(patronNoticePolicy.name).click())
+    cy.do(Link(patronNoticePolicy.name).click());
   },
 
   deletePolicy: () => {

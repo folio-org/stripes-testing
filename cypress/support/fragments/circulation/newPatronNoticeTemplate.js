@@ -18,9 +18,7 @@ export default {
   waitLoading() { cy.expect(Heading('Patron notice templates').exists()); },
 
   createTemplate(patronNoticeTemplate) {
-    // cy.intercept('/patron-notice-policy-storage/patron-notice-policies**').as('request-patron-notice-policies')
     cy.do(Button({ id: 'clickable-create-entry' }).click());
-    // cy.wait('@request-patron-notice-policies')
     // waiting the form to load
     cy.wait(1000);
     this.fillGeneralInformation(patronNoticeTemplate);
@@ -28,7 +26,6 @@ export default {
     cy.do(itemTitleCheckbox.click());
     cy.do(addTokenButton.click());
     cy.do(Button({ id: 'footer-save-entity' }).click());
-    // cy.wait('@request-patron-notice-policies')
   },
   fillGeneralInformation: (patronNoticeTemplate) => {
     cy.get('#template-editor')
@@ -41,7 +38,6 @@ export default {
     ]);
   },
   checkTemplate: (patronNoticeTemplate) => {
-    cy.log(KeyValue({ value:patronNoticeTemplate.body}))
     cy.expect([
       KeyValue({ value: patronNoticeTemplate.name }).exists(),
       KeyValue({ value: patronNoticeTemplate.description }).exists(),

@@ -8,7 +8,33 @@ export const defaultNoticePolicy = {
   id: uuid(),
 };
 
+const loanNotice = {
+  'format': 'Email',
+  'realTime': false,
+};
+
 export default {
+  createWithTemplateApi(createdTemplateId, sendWhenOption) {
+    return cy
+      .okapiRequest({
+        method: 'POST',
+        path: 'patron-notice-policy-storage/patron-notice-policies',
+        body: {
+          ...defaultNoticePolicy,
+          loanNotices:
+            [{
+              ...loanNotice,
+              templateId: createdTemplateId,
+              sendOptions: {
+                sendWhen: sendWhenOption,
+              },
+            }]
+        },
+      })
+      .then(({ body }) => {
+        return body;
+      });
+  },
   createApi() {
     return cy
       .okapiRequest({

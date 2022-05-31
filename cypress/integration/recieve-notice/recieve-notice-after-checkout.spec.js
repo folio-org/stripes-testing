@@ -5,6 +5,7 @@ import getRandomPostfix from '../../support/utils/stringTools';
 import TestTypes from '../../support/dictionary/testTypes';
 import TopMenu from '../../support/fragments/topMenu';
 import SettingsMenu from '../../support/fragments/settingsMenu';
+import Permissions from '../../support/dictionary/permissions';
 
 import LoanPolicy, {
   defaultLoanPolicy,
@@ -27,11 +28,23 @@ import PatronGroups from '../../support/fragments/settings/users/patronGroups';
 import CirculationRules from '../../support/fragments/circulation/circulation-rules';
 import CheckoutActions from '../../support/fragments/check-out-actions/check-out-actions';
 import SearchPane from '../../support/fragments/circulation-log/searchPane';
+import DefaultUser from '../../support/fragments/user/defaultUser';
+import Checkout from '../../support/fragments/checkout/checkout';
+import newInctanceHoldingsItem from '../../support/fragments/inventory/newInctanceHoldingsItem';
+import newUser from '../../support/fragments/user/newUser';
 
 // TODO: Add recieving notice in the email box check
 describe('Recieving notice: Checkout', { tags: [TestTypes.smoke] }, () => {
+  let user = {}
+  let loanTypeId;
+  let servicePointId;
+  let materialTypeId;
+  let locationId;
+  let holdingTypeId;
+  let holdingSourceId
+  let instanceTypeId;
   let patronGroupId;
-  let userLastName;
+  let patronGroup
 
   const testPatronGroup = PatronGroups.defaultPatronGroup;
   const testPatronNoticeTemplate = NewPatronNoticeTemplate.defaultUiPatronNoticeTemplate;
@@ -42,52 +55,35 @@ describe('Recieving notice: Checkout', { tags: [TestTypes.smoke] }, () => {
   beforeEach(() => {
     cy.getAdminToken()
       .then(() => {
-        cy.getLoanTypes({ limit: 1 });
-        cy.getMaterialTypes({ limit: 1 });
-        cy.getLocations({ limit: 1 });
-        cy.getHoldingTypes({ limit: 1 });
-        cy.getHoldingSources({ limit: 1 });
-        cy.getInstanceTypes({ limit: 1 });
-        cy.getUserGroups({ limit: 1 }).then((patronGroups) => {
-          patronGroupId = patronGroups;
-        });
+        cy.getLoanTypes({ limit: 1 }).then((loanType) => { loanTypeId = loanType[0].id; })
+        cy.getMaterialTypes({ limit: 1 }).then((materialTypes) => { materialTypeId = materialTypes.id; })
+        cy.getLocations({ limit: 1 }).then((location) => { locationId = location.id })
+        cy.getHoldingTypes({ limit: 1 }).then((holdingsTypes) => { holdingTypeId = holdingsTypes[0].id })
+        cy.getHoldingSources({ limit: 1 }).then((holdingsRecordsSources) => { holdingSourceId = holdingsRecordsSources[0].id })
+        cy.getInstanceTypes({ limit: 1 }).then((instanceTypes) => { instanceTypeId =instanceTypes[0].id });
+        cy.getUserGroups({ limit: 1 }).then((patronGroups) => { patronGroup = patronGroups });
+        cy.getUsers({ limit: 1, query: '"personal.firstName"="checkin-all" and "active"="true"' }).then((users) => { user.id =  users.id})
       })
       .then(() => {
-        cy.createUserApi({
-          active: true,
-          barcode: USER_BARCODE,
-          personal: {
-            preferredContactTypeId: '002',
-            lastName: `Test user ${getRandomPostfix()}`,
-            email: 'test@folio.org',
-          },
-          patronGroup: patronGroupId,
-          departments: [],
-        }).then((user) => {
-          userLastName = user.personal.lastname;
-        });
-
         cy.createInstance({
           instance: {
             instanceTypeId: Cypress.env('instanceTypes')[0].id,
-            title: `Automation test instance ${getRandomPostfix()}`,
+            title: `Pre-checkout instance ${Number(new Date())}`,
           },
-          holdings: [
-            {
-              holdingsTypeId: Cypress.env('holdingsTypes')[0].id,
-              permanentLocationId: Cypress.env('locations')[0].id,
-              sourceId: Cypress.env('holdingSources')[0].id,
-            },
-          ],
+          holdings: [{
+            holdingsTypeId: Cypress.env('holdingsTypes')[0].id,
+            permanentLocationId: Cypress.env('locations')[0].id,
+            sourceId: Cypress.env('holdingSources')[0].id,
+          }],
           items: [
-            [
-              {
-                barcode: ITEM_BARCODE,
-                status: { name: 'Available' },
-                permanentLoanType: { id: Cypress.env('loanTypes')[0].id },
-                materialType: { id: Cypress.env('materialTypes')[0].id },
-              },
-            ],
+            [{
+              barcode: ITEM_BARCODE,
+              missingPieces: '3',
+              numberOfMissingPieces: '3',
+              status: { name: 'Available' },
+              permanentLoanType: { id: Cypress.env('loanTypes')[0].id },
+              materialType: { id: Cypress.env('materialTypes')[0].id },
+            }],
           ],
         });
       });
@@ -106,18 +102,25 @@ describe('Recieving notice: Checkout', { tags: [TestTypes.smoke] }, () => {
     NewPatronNoticeTemplate.createTemplate(testPatronNoticeTemplate);
     NewPatronNoticeTemplate.checkTemplate(testPatronNoticeTemplate);
     cy.visit(SettingsMenu.circulationPatronNoticePoliciesPath);
-    NewPatronNoticePolicies.createPolicy(testPatronNotice);
     NewPatronNoticePolicies.savePolicy();
     testPatronNotice.templateId = testPatronNoticeTemplate.name;
     testPatronNotice.format = 'Email';
     testPatronNotice.action = 'Check out';
+
+    NewPatronNoticePolicies.getNoticePolicyWithLoan(testPatronNotice.templateId);
     NewPatronNoticePolicies.addNotice(testPatronNotice);
     NewPatronNoticePolicies.savePolicy();
     NewPatronNoticePolicies.checkPolicy(testPatronNotice.name);
   });
 
   it('C347621 Check that user can receive notice with multiple items after finishing the session "Check out" by clicking the End Session button', () => {
-    cy.visitSettingsMenu.circulationRulesPath();
+    cy.loginAsAdmin({
+      path: SettingsMenu.circulationRulesPath,
+      waiter: CirculationRules.waitLoading,
+    });
+    CirculationRules.getApi().then((rules) => {
+      console.log('rules' + rules)
+    })
     CirculationRules.clearCirculationRules();
     CirculationRules.fillInPriority();
     CirculationRules.fillInFallbackPolicy({
@@ -130,7 +133,7 @@ describe('Recieving notice: Checkout', { tags: [TestTypes.smoke] }, () => {
     });
     CirculationRules.fillInPolicy({
       priorityType: 'g ',
-      priorityTypeName: testPatronGroup.group,
+      priorityTypeName: patronGroupId.group,
       loanPolicyName: defaultLoanPolicy.name,
       overdueFinePolicyName: defaultOverdueFinePolicy.name,
       lostItemFeePolicyName: defaultLostItemFeePolicy.name,
@@ -146,7 +149,7 @@ describe('Recieving notice: Checkout', { tags: [TestTypes.smoke] }, () => {
   });
 
   after(() => {
-    cy.visit(settingsMenu.circulationRulesPath);
+    cy.visit(SettingsMenu.circulationRulesPath);
     CirculationRules.clearCirculationRules();
     CirculationRules.fillInPriority();
     CirculationRules.fillInFallbackPolicy({
@@ -166,31 +169,21 @@ describe('Recieving notice: Checkout', { tags: [TestTypes.smoke] }, () => {
       noticePolicyName: 'send-no-notices',
     });
     CirculationRules.saveCirculationRules();
-    cy.getUsers({ query: `personal.lastName='${userLastName}'` }).then(() => {
-      Cypress.env('users').forEach((user) => {
-        cy.deleteUser(user.id);
-      });
-    });
-    cy.getInstance({
-      limit: 1,
-      expandAll: true,
-      query: `'items.barcode'=='${ITEM_BARCODE}'`,
-    }).then((instance) => {
-      cy.deleteItem(instance.items[0].id);
-      cy.deleteHoldingRecord(instance.holdings[0].id);
-      cy.deleteInstanceApi(instance.id);
-    });
+
+    cy.deleteItem()
+    
     MaterialTypesSettings.deleteApi(defaultMaterialType.id);
     LoanPolicy.deleteApi(defaultLoanPolicy.id);
     RequestPolicy.deleteApi(defaultRequestPolicy.id);
     LostItemFeePolicy.deleteApi(defaultLostItemFeePolicy.id);
     OverdueFinePolicy.deleteApi(defaultOverdueFinePolicy.id);
-    PatronGroups.deleteViaApi(Cypress.env('patronGroupId'));
     cy.visit(SettingsMenu.circulationPatronNoticePoliciesPath);
     NewPatronNoticePolicies.openNoticyToSide(testPatronNotice);
     NewPatronNoticePolicies.deletePolicy();
     cy.visit(SettingsMenu.circulationPatronNoticeTemplatesPath);
     NewPatronNoticeTemplate.openTemplateToSide(testPatronNoticeTemplate);
     NewPatronNoticeTemplate.deleteTemplate();
+    cy.deleteUser(user.userId);
+
   });
 });
