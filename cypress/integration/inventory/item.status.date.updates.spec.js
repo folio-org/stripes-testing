@@ -30,9 +30,8 @@ import UpdateUser from '../../support/fragments/user/updateUser';
 import BasicOrderLine from '../../support/fragments/orders/basicOrderLine';
 import NewLocations from '../../support/fragments/settings/tenant/locations/newLocation';
 
-// TODO: When bug(https://issues.folio.org/browse/MSEARCH-361) will be fixed check full run test!!!
 describe('ui-inventory: Item status date updates', () => {
-  const instanceTitle = `autotest_title_${getRandomPostfix()}`;
+  const instanceTitle = `autotestTitle ${Helper.getRandomBarcode()}`;
   const itemQuantity = '1';
   let orderNumber;
   let effectiveLocationServicePoint;
