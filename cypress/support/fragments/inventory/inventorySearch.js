@@ -55,7 +55,10 @@ export default {
   },
 
   byKeywords(kw = '*') {
-    return cy.do(keywordInput.fillIn(kw));
+    return cy.do([
+      keywordInput.fillIn(kw),
+      Button('Search').click(),
+    ]);
   },
 
   selectBrowseCallNumbers() {
