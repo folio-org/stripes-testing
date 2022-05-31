@@ -1,13 +1,16 @@
 import { HTML } from '@interactors/html';
 import {
   Accordion,
-  Button, Checkbox, DropdownMenu,
+  Button,
+  Checkbox,
+  DropdownMenu,
   Modal,
-  MultiColumnListCell, MultiColumnListHeader,
+  MultiColumnListCell,
+  MultiColumnListHeader,
   RadioButton,
-  Select
+  Select,
+  MultiColumnList
 } from '../../../../interactors';
-import MultiColumnList from '../../../../interactors/multi-column-list';
 
 const resultsAccordion = Accordion('Preview of record matched');
 const errorsAccordion = Accordion('Errors');
