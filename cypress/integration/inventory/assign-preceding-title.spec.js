@@ -51,7 +51,7 @@ describe('ui-inventory: Assign a Preceding title for an instance', () => {
       });
   });
 
-  it('C9215 In Accordion Title --> Test assigning a Preceding title', () => {
+  it('C9215 In Accordion Title --> Test assigning a Preceding title', { tags:  [testTypes.smoke] }, () => {
     InventorySearch.searchByParameter('Title (all)', instanceTitle);
     InventoryInstances.selectInstance();
     InventoryInstance.editInstance();
