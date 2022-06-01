@@ -87,7 +87,7 @@ Cypress.Commands.add('getInstanceTypes', (searchParams) => {
     })
     .then(({ body }) => {
       Cypress.env('instanceTypes', body.instanceTypes);
-      return body.instanceTypes
+      return body.instanceTypes;
     });
 });
 

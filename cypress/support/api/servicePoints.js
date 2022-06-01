@@ -58,5 +58,7 @@ Cypress.Commands.add('addServicePointToUser', (servicePointId, userId) => {
       servicePointsIds: [servicePointId],
       defaultServicePointId: servicePointId,
     },
+  }).then((res) => {
+    return res;
   });
 });

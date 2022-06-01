@@ -10,7 +10,7 @@ export default {
     return cy.okapiRequest({
       method: 'POST',
       path: 'groups',
-      body:defaultPatronGroup
+      body: defaultPatronGroup,
     }).then(({ body }) => {
       return body;
     });

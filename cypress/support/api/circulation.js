@@ -48,6 +48,8 @@ Cypress.Commands.add('updateCirculationRules', (body) => {
     method: REQUEST_METHOD.PUT,
     path: 'circulation/rules',
     body,
+  }).then((res) => {
+    return res;
   });
 });
 

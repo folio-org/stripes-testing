@@ -90,19 +90,23 @@ export default {
     // TODO add supporting for more options
     const priority = '\ng ';
     let defaultRules;
+    let withNewRule;
 
     this.getApi().then((rulesAsText) => { defaultRules = rulesAsText.rulesAsText; }).then(() => {
-      // deault parameters addresses in string
-      // defaultRules.substring(286, 322),
-      // defaultRules.substring(325, 361),
-      // defaultRules.substring(364, 400),
-      // defaultRules.substring(403, 438)
-      const withNewRule = defaultRules + priority + priorityId + defaultRules.substring(281, 440) + 'n ' + noticeId;
-      cy.updateCirculationRules({ rulesAsText: withNewRule });
+      const oIndex = defaultRules.indexOf(' o ', 2);
+      const iIndex = defaultRules.indexOf(' i ', 2);
+      const lIndex = defaultRules.indexOf(' l ', 2);
+      const rIndex = defaultRules.indexOf(' r ', 2);
+      const o = defaultRules.substring(oIndex, oIndex + 39);
+      const l = defaultRules.substring(lIndex, lIndex + 39);
+      const i = defaultRules.substring(iIndex, iIndex + 39);
+      const r = defaultRules.substring(rIndex, rIndex + 39);
+      withNewRule = defaultRules + priority + priorityId + ' : ' + i + l + r + o + ' n ' + noticeId;
     }).then(() => {
-      // TODO: fix - cannot get value from return
+      cy.updateCirculationRules({ rulesAsText: withNewRule });
       Cypress.env('defaultRules', defaultRules);
     });
+    return withNewRule;
   },
   deleteAddedRuleApi(defaultRules) {
     return cy.updateCirculationRules({ rulesAsText: defaultRules });

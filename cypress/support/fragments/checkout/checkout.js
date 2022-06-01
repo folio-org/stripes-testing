@@ -3,10 +3,12 @@ import moment from 'moment';
 import {
   TextField,
   Button,
+  Heading
 } from '../../../../interactors';
 import { REQUEST_METHOD } from '../../constants';
 
 export default {
+  waitLoading() { cy.expect(Heading('Check out').exists()); },
   fillUserBarcode(barcode) {
     cy.do([
       TextField({ id: 'input-patron-identifier' }).fillIn(barcode),
