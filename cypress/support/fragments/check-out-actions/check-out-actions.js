@@ -1,5 +1,5 @@
 import TopMenu from '../topMenu';
-import { TextField, Button, KeyValue, MultiColumnListRow} from '../../../../interactors';
+import { TextField, Button, KeyValue, MultiColumnListRow } from '../../../../interactors';
 
 export default {
   checkOutItem(userBarcode, itemBarcode) {
