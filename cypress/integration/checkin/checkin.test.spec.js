@@ -30,12 +30,14 @@ describe('Check In - Actions ', () => {
       NewInctanceHoldingsItem.createItemWithSameParams(location.id);
       NewUser.createUserWithSameParams().then(userProperties => {
         SwitchServicePoint.addServicePointPermissions(userProperties.userName);
-        SwitchServicePoint.logOutAndLogIn(userProperties);
+        SwitchServicePoint.logOutAndLogInByUser(userProperties);
+        console.log(userProperties);
       });
     });
   });
 
   after('Delete New Service point, Item and User', () => {
+    SwitchServicePoint.logOutAndLogInByDiku();
     SwitchServicePoint.changeServicePointPreference();
     NewInctanceHoldingsItem.deleteItemWithSameParams();
     NewServicePoint.deleteServicePointViaApi();

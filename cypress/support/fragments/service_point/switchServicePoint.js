@@ -25,28 +25,39 @@ export default {
       Select({ id: 'servicePointPreference' }).choose(NewServicePoint.defaultUiServicePoint.body.name),
       Button({ id: 'accordion-toggle-button-permissions' }).click(),
       Button({ id: 'clickable-add-permission' }).click(),
-      Modal({ id: 'permissions-modal' }).find(TextField({ type: 'search' })).fillIn(permissions.uiCheckinAll.gui),
+      Modal({ id: 'permissions-modal' }).find(TextField({ type: 'search' })).fillIn(permissions.checkinAll.gui),
       Modal({ id: 'permissions-modal' }).find(Button('Search')).click(),
-      Modal({ id: 'permissions-modal' }).find(MultiColumnListCell(permissions.uiCheckinAll.gui)).click()]);
+      Modal({ id: 'permissions-modal' }).find(MultiColumnListCell(permissions.checkinAll.gui)).click()]);
     cy.expect(Modal({ id: 'permissions-modal' }).find(HTML(including('Total selected: 1'))));
     cy.do(Button({ id: 'clickable-permissions-modal-save' }).click());
     cy.expect(Modal({ id: 'permissions-modal' }).absent());
-    cy.expect(Accordion({ id: 'permissions' }).find(HTML(including(permissions.uiCheckinAll.gui))).exists());
+    cy.expect(Accordion({ id: 'permissions' }).find(HTML(including(permissions.checkinAll.gui))).exists());
+    cy.do(Button({ id: 'clickable-add-permission' }).focus());
+    cy.wait(10000);
     cy.do(Button('Save & close').click());
-    cy.do(Button('User permissions').click());
+    cy.do(Button({ id: 'accordion-toggle-button-permissionsSection' }).click());
+    cy.do(Button({ id: 'accordion-toggle-button-permissionsSection' }).focus());
+    cy.wait(10000);
   },
 
-  logOutAndLogIn: ({ userName, password }) => {
+  logOutAndLogInByUser: ({ userName, password }) => {
     cy.do([
       Dropdown('My profile').open(),
       Button('Log out').click(),
     ]);
     cy.login(userName, password);
   },
+  logOutAndLogInByDiku: () => {
+    cy.do([
+      Dropdown('My profile').open(),
+      Button('Log out').click(),
+    ]);
+    cy.login(Cypress.env('diku_login'), Cypress.env('diku_password'));
+  },
   // we can remove the service point if it is not Preference
   changeServicePointPreference: () => {
     cy.visit(TopMenu.usersPath);
-    cy.do(TextField({ id: 'input-user-search' }).fillIn(defaultUser.defaultUiPatron.body.userName));
+    cy.do(TextField({ id: 'input-user-search' }).fillIn(defaultUser.defaultUiPatron.body.username));
     cy.do(Button('Search').click());
     cy.do(MultiColumnList().click({ row: 0, column: 'Active' }));
     cy.do(Pane({ id: 'pane-userdetails' }).find(Button('Actions')).click());
