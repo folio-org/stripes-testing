@@ -38,7 +38,7 @@ describe('Patron blocks relations with users, conditions', () => {
             ManualCharges.createViaApi({ ...ManualCharges.defaultFeeFineType, ownerId: owner.id, defaultAmount: testData.chargeAmount }).then(manualCharge => {
               testData.manualChargeId = manualCharge.id;
               cy.visit(AppPaths.getUserPreviewPath(userProperties.id));
-              // TODO: clarify why reloading is needed to load expected options in Actions
+              // TODO: https://issues.folio.org/browse/UIU-2617
               cy.reload();
               UsersCard.startFeeFine();
               UserCharge.fillRequiredFields(owner.ownerName, manualCharge.feeFineType);
