@@ -1,189 +1,70 @@
 import uuid from 'uuid';
-import generateItemBarcode from '../../support/utils/generateItemBarcode';
-import getRandomPostfix from '../../support/utils/stringTools';
-
-import TestTypes from '../../support/dictionary/testTypes';
-import TopMenu from '../../support/fragments/topMenu';
-import SettingsMenu from '../../support/fragments/settingsMenu';
-import Permissions from '../../support/dictionary/permissions';
-
-import LoanPolicy, {
-  defaultLoanPolicy,
-} from '../../support/fragments/circulation/loan-policy';
-import LostItemFeePolicy, {
-  defaultLostItemFeePolicy,
-} from '../../support/fragments/circulation/lost-item-fee-policy';
-import NewPatronNoticePolicies from '../../support/fragments/circulation/newPatronNoticePolicies';
-import NewPatronNoticeTemplate from '../../support/fragments/circulation/newPatronNoticeTemplate';
-import OverdueFinePolicy, {
-  defaultOverdueFinePolicy,
-} from '../../support/fragments/circulation/overdue-fine-policy';
-import RequestPolicy, {
-  defaultRequestPolicy,
-} from '../../support/fragments/circulation/request-policy';
-import MaterialTypesSettings, {
-  defaultMaterialType,
-} from '../../support/fragments/inventory/materialType/materialTypesSettings';
-import PatronGroups from '../../support/fragments/settings/users/patronGroups';
-import CirculationRules from '../../support/fragments/circulation/circulation-rules';
-import CheckoutActions from '../../support/fragments/check-out-actions/check-out-actions';
-import SearchPane from '../../support/fragments/circulation-log/searchPane';
-import DefaultUser from '../../support/fragments/user/defaultUser';
-import Checkout from '../../support/fragments/checkout/checkout';
-import newInctanceHoldingsItem from '../../support/fragments/inventory/newInctanceHoldingsItem';
-import newUser from '../../support/fragments/user/newUser';
-
-// TODO: Add recieving notice in the email box check
-describe('Recieving notice: Checkout', { tags: [TestTypes.smoke] }, () => {
-  let user = {}
-  let loanTypeId;
-  let servicePointId;
-  let materialTypeId;
-  let locationId;
-  let holdingTypeId;
-  let holdingSourceId
-  let instanceTypeId;
-  let patronGroupId;
-  let patronGroup
-
-  const testPatronGroup = PatronGroups.defaultPatronGroup;
-  const testPatronNoticeTemplate = NewPatronNoticeTemplate.defaultUiPatronNoticeTemplate;
-  const testPatronNotice = NewPatronNoticePolicies.defaultUiPatronNoticePolicies;
-  const USER_BARCODE = uuid();
-  const ITEM_BARCODE = generateItemBarcode();
+import circulationRules from '../../support/fragments/circulation/circulation-rules';
+import noticePolicy, { NOTICE_ACTIONS } from '../../support/fragments/circulation/notice-policy';
+import noticePolicyTemplate, { TEMPLATE_CATEGORIES } from '../../support/fragments/circulation/notice-policy-template';
+import patronGroups from '../../support/fragments/settings/users/patronGroups';
+// TODO email checking
+describe('Recieving notice: Checkout', () => {
+  const patronGroup = {};
+  const userData = {
+    active: true,
+    barcode: uuid(),
+    personal: {
+      preferredContactTypeId: '002',
+      lastName: 'Test_last_Name',
+      email: 'test@folio.org',
+    },
+    patronGroup: patronGroup.id,
+    departments: []
+  };
+  let userId;
+  let templateId;
+  let noticePolicyId;
 
   beforeEach(() => {
-    cy.getAdminToken()
-      .then(() => {
-        cy.getLoanTypes({ limit: 1 }).then((loanType) => { loanTypeId = loanType[0].id; })
-        cy.getMaterialTypes({ limit: 1 }).then((materialTypes) => { materialTypeId = materialTypes.id; })
-        cy.getLocations({ limit: 1 }).then((location) => { locationId = location.id })
-        cy.getHoldingTypes({ limit: 1 }).then((holdingsTypes) => { holdingTypeId = holdingsTypes[0].id })
-        cy.getHoldingSources({ limit: 1 }).then((holdingsRecordsSources) => { holdingSourceId = holdingsRecordsSources[0].id })
-        cy.getInstanceTypes({ limit: 1 }).then((instanceTypes) => { instanceTypeId =instanceTypes[0].id });
-        cy.getUserGroups({ limit: 1 }).then((patronGroups) => { patronGroup = patronGroups });
-        cy.getUsers({ limit: 1, query: '"personal.firstName"="checkin-all" and "active"="true"' }).then((users) => { user.id =  users.id})
-      })
-      .then(() => {
-        cy.createInstance({
-          instance: {
-            instanceTypeId: Cypress.env('instanceTypes')[0].id,
-            title: `Pre-checkout instance ${Number(new Date())}`,
-          },
-          holdings: [{
-            holdingsTypeId: Cypress.env('holdingsTypes')[0].id,
-            permanentLocationId: Cypress.env('locations')[0].id,
-            sourceId: Cypress.env('holdingSources')[0].id,
-          }],
-          items: [
-            [{
-              barcode: ITEM_BARCODE,
-              missingPieces: '3',
-              numberOfMissingPieces: '3',
-              status: { name: 'Available' },
-              permanentLoanType: { id: Cypress.env('loanTypes')[0].id },
-              materialType: { id: Cypress.env('materialTypes')[0].id },
-            }],
-          ],
-        });
+    cy.getAdminToken();
+    // creating noticy with template
+    noticePolicyTemplate.createViaApi(TEMPLATE_CATEGORIES.loan).then(res => { templateId = res.body.id; }).then(() => {
+      noticePolicy.createWithTemplateApi(templateId, NOTICE_ACTIONS.checkout).then(res => { noticePolicyId = res.id; });
+    }).then(() => {
+      // creating patron group
+      patronGroups.createViaApi().then(res => {
+        patronGroup.name = res.group;
+        patronGroup.id = res.id;
+      }).then(() => {
+        // creating rule
+        circulationRules.addNewRuleApi(patronGroup.id, noticePolicyId);
       });
-
-    MaterialTypesSettings.createApi();
-    LoanPolicy.createApi();
-    RequestPolicy.createApi();
-    LostItemFeePolicy.createApi();
-    OverdueFinePolicy.createApi();
-    PatronGroups.createViaApi(testPatronGroup);
-    cy.loginAsAdmin({
-      path: SettingsMenu.circulationPatronNoticeTemplatesPath,
-      waiter: NewPatronNoticeTemplate.waitLoading,
     });
+    // creating item
+    try {
+      cy.createUserApi(userData).then(user => { userId = user.id; });
+      // cy.createItemRequestApi({
+      //   requestType: 'Page',
+      //   fulfilmentPreference: 'Hold Shelf',
+      //   itemId: Cypress.env('items')[0].id,
+      //   requesterId: specialUserId,
+      //   pickupServicePointId: Cypress.env('servicePoints')[0].id,
+      //   requestDate: '2021-09-20T18:36:56Z',
+      // })
+    } catch (error) {
+      console.log(error);
+    }
+    // specialItem.holdingsRecordId = specialHolding.id;
+    // specialItem.permanentLoanType.id = loanTypes[0].id;
+    // specialItem.materialType.id = materialType.id;
+  });
 
-    NewPatronNoticeTemplate.createTemplate(testPatronNoticeTemplate);
-    NewPatronNoticeTemplate.checkTemplate(testPatronNoticeTemplate);
-    cy.visit(SettingsMenu.circulationPatronNoticePoliciesPath);
-    NewPatronNoticePolicies.savePolicy();
-    testPatronNotice.templateId = testPatronNoticeTemplate.name;
-    testPatronNotice.format = 'Email';
-    testPatronNotice.action = 'Check out';
-
-    NewPatronNoticePolicies.getNoticePolicyWithLoan(testPatronNotice.templateId);
-    NewPatronNoticePolicies.addNotice(testPatronNotice);
-    NewPatronNoticePolicies.savePolicy();
-    NewPatronNoticePolicies.checkPolicy(testPatronNotice.name);
+  afterEach(() => {
+    circulationRules.deleteAddedRuleApi(Cypress.env('defaultRules'));
+    noticePolicy.deleteApi(noticePolicyId);
+    noticePolicyTemplate.deleteViaApi(templateId);
+    patronGroups.deleteViaApi(patronGroup.id);
+    cy.deleteUser(userId);
+    // cy.deleteItem()
   });
 
   it('C347621 Check that user can receive notice with multiple items after finishing the session "Check out" by clicking the End Session button', () => {
-    cy.loginAsAdmin({
-      path: SettingsMenu.circulationRulesPath,
-      waiter: CirculationRules.waitLoading,
-    });
-    CirculationRules.getApi().then((rules) => {
-      console.log('rules' + rules)
-    })
-    CirculationRules.clearCirculationRules();
-    CirculationRules.fillInPriority();
-    CirculationRules.fillInFallbackPolicy({
-      loanPolicyName: defaultLoanPolicy.name,
-      overdueFinePolicyName: defaultOverdueFinePolicy.name,
-      lostItemFeePolicyName: defaultLostItemFeePolicy.name,
-      requestPolicyName: defaultRequestPolicy.name,
-      noticePolicyName: testPatronNotice.name,
-      materialTypeName: defaultMaterialType.name,
-    });
-    CirculationRules.fillInPolicy({
-      priorityType: 'g ',
-      priorityTypeName: patronGroupId.group,
-      loanPolicyName: defaultLoanPolicy.name,
-      overdueFinePolicyName: defaultOverdueFinePolicy.name,
-      lostItemFeePolicyName: defaultLostItemFeePolicy.name,
-      requestPolicyName: defaultRequestPolicy.name,
-      noticePolicyName: testPatronNotice.name,
-    });
-    CirculationRules.saveCirculationRules();
-    cy.visit(TopMenu.checkOutPath);
-    CheckoutActions.checkOutItem(USER_BARCODE, ITEM_BARCODE);
-    cy.visit(TopMenu.circulationLogPath);
-    SearchPane.searchByUserBarcode(USER_BARCODE);
-    SearchPane.verifyResultCells();
-  });
-
-  after(() => {
-    cy.visit(SettingsMenu.circulationRulesPath);
-    CirculationRules.clearCirculationRules();
-    CirculationRules.fillInPriority();
-    CirculationRules.fillInFallbackPolicy({
-      loanPolicyName: 'example-loan-policy',
-      overdueFinePolicyName: 'overdue-fine-policy',
-      lostItemFeePolicyName: 'lost-item-fee-policy ',
-      requestPolicyName: 'allow-all',
-      noticePolicyName: 'send-no-notices',
-    });
-    CirculationRules.fillInPolicy({
-      priorityType: 'm ',
-      priorityTypeName: 'book',
-      loanPolicyName: 'one-hour',
-      overdueFinePolicyName: 'overdue-fine-policy',
-      lostItemFeePolicyName: 'lost-item-fee-policy',
-      requestPolicyName: 'allow-all',
-      noticePolicyName: 'send-no-notices',
-    });
-    CirculationRules.saveCirculationRules();
-
-    cy.deleteItem()
-    
-    MaterialTypesSettings.deleteApi(defaultMaterialType.id);
-    LoanPolicy.deleteApi(defaultLoanPolicy.id);
-    RequestPolicy.deleteApi(defaultRequestPolicy.id);
-    LostItemFeePolicy.deleteApi(defaultLostItemFeePolicy.id);
-    OverdueFinePolicy.deleteApi(defaultOverdueFinePolicy.id);
-    cy.visit(SettingsMenu.circulationPatronNoticePoliciesPath);
-    NewPatronNoticePolicies.openNoticyToSide(testPatronNotice);
-    NewPatronNoticePolicies.deletePolicy();
-    cy.visit(SettingsMenu.circulationPatronNoticeTemplatesPath);
-    NewPatronNoticeTemplate.openTemplateToSide(testPatronNoticeTemplate);
-    NewPatronNoticeTemplate.deleteTemplate();
-    cy.deleteUser(user.userId);
-
+    cy.log('123');
   });
 });
