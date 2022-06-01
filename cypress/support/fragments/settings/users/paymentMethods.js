@@ -73,5 +73,15 @@ export default {
       fillRequiredFields(updatedPaymentMethod);
       save();
     });
-  }
+  },
+  createViaApi: (ownerId) => cy.okapiRequest({
+    method: 'POST',
+    path: 'payments',
+    body: {
+      allowedRefundMethod: true,
+      nameMethod: `autotestPaymentMethod${getRandomPostfix()}`,
+      ownerId
+    },
+    isDefaultSearchParamsRequired : false,
+  }).then(response => ({ name: response.body.name, id: response.body.id }))
 };

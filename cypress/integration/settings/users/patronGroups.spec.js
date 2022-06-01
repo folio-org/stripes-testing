@@ -22,7 +22,7 @@ describe('Patron blocks relations with users, conditions', () => {
     const patronGroupName = `auttestPatronGroup${getRandomPostfix()}`;
     PatronGroups.createViaApi(patronGroupName).then(patronGroupId => {
       testData.patronGroupId = patronGroupId;
-      Users.createUserViaApi({ ...Users.defaultUser, patronGroup: patronGroupId }).then(userProperties => {
+      Users.createViaApi({ ...Users.defaultUser, patronGroup: patronGroupId }).then(userProperties => {
         testData.userId = userProperties.id;
         testData.username = userProperties.username;
 
@@ -52,7 +52,7 @@ describe('Patron blocks relations with users, conditions', () => {
     });
   });
   after(() => {
-    UserFeesFines.waiveFeeFine(testData.userId, testData.chargeAmount);
+    UserFeesFines.waiveFeeFine(testData.userId, testData.chargeAmount, testData.ownerId);
     ManualCharges.deleteViaApi(testData.manualChargeId);
     UsersOwners.deleteViaApi(testData.ownerId);
     Conditions.resetConditionViaApi(testData.testConditionId, testData.name);
