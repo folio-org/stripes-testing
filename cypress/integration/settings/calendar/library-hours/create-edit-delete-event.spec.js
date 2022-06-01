@@ -1,6 +1,7 @@
 import TestType from '../../../../support/dictionary/testTypes';
 import calendarActions from '../../../../support/fragments/settings/calendar/library-hours/library-hours';
 import permissions from '../../../../support/dictionary/permissions';
+import users from '../../../../support/fragments/users/users';
 
 describe('Calendar', () => {
   const limitedAccessUser = {
@@ -26,8 +27,8 @@ describe('Calendar', () => {
   });
 
   after(() => {
-    cy.deleteUser(fullAccessUser.id);
-    cy.deleteUser(limitedAccessUser.id);
+    users.deleteViaApi(fullAccessUser.id);
+    users.deleteViaApi(limitedAccessUser.id);
     calendarActions.clearCreatedEvents();
   });
 

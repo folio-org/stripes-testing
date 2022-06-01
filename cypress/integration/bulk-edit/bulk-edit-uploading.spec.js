@@ -4,6 +4,7 @@ import permissions from '../../support/dictionary/permissions';
 import BulkEditSearchPane from '../../support/fragments/bulk-edit/bulk-edit-search-pane';
 import InteractorsTools from '../../support/utils/interactorsTools';
 import { calloutTypes } from '../../../interactors';
+import users from '../../support/fragments/users/users';
 
 let user;
 
@@ -21,7 +22,7 @@ describe('ui-users: file uploading', () => {
   });
 
   after('Delete all data', () => {
-    cy.deleteUser(user.userId);
+    users.deleteViaApi(user.userId);
   });
 
 

@@ -3,6 +3,7 @@ import TestTypes from '../../support/dictionary/testTypes';
 import Requests from '../../support/fragments/requests/requests';
 import TopMenu from '../../support/fragments/topMenu';
 import { Pane } from '../../../interactors';
+import Users from '../../support/fragments/users/users';
 
 describe('ui-requests: Make sure that request type filters are working properly', () => {
   const requests = [];
@@ -45,7 +46,7 @@ describe('ui-requests: Make sure that request type filters are working properly'
       Requests.deleteRequestApi(request.id);
     });
     userIds.forEach(id => {
-      cy.deleteUser(id);
+      Users.deleteViaApi(id);
     });
     Requests.updateCirculationRulesApi(oldRulesText);
     Requests.deleteRequestPolicyApi(requestPolicyId);

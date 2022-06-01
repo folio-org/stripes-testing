@@ -10,6 +10,8 @@ import EditRequest from '../../support/fragments/requests/edit-request';
 import UsersOwners from '../../support/fragments/settings/users/usersOwners';
 import checkinActions from '../../support/fragments/check-in-actions/checkInActions';
 import checkoutActions from '../../support/fragments/checkout/checkout';
+import Users from '../../support/fragments/users/users';
+import users from '../../support/fragments/users/users';
 
 describe('Deleting user', () => {
   const lastName = 'Test-' + uuid();
@@ -50,12 +52,12 @@ describe('Deleting user', () => {
       patronGroup: Cypress.env('userGroups')[0].id,
       departments: []
     };
-    cy.createUserApi(userData).then(user => { specialUserId = user.id; });
+    users.createViaApi(userData).then(user => { specialUserId = user.id; });
   });
 
   afterEach(() => {
     // TODO: clarify the reason of issue with 404 responce code
-    cy.deleteUser(specialUserId);
+    users.deleteViaApi(specialUserId);
   });
 
   it('should be possible by user delete action', function () {
@@ -173,14 +175,14 @@ describe('Deleting user', () => {
       patronGroup: Cypress.env('userGroups')[0].id,
       departments: []
     };
-    cy.createUserApi(userProxyData)
-      .then(() => {
+    Users.createViaApi(userProxyData)
+      .then(userProeprties => {
         const proxy = {
           accrueTo: 'Sponsor',
           notificationsTo: 'Sponsor',
           requestForSponsor: 'Yes',
           status: 'Active',
-          proxyUserId: Cypress.env('user').id,
+          proxyUserId: userProeprties.id,
           specialUserId,
         };
         cy.createProxyApi(proxy);

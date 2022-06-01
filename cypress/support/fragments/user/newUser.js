@@ -1,5 +1,6 @@
 import DefaultUser from './defaultUser';
 import checkoutActions from '../checkout/checkout';
+import users from '../users/users';
 
 const requestPrefStorage = { ...DefaultUser.defaultUiRequestPrefStorage };
 
@@ -8,7 +9,7 @@ export default {
     cy.getUserGroups().then(patronGroupId => {
       const specialPatron = { ...DefaultUser.defaultUiPatron.body };
       specialPatron.patronGroup = patronGroupId;
-      cy.createUserApi(specialPatron);
+      users.createViaApi(specialPatron);
       cy.getRequestPreference(requestPrefStorage.body);
 
       const permissions = { ...DefaultUser.defaultUiPermissions };

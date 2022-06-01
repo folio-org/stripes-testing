@@ -9,6 +9,7 @@ import InventoryInstanceEdit from '../../support/fragments/inventory/InventoryIn
 import testTypes from '../../support/dictionary/testTypes';
 import features from '../../support/dictionary/features';
 import permissions from '../../support/dictionary/permissions';
+import Users from '../../support/fragments/users/users';
 
 // TODO: redesign test to exclude repeated steps
 describe('Manage inventory Bib records with quickMarc editor', () => {
@@ -142,6 +143,6 @@ describe('Manage inventory Bib records with quickMarc editor', () => {
   });
 
   afterEach(() => {
-    cy.deleteUser(userId);
+    Users.deleteViaApi(userId);
   });
 });

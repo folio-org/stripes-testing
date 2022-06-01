@@ -10,6 +10,7 @@ import CheckOutActions from '../../support/fragments/check-out-actions/check-out
 import DateTools from '../../support/utils/dateTools';
 import NewRequest from '../../support/fragments/requests/newRequest';
 import checkinActions from '../../support/fragments/check-in-actions/checkInActions';
+import Users from '../../support/fragments/users/users';
 
 const item = {
   barcode: `123${getRandomPostfix()}`,
@@ -94,7 +95,7 @@ describe('loan dates', () => {
         cy.deleteHoldingRecord(instance.holdings[0].id);
         cy.deleteInstanceApi(instance.id);
       });
-    cy.deleteUser(checkOutUser.userId);
+    Users.deleteViaApi(checkOutUser.userId);
   });
 
   it('C566 Loan: Change due date warnings and alerts', { tags: [TestTypes.smoke] }, () => {

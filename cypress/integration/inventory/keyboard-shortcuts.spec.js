@@ -9,6 +9,7 @@ import InventoryHotkeys from '../../support/fragments/inventory/inventoryHotkeys
 import SearchInventory from '../../support/fragments/data_import/searchInventory';
 import devTeams from '../../support/dictionary/devTeams';
 import InventoryInstance from '../../support/fragments/inventory/inventoryInstance';
+import users from '../../support/fragments/users/users';
 
 let userId = '';
 const precedingTitleValue = `Preceding title test value ${getRandomPostfix()}`;
@@ -30,7 +31,7 @@ describe('ui-inventory: keyboard shortcut', () => {
   });
 
   afterEach('Delete all data', () => {
-    cy.deleteUser(userId);
+    users.deleteViaApi(userId);
   });
 
   it('C345297 Keyboard Shortcut. Access to drop down menu', { tags: [testTypes.smoke, devTeams.firebird] }, () => {

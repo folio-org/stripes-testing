@@ -9,6 +9,7 @@ import { getLongDelay } from '../../support/utils/cypressTools';
 import permissions from '../../support/dictionary/permissions';
 import getRandomPostfix from '../../support/utils/stringTools';
 import devTeams from '../../support/dictionary/devTeams';
+import users from '../../support/fragments/users/users';
 
 let userId = '';
 const instanceTitle = `Inventory export test ${Number(new Date())}`;
@@ -75,7 +76,7 @@ describe('ui-inventory: exports', () => {
         cy.deleteHoldingRecord(instance.holdings[0].id);
         cy.deleteInstanceApi(instance.id);
       });
-    cy.deleteUser(userId);
+    users.deleteViaApi(userId);
     FileManager.deleteFolder(Cypress.config('downloadsFolder'));
   });
 

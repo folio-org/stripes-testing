@@ -1,3 +1,4 @@
+import users from '../fragments/users/users';
 import Users from '../fragments/users/users';
 import getRandomPostfix from '../utils/stringTools';
 
@@ -53,29 +54,6 @@ Cypress.Commands.add('getFirstUserGroupId', (searchParams, patronGroup) => {
   });
 });
 
-// Depricated, use delete from cypress\support\fragments\users\users.js
-Cypress.Commands.add('deleteUser', (userId) => {
-  cy
-    .okapiRequest({
-      method: 'DELETE',
-      path: `bl-users/by-id/${userId}`,
-    });
-});
-
-// Depricated, use createUserViaApi in cypress\support\fragments\users\users.js
-Cypress.Commands.add('createUserApi', (user) => {
-  cy
-    .okapiRequest({
-      method: 'POST',
-      path: 'users',
-      body: user,
-    })
-    .then(({ body }) => {
-      Cypress.env('user', body);
-      return body;
-    });
-});
-
 Cypress.Commands.add('overrideLocalSettings', (userId) => {
   const body = {
     module: '@folio/stripes-core',
@@ -117,22 +95,21 @@ Cypress.Commands.add('createTempUser', (permissions = [], patronGroup) => {
           // Can be used to collect pairs of ui and backend permission names
           // cy.log('Initial permissions=' + permissions);
           // cy.log('internalPermissions=' + [...permissionsResponse.body.permissions.map(permission => permission.permissionName)]);
-          cy.createUserApi({
+          users.createViaApi({
             ...Users.defaultUser,
             patronGroup: userGroupdId
-          })
-            .then((userCreateResponse) => {
-              userProperties.userId = userCreateResponse.id;
-              userProperties.barcode = userCreateResponse.barcode;
-              cy.setUserPassword(userProperties);
-              cy.addPermissionsToNewUserApi({
-                userId: userProperties.userId,
-                permissions: [...permissionsResponse.body.permissions.map(permission => permission.permissionName)]
-              });
-              cy.overrideLocalSettings(userProperties.userId);
-              userProperties.barcode = userCreateResponse.barcode;
-              cy.wrap(userProperties).as('userProperties');
+          }).then(newUserProperties => {
+            userProperties.userId = newUserProperties.id;
+            userProperties.barcode = newUserProperties.barcode;
+            cy.setUserPassword(userProperties);
+            cy.addPermissionsToNewUserApi({
+              userId: userProperties.userId,
+              permissions: [...permissionsResponse.body.permissions.map(permission => permission.permissionName)]
             });
+            cy.overrideLocalSettings(userProperties.userId);
+            userProperties.barcode = newUserProperties.barcode;
+            cy.wrap(userProperties).as('userProperties');
+          });
         });
     });
   return cy.get('@userProperties');

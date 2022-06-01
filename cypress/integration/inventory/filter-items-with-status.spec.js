@@ -5,6 +5,7 @@ import permissions from '../../support/dictionary/permissions';
 import { MultiColumnList } from '../../../interactors';
 import getRandomPostfix from '../../support/utils/stringTools';
 import inventorySearch from '../../support/fragments/inventory/inventorySearch';
+import users from '../../support/fragments/users/users';
 
 const ITEM_BARCODE = `123${getRandomPostfix()}`;
 let userId = '';
@@ -69,7 +70,7 @@ describe('ui-inventory: items with status', () => {
         cy.deleteHoldingRecord(instance.holdings[0].id);
         cy.deleteInstanceApi(instance.id);
       });
-    cy.deleteUser(userId);
+    users.deleteViaApi(userId);
   });
 
   it('C11081: Verify item status filters retrieve items with that item status', () => {

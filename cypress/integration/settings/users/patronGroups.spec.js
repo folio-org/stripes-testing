@@ -16,12 +16,13 @@ import UserFeesFines from '../../../support/fragments/users/userFeesFines';
 describe('Patron blocks relations with users, conditions', () => {
   const testData = {};
   it("C11020 Verify user information display when automated patron block 'Maximum outstanding fee/fine balance' exists for patron", { tags: [TestType.smoke, Features.patronBlocks] }, () => {
-    const charge = 99.99;
+    testData.chargeAmount = 100;
+
     cy.getAdminToken();
     const patronGroupName = `auttestPatronGroup${getRandomPostfix()}`;
     PatronGroups.createViaApi(patronGroupName).then(patronGroupId => {
       testData.patronGroupId = patronGroupId;
-      Users.createUserApi({ ...Users.defaultUser, patronGroup: patronGroupId }).then(userProperties => {
+      Users.createUserViaApi({ ...Users.defaultUser, patronGroup: patronGroupId }).then(userProperties => {
         testData.userId = userProperties.id;
         testData.username = userProperties.username;
 
@@ -30,23 +31,20 @@ describe('Patron blocks relations with users, conditions', () => {
           testData.testConditionId = patronBlockConditions.filter(conditionProperty => conditionProperty.name === testCondition.name)[0].id;
           testData.name = testCondition.name;
           Conditions.updateViaApi({ ...testCondition, id: testData.testConditionId });
-          Limits.createViApi(patronGroupId, testData.testConditionId, charge);
+          Limits.createViApi(patronGroupId, testData.testConditionId, testData.chargeAmount - 0.01);
 
           UsersOwners.createViaApi({ owner: uuid() }).then(owner => {
             testData.ownerId = owner.id;
-            testData.chargeAmount = charge + 0.01;
             ManualCharges.createViaApi({ ...ManualCharges.defaultFeeFineType, ownerId: owner.id, defaultAmount: testData.chargeAmount }).then(manualCharge => {
               testData.manualChargeId = manualCharge.id;
-              // TODO: clarify why reload is needed to load expected options in Actions
               cy.visit(AppPaths.getUserPreviewPath(userProperties.id));
+              // TODO: clarify why reloading is needed to load expected options in Actions
               cy.reload();
               UsersCard.startFeeFine();
-              // cy.loginAsAdmin({ path: AppPaths.getChargePath(userId), waiter: UserCharge.waitLoading });
-
               UserCharge.fillRequiredFields(owner.ownerName, manualCharge.feeFineType);
               UserCharge.chargeOnly();
-              // TODO: clarify the issue when error message is not presented
-              // UsersCard.hasSaveError(UsersCard.errors.patronHasBlocksInPlace);
+              // TODO: clarify the issue when error message is not presented in cypress env. Work correctly in current snapshot
+              UsersCard.hasSaveError(UsersCard.errors.patronHasBlocksInPlace);
             });
           });
         });
@@ -54,7 +52,6 @@ describe('Patron blocks relations with users, conditions', () => {
     });
   });
   after(() => {
-    // test data clearing
     UserFeesFines.waiveFeeFine(testData.userId, testData.chargeAmount);
     ManualCharges.deleteViaApi(testData.manualChargeId);
     UsersOwners.deleteViaApi(testData.ownerId);

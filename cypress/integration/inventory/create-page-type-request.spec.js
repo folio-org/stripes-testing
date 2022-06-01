@@ -4,6 +4,7 @@ import TopMenu from '../../support/fragments/topMenu';
 import createPageTypeRequest from '../../support/fragments/inventory/createPageTypeRequest';
 import Requests from '../../support/fragments/requests/requests';
 import MarkItemAsMissing from '../../support/fragments/inventory/markItemAsMissing';
+import users from '../../support/fragments/users/users';
 
 describe('ui-inventory: Create page type request', () => {
   let user;
@@ -72,7 +73,7 @@ describe('ui-inventory: Create page type request', () => {
     cy.deleteItem(createdItem.itemId);
     cy.deleteHoldingRecord(instanceData.holdingId);
     cy.deleteInstanceApi(instanceData.instanceId);
-    cy.deleteUser(user.userId);
+    users.deleteViaApi(user.userId);
     Requests.updateCirculationRulesApi(oldRulesText);
     Requests.deleteRequestPolicyApi(requestPolicyId);
   });
