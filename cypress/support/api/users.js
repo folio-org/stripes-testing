@@ -1,4 +1,3 @@
-import users from '../fragments/users/users';
 import Users from '../fragments/users/users';
 import getRandomPostfix from '../utils/stringTools';
 
@@ -95,7 +94,7 @@ Cypress.Commands.add('createTempUser', (permissions = [], patronGroup) => {
           // Can be used to collect pairs of ui and backend permission names
           // cy.log('Initial permissions=' + permissions);
           // cy.log('internalPermissions=' + [...permissionsResponse.body.permissions.map(permission => permission.permissionName)]);
-          users.createViaApi({
+          Users.createViaApi({
             ...Users.defaultUser,
             patronGroup: userGroupdId
           }).then(newUserProperties => {

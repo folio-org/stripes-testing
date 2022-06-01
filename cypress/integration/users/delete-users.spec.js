@@ -11,7 +11,6 @@ import UsersOwners from '../../support/fragments/settings/users/usersOwners';
 import checkinActions from '../../support/fragments/check-in-actions/checkInActions';
 import checkoutActions from '../../support/fragments/checkout/checkout';
 import Users from '../../support/fragments/users/users';
-import users from '../../support/fragments/users/users';
 
 describe('Deleting user', () => {
   const lastName = 'Test-' + uuid();
@@ -52,12 +51,12 @@ describe('Deleting user', () => {
       patronGroup: Cypress.env('userGroups')[0].id,
       departments: []
     };
-    users.createViaApi(userData).then(user => { specialUserId = user.id; });
+    Users.createViaApi(userData).then(user => { specialUserId = user.id; });
   });
 
   afterEach(() => {
     // TODO: clarify the reason of issue with 404 responce code
-    users.deleteViaApi(specialUserId);
+    Users.deleteViaApi(specialUserId);
   });
 
   it('should be possible by user delete action', function () {
