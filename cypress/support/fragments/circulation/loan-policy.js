@@ -2,6 +2,19 @@ import uuid from 'uuid';
 import { getTestEntityValue } from '../../utils/stringTools';
 import { LIBRARY_DUE_DATE_MANAGMENT, LOAN_PROFILE } from '../../constants';
 
+const getDefaultLoanPolicy = (limitItem) => {
+  const defaultLoanPolicy = {
+    id: uuid(),
+    name: getTestEntityValue(),
+    loanable: false,
+    loansPolicy: { profileId: 'Rolling', period: { duration: 1, intervalId: 'Days' } },
+    closedLibraryDueDateManagementId: 'CURRENT_DUE_DATE',
+    itemLimit: limitItem,
+    renewable: false,
+  };
+  return defaultLoanPolicy;
+};
+
 export const defaultLoanPolicy = {
   id: uuid(),
   name: getTestEntityValue(),
@@ -11,12 +24,13 @@ export const defaultLoanPolicy = {
 };
 
 export default {
-  createApi() {
+  getDefaultLoanPolicy,
+  createApi(loanPolicy) {
     return cy
       .okapiRequest({
         method: 'POST',
         path: 'loan-policy-storage/loan-policies',
-        body: defaultLoanPolicy,
+        body: loanPolicy,
       })
       .then(({ body }) => {
         Cypress.env('loanPolicy', body);
