@@ -36,6 +36,7 @@ describe('Check In - Actions ', () => {
   });
 
   after('Delete New Service point, Item and User', () => {
+    SwitchServicePoint.logOutAndLogInByDiku();
     SwitchServicePoint.changeServicePointPreference();
     NewInctanceHoldingsItem.deleteItemWithSameParams();
     NewServicePoint.deleteServicePointViaApi();
