@@ -6,7 +6,34 @@ export const NOTICE_ACTIONS = {
   checkout: 'Check out'
 };
 
-const loanNotice = {
+export const NOTICE_CATEGORIES = {
+  loan: {
+    name: 'Loan',
+    id: 'loan'
+  },
+  request: {
+    name: 'Request',
+    id: 'request'
+  },
+  AutomatedFeeFineCharge: {
+    name: 'automated fee/fine charge',
+    id: 'automatedFeeFineCharge'
+  },
+  AutomatedFeeFineAdjustment: {
+    name: 'automated fee/fine adjustment (refund or cancel)',
+    id: 'automatedFeeFineAdjustment'
+  },
+  FeeFineCharge: {
+    name: 'Manual fee/fine charge',
+    id: 'feeFineCharge'
+  },
+  FeeFineAction: {
+    name: 'Manual fee/fine action (pay, waive, refund, transfer or cancel/error)}',
+    id: 'feeFineAction'
+  }
+};
+
+const defaultNotice = {
   'format': 'Email',
   'realTime': false,
 };
@@ -28,7 +55,7 @@ export default {
           ...defaultNoticePolicy,
           loanNotices:
             [{
-              ...loanNotice,
+              ...defaultNotice,
               templateId: createdTemplateId,
               sendOptions: {
                 sendWhen: sendWhenOption,
@@ -50,6 +77,16 @@ export default {
       .then(({ body }) => {
         Cypress.env('noticePolicy', body);
         return body;
+      });
+  },
+  getApi(searchParams) {
+    return cy.okapiRequest({
+      method: 'GET',
+      path: 'patron-notice-policy-storage/patron-notice-policies',
+      searchParams,
+    })
+      .then(policy => {
+        return policy.body.patronNoticePolicies;
       });
   },
   deleteApi(id) {

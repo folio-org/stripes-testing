@@ -1,3 +1,4 @@
+/* eslint-disable cypress/no-unnecessary-waiting */
 import getRandomPostfix from '../../utils/stringTools';
 import { Button, TextField, TextArea, KeyValue, Checkbox, Link, Heading } from '../../../../interactors';
 
@@ -15,8 +16,10 @@ export default {
     subject: 'Subject_Test',
     body: `Test_email_body {{${tokenName}}}`
   },
-  waitLoading() { cy.expect(Heading('Patron notice templates').exists()); },
-
+  waitLoading() {
+    cy.do(Link('Patron notice templates').click());
+    cy.expect(Heading('Patron notice templates').exists());
+  },
   createTemplate(patronNoticeTemplate) {
     cy.do(Button({ id: 'clickable-create-entry' }).click());
     // waiting the form to load

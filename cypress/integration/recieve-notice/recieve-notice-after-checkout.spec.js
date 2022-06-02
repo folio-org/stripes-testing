@@ -1,20 +1,27 @@
 import uuid from 'uuid';
 import moment from 'moment';
-import checkout from '../../support/fragments/checkout/checkout';
 import searchPane from '../../support/fragments/circulation-log/searchPane';
 import circulationRules from '../../support/fragments/circulation/circulation-rules';
-import noticePolicy, { NOTICE_ACTIONS } from '../../support/fragments/circulation/notice-policy';
-import noticePolicyTemplate, { TEMPLATE_CATEGORIES } from '../../support/fragments/circulation/notice-policy-template';
+import noticePolicy, { NOTICE_CATEGORIES, NOTICE_ACTIONS } from '../../support/fragments/circulation/notice-policy';
 import patronGroups from '../../support/fragments/settings/users/patronGroups';
 import topMenu from '../../support/fragments/topMenu';
+import settingsMenu from '../../support/fragments/settingsMenu';
 import generateItemBarcode from '../../support/utils/generateItemBarcode';
 import getRandomPostfix from '../../support/utils/stringTools';
 import testTypes from '../../support/dictionary/testTypes';
 import devTeams from '../../support/dictionary/devTeams';
 import checkInActions from '../../support/fragments/check-in-actions/checkInActions';
+import newPatronNoticePolicies from '../../support/fragments/circulation/newPatronNoticePolicies';
+import newPatronNoticeTemplate from '../../support/fragments/circulation/newPatronNoticeTemplate';
 
-// TODO email checking
+// TODO Add email notice check after checktout: https://issues.folio.org/browse/FAT-185
 describe('Recieving notice: Checkout', () => {
+  const patronNoticeTemplate = {
+    ...newPatronNoticeTemplate.defaultUiPatronNoticeTemplate,
+  };
+  const patronNoticePolicy = {
+    ...newPatronNoticePolicies.defaultUiPatronNoticePolicies,
+  };
   const ITEM_BARCODE = generateItemBarcode();
   const patronGroup = {};
   const userData = {
@@ -28,8 +35,6 @@ describe('Recieving notice: Checkout', () => {
     },
     departments: []
   };
-  let templateId;
-  let noticePolicyId;
   let loanType;
   let materialType;
   let location;
@@ -37,12 +42,11 @@ describe('Recieving notice: Checkout', () => {
   let holdingSource;
   let instanceType;
   let userServicePoint;
+  let noticeId;
 
   beforeEach('Creating help entities', () => {
     cy.getAdminToken()
-      .then(() => {
-        patronGroups.createViaApi();
-      })
+      .then(() => patronGroups.createViaApi())
       .then(res => {
         cy.createUserApi({
           patronGroup: res.id,
@@ -57,7 +61,6 @@ describe('Recieving notice: Checkout', () => {
         cy.getServicePointsApi({ limit: 1, query: 'pickupLocation=="true"' }).then((res) => {
           cy.addServicePointToUser(res[0].id, userData.id).then((points) => {
             userServicePoint = points.body.defaultServicePointId;
-            console.log(points);
           });
         });
       })
@@ -91,24 +94,18 @@ describe('Recieving notice: Checkout', () => {
             }],
           ],
         });
-      })
-      .then(() => {
-        noticePolicyTemplate.createViaApi(TEMPLATE_CATEGORIES.loan).then(res => { templateId = res.body.id; });
-      })
-      .then(() => {
-        noticePolicy.createWithTemplateApi(templateId, NOTICE_ACTIONS.checkout).then(res => { noticePolicyId = res.id; });
-      })
-      .then(() => {
-        cy.loginAsAdmin({ path: topMenu.checkOutPath, waiter: checkout.waitLoading });
-      })
-      .then(() => {
-        cy.checkOutItem(userData.username, ITEM_BARCODE);
       });
+    cy.loginAsAdmin({ path: settingsMenu.circulationPatronNoticePoliciesPath, waiter: newPatronNoticeTemplate.waitLoading });
   });
   afterEach('Deleting created entities', () => {
+    cy.visit(settingsMenu.circulationPatronNoticePoliciesPath);
     circulationRules.deleteAddedRuleApi(Cypress.env('defaultRules'));
-    noticePolicy.deleteApi(noticePolicyId);
-    noticePolicyTemplate.deleteViaApi(templateId);
+    noticePolicy.deleteApi(noticeId);
+    newPatronNoticeTemplate.waitLoading();
+    newPatronNoticeTemplate.openTemplateToSide(patronNoticeTemplate);
+    newPatronNoticeTemplate.deleteTemplate();
+    // noticePolicyTemplate.deleteViaApi(templateId);
+
     checkInActions.createItemCheckinApi({
       itemBarcode: ITEM_BARCODE,
       servicePointId: userServicePoint,
@@ -117,6 +114,7 @@ describe('Recieving notice: Checkout', () => {
       cy.deleteUser(userData.id);
       patronGroups.deleteViaApi(patronGroup.id);
     });
+
     cy.getInstance({ limit: 1, expandAll: true, query: `"items.barcode"=="${ITEM_BARCODE}"` })
       .then((instance) => {
         cy.deleteItem(instance.items[0].id);
@@ -126,6 +124,26 @@ describe('Recieving notice: Checkout', () => {
   });
 
   it('C347621 Check that user can receive notice with multiple items after finishing the session "Check out" by clicking the End Session button', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
+    newPatronNoticeTemplate.createTemplate(patronNoticeTemplate);
+    newPatronNoticeTemplate.checkTemplate(patronNoticeTemplate);
+    patronNoticePolicy.templateId = patronNoticeTemplate.name;
+    patronNoticePolicy.format = 'Email';
+    patronNoticePolicy.action = NOTICE_ACTIONS.checkout;
+    patronNoticePolicy.noticeName = NOTICE_CATEGORIES.loan.name;
+    patronNoticePolicy.noticeId = NOTICE_CATEGORIES.loan.id;
+
+    cy.visit(`${settingsMenu.circulationPatronNoticePoliciesPath}`);
+    newPatronNoticePolicies.createPolicy(patronNoticePolicy);
+    newPatronNoticePolicies.addNotice(patronNoticePolicy);
+    newPatronNoticePolicies.savePolicy();
+    newPatronNoticePolicies.checkPolicy(patronNoticePolicy.name);
+    cy.getNoticePolicy({ query: `name=="${patronNoticePolicy.name}"` }).then((res) => {
+      try { noticeId = res[0].id; circulationRules.addNewRuleApi(patronGroup.id, res[0].id); } catch (error) { console.log(error); }
+    });
+
+    cy.visit(topMenu.checkOutPath);
+    cy.checkOutItem(userData.barcode, ITEM_BARCODE);
+
     cy.visit(topMenu.circulationLogPath);
     searchPane.searchByItemBarcode(ITEM_BARCODE);
     searchPane.verifyResultCells();

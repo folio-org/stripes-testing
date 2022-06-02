@@ -3,5 +3,4 @@ export default function getRandomPostfix() {
     .toString(10)}${new Date().getMilliseconds()}`;
 }
 
-export const getTestEntityValue = (entityName) =>
-  `autotest_${entityName ? `${entityName}_`: ''}${getRandomPostfix()}`;
+export const getTestEntityValue = (entityName) => `autotest_${entityName ? `${entityName}_` : ''}${getRandomPostfix()}`;

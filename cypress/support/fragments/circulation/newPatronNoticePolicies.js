@@ -1,18 +1,45 @@
 import getRandomPostfix from '../../utils/stringTools';
-import { Button, TextField, TextArea, NavListItem, Checkbox, Link } from '../../../../interactors';
+import {
+  Button,
+  TextArea,
+  NavListItem,
+  Checkbox,
+  Select,
+  Section,
+  Link,
+  TextInput
+} from '../../../../interactors';
 
 const actionsButton = Button('Actions');
-const nameField = TextField({ id: 'notice_policy_name' });
+const addNoticeButton = Button('Add notice');
+const nameField = TextInput({ id: 'notice_policy_name' });
 
 export default {
   defaultUiPatronNoticePolicies: {
     name: `Test_notice_${getRandomPostfix()}`,
     description: 'Created by autotest team',
+    // optional properties:
+    templateId: null,
+    action: null,
+    format: null,
+  },
+
+  getPatronNoticePolicyTemplate(patronNoticePolicy, templateId, action) {
+    return { ...patronNoticePolicy, templateId, action };
   },
 
   createPolicy(patronNoticePolicy) {
     cy.do(Button({ id: 'clickable-create-entry' }).click());
     this.fillGeneralInformation(patronNoticePolicy);
+  },
+
+  addNotice(patronNoticePolicy) {
+    cy.do([
+      Section({ id: `edit${patronNoticePolicy.noticeName}Notices` }).find(addNoticeButton).click(),
+      Select({ name: `${patronNoticePolicy.noticeId}Notices[0].templateId` }).choose(patronNoticePolicy.templateId),
+      Select({ name: `${patronNoticePolicy.noticeId}Notices[0].format` }).choose(patronNoticePolicy.format),
+      Select({ name: `${patronNoticePolicy.noticeId}Notices[0].sendOptions.sendWhen` }).choose(patronNoticePolicy.action),
+    ]);
   },
 
   fillGeneralInformation: (patronNoticePolicy) => {
@@ -27,8 +54,13 @@ export default {
 
   savePolicy: () => {
     cy.do([
-      Button({ id: 'footer-save-entity' }).click()
+      Button({ id: 'footer-save-entity' }).click(),
+      Button({ icon: 'times' }).click(),
     ]);
+  },
+
+  openNoticyToSide(patronNoticePolicy) {
+    cy.do(Link(patronNoticePolicy.name).click());
   },
 
   checkPolicy: (patronNoticePolicyName) => {
@@ -55,10 +87,6 @@ export default {
       nameField.fillIn('DUPLICATE'),
       Button({ id: 'footer-save-entity' }).click(),
     ]);
-  },
-
-  openNoticyToSide(patronNoticePolicy) {
-    cy.do(Link(patronNoticePolicy.name).click());
   },
 
   deletePolicy: () => {
