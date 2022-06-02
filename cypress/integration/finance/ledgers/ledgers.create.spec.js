@@ -11,7 +11,7 @@ describe('ui-finance: Ledger creation', () => {
     cy.visit(TopMenu.ledgerPath);
   });
 
-  it('C4053 should create new ledger if mandatory fields are filled', { tags: [testType.smoke] }, () => {
+  it('C4053 Create a new ledger', { tags: [testType.smoke] }, () => {
     const defaultLedger = NewLedger.defaultLedger;
 
     Ledgers.createDefaultLedger(defaultLedger);
