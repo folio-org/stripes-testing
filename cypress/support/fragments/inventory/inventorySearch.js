@@ -205,10 +205,4 @@ export default {
   verifySearchResult(cellContent) {
     cy.expect(MultiColumnListCell({ content: cellContent }).exists());
   },
-
-  resetAllFilters() {
-    cy.intercept('/holdings-storage/holdings?*').as('getHoldings');
-    cy.do(Button('Reset all').click());
-    cy.wait('@getHoldings');
-  },
 };
