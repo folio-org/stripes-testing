@@ -67,12 +67,21 @@ export default {
               const today = new Date();
 
               const isActualDateCorrect = lastWeek <= actualDate <= today;
+              // eslint-disable-next-line no-unused-expressions
               expect(isActualDateCorrect).to.be.true;
             })
           );
         }
       }
     });
+  },
+
+  checkResultSearch(searchResults) {
+    for (const result in searchResults) {
+      if (MultiColumnListCell(result)) {
+        cy.expect(MultiColumnListCell(searchResults[result]).exists());
+      }
+    }
   },
 
   filterByLastWeek() {

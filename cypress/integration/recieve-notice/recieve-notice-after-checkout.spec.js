@@ -35,6 +35,15 @@ describe('Recieving notice: Checkout', () => {
     },
     departments: []
   };
+
+  const searchResultsData = {
+    userBarcode: userData.barcode,
+    itemBarcode: ITEM_BARCODE,
+    objectType: NOTICE_CATEGORIES.loan.name,
+    souce: 'ADMINISTRATOR, DIKU',
+    desc: 'Checked out to proxy: no.',
+    circAction: 'Checked out',
+  };
   let loanType;
   let materialType;
   let location;
@@ -61,6 +70,7 @@ describe('Recieving notice: Checkout', () => {
         cy.getServicePointsApi({ limit: 1, query: 'pickupLocation=="true"' }).then((res) => {
           cy.addServicePointToUser(res[0].id, userData.id).then((points) => {
             userServicePoint = points.body.defaultServicePointId;
+            searchResultsData.servicePoint = res[0].name;
           });
         });
       })
@@ -97,6 +107,7 @@ describe('Recieving notice: Checkout', () => {
       });
     cy.loginAsAdmin({ path: settingsMenu.circulationPatronNoticePoliciesPath, waiter: newPatronNoticeTemplate.waitLoading });
   });
+
   afterEach('Deleting created entities', () => {
     cy.visit(settingsMenu.circulationPatronNoticePoliciesPath);
     circulationRules.deleteAddedRuleApi(Cypress.env('defaultRules'));
@@ -104,7 +115,6 @@ describe('Recieving notice: Checkout', () => {
     newPatronNoticeTemplate.waitLoading();
     newPatronNoticeTemplate.openTemplateToSide(patronNoticeTemplate);
     newPatronNoticeTemplate.deleteTemplate();
-    // noticePolicyTemplate.deleteViaApi(templateId);
 
     checkInActions.createItemCheckinApi({
       itemBarcode: ITEM_BARCODE,
@@ -136,9 +146,11 @@ describe('Recieving notice: Checkout', () => {
     newPatronNoticePolicies.createPolicy(patronNoticePolicy);
     newPatronNoticePolicies.addNotice(patronNoticePolicy);
     newPatronNoticePolicies.savePolicy();
-    newPatronNoticePolicies.checkPolicy(patronNoticePolicy.name);
-    cy.getNoticePolicy({ query: `name=="${patronNoticePolicy.name}"` }).then((res) => {
-      try { noticeId = res[0].id; circulationRules.addNewRuleApi(patronGroup.id, res[0].id); } catch (error) { console.log(error); }
+    newPatronNoticePolicies.checkPolicy(patronNoticePolicy.name).then(() => {
+      cy.getNoticePolicy({ query: `name=="${patronNoticePolicy.name}"` }).then((res) => {
+        noticeId = res[0].id;
+        circulationRules.addNewRuleApi(patronGroup.id, res[0].id);
+      });
     });
 
     cy.visit(topMenu.checkOutPath);
@@ -147,5 +159,6 @@ describe('Recieving notice: Checkout', () => {
     cy.visit(topMenu.circulationLogPath);
     searchPane.searchByItemBarcode(ITEM_BARCODE);
     searchPane.verifyResultCells();
+    searchPane.checkResultSearch(searchResultsData);
   });
 });

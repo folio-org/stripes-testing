@@ -18,10 +18,6 @@ export default {
   defaultUiPatronNoticePolicies: {
     name: `Test_notice_${getRandomPostfix()}`,
     description: 'Created by autotest team',
-    // optional properties:
-    templateId: null,
-    action: null,
-    format: null,
   },
 
   getPatronNoticePolicyTemplate(patronNoticePolicy, templateId, action) {
@@ -64,7 +60,7 @@ export default {
   },
 
   checkPolicy: (patronNoticePolicyName) => {
-    cy.expect(NavListItem(patronNoticePolicyName).exists());
+    return cy.expect(NavListItem(patronNoticePolicyName).exists());
   },
 
   choosePolicy: (patronNoticePolicy) => {
