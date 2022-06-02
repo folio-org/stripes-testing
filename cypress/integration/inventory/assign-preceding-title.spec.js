@@ -4,11 +4,12 @@ import InventorySearch from '../../support/fragments/inventory/inventorySearch';
 import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
 import InventoryInstance from '../../support/fragments/inventory/inventoryInstance';
 import InventoryInstanceEdit from '../../support/fragments/inventory/InventoryInstanceEdit';
+import Helper from '../../support/fragments/finance/financeHelper';
 
 describe('ui-inventory: Assign a Preceding title for an instance', () => {
   const instanceIds = [];
-  const instanceTitle = `autoTestInstanceTitle.${getRandomPostfix()}`;
-  const instanceTitle2 = `autoTestInstanceTitle.${getRandomPostfix()}`;
+  const instanceTitle = `autoTestInstanceTitle ${Helper.getRandomBarcode()}`;
+  const instanceTitle2 = `autoTestInstanceTitle ${Helper.getRandomBarcode()}`;
   const precedingTitleValue = `Preceding title test value ${getRandomPostfix()}`;
   const isbnValue = `ISBN test value ${getRandomPostfix()}`;
   const issnValue = `ISSN test value ${getRandomPostfix()}`;
