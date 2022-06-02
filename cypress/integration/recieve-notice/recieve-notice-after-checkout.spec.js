@@ -133,7 +133,7 @@ describe('Recieving notice: Checkout', () => {
       });
   });
 
-  it('C347621 Check that user can receive notice with multiple items after finishing the session "Check out" by clicking the End Session button', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
+  it('C347621 Check that user can receive notice with multiple items after finishing the session "Check out" by clicking the End Session button', { tags: [testTypes.smoke, devTeams.vega] }, () => {
     newPatronNoticeTemplate.createTemplate(patronNoticeTemplate);
     newPatronNoticeTemplate.checkTemplate(patronNoticeTemplate);
     patronNoticePolicy.templateId = patronNoticeTemplate.name;
