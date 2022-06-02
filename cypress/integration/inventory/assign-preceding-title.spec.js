@@ -8,8 +8,8 @@ import TestTypes from '../../support/dictionary/testTypes';
 
 describe('ui-inventory: Assign a Preceding title for an instance', () => {
   const instanceIds = [];
-  const instanceTitle = `autoTestInstanceTitle.${getRandomPostfix()}`;
-  const instanceTitle2 = `autoTestInstanceTitle.${getRandomPostfix()}`;
+  const instanceTitle = `${getRandomPostfix()}1`;
+  const instanceTitle2 = `${getRandomPostfix()}2`;
   const precedingTitleValue = `Preceding title test value ${getRandomPostfix()}`;
   const isbnValue = `ISBN test value ${getRandomPostfix()}`;
   const issnValue = `ISSN test value ${getRandomPostfix()}`;
@@ -32,7 +32,9 @@ describe('ui-inventory: Assign a Preceding title for an instance', () => {
             title: instanceTitle2,
             source: 'FOLIO',
           }
-        ]).each((instance, i) => cy.createInstance({ instance }).then(specialInstanceId => { instanceIds[i] = specialInstanceId; }));
+        ]).each((instance, i) => cy.createInstance({ instance }).then(specialInstanceId => {
+          instanceIds[i] = specialInstanceId;
+        }));
       });
 
     cy.visit(TopMenu.inventoryPath);
@@ -52,7 +54,7 @@ describe('ui-inventory: Assign a Preceding title for an instance', () => {
       });
   });
 
-  it('C9215 In Accordion Title --> Test assigning a Preceding title', { tags:  [TestTypes.smoke] }, () => {
+  it('C9215 In Accordion Title --> Test assigning a Preceding title', { tags: [TestTypes.smoke] }, () => {
     InventorySearch.searchByParameter('Title (all)', instanceTitle);
     InventoryInstances.selectInstance();
     InventoryInstance.editInstance();
