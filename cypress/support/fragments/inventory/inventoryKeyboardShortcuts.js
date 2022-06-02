@@ -1,4 +1,4 @@
-import { Button, Dropdown, Modal, Pane, HTML, including, Select, TextArea, Section } from '../../../../interactors';
+import { Button, Dropdown, Modal, HTML, including, Select, TextArea, Section } from '../../../../interactors';
 
 const inventoryApplicationContextDropdown = Dropdown('InventoryApplication context dropdown');
 

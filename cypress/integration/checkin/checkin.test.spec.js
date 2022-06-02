@@ -30,8 +30,7 @@ describe('Check In - Actions ', () => {
       NewInctanceHoldingsItem.createItemWithSameParams(location.id);
       NewUser.createUserWithSameParams().then(userProperties => {
         SwitchServicePoint.addServicePointPermissions(userProperties.userName);
-        SwitchServicePoint.logOutAndLogInByUser(userProperties);
-        console.log(userProperties);
+        SwitchServicePoint.logOutAndLogIn(userProperties);
       });
     });
   });

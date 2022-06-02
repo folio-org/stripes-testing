@@ -17,20 +17,14 @@ export default {
     UsersEditPage.saveAndClose();
   },
 
-  logOutAndLogInByUser: ({ userName, password }) => {
+  logOutAndLogIn: ({ userName, password }) => {
     cy.do([
       Dropdown('My profile').open(),
       Button('Log out').click(),
     ]);
     cy.login(userName, password);
   },
-  logOutAndLogInByDiku: () => {
-    cy.do([
-      Dropdown('My profile').open(),
-      Button('Log out').click(),
-    ]);
-    cy.login(Cypress.env('diku_login'), Cypress.env('diku_password'));
-  },
+
   // we can remove the service point if it is not Preference
   changeServicePointPreference: () => {
     cy.visit(TopMenu.usersPath);
