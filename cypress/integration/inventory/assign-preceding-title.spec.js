@@ -8,8 +8,8 @@ import TestTypes from '../../support/dictionary/testTypes';
 
 describe('ui-inventory: Assign a Preceding title for an instance', () => {
   const instanceIds = [];
-  const instanceTitle = `${getRandomPostfix()}1`;
-  const instanceTitle2 = `${getRandomPostfix()}2`;
+  const instanceTitle = `1${getRandomPostfix()}`;
+  const instanceTitle2 = `2${getRandomPostfix()}`;
   const precedingTitleValue = `Preceding title test value ${getRandomPostfix()}`;
   const isbnValue = `ISBN test value ${getRandomPostfix()}`;
   const issnValue = `ISSN test value ${getRandomPostfix()}`;
