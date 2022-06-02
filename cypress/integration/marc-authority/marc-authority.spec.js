@@ -81,6 +81,7 @@ describe('MARC Authority management', () => {
     MarcAuthorities.checkRowsCount(1);
   });
 
+  // TODO: https://issues.folio.org/browse/MODINV-705
   it('C350667 Update a MARC authority record via data import. Record match with 010 $a', { tags:  [TestTypes.smoke, Features.authority] }, () => {
     // profiles preparing
     dataImportSettingMappingProfiles.createMappingProfileApi().then(mappingProfileResponse => {
