@@ -15,21 +15,6 @@ export default {
     UsersEditPage.addPermissions([permissions.checkinAll.gui]);
     UsersEditPage.addServicePoints([NewServicePoint.defaultUiServicePoint.body.name]);
     UsersEditPage.saveAndClose();
-    cy.pause();
-
-    // cy.expect(Modal({ id: 'permissions-modal' }).find(HTML(including('Total selected: 1'))));
-    // cy.wait(3000);
-    // cy.do(Button({ id: 'clickable-permissions-modal-save' }).click());
-    // cy.wait(3000);
-    // cy.expect(Modal({ id: 'permissions-modal' }).absent());
-    // cy.expect(Accordion({ id: 'permissions' }).find(HTML(including(permissions.checkinAll.gui))).exists());
-    // cy.wait(3000);
-    // cy.do(Button({ id: 'clickable-add-permission' }).focus());
-    // cy.wait(3000);
-    // cy.do(Button('Save & close').click());
-    // cy.do(Button({ id: 'accordion-toggle-button-permissionsSection' }).click());
-    // cy.do(Button({ id: 'accordion-toggle-button-permissionsSection' }).focus());
-    // cy.pause();
   },
 
   logOutAndLogInByUser: ({ userName, password }) => {
