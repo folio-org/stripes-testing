@@ -91,8 +91,7 @@ export default {
     const priority = '\ng ';
     let defaultRules;
     let withNewRule;
-
-    this.getApi().then((rulesAsText) => { defaultRules = rulesAsText.rulesAsText; }).then(() => {
+    return this.getApi().then((rulesAsText) => { defaultRules = rulesAsText.rulesAsText; }).then(() => {
       const oIndex = defaultRules.indexOf(' o ', 2);
       const iIndex = defaultRules.indexOf(' i ', 2);
       const lIndex = defaultRules.indexOf(' l ', 2);
@@ -103,10 +102,10 @@ export default {
       const r = defaultRules.substring(rIndex, rIndex + 39);
       withNewRule = defaultRules + priority + priorityId + ' : ' + i + l + r + o + ' n ' + noticeId;
     }).then(() => {
-      cy.updateCirculationRules({ rulesAsText: withNewRule });
-      Cypress.env('defaultRules', defaultRules);
+      cy.updateCirculationRules({ rulesAsText: withNewRule }).then(() => {
+        return (defaultRules);
+      });
     });
-    return withNewRule;
   },
   deleteAddedRuleApi(defaultRules) {
     return cy.updateCirculationRules({ rulesAsText: defaultRules });

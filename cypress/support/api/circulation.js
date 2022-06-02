@@ -44,7 +44,7 @@ Cypress.Commands.add('getCirculationRules', () => {
 });
 
 Cypress.Commands.add('updateCirculationRules', (body) => {
-  cy.okapiRequest({
+  return cy.okapiRequest({
     method: REQUEST_METHOD.PUT,
     path: 'circulation/rules',
     body,
@@ -91,7 +91,7 @@ Cypress.Commands.add('getRequestPolicy', (searchParams) => {
 });
 
 Cypress.Commands.add('getNoticePolicy', (searchParams) => {
-  cy.okapiRequest({
+  return cy.okapiRequest({
     method: REQUEST_METHOD.GET,
     path: 'patron-notice-policy-storage/patron-notice-policies',
     searchParams,

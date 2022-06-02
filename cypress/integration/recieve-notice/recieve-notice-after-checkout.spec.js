@@ -52,6 +52,7 @@ describe('Recieving notice: Checkout', () => {
   let instanceType;
   let userServicePoint;
   let noticeId;
+  let defaultRules;
 
   beforeEach('Creating help entities', () => {
     cy.getAdminToken()
@@ -110,7 +111,7 @@ describe('Recieving notice: Checkout', () => {
 
   afterEach('Deleting created entities', () => {
     cy.visit(settingsMenu.circulationPatronNoticePoliciesPath);
-    circulationRules.deleteAddedRuleApi(Cypress.env('defaultRules'));
+    circulationRules.deleteAddedRuleApi(defaultRules);
     noticePolicy.deleteApi(noticeId);
     newPatronNoticeTemplate.waitLoading();
     newPatronNoticeTemplate.openTemplateToSide(patronNoticeTemplate);
@@ -149,12 +150,14 @@ describe('Recieving notice: Checkout', () => {
     newPatronNoticePolicies.checkPolicy(patronNoticePolicy.name).then(() => {
       cy.getNoticePolicy({ query: `name=="${patronNoticePolicy.name}"` }).then((res) => {
         noticeId = res[0].id;
-        circulationRules.addNewRuleApi(patronGroup.id, res[0].id);
+        circulationRules.addNewRuleApi(patronGroup.id, res[0].id).then((rules => {
+          defaultRules = rules;
+        }));
       });
     });
 
     cy.visit(topMenu.checkOutPath);
-    cy.checkOutItem(userData.barcode, ITEM_BARCODE);
+    cy.checkOutItem(userData.username, ITEM_BARCODE);
 
     cy.visit(topMenu.circulationLogPath);
     searchPane.searchByItemBarcode(ITEM_BARCODE);
