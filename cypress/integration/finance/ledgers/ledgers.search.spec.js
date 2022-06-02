@@ -50,7 +50,7 @@ describe('ui-finance: Ledger list search and filters', () => {
     cy.deleteLedgerApi(ledger.id);
   });
 
-  it('C4061 should return ledgers according to ledgers filters and search by all indexes', { tags: [TestType.smoke] }, function () {
+  it('C4061 Test the search and filter options for ledgers', { tags: [TestType.smoke] }, function () {
     FinanceHelp.checkZeroSearchResultsMessage();
 
     // search by acquisition units, name and status
