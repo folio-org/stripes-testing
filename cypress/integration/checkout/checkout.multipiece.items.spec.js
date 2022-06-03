@@ -14,12 +14,12 @@ import InventoryInstances from '../../support/fragments/inventory/inventoryInsta
 describe('Check Out', () => {
   let user = {};
   let userBarcode;
-  const instanceTitle = `autotest_instance_title_${getRandomPostfix()}`;
-  const testItems = [];
-  const defautlDescription = `autotest_description_${getRandomPostfix()}`;
   let servicePoint;
   let materialTypeName;
   let testInstanceIds;
+  const instanceTitle = `autotest_instance_title_${getRandomPostfix()}`;
+  const testItems = [];
+  const defautlDescription = `autotest_description_${getRandomPostfix()}`;
 
   beforeEach(() => {
     cy.getAdminToken().then(() => {
