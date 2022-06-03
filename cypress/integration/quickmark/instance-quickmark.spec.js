@@ -9,6 +9,8 @@ import InventoryInstanceEdit from '../../support/fragments/inventory/InventoryIn
 import testTypes from '../../support/dictionary/testTypes';
 import features from '../../support/dictionary/features';
 import permissions from '../../support/dictionary/permissions';
+import { replaceByIndex } from '../../support/utils/stringTools';
+import { Callout } from '../../../interactors';
 
 // TODO: redesign test to exclude repeated steps
 describe('Manage inventory Bib records with quickMarc editor', () => {
@@ -141,7 +143,32 @@ describe('Manage inventory Bib records with quickMarc editor', () => {
       });
   });
 
+
+
+  it.only('C353612 Verify "LDR" validation rules with invalid data for editable and non-editable positions when editing/deriving record', { tags: [testTypes.smoke, features.quickMarcEditor] }, () => {
+    InventoryInstance.checkExpectedMARCSource();
+    InventoryInstance.goToEditMARCBiblRecord();
+    QuickMarcEditor.waitLoading();
+    cy.wait(1000);
+
+    const initialLDRValue = InventoryInstance.validOCLC.ldrValue;
+    const positions6and7Error = 'Record cannot be saved. Cannot edit 008 due to invalid Leader 06. Please update this record\'s Leader 06. Valid values are listed at https://loc.gov/marc/bibliographic/bdleader.html';
+
+    const changedLDRs = [
+      { newContent: replaceByIndex(replaceByIndex(initialLDRValue, 6, 'h'), 7, 'm'), errorMessage: positions6and7Error, is008presented : true },
+      // replaceByIndex(replaceByIndex(initialLDRValue, 6, 'p'), 7, 'g'),
+      // replaceByIndex(replaceByIndex(initialLDRValue, 6, 'a'), 7, 'g')
+    ];
+
+    changedLDRs.forEach(changedLDR => {
+      quickmarcEditor.updateExistingField('LDR', changedLDR.newContent);
+      QuickMarcEditor.pressSaveAndClose();
+      cy.expect(Callout(changedLDR.errorMessage).exists);
+      Callout(changedLDR.errorMessage).dismiss();
+    });
+  });
+
   afterEach(() => {
-    cy.deleteUser(userId);
+    // cy.deleteUser(userId);
   });
 });

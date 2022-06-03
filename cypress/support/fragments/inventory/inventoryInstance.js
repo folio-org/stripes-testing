@@ -44,7 +44,8 @@ const validOCLC = { id:'176116217',
   // TODO: hardcoded count related with interactors getters issue. Redesign to cy.then(QuickMarkEditor().rowsCount()).then(rowsCount => {...}
   lastRowNumber: 30,
   // it should be presented in marc bib one time to correct work(applicable in update of record)
-  existingTag: '100' };
+  existingTag: '100',
+  ldrValue: '01677cam\\a22003974a\\4500' };
 
 const pressAddHoldingsButton = () => {
   cy.do(Button({ id:'clickable-new-holdings-record' }).click());
