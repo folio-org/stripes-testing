@@ -10,7 +10,7 @@ export default {
       const specialHolding = { ...NewInstanceHoldingItem.defaultUiHolding.body };
       specialHolding.permanentLocationId = locationId;
       specialHolding.instanceId = specialInstance.id;
-      specialHolding.sourceId = holdingSources.holdingsRecordsSources[0].id;
+      specialHolding.sourceId = holdingSources[0].id;
       cy.createHolding({ holding: specialHolding });
       cy.getMaterialTypes().then(materialType => {
         cy.getLoanTypes().then(loanTypes => {

@@ -7,7 +7,10 @@ const content = el => el.textContent;
 
 export const MultiColumnListRow = HTML.extend('multi column list row')
   .selector('[data-row-inner],[class^=mclRowFormatterContainer-]')
+  .locator(content)
   .filters({
+    content,
+    isContainer: el => /mclRowFormatterContainer/.test(el.className),
     selected: el => el.className.match(/mclSelected/),
     cellCount: el => [...el.querySelectorAll('div[class*=mclCell-]')].length,
     index: el => parseInt(el.getAttribute('data-row-inner'), 10),
