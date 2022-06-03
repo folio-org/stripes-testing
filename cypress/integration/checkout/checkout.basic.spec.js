@@ -2,12 +2,10 @@ import generateItemBarcode from '../../support/utils/generateItemBarcode';
 import InventoryHoldings from '../../support/fragments/inventory/holdings/inventoryHoldings';
 
 describe('Check Out', () => {
-  let ITEM_BARCODE;
+  const ITEM_BARCODE = generateItemBarcode();
+  let source;
 
   beforeEach(() => {
-    ITEM_BARCODE = generateItemBarcode();
-    let source;
-
     cy.login(Cypress.env('diku_login'), Cypress.env('diku_password'));
     cy.getAdminToken()
       .then(() => {

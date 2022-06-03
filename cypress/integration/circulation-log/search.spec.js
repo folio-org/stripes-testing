@@ -13,12 +13,10 @@ import UsersEditPage from '../../support/fragments/users/usersEditPage';
 
 const ITEM_BARCODE = `123${getRandomPostfix()}`;
 let userId = '';
-
+let source;
 
 describe('ui-circulation-log', () => {
   before('create inventory instance', () => {
-    let source;
-
     cy.createTempUser([
       permissions.inventoryAll.gui,
       permissions.circulationLogAll.gui,

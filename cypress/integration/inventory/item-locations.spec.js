@@ -11,11 +11,10 @@ import devTeams from '../../support/dictionary/devTeams';
 
 const ITEM_BARCODE = `123${getRandomPostfix()}`;
 let userId = '';
+let source;
 
 describe('ui-inventory: location', () => {
   before('create inventory instance', () => {
-    let source;
-
     cy.createTempUser([
       permissions.inventoryAll.gui,
       permissions.remoteStorageCRUD.gui,

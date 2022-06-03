@@ -3,12 +3,10 @@ import checkoutActions from '../../support/fragments/checkout/checkout';
 import InventoryHoldings from '../../support/fragments/inventory/holdings/inventoryHoldings';
 
 describe('Check In', () => {
-  let ITEM_BARCODE;
+  const ITEM_BARCODE = generateItemBarcode();
+  let source;
 
   beforeEach(() => {
-    ITEM_BARCODE = generateItemBarcode();
-    let source;
-
     cy.login(Cypress.env('diku_login'), Cypress.env('diku_password'));
     cy.getAdminToken()
       .then(() => {

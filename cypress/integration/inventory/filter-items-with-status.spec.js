@@ -11,11 +11,10 @@ const ITEM_BARCODE = `123${getRandomPostfix()}`;
 let userId = '';
 const holdingId = uuid();
 const title = `Filter items with status test ${Number(new Date())}`;
+let source;
 
 describe('ui-inventory: items with status', () => {
   before('create inventory instance', () => {
-    let source;
-
     cy.createTempUser([
       permissions.inventoryAll.gui,
     ])
