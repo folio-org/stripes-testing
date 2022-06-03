@@ -1,6 +1,7 @@
 /* eslint-disable cypress/no-unnecessary-waiting */
 import getRandomPostfix from '../../utils/stringTools';
 import { Button, TextField, TextArea, KeyValue, Checkbox, Link, Heading } from '../../../../interactors';
+import richTextEditor from '../../../../interactors/rich-text-editor';
 
 const tokenName = 'item.title';
 const actionsButton = Button('Actions');
@@ -9,38 +10,39 @@ const addTokenButton = Button('Add token');
 const nameField = TextField({ id: 'input-patron-notice-name' });
 const itemTitleCheckbox = Checkbox(`${tokenName}`);
 
+const defaultUiPatronNoticeTemplate = {
+  name: `Test_template_${getRandomPostfix()}`,
+  description: 'Template created by autotest team',
+  subject: 'Subject_Test',
+  body: 'Test_email_body',
+  tokenName,
+};
+
 export default {
-  defaultUiPatronNoticeTemplate : {
-    name: `Test_template_${getRandomPostfix()}`,
-    description: 'Template created by autotest team',
-    subject: 'Subject_Test',
-    body: `Test_email_body {{${tokenName}}}`
-  },
+  defaultUiPatronNoticeTemplate,
   waitLoading() {
     cy.do(Link('Patron notice templates').click());
     cy.expect(Heading('Patron notice templates').exists());
   },
-  createTemplate(patronNoticeTemplate) {
+  create(patronNoticeTemplate) {
     cy.do(Button({ id: 'clickable-create-entry' }).click());
-    // waiting the form to load
-    cy.wait(1000);
+    cy.wait(3000);
     this.fillGeneralInformation(patronNoticeTemplate);
-    cy.do(tokenButton.click());
-    cy.do(itemTitleCheckbox.click());
-    cy.do(addTokenButton.click());
     cy.do(Button({ id: 'footer-save-entity' }).click());
   },
+  // patronNoticeTemplate must have the exact structure as defaultUiPatronNoticeTemplate on 14th line
   fillGeneralInformation: (patronNoticeTemplate) => {
-    cy.get('#template-editor')
-      .type('{selectAll}')
-      .type(patronNoticeTemplate.body.substr(0, 16));
     cy.do([
       nameField.fillIn(patronNoticeTemplate.name),
       TextArea({ id: 'input-patron-notice-description' }).fillIn(patronNoticeTemplate.description),
       TextField({ id: 'input-patron-notice-subject' }).fillIn(patronNoticeTemplate.subject),
+      richTextEditor().fillIn(patronNoticeTemplate.body),
+      // tokenButton.click(),
+      // itemTitleCheckbox.click(),
+      // addTokenButton.click(),
     ]);
   },
-  checkTemplate: (patronNoticeTemplate) => {
+  check: (patronNoticeTemplate) => {
     cy.expect([
       KeyValue({ value: patronNoticeTemplate.name }).exists(),
       KeyValue({ value: patronNoticeTemplate.description }).exists(),

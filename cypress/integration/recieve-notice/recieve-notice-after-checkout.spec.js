@@ -13,6 +13,7 @@ import devTeams from '../../support/dictionary/devTeams';
 import checkInActions from '../../support/fragments/check-in-actions/checkInActions';
 import newPatronNoticePolicies from '../../support/fragments/circulation/newPatronNoticePolicies';
 import newPatronNoticeTemplate from '../../support/fragments/circulation/newPatronNoticeTemplate';
+import checkOutActions from '../../support/fragments/check-out-actions/check-out-actions';
 
 // TODO Add email notice check after checktout: https://issues.folio.org/browse/FAT-185
 describe('Recieving notice: Checkout', () => {
@@ -111,7 +112,10 @@ describe('Recieving notice: Checkout', () => {
 
   afterEach('Deleting created entities', () => {
     cy.visit(settingsMenu.circulationPatronNoticePoliciesPath);
-    circulationRules.deleteAddedRuleApi(defaultRules);
+    circulationRules.deleteAddedRuleApi(defaultRules).then(() => {
+      console.log('DSFLKJDSLKFJLSDJFLDSJKLFJDSKLJFKLDSJFKLJDSKLFJDKSLJFKLDS')
+    });
+    
     noticePolicy.deleteApi(noticeId);
     newPatronNoticeTemplate.waitLoading();
     newPatronNoticeTemplate.openTemplateToSide(patronNoticeTemplate);
@@ -135,8 +139,8 @@ describe('Recieving notice: Checkout', () => {
   });
 
   it('C347621 Check that user can receive notice with multiple items after finishing the session "Check out" by clicking the End Session button', { tags: [testTypes.smoke, devTeams.vega] }, () => {
-    newPatronNoticeTemplate.createTemplate(patronNoticeTemplate);
-    newPatronNoticeTemplate.checkTemplate(patronNoticeTemplate);
+    newPatronNoticeTemplate.create(patronNoticeTemplate);
+    newPatronNoticeTemplate.check(patronNoticeTemplate);
     patronNoticePolicy.templateId = patronNoticeTemplate.name;
     patronNoticePolicy.format = 'Email';
     patronNoticePolicy.action = NOTICE_ACTIONS.checkout;
@@ -150,14 +154,20 @@ describe('Recieving notice: Checkout', () => {
     newPatronNoticePolicies.checkPolicy(patronNoticePolicy.name).then(() => {
       cy.getNoticePolicy({ query: `name=="${patronNoticePolicy.name}"` }).then((res) => {
         noticeId = res[0].id;
-        circulationRules.addNewRuleApi(patronGroup.id, res[0].id).then((rules => {
-          defaultRules = rules;
-        }));
+        circulationRules.getApi().then(resp => {
+          defaultRules = resp.rulesAsText;
+
+          circulationRules.addNewRuleApi(defaultRules, patronGroup.id, res[0].id).then((rules => {
+            // defaultRules = JSON.parse(rules.requestBody).rulesAsText;
+  
+            console.log('SRAN GOSPODNYA', defaultRules, rules);
+          }));
+        })
       });
     });
 
     cy.visit(topMenu.checkOutPath);
-    cy.checkOutItem(userData.username, ITEM_BARCODE);
+    cy.checkOutItem(userData.barcode, ITEM_BARCODE);
 
     cy.visit(topMenu.circulationLogPath);
     searchPane.searchByItemBarcode(ITEM_BARCODE);
