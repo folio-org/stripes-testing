@@ -1,6 +1,6 @@
 import DefaultUser from './defaultUser';
-import checkoutActions from '../checkout/checkout';
-import users from '../users/users';
+import checkoutActions from '../../checkout/checkout';
+import users from '../users';
 
 const requestPrefStorage = { ...DefaultUser.defaultUiRequestPrefStorage };
 

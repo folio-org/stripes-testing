@@ -1,7 +1,7 @@
 import uuid from 'uuid';
-import getRandomPostfix from '../../utils/stringTools';
-import defaultInstanceHoldingItem from '../inventory/holdingsMove/defaultInstanceHoldingItem';
-import NewServicePoint from '../service_point/newServicePoint';
+import getRandomPostfix from '../../../utils/stringTools';
+import defaultInstanceHoldingItem from '../../inventory/holdingsMove/defaultInstanceHoldingItem';
+import NewServicePoint from '../../service_point/newServicePoint';
 
 
 const defaultUiPatron = {

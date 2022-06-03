@@ -1,7 +1,7 @@
 import NewServicePoint from './newServicePoint';
 import { TextField, Dropdown, MultiColumnList, Button, Pane, Select } from '../../../../interactors';
 import TopMenu from '../topMenu';
-import defaultUser from '../user/defaultUser';
+import defaultUser from '../users/userDefaultObjects/defaultUser';
 import permissions from '../../dictionary/permissions';
 import UsersSearchPane from '../users/usersSearchPane';
 import UsersEditPage from '../users/usersEditPage';
