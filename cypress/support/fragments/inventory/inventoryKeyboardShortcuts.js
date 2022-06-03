@@ -1,4 +1,4 @@
-import { Button, Dropdown, Modal, Pane, HTML, including, Select, TextArea } from '../../../../interactors';
+import { Button, Dropdown, Modal, HTML, including, Select, TextArea, Section } from '../../../../interactors';
 
 const inventoryApplicationContextDropdown = Dropdown('InventoryApplication context dropdown');
 
@@ -32,7 +32,7 @@ export default {
     ]);
   },
   checkInstance:(instanceTitle) => {
-    cy.expect(Pane({ id: 'pane-instancedetails-content' })
-      .find(HTML(including(instanceTitle), { class: 'headline' })).exists());
+    cy.expect(Section({ id: 'pane-instancedetails' })
+      .find(HTML(including(instanceTitle, { class: 'headline' }))).exists());
   },
 };
