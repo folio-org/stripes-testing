@@ -11,11 +11,12 @@ Cypress.Commands.add('checkOutItem', (userBarcode, itemBarcode) => {
   cy.do([
     TextField('Patron identifier').fillIn(userBarcode),
     Pane('Scan patron card').find(Button('Enter')).click(),
-  ]);
-  // wait form to load
-  cy.do([
+
+    Button(userBarcode).exists(),
+
     TextField('Item ID').fillIn(itemBarcode),
-    Pane('Scan items').find(Button({ id: 'clickable-add-item' })).click(),
+    Pane('Scan items').find(Button('Enter')).click(),
+
     Modal('Confirm multipiece check out').find(Button('Check out')).click(),
   ]);
 });

@@ -2,11 +2,16 @@
 import getRandomPostfix from '../../utils/stringTools';
 import { Button, TextField, TextArea, KeyValue, Checkbox, Link, Heading } from '../../../../interactors';
 import richTextEditor from '../../../../interactors/rich-text-editor';
+import { NOTICE_CATEGORIES } from './notice-policy';
 
+const newButton = Button({ id: 'clickable-create-entry' });
 const actionsButton = Button('Actions');
 const tokenButton = Button('{ }');
 const addTokenButton = Button('Add token');
 const nameField = TextField({ id: 'input-patron-notice-name' });
+const subjectField = TextField({ id: 'input-patron-notice-subject' });
+const descriptionField = TextArea({ id: 'input-patron-notice-description' });
+const bodyField = richTextEditor();
 
 const defaultUi = {
   name: `Test_template_${getRandomPostfix()}`,
@@ -21,38 +26,73 @@ export default {
     cy.do(Link('Patron notice templates').click());
     cy.expect(Heading('Patron notice templates').exists());
   },
-  create(patronNoticeTemplate) {
-    cy.do(Button({ id: 'clickable-create-entry' }).click());
-    cy.wait(3000);
-    this.fillGeneralInformation(patronNoticeTemplate);
-    cy.do(Button({ id: 'footer-save-entity' }).click());
+  clickNew() {
+    cy.do(newButton.click());
   },
-  // patronNoticeTemplate must have the exact structure as newNoticePolicyTemplate.defaultUi on 14th line
-  fillGeneralInformation: (patronNoticeTemplate) => {
-    cy.do([
-      nameField.fillIn(patronNoticeTemplate.name),
-      TextArea({ id: 'input-patron-notice-description' }).fillIn(patronNoticeTemplate.description),
-      TextField({ id: 'input-patron-notice-subject' }).fillIn(patronNoticeTemplate.subject),
-      richTextEditor().fillIn(patronNoticeTemplate.body),
-    ]);
+  create(noticePolicyTemplate) {
+    this.checkForm();
+    this.fillGeneralInformation(noticePolicyTemplate);
   },
-  check: (patronNoticeTemplate) => {
+  checkNewButton() {
     cy.expect([
-      KeyValue({ value: patronNoticeTemplate.name }).exists(),
-      KeyValue({ value: patronNoticeTemplate.description }).exists(),
-      KeyValue({ value: patronNoticeTemplate.subject }).exists(),
-      KeyValue({ value: patronNoticeTemplate.body }).exists(),
+      newButton.exists(),
+      cy.get('[id="clickable-create-entry"]').should('not.be.disabled')
     ]);
   },
-  addToken(patronNoticeTemplate) {
+  save() {
     cy.do([
-      tokenButton.click(),
-      Checkbox(`${patronNoticeTemplate.tokenName}`).click(),
+      Button({ id: 'footer-save-entity' }).click(),
+      Button({ icon: 'times' }).click(),
+    ]);
+  },
+  checkForm() {
+    cy.expect([
+      Heading('New patron notice template').exists(),
+      nameField.exists(),
+      tokenButton.exists(),
+      descriptionField.exists(),
+      subjectField.exists(),
+      bodyField.exists(),
+      cy.get('[id="input-patron-notice-description"]').should('have.value', ''),
+      cy.get('[id="input-patron-notice-active"]').should('be.checked'),
+      cy.get('select[name="category"]').get('option').each(($option, index) => {
+        if (index <= 5) {
+          expect($option).to.contain(Object.values(NOTICE_CATEGORIES)[index].name);
+        }
+      })
+    ]);
+  },
+  // noticePolicyTemplate must have the exact structure as newNoticePolicyTemplate.defaultUi on 14th line
+  fillGeneralInformation: (noticePolicyTemplate) => {
+    cy.wait(500); // waiting for the html body input to be available for typing
+    cy.get('#template-editor')
+      .type('{selectAll}')
+      .type(noticePolicyTemplate.body);
+    cy.do([
+      nameField.fillIn(noticePolicyTemplate.name),
+      TextArea({ id: 'input-patron-notice-description' }).fillIn(noticePolicyTemplate.description),
+      TextField({ id: 'input-patron-notice-subject' }).fillIn(noticePolicyTemplate.subject),
+    ]);
+  },
+  check: (noticePolicyTemplate) => {
+    cy.expect([
+      KeyValue({ value: noticePolicyTemplate.name }).exists(),
+      KeyValue({ value: noticePolicyTemplate.description }).exists(),
+      KeyValue({ value: noticePolicyTemplate.subject }).exists(),
+      KeyValue({ value: noticePolicyTemplate.body }).exists(),
+    ]);
+  },
+  addToken(noticePolicyTemplate) {
+    cy.do(tokenButton.click());
+    cy.expect(Heading('Add token').exists());
+    cy.do([
+      Checkbox(`${noticePolicyTemplate.token}`).click(),
       addTokenButton.click(),
     ]);
+    cy.contains(noticePolicyTemplate.token).should('be.visible');
   },
-  openToSide(patronNoticeTemplate) {
-    cy.do(Link(patronNoticeTemplate.name).click());
+  openToSide(noticePolicyTemplate) {
+    cy.do(Link(noticePolicyTemplate.name).click());
   },
   delete: () => {
     cy.do([

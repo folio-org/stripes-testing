@@ -33,7 +33,12 @@ describe('Recieving notice: Checkout', () => {
   const testData = {};
 
   beforeEach('Preconditions', () => {
-    noticePolicyTemplate.tokenName = 'item.title';
+    noticePolicyTemplate.token = 'item.title';
+    noticePolicy.templateId = noticePolicyTemplate.name;
+    noticePolicy.format = 'Email';
+    noticePolicy.action = NOTICE_ACTIONS.checkout;
+    noticePolicy.noticeName = NOTICE_CATEGORIES.loan.name;
+    noticePolicy.noticeId = NOTICE_CATEGORIES.loan.id;
     cy.getAdminToken()
       .then(() => PatronGroups.createViaApi())
       .then(res => {
@@ -50,7 +55,6 @@ describe('Recieving notice: Checkout', () => {
         cy.getServicePointsApi({ limit: 1, query: 'pickupLocation=="true"' }).then((res) => {
           cy.addServicePointToUser(res[0].id, userData.id).then((points) => {
             testData.userServicePoint = points.body.defaultServicePointId;
-            // searchResultsData.servicePoint = res[0].name;
           });
         });
       })
@@ -90,12 +94,6 @@ describe('Recieving notice: Checkout', () => {
 
   afterEach('Deleting created entities', () => {
     cy.visit(settingsMenu.circulationPatronNoticePoliciesPath);
-    CirculationRules.deleteRuleApi(testData.defaultRules);
-    NoticePolicyApi.deleteApi(testData.noticeId);
-    NewNoticePolicyTemplate.waitLoading();
-    NewNoticePolicyTemplate.openToSide(noticePolicyTemplate);
-    NewNoticePolicyTemplate.delete();
-
     CheckInActions.createItemCheckinApi({
       itemBarcode: ITEM_BARCODE,
       servicePointId: testData.userServicePoint,
@@ -111,20 +109,25 @@ describe('Recieving notice: Checkout', () => {
         cy.deleteHoldingRecord(instance.holdings[0].id);
         cy.deleteInstanceApi(instance.id);
       });
+
+    CirculationRules.deleteRuleApi(testData.defaultRules);
+    NoticePolicyApi.deleteApi(testData.noticeId);
+    NewNoticePolicyTemplate.waitLoading();
+    NewNoticePolicyTemplate.openToSide(noticePolicyTemplate);
+    NewNoticePolicyTemplate.delete();
   });
 
   it('C347621 Check that user can receive notice with multiple items after finishing the session "Check out" by clicking the End Session button', { tags: [testTypes.smoke, devTeams.vega] }, () => {
+    NewNoticePolicyTemplate.checkNewButton();
+    NewNoticePolicyTemplate.clickNew();
     NewNoticePolicyTemplate.create(noticePolicyTemplate);
     NewNoticePolicyTemplate.addToken(noticePolicyTemplate);
-    noticePolicyTemplate.body = '{{item.title}}' + noticePolicyTemplate.body;
+    noticePolicyTemplate.body += '{{item.title}}';
+    NewNoticePolicyTemplate.save();
     NewNoticePolicyTemplate.check(noticePolicyTemplate);
-    noticePolicy.templateId = noticePolicyTemplate.name;
-    noticePolicy.format = 'Email';
-    noticePolicy.action = NOTICE_ACTIONS.checkout;
-    noticePolicy.noticeName = NOTICE_CATEGORIES.loan.name;
-    noticePolicy.noticeId = NOTICE_CATEGORIES.loan.id;
 
     cy.visit(`${settingsMenu.circulationPatronNoticePoliciesPath}`);
+    NewNoticePolicy.clickNew();
     NewNoticePolicy.create(noticePolicy);
     NewNoticePolicy.addNotice(noticePolicy);
     NewNoticePolicy.save();
@@ -139,16 +142,9 @@ describe('Recieving notice: Checkout', () => {
       CirculationRules.addRuleApi(resp.rulesAsText, ' g ', patronGroup.id, testData.noticeId);
     });
 
-    try {
-      cy.visit(topMenu.checkOutPath);
-      CheckOutActions.checkOutUser(userData.barcode);
-      cy.wait(3000)// waiting for getting info about user barcode
-      CheckOutActions.checkOutItem(ITEM_BARCODE);
-      cy.wait(3000)// waiting for getting info about item barcode
-      CheckOutActions.endSession();
-    } catch (error) {
-      console.log(error);
-    }
+    cy.visit(topMenu.checkOutPath);
+    CheckOutActions.checkOutItem(userData.barcode, ITEM_BARCODE);
+    CheckOutActions.endSession();
 
     cy.visit(topMenu.circulationLogPath);
     SearchPane.searchByItemBarcode(ITEM_BARCODE);

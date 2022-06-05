@@ -7,12 +7,14 @@ import {
   Select,
   Section,
   Link,
-  TextInput
+  TextInput,
+  Heading
 } from '../../../../interactors';
 
 const actionsButton = Button('Actions');
 const addNoticeButton = Button('Add notice');
 const nameField = TextInput({ id: 'notice_policy_name' });
+const descriptionField = TextArea({ id: 'notice_policy_description' });
 
 export default {
   defaultUi: {
@@ -20,15 +22,28 @@ export default {
     description: 'Created by autotest team',
   },
 
-  getPatronNoticePolicyTemplate(patronNoticePolicy, templateId, action) {
-    return { ...patronNoticePolicy, templateId, action };
-  },
-
   create(patronNoticePolicy) {
-    cy.do(Button({ id: 'clickable-create-entry' }).click());
+    this.checkForm();
     this.fillGeneralInformation(patronNoticePolicy);
   },
 
+  clickNew() {
+    cy.do(Button({ id: 'clickable-create-entry' }).click());
+  },
+  checkForm() {
+    cy.expect([
+      Heading('New patron notice policy').exists(),
+      nameField.exists(),
+      descriptionField.exists(),
+      cy.get('[id="notice_policy_description"]').should('have.value', ''),
+      cy.get('[id="notice_policy_name"]').should('have.value', ''),
+      cy.get('[id="notice_policy_active"]').should('not.be.checked'),
+      cy.get('button').contains('Add notice').each(($button) => {
+        cy.get($button).should('not.be.disabled');
+      }),
+      cy
+    ]);
+  },
   addNotice(patronNoticePolicy) {
     cy.do([
       Section({ id: `edit${patronNoticePolicy.noticeName}Notices` }).find(addNoticeButton).click(),
@@ -42,7 +57,7 @@ export default {
     cy.do([
       nameField.fillIn(patronNoticePolicy.name),
       Checkbox({ id: 'notice_policy_active' }).click(),
-      TextArea({ id: 'notice_policy_description' }).fillIn(
+      descriptionField.fillIn(
         patronNoticePolicy.description
       ),
     ]);
