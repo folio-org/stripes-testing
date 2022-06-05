@@ -16,11 +16,11 @@ export const NOTICE_CATEGORIES = {
     id: 'request'
   },
   AutomatedFeeFineCharge: {
-    name: 'automated fee/fine charge',
+    name: 'Automated fee/fine charge',
     id: 'automatedFeeFineCharge'
   },
   AutomatedFeeFineAdjustment: {
-    name: 'automated fee/fine adjustment (refund or cancel)',
+    name: 'Automated fee/fine adjustment (refund or cancel)',
     id: 'automatedFeeFineAdjustment'
   },
   FeeFineCharge: {
@@ -28,7 +28,7 @@ export const NOTICE_CATEGORIES = {
     id: 'feeFineCharge'
   },
   FeeFineAction: {
-    name: 'Manual fee/fine action (pay, waive, refund, transfer or cancel/error)}',
+    name: 'Manual fee/fine action (pay, waive, refund, transfer or cancel/error)',
     id: 'feeFineAction'
   }
 };
