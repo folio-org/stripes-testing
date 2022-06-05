@@ -5,7 +5,8 @@ import {
   TextField,
   MultiColumnListRow,
   Checkbox,
-  MultiColumnListCell
+  MultiColumnListCell,
+  Modal
 } from '../../../../interactors';
 
 export default {
@@ -26,6 +27,19 @@ export default {
     });
 
     cy.do(Button('Save & close').click());
+  },
+
+  addServicePoints(points) {
+    cy.do([
+      Button({ id: 'accordion-toggle-button-servicePoints' }).click(),
+      Button({ id: 'add-service-point-btn' }).click(),
+    ]);
+
+    points.forEach(point => {
+      cy.do(MultiColumnListRow({ content: point, isContainer: true }).find(Checkbox()).click());
+    });
+
+    cy.do(Modal().find(Button('Save & close')).click());
   },
 
   saveAndClose() {

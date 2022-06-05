@@ -10,14 +10,12 @@ import {
   including,
 } from '../../../../interactors';
 import InteractorsTools from '../../utils/interactorsTools';
-import getRandomPostfix from '../../utils/stringTools';
 import InventoryInstanceModal from './holdingsMove/inventoryInstanceSelectInstanceModal';
 
 const closeButton = Button({ icon: 'times' });
 const saveAndCloseButton = Button('Save and close');
 const rootSection = Section({ id: 'instance-form' });
 const actionsButton = Button('Actions');
-const value = `test.${getRandomPostfix()}`;
 const identifierAccordion = Accordion('Identifier');
 
 export default {
@@ -81,7 +79,7 @@ export default {
     InteractorsTools.checkSimpleDisabledElements(getRegularElements(readonlyTextFields, readonlyButtons, readonlyTextAreas, readonlySelects));
   },
 
-  addIdentifier:(identifier) => {
+  addIdentifier:(identifier, value) => {
     cy.expect(identifierAccordion.exists());
     cy.do(Button('Add identifier').click());
     cy.expect(Select('Type*').exists());
