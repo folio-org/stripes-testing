@@ -13,7 +13,6 @@ Cypress.Commands.add('checkOutItem', (userBarcode, itemBarcode) => {
     Pane('Scan patron card').find(Button('Enter')).click(),
   ]);
   // wait form to load
-  cy.wait(1000);
   cy.do([
     TextField('Item ID').fillIn(itemBarcode),
     Pane('Scan items').find(Button({ id: 'clickable-add-item' })).click(),

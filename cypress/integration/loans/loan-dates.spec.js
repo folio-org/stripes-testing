@@ -70,7 +70,9 @@ describe('loan dates', () => {
           })
           .then(() => {
             cy.login(userProperties.username, userProperties.password);
-            CheckOutActions.checkOutItem(Cypress.env('users')[0].barcode, item.barcode);
+            CheckOutActions.checkOutItem(item.barcode);
+            CheckOutActions.checkOutUser(Cypress.env('users')[0].barcode);
+            CheckOutActions.endSession();
             cy.updateUser({ ...Cypress.env('users')[0], expirationDate: DateTools.getFormattedDate({ date: expirationUserDate }) });
           })
           .then(() => {

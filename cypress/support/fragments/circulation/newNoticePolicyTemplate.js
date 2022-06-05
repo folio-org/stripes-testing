@@ -3,23 +3,20 @@ import getRandomPostfix from '../../utils/stringTools';
 import { Button, TextField, TextArea, KeyValue, Checkbox, Link, Heading } from '../../../../interactors';
 import richTextEditor from '../../../../interactors/rich-text-editor';
 
-const tokenName = 'item.title';
 const actionsButton = Button('Actions');
 const tokenButton = Button('{ }');
 const addTokenButton = Button('Add token');
 const nameField = TextField({ id: 'input-patron-notice-name' });
-const itemTitleCheckbox = Checkbox(`${tokenName}`);
 
-const defaultUiPatronNoticeTemplate = {
+const defaultUi = {
   name: `Test_template_${getRandomPostfix()}`,
   description: 'Template created by autotest team',
   subject: 'Subject_Test',
   body: 'Test_email_body',
-  tokenName,
 };
 
 export default {
-  defaultUiPatronNoticeTemplate,
+  defaultUi,
   waitLoading() {
     cy.do(Link('Patron notice templates').click());
     cy.expect(Heading('Patron notice templates').exists());
@@ -30,16 +27,13 @@ export default {
     this.fillGeneralInformation(patronNoticeTemplate);
     cy.do(Button({ id: 'footer-save-entity' }).click());
   },
-  // patronNoticeTemplate must have the exact structure as defaultUiPatronNoticeTemplate on 14th line
+  // patronNoticeTemplate must have the exact structure as newNoticePolicyTemplate.defaultUi on 14th line
   fillGeneralInformation: (patronNoticeTemplate) => {
     cy.do([
       nameField.fillIn(patronNoticeTemplate.name),
       TextArea({ id: 'input-patron-notice-description' }).fillIn(patronNoticeTemplate.description),
       TextField({ id: 'input-patron-notice-subject' }).fillIn(patronNoticeTemplate.subject),
       richTextEditor().fillIn(patronNoticeTemplate.body),
-      // tokenButton.click(),
-      // itemTitleCheckbox.click(),
-      // addTokenButton.click(),
     ]);
   },
   check: (patronNoticeTemplate) => {
@@ -50,10 +44,17 @@ export default {
       KeyValue({ value: patronNoticeTemplate.body }).exists(),
     ]);
   },
-  openTemplateToSide(patronNoticeTemplate) {
+  addToken(patronNoticeTemplate) {
+    cy.do([
+      tokenButton.click(),
+      Checkbox(`${patronNoticeTemplate.tokenName}`).click(),
+      addTokenButton.click(),
+    ]);
+  },
+  openToSide(patronNoticeTemplate) {
     cy.do(Link(patronNoticeTemplate.name).click());
   },
-  deleteTemplate: () => {
+  delete: () => {
     cy.do([
       actionsButton.click(),
       Button({ id: 'dropdown-clickable-delete-item' }).click(),

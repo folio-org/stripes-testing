@@ -32,7 +32,7 @@ Cypress.Commands.add('deleteFixedDueDateSchedule', (id) => {
 });
 
 Cypress.Commands.add('getCirculationRules', () => {
-  cy.okapiRequest({
+  return cy.okapiRequest({
     method: REQUEST_METHOD.GET,
     path: 'circulation/rules',
   })
@@ -42,17 +42,6 @@ Cypress.Commands.add('getCirculationRules', () => {
       return rules.body;
     });
 });
-
-// Cypress.Commands.add('updateCirculationRules', (body) => {
-//   return cy.okapiRequest({
-//     method: REQUEST_METHOD.PUT,
-//     path: 'circulation/rules',
-//     body,
-//   }).then((res) => {
-//     return res;
-//   });
-// });
-
 
 Cypress.Commands.add('updateCirculationRules', body => cy.okapiRequest({
   method: REQUEST_METHOD.PUT,

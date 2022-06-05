@@ -15,7 +15,7 @@ const addNoticeButton = Button('Add notice');
 const nameField = TextInput({ id: 'notice_policy_name' });
 
 export default {
-  defaultUiPatronNoticePolicies: {
+  defaultUi: {
     name: `Test_notice_${getRandomPostfix()}`,
     description: 'Created by autotest team',
   },
@@ -24,7 +24,7 @@ export default {
     return { ...patronNoticePolicy, templateId, action };
   },
 
-  createPolicy(patronNoticePolicy) {
+  create(patronNoticePolicy) {
     cy.do(Button({ id: 'clickable-create-entry' }).click());
     this.fillGeneralInformation(patronNoticePolicy);
   },
@@ -48,7 +48,7 @@ export default {
     ]);
   },
 
-  savePolicy: () => {
+  save: () => {
     cy.do([
       Button({ id: 'footer-save-entity' }).click(),
       Button({ icon: 'times' }).click(),
@@ -59,7 +59,7 @@ export default {
     cy.do(Link(patronNoticePolicy.name).click());
   },
 
-  checkPolicy: (patronNoticePolicyName) => {
+  check: (patronNoticePolicyName) => {
     return cy.expect(NavListItem(patronNoticePolicyName).exists());
   },
 
