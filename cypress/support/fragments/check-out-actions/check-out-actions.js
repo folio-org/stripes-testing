@@ -1,19 +1,17 @@
-import TopMenu from '../topMenu';
 import { Pane, Modal, TextField, Button } from '../../../../interactors';
 
 export default {
-  checkOutItem(itemBarcode) {
+  checkOutItem(userBarcode, itemBarcode) {
     cy.do([
-      TextField({ name: 'item.barcode' }).fillIn(itemBarcode),
-      Pane('Scan items').find(Button({ id: 'clickable-add-item' })).click(),
-      Modal('Confirm multipiece check out').find(Button('Check out')).click()
-    ]);
-  },
-  checkOutUser(userBarcode) {
-    cy.visit(TopMenu.checkOutPath);
-    cy.do([
-      TextField({ name: 'patron.identifier' }).fillIn(userBarcode),
+      TextField('Patron identifier').fillIn(userBarcode),
       Pane('Scan patron card').find(Button('Enter')).click(),
+
+      Button(userBarcode).exists(),
+
+      TextField('Item ID').fillIn(itemBarcode),
+      Pane('Scan items').find(Button('Enter')).click(),
+
+      Modal('Confirm multipiece check out').find(Button('Check out')).click(),
     ]);
   },
   endSession() {
