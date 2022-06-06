@@ -10,6 +10,9 @@ import MultipieceCheckOut from '../../support/fragments/checkout/modals/multipie
 import UsersEditPage from '../../support/fragments/users/usersEditPage';
 import Checkout from '../../support/fragments/checkout/checkout';
 import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
+import CheckInActions from '../../support/fragments/check-in-actions/checkInActions';
+import Users from '../../support/fragments/users/users';
+import SwitchServicePoint from '../../support/fragments/service_point/switchServicePoint';
 
 describe('Check Out', () => {
   let user = {};
@@ -91,6 +94,9 @@ describe('Check Out', () => {
   });
 
   after(() => {
+    testItems.forEach(item => {
+      CheckInActions.checkInItem(item.barcode);
+    });
     cy.wrap(testInstanceIds.holdingIds.forEach(holdingsId => {
       cy.wrap(holdingsId.itemIds.forEach(itemId => {
         cy.deleteItem(itemId);
@@ -100,7 +106,9 @@ describe('Check Out', () => {
     })).then(() => {
       cy.deleteInstanceApi(testInstanceIds.instanceId);
     });
-    // TODO delete service point and user
+    SwitchServicePoint.changeServicePointPreference(user.username);
+    cy.deleteServicePoint(servicePoint.body.id);
+    Users.deleteViaApi(user.userId);
   });
 
   it('C591 Check out: multipiece items', { tags: [TestTypes.smoke] }, () => {

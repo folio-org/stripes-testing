@@ -1,21 +1,44 @@
 import uuid from 'uuid';
-import { Button, Pane, including, TextField, MultiColumnListCell } from '../../../../interactors';
+import { Button, Pane, including, TextField, MultiColumnListRow, HTML } from '../../../../interactors';
 import NewInctanceHoldingsItem from '../inventory/newInctanceHoldingsItem';
 import NewUser from '../user/newUser';
 import { REQUEST_METHOD } from '../../constants';
+import { getLongDelay } from '../../utils/cypressTools';
 
 const loadDetailsButton = Button('Loan details');
 const patronDetailsButton = Button('Patron details');
 const itemDetailsButton = Button('Item details');
 const newFeeFineButton = Button('New Fee/Fine');
+const checkInButton = Button('Check in');
+const itemBarcodeField = TextField({ name:'item.barcode' });
+const addItemButton = Button({ id: 'clickable-add-item' });
+const availableActionsButton = Button({ id: 'available-actions-button-0' });
 
 export default {
-  checkInItem: () => {
-    cy.do(Button('Check in').click());
-    cy.do(TextField({ id: 'input-item-barcode' }).fillIn(NewInctanceHoldingsItem.itemBarcode));
-    cy.do(Button({ id: 'clickable-add-item' }).click());
-    cy.expect(MultiColumnListCell('Available').exists());
-    cy.do(Button({ id: 'available-actions-button-0' }).click());
+  waitLoading:() => {
+    cy.expect(TextField({ name: 'item.barcode' }).exists());
+    cy.expect(Button('End session').exists());
+  },
+
+  checkInItem:(barcode) => {
+    cy.intercept('/saml/check').as('getCheck');
+    cy.wait('@getCheck', getLongDelay());
+    // Need some waiting when item is changed status
+    cy.wait(9000);
+    cy.intercept('/inventory/items?*').as('getItems');
+    cy.do(itemBarcodeField.fillIn(barcode));
+    // Need some waiting when item is changed status
+    cy.wait(3000);
+    cy.do(addItemButton.click());
+    cy.wait('@getItems', getLongDelay());
+  },
+  openItemRecordInInventory:(status) => {
+    cy.expect(MultiColumnListRow({ indexRow: 'row-0' }).find(HTML(including(status))).exists());
+    cy.do(availableActionsButton.click());
+    cy.expect(itemDetailsButton.exists());
+    cy.intercept('/tags?*').as('getTags');
+    cy.do(itemDetailsButton.click());
+    cy.wait('@getTags', getLongDelay());
   },
   existsFormColomns:() => {
     cy.expect([
@@ -26,8 +49,8 @@ export default {
     ]);
   },
   returnCheckIn() {
-    cy.do(Button('Check in').click());
-    cy.do(Button({ id: 'available-actions-button-0' }).click());
+    cy.do(checkInButton.click());
+    cy.do(availableActionsButton.click());
   },
   existsItemsInForm() {
     cy.do(loadDetailsButton.click());
