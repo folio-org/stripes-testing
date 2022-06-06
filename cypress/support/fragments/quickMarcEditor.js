@@ -142,10 +142,7 @@ export default class QuickmarcEditor {
   }
 
   updateExistingField(tag = this.validRecord.existingTag, newContent = `newContent${getRandomPostfix()}`) {
-    console.log(newContent);
-    //cy.expect(QuickMarcEditorRow({ tagValue: tag }).find(TextArea()).exists());
-    cy.do(QuickMarcEditorRow({ tagValue: tag }).find(TextArea()).fillIn(''));
-    // cy.do(QuickMarcEditorRow({ tagValue: tag }).find(TextArea()).fillIn(newContent));
+    cy.do(QuickMarcEditorRow({ tagValue: tag }).find(TextArea()).fillIn(newContent));
     return newContent;
   }
 

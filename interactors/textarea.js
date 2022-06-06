@@ -25,15 +25,5 @@ export default HTML.extend('text area')
   .actions({
     blur: ({ find }) => find(TextField()).perform(dispatchFocusout),
     fillIn:  ({ find }, value) => find(TextField()).fillIn(value),
-    // async ({ perform, find }, value) => {
-    //   const textField = await find(TextField());
-    //   if(textField){
-    //     textField.fillIn(value);
-    //   }else{
-    //     await perform(el => {
-    //       el.querySelectorAll('textarea').setRangeText(value);
-    //     }
-    //   };
-    //},
     focus: ({ find }) => find(TextField()).focus(),
   });
