@@ -62,9 +62,6 @@ export default {
               },
             }]
         },
-      })
-      .then(({ body }) => {
-        return body;
       });
   },
   createApi() {
