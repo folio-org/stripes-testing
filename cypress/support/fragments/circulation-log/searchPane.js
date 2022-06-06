@@ -77,11 +77,7 @@ export default {
   },
 
   checkResultSearch(searchResults) {
-    for (const result in searchResults) {
-      if (MultiColumnListCell(result)) {
-        cy.expect(MultiColumnListCell(searchResults[result]).exists());
-      }
-    }
+    Object.values(searchResults).filter((result) => cy.expect(MultiColumnListCell(searchResults[result]).exists()));
   },
 
   filterByLastWeek() {

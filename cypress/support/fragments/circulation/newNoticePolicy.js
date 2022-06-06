@@ -15,6 +15,11 @@ const actionsButton = Button('Actions');
 const addNoticeButton = Button('Add notice');
 const nameField = TextInput({ id: 'notice_policy_name' });
 const descriptionField = TextArea({ id: 'notice_policy_description' });
+const sections = {
+  section1: Section({ id: 'editLoanNotices' }),
+  section2: Section({ id: 'editRequestNotices' }),
+  section3: Section({ id: 'editFeeFineNotices' }),
+};
 
 export default {
   defaultUi: {
@@ -27,22 +32,19 @@ export default {
     this.fillGeneralInformation(patronNoticePolicy);
   },
 
-  clickNew() {
+  startAdding() {
     cy.do(Button({ id: 'clickable-create-entry' }).click());
   },
   checkForm() {
     cy.expect([
       Heading('New patron notice policy').exists(),
       nameField.exists(),
+      nameField.has({ value: '' }),
       descriptionField.exists(),
-      cy.get('[id="notice_policy_description"]').should('have.value', ''),
-      cy.get('[id="notice_policy_name"]').should('have.value', ''),
-      cy.get('[id="notice_policy_active"]').should('not.be.checked'),
-      cy.get('button').contains('Add notice').each(($button) => {
-        cy.get($button).should('not.be.disabled');
-      }),
-      cy
+      descriptionField.has({ value: '' }),
+      Checkbox({ id: 'notice_policy_active' }).has({ checked:false }),
     ]);
+    Object.values(sections).forEach((specialSection) => cy.expect(specialSection.find(addNoticeButton).has({ disabled: false, visible: true })));
   },
   addNotice(patronNoticePolicy) {
     cy.do([
@@ -75,7 +77,7 @@ export default {
   },
 
   check: (patronNoticePolicyName) => {
-    return cy.expect(NavListItem(patronNoticePolicyName).exists());
+    cy.expect(NavListItem(patronNoticePolicyName).exists());
   },
 
   choosePolicy: (patronNoticePolicy) => {

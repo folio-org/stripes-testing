@@ -32,7 +32,7 @@ Cypress.Commands.add('deleteFixedDueDateSchedule', (id) => {
 });
 
 Cypress.Commands.add('getCirculationRules', () => {
-  return cy.okapiRequest({
+  cy.okapiRequest({
     method: REQUEST_METHOD.GET,
     path: 'circulation/rules',
   })
@@ -88,7 +88,7 @@ Cypress.Commands.add('getRequestPolicy', (searchParams) => {
 });
 
 Cypress.Commands.add('getNoticePolicy', (searchParams) => {
-  return cy.okapiRequest({
+  cy.okapiRequest({
     method: REQUEST_METHOD.GET,
     path: 'patron-notice-policy-storage/patron-notice-policies',
     searchParams,

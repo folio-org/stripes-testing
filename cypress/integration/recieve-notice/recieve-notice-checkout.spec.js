@@ -8,6 +8,7 @@ import devTeams from '../../support/dictionary/devTeams';
 import SearchPane from '../../support/fragments/circulation-log/searchPane';
 import CirculationRules from '../../support/fragments/circulation/circulation-rules';
 import NoticePolicyApi, { NOTICE_CATEGORIES, NOTICE_ACTIONS } from '../../support/fragments/circulation/notice-policy';
+import NoticePolicyTemplateApi from '../../support/fragments/circulation/notice-policy-template';
 import PatronGroups from '../../support/fragments/settings/users/patronGroups';
 import CheckInActions from '../../support/fragments/check-in-actions/checkInActions';
 import NewNoticePolicy from '../../support/fragments/circulation/newNoticePolicy';
@@ -39,26 +40,26 @@ describe('Recieving notice: Checkout', () => {
     noticePolicy.action = NOTICE_ACTIONS.checkout;
     noticePolicy.noticeName = NOTICE_CATEGORIES.loan.name;
     noticePolicy.noticeId = NOTICE_CATEGORIES.loan.id;
-    cy.getAdminToken()
-      .then(() => PatronGroups.createViaApi())
+
+    cy.getAdminToken();
+
+    PatronGroups.createViaApi()
       .then(res => {
+        patronGroup.name = res.group;
+        patronGroup.id = res.id;
         cy.createUserApi({
           patronGroup: res.id,
           ...userData
         }).then((createdUser) => {
           userData.id = createdUser.id;
         });
-        patronGroup.name = res.group;
-        patronGroup.id = res.id;
-      })
-      .then(() => {
-        cy.getServicePointsApi({ limit: 1, query: 'pickupLocation=="true"' }).then((res) => {
-          cy.addServicePointToUser(res[0].id, userData.id).then((points) => {
-            testData.userServicePoint = points.body.defaultServicePointId;
-          });
+      });
+
+    cy.getServicePointsApi({ limit: 1, query: 'pickupLocation=="true"' })
+      .then((servicePoints) => {
+        cy.addServicePointToUser(servicePoints[0].id, userData.id).then((points) => {
+          testData.userServicePoint = points.body.defaultServicePointId;
         });
-      })
-      .then(() => {
         cy.getMaterialTypes({ limit: 1 }).then((res) => { testData.materialType = res.id; });
         cy.getLocations({ limit: 1 }).then((res) => { testData.location = res.id; });
         cy.getHoldingTypes({ limit: 1 }).then((res) => { testData.holdingType = res[0].id; });
@@ -66,6 +67,7 @@ describe('Recieving notice: Checkout', () => {
         cy.getInstanceTypes({ limit: 1 }).then((res) => { testData.instanceType = res[0].id; });
         cy.getLoanTypes({ limit: 1 }).then((res) => { testData.loanType = res[0].id; });
       })
+
       .then(() => {
         cy.createInstance({
           instance: {
@@ -89,6 +91,7 @@ describe('Recieving notice: Checkout', () => {
           ],
         });
       });
+
     cy.loginAsAdmin({ path: settingsMenu.circulationPatronNoticePoliciesPath, waiter: NewNoticePolicyTemplate.waitLoading });
   });
 
@@ -112,14 +115,13 @@ describe('Recieving notice: Checkout', () => {
 
     CirculationRules.deleteRuleApi(testData.defaultRules);
     NoticePolicyApi.deleteApi(testData.noticeId);
-    NewNoticePolicyTemplate.waitLoading();
-    NewNoticePolicyTemplate.openToSide(noticePolicyTemplate);
-    NewNoticePolicyTemplate.delete();
+    NoticePolicyTemplateApi.getViaApi({ query: `name=${noticePolicyTemplate.name}` }).then((templateId) => {
+      NoticePolicyTemplateApi.deleteViaApi(templateId);
+    });
   });
 
   it('C347621 Check that user can receive notice with multiple items after finishing the session "Check out" by clicking the End Session button', { tags: [testTypes.smoke, devTeams.vega] }, () => {
-    NewNoticePolicyTemplate.checkNewButton();
-    NewNoticePolicyTemplate.clickNew();
+    NewNoticePolicyTemplate.startAdding();
     NewNoticePolicyTemplate.create(noticePolicyTemplate);
     NewNoticePolicyTemplate.addToken(noticePolicyTemplate);
     noticePolicyTemplate.body += '{{item.title}}';
@@ -127,14 +129,13 @@ describe('Recieving notice: Checkout', () => {
     NewNoticePolicyTemplate.check(noticePolicyTemplate);
 
     cy.visit(`${settingsMenu.circulationPatronNoticePoliciesPath}`);
-    NewNoticePolicy.clickNew();
+    NewNoticePolicy.startAdding();
     NewNoticePolicy.create(noticePolicy);
     NewNoticePolicy.addNotice(noticePolicy);
     NewNoticePolicy.save();
-    NewNoticePolicy.check(noticePolicy.name).then(() => {
-      cy.getNoticePolicy({ query: `name=="${noticePolicy.name}"` }).then((res) => {
-        testData.noticeId = res[0].id;
-      });
+    NewNoticePolicy.check(noticePolicy.name);
+    cy.getNoticePolicy({ query: `name=="${noticePolicy.name}"` }).then((res) => {
+      testData.noticeId = res[0].id;
     });
 
     cy.getCirculationRules().then((resp) => {

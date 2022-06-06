@@ -12,7 +12,6 @@ const nameField = TextField({ id: 'input-patron-notice-name' });
 const subjectField = TextField({ id: 'input-patron-notice-subject' });
 const descriptionField = TextArea({ id: 'input-patron-notice-description' });
 const bodyField = richTextEditor();
-
 const defaultUi = {
   name: `Test_template_${getRandomPostfix()}`,
   description: 'Template created by autotest team',
@@ -26,7 +25,7 @@ export default {
     cy.do(Link('Patron notice templates').click());
     cy.expect(Heading('Patron notice templates').exists());
   },
-  clickNew() {
+  startAdding() {
     cy.do(newButton.click());
   },
   create(noticePolicyTemplate) {
@@ -49,12 +48,15 @@ export default {
     cy.expect([
       Heading('New patron notice template').exists(),
       nameField.exists(),
+      nameField.has({ value: '' }),
       tokenButton.exists(),
       descriptionField.exists(),
+      descriptionField.has({ value: '' }),
       subjectField.exists(),
+      subjectField.has({ value: '' }),
       bodyField.exists(),
-      cy.get('[id="input-patron-notice-description"]').should('have.value', ''),
-      cy.get('[id="input-patron-notice-active"]').should('be.checked'),
+      bodyField.has({ value: '' }),
+      Checkbox({ id: 'input-patron-notice-active' }).has({ checked:'true' }),
       cy.get('select[name="category"]').get('option').each(($option, index) => {
         if (index <= 5) {
           expect($option).to.contain(Object.values(NOTICE_CATEGORIES)[index].name);

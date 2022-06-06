@@ -24,7 +24,6 @@ export default {
   },
   createItemCheckoutApi(body) {
     const checkoutId = uuid();
-    cy.log('it is loanDate from "cehckout.createItemCheckoutApi"' + moment.utc().toDate());
 
     return cy.okapiRequest({
       method: REQUEST_METHOD.POST,
