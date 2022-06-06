@@ -96,7 +96,6 @@ describe('Recieving notice: Checkout', () => {
   });
 
   afterEach('Deleting created entities', () => {
-    cy.visit(settingsMenu.circulationPatronNoticePoliciesPath);
     CheckInActions.createItemCheckinApi({
       itemBarcode: ITEM_BARCODE,
       servicePointId: testData.userServicePoint,
