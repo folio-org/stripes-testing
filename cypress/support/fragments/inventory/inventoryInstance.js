@@ -45,7 +45,35 @@ const validOCLC = { id:'176116217',
   lastRowNumber: 30,
   // it should be presented in marc bib one time to correct work(applicable in update of record)
   existingTag: '100',
-  ldrValue: '01677cam\\a22003974a\\4500' };
+  ldrValue: '01677cam\\a22003974a\\4500',
+  tag008BytesProperties : {
+    eLvl : { interactor:TextField('eLvl'), defaultValue:'4' },
+    srce: { interactor:TextField('Srce'), defaultValue:'\\' },
+    audn : { interactor:TextField('Audn'), defaultValue:'\\' },
+    ctrl : { interactor:TextField('Ctrl'), defaultValue:'' },
+    lang : { interactor:TextField('Lang'), defaultValue:'rus' },
+    form : { interactor:TextField('Form'), defaultValue:'\\' },
+    conf : { interactor:TextField('Conf'), defaultValue:'0' },
+    biog : { interactor:TextField('Biog'), defaultValue:'b' },
+    mRec : { interactor:TextField('MRec'), defaultValue:'o' },
+    ctry : { interactor:TextField('Ctry'), defaultValue:'ru\\' },
+    cont0 : { interactor:TextField('Cont', { name: including('content.Ills[0]') }), defaultValue:'b' },
+    cont1 : { interactor:TextField('Cont', { name: including('content.Ills[1]') }), defaultValue:'\\' },
+    cont2 : { interactor:TextField('Cont', { name: including('content.Ills[2]') }), defaultValue:'\\' },
+    cont3 : { interactor:TextField('Cont', { name: including('content.Ills[3]') }), defaultValue:'\\' },
+    gPub : { interactor:TextField('GPub'), defaultValue:'\\' },
+    litF : { interactor:TextField('LitF'), defaultValue:'0' },
+    indx : { interactor:TextField('Indx'), defaultValue:'0' },
+    desc : { interactor:TextField('Desc'), defaultValue:'a' },
+    ills0 : { interactor:TextField('Ills', { name: including('content.Ills[0]') }), defaultValue:'a' },
+    ills1 : { interactor:TextField('Ills', { name: including('content.Ills[1]') }), defaultValue:'\\' },
+    ills2 : { interactor:TextField('Ills', { name: including('content.Ills[2]') }), defaultValue:'\\' },
+    ills3 : { interactor:TextField('Ills', { name: including('content.Ills[3]') }), defaultValue:'\\' },
+    fest : { interactor:TextField('Fest'), defaultValue:'0' },
+    dtSt : { interactor:TextField('DtSt'), defaultValue:'s' },
+    startDate : { interactor:TextField('Start date'), defaultValue:'2007' },
+    endDate : { interactor:TextField('End date'), defaultValue:'\\\\\\\\' }
+  } };
 
 const pressAddHoldingsButton = () => {
   cy.do(Button({ id:'clickable-new-holdings-record' }).click());

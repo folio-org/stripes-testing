@@ -149,10 +149,11 @@ describe('Manage inventory Bib records with quickMarc editor', () => {
     InventoryInstance.checkExpectedMARCSource();
     InventoryInstance.goToEditMARCBiblRecord();
     QuickMarcEditor.waitLoading();
-    cy.wait(1000);
 
     const initialLDRValue = InventoryInstance.validOCLC.ldrValue;
-    const positions6and7Error = 'Record cannot be saved. Cannot edit 008 due to invalid Leader 06. Please update this record\'s Leader 06. Valid values are listed at https://loc.gov/marc/bibliographic/bdleader.html';
+    const positions6and7Error = 'Record cannot be saved. Please enter a valid Leader 06. Valid values are listed at https://loc.gov/marc/bibliographic/bdleader.html';
+    // TODO: clarify differences in messages
+    // 'Record cannot be saved. Cannot edit 008 due to invalid Leader 06. Please update this record\'s Leader 06. Valid values are listed at https://loc.gov/marc/bibliographic/bdleader.html';
 
     const changedLDRs = [
       { newContent: replaceByIndex(replaceByIndex(initialLDRValue, 6, 'h'), 7, 'm'), errorMessage: positions6and7Error, is008presented : true },
@@ -162,13 +163,16 @@ describe('Manage inventory Bib records with quickMarc editor', () => {
 
     changedLDRs.forEach(changedLDR => {
       quickmarcEditor.updateExistingField('LDR', changedLDR.newContent);
-      QuickMarcEditor.pressSaveAndClose();
-      cy.expect(Callout(changedLDR.errorMessage).exists);
-      Callout(changedLDR.errorMessage).dismiss();
+      cy.wrap(QuickMarcEditor.pressSaveAndClose()).then(() => {
+        cy.expect(Callout(changedLDR.errorMessage).exists());
+        cy.do(Callout(changedLDR.errorMessage).dismiss());
+        QuickMarcEditor.checkEmptyContent('008');
+        // quickmarcEditor.checkInitialInstance008Content();
+      });
     });
   });
 
   afterEach(() => {
-    // cy.deleteUser(userId);
+    cy.deleteUser(userId);
   });
 });
