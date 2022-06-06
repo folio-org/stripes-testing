@@ -6,17 +6,15 @@ const defaultPatronGroup = {
   'expirationOffsetInDays': '10'
 };
 export default {
-  createViaApi() {
+  createViaApi: () => {
     return cy.okapiRequest({
       method: 'POST',
       path: 'groups',
       body: defaultPatronGroup,
-    }).then(({ body }) => {
-      return body;
     });
   },
   deleteViaApi(patronGroupId) {
-    return cy.okapiRequest({
+    cy.okapiRequest({
       method: 'DELETE',
       path: `groups/${patronGroupId}`
     });
