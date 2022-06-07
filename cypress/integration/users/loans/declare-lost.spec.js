@@ -9,6 +9,7 @@ import ServicePoint from '../../../support/fragments/service_point/service-point
 import Checkout from '../../../support/fragments/checkout/checkout';
 import UsersCard from '../../../support/fragments/users/usersCard';
 import permissions from '../../../support/dictionary/permissions';
+import InventoryHoldings from '../../../support/fragments/inventory/holdings/inventoryHoldings';
 
 describe('ui-users-loans: Loans', () => {
   const newOwnerData = getNewOwner();
@@ -21,6 +22,8 @@ describe('ui-users-loans: Loans', () => {
   let testUserId;
 
   beforeEach(() => {
+    let source;
+
     cy.getAdminToken();
 
     cy.then(() => {
@@ -30,7 +33,7 @@ describe('ui-users-loans: Loans', () => {
       cy.getInstanceTypes({ limit: 1 });
       cy.getLocations({ limit: 1 });
       cy.getHoldingTypes({ limit: 1 });
-      cy.getHoldingSources({ limit: 1 });
+      source = InventoryHoldings.getHoldingSources({ limit: 1 });
     }).then(() => {
       cy.createTempUser([
         permissions.uiUsersViewLoans.gui,
@@ -43,7 +46,7 @@ describe('ui-users-loans: Loans', () => {
       }) => {
         testUserId = userId;
 
-        cy.addServicePointToUser(Cypress.env('servicePoints')[0].id, userId).then(() => {
+        cy.addServicePointToUser([Cypress.env('servicePoints')[0].id], userId).then(() => {
           const servicePointOwner = Cypress.env('servicePoints').map(({
             id,
             name,
@@ -65,7 +68,7 @@ describe('ui-users-loans: Loans', () => {
             holdings: [{
               holdingsTypeId: Cypress.env('holdingsTypes')[0].id,
               permanentLocationId: Cypress.env('locations')[0].id,
-              sourceId: Cypress.env('holdingSources')[0].id,
+              sourceId: source.id,
             }],
             items: [
               [{
