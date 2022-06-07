@@ -3,6 +3,7 @@ yarn.lock
 .yarnclean
 yarn-error.log
 .idea
+.vscode/
 
 cypress/screenshots
 

@@ -8,6 +8,7 @@ export default {
 
       Button(userBarcode).exists(),
 
+      cy.wait(3000),
       TextField('Item ID').fillIn(itemBarcode),
       Pane('Scan items').find(Button('Enter')).click(),
 

@@ -35,7 +35,8 @@ describe('Recieving notice: Checkout', () => {
 
   beforeEach('Preconditions', () => {
     noticePolicyTemplate.token = 'item.title';
-    noticePolicy.templateId = noticePolicyTemplate.name;
+    noticePolicyTemplate.category = NOTICE_CATEGORIES.loan.name;
+    noticePolicy.templateName = noticePolicyTemplate.name;
     noticePolicy.format = 'Email';
     noticePolicy.action = NOTICE_ACTIONS.checkout;
     noticePolicy.noticeName = NOTICE_CATEGORIES.loan.name;
@@ -121,18 +122,24 @@ describe('Recieving notice: Checkout', () => {
 
   it('C347621 Check that user can receive notice with multiple items after finishing the session "Check out" by clicking the End Session button', { tags: [testTypes.smoke, devTeams.vega] }, () => {
     NewNoticePolicyTemplate.startAdding();
+    NewNoticePolicyTemplate.checkForm();
     NewNoticePolicyTemplate.create(noticePolicyTemplate);
     NewNoticePolicyTemplate.addToken(noticePolicyTemplate);
     noticePolicyTemplate.body += '{{item.title}}';
     NewNoticePolicyTemplate.save();
-    NewNoticePolicyTemplate.check(noticePolicyTemplate);
+    NewNoticePolicyTemplate.checkAfterSaving(noticePolicyTemplate);
+    NewNoticePolicyTemplate.checkTemplateActions(noticePolicyTemplate);
 
-    cy.visit(`${settingsMenu.circulationPatronNoticePoliciesPath}`);
+    cy.visit(settingsMenu.circulationPatronNoticePoliciesPath);
+    NewNoticePolicy.waitLoading();
     NewNoticePolicy.startAdding();
+    NewNoticePolicy.checkForm();
     NewNoticePolicy.create(noticePolicy);
     NewNoticePolicy.addNotice(noticePolicy);
     NewNoticePolicy.save();
-    NewNoticePolicy.check(noticePolicy.name);
+    NewNoticePolicy.check(noticePolicy);
+    NewNoticePolicy.checkAfterSaving(noticePolicy);
+    NewNoticePolicy.checkNoticeActions(noticePolicy);
     cy.getNoticePolicy({ query: `name=="${noticePolicy.name}"` }).then((res) => {
       testData.noticeId = res[0].id;
     });

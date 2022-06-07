@@ -8,7 +8,9 @@ import {
   Section,
   Link,
   TextInput,
-  Heading
+  Heading,
+  PaneSet,
+  KeyValue
 } from '../../../../interactors';
 
 const actionsButton = Button('Actions');
@@ -20,6 +22,13 @@ const sections = {
   section2: Section({ id: 'editRequestNotices' }),
   section3: Section({ id: 'editFeeFineNotices' }),
 };
+const activeCheckbox = Checkbox({ id: 'notice_policy_active' });
+
+export const actionsButtons = {
+  edit: Button({ id: 'dropdown-clickable-edit-item' }),
+  duplicate: Button({ id: 'dropdown-clickable-duplicate-item' }),
+  delete: Button({ id: 'dropdown-clickable-delete-item' }),
+};
 
 export default {
   defaultUi: {
@@ -27,26 +36,35 @@ export default {
     description: 'Created by autotest team',
   },
 
+  waitLoading() {
+    cy.do(Link('Patron notice policies').click());
+    cy.expect(Heading('Patron notice policies').exists());
+  },
+
+  openToSide(patronNoticePolicy) {
+    cy.do(Link(patronNoticePolicy.name).click());
+  },
+
+  fillGeneralInformation: (patronNoticePolicy) => {
+    cy.do([
+      nameField.fillIn(patronNoticePolicy.name),
+      activeCheckbox.click(),
+      descriptionField.fillIn(
+        patronNoticePolicy.description
+      ),
+    ]);
+  },
+
   create(patronNoticePolicy) {
-    this.checkForm();
     this.fillGeneralInformation(patronNoticePolicy);
   },
 
   startAdding() {
     cy.do(Button({ id: 'clickable-create-entry' }).click());
   },
-  checkForm() {
-    cy.expect([
-      Heading('New patron notice policy').exists(),
-      nameField.exists(),
-      nameField.has({ value: '' }),
-      descriptionField.exists(),
-      descriptionField.has({ value: '' }),
-      Checkbox({ id: 'notice_policy_active' }).has({ checked:false }),
-    ]);
-    Object.values(sections).forEach((specialSection) => cy.expect(specialSection.find(addNoticeButton).has({ disabled: false, visible: true })));
-  },
+
   addNotice(patronNoticePolicy) {
+    cy.log(patronNoticePolicy.templateId);
     cy.do([
       Section({ id: `edit${patronNoticePolicy.noticeName}Notices` }).find(addNoticeButton).click(),
       Select({ name: `${patronNoticePolicy.noticeId}Notices[0].templateId` }).choose(patronNoticePolicy.templateId),
@@ -55,13 +73,36 @@ export default {
     ]);
   },
 
-  fillGeneralInformation: (patronNoticePolicy) => {
-    cy.do([
-      nameField.fillIn(patronNoticePolicy.name),
-      Checkbox({ id: 'notice_policy_active' }).click(),
-      descriptionField.fillIn(
-        patronNoticePolicy.description
-      ),
+  check: (patronNoticePolicy) => {
+    cy.expect(NavListItem(patronNoticePolicy.name).exists());
+  },
+
+  checkForm() {
+    cy.expect([
+      Heading('New patron notice policy').exists(),
+      nameField.exists(),
+      nameField.has({ value: '' }),
+      descriptionField.exists(),
+      descriptionField.has({ value: '' }),
+      activeCheckbox.has({ checked:false }),
+    ]);
+    Object.values(sections).forEach((specialSection) => cy.expect(specialSection.find(addNoticeButton).has({ disabled: false, visible: true })));
+  },
+  checkAfterSaving: (patronNoticePolicy) => {
+    Object.values(patronNoticePolicy).forEach((prop) => cy.expect(PaneSet().find(KeyValue({ value: prop }))));
+  },
+
+  checkNoticeActions(patronNoticePolicy) {
+    cy.expect([
+      this.openToSide(patronNoticePolicy),
+      actionsButton.click(),
+      actionsButton.click(),
+      actionsButtons.duplicate.exists(),
+      actionsButtons.duplicate.has({ visible: true }),
+      actionsButtons.edit.exists(),
+      actionsButtons.duplicate.exists({ visible: true }),
+      actionsButtons.delete.exists(),
+      actionsButtons.duplicate.exists({ visible: true }),
     ]);
   },
 
@@ -72,14 +113,6 @@ export default {
     ]);
   },
 
-  openNoticyToSide(patronNoticePolicy) {
-    cy.do(Link(patronNoticePolicy.name).click());
-  },
-
-  check: (patronNoticePolicyName) => {
-    cy.expect(NavListItem(patronNoticePolicyName).exists());
-  },
-
   choosePolicy: (patronNoticePolicy) => {
     cy.do(NavListItem(patronNoticePolicy.name).click());
   },
@@ -88,7 +121,7 @@ export default {
     cy.do([
       NavListItem(patronNoticePolicy.name).click(),
       actionsButton.click(),
-      Button({ id: 'dropdown-clickable-edit-item' }).click(),
+      actionsButtons.edit.click(),
     ]);
     this.fillGeneralInformation(patronNoticePolicy);
   },
