@@ -54,7 +54,7 @@ describe('bulk-edit: in-app file uploading', () => {
     BulkEditSearchPane.uploadFile(['empty.csv', 'example.json']);
   });
 
-  it.only('C353232 Verify error accordion during matching (In app approach)', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
+  it('C353232 Verify error accordion during matching (In app approach)', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
     BulkEditSearchPane.selectRecordIdentifier('Item barcode');
 
     BulkEditSearchPane.uploadFile(itemBarcodesFileName);
