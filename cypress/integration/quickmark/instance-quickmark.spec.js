@@ -146,15 +146,15 @@ describe('Manage inventory Bib records with quickMarc editor', () => {
   it('C353612 Verify "LDR" validation rules with invalid data for editable and non-editable positions when editing/deriving record', { tags: [testTypes.smoke, features.quickMarcEditor] }, () => {
     const checkLdrErrors = () => {
       const initialLDRValue = InventoryInstance.validOCLC.ldrValue;
-      const positions6and7Error = 'Record cannot be saved. Please enter a valid Leader 06. Valid values are listed at https://loc.gov/marc/bibliographic/bdleader.html';
+      // TODO: https://issues.folio.org/browse/UIQM-248, error should be
+      // "Record cannot be saved. Cannot edit 008 due to invalid Leader 06. Please update this record's Leader 06. Valid values are listed at https://loc.gov/marc/bibliographic/bdleader.html"
+      const positions6Error = 'Record cannot be saved. Please enter a valid Leader 06. Valid values are listed at https://loc.gov/marc/bibliographic/bdleader.html';
       const position7Error = 'Record cannot be saved. Please enter a valid Leader 07. Valid values are listed at https://loc.gov/marc/bibliographic/bdleader.html';
       const positions6And7Error = 'Record cannot be saved. Please enter a valid Leader 06 and Leader 07. Valid values are listed at https://loc.gov/marc/bibliographic/bdleader.html';
       const readOnlyPositionsError = 'Record cannot be saved. Please check the Leader. Only positions 5, 6, 7, 8, 17, 18 and/or 19 can be edited in the Leader.';
-      // TODO: clarify differences in messages
-      // 'Record cannot be saved. Cannot edit 008 due to invalid Leader 06. Please update this record\'s Leader 06. Valid values are listed at https://loc.gov/marc/bibliographic/bdleader.html';
 
       const changedLDRs = [
-        { newContent: replaceByIndex(replaceByIndex(initialLDRValue, 6, 'h'), 7, 'm'), errorMessage: positions6and7Error, is008presented : false },
+        { newContent: replaceByIndex(replaceByIndex(initialLDRValue, 6, 'h'), 7, 'm'), errorMessage: positions6Error, is008presented : false },
         { newContent: replaceByIndex(replaceByIndex(initialLDRValue, 6, 'p'), 7, 'g'), errorMessage: position7Error, is008presented: true },
         { newContent: replaceByIndex(replaceByIndex(initialLDRValue, 6, 'a'), 7, 'g'), errorMessage: position7Error, is008presented: false },
         { newContent: replaceByIndex(replaceByIndex(initialLDRValue, 6, '1'), 7, '$'), errorMessage: positions6And7Error, is008presented: false },
