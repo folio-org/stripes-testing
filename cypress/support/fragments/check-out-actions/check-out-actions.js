@@ -9,7 +9,11 @@ import {
   including
 } from '../../../../interactors';
 
+const modal = Modal('Confirm multipiece check out');
+
 export default {
+  modal,
+
   checkOutItem(userBarcode, itemBarcode) {
     cy.do(TextField({ name: 'patron.identifier' }).fillIn(userBarcode));
     cy.intercept('/circulation/requests?*').as('getRequests');
@@ -33,10 +37,6 @@ export default {
   checkPatronInformation:() => {
     cy.expect(KeyValue('Borrower').exists());
     cy.expect(KeyValue('Status').exists());
-  },
-
-  checkConfirmMultipieceCheckOut:() => {
-    cy.expect(Modal('Confirm multipiece check out').absent());
   },
 
   checkItemstatus:(barcode) => {

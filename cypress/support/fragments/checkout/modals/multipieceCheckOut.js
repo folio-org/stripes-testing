@@ -31,6 +31,7 @@ export default {
       cy.expect(descriptionOfMissingPiecesKeyValue.has({ value: missingDescription }));
     }
     cy.expect(checkOutButton.exists());
+    cy.expect(cancelButton.exists());
   },
 
   cancelModal:() => {

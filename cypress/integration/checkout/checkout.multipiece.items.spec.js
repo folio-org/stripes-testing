@@ -12,7 +12,6 @@ import Checkout from '../../support/fragments/checkout/checkout';
 import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
 import CheckInActions from '../../support/fragments/check-in-actions/checkInActions';
 import Users from '../../support/fragments/users/users';
-import SwitchServicePoint from '../../support/fragments/service_point/switchServicePoint';
 
 describe('Check Out', () => {
   let user = {};
@@ -95,7 +94,11 @@ describe('Check Out', () => {
 
   after(() => {
     testItems.forEach(item => {
-      CheckInActions.checkInItem(item.barcode);
+      CheckInActions.createItemCheckinApi({
+        itemBarcode: item.barcode,
+        servicePointId: servicePoint.body.id,
+        checkInDate: '2021-09-30T16:14:50.444Z',
+      });
     });
     cy.wrap(testInstanceIds.holdingIds.forEach(holdingsId => {
       cy.wrap(holdingsId.itemIds.forEach(itemId => {
@@ -106,40 +109,37 @@ describe('Check Out', () => {
     })).then(() => {
       cy.deleteInstanceApi(testInstanceIds.instanceId);
     });
-    SwitchServicePoint.changeServicePointPreference(user.username);
-    cy.deleteServicePoint(servicePoint.body.id);
-    Users.deleteViaApi(user.userId);
+    cy.wrap(UsersEditPage.changeServicePointPreferenceViaApi(user.userId, [servicePoint.body.id]))
+      .then(() => {
+        cy.deleteServicePoint(servicePoint.body.id);
+        Users.deleteViaApi(user.userId);
+      });
   });
+
+  const fullCheckOut = ({ barcode, numberOfPieces, descriptionOfPieces, numberOfMissingPieces, missingPieces }) => {
+    CheckOutActions.checkOutItem(userBarcode, barcode);
+    MultipieceCheckOut.checkContent(instanceTitle, materialTypeName.name, barcode,
+      { itemPieces : numberOfPieces, description : descriptionOfPieces },
+      { missingitemPieces : numberOfMissingPieces, missingDescription: missingPieces });
+  };
 
   it('C591 Check out: multipiece items', { tags: [TestTypes.smoke] }, () => {
     CheckOutActions.checkIsInterfacesOpened();
     CheckOutActions.checkOutItem(userBarcode, testItems[0].barcode);
     CheckOutActions.checkPatronInformation(user.username, userBarcode);
-    CheckOutActions.checkConfirmMultipieceCheckOut();
+    cy.expect(CheckOutActions.modal.absent());
 
-    CheckOutActions.checkOutItem(userBarcode, testItems[1].barcode);
-    MultipieceCheckOut.checkContent(instanceTitle, materialTypeName.name, testItems[1].barcode,
-      { itemPieces : testItems[1].numberOfPieces, description :testItems[1].descriptionOfPieces },
-      { missingitemPieces : testItems[1].numberOfMissingPieces, missingDescription: testItems[1].missingPieces });
+    fullCheckOut(testItems[1]);
     MultipieceCheckOut.cancelModal();
     CheckOutActions.checkItemstatus(testItems[1].barcode);
 
-    CheckOutActions.checkOutItem(userBarcode, testItems[1].barcode);
-    MultipieceCheckOut.checkContent(instanceTitle, materialTypeName.name, testItems[1].barcode,
-      { itemPieces : testItems[1].numberOfPieces, description :testItems[1].descriptionOfPieces },
-      { missingitemPieces : testItems[1].numberOfMissingPieces, missingDescription: testItems[1].missingPieces });
+    fullCheckOut(testItems[1]);
     MultipieceCheckOut.confirmMultipleCheckOut(testItems[1].barcode);
 
-    CheckOutActions.checkOutItem(userBarcode, testItems[2].barcode);
-    MultipieceCheckOut.checkContent(instanceTitle, materialTypeName.name, testItems[2].barcode,
-      { itemPieces : testItems[2].numberOfPieces, description :testItems[2].descriptionOfPieces },
-      { missingitemPieces : testItems[2].numberOfMissingPieces, missingDescription: testItems[2].missingPieces });
+    fullCheckOut(testItems[2]);
     MultipieceCheckOut.confirmMultipleCheckOut(testItems[2].barcode);
 
-    CheckOutActions.checkOutItem(userBarcode, testItems[3].barcode);
-    MultipieceCheckOut.checkContent(instanceTitle, materialTypeName.name, testItems[3].barcode,
-      { itemPieces : testItems[3].numberOfPieces, description :testItems[3].descriptionOfPieces },
-      { missingitemPieces : testItems[3].numberOfMissingPieces, missingDescription: testItems[3].missingPieces });
+    fullCheckOut(testItems[3]);
     MultipieceCheckOut.confirmMultipleCheckOut(testItems[3].barcode);
   });
 });
