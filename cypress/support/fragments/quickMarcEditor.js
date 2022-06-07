@@ -268,4 +268,9 @@ export default class QuickmarcEditor {
   checkInitialInstance008Content() {
     Object.values(this.validRecord.tag008BytesProperties).forEach(property => cy.expect(property.interactor.has({ value: property.defaultValue })));
   }
+
+  static check008FieldsAbsent(...subfieldNames) {
+    subfieldNames.forEach(subfieldName => cy.expect(getRowInteractorByTagName('008').find(HTML({ className: including('quickMarcEditorRowContent') }))
+      .find(TextField(subfieldName)).absent()));
+  }
 }
