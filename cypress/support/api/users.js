@@ -1,3 +1,4 @@
+import uuid from 'uuid';
 import Users from '../fragments/users/users';
 import getRandomPostfix from '../utils/stringTools';
 
@@ -94,10 +95,10 @@ Cypress.Commands.add('createTempUser', (permissions = [], patronGroup) => {
           // Can be used to collect pairs of ui and backend permission names
           // cy.log('Initial permissions=' + permissions);
           // cy.log('internalPermissions=' + [...permissionsResponse.body.permissions.map(permission => permission.permissionName)]);
-          Users.createViaApi({
-            ...Users.defaultUser,
-            patronGroup: userGroupdId
-          }).then(newUserProperties => {
+          Users.createViaApi({ ...Users.defaultUser,
+            patronGroup: userGroupdId,
+            username: userProperties.username,
+            personal: { ...Users.defaultUser.personal, lastName : userProperties.username } }).then(newUserProperties => {
             userProperties.userId = newUserProperties.id;
             userProperties.barcode = newUserProperties.barcode;
             cy.setUserPassword(userProperties);
@@ -106,7 +107,6 @@ Cypress.Commands.add('createTempUser', (permissions = [], patronGroup) => {
               permissions: [...permissionsResponse.body.permissions.map(permission => permission.permissionName)]
             });
             cy.overrideLocalSettings(userProperties.userId);
-            userProperties.barcode = newUserProperties.barcode;
             cy.wrap(userProperties).as('userProperties');
           });
         });
