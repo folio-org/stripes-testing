@@ -10,7 +10,7 @@ let user;
 const userUUIDsFileName = `C350905_userUUIDs_${getRandomPostfix()}.csv`;
 const invalidUserUUID = getRandomPostfix();
 
-describe('ui-users: file uploading', () => {
+describe('bulk-edit: csv file uploading', () => {
   before('create user', () => {
     cy.createTempUser([
       permissions.bulkEditCsvView.gui,
@@ -26,6 +26,7 @@ describe('ui-users: file uploading', () => {
 
   after('Delete all data', () => {
     cy.deleteUser(user.userId);
+    FileManager.deleteFile(`cypress/fixtures/${userUUIDsFileName}`);
   });
 
 
@@ -39,7 +40,7 @@ describe('ui-users: file uploading', () => {
     BulkEditSearchPane.verifyMatchedResults([user.username]);
     BulkEditSearchPane.verifyNonMatchedResults([invalidUserUUID]);
 
-    BulkEditSearchPane.verifyActionsAfterConductedUploading();
+    BulkEditSearchPane.verifyActionsAfterConductedCSVUploading();
     BulkEditSearchPane.verifyActionShowColumns();
 
     BulkEditSearchPane.changeShowColumnCheckbox('Email');
