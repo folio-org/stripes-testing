@@ -9,7 +9,11 @@ import ChangeDueDateForm from '../../support/fragments/loans/changeDueDateForm';
 import CheckOutActions from '../../support/fragments/check-out-actions/check-out-actions';
 import DateTools from '../../support/utils/dateTools';
 import NewRequest from '../../support/fragments/requests/newRequest';
-import checkinActions from '../../support/fragments/check-in-actions/checkInActions';
+import CheckinActions from '../../support/fragments/check-in-actions/checkInActions';
+import InventoryHoldings from '../../support/fragments/inventory/holdings/inventoryHoldings';
+import UsersEditPage from '../../support/fragments/users/usersEditPage';
+import Checkout from '../../support/fragments/checkout/checkout';
+import MultipieceCheckOut from '../../support/fragments/checkout/modals/multipieceCheckOut';
 
 const item = {
   barcode: `123${getRandomPostfix()}`,
@@ -22,6 +26,8 @@ const expirationUserDate = DateTools.getFutureWeekDateObj();
 
 describe('loan dates', () => {
   before('create inventory instance', () => {
+    let source;
+
     cy.createTempUser([
       permissions.loansAll.gui,
       permissions.checkoutAll.gui,
@@ -35,7 +41,7 @@ describe('loan dates', () => {
             cy.getMaterialTypes({ limit: 1 });
             cy.getLocations({ limit: 1 });
             cy.getHoldingTypes({ limit: 1 });
-            cy.getHoldingSources({ limit: 1 });
+            source = InventoryHoldings.getHoldingSources({ limit: 1 });
             cy.getInstanceTypes({ limit: 1 });
             cy.getServicePointsApi({ limit: 1, query: 'pickupLocation=="true"' });
             cy.getUsers({
@@ -44,7 +50,7 @@ describe('loan dates', () => {
             });
           })
           .then(() => {
-            cy.addServicePointToUser(Cypress.env('servicePoints')[0].id, userProperties.userId);
+            UsersEditPage.addServicePointsToUser([Cypress.env('servicePoints')[0].id], userProperties.userId);
             cy.getUserServicePoints(Cypress.env('users')[0].id);
             cy.createInstance({
               instance: {
@@ -54,7 +60,7 @@ describe('loan dates', () => {
               holdings: [{
                 holdingsTypeId: Cypress.env('holdingsTypes')[0].id,
                 permanentLocationId: Cypress.env('locations')[0].id,
-                sourceId: Cypress.env('holdingSources')[0].id,
+                sourceId: source.id,
               }],
               items: [
                 [{
@@ -69,8 +75,10 @@ describe('loan dates', () => {
             });
           })
           .then(() => {
-            cy.login(userProperties.username, userProperties.password);
+            cy.login(userProperties.username, userProperties.password, { path: TopMenu.checkOutPath, waiter: Checkout.waitLoading });
             CheckOutActions.checkOutItem(Cypress.env('users')[0].barcode, item.barcode);
+            MultipieceCheckOut.confirmMultipleCheckOut(item.barcode);
+            CheckOutActions.endCheckOutSession();
             cy.updateUser({ ...Cypress.env('users')[0], expirationDate: DateTools.getFormattedDate({ date: expirationUserDate }) });
           })
           .then(() => {
@@ -83,7 +91,7 @@ describe('loan dates', () => {
   });
 
   after('Delete all data', () => {
-    checkinActions.createItemCheckinApi({
+    CheckinActions.createItemCheckinApi({
       itemBarcode: item.barcode,
       servicePointId: Cypress.env('servicePoints')[0].id,
       checkInDate: '2021-09-30T16:14:50.444Z',

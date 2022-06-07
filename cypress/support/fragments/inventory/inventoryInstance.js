@@ -205,7 +205,7 @@ export default {
   checkInstanceIdentifier: (identifier) => {
     cy.expect(Accordion('Identifiers').find(MultiColumnList({ id: 'list-identifiers' })
       .find(MultiColumnListRow({ index: 0 })))
-      .find(MultiColumnListCell({ columnIndex: 0 }))
+      .find(MultiColumnListCell({ columnIndex: 1 }))
       .has({ content: identifier }));
   },
   checkPrecedingTitle:(rowNumber, title, isbn, issn) => {

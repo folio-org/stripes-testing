@@ -21,14 +21,8 @@ export default {
   },
 
   checkInItem:(barcode) => {
-    cy.intercept('/saml/check').as('getCheck');
-    cy.wait('@getCheck', getLongDelay());
-    // Need some waiting when item is changed status
-    cy.wait(9000);
     cy.intercept('/inventory/items?*').as('getItems');
     cy.do(itemBarcodeField.fillIn(barcode));
-    // Need some waiting when item is changed status
-    cy.wait(3000);
     cy.do(addItemButton.click());
     cy.wait('@getItems', getLongDelay());
   },

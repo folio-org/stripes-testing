@@ -41,7 +41,7 @@ describe('Calendar', () => {
     calendarActions.deleteCalendarEvent();
   });
 
-  it('C353206 Create, view, and edit calendar events', { tags: [TestType.smoke] }, () => {
+  it('C353206 Settings (Calendar): Can create, view, and edit calendar events', { tags: [TestType.smoke] }, () => {
     cy.login(limitedAccessUser.userName, limitedAccessUser.password);
 
     calendarActions.openCalendarEvents();

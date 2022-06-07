@@ -248,7 +248,7 @@ export default {
       PaneHeader({ id: 'paneHeaderinvoice-results-pane' })
         .find(actionsButton).click(),
       Button('Voucher export').click(),
-      Select().choose('FOLIO'),
+      Select().choose('Amherst (AC)'),
       Button('Run manual export').click(),
       Button({ id: 'clickable-run-manual-export-confirmation-confirm' }).click(),
     ]);

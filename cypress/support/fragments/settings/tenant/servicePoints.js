@@ -9,6 +9,5 @@ export default {
         return body.servicepoints;
       });
   },
-
-  createViaApi: (servicePointParameters) => cy.createServicePoint(servicePointParameters),
+  createViaApi : (servicePointParameters) => cy.createServicePoint(servicePointParameters),
 };

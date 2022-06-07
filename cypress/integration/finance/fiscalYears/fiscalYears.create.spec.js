@@ -11,7 +11,7 @@ describe('ui-finance: Fiscal Year creation', () => {
     cy.visit(TopMenu.fiscalYearPath);
   });
 
-  it('C4051 should create new fiscal year', { tags: [testType.smoke] }, () => {
+  it('C4051 Create a new fiscal year', { tags: [testType.smoke] }, () => {
     const defaultFiscalYear = { ...NewFiscalYear.defaultFiscalYear };
     FiscalYears.createDefaultFiscalYear(defaultFiscalYear);
     FiscalYears.checkCreatedFiscalYear(defaultFiscalYear.name);
