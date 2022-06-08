@@ -62,6 +62,7 @@ export default {
       Button('Edit').click(),
     ]);
   },
+
   assignOrderToAdmin: (rowNumber = 0) => {
     cy.do([
       Button({ id: 'clickable-plugin-find-user' }).click(),
@@ -70,12 +71,15 @@ export default {
       MultiColumnListRow({ index: rowNumber }).click(),
     ]);
   },
+
   saveEditingOrder : () => {
     cy.do(saveAndClose.click());
   },
+
   selectOngoingOrderType: () => {
     cy.do(Select({ name: 'orderType' }).choose('Ongoing'));
   },
+
   fillOngoingInformation: (newDate) => {
     cy.do([
       Checkbox({ name: 'ongoing.isSubscription' }).click(),
@@ -83,6 +87,7 @@ export default {
       TextField({ name: 'ongoing.renewalDate' }).fillIn(newDate),
     ]);
   },
+
   closeOrder: (reason) => {
     cy.do([
       orderDetailsPane
@@ -130,6 +135,10 @@ export default {
     cy.expect(Pane({ id: 'order-details' }).exists());
     cy.expect(Accordion({ id: orderDetailsAccordionId }).find(KeyValue({ value: order.vendor })).exists());
     cy.expect(Accordion({ id: orderDetailsAccordionId }).find(KeyValue({ value: createdByAdmin })).exists());
+  },
+
+  selectFromResultsList: (rowNumber = 0) => {
+    cy.do(MultiColumnListRow({ index: rowNumber }).click());
   },
 
   deleteOrderViaActions: () => {
