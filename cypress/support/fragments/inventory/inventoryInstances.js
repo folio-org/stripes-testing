@@ -10,11 +10,28 @@ import {
   TextField,
   Checkbox
 } from '../../../../interactors';
+import InventoryHoldings from './holdings/inventoryHoldings';
 import NewInventoryInstance from './newInventoryInstance';
 
 const rootSection = Section({ id: 'pane-results' });
 const inventoriesList = rootSection.find(MultiColumnList({ id: 'list-inventory' }));
 const actionsButton = rootSection.find(Button('Actions'));
+
+const createInstanceViaAPI = (instanceWithSpecifiedNewId) => cy.okapiRequest({
+  method: 'POST',
+  path: 'inventory/instances',
+  body: instanceWithSpecifiedNewId
+});
+const createHoldingViaAPI = (holdingWithIds) => cy.okapiRequest({
+  method: 'POST',
+  path: 'holdings-storage/holdings',
+  body:  holdingWithIds
+});
+const createItemViaAPI = (itemWithIds) => cy.okapiRequest({
+  method: 'POST',
+  path: 'inventory/items',
+  body:  itemWithIds
+});
 
 export default {
   waitLoading:() => {
@@ -103,8 +120,6 @@ export default {
       .then(() => {
         cy.getHoldings({ limit: 1, query: `"instanceId"="${instanceId}"` })
           .then((holdings) => {
-            console.log(instanceId);
-            console.log(holdings[0]);
             cy.updateHoldingRecord(holdings[0].id, {
               ...holdings[0],
               callNumber: holdingCallNumber
@@ -120,5 +135,33 @@ export default {
         cy.deleteHoldingRecord(instance.holdings[0].id);
         cy.deleteInstanceApi(instance.id);
       });
+  },
+
+  createFolioInstanceViaApi: ({ instance, holdings = [], items = [] }) => {
+    InventoryHoldings.getHoldingsFolioSource()
+      .then(folioSource => {
+        const ids = {};
+        const instanceWithSpecifiedNewId = { ...instance, id: uuid(), source: folioSource.name };
+        ids.instanceId = instanceWithSpecifiedNewId.id;
+        createInstanceViaAPI(instanceWithSpecifiedNewId).then(() => {
+          ids.holdingIds = [];
+          cy.wrap(holdings.forEach(holding => {
+            const holdingWithIds = { ...holding, id: uuid(), instanceId: instanceWithSpecifiedNewId.id, sourceId: folioSource.id };
+            createHoldingViaAPI(holdingWithIds).then(() => {
+              const itemIds = [];
+              cy.wrap(items.forEach(item => {
+                const itemWithIds = { ...item, id: uuid(), holdingsRecordId: holdingWithIds.id };
+                itemIds.push(itemWithIds.id);
+                createItemViaAPI(itemWithIds);
+              })).then(() => {
+                ids.holdingIds.push({ id: holdingWithIds.id, itemIds });
+              });
+            });
+          })).then(() => {
+            cy.wrap(ids).as('ids');
+          });
+        });
+      });
+    return cy.get('@ids');
   }
 };
