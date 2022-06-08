@@ -30,7 +30,7 @@ describe('bulk-edit: csv file uploading', () => {
   });
 
 
-  it('C350905 Negative uploading file with identifiers -- In app approach', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
+  it('C350928 Verify error accordion during matching (CSV approach)', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
     BulkEditSearchPane.checkUsersRadio();
     BulkEditSearchPane.selectRecordIdentifier('User UUIDs');
 
