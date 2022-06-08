@@ -38,8 +38,6 @@ describe('Patron blocks relations with users, conditions', () => {
             ManualCharges.createViaApi({ ...ManualCharges.defaultFeeFineType, ownerId: owner.id, defaultAmount: testData.chargeAmount }).then(manualCharge => {
               testData.manualChargeId = manualCharge.id;
               cy.loginAsAdmin({ path: AppPaths.getUserPreviewPath(userProperties.id), waiter: UsersCard.waitLoading });
-              // TODO: https://issues.folio.org/browse/UIU-2617
-              cy.reload();
               UsersCard.startFeeFine();
               UserCharge.fillRequiredFields(owner.ownerName, manualCharge.feeFineType);
               UserCharge.chargeOnly();
