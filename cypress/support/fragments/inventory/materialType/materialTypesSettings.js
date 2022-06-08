@@ -49,7 +49,7 @@ export default {
     });
   },
   getMaterialTypesApi: (searchParams) => {
-    cy
+    return cy
       .okapiRequest({
         path: 'material-types',
         searchParams,

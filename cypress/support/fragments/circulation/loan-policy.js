@@ -2,14 +2,17 @@ import uuid from 'uuid';
 import { getTestEntityValue } from '../../utils/stringTools';
 import { LIBRARY_DUE_DATE_MANAGMENT, LOAN_PROFILE } from '../../constants';
 
-const getDefaultLoanPolicy = (limitItem) => {
+const getDefaultLoanPolicy = (limit, scheduleId) => {
   const defaultLoanPolicy = {
     id: uuid(),
     name: getTestEntityValue(),
     loanable: false,
-    loansPolicy: { profileId: 'Rolling', period: { duration: 1, intervalId: 'Days' } },
-    closedLibraryDueDateManagementId: 'CURRENT_DUE_DATE',
-    itemLimit: limitItem,
+    loansPolicy: {
+      profileId: 'Rolling',
+      period: { duration: 1, intervalId: 'Days' },
+      itemLimit: limit,
+      fixedDueDateScheduleId: scheduleId
+    },
     renewable: false,
   };
   return defaultLoanPolicy;

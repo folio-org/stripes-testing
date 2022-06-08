@@ -8,9 +8,9 @@ import ServicePoints from '../../../../support/fragments/settings/tenant/service
 import TopMenu from '../../../../support/fragments/topMenu';
 import InventoryInstances from '../../../../support/fragments/inventory/inventoryInstances';
 import LoanPolicyActions from '../../../../support/fragments/circulation/loan-policy';
-import MaterialTypesSettings from '../../../../support/fragments/inventory/materialType/materialTypesSettings';
 import { CY_ENV } from '../../../../support/constants';
 import CheckoutActions from '../../../../support/fragments/checkout/checkout';
+import FixedDueDateSchedules from '../../../../support/fragments/circulation/fixedDueDateSchedules';
 
 describe('ui-users:', () => {
   let user = {};
@@ -19,19 +19,21 @@ describe('ui-users:', () => {
   let servicePoint;
   let testInstanceIds;
   let loanPolicy;
-  let materialTypeId;
+  let materialType;
   let loanTypeId;
   const testItems = [];
 
   beforeEach(() => {
     cy.getAdminToken()
       .then(() => {
-        MaterialTypesSettings.getMaterialTypesApi({ query: 'name="book"' })
-          .then(mtypes => {
-            materialTypeId = mtypes.id;
+        cy.getMaterialTypes({ limit: 1 })
+          .then(({ id }) => {
+            materialType = { id };
           });
-        cy.getLoanTypes({ limit: 1, query: '"name"="Course Reserve"' })
-          .then((ltypes) => { loanTypeId = ltypes[0].id; });
+        cy.getLoanTypes({ limit: 1, query: 'name="Course reserves"' })
+          .then((body) => {
+            loanTypeId = body[0].id;
+          });
         cy.getLocations({ limit: 1 });
         cy.getHoldingTypes({ limit: 1 });
         cy.getInstanceTypes({ limit: 1 });
@@ -41,8 +43,8 @@ describe('ui-users:', () => {
           const defaultItem = {
             barcode: Helper.getRandomBarcode(),
             status:  { name: 'Available' },
-            permanentLoanType: { id: loanTypeId },
-            materialType: { id: materialTypeId },
+            permanentLoanType: { id:loanTypeId },
+            materialType: { id: materialType.id },
           };
           return defaultItem;
         };
@@ -66,9 +68,12 @@ describe('ui-users:', () => {
           })
         // create loan policy
           .then(() => {
-            LoanPolicyActions.createApi(LoanPolicyActions.getDefaultLoanPolicy(2))
-              .then((policy) => {
-                loanPolicy = policy;
+            FixedDueDateSchedules.createViaApi()
+              .then((schedule) => {
+                LoanPolicyActions.createApi(LoanPolicyActions.getDefaultLoanPolicy(2, schedule.body.id))
+                  .then((policy) => {
+                    loanPolicy = policy;
+                  });
               });
           })
         // create circulation rules
@@ -109,6 +114,8 @@ describe('ui-users:', () => {
 
   it('C9277 Verify that maximum number of items borrowed for loan type (e.g. course reserve) limit works', { tags: [TestTypes.smoke] }, () => {
     cy.visit(TopMenu.checkOutPath);
-    CheckoutActions.checkOutItem(userBarcode, testItems[0].barcode);
+    testItems.forEach((barcode) => {
+      CheckoutActions.checkOutItem(userBarcode, barcode);
+    });
   });
 });
