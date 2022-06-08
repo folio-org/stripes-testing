@@ -1,7 +1,6 @@
 import { TextField } from '@interactors/html';
 import { dispatchFocusout } from './util';
 import HTML from './baseHTML';
-import { TextArea } from '.';
 
 const label = (el) => {
   const labelText = el.querySelector('label');
