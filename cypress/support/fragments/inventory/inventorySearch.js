@@ -167,7 +167,6 @@ export default {
   },
 
   searchByParameter: (parameter, value) => {
-    cy.visit(TopMenu.inventoryPath);
     cy.do(SearchField({ id: 'input-inventory-search' }).selectIndex(parameter));
     cy.do(TextField('Search ').fillIn(value));
     cy.intercept('/holdings-storage/holdings?*').as('getHoldings');
