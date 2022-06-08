@@ -5,7 +5,6 @@ import TestType from '../../support/dictionary/testTypes';
 import OrderLines from '../../support/fragments/orders/orderLines';
 import getRandomPostfix from '../../support/utils/stringTools';
 import InventorySearch from '../../support/fragments/inventory/inventorySearch';
-import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
 
 describe('orders: create an order', () => {
   const order = { ...NewOrder.defaultOrder };
