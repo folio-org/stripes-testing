@@ -12,7 +12,6 @@ import {
   MultiColumnListHeader
 } from '../../../../interactors';
 import InventoryActions from './inventoryActions';
-import TopMenu from '../topMenu';
 
 const effectiveLocationInput = Accordion({ id: 'effectiveLocation' });
 const languageInput = Accordion({ id: 'language' });
