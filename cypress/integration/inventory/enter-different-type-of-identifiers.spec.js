@@ -5,6 +5,7 @@ import InventoryInstances from '../../support/fragments/inventory/inventoryInsta
 import InventoryInstance from '../../support/fragments/inventory/inventoryInstance';
 import InventoryInstanceEdit from '../../support/fragments/inventory/InventoryInstanceEdit';
 import Helper from '../../support/fragments/finance/financeHelper';
+import TopMenu from '../../support/fragments/topMenu';
 
 describe('ui-inventory: Enter different type of identifiers', () => {
   let instanceTitle;
@@ -40,9 +41,12 @@ describe('ui-inventory: Enter different type of identifiers', () => {
     it('C609 In Accordion Identifiers --> enter different type of identifiers', { tags: [TestTypes.smoke] }, () => {
       resourceIdentifier = `testResourceIdentifier.${getRandomPostfix()}`;
 
+      cy.visit(TopMenu.inventoryPath);
       InventorySearch.searchByParameter('Title (all)', instanceTitle);
       InventoryInstances.selectInstance();
       InventoryInstance.editInstance();
+
+      cy.visit(TopMenu.inventoryPath);
       InventoryInstanceEdit.addIdentifier(identifier, resourceIdentifier);
       InventorySearch.searchByParameter('Keyword (title, contributor, identifier)', resourceIdentifier);
       InventoryInstances.selectInstance();

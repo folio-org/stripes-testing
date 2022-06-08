@@ -1,3 +1,4 @@
+import { v4 as uuidv4 } from 'uuid';
 import {
   Pane,
   Button,
@@ -6,8 +7,12 @@ import {
   MultiColumnListRow,
   Checkbox,
   MultiColumnListCell,
-  Modal
+  Modal,
+  MultiColumnList,
+  Select
 } from '../../../../interactors';
+import TopMenu from '../topMenu';
+import defaultUser from '../user/defaultUser';
 
 export default {
   addPermissions(permissions) {
@@ -44,5 +49,52 @@ export default {
 
   saveAndClose() {
     cy.do(Button('Save & close').click());
+  },
+
+  addServicePointsToUser: (servicePointIds, userId, defaultServicePointId) => {
+    // servicePointIds is array of ids
+    cy.okapiRequest({
+      method: 'POST',
+      path: 'service-points-users',
+      body: {
+        id: uuidv4(),
+        userId,
+        servicePointsIds: servicePointIds,
+        defaultServicePointId: defaultServicePointId || servicePointIds[0],
+      },
+    });
+  },
+
+  // we can remove the service point if it is not Preference
+  changeServicePointPreference: (userName = defaultUser.defaultUiPatron.body.userName) => {
+    cy.visit(TopMenu.usersPath);
+    cy.do(TextField({ id: 'input-user-search' }).fillIn(userName));
+    cy.do(Button('Search').click());
+    cy.do(MultiColumnList().click({ row: 0, column: 'Active' }));
+    cy.do(Pane({ id: 'pane-userdetails' }).find(Button('Actions')).click());
+    cy.do(Button({ id: 'clickable-edituser' }).click());
+    cy.do(Button({ id: 'accordion-toggle-button-servicePoints' }).click());
+    cy.do(Select({ id: 'servicePointPreference' }).choose('None'));
+    cy.do(Button({ id: 'clickable-save' }).click());
+  },
+
+  changeServicePointPreferenceViaApi:(userId, servicePointIds, defaultServicePointId = null) => {
+    cy.okapiRequest({
+      method: 'GET',
+      path: `service-points-users?query="userId"="${userId}"`,
+      isDefaultSearchParamsRequired: false,
+    })
+      .then((servicePointsUsers) => {
+        cy.okapiRequest({
+          method: 'PUT',
+          path: `service-points-users/${servicePointsUsers.body.servicePointsUsers[0].id}`,
+          body: {
+            userId,
+            servicePointsIds: servicePointIds,
+            defaultServicePointId,
+          },
+          isDefaultSearchParamsRequired: false,
+        });
+      });
   }
 };
