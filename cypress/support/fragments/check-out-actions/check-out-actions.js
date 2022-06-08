@@ -9,7 +9,8 @@ import {
   MultiColumnList,
   MultiColumnListCell,
   HTML,
-  including
+  including,
+  PaneContent
 } from '../../../../interactors';
 
 const modal = Modal('Confirm multipiece check out');
