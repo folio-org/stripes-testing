@@ -126,8 +126,8 @@ describe('ui-inventory: Item status date updates', () => {
       });
   });
 
-  afterEach(() => {
-    InventoryInstances.deleteInstanceViaApi(userItemBarcode);
+  /*afterEach(() => {
+    InventoryInstances.deleteInstanceViaApi(itemBarcode);
     Orders.getOrdersApi({ limit: 1, query: `"poNumber"=="${orderNumber}"` })
       .then(order => {
         cy.deleteOrderApi(order[0].id);
@@ -136,7 +136,7 @@ describe('ui-inventory: Item status date updates', () => {
       .then(organization => {
         cy.deleteOrganizationApi(organization[0].id);
       });
-    Requests.getRequestApi({ limit: 1, query: `"item.barcode"=="${userItemBarcode}"` })
+    Requests.getRequestApi({ limit: 1, query: `"item.barcode"=="${itemBarcode}"` })
       .then(requests => {
         requests.forEach(request => {
           Requests.deleteRequestApi(request.id);
@@ -148,7 +148,7 @@ describe('ui-inventory: Item status date updates', () => {
         cy.deleteServicePoint(notEffectiveLocationServicePoint.id);
         Users.deleteViaApi(user.userId);
       });
-  });
+  });*/
 
   const openItem = (title, itemLocation, barcode) => {
     cy.visit(TopMenu.inventoryPath);
@@ -162,6 +162,7 @@ describe('ui-inventory: Item status date updates', () => {
     const caption = `autotest_caption_${getRandomPostfix()}`;
     const numberOfPieces = '3';
 
+    // open order and create Item
     Orders.selectOrderWithNumber(orderNumber);
     Orders.openOrder();
     OrdersHelper.verifyOrderDateOpened();
@@ -170,6 +171,7 @@ describe('ui-inventory: Item status date updates', () => {
     ItemVeiw.verifyItemStatus(ItemVeiw.itemStatuses.onOrder);
     cy.log('###On order###');
 
+    // receive item
     Orders.selectOrderWithNumber(orderNumber);
     Orders.receiveOrderViaActions();
     Helper.selectFromResultsList();
@@ -179,6 +181,7 @@ describe('ui-inventory: Item status date updates', () => {
     ItemVeiw.verifyItemStatus(ItemVeiw.itemStatuses.inProcess);
     cy.log('###In process###');
 
+    // check in item at service point assigned to its effective location
     SwitchServicePoint.switchServicePoint(effectiveLocationServicePoint.name);
     cy.visit(TopMenu.checkInPath);
     CheckInActions.checkInItem(itemBarcode);
@@ -187,11 +190,13 @@ describe('ui-inventory: Item status date updates', () => {
     ItemVeiw.verifyItemStatus(ItemVeiw.itemStatuses.available);
     cy.log('###Available###');
 
+    // mark item as missing
     ItemVeiw.clickMarkAsMissing();
     ItemVeiw.verifyUpdatedItemDate();
     ItemVeiw.verifyItemStatus(ItemVeiw.itemStatuses.missing);
     cy.log('###Missing###');
 
+    // check in item at service point assigned to its effective location
     cy.visit(TopMenu.checkInPath);
     CheckInActions.checkInItem(itemBarcode);
     ConfirmItemInModal.confirmMissingModal();
@@ -200,6 +205,7 @@ describe('ui-inventory: Item status date updates', () => {
     ItemVeiw.verifyItemStatus(ItemVeiw.itemStatuses.available);
     cy.log('###Available###');
 
+    // heck in item at service point assigned to its effective location
     cy.visit(TopMenu.checkInPath);
     CheckInActions.checkInItem(itemBarcode);
     CheckInActions.openItemRecordInInventory(itemBarcode);
@@ -207,9 +213,10 @@ describe('ui-inventory: Item status date updates', () => {
     ItemVeiw.verifyItemStatus(ItemVeiw.itemStatuses.available);
     cy.log('###Available###');
 
+    // check in item at service point not assigned to its effective location
     SwitchServicePoint.switchServicePoint(notEffectiveLocationServicePoint.name);
     cy.visit(TopMenu.checkInPath);
-    cy.wait(20000);
+    cy.wait(25000);
     CheckInActions.checkInItem(itemBarcode);
     ConfirmItemInModal.confirmInTransitModal();
     CheckInActions.openItemRecordInInventory(itemBarcode);
@@ -217,6 +224,7 @@ describe('ui-inventory: Item status date updates', () => {
     ItemVeiw.verifyItemStatus(ItemVeiw.itemStatuses.inTransit);
     cy.log('###In transit###');
 
+    // check in item at service point not assigned to its effective location
     cy.visit(TopMenu.checkInPath);
     CheckInActions.checkInItem(itemBarcode);
     ConfirmItemInModal.confirmInTransitModal();
@@ -225,6 +233,7 @@ describe('ui-inventory: Item status date updates', () => {
     ItemVeiw.verifyItemStatus(ItemVeiw.itemStatuses.inTransit);
     cy.log('###In transit###');
 
+    // check in item at service point assigned to its effective location
     SwitchServicePoint.switchServicePoint(effectiveLocationServicePoint.name);
     cy.visit(TopMenu.checkInPath);
     CheckInActions.checkInItem(itemBarcode);
@@ -233,6 +242,7 @@ describe('ui-inventory: Item status date updates', () => {
     ItemVeiw.verifyItemStatus(ItemVeiw.itemStatuses.available);
     cy.log('###Available###');
 
+    // create Page request on an item
     cy.visit(TopMenu.requestsPath);
     NewRequest.createNewRequest({
       itemBarcode,
@@ -245,6 +255,7 @@ describe('ui-inventory: Item status date updates', () => {
     ItemVeiw.verifyItemStatus(ItemVeiw.itemStatuses.paged);
     cy.log('###Paged###');
 
+    // check in item at a service point other than the pickup service point for the request
     SwitchServicePoint.switchServicePoint(notEffectiveLocationServicePoint.name);
     cy.visit(TopMenu.checkInPath);
     CheckInActions.checkInItem(itemBarcode);
@@ -254,6 +265,7 @@ describe('ui-inventory: Item status date updates', () => {
     ItemVeiw.verifyItemStatus(ItemVeiw.itemStatuses.inTransit);
     cy.log('###In transit###');
 
+    // check in item at the pickup service point for the page request
     SwitchServicePoint.switchServicePoint(effectiveLocationServicePoint.name);
     cy.visit(TopMenu.checkInPath);
     CheckInActions.checkInItem(itemBarcode);
@@ -263,6 +275,7 @@ describe('ui-inventory: Item status date updates', () => {
     ItemVeiw.verifyItemStatus(ItemVeiw.itemStatuses.awaitingPickup);
     cy.log('###Awaiting pickup###');
 
+    // check out item to user for whom page request was created
     cy.visit(TopMenu.checkOutPath);
     CheckOut.checkOutItem(userBarcode, itemBarcode);
     ConfirmItemInModal.confirmAvaitingPicupCheckInModal();
@@ -271,6 +284,7 @@ describe('ui-inventory: Item status date updates', () => {
     ItemVeiw.verifyItemStatus(ItemVeiw.itemStatuses.checkedOut);
     cy.log('###Checked out###');
 
+    // declare item lost
     cy.visit(TopMenu.usersPath);
     UsersSearchPane.searchByKeywords(user.username);
     UsersSearchPane.openUser(user.userId);
@@ -283,6 +297,7 @@ describe('ui-inventory: Item status date updates', () => {
     ItemVeiw.verifyItemStatus(ItemVeiw.itemStatuses.declaredLost);
     cy.log('###Declared lost###');
 
+    // renew item (through override)
     cy.visit(TopMenu.usersPath);
     UsersSearchPane.searchByKeywords(user.username);
     UsersSearchPane.openUser(user.userId);
@@ -296,6 +311,7 @@ describe('ui-inventory: Item status date updates', () => {
     ItemVeiw.verifyItemStatus(ItemVeiw.itemStatuses.checkedOut);
     cy.log('###Checked out###');
 
+    // edit item record so that it has multiple pieces
     openItem(instanceTitle, effectiveLocation.name, itemBarcode);
     InventoryInstance.openEditItemPage();
     ItemVeiw.addPieceToItem(numberOfPieces);
@@ -303,6 +319,7 @@ describe('ui-inventory: Item status date updates', () => {
     ItemVeiw.verifyItemStatus(ItemVeiw.itemStatuses.checkedOut);
     cy.log('###Checked out###');
 
+    // create delivery request (hold or recall) on item
     cy.visit(TopMenu.requestsPath);
     NewRequest.createDeliveryRequest({
       itemBarcode,
@@ -320,6 +337,7 @@ describe('ui-inventory: Item status date updates', () => {
     ItemVeiw.verifyItemStatus(ItemVeiw.itemStatuses.awaitingDelivery);
     cy.log('###Awaiting delivery###');
 
+    // check out item to user with delivery request
     cy.visit(TopMenu.checkOutPath);
     CheckOut.checkOutItem(userBarcode, itemBarcode);
     ConfirmItemInModal.confirmAvaitingPicupCheckInModal();
@@ -329,6 +347,7 @@ describe('ui-inventory: Item status date updates', () => {
     ItemVeiw.verifyItemStatus(ItemVeiw.itemStatuses.checkedOut);
     cy.log('###Checked out###');
 
+    // check in item at service point assigned to its effective location
     SwitchServicePoint.switchServicePoint(effectiveLocationServicePoint.name);
     cy.visit(TopMenu.checkInPath);
     CheckInActions.checkInItem(itemBarcode);
