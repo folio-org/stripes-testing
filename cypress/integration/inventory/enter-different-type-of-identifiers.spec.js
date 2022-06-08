@@ -49,6 +49,8 @@ describe('ui-inventory: Enter different type of identifiers', () => {
 
       searchAndOpenInstance('Title (all)', instanceTitle);
       InventoryInstance.editInstance();
+
+      cy.visit(TopMenu.inventoryPath);
       InventoryInstanceEdit.addIdentifier(identifier, resourceIdentifier);
       searchAndOpenInstance('Keyword (title, contributor, identifier)', resourceIdentifier);
       InventoryInstance.checkInstanceIdentifier(resourceIdentifier);
