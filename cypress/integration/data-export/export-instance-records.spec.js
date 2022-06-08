@@ -8,6 +8,7 @@ import DataExportResults from '../../support/fragments/data-export/dataExportRes
 import getRandomPostfix from '../../support/utils/stringTools';
 import { getLongDelay } from '../../support/utils/cypressTools';
 import permissions from '../../support/dictionary/permissions';
+import InventoryHoldings from '../../support/fragments/inventory/holdings/inventoryHoldings';
 import devTeams from '../../support/dictionary/devTeams';
 import users from '../../support/fragments/users/users';
 
@@ -18,6 +19,8 @@ let userName = '';
 
 describe('data-export', () => {
   beforeEach('login', () => {
+    let source;
+
     cy.createTempUser([
       permissions.inventoryAll.gui,
       permissions.dataExportAll.gui
@@ -32,7 +35,7 @@ describe('data-export', () => {
             cy.getMaterialTypes({ limit: 1 });
             cy.getLocations({ limit: 1 });
             cy.getHoldingTypes({ limit: 1 });
-            cy.getHoldingSources({ limit: 1 });
+            source = InventoryHoldings.getHoldingSources({ limit: 1 });
             cy.getInstanceTypes({ limit: 1 });
             cy.getServicePointsApi({ limit: 1, query: 'pickupLocation=="true"' });
             cy.getUsers({
@@ -49,7 +52,7 @@ describe('data-export', () => {
               holdings: [{
                 holdingsTypeId: Cypress.env('holdingsTypes')[0].id,
                 permanentLocationId: Cypress.env('locations')[0].id,
-                sourceId: Cypress.env('holdingSources')[0].id,
+                sourceId: source.id,
               }],
               items: [
                 [{

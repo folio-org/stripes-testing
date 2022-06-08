@@ -1,20 +1,45 @@
-import TopMenu from '../topMenu';
-import { TextField, Button, Modal, KeyValue, MultiColumnListRow } from '../../../../interactors';
+import {
+  TextField,
+  Button,
+  KeyValue,
+  Pane,
+  Modal,
+  MultiColumnList,
+  HTML,
+  including
+} from '../../../../interactors';
+
+const modal = Modal('Confirm multipiece check out');
 
 export default {
+  modal,
+
   checkOutItem(userBarcode, itemBarcode) {
-    cy.visit(TopMenu.checkOutPath);
-    cy.do([
-      TextField({ name: 'patron.identifier' }).fillIn(userBarcode),
-      Button({ id: 'clickable-find-patron' }).click(),
-    ]);
+    cy.do(TextField({ name: 'patron.identifier' }).fillIn(userBarcode));
+    cy.intercept('/circulation/requests?*').as('getRequests');
+    cy.do(Button({ id: 'clickable-find-patron' }).click());
     cy.expect(KeyValue('Borrower').exists());
-    cy.do([
-      TextField({ name: 'item.barcode' }).fillIn(itemBarcode),
-      Button({ id: 'clickable-add-item' }).click(),
-      Modal().find(Button('Check out')).click(),
-      Button('End session').click()
-    ]);
-    cy.expect(MultiColumnListRow().exists());
+    cy.wait('@getRequests');
+    cy.do(TextField({ name: 'item.barcode' }).fillIn(itemBarcode));
+    cy.wait('@getRequests');
+    cy.do(Button({ id: 'clickable-add-item' }).click());
+  },
+
+  endCheckOutSession:() => {
+    cy.do(Button('End session').click());
+  },
+
+  checkIsInterfacesOpened:() => {
+    cy.expect(Pane('Scan patron card').exists());
+    cy.expect(Pane('Scan items').exists());
+  },
+
+  checkPatronInformation:() => {
+    cy.expect(KeyValue('Borrower').exists());
+    cy.expect(KeyValue('Status').exists());
+  },
+
+  checkItemstatus:(barcode) => {
+    cy.expect(MultiColumnList({ id:'list-items-checked-out' }).find(HTML(including(barcode))).absent());
   }
 };

@@ -67,18 +67,6 @@ Cypress.Commands.add('getHoldingTypes', (searchParams) => {
     });
 });
 
-Cypress.Commands.add('getHoldingSources', (searchParams) => {
-  cy
-    .okapiRequest({
-      path: 'holdings-sources',
-      searchParams,
-    })
-    .then(({ body }) => {
-      Cypress.env('holdingSources', body.holdingsRecordsSources);
-      return body.holdingsRecordsSources;
-    });
-});
-
 Cypress.Commands.add('getInstanceTypes', (searchParams) => {
   cy
     .okapiRequest({
@@ -116,9 +104,14 @@ Cypress.Commands.add('getInstanceIdentifierTypes', (searchParams) => {
     });
 });
 
+// Depricated, use createInstanceWithGivenIds instead
 Cypress.Commands.add('createInstance', ({ instance, holdings = [], items = [] }) => {
   const { instanceId = uuid() } = instance;
+
   delete instance.instanceId;
+
+  const holdingIds = [];
+
   cy
     .okapiRequest({
       method: 'POST',
@@ -135,7 +128,9 @@ Cypress.Commands.add('createInstance', ({ instance, holdings = [], items = [] })
         .each((holding, i) => cy.createHolding({
           holding: { ...holding, instanceId },
           items: items[i],
-        }));
+        })).then(holdingId => {
+          holdingIds.push(holdingId);
+        });
       cy.wrap(instanceId).as('instanceId');
     });
   return cy.get('@instanceId');
@@ -154,9 +149,15 @@ Cypress.Commands.add('updateInstance', requestData => {
   return cy.get('@instanceId');
 });
 
+// Depricated, use createInstanceWithGivenIds instead
+// TODO: move preparing of IDs from createInstanceWithGivenIds into createHolding
 Cypress.Commands.add('createHolding', ({ holding, items = [] }) => {
   const { holdingId = uuid() } = holding;
   delete holding.holdingId;
+
+  const itemIds = [];
+  const holdingsIds = [];
+
   cy
     .okapiRequest({
       method: 'POST',
@@ -169,7 +170,13 @@ Cypress.Commands.add('createHolding', ({ holding, items = [] }) => {
     .then(() => {
       cy
         .wrap(items)
-        .each(item => cy.createItem({ ...item, holdingsRecordId: holdingId }));
+        .each(item => cy.createItem({ ...item, holdingsRecordId: holdingId })
+          .then(itemId => itemIds.push(itemId)));
+    })
+    .then(() => {
+      cy
+        .wrap(holding)
+        .then(holdingsId => holdingsIds.push(holdingsId));
     });
 });
 
@@ -200,6 +207,7 @@ Cypress.Commands.add('updateHoldingRecord', (holdingsRecordId, newParams) => {
   });
 });
 
+// Depricated, use createInstanceWithGivenIds instead
 Cypress.Commands.add('createItem', (item) => {
   const { itemId = uuid() } = item;
   delete item.itemId;

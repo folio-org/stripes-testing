@@ -8,9 +8,10 @@ import {
 import generateItemBarcode from '../../support/utils/generateItemBarcode';
 import EditRequest from '../../support/fragments/requests/edit-request';
 import UsersOwners from '../../support/fragments/settings/users/usersOwners';
-import checkinActions from '../../support/fragments/check-in-actions/checkInActions';
-import checkoutActions from '../../support/fragments/checkout/checkout';
 import Users from '../../support/fragments/users/users';
+import CheckinActions from '../../support/fragments/check-in-actions/checkInActions';
+import CheckoutActions from '../../support/fragments/checkout/checkout';
+import InventoryHoldings from '../../support/fragments/inventory/holdings/inventoryHoldings';
 
 describe('Deleting user', () => {
   const lastName = 'Test-' + uuid();
@@ -111,6 +112,7 @@ describe('Deleting user', () => {
     const ITEM_BARCODE = generateItemBarcode();
     const specialUserBarcode = Cypress.env('user').barcode;
     const servicePoint = Cypress.env('servicePoints')[0];
+    let source;
 
     cy
       .then(() => {
@@ -118,7 +120,7 @@ describe('Deleting user', () => {
         cy.getMaterialTypes({ limit: 1 });
         cy.getLocations({ limit: 1 });
         cy.getHoldingTypes({ limit: 1 });
-        cy.getHoldingSources({ limit: 1 });
+        source = InventoryHoldings.getHoldingSources({ limit: 1 });
         cy.getInstanceTypes({ limit: 1 });
       })
       .then(() => {
@@ -130,7 +132,7 @@ describe('Deleting user', () => {
           holdings: [{
             holdingsTypeId: Cypress.env('holdingsTypes')[0].id,
             permanentLocationId: Cypress.env('locations')[0].id,
-            sourceId: Cypress.env('holdingSources')[0].id,
+            sourceId: source.id,
           }],
           items: [
             [{
@@ -145,7 +147,7 @@ describe('Deleting user', () => {
         });
       })
       .then(() => {
-        checkoutActions.createItemCheckoutApi({
+        CheckoutActions.createItemCheckoutApi({
           itemBarcode: ITEM_BARCODE,
           userBarcode: specialUserBarcode,
           servicePointId: servicePoint.id,
@@ -154,7 +156,7 @@ describe('Deleting user', () => {
       .then(() => {
         verifyUserDeleteImpossible(specialUserId);
 
-        checkinActions.createItemCheckinApi({
+        CheckinActions.createItemCheckinApi({
           itemBarcode: ITEM_BARCODE,
           servicePointId: servicePoint.id,
           checkInDate: '2021-09-30T16:14:50.444Z',
