@@ -21,6 +21,7 @@ Cypress.Commands.add('createServicePoint', (servicePoint) => {
   cy.okapiRequest({
     method: REQUEST_METHOD.POST,
     path: 'service-points',
+    isDefaultSearchParamsRequired: false,
     body: {
       id: uuidv4(),
       name: testName,
@@ -36,7 +37,6 @@ Cypress.Commands.add('createServicePoint', (servicePoint) => {
   })
     .then(newServicePoint => {
       Cypress.env(CY_ENV.NEW_SERVICE_POINT, newServicePoint.body);
-      console.log(Cypress.env(CY_ENV.NEW_SERVICE_POINT));
       return newServicePoint.body;
     });
 });

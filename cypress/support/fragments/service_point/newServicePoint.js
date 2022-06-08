@@ -4,8 +4,20 @@ import DefaultInstanceHoldingItem from '../inventory/holdingsMove/defaultInstanc
 import Campuses from '../settings/tenant/campuses';
 import Institutions from '../settings/tenant/institutions';
 
+const getDefaulServicePoint = () => {
+  const defaultUiServicePoint = {
+    code: `autotest_code_${getRandomPostfix()}`,
+    discoveryDisplayName: `autotest_discovery_display_name_${getRandomPostfix()}`,
+    id: uuid(),
+    name: `autotest_service_${getRandomPostfix()}`,
+  };
+  return defaultUiServicePoint;
+};
+
 export default {
-// TODO move to settings fragment
+  getDefaulServicePoint,
+
+  // TODO move to settings fragment
   defaultUiServicePoint: {
     body: {
       code: `autotest_code_${getRandomPostfix()}`,
@@ -13,17 +25,6 @@ export default {
       id: uuid(),
       name: `autotest_service_${getRandomPostfix()}`,
     }
-  },
-
-  getDefaulServicePoint:() => {
-    return {
-      body: {
-        code: `autotest_code_${getRandomPostfix()}`,
-        discoveryDisplayName: `autotest_discovery_display_name_${getRandomPostfix()}`,
-        id: uuid(),
-        name: `autotest_service_${getRandomPostfix()}`,
-      }
-    };
   },
 
   defaultUiLibraries: {

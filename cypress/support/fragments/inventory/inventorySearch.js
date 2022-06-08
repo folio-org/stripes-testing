@@ -12,7 +12,6 @@ import {
   MultiColumnListHeader
 } from '../../../../interactors';
 import InventoryActions from './inventoryActions';
-import TopMenu from '../topMenu';
 
 const effectiveLocationInput = Accordion({ id: 'effectiveLocation' });
 const languageInput = Accordion({ id: 'language' });
@@ -167,14 +166,10 @@ export default {
   },
 
   searchByParameter: (parameter, value) => {
-    cy.visit(TopMenu.inventoryPath);
     cy.do(SearchField({ id: 'input-inventory-search' }).selectIndex(parameter));
     cy.do(TextField('Search ').fillIn(value));
-    cy.intercept('/holdings-storage/holdings?*').as('getHoldings');
-    cy.intercept('/copycat/profiles?*').as('getProfiles');
     cy.do(Button('Search').focus());
     cy.do(Button('Search').click());
-    cy.wait(['@getHoldings', '@getProfiles']);
   },
   switchToItem: () => {
     cy.do(Button({ id: 'segment-navigation-items' }).click());

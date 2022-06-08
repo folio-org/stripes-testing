@@ -1,4 +1,4 @@
-import { Accordion, KeyValue, Button, HTML, including, TextField } from '../../../../../interactors';
+import { Accordion, KeyValue, Button, HTML, including, TextField, PaneHeader } from '../../../../../interactors';
 import dateTools from '../../../utils/dateTools';
 import ConfirmItemMissingModal from './confirmItemMissingModal';
 
@@ -17,8 +17,14 @@ const itemStatuses = {
 
 const loanAccordion = Accordion('Loan and availability');
 
+const waitLoading = () => {
+  cy.wait(5000);
+  cy.expect(Button('Actions').exists());
+};
+
 export default {
   itemStatuses,
+  waitLoading,
 
   verifyUpdatedItemDate:() => {
     cy.do(loanAccordion.find(KeyValue('Item status')).perform(element => {
@@ -30,9 +36,8 @@ export default {
   },
 
   verifyItemStatus:(status) => {
-    cy.intercept('/orders/pieces?*').as('getPieces');
+    waitLoading();
     cy.expect(loanAccordion.find(HTML(including(status))).exists());
-    cy.wait('@getPieces');
   },
 
   clickMarkAsMissing:() => {

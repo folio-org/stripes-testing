@@ -5,6 +5,7 @@ import InventoryInstances from '../../support/fragments/inventory/inventoryInsta
 import InventoryInstance from '../../support/fragments/inventory/inventoryInstance';
 import InventoryInstanceEdit from '../../support/fragments/inventory/InventoryInstanceEdit';
 import Helper from '../../support/fragments/finance/financeHelper';
+import TopMenu from '../../support/fragments/topMenu';
 
 describe('ui-inventory: Enter different type of identifiers', () => {
   let instanceTitle;
@@ -33,6 +34,12 @@ describe('ui-inventory: Enter different type of identifiers', () => {
     cy.deleteInstanceApi(instanceId);
   });
 
+  const searchAndOpenInstance = (parametr, title) => {
+    cy.visit(TopMenu.inventoryPath);
+    InventorySearch.searchByParameter(parametr, title);
+    InventoryInstances.selectInstance();
+  };
+
   [
     'ASIN',
     'BNB'
@@ -40,12 +47,10 @@ describe('ui-inventory: Enter different type of identifiers', () => {
     it('C609 In Accordion Identifiers --> enter different type of identifiers', { tags: [TestTypes.smoke] }, () => {
       resourceIdentifier = `testResourceIdentifier.${getRandomPostfix()}`;
 
-      InventorySearch.searchByParameter('Title (all)', instanceTitle);
-      InventoryInstances.selectInstance();
+      searchAndOpenInstance('Title (all)', instanceTitle);
       InventoryInstance.editInstance();
       InventoryInstanceEdit.addIdentifier(identifier, resourceIdentifier);
-      InventorySearch.searchByParameter('Keyword (title, contributor, identifier)', resourceIdentifier);
-      InventoryInstances.selectInstance();
+      searchAndOpenInstance('Keyword (title, contributor, identifier)', resourceIdentifier);
       InventoryInstance.checkInstanceIdentifier(resourceIdentifier);
     });
   });

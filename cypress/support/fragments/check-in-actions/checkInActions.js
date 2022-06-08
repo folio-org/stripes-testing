@@ -14,26 +14,31 @@ const itemBarcodeField = TextField({ name:'item.barcode' });
 const addItemButton = Button({ id: 'clickable-add-item' });
 const availableActionsButton = Button({ id: 'available-actions-button-0' });
 
+const waitLoading = () => {
+  cy.expect(TextField({ name: 'item.barcode' }).exists());
+  cy.expect(Button('End session').exists());
+};
+
 export default {
-  waitLoading:() => {
-    cy.expect(TextField({ name: 'item.barcode' }).exists());
-    cy.expect(Button('End session').exists());
-  },
+  waitLoading,
 
   checkInItem:(barcode) => {
+    waitLoading();
     cy.intercept('/inventory/items?*').as('getItems');
     cy.do(itemBarcodeField.fillIn(barcode));
     cy.do(addItemButton.click());
     cy.wait('@getItems', getLongDelay());
   },
-  openItemRecordInInventory:(status) => {
-    cy.expect(MultiColumnListRow({ indexRow: 'row-0' }).find(HTML(including(status))).exists());
+
+  openItemRecordInInventory:(barcode) => {
+    cy.expect(MultiColumnListRow({ indexRow: 'row-0' }).find(HTML(including(barcode))).exists());
     cy.do(availableActionsButton.click());
     cy.expect(itemDetailsButton.exists());
     cy.intercept('/tags?*').as('getTags');
     cy.do(itemDetailsButton.click());
     cy.wait('@getTags', getLongDelay());
   },
+
   existsFormColomns:() => {
     cy.expect([
       loadDetailsButton.exists(),
@@ -42,10 +47,12 @@ export default {
       newFeeFineButton.exists(),
     ]);
   },
+
   returnCheckIn() {
     cy.do(checkInButton.click());
     cy.do(availableActionsButton.click());
   },
+
   existsItemsInForm() {
     cy.do(loadDetailsButton.click());
     cy.expect(Pane(including(NewUser.userName)).exists());
@@ -60,6 +67,7 @@ export default {
     cy.expect(Pane({ title:  'New fee/fine' }).exists());
     this.returnCheckIn();
   },
+
   createItemCheckinApi(body) {
     return cy.okapiRequest({
       method: REQUEST_METHOD.POST,

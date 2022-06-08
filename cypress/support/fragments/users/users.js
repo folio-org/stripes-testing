@@ -20,6 +20,7 @@ const defaultUser = {
 
 export default {
   defaultUser,
+
   createViaApi: (user) => cy.okapiRequest({
     method: 'POST',
     path: 'users',
@@ -28,6 +29,7 @@ export default {
   }).then(response => ({ id: response.body.id,
     username: response.body.username,
     barcode:  response.body.barcode })),
+
   deleteViaApi:(userId) => cy.okapiRequest({
     method: 'DELETE',
     path: `bl-users/by-id/${userId}`,
