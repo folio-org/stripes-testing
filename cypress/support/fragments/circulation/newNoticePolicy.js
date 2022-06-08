@@ -77,7 +77,7 @@ export default {
     cy.expect(NavListItem(patronNoticePolicy.name).exists());
   },
 
-  checkForm() {
+  checInitialState() {
     cy.expect([
       Heading('New patron notice policy').exists(),
       nameField.exists(),

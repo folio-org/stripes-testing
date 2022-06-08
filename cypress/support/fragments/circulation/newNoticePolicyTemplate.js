@@ -38,7 +38,8 @@ export default {
     cy.do(Link(noticePolicyTemplate.name).click());
   },
 
-  fillGeneralInformation: (noticePolicyTemplate) => {
+  // noticePolicyTemplate must have the exact structure as newNoticePolicyTemplate.defaultUi on 14th line
+  create: (noticePolicyTemplate) => {
     cy.wait(1000); // waiting for the html body input to be available for typing
     cy.get('#template-editor')
       .type('{selectAll}')
@@ -52,11 +53,6 @@ export default {
 
   startAdding() {
     cy.do(newButton.click());
-  },
-
-  // noticePolicyTemplate must have the exact structure as newNoticePolicyTemplate.defaultUi on 14th line
-  create(noticePolicyTemplate) {
-    this.fillGeneralInformation(noticePolicyTemplate);
   },
 
   addToken(noticePolicyTemplate) {
@@ -97,7 +93,7 @@ export default {
     ]);
   },
 
-  checkForm() {
+  checInitialState() {
     cy.expect([
       Heading(titles.newTemplate).exists(),
       nameField.exists(),
