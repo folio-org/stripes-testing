@@ -1,5 +1,5 @@
 import { matching } from 'bigtest';
-import { Accordion, Button, MultiColumnListCell, TextField } from '../../../../interactors';
+import { Accordion, Button, MultiColumnListCell, MultiColumnList, TextField } from '../../../../interactors';
 import DateTools from '../../utils/dateTools';
 
 
@@ -77,7 +77,8 @@ export default {
   },
 
   checkResultSearch(searchResults) {
-    Object.values(searchResults).filter((result) => cy.expect(MultiColumnListCell(searchResults[result]).exists()));
+    // TODO: add check for date with format <C6/8/2022, 6:46 AM>
+    Object.values(searchResults).filter((result) => cy.expect(MultiColumnList({ rowCount: 1 }).find(MultiColumnListCell(searchResults[result])).exists()));
   },
 
   filterByLastWeek() {

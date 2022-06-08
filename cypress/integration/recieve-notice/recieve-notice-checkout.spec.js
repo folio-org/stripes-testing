@@ -27,11 +27,15 @@ describe('Recieving notice: Checkout', () => {
     userBarcode: userData.barcode,
     itemBarcode: ITEM_BARCODE,
     objectType: NOTICE_CATEGORIES.loan.name,
-    souce: 'ADMINISTRATOR, DIKU',
-    desc: 'Checked out to proxy: no.',
     circAction: 'Checked out',
+    // TODO: add check for date with format <C6/8/2022, 6:46 AM>
+    servicePoint: 'Online',
+    source: 'ADMINISTRATOR, DIKU',
+    desc: 'Checked out to proxy: no.',
   };
-  const testData = {};
+  const testData = {
+    instanceTitle: `Pre-checkout_instance_${Number(new Date())}`
+  };
 
   beforeEach('Preconditions', () => {
     noticePolicyTemplate.token = 'item.title';
@@ -73,7 +77,7 @@ describe('Recieving notice: Checkout', () => {
         cy.createInstance({
           instance: {
             instanceTypeId: testData.instanceType,
-            title: `Pre-checkout_instance_${Number(new Date())}`,
+            title: testData.instanceTitle,
           },
           holdings: [{
             holdingsTypeId: testData.holdingType,
@@ -109,6 +113,7 @@ describe('Recieving notice: Checkout', () => {
     cy.getInstance({ limit: 1, expandAll: true, query: `"items.barcode"=="${ITEM_BARCODE}"` })
       .then((instance) => {
         cy.deleteItem(instance.items[0].id);
+        cy.log(instance.items[0]);
         cy.deleteHoldingRecord(instance.holdings[0].id);
         cy.deleteInstanceApi(instance.id);
       });
@@ -150,7 +155,12 @@ describe('Recieving notice: Checkout', () => {
     });
 
     cy.visit(topMenu.checkOutPath);
-    CheckOutActions.checkOutItem(userData.barcode, ITEM_BARCODE);
+    CheckOutActions.checkOutUser(userData.barcode);
+    CheckOutActions.checkUserInfo(userData, patronGroup.name);
+    CheckOutActions.checkOutUser(userData.barcode);
+    CheckOutActions.checkOutItem(ITEM_BARCODE);
+    CheckOutActions.checkUserInfo(userData);
+    CheckOutActions.checkItemInfo(ITEM_BARCODE, testData.instanceTitle);
     CheckOutActions.endSession();
 
     cy.visit(topMenu.circulationLogPath);

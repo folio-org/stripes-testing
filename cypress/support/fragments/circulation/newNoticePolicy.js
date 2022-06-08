@@ -10,7 +10,8 @@ import {
   TextInput,
   Heading,
   PaneSet,
-  KeyValue
+  KeyValue,
+  Option
 } from '../../../../interactors';
 
 const actionsButton = Button('Actions');
@@ -64,10 +65,9 @@ export default {
   },
 
   addNotice(patronNoticePolicy) {
-    cy.log(patronNoticePolicy.templateId);
     cy.do([
       Section({ id: `edit${patronNoticePolicy.noticeName}Notices` }).find(addNoticeButton).click(),
-      Select({ name: `${patronNoticePolicy.noticeId}Notices[0].templateId` }).choose(patronNoticePolicy.templateId),
+      Select({ name: `${patronNoticePolicy.noticeId}Notices[0].templateId` }).choose(patronNoticePolicy.templateName),
       Select({ name: `${patronNoticePolicy.noticeId}Notices[0].format` }).choose(patronNoticePolicy.format),
       Select({ name: `${patronNoticePolicy.noticeId}Notices[0].sendOptions.sendWhen` }).choose(patronNoticePolicy.action),
     ]);

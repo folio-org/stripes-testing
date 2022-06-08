@@ -39,7 +39,7 @@ export default {
   },
 
   fillGeneralInformation: (noticePolicyTemplate) => {
-    cy.wait(500); // waiting for the html body input to be available for typing
+    cy.wait(1000); // waiting for the html body input to be available for typing
     cy.get('#template-editor')
       .type('{selectAll}')
       .type(noticePolicyTemplate.body); // TODO: research why <bodyField.fillIn(noticePolicyTemplate.body)> doesn't work
