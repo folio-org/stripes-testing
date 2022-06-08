@@ -1,4 +1,3 @@
-import uuid from 'uuid';
 import Users from '../fragments/users/users';
 import getRandomPostfix from '../utils/stringTools';
 
