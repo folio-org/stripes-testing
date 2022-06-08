@@ -16,7 +16,7 @@ import NewNoticePolicyTemplate from '../../support/fragments/circulation/newNoti
 import CheckOutActions from '../../support/fragments/check-out-actions/check-out-actions';
 import DefaultUser from '../../support/fragments/user/defaultUser';
 
-// TODO Add email notice check after checktout: https://issues.folio.org/browse/FAT-185
+// TODO Add email notice check after checktout: https://issues.folio.org/browse/FAT-1854
 describe('Recieving notice: Checkout', () => {
   const noticePolicyTemplate = { ...NewNoticePolicyTemplate.defaultUi };
   const noticePolicy = { ...NewNoticePolicy.defaultUi };
@@ -113,7 +113,6 @@ describe('Recieving notice: Checkout', () => {
     cy.getInstance({ limit: 1, expandAll: true, query: `"items.barcode"=="${ITEM_BARCODE}"` })
       .then((instance) => {
         cy.deleteItem(instance.items[0].id);
-        cy.log(instance.items[0]);
         cy.deleteHoldingRecord(instance.holdings[0].id);
         cy.deleteInstanceApi(instance.id);
       });

@@ -77,7 +77,8 @@ describe('loan dates', () => {
           .then(() => {
             cy.login(userProperties.username, userProperties.password, { path: TopMenu.checkOutPath, waiter: Checkout.waitLoading });
             CheckOutActions.checkOutItemUser(Cypress.env('users')[0].barcode, item.barcode);
-            CheckOutActions.endSession();
+            MultipieceCheckOut.confirmMultipleCheckOut(item.barcode);
+            CheckOutActions.endCheckOutSession();
             cy.updateUser({ ...Cypress.env('users')[0], expirationDate: DateTools.getFormattedDate({ date: expirationUserDate }) });
           })
           .then(() => {
