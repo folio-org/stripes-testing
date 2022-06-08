@@ -54,9 +54,7 @@ export default {
       cy.expect(permissionAccordion.find(HTML(including(permission))).exists());
     });
   },
-  waitLoading:() => {
-    cy.expect(rootSection.exists());
-  },
+  waitLoading:() => cy.expect(rootSection.exists()),
   startFeeFine: () => {
     cy.do(actionsButton.click());
     cy.do(Button('Create fee/fine').click());
