@@ -3,7 +3,6 @@ import moment from 'moment';
 import TestType from '../../support/dictionary/testTypes';
 import renewalActions from '../../support/fragments/loans/renewals';
 import generateItemBarcode from '../../support/utils/generateItemBarcode';
-import handlePromiseException from '../../support/utils/exceptionTools';
 import permissions from '../../support/dictionary/permissions';
 import {
   CY_ENV,
@@ -165,9 +164,6 @@ describe('Renewal', () => {
   });
 
   it('C568 Renewal: failure because loan is not renewable', { tags: [TestType.smoke] }, () => {
-    // todo: Remove exception handler after promise error fix (ticket number UIU-2603)
-    handlePromiseException();
-
     renewalActions.renewWithoutOverrideAccess(loanId, renewUserData.id, itemData);
 
     cy.login(renewOverrideUserData.lastName, renewOverrideUserData.password);
