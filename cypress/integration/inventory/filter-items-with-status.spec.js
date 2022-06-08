@@ -4,12 +4,14 @@ import FilterItems from '../../support/fragments/inventory/filterItems';
 import permissions from '../../support/dictionary/permissions';
 import { MultiColumnList } from '../../../interactors';
 import getRandomPostfix from '../../support/utils/stringTools';
-import inventorySearch from '../../support/fragments/inventory/inventorySearch';
+import InventorySearch from '../../support/fragments/inventory/inventorySearch';
+import InventoryHoldings from '../../support/fragments/inventory/holdings/inventoryHoldings';
 
 const ITEM_BARCODE = `123${getRandomPostfix()}`;
 let userId = '';
 const holdingId = uuid();
 const title = `Filter items with status test ${Number(new Date())}`;
+let source;
 
 describe('ui-inventory: items with status', () => {
   before('create inventory instance', () => {
@@ -25,7 +27,7 @@ describe('ui-inventory: items with status', () => {
             cy.getMaterialTypes({ limit: 1 });
             cy.getLocations({ limit: 2 });
             cy.getHoldingTypes({ limit: 1 });
-            cy.getHoldingSources({ limit: 1 });
+            source = InventoryHoldings.getHoldingSources({ limit: 1 });
             cy.getInstanceTypes({ limit: 1 });
             cy.getServicePointsApi({ limit: 1, query: 'pickupLocation=="true"' });
             cy.getUsers({
@@ -50,7 +52,7 @@ describe('ui-inventory: items with status', () => {
               holdings: [{
                 holdingsTypeId: Cypress.env('holdingsTypes')[0].id,
                 permanentLocationId: Cypress.env('locations')[0].id,
-                sourceId: Cypress.env('holdingSources')[0].id,
+                sourceId: source.id,
                 holdingId,
               }],
               items: [items],
@@ -79,7 +81,7 @@ describe('ui-inventory: items with status', () => {
     cy.intercept('GET', '/search/instances/facets?*').as('getFacets');
     cy.intercept('GET', '/holdings-storage/holdings?*').as('getHoldings');
 
-    inventorySearch.switchToItem();
+    InventorySearch.switchToItem();
     FilterItems.toggleItemStatusAccordion();
 
     cy.wrap(FilterItems.itemStatuses).each((status) => {

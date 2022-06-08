@@ -1,17 +1,19 @@
 import TestTypes from '../../support/dictionary/testTypes';
 import getRandomPostfix from '../../support/utils/stringTools';
-import TopMenu from '../../support/fragments/topMenu';
 import InventorySearch from '../../support/fragments/inventory/inventorySearch';
 import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
 import InventoryInstance from '../../support/fragments/inventory/inventoryInstance';
 import InventoryInstanceEdit from '../../support/fragments/inventory/InventoryInstanceEdit';
+import Helper from '../../support/fragments/finance/financeHelper';
+import TopMenu from '../../support/fragments/topMenu';
 
 describe('ui-inventory: Enter different type of identifiers', () => {
-  const instanceTitle = `autoTestInstanceTitle.${getRandomPostfix()}`;
+  let instanceTitle;
   let instanceId;
+  let resourceIdentifier;
 
   beforeEach('navigate to inventory', () => {
-    cy.login(Cypress.env('diku_login'), Cypress.env('diku_password'));
+    instanceTitle = `autoTestInstanceTitle ${Helper.getRandomBarcode()}`;
     cy.getAdminToken()
       .then(() => {
         cy.getInstanceTypes({ limit: 1 });
@@ -34,16 +36,21 @@ describe('ui-inventory: Enter different type of identifiers', () => {
 
   [
     'ASIN',
-    'BNB',
+    'BNB'
   ].forEach((identifier) => {
     it('C609 In Accordion Identifiers --> enter different type of identifiers', { tags: [TestTypes.smoke] }, () => {
+      resourceIdentifier = `testResourceIdentifier.${getRandomPostfix()}`;
+
       cy.visit(TopMenu.inventoryPath);
       InventorySearch.searchByParameter('Title (all)', instanceTitle);
       InventoryInstances.selectInstance();
       InventoryInstance.editInstance();
-      InventoryInstanceEdit.addIdentifier(identifier);
-      InventorySearch.searchByParameter('Identifier (all)', identifier);
-      InventoryInstance.checkInstanceIdentifier(identifier);
+
+      cy.visit(TopMenu.inventoryPath);
+      InventoryInstanceEdit.addIdentifier(identifier, resourceIdentifier);
+      InventorySearch.searchByParameter('Keyword (title, contributor, identifier)', resourceIdentifier);
+      InventoryInstances.selectInstance();
+      InventoryInstance.checkInstanceIdentifier(resourceIdentifier);
     });
   });
 });

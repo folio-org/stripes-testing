@@ -5,14 +5,9 @@ export default {
       searchParams,
     })
       .then(({ body }) => {
-        //   TO DO Убрать cy env
         Cypress.env('servicePoints', body.servicepoints);
         return body.servicepoints;
       });
   },
-  createViaApi : (servicePointParameters) => cy.okapiRequest({
-    path: 'service-points',
-    body: servicePointParameters,
-    method: 'POST',
-  })
+  createViaApi : (servicePointParameters) => cy.createServicePoint(servicePointParameters),
 };

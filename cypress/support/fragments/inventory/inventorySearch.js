@@ -8,10 +8,10 @@ import {
   TextField,
   Button,
   SearchField,
-  Select, MultiColumnListHeader
+  Select,
+  MultiColumnListHeader
 } from '../../../../interactors';
 import InventoryActions from './inventoryActions';
-
 
 const effectiveLocationInput = Accordion({ id: 'effectiveLocation' });
 const languageInput = Accordion({ id: 'language' });
@@ -116,8 +116,8 @@ export default {
   verifyKeywordsAsDefault() {
     cy.get('#input-inventory-search-qindex').then(elem => {
       expect(elem.text()).to.include('Keyword (title, contributor, identifier)');
-      expect(elem).to.be.visible;
     });
+    cy.expect(Select({ id: 'input-inventory-search-qindex' }).exists());
   },
 
   verifyCallNumberBrowseEmptyPane() {
@@ -166,11 +166,13 @@ export default {
   },
 
   searchByParameter: (parameter, value) => {
-    cy.do([
-      SearchField({ id: 'input-inventory-search' }).selectIndex(parameter),
-      SearchField({ id: 'input-inventory-search' }).fillIn(value),
-      Button('Search').click(),
-    ]);
+    cy.do(SearchField({ id: 'input-inventory-search' }).selectIndex(parameter));
+    cy.do(TextField('Search ').fillIn(value));
+    cy.intercept('/holdings-storage/holdings?*').as('getHoldings');
+    cy.intercept('/copycat/profiles?*').as('getProfiles');
+    cy.do(Button('Search').focus());
+    cy.do(Button('Search').click());
+    cy.wait(['@getHoldings', '@getProfiles']);
   },
   switchToItem: () => {
     cy.do(Button({ id: 'segment-navigation-items' }).click());
@@ -200,5 +202,5 @@ export default {
 
   verifySearchResult(cellContent) {
     cy.expect(MultiColumnListCell({ content: cellContent }).exists());
-  }
+  },
 };

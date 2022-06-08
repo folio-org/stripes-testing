@@ -8,6 +8,7 @@ import { Checkbox } from '../../../interactors';
 import { getLongDelay } from '../../support/utils/cypressTools';
 import permissions from '../../support/dictionary/permissions';
 import getRandomPostfix from '../../support/utils/stringTools';
+import InventoryHoldings from '../../support/fragments/inventory/holdings/inventoryHoldings';
 import devTeams from '../../support/dictionary/devTeams';
 
 let userId = '';
@@ -16,6 +17,8 @@ let locationName = '';
 
 describe('ui-inventory: exports', () => {
   before('navigates to Inventory', () => {
+    let source;
+
     cy.createTempUser([
       permissions.inventoryAll.gui,
       permissions.dataExportAll.gui,
@@ -30,7 +33,7 @@ describe('ui-inventory: exports', () => {
             cy.getInstanceTypes({ limit: 1 });
             cy.getLocations({ limit: 1 });
             cy.getHoldingTypes({ limit: 1 });
-            cy.getHoldingSources({ limit: 1 });
+            source = InventoryHoldings.getHoldingSources({ limit: 1 });
           })
           .then(() => {
             locationName = Cypress.env('locations')[0].name;
@@ -43,7 +46,7 @@ describe('ui-inventory: exports', () => {
               holdings: [{
                 holdingsTypeId: Cypress.env('holdingsTypes')[0].id,
                 permanentLocationId: Cypress.env('locations')[0].id,
-                sourceId: Cypress.env('holdingSources')[0].id,
+                sourceId: source.id,
               }],
               items: [
                 [{
@@ -79,7 +82,7 @@ describe('ui-inventory: exports', () => {
     FileManager.deleteFolder(Cypress.config('downloadsFolder'));
   });
 
-  it('C9284 verifies export UUIDs instances', { retries: 3, tags: [testTypes.smoke, devTeams.firebird] }, () => {
+  it('C9284 Export small number of Instance UUIDs (30 or fewer)', { retries: 3, tags: [testTypes.smoke, devTeams.firebird] }, () => {
     InventorySearch.searchByParameter('Title (all)', instanceTitle);
     InventorySearch.saveUUIDs();
 
