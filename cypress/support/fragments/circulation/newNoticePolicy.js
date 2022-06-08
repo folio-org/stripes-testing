@@ -11,7 +11,6 @@ import {
   Heading,
   PaneSet,
   KeyValue,
-  Option
 } from '../../../../interactors';
 
 const actionsButton = Button('Actions');

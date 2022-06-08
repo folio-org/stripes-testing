@@ -3,7 +3,6 @@ import moment from 'moment';
 import {
   TextField,
   Button,
-  Heading,
   Pane,
 } from '../../../../interactors';
 import { REQUEST_METHOD } from '../../constants';
