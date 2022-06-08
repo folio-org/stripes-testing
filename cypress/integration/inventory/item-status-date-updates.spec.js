@@ -277,6 +277,7 @@ describe('ui-inventory: Item status date updates', () => {
 
     // check out item to user for whom page request was created
     cy.visit(TopMenu.checkOutPath);
+    cy.wait(25000);
     CheckOut.checkOutItem(userBarcode, itemBarcode);
     ConfirmItemInModal.confirmAvaitingPicupCheckInModal();
     CheckOut.openItemRecordInInventory(itemBarcode);
