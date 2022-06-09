@@ -20,6 +20,7 @@ import MaterialTypes, {
   defaultMaterialType,
 } from '../../../../support/fragments/inventory/materialType/materialTypesSettings';
 import permissions from '../../../../support/dictionary/permissions';
+import Users from '../../../../support/fragments/users/users';
 
 describe('ui-circulation-settings: Edit circulation rules', () => {
   let originalCirculationRules;
@@ -61,7 +62,7 @@ describe('ui-circulation-settings: Edit circulation rules', () => {
     RequestPolicy.deleteApi(defaultRequestPolicy.id);
     LostItemFeePolicy.deleteApi(defaultLostItemFeePolicy.id);
     OverdueFinePolicy.deleteApi(defaultOverdueFinePolicy.id);
-    cy.deleteUser(newUserId);
+    Users.deleteViaApi(newUserId);
   });
 
   it('C2268: Add notice policy to circulation rules', { tags: [TestType.smoke] }, () => {
@@ -77,7 +78,8 @@ describe('ui-circulation-settings: Edit circulation rules', () => {
     });
 
     CirculationRules.fillInPolicy({
-      materialTypeName: defaultMaterialType.name,
+      priorityType: 'm ',
+      priorityTypeName: defaultMaterialType.name,
       loanPolicyName: defaultLoanPolicy.name,
       overdueFinePolicyName: defaultOverdueFinePolicy.name,
       lostItemFeePolicyName: defaultLostItemFeePolicy.name,

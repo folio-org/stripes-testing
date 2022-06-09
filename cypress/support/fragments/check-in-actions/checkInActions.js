@@ -1,7 +1,7 @@
 import uuid from 'uuid';
 import { Button, Pane, including, TextField, MultiColumnListRow, HTML } from '../../../../interactors';
 import NewInctanceHoldingsItem from '../inventory/newInctanceHoldingsItem';
-import NewUser from '../user/newUser';
+import NewUser from '../users/userDefaultObjects/newUser';
 import { REQUEST_METHOD } from '../../constants';
 import { getLongDelay } from '../../utils/cypressTools';
 

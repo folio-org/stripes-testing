@@ -21,6 +21,7 @@ import checkout from '../../../../support/fragments/checkout/checkout';
 import loans from '../../../../support/fragments/loans/loansPage';
 import topMenu from '../../../../support/fragments/topMenu';
 import checkinActions from '../../../../support/fragments/check-in-actions/checkInActions';
+import users from '../../../../support/fragments/users/users';
 
 let userId;
 let createdLoanPolicy;
@@ -57,7 +58,7 @@ describe('ui-circulation-settings: Fixed due date schedules', () => {
           });
       })
       .then(() => {
-        cy.createUserApi({
+        users.createViaApi({
           active: true,
           barcode: USER_BARCODE,
           personal: {
@@ -157,7 +158,7 @@ describe('ui-circulation-settings: Fixed due date schedules', () => {
       checkInDate: moment.utc().format(),
     })
       .then(() => {
-        cy.deleteUser(userId);
+        users.deleteViaApi(userId);
         cy.getInstance({ limit: 1, expandAll: true, query: `"items.barcode"=="${ITEM_BARCODE}"` })
           .then((instance) => {
             cy.deleteItem(instance.items[0].id);

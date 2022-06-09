@@ -8,6 +8,7 @@ import {
 import generateItemBarcode from '../../support/utils/generateItemBarcode';
 import EditRequest from '../../support/fragments/requests/edit-request';
 import UsersOwners from '../../support/fragments/settings/users/usersOwners';
+import Users from '../../support/fragments/users/users';
 import CheckinActions from '../../support/fragments/check-in-actions/checkInActions';
 import CheckoutActions from '../../support/fragments/checkout/checkout';
 import InventoryHoldings from '../../support/fragments/inventory/holdings/inventoryHoldings';
@@ -51,12 +52,12 @@ describe('Deleting user', () => {
       patronGroup: Cypress.env('userGroups')[0].id,
       departments: []
     };
-    cy.createUserApi(userData).then(user => { specialUserId = user.id; });
+    Users.createViaApi(userData).then(user => { specialUserId = user.id; });
   });
 
   afterEach(() => {
     // TODO: clarify the reason of issue with 404 responce code
-    cy.deleteUser(specialUserId);
+    Users.deleteViaApi(specialUserId);
   });
 
   it('should be possible by user delete action', function () {
@@ -175,14 +176,14 @@ describe('Deleting user', () => {
       patronGroup: Cypress.env('userGroups')[0].id,
       departments: []
     };
-    cy.createUserApi(userProxyData)
-      .then(() => {
+    Users.createViaApi(userProxyData)
+      .then(userProeprties => {
         const proxy = {
           accrueTo: 'Sponsor',
           notificationsTo: 'Sponsor',
           requestForSponsor: 'Yes',
           status: 'Active',
-          proxyUserId: Cypress.env('user').id,
+          proxyUserId: userProeprties.id,
           specialUserId,
         };
         cy.createProxyApi(proxy);
@@ -207,8 +208,8 @@ describe('Deleting user', () => {
 
   it('should be unable in case the user has open fees/fines', function () {
     UsersOwners.createViaApi({ owner: uuid() })
-      .then(owner => {
-        specialOwnerId = owner.id;
+      .then(ownerId => {
+        specialOwnerId = ownerId;
         cy.createFeesFinesTypeApi({
           feeFineType: uuid(),
           ownerId: specialOwnerId,

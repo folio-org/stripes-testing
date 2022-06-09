@@ -11,6 +11,7 @@ import features from '../../support/dictionary/features';
 import permissions from '../../support/dictionary/permissions';
 import { replaceByIndex } from '../../support/utils/stringTools';
 import { Callout } from '../../../interactors';
+import Users from '../../support/fragments/users/users';
 
 // TODO: redesign test to exclude repeated steps
 describe('Manage inventory Bib records with quickMarc editor', () => {
@@ -190,6 +191,6 @@ describe('Manage inventory Bib records with quickMarc editor', () => {
   });
 
   afterEach(() => {
-    cy.deleteUser(userId);
+    Users.deleteViaApi(userId);
   });
 });

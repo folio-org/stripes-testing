@@ -9,6 +9,7 @@ import {
   TextField
 } from '../../../../interactors';
 import getRandomPostfix from '../../utils/stringTools';
+import users from '../users/users';
 
 const actionsButton = Button('Actions');
 const markAsMissingButton = Button('Mark as missing');
@@ -152,7 +153,7 @@ export default {
         });
       })
       .then(() => {
-        cy.createUserApi(userData).then(user => {
+        users.createViaApi(userData).then(user => {
           createdUserId = user.id;
           requestData.requesterId = user.id;
         });
