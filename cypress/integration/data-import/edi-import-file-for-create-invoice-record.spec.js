@@ -12,6 +12,7 @@ import TopMenu from '../../support/fragments/topMenu';
 import NewMappingProfile from '../../support/fragments/data_import/mapping_profiles/newMappingProfile';
 import InvoiceView from '../../support/fragments/invoices/invoiceView';
 import permissions from '../../support/dictionary/permissions';
+import users from '../../support/fragments/users/users';
 
 describe('ui-data-import: EDIFACT file import with creating of new invoice record', () => {
   let user = {};
@@ -35,7 +36,7 @@ describe('ui-data-import: EDIFACT file import with creating of new invoice recor
     cy.getInvoiceIdApi({ query: `vendorInvoiceNo="${FileDetails.invoiceNumberFromEdifactFile}"` })
       .then(id => cy.deleteInvoiceFromStorageApi(id));
     DataImport.checkUploadState();
-    cy.deleteUser(user.userId);
+    users.deleteViaApi(user.userId);
   });
 
   it('C343338 EDIFACT file import with creating of new invoice record', { tags: [TestTypes.smoke] }, () => {

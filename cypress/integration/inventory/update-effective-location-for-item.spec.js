@@ -8,6 +8,7 @@ import TopMenu from '../../support/fragments/topMenu';
 import getRandomPostfix from '../../support/utils/stringTools';
 import generateItemBarcode from '../../support/utils/generateItemBarcode';
 import permissions from '../../support/dictionary/permissions';
+import Users from '../../support/fragments/users/users';
 
 describe('Update the effective location for the item', () => {
   const instanceTitle = `autoTestInstanceTitle.${getRandomPostfix()}`;
@@ -63,7 +64,7 @@ describe('Update the effective location for the item', () => {
         cy.deleteHoldingRecord(instance.holdings[0].id);
         cy.deleteInstanceApi(instance.id);
       });
-    cy.deleteUser(userId);
+    Users.deleteViaApi(userId);
   });
 
   it('C3501 An item is being moved from one library location to another. Update the effective location for the item',
