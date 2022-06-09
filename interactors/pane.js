@@ -15,6 +15,12 @@ export const PaneSet = HTML.extend('pane set')
     id: el => el.getAttribute('id')
   });
 
+export const PaneContent = HTML.extend('pane content')
+  .selector('[class^=paneContent-]')
+  .filters({
+    id: el => el.getAttribute('id')
+  });
+
 export default HTML.extend('pane')
   .selector('[class^=pane-]')
   .locator(title)

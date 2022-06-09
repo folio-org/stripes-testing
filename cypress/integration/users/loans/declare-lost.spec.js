@@ -130,6 +130,7 @@ describe('ui-users-loans: Loans', () => {
             FIRST_ACTION_ROW_INDEX,
             loanHistoryFirstAction.loan.metadata.updatedDate
           );
+
           LoanDetails.checkActionDeclaredLost(FIRST_ACTION_ROW_INDEX);
           LoanDetails.checkLoansActionsHaveSameDueDate(
             FIRST_ACTION_ROW_INDEX,
