@@ -12,7 +12,7 @@ import {
   Select
 } from '../../../../interactors';
 import TopMenu from '../topMenu';
-import defaultUser from '../user/defaultUser';
+import defaultUser from './userDefaultObjects/defaultUser';
 
 export default {
   addPermissions(permissions) {
