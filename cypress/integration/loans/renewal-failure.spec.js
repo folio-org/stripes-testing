@@ -49,7 +49,6 @@ describe('Renewal', () => {
         cy.getInstanceTypes({ limit: 1 });
         cy.getHoldingTypes({ limit: 1 });
         cy.getLocations({ limit: 1 });
-
         InventoryHoldings.getHoldingSources({ limit: 1 }).then(holdingsSources => {
           sourceId = holdingsSources[0].id;
         });
