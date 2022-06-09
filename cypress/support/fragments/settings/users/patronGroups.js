@@ -22,7 +22,7 @@ export default {
     cy.do(patronGroupNameTextField.fillIn(patronGroup));
     cy.do(saveButton.click());
   },
-  createViaApi: (patronGroup = defaultPatronGroup) => cy.okapiRequest({
+  createViaApi: (patronGroup = defaultPatronGroup.group) => cy.okapiRequest({
     method: 'POST',
     path: 'groups',
     isDefaultSearchParamsRequired: false,

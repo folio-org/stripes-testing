@@ -22,8 +22,10 @@ import loans from '../../../../support/fragments/loans/loansPage';
 import topMenu from '../../../../support/fragments/topMenu';
 import checkinActions from '../../../../support/fragments/check-in-actions/checkInActions';
 import users from '../../../../support/fragments/users/users';
+import InventoryHoldings from '../../../../support/fragments/inventory/holdings/inventoryHoldings';
 
 let userId;
+let userBarcode;
 let createdLoanPolicy;
 let materialTypeId;
 let mySchedule;
@@ -37,6 +39,7 @@ const toDate = moment.utc().add(2, 'days');
 const dueDate = moment.utc().add(2, 'days');
 const newToDate = moment.utc().subtract(1, 'days');
 const dateFallsMessage = 'renewal date falls outside of date ranges in fixed loan policy';
+let sourceId;
 
 describe('ui-circulation-settings: Fixed due date schedules', () => {
   before(() => {
@@ -46,7 +49,9 @@ describe('ui-circulation-settings: Fixed due date schedules', () => {
         cy.getInstanceTypes({ limit: 1 });
         cy.getHoldingTypes({ limit: 1 });
         cy.getLocations({ limit: 1 });
-        cy.getHoldingSources({ limit: 1 });
+        InventoryHoldings.getHoldingSources({ limit: 1 }).then(holdingsSources => {
+          sourceId = holdingsSources[0].id;
+        });
         cy.getLoanTypes({ query: `name="${LOAN_TYPE_NAMES.CAN_CIRCULATE}"` });
         cy.getMaterialTypes({ query: `name="${MATERIAL_TYPE_NAMES.MICROFORM}"` })
           .then(materilaTypes => {
@@ -71,6 +76,7 @@ describe('ui-circulation-settings: Fixed due date schedules', () => {
         })
           .then((user) => {
             userId = user.id;
+            userBarcode = user.barcode;
           });
         cy.createInstance({
           instance: {
@@ -80,7 +86,7 @@ describe('ui-circulation-settings: Fixed due date schedules', () => {
           holdings: [{
             holdingsTypeId: Cypress.env(CY_ENV.HOLDINGS_TYPES)[0].id,
             permanentLocationId: Cypress.env(CY_ENV.LOCATION)[0].id,
-            sourceId: Cypress.env(CY_ENV.HOLDING_SOURCES)[0].id,
+            sourceId,
           }],
           items: [[{
             barcode: ITEM_BARCODE,
@@ -188,7 +194,7 @@ describe('ui-circulation-settings: Fixed due date schedules', () => {
         }],
       });
       cy.visit(topMenu.checkOutPath);
-      checkout.checkUserOpenLoans(Cypress.env(CY_ENV.USER));
+      checkout.checkUserOpenLoans({ barcode: userBarcode, id: userId });
       loans.checkLoanPolicy(createdLoanPolicy.name);
       loans.renewalMessageCheck(dateFallsMessage);
     });
