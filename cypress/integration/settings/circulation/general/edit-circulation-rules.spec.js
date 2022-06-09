@@ -78,7 +78,8 @@ describe('ui-circulation-settings: Edit circulation rules', () => {
     });
 
     CirculationRules.fillInPolicy({
-      materialTypeName: defaultMaterialType.name,
+      priorityType: 'm ',
+      priorityTypeName: defaultMaterialType.name,
       loanPolicyName: defaultLoanPolicy.name,
       overdueFinePolicyName: defaultOverdueFinePolicy.name,
       lostItemFeePolicyName: defaultLostItemFeePolicy.name,

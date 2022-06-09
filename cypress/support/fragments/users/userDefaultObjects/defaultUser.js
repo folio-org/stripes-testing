@@ -3,6 +3,18 @@ import getRandomPostfix from '../../../utils/stringTools';
 import defaultInstanceHoldingItem from '../../inventory/holdingsMove/defaultInstanceHoldingItem';
 import NewServicePoint from '../../service_point/newServicePoint';
 
+const defaultApiPatron = {
+  username: `autotest_username_${getRandomPostfix()}`,
+  active: true,
+  barcode: `1234456_${getRandomPostfix()}`,
+  personal: {
+    email: 'test@folio.org',
+    firstName: '',
+    lastName: `autotest_user_lastname_${getRandomPostfix()}`,
+    preferredContactTypeId: '002',
+  },
+  departments: []
+};
 
 const defaultUiPatron = {
   body: {
@@ -17,11 +29,12 @@ const defaultUiPatron = {
       lastName: `autotest_login_${getRandomPostfix()}`,
       preferredContactTypeId: '002',
     },
-    username: `autotest_name_${getRandomPostfix()}`,
+    username: `autotest_username_${getRandomPostfix()}`,
   }
 };
 
 export default {
+  defaultApiPatron,
   defaultUiPatron,
   defaultUiRequestPrefStorage : {
     body: {

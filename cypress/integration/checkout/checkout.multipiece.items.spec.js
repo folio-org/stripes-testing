@@ -117,7 +117,7 @@ describe('Check Out', () => {
   });
 
   const fullCheckOut = ({ barcode, numberOfPieces, descriptionOfPieces, numberOfMissingPieces, missingPieces }) => {
-    CheckOutActions.checkOutItem(userBarcode, barcode);
+    CheckOutActions.checkOutItemUser(userBarcode, barcode);
     MultipieceCheckOut.checkContent(instanceTitle, materialTypeName.name, barcode,
       { itemPieces : numberOfPieces, description : descriptionOfPieces },
       { missingitemPieces : numberOfMissingPieces, missingDescription: missingPieces });
@@ -125,7 +125,7 @@ describe('Check Out', () => {
 
   it('C591 Check out: multipiece items', { tags: [TestTypes.smoke] }, () => {
     CheckOutActions.checkIsInterfacesOpened();
-    CheckOutActions.checkOutItem(userBarcode, testItems[0].barcode);
+    CheckOutActions.checkOutItemUser(userBarcode, testItems[0].barcode);
     CheckOutActions.checkPatronInformation(user.username, userBarcode);
     cy.expect(CheckOutActions.modal.absent());
 
