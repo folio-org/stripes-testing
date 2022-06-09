@@ -1,4 +1,5 @@
 import { MultiColumnListRow, HTML, including, Button } from '../../../../../interactors';
+import ItemVeiw from '../../inventory/inventoryItem/itemVeiw';
 
 const declaredLostButton = Button('Declare lost');
 const itemDetailsButton = Button('Item details');
@@ -20,6 +21,7 @@ export default {
     cy.do(ellipsisButton.click());
     cy.expect(itemDetailsButton.exists());
     cy.do(itemDetailsButton.click());
+    ItemVeiw.waitLoading();
   },
   renewItem:(barcode) => {
     cy.expect(rowInList.find(HTML(including(barcode))).exists());

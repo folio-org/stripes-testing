@@ -34,5 +34,6 @@ export default {
       Button('Switch service point').click()
     ]);
     SelectServicePointModal.selectServicePoint(servicePoint);
+    cy.wait(5000);
   }
 };

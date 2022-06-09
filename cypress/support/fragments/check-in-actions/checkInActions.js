@@ -4,6 +4,7 @@ import NewInctanceHoldingsItem from '../inventory/newInctanceHoldingsItem';
 import NewUser from '../user/newUser';
 import { REQUEST_METHOD } from '../../constants';
 import { getLongDelay } from '../../utils/cypressTools';
+import ItemVeiw from '../inventory/inventoryItem/itemVeiw';
 
 const loadDetailsButton = Button('Loan details');
 const patronDetailsButton = Button('Patron details');
@@ -37,6 +38,7 @@ export default {
     cy.intercept('/tags?*').as('getTags');
     cy.do(itemDetailsButton.click());
     cy.wait('@getTags', getLongDelay());
+    ItemVeiw.waitLoading();
   },
 
   existsFormColomns:() => {

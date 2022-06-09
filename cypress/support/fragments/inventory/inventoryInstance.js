@@ -24,6 +24,7 @@ import InventoryViewSource from './inventoryViewSource';
 import NewHoldingsRecord from './newHoldingsRecord';
 import InventoryInstanceSelectInstanceModal from './holdingsMove/inventoryInstanceSelectInstanceModal';
 import InventoryInstancesMovement from './holdingsMove/inventoryInstancesMovement';
+import ItemVeiw from './inventoryItem/itemVeiw';
 
 const section = Section({ id: 'pane-instancedetails' });
 const actionsButton = section.find(Button('Actions'));
@@ -224,6 +225,7 @@ export default {
   },
   openItemView: (itemBarcode) => {
     cy.do(Link(including(itemBarcode)).click());
+    ItemVeiw.waitLoading();
   },
   openEditItemPage() {
     cy.do([

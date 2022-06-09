@@ -18,7 +18,6 @@ const itemStatuses = {
 const loanAccordion = Accordion('Loan and availability');
 
 const waitLoading = () => {
-  cy.wait(5000);
   cy.expect(Button('Actions').exists());
 };
 
@@ -36,7 +35,6 @@ export default {
   },
 
   verifyItemStatus:(status) => {
-    waitLoading();
     cy.expect(loanAccordion.find(HTML(including(status))).exists());
   },
 

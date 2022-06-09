@@ -15,12 +15,12 @@ export default {
     cy.do(inTransitModal.find(closeButton).click());
   },
 
-  confirmAvaitingPicupModal:() => {
+  confirmAvaitingPickUpModal:() => {
     cy.do(awaitingPickupModal.find(printSlipCheckbox).click());
     cy.do(awaitingPickupModal.find(closeButton).click());
   },
 
-  confirmAvaitingPicupCheckInModal:() => {
+  confirmAvaitingPickupCheckInModal:() => {
     cy.do(Modal('Items awaiting pickup').find(closeButton).click());
   },
 
