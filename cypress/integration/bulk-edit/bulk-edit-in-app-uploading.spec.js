@@ -8,6 +8,7 @@ import devTeams from '../../support/dictionary/devTeams';
 import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
 import getRandomPostfix from '../../support/utils/stringTools';
 import FileManager from '../../support/utils/fileManager';
+import users from '../../support/fragments/users/users';
 
 let user;
 const item = {
@@ -33,7 +34,7 @@ describe('bulk-edit: in-app file uploading', () => {
   });
 
   after('Delete all data', () => {
-    cy.deleteUser(user.userId);
+    users.deleteViaApi(user.userId);
     FileManager.deleteFile(`cypress/fixtures/${itemBarcodesFileName}`);
   });
 
