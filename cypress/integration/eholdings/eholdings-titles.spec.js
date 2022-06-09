@@ -14,6 +14,7 @@ import dateTools from '../../support/utils/dateTools';
 import testTypes from '../../support/dictionary/testTypes';
 import features from '../../support/dictionary/features';
 import permissions from '../../support/dictionary/permissions';
+import users from '../../support/fragments/users/users';
 
 
 
@@ -127,6 +128,6 @@ describe('eHoldings titles management', () => {
   });
 
   afterEach(() => {
-    cy.deleteUser(userId);
+    users.deleteViaApi(userId);
   });
 });

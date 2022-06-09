@@ -5,6 +5,7 @@ import getRandomPostfix from '../../support/utils/stringTools';
 import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
 import InventorySearch from '../../support/fragments/inventory/inventorySearch';
 import devTeams from '../../support/dictionary/devTeams';
+import Users from '../../support/fragments/users/users';
 
 let userId = '';
 const item = {
@@ -28,7 +29,7 @@ describe('ui-inventory: query search', () => {
 
   after('Delete all data', () => {
     InventoryInstances.deleteInstanceViaApi(item.itemBarcode);
-    cy.deleteUser(userId);
+    Users.deleteViaApi(userId);
   });
 
   afterEach(() => {

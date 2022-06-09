@@ -6,8 +6,8 @@ import {
   Dropdown,
   Button,
   TextArea,
-} from '../../../../interactors';
-import { ITEM_STATUSES } from '../../../support/constants';
+} from '../../../../../interactors';
+import { ITEM_STATUSES } from '../../../constants';
 
 const LOANS_HISTORY_LIST_ID = 'list-loanshistory';
 const DECLARE_LOST_MODAL_TITLE = 'Confirm item status: Declared lost';
@@ -63,6 +63,9 @@ export default {
 
     this.checkDeclareLostModalAbsent();
   },
+  checkDeclareLostModalAbsent() {
+    cy.expect(DeclareLostModal.absent());
+  },
   finishDeclareLost(additionalInformation) {
     cy.do([
       DeclareLostModal
@@ -74,8 +77,5 @@ export default {
     ]);
 
     this.checkDeclareLostModalAbsent();
-  },
-  checkDeclareLostModalAbsent() {
-    cy.expect(DeclareLostModal.absent());
-  },
+  }
 };

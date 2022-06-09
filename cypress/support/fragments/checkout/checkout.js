@@ -3,10 +3,15 @@ import moment from 'moment';
 import {
   TextField,
   Button,
+  Pane,
 } from '../../../../interactors';
 import { REQUEST_METHOD } from '../../constants';
 
 export default {
+  waitLoading:() => {
+    cy.expect(Pane('Scan patron card').exists());
+    cy.expect(Pane('Scan items').exists());
+  },
   fillUserBarcode(barcode) {
     cy.do([
       TextField({ id: 'input-patron-identifier' }).fillIn(barcode),

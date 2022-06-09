@@ -12,6 +12,7 @@ import SettingsMenu from '../../support/fragments/settingsMenu';
 import FileDetails from '../../support/fragments/data_import/logs/fileDetails';
 import TopMenu from '../../support/fragments/topMenu';
 import permissions from '../../support/dictionary/permissions';
+import users from '../../support/fragments/users/users';
 
 describe('ui-data-import: MARC file import with creating of the new instance, holding and item', () => {
   let user = {};
@@ -44,7 +45,7 @@ describe('ui-data-import: MARC file import with creating of the new instance, ho
 
   after(() => {
     DataImport.checkUploadState();
-    cy.deleteUser(user.userId);
+    users.deleteViaApi(user.userId);
   });
 
   it('C343334 MARC file import with creating a new mapping profiles, action profiles and job profile', { tags: [TestTypes.smoke] }, () => {

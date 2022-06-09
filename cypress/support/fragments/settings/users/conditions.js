@@ -16,10 +16,46 @@ const resetCondition = (conditionValue) => {
   });
 };
 
+
+const defaultConditions = { defaultMaximumOustandingFeeFineBalance : {
+  // required field
+  id: undefined,
+  'name': 'Maximum outstanding fee/fine balance',
+  blockBorrowing: true,
+  blockRenewals: true,
+  blockRequests: true,
+  valueType: 'Double',
+  message: 'test message'
+} };
+
+const updateViaApi = (conditionProperties) => cy.okapiRequest({
+  method: 'PUT',
+  path: `patron-block-conditions/${conditionProperties.id}`,
+  isDefaultSearchParamsRequired : false,
+  body: conditionProperties
+});
+
 export default {
+  updateViaApi,
+  resetConditionViaApi:(conditionId, conditionName) => updateViaApi({
+    id: conditionId,
+    'name': conditionName,
+    blockBorrowing: false,
+    blockRenewals: false,
+    blockRequests: false,
+    valueType: 'Double',
+    message: ''
+  }),
+  defaultConditions,
   conditionsValues,
   waitLoading:() => conditionsValues.forEach(conditionValue => cy.expect(rootPaneset.find(NavListItem(conditionValue)).exists())),
   select: (conditionValue = conditionsValues[0]) => cy.do(rootPaneset.find(NavListItem(conditionValue)).click()),
   resetCondition,
   resetConditions:() => conditionsValues.forEach(conditionValue => resetCondition(conditionValue)),
+
+  getConditionsViaApi: () => cy.okapiRequest({
+    path: 'patron-block-conditions',
+    isDefaultSearchParamsRequired : false,
+  }).then(response => response.body.patronBlockConditions)
+
 };
