@@ -372,11 +372,5 @@ export default {
       .then(({ body }) => {
         return body.purchaseOrders;
       });
-  },
-
-  selectOrderWithNumber:(orderNumber) => {
-    cy.visit(TopMenu.ordersPath);
-    searchByParameter('PO number', orderNumber);
-    SearchHelper.selectFromResultsList();
   }
 };

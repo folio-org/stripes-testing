@@ -126,7 +126,7 @@ describe('ui-inventory: Item status date updates', () => {
       });
   });
 
-  /*afterEach(() => {
+  afterEach(() => {
     InventoryInstances.deleteInstanceViaApi(itemBarcode);
     Orders.getOrdersApi({ limit: 1, query: `"poNumber"=="${orderNumber}"` })
       .then(order => {
@@ -148,7 +148,7 @@ describe('ui-inventory: Item status date updates', () => {
         cy.deleteServicePoint(notEffectiveLocationServicePoint.id);
         Users.deleteViaApi(user.userId);
       });
-  });*/
+  });
 
   const openItem = (title, itemLocation, barcode) => {
     cy.visit(TopMenu.inventoryPath);
@@ -158,12 +158,18 @@ describe('ui-inventory: Item status date updates', () => {
     InventoryInstance.openItemView(barcode);
   };
 
+  const selectOrderWithNumber = (numberOrder) => {
+    Orders.searchByParameter('PO number', numberOrder);
+    Helper.selectFromResultsList();
+  };
+
   it('C9200 Item status date updates', { tags: [TestTypes.smoke] }, () => {
     const caption = `autotest_caption_${getRandomPostfix()}`;
     const numberOfPieces = '3';
 
     // open order and create Item
-    Orders.selectOrderWithNumber(orderNumber);
+    cy.visit(TopMenu.ordersPath);
+    selectOrderWithNumber(orderNumber);
     Orders.openOrder();
     OrdersHelper.verifyOrderDateOpened();
     openItem(instanceTitle, effectiveLocation.name, 'No barcode');
@@ -172,6 +178,7 @@ describe('ui-inventory: Item status date updates', () => {
     cy.log('###On order###');
 
     // receive item
+    cy.visit(TopMenu.ordersPath);
     Orders.selectOrderWithNumber(orderNumber);
     Orders.receiveOrderViaActions();
     Helper.selectFromResultsList();
