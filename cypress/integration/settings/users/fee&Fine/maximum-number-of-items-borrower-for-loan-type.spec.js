@@ -8,9 +8,9 @@ import ServicePoints from '../../../../support/fragments/settings/tenant/service
 import TopMenu from '../../../../support/fragments/topMenu';
 import InventoryInstances from '../../../../support/fragments/inventory/inventoryInstances';
 import LoanPolicyActions from '../../../../support/fragments/circulation/loan-policy';
-import { CY_ENV } from '../../../../support/constants';
-import CheckoutActions from '../../../../support/fragments/checkout/checkout';
+import { CY_ENV, LOST_ITEM_FEES_POLICY_NAMES, NOTICE_POLICY_NAMES, OVERDUE_FINE_POLICY_NAMES, REQUEST_POLICY_NAMES } from '../../../../support/constants';
 import FixedDueDateSchedules from '../../../../support/fragments/circulation/fixedDueDateSchedules';
+import СheckOutActions from '../../../../support/fragments/check-out-actions/check-out-actions';
 
 describe('ui-users:', () => {
   let user = {};
@@ -22,6 +22,7 @@ describe('ui-users:', () => {
   let materialType;
   let loanTypeId;
   const testItems = [];
+  let rulesDefaultString;
 
   beforeEach(() => {
     cy.getAdminToken()
@@ -75,6 +76,14 @@ describe('ui-users:', () => {
                     loanPolicy = policy;
                   });
               });
+            cy.getRequestPolicy({ query: `name=="${REQUEST_POLICY_NAMES.ALLOW_ALL}"` });
+            cy.getNoticePolicy({ query: `name=="${NOTICE_POLICY_NAMES.SEND_NO_NOTICES}"` });
+            cy.getOverdueFinePolicy({ query: `name=="${OVERDUE_FINE_POLICY_NAMES.OVERDUE_FINE_POLICY}"` });
+            cy.getLostItemFeesPolicy({ query: `name=="${LOST_ITEM_FEES_POLICY_NAMES.LOST_ITEM_FEES_POLICY}"` });
+            cy.getCirculationRules()
+              .then(rules => {
+                rulesDefaultString = rules.rulesAsText;
+              });
           })
         // create circulation rules
           .then(() => {
@@ -111,11 +120,32 @@ describe('ui-users:', () => {
       });
   });
 
+  /* after(() => {
+    checkinActions.createItemCheckinApi({
+      itemBarcode: itemData.barcode,
+      servicePointId,
+      checkInDate: moment.utc().format(),
+    })
+      .then(() => {
+        cy.deleteUser(renewUserData.id);
+        cy.deleteUser(renewOverrideUserData.id);
+        cy.getInstance({ limit: 1, expandAll: true, query: `"items.barcode"=="${itemData.barcode}"` })
+          .then((instance) => {
+            cy.deleteItem(instance.items[0].id);
+            cy.deleteHoldingRecord(instance.holdings[0].id);
+            cy.deleteInstanceApi(instance.id);
+          });
+        cy.updateCirculationRules({
+          rulesAsText: initialCircRules,
+        });
+        cy.deleteLoanPolicy(LOAN_POLICY_ID);
+      });
+  }); */
 
   it('C9277 Verify that maximum number of items borrowed for loan type (e.g. course reserve) limit works', { tags: [TestTypes.smoke] }, () => {
     cy.visit(TopMenu.checkOutPath);
-    testItems.forEach((barcode) => {
-      CheckoutActions.checkOutItem(userBarcode, barcode);
+    testItems.forEach((item) => {
+      СheckOutActions.checkOutItem(userBarcode, item.barcode);
     });
   });
 });
