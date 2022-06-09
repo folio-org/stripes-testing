@@ -1,3 +1,4 @@
+import uuid from 'uuid';
 import Users from '../fragments/users/users';
 import getRandomPostfix from '../utils/stringTools';
 
@@ -97,6 +98,7 @@ Cypress.Commands.add('createTempUser', (permissions = [], patronGroup) => {
           Users.createViaApi({ ...Users.defaultUser,
             patronGroup: userGroupdId,
             username: userProperties.username,
+            barcode: uuid(),
             personal: { ...Users.defaultUser.personal, lastName : userProperties.username } }).then(newUserProperties => {
             userProperties.userId = newUserProperties.id;
             userProperties.barcode = newUserProperties.barcode;
