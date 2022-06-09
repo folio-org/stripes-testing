@@ -23,6 +23,6 @@ export default HTML.extend('text area')
   })
   .actions({
     blur: ({ find }) => find(TextField()).perform(dispatchFocusout),
-    fillIn:  ({ find }, value) => find(TextField()).fillIn(value),
+    fillIn: ({ find }, value) => find(TextField()).fillIn(value),
     focus: ({ find }) => find(TextField()).focus(),
   });
