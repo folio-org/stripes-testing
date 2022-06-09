@@ -14,7 +14,7 @@ import CheckInActions from '../../support/fragments/check-in-actions/checkInActi
 import NewNoticePolicy from '../../support/fragments/circulation/newNoticePolicy';
 import NewNoticePolicyTemplate from '../../support/fragments/circulation/newNoticePolicyTemplate';
 import CheckOutActions from '../../support/fragments/check-out-actions/check-out-actions';
-import DefaultUser from '../../support/fragments/user/defaultUser';
+import DefaultUser from '../../support/fragments/users/userDefaultObjects/defaultUser';
 
 // TODO Add email notice check after checktout: https://issues.folio.org/browse/FAT-1854
 describe('Recieving notice: Checkout', () => {
