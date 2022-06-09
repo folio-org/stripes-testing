@@ -11,8 +11,10 @@ import InventoryViewSource from '../../support/fragments/inventory/inventoryView
 import Features from '../../support/dictionary/features';
 import permissions from '../../support/dictionary/permissions';
 import getRandomPostfix from '../../support/utils/stringTools';
+import InventoryHoldings from '../../support/fragments/inventory/holdings/inventoryHoldings';
 import devTeams from '../../support/dictionary/devTeams';
 import InventoryInstancesMovement from '../../support/fragments/inventory/holdingsMove/inventoryInstancesMovement';
+import users from '../../support/fragments/users/users';
 
 const successCalloutMessage = '1 item has been successfully moved.';
 let userId = '';
@@ -22,6 +24,8 @@ let ITEM_BARCODE;
 
 describe('ui-inventory: moving items', () => {
   beforeEach('navigates to Inventory', () => {
+    let source;
+
     ITEM_BARCODE = `test${getRandomPostfix()}`;
     cy.createTempUser([
       permissions.inventoryAll.gui,
@@ -42,7 +46,10 @@ describe('ui-inventory: moving items', () => {
             cy.getMaterialTypes({ limit: 1 });
             cy.getLocations({ limit: 2 });
             cy.getHoldingTypes({ limit: 2 });
-            cy.getHoldingSources({ limit: 2 });
+            InventoryHoldings.getHoldingSources({ limit: 2 })
+              .then(holdingsSources => {
+                source = holdingsSources;
+              });
             cy.getInstanceTypes({ limit: 1 });
             cy.getServicePointsApi({ limit: 1, query: 'pickupLocation=="true"' });
             cy.getUsers({
@@ -62,12 +69,12 @@ describe('ui-inventory: moving items', () => {
                 {
                   holdingsTypeId: Cypress.env('holdingsTypes')[0].id,
                   permanentLocationId: Cypress.env('locations')[0].id,
-                  sourceId: Cypress.env('holdingSources')[0].id,
+                  sourceId: source[0].id,
                 },
                 {
                   holdingsTypeId: Cypress.env('holdingsTypes')[1].id,
                   permanentLocationId: Cypress.env('locations')[1].id,
-                  sourceId: Cypress.env('holdingSources')[1].id,
+                  sourceId: source[1].id,
                 }],
               items: [
                 [{
@@ -92,7 +99,7 @@ describe('ui-inventory: moving items', () => {
         cy.deleteHoldingRecord(instance.holdings[1].id);
         cy.deleteInstanceApi(instance.id);
       });
-    cy.deleteUser(userId);
+    users.deleteViaApi(userId);
   });
 
 
@@ -132,4 +139,3 @@ describe('ui-inventory: moving items', () => {
     });
   });
 });
-

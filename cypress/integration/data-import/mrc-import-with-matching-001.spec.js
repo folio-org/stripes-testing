@@ -18,6 +18,7 @@ import TestTypes from '../../support/dictionary/testTypes';
 import SettingsMenu from '../../support/fragments/settingsMenu';
 import FileDetails from '../../support/fragments/data_import/logs/fileDetails';
 import permissions from '../../support/dictionary/permissions';
+import users from '../../support/fragments/users/users';
 
 describe('ui-data-import: Test MARC-MARC matching for 001 field', () => {
   let user = {};
@@ -27,6 +28,8 @@ describe('ui-data-import: Test MARC-MARC matching for 001 field', () => {
       permissions.dataImportUploadAll.gui,
       permissions.moduleDataImportEnabled.gui,
       permissions.settingsDataImportEnabled.gui,
+      permissions.inventoryAll.gui,
+      permissions.dataExportAll.gui
     ])
       .then(userProperties => {
         user = userProperties;
@@ -38,7 +41,7 @@ describe('ui-data-import: Test MARC-MARC matching for 001 field', () => {
 
   after(() => {
     DataImport.checkUploadState();
-    cy.deleteUser(user.userId);
+    users.deleteViaApi(user.userId);
   });
 
   it('C17044: MARC-MARC matching for 001 field', { tags: [TestTypes.smoke] }, () => {

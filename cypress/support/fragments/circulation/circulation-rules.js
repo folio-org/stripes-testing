@@ -11,6 +11,9 @@ const calloutMessages = {
 };
 
 export default {
+  defaultcirculationPolicy: {
+    'rulesAsText': 'circulation policy'
+  },
   clearCirculationRules() {
     cy.do(CodeMirror().clear());
   },
@@ -29,19 +32,19 @@ export default {
     this.fillInPolicy(policyData);
   },
   fillInPolicy({
+    priorityType,
+    priorityTypeName,
     loanPolicyName,
     overdueFinePolicyName,
     lostItemFeePolicyName,
     requestPolicyName,
     noticePolicyName,
-    materialTypeName,
   }) {
-    if (materialTypeName) {
-      this.fillInCirculationRules('m ');
-      this.clickCirculationRulesHintItem(materialTypeName);
+    if (priorityType) {
+      this.fillInCirculationRules(priorityType);
+      this.clickCirculationRulesHintItem(priorityTypeName);
       this.fillInCirculationRules(': ');
     }
-
     this.fillInCirculationRules('l ');
     this.clickCirculationRulesHintItem(loanPolicyName);
     this.fillInCirculationRules('o ');
@@ -74,4 +77,21 @@ export default {
   updateApi(data) {
     return cy.updateCirculationRules(data);
   },
+  addRuleApi(defaultRules, priority, priorityId, noticeId) {
+    // TODO add supporting for more options
+    const oIndex = defaultRules.indexOf(' o ', 2);
+    const iIndex = defaultRules.indexOf(' i ', 2);
+    const lIndex = defaultRules.indexOf(' l ', 2);
+    const rIndex = defaultRules.indexOf(' r ', 2);
+    const o = defaultRules.substring(oIndex, oIndex + 39);
+    const l = defaultRules.substring(lIndex, lIndex + 39);
+    const i = defaultRules.substring(iIndex, iIndex + 39);
+    const r = defaultRules.substring(rIndex, rIndex + 39);
+
+    const withNewRule = defaultRules + ' \n' + priority + priorityId + ':' + i + l + r + o + ' n ' + noticeId;
+    return cy.updateCirculationRules({ rulesAsText: withNewRule });
+  },
+  deleteRuleApi(defaultRules) {
+    return cy.updateCirculationRules({ rulesAsText: defaultRules });
+  }
 };

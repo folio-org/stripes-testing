@@ -1,13 +1,14 @@
 import NewServicePoint from '../../support/fragments/service_point/newServicePoint';
 import NewInctanceHoldingsItem from '../../support/fragments/inventory/newInctanceHoldingsItem';
 import TestTypes from '../../support/dictionary/testTypes';
-import NewUser from '../../support/fragments/user/newUser';
+import NewUser from '../../support/fragments/users/userDefaultObjects/newUser';
 import SwitchServicePoint from '../../support/fragments/service_point/switchServicePoint';
 import CheckInActions from '../../support/fragments/check-in-actions/checkInActions';
 import ServicePoints from '../../support/fragments/settings/tenant/servicePoints';
 import institutions from '../../support/fragments/settings/tenant/institutions';
 import campuses from '../../support/fragments/settings/tenant/campuses';
 import libraries from '../../support/fragments/settings/tenant/libraries';
+import UsersEditPage from '../../support/fragments/users/usersEditPage';
 
 // TODO: We need to move all api methods to fragments. https://issues.folio.org/browse/FAT-1624
 // When bug(https://issues.folio.org/browse/FAT-1637) will be fixed check full run test!!!
@@ -36,7 +37,8 @@ describe('Check In - Actions ', () => {
   });
 
   after('Delete New Service point, Item and User', () => {
-    SwitchServicePoint.changeServicePointPreference();
+    SwitchServicePoint.logOutAndLogInByDiku();
+    UsersEditPage.changeServicePointPreference();
     NewInctanceHoldingsItem.deleteItemWithSameParams();
     NewServicePoint.deleteServicePointViaApi();
     NewUser.deleteUserWithSameParams();

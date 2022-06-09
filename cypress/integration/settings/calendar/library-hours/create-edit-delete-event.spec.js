@@ -1,6 +1,7 @@
 import TestType from '../../../../support/dictionary/testTypes';
 import calendarActions from '../../../../support/fragments/settings/calendar/library-hours/library-hours';
 import permissions from '../../../../support/dictionary/permissions';
+import users from '../../../../support/fragments/users/users';
 
 describe('Calendar', () => {
   const limitedAccessUser = {
@@ -26,8 +27,8 @@ describe('Calendar', () => {
   });
 
   after(() => {
-    cy.deleteUser(fullAccessUser.id);
-    cy.deleteUser(limitedAccessUser.id);
+    users.deleteViaApi(fullAccessUser.id);
+    users.deleteViaApi(limitedAccessUser.id);
     calendarActions.clearCreatedEvents();
   });
 
@@ -41,7 +42,7 @@ describe('Calendar', () => {
     calendarActions.deleteCalendarEvent();
   });
 
-  it('C353206 Create, view, and edit calendar events', { tags: [TestType.smoke] }, () => {
+  it('C353206 Settings (Calendar): Can create, view, and edit calendar events', { tags: [TestType.smoke] }, () => {
     cy.login(limitedAccessUser.userName, limitedAccessUser.password);
 
     calendarActions.openCalendarEvents();

@@ -5,6 +5,7 @@ import eHoldingsProviderView from '../../support/fragments/eholdings/eHoldingsPr
 import eHoldingsProviderEdit from '../../support/fragments/eholdings/eHoldingsProviderEdit';
 import testTypes from '../../support/dictionary/testTypes';
 import permissions from '../../support/dictionary/permissions';
+import users from '../../support/fragments/users/users';
 
 describe('ui-eholdings: Provider manage', () => {
   let userId = '';
@@ -32,6 +33,6 @@ describe('ui-eholdings: Provider manage', () => {
     });
   });
   afterEach(() => {
-    cy.deleteUser(userId);
+    users.deleteViaApi(userId);
   });
 });

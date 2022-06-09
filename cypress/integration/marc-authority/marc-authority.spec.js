@@ -15,6 +15,7 @@ import dataImportSettingsActionProfiles from '../../support/fragments/settings/d
 import dataImportSettingsMatchProfiles from '../../support/fragments/settings/dataImport/dataImportSettingsMatchProfiles';
 import dataImportSettingMappingProfiles from '../../support/fragments/settings/dataImport/dataImportSettingsMappingProfiles';
 import dataImportSettingsJobProfiles from '../../support/fragments/settings/dataImport/dataImportSettingsJobProfiles';
+import Users from '../../support/fragments/users/users';
 
 describe('MARC Authority management', () => {
   let userId = '';
@@ -80,6 +81,7 @@ describe('MARC Authority management', () => {
     MarcAuthorities.checkRowsCount(1);
   });
 
+  // TODO: https://issues.folio.org/browse/MODINV-705
   it('C350667 Update a MARC authority record via data import. Record match with 010 $a', { tags:  [TestTypes.smoke, Features.authority] }, () => {
     // profiles preparing
     dataImportSettingMappingProfiles.createMappingProfileApi().then(mappingProfileResponse => {
@@ -203,6 +205,6 @@ describe('MARC Authority management', () => {
     // https://issues.folio.org/browse/FAT-1680
     new Set(marcAuthorityIds).forEach(marcAuthorityId => MarcAuthority.deleteViaAPI(marcAuthorityId));
     marcAuthorityIds = [];
-    cy.deleteUser(userId);
+    Users.deleteViaApi(userId);
   });
 });

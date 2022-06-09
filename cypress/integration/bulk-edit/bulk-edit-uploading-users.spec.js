@@ -5,6 +5,7 @@ import BulkEditSearchPane from '../../support/fragments/bulk-edit/bulk-edit-sear
 import FileManager from '../../support/utils/fileManager';
 import getRandomPostfix from '../../support/utils/stringTools';
 import devTeams from '../../support/dictionary/devTeams';
+import users from '../../support/fragments/users/users';
 
 let user;
 const userUUIDsFileName = `C350905_userUUIDs_${getRandomPostfix()}.csv`;
@@ -25,11 +26,11 @@ describe('ui-users: file uploading', () => {
   });
 
   after('Delete all data', () => {
-    cy.deleteUser(user.userId);
+    users.deleteViaApi(user.userId);
   });
 
 
-  it('C350905 Negative uploading file with identifiers -- In app approach', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
+  it('C350928 Verify error accordion during matching (CSV approach)', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
     BulkEditSearchPane.checkUsersRadio();
     BulkEditSearchPane.selectRecordIdentifier('User UUIDs');
 

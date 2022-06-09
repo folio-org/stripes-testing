@@ -2,6 +2,7 @@ import TestTypes from '../../support/dictionary/testTypes';
 import EditRequest from '../../support/fragments/requests/edit-request';
 import TopMenu from '../../support/fragments/topMenu';
 import Requests from '../../support/fragments/requests/requests';
+import Users from '../../support/fragments/users/users';
 
 describe('ui-requests: Request: Edit requests. Make sure that edits are being saved.', () => {
   let userId;
@@ -36,7 +37,7 @@ describe('ui-requests: Request: Edit requests. Make sure that edits are being sa
       cancellationReasonId: cancellationReason,
       cancelledDate: new Date().toISOString(),
     });
-    cy.deleteUser(userId);
+    Users.deleteViaApi(userId);
   });
 
   it('C556 Request: Edit requests. Make sure that edits are being saved.', { tags: [TestTypes.smoke] }, () => {
