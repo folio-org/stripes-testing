@@ -4,6 +4,7 @@ import permissions from '../../support/dictionary/permissions';
 import BulkEditSearchPane from '../../support/fragments/bulk-edit/bulk-edit-search-pane';
 import InteractorsTools from '../../support/utils/interactorsTools';
 import { calloutTypes } from '../../../interactors';
+import Users from '../../support/fragments/users/users';
 import devTeams from '../../support/dictionary/devTeams';
 import BulkEditActions from '../../support/fragments/bulk-edit/bulk-edit-actions';
 
@@ -30,8 +31,8 @@ describe('ui-users: file uploading', () => {
   });
 
   after('Delete all data', () => {
-    cy.deleteUser(userWIthBulkEditPermissions.userId);
-    cy.deleteUser(userWithCsvPermissions.userId);
+    Users.deleteViaApi(userWIthBulkEditPermissions.userId);
+    Users.deleteViaApi(userWithCsvPermissions.userId);
   });
 
 

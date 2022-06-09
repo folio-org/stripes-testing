@@ -13,6 +13,7 @@ import getRandomPostfix from '../../support/utils/stringTools';
 import loanPolicyActions from '../../support/fragments/circulation/loan-policy';
 import checkoutActions from '../../support/fragments/checkout/checkout';
 import checkinActions from '../../support/fragments/check-in-actions/checkInActions';
+import users from '../../support/fragments/users/users';
 
 describe('Renewal', () => {
   let materialTypeId;
@@ -148,8 +149,8 @@ describe('Renewal', () => {
       checkInDate: moment.utc().format(),
     })
       .then(() => {
-        cy.deleteUser(renewUserData.id);
-        cy.deleteUser(renewOverrideUserData.id);
+        users.deleteViaApi(renewUserData.id);
+        users.deleteViaApi(renewOverrideUserData.id);
         cy.getInstance({ limit: 1, expandAll: true, query: `"items.barcode"=="${itemData.barcode}"` })
           .then((instance) => {
             cy.deleteItem(instance.items[0].id);
