@@ -13,6 +13,7 @@ import {
   TextField,
   Badge, Section, Heading
 } from '../../../../interactors';
+import users from '../users/users';
 
 const requestsResultsSection = Section({ id: 'pane-results' });
 const appsButton = Button({ id: 'app-list-dropdown-toggle' });
@@ -114,7 +115,7 @@ function createRequestApi(
       });
     })
     .then(() => {
-      cy.createUserApi(userData).then(user => {
+      users.createViaApi(userData).then(user => {
         createdUser = user;
         requestData.requesterId = user.id;
         userRequestPreferences.userId = user.id;

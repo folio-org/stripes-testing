@@ -10,6 +10,7 @@ import { getLongDelay } from '../../support/utils/cypressTools';
 import permissions from '../../support/dictionary/permissions';
 import InventoryHoldings from '../../support/fragments/inventory/holdings/inventoryHoldings';
 import devTeams from '../../support/dictionary/devTeams';
+import users from '../../support/fragments/users/users';
 
 
 const ITEM_BARCODE = `123${getRandomPostfix()}`;
@@ -75,7 +76,7 @@ describe('data-export', () => {
         cy.deleteHoldingRecord(instance.holdings[0].id);
         cy.deleteInstanceApi(instance.id);
       });
-    cy.deleteUser(userId);
+    users.deleteViaApi(userId);
   });
 
   it('C9288 Export small number of instance records - default instance mapping profile', { retries: 3, tags: [TestTypes.smoke, devTeams.firebird] }, () => {

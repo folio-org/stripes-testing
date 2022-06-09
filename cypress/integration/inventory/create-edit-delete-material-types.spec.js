@@ -4,6 +4,7 @@ import SettingsMenu from '../../support/fragments/settingsMenu';
 import getRandomPostfix from '../../support/utils/stringTools';
 import InventorySettings from '../../support/fragments/inventory/inventorySettings';
 import MaterialTypesSettings from '../../support/fragments/inventory/materialType/materialTypesSettings';
+import users from '../../support/fragments/users/users';
 
 describe('ui-inventory: Create, edit, delete material types', () => {
   let userId = '';
@@ -18,7 +19,7 @@ describe('ui-inventory: Create, edit, delete material types', () => {
   });
 
   after(() => {
-    cy.deleteUser(userId);
+    users.deleteViaApi(userId);
   });
 
   it('C505 Settings (Inventory): Create, edit, delete material types', { tags: [TestTypes.smoke] }, () => {

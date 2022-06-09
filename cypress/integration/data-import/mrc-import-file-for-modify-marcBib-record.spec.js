@@ -16,6 +16,7 @@ import SettingsMenu from '../../support/fragments/settingsMenu';
 import FileDetails from '../../support/fragments/data_import/logs/fileDetails';
 import TopMenu from '../../support/fragments/topMenu';
 import permissions from '../../support/dictionary/permissions';
+import users from '../../support/fragments/users/users';
 
 describe('ui-data-import: Verify the possibility to modify MARC Bibliographic record', () => {
   let user = {};
@@ -37,7 +38,7 @@ describe('ui-data-import: Verify the possibility to modify MARC Bibliographic re
 
   after(() => {
     DataImport.checkUploadState();
-    cy.deleteUser(user.userId);
+    users.deleteViaApi(user.userId);
   });
 
   it('C345423 Verify the possibility to modify MARC Bibliographic record', { tags: [TestTypes.smoke] }, () => {

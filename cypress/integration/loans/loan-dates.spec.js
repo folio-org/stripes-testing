@@ -9,6 +9,7 @@ import ChangeDueDateForm from '../../support/fragments/loans/changeDueDateForm';
 import CheckOutActions from '../../support/fragments/check-out-actions/check-out-actions';
 import DateTools from '../../support/utils/dateTools';
 import NewRequest from '../../support/fragments/requests/newRequest';
+import Users from '../../support/fragments/users/users';
 import CheckinActions from '../../support/fragments/check-in-actions/checkInActions';
 import InventoryHoldings from '../../support/fragments/inventory/holdings/inventoryHoldings';
 import UsersEditPage from '../../support/fragments/users/usersEditPage';
@@ -102,7 +103,7 @@ describe('loan dates', () => {
         cy.deleteHoldingRecord(instance.holdings[0].id);
         cy.deleteInstanceApi(instance.id);
       });
-    cy.deleteUser(checkOutUser.userId);
+    Users.deleteViaApi(checkOutUser.userId);
   });
 
   it('C566 Loan: Change due date warnings and alerts', { tags: [TestTypes.smoke] }, () => {
