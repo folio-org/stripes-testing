@@ -11,7 +11,6 @@ import permissions from '../../support/dictionary/permissions';
 import Users from '../../support/fragments/users/users';
 import InventoryHoldings from '../../support/fragments/inventory/holdings/inventoryHoldings';
 
-
 describe('Update the effective location for the item', () => {
   const instanceTitle = `autoTestInstanceTitle.${getRandomPostfix()}`;
   const anotherPermanentLocation = 'Main Library';
