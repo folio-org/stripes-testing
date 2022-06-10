@@ -6,11 +6,12 @@ const getDefaultLoanPolicy = (limit, scheduleId) => {
   const defaultLoanPolicy = {
     id: uuid(),
     name: getTestEntityValue(),
-    loanable: false,
+    loanable: true,
     loansPolicy: {
       profileId: 'Rolling',
       period: { duration: 1, intervalId: 'Days' },
       itemLimit: limit,
+      closedLibraryDueDateManagementId:'CURRENT_DUE_DATE',
       fixedDueDateScheduleId: scheduleId
     },
     renewable: false,

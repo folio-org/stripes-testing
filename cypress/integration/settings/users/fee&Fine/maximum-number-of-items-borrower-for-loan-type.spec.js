@@ -11,6 +11,10 @@ import LoanPolicyActions from '../../../../support/fragments/circulation/loan-po
 import { CY_ENV, LOST_ITEM_FEES_POLICY_NAMES, NOTICE_POLICY_NAMES, OVERDUE_FINE_POLICY_NAMES, REQUEST_POLICY_NAMES } from '../../../../support/constants';
 import FixedDueDateSchedules from '../../../../support/fragments/circulation/fixedDueDateSchedules';
 import СheckOutActions from '../../../../support/fragments/check-out-actions/check-out-actions';
+import LimitCheckOut from '../../../../support/fragments/checkout/modals/limitCheckOut';
+import CheckInActions from '../../../../support/fragments/check-in-actions/checkInActions';
+import UsersEditPage from '../../../../support/fragments/users/usersEditPage';
+import Users from '../../../../support/fragments/users/users';
 
 describe('ui-users:', () => {
   let user = {};
@@ -18,11 +22,16 @@ describe('ui-users:', () => {
   const instanceTitle = `autotest_instance_title_${getRandomPostfix()}`;
   let servicePoint;
   let testInstanceIds;
+  let testInstanceIds2;
   let loanPolicy;
   let materialType;
+  let limitLoanTypeId;
   let loanTypeId;
+  const limitTestItems = [];
   const testItems = [];
   let rulesDefaultString;
+  let initialCircRules;
+  const limitOfItem = 2;
 
   beforeEach(() => {
     cy.getAdminToken()
@@ -33,25 +42,37 @@ describe('ui-users:', () => {
           });
         cy.getLoanTypes({ limit: 1, query: 'name="Course reserves"' })
           .then((body) => {
+            limitLoanTypeId = body[0].id;
+          });
+        cy.getLoanTypes({ limit: 1, query: 'name="Can circulate"' })
+          .then((body) => {
             loanTypeId = body[0].id;
           });
         cy.getLocations({ limit: 1 });
         cy.getHoldingTypes({ limit: 1 });
         cy.getInstanceTypes({ limit: 1 });
+        cy.getCirculationRules()
+          .then(rules => {
+            initialCircRules = rules.rulesAsText;
+          });
       })
       .then(() => {
-        const getTestItem = () => {
+        const getTestItem = (type) => {
           const defaultItem = {
             barcode: Helper.getRandomBarcode(),
             status:  { name: 'Available' },
-            permanentLoanType: { id:loanTypeId },
+            permanentLoanType: { id:type },
             materialType: { id: materialType.id },
           };
           return defaultItem;
         };
-        testItems.push(getTestItem());
-        testItems.push(getTestItem());
-        testItems.push(getTestItem());
+
+        limitTestItems.push(getTestItem(limitLoanTypeId));
+        limitTestItems.push(getTestItem(limitLoanTypeId));
+        limitTestItems.push(getTestItem(limitLoanTypeId));
+        testItems.push(getTestItem(loanTypeId));
+        testItems.push(getTestItem(loanTypeId));
+        testItems.push(getTestItem(loanTypeId));
 
         InventoryInstances.createFolioInstanceViaApi({
           instance: {
@@ -62,7 +83,7 @@ describe('ui-users:', () => {
             holdingsTypeId: Cypress.env('holdingsTypes')[0].id,
             permanentLocationId: Cypress.env('locations')[0].id,
           }],
-          items: testItems,
+          items: limitTestItems
         })
           .then(specialInstanceIds => {
             testInstanceIds = specialInstanceIds;
@@ -71,7 +92,7 @@ describe('ui-users:', () => {
           .then(() => {
             FixedDueDateSchedules.createViaApi()
               .then((schedule) => {
-                LoanPolicyActions.createApi(LoanPolicyActions.getDefaultLoanPolicy(2, schedule.body.id))
+                LoanPolicyActions.createApi(LoanPolicyActions.getDefaultLoanPolicy(limitOfItem, schedule.body.id))
                   .then((policy) => {
                     loanPolicy = policy;
                   });
@@ -93,11 +114,26 @@ describe('ui-users:', () => {
             const lostItemFeesPolicyId = Cypress.env(CY_ENV.LOST_ITEM_FEES_POLICY)[0].id;
             const policy = `l ${loanPolicy.id} r ${requestPolicyId} n ${noticePolicyId} o ${overdueFinePolicyId} i ${lostItemFeesPolicyId}`;
             const priority = 'priority: number-of-criteria, criterium (t, s, c, b, a, m, g), last-line';
-            const newRule = `${priority}\nfallback-policy: ${policy}\nt ${loanTypeId}: ${policy}`;
+            const newRule = `${priority}\nfallback-policy: ${policy}\nt ${limitLoanTypeId}: ${policy}`;
 
             cy.updateCirculationRules({
               rulesAsText: newRule,
             });
+          });
+
+        InventoryInstances.createFolioInstanceViaApi({
+          instance: {
+            instanceTypeId: Cypress.env('instanceTypes')[0].id,
+            title: instanceTitle,
+          },
+          holdings: [{
+            holdingsTypeId: Cypress.env('holdingsTypes')[0].id,
+            permanentLocationId: Cypress.env('locations')[0].id,
+          }],
+          items: testItems
+        })
+          .then(specialInstanceIds => {
+            testInstanceIds2 = specialInstanceIds;
           });
       });
 
@@ -120,30 +156,57 @@ describe('ui-users:', () => {
       });
   });
 
-  /* after(() => {
-    checkinActions.createItemCheckinApi({
-      itemBarcode: itemData.barcode,
-      servicePointId,
-      checkInDate: moment.utc().format(),
-    })
-      .then(() => {
-        cy.deleteUser(renewUserData.id);
-        cy.deleteUser(renewOverrideUserData.id);
-        cy.getInstance({ limit: 1, expandAll: true, query: `"items.barcode"=="${itemData.barcode}"` })
-          .then((instance) => {
-            cy.deleteItem(instance.items[0].id);
-            cy.deleteHoldingRecord(instance.holdings[0].id);
-            cy.deleteInstanceApi(instance.id);
-          });
-        cy.updateCirculationRules({
-          rulesAsText: initialCircRules,
-        });
-        cy.deleteLoanPolicy(LOAN_POLICY_ID);
+  after(() => {
+    limitTestItems.forEach(item => {
+      CheckInActions.createItemCheckinApi({
+        itemBarcode: item.barcode,
+        servicePointId: servicePoint.body.id,
+        checkInDate: '2021-09-30T16:14:50.444Z',
       });
-  }); */
+    });
+    cy.wrap(testInstanceIds.holdingIds.forEach(holdingsId => {
+      cy.wrap(holdingsId.itemIds.forEach(itemId => {
+        cy.deleteItem(itemId);
+      })).then(() => {
+        cy.deleteHoldingRecord(holdingsId.id);
+      });
+    })).then(() => {
+      cy.deleteInstanceApi(testInstanceIds.instanceId);
+    });
+    testItems.forEach(item => {
+      CheckInActions.createItemCheckinApi({
+        itemBarcode: item.barcode,
+        servicePointId: servicePoint.body.id,
+        checkInDate: '2021-09-30T16:14:50.444Z',
+      });
+    });
+    cy.wrap(testInstanceIds2.holdingIds.forEach(holdingsId => {
+      cy.wrap(holdingsId.itemIds.forEach(itemId => {
+        cy.deleteItem(itemId);
+      })).then(() => {
+        cy.deleteHoldingRecord(holdingsId.id);
+      });
+    })).then(() => {
+      cy.deleteInstanceApi(testInstanceIds2.instanceId);
+    });
+    cy.updateCirculationRules({
+      rulesAsText: initialCircRules,
+    });
+    cy.deleteLoanPolicy(loanPolicy.id);
+    cy.wrap(UsersEditPage.changeServicePointPreferenceViaApi(user.userId, [servicePoint.body.id]))
+      .then(() => {
+        cy.deleteServicePoint(servicePoint.body.id);
+        Users.deleteViaApi(user.userId);
+      });
+  });
 
   it('C9277 Verify that maximum number of items borrowed for loan type (e.g. course reserve) limit works', { tags: [TestTypes.smoke] }, () => {
     cy.visit(TopMenu.checkOutPath);
+    limitTestItems.forEach((item) => {
+      СheckOutActions.checkOutItem(userBarcode, item.barcode);
+    });
+    LimitCheckOut.checkContent(limitOfItem);
+    LimitCheckOut.cancelModal();
     testItems.forEach((item) => {
       СheckOutActions.checkOutItem(userBarcode, item.barcode);
     });
