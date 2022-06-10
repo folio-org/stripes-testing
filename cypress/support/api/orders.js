@@ -16,13 +16,6 @@ Cypress.Commands.add('createOrderLineApi', (orderLine) => {
     });
 });
 
-Cypress.Commands.add('getOrdersApi', (searchParams) => {
-  cy.okapiRequest({
-    path: 'orders/composite-orders',
-    searchParams
-  }).then(response => { return response.body.purchaseOrders[0]; });
-});
-
 Cypress.Commands.add('getAcquisitionMethodsApi', (searchParams) => {
   return cy
     .okapiRequest({
