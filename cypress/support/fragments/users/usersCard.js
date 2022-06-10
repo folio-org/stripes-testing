@@ -1,9 +1,17 @@
 import { HTML, including, Link } from '@interactors/html';
-import { Accordion, Button, TextArea } from '../../../../interactors';
+import { TextField } from 'bigtest';
+import { Accordion, Button, Section, TextArea } from '../../../../interactors';
 
+const rootSection = Section({ id:'pane-userdetails' });
 const permissionAccordion = Accordion({ id: 'permissionsSection' });
+const actionsButton = rootSection.find(Button('Actions'));
+const errors = {
+  patronHasBlocksInPlace:'Patron has block(s) in place'
+};
+
 
 export default {
+  errors,
   openPatronBlocks() {
     cy.do(Accordion({ id: 'patronBlocksSection' }).clickHeader());
   },
@@ -47,5 +55,11 @@ export default {
     permissions.forEach(permission => {
       cy.expect(permissionAccordion.find(HTML(including(permission))).exists());
     });
-  }
+  },
+  waitLoading:() => cy.expect(rootSection.exists()),
+  startFeeFine: () => {
+    cy.do(actionsButton.click());
+    cy.do(Button('Create fee/fine').click());
+  },
+  hasSaveError: (errorMessage) => cy.expect(rootSection.find(TextField({ value: errorMessage })).exists())
 };

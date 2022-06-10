@@ -6,6 +6,7 @@ import {
   TextField,
 } from '../../interactors';
 
+// DEPRECATED use cypress\support\fragments\check-out-actions\check-out-actions.js
 Cypress.Commands.add('checkOutItem', (userBarcode, itemBarcode) => {
   cy.do([
     TextField('Patron identifier').fillIn(userBarcode),

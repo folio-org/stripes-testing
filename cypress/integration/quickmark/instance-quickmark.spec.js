@@ -9,6 +9,9 @@ import InventoryInstanceEdit from '../../support/fragments/inventory/InventoryIn
 import testTypes from '../../support/dictionary/testTypes';
 import features from '../../support/dictionary/features';
 import permissions from '../../support/dictionary/permissions';
+import { replaceByIndex } from '../../support/utils/stringTools';
+import { Callout } from '../../../interactors';
+import Users from '../../support/fragments/users/users';
 
 // TODO: redesign test to exclude repeated steps
 describe('Manage inventory Bib records with quickMarc editor', () => {
@@ -141,7 +144,53 @@ describe('Manage inventory Bib records with quickMarc editor', () => {
       });
   });
 
+  it('C353612 Verify "LDR" validation rules with invalid data for editable and non-editable positions when editing/deriving record', { tags: [testTypes.smoke, features.quickMarcEditor] }, () => {
+    const checkLdrErrors = () => {
+      const initialLDRValue = InventoryInstance.validOCLC.ldrValue;
+      // TODO: https://issues.folio.org/browse/UIQM-248, error should be
+      // "Record cannot be saved. Cannot edit 008 due to invalid Leader 06. Please update this record's Leader 06. Valid values are listed at https://loc.gov/marc/bibliographic/bdleader.html"
+      const positions6Error = 'Record cannot be saved. Please enter a valid Leader 06. Valid values are listed at https://loc.gov/marc/bibliographic/bdleader.html';
+      const position7Error = 'Record cannot be saved. Please enter a valid Leader 07. Valid values are listed at https://loc.gov/marc/bibliographic/bdleader.html';
+      const positions6And7Error = 'Record cannot be saved. Please enter a valid Leader 06 and Leader 07. Valid values are listed at https://loc.gov/marc/bibliographic/bdleader.html';
+      const readOnlyPositionsError = 'Record cannot be saved. Please check the Leader. Only positions 5, 6, 7, 8, 17, 18 and/or 19 can be edited in the Leader.';
+
+      const changedLDRs = [
+        { newContent: replaceByIndex(replaceByIndex(initialLDRValue, 6, 'h'), 7, 'm'), errorMessage: positions6Error, is008presented : false },
+        { newContent: replaceByIndex(replaceByIndex(initialLDRValue, 6, 'p'), 7, 'g'), errorMessage: position7Error, is008presented: true },
+        { newContent: replaceByIndex(replaceByIndex(initialLDRValue, 6, 'a'), 7, 'g'), errorMessage: position7Error, is008presented: false },
+        { newContent: replaceByIndex(replaceByIndex(initialLDRValue, 6, '1'), 7, '$'), errorMessage: positions6And7Error, is008presented: false },
+        { newContent: replaceByIndex(initialLDRValue, 1, 'z'), errorMessage: readOnlyPositionsError, is008presented: true },
+        { newContent: replaceByIndex(initialLDRValue, 4, 'z'), errorMessage: readOnlyPositionsError, is008presented: true },
+        { newContent: replaceByIndex(initialLDRValue, 9, 'z'), errorMessage: readOnlyPositionsError, is008presented: true },
+        { newContent: replaceByIndex(initialLDRValue, 16, 'z'), errorMessage: readOnlyPositionsError, is008presented: true },
+        { newContent: replaceByIndex(initialLDRValue, 20, 'z'), errorMessage: readOnlyPositionsError, is008presented: true },
+        { newContent: replaceByIndex(initialLDRValue, 23, 'z'), errorMessage: readOnlyPositionsError, is008presented: true },
+      ];
+
+      changedLDRs.forEach(changedLDR => {
+        quickmarcEditor.updateExistingField('LDR', changedLDR.newContent);
+        cy.wrap(QuickMarcEditor.pressSaveAndClose()).then(() => {
+          cy.expect(Callout(changedLDR.errorMessage).exists());
+          cy.do(Callout(changedLDR.errorMessage).dismiss());
+          cy.expect(Callout(changedLDR.errorMessage).absent());
+          // eslint-disable-next-line no-unused-expressions
+          changedLDR.is008presented ? quickmarcEditor.checkInitialInstance008Content() : QuickMarcEditor.checkEmptyContent('008');
+        });
+      });
+    };
+
+
+    InventoryInstance.checkExpectedMARCSource();
+    InventoryInstance.goToEditMARCBiblRecord();
+    QuickMarcEditor.waitLoading();
+    checkLdrErrors();
+    QuickMarcEditor.closeWithoutSaving();
+    InventoryInstance.deriveNewMarcBib();
+    QuickMarcEditor.check008FieldsAbsent('Type', 'Blvl');
+    checkLdrErrors();
+  });
+
   afterEach(() => {
-    cy.deleteUser(userId);
+    Users.deleteViaApi(userId);
   });
 });

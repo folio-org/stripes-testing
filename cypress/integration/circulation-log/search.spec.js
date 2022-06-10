@@ -9,6 +9,7 @@ import CheckinActions from '../../support/fragments/check-in-actions/checkInActi
 import CheckoutActions from '../../support/fragments/checkout/checkout';
 import InventoryHoldings from '../../support/fragments/inventory/holdings/inventoryHoldings';
 import devTeams from '../../support/dictionary/devTeams';
+import Users from '../../support/fragments/users/users';
 import UsersEditPage from '../../support/fragments/users/usersEditPage';
 
 const ITEM_BARCODE = `123${getRandomPostfix()}`;
@@ -94,7 +95,7 @@ describe('ui-circulation-log', () => {
     cy.getBlockApi(userId).then(() => {
       cy.deleteBlockApi(Cypress.env('blockIds')[0].id);
     });
-    cy.deleteUser(userId);
+    Users.deleteViaApi(userId);
   });
 
   it('C15484 Filter circulation log on item barcode', { retries: 3, tags: [TestTypes.smoke, devTeams.firebird] }, () => {

@@ -1,11 +1,11 @@
-import uuid from 'uuid';
 import getRandomPostfix from '../../utils/stringTools';
 
 const defaultUserName = `AutotestUser${getRandomPostfix()}`;
 const defaultUser = {
   username: defaultUserName,
   active: true,
-  barcode: uuid(),
+  // should be defined
+  barcode: undefined,
   personal: {
     preferredContactTypeId: '002',
     firstName: 'testPermFirst',

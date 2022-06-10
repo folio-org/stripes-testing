@@ -26,13 +26,9 @@ Cypress.Commands.add('deleteInstanceApi', (id) => {
   });
 });
 
-Cypress.Commands.add('getAlternativeTitlesTypes', (searchParams) => {
-  cy.okapiRequest({
-    method: 'GET',
-    path: 'alternative-title-types',
-    searchParams,
-    isDefaultSearchParamsRequired: false
-  }).then(({ body }) => {
-    return body.alternativeTitleTypes;
-  });
-});
+Cypress.Commands.add('getAlternativeTitlesTypes', (searchParams) => cy.okapiRequest({
+  method: 'GET',
+  path: 'alternative-title-types',
+  searchParams,
+  isDefaultSearchParamsRequired: false
+}).then(({ body }) => body.alternativeTitleTypes));

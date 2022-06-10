@@ -2,6 +2,7 @@ import testType from '../../support/dictionary/testTypes';
 import TopMenu from '../../support/fragments/topMenu';
 import Requests from '../../support/fragments/requests/requests';
 import { MultiColumnListHeader } from '../../../interactors';
+import Users from '../../support/fragments/users/users';
 
 describe('ui-requests: Sort requests', () => {
   const userIds = [];
@@ -36,7 +37,7 @@ describe('ui-requests: Sort requests', () => {
       Requests.deleteRequestApi(request.id);
     });
     userIds.forEach(id => {
-      cy.deleteUser(id);
+      Users.deleteViaApi(id);
     });
   });
 

@@ -2,6 +2,7 @@ import {
   Pane,
   including,
 } from '../../../interactors';
+import users from '../../support/fragments/users/users';
 
 import generateItemBarcode from '../../support/utils/generateItemBarcode';
 
@@ -21,7 +22,7 @@ describe('Creating user', () => {
     cy.getUsers({ query: `personal.lastName="${lastName}"` })
       .then(() => {
         Cypress.env('users').forEach(user => {
-          cy.deleteUser(user.id);
+          users.deleteViaApi(user.id);
         });
       });
   });
