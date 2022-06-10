@@ -25,7 +25,6 @@ import OverrideAndRenewModal from '../../support/fragments/users/loans/overrideA
 import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
 import InventoryInstance from '../../support/fragments/inventory/inventoryInstance';
 import InventorySearch from '../../support/fragments/inventory/inventorySearch';
-import UpdateUser from '../../support/fragments/user/updateUser';
 import BasicOrderLine from '../../support/fragments/orders/basicOrderLine';
 import NewLocations from '../../support/fragments/settings/tenant/locations/newLocation';
 import UsersEditPage from '../../support/fragments/users/usersEditPage';
@@ -40,11 +39,9 @@ describe('ui-inventory: Item status date updates', () => {
   let effectiveLocation;
   let user = {};
   let userForDeliveryRequest = {};
-  let userBarcode = '';
   const itemBarcode = Helper.getRandomBarcode();
-  let userRequestPreferences;
 
-  before(() => {,
+  before(() => {
     // TODO rewrite with user diku_admin
     cy.createTempUser([
       permissions.uiCreateOrderAndOrderLine.gui,
@@ -68,18 +65,8 @@ describe('ui-inventory: Item status date updates', () => {
 
         ServicePoints.createViaApi(effectiveLocationServicePoint);
         ServicePoints.createViaApi(notEffectiveLocationServicePoint);
-        cy.addServicePointToUser([effectiveLocationServicePoint.id, notEffectiveLocationServicePoint.id],
+        UsersEditPage.addServicePointsToUser([effectiveLocationServicePoint.id, notEffectiveLocationServicePoint.id],
           user.userId, effectiveLocationServicePoint.id);
-
-        userRequestPreferences = {
-          id: uuid(),
-          fulfillment: 'Delivery',
-          defaultDeliveryAddressTypeId: null,
-          defaultServicePointId: effectiveLocationServicePoint.id,
-          delivery: true,
-          holdShelf: true,
-          userId: userForDeliveryRequest.id,
-        };
 
         cy.login(userProperties.username, userProperties.password)
           .then(() => {
@@ -88,17 +75,12 @@ describe('ui-inventory: Item status date updates', () => {
                 effectiveLocation = location;
                 Orders.createOrderWithOrderLineViaApi(
                   NewOrder.getDefaultOrder(),
-                  BasicOrderLine.getDefaultOrderLine(itemQuantity, instanceTitle, location.id)
+                  BasicOrderLine.getDefaultOrderLine(itemQuantity, instanceTitle, effectiveLocation.id)
                 )
                   .then(order => {
                     orderNumber = order;
                   });
               });
-          });
-
-        cy.getUsers({ limit: 1, query: `"personal.lastName"="${user.username}" and "active"="true"` })
-          .then((users) => {
-            userBarcode = users[0].barcode;
           });
       });
 
@@ -110,17 +92,20 @@ describe('ui-inventory: Item status date updates', () => {
         userForDeliveryRequest = userProperties;
         cy.getUsers({ limit: 1, query: `"username"="${userForDeliveryRequest.username}"` })
           .then((users) => {
-            userForDeliveryRequest.barcode = users[0].barcode;
-            userRequestPreferences.userId = users[0].id;
             cy.getAddressTypesApi({ limit: 1 }).then(addressTypes => {
-              userRequestPreferences.defaultDeliveryAddressTypeId = addressTypes[0].id;
-            })
-              .then(() => {
-                UpdateUser.updateUserAddress(users[0], [{ city: 'New York',
-                  addressTypeId: userRequestPreferences.defaultDeliveryAddressTypeId,
-                  countryId: 'US' }]);
-                cy.createUserRequestPreferencesApi(userRequestPreferences);
+              UsersEditPage.updateUserAddress(users[0], [{ city: 'New York',
+                addressTypeId: addressTypes[0].id,
+                countryId: 'US' }]);
+              cy.createUserRequestPreferencesApi({
+                id: uuid(),
+                fulfillment: 'Delivery',
+                defaultDeliveryAddressTypeId: addressTypes[0].id,
+                defaultServicePointId: effectiveLocationServicePoint.id,
+                delivery: true,
+                holdShelf: true,
+                userId: userForDeliveryRequest.userId,
               });
+            });
           });
       });
   });
@@ -259,7 +244,7 @@ describe('ui-inventory: Item status date updates', () => {
     NewRequest.createNewRequest({
       itemBarcode,
       itemTitle: null,
-      requesterBarcode: userBarcode,
+      requesterBarcode: user.barcode,
       pickupServicePoint: effectiveLocationServicePoint.name,
     });
     openItem(instanceTitle, effectiveLocation.name, itemBarcode);
@@ -274,7 +259,7 @@ describe('ui-inventory: Item status date updates', () => {
     checkIn(itemBarcode, ItemVeiw.itemStatuses.awaitingPickup, ConfirmItemInModal.confirmAvaitingPickUpModal);
 
     // check out item to user for whom page request was created
-    checkOut(userBarcode, itemBarcode, ItemVeiw.itemStatuses.checkedOut, ConfirmItemInModal.confirmAvaitingPickupCheckInModal);
+    checkOut(user.barcode, itemBarcode, ItemVeiw.itemStatuses.checkedOut, ConfirmItemInModal.confirmAvaitingPickupCheckInModal);
 
     // declare item lost
     openUser(user);
@@ -306,10 +291,10 @@ describe('ui-inventory: Item status date updates', () => {
     cy.visit(TopMenu.checkInPath);
     CheckInActions.checkInItem(itemBarcode);
     ConfirmItemInModal.confirmAvaitingPickUpModal();
-    checkOut(userBarcode, itemBarcode, ItemVeiw.itemStatuses.awaitingDelivery, ConfirmItemInModal.confirmMultipieceItemModal);
+    checkOut(user.barcode, itemBarcode, ItemVeiw.itemStatuses.awaitingDelivery, ConfirmItemInModal.confirmMultipieceItemModal);
 
     // check out item to user with delivery request
-    checkOut(userBarcode, itemBarcode, ItemVeiw.itemStatuses.checkedOut, ConfirmItemInModal.confirmAvaitingPickupCheckInModal);
+    checkOut(user.barcode, itemBarcode, ItemVeiw.itemStatuses.checkedOut, ConfirmItemInModal.confirmAvaitingPickupCheckInModal);
 
     // check in item at service point assigned to its effective location
     SwitchServicePoint.switchServicePoint(effectiveLocationServicePoint.name);

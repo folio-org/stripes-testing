@@ -96,5 +96,15 @@ export default {
           isDefaultSearchParamsRequired: false,
         });
       });
+  },
+
+  updateUserAddress:(user, addresses) => {
+    cy.updateUser({
+      ...user,
+      personal: {
+        lastName: '',
+        addresses
+      }
+    });
   }
 };

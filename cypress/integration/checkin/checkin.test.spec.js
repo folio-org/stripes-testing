@@ -8,8 +8,6 @@ import ServicePoints from '../../support/fragments/settings/tenant/servicePoints
 import institutions from '../../support/fragments/settings/tenant/institutions';
 import campuses from '../../support/fragments/settings/tenant/campuses';
 import libraries from '../../support/fragments/settings/tenant/libraries';
-import ItemVeiw from '../../support/fragments/inventory/inventoryItem/itemVeiw';
-import TopMenu from '../../support/fragments/topMenu';
 import UsersEditPage from '../../support/fragments/users/usersEditPage';
 
 // TODO: We need to move all api methods to fragments. https://issues.folio.org/browse/FAT-1624
@@ -17,7 +15,7 @@ import UsersEditPage from '../../support/fragments/users/usersEditPage';
 
 describe('Check In - Actions ', () => {
   before('Create New Service point, Item, User and Check out item', () => {
-    cy.login(Cypress.env('diku_login'), Cypress.env('diku_password'), { path: TopMenu.checkInPath, waiter: CheckInActions.waitLoading });
+    cy.login(Cypress.env('diku_login'), Cypress.env('diku_password'));
     cy.getAdminToken();
     ServicePoints.createViaApi(NewServicePoint.defaultUiServicePoint.body);
     institutions.createViaApi(institutions.defaultUiInstitutions.body);
@@ -47,10 +45,8 @@ describe('Check In - Actions ', () => {
   });
 
   it('C347631 Check in: Basic check in', { tags: [TestTypes.smoke] }, () => {
-    CheckInActions.checkInItem(NewInctanceHoldingsItem.itemBarcode);
-    CheckInActions.openItemRecordInInventory(ItemVeiw.itemStatuses.available);
+    CheckInActions.checkInItem();
     CheckInActions.existsFormColomns();
     CheckInActions.existsItemsInForm();
   });
 });
-
