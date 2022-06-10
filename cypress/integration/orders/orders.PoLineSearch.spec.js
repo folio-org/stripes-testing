@@ -6,10 +6,12 @@ import TopMenu from '../../support/fragments/topMenu';
 import OrdersHelper from '../../support/fragments/orders/ordersHelper';
 import basicOrderLine from '../../support/fragments/orders/basicOrderLine';
 import getRandomPostfix from '../../support/utils/stringTools';
+import newOrganization from '../../support/fragments/organizations/newOrganization';
 
 // TODO:  Rebuild the test after fixing the problem with orderLineNumber definition in its scope.
 // TODO: Check the search using the second POLINE,to have a working search on empty env.
 describe('orders: Test Po line search', () => {
+  const organization = { ...newOrganization.defaultUiOrganizations };
   const order = { ...NewOrder.defaultOrder };
   const orderLine = {
     ...basicOrderLine.defaultOrderLine,
@@ -66,17 +68,21 @@ describe('orders: Test Po line search', () => {
 
   before(() => {
     cy.getAdminToken();
-    cy.getOrganizationApi({ query: 'name="Amazon.com"' })
-      .then(organization => {
-        order.vendor = organization.id;
-        orderLine.physical.materialSupplier = organization.id;
-        orderLine.eresource.accessProvider = organization.id;
+
+    cy.createOrganizationApi(organization);
+    cy.getOrganizationApi({ query: `name="${organization.name}"` })
+      .then(body => {
+        order.vendor = body.id;
+        orderLine.physical.materialSupplier = body.id;
+        orderLine.eresource.accessProvider = body.id;
       });
+
     cy.getLocations({ query: `name="${OrdersHelper.mainLibraryLocation}"` })
       .then(location => { orderLine.locations[0].locationId = location.id; });
+
     cy.getMaterialTypes({ query: 'name="book"' })
       .then(materialType => { orderLine.physical.materialType = materialType.id; });
-    cy.login(Cypress.env('diku_login'), Cypress.env('diku_password'));
+
     cy.createOrderApi(order)
       .then(() => {
         cy.getAcquisitionMethodsApi({ query: 'value="Other"' })
@@ -95,6 +101,11 @@ describe('orders: Test Po line search', () => {
 
   after(() => {
     cy.deleteOrderApi(order.id);
+
+    cy.getOrganizationApi({ query: `name="${organization.name}"` })
+      .then(returnedOrganization => {
+        cy.deleteOrganizationApi(returnedOrganization.id);
+      });
   });
 
   searchers.forEach((searcher) => {

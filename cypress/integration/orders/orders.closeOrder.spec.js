@@ -5,18 +5,21 @@ import Orders from '../../support/fragments/orders/orders';
 import TopMenu from '../../support/fragments/topMenu';
 import Helper from '../../support/fragments/finance/financeHelper';
 import OrdersHelper from '../../support/fragments/orders/ordersHelper';
+import newOrganization from '../../support/fragments/organizations/newOrganization';
 
 describe('orders: Close Order', () => {
   const order = { ...NewOrder.defaultOrder };
   const orderLine = { ...BasicOrderLine.defaultOrderLine };
+  const organization = { ...newOrganization.defaultUiOrganizations };
 
   before(() => {
     cy.getAdminToken();
-    cy.getOrganizationApi({ query: 'name="Amazon.com"' })
-      .then(organization => {
-        order.vendor = organization.id;
-        orderLine.physical.materialSupplier = organization.id;
-        orderLine.eresource.accessProvider = organization.id;
+    cy.createOrganizationApi(organization);
+    cy.getOrganizationApi({ query: `name="${organization.name}"` })
+      .then(body => {
+        order.vendor = body.id;
+        orderLine.physical.materialSupplier = body.id;
+        orderLine.eresource.accessProvider = body.id;
       });
     cy.getLocations({ query: `name="${OrdersHelper.mainLibraryLocation}"` })
       .then(location => { orderLine.locations[0].locationId = location.id; });
@@ -27,6 +30,10 @@ describe('orders: Close Order', () => {
 
   after(() => {
     cy.deleteOrderApi(order.id);
+    cy.getOrganizationApi({ query: `name="${organization.name}"` })
+      .then(returnedOrganization => {
+        cy.deleteOrganizationApi(returnedOrganization.id);
+      });
   });
 
   it('C667 Close an existing order', { tags: [TestType.smoke] }, () => {

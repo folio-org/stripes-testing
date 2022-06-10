@@ -8,8 +8,11 @@ import basicOrderLine from '../../support/fragments/orders/basicOrderLine';
 import getRandomPostfix from '../../support/utils/stringTools';
 import NewInvoice from '../../support/fragments/invoices/newInvoice';
 import DateTools from '../../support/utils/dateTools';
+import newOrganization from '../../support/fragments/organizations/newOrganization';
 
 describe('orders: Test Po line filters', () => {
+  const organization = { ...newOrganization.defaultUiOrganizations };
+
   const today = new Date();
   const subcriptionDate = DateTools.getFormattedDate({ date: today }, 'MM/DD/YYYY');
   const order = { ...NewOrder.defaultOrder };
@@ -52,21 +55,29 @@ describe('orders: Test Po line filters', () => {
       vendorAccount: '8910-10'
     },
   };
-  const invoice = { ...NewInvoice.defaultUiInvoice };
+  const invoice = {
+    ...NewInvoice.defaultUiInvoice,
+    vendorName: organization.name,
+  };
   let orderLineNumber;
 
   before(() => {
     cy.getToken(Cypress.env('diku_login'), Cypress.env('diku_password'));
-    cy.getOrganizationApi({ query: 'name="Amazon.com"' })
-      .then(organization => {
-        order.vendor = organization.id;
-        orderLine.physical.materialSupplier = organization.id;
-        orderLine.eresource.accessProvider = organization.id;
+
+    cy.createOrganizationApi(organization);
+    cy.getOrganizationApi({ query: `name="${organization.name}"` })
+      .then(body => {
+        order.vendor = body.id;
+        orderLine.physical.materialSupplier = body.id;
+        orderLine.eresource.accessProvider = body.id;
       });
+
     cy.getLocations({ query: `name="${OrdersHelper.mainLibraryLocation}"` })
       .then(location => { orderLine.locations[0].locationId = location.id; });
+
     cy.getMaterialTypes({ query: 'name="book"' })
       .then(materialType => { orderLine.physical.materialType = materialType.id; });
+
     cy.getFundsApi({ query: 'code="USHIST"' })
       .then(funds => {
         orderLine.fundDistribution[0].fundId = funds[0]?.id;
@@ -90,6 +101,11 @@ describe('orders: Test Po line filters', () => {
 
   after(() => {
     cy.deleteOrderApi(order.id);
+
+    cy.getOrganizationApi({ query: `name="${organization.name}"` })
+      .then(returnedOrganization => {
+        cy.deleteOrganizationApi(returnedOrganization.id);
+      });
   });
 
   [

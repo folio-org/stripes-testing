@@ -6,8 +6,10 @@ import TopMenu from '../../support/fragments/topMenu';
 import SearchHelper from '../../support/fragments/finance/financeHelper';
 import OrdersHelper from '../../support/fragments/orders/ordersHelper';
 import NewInvoice from '../../support/fragments/invoices/newInvoice';
+import newOrganization from '../../support/fragments/organizations/newOrganization';
 
 describe('orders: Test PO filters', () => {
+  const organization = { ...newOrganization.defaultUiOrganizations };
   const order = {
     ...NewOrder.defaultOrder,
     poNumberPrefix: 'pref',
@@ -17,19 +19,26 @@ describe('orders: Test PO filters', () => {
     approved: true,
   };
   const orderLine = { ...BasicOrderLine.defaultOrderLine };
-  const invoice = { ...NewInvoice.defaultUiInvoice };
+  const invoice = {
+    ...NewInvoice.defaultUiInvoice,
+    vendorName: organization.name,
+  };
   let orderNumber;
 
   before(() => {
     cy.getToken(Cypress.env('diku_login'), Cypress.env('diku_password'));
-    cy.getOrganizationApi({ query: 'name="Amazon.com"' })
-      .then(organization => {
-        order.vendor = organization.id;
-        orderLine.physical.materialSupplier = organization.id;
-        orderLine.eresource.accessProvider = organization.id;
+
+    cy.createOrganizationApi(organization);
+    cy.getOrganizationApi({ query: `name="${organization.name}"` })
+      .then(body => {
+        order.vendor = body.id;
+        orderLine.physical.materialSupplier = body.id;
+        orderLine.eresource.accessProvider = body.id;
       });
+
     cy.getLocations({ query: `name="${OrdersHelper.mainLibraryLocation}"` })
       .then(location => { orderLine.locations[0].locationId = location.id; });
+
     cy.getMaterialTypes({ query: 'name="book"' })
       .then(materialType => {
         orderLine.physical.materialType = materialType.id;
@@ -55,6 +64,11 @@ describe('orders: Test PO filters', () => {
 
   after(() => {
     cy.deleteOrderApi(order.id);
+
+    cy.getOrganizationApi({ query: `name="${organization.name}"` })
+      .then(returnedOrganization => {
+        cy.deleteOrganizationApi(returnedOrganization.id);
+      });
   });
 
   [

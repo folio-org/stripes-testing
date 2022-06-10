@@ -5,18 +5,22 @@ import TopMenu from '../../support/fragments/topMenu';
 import SearchHelper from '../../support/fragments/finance/financeHelper';
 import interactorsTools from '../../support/utils/interactorsTools';
 import OrderLines from '../../support/fragments/orders/orderLines';
+import newOrganization from '../../support/fragments/organizations/newOrganization';
 
 describe('orders: Test PO search', () => {
   const order = { ...NewOrder.defaultOrder };
+  const organization = { ...newOrganization.defaultUiOrganizations };
   let orderNumber;
 
   before(() => {
     cy.getAdminToken();
-    cy.getOrganizationApi({ query: 'name="Amazon.com"' })
-      .then(organization => {
-        order.vendor = organization.id;
+
+    cy.createOrganizationApi(organization);
+    cy.getOrganizationApi({ query: `name="${organization.name}"` })
+      .then(body => {
+        order.vendor = body.id;
       });
-    cy.login(Cypress.env('diku_login'), Cypress.env('diku_password'));
+
     cy.createOrderApi(order)
       .then((response) => {
         orderNumber = response.body.poNumber;
@@ -26,6 +30,11 @@ describe('orders: Test PO search', () => {
 
   afterEach(() => {
     cy.deleteOrderApi(order.id);
+
+    cy.getOrganizationApi({ query: `name="${organization.name}"` })
+      .then(returnedOrganization => {
+        cy.deleteOrganizationApi(returnedOrganization.id);
+      });
   });
 
   it('C343242 Create an order line for format = P/E mix', { tags: [TestType.smoke] }, () => {

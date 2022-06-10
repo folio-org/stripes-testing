@@ -6,29 +6,39 @@ import TopMenu from '../../support/fragments/topMenu';
 import DateTools from '../../support/utils/dateTools';
 import SearchHelper from '../../support/fragments/finance/financeHelper';
 import OrdersHelper from '../../support/fragments/orders/ordersHelper';
+import newOrganization from '../../support/fragments/organizations/newOrganization';
 
 describe('orders: Test PO search', () => {
+  const organization = { ...newOrganization.defaultUiOrganizations };
   const order = { ...NewOrder.defaultOrder };
   const orderLine = { ...BasicOrderLine.defaultOrderLine };
 
   before(() => {
     cy.getAdminToken();
-    cy.getOrganizationApi({ query: 'name="Amazon.com"' })
-      .then(organization => {
-        order.vendor = organization.id;
-        orderLine.physical.materialSupplier = organization.id;
-        orderLine.eresource.accessProvider = organization.id;
+
+    cy.createOrganizationApi(organization);
+    cy.getOrganizationApi({ query: `name="${organization.name}"` })
+      .then(body => {
+        order.vendor = body.id;
+        orderLine.physical.materialSupplier = body.id;
+        orderLine.eresource.accessProvider = body.id;
       });
+
     cy.getLocations({ query: `name="${OrdersHelper.mainLibraryLocation}"` })
       .then(location => { orderLine.locations[0].locationId = location.id; });
+
     cy.getMaterialTypes({ query: 'name="book"' })
       .then(materialType => { orderLine.physical.materialType = materialType.id; });
-    cy.login(Cypress.env('diku_login'), Cypress.env('diku_password'));
   });
 
   afterEach(() => {
     SearchHelper.selectFromResultsList();
     Orders.deleteOrderViaActions();
+
+    cy.getOrganizationApi({ query: `name="${organization.name}"` })
+    .then(returnedOrganization => {
+      cy.deleteOrganizationApi(returnedOrganization.id);
+    });
   });
 
   it('C6717 Test the PO searches', { tags: [TestType.smoke] }, () => {

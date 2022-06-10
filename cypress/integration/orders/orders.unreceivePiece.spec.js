@@ -9,24 +9,38 @@ import InventorySearch from '../../support/fragments/inventory/inventorySearch';
 import InventoryInstance from '../../support/fragments/inventory/inventoryInstance';
 import InteractorsTools from '../../support/utils/interactorsTools';
 import OrdersHelper from '../../support/fragments/orders/ordersHelper';
+import newOrganization from '../../support/fragments/organizations/newOrganization';
 
 describe('orders: Unreceive piece from Order', () => {
+  const organization = { ...newOrganization.defaultUiOrganizations };
   const order = { ...NewOrder.defaultOrder };
   const orderLine = { ...basicOrderLine.defaultOrderLine };
 
   before(() => {
     cy.getAdminToken();
-    cy.getOrganizationApi({ query: 'name="Amazon.com"' })
-      .then(organization => {
-        order.vendor = organization.id;
-        orderLine.physical.materialSupplier = organization.id;
-        orderLine.eresource.accessProvider = organization.id;
+
+    cy.createOrganizationApi(organization);
+    cy.getOrganizationApi({ query: `name="${organization.name}"` })
+      .then(body => {
+        order.vendor = body.id;
+        orderLine.physical.materialSupplier = body.id;
+        orderLine.eresource.accessProvider = body.id;
       });
+
     cy.getLocations({ query: `name="${OrdersHelper.mainLibraryLocation}"` })
       .then(location => { orderLine.locations[0].locationId = location.id; });
+
     cy.getMaterialTypes({ query: 'name="book"' })
       .then(materialType => { orderLine.physical.materialType = materialType.id; });
-    cy.login(Cypress.env('diku_login'), Cypress.env('diku_password'));
+  });
+
+  after(() => {
+    cy.deleteOrderApi(order.id);
+
+    cy.getOrganizationApi({ query: `name="${organization.name}"` })
+      .then(returnedOrganization => {
+        cy.deleteOrganizationApi(returnedOrganization.id);
+      });
   });
 
   it('C10925 Unreceive piece', { tags: [TestType.smoke] }, () => {
