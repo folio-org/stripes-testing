@@ -6,6 +6,7 @@ import OrderLines from '../../support/fragments/orders/orderLines';
 import InventorySearch from '../../support/fragments/inventory/inventorySearch';
 import newOrganization from '../../support/fragments/organizations/newOrganization';
 import basicOrderLine from '../../support/fragments/orders/basicOrderLine';
+import Organizations from '../../support/fragments/organizations/organizations';
 
 describe('orders: create an order', () => {
   const organization = { ...newOrganization.defaultUiOrganizations };
@@ -14,34 +15,34 @@ describe('orders: create an order', () => {
 
   before(() => {
     cy.getAdminToken();
-    cy.createOrganizationApi(organization);
+    Organizations.createOrganizationApi(organization)
+      .then(response => {
+        organization.id = response;
+      });
     order.vendor = organization.name;
     order.orderType = 'One-time';
     cy.visit(TopMenu.ordersPath);
   });
 
   after(() => {
-    cy.getOrdersApi()
-      .then(body => {
-        cy.deleteOrderApi(body.id);
-      });
-    cy.getOrganizationApi({ query: `name="${organization.name}"` })
-      .then(returnedOrganization => {
-        cy.deleteOrganizationApi(returnedOrganization.id);
-      });
+    Orders.deleteOrderApi(order.id);
+
+    Organizations.deleteOrganizationApi(organization.id);
   });
 
   it('C734 Open order for physical material set to create Instance, Holding, Item', { tags: [TestType.smoke] }, () => {
-    Orders.createOrder(order);
-    Orders.checkCreatedOrder(order);
+    Orders.createOrder(order).then(orderId => {
+      order.id = orderId;
+      Orders.checkCreatedOrder(order);
 
-    OrderLines.addPOLine();
-    OrderLines.POLineInfodorPhysicalMaterial(orderLineTitle);
-    OrderLines.backToEditingOrder();
-    Orders.openOrder();
+      OrderLines.addPOLine();
+      OrderLines.POLineInfodorPhysicalMaterial(orderLineTitle);
+      OrderLines.backToEditingOrder();
+      Orders.openOrder();
 
-    cy.visit(TopMenu.inventoryPath);
-    InventorySearch.instanceSearch('Title (all)', orderLineTitle);
-    InventorySearch.verifySearchResult(orderLineTitle);
+      cy.visit(TopMenu.inventoryPath);
+      InventorySearch.instanceSearch('Title (all)', orderLineTitle);
+      InventorySearch.verifySearchResult(orderLineTitle);
+    });
   });
 });

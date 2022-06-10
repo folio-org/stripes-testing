@@ -1,7 +1,7 @@
 import { Button, SearchField, PaneHeader, Pane, Select, Accordion, KeyValue, Checkbox, MultiColumnList, MultiColumnListCell, MultiColumnListRow, Modal, TextField, SelectionOption } from '../../../../interactors';
 import SearchHelper from '../finance/financeHelper';
 import InteractorsTools from '../../utils/interactorsTools';
-
+import { getLongDelay } from '../../utils/cypressTools';
 
 const actionsButton = Button('Actions');
 const orderDetailsPane = Pane({ id: 'order-details' });
@@ -72,7 +72,7 @@ export default {
     ]);
   },
 
-  saveEditingOrder : () => {
+  saveEditingOrder: () => {
     cy.do(saveAndClose.click());
   },
 
@@ -116,10 +116,16 @@ export default {
       newButton.click()
     ]);
     this.selectVendorOnUi(order.vendor);
+    cy.intercept('POST', '/orders/composite-orders**').as('newOrderID');
     cy.do([
       Select('Order type*').choose(order.orderType),
       saveAndClose.click()
     ]);
+    return cy.wait('@newOrderID', getLongDelay())
+      .then(({ response }) => {
+        console.log(response);
+        return response.body.id;
+      });
   },
 
   selectVendorOnUi: (organizationName) => {
@@ -355,5 +361,11 @@ export default {
       buttonSubscriptionFromFilter.click(),
     ]);
   },
+
+  deleteOrderApi: (id) => cy.okapiRequest({
+    method: 'DELETE',
+    path: `orders/composite-orders/${id}`,
+  }),
+
 };
 

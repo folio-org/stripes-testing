@@ -26,7 +26,7 @@ describe('orders: Close Order', () => {
   });
 
   after(() => {
-    cy.deleteOrderApi(order.id);
+    Orders.deleteOrderApi(order.id);
   });
 
   it('C667 Close an existing order', { tags: [TestType.smoke] }, () => {
