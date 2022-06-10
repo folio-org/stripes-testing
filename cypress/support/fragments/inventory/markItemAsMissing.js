@@ -9,6 +9,8 @@ import {
   TextField
 } from '../../../../interactors';
 import getRandomPostfix from '../../utils/stringTools';
+import users from '../users/users';
+import InventoryHoldings from './holdings/inventoryHoldings';
 
 const actionsButton = Button('Actions');
 const markAsMissingButton = Button('Mark as missing');
@@ -82,7 +84,7 @@ export default {
       cy.getLocations({ limit: 1 }).then(location => {
         instanceRecordData.permanentLocationId = location.id;
       });
-      cy.getHoldingSources({ limit: 1 }).then(holdingsSources => {
+      InventoryHoldings.getHoldingSources({ limit: 1 }).then(holdingsSources => {
         instanceRecordData.sourceId = holdingsSources[0].id;
       });
       cy.getInstanceTypes({ limit: 1 }).then(instanceTypes => {
@@ -152,7 +154,7 @@ export default {
         });
       })
       .then(() => {
-        cy.createUserApi(userData).then(user => {
+        users.createViaApi(userData).then(user => {
           createdUserId = user.id;
           requestData.requesterId = user.id;
         });

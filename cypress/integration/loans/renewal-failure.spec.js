@@ -13,12 +13,15 @@ import getRandomPostfix from '../../support/utils/stringTools';
 import loanPolicyActions from '../../support/fragments/circulation/loan-policy';
 import checkoutActions from '../../support/fragments/checkout/checkout';
 import checkinActions from '../../support/fragments/check-in-actions/checkInActions';
+import users from '../../support/fragments/users/users';
+import InventoryHoldings from '../../support/fragments/inventory/holdings/inventoryHoldings';
 
 describe('Renewal', () => {
   let materialTypeId;
   let loanId;
   let servicePointId;
   let initialCircRules;
+  let sourceId;
   const firstName = 'testPermFirst';
   const renewUserData = {
     firstName,
@@ -46,7 +49,9 @@ describe('Renewal', () => {
         cy.getInstanceTypes({ limit: 1 });
         cy.getHoldingTypes({ limit: 1 });
         cy.getLocations({ limit: 1 });
-        cy.getHoldingSources({ limit: 1 });
+        InventoryHoldings.getHoldingSources({ limit: 1 }).then(holdingsSources => {
+          sourceId = holdingsSources[0].id;
+        });
         cy.getLoanTypes({ query: `name="${LOAN_TYPE_NAMES.CAN_CIRCULATE}"` });
         cy.getMaterialTypes({ query: `name="${MATERIAL_TYPE_NAMES.BOOK}"` })
           .then(materilaTypes => {
@@ -100,7 +105,7 @@ describe('Renewal', () => {
           holdings: [{
             holdingsTypeId: Cypress.env(CY_ENV.HOLDINGS_TYPES)[0].id,
             permanentLocationId: Cypress.env(CY_ENV.LOCATION)[0].id,
-            sourceId: Cypress.env(CY_ENV.HOLDING_SOURCES)[0].id,
+            sourceId,
           }],
           items: [[{
             barcode: itemData.barcode,
@@ -148,8 +153,8 @@ describe('Renewal', () => {
       checkInDate: moment.utc().format(),
     })
       .then(() => {
-        cy.deleteUser(renewUserData.id);
-        cy.deleteUser(renewOverrideUserData.id);
+        users.deleteViaApi(renewUserData.id);
+        users.deleteViaApi(renewOverrideUserData.id);
         cy.getInstance({ limit: 1, expandAll: true, query: `"items.barcode"=="${itemData.barcode}"` })
           .then((instance) => {
             cy.deleteItem(instance.items[0].id);

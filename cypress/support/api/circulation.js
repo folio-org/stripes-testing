@@ -43,13 +43,12 @@ Cypress.Commands.add('getCirculationRules', () => {
     });
 });
 
-Cypress.Commands.add('updateCirculationRules', (body) => {
-  cy.okapiRequest({
-    method: REQUEST_METHOD.PUT,
-    path: 'circulation/rules',
-    body,
-  });
-});
+Cypress.Commands.add('updateCirculationRules', body => cy.okapiRequest({
+  method: REQUEST_METHOD.PUT,
+  path: 'circulation/rules',
+  body,
+}));
+
 
 Cypress.Commands.add('createLoanPolicy', (policy) => {
   cy.okapiRequest({

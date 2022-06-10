@@ -14,6 +14,7 @@ import getRandomPostfix from '../../support/utils/stringTools';
 import InventoryHoldings from '../../support/fragments/inventory/holdings/inventoryHoldings';
 import devTeams from '../../support/dictionary/devTeams';
 import InventoryInstancesMovement from '../../support/fragments/inventory/holdingsMove/inventoryInstancesMovement';
+import users from '../../support/fragments/users/users';
 
 const successCalloutMessage = '1 item has been successfully moved.';
 let userId = '';
@@ -98,7 +99,7 @@ describe('ui-inventory: moving items', () => {
         cy.deleteHoldingRecord(instance.holdings[1].id);
         cy.deleteInstanceApi(instance.id);
       });
-    cy.deleteUser(userId);
+    users.deleteViaApi(userId);
   });
 
 

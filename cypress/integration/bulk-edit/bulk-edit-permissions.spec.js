@@ -6,6 +6,7 @@ import UsersEditPage from '../../support/fragments/users/usersEditPage';
 import UsersCard from '../../support/fragments/users/usersCard';
 import BulkEditSearchPane from '../../support/fragments/bulk-edit/bulk-edit-search-pane';
 import devTeams from '../../support/dictionary/devTeams';
+import users from '../../support/fragments/users/users';
 
 let userWthViewEditPermissions;
 let userWithCsvViewPermission;
@@ -28,9 +29,9 @@ describe('ui-users: BULK EDIT permissions', () => {
   });
 
   after('Delete all data', () => {
-    cy.deleteUser(userWthViewEditPermissions.userId);
-    cy.deleteUser(userWithCsvViewPermission.userId);
-    cy.deleteUser(userWithInAppViewPermission.userId);
+    users.deleteViaApi(userWthViewEditPermissions.userId);
+    users.deleteViaApi(userWithCsvViewPermission.userId);
+    users.deleteViaApi(userWithInAppViewPermission.userId);
   });
 
 

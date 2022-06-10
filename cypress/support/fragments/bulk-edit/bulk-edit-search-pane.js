@@ -77,12 +77,22 @@ export default {
     cy.expect(HTML(`${fileName}: ${validRecordCount + invalidRecordCount} entries * ${validRecordCount} records matched * ${invalidRecordCount} errors`).exists());
   },
 
-  verifyActionsAfterConductedUploading() {
+  verifyActionsAfterConductedCSVUploading() {
     cy.do(Button('Actions').click());
     cy.expect([
       Button('Download matched records (CSV)').exists(),
       Button('Download errors (CSV)').exists(),
       Button('Start bulk edit (CSV)').exists(),
+      DropdownMenu().find(HTML('Show columns')).exists(),
+    ]);
+  },
+
+  verifyActionsAfterConductedInAppUploading() {
+    cy.do(Button('Actions').click());
+    cy.expect([
+      Button('Download matched records (CSV)').exists(),
+      Button('Download errors (CSV)').exists(),
+      Button('Start bulk edit').exists(),
       DropdownMenu().find(HTML('Show columns')).exists(),
     ]);
   },

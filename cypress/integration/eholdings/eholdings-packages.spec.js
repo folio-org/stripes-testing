@@ -8,6 +8,7 @@ import eHoldingsPackagesSearch from '../../support/fragments/eholdings/eHoldings
 import eHoldingsPackage from '../../support/fragments/eholdings/eHoldingsPackage';
 import permissions from '../../support/dictionary/permissions';
 import features from '../../support/dictionary/features';
+import users from '../../support/fragments/users/users';
 
 
 describe('eHoldings packages management', () => {
@@ -99,6 +100,6 @@ describe('eHoldings packages management', () => {
   });
 
   afterEach(() => {
-    cy.deleteUser(userId);
+    users.deleteViaApi(userId);
   });
 });

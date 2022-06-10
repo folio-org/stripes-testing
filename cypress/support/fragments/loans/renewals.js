@@ -122,8 +122,7 @@ export default {
 
     checkModalTable(headers.renewConfirmation, itemData);
 
-    // todo: Uncomment button check after permission issue fix (ticket number UIU-2604)
-    // cy.expect(Button(buttonLabels.override).exists());
+    cy.expect(Button(buttonLabels.override).absent());
     cy.do(Button(buttonLabels.close).click());
   },
 

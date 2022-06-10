@@ -1,7 +1,6 @@
 import TopMenu from '../../support/fragments/topMenu';
 import InventorySearch from '../../support/fragments/inventory/inventorySearch';
 import InventoryActions from '../../support/fragments/inventory/inventoryActions';
-import { Checkbox } from '../../../interactors';
 import testTypes from '../../support/dictionary/testTypes';
 import devTeams from '../../support/dictionary/devTeams';
 
