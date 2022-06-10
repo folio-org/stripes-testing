@@ -3,14 +3,14 @@ import NewOrder from '../../support/fragments/orders/newOrder';
 import Orders from '../../support/fragments/orders/orders';
 import TestType from '../../support/dictionary/testTypes';
 import OrderLines from '../../support/fragments/orders/orderLines';
-import getRandomPostfix from '../../support/utils/stringTools';
 import InventorySearch from '../../support/fragments/inventory/inventorySearch';
 import newOrganization from '../../support/fragments/organizations/newOrganization';
+import basicOrderLine from '../../support/fragments/orders/basicOrderLine';
 
 describe('orders: create an order', () => {
   const organization = { ...newOrganization.defaultUiOrganizations };
   const order = { ...NewOrder.defaultOrder };
-  const orderLineTitle = `Autotest Tetle_${getRandomPostfix()}`;
+  const orderLineTitle = basicOrderLine.defaultOrderLine.titleOrPackage;
 
   before(() => {
     cy.getAdminToken();
