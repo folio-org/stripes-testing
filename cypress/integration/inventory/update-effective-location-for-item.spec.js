@@ -9,12 +9,14 @@ import getRandomPostfix from '../../support/utils/stringTools';
 import generateItemBarcode from '../../support/utils/generateItemBarcode';
 import permissions from '../../support/dictionary/permissions';
 import Users from '../../support/fragments/users/users';
+import InventoryHoldings from '../../support/fragments/inventory/holdings/inventoryHoldings';
 
 describe('Update the effective location for the item', () => {
   const instanceTitle = `autoTestInstanceTitle.${getRandomPostfix()}`;
   const anotherPermanentLocation = 'Main Library';
   const ITEM_BARCODE = generateItemBarcode();
   let userId = '';
+  let sourceId;
 
   beforeEach(() => {
     cy.createTempUser([
@@ -28,7 +30,9 @@ describe('Update the effective location for the item', () => {
           cy.getInstanceTypes({ limit: 1 });
           cy.getLocations({ limit: 1 });
           cy.getHoldingTypes({ limit: 1 });
-          cy.getHoldingSources({ limit: 1 });
+          InventoryHoldings.getHoldingSources({ limit: 1 }).then(holdingsSources => {
+            sourceId = holdingsSources[0].id;
+          });
         })
           .then(() => {
             cy.createInstance({
@@ -39,6 +43,7 @@ describe('Update the effective location for the item', () => {
               },
               holdings: [{
                 permanentLocationId: Cypress.env('locations')[0].id,
+                sourceId
               }],
               items: [
                 [{
