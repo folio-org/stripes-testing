@@ -25,6 +25,7 @@
 * Implement e-2-e automation of test case C568. Refs FAT-841.
 * Implement e-2-e automation of test case C9191. Refs FAT-838.
 * Implement e-2-e automation of test case C350616. Refs FAT-1666.
+* "Override" button permission issue inside Renew Confirmation modal. Refs FAT-1856.
 
 ## [4.2.0](https://github.com/folio-org/stripes-testing/tree/v4.2.0) (2022-02-11)
 [Full Changelog](https://github.com/folio-org/stripes-testing/compare/v4.0.0...v4.2.0)

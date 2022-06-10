@@ -90,7 +90,7 @@ Cypress.Commands.add('createTempUser', (permissions = [], patronGroup) => {
   cy.getFirstUserGroupId({ limit: patronGroup ? 10 : 1 }, patronGroup)
     .then((userGroupdId) => {
       const queryField = 'displayName';
-      cy.getPermissionsApi({ query: `(${queryField}="${permissions.join(`")or(${queryField}="`)}"))"` })
+      cy.getPermissionsApi({ query: `(${queryField}=="${permissions.join(`")or(${queryField}=="`)}"))"` })
         .then((permissionsResponse) => {
           // Can be used to collect pairs of ui and backend permission names
           // cy.log('Initial permissions=' + permissions);
