@@ -3,8 +3,8 @@ import TestType from '../../../support/dictionary/testTypes';
 import AppPaths from '../../../support/fragments/app-paths';
 import { getNewItem } from '../../../support/fragments/inventory/item';
 import UsersOwners, { getNewOwner } from '../../../support/fragments/settings/users/usersOwners';
-import Loans from '../../../support/fragments/user/loans';
-import LoanDetails from '../../../support/fragments/user/loan-details';
+import Loans from '../../../support/fragments/users/userDefaultObjects/loans';
+import LoanDetails from '../../../support/fragments/users/userDefaultObjects/loanDetails';
 import ServicePoint from '../../../support/fragments/service_point/service-point';
 import Checkout from '../../../support/fragments/checkout/checkout';
 import UsersCard from '../../../support/fragments/users/usersCard';
@@ -130,6 +130,7 @@ describe('ui-users-loans: Loans', () => {
             FIRST_ACTION_ROW_INDEX,
             loanHistoryFirstAction.loan.metadata.updatedDate
           );
+
           LoanDetails.checkActionDeclaredLost(FIRST_ACTION_ROW_INDEX);
           LoanDetails.checkLoansActionsHaveSameDueDate(
             FIRST_ACTION_ROW_INDEX,

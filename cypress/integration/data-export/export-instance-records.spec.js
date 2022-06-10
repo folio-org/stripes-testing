@@ -8,74 +8,38 @@ import DataExportResults from '../../support/fragments/data-export/dataExportRes
 import getRandomPostfix from '../../support/utils/stringTools';
 import { getLongDelay } from '../../support/utils/cypressTools';
 import permissions from '../../support/dictionary/permissions';
-import InventoryHoldings from '../../support/fragments/inventory/holdings/inventoryHoldings';
 import devTeams from '../../support/dictionary/devTeams';
+import users from '../../support/fragments/users/users';
+import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
 
 
-const ITEM_BARCODE = `123${getRandomPostfix()}`;
-let userId = '';
-let userName = '';
+let user;
+const item = {
+  instanceName: `testBulkEdit_${getRandomPostfix()}`,
+  itemBarcode: getRandomPostfix(),
+};
 
 describe('data-export', () => {
   beforeEach('login', () => {
-    let source;
-
     cy.createTempUser([
       permissions.inventoryAll.gui,
       permissions.dataExportAll.gui
     ])
       .then(userProperties => {
-        userId = userProperties.userId;
-        userName = userProperties.username;
-        cy.login(userProperties.username, userProperties.password);
-        cy.getAdminToken()
-          .then(() => {
-            cy.getLoanTypes({ limit: 1 });
-            cy.getMaterialTypes({ limit: 1 });
-            cy.getLocations({ limit: 1 });
-            cy.getHoldingTypes({ limit: 1 });
-            source = InventoryHoldings.getHoldingSources({ limit: 1 });
-            cy.getInstanceTypes({ limit: 1 });
-            cy.getServicePointsApi({ limit: 1, query: 'pickupLocation=="true"' });
-            cy.getUsers({
-              limit: 1,
-              query: `"personal.lastName"="${userProperties.username}" and "active"="true"`
-            });
-          })
-          .then(() => {
-            cy.createInstance({
-              instance: {
-                instanceTypeId: Cypress.env('instanceTypes')[0].id,
-                title: `Barcode search test ${Number(new Date())}`,
-              },
-              holdings: [{
-                holdingsTypeId: Cypress.env('holdingsTypes')[0].id,
-                permanentLocationId: Cypress.env('locations')[0].id,
-                sourceId: source.id,
-              }],
-              items: [
-                [{
-                  barcode: ITEM_BARCODE,
-                  missingPieces: '3',
-                  numberOfMissingPieces: '3',
-                  status: { name: 'Available' },
-                  permanentLoanType: { id: Cypress.env('loanTypes')[0].id },
-                  materialType: { id: Cypress.env('materialTypes')[0].id },
-                }],
-              ],
-            });
-          });
+        user = userProperties;
+        cy.login(user.username, user.password);
+        InventoryInstances.createInstanceViaApi(item.instanceName, item.itemBarcode);
       });
   });
 
   after('Delete all data', () => {
-    cy.getInstance({ limit: 1, expandAll: true, query: `"items.barcode"=="${ITEM_BARCODE}"` })
+    cy.getInstance({ limit: 1, expandAll: true, query: `"items.barcode"=="${item.itemBarcode}"` })
       .then((instance) => {
         cy.deleteItem(instance.items[0].id);
         cy.deleteHoldingRecord(instance.holdings[0].id);
         cy.deleteInstanceApi(instance.id);
       });
-    cy.deleteUser(userId);
+    users.deleteViaApi(user.userId);
   });
 
   it('C9288 Export small number of instance records - default instance mapping profile', { retries: 3, tags: [TestTypes.smoke, devTeams.firebird] }, () => {
@@ -84,7 +48,7 @@ describe('data-export', () => {
     // download file with existing UUIDs
     cy.visit(TopMenu.inventoryPath);
     InventorySearch.switchToItem();
-    InventorySearch.searchByParameter('Barcode', ITEM_BARCODE);
+    InventorySearch.searchByParameter('Barcode', item.itemBarcode);
     InventorySearch.saveUUIDs();
     DownloadHelper.downloadCSVFile(fileName, 'SearchInstanceUUIDs*');
 
@@ -101,7 +65,7 @@ describe('data-export', () => {
       const recordsCount = job.progress.total;
       const jobId = job.hrId;
 
-      DataExportResults.verifySuccessExportResultCells(resultFileName, recordsCount, jobId, userName);
+      DataExportResults.verifySuccessExportResultCells(resultFileName, recordsCount, jobId, user.username);
     });
 
     // delete created files
