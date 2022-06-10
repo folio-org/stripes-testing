@@ -20,7 +20,7 @@ Cypress.Commands.add('getOrdersApi', (searchParams) => {
   cy.okapiRequest({
     path: 'orders/composite-orders',
     searchParams
-  }).then(response => { return response.body.orders[0]; });
+  }).then(response => { return response.body.purchaseOrders[0]; });
 });
 
 Cypress.Commands.add('getAcquisitionMethodsApi', (searchParams) => {

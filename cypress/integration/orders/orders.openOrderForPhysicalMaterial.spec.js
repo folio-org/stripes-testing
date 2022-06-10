@@ -21,9 +21,10 @@ describe('orders: create an order', () => {
   });
 
   after(() => {
-    cy.getOrdersApi();
-    cy.deleteOrderApi(order.id);
-
+    cy.getOrdersApi()
+      .then(body => {
+        cy.deleteOrderApi(body.id);
+      });
     cy.getOrganizationApi({ query: `name="${organization.name}"` })
       .then(returnedOrganization => {
         cy.deleteOrganizationApi(returnedOrganization.id);
@@ -39,6 +40,7 @@ describe('orders: create an order', () => {
     OrderLines.backToEditingOrder();
     Orders.openOrder();
 
+    cy.visit(TopMenu.inventoryPath);
     InventorySearch.instanceSearch('Title (all)', orderLineTitle);
     InventorySearch.verifySearchResult(orderLineTitle);
   });
