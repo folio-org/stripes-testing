@@ -11,7 +11,7 @@ describe('ui-users-settings: payments methods in Fee/fine', () => {
   before(() => {
     cy.loginAsAdmin();
     cy.getAdminToken().then(() => {
-      UsersOwners.createViaApi({ owner: uuid() }).then(response => { specialOwnerId = response.body.id; });
+      UsersOwners.createViaApi({ owner: uuid() }).then(ownerId => { specialOwnerId = ownerId; });
       cy.visit(SettingsMenu.paymentsPath);
     });
   });

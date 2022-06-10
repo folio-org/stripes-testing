@@ -117,14 +117,10 @@ export default {
     cy.do(rootPaneset.find(Button({ id:`clickable-cancel-settings-owners-${rowNumber}` })).click());
     cy.expect(addButton.has({ disabled: false }));
   },
-  createViaApi: (owner) => {
-    return cy.okapiRequest({
-      method: 'POST',
-      path: 'owners',
-      body: owner,
-      isDefaultSearchParamsRequired: false
-    });
-  },
+  createViaApi: (owner) => cy.okapiRequest({ method: 'POST',
+    path: 'owners',
+    body: owner,
+    isDefaultSearchParamsRequired: false }).then(response => ({ id: response.body.id, ownerName: response.body.owner })),
   getOwnerViaApi: (searchParams) => {
     cy.okapiRequest({
       path: 'owners',

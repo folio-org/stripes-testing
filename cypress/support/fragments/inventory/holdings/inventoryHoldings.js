@@ -1,13 +1,8 @@
-const getHoldingSources = (searchParams) => {
-  return cy
-    .okapiRequest({
-      path: 'holdings-sources',
-      searchParams,
-    })
-    .then(({ body }) => {
-      return body.holdingsRecordsSources;
-    });
-};
+const getHoldingSources = (searchParams) => cy.okapiRequest({
+  path: 'holdings-sources',
+  searchParams,
+})
+  .then(({ body }) => body.holdingsRecordsSources);
 
 export default {
   getHoldingSources,

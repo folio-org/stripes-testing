@@ -4,6 +4,7 @@ import FilterItems from '../../support/fragments/inventory/filterItems';
 import permissions from '../../support/dictionary/permissions';
 import { MultiColumnList } from '../../../interactors';
 import getRandomPostfix from '../../support/utils/stringTools';
+import users from '../../support/fragments/users/users';
 import InventorySearch from '../../support/fragments/inventory/inventorySearch';
 import InventoryHoldings from '../../support/fragments/inventory/holdings/inventoryHoldings';
 
@@ -71,7 +72,7 @@ describe('ui-inventory: items with status', () => {
         cy.deleteHoldingRecord(instance.holdings[0].id);
         cy.deleteInstanceApi(instance.id);
       });
-    cy.deleteUser(userId);
+    users.deleteViaApi(userId);
   });
 
   it('C11081: Verify item status filters retrieve items with that item status', () => {

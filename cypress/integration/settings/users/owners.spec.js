@@ -4,6 +4,7 @@ import UsersOwners from '../../../support/fragments/settings/users/usersOwners';
 import Permissions from '../../../support/dictionary/permissions';
 import getRandomPostfix from '../../../support/utils/stringTools';
 import Features from '../../../support/dictionary/features';
+import users from '../../../support/fragments/users/users';
 
 describe('ui-users-settings: Owners', () => {
   describe('Owner creation', () => {
@@ -62,14 +63,14 @@ describe('ui-users-settings: Owners', () => {
   });
 
   describe('Management of n fee/fine owners and service points', () => {
-    const users = [];
+    const testUsers = [];
     const addedServicePoints = [];
     const createRegularUser = () => cy.createTempUser([Permissions.uiUsersSettingsOwners.gui,
       Permissions.uiUsersEdituserservicepoints.gui]);
 
     it('C441 Verify that you can create/edit/delete associations between fee/fine owners and service points', { tags: [TestType.criticalPath] }, () => {
       createRegularUser().then(firstUserProperties => {
-        users.push(firstUserProperties);
+        testUsers.push(firstUserProperties);
 
         cy.allure().startStep('Login and open Owners settings by user1');
         cy.login(firstUserProperties.username, firstUserProperties.password, { path: SettingsMenu.usersOwnersPath, waiter: UsersOwners.waitLoading });
@@ -83,8 +84,8 @@ describe('ui-users-settings: Owners', () => {
 
           cy.allure().startStep('Add new owner, related with current user and not used service point');
           UsersOwners.startNewLineAdding();
-          UsersOwners.fill(users[0].username, addedServicePoints.at(-1));
-          UsersOwners.save(users[0].username);
+          UsersOwners.fill(testUsers[0].username, addedServicePoints.at(-1));
+          UsersOwners.save(testUsers[0].username);
           cy.allure().endStep();
 
           cy.allure().startStep('Verify values in Associated service points.');
@@ -93,7 +94,7 @@ describe('ui-users-settings: Owners', () => {
           cy.allure().endStep();
 
           createRegularUser().then(secondUserProperties => {
-            users.push(secondUserProperties);
+            testUsers.push(secondUserProperties);
 
             cy.allure().startStep('Login and open Owners settings by user2');
             cy.login(secondUserProperties.username, secondUserProperties.password, { path: SettingsMenu.usersOwnersPath, waiter: UsersOwners.waitLoading });
@@ -131,7 +132,7 @@ describe('ui-users-settings: Owners', () => {
     });
 
     afterEach(() => {
-      users.forEach(user => cy.deleteUser(user.userId));
+      testUsers.forEach(user => users.deleteViaApi(user.userId));
     });
   });
 });

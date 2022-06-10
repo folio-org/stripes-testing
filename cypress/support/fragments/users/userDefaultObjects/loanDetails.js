@@ -10,10 +10,10 @@ import {
   Link,
   Modal,
   including,
-} from '../../../../interactors';
-import { ITEM_STATUSES } from '../../../support/constants';
-import DateTools from '../../../support/utils/dateTools';
-import { getFullName } from '../../../support/utils/users';
+} from '../../../../../interactors';
+import { ITEM_STATUSES } from '../../../constants';
+import DateTools from '../../../utils/dateTools';
+import { getFullName } from '../../../utils/users';
 
 const DECLARE_LOST_MODAL_TITLE = 'Confirm item status: Declared lost';
 const LOAN_ACTIONS_LIST_ID = 'list-loanactions';
@@ -21,15 +21,17 @@ const DeclareLostButton = Button('Declare lost');
 const DeclareLostModal = Modal(DECLARE_LOST_MODAL_TITLE);
 const LoanActionsList = MultiColumnList(LOAN_ACTIONS_LIST_ID);
 
+const checkDeclareLostButtonActivity = (disabled) => {
+  cy.expect(DeclareLostButton.has({ disabled }));
+};
+
 export default {
-  checkDeclareLostButtonActivity(disabled) {
-    cy.expect(DeclareLostButton.has({ disabled }));
-  },
+
   checkDeclareLostButtonDisabled() {
-    this.checkDeclareLostButtonActivity(true);
+    checkDeclareLostButtonActivity(true);
   },
   checkDeclareLostButtonActive() {
-    this.checkDeclareLostButtonActivity(false);
+    checkDeclareLostButtonActivity(false);
   },
   startDeclareLost() {
     cy.do(
@@ -91,6 +93,7 @@ export default {
     });
   },
   checkDateValid(date) {
+    // TODO: clarify the reason of eslint warning
     expect(moment(date).isValid()).to.be.true;
   },
   checkActionDate(row, actionDate) {

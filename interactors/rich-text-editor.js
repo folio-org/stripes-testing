@@ -5,7 +5,7 @@ function label(el) {
 }
 
 export default HTML.extend('rich text editor')
-  .selector('[class^=inputGroup]')
+  .selector('[class^=inputGroup],[class^="quill editor"]')
   .locator(label)
   .filters({
     value: (element) => element.querySelector('.ql-editor').textContent

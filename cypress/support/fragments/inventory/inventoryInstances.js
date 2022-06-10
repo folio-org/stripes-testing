@@ -73,7 +73,8 @@ export default {
   },
 
   createInstanceViaApi(instanceName, itemBarcode, publisher = null, holdingCallNumber = '1', itemCallNumber = '2') {
-    let alternativeTitleType = '';
+    let alternativeTitleTypeId = '';
+    let holdingSourceId = '';
     const instanceId = uuid();
     cy.getToken(Cypress.env('diku_login'), Cypress.env('diku_password'))
       .then(() => {
@@ -81,10 +82,12 @@ export default {
         cy.getMaterialTypes({ limit: 1 });
         cy.getLocations({ limit: 1 });
         cy.getHoldingTypes({ limit: 1 });
-        cy.getHoldingSources({ limit: 1 });
-        cy.getInstanceTypes({ limit: 1 });
-        cy.getAlternativeTitlesTypes({ limit: 1, query: 'name="Uniform title"' }).then(titleTypes => {
-          alternativeTitleType = titleTypes[0].id;
+        InventoryHoldings.getHoldingSources({ limit: 1 }).then(holdingSources => {
+          holdingSourceId = holdingSources[0].id;
+          cy.getInstanceTypes({ limit: 1 });
+          cy.getAlternativeTitlesTypes({ limit: 1, query: 'name="Uniform title"' }).then(titleTypes => {
+            alternativeTitleTypeId = titleTypes[0].id;
+          });
         });
       })
       .then(() => {
@@ -93,7 +96,7 @@ export default {
             instanceTypeId: Cypress.env('instanceTypes')[0].id,
             title: instanceName,
             alternativeTitles: [{
-              alternativeTitleTypeId: alternativeTitleType,
+              alternativeTitleTypeId,
               alternativeTitle: instanceName
             }],
             publication: [{ publisher: publisher ?? 'MIT' }],
@@ -102,7 +105,7 @@ export default {
           holdings: [{
             holdingsTypeId: Cypress.env('holdingsTypes')[0].id,
             permanentLocationId: Cypress.env('locations')[0].id,
-            sourceId: Cypress.env('holdingSources')[0].id,
+            sourceId: holdingSourceId,
           }],
           items: [
             [{
