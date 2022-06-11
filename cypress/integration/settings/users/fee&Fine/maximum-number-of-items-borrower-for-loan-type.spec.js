@@ -19,8 +19,8 @@ describe('ui-users:', () => {
   let user = {};
   const instanceTitle = `autotest_instance_title_${getRandomPostfix()}`;
   let servicePoint;
+  let limitTstInstanceIds;
   let testInstanceIds;
-  let testInstanceIds2;
   let loanPolicy;
   let materialType;
   let limitLoanTypeId;
@@ -84,7 +84,7 @@ describe('ui-users:', () => {
           items: limitTestItems
         })
           .then(specialInstanceIds => {
-            testInstanceIds = specialInstanceIds;
+            limitTstInstanceIds = specialInstanceIds;
           })
         // create loan policy
           .then(() => {
@@ -131,7 +131,7 @@ describe('ui-users:', () => {
           items: testItems
         })
           .then(specialInstanceIds => {
-            testInstanceIds2 = specialInstanceIds;
+            testInstanceIds = specialInstanceIds;
           });
       });
 
@@ -158,6 +158,22 @@ describe('ui-users:', () => {
         checkInDate: '2021-09-30T16:14:50.444Z',
       });
     });
+    cy.wrap(limitTstInstanceIds.holdingIds.forEach(holdingsId => {
+      cy.wrap(holdingsId.itemIds.forEach(itemId => {
+        cy.deleteItem(itemId);
+      })).then(() => {
+        cy.deleteHoldingRecord(holdingsId.id);
+      });
+    })).then(() => {
+      cy.deleteInstanceApi(limitTstInstanceIds.instanceId);
+    });
+    testItems.forEach(item => {
+      CheckInActions.createItemCheckinApi({
+        itemBarcode: item.barcode,
+        servicePointId: servicePoint.body.id,
+        checkInDate: '2021-09-30T16:14:50.444Z',
+      });
+    });
     cy.wrap(testInstanceIds.holdingIds.forEach(holdingsId => {
       cy.wrap(holdingsId.itemIds.forEach(itemId => {
         cy.deleteItem(itemId);
@@ -167,24 +183,8 @@ describe('ui-users:', () => {
     })).then(() => {
       cy.deleteInstanceApi(testInstanceIds.instanceId);
     });
-    testItems.forEach(item => {
-      CheckInActions.createItemCheckinApi({
-        itemBarcode: item.barcode,
-        servicePointId: servicePoint.body.id,
-        checkInDate: '2021-09-30T16:14:50.444Z',
-      });
-    });
-    cy.wrap(testInstanceIds2.holdingIds.forEach(holdingsId => {
-      cy.wrap(holdingsId.itemIds.forEach(itemId => {
-        cy.deleteItem(itemId);
-      })).then(() => {
-        cy.deleteHoldingRecord(holdingsId.id);
-      });
-    })).then(() => {
-      cy.deleteInstanceApi(testInstanceIds2.instanceId);
-    });
     cy.updateCirculationRules({
-      rulesAsText: initialCircRules,
+      rulesAsText: rulesDefaultString,
     });
     cy.deleteLoanPolicy(loanPolicy.id);
     cy.wrap(UsersEditPage.changeServicePointPreferenceViaApi(user.userId, [servicePoint.body.id]))
