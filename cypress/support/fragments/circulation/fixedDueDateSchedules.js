@@ -51,7 +51,7 @@ export default {
         path: 'fixed-due-date-schedule-storage/fixed-due-date-schedules',
         body: {
           id: uuid(),
-          schedules:[{from:new Date(), to:new Date(), due:new Date()}],
+          schedules:[{ from:new Date(), to:new Date(), due:new Date() }],
           name: `autotest_schedule_${getRandomPostfix()}`,
         },
       })

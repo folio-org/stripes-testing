@@ -1,7 +1,7 @@
 import { Button, Modal, including, HTML } from '../../../../../interactors';
 
 export default {
-  checkContent:(quantityItem) => {
+  verifyErrorMessage:(quantityItem) => {
     cy.expect(Modal('Item not checked out')
       .find(HTML(including(`Patron has reached maximum limit of ${quantityItem} items for loan type`)))
       .exists());

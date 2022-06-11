@@ -3,8 +3,6 @@ import {
   NOTICE_POLICY_NAMES,
   OVERDUE_FINE_POLICY_NAMES,
   CY_ENV,
-  LOAN_TYPE_NAMES,
-  MATERIAL_TYPE_NAMES,
   LIBRARY_DUE_DATE_MANAGMENT,
   LOAN_PROFILE,
   LOST_ITEM_FEES_POLICY_NAMES,
@@ -49,7 +47,7 @@ export default {
         noticePolicyId = Cypress.env(CY_ENV.NOTICE_POLICY)[0].id;
         overdueFinePolicyId = Cypress.env(CY_ENV.OVERDUE_FINE_POLICY)[0].id;
         lostItemFeesPolicyId = Cypress.env(CY_ENV.LOST_ITEM_FEES_POLICY)[0].id;
-        const newRule = `\ng ${patronGroupId} + m ${materialTypeId}: l ${createdLoanPolicy.id} r ${requestPolicyId} n ${noticePolicyId} o ${overdueFinePolicyId} i ${lostItemFeesPolicyId}`;
+        const newRule = `\nl ${createdLoanPolicy.id} r ${requestPolicyId} n ${noticePolicyId} o ${overdueFinePolicyId} i ${lostItemFeesPolicyId}`;
 
         cy.updateCirculationRules({
           rulesAsText: rulesDefaultString + newRule,

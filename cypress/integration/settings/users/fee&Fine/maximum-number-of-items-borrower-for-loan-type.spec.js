@@ -1,4 +1,3 @@
-// import uuid from 'uuid';
 import TestTypes from '../../../../support/dictionary/testTypes';
 import getRandomPostfix from '../../../../support/utils/stringTools';
 import permissions from '../../../../support/dictionary/permissions';
@@ -18,7 +17,6 @@ import Users from '../../../../support/fragments/users/users';
 
 describe('ui-users:', () => {
   let user = {};
-  let userBarcode = '';
   const instanceTitle = `autotest_instance_title_${getRandomPostfix()}`;
   let servicePoint;
   let testInstanceIds;
@@ -149,10 +147,6 @@ describe('ui-users:', () => {
       })
       .then(() => {
         cy.login(user.username, user.password);
-        cy.getUsers({ limit: 1, query: `"personal.lastName"="${user.username}" and "active"="true"` })
-          .then((users) => {
-            userBarcode = users[0].barcode;
-          });
       });
   });
 
@@ -201,14 +195,21 @@ describe('ui-users:', () => {
   });
 
   it('C9277 Verify that maximum number of items borrowed for loan type (e.g. course reserve) limit works', { tags: [TestTypes.smoke] }, () => {
+    limitTestItems.forEach((item) => {
+      console.log(item.barcode);
+    });
     cy.visit(TopMenu.checkOutPath);
     limitTestItems.forEach((item) => {
-      СheckOutActions.checkOutItem(userBarcode, item.barcode);
+      console.log(user.barcode);
+      СheckOutActions.checkOutItemUser(user.barcode, item.barcode);
     });
-    LimitCheckOut.checkContent(limitOfItem);
+    testItems.forEach((item) => {
+      console.log(item.barcode);
+    });
+    LimitCheckOut.verifyErrorMessage(limitOfItem);
     LimitCheckOut.cancelModal();
     testItems.forEach((item) => {
-      СheckOutActions.checkOutItem(userBarcode, item.barcode);
+      СheckOutActions.checkOutItemUser(user.barcode, item.barcode);
     });
   });
 });
