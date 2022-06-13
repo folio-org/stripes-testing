@@ -6,13 +6,8 @@ import {
   Dropdown,
   Button,
   TextArea,
-<<<<<<< HEAD:cypress/support/fragments/user/loans.js
-} from '../../../../interactors';
-import { ITEM_STATUSES } from '../../constants';
-=======
 } from '../../../../../interactors';
 import { ITEM_STATUSES } from '../../../constants';
->>>>>>> FAT-863/C347623:cypress/support/fragments/users/userDefaultObjects/loans.js
 
 const LOANS_HISTORY_LIST_ID = 'list-loanshistory';
 const DECLARE_LOST_MODAL_TITLE = 'Confirm item status: Declared lost';

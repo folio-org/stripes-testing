@@ -55,18 +55,6 @@ Cypress.Commands.add('getLocations', (searchParams) => {
     });
 });
 
-Cypress.Commands.add('getHoldingSources', (searchParams) => {
-  cy
-    .okapiRequest({
-      path: 'holdings-sources',
-      searchParams,
-    })
-    .then(({ body }) => {
-      Cypress.env('holdingSources', body.holdingsRecordsSources);
-      return body.holdingsRecordsSources;
-    });
-});
-
 Cypress.Commands.add('getHoldingTypes', (searchParams) => {
   cy
     .okapiRequest({
