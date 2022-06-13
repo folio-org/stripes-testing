@@ -123,7 +123,6 @@ export default {
     ]);
     return cy.wait('@newOrderID', getLongDelay())
       .then(({ response }) => {
-        console.log(response);
         return response.body.id;
       });
   },
