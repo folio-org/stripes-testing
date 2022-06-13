@@ -45,7 +45,7 @@ describe('ui-invoices: test POL search plugin', () => {
   });
 
   afterEach(() => {
-    cy.deleteOrderApi(order.id);
+    Orders.deleteOrderApi(order.id);
   });
 
   it('C350389 Test purchase order line plugin search', { tags: [testType.smoke] }, () => {
