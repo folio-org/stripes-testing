@@ -18,7 +18,7 @@ import './data-import';
 import './commands';
 
 
-setInteractorTimeout(20_000);
+setInteractorTimeout(10_000);
 
 
 require('cypress-xpath');
