@@ -29,6 +29,12 @@ export default {
       path: `loan-policy-storage/loan-policies/${id}`,
     });
   },
+  getApi(searchParams) {
+    return cy.okapiRequest({
+      path: 'loan-policy-storage/loan-policies',
+      query: searchParams,
+    });
+  },
   createLoanableNotRenewableLoanPolicyApi(loanPolicy) {
     cy.createLoanPolicy({
       name: loanPolicy.name,
