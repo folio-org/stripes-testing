@@ -1,5 +1,4 @@
 import { isVisible, Button } from '@interactors/html';
-import { el } from 'date-fns/locale';
 import HTML from './baseHTML';
 
 const childIndex = el => [...el.parentElement.children].indexOf(el);
