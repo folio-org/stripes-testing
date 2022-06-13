@@ -14,7 +14,7 @@ import CheckInActions from '../../support/fragments/check-in-actions/checkInActi
 import NewNoticePolicy from '../../support/fragments/circulation/newNoticePolicy';
 import NewNoticePolicyTemplate from '../../support/fragments/circulation/newNoticePolicyTemplate';
 import CheckOutActions from '../../support/fragments/check-out-actions/check-out-actions';
-import DefaultUser from '../../support/fragments/user/defaultUser';
+import DefaultUser from '../../support/fragments/users/userDefaultObjects/defaultUser';
 import loanPolicy from '../../support/fragments/circulation/loan-policy';
 import InventoryHoldings from '../../support/fragments/inventory/holdings/inventoryHoldings';
 import Users from '../../support/fragments/users/users';
@@ -54,11 +54,10 @@ describe('Recieving notice: Checkout', () => {
     cy.getAdminToken();
     PatronGroups.createViaApi()
       .then(res => {
-        patronGroup.name = res.group;
-        patronGroup.id = res.id;
+        patronGroup.id = res;
         Users.createViaApi({
-          patronGroup: res.id,
-          ...userData
+          patronGroup: res,
+          ...userData,
         }).then((createdUser) => {
           userData.id = createdUser.id;
         });
@@ -120,7 +119,7 @@ describe('Recieving notice: Checkout', () => {
       servicePointId: testData.userServicePoint,
       checkInDate: moment.utc().format(),
     }).then(() => {
-      cy.deleteUser(userData.id);
+      Users.deleteViaApi(userData.id);
       PatronGroups.deleteViaApi(patronGroup.id);
     });
 

@@ -14,8 +14,10 @@ import CheckInActions from '../../support/fragments/check-in-actions/checkInActi
 import NewNoticePolicy from '../../support/fragments/circulation/newNoticePolicy';
 import NewNoticePolicyTemplate from '../../support/fragments/circulation/newNoticePolicyTemplate';
 import CheckOutActions from '../../support/fragments/check-out-actions/check-out-actions';
-import DefaultUser from '../../support/fragments/user/defaultUser';
+import DefaultUser from '../../support/fragments/users/userDefaultObjects/defaultUser';
 import loanPolicy from '../../support/fragments/circulation/loan-policy';
+import InventoryHoldings from '../../support/fragments/inventory/holdings/inventoryHoldings';
+import Users from '../../support/fragments/users/users';
 
 // TODO Add email notice check after checktout: https://issues.folio.org/browse/FAT-1854
 describe('Recieving notice: Checkin', () => {
@@ -53,10 +55,9 @@ describe('Recieving notice: Checkin', () => {
     cy.getAdminToken();
     PatronGroups.createViaApi()
       .then(res => {
-        patronGroup.name = res.group;
-        patronGroup.id = res.id;
-        cy.createUserApi({
-          patronGroup: res.id,
+        patronGroup.id = res;
+        Users.createViaApi({
+          patronGroup: res,
           ...userData
         }).then((createdUser) => {
           userData.id = createdUser.id;
@@ -71,7 +72,7 @@ describe('Recieving notice: Checkin', () => {
         cy.getMaterialTypes({ limit: 1 }).then((res) => { testData.materialType = res.id; });
         cy.getLocations({ limit: 1 }).then((res) => { testData.location = res.id; });
         cy.getHoldingTypes({ limit: 1 }).then((res) => { testData.holdingType = res[0].id; });
-        cy.getHoldingSources({ limit: 1 }).then((res) => { testData.holdingSource = res[0].id; });
+        InventoryHoldings.getHoldingSources({ limit: 1 }).then((res) => { testData.holdingSource = res[0].id; });
         cy.getInstanceTypes({ limit: 1 }).then((res) => { testData.instanceType = res[0].id; });
         cy.getLoanTypes({ limit: 1 }).then((res) => { testData.loanType = res[0].id; });
       })
@@ -119,7 +120,7 @@ describe('Recieving notice: Checkin', () => {
       servicePointId: testData.userServicePoint,
       checkInDate: moment.utc().format(),
     }).then(() => {
-      cy.deleteUser(userData.id);
+      Users.deleteViaApi(userData.id);
       PatronGroups.deleteViaApi(patronGroup.id);
     });
 

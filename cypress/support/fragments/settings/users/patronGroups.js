@@ -1,10 +1,6 @@
-<<<<<<< HEAD
-import getRandomPostfix from '../../../utils/stringTools';
-
-=======
 import uuid from 'uuid';
-import { PaneHeader, Section, Button, TextField, including } from '../../../../../interactors';
 import getRandomPostfix from '../../../utils/stringTools';
+import { PaneHeader, Section, Button, TextField, including } from '../../../../../interactors';
 
 
 const rootSection = Section({ id:'controlled-vocab-pane' });
@@ -12,28 +8,11 @@ const newButton = rootSection.find(Button({ id:'clickable-add-patrongroups' }));
 const saveButton = rootSection.find(Button({ id: including('clickable-save-patrongroups-') }));
 const patronGroupNameTextField = rootSection.find(TextField({ placeholder: 'group' }));
 
->>>>>>> FAT-863/C347623
 const defaultPatronGroup = {
   'group': `Patron_group_${getRandomPostfix()}`,
   'desc': 'Patron_group_description',
   'expirationOffsetInDays': '10'
 };
-<<<<<<< HEAD
-export default {
-  createViaApi() {
-    return cy.okapiRequest({
-      method: 'POST',
-      path: 'groups',
-      body: defaultPatronGroup,
-    }).then(({ body }) => {
-      return body;
-    });
-  },
-  deleteViaApi(patronGroupId) {
-    return cy.okapiRequest({
-      method: 'DELETE',
-      path: `groups/${patronGroupId}`
-=======
 
 
 export default {
@@ -57,7 +36,6 @@ export default {
       method: 'DELETE',
       path: `groups/${patronGroupId}`,
       isDefaultSearchParamsRequired: false
->>>>>>> FAT-863/C347623
     });
   }
 };
