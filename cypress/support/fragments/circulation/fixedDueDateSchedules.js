@@ -55,8 +55,8 @@ export default {
           name: `autotest_schedule_${getRandomPostfix()}`,
         },
       })
-      .then(({ fixedDueDateSchedules }) => {
-        return fixedDueDateSchedules;
+      .then(fixedDueDateSchedules => {
+        return fixedDueDateSchedules.body;
       });
   }
 };

@@ -28,7 +28,6 @@ describe('ui-users:', () => {
   const limitTestItems = [];
   const testItems = [];
   let rulesDefaultString;
-  let initialCircRules;
   const limitOfItem = 2;
 
   beforeEach(() => {
@@ -49,10 +48,6 @@ describe('ui-users:', () => {
         cy.getLocations({ limit: 1 });
         cy.getHoldingTypes({ limit: 1 });
         cy.getInstanceTypes({ limit: 1 });
-        cy.getCirculationRules()
-          .then(rules => {
-            initialCircRules = rules.rulesAsText;
-          });
       })
       .then(() => {
         const getTestItem = (type) => {
@@ -90,7 +85,7 @@ describe('ui-users:', () => {
           .then(() => {
             FixedDueDateSchedules.createViaApi()
               .then((schedule) => {
-                LoanPolicyActions.createApi(LoanPolicyActions.getDefaultLoanPolicy(limitOfItem, schedule.body.id))
+                LoanPolicyActions.createApi(LoanPolicyActions.getDefaultLoanPolicy(limitOfItem, schedule.id))
                   .then((policy) => {
                     loanPolicy = policy;
                   });
@@ -195,16 +190,9 @@ describe('ui-users:', () => {
   });
 
   it('C9277 Verify that maximum number of items borrowed for loan type (e.g. course reserve) limit works', { tags: [TestTypes.smoke] }, () => {
-    limitTestItems.forEach((item) => {
-      console.log(item.barcode);
-    });
     cy.visit(TopMenu.checkOutPath);
     limitTestItems.forEach((item) => {
-      console.log(user.barcode);
       СheckOutActions.checkOutItemUser(user.barcode, item.barcode);
-    });
-    testItems.forEach((item) => {
-      console.log(item.barcode);
     });
     LimitCheckOut.verifyErrorMessage(limitOfItem);
     LimitCheckOut.cancelModal();
