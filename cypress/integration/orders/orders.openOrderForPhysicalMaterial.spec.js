@@ -1,5 +1,4 @@
 import TopMenu from '../../support/fragments/topMenu';
-import SettingsMenu from '../../support/fragments/settingsMenu';
 import NewOrder from '../../support/fragments/orders/newOrder';
 import Orders from '../../support/fragments/orders/orders';
 import TestType from '../../support/dictionary/testTypes';
@@ -8,7 +7,6 @@ import InventorySearch from '../../support/fragments/inventory/inventorySearch';
 import newOrganization from '../../support/fragments/organizations/newOrganization';
 import basicOrderLine from '../../support/fragments/orders/basicOrderLine';
 import Organizations from '../../support/fragments/organizations/organizations';
-import inventoryInteractionsDefaults from '../../support/fragments/settings/orders/inventoryInteractionsDefaults';
 
 describe('orders: create an order', () => {
   const organization = { ...newOrganization.defaultUiOrganizations };
@@ -19,7 +17,7 @@ describe('orders: create an order', () => {
     module: 'ORDERS',
     configName: 'createInventory',
     enabled: true,
-    value: '{"eresource":"Instance, Holding, Item","physical":"Instance","other":"Instance, Holding"}'
+    value: '{"eresource":"Instance, Holding","physical":"Instance, Holding, Item","other":"None"}'
   };
 
   before(() => {
