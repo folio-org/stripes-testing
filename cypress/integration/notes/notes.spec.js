@@ -10,6 +10,7 @@ import Features from '../../support/dictionary/features';
 import Permissions from '../../support/dictionary/permissions';
 import NewAgreement from '../../support/fragments/agreements/newAgreement';
 import { getLongDelay } from '../../support/utils/cypressTools';
+import Users from '../../support/fragments/users/users';
 
 describe('Note creation', () => {
   let userId = '';
@@ -102,6 +103,6 @@ describe('Note creation', () => {
     AgreementDetails.remove();
     Agreements.waitLoading();
     Agreements.agreementNotVisible(agreementTitle);
-    cy.deleteUser(userId);
+    Users.deleteViaApi(userId);
   });
 });

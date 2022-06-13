@@ -1,4 +1,4 @@
-import { QuickMarcEditor, QuickMarcEditorRow, TextArea, Button, Modal, TextField, and, some, Pane } from '../../../interactors';
+import { QuickMarcEditor, QuickMarcEditorRow, TextArea, Button, Modal, TextField, and, some, Pane, HTML, including } from '../../../interactors';
 import getRandomPostfix from '../utils/stringTools';
 
 const addFieldButton = Button({ ariaLabel : 'Add a new field' });
@@ -7,7 +7,7 @@ const saveAndCloseButton = Button({ id:'quick-marc-record-save' });
 const confirmationModal = Modal({ id: 'quick-marc-confirm-modal' });
 const continueWithSaveButton = Modal().find(Button({ id: 'clickable-quick-marc-confirm-modal-confirm' }));
 
-const specRetInputNames = ['records[3].content.Spec ret[0]',
+const specRetInputNamesHoldings008 = ['records[3].content.Spec ret[0]',
   'records[3].content.Spec ret[1]',
   'records[3].content.Spec ret[2]'];
 
@@ -16,9 +16,9 @@ const tag008HoldingsBytesProperties = {
   acqMethod :{ interactor:TextField('AcqMethod'), defaultValue:'u', newValue:'v', voidValue:' ', replacedVoidValue:'\\' },
   acqEndDate :{ interactor:TextField('AcqEndDate'), defaultValue:'\\\\\\\\', newValue:'vvvv', voidValue:' ', replacedVoidValue:'\\\\\\\\' },
   genRet : { interactor:TextField('Gen ret'), defaultValue:'0', newValue:'v', voidValue:' ', replacedVoidValue:'\\' },
-  specRet0: { interactor:TextField('Spec ret', { name:specRetInputNames[0] }), defaultValue:'\\', newValue:'v', voidValue:' ', replacedVoidValue:'\\' },
-  specRet1: { interactor:TextField('Spec ret', { name:specRetInputNames[1] }), defaultValue:'\\', newValue:'v', voidValue:' ', replacedVoidValue:'\\' },
-  specRet2: { interactor:TextField('Spec ret', { name:specRetInputNames[2] }), defaultValue:'\\', newValue:'v', voidValue:' ', replacedVoidValue:'\\' },
+  specRet0: { interactor:TextField('Spec ret', { name:specRetInputNamesHoldings008[0] }), defaultValue:'\\', newValue:'v', voidValue:' ', replacedVoidValue:'\\' },
+  specRet1: { interactor:TextField('Spec ret', { name:specRetInputNamesHoldings008[1] }), defaultValue:'\\', newValue:'v', voidValue:' ', replacedVoidValue:'\\' },
+  specRet2: { interactor:TextField('Spec ret', { name:specRetInputNamesHoldings008[2] }), defaultValue:'\\', newValue:'v', voidValue:' ', replacedVoidValue:'\\' },
   compl : { interactor:TextField('Compl'), defaultValue:'0', newValue:'9', voidValue:' ', replacedVoidValue:'\\' },
   copies :{ interactor:TextField('Copies'), defaultValue:'\\\\\\', newValue:'vvv', voidValue:' ', replacedVoidValue:'\\\\\\' },
   lend : { interactor:TextField('Lend'), defaultValue:'u', newValue:'v', voidValue:' ', replacedVoidValue:'\\' },
@@ -58,8 +58,11 @@ defaultFieldValues.getSourceContent = (contentInQuickMarcEditor) => contentInQui
 
 const requiredRowsTags = ['LDR', '001', '005', '008', '999'];
 
-const getRowInteractor = (specialRowNumber) => QuickMarcEditor()
+const getRowInteractorByRowNumber = (specialRowNumber) => QuickMarcEditor()
   .find(QuickMarcEditorRow({ index: specialRowNumber }));
+const getRowInteractorByTagName = (tagName) => QuickMarcEditor()
+  .find(QuickMarcEditorRow({ tagValue: tagName }));
+
 export default class QuickmarcEditor {
   constructor(validRecord) {
     this.validRecord = validRecord;
@@ -79,11 +82,11 @@ export default class QuickmarcEditor {
 
   deletePenaltField() {
     const shouldBeRemovedRowNumber = this.getInitialRowsCount() - 1;
-    cy.expect(getRowInteractor(shouldBeRemovedRowNumber).exists());
+    cy.expect(getRowInteractorByRowNumber(shouldBeRemovedRowNumber).exists());
     cy.then(() => QuickMarcEditor().presentedRowsProperties())
       .then(presentedRowsProperties => {
         const shouldBeDeletedRowTag = presentedRowsProperties[shouldBeRemovedRowNumber].tag;
-        cy.do(getRowInteractor(shouldBeRemovedRowNumber).find(deleteFieldButton).click());
+        cy.do(getRowInteractorByRowNumber(shouldBeRemovedRowNumber).find(deleteFieldButton).click());
         cy.wrap(shouldBeDeletedRowTag).as('specialTag');
       });
     return cy.get('@specialTag');
@@ -96,19 +99,24 @@ export default class QuickmarcEditor {
   static confirmDelete() { cy.do(continueWithSaveButton.click()); }
 
   addRow(rowNumber) {
-    cy.do(getRowInteractor(rowNumber ?? this.getInitialRowsCount()).find(addFieldButton).click());
+    cy.do(getRowInteractorByRowNumber(rowNumber ?? this.getInitialRowsCount()).find(addFieldButton).click());
   }
 
   checkInitialContent(rowNumber) {
-    cy.expect(getRowInteractor(rowNumber ?? this.getInitialRowsCount() + 1)
+    cy.expect(getRowInteractorByRowNumber(rowNumber ?? this.getInitialRowsCount() + 1)
       .find(TextArea({ name: `records[${rowNumber ?? this.getInitialRowsCount() + 1}].content` }))
       .has({ value: defaultFieldValues.initialSubField }));
   }
 
   checkContent(content, rowNumber) {
-    cy.expect(getRowInteractor(rowNumber ?? this.getInitialRowsCount() + 1)
+    cy.expect(getRowInteractorByRowNumber(rowNumber ?? this.getInitialRowsCount() + 1)
       .find(TextArea({ name: `records[${rowNumber ?? this.getInitialRowsCount() + 1}].content` }))
       .has({ value: content ?? defaultFieldValues.contentWithSubfield }));
+  }
+
+  static checkEmptyContent(tagName) {
+    cy.expect(getRowInteractorByTagName(tagName).find(HTML({ className: including('quickMarcEditorRowContent') })).exists());
+    cy.expect(getRowInteractorByTagName(tagName).find(HTML({ className: including('quickMarcEditorRowContent') })).find(TextField()).absent());
   }
 
   fillAllAvailableValues(fieldContent, tag, initialRowsCount = this.validRecord.lastRowNumber) {
@@ -118,8 +126,8 @@ export default class QuickmarcEditor {
     const tagValue = tag ?? defaultFieldValues.freeTags[0];
     const content = fieldContent ?? defaultFieldValues.content;
 
-    cy.do(getRowInteractor(initialRowsCount + 1).find(contentTextArea).fillIn(content));
-    cy.do(getRowInteractor(initialRowsCount + 1).find(tagTextField).fillIn(tagValue));
+    cy.do(getRowInteractorByRowNumber(initialRowsCount + 1).find(contentTextArea).fillIn(content));
+    cy.do(getRowInteractorByRowNumber(initialRowsCount + 1).find(tagTextField).fillIn(tagValue));
 
     if (!content.match(/^\$\w/)) {
       return `${tagValue}${separator}${defaultFieldValues.getSourceContent(`${defaultFieldValues.initialSubField}${content}`)}`;
@@ -205,7 +213,7 @@ export default class QuickmarcEditor {
       cy.do(QuickMarcEditorRow({ tagValue: '008' }).find(byteProperty.interactor).fillIn(byteProperty.newValue));
     });
     // additional steps related with Spec ret
-    specRetInputNames.forEach(name => {
+    specRetInputNamesHoldings008.forEach(name => {
       // TODO: redesign to interactors
       cy.get(`input[name="${name}"]`).click();
       cy.get(`input[name="${name}"]`).type(`{backspace}{backspace}${tag008HoldingsBytesProperties.specRet0.newValue}`);
@@ -255,5 +263,14 @@ export default class QuickmarcEditor {
     cy.then(() => QuickMarcEditor().presentedRowsProperties())
       .then(presentedRowsProperties => presentedRowsProperties.filter(rowProperties => tags.includes(rowProperties.tag))
         .forEach(specialRowsProperties => cy.expect(specialRowsProperties.isDeleteButtonExist).to.be.false));
+  }
+
+  checkInitialInstance008Content() {
+    Object.values(this.validRecord.tag008BytesProperties).forEach(property => cy.expect(property.interactor.has({ value: property.defaultValue })));
+  }
+
+  static check008FieldsAbsent(...subfieldNames) {
+    subfieldNames.forEach(subfieldName => cy.expect(getRowInteractorByTagName('008').find(HTML({ className: including('quickMarcEditorRowContent') }))
+      .find(TextField(subfieldName)).absent()));
   }
 }
