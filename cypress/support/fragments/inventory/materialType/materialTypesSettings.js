@@ -26,17 +26,20 @@ const verifyMessageOfDeteted = (newMaterialTypeName) => {
   InteractorsTools.closeCalloutMessage();
 };
 
+const getDefaultMaterialType = () => {
+  return defaultMaterialType;
+};
+
 export default {
-  createApi() {
+  createApi(materialTypeProperties) {
     return cy
       .okapiRequest({
         method: 'POST',
         path: 'material-types',
-        body: defaultMaterialType,
+        body: materialTypeProperties,
       })
-      .then(({ body }) => {
-        Cypress.env('materialType', body);
-        return body;
+      .then(({ response }) => {
+        return response.body;
       });
   },
   deleteApi(id) {
@@ -45,6 +48,17 @@ export default {
       path: `material-types/${id}`,
     });
   },
+  getMaterialTypesApi: (searchParams) => {
+    return cy
+      .okapiRequest({
+        path: 'material-types',
+        searchParams,
+      })
+      .then(response => {
+        return response.body.mtypes;
+      });
+  },
+  getDefaultMaterialType,
   isPresented,
   isDeleted,
   verifyMessageOfDeteted,
