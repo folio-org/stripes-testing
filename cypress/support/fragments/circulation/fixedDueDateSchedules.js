@@ -1,5 +1,6 @@
+import uuid from 'uuid';
 import moment from 'moment';
-
+import getRandomPostfix from '../../utils/stringTools';
 import {
   Button,
   NavListItem,
@@ -42,4 +43,20 @@ export default {
     cy.do(Button({ id: 'clickable-save-fixedDueDateSchedule' }).click());
     this.checkSchedules(newScheduleData.schedules);
   },
+
+  createViaApi:() => {
+    return cy
+      .okapiRequest({
+        method: 'POST',
+        path: 'fixed-due-date-schedule-storage/fixed-due-date-schedules',
+        body: {
+          id: uuid(),
+          schedules:[{ from:new Date(), to:new Date(), due:new Date() }],
+          name: `autotest_schedule_${getRandomPostfix()}`,
+        },
+      })
+      .then(fixedDueDateSchedules => {
+        return fixedDueDateSchedules.body;
+      });
+  }
 };

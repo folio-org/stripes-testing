@@ -18,7 +18,7 @@ Cypress.Commands.add('getInstanceById', instanceId => {
 });
 
 Cypress.Commands.add('getLoanTypes', (searchParams) => {
-  cy
+  return cy
     .okapiRequest({
       path: 'loan-types',
       searchParams,

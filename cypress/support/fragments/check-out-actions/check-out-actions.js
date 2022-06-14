@@ -56,13 +56,16 @@ export default {
   },
   checkOutItemUser(userBarcode, itemBarcode) {
     cy.do(TextField({ name: 'patron.identifier' }).fillIn(userBarcode));
-    cy.intercept('/circulation/requests?*').as('getRequests');
+    cy.intercept('/circulation/loans?*').as('getLoans');
     cy.do(Button({ id: 'clickable-find-patron' }).click());
     cy.expect(KeyValue('Borrower').exists());
-    cy.wait('@getRequests');
+    cy.wait('@getLoans');
+    cy.intercept('/circulation/requests?*').as('getRequests');
     cy.do(TextField({ name: 'item.barcode' }).fillIn(itemBarcode));
     cy.wait('@getRequests');
     cy.do(Button({ id: 'clickable-add-item' }).click());
+    // waiters needs for check out item in loop
+    cy.wait(1000);
   },
 
   endCheckOutSession:() => {
