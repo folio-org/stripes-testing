@@ -5,11 +5,14 @@ import BulkEditSearchPane from '../../support/fragments/bulk-edit/bulk-edit-sear
 import FileManager from '../../support/utils/fileManager';
 import getRandomPostfix from '../../support/utils/stringTools';
 import devTeams from '../../support/dictionary/devTeams';
+import BulkEditActions from '../../support/fragments/bulk-edit/bulk-edit-actions';
 import users from '../../support/fragments/users/users';
 
 let user;
 const userUUIDsFileName = `C350905_userUUIDs_${getRandomPostfix()}.csv`;
 const invalidUserUUID = getRandomPostfix();
+const matchRecordsFileName = `C353233_matchedRecords_${getRandomPostfix()}.csv`;
+const importFileName = `C353233_bulkEditImport_${getRandomPostfix()}.csv`;
 
 describe('bulk-edit: csv file uploading', () => {
   before('create user', () => {
@@ -25,8 +28,14 @@ describe('bulk-edit: csv file uploading', () => {
       });
   });
 
+  afterEach('open bulk edit page', () => {
+    BulkEditActions.newBulkEdit();
+  });
+
   after('Delete all data', () => {
     FileManager.deleteFile(`cypress/fixtures/${userUUIDsFileName}`);
+    FileManager.deleteFile(`cypress/fixtures/${importFileName}`);
+    FileManager.deleteFile(`cypress/downloads/${matchRecordsFileName}`);
     users.deleteViaApi(user.userId);
   });
 
@@ -47,6 +56,28 @@ describe('bulk-edit: csv file uploading', () => {
     BulkEditSearchPane.changeShowColumnCheckbox('Email');
     BulkEditSearchPane.verifyResultColumTitles('Email');
 
+    BulkEditSearchPane.verifyErrorLabel(userUUIDsFileName, 1, 1);
+  });
+
+  it('C353233 Verify number of updated records', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
+    BulkEditSearchPane.selectRecordIdentifier('User UUIDs');
+
+    // Upload file
+    BulkEditSearchPane.uploadFile(userUUIDsFileName);
+    BulkEditSearchPane.waitFileUploading();
+
+    // Prepare file for bulk edit
+    BulkEditActions.downloadMatchedResults(matchRecordsFileName);
+    BulkEditActions.prepareBulkEditFileForImport(matchRecordsFileName, importFileName, user.username, 'test');
+
+    // Upload bulk edit file
+    BulkEditActions.openStartBulkEditForm();
+    BulkEditSearchPane.uploadFile(importFileName);
+    BulkEditSearchPane.waitFileUploading();
+    BulkEditActions.commitChanges();
+
+    // Verify changes
+    BulkEditSearchPane.verifyMatchedResults([user.username]);
     BulkEditSearchPane.verifyErrorLabel(userUUIDsFileName, 1, 1);
   });
 });
