@@ -9,15 +9,15 @@ describe('ui-organizations: View organization', () => {
   before(() => {
     cy.login(Cypress.env('diku_login'), Cypress.env('diku_password'));
     cy.getAdminToken();
-    cy.createOrganizationApi(organization);
+    Organizations.createOrganizationApi(organization)
+      .then(response => {
+        organization.id = response;
+      });
     cy.visit(TopMenu.organizationsPath);
   });
 
   after(() => {
-    cy.getOrganizationApi({ query: `name="${organization.name}"` })
-      .then(returnedOrganization => {
-        cy.deleteOrganizationApi(returnedOrganization.id);
-      });
+    Organizations.deleteOrganizationApi(organization.id);
   });
 
   it('C672 View existing organization record', { tags: [TestType.smoke] }, () => {
