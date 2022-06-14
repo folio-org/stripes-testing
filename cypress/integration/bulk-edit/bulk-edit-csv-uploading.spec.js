@@ -47,8 +47,8 @@ describe('bulk-edit: csv file uploading', () => {
     BulkEditSearchPane.uploadFile(userUUIDsFileName);
     BulkEditSearchPane.waitFileUploading();
 
-    BulkEditSearchPane.verifyMatchedResults([user.username]);
-    BulkEditSearchPane.verifyNonMatchedResults([invalidUserUUID]);
+    BulkEditSearchPane.verifyMatchedResults(user.username);
+    BulkEditSearchPane.verifyNonMatchedResults(invalidUserUUID);
 
     BulkEditSearchPane.verifyActionsAfterConductedCSVUploading();
     BulkEditSearchPane.verifyActionShowColumns();
@@ -77,7 +77,7 @@ describe('bulk-edit: csv file uploading', () => {
     BulkEditActions.commitChanges();
 
     // Verify changes
-    BulkEditSearchPane.verifyMatchedResults([user.username]);
+    BulkEditSearchPane.verifyMatchedResults(user.username);
     BulkEditSearchPane.verifyErrorLabel(userUUIDsFileName, 1, 1);
   });
 });
