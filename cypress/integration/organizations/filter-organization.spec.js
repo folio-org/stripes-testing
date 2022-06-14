@@ -9,14 +9,14 @@ describe('ui-organizations: Filtering organization', () => {
   before(() => {
     cy.login(Cypress.env('diku_login'), Cypress.env('diku_password'));
     cy.getAdminToken();
-    cy.createOrganizationApi(organization);
+    Organizations.createOrganizationApi(organization)
+      .then(response => {
+        organization.id = response;
+      });
   });
 
   after(() => {
-    cy.getOrganizationApi({ query: `name="${organization.name}"` })
-      .then(returnedOrganization => {
-        cy.deleteOrganizationApi(returnedOrganization.id);
-      });
+    Organizations.deleteOrganizationApi(organization.id);
   });
   [
     { filterActions: Organizations.selectActiveStatus },
