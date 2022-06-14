@@ -41,7 +41,7 @@ describe('ui-users:', () => {
           .then((body) => {
             limitLoanTypeId = body[0].id;
           });
-        cy.getLoanTypes({ limit: 1, query: 'name="Can circulate"' })
+        cy.getLoanTypes({ limit: 1, query: 'name="Reading Room"' })
           .then((body) => {
             loanTypeId = body[0].id;
           });
@@ -63,7 +63,6 @@ describe('ui-users:', () => {
         limitTestItems.push(getTestItem(limitLoanTypeId));
         limitTestItems.push(getTestItem(limitLoanTypeId));
         limitTestItems.push(getTestItem(limitLoanTypeId));
-        testItems.push(getTestItem(loanTypeId));
         testItems.push(getTestItem(loanTypeId));
         testItems.push(getTestItem(loanTypeId));
 
@@ -150,7 +149,7 @@ describe('ui-users:', () => {
       CheckInActions.createItemCheckinApi({
         itemBarcode: item.barcode,
         servicePointId: servicePoint.body.id,
-        checkInDate: '2021-09-30T16:14:50.444Z',
+        checkInDate: new Date().toISOString(),
       });
     });
     cy.wrap(limitTstInstanceIds.holdingIds.forEach(holdingsId => {
@@ -166,7 +165,7 @@ describe('ui-users:', () => {
       CheckInActions.createItemCheckinApi({
         itemBarcode: item.barcode,
         servicePointId: servicePoint.body.id,
-        checkInDate: '2021-09-30T16:14:50.444Z',
+        checkInDate: new Date().toISOString(),
       });
     });
     cy.wrap(testInstanceIds.holdingIds.forEach(holdingsId => {
@@ -191,13 +190,13 @@ describe('ui-users:', () => {
 
   it('C9277 Verify that maximum number of items borrowed for loan type (e.g. course reserve) limit works', { tags: [TestTypes.smoke] }, () => {
     cy.visit(TopMenu.checkOutPath);
-    limitTestItems.forEach((item) => {
-      СheckOutActions.checkOutItemUser(user.barcode, item.barcode);
-    });
-    LimitCheckOut.verifyErrorMessage(limitOfItem);
-    LimitCheckOut.cancelModal();
+    СheckOutActions.checkOutItemUser(user.barcode, limitTestItems[0].barcode);
+    СheckOutActions.checkOutItemUser(user.barcode, limitTestItems[1].barcode);
     testItems.forEach((item) => {
       СheckOutActions.checkOutItemUser(user.barcode, item.barcode);
     });
+    СheckOutActions.checkOutItemUser(user.barcode, limitTestItems[2].barcode);
+    LimitCheckOut.verifyErrorMessage(limitOfItem);
+    LimitCheckOut.cancelModal();
   });
 });
