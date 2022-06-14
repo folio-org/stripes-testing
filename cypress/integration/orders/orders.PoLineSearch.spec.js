@@ -94,7 +94,7 @@ describe('orders: Test Po line search', () => {
   });
 
   after(() => {
-    cy.deleteOrderApi(order.id);
+    Orders.deleteOrderApi(order.id);
   });
 
   searchers.forEach((searcher) => {
