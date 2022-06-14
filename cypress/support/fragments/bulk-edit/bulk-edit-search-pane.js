@@ -55,14 +55,14 @@ export default {
     cy.do(Button('Cancel').click());
   },
 
-  verifyMatchedResults(values) {
+  verifyMatchedResults(...values) {
     // values: array with cells content
     values.forEach(value => {
       cy.expect(resultsAccordion.find(MultiColumnListCell({ content: value })).exists());
     });
   },
 
-  verifyNonMatchedResults(values) {
+  verifyNonMatchedResults(...values) {
     // values: array with cells content
     cy.expect([
       errorsAccordion.find(MultiColumnListHeader('Record identifier')).exists(),
