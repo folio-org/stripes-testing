@@ -77,14 +77,14 @@ export default {
   updateApi(data) {
     return cy.updateCirculationRules(data);
   },
-  getRuleParams(defaultRules) {
+  getRuleProps(defaultRules) {
     const oIndex = defaultRules.indexOf(' o ', 2);
     const lIndex = defaultRules.indexOf(' l ', 2);
     const iIndex = defaultRules.indexOf(' i ', 2);
     const rIndex = defaultRules.indexOf(' r ', 2);
     const nIndex = defaultRules.indexOf(' n ', 2);
 
-    const defaultRuleParams = {
+    const baseRuleProps = {
       'o': defaultRules.substring(oIndex + 3, oIndex + 39),
       'l': defaultRules.substring(lIndex + 3, lIndex + 39),
       'i': defaultRules.substring(iIndex + 3, iIndex + 39),
@@ -92,7 +92,7 @@ export default {
       'n': defaultRules.substring(nIndex + 3, nIndex + 39)
     };
 
-    return defaultRuleParams;
+    return baseRuleProps;
   },
   addRuleApi(defaultRules, ruleParams, priority, priorityId) {
     const withNewRule = defaultRules + ' \n' + priority + priorityId + ': i ' + ruleParams.i + ' l ' + ruleParams.l + ' r ' + ruleParams.r + ' o ' + ruleParams.o + ' n ' + ruleParams.n;

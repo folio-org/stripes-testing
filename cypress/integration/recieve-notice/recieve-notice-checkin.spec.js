@@ -36,7 +36,8 @@ describe('Recieving notice: Checkin', () => {
     circAction3: 'Checked out',
     // TODO: add check for date with format <C6/8/2022, 6:46 AM>
     servicePoint: 'Online',
-    source: 'ADMINISTRATOR, DIKU',
+    source1: 'ADMINISTRATOR, DIKU',
+    source2: 'System',
     desc: 'Checked out to proxy: no.',
   };
   const testData = {
@@ -102,12 +103,12 @@ describe('Recieving notice: Checkin', () => {
       });
 
     cy.getCirculationRules().then((res) => {
-      testData.defaultRules = res.rulesAsText;
-      testData.ruleParams = CirculationRules.getRuleParams(res.rulesAsText);
+      testData.baseRules = res.rulesAsText;
+      testData.ruleProps = CirculationRules.getRuleProps(res.rulesAsText);
     });
 
     loanPolicy.getApi({ limit: 1 }).then((loanPolicyRes) => {
-      testData.ruleParams.l = loanPolicyRes.body.loanPolicies[0].id;
+      testData.ruleProps.l = loanPolicyRes.body.loanPolicies[0].id;
       testData.loanNoticeName = loanPolicyRes.body.loanPolicies[0].name;
     });
 
@@ -131,8 +132,8 @@ describe('Recieving notice: Checkin', () => {
         cy.deleteInstanceApi(instance.id);
       });
 
-    CirculationRules.deleteRuleApi(testData.defaultRules);
-    NoticePolicyApi.deleteApi(testData.ruleParams.n);
+    CirculationRules.deleteRuleApi(testData.baseRules);
+    NoticePolicyApi.deleteApi(testData.ruleProps.n);
     NoticePolicyTemplateApi.getViaApi({ query: `name=${noticePolicyTemplate.name}` }).then((templateId) => {
       NoticePolicyTemplateApi.deleteViaApi(templateId);
     });
@@ -159,8 +160,8 @@ describe('Recieving notice: Checkin', () => {
     NewNoticePolicy.checkAfterSaving(noticePolicy);
     NewNoticePolicy.checkNoticeActions(noticePolicy);
     cy.getNoticePolicy({ query: `name=="${noticePolicy.name}"` }).then((res) => {
-      testData.ruleParams.n = res[0].id;
-      CirculationRules.addRuleApi(testData.defaultRules, testData.ruleParams, 'g ', patronGroup.id);
+      testData.ruleProps.n = res[0].id;
+      CirculationRules.addRuleApi(testData.baseRules, testData.ruleProps, 'g ', patronGroup.id);
     });
 
     cy.visit(topMenu.checkOutPath);
