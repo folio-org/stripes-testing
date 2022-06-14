@@ -23,10 +23,3 @@ Cypress.Commands.add('getAcquisitionMethodsApi', (searchParams) => {
       searchParams
     });
 });
-
-Cypress.Commands.add('deleteOrderApi', (id) => {
-  cy.okapiRequest({
-    method: 'DELETE',
-    path: `orders/composite-orders/${id}`,
-  });
-});

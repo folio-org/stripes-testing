@@ -56,7 +56,7 @@ describe('orders: Test PO filters', () => {
   });
 
   after(() => {
-    cy.deleteOrderApi(order.id);
+    Orders.deleteOrderApi(order.id);
   });
 
   [
