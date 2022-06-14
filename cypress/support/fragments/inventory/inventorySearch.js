@@ -175,14 +175,12 @@ export default {
     cy.do(Button('Search').click());
     // cy.wait(['@getHoldings', '@getProfiles']);
   },
-
-  simpleSearchByParameter: (parameter, value) => {
+  instanceSearch: (parameter, value) => {
     cy.do(SearchField({ id: 'input-inventory-search' }).selectIndex(parameter));
     cy.do(TextField('Search ').fillIn(value));
     cy.do(Button('Search').focus());
     cy.do(Button('Search').click());
   },
-
   switchToItem: () => {
     cy.do(Button({ id: 'segment-navigation-items' }).click());
   },
