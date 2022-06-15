@@ -9,6 +9,7 @@ describe('ui-circulation-settings: create patron notice policies', () => {
   });
 
   it('C6530 Create notice policy', { tags: [TestType.smoke] }, () => {
+    NewNoticePolicy.waitLoading();
     NewNoticePolicy.startAdding();
     NewNoticePolicy.checkInitialState();
     NewNoticePolicy.fillGeneralInformation(noticePolicy);
