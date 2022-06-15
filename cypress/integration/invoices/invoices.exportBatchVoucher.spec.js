@@ -17,7 +17,7 @@ describe('ui-invoices-settings: Export batch voucher', () => {
   const fund = { ...NewFund.defaultFund };
   const subtotalValue = 100;
   const batchGroupConfiguration = {
-    batchGroupId: 'cd592659-77aa-4eb3-ac34-c9a4657bb20f',
+    batchGroupId: '',
     format: 'Application/json'
   };
 
@@ -30,7 +30,11 @@ describe('ui-invoices-settings: Export batch voucher', () => {
           organization.addresses.find(address => address.isPrimary === true));
       });
     cy.getBatchGroups()
-      .then(batchGroup => { invoice.batchGroup = batchGroup.name; });
+      .then(batchGroup => {
+        invoice.batchGroup = batchGroup.name;
+        batchGroupConfiguration.batchGroupId = batchGroup.id;
+      });
+    console.log(batchGroupConfiguration);
     SettingsInvoices.setConfigurationBatchGroup(batchGroupConfiguration);
     Funds.createFundViaUI(fund)
       .then(
