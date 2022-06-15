@@ -16,6 +16,8 @@ import InventoryActions from './inventoryActions';
 const effectiveLocationInput = Accordion({ id: 'effectiveLocation' });
 const languageInput = Accordion({ id: 'language' });
 const keywordInput = TextField({ id: 'input-inventory-search' });
+const searchButton = Button('Search');
+const searchTextField = TextField('Search ');
 
 export default {
   effectiveLocation: {
@@ -57,7 +59,7 @@ export default {
   byKeywords(kw = '*') {
     return cy.do([
       keywordInput.fillIn(kw),
-      Button('Search').click(),
+      searchButton.click(),
     ]);
   },
 
@@ -167,19 +169,25 @@ export default {
 
   searchByParameter: (parameter, value) => {
     cy.do(SearchField({ id: 'input-inventory-search' }).selectIndex(parameter));
-    cy.do(TextField('Search ').fillIn(value));
+    cy.do(searchTextField.fillIn(value));
     // TODO: clarify the reason of failed waiter
     // cy.intercept('/holdings-storage/holdings?*').as('getHoldings');
     // cy.intercept('/copycat/profiles?*').as('getProfiles');
-    cy.do(Button('Search').focus());
-    cy.do(Button('Search').click());
+    cy.do(searchButton.focus());
+    cy.do(searchButton.click());
     // cy.wait(['@getHoldings', '@getProfiles']);
+  },
+  simpleSearchByParameter: (parameter, value) => {
+    cy.do(SearchField({ id: 'input-inventory-search' }).selectIndex(parameter));
+    cy.do(searchTextField.fillIn(value));
+    cy.do(searchButton.focus());
+    cy.do(searchButton.click());
   },
   instanceSearch: (parameter, value) => {
     cy.do(SearchField({ id: 'input-inventory-search' }).selectIndex(parameter));
-    cy.do(TextField('Search ').fillIn(value));
-    cy.do(Button('Search').focus());
-    cy.do(Button('Search').click());
+    cy.do(searchTextField.fillIn(value));
+    cy.do(searchButton.focus());
+    cy.do(searchButton.click());
   },
   switchToItem: () => {
     cy.do(Button({ id: 'segment-navigation-items' }).click());

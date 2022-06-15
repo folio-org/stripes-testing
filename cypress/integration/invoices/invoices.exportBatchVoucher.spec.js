@@ -8,6 +8,7 @@ import NewFund from '../../support/fragments/finance/funds/newFund';
 import Funds from '../../support/fragments/finance/funds/funds';
 import DateTools from '../../support/utils/dateTools';
 import FileManager from '../../support/utils/fileManager';
+import SettingsInvoices from '../../support/fragments/invoices/settingsInvoices';
 
 describe('ui-invoices-settings: Export batch voucher', () => {
   const invoice = { ...NewInvoice.defaultUiInvoice };
@@ -15,6 +16,10 @@ describe('ui-invoices-settings: Export batch voucher', () => {
   const invoiceLine = { ...NewInvoiceLine.defaultUiInvoiceLine };
   const fund = { ...NewFund.defaultFund };
   const subtotalValue = 100;
+  const batchGroupConfiguration = {
+    batchGroupId: '',
+    format: 'Application/json'
+  };
 
   before(() => {
     cy.getToken(Cypress.env('diku_login'), Cypress.env('diku_password'));
@@ -25,7 +30,11 @@ describe('ui-invoices-settings: Export batch voucher', () => {
           organization.addresses.find(address => address.isPrimary === true));
       });
     cy.getBatchGroups()
-      .then(batchGroup => { invoice.batchGroup = batchGroup.name; });
+      .then(batchGroup => {
+        invoice.batchGroup = batchGroup.name;
+        batchGroupConfiguration.batchGroupId = batchGroup.id;
+      });
+    SettingsInvoices.setConfigurationBatchGroup(batchGroupConfiguration);
     Funds.createFundViaUI(fund)
       .then(
         () => {
