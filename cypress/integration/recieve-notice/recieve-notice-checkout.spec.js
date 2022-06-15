@@ -140,7 +140,7 @@ describe('Recieving notice: Checkout', () => {
 
   it('C347621 Check that user can receive notice with multiple items after finishing the session "Check out" by clicking the End Session button', { tags: [testTypes.smoke, devTeams.vega] }, () => {
     NewNoticePolicyTemplate.startAdding();
-    NewNoticePolicyTemplate.checInitialState();
+    NewNoticePolicyTemplate.checkInitialState();
     NewNoticePolicyTemplate.create(noticePolicyTemplate);
     NewNoticePolicyTemplate.addToken(noticePolicyTemplate);
     noticePolicyTemplate.body += '{{item.title}}';
@@ -151,7 +151,7 @@ describe('Recieving notice: Checkout', () => {
     cy.visit(settingsMenu.circulationPatronNoticePoliciesPath);
     NewNoticePolicy.waitLoading();
     NewNoticePolicy.startAdding();
-    NewNoticePolicy.checInitialState();
+    NewNoticePolicy.checkInitialState();
     NewNoticePolicy.fillGeneralInformation(noticePolicy);
     NewNoticePolicy.addNotice(noticePolicy);
     NewNoticePolicy.save();

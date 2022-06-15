@@ -93,7 +93,7 @@ export default {
     ]);
   },
 
-  checInitialState() {
+  checkInitialState() {
     cy.expect([
       Heading(titles.newTemplate).exists(),
       nameField.exists(),
