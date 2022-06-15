@@ -1,6 +1,6 @@
 /* eslint-disable cypress/no-unnecessary-waiting */
 import getRandomPostfix from '../../utils/stringTools';
-import { Button, TextField, TextArea, KeyValue, Checkbox, Link, Heading, Select, PaneSet } from '../../../../interactors';
+import { Button, TextField, TextArea, KeyValue, Checkbox, Link, Heading, Select, PaneSet, Alert } from '../../../../interactors';
 import richTextEditor from '../../../../interactors/rich-text-editor';
 import { NOTICE_CATEGORIES } from './notice-policy';
 import { actionsButtons } from './newNoticePolicy';
@@ -49,6 +49,7 @@ export default {
       descriptionField.fillIn(noticePolicyTemplate.description),
       subjectField.fillIn(noticePolicyTemplate.subject),
     ]);
+    cy.expect(Alert('Always sent at the end of a session and loans are bundled into a single notice for each patron.').exists());
   },
 
   startAdding() {
