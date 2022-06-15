@@ -77,27 +77,31 @@ export default {
     cy.expect(HTML(`${fileName}: ${validRecordCount + invalidRecordCount} entries * ${validRecordCount} records matched * ${invalidRecordCount} errors`).exists());
   },
 
-  verifyActionsAfterConductedCSVUploading() {
+  verifyActionsAfterConductedCSVUploading(errors = true) {
     cy.do(Button('Actions').click());
     cy.expect([
       Button('Download matched records (CSV)').exists(),
-      Button('Download errors (CSV)').exists(),
       Button('Start bulk edit (CSV)').exists(),
       DropdownMenu().find(HTML('Show columns')).exists(),
     ]);
+    if (errors) {
+      cy.expect(Button('Download errors (CSV)').exists());
+    }
   },
 
-  verifyActionsAfterConductedInAppUploading() {
+  verifyActionsAfterConductedInAppUploading(errors = true) {
     cy.do(Button('Actions').click());
     cy.expect([
       Button('Download matched records (CSV)').exists(),
-      Button('Download errors (CSV)').exists(),
       Button('Start bulk edit').exists(),
       DropdownMenu().find(HTML('Show columns')).exists(),
     ]);
+    if (errors) {
+      cy.expect(Button('Download errors (CSV)').exists());
+    }
   },
 
-  verifyActionShowColumns() {
+  verifyUsersActionShowColumns() {
     cy.expect([
       DropdownMenu().find(Checkbox('Status')).exists(),
       DropdownMenu().find(Checkbox('Last name')).exists(),
@@ -107,6 +111,28 @@ export default {
       DropdownMenu().find(Checkbox('Username')).exists(),
       DropdownMenu().find(Checkbox('Email')).exists(),
       DropdownMenu().find(Checkbox('Expiration date')).exists(),
+    ]);
+  },
+
+  verifyItemsActionDropdownItems() {
+    cy.expect([
+      DropdownMenu().find(Checkbox({ name: 'barcode', checked: true })).exists(),
+      DropdownMenu().find(Checkbox({ name: 'status', checked: true })).exists(),
+      DropdownMenu().find(Checkbox({ name: 'effectiveLocation', checked: true })).exists(),
+      DropdownMenu().find(Checkbox({ name: 'callNumber', checked: true })).exists(),
+      DropdownMenu().find(Checkbox({ name: 'hrid', checked: true })).exists(),
+      DropdownMenu().find(Checkbox({ name: 'materialType', checked: true })).exists(),
+      DropdownMenu().find(Checkbox({ name: 'permanentLoanType', checked: true })).exists(),
+      DropdownMenu().find(Checkbox({ name: 'temporaryLoanType', checked: true })).exists(),
+      DropdownMenu().find(Checkbox({ name: 'id', checked: false })).exists(),
+      DropdownMenu().find(Checkbox({ name: 'formerIds', checked: false })).exists(),
+      DropdownMenu().find(Checkbox({ name: 'accessionNumber', checked: false })).exists(),
+      DropdownMenu().find(Checkbox({ name: 'permanentLocation', checked: false })).exists(),
+      DropdownMenu().find(Checkbox({ name: 'temporaryLocation', checked: false })).exists(),
+      DropdownMenu().find(Checkbox({ name: 'copyNumber', checked: false })).exists(),
+      DropdownMenu().find(Checkbox({ name: 'enumeration', checked: false })).exists(),
+      DropdownMenu().find(Checkbox({ name: 'chronology', checked: false })).exists(),
+      DropdownMenu().find(Checkbox({ name: 'volume', checked: false })).exists(),
     ]);
   },
 
