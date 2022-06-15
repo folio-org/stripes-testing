@@ -11,7 +11,6 @@ import {
   Heading,
   PaneSet,
   KeyValue,
-  Alert,
 } from '../../../../interactors';
 
 const actionsButton = Button('Actions');
@@ -56,10 +55,6 @@ export default {
     ]);
   },
 
-  create(patronNoticePolicy) {
-    this.fillGeneralInformation(patronNoticePolicy);
-  },
-
   startAdding() {
     cy.do(Button({ id: 'clickable-create-entry' }).click());
   },
@@ -78,7 +73,7 @@ export default {
     cy.expect(NavListItem(patronNoticePolicy.name).exists());
   },
 
-  checInitialState() {
+  checkInitialState() {
     cy.expect([
       Heading('New patron notice policy').exists(),
       nameField.exists(),
