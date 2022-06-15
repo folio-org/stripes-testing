@@ -10,22 +10,20 @@ describe('ui-circulation-settings: create patron notice policies', () => {
   });
 
   it('C6530 Create notice policy', { tags: [TestType.smoke] }, () => {
-    try {
-      NewNoticePolicy.waitLoading();
-      NewNoticePolicy.startAdding();
-      NewNoticePolicy.checInitialState();
-      NewNoticePolicy.fillGeneralInformation(noticePolicy);
-      NewNoticePolicy.save();
-      NewNoticePolicy.check(noticePolicy);
-      NewNoticePolicy.choosePolicy(noticePolicy);
-      NewNoticePolicy.duplicatePolicy(noticePolicy);
-      NewNoticePolicy.deletePolicy(noticePolicy);
-      NewNoticePolicy.choosePolicy(noticePolicy);
-      NewNoticePolicy.editPolicy(noticePolicy);
-      NewNoticePolicy.save(noticePolicy);
-      NewNoticePolicy.check(noticePolicy);
-      NewNoticePolicy.choosePolicy(noticePolicy);
-      NewNoticePolicy.deletePolicy(noticePolicy);
-    } catch (error) { console.log(error); }
+    NewNoticePolicy.waitLoading();
+    NewNoticePolicy.startAdding();
+    NewNoticePolicy.checInitialState();
+    NewNoticePolicy.fillGeneralInformation(noticePolicy);
+    NewNoticePolicy.save();
+    NewNoticePolicy.check(noticePolicy);
+    NewNoticePolicy.choosePolicy(noticePolicy);
+    NewNoticePolicy.duplicatePolicy(noticePolicy);
+    NewNoticePolicy.deletePolicy(noticePolicy);
+    NewNoticePolicy.choosePolicy(noticePolicy);
+    NewNoticePolicy.editPolicy(noticePolicy);
+    NewNoticePolicy.save(noticePolicy);
+    NewNoticePolicy.check(noticePolicy);
+    NewNoticePolicy.choosePolicy(noticePolicy);
+    NewNoticePolicy.deletePolicy(noticePolicy);
   });
 });
