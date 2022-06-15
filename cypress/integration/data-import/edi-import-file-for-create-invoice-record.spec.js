@@ -15,6 +15,10 @@ import permissions from '../../support/dictionary/permissions';
 import users from '../../support/fragments/users/users';
 
 describe('ui-data-import: EDIFACT file import with creating of new invoice record', () => {
+  // unique name for profiles
+  const mappingProfileName = `autoTestMappingProf.${getRandomPostfix()}`;
+  const actionProfileName = `autoTestActionProf.${getRandomPostfix()}`;
+  const jobProfileName = `autoTestJobProf.${getRandomPostfix()}`;
   let user = {};
 
   before(() => {
@@ -37,14 +41,14 @@ describe('ui-data-import: EDIFACT file import with creating of new invoice recor
       .then(id => cy.deleteInvoiceFromStorageApi(id));
     DataImport.checkUploadState();
     users.deleteViaApi(user.userId);
+
+    // clean up generated profiles
+    JobProfiles.deleteJobProfile(jobProfileName);
+    ActionProfiles.deleteActionProfile(actionProfileName);
+    FieldMappingProfiles.deleteFieldMappingProfile(mappingProfileName);
   });
 
   it('C343338 EDIFACT file import with creating of new invoice record', { tags: [TestTypes.smoke] }, () => {
-    // unique name for profiles
-    const mappingProfileName = `autoTestMappingProf.${getRandomPostfix()}`;
-    const actionProfileName = `autoTestActionProf.${getRandomPostfix()}`;
-    const jobProfileName = `autoTestJobProf.${getRandomPostfix()}`;
-
     // unique file name to upload
     const fileName = `C343338autotestFile.${getRandomPostfix()}.edi`;
 
@@ -85,13 +89,8 @@ describe('ui-data-import: EDIFACT file import with creating of new invoice recor
     JobProfiles.runImportFile(fileName);
     Logs.checkImportFile(jobProfile.profileName);
     Logs.checkStatusOfJobProfile();
-    Logs.openFileDetails(fileName);
+    Logs.openFileDetails();
     FileDetails.checkStatusInColumn(FileDetails.status.created, FileDetails.columnName.invoice);
     InvoiceView.checkInvoiceDetails(InvoiceView.vendorInvoiceNumber);
-
-    // clean up generated profiles
-    JobProfiles.deleteJobProfile(jobProfileName);
-    ActionProfiles.deleteActionProfile(actionProfileName);
-    FieldMappingProfiles.deleteFieldMappingProfile(mappingProfileName);
   });
 });
