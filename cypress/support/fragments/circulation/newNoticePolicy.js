@@ -11,6 +11,7 @@ import {
   Heading,
   PaneSet,
   KeyValue,
+  Alert,
 } from '../../../../interactors';
 
 const actionsButton = Button('Actions');
@@ -70,6 +71,7 @@ export default {
       Select({ name: `${patronNoticePolicy.noticeId}Notices[0].format` }).choose(patronNoticePolicy.format),
       Select({ name: `${patronNoticePolicy.noticeId}Notices[0].sendOptions.sendWhen` }).choose(patronNoticePolicy.action),
     ]);
+    // add check for alert "div[role=alert]" 'Always sent at the end of a session and loans are bundled into a single notice for each patron.'
   },
 
   check: (patronNoticePolicy) => {
