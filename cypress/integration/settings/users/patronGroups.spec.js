@@ -43,7 +43,7 @@ describe('Patron blocks relations with users, conditions', () => {
               UsersCard.startFeeFine();
               UserCharge.fillRequiredFields(owner.ownerName, manualCharge.feeFineType);
               UserCharge.chargeOnly();
-              // TODO: clarify the issue when error message is not presented in cypress env. Work correctly in current snapshot
+              // TODO: clarify the issue when error message is not presented in cypress env time to time
               UsersCard.hasSaveError(UsersCard.errors.patronHasBlocksInPlace);
             });
           });
