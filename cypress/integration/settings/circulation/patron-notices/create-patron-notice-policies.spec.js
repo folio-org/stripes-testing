@@ -5,8 +5,7 @@ import SettingsMenu from '../../../../support/fragments/settingsMenu';
 describe('ui-circulation-settings: create patron notice policies', () => {
   const noticePolicy = { ...NewNoticePolicy.defaultUi };
   beforeEach('login', () => {
-    cy.login(Cypress.env('diku_login'), Cypress.env('diku_password'));
-    cy.visit(`${SettingsMenu.circulationPatronNoticePoliciesPath}`);
+    cy.loginAsAdmin({ path: SettingsMenu.circulationPatronNoticePoliciesPath, waiter: NewNoticePolicy.waitLoading });
   });
 
   it('C6530 Create notice policy', { tags: [TestType.smoke] }, () => {
