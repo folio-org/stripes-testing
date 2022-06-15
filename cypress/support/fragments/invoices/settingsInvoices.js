@@ -94,11 +94,10 @@ export default {
     ]);
   },
 
-  setConfigurationBatchGroup: (body) => {
-    cy.okapiRequest({
-      method: 'POST',
-      path: 'batch-voucher/export-configurations',
-      body,
-    });
-  }
+  setConfigurationBatchGroup: body => cy.okapiRequest({
+    method: 'POST',
+    path: 'batch-voucher/export-configurations',
+    body
+  }),
+
 };
