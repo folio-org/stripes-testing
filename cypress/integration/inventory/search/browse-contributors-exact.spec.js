@@ -15,9 +15,7 @@ describe('Search: browse contributors with exact match query', () => {
     contributors: [
       {
         name: `__A_test_contributor_${getRandomPostfix()}`,
-        contributorNameTypeId: '2b94c631-fca9-4892-a730-03ee529ffe2a',
         primary: false,
-        contributorTypeText: '',
       }
     ],
     id: uuid()
@@ -29,9 +27,7 @@ describe('Search: browse contributors with exact match query', () => {
     contributors: [
       {
         name: `__Z_test_contributor_${getRandomPostfix()}`,
-        contributorNameTypeId: '2b94c631-fca9-4892-a730-03ee529ffe2a',
         primary: false,
-        contributorTypeText: '',
       }
     ],
     id: uuid()
@@ -40,56 +36,54 @@ describe('Search: browse contributors with exact match query', () => {
   beforeEach('Creating user and "Instance" records with contributors', () => {
     cy.getAdminToken();
 
-    // cy.getInstanceTypes({ limit: 1 }).then((res) => {
-    //   instanceA.instanceTypeId = res[0].id;
-    //   instanceZ.instanceTypeId = res[0].id;
-    // });
+    cy.getInstanceTypes({ limit: 1 }).then((res) => {
+      instanceA.instanceTypeId = res[0].id;
+      instanceZ.instanceTypeId = res[0].id;
+    });
 
-    // browseContributors.getContributorNameTypes().then((res) => {
-    //   instanceA.contributors[0].contributorNameTypeId = res.body.contributorNameTypes[0].id;
-    //   instanceA.contributors[0].contributorTypeText = res.body.contributorNameTypes[0].name;
-    //   instanceZ.contributors[0].contributorNameTypeId = res.body.contributorNameTypes[0].id;
-    //   instanceZ.contributors[0].contributorTypeText = res.body.contributorNameTypes[0].name;
-    // });
+    browseContributors.getContributorNameTypes().then((res) => {
+      instanceA.contributors[0].contributorNameTypeId = res.body.contributorNameTypes[0].id;
+      instanceA.contributors[0].contributorTypeText = res.body.contributorNameTypes[0].name;
+      instanceZ.contributors[0].contributorNameTypeId = res.body.contributorNameTypes[0].id;
+      instanceZ.contributors[0].contributorTypeText = res.body.contributorNameTypes[0].name;
+    });
 
-    // browseContributors.createInstanceWithContributorViaApi(instanceA);
-    // browseContributors.createInstanceWithContributorViaApi(instanceZ);
-    // cy.getInstanceById(instanceA.id)
-    //   .then((res) => {
-    //     testData.instanceAProps = res;
-    //     cy.log(testData.instanceA);
-    //   });
-    // cy.getInstanceById(instanceZ.id)
-    //   .then((res) => {
-    //     testData.instanceZProps = res;
-    //     cy.log(testData.instanceZProps);
-    //   });
+    browseContributors.createInstanceWithContributorViaApi(instanceA);
+    browseContributors.createInstanceWithContributorViaApi(instanceZ);
+    cy.getInstanceById(instanceA.id)
+      .then((res) => {
+        testData.instanceAProps = res;
+      });
+    cy.getInstanceById(instanceZ.id)
+      .then((res) => {
+        testData.instanceZProps = res;
+      });
 
 
-    // cy.createTempUser([
-    //   permissions.uiInventoryViewInstances.gui,
-    // ]).then((resUserProperties) => {
-    //   testData.user = resUserProperties;
-    cy.loginAsAdmin();
-      // cy.login(resUserProperties.username, resUserProperties.password);
+    cy.createTempUser([
+      permissions.uiInventoryViewInstances.gui,
+    ]).then((resUserProperties) => {
+      testData.user = resUserProperties;
+      cy.login(resUserProperties.username, resUserProperties.password);
       cy.visit(topMenu.inventoryPath);
-    // });
+    });
   });
+
   it('C353639 Browse contributors with exact match query', () => {
     inventorySearch.verifyKeywordsAsDefault();
     browseContributors.checkBrowseOptions();
     browseContributors.select();
     browseContributors.checkSearch();
-    browseContributors.browse('__A_test_contributor_848.0936288305725789');
-    // browseContributors.browse(instanceA.contributors[0].name);
-    // browseContributors.checkExactSearchResult(instanceA.contributors[0]);
+    browseContributors.browse(instanceA.contributors[0].name);
+    browseContributors.checkExactSearchResult(instanceA.contributors[0]);
     browseContributors.checkInstanceOrder();
-    // browseContributors.openInstance(instanceA.contributors[0]);
-    // browseContributors.checkInstance(instanceA);
+    browseContributors.openInstance(instanceA.contributors[0]);
+    browseContributors.checkInstance(instanceA);
   });
+
   afterEach('Deleting user', () => {
-    // users.deleteViaApi(testData.user.userId);
-    // cy.deleteInstanceApi(instanceA.id);
-    // cy.deleteInstanceApi(instanceZ.id);
+    users.deleteViaApi(testData.user.userId);
+    cy.deleteInstanceApi(instanceA.id);
+    cy.deleteInstanceApi(instanceZ.id);
   });
 });
