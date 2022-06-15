@@ -9,6 +9,7 @@ import InventoryInstances from '../../support/fragments/inventory/inventoryInsta
 import getRandomPostfix from '../../support/utils/stringTools';
 import FileManager from '../../support/utils/fileManager';
 import users from '../../support/fragments/users/users';
+import BulkEditActions from '../../support/fragments/bulk-edit/bulk-edit-actions';
 
 let user;
 const item = {
@@ -41,6 +42,9 @@ describe('bulk-edit: in-app file uploading', () => {
     FileManager.deleteFile(`cypress/fixtures/${validItemBarcodesFileName}`);
   });
 
+  afterEach('open bulk edit page', () => {
+    BulkEditActions.newBulkEdit();
+  });
 
   it('C350905 Negative uploading file with identifiers -- In app approach', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
     BulkEditSearchPane.selectRecordIdentifier('Item barcode');
@@ -64,8 +68,8 @@ describe('bulk-edit: in-app file uploading', () => {
     BulkEditSearchPane.uploadFile(invalidItemBarcodesFileName);
     BulkEditSearchPane.waitFileUploading();
 
-    BulkEditSearchPane.verifyMatchedResults([item.itemBarcode]);
-    BulkEditSearchPane.verifyNonMatchedResults([invalidBarcode]);
+    BulkEditSearchPane.verifyMatchedResults(item.itemBarcode);
+    BulkEditSearchPane.verifyNonMatchedResults(invalidBarcode);
 
     BulkEditSearchPane.verifyActionsAfterConductedInAppUploading();
 
@@ -95,5 +99,20 @@ describe('bulk-edit: in-app file uploading', () => {
 
     BulkEditSearchPane.changeShowColumnCheckbox('Item UUID');
     BulkEditSearchPane.verifyResultColumTitles('Item UUID');
+  });
+
+  it('C350943 Verify Record identifiers dropdown -- Inventory-Items app', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
+    BulkEditSearchPane.verifyItemIdentifiers();
+
+    [
+      { identifier: 'Item barcode', label: 'Select a file with item barcode' },
+      { identifier: 'Item UUIDs', label: 'Select a file with item UUIDs' },
+      { identifier: 'Item former identifier', label: 'Select a file with item former identifier' },
+      { identifier: 'Item accession number', label: 'Select a file with item accession number' },
+      { identifier: 'Holdings UUIDs', label: 'Select a file with holdings UUIDs' },
+    ].forEach(checker => {
+      BulkEditSearchPane.selectRecordIdentifier(checker.identifier);
+      BulkEditSearchPane.verifyInputLabel(checker.label);
+    });
   });
 });
