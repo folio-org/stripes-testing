@@ -42,9 +42,9 @@ describe('bulk-edit: in-app file uploading', () => {
     FileManager.deleteFile(`cypress/fixtures/${validItemBarcodesFileName}`);
   });
 
-  // afterEach('open bulk edit page', () => {
-  //   BulkEditActions.newBulkEdit();
-  // });
+  afterEach('open bulk edit page', () => {
+    BulkEditActions.newBulkEdit();
+  });
 
   it('C350905 Negative uploading file with identifiers -- In app approach', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
     BulkEditSearchPane.selectRecordIdentifier('Item barcode');
