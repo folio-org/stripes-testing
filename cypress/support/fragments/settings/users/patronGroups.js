@@ -1,6 +1,6 @@
 import uuid from 'uuid';
-import { PaneHeader, Section, Button, TextField, including } from '../../../../../interactors';
 import getRandomPostfix from '../../../utils/stringTools';
+import { PaneHeader, Section, Button, TextField, including } from '../../../../../interactors';
 
 
 const rootSection = Section({ id:'controlled-vocab-pane' });
