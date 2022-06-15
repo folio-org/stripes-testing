@@ -93,7 +93,7 @@ export default {
     ]);
   },
 
-  checInitialState() {
+  checkInitialState() {
     cy.expect([
       Heading(titles.newTemplate).exists(),
       nameField.exists(),
@@ -119,7 +119,6 @@ export default {
   checkAfterSaving: (noticePolicyTemplate) => {
     Object.values(noticePolicyTemplate).forEach((prop) => cy.expect(PaneSet().find(KeyValue({ value: prop }))));
   },
-
 
   delete: () => {
     cy.do([

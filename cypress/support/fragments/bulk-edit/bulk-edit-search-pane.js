@@ -14,6 +14,7 @@ import {
 
 const resultsAccordion = Accordion('Preview of record matched');
 const errorsAccordion = Accordion('Errors');
+const recordIdentifier = Select('Record identifier');
 
 export default {
   verifyCsvViewPermission() {
@@ -35,7 +36,22 @@ export default {
   },
 
   selectRecordIdentifier(value) {
-    cy.do(Select('Record identifier').choose(value));
+    cy.do(recordIdentifier.choose(value));
+  },
+
+  verifyItemIdentifiers() {
+    cy.expect([
+      recordIdentifier.find(HTML('Item barcode')).exists(),
+      recordIdentifier.find(HTML('Item UUIDs')).exists(),
+      recordIdentifier.find(HTML('Item HRIDs')).exists(),
+      recordIdentifier.find(HTML('Item former identifier')).exists(),
+      recordIdentifier.find(HTML('Item accession number')).exists(),
+      recordIdentifier.find(HTML('Holdings UUIDs')).exists(),
+    ]);
+  },
+
+  verifyInputLabel(name) {
+    cy.expect(HTML(name).exists());
   },
 
   checkUsersRadio() {
