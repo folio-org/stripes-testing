@@ -120,7 +120,6 @@ export default {
     Object.values(noticePolicyTemplate).forEach((prop) => cy.expect(PaneSet().find(KeyValue({ value: prop }))));
   },
 
-
   delete: () => {
     cy.do([
       actionsButton.click(),
