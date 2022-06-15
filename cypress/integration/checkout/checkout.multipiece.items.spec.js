@@ -110,11 +110,10 @@ describe('Check Out', () => {
         })).then(() => {
           cy.deleteInstanceApi(testInstanceIds.instanceId);
         });
-        cy.wrap(UsersEditPage.changeServicePointPreferenceViaApi(user.userId, [servicePoint.body.id]))
-          .then(() => {
-            cy.deleteServicePoint(servicePoint.body.id);
-            Users.deleteViaApi(user.userId);
-          });
+        UsersEditPage.changeServicePointPreferenceViaApi(user.userId, [servicePoint.body.id]).then(() => {
+          cy.deleteServicePoint(servicePoint.body.id);
+          Users.deleteViaApi(user.userId);
+        });
       });
   });
 
