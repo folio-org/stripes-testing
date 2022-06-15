@@ -51,7 +51,7 @@ describe('bulk-edit: csv file uploading', () => {
     BulkEditSearchPane.verifyNonMatchedResults(invalidUserUUID);
 
     BulkEditSearchPane.verifyActionsAfterConductedCSVUploading();
-    BulkEditSearchPane.verifyActionShowColumns();
+    BulkEditSearchPane.verifyUsersActionShowColumns();
 
     BulkEditSearchPane.changeShowColumnCheckbox('Email');
     BulkEditSearchPane.verifyResultColumTitles('Email');

@@ -38,10 +38,12 @@ describe('Patron blocks relations with users, conditions', () => {
             ManualCharges.createViaApi({ ...ManualCharges.defaultFeeFineType, ownerId: owner.id, defaultAmount: testData.chargeAmount }).then(manualCharge => {
               testData.manualChargeId = manualCharge.id;
               cy.loginAsAdmin({ path: AppPaths.getUserPreviewPath(userProperties.id), waiter: UsersCard.waitLoading });
+              // TODO: clarify the reason of extra reloading
+              cy.reload();
               UsersCard.startFeeFine();
               UserCharge.fillRequiredFields(owner.ownerName, manualCharge.feeFineType);
               UserCharge.chargeOnly();
-              // TODO: clarify the issue when error message is not presented in cypress env. Work correctly in current snapshot
+              // TODO: clarify the issue when error message is not presented in cypress env time to time
               UsersCard.hasSaveError(UsersCard.errors.patronHasBlocksInPlace);
             });
           });
