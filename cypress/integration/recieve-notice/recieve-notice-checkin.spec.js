@@ -153,7 +153,7 @@ describe('Recieving notice: Checkin', () => {
     NewNoticePolicy.waitLoading();
     NewNoticePolicy.startAdding();
     NewNoticePolicy.checInitialState();
-    NewNoticePolicy.create(noticePolicy);
+    NewNoticePolicy.fillGeneralInformation(noticePolicy);
     NewNoticePolicy.addNotice(noticePolicy);
     NewNoticePolicy.save();
     NewNoticePolicy.check(noticePolicy);

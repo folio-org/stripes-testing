@@ -11,7 +11,6 @@ import {
   Heading,
   PaneSet,
   KeyValue,
-  Alert,
 } from '../../../../interactors';
 
 const actionsButton = Button('Actions');
@@ -54,10 +53,6 @@ export default {
         patronNoticePolicy.description
       ),
     ]);
-  },
-
-  create(patronNoticePolicy) {
-    this.fillGeneralInformation(patronNoticePolicy);
   },
 
   startAdding() {

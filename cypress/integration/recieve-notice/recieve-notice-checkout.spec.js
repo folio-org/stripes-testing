@@ -152,7 +152,7 @@ describe('Recieving notice: Checkout', () => {
     NewNoticePolicy.waitLoading();
     NewNoticePolicy.startAdding();
     NewNoticePolicy.checInitialState();
-    NewNoticePolicy.create(noticePolicy);
+    NewNoticePolicy.fillGeneralInformation(noticePolicy);
     NewNoticePolicy.addNotice(noticePolicy);
     NewNoticePolicy.save();
     NewNoticePolicy.check(noticePolicy);
