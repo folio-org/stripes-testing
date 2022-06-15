@@ -39,6 +39,9 @@ export default {
   uiCreateEditDeleteMaterialTypes: { internal: 'ui-inventory.settings.materialtypes', gui: 'Settings (Inventory): Create, edit, delete material types' },
   uiInventoryMarkAsMissing: { internal: 'ui-inventory.item.markasmissing', gui: 'Inventory: View, create, edit, mark missing items' },
   uiInventoryMoveItems: { internal: '', gui: 'Inventory: Move items' },
+  uiInventoryViewCreateEditHoldings:{ internal:'ui-inventory.holdings.edit', gui:'Inventory: View, create, edit holdings' },
+  uiInventoryViewCreateEditInstances:{ internal:'ui-inventory.instance.edit', gui:'Inventory: View, create, edit instances' },
+  uiInventoryViewCreateEditItems:{ internal:'ui-inventory.item.edit', gui:'Inventory: View, create, edit items' },
   // Tags
   uiTagsPermissionAll: { internal: 'ui-tags.permission.all', gui:'Tags: All permissions' },
   // Settings->Owners
@@ -94,4 +97,8 @@ export default {
   viewOrganization:{ internal:'', gui:'Organizations: View' },
   // Invoice
   viewEditDeleteInvoiceInvoiceLine:{ internal:'', gui:'Invoice: Can view, edit and delete Invoices and Invoice lines' },
+  // Orders
+  createOrdersAndOrderLines:{ internal:'ui-orders.orders.create', gui:'Orders: Can create new Orders and Order lines' },
+  editOrdersAndOrderLines:{ internal:'ui-orders.orders.edit', gui:'Orders: Can edit Orders and Order lines' },
+  viewOrdersAndOrderLines:{ internal:'ui-orders.orders.view', gui:'Orders: Can view Orders and Order lines' },
 };
