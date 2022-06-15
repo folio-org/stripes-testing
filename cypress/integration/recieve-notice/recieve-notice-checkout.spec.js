@@ -17,6 +17,7 @@ import CheckOutActions from '../../support/fragments/check-out-actions/check-out
 import DefaultUser from '../../support/fragments/users/userDefaultObjects/defaultUser';
 import InventoryHoldings from '../../support/fragments/inventory/holdings/inventoryHoldings';
 import Users from '../../support/fragments/users/users';
+import MultipieceCheckOut from '../../support/fragments/checkout/modals/multipieceCheckOut';
 
 // TODO Add email notice check after checktout: https://issues.folio.org/browse/FAT-1854
 describe('Recieving notice: Checkout', () => {
@@ -160,6 +161,7 @@ describe('Recieving notice: Checkout', () => {
     CheckOutActions.checkUserInfo(userData, patronGroup.name);
     CheckOutActions.checkOutUser(userData.barcode);
     CheckOutActions.checkOutItem(ITEM_BARCODE);
+    MultipieceCheckOut.confirmMultipleCheckOut(ITEM_BARCODE);
     CheckOutActions.checkUserInfo(userData);
     CheckOutActions.checkItemInfo(ITEM_BARCODE, testData.instanceTitle);
     CheckOutActions.endSession();

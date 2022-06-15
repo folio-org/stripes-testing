@@ -93,31 +93,33 @@ describe('Check Out', () => {
   });
 
   after(() => {
-    testItems.forEach(item => {
+    cy.wrap(testItems.forEach(item => {
       CheckInActions.createItemCheckinApi({
         itemBarcode: item.barcode,
         servicePointId: servicePoint.body.id,
-        checkInDate: '2021-09-30T16:14:50.444Z',
+        checkInDate: new Date().toISOString(),
       });
-    });
-    cy.wrap(testInstanceIds.holdingIds.forEach(holdingsId => {
-      cy.wrap(holdingsId.itemIds.forEach(itemId => {
-        cy.deleteItem(itemId);
-      })).then(() => {
-        cy.deleteHoldingRecord(holdingsId.id);
-      });
-    })).then(() => {
-      cy.deleteInstanceApi(testInstanceIds.instanceId);
-    });
-    cy.wrap(UsersEditPage.changeServicePointPreferenceViaApi(user.userId, [servicePoint.body.id]))
+    }))
       .then(() => {
-        cy.deleteServicePoint(servicePoint.body.id);
-        Users.deleteViaApi(user.userId);
+        cy.wrap(testInstanceIds.holdingIds.forEach(holdingsId => {
+          cy.wrap(holdingsId.itemIds.forEach(itemId => {
+            cy.deleteItem(itemId);
+          })).then(() => {
+            cy.deleteHoldingRecord(holdingsId.id);
+          });
+        })).then(() => {
+          cy.deleteInstanceApi(testInstanceIds.instanceId);
+        });
+        cy.wrap(UsersEditPage.changeServicePointPreferenceViaApi(user.userId, [servicePoint.body.id]))
+          .then(() => {
+            cy.deleteServicePoint(servicePoint.body.id);
+            Users.deleteViaApi(user.userId);
+          });
       });
   });
 
   const fullCheckOut = ({ barcode, numberOfPieces, descriptionOfPieces, numberOfMissingPieces, missingPieces }) => {
-    CheckOutActions.checkOutItemUser(userBarcode, barcode);
+    CheckOutActions.checkOutItem(barcode);
     MultipieceCheckOut.checkContent(instanceTitle, materialTypeName.name, barcode,
       { itemPieces : numberOfPieces, description : descriptionOfPieces },
       { missingitemPieces : numberOfMissingPieces, missingDescription: missingPieces });
@@ -131,7 +133,7 @@ describe('Check Out', () => {
 
     fullCheckOut(testItems[1]);
     MultipieceCheckOut.cancelModal();
-    CheckOutActions.checkItemstatus(testItems[1].barcode);
+    CheckOutActions.checkItem(testItems[1].barcode);
 
     fullCheckOut(testItems[1]);
     MultipieceCheckOut.confirmMultipleCheckOut(testItems[1].barcode);
