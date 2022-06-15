@@ -41,13 +41,12 @@ export default {
       Pane('Scan items').find(Button('Enter')).click(),
     ]);
   },
-
-  checkItemInfo(itemBarcode, instanceTitle) {
+  checkItemInfo(itemBarcode, instanceTitle, loanNoticeName) {
     cy.expect([
       MultiColumnList({ rowCount: 1 }).find(MultiColumnListCell('1')).exists(),
       MultiColumnList({ rowCount: 1 }).find(MultiColumnListCell(itemBarcode)).exists(),
       MultiColumnList({ rowCount: 1 }).find(MultiColumnListCell(instanceTitle)).exists(),
-      MultiColumnList({ rowCount: 1 }).find(MultiColumnListCell('Example Loan Policy')).exists(),
+      MultiColumnList({ rowCount: 1 }).find(MultiColumnListCell(loanNoticeName)).exists(),
       Label('Total items scanned: 1').exists(),
     ]);
   },

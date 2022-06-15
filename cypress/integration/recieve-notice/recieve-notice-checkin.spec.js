@@ -18,10 +18,9 @@ import DefaultUser from '../../support/fragments/users/userDefaultObjects/defaul
 import loanPolicy from '../../support/fragments/circulation/loan-policy';
 import InventoryHoldings from '../../support/fragments/inventory/holdings/inventoryHoldings';
 import Users from '../../support/fragments/users/users';
-import MultipieceCheckOut from '../../support/fragments/checkout/modals/multipieceCheckOut';
 
 // TODO Add email notice check after checktout: https://issues.folio.org/browse/FAT-1854
-describe('Recieving notice: Checkout', () => {
+describe('Recieving notice: Checkin', () => {
   const noticePolicyTemplate = { ...NewNoticePolicyTemplate.defaultUi };
   const noticePolicy = { ...NewNoticePolicy.defaultUi };
   const ITEM_BARCODE = generateItemBarcode();
@@ -32,16 +31,17 @@ describe('Recieving notice: Checkout', () => {
     itemBarcode: ITEM_BARCODE,
     objectType1: NOTICE_CATEGORIES.loan.name,
     objectType2: 'Notice',
-    circAction1: 'Checked out',
-    circAction2: 'Send',
-    circAction3: 'Checked in',
+    circAction1: 'Checked in',
+    circAction2: 'Closed loan',
+    circAction3: 'Checked out',
     // TODO: add check for date with format <C6/8/2022, 6:46 AM>
     servicePoint: 'Online',
-    source: 'ADMINISTRATOR, DIKU',
+    source1: 'ADMINISTRATOR, DIKU',
+    source2: 'System',
     desc: 'Checked out to proxy: no.',
   };
   const testData = {
-    instanceTitle: `Pre-checkout_instance_${Number(new Date())}`
+    instanceTitle: `Pre-checkin_instance_${Number(new Date())}`
   };
 
   beforeEach('Preconditions', () => {
@@ -49,7 +49,7 @@ describe('Recieving notice: Checkout', () => {
     noticePolicyTemplate.category = NOTICE_CATEGORIES.loan.name;
     noticePolicy.templateName = noticePolicyTemplate.name;
     noticePolicy.format = 'Email';
-    noticePolicy.action = NOTICE_ACTIONS.checkout;
+    noticePolicy.action = NOTICE_ACTIONS.checkin;
     noticePolicy.noticeName = NOTICE_CATEGORIES.loan.name;
     noticePolicy.noticeId = NOTICE_CATEGORIES.loan.id;
 
@@ -59,7 +59,7 @@ describe('Recieving notice: Checkout', () => {
         patronGroup.id = res;
         Users.createViaApi({
           patronGroup: res,
-          ...userData,
+          ...userData
         }).then((createdUser) => {
           userData.id = createdUser.id;
         });
@@ -139,7 +139,7 @@ describe('Recieving notice: Checkout', () => {
     });
   });
 
-  it('C347621 Check that user can receive notice with multiple items after finishing the session "Check out" by clicking the End Session button', { tags: [testTypes.smoke, devTeams.vega] }, () => {
+  it('C347623 Check that user can receive notice with multiple items after finishing the session "Check in" by clicking the End Session button', { tags: [testTypes.smoke, devTeams.vega] }, () => {
     NewNoticePolicyTemplate.startAdding();
     NewNoticePolicyTemplate.checInitialState();
     NewNoticePolicyTemplate.create(noticePolicyTemplate);
@@ -169,14 +169,17 @@ describe('Recieving notice: Checkout', () => {
     CheckOutActions.checkUserInfo(userData, patronGroup.name);
     CheckOutActions.checkOutUser(userData.barcode);
     CheckOutActions.checkOutItem(ITEM_BARCODE);
-    MultipieceCheckOut.confirmMultipleCheckOut(ITEM_BARCODE);
     CheckOutActions.checkUserInfo(userData);
     CheckOutActions.checkItemInfo(ITEM_BARCODE, testData.instanceTitle, testData.loanNoticeName);
     CheckOutActions.endSession();
 
+    cy.visit(topMenu.checkInPath);
+    cy.checkInItem(ITEM_BARCODE);
+    cy.verifyItemCheckIn();
+
     cy.visit(topMenu.circulationLogPath);
     SearchPane.searchByItemBarcode(ITEM_BARCODE);
     SearchPane.verifyResultCells();
-    SearchPane.checkResultSearch(searchResultsData, 2);
+    SearchPane.checkResultSearch(searchResultsData, 3);
   });
 });
