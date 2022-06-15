@@ -34,7 +34,6 @@ describe('ui-invoices-settings: Export batch voucher', () => {
         invoice.batchGroup = batchGroup.name;
         batchGroupConfiguration.batchGroupId = batchGroup.id;
       });
-    console.log(batchGroupConfiguration);
     SettingsInvoices.setConfigurationBatchGroup(batchGroupConfiguration);
     Funds.createFundViaUI(fund)
       .then(
