@@ -10,7 +10,7 @@ export default {
     cy.do([
       TextField({ id: 'input-user-search' }).fillIn(username),
       Button('Search').click(),
-      MultiColumnList().click({ row: 0, column: 'Active' }),
+      MultiColumnList().click({ row: 0, content: 'Active' }),
       Pane({ id: 'pane-userdetails' }).find(Button('Actions')).click(),
       Button({ id: 'clickable-edituser' }).click()]);
     cy.intercept('/configurations/entries?query=(module==USERS%20and%20configName==custom_fields_label)').as('getPermissions1');
@@ -48,7 +48,7 @@ export default {
     cy.visit(TopMenu.usersPath);
     cy.do(TextField({ id: 'input-user-search' }).fillIn(defaultUser.defaultUiPatron.body.userName));
     cy.do(Button('Search').click());
-    cy.do(MultiColumnList().click({ row: 0, column: 'Active' }));
+    cy.do(MultiColumnList().click({ row: 0, content: 'Active' }));
     cy.do(Pane({ id: 'pane-userdetails' }).find(Button('Actions')).click());
     cy.do(Button({ id: 'clickable-edituser' }).click());
     cy.do(Button({ id: 'accordion-toggle-button-servicePoints' }).click());

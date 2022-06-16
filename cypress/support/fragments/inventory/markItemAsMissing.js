@@ -169,7 +169,7 @@ export default {
     cy.do([
       TextField({ id: 'input-inventory-search' }).fillIn(instanceTitle),
       Button('Search').click(),
-      MultiColumnListCell({ row: 0, column: instanceTitle }).click(),
+      MultiColumnListCell({ row: 0, content: instanceTitle }).click(),
     ]);
     cy.expect(Section({ id: 'pane-instancedetails' }).exists());
   },

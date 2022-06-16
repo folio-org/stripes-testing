@@ -42,7 +42,7 @@ describe('ui-inventory: Create a Holdings record as another user than the one th
   it('C1294: Create a Holdings record as another user than the one that created the Instance', { tags: [TestTypes.smoke] }, () => {
     InventoryInstances.add(recordsData.instanceTitle);
     searchInventory.searchInstanceByTitle(recordsData.instanceTitle);
-    cy.expect(MultiColumnListCell({ row: 0, column: recordsData.instanceTitle }).exists());
+    cy.expect(MultiColumnListCell({ row: 0, content: recordsData.instanceTitle }).exists());
 
     // logout and login as a different user
     cy.logout();

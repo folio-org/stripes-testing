@@ -17,7 +17,7 @@ export default {
   },
 
   checkStatusOfJobProfile:() => {
-    cy.do(MultiColumnListCell({ row: 0, column: 'Completed' }).exists());
+    cy.do(MultiColumnListCell({ row: 0, content: 'Completed' }).exists());
   },
 
   openFileDetails:(fileName) => {
@@ -25,7 +25,7 @@ export default {
   },
 
   checkQuantityRecordsInFile:(quantityRecords) => {
-    cy.do(MultiColumnListCell({ row: 0, column: quantityRecords }).exists());
+    cy.do(MultiColumnListCell({ row: 0, content: quantityRecords }).exists());
   },
 
   quantityRecordsInInvoice,
