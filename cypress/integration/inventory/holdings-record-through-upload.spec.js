@@ -18,7 +18,7 @@ describe('Manage holding records of instance records created through marc file u
     cy.getAdminToken();
   });
 
-  it('C345408 MARC instance record + FOLIO holdings record (Regression)', { tags: [testTypes.smoke, features.holdingsRecord] }, () => {
+  it('C345408 MARC instance record + FOLIO holdings record (Regression)', { tags: [testTypes.smoke, features.holdingsRecord, testTypes.broken] }, () => {
     DataImport.uploadMarcBib().then(instanceRecordHrId => {
       cy.visit(TopMenu.inventoryPath);
       SearchInventory.searchInstanceByHRID(instanceRecordHrId);

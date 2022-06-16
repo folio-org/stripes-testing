@@ -83,7 +83,7 @@ describe('ui-inventory: exports', () => {
     FileManager.deleteFolder(Cypress.config('downloadsFolder'));
   });
 
-  it('C9284 Export small number of Instance UUIDs (30 or fewer)', { retries: 3, tags: [testTypes.smoke, devTeams.firebird] }, () => {
+  it('C9284 Export small number of Instance UUIDs (30 or fewer)', { retries: 3, tags: [testTypes.smoke, devTeams.firebird, testTypes.broken] }, () => {
     InventorySearch.searchByParameter('Title (all)', instanceTitle);
     InventorySearch.saveUUIDs();
 
@@ -115,7 +115,7 @@ describe('ui-inventory: exports', () => {
     );
   });
 
-  it('C196757 verifies export instances (MARC)', { retries: 3, tags: [testTypes.smoke, devTeams.firebird] }, () => {
+  it('C196757 verifies export instances (MARC)', { retries: 3, tags: [testTypes.smoke, devTeams.firebird, testTypes.broken] }, () => {
     InventorySearch.searchByParameter('Title (all)', instanceTitle);
     cy.do(InventorySearch.getSearchResult().find(Checkbox()).click());
     InventorySearch.exportInstanceAsMarc();

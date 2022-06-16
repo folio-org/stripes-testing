@@ -35,7 +35,7 @@ describe('ui-data-import: Import a large EDIFACT invoice file', () => {
     DataImport.checkUploadState();
   });
 
-  it('C347615 Import a large EDIFACT invoice file', { tags: [TestTypes.smoke] }, () => {
+  it('C347615 Import a large EDIFACT invoice file', { tags: [TestTypes.smoke, TestTypes.broken] }, () => {
     // unique file name to upload
     const fileName = `C347615autotestFile.${getRandomPostfix()}.edi`;
 
