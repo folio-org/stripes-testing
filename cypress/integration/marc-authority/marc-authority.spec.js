@@ -15,6 +15,7 @@ import dataImportSettingsActionProfiles from '../../support/fragments/settings/d
 import dataImportSettingsMatchProfiles from '../../support/fragments/settings/dataImport/dataImportSettingsMatchProfiles';
 import dataImportSettingMappingProfiles from '../../support/fragments/settings/dataImport/dataImportSettingsMappingProfiles';
 import dataImportSettingsJobProfiles from '../../support/fragments/settings/dataImport/dataImportSettingsJobProfiles';
+import Users from '../../support/fragments/users/users';
 
 describe('MARC Authority management', () => {
   let userId = '';
@@ -168,7 +169,7 @@ describe('MARC Authority management', () => {
     MarcAuthorityBrowse.checkPresentedColumns();
   });
 
-  it('C350513 Browse authority - handling for when there is no exact match', { tags:  [TestTypes.smoke, Features.authority] }, () => {
+  it('C350513 Browse authority - handling for when there is no exact match', { tags:  [TestTypes.smoke, Features.authority, TestTypes.broken] }, () => {
     // update created marc authority
     MarcAuthority.edit();
     QuickMarcEditor.waitLoading();
@@ -203,6 +204,6 @@ describe('MARC Authority management', () => {
     // https://issues.folio.org/browse/FAT-1680
     new Set(marcAuthorityIds).forEach(marcAuthorityId => MarcAuthority.deleteViaAPI(marcAuthorityId));
     marcAuthorityIds = [];
-    cy.deleteUser(userId);
+    Users.deleteViaApi(userId);
   });
 });

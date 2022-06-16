@@ -5,6 +5,7 @@ import eHoldingsProviderView from '../../support/fragments/eholdings/eHoldingsPr
 import eHoldingsProviderEdit from '../../support/fragments/eholdings/eHoldingsProviderEdit';
 import testTypes from '../../support/dictionary/testTypes';
 import permissions from '../../support/dictionary/permissions';
+import users from '../../support/fragments/users/users';
 
 describe('ui-eholdings: Provider manage', () => {
   let userId = '';
@@ -17,7 +18,7 @@ describe('ui-eholdings: Provider manage', () => {
       cy.visit(TopMenu.eholdingsPath);
     });
   });
-  it('C696 Edit proxy setting', { tags: [testTypes.smoke] }, () => {
+  it('C696 Edit proxy setting', { tags: [testTypes.smoke, testTypes.broken] }, () => {
     const specialProvider = 'Johns Hopkins University Press';
     eHoldingsProvidersSearch.byProvider(specialProvider);
     eHoldingsProviders.viewProvider();
@@ -32,6 +33,6 @@ describe('ui-eholdings: Provider manage', () => {
     });
   });
   afterEach(() => {
-    cy.deleteUser(userId);
+    users.deleteViaApi(userId);
   });
 });

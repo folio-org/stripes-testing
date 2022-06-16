@@ -43,13 +43,12 @@ Cypress.Commands.add('getCirculationRules', () => {
     });
 });
 
-Cypress.Commands.add('updateCirculationRules', (body) => {
-  cy.okapiRequest({
-    method: REQUEST_METHOD.PUT,
-    path: 'circulation/rules',
-    body,
-  });
-});
+Cypress.Commands.add('updateCirculationRules', body => cy.okapiRequest({
+  method: REQUEST_METHOD.PUT,
+  path: 'circulation/rules',
+  body,
+}));
+
 
 Cypress.Commands.add('createLoanPolicy', (policy) => {
   cy.okapiRequest({
@@ -57,7 +56,7 @@ Cypress.Commands.add('createLoanPolicy', (policy) => {
     path: 'loan-policy-storage/loan-policies',
     body: {
       id: uuid(),
-      name: `Automation loan policy ${getRandomPostfix()}`,
+      name: `automation_loan_policy_${getRandomPostfix()}`,
       ...policy,
     },
   })

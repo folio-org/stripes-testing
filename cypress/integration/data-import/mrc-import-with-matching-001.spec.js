@@ -17,25 +17,34 @@ import FileManager from '../../support/utils/fileManager';
 import TestTypes from '../../support/dictionary/testTypes';
 import SettingsMenu from '../../support/fragments/settingsMenu';
 import FileDetails from '../../support/fragments/data_import/logs/fileDetails';
+import permissions from '../../support/dictionary/permissions';
+import users from '../../support/fragments/users/users';
 
 describe('ui-data-import: Test MARC-MARC matching for 001 field', () => {
-  beforeEach(() => {
-    cy.login(
-      Cypress.env('diku_login'),
-      Cypress.env('diku_password')
-    );
-    cy.getAdminToken();
+  let user = {};
 
-    cy.visit(TopMenu.dataImportPath);
-
+  before(() => {
+    cy.createTempUser([
+      permissions.dataImportUploadAll.gui,
+      permissions.moduleDataImportEnabled.gui,
+      permissions.settingsDataImportEnabled.gui,
+      permissions.inventoryAll.gui,
+      permissions.dataExportAll.gui
+    ])
+      .then(userProperties => {
+        user = userProperties;
+        cy.login(userProperties.username, userProperties.password, { path: TopMenu.dataImportPath, waiter: DataImport.wailtLoading });
+      });
     DataImport.checkUploadState();
   });
 
-  afterEach(() => {
+
+  after(() => {
     DataImport.checkUploadState();
+    users.deleteViaApi(user.userId);
   });
 
-  it('C17044: MARC-MARC matching for 001 field', { tags: TestTypes.smoke }, () => {
+  it('C17044: MARC-MARC matching for 001 field', { tags: [TestTypes.smoke, TestTypes.broken] }, () => {
     // unique file name to upload
     const nameForMarcFile = `C17044autoTestFile${getRandomPostfix()}.mrc`;
     const nameForExportedMarcFile = `C17044autoTestFile${getRandomPostfix()}.mrc`;

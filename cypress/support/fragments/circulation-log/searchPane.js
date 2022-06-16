@@ -1,5 +1,5 @@
 import { matching } from 'bigtest';
-import { Accordion, Button, MultiColumnListCell, TextField } from '../../../../interactors';
+import { Accordion, Button, MultiColumnListCell, MultiColumnList, TextField } from '../../../../interactors';
 import DateTools from '../../utils/dateTools';
 
 
@@ -67,12 +67,18 @@ export default {
               const today = new Date();
 
               const isActualDateCorrect = lastWeek <= actualDate <= today;
+              // eslint-disable-next-line no-unused-expressions
               expect(isActualDateCorrect).to.be.true;
             })
           );
         }
       }
     });
+  },
+
+  checkResultSearch(searchResults, rowCountNumber = 1) {
+    // TODO: add check for date with format <C6/8/2022, 6:46 AM>
+    Object.values(searchResults).filter((result) => cy.expect(MultiColumnList({ rowCount: rowCountNumber }).find(MultiColumnListCell(searchResults[result])).exists()));
   },
 
   filterByLastWeek() {

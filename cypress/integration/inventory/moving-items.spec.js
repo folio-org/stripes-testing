@@ -11,22 +11,30 @@ import InventoryViewSource from '../../support/fragments/inventory/inventoryView
 import Features from '../../support/dictionary/features';
 import permissions from '../../support/dictionary/permissions';
 import getRandomPostfix from '../../support/utils/stringTools';
+import InventoryHoldings from '../../support/fragments/inventory/holdings/inventoryHoldings';
+import devTeams from '../../support/dictionary/devTeams';
+import InventoryInstancesMovement from '../../support/fragments/inventory/holdingsMove/inventoryInstancesMovement';
+import users from '../../support/fragments/users/users';
 
 const successCalloutMessage = '1 item has been successfully moved.';
 let userId = '';
 let firstHolding = '';
 let secondHolding = '';
-const ITEM_BARCODE = `test${getRandomPostfix()}`;
+let ITEM_BARCODE;
 
 describe('ui-inventory: moving items', () => {
   beforeEach('navigates to Inventory', () => {
+    let source;
+
+    ITEM_BARCODE = `test${getRandomPostfix()}`;
     cy.createTempUser([
       permissions.inventoryAll.gui,
       permissions.uiInventoryMoveItems.gui,
       permissions.uiInventorySingleRecordImport.gui,
       permissions.uiQuickMarcQuickMarcHoldingsEditorCreate.gui,
       permissions.uiInventoryHoldingsMove.gui,
-      permissions.uiQuickMarcQuickMarcHoldingsEditorView.gui
+      permissions.uiQuickMarcQuickMarcHoldingsEditorView.gui,
+      permissions.uiMarcAuthoritiesAuthorityRecordEdit.gui
     ])
       .then(userProperties => {
         userId = userProperties.userId;
@@ -38,7 +46,10 @@ describe('ui-inventory: moving items', () => {
             cy.getMaterialTypes({ limit: 1 });
             cy.getLocations({ limit: 2 });
             cy.getHoldingTypes({ limit: 2 });
-            cy.getHoldingSources({ limit: 2 });
+            InventoryHoldings.getHoldingSources({ limit: 2 })
+              .then(holdingsSources => {
+                source = holdingsSources;
+              });
             cy.getInstanceTypes({ limit: 1 });
             cy.getServicePointsApi({ limit: 1, query: 'pickupLocation=="true"' });
             cy.getUsers({
@@ -58,12 +69,12 @@ describe('ui-inventory: moving items', () => {
                 {
                   holdingsTypeId: Cypress.env('holdingsTypes')[0].id,
                   permanentLocationId: Cypress.env('locations')[0].id,
-                  sourceId: Cypress.env('holdingSources')[0].id,
+                  sourceId: source[0].id,
                 },
                 {
                   holdingsTypeId: Cypress.env('holdingsTypes')[1].id,
                   permanentLocationId: Cypress.env('locations')[1].id,
-                  sourceId: Cypress.env('holdingSources')[1].id,
+                  sourceId: source[1].id,
                 }],
               items: [
                 [{
@@ -82,17 +93,17 @@ describe('ui-inventory: moving items', () => {
 
   after('Delete all data', () => {
     cy.getInstance({ limit: 1, expandAll: true, query: `"items.barcode"=="${ITEM_BARCODE}"` })
-      .then(() => {
-        cy.deleteItem(Cypress.env('instances')[0].items[0].id);
-        cy.deleteHoldingRecord(Cypress.env('instances')[0].holdings[0].id);
-        cy.deleteHoldingRecord(Cypress.env('instances')[0].holdings[1].id);
-        cy.deleteInstanceApi(Cypress.env('instances')[0].id);
+      .then((instance) => {
+        cy.deleteItem(instance.items[0].id);
+        cy.deleteHoldingRecord(instance.holdings[0].id);
+        cy.deleteHoldingRecord(instance.holdings[1].id);
+        cy.deleteInstanceApi(instance.id);
       });
-    cy.deleteUser(userId);
+    users.deleteViaApi(userId);
   });
 
 
-  it('C15185 Move multiple items from one holdings to another holdings within an instance', { tags: [TestTypes.smoke] }, () => {
+  it('C15185 Move multiple items from one holdings to another holdings within an instance', { tags: [TestTypes.smoke, devTeams.firebird] }, () => {
     InventorySearch.switchToItem();
     InventorySearch.searchByParameter('Barcode', ITEM_BARCODE);
     InventorySearch.selectSearchResultItem();
@@ -116,17 +127,15 @@ describe('ui-inventory: moving items', () => {
         HoldingsRecordView.close();
         InventoryInstance.waitLoading();
         InventoryInstance.moveHoldingsToAnotherInstance(initialInstanceHrId);
-        cy.visit(TopMenu.inventoryPath);
+        InventoryInstancesMovement.closeInLeftForm();
         InventorySearch.searchByParameter('Instance HRID', initialInstanceHrId);
         InventoryInstances.waitLoading();
         InventoryInstances.selectInstance();
         InventoryInstance.goToHoldingView();
         HoldingsRecordView.checkHrId(holdingsRecordhrId);
-        // TODO: view source is not available now, in process of investigation. Can be related with new error. https://issues.folio.org/browse/UIIN-2044
         HoldingsRecordView.viewSource();
         InventoryViewSource.contains(`004\t${initialInstanceHrId}`);
       });
     });
   });
 });
-

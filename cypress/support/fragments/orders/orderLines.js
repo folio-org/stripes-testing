@@ -23,6 +23,7 @@ const electronicUnitPriceTextField = TextField({ name: 'cost.listUnitPriceElectr
 const quantityElectronicTextField = TextField({ name: 'cost.quantityElectronic' });
 const searchForm = SearchField({ id: 'input-record-search' });
 const contibutor = 'Autotest,Contributor_name';
+const orderLineTitle = `Autotest Tetle_${getRandomPostfix()}`;
 
 export default {
 
@@ -72,7 +73,7 @@ export default {
     }
   },
 
-  createPOLineViaActions: () => {
+  addPOLine: () => {
     cy.do([
       Accordion({ id: 'POListing' })
         .find(Button('Actions'))
@@ -80,9 +81,42 @@ export default {
       Button('Add PO line').click()
     ]);
   },
+
+  backToEditingOrder: () => {
+    cy.do(Button({ id: 'clickable-backToPO' }).click());
+  },
+
+  deleteOrderLine: () => {
+    cy.do([
+      PaneHeader({ id: 'paneHeaderorder-lines-details' }).find(actionsButton).click(),
+      Button('Delete').click(),
+      Button({ id: 'clickable-delete-line-confirmation-confirm' }).click()
+    ]);
+  },
+
+  POLineInfodorPhysicalMaterial: (orderLineTitleName) => {
+    cy.do([
+      TextField({ name: 'titleOrPackage' }).fillIn(orderLineTitleName),
+      Select({ name: 'orderFormat' }).choose('Physical resource'),
+      Button({ id: 'acquisition-method' }).click(),
+      SelectionOption('Depository').click(),
+      Select({ name: 'checkinItems' }).choose('Independent order and receipt quantity'),
+      physicalUnitPriceTextField.fillIn(physicalUnitPrice),
+      quantityPhysicalTextField.fillIn(quantityPhysical),
+      Select({ name: 'physical.materialType' }).choose('book'),
+      Button('Add location').click(),
+      Button('Location look-up').click(),
+      Select({ name: 'institutionId' }).choose('Københavns Universitet'),
+      Select({ name: 'campusId' }).choose('Online'),
+      Button('Save and close').click(),
+      TextField({ name: 'locations[0].quantityPhysical' }).fillIn(quantityPhysical),
+      saveAndClose.click()
+    ]);
+  },
+
   fillInPOLineInfoViaUi: () => {
     cy.do([
-      TextField({ name: 'titleOrPackage' }).fillIn(`Autotest Tetle_${getRandomPostfix()}`),
+      TextField({ name: 'titleOrPackage' }).fillIn(orderLineTitle),
       Select({ name: 'orderFormat' }).choose('P/E mix'),
       Button({ id: 'acquisition-method' }).click(),
       Button({ id: 'acquisition-method' }).click(),
@@ -97,8 +131,6 @@ export default {
       Button('Location look-up').click(),
       Select({ name: 'institutionId' }).choose('Københavns Universitet'),
       Select({ name: 'campusId' }).choose('Online'),
-      Button({ id: 'locationId' }).click(),
-      SelectionOption('Online (E) ').click(),
       Button('Save and close').click(),
       TextField({ name: 'locations[0].quantityPhysical' }).fillIn(quantityPhysical),
       TextField({ name: 'locations[0].quantityElectronic' }).fillIn(quantityElectronic),
@@ -111,6 +143,7 @@ export default {
     ]);
     cy.do(saveAndClose.click());
   },
+
   selectFilterMainLibraryLocationsPOL: () => {
     cy.do([
       buttonLocationFilter.click(),
@@ -122,6 +155,7 @@ export default {
       buttonLocationFilter.click(),
     ]);
   },
+
   selectFilterFundCodeUSHISTPOL: () => {
     cy.do([
       buttonFundCodeFilter.click(),
@@ -130,6 +164,7 @@ export default {
       buttonFundCodeFilter.click(),
     ]);
   },
+
   selectFilterOrderFormatPhysicalResourcePOL: () => {
     cy.do([
       buttonOrderFormatFilter.click(),
@@ -137,6 +172,7 @@ export default {
       buttonOrderFormatFilter.click(),
     ]);
   },
+
   selectFilterVendorPOL: (invoice) => {
     cy.do([
       buttonFVendorFilter.click(),
@@ -147,6 +183,7 @@ export default {
     SearchHelper.selectFromResultsList();
     cy.do(buttonFVendorFilter.click());
   },
+
   selectFilterNoInRushPOL: () => {
     cy.do([
       buttonRushFilter.click(),
@@ -154,6 +191,7 @@ export default {
       buttonRushFilter.click(),
     ]);
   },
+
   selectFilterSubscriptionFromPOL: (newDate) => {
     cy.do([
       buttonSubscriptionFromFilter.click(),
@@ -163,12 +201,14 @@ export default {
       buttonSubscriptionFromFilter.click(),
     ]);
   },
+
   selectPOLInOrder: () => {
     cy.do(Accordion({ id: 'POListing' })
       .find(MultiColumnListRow({ index: 0 }))
       .find(MultiColumnListCell({ columnIndex: 0 }))
       .click());
   },
+
   editPOLInOrder: () => {
     cy.do([
       Pane({ id: 'order-lines-details' })
@@ -177,6 +217,7 @@ export default {
       Button('Edit').click(),
     ]);
   },
+
   addContributorToPOL: () => {
     cy.do([
       Button('Add contributor').click(),
@@ -184,8 +225,10 @@ export default {
       Select('Contributor type*').choose('Personal name')
     ]);
   },
+
   saveOrderLine: () => {
     cy.do(Button({ id: 'clickable-updatePoLine' }).click());
   },
+
 };
 

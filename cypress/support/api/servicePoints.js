@@ -3,6 +3,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { CY_ENV, REQUEST_METHOD } from '../constants';
 import getRandomPostfix from '../utils/stringTools';
 
+// TODO: depricated, use getServicePointsApi from cypress\support\fragments\settings\tenant\servicePoints.js instead
 Cypress.Commands.add('getServicePointsApi', (searchParams) => {
   cy
     .okapiRequest({
@@ -36,7 +37,6 @@ Cypress.Commands.add('createServicePoint', (servicePoint) => {
   })
     .then(newServicePoint => {
       Cypress.env(CY_ENV.NEW_SERVICE_POINT, newServicePoint.body);
-
       return newServicePoint.body;
     });
 });
@@ -48,15 +48,19 @@ Cypress.Commands.add('deleteServicePoint', (id) => {
   });
 });
 
-Cypress.Commands.add('addServicePointToUser', (servicePointId, userId) => {
+// TODO: depricated, use addServicePoint from cypress\support\fragments\users\users.js instead
+Cypress.Commands.add('addServicePointToUser', (servicePointIds, userId, defaultServicePointId) => {
+  // servicePointIds is array of ids
   cy.okapiRequest({
     method: 'POST',
     path: 'service-points-users',
     body: {
       id: uuidv4(),
       userId,
-      servicePointsIds: [servicePointId],
-      defaultServicePointId: servicePointId,
+      servicePointsIds: servicePointIds,
+      defaultServicePointId: defaultServicePointId || servicePointIds[0],
     },
+  }).then((res) => {
+    return res;
   });
 });

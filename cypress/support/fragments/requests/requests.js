@@ -13,6 +13,8 @@ import {
   TextField,
   Badge, Section, Heading
 } from '../../../../interactors';
+import users from '../users/users';
+import inventoryHoldings from '../inventory/holdings/inventoryHoldings';
 
 const requestsResultsSection = Section({ id: 'pane-results' });
 const appsButton = Button({ id: 'app-list-dropdown-toggle' });
@@ -103,7 +105,7 @@ function createRequestApi(
       cy.getHoldingTypes({ limit: 1 }).then(holdingsTypes => {
         instanceRecordData.holdingsTypeId = holdingsTypes[0].id;
       });
-      cy.getHoldingSources({ limit: 1 }).then(holdingsSources => {
+      inventoryHoldings.getHoldingSources({ limit: 1 }).then(holdingsSources => {
         instanceRecordData.sourceId = holdingsSources[0].id;
       });
       cy.getInstanceTypes({ limit: 1 }).then(instanceTypes => {
@@ -114,7 +116,7 @@ function createRequestApi(
       });
     })
     .then(() => {
-      cy.createUserApi(userData).then(user => {
+      users.createViaApi(userData).then(user => {
         createdUser = user;
         requestData.requesterId = user.id;
         userRequestPreferences.userId = user.id;

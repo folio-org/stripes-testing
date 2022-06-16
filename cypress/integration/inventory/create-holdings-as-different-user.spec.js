@@ -7,6 +7,7 @@ import InventoryInstance from '../../support/fragments/inventory/inventoryInstan
 import HoldingsRecordView from '../../support/fragments/inventory/holdingsRecordView';
 import getRandomPostfix from '../../support/utils/stringTools';
 import TestTypes from '../../support/dictionary/testTypes';
+import users from '../../support/fragments/users/users';
 
 describe('ui-inventory: Create a Holdings record as another user than the one that created the Instance', () => {
   let firstUser;
@@ -35,8 +36,8 @@ describe('ui-inventory: Create a Holdings record as another user than the one th
   });
 
   afterEach(() => {
-    cy.deleteUser(firstUser.userId);
-    cy.deleteUser(secondUser.userId);
+    users.deleteViaApi(firstUser.userId);
+    users.deleteViaApi(secondUser.userId);
   });
 
   it('C1294: Create a Holdings record as another user than the one that created the Instance', { tags: [TestTypes.smoke] }, () => {

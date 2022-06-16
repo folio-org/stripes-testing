@@ -1,5 +1,3 @@
-/// <reference types="cypress" />
-
 import TestTypes from '../../support/dictionary/testTypes';
 import FieldMappingProfiles from '../../support/fragments/data_import/mapping_profiles/fieldMappingProfiles';
 import getRandomPostfix from '../../support/utils/stringTools';
@@ -17,23 +15,33 @@ import ExportFile from '../../support/fragments/data-export/exportFile';
 import SettingsMenu from '../../support/fragments/settingsMenu';
 import FileDetails from '../../support/fragments/data_import/logs/fileDetails';
 import TopMenu from '../../support/fragments/topMenu';
+import permissions from '../../support/dictionary/permissions';
+import users from '../../support/fragments/users/users';
 
 describe('ui-data-import: Verify the possibility to modify MARC Bibliographic record', () => {
-  beforeEach(() => {
-    cy.login(
-      Cypress.env('diku_login'),
-      Cypress.env('diku_password')
-    );
-    cy.getAdminToken();
+  let user = {};
 
+  before(() => {
+    cy.createTempUser([
+      permissions.dataImportUploadAll.gui,
+      permissions.moduleDataImportEnabled.gui,
+      permissions.settingsDataImportEnabled.gui,
+      permissions.uiInventoryViewInstances.gui,
+      permissions.dataExportAll.gui
+    ])
+      .then(userProperties => {
+        user = userProperties;
+        cy.login(userProperties.username, userProperties.password);
+      });
     DataImport.checkUploadState();
   });
 
-  afterEach(() => {
+  after(() => {
     DataImport.checkUploadState();
+    users.deleteViaApi(user.userId);
   });
 
-  it('C345423 Verify the possibility to modify MARC Bibliographic record', { tags: [TestTypes.smoke] }, () => {
+  it('C345423 Verify the possibility to modify MARC Bibliographic record', { tags: [TestTypes.smoke, TestTypes.broken] }, () => {
     const mappingProfileFieldsForModify = {
       marcMappingOption: 'Modifications',
       action: 'Add',

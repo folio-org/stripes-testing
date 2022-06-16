@@ -8,14 +8,16 @@ import {
   TextField,
   Button,
   SearchField,
-  Select, MultiColumnListHeader
+  Select,
+  MultiColumnListHeader
 } from '../../../../interactors';
 import InventoryActions from './inventoryActions';
-
 
 const effectiveLocationInput = Accordion({ id: 'effectiveLocation' });
 const languageInput = Accordion({ id: 'language' });
 const keywordInput = TextField({ id: 'input-inventory-search' });
+const searchButton = Button('Search');
+const searchTextField = TextField('Search ');
 
 export default {
   effectiveLocation: {
@@ -55,7 +57,10 @@ export default {
   },
 
   byKeywords(kw = '*') {
-    return cy.do(keywordInput.fillIn(kw));
+    return cy.do([
+      keywordInput.fillIn(kw),
+      searchButton.click(),
+    ]);
   },
 
   selectBrowseCallNumbers() {
@@ -113,8 +118,8 @@ export default {
   verifyKeywordsAsDefault() {
     cy.get('#input-inventory-search-qindex').then(elem => {
       expect(elem.text()).to.include('Keyword (title, contributor, identifier)');
-      expect(elem).to.be.visible;
     });
+    cy.expect(Select({ id: 'input-inventory-search-qindex' }).exists());
   },
 
   verifyCallNumberBrowseEmptyPane() {
@@ -163,18 +168,35 @@ export default {
   },
 
   searchByParameter: (parameter, value) => {
-    cy.do([
-      SearchField({ id: 'input-inventory-search' }).selectIndex(parameter),
-      SearchField({ id: 'input-inventory-search' }).fillIn(value),
-      Button('Search').click(),
-    ]);
+    cy.do(SearchField({ id: 'input-inventory-search' }).selectIndex(parameter));
+    cy.do(searchTextField.fillIn(value));
+    // TODO: clarify the reason of failed waiter
+    // cy.intercept('/holdings-storage/holdings?*').as('getHoldings');
+    // cy.intercept('/copycat/profiles?*').as('getProfiles');
+    cy.do(searchButton.focus());
+    cy.do(searchButton.click());
+    // cy.wait(['@getHoldings', '@getProfiles']);
+  },
+  simpleSearchByParameter: (parameter, value) => {
+    cy.do(SearchField({ id: 'input-inventory-search' }).selectIndex(parameter));
+    cy.do(searchTextField.fillIn(value));
+    cy.do(searchButton.focus());
+    cy.do(searchButton.click());
+  },
+  instanceSearch: (parameter, value) => {
+    cy.do(SearchField({ id: 'input-inventory-search' }).selectIndex(parameter));
+    cy.do(searchTextField.fillIn(value));
+    cy.do(searchButton.focus());
+    cy.do(searchButton.click());
   },
   switchToItem: () => {
     cy.do(Button({ id: 'segment-navigation-items' }).click());
   },
+
   switchToHoldings: () => {
     cy.do(Button({ id: 'segment-navigation-holdings' }).click());
   },
+
   switchToInstance: () => {
     cy.do(Button({ id: 'segment-navigation-instances' }).click());
   },
@@ -197,5 +219,5 @@ export default {
 
   verifySearchResult(cellContent) {
     cy.expect(MultiColumnListCell({ content: cellContent }).exists());
-  }
+  },
 };

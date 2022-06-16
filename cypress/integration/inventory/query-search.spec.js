@@ -4,6 +4,8 @@ import permissions from '../../support/dictionary/permissions';
 import getRandomPostfix from '../../support/utils/stringTools';
 import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
 import InventorySearch from '../../support/fragments/inventory/inventorySearch';
+import devTeams from '../../support/dictionary/devTeams';
+import Users from '../../support/fragments/users/users';
 
 let userId = '';
 const item = {
@@ -27,7 +29,7 @@ describe('ui-inventory: query search', () => {
 
   after('Delete all data', () => {
     InventoryInstances.deleteInstanceViaApi(item.itemBarcode);
-    cy.deleteUser(userId);
+    Users.deleteViaApi(userId);
   });
 
   afterEach(() => {
@@ -40,7 +42,7 @@ describe('ui-inventory: query search', () => {
     { searchTab: InventorySearch.switchToHoldings, value: `holdingsNormalizedCallNumbers="${item.holdingCallNumber}"` },
     { searchTab: InventorySearch.switchToItem, value: `itemNormalizedCallNumbers="${item.itemCallNumber}"` },
   ].forEach(searcher => {
-    it('C9202 Test search field working for Query Search in Instance, Holdings and Item segment', { tags: [testTypes.smoke] }, () => {
+    it('C9202 Test search field working for Query Search in Instance, Holdings and Item segment', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
       searcher.searchTab();
       InventorySearch.searchByParameter('Query search', searcher.value);
       InventorySearch.verifySearchResult(item.instanceName);

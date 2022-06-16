@@ -4,6 +4,7 @@ import markItemAsWithdrawn from '../../support/fragments/inventory/markItemAsWit
 import markItemAsMissing from '../../support/fragments/inventory/markItemAsMissing';
 import Requests from '../../support/fragments/requests/requests';
 import TopMenu from '../../support/fragments/topMenu';
+import users from '../../support/fragments/users/users';
 
 describe('ui-inventory: Mark items as withdrawn', () => {
   let user = {};
@@ -64,11 +65,11 @@ describe('ui-inventory: Mark items as withdrawn', () => {
     createdRequestsIds.forEach(id => {
       Requests.deleteRequestApi(id);
     });
-    cy.deleteUser(user.userId);
-    requesterIds.forEach(id => cy.deleteUser(id));
+    users.deleteViaApi(user.userId);
+    requesterIds.forEach(id => users.deleteViaApi(id));
   });
 
-  it('C10930: Mark items as withdrawn ', { tags: [TestTypes.smoke] }, () => {
+  it('C10930: Mark items as withdrawn ', { tags: [TestTypes.smoke, TestTypes.broken] }, () => {
     cy.visit(TopMenu.inventoryPath);
     markItemAsMissing.findAndOpenInstance(instanceData.instanceTitle);
     markItemAsMissing.getItemsToMarkAsMissing.call(markItemAsWithdrawn, createdItems).forEach(item => {

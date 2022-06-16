@@ -1,5 +1,3 @@
-/// <reference types="cypress" />
-
 import FieldMappingProfiles from '../../support/fragments/data_import/mapping_profiles/fieldMappingProfiles';
 import NewActionProfile from '../../support/fragments/data_import/action_profiles/newActionProfile';
 import NewMappingProfile from '../../support/fragments/data_import/mapping_profiles/newMappingProfile';
@@ -13,8 +11,12 @@ import TestTypes from '../../support/dictionary/testTypes';
 import SettingsMenu from '../../support/fragments/settingsMenu';
 import FileDetails from '../../support/fragments/data_import/logs/fileDetails';
 import TopMenu from '../../support/fragments/topMenu';
+import permissions from '../../support/dictionary/permissions';
+import users from '../../support/fragments/users/users';
 
 describe('ui-data-import: MARC file import with creating of the new instance, holding and item', () => {
+  let user = {};
+
   // unique file name to upload
   const fileName = `C343334autotestFile.${getRandomPostfix()}.mrc`;
 
@@ -27,21 +29,26 @@ describe('ui-data-import: MARC file import with creating of the new instance, ho
   const mappingProfileNameForHoldings = `autotestMappingHoldings${getRandomPostfix()}`;
   const mappingProfileNameForItem = `autotestMappingItem${getRandomPostfix()}`;
 
-  beforeEach(() => {
-    cy.login(
-      Cypress.env('diku_login'),
-      Cypress.env('diku_password')
-    );
-    cy.getAdminToken();
-
+  before(() => {
+    cy.createTempUser([
+      permissions.dataImportUploadAll.gui,
+      permissions.moduleDataImportEnabled.gui,
+      permissions.settingsDataImportEnabled.gui,
+      permissions.uiInventoryViewInstances.gui,
+    ])
+      .then(userProperties => {
+        user = userProperties;
+        cy.login(userProperties.username, userProperties.password);
+      });
     DataImport.checkUploadState();
   });
 
-  afterEach(() => {
+  after(() => {
     DataImport.checkUploadState();
+    users.deleteViaApi(user.userId);
   });
 
-  it('C343334 MARC file import with creating a new mapping profiles, action profiles and job profile', { tags: [TestTypes.smoke] }, () => {
+  it('C343334 MARC file import with creating a new mapping profiles, action profiles and job profile', { tags: [TestTypes.smoke, TestTypes.broken] }, () => {
     const collectionOfProfiles = [
       {
         mappingProfile: { typeValue: NewMappingProfile.folioRecordTypeValue.instance,

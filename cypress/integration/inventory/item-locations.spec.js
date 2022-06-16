@@ -6,11 +6,13 @@ import InventoryInstanceEdit from '../../support/fragments/inventory/InventoryIn
 import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
 import permissions from '../../support/dictionary/permissions';
 import getRandomPostfix from '../../support/utils/stringTools';
-
+import InventoryHoldings from '../../support/fragments/inventory/holdings/inventoryHoldings';
+import devTeams from '../../support/dictionary/devTeams';
+import users from '../../support/fragments/users/users';
 
 const ITEM_BARCODE = `123${getRandomPostfix()}`;
 let userId = '';
-
+let source;
 
 describe('ui-inventory: location', () => {
   before('create inventory instance', () => {
@@ -27,7 +29,7 @@ describe('ui-inventory: location', () => {
             cy.getMaterialTypes({ limit: 1 });
             cy.getLocations({ limit: 2 });
             cy.getHoldingTypes({ limit: 1 });
-            cy.getHoldingSources({ limit: 1 });
+            source = InventoryHoldings.getHoldingSources({ limit: 1 });
             cy.getInstanceTypes({ limit: 1 });
             cy.getServicePointsApi({ limit: 1, query: 'pickupLocation=="true"' });
             cy.getUsers({
@@ -44,7 +46,7 @@ describe('ui-inventory: location', () => {
               holdings: [{
                 holdingsTypeId: Cypress.env('holdingsTypes')[0].id,
                 permanentLocationId: Cypress.env('locations')[0].id,
-                sourceId: Cypress.env('holdingSources')[0].id,
+                sourceId: source.id,
               }],
               items: [
                 [
@@ -72,7 +74,6 @@ describe('ui-inventory: location', () => {
     cy.visit(TopMenu.inventoryPath);
   });
 
-
   after('Delete all data', () => {
     cy.getInstance({ limit: 1, expandAll: true, query: `"items.barcode"=="${ITEM_BARCODE}"` })
       .then((instance) => {
@@ -81,11 +82,10 @@ describe('ui-inventory: location', () => {
         cy.deleteHoldingRecord(instance.holdings[0].id);
         cy.deleteInstanceApi(instance.id);
       });
-    cy.deleteUser(userId);
+    users.deleteViaApi(userId);
   });
 
-
-  it('C163923 Change a location to remote storage', { tags: [TestTypes.smoke] }, () => {
+  it('C163923 Change a location to remote storage', { tags: [TestTypes.smoke, devTeams.firebird] }, () => {
     const toBeEditedLocationName = Cypress.env('locations')[0].name;
     const editedLocationName = Cypress.env('locations')[1].name;
 
@@ -113,8 +113,7 @@ describe('ui-inventory: location', () => {
     );
   });
 
-  // TODO: test failed, bug UIIN-1988
-  it('C163924 Change a remote storage location to standard location', { tags: [TestTypes.smoke] }, () => {
+  it('C163924 Change a remote storage location to standard location', { tags: [TestTypes.smoke, devTeams.firebird] }, () => {
     const toBeEditedLocationName = Cypress.env('locations')[1].name;
     const editedLocationName = Cypress.env('locations')[0].name;
 

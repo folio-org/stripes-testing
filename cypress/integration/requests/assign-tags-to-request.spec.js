@@ -3,6 +3,7 @@ import testType from '../../support/dictionary/testTypes';
 import TopMenu from '../../support/fragments/topMenu';
 import Requests from '../../support/fragments/requests/requests';
 import NewRequest from '../../support/fragments/requests/newRequest';
+import Users from '../../support/fragments/users/users';
 
 
 describe('Assign Tags to Request', () => {
@@ -36,7 +37,7 @@ describe('Assign Tags to Request', () => {
         patronGroup,
         departments: []
       };
-      cy.createUserApi(userData);
+      Users.createViaApi(userData);
     });
 
     cy.getItems({ limit: 1, query: 'status.name=="Available"' }).then((item) => {
@@ -51,12 +52,12 @@ describe('Assign Tags to Request', () => {
     cy.getUsers({ query: `personal.lastName="${lastName}"` })
       .then(() => {
         Cypress.env('users').forEach(user => {
-          cy.deleteUser(user.id);
+          Users.deleteViaApi(user.id);
         });
       });
   });
 
-  it('C747 Assign Tags to Request', { tags:  [testType.smoke] }, () => {
+  it('C747 Assign Tags to Request', { tags:  [testType.smoke, testType.broken] }, () => {
     NewRequest.createNewRequest(requestRecord);
 
     Requests.selectNotYetFilledRequest();

@@ -10,6 +10,7 @@ import Features from '../../support/dictionary/features';
 import Permissions from '../../support/dictionary/permissions';
 import NewAgreement from '../../support/fragments/agreements/newAgreement';
 import { getLongDelay } from '../../support/utils/cypressTools';
+import Users from '../../support/fragments/users/users';
 
 describe('Note creation', () => {
   let userId = '';
@@ -90,12 +91,11 @@ describe('Note creation', () => {
     AgreementDetails.openNoteView(longNote);
     ExistingNoteView.waitLoading();
     ExistingNoteView.checkProperties(longNote);
-    ExistingNoteView.close();
     cy.intercept('note-types?**').as('noteTypesLoading');
     cy.intercept('note-links/domain/agreements/type/agreement/id/**').as('notesLoading');
+    ExistingNoteView.close();
+    cy.wait(['@notesLoading', '@noteTypesLoading'], getLongDelay());
     AgreementDetails.checkNotesCount(1);
-    cy.wait('@notesLoading', getLongDelay());
-    cy.wait('@noteTypesLoading', getLongDelay());
   });
 
   afterEach(() => {
@@ -103,6 +103,6 @@ describe('Note creation', () => {
     AgreementDetails.remove();
     Agreements.waitLoading();
     Agreements.agreementNotVisible(agreementTitle);
-    cy.deleteUser(userId);
+    Users.deleteViaApi(userId);
   });
 });

@@ -1,16 +1,17 @@
+import InventoryHoldings from './holdings/inventoryHoldings';
 import NewInstanceHoldingItem from './holdingsMove/defaultInstanceHoldingItem';
 
 export default {
   createItemWithSameParams: (locationId) => {
     cy.createInstanceType(NewInstanceHoldingItem.defaultUiInstanceType.body);
-    cy.getHoldingSources().then(holdingSources => {
+    InventoryHoldings.getHoldingSources({ limit: 1 }).then(holdingSources => {
       const specialInstance = { ...NewInstanceHoldingItem.defaultUiInstance.body };
       specialInstance.instanceTypeId = NewInstanceHoldingItem.defaultUiInstanceType.body.id;
       cy.createInstance({ instance: specialInstance });
       const specialHolding = { ...NewInstanceHoldingItem.defaultUiHolding.body };
       specialHolding.permanentLocationId = locationId;
       specialHolding.instanceId = specialInstance.id;
-      specialHolding.sourceId = holdingSources.holdingsRecordsSources[0].id;
+      specialHolding.sourceId = holdingSources[0].id;
       cy.createHolding({ holding: specialHolding });
       cy.getMaterialTypes().then(materialType => {
         cy.getLoanTypes().then(loanTypes => {

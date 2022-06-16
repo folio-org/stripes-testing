@@ -1,5 +1,3 @@
-/// <reference types="cypress" />
-
 import TestTypes from '../../support/dictionary/testTypes';
 import FieldMappingProfiles from '../../support/fragments/data_import/mapping_profiles/fieldMappingProfiles';
 import getRandomPostfix from '../../support/utils/stringTools';
@@ -13,7 +11,6 @@ import TopMenu from '../../support/fragments/topMenu';
 import NewMappingProfile from '../../support/fragments/data_import/mapping_profiles/newMappingProfile';
 import InvoiceView from '../../support/fragments/invoices/invoiceView';
 
-// TODO: https://issues.folio.org/browse/UIDATIMP-1167
 describe('ui-data-import: Import a large EDIFACT invoice file', () => {
 // unique name for profiles
   const mappingProfileName = `autoTestMappingProf.${getRandomPostfix()}`;
@@ -31,10 +28,14 @@ describe('ui-data-import: Import a large EDIFACT invoice file', () => {
   });
 
   afterEach(() => {
+    // clean up generated profiles
+    JobProfiles.deleteJobProfile(jobProfileName);
+    ActionProfiles.deleteActionProfile(actionProfileName);
+    FieldMappingProfiles.deleteFieldMappingProfile(mappingProfileName);
     DataImport.checkUploadState();
   });
 
-  it('C347615 Import a large EDIFACT invoice file', { tags: [TestTypes.smoke] }, () => {
+  it('C347615 Import a large EDIFACT invoice file', { tags: [TestTypes.smoke, TestTypes.broken] }, () => {
     // unique file name to upload
     const fileName = `C347615autotestFile.${getRandomPostfix()}.edi`;
 
@@ -76,10 +77,5 @@ describe('ui-data-import: Import a large EDIFACT invoice file', () => {
     Logs.checkQuantityRecordsInFile(Logs.quantityRecordsInInvoice.firstQuantity);
     Logs.openFileDetails(fileName);
     InvoiceView.checkQuantityInvoiceLinesInRecord();
-
-    // clean up generated profiles
-    JobProfiles.deleteJobProfile(jobProfileName);
-    ActionProfiles.deleteActionProfile(actionProfileName);
-    FieldMappingProfiles.deleteFieldMappingProfile(mappingProfileName);
   });
 });

@@ -2,6 +2,7 @@ import testType from '../../support/dictionary/testTypes';
 import TopMenu from '../../support/fragments/topMenu';
 import Requests from '../../support/fragments/requests/requests';
 import { MultiColumnListHeader } from '../../../interactors';
+import Users from '../../support/fragments/users/users';
 
 describe('ui-requests: Sort requests', () => {
   const userIds = [];
@@ -36,11 +37,11 @@ describe('ui-requests: Sort requests', () => {
       Requests.deleteRequestApi(request.id);
     });
     userIds.forEach(id => {
-      cy.deleteUser(id);
+      Users.deleteViaApi(id);
     });
   });
 
-  it('should implement e-2-e automation of test case C2379: Test Request app sorting', { tags: [testType.smoke] }, () => {
+  it('C2379: Test Request app sorting', { tags: [testType.smoke] }, () => {
     cy.visit(TopMenu.requestsPath);
 
     cy.intercept('GET', '/circulation/requests?*').as('getRequests');

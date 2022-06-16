@@ -1,5 +1,3 @@
-/// <reference types="cypress" />
-
 import TestTypes from '../../support/dictionary/testTypes';
 import getRandomPostfix from '../../support/utils/stringTools';
 import DataImport from '../../support/fragments/data_import/dataImport';
@@ -249,7 +247,7 @@ describe('ui-data-import: MARC file upload with the update of instance, holding,
     DataImport.checkUploadState();
   });
 
-  it('C343335 MARC file upload with the update of instance, holding, and items', { tags: [TestTypes.smoke] }, () => {
+  it('C343335 MARC file upload with the update of instance, holding, and items', { tags: [TestTypes.smoke, TestTypes.broken] }, () => {
     // upload a marc file for creating of the new instance, holding and item
     cy.visit(TopMenu.dataImportPath);
     DataImport.uploadFile('oneMarcBib.mrc', nameMarcFileForImportCreate);

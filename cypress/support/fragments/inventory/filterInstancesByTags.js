@@ -10,6 +10,7 @@ import {
   Section,
   TextField
 } from '../../../../interactors';
+import Helper from '../finance/financeHelper';
 
 const paneFilterSection = Section({ id: 'pane-filter' });
 const paneResultsSection = Section({ id: 'pane-results' });
@@ -24,7 +25,7 @@ const emptyResultsMessage = 'Choose a filter or enter a search query to show res
 export default {
   createInstanceViaApi() {
     const instanceData = {
-      instanceTitle: `inst_title-${uuid()}`,
+      instanceTitle: `instanceTitle ${Helper.getRandomBarcode()}`,
       instanceId: uuid(),
       instanceTypeId: null,
     };

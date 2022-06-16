@@ -3,59 +3,74 @@ import SettingsMenu from '../../../support/fragments/settingsMenu';
 import UsersOwners from '../../../support/fragments/settings/users/usersOwners';
 import Permissions from '../../../support/dictionary/permissions';
 import getRandomPostfix from '../../../support/utils/stringTools';
-import { CY_ENV } from '../../../support/constants';
+import Features from '../../../support/dictionary/features';
+import users from '../../../support/fragments/users/users';
 
 describe('ui-users-settings: Owners', () => {
   describe('Owner creation', () => {
     const servicePoints = [];
-    const ownerName = `Automation owner $${getRandomPostfix()}`;
+    const ownerNames = [];
 
     beforeEach(() => {
-      cy.login(Cypress.env(CY_ENV.DIKU_LOGIN), Cypress.env(CY_ENV.DIKU_PASSWORD));
-      cy.getToken(Cypress.env(CY_ENV.DIKU_LOGIN), Cypress.env(CY_ENV.DIKU_PASSWORD))
-        .then(() => {
-          cy.createServicePoint()
-            .then(newServicePoint => {
-              servicePoints.push(newServicePoint);
-            });
-          cy.createServicePoint()
-            .then(newServicePoint => {
-              servicePoints.push(newServicePoint);
-            });
-        });
+      cy.getAdminToken().then(() => {
+        cy.createServicePoint()
+          .then(newServicePoint => {
+            servicePoints.push(newServicePoint);
+          });
+        cy.createServicePoint()
+          .then(newServicePoint => {
+            servicePoints.push(newServicePoint);
+          });
+        cy.loginAsAdmin({ path: SettingsMenu.usersOwnersPath, waiter: UsersOwners.waitLoading });
+      });
     });
 
-    afterEach(() => {
+    after(() => {
       servicePoints.forEach(servicePoint => {
         cy.deleteServicePoint(servicePoint.id);
+      });
+
+      ownerNames.forEach(ownerName => {
+        UsersOwners.getOwnerViaApi({ query: `owner==${ownerName}` })
+          .then(owner => UsersOwners.deleteViaApi(owner.id));
       });
     });
 
     it('C350616 Fee/Fine Owners are not required to have a Service Point', { tags: [TestType.smoke] }, () => {
-      cy.visit(SettingsMenu.usersOwnersPath);
-
+      const ownerName = `Automation owner $${getRandomPostfix()}`;
+      ownerNames.push(ownerName);
       UsersOwners.startNewLineAdding();
       UsersOwners.fill(ownerName);
       UsersOwners.save(ownerName);
 
       UsersOwners.startNewLineAdding();
       UsersOwners.multiCheckFreeServicePointPresence(servicePoints);
+    });
 
-      // testdata clearing
-      UsersOwners.getOwnerViaApi({ query: `owner==${ownerName}` })
-        .then(owner => UsersOwners.deleteViaApi(owner.id));
+    it('C350615 The "Shared" Fee/Fine Owner is not allowed to have Service Points', { tags: [TestType.smoke, Features.sharedOwner] }, () => {
+      const ownerName = 'Shared';
+      UsersOwners.startNewLineAdding();
+      UsersOwners.fill(ownerName);
+      UsersOwners.save();
+      ownerNames.push(ownerName);
+
+      UsersOwners.startNewLineAdding();
+      UsersOwners.fill('Shared', servicePoints.at(-1).name);
+      UsersOwners.trySave();
+
+      UsersOwners.checkValidatorError('Shared', 'Associated service points not allowed for Shared fee/fine owner');
     });
   });
 
   describe('Management of n fee/fine owners and service points', () => {
-    const users = [];
+    const testUsers = [];
     const addedServicePoints = [];
     const createRegularUser = () => cy.createTempUser([Permissions.uiUsersSettingsOwners.gui,
       Permissions.uiUsersEdituserservicepoints.gui]);
 
     it('C441 Verify that you can create/edit/delete associations between fee/fine owners and service points', { tags: [TestType.criticalPath] }, () => {
       createRegularUser().then(firstUserProperties => {
-        users.push(firstUserProperties);
+        testUsers.push(firstUserProperties);
 
         cy.allure().startStep('Login and open Owners settings by user1');
         cy.login(firstUserProperties.username, firstUserProperties.password, { path: SettingsMenu.usersOwnersPath, waiter: UsersOwners.waitLoading });
@@ -69,8 +84,8 @@ describe('ui-users-settings: Owners', () => {
 
           cy.allure().startStep('Add new owner, related with current user and not used service point');
           UsersOwners.startNewLineAdding();
-          UsersOwners.fill(users[0].username, addedServicePoints.at(-1));
-          UsersOwners.save(users[0].username);
+          UsersOwners.fill(testUsers[0].username, addedServicePoints.at(-1));
+          UsersOwners.save(testUsers[0].username);
           cy.allure().endStep();
 
           cy.allure().startStep('Verify values in Associated service points.');
@@ -79,7 +94,7 @@ describe('ui-users-settings: Owners', () => {
           cy.allure().endStep();
 
           createRegularUser().then(secondUserProperties => {
-            users.push(secondUserProperties);
+            testUsers.push(secondUserProperties);
 
             cy.allure().startStep('Login and open Owners settings by user2');
             cy.login(secondUserProperties.username, secondUserProperties.password, { path: SettingsMenu.usersOwnersPath, waiter: UsersOwners.waitLoading });
@@ -117,7 +132,7 @@ describe('ui-users-settings: Owners', () => {
     });
 
     afterEach(() => {
-      users.forEach(user => cy.deleteUser(user.userId));
+      testUsers.forEach(user => users.deleteViaApi(user.userId));
     });
   });
 });

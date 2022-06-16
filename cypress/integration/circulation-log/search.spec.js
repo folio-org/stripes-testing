@@ -3,14 +3,18 @@ import TestTypes from '../../support/dictionary/testTypes';
 import SearchPane from '../../support/fragments/circulation-log/searchPane';
 import getRandomPostfix from '../../support/utils/stringTools';
 import permissions from '../../support/dictionary/permissions';
-import usersSearchPane from '../../support/fragments/users/usersSearchPane';
-import usersCard from '../../support/fragments/users/usersCard';
-import checkinActions from '../../support/fragments/check-in-actions/checkInActions';
-import checkoutActions from '../../support/fragments/checkout/checkout';
+import UsersSearchPane from '../../support/fragments/users/usersSearchPane';
+import UsersCard from '../../support/fragments/users/usersCard';
+import CheckinActions from '../../support/fragments/check-in-actions/checkInActions';
+import CheckoutActions from '../../support/fragments/checkout/checkout';
+import InventoryHoldings from '../../support/fragments/inventory/holdings/inventoryHoldings';
+import devTeams from '../../support/dictionary/devTeams';
+import Users from '../../support/fragments/users/users';
+import UsersEditPage from '../../support/fragments/users/usersEditPage';
 
 const ITEM_BARCODE = `123${getRandomPostfix()}`;
 let userId = '';
-
+let source;
 
 describe('ui-circulation-log', () => {
   before('create inventory instance', () => {
@@ -29,7 +33,7 @@ describe('ui-circulation-log', () => {
             cy.getMaterialTypes({ limit: 1 });
             cy.getLocations({ limit: 1 });
             cy.getHoldingTypes({ limit: 1 });
-            cy.getHoldingSources({ limit: 1 });
+            source = InventoryHoldings.getHoldingSources({ limit: 1 });
             cy.getInstanceTypes({ limit: 1 });
             cy.getServicePointsApi({ limit: 1, query: 'pickupLocation=="true"' });
             cy.getUsers({
@@ -38,7 +42,7 @@ describe('ui-circulation-log', () => {
             });
           })
           .then(() => {
-            cy.addServicePointToUser(Cypress.env('servicePoints')[0].id, userId);
+            UsersEditPage.addServicePointsToUser([Cypress.env('servicePoints')[0].id], userId);
             cy.getUserServicePoints(Cypress.env('users')[0].id);
             cy.createInstance({
               instance: {
@@ -48,7 +52,7 @@ describe('ui-circulation-log', () => {
               holdings: [{
                 holdingsTypeId: Cypress.env('holdingsTypes')[0].id,
                 permanentLocationId: Cypress.env('locations')[0].id,
-                sourceId: Cypress.env('holdingSources')[0].id,
+                sourceId: source.id,
               }],
               items: [
                 [{
@@ -63,7 +67,7 @@ describe('ui-circulation-log', () => {
             });
           })
           .then(() => {
-            checkoutActions.createItemCheckoutApi({
+            CheckoutActions.createItemCheckoutApi({
               itemBarcode: ITEM_BARCODE,
               userBarcode: Cypress.env('users')[0].barcode,
               servicePointId: Cypress.env('userServicePoints')[0].id,
@@ -77,7 +81,7 @@ describe('ui-circulation-log', () => {
   });
 
   after('Delete all data', () => {
-    checkinActions.createItemCheckinApi({
+    CheckinActions.createItemCheckinApi({
       itemBarcode: ITEM_BARCODE,
       servicePointId: Cypress.env('servicePoints')[0].id,
       checkInDate: '2021-09-30T16:14:50.444Z',
@@ -91,46 +95,46 @@ describe('ui-circulation-log', () => {
     cy.getBlockApi(userId).then(() => {
       cy.deleteBlockApi(Cypress.env('blockIds')[0].id);
     });
-    cy.deleteUser(userId);
+    Users.deleteViaApi(userId);
   });
 
-  it('C15484 Filter circulation log on item barcode', { retries: 3, tags: [TestTypes.smoke] }, () => {
+  it('C15484 Filter circulation log on item barcode', { retries: 3, tags: [TestTypes.smoke, devTeams.firebird, TestTypes.broken] }, () => {
     SearchPane.searchByItemBarcode(ITEM_BARCODE);
     SearchPane.verifyResultCells();
   });
 
-  it('C16976 Filter circulation log by date', { retries: 3, tags: [TestTypes.smoke] }, () => {
+  it('C16976 Filter circulation log by date', { retries: 3, tags: [TestTypes.smoke, devTeams.firebird, TestTypes.broken] }, () => {
     const verifyDate = true;
 
     SearchPane.filterByLastWeek();
     SearchPane.verifyResultCells(verifyDate);
   });
 
-  it('C15485 Filter circulation log on user barcode', { tags: [TestTypes.smoke] }, () => {
+  it('C15485 Filter circulation log on user barcode', { tags: [TestTypes.smoke, devTeams.firebird, TestTypes.broken] }, () => {
     const userBarcode = Cypress.env('users')[0].barcode;
 
     SearchPane.searchByUserBarcode(userBarcode);
     SearchPane.verifyResultCells();
   });
 
-  it('C15853 Filter circulation log on description', { tags: [TestTypes.smoke] }, () => {
+  it('C15853 Filter circulation log on description', { tags: [TestTypes.smoke, devTeams.firebird, TestTypes.broken] }, () => {
     // login with user that has all permissions
     cy.login(Cypress.env('diku_login'), Cypress.env('diku_password'));
     cy.visit(TopMenu.usersPath);
 
     // find user
-    usersSearchPane.searchByStatus('Active');
-    usersSearchPane.searchByKeywords(userId);
-    usersSearchPane.openUser(userId);
+    UsersSearchPane.searchByStatus('Active');
+    UsersSearchPane.searchByKeywords(userId);
+    UsersSearchPane.openUser(userId);
 
     // create patron block
     const searchString = `${getRandomPostfix()}`;
     const testDescription = `test ${searchString} description filter`;
 
-    usersCard.openPatronBlocks();
-    usersCard.createPatronBlock();
-    usersCard.fillDescription(testDescription);
-    usersCard.saveAndClose();
+    UsersCard.openPatronBlocks();
+    UsersCard.createPatronBlock();
+    UsersCard.fillDescription(testDescription);
+    UsersCard.saveAndClose();
 
     // verify circulation logs result
     cy.visit(TopMenu.circulationLogPath);

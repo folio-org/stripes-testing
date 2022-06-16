@@ -1,5 +1,3 @@
-/// <reference types="cypress" />
-
 import TestTypes from '../../support/dictionary/testTypes';
 import FieldMappingProfiles from '../../support/fragments/data_import/mapping_profiles/fieldMappingProfiles';
 import getRandomPostfix from '../../support/utils/stringTools';
@@ -13,32 +11,44 @@ import SettingsMenu from '../../support/fragments/settingsMenu';
 import TopMenu from '../../support/fragments/topMenu';
 import NewMappingProfile from '../../support/fragments/data_import/mapping_profiles/newMappingProfile';
 import InvoiceView from '../../support/fragments/invoices/invoiceView';
+import permissions from '../../support/dictionary/permissions';
+import users from '../../support/fragments/users/users';
 
 describe('ui-data-import: EDIFACT file import with creating of new invoice record', () => {
-  beforeEach(() => {
-    cy.login(
-      Cypress.env('diku_login'),
-      Cypress.env('diku_password')
-    );
-    cy.getAdminToken();
+  // unique name for profiles
+  const mappingProfileName = `autoTestMappingProf.${getRandomPostfix()}`;
+  const actionProfileName = `autoTestActionProf.${getRandomPostfix()}`;
+  const jobProfileName = `autoTestJobProf.${getRandomPostfix()}`;
+  let user = {};
 
+  before(() => {
+    cy.createTempUser([
+      permissions.dataImportUploadAll.gui,
+      permissions.moduleDataImportEnabled.gui,
+      permissions.settingsDataImportEnabled.gui,
+      permissions.viewOrganization.gui,
+      permissions.viewEditDeleteInvoiceInvoiceLine.gui
+    ])
+      .then(userProperties => {
+        user = userProperties;
+        cy.login(userProperties.username, userProperties.password);
+      });
     DataImport.checkUploadState();
   });
 
-  afterEach(() => {
+  after(() => {
     cy.getInvoiceIdApi({ query: `vendorInvoiceNo="${FileDetails.invoiceNumberFromEdifactFile}"` })
       .then(id => cy.deleteInvoiceFromStorageApi(id));
-
     DataImport.checkUploadState();
+    users.deleteViaApi(user.userId);
+
+    // clean up generated profiles
+    JobProfiles.deleteJobProfile(jobProfileName);
+    ActionProfiles.deleteActionProfile(actionProfileName);
+    FieldMappingProfiles.deleteFieldMappingProfile(mappingProfileName);
   });
 
-  // TODO: https://issues.folio.org/browse/UIDATIMP-1167
-  it('C343338 EDIFACT file import with creating of new invoice record', { tags: [TestTypes.smoke] }, () => {
-    // unique name for profiles
-    const mappingProfileName = `autoTestMappingProf.${getRandomPostfix()}`;
-    const actionProfileName = `autoTestActionProf.${getRandomPostfix()}`;
-    const jobProfileName = `autoTestJobProf.${getRandomPostfix()}`;
-
+  it('C343338 EDIFACT file import with creating of new invoice record', { tags: [TestTypes.smoke, TestTypes.broken] }, () => {
     // unique file name to upload
     const fileName = `C343338autotestFile.${getRandomPostfix()}.edi`;
 
@@ -79,13 +89,8 @@ describe('ui-data-import: EDIFACT file import with creating of new invoice recor
     JobProfiles.runImportFile(fileName);
     Logs.checkImportFile(jobProfile.profileName);
     Logs.checkStatusOfJobProfile();
-    Logs.openFileDetails(fileName);
+    Logs.openFileDetails();
     FileDetails.checkStatusInColumn(FileDetails.status.created, FileDetails.columnName.invoice);
     InvoiceView.checkInvoiceDetails(InvoiceView.vendorInvoiceNumber);
-
-    // clean up generated profiles
-    JobProfiles.deleteJobProfile(jobProfileName);
-    ActionProfiles.deleteActionProfile(actionProfileName);
-    FieldMappingProfiles.deleteFieldMappingProfile(mappingProfileName);
   });
 });

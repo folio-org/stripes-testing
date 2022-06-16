@@ -1,9 +1,10 @@
-import { Button, TextField, MultiColumnListCell, Modal, HTML, including, Section, PaneHeader, MultiColumnList } from '../../../../../interactors';
+import { Button, TextField, MultiColumnListCell, Modal, HTML, including, Section, PaneHeader, MultiColumnList, Pane } from '../../../../../interactors';
 import { getLongDelay } from '../../../utils/cypressTools';
 import newJobProfile from './newJobProfile';
 
 const actionsButton = Button('Actions');
 const runButton = Button('Run');
+const waitSelector = Pane({ id:'view-job-profile-pane' });
 
 const openNewJobProfileForm = () => {
   cy.do([
@@ -16,6 +17,10 @@ const openNewJobProfileForm = () => {
 const waitLoadingList = () => {
   cy.get('[id="job-profiles-list"]', getLongDelay())
     .should('be.visible');
+};
+
+const waitLoading = (selector) => {
+  cy.expect(selector.exists());
 };
 
 const deleteJobProfile = (profileName) => {
@@ -62,6 +67,7 @@ export default {
   },
 
   waitLoadingList,
+  waitLoading,
 
   checkJobProfilePresented:(jobProfileTitle) => {
     cy.get('[id="job-profiles-list"]')
@@ -70,17 +76,15 @@ export default {
 
   searchJobProfileForImport:(jobProfileTitle) => {
     // wait for data to be loaded
-    cy.intercept('/data-import-profiles/jobProfiles?*').as('getJob');
+    cy.intercept('/data-import-profiles/jobProfiles?limit=5000?*').as('getJob');
     cy.do(TextField({ id:'input-search-job-profiles-field' }).fillIn(jobProfileTitle));
     cy.wait('@getJob');
     cy.do(Button('Search').click());
-    // wait for data to be loaded
-    cy.intercept('/data-import-profiles/jobProfiles?*').as('getJob');
-    cy.expect(MultiColumnListCell(jobProfileTitle).exists());
     cy.wait('@getJob');
   },
 
   runImportFile:(fileName) => {
+    waitLoading(waitSelector);
     cy.do([
       actionsButton.click(),
       runButton.click(),

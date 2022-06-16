@@ -122,8 +122,7 @@ export default {
 
     checkModalTable(headers.renewConfirmation, itemData);
 
-    // todo: Uncomment button check after permission issue fix (ticket number UIU-2604)
-    // cy.expect(Button(buttonLabels.override).exists());
+    cy.expect(Button(buttonLabels.override).absent());
     cy.do(Button(buttonLabels.close).click());
   },
 
@@ -189,7 +188,7 @@ export default {
       firstTableRow.find(MultiColumnListCell(loanInfo.overrideRenewed)).exists(),
       firstTableRow.find(MultiColumnListCell(fullOverrideDate)).exists(),
       firstTableRow.find(MultiColumnListCell(overrideData.status)).exists(),
-      firstTableRow.find(MultiColumnListCell(`${lastName}, ${firstName}`)).exists(),
+      firstTableRow.find(MultiColumnListCell(including(`${lastName}, ${firstName}`))).exists(),
       firstTableRow.find(MultiColumnListCell(overrideData.additionalInfo)).exists(),
     ]);
   },
