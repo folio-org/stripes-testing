@@ -76,8 +76,8 @@ export const MultiColumnList = HTML.extend('multi column list')
       }
     ),
     click: (interactor, { row = 0, column }) => {
-      const columnSearch = !column ? { columnIndex: 0 } : { column };
-      return interactor.find(MultiColumnListCell({ row, ...columnSearch })).click();
+      const contentSearch = !column ? { columnIndex: 0 } : { content: column };
+      return interactor.find(MultiColumnListCell({ row, ...contentSearch })).click();
     },
     clickNextPagingButton: (interactor, label = 'Next') => {
       return interactor.find(Button(label)).click();
