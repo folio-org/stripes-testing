@@ -7,7 +7,6 @@ import InventorySearch from '../../support/fragments/inventory/inventorySearch';
 import newOrganization from '../../support/fragments/organizations/newOrganization';
 import basicOrderLine from '../../support/fragments/orders/basicOrderLine';
 import Organizations from '../../support/fragments/organizations/organizations';
-import testTypes from '../../support/dictionary/testTypes';
 
 describe('orders: create an order', () => {
   const organization = { ...newOrganization.defaultUiOrganizations };
@@ -40,7 +39,7 @@ describe('orders: create an order', () => {
     Organizations.deleteOrganizationApi(organization.id);
   });
 
-  it('C734 Open order for physical material set to create Instance, Holding, Item', { tags: [TestType.smoke, testTypes.broken] }, () => {
+  it('C734 Open order for physical material set to create Instance, Holding, Item', { tags: [TestType.smoke, testType.broken] }, () => {
     Orders.createOrder(order).then(orderId => {
       order.id = orderId;
       Orders.checkCreatedOrder(order);
