@@ -77,18 +77,25 @@ export default {
   updateApi(data) {
     return cy.updateCirculationRules(data);
   },
-  addRuleApi(defaultRules, priority, priorityId, noticeId) {
-    // TODO add supporting for more options
+  getRuleProps(defaultRules) {
     const oIndex = defaultRules.indexOf(' o ', 2);
-    const iIndex = defaultRules.indexOf(' i ', 2);
     const lIndex = defaultRules.indexOf(' l ', 2);
+    const iIndex = defaultRules.indexOf(' i ', 2);
     const rIndex = defaultRules.indexOf(' r ', 2);
-    const o = defaultRules.substring(oIndex, oIndex + 39);
-    const l = defaultRules.substring(lIndex, lIndex + 39);
-    const i = defaultRules.substring(iIndex, iIndex + 39);
-    const r = defaultRules.substring(rIndex, rIndex + 39);
+    const nIndex = defaultRules.indexOf(' n ', 2);
 
-    const withNewRule = defaultRules + ' \n' + priority + priorityId + ':' + i + l + r + o + ' n ' + noticeId;
+    const baseRuleProps = {
+      'o': defaultRules.substring(oIndex + 3, oIndex + 39),
+      'l': defaultRules.substring(lIndex + 3, lIndex + 39),
+      'i': defaultRules.substring(iIndex + 3, iIndex + 39),
+      'r': defaultRules.substring(rIndex + 3, rIndex + 39),
+      'n': defaultRules.substring(nIndex + 3, nIndex + 39)
+    };
+
+    return baseRuleProps;
+  },
+  addRuleApi(defaultRules, ruleParams, priority, priorityId) {
+    const withNewRule = defaultRules + ' \n' + priority + priorityId + ': i ' + ruleParams.i + ' l ' + ruleParams.l + ' r ' + ruleParams.r + ' o ' + ruleParams.o + ' n ' + ruleParams.n;
     return cy.updateCirculationRules({ rulesAsText: withNewRule });
   },
   deleteRuleApi(defaultRules) {

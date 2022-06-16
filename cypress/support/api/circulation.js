@@ -56,7 +56,7 @@ Cypress.Commands.add('createLoanPolicy', (policy) => {
     path: 'loan-policy-storage/loan-policies',
     body: {
       id: uuid(),
-      name: `Automation loan policy ${getRandomPostfix()}`,
+      name: `automation_loan_policy_${getRandomPostfix()}`,
       ...policy,
     },
   })

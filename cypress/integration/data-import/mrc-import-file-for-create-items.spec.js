@@ -48,7 +48,7 @@ describe('ui-data-import: MARC file import with creating of the new instance, ho
     users.deleteViaApi(user.userId);
   });
 
-  it('C343334 MARC file import with creating a new mapping profiles, action profiles and job profile', { tags: [TestTypes.smoke] }, () => {
+  it('C343334 MARC file import with creating a new mapping profiles, action profiles and job profile', { tags: [TestTypes.smoke, TestTypes.broken] }, () => {
     const collectionOfProfiles = [
       {
         mappingProfile: { typeValue: NewMappingProfile.folioRecordTypeValue.instance,

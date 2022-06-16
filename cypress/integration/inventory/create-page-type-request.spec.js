@@ -78,7 +78,7 @@ describe('ui-inventory: Create page type request', () => {
     Requests.deleteRequestPolicyApi(requestPolicyId);
   });
 
-  it('C546: Create new request for "Page" type', { tags: [TestTypes.smoke] }, () => {
+  it('C546: Create new request for "Page" type', { tags: [TestTypes.smoke, TestTypes.broken] }, () => {
     cy.visit(TopMenu.inventoryPath);
     createPageTypeRequest.findAvailableItem(instanceData, createdItem.barcode);
     createPageTypeRequest.clickNewRequest(createdItem.barcode);

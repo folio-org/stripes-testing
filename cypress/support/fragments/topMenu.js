@@ -21,5 +21,6 @@ export default {
   requestsPath: '/requests',
   usersPath: '/users',
   checkOutPath: '/checkout',
+  checkInPath: '/checkin',
   bulkEditPath: '/bulk-edit'
 };
