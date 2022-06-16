@@ -44,7 +44,7 @@ describe('Check In - Actions ', () => {
     NewUser.deleteUserWithSameParams();
   });
 
-  it('C347631 Check in: Basic check in', { tags: [TestTypes.smoke] }, () => {
+  it('C347631 Check in: Basic check in', { tags: [TestTypes.smoke, TestTypes.broken] }, () => {
     CheckInActions.checkInItem();
     CheckInActions.existsFormColomns();
     CheckInActions.existsItemsInForm();

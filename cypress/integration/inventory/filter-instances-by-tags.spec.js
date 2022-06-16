@@ -32,7 +32,7 @@ describe('ui-inventory: Filter instances by tags', () => {
     users.deleteViaApi(userId);
   });
 
-  it('C343215 Filter instances by tags', { tags: [TestTypes.smoke] }, () => {
+  it('C343215 Filter instances by tags', { tags: [TestTypes.smoke, TestTypes.broken] }, () => {
     cy.visit(TopMenu.inventoryPath);
     FilterInstancesByTags.verifyPanesExist();
     SearchInventory.searchInstanceByTitle(instanceRecord.instanceTitle);
