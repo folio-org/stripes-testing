@@ -7,7 +7,7 @@ import users from '../../support/fragments/users/users';
 
 let user;
 
-describe('ui-users: BULK EDIT permissions', () => {
+describe('bulk-edit: landing page', () => {
   before('create user', () => {
     cy.createTempUser([
       permissions.bulkEditView.gui,
