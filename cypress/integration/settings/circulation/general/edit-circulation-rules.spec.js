@@ -21,7 +21,6 @@ import MaterialTypes, {
 } from '../../../../support/fragments/inventory/materialType/materialTypesSettings';
 import permissions from '../../../../support/dictionary/permissions';
 import Users from '../../../../support/fragments/users/users';
-import testTypes from '../../../../support/dictionary/testTypes';
 
 describe('ui-circulation-settings: Edit circulation rules', () => {
   let originalCirculationRules;
