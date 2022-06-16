@@ -1,6 +1,3 @@
-import uuid from 'uuid';
-import getRandomPostfix from '../../../support/utils/stringTools';
-
 import permissions from '../../../support/dictionary/permissions';
 import inventorySearch from '../../../support/fragments/inventory/inventorySearch';
 import browseContributors from '../../../support/fragments/inventory/search/browseContributors';
@@ -9,29 +6,8 @@ import users from '../../../support/fragments/users/users';
 
 describe('Search: browse contributors with exact match query', () => {
   const testData = {};
-  const instanceA = {
-    source: 'FOLIO',
-    title: `Test_title_A_${getRandomPostfix()}`,
-    contributors: [
-      {
-        name: `__A_test_contributor_${getRandomPostfix()}`,
-        primary: false,
-      }
-    ],
-    id: uuid()
-  };
-
-  const instanceZ = {
-    source: 'FOLIO',
-    title: `Test_title_Z_${getRandomPostfix()}`,
-    contributors: [
-      {
-        name: `__Z_test_contributor_${getRandomPostfix()}`,
-        primary: false,
-      }
-    ],
-    id: uuid()
-  };
+  const instanceA = browseContributors.defaultInstanceAWithContributor;
+  const instanceZ = browseContributors.defaultInstanceZWithContributor;
 
   beforeEach('Creating user and "Instance" records with contributors', () => {
     cy.getAdminToken();
@@ -50,6 +26,7 @@ describe('Search: browse contributors with exact match query', () => {
 
     browseContributors.createInstanceWithContributorViaApi(instanceA);
     browseContributors.createInstanceWithContributorViaApi(instanceZ);
+
     cy.getInstanceById(instanceA.id)
       .then((res) => {
         testData.instanceAProps = res;
@@ -76,7 +53,7 @@ describe('Search: browse contributors with exact match query', () => {
     browseContributors.checkSearch();
     browseContributors.browse(instanceA.contributors[0].name);
     browseContributors.checkExactSearchResult(instanceA.contributors[0]);
-    browseContributors.checkInstanceOrder();
+    browseContributors.checkInstanceOrder(instanceA.contributors[0], instanceZ.contributors[0]);
     browseContributors.openInstance(instanceA.contributors[0]);
     browseContributors.checkInstance(instanceA);
   });

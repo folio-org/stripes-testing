@@ -41,6 +41,7 @@ export const MultiColumnListHeader = HTML.extend('multi column list header')
   .selector('div[class*=mclHeader-]')
   .locator(content)
   .filters({
+    content,
     index: childIndex,
     id: el => el.getAttribute('id')
   })
