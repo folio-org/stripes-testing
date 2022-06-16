@@ -9,20 +9,119 @@ import {
   MultiColumnListHeader,
   RadioButton,
   Select,
-  MultiColumnList
+  MultiColumnList, Pane, TextArea
 } from '../../../../interactors';
 
 const resultsAccordion = Accordion('Preview of record matched');
 const errorsAccordion = Accordion('Errors');
 const recordIdentifier = Select('Record identifier');
+const recordTypes = Accordion({ label: 'Record types' });
+const actions = Button('Actions');
 
 export default {
+  actionsIsShown() {
+    cy.expect(actions.exists());
+  },
+
+  verifyPanesBeforeImport() {
+    cy.expect([
+      Pane('Set criteria').exists(),
+      Pane('Bulk edit').exists(),
+    ]);
+  },
+
+  verifyBulkEditPaneItems() {
+    cy.expect([
+      Pane('Bulk edit').find(HTML('Set criteria to start bulk edit')).exists(),
+    ]);
+  },
+
+  verifySetCriteriaPaneItems() {
+    cy.expect([
+      Button('Identifier').exists(),
+      Button('Query').exists(),
+      recordIdentifier.exists(),
+      recordIdentifier.find(HTML('Select record identifier')).exists(),
+      Accordion({ label: 'Record types', open: true }).exists(),
+      HTML('Drag and drop').exists()
+    ]);
+  },
+
+  verifyRecordsTypeItems() {
+    cy.expect([
+      recordTypes.find(HTML('Users')).exists(),
+      recordTypes.find(HTML('Inventory - items')).exists()
+    ]);
+    this.checkUsersRadio();
+    cy.do(recordTypes.clickHeader());
+    cy.expect(Accordion({ label: 'Record types', open: false }).exists());
+    cy.do(recordTypes.clickHeader());
+    cy.expect(RadioButton({ text: 'Users', checked: true }).exists());
+  },
+
+  verifyRecordIdentifierItems() {
+    cy.expect([
+      recordIdentifier.find(HTML('User UUIDs')).exists(),
+      recordIdentifier.find(HTML('User Barcodes')).exists(),
+      recordIdentifier.find(HTML('External IDs')).exists(),
+      recordIdentifier.find(HTML('Usernames')).exists(),
+    ]);
+  },
+
+  verifyDragNDropUsersUIIDsArea() {
+    this.checkUsersRadio();
+    this.selectRecordIdentifier('User UUIDs');
+    cy.expect([
+      HTML('Select a file with User UUIDs').exists(),
+      actions.exists()
+    ]);
+  },
+
+  verifyDragNDropUsersBarcodesArea() {
+    this.checkUsersRadio();
+    this.selectRecordIdentifier('User Barcodes');
+    cy.expect(HTML('Select a file with User Barcodes').exists());
+  },
+
+  openQuerySearch() {
+    cy.do(Button('Query').click());
+  },
+
+  verifyEmptyQueryPane() {
+    cy.expect([
+      TextArea().exists(),
+      Button({ text: 'Search', disabled: true }).exists(),
+      Button({ text: 'Reset all', disabled: true }).exists(),
+      Accordion({ label: 'Record types', open: true }).exists()
+    ]);
+  },
+
+  fillQuery(text) {
+    cy.do(TextArea().fillIn(text));
+  },
+
+  verifyFilledQueryPane() {
+    cy.expect([
+      TextArea().exists(),
+      Button({ text: 'Search', disabled: false }).exists(),
+      Button({ text: 'Reset all', disabled: false }).exists(),
+      Accordion({ label: 'Record types', open: true }).exists()
+    ]);
+  },
+
+  resetQueryField() {
+    cy.do([
+      Button('Reset all').click(),
+      Button('Identifier').click()
+    ]);
+  },
+
   verifyCsvViewPermission() {
     cy.expect([
       RadioButton('Inventory - items').has({ disabled: true }),
       Select('Record identifier').has({ disabled: true }),
       Button('or choose file').has({ disabled: true }),
-      Button('Actions').absent()
+      actions.absent()
     ]);
   },
 
@@ -31,7 +130,7 @@ export default {
       RadioButton('Inventory - items').has({ disabled: false }),
       Select('Record identifier').has({ disabled: true }),
       Button('or choose file').has({ disabled: true }),
-      Button('Actions').absent()
+      actions.absent()
     ]);
   },
 
@@ -56,6 +155,10 @@ export default {
 
   checkUsersRadio() {
     cy.do(RadioButton('Users').click());
+  },
+
+  checkItemsRadio() {
+    cy.do(RadioButton('Inventory - items').click());
   },
 
   uploadFile(fileName) {
@@ -94,7 +197,7 @@ export default {
   },
 
   verifyActionsAfterConductedCSVUploading(errors = true) {
-    cy.do(Button('Actions').click());
+    cy.do(actions.click());
     cy.expect([
       Button('Download matched records (CSV)').exists(),
       Button('Start bulk edit (CSV)').exists(),
@@ -106,7 +209,7 @@ export default {
   },
 
   verifyActionsAfterConductedInAppUploading(errors = true) {
-    cy.do(Button('Actions').click());
+    cy.do(actions.click());
     cy.expect([
       Button('Download matched records (CSV)').exists(),
       Button('Start bulk edit').exists(),
