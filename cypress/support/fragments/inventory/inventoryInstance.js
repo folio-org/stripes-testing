@@ -15,7 +15,6 @@ import {
   Link,
   MultiSelect,
   Pane,
-  Spinner,
   TextField
 } from '../../../../interactors';
 import InventoryInstanceEdit from './InventoryInstanceEdit';
