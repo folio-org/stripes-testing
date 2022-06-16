@@ -67,7 +67,7 @@ const waitLoading = () => cy.expect(actionsButton.exists());
 const tagButton = Button({ icon: 'tag' });
 const closeTag = Button({ icon: 'times' });
 const tagsPane = Pane('Tags');
-const textFieldTagInput = TextField({ id:'input-tag-input' });
+const textFieldTagInput = MultiSelect({ ariaLabelledby:'accordion-toggle-button-tag-accordion' });
 
 export default {
   validOCLC,
@@ -255,10 +255,7 @@ export default {
     cy.wait(['@getTags']);
     // TODO: clarify with developers what should be waited
     cy.wait(1000);
-    cy.do(tagsPane.find(textFieldTagInput).fillIn(tagName));
-    cy.do(tagsPane.find(textFieldTagInput).click());
-    cy.expect(Pane({ id: 'pane-instancedetails' }).find(Spinner()).absent());
-    cy.do(MultiSelect().select([including('Add tag for:')]));
+    cy.do(tagsPane.find(textFieldTagInput).choose(tagName));
   },
 
   checkAddedTag:(tagName, instanceTitle) => {
