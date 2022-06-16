@@ -2,7 +2,8 @@
   "baseUrl": "https://cypress.ci.folio.org",
   "viewportWidth": 1920,
   "viewportHeight": 1080,
-  "video": false,
+  "video": true,
+  "videosFolder": "cypress/videos",
   "defaultCommandTimeout": 81000,
   "pageLoadTimeout": 120000,
   "env": {
