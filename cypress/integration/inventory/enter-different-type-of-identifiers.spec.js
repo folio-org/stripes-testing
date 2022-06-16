@@ -45,8 +45,6 @@ describe('ui-inventory: Enter different type of identifiers', () => {
       InventorySearch.searchByParameter('Title (all)', instanceTitle);
       InventoryInstances.selectInstance();
       InventoryInstance.editInstance();
-
-      cy.visit(TopMenu.inventoryPath);
       InventoryInstanceEdit.addIdentifier(identifier, resourceIdentifier);
       InventorySearch.searchByParameter('Keyword (title, contributor, identifier)', resourceIdentifier);
       InventoryInstances.selectInstance();
