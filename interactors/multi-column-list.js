@@ -29,8 +29,7 @@ export const MultiColumnListCell = HTML.extend('multi column list cell')
     row: (el) => (+el.parentElement.getAttribute('data-row-inner') ? +el.parentElement.getAttribute('data-row-inner') : +el.parentElement.getAttribute('aria-rowindex')),
     column: (el) => {
       const headers = el.closest('[class^=mclContainer]').querySelector('[class^=mclHeaderRow]').querySelectorAll('[role=columnheader]');
-      const colIndex = childIndex(el);
-      return headers ? headers[colIndex]?.textContent : undefined;
+      return headers ? headers[childIndex(el)]?.textContent : undefined;
     },
     columnIndex: childIndex,
     selected: (el) => !!el.parentElement.className.match(/mclSelected/),
