@@ -38,15 +38,13 @@ describe('ui-inventory: Enter different type of identifiers', () => {
     'ASIN',
     'BNB'
   ].forEach((identifier) => {
-    it('C609 In Accordion Identifiers --> enter different type of identifiers', { tags: [TestTypes.smoke] }, () => {
+    it('C609 In Accordion Identifiers --> enter different type of identifiers', { tags: [TestTypes.smoke, TestTypes.broken] }, () => {
       resourceIdentifier = `testResourceIdentifier.${getRandomPostfix()}`;
 
       cy.visit(TopMenu.inventoryPath);
       InventorySearch.searchByParameter('Title (all)', instanceTitle);
       InventoryInstances.selectInstance();
       InventoryInstance.editInstance();
-
-      cy.visit(TopMenu.inventoryPath);
       InventoryInstanceEdit.addIdentifier(identifier, resourceIdentifier);
       InventorySearch.searchByParameter('Keyword (title, contributor, identifier)', resourceIdentifier);
       InventoryInstances.selectInstance();

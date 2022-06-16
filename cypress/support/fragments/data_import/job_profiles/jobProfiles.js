@@ -76,10 +76,11 @@ export default {
 
   searchJobProfileForImport:(jobProfileTitle) => {
     // wait for data to be loaded
-    cy.intercept('/data-import-profiles/jobProfiles?*').as('getJob');
+    cy.intercept('/data-import-profiles/jobProfiles?limit=5000?*').as('getJob');
     cy.do(TextField({ id:'input-search-job-profiles-field' }).fillIn(jobProfileTitle));
     cy.wait('@getJob');
     cy.do(Button('Search').click());
+    cy.wait('@getJob');
   },
 
   runImportFile:(fileName) => {

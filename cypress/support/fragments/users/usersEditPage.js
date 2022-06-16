@@ -78,23 +78,21 @@ export default {
     cy.do(Button({ id: 'clickable-save' }).click());
   },
 
-  changeServicePointPreferenceViaApi:(userId, servicePointIds, defaultServicePointId = null) => {
-    cy.okapiRequest({
-      method: 'GET',
-      path: `service-points-users?query="userId"="${userId}"`,
-      isDefaultSearchParamsRequired: false,
-    })
-      .then((servicePointsUsers) => {
-        cy.okapiRequest({
-          method: 'PUT',
-          path: `service-points-users/${servicePointsUsers.body.servicePointsUsers[0].id}`,
-          body: {
-            userId,
-            servicePointsIds: servicePointIds,
-            defaultServicePointId,
-          },
-          isDefaultSearchParamsRequired: false,
-        });
+  changeServicePointPreferenceViaApi:(userId, servicePointIds, defaultServicePointId = null) => cy.okapiRequest({
+    method: 'GET',
+    path: `service-points-users?query="userId"="${userId}"`,
+    isDefaultSearchParamsRequired: false,
+  })
+    .then((servicePointsUsers) => {
+      cy.okapiRequest({
+        method: 'PUT',
+        path: `service-points-users/${servicePointsUsers.body.servicePointsUsers[0].id}`,
+        body: {
+          userId,
+          servicePointsIds: servicePointIds,
+          defaultServicePointId,
+        },
+        isDefaultSearchParamsRequired: false,
       });
-  }
+    })
 };

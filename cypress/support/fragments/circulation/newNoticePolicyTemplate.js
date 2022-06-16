@@ -40,7 +40,7 @@ export default {
 
   // noticePolicyTemplate must have the exact structure as newNoticePolicyTemplate.defaultUi on 14th line
   create: (noticePolicyTemplate) => {
-    cy.wait(1000); // waiting for the html body input to be available for typing
+    cy.wait(2500); // waiting for the html body input to be available for typing
     cy.get('#template-editor')
       .type('{selectAll}')
       .type(noticePolicyTemplate.body); // TODO: research why <bodyField.fillIn(noticePolicyTemplate.body)> doesn't work
@@ -93,7 +93,7 @@ export default {
     ]);
   },
 
-  checInitialState() {
+  checkInitialState() {
     cy.expect([
       Heading(titles.newTemplate).exists(),
       nameField.exists(),
@@ -119,7 +119,6 @@ export default {
   checkAfterSaving: (noticePolicyTemplate) => {
     Object.values(noticePolicyTemplate).forEach((prop) => cy.expect(PaneSet().find(KeyValue({ value: prop }))));
   },
-
 
   delete: () => {
     cy.do([
