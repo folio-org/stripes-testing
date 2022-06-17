@@ -83,7 +83,7 @@ describe('ui-inventory: exports', () => {
     FileManager.deleteFolder(Cypress.config('downloadsFolder'));
   });
 
-  it('C9284 Export small number of Instance UUIDs (30 or fewer)', { retries: 3, tags: [testTypes.smoke, devTeams.firebird, testTypes.broken] }, () => {
+  it('C9284 Export small number of Instance UUIDs (30 or fewer)', { retries: 3, tags: [testTypes.smoke, devTeams.firebird] }, () => {
     InventorySearch.searchByParameter('Title (all)', instanceTitle);
     InventorySearch.saveUUIDs();
 
