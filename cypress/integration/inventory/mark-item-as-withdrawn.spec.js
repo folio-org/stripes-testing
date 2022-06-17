@@ -69,7 +69,7 @@ describe('ui-inventory: Mark items as withdrawn', () => {
     requesterIds.forEach(id => users.deleteViaApi(id));
   });
 
-  it('C10930: Mark items as withdrawn ', { tags: [TestTypes.smoke] }, () => {
+  it('C10930: Mark items as withdrawn ', { tags: [TestTypes.smoke, TestTypes.broken] }, () => {
     cy.visit(TopMenu.inventoryPath);
     markItemAsMissing.findAndOpenInstance(instanceData.instanceTitle);
     markItemAsMissing.getItemsToMarkAsMissing.call(markItemAsWithdrawn, createdItems).forEach(item => {

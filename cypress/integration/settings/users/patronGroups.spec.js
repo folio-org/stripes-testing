@@ -15,42 +15,43 @@ import UserFeesFines from '../../../support/fragments/users/userFeesFines';
 
 describe('Patron blocks relations with users, conditions', () => {
   const testData = {};
-  it("C11020 Verify user information display when automated patron block 'Maximum outstanding fee/fine balance' exists for patron", { tags: [TestType.smoke, Features.patronBlocks] }, () => {
-    testData.chargeAmount = 100;
+  it("C11020 Verify user information display when automated patron block 'Maximum outstanding fee/fine balance' exists for patron",
+    { tags: [TestType.smoke, Features.patronBlocks, TestType.broken] }, () => {
+      testData.chargeAmount = 100;
 
-    cy.getAdminToken();
-    const patronGroupName = `auttestPatronGroup${getRandomPostfix()}`;
-    PatronGroups.createViaApi(patronGroupName).then(patronGroupId => {
-      testData.patronGroupId = patronGroupId;
-      Users.createViaApi({ ...Users.defaultUser, patronGroup: patronGroupId }).then(userProperties => {
-        testData.userId = userProperties.id;
-        testData.username = userProperties.username;
+      cy.getAdminToken();
+      const patronGroupName = `auttestPatronGroup${getRandomPostfix()}`;
+      PatronGroups.createViaApi(patronGroupName).then(patronGroupId => {
+        testData.patronGroupId = patronGroupId;
+        Users.createViaApi({ ...Users.defaultUser, patronGroup: patronGroupId }).then(userProperties => {
+          testData.userId = userProperties.id;
+          testData.username = userProperties.username;
 
-        Conditions.getConditionsViaApi().then(patronBlockConditions => {
-          const testCondition = Conditions.defaultConditions.defaultMaximumOustandingFeeFineBalance;
-          testData.testConditionId = patronBlockConditions.filter(conditionProperty => conditionProperty.name === testCondition.name)[0].id;
-          testData.name = testCondition.name;
-          Conditions.updateViaApi({ ...testCondition, id: testData.testConditionId });
-          Limits.createViApi(patronGroupId, testData.testConditionId, testData.chargeAmount - 0.01);
+          Conditions.getConditionsViaApi().then(patronBlockConditions => {
+            const testCondition = Conditions.defaultConditions.defaultMaximumOustandingFeeFineBalance;
+            testData.testConditionId = patronBlockConditions.filter(conditionProperty => conditionProperty.name === testCondition.name)[0].id;
+            testData.name = testCondition.name;
+            Conditions.updateViaApi({ ...testCondition, id: testData.testConditionId });
+            Limits.createViApi(patronGroupId, testData.testConditionId, testData.chargeAmount - 0.01);
 
-          UsersOwners.createViaApi({ owner: uuid() }).then(owner => {
-            testData.ownerId = owner.id;
-            ManualCharges.createViaApi({ ...ManualCharges.defaultFeeFineType, ownerId: owner.id, defaultAmount: testData.chargeAmount }).then(manualCharge => {
-              testData.manualChargeId = manualCharge.id;
-              cy.loginAsAdmin({ path: AppPaths.getUserPreviewPath(userProperties.id), waiter: UsersCard.waitLoading });
-              // TODO: clarify the reason of extra reloading
-              cy.reload();
-              UsersCard.startFeeFine();
-              UserCharge.fillRequiredFields(owner.ownerName, manualCharge.feeFineType);
-              UserCharge.chargeOnly();
-              // TODO: clarify the issue when error message is not presented in cypress env time to time
-              UsersCard.hasSaveError(UsersCard.errors.patronHasBlocksInPlace);
+            UsersOwners.createViaApi({ owner: uuid() }).then(owner => {
+              testData.ownerId = owner.id;
+              ManualCharges.createViaApi({ ...ManualCharges.defaultFeeFineType, ownerId: owner.id, defaultAmount: testData.chargeAmount }).then(manualCharge => {
+                testData.manualChargeId = manualCharge.id;
+                cy.loginAsAdmin({ path: AppPaths.getUserPreviewPath(userProperties.id), waiter: UsersCard.waitLoading });
+                // TODO: clarify the reason of extra reloading
+                cy.reload();
+                UsersCard.startFeeFine();
+                UserCharge.fillRequiredFields(owner.ownerName, manualCharge.feeFineType);
+                UserCharge.chargeOnly();
+                // TODO: clarify the issue when error message is not presented in cypress env time to time
+                UsersCard.hasSaveError(UsersCard.errors.patronHasBlocksInPlace);
+              });
             });
           });
         });
       });
     });
-  });
   after(() => {
     UserFeesFines.waiveFeeFine(testData.userId, testData.chargeAmount, testData.ownerId);
     ManualCharges.deleteViaApi(testData.manualChargeId);

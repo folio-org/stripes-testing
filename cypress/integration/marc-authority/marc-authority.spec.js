@@ -81,7 +81,6 @@ describe('MARC Authority management', () => {
     MarcAuthorities.checkRowsCount(1);
   });
 
-  // TODO: https://issues.folio.org/browse/MODINV-705
   it('C350667 Update a MARC authority record via data import. Record match with 010 $a', { tags:  [TestTypes.smoke, Features.authority] }, () => {
     // profiles preparing
     dataImportSettingMappingProfiles.createMappingProfileApi().then(mappingProfileResponse => {
@@ -170,7 +169,7 @@ describe('MARC Authority management', () => {
     MarcAuthorityBrowse.checkPresentedColumns();
   });
 
-  it('C350513 Browse authority - handling for when there is no exact match', { tags:  [TestTypes.smoke, Features.authority] }, () => {
+  it('C350513 Browse authority - handling for when there is no exact match', { tags:  [TestTypes.smoke, Features.authority, TestTypes.broken] }, () => {
     // update created marc authority
     MarcAuthority.edit();
     QuickMarcEditor.waitLoading();
