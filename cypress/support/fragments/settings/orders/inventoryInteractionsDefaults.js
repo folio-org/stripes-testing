@@ -8,9 +8,10 @@ export default {
   },
 
   getConfigurationInventoryInteractions: (searchParams) => {
-    cy.okapiRequest({
+    return cy.okapiRequest({
       path: 'configurations/entries',
-      searchParams
+      searchParams,
+      isDefaultSearchParamsRequired: false,
     }).then(response => { return response.body; });
   }
 };

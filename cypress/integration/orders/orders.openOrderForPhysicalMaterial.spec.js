@@ -14,6 +14,9 @@ describe('orders: create an order', () => {
   const order = { ...NewOrder.defaultOrder };
   const orderLineTitle = basicOrderLine.defaultOrderLine.titleOrPackage;
   const interactions = {
+    module: 'ORDERS',
+    configName: 'createInventory',
+    id: '',
     value: '{"eresource":"Instance, Holding","physical":"Instance, Holding, Item","other":"None"}',
   };
 
@@ -25,9 +28,9 @@ describe('orders: create an order', () => {
       });
     order.vendor = organization.name;
     order.orderType = 'One-time';
-    InventoryInteractionsDefaults.getConfigurationInventoryInteractions({ limit: 1, query: '"module"="ORDERS" and "configName"="createInventory"' })
-      .then(response => {
-        interactions.id = response.body.id;
+    InventoryInteractionsDefaults.getConfigurationInventoryInteractions({ limit: 1, query: '("module"="ORDERS" and "configName"="createInventory")' })
+      .then(responseInventory => {
+        interactions.id = responseInventory.configs[0].id;
         InventoryInteractionsDefaults.setConfigurationInventoryInteractions(interactions);
       });
     cy.login(Cypress.env('diku_login'), Cypress.env('diku_password'));
