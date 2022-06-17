@@ -18,6 +18,7 @@ import DefaultUser from '../../support/fragments/users/userDefaultObjects/defaul
 import loanPolicy from '../../support/fragments/circulation/loan-policy';
 import InventoryHoldings from '../../support/fragments/inventory/holdings/inventoryHoldings';
 import Users from '../../support/fragments/users/users';
+import UserEdit from '../../support/fragments/users/userEdit';
 
 // TODO Add email notice check after checktout: https://issues.folio.org/browse/FAT-1854
 describe('Recieving notice: Checkin', () => {
@@ -67,7 +68,7 @@ describe('Recieving notice: Checkin', () => {
 
     cy.getServicePointsApi({ limit: 1, query: 'pickupLocation=="true"' })
       .then((servicePoints) => {
-        cy.addServicePointToUser([servicePoints[0].id], userData.id).then((points) => {
+        UserEdit.addServicePointViaApi(servicePoints[0].id, userData.id).then((points) => {
           testData.userServicePoint = points.body.defaultServicePointId;
         });
         cy.getMaterialTypes({ limit: 1 }).then((res) => { testData.materialType = res.id; });
