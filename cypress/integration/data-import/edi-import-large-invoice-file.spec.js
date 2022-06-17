@@ -28,10 +28,14 @@ describe('ui-data-import: Import a large EDIFACT invoice file', () => {
   });
 
   afterEach(() => {
+    // clean up generated profiles
+    JobProfiles.deleteJobProfile(jobProfileName);
+    ActionProfiles.deleteActionProfile(actionProfileName);
+    FieldMappingProfiles.deleteFieldMappingProfile(mappingProfileName);
     DataImport.checkUploadState();
   });
 
-  it('C347615 Import a large EDIFACT invoice file', { tags: [TestTypes.smoke] }, () => {
+  it('C347615 Import a large EDIFACT invoice file', { tags: [TestTypes.smoke, TestTypes.broken] }, () => {
     // unique file name to upload
     const fileName = `C347615autotestFile.${getRandomPostfix()}.edi`;
 
@@ -73,10 +77,5 @@ describe('ui-data-import: Import a large EDIFACT invoice file', () => {
     Logs.checkQuantityRecordsInFile(Logs.quantityRecordsInInvoice.firstQuantity);
     Logs.openFileDetails(fileName);
     InvoiceView.checkQuantityInvoiceLinesInRecord();
-
-    // clean up generated profiles
-    JobProfiles.deleteJobProfile(jobProfileName);
-    ActionProfiles.deleteActionProfile(actionProfileName);
-    FieldMappingProfiles.deleteFieldMappingProfile(mappingProfileName);
   });
 });

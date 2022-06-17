@@ -102,7 +102,7 @@ describe('ui-users-loans: Loans', () => {
     });
   });
 
-  it('C9191: Declare lost', { tags: [TestType.smoke] }, () => {
+  it('C9191: Declare lost', { tags: [TestType.smoke, TestType.broken] }, () => {
     UsersCard.getApi(testUserId).then((user) => {
       Loans.getApi(testUserId).then(([firstLoan, secondLoan]) => {
         Loans.checkStatusCheckedOut(SECOND_LOAN_ROW_INDEX);

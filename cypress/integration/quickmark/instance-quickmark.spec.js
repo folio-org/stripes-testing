@@ -33,7 +33,7 @@ describe('Manage inventory Bib records with quickMarc editor', () => {
     });
   });
 
-  it('C10950 Edit and save a MARC record in quickMARC', { tags: [testTypes.smoke, features.quickMarcEditor] }, () => {
+  it('C10950 Edit and save a MARC record in quickMARC', { tags: [testTypes.smoke, features.quickMarcEditor, testTypes.broken] }, () => {
     InventoryInstance.goToEditMARCBiblRecord();
     QuickMarcEditor.waitLoading();
 
@@ -188,6 +188,28 @@ describe('Manage inventory Bib records with quickMarc editor', () => {
     InventoryInstance.deriveNewMarcBib();
     QuickMarcEditor.check008FieldsAbsent('Type', 'Blvl');
     checkLdrErrors();
+  });
+
+  it('C353610 Verify "LDR" validation rules with valid data for positions 06 and 07 when editing record', { tags: [testTypes.smoke, features.quickMarcEditor] }, () => {
+    const initialLDRValue = InventoryInstance.validOCLC.ldrValue;
+    const changesIn06 = ['a', 'c', 'd', 'e', 'f', 'g', 'i', 'j', 'k', 'm', 'o', 'p', 'r', 't'];
+    const changesIn07 = ['a', 'b', 'c', 'd', 'i', 'm', 's'];
+
+    InventoryInstance.checkExpectedMARCSource();
+
+    const checkCorrectUpdate = (subfieldIndex, values) => {
+      values.forEach(specialValue => {
+        InventoryInstance.goToEditMARCBiblRecord();
+        QuickMarcEditor.waitLoading();
+        quickmarcEditor.updateExistingField('LDR', replaceByIndex(initialLDRValue, subfieldIndex, specialValue));
+        QuickMarcEditor.checkSubfieldsPresenceInTag008();
+        QuickMarcEditor.pressSaveAndClose();
+        InventoryInstance.waitLoading();
+      });
+    };
+
+    checkCorrectUpdate(6, changesIn06);
+    checkCorrectUpdate(7, changesIn07);
   });
 
   afterEach(() => {

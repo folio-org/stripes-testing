@@ -139,47 +139,48 @@ describe('Recieving notice: Checkin', () => {
     });
   });
 
-  it('C347623 Check that user can receive notice with multiple items after finishing the session "Check in" by clicking the End Session button', { tags: [testTypes.smoke, devTeams.vega] }, () => {
-    NewNoticePolicyTemplate.startAdding();
-    NewNoticePolicyTemplate.checkInitialState();
-    NewNoticePolicyTemplate.create(noticePolicyTemplate);
-    NewNoticePolicyTemplate.addToken(noticePolicyTemplate);
-    noticePolicyTemplate.body += '{{item.title}}';
-    NewNoticePolicyTemplate.save();
-    NewNoticePolicyTemplate.checkAfterSaving(noticePolicyTemplate);
-    NewNoticePolicyTemplate.checkTemplateActions(noticePolicyTemplate);
+  it('C347623 Check that user can receive notice with multiple items after finishing the session "Check in" by clicking the End Session button',
+    { tags: [testTypes.smoke, devTeams.vega, testTypes.broken] }, () => {
+      NewNoticePolicyTemplate.startAdding();
+      NewNoticePolicyTemplate.checkInitialState();
+      NewNoticePolicyTemplate.create(noticePolicyTemplate);
+      NewNoticePolicyTemplate.addToken(noticePolicyTemplate);
+      noticePolicyTemplate.body += '{{item.title}}';
+      NewNoticePolicyTemplate.save();
+      NewNoticePolicyTemplate.checkAfterSaving(noticePolicyTemplate);
+      NewNoticePolicyTemplate.checkTemplateActions(noticePolicyTemplate);
 
-    cy.visit(settingsMenu.circulationPatronNoticePoliciesPath);
-    NewNoticePolicy.waitLoading();
-    NewNoticePolicy.startAdding();
-    NewNoticePolicy.checkInitialState();
-    NewNoticePolicy.fillGeneralInformation(noticePolicy);
-    NewNoticePolicy.addNotice(noticePolicy);
-    NewNoticePolicy.save();
-    NewNoticePolicy.check(noticePolicy);
-    NewNoticePolicy.checkAfterSaving(noticePolicy);
-    NewNoticePolicy.checkNoticeActions(noticePolicy);
-    cy.getNoticePolicy({ query: `name=="${noticePolicy.name}"` }).then((res) => {
-      testData.ruleProps.n = res[0].id;
-      CirculationRules.addRuleApi(testData.baseRules, testData.ruleProps, 'g ', patronGroup.id);
+      cy.visit(settingsMenu.circulationPatronNoticePoliciesPath);
+      NewNoticePolicy.waitLoading();
+      NewNoticePolicy.startAdding();
+      NewNoticePolicy.checkInitialState();
+      NewNoticePolicy.fillGeneralInformation(noticePolicy);
+      NewNoticePolicy.addNotice(noticePolicy);
+      NewNoticePolicy.save();
+      NewNoticePolicy.check(noticePolicy);
+      NewNoticePolicy.checkAfterSaving(noticePolicy);
+      NewNoticePolicy.checkNoticeActions(noticePolicy);
+      cy.getNoticePolicy({ query: `name=="${noticePolicy.name}"` }).then((res) => {
+        testData.ruleProps.n = res[0].id;
+        CirculationRules.addRuleApi(testData.baseRules, testData.ruleProps, 'g ', patronGroup.id);
+      });
+
+      cy.visit(topMenu.checkOutPath);
+      CheckOutActions.checkOutUser(userData.barcode);
+      CheckOutActions.checkUserInfo(userData, patronGroup.name);
+      CheckOutActions.checkOutUser(userData.barcode);
+      CheckOutActions.checkOutItem(ITEM_BARCODE);
+      CheckOutActions.checkUserInfo(userData);
+      CheckOutActions.checkItemInfo(ITEM_BARCODE, testData.instanceTitle, testData.loanNoticeName);
+      CheckOutActions.endSession();
+
+      cy.visit(topMenu.checkInPath);
+      cy.checkInItem(ITEM_BARCODE);
+      cy.verifyItemCheckIn();
+
+      cy.visit(topMenu.circulationLogPath);
+      SearchPane.searchByItemBarcode(ITEM_BARCODE);
+      SearchPane.verifyResultCells();
+      SearchPane.checkResultSearch(searchResultsData, 3);
     });
-
-    cy.visit(topMenu.checkOutPath);
-    CheckOutActions.checkOutUser(userData.barcode);
-    CheckOutActions.checkUserInfo(userData, patronGroup.name);
-    CheckOutActions.checkOutUser(userData.barcode);
-    CheckOutActions.checkOutItem(ITEM_BARCODE);
-    CheckOutActions.checkUserInfo(userData);
-    CheckOutActions.checkItemInfo(ITEM_BARCODE, testData.instanceTitle, testData.loanNoticeName);
-    CheckOutActions.endSession();
-
-    cy.visit(topMenu.checkInPath);
-    cy.checkInItem(ITEM_BARCODE);
-    cy.verifyItemCheckIn();
-
-    cy.visit(topMenu.circulationLogPath);
-    SearchPane.searchByItemBarcode(ITEM_BARCODE);
-    SearchPane.verifyResultCells();
-    SearchPane.checkResultSearch(searchResultsData, 3);
-  });
 });

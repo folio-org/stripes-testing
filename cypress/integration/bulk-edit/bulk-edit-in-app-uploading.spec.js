@@ -46,7 +46,7 @@ describe('bulk-edit: in-app file uploading', () => {
     BulkEditActions.newBulkEdit();
   });
 
-  it('C350905 Negative uploading file with identifiers -- In app approach', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
+  it('C350905 Negative uploading file with identifiers -- In app approach', { tags: [testTypes.smoke, devTeams.firebird, testTypes.broken] }, () => {
     BulkEditSearchPane.selectRecordIdentifier('Item barcode');
 
     // try to upload empty file
