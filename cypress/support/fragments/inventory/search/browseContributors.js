@@ -97,8 +97,8 @@ export default {
 
   checkInstanceOrder(contributorA, contributorZ) {
     cy.do([
-      MultiColumnListRow({ index: 0 }).has({ content: `${contributorA.name}Personal name1` }),
-      MultiColumnListRow({ index: 1 }).has({ content:  `${contributorZ.name}Personal name1` }),
+      MultiColumnListRow({ index: 0 }).has({ content: `${contributorA.name}${contributorA.contributorNameType}1` }),
+      MultiColumnListRow({ index: 1 }).has({ content:  `${contributorZ.name}${contributorZ.contributorNameType}1` }),
     ]);
   },
 
@@ -107,7 +107,10 @@ export default {
   },
 
   checkInstance(instance) {
-    cy.do(inventorySearch.has({ value: instance.contributors[0].name }));
+    cy.do([
+      inventorySearch.has({ value: instance.contributors[0].name }),
+      MultiColumnListCell(instance.contributors[0].name).click(),
+    ]);
     cy.expect([
       // TODO: add check for date with format <6/8/2022, 6:46 AM>
       inventorySelect.has({ value: 'contributor' }),
