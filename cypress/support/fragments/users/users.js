@@ -1,4 +1,3 @@
-import { v4 as uuidv4 } from 'uuid';
 import getRandomPostfix from '../../utils/stringTools';
 
 const defaultUserName = `AutotestUser${getRandomPostfix()}`;
@@ -21,6 +20,7 @@ const defaultUser = {
 
 export default {
   defaultUser,
+
   createViaApi: (user) => cy.okapiRequest({
     method: 'POST',
     path: 'users',
@@ -29,20 +29,10 @@ export default {
   }).then(response => ({ id: response.body.id,
     username: response.body.username,
     barcode:  response.body.barcode })),
+
   deleteViaApi:(userId) => cy.okapiRequest({
     method: 'DELETE',
     path: `bl-users/by-id/${userId}`,
     isDefaultSearchParamsRequired : false
   }),
-  // servicePointIds is array of ids
-  addServicePoint: (servicePointIds, userId, defaultServicePointId) => cy.okapiRequest({
-    method: 'POST',
-    path: 'service-points-users',
-    body: {
-      id: uuidv4(),
-      userId,
-      servicePointsIds: servicePointIds,
-      defaultServicePointId: defaultServicePointId || servicePointIds[0],
-    },
-  })
 };
