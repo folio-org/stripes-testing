@@ -133,13 +133,13 @@ describe('MARC Authority management', () => {
     });
   });
 
-  it('C350575  MARC Authority fields LEADER and 008 can not be deleted', { tags:  [TestTypes.smoke, Features.authority] }, () => {
+  it('C350575  MARC Authority fields LEADER and 008 can not be deleted', { tags:  [TestTypes.smoke, Features.authority, TestTypes.broken] }, () => {
     MarcAuthority.edit();
     QuickMarcEditor.waitLoading();
     QuickMarcEditor.checkNotDeletableTags('008', 'LDR');
   });
 
-  it('C350576 Update 008 of Authority record', { tags:  [TestTypes.smoke, Features.authority] }, () => {
+  it('C350576 Update 008 of Authority record', { tags:  [TestTypes.smoke, Features.authority, TestTypes.broken] }, () => {
     MarcAuthority.edit();
     QuickMarcEditor.waitLoading();
 
@@ -180,6 +180,7 @@ describe('MARC Authority management', () => {
     // postfixes A and B added to check lines ordering
     quickmarcEditor.updateExistingField('130', `${randomPrefix} A`);
     QuickMarcEditor.pressSaveAndClose();
+    MarcAuthority.waitLoading();
 
     importFile(MarcAuthority.defaultCreateJobProfile);
     MarcAuthority.edit();
@@ -187,6 +188,7 @@ describe('MARC Authority management', () => {
 
     quickmarcEditor.updateExistingField('130', `${randomPrefix} B`);
     QuickMarcEditor.pressSaveAndClose();
+    MarcAuthority.waitLoading();
 
     MarcAuthorities.switchToBrowse();
     MarcAuthorityBrowse.waitEmptyTable();
