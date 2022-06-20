@@ -5,7 +5,7 @@ import NewOrder from '../../support/fragments/orders/newOrder';
 import OrdersHelper from '../../support/fragments/orders/ordersHelper';
 import Orders from '../../support/fragments/orders/orders';
 import Helper from '../../support/fragments/finance/financeHelper';
-import PoNumberEdit from '../../support/fragments/settings/orders/poNumberEdit';
+import PoNumber from '../../support/fragments/settings/orders/poNumber';
 
 describe('ui-users:', () => {
   const instanceTitle = `autotestTitle ${Helper.getRandomBarcode()}`;
@@ -13,13 +13,13 @@ describe('ui-users:', () => {
   let vendorId;
   let locationId;
   let materialTypeId;
-  const firstOrderNumber = 'autotestOrder99999';
+  const firstOrderNumber = 'auto99999test';
+  const secondOrderNumber = 'auto100000test';
   let user = {};
 
   beforeEach(() => {
     cy.getAdminToken()
       .then(() => {
-        PoNumberEdit.viaApi();
         cy.getOrganizationApi({ query: 'name="GOBI Library Solutions"' })
           .then(organization => { vendorId = organization.id; });
         cy.getLocations({ query: `name="${OrdersHelper.mainLibraryLocation}"` })
@@ -28,8 +28,16 @@ describe('ui-users:', () => {
           .then(materialType => { materialTypeId = materialType.id; });
       })
       .then(() => {
+        PoNumber.getViaApi({ query: 'module="ORDERS"' })
+          .then((res) => {
+            PoNumber.editViaApi(res[0].id);
+          });
         Orders.createOrderWithOrderLineViaApi(
           NewOrder.getDefaultOrder(vendorId, firstOrderNumber),
+          BasicOrderLine.getDefaultOrderLine(itemQuantity, instanceTitle, locationId, materialTypeId)
+        );
+        Orders.createOrderWithOrderLineViaApi(
+          NewOrder.getDefaultOrder(vendorId, secondOrderNumber),
           BasicOrderLine.getDefaultOrderLine(itemQuantity, instanceTitle, locationId, materialTypeId)
         );
       });

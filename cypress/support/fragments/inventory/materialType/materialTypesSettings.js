@@ -39,7 +39,7 @@ export default {
         body: materialTypeProperties,
       })
       .then(({ response }) => {
-        return response.body;
+        //return response.body;
       });
   },
   deleteApi(id) {
