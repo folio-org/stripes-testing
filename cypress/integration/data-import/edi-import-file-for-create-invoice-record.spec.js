@@ -89,7 +89,7 @@ describe('ui-data-import: EDIFACT file import with creating of new invoice recor
     JobProfiles.runImportFile(fileName);
     Logs.checkImportFile(jobProfile.profileName);
     Logs.checkStatusOfJobProfile();
-    Logs.openFileDetails();
+    Logs.openFileDetails(fileName);
     FileDetails.checkStatusInColumn(FileDetails.status.created, FileDetails.columnName.invoice);
     InvoiceView.checkInvoiceDetails(InvoiceView.vendorInvoiceNumber);
   });

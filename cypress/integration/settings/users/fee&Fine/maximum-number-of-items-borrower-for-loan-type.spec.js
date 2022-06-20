@@ -12,7 +12,7 @@ import FixedDueDateSchedules from '../../../../support/fragments/circulation/fix
 import СheckOutActions from '../../../../support/fragments/check-out-actions/check-out-actions';
 import LimitCheckOut from '../../../../support/fragments/checkout/modals/limitCheckOut';
 import CheckInActions from '../../../../support/fragments/check-in-actions/checkInActions';
-import UsersEditPage from '../../../../support/fragments/users/usersEditPage';
+import UserEdit from '../../../../support/fragments/users/userEdit';
 import Users from '../../../../support/fragments/users/users';
 
 describe('ui-users:', () => {
@@ -136,8 +136,7 @@ describe('ui-users:', () => {
         user = userProperties;
         servicePoint = NewServicePoint.getDefaulServicePoint();
         ServicePoints.createViaApi(servicePoint.body);
-        cy.addServicePointToUser([servicePoint.body.id],
-          user.userId, servicePoint.body.id);
+        UserEdit.addServicePointViaApi(servicePoint.body.id, user.userId, servicePoint.body.id);
       })
       .then(() => {
         cy.login(user.username, user.password);
@@ -181,7 +180,7 @@ describe('ui-users:', () => {
       rulesAsText: rulesDefaultString,
     });
     cy.deleteLoanPolicy(loanPolicy.id);
-    cy.wrap(UsersEditPage.changeServicePointPreferenceViaApi(user.userId, [servicePoint.body.id]))
+    cy.wrap(UserEdit.changeServicePointPreferenceViaApi(user.userId, [servicePoint.body.id]))
       .then(() => {
         cy.deleteServicePoint(servicePoint.body.id);
         Users.deleteViaApi(user.userId);
