@@ -145,8 +145,8 @@ describe('Recieving notice: Checkin', () => {
       NewNoticePolicyTemplate.startAdding();
       NewNoticePolicyTemplate.checkInitialState();
       NewNoticePolicyTemplate.addToken(noticePolicyTemplate);
-      NewNoticePolicyTemplate.create(noticePolicyTemplate);
       noticePolicyTemplate.body += '{{item.title}}';
+      NewNoticePolicyTemplate.create(noticePolicyTemplate);
       NewNoticePolicyTemplate.save();
       NewNoticePolicyTemplate.checkAfterSaving(noticePolicyTemplate);
       NewNoticePolicyTemplate.checkTemplateActions(noticePolicyTemplate);
