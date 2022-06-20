@@ -6,6 +6,7 @@ const deleteFieldButton = Button({ ariaLabel : 'Delete this field' });
 const saveAndCloseButton = Button({ id:'quick-marc-record-save' });
 const confirmationModal = Modal({ id: 'quick-marc-confirm-modal' });
 const continueWithSaveButton = Modal().find(Button({ id: 'clickable-quick-marc-confirm-modal-confirm' }));
+const quickMarcEditorRowContent = HTML({ className: including('quickMarcEditorRowContent') });
 
 const specRetInputNamesHoldings008 = ['records[3].content.Spec ret[0]',
   'records[3].content.Spec ret[1]',
@@ -115,8 +116,8 @@ export default class QuickmarcEditor {
   }
 
   static checkEmptyContent(tagName) {
-    cy.expect(getRowInteractorByTagName(tagName).find(HTML({ className: including('quickMarcEditorRowContent') })).exists());
-    cy.expect(getRowInteractorByTagName(tagName).find(HTML({ className: including('quickMarcEditorRowContent') })).find(TextField()).absent());
+    cy.expect(getRowInteractorByTagName(tagName).find(quickMarcEditorRowContent).exists());
+    cy.expect(getRowInteractorByTagName(tagName).find(quickMarcEditorRowContent).find(TextField()).absent());
   }
 
   fillAllAvailableValues(fieldContent, tag, initialRowsCount = this.validRecord.lastRowNumber) {
@@ -270,7 +271,7 @@ export default class QuickmarcEditor {
   }
 
   static check008FieldsAbsent(...subfieldNames) {
-    subfieldNames.forEach(subfieldName => cy.expect(getRowInteractorByTagName('008').find(HTML({ className: including('quickMarcEditorRowContent') }))
+    subfieldNames.forEach(subfieldName => cy.expect(getRowInteractorByTagName('008').find(quickMarcEditorRowContent)
       .find(TextField(subfieldName)).absent()));
   }
 
@@ -284,5 +285,10 @@ export default class QuickmarcEditor {
       const dateWithUTC = Date.parse(new Date(subtitle.split('Last updated: ')[1].split('  • ')[0] + ' UTC'));
       // dateTools.verifyDate(dateWithUTC);
     });
+  }
+
+  static checkSubfieldsPresenceInTag008() {
+    cy.expect(getRowInteractorByTagName('008').find(quickMarcEditorRowContent)
+      .find(HTML({ className: including('bytesFieldRow-') })).exists());
   }
 }
