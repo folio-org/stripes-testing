@@ -18,6 +18,7 @@ import DefaultUser from '../../support/fragments/users/userDefaultObjects/defaul
 import loanPolicy from '../../support/fragments/circulation/loan-policy';
 import InventoryHoldings from '../../support/fragments/inventory/holdings/inventoryHoldings';
 import Users from '../../support/fragments/users/users';
+import MultipieceCheckOut from '../../support/fragments/checkout/modals/multipieceCheckOut';
 import UserEdit from '../../support/fragments/users/userEdit';
 
 // TODO Add email notice check after checktout: https://issues.folio.org/browse/FAT-1854
@@ -144,9 +145,9 @@ describe('Recieving notice: Checkin', () => {
     { tags: [testTypes.smoke, devTeams.vega, testTypes.broken] }, () => {
       NewNoticePolicyTemplate.startAdding();
       NewNoticePolicyTemplate.checkInitialState();
-      NewNoticePolicyTemplate.create(noticePolicyTemplate);
       NewNoticePolicyTemplate.addToken(noticePolicyTemplate);
       noticePolicyTemplate.body += '{{item.title}}';
+      NewNoticePolicyTemplate.create(noticePolicyTemplate);
       NewNoticePolicyTemplate.save();
       NewNoticePolicyTemplate.checkAfterSaving(noticePolicyTemplate);
       NewNoticePolicyTemplate.checkTemplateActions(noticePolicyTemplate);
@@ -171,6 +172,7 @@ describe('Recieving notice: Checkin', () => {
       CheckOutActions.checkUserInfo(userData, patronGroup.name);
       CheckOutActions.checkOutUser(userData.barcode);
       CheckOutActions.checkOutItem(ITEM_BARCODE);
+      MultipieceCheckOut.confirmMultipleCheckOut(ITEM_BARCODE);
       CheckOutActions.checkUserInfo(userData);
       CheckOutActions.checkItemInfo(ITEM_BARCODE, testData.instanceTitle, testData.loanNoticeName);
       CheckOutActions.endSession();
