@@ -274,7 +274,7 @@ export default class QuickmarcEditor {
     subfieldNames.forEach(subfieldName => cy.expect(getRowInteractorByTagName('008').find(quickMarcEditorRowContent)
       .find(TextField(subfieldName)).absent()));
   }
-  
+
   static checkSubfieldsPresenceInTag008() {
     cy.expect(getRowInteractorByTagName('008').find(quickMarcEditorRowContent)
       .find(HTML({ className: including('bytesFieldRow-') })).exists());
