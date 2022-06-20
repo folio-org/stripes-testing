@@ -143,9 +143,9 @@ describe('Recieving notice: Checkout', () => {
     { tags: [testTypes.smoke, devTeams.vega, testTypes.broken] }, () => {
       NewNoticePolicyTemplate.startAdding();
       NewNoticePolicyTemplate.checkInitialState();
-      NewNoticePolicyTemplate.create(noticePolicyTemplate);
       NewNoticePolicyTemplate.addToken(noticePolicyTemplate);
       noticePolicyTemplate.body += '{{item.title}}';
+      NewNoticePolicyTemplate.create(noticePolicyTemplate);
       NewNoticePolicyTemplate.save();
       NewNoticePolicyTemplate.checkAfterSaving(noticePolicyTemplate);
       NewNoticePolicyTemplate.checkTemplateActions(noticePolicyTemplate);
