@@ -46,7 +46,6 @@ export default {
     return cy.get('@customePackageName');
   },
   getNotCustomSelectedPackageIdViaApi:() => {
-    // TODO: issue related with filter[custom] https://issues.folio.org/browse/MODKBEKBJ-630
     cy.okapiRequest({ path: 'eholdings/packages',
       searchParams: { 'filter[selected]':true, count:100, pageSize:100 },
       isDefaultSearchParamsRequired : false }).then(({ body }) => {
@@ -62,7 +61,6 @@ export default {
     return cy.get('@packageId');
   },
   getNotSelectedPackageIdViaApi:() => {
-    // TODO: issue related with filter[custom] https://issues.folio.org/browse/MODKBEKBJ-630
     cy.okapiRequest({ path: 'eholdings/packages',
       searchParams: { 'filter[selected]':false, count:100, pageSize:100 },
       isDefaultSearchParamsRequired : false }).then(({ body }) => {
