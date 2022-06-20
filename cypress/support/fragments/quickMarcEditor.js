@@ -274,21 +274,4 @@ export default class QuickmarcEditor {
     subfieldNames.forEach(subfieldName => cy.expect(getRowInteractorByTagName('008').find(quickMarcEditorRowContent)
       .find(TextField(subfieldName)).absent()));
   }
-
-  checkHeaderFirstLine(oneXXHeadingType, headingType, status) {
-    cy.expect(Pane(`Edit MARC authority record - ${oneXXHeadingType}`).exists());
-    cy.then(Pane(`Edit MARC authority record - ${oneXXHeadingType}`).subtitle()).then(subtitle => {
-      cy.expect(Pane({ subtitle: and(including(`Status: ${status}`),
-        including(headingType),
-        including('Record last updated:')) }));
-
-      const dateWithUTC = Date.parse(new Date(subtitle.split('Last updated: ')[1].split('  • ')[0] + ' UTC'));
-      // dateTools.verifyDate(dateWithUTC);
-    });
-  }
-
-  static checkSubfieldsPresenceInTag008() {
-    cy.expect(getRowInteractorByTagName('008').find(quickMarcEditorRowContent)
-      .find(HTML({ className: including('bytesFieldRow-') })).exists());
-  }
 }
