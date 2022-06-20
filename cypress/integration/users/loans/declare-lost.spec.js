@@ -10,6 +10,7 @@ import Checkout from '../../../support/fragments/checkout/checkout';
 import UsersCard from '../../../support/fragments/users/usersCard';
 import permissions from '../../../support/dictionary/permissions';
 import InventoryHoldings from '../../../support/fragments/inventory/holdings/inventoryHoldings';
+import UserEdit from '../../../support/fragments/users/userEdit';
 
 describe('ui-users-loans: Loans', () => {
   const newOwnerData = getNewOwner();
@@ -46,7 +47,7 @@ describe('ui-users-loans: Loans', () => {
       }) => {
         testUserId = userId;
 
-        cy.addServicePointToUser([Cypress.env('servicePoints')[0].id], userId).then(() => {
+        UserEdit.addServicePointViaApi(Cypress.env('servicePoints')[0].id, userId).then(() => {
           const servicePointOwner = Cypress.env('servicePoints').map(({
             id,
             name,

@@ -4,8 +4,7 @@ import {
   Accordion,
   Selection,
   SelectionList,
-  Link,
-  including
+  Link
 } from '../../../../../interactors';
 
 const quantityRecordsInInvoice = {
@@ -28,8 +27,8 @@ export default {
     cy.do(MultiColumnListCell({ row: 0, column: 'Completed' }).exists());
   },
 
-  openFileDetails:() => {
-    cy.do(Link({ href: including('/data-import/job-summary/') }).click());
+  openFileDetails:(fileName) => {
+    cy.do(Link(fileName).click());
   },
 
   checkQuantityRecordsInFile:(quantityRecords) => {
