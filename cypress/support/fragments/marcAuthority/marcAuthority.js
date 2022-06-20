@@ -1,4 +1,7 @@
-import { Section, Button, HTML, including, TextField } from '../../../../interactors';
+import { and } from 'bigtest';
+import { stat } from 'fs-extra';
+import { Section, Button, HTML, including, TextField, Pane } from '../../../../interactors';
+import dateTools from '../../utils/dateTools';
 
 const defaultCreateJobProfile = 'Default - Create SRS MARC Authority';
 const defaultUpdateJobProfile = 'Update authority by matching 010';
@@ -11,6 +14,9 @@ const defaultAuthority = { id:'176116217',
   // it should be presented in marc bib one time to correct work(applicable in update of record)
   existingTag: '130',
   headingReference: 'Congress and foreign policy series',
+  // related with presence of 130 tag, see https://issues.folio.org/browse/MODQM-159
+  headingType: 'Uniform title',
+  status: 'Current',
   name: 'oneMarcAuthority.mrc',
   tag008AuthorityBytesProperties : {
     geoSubd : { interactor:TextField('Geo Subd'), defaultValue:'n', newValue:'v' },
@@ -65,5 +71,4 @@ export default {
       path: `records-editor/records/${internalAuthorityId}`,
     });
   }
-
 };

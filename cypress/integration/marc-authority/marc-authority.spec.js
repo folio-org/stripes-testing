@@ -134,13 +134,13 @@ describe('MARC Authority management', () => {
     });
   });
 
-  it('C350575  MARC Authority fields LEADER and 008 can not be deleted', { tags:  [TestTypes.smoke, Features.authority] }, () => {
+  it('C350575  MARC Authority fields LEADER and 008 can not be deleted', { tags:  [TestTypes.smoke, Features.authority, TestTypes.broken] }, () => {
     MarcAuthority.edit();
     QuickMarcEditor.waitLoading();
     QuickMarcEditor.checkNotDeletableTags('008', 'LDR');
   });
 
-  it('C350576 Update 008 of Authority record', { tags:  [TestTypes.smoke, Features.authority] }, () => {
+  it('C350576 Update 008 of Authority record', { tags:  [TestTypes.smoke, Features.authority, TestTypes.broken] }, () => {
     MarcAuthority.edit();
     QuickMarcEditor.waitLoading();
 
@@ -181,6 +181,7 @@ describe('MARC Authority management', () => {
     // postfixes A and B added to check lines ordering
     quickmarcEditor.updateExistingField('130', `${randomPrefix} A`);
     QuickMarcEditor.pressSaveAndClose();
+    MarcAuthority.waitLoading();
 
     importFile(MarcAuthority.defaultCreateJobProfile);
     MarcAuthority.edit();
@@ -188,7 +189,8 @@ describe('MARC Authority management', () => {
 
     quickmarcEditor.updateExistingField('130', `${randomPrefix} B`);
     QuickMarcEditor.pressSaveAndClose();
-
+    MarcAuthority.waitLoading();
+  
     MarcAuthorities.switchToBrowse();
     MarcAuthorityBrowse.waitEmptyTable();
     MarcAuthorityBrowse.checkSearchOptions();
@@ -201,8 +203,14 @@ describe('MARC Authority management', () => {
     MarcAuthorityBrowse.checkHeadingReferenceInRow(2, `${randomPrefix} B`, true);
   });
 
+  it('C350902 MARC fields behavior when editing "MARC Authority" record', { tags:  [TestTypes.smoke, Features.authority] }, () => {
+    MarcAuthority.edit();
+    QuickMarcEditor.waitLoading();
+    const quickmarcEditor = new QuickMarcEditor(MarcAuthority.defaultAuthority);
+    quickmarcEditor.checkHeaderFirstLine();
+  });
+
   afterEach(() => {
-    // https://issues.folio.org/browse/FAT-1680
     new Set(marcAuthorityIds).forEach(marcAuthorityId => MarcAuthority.deleteViaAPI(marcAuthorityId));
     marcAuthorityIds = [];
     Users.deleteViaApi(userId);
