@@ -9,7 +9,7 @@ export default {
         body: {
           module:'ORDERS',
           configName:'orderNumber',
-          value: { canUserEditOrderNumber: true },
+          value: '{\"canUserEditOrderNumber\":true}"}',
           id: uuid()
         },
         isDefaultSearchParamsRequired : false
