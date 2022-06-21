@@ -180,7 +180,7 @@ describe('ui-users:', () => {
       rulesAsText: rulesDefaultString,
     });
     cy.deleteLoanPolicy(loanPolicy.id);
-    cy.wrap(UserEdit.changeServicePointPreferenceViaApi(user.userId, [servicePoint.body.id]))
+    UserEdit.changeServicePointPreferenceViaApi(user.userId, [servicePoint.body.id])
       .then(() => {
         cy.deleteServicePoint(servicePoint.body.id);
         Users.deleteViaApi(user.userId);
