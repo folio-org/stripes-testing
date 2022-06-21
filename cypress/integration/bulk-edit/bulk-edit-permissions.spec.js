@@ -2,7 +2,7 @@ import TopMenu from '../../support/fragments/topMenu';
 import testTypes from '../../support/dictionary/testTypes';
 import permissions from '../../support/dictionary/permissions';
 import UsersSearchPane from '../../support/fragments/users/usersSearchPane';
-import UsersEditPage from '../../support/fragments/users/usersEditPage';
+import UserEdit from '../../support/fragments/users/userEdit';
 import UsersCard from '../../support/fragments/users/usersCard';
 import BulkEditSearchPane from '../../support/fragments/bulk-edit/bulk-edit-search-pane';
 import devTeams from '../../support/dictionary/devTeams';
@@ -47,8 +47,8 @@ describe('ui-users: BULK EDIT permissions', () => {
 
     UsersSearchPane.searchByKeywords(userWthViewEditPermissions.barcode);
     UsersSearchPane.openUser(userWthViewEditPermissions.userId);
-    UsersEditPage.addPermissions(permissionsToVerify);
-    UsersEditPage.saveAndClose();
+    UserEdit.addPermissions(permissionsToVerify);
+    UserEdit.saveAndClose();
     UsersCard.verifyPermissions(permissionsToVerify);
   });
 
