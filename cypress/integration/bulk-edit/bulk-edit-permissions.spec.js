@@ -7,10 +7,12 @@ import UsersCard from '../../support/fragments/users/usersCard';
 import BulkEditSearchPane from '../../support/fragments/bulk-edit/bulk-edit-search-pane';
 import devTeams from '../../support/dictionary/devTeams';
 import users from '../../support/fragments/users/users';
+import BulkEditActions from '../../support/fragments/bulk-edit/bulk-edit-actions';
 
 let userWthViewEditPermissions;
 let userWithCsvViewPermission;
 let userWithInAppViewPermission;
+let userWithCsvPermissions;
 
 describe('ui-users: BULK EDIT permissions', () => {
   before('create user', () => {
@@ -26,6 +28,11 @@ describe('ui-users: BULK EDIT permissions', () => {
 
     cy.createTempUser([permissions.bulkEditView.gui])
       .then(userProperties => { userWithInAppViewPermission = userProperties; });
+
+    cy.createTempUser([
+      permissions.bulkEditCsvView.gui,
+      permissions.bulkEditCsvEdit.gui,
+    ]).then(userProperties => { userWithCsvPermissions = userProperties; });
   });
 
   after('Delete all data', () => {
@@ -64,5 +71,14 @@ describe('ui-users: BULK EDIT permissions', () => {
     cy.visit(TopMenu.bulkEditPath);
 
     BulkEditSearchPane.verifyInAppViewPermission();
+  });
+
+  // TODO: think about dragging file without dropping
+  it('C353537 Verify label to the Drag and drop area -- CSV approach', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
+    cy.login(userWithCsvPermissions.username, userWithCsvPermissions.password);
+    cy.visit(TopMenu.bulkEditPath);
+
+    BulkEditActions.openStartBulkEditForm();
+    BulkEditActions.verifyLabel('Drop to continue');
   });
 });
