@@ -1,10 +1,12 @@
-import { Button, MultiColumnListCell, Section, HTML, including, Modal } from '../../interactors';
+/* eslint-disable cypress/no-unnecessary-waiting */
+import { Button, HTML, including, Modal, MultiColumnListCell, Section } from '../../interactors';
 import { getLongDelay } from './utils/cypressTools';
 
 Cypress.Commands.add('uploadFileWithDefaultJobProfile', (name, jobProfileToRun = 'Default - Create instance and SRS MARC Bib') => {
+  cy.wait(2000);
   // upload generated file with given unique name
   cy.get('input[type=file]', getLongDelay()).attachFile(name);
-  cy.expect(Section({ id:'pane-upload' }).find(HTML(including(name))).exists());
+  cy.expect(Section({ id: 'pane-upload' }).find(HTML(including(name))).exists());
 
   // run file with given jobProfile
   cy.do(MultiColumnListCell(jobProfileToRun).click());
@@ -12,8 +14,9 @@ Cypress.Commands.add('uploadFileWithDefaultJobProfile', (name, jobProfileToRun =
     Button('Actions').click(),
     Button('Run').click(),
   ]);
-  cy.do(Modal({ id:'run-job-profile-modal' }).find(Button('Run')).click());
+  cy.do(Modal({ id: 'run-job-profile-modal' }).find(Button('Run')).click());
   // wait until uploaded file is displayed in the list
-  cy.expect(Section({ id: 'pane-logs-title' }).find(HTML(including(name))).exists());
+  cy.get('#pane-logs-title').contains(name);
+  // cy.expect(Section({ id: 'pane-logs-title' }).find(HTML(including(name))).exists());
 });
 

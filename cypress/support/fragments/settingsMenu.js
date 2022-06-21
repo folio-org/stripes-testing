@@ -57,10 +57,10 @@ export default {
   conditionsPath: 'settings/users/conditions',
   waiveReasons: 'settings/users/waivereasons',
   // Data Import
-  mappingProfilePath: 'settings/data-import/mapping-profiles',
+  mappingProfilePath: '/settings/data-import/mapping-profiles',
   actionProfilePath: 'settings/data-import/action-profiles',
-  matchProfilePath: 'settings/data-import/match-profiles',
-  jobProfilePath: 'settings/data-import/job-profiles',
+  matchProfilePath: '/settings/data-import/match-profiles',
+  jobProfilePath: '/settings/data-import/job-profiles',
   exportMappingProfilePath: 'settings/data-export/mapping-profiles',
   exportJobProfilePath: 'settings/data-export/job-profiles',
 };

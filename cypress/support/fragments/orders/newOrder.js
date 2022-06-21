@@ -4,6 +4,6 @@ export default {
   defaultOrder: {
     id: uuid(),
     vendor: '',
-    orderType: 'One-Time'
+    orderType: 'One-time'
   }
 };
