@@ -17,6 +17,8 @@ const errorsAccordion = Accordion('Errors');
 const recordIdentifier = Select('Record identifier');
 const recordTypes = Accordion({ label: 'Record types' });
 const actions = Button('Actions');
+const radioItems = RadioButton('Inventory - items');
+const fileBtn = Button('or choose file');
 
 export default {
   actionsIsShown() {
@@ -118,18 +120,18 @@ export default {
 
   verifyCsvViewPermission() {
     cy.expect([
-      RadioButton('Inventory - items').has({ disabled: true }),
-      Select('Record identifier').has({ disabled: true }),
-      Button('or choose file').has({ disabled: true }),
+      radioItems.has({ disabled: true }),
+      recordIdentifier.has({ disabled: true }),
+      fileBtn.has({ disabled: true }),
       actions.absent()
     ]);
   },
 
   verifyInAppViewPermission() {
     cy.expect([
-      RadioButton('Inventory - items').has({ disabled: false }),
-      Select('Record identifier').has({ disabled: true }),
-      Button('or choose file').has({ disabled: true }),
+      radioItems.has({ disabled: false }),
+      recordIdentifier.has({ disabled: true }),
+      fileBtn.has({ disabled: true }),
       actions.absent()
     ]);
   },
