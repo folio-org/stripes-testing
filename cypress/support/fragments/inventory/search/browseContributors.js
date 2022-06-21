@@ -80,13 +80,12 @@ export default {
     ]);
   },
 
-  checkExactSearchResult(contributor) {
+  checkSearchResultsTable() {
     cy.do([
       MultiColumnListHeader({ id: 'list-column-contributor' }).has({ content: 'Contributor' }),
       MultiColumnListHeader({ id: 'list-column-contributortype' }).has({ content: 'Type' }),
       MultiColumnListHeader({ id: 'list-column-relatorterm' }).has({ content: 'Relator term' }),
       MultiColumnListHeader({ id: 'list-column-numberoftitles' }).has({ content: 'Number of titles' }),
-      MultiColumnListCell(contributor.name).has({ innerHTML: `<strong>${contributor.name}</strong>` }),
     ]);
     cy.expect([
       Pane({ id: 'pane-results' }).find(MultiColumnListHeader()).exists(),
@@ -95,8 +94,19 @@ export default {
     ]);
   },
 
-  checkInstanceOrder(contributorA, contributorZ) {
+  checkNonExactSearchResult(contributorA, contributorZ) {
+    // cy.expect([
+    //   MultiColumnListCell(' __A_test_contributor_ would be here').exists(),
+    // ]); - WTF
     cy.do([
+      MultiColumnListRow({ index: 1 }).has({ content: `${contributorA.name}${contributorA.contributorNameType}1` }),
+      MultiColumnListRow({ index: 2 }).has({ content:  `${contributorZ.name}${contributorZ.contributorNameType}1` }),
+    ]);
+  },
+
+  checkExactSearchResult(contributorA, contributorZ) {
+    cy.do([
+      MultiColumnListCell(contributorA.name).has({ innerHTML: `<strong>${contributorA.name}</strong>` }),
       MultiColumnListRow({ index: 0 }).has({ content: `${contributorA.name}${contributorA.contributorNameType}1` }),
       MultiColumnListRow({ index: 1 }).has({ content:  `${contributorZ.name}${contributorZ.contributorNameType}1` }),
     ]);
@@ -120,6 +130,10 @@ export default {
       paneIntanceDetails.find(MultiColumnListCell(instance.contributors[0].contributorTypeText)).exists(),
       paneIntanceDetails.find(MultiColumnListCell(instance.contributors[0].name)).exists(),
     ]);
+  },
+
+  resetAllInSearchPane() {
+    cy.do(Button('Reset all').click());
   },
 
   getContributorNameTypes() {
