@@ -202,6 +202,13 @@ describe('MARC Authority management', () => {
     MarcAuthorityBrowse.checkHeadingReferenceInRow(2, `${randomPrefix} B`, true);
   });
 
+  it.only('C350902 MARC fields behavior when editing "MARC Authority" record', { tags:  [TestTypes.smoke, Features.authority] }, () => {
+    MarcAuthority.edit();
+    QuickMarcEditor.waitLoading();
+    const quickmarcEditor = new QuickMarcEditor(MarcAuthority.defaultAuthority);
+    quickmarcEditor.checkHeaderFirstLine(MarcAuthority.defaultAuthority.headingReference, MarcAuthority.defaultAuthority.headingType);
+  });
+
   afterEach(() => {
     // https://issues.folio.org/browse/FAT-1680
     new Set(marcAuthorityIds).forEach(marcAuthorityId => MarcAuthority.deleteViaAPI(marcAuthorityId));

@@ -1,4 +1,5 @@
 import { QuickMarcEditor, QuickMarcEditorRow, TextArea, Button, Modal, TextField, and, some, Pane, HTML, including } from '../../../interactors';
+import dateTools from '../utils/dateTools';
 import getRandomPostfix from '../utils/stringTools';
 
 const addFieldButton = Button({ ariaLabel : 'Add a new field' });
@@ -278,5 +279,16 @@ export default class QuickmarcEditor {
   static checkSubfieldsPresenceInTag008() {
     cy.expect(getRowInteractorByTagName('008').find(quickMarcEditorRowContent)
       .find(HTML({ className: including('bytesFieldRow-') })).exists());
+  }
+
+  checkHeaderFirstLine(headingTypeFrom1XX, headingType, status) {
+    cy.expect(Pane(`Edit MARC authority record - ${headingTypeFrom1XX}`).exists());
+    cy.then(() => Pane(`Edit MARC authority record - ${headingTypeFrom1XX}`).subtitle()).then(subtitle => {
+      cy.expect(Pane({ subtitle: and(including(`Status: ${status}`),
+        including(headingType),
+        including('Record last updated:')) }));
+      const stringDate = `${subtitle.split('Last updated: ')[1].split(' •')[0]} UTC`;
+      dateTools.verifyDate(Date.parse(stringDate), 120_000);
+    });
   }
 }

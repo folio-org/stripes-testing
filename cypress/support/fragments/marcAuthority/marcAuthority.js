@@ -11,6 +11,9 @@ const defaultAuthority = { id:'176116217',
   // it should be presented in marc bib one time to correct work(applicable in update of record)
   existingTag: '130',
   headingReference: 'Congress and foreign policy series',
+  // related with presence of 130 tag, see https://issues.folio.org/browse/MODQM-159
+  headingType: 'Uniform title',
+  status: 'Current',
   name: 'oneMarcAuthority.mrc',
   tag008AuthorityBytesProperties : {
     geoSubd : { interactor:TextField('Geo Subd'), defaultValue:'n', newValue:'v' },
