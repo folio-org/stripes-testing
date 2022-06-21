@@ -38,7 +38,6 @@ describe('Search: browse contributors with exact match query', () => {
         testData.instanceZProps = res;
       });
 
-
     cy.createTempUser([
       Permissions.uiInventoryViewInstances.gui,
     ]).then((resUserProperties) => {
