@@ -5,6 +5,7 @@ export default HTML.extend('button')
   .filters({
     // some buttons don't have attribute href
     href: (el) => el.getAttribute('href') ?? '',
+    type: (el) => el.getAttribute('type'),
     icon: (el) => el.getAttribute('icon'),
     button: (el) => el.tagName === 'BUTTON',
     anchor: (el) => el.tagName === 'A',

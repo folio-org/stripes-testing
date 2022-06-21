@@ -10,7 +10,7 @@ import CheckoutActions from '../../support/fragments/checkout/checkout';
 import InventoryHoldings from '../../support/fragments/inventory/holdings/inventoryHoldings';
 import devTeams from '../../support/dictionary/devTeams';
 import Users from '../../support/fragments/users/users';
-import UsersEditPage from '../../support/fragments/users/usersEditPage';
+import UserEdit from '../../support/fragments/users/userEdit';
 
 const ITEM_BARCODE = `123${getRandomPostfix()}`;
 let userId = '';
@@ -42,7 +42,7 @@ describe('ui-circulation-log', () => {
             });
           })
           .then(() => {
-            UsersEditPage.addServicePointsToUser([Cypress.env('servicePoints')[0].id], userId);
+            UserEdit.addServicePoints(Cypress.env('servicePoints')[0].id, userId);
             cy.getUserServicePoints(Cypress.env('users')[0].id);
             cy.createInstance({
               instance: {
