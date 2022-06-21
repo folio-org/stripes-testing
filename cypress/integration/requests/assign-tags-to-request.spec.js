@@ -5,7 +5,6 @@ import Requests from '../../support/fragments/requests/requests';
 import NewRequest from '../../support/fragments/requests/newRequest';
 import Users from '../../support/fragments/users/users';
 
-
 describe('Assign Tags to Request', () => {
   const barcode = uuid();
   const lastName = `Test-${uuid()}`;
@@ -16,6 +15,7 @@ describe('Assign Tags to Request', () => {
     requesterBarcode: barcode,
     pickupServicePoint: 'Circ Desk 1',
   };
+  let itemBarcode;
 
   before(() => {
     cy.login(Cypress.env('diku_login'), Cypress.env('diku_password'));
@@ -41,19 +41,24 @@ describe('Assign Tags to Request', () => {
     });
 
     cy.getItems({ limit: 1, query: 'status.name=="Available"' }).then((item) => {
-      requestRecord.itemBarcode = item.barcode;
+      itemBarcode = item.barcode;
+      requestRecord.itemBarcode = itemBarcode;
       requestRecord.itemTitle = item.title;
     });
   });
 
   afterEach(() => {
-    Requests.removeCreatedRequest();
-
-    cy.getUsers({ query: `personal.lastName="${lastName}"` })
-      .then(() => {
-        Cypress.env('users').forEach(user => {
-          Users.deleteViaApi(user.id);
-        });
+    // Requests.getRequestViaApi({ limit:1, query: `item.barcode="${itemBarcode}"` })
+    Requests.getRequestViaApi({ limit:1, query: 'tags.tagList="urgent"' })
+      .then((res) => {
+        //console.log(res.body.requests[0].id);
+        Requests.deleteRequestApi(res.body.requests[0].id);
+        cy.getUsers({ query: `personal.lastName="${lastName}"` })
+          .then(() => {
+            Cypress.env('users').forEach(user => {
+              Users.deleteViaApi(user.id);
+            });
+          });
       });
   });
 
