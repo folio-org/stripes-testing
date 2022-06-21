@@ -14,7 +14,21 @@ import {
 import TopMenu from '../topMenu';
 import defaultUser from './userDefaultObjects/defaultUser';
 
+// servicePointIds is array of ids
+const addServicePointsViaApi = (servicePointIds, userId, defaultServicePointId) => cy.okapiRequest({
+  method: 'POST',
+  path: 'service-points-users',
+  body: {
+    id: uuidv4(),
+    userId,
+    servicePointsIds: servicePointIds,
+    defaultServicePointId: defaultServicePointId || servicePointIds[0],
+  },
+});
+
 export default {
+  addServicePointsViaApi,
+
   addPermissions(permissions) {
     cy.do([
       Pane({ id: 'pane-userdetails' }).find(Button('Actions')).click(),
@@ -51,19 +65,7 @@ export default {
     cy.do(Button('Save & close').click());
   },
 
-  addServicePointsToUser: (servicePointIds, userId, defaultServicePointId) => {
-    // servicePointIds is array of ids
-    cy.okapiRequest({
-      method: 'POST',
-      path: 'service-points-users',
-      body: {
-        id: uuidv4(),
-        userId,
-        servicePointsIds: servicePointIds,
-        defaultServicePointId: defaultServicePointId || servicePointIds[0],
-      },
-    });
-  },
+  addServicePointViaApi: (servicePointId, userId, defaultServicePointId) => addServicePointsViaApi([servicePointId], userId, defaultServicePointId),
 
   // we can remove the service point if it is not Preference
   changeServicePointPreference: (userName = defaultUser.defaultUiPatron.body.userName) => {

@@ -36,13 +36,15 @@ export const MultiColumnListCell = HTML.extend('multi column list cell')
     measured: (el) => el.style && el.style.width !== '',
     visible: (el) => isVisible(el),
     inputTextFieldNames: (el) => [...el.querySelectorAll('input')].map(input => input.name),
-    liValues: (el) => [...el.querySelectorAll('li')].map(li => li.textContent)
+    liValues: (el) => [...el.querySelectorAll('li')].map(li => li.textContent),
+    innerHTML: (el) => el.innerHTML,
   });
 
 export const MultiColumnListHeader = HTML.extend('multi column list header')
   .selector('div[class*=mclHeader-]')
   .locator(content)
   .filters({
+    content,
     index: childIndex,
     id: el => el.getAttribute('id')
   })

@@ -11,7 +11,7 @@ describe('ui-users-settings: Conditions in Patron blocks', () => {
     Conditions.resetConditions();
   });
 
-  it('C11078 Verify that you can select/edit/remove patron block conditions', { tags: [TestType.smoke, Features.patronBlocks, TestType.broken] }, () => {
+  it('C11078 Verify that you can select/edit/remove patron block conditions', { tags: [TestType.smoke, Features.patronBlocks] }, () => {
     Object.values(Condition.blockCheckboxes).forEach(specialCheckBox => {
       Conditions.conditionsValues.forEach(conditionValue => {
         Conditions.select(conditionValue);

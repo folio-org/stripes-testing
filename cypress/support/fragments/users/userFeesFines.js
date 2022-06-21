@@ -1,6 +1,6 @@
 import servicePoints from '../settings/tenant/servicePoints';
 import paymentMethods from '../settings/users/paymentMethods';
-import Users from './users';
+import UserEdit from './userEdit';
 
 export default {
   waiveFeeFine:(userId, amount, ownerId) => {
@@ -16,7 +16,7 @@ export default {
       paymentMethods.createViaApi(ownerId).then(paymentMethodProperties => {
         servicePoints.getServicePointsApi({ limit: 1, query: 'pickupLocation=="true"' }).then(requestedServicePoints => {
           const servicePointId = requestedServicePoints[0].id;
-          Users.addServicePoint([servicePointId], userId).then(() => {
+          UserEdit.addServicePointViaApi(servicePointId, userId).then(() => {
             cy.okapiRequest({
               method: 'POST',
               path: `accounts/${accountId}/waive`,
