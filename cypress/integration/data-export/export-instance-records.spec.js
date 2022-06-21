@@ -23,7 +23,8 @@ describe('data-export', () => {
   beforeEach('login', () => {
     cy.createTempUser([
       permissions.inventoryAll.gui,
-      permissions.dataExportAll.gui
+      permissions.dataExportAll.gui,
+      permissions.dataExportEnableModule.gui,
     ])
       .then(userProperties => {
         user = userProperties;
