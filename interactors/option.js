@@ -4,5 +4,6 @@ export default HTML.extend('option')
   .selector('option')
   .filters({
     id: (el) => el.getAttribute('id'),
-    value: (el) => el.getAttribute('value')
+    value: (el) => el.getAttribute('value'),
+    index: (el) => [...el.parentElement.children].indexOf(el),
   });
