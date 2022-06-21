@@ -6,6 +6,7 @@ import {
   KeyValue,
   Modal,
   MultiColumnListCell,
+  Pane,
   PaneHeader,
   Select,
   Selection,
@@ -98,55 +99,72 @@ function closeMappingProfile() {
   cy.expect(PaneHeader('Field mapping profiles').find(Button('Actions')).exists());
 }
 
+function saveProfile() {
+  cy.do(Button('Save as profile & Close').click());
+}
+
+const closeViewModeForMappingProfile = (profileName) => {
+  cy.do(Pane({ title: profileName }).find(Button({ icon: 'times' })).click());
+};
+
 function creatMappingProfilesForInstance(name) {
   cy.intercept('GET', '/instance-statuses?*').as('getInstanceStatuses');
   openMappingProfileForm();
-  cy.wait(10000);
-  cy.do([
-    TextField('Name*').fillIn(name),
-    Select('Incoming record type*').choose('MARC Bibliographic'),
-    Select('FOLIO record type*').choose('Instance'),
-  ]);
-  cy.wait('@getInstanceStatuses');
-  cy.do([
-    TextField('Cataloged date').fillIn('###TODAY###'),
-    TextField('Instance status term').fillIn('"Batch Loaded"'),
-    Button('Save as profile & Close').click()
-  ]);
-  closeMappingProfile();
+  return cy.do(Select('FOLIO record type*').choose('Instance'))
+    .then(() => {
+      cy.wait('@getInstanceStatuses');
+    })
+    .then(() => {
+      cy.do([
+        TextField('Name*').fillIn(name),
+        Select('Incoming record type*').choose('MARC Bibliographic'),
+        TextField('Cataloged date').fillIn('###TODAY###'),
+        TextField('Instance status term').fillIn('"Batch Loaded"'),
+      ]);
+      saveProfile();
+      closeViewModeForMappingProfile(name);
+    });
 }
 
 function creatMappingProfilesForHoldings(name) {
   cy.intercept('GET', '/holdings-types?*').as('getHoldingsTypes');
   cy.intercept('GET', '/call-number-types?*').as('getCallNumberTypes');
   openMappingProfileForm();
-  cy.do([
-    Select('FOLIO record type*').choose('Holdings'),
-    TextField('Name*').fillIn(name),
-    Select('Incoming record type*').choose('MARC Bibliographic'),
-    TextField('Permanent').fillIn('980$a'),
-    TextField('Call number').fillIn('980$b " " 980$c'),
-    TextField('Holdings type').fillIn('"Monograph"'),
-    TextField('Call number type').fillIn('"Library of Congress classification"'),
-    Button('Save as profile & Close').click()
-  ]);
-  cy.wait(['@getHoldingsTypes', '@getCallNumberTypes'], getLongDelay());
-  closeMappingProfile();
+  return cy.do(Select('FOLIO record type*').choose('Holdings'))
+    .then(() => {
+      cy.wait(['@getHoldingsTypes', '@getCallNumberTypes'], getLongDelay());
+    })
+    .then(() => {
+      cy.do([
+        TextField('Name*').fillIn(name),
+        Select('Incoming record type*').choose('MARC Bibliographic'),
+        TextField('Permanent').fillIn('980$a'),
+        TextField('Call number').fillIn('980$b " " 980$c'),
+        TextField('Holdings type').fillIn('"Monograph"'),
+        TextField('Call number type').fillIn('"Library of Congress classification"'),
+      ]);
+      saveProfile();
+      closeViewModeForMappingProfile(name);
+    });
 }
 
 function creatMappingProfilesForItem(name) {
   openMappingProfileForm();
-  cy.wait(10000);
-  cy.do([
-    TextField('Name*').fillIn(name),
-    Select('Incoming record type*').choose('MARC Bibliographic'),
-    Select('FOLIO record type*').choose('Item'),
-    TextField('Barcode').fillIn('981$b'),
-    TextField('Copy number').fillIn('981$a'),
-    TextField('Status').fillIn('"Available"'),
-    Button('Save as profile & Close').click()
-  ]);
-  closeMappingProfile();
+  return cy.do(Select('FOLIO record type*').choose('Item'))
+    .then(() => {
+      cy.wait(1000);
+    })
+    .then(() => {
+      cy.do([
+        TextField('Name*').fillIn(name),
+        Select('Incoming record type*').choose('MARC Bibliographic'),
+        TextField('Barcode').fillIn('981$b'),
+        TextField('Copy number').fillIn('981$a'),
+        TextField('Status').fillIn('"Available"'),
+      ]);
+      saveProfile();
+      closeViewModeForMappingProfile(name);
+    });
 }
 
 function closeTimesButton() {
@@ -248,4 +266,7 @@ export default {
   createMatchProfileForVRN,
   waitJSONSchemasLoad,
   createJobProfileForVRN,
+  openMappingProfileForm,
+  closeMappingProfile,
+  saveProfile,
 };

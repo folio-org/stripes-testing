@@ -87,9 +87,12 @@ describe('ui-data-import: Match on VRN and update related Instance, Holdings, It
     // create field mapping profiles
     cy.visit(SettingsMenu.mappingProfilePath);
     cy.contains('Field mapping profiles').should('exist');
-    MatchOnVRN.creatMappingProfilesForInstance(instanceMappingProfileName);
-    MatchOnVRN.creatMappingProfilesForHoldings(holdingsMappingProfileName);
-    MatchOnVRN.creatMappingProfilesForItem(itemMappingProfileName);
+    MatchOnVRN.creatMappingProfilesForInstance(instanceMappingProfileName)
+      .then(() => {
+        MatchOnVRN.creatMappingProfilesForHoldings(holdingsMappingProfileName);
+      }).then(() => {
+        MatchOnVRN.creatMappingProfilesForItem(itemMappingProfileName);
+      });
 
     // create action profiles
     cy.visit(SettingsMenu.actionProfilePath);
