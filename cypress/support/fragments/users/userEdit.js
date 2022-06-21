@@ -48,7 +48,7 @@ export default {
     cy.do(Button('Save & close').click());
   },
 
-  addServicePoints(points) {
+  addServicePoints(...points) {
     cy.do([
       Button({ id: 'accordion-toggle-button-servicePoints' }).click(),
       Button({ id: 'add-service-point-btn' }).click(),
