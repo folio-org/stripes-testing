@@ -16,6 +16,7 @@ describe('Assign Tags to Request', () => {
     pickupServicePoint: 'Circ Desk 1',
   };
   let itemBarcode;
+  let userId;
 
   before(() => {
     cy.login(Cypress.env('diku_login'), Cypress.env('diku_password'));
@@ -37,7 +38,10 @@ describe('Assign Tags to Request', () => {
         patronGroup,
         departments: []
       };
-      Users.createViaApi(userData);
+      Users.createViaApi(userData)
+        .then(userProperties => {
+          userId = userProperties.id;
+        });
     });
 
     cy.getItems({ limit: 1, query: 'status.name=="Available"' }).then((item) => {
@@ -48,16 +52,11 @@ describe('Assign Tags to Request', () => {
   });
 
   afterEach(() => {
-    // Requests.getRequestViaApi({ limit:1, query: `item.barcode="${itemBarcode}"` })
-    Requests.getRequestViaApi({ limit:1, query: 'tags.tagList="urgent"' })
-      .then((res) => {
-        //console.log(res.body.requests[0].id);
-        Requests.deleteRequestApi(res.body.requests[0].id);
-        cy.getUsers({ query: `personal.lastName="${lastName}"` })
+    Requests.getRequestIdViaApi({ limit:1, query: `item.barcode="${itemBarcode}"` })
+      .then(requestId => {
+        Requests.deleteRequestApi(requestId)
           .then(() => {
-            Cypress.env('users').forEach(user => {
-              Users.deleteViaApi(user.id);
-            });
+            Users.deleteViaApi(userId);
           });
       });
   });

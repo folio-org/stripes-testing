@@ -501,14 +501,8 @@ export default {
     cy.wait(1000);
   },
 
-  getRequestViaApi: (searchParams) => {
-    return cy
-      .okapiRequest({
-        path: 'circulation/requests',
-        searchParams
-      })
-      .then((res) => {
-        return res.requests;
-      });
-  }
+  getRequestIdViaApi: (searchParams) => cy.okapiRequest({
+    path: 'circulation/requests',
+    searchParams
+  }).then(res => res.body.requests[0].id)
 };
