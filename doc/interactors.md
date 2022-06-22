@@ -843,8 +843,6 @@ The MultiColumnListCell is located by the text content.
 
 ```js
 MultiColumnListCell('Jane Doe').is({ selected: true });
-
-MultiColumnListCell({ row: 3, column: 'first name', content: 'George'}).exists();
 ```
 
 ###### Actions
@@ -855,7 +853,7 @@ MultiColumnListCell({ row: 3, column: 'first name', content: 'George'}).exists()
 
 - `content`: _string_ = the content within a cell
 - `row`: _number_ = find a cell within a row based on the index
-- `column`: _string_ = find a cell within a column with the supplied label, preferred over `columnIndex`
+- `column`: _string_ = find a cell within a column, preferred over `columnIndex`
 - `columnIndex`: _number_ = find a cell within a column based on the index, prefer use of `column` as that is user facing
 - `selected`: _boolean_ = `true` if the cell is selected
 - `measured`: _boolean_ = if the width of the cell has been measured
