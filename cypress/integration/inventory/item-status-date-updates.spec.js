@@ -27,8 +27,8 @@ import InventoryInstance from '../../support/fragments/inventory/inventoryInstan
 import InventorySearch from '../../support/fragments/inventory/inventorySearch';
 import BasicOrderLine from '../../support/fragments/orders/basicOrderLine';
 import NewLocations from '../../support/fragments/settings/tenant/locations/newLocation';
-import UsersEditPage from '../../support/fragments/users/usersEditPage';
 import Users from '../../support/fragments/users/users';
+import UserEdit from '../../support/fragments/users/userEdit';
 
 describe('ui-inventory: Item status date updates', () => {
   const instanceTitle = `autotestTitle ${Helper.getRandomBarcode()}`;
@@ -65,7 +65,7 @@ describe('ui-inventory: Item status date updates', () => {
 
         ServicePoints.createViaApi(effectiveLocationServicePoint);
         ServicePoints.createViaApi(notEffectiveLocationServicePoint);
-        UsersEditPage.addServicePointsToUser([effectiveLocationServicePoint.id, notEffectiveLocationServicePoint.id],
+        UserEdit.addServicePointViaApi([effectiveLocationServicePoint.id, notEffectiveLocationServicePoint.id],
           user.userId, effectiveLocationServicePoint.id);
 
         cy.login(userProperties.username, userProperties.password)
