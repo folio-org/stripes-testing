@@ -19,6 +19,7 @@ export { default as DataImportUploadFile } from './dataImportUploadFile';
 export { default as Datepicker, Calendar } from './datepicker';
 export { default as Dropdown, DropdownMenu } from './dropdown';
 export { default as IconButton } from './icon-button';
+export { default as Image } from './image';
 export { default as KeyValue } from './key-value';
 export { default as Keyboard } from './keyboard';
 export { default as Label } from './label';

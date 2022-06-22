@@ -1,4 +1,6 @@
+import servicePoints from '../settings/tenant/servicePoints';
 import paymentMethods from '../settings/users/paymentMethods';
+import UserEdit from './userEdit';
 
 export default {
   waiveFeeFine:(userId, amount, ownerId) => {
@@ -12,10 +14,9 @@ export default {
     }).then(response => {
       const accountId = response.body.accounts[0]?.id;
       paymentMethods.createViaApi(ownerId).then(paymentMethodProperties => {
-        // TODO: move to fragment after merge of https://github.com/folio-org/stripes-testing/pull/380
-        cy.getServicePointsApi({ limit: 1, query: 'pickupLocation=="true"' }).then(servicePoints => {
-          const servicePointId = servicePoints[0].id;
-          cy.addServicePointToUser(servicePointId, userId).then(() => {
+        servicePoints.getServicePointsApi({ limit: 1, query: 'pickupLocation=="true"' }).then(requestedServicePoints => {
+          const servicePointId = requestedServicePoints[0].id;
+          UserEdit.addServicePointViaApi(servicePointId, userId).then(() => {
             cy.okapiRequest({
               method: 'POST',
               path: `accounts/${accountId}/waive`,

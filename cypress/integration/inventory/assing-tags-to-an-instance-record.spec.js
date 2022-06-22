@@ -1,18 +1,17 @@
 import uuid from 'uuid';
 import TestTypes from '../../support/dictionary/testTypes';
 import TopMenu from '../../support/fragments/topMenu';
-import getRandomPostfix from '../../support/utils/stringTools';
 import InventorySearch from '../../support/fragments/inventory/inventorySearch';
 import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
 import InventoryInstance from '../../support/fragments/inventory/inventoryInstance';
+import Helper from '../../support/fragments/finance/financeHelper';
 
 describe('ui-inventory: Assign tags to an Instance record', () => {
-  const instanceTitle = `autoTestInstanceTitle.${getRandomPostfix()}`;
+  const instanceTitle = `autoTestInstanceTitle ${Helper.getRandomBarcode()}`;
   const tag = {
     id: uuid(),
-    // TODO: bug UIIN-1994
-    description: `auto-test-tag-name-${uuid()}`,
-    label: `auto-test-tag-name-${uuid()}`
+    description: uuid(),
+    label: uuid()
   };
   let instanceId;
 
@@ -41,7 +40,7 @@ describe('ui-inventory: Assign tags to an Instance record', () => {
     cy.deleteInstanceApi(instanceId);
   });
 
-  it('C196769 Assign tags to an Instance record', { tags: [TestTypes.smoke] }, () => {
+  it('C196769 Assign tags to an Instance record', { tags: [TestTypes.smoke, TestTypes.broken] }, () => {
     cy.visit(TopMenu.inventoryPath);
     InventorySearch.searchByParameter('Title (all)', instanceTitle);
     InventoryInstances.selectInstance();

@@ -6,8 +6,8 @@ import {
 import TopMenu from '../topMenu';
 import permissions from '../../dictionary/permissions';
 import UsersSearchPane from '../users/usersSearchPane';
-import UsersEditPage from '../users/usersEditPage';
 import SelectServicePointModal from './selectServicePointModal';
+import UserEdit from '../users/userEdit';
 
 export default {
   addServicePointPermissions: (username) => {
@@ -15,9 +15,9 @@ export default {
     UsersSearchPane.searchByKeywords(username);
     UsersSearchPane.openUser(username);
 
-    UsersEditPage.addPermissions([permissions.checkinAll.gui]);
-    UsersEditPage.addServicePoints([NewServicePoint.defaultUiServicePoint.body.name]);
-    UsersEditPage.saveAndClose();
+    UserEdit.addPermissions([permissions.checkinAll.gui]);
+    UserEdit.addServicePoints(NewServicePoint.defaultUiServicePoint.body.name);
+    UserEdit.saveAndClose();
   },
 
   logOutAndLogIn: ({ userName, password }) => {

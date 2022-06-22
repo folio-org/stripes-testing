@@ -55,10 +55,6 @@ export default {
     ]);
   },
 
-  create(patronNoticePolicy) {
-    this.fillGeneralInformation(patronNoticePolicy);
-  },
-
   startAdding() {
     cy.do(Button({ id: 'clickable-create-entry' }).click());
   },
@@ -70,13 +66,14 @@ export default {
       Select({ name: `${patronNoticePolicy.noticeId}Notices[0].format` }).choose(patronNoticePolicy.format),
       Select({ name: `${patronNoticePolicy.noticeId}Notices[0].sendOptions.sendWhen` }).choose(patronNoticePolicy.action),
     ]);
+    // add check for alert "div[role=alert]" 'Always sent at the end of a session and loans are bundled into a single notice for each patron.'
   },
 
   check: (patronNoticePolicy) => {
     cy.expect(NavListItem(patronNoticePolicy.name).exists());
   },
 
-  checInitialState() {
+  checkInitialState() {
     cy.expect([
       Heading('New patron notice policy').exists(),
       nameField.exists(),

@@ -1,4 +1,11 @@
-import { Button, MultiColumnListCell, Accordion, Selection, SelectionList } from '../../../../../interactors';
+import {
+  Button,
+  MultiColumnListCell,
+  Accordion,
+  Selection,
+  SelectionList,
+  Link
+} from '../../../../../interactors';
 
 const quantityRecordsInInvoice = {
   firstQuantity: '18',
@@ -21,7 +28,7 @@ export default {
   },
 
   openFileDetails:(fileName) => {
-    cy.do(MultiColumnListCell({ row: 0, columnIndex: 1 }).find(Button(fileName)).click());
+    cy.do(Link(fileName).click());
   },
 
   checkQuantityRecordsInFile:(quantityRecords) => {

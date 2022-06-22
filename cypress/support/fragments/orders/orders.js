@@ -16,6 +16,7 @@ import {
 } from '../../../../interactors';
 import SearchHelper from '../finance/financeHelper';
 import InteractorsTools from '../../utils/interactorsTools';
+import { getLongDelay } from '../../utils/cypressTools';
 
 const actionsButton = Button('Actions');
 const orderDetailsPane = Pane({ id: 'order-details' });
@@ -78,6 +79,7 @@ export default {
       Button('Edit').click(),
     ]);
   },
+
   assignOrderToAdmin: (rowNumber = 0) => {
     cy.do([
       Button({ id: 'clickable-plugin-find-user' }).click(),
@@ -86,12 +88,15 @@ export default {
       MultiColumnListRow({ index: rowNumber }).click(),
     ]);
   },
-  saveEditingOrder : () => {
+
+  saveEditingOrder: () => {
     cy.do(saveAndClose.click());
   },
+
   selectOngoingOrderType: () => {
     cy.do(Select({ name: 'orderType' }).choose('Ongoing'));
   },
+
   fillOngoingInformation: (newDate) => {
     cy.do([
       Checkbox({ name: 'ongoing.isSubscription' }).click(),
@@ -99,6 +104,7 @@ export default {
       TextField({ name: 'ongoing.renewalDate' }).fillIn(newDate),
     ]);
   },
+
   closeOrder: (reason) => {
     cy.do([
       orderDetailsPane
@@ -127,10 +133,15 @@ export default {
       newButton.click()
     ]);
     this.selectVendorOnUi(order.vendor);
+    cy.intercept('POST', '/orders/composite-orders**').as('newOrderID');
     cy.do([
       Select('Order type*').choose(order.orderType),
       saveAndClose.click()
     ]);
+    return cy.wait('@newOrderID', getLongDelay())
+      .then(({ response }) => {
+        return response.body.id;
+      });
   },
 
   selectVendorOnUi: (organizationName) => {
@@ -146,6 +157,10 @@ export default {
     cy.expect(Pane({ id: 'order-details' }).exists());
     cy.expect(Accordion({ id: orderDetailsAccordionId }).find(KeyValue({ value: order.vendor })).exists());
     cy.expect(Accordion({ id: orderDetailsAccordionId }).find(KeyValue({ value: createdByAdmin })).exists());
+  },
+
+  selectFromResultsList: (rowNumber = 0) => {
+    cy.do(MultiColumnListRow({ index: rowNumber }).click());
   },
 
   deleteOrderViaActions: () => {
@@ -371,5 +386,10 @@ export default {
       .then(({ body }) => {
         return body.purchaseOrders;
       });
-  }
+  },
+
+  deleteOrderApi: (id) => cy.okapiRequest({
+    method: 'DELETE',
+    path: `orders/composite-orders/${id}`,
+  }),-
 };

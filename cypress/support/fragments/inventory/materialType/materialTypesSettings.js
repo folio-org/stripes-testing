@@ -37,7 +37,7 @@ export default {
         path: 'material-types',
         body: materialTypeProperties,
       })
-      .then((response) => {
+      .then(({ response }) => {
         return response.body;
       });
   },
@@ -47,8 +47,17 @@ export default {
       path: `material-types/${id}`,
     });
   },
+  getMaterialTypesApi: (searchParams) => {
+    return cy
+      .okapiRequest({
+        path: 'material-types',
+        searchParams,
+      })
+      .then(response => {
+        return response.body.mtypes;
+      });
+  },
   getDefaultMaterialType,
-
   isPresented,
   isDeleted,
   verifyMessageOfDeteted,
