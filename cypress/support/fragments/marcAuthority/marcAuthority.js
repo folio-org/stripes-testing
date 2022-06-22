@@ -8,8 +8,8 @@ const rootSection = Section({ id: 'marc-view-pane' });
 const defaultAuthority = { id:'176116217',
   // TODO: hardcoded count related with interactors getters issue. Redesign to cy.then(QuickMarkEditor().rowsCount()).then(rowsCount => {...}
   lastRowNumber: 18,
-  // it should be presented in marc bib one time to correct work(applicable in update of record)
-  existingTag: '130',
+  // it should be presented in marc authority one time to correct work(applicable in update of record)
+  existingTag: '380',
   headingReference: 'Congress and foreign policy series',
   // related with presence of 130 tag, see https://issues.folio.org/browse/MODQM-159
   headingType: 'Uniform title',
@@ -48,7 +48,9 @@ const defaultAuthority = { id:'176116217',
     getNewValueSourceLine: () => defaultAuthority.tag008AuthorityBytesProperties.convertToSource(
       defaultAuthority.tag008AuthorityBytesProperties.getAllProperties().map(property => property.newValue)
     ).join('')
-  } };
+  },
+  // 24 symbols
+  ldrValue: '00846cz\\\\a2200241n\\\\4500' };
 
 export default {
   defaultAuthority,
