@@ -12,7 +12,7 @@ import NewRequest from '../../support/fragments/requests/newRequest';
 import Users from '../../support/fragments/users/users';
 import CheckinActions from '../../support/fragments/check-in-actions/checkInActions';
 import InventoryHoldings from '../../support/fragments/inventory/holdings/inventoryHoldings';
-import UsersEditPage from '../../support/fragments/users/usersEditPage';
+import UserEdit from '../../support/fragments/users/userEdit';
 import Checkout from '../../support/fragments/checkout/checkout';
 import MultipieceCheckOut from '../../support/fragments/checkout/modals/multipieceCheckOut';
 
@@ -51,7 +51,7 @@ describe('loan dates', () => {
             });
           })
           .then(() => {
-            UsersEditPage.addServicePointsToUser([Cypress.env('servicePoints')[0].id], userProperties.userId);
+            UserEdit.addServicePoints(Cypress.env('servicePoints')[0].id, userProperties.userId);
             cy.getUserServicePoints(Cypress.env('users')[0].id);
             cy.createInstance({
               instance: {
