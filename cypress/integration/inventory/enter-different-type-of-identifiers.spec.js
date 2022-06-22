@@ -14,6 +14,7 @@ describe('ui-inventory: Enter different type of identifiers', () => {
 
   beforeEach('navigate to inventory', () => {
     instanceTitle = `autoTestInstanceTitle ${Helper.getRandomBarcode()}`;
+    cy.login(Cypress.env('diku_login'), Cypress.env('diku_password'));
     cy.getAdminToken()
       .then(() => {
         cy.getInstanceTypes({ limit: 1 });
@@ -38,7 +39,7 @@ describe('ui-inventory: Enter different type of identifiers', () => {
     'ASIN',
     'BNB'
   ].forEach((identifier) => {
-    it('C609 In Accordion Identifiers --> enter different type of identifiers', { tags: [TestTypes.smoke, TestTypes.broken] }, () => {
+    it('C609 In Accordion Identifiers --> enter different type of identifiers', { tags: [TestTypes.smoke] }, () => {
       resourceIdentifier = `testResourceIdentifier.${getRandomPostfix()}`;
 
       cy.visit(TopMenu.inventoryPath);

@@ -40,10 +40,9 @@ export default {
 
   // noticePolicyTemplate must have the exact structure as newNoticePolicyTemplate.defaultUi on 14th line
   create: (noticePolicyTemplate) => {
-    cy.wait(2500); // waiting for the html body input to be available for typing
     cy.get('#template-editor')
       .type('{selectAll}')
-      .type(noticePolicyTemplate.body); // TODO: research why <bodyField.fillIn(noticePolicyTemplate.body)> doesn't work
+      .type(noticePolicyTemplate.body, { parseSpecialCharSequences: false }); // TODO: research why <bodyField.fillIn(noticePolicyTemplate.body)> doesn't work
     cy.do([
       nameField.fillIn(noticePolicyTemplate.name),
       descriptionField.fillIn(noticePolicyTemplate.description),
@@ -60,9 +59,11 @@ export default {
     cy.expect(Heading(titles.addToken).exists());
     cy.do([
       Checkbox(`${noticePolicyTemplate.token}`).click(),
+      // waiting for the html body input to be available for adding symbols
+      cy.wait(1000),
       addTokenButton.click(),
     ]);
-    cy.do(bodyField.has({ value: `${noticePolicyTemplate.body}{{${noticePolicyTemplate.token}}}` }));
+    cy.do(bodyField.has({ value: `{{${noticePolicyTemplate.token}}}` }));
   },
 
   save() {

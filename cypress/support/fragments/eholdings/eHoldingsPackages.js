@@ -46,13 +46,13 @@ export default {
     return cy.get('@customePackageName');
   },
   getNotCustomSelectedPackageIdViaApi:() => {
-    // TODO: issue related with filter[custom] https://issues.folio.org/browse/MODKBEKBJ-630
     cy.okapiRequest({ path: 'eholdings/packages',
       searchParams: { 'filter[selected]':true, count:100, pageSize:100 },
       isDefaultSearchParamsRequired : false }).then(({ body }) => {
       const initialPackageIds = body.data.filter(specialPackage => !specialPackage?.attributes?.isCustom
         && specialPackage?.attributes?.name
-        && specialPackage.attributes?.packageType !== 'Complete'
+      // TODO: can't see not complete package in response now
+      // && specialPackage.attributes?.packageType !== 'Complete'
         // TODO: potencial issue with this package
         && !['123Library eBooks'].includes(specialPackage?.attributes?.name))
         .map(customePackage => ({ id: customePackage.id, name: customePackage.attributes.name }));
@@ -61,7 +61,6 @@ export default {
     return cy.get('@packageId');
   },
   getNotSelectedPackageIdViaApi:() => {
-    // TODO: issue related with filter[custom] https://issues.folio.org/browse/MODKBEKBJ-630
     cy.okapiRequest({ path: 'eholdings/packages',
       searchParams: { 'filter[selected]':false, count:100, pageSize:100 },
       isDefaultSearchParamsRequired : false }).then(({ body }) => {

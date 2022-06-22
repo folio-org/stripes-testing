@@ -7,11 +7,11 @@ import CheckOutActions from '../../support/fragments/check-out-actions/check-out
 import NewServicePoint from '../../support/fragments/service_point/newServicePoint';
 import ServicePoints from '../../support/fragments/settings/tenant/servicePoints';
 import MultipieceCheckOut from '../../support/fragments/checkout/modals/multipieceCheckOut';
-import UsersEditPage from '../../support/fragments/users/usersEditPage';
 import Checkout from '../../support/fragments/checkout/checkout';
 import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
 import CheckInActions from '../../support/fragments/check-in-actions/checkInActions';
 import Users from '../../support/fragments/users/users';
+import UserEdit from '../../support/fragments/users/userEdit';
 
 describe('Check Out', () => {
   let user = {};
@@ -80,7 +80,7 @@ describe('Check Out', () => {
         user = userProperties;
         servicePoint = NewServicePoint.getDefaulServicePoint();
         ServicePoints.createViaApi(servicePoint.body);
-        UsersEditPage.addServicePointsToUser([servicePoint.body.id],
+        UserEdit.addServicePointViaApi(servicePoint.body.id,
           user.userId, servicePoint.body.id);
       })
       .then(() => {
@@ -110,7 +110,7 @@ describe('Check Out', () => {
         })).then(() => {
           cy.deleteInstanceApi(testInstanceIds.instanceId);
         });
-        UsersEditPage.changeServicePointPreferenceViaApi(user.userId, [servicePoint.body.id]).then(() => {
+        UserEdit.changeServicePointPreferenceViaApi(user.userId, [servicePoint.body.id]).then(() => {
           cy.deleteServicePoint(servicePoint.body.id);
           Users.deleteViaApi(user.userId);
         });
