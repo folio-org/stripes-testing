@@ -166,5 +166,17 @@ export default {
         });
       });
     return cy.get('@ids');
-  }
+  },
+
+  getInstanceIdApi: (searchParams) => {
+    return cy
+      .okapiRequest({
+        path: 'instance-storage/instances',
+        searchParams,
+        isDefaultSearchParamsRequired: false
+      })
+      .then((res) => {
+        return res.body.instances[0].id;
+      });
+  },
 };

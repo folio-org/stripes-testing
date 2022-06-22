@@ -1,13 +1,3 @@
-/// <reference types="cypress" />
-
-Cypress.Commands.add('getInstanceIdApi', (searchParams) => {
-  return cy
-    .okapiRequest({
-      path: 'instance-storage/instances',
-      searchParams,
-    });
-});
-
 Cypress.Commands.add('getInstance', (searchParams) => {
   cy.okapiRequest({
     method: 'GET',
