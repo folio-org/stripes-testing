@@ -499,5 +499,10 @@ export default {
 
     // eslint-disable-next-line cypress/no-unnecessary-waiting
     cy.wait(1000);
-  }
+  },
+
+  getRequestIdViaApi: (searchParams) => cy.okapiRequest({
+    path: 'circulation/requests',
+    searchParams
+  }).then(res => res.body.requests[0].id)
 };
