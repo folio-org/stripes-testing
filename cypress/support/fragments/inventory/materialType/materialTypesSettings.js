@@ -36,9 +36,6 @@ export default {
         method: 'POST',
         path: 'material-types',
         body: materialTypeProperties,
-      })
-      .then(({ response }) => {
-        return response.body;
       });
   },
   deleteApi(id) {

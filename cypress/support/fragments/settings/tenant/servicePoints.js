@@ -3,6 +3,7 @@ export default {
     path: 'service-points',
     searchParams,
   }).then(({ body }) => body.servicepoints),
+
   createViaApi : (servicePointParameters) => cy.okapiRequest({
     path: 'service-points',
     body: servicePointParameters,

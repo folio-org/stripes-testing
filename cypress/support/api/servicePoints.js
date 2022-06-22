@@ -48,20 +48,3 @@ Cypress.Commands.add('deleteServicePoint', (id) => {
     path: `service-points/${id}`,
   });
 });
-
-// TODO: depricated, use addServicePoint from cypress\support\fragments\users\users.js instead
-Cypress.Commands.add('addServicePointToUser', (servicePointIds, userId, defaultServicePointId) => {
-  // servicePointIds is array of ids
-  cy.okapiRequest({
-    method: 'POST',
-    path: 'service-points-users',
-    body: {
-      id: uuidv4(),
-      userId,
-      servicePointsIds: servicePointIds,
-      defaultServicePointId: defaultServicePointId || servicePointIds[0],
-    },
-  }).then((res) => {
-    return res;
-  });
-});

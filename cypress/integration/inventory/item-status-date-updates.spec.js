@@ -65,7 +65,7 @@ describe('ui-inventory: Item status date updates', () => {
 
         ServicePoints.createViaApi(effectiveLocationServicePoint);
         ServicePoints.createViaApi(notEffectiveLocationServicePoint);
-        UserEdit.addServicePointViaApi([effectiveLocationServicePoint.id, notEffectiveLocationServicePoint.id],
+        UserEdit.addServicePointsViaApi([effectiveLocationServicePoint.id, notEffectiveLocationServicePoint.id],
           user.userId, effectiveLocationServicePoint.id);
 
         cy.login(userProperties.username, userProperties.password)
@@ -93,7 +93,7 @@ describe('ui-inventory: Item status date updates', () => {
         cy.getUsers({ limit: 1, query: `"username"="${userForDeliveryRequest.username}"` })
           .then((users) => {
             cy.getAddressTypesApi({ limit: 1 }).then(addressTypes => {
-              UsersEditPage.updateUserAddress(users[0], [{ city: 'New York',
+              UserEdit.updateUserAddress(users[0], [{ city: 'New York',
                 addressTypeId: addressTypes[0].id,
                 countryId: 'US' }]);
               cy.createUserRequestPreferencesApi({
@@ -130,7 +130,7 @@ describe('ui-inventory: Item status date updates', () => {
       servicePointId: effectiveLocationServicePoint.id,
       checkInDate: '2021-09-30T16:14:50.444Z',
     });
-    cy.wrap(UsersEditPage.changeServicePointPreferenceViaApi(user.userId, [effectiveLocationServicePoint.id]))
+    cy.wrap(UserEdit.changeServicePointPreferenceViaApi(user.userId, [effectiveLocationServicePoint.id]))
       .then(() => {
         cy.deleteServicePoint(effectiveLocationServicePoint.id);
         cy.deleteServicePoint(notEffectiveLocationServicePoint.id);

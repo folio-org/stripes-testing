@@ -57,7 +57,7 @@ const getDefaultOrderLine = (quantity, title, spesialLocationId, specialMaterial
   if (!defaultOrderLine.materialType) {
     MaterialTypesSettings.createApi(MaterialTypesSettings.getDefaultMaterialType())
       .then(mtypes => {
-        defaultOrderLine.physical.materialType = mtypes.id;
+        defaultOrderLine.physical.materialType = mtypes.body.id;
       });
   }
   return defaultOrderLine;
