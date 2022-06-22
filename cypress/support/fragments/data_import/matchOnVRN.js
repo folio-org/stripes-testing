@@ -5,9 +5,11 @@ import {
   Button,
   KeyValue,
   Modal,
+  MultiColumnList,
   MultiColumnListCell,
   Pane,
   PaneHeader,
+  Section,
   Select,
   Selection,
   SelectionList,
@@ -16,6 +18,7 @@ import {
 } from '../../../../interactors';
 import { getLongDelay } from '../../utils/cypressTools';
 import NewJobProfile from './job_profiles/newJobProfile';
+import DateTools from '../../utils/dateTools';
 
 const poLineData = {
   title: 'Agrarianism and capitalism in early Georgia, 1732-1743 / Jay Jordan Butler.',
@@ -27,99 +30,157 @@ const poLineData = {
   vrnType: 'Vendor order reference number',
   physicalUnitPrice: '20',
   physicalUnitQuantity: '1',
-  locationName: 'Online (E)',
+  locationName: 'Main Library (KU/CC/DI/M)',
   quantityPhysical: '1',
   materialType: 'book',
 };
 
+const actionButton = Button('Actions');
+const deleteButton = Button('Delete');
+const closeButton = Button({ icon: 'times' });
+const poTitleField = TextField({ name: 'titleOrPackage' });
+const addProductIdButton = Button('Add product ID and product ID type');
+const productIdField = TextField('Product ID*');
+const productIdSelect = Select('Product ID type*');
+const acquisitionMethodButton = Button({ id: 'acquisition-method' });
+const acquisitionMethodOption = SelectionOption(poLineData.acquisitionMethod);
+const orderFormatSelect = Select({ name: 'orderFormat' });
+const addVRNButton = Button('Add vendor reference number');
+const vrnField = TextField('Vendor reference number*');
+const vrnType = Select('Vendor reference type*');
+const physicalUnitPriceField = TextField('Physical unit price*');
+const physicalQuantityField = TextField('Quantity physical*');
+const materialTypeSelect = Select('Material type*');
+const addLocationButton = Button('Add location');
+const locationNameSelection = Selection('Name (code)*');
+const locationNameOption = SelectionOption(poLineData.locationName);
+const locationQuantityPhysicalField = TextField({ name: 'locations[0].quantityPhysical' });
+const poLineSaveButton = Button('Save & close');
+const goBackPurchaseOrderButton = Button({ id: 'clickable-backToPO' });
+const orderDetailsPane = PaneHeader({ id: 'paneHeaderorder-details' });
+const orderLinesDetailsSection = Section({ id: 'order-lines-details' });
+const openOrderButton = Button('Open');
+const openOrderModal = Modal({ content: including('Open - purchase order') });
+const submitButton = Button('Submit');
+const workflowStatusKeyValue = KeyValue('Workflow status');
+const newMappingProfileButton = Button('New field mapping profile');
+const saveProfileButton = Button('Save as profile & Close');
+const folioRecordTypeSelect = Select('FOLIO record type*');
+const nameField = TextField('Name*');
+const incomingRecordTypeSelect = Select('Incoming record type*');
+const catalogedDateField = TextField('Cataloged date');
+const instanceStatusTermField = TextField('Instance status term');
+const permanentLocationField = TextField('Permanent');
+const callNumberField = TextField('Call number');
+const holdingsTypeField = TextField('Holdings type');
+const callNumberTypeField = TextField('Call number type');
+const barcodeField = TextField('Barcode');
+const copyNumberField = TextField('Copy number');
+const statusField = TextField('Status');
+const actionProfilesPaneHeader = PaneHeader('Action profiles');
+const newActionProfileButton = Button('New action profile');
+const actionSelect = Select('Action*');
+const linkProfileButton = Button('Link Profile');
+const selectMappingProfilesModal = Modal('Select Field Mapping Profiles');
+const queryField = TextField({ name: 'query' });
+const searchButton = Button('Search');
+const matchProfilesPaneHeader = PaneHeader('Match profiles');
+const newMatchProfileButton = Button('New match profile');
+const incomingField = TextField('Field');
+const indicatorField1 = TextField('In. 1');
+const indicatorField2 = TextField('In. 2');
+const incomingSubField = TextField('Subfield');
+const criterionValueButton = Button({ id: 'criterion-value-type' });
+const criterionSelection = SelectionList({ id: 'sl-container-criterion-value-type' });
+const jobProfilesPaneHeader = PaneHeader('Job profiles');
+const newJobProfileButton = Button('New job profile');
+const dataTypeSelect = Select('Accepted data type*');
+const searchResultsList = MultiColumnList({ id: 'search-results-list' });
+const instanceStatusTermKeyValue = KeyValue('Instance status term');
+const sourceKeyValue = KeyValue('Source');
+const catalogedDateKeyValue = KeyValue('Cataloged date');
+const viewHoldingsButton = Button('View holdings');
+const holdingsTypeKeyValue = KeyValue('Holdings type');
+const callNumberTypeKeyValue = KeyValue('Call number type');
+const permanentLocationKeyValue = KeyValue('Permanent');
+const holdingsAccordionButton = Button(including('Holdings: Main Library'));
+const itemStatusKeyValue = KeyValue('Item status');
+const itemBarcodeKeyValue = KeyValue('Item barcode');
+const instanceDetailsSection = Section({ id: 'pane-instancedetails' });
+const viewSourceButton = Button('View source');
+const holdingsDetailsSection = Section({ id: 'ui-inventory.holdingsRecordView' });
+const itemPaneHeader = PaneHeader(including('Item'));
+const instanceAcquisitionsList = MultiColumnList({ id: 'list-instance-acquisitions' });
+const itemBarcodeLink = Link('xyzt124245271818912626262');
+
 function fillPOLineInfo() {
   cy.do([
-    TextField({ name: 'titleOrPackage' }).fillIn(poLineData.title),
-    Button('Add product ID and product ID type').click(),
-    TextField('Product ID*').fillIn(poLineData.productId),
-    Select('Product ID type*').choose(poLineData.productIdType),
-    Button({ id: 'acquisition-method' }).click(),
-    SelectionOption(poLineData.acquisitionMethod).click(),
-    Select({ name: 'orderFormat' }).choose(poLineData.orderFormat),
-    Button('Add vendor reference number').click(),
-    TextField('Vendor reference number*').fillIn(poLineData.vrn),
-    Select('Vendor reference type*').choose(poLineData.vrnType),
-    TextField({ name: 'cost.listUnitPrice' }).fillIn(poLineData.physicalUnitPrice),
-    TextField({ name: 'cost.quantityPhysical' }).fillIn(poLineData.physicalUnitQuantity),
-    Select({ name: 'physical.materialType' }).choose(poLineData.materialType),
-    Button('Add location').click(),
-    Selection('Name (code)*').open(),
-    SelectionOption(poLineData.locationName).click(),
-    TextField({ name: 'locations[0].quantityPhysical' }).fillIn(poLineData.quantityPhysical),
-    Button('Save & close').click(),
+    poTitleField.fillIn(poLineData.title),
+    addProductIdButton.click(),
+    productIdField.fillIn(poLineData.productId),
+    productIdSelect.choose(poLineData.productIdType),
+    acquisitionMethodButton.click(),
+    acquisitionMethodOption.click(),
+    orderFormatSelect.choose(poLineData.orderFormat),
+    addVRNButton.click(),
+    vrnField.fillIn(poLineData.vrn),
+    vrnType.choose(poLineData.vrnType),
+    physicalUnitPriceField.fillIn(poLineData.physicalUnitPrice),
+    physicalQuantityField.fillIn(poLineData.physicalUnitQuantity),
+    materialTypeSelect.choose(poLineData.materialType),
+    addLocationButton.click(),
+    locationNameSelection.open(),
+    locationNameOption.click(),
+    locationQuantityPhysicalField.fillIn(poLineData.quantityPhysical),
+    poLineSaveButton.click(),
   ]);
 }
 
 function goBackToPO() {
-  cy.do(Button({ id: 'clickable-backToPO' }).click());
+  cy.do(goBackPurchaseOrderButton.click());
 }
 
 function openOrder() {
   cy.do([
-    PaneHeader({ id: 'paneHeaderorder-details' }).find(Button('Actions')).click(),
-    Button('Open').click(),
-    Modal({ content: including('Open - purchase order') }).find(Button('Submit')).click()
+    orderDetailsPane.find(actionButton).click(),
+    openOrderButton.click(),
+    openOrderModal.find(submitButton).click()
   ]);
 }
 
 function verifyOrderStatus() {
-  cy.expect(KeyValue('Workflow status').has({ value: 'Open' }));
-}
-
-function verifyReceivingPieces(value) {
-  cy.do([
-    Select({ id: 'input-record-search-qindex' }).choose('Package (POL Package name)'),
-    TextField({ id: 'input-record-search' }).fillIn(value),
-    Button('Search').click(),
-  ]);
-
-  cy.expect(MultiColumnListCell(value).exists());
-}
-
-function verifyInstanceHoldingItemCreated() {
-  cy.do(MultiColumnListCell(including(poLineData.title)).click());
-  cy.do(Link(poLineData.title).click());
-  cy.expect(PaneHeader(including(poLineData.title)).exists());
+  cy.expect(workflowStatusKeyValue.has({ value: 'Open' }));
 }
 
 function openMappingProfileForm() {
   cy.do([
-    Button('Actions').click(),
-    Button('New field mapping profile').click(),
+    actionButton.click(),
+    newMappingProfileButton.click(),
   ]);
 }
 
-function closeMappingProfile() {
-  cy.do(Button({ icon: 'times' }).click());
-  cy.expect(PaneHeader('Field mapping profiles').find(Button('Actions')).exists());
-}
-
 function saveProfile() {
-  cy.do(Button('Save as profile & Close').click());
+  cy.do(saveProfileButton.click());
 }
 
 const closeViewModeForMappingProfile = (profileName) => {
-  cy.do(Pane({ title: profileName }).find(Button({ icon: 'times' })).click());
+  cy.do(Pane({ title: profileName }).find(closeButton).click());
 };
 
 function creatMappingProfilesForInstance(name) {
   cy.intercept('GET', '/instance-statuses?*').as('getInstanceStatuses');
   openMappingProfileForm();
-  return cy.do(Select('FOLIO record type*').choose('Instance'))
+  return cy.do(folioRecordTypeSelect.choose('Instance'))
     .then(() => {
       cy.wait('@getInstanceStatuses');
+      cy.wait(1200);
     })
     .then(() => {
       cy.do([
-        TextField('Name*').fillIn(name),
-        Select('Incoming record type*').choose('MARC Bibliographic'),
-        TextField('Cataloged date').fillIn('###TODAY###'),
-        TextField('Instance status term').fillIn('"Batch Loaded"'),
+        nameField.fillIn(name),
+        incomingRecordTypeSelect.choose('MARC Bibliographic'),
+        catalogedDateField.fillIn('###TODAY###'),
+        instanceStatusTermField.fillIn('"Batch Loaded"'),
       ]);
       saveProfile();
       closeViewModeForMappingProfile(name);
@@ -130,18 +191,19 @@ function creatMappingProfilesForHoldings(name) {
   cy.intercept('GET', '/holdings-types?*').as('getHoldingsTypes');
   cy.intercept('GET', '/call-number-types?*').as('getCallNumberTypes');
   openMappingProfileForm();
-  return cy.do(Select('FOLIO record type*').choose('Holdings'))
+  return cy.do(folioRecordTypeSelect.choose('Holdings'))
     .then(() => {
-      cy.wait(['@getHoldingsTypes', '@getCallNumberTypes'], getLongDelay());
+      cy.wait(['@getHoldingsTypes', '@getCallNumberTypes']);
+      cy.wait(1200);
     })
     .then(() => {
       cy.do([
-        TextField('Name*').fillIn(name),
-        Select('Incoming record type*').choose('MARC Bibliographic'),
-        TextField('Permanent').fillIn('980$a'),
-        TextField('Call number').fillIn('980$b " " 980$c'),
-        TextField('Holdings type').fillIn('"Monograph"'),
-        TextField('Call number type').fillIn('"Library of Congress classification"'),
+        nameField.fillIn(name),
+        incomingRecordTypeSelect.choose('MARC Bibliographic'),
+        permanentLocationField.fillIn('980$a'),
+        callNumberField.fillIn('980$b " " 980$c'),
+        holdingsTypeField.fillIn('"Monograph"'),
+        callNumberTypeField.fillIn('"Library of Congress classification"'),
       ]);
       saveProfile();
       closeViewModeForMappingProfile(name);
@@ -150,45 +212,40 @@ function creatMappingProfilesForHoldings(name) {
 
 function creatMappingProfilesForItem(name) {
   openMappingProfileForm();
-  return cy.do(Select('FOLIO record type*').choose('Item'))
-    .then(() => {
-      cy.wait(1000);
-    })
-    .then(() => {
-      cy.do([
-        TextField('Name*').fillIn(name),
-        Select('Incoming record type*').choose('MARC Bibliographic'),
-        TextField('Barcode').fillIn('981$b'),
-        TextField('Copy number').fillIn('981$a'),
-        TextField('Status').fillIn('"Available"'),
-      ]);
-      saveProfile();
-      closeViewModeForMappingProfile(name);
-    });
+  cy.do([
+    folioRecordTypeSelect.choose('Item'),
+    nameField.fillIn(name),
+    incomingRecordTypeSelect.choose('MARC Bibliographic'),
+    barcodeField.fillIn('981$b'),
+    copyNumberField.fillIn('981$a'),
+    statusField.fillIn('"Available"'),
+  ]);
+  saveProfile();
+  closeViewModeForMappingProfile(name);
 }
 
 function closeTimesButton() {
-  cy.do(Button({ icon: 'times' }).click());
+  cy.do(closeButton.click());
 }
 
 function createActionProfileForVRN(name, recordType, mappingProfile, action) {
   cy.contains('Action profiles').should('be.visible');
   cy.do([
-    PaneHeader('Action profiles').find(Button('Actions')).click(),
-    Button('New action profile').click(),
-    TextField('Name*').fillIn(name),
-    Select('Action*').choose(action || 'Update (all record types except Orders)'),
-    Select('FOLIO record type*').choose(recordType),
-    Button('Link Profile').click(),
-    Modal('Select Field Mapping Profiles').find(TextField({ name: 'query' })).fillIn(mappingProfile),
-    Button('Search').click(),
+    actionProfilesPaneHeader.find(actionButton).click(),
+    newActionProfileButton.click(),
+    nameField.fillIn(name),
+    actionSelect.choose(action || 'Update (all record types except Orders)'),
+    folioRecordTypeSelect.choose(recordType),
+    linkProfileButton.click(),
+    selectMappingProfilesModal.find(queryField).fillIn(mappingProfile),
+    searchButton.click(),
     MultiColumnListCell(mappingProfile).click(),
   ]);
-  cy.expect(Button('Link Profile').has({ disabled: true }));
-  cy.do(Button('Save as profile & Close').click());
+  cy.expect(linkProfileButton.has({ disabled: true }));
+  cy.do(saveProfileButton.click());
 
   closeTimesButton();
-  cy.wait(1200);
+  cy.wait(400);
 }
 
 function waitJSONSchemasLoad() {
@@ -211,25 +268,23 @@ function createMatchProfileForVRN({
   in2 = '*',
   subfield = 'a'
 }) {
-  cy.wait(10000);
   cy.do([
-    PaneHeader('Match profiles').find(Button('Actions')).click(),
-    Button('New match profile').click(),
-    TextField('Name*').fillIn(name),
+    matchProfilesPaneHeader.find(actionButton).click(),
+    newMatchProfileButton.click(),
+    nameField.fillIn(name),
   ]);
 
   cy.get(`[data-id="${existingRecordType}"]`).last().click();
   cy.do([
-    TextField('Field').fillIn(field),
-    TextField('In. 1').fillIn(in1),
-    TextField('In. 2').fillIn(in2),
-    TextField('Subfield').fillIn(subfield),
-    Button({ id: 'criterion-value-type' }).click(),
+    incomingField.fillIn(field),
+    indicatorField1.fillIn(in1),
+    indicatorField2.fillIn(in2),
+    incomingSubField.fillIn(subfield),
+    criterionValueButton.click(),
   ]);
-  cy.expect(SelectionList({ id: 'sl-container-criterion-value-type' }).exists());
-  cy.do(SelectionList({ id: 'sl-container-criterion-value-type' }).select('Acquisitions data: Vendor reference number'));
-  cy.wait(1200);
-  cy.do(Button('Save as profile & Close').click());
+  cy.expect(criterionSelection.exists());
+  cy.do(criterionSelection.select('Acquisitions data: Vendor reference number'));
+  saveProfile();
 
   cy.intercept('POST', '/data-import-profiles/matchProfiles').as('createMatchProfile');
   cy.wait('@createMatchProfile');
@@ -237,18 +292,92 @@ function createMatchProfileForVRN({
 }
 
 function createJobProfileForVRN({ name, dataType, matches }) {
-  cy.wait(3000);
+  cy.wait(1000);
   cy.do([
-    PaneHeader('Job profiles').find(Button('Actions')).click(),
-    Button('New job profile').click(),
-    TextField('Name*').fillIn(name),
-    Select('Accepted data type*').choose(dataType),
+    jobProfilesPaneHeader.find(actionButton).click(),
+    newJobProfileButton.click(),
+    nameField.fillIn(name),
+    dataTypeSelect.choose(dataType),
   ]);
 
   matches.forEach((match, i) => {
     NewJobProfile.linkMatchAndActionProfiles(match.matchName, match.actionName, 2 * i);
   });
-  cy.do(Button('Save as profile & Close').click());
+  saveProfile();
+}
+
+function clickOnUpdatedHotlink(columnIndex = 3, row = 0) {
+  cy.intercept('GET', '/metadata-provider/jobLogEntries/*').as('getLogEntries');
+  cy.wait('@getLogEntries');
+  cy.do(searchResultsList.find(MultiColumnListCell({
+    row,
+    columnIndex,
+  })).find(Link('Updated')).click());
+}
+
+function verifyInstanceUpdated() {
+  cy.expect(instanceStatusTermKeyValue.has({ value: 'Batch Loaded' }));
+  cy.expect(sourceKeyValue.has({ value: 'MARC' }));
+  cy.expect(catalogedDateKeyValue.has({ value: DateTools.getFormattedDate({ date: new Date() }) }));
+}
+
+function verifyHoldingsUpdated() {
+  cy.do(viewHoldingsButton.click());
+  cy.expect(holdingsTypeKeyValue.has({ value: 'Monograph' }));
+  cy.expect(callNumberTypeKeyValue.has({ value: 'Library of Congress classification' }));
+  cy.expect(permanentLocationKeyValue.has({ value: 'Main Library' }));
+  closeTimesButton();
+}
+
+
+function verifyItemUpdated() {
+  cy.do([
+    holdingsAccordionButton.click(),
+    itemBarcodeLink.click(),
+  ]);
+  cy.expect(itemStatusKeyValue.has({ value: 'Available' }));
+  cy.expect(itemBarcodeKeyValue.has({ value: 'xyzt124245271818912626262' }));
+
+  closeTimesButton();
+}
+
+function openMARCBibSource() {
+  cy.do([
+    instanceDetailsSection.find(actionButton).click(),
+    viewSourceButton.click(),
+  ]);
+  closeTimesButton();
+}
+
+function deleteHoldings() {
+  cy.do([
+    viewHoldingsButton.click(),
+    holdingsDetailsSection.find(actionButton).click(),
+    deleteButton.click(),
+    Modal().find(deleteButton).click(),
+  ]);
+}
+
+function deleteItem() {
+  cy.intercept('GET', '/inventory/items/*').as('deleteItem');
+  cy.do([
+    holdingsAccordionButton.click(),
+    itemBarcodeLink.click(),
+    itemPaneHeader.find(actionButton).click(),
+    deleteButton.click(),
+    Modal().find(deleteButton).click(),
+  ]);
+  cy.wait('@deleteItem');
+}
+
+
+function deletePOLine() {
+  cy.do([
+    instanceAcquisitionsList.find(Link(including('1'))).click(),
+    orderLinesDetailsSection.find(actionButton).click(),
+    deleteButton.click(),
+    Modal().find(deleteButton).click(),
+  ]);
 }
 
 export default {
@@ -257,8 +386,6 @@ export default {
   goBackToPO,
   openOrder,
   verifyOrderStatus,
-  verifyInstanceHoldingItemCreated,
-  verifyReceivingPieces,
   creatMappingProfilesForInstance,
   creatMappingProfilesForHoldings,
   creatMappingProfilesForItem,
@@ -266,7 +393,12 @@ export default {
   createMatchProfileForVRN,
   waitJSONSchemasLoad,
   createJobProfileForVRN,
-  openMappingProfileForm,
-  closeMappingProfile,
-  saveProfile,
+  clickOnUpdatedHotlink,
+  verifyInstanceUpdated,
+  verifyHoldingsUpdated,
+  verifyItemUpdated,
+  openMARCBibSource,
+  deleteItem,
+  deleteHoldings,
+  deletePOLine,
 };

@@ -1,9 +1,14 @@
+/* eslint-disable cypress/no-unnecessary-waiting */
 import TestTypes from '../../support/dictionary/testTypes';
 import NewOrder from '../../support/fragments/orders/newOrder';
 import FinanceHelper from '../../support/fragments/finance/financeHelper';
-import MatchOnVRN from '../../support/fragments/data_import/matchOnVRN';
-import SettingsMenu from '../../support/fragments/settingsMenu';
 import getRandomPostfix from '../../support/utils/stringTools';
+import TopMenu from '../../support/fragments/topMenu';
+import Logs from '../../support/fragments/data_import/logs/logs';
+import MatchOnVRN from '../../support/fragments/data_import/matchOnVRN';
+import FileManager from '../../support/utils/fileManager';
+import SettingsMenu from '../../support/fragments/settingsMenu';
+import Orders from '../../support/fragments/orders/orders';
 
 describe('ui-data-import: Match on VRN and update related Instance, Holdings, Item', () => {
   const order = {
@@ -61,30 +66,25 @@ describe('ui-data-import: Match on VRN and update related Instance, Holdings, It
       Cypress.env('diku_password')
     );
 
-    // cy.readFile(`cypress/fixtures/${filePath}`).then(content => {
-    //   FileManager.createFile(`cypress/fixtures/${fileName}`, content);
-    // });
+    cy.readFile(`cypress/fixtures/${filePath}`).then(content => {
+      FileManager.createFile(`cypress/fixtures/${fileName}`, content);
+    });
   });
 
   it('C350591 Match on VRN and update related Instance, Holdings, Item', { tags: [TestTypes.smoke] }, () => {
-    // // create order
-    // cy.visit(TopMenu.ordersPath);
-    // Orders.createOrder(order);
-    // Orders.checkCreatedOrder(order);
-    //
-    // // add and verify po line
-    // Orders.createPOLineViaActions();
-    // MatchOnVRN.fillPOLineInfo();
-    // MatchOnVRN.goBackToPO();
-    // MatchOnVRN.openOrder();
-    // MatchOnVRN.verifyOrderStatus();
-    // MatchOnVRN.verifyInstanceHoldingItemCreated();
+    // create order
+    cy.visit(TopMenu.ordersPath);
+    Orders.createOrder(order);
+    Orders.checkCreatedOrder(order);
 
-    // verify receiving pieces
-    // cy.visit(TopMenu.receivingPath);
-    // MatchOnVRN.verifyReceivingPieces(MatchOnVRN.poLineData.title);
+    // add and verify po line
+    Orders.createPOLineViaActions();
+    MatchOnVRN.fillPOLineInfo();
+    MatchOnVRN.goBackToPO();
+    MatchOnVRN.openOrder();
+    MatchOnVRN.verifyOrderStatus();
 
-    // create field mapping profiles
+    // // create field mapping profiles
     cy.visit(SettingsMenu.mappingProfilePath);
     cy.contains('Field mapping profiles').should('exist');
     MatchOnVRN.creatMappingProfilesForInstance(instanceMappingProfileName)
@@ -105,6 +105,7 @@ describe('ui-data-import: Match on VRN and update related Instance, Holdings, It
     cy.visit(SettingsMenu.matchProfilePath);
     cy.contains('Match profiles').should('exist');
     MatchOnVRN.waitJSONSchemasLoad();
+    cy.wait(10000);
     matchProfiles.forEach(match => {
       MatchOnVRN.createMatchProfileForVRN(match);
     });
@@ -116,10 +117,17 @@ describe('ui-data-import: Match on VRN and update related Instance, Holdings, It
     cy.contains(jobProfilesData.name).should('exist');
 
     // import a file
-    // cy.visit(TopMenu.dataImportPath);
-    // cy.uploadFileWithDefaultJobProfile(fileName, jobProfilesData.name);
-    // FileManager.deleteFile(`cypress/fixtures/${fileName}`);
-    // Logs.openFileDetails(fileName);
-    // FileDetails.checkStatusInColumn(FileDetails.status.updated, FileDetails.columnName.instance);
+    cy.visit(TopMenu.dataImportPath);
+    cy.uploadFileWithDefaultJobProfile(fileName, jobProfilesData.name);
+    FileManager.deleteFile(`cypress/fixtures/${fileName}`);
+    Logs.openFileDetails(fileName);
+    MatchOnVRN.clickOnUpdatedHotlink();
+    MatchOnVRN.verifyInstanceUpdated();
+    MatchOnVRN.verifyHoldingsUpdated();
+    MatchOnVRN.verifyItemUpdated();
+    MatchOnVRN.openMARCBibSource();
+    MatchOnVRN.deleteItem();
+    MatchOnVRN.deleteHoldings();
+    MatchOnVRN.deletePOLine();
   });
 });
