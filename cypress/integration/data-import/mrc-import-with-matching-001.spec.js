@@ -29,7 +29,7 @@ describe('ui-data-import: Test MARC-MARC matching for 001 field', () => {
       permissions.moduleDataImportEnabled.gui,
       permissions.settingsDataImportEnabled.gui,
       permissions.inventoryAll.gui,
-      permissions.dataExportAll.gui
+      permissions.dataExportEnableModule.gui
     ])
       .then(userProperties => {
         user = userProperties;
