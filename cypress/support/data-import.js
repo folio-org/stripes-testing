@@ -3,10 +3,10 @@ import { Button, HTML, including, Modal, MultiColumnListCell, Section } from '..
 import { getLongDelay } from './utils/cypressTools';
 
 Cypress.Commands.add('uploadFileWithDefaultJobProfile', (name, jobProfileToRun = 'Default - Create instance and SRS MARC Bib') => {
-  cy.wait(2000);
   // upload generated file with given unique name
   cy.get('input[type=file]', getLongDelay()).attachFile(name);
   cy.expect(Section({ id: 'pane-upload' }).find(HTML(including(name))).exists());
+  cy.expect(Button({ icon: 'trash' }).exists());
 
   // run file with given jobProfile
   cy.do(MultiColumnListCell(jobProfileToRun).click());
@@ -15,8 +15,6 @@ Cypress.Commands.add('uploadFileWithDefaultJobProfile', (name, jobProfileToRun =
     Button('Run').click(),
   ]);
   cy.do(Modal({ id: 'run-job-profile-modal' }).find(Button('Run')).click());
-  // wait until uploaded file is displayed in the list
   cy.get('#pane-logs-title').contains(name);
-  // cy.expect(Section({ id: 'pane-logs-title' }).find(HTML(including(name))).exists());
 });
 

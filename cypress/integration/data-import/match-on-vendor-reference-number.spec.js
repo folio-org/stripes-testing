@@ -69,10 +69,11 @@ describe('ui-data-import: Match on VRN and update related Instance, Holdings, It
       permissions.uiOrdersCreate.gui,
       permissions.uiOrdersEdit.gui,
       permissions.uiOrdersDelete.gui,
-      permissions.inventoryAll,
+      permissions.inventoryAll.gui,
       permissions.moduleDataImportEnabled.gui,
       permissions.settingsDataImportEnabled.gui,
       permissions.dataImportDeleteLogs.gui,
+      permissions.uiQuickMarcQuickMarcBibliographicEditorAll.gui,
     ]).then(userProperties => {
       userId = userProperties.userId;
       cy.login(userProperties.username, userProperties.password);
@@ -125,19 +126,20 @@ describe('ui-data-import: Match on VRN and update related Instance, Holdings, It
     // create job profiles
     cy.visit(SettingsMenu.jobProfilePath);
     MatchOnVRN.createJobProfileForVRN(jobProfilesData);
-    cy.contains(jobProfilesData.name).should('exist');
 
     // import a file
     cy.visit(TopMenu.dataImportPath);
     cy.uploadFileWithDefaultJobProfile(fileName, jobProfilesData.name);
     FileManager.deleteFile(`cypress/fixtures/${fileName}`);
 
+    // verify Instance, Holdings and Item details
     Logs.openFileDetails(fileName);
     MatchOnVRN.clickOnUpdatedHotlink();
     MatchOnVRN.verifyInstanceUpdated();
     MatchOnVRN.verifyHoldingsUpdated();
     MatchOnVRN.verifyItemUpdated();
-    MatchOnVRN.openMARCBibSource();
+    MatchOnVRN.verifyMARCBibSource();
+
     MatchOnVRN.deleteItem();
     MatchOnVRN.deleteHoldings();
     MatchOnVRN.deletePOLine();

@@ -1,10 +1,10 @@
 /* eslint-disable cypress/no-unnecessary-waiting */
-import { including, Link } from '@interactors/html';
-import getRandomPostfix from '../../utils/stringTools';
 import {
   Accordion,
   Button,
+  including,
   KeyValue,
+  Link,
   Modal,
   MultiColumnList,
   MultiColumnListCell,
@@ -15,11 +15,12 @@ import {
   Selection,
   SelectionList,
   SelectionOption,
-  TextField
+  TextField,
 } from '../../../../interactors';
 import { getLongDelay } from '../../utils/cypressTools';
 import NewJobProfile from './job_profiles/newJobProfile';
 import DateTools from '../../utils/dateTools';
+import getRandomPostfix from '../../utils/stringTools';
 
 const itemBarcode = 'xyzt124245271818912626262';
 const poLineData = {
@@ -315,7 +316,9 @@ function createJobProfileForVRN({ name, dataType, matches }) {
   matches.forEach((match, i) => {
     NewJobProfile.linkMatchAndActionProfiles(match.matchName, match.actionName, 2 * i);
   });
+
   saveProfile();
+  cy.expect(PaneHeader(name).exists());
 }
 
 function clickOnUpdatedHotlink(columnIndex = 3, row = 0) {
@@ -353,11 +356,18 @@ function verifyItemUpdated() {
   closeDetailView();
 }
 
-function openMARCBibSource() {
+function verifyMARCBibSource() {
   cy.do([
     instanceDetailsSection.find(actionButton).click(),
     viewSourceButton.click(),
   ]);
+  // verify table data in marc bibliographic source
+  // need interactor to work with tables
+  cy.contains('980').parent('tr').should('exist');
+  cy.contains('KU/CC/DI/M').parent('tr').should('exist');
+  cy.contains('981').parent('tr').should('exist');
+  cy.contains(itemBarcode).parent('tr').should('exist');
+
   closeDetailView();
 }
 
@@ -410,7 +420,7 @@ export default {
   verifyInstanceUpdated,
   verifyHoldingsUpdated,
   verifyItemUpdated,
-  openMARCBibSource,
+  verifyMARCBibSource,
   deleteItem,
   deleteHoldings,
   deletePOLine,
