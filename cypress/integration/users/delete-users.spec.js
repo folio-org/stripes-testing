@@ -21,6 +21,7 @@ describe('Deleting user', () => {
   const ModalButtonNo = Button({ id: 'close-delete-user-button' });
   let specialOwnerId;
   let specialUserId;
+  let servicePoint;
 
   function verifyUserDeleteImpossible(id) {
     cy.visit(`/users/preview/${id}`);
@@ -36,7 +37,10 @@ describe('Deleting user', () => {
   before(() => {
     cy.login(Cypress.env('diku_login'), Cypress.env('diku_password'));
     cy.getAdminToken();
-    ServicePoints.getViaApi({ limit: 1, query: 'pickupLocation=="true"' });
+    ServicePoints.getViaApi({ limit: 1, query: 'pickupLocation=="true"' })
+      .then((servicePoints) => {
+        servicePoint = servicePoints[0];
+      });
     cy.getCancellationReasonsApi({ limit: 1 });
     cy.getUserGroups({ limit: 1 });
   });
@@ -92,7 +96,7 @@ describe('Deleting user', () => {
           fulfilmentPreference: 'Hold Shelf',
           itemId: Cypress.env('items')[0].id,
           requesterId: specialUserId,
-          pickupServicePointId: Cypress.env('servicePoints')[0].id,
+          pickupServicePointId: servicePoint.id,
           requestDate: '2021-09-20T18:36:56Z',
         });
       })
@@ -112,7 +116,6 @@ describe('Deleting user', () => {
   it('should be unable in case the user has open loans', function () {
     const ITEM_BARCODE = generateItemBarcode();
     const specialUserBarcode = Cypress.env('user').barcode;
-    const servicePoint = Cypress.env('servicePoints')[0];
     let source;
 
     cy

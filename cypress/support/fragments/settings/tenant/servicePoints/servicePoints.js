@@ -8,5 +8,6 @@ export default {
     path: 'service-points',
     body: servicePointParameters,
     method: 'POST',
+    isDefaultSearchParamsRequired: false
   }),
 };

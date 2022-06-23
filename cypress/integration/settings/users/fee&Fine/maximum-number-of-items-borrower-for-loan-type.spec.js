@@ -2,7 +2,7 @@ import TestTypes from '../../../../support/dictionary/testTypes';
 import getRandomPostfix from '../../../../support/utils/stringTools';
 import permissions from '../../../../support/dictionary/permissions';
 import Helper from '../../../../support/fragments/finance/financeHelper';
-import NewServicePoint from '../../../../support/fragments/service_point/newServicePoint';
+import NewServicePoint from '../../../../support/fragments/settings/tenant/servicePoints/newServicePoint';
 import ServicePoint from '../../../../support/fragments/servicePoint/servicePoint';
 import TopMenu from '../../../../support/fragments/topMenu';
 import InventoryInstances from '../../../../support/fragments/inventory/inventoryInstances';

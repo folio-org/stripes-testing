@@ -4,8 +4,7 @@ import UsersOwners from '../../../support/fragments/settings/users/usersOwners';
 import Permissions from '../../../support/dictionary/permissions';
 import getRandomPostfix from '../../../support/utils/stringTools';
 import Features from '../../../support/dictionary/features';
-import Users from '../../../support/fragments/users/users';
-import ServicePoints from '../../../support/fragments/settings/tenant/servicePoints/servicePoints';
+import users from '../../../support/fragments/users/users';
 import ServicePoint from '../../../support/fragments/servicePoint/servicePoint';
 
 describe('ui-users-settings: Owners', () => {
@@ -19,7 +18,7 @@ describe('ui-users-settings: Owners', () => {
           .then(newServicePoint => {
             servicePoints.push(newServicePoint);
           });
-        ServicePoints.createViaApi()
+        cy.createServicePoint()
           .then(newServicePoint => {
             servicePoints.push(newServicePoint);
           });
@@ -28,8 +27,8 @@ describe('ui-users-settings: Owners', () => {
     });
 
     after(() => {
-      servicePoints.forEach(servicePoint => {
-        ServicePoint.deleteViaApi(servicePoint.id);
+      servicePoints.forEach(servicePointId => {
+        ServicePoint.deleteViaApi(servicePointId.id);
       });
 
       ownerNames.forEach(ownerName => {
@@ -134,7 +133,7 @@ describe('ui-users-settings: Owners', () => {
     });
 
     afterEach(() => {
-      testUsers.forEach(user => Users.deleteViaApi(user.userId));
+      testUsers.forEach(user => users.deleteViaApi(user.userId));
     });
   });
 });
