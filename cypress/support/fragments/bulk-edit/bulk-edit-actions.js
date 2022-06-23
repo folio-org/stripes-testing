@@ -1,14 +1,47 @@
-import { Button, HTML } from '@interactors/html';
+import { Button, HTML, including } from '@interactors/html';
 import FileManager from '../../utils/fileManager';
-import { Modal } from '../../../../interactors';
+import { Modal, SelectionOption } from '../../../../interactors';
 
 export default {
   openStartBulkEditForm() {
-    cy.do(Button('Start bulk edit (CSV)').click());
+    cy.do(Button(including('Start bulk edit')).click());
+  },
+
+  openActions() {
+    cy.do(Button('Actions').click());
+  },
+
+  verifyActionAfterChangingRecords() {
+    cy.do(Button('Actions').click());
+    cy.expect([
+      Button('Download changed records (CSV)').exists(),
+      Button('Download errors (CSV)').exists(),
+    ]);
+  },
+
+  verifySuccessBanner(validRecordsCount) {
+    cy.expect(HTML(`${validRecordsCount} records have been successfully changed`).exists());
   },
 
   verifyLabel(text) {
     cy.expect(HTML(text).exists());
+  },
+
+  replaceTemporaryLocation() {
+    // interactor doesn't allow to pick second the same select
+    cy.get('select').eq(2).select('Replace with');
+    cy.do([
+      Button('Select control\nSelect location').click(),
+      SelectionOption(including('Annex')).click(),
+    ]);
+  },
+
+  confirmChanges() {
+    cy.do(Button('Confirm changes').click());
+  },
+
+  saveAndClose() {
+    cy.do(Button('Save & close').click());
   },
 
   downloadMatchedResults(fileName = 'matchedRecords.csv') {
