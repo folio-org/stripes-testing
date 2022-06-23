@@ -41,12 +41,11 @@ export default {
       Pane('Scan items').find(Button('Enter')).click(),
     ]);
   },
-  checkItemInfo(itemBarcode, instanceTitle, loanNoticeName) {
+  checkItemInfo(itemBarcode, instanceTitle) {
     cy.expect([
       MultiColumnList({ rowCount: 1 }).find(MultiColumnListCell('1')).exists(),
       MultiColumnList({ rowCount: 1 }).find(MultiColumnListCell(itemBarcode)).exists(),
       MultiColumnList({ rowCount: 1 }).find(MultiColumnListCell(instanceTitle)).exists(),
-      MultiColumnList({ rowCount: 1 }).find(MultiColumnListCell(loanNoticeName)).exists(),
       Label('Total items scanned: 1').exists(),
     ]);
   },
@@ -68,6 +67,7 @@ export default {
     cy.wait('@getRequests');
     cy.do(Button({ id: 'clickable-add-item' }).click());
     // waiters needs for check out item in loop
+    // eslint-disable-next-line cypress/no-unnecessary-waiting
     cy.wait(1000);
   },
 

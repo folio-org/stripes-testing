@@ -174,12 +174,11 @@ describe('Recieving notice: Checkin', () => {
       CheckOutActions.checkOutItem(ITEM_BARCODE);
       MultipieceCheckOut.confirmMultipleCheckOut(ITEM_BARCODE);
       CheckOutActions.checkUserInfo(userData);
-      CheckOutActions.checkItemInfo(ITEM_BARCODE, testData.instanceTitle, testData.loanNoticeName);
+      CheckOutActions.checkItemInfo(ITEM_BARCODE, testData.instanceTitle);
       CheckOutActions.endSession();
 
       cy.visit(topMenu.checkInPath);
       cy.checkInItem(ITEM_BARCODE);
-      cy.verifyItemCheckIn();
 
       cy.visit(topMenu.circulationLogPath);
       SearchPane.searchByItemBarcode(ITEM_BARCODE);
