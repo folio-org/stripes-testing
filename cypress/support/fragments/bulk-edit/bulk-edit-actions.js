@@ -14,7 +14,7 @@ export default {
   },
 
   verifyActionAfterChangingRecords() {
-    cy.do(Button('Actions').click());
+    cy.do(actionsBtn.click());
     cy.expect([
       Button('Download changed records (CSV)').exists(),
       Button('Download errors (CSV)').exists(),
@@ -47,7 +47,7 @@ export default {
   },
 
   downloadMatchedResults(fileName = 'matchedRecords.csv') {
-    cy.do(Button('Actions').click());
+    cy.do(actionsBtn.click());
     // It is necessary to avoid cypress reload page expecting
     cy.get('a[download]', { timeout: 15000 }).first().then(($input) => {
       cy.downloadFile($input.attr('href'), 'cypress/downloads', fileName);
