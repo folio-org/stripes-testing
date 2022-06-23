@@ -20,6 +20,7 @@ import InventoryHoldings from '../../support/fragments/inventory/holdings/invent
 import Users from '../../support/fragments/users/users';
 import MultipieceCheckOut from '../../support/fragments/checkout/modals/multipieceCheckOut';
 import UserEdit from '../../support/fragments/users/userEdit';
+import ServicePoints from '../../support/fragments/settings/tenant/servicePoints';
 
 // TODO Add email notice check after checktout: https://issues.folio.org/browse/FAT-1854
 describe('Recieving notice: Checkin', () => {
@@ -67,7 +68,7 @@ describe('Recieving notice: Checkin', () => {
         });
       });
 
-    cy.getServicePointsApi({ limit: 1, query: 'pickupLocation=="true"' })
+    ServicePoints.getServicePointsApi({ limit: 1, query: 'pickupLocation=="true"' })
       .then((servicePoints) => {
         UserEdit.addServicePointViaApi(servicePoints[0].id, userData.id).then((points) => {
           testData.userServicePoint = points.body.defaultServicePointId;
@@ -174,12 +175,11 @@ describe('Recieving notice: Checkin', () => {
       CheckOutActions.checkOutItem(ITEM_BARCODE);
       MultipieceCheckOut.confirmMultipleCheckOut(ITEM_BARCODE);
       CheckOutActions.checkUserInfo(userData);
-      CheckOutActions.checkItemInfo(ITEM_BARCODE, testData.instanceTitle, testData.loanNoticeName);
+      CheckOutActions.checkItemInfo(ITEM_BARCODE, testData.instanceTitle);
       CheckOutActions.endSession();
 
       cy.visit(topMenu.checkInPath);
       cy.checkInItem(ITEM_BARCODE);
-      cy.verifyItemCheckIn();
 
       cy.visit(topMenu.circulationLogPath);
       SearchPane.searchByItemBarcode(ITEM_BARCODE);
