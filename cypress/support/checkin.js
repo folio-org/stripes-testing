@@ -1,6 +1,5 @@
 import {
   Button,
-  Checkbox,
   Modal,
   MultiColumnList,
   TextField,
@@ -11,8 +10,7 @@ Cypress.Commands.add('checkInItem', barcode => {
     TextField('Item ID').fillIn(barcode),
     Button('Enter').click(),
     Modal('Confirm multipiece check in').find(Button('Check in')).click(),
-    Checkbox('Print slip').click(),
-    Button('Close').click(),
+    Button('End session').click(),
   ]);
 });
 
