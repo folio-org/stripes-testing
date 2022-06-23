@@ -2,6 +2,7 @@
 import { including, Link } from '@interactors/html';
 import getRandomPostfix from '../../utils/stringTools';
 import {
+  Accordion,
   Button,
   KeyValue,
   Modal,
@@ -20,6 +21,7 @@ import { getLongDelay } from '../../utils/cypressTools';
 import NewJobProfile from './job_profiles/newJobProfile';
 import DateTools from '../../utils/dateTools';
 
+const itemBarcode = 'xyzt124245271818912626262';
 const poLineData = {
   title: 'Agrarianism and capitalism in early Georgia, 1732-1743 / Jay Jordan Butler.',
   productId: `xyz${getRandomPostfix()}`,
@@ -111,7 +113,13 @@ const viewSourceButton = Button('View source');
 const holdingsDetailsSection = Section({ id: 'ui-inventory.holdingsRecordView' });
 const itemPaneHeader = PaneHeader(including('Item'));
 const instanceAcquisitionsList = MultiColumnList({ id: 'list-instance-acquisitions' });
-const itemBarcodeLink = Link('xyzt124245271818912626262');
+const itemBarcodeLink = Link(itemBarcode);
+const orderDetailsAccordion = Accordion({ id: 'purchaseOrder' });
+
+function verifyCreatedOrder(order) {
+  cy.expect(Pane({ id: 'order-details' }).exists());
+  cy.expect(orderDetailsAccordion.find(KeyValue({ value: order.vendor })).exists());
+}
 
 function fillPOLineInfo() {
   cy.do([
@@ -173,6 +181,7 @@ function creatMappingProfilesForInstance(name) {
   return cy.do(folioRecordTypeSelect.choose('Instance'))
     .then(() => {
       cy.wait('@getInstanceStatuses');
+      // needs some waiting until selection lists are populated
       cy.wait(1200);
     })
     .then(() => {
@@ -194,6 +203,7 @@ function creatMappingProfilesForHoldings(name) {
   return cy.do(folioRecordTypeSelect.choose('Holdings'))
     .then(() => {
       cy.wait(['@getHoldingsTypes', '@getCallNumberTypes']);
+      // needs some waiting until selection lists are populated
       cy.wait(1200);
     })
     .then(() => {
@@ -224,12 +234,12 @@ function creatMappingProfilesForItem(name) {
   closeViewModeForMappingProfile(name);
 }
 
-function closeTimesButton() {
+function closeDetailView() {
   cy.do(closeButton.click());
 }
 
 function createActionProfileForVRN(name, recordType, mappingProfile, action) {
-  cy.contains('Action profiles').should('be.visible');
+  cy.expect(actionProfilesPaneHeader.exists());
   cy.do([
     actionProfilesPaneHeader.find(actionButton).click(),
     newActionProfileButton.click(),
@@ -242,10 +252,9 @@ function createActionProfileForVRN(name, recordType, mappingProfile, action) {
     MultiColumnListCell(mappingProfile).click(),
   ]);
   cy.expect(linkProfileButton.has({ disabled: true }));
-  cy.do(saveProfileButton.click());
 
-  closeTimesButton();
-  cy.wait(400);
+  cy.do(saveProfileButton.click());
+  closeDetailView();
 }
 
 function waitJSONSchemasLoad() {
@@ -258,6 +267,8 @@ function waitJSONSchemasLoad() {
     '/_/jsonSchemas?path=raml-util/schemas/metadata.schema',
   ).as('metadata');
   cy.wait(['@getVendorDetailJson', '@metadata'], getLongDelay());
+  // needs some waiting until existing record list is populated
+  cy.wait(1500);
 }
 
 function createMatchProfileForVRN({
@@ -284,15 +295,16 @@ function createMatchProfileForVRN({
   ]);
   cy.expect(criterionSelection.exists());
   cy.do(criterionSelection.select('Acquisitions data: Vendor reference number'));
-  saveProfile();
 
+  saveProfile();
   cy.intercept('POST', '/data-import-profiles/matchProfiles').as('createMatchProfile');
   cy.wait('@createMatchProfile');
-  closeTimesButton();
+  cy.expect(PaneHeader(name).exists());
+  closeDetailView();
 }
 
 function createJobProfileForVRN({ name, dataType, matches }) {
-  cy.wait(1000);
+  cy.expect(jobProfilesPaneHeader.exists());
   cy.do([
     jobProfilesPaneHeader.find(actionButton).click(),
     newJobProfileButton.click(),
@@ -308,7 +320,7 @@ function createJobProfileForVRN({ name, dataType, matches }) {
 
 function clickOnUpdatedHotlink(columnIndex = 3, row = 0) {
   cy.intercept('GET', '/metadata-provider/jobLogEntries/*').as('getLogEntries');
-  cy.wait('@getLogEntries');
+  cy.wait('@getLogEntries', getLongDelay());
   cy.do(searchResultsList.find(MultiColumnListCell({
     row,
     columnIndex,
@@ -326,7 +338,7 @@ function verifyHoldingsUpdated() {
   cy.expect(holdingsTypeKeyValue.has({ value: 'Monograph' }));
   cy.expect(callNumberTypeKeyValue.has({ value: 'Library of Congress classification' }));
   cy.expect(permanentLocationKeyValue.has({ value: 'Main Library' }));
-  closeTimesButton();
+  closeDetailView();
 }
 
 
@@ -336,9 +348,9 @@ function verifyItemUpdated() {
     itemBarcodeLink.click(),
   ]);
   cy.expect(itemStatusKeyValue.has({ value: 'Available' }));
-  cy.expect(itemBarcodeKeyValue.has({ value: 'xyzt124245271818912626262' }));
+  cy.expect(itemBarcodeKeyValue.has({ value: itemBarcode }));
 
-  closeTimesButton();
+  closeDetailView();
 }
 
 function openMARCBibSource() {
@@ -346,7 +358,7 @@ function openMARCBibSource() {
     instanceDetailsSection.find(actionButton).click(),
     viewSourceButton.click(),
   ]);
-  closeTimesButton();
+  closeDetailView();
 }
 
 function deleteHoldings() {
@@ -382,6 +394,7 @@ function deletePOLine() {
 
 export default {
   poLineData,
+  verifyCreatedOrder,
   fillPOLineInfo,
   goBackToPO,
   openOrder,
