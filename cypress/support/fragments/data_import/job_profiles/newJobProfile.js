@@ -2,12 +2,12 @@ import { Accordion, Button, HTML, including, Select, TextField } from '../../../
 import ModalSelectActionProfile from './modalSelectActionProfile';
 
 const acceptedDataType = {
-  marc: 'MARC',
-  edifact: 'EDIFACT'
+  marc:'MARC',
+  edifact:'EDIFACT'
 };
 
 const defaultJobProfile = {
-  profileName: '',
+  profileName:  '',
   acceptedType: acceptedDataType.marc,
 };
 
@@ -22,16 +22,13 @@ export default {
 
   fillJobProfile: (specialJobProfile = defaultJobProfile) => {
     cy.do([
-      TextField({ name: 'profile.name' }).fillIn(specialJobProfile.profileName),
-      Select({ name: 'profile.dataType' }).choose(specialJobProfile.acceptedType),
+      TextField({ name:'profile.name' }).fillIn(specialJobProfile.profileName),
+      Select({ name:'profile.dataType' }).choose(specialJobProfile.acceptedType),
     ]);
   },
 
   linkActionProfile(specialActionProfile) {
-    cy.do(HTML({
-      className: including('linker-button'),
-      id: 'type-selector-dropdown-linker-root'
-    }).find(Button()).click());
+    cy.do(HTML({ className: including('linker-button'), id:'type-selector-dropdown-linker-root' }).find(Button()).click());
     cy.do(actionsButton.click());
     ModalSelectActionProfile.searchActionProfileByName(specialActionProfile.name);
     ModalSelectActionProfile.selectActionProfile(specialActionProfile.name);
