@@ -67,7 +67,6 @@ export default {
     cy.wait('@getRequests');
     cy.do(Button({ id: 'clickable-add-item' }).click());
     // waiters needs for check out item in loop
-    // eslint-disable-next-line cypress/no-unnecessary-waiting
     cy.wait(1000);
   },
 
