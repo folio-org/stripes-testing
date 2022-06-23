@@ -2,13 +2,15 @@ import { Button, HTML, including } from '@interactors/html';
 import FileManager from '../../utils/fileManager';
 import { Modal, SelectionOption } from '../../../../interactors';
 
+const actionsBtn = Button('Actions');
+
 export default {
   openStartBulkEditForm() {
     cy.do(Button(including('Start bulk edit')).click());
   },
 
   openActions() {
-    cy.do(Button('Actions').click());
+    cy.do(actionsBtn.click());
   },
 
   verifyActionAfterChangingRecords() {
