@@ -5,6 +5,9 @@ export default {
 
   toggleStatus(statusName) {
     cy.do(TextField({ label: 'itemStatus-field' }).fillIn(statusName));
+    // need to wait until status is uploaded
+    cy.wait(500);
+    cy.do(TextField({ label: 'itemStatus-field' }).focus());
     cy.do(Checkbox(statusName).click());
   },
 
@@ -25,7 +28,7 @@ export default {
   },
 
   waitItemsLoading() {
-    cy.wait(['@getItems', '@getTitles', '@getHoldings']);
+    cy.wait(['@getItems', '@getHoldings']);
   },
 };
 
