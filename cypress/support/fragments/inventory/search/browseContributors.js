@@ -38,7 +38,6 @@ export default {
 
   select() {
     // cypress can't draw selected option without wait
-    // eslint-disable-next-line cypress/no-unnecessary-waiting
     cy.wait(1000);
     cy.do(Select('Search field index').choose('Browse contributors'));
   },
@@ -95,9 +94,8 @@ export default {
   },
 
   checkNonExactSearchResult(contributorA, contributorZ) {
-    // cy.expect([
-    //   MultiColumnListCell(' __A_test_contributor_ would be here').exists(),
-    // ]); - WTF
+    console.log(cy.do(MultiColumnListRow({ index: 0 }).textContent));
+    // cy.do(MultiColumnListCell('&nbsp;__A_test_contributor_&nbsp;would be here').has({ visible : true }));
     cy.do([
       MultiColumnListRow({ index: 1 }).has({ content: `${contributorA.name}${contributorA.contributorNameType}1` }),
       MultiColumnListRow({ index: 2 }).has({ content:  `${contributorZ.name}${contributorZ.contributorNameType}1` }),
