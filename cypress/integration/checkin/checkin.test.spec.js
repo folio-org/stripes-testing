@@ -1,10 +1,11 @@
-import NewServicePoint from '../../support/fragments/service_point/newServicePoint';
+import NewServicePoint from '../../support/fragments/settings/tenant/servicePoints/newServicePoint';
 import NewInctanceHoldingsItem from '../../support/fragments/inventory/newInctanceHoldingsItem';
 import TestTypes from '../../support/dictionary/testTypes';
 import NewUser from '../../support/fragments/users/userDefaultObjects/newUser';
-import SwitchServicePoint from '../../support/fragments/service_point/switchServicePoint';
+import SwitchServicePoint from '../../support/fragments/servicePoint/switchServicePoint';
 import CheckInActions from '../../support/fragments/check-in-actions/checkInActions';
-import ServicePoints from '../../support/fragments/settings/tenant/servicePoints';
+import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
+import ServicePoint from '../../support/fragments/servicePoint/servicePoint';
 import institutions from '../../support/fragments/settings/tenant/institutions';
 import campuses from '../../support/fragments/settings/tenant/campuses';
 import libraries from '../../support/fragments/settings/tenant/libraries';
@@ -37,10 +38,10 @@ describe('Check In - Actions ', () => {
   });
 
   after('Delete New Service point, Item and User', () => {
-    SwitchServicePoint.logOutAndLogInByDiku();
+    SwitchServicePoint.logOutAndLogIn();
     UserEdit.changeServicePointPreference();
     NewInctanceHoldingsItem.deleteItemWithSameParams();
-    NewServicePoint.deleteServicePointViaApi();
+    ServicePoint.deleteViaApi();
     NewUser.deleteUserWithSameParams();
   });
 
