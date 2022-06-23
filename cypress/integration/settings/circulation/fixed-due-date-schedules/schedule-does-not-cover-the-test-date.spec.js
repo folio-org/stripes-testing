@@ -23,6 +23,7 @@ import topMenu from '../../../../support/fragments/topMenu';
 import checkinActions from '../../../../support/fragments/check-in-actions/checkInActions';
 import users from '../../../../support/fragments/users/users';
 import InventoryHoldings from '../../../../support/fragments/inventory/holdings/inventoryHoldings';
+import ServicePoints from '../../../../support/fragments/settings/tenant/servicePoints/servicePoints';
 
 let userId;
 let userBarcode;
@@ -121,7 +122,7 @@ describe('ui-circulation-settings: Fixed due date schedules', () => {
                   .then((loanPolicy) => {
                     createdLoanPolicy = loanPolicy;
 
-                    cy.getServicePointsApi({ pickupLocation: true })
+                    ServicePoints.getViaApi({ pickupLocation: true })
                       .then(servicePoints => {
                         servicePointId = servicePoints[0].id;
                       });

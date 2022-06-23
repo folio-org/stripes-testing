@@ -12,6 +12,7 @@ import Users from '../../support/fragments/users/users';
 import CheckinActions from '../../support/fragments/check-in-actions/checkInActions';
 import CheckoutActions from '../../support/fragments/checkout/checkout';
 import InventoryHoldings from '../../support/fragments/inventory/holdings/inventoryHoldings';
+import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
 
 describe('Deleting user', () => {
   const lastName = 'Test-' + uuid();
@@ -35,7 +36,7 @@ describe('Deleting user', () => {
   before(() => {
     cy.login(Cypress.env('diku_login'), Cypress.env('diku_password'));
     cy.getAdminToken();
-    cy.getServicePointsApi({ limit: 1, query: 'pickupLocation=="true"' });
+    ServicePoints.getViaApi({ limit: 1, query: 'pickupLocation=="true"' });
     cy.getCancellationReasonsApi({ limit: 1 });
     cy.getUserGroups({ limit: 1 });
   });

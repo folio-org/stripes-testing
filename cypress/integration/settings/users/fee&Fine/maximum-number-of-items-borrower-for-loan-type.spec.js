@@ -3,7 +3,7 @@ import getRandomPostfix from '../../../../support/utils/stringTools';
 import permissions from '../../../../support/dictionary/permissions';
 import Helper from '../../../../support/fragments/finance/financeHelper';
 import NewServicePoint from '../../../../support/fragments/service_point/newServicePoint';
-import ServicePoints from '../../../../support/fragments/settings/tenant/servicePoints';
+import ServicePoint from '../../../../support/fragments/servicePoint/servicePoint';
 import TopMenu from '../../../../support/fragments/topMenu';
 import InventoryInstances from '../../../../support/fragments/inventory/inventoryInstances';
 import LoanPolicyActions from '../../../../support/fragments/circulation/loan-policy';
@@ -14,6 +14,7 @@ import LimitCheckOut from '../../../../support/fragments/checkout/modals/limitCh
 import CheckInActions from '../../../../support/fragments/check-in-actions/checkInActions';
 import UserEdit from '../../../../support/fragments/users/userEdit';
 import Users from '../../../../support/fragments/users/users';
+import ServicePoints from '../../../../support/fragments/settings/tenant/servicePoints/servicePoints';
 
 describe('ui-users:', () => {
   let user = {};
@@ -182,7 +183,7 @@ describe('ui-users:', () => {
     cy.deleteLoanPolicy(loanPolicy.id);
     UserEdit.changeServicePointPreferenceViaApi(user.userId, [servicePoint.body.id])
       .then(() => {
-        cy.deleteServicePoint(servicePoint.body.id);
+        ServicePoint.deleteViaApi(servicePoint.body.id);
         Users.deleteViaApi(user.userId);
       });
   });
