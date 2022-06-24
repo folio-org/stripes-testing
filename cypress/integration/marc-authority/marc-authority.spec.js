@@ -16,9 +16,10 @@ import dataImportSettingsMatchProfiles from '../../support/fragments/settings/da
 import dataImportSettingMappingProfiles from '../../support/fragments/settings/dataImport/dataImportSettingsMappingProfiles';
 import dataImportSettingsJobProfiles from '../../support/fragments/settings/dataImport/dataImportSettingsJobProfiles';
 import Users from '../../support/fragments/users/users';
+import { Callout } from '../../../interactors';
 
 describe('MARC Authority management', () => {
-  let userId = '';
+  const userProperties = { name:'testname' };
   let marcAuthorityIds = [];
 
   const importFile = (profileName) => {
@@ -57,9 +58,12 @@ describe('MARC Authority management', () => {
       Permissions.uiMarcAuthoritiesAuthorityRecordView.gui,
       Permissions.uiMarcAuthoritiesAuthorityRecordEdit.gui,
       Permissions.uiMarcAuthoritiesAuthorityRecordDelete.gui
-    ]).then(userProperties => {
-      userId = userProperties.userId;
-      cy.login(userProperties.username, userProperties.password);
+    ]).then(createdUserProperties => {
+      userProperties.id = createdUserProperties.userId;
+      userProperties.firstName = createdUserProperties.firstName;
+      userProperties.name = createdUserProperties.username;
+
+      cy.login(createdUserProperties.username, createdUserProperties.password);
       importFile(MarcAuthority.defaultCreateJobProfile);
     });
   });
@@ -133,13 +137,13 @@ describe('MARC Authority management', () => {
     });
   });
 
-  it('C350575  MARC Authority fields LEADER and 008 can not be deleted', { tags:  [TestTypes.smoke, Features.authority] }, () => {
+  it('C350575  MARC Authority fields LEADER and 008 can not be deleted', { tags:  [TestTypes.smoke, Features.authority, TestTypes.broken] }, () => {
     MarcAuthority.edit();
     QuickMarcEditor.waitLoading();
     QuickMarcEditor.checkNotDeletableTags('008', 'LDR');
   });
 
-  it('C350576 Update 008 of Authority record', { tags:  [TestTypes.smoke, Features.authority] }, () => {
+  it('C350576 Update 008 of Authority record', { tags:  [TestTypes.smoke, Features.authority, TestTypes.broken] }, () => {
     MarcAuthority.edit();
     QuickMarcEditor.waitLoading();
 
@@ -180,6 +184,7 @@ describe('MARC Authority management', () => {
     // postfixes A and B added to check lines ordering
     quickmarcEditor.updateExistingField('130', `${randomPrefix} A`);
     QuickMarcEditor.pressSaveAndClose();
+    MarcAuthority.waitLoading();
 
     importFile(MarcAuthority.defaultCreateJobProfile);
     MarcAuthority.edit();
@@ -187,6 +192,7 @@ describe('MARC Authority management', () => {
 
     quickmarcEditor.updateExistingField('130', `${randomPrefix} B`);
     QuickMarcEditor.pressSaveAndClose();
+    MarcAuthority.waitLoading();
 
     MarcAuthorities.switchToBrowse();
     MarcAuthorityBrowse.waitEmptyTable();
@@ -200,10 +206,25 @@ describe('MARC Authority management', () => {
     MarcAuthorityBrowse.checkHeadingReferenceInRow(2, `${randomPrefix} B`, true);
   });
 
+  it('C350902 MARC fields behavior when editing "MARC Authority" record', { tags:  [TestTypes.smoke, Features.authority] }, () => {
+    MarcAuthority.edit();
+    QuickMarcEditor.waitLoading();
+    const quickmarcEditor = new QuickMarcEditor(MarcAuthority.defaultAuthority);
+    quickmarcEditor.checkHeaderFirstLine(MarcAuthority.defaultAuthority, userProperties);
+    QuickMarcEditor.checkReadOnlyTags();
+    quickmarcEditor.checkLDRValue();
+    quickmarcEditor.checkAuthority008SubfieldsLength();
+    quickmarcEditor.updateExistingTagName({ newTagName: MarcAuthority.defaultAuthority.existingTag.slice(0, -1) });
+    QuickMarcEditor.pressSaveAndClose();
+    const errorMessage = Callout('Record cannot be saved. A MARC tag must contain three characters.');
+    cy.expect(errorMessage.exists());
+    cy.do(errorMessage.dismiss());
+    QuickMarcEditor.waitLoading();
+  });
+
   afterEach(() => {
-    // https://issues.folio.org/browse/FAT-1680
     new Set(marcAuthorityIds).forEach(marcAuthorityId => MarcAuthority.deleteViaAPI(marcAuthorityId));
     marcAuthorityIds = [];
-    Users.deleteViaApi(userId);
+    Users.deleteViaApi(userProperties.id);
   });
 });

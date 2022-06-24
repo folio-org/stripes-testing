@@ -33,7 +33,8 @@ export default HTML.extend('text field')
       const clearBtn = [...el.querySelectorAll('[class^=iconButton]')]
         .filter(I => I.getAttribute('icon') === 'clear');
       return clearBtn.length === 1;
-    }
+    },
+    maxLength: (el) => el.querySelector('input').getAttribute('maxLength')
   })
   .actions({
     blur: ({ find }) => find(TextField()).perform(dispatchFocusout),

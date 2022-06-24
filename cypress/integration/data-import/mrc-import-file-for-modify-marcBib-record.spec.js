@@ -27,7 +27,7 @@ describe('ui-data-import: Verify the possibility to modify MARC Bibliographic re
       permissions.moduleDataImportEnabled.gui,
       permissions.settingsDataImportEnabled.gui,
       permissions.uiInventoryViewInstances.gui,
-      permissions.dataExportAll.gui
+      permissions.dataExportEnableModule.gui
     ])
       .then(userProperties => {
         user = userProperties;
