@@ -92,5 +92,12 @@ export default {
       Selection({ name: 'format' }).open(),
       SelectionList().select('JSON'),
     ]);
-  }
+  },
+
+  setConfigurationBatchGroup: body => cy.okapiRequest({
+    method: 'POST',
+    path: 'batch-voucher/export-configurations',
+    body
+  }),
+
 };

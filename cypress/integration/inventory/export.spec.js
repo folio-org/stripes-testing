@@ -23,6 +23,7 @@ describe('ui-inventory: exports', () => {
     cy.createTempUser([
       permissions.inventoryAll.gui,
       permissions.dataExportAll.gui,
+      permissions.dataExportEnableModule.gui,
     ])
       .then(userProperties => {
         userId = userProperties.userId;
@@ -115,7 +116,7 @@ describe('ui-inventory: exports', () => {
     );
   });
 
-  it('C196757 verifies export instances (MARC)', { retries: 3, tags: [testTypes.smoke, devTeams.firebird] }, () => {
+  it('C196757 verifies export instances (MARC)', { retries: 3, tags: [testTypes.smoke, devTeams.firebird, testTypes.broken] }, () => {
     InventorySearch.searchByParameter('Title (all)', instanceTitle);
     cy.do(InventorySearch.getSearchResult().find(Checkbox()).click());
     InventorySearch.exportInstanceAsMarc();

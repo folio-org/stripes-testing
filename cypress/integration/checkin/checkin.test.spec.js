@@ -8,7 +8,7 @@ import ServicePoints from '../../support/fragments/settings/tenant/servicePoints
 import institutions from '../../support/fragments/settings/tenant/institutions';
 import campuses from '../../support/fragments/settings/tenant/campuses';
 import libraries from '../../support/fragments/settings/tenant/libraries';
-import UsersEditPage from '../../support/fragments/users/usersEditPage';
+import UserEdit from '../../support/fragments/users/userEdit';
 
 // TODO: We need to move all api methods to fragments. https://issues.folio.org/browse/FAT-1624
 // When bug(https://issues.folio.org/browse/FAT-1637) will be fixed check full run test!!!
@@ -38,13 +38,13 @@ describe('Check In - Actions ', () => {
 
   after('Delete New Service point, Item and User', () => {
     SwitchServicePoint.logOutAndLogInByDiku();
-    UsersEditPage.changeServicePointPreference();
+    UserEdit.changeServicePointPreference();
     NewInctanceHoldingsItem.deleteItemWithSameParams();
     NewServicePoint.deleteServicePointViaApi();
     NewUser.deleteUserWithSameParams();
   });
 
-  it('C347631 Check in: Basic check in', { tags: [TestTypes.smoke] }, () => {
+  it('C347631 Check in: Basic check in', { tags: [TestTypes.smoke, TestTypes.broken] }, () => {
     CheckInActions.checkInItem();
     CheckInActions.existsFormColomns();
     CheckInActions.existsItemsInForm();

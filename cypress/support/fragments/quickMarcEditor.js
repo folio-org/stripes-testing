@@ -1,4 +1,5 @@
 import { QuickMarcEditor, QuickMarcEditorRow, TextArea, Button, Modal, TextField, and, some, Pane, HTML, including } from '../../../interactors';
+import dateTools from '../utils/dateTools';
 import getRandomPostfix from '../utils/stringTools';
 
 const addFieldButton = Button({ ariaLabel : 'Add a new field' });
@@ -6,6 +7,7 @@ const deleteFieldButton = Button({ ariaLabel : 'Delete this field' });
 const saveAndCloseButton = Button({ id:'quick-marc-record-save' });
 const confirmationModal = Modal({ id: 'quick-marc-confirm-modal' });
 const continueWithSaveButton = Modal().find(Button({ id: 'clickable-quick-marc-confirm-modal-confirm' }));
+const quickMarcEditorRowContent = HTML({ className: including('quickMarcEditorRowContent') });
 
 const specRetInputNamesHoldings008 = ['records[3].content.Spec ret[0]',
   'records[3].content.Spec ret[1]',
@@ -57,6 +59,7 @@ defaultFieldValues.contentWithSubfield = `${defaultFieldValues.initialSubField}$
 defaultFieldValues.getSourceContent = (contentInQuickMarcEditor) => contentInQuickMarcEditor.replace(defaultFieldValues.subfieldPrefixInEditor, defaultFieldValues.subfieldPrefixInSource);
 
 const requiredRowsTags = ['LDR', '001', '005', '008', '999'];
+const readOnlyAuthorityTags = ['LDR', '001', '005', '999'];
 
 const getRowInteractorByRowNumber = (specialRowNumber) => QuickMarcEditor()
   .find(QuickMarcEditorRow({ index: specialRowNumber }));
@@ -115,8 +118,8 @@ export default class QuickmarcEditor {
   }
 
   static checkEmptyContent(tagName) {
-    cy.expect(getRowInteractorByTagName(tagName).find(HTML({ className: including('quickMarcEditorRowContent') })).exists());
-    cy.expect(getRowInteractorByTagName(tagName).find(HTML({ className: including('quickMarcEditorRowContent') })).find(TextField()).absent());
+    cy.expect(getRowInteractorByTagName(tagName).find(quickMarcEditorRowContent).exists());
+    cy.expect(getRowInteractorByTagName(tagName).find(quickMarcEditorRowContent).find(TextField()).absent());
   }
 
   fillAllAvailableValues(fieldContent, tag, initialRowsCount = this.validRecord.lastRowNumber) {
@@ -152,6 +155,12 @@ export default class QuickmarcEditor {
   updateExistingField(tag = this.validRecord.existingTag, newContent = `newContent${getRandomPostfix()}`) {
     cy.do(QuickMarcEditorRow({ tagValue: tag }).find(TextArea()).fillIn(newContent));
     return newContent;
+  }
+
+  updateExistingTagName({ currentTagName = this.validRecord.existingTag, newTagName }) {
+    cy.then(() => QuickMarcEditorRow({ tagValue: currentTagName }).index()).then(index => {
+      cy.do(QuickMarcEditorRow({ index }).find(TextField({ name: including('.tag') })).fillIn(newTagName));
+    });
   }
 
   static waitLoading() {
@@ -270,7 +279,48 @@ export default class QuickmarcEditor {
   }
 
   static check008FieldsAbsent(...subfieldNames) {
-    subfieldNames.forEach(subfieldName => cy.expect(getRowInteractorByTagName('008').find(HTML({ className: including('quickMarcEditorRowContent') }))
+    subfieldNames.forEach(subfieldName => cy.expect(getRowInteractorByTagName('008').find(quickMarcEditorRowContent)
       .find(TextField(subfieldName)).absent()));
+  }
+
+  static checkSubfieldsPresenceInTag008() {
+    cy.expect(getRowInteractorByTagName('008').find(quickMarcEditorRowContent)
+      .find(HTML({ className: including('bytesFieldRow-') })).exists());
+  }
+
+  checkHeaderFirstLine({ headingReference:headingTypeFrom1XX, headingType, status }, { firstName, name }) {
+    cy.expect(Pane(`Edit MARC authority record - ${headingTypeFrom1XX}`).exists());
+    cy.then(() => Pane(`Edit MARC authority record - ${headingTypeFrom1XX}`).subtitle()).then(subtitle => {
+      cy.expect(Pane({ subtitle: and(including(`Status: ${status}`),
+        including(headingType),
+        including('Record last updated:'),
+        including(`Source: ${firstName}, ${name}`)) }));
+      const stringDate = `${subtitle.split('Last updated: ')[1].split(' •')[0]} UTC`;
+      dateTools.verifyDate(Date.parse(stringDate), 120_000);
+    });
+  }
+
+  static checkReadOnlyTags() {
+    readOnlyAuthorityTags.forEach(readOnlyTag => {
+      cy.expect(getRowInteractorByTagName(readOnlyTag).find(TextField('Field')).has({ disabled: true }));
+      if (readOnlyTag !== 'LDR') {
+        cy.expect(getRowInteractorByTagName(readOnlyTag).find(TextArea({ ariaLabel: 'Subfield' })).has({ disabled: true }));
+      }
+      if (readOnlyTag === '999') {
+        cy.expect(getRowInteractorByTagName(readOnlyTag).find(TextField('Indicator', { name: including('.indicators[0]') })).has({ disabled: true }));
+        cy.expect(getRowInteractorByTagName(readOnlyTag).find(TextField('Indicator', { name: including('.indicators[1]') })).has({ disabled: true }));
+      }
+    });
+  }
+
+  checkLDRValue(ldrValue = this.validRecord.ldrValue) {
+    cy.expect(getRowInteractorByTagName('LDR').find(TextArea({ ariaLabel: 'Subfield' })).has({ textContent: ldrValue }));
+  }
+
+  checkAuthority008SubfieldsLength() {
+    this.validRecord.tag008AuthorityBytesProperties.getAllProperties().map(property => property.interactor)
+      .forEach(subfield => {
+        cy.expect(getRowInteractorByTagName('008').find(subfield).has({ maxLength: (1).toString() }));
+      });
   }
 }
