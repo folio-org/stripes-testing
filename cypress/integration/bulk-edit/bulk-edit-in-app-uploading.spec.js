@@ -77,7 +77,7 @@ describe('bulk-edit: in-app file uploading', () => {
 
     BulkEditSearchPane.verifyActionsAfterConductedInAppUploading();
 
-    BulkEditSearchPane.verifyErrorLabel(invalidItemBarcodesFileName, 1, 1);
+    BulkEditSearchPane.verifyErrorLabel(invalidItemBarcodesFileName, 2, 1);
     BulkEditActions.newBulkEdit();
   });
 
@@ -120,7 +120,6 @@ describe('bulk-edit: in-app file uploading', () => {
       BulkEditSearchPane.selectRecordIdentifier(checker.identifier);
       BulkEditSearchPane.verifyInputLabel(checker.label);
     });
-    BulkEditActions.newBulkEdit();
   });
 
   it('C353230 Verify completion of the in-app bulk edit', { tags: [testTypes.smoke, devTeams.firebird] }, () => {

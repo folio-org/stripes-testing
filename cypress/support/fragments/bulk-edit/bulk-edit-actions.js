@@ -26,7 +26,7 @@ export default {
   },
 
   verifyLabel(text) {
-    cy.expect(HTML(text).exists());
+    cy.expect(Modal().find(HTML(text)).exists());
   },
 
   replaceTemporaryLocation() {
