@@ -14,7 +14,7 @@ let userWithCsvViewPermission;
 let userWithInAppViewPermission;
 let userWithCsvPermissions;
 
-describe('ui-users: BULK EDIT permissions', () => {
+describe('bulk-edit: permissions', () => {
   before('create user', () => {
     cy.createTempUser([
       permissions.uiUsersEditProfile.gui,
