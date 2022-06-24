@@ -73,7 +73,7 @@ describe('ui-data-import: Match on VRN and update related Instance, Holdings, It
       permissions.moduleDataImportEnabled.gui,
       permissions.settingsDataImportEnabled.gui,
       permissions.dataImportDeleteLogs.gui,
-      permissions.uiQuickMarcQuickMarcBibliographicEditorAll.gui,
+      permissions.uiQuickMarcQuickMarcBibliographicEditorView.gui,
     ]).then(userProperties => {
       userId = userProperties.userId;
       cy.login(userProperties.username, userProperties.password);
@@ -89,6 +89,7 @@ describe('ui-data-import: Match on VRN and update related Instance, Holdings, It
   });
 
   it('C350591 Match on VRN and update related Instance, Holdings, Item', { tags: [TestTypes.smoke] }, () => {
+    cy.pause();
     // create order
     cy.visit(TopMenu.ordersPath);
     Orders.createOrder(order);
@@ -134,6 +135,7 @@ describe('ui-data-import: Match on VRN and update related Instance, Holdings, It
 
     // verify Instance, Holdings and Item details
     Logs.openFileDetails(fileName);
+    MatchOnVRN.verifyInstanceStatusNotUpdated();
     MatchOnVRN.clickOnUpdatedHotlink();
     MatchOnVRN.verifyInstanceUpdated();
     MatchOnVRN.verifyHoldingsUpdated();

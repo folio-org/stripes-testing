@@ -1,4 +1,5 @@
 /* eslint-disable cypress/no-unnecessary-waiting */
+import { HTML } from '@interactors/html';
 import {
   Accordion,
   Button,
@@ -118,7 +119,7 @@ const itemBarcodeLink = Link(itemBarcode);
 const orderDetailsAccordion = Accordion({ id: 'purchaseOrder' });
 
 function verifyCreatedOrder(order) {
-  cy.expect(Pane({ id: 'order-details' }).exists());
+  cy.expect(orderDetailsPane.exists());
   cy.expect(orderDetailsAccordion.find(KeyValue({ value: order.vendor })).exists());
 }
 
@@ -254,7 +255,8 @@ function createActionProfileForVRN(name, recordType, mappingProfile, action) {
   ]);
   cy.expect(linkProfileButton.has({ disabled: true }));
 
-  cy.do(saveProfileButton.click());
+  saveProfile();
+  cy.expect(PaneHeader(name).exists());
   closeDetailView();
 }
 
@@ -322,12 +324,19 @@ function createJobProfileForVRN({ name, dataType, matches }) {
 }
 
 function clickOnUpdatedHotlink(columnIndex = 3, row = 0) {
-  cy.intercept('GET', '/metadata-provider/jobLogEntries/*').as('getLogEntries');
-  cy.wait('@getLogEntries', getLongDelay());
   cy.do(searchResultsList.find(MultiColumnListCell({
     row,
     columnIndex,
   })).find(Link('Updated')).click());
+}
+
+function verifyInstanceStatusNotUpdated() {
+  cy.intercept('GET', '/metadata-provider/jobLogEntries/*').as('getLogEntries');
+  cy.wait('@getLogEntries', getLongDelay());
+  cy.do(searchResultsList.find(MultiColumnListCell({
+    row: 1,
+    columnIndex: 3,
+  })).find(HTML(including('-'))).exists());
 }
 
 function verifyInstanceUpdated() {
@@ -395,7 +404,7 @@ function deleteItem() {
 
 function deletePOLine() {
   cy.do([
-    instanceAcquisitionsList.find(Link(including('1'))).click(),
+    instanceAcquisitionsList.find(Link({ href: including('/orders/lines/view/') })).click(),
     orderLinesDetailsSection.find(actionButton).click(),
     deleteButton.click(),
     Modal().find(deleteButton).click(),
@@ -424,4 +433,5 @@ export default {
   deleteItem,
   deleteHoldings,
   deletePOLine,
+  verifyInstanceStatusNotUpdated,
 };
