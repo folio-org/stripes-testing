@@ -47,16 +47,16 @@ describe('Search: browse contributors with exact match query', () => {
     });
   });
 
-  it('C353639 Browse contributors with exact match query', () => {
+  it('C353640 Browse contributors with non exact match query', () => {
     InventorySearch.verifyKeywordsAsDefault();
     BrowseContributors.checkBrowseOptions();
     BrowseContributors.select();
     BrowseContributors.checkSearch();
-    BrowseContributors.browse(instanceA.contributors[0].name);
+    BrowseContributors.browse(instanceA.contributors[0].name.substring(0, 21));
     BrowseContributors.checkSearchResultsTable();
-    BrowseContributors.checkExactSearchResult(instanceA.contributors[0], instanceZ.contributors[0]);
-    BrowseContributors.openInstance(instanceA.contributors[0]);
-    BrowseContributors.checkInstance(instanceA);
+    BrowseContributors.checkNonExactSearchResult(instanceA.contributors[0], instanceZ.contributors[0]);
+    BrowseContributors.resetAllInSearchPane();
+    InventorySearch.verifyKeywordsAsDefault();
   });
 
   afterEach('Deleting user', () => {
