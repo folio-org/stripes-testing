@@ -14,6 +14,7 @@ describe('ui-inventory: Enter different type of identifiers', () => {
 
   beforeEach('navigate to inventory', () => {
     instanceTitle = `autoTestInstanceTitle ${Helper.getRandomBarcode()}`;
+    cy.login(Cypress.env('diku_login'), Cypress.env('diku_password'));
     cy.getAdminToken()
       .then(() => {
         cy.getInstanceTypes({ limit: 1 });
@@ -45,8 +46,6 @@ describe('ui-inventory: Enter different type of identifiers', () => {
       InventorySearch.searchByParameter('Title (all)', instanceTitle);
       InventoryInstances.selectInstance();
       InventoryInstance.editInstance();
-
-      cy.visit(TopMenu.inventoryPath);
       InventoryInstanceEdit.addIdentifier(identifier, resourceIdentifier);
       InventorySearch.searchByParameter('Keyword (title, contributor, identifier)', resourceIdentifier);
       InventoryInstances.selectInstance();

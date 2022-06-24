@@ -18,6 +18,9 @@ import DefaultUser from '../../support/fragments/users/userDefaultObjects/defaul
 import loanPolicy from '../../support/fragments/circulation/loan-policy';
 import InventoryHoldings from '../../support/fragments/inventory/holdings/inventoryHoldings';
 import Users from '../../support/fragments/users/users';
+import MultipieceCheckOut from '../../support/fragments/checkout/modals/multipieceCheckOut';
+import UserEdit from '../../support/fragments/users/userEdit';
+import ServicePoints from '../../support/fragments/settings/tenant/servicePoints';
 
 // TODO Add email notice check after checktout: https://issues.folio.org/browse/FAT-1854
 describe('Recieving notice: Checkin', () => {
@@ -65,9 +68,9 @@ describe('Recieving notice: Checkin', () => {
         });
       });
 
-    cy.getServicePointsApi({ limit: 1, query: 'pickupLocation=="true"' })
+    ServicePoints.getServicePointsApi({ limit: 1, query: 'pickupLocation=="true"' })
       .then((servicePoints) => {
-        cy.addServicePointToUser([servicePoints[0].id], userData.id).then((points) => {
+        UserEdit.addServicePointViaApi(servicePoints[0].id, userData.id).then((points) => {
           testData.userServicePoint = points.body.defaultServicePointId;
         });
         cy.getMaterialTypes({ limit: 1 }).then((res) => { testData.materialType = res.id; });
@@ -139,47 +142,48 @@ describe('Recieving notice: Checkin', () => {
     });
   });
 
-  it('C347623 Check that user can receive notice with multiple items after finishing the session "Check in" by clicking the End Session button', { tags: [testTypes.smoke, devTeams.vega] }, () => {
-    NewNoticePolicyTemplate.startAdding();
-    NewNoticePolicyTemplate.checInitialState();
-    NewNoticePolicyTemplate.create(noticePolicyTemplate);
-    NewNoticePolicyTemplate.addToken(noticePolicyTemplate);
-    noticePolicyTemplate.body += '{{item.title}}';
-    NewNoticePolicyTemplate.save();
-    NewNoticePolicyTemplate.checkAfterSaving(noticePolicyTemplate);
-    NewNoticePolicyTemplate.checkTemplateActions(noticePolicyTemplate);
+  it('C347623 Check that user can receive notice with multiple items after finishing the session "Check in" by clicking the End Session button',
+    { tags: [testTypes.smoke, devTeams.vega, testTypes.broken] }, () => {
+      NewNoticePolicyTemplate.startAdding();
+      NewNoticePolicyTemplate.checkInitialState();
+      NewNoticePolicyTemplate.addToken(noticePolicyTemplate);
+      noticePolicyTemplate.body += '{{item.title}}';
+      NewNoticePolicyTemplate.create(noticePolicyTemplate);
+      NewNoticePolicyTemplate.save();
+      NewNoticePolicyTemplate.checkAfterSaving(noticePolicyTemplate);
+      NewNoticePolicyTemplate.checkTemplateActions(noticePolicyTemplate);
 
-    cy.visit(settingsMenu.circulationPatronNoticePoliciesPath);
-    NewNoticePolicy.waitLoading();
-    NewNoticePolicy.startAdding();
-    NewNoticePolicy.checInitialState();
-    NewNoticePolicy.create(noticePolicy);
-    NewNoticePolicy.addNotice(noticePolicy);
-    NewNoticePolicy.save();
-    NewNoticePolicy.check(noticePolicy);
-    NewNoticePolicy.checkAfterSaving(noticePolicy);
-    NewNoticePolicy.checkNoticeActions(noticePolicy);
-    cy.getNoticePolicy({ query: `name=="${noticePolicy.name}"` }).then((res) => {
-      testData.ruleProps.n = res[0].id;
-      CirculationRules.addRuleApi(testData.baseRules, testData.ruleProps, 'g ', patronGroup.id);
+      cy.visit(settingsMenu.circulationPatronNoticePoliciesPath);
+      NewNoticePolicy.waitLoading();
+      NewNoticePolicy.startAdding();
+      NewNoticePolicy.checkInitialState();
+      NewNoticePolicy.fillGeneralInformation(noticePolicy);
+      NewNoticePolicy.addNotice(noticePolicy);
+      NewNoticePolicy.save();
+      NewNoticePolicy.check(noticePolicy);
+      NewNoticePolicy.checkAfterSaving(noticePolicy);
+      NewNoticePolicy.checkNoticeActions(noticePolicy);
+      cy.getNoticePolicy({ query: `name=="${noticePolicy.name}"` }).then((res) => {
+        testData.ruleProps.n = res[0].id;
+        CirculationRules.addRuleApi(testData.baseRules, testData.ruleProps, 'g ', patronGroup.id);
+      });
+
+      cy.visit(topMenu.checkOutPath);
+      CheckOutActions.checkOutUser(userData.barcode);
+      CheckOutActions.checkUserInfo(userData, patronGroup.name);
+      CheckOutActions.checkOutUser(userData.barcode);
+      CheckOutActions.checkOutItem(ITEM_BARCODE);
+      MultipieceCheckOut.confirmMultipleCheckOut(ITEM_BARCODE);
+      CheckOutActions.checkUserInfo(userData);
+      CheckOutActions.checkItemInfo(ITEM_BARCODE, testData.instanceTitle);
+      CheckOutActions.endSession();
+
+      cy.visit(topMenu.checkInPath);
+      cy.checkInItem(ITEM_BARCODE);
+
+      cy.visit(topMenu.circulationLogPath);
+      SearchPane.searchByItemBarcode(ITEM_BARCODE);
+      SearchPane.verifyResultCells();
+      SearchPane.checkResultSearch(searchResultsData, 3);
     });
-
-    cy.visit(topMenu.checkOutPath);
-    CheckOutActions.checkOutUser(userData.barcode);
-    CheckOutActions.checkUserInfo(userData, patronGroup.name);
-    CheckOutActions.checkOutUser(userData.barcode);
-    CheckOutActions.checkOutItem(ITEM_BARCODE);
-    CheckOutActions.checkUserInfo(userData);
-    CheckOutActions.checkItemInfo(ITEM_BARCODE, testData.instanceTitle, testData.loanNoticeName);
-    CheckOutActions.endSession();
-
-    cy.visit(topMenu.checkInPath);
-    cy.checkInItem(ITEM_BARCODE);
-    cy.verifyItemCheckIn();
-
-    cy.visit(topMenu.circulationLogPath);
-    SearchPane.searchByItemBarcode(ITEM_BARCODE);
-    SearchPane.verifyResultCells();
-    SearchPane.checkResultSearch(searchResultsData, 3);
-  });
 });

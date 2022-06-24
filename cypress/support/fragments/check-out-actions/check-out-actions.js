@@ -25,6 +25,7 @@ export default {
       Button(userBarcode).exists(),
     ]);
   },
+
   checkUserInfo(user, patronGroup = '0') {
     cy.expect([
       userPane.find(KeyValue({ value: 'Active' })).exists(),
@@ -33,27 +34,28 @@ export default {
       userPane.find(Link(user.barcode)).exists(),
     ]);
   },
+
   checkOutItem(itemBarcode) {
     cy.do([
       TextField('Item ID').fillIn(itemBarcode),
       Pane('Scan items').find(Button('Enter')).click(),
-      Modal('Confirm multipiece check out').find(Button('Check out')).click(),
     ]);
   },
-  checkItemInfo(itemBarcode, instanceTitle, loanNoticeName) {
+  checkItemInfo(itemBarcode, instanceTitle) {
     cy.expect([
       MultiColumnList({ rowCount: 1 }).find(MultiColumnListCell('1')).exists(),
       MultiColumnList({ rowCount: 1 }).find(MultiColumnListCell(itemBarcode)).exists(),
       MultiColumnList({ rowCount: 1 }).find(MultiColumnListCell(instanceTitle)).exists(),
-      MultiColumnList({ rowCount: 1 }).find(MultiColumnListCell(loanNoticeName)).exists(),
       Label('Total items scanned: 1').exists(),
     ]);
   },
+
   endSession() {
     cy.do([
       Button('End session').click(),
     ]);
   },
+
   checkOutItemUser(userBarcode, itemBarcode) {
     cy.do(TextField({ name: 'patron.identifier' }).fillIn(userBarcode));
     cy.intercept('/circulation/loans?*').as('getLoans');
@@ -82,7 +84,7 @@ export default {
     cy.expect(KeyValue('Status').exists());
   },
 
-  checkItemstatus:(barcode) => {
+  checkItem:(barcode) => {
     cy.expect(MultiColumnList({ id:'list-items-checked-out' }).find(HTML(including(barcode))).absent());
   }
 };

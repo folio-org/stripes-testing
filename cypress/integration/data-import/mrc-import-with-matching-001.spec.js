@@ -29,7 +29,7 @@ describe('ui-data-import: Test MARC-MARC matching for 001 field', () => {
       permissions.moduleDataImportEnabled.gui,
       permissions.settingsDataImportEnabled.gui,
       permissions.inventoryAll.gui,
-      permissions.dataExportAll.gui
+      permissions.dataExportEnableModule.gui
     ])
       .then(userProperties => {
         user = userProperties;
@@ -44,7 +44,7 @@ describe('ui-data-import: Test MARC-MARC matching for 001 field', () => {
     users.deleteViaApi(user.userId);
   });
 
-  it('C17044: MARC-MARC matching for 001 field', { tags: [TestTypes.smoke] }, () => {
+  it('C17044: MARC-MARC matching for 001 field', { tags: [TestTypes.smoke, TestTypes.broken] }, () => {
     // unique file name to upload
     const nameForMarcFile = `C17044autoTestFile${getRandomPostfix()}.mrc`;
     const nameForExportedMarcFile = `C17044autoTestFile${getRandomPostfix()}.mrc`;

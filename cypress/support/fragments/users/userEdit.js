@@ -6,7 +6,6 @@ import {
   TextField,
   MultiColumnListRow,
   Checkbox,
-  MultiColumnListCell,
   Modal,
   MultiColumnList,
   Select
@@ -14,7 +13,24 @@ import {
 import TopMenu from '../topMenu';
 import defaultUser from './userDefaultObjects/defaultUser';
 
+const userSearch = TextField('User search');
+const saveAndCloseBtn = Button('Save & close');
+
+// servicePointIds is array of ids
+const addServicePointsViaApi = (servicePointIds, userId, defaultServicePointId) => cy.okapiRequest({
+  method: 'POST',
+  path: 'service-points-users',
+  body: {
+    id: uuidv4(),
+    userId,
+    servicePointsIds: servicePointIds,
+    defaultServicePointId: defaultServicePointId || servicePointIds[0],
+  },
+});
+
 export default {
+  addServicePointsViaApi,
+
   addPermissions(permissions) {
     cy.do([
       Pane({ id: 'pane-userdetails' }).find(Button('Actions')).click(),
@@ -24,17 +40,17 @@ export default {
     ]);
 
     permissions.forEach(permission => {
-      cy.do(TextField('User search').fillIn(permission));
-      cy.expect(TextField('User search').is({ value: permission }));
+      cy.do(userSearch.fillIn(permission));
+      cy.expect(userSearch.is({ value: permission }));
       cy.do(Button('Search').click());
-      cy.expect(MultiColumnListCell({ content: permission }).exists());
+      // wait is needed to avoid so fast robot clicks
+      cy.wait(1000);
       cy.do(MultiColumnListRow({ index: 0 }).find(Checkbox()).click());
     });
-
-    cy.do(Button('Save & close').click());
+    cy.do(saveAndCloseBtn.click());
   },
 
-  addServicePoints(points) {
+  addServicePoints(...points) {
     cy.do([
       Button({ id: 'accordion-toggle-button-servicePoints' }).click(),
       Button({ id: 'add-service-point-btn' }).click(),
@@ -44,26 +60,14 @@ export default {
       cy.do(MultiColumnListRow({ content: point, isContainer: true }).find(Checkbox()).click());
     });
 
-    cy.do(Modal().find(Button('Save & close')).click());
+    cy.do(Modal().find(saveAndCloseBtn).click());
   },
 
   saveAndClose() {
-    cy.do(Button('Save & close').click());
+    cy.do(saveAndCloseBtn.click());
   },
 
-  addServicePointsToUser: (servicePointIds, userId, defaultServicePointId) => {
-    // servicePointIds is array of ids
-    cy.okapiRequest({
-      method: 'POST',
-      path: 'service-points-users',
-      body: {
-        id: uuidv4(),
-        userId,
-        servicePointsIds: servicePointIds,
-        defaultServicePointId: defaultServicePointId || servicePointIds[0],
-      },
-    });
-  },
+  addServicePointViaApi: (servicePointId, userId, defaultServicePointId) => addServicePointsViaApi([servicePointId], userId, defaultServicePointId),
 
   // we can remove the service point if it is not Preference
   changeServicePointPreference: (userName = defaultUser.defaultUiPatron.body.userName) => {
@@ -78,23 +82,21 @@ export default {
     cy.do(Button({ id: 'clickable-save' }).click());
   },
 
-  changeServicePointPreferenceViaApi:(userId, servicePointIds, defaultServicePointId = null) => {
-    cy.okapiRequest({
-      method: 'GET',
-      path: `service-points-users?query="userId"="${userId}"`,
-      isDefaultSearchParamsRequired: false,
-    })
-      .then((servicePointsUsers) => {
-        cy.okapiRequest({
-          method: 'PUT',
-          path: `service-points-users/${servicePointsUsers.body.servicePointsUsers[0].id}`,
-          body: {
-            userId,
-            servicePointsIds: servicePointIds,
-            defaultServicePointId,
-          },
-          isDefaultSearchParamsRequired: false,
-        });
+  changeServicePointPreferenceViaApi:(userId, servicePointIds, defaultServicePointId = null) => cy.okapiRequest({
+    method: 'GET',
+    path: `service-points-users?query="userId"="${userId}"`,
+    isDefaultSearchParamsRequired: false,
+  })
+    .then((servicePointsUsers) => {
+      cy.okapiRequest({
+        method: 'PUT',
+        path: `service-points-users/${servicePointsUsers.body.servicePointsUsers[0].id}`,
+        body: {
+          userId,
+          servicePointsIds: servicePointIds,
+          defaultServicePointId,
+        },
+        isDefaultSearchParamsRequired: false,
       });
-  }
+    })
 };

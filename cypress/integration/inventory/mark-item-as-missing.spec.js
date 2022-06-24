@@ -3,8 +3,8 @@ import permissions from '../../support/dictionary/permissions';
 import MarkItemAsMissing from '../../support/fragments/inventory/markItemAsMissing';
 import Requests from '../../support/fragments/requests/requests';
 import TopMenu from '../../support/fragments/topMenu';
-import users from '../../support/fragments/users/users';
-
+import Users from '../../support/fragments/users/users';
+import UserEdit from '../../support/fragments/users/userEdit';
 
 describe('ui-inventory: Mark an item as Missing', () => {
   let user = {};
@@ -29,7 +29,7 @@ describe('ui-inventory: Mark an item as Missing', () => {
       })
       .then(userProperties => {
         user = userProperties;
-        cy.addServicePointToUser(defaultServicePointId, user.userId);
+        UserEdit.addServicePointViaApi(defaultServicePointId, user.userId);
       })
       .then(() => {
         cy.login(user.username, user.password);
@@ -63,11 +63,11 @@ describe('ui-inventory: Mark an item as Missing', () => {
     createdRequestsIds.forEach(id => {
       Requests.deleteRequestApi(id);
     });
-    users.deleteViaApi(user.userId);
-    requesterIds.forEach(id => users.deleteViaApi(id));
+    Users.deleteViaApi(user.userId);
+    requesterIds.forEach(id => Users.deleteViaApi(id));
   });
 
-  it('C714 Mark an item as Missing', { tags: [TestTypes.smoke] }, () => {
+  it('C714 Mark an item as Missing', { tags: [TestTypes.smoke, TestTypes.broken] }, () => {
     cy.visit(TopMenu.inventoryPath);
     MarkItemAsMissing.findAndOpenInstance(instanceData.instanceTitle);
     MarkItemAsMissing.getItemsToMarkAsMissing(createdItems).forEach(item => {

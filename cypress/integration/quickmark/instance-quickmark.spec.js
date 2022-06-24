@@ -33,7 +33,7 @@ describe('Manage inventory Bib records with quickMarc editor', () => {
     });
   });
 
-  it('C10950 Edit and save a MARC record in quickMARC', { tags: [testTypes.smoke, features.quickMarcEditor] }, () => {
+  it('C10950 Edit and save a MARC record in quickMARC', { tags: [testTypes.smoke, features.quickMarcEditor, testTypes.broken] }, () => {
     InventoryInstance.goToEditMARCBiblRecord();
     QuickMarcEditor.waitLoading();
 
@@ -147,8 +147,6 @@ describe('Manage inventory Bib records with quickMarc editor', () => {
   it('C353612 Verify "LDR" validation rules with invalid data for editable and non-editable positions when editing/deriving record', { tags: [testTypes.smoke, features.quickMarcEditor] }, () => {
     const checkLdrErrors = () => {
       const initialLDRValue = InventoryInstance.validOCLC.ldrValue;
-      // TODO: https://issues.folio.org/browse/UIQM-248, error should be
-      // "Record cannot be saved. Cannot edit 008 due to invalid Leader 06. Please update this record's Leader 06. Valid values are listed at https://loc.gov/marc/bibliographic/bdleader.html"
       const positions6Error = 'Record cannot be saved. Please enter a valid Leader 06. Valid values are listed at https://loc.gov/marc/bibliographic/bdleader.html';
       const position7Error = 'Record cannot be saved. Please enter a valid Leader 07. Valid values are listed at https://loc.gov/marc/bibliographic/bdleader.html';
       const positions6And7Error = 'Record cannot be saved. Please enter a valid Leader 06 and Leader 07. Valid values are listed at https://loc.gov/marc/bibliographic/bdleader.html';
@@ -188,6 +186,28 @@ describe('Manage inventory Bib records with quickMarc editor', () => {
     InventoryInstance.deriveNewMarcBib();
     QuickMarcEditor.check008FieldsAbsent('Type', 'Blvl');
     checkLdrErrors();
+  });
+
+  it('C353610 Verify "LDR" validation rules with valid data for positions 06 and 07 when editing record', { tags: [testTypes.smoke, features.quickMarcEditor] }, () => {
+    const initialLDRValue = InventoryInstance.validOCLC.ldrValue;
+    const changesIn06 = ['a', 'c', 'd', 'e', 'f', 'g', 'i', 'j', 'k', 'm', 'o', 'p', 'r', 't'];
+    const changesIn07 = ['a', 'b', 'c', 'd', 'i', 'm', 's'];
+
+    InventoryInstance.checkExpectedMARCSource();
+
+    const checkCorrectUpdate = (subfieldIndex, values) => {
+      values.forEach(specialValue => {
+        InventoryInstance.goToEditMARCBiblRecord();
+        QuickMarcEditor.waitLoading();
+        quickmarcEditor.updateExistingField('LDR', replaceByIndex(initialLDRValue, subfieldIndex, specialValue));
+        QuickMarcEditor.checkSubfieldsPresenceInTag008();
+        QuickMarcEditor.pressSaveAndClose();
+        InventoryInstance.waitLoading();
+      });
+    };
+
+    checkCorrectUpdate(6, changesIn06);
+    checkCorrectUpdate(7, changesIn07);
   });
 
   afterEach(() => {

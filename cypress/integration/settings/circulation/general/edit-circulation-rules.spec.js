@@ -65,7 +65,7 @@ describe('ui-circulation-settings: Edit circulation rules', () => {
     Users.deleteViaApi(newUserId);
   });
 
-  it('C2268: Add notice policy to circulation rules', { tags: [TestType.smoke] }, () => {
+  it('C2268: Add notice policy to circulation rules', { tags: [TestType.smoke, TestType.broken] }, () => {
     CirculationRules.clearCirculationRules();
     CirculationRules.fillInPriority();
 
