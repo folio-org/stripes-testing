@@ -37,9 +37,11 @@ export default {
         method: 'POST',
         path: 'material-types',
         body: materialTypeProperties,
+        isDefaultSearchParamsRequired: false,
       })
       .then(({ response }) => {
-        //return response.body;
+        console.log(response);
+        // return response.body;
       });
   },
   deleteApi(id) {

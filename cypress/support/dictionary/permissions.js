@@ -102,4 +102,6 @@ export default {
   createOrdersAndOrderLines:{ internal:'ui-orders.orders.create', gui:'Orders: Can create new Orders and Order lines' },
   editOrdersAndOrderLines:{ internal:'ui-orders.orders.edit', gui:'Orders: Can edit Orders and Order lines' },
   viewOrdersAndOrderLines:{ internal:'ui-orders.orders.view', gui:'Orders: Can view Orders and Order lines' },
+  // Receiving
+  uiReceivingViewEditCreate:{ internal:'', gui:'Receiving: View, edit, create' },
 };

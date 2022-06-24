@@ -54,7 +54,7 @@ const getDefaultOrderLine = (quantity, title, spesialLocationId, specialMaterial
       vendorAccount: '1234'
     }
   };
-  if (!defaultOrderLine.materialType) {
+  if (!specialMaterialTypeId) {
     MaterialTypesSettings.createApi(MaterialTypesSettings.getDefaultMaterialType())
       .then(mtypes => {
         defaultOrderLine.physical.materialType = mtypes.id;
