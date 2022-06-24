@@ -31,6 +31,8 @@ const inventorySelect = Select({ id: 'input-inventory-search-qindex' });
 const inventorySearch = TextInput({ id: 'input-inventory-search' });
 const browseContributorsOption = Option('Browse contributors');
 const browseButtor = Button('Browse');
+const row0 = MultiColumnListRow({ index: 0 });
+const row1 = MultiColumnListRow({ index: 1 });
 
 export default {
   defaultInstanceAWithContributor,
@@ -95,8 +97,8 @@ export default {
 
   checkNonExactSearchResult(contributorA, contributorZ) {
     cy.do([
-      MultiColumnListRow({ index: 0 }).has({ content: ' __A_test_contributor_ would be here' }),
-      MultiColumnListRow({ index: 1 }).has({ content: `${contributorA.name}${contributorA.contributorNameType}1` }),
+      row0.has({ content: ' __A_test_contributor_ would be here' }),
+      row1.has({ content: `${contributorA.name}${contributorA.contributorNameType}1` }),
       MultiColumnListRow({ index: 2 }).has({ content:  `${contributorZ.name}${contributorZ.contributorNameType}1` }),
     ]);
   },
@@ -104,8 +106,8 @@ export default {
   checkExactSearchResult(contributorA, contributorZ) {
     cy.do([
       MultiColumnListCell(contributorA.name).has({ innerHTML: `<strong>${contributorA.name}</strong>` }),
-      MultiColumnListRow({ index: 0 }).has({ content: `${contributorA.name}${contributorA.contributorNameType}1` }),
-      MultiColumnListRow({ index: 1 }).has({ content:  `${contributorZ.name}${contributorZ.contributorNameType}1` }),
+      row0.has({ content: `${contributorA.name}${contributorA.contributorNameType}1` }),
+      row1.has({ content:  `${contributorZ.name}${contributorZ.contributorNameType}1` }),
     ]);
   },
 
