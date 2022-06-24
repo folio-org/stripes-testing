@@ -1,4 +1,4 @@
-import { Button, TextField, Select, KeyValue, Accordion, Pane, Checkbox, MultiColumnList, MultiColumnListCell, SearchField, MultiColumnListRow, SelectionOption, Section, Option } from '../../../../interactors';
+import { Button, TextField, Select, KeyValue, Accordion, Pane, Checkbox, MultiColumnList, MultiColumnListCell, SearchField, MultiColumnListRow, SelectionOption, Section } from '../../../../interactors';
 import getRandomPostfix from '../../utils/stringTools';
 
 const buttonNew = Button('New');
@@ -72,13 +72,13 @@ export default {
       ediSection.find(TextField('Library EDI code*')).fillIn(libraryEDICode),
       ediSection.find(Button({ icon: 'info' })).click()
     ]);
+    cy.get('select[name="exportTypeSpecificParameters.vendorEdiOrdersExportConfig.ediConfig.accountNoList"]').select('1234');
     cy.do([
       ftpSection.find(Select('EDI FTP')).choose('FTP'),
       ftpSection.find(TextField('Server address*')).fillIn(serverAddress),
       ftpSection.find(TextField('FTP port*')).fillIn(FTPport),
-      Select({ name: 'exportTypeSpecificParameters.vendorEdiOrdersExportConfig.ediConfig.accountNoList' }).find(Option({ value: '1234' })).click(),
-      saveAndClose.click(),
     ]);
+    cy.do(saveAndClose.click());
   },
 
   editIntegrationInformation: () => {

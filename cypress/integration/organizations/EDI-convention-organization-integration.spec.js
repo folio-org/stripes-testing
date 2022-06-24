@@ -1,10 +1,5 @@
 import TopMenu from '../../support/fragments/topMenu';
-import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
-import searchInventory from '../../support/fragments/data_import/searchInventory';
-import { MultiColumnListCell } from '../../../interactors';
 import permissions from '../../support/dictionary/permissions';
-import InventoryInstance from '../../support/fragments/inventory/inventoryInstance';
-import HoldingsRecordView from '../../support/fragments/inventory/holdingsRecordView';
 import getRandomPostfix from '../../support/utils/stringTools';
 import TestTypes from '../../support/dictionary/testTypes';
 import users from '../../support/fragments/users/users';
@@ -64,6 +59,5 @@ describe('ui-organizations: EDI convention in Organization Integration', () => {
     Organizations.selectIntegration();
     Organizations.editIntegrationInformation();
     InteractorsTools.checkCalloutMessage('Integration was saved');
-    cy.pause();
   });
 });
