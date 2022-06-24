@@ -42,7 +42,7 @@ describe('ui-inventory: query search', () => {
     { searchTab: InventorySearch.switchToHoldings, value: `holdingsNormalizedCallNumbers="${item.holdingCallNumber}"` },
     { searchTab: InventorySearch.switchToItem, value: `itemNormalizedCallNumbers="${item.itemCallNumber}"` },
   ].forEach(searcher => {
-    it('C9202 Test search field working for Query Search in Instance, Holdings and Item segment', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
+    it('C9202 Test search field working for Query Search in Instance, Holdings and Item segment', { tags: [testTypes.smoke] }, () => {
       searcher.searchTab();
       InventorySearch.searchByParameter('Query search', searcher.value);
       InventorySearch.verifySearchResult(item.instanceName);
