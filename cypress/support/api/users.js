@@ -81,8 +81,7 @@ Cypress.Commands.add('updateUser', (userData) => {
 Cypress.Commands.add('createTempUser', (permissions = [], patronGroup) => {
   const userProperties = {
     username: `cypressTestUser${getRandomPostfix()}`,
-    password: `Password${getRandomPostfix()}`,
-    userId: ''
+    password: `Password${getRandomPostfix()}`
   };
 
   cy.getAdminToken();
@@ -102,6 +101,7 @@ Cypress.Commands.add('createTempUser', (permissions = [], patronGroup) => {
             personal: { ...Users.defaultUser.personal, lastName : userProperties.username } }).then(newUserProperties => {
             userProperties.userId = newUserProperties.id;
             userProperties.barcode = newUserProperties.barcode;
+            userProperties.firstName = Users.defaultUser.personal.firstName;
             cy.setUserPassword(userProperties);
             cy.addPermissionsToNewUserApi({
               userId: userProperties.userId,
