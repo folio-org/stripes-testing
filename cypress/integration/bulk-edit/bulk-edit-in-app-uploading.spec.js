@@ -120,7 +120,6 @@ describe('bulk-edit: in-app file uploading', () => {
       BulkEditSearchPane.selectRecordIdentifier(checker.identifier);
       BulkEditSearchPane.verifyInputLabel(checker.label);
     });
-    BulkEditActions.newBulkEdit();
   });
 
   it('C353230 Verify completion of the in-app bulk edit', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
