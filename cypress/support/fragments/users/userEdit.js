@@ -45,7 +45,6 @@ export default {
       cy.wait(1000);
       cy.do(MultiColumnListRow({ index: 0 }).find(Checkbox()).click());
     });
-    cy.pause();
     cy.do(Button('Save & close').click());
   },
 
