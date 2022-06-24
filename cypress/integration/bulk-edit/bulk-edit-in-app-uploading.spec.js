@@ -77,7 +77,7 @@ describe('bulk-edit: in-app file uploading', () => {
 
     BulkEditSearchPane.verifyActionsAfterConductedInAppUploading();
 
-    BulkEditSearchPane.verifyErrorLabel(invalidItemBarcodesFileName, 1, 1);
+    BulkEditSearchPane.verifyErrorLabel(invalidItemBarcodesFileName, 2, 1);
     BulkEditActions.newBulkEdit();
   });
 

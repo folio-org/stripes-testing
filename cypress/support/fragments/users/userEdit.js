@@ -41,10 +41,11 @@ export default {
       cy.do(TextField('User search').fillIn(permission));
       cy.expect(TextField('User search').is({ value: permission }));
       cy.do(Button('Search').click());
-      cy.expect(MultiColumnListCell({ content: permission }).exists());
+      // wait is needed to avoid so fast robot clicks
+      cy.wait(1000);
       cy.do(MultiColumnListRow({ index: 0 }).find(Checkbox()).click());
     });
-
+    cy.pause();
     cy.do(Button('Save & close').click());
   },
 
