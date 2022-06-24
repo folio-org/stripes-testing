@@ -6,13 +6,15 @@ import {
   TextField,
   MultiColumnListRow,
   Checkbox,
-  MultiColumnListCell,
   Modal,
   MultiColumnList,
   Select
 } from '../../../../interactors';
 import TopMenu from '../topMenu';
 import defaultUser from './userDefaultObjects/defaultUser';
+
+const userSearch = TextField('User search');
+const saveAndCloseBtn = Button('Save & close');
 
 // servicePointIds is array of ids
 const addServicePointsViaApi = (servicePointIds, userId, defaultServicePointId) => cy.okapiRequest({
@@ -38,14 +40,14 @@ export default {
     ]);
 
     permissions.forEach(permission => {
-      cy.do(TextField('User search').fillIn(permission));
-      cy.expect(TextField('User search').is({ value: permission }));
+      cy.do(userSearch.fillIn(permission));
+      cy.expect(userSearch.is({ value: permission }));
       cy.do(Button('Search').click());
       // wait is needed to avoid so fast robot clicks
       cy.wait(1000);
       cy.do(MultiColumnListRow({ index: 0 }).find(Checkbox()).click());
     });
-    cy.do(Button('Save & close').click());
+    cy.do(saveAndCloseBtn.click());
   },
 
   addServicePoints(...points) {
@@ -58,11 +60,11 @@ export default {
       cy.do(MultiColumnListRow({ content: point, isContainer: true }).find(Checkbox()).click());
     });
 
-    cy.do(Modal().find(Button('Save & close')).click());
+    cy.do(Modal().find(saveAndCloseBtn).click());
   },
 
   saveAndClose() {
-    cy.do(Button('Save & close').click());
+    cy.do(saveAndCloseBtn.click());
   },
 
   addServicePointViaApi: (servicePointId, userId, defaultServicePointId) => addServicePointsViaApi([servicePointId], userId, defaultServicePointId),
