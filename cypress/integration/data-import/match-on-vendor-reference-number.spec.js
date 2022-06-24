@@ -1,7 +1,7 @@
 /* eslint-disable cypress/no-unnecessary-waiting */
 import TestTypes from '../../support/dictionary/testTypes';
 import NewOrder from '../../support/fragments/orders/newOrder';
-import FinanceHelper from '../../support/fragments/finance/financeHelper';
+import Helper from '../../support/fragments/finance/financeHelper';
 import TopMenu from '../../support/fragments/topMenu';
 import Logs from '../../support/fragments/data_import/logs/logs';
 import MatchOnVRN from '../../support/fragments/data_import/matchOnVRN';
@@ -18,15 +18,15 @@ describe('ui-data-import: Match on VRN and update related Instance, Holdings, It
     ...NewOrder.defaultOrder,
     vendor: 'GOBI Library Solutions',
   };
-  const instanceMappingProfileName = `CaseC350591 Update Instance by VRN match ${FinanceHelper.getRandomBarcode()}`;
-  const holdingsMappingProfileName = `CaseC350591 Update Holdings by VRN match ${FinanceHelper.getRandomBarcode()}`;
-  const itemMappingProfileName = `CaseC350591 Update Item by VRN match ${FinanceHelper.getRandomBarcode()}`;
-  const instanceActionProfileName = `CaseC350591 Action for Instance ${FinanceHelper.getRandomBarcode()}`;
-  const holdingsActionProfileName = `CaseC350591 Action for Holdings ${FinanceHelper.getRandomBarcode()}`;
-  const itemActionProfileName = `CaseC350591 Action for Item ${FinanceHelper.getRandomBarcode()}`;
-  const instanceMatchProfileName = `CaseC350591 Match for Instance ${FinanceHelper.getRandomBarcode()}`;
-  const holdingsMatchProfileName = `CaseC350591 Match for Holdings ${FinanceHelper.getRandomBarcode()}`;
-  const itemMatchProfileName = `CaseC350591 Match for Item ${FinanceHelper.getRandomBarcode()}`;
+  const instanceMappingProfileName = `CaseC350591 Update Instance by VRN match ${Helper.getRandomBarcode()}`;
+  const holdingsMappingProfileName = `CaseC350591 Update Holdings by VRN match ${Helper.getRandomBarcode()}`;
+  const itemMappingProfileName = `CaseC350591 Update Item by VRN match ${Helper.getRandomBarcode()}`;
+  const instanceActionProfileName = `CaseC350591 Action for Instance ${Helper.getRandomBarcode()}`;
+  const holdingsActionProfileName = `CaseC350591 Action for Holdings ${Helper.getRandomBarcode()}`;
+  const itemActionProfileName = `CaseC350591 Action for Item ${Helper.getRandomBarcode()}`;
+  const instanceMatchProfileName = `CaseC350591 Match for Instance ${Helper.getRandomBarcode()}`;
+  const holdingsMatchProfileName = `CaseC350591 Match for Holdings ${Helper.getRandomBarcode()}`;
+  const itemMatchProfileName = `CaseC350591 Match for Item ${Helper.getRandomBarcode()}`;
   const matchProfiles = [
     {
       name: instanceMatchProfileName,
@@ -45,7 +45,7 @@ describe('ui-data-import: Match on VRN and update related Instance, Holdings, It
   const fileName = `vrn${getRandomPostfix()}.mrc`;
 
   const jobProfilesData = {
-    name: `CaseC350591 Job profile ${FinanceHelper.getRandomBarcode()}`,
+    name: `CaseC350591 Job profile ${Helper.getRandomBarcode()}`,
     dataType: 'MARC',
     matches: [
       {
@@ -89,7 +89,6 @@ describe('ui-data-import: Match on VRN and update related Instance, Holdings, It
   });
 
   it('C350591 Match on VRN and update related Instance, Holdings, Item', { tags: [TestTypes.smoke] }, () => {
-    cy.pause();
     // create order
     cy.visit(TopMenu.ordersPath);
     Orders.createOrder(order);
