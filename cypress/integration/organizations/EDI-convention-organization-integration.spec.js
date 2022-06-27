@@ -54,7 +54,7 @@ describe('ui-organizations: EDI convention in Organization Integration', () => {
 
     Organizations.addIntegration();
     Organizations.fillIntegrationInformation();
-    // InteractorsTools.checkCalloutMessage('Integration was saved');
+    InteractorsTools.checkCalloutMessage('Integration was saved');
 
     Organizations.selectIntegration();
     Organizations.editIntegrationInformation();
