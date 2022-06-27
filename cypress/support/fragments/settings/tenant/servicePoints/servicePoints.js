@@ -1,5 +1,5 @@
 export default {
-  getServicePointsApi: (searchParams) => cy.okapiRequest({
+  getViaApi: (searchParams) => cy.okapiRequest({
     path: 'service-points',
     searchParams,
   }).then(({ body }) => body.servicepoints),
@@ -8,5 +8,6 @@ export default {
     path: 'service-points',
     body: servicePointParameters,
     method: 'POST',
-  })
+    isDefaultSearchParamsRequired: false
+  }),
 };
