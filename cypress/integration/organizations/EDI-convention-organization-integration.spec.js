@@ -46,7 +46,6 @@ describe('ui-organizations: EDI convention in Organization Integration', () => {
   });
 
   it('C350758: Verify if a User can set/edit EDI convention in Organization Integration', { tags: [TestTypes.smoke] }, () => {
-    // Find created Organization
     Organizations.searchByParameters('Name', organization.name);
     Organizations.checkSearchResults(organization);
     Organizations.chooseOrganizationFromList(organization);
