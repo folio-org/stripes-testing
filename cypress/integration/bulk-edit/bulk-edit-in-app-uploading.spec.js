@@ -45,9 +45,9 @@ describe('bulk-edit: in-app file uploading', () => {
 
   after('Delete all data', () => {
     users.deleteViaApi(user.userId);
-    // InventoryInstances.deleteInstanceViaApi(item.itemBarcode);
+    InventoryInstances.deleteInstanceViaApi(item.itemBarcode);
     FileManager.deleteFile(`cypress/fixtures/${invalidItemBarcodesFileName}`);
-    // FileManager.deleteFile(`cypress/fixtures/${validItemBarcodesFileName}`);
+    FileManager.deleteFile(`cypress/fixtures/${validItemBarcodesFileName}`);
   });
 
   it('C350905 Negative uploading file with identifiers -- In app approach', { tags: [testTypes.smoke, devTeams.firebird, testTypes.broken] }, () => {
