@@ -12,6 +12,7 @@ export default HTML.extend('text area')
   .locator(label)
   .filters({
     id: el => el.querySelector('textarea').getAttribute('id'),
+    ariaLabel: el => el.querySelector('textarea').getAttribute('aria-label'),
     label,
     value: el => el.querySelector('textarea').value,
     textContent: el => el.querySelector('textarea').textContent,

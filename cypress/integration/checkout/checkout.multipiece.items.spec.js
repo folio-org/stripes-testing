@@ -4,8 +4,9 @@ import TopMenu from '../../support/fragments/topMenu';
 import getRandomPostfix from '../../support/utils/stringTools';
 import Helper from '../../support/fragments/finance/financeHelper';
 import CheckOutActions from '../../support/fragments/check-out-actions/check-out-actions';
-import NewServicePoint from '../../support/fragments/service_point/newServicePoint';
-import ServicePoints from '../../support/fragments/settings/tenant/servicePoints';
+import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
+import ServicePoint from '../../support/fragments/servicePoint/servicePoint';
+import NewServicePoint from '../../support/fragments/settings/tenant/servicePoints/newServicePoint';
 import MultipieceCheckOut from '../../support/fragments/checkout/modals/multipieceCheckOut';
 import Checkout from '../../support/fragments/checkout/checkout';
 import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
@@ -111,7 +112,7 @@ describe('Check Out', () => {
           cy.deleteInstanceApi(testInstanceIds.instanceId);
         });
         UserEdit.changeServicePointPreferenceViaApi(user.userId, [servicePoint.body.id]).then(() => {
-          cy.deleteServicePoint(servicePoint.body.id);
+          ServicePoint.deleteViaApi(servicePoint.body.id);
           Users.deleteViaApi(user.userId);
         });
       });
