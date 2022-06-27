@@ -177,6 +177,6 @@ describe('Recieving notice: Checkout', () => {
       cy.visit(topMenu.circulationLogPath);
       SearchPane.searchByItemBarcode(ITEM_BARCODE);
       SearchPane.verifyResultCells();
-      SearchPane.checkResultSearch(searchResultsData, 2);
+      SearchPane.checkResultSearch(searchResultsData, 1);
     });
 });
