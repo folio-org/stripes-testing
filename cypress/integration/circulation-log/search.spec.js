@@ -11,10 +11,12 @@ import InventoryHoldings from '../../support/fragments/inventory/holdings/invent
 import devTeams from '../../support/dictionary/devTeams';
 import Users from '../../support/fragments/users/users';
 import UserEdit from '../../support/fragments/users/userEdit';
+import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
 
 const ITEM_BARCODE = `123${getRandomPostfix()}`;
 let userId = '';
 let source;
+let servicePointId;
 
 describe('ui-circulation-log', () => {
   before('create inventory instance', () => {
@@ -35,14 +37,17 @@ describe('ui-circulation-log', () => {
             cy.getHoldingTypes({ limit: 1 });
             source = InventoryHoldings.getHoldingSources({ limit: 1 });
             cy.getInstanceTypes({ limit: 1 });
-            cy.getServicePointsApi({ limit: 1, query: 'pickupLocation=="true"' });
+            ServicePoints.getViaApi({ limit: 1, query: 'pickupLocation=="true"' })
+              .then((res) => {
+                servicePointId = res[0].id;
+              });
             cy.getUsers({
               limit: 1,
               query: `"personal.lastName"="${userProperties.username}" and "active"="true"`
             });
           })
           .then(() => {
-            UserEdit.addServicePointsViaApi([Cypress.env('servicePoints')[0].id], userId);
+            UserEdit.addServicePointViaApi(servicePointId, userId);
             cy.getUserServicePoints(Cypress.env('users')[0].id);
             cy.createInstance({
               instance: {
@@ -70,7 +75,7 @@ describe('ui-circulation-log', () => {
             CheckoutActions.createItemCheckoutApi({
               itemBarcode: ITEM_BARCODE,
               userBarcode: Cypress.env('users')[0].barcode,
-              servicePointId: Cypress.env('userServicePoints')[0].id,
+              servicePointId,
             });
           });
       });
@@ -83,19 +88,21 @@ describe('ui-circulation-log', () => {
   after('Delete all data', () => {
     CheckinActions.createItemCheckinApi({
       itemBarcode: ITEM_BARCODE,
-      servicePointId: Cypress.env('servicePoints')[0].id,
-      checkInDate: '2021-09-30T16:14:50.444Z',
-    });
-    cy.getInstance({ limit: 1, expandAll: true, query: `"items.barcode"=="${ITEM_BARCODE}"` })
-      .then((instance) => {
-        cy.deleteItem(instance.items[0].id);
-        cy.deleteHoldingRecord(instance.holdings[0].id);
-        cy.deleteInstanceApi(instance.id);
+      servicePointId,
+      checkInDate: new Date().toISOString(),
+    })
+      .then(() => {
+        cy.getInstance({ limit: 1, expandAll: true, query: `"items.barcode"=="${ITEM_BARCODE}"` })
+          .then((instance) => {
+            cy.deleteItem(instance.items[0].id);
+            cy.deleteHoldingRecord(instance.holdings[0].id);
+            cy.deleteInstanceApi(instance.id);
+          });
+        cy.getBlockApi(userId).then(() => {
+          cy.deleteBlockApi(Cypress.env('blockIds')[0].id);
+        });
+        Users.deleteViaApi(userId);
       });
-    cy.getBlockApi(userId).then(() => {
-      cy.deleteBlockApi(Cypress.env('blockIds')[0].id);
-    });
-    Users.deleteViaApi(userId);
   });
 
   it('C15484 Filter circulation log on item barcode', { retries: 3, tags: [TestTypes.smoke, devTeams.firebird, TestTypes.broken] }, () => {
