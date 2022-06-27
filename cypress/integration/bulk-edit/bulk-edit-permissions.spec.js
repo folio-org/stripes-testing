@@ -78,7 +78,8 @@ describe('bulk-edit: permissions', () => {
     cy.login(userWithCsvPermissions.username, userWithCsvPermissions.password);
     cy.visit(TopMenu.bulkEditPath);
 
+    BulkEditActions.openActions();
     BulkEditActions.openStartBulkEditForm();
-    BulkEditActions.verifyLabel('Drop to continue');
+    BulkEditActions.verifyLabel('Upload CSV file with edited records');
   });
 });

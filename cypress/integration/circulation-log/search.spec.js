@@ -42,7 +42,7 @@ describe('ui-circulation-log', () => {
             });
           })
           .then(() => {
-            UserEdit.addServicePoints(Cypress.env('servicePoints')[0].id, userId);
+            UserEdit.addServicePointsViaApi([Cypress.env('servicePoints')[0].id], userId);
             cy.getUserServicePoints(Cypress.env('users')[0].id);
             cy.createInstance({
               instance: {
