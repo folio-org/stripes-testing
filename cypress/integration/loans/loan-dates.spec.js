@@ -12,9 +12,10 @@ import NewRequest from '../../support/fragments/requests/newRequest';
 import Users from '../../support/fragments/users/users';
 import CheckinActions from '../../support/fragments/check-in-actions/checkInActions';
 import InventoryHoldings from '../../support/fragments/inventory/holdings/inventoryHoldings';
-import UsersEditPage from '../../support/fragments/users/usersEditPage';
+import UserEdit from '../../support/fragments/users/userEdit';
 import Checkout from '../../support/fragments/checkout/checkout';
 import MultipieceCheckOut from '../../support/fragments/checkout/modals/multipieceCheckOut';
+import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
 
 const item = {
   barcode: `123${getRandomPostfix()}`,
@@ -23,7 +24,7 @@ const item = {
 let checkOutUser;
 const checkInUser = {};
 const expirationUserDate = DateTools.getFutureWeekDateObj();
-
+let servicePointId;
 
 describe('loan dates', () => {
   before('create inventory instance', () => {
@@ -44,14 +45,17 @@ describe('loan dates', () => {
             cy.getHoldingTypes({ limit: 1 });
             source = InventoryHoldings.getHoldingSources({ limit: 1 });
             cy.getInstanceTypes({ limit: 1 });
-            cy.getServicePointsApi({ limit: 1, query: 'pickupLocation=="true"' });
+            ServicePoints.getViaApi({ limit: 1, query: 'pickupLocation=="true"' })
+              .then((res) => {
+                servicePointId = res[0].id;
+              });
             cy.getUsers({
               limit: 1,
               query: `"personal.lastName"="${userProperties.username}" and "active"="true"`
             });
           })
           .then(() => {
-            UsersEditPage.addServicePointsToUser([Cypress.env('servicePoints')[0].id], userProperties.userId);
+            UserEdit.addServicePointViaApi(servicePointId, userProperties.userId);
             cy.getUserServicePoints(Cypress.env('users')[0].id);
             cy.createInstance({
               instance: {
@@ -94,7 +98,7 @@ describe('loan dates', () => {
   after('Delete all data', () => {
     CheckinActions.createItemCheckinApi({
       itemBarcode: item.barcode,
-      servicePointId: Cypress.env('servicePoints')[0].id,
+      servicePointId,
       checkInDate: '2021-09-30T16:14:50.444Z',
     });
     cy.getInstance({ limit: 1, expandAll: true, query: `"items.barcode"=="${item.barcode}"` })

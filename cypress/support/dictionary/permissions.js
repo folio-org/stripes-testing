@@ -80,6 +80,7 @@ export default {
   calendarAll: { internal: 'ui-calendar.all', gui: 'Settings (Calendar): Can create, view, edit, and remove calendar events' },
   // Data Export
   dataExportAll: { internal: 'data-export.all', gui: 'Data Export - all permissions' },
+  dataExportEnableModule: { internal: 'module.data-export.enabled', gui: 'Data export: all permissions' },
   // Loans
   loansAll: { internal: 'ui-users.loans.all', gui: 'Users: User loans view, change due date, renew' },
   loansView: { internal: 'ui-users.loans.view', gui: 'Users: User loans view' },
@@ -92,6 +93,7 @@ export default {
   checkinAll: { internal: '', gui: 'Check in: All permissions' },
   // Organization
   viewOrganization:{ internal:'', gui:'Organizations: View' },
+  viewEditCreateOrganization:{ internal:'', gui:'Organizations: View, edit, create' },
   // Invoice
   viewEditDeleteInvoiceInvoiceLine:{ internal:'', gui:'Invoice: Can view, edit and delete Invoices and Invoice lines' },
 };

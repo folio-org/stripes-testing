@@ -7,6 +7,8 @@ import getRandomPostfix from '../../support/utils/stringTools';
 import users from '../../support/fragments/users/users';
 import InventorySearch from '../../support/fragments/inventory/inventorySearch';
 import InventoryHoldings from '../../support/fragments/inventory/holdings/inventoryHoldings';
+import TestTypes from '../../support/dictionary/testTypes';
+import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
 
 const ITEM_BARCODE = `123${getRandomPostfix()}`;
 let userId = '';
@@ -30,7 +32,7 @@ describe('ui-inventory: items with status', () => {
             cy.getHoldingTypes({ limit: 1 });
             source = InventoryHoldings.getHoldingSources({ limit: 1 });
             cy.getInstanceTypes({ limit: 1 });
-            cy.getServicePointsApi({ limit: 1, query: 'pickupLocation=="true"' });
+            ServicePoints.getViaApi({ limit: 1, query: 'pickupLocation=="true"' });
             cy.getUsers({
               limit: 1,
               query: `"personal.lastName"="${userProperties.username}" and "active"="true"`
@@ -75,7 +77,7 @@ describe('ui-inventory: items with status', () => {
     users.deleteViaApi(userId);
   });
 
-  it('C11081: Verify item status filters retrieve items with that item status', () => {
+  it('C11081: Verify item status filters retrieve items with that item status', { tags: [TestTypes.smoke] }, () => {
     cy.intercept('GET', '/inventory/items?*').as('getItems');
     cy.intercept('GET', '/search/instances?*').as('getInstances');
     cy.intercept('GET', '/orders/titles?*').as('getTitles');

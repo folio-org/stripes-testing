@@ -27,7 +27,7 @@ describe('ui-data-import: Verify the possibility to modify MARC Bibliographic re
       permissions.moduleDataImportEnabled.gui,
       permissions.settingsDataImportEnabled.gui,
       permissions.uiInventoryViewInstances.gui,
-      permissions.dataExportAll.gui
+      permissions.dataExportEnableModule.gui
     ])
       .then(userProperties => {
         user = userProperties;
@@ -149,8 +149,6 @@ describe('ui-data-import: Verify the possibility to modify MARC Bibliographic re
     ].forEach(columnName => {
       FileDetails.checkStatusInColumn(FileDetails.status.updated, columnName);
     });
-    FileDetails.checkStatusInColumn(FileDetails.status.updated, FileDetails.columnName.srsMarc);
-    FileDetails.checkStatusInColumn(FileDetails.status.updated, FileDetails.columnName.instance);
 
     // delete profiles
     JobProfiles.deleteJobProfile(jobProfileName);

@@ -33,7 +33,7 @@ describe('Manage inventory Bib records with quickMarc editor', () => {
     });
   });
 
-  it('C10950 Edit and save a MARC record in quickMARC', { tags: [testTypes.smoke, features.quickMarcEditor, testTypes.broken] }, () => {
+  it('C10950 Edit and save a MARC record in quickMARC', { tags: [testTypes.smoke, features.quickMarcEditor] }, () => {
     InventoryInstance.goToEditMARCBiblRecord();
     QuickMarcEditor.waitLoading();
 
@@ -147,8 +147,6 @@ describe('Manage inventory Bib records with quickMarc editor', () => {
   it('C353612 Verify "LDR" validation rules with invalid data for editable and non-editable positions when editing/deriving record', { tags: [testTypes.smoke, features.quickMarcEditor] }, () => {
     const checkLdrErrors = () => {
       const initialLDRValue = InventoryInstance.validOCLC.ldrValue;
-      // TODO: https://issues.folio.org/browse/UIQM-248, error should be
-      // "Record cannot be saved. Cannot edit 008 due to invalid Leader 06. Please update this record's Leader 06. Valid values are listed at https://loc.gov/marc/bibliographic/bdleader.html"
       const positions6Error = 'Record cannot be saved. Please enter a valid Leader 06. Valid values are listed at https://loc.gov/marc/bibliographic/bdleader.html';
       const position7Error = 'Record cannot be saved. Please enter a valid Leader 07. Valid values are listed at https://loc.gov/marc/bibliographic/bdleader.html';
       const positions6And7Error = 'Record cannot be saved. Please enter a valid Leader 06 and Leader 07. Valid values are listed at https://loc.gov/marc/bibliographic/bdleader.html';

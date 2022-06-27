@@ -15,6 +15,7 @@ import {
 } from '../../../../interactors';
 import users from '../users/users';
 import inventoryHoldings from '../inventory/holdings/inventoryHoldings';
+import ServicePoints from '../settings/tenant/servicePoints/servicePoints';
 
 const requestsResultsSection = Section({ id: 'pane-results' });
 const appsButton = Button({ id: 'app-list-dropdown-toggle' });
@@ -83,7 +84,7 @@ function createRequestApi(
 
   return cy.wrap(Promise.resolve(true))
     .then(() => {
-      cy.getServicePointsApi({ limit: 1, query: 'pickupLocation=="true"' }).then(servicePoints => {
+      ServicePoints.getViaApi({ limit: 1, query: 'pickupLocation=="true"' }).then(servicePoints => {
         requestData.pickupServicePointId = servicePoints[0].id;
       });
       cy.getAddressTypesApi({ limit: 1 }).then(addressTypes => {
@@ -499,5 +500,10 @@ export default {
 
     // eslint-disable-next-line cypress/no-unnecessary-waiting
     cy.wait(1000);
-  }
+  },
+
+  getRequestIdViaApi: (searchParams) => cy.okapiRequest({
+    path: 'circulation/requests',
+    searchParams
+  }).then(res => res.body.requests[0].id)
 };

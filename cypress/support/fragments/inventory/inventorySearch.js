@@ -65,12 +65,14 @@ export default {
 
   selectBrowseCallNumbers() {
     // cypress can't draw selected option without wait
+    // eslint-disable-next-line cypress/no-unnecessary-waiting
     cy.wait(1000);
     cy.do(Select('Search field index').choose('Browse call numbers'));
   },
 
   selectBrowseSubjects() {
     // cypress can't draw selected option without wait
+    // eslint-disable-next-line cypress/no-unnecessary-waiting
     cy.wait(1000);
     cy.do(Select('Search field index').choose('Browse subjects'));
   },
@@ -161,10 +163,7 @@ export default {
   },
 
   verifySelectedRecords(selected) {
-    cy.get('#list-inventory div[data-row-index]').then((el) => {
-      const overall = el.length;
-      cy.expect(Pane('Inventory').is({ subtitle: `${overall} records found${selected} records selected` }));
-    });
+    cy.expect(Pane('Inventory').is({ subtitle: including(`records found${selected} records selected`) }));
   },
 
   searchByParameter: (parameter, value) => {

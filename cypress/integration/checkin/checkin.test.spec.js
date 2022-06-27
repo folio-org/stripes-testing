@@ -1,14 +1,15 @@
-import NewServicePoint from '../../support/fragments/service_point/newServicePoint';
+import NewServicePoint from '../../support/fragments/settings/tenant/servicePoints/newServicePoint';
 import NewInctanceHoldingsItem from '../../support/fragments/inventory/newInctanceHoldingsItem';
 import TestTypes from '../../support/dictionary/testTypes';
 import NewUser from '../../support/fragments/users/userDefaultObjects/newUser';
-import SwitchServicePoint from '../../support/fragments/service_point/switchServicePoint';
+import SwitchServicePoint from '../../support/fragments/servicePoint/switchServicePoint';
 import CheckInActions from '../../support/fragments/check-in-actions/checkInActions';
-import ServicePoints from '../../support/fragments/settings/tenant/servicePoints';
+import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
+import ServicePoint from '../../support/fragments/servicePoint/servicePoint';
 import institutions from '../../support/fragments/settings/tenant/institutions';
 import campuses from '../../support/fragments/settings/tenant/campuses';
 import libraries from '../../support/fragments/settings/tenant/libraries';
-import UsersEditPage from '../../support/fragments/users/usersEditPage';
+import UserEdit from '../../support/fragments/users/userEdit';
 
 // TODO: We need to move all api methods to fragments. https://issues.folio.org/browse/FAT-1624
 // When bug(https://issues.folio.org/browse/FAT-1637) will be fixed check full run test!!!
@@ -31,16 +32,16 @@ describe('Check In - Actions ', () => {
       NewInctanceHoldingsItem.createItemWithSameParams(location.id);
       NewUser.createUserWithSameParams().then(userProperties => {
         SwitchServicePoint.addServicePointPermissions(userProperties.userName);
-        SwitchServicePoint.logOutAndLogIn(userProperties);
+        SwitchServicePoint.logOutAndLogIn(userProperties.userName, userProperties.password);
       });
     });
   });
 
   after('Delete New Service point, Item and User', () => {
-    SwitchServicePoint.logOutAndLogInByDiku();
-    UsersEditPage.changeServicePointPreference();
+    SwitchServicePoint.logOutAndLogIn();
+    UserEdit.changeServicePointPreference();
     NewInctanceHoldingsItem.deleteItemWithSameParams();
-    NewServicePoint.deleteServicePointViaApi();
+    ServicePoint.deleteViaApi();
     NewUser.deleteUserWithSameParams();
   });
 
