@@ -45,9 +45,9 @@ describe('bulk-edit: in-app file uploading', () => {
 
   after('Delete all data', () => {
     users.deleteViaApi(user.userId);
-    InventoryInstances.deleteInstanceViaApi(item.itemBarcode);
+    // InventoryInstances.deleteInstanceViaApi(item.itemBarcode);
     FileManager.deleteFile(`cypress/fixtures/${invalidItemBarcodesFileName}`);
-    FileManager.deleteFile(`cypress/fixtures/${validItemBarcodesFileName}`);
+    // FileManager.deleteFile(`cypress/fixtures/${validItemBarcodesFileName}`);
   });
 
   it('C350905 Negative uploading file with identifiers -- In app approach', { tags: [testTypes.smoke, devTeams.firebird, testTypes.broken] }, () => {
@@ -58,12 +58,13 @@ describe('bulk-edit: in-app file uploading', () => {
     InteractorsTools.checkCalloutMessage('Fail to upload file', calloutTypes.error);
     InteractorsTools.closeCalloutMessage();
 
+    const invalidFileWarning = 'Invalid file';
     // try to upload another extension
     BulkEditSearchPane.uploadFile('example.json');
-    BulkEditSearchPane.verifyModalName('Invalid file');
+    BulkEditSearchPane.verifyModalName(invalidFileWarning);
 
-    // bug UIBULKED-88
     BulkEditSearchPane.uploadFile(['empty.csv', 'example.json']);
+    BulkEditSearchPane.verifyModalName(invalidFileWarning);
   });
 
   it('C353232 Verify error accordion during matching (In app approach)', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
@@ -122,6 +123,19 @@ describe('bulk-edit: in-app file uploading', () => {
     });
   });
 
+  it('C357053 Negative: Verify enable type ahead in location look-up', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
+    BulkEditSearchPane.selectRecordIdentifier('Item barcode');
+
+    BulkEditSearchPane.uploadFile(validItemBarcodesFileName);
+    BulkEditSearchPane.waitFileUploading();
+
+    BulkEditActions.openActions();
+    BulkEditActions.openStartBulkEditForm();
+    BulkEditActions.fillTemporaryLocationFilter(`test_location_${getRandomPostfix()}`);
+    BulkEditActions.verifyNoMatchingOptionsForLocationFilter();
+  });
+
+  // Bug UIBULKED-121
   it('C353230 Verify completion of the in-app bulk edit', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
     BulkEditSearchPane.selectRecordIdentifier('Item barcode');
 
