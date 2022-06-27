@@ -28,7 +28,7 @@ describe('ui-organizations: EDI convention in Organization Integration', () => {
   };
 
   beforeEach(() => {
-    cy.createTempUser([permissions.OrganizationviewCreateEdit.gui])
+    cy.createTempUser([permissions.viewEditCreateOrganization.gui])
       .then(userProperties => {
         userId = userProperties.userId;
         cy.login(userProperties.username, userProperties.password);

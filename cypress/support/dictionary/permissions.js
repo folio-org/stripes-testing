@@ -93,7 +93,7 @@ export default {
   checkinAll: { internal: '', gui: 'Check in: All permissions' },
   // Organization
   viewOrganization:{ internal:'', gui:'Organizations: View' },
-  OrganizationviewCreateEdit:{ internal:'', gui:'Organizations: View, edit, create' },
+  viewEditCreateOrganization:{ internal:'', gui:'Organizations: View, edit, create' },
   // Invoice
   viewEditDeleteInvoiceInvoiceLine:{ internal:'', gui:'Invoice: Can view, edit and delete Invoices and Invoice lines' },
 };
