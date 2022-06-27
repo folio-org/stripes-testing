@@ -366,5 +366,15 @@ export default {
     path: `orders/composite-orders/${id}`,
   }),
 
+  getOrdersApi: (searchParams) => {
+    return cy
+      .okapiRequest({
+        path: 'orders/composite-orders',
+        searchParams
+      })
+      .then(({ body }) => {
+        return body.purchaseOrders;
+      });
+  },
 };
 

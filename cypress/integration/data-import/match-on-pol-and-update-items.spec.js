@@ -13,6 +13,7 @@ import NewMappingProfile from '../../support/fragments/data_import/mapping_profi
 import ActionProfiles from '../../support/fragments/data_import/action_profiles/actionProfiles';
 import NewJobProfile from '../../support/fragments/data_import/job_profiles/newJobProfile';
 import SettingsMenu from '../../support/fragments/settingsMenu';
+import Users from '../../support/fragments/users/users';
 
 describe('ui-users:', () => {
   const firstTitle = 'Sport and sociology / Dominic Malcolm.';
@@ -97,25 +98,45 @@ describe('ui-users:', () => {
       });
   });
 
+  /* afterEach(() => {
+    cy.getInstance({ limit: 1, expandAll: true, query: `"items.barcode"=="${itemBarcode}"` })
+      .then((instance) => {
+        cy.deleteItem(instance.items[0].id);
+        cy.deleteHoldingRecord(instance.holdings[0].id);
+        cy.deleteInstanceApi(instance.id);
+      });
+    orderNumbers.forEach(number => {
+      Orders.getOrdersApi({ limit: 1, query: `"poNumber"=="${number}"` })
+        .then(order => {
+          console.log(order);
+          cy.deleteOrderApi(order[0].id);
+        });
+    });
+    Users.deleteViaApi(user.userId);
+  }); */
+
   it('C350590 Match on POL and update related Instance, Holdings, Item', { tags: [TestTypes.smoke] }, () => {
     const collectionOfProfiles = [
       {
         mappingProfile: { typeValue: NewMappingProfile.folioRecordTypeValue.instance,
           name: mappingProfileNameForInstance },
         actionProfile: { typeValue: NewActionProfile.folioRecordTypeValue.instance,
-          name: actionProfileNameForInstance }
+          name: actionProfileNameForInstance,
+          action: 'Update (all record types except Orders)' }
       },
       {
         mappingProfile: { typeValue: NewMappingProfile.folioRecordTypeValue.holdings,
           name: mappingProfileNameForHoldings },
         actionProfile: { typeValue: NewActionProfile.folioRecordTypeValue.holdings,
-          name: actionProfileNameForHoldings }
+          name: actionProfileNameForHoldings,
+          action: 'Update (all record types except Orders)' }
       },
       {
         mappingProfile: { typeValue: NewMappingProfile.folioRecordTypeValue.item,
           name: mappingProfileNameForItem },
         actionProfile: { typeValue: NewActionProfile.folioRecordTypeValue.item,
-          name: actionProfileNameForItem }
+          name: actionProfileNameForItem,
+          action: 'Update (all record types except Orders)' }
       }
     ];
 
@@ -125,7 +146,8 @@ describe('ui-users:', () => {
 
     collectionOfProfiles.forEach(profile => {
       cy.visit(SettingsMenu.mappingProfilePath);
-      FieldMappingProfiles.createMappingProfile(profile.mappingProfile);
+      // instance correct
+      FieldMappingProfiles.createMappingProfileForMatch(profile.mappingProfile);
       FieldMappingProfiles.checkMappingProfilePresented(profile.mappingProfile.name);
       cy.visit(SettingsMenu.actionProfilePath);
       ActionProfiles.createActionProfile(profile.actionProfile, profile.mappingProfile.name);
