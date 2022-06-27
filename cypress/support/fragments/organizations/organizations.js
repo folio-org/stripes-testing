@@ -1,4 +1,5 @@
-import { Button, TextField, Select, KeyValue, Accordion, Pane, Checkbox, MultiColumnList, MultiColumnListCell, SearchField, MultiColumnListRow, SelectionOption } from '../../../../interactors';
+import { Button, TextField, Select, KeyValue, Accordion, Pane, Checkbox, MultiColumnList, MultiColumnListCell, SearchField, MultiColumnListRow, SelectionOption, Section } from '../../../../interactors';
+import getRandomPostfix from '../../utils/stringTools';
 
 const buttonNew = Button('New');
 const saveAndClose = Button('Save & close');
@@ -8,6 +9,15 @@ const organizationsList = MultiColumnList({ id: 'organizations-list' });
 const blueColor = 'rgba(0, 0, 0, 0)';
 const summarySection = Accordion({ id: summaryAccordionId });
 const searchInput = SearchField({ id: 'input-record-search' });
+const integrationName = `IntegrationName${getRandomPostfix()}`;
+const vendorEDICode = `${getRandomPostfix()}`;
+const vendorEDICodeEdited = `${getRandomPostfix()}`;
+const libraryEDICode = `${getRandomPostfix()}`;
+const libraryEDICodeEdited = `${getRandomPostfix()}`;
+const serverAddress = 'ftp://ftp.ci.folio.org';
+const FTPport = '22';
+const ediSection = Section({ id: 'edi' });
+const ftpSection = Section({ id: 'ftp' });
 
 export default {
   createOrganizationViaUi: (organization) => {
@@ -39,6 +49,46 @@ export default {
     cy.do(organizationsList
       .find(MultiColumnListCell({ content: organization.name }))
       .click());
+  },
+
+  addIntegration: () => {
+    cy.do([
+      Button({ id: 'accordion-toggle-button-integrationDetailsSection' }).click(),
+      Button({ id: 'clickable-neworganization-integration' }).click(),
+    ]);
+  },
+
+  selectIntegration: () => {
+    cy.do([
+      Button({ id: 'accordion-toggle-button-integrationDetailsSection' }).click(),
+      MultiColumnList({ id: 'list-integration-configs' }).find(MultiColumnListCell({ content: integrationName })).click(),
+    ]);
+  },
+
+  fillIntegrationInformation: () => {
+    cy.do([
+      Section({ id: 'integrationInfo' }).find(TextField('Integration name*')).fillIn(integrationName),
+      ediSection.find(TextField('Vendor EDI code*')).fillIn(vendorEDICode),
+      ediSection.find(TextField('Library EDI code*')).fillIn(libraryEDICode),
+      ediSection.find(Button({ icon: 'info' })).click()
+    ]);
+    cy.get('select[name="exportTypeSpecificParameters.vendorEdiOrdersExportConfig.ediConfig.accountNoList"]').select('1234');
+    cy.do([
+      ftpSection.find(Select('EDI FTP')).choose('FTP'),
+      ftpSection.find(TextField('Server address*')).fillIn(serverAddress),
+      ftpSection.find(TextField('FTP port*')).fillIn(FTPport),
+    ]);
+    cy.do(saveAndClose.click());
+  },
+
+  editIntegrationInformation: () => {
+    cy.do([
+      Button('Actions').click(),
+      Button('Edit').click(),
+      ediSection.find(TextField('Vendor EDI code*')).fillIn(vendorEDICodeEdited),
+      ediSection.find(TextField('Library EDI code*')).fillIn(libraryEDICodeEdited),
+      saveAndClose.click(),
+    ]);
   },
 
   expectColorFromList: () => {
