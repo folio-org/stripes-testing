@@ -31,6 +31,8 @@ const inventorySelect = Select({ id: 'input-inventory-search-qindex' });
 const inventorySearch = TextInput({ id: 'input-inventory-search' });
 const browseContributorsOption = Option('Browse contributors');
 const browseButtor = Button('Browse');
+const row0 = MultiColumnListRow({ index: 0 });
+const row1 = MultiColumnListRow({ index: 1 });
 
 export default {
   defaultInstanceAWithContributor,
@@ -38,7 +40,6 @@ export default {
 
   select() {
     // cypress can't draw selected option without wait
-    // eslint-disable-next-line cypress/no-unnecessary-waiting
     cy.wait(1000);
     cy.do(Select('Search field index').choose('Browse contributors'));
   },
@@ -80,13 +81,12 @@ export default {
     ]);
   },
 
-  checkExactSearchResult(contributor) {
+  checkSearchResultsTable() {
     cy.do([
       MultiColumnListHeader({ id: 'list-column-contributor' }).has({ content: 'Contributor' }),
       MultiColumnListHeader({ id: 'list-column-contributortype' }).has({ content: 'Type' }),
       MultiColumnListHeader({ id: 'list-column-relatorterm' }).has({ content: 'Relator term' }),
       MultiColumnListHeader({ id: 'list-column-numberoftitles' }).has({ content: 'Number of titles' }),
-      MultiColumnListCell(contributor.name).has({ innerHTML: `<strong>${contributor.name}</strong>` }),
     ]);
     cy.expect([
       Pane({ id: 'pane-results' }).find(MultiColumnListHeader()).exists(),
@@ -95,10 +95,19 @@ export default {
     ]);
   },
 
-  checkInstanceOrder(contributorA, contributorZ) {
+  checkNonExactSearchResult(contributorA, contributorZ) {
     cy.do([
-      MultiColumnListRow({ index: 0 }).has({ content: `${contributorA.name}${contributorA.contributorNameType}1` }),
-      MultiColumnListRow({ index: 1 }).has({ content:  `${contributorZ.name}${contributorZ.contributorNameType}1` }),
+      row0.has({ content: ' __A_test_contributor_ would be here' }),
+      row1.has({ content: `${contributorA.name}${contributorA.contributorNameType}1` }),
+      MultiColumnListRow({ index: 2 }).has({ content:  `${contributorZ.name}${contributorZ.contributorNameType}1` }),
+    ]);
+  },
+
+  checkExactSearchResult(contributorA, contributorZ) {
+    cy.do([
+      MultiColumnListCell(contributorA.name).has({ innerHTML: `<strong>${contributorA.name}</strong>` }),
+      row0.has({ content: `${contributorA.name}${contributorA.contributorNameType}1` }),
+      row1.has({ content:  `${contributorZ.name}${contributorZ.contributorNameType}1` }),
     ]);
   },
 
@@ -120,6 +129,10 @@ export default {
       paneIntanceDetails.find(MultiColumnListCell(instance.contributors[0].contributorTypeText)).exists(),
       paneIntanceDetails.find(MultiColumnListCell(instance.contributors[0].name)).exists(),
     ]);
+  },
+
+  resetAllInSearchPane() {
+    cy.do(Button('Reset all').click());
   },
 
   getContributorNameTypes() {

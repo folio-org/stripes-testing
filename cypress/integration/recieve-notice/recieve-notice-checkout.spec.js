@@ -20,6 +20,7 @@ import InventoryHoldings from '../../support/fragments/inventory/holdings/invent
 import Users from '../../support/fragments/users/users';
 import MultipieceCheckOut from '../../support/fragments/checkout/modals/multipieceCheckOut';
 import UserEdit from '../../support/fragments/users/userEdit';
+import ServicePoints from '../../support/fragments/settings/tenant/servicePoints';
 
 // TODO Add email notice check after checktout: https://issues.folio.org/browse/FAT-1854
 describe('Recieving notice: Checkout', () => {
@@ -32,10 +33,7 @@ describe('Recieving notice: Checkout', () => {
     userBarcode: userData.barcode,
     itemBarcode: ITEM_BARCODE,
     objectType1: NOTICE_CATEGORIES.loan.name,
-    objectType2: 'Notice',
     circAction1: 'Checked out',
-    circAction2: 'Send',
-    circAction3: 'Checked in',
     // TODO: add check for date with format <C6/8/2022, 6:46 AM>
     servicePoint: 'Online',
     source: 'ADMINISTRATOR, DIKU',
@@ -66,7 +64,7 @@ describe('Recieving notice: Checkout', () => {
         });
       });
 
-    cy.getServicePointsApi({ limit: 1, query: 'pickupLocation=="true"' })
+    ServicePoints.getServicePointsApi({ limit: 1, query: 'pickupLocation=="true"' })
       .then((servicePoints) => {
         UserEdit.addServicePointViaApi(servicePoints[0].id, userData.id).then((points) => {
           testData.userServicePoint = points.body.defaultServicePointId;
@@ -173,12 +171,12 @@ describe('Recieving notice: Checkout', () => {
       CheckOutActions.checkOutItem(ITEM_BARCODE);
       MultipieceCheckOut.confirmMultipleCheckOut(ITEM_BARCODE);
       CheckOutActions.checkUserInfo(userData);
-      CheckOutActions.checkItemInfo(ITEM_BARCODE, testData.instanceTitle, testData.loanNoticeName);
+      CheckOutActions.checkItemInfo(ITEM_BARCODE, testData.instanceTitle);
       CheckOutActions.endSession();
 
       cy.visit(topMenu.circulationLogPath);
       SearchPane.searchByItemBarcode(ITEM_BARCODE);
       SearchPane.verifyResultCells();
-      SearchPane.checkResultSearch(searchResultsData, 2);
+      SearchPane.checkResultSearch(searchResultsData, 1);
     });
 });
