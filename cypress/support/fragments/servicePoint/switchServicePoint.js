@@ -1,4 +1,4 @@
-import NewServicePoint from './newServicePoint';
+import NewServicePoint from '../settings/tenant/servicePoints/newServicePoint';
 import { Dropdown, Button } from '../../../../interactors';
 import TopMenu from '../topMenu';
 import permissions from '../../dictionary/permissions';
@@ -16,7 +16,7 @@ export default {
     UserEdit.saveAndClose();
   },
 
-  logOutAndLogIn: ({ userName, password }) => {
+  logOutAndLogIn: (userName, password) => {
     cy.do([
       Dropdown('My profile').open(),
       Button('Log out').click(),

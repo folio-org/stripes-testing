@@ -9,6 +9,7 @@ import getRandomPostfix from '../../support/utils/stringTools';
 import InventoryHoldings from '../../support/fragments/inventory/holdings/inventoryHoldings';
 import devTeams from '../../support/dictionary/devTeams';
 import users from '../../support/fragments/users/users';
+import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
 
 const ITEM_BARCODE = `123${getRandomPostfix()}`;
 let userId = '';
@@ -31,7 +32,7 @@ describe('ui-inventory: location', () => {
             cy.getHoldingTypes({ limit: 1 });
             source = InventoryHoldings.getHoldingSources({ limit: 1 });
             cy.getInstanceTypes({ limit: 1 });
-            cy.getServicePointsApi({ limit: 1, query: 'pickupLocation=="true"' });
+            ServicePoints.getViaApi({ limit: 1, query: 'pickupLocation=="true"' });
             cy.getUsers({
               limit: 1,
               query: `"personal.lastName"="${userProperties.username}" and "active"="true"`

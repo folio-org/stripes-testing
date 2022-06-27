@@ -1,4 +1,4 @@
-import servicePoints from '../settings/tenant/servicePoints';
+import ServicePoints from '../settings/tenant/servicePoints/servicePoints';
 import paymentMethods from '../settings/users/paymentMethods';
 import UserEdit from './userEdit';
 
@@ -14,7 +14,7 @@ export default {
     }).then(response => {
       const accountId = response.body.accounts[0]?.id;
       paymentMethods.createViaApi(ownerId).then(paymentMethodProperties => {
-        servicePoints.getServicePointsApi({ limit: 1, query: 'pickupLocation=="true"' }).then(requestedServicePoints => {
+        ServicePoints.getViaApi({ limit: 1, query: 'pickupLocation=="true"' }).then(requestedServicePoints => {
           const servicePointId = requestedServicePoints[0].id;
           UserEdit.addServicePointViaApi(servicePointId, userId).then(() => {
             cy.okapiRequest({
