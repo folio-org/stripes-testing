@@ -14,7 +14,7 @@ let userWithCsvViewPermission;
 let userWithInAppViewPermission;
 let userWithCsvPermissions;
 
-describe('ui-users: BULK EDIT permissions', () => {
+describe('bulk-edit: permissions', () => {
   before('create user', () => {
     cy.createTempUser([
       permissions.uiUsersEditProfile.gui,
@@ -78,7 +78,8 @@ describe('ui-users: BULK EDIT permissions', () => {
     cy.login(userWithCsvPermissions.username, userWithCsvPermissions.password);
     cy.visit(TopMenu.bulkEditPath);
 
+    BulkEditActions.openActions();
     BulkEditActions.openStartBulkEditForm();
-    BulkEditActions.verifyLabel('Drop to continue');
+    BulkEditActions.verifyLabel('Upload CSV file with edited records');
   });
 });
