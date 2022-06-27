@@ -86,11 +86,11 @@ describe('ui-circulation-log', () => {
   });
 
   after('Delete all data', () => {
-    cy.wrap(CheckinActions.createItemCheckinApi({
+    CheckinActions.createItemCheckinApi({
       itemBarcode: ITEM_BARCODE,
       servicePointId,
       checkInDate: new Date().toISOString(),
-    }))
+    })
       .then(() => {
         cy.getInstance({ limit: 1, expandAll: true, query: `"items.barcode"=="${ITEM_BARCODE}"` })
           .then((instance) => {
