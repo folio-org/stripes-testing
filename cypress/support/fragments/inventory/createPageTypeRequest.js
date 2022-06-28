@@ -34,7 +34,7 @@ export default {
     cy.do([
       TextField({ name: 'query' }).fillIn(username),
       Button('Search').click(),
-      MultiColumnListCell({ row: 0, column: username }).click(),
+      MultiColumnListCell({ row: 0, content: username }).click(),
     ]);
   },
 
@@ -121,7 +121,7 @@ export default {
   },
 
   clickRequesterBarcode(username) {
-    cy.do(MultiColumnListCell({ row: 0, column: including(username) }).click());
+    cy.do(MultiColumnListCell({ row: 0, content: including(username) }).click());
     cy.do(Section({ id: 'requester-info' }).find(Link(including(username))).click());
     this.verifyUserRecordPage(username);
   },

@@ -263,7 +263,7 @@ export default {
   },
 
   selectFirstRequest(title) {
-    cy.do(Pane({ title: 'Requests' }).find(MultiColumnListCell({ row: 0, column: title })).click());
+    cy.do(Pane({ title: 'Requests' }).find(MultiColumnListCell({ row: 0, content: title })).click());
   },
 
   openTagsPane() {
@@ -329,7 +329,7 @@ export default {
   },
 
   verifyCreatedRequest(title) {
-    cy.expect(Pane({ title: 'Requests' }).find(MultiColumnListCell({ row: 0, column: title })).exists());
+    cy.expect(Pane({ title: 'Requests' }).find(MultiColumnListCell({ row: 0, content: title })).exists());
   },
 
   verifyNoResultMessage(noResultMessage) {
