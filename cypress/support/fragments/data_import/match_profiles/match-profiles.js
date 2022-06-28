@@ -75,6 +75,37 @@ const fillMatchProfileForm = ({
   }
 };
 
+const fillMatchProfileFormForPol = ({
+  profileName,
+  incomingRecordFields,
+  matchCriterion,
+  existingRecordType
+}) => {
+  cy.wait(2000);
+  cy.do(TextField('Name*').fillIn(profileName));
+  // wait for data to be loaded
+  cy.intercept('/_/jsonSchemas?path=raml-util/schemas/metadata.schema').as('getJson');
+  cy.wait('@getJson', getLongDelay());
+  // TODO think about how to use interactor
+  cy.get(`[data-id="${existingRecordType}"]`).last().click();
+  fillIncomingRecordFields(incomingRecordFields);
+  cy.do(Select('Match criterion').choose(matchCriterion));
+  cy.wait(1500);
+  if (existingRecordType === 'INSTANCE') { 
+    cy.do(Button({ id:'criterion-value-type' }).click());
+    cy.expect(SelectionList({ id: 'sl-container-criterion-value-type' }).exists());
+    cy.do(SelectionList({ id: 'sl-container-criterion-value-type' }).select('Acquisitions data: Purchase order line (POL)'));
+  } else if (existingRecordType === 'HOLDINGS') {
+    cy.do(Button({ id:'criterion-value-type' }).click());
+    cy.expect(SelectionList({ id: 'sl-container-criterion-value-type' }).exists());
+    cy.do(SelectionList({ id: 'sl-container-criterion-value-type' }).select('Acquisitions data: Purchase order line (POL)'));
+  } else {
+    cy.do(Button({ id:'criterion-value-type' }).click());
+    cy.expect(SelectionList({ id: 'sl-container-criterion-value-type' }).exists());
+    cy.do(SelectionList({ id: 'sl-container-criterion-value-type' }).select('Acquisitions data: Purchase order line (POL)'));
+  }
+};
+
 const deleteMatchProfile = (profileName) => {
   // get all match profiles
   cy
@@ -106,9 +137,19 @@ export default {
   fillIncomingRecordFields,
   fillExistingRecordFields,
   deleteMatchProfile,
+
   createMatchProfile(profile) {
     openNewMatchProfileForm();
     fillMatchProfileForm(profile);
+    // save profile
+    cy.do(Button('Save as profile & Close').click());
+    // wait till profile appears in profiles list
+    cy.expect(MultiColumnListCell(profile.profileName).exists());
+  },
+
+  createMatchProfileForPol(profile) {
+    openNewMatchProfileForm();
+    fillMatchProfileFormForPol(profile);
     // save profile
     cy.do(Button('Save as profile & Close').click());
     // wait till profile appears in profiles list

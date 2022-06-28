@@ -95,12 +95,12 @@ describe('ui-users:', () => {
       })
       .then(() => {
         cy.login(user.username, user.password);
-        orderNumbers.forEach(number => {
+        /*orderNumbers.forEach(number => {
           cy.visit(TopMenu.ordersPath);
           Orders.searchByParameter('PO number', number);
           Helper.selectFromResultsList();
           Orders.openOrder();
-        });
+        });*/
       });
   });
 
@@ -122,7 +122,7 @@ describe('ui-users:', () => {
   }); */
 
   it('C350590 Match on POL and update related Instance, Holdings, Item', { tags: [TestTypes.smoke] }, () => {
-    /*const collectionOfProfiles = [
+    const collectionOfProfiles = [
       {
         mappingProfile: { typeValue: NewMappingProfile.folioRecordTypeValue.instance,
           name: mappingProfileNameForInstance },
@@ -144,7 +144,7 @@ describe('ui-users:', () => {
           name: actionProfileNameForItem,
           action: 'Update (all record types except Orders)' }
       }
-    ];*/
+    ];
 
     // create Match profile
     const collectionOfMatchProfiles = [
@@ -155,7 +155,6 @@ describe('ui-users:', () => {
             subfield:'a'
           },
           matchCriterion: 'Exactly matches',
-          existingInstanceRecordField: 'Acquisitions data: Purchase order line (POL)',
           existingRecordType: 'INSTANCE' }
       },
       {
@@ -165,7 +164,6 @@ describe('ui-users:', () => {
             subfield: 'a'
           },
           matchCriterion: 'Exactly matches',
-          existingInstanceRecordField: 'Acquisitions data: Purchase order line (POL)',
           existingRecordType: 'HOLDINGS' }
       },
       {
@@ -176,13 +174,12 @@ describe('ui-users:', () => {
             subfield: 'a'
           },
           matchCriterion: 'Exactly matches',
-          existingInstanceRecordField: 'Acquisitions data: Purchase order line (POL)',
           existingRecordType: 'ITEM'
         }
       }
     ];
 
-    /*const specialJobProfile = { ...NewJobProfile.defaultJobProfile,
+    const specialJobProfile = { ...NewJobProfile.defaultJobProfile,
       profileName: jobProfileName,
       acceptedType: NewJobProfile.acceptedDataType.marc };
 
@@ -194,18 +191,18 @@ describe('ui-users:', () => {
       cy.visit(SettingsMenu.actionProfilePath);
       ActionProfiles.createActionProfile(profile.actionProfile, profile.mappingProfile.name);
       ActionProfiles.checkActionProfilePresented(profile.actionProfile.name);
-    });*/
+    });
 
     cy.visit(SettingsMenu.matchProfilePath);
     collectionOfMatchProfiles.forEach(profile => {
-      MatchProfiles.createMatchProfile(profile.matchProfile);
+      MatchProfiles.createMatchProfileForPol(profile.matchProfile);
     });
 
-    /*cy.visit(SettingsMenu.jobProfilePath);
+    cy.visit(SettingsMenu.jobProfilePath);
     JobProfiles.createJobProfileWithLinkingProfilesForUpdate(jobProfileName);
     NewJobProfile.linkMatchAndActionProfilesForInstance(actionProfileNameForInstance, matchProfileNameForInstance, 0);
     NewJobProfile.linkMatchAndActionProfilesForHoldings(actionProfileNameForHoldings, matchProfileNameForHoldings, 2);
     NewJobProfile.linkMatchAndActionProfilesForItem(actionProfileNameForItem, matchProfileNameForItem, 4);
-    NewJobProfile.saveAndClose();*/
+    NewJobProfile.saveAndClose();
   });
 });
