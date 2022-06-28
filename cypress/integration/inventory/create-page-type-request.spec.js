@@ -6,6 +6,7 @@ import Requests from '../../support/fragments/requests/requests';
 import MarkItemAsMissing from '../../support/fragments/inventory/markItemAsMissing';
 import Users from '../../support/fragments/users/users';
 import UserEdit from '../../support/fragments/users/userEdit';
+import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
 
 describe('ui-inventory: Create page type request', () => {
   let user;
@@ -18,9 +19,10 @@ describe('ui-inventory: Create page type request', () => {
   beforeEach(() => {
     cy.getAdminToken()
       .then(() => {
-        cy.getServicePointsApi({ limit: 1, query: 'pickupLocation=="true"' }).then(servicePoints => {
-          defaultServicePointId = servicePoints[0].id;
-        });
+        ServicePoints.getViaApi({ limit: 1, query: 'pickupLocation=="true"' })
+          .then((res) => {
+            defaultServicePointId = res[0].id;
+          });
       })
       .then(() => {
         cy.createTempUser([

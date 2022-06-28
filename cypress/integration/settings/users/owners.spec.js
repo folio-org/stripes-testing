@@ -5,6 +5,7 @@ import Permissions from '../../../support/dictionary/permissions';
 import getRandomPostfix from '../../../support/utils/stringTools';
 import Features from '../../../support/dictionary/features';
 import users from '../../../support/fragments/users/users';
+import ServicePoint from '../../../support/fragments/servicePoint/servicePoint';
 
 describe('ui-users-settings: Owners', () => {
   describe('Owner creation', () => {
@@ -26,8 +27,8 @@ describe('ui-users-settings: Owners', () => {
     });
 
     after(() => {
-      servicePoints.forEach(servicePoint => {
-        cy.deleteServicePoint(servicePoint.id);
+      servicePoints.forEach(servicePointId => {
+        ServicePoint.deleteViaApi(servicePointId.id);
       });
 
       ownerNames.forEach(ownerName => {

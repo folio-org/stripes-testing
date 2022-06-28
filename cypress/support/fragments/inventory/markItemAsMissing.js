@@ -11,6 +11,7 @@ import {
 import getRandomPostfix from '../../utils/stringTools';
 import users from '../users/users';
 import InventoryHoldings from './holdings/inventoryHoldings';
+import ServicePoints from '../settings/tenant/servicePoints/servicePoints';
 
 const actionsButton = Button('Actions');
 const markAsMissingButton = Button('Mark as missing');
@@ -146,7 +147,7 @@ export default {
     };
     return cy.wrap(Promise.resolve(true))
       .then(() => {
-        cy.getServicePointsApi({ limit: 1, query: 'pickupLocation=="true"' }).then(servicePoints => {
+        ServicePoints.getViaApi({ limit: 1, query: 'pickupLocation=="true"' }).then(servicePoints => {
           requestData.pickupServicePointId = servicePoints[0].id;
         });
         cy.getUserGroups({ limit: 1 }).then(patronGroup => {
@@ -171,7 +172,7 @@ export default {
     cy.do([
       TextField({ id: 'input-inventory-search' }).fillIn(instanceTitle),
       Button('Search').click(),
-      MultiColumnListCell({ row: 0, column: instanceTitle }).click(),
+      MultiColumnListCell({ row: 0, content: instanceTitle }).click(),
     ]);
     cy.expect(Section({ id: 'pane-instancedetails' }).exists());
   },

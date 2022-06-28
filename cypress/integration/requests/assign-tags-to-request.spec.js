@@ -4,6 +4,7 @@ import TopMenu from '../../support/fragments/topMenu';
 import Requests from '../../support/fragments/requests/requests';
 import NewRequest from '../../support/fragments/requests/newRequest';
 import Users from '../../support/fragments/users/users';
+import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
 
 describe('Assign Tags to Request', () => {
   const barcode = uuid();
@@ -25,7 +26,7 @@ describe('Assign Tags to Request', () => {
   });
 
   beforeEach(() => {
-    cy.getServicePointsApi({ limit: 1, query: 'pickupLocation=="true"' });
+    ServicePoints.getViaApi({ limit: 1, query: 'pickupLocation=="true"' });
     cy.getUserGroups({ limit: 1 }).then((patronGroup) => {
       const userData = {
         active: true,
