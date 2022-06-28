@@ -14,6 +14,8 @@ import ActionProfiles from '../../support/fragments/data_import/action_profiles/
 import NewJobProfile from '../../support/fragments/data_import/job_profiles/newJobProfile';
 import SettingsMenu from '../../support/fragments/settingsMenu';
 import Users from '../../support/fragments/users/users';
+import MatchProfiles from '../../support/fragments/data_import/match_profiles/match-profiles';
+import JobProfiles from '../../support/fragments/data_import/job_profiles/jobProfiles';
 
 describe('ui-users:', () => {
   const firstTitle = 'Sport and sociology / Dominic Malcolm.';
@@ -32,9 +34,12 @@ describe('ui-users:', () => {
 
   // unique profile names
   const jobProfileName = `autotestJobProf${getRandomPostfix()}`;
-  const actionProfileNameForInstance = `autotestActionInstance${getRandomPostfix()}`;
-  const actionProfileNameForHoldings = `autotestActionHoldings${getRandomPostfix()}`;
-  const actionProfileNameForItem = `autotestActionItem${getRandomPostfix()}`;
+  const matchProfileNameForInstance = `C350590 935 $a POL to Instance POL ${Helper.getRandomBarcode()}`;
+  const matchProfileNameForHoldings = `C350590 935 $a POL to Holdings POL ${Helper.getRandomBarcode()}`;
+  const matchProfileNameForItem = `C350590 935 $a POL to Item POL ${Helper.getRandomBarcode()}`;
+  const actionProfileNameForInstance = `C350590 Update Instance by POL match ${Helper.getRandomBarcode()}`;
+  const actionProfileNameForHoldings = `C350590 Update Holdings by POL match ${Helper.getRandomBarcode()}`;
+  const actionProfileNameForItem = `C350590 Update Item by POL match ${getRandomPostfix()}`;
   const mappingProfileNameForInstance = `C350590 Update Instance by POL match ${Helper.getRandomBarcode()}`;
   const mappingProfileNameForHoldings = `C350590 Update Holdings by POL match ${Helper.getRandomBarcode()}`;
   const mappingProfileNameForItem = `C350590 Update Item by POL match ${getRandomPostfix()}`;
@@ -64,14 +69,15 @@ describe('ui-users:', () => {
           });
       })
       .then(() => {
-        PoNumber.getViaApi({ query: 'configName="orderNumber"' })
+        /*PoNumber.getViaApi({ query: 'configName="orderNumber" and module="ORDERS"' })
           .then((res) => {
+            console.log(res);
             PoNumber.editViaApi(res[0].id);
           });
         Orders.createOrderWithOrderLineViaApi(NewOrder.getDefaultOrder(vendorId, firstOrderNumber),
           BasicOrderLine.getDefaultOrderLine(itemQuantity, firstTitle, locationId, acquisitionMethodId, price, price, [{ productId: '9782266111560', productIdType:productIdTypeId }], materialTypeId));
         Orders.createOrderWithOrderLineViaApi(NewOrder.getDefaultOrder(vendorId, secondOrderNumber),
-          BasicOrderLine.getDefaultOrderLine(itemQuantity, secondTitle, locationId, acquisitionMethodId, price, price, [{ productId: '9782266111560', productIdType:productIdTypeId }], materialTypeId));
+          BasicOrderLine.getDefaultOrderLine(itemQuantity, secondTitle, locationId, acquisitionMethodId, price, price, [{ productId: '9782266111560', productIdType:productIdTypeId }], materialTypeId));*/
       });
 
     cy.createTempUser([
@@ -116,7 +122,7 @@ describe('ui-users:', () => {
   }); */
 
   it('C350590 Match on POL and update related Instance, Holdings, Item', { tags: [TestTypes.smoke] }, () => {
-    const collectionOfProfiles = [
+    /*const collectionOfProfiles = [
       {
         mappingProfile: { typeValue: NewMappingProfile.folioRecordTypeValue.instance,
           name: mappingProfileNameForInstance },
@@ -138,9 +144,45 @@ describe('ui-users:', () => {
           name: actionProfileNameForItem,
           action: 'Update (all record types except Orders)' }
       }
+    ];*/
+
+    // create Match profile
+    const collectionOfMatchProfiles = [
+      {
+        matchProfile: { profileName: matchProfileNameForInstance,
+          incomingRecordFields: {
+            field: '935',
+            subfield:'a'
+          },
+          matchCriterion: 'Exactly matches',
+          existingInstanceRecordField: 'Acquisitions data: Purchase order line (POL)',
+          existingRecordType: 'INSTANCE' }
+      },
+      {
+        matchProfile: { profileName: matchProfileNameForHoldings,
+          incomingRecordFields: {
+            field: '935',
+            subfield: 'a'
+          },
+          matchCriterion: 'Exactly matches',
+          existingInstanceRecordField: 'Acquisitions data: Purchase order line (POL)',
+          existingRecordType: 'HOLDINGS' }
+      },
+      {
+        matchProfile: {
+          profileName: matchProfileNameForItem,
+          incomingRecordFields: {
+            field: '935',
+            subfield: 'a'
+          },
+          matchCriterion: 'Exactly matches',
+          existingInstanceRecordField: 'Acquisitions data: Purchase order line (POL)',
+          existingRecordType: 'ITEM'
+        }
+      }
     ];
 
-    const specialJobProfile = { ...NewJobProfile.defaultJobProfile,
+    /*const specialJobProfile = { ...NewJobProfile.defaultJobProfile,
       profileName: jobProfileName,
       acceptedType: NewJobProfile.acceptedDataType.marc };
 
@@ -152,6 +194,18 @@ describe('ui-users:', () => {
       cy.visit(SettingsMenu.actionProfilePath);
       ActionProfiles.createActionProfile(profile.actionProfile, profile.mappingProfile.name);
       ActionProfiles.checkActionProfilePresented(profile.actionProfile.name);
+    });*/
+
+    cy.visit(SettingsMenu.matchProfilePath);
+    collectionOfMatchProfiles.forEach(profile => {
+      MatchProfiles.createMatchProfile(profile.matchProfile);
     });
+
+    /*cy.visit(SettingsMenu.jobProfilePath);
+    JobProfiles.createJobProfileWithLinkingProfilesForUpdate(jobProfileName);
+    NewJobProfile.linkMatchAndActionProfilesForInstance(actionProfileNameForInstance, matchProfileNameForInstance, 0);
+    NewJobProfile.linkMatchAndActionProfilesForHoldings(actionProfileNameForHoldings, matchProfileNameForHoldings, 2);
+    NewJobProfile.linkMatchAndActionProfilesForItem(actionProfileNameForItem, matchProfileNameForItem, 4);
+    NewJobProfile.saveAndClose();*/
   });
 });
