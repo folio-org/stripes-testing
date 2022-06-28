@@ -3,6 +3,11 @@ import FileManager from '../../utils/fileManager';
 import { Modal, SelectionOption } from '../../../../interactors';
 
 const actionsBtn = Button('Actions');
+// interactor doesn't allow to pick second the same select
+function getLocationSelect() {
+  return cy.get('select').eq(2);
+}
+
 
 export default {
   openStartBulkEditForm() {
@@ -29,13 +34,22 @@ export default {
     cy.expect(Modal().find(HTML(text)).exists());
   },
 
-  replaceTemporaryLocation() {
-    // interactor doesn't allow to pick second the same select
-    cy.get('select').eq(2).select('Replace with');
+  replaceTemporaryLocation(location = 'Annex') {
+    getLocationSelect().select('Replace with');
     cy.do([
       Button('Select control\nSelect location').click(),
-      SelectionOption(including('Annex')).click(),
+      SelectionOption(including(location)).click(),
     ]);
+  },
+
+  fillTemporaryLocationFilter(location = 'Annex') {
+    getLocationSelect().select('Replace with');
+    cy.do(Button('Select control\nSelect location').click());
+    cy.get('[class^=selectionFilter-]').type(location);
+  },
+
+  verifyNoMatchingOptionsForLocationFilter() {
+    cy.expect(HTML('No matching options').exists());
   },
 
   confirmChanges() {
