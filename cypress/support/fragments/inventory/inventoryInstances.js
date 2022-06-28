@@ -129,6 +129,7 @@ export default {
             });
           });
       });
+    return instanceId;
   },
 
   deleteInstanceViaApi(itemBarcode) {
