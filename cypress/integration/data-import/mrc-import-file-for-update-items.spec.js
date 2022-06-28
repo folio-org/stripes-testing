@@ -242,7 +242,6 @@ describe('ui-data-import: MARC file upload with the update of instance, holding,
     DataImport.checkUploadState();
   });
 
-  // TODO: https://issues.folio.org/browse/MODDATAIMP-672
   it('C343335 MARC file upload with the update of instance, holding, and items', { tags: [TestTypes.smoke] }, () => {
     // upload a marc file for creating of the new instance, holding and item
     cy.visit(TopMenu.dataImportPath);

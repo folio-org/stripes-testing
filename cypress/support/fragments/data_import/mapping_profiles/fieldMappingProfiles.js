@@ -13,8 +13,8 @@ const openNewMappingProfileForm = () => {
   ]);
 };
 
-const closeViewModeForMappingProfile = () => {
-  cy.do(iconButton.click());
+const closeViewModeForMappingProfile = (profileName) => {
+  cy.do(Pane({ title: profileName }).find(iconButton).click());
 };
 
 const mappingProfileForDuplicate = {
@@ -72,7 +72,7 @@ export default {
   createMappingProfileForUpdate:(mappingProfile) => {
     openNewMappingProfileForm();
     newMappingProfile.fillMappingProfileForUpdate(mappingProfile);
-    closeViewModeForMappingProfile();
+    closeViewModeForMappingProfile(mappingProfile.name);
     cy.expect(actionsButton.exists());
   },
 
@@ -100,7 +100,7 @@ export default {
     cy.wait('@getTag');
     duplicateMappingProfile();
     newMappingProfile.fillMappingProfileForInvoice(mappingProfileName, organizationName);
-    closeViewModeForMappingProfile();
+    closeViewModeForMappingProfile(mappingProfileName);
     cy.expect(actionsButton.exists());
   },
 
