@@ -73,7 +73,7 @@ describe('ui-users:', () => {
           });
       })
       .then(() => {
-        /* PoNumber.getViaApi({ query: 'configName="orderNumber" and module="ORDERS"' })
+        PoNumber.getViaApi({ query: 'configName="orderNumber" and module="ORDERS"' })
           .then((res) => {
             console.log(res);
             PoNumber.editViaApi(res[0].id);
@@ -105,7 +105,7 @@ describe('ui-users:', () => {
               productIdType:productIdTypeId
             }],
             materialTypeId
-          )); */
+          ));
       });
 
     cy.createTempUser([
@@ -123,12 +123,12 @@ describe('ui-users:', () => {
       })
       .then(() => {
         cy.login(user.username, user.password);
-        /* orderNumbers.forEach(number => {
+        orderNumbers.forEach(number => {
           cy.visit(TopMenu.ordersPath);
           Orders.searchByParameter('PO number', number);
           Helper.selectFromResultsList();
           Orders.openOrder();
-        }); */
+        });
       });
   });
 
