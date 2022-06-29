@@ -11,11 +11,13 @@ import BulkEditFiles from '../../support/fragments/bulk-edit/bulk-edit-files';
 import Users from '../../support/fragments/users/users';
 
 let user;
+const itemBarcode = getRandomPostfix();
 const validHoldingUUIDsFileName = `validHoldingUUIDs_${getRandomPostfix()}.csv`;
 const resultFileName = `matchedRecords_${getRandomPostfix()}.csv`;
 const item = {
   instanceName: `testBulkEdit_${getRandomPostfix()}`,
-  itemBarcode: getRandomPostfix(),
+  itemBarcode1: itemBarcode,
+  itemBarcode2: `secondBarcode_${itemBarcode}`
 };
 
 describe('bulk-edit: in-app file uploading', () => {
@@ -30,7 +32,7 @@ describe('bulk-edit: in-app file uploading', () => {
         cy.visit(TopMenu.bulkEditPath);
 
         // Create file with valid holdings UUIDs
-        const instanceId = InventoryInstances.createInstanceViaApi(item.instanceName, item.itemBarcode);
+        const instanceId = InventoryInstances.createInstanceViaApi(item.instanceName, item.itemBarcode1);
         cy.getHoldings({ limit: 1, query: `"instanceId"="${instanceId}"` })
           .then(holdings => {
             FileManager.createFile(`cypress/fixtures/${validHoldingUUIDsFileName}`, holdings[0].id);
@@ -40,7 +42,7 @@ describe('bulk-edit: in-app file uploading', () => {
 
   after('Delete all data', () => {
     Users.deleteViaApi(user.userId);
-    InventoryInstances.deleteInstanceViaApi(item.itemBarcode);
+    InventoryInstances.deleteInstanceViaApi(item.itemBarcode1);
     FileManager.deleteFile(`cypress/fixtures/${validHoldingUUIDsFileName}`);
     FileManager.deleteFile(`cypress/downloads/${resultFileName}`);
   });
@@ -50,9 +52,9 @@ describe('bulk-edit: in-app file uploading', () => {
 
     BulkEditSearchPane.uploadFile(validHoldingUUIDsFileName);
     BulkEditSearchPane.waitFileUploading();
-    BulkEditSearchPane.verifyMatchedResults('Available');
+    BulkEditSearchPane.verifyMatchedResults(item.itemBarcode1, item.itemBarcode2);
 
     BulkEditActions.downloadMatchedResults(resultFileName);
-    BulkEditFiles.verifyMatchedResultFileContent(resultFileName, [item.itemBarcode]);
+    BulkEditFiles.verifyMatchedResultFileContent(resultFileName, [item.itemBarcode1, item.itemBarcode2]);
   });
 });

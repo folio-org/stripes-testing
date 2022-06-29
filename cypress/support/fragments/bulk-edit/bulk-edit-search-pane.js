@@ -177,14 +177,17 @@ export default {
   },
 
   verifyMatchedResults(...values) {
-    // values: array with cells content
     values.forEach(value => {
       cy.expect(resultsAccordion.find(MultiColumnListCell({ content: value })).exists());
     });
+
+    // verify items count
+    cy.get('[class^=mclEndOfListContainer-]')
+      .invoke('attr', 'data-end-of-list')
+      .should('eq', `${values.length}`);
   },
 
   verifyNonMatchedResults(...values) {
-    // values: array with cells content
     cy.expect([
       errorsAccordion.find(MultiColumnListHeader('Record identifier')).exists(),
       errorsAccordion.find(MultiColumnListHeader('Reason for error')).exists(),

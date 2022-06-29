@@ -12,6 +12,7 @@ import {
 } from '../../../../interactors';
 import InventoryHoldings from './holdings/inventoryHoldings';
 import NewInventoryInstance from './newInventoryInstance';
+import getRandomPostfix from '../../utils/stringTools';
 
 const rootSection = Section({ id: 'pane-results' });
 const inventoriesList = rootSection.find(MultiColumnList({ id: 'list-inventory' }));
@@ -108,15 +109,26 @@ export default {
             sourceId: holdingSourceId,
           }],
           items: [
-            [{
-              barcode: itemBarcode,
-              missingPieces: '3',
-              numberOfMissingPieces: '3',
-              status: { name: 'Available' },
-              permanentLoanType: { id: Cypress.env('loanTypes')[0].id },
-              materialType: { id: Cypress.env('materialTypes')[0].id },
-              itemLevelCallNumber: itemCallNumber
-            }],
+            [
+              {
+                barcode: itemBarcode,
+                missingPieces: '3',
+                numberOfMissingPieces: '3',
+                status: { name: 'Available' },
+                permanentLoanType: { id: Cypress.env('loanTypes')[0].id },
+                materialType: { id: Cypress.env('materialTypes')[0].id },
+                itemLevelCallNumber: itemCallNumber
+              },
+              {
+                barcode: 'secondBarcode_' + itemBarcode,
+                missingPieces: '3',
+                numberOfMissingPieces: '3',
+                status: { name: 'Available' },
+                permanentLoanType: { id: Cypress.env('loanTypes')[0].id },
+                materialType: { id: Cypress.env('materialTypes')[0].id },
+                itemLevelCallNumber: itemCallNumber
+              }
+            ],
           ],
         });
       })
@@ -135,7 +147,7 @@ export default {
   deleteInstanceViaApi(itemBarcode) {
     cy.getInstance({ limit: 1, expandAll: true, query: `"items.barcode"=="${itemBarcode}"` })
       .then((instance) => {
-        cy.deleteItem(instance.items[0].id);
+        instance.items.forEach((item) => cy.deleteItem(item.id));
         cy.deleteHoldingRecord(instance.holdings[0].id);
         cy.deleteInstanceApi(instance.id);
       });
