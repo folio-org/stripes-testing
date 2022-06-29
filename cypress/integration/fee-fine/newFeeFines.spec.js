@@ -12,6 +12,7 @@ import PaymentMethods from '../../support/fragments/settings/users/paymentMethod
 import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
 import UserEdit from '../../support/fragments/users/userEdit';
 import NewFeeFine from '../../support/fragments/users/newFeeFine';
+import userFeesFines from '../../support/fragments/users/userFeesFines';
 
 describe('Fee/fine management', () => {
   const testData = {};
@@ -48,14 +49,31 @@ describe('Fee/fine management', () => {
       });
     });
   });
+
   it('C455 Verify "New fee/fine" behavior when "Charge & pay now" button pressed', { tags: [TestType.smoke, Features.feeFine] }, () => {
+    const initialCheckNewFeeFineFragment = (ownerName = '') => {
+      NewFeeFine.checkInitialState(testData.userProperties, ownerName);
+      NewFeeFine.setFeeFineOwner(testData.owner.name);
+      NewFeeFine.checkFilteredOptions(testData.feeFineType.feeFineTypeName);
+    };
+
     // Scenario 1: CHARGING MANUAL FEE/FINE USING BUTTON FROM USER INFORMATION
     UsersCard.openFeeFines();
     UsersCard.startFeeFineAdding();
     NewFeeFine.waitLoading();
-    NewFeeFine.checkInitialState(testData.userProperties);
-    NewFeeFine.setFeeFineOwner(testData.owner.name);
-    NewFeeFine.checkFilteredOptions(testData.feeFineType.feeFineTypeName);
+    initialCheckNewFeeFineFragment();
+
+    // return to UsersCard
+    NewFeeFine.close();
+    UsersCard.waitLoading();
+
+    // Scenario 2: CHARGING MANUAL FEE/FINE USING BUTTON ON "FEES/FINES HISTORY"
+    UsersCard.openFeeFines();
+    UsersCard.viewAllFeesFines();
+    userFeesFines.createFeeFine();
+    // TODO: double check current expectation "Fee/fine owner” as location of current staff member with option to be changed". "Select one" is presented now
+    // initialCheckNewFeeFineFragment(testData.owner.name);
+    initialCheckNewFeeFineFragment();
   });
   after(() => {
     PaymentMethods.deleteViaApi(testData.paymentMethodId);

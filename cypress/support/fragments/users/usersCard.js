@@ -8,6 +8,7 @@ const actionsButton = rootSection.find(Button('Actions'));
 const errors = {
   patronHasBlocksInPlace:'Patron has block(s) in place'
 };
+const feesFinesAccourdion = rootSection.find(Accordion({ id : 'accountsSection' }));
 
 
 export default {
@@ -63,5 +64,6 @@ export default {
     cy.do(Button('Create fee/fine').click());
   },
   hasSaveError: (errorMessage) => cy.expect(rootSection.find(TextField({ value: errorMessage })).exists()),
-  startFeeFineAdding: () => cy.do(rootSection.find(Accordion({ id : 'accountsSection' })).find(Button('Create fee/fine')).click())
+  startFeeFineAdding: () => cy.do(feesFinesAccourdion.find(Button('Create fee/fine')).click()),
+  viewAllFeesFines:() => cy.do(feesFinesAccourdion.find(Button({ id: 'clickable-viewallaccounts' })).click()),
 };

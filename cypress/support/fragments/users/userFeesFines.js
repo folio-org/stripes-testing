@@ -1,3 +1,4 @@
+import { Button } from '../../../../interactors';
 import ServicePoints from '../settings/tenant/servicePoints/servicePoints';
 import paymentMethods from '../settings/users/paymentMethods';
 import UserEdit from './userEdit';
@@ -37,5 +38,8 @@ export default {
         });
       });
     });
+  },
+  createFeeFine: () => {
+    cy.do(Button({ id: 'open-closed-all-charge-button' }).click());
   }
 };

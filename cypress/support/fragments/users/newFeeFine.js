@@ -8,11 +8,11 @@ export default {
   waitLoading:() => {
     cy.expect(rootModal.exists());
   },
-  checkInitialState:({ lastName: userLastName, middleName: userMiddleName, firstName: userFirstName, barcode: userBarcode }) => {
+  checkInitialState:({ lastName: userLastName, middleName: userMiddleName, firstName: userFirstName, barcode: userBarcode }, ownerName = '') => {
     cy.expect(rootModal.find(Button(`${userLastName}, ${userFirstName} ${userMiddleName}`)).exists());
     console.log(userBarcode);
     cy.expect(rootModal.find(Button(userBarcode)).exists());
-    cy.expect(feefineOwnerSelect.has({ value:'' }));
+    cy.expect(feefineOwnerSelect.has({ value:ownerName }));
     cy.expect(feeFineTypeSelect.has({ value:'' }));
     cy.expect(rootModal.find(TextField({ id:'amount' })).has({ value: '' }));
     cy.expect(rootModal.find(TextField({ placeholder:'Scan or enter item barcode' })).has({ value: '' }));
@@ -24,6 +24,7 @@ export default {
   },
   checkFilteredOptions:(feefineTypeName) => {
     cy.expect(feeFineTypeSelect.find(Option(feefineTypeName)).exists());
-  }
+  },
+  close: () => cy.do(rootModal.find(Button({ id :'cancelCharge' })).click())
 };
 
