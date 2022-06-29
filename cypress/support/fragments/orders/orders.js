@@ -22,6 +22,13 @@ const buttonSubscriptionFromFilter = Button({ id: 'accordion-toggle-button-subsc
 const searchForm = SearchField({ id: 'input-record-search' });
 
 export default {
+  waitLoading() {
+    cy.expect([
+      Pane({ id: 'orders-filters-pane' }).exists(),
+      Pane({ id: 'orders-results-pane' }).exists(),
+    ]);
+  },
+
   createOrderWithOrderLineViaApi(order, orderLine) {
     cy.createOrderApi(order)
       .then((response) => {

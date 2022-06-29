@@ -219,4 +219,8 @@ export default {
   verifySearchResult(cellContent) {
     cy.expect(MultiColumnListCell({ content: cellContent }).exists());
   },
+
+  expandHoldingsSection() {
+    cy.do(Button('Holdings: Main Library >').click());
+  }
 };
