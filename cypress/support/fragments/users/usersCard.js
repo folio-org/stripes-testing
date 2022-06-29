@@ -19,6 +19,9 @@ export default {
   openLoans() {
     cy.do(Accordion({ id : 'loansSection' }).clickHeader());
   },
+  openFeeFines() {
+    cy.do(Accordion({ id : 'accountsSection' }).clickHeader());
+  },
 
   showOpenedLoans() {
     cy.do(Link({ id: 'clickable-viewcurrentloans' }).click());
@@ -59,5 +62,6 @@ export default {
     cy.do(actionsButton.click());
     cy.do(Button('Create fee/fine').click());
   },
-  hasSaveError: (errorMessage) => cy.expect(rootSection.find(TextField({ value: errorMessage })).exists())
+  hasSaveError: (errorMessage) => cy.expect(rootSection.find(TextField({ value: errorMessage })).exists()),
+  startFeeFineAdding: () => cy.do(rootSection.find(Accordion({ id : 'accountsSection' })).find(Button('Create fee/fine')).click())
 };

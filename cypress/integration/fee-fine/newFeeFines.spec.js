@@ -11,40 +11,47 @@ import UsersCard from '../../support/fragments/users/usersCard';
 import PaymentMethods from '../../support/fragments/settings/users/paymentMethods';
 import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
 import UserEdit from '../../support/fragments/users/userEdit';
+import NewFeeFine from '../../support/fragments/users/newFeeFine';
 
 describe('Fee/fine management', () => {
   const testData = {};
-  it('C455 Verify "New fee/fine" behavior when "Charge & pay now" button pressed', { tags: [TestType.smoke, Features.feeFine] }, () => {
+  beforeEach(() => {
     cy.getAdminToken();
     const patronGroupName = `autotestPatronGroup${getRandomPostfix()}`;
     PatronGroups.createViaApi(patronGroupName).then(patronGroupId => {
       testData.patronGroupId = patronGroupId;
       Users.createViaApi({ ...Users.defaultUser, patronGroup: patronGroupId }).then(userProperties => {
         testData.userId = userProperties.id;
-        testData.username = userProperties.username;
-
         ServicePoints.getViaApi({ limit: 1, query: 'pickupLocation=="true"' })
           .then((res) => {
             testData.servicePointId = res[0].id;
-            cy.getUsers({
-              limit: 1,
-              query: `"personal.lastName"="${userProperties.username}" and "active"="true"`
-            });
-          }).then(() => {
+            console.log(testData.userId);
             UserEdit.addServicePointViaApi(testData.servicePointId, testData.userId);
-          });
-        UsersOwners.createViaApi({ owner: uuid() }).then(owner => {
-          testData.ownerId = owner.id;
-          ManualCharges.createViaApi({ ...ManualCharges.defaultFeeFineType, ownerId: owner.id }).then(manualCharge => {
-            testData.manualChargeId = manualCharge.id;
-            PaymentMethods.createViaApi(testData.ownerId).then(createdPaymentMethod => {
-              testData.paymentMethodId = createdPaymentMethod.id;
-              cy.loginAsAdmin({ path: AppPaths.getUserPreviewPath(userProperties.id), waiter: UsersCard.waitLoading });
+            UsersOwners.createViaApi({ owner: uuid() }).then(owner => {
+              testData.ownerId = owner.id;
+              ManualCharges.createViaApi({ ...ManualCharges.defaultFeeFineType, ownerId: owner.id }).then(manualCharge => {
+                testData.manualChargeId = manualCharge.id;
+                PaymentMethods.createViaApi(testData.ownerId).then(createdPaymentMethod => {
+                  testData.paymentMethodId = createdPaymentMethod.id;
+                  // TODO: clarify why initial login is needed to load accordion with Fee/Fines
+                  // cy.loginAsAdmin({ path: AppPaths.getUserPreviewPath(testData.userId), waiter: UsersCard.waitLoading });
+                  cy.loginAsAdmin();
+                  cy.visit(AppPaths.getUserPreviewPath(testData.userId));
+                  UsersCard.waitLoading();
+
+                  cy.pause();
+                });
+              });
             });
           });
-        });
       });
     });
+  });
+  it('C455 Verify "New fee/fine" behavior when "Charge & pay now" button pressed', { tags: [TestType.smoke, Features.feeFine] }, () => {
+    // Scenario 1: CHARGING MANUAL FEE/FINE USING BUTTON FROM USER INFORMATION
+    UsersCard.openFeeFines();
+    UsersCard.startFeeFineAdding();
+    NewFeeFine.waitLoading();
   });
   after(() => {
     PaymentMethods.deleteViaApi(testData.paymentMethodId);
