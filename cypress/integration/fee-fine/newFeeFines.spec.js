@@ -20,26 +20,27 @@ describe('Fee/fine management', () => {
     const patronGroupName = `autotestPatronGroup${getRandomPostfix()}`;
     PatronGroups.createViaApi(patronGroupName).then(patronGroupId => {
       testData.patronGroupId = patronGroupId;
-      Users.createViaApi({ ...Users.defaultUser, patronGroup: patronGroupId }).then(userProperties => {
-        testData.userId = userProperties.id;
+      testData.userProperties = { barcode : uuid() };
+      Users.createViaApi({ ...Users.defaultUser, patronGroup: patronGroupId, barcode: testData.userProperties.barcode }).then(userProperties => {
+        testData.userProperties.id = userProperties.id;
+        testData.userProperties.lastName = userProperties.lastName;
+        testData.userProperties.firstName = userProperties.firstName;
+        testData.userProperties.middleName = userProperties.middleName;
         ServicePoints.getViaApi({ limit: 1, query: 'pickupLocation=="true"' })
           .then((res) => {
             testData.servicePointId = res[0].id;
-            console.log(testData.userId);
-            UserEdit.addServicePointViaApi(testData.servicePointId, testData.userId);
+            UserEdit.addServicePointViaApi(testData.servicePointId, testData.userProperties.id);
             UsersOwners.createViaApi({ owner: uuid() }).then(owner => {
-              testData.ownerId = owner.id;
+              testData.owner = { id : owner.id, name : owner.ownerName };
               ManualCharges.createViaApi({ ...ManualCharges.defaultFeeFineType, ownerId: owner.id }).then(manualCharge => {
-                testData.manualChargeId = manualCharge.id;
-                PaymentMethods.createViaApi(testData.ownerId).then(createdPaymentMethod => {
+                testData.feeFineType = { id:  manualCharge.id, feeFineTypeName: manualCharge.feeFineType };
+                PaymentMethods.createViaApi(testData.owner.id).then(createdPaymentMethod => {
                   testData.paymentMethodId = createdPaymentMethod.id;
                   // TODO: clarify why initial login is needed to load accordion with Fee/Fines
                   // cy.loginAsAdmin({ path: AppPaths.getUserPreviewPath(testData.userId), waiter: UsersCard.waitLoading });
                   cy.loginAsAdmin();
-                  cy.visit(AppPaths.getUserPreviewPath(testData.userId));
+                  cy.visit(AppPaths.getUserPreviewPath(testData.userProperties.id));
                   UsersCard.waitLoading();
-
-                  cy.pause();
                 });
               });
             });
@@ -52,12 +53,15 @@ describe('Fee/fine management', () => {
     UsersCard.openFeeFines();
     UsersCard.startFeeFineAdding();
     NewFeeFine.waitLoading();
+    NewFeeFine.checkInitialState(testData.userProperties);
+    NewFeeFine.setFeeFineOwner(testData.owner.name);
+    NewFeeFine.checkFilteredOptions(testData.feeFineType.feeFineTypeName);
   });
   after(() => {
     PaymentMethods.deleteViaApi(testData.paymentMethodId);
-    ManualCharges.deleteViaApi(testData.manualChargeId);
-    UsersOwners.deleteViaApi(testData.ownerId);
-    Users.deleteViaApi(testData.userId);
+    ManualCharges.deleteViaApi(testData.feeFineType.id);
+    UsersOwners.deleteViaApi(testData.owner.id);
+    Users.deleteViaApi(testData.userProperties.id);
     PatronGroups.deleteViaApi(testData.patronGroupId);
   });
 });
