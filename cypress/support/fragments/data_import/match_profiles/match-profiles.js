@@ -81,11 +81,11 @@ const fillMatchProfileFormForPol = ({
   matchCriterion,
   existingRecordType
 }) => {
-  cy.wait(2000);
   cy.do(TextField('Name*').fillIn(profileName));
   // wait for data to be loaded
   cy.intercept('/_/jsonSchemas?path=raml-util/schemas/metadata.schema').as('getJson');
   cy.wait('@getJson', getLongDelay());
+  cy.wait(1500);
   // TODO think about how to use interactor
   cy.get(`[data-id="${existingRecordType}"]`).last().click();
   fillIncomingRecordFields(incomingRecordFields);

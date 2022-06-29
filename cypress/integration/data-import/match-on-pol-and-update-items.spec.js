@@ -16,6 +16,8 @@ import SettingsMenu from '../../support/fragments/settingsMenu';
 import Users from '../../support/fragments/users/users';
 import MatchProfiles from '../../support/fragments/data_import/match_profiles/match-profiles';
 import JobProfiles from '../../support/fragments/data_import/job_profiles/jobProfiles';
+import DataImport from '../../support/fragments/data_import/dataImport';
+import Logs from '../../support/fragments/data_import/logs/logs';
 
 describe('ui-users:', () => {
   const firstTitle = 'Sport and sociology / Dominic Malcolm.';
@@ -44,6 +46,8 @@ describe('ui-users:', () => {
   const mappingProfileNameForHoldings = `C350590 Update Holdings by POL match ${Helper.getRandomBarcode()}`;
   const mappingProfileNameForItem = `C350590 Update Item by POL match ${getRandomPostfix()}`;
 
+  const nameMarcFile = `C343335autotestFile.${getRandomPostfix()}.mrc`;
+
   beforeEach(() => {
     cy.getAdminToken()
       .then(() => {
@@ -69,15 +73,39 @@ describe('ui-users:', () => {
           });
       })
       .then(() => {
-        /*PoNumber.getViaApi({ query: 'configName="orderNumber" and module="ORDERS"' })
+        /* PoNumber.getViaApi({ query: 'configName="orderNumber" and module="ORDERS"' })
           .then((res) => {
             console.log(res);
             PoNumber.editViaApi(res[0].id);
           });
         Orders.createOrderWithOrderLineViaApi(NewOrder.getDefaultOrder(vendorId, firstOrderNumber),
-          BasicOrderLine.getDefaultOrderLine(itemQuantity, firstTitle, locationId, acquisitionMethodId, price, price, [{ productId: '9782266111560', productIdType:productIdTypeId }], materialTypeId));
+          BasicOrderLine.getDefaultOrderLine(
+            itemQuantity,
+            firstTitle,
+            locationId,
+            acquisitionMethodId,
+            price,
+            price,
+            [{
+              productId: '9782266111560',
+              productIdType:productIdTypeId
+            }],
+            materialTypeId
+          ));
         Orders.createOrderWithOrderLineViaApi(NewOrder.getDefaultOrder(vendorId, secondOrderNumber),
-          BasicOrderLine.getDefaultOrderLine(itemQuantity, secondTitle, locationId, acquisitionMethodId, price, price, [{ productId: '9782266111560', productIdType:productIdTypeId }], materialTypeId));*/
+          BasicOrderLine.getDefaultOrderLine(
+            itemQuantity,
+            secondTitle,
+            locationId,
+            acquisitionMethodId,
+            price,
+            price,
+            [{
+              productId: '9782266111560',
+              productIdType:productIdTypeId
+            }],
+            materialTypeId
+          )); */
       });
 
     cy.createTempUser([
@@ -95,12 +123,12 @@ describe('ui-users:', () => {
       })
       .then(() => {
         cy.login(user.username, user.password);
-        /*orderNumbers.forEach(number => {
+        /* orderNumbers.forEach(number => {
           cy.visit(TopMenu.ordersPath);
           Orders.searchByParameter('PO number', number);
           Helper.selectFromResultsList();
           Orders.openOrder();
-        });*/
+        }); */
       });
   });
 
@@ -185,7 +213,6 @@ describe('ui-users:', () => {
 
     collectionOfProfiles.forEach(profile => {
       cy.visit(SettingsMenu.mappingProfilePath);
-      // instance correct
       FieldMappingProfiles.createMappingProfileForMatch(profile.mappingProfile);
       FieldMappingProfiles.checkMappingProfilePresented(profile.mappingProfile.name);
       cy.visit(SettingsMenu.actionProfilePath);
@@ -199,10 +226,24 @@ describe('ui-users:', () => {
     });
 
     cy.visit(SettingsMenu.jobProfilePath);
-    JobProfiles.createJobProfileWithLinkingProfilesForUpdate(jobProfileName);
+    JobProfiles.createJobProfile(specialJobProfile);
+    collectionOfProfiles.forEach(profile => {
+      NewJobProfile.linkActionProfile(profile.actionProfile);
+    });
+    NewJobProfile.saveAndClose();
+    JobProfiles.checkJobProfilePresented(specialJobProfile.profileName);
+
+    cy.visit(SettingsMenu.jobProfilePath);
+    JobProfiles.createJobProfileWithLinkingProfilesForUpdate(specialJobProfile);
     NewJobProfile.linkMatchAndActionProfilesForInstance(actionProfileNameForInstance, matchProfileNameForInstance, 0);
     NewJobProfile.linkMatchAndActionProfilesForHoldings(actionProfileNameForHoldings, matchProfileNameForHoldings, 2);
     NewJobProfile.linkMatchAndActionProfilesForItem(actionProfileNameForItem, matchProfileNameForItem, 4);
     NewJobProfile.saveAndClose();
+
+    cy.visit(TopMenu.dataImportPath);
+    DataImport.uploadFile('matchOnPOL.mrc', nameMarcFile);
+    JobProfiles.searchJobProfileForImport(jobProfileName);
+    JobProfiles.runImportFile(nameMarcFile);
+    Logs.openFileDetails(nameMarcFile);
   });
 });
