@@ -13,6 +13,7 @@ import ServicePoints from '../../support/fragments/settings/tenant/servicePoints
 import UserEdit from '../../support/fragments/users/userEdit';
 import NewFeeFine from '../../support/fragments/users/newFeeFine';
 import userFeesFines from '../../support/fragments/users/userFeesFines';
+import PayFeeFaine from '../../support/fragments/users/payFeeFaine';
 
 describe('Fee/fine management', () => {
   const testData = {};
@@ -36,7 +37,7 @@ describe('Fee/fine management', () => {
               ManualCharges.createViaApi({ ...ManualCharges.defaultFeeFineType, ownerId: owner.id }).then(manualCharge => {
                 testData.feeFineType = { id:  manualCharge.id, feeFineTypeName: manualCharge.feeFineType };
                 PaymentMethods.createViaApi(testData.owner.id).then(createdPaymentMethod => {
-                  testData.paymentMethodId = createdPaymentMethod.id;
+                  testData.paymentMethod = { id: createdPaymentMethod.id, name: createdPaymentMethod.name };
                   // TODO: clarify why initial login is needed to load accordion with Fee/Fines
                   // cy.loginAsAdmin({ path: AppPaths.getUserPreviewPath(testData.userId), waiter: UsersCard.waitLoading });
                   cy.loginAsAdmin();
@@ -54,7 +55,7 @@ describe('Fee/fine management', () => {
     const initialCheckNewFeeFineFragment = (ownerName = '') => {
       NewFeeFine.checkInitialState(testData.userProperties, ownerName);
       NewFeeFine.setFeeFineOwner(testData.owner.name);
-      NewFeeFine.checkFilteredOptions(testData.feeFineType.feeFineTypeName);
+      NewFeeFine.checkFilteredFeeFineType(testData.feeFineType.feeFineTypeName);
     };
 
     // Scenario 1: CHARGING MANUAL FEE/FINE USING BUTTON FROM USER INFORMATION
@@ -63,8 +64,21 @@ describe('Fee/fine management', () => {
     NewFeeFine.waitLoading();
     initialCheckNewFeeFineFragment();
 
-    // return to UsersCard
-    NewFeeFine.close();
+    NewFeeFine.setFeeFineType(testData.feeFineType.feeFineTypeName);
+    NewFeeFine.checkAmount(ManualCharges.defaultFeeFineType.defaultAmount);
+    // TODO: can't see expected warning "Are you sure?"
+    NewFeeFine.cancel();
+    UsersCard.waitLoading();
+    // second adding after cancelation
+    UsersCard.openFeeFines();
+    UsersCard.startFeeFineAdding();
+    NewFeeFine.setFeeFineOwner(testData.owner.name);
+    NewFeeFine.setFeeFineType(testData.feeFineType.feeFineTypeName);
+    NewFeeFine.chargeAndPayNow();
+    PayFeeFaine.checkAmount(ManualCharges.defaultFeeFineType.defaultAmount);
+    PayFeeFaine.setPaymentMethod(testData.paymentMethod);
+    PayFeeFaine.submit();
+    PayFeeFaine.confirm();
     UsersCard.waitLoading();
 
     // Scenario 2: CHARGING MANUAL FEE/FINE USING BUTTON ON "FEES/FINES HISTORY"
@@ -76,7 +90,7 @@ describe('Fee/fine management', () => {
     initialCheckNewFeeFineFragment();
   });
   after(() => {
-    PaymentMethods.deleteViaApi(testData.paymentMethodId);
+    PaymentMethods.deleteViaApi(testData.paymentMethod.id);
     ManualCharges.deleteViaApi(testData.feeFineType.id);
     UsersOwners.deleteViaApi(testData.owner.id);
     Users.deleteViaApi(testData.userProperties.id);
