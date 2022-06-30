@@ -21,7 +21,7 @@ export default {
     cy.do(Accordion({ id : 'loansSection' }).clickHeader());
   },
   openFeeFines() {
-    cy.do(Accordion({ id : 'accountsSection' }).clickHeader());
+    cy.do(feesFinesAccourdion.clickHeader());
   },
 
   showOpenedLoans() {
