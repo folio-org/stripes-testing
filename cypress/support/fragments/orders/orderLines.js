@@ -108,6 +108,8 @@ export default {
       Button('Location look-up').click(),
       Select({ name: 'institutionId' }).choose('Københavns Universitet'),
       Select({ name: 'campusId' }).choose('Online'),
+      Button({ id: 'locationId' }).click(),
+      SelectionList({ id: 'sl-container-locationId' }).select('Online (E) '),
       Button('Save and close').click(),
       TextField({ name: 'locations[0].quantityPhysical' }).fillIn(quantityPhysical),
       saveAndClose.click()
