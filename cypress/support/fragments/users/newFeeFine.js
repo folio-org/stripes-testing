@@ -25,7 +25,6 @@ export default {
   checkFilteredFeeFineType:(feefineTypeName) => {
     cy.expect(feeFineTypeSelect.find(Option(feefineTypeName)).exists());
   },
-  close: () => cy.do(rootModal.find(Button({ id :'cancelCharge' })).click()),
   setFeeFineType: (feeFineType) => {
     // TODO: fix iterators issue related with select
     cy.get('div[id=new-modal] select[name=feeFineId]').select(feeFineType);
