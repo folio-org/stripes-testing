@@ -141,7 +141,8 @@ Cypress.Commands.add('updateInstance', requestData => {
     .okapiRequest({
       method: 'PUT',
       path: `inventory/instances/${requestData.id}`,
-      body: requestData
+      body: requestData,
+      isDefaultSearchParamsRequired: false,
     })
     .then(({ body }) => {
       return body;

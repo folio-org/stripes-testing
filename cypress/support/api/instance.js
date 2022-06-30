@@ -13,6 +13,7 @@ Cypress.Commands.add('deleteInstanceApi', (id) => {
   cy.okapiRequest({
     method: 'DELETE',
     path: `instance-storage/instances/${id}`,
+    isDefaultSearchParamsRequired: false
   });
 });
 

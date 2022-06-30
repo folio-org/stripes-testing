@@ -18,21 +18,28 @@ import MatchProfiles from '../../support/fragments/data_import/match_profiles/ma
 import JobProfiles from '../../support/fragments/data_import/job_profiles/jobProfiles';
 import DataImport from '../../support/fragments/data_import/dataImport';
 import Logs from '../../support/fragments/data_import/logs/logs';
+import ItemRecordView from '../../support/fragments/inventory/itemRecordView';
+import CheckInActions from '../../support/fragments/check-in-actions/checkInActions';
+import ServicePoints from '../../support/fragments/settings/tenant/servicePoints';
 
 describe('ui-users:', () => {
   const firstTitle = 'Sport and sociology / Dominic Malcolm.';
   const secondTitle = 'South Asian texts in history : critical engagements with Sheldon Pollock / edited by Yigal Bronner, Whitney Cox, and Lawrence McCrea.';
+  const titles = [firstTitle, secondTitle];
+  const firstOrderNumber = Helper.getRandomBarcode();
+  const secondOrderNumber = Helper.getRandomBarcode();
+  //const firstOrderNumber = 'auto99999test';
+  //const secondOrderNumber = 'auto100000test';
+  const orderNumbers = [firstOrderNumber, secondOrderNumber];
   let vendorId;
   let locationId;
   let materialTypeId;
   let acquisitionMethodId;
   let productIdTypeId;
-  const firstOrderNumber = 'auto99999test';
-  const secondOrderNumber = 'auto100000test';
   const itemQuantity = '1';
   const price = '20';
   let user = {};
-  const orderNumbers = [firstOrderNumber, secondOrderNumber];
+  let servicePointId;
 
   // unique profile names
   const jobProfileName = `autotestJobProf${getRandomPostfix()}`;
@@ -46,68 +53,9 @@ describe('ui-users:', () => {
   const mappingProfileNameForHoldings = `C350590 Update Holdings by POL match ${Helper.getRandomBarcode()}`;
   const mappingProfileNameForItem = `C350590 Update Item by POL match ${getRandomPostfix()}`;
 
-  const nameMarcFile = `C343335autotestFile.${getRandomPostfix()}.mrc`;
+  const marcFileName = `C343335autotestFile.${getRandomPostfix()}.mrc`;
 
-  beforeEach(() => {
-    cy.getAdminToken()
-      .then(() => {
-        cy.getOrganizationApi({ query: 'name="GOBI Library Solutions"' })
-          .then(organization => {
-            vendorId = organization.id;
-          });
-        cy.getLocations({ limit:1 })
-          .then(location => {
-            locationId = location.id;
-          });
-        cy.getMaterialTypes({ query: 'name="book"' })
-          .then(materialType => {
-            materialTypeId = materialType.id;
-          });
-        cy.getAcquisitionMethodsApi({ query: 'value="Purchase at vendor system"' })
-          .then(params => {
-            acquisitionMethodId = params.body.acquisitionMethods[0].id;
-          });
-        cy.getProductIdTypes({ query: 'name=="ISBN"' })
-          .then(productIdType => {
-            productIdTypeId = productIdType.id;
-          });
-      })
-      .then(() => {
-        PoNumber.getViaApi({ query: 'configName="orderNumber" and module="ORDERS"' })
-          .then((res) => {
-            console.log(res);
-            PoNumber.editViaApi(res[0].id);
-          });
-        Orders.createOrderWithOrderLineViaApi(NewOrder.getDefaultOrder(vendorId, firstOrderNumber),
-          BasicOrderLine.getDefaultOrderLine(
-            itemQuantity,
-            firstTitle,
-            locationId,
-            acquisitionMethodId,
-            price,
-            price,
-            [{
-              productId: '9782266111560',
-              productIdType:productIdTypeId
-            }],
-            materialTypeId
-          ));
-        Orders.createOrderWithOrderLineViaApi(NewOrder.getDefaultOrder(vendorId, secondOrderNumber),
-          BasicOrderLine.getDefaultOrderLine(
-            itemQuantity,
-            secondTitle,
-            locationId,
-            acquisitionMethodId,
-            price,
-            price,
-            [{
-              productId: '9782266111560',
-              productIdType:productIdTypeId
-            }],
-            materialTypeId
-          ));
-      });
-
+  before(() => {
     cy.createTempUser([
       permissions.createOrdersAndOrderLines.gui,
       permissions.editOrdersAndOrderLines.gui,
@@ -123,31 +71,120 @@ describe('ui-users:', () => {
       })
       .then(() => {
         cy.login(user.username, user.password);
-        orderNumbers.forEach(number => {
-          cy.visit(TopMenu.ordersPath);
-          Orders.searchByParameter('PO number', number);
-          Helper.selectFromResultsList();
-          Orders.openOrder();
-        });
+
+        cy.getAdminToken()
+          .then(() => {
+            cy.getOrganizationApi({ query: 'name="GOBI Library Solutions"' })
+              .then(organization => {
+                vendorId = organization.id;
+              });
+            cy.getLocations({ limit:1 })
+              .then(location => {
+                locationId = location.id;
+              });
+            cy.getMaterialTypes({ query: 'name="book"' })
+              .then(materialType => {
+                materialTypeId = materialType.id;
+              });
+            cy.getAcquisitionMethodsApi({ query: 'value="Purchase at vendor system"' })
+              .then(params => {
+                acquisitionMethodId = params.body.acquisitionMethods[0].id;
+              });
+            cy.getProductIdTypes({ query: 'name=="ISBN"' })
+              .then(productIdType => {
+                productIdTypeId = productIdType.id;
+              });
+            ServicePoints.getServicePointsApi()
+              .then((servicePoint) => {
+                servicePointId = servicePoint[0].id;
+              });
+          })
+          .then(() => {
+            /* PoNumber.getViaApi({ query: 'configName="orderNumber" and module="ORDERS"' })
+          .then((res) => {
+            PoNumber.editViaApi(res[0].id);
+          }); */
+            Orders.createOrderWithOrderLineViaApi(NewOrder.getDefaultOrder(vendorId, firstOrderNumber),
+              BasicOrderLine.getDefaultOrderLine(
+                itemQuantity,
+                firstTitle,
+                locationId,
+                acquisitionMethodId,
+                price,
+                price,
+                [{
+                  productId: '9782266111560',
+                  productIdType:productIdTypeId
+                }],
+                materialTypeId
+              ))
+              .then((number) => {
+                cy.visit(TopMenu.ordersPath);
+                Orders.searchByParameter('PO number', number);
+                Helper.selectFromResultsList();
+                Orders.openOrder();
+              });
+            Orders.createOrderWithOrderLineViaApi(NewOrder.getDefaultOrder(vendorId, secondOrderNumber),
+              BasicOrderLine.getDefaultOrderLine(
+                itemQuantity,
+                secondTitle,
+                locationId,
+                acquisitionMethodId,
+                price,
+                price,
+                [{
+                  productId: '9783161484100',
+                  productIdType:productIdTypeId
+                }],
+                materialTypeId
+              ))
+              .then((number) => {
+                cy.visit(TopMenu.ordersPath);
+                Orders.searchByParameter('PO number', number);
+                Helper.selectFromResultsList();
+                Orders.openOrder();
+              });
+          });
       });
   });
 
-  /* afterEach(() => {
-    cy.getInstance({ limit: 1, expandAll: true, query: `"items.barcode"=="${itemBarcode}"` })
-      .then((instance) => {
-        cy.deleteItem(instance.items[0].id);
-        cy.deleteHoldingRecord(instance.holdings[0].id);
-        cy.deleteInstanceApi(instance.id);
-      });
+  after(() => {
+    let itemId;
+    const itemBarcode = Helper.getRandomBarcode();
+
+    titles.forEach(title => {
+      cy.getInstance({ limit: 1, expandAll: true, query: `"title"=="${title}"` })
+        .then((instance) => {
+          itemId = instance.items[0].id;
+
+          cy.getItems({ query: `"id"=="${itemId}"` })
+            .then((item) => {
+              item.barcode = itemBarcode;
+              cy.wrap(ItemRecordView.editItem(item))
+                .then(() => {
+                  CheckInActions.createItemCheckinApi({
+                    itemBarcode: item.barcode,
+                    servicePointId,
+                    checkInDate: new Date().toISOString(),
+                  })
+                    .then(() => {
+                      cy.deleteItem(itemId);
+                      cy.deleteHoldingRecord(instance.holdings[0].id);
+                      cy.deleteInstanceApi(instance.id);
+                    });
+                });
+            });
+        });
+    });
     orderNumbers.forEach(number => {
       Orders.getOrdersApi({ limit: 1, query: `"poNumber"=="${number}"` })
         .then(order => {
           console.log(order);
-          cy.deleteOrderApi(order[0].id);
+          // Orders.deleteOrderApi(order[0].id);
         });
     });
     Users.deleteViaApi(user.userId);
-  }); */
+  });
 
   it('C350590 Match on POL and update related Instance, Holdings, Item', { tags: [TestTypes.smoke] }, () => {
     const collectionOfProfiles = [
@@ -225,6 +262,7 @@ describe('ui-users:', () => {
       MatchProfiles.createMatchProfileForPol(profile.matchProfile);
     });
 
+    cy.visit(SettingsMenu.mappingProfilePath);
     cy.visit(SettingsMenu.jobProfilePath);
     JobProfiles.createJobProfile(specialJobProfile);
     collectionOfProfiles.forEach(profile => {
@@ -240,10 +278,11 @@ describe('ui-users:', () => {
     NewJobProfile.linkMatchAndActionProfilesForItem(actionProfileNameForItem, matchProfileNameForItem, 4);
     NewJobProfile.saveAndClose();
 
+
     cy.visit(TopMenu.dataImportPath);
-    DataImport.uploadFile('matchOnPOL.mrc', nameMarcFile);
+    DataImport.uploadFile('matchOnPOL.mrc', marcFileName);
     JobProfiles.searchJobProfileForImport(jobProfileName);
-    JobProfiles.runImportFile(nameMarcFile);
-    Logs.openFileDetails(nameMarcFile);
+    JobProfiles.runImportFile(marcFileName);
+    Logs.openFileDetails(marcFileName);
   });
 });

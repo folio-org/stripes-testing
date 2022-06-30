@@ -3,7 +3,8 @@ Cypress.Commands.add('createOrderApi', (order) => {
     .okapiRequest({
       method: 'POST',
       path: 'orders/composite-orders',
-      body: order
+      body: order,
+      isDefaultSearchParamsRequired: false
     });
 });
 
@@ -13,6 +14,7 @@ Cypress.Commands.add('createOrderLineApi', (orderLine) => {
       method: 'POST',
       path: 'orders/order-lines',
       body: orderLine,
+      isDefaultSearchParamsRequired: false
     });
 });
 
