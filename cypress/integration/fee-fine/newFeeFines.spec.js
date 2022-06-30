@@ -12,7 +12,7 @@ import PaymentMethods from '../../support/fragments/settings/users/paymentMethod
 import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
 import UserEdit from '../../support/fragments/users/userEdit';
 import NewFeeFine from '../../support/fragments/users/newFeeFine';
-import userFeesFines from '../../support/fragments/users/userFeesFines';
+import UserAllFeesFines from '../../support/fragments/users/userAllFeesFines';
 import PayFeeFaine from '../../support/fragments/users/payFeeFaine';
 
 describe('Fee/fine management', () => {
@@ -58,36 +58,54 @@ describe('Fee/fine management', () => {
       NewFeeFine.checkFilteredFeeFineType(testData.feeFineType.feeFineTypeName);
     };
 
+    const pay = (isFullPay = true, initialFragmentWaiter, secondOpen) => {
+      NewFeeFine.setFeeFineType(testData.feeFineType.feeFineTypeName);
+      NewFeeFine.checkAmount(ManualCharges.defaultFeeFineType.defaultAmount);
+      // TODO: can't see expected warning "Are you sure?"
+      NewFeeFine.cancel();
+      initialFragmentWaiter();
+      secondOpen();
+      NewFeeFine.setFeeFineOwner(testData.owner.name);
+      NewFeeFine.setFeeFineType(testData.feeFineType.feeFineTypeName);
+      NewFeeFine.chargeAndPayNow();
+      PayFeeFaine.checkAmount(ManualCharges.defaultFeeFineType.defaultAmount);
+      PayFeeFaine.setPaymentMethod(testData.paymentMethod);
+      if (!isFullPay) {
+        PayFeeFaine.setAmount(ManualCharges.defaultFeeFineType.defaultAmount - 1);
+        PayFeeFaine.checkRestOfPay(1);
+      }
+      PayFeeFaine.submit();
+      if (!isFullPay) {
+        PayFeeFaine.checkPartialPayConfirmation();
+        PayFeeFaine.back();
+        PayFeeFaine.setPaymentMethod(testData.paymentMethod);
+        PayFeeFaine.setAmount(ManualCharges.defaultFeeFineType.defaultAmount);
+        PayFeeFaine.checkRestOfPay(0);
+        PayFeeFaine.submit();
+      }
+      PayFeeFaine.confirm();
+      initialFragmentWaiter();
+    };
+
+
     // Scenario 1: CHARGING MANUAL FEE/FINE USING BUTTON FROM USER INFORMATION
     UsersCard.openFeeFines();
     UsersCard.startFeeFineAdding();
     NewFeeFine.waitLoading();
     initialCheckNewFeeFineFragment();
-
-    NewFeeFine.setFeeFineType(testData.feeFineType.feeFineTypeName);
-    NewFeeFine.checkAmount(ManualCharges.defaultFeeFineType.defaultAmount);
-    // TODO: can't see expected warning "Are you sure?"
-    NewFeeFine.cancel();
-    UsersCard.waitLoading();
-    // second adding after cancelation
-    UsersCard.openFeeFines();
-    UsersCard.startFeeFineAdding();
-    NewFeeFine.setFeeFineOwner(testData.owner.name);
-    NewFeeFine.setFeeFineType(testData.feeFineType.feeFineTypeName);
-    NewFeeFine.chargeAndPayNow();
-    PayFeeFaine.checkAmount(ManualCharges.defaultFeeFineType.defaultAmount);
-    PayFeeFaine.setPaymentMethod(testData.paymentMethod);
-    PayFeeFaine.submit();
-    PayFeeFaine.confirm();
-    UsersCard.waitLoading();
+    pay(true, UsersCard.waitLoading, () => {
+      UsersCard.openFeeFines();
+      UsersCard.startFeeFineAdding();
+    });
 
     // Scenario 2: CHARGING MANUAL FEE/FINE USING BUTTON ON "FEES/FINES HISTORY"
     UsersCard.openFeeFines();
     UsersCard.viewAllFeesFines();
-    userFeesFines.createFeeFine();
+    UserAllFeesFines.createFeeFine();
     // TODO: double check current expectation "Fee/fine owner” as location of current staff member with option to be changed". "Select one" is presented now
     // initialCheckNewFeeFineFragment(testData.owner.name);
     initialCheckNewFeeFineFragment();
+    pay(false, UserAllFeesFines.waitLoading, UserAllFeesFines.createFeeFine);
   });
   after(() => {
     PaymentMethods.deleteViaApi(testData.paymentMethod.id);
