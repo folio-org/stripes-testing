@@ -11,7 +11,7 @@ import AppPaths from '../../../support/fragments/app-paths';
 import UserCharge from '../../../support/fragments/users/userCharge';
 import UsersCard from '../../../support/fragments/users/usersCard';
 import Limits from '../../../support/fragments/settings/users/limits';
-import UserFeesFines from '../../../support/fragments/users/userFeesFines';
+import UserAllFeesFines from '../../../support/fragments/users/userAllFeesFines';
 
 describe('Patron blocks relations with users, conditions', () => {
   const testData = {};
@@ -53,7 +53,7 @@ describe('Patron blocks relations with users, conditions', () => {
       });
     });
   after(() => {
-    UserFeesFines.waiveFeeFine(testData.userId, testData.chargeAmount, testData.ownerId);
+    UserAllFeesFines.waiveFeeFine(testData.userId, testData.chargeAmount, testData.ownerId);
     ManualCharges.deleteViaApi(testData.manualChargeId);
     UsersOwners.deleteViaApi(testData.ownerId);
     Conditions.resetConditionViaApi(testData.testConditionId, testData.name);
