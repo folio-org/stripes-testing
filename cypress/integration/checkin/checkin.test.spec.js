@@ -1,54 +1,127 @@
-import NewServicePoint from '../../support/fragments/settings/tenant/servicePoints/newServicePoint';
-import NewInctanceHoldingsItem from '../../support/fragments/inventory/newInctanceHoldingsItem';
+import moment from 'moment';
+import uuid from 'uuid';
+import permissions from '../../support/dictionary/permissions';
+import TopMenu from '../../support/fragments/topMenu';
 import TestTypes from '../../support/dictionary/testTypes';
-import NewUser from '../../support/fragments/users/userDefaultObjects/newUser';
-import SwitchServicePoint from '../../support/fragments/servicePoint/switchServicePoint';
 import CheckInActions from '../../support/fragments/check-in-actions/checkInActions';
 import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
-import ServicePoint from '../../support/fragments/servicePoint/servicePoint';
-import institutions from '../../support/fragments/settings/tenant/institutions';
-import campuses from '../../support/fragments/settings/tenant/campuses';
-import libraries from '../../support/fragments/settings/tenant/libraries';
 import UserEdit from '../../support/fragments/users/userEdit';
-
-// TODO: We need to move all api methods to fragments. https://issues.folio.org/browse/FAT-1624
-// When bug(https://issues.folio.org/browse/FAT-1637) will be fixed check full run test!!!
+import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
+import generateItemBarcode from '../../support/utils/generateItemBarcode';
+import getRandomPostfix from '../../support/utils/stringTools';
+import checkoutActions from '../../support/fragments/checkout/checkout';
+import Users from '../../support/fragments/users/users';
+import InTransitModal from '../../support/fragments/checkin/modals/inTransit';
+import { Button, Pane, including, Modal } from '../../../interactors';
 
 describe('Check In - Actions ', () => {
-  before('Create New Service point, Item, User and Check out item', () => {
-    cy.login(Cypress.env('diku_login'), Cypress.env('diku_password'));
-    cy.getAdminToken();
-    ServicePoints.createViaApi(NewServicePoint.defaultUiServicePoint.body);
-    institutions.createViaApi(institutions.defaultUiInstitutions.body);
-    const specialCampuse = { ...campuses.defaultUiCampuses.body };
-    specialCampuse.institutionId = institutions.defaultUiInstitutions.body.id;
-    campuses.createViaApi(specialCampuse);
+  const userData = {
+    permissions: [permissions.checkinAll.gui,
+      permissions.uiUsersViewLoans.gui,
+      permissions.uiUsersView.gui,
+      permissions.uiInventoryViewInstances.gui,
+      permissions.uiUsersfeefinesCRUD.gui],
+  };
+  const itemData = {
+    barcode: generateItemBarcode(),
+    instanceTitle: `Instance ${getRandomPostfix()}`,
 
-    const specialLibrary = { ...libraries.defaultUiLibraries.body };
-    specialLibrary.campusId = specialCampuse.id;
+  };
+  const loanDetailsButton = Button('Loan details');
+  const patronDetailsButton = Button('Patron details');
+  const itemDetailsButton = Button('Item details');
+  const newFeeFineButton = Button('New Fee/Fine');
+  const checkInButton = Button('Check in');
+  const availableActionsButton = Button({ id: 'available-actions-button-0' });
 
-    libraries.createViaApi(specialLibrary);
-    cy.getLocations().then(location => {
-      NewInctanceHoldingsItem.createItemWithSameParams(location.id);
-      NewUser.createUserWithSameParams().then(userProperties => {
-        SwitchServicePoint.addServicePointPermissions(userProperties.userName);
-        SwitchServicePoint.logOutAndLogIn(userProperties.userName, userProperties.password);
-      });
+  function returnCheckIn() {
+    cy.do(checkInButton.click());
+    cy.do(availableActionsButton.click());
+  }
+
+  before('Create New Item, New User and Check out item', () => {
+    cy.getAdminToken().then(() => {
+      cy.getInstanceTypes({ limit: 1 }).then((instanceTypes) => { itemData.instanceTypeId = instanceTypes[0].id; console.log('itemData.instanceTypeId= ' + itemData.instanceTypeId); });
+      cy.getHoldingTypes({ limit: 1 }).then((res) => { itemData.holdingTypeId = res[0].id; });
+      cy.getLocations({ limit: 1 }).then((res) => { itemData.locationId = res.id; });
+      cy.getLoanTypes({ limit: 1 }).then((res) => { itemData.loanTypeId = res[0].id; });
+      cy.getMaterialTypes({ limit: 1 }).then((res) => { itemData.materialTypeId = res.id; });
+      ServicePoints.getViaApi({ limit: 1 }).then((servicePoints) => { itemData.servicepointId = servicePoints[0].id; });
+    }).then(() => {
+      InventoryInstances.createFolioInstanceViaApi({ instance: {
+        instanceTypeId: itemData.instanceTypeId,
+        title: itemData.instanceTitle,
+      },
+      holdings: [{
+        holdingsTypeId: itemData.holdingTypeId,
+        permanentLocationId: itemData.locationId,
+      }],
+      items:[{
+        barcode: itemData.barcode,
+        status:  { name: 'Available' },
+        permanentLoanType: { id: itemData.loanTypeId },
+        materialType: { id: itemData.materialTypeId },
+      }] });
+    }).then(specialInstanceIds => {
+      itemData.testInstanceIds = specialInstanceIds;
     });
+
+    cy.createTempUser(userData.permissions)
+      .then(userProperties => {
+        userData.username = userProperties.username;
+        userData.password = userProperties.password;
+        userData.userId = userProperties.userId;
+        userData.barcode = userProperties.barcode;
+        userData.firstName = userProperties.firstName;
+      })
+      .then(() => {
+        UserEdit.addServicePointViaApi(itemData.servicepointId,
+          userData.userId, itemData.servicepointId);
+
+        const payloadInCheckOutItemRequest = {
+          id: uuid(),
+          itemBarcode: itemData.barcode,
+          loanDate: moment.utc().format(),
+          servicePointId: itemData.servicepointId,
+          userBarcode: userData.barcode,
+        };
+
+        checkoutActions.createItemCheckoutApi(payloadInCheckOutItemRequest);
+
+        cy.login(userData.username, userData.password, { path: TopMenu.checkInPath, waiter: CheckInActions.waitLoading });
+      });
   });
 
   after('Delete New Service point, Item and User', () => {
-    SwitchServicePoint.logOutAndLogIn();
-    UserEdit.changeServicePointPreference();
-    NewInctanceHoldingsItem.deleteItemWithSameParams();
-    ServicePoint.deleteViaApi();
-    NewUser.deleteUserWithSameParams();
+    InventoryInstances.deleteInstanceViaApi(itemData.barcode);
+    cy.get('@userProperties').then(userProperties => {
+      Users.deleteViaApi(userProperties.userId);
+    });
   });
 
   it('C347631 Check in: Basic check in', { tags: [TestTypes.smoke, TestTypes.broken] }, () => {
-    CheckInActions.checkInItem();
-    CheckInActions.existsFormColomns();
-    CheckInActions.existsItemsInForm();
+    CheckInActions.checkInItemGui(itemData.barcode);
+    InTransitModal.verifyModalTitle();
+    InTransitModal.verifySelectedCheckbox();
+    InTransitModal.unselectChechbox();
+    InTransitModal.verifyUnSelectedCheckbox();
+    InTransitModal.closeModal();
+    cy.get('@userProperties').then(userProperties => {
+      CheckInActions.checkActionsMenuOptions();
+      cy.do(loanDetailsButton.click());
+      cy.expect(Pane(including(userProperties.username)).exists());
+      cy.expect(Pane(including('Loan details')).exists());
+      returnCheckIn();
+      cy.do(patronDetailsButton.click());
+      cy.expect(Pane({ title: including(userProperties.username) }).exists());
+      returnCheckIn();
+      cy.do(itemDetailsButton.click());
+      cy.expect(Pane(including(itemData.barcode)).exists());
+      returnCheckIn();
+      cy.do(newFeeFineButton.click());
+      cy.expect(Modal(including('New fee/fine')).exists());
+      returnCheckIn();
+    });
   });
 });
 

@@ -5,7 +5,8 @@ import NewUser from '../users/userDefaultObjects/newUser';
 import { REQUEST_METHOD } from '../../constants';
 import { getLongDelay } from '../../utils/cypressTools';
 
-const loadDetailsButton = Button('Loan details');
+const actionsButton = Button({ id: 'available-actions-button-0' });
+const loanDetailsButton = Button('Loan details');
 const patronDetailsButton = Button('Patron details');
 const itemDetailsButton = Button('Item details');
 const newFeeFineButton = Button('New Fee/Fine');
@@ -16,7 +17,7 @@ const availableActionsButton = Button({ id: 'available-actions-button-0' });
 
 export default {
   waitLoading:() => {
-    cy.expect(TextField({ name: 'item.barcode' }).exists());
+    cy.expect(itemBarcodeField.exists());
     cy.expect(Button('End session').exists());
   },
 
@@ -26,6 +27,10 @@ export default {
     cy.do(addItemButton.click());
     cy.wait('@getItems', getLongDelay());
   },
+  checkInItemGui:(barcode) => {
+    cy.do(itemBarcodeField.fillIn(barcode));
+    cy.do(addItemButton.click());
+  },
   openItemRecordInInventory:(status) => {
     cy.expect(MultiColumnListRow({ indexRow: 'row-0' }).find(HTML(including(status))).exists());
     cy.do(availableActionsButton.click());
@@ -34,9 +39,11 @@ export default {
     cy.do(itemDetailsButton.click());
     cy.wait('@getTags', getLongDelay());
   },
-  existsFormColomns:() => {
+  checkActionsMenuOptions:() => {
+    cy.expect(actionsButton.exists());
+    cy.do(actionsButton.click());
     cy.expect([
-      loadDetailsButton.exists(),
+      loanDetailsButton.exists(),
       patronDetailsButton.exists(),
       itemDetailsButton.exists(),
       newFeeFineButton.exists(),
@@ -45,20 +52,6 @@ export default {
   returnCheckIn() {
     cy.do(checkInButton.click());
     cy.do(availableActionsButton.click());
-  },
-  existsItemsInForm() {
-    cy.do(loadDetailsButton.click());
-    cy.expect(Pane(including(NewUser.userName)).exists());
-    this.returnCheckIn();
-    cy.do(patronDetailsButton.click());
-    cy.expect(Pane({ title: NewUser.userName }).exists());
-    this.returnCheckIn();
-    cy.do(itemDetailsButton.click());
-    cy.expect(Pane(including(NewInctanceHoldingsItem.itemBarcode)).exists());
-    this.returnCheckIn();
-    cy.do(newFeeFineButton.click());
-    cy.expect(Pane({ title:  'New fee/fine' }).exists());
-    this.returnCheckIn();
   },
   createItemCheckinApi(body) {
     return cy.okapiRequest({
