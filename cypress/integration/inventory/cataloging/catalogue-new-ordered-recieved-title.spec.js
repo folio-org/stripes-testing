@@ -36,6 +36,10 @@ describe('orders: Receive piece from Order', () => {
     cy.loginAsAdmin({ path: TopMenu.ordersPath, waiter: Orders.waitLoading });
   });
 
+  after('', () => {
+    Orders.deleteOrderApi(orderNumber);
+  });
+
   it('C735 Receiving pieces from an order for physical material that is set to create Items in inventory', { tags: [testType.smoke] }, () => {
     Orders.searchByParameter('PO number', orderNumber);
     Helper.selectFromResultsList();
