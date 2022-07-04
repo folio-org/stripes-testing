@@ -14,28 +14,28 @@ describe('ui-organizations: EDI convention in Organization Integration', () => {
     ...newOrganization.defaultUiOrganizations,
     accounts: [
       {
-        accountNo: `${getRandomPostfix()}`,
+        accountNo: getRandomPostfix(),
         accountStatus: 'Active',
         acqUnitIds: [],
         appSystemNo: '',
         description: 'Main library account',
         libraryCode: 'COB',
-        libraryEdiCode: `${getRandomPostfix()}`,
-        name: 'Accout1',
+        libraryEdiCode: getRandomPostfix(),
+        name: 'TestAccout1',
         notes: '',
         paymentMethod: 'Physical Check',
       },
       {
-        accountNo: `${getRandomPostfix()}`,
+        accountNo: getRandomPostfix(),
         accountStatus: 'Active',
         acqUnitIds: [],
         appSystemNo: '',
-        description: 'Main library account',
+        description: 'Libraries',
         libraryCode: 'COB',
-        libraryEdiCode: `${getRandomPostfix()}`,
-        name: 'Accout2',
+        libraryEdiCode: getRandomPostfix(),
+        name: 'TestAccout2',
         notes: '',
-        paymentMethod: 'Physical Check',
+        paymentMethod: 'Credit card',
       },
     ]
   };
@@ -43,10 +43,10 @@ describe('ui-organizations: EDI convention in Organization Integration', () => {
   const integrationName2 = `SecondIntegrationName${getRandomPostfix()}`;
   const integartionDescription1 = 'Test Integation descripton1';
   const integartionDescription2 = 'Test Integation descripton2';
-  const vendorEDICodeFor1Integration = `${getRandomPostfix()}`;
-  const libraryEDICodeFor1Integration = `${getRandomPostfix()}`;
-  const vendorEDICodeFor2Integration = `${getRandomPostfix()}`;
-  const libraryEDICodeFor2Integration = `${getRandomPostfix()}`;
+  const vendorEDICodeFor1Integration = getRandomPostfix();
+  const libraryEDICodeFor1Integration = getRandomPostfix();
+  const vendorEDICodeFor2Integration = getRandomPostfix();
+  const libraryEDICodeFor2Integration = getRandomPostfix();
 
   beforeEach(() => {
     cy.createTempUser([permissions.viewEditCreateOrganization.gui])
