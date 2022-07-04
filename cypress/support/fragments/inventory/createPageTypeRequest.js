@@ -31,11 +31,9 @@ export default {
   },
 
   selectUser(username) {
-    cy.do([
-      TextField({ name: 'query' }).fillIn(username),
-      Button('Search').click(),
-      MultiColumnListCell({ row: 0, content: username }).click(),
-    ]);
+    cy.do(Modal('Select User').find(TextField({ name: 'query' })).fillIn(username));
+    cy.do(Modal('Select User').find(Button('Search')).click());
+    cy.do(MultiColumnListCell({ row: 0, content: username }).click());
   },
 
   verifyInventoryDetailsPage(barcode) {

@@ -196,7 +196,7 @@ describe('ui-users:', () => {
       СheckOutActions.checkOutItemUser(user.barcode, item.barcode);
     });
     СheckOutActions.checkOutItemUser(user.barcode, limitTestItems[2].barcode);
-    LimitCheckOut.verifyErrorMessage(limitOfItem);
+    LimitCheckOut.verifyErrorMessage(1);
     LimitCheckOut.cancelModal();
   });
 });

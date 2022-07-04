@@ -9,14 +9,14 @@ import getRandomPostfix from '../../support/utils/stringTools';
 import generateItemBarcode from '../../support/utils/generateItemBarcode';
 import permissions from '../../support/dictionary/permissions';
 import Users from '../../support/fragments/users/users';
-import InventoryHoldings from '../../support/fragments/inventory/holdings/inventoryHoldings';
+import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
 
-describe('Update the effective location for the item', () => {
+describe('ui-inventory: Update the effective location for the item', () => {
   const instanceTitle = `autoTestInstanceTitle.${getRandomPostfix()}`;
   const anotherPermanentLocation = 'Main Library';
   const ITEM_BARCODE = generateItemBarcode();
   let userId = '';
-  let sourceId;
+  let testInstanceIds;
 
   beforeEach(() => {
     cy.createTempUser([
@@ -30,23 +30,19 @@ describe('Update the effective location for the item', () => {
           cy.getInstanceTypes({ limit: 1 });
           cy.getLocations({ limit: 1 });
           cy.getHoldingTypes({ limit: 1 });
-          InventoryHoldings.getHoldingSources({ limit: 1 }).then(holdingsSources => {
-            sourceId = holdingsSources[0].id;
-          });
         })
           .then(() => {
-            cy.createInstance({
+            InventoryInstances.createFolioInstanceViaApi({
               instance: {
                 instanceTypeId: Cypress.env('instanceTypes')[0].id,
                 title: instanceTitle,
-                source: 'FOLIO',
               },
               holdings: [{
+                holdingsTypeId: Cypress.env('holdingsTypes')[0].id,
                 permanentLocationId: Cypress.env('locations')[0].id,
-                sourceId
               }],
               items: [
-                [{
+                {
                   barcode: ITEM_BARCODE,
                   missingPieces: '3',
                   numberOfMissingPieces: '3',
@@ -54,8 +50,10 @@ describe('Update the effective location for the item', () => {
                   permanentLoanType: { id: Cypress.env('loanTypes')[0].id },
                   materialType: { id: Cypress.env('materialTypes')[0].id },
                 }],
-              ],
-            });
+            })
+              .then(specialInstanceIds => {
+                testInstanceIds = specialInstanceIds;
+              });
           });
         cy.login(userProperties.username, userProperties.password);
       });
@@ -63,12 +61,15 @@ describe('Update the effective location for the item', () => {
   });
 
   afterEach(() => {
-    cy.getInstance({ limit: 1, expandAll: true, query: `"items.barcode"=="${ITEM_BARCODE}"` })
-      .then((instance) => {
-        cy.deleteItem(instance.items[0].id);
-        cy.deleteHoldingRecord(instance.holdings[0].id);
-        cy.deleteInstanceApi(instance.id);
+    cy.wrap(testInstanceIds.holdingIds.forEach(holdingsId => {
+      cy.wrap(holdingsId.itemIds.forEach(itemId => {
+        cy.deleteItem(itemId);
+      })).then(() => {
+        cy.deleteHoldingRecord(holdingsId.id);
       });
+    })).then(() => {
+      cy.deleteInstanceApi(testInstanceIds.instanceId);
+    });
     Users.deleteViaApi(userId);
   });
 

@@ -5,15 +5,16 @@ import { MultiColumnListCell } from '../../../interactors';
 import permissions from '../../support/dictionary/permissions';
 import InventoryInstance from '../../support/fragments/inventory/inventoryInstance';
 import HoldingsRecordView from '../../support/fragments/inventory/holdingsRecordView';
-import getRandomPostfix from '../../support/utils/stringTools';
 import TestTypes from '../../support/dictionary/testTypes';
 import users from '../../support/fragments/users/users';
+import Helper from '../../support/fragments/finance/financeHelper';
 
 describe('ui-inventory: Create a Holdings record as another user than the one that created the Instance', () => {
   let firstUser;
   let secondUser;
+  const instanceTitle = `autoTestInstanceTitle ${Helper.getRandomBarcode()}`;
   const recordsData = {
-    instanceTitle: `e2e-Instance${getRandomPostfix()}`,
+    instanceTitle,
     permanentLocationOption: 'Online (E) ',
     permanentLocationValue: 'Online',
     source: 'FOLIO'
@@ -36,6 +37,11 @@ describe('ui-inventory: Create a Holdings record as another user than the one th
   });
 
   afterEach(() => {
+    cy.getInstance({ limit: 1, expandAll: true, query: `"title"=="${instanceTitle}"` })
+      .then((instance) => {
+        cy.deleteHoldingRecord(instance.holdings[0].id);
+        cy.deleteInstanceApi(instance.id);
+      });
     users.deleteViaApi(firstUser.userId);
     users.deleteViaApi(secondUser.userId);
   });
