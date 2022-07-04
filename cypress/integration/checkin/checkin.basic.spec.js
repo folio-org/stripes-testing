@@ -65,15 +65,13 @@ describe('Check In - Actions ', () => {
         UserEdit.addServicePointViaApi(itemData.servicepointId,
           userData.userId, itemData.servicepointId);
 
-        const payloadInCheckOutItemRequest = {
+        checkoutActions.createItemCheckoutApi({
           id: uuid(),
           itemBarcode: itemData.barcode,
           loanDate: moment.utc().format(),
           servicePointId: itemData.servicepointId,
           userBarcode: userData.barcode,
-        };
-
-        checkoutActions.createItemCheckoutApi(payloadInCheckOutItemRequest);
+        });
 
         cy.login(userData.username, userData.password, { path: TopMenu.checkInPath, waiter: CheckInActions.waitLoading });
       });
