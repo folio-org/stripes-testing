@@ -84,7 +84,7 @@ describe('Check In - Actions ', () => {
     Users.deleteViaApi(userData.userId);
   });
 
-  it('C347631 Check in: Basic check in', { tags: [TestTypes.smoke, TestTypes.broken] }, () => {
+  it('C347631 Check in: Basic check in', { tags: [TestTypes.smoke] }, () => {
     CheckInActions.checkInItemGui(itemData.barcode);
     InTransitModal.verifyModalTitle();
     InTransitModal.verifySelectedCheckboxPrintSlip();
