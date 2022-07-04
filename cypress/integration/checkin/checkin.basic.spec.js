@@ -41,7 +41,7 @@ describe('Check In - Actions ', () => {
 
   before('Create New Item, New User and Check out item', () => {
     cy.getAdminToken().then(() => {
-      cy.getInstanceTypes({ limit: 1 }).then((instanceTypes) => { itemData.instanceTypeId = instanceTypes[0].id; console.log('itemData.instanceTypeId= ' + itemData.instanceTypeId); });
+      cy.getInstanceTypes({ limit: 1 }).then((instanceTypes) => { itemData.instanceTypeId = instanceTypes[0].id; });
       cy.getHoldingTypes({ limit: 1 }).then((res) => { itemData.holdingTypeId = res[0].id; });
       cy.getLocations({ limit: 1 }).then((res) => { itemData.locationId = res.id; });
       cy.getLoanTypes({ limit: 1 }).then((res) => { itemData.loanTypeId = res[0].id; });
@@ -102,9 +102,9 @@ describe('Check In - Actions ', () => {
   it('C347631 Check in: Basic check in', { tags: [TestTypes.smoke, TestTypes.broken] }, () => {
     CheckInActions.checkInItemGui(itemData.barcode);
     InTransitModal.verifyModalTitle();
-    InTransitModal.verifySelectedCheckbox();
-    InTransitModal.unselectChechbox();
-    InTransitModal.verifyUnSelectedCheckbox();
+    InTransitModal.verifySelectedCheckboxPrintSlip();
+    InTransitModal.unselectCheckboxPrintSlip();
+    InTransitModal.verifyUnSelectedCheckboxPrintSlip();
     InTransitModal.closeModal();
     cy.get('@userProperties').then(userProperties => {
       CheckInActions.checkActionsMenuOptions();

@@ -11,13 +11,13 @@ export default {
   closeModal:() => {
     cy.do(Button('Close').click());
   },
-  verifyUnSelectedCheckbox: () => {
+  verifyUnSelectedCheckboxPrintSlip: () => {
     cy.expect(modalCheckbox.is({ disabled: false, checked: false }));
   },
-  verifySelectedCheckbox: () => {
+  verifySelectedCheckboxPrintSlip: () => {
     cy.expect(modalCheckbox.is({ disabled: false, checked: true }));
   },
-  unselectChechbox: () => {
+  unselectCheckboxPrintSlip: () => {
     cy.do(modalCheckbox.click());
   },
   getModalCheckbox: () => {
