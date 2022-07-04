@@ -158,4 +158,19 @@ describe('bulk-edit: in-app file uploading', () => {
     BulkEditActions.verifySuccessBanner();
     BulkEditActions.newBulkEdit();
   });
+
+  it('C357035 Verify elements of the bulk edit app -- In app approach', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
+    BulkEditSearchPane.selectRecordIdentifier('Item barcode');
+
+    BulkEditSearchPane.clickToBulkEditMainButton();
+    BulkEditSearchPane.verifyDefaultFilterState();
+
+    BulkEditSearchPane.selectRecordIdentifier('Item barcode');
+
+    BulkEditSearchPane.uploadFile(invalidItemBarcodesFileName);
+    BulkEditSearchPane.waitFileUploading();
+
+    BulkEditSearchPane.clickToBulkEditMainButton();
+    BulkEditSearchPane.verifyDefaultFilterState();
+  });
 });

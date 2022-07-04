@@ -140,6 +140,18 @@ export default {
     cy.do(recordIdentifier.choose(value));
   },
 
+  clickToBulkEditMainButton() {
+    cy.do(Button({ id: 'ModuleMainHeading' }).click());
+  },
+
+  verifyDefaultFilterState() {
+    cy.expect([
+      Button('or choose file').has({ disabled: true }),
+      HTML('Select record identifier').exists()
+    ]);
+    this.verifyBulkEditPaneItems();
+  },
+
   verifyItemIdentifiers() {
     cy.expect([
       recordIdentifier.find(HTML('Item barcode')).exists(),
