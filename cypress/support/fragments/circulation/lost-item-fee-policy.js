@@ -24,6 +24,18 @@ export const defaultLostItemFeePolicy = {
 };
 
 export default {
+  createApiSpecific(lostItemFeePolicy) {
+    return cy
+      .okapiRequest({
+        method: 'POST',
+        path: 'lost-item-fees-policies',
+        body: lostItemFeePolicy,
+      })
+      .then(({ body }) => {
+        return body;
+      });
+  },
+
   createApi() {
     return cy
       .okapiRequest({
