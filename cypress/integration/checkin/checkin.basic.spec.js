@@ -65,7 +65,7 @@ describe('Check In - Actions ', () => {
         UserEdit.addServicePointViaApi(itemData.servicepointId,
           userData.userId, itemData.servicepointId);
 
-        CheckoutActions.createItemCheckoutApi({
+        CheckoutActions.createItemCheckoutViaApi({
           id: uuid(),
           itemBarcode: itemData.barcode,
           loanDate: moment.utc().format(),
