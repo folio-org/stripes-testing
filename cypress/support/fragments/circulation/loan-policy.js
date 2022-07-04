@@ -1,6 +1,7 @@
 import uuid from 'uuid';
 import { getTestEntityValue } from '../../utils/stringTools';
 import { LIBRARY_DUE_DATE_MANAGMENT, LOAN_PROFILE } from '../../constants';
+import Heading from '../../../../interactors';
 
 const getDefaultLoanPolicy = (limit, scheduleId) => {
   const defaultLoanPolicy = {
@@ -28,6 +29,9 @@ export const defaultLoanPolicy = {
 };
 
 export default {
+  waitLoading() {
+    cy.expect(Heading('Loan policies').exists());
+  },
   getDefaultLoanPolicy,
   createApi(loanPolicy) {
     return cy
