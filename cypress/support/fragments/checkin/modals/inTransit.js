@@ -20,7 +20,4 @@ export default {
   unselectCheckboxPrintSlip: () => {
     cy.do(modalCheckbox.click());
   },
-  getModalCheckbox: () => {
-    return modalCheckbox;
-  },
 };
