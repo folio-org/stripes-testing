@@ -12,7 +12,6 @@ import getRandomPostfix from '../../support/utils/stringTools';
 import checkoutActions from '../../support/fragments/checkout/checkout';
 import Users from '../../support/fragments/users/users';
 import InTransitModal from '../../support/fragments/checkin/modals/inTransit';
-import { Button, Pane, including, Modal } from '../../../interactors';
 
 describe('Check In - Actions ', () => {
   const userData = {
@@ -25,19 +24,7 @@ describe('Check In - Actions ', () => {
   const itemData = {
     barcode: generateItemBarcode(),
     instanceTitle: `Instance ${getRandomPostfix()}`,
-
   };
-  const loanDetailsButton = Button('Loan details');
-  const patronDetailsButton = Button('Patron details');
-  const itemDetailsButton = Button('Item details');
-  const newFeeFineButton = Button('New Fee/Fine');
-  const checkInButton = Button('Check in');
-  const availableActionsButton = Button({ id: 'available-actions-button-0' });
-
-  function returnCheckIn() {
-    cy.do(checkInButton.click());
-    cy.do(availableActionsButton.click());
-  }
 
   before('Create New Item, New User and Check out item', () => {
     cy.getAdminToken().then(() => {
@@ -94,9 +81,7 @@ describe('Check In - Actions ', () => {
 
   after('Delete New Service point, Item and User', () => {
     InventoryInstances.deleteInstanceViaApi(itemData.barcode);
-    cy.get('@userProperties').then(userProperties => {
-      Users.deleteViaApi(userProperties.userId);
-    });
+    Users.deleteViaApi(userData.userId);
   });
 
   it('C347631 Check in: Basic check in', { tags: [TestTypes.smoke, TestTypes.broken] }, () => {
@@ -106,22 +91,15 @@ describe('Check In - Actions ', () => {
     InTransitModal.unselectCheckboxPrintSlip();
     InTransitModal.verifyUnSelectedCheckboxPrintSlip();
     InTransitModal.closeModal();
-    cy.get('@userProperties').then(userProperties => {
-      CheckInActions.checkActionsMenuOptions();
-      cy.do(loanDetailsButton.click());
-      cy.expect(Pane(including(userProperties.username)).exists());
-      cy.expect(Pane(including('Loan details')).exists());
-      returnCheckIn();
-      cy.do(patronDetailsButton.click());
-      cy.expect(Pane({ title: including(userProperties.username) }).exists());
-      returnCheckIn();
-      cy.do(itemDetailsButton.click());
-      cy.expect(Pane(including(itemData.barcode)).exists());
-      returnCheckIn();
-      cy.do(newFeeFineButton.click());
-      cy.expect(Modal(including('New fee/fine')).exists());
-      returnCheckIn();
-    });
+    CheckInActions.checkActionsMenuOptions();
+    CheckInActions.openLoanDetails(userData.username);
+    CheckInActions.openCheckInPane();
+    CheckInActions.openPatronDetails(userData.username);
+    CheckInActions.openCheckInPane();
+    CheckInActions.openItemDetails(itemData.barcode);
+    CheckInActions.openCheckInPane();
+    CheckInActions.openNewfeefinesPane();
+    CheckInActions.openCheckInPane();
   });
 });
 

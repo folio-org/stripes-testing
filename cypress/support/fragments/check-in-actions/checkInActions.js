@@ -1,9 +1,8 @@
 import uuid from 'uuid';
-import { Button, including, TextField, MultiColumnListRow, HTML } from '../../../../interactors';
+import { Button, including, TextField, MultiColumnListRow, HTML, Pane, Modal } from '../../../../interactors';
 import { REQUEST_METHOD } from '../../constants';
 import { getLongDelay } from '../../utils/cypressTools';
 
-const actionsButton = Button({ id: 'available-actions-button-0' });
 const loanDetailsButton = Button('Loan details');
 const patronDetailsButton = Button('Patron details');
 const itemDetailsButton = Button('Item details');
@@ -38,20 +37,49 @@ export default {
     cy.wait('@getTags', getLongDelay());
   },
   checkActionsMenuOptions:() => {
-    cy.expect(actionsButton.exists());
-    cy.do(actionsButton.click());
+    cy.expect(availableActionsButton.exists());
+    cy.do(availableActionsButton.click());
     cy.expect([
       loanDetailsButton.exists(),
       patronDetailsButton.exists(),
       itemDetailsButton.exists(),
       newFeeFineButton.exists(),
     ]);
-  },
-  returnCheckIn() {
-    cy.do(checkInButton.click());
     cy.do(availableActionsButton.click());
   },
-  createItemCheckinApi(body) {
+  openCheckInPane: () => {
+    cy.do(checkInButton.click());
+  },
+  openLoanDetails: (username) => {
+    cy.do([
+      availableActionsButton.click(),
+      loanDetailsButton.click()
+    ]);
+    cy.expect(Pane(including(username)).exists());
+    cy.expect(Pane(including('Loan details')).exists());
+  },
+  openPatronDetails: (username) => {
+    cy.do([
+      availableActionsButton.click(),
+      patronDetailsButton.click()
+    ]);
+    cy.expect(Pane({ title: including(username) }).exists());
+  },
+  openItemDetails: (itemBarcode) => {
+    cy.do([
+      availableActionsButton.click(),
+      itemDetailsButton.click()
+    ]);
+    cy.expect(Pane(including(itemBarcode)).exists());
+  },
+  openNewfeefinesPane: () => {
+    cy.do([
+      availableActionsButton.click(),
+      newFeeFineButton.click()
+    ]);
+    cy.expect(Modal(including('New fee/fine')).exists());
+  },
+  createItemCheckinApi: (body) => {
     return cy.okapiRequest({
       method: REQUEST_METHOD.POST,
       path: 'circulation/check-in-by-barcode',
