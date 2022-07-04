@@ -26,10 +26,10 @@ describe('ui-users:', () => {
   const firstTitle = 'Sport and sociology / Dominic Malcolm.';
   const secondTitle = 'South Asian texts in history : critical engagements with Sheldon Pollock / edited by Yigal Bronner, Whitney Cox, and Lawrence McCrea.';
   const titles = [firstTitle, secondTitle];
-  const firstOrderNumber = Helper.getRandomBarcode();
-  const secondOrderNumber = Helper.getRandomBarcode();
-  //const firstOrderNumber = 'auto99999test';
-  //const secondOrderNumber = 'auto100000test';
+  // const firstOrderNumber = Helper.getRandomBarcode();
+  // const secondOrderNumber = Helper.getRandomBarcode();
+  const firstOrderNumber = 'auto99999test';
+  const secondOrderNumber = 'auto100000test';
   const orderNumbers = [firstOrderNumber, secondOrderNumber];
   let vendorId;
   let locationId;
@@ -48,7 +48,7 @@ describe('ui-users:', () => {
   const matchProfileNameForItem = `C350590 935 $a POL to Item POL ${Helper.getRandomBarcode()}`;
   const actionProfileNameForInstance = `C350590 Update Instance by POL match ${Helper.getRandomBarcode()}`;
   const actionProfileNameForHoldings = `C350590 Update Holdings by POL match ${Helper.getRandomBarcode()}`;
-  const actionProfileNameForItem = `C350590 Update Item by POL match ${getRandomPostfix()}`;
+  const actionProfileNameForItem = `C350590 Update Item by POL match ${Helper.getRandomBarcode()}`;
   const mappingProfileNameForInstance = `C350590 Update Instance by POL match ${Helper.getRandomBarcode()}`;
   const mappingProfileNameForHoldings = `C350590 Update Holdings by POL match ${Helper.getRandomBarcode()}`;
   const mappingProfileNameForItem = `C350590 Update Item by POL match ${getRandomPostfix()}`;
@@ -78,7 +78,7 @@ describe('ui-users:', () => {
               .then(organization => {
                 vendorId = organization.id;
               });
-            cy.getLocations({ limit:1 })
+            cy.getLocations({ limit:1, query:'name="Main Library"' })
               .then(location => {
                 locationId = location.id;
               });
@@ -180,7 +180,7 @@ describe('ui-users:', () => {
       Orders.getOrdersApi({ limit: 1, query: `"poNumber"=="${number}"` })
         .then(order => {
           console.log(order);
-          // Orders.deleteOrderApi(order[0].id);
+          Orders.deleteOrderApi(order[0].id);
         });
     });
     Users.deleteViaApi(user.userId);
@@ -262,15 +262,6 @@ describe('ui-users:', () => {
       MatchProfiles.createMatchProfileForPol(profile.matchProfile);
     });
 
-    cy.visit(SettingsMenu.mappingProfilePath);
-    cy.visit(SettingsMenu.jobProfilePath);
-    JobProfiles.createJobProfile(specialJobProfile);
-    collectionOfProfiles.forEach(profile => {
-      NewJobProfile.linkActionProfile(profile.actionProfile);
-    });
-    NewJobProfile.saveAndClose();
-    JobProfiles.checkJobProfilePresented(specialJobProfile.profileName);
-
     cy.visit(SettingsMenu.jobProfilePath);
     JobProfiles.createJobProfileWithLinkingProfilesForUpdate(specialJobProfile);
     NewJobProfile.linkMatchAndActionProfilesForInstance(actionProfileNameForInstance, matchProfileNameForInstance, 0);
@@ -278,11 +269,20 @@ describe('ui-users:', () => {
     NewJobProfile.linkMatchAndActionProfilesForItem(actionProfileNameForItem, matchProfileNameForItem, 4);
     NewJobProfile.saveAndClose();
 
-
     cy.visit(TopMenu.dataImportPath);
     DataImport.uploadFile('matchOnPOL.mrc', marcFileName);
     JobProfiles.searchJobProfileForImport(jobProfileName);
     JobProfiles.runImportFile(marcFileName);
     Logs.openFileDetails(marcFileName);
+
+    // delete generated profiles
+    JobProfiles.deleteJobProfile(jobProfileName);
+    collectionOfMatchProfiles.forEach(profile => {
+      MatchProfiles.deleteMatchProfile(profile.matchProfile.profileName);
+    });
+    collectionOfProfiles.forEach(profile => {
+      ActionProfiles.deleteActionProfile(profile.actionProfile.name);
+      FieldMappingProfiles.deleteFieldMappingProfile(profile.mappingProfile.name);
+    });
   });
 });
