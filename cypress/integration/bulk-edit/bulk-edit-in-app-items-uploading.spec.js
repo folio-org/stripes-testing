@@ -132,6 +132,23 @@ describe('bulk-edit: in-app file uploading', () => {
     BulkEditActions.openStartBulkEditForm();
     BulkEditActions.fillTemporaryLocationFilter(`test_location_${getRandomPostfix()}`);
     BulkEditActions.verifyNoMatchingOptionsForLocationFilter();
+    BulkEditActions.cancel();
+    BulkEditActions.newBulkEdit();
+  });
+
+  it('C357035 Verify elements of the bulk edit app -- In app approach', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
+    BulkEditSearchPane.selectRecordIdentifier('Item barcode');
+
+    BulkEditSearchPane.clickToBulkEditMainButton();
+    BulkEditSearchPane.verifyDefaultFilterState();
+
+    BulkEditSearchPane.selectRecordIdentifier('Item barcode');
+
+    BulkEditSearchPane.uploadFile(invalidItemBarcodesFileName);
+    BulkEditSearchPane.waitFileUploading();
+
+    BulkEditSearchPane.clickToBulkEditMainButton();
+    BulkEditSearchPane.verifyDefaultFilterState();
   });
 
   // Bug UIBULKED-121
@@ -156,20 +173,5 @@ describe('bulk-edit: in-app file uploading', () => {
     BulkEditSearchPane.verifyErrorLabel(invalidItemBarcodesFileName, 1, 1);
     BulkEditActions.verifySuccessBanner();
     BulkEditActions.newBulkEdit();
-  });
-
-  it('C357035 Verify elements of the bulk edit app -- In app approach', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
-    BulkEditSearchPane.selectRecordIdentifier('Item barcode');
-
-    BulkEditSearchPane.clickToBulkEditMainButton();
-    BulkEditSearchPane.verifyDefaultFilterState();
-
-    BulkEditSearchPane.selectRecordIdentifier('Item barcode');
-
-    BulkEditSearchPane.uploadFile(invalidItemBarcodesFileName);
-    BulkEditSearchPane.waitFileUploading();
-
-    BulkEditSearchPane.clickToBulkEditMainButton();
-    BulkEditSearchPane.verifyDefaultFilterState();
   });
 });

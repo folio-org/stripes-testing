@@ -196,11 +196,7 @@ export default {
     values.forEach(value => {
       cy.expect(resultsAccordion.find(MultiColumnListCell({ content: value })).exists());
     });
-
-    // verify items count
-    cy.get('[class^=mclEndOfListContainer-]')
-      .invoke('attr', 'data-end-of-list')
-      .should('eq', `${values.length}`);
+    cy.expect(resultsAccordion.has({ contentLength: values.length }));
   },
 
   verifyNonMatchedResults(...values) {
