@@ -41,7 +41,6 @@ describe('ui-inventory: Filter instances by tags', () => {
     FilterInstancesByTags.selectFoundInstance(instanceRecord.instanceTitle);
     FilterInstancesByTags.verifyInstanceDetailsView();
     FilterInstancesByTags.openTagsField();
-    FilterInstancesByTags.waitTagsViewLoading();
     FilterInstancesByTags.verifyTagsView();
     FilterInstancesByTags.addTag(testTag);
     FilterInstancesByTags.verifyTagCount(tagsCount);
