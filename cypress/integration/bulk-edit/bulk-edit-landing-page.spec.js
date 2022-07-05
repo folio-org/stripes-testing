@@ -4,7 +4,6 @@ import permissions from '../../support/dictionary/permissions';
 import BulkEditSearchPane from '../../support/fragments/bulk-edit/bulk-edit-search-pane';
 import devTeams from '../../support/dictionary/devTeams';
 import users from '../../support/fragments/users/users';
-import bulkEditSearchPane from '../../support/fragments/bulk-edit/bulk-edit-search-pane';
 
 let user;
 
@@ -18,7 +17,7 @@ describe('bulk-edit: landing page', () => {
     ])
       .then(userProperties => {
         user = userProperties;
-        cy.login(user.username, user.password, { path: TopMenu.bulkEditPath, waiter: bulkEditSearchPane.waitLoading });
+        cy.login(user.username, user.password, { path: TopMenu.bulkEditPath, waiter: BulkEditSearchPane.waitLoading });
       });
   });
 

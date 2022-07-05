@@ -3,14 +3,13 @@ import testTypes from '../../support/dictionary/testTypes';
 import permissions from '../../support/dictionary/permissions';
 import BulkEditSearchPane from '../../support/fragments/bulk-edit/bulk-edit-search-pane';
 import InteractorsTools from '../../support/utils/interactorsTools';
-import { calloutTypes, Heading, including, Pane } from '../../../interactors';
+import { calloutTypes } from '../../../interactors';
 import devTeams from '../../support/dictionary/devTeams';
 import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
 import getRandomPostfix from '../../support/utils/stringTools';
 import FileManager from '../../support/utils/fileManager';
 import users from '../../support/fragments/users/users';
 import BulkEditActions from '../../support/fragments/bulk-edit/bulk-edit-actions';
-import bulkEditSearchPane from '../../support/fragments/bulk-edit/bulk-edit-search-pane';
 
 let user;
 const item = {
@@ -33,7 +32,7 @@ describe('bulk-edit: in-app file uploading', () => {
     ])
       .then(userProperties => {
         user = userProperties;
-        cy.login(user.username, user.password, { path: TopMenu.bulkEditPath, waiter: bulkEditSearchPane.waitLoading });
+        cy.login(user.username, user.password, { path: TopMenu.bulkEditPath, waiter: BulkEditSearchPane.waitLoading });
 
         InventoryInstances.createInstanceViaApi(item.instanceName, item.itemBarcode);
         InventoryInstances.createInstanceViaApi(itemToBeDeleted.instanceName, itemToBeDeleted.itemBarcode);
