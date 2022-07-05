@@ -1,6 +1,6 @@
 import uuid from 'uuid';
 import { getTestEntityValue } from '../../utils/stringTools';
-import { PaneHeader, Button, TextField, Select, KeyValue, Section, HTML} from '../../../../interactors';
+import { PaneHeader, Button, TextField, Select, KeyValue, Section, HTML } from '../../../../interactors';
 
 const actionsButton = Button('Actions');
 const lostItemFeePolicySection = Section({ id: 'viewLostItemFeeSection' });
