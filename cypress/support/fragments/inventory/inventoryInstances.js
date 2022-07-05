@@ -12,7 +12,6 @@ import {
 } from '../../../../interactors';
 import InventoryHoldings from './holdings/inventoryHoldings';
 import NewInventoryInstance from './newInventoryInstance';
-import getRandomPostfix from '../../utils/stringTools';
 
 const rootSection = Section({ id: 'pane-results' });
 const inventoriesList = rootSection.find(MultiColumnList({ id: 'list-inventory' }));
