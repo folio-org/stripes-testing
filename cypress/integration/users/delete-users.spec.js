@@ -151,7 +151,7 @@ describe('Deleting user', () => {
         });
       })
       .then(() => {
-        CheckoutActions.createItemCheckoutApi({
+        CheckoutActions.createItemCheckoutViaApi({
           itemBarcode: ITEM_BARCODE,
           userBarcode: specialUserBarcode,
           servicePointId: servicePoint.id,

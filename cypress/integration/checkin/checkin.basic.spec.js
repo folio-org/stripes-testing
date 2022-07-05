@@ -1,61 +1,103 @@
-import generateItemBarcode from '../../support/utils/generateItemBarcode';
-import checkoutActions from '../../support/fragments/checkout/checkout';
+import moment from 'moment';
+import uuid from 'uuid';
+import permissions from '../../support/dictionary/permissions';
 import TopMenu from '../../support/fragments/topMenu';
-import InventoryHoldings from '../../support/fragments/inventory/holdings/inventoryHoldings';
+import TestTypes from '../../support/dictionary/testTypes';
+import CheckInActions from '../../support/fragments/check-in-actions/checkInActions';
+import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
+import UserEdit from '../../support/fragments/users/userEdit';
+import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
+import generateItemBarcode from '../../support/utils/generateItemBarcode';
+import getRandomPostfix from '../../support/utils/stringTools';
+import CheckoutActions from '../../support/fragments/checkout/checkout';
+import Users from '../../support/fragments/users/users';
+import InTransitModal from '../../support/fragments/checkin/modals/inTransit';
 
-describe('Check In', () => {
-  const ITEM_BARCODE = generateItemBarcode();
-  let source;
+describe('Check In - Actions ', () => {
+  const userData = {
+    permissions: [permissions.checkinAll.gui,
+      permissions.uiUsersViewLoans.gui,
+      permissions.uiUsersView.gui,
+      permissions.uiInventoryViewInstances.gui,
+      permissions.uiUsersfeefinesCRUD.gui],
+  };
+  const itemData = {
+    barcode: generateItemBarcode(),
+    instanceTitle: `Instance ${getRandomPostfix()}`,
+  };
 
-  beforeEach(() => {
-    cy.login(Cypress.env('diku_login'), Cypress.env('diku_password'));
-    cy.getAdminToken()
-      .then(() => {
-        cy.getLoanTypes({ limit: 1 });
-        cy.getMaterialTypes({ limit: 1 });
-        cy.getLocations({ limit: 1 });
-        cy.getHoldingTypes({ limit: 1 });
-        source = InventoryHoldings.getHoldingSources({ limit: 1 });
-        cy.getInstanceTypes({ limit: 1 });
-        cy.getUsers({ limit: 1, query: '"personal.firstName"="checkout-all" and "active"="true"' });
+  before('Create New Item, New User and Check out item', () => {
+    cy.getAdminToken().then(() => {
+      cy.getInstanceTypes({ limit: 1 }).then((instanceTypes) => { itemData.instanceTypeId = instanceTypes[0].id; });
+      cy.getHoldingTypes({ limit: 1 }).then((res) => { itemData.holdingTypeId = res[0].id; });
+      cy.getLocations({ limit: 1 }).then((res) => { itemData.locationId = res.id; });
+      cy.getLoanTypes({ limit: 1 }).then((res) => { itemData.loanTypeId = res[0].id; });
+      cy.getMaterialTypes({ limit: 1 }).then((res) => { itemData.materialTypeId = res.id; });
+      ServicePoints.getViaApi({ limit: 1 }).then((servicePoints) => { itemData.servicepointId = servicePoints[0].id; });
+    }).then(() => {
+      InventoryInstances.createFolioInstanceViaApi({ instance: {
+        instanceTypeId: itemData.instanceTypeId,
+        title: itemData.instanceTitle,
+      },
+      holdings: [{
+        holdingsTypeId: itemData.holdingTypeId,
+        permanentLocationId: itemData.locationId,
+      }],
+      items:[{
+        barcode: itemData.barcode,
+        status:  { name: 'Available' },
+        permanentLoanType: { id: itemData.loanTypeId },
+        materialType: { id: itemData.materialTypeId },
+      }] });
+    }).then(specialInstanceIds => {
+      itemData.testInstanceIds = specialInstanceIds;
+    });
+
+    cy.createTempUser(userData.permissions)
+      .then(userProperties => {
+        userData.username = userProperties.username;
+        userData.password = userProperties.password;
+        userData.userId = userProperties.userId;
+        userData.barcode = userProperties.barcode;
+        userData.firstName = userProperties.firstName;
       })
       .then(() => {
-        cy.getUserServicePoints(Cypress.env('users')[0].id);
+        UserEdit.addServicePointViaApi(itemData.servicepointId,
+          userData.userId, itemData.servicepointId);
 
-        cy.createInstance({
-          instance: {
-            instanceTypeId: Cypress.env('instanceTypes')[0].id,
-            title: `Checkout instance ${Number(new Date())}`,
-          },
-          holdings: [{
-            holdingsTypeId: Cypress.env('holdingsTypes')[0].id,
-            permanentLocationId: Cypress.env('locations')[0].id,
-            sourceId: source.id
-          }],
-          items: [
-            [{
-              barcode: ITEM_BARCODE,
-              missingPieces: '3',
-              numberOfMissingPieces: '3',
-              status: { name: 'Available' },
-              permanentLoanType: { id: Cypress.env('loanTypes')[0].id },
-              materialType: { id: Cypress.env('materialTypes')[0].id },
-            }],
-          ],
+        CheckoutActions.createItemCheckoutViaApi({
+          id: uuid(),
+          itemBarcode: itemData.barcode,
+          loanDate: moment.utc().format(),
+          servicePointId: itemData.servicepointId,
+          userBarcode: userData.barcode,
         });
-      })
-      .then(() => {
-        checkoutActions.createItemCheckoutApi({
-          itemBarcode: ITEM_BARCODE,
-          userBarcode: Cypress.env('users')[0].barcode,
-          servicePointId: Cypress.env('userServicePoints')[0].id,
-        });
+
+        cy.login(userData.username, userData.password, { path: TopMenu.checkInPath, waiter: CheckInActions.waitLoading });
       });
   });
 
-  it('Basic flow', function () {
-    cy.visit(TopMenu.checkInPath);
-    cy.checkInItem(ITEM_BARCODE);
-    cy.verifyItemCheckIn();
+  after('Delete New Service point, Item and User', () => {
+    InventoryInstances.deleteInstanceViaApi(itemData.barcode);
+    Users.deleteViaApi(userData.userId);
+  });
+
+  it('C347631 Check in: Basic check in', { tags: [TestTypes.smoke] }, () => {
+    CheckInActions.checkInItemGui(itemData.barcode);
+    InTransitModal.verifyModalTitle();
+    InTransitModal.verifySelectedCheckboxPrintSlip();
+    InTransitModal.unselectCheckboxPrintSlip();
+    InTransitModal.verifyUnSelectedCheckboxPrintSlip();
+    InTransitModal.closeModal();
+    CheckInActions.checkActionsMenuOptions();
+    CheckInActions.openLoanDetails(userData.username);
+    CheckInActions.openCheckInPane();
+    CheckInActions.openPatronDetails(userData.username);
+    CheckInActions.openCheckInPane();
+    CheckInActions.openItemDetails(itemData.barcode);
+    CheckInActions.openCheckInPane();
+    CheckInActions.openNewfeefinesPane();
+    CheckInActions.openCheckInPane();
   });
 });
+

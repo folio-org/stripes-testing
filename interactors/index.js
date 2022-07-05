@@ -51,6 +51,7 @@ export { default as QuickMarcEditorRow } from './quickMarcEditorRow';
 export { default as QuickMarcEditor } from './quickMarcEditor';
 export { AdvancedSearch, AdvancedSearchRow } from './advanced-search';
 export { FieldSet, FieldInFieldset } from './fieldset';
+export { default as ConfirmationModal } from './confirmation-modal';
 
 // Stripes-smart-component interactors
 export { AddressList, AddressEdit, AddressItem } from './address-edit-list';

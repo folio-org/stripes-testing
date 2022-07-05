@@ -51,11 +51,11 @@ export default {
   },
 
   verifySearchResult(instanceTitle) {
-    cy.expect(MultiColumnListCell({ row: 0, column: instanceTitle }).exists());
+    cy.expect(MultiColumnListCell({ row: 0, content: instanceTitle }).exists());
   },
 
   selectFoundInstance(instanceTitle) {
-    cy.do(MultiColumnListCell({ row: 0, column: instanceTitle }).click());
+    cy.do(MultiColumnListCell({ row: 0, content: instanceTitle }).click());
   },
 
   verifyInstanceDetailsView() {
@@ -114,7 +114,7 @@ export default {
   },
 
   verifyIsFilteredByTag(instanceTitle) {
-    cy.expect(MultiColumnListCell({ row: 0, column: instanceTitle }).exists());
+    cy.expect(MultiColumnListCell({ row: 0, content: instanceTitle }).exists());
     cy.expect(MultiColumnList().has({ rowCount: 1 }));
   }
 };

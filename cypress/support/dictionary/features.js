@@ -10,5 +10,6 @@ export default {
   sharedOwner: '"Shared" owner',
   // users
   patronBlocks: 'Patron blocks',
-  waiveReasons: 'Waive reasons'
+  waiveReasons: 'Waive reasons',
+  feeFine: 'Fee/fine'
 };
