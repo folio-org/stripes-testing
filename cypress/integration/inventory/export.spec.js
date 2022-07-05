@@ -13,7 +13,7 @@ import devTeams from '../../support/dictionary/devTeams';
 import users from '../../support/fragments/users/users';
 import InventoryInstance from '../../support/fragments/inventory/inventoryInstance';
 
-let userId = '';
+let userId;
 const instanceTitle = `Inventory export test ${Number(new Date())}`;
 let locationName = '';
 

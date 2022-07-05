@@ -12,7 +12,7 @@ import ServicePoints from '../../support/fragments/settings/tenant/servicePoints
 import InventoryInstance from '../../support/fragments/inventory/inventoryInstance';
 
 const ITEM_BARCODE = `123${getRandomPostfix()}`;
-let userId = '';
+let userId;
 const holdingId = uuid();
 const title = `Filter items with status test ${Number(new Date())}`;
 let source;

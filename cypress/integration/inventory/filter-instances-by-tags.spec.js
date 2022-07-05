@@ -8,7 +8,7 @@ import Users from '../../support/fragments/users/users';
 import InventoryInstance from '../../support/fragments/inventory/inventoryInstance';
 
 describe('ui-inventory: Filter instances by tags', () => {
-  let userId = '';
+  let userId;
   let instanceRecord = null;
   const testTag = `test_tag_${uuid()}`;
   const tagsCount = '1';

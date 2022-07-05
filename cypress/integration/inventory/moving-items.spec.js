@@ -18,7 +18,7 @@ import users from '../../support/fragments/users/users';
 import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
 
 const successCalloutMessage = '1 item has been successfully moved.';
-let userId = '';
+let userId;
 let firstHolding = '';
 let secondHolding = '';
 let ITEM_BARCODE;

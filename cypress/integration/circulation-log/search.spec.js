@@ -15,7 +15,7 @@ import ServicePoints from '../../support/fragments/settings/tenant/servicePoints
 import InventoryInstance from '../../support/fragments/inventory/inventoryInstance';
 
 const ITEM_BARCODE = `123${getRandomPostfix()}`;
-let userId = '';
+let userId;
 let source;
 let servicePointId;
 

@@ -14,8 +14,8 @@ import Helper from '../../support/fragments/finance/financeHelper';
 describe('ui-inventory: Update the effective location for the item', () => {
   const instanceTitle = `autoTestInstanceTitle ${Helper.getRandomBarcode()}`;
   const anotherPermanentLocation = 'Main Library';
-  const ITEM_BARCODE = generateItemBarcode();
-  let userId = '';
+  const itemBarcode = generateItemBarcode();
+  let userId;
   let testInstanceIds;
 
   beforeEach(() => {
@@ -43,7 +43,7 @@ describe('ui-inventory: Update the effective location for the item', () => {
               }],
               items: [
                 {
-                  barcode: ITEM_BARCODE,
+                  barcode: itemBarcode,
                   missingPieces: '3',
                   numberOfMissingPieces: '3',
                   status: { name: 'Available' },
@@ -76,7 +76,7 @@ describe('ui-inventory: Update the effective location for the item', () => {
     { tags: [TestTypes.smoke] },
     () => {
       InventorySearch.switchToItem();
-      InventorySearch.searchByParameter('Barcode', ITEM_BARCODE);
+      InventorySearch.searchByParameter('Barcode', itemBarcode);
       InventorySearch.selectSearchResultItem();
       InventoryInstance.openHoldingView();
       HoldingsRecordView.edit();
@@ -86,7 +86,7 @@ describe('ui-inventory: Update the effective location for the item', () => {
       HoldingsRecordView.checkPermanentLocation(anotherPermanentLocation);
       HoldingsRecordView.close();
       InventoryInstance.openHoldings([anotherPermanentLocation]);
-      InventoryInstance.openItemView(ITEM_BARCODE);
+      InventoryInstance.openItemView(itemBarcode);
       ItemRecordView.verifyPermanentLocation(anotherPermanentLocation);
     });
 });

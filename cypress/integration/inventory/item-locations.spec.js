@@ -12,7 +12,7 @@ import users from '../../support/fragments/users/users';
 import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
 
 const ITEM_BARCODE = `123${getRandomPostfix()}`;
-let userId = '';
+let userId;
 let source;
 
 describe('ui-inventory: location', () => {
