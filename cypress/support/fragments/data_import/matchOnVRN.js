@@ -1,5 +1,6 @@
 /* eslint-disable cypress/no-unnecessary-waiting */
 import { HTML } from '@interactors/html';
+import { not } from 'bigtest';
 import {
   Accordion,
   Button,
@@ -36,11 +37,11 @@ const poLineData = {
   physicalUnitQuantity: '1',
   locationName: 'Main Library (KU/CC/DI/M)',
   quantityPhysical: '1',
+  createInventory: 'Instance, holdings, item',
   materialType: 'book',
 };
 
 const actionButton = Button('Actions');
-const deleteButton = Button('Delete');
 const closeButton = Button({ icon: 'times' });
 const poTitleField = TextField({ name: 'titleOrPackage' });
 const addProductIdButton = Button('Add product ID and product ID type');
@@ -62,7 +63,6 @@ const locationQuantityPhysicalField = TextField({ name: 'locations[0].quantityPh
 const poLineSaveButton = Button('Save & close');
 const goBackPurchaseOrderButton = Button({ id: 'clickable-backToPO' });
 const orderDetailsPane = PaneHeader({ id: 'paneHeaderorder-details' });
-const orderLinesDetailsSection = Section({ id: 'order-lines-details' });
 const openOrderButton = Button('Open');
 const openOrderModal = Modal({ content: including('Open - purchase order') });
 const submitButton = Button('Submit');
@@ -81,6 +81,7 @@ const callNumberTypeField = TextField('Call number type');
 const barcodeField = TextField('Barcode');
 const copyNumberField = TextField('Copy number');
 const statusField = TextField('Status');
+const createInventorySelect = Select('Create inventory*');
 const actionProfilesPaneHeader = PaneHeader('Action profiles');
 const newActionProfileButton = Button('New action profile');
 const actionSelect = Select('Action*');
@@ -112,9 +113,6 @@ const itemStatusKeyValue = KeyValue('Item status');
 const itemBarcodeKeyValue = KeyValue('Item barcode');
 const instanceDetailsSection = Section({ id: 'pane-instancedetails' });
 const viewSourceButton = Button('View source');
-const holdingsDetailsSection = Section({ id: 'ui-inventory.holdingsRecordView' });
-const itemPaneHeader = PaneHeader(including('Item'));
-const instanceAcquisitionsList = MultiColumnList({ id: 'list-instance-acquisitions' });
 const itemBarcodeLink = Link(itemBarcode);
 const orderDetailsAccordion = Accordion({ id: 'purchaseOrder' });
 
@@ -142,6 +140,7 @@ function fillPOLineInfo() {
     locationNameSelection.open(),
     locationNameOption.click(),
     locationQuantityPhysicalField.fillIn(poLineData.quantityPhysical),
+    createInventorySelect.choose(poLineData.createInventory),
     poLineSaveButton.click(),
   ]);
 }
@@ -232,6 +231,8 @@ function creatMappingProfilesForItem(name) {
     copyNumberField.fillIn('981$a'),
     statusField.fillIn('"Available"'),
   ]);
+  // needs some waiting until selection lists are populated
+  cy.wait(500);
   saveProfile();
   closeViewModeForMappingProfile(name);
 }
@@ -336,7 +337,8 @@ function verifyInstanceStatusNotUpdated() {
   cy.do(searchResultsList.find(MultiColumnListCell({
     row: 1,
     columnIndex: 3,
-  })).find(HTML(including('-'))).exists());
+    content: not('Updated'),
+  })).exists());
 }
 
 function verifyInstanceUpdated() {
@@ -380,39 +382,45 @@ function verifyMARCBibSource() {
   closeDetailView();
 }
 
-function deleteHoldings() {
-  cy.do([
-    viewHoldingsButton.click(),
-    holdingsDetailsSection.find(actionButton).click(),
-    deleteButton.click(),
-    Modal().find(deleteButton).click(),
-  ]);
+function deletePOLineViaAPI(title) {
+  return cy.okapiRequest({
+    method: 'GET',
+    path: 'orders/order-lines',
+    searchParams: {
+      query: `(((titleOrPackage=="*${title}*"))) sortby metadata.updatedDate/sort.descending`,
+      limit: 50,
+      offset: 0,
+    },
+    isDefaultSearchParamsRequired: false,
+  })
+    .then(({ body: { poLines } }) => {
+      return cy.okapiRequest({
+        method: 'DELETE',
+        path: `orders/order-lines/${poLines[0].id}`,
+        isDefaultSearchParamsRequired: false,
+      });
+    });
 }
 
-function deleteItem() {
-  cy.intercept('GET', '/inventory/items/*').as('deleteItem');
-  cy.do([
-    holdingsAccordionButton.click(),
-    itemBarcodeLink.click(),
-    itemPaneHeader.find(actionButton).click(),
-    deleteButton.click(),
-    Modal().find(deleteButton).click(),
-  ]);
-  cy.wait('@deleteItem');
-}
-
-
-function deletePOLine() {
-  cy.do([
-    instanceAcquisitionsList.find(Link({ href: including('/orders/lines/view/') })).click(),
-    orderLinesDetailsSection.find(actionButton).click(),
-    deleteButton.click(),
-    Modal().find(deleteButton).click(),
-  ]);
+function deleteItemViaAPI(barcode = itemBarcode) {
+  return cy.okapiRequest({
+    method: 'GET',
+    path: 'inventory/items',
+    searchParams: {
+      query: `barcode=="${barcode}"`,
+      limit: 1000,
+    },
+    isDefaultSearchParamsRequired: false,
+  })
+    .then(({ body: { items } }) => {
+      return cy.deleteItem(items[0].id);
+    });
 }
 
 export default {
   poLineData,
+  deletePOLineViaAPI,
+  deleteItemViaAPI,
   verifyCreatedOrder,
   fillPOLineInfo,
   goBackToPO,
@@ -430,8 +438,5 @@ export default {
   verifyHoldingsUpdated,
   verifyItemUpdated,
   verifyMARCBibSource,
-  deleteItem,
-  deleteHoldings,
-  deletePOLine,
   verifyInstanceStatusNotUpdated,
 };

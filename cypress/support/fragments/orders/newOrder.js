@@ -1,7 +1,7 @@
 import uuid from 'uuid';
 
 export default {
-  defaultOrder: {
+  defaultOneTimeOrder: {
     id: uuid(),
     vendor: '',
     orderType: 'One-time'

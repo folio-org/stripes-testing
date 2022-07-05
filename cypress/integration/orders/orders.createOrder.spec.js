@@ -4,7 +4,7 @@ import Orders from '../../support/fragments/orders/orders';
 import TestType from '../../support/dictionary/testTypes';
 
 describe('orders: create an order', () => {
-  const order = { ...NewOrder.defaultOrder };
+  const order = { ...NewOrder.defaultOneTimeOrder };
 
   before(() => {
     cy.login(Cypress.env('diku_login'), Cypress.env('diku_password'));

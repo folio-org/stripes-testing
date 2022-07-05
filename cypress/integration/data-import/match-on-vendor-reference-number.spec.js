@@ -15,7 +15,7 @@ import users from '../../support/fragments/users/users';
 describe('ui-data-import: Match on VRN and update related Instance, Holdings, Item', () => {
   let userId = null;
   const order = {
-    ...NewOrder.defaultOrder,
+    ...NewOrder.defaultOneTimeOrder,
     vendor: 'GOBI Library Solutions',
   };
   const instanceMappingProfileName = `CaseC350591 Update Instance by VRN match ${Helper.getRandomBarcode()}`;
@@ -86,6 +86,8 @@ describe('ui-data-import: Match on VRN and update related Instance, Holdings, It
 
   after(() => {
     users.deleteViaApi(userId);
+    MatchOnVRN.deletePOLineViaAPI(MatchOnVRN.poLineData.title);
+    MatchOnVRN.deleteItemViaAPI();
   });
 
   it('C350591 Match on VRN and update related Instance, Holdings, Item', { tags: [TestTypes.smoke] }, () => {
@@ -140,9 +142,5 @@ describe('ui-data-import: Match on VRN and update related Instance, Holdings, It
     MatchOnVRN.verifyHoldingsUpdated();
     MatchOnVRN.verifyItemUpdated();
     MatchOnVRN.verifyMARCBibSource();
-
-    MatchOnVRN.deleteItem();
-    MatchOnVRN.deleteHoldings();
-    MatchOnVRN.deletePOLine();
   });
 });
