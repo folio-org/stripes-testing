@@ -25,7 +25,7 @@ describe('Manage holding records of instance records created through marc file u
       InventoryInstances.selectInstance();
       InventoryInstance.waitLoading();
       InventoryInstance.createHoldingsRecord();
-      InventoryInstance.goToHoldingView();
+      InventoryInstance.openHoldingView();
       HoldingsRecordView.checkSource('FOLIO');
       HoldingsRecordView.checkActionsMenuOptionsInFolioSource();
       HoldingsRecordView.edit();

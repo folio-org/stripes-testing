@@ -16,6 +16,7 @@ import {
 import users from '../users/users';
 import inventoryHoldings from '../inventory/holdings/inventoryHoldings';
 import ServicePoints from '../settings/tenant/servicePoints/servicePoints';
+import Helper from '../finance/financeHelper';
 
 const requestsResultsSection = Section({ id: 'pane-results' });
 const appsButton = Button({ id: 'app-list-dropdown-toggle' });
@@ -55,7 +56,7 @@ function createRequestApi(
     userId: null,
   };
   const instanceRecordData = {
-    instanceTitle: `instanceTitle-${uuid()}`,
+    instanceTitle: `autoTestInstanceTitle ${Helper.getRandomBarcode()}`,
     itemBarcode: `item-barcode-${uuid()}`,
     instanceId: uuid(),
     itemId: uuid(),
