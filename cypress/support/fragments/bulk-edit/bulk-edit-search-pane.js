@@ -9,7 +9,7 @@ import {
   MultiColumnListHeader,
   RadioButton,
   Select,
-  MultiColumnList, Pane, TextArea
+  MultiColumnList, Pane, TextArea, including
 } from '../../../../interactors';
 
 const resultsAccordion = Accordion('Preview of record matched');
@@ -21,6 +21,10 @@ const radioItems = RadioButton('Inventory - items');
 const fileBtn = Button('or choose file');
 
 export default {
+  waitLoading() {
+    cy.expect(Pane(including('Bulk edit')).exists())
+  },
+
   actionsIsShown() {
     cy.expect(actions.exists());
   },

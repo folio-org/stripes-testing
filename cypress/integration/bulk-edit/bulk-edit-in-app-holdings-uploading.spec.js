@@ -9,6 +9,7 @@ import BulkEditSearchPane from '../../support/fragments/bulk-edit/bulk-edit-sear
 import BulkEditActions from '../../support/fragments/bulk-edit/bulk-edit-actions';
 import BulkEditFiles from '../../support/fragments/bulk-edit/bulk-edit-files';
 import Users from '../../support/fragments/users/users';
+import bulkEditSearchPane from '../../support/fragments/bulk-edit/bulk-edit-search-pane';
 
 let user;
 const itemBarcode = getRandomPostfix();
@@ -28,8 +29,7 @@ describe('bulk-edit: in-app file uploading', () => {
     ])
       .then(userProperties => {
         user = userProperties;
-        cy.login(user.username, user.password);
-        cy.visit(TopMenu.bulkEditPath);
+        cy.login(user.username, user.password, { path: TopMenu.bulkEditPath, waiter: bulkEditSearchPane.waitLoading });
 
         // Create file with valid holdings UUIDs
         const instanceId = InventoryInstances.createInstanceViaApi(item.instanceName, item.itemBarcode1);
