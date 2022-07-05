@@ -20,12 +20,14 @@ const buttonFVendorFilter = Button({ id: 'accordion-toggle-button-purchaseOrder.
 const buttonRushFilter = Button({ id: 'accordion-toggle-button-rush' });
 const buttonSubscriptionFromFilter = Button({ id: 'accordion-toggle-button-subscriptionFrom' });
 const searchForm = SearchField({ id: 'input-record-search' });
+const ordersFiltersPane = Pane({ id: 'orders-filters-pane' });
+const ordersResultsPane = Pane({ id: 'orders-results-pane' });
 
 export default {
   waitLoading() {
     cy.expect([
-      Pane({ id: 'orders-filters-pane' }).exists(),
-      Pane({ id: 'orders-results-pane' }).exists(),
+      ordersFiltersPane.exists(),
+      ordersResultsPane.exists(),
     ]);
   },
 
