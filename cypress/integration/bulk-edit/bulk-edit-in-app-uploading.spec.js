@@ -16,6 +16,10 @@ const item = {
   instanceName: `testBulkEdit_${getRandomPostfix()}`,
   itemBarcode: getRandomPostfix(),
 };
+const itemToBeDeleted = {
+  instanceName: `testBulkEdit_${getRandomPostfix()}`,
+  itemBarcode: getRandomPostfix(),
+};
 const invalidItemBarcodesFileName = `C350905_invalidItemBarcodes_${getRandomPostfix()}.csv`;
 const validItemBarcodesFileName = `C350905_validItemBarcodes_${getRandomPostfix()}.csv`;
 const invalidBarcode = getRandomPostfix();
@@ -29,21 +33,21 @@ describe('bulk-edit: in-app file uploading', () => {
       .then(userProperties => {
         user = userProperties;
         cy.login(user.username, user.password);
-        InventoryInstances.createInstanceViaApi(item.instanceName, item.itemBarcode);
         cy.visit(TopMenu.bulkEditPath);
-        FileManager.createFile(`cypress/fixtures/${invalidItemBarcodesFileName}`, `${item.itemBarcode}\r\n${invalidBarcode}`);
+
+        InventoryInstances.createInstanceViaApi(item.instanceName, item.itemBarcode);
+        InventoryInstances.createInstanceViaApi(itemToBeDeleted.instanceName, itemToBeDeleted.itemBarcode);
+
+        FileManager.createFile(`cypress/fixtures/${invalidItemBarcodesFileName}`, `${item.itemBarcode}\r\n${invalidBarcode}\r\n${itemToBeDeleted.itemBarcode}`);
         FileManager.createFile(`cypress/fixtures/${validItemBarcodesFileName}`, item.itemBarcode);
       });
   });
 
   after('Delete all data', () => {
     users.deleteViaApi(user.userId);
+    InventoryInstances.deleteInstanceViaApi(item.itemBarcode);
     FileManager.deleteFile(`cypress/fixtures/${invalidItemBarcodesFileName}`);
     FileManager.deleteFile(`cypress/fixtures/${validItemBarcodesFileName}`);
-  });
-
-  afterEach('open bulk edit page', () => {
-    BulkEditActions.newBulkEdit();
   });
 
   it('C350905 Negative uploading file with identifiers -- In app approach', { tags: [testTypes.smoke, devTeams.firebird, testTypes.broken] }, () => {
@@ -54,12 +58,13 @@ describe('bulk-edit: in-app file uploading', () => {
     InteractorsTools.checkCalloutMessage('Fail to upload file', calloutTypes.error);
     InteractorsTools.closeCalloutMessage();
 
+    const invalidFileWarning = 'Invalid file';
     // try to upload another extension
     BulkEditSearchPane.uploadFile('example.json');
-    BulkEditSearchPane.verifyModalName('Invalid file');
+    BulkEditSearchPane.verifyModalName(invalidFileWarning);
 
-    // bug UIBULKED-88
     BulkEditSearchPane.uploadFile(['empty.csv', 'example.json']);
+    BulkEditSearchPane.verifyModalName(invalidFileWarning);
   });
 
   it('C353232 Verify error accordion during matching (In app approach)', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
@@ -73,7 +78,8 @@ describe('bulk-edit: in-app file uploading', () => {
 
     BulkEditSearchPane.verifyActionsAfterConductedInAppUploading();
 
-    BulkEditSearchPane.verifyErrorLabel(invalidItemBarcodesFileName, 1, 1);
+    BulkEditSearchPane.verifyErrorLabel(invalidItemBarcodesFileName, 2, 1);
+    BulkEditActions.newBulkEdit();
   });
 
   it('C350941 Verify uploading file with identifiers -- In app approach', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
@@ -99,6 +105,7 @@ describe('bulk-edit: in-app file uploading', () => {
 
     BulkEditSearchPane.changeShowColumnCheckbox('Item UUID');
     BulkEditSearchPane.verifyResultColumTitles('Item UUID');
+    BulkEditActions.newBulkEdit();
   });
 
   it('C350943 Verify Record identifiers dropdown -- Inventory-Items app', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
@@ -114,5 +121,41 @@ describe('bulk-edit: in-app file uploading', () => {
       BulkEditSearchPane.selectRecordIdentifier(checker.identifier);
       BulkEditSearchPane.verifyInputLabel(checker.label);
     });
+  });
+
+  it('C357053 Negative: Verify enable type ahead in location look-up', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
+    BulkEditSearchPane.selectRecordIdentifier('Item barcode');
+
+    BulkEditSearchPane.uploadFile(validItemBarcodesFileName);
+    BulkEditSearchPane.waitFileUploading();
+
+    BulkEditActions.openActions();
+    BulkEditActions.openStartBulkEditForm();
+    BulkEditActions.fillTemporaryLocationFilter(`test_location_${getRandomPostfix()}`);
+    BulkEditActions.verifyNoMatchingOptionsForLocationFilter();
+  });
+
+  // Bug UIBULKED-121
+  it('C353230 Verify completion of the in-app bulk edit', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
+    BulkEditSearchPane.selectRecordIdentifier('Item barcode');
+
+    BulkEditSearchPane.uploadFile(invalidItemBarcodesFileName);
+    BulkEditSearchPane.waitFileUploading();
+
+    BulkEditActions.openActions();
+    BulkEditActions.openStartBulkEditForm();
+    BulkEditActions.replaceTemporaryLocation();
+    BulkEditActions.confirmChanges();
+
+    InventoryInstances.deleteInstanceViaApi(itemToBeDeleted.itemBarcode);
+
+    BulkEditActions.saveAndClose();
+    BulkEditSearchPane.waitFileUploading();
+
+    BulkEditSearchPane.verifyNonMatchedResults(invalidBarcode);
+    BulkEditActions.verifyActionAfterChangingRecords();
+    BulkEditSearchPane.verifyErrorLabel(invalidItemBarcodesFileName, 1, 1);
+    BulkEditActions.verifySuccessBanner();
+    BulkEditActions.newBulkEdit();
   });
 });

@@ -15,6 +15,7 @@ import checkoutActions from '../../support/fragments/checkout/checkout';
 import checkinActions from '../../support/fragments/check-in-actions/checkInActions';
 import users from '../../support/fragments/users/users';
 import InventoryHoldings from '../../support/fragments/inventory/holdings/inventoryHoldings';
+import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
 
 describe('Renewal', () => {
   let materialTypeId;
@@ -65,8 +66,8 @@ describe('Renewal', () => {
           .then(rules => {
             initialCircRules = rules.rulesAsText;
           });
-        cy.getServicePointsApi({ pickupLocation: true })
-          .then(servicePoints => {
+        ServicePoints.getViaApi({ pickupLocation: true })
+          .then((servicePoints) => {
             servicePointId = servicePoints[0].id;
           });
       })
@@ -135,7 +136,7 @@ describe('Renewal', () => {
       })
       // checkout item
       .then(() => {
-        checkoutActions.createItemCheckoutApi({
+        checkoutActions.createItemCheckoutViaApi({
           servicePointId,
           itemBarcode: itemData.barcode,
           userBarcode: renewUserData.barcode

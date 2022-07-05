@@ -1,7 +1,7 @@
 import uuid from 'uuid';
 import getRandomPostfix from '../../../utils/stringTools';
 import defaultInstanceHoldingItem from '../../inventory/holdingsMove/defaultInstanceHoldingItem';
-import NewServicePoint from '../../service_point/newServicePoint';
+import NewServicePoint from '../../settings/tenant/servicePoints/newServicePoint';
 
 const defaultApiPatron = {
   username: `autotest_username_${getRandomPostfix()}`,

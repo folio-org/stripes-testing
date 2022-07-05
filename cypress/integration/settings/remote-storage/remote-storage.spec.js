@@ -3,7 +3,7 @@ import RemoteStorageHelper from '../../../support/fragments/settings/remote-stor
 import getRandomPostfix from '../../../support/utils/stringTools';
 import TestTypes from '../../../support/dictionary/testTypes';
 import settingsMenu from '../../../support/fragments/settingsMenu';
-import CreateLocationsPage from '../../../support/fragments/settings/tenant/locations/createLocationsPage';
+import CreateLocations from '../../../support/fragments/settings/tenant/locations/createLocations';
 import Locations from '../../../support/fragments/settings/tenant/locations/locations';
 import devTeams from '../../../support/dictionary/devTeams';
 
@@ -66,12 +66,12 @@ describe('remote-storage-configuration', () => {
     Locations.createNewLocation();
 
     // creating location
-    CreateLocationsPage.fillFolioName(locationName);
-    CreateLocationsPage.fillCode();
-    CreateLocationsPage.fillDiscoveryDisplayName();
-    CreateLocationsPage.selectRemoteStorage();
-    CreateLocationsPage.selectServicePoint();
-    CreateLocationsPage.saveAndClose();
+    CreateLocations.fillFolioName(locationName);
+    CreateLocations.fillCode();
+    CreateLocations.fillDiscoveryDisplayName();
+    CreateLocations.selectRemoteStorage();
+    CreateLocations.selectServicePoint();
+    CreateLocations.saveAndClose();
 
     Locations.verifyRemoteStorageValue();
     Locations.deleteLocation(locationName);

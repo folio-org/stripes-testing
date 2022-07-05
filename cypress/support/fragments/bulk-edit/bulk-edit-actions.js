@@ -1,18 +1,67 @@
-import { Button, HTML } from '@interactors/html';
+import { Button, HTML, including } from '@interactors/html';
 import FileManager from '../../utils/fileManager';
-import { Modal } from '../../../../interactors';
+import { Modal, SelectionOption } from '../../../../interactors';
+
+const actionsBtn = Button('Actions');
+// interactor doesn't allow to pick second the same select
+function getLocationSelect() {
+  return cy.get('select').eq(2);
+}
+
 
 export default {
   openStartBulkEditForm() {
-    cy.do(Button('Start bulk edit (CSV)').click());
+    cy.do(Button(including('Start bulk edit')).click());
+  },
+
+  openActions() {
+    cy.do(actionsBtn.click());
+  },
+
+  verifyActionAfterChangingRecords() {
+    cy.do(actionsBtn.click());
+    cy.expect([
+      Button('Download changed records (CSV)').exists(),
+      Button('Download errors (CSV)').exists(),
+    ]);
+  },
+
+  verifySuccessBanner(validRecordsCount) {
+    cy.expect(HTML(`${validRecordsCount} records have been successfully changed`).exists());
   },
 
   verifyLabel(text) {
-    cy.expect(HTML(text).exists());
+    cy.expect(Modal().find(HTML(text)).exists());
+  },
+
+  replaceTemporaryLocation(location = 'Annex') {
+    getLocationSelect().select('Replace with');
+    cy.do([
+      Button('Select control\nSelect location').click(),
+      SelectionOption(including(location)).click(),
+    ]);
+  },
+
+  fillTemporaryLocationFilter(location = 'Annex') {
+    getLocationSelect().select('Replace with');
+    cy.do(Button('Select control\nSelect location').click());
+    cy.get('[class^=selectionFilter-]').type(location);
+  },
+
+  verifyNoMatchingOptionsForLocationFilter() {
+    cy.expect(HTML('No matching options').exists());
+  },
+
+  confirmChanges() {
+    cy.do(Button('Confirm changes').click());
+  },
+
+  saveAndClose() {
+    cy.do(Button('Save & close').click());
   },
 
   downloadMatchedResults(fileName = 'matchedRecords.csv') {
-    cy.do(Button('Actions').click());
+    cy.do(actionsBtn.click());
     // It is necessary to avoid cypress reload page expecting
     cy.get('a[download]', { timeout: 15000 }).first().then(($input) => {
       cy.downloadFile($input.attr('href'), 'cypress/downloads', fileName);

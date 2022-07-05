@@ -25,6 +25,6 @@ describe('ui-inventory: Create new instance with add "New"', () => {
     InventoryInstances.add(instanceTitle);
     SearchInventory.searchInstanceByTitle(instanceTitle);
 
-    cy.expect(MultiColumnListCell({ row: 0, column: instanceTitle }).exists());
+    cy.expect(MultiColumnListCell({ row: 0, content: instanceTitle }).exists());
   });
 });

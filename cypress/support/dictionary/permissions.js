@@ -72,6 +72,7 @@ export default {
   uiUsersEditProfile: { internal: 'ui-users.edit', gui: 'Users: Can edit user profile' },
   uiUsersViewProfile: { internal: 'ui-users.view', gui: 'Users: Can view user profile' },
   uiUsersPermissions: { internal: 'ui-users.editperms', gui: 'Users: Can assign and unassign permissions to users' },
+  uiUsersfeefinesCRUD: { internal:'ui-users.feesfines.actions.all', gui:'Users: Can create, edit and remove fees/fines' },
   // Remote Storage
   remoteStorageCRUD: { internal: '', gui: 'Settings (Remote storage): Can create, edit, delete remote storage settings' },
   // Requests
@@ -96,6 +97,7 @@ export default {
   checkinAll: { internal: '', gui: 'Check in: All permissions' },
   // Organization
   viewOrganization:{ internal:'', gui:'Organizations: View' },
+  viewEditCreateOrganization:{ internal:'', gui:'Organizations: View, edit, create' },
   // Invoice
   viewEditDeleteInvoiceInvoiceLine:{ internal:'', gui:'Invoice: Can view, edit and delete Invoices and Invoice lines' },
   // Orders

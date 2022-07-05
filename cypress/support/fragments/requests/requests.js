@@ -15,6 +15,7 @@ import {
 } from '../../../../interactors';
 import users from '../users/users';
 import inventoryHoldings from '../inventory/holdings/inventoryHoldings';
+import ServicePoints from '../settings/tenant/servicePoints/servicePoints';
 
 const requestsResultsSection = Section({ id: 'pane-results' });
 const appsButton = Button({ id: 'app-list-dropdown-toggle' });
@@ -83,7 +84,7 @@ function createRequestApi(
 
   return cy.wrap(Promise.resolve(true))
     .then(() => {
-      cy.getServicePointsApi({ limit: 1, query: 'pickupLocation=="true"' }).then(servicePoints => {
+      ServicePoints.getViaApi({ limit: 1, query: 'pickupLocation=="true"' }).then(servicePoints => {
         requestData.pickupServicePointId = servicePoints[0].id;
       });
       cy.getAddressTypesApi({ limit: 1 }).then(addressTypes => {
@@ -262,7 +263,7 @@ export default {
   },
 
   selectFirstRequest(title) {
-    cy.do(Pane({ title: 'Requests' }).find(MultiColumnListCell({ row: 0, column: title })).click());
+    cy.do(Pane({ title: 'Requests' }).find(MultiColumnListCell({ row: 0, content: title })).click());
   },
 
   openTagsPane() {
@@ -328,7 +329,7 @@ export default {
   },
 
   verifyCreatedRequest(title) {
-    cy.expect(Pane({ title: 'Requests' }).find(MultiColumnListCell({ row: 0, column: title })).exists());
+    cy.expect(Pane({ title: 'Requests' }).find(MultiColumnListCell({ row: 0, content: title })).exists());
   },
 
   verifyNoResultMessage(noResultMessage) {
