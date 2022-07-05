@@ -28,7 +28,10 @@ export default {
     isDefaultSearchParamsRequired: false
   }).then(response => ({ id: response.body.id,
     username: response.body.username,
-    barcode:  response.body.barcode })),
+    barcode:  response.body.barcode,
+    lastName: response.body.personal.lastName,
+    firstName : response.body.personal.firstName,
+    middleName : response.body.personal.middleName })),
 
   deleteViaApi:(userId) => cy.okapiRequest({
     method: 'DELETE',

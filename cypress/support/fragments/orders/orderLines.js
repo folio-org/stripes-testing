@@ -1,4 +1,4 @@
-import { Button, SearchField, PaneHeader, Select, Accordion, Checkbox, MultiColumnList, MultiColumnListCell, MultiColumnListRow, Modal, TextField, SelectionOption, Pane } from '../../../../interactors';
+import { Button, SearchField, PaneHeader, Select, Accordion, Checkbox, MultiColumnList, MultiColumnListCell, MultiColumnListRow, Modal, TextField, SelectionOption, Pane, SelectionList } from '../../../../interactors';
 import SearchHelper from '../finance/financeHelper';
 import getRandomPostfix from '../../utils/stringTools';
 
@@ -108,6 +108,8 @@ export default {
       Button('Location look-up').click(),
       Select({ name: 'institutionId' }).choose('Københavns Universitet'),
       Select({ name: 'campusId' }).choose('Online'),
+      Button({ id: 'locationId' }).click(),
+      SelectionList({ id: 'sl-container-locationId' }).select('Online (E) '),
       Button('Save and close').click(),
       TextField({ name: 'locations[0].quantityPhysical' }).fillIn(quantityPhysical),
       saveAndClose.click()
@@ -129,7 +131,7 @@ export default {
       Select({ name: 'physical.materialType' }).choose('book'),
       Button('Add location').click(),
       Button('Location look-up').click(),
-      Select({ name: 'institutionId' }).choose('Københavns Universitet'),
+      // Someone create new institution, and on ui sometimes we need to select Institution.
       Select({ name: 'campusId' }).choose('Online'),
       Button('Save and close').click(),
       TextField({ name: 'locations[0].quantityPhysical' }).fillIn(quantityPhysical),

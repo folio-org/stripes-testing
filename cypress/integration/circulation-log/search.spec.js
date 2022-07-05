@@ -72,7 +72,7 @@ describe('ui-circulation-log', () => {
             });
           })
           .then(() => {
-            CheckoutActions.createItemCheckoutApi({
+            CheckoutActions.createItemCheckoutViaApi({
               itemBarcode: ITEM_BARCODE,
               userBarcode: Cypress.env('users')[0].barcode,
               servicePointId,

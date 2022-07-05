@@ -83,5 +83,5 @@ export default {
       ownerId
     },
     isDefaultSearchParamsRequired : false,
-  }).then(response => ({ name: response.body.name, id: response.body.id }))
+  }).then(response => ({ name: response.body.nameMethod, id: response.body.id }))
 };
