@@ -18,7 +18,8 @@ describe('ui-invoices-settings: Export batch voucher', () => {
   const subtotalValue = 100;
   const batchGroupConfiguration = {
     batchGroupId: '',
-    format: 'Application/json'
+    format: 'Application/json',
+    enableScheduledExport: false
   };
 
   before(() => {
