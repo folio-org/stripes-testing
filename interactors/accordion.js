@@ -15,7 +15,7 @@ export default HTML.extend('accordion')
     id: el => el.id,
     open: el => isVisible(el.querySelector('[class^=content-region]')),
     contentHeight: el => el.querySelector('[class^=content-region]').offsetHeight,
-    contentLength: el => el.querySelectorAll('[class^=mclEndOfListContainer-]>div').length,
+    itemsAmount: el => el.querySelector('[class^=mclEndOfListContainer-]').getAttribute('data-end-of-list'),
     contentId: el => {
       const id = el.querySelector('[class^=content-region]').id;
       if (id.startsWith('accordion')) {

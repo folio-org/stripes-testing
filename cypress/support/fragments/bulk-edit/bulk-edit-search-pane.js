@@ -22,7 +22,7 @@ const fileBtn = Button('or choose file');
 
 export default {
   waitLoading() {
-    cy.expect(Pane(including('Bulk edit')).exists())
+    cy.expect(Pane(including('Bulk edit')).exists());
   },
 
   actionsIsShown() {
@@ -196,7 +196,7 @@ export default {
     values.forEach(value => {
       cy.expect(resultsAccordion.find(MultiColumnListCell({ content: value })).exists());
     });
-    cy.expect(resultsAccordion.has({ contentLength: values.length }));
+    cy.expect(resultsAccordion.has({ itemsAmount: (values.length).toString() }));
   },
 
   verifyNonMatchedResults(...values) {
