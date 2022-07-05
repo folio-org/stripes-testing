@@ -68,12 +68,6 @@ export default {
 
   verifyTagsView() {
     cy.expect(tagsPane.exists());
-  },
-
-  waitTagsViewLoading() {
-    cy.intercept('GET', '**/inventory/instances/**').as('getInstance');
-    cy.wait('@getInstance');
-
     // needs some waiting until request payload is gathered
     // otherwise, UI throws "Permissions" error
     // eslint-disable-next-line cypress/no-unnecessary-waiting
