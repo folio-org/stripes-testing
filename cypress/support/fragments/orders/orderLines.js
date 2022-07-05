@@ -106,7 +106,7 @@ export default {
       Select({ name: 'physical.materialType' }).choose('book'),
       Button('Add location').click(),
       Button('Location look-up').click(),
-      Select({ name: 'institutionId' }).choose('Københavns Universitet'),
+      // Select({ name: 'institutionId' }).choose('Københavns Universitet'),
       Select({ name: 'campusId' }).choose('Online'),
       Button({ id: 'locationId' }).click(),
       SelectionList({ id: 'sl-container-locationId' }).select('Online (E) '),

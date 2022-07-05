@@ -15,6 +15,7 @@ describe('orders: create an order', () => {
   const orderLineTitle = basicOrderLine.defaultOrderLine.titleOrPackage;
   const interactions = {
     module: 'ORDERS',
+    enabled: true,
     configName: 'createInventory',
     id: '',
     value: '{"eresource":"Instance, Holding","physical":"Instance, Holding, Item","other":"None"}',
