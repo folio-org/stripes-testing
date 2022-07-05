@@ -5,12 +5,12 @@ import { getNewItem } from '../../../support/fragments/inventory/item';
 import UsersOwners, { getNewOwner } from '../../../support/fragments/settings/users/usersOwners';
 import Loans from '../../../support/fragments/users/userDefaultObjects/loans';
 import LoanDetails from '../../../support/fragments/users/userDefaultObjects/loanDetails';
-import ServicePoint from '../../../support/fragments/service_point/service-point';
 import Checkout from '../../../support/fragments/checkout/checkout';
 import UsersCard from '../../../support/fragments/users/usersCard';
 import permissions from '../../../support/dictionary/permissions';
 import InventoryHoldings from '../../../support/fragments/inventory/holdings/inventoryHoldings';
 import UserEdit from '../../../support/fragments/users/userEdit';
+import ServicePoints from '../../../support/fragments/settings/tenant/servicePoints/servicePoints';
 
 describe('ui-users-loans: Loans', () => {
   const newOwnerData = getNewOwner();
@@ -21,6 +21,8 @@ describe('ui-users-loans: Loans', () => {
   const FIRST_ACTION_ROW_INDEX = 0;
   const SECOND_ACTION_ROW_INDEX = 1;
   let testUserId;
+  let servicePointId;
+  let servicePoints = [];
 
   beforeEach(() => {
     let source;
@@ -28,7 +30,11 @@ describe('ui-users-loans: Loans', () => {
     cy.getAdminToken();
 
     cy.then(() => {
-      ServicePoint.getViaApi();
+      ServicePoints.getViaApi()
+        .then((res) => {
+          servicePointId = res[0].id;
+          servicePoints = res;
+        });
       cy.getLoanTypes({ limit: 1 });
       cy.getMaterialTypes({ limit: 1 });
       cy.getInstanceTypes({ limit: 1 });
@@ -47,8 +53,8 @@ describe('ui-users-loans: Loans', () => {
       }) => {
         testUserId = userId;
 
-        UserEdit.addServicePointViaApi(Cypress.env('servicePoints')[0].id, userId).then(() => {
-          const servicePointOwner = Cypress.env('servicePoints').map(({
+        UserEdit.addServicePointViaApi(servicePointId, userId).then(() => {
+          const servicePointOwner = servicePoints.map(({
             id,
             name,
           }) => ({
@@ -90,7 +96,7 @@ describe('ui-users-loans: Loans', () => {
               Checkout.createItemCheckoutApi({
                 itemBarcode,
                 userBarcode,
-                servicePointId: Cypress.env('servicePoints')[0].id,
+                servicePointId,
               });
             });
 

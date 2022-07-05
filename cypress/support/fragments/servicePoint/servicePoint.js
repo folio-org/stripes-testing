@@ -1,39 +1,17 @@
-import uuid from 'uuid';
-import getRandomPostfix from '../../utils/stringTools';
+import { REQUEST_METHOD } from '../../constants';
 import DefaultInstanceHoldingItem from '../inventory/holdingsMove/defaultInstanceHoldingItem';
 import Campuses from '../settings/tenant/campuses';
 import Institutions from '../settings/tenant/institutions';
+import NewServicePoint from '../settings/tenant/servicePoints/newServicePoint';
 
 export default {
-
-  defaultUiServicePoint: {
-    body: {
-      code: `autotest_code_${getRandomPostfix()}`,
-      discoveryDisplayName: `autotest_discovery_display_name_${getRandomPostfix()}`,
-      id: uuid(),
-      name: `autotest_service_${getRandomPostfix()}`,
-    }
+  deleteViaApi: (id) => {
+    cy.okapiRequest({
+      method: REQUEST_METHOD.DELETE,
+      path: `service-points/${id}`,
+    });
   },
 
-  getDefaulServicePoint:() => {
-    return {
-      body: {
-        code: `autotest_code_${getRandomPostfix()}`,
-        discoveryDisplayName: `autotest_discovery_display_name_${getRandomPostfix()}`,
-        id: uuid(),
-        name: `autotest_service_${getRandomPostfix()}`,
-      }
-    };
-  },
-
-  defaultUiLibraries: {
-    body: {
-      campusId: uuid(),
-      code: `autotest_code_${getRandomPostfix()}`,
-      id: uuid(),
-      name: `autotest_name_${getRandomPostfix()}`,
-    }
-  },
   // Before using the "delete" method, check that it works!
   deleteServicePointViaApi() {
     cy.okapiRequest({
@@ -54,7 +32,7 @@ export default {
     });
     cy.okapiRequest({
       method: 'DELETE',
-      path: `service-points/${this.defaultUiServicePoint.body.id}`,
+      path: `service-points/${NewServicePoint.defaultUiServicePoint.body.id}`,
     });
   },
 };
