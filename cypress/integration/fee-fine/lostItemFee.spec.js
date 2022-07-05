@@ -7,8 +7,9 @@ describe('Fee/fine management', () => {
   const duration = '6 week(s)';
 
   before('Preconditions', () => {
-    cy.login(Cypress.env('diku_login'), Cypress.env('diku_password'));
-    cy.visit(`${SettingsMenu.circulationLostItemFeePolicyPath}`);
+    cy.loginAsAdmin({ path: SettingsMenu.circulationLostItemFeePolicyPath, waiter: LostItemFeePolicy.waitLoading });
+    // cy.login(Cypress.env('diku_login'), Cypress.env('diku_password'));
+    // cy.visit(`${SettingsMenu.circulationLostItemFeePolicyPath}`);
   });
 
   it('C5558 Verify that you can create/edit/delete lost item fee policies', () => {
