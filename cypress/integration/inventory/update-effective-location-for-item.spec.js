@@ -5,14 +5,14 @@ import InventoryInstance from '../../support/fragments/inventory/inventoryInstan
 import InventorySearch from '../../support/fragments/inventory/inventorySearch';
 import ItemRecordView from '../../support/fragments/inventory/itemRecordView';
 import TopMenu from '../../support/fragments/topMenu';
-import getRandomPostfix from '../../support/utils/stringTools';
 import generateItemBarcode from '../../support/utils/generateItemBarcode';
 import permissions from '../../support/dictionary/permissions';
 import Users from '../../support/fragments/users/users';
 import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
+import Helper from '../../support/fragments/finance/financeHelper';
 
 describe('ui-inventory: Update the effective location for the item', () => {
-  const instanceTitle = `autoTestInstanceTitle.${getRandomPostfix()}`;
+  const instanceTitle = `autoTestInstanceTitle ${Helper.getRandomBarcode()}`;
   const anotherPermanentLocation = 'Main Library';
   const ITEM_BARCODE = generateItemBarcode();
   let userId = '';
@@ -28,7 +28,7 @@ describe('ui-inventory: Update the effective location for the item', () => {
           cy.getLoanTypes({ limit: 1 });
           cy.getMaterialTypes({ limit: 1 });
           cy.getInstanceTypes({ limit: 1 });
-          cy.getLocations({ limit: 1 });
+          cy.getLocations({ limit: 1, query: 'name="Online"' });
           cy.getHoldingTypes({ limit: 1 });
         })
           .then(() => {
@@ -55,9 +55,8 @@ describe('ui-inventory: Update the effective location for the item', () => {
                 testInstanceIds = specialInstanceIds;
               });
           });
-        cy.login(userProperties.username, userProperties.password);
+        cy.login(userProperties.username, userProperties.password, { path: TopMenu.inventoryPath, waiter: InventoryInstances.waitContentLoading });
       });
-    cy.visit(TopMenu.inventoryPath);
   });
 
   afterEach(() => {
@@ -65,10 +64,10 @@ describe('ui-inventory: Update the effective location for the item', () => {
       cy.wrap(holdingsId.itemIds.forEach(itemId => {
         cy.deleteItem(itemId);
       })).then(() => {
-        cy.deleteHoldingRecord(holdingsId.id);
+        cy.deleteHoldingRecordViaApi(holdingsId.id);
       });
     })).then(() => {
-      cy.deleteInstanceApi(testInstanceIds.instanceId);
+      InventoryInstance.deleteInstanceViaApi(testInstanceIds.instanceId);
     });
     Users.deleteViaApi(userId);
   });
@@ -79,7 +78,7 @@ describe('ui-inventory: Update the effective location for the item', () => {
       InventorySearch.switchToItem();
       InventorySearch.searchByParameter('Barcode', ITEM_BARCODE);
       InventorySearch.selectSearchResultItem();
-      InventoryInstance.goToHoldingView();
+      InventoryInstance.openHoldingView();
       HoldingsRecordView.edit();
       HoldingsRecordEdit.changePermanentLocation(anotherPermanentLocation);
       HoldingsRecordEdit.saveAndClose();

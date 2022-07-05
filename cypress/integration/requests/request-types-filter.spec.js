@@ -4,6 +4,7 @@ import Requests from '../../support/fragments/requests/requests';
 import TopMenu from '../../support/fragments/topMenu';
 import { Pane } from '../../../interactors';
 import Users from '../../support/fragments/users/users';
+import InventoryInstance from '../../support/fragments/inventory/inventoryInstance';
 
 describe('ui-requests: Make sure that request type filters are working properly', () => {
   const requests = [];
@@ -39,8 +40,8 @@ describe('ui-requests: Make sure that request type filters are working properly'
   afterEach(() => {
     instances.forEach(instance => {
       cy.deleteItem(instance.itemId);
-      cy.deleteHoldingRecord(instance.holdingId);
-      cy.deleteInstanceApi(instance.instanceId);
+      cy.deleteHoldingRecordViaApi(instance.holdingId);
+      InventoryInstance.deleteInstanceViaApi(instance.instanceId);
     });
     requests.forEach(request => {
       Requests.deleteRequestApi(request.id);

@@ -6,6 +6,7 @@ import TopMenu from '../../support/fragments/topMenu';
 import Users from '../../support/fragments/users/users';
 import UserEdit from '../../support/fragments/users/userEdit';
 import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
+import InventoryInstance from '../../support/fragments/inventory/inventoryInstance';
 
 describe('ui-inventory: Mark an item as Missing', () => {
   let user = {};
@@ -60,8 +61,8 @@ describe('ui-inventory: Mark an item as Missing', () => {
     createdItems.forEach(item => {
       cy.deleteItem(item.itemId);
     });
-    cy.deleteHoldingRecord(instanceData.holdingId);
-    cy.deleteInstanceApi(instanceData.instanceId);
+    cy.deleteHoldingRecordViaApi(instanceData.holdingId);
+    InventoryInstance.deleteInstanceViaApi(instanceData.instanceId);
     createdRequestsIds.forEach(id => {
       Requests.deleteRequestApi(id);
     });

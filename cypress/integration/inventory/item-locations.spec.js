@@ -80,8 +80,8 @@ describe('ui-inventory: location', () => {
       .then((instance) => {
         cy.deleteItem(instance.items[0].id);
         cy.deleteItem(instance.items[1].id);
-        cy.deleteHoldingRecord(instance.holdings[0].id);
-        cy.deleteInstanceApi(instance.id);
+        cy.deleteHoldingRecordViaApi(instance.holdings[0].id);
+        InventoryInstance.deleteInstanceViaApi(instance.id);
       });
     users.deleteViaApi(userId);
   });

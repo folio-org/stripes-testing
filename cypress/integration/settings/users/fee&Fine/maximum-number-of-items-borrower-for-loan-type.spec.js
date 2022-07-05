@@ -15,6 +15,7 @@ import CheckInActions from '../../../../support/fragments/check-in-actions/check
 import UserEdit from '../../../../support/fragments/users/userEdit';
 import Users from '../../../../support/fragments/users/users';
 import ServicePoints from '../../../../support/fragments/settings/tenant/servicePoints/servicePoints';
+import InventoryInstance from '../../../../support/fragments/inventory/inventoryInstance';
 
 describe('ui-users:', () => {
   let user = {};
@@ -156,10 +157,10 @@ describe('ui-users:', () => {
       cy.wrap(holdingsId.itemIds.forEach(itemId => {
         cy.deleteItem(itemId);
       })).then(() => {
-        cy.deleteHoldingRecord(holdingsId.id);
+        cy.deleteHoldingRecordViaApi(holdingsId.id);
       });
     })).then(() => {
-      cy.deleteInstanceApi(limitTstInstanceIds.instanceId);
+      InventoryInstance.deleteInstanceViaApi(limitTstInstanceIds.instanceId);
     });
     testItems.forEach(item => {
       CheckInActions.createItemCheckinApi({
@@ -172,10 +173,10 @@ describe('ui-users:', () => {
       cy.wrap(holdingsId.itemIds.forEach(itemId => {
         cy.deleteItem(itemId);
       })).then(() => {
-        cy.deleteHoldingRecord(holdingsId.id);
+        cy.deleteHoldingRecordViaApi(holdingsId.id);
       });
     })).then(() => {
-      cy.deleteInstanceApi(testInstanceIds.instanceId);
+      InventoryInstance.deleteInstanceViaApi(testInstanceIds.instanceId);
     });
     cy.updateCirculationRules({
       rulesAsText: rulesDefaultString,

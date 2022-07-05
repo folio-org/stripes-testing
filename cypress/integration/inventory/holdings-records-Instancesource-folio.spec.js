@@ -18,7 +18,7 @@ describe('Manage holding records with FOLIO source', () => {
   });
   it('C345406 FOLIO instance record + FOLIO holdings record (Regression)', { tags: [testTypes.smoke, features.holdingsRecord] }, () => {
     InventoryInstance.createHoldingsRecord();
-    InventoryInstance.goToHoldingView();
+    InventoryInstance.openHoldingView();
     HoldingsRecordView.checkSource('FOLIO');
     HoldingsRecordView.checkActionsMenuOptionsInFolioSource();
     HoldingsRecordView.edit();

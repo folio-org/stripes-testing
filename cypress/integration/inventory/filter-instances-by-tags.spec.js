@@ -4,7 +4,8 @@ import permissions from '../../support/dictionary/permissions';
 import FilterInstancesByTags from '../../support/fragments/inventory/filterInstancesByTags';
 import TopMenu from '../../support/fragments/topMenu';
 import SearchInventory from '../../support/fragments/data_import/searchInventory';
-import users from '../../support/fragments/users/users';
+import Users from '../../support/fragments/users/users';
+import InventoryInstance from '../../support/fragments/inventory/inventoryInstance';
 
 describe('ui-inventory: Filter instances by tags', () => {
   let userId = '';
@@ -28,8 +29,8 @@ describe('ui-inventory: Filter instances by tags', () => {
   });
 
   afterEach(() => {
-    cy.deleteInstanceApi(instanceRecord.instanceId);
-    users.deleteViaApi(userId);
+    InventoryInstance.deleteInstanceViaApi(instanceRecord.instanceId);
+    Users.deleteViaApi(userId);
   });
 
   it('C343215 Filter instances by tags', { tags: [TestTypes.smoke, TestTypes.broken] }, () => {
