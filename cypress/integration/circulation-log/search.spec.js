@@ -12,9 +12,10 @@ import devTeams from '../../support/dictionary/devTeams';
 import Users from '../../support/fragments/users/users';
 import UserEdit from '../../support/fragments/users/userEdit';
 import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
+import InventoryInstance from '../../support/fragments/inventory/inventoryInstance';
 
 const ITEM_BARCODE = `123${getRandomPostfix()}`;
-let userId = '';
+let userId;
 let source;
 let servicePointId;
 
@@ -72,7 +73,7 @@ describe('ui-circulation-log', () => {
             });
           })
           .then(() => {
-            CheckoutActions.createItemCheckoutApi({
+            CheckoutActions.createItemCheckoutViaApi({
               itemBarcode: ITEM_BARCODE,
               userBarcode: Cypress.env('users')[0].barcode,
               servicePointId,
@@ -95,8 +96,8 @@ describe('ui-circulation-log', () => {
         cy.getInstance({ limit: 1, expandAll: true, query: `"items.barcode"=="${ITEM_BARCODE}"` })
           .then((instance) => {
             cy.deleteItem(instance.items[0].id);
-            cy.deleteHoldingRecord(instance.holdings[0].id);
-            cy.deleteInstanceApi(instance.id);
+            cy.deleteHoldingRecordViaApi(instance.holdings[0].id);
+            InventoryInstance.deleteInstanceViaApi(instance.id);
           });
         cy.getBlockApi(userId).then(() => {
           cy.deleteBlockApi(Cypress.env('blockIds')[0].id);

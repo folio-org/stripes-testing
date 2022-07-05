@@ -12,7 +12,7 @@ import {
 } from '../../../../interactors';
 import InventoryHoldings from './holdings/inventoryHoldings';
 import NewInventoryInstance from './newInventoryInstance';
-import getRandomPostfix from '../../utils/stringTools';
+import InventoryInstance from './inventoryInstance';
 
 const rootSection = Section({ id: 'pane-results' });
 const inventoriesList = rootSection.find(MultiColumnList({ id: 'list-inventory' }));
@@ -33,8 +33,12 @@ const createItemViaAPI = (itemWithIds) => cy.okapiRequest({
   path: 'inventory/items',
   body:  itemWithIds
 });
+const waitContentLoading = () => {
+  cy.expect(rootSection.find(HTML(including('Choose a filter or enter a search query to show results.'))).exists());
+};
 
 export default {
+  waitContentLoading,
   waitLoading:() => {
     cy.expect(rootSection.find(HTML(including('Choose a filter or enter a search query to show results'))).absent());
     cy.expect(rootSection.find(HTML(including('Loading…'))).absent());
@@ -148,8 +152,8 @@ export default {
     cy.getInstance({ limit: 1, expandAll: true, query: `"items.barcode"=="${itemBarcode}"` })
       .then((instance) => {
         instance.items.forEach((item) => cy.deleteItem(item.id));
-        cy.deleteHoldingRecord(instance.holdings[0].id);
-        cy.deleteInstanceApi(instance.id);
+        cy.deleteHoldingRecordViaApi(instance.holdings[0].id);
+        InventoryInstance.deleteInstanceViaApi(instance.id);
       });
   },
 

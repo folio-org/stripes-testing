@@ -20,7 +20,7 @@ export default {
       newPassword.userId = specialPatron.userId;
       newPassword.username = specialPatron.username;
       cy.setUserPassword(newPassword);
-      checkoutActions.createItemCheckoutApi(DefaultUser.defaultUiChekhOutItem.body);
+      checkoutActions.createItemCheckoutViaApi(DefaultUser.defaultUiChekhOutItem.body);
       cy.wrap({ userName: newPassword.username, password: newPassword.password }).as('userProperties');
     });
     return cy.get('@userProperties');

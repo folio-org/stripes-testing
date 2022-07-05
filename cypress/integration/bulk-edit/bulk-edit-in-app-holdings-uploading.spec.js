@@ -28,8 +28,7 @@ describe('bulk-edit: in-app file uploading', () => {
     ])
       .then(userProperties => {
         user = userProperties;
-        cy.login(user.username, user.password);
-        cy.visit(TopMenu.bulkEditPath);
+        cy.login(user.username, user.password, { path: TopMenu.bulkEditPath, waiter: bulkEditSearchPane.waitLoading });
 
         // Create file with valid holdings UUIDs
         const instanceId = InventoryInstances.createInstanceViaApi(item.instanceName, item.itemBarcode1);

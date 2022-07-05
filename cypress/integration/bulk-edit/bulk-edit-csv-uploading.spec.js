@@ -7,6 +7,7 @@ import getRandomPostfix from '../../support/utils/stringTools';
 import devTeams from '../../support/dictionary/devTeams';
 import BulkEditActions from '../../support/fragments/bulk-edit/bulk-edit-actions';
 import users from '../../support/fragments/users/users';
+import bulkEditSearchPane from '../../support/fragments/bulk-edit/bulk-edit-search-pane';
 
 let user;
 const userUUIDsFileName = `C350905_userUUIDs_${getRandomPostfix()}.csv`;
@@ -22,8 +23,7 @@ describe('bulk-edit: csv file uploading', () => {
     ])
       .then(userProperties => {
         user = userProperties;
-        cy.login(user.username, user.password);
-        cy.visit(TopMenu.bulkEditPath);
+        cy.login(user.username, user.password, { path: TopMenu.bulkEditPath, waiter: bulkEditSearchPane.waitLoading });
         FileManager.createFile(`cypress/fixtures/${userUUIDsFileName}`, `${user.userId}\r\n${invalidUserUUID}`);
       });
   });

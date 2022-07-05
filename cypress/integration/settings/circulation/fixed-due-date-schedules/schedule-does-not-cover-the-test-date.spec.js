@@ -24,6 +24,7 @@ import checkinActions from '../../../../support/fragments/check-in-actions/check
 import users from '../../../../support/fragments/users/users';
 import InventoryHoldings from '../../../../support/fragments/inventory/holdings/inventoryHoldings';
 import ServicePoints from '../../../../support/fragments/settings/tenant/servicePoints/servicePoints';
+import InventoryInstance from '../../../../support/fragments/inventory/inventoryInstance';
 
 let userId;
 let userBarcode;
@@ -147,7 +148,7 @@ describe('ui-circulation-settings: Fixed due date schedules', () => {
                     });
                   })
                   .then(() => {
-                    checkout.createItemCheckoutApi({
+                    checkout.createItemCheckoutViaApi({
                       servicePointId,
                       itemBarcode: ITEM_BARCODE,
                       userBarcode: USER_BARCODE,
@@ -169,8 +170,8 @@ describe('ui-circulation-settings: Fixed due date schedules', () => {
         cy.getInstance({ limit: 1, expandAll: true, query: `"items.barcode"=="${ITEM_BARCODE}"` })
           .then((instance) => {
             cy.deleteItem(instance.items[0].id);
-            cy.deleteHoldingRecord(instance.holdings[0].id);
-            cy.deleteInstanceApi(instance.id);
+            cy.deleteHoldingRecordViaApi(instance.holdings[0].id);
+            InventoryInstance.deleteInstanceViaApi(instance.id);
           });
         cy.updateCirculationRules({
           rulesAsText: rulesDefaultString,

@@ -1,4 +1,4 @@
-import { Button, TextField, Select, KeyValue, Accordion, Pane, Checkbox, MultiColumnList, MultiColumnListCell, SearchField, MultiColumnListRow, SelectionOption, Section } from '../../../../interactors';
+import { Button, TextField, Select, KeyValue, Accordion, Pane, Checkbox, MultiColumnList, MultiColumnListCell, SearchField, MultiColumnListRow, SelectionOption, Section, TextArea } from '../../../../interactors';
 import getRandomPostfix from '../../utils/stringTools';
 
 const buttonNew = Button('New');
@@ -9,15 +9,13 @@ const organizationsList = MultiColumnList({ id: 'organizations-list' });
 const blueColor = 'rgba(0, 0, 0, 0)';
 const summarySection = Accordion({ id: summaryAccordionId });
 const searchInput = SearchField({ id: 'input-record-search' });
-const integrationName = `IntegrationName${getRandomPostfix()}`;
-const vendorEDICode = `${getRandomPostfix()}`;
 const vendorEDICodeEdited = `${getRandomPostfix()}`;
-const libraryEDICode = `${getRandomPostfix()}`;
 const libraryEDICodeEdited = `${getRandomPostfix()}`;
 const serverAddress = 'ftp://ftp.ci.folio.org';
 const FTPport = '22';
 const ediSection = Section({ id: 'edi' });
 const ftpSection = Section({ id: 'ftp' });
+const actionsButton = Button('Actions');
 
 export default {
   createOrganizationViaUi: (organization) => {
@@ -65,14 +63,17 @@ export default {
     ]);
   },
 
-  fillIntegrationInformation: () => {
+  fillIntegrationInformation: (integrationName, integartionDescription, vendorEDICode, libraryEDICode, accountNumber, acquisitionMethod) => {
     cy.do([
       Section({ id: 'integrationInfo' }).find(TextField('Integration name*')).fillIn(integrationName),
+      TextArea('Description').fillIn(integartionDescription),
       ediSection.find(TextField('Vendor EDI code*')).fillIn(vendorEDICode),
       ediSection.find(TextField('Library EDI code*')).fillIn(libraryEDICode),
-      ediSection.find(Button({ icon: 'info' })).click()
+      ediSection.find(Button({ icon: 'info' })).click(),
+      Checkbox({ name: 'exportTypeSpecificParameters.vendorEdiOrdersExportConfig.ediConfig.supportInvoice' }).click(),
     ]);
-    cy.get('select[name="exportTypeSpecificParameters.vendorEdiOrdersExportConfig.ediConfig.accountNoList"]').select('1234');
+    cy.get('select[name="exportTypeSpecificParameters.vendorEdiOrdersExportConfig.ediConfig.accountNoList"]').select(accountNumber);
+    cy.get('select[name="exportTypeSpecificParameters.vendorEdiOrdersExportConfig.ediConfig.defaultAcquisitionMethods"]').select(acquisitionMethod);
     cy.do([
       ftpSection.find(Select('EDI FTP')).choose('FTP'),
       ftpSection.find(TextField('Server address*')).fillIn(serverAddress),
@@ -83,7 +84,7 @@ export default {
 
   editIntegrationInformation: () => {
     cy.do([
-      Button('Actions').click(),
+      actionsButton.click(),
       Button('Edit').click(),
       ediSection.find(TextField('Vendor EDI code*')).fillIn(vendorEDICodeEdited),
       ediSection.find(TextField('Library EDI code*')).fillIn(libraryEDICodeEdited),
@@ -162,4 +163,53 @@ export default {
     body: organization,
   }).then(response => response.body.id),
 
+  editOrganization: () => {
+    cy.do([
+      actionsButton.click(),
+      Button('Edit').click(),
+    ]);
+  },
+
+  addAccount: () => {
+    cy.do([
+      Button({ id: 'accordion-toggle-button-org-filter-paymentMethod' }).click(),
+      Checkbox('Cash').click(),
+    ]);
+  },
+
+  checkIntegationsAdd: (integrationName, integartionDescription) => {
+    cy.do([
+      Button({ id: 'accordion-toggle-button-integrationDetailsSection' }).click(),
+    ]);
+    cy.expect(MultiColumnList({ id: 'list-integration-configs' })
+      .find(MultiColumnListRow({ index: 0 }))
+      .find(MultiColumnListCell({ columnIndex: 0 }))
+      .has({ content: integrationName }));
+    cy.expect(MultiColumnList({ id: 'list-integration-configs' })
+      .find(MultiColumnListRow({ index: 0 }))
+      .find(MultiColumnListCell({ columnIndex: 1 }))
+      .has({ content: integartionDescription }));
+  },
+
+  checkTwoIntegationsAdd: (integrationName1, integartionDescription1, integrationName2, integartionDescription2) => {
+    cy.do([
+      Button({ id: 'accordion-toggle-button-integrationDetailsSection' }).click(),
+    ]);
+    cy.expect(MultiColumnList({ id: 'list-integration-configs' })
+      .find(MultiColumnListRow({ index: 0 }))
+      .find(MultiColumnListCell({ columnIndex: 0 }))
+      .has({ content: integrationName1 }));
+    cy.expect(MultiColumnList({ id: 'list-integration-configs' })
+      .find(MultiColumnListRow({ index: 0 }))
+      .find(MultiColumnListCell({ columnIndex: 1 }))
+      .has({ content: integartionDescription1 }));
+    cy.expect(MultiColumnList({ id: 'list-integration-configs' })
+      .find(MultiColumnListRow({ index: 1 }))
+      .find(MultiColumnListCell({ columnIndex: 0 }))
+      .has({ content: integrationName2 }));
+    cy.expect(MultiColumnList({ id: 'list-integration-configs' })
+      .find(MultiColumnListRow({ index: 1 }))
+      .find(MultiColumnListCell({ columnIndex: 1 }))
+      .has({ content: integartionDescription2 }));
+  },
 };
