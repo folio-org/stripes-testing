@@ -5,6 +5,12 @@ import { PaneHeader, Button, TextField, Select, KeyValue, Section, HTML } from '
 const actionsButton = Button('Actions');
 const lostItemFeePolicySection = Section({ id: 'viewLostItemFeeSection' });
 const lostItemFeeGeneralInformationSection = Section({ id: 'LostItemFeeGeneralInformation' });
+const policyNameField = TextField('Lost item fee policy name*');
+const durationTextfield = TextField({ name: 'lostItemChargeFeeFine.duration' });
+const intervalSelect = Select({ name: 'lostItemChargeFeeFine.intervalId' });
+const saveButton = Button({ id: 'footer-save-entity' });
+const deleteButton = Button({ id: 'dropdown-clickable-delete-item' });
+const confirmButton = Button({ id: 'clickable-delete-item-confirmation-confirm' });
 
 export const defaultLostItemFeePolicy = {
   chargeAmountItem: {
@@ -47,22 +53,22 @@ export default {
   fillName(name) {
     // waiting for form to be able to recieve text
     cy.wait(1000);
-    cy.do(TextField('Lost item fee policy name*').fillIn(name));
+    cy.do(policyNameField.fillIn(name));
   },
 
   fillDuration(duration, interval) {
     cy.do([
-      TextField({ name: 'lostItemChargeFeeFine.duration' }).fillIn(duration),
-      Select({ name: 'lostItemChargeFeeFine.intervalId' }).choose(interval),
+      durationTextfield.fillIn(duration),
+      intervalSelect.choose(interval),
     ]);
   },
 
   save() {
-    cy.do(Button({ id: 'footer-save-entity' }).click());
+    cy.do(saveButton.click());
   },
 
-  checkErrorMessage() {
-    cy.expect(HTML('Required if there is a possibility of no fee/fine being charged for a lost item').exists());
+  checkErrorMessage(errorText) {
+    cy.expect(HTML(errorText).exists());
   },
 
   checkAfterSaving(name, duration) {
@@ -75,21 +81,9 @@ export default {
   delete() {
     cy.do([
       actionsButton.click(),
-      Button({ id: 'dropdown-clickable-delete-item' }).click(),
-      Button({ id: 'clickable-delete-item-confirmation-confirm' }).click(),
+      deleteButton.click(),
+      confirmButton.click(),
     ]);
-  },
-
-  createApiSpecific(lostItemFeePolicy) {
-    return cy
-      .okapiRequest({
-        method: 'POST',
-        path: 'lost-item-fees-policies',
-        body: lostItemFeePolicy,
-      })
-      .then(({ body }) => {
-        return body;
-      });
   },
 
   createApi() {

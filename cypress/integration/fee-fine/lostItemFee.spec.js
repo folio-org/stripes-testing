@@ -5,6 +5,8 @@ describe('Fee/fine management', () => {
   const name = 'A_very_specific_name';
   const editedName = 'An_edited_name';
   const duration = '6 week(s)';
+  const lostItemChargeFeeFineError = 'Required if there is a possibility of no fee/fine being charged for a lost item';
+  const duplicateError = 'The Lost item fee policy name entered already exists. Please enter a different name.';
 
   before('Preconditions', () => {
     cy.loginAsAdmin({ path: SettingsMenu.circulationLostItemFeePolicyPath, waiter: LostItemFeePolicy.waitLoading });
@@ -15,7 +17,7 @@ describe('Fee/fine management', () => {
     LostItemFeePolicy.startAdding();
     LostItemFeePolicy.fillName(name);
     LostItemFeePolicy.save();
-    LostItemFeePolicy.checkErrorMessage('Required if there is a possibility of no fee/fine being charged for a lost item');
+    LostItemFeePolicy.checkErrorMessage(lostItemChargeFeeFineError);
     LostItemFeePolicy.fillDuration('6', 'week(s)');
     LostItemFeePolicy.save();
     LostItemFeePolicy.checkAfterSaving(name, duration);
@@ -29,8 +31,9 @@ describe('Fee/fine management', () => {
     // creating policy with existing name
     LostItemFeePolicy.startAdding();
     LostItemFeePolicy.fillName(editedName);
+    LostItemFeePolicy.fillDuration('6', 'week(s)');
     LostItemFeePolicy.save();
-    LostItemFeePolicy.checkErrorMessage('The Lost item fee policy name entered already exists. Please enter a different name.');
+    LostItemFeePolicy.checkErrorMessage(duplicateError);
   });
   after('Deleting lost item fee policy', () => {
     // deleting
