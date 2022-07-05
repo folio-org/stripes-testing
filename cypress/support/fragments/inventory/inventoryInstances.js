@@ -32,8 +32,12 @@ const createItemViaAPI = (itemWithIds) => cy.okapiRequest({
   path: 'inventory/items',
   body:  itemWithIds
 });
+const waitContentLoading = () => {
+  cy.expect(rootSection.find(HTML(including('Choose a filter or enter a search query to show results.'))).exists());
+};
 
 export default {
+  waitContentLoading,
   waitLoading:() => {
     cy.expect(rootSection.find(HTML(including('Choose a filter or enter a search query to show results'))).absent());
     cy.expect(rootSection.find(HTML(including('Loading…'))).absent());
@@ -149,6 +153,9 @@ export default {
         instance.items.forEach((item) => cy.deleteItem(item.id));
         cy.deleteHoldingRecord(instance.holdings[0].id);
         cy.deleteInstanceApi(instance.id);
+        cy.deleteItem(instance.items[0].id);
+        cy.deleteHoldingRecordViaApi(instance.holdings[0].id);
+        InventoryInstance.deleteInstanceViaApi(instance.id);
       });
   },
 
