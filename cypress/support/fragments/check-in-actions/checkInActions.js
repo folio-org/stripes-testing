@@ -1,11 +1,9 @@
 import uuid from 'uuid';
-import { Button, Pane, including, TextField, MultiColumnListRow, HTML } from '../../../../interactors';
-import NewInctanceHoldingsItem from '../inventory/newInctanceHoldingsItem';
-import NewUser from '../users/userDefaultObjects/newUser';
+import { Button, including, TextField, MultiColumnListRow, HTML, Pane, Modal } from '../../../../interactors';
 import { REQUEST_METHOD } from '../../constants';
 import { getLongDelay } from '../../utils/cypressTools';
 
-const loadDetailsButton = Button('Loan details');
+const loanDetailsButton = Button('Loan details');
 const patronDetailsButton = Button('Patron details');
 const itemDetailsButton = Button('Item details');
 const newFeeFineButton = Button('New Fee/Fine');
@@ -16,7 +14,7 @@ const availableActionsButton = Button({ id: 'available-actions-button-0' });
 
 export default {
   waitLoading:() => {
-    cy.expect(TextField({ name: 'item.barcode' }).exists());
+    cy.expect(itemBarcodeField.exists());
     cy.expect(Button('End session').exists());
   },
 
@@ -26,6 +24,10 @@ export default {
     cy.do(addItemButton.click());
     cy.wait('@getItems', getLongDelay());
   },
+  checkInItemGui:(barcode) => {
+    cy.do(itemBarcodeField.fillIn(barcode));
+    cy.do(addItemButton.click());
+  },
   openItemRecordInInventory:(status) => {
     cy.expect(MultiColumnListRow({ indexRow: 'row-0' }).find(HTML(including(status))).exists());
     cy.do(availableActionsButton.click());
@@ -34,33 +36,50 @@ export default {
     cy.do(itemDetailsButton.click());
     cy.wait('@getTags', getLongDelay());
   },
-  existsFormColomns:() => {
+  checkActionsMenuOptions:() => {
+    cy.expect(availableActionsButton.exists());
+    cy.do(availableActionsButton.click());
     cy.expect([
-      loadDetailsButton.exists(),
+      loanDetailsButton.exists(),
       patronDetailsButton.exists(),
       itemDetailsButton.exists(),
       newFeeFineButton.exists(),
     ]);
-  },
-  returnCheckIn() {
-    cy.do(checkInButton.click());
     cy.do(availableActionsButton.click());
   },
-  existsItemsInForm() {
-    cy.do(loadDetailsButton.click());
-    cy.expect(Pane(including(NewUser.userName)).exists());
-    this.returnCheckIn();
-    cy.do(patronDetailsButton.click());
-    cy.expect(Pane({ title: NewUser.userName }).exists());
-    this.returnCheckIn();
-    cy.do(itemDetailsButton.click());
-    cy.expect(Pane(including(NewInctanceHoldingsItem.itemBarcode)).exists());
-    this.returnCheckIn();
-    cy.do(newFeeFineButton.click());
-    cy.expect(Pane({ title:  'New fee/fine' }).exists());
-    this.returnCheckIn();
+  openCheckInPane: () => {
+    cy.do(checkInButton.click());
   },
-  createItemCheckinApi(body) {
+  openLoanDetails: (username) => {
+    cy.do([
+      availableActionsButton.click(),
+      loanDetailsButton.click()
+    ]);
+    cy.expect(Pane(including(username)).exists());
+    cy.expect(Pane(including('Loan details')).exists());
+  },
+  openPatronDetails: (username) => {
+    cy.do([
+      availableActionsButton.click(),
+      patronDetailsButton.click()
+    ]);
+    cy.expect(Pane({ title: including(username) }).exists());
+  },
+  openItemDetails: (itemBarcode) => {
+    cy.do([
+      availableActionsButton.click(),
+      itemDetailsButton.click()
+    ]);
+    cy.expect(Pane(including(itemBarcode)).exists());
+  },
+  openNewfeefinesPane: () => {
+    cy.do([
+      availableActionsButton.click(),
+      newFeeFineButton.click()
+    ]);
+    cy.expect(Modal(including('New fee/fine')).exists());
+  },
+  createItemCheckinApi: (body) => {
     return cy.okapiRequest({
       method: REQUEST_METHOD.POST,
       path: 'circulation/check-in-by-barcode',
