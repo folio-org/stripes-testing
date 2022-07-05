@@ -8,8 +8,6 @@ describe('Fee/fine management', () => {
 
   before('Preconditions', () => {
     cy.loginAsAdmin({ path: SettingsMenu.circulationLostItemFeePolicyPath, waiter: LostItemFeePolicy.waitLoading });
-    // cy.login(Cypress.env('diku_login'), Cypress.env('diku_password'));
-    // cy.visit(`${SettingsMenu.circulationLostItemFeePolicyPath}`);
   });
 
   it('C5558 Verify that you can create/edit/delete lost item fee policies', () => {
