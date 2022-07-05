@@ -20,7 +20,7 @@ describe('ui-inventory: MARC', () => {
     describe('opening Derive MARC record page', () => {
       beforeEach(() => {
         cy.do([
-          MultiColumnList().click({ row: 0, column: 'Robert C. Klove papers.' }),
+          MultiColumnList().click({ row: 0, content: 'Robert C. Klove papers.' }),
           Pane(including('Instance')).find(Button('Actions')).click(),
           // FIXME: This button is disabled for unknown reason
           Button('Derive new MARC bibliographic record').click()
@@ -42,7 +42,7 @@ describe('ui-inventory: MARC', () => {
   describe('editing a MARC record', () => {
     beforeEach('searching for MARC inventory items and editing', () => {
       cy.do([
-        MultiColumnList().click({ row: 0, column: 'Robert C. Klove papers.' }),
+        MultiColumnList().click({ row: 0, content: 'Robert C. Klove papers.' }),
         Pane(including('Instance')).find(Button('Actions')).click(),
         // FIXME: This button is disabled for unknown reason
         Button('Edit in quickMARC').click()

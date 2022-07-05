@@ -34,14 +34,14 @@ export default {
 
     function getResultRowByRowNumber(rowNumber) {
       return {
-        userBarcode: MultiColumnListCell({ row: rowNumber, columnIndex: 0, column: matching(/\d|/) }),
-        itemBarcode: MultiColumnListCell({ row: rowNumber, columnIndex: 1, column: matching(/\d|/) }),
-        object: MultiColumnListCell({ row: rowNumber, columnIndex: 2, column: matching(/\w|-/) }),
-        circAction: MultiColumnListCell({ row: rowNumber, columnIndex: 3, column: matching(/\w/) }),
-        date: MultiColumnListCell({ row: rowNumber, columnIndex: 4, column: matching(dateRegEx) }),
-        servicePoint: MultiColumnListCell({ row: rowNumber, columnIndex: 5, column: matching(/\w|/) }),
-        source: MultiColumnListCell({ row: rowNumber, columnIndex: 6, column: matching(/\w/) }),
-        description: MultiColumnListCell({ row: rowNumber, columnIndex: 7, column: matching(/\w/) })
+        userBarcode: MultiColumnListCell({ row: rowNumber, columnIndex: 0, content: matching(/\d|/) }),
+        itemBarcode: MultiColumnListCell({ row: rowNumber, columnIndex: 1, content: matching(/\d|/) }),
+        object: MultiColumnListCell({ row: rowNumber, columnIndex: 2, content: matching(/\w|-/) }),
+        circAction: MultiColumnListCell({ row: rowNumber, columnIndex: 3, content: matching(/\w/) }),
+        date: MultiColumnListCell({ row: rowNumber, columnIndex: 4, content: matching(dateRegEx) }),
+        servicePoint: MultiColumnListCell({ row: rowNumber, columnIndex: 5, content: matching(/\w|/) }),
+        source: MultiColumnListCell({ row: rowNumber, columnIndex: 6, content: matching(/\w/) }),
+        description: MultiColumnListCell({ row: rowNumber, columnIndex: 7, content: matching(/\w/) })
       };
     }
 

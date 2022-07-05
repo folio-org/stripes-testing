@@ -147,7 +147,7 @@ describe('ui-circulation-settings: Fixed due date schedules', () => {
                     });
                   })
                   .then(() => {
-                    checkout.createItemCheckoutApi({
+                    checkout.createItemCheckoutViaApi({
                       servicePointId,
                       itemBarcode: ITEM_BARCODE,
                       userBarcode: USER_BARCODE,
