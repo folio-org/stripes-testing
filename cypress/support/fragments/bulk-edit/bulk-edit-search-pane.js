@@ -22,7 +22,7 @@ const fileBtn = Button('or choose file');
 
 export default {
   waitLoading() {
-    cy.expect(Pane(including('Bulk edit')).exists())
+    cy.expect(Pane(including('Bulk edit')).exists());
   },
 
   actionsIsShown() {
@@ -144,6 +144,18 @@ export default {
     cy.do(recordIdentifier.choose(value));
   },
 
+  clickToBulkEditMainButton() {
+    cy.do(Button({ id: 'ModuleMainHeading' }).click());
+  },
+
+  verifyDefaultFilterState() {
+    cy.expect([
+      Button('or choose file').has({ disabled: true }),
+      HTML('Select record identifier').exists()
+    ]);
+    this.verifyBulkEditPaneItems();
+  },
+
   verifyItemIdentifiers() {
     cy.expect([
       recordIdentifier.find(HTML('Item barcode')).exists(),
@@ -184,11 +196,7 @@ export default {
     values.forEach(value => {
       cy.expect(resultsAccordion.find(MultiColumnListCell({ content: value })).exists());
     });
-
-    // verify items count
-    cy.get('[class^=mclEndOfListContainer-]')
-      .invoke('attr', 'data-end-of-list')
-      .should('eq', `${values.length}`);
+    cy.expect(resultsAccordion.has({ itemsAmount: (values.length).toString() }));
   },
 
   verifyNonMatchedResults(...values) {

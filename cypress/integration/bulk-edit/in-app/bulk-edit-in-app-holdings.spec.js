@@ -1,15 +1,14 @@
-import permissions from '../../support/dictionary/permissions';
-import TopMenu from '../../support/fragments/topMenu';
-import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
-import FileManager from '../../support/utils/fileManager';
-import getRandomPostfix from '../../support/utils/stringTools';
-import testTypes from '../../support/dictionary/testTypes';
-import devTeams from '../../support/dictionary/devTeams';
-import BulkEditSearchPane from '../../support/fragments/bulk-edit/bulk-edit-search-pane';
-import BulkEditActions from '../../support/fragments/bulk-edit/bulk-edit-actions';
-import BulkEditFiles from '../../support/fragments/bulk-edit/bulk-edit-files';
-import Users from '../../support/fragments/users/users';
-import bulkEditSearchPane from '../../support/fragments/bulk-edit/bulk-edit-search-pane';
+import permissions from '../../../support/dictionary/permissions';
+import TopMenu from '../../../support/fragments/topMenu';
+import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
+import FileManager from '../../../support/utils/fileManager';
+import getRandomPostfix from '../../../support/utils/stringTools';
+import testTypes from '../../../support/dictionary/testTypes';
+import devTeams from '../../../support/dictionary/devTeams';
+import BulkEditSearchPane from '../../../support/fragments/bulk-edit/bulk-edit-search-pane';
+import BulkEditActions from '../../../support/fragments/bulk-edit/bulk-edit-actions';
+import BulkEditFiles from '../../../support/fragments/bulk-edit/bulk-edit-files';
+import Users from '../../../support/fragments/users/users';
 
 let user;
 const itemBarcode = getRandomPostfix();
@@ -29,7 +28,7 @@ describe('bulk-edit: in-app file uploading', () => {
     ])
       .then(userProperties => {
         user = userProperties;
-        cy.login(user.username, user.password, { path: TopMenu.bulkEditPath, waiter: bulkEditSearchPane.waitLoading });
+        cy.login(user.username, user.password, { path: TopMenu.bulkEditPath, waiter: BulkEditSearchPane.waitLoading });
 
         // Create file with valid holdings UUIDs
         const instanceId = InventoryInstances.createInstanceViaApi(item.instanceName, item.itemBarcode1);
