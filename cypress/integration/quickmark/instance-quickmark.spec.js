@@ -15,7 +15,7 @@ import Users from '../../support/fragments/users/users';
 
 // TODO: redesign test to exclude repeated steps
 describe('Manage inventory Bib records with quickMarc editor', () => {
-  let userId = '';
+  let userId;
   const quickmarcEditor = new QuickMarcEditor(InventoryInstance.validOCLC);
 
   beforeEach(() => {

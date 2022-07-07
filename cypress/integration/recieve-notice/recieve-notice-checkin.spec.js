@@ -21,6 +21,7 @@ import Users from '../../support/fragments/users/users';
 import MultipieceCheckOut from '../../support/fragments/checkout/modals/multipieceCheckOut';
 import UserEdit from '../../support/fragments/users/userEdit';
 import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
+import InventoryInstance from '../../support/fragments/inventory/inventoryInstance';
 
 // TODO Add email notice check after checktout: https://issues.folio.org/browse/FAT-1854
 describe('Recieving notice: Checkin', () => {
@@ -131,8 +132,8 @@ describe('Recieving notice: Checkin', () => {
     cy.getInstance({ limit: 1, expandAll: true, query: `"items.barcode"=="${ITEM_BARCODE}"` })
       .then((instance) => {
         cy.deleteItem(instance.items[0].id);
-        cy.deleteHoldingRecord(instance.holdings[0].id);
-        cy.deleteInstanceApi(instance.id);
+        cy.deleteHoldingRecordViaApi(instance.holdings[0].id);
+        InventoryInstance.deleteInstanceViaApi(instance.id);
       });
 
     CirculationRules.deleteRuleApi(testData.baseRules);

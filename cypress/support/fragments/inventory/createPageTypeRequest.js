@@ -19,6 +19,8 @@ const actionsButton = Button('Actions');
 const newRequestButton = Button('New Request');
 const selectUserModal = Modal('Select User');
 const loanAndAvailabilitySection = Section({ id: 'acc06' });
+const itemInfoSection = Section({ id: 'item-info' });
+const requestInfoSection = Section({ id: 'new-requester-info' });
 
 export default {
   itemStatusesToCreate() { return ['Available']; },
@@ -31,11 +33,9 @@ export default {
   },
 
   selectUser(username) {
-    cy.do([
-      TextField({ name: 'query' }).fillIn(username),
-      Button('Search').click(),
-      MultiColumnListCell({ row: 0, content: username }).click(),
-    ]);
+    cy.do(selectUserModal.find(TextField({ name: 'query' })).fillIn(username));
+    cy.do(selectUserModal.find(Button('Search')).click());
+    cy.do(MultiColumnListCell({ row: 0, content: username }).click());
   },
 
   verifyInventoryDetailsPage(barcode) {
@@ -68,13 +68,13 @@ export default {
   },
 
   verifyNewRequest() {
-    cy.expect(Section({ id: 'item-info' }).find(Link('1')).exists());
-    cy.expect(Section({ id: 'item-info' }).find(HTML('Paged')).exists());
+    cy.expect(itemInfoSection.find(Link('1')).exists());
+    cy.expect(itemInfoSection.find(HTML('Paged')).exists());
   },
 
   verifyRequesterDetailsPopulated(username) {
-    cy.expect(Section({ id: 'new-requester-info' }).find(Link(including(username))).exists());
-    cy.expect(Section({ id: 'new-requester-info' }).find(HTML('faculty')).exists());
+    cy.expect(requestInfoSection.find(Link(including(username))).exists());
+    cy.expect(requestInfoSection.find(HTML('faculty')).exists());
   },
 
   checkModalExists(isExist) {

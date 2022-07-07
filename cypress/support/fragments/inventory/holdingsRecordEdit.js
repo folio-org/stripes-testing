@@ -1,4 +1,4 @@
-import { Button, including, HTML, TextField, Select, Selection, SelectionList } from '../../../../interactors';
+import { Button, including, HTML, TextField, Select, SelectionList } from '../../../../interactors';
 
 const rootForm = HTML({ className: including('holdingsForm-') });
 const holdingsHrId = rootForm.find(TextField({ name: 'hrid' }));
@@ -17,7 +17,7 @@ export default {
   closeWithoutSave : () => cy.do(rootForm.find(Button('Cancel')).click()),
   changePermanentLocation: (location) => {
     cy.do([
-      Selection({ id: 'additem_permanentlocation' }).open(),
+      Button({ id:'additem_permanentlocation' }).click(),
       SelectionList().filter(location),
       SelectionList().select(including(location)),
     ]);

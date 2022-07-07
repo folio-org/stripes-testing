@@ -9,9 +9,10 @@ import InventorySearch from '../../support/fragments/inventory/inventorySearch';
 import InventoryHoldings from '../../support/fragments/inventory/holdings/inventoryHoldings';
 import TestTypes from '../../support/dictionary/testTypes';
 import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
+import InventoryInstance from '../../support/fragments/inventory/inventoryInstance';
 
 const ITEM_BARCODE = `123${getRandomPostfix()}`;
-let userId = '';
+let userId;
 const holdingId = uuid();
 const title = `Filter items with status test ${Number(new Date())}`;
 let source;
@@ -71,8 +72,8 @@ describe('ui-inventory: items with status', () => {
         instance.items.forEach((item) => {
           cy.deleteItem(item.id);
         });
-        cy.deleteHoldingRecord(instance.holdings[0].id);
-        cy.deleteInstanceApi(instance.id);
+        cy.deleteHoldingRecordViaApi(instance.holdings[0].id);
+        InventoryInstance.deleteInstanceViaApi(instance.id);
       });
     users.deleteViaApi(userId);
   });

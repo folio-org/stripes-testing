@@ -136,7 +136,7 @@ export default {
     cy.do(addMarcHoldingRecordButton.click());
   },
 
-  goToHoldingView: () => {
+  openHoldingView: () => {
     cy.do(viewHoldingsButton.click());
     HoldingsRecordView.waitLoading();
   },
@@ -275,5 +275,12 @@ export default {
     cy.expect(Pane({ id:'pane-instancedetails' }).find(HTML(including(location))).exists());
     openHoldings([location]);
     cy.expect(Pane({ id:'pane-instancedetails' }).find(MultiColumnListCell(content)).exists());
+  },
+
+  deleteInstanceViaApi: (id) => {
+    cy.okapiRequest({
+      method: 'DELETE',
+      path: `instance-storage/instances/${id}`,
+    });
   }
 };
