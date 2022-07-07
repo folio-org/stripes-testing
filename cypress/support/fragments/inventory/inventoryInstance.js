@@ -68,10 +68,19 @@ const closeTag = Button({ icon: 'times' });
 const tagsPane = Pane('Tags');
 const textFieldTagInput = MultiSelect({ ariaLabelledby:'accordion-toggle-button-tag-accordion' });
 
+const openHoldings = (holdingToBeOpened) => {
+  const openActions = [];
+  for (let i = 0; i < holdingToBeOpened.length; i++) {
+    openActions.push(Accordion({ label: including(`Holdings: ${holdingToBeOpened[i]}`) }).clickHeader());
+  }
+  return cy.do(openActions);
+};
+
 export default {
   validOCLC,
   pressAddHoldingsButton,
   waitLoading,
+  openHoldings,
   checkExpectedOCLCPresence: (OCLCNumber = validOCLC.id) => {
     cy.expect(identifiers.find(HTML(including(OCLCNumber))).exists());
   },
@@ -170,16 +179,8 @@ export default {
     }
   },
 
-  openHoldings(holdingToBeOpened) {
-    const openActions = [];
-    for (let i = 0; i < holdingToBeOpened.length; i++) {
-      openActions.push(Accordion({ label: including(`Holdings: ${holdingToBeOpened[i]}`) }).clickHeader());
-    }
-    return cy.do(openActions);
-  },
-
   moveItemToAnotherHolding(firstHoldingName, secondHoldingName) {
-    this.openHoldings([firstHoldingName, secondHoldingName]);
+    openHoldings([firstHoldingName, secondHoldingName]);
 
     cy.do([
       Accordion({ label: including(`Holdings: ${firstHoldingName}`) }).find(MultiColumnListRow({ indexRow: 'row-0' })).find(Checkbox()).click(),
@@ -268,4 +269,11 @@ export default {
     cy.expect(MultiSelect().find(HTML(including(tagName))).absent());
     cy.expect(tagButton.find(HTML(including('0'))).exists());
   },
+
+  checkIsInstancePresented:(title, location, content = 'On order') => {
+    cy.expect(Pane({ titleLabel: including(title) }).exists());
+    cy.expect(Pane({ id:'pane-instancedetails' }).find(HTML(including(location))).exists());
+    openHoldings([location]);
+    cy.expect(Pane({ id:'pane-instancedetails' }).find(MultiColumnListCell(content)).exists());
+  }
 };

@@ -1,4 +1,22 @@
-import { Button, SearchField, PaneHeader, Pane, Select, Accordion, KeyValue, Checkbox, MultiColumnList, MultiColumnListCell, MultiColumnListRow, Modal, TextField, SelectionOption } from '../../../../interactors';
+import {
+  Button,
+  SearchField,
+  PaneHeader,
+  Pane,
+  Select,
+  Accordion,
+  KeyValue,
+  Checkbox,
+  MultiColumnList,
+  MultiColumnListCell,
+  MultiColumnListRow,
+  Modal,
+  TextField,
+  SelectionOption,
+  HTML,
+  including,
+  Section
+} from '../../../../interactors';
 import SearchHelper from '../finance/financeHelper';
 import InteractorsTools from '../../utils/interactorsTools';
 import { getLongDelay } from '../../utils/cypressTools';
@@ -21,7 +39,13 @@ const buttonRushFilter = Button({ id: 'accordion-toggle-button-rush' });
 const buttonSubscriptionFromFilter = Button({ id: 'accordion-toggle-button-subscriptionFrom' });
 const searchForm = SearchField({ id: 'input-record-search' });
 
+const waitLoading = () => {
+  cy.expect(Button('Orders').exists());
+};
+
 export default {
+  waitLoading,
+
   createOrderWithOrderLineViaApi(order, orderLine) {
     cy.createOrderApi(order)
       .then((response) => {
@@ -376,5 +400,9 @@ export default {
         return body.purchaseOrders;
       });
   },
-};
 
+  checkIsOrderCreated:(orderNumber) => {
+    cy.do(Checkbox({ id: 'clickable-filter-workflowStatus-pending' }).click());
+    cy.expect(MultiColumnList({ id: 'orders-list' }).find(HTML(including(orderNumber))).exists());
+  }
+};

@@ -5,7 +5,6 @@ import BasicOrderLine from '../../support/fragments/orders/basicOrderLine';
 import NewOrder from '../../support/fragments/orders/newOrder';
 import Orders from '../../support/fragments/orders/orders';
 import Helper from '../../support/fragments/finance/financeHelper';
-import PoNumber from '../../support/fragments/settings/orders/poNumber';
 import TopMenu from '../../support/fragments/topMenu';
 import FieldMappingProfiles from '../../support/fragments/data_import/mapping_profiles/fieldMappingProfiles';
 import NewActionProfile from '../../support/fragments/data_import/action_profiles/newActionProfile';
@@ -20,29 +19,41 @@ import DataImport from '../../support/fragments/data_import/dataImport';
 import Logs from '../../support/fragments/data_import/logs/logs';
 import ItemRecordView from '../../support/fragments/inventory/itemRecordView';
 import CheckInActions from '../../support/fragments/check-in-actions/checkInActions';
-import ServicePoints from '../../support/fragments/settings/tenant/servicePoints';
+import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
+import OrderView from '../../support/fragments/orders/orderView';
+import Receiving from '../../support/fragments/receiving/receiving';
+import FileDetails from '../../support/fragments/data_import/logs/fileDetails';
 
 describe('ui-users:', () => {
-  const firstTitle = 'Sport and sociology / Dominic Malcolm.';
-  const secondTitle = 'South Asian texts in history : critical engagements with Sheldon Pollock / edited by Yigal Bronner, Whitney Cox, and Lawrence McCrea.';
-  const titles = [firstTitle, secondTitle];
-  // const firstOrderNumber = Helper.getRandomBarcode();
-  // const secondOrderNumber = Helper.getRandomBarcode();
-  const firstOrderNumber = 'auto99999test';
-  const secondOrderNumber = 'auto100000test';
-  const orderNumbers = [firstOrderNumber, secondOrderNumber];
+  const firstItem = {
+    title: 'Sport and sociology. Dominic Malcolm.',
+    orderNumber: 'auto99999test',
+    productId: '9782266111560',
+    quantity: '1',
+    price: '20'
+  };
+
+  const secondItem = {
+    title: 'South Asian texts in history : critical engagements with Sheldon Pollock. edited by Yigal Bronner, Whitney Cox, and Lawrence McCrea.',
+    orderNumber: 'auto100000test',
+    productId: '9783161484100',
+    quantity: '1',
+    price: '20'
+  };
+
+  const titles = [firstItem.title, secondItem.title];
+  const orderNumbers = [firstItem.orderNumber, secondItem.orderNumber];
+  // const itemBarcode = '242412412541';
   let vendorId;
   let locationId;
   let materialTypeId;
   let acquisitionMethodId;
   let productIdTypeId;
-  const itemQuantity = '1';
-  const price = '20';
   let user = {};
   let servicePointId;
 
   // unique profile names
-  const jobProfileName = `autotestJobProf${getRandomPostfix()}`;
+  const jobProfileName = `C350590 autotestJobProf${getRandomPostfix()}`;
   const matchProfileNameForInstance = `C350590 935 $a POL to Instance POL ${Helper.getRandomBarcode()}`;
   const matchProfileNameForHoldings = `C350590 935 $a POL to Holdings POL ${Helper.getRandomBarcode()}`;
   const matchProfileNameForItem = `C350590 935 $a POL to Item POL ${Helper.getRandomBarcode()}`;
@@ -65,13 +76,12 @@ describe('ui-users:', () => {
       permissions.uiInventoryViewCreateEditItems,
       permissions.settingsDataImportEnabled.gui,
       permissions.moduleDataImportEnabled.gui,
+      permissions.uiReceivingViewEditCreate.gui
     ])
       .then(userProperties => {
         user = userProperties;
       })
       .then(() => {
-        cy.login(user.username, user.password);
-
         cy.getAdminToken()
           .then(() => {
             cy.getOrganizationApi({ query: 'name="GOBI Library Solutions"' })
@@ -94,61 +104,18 @@ describe('ui-users:', () => {
               .then(productIdType => {
                 productIdTypeId = productIdType.id;
               });
-            ServicePoints.getServicePointsApi()
+            ServicePoints.getViaApi()
               .then((servicePoint) => {
                 servicePointId = servicePoint[0].id;
               });
           })
           .then(() => {
-            /* PoNumber.getViaApi({ query: 'configName="orderNumber" and module="ORDERS"' })
-          .then((res) => {
-            PoNumber.editViaApi(res[0].id);
-          }); */
-            Orders.createOrderWithOrderLineViaApi(NewOrder.getDefaultOrder(vendorId, firstOrderNumber),
-              BasicOrderLine.getDefaultOrderLine(
-                itemQuantity,
-                firstTitle,
-                locationId,
-                acquisitionMethodId,
-                price,
-                price,
-                [{
-                  productId: '9782266111560',
-                  productIdType:productIdTypeId
-                }],
-                materialTypeId
-              ))
-              .then((number) => {
-                cy.visit(TopMenu.ordersPath);
-                Orders.searchByParameter('PO number', number);
-                Helper.selectFromResultsList();
-                Orders.openOrder();
-              });
-            Orders.createOrderWithOrderLineViaApi(NewOrder.getDefaultOrder(vendorId, secondOrderNumber),
-              BasicOrderLine.getDefaultOrderLine(
-                itemQuantity,
-                secondTitle,
-                locationId,
-                acquisitionMethodId,
-                price,
-                price,
-                [{
-                  productId: '9783161484100',
-                  productIdType:productIdTypeId
-                }],
-                materialTypeId
-              ))
-              .then((number) => {
-                cy.visit(TopMenu.ordersPath);
-                Orders.searchByParameter('PO number', number);
-                Helper.selectFromResultsList();
-                Orders.openOrder();
-              });
+            cy.login(user.username, user.password, { path: TopMenu.ordersPath, waiter: Orders.waitLoading });
           });
       });
   });
 
-  after(() => {
+  /*after(() => {
     let itemId;
     const itemBarcode = Helper.getRandomBarcode();
 
@@ -184,7 +151,30 @@ describe('ui-users:', () => {
         });
     });
     Users.deleteViaApi(user.userId);
-  });
+  });*/
+
+  const createOrderAndOrderLine = (specialVendorId, spesialVendorNumber, specialProductId, quantity, title, specialPrice) => {
+    Orders.createOrderWithOrderLineViaApi(NewOrder.getDefaultOrder(specialVendorId, spesialVendorNumber),
+      BasicOrderLine.getDefaultOrderLine(
+        quantity,
+        title,
+        locationId,
+        acquisitionMethodId,
+        specialPrice,
+        specialPrice,
+        [{
+          productId: specialProductId,
+          productIdType:productIdTypeId
+        }],
+        materialTypeId
+      ));
+  };
+
+  const openOrder = (number) => {
+    Orders.searchByParameter('PO number', number);
+    Helper.selectFromResultsList();
+    Orders.openOrder();
+  };
 
   it('C350590 Match on POL and update related Instance, Holdings, Item', { tags: [TestTypes.smoke] }, () => {
     const collectionOfProfiles = [
@@ -211,7 +201,6 @@ describe('ui-users:', () => {
       }
     ];
 
-    // create Match profile
     const collectionOfMatchProfiles = [
       {
         matchProfile: { profileName: matchProfileNameForInstance,
@@ -248,6 +237,43 @@ describe('ui-users:', () => {
       profileName: jobProfileName,
       acceptedType: NewJobProfile.acceptedDataType.marc };
 
+    // create the first PO with POL
+    createOrderAndOrderLine(
+      vendorId,
+      firstItem.orderNumber,
+      firstItem.productId,
+      firstItem.quantity,
+      firstItem.title,
+      firstItem.price
+    );
+    Orders.checkIsOrderCreated(firstItem.orderNumber);
+    // open the first PO
+    openOrder(firstItem.orderNumber);
+    OrderView.checkIsOrderOpened('Open');
+    OrderView.checkIsItemsInInventoryCreated(firstItem.title, 'Main Library');
+    cy.visit(TopMenu.receivingPath);
+    Receiving.checkIsPiecesCreated(firstItem.title, 'Title (Receiving titles)');
+
+    // create second PO with POL
+    createOrderAndOrderLine(
+      vendorId,
+      secondItem.orderNumber,
+      secondItem.productId,
+      secondItem.quantity,
+      secondItem.title,
+      secondItem.price
+    );
+    cy.visit(TopMenu.ordersPath);
+    Orders.resetFilters();
+    Orders.checkIsOrderCreated(secondItem.orderNumber);
+    // open the second PO
+    openOrder(secondItem.orderNumber);
+    OrderView.checkIsOrderOpened('Open');
+    OrderView.checkIsItemsInInventoryCreated(secondItem.title, 'Main Library');
+    cy.visit(TopMenu.receivingPath);
+    Receiving.checkIsPiecesCreated(secondItem.title, 'Title (Receiving titles)');
+
+    // create mapping and action profiles
     collectionOfProfiles.forEach(profile => {
       cy.visit(SettingsMenu.mappingProfilePath);
       FieldMappingProfiles.createMappingProfileForMatch(profile.mappingProfile);
@@ -257,11 +283,13 @@ describe('ui-users:', () => {
       ActionProfiles.checkActionProfilePresented(profile.actionProfile.name);
     });
 
+    // create match profiles
     cy.visit(SettingsMenu.matchProfilePath);
     collectionOfMatchProfiles.forEach(profile => {
       MatchProfiles.createMatchProfileForPol(profile.matchProfile);
     });
 
+    // create job profile
     cy.visit(SettingsMenu.jobProfilePath);
     JobProfiles.createJobProfileWithLinkingProfilesForUpdate(specialJobProfile);
     NewJobProfile.linkMatchAndActionProfilesForInstance(actionProfileNameForInstance, matchProfileNameForInstance, 0);
@@ -269,11 +297,17 @@ describe('ui-users:', () => {
     NewJobProfile.linkMatchAndActionProfilesForItem(actionProfileNameForItem, matchProfileNameForItem, 4);
     NewJobProfile.saveAndClose();
 
+    // upload .mrc file
     cy.visit(TopMenu.dataImportPath);
     DataImport.uploadFile('matchOnPOL.mrc', marcFileName);
     JobProfiles.searchJobProfileForImport(jobProfileName);
     JobProfiles.runImportFile(marcFileName);
     Logs.openFileDetails(marcFileName);
+    /*FileDetails.checkStatusInColumn(FileDetails.status.created, FileDetails.columnName.srsMarc);
+    FileDetails.checkStatusInColumn(FileDetails.status.updated, FileDetails.columnName.instance);
+    FileDetails.checkStatusInColumn(FileDetails.status.updated, FileDetails.columnName.holdings);
+    FileDetails.checkStatusInColumn(FileDetails.status.updated, FileDetails.columnName.item);*/
+
 
     // delete generated profiles
     JobProfiles.deleteJobProfile(jobProfileName);
