@@ -1,4 +1,5 @@
 import Permissions from '../../../support/dictionary/permissions';
+import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 import InventorySearch from '../../../support/fragments/inventory/inventorySearch';
 import BrowseContributors from '../../../support/fragments/inventory/search/browseContributors';
 import TopMenu from '../../../support/fragments/topMenu';
@@ -61,7 +62,7 @@ describe('Search: browse contributors with exact match query', () => {
 
   afterEach('Deleting user', () => {
     Users.deleteViaApi(testData.user.userId);
-    cy.deleteInstanceApi(instanceA.id);
-    cy.deleteInstanceApi(instanceZ.id);
+    InventoryInstance.deleteInstanceViaApi(instanceA.id);
+    InventoryInstance.deleteInstanceViaApi(instanceZ.id);
   });
 });

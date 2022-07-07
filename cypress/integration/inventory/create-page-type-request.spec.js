@@ -7,6 +7,7 @@ import MarkItemAsMissing from '../../support/fragments/inventory/markItemAsMissi
 import Users from '../../support/fragments/users/users';
 import UserEdit from '../../support/fragments/users/userEdit';
 import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
+import InventoryInstance from '../../support/fragments/inventory/inventoryInstance';
 
 describe('ui-inventory: Create page type request', () => {
   let user;
@@ -74,8 +75,8 @@ describe('ui-inventory: Create page type request', () => {
       });
     });
     cy.deleteItem(createdItem.itemId);
-    cy.deleteHoldingRecord(instanceData.holdingId);
-    cy.deleteInstanceApi(instanceData.instanceId);
+    cy.deleteHoldingRecordViaApi(instanceData.holdingId);
+    InventoryInstance.deleteInstanceViaApi(instanceData.instanceId);
     Users.deleteViaApi(user.userId);
     Requests.updateCirculationRulesApi(oldRulesText);
     Requests.deleteRequestPolicyApi(requestPolicyId);

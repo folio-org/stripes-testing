@@ -4,10 +4,11 @@ import permissions from '../../support/dictionary/permissions';
 import FilterInstancesByTags from '../../support/fragments/inventory/filterInstancesByTags';
 import TopMenu from '../../support/fragments/topMenu';
 import SearchInventory from '../../support/fragments/data_import/searchInventory';
-import users from '../../support/fragments/users/users';
+import Users from '../../support/fragments/users/users';
+import InventoryInstance from '../../support/fragments/inventory/inventoryInstance';
 
 describe('ui-inventory: Filter instances by tags', () => {
-  let userId = '';
+  let userId;
   let instanceRecord = null;
   const testTag = `test_tag_${uuid()}`;
   const tagsCount = '1';
@@ -28,8 +29,8 @@ describe('ui-inventory: Filter instances by tags', () => {
   });
 
   afterEach(() => {
-    cy.deleteInstanceApi(instanceRecord.instanceId);
-    users.deleteViaApi(userId);
+    InventoryInstance.deleteInstanceViaApi(instanceRecord.instanceId);
+    Users.deleteViaApi(userId);
   });
 
   it('C343215 Filter instances by tags', { tags: [TestTypes.smoke, TestTypes.broken] }, () => {
@@ -40,7 +41,6 @@ describe('ui-inventory: Filter instances by tags', () => {
     FilterInstancesByTags.selectFoundInstance(instanceRecord.instanceTitle);
     FilterInstancesByTags.verifyInstanceDetailsView();
     FilterInstancesByTags.openTagsField();
-    FilterInstancesByTags.waitTagsViewLoading();
     FilterInstancesByTags.verifyTagsView();
     FilterInstancesByTags.addTag(testTag);
     FilterInstancesByTags.verifyTagCount(tagsCount);

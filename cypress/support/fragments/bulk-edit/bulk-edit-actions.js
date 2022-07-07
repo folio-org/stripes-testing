@@ -34,6 +34,10 @@ export default {
     cy.expect(Modal().find(HTML(text)).exists());
   },
 
+  cancel() {
+    cy.do(Button('Cancel').click());
+  },
+
   replaceTemporaryLocation(location = 'Annex') {
     getLocationSelect().select('Replace with');
     cy.do([

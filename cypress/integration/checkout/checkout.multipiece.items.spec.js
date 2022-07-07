@@ -13,6 +13,7 @@ import InventoryInstances from '../../support/fragments/inventory/inventoryInsta
 import CheckInActions from '../../support/fragments/check-in-actions/checkInActions';
 import Users from '../../support/fragments/users/users';
 import UserEdit from '../../support/fragments/users/userEdit';
+import InventoryInstance from '../../support/fragments/inventory/inventoryInstance';
 
 describe('Check Out', () => {
   let user = {};
@@ -106,10 +107,10 @@ describe('Check Out', () => {
           cy.wrap(holdingsId.itemIds.forEach(itemId => {
             cy.deleteItem(itemId);
           })).then(() => {
-            cy.deleteHoldingRecord(holdingsId.id);
+            cy.deleteHoldingRecordViaApi(holdingsId.id);
           });
         })).then(() => {
-          cy.deleteInstanceApi(testInstanceIds.instanceId);
+          InventoryInstance.deleteInstanceViaApi(testInstanceIds.instanceId);
         });
         UserEdit.changeServicePointPreferenceViaApi(user.userId, [servicePoint.body.id]).then(() => {
           ServicePoint.deleteViaApi(servicePoint.body.id);
