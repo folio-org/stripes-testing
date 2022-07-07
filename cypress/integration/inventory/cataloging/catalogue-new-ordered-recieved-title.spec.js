@@ -1,6 +1,7 @@
-import newOrder from '../../../support/fragments/orders/newOrder';
-import basicOrderLine from '../../../support/fragments/orders/basicOrderLine';
 import testType from '../../../support/dictionary/testTypes';
+
+import NewOrder from '../../../support/fragments/orders/newOrder';
+import BasicOrderLine from '../../../support/fragments/orders/basicOrderLine';
 import Orders from '../../../support/fragments/orders/orders';
 import Receiving from '../../../support/fragments/receiving/receiving';
 import TopMenu from '../../../support/fragments/topMenu';
@@ -11,8 +12,8 @@ import OrdersHelper from '../../../support/fragments/orders/ordersHelper';
 import CheckInActions from '../../../support/fragments/check-in-actions/checkInActions';
 
 describe('orders: Receive piece from Order', () => {
-  const order = { ...newOrder.defaultOrder };
-  const orderLine = { ...basicOrderLine.defaultOrderLine };
+  const order = { ...NewOrder.defaultOrder };
+  const orderLine = { ...BasicOrderLine.defaultOrderLine };
   let orderNumber;
   const barcode = Helper.getRandomBarcode();
   const caption = 'autotestCaption';
