@@ -13,7 +13,7 @@ import { getLongDelay } from '../../support/utils/cypressTools';
 import Users from '../../support/fragments/users/users';
 
 describe('Note creation', () => {
-  let userId = '';
+  let userId;
   const agreementTitle = NewAgreement.defaultAgreement.name;
 
   const longNote = { ...NewNote.defaultNote };

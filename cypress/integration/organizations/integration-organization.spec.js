@@ -9,7 +9,7 @@ import InteractorsTools from '../../support/utils/interactorsTools';
 
 
 describe('ui-organizations: EDI convention in Organization Integration', () => {
-  let userId = '';
+  let userId;
   const organization = {
     ...newOrganization.defaultUiOrganizations,
     accounts: [

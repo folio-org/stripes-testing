@@ -19,13 +19,6 @@ Cypress.Commands.add('getInstance', (searchParams) => {
   });
 });
 
-Cypress.Commands.add('deleteInstanceApi', (id) => {
-  cy.okapiRequest({
-    method: 'DELETE',
-    path: `instance-storage/instances/${id}`,
-  });
-});
-
 Cypress.Commands.add('getAlternativeTitlesTypes', (searchParams) => cy.okapiRequest({
   method: 'GET',
   path: 'alternative-title-types',

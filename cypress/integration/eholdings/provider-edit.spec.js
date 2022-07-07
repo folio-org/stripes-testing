@@ -8,7 +8,7 @@ import permissions from '../../support/dictionary/permissions';
 import users from '../../support/fragments/users/users';
 
 describe('ui-eholdings: Provider manage', () => {
-  let userId = '';
+  let userId;
 
   beforeEach(() => {
     cy.createTempUser([permissions.uieHoldingsRecordsEdit.gui,
