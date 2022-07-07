@@ -52,6 +52,7 @@ export default {
 
   fillName(name) {
     // waiting for form to be able to recieve text
+    // TODO: ask frontend team for the reasongs
     cy.wait(1000);
     cy.do(policyNameField.fillIn(name));
   },
@@ -86,7 +87,7 @@ export default {
     ]);
   },
 
-  createApi() {
+  createViaApi() {
     return cy
       .okapiRequest({
         method: 'POST',
@@ -98,7 +99,7 @@ export default {
         return body;
       });
   },
-  deleteApi(id) {
+  deleteViaApi(id) {
     return cy.okapiRequest({
       method: 'DELETE',
       path: `lost-item-fees-policies/${id}`,
