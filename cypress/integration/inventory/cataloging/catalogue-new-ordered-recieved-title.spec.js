@@ -9,7 +9,7 @@ import InventorySearch from '../../../support/fragments/inventory/inventorySearc
 import InteractorsTools from '../../../support/utils/interactorsTools';
 import OrdersHelper from '../../../support/fragments/orders/ordersHelper';
 import CheckInActions from '../../../support/fragments/check-in-actions/checkInActions';
-import inventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
+import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 
 describe('orders: Receive piece from Order', () => {
   const order = { ...NewOrder.defaultOrder };
@@ -60,7 +60,7 @@ describe('orders: Receive piece from Order', () => {
     InventorySearch.verifyKeywordsAsDefault();
     InventorySearch.switchToItem();
     InventorySearch.simpleSearchByParameter('Barcode', barcode);
-    inventoryInstance.openHoldings(['Main Library >']);
+    InventoryInstance.openHoldings(['Main Library >']);
     InventorySearch.verifySearchResult('In transit');
   });
 });
