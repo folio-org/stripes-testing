@@ -93,6 +93,7 @@ export default {
         method: 'POST',
         path: 'lost-item-fees-policies',
         body: defaultLostItemFeePolicy,
+        isDefaultSearchParamsRequired: false,
       })
       .then(({ body }) => {
         Cypress.env('lostItemFeePolicy', body);
@@ -103,6 +104,7 @@ export default {
     return cy.okapiRequest({
       method: 'DELETE',
       path: `lost-item-fees-policies/${id}`,
+      isDefaultSearchParamsRequired: false,
     });
   },
 };

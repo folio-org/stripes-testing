@@ -4,7 +4,6 @@ import SettingsMenu from '../../support/fragments/settingsMenu';
 describe('Fee/fine management', () => {
   const name = 'A_very_specific_name';
   const editedName = 'An_edited_name';
-  // const duration = '6 week(s)';
   const lostItemChargeFeeFineError = 'Required if there is a possibility of no fee/fine being charged for a lost item';
   const duplicateError = 'The Lost item fee policy name entered already exists. Please enter a different name.';
   const duration = '6';
