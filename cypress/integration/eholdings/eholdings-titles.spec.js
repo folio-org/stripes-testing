@@ -19,7 +19,7 @@ import users from '../../support/fragments/users/users';
 
 
 describe('eHoldings titles management', () => {
-  let userId = '';
+  let userId;
 
   it('C16994 Add a title in a package to holdings', { tags:  [testTypes.smoke, features.eHoldings] }, () => {
     cy.createTempUser([permissions.uieHoldingsRecordsEdit.gui,

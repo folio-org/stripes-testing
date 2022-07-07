@@ -16,6 +16,7 @@ import UserEdit from '../../support/fragments/users/userEdit';
 import Checkout from '../../support/fragments/checkout/checkout';
 import MultipieceCheckOut from '../../support/fragments/checkout/modals/multipieceCheckOut';
 import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
+import InventoryInstance from '../../support/fragments/inventory/inventoryInstance';
 
 const item = {
   barcode: `123${getRandomPostfix()}`,
@@ -104,8 +105,8 @@ describe('loan dates', () => {
     cy.getInstance({ limit: 1, expandAll: true, query: `"items.barcode"=="${item.barcode}"` })
       .then((instance) => {
         cy.deleteItem(instance.items[0].id);
-        cy.deleteHoldingRecord(instance.holdings[0].id);
-        cy.deleteInstanceApi(instance.id);
+        cy.deleteHoldingRecordViaApi(instance.holdings[0].id);
+        InventoryInstance.deleteInstanceViaApi(instance.id);
       });
     Users.deleteViaApi(checkOutUser.userId);
   });

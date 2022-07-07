@@ -1,12 +1,12 @@
-import TopMenu from '../../support/fragments/topMenu';
-import testTypes from '../../support/dictionary/testTypes';
-import permissions from '../../support/dictionary/permissions';
-import BulkEditSearchPane from '../../support/fragments/bulk-edit/bulk-edit-search-pane';
-import FileManager from '../../support/utils/fileManager';
-import getRandomPostfix from '../../support/utils/stringTools';
-import devTeams from '../../support/dictionary/devTeams';
-import BulkEditActions from '../../support/fragments/bulk-edit/bulk-edit-actions';
-import users from '../../support/fragments/users/users';
+import TopMenu from '../../../support/fragments/topMenu';
+import testTypes from '../../../support/dictionary/testTypes';
+import permissions from '../../../support/dictionary/permissions';
+import BulkEditSearchPane from '../../../support/fragments/bulk-edit/bulk-edit-search-pane';
+import FileManager from '../../../support/utils/fileManager';
+import getRandomPostfix from '../../../support/utils/stringTools';
+import devTeams from '../../../support/dictionary/devTeams';
+import BulkEditActions from '../../../support/fragments/bulk-edit/bulk-edit-actions';
+import Users from '../../../support/fragments/users/users';
 
 let user;
 const userUUIDsFileName = `C350905_userUUIDs_${getRandomPostfix()}.csv`;
@@ -22,8 +22,7 @@ describe('bulk-edit: csv file uploading', () => {
     ])
       .then(userProperties => {
         user = userProperties;
-        cy.login(user.username, user.password);
-        cy.visit(TopMenu.bulkEditPath);
+        cy.login(user.username, user.password, { path: TopMenu.bulkEditPath, waiter: BulkEditSearchPane.waitLoading });
         FileManager.createFile(`cypress/fixtures/${userUUIDsFileName}`, `${user.userId}\r\n${invalidUserUUID}`);
       });
   });
@@ -36,7 +35,7 @@ describe('bulk-edit: csv file uploading', () => {
     FileManager.deleteFile(`cypress/fixtures/${userUUIDsFileName}`);
     FileManager.deleteFile(`cypress/fixtures/${importFileName}`);
     FileManager.deleteFile(`cypress/downloads/${matchRecordsFileName}`);
-    users.deleteViaApi(user.userId);
+    Users.deleteViaApi(user.userId);
   });
 
 

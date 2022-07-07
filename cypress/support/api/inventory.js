@@ -192,7 +192,7 @@ Cypress.Commands.add('getHoldings', (searchParams) => {
     });
 });
 
-Cypress.Commands.add('deleteHoldingRecord', (holdingsRecordId) => {
+Cypress.Commands.add('deleteHoldingRecordViaApi', (holdingsRecordId) => {
   cy.okapiRequest({
     method: 'DELETE',
     path: `holdings-storage/holdings/${holdingsRecordId}`,
