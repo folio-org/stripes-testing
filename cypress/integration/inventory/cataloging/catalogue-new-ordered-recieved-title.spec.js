@@ -17,10 +17,11 @@ describe('orders: Receive piece from Order', () => {
   let orderNumber;
   const barcode = Helper.getRandomBarcode();
   const caption = 'autotestCaption';
+  const companyName = 'Amazon.com';
 
   before(() => {
     cy.getAdminToken();
-    cy.getOrganizationApi({ query: 'name="Amazon.com"' })
+    cy.getOrganizationApi({ query: `name=${companyName}` })
       .then(organization => {
         order.vendor = organization.id;
         orderLine.physical.materialSupplier = organization.id;
