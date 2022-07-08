@@ -5,7 +5,7 @@ import BrowseContributors from '../../../support/fragments/inventory/search/brow
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 
-describe('Search: browse contributors with exact match query', () => {
+describe('ui-inventory: search', () => {
   const testData = {};
   const instanceA = BrowseContributors.defaultInstanceAWithContributor;
   const instanceZ = BrowseContributors.defaultInstanceZWithContributor;

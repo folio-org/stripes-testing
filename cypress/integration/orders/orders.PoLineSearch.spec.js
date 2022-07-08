@@ -10,7 +10,7 @@ import getRandomPostfix from '../../support/utils/stringTools';
 // TODO:  Rebuild the test after fixing the problem with orderLineNumber definition in its scope.
 // TODO: Check the search using the second POLINE,to have a working search on empty env.
 describe('orders: Test Po line search', () => {
-  const order = { ...NewOrder.defaultOrder };
+  const order = { ...NewOrder.defaultOneTimeOrder };
   const orderLine = {
     ...basicOrderLine.defaultOrderLine,
     details: {
