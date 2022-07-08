@@ -6,7 +6,7 @@ import InventoryInstances from '../../support/fragments/inventory/inventoryInsta
 import InventorySearch from '../../support/fragments/inventory/inventorySearch';
 import Users from '../../support/fragments/users/users';
 
-let userId = '';
+let userId;
 const item = {
   instanceName: `testQuerySearch_${getRandomPostfix()}`,
   itemBarcode: `987${getRandomPostfix()}`,

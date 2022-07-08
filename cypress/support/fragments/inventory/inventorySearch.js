@@ -218,5 +218,5 @@ export default {
 
   verifySearchResult(cellContent) {
     cy.expect(MultiColumnListCell({ content: cellContent }).exists());
-  },
+  }
 };

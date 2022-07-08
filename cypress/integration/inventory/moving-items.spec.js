@@ -18,7 +18,7 @@ import users from '../../support/fragments/users/users';
 import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
 
 const successCalloutMessage = '1 item has been successfully moved.';
-let userId = '';
+let userId;
 let firstHolding = '';
 let secondHolding = '';
 let ITEM_BARCODE;
@@ -96,9 +96,9 @@ describe('ui-inventory: moving items', () => {
     cy.getInstance({ limit: 1, expandAll: true, query: `"items.barcode"=="${ITEM_BARCODE}"` })
       .then((instance) => {
         cy.deleteItem(instance.items[0].id);
-        cy.deleteHoldingRecord(instance.holdings[0].id);
-        cy.deleteHoldingRecord(instance.holdings[1].id);
-        cy.deleteInstanceApi(instance.id);
+        cy.deleteHoldingRecordViaApi(instance.holdings[0].id);
+        cy.deleteHoldingRecordViaApi(instance.holdings[1].id);
+        InventoryInstance.deleteInstanceViaApi(instance.id);
       });
     users.deleteViaApi(userId);
   });
@@ -132,7 +132,7 @@ describe('ui-inventory: moving items', () => {
         InventorySearch.searchByParameter('Instance HRID', initialInstanceHrId);
         InventoryInstances.waitLoading();
         InventoryInstances.selectInstance();
-        InventoryInstance.goToHoldingView();
+        InventoryInstance.openHoldingView();
         HoldingsRecordView.checkHrId(holdingsRecordhrId);
         HoldingsRecordView.viewSource();
         InventoryViewSource.contains(`004\t${initialInstanceHrId}`);

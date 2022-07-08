@@ -49,7 +49,7 @@ describe('ui-inventory: Assign a Preceding title for an instance', () => {
         cy.updateInstance(requestBody);
       })
       .then(() => {
-        instanceIds.forEach(instanceId => cy.deleteInstanceApi(instanceId));
+        instanceIds.forEach(instanceId => InventoryInstance.deleteInstanceViaApi(instanceId));
       });
   });
 

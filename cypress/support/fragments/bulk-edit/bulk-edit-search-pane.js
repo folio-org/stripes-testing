@@ -9,7 +9,7 @@ import {
   MultiColumnListHeader,
   RadioButton,
   Select,
-  MultiColumnList, Pane, TextArea
+  MultiColumnList, Pane, TextArea, including
 } from '../../../../interactors';
 
 const resultsAccordion = Accordion('Preview of record matched');
@@ -21,6 +21,10 @@ const radioItems = RadioButton('Inventory - items');
 const fileBtn = Button('or choose file');
 
 export default {
+  waitLoading() {
+    cy.expect(Pane(including('Bulk edit')).exists());
+  },
+
   actionsIsShown() {
     cy.expect(actions.exists());
   },
@@ -140,6 +144,18 @@ export default {
     cy.do(recordIdentifier.choose(value));
   },
 
+  clickToBulkEditMainButton() {
+    cy.do(Button({ id: 'ModuleMainHeading' }).click());
+  },
+
+  verifyDefaultFilterState() {
+    cy.expect([
+      Button('or choose file').has({ disabled: true }),
+      HTML('Select record identifier').exists()
+    ]);
+    this.verifyBulkEditPaneItems();
+  },
+
   verifyItemIdentifiers() {
     cy.expect([
       recordIdentifier.find(HTML('Item barcode')).exists(),
@@ -177,14 +193,13 @@ export default {
   },
 
   verifyMatchedResults(...values) {
-    // values: array with cells content
     values.forEach(value => {
       cy.expect(resultsAccordion.find(MultiColumnListCell({ content: value })).exists());
     });
+    cy.expect(resultsAccordion.has({ itemsAmount: (values.length).toString() }));
   },
 
   verifyNonMatchedResults(...values) {
-    // values: array with cells content
     cy.expect([
       errorsAccordion.find(MultiColumnListHeader('Record identifier')).exists(),
       errorsAccordion.find(MultiColumnListHeader('Reason for error')).exists(),
