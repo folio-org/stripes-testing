@@ -8,9 +8,9 @@ import MatchOnVRN from '../../support/fragments/data_import/matchOnVRN';
 import FileManager from '../../support/utils/fileManager';
 import SettingsMenu from '../../support/fragments/settingsMenu';
 import Orders from '../../support/fragments/orders/orders';
+import Users from '../../support/fragments/users/users';
 import getRandomPostfix from '../../support/utils/stringTools';
 import permissions from '../../support/dictionary/permissions';
-import users from '../../support/fragments/users/users';
 
 describe('ui-data-import: Match on VRN and update related Instance, Holdings, Item', () => {
   let userId = null;
@@ -85,7 +85,7 @@ describe('ui-data-import: Match on VRN and update related Instance, Holdings, It
   });
 
   after(() => {
-    users.deleteViaApi(userId);
+    Users.deleteViaApi(userId);
     MatchOnVRN.deletePOLineViaAPI(MatchOnVRN.poLineData.title);
     MatchOnVRN.deleteItemViaAPI();
   });
