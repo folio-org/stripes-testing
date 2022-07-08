@@ -23,6 +23,7 @@ import InventoryViewSource from './inventoryViewSource';
 import NewHoldingsRecord from './newHoldingsRecord';
 import InventoryInstanceSelectInstanceModal from './holdingsMove/inventoryInstanceSelectInstanceModal';
 import InventoryInstancesMovement from './holdingsMove/inventoryInstancesMovement';
+import DateTools from '../../utils/dateTools';
 
 const section = Section({ id: 'pane-instancedetails' });
 const actionsButton = section.find(Button('Actions'));
@@ -151,16 +152,9 @@ export default {
     const accordionHeader = `Holdings: ${locationName} >`;
     const indexRowNumber = `row-${rowNumber}`;
     // wait for data to be loaded
-    cy.intercept(
-      {
-        method: 'GET',
-        url: '/inventory/items?*',
-      }
-    ).as('getItems');
+    cy.intercept('/inventory/items?*').as('getItems');
     cy.wait('@getItems');
-    cy.do([
-      Accordion(accordionHeader).clickHeader(),
-    ]);
+    cy.do(Accordion(accordionHeader).clickHeader());
 
     cy.expect(Accordion(accordionHeader)
       .find(MultiColumnListRow({ indexRow: indexRowNumber }))
@@ -282,5 +276,21 @@ export default {
       method: 'DELETE',
       path: `instance-storage/instances/${id}`,
     });
+  },
+
+  checkIsInstanceUpdated:(status, specialSource) => {
+    const instanceStatusTerm = KeyValue('Instance status term');
+    const source = KeyValue('Source');
+
+
+
+    /*cy.do().perform(element => {
+      const rawDate = element.innerText;
+      const parsedDate = Date.parse(rawDate.match(/\d{1,2}\/\d{1,2}\/\d{4},\s\d{1,2}:\d{1,2}\s\w{2}/gm)[0]);
+
+      DateTools.verifyDate(parsedDate, 18000000);
+    });*/
+    cy.expect(instanceStatusTerm.has({ value: status }));
+    cy.expect(source.has({ value: specialSource }));
   }
 };

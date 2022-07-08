@@ -29,4 +29,8 @@ export default {
   checkStatusInColumn,
 
   invoiceNumberFromEdifactFile,
+
+  openInstanceInInventory:(rowIndex, index) => {
+    cy.do(MultiColumnList({ id:'search-results-list' }).find(MultiColumnListCell({ 'row': rowIndex, columnIndex: index })).click());
+  }
 };

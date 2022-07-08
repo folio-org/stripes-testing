@@ -66,6 +66,8 @@ export default {
   permanentLoanType,
   statusField: status,
   organization,
+  instanceStatusTerm,
+  catalogedDate,
 
   fillMappingProfile:(specialMappingProfile = defaultMappingProfile) => {
     cy.do([
@@ -196,6 +198,8 @@ export default {
     ]);
     if (specialMappingProfile.typeValue === holdingsType) {
       cy.do(TextField('Holdings type').fillIn('"Monograph"'));
+      // wait accepted values to be filled
+      cy.wait(1000);
       cy.do(TextField('Permanent').fillIn('980$a'));
       cy.do(TextField('Call number type').fillIn('"Library of Congress classification"'));
       cy.do(TextField('Call number').fillIn('980$b " " 980$c'));

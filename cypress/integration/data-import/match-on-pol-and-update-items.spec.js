@@ -23,6 +23,7 @@ import ServicePoints from '../../support/fragments/settings/tenant/servicePoints
 import OrderView from '../../support/fragments/orders/orderView';
 import Receiving from '../../support/fragments/receiving/receiving';
 import FileDetails from '../../support/fragments/data_import/logs/fileDetails';
+import InventoryInstance from '../../support/fragments/inventory/inventoryInstance';
 
 describe('ui-users:', () => {
   const firstItem = {
@@ -115,7 +116,7 @@ describe('ui-users:', () => {
       });
   });
 
-  /*after(() => {
+  after(() => {
     let itemId;
     const itemBarcode = Helper.getRandomBarcode();
 
@@ -136,8 +137,8 @@ describe('ui-users:', () => {
                   })
                     .then(() => {
                       cy.deleteItem(itemId);
-                      cy.deleteHoldingRecord(instance.holdings[0].id);
-                      cy.deleteInstanceApi(instance.id);
+                      cy.deleteHoldingRecordViaApi(instance.holdings[0].id);
+                      InventoryInstance.deleteInstanceViaApi(instance.id);
                     });
                 });
             });
@@ -151,7 +152,7 @@ describe('ui-users:', () => {
         });
     });
     Users.deleteViaApi(user.userId);
-  });*/
+  });
 
   const createOrderAndOrderLine = (specialVendorId, spesialVendorNumber, specialProductId, quantity, title, specialPrice) => {
     Orders.createOrderWithOrderLineViaApi(NewOrder.getDefaultOrder(specialVendorId, spesialVendorNumber),
@@ -299,15 +300,18 @@ describe('ui-users:', () => {
 
     // upload .mrc file
     cy.visit(TopMenu.dataImportPath);
+    DataImport.checkIsLandingPageOpened();
     DataImport.uploadFile('matchOnPOL.mrc', marcFileName);
     JobProfiles.searchJobProfileForImport(jobProfileName);
     JobProfiles.runImportFile(marcFileName);
+    Logs.checkStatusOfJobProfile();
     Logs.openFileDetails(marcFileName);
-    /*FileDetails.checkStatusInColumn(FileDetails.status.created, FileDetails.columnName.srsMarc);
+    FileDetails.checkStatusInColumn(FileDetails.status.created, FileDetails.columnName.srsMarc);
     FileDetails.checkStatusInColumn(FileDetails.status.updated, FileDetails.columnName.instance);
     FileDetails.checkStatusInColumn(FileDetails.status.updated, FileDetails.columnName.holdings);
-    FileDetails.checkStatusInColumn(FileDetails.status.updated, FileDetails.columnName.item);*/
-
+    FileDetails.checkStatusInColumn(FileDetails.status.updated, FileDetails.columnName.item);
+    FileDetails.openInstanceInInventory(0, 3);
+    InventoryInstance.checkIsInstanceUpdated(NewMappingProfile.catalogedDate, NewMappingProfile.instanceStatusTerm, 'MARC');
 
     // delete generated profiles
     JobProfiles.deleteJobProfile(jobProfileName);
