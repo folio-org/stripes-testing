@@ -27,10 +27,6 @@ describe('bulk-edit: csv file uploading', () => {
       });
   });
 
-  afterEach('open bulk edit page', () => {
-    BulkEditActions.newBulkEdit();
-  });
-
   after('Delete all data', () => {
     FileManager.deleteFile(`cypress/fixtures/${userUUIDsFileName}`);
     FileManager.deleteFile(`cypress/fixtures/${importFileName}`);
@@ -56,6 +52,7 @@ describe('bulk-edit: csv file uploading', () => {
     BulkEditSearchPane.verifyResultColumTitles('Email');
 
     BulkEditSearchPane.verifyErrorLabel(userUUIDsFileName, 1, 1);
+    BulkEditActions.newBulkEdit();
   });
 
   it('C353233 Verify number of updated records', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
@@ -78,5 +75,24 @@ describe('bulk-edit: csv file uploading', () => {
     // Verify changes
     BulkEditSearchPane.verifyMatchedResults(user.username);
     BulkEditSearchPane.verifyErrorLabel(userUUIDsFileName, 1, 1);
+    BulkEditActions.newBulkEdit();
+  });
+
+  it('C357034 Verify elements of the bulk edit app -- CSV app', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
+    BulkEditSearchPane.selectRecordIdentifier('User UUIDs');
+
+    BulkEditSearchPane.clickToBulkEditMainButton();
+    BulkEditSearchPane.verifyDefaultFilterState();
+
+    BulkEditSearchPane.selectRecordIdentifier('User UUIDs');
+
+    BulkEditSearchPane.uploadFile(userUUIDsFileName);
+    BulkEditSearchPane.waitFileUploading();
+
+    BulkEditSearchPane.verifyMatchedResults(user.username);
+    BulkEditSearchPane.verifyNonMatchedResults(invalidUserUUID);
+
+    BulkEditSearchPane.clickToBulkEditMainButton();
+    BulkEditSearchPane.verifyDefaultFilterState();
   });
 });
