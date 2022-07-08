@@ -11,7 +11,7 @@ import OrdersHelper from '../../support/fragments/orders/ordersHelper';
 describe('ui-invoices: test POL search plugin', () => {
   const invoice = { ...NewInvoice.defaultUiInvoice };
   const vendorPrimaryAddress = { ...VendorAddress.vendorAddress };
-  const order = { ...newOrder.defaultOrder };
+  const order = { ...newOrder.defaultOneTimeOrder };
   const orderLine = { ...newOrderLine.defaultOrderLine };
   let createdOrderNumber;
 

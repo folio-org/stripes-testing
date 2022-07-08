@@ -11,7 +11,7 @@ import InteractorsTools from '../../support/utils/interactorsTools';
 import OrdersHelper from '../../support/fragments/orders/ordersHelper';
 
 describe('orders: Unreceive piece from Order', () => {
-  const order = { ...NewOrder.defaultOrder };
+  const order = { ...NewOrder.defaultOneTimeOrder };
   const orderLine = { ...basicOrderLine.defaultOrderLine };
 
   before(() => {

@@ -18,11 +18,9 @@ const getDefaultOrder = (vendorId, number) => {
 };
 
 export default {
-  defaultOrder: {
+  defaultOneTimeOrder: {
     id: uuid(),
     vendor: '',
-    orderType: 'One-Time'
-  },
-
-  getDefaultOrder,
+    orderType: 'One-time'
+  }
 };
