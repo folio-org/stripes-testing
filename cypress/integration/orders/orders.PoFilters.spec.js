@@ -9,7 +9,7 @@ import NewInvoice from '../../support/fragments/invoices/newInvoice';
 
 describe('orders: Test PO filters', () => {
   const order = {
-    ...NewOrder.defaultOrder,
+    ...NewOrder.defaultOneTimeOrder,
     poNumberPrefix: 'pref',
     poNumberSuffix: 'suf',
     reEncumber: true,

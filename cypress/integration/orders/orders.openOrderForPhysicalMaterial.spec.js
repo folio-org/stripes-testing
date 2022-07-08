@@ -11,7 +11,7 @@ import InventoryInteractionsDefaults from '../../support/fragments/settings/orde
 
 describe('orders: create an order', () => {
   const organization = { ...newOrganization.defaultUiOrganizations };
-  const order = { ...NewOrder.defaultOrder };
+  const order = { ...NewOrder.defaultOneTimeOrder };
   const orderLineTitle = basicOrderLine.defaultOrderLine.titleOrPackage;
   const interactions = {
     module: 'ORDERS',
