@@ -45,7 +45,7 @@ describe('ui-circulation-settings: Edit circulation rules', () => {
       NoticePolicy.createApi();
       LoanPolicy.createApi();
       RequestPolicy.createApi();
-      LostItemFeePolicy.createApi();
+      LostItemFeePolicy.createViaApi();
       OverdueFinePolicy.createApi();
 
       cy.login(username, password);
@@ -60,7 +60,7 @@ describe('ui-circulation-settings: Edit circulation rules', () => {
     NoticePolicy.deleteApi(defaultNoticePolicy.id);
     LoanPolicy.deleteApi(defaultLoanPolicy.id);
     RequestPolicy.deleteApi(defaultRequestPolicy.id);
-    LostItemFeePolicy.deleteApi(defaultLostItemFeePolicy.id);
+    LostItemFeePolicy.deleteViaApi(defaultLostItemFeePolicy.id);
     OverdueFinePolicy.deleteApi(defaultOverdueFinePolicy.id);
     Users.deleteViaApi(newUserId);
   });

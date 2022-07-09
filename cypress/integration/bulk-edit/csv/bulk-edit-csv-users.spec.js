@@ -1,12 +1,12 @@
-import TopMenu from '../../support/fragments/topMenu';
-import testTypes from '../../support/dictionary/testTypes';
-import permissions from '../../support/dictionary/permissions';
-import BulkEditSearchPane from '../../support/fragments/bulk-edit/bulk-edit-search-pane';
-import FileManager from '../../support/utils/fileManager';
-import getRandomPostfix from '../../support/utils/stringTools';
-import devTeams from '../../support/dictionary/devTeams';
-import BulkEditActions from '../../support/fragments/bulk-edit/bulk-edit-actions';
-import users from '../../support/fragments/users/users';
+import TopMenu from '../../../support/fragments/topMenu';
+import testTypes from '../../../support/dictionary/testTypes';
+import permissions from '../../../support/dictionary/permissions';
+import BulkEditSearchPane from '../../../support/fragments/bulk-edit/bulk-edit-search-pane';
+import FileManager from '../../../support/utils/fileManager';
+import getRandomPostfix from '../../../support/utils/stringTools';
+import devTeams from '../../../support/dictionary/devTeams';
+import BulkEditActions from '../../../support/fragments/bulk-edit/bulk-edit-actions';
+import Users from '../../../support/fragments/users/users';
 
 let user;
 const userUUIDsFileName = `C350905_userUUIDs_${getRandomPostfix()}.csv`;
@@ -22,21 +22,16 @@ describe('bulk-edit: csv file uploading', () => {
     ])
       .then(userProperties => {
         user = userProperties;
-        cy.login(user.username, user.password);
-        cy.visit(TopMenu.bulkEditPath);
+        cy.login(user.username, user.password, { path: TopMenu.bulkEditPath, waiter: BulkEditSearchPane.waitLoading });
         FileManager.createFile(`cypress/fixtures/${userUUIDsFileName}`, `${user.userId}\r\n${invalidUserUUID}`);
       });
-  });
-
-  afterEach('open bulk edit page', () => {
-    BulkEditActions.newBulkEdit();
   });
 
   after('Delete all data', () => {
     FileManager.deleteFile(`cypress/fixtures/${userUUIDsFileName}`);
     FileManager.deleteFile(`cypress/fixtures/${importFileName}`);
     FileManager.deleteFile(`cypress/downloads/${matchRecordsFileName}`);
-    users.deleteViaApi(user.userId);
+    Users.deleteViaApi(user.userId);
   });
 
 
@@ -57,6 +52,7 @@ describe('bulk-edit: csv file uploading', () => {
     BulkEditSearchPane.verifyResultColumTitles('Email');
 
     BulkEditSearchPane.verifyErrorLabel(userUUIDsFileName, 1, 1);
+    BulkEditActions.newBulkEdit();
   });
 
   it('C353233 Verify number of updated records', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
@@ -79,5 +75,24 @@ describe('bulk-edit: csv file uploading', () => {
     // Verify changes
     BulkEditSearchPane.verifyMatchedResults(user.username);
     BulkEditSearchPane.verifyErrorLabel(userUUIDsFileName, 1, 1);
+    BulkEditActions.newBulkEdit();
+  });
+
+  it('C357034 Verify elements of the bulk edit app -- CSV app', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
+    BulkEditSearchPane.selectRecordIdentifier('User UUIDs');
+
+    BulkEditSearchPane.clickToBulkEditMainButton();
+    BulkEditSearchPane.verifyDefaultFilterState();
+
+    BulkEditSearchPane.selectRecordIdentifier('User UUIDs');
+
+    BulkEditSearchPane.uploadFile(userUUIDsFileName);
+    BulkEditSearchPane.waitFileUploading();
+
+    BulkEditSearchPane.verifyMatchedResults(user.username);
+    BulkEditSearchPane.verifyNonMatchedResults(invalidUserUUID);
+
+    BulkEditSearchPane.clickToBulkEditMainButton();
+    BulkEditSearchPane.verifyDefaultFilterState();
   });
 });

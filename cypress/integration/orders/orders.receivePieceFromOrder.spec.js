@@ -11,7 +11,7 @@ import InteractorsTools from '../../support/utils/interactorsTools';
 import OrdersHelper from '../../support/fragments/orders/ordersHelper';
 
 describe('orders: Receive piece from Order', () => {
-  const order = { ...newOrder.defaultOrder };
+  const order = { ...newOrder.defaultOneTimeOrder };
   const orderLine = { ...basicOrderLine.defaultOrderLine };
 
   before(() => {
