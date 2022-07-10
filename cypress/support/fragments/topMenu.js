@@ -20,8 +20,8 @@ export default {
   inventorySettingsFastAddPath: '/settings/inventory/fastAdd',
   requestsPath: '/requests',
   usersPath: '/users',
-  checkOutPath: '/checkout',
   checkInPath: '/checkin',
-  bulkEditPath: '/bulk-edit',
-  receivingPath: '/receiving'
+  checkOutPath: '/checkout',
+  receivingPath: '/receiving',
+  bulkEditPath: '/bulk-edit'
 };

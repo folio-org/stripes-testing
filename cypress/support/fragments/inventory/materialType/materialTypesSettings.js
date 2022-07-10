@@ -1,5 +1,4 @@
 import uuid from 'uuid';
-
 import { Button, Pane, TextField, HTML, including, MultiColumnListRow } from '../../../../../interactors';
 import ModalDeleteMaterialType from './modalDeleteMaterialType';
 import InteractorsTools from '../../../utils/interactorsTools';

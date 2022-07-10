@@ -10,13 +10,14 @@ import {
   Pane
 } from '../../../../interactors';
 import InteractorsTools from '../../utils/interactorsTools';
-import TopMenu from '../topMenu';
 
 const actionsButton = Button('Actions');
 const receivingSuccessful = 'Receiving successful';
 const unreceivingSuccessful = 'Unreceiving successful';
 const expectedPiecesAccordionId = 'expected';
 const receivedPiecesAccordionId = 'received';
+const receiveButton = Button('Receive');
+const unreceiveButton = Button('Unreceive');
 
 const searchByParameter = (parameter, value) => {
   cy.do(Select({ id: 'input-record-search-qindex' }).choose(parameter));
@@ -38,11 +39,11 @@ export default {
     cy.expect(Accordion({ id: expectedPiecesAccordionId }).exists());
     cy.do([
       Accordion({ id: expectedPiecesAccordionId }).find(actionsButton).click(),
-      Button('Receive').click(),
+      receiveButton.click(),
       Checkbox({ name: `${recievingFieldName}.checked` }).clickInput(),
       TextField({ name: `${recievingFieldName}.caption` }).fillIn(caption),
       TextField({ name: `${recievingFieldName}.barcode` }).fillIn(barcode),
-      Button('Receive').click(),
+      receiveButton.click(),
     ]);
     InteractorsTools.checkCalloutMessage(receivingSuccessful);
   },
@@ -64,9 +65,9 @@ export default {
     cy.expect(Accordion({ id: receivedPiecesAccordionId }).exists());
     cy.do([
       Accordion({ id: receivedPiecesAccordionId }).find(actionsButton).click(),
-      Button('Unreceive').click(),
+      unreceiveButton.click(),
       Checkbox({ name: `${recievingFieldName}.checked` }).clickInput(),
-      Button('Unreceive').click(),
+      unreceiveButton.click(),
     ]);
     InteractorsTools.checkCalloutMessage(unreceivingSuccessful);
   },
@@ -86,5 +87,9 @@ export default {
       .find(MultiColumnList({ id: 'receivings-list' }))
       .find(MultiColumnListCell({ content: title }))
       .exists());
+  },
+
+  selectReceivingItem:(indexRow = 0) => {
+    cy.do(MultiColumnListCell({ 'row': indexRow, 'columnIndex': 0 }).click());
   }
 };

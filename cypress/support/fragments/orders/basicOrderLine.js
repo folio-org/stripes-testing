@@ -54,10 +54,10 @@ const getDefaultOrderLine = (quantity, title, spesialLocationId, acquisitionMeth
       vendorAccount: '1234'
     }
   };
-  if (!specialMaterialTypeId) {
+  if (!defaultOrderLine.materialType) {
     MaterialTypesSettings.createApi(MaterialTypesSettings.getDefaultMaterialType())
       .then(mtypes => {
-        defaultOrderLine.physical.materialType = mtypes.id;
+        defaultOrderLine.physical.materialType = mtypes.body.id;
       });
   }
   return defaultOrderLine;

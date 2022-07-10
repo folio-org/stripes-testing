@@ -23,10 +23,9 @@ import InventoryViewSource from './inventoryViewSource';
 import NewHoldingsRecord from './newHoldingsRecord';
 import InventoryInstanceSelectInstanceModal from './holdingsMove/inventoryInstanceSelectInstanceModal';
 import InventoryInstancesMovement from './holdingsMove/inventoryInstancesMovement';
-import DateTools from '../../utils/dateTools';
+import ItemVeiw from './inventoryItem/itemVeiw';
 
 const section = Section({ id: 'pane-instancedetails' });
-const actionsButton = section.find(Button('Actions'));
 const identifiers = MultiColumnList({ id:'list-identifiers' });
 const editMARCBibRecordButton = Button({ id:'edit-instance-marc' });
 const editInstanceButton = Button({ id:'edit-instance' });
@@ -173,6 +172,14 @@ export default {
     }
   },
 
+  openHoldings(...holdingToBeOpened) {
+    const openActions = [];
+    for (let i = 0; i < holdingToBeOpened.length; i++) {
+      openActions.push(Accordion({ label: including(`Holdings: ${holdingToBeOpened[i]}`) }).clickHeader());
+    }
+    return cy.do(openActions);
+  },
+
   moveItemToAnotherHolding(firstHoldingName, secondHoldingName) {
     openHoldings([firstHoldingName, secondHoldingName]);
 
@@ -231,6 +238,7 @@ export default {
   },
   openItemView: (itemBarcode) => {
     cy.do(Link(including(itemBarcode)).click());
+    ItemVeiw.waitLoading();
   },
   openEditItemPage() {
     cy.do([

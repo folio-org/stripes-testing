@@ -41,7 +41,16 @@ const searchForm = SearchField({ id: 'input-record-search' });
 const ordersFiltersPane = Pane({ id: 'orders-filters-pane' });
 const ordersResultsPane = Pane({ id: 'orders-results-pane' });
 
+const searchByParameter = (parameter, value) => {
+  cy.do([
+    searchForm.selectIndex(parameter),
+    searchForm.fillIn(value),
+    Button('Search').click(),
+  ]);
+};
+
 export default {
+  searchByParameter,
   waitLoading() {
     cy.expect([
       ordersFiltersPane.exists(),
@@ -61,14 +70,6 @@ export default {
           });
       });
     return cy.get('@orderNumber');
-  },
-
-  searchByParameter: (parameter, value) => {
-    cy.do([
-      searchForm.selectIndex(parameter),
-      searchForm.fillIn(value),
-      Button('Search').click(),
-    ]);
   },
 
   openOrder: () => {
@@ -387,12 +388,6 @@ export default {
       buttonSubscriptionFromFilter.click(),
     ]);
   },
-
-  deleteOrderApi: (id) => cy.okapiRequest({
-    method: 'DELETE',
-    path: `orders/composite-orders/${id}`,
-  }),
-
   getOrdersApi: (searchParams) => {
     return cy
       .okapiRequest({
@@ -403,6 +398,11 @@ export default {
         return body.purchaseOrders;
       });
   },
+
+  deleteOrderApi: (id) => cy.okapiRequest({
+    method: 'DELETE',
+    path: `orders/composite-orders/${id}`,
+  }),
 
   checkIsOrderCreated:(orderNumber) => {
     cy.do(Checkbox({ id: 'clickable-filter-workflowStatus-pending' }).click());
