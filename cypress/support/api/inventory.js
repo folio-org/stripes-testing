@@ -17,6 +17,17 @@ Cypress.Commands.add('getInstanceById', instanceId => {
     });
 });
 
+Cypress.Commands.add('createLoanType', (loanType) => {
+  return cy.okapiRequest({
+    path: 'loan-types',
+    method: 'POST',
+    body: loanType,
+  }).then(({ body }) => {
+    Cypress.env('loanTypes', body);
+    return body;
+  });
+});
+
 Cypress.Commands.add('getLoanTypes', (searchParams) => {
   return cy
     .okapiRequest({

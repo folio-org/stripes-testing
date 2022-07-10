@@ -65,6 +65,8 @@ export default {
   uiUserAccounts: { internal: 'ui-users.accounts', gui: 'Fee/Fine History: Can create, edit and remove accounts' },
   uiUserRequestsAll: { internal: 'ui-users.requests.all', gui: 'Users: View requests' },
   uiUsersViewLoans: { internal: 'ui-users.loans.view', gui: 'Users: User loans view' },
+  uiUserLoansAnonymize: { internal: '', gui: 'Users: User loans anonymize' },
+  uiFeeFines: { internal: '', gui: 'Users: Can create, edit and remove fees/fines' },
   uiUsersDeclareItemLost: { internal: 'ui-users.loans.declare-item-lost', gui: 'Users: User loans declare lost' },
   uiUsersEditProfile: { internal: 'ui-users.edit', gui: 'Users: Can edit user profile' },
   uiUsersViewProfile: { internal: 'ui-users.view', gui: 'Users: Can view user profile' },

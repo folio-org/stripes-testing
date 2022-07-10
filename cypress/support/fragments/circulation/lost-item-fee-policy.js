@@ -32,7 +32,7 @@ export default {
         body: defaultLostItemFeePolicy,
       })
       .then(({ body }) => {
-        Cypress.env('lostItemFeePolicy', body);
+        Cypress.env('lostItemFeesPolicy', body);
         return body;
       });
   },
