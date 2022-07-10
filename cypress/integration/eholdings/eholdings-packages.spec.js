@@ -54,7 +54,7 @@ describe('eHoldings packages management', () => {
     });
   });
 
-  it('C690 Remove a package from your holdings', { tags:  [testType.smoke, features.eHoldings] }, () => {
+  it.only('C690 Remove a package from your holdings', { tags:  [testType.smoke, features.eHoldings] }, () => {
     cy.createTempUser([permissions.uieHoldingsRecordsEdit.gui,
       permissions.uieHoldingsPackageTitleSelectUnselect.gui]).then(userProperties => {
       userId = userProperties.userId;
