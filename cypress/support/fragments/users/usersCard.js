@@ -18,7 +18,9 @@ export default {
   },
 
   openLoans() {
+    cy.intercept('/circulation/loans?*').as('getLoans');
     cy.do(Accordion({ id : 'loansSection' }).clickHeader());
+    cy.wait('@getLoans');
   },
   openFeeFines() {
     cy.do(feesFinesAccourdion.clickHeader());

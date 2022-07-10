@@ -2,6 +2,7 @@ import uuid from 'uuid';
 import { Button, including, TextField, MultiColumnListRow, HTML, Pane, Modal } from '../../../../interactors';
 import { REQUEST_METHOD } from '../../constants';
 import { getLongDelay } from '../../utils/cypressTools';
+import ItemVeiw from '../inventory/inventoryItem/itemVeiw';
 
 const loanDetailsButton = Button('Loan details');
 const patronDetailsButton = Button('Patron details');
@@ -12,6 +13,11 @@ const itemBarcodeField = TextField({ name:'item.barcode' });
 const addItemButton = Button({ id: 'clickable-add-item' });
 const availableActionsButton = Button({ id: 'available-actions-button-0' });
 
+const waitLoading = () => {
+  cy.expect(TextField({ name: 'item.barcode' }).exists());
+  cy.expect(Button('End session').exists());
+};
+
 export default {
   waitLoading:() => {
     cy.expect(itemBarcodeField.exists());
@@ -19,6 +25,7 @@ export default {
   },
 
   checkInItem:(barcode) => {
+    waitLoading();
     cy.intercept('/inventory/items?*').as('getItems');
     cy.do(itemBarcodeField.fillIn(barcode));
     cy.do(addItemButton.click());
@@ -35,6 +42,7 @@ export default {
     cy.intercept('/tags?*').as('getTags');
     cy.do(itemDetailsButton.click());
     cy.wait('@getTags', getLongDelay());
+    ItemVeiw.waitLoading();
   },
   checkActionsMenuOptions:() => {
     cy.expect(availableActionsButton.exists());

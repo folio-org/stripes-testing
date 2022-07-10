@@ -3,6 +3,7 @@ import { Dropdown, Button } from '../../../../interactors';
 import TopMenu from '../topMenu';
 import permissions from '../../dictionary/permissions';
 import UsersSearchPane from '../users/usersSearchPane';
+import SelectServicePointModal from './selectServicePointModal';
 import UserEdit from '../users/userEdit';
 
 export default {
@@ -22,5 +23,14 @@ export default {
       Button('Log out').click(),
     ]);
     cy.login(userName, password);
+  },
+
+  switchServicePoint:(servicePoint) => {
+    cy.do([
+      Dropdown('My profile').open(),
+      Button('Switch service point').click()
+    ]);
+    SelectServicePointModal.selectServicePoint(servicePoint);
+    cy.wait(5000);
   }
 };

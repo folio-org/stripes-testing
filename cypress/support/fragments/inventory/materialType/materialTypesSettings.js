@@ -1,5 +1,4 @@
 import uuid from 'uuid';
-
 import { Button, Pane, TextField, HTML, including, MultiColumnListRow } from '../../../../../interactors';
 import ModalDeleteMaterialType from './modalDeleteMaterialType';
 import InteractorsTools from '../../../utils/interactorsTools';
@@ -37,9 +36,6 @@ export default {
         method: 'POST',
         path: 'material-types',
         body: materialTypeProperties,
-      })
-      .then(({ response }) => {
-        return response.body;
       });
   },
   deleteApi(id) {

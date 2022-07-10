@@ -23,11 +23,13 @@ const createInstanceViaAPI = (instanceWithSpecifiedNewId) => cy.okapiRequest({
   path: 'inventory/instances',
   body: instanceWithSpecifiedNewId
 });
+
 const createHoldingViaAPI = (holdingWithIds) => cy.okapiRequest({
   method: 'POST',
   path: 'holdings-storage/holdings',
   body:  holdingWithIds
 });
+
 const createItemViaAPI = (itemWithIds) => cy.okapiRequest({
   method: 'POST',
   path: 'inventory/items',
@@ -45,12 +47,14 @@ export default {
     cy.expect(or(inventoriesList.exists()),
       rootSection.find(HTML(including('No results found'))).exists());
   },
+
   selectInstance:(rowNumber = 0) => {
     cy.intercept('/inventory/instances/*').as('getView');
     cy.do(inventoriesList.focus({ row: rowNumber }));
     cy.do(inventoriesList.click({ row: rowNumber }));
     cy.wait('@getView');
   },
+
   add: (title) => {
     cy.do(actionsButton.click());
     cy.do(Button('New').click());
