@@ -29,9 +29,12 @@ import BasicOrderLine from '../../support/fragments/orders/basicOrderLine';
 import NewLocations from '../../support/fragments/settings/tenant/locations/newLocation';
 import Users from '../../support/fragments/users/users';
 import UserEdit from '../../support/fragments/users/userEdit';
+import ServicePoint from '../../support/fragments/servicePoint/servicePoint';
 
 describe('ui-inventory: Item status date updates', () => {
   const instanceTitle = `autotestTitle ${Helper.getRandomBarcode()}`;
+  const effectiveLocationServicePointName = `autotest_service_point_${getRandomPostfix()}`;
+  const notEffectiveLocationServicePointName = `autotest_service_point_${getRandomPostfix()}`;
   const itemQuantity = '1';
   let orderNumber;
   let effectiveLocationServicePoint;
@@ -60,8 +63,8 @@ describe('ui-inventory: Item status date updates', () => {
     ])
       .then(userProperties => {
         user = userProperties;
-        effectiveLocationServicePoint = NewServicePoint.getDefaulServicePoint();
-        notEffectiveLocationServicePoint = NewServicePoint.getDefaulServicePoint();
+        effectiveLocationServicePoint = NewServicePoint.getDefaultServicePoint(effectiveLocationServicePointName);
+        notEffectiveLocationServicePoint = NewServicePoint.getDefaultServicePoint(notEffectiveLocationServicePointName);
 
         ServicePoints.createViaApi(effectiveLocationServicePoint);
         ServicePoints.createViaApi(notEffectiveLocationServicePoint);
@@ -111,31 +114,33 @@ describe('ui-inventory: Item status date updates', () => {
   });
 
   afterEach(() => {
-    cy.getInstance({ limit: 1, expandAll: true, query: `"items.barcode"=="${itemBarcode}"` })
-      .then((instance) => {
-        cy.deleteItem(instance.items[0].id);
-        cy.deleteHoldingRecord(instance.holdings[0].id);
-        cy.deleteInstanceApi(instance.id);
+    CheckInActions.createItemCheckinApi({
+      itemBarcode,
+      servicePointId: effectiveLocationServicePoint.id,
+      checkInDate: new Date().toISOString(),
+    })
+      .then(() => {
+        cy.getInstance({ limit: 1, expandAll: true, query: `"items.barcode"=="${itemBarcode}"` })
+          .then((instance) => {
+            cy.deleteItem(instance.items[0].id);
+            cy.deleteHoldingRecordViaApi(instance.holdings[0].id);
+            InventoryInstance.deleteInstanceViaApi(instance.id);
+          });
       });
     Orders.getOrdersApi({ limit: 1, query: `"poNumber"=="${orderNumber}"` })
       .then(order => {
-        cy.deleteOrderApi(order[0].id);
+        Orders.deleteOrderApi(order[0].id);
       });
     cy.getOrganizationApi()
       .then(organization => {
         cy.deleteOrganizationApi(organization[0].id);
       });
-    CheckInActions.createItemCheckinApi({
-      itemBarcode,
-      servicePointId: effectiveLocationServicePoint.id,
-      checkInDate: '2021-09-30T16:14:50.444Z',
+    UserEdit.changeServicePointPreferenceViaApi(user.userId, [effectiveLocationServicePoint.id]).then(() => {
+      ServicePoint.deleteViaApi(effectiveLocationServicePoint.id);
+      Users.deleteViaApi(user.userId);
     });
-    cy.wrap(UserEdit.changeServicePointPreferenceViaApi(user.userId, [effectiveLocationServicePoint.id]))
-      .then(() => {
-        cy.deleteServicePoint(effectiveLocationServicePoint.id);
-        cy.deleteServicePoint(notEffectiveLocationServicePoint.id);
-        Users.deleteViaApi(user.userId);
-      });
+    ServicePoint.deleteViaApi(notEffectiveLocationServicePoint.id);
+    Users.deleteViaApi(userForDeliveryRequest.userId);
   });
 
   const openItem = (title, itemLocation, barcode) => {
@@ -168,6 +173,7 @@ describe('ui-inventory: Item status date updates', () => {
   const checkIn = (barcode, status, confirmModal) => {
     cy.visit(TopMenu.checkInPath);
     // TODO investigate why need 1 min wait before each step
+    // it's enough to wait 15000 before and after check in
     cy.wait(15000);
     CheckInActions.checkInItem(barcode);
     cy.wait(15000);
