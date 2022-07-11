@@ -104,7 +104,7 @@ Cypress.Commands.add('getInstanceIdentifierTypes', (searchParams) => {
     });
 });
 
-// Depricated, use createInstanceWithGivenIds instead
+// Depricated, use createFolioInstanceViaApi instead
 Cypress.Commands.add('createInstance', ({ instance, holdings = [], items = [] }) => {
   const { instanceId = uuid() } = instance;
 
@@ -150,8 +150,8 @@ Cypress.Commands.add('updateInstance', requestData => {
   return cy.get('@instanceId');
 });
 
-// Depricated, use createInstanceWithGivenIds instead
-// TODO: move preparing of IDs from createInstanceWithGivenIds into createHolding
+// Depricated, use createFolioInstanceViaApi instead
+// TODO: move preparing of IDs from createFolioInstanceViaApi into createHolding
 Cypress.Commands.add('createHolding', ({ holding, items = [] }) => {
   const { holdingId = uuid() } = holding;
   delete holding.holdingId;
@@ -208,7 +208,7 @@ Cypress.Commands.add('updateHoldingRecord', (holdingsRecordId, newParams) => {
   });
 });
 
-// Depricated, use createInstanceWithGivenIds instead
+// Depricated, use createFolioInstanceViaApi instead
 Cypress.Commands.add('createItem', (item) => {
   const { itemId = uuid() } = item;
   delete item.itemId;
