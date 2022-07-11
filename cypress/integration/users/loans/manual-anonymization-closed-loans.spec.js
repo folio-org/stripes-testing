@@ -17,6 +17,7 @@ import RequestPolicy from '../../../support/fragments/circulation/request-policy
 import OverdueFinePolicy from '../../../support/fragments/circulation/overdue-fine-policy';
 import LostItemFeePolicy from '../../../support/fragments/circulation/lost-item-fee-policy';
 import NoticePolicy from '../../../support/fragments/circulation/notice-policy';
+import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
 
 describe('ui-users-loans: Manual anonymization in closed loans', () => {
   const loanTypeName = `autotest_loan_type${getRandomPostfix()}`;
@@ -101,7 +102,7 @@ describe('ui-users-loans: Manual anonymization in closed loans', () => {
             label: name,
           }));
 
-          cy.createInstance({
+          InventoryInstances.createFolioInstanceViaApi({
             instance: {
               instanceTypeId: Cypress.env('instanceTypes')[0].id,
               title: getTestEntityValue(),
@@ -112,7 +113,7 @@ describe('ui-users-loans: Manual anonymization in closed loans', () => {
               sourceId: source.id,
             }],
             items: [
-              [{
+              {
                 ...newFirstItemData,
                 permanentLoanType: { id: Cypress.env('loanTypes').id },
                 materialType: { id: Cypress.env('materialTypes')[0].id },
@@ -120,7 +121,7 @@ describe('ui-users-loans: Manual anonymization in closed loans', () => {
                 ...newSecondItemData,
                 permanentLoanType: { id: Cypress.env('loanTypes').id },
                 materialType: { id: Cypress.env('materialTypes')[0].id },
-              }],
+              },
             ],
           }).then(() => {
             [
@@ -145,8 +146,7 @@ describe('ui-users-loans: Manual anonymization in closed loans', () => {
               });
             });
 
-            cy.login(username, password);
-            cy.visit(AppPaths.getClosedLoansPath(userId));
+            cy.login(username, password, { path: AppPaths.getClosedLoansPath(userId), waiter: LoanDetails.waitLoading });
 
             UsersOwners.createViaApi({
               ...newOwnerData,

@@ -13,6 +13,7 @@ import {
   including,
   Select,
   TextInput,
+  Pane,
 } from '../../../../../interactors';
 import { ITEM_STATUSES } from '../../../constants';
 import DateTools from '../../../utils/dateTools';
@@ -34,6 +35,9 @@ const checkDeclareLostButtonActivity = (disabled) => {
 
 export default {
 
+  waitLoading:() => {
+    cy.expect(Pane({ id: 'pane-loanshistory' }).exists());
+  },
   checkDeclareLostButtonDisabled() {
     checkDeclareLostButtonActivity(true);
   },
