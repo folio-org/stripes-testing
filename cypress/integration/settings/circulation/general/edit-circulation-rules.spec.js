@@ -16,7 +16,7 @@ import LoanPolicy, {
 import NoticePolicy, {
   defaultNoticePolicy,
 } from '../../../../support/fragments/circulation/notice-policy';
-import MaterialTypes, {
+import MaterialTypesSettings, {
   defaultMaterialType,
 } from '../../../../support/fragments/inventory/materialType/materialTypesSettings';
 import permissions from '../../../../support/dictionary/permissions';
@@ -41,11 +41,11 @@ describe('ui-circulation-settings: Edit circulation rules', () => {
       CirculationRules.getApi().then((circulationRules) => {
         originalCirculationRules = circulationRules;
       });
-      MaterialTypes.createApi();
+      MaterialTypesSettings.createApi(MaterialTypesSettings.getDefaultMaterialType());
       NoticePolicy.createApi();
       LoanPolicy.createApi();
       RequestPolicy.createApi();
-      LostItemFeePolicy.createApi();
+      LostItemFeePolicy.createViaApi();
       OverdueFinePolicy.createApi();
 
       cy.login(username, password);
@@ -56,11 +56,11 @@ describe('ui-circulation-settings: Edit circulation rules', () => {
 
   afterEach(() => {
     CirculationRules.updateApi(originalCirculationRules);
-    MaterialTypes.deleteApi(defaultMaterialType.id);
+    MaterialTypesSettings.deleteApi(defaultMaterialType.id);
     NoticePolicy.deleteApi(defaultNoticePolicy.id);
     LoanPolicy.deleteApi(defaultLoanPolicy.id);
     RequestPolicy.deleteApi(defaultRequestPolicy.id);
-    LostItemFeePolicy.deleteApi(defaultLostItemFeePolicy.id);
+    LostItemFeePolicy.deleteViaApi(defaultLostItemFeePolicy.id);
     OverdueFinePolicy.deleteApi(defaultOverdueFinePolicy.id);
     Users.deleteViaApi(newUserId);
   });

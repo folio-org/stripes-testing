@@ -2,7 +2,7 @@ import { CheckBox } from '@interactors/html';
 import { dispatchFocusout } from './util';
 import HTML from './baseHTML';
 
-export default HTML.extend('checkbox')
+export const Checkbox = HTML.extend('checkbox')
   .selector('div[class^=checkbox-]')
   .locator((el) => {
     const labelText = el.querySelector('[class^=labelText]');
@@ -38,4 +38,10 @@ export default HTML.extend('checkbox')
       el.querySelector('input').click();
       dispatchFocusout(el.querySelector('input'));
     }),
+  });
+
+export const CheckboxInTable = HTML.extend('checkboxInTable')
+  .selector('div>input[type=checkbox]')
+  .filters({
+    name: (el) => el.name,
   });

@@ -11,7 +11,7 @@ import devTeams from '../../support/dictionary/devTeams';
 import InventoryInstance from '../../support/fragments/inventory/inventoryInstance';
 import users from '../../support/fragments/users/users';
 
-let userId = '';
+let userId;
 const precedingTitleValue = `Preceding title test value ${getRandomPostfix()}`;
 const isbnValue = `ISBN test value ${getRandomPostfix()}`;
 const issnValue = `ISSN test value ${getRandomPostfix()}`;

@@ -7,7 +7,7 @@ import interactorsTools from '../../support/utils/interactorsTools';
 import OrderLines from '../../support/fragments/orders/orderLines';
 
 describe('orders: Test PO search', () => {
-  const order = { ...NewOrder.defaultOrder };
+  const order = { ...NewOrder.defaultOneTimeOrder };
   let orderNumber;
 
   before(() => {

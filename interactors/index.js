@@ -13,7 +13,7 @@ export { default as ButtonGroup } from './buttongroup';
 export { default as Form } from './form';
 export { default as Callout, calloutTypes } from './callout';
 export { default as Card, cardStyles } from './card';
-export { default as Checkbox } from './checkbox';
+export { Checkbox, CheckboxInTable } from './checkbox';
 export { default as CodeMirror, CodeMirrorHint } from './code-mirror';
 export { default as DataImportUploadFile } from './dataImportUploadFile';
 export { default as Datepicker, Calendar } from './datepicker';

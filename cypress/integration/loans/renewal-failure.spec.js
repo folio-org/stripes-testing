@@ -16,6 +16,7 @@ import checkinActions from '../../support/fragments/check-in-actions/checkInActi
 import users from '../../support/fragments/users/users';
 import InventoryHoldings from '../../support/fragments/inventory/holdings/inventoryHoldings';
 import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
+import InventoryInstance from '../../support/fragments/inventory/inventoryInstance';
 
 describe('Renewal', () => {
   let materialTypeId;
@@ -136,7 +137,7 @@ describe('Renewal', () => {
       })
       // checkout item
       .then(() => {
-        checkoutActions.createItemCheckoutApi({
+        checkoutActions.createItemCheckoutViaApi({
           servicePointId,
           itemBarcode: itemData.barcode,
           userBarcode: renewUserData.barcode
@@ -159,8 +160,8 @@ describe('Renewal', () => {
         cy.getInstance({ limit: 1, expandAll: true, query: `"items.barcode"=="${itemData.barcode}"` })
           .then((instance) => {
             cy.deleteItem(instance.items[0].id);
-            cy.deleteHoldingRecord(instance.holdings[0].id);
-            cy.deleteInstanceApi(instance.id);
+            cy.deleteHoldingRecordViaApi(instance.holdings[0].id);
+            InventoryInstance.deleteInstanceViaApi(instance.id);
           });
         cy.updateCirculationRules({
           rulesAsText: initialCircRules,

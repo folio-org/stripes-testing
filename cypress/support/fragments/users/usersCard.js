@@ -8,6 +8,7 @@ const actionsButton = rootSection.find(Button('Actions'));
 const errors = {
   patronHasBlocksInPlace:'Patron has block(s) in place'
 };
+const feesFinesAccourdion = rootSection.find(Accordion({ id : 'accountsSection' }));
 
 
 export default {
@@ -17,7 +18,12 @@ export default {
   },
 
   openLoans() {
+    cy.intercept('/circulation/loans?*').as('getLoans');
     cy.do(Accordion({ id : 'loansSection' }).clickHeader());
+    cy.wait('@getLoans');
+  },
+  openFeeFines() {
+    cy.do(feesFinesAccourdion.clickHeader());
   },
 
   showOpenedLoans() {
@@ -59,5 +65,7 @@ export default {
     cy.do(actionsButton.click());
     cy.do(Button('Create fee/fine').click());
   },
-  hasSaveError: (errorMessage) => cy.expect(rootSection.find(TextField({ value: errorMessage })).exists())
+  hasSaveError: (errorMessage) => cy.expect(rootSection.find(TextField({ value: errorMessage })).exists()),
+  startFeeFineAdding: () => cy.do(feesFinesAccourdion.find(Button('Create fee/fine')).click()),
+  viewAllFeesFines:() => cy.do(feesFinesAccourdion.find(Button({ id: 'clickable-viewallaccounts' })).click()),
 };

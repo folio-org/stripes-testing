@@ -23,6 +23,7 @@ import InventoryViewSource from './inventoryViewSource';
 import NewHoldingsRecord from './newHoldingsRecord';
 import InventoryInstanceSelectInstanceModal from './holdingsMove/inventoryInstanceSelectInstanceModal';
 import InventoryInstancesMovement from './holdingsMove/inventoryInstancesMovement';
+import ItemVeiw from './inventoryItem/itemVeiw';
 
 const section = Section({ id: 'pane-instancedetails' });
 const actionsButton = section.find(Button('Actions'));
@@ -127,7 +128,7 @@ export default {
     cy.do(addMarcHoldingRecordButton.click());
   },
 
-  goToHoldingView: () => {
+  openHoldingView: () => {
     cy.do(viewHoldingsButton.click());
     HoldingsRecordView.waitLoading();
   },
@@ -170,7 +171,7 @@ export default {
     }
   },
 
-  openHoldings(holdingToBeOpened) {
+  openHoldings(...holdingToBeOpened) {
     const openActions = [];
     for (let i = 0; i < holdingToBeOpened.length; i++) {
       openActions.push(Accordion({ label: including(`Holdings: ${holdingToBeOpened[i]}`) }).clickHeader());
@@ -236,6 +237,7 @@ export default {
   },
   openItemView: (itemBarcode) => {
     cy.do(Link(including(itemBarcode)).click());
+    ItemVeiw.waitLoading();
   },
   openEditItemPage() {
     cy.do([
@@ -268,4 +270,11 @@ export default {
     cy.expect(MultiSelect().find(HTML(including(tagName))).absent());
     cy.expect(tagButton.find(HTML(including('0'))).exists());
   },
+
+  deleteInstanceViaApi: (id) => {
+    cy.okapiRequest({
+      method: 'DELETE',
+      path: `instance-storage/instances/${id}`,
+    });
+  }
 };

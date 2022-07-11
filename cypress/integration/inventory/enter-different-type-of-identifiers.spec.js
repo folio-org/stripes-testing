@@ -32,8 +32,14 @@ describe('ui-inventory: Enter different type of identifiers', () => {
   });
 
   afterEach(() => {
-    cy.deleteInstanceApi(instanceId);
+    InventoryInstance.deleteInstanceViaApi(instanceId);
   });
+
+  const searchAndOpenInstance = (parametr, title) => {
+    cy.visit(TopMenu.inventoryPath);
+    InventorySearch.searchByParameter(parametr, title);
+    InventoryInstances.selectInstance();
+  };
 
   [
     'ASIN',
@@ -42,13 +48,10 @@ describe('ui-inventory: Enter different type of identifiers', () => {
     it('C609 In Accordion Identifiers --> enter different type of identifiers', { tags: [TestTypes.smoke] }, () => {
       resourceIdentifier = `testResourceIdentifier.${getRandomPostfix()}`;
 
-      cy.visit(TopMenu.inventoryPath);
-      InventorySearch.searchByParameter('Title (all)', instanceTitle);
-      InventoryInstances.selectInstance();
+      searchAndOpenInstance('Title (all)', instanceTitle);
       InventoryInstance.editInstance();
       InventoryInstanceEdit.addIdentifier(identifier, resourceIdentifier);
-      InventorySearch.searchByParameter('Keyword (title, contributor, identifier)', resourceIdentifier);
-      InventoryInstances.selectInstance();
+      searchAndOpenInstance('Keyword (title, contributor, identifier)', resourceIdentifier);
       InventoryInstance.checkInstanceIdentifier(resourceIdentifier);
     });
   });

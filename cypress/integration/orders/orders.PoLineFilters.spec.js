@@ -12,7 +12,7 @@ import DateTools from '../../support/utils/dateTools';
 describe('orders: Test Po line filters', () => {
   const today = new Date();
   const subcriptionDate = DateTools.getFormattedDate({ date: today }, 'MM/DD/YYYY');
-  const order = { ...NewOrder.defaultOrder };
+  const order = { ...NewOrder.defaultOneTimeOrder };
   const orderLine = {
     ...basicOrderLine.defaultOrderLine,
     details: {

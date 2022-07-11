@@ -15,6 +15,7 @@ import CheckInActions from '../../../../support/fragments/check-in-actions/check
 import UserEdit from '../../../../support/fragments/users/userEdit';
 import Users from '../../../../support/fragments/users/users';
 import ServicePoints from '../../../../support/fragments/settings/tenant/servicePoints/servicePoints';
+import InventoryInstance from '../../../../support/fragments/inventory/inventoryInstance';
 
 describe('ui-users:', () => {
   let user = {};
@@ -135,9 +136,9 @@ describe('ui-users:', () => {
     ])
       .then(userProperties => {
         user = userProperties;
-        servicePoint = NewServicePoint.getDefaulServicePoint();
-        ServicePoints.createViaApi(servicePoint.body);
-        UserEdit.addServicePointViaApi(servicePoint.body.id, user.userId, servicePoint.body.id);
+        servicePoint = NewServicePoint.getDefaultServicePoint();
+        ServicePoints.createViaApi(servicePoint);
+        UserEdit.addServicePointViaApi(servicePoint.id, user.userId, servicePoint.id);
       })
       .then(() => {
         cy.login(user.username, user.password);
@@ -148,7 +149,7 @@ describe('ui-users:', () => {
     limitTestItems.forEach(item => {
       CheckInActions.createItemCheckinApi({
         itemBarcode: item.barcode,
-        servicePointId: servicePoint.body.id,
+        servicePointId: servicePoint.id,
         checkInDate: new Date().toISOString(),
       });
     });
@@ -156,15 +157,15 @@ describe('ui-users:', () => {
       cy.wrap(holdingsId.itemIds.forEach(itemId => {
         cy.deleteItem(itemId);
       })).then(() => {
-        cy.deleteHoldingRecord(holdingsId.id);
+        cy.deleteHoldingRecordViaApi(holdingsId.id);
       });
     })).then(() => {
-      cy.deleteInstanceApi(limitTstInstanceIds.instanceId);
+      InventoryInstance.deleteInstanceViaApi(limitTstInstanceIds.instanceId);
     });
     testItems.forEach(item => {
       CheckInActions.createItemCheckinApi({
         itemBarcode: item.barcode,
-        servicePointId: servicePoint.body.id,
+        servicePointId: servicePoint.id,
         checkInDate: new Date().toISOString(),
       });
     });
@@ -172,18 +173,18 @@ describe('ui-users:', () => {
       cy.wrap(holdingsId.itemIds.forEach(itemId => {
         cy.deleteItem(itemId);
       })).then(() => {
-        cy.deleteHoldingRecord(holdingsId.id);
+        cy.deleteHoldingRecordViaApi(holdingsId.id);
       });
     })).then(() => {
-      cy.deleteInstanceApi(testInstanceIds.instanceId);
+      InventoryInstance.deleteInstanceViaApi(testInstanceIds.instanceId);
     });
     cy.updateCirculationRules({
       rulesAsText: rulesDefaultString,
     });
     cy.deleteLoanPolicy(loanPolicy.id);
-    UserEdit.changeServicePointPreferenceViaApi(user.userId, [servicePoint.body.id])
+    UserEdit.changeServicePointPreferenceViaApi(user.userId, [servicePoint.id])
       .then(() => {
-        ServicePoint.deleteViaApi(servicePoint.body.id);
+        ServicePoint.deleteViaApi(servicePoint.id);
         Users.deleteViaApi(user.userId);
       });
   });
@@ -196,7 +197,7 @@ describe('ui-users:', () => {
       СheckOutActions.checkOutItemUser(user.barcode, item.barcode);
     });
     СheckOutActions.checkOutItemUser(user.barcode, limitTestItems[2].barcode);
-    LimitCheckOut.verifyErrorMessage(limitOfItem);
+    LimitCheckOut.verifyErrorMessage(1);
     LimitCheckOut.cancelModal();
   });
 });

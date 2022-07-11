@@ -34,12 +34,7 @@ describe('data-export', () => {
   });
 
   after('Delete all data', () => {
-    cy.getInstance({ limit: 1, expandAll: true, query: `"items.barcode"=="${item.itemBarcode}"` })
-      .then((instance) => {
-        cy.deleteItem(instance.items[0].id);
-        cy.deleteHoldingRecord(instance.holdings[0].id);
-        cy.deleteInstanceApi(instance.id);
-      });
+    InventoryInstances.deleteInstanceViaApi(item.itemBarcode);
     users.deleteViaApi(user.userId);
   });
 

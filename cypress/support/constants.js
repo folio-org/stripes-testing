@@ -45,6 +45,7 @@ export const CY_ENV = {
   HOLDINGS_TYPES: 'holdingsTypes',
   INSTANCE_TYPES: 'instanceTypes',
   LOAN_POLICY: 'loanPolicy',
+  LOAN_POLICIES: 'loanPolicies',
   LOAN_TYPES: 'loanTypes',
   LOCATION: 'locations',
   LOST_ITEM_FEES_POLICY: 'lostItemFeesPolicy',
