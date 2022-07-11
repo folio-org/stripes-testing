@@ -68,9 +68,9 @@ describe('ui-users:', () => {
 
   before(() => {
     cy.createTempUser([
-      permissions.uiOrdersCreate,
-      permissions.uiOrdersView,
-      permissions.uiOrdersEdit,
+      permissions.uiOrdersCreate.gui,
+      permissions.uiOrdersView.gui,
+      permissions.uiOrdersEdit.gui,
       permissions.uiInventoryViewCreateEditHoldings.gui,
       permissions.uiInventoryViewCreateEditInstances.gui,
       permissions.uiInventoryViewCreateEditItems,
