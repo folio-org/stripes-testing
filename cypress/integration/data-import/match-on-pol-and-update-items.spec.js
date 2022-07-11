@@ -44,7 +44,6 @@ describe('ui-users:', () => {
 
   const titles = [firstItem.title, secondItem.title];
   const orderNumbers = [firstItem.orderNumber, secondItem.orderNumber];
-  // const itemBarcode = '242412412541';
   let vendorId;
   let locationId;
   let materialTypeId;
