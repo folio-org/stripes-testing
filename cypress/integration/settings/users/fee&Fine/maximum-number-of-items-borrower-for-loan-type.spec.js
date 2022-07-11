@@ -189,7 +189,7 @@ describe('ui-users:', () => {
       });
   });
 
-  it('C9277 Verify that maximum number of items borrowed for loan type (e.g. course reserve) limit works', { tags: [TestTypes.smoke] }, () => {
+  it('C9277 Verify that maximum number of items borrowed for loan type (e.g. course reserve) limit works (folijet)', { tags: [TestTypes.smoke] }, () => {
     cy.visit(TopMenu.checkOutPath);
     СheckOutActions.checkOutItemUser(user.barcode, limitTestItems[0].barcode);
     СheckOutActions.checkOutItemUser(user.barcode, limitTestItems[1].barcode);

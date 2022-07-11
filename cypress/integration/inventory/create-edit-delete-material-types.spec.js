@@ -22,7 +22,7 @@ describe('ui-inventory: Create, edit, delete material types', () => {
     users.deleteViaApi(userId);
   });
 
-  it('C505 Settings (Inventory): Create, edit, delete material types', { tags: [TestTypes.smoke] }, () => {
+  it('C505 Settings (Inventory): Create, edit, delete material types (folijet)', { tags: [TestTypes.smoke] }, () => {
     cy.visit(SettingsMenu.materialTypePath);
     InventorySettings.checkAvailableOptions();
     MaterialTypesSettings.create(materialTypeName);

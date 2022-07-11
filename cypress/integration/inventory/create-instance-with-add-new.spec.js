@@ -13,7 +13,7 @@ describe('ui-inventory: Create new instance with add "New"', () => {
     cy.visit(TopMenu.inventoryPath);
   });
 
-  it('C598 Create new instance with add "New"', { tags: [TestTypes.smoke, TestTypes.broken] }, () => {
+  it('C598 Create new instance with add "New" (folijet)', { tags: [TestTypes.smoke, TestTypes.broken] }, () => {
     InventoryInstances.add(instanceTitle);
     searchInventory.searchInstanceByTitle(instanceTitle);
 
