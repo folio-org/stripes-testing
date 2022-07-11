@@ -21,7 +21,7 @@ export default {
         body: defaultOverdueFinePolicy,
       })
       .then(({ body }) => {
-        Cypress.env('overdueFinesPolicies', body);
+        Cypress.env('overdueFinePolicy', body);
         return body;
       });
   },

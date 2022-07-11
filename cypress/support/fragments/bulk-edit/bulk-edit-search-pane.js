@@ -278,5 +278,9 @@ export default {
 
   verifyResultColumTitles(title) {
     cy.expect(resultsAccordion.find(MultiColumnListHeader(title)).exists());
+  },
+
+  verifyPaneRecordsCount(value) {
+    cy.expect(Pane(including('Bulk edit')).find(HTML(`${value} records match`)).exists());
   }
 };
