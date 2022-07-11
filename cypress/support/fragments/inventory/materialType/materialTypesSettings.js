@@ -39,8 +39,7 @@ export default {
         isDefaultSearchParamsRequired: false,
       })
       .then(({ response }) => {
-        //console.log(response);
-        // return response.body;
+        return response.body;
       });
   },
   deleteApi(id) {

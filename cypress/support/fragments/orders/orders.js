@@ -14,8 +14,7 @@ import {
   TextField,
   SelectionOption,
   HTML,
-  including,
-  Section
+  including
 } from '../../../../interactors';
 import SearchHelper from '../finance/financeHelper';
 import InteractorsTools from '../../utils/interactorsTools';

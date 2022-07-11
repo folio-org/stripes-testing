@@ -1,4 +1,3 @@
-import { getLongDelay } from '../../utils/cypressTools';
 import {
   Button,
   Pane,

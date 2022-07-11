@@ -26,6 +26,7 @@ import InventoryInstancesMovement from './holdingsMove/inventoryInstancesMovemen
 import ItemVeiw from './inventoryItem/itemVeiw';
 
 const section = Section({ id: 'pane-instancedetails' });
+const actionsButton = section.find(Button('Actions'));
 const identifiers = MultiColumnList({ id:'list-identifiers' });
 const editMARCBibRecordButton = Button({ id:'edit-instance-marc' });
 const editInstanceButton = Button({ id:'edit-instance' });
@@ -37,6 +38,7 @@ const addMarcHoldingRecordButton = Button({ id:'create-holdings-marc' });
 const viewHoldingsButton = Button('View holdings');
 const notesSection = Section({ id: 'instance-details-notes' });
 const moveItemsButton = Button({ id: 'move-instance-items' });
+const instanceDetailsPane = Pane({ id:'pane-instancedetails' });
 
 const instanceHRID = 'Instance HRID';
 const validOCLC = { id:'176116217',
@@ -68,7 +70,7 @@ const closeTag = Button({ icon: 'times' });
 const tagsPane = Pane('Tags');
 const textFieldTagInput = MultiSelect({ ariaLabelledby:'accordion-toggle-button-tag-accordion' });
 
-const openHoldings = (holdingToBeOpened) => {
+const openHoldings = (...holdingToBeOpened) => {
   const openActions = [];
   for (let i = 0; i < holdingToBeOpened.length; i++) {
     openActions.push(Accordion({ label: including(`Holdings: ${holdingToBeOpened[i]}`) }).clickHeader());
@@ -172,14 +174,6 @@ export default {
     }
   },
 
-  openHoldings(...holdingToBeOpened) {
-    const openActions = [];
-    for (let i = 0; i < holdingToBeOpened.length; i++) {
-      openActions.push(Accordion({ label: including(`Holdings: ${holdingToBeOpened[i]}`) }).clickHeader());
-    }
-    return cy.do(openActions);
-  },
-
   moveItemToAnotherHolding(firstHoldingName, secondHoldingName) {
     openHoldings([firstHoldingName, secondHoldingName]);
 
@@ -274,9 +268,9 @@ export default {
 
   checkIsInstancePresented:(title, location, content = 'On order') => {
     cy.expect(Pane({ titleLabel: including(title) }).exists());
-    cy.expect(Pane({ id:'pane-instancedetails' }).find(HTML(including(location))).exists());
+    cy.expect(instanceDetailsPane.find(HTML(including(location))).exists());
     openHoldings([location]);
-    cy.expect(Pane({ id:'pane-instancedetails' }).find(MultiColumnListCell(content)).exists());
+    cy.expect(instanceDetailsPane.find(MultiColumnListCell(content)).exists());
   },
 
   deleteInstanceViaApi: (id) => {
