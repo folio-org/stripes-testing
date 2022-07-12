@@ -207,7 +207,7 @@ export default {
     values.forEach(value => {
       cy.expect(changesAccordion.find(MultiColumnListCell({ content: value })).exists());
     });
-    cy.expect(bulkEditPane.find(HTML('1 records have been successfully changed')).exists());
+    cy.expect(bulkEditPane.find(HTML(`${values.length} records have been successfully changed`)).exists());
   },
 
   verifyNonMatchedResults(...values) {
