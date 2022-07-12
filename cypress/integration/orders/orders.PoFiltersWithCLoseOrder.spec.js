@@ -11,7 +11,7 @@ import DateTools from '../../support/utils/dateTools';
 describe('orders: Test PO filters', () => {
   const today = new Date();
   const renewalDate = DateTools.getFormattedDate({ date: today }, 'MM/DD/YYYY');
-  const order = { ...NewOrder.defaultOrder };
+  const order = { ...NewOrder.defaultOneTimeOrder };
   const orderLine = { ...BasicOrderLine.defaultOrderLine };
   const invoice = { ...NewInvoice.defaultUiInvoice };
   let orderNumber;

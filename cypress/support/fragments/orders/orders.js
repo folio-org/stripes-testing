@@ -1,4 +1,19 @@
-import { Button, SearchField, PaneHeader, Pane, Select, Accordion, KeyValue, Checkbox, MultiColumnList, MultiColumnListCell, MultiColumnListRow, Modal, TextField, SelectionOption } from '../../../../interactors';
+import {
+  Button,
+  SearchField,
+  PaneHeader,
+  Pane,
+  Select,
+  Accordion,
+  KeyValue,
+  Checkbox,
+  MultiColumnList,
+  MultiColumnListCell,
+  MultiColumnListRow,
+  Modal,
+  TextField,
+  SelectionOption
+} from '../../../../interactors';
 import SearchHelper from '../finance/financeHelper';
 import InteractorsTools from '../../utils/interactorsTools';
 import { getLongDelay } from '../../utils/cypressTools';
@@ -20,8 +35,26 @@ const buttonFVendorFilter = Button({ id: 'accordion-toggle-button-purchaseOrder.
 const buttonRushFilter = Button({ id: 'accordion-toggle-button-rush' });
 const buttonSubscriptionFromFilter = Button({ id: 'accordion-toggle-button-subscriptionFrom' });
 const searchForm = SearchField({ id: 'input-record-search' });
+const ordersFiltersPane = Pane({ id: 'orders-filters-pane' });
+const ordersResultsPane = Pane({ id: 'orders-results-pane' });
+
+const searchByParameter = (parameter, value) => {
+  cy.do([
+    searchForm.selectIndex(parameter),
+    searchForm.fillIn(value),
+    Button('Search').click(),
+  ]);
+};
 
 export default {
+  searchByParameter,
+  waitLoading() {
+    cy.expect([
+      ordersFiltersPane.exists(),
+      ordersResultsPane.exists(),
+    ]);
+  },
+
   createOrderWithOrderLineViaApi(order, orderLine) {
     cy.createOrderApi(order)
       .then((response) => {
@@ -34,14 +67,6 @@ export default {
           });
       });
     return cy.get('@orderNumber');
-  },
-
-  searchByParameter: (parameter, value) => {
-    cy.do([
-      searchForm.selectIndex(parameter),
-      searchForm.fillIn(value),
-      Button('Search').click(),
-    ]);
   },
 
   openOrder: () => {
@@ -360,11 +385,19 @@ export default {
       buttonSubscriptionFromFilter.click(),
     ]);
   },
+  getOrdersApi: (searchParams) => {
+    return cy
+      .okapiRequest({
+        path: 'orders/composite-orders',
+        searchParams
+      })
+      .then(({ body }) => {
+        return body.purchaseOrders;
+      });
+  },
 
   deleteOrderApi: (id) => cy.okapiRequest({
     method: 'DELETE',
     path: `orders/composite-orders/${id}`,
   }),
-
 };
-

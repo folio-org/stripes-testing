@@ -9,9 +9,11 @@ export default {
     cy.okapiRequest({
       method: REQUEST_METHOD.DELETE,
       path: `service-points/${id}`,
+      isDefaultSearchParamsRequired: false,
     });
   },
 
+  // investigate is this function used
   // Before using the "delete" method, check that it works!
   deleteServicePointViaApi() {
     cy.okapiRequest({
