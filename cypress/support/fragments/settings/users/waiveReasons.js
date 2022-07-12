@@ -1,5 +1,8 @@
+import uuid from 'uuid';
 import { including } from 'bigtest';
 import { Button, MultiColumnListCell, MultiColumnListRow, PaneHeader, Section, TextField, Modal, MultiColumnListHeader } from '../../../../../interactors';
+import { getTestEntityValue } from '../../../utils/stringTools';
+
 
 const rootSection = Section({ id:'controlled-vocab-pane' });
 const newButton = rootSection.find(Button({ id:'clickable-add-settings-waives' }));
@@ -9,6 +12,12 @@ const descriptionTextField = TextField({ placeholder: 'description' });
 
 const getRowByReason = (reason) => cy.then(() => rootSection.find(MultiColumnListCell(reason)).row());
 const getDescriptionColumnIdex = () => cy.then(() => rootSection.find(MultiColumnListHeader('Description')).index());
+
+export const getNewWaiveReason = (name, desc) => ({
+  nameReason: name ? getTestEntityValue(name) : getTestEntityValue(),
+  description: desc ? getTestEntityValue(desc) : getTestEntityValue(),
+  id: uuid(),
+});
 
 export default {
   waitLoading:() => cy.expect(rootSection.find(PaneHeader('Fee/fine: Waive reasons')).exists()),
@@ -42,5 +51,17 @@ export default {
       cy.do(Modal({ id: 'delete-controlled-vocab-entry-confirmation' }).find(Button({ id:'clickable-delete-controlled-vocab-entry-confirmation-confirm' })).click());
       cy.expect(rootSection.find(MultiColumnListCell(reason)).absent());
     });
-  }
+  },
+  createViaApi: (waiveReason) => cy.okapiRequest({ method: 'POST',
+    path: 'waives',
+    body: waiveReason,
+    isDefaultSearchParamsRequired: false }),
+  deleteViaApi:  (waiveReasonId) => {
+    cy.okapiRequest({
+      method: 'DELETE',
+      path: `waives/${waiveReasonId}`,
+      isDefaultSearchParamsRequired: false,
+    });
+  },
+
 };

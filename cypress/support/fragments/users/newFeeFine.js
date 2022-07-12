@@ -1,9 +1,50 @@
+import uuid from 'uuid';
 import { Button, Modal, Option, Select, TextArea, TextField } from '../../../../interactors';
 
 const rootModal = Modal({ id: 'new-modal' });
 const feefineOwnerSelect = rootModal.find(Select({ id: 'ownerId' }));
 const feeFineTypeSelect = rootModal.find(Select({ id: 'feeFineType' }));
 const amountTextField = rootModal.find(TextField({ name: 'amount' }));
+
+const getChargeFeeFine = ({ amount, userId, feeFineType, id, dateAction, createdAt, source }) => ({
+  accountId: id,
+  amountAction: amount,
+  balance: amount,
+  id : uuid(),
+  userId,
+  typeAction: feeFineType,
+  dateAction,
+  createdAt,
+  source,
+});
+
+const getNewFeeFineAccount = ({ ownerId, feeFineId, amount, paymentStatus, status, userId, feeFineType, feeFineOwner }) => ({
+  feeFineId,
+  ownerId,
+  amount,
+  paymentStatus: paymentStatus || { "name":"Outstanding" },
+  status: status || {"name":"Open"},
+  id : uuid(),
+  userId,
+  feeFineType,
+  remaining: amount,
+  feeFineOwner,
+});
+
+const createFeeFineAccountViaApi = (feeFineAccount) => {
+  return cy.okapiRequest({ method: 'POST',
+    path: 'accounts',
+    body: feeFineAccount,
+    isDefaultSearchParamsRequired: false }).then(res => res.body.id);
+};
+
+const chargeAmountFeeFineActionsViaApi = (chargeFeeFineAction) => {
+  return cy.okapiRequest({ method: 'POST',
+    path: 'feefineactions',
+    body: chargeFeeFineAction,
+    searchParams: { limit: 1000, query: `(userId==${chargeFeeFineAction.userId})` },
+    isDefaultSearchParamsRequired: false }).then(res => res.body.accountId);
+};
 
 export default {
   waitLoading:() => {
@@ -34,6 +75,9 @@ export default {
     cy.expect(amountTextField.has({ disabled: false }));
   },
   cancel:() => cy.do(rootModal.find(Button({ id:'cancelCharge' })).click()),
-  chargeAndPayNow: () => cy.do(rootModal.find(Button({ id:'chargeAndPay' })).click())
+  chargeAndPayNow: () => cy.do(rootModal.find(Button({ id:'chargeAndPay' })).click()),
+  createViaApi: (feeFineAccount) => {
+    return createFeeFineAccountViaApi(getNewFeeFineAccount(feeFineAccount))
+      .then((feeFineAccountId) => chargeAmountFeeFineActionsViaApi(getChargeFeeFine({ ...feeFineAccount, id: feeFineAccountId })));
+  }
 };
-

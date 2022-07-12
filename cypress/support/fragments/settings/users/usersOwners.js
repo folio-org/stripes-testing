@@ -29,8 +29,9 @@ const deleteOwner = (rowNumber = 2) => {
   cy.expect(Modal('Delete Fee/fine owner').absent());
 };
 
-export const getNewOwner = () => ({
-  owner: getTestEntityValue(),
+export const getNewOwner = (name, desc) => ({
+  owner: name ? getTestEntityValue(name) : getTestEntityValue(),
+  desc: desc ? getTestEntityValue(desc) : getTestEntityValue(),
   id: uuid(),
 });
 
@@ -135,6 +136,7 @@ export default {
     cy.okapiRequest({
       method: 'DELETE',
       path: `owners/${ownerId}`,
+      isDefaultSearchParamsRequired: false,
     });
   },
   checkValidatorError: (ownerName, errorMessage) => {
