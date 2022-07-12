@@ -1,26 +1,36 @@
 import uuid from 'uuid';
+
+import { Button, TextField } from '../../../../../interactors';
 import getRandomPostfix from '../../../utils/stringTools';
 
+export const defaultMaterialType = {
+  source: 'local',
+  name: `autotest_material_type_${getRandomPostfix()}`,
+  id: uuid(),
+};
+
 const getDefaultMaterialType = () => {
-  const defaultMaterialType = {
-    id: uuid(),
-    name: `autotest_material_type_${getRandomPostfix()}`,
-    source: 'local'
-  };
   return defaultMaterialType;
 };
 
 export default {
   getDefaultMaterialType,
 
-  createViaApi: (materialTypeProperties) => {
+  create:(materialTypeName) => {
+    cy.do(Button('+ New').click());
+    cy.do(TextField({ placeholder: 'name' }).fillIn(materialTypeName));
+    cy.do(Button('Save').click());
+  },
+
+  createViaApi(materialTypeProperties) {
     return cy
       .okapiRequest({
+        method: 'POST',
         path: 'material-types',
         body: materialTypeProperties,
-        method: 'POST'
+        isDefaultSearchParamsRequired: false,
       })
-      .then((response) => {
+      .then(({ response }) => {
         return response;
       });
   },

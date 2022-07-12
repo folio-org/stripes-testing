@@ -24,6 +24,7 @@ import NewHoldingsRecord from './newHoldingsRecord';
 import InventoryInstanceSelectInstanceModal from './holdingsMove/inventoryInstanceSelectInstanceModal';
 import InventoryInstancesMovement from './holdingsMove/inventoryInstancesMovement';
 import ItemVeiw from './inventoryItem/itemVeiw';
+import DateTools from '../../utils/dateTools';
 
 const section = Section({ id: 'pane-instancedetails' });
 const actionsButton = section.find(Button('Actions'));
@@ -284,15 +285,8 @@ export default {
     const instanceStatusTerm = KeyValue('Instance status term');
     const source = KeyValue('Source');
 
-
-
-    /*cy.do().perform(element => {
-      const rawDate = element.innerText;
-      const parsedDate = Date.parse(rawDate.match(/\d{1,2}\/\d{1,2}\/\d{4},\s\d{1,2}:\d{1,2}\s\w{2}/gm)[0]);
-
-      DateTools.verifyDate(parsedDate, 18000000);
-    });*/
     cy.expect(instanceStatusTerm.has({ value: status }));
     cy.expect(source.has({ value: specialSource }));
+    cy.expect(KeyValue('Cataloged date').has({ value: DateTools.getFormattedDate({ date: new Date() }) }));
   }
 };

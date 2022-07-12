@@ -3,7 +3,8 @@ import permissions from '../../support/dictionary/permissions';
 import SettingsMenu from '../../support/fragments/settingsMenu';
 import getRandomPostfix from '../../support/utils/stringTools';
 import InventorySettings from '../../support/fragments/inventory/inventorySettings';
-import MaterialTypesSettings from '../../support/fragments/inventory/materialType/materialTypesSettings';
+import MaterialTypes from '../../support/fragments/settings/inventory/materialTypes';
+import NewMaterialType from '../../support/fragments/settings/inventory/newMaterialType';
 import users from '../../support/fragments/users/users';
 
 describe('ui-inventory: Create, edit, delete material types', () => {
@@ -25,11 +26,11 @@ describe('ui-inventory: Create, edit, delete material types', () => {
   it('C505 Settings (Inventory): Create, edit, delete material types', { tags: [TestTypes.smoke] }, () => {
     cy.visit(SettingsMenu.materialTypePath);
     InventorySettings.checkAvailableOptions();
-    MaterialTypesSettings.create(materialTypeName);
-    MaterialTypesSettings.isPresented(materialTypeName);
-    MaterialTypesSettings.edit(newMaterialTypeName);
-    MaterialTypesSettings.delete(newMaterialTypeName);
-    MaterialTypesSettings.isDeleted(newMaterialTypeName);
-    MaterialTypesSettings.verifyMessageOfDeteted(newMaterialTypeName);
+    NewMaterialType.create(materialTypeName);
+    MaterialTypes.isPresented(materialTypeName);
+    MaterialTypes.edit(newMaterialTypeName);
+    MaterialTypes.delete(newMaterialTypeName);
+    MaterialTypes.isDeleted(newMaterialTypeName);
+    MaterialTypes.verifyMessageOfDeteted(newMaterialTypeName);
   });
 });

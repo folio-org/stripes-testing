@@ -1,4 +1,10 @@
-import { MultiColumnListCell, MultiColumnList, MultiColumnListHeader } from '../../../../../interactors';
+import {
+  MultiColumnListCell,
+  MultiColumnList,
+  MultiColumnListHeader,
+  MultiColumnListRow,
+  Link
+} from '../../../../../interactors';
 
 const resultsList = MultiColumnList({ id:'search-results-list' });
 
@@ -12,7 +18,8 @@ const columnName = {
 
 const status = {
   created: 'Created',
-  updated: 'Updated'
+  updated: 'Updated',
+  discarded: 'Discarded'
 };
 
 const checkStatusInColumn = (specialStatus, specialColumnName) => {
@@ -21,16 +28,28 @@ const checkStatusInColumn = (specialStatus, specialColumnName) => {
       .has({ content: specialStatus })));
 };
 
+const checkItemsStatuses = (rowIndex, itemStatuses) => {
+  // itemStatuses = [SRS MARC status, Instance status, Holdings status, Item status]
+  const indexes = [2, 3, 4, 5];
+  itemStatuses.forEach((itemStatus, columnIndex) => {
+    cy.expect(MultiColumnListRow({ dataRowIndex: rowIndex }).find(MultiColumnListCell({ columnIndex: indexes[columnIndex], content: itemStatus }).exists()));
+  });
+};
+
 const invoiceNumberFromEdifactFile = '94999';
 
 export default {
   columnName,
   status,
   checkStatusInColumn,
+  checkItemsStatuses,
 
   invoiceNumberFromEdifactFile,
 
-  openInstanceInInventory:(rowIndex, index) => {
-    cy.do(MultiColumnList({ id:'search-results-list' }).find(MultiColumnListCell({ 'row': rowIndex, columnIndex: index })).click());
+  openInstanceInInventory:(columnIndex = 3, row = 0) => {
+    cy.do(MultiColumnList({ id:'search-results-list' })
+      .find(MultiColumnListCell({ row, columnIndex }))
+      .find(Link('Updated'))
+      .click());
   }
 };

@@ -21,9 +21,14 @@ const waitLoading = () => {
   cy.expect(Button('Actions').exists());
 };
 
+const closeDetailView = () => {
+  cy.do(Button({ icon: 'times' }).click());
+};
+
 export default {
   itemStatuses,
   waitLoading,
+  closeDetailView,
 
   verifyUpdatedItemDate:() => {
     cy.do(loanAccordion.find(KeyValue('Item status')).perform(element => {
@@ -48,5 +53,16 @@ export default {
   addPieceToItem:(numberOfPieces) => {
     cy.do(TextField({ name:'numberOfPieces' }).fillIn(numberOfPieces));
     cy.do(Button('Save and close').click());
+  },
+
+  checkIsItemUpdated() {
+    cy.do([
+      Button(including('Holdings: Main Library')).click(),
+      // Link(itemBarcode).click(),
+    ]);
+    cy.expect(KeyValue('Item status').has({ value: 'On Order' }));
+    //cy.expect(KeyValue('Item barcode').has({ value: itemBarcode }));
+
+    closeDetailView();
   }
 };

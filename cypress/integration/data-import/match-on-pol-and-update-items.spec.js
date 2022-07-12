@@ -24,6 +24,9 @@ import OrderView from '../../support/fragments/orders/orderView';
 import Receiving from '../../support/fragments/receiving/receiving';
 import FileDetails from '../../support/fragments/data_import/logs/fileDetails';
 import InventoryInstance from '../../support/fragments/inventory/inventoryInstance';
+import HoldingsRecordView from '../../support/fragments/inventory/holdingsRecordView';
+import ItemVeiw from '../../support/fragments/inventory/inventoryItem/itemVeiw';
+import InventoryViewSource from '../../support/fragments/inventory/inventoryViewSource';
 
 describe('ui-users:', () => {
   const firstItem = {
@@ -31,7 +34,8 @@ describe('ui-users:', () => {
     orderNumber: 'auto99999test',
     productId: '9782266111560',
     quantity: '1',
-    price: '20'
+    price: '20',
+    barcode: '242451241241'
   };
 
   const secondItem = {
@@ -46,9 +50,9 @@ describe('ui-users:', () => {
   const orderNumbers = [firstItem.orderNumber, secondItem.orderNumber];
   let vendorId;
   let locationId;
-  let materialTypeId;
   let acquisitionMethodId;
   let productIdTypeId;
+  let materialTypeId;
   let user = {};
   let servicePointId;
 
@@ -115,7 +119,7 @@ describe('ui-users:', () => {
       });
   });
 
-  after(() => {
+  /*after(() => {
     let itemId;
     const itemBarcode = Helper.getRandomBarcode();
 
@@ -151,22 +155,22 @@ describe('ui-users:', () => {
         });
     });
     Users.deleteViaApi(user.userId);
-  });
+  });*/
 
-  const createOrderAndOrderLine = (specialVendorId, spesialVendorNumber, specialProductId, quantity, title, specialPrice) => {
-    Orders.createOrderWithOrderLineViaApi(NewOrder.getDefaultOrder(specialVendorId, spesialVendorNumber),
+  const createOrderAndOrderLine = (specialVendorId, orderNumber, specialProductId, quantity, title, unitPrice, estimatePrice, materialType) => {
+    Orders.createOrderWithOrderLineViaApi(NewOrder.getDefaultOrder(specialVendorId, orderNumber),
       BasicOrderLine.getDefaultOrderLine(
         quantity,
         title,
         locationId,
         acquisitionMethodId,
-        specialPrice,
-        specialPrice,
+        unitPrice,
+        estimatePrice,
         [{
           productId: specialProductId,
           productIdType:productIdTypeId
         }],
-        materialTypeId
+        materialType
       ));
   };
 
@@ -244,7 +248,9 @@ describe('ui-users:', () => {
       firstItem.productId,
       firstItem.quantity,
       firstItem.title,
-      firstItem.price
+      firstItem.price,
+      firstItem.price,
+      materialTypeId
     );
     Orders.checkIsOrderCreated(firstItem.orderNumber);
     // open the first PO
@@ -261,7 +267,9 @@ describe('ui-users:', () => {
       secondItem.productId,
       secondItem.quantity,
       secondItem.title,
-      secondItem.price
+      secondItem.price,
+      secondItem.price,
+      materialTypeId
     );
     cy.visit(TopMenu.ordersPath);
     Orders.resetFilters();
@@ -305,12 +313,14 @@ describe('ui-users:', () => {
     JobProfiles.runImportFile(marcFileName);
     Logs.checkStatusOfJobProfile();
     Logs.openFileDetails(marcFileName);
-    FileDetails.checkStatusInColumn(FileDetails.status.created, FileDetails.columnName.srsMarc);
-    FileDetails.checkStatusInColumn(FileDetails.status.updated, FileDetails.columnName.instance);
-    FileDetails.checkStatusInColumn(FileDetails.status.updated, FileDetails.columnName.holdings);
-    FileDetails.checkStatusInColumn(FileDetails.status.updated, FileDetails.columnName.item);
-    FileDetails.openInstanceInInventory(0, 3);
-    InventoryInstance.checkIsInstanceUpdated(NewMappingProfile.catalogedDate, NewMappingProfile.instanceStatusTerm, 'MARC');
+    FileDetails.checkItemsStatuses('row-0', [FileDetails.status.created, FileDetails.status.updated, FileDetails.status.updated, FileDetails.status.updated]);
+    FileDetails.checkItemsStatuses('row-1', [FileDetails.status.discarded, FileDetails.status.discarded, FileDetails.status.discarded, FileDetails.status.discarded]);
+
+    FileDetails.openInstanceInInventory();
+    InventoryInstance.checkIsInstanceUpdated(NewMappingProfile.instanceStatusTerm, 'MARC');
+    HoldingsRecordView.checkIsHoldingsUpdated();
+    ItemVeiw.checkIsItemUpdated();
+    InventoryViewSource.verifyMARCBibSource(firstItem.barcode);
 
     // delete generated profiles
     JobProfiles.deleteJobProfile(jobProfileName);
