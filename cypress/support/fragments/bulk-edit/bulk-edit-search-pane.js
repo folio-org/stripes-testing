@@ -48,7 +48,7 @@ export default {
     cy.expect([
       Button('Identifier').exists(),
       Button('Query').exists(),
-      recordIdentifier.exits(),
+      recordIdentifier.exists(),
       recordIdentifier.find(HTML('Select record identifier')).exists(),
       Accordion({ label: 'Record types', open: true }).exists(),
       HTML('Drag and drop').exists()
