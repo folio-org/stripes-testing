@@ -119,7 +119,7 @@ describe('ui-users:', () => {
       });
   });
 
-  /*after(() => {
+  after(() => {
     let itemId;
     const itemBarcode = Helper.getRandomBarcode();
 
@@ -150,29 +150,11 @@ describe('ui-users:', () => {
     orderNumbers.forEach(number => {
       Orders.getOrdersApi({ limit: 1, query: `"poNumber"=="${number}"` })
         .then(order => {
-          console.log(order);
           Orders.deleteOrderApi(order[0].id);
         });
     });
     Users.deleteViaApi(user.userId);
-  });*/
-
-  const createOrderAndOrderLine = (specialVendorId, orderNumber, specialProductId, quantity, title, unitPrice, estimatePrice, materialType) => {
-    Orders.createOrderWithOrderLineViaApi(NewOrder.getDefaultOrder(specialVendorId, orderNumber),
-      BasicOrderLine.getDefaultOrderLine(
-        quantity,
-        title,
-        locationId,
-        acquisitionMethodId,
-        unitPrice,
-        estimatePrice,
-        [{
-          productId: specialProductId,
-          productIdType:productIdTypeId
-        }],
-        materialType
-      ));
-  };
+  });
 
   const openOrder = (number) => {
     Orders.searchByParameter('PO number', number);
@@ -242,17 +224,22 @@ describe('ui-users:', () => {
       acceptedType: NewJobProfile.acceptedDataType.marc };
 
     // create the first PO with POL
-    createOrderAndOrderLine(
-      vendorId,
-      firstItem.orderNumber,
-      firstItem.productId,
-      firstItem.quantity,
-      firstItem.title,
-      firstItem.price,
-      firstItem.price,
-      materialTypeId
-    );
+    Orders.createOrderWithOrderLineViaApi(NewOrder.getDefaultOrder(vendorId, firstItem.orderNumber),
+      BasicOrderLine.getDefaultOrderLine(
+        firstItem.quantity,
+        firstItem.title,
+        locationId,
+        acquisitionMethodId,
+        firstItem.price,
+        firstItem.price,
+        [{
+          productId: firstItem.productId,
+          productIdType: productIdTypeId
+        }],
+        materialTypeId
+      ));
     Orders.checkIsOrderCreated(firstItem.orderNumber);
+
     // open the first PO
     openOrder(firstItem.orderNumber);
     OrderView.checkIsOrderOpened('Open');
@@ -261,19 +248,24 @@ describe('ui-users:', () => {
     Receiving.checkIsPiecesCreated(firstItem.title, 'Title (Receiving titles)');
 
     // create second PO with POL
-    createOrderAndOrderLine(
-      vendorId,
-      secondItem.orderNumber,
-      secondItem.productId,
-      secondItem.quantity,
-      secondItem.title,
-      secondItem.price,
-      secondItem.price,
-      materialTypeId
-    );
+    Orders.createOrderWithOrderLineViaApi(NewOrder.getDefaultOrder(vendorId, secondItem.orderNumber),
+      BasicOrderLine.getDefaultOrderLine(
+        secondItem.quantity,
+        secondItem.title,
+        locationId,
+        acquisitionMethodId,
+        secondItem.price,
+        secondItem.price,
+        [{
+          productId: secondItem.productId,
+          productIdType: productIdTypeId
+        }],
+        materialTypeId
+      ));
     cy.visit(TopMenu.ordersPath);
     Orders.resetFilters();
     Orders.checkIsOrderCreated(secondItem.orderNumber);
+
     // open the second PO
     openOrder(secondItem.orderNumber);
     OrderView.checkIsOrderOpened('Open');
@@ -313,8 +305,8 @@ describe('ui-users:', () => {
     JobProfiles.runImportFile(marcFileName);
     Logs.checkStatusOfJobProfile();
     Logs.openFileDetails(marcFileName);
-    FileDetails.checkItemsStatuses('row-0', [FileDetails.status.created, FileDetails.status.updated, FileDetails.status.updated, FileDetails.status.updated]);
-    FileDetails.checkItemsStatuses('row-1', [FileDetails.status.discarded, FileDetails.status.discarded, FileDetails.status.discarded, FileDetails.status.discarded]);
+    FileDetails.checkItemsStatuses(0, [FileDetails.status.created, FileDetails.status.updated, FileDetails.status.updated, FileDetails.status.updated]);
+    FileDetails.checkItemsStatuses(1, [FileDetails.status.dash, FileDetails.status.discarded, FileDetails.status.discarded, FileDetails.status.discarded]);
 
     FileDetails.openInstanceInInventory();
     InventoryInstance.checkIsInstanceUpdated(NewMappingProfile.instanceStatusTerm, 'MARC');

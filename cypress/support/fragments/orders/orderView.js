@@ -20,10 +20,7 @@ export default {
 
   checkIsOrderOpened:(value) => {
     Orders.selectStatusInSearch('Open');
-    cy.intercept('/organizations/organizations?**').as('getOrg');
-    cy.intercept('/users?**').as('getUsers');
     cy.expect(Section({ id:'POSummary' }).find(KeyValue('Workflow status')).has({ value }));
-    // cy.wait(['@getOrg', '@getUsers'], getLongDelay());
   },
 
   openReceive:() => {

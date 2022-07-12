@@ -1,5 +1,6 @@
 import { HTML, including } from '@interactors/html';
 import { Button, Section } from '../../../../interactors';
+import InventoryInstance from './inventoryInstance';
 
 const instanceTitle = 'MARC bibliographic record';
 const holdingTitle = 'Holdings record';
@@ -18,10 +19,7 @@ export default {
   waitLoading:() => cy.expect(rootSection.exists()),
 
   verifyMARCBibSource:(itemBarcode) => {
-    cy.do([
-      Section({ id: 'pane-instancedetails' }).find(Button('Actions')).click(),
-      Button('View source').click(),
-    ]);
+    InventoryInstance.openViewSource();
     // verify table data in marc bibliographic source
     cy.contains('980').parent('tr').should('exist');
     cy.contains('KU/CC/DI/M').parent('tr').should('exist');

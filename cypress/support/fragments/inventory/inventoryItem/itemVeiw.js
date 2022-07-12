@@ -57,12 +57,10 @@ export default {
 
   checkIsItemUpdated() {
     cy.do([
-      Button(including('Holdings: Main Library')).click(),
-      // Link(itemBarcode).click(),
+      Button(including('Holdings: Main Library > GV706.5')).click(),
     ]);
-    cy.expect(KeyValue('Item status').has({ value: 'On Order' }));
-    //cy.expect(KeyValue('Item barcode').has({ value: itemBarcode }));
-
+    cy.expect(KeyValue('Status').has({ value: 'In progress' }));
+    cy.expect(KeyValue('Effective location').has({ value: 'Main Library' }));
     closeDetailView();
   }
 };

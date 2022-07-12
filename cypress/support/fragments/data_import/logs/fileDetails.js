@@ -19,7 +19,8 @@ const columnName = {
 const status = {
   created: 'Created',
   updated: 'Updated',
-  discarded: 'Discarded'
+  discarded: 'Discarded',
+  dash: 'No value set-'
 };
 
 const checkStatusInColumn = (specialStatus, specialColumnName) => {
@@ -28,13 +29,16 @@ const checkStatusInColumn = (specialStatus, specialColumnName) => {
       .has({ content: specialStatus })));
 };
 
-const checkItemsStatuses = (rowIndex, itemStatuses) => {
+function checkItemsStatuses(rowIndex, itemStatuses) {
   // itemStatuses = [SRS MARC status, Instance status, Holdings status, Item status]
   const indexes = [2, 3, 4, 5];
   itemStatuses.forEach((itemStatus, columnIndex) => {
-    cy.expect(MultiColumnListRow({ dataRowIndex: rowIndex }).find(MultiColumnListCell({ columnIndex: indexes[columnIndex], content: itemStatus }).exists()));
+    cy.expect(MultiColumnList({ id: 'search-results-list' })
+      .find(MultiColumnListRow({ index: rowIndex }))
+      .find(MultiColumnListCell({ columnIndex: indexes[columnIndex], content: itemStatus }))
+      .exists());
   });
-};
+}
 
 const invoiceNumberFromEdifactFile = '94999';
 

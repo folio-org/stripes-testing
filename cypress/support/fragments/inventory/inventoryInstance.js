@@ -288,5 +288,12 @@ export default {
     cy.expect(instanceStatusTerm.has({ value: status }));
     cy.expect(source.has({ value: specialSource }));
     cy.expect(KeyValue('Cataloged date').has({ value: DateTools.getFormattedDate({ date: new Date() }) }));
+  },
+
+  openViewSource:() => {
+    cy.do([
+      Section({ id: 'pane-instancedetails' }).find(Button('Actions')).click(),
+      Button('View source').click(),
+    ]);
   }
 };
