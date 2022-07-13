@@ -1,4 +1,4 @@
-import { Button, Section, HTML, including, PaneHeader } from '../../../../interactors';
+import { Button, Section, HTML, including, PaneHeader, Pane } from '../../../../interactors';
 import { getLongDelay } from '../../utils/cypressTools';
 import getRandomPostfix from '../../utils/stringTools';
 import JobProfiles from './job_profiles/jobProfiles';
@@ -57,5 +57,10 @@ export default {
         cy.allure().endStep();
       }
     });
+  },
+
+  checkIsLandingPageOpened:() => {
+    cy.expect(Pane({ id:'pane-jobs-title' }).find(Button('or choose files')).exists());
+    cy.expect(PaneHeader({ id:'paneHeaderpane-logs-title' }).find(Button('Actions')).exists());
   }
 };

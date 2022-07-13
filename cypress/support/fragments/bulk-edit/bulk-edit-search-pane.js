@@ -13,16 +13,18 @@ import {
 } from '../../../../interactors';
 
 const resultsAccordion = Accordion('Preview of record matched');
+const changesAccordion = Accordion('Preview of record changed');
 const errorsAccordion = Accordion('Errors');
 const recordIdentifier = Select('Record identifier');
 const recordTypes = Accordion({ label: 'Record types' });
 const actions = Button('Actions');
 const radioItems = RadioButton('Inventory - items');
 const fileBtn = Button('or choose file');
+const bulkEditPane = Pane(including('Bulk edit'));
 
 export default {
   waitLoading() {
-    cy.expect(Pane(including('Bulk edit')).exists());
+    cy.expect(bulkEditPane.exists());
   },
 
   actionsIsShown() {
@@ -32,13 +34,13 @@ export default {
   verifyPanesBeforeImport() {
     cy.expect([
       Pane('Set criteria').exists(),
-      Pane('Bulk edit').exists(),
+      bulkEditPane.exists(),
     ]);
   },
 
   verifyBulkEditPaneItems() {
     cy.expect([
-      Pane('Bulk edit').find(HTML('Set criteria to start bulk edit')).exists(),
+      bulkEditPane.find(HTML('Set criteria to start bulk edit')).exists(),
     ]);
   },
 
@@ -184,6 +186,8 @@ export default {
   },
 
   waitFileUploading() {
+    // it is needed to avoid triggering for previous page list
+    cy.wait(1000);
     cy.expect(MultiColumnList().exists());
   },
 
@@ -199,6 +203,13 @@ export default {
     cy.expect(resultsAccordion.has({ itemsAmount: (values.length).toString() }));
   },
 
+  verifyChangedResults(...values) {
+    values.forEach(value => {
+      cy.expect(changesAccordion.find(MultiColumnListCell({ content: value })).exists());
+    });
+    cy.expect(bulkEditPane.find(HTML(`${values.length} records have been successfully changed`)).exists());
+  },
+
   verifyNonMatchedResults(...values) {
     cy.expect([
       errorsAccordion.find(MultiColumnListHeader('Record identifier')).exists(),
@@ -211,6 +222,10 @@ export default {
 
   verifyErrorLabel(fileName, validRecordCount, invalidRecordCount) {
     cy.expect(HTML(`${fileName}: ${validRecordCount + invalidRecordCount} entries * ${validRecordCount} records matched * ${invalidRecordCount} errors`).exists());
+  },
+
+  verifyErrorLabelAfterChanges(fileName, validRecordCount, invalidRecordCount) {
+    cy.expect(HTML(`${fileName}: ${validRecordCount + invalidRecordCount} entries * ${validRecordCount} records changed * ${invalidRecordCount} errors`).exists());
   },
 
   verifyActionsAfterConductedCSVUploading(errors = true) {
@@ -278,5 +293,9 @@ export default {
 
   verifyResultColumTitles(title) {
     cy.expect(resultsAccordion.find(MultiColumnListHeader(title)).exists());
+  },
+
+  verifyPaneRecordsCount(value) {
+    cy.expect(bulkEditPane.find(HTML(`${value} records match`)).exists());
   }
 };

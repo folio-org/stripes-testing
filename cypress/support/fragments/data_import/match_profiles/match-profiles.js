@@ -1,6 +1,8 @@
 import { Button, MultiColumnListCell, Select, TextField, SelectionList, Section } from '../../../../../interactors';
 import { getLongDelay } from '../../../utils/cypressTools';
 
+const criterionValueTypeList = SelectionList({ id: 'sl-container-criterion-value-type' });
+const criterionValueTypeButton = Button({ id:'criterion-value-type' });
 const openNewMatchProfileForm = () => {
   cy.do([
     Section({ id: 'pane-results' }).find(Button('Actions')).click(),
@@ -65,13 +67,45 @@ const fillMatchProfileForm = ({
     // fill MARC Bibliographic field in existing
     fillExistingRecordFields(existingRecordFields);
   } else if (existingRecordType === 'HOLDINGS') {
-    cy.do(Button({ id:'criterion-value-type' }).click());
-    cy.expect(SelectionList({ id: 'sl-container-criterion-value-type' }).exists());
-    cy.do(SelectionList({ id: 'sl-container-criterion-value-type' }).select('Admin data: Holdings HRID'));
+    cy.do(criterionValueTypeButton.click());
+    cy.expect(criterionValueTypeList.exists());
+    cy.do(criterionValueTypeList.select('Admin data: Holdings HRID'));
   } else {
-    cy.do(Button({ id:'criterion-value-type' }).click());
-    cy.expect(SelectionList({ id: 'sl-container-criterion-value-type' }).exists());
-    cy.do(SelectionList({ id: 'sl-container-criterion-value-type' }).select('Admin data: Item HRID'));
+    cy.do(criterionValueTypeButton.click());
+    cy.expect(criterionValueTypeList.exists());
+    cy.do(criterionValueTypeList.select('Admin data: Item HRID'));
+  }
+};
+
+const fillMatchProfileFormForPol = ({
+  profileName,
+  incomingRecordFields,
+  matchCriterion,
+  existingRecordType
+}) => {
+  cy.do(TextField('Name*').fillIn(profileName));
+  // wait for data to be loaded
+  cy.intercept('/_/jsonSchemas?path=raml-util/schemas/metadata.schema').as('getJson');
+  cy.wait('@getJson', getLongDelay());
+  cy.wait(1500);
+  // TODO think about how to use interactor
+  cy.get(`[data-id="${existingRecordType}"]`).last().click();
+  fillIncomingRecordFields(incomingRecordFields);
+  cy.do(Select('Match criterion').choose(matchCriterion));
+  // wait for data to be loaded
+  cy.wait(1500);
+  if (existingRecordType === 'INSTANCE') { 
+    cy.do(criterionValueTypeButton.click());
+    cy.expect(criterionValueTypeList.exists());
+    cy.do(criterionValueTypeList.select('Acquisitions data: Purchase order line (POL)'));
+  } else if (existingRecordType === 'HOLDINGS') {
+    cy.do(criterionValueTypeButton.click());
+    cy.expect(criterionValueTypeList.exists());
+    cy.do(criterionValueTypeList.select('Acquisitions data: Purchase order line (POL)'));
+  } else {
+    cy.do(criterionValueTypeButton.click());
+    cy.expect(criterionValueTypeList.exists());
+    cy.do(criterionValueTypeList.select('Acquisitions data: Purchase order line (POL)'));
   }
 };
 
@@ -106,9 +140,19 @@ export default {
   fillIncomingRecordFields,
   fillExistingRecordFields,
   deleteMatchProfile,
+
   createMatchProfile(profile) {
     openNewMatchProfileForm();
     fillMatchProfileForm(profile);
+    // save profile
+    cy.do(Button('Save as profile & Close').click());
+    // wait till profile appears in profiles list
+    cy.expect(MultiColumnListCell(profile.profileName).exists());
+  },
+
+  createMatchProfileForPol(profile) {
+    openNewMatchProfileForm();
+    fillMatchProfileFormForPol(profile);
     // save profile
     cy.do(Button('Save as profile & Close').click());
     // wait till profile appears in profiles list

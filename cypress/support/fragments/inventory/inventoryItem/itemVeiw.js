@@ -21,9 +21,14 @@ const waitLoading = () => {
   cy.expect(Button('Actions').exists());
 };
 
+const closeDetailView = () => {
+  cy.do(Button({ icon: 'times' }).click());
+};
+
 export default {
   itemStatuses,
   waitLoading,
+  closeDetailView,
 
   verifyUpdatedItemDate:() => {
     cy.do(loanAccordion.find(KeyValue('Item status')).perform(element => {
@@ -48,5 +53,14 @@ export default {
   addPieceToItem:(numberOfPieces) => {
     cy.do(TextField({ name:'numberOfPieces' }).fillIn(numberOfPieces));
     cy.do(Button('Save and close').click());
+  },
+
+  checkIsItemUpdated() {
+    cy.do([
+      Button(including('Holdings: Main Library > GV706.5')).click(),
+    ]);
+    cy.expect(KeyValue('Status').has({ value: 'In progress' }));
+    cy.expect(KeyValue('Effective location').has({ value: 'Main Library' }));
+    closeDetailView();
   }
 };

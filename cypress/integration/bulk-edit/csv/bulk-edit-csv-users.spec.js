@@ -9,10 +9,10 @@ import BulkEditActions from '../../../support/fragments/bulk-edit/bulk-edit-acti
 import Users from '../../../support/fragments/users/users';
 
 let user;
-const userUUIDsFileName = `C350905_userUUIDs_${getRandomPostfix()}.csv`;
+const userUUIDsFileName = `userUUIDs_${getRandomPostfix()}.csv`;
 const invalidUserUUID = getRandomPostfix();
-const matchRecordsFileName = `C353233_matchedRecords_${getRandomPostfix()}.csv`;
-const importFileName = `C353233_bulkEditImport_${getRandomPostfix()}.csv`;
+const matchRecordsFileName = `matchedRecords_${getRandomPostfix()}.csv`;
+const importFileName = `bulkEditImport_${getRandomPostfix()}.csv`;
 
 describe('bulk-edit: csv file uploading', () => {
   before('create user', () => {
@@ -64,7 +64,7 @@ describe('bulk-edit: csv file uploading', () => {
 
     // Prepare file for bulk edit
     BulkEditActions.downloadMatchedResults(matchRecordsFileName);
-    BulkEditActions.prepareBulkEditFileForImport(matchRecordsFileName, importFileName, user.username, 'test');
+    BulkEditActions.prepareBulkEditFileWithDuplicates(matchRecordsFileName, importFileName, user.username, 'test');
 
     // Upload bulk edit file
     BulkEditActions.openStartBulkEditForm();
@@ -94,5 +94,29 @@ describe('bulk-edit: csv file uploading', () => {
 
     BulkEditSearchPane.clickToBulkEditMainButton();
     BulkEditSearchPane.verifyDefaultFilterState();
+  });
+
+  it('C356817 Verify Matched records label cleanup -- CSV approach', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
+    BulkEditSearchPane.selectRecordIdentifier('User UUIDs');
+
+    BulkEditSearchPane.uploadFile(userUUIDsFileName);
+    BulkEditSearchPane.waitFileUploading();
+
+    BulkEditSearchPane.verifyMatchedResults(user.username);
+    BulkEditSearchPane.verifyNonMatchedResults(invalidUserUUID);
+    BulkEditSearchPane.verifyErrorLabel(userUUIDsFileName, 1, 1);
+    BulkEditSearchPane.verifyPaneRecordsCount(1);
+
+    BulkEditActions.downloadMatchedResults(matchRecordsFileName);
+    BulkEditActions.prepareBulkEditFileWithDuplicates(matchRecordsFileName, importFileName, user.username, 'test');
+
+    BulkEditActions.openStartBulkEditForm();
+    BulkEditSearchPane.uploadFile(importFileName);
+    BulkEditSearchPane.waitFileUploading();
+    BulkEditActions.commitChanges();
+
+    BulkEditSearchPane.verifyChangedResults(user.username);
+    BulkEditSearchPane.verifyErrorLabelAfterChanges(userUUIDsFileName, 1, 1);
+    BulkEditActions.newBulkEdit();
   });
 });
