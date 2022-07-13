@@ -1,9 +1,10 @@
-import { Accordion, Button, RadioButton, Select, TextField } from '../../../../interactors';
+import { Accordion, Button, PaneContent, RadioButton, Select, TextField, Heading, Section, KeyValue, including } from '../../../../interactors';
 import eHoldingsTitles from './eHoldingsTitles';
 
 const publicationTypeAccordion = Accordion({ id:'filter-titles-type' });
 const selectionStatusAccordion = Accordion({ id: 'filter-titles-selected' });
-
+const searchResults = PaneContent({ id: 'search-results-content' });
+const titleInfoPane = Section({ id: 'titleShowTitleInformation' });
 const mainSearchOptions = {
   bySubject:'Subject',
   byTitle:'Title',
@@ -37,5 +38,25 @@ export default {
     cy.do(selectionStatusAccordion
       .find(RadioButton(selectionStatus)).click());
     eHoldingsTitles.waitLoading();
-  }
+  },
+  openTitle(itemTitle) {
+    cy.do([
+      searchResults.find(Heading(itemTitle)).click(),
+    ]);
+  },
+  checkTitleInfo(publicationType, titleValue) {
+    cy.expect([
+      titleInfoPane.find(KeyValue({ value: including(titleValue) })).exists(),
+      titleInfoPane.find(KeyValue({ value : publicationType })).exists(),
+    ]);
+  },
+  getViaApi(query) {
+    return cy.okapiRequest({
+      path: 'eholdings/titles',
+      searchParams: query,
+      isDefaultSearchParamsRequired: false,
+    }).then((res) => {
+      return res.body.data[0];
+    });
+  },
 };
