@@ -40,9 +40,7 @@ export default {
     eHoldingsTitles.waitLoading();
   },
   openTitle(itemTitle) {
-    cy.do([
-      searchResults.find(Heading(itemTitle)).click(),
-    ]);
+    cy.do(searchResults.find(Heading(itemTitle)).click());
   },
   checkTitleInfo(publicationType, titleValue) {
     cy.expect([
@@ -56,7 +54,7 @@ export default {
       searchParams: query,
       isDefaultSearchParamsRequired: false,
     }).then((res) => {
-      return res.body.data[0];
+      return res.body.data;
     });
   },
 };

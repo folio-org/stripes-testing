@@ -21,7 +21,7 @@ describe('ui-eholdings: Search titles', () => {
     });
 
     eHoldingsTitlesSearch.getViaApi({ 'filter[name]' : testData.title, 'filter[type]' : testData.publicationType.toLowerCase() }).then((res) => {
-      testData.titleProps = res;
+      testData.titleProps = res[0];
     });
   });
 
