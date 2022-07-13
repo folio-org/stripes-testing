@@ -5,8 +5,9 @@ import {
   TextField,
   MultiColumnListRow,
   MultiColumnListCell,
-  SearchField,
-  Select
+  MultiColumnList,
+  Select,
+  Pane
 } from '../../../../interactors';
 import InteractorsTools from '../../utils/interactorsTools';
 
@@ -18,7 +19,20 @@ const receivedPiecesAccordionId = 'received';
 const receiveButton = Button('Receive');
 const unreceiveButton = Button('Unreceive');
 
+const searchByParameter = (parameter, value) => {
+  cy.do(Select({ id: 'input-record-search-qindex' }).choose(parameter));
+  cy.do(TextField({ id:'input-record-search' }).fillIn(value));
+  cy.do(Button('Search').click());
+};
+
+const filterOpenReceiving = () => {
+  cy.do(Pane({ id:'receiving-filters-pane' }).find(Button('Order status')).click());
+  cy.do(Checkbox({ id: 'clickable-filter-purchaseOrder.workflowStatus-open' }).click());
+};
+
 export default {
+  searchByParameter,
+  filterOpenReceiving,
 
   receivePiece: (rowNumber, caption, barcode) => {
     const recievingFieldName = `receivedItems[${rowNumber}]`;
@@ -66,12 +80,13 @@ export default {
     ]);
   },
 
-  searchByParameter:(parameter, value) => {
-    cy.do([
-      Select({ id: 'input-record-search-qindex' }).choose(parameter),
-      SearchField({ id: 'input-record-search' }).fillIn(value),
-      Button('Search').click(),
-    ]);
+  checkIsPiecesCreated:(title, parameter) => {
+    filterOpenReceiving();
+    searchByParameter(parameter, title);
+    cy.expect(Pane('Receiving')
+      .find(MultiColumnList({ id: 'receivings-list' }))
+      .find(MultiColumnListCell({ content: title }))
+      .exists());
   },
 
   selectReceivingItem:(indexRow = 0) => {

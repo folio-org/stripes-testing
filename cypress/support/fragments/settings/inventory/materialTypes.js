@@ -1,14 +1,6 @@
-import uuid from 'uuid';
 import { Button, Pane, TextField, HTML, including, MultiColumnListRow } from '../../../../../interactors';
 import ModalDeleteMaterialType from './modalDeleteMaterialType';
 import InteractorsTools from '../../../utils/interactorsTools';
-import { getTestEntityValue } from '../../../utils/stringTools';
-
-export const defaultMaterialType = {
-  source: 'local',
-  name: getTestEntityValue(),
-  id: uuid(),
-};
 
 const pane = Pane('Material types');
 
@@ -16,7 +8,7 @@ const isPresented = (materialTypeName) => {
   cy.expect(pane.find(HTML(including(materialTypeName))).exists());
 };
 
-const isDeleted = (newMaterialTypeName) => {
+const checkIsDeleted = (newMaterialTypeName) => {
   cy.expect(pane.find(HTML(including(newMaterialTypeName))).absent());
 };
 
@@ -25,44 +17,16 @@ const verifyMessageOfDeteted = (newMaterialTypeName) => {
   InteractorsTools.closeCalloutMessage();
 };
 
-const getDefaultMaterialType = () => {
-  return defaultMaterialType;
-};
-
 export default {
-  createApi(materialTypeProperties) {
-    return cy
-      .okapiRequest({
-        method: 'POST',
-        path: 'material-types',
-        body: materialTypeProperties,
-      });
-  },
+  isPresented,
+  checkIsDeleted,
+  verifyMessageOfDeteted,
+
   deleteApi(id) {
     return cy.okapiRequest({
       method: 'DELETE',
       path: `material-types/${id}`,
     });
-  },
-  getMaterialTypesApi: (searchParams) => {
-    return cy
-      .okapiRequest({
-        path: 'material-types',
-        searchParams,
-      })
-      .then(response => {
-        return response.body.mtypes;
-      });
-  },
-  getDefaultMaterialType,
-  isPresented,
-  isDeleted,
-  verifyMessageOfDeteted,
-
-  create:(materialTypeName) => {
-    cy.do(Button('+ New').click());
-    cy.do(TextField({ placeholder: 'name' }).fillIn(materialTypeName));
-    cy.do(Button('Save').click());
   },
 
   edit:(newMaterialTypeName) => {
