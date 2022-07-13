@@ -45,7 +45,7 @@ describe('ui-inventory: keyboard shortcut', () => {
     InventoryKeyboardShortcuts.verifyInventoryDropdownIsShown('false');
   });
 
-  it('C345298 Keyboard Shortcut. Test the functionality of the different shortcut keys', { tags: [testTypes.smoke, testTypes.broken] }, () => {
+  it('C345298 Keyboard Shortcut. Test the functionality of the different shortcut keys (thunderjet)', { tags: [testTypes.smoke, testTypes.broken] }, () => {
     InventoryKeyboardShortcuts.verifyInventoryDropdownIsShown('false');
 
     InventoryKeyboardShortcuts.openInventoryMenu();

@@ -42,7 +42,7 @@ describe('ui-invoices: Invoice Line creation - based on POL', () => {
     invoiceLine.subTotal = orderLine.cost.quantityPhysical * orderLine.cost.listUnitPrice;
   });
 
-  it('C2327 Create invoice line based on purchase order line', { tags: [testType.smoke] }, () => {
+  it('C2327 Create invoice line based on purchase order line (thunderjet)', { tags: [testType.smoke] }, () => {
     Orders.createOrderWithOrderLineViaApi(order, orderLine)
       .then(orderNumber => {
         cy.visit(TopMenu.invoicesPath);

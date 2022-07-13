@@ -100,7 +100,7 @@ describe('orders: Test Po line filters', () => {
     { filterActions: () => { Orders.selectFilterSubscriptionFromPOL(subcriptionDate); } },
     { filterActions: Orders.selectFilterNoInRushPOL },
   ].forEach((filter) => {
-    it('C6720 Test the POL filters [except tags]', { tags: [TestType.smoke] }, () => {
+    it('C6720 Test the POL filters [except tags] (thunderjet)', { tags: [TestType.smoke] }, () => {
       filter.filterActions();
       Orders.checkOrderlineSearchResults(orderLineNumber);
       Orders.resetFilters();

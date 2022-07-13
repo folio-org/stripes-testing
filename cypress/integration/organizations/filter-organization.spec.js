@@ -25,7 +25,7 @@ describe('ui-organizations: Filtering organization', () => {
     { filterActions: Organizations.selectLanguageFilter },
     { filterActions: Organizations.selectCashInPaymentMethod },
   ].forEach((filter) => {
-    it('C6713: Test the Organizations app filters (except Tags) ', { tags: [TestType.smoke] }, () => {
+    it('C6713: Test the Organizations app filters (except Tags) (thunderjet)', { tags: [TestType.smoke] }, () => {
       cy.visit(TopMenu.organizationsPath);
       filter.filterActions();
       Organizations.checkOrganizationFilter();
