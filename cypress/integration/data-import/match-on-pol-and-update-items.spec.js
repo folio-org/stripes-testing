@@ -305,8 +305,8 @@ describe('ui-users:', () => {
     JobProfiles.runImportFile(marcFileName);
     Logs.checkStatusOfJobProfile();
     Logs.openFileDetails(marcFileName);
-    FileDetails.checkItemsStatuses(0, [FileDetails.status.created, FileDetails.status.updated, FileDetails.status.updated, FileDetails.status.updated]);
-    FileDetails.checkItemsStatuses(1, [FileDetails.status.dash, FileDetails.status.discarded, FileDetails.status.discarded, FileDetails.status.discarded]);
+    FileDetails.checkItemsStatusesInResultList(0, [FileDetails.status.created, FileDetails.status.updated, FileDetails.status.updated, FileDetails.status.updated]);
+    FileDetails.checkItemsStatusesInResultList(1, [FileDetails.status.dash, FileDetails.status.discarded, FileDetails.status.discarded, FileDetails.status.discarded]);
 
     FileDetails.openInstanceInInventory();
     InventoryInstance.checkIsInstanceUpdated(NewMappingProfile.instanceStatusTerm, 'MARC');

@@ -29,7 +29,7 @@ const checkStatusInColumn = (specialStatus, specialColumnName) => {
       .has({ content: specialStatus })));
 };
 
-function checkItemsStatuses(rowIndex, itemStatuses) {
+function checkItemsStatusesInResultList(rowIndex, itemStatuses) {
   // itemStatuses = [SRS MARC status, Instance status, Holdings status, Item status]
   const indexes = [2, 3, 4, 5];
   itemStatuses.forEach((itemStatus, columnIndex) => {
@@ -40,15 +40,21 @@ function checkItemsStatuses(rowIndex, itemStatuses) {
   });
 }
 
+const checkItemsQuantityInSummaryTable = (quantity, specialColumnName) => {
+  cy.then(() => specialColumnName.index())
+    .then((index) => cy.expect(MultiColumnList({ id: 'job-summary-table' }).find(MultiColumnListCell({ columnIndex: index }))
+      .has({ content: quantity })));
+};
+
 const invoiceNumberFromEdifactFile = '94999';
 
 export default {
   columnName,
   status,
-  checkStatusInColumn,
-  checkItemsStatuses,
-
   invoiceNumberFromEdifactFile,
+  checkStatusInColumn,
+  checkItemsStatusesInResultList,
+  checkItemsQuantityInSummaryTable,
 
   openInstanceInInventory:(columnIndex = 3, row = 0) => {
     cy.do(MultiColumnList({ id:'search-results-list' })

@@ -104,6 +104,7 @@ describe('ui-data-import: MARC file import with creating of the new instance, ho
       FileDetails.columnName.holdings,
       FileDetails.columnName.item].forEach(columnName => {
       FileDetails.checkStatusInColumn(FileDetails.status.created, columnName);
+      FileDetails.checkItemsQuantityInSummaryTable('1', columnName);
     });
 
     // delete generated profiles
