@@ -30,7 +30,7 @@ describe('ui-inventory: Create, edit, delete material types', () => {
     MaterialTypes.isPresented(materialTypeName);
     MaterialTypes.edit(newMaterialTypeName);
     MaterialTypes.delete(newMaterialTypeName);
-    MaterialTypes.isDeleted(newMaterialTypeName);
+    MaterialTypes.checkIsDeleted(newMaterialTypeName);
     MaterialTypes.verifyMessageOfDeteted(newMaterialTypeName);
   });
 });

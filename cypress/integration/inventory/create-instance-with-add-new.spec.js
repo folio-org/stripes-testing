@@ -17,7 +17,7 @@ describe('ui-inventory: Create new instance with add "New"', () => {
   after(() => {
     InventoryInstances.getInstanceIdApi({ limit: 1, query: `title="${instanceTitle}"` })
       .then((id) => {
-        cy.deleteInstanceApi(id);
+        InventoryInstances.deleteInstanceViaApi(id);
       });
   });
 

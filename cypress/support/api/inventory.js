@@ -41,6 +41,7 @@ Cypress.Commands.add('getLoanTypes', (searchParams) => {
 });
 
 // TODO: update tests where cypress env is still used
+// TODO: move to the related fragment
 Cypress.Commands.add('getMaterialTypes', (searchParams) => {
   cy
     .okapiRequest({

@@ -8,7 +8,7 @@ const isPresented = (materialTypeName) => {
   cy.expect(pane.find(HTML(including(materialTypeName))).exists());
 };
 
-const isDeleted = (newMaterialTypeName) => {
+const checkIsDeleted = (newMaterialTypeName) => {
   cy.expect(pane.find(HTML(including(newMaterialTypeName))).absent());
 };
 
@@ -19,7 +19,7 @@ const verifyMessageOfDeteted = (newMaterialTypeName) => {
 
 export default {
   isPresented,
-  isDeleted,
+  checkIsDeleted,
   verifyMessageOfDeteted,
 
   deleteApi(id) {
@@ -27,17 +27,6 @@ export default {
       method: 'DELETE',
       path: `material-types/${id}`,
     });
-  },
-
-  getMaterialTypesApi: (searchParams) => {
-    return cy
-      .okapiRequest({
-        path: 'material-types',
-        searchParams,
-      })
-      .then(response => {
-        return response.body.mtypes;
-      });
   },
 
   edit:(newMaterialTypeName) => {
