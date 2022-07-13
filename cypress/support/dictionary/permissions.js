@@ -41,6 +41,9 @@ export default {
   uiCreateEditDeleteMaterialTypes: { internal: 'ui-inventory.settings.materialtypes', gui: 'Settings (Inventory): Create, edit, delete material types' },
   uiInventoryMarkAsMissing: { internal: 'ui-inventory.item.markasmissing', gui: 'Inventory: View, create, edit, mark missing items' },
   uiInventoryMoveItems: { internal: '', gui: 'Inventory: Move items' },
+  uiInventoryViewCreateEditHoldings:{ internal:'ui-inventory.holdings.edit', gui:'Inventory: View, create, edit holdings' },
+  uiInventoryViewCreateEditInstances:{ internal:'ui-inventory.instance.edit', gui:'Inventory: View, create, edit instances' },
+  uiInventoryViewCreateEditItems:{ internal:'ui-inventory.item.edit', gui:'Inventory: View, create, edit items' },
   // Tags
   uiTagsPermissionAll: { internal: 'ui-tags.permission.all', gui:'Tags: All permissions' },
   // Settings->Owners
@@ -68,6 +71,8 @@ export default {
   uiUserAccounts: { internal: 'ui-users.accounts', gui: 'Fee/Fine History: Can create, edit and remove accounts' },
   uiUserRequestsAll: { internal: 'ui-users.requests.all', gui: 'Users: View requests' },
   uiUsersViewLoans: { internal: 'ui-users.loans.view', gui: 'Users: User loans view' },
+  uiUserLoansAnonymize: { internal: '', gui: 'Users: User loans anonymize' },
+  uiFeeFines: { internal: '', gui: 'Users: Can create, edit and remove fees/fines' },
   uiUsersDeclareItemLost: { internal: 'ui-users.loans.declare-item-lost', gui: 'Users: User loans declare lost' },
   usersLoansRenewThroughOverride: { internal: '', gui: 'Users: User loans renew through override' },
   uiUsersEditProfile: { internal: 'ui-users.edit', gui: 'Users: Can edit user profile' },
