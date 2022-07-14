@@ -11,3 +11,5 @@ cypress/screenshots
 .DS_Store
 
 allure-results
+
+videos

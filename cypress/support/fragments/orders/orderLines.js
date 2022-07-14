@@ -1,4 +1,22 @@
-import { Button, SearchField, PaneHeader, Select, Accordion, Checkbox, MultiColumnList, MultiColumnListCell, MultiColumnListRow, Modal, TextField, SelectionOption, Pane, SelectionList } from '../../../../interactors';
+import {
+  Button,
+  SearchField,
+  PaneHeader,
+  Select,
+  Accordion,
+  Checkbox,
+  MultiColumnList,
+  MultiColumnListCell,
+  MultiColumnListRow,
+  Modal,
+  TextField,
+  SelectionOption,
+  Pane,
+  SelectionList,
+  Link,
+  including,
+  PaneContent
+} from '../../../../interactors';
 import SearchHelper from '../finance/financeHelper';
 import getRandomPostfix from '../../utils/stringTools';
 
@@ -233,5 +251,8 @@ export default {
     cy.do(Button({ id: 'clickable-updatePoLine' }).click());
   },
 
+  openInstance:() => {
+    cy.do(PaneContent({ id:'order-lines-details-content' }).find(Link({ href: including('/inventory/view/') })).click());
+  }
 };
 

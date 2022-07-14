@@ -101,5 +101,12 @@ export default {
 
   deleteFieldMappingProfile,
   mappingProfileForDuplicate,
-  waitLoading: () => cy.expect(MultiColumnListRow({ index:0 }).exists())
+  waitLoading: () => cy.expect(MultiColumnListRow({ index:0 }).exists()),
+
+  createMappingProfileForMatch:(mappingProfile) => {
+    openNewMappingProfileForm();
+    newMappingProfile.fillMappingProfileForMatch(mappingProfile);
+    closeViewModeForMappingProfile(mappingProfile.name);
+    cy.expect(actionsButton.exists());
+  },
 };
