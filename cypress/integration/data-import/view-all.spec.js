@@ -40,7 +40,7 @@ describe('ui-data-import: Search the "View all" log screen', () => {
     DataImport.checkUploadState();
   });
 
-  it('C11112 Search the "View all" log screen', { tags: [TestTypes.smoke] }, () => {
+  it('C11112 Search the "View all" log screen (folijet)', { tags: [TestTypes.smoke] }, () => {
     LogsViewAll.gotoViewAllPage();
 
     LogsViewAll.options.forEach((option) => {

@@ -10,7 +10,7 @@ describe('ui-inventory: actions', () => {
     cy.visit(TopMenu.inventoryPath);
   });
 
-  it('C196752 verifies action menu options before any search is conducted', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
+  it('C196752 verifies action menu options before any search is conducted (firebird)', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
     InventoryActions.open();
 
     cy.expect(InventorySearch.getAllSearchResults().absent());
@@ -22,7 +22,7 @@ describe('ui-inventory: actions', () => {
     ]);
   });
 
-  it('C196753 verifies action menu options after searching and selecting result', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
+  it('C196753 verifies action menu options after searching and selecting result (firebird)', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
     InventorySearch.byKeywords('*');
     InventorySearch.selectResultCheckboxes(1);
     InventoryActions.open();

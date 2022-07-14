@@ -17,7 +17,7 @@ describe('orders: create an order', () => {
     Orders.deleteOrderViaActions();
   });
 
-  it('C660 Create an order', { tags: [TestType.smoke] }, () => {
+  it('C660 Create an order (thunderjet)', { tags: [TestType.smoke] }, () => {
     Orders.createOrder(order);
     Orders.checkCreatedOrder(order);
   });

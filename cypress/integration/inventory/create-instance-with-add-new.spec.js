@@ -21,7 +21,7 @@ describe('ui-inventory: Create new instance with add "New"', () => {
       });
   });
 
-  it('C598 Create new instance with add "New"', { tags: [TestTypes.smoke, TestTypes.broken] }, () => {
+  it('C598 Create new instance with add "New" (folijet)', { tags: [TestTypes.smoke, TestTypes.broken] }, () => {
     InventoryInstances.add(instanceTitle);
     SearchInventory.searchInstanceByTitle(instanceTitle);
 

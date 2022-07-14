@@ -8,7 +8,7 @@ describe('ui-circulation-settings: create patron notice policies', () => {
     cy.loginAsAdmin({ path: SettingsMenu.circulationPatronNoticePoliciesPath, waiter: NewNoticePolicy.waitLoading });
   });
 
-  it('C6530 Create notice policy', { tags: [TestType.smoke] }, () => {
+  it('C6530 Create notice policy (vega)', { tags: [TestType.smoke] }, () => {
     NewNoticePolicy.waitLoading();
     NewNoticePolicy.startAdding();
     NewNoticePolicy.checkInitialState();
