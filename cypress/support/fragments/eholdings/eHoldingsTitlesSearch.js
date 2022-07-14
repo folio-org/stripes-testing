@@ -1,5 +1,5 @@
 import { Accordion, Button, PaneContent, RadioButton, Select, TextField, Heading, Section, KeyValue, including } from '../../../../interactors';
-import eHoldingsTitles from './eHoldingsTitles';
+import EHoldingsTitles from './eHoldingsTitles';
 
 const publicationTypeAccordion = Accordion({ id:'filter-titles-type' });
 const selectionStatusAccordion = Accordion({ id: 'filter-titles-selected' });
@@ -17,10 +17,14 @@ const mainSearchBy = (searchParameter, searchValue) => {
   cy.expect(Select({ value:  searchParameter.toLowerCase() }).exists());
   cy.do(TextField('Enter your search').fillIn(searchValue));
   cy.do(Button('Search').click());
-  eHoldingsTitles.waitLoading();
+  EHoldingsTitles.waitLoading();
 };
 
 export default {
+  waitLoading:() => {
+    cy.expect(titleInfoPane.exists());
+  },
+
   bySubject: (subjectValue) => {
     mainSearchBy(mainSearchOptions.bySubject, subjectValue);
   },
@@ -31,13 +35,13 @@ export default {
     cy.do(publicationTypeAccordion.clickHeader());
     cy.do(publicationTypeAccordion
       .find(RadioButton(type)).click());
-    eHoldingsTitles.waitLoading();
+    EHoldingsTitles.waitLoading();
   },
   bySelectionStatus:(selectionStatus) => {
     cy.do(selectionStatusAccordion.clickHeader());
     cy.do(selectionStatusAccordion
       .find(RadioButton(selectionStatus)).click());
-    eHoldingsTitles.waitLoading();
+    EHoldingsTitles.waitLoading();
   },
   openTitle(itemTitle) {
     cy.do(searchResults.find(Heading(itemTitle)).click());
