@@ -1,13 +1,13 @@
-import TopMenu from '../../support/fragments/topMenu';
-import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
-import SearchInventory from '../../support/fragments/data_import/searchInventory';
-import { MultiColumnListCell } from '../../../interactors';
-import permissions from '../../support/dictionary/permissions';
-import InventoryInstance from '../../support/fragments/inventory/inventoryInstance';
-import HoldingsRecordView from '../../support/fragments/inventory/holdingsRecordView';
-import TestTypes from '../../support/dictionary/testTypes';
-import Users from '../../support/fragments/users/users';
-import Helper from '../../support/fragments/finance/financeHelper';
+import TopMenu from '../../../support/fragments/topMenu';
+import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
+import SearchInventory from '../../../support/fragments/data_import/searchInventory';
+import { MultiColumnListCell } from '../../../../interactors';
+import permissions from '../../../support/dictionary/permissions';
+import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
+import HoldingsRecordView from '../../../support/fragments/inventory/holdingsRecordView';
+import TestTypes from '../../../support/dictionary/testTypes';
+import Users from '../../../support/fragments/users/users';
+import Helper from '../../../support/fragments/finance/financeHelper';
 
 describe('ui-inventory: Create a Holdings record as another user than the one that created the Instance', () => {
   let firstUser;

@@ -162,7 +162,7 @@ describe('ui-users:', () => {
     Orders.openOrder();
   };
 
-  it('C350590 Match on POL and update related Instance, Holdings, Item', { tags: [TestTypes.smoke] }, () => {
+  it('C350590 Match on POL and update related Instance, Holdings, Item (folijet)', { tags: [TestTypes.smoke] }, () => {
     const collectionOfProfiles = [
       {
         mappingProfile: { typeValue: NewMappingProfile.folioRecordTypeValue.instance,

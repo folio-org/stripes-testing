@@ -53,7 +53,7 @@ describe('ui-requests: Make sure that request type filters are working properly'
     Requests.deleteRequestPolicyApi(requestPolicyId);
   });
 
-  it('C540 Make sure that request type filters are working properly', { tags: [TestTypes.smoke] }, () => {
+  it('C540 Make sure that request type filters are working properly (prokopovych)', { tags: [TestTypes.smoke] }, () => {
     cy.visit(TopMenu.requestsPath);
     // Apply filters and test that the appropriate results display
     requests.forEach(({ requestType }) => {

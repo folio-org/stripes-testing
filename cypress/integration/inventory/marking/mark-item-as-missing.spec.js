@@ -1,12 +1,12 @@
-import TestTypes from '../../support/dictionary/testTypes';
-import permissions from '../../support/dictionary/permissions';
-import MarkItemAsMissing from '../../support/fragments/inventory/markItemAsMissing';
-import Requests from '../../support/fragments/requests/requests';
-import TopMenu from '../../support/fragments/topMenu';
-import Users from '../../support/fragments/users/users';
-import UserEdit from '../../support/fragments/users/userEdit';
-import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
-import InventoryInstance from '../../support/fragments/inventory/inventoryInstance';
+import TestTypes from '../../../support/dictionary/testTypes';
+import permissions from '../../../support/dictionary/permissions';
+import MarkItemAsMissing from '../../../support/fragments/inventory/markItemAsMissing';
+import Requests from '../../../support/fragments/requests/requests';
+import TopMenu from '../../../support/fragments/topMenu';
+import Users from '../../../support/fragments/users/users';
+import UserEdit from '../../../support/fragments/users/userEdit';
+import ServicePoints from '../../../support/fragments/settings/tenant/servicePoints/servicePoints';
+import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 
 describe('ui-inventory: Mark an item as Missing', () => {
   let user = {};

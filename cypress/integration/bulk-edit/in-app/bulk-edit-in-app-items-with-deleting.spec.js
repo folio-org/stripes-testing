@@ -19,7 +19,6 @@ const itemToBeDeleted = {
   itemBarcode: getRandomPostfix(),
 };
 const invalidItemBarcodesFileName = `C350905_invalidItemBarcodes_${getRandomPostfix()}.csv`;
-const validItemBarcodesFileName = `C350905_validItemBarcodes_${getRandomPostfix()}.csv`;
 const invalidBarcode = getRandomPostfix();
 
 describe('bulk-edit: in-app file uploading', () => {
@@ -36,7 +35,6 @@ describe('bulk-edit: in-app file uploading', () => {
         InventoryInstances.createInstanceViaApi(itemToBeDeleted.instanceName, itemToBeDeleted.itemBarcode);
 
         FileManager.createFile(`cypress/fixtures/${invalidItemBarcodesFileName}`, `${item.itemBarcode}\r\n${invalidBarcode}\r\n${itemToBeDeleted.itemBarcode}`);
-        FileManager.createFile(`cypress/fixtures/${validItemBarcodesFileName}`, item.itemBarcode);
       });
   });
 
@@ -44,10 +42,8 @@ describe('bulk-edit: in-app file uploading', () => {
     InventoryInstances.deleteInstanceViaApi(item.itemBarcode);
     Users.deleteViaApi(user.userId);
     FileManager.deleteFile(`cypress/fixtures/${invalidItemBarcodesFileName}`);
-    FileManager.deleteFile(`cypress/fixtures/${validItemBarcodesFileName}`);
   });
 
-  // Bug UIBULKED-121
   it('C353230 Verify completion of the in-app bulk edit (firebird)', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
     BulkEditSearchPane.selectRecordIdentifier('Item barcode');
 
@@ -66,7 +62,7 @@ describe('bulk-edit: in-app file uploading', () => {
 
     BulkEditSearchPane.verifyNonMatchedResults(invalidBarcode);
     BulkEditActions.verifyActionAfterChangingRecords();
-    BulkEditSearchPane.verifyErrorLabel(invalidItemBarcodesFileName, 1, 1);
-    BulkEditActions.verifySuccessBanner();
+    BulkEditSearchPane.verifyErrorLabelAfterChanges(invalidItemBarcodesFileName, 1, 1);
+    BulkEditActions.verifySuccessBanner(1);
   });
 });
