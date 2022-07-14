@@ -106,7 +106,7 @@ describe('orders: Test Po line search', () => {
   });
 
   // TODO: add extra TC in testrail about it
-  it('C6719 Test the POL searches(Only test POL name search)', { tags: [TestType.smoke] }, () => {
+  it('C6719 Test the POL searches(Only test POL name search) (thunderjet)', { tags: [TestType.smoke] }, () => {
     Orders.searchByParameter('PO line number', orderLineNumber);
     Orders.checkOrderlineSearchResults(orderLineNumber);
     Orders.resetFilters();

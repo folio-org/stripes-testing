@@ -29,7 +29,7 @@ describe('orders: Close Order', () => {
     Orders.deleteOrderApi(order.id);
   });
 
-  it('C667 Close an existing order', { tags: [TestType.smoke] }, () => {
+  it('C667 Close an existing order (thunderjet)', { tags: [TestType.smoke] }, () => {
     Orders.createOrderWithOrderLineViaApi(order, orderLine)
       .then(orderNumber => {
         cy.visit(TopMenu.ordersPath);

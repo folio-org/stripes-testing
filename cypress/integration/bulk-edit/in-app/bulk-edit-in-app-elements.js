@@ -39,7 +39,7 @@ describe('bulk-edit: in-app file uploading', { retries: 3 }, () => {
     FileManager.deleteFile(`cypress/fixtures/${invalidItemBarcodesFileName}`);
   });
 
-  it('C353232 Verify error accordion during matching (In app approach)', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
+  it('C353232 Verify error accordion during matching (In app approach) (firebird)', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
     BulkEditSearchPane.selectRecordIdentifier('Item barcode');
 
     BulkEditSearchPane.uploadFile(invalidItemBarcodesFileName);
@@ -54,7 +54,7 @@ describe('bulk-edit: in-app file uploading', { retries: 3 }, () => {
     BulkEditActions.newBulkEdit();
   });
 
-  it('C350941 Verify uploading file with identifiers -- In app approach', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
+  it('C350941 Verify uploading file with identifiers -- In app approach (firebird)', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
     BulkEditSearchPane.selectRecordIdentifier('Item barcode');
 
     BulkEditSearchPane.uploadFile(invalidItemBarcodesFileName);
@@ -80,7 +80,7 @@ describe('bulk-edit: in-app file uploading', { retries: 3 }, () => {
     BulkEditActions.newBulkEdit();
   });
 
-  it('C350943 Verify Record identifiers dropdown -- Inventory-Items app', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
+  it('C350943 Verify Record identifiers dropdown -- Inventory-Items app (firebird)', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
     BulkEditSearchPane.verifyItemIdentifiers();
 
     [
@@ -95,7 +95,7 @@ describe('bulk-edit: in-app file uploading', { retries: 3 }, () => {
     });
   });
 
-  it('C357035 Verify elements of the bulk edit app -- In app approach', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
+  it('C357035 Verify elements of the bulk edit app -- In app approach (firebird)', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
     BulkEditSearchPane.selectRecordIdentifier('Item barcode');
 
     BulkEditSearchPane.clickToBulkEditMainButton();

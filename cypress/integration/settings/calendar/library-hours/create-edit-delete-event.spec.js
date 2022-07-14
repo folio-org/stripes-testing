@@ -32,7 +32,7 @@ describe('Calendar', () => {
     calendarActions.clearCreatedEvents();
   });
 
-  it('C347825 Create, view, edit and delete calendar events', { tags: [TestType.smoke] }, () => {
+  it('C347825 Create, view, edit and delete calendar events (vega)', { tags: [TestType.smoke] }, () => {
     cy.login(fullAccessUser.userName, fullAccessUser.password);
 
     calendarActions.openCalendarEvents();
@@ -42,7 +42,7 @@ describe('Calendar', () => {
     calendarActions.deleteCalendarEvent();
   });
 
-  it('C353206 Settings (Calendar): Can create, view, and edit calendar events', { tags: [TestType.smoke] }, () => {
+  it('C353206 Settings (Calendar): Can create, view, and edit calendar events (vega)', { tags: [TestType.smoke] }, () => {
     cy.login(limitedAccessUser.userName, limitedAccessUser.password);
 
     calendarActions.openCalendarEvents();

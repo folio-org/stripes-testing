@@ -19,7 +19,7 @@ describe('ui-organizations: Creating organization', () => {
       });
   });
 
-  it('C675 Create new organization record', { tags: [TestType.smoke] }, () => {
+  it('C675 Create new organization record (thunderjet)', { tags: [TestType.smoke] }, () => {
     Organizations.createOrganizationViaUi(organization);
     Organizations.checkCreatedOrganization(organization);
   });

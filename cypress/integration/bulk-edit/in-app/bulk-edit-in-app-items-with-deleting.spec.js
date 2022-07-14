@@ -48,7 +48,7 @@ describe('bulk-edit: in-app file uploading', () => {
   });
 
   // Bug UIBULKED-121
-  it('C353230 Verify completion of the in-app bulk edit', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
+  it('C353230 Verify completion of the in-app bulk edit (firebird)', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
     BulkEditSearchPane.selectRecordIdentifier('Item barcode');
 
     BulkEditSearchPane.uploadFile(invalidItemBarcodesFileName);
