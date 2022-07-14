@@ -166,21 +166,24 @@ describe('ui-users:', () => {
     const collectionOfProfiles = [
       {
         mappingProfile: { typeValue: NewMappingProfile.folioRecordTypeValue.instance,
-          name: mappingProfileNameForInstance },
+          name: mappingProfileNameForInstance,
+          update: true },
         actionProfile: { typeValue: NewActionProfile.folioRecordTypeValue.instance,
           name: actionProfileNameForInstance,
           action: 'Update (all record types except Orders)' }
       },
       {
         mappingProfile: { typeValue: NewMappingProfile.folioRecordTypeValue.holdings,
-          name: mappingProfileNameForHoldings },
+          name: mappingProfileNameForHoldings,
+          update: true },
         actionProfile: { typeValue: NewActionProfile.folioRecordTypeValue.holdings,
           name: actionProfileNameForHoldings,
           action: 'Update (all record types except Orders)' }
       },
       {
         mappingProfile: { typeValue: NewMappingProfile.folioRecordTypeValue.item,
-          name: mappingProfileNameForItem },
+          name: mappingProfileNameForItem,
+          update: true },
         actionProfile: { typeValue: NewActionProfile.folioRecordTypeValue.item,
           name: actionProfileNameForItem,
           action: 'Update (all record types except Orders)' }
@@ -309,7 +312,7 @@ describe('ui-users:', () => {
     FileDetails.checkItemsStatusesInResultList(1, [FileDetails.status.dash, FileDetails.status.discarded, FileDetails.status.discarded, FileDetails.status.discarded]);
 
     FileDetails.openInstanceInInventory();
-    InventoryInstance.checkIsInstanceUpdated(NewMappingProfile.instanceStatusTerm, 'MARC');
+    InventoryInstance.checkIsInstanceUpdated();
     HoldingsRecordView.checkIsHoldingsUpdated();
     ItemVeiw.checkIsItemUpdated();
     InventoryViewSource.verifyMARCBibSource(firstItem.barcode);

@@ -6,6 +6,7 @@ Cypress.Commands.add('deleteOrganizationApi', (organizationId) => {
     });
 });
 
+// TODO delete this function, use getOrganizationApi from fragment organizations
 Cypress.Commands.add('getOrganizationApi', (searchParams) => {
   cy.okapiRequest({
     path: 'organizations/organizations',

@@ -40,9 +40,9 @@ function checkItemsStatusesInResultList(rowIndex, itemStatuses) {
   });
 }
 
-const checkItemsQuantityInSummaryTable = (quantity, specialColumnName) => {
+const checkItemsQuantityInSummaryTable = (rowIndex, quantity, specialColumnName) => {
   cy.then(() => specialColumnName.index())
-    .then((index) => cy.expect(MultiColumnList({ id: 'job-summary-table' }).find(MultiColumnListCell({ columnIndex: index }))
+    .then((index) => cy.expect(MultiColumnList({ id: 'job-summary-table' }).find(MultiColumnListCell({ row: rowIndex, columnIndex: index }))
       .has({ content: quantity })));
 };
 
