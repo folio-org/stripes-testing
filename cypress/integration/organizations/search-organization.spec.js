@@ -1,10 +1,10 @@
 import TopMenu from '../../support/fragments/topMenu';
 import TestType from '../../support/dictionary/testTypes';
 import Organizations from '../../support/fragments/organizations/organizations';
-import newOrganization from '../../support/fragments/organizations/newOrganization';
+import NewOrganization from '../../support/fragments/organizations/newOrganization';
 
 describe('ui-organizations: Search organization', () => {
-  const organization = { ...newOrganization.specialOrganization };
+  const organization = { ...NewOrganization.specialOrganization };
 
   before(() => {
     cy.login(Cypress.env('diku_login'), Cypress.env('diku_password'));

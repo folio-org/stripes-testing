@@ -10,6 +10,7 @@ Cypress.Commands.add('createServicePoint', (servicePoint) => {
   cy.okapiRequest({
     method: REQUEST_METHOD.POST,
     path: 'service-points',
+    isDefaultSearchParamsRequired: false,
     body: {
       id: uuidv4(),
       name: testName,
