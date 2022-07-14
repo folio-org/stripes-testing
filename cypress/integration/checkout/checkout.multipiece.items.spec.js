@@ -126,7 +126,7 @@ describe('Check Out', () => {
       { missingitemPieces : numberOfMissingPieces, missingDescription: missingPieces });
   };
 
-  it('C591 Check out: multipiece items (folijet)', { tags: [TestTypes.smoke] }, () => {
+  it('C591 Check out: multipiece items (folijet) (vega)', { tags: [TestTypes.smoke] }, () => {
     CheckOutActions.checkIsInterfacesOpened();
     CheckOutActions.checkOutItemUser(userBarcode, testItems[0].barcode);
     CheckOutActions.checkPatronInformation(user.username, userBarcode);

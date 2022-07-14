@@ -9,7 +9,7 @@ describe('ui-circulation-settings: Edit Staff slip settings', () => {
     cy.visit(`${SettingsMenu.circulationStaffSlipsPath}`);
   });
 
-  it('C347901 Staff clips settings', { tags: [TestType.smoke] }, () => {
+  it('C347901 Staff clips settings (vega)', { tags: [TestType.smoke] }, () => {
     EditStaffClips.editHold(editStaffClipsHold);
     EditStaffClips.fillAndPreviewTemplate(editStaffClipsHold);
     EditStaffClips.editPickslip(editStaffClipsHold);
