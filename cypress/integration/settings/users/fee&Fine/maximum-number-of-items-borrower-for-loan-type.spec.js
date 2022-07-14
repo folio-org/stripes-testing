@@ -136,9 +136,9 @@ describe('ui-users:', () => {
     ])
       .then(userProperties => {
         user = userProperties;
-        servicePoint = NewServicePoint.getDefaulServicePoint();
-        ServicePoints.createViaApi(servicePoint.body);
-        UserEdit.addServicePointViaApi(servicePoint.body.id, user.userId, servicePoint.body.id);
+        servicePoint = NewServicePoint.getDefaultServicePoint();
+        ServicePoints.createViaApi(servicePoint);
+        UserEdit.addServicePointViaApi(servicePoint.id, user.userId, servicePoint.id);
       })
       .then(() => {
         cy.login(user.username, user.password);
@@ -149,7 +149,7 @@ describe('ui-users:', () => {
     limitTestItems.forEach(item => {
       CheckInActions.createItemCheckinApi({
         itemBarcode: item.barcode,
-        servicePointId: servicePoint.body.id,
+        servicePointId: servicePoint.id,
         checkInDate: new Date().toISOString(),
       });
     });
@@ -165,7 +165,7 @@ describe('ui-users:', () => {
     testItems.forEach(item => {
       CheckInActions.createItemCheckinApi({
         itemBarcode: item.barcode,
-        servicePointId: servicePoint.body.id,
+        servicePointId: servicePoint.id,
         checkInDate: new Date().toISOString(),
       });
     });
@@ -182,9 +182,9 @@ describe('ui-users:', () => {
       rulesAsText: rulesDefaultString,
     });
     cy.deleteLoanPolicy(loanPolicy.id);
-    UserEdit.changeServicePointPreferenceViaApi(user.userId, [servicePoint.body.id])
+    UserEdit.changeServicePointPreferenceViaApi(user.userId, [servicePoint.id])
       .then(() => {
-        ServicePoint.deleteViaApi(servicePoint.body.id);
+        ServicePoint.deleteViaApi(servicePoint.id);
         Users.deleteViaApi(user.userId);
       });
   });

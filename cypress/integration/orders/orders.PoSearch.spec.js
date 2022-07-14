@@ -31,7 +31,7 @@ describe('orders: Test PO search', () => {
     Orders.deleteOrderViaActions();
   });
 
-  it('C6717 Test the PO searches', { tags: [TestType.smoke] }, () => {
+  it('C6717 Test the PO searches (thunderjet)', { tags: [TestType.smoke] }, () => {
     Orders.createOrderWithOrderLineViaApi(order, orderLine)
       .then(orderNumber => {
         const today = new Date();

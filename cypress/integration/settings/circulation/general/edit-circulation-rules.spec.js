@@ -16,11 +16,12 @@ import LoanPolicy, {
 import NoticePolicy, {
   defaultNoticePolicy,
 } from '../../../../support/fragments/circulation/notice-policy';
-import MaterialTypes, {
-  defaultMaterialType,
-} from '../../../../support/fragments/inventory/materialType/materialTypesSettings';
+import MaterialTypes from '../../../../support/fragments/settings/inventory/materialTypes';
 import permissions from '../../../../support/dictionary/permissions';
 import Users from '../../../../support/fragments/users/users';
+import NewMaterialType, {
+  defaultMaterialType,
+} from '../../../../support/fragments/settings/inventory/newMaterialType';
 
 describe('ui-circulation-settings: Edit circulation rules', () => {
   let originalCirculationRules;
@@ -41,7 +42,7 @@ describe('ui-circulation-settings: Edit circulation rules', () => {
       CirculationRules.getApi().then((circulationRules) => {
         originalCirculationRules = circulationRules;
       });
-      MaterialTypes.createApi();
+      NewMaterialType.createViaApi(NewMaterialType.getDefaultMaterialType());
       NoticePolicy.createApi();
       LoanPolicy.createApi();
       RequestPolicy.createApi();

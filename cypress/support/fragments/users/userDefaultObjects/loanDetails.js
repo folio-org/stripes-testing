@@ -4,12 +4,16 @@ import {
   MultiColumnList,
   MultiColumnListCell,
   MultiColumnListHeader,
+  MultiColumnListRow,
   Button,
   TextArea,
   KeyValue,
   Link,
   Modal,
   including,
+  Select,
+  TextInput,
+  Pane,
 } from '../../../../../interactors';
 import { ITEM_STATUSES } from '../../../constants';
 import DateTools from '../../../utils/dateTools';
@@ -18,7 +22,11 @@ import { getFullName } from '../../../utils/users';
 const DECLARE_LOST_MODAL_TITLE = 'Confirm item status: Declared lost';
 const LOAN_ACTIONS_LIST_ID = 'list-loanactions';
 const DeclareLostButton = Button('Declare lost');
+const AnonymizeAllButton = Button('Anonymize all loans');
+const ActionButton = Button({ ariaLabel: 'Action' });
+const NewFeeFineButton = Button('New fee/fine');
 const DeclareLostModal = Modal(DECLARE_LOST_MODAL_TITLE);
+const AnonymizeModal = Modal('Anonymization prevented');
 const LoanActionsList = MultiColumnList(LOAN_ACTIONS_LIST_ID);
 
 const checkDeclareLostButtonActivity = (disabled) => {
@@ -27,6 +35,9 @@ const checkDeclareLostButtonActivity = (disabled) => {
 
 export default {
 
+  waitLoading:() => {
+    cy.expect(Pane({ id: 'pane-loanshistory' }).exists());
+  },
   checkDeclareLostButtonDisabled() {
     checkDeclareLostButtonActivity(true);
   },
@@ -80,6 +91,36 @@ export default {
   },
   checkStatusDeclaredLostInList(row) {
     this.checkStatusInList(row, ITEM_STATUSES.DECLARED_LOST);
+  },
+  anonymizeAllLoans() {
+    cy.do(AnonymizeAllButton.click());
+  },
+  createFeeFine(owner, feeFineType) {
+    cy.do([
+      MultiColumnList()
+        .find(MultiColumnListRow({ index: 0 }))
+        .find(MultiColumnListCell({ columnIndex: 10 }))
+        .find(ActionButton)
+        .click(),
+      NewFeeFineButton.click(),
+    ]);
+    cy.expect(Modal('New fee/fine').exists());
+    cy.do([
+      Select({ id: 'ownerId' }).choose(owner),
+      Select({ id: 'feeFineType' }).choose(feeFineType),
+      TextInput({ id: 'amount' }).fillIn('1'),
+      Button({ id: 'chargeOnly' }).click(),
+    ]);
+  },
+  checkAnonymizeModalOpen() {
+    cy.expect(AnonymizeModal.exists());
+  },
+  closeAnonymizeModal() {
+    cy.do(AnonymizeModal.find(Button('OK')).click());
+    cy.expect(AnonymizeModal.absent());
+  },
+  checkLoanAbsent(title) {
+    cy.expect(KeyValue(title).absent());
   },
   checkAction(row, action) {
     cy.then(() => MultiColumnListHeader({ id: 'list-column-action' }).index()).then((columnIndex) => {

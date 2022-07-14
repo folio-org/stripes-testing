@@ -25,5 +25,5 @@ export default {
       Button('Delete').click(),
       Button({ id: 'clickable-deletelocation-confirmation-confirm' }).click()
     ]);
-  }
+  },
 };

@@ -10,6 +10,9 @@ export default {
   getOpenLoansPath(userId) {
     return `${this.getLoansPath(userId)}/open`;
   },
+  getClosedLoansPath(userId) {
+    return `${this.getLoansPath(userId)}/closed`;
+  },
   getLoanDetailsPath(userId, loanId) {
     return `${this.getLoansPath(userId)}/view/${loanId}`;
   },
