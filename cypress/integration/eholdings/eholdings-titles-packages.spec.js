@@ -28,7 +28,7 @@ describe('ui-eholdings: Search titles', () => {
     Users.deleteViaApi(testData.userId);
   });
 
-  it('C684 Title Search: Search titles for chemical engineering. Then filter results to journals.', { tags:  [testTypes.smoke, features.eHoldings] }, () => {
+  it('C684 Title Search: Search titles for chemical engineering. Then filter results to journals. (spitfire)', { tags:  [testTypes.smoke, features.eHoldings] }, () => {
     EHoldingSearch.switchToTitles();
     EHoldingsTitlesSearch.byTitle(testData.title);
     EHoldingsTitlesSearch.byPublicationType(testData.publicationType);
