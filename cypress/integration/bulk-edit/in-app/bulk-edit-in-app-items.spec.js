@@ -44,7 +44,7 @@ describe('bulk-edit: in-app file uploading', { retries: 3 }, () => {
     FileManager.deleteFile(`cypress/fixtures/${validItemBarcodesFileName}`);
   });
 
-  it('C350905 Negative uploading file with identifiers -- In app approach', { tags: [testTypes.smoke, devTeams.firebird, testTypes.broken] }, () => {
+  it('C350905 Negative uploading file with identifiers -- In app approach (firebird)', { tags: [testTypes.smoke, devTeams.firebird, testTypes.broken] }, () => {
     BulkEditSearchPane.selectRecordIdentifier('Item barcode');
 
     // try to upload empty file
@@ -61,7 +61,7 @@ describe('bulk-edit: in-app file uploading', { retries: 3 }, () => {
     BulkEditSearchPane.verifyModalName(invalidFileWarning);
   });
 
-  it('C357053 Negative: Verify enable type ahead in location look-up', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
+  it('C357053 Negative: Verify enable type ahead in location look-up (firebird)', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
     BulkEditSearchPane.selectRecordIdentifier('Item barcode');
 
     BulkEditSearchPane.uploadFile(validItemBarcodesFileName);
@@ -76,7 +76,7 @@ describe('bulk-edit: in-app file uploading', { retries: 3 }, () => {
   });
 
   // Bug UIBULKED-121
-  it('C357030 Verify Matched records label cleanup -- In -app approach', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
+  it('C357030 Verify Matched records label cleanup -- In -app approach (firebird)', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
     BulkEditSearchPane.selectRecordIdentifier('Item barcode');
 
     BulkEditSearchPane.uploadFile(invalidItemBarcodesFileName);

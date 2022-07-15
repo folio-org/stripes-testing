@@ -11,7 +11,7 @@ describe('ui-invoices-settings: Batch Group creation', () => {
     cy.visit(`${SettingsMenu.invoiceBatchGroupsPath}`);
   });
 
-  it('C343345 Create and edit Batch groups', { tags: [TestType.smoke] }, () => {
+  it('C343345 Create and edit Batch groups (thunderjet)', { tags: [TestType.smoke] }, () => {
     SettingsInvoices.waitBatchGroupsLoading();
     SettingsInvoices.createNewBatchGroup(batchGroup);
     SettingsInvoices.checkBatchGroup(batchGroup);

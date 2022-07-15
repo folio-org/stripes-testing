@@ -48,7 +48,7 @@ describe('ui-data-import: EDIFACT file import with creating of new invoice recor
     FieldMappingProfiles.deleteFieldMappingProfile(mappingProfileName);
   });
 
-  it('C343338 EDIFACT file import with creating of new invoice record', { tags: [TestTypes.smoke, TestTypes.broken] }, () => {
+  it('C343338 EDIFACT file import with creating of new invoice record (folijet)', { tags: [TestTypes.smoke, TestTypes.broken] }, () => {
     // unique file name to upload
     const fileName = `C343338autotestFile.${getRandomPostfix()}.edi`;
 

@@ -12,7 +12,7 @@ describe('ui-finance: Add budget to fund', () => {
     cy.deleteLedgerApi(createdLedgerId);
   });
 
-  it('C4057 Add budget to a fund', { tags: [testType.smoke] }, () => {
+  it('C4057 Add budget to a fund (thunderjet)', { tags: [testType.smoke] }, () => {
     Funds.createFundViaUI(fund)
       .then(
         createdLedger => {

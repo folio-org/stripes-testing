@@ -41,7 +41,7 @@ describe('ui-data-import: Verify the possibility to modify MARC Bibliographic re
     users.deleteViaApi(user.userId);
   });
 
-  it('C345423 Verify the possibility to modify MARC Bibliographic record', { tags: [TestTypes.smoke, TestTypes.broken] }, () => {
+  it('C345423 Verify the possibility to modify MARC Bibliographic record (folijet)', { tags: [TestTypes.smoke, TestTypes.broken] }, () => {
     const mappingProfileFieldsForModify = {
       marcMappingOption: 'Modifications',
       action: 'Add',

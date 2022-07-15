@@ -40,7 +40,7 @@ describe('ui-inventory: Assign tags to an Instance record', () => {
     InventoryInstance.deleteInstanceViaApi(instanceId);
   });
 
-  it('C196769 Assign tags to an Instance record', { tags: [TestTypes.smoke, TestTypes.broken] }, () => {
+  it('C196769 Assign tags to an Instance record (folijet)', { tags: [TestTypes.smoke, TestTypes.broken] }, () => {
     cy.visit(TopMenu.inventoryPath);
     InventorySearch.searchByParameter('Title (all)', instanceTitle);
     InventoryInstances.selectInstance();

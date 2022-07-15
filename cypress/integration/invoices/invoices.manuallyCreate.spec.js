@@ -22,7 +22,7 @@ describe('ui-invoices: Invoice creation', () => {
     cy.visit(TopMenu.invoicesPath);
   });
 
-  it('C2299 Manually Create Invoice', { tags: [testType.smoke] }, () => {
+  it('C2299 Manually Create Invoice (thunderjet)', { tags: [testType.smoke] }, () => {
     Invoices.createDefaultInvoice(invoice, vendorPrimaryAddress);
     Invoices.checkCreatedInvoice(invoice, vendorPrimaryAddress);
     Invoices.deleteInvoiceViaActions();

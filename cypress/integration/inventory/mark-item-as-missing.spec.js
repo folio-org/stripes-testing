@@ -70,7 +70,7 @@ describe('ui-inventory: Mark an item as Missing', () => {
     requesterIds.forEach(id => Users.deleteViaApi(id));
   });
 
-  it('C714 Mark an item as Missing', { tags: [TestTypes.smoke, TestTypes.broken] }, () => {
+  it('C714 Mark an item as Missing (folijet)', { tags: [TestTypes.smoke, TestTypes.broken] }, () => {
     cy.visit(TopMenu.inventoryPath);
     MarkItemAsMissing.findAndOpenInstance(instanceData.instanceTitle);
     MarkItemAsMissing.getItemsToMarkAsMissing(createdItems).forEach(item => {

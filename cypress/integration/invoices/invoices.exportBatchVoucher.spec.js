@@ -51,7 +51,7 @@ describe('ui-invoices-settings: Export batch voucher', () => {
     FileManager.deleteFolder(Cypress.config('downloadsFolder'));
   });
 
-  it('C10943 Run batch voucher export manually', { tags: [TestType.smoke, TestType.broken] }, () => {
+  it('C10943 Run batch voucher export manually (thunderjet)', { tags: [TestType.smoke, TestType.broken] }, () => {
     Invoices.createDefaultInvoice(invoice, vendorPrimaryAddress);
     Invoices.createInvoiceLine(invoiceLine);
     Invoices.addFundDistributionToLine(invoiceLine, fund);
