@@ -28,7 +28,7 @@ describe('ui-organizations: Search organization', () => {
     { parameter: 'Accounting code', value: organization.erpCode },
     { parameter: 'Tax ID', value: organization.taxId },
   ].forEach((searcher) => {
-    it('C6712 Test the Organizations app searches', { tags: [TestType.smoke] }, () => {
+    it('C6712 Test the Organizations app searches (thunderjet)', { tags: [TestType.smoke] }, () => {
       cy.visit(TopMenu.organizationsPath);
       Organizations.searchByParameters(searcher.parameter, searcher.value);
       Organizations.checkSearchResults(organization);

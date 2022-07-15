@@ -48,7 +48,7 @@ describe('ui-invoices: test POL search plugin', () => {
     Orders.deleteOrderApi(order.id);
   });
 
-  it('C350389 Test purchase order line plugin search', { tags: [testType.smoke] }, () => {
+  it('C350389 Test purchase order line plugin search (thunderjet)', { tags: [testType.smoke] }, () => {
     Invoices.getSearchParamsMap(createdOrderNumber, orderLine);
     Invoices.createDefaultInvoice(invoice, vendorPrimaryAddress);
     Invoices.checkCreatedInvoice(invoice, vendorPrimaryAddress);

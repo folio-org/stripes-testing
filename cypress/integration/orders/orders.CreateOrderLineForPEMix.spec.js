@@ -28,7 +28,7 @@ describe('orders: Test PO search', () => {
     Orders.deleteOrderApi(order.id);
   });
 
-  it('C343242 Create an order line for format = P/E mix', { tags: [TestType.smoke] }, () => {
+  it('C343242 Create an order line for format = P/E mix (thunderjet)', { tags: [TestType.smoke] }, () => {
     Orders.searchByParameter('PO number', orderNumber);
     SearchHelper.selectFromResultsList();
     Orders.createPOLineViaActions();

@@ -29,7 +29,7 @@ describe('orders: Unreceive piece from Order', () => {
     cy.login(Cypress.env('diku_login'), Cypress.env('diku_password'));
   });
 
-  it('C10925 Unreceive piece', { tags: [TestType.smoke] }, () => {
+  it('C10925 Unreceive piece (thunderjet)', { tags: [TestType.smoke] }, () => {
     const barcode = Helper.getRandomBarcode();
     const caption = 'autotestCaption';
     Orders.createOrderWithOrderLineViaApi(order, orderLine)

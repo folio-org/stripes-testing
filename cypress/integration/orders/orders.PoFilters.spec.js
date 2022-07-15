@@ -64,7 +64,7 @@ describe('orders: Test PO filters', () => {
     { filterActions: Orders.selectOrderTypeFilter },
     { filterActions: () => { Orders.selectVendorFilter(invoice); } },
   ].forEach((filter) => {
-    it('C6718 Test the PO filters with open Order [except tags]', { tags: [TestType.smoke] }, () => {
+    it('C6718 Test the PO filters with open Order [except tags] (thunderjet)', { tags: [TestType.smoke] }, () => {
       filter.filterActions();
       Orders.checkSearchResults(orderNumber);
       Orders.resetFilters();
