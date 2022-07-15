@@ -65,7 +65,7 @@ describe('ui-organizations: EDI convention in Organization Integration', () => {
     Organizations.deleteOrganizationApi(organization.id);
   });
 
-  it('C350762: User can Create and Edit Integrations for an Organization-Vendor', { tags: [TestTypes.smoke] }, () => {
+  it('C350762: User can Create and Edit Integrations for an Organization-Vendor (thunderjet)', { tags: [TestTypes.smoke] }, () => {
     // Found and edit created organization
     Organizations.searchByParameters('Name', organization.name);
     Organizations.checkSearchResults(organization);

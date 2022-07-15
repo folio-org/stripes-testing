@@ -49,7 +49,7 @@ describe('ui-organizations: EDI convention in Organization Integration', () => {
     Organizations.deleteOrganizationApi(organization.id);
   });
 
-  it('C350758: Verify if a User can set/edit EDI convention in Organization Integration', { tags: [TestTypes.smoke] }, () => {
+  it('C350758: Verify if a User can set/edit EDI convention in Organization Integration (thunderjet)', { tags: [TestTypes.smoke] }, () => {
     Organizations.searchByParameters('Name', organization.name);
     Organizations.checkSearchResults(organization);
     Organizations.chooseOrganizationFromList(organization);
