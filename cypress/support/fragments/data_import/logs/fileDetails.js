@@ -40,10 +40,17 @@ function checkItemsStatusesInResultList(rowIndex, itemStatuses) {
   });
 }
 
-const checkItemsQuantityInSummaryTable = (rowIndex, quantity, specialColumnName) => {
-  cy.then(() => specialColumnName.index())
-    .then((index) => cy.expect(MultiColumnList({ id: 'job-summary-table' }).find(MultiColumnListCell({ row: rowIndex, columnIndex: index }))
-      .has({ content: quantity })));
+const checkItemsQuantityInSummaryTable = (itemStatus, quantity) => {
+  cy.expect(MultiColumnList({ id: 'job-summary-table' })
+    .find(MultiColumnListRow({ indexRow: 'row-0' }))
+    .find(MultiColumnListCell({ columnIndex: 0, content: itemStatus }))
+    .exists());
+  for (let i = 1; i < 4; i++) {
+    cy.expect(MultiColumnList({ id: 'job-summary-table' })
+      .find(MultiColumnListRow({ indexRow: 'row-0' }))
+      .find(MultiColumnListCell({ columnIndex: i, content: quantity }))
+      .exists());
+  }
 };
 
 const invoiceNumberFromEdifactFile = '94999';

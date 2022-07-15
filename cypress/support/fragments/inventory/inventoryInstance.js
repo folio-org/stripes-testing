@@ -289,11 +289,4 @@ export default {
     cy.expect(source.has({ value: 'MARC' }));
     cy.expect(KeyValue('Cataloged date').has({ value: DateTools.getFormattedDate({ date: new Date() }) }));
   },
-
-  openViewSource:() => {
-    cy.do([
-      Section({ id: 'pane-instancedetails' }).find(Button('Actions')).click(),
-      Button('View source').click(),
-    ]);
-  }
 };

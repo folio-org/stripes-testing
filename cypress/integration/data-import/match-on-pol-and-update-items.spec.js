@@ -314,7 +314,7 @@ describe('ui-users:', () => {
     FileDetails.openInstanceInInventory();
     InventoryInstance.checkIsInstanceUpdated();
     HoldingsRecordView.checkIsHoldingsUpdated();
-    ItemVeiw.checkIsItemUpdated();
+    ItemVeiw.checkIsItemUpdated(firstItem.barcode);
     InventoryViewSource.verifyMARCBibSource(firstItem.barcode);
 
     // delete generated profiles
