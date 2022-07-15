@@ -19,6 +19,7 @@ import {
 import SearchHelper from '../finance/financeHelper';
 import InteractorsTools from '../../utils/interactorsTools';
 import { getLongDelay } from '../../utils/cypressTools';
+import AdminName from '../../../../cypress.json';
 
 const actionsButton = Button('Actions');
 const orderDetailsPane = Pane({ id: 'order-details' });
@@ -27,9 +28,9 @@ const searchButton = Button('Search');
 const newButton = Button('New');
 const saveAndClose = Button('Save & close');
 const orderDetailsAccordionId = 'purchaseOrder';
-const createdByAdmin = 'ADMINISTRATOR, DIKU ';
+const createdByAdmin = `${AdminName.env.diku_login}  `;
 const searchField = SearchField({ id: 'input-record-search' });
-const admin = 'administrator';
+const admin = AdminName.env.diku_login;
 const buttonLocationFilter = Button({ id: 'accordion-toggle-button-pol-location-filter' });
 const buttonFundCodeFilter = Button({ id: 'accordion-toggle-button-fundCode' });
 const buttonOrderFormatFilter = Button({ id: 'accordion-toggle-button-orderFormat' });

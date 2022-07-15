@@ -34,7 +34,7 @@ describe('ui-inventory: keyboard shortcut', () => {
     users.deleteViaApi(userId);
   });
 
-  it('C345297 Keyboard Shortcut. Access to drop down menu (firebird)', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
+  it('C345297 Keyboard Shortcut. Access to drop down menu', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
     InventoryKeyboardShortcuts.verifyInventoryDropdownIsShown('false');
 
     InventoryKeyboardShortcuts.openInventoryMenu();
@@ -45,7 +45,7 @@ describe('ui-inventory: keyboard shortcut', () => {
     InventoryKeyboardShortcuts.verifyInventoryDropdownIsShown('false');
   });
 
-  it('C345298 Keyboard Shortcut. Test the functionality of the different shortcut keys (thunderjet)', { tags: [testTypes.smoke, testTypes.broken] }, () => {
+  it('C345298 Keyboard Shortcut. Test the functionality of the different shortcut keys', { tags: [testTypes.smoke, testTypes.broken] }, () => {
     InventoryKeyboardShortcuts.verifyInventoryDropdownIsShown('false');
 
     InventoryKeyboardShortcuts.openInventoryMenu();
@@ -67,5 +67,6 @@ describe('ui-inventory: keyboard shortcut', () => {
     InventoryInstanceEdit.addPrecedingTitle(0, precedingTitleValue, isbnValue, issnValue);
     InventoryKeyboardShortcuts.pressHotKey(hotKeys.save);
     InventoryInstance.checkPrecedingTitle(0, precedingTitleValue, isbnValue, issnValue);
+    cy.wait(2000);
   });
 });

@@ -1,6 +1,7 @@
 import { Button, TextField, MultiColumnListHeader, EditableListRow, MultiColumnListCell, Selection, SelectionList } from '../../../../interactors';
 import InteractorsTools from '../../utils/interactorsTools';
 import DateTools from '../../utils/dateTools';
+import AdminName from '../../../../cypress.json';
 
 const saveButton = Button('Save');
 const deleteButton = Button('Delete');
@@ -49,7 +50,7 @@ export default {
     cy.do(MultiColumnListCell({ content: batchGroup.name }).perform(
       element => {
         const rowNumber = element.parentElement.parentElement.getAttribute('data-row-index');
-        const createdByAdmin = `${DateTools.getFormattedDateWithSlashes({ date: new Date() })} by ADMINISTRATOR, DIKU`;
+        const createdByAdmin = `${DateTools.getFormattedDateWithSlashes({ date: new Date() })} by ${AdminName.env.diku_login}`;
         cy.expect(getEditableListRow(rowNumber)
           .find(MultiColumnListCell({ columnIndex: 0 }))
           .has({ content: batchGroup.name }));
