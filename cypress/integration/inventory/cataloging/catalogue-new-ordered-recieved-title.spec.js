@@ -10,9 +10,10 @@ import InteractorsTools from '../../../support/utils/interactorsTools';
 import OrdersHelper from '../../../support/fragments/orders/ordersHelper';
 import CheckInActions from '../../../support/fragments/check-in-actions/checkInActions';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
+import Organizations from '../../../support/fragments/organizations/organizations';
 
 describe('orders: Receive piece from Order', () => {
-  const order = { ...NewOrder.defaultOrder };
+  const order = { ...NewOrder.defaultOneTimeOrder };
   const orderLine = { ...BasicOrderLine.defaultOrderLine };
   let orderNumber;
   const barcode = Helper.getRandomBarcode();
@@ -21,7 +22,7 @@ describe('orders: Receive piece from Order', () => {
 
   before(() => {
     cy.getAdminToken();
-    cy.getOrganizationApi({ query: `name=${companyName}` })
+    Organizations.getOrganizationViaApi({ query: `name=${companyName}` })
       .then(organization => {
         order.vendor = organization.id;
         orderLine.physical.materialSupplier = organization.id;

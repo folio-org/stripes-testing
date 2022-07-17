@@ -9,7 +9,7 @@ describe('ui-organizations: View organization', () => {
   before(() => {
     cy.login(Cypress.env('diku_login'), Cypress.env('diku_password'));
     cy.getAdminToken();
-    Organizations.createOrganizationApi(organization)
+    Organizations.createOrganizationViaApi(organization)
       .then(response => {
         organization.id = response;
       });
@@ -17,7 +17,7 @@ describe('ui-organizations: View organization', () => {
   });
 
   after(() => {
-    Organizations.deleteOrganizationApi(organization.id);
+    Organizations.deleteOrganizationViaApi(organization.id);
   });
 
   it('C672 View existing organization record (thunderjet)', { tags: [TestType.smoke] }, () => {

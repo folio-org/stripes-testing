@@ -23,7 +23,7 @@ describe('orders: create an order', () => {
 
   before(() => {
     cy.getAdminToken();
-    Organizations.createOrganizationApi(organization)
+    Organizations.createOrganizationViaApi(organization)
       .then(response => {
         organization.id = response;
       });
@@ -41,7 +41,7 @@ describe('orders: create an order', () => {
   after(() => {
     Orders.deleteOrderApi(order.id);
 
-    Organizations.deleteOrganizationApi(organization.id);
+    Organizations.deleteOrganizationViaApi(organization.id);
   });
 
   it('C734 Open order for physical material set to create Instance, Holding, Item (thunderjet)', { tags: [TestType.smoke, TestType.broken] }, () => {

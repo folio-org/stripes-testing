@@ -147,20 +147,22 @@ export default {
       Checkbox('Cash').click(),
     ]);
   },
-  deleteOrganizationApi: (organizationId) => cy.okapiRequest({
+  deleteOrganizationViaApi: (organizationId) => cy.okapiRequest({
     method: 'DELETE',
     path: `organizations/organizations/${organizationId}`,
+    isDefaultSearchParamsRequired: false,
   }),
 
-  getOrganizationApi: (searchParams) => cy.okapiRequest({
+  getOrganizationViaApi: (searchParams) => cy.okapiRequest({
     path: 'organizations/organizations',
     searchParams
   }).then(response => { return response.body.organizations[0]; }),
 
-  createOrganizationApi: (organization) => cy.okapiRequest({
+  createOrganizationViaApi: (organization) => cy.okapiRequest({
     method: 'POST',
     path: 'organizations/organizations',
     body: organization,
+    isDefaultSearchParamsRequired: false,
   }).then(response => response.body.id),
 
   editOrganization: () => {

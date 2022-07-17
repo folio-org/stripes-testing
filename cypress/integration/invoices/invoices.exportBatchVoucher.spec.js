@@ -9,6 +9,7 @@ import Funds from '../../support/fragments/finance/funds/funds';
 import DateTools from '../../support/utils/dateTools';
 import FileManager from '../../support/utils/fileManager';
 import SettingsInvoices from '../../support/fragments/invoices/settingsInvoices';
+import Organizations from '../../support/fragments/organizations/organizations';
 
 describe('ui-invoices-settings: Export batch voucher', () => {
   const invoice = { ...NewInvoice.defaultUiInvoice };
@@ -24,7 +25,7 @@ describe('ui-invoices-settings: Export batch voucher', () => {
 
   before(() => {
     cy.getToken(Cypress.env('diku_login'), Cypress.env('diku_password'));
-    cy.getOrganizationApi({ query: `name=${invoice.vendorName}` })
+    Organizations.getOrganizationViaApi({ query: `name=${invoice.vendorName}` })
       .then(organization => {
         invoice.accountingCode = organization.erpCode;
         Object.assign(vendorPrimaryAddress,

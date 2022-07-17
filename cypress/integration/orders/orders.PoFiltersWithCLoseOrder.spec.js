@@ -7,6 +7,7 @@ import SearchHelper from '../../support/fragments/finance/financeHelper';
 import OrdersHelper from '../../support/fragments/orders/ordersHelper';
 import NewInvoice from '../../support/fragments/invoices/newInvoice';
 import DateTools from '../../support/utils/dateTools';
+import Organizations from '../../support/fragments/organizations/organizations';
 
 describe('orders: Test PO filters', () => {
   const today = new Date();
@@ -18,7 +19,7 @@ describe('orders: Test PO filters', () => {
 
   before(() => {
     cy.getToken(Cypress.env('diku_login'), Cypress.env('diku_password'));
-    cy.getOrganizationApi({ query: 'name="Amazon.com"' })
+    Organizations.getOrganizationViaApi({ query: 'name="Amazon.com"' })
       .then(organization => {
         order.vendor = organization.id;
         orderLine.physical.materialSupplier = organization.id;

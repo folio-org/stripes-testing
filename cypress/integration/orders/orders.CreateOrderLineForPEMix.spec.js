@@ -5,6 +5,7 @@ import TopMenu from '../../support/fragments/topMenu';
 import SearchHelper from '../../support/fragments/finance/financeHelper';
 import interactorsTools from '../../support/utils/interactorsTools';
 import OrderLines from '../../support/fragments/orders/orderLines';
+import Organizations from '../../support/fragments/organizations/organizations';
 
 describe('orders: Test PO search', () => {
   const order = { ...NewOrder.defaultOneTimeOrder };
@@ -12,7 +13,7 @@ describe('orders: Test PO search', () => {
 
   before(() => {
     cy.getAdminToken();
-    cy.getOrganizationApi({ query: 'name="Amazon.com"' })
+    Organizations.getOrganizationViaApi({ query: 'name="Amazon.com"' })
       .then(organization => {
         order.vendor = organization.id;
       });
