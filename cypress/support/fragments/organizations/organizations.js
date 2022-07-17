@@ -177,7 +177,7 @@ export default {
     ]);
   },
 
-  checkIntegationsAdd: (integrationName, integartionDescription) => {
+  checkIntegrationsAdd: (integrationName, integartionDescription) => {
     cy.do([
       Button({ id: 'accordion-toggle-button-integrationDetailsSection' }).click(),
     ]);

@@ -2,7 +2,7 @@ import TopMenu from '../../support/fragments/topMenu';
 import permissions from '../../support/dictionary/permissions';
 import getRandomPostfix from '../../support/utils/stringTools';
 import TestTypes from '../../support/dictionary/testTypes';
-import users from '../../support/fragments/users/users';
+import Users from '../../support/fragments/users/users';
 import newOrganization from '../../support/fragments/organizations/newOrganization';
 import Organizations from '../../support/fragments/organizations/organizations';
 import InteractorsTools from '../../support/utils/interactorsTools';
@@ -45,7 +45,7 @@ describe('ui-organizations: EDI convention in Organization Integration', () => {
   });
 
   after(() => {
-    users.deleteViaApi(userId);
+    Users.deleteViaApi(userId);
     Organizations.deleteOrganizationApi(organization.id);
   });
 

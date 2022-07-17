@@ -2,7 +2,7 @@ import TopMenu from '../../support/fragments/topMenu';
 import permissions from '../../support/dictionary/permissions';
 import getRandomPostfix from '../../support/utils/stringTools';
 import TestTypes from '../../support/dictionary/testTypes';
-import users from '../../support/fragments/users/users';
+import Users from '../../support/fragments/users/users';
 import newOrganization from '../../support/fragments/organizations/newOrganization';
 import Organizations from '../../support/fragments/organizations/organizations';
 import InteractorsTools from '../../support/utils/interactorsTools';
@@ -61,7 +61,7 @@ describe('ui-organizations: EDI convention in Organization Integration', () => {
   });
 
   after(() => {
-    users.deleteViaApi(userId);
+    Users.deleteViaApi(userId);
     Organizations.deleteOrganizationApi(organization.id);
   });
 
@@ -74,7 +74,7 @@ describe('ui-organizations: EDI convention in Organization Integration', () => {
     Organizations.addIntegration();
     Organizations.fillIntegrationInformation(integrationName1, integartionDescription1, vendorEDICodeFor1Integration, libraryEDICodeFor1Integration, organization.accounts[0].accountNo, 'Purchase');
     InteractorsTools.checkCalloutMessage('Integration was saved');
-    Organizations.checkIntegationsAdd(integrationName1, integartionDescription1);
+    Organizations.checkIntegrationsAdd(integrationName1, integartionDescription1);
     // Add second inegration and check all
     Organizations.addIntegration();
     cy.wait(2000);
