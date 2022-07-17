@@ -6,6 +6,7 @@ import Users from '../../support/fragments/users/users';
 import newOrganization from '../../support/fragments/organizations/newOrganization';
 import Organizations from '../../support/fragments/organizations/organizations';
 import InteractorsTools from '../../support/utils/interactorsTools';
+import devTeams from '../../support/dictionary/devTeams';
 
 describe('ui-organizations: EDI convention in Organization Integration', () => {
   let userId;
@@ -49,7 +50,7 @@ describe('ui-organizations: EDI convention in Organization Integration', () => {
     Organizations.deleteOrganizationApi(organization.id);
   });
 
-  it('C350758: Verify if a User can set/edit EDI convention in Organization Integration (thunderjet)', { tags: [TestTypes.smoke] }, () => {
+  it('C350758: Verify if a User can set/edit EDI convention in Organization Integration (thunderjet)', { tags: [TestTypes.smoke, devTeams.thunderjet] }, () => {
     Organizations.searchByParameters('Name', organization.name);
     Organizations.checkSearchResults(organization);
     Organizations.chooseOrganizationFromList(organization);
