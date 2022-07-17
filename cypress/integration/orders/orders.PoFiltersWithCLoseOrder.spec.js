@@ -66,7 +66,7 @@ describe('orders: Test PO filters', () => {
     { filterActions: () => { Orders.selectRenewalDateFilter(renewalDate); } },
     { filterActions: () => { Orders.selectVendorFilter(invoice); } },
   ].forEach((filter) => {
-    it('C350906 Test the PO filters with closed Order [except tags]', { tags: [TestType.smoke] }, () => {
+    it('C350906 Test the PO filters with closed Order [except tags] (thunderjet)', { tags: [TestType.smoke] }, () => {
       filter.filterActions();
       Orders.checkSearchResultsWithClosedOrder(orderNumber);
       Orders.resetFilters();

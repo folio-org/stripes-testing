@@ -78,7 +78,7 @@ describe('ui-inventory: items with status', () => {
     users.deleteViaApi(userId);
   });
 
-  it('C11081: Verify item status filters retrieve items with that item status', { tags: [TestTypes.smoke] }, () => {
+  it('C11081: Verify item status filters retrieve items with that item status (folijet)', { tags: [TestTypes.smoke] }, () => {
     cy.intercept('GET', '/inventory/items?*').as('getItems');
     cy.intercept('GET', '/search/instances?*').as('getInstances');
     cy.intercept('GET', '/orders/titles?*').as('getTitles');

@@ -1,10 +1,10 @@
 import TopMenu from '../../support/fragments/topMenu';
 import TestType from '../../support/dictionary/testTypes';
 import Organizations from '../../support/fragments/organizations/organizations';
-import newOrganization from '../../support/fragments/organizations/newOrganization';
+import NewOrganization from '../../support/fragments/organizations/newOrganization';
 
 describe('ui-organizations: Search organization', () => {
-  const organization = { ...newOrganization.specialOrganization };
+  const organization = { ...NewOrganization.specialOrganization };
 
   before(() => {
     cy.login(Cypress.env('diku_login'), Cypress.env('diku_password'));
@@ -28,7 +28,7 @@ describe('ui-organizations: Search organization', () => {
     { parameter: 'Accounting code', value: organization.erpCode },
     { parameter: 'Tax ID', value: organization.taxId },
   ].forEach((searcher) => {
-    it('C6712 Test the Organizations app searches', { tags: [TestType.smoke] }, () => {
+    it('C6712 Test the Organizations app searches (thunderjet)', { tags: [TestType.smoke] }, () => {
       cy.visit(TopMenu.organizationsPath);
       Organizations.searchByParameters(searcher.parameter, searcher.value);
       Organizations.checkSearchResults(organization);

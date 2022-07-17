@@ -8,7 +8,7 @@ describe('ui-circulation-settings: create patron notice template', () => {
     cy.loginAsAdmin({ path: SettingsMenu.circulationPatronNoticeTemplatesPath, waiter: NewNoticePolicyTemplate.waitLoading });
   });
 
-  it('C199656 Create notice template', { tags: [TestType.smoke] }, () => {
+  it('C199656 Create notice template (vega)', { tags: [TestType.smoke] }, () => {
     NewNoticePolicyTemplate.startAdding();
     NewNoticePolicyTemplate.checkInitialState();
     NewNoticePolicyTemplate.create(patronNoticeTemplate);

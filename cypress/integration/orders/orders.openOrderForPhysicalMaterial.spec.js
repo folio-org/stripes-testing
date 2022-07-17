@@ -44,7 +44,7 @@ describe('orders: create an order', () => {
     Organizations.deleteOrganizationApi(organization.id);
   });
 
-  it('C734 Open order for physical material set to create Instance, Holding, Item', { tags: [TestType.smoke, TestType.broken] }, () => {
+  it('C734 Open order for physical material set to create Instance, Holding, Item (thunderjet)', { tags: [TestType.smoke, TestType.broken] }, () => {
     Orders.createOrder(order).then(orderId => {
       order.id = orderId;
       Orders.checkCreatedOrder(order);

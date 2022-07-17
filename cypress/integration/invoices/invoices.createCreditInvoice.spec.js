@@ -38,7 +38,7 @@ describe('ui-invoices: Credit Invoice creation', () => {
     cy.visit(TopMenu.invoicesPath);
   });
 
-  it('C343209 Create a credit invoice', { tags: [TestType.smoke] }, () => {
+  it('C343209 Create a credit invoice (thunderjet)', { tags: [TestType.smoke] }, () => {
     const transactionFactory = new Transaction();
     Invoices.createDefaultInvoice(invoice, vendorPrimaryAddress);
     Invoices.createInvoiceLine(invoiceLine);

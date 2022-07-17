@@ -19,7 +19,7 @@ import ExportFieldMappingProfiles from '../../support/fragments/data-export/expo
 import ExportJobProfiles from '../../support/fragments/data-export/exportJobProfile/exportJobProfiles';
 import SettingsMenu from '../../support/fragments/settingsMenu';
 import FileDetails from '../../support/fragments/data_import/logs/fileDetails';
-import dataImportSettingsJobProfiles from '../../support/fragments/settings/dataImport/dataImportSettingsJobProfiles';
+import DataImportSettingsJobProfiles from '../../support/fragments/settings/dataImport/dataImportSettingsJobProfiles';
 
 describe('ui-data-import: MARC file upload with the update of instance, holding, and items', () => {
   // profile names for creating
@@ -237,7 +237,7 @@ describe('ui-data-import: MARC file upload with the update of instance, holding,
         cy.addJobProfileRelation(testData.jobProfileForCreate.addedRelations, idActionProfile);
       });
     });
-    dataImportSettingsJobProfiles.createJobProfileApi(testData.jobProfileForCreate)
+    DataImportSettingsJobProfiles.createJobProfileApi(testData.jobProfileForCreate)
       .then((bodyWithjobProfile) => {
         testData.jobProfileForCreate.id = bodyWithjobProfile.body.id;
       });
@@ -247,7 +247,7 @@ describe('ui-data-import: MARC file upload with the update of instance, holding,
     DataImport.checkUploadState();
   });
 
-  it('C343335 MARC file upload with the update of instance, holding, and items', { tags: [TestTypes.smoke, TestTypes.broken] }, () => {
+  it('C343335 MARC file upload with the update of instance, holding, and items (folijet)', { tags: [TestTypes.smoke, TestTypes.broken] }, () => {
     // upload a marc file for creating of the new instance, holding and item
     cy.visit(TopMenu.dataImportPath);
     DataImport.uploadFile('oneMarcBib.mrc', nameMarcFileForImportCreate);

@@ -20,7 +20,7 @@ const invalidItemBarcodesFileName = `invalidItemBarcodes_${getRandomPostfix()}.c
 const validItemBarcodesFileName = `validItemBarcodes_${getRandomPostfix()}.csv`;
 const invalidBarcode = getRandomPostfix();
 
-describe('bulk-edit: in-app file uploading', () => {
+describe('bulk-edit: in-app file uploading', { retries: 3 }, () => {
   before('create user', () => {
     cy.createTempUser([
       permissions.bulkEditView.gui,
@@ -44,7 +44,7 @@ describe('bulk-edit: in-app file uploading', () => {
     FileManager.deleteFile(`cypress/fixtures/${validItemBarcodesFileName}`);
   });
 
-  it('C350905 Negative uploading file with identifiers -- In app approach', { tags: [testTypes.smoke, devTeams.firebird, testTypes.broken] }, () => {
+  it('C350905 Negative uploading file with identifiers -- In app approach (firebird)', { tags: [testTypes.smoke, devTeams.firebird, testTypes.broken] }, () => {
     BulkEditSearchPane.selectRecordIdentifier('Item barcode');
 
     // try to upload empty file
@@ -61,63 +61,7 @@ describe('bulk-edit: in-app file uploading', () => {
     BulkEditSearchPane.verifyModalName(invalidFileWarning);
   });
 
-  it('C353232 Verify error accordion during matching (In app approach)', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
-    BulkEditSearchPane.selectRecordIdentifier('Item barcode');
-
-    BulkEditSearchPane.uploadFile(invalidItemBarcodesFileName);
-    BulkEditSearchPane.waitFileUploading();
-
-    BulkEditSearchPane.verifyMatchedResults(item.itemBarcode);
-    BulkEditSearchPane.verifyNonMatchedResults(invalidBarcode);
-
-    BulkEditSearchPane.verifyActionsAfterConductedInAppUploading();
-
-    BulkEditSearchPane.verifyErrorLabel(invalidItemBarcodesFileName, 1, 1);
-    BulkEditActions.newBulkEdit();
-  });
-
-  it('C350941 Verify uploading file with identifiers -- In app approach', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
-    BulkEditSearchPane.selectRecordIdentifier('Item barcode');
-
-    BulkEditSearchPane.uploadFile(validItemBarcodesFileName);
-    BulkEditSearchPane.waitFileUploading();
-
-    const expectedColumnTitles = [
-      'Barcode',
-      'Status',
-      'Item effective location',
-      'Effective call number',
-      'Item HRID',
-      'Material type',
-      'Permanent loan type',
-      'Temporary loan type'
-    ];
-    expectedColumnTitles.forEach(title => BulkEditSearchPane.verifyResultColumTitles(title));
-
-    BulkEditSearchPane.verifyActionsAfterConductedInAppUploading(false);
-    BulkEditSearchPane.verifyItemsActionDropdownItems();
-
-    BulkEditSearchPane.changeShowColumnCheckbox('Item UUID');
-    BulkEditSearchPane.verifyResultColumTitles('Item UUID');
-    BulkEditActions.newBulkEdit();
-  });
-
-  it('C350943 Verify Record identifiers dropdown -- Inventory-Items app', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
-    BulkEditSearchPane.verifyItemIdentifiers();
-
-    [
-      { identifier: 'Item barcode', label: 'Select a file with item barcode' },
-      { identifier: 'Item UUIDs', label: 'Select a file with item UUIDs' },
-      { identifier: 'Item former identifier', label: 'Select a file with item former identifier' },
-      { identifier: 'Item accession number', label: 'Select a file with item accession number' },
-      { identifier: 'Holdings UUIDs', label: 'Select a file with holdings UUIDs' },
-    ].forEach(checker => {
-      BulkEditSearchPane.selectRecordIdentifier(checker.identifier);
-      BulkEditSearchPane.verifyInputLabel(checker.label);
-    });
-  });
-
-  it('C357053 Negative: Verify enable type ahead in location look-up', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
+  it('C357053 Negative: Verify enable type ahead in location look-up (firebird)', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
     BulkEditSearchPane.selectRecordIdentifier('Item barcode');
 
     BulkEditSearchPane.uploadFile(validItemBarcodesFileName);
@@ -131,18 +75,27 @@ describe('bulk-edit: in-app file uploading', () => {
     BulkEditActions.newBulkEdit();
   });
 
-  it('C357035 Verify elements of the bulk edit app -- In app approach', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
-    BulkEditSearchPane.selectRecordIdentifier('Item barcode');
-
-    BulkEditSearchPane.clickToBulkEditMainButton();
-    BulkEditSearchPane.verifyDefaultFilterState();
-
+  // Bug UIBULKED-121
+  it('C357030 Verify Matched records label cleanup -- In -app approach (firebird)', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
     BulkEditSearchPane.selectRecordIdentifier('Item barcode');
 
     BulkEditSearchPane.uploadFile(invalidItemBarcodesFileName);
     BulkEditSearchPane.waitFileUploading();
 
-    BulkEditSearchPane.clickToBulkEditMainButton();
-    BulkEditSearchPane.verifyDefaultFilterState();
+    BulkEditSearchPane.verifyMatchedResults(item.itemBarcode);
+    BulkEditSearchPane.verifyNonMatchedResults(invalidBarcode);
+    BulkEditSearchPane.verifyErrorLabel(invalidItemBarcodesFileName, 1, 1);
+    BulkEditSearchPane.verifyPaneRecordsCount(1);
+
+    BulkEditActions.openActions();
+    BulkEditActions.openStartBulkEditForm();
+    BulkEditActions.replaceTemporaryLocation();
+    BulkEditActions.confirmChanges();
+    BulkEditActions.saveAndClose();
+    BulkEditSearchPane.waitFileUploading();
+
+    BulkEditSearchPane.verifyNonMatchedResults(invalidBarcode);
+    BulkEditSearchPane.verifyErrorLabel(invalidItemBarcodesFileName, 1, 1);
+    BulkEditActions.verifySuccessBanner();
   });
 });

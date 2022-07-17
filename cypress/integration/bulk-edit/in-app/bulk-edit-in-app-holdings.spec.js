@@ -46,7 +46,7 @@ describe('bulk-edit: in-app file uploading', () => {
     FileManager.deleteFile(`cypress/downloads/${resultFileName}`);
   });
 
-  it('C357052 Verify Downloaded matched records if identifiers return more than one item', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
+  it('C357052 Verify Downloaded matched records if identifiers return more than one item (firebird)', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
     BulkEditSearchPane.selectRecordIdentifier('Holdings UUIDs');
 
     BulkEditSearchPane.uploadFile(validHoldingUUIDsFileName);

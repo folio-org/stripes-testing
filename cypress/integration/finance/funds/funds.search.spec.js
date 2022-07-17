@@ -65,7 +65,7 @@ describe('ui-finance: Funds list search and filter', () => {
     cy.deleteFundApi(fund.id);
   });
 
-  it('C4059 Test the search and filter options for funds', { tags: [testType.smoke] }, function () {
+  it('C4059 Test the search and filter options for funds (thunderjet)', { tags: [testType.smoke] }, function () {
     FinanceHelp.checkZeroSearchResultsMessage();
 
     Funds.checkFundFilters(ledger.name, fundType.name, 'Active', aUnit.name,

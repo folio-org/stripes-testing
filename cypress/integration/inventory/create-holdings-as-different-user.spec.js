@@ -45,7 +45,7 @@ describe('ui-inventory: Create a Holdings record as another user than the one th
     Users.deleteViaApi(secondUser.userId);
   });
 
-  it('C1294: Create a Holdings record as another user than the one that created the Instance', { tags: [TestTypes.smoke] }, () => {
+  it('C1294: Create a Holdings record as another user than the one that created the Instance (folijet)', { tags: [TestTypes.smoke] }, () => {
     InventoryInstances.add(recordsData.instanceTitle);
     SearchInventory.searchInstanceByTitle(recordsData.instanceTitle);
     cy.expect(MultiColumnListCell({ row: 0, content: recordsData.instanceTitle }).exists());
