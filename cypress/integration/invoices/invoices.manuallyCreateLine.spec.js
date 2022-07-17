@@ -24,7 +24,7 @@ describe('ui-invoices: Invoice Line creation', () => {
     cy.visit(TopMenu.invoicesPath);
   });
 
-  it('C2326 Manually create invoice line', { tags: [testType.smoke] }, () => {
+  it('C2326 Manually create invoice line (thunderjet)', { tags: [testType.smoke] }, () => {
     Invoices.createDefaultInvoice(invoice, vendorPrimaryAddress);
     Invoices.createInvoiceLine(invoiceLine);
     Invoices.checkInvoiceLine(invoiceLine);

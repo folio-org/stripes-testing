@@ -73,5 +73,13 @@ export default {
   edit:() => {
     cy.do(actionsButton.click());
     cy.do(editButton.click());
+  },
+
+  checkIsHoldingsUpdated:() => {
+    cy.do(Button('View holdings').click());
+    cy.expect(KeyValue('Holdings type').has({ value: 'Monograph' }));
+    cy.expect(KeyValue('Call number type').has({ value: 'Library of Congress classification' }));
+    cy.expect(KeyValue('Permanent').has({ value: 'Main Library' }));
+    cy.do(Button({ icon: 'times' }).click());
   }
 };

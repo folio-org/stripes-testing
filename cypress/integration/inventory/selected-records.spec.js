@@ -10,7 +10,7 @@ describe('ui-inventory: selecting / changing records', () => {
     cy.visit(TopMenu.inventoryPath);
   });
 
-  it('C196755 verifies search result counts and selected counts', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
+  it('C196755 verifies search result counts and selected counts (firebird)', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
     const selectedRecords = 2;
 
     InventorySearch.byKeywords('*');
@@ -18,7 +18,7 @@ describe('ui-inventory: selecting / changing records', () => {
     InventorySearch.verifySelectedRecords(selectedRecords);
   });
 
-  it('C196754 verify show selected records', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
+  it('C196754 verify show selected records (firebird)', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
     const selectedRecords = 3;
 
     InventorySearch.byKeywords('*');
@@ -31,7 +31,7 @@ describe('ui-inventory: selecting / changing records', () => {
     InventoryModals.verifyButtons();
   });
 
-  it('C196756 verify selected records after changing selection', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
+  it('C196756 verify selected records after changing selection (firebird)', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
     const selectedRecords = 3;
     const unselectedRecords = 1;
 

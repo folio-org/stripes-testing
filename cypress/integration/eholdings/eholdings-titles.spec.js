@@ -113,7 +113,7 @@ describe('eHoldings titles management', () => {
     });
   });
 
-  it('C693 Create a custom title.', { tags:  [testTypes.smoke, features.eHoldings] }, () => {
+  it('C693 Create a custom title. (spitfire)', { tags:  [testTypes.smoke, features.eHoldings] }, () => {
     cy.createTempUser([permissions.uieHoldingsRecordsEdit.gui,
       permissions.uieHoldingsTitlesPackagesCreateDelete.gui]).then(userProperties => {
       userId = userProperties.userId;

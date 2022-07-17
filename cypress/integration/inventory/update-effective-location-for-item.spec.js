@@ -72,7 +72,7 @@ describe('ui-inventory: Update the effective location for the item', () => {
     Users.deleteViaApi(userId);
   });
 
-  it('C3501 An item is being moved from one library location to another. Update the effective location for the item',
+  it('C3501 An item is being moved from one library location to another. Update the effective location for the item (folijet)',
     { tags: [TestTypes.smoke] },
     () => {
       InventorySearch.switchToItem();

@@ -11,7 +11,7 @@ describe('ui-finance: Delete budget with transfer transaction from fund', () => 
   const fundFrom = { ...NewFund.defaultFund };
   const fundTo = { ...NewFund.defaultFund };
 
-  it('C343240 delete budget with transfer transaction', { tags: [TestType.smoke] }, () => {
+  it('C343240 delete budget with transfer transaction (thunderjet)', { tags: [TestType.smoke] }, () => {
     // TODO: update test in testrail - it should contain rather business actions than buttons clicks etc.
     const hundredQunatity = 100;
     const budgetCanNotBeDeletedMessage = 'Budget can not be deleted, because it has transactions';

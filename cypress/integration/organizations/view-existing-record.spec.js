@@ -20,7 +20,7 @@ describe('ui-organizations: View organization', () => {
     Organizations.deleteOrganizationApi(organization.id);
   });
 
-  it('C672 View existing organization record', { tags: [TestType.smoke] }, () => {
+  it('C672 View existing organization record (thunderjet)', { tags: [TestType.smoke] }, () => {
     Organizations.selectActiveStatus();
     Organizations.checkOrganizationFilter();
     Organizations.chooseOrganizationFromList(organization);

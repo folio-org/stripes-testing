@@ -16,11 +16,12 @@ import LoanPolicy, {
 import NoticePolicy, {
   defaultNoticePolicy,
 } from '../../../../support/fragments/circulation/notice-policy';
-import MaterialTypesSettings, {
-  defaultMaterialType,
-} from '../../../../support/fragments/inventory/materialType/materialTypesSettings';
+import MaterialTypes from '../../../../support/fragments/settings/inventory/materialTypes';
 import permissions from '../../../../support/dictionary/permissions';
 import Users from '../../../../support/fragments/users/users';
+import NewMaterialType, {
+  defaultMaterialType,
+} from '../../../../support/fragments/settings/inventory/newMaterialType';
 
 describe('ui-circulation-settings: Edit circulation rules', () => {
   let originalCirculationRules;
@@ -41,7 +42,7 @@ describe('ui-circulation-settings: Edit circulation rules', () => {
       CirculationRules.getApi().then((circulationRules) => {
         originalCirculationRules = circulationRules;
       });
-      MaterialTypesSettings.createApi(MaterialTypesSettings.getDefaultMaterialType());
+      NewMaterialType.createViaApi(NewMaterialType.getDefaultMaterialType());
       NoticePolicy.createApi();
       LoanPolicy.createApi();
       RequestPolicy.createApi();
@@ -56,7 +57,7 @@ describe('ui-circulation-settings: Edit circulation rules', () => {
 
   afterEach(() => {
     CirculationRules.updateApi(originalCirculationRules);
-    MaterialTypesSettings.deleteApi(defaultMaterialType.id);
+    MaterialTypes.deleteApi(defaultMaterialType.id);
     NoticePolicy.deleteApi(defaultNoticePolicy.id);
     LoanPolicy.deleteApi(defaultLoanPolicy.id);
     RequestPolicy.deleteApi(defaultRequestPolicy.id);
@@ -65,7 +66,7 @@ describe('ui-circulation-settings: Edit circulation rules', () => {
     Users.deleteViaApi(newUserId);
   });
 
-  it('C2268: Add notice policy to circulation rules', { tags: [TestType.smoke, TestType.broken] }, () => {
+  it('C2268: Add notice policy to circulation rules (vega)', { tags: [TestType.smoke, TestType.broken] }, () => {
     CirculationRules.clearCirculationRules();
     CirculationRules.fillInPriority();
 
