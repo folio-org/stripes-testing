@@ -105,7 +105,7 @@ describe('ui-data-import: MARC file import with creating of the new instance, ho
       FileDetails.columnName.item].forEach(columnName => {
       FileDetails.checkStatusInColumn(FileDetails.status.created, columnName);
     });
-    FileDetails.checkItemsQuantityInSummaryTable(FileDetails.status.created, '1');
+    FileDetails.checkItemsQuantityInSummaryTable(0, '1');
 
     // delete generated profiles
     JobProfiles.deleteJobProfile(specialJobProfile.profileName);

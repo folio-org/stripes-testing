@@ -15,7 +15,7 @@ export default {
   gotoViewAllPage() {
     cy.do([
       Button('Actions').click(),
-      Button('View all').click()
+      Button('View all logs').click()
     ]);
   },
 

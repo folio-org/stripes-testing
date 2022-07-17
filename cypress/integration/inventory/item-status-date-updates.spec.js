@@ -30,6 +30,7 @@ import NewLocations from '../../support/fragments/settings/tenant/locations/newL
 import Users from '../../support/fragments/users/users';
 import UserEdit from '../../support/fragments/users/userEdit';
 import ServicePoint from '../../support/fragments/servicePoint/servicePoint';
+import Organizations from '../../support/fragments/organizations/organizations';
 
 describe('ui-inventory: Item status date updates', () => {
   const instanceTitle = `autotestTitle ${Helper.getRandomBarcode()}`;
@@ -69,7 +70,7 @@ describe('ui-inventory: Item status date updates', () => {
         ServicePoints.createViaApi(effectiveLocationServicePoint);
         ServicePoints.createViaApi(notEffectiveLocationServicePoint);
         UserEdit.addServicePointsViaApi([effectiveLocationServicePoint.id, notEffectiveLocationServicePoint.id],
-          user.userId, effectiveLocationServicePoint.id);
+          user.userId);
 
         cy.login(userProperties.username, userProperties.password)
           .then(() => {
@@ -131,9 +132,9 @@ describe('ui-inventory: Item status date updates', () => {
       .then(order => {
         Orders.deleteOrderApi(order[0].id);
       });
-    cy.getOrganizationApi()
+    Organizations.getOrganizationViaApi()
       .then(organization => {
-        cy.deleteOrganizationApi(organization[0].id);
+        Organizations.deleteOrganizationViaApi(organization.id);
       });
     UserEdit.changeServicePointPreferenceViaApi(user.userId, [effectiveLocationServicePoint.id]).then(() => {
       ServicePoint.deleteViaApi(effectiveLocationServicePoint.id);

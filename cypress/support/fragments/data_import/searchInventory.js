@@ -2,7 +2,8 @@ import {
   Button,
   KeyValue,
   MultiColumnListCell,
-  TextField
+  TextField,
+  Select
 } from '../../../../interactors';
 import logsViewAll from './logs/logsViewAll';
 import DateTools from '../../utils/dateTools';
@@ -44,12 +45,10 @@ const getInstanceHRID = () => {
 };
 
 const searchInstanceByHRID = (id) => {
-  cy.get('#input-inventory-search-qindex').select('Instance HRID');
-  cy.do([
-    // Select({ id: 'input-inventory-search-qindex' }).choose('Instance HRID'),
-    TextField({ id: 'input-inventory-search' }).fillIn(id),
-    Button('Search').click()
-  ]);
+  InventoryInstances.waitContentLoading();
+  cy.do(Select({ id: 'input-inventory-search-qindex' }).choose('Instance HRID'));
+  cy.do(TextField({ id: 'input-inventory-search' }).fillIn(id));
+  cy.do(Button('Search').click());
   InventoryInstances.waitLoading();
 };
 

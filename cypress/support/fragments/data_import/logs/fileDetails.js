@@ -29,6 +29,26 @@ const checkStatusInColumn = (specialStatus, specialColumnName) => {
       .has({ content: specialStatus })));
 };
 
+const checkItemsQuantityInSummaryTable = (rowNumber, quantity) => {
+  for (let i = 1; i < 5; i++) {
+    cy.expect(MultiColumnList({ id: 'job-summary-table' })
+      .find(MultiColumnListRow({ indexRow: `row-${rowNumber}` }))
+      .find(MultiColumnListCell({ columnIndex: i, content: quantity }))
+      .exists());
+  }
+};
+
+const checkCreatedInvoiceISummaryTable = (quantity) => {
+  cy.expect(MultiColumnList({ id: 'job-summary-table' })
+    .find(MultiColumnListRow({ indexRow: 'row-0' }))
+    .find(MultiColumnListCell({ columnIndex: 1, content: quantity }))
+    .exists());
+  cy.expect(MultiColumnList({ id: 'job-summary-table' })
+    .find(MultiColumnListRow({ indexRow: 'row-0' }))
+    .find(MultiColumnListCell({ columnIndex: 7, content: quantity }))
+    .exists());
+};
+
 function checkItemsStatusesInResultList(rowIndex, itemStatuses) {
   // itemStatuses = [SRS MARC status, Instance status, Holdings status, Item status]
   const indexes = [2, 3, 4, 5];
@@ -40,19 +60,6 @@ function checkItemsStatusesInResultList(rowIndex, itemStatuses) {
   });
 }
 
-const checkItemsQuantityInSummaryTable = (itemStatus, quantity) => {
-  cy.expect(MultiColumnList({ id: 'job-summary-table' })
-    .find(MultiColumnListRow({ indexRow: 'row-0' }))
-    .find(MultiColumnListCell({ columnIndex: 0, content: itemStatus }))
-    .exists());
-  for (let i = 1; i < 4; i++) {
-    cy.expect(MultiColumnList({ id: 'job-summary-table' })
-      .find(MultiColumnListRow({ indexRow: 'row-0' }))
-      .find(MultiColumnListCell({ columnIndex: i, content: quantity }))
-      .exists());
-  }
-};
-
 const invoiceNumberFromEdifactFile = '94999';
 
 export default {
@@ -62,6 +69,7 @@ export default {
   checkStatusInColumn,
   checkItemsStatusesInResultList,
   checkItemsQuantityInSummaryTable,
+  checkCreatedInvoiceISummaryTable,
 
   openInstanceInInventory:(columnIndex = 3, row = 0) => {
     cy.do(MultiColumnList({ id:'search-results-list' })
