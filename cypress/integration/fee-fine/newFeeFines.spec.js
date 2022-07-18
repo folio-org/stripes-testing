@@ -56,6 +56,8 @@ describe('Fee/fine management', () => {
                 testData.feeFineType = { id:  manualCharge.id, feeFineTypeName: manualCharge.feeFineType };
                 PaymentMethods.createViaApi(testData.owner.id).then(createdPaymentMethod => {
                   testData.paymentMethod = { id: createdPaymentMethod.id, name: createdPaymentMethod.name };
+                  // providing path in the login function doesn't working
+                  // TODO: investigate
                   cy.loginAsAdmin();
                   cy.visit(AppPaths.getUserPreviewPath(testData.userProperties.id));
                   UsersCard.waitLoading();
