@@ -4,6 +4,7 @@ import TopMenu from '../../support/fragments/topMenu';
 import TestTypes from '../../support/dictionary/testTypes';
 import Helper from '../../support/fragments/finance/financeHelper';
 import { MultiColumnListCell } from '../../../interactors';
+import DevTeams from '../../support/dictionary/devTeams';
 
 describe('ui-inventory: Create new instance with add "New"', () => {
   const instanceTitle = `autoTestInstanceTitle ${Helper.getRandomBarcode()}`;
@@ -21,7 +22,7 @@ describe('ui-inventory: Create new instance with add "New"', () => {
       });
   });
 
-  it('C598 Create new instance with add "New" (folijet)', { tags: [TestTypes.smoke, TestTypes.broken] }, () => {
+  it('C598 Create new instance with add "New" (folijet) (prokopovych)', { tags: [TestTypes.smoke, DevTeams.folijet] }, () => {
     InventoryInstances.add(instanceTitle);
     SearchInventory.searchInstanceByTitle(instanceTitle);
 

@@ -6,6 +6,7 @@ import TopMenu from '../../support/fragments/topMenu';
 import SearchInventory from '../../support/fragments/data_import/searchInventory';
 import Users from '../../support/fragments/users/users';
 import InventoryInstance from '../../support/fragments/inventory/inventoryInstance';
+import DevTeams from '../../support/dictionary/devTeams';
 
 describe('ui-inventory: Filter instances by tags', () => {
   let userId;
@@ -33,7 +34,7 @@ describe('ui-inventory: Filter instances by tags', () => {
     Users.deleteViaApi(userId);
   });
 
-  it('C343215 Filter instances by tags (folijet)', { tags: [TestTypes.smoke, TestTypes.broken] }, () => {
+  it('C343215 Filter instances by tags (folijet)', { tags: [TestTypes.smoke, DevTeams.folijet] }, () => {
     cy.visit(TopMenu.inventoryPath);
     FilterInstancesByTags.verifyPanesExist();
     SearchInventory.searchInstanceByTitle(instanceRecord.instanceTitle);
