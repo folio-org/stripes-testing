@@ -10,6 +10,7 @@ import permissions from '../../support/dictionary/permissions';
 import Users from '../../support/fragments/users/users';
 import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
 import Helper from '../../support/fragments/finance/financeHelper';
+import DevTeams from '../../support/dictionary/devTeams';
 
 describe('ui-inventory: Update the effective location for the item', () => {
   const instanceTitle = `autoTestInstanceTitle ${Helper.getRandomBarcode()}`;
@@ -72,8 +73,8 @@ describe('ui-inventory: Update the effective location for the item', () => {
     Users.deleteViaApi(userId);
   });
 
-  it('C3501 An item is being moved from one library location to another. Update the effective location for the item (folijet)',
-    { tags: [TestTypes.smoke] },
+  it('C3501 An item is being moved from one library location to another. Update the effective location for the item (folijet) (prokopovych)',
+    { tags: [TestTypes.smoke, DevTeams.folijet] },
     () => {
       InventorySearch.switchToItem();
       InventorySearch.searchByParameter('Barcode', itemBarcode);

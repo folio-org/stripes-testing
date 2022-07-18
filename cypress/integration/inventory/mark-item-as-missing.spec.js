@@ -7,6 +7,7 @@ import Users from '../../support/fragments/users/users';
 import UserEdit from '../../support/fragments/users/userEdit';
 import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
 import InventoryInstance from '../../support/fragments/inventory/inventoryInstance';
+import DevTeams from '../../support/dictionary/devTeams';
 
 describe('ui-inventory: Mark an item as Missing', () => {
   let user = {};
@@ -70,7 +71,7 @@ describe('ui-inventory: Mark an item as Missing', () => {
     requesterIds.forEach(id => Users.deleteViaApi(id));
   });
 
-  it('C714 Mark an item as Missing (folijet)', { tags: [TestTypes.smoke, TestTypes.broken] }, () => {
+  it('C714 Mark an item as Missing (folijet) (prokopovych)', { tags: [TestTypes.smoke, DevTeams.folijet] }, () => {
     cy.visit(TopMenu.inventoryPath);
     MarkItemAsMissing.findAndOpenInstance(instanceData.instanceTitle);
     MarkItemAsMissing.getItemsToMarkAsMissing(createdItems).forEach(item => {
