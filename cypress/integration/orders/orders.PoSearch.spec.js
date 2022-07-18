@@ -6,6 +6,7 @@ import TopMenu from '../../support/fragments/topMenu';
 import DateTools from '../../support/utils/dateTools';
 import SearchHelper from '../../support/fragments/finance/financeHelper';
 import OrdersHelper from '../../support/fragments/orders/ordersHelper';
+import devTeams from '../../support/dictionary/devTeams';
 
 describe('orders: Test PO search', () => {
   const order = { ...NewOrder.defaultOneTimeOrder };
@@ -31,7 +32,7 @@ describe('orders: Test PO search', () => {
     Orders.deleteOrderViaActions();
   });
 
-  it('C6717 Test the PO searches', { tags: [TestType.smoke] }, () => {
+  it('C6717 Test the PO searches (thunderjet)', { tags: [TestType.smoke, devTeams.thunderjet] }, () => {
     Orders.createOrderWithOrderLineViaApi(order, orderLine)
       .then(orderNumber => {
         const today = new Date();

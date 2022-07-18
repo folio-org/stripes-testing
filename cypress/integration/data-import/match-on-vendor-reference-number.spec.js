@@ -90,7 +90,7 @@ describe('ui-data-import: Match on VRN and update related Instance, Holdings, It
     MatchOnVRN.deleteItemViaAPI();
   });
 
-  it('C350591 Match on VRN and update related Instance, Holdings, Item', { tags: [TestTypes.smoke] }, () => {
+  it('C350591 Match on VRN and update related Instance, Holdings, Item (folijet)', { tags: [TestTypes.smoke] }, () => {
     // create order
     cy.visit(TopMenu.ordersPath);
     Orders.createOrder(order);
