@@ -8,9 +8,15 @@ import {
   SelectionList,
   TextField,
   Pane,
-  Checkbox
+  Checkbox,
+  MultiColumnListCell,
+  Modal
 } from '../../../../../interactors';
 import UrlParams from '../url-params';
+
+function getCheckboxByRow(row) {
+  return MultiColumnList().find(MultiColumnListCell({ 'row': row, 'columnIndex': 0 })).find(Checkbox());
+}
 
 export default {
   openViewAll() {
@@ -165,9 +171,10 @@ export default {
 
   checkByDate({ from, end }) {
     const queryString = UrlParams.getDateQueryString({ from, end });
-    this.getNumberOfMatchedJobs(queryString).then(count => {
+    return this.getNumberOfMatchedJobs(queryString).then(count => {
       // ensure MultiColumnList is filtered by Date
       this.checkRowsCount(count);
+      cy.wrap(count);
     });
   },
 
@@ -270,6 +277,31 @@ export default {
   },
 
   selectAllLogs:() => {
-    cy.do(MultiColumnList({ id:'list-column-selected' }).find(Checkbox({ name:'selected-all' })));
+    cy.do(MultiColumnList({ id:'list-data-import' }).find(Checkbox({ name:'selected-all', checked: false })).click());
+  },
+
+  checkIsLogsSelected:(elemCount) => {
+    for (let i = 0; i < elemCount; i++) {
+      cy.expect(getCheckboxByRow(i).is({ disabled: false, checked: true }));
+    }
+  },
+
+  unmarcCheckbox:(index) => {
+    cy.do(MultiColumnList({ id:'list-data-import' })
+      .find(MultiColumnListCell({ row: 0, columnIndex: index }))
+      .find(Checkbox({ checked: true })).click());
+  },
+
+  checkIsCheckmarkAllLogsRemoved:() => {
+    cy.do(MultiColumnList({ id:'list-data-import' }).find(Checkbox({ name:'selected-all', checked: false })).exists());
+  },
+
+  deleteLog:() => {
+    cy.do(Pane({ id:'pane-results' }).find(Button('Actions')).click());
+    cy.do(Button('Delete selected logs').click());
+  },
+
+  checkIsModalAbsent:() => {
+    cy.expect(Modal('Delete data import logs?').absent());
   }
 };
