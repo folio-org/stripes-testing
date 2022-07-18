@@ -1,4 +1,5 @@
 export default {
   firebird: 'firebird',
-  vega: 'vega'
+  vega: 'vega',
+  thunderjet: 'thunderjet'
 };
