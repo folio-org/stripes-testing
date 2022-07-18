@@ -39,20 +39,15 @@ const waitCreatingMatchProfile = () => {
   cy.expect(Pane({ id:'pane-results' }).find(Button('Actions')).exists());
 };
 
-const checkMatchProfilePresented = (profileName) => {
-  waitCreatingMatchProfile();
-  cy.do(TextField({ id:'input-search-match-profiles-field' }).fillIn(profileName));
-  cy.expect(Pane('Match profiles').find(Button('Search')).has({ visible: true }));
-  // waiting for activite search button
-  cy.wait(1000);
-  cy.do(Pane('Match profiles').find(Button('Search')).click());
-  cy.expect(MultiColumnListCell(profileName).exists());
+const clearSearchField = () => {
+  cy.do(TextField({ id:'input-search-match-profiles-field' }).focus());
+  cy.do(TextField({ id:'input-search-match-profiles-field' }).clear());
 };
 
 export default {
   openNewMatchProfileForm,
   deleteMatchProfile,
-  checkMatchProfilePresented,
+  clearSearchField,
 
   createMatchProfile(profile) {
     openNewMatchProfileForm();
@@ -60,9 +55,21 @@ export default {
     cy.do(Button('Save as profile & Close').click());
   },
 
+  checkMatchProfilePresented:(profileName) => {
+    waitCreatingMatchProfile();
+    cy.do(TextField({ id:'input-search-match-profiles-field' }).fillIn(profileName));
+    cy.expect(Pane('Match profiles').find(Button('Search')).has({ visible: true }));
+    // waiting for activite search button
+    cy.wait(1000);
+    cy.do(Pane('Match profiles').find(Button('Search')).click());
+    cy.expect(MultiColumnListCell(profileName).exists());
+    clearSearchField();
+  },
+
   createMatchProfileForPol(profile) {
     openNewMatchProfileForm();
     NewMatchProfile.fillMatchProfileFormForPol(profile);
     cy.do(Button('Save as profile & Close').click());
-  },
+    clearSearchField();
+  }
 };
