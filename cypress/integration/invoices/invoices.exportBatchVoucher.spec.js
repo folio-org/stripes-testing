@@ -10,6 +10,7 @@ import DateTools from '../../support/utils/dateTools';
 import FileManager from '../../support/utils/fileManager';
 import SettingsInvoices from '../../support/fragments/invoices/settingsInvoices';
 import Organizations from '../../support/fragments/organizations/organizations';
+import devTeams from '../../support/dictionary/devTeams';
 
 describe('ui-invoices-settings: Export batch voucher', () => {
   const invoice = { ...NewInvoice.defaultUiInvoice };
@@ -52,7 +53,7 @@ describe('ui-invoices-settings: Export batch voucher', () => {
     FileManager.deleteFolder(Cypress.config('downloadsFolder'));
   });
 
-  it('C10943 Run batch voucher export manually (thunderjet)', { tags: [TestType.smoke, TestType.broken] }, () => {
+  it('C10943 Run batch voucher export manually (thunderjet)', { tags: [TestType.smoke, devTeams.thunderjet, TestType.broken] }, () => {
     Invoices.createDefaultInvoice(invoice, vendorPrimaryAddress);
     Invoices.createInvoiceLine(invoiceLine);
     Invoices.addFundDistributionToLine(invoiceLine, fund);

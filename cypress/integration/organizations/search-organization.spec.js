@@ -2,6 +2,7 @@ import TopMenu from '../../support/fragments/topMenu';
 import TestType from '../../support/dictionary/testTypes';
 import Organizations from '../../support/fragments/organizations/organizations';
 import NewOrganization from '../../support/fragments/organizations/newOrganization';
+import devTeams from '../../support/dictionary/devTeams';
 
 describe('ui-organizations: Search organization', () => {
   const organization = { ...NewOrganization.specialOrganization };
@@ -28,7 +29,7 @@ describe('ui-organizations: Search organization', () => {
     { parameter: 'Accounting code', value: organization.erpCode },
     { parameter: 'Tax ID', value: organization.taxId },
   ].forEach((searcher) => {
-    it('C6712 Test the Organizations app searches (thunderjet)', { tags: [TestType.smoke] }, () => {
+    it('C6712 Test the Organizations app searches (thunderjet)', { tags: [TestType.smoke, devTeams.thunderjet] }, () => {
       cy.visit(TopMenu.organizationsPath);
       Organizations.searchByParameters(searcher.parameter, searcher.value);
       Organizations.checkSearchResults(organization);

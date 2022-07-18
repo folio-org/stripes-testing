@@ -9,6 +9,7 @@ import getRandomPostfix from '../../support/utils/stringTools';
 import NewInvoice from '../../support/fragments/invoices/newInvoice';
 import DateTools from '../../support/utils/dateTools';
 import Organizations from '../../support/fragments/organizations/organizations';
+import devTeams from '../../support/dictionary/devTeams';
 
 describe('orders: Test Po line filters', () => {
   const today = new Date();
@@ -101,7 +102,7 @@ describe('orders: Test Po line filters', () => {
     { filterActions: () => { Orders.selectFilterSubscriptionFromPOL(subcriptionDate); } },
     { filterActions: Orders.selectFilterNoInRushPOL },
   ].forEach((filter) => {
-    it('C6720 Test the POL filters [except tags] (thunderjet)', { tags: [TestType.smoke] }, () => {
+    it('C6720 Test the POL filters [except tags] (thunderjet)', { tags: [TestType.smoke, devTeams.thunderjet] }, () => {
       filter.filterActions();
       Orders.checkOrderlineSearchResults(orderLineNumber);
       Orders.resetFilters();

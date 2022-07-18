@@ -10,6 +10,7 @@ import InventoryInstance from '../../support/fragments/inventory/inventoryInstan
 import InteractorsTools from '../../support/utils/interactorsTools';
 import OrdersHelper from '../../support/fragments/orders/ordersHelper';
 import Organizations from '../../support/fragments/organizations/organizations';
+import devTeams from '../../support/dictionary/devTeams';
 
 describe('orders: Unreceive piece from Order', () => {
   const order = { ...NewOrder.defaultOneTimeOrder };
@@ -30,7 +31,7 @@ describe('orders: Unreceive piece from Order', () => {
     cy.login(Cypress.env('diku_login'), Cypress.env('diku_password'));
   });
 
-  it('C10925 Unreceive piece (thunderjet)', { tags: [TestType.smoke] }, () => {
+  it('C10925 Unreceive piece (thunderjet)', { tags: [TestType.smoke, devTeams.thunderjet] }, () => {
     const barcode = Helper.getRandomBarcode();
     const caption = 'autotestCaption';
     Orders.createOrderWithOrderLineViaApi(order, orderLine)

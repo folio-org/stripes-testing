@@ -6,6 +6,7 @@ import TopMenu from '../../support/fragments/topMenu';
 import Helper from '../../support/fragments/finance/financeHelper';
 import OrdersHelper from '../../support/fragments/orders/ordersHelper';
 import Organizations from '../../support/fragments/organizations/organizations';
+import devTeams from '../../support/dictionary/devTeams';
 
 describe('orders: Close Order', () => {
   const order = { ...NewOrder.defaultOneTimeOrder };
@@ -30,7 +31,7 @@ describe('orders: Close Order', () => {
     Orders.deleteOrderApi(order.id);
   });
 
-  it('C667 Close an existing order (thunderjet)', { tags: [TestType.smoke] }, () => {
+  it('C667 Close an existing order (thunderjet)', { tags: [TestType.smoke, devTeams.thunderjet] }, () => {
     Orders.createOrderWithOrderLineViaApi(order, orderLine)
       .then(orderNumber => {
         cy.visit(TopMenu.ordersPath);

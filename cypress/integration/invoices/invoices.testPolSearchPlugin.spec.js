@@ -8,6 +8,7 @@ import NewOrderLine from '../../support/fragments/orders/enchancedOrderLine';
 import Orders from '../../support/fragments/orders/orders';
 import OrdersHelper from '../../support/fragments/orders/ordersHelper';
 import Organizations from '../../support/fragments/organizations/organizations';
+import devTeams from '../../support/dictionary/devTeams';
 
 describe('ui-invoices: test POL search plugin', () => {
   const invoice = { ...NewInvoice.defaultUiInvoice };
@@ -49,7 +50,7 @@ describe('ui-invoices: test POL search plugin', () => {
     Orders.deleteOrderApi(order.id);
   });
 
-  it('C350389 Test purchase order line plugin search (thunderjet)', { tags: [testType.smoke] }, () => {
+  it('C350389 Test purchase order line plugin search (thunderjet)', { tags: [testType.smoke, devTeams.thunderjet] }, () => {
     Invoices.getSearchParamsMap(createdOrderNumber, orderLine);
     Invoices.createDefaultInvoice(invoice, vendorPrimaryAddress);
     Invoices.checkCreatedInvoice(invoice, vendorPrimaryAddress);

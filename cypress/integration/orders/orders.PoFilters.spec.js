@@ -7,6 +7,7 @@ import SearchHelper from '../../support/fragments/finance/financeHelper';
 import OrdersHelper from '../../support/fragments/orders/ordersHelper';
 import NewInvoice from '../../support/fragments/invoices/newInvoice';
 import Organizations from '../../support/fragments/organizations/organizations';
+import devTeams from '../../support/dictionary/devTeams';
 
 describe('orders: Test PO filters', () => {
   const order = {
@@ -65,7 +66,7 @@ describe('orders: Test PO filters', () => {
     { filterActions: Orders.selectOrderTypeFilter },
     { filterActions: () => { Orders.selectVendorFilter(invoice); } },
   ].forEach((filter) => {
-    it('C6718 Test the PO filters with open Order [except tags] (thunderjet)', { tags: [TestType.smoke] }, () => {
+    it('C6718 Test the PO filters with open Order [except tags] (thunderjet)', { tags: [TestType.smoke, devTeams.thunderjet] }, () => {
       filter.filterActions();
       Orders.checkSearchResults(orderNumber);
       Orders.resetFilters();
