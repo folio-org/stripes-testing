@@ -4,6 +4,7 @@ import NewLedger from '../../../support/fragments/finance/ledgers/newLedger';
 import getRandomPostfix from '../../../support/utils/stringTools';
 import testType from '../../../support/dictionary/testTypes';
 import FinanceHelp from '../../../support/fragments/finance/financeHelper';
+import devTeams from '../../../support/dictionary/devTeams';
 
 describe('ui-finance: Ledger creation', () => {
   before(() => {
@@ -11,7 +12,7 @@ describe('ui-finance: Ledger creation', () => {
     cy.visit(TopMenu.ledgerPath);
   });
 
-  it('C4053 Create a new ledger', { tags: [testType.smoke] }, () => {
+  it('C4053 Create a new ledger (thunderjet)', { tags: [testType.smoke, devTeams.thunderjet] }, () => {
     const defaultLedger = NewLedger.defaultLedger;
 
     Ledgers.createDefaultLedger(defaultLedger);

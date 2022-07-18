@@ -6,12 +6,13 @@ import FinanceHelp from '../../../support/fragments/finance/financeHelper';
 import NewFund from '../../../support/fragments/finance/funds/newFund';
 import { calloutTypes } from '../../../../interactors';
 import InteractorsTools from '../../../support/utils/interactorsTools';
+import devTeams from '../../../support/dictionary/devTeams';
 
 describe('ui-finance: Delete budget with transfer transaction from fund', () => {
   const fundFrom = { ...NewFund.defaultFund };
   const fundTo = { ...NewFund.defaultFund };
 
-  it('C343240 delete budget with transfer transaction', { tags: [TestType.smoke] }, () => {
+  it('C343240 delete budget with transfer transaction (thunderjet)', { tags: [TestType.smoke, devTeams.thunderjet] }, () => {
     // TODO: update test in testrail - it should contain rather business actions than buttons clicks etc.
     const hundredQunatity = 100;
     const budgetCanNotBeDeletedMessage = 'Budget can not be deleted, because it has transactions';

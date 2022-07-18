@@ -3,6 +3,7 @@ import Funds from '../../../support/fragments/finance/funds/funds';
 import DateTools from '../../../support/utils/dateTools';
 import FinanceHelp from '../../../support/fragments/finance/financeHelper';
 import testType from '../../../support/dictionary/testTypes';
+import devTeams from '../../../support/dictionary/devTeams';
 
 describe('ui-finance: Add budget to fund', () => {
   const fund = { ...newFund.defaultFund };
@@ -12,7 +13,7 @@ describe('ui-finance: Add budget to fund', () => {
     cy.deleteLedgerApi(createdLedgerId);
   });
 
-  it('C4057 Add budget to a fund', { tags: [testType.smoke] }, () => {
+  it('C4057 Add budget to a fund (thunderjet)', { tags: [testType.smoke, devTeams.thunderjet] }, () => {
     Funds.createFundViaUI(fund)
       .then(
         createdLedger => {

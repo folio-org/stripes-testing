@@ -85,7 +85,7 @@ describe('ui-inventory: exports', () => {
     FileManager.deleteFolder(Cypress.config('downloadsFolder'));
   });
 
-  it('C9284 Export small number of Instance UUIDs (30 or fewer)', { retries: 3, tags: [testTypes.smoke, devTeams.firebird] }, () => {
+  it('C9284 Export small number of Instance UUIDs (30 or fewer) (firebird)', { retries: 3, tags: [testTypes.smoke, devTeams.firebird] }, () => {
     InventorySearch.searchByParameter('Title (all)', instanceTitle);
     InventorySearch.saveUUIDs();
 
@@ -103,7 +103,7 @@ describe('ui-inventory: exports', () => {
       });
   });
 
-  it('C9287 verifies export CQL query', { retries: 3, tags: [testTypes.smoke, devTeams.firebird] }, () => {
+  it('C9287 verifies export CQL query (firebird)', { retries: 3, tags: [testTypes.smoke, devTeams.firebird] }, () => {
     InventorySearch.byLanguage();
     InventorySearch.searchByParameter('Keyword (title, contributor, identifier)', instanceTitle);
     InventorySearch.byEffectiveLocation(locationName);
@@ -117,7 +117,7 @@ describe('ui-inventory: exports', () => {
     );
   });
 
-  it('C196757 verifies export instances (MARC)', { retries: 3, tags: [testTypes.smoke, devTeams.firebird, testTypes.broken] }, () => {
+  it('C196757 verifies export instances (MARC) (firebird)', { retries: 3, tags: [testTypes.smoke, devTeams.firebird, testTypes.broken] }, () => {
     InventorySearch.searchByParameter('Title (all)', instanceTitle);
     cy.do(InventorySearch.getSearchResult().find(Checkbox()).click());
     InventorySearch.exportInstanceAsMarc();

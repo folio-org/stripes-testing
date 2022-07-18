@@ -38,7 +38,7 @@ describe('data-export', () => {
     users.deleteViaApi(user.userId);
   });
 
-  it('C9288 Export small number of instance records - default instance mapping profile', { retries: 3, tags: [TestTypes.smoke, devTeams.firebird] }, () => {
+  it('C9288 Export small number of instance records - default instance mapping profile (firebird)', { retries: 3, tags: [TestTypes.smoke, devTeams.firebird] }, () => {
     const fileName = `autoTestFile${getRandomPostfix()}.csv`;
 
     // download file with existing UUIDs

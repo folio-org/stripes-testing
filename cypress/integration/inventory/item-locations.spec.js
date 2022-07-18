@@ -86,7 +86,7 @@ describe('ui-inventory: location', () => {
     users.deleteViaApi(userId);
   });
 
-  it('C163923 Change a location to remote storage', { tags: [TestTypes.smoke, devTeams.firebird] }, () => {
+  it('C163923 Change a location to remote storage (firebird)', { tags: [TestTypes.smoke, devTeams.firebird] }, () => {
     const toBeEditedLocationName = Cypress.env('locations')[0].name;
     const editedLocationName = Cypress.env('locations')[1].name;
 
@@ -114,7 +114,7 @@ describe('ui-inventory: location', () => {
     );
   });
 
-  it('C163924 Change a remote storage location to standard location', { tags: [TestTypes.smoke, devTeams.firebird] }, () => {
+  it('C163924 Change a remote storage location to standard location (firebird)', { tags: [TestTypes.smoke, devTeams.firebird] }, () => {
     const toBeEditedLocationName = Cypress.env('locations')[1].name;
     const editedLocationName = Cypress.env('locations')[0].name;
 
