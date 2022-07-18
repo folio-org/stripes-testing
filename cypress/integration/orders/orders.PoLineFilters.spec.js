@@ -8,11 +8,12 @@ import basicOrderLine from '../../support/fragments/orders/basicOrderLine';
 import getRandomPostfix from '../../support/utils/stringTools';
 import NewInvoice from '../../support/fragments/invoices/newInvoice';
 import DateTools from '../../support/utils/dateTools';
+import devTeams from '../../support/dictionary/devTeams';
 
 describe('orders: Test Po line filters', () => {
   const today = new Date();
   const subcriptionDate = DateTools.getFormattedDate({ date: today }, 'MM/DD/YYYY');
-  const order = { ...NewOrder.defaultOrder };
+  const order = { ...NewOrder.defaultOneTimeOrder };
   const orderLine = {
     ...basicOrderLine.defaultOrderLine,
     details: {
@@ -100,7 +101,7 @@ describe('orders: Test Po line filters', () => {
     { filterActions: () => { Orders.selectFilterSubscriptionFromPOL(subcriptionDate); } },
     { filterActions: Orders.selectFilterNoInRushPOL },
   ].forEach((filter) => {
-    it('C6720 Test the POL filters [except tags]', { tags: [TestType.smoke] }, () => {
+    it('C6720 Test the POL filters [except tags] (thunderjet)', { tags: [TestType.smoke, devTeams.thunderjet] }, () => {
       filter.filterActions();
       Orders.checkOrderlineSearchResults(orderLineNumber);
       Orders.resetFilters();

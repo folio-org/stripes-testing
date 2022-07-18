@@ -1,10 +1,11 @@
 import TopMenu from '../../support/fragments/topMenu';
 import TestType from '../../support/dictionary/testTypes';
 import Organizations from '../../support/fragments/organizations/organizations';
-import newOrganization from '../../support/fragments/organizations/newOrganization';
+import NewOrganization from '../../support/fragments/organizations/newOrganization';
+import devTeams from '../../support/dictionary/devTeams';
 
 describe('ui-organizations: Filtering organization', () => {
-  const organization = { ...newOrganization.specialOrganization };
+  const organization = { ...NewOrganization.specialOrganization };
 
   before(() => {
     cy.login(Cypress.env('diku_login'), Cypress.env('diku_password'));
@@ -25,7 +26,7 @@ describe('ui-organizations: Filtering organization', () => {
     { filterActions: Organizations.selectLanguageFilter },
     { filterActions: Organizations.selectCashInPaymentMethod },
   ].forEach((filter) => {
-    it('C6713: Test the Organizations app filters (except Tags) ', { tags: [TestType.smoke] }, () => {
+    it('C6713: Test the Organizations app filters (except Tags) (thunderjet)', { tags: [TestType.smoke, devTeams.thunderjet] }, () => {
       cy.visit(TopMenu.organizationsPath);
       filter.filterActions();
       Organizations.checkOrganizationFilter();

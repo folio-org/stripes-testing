@@ -54,7 +54,7 @@ describe('ui-data-import: Filter the "View all" log screen', () => {
     });
   });
 
-  it('C11113 Filter the "View all" log screen', { tags: [TestTypes.smoke] }, () => {
+  it('C11113 Filter the "View all" log screen (folijet)', { tags: [TestTypes.smoke] }, () => {
     LogsViewAll.gotoViewAllPage();
     LogsViewAll.checkByReverseChronologicalOrder();
 

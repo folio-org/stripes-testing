@@ -27,6 +27,7 @@ export default HTML.extend('pane')
   .filters({
     title,
     subtitle: (el) => el.querySelector('[class^=paneSub]').textContent,
+    titleLabel: el => el.querySelector('[class^=paneTitleLabel-]').textContent,
     visible: {
       apply: (el) => isVisible(el) || (el.labels && Array.from(el.labels).some(isVisible)),
       default: true

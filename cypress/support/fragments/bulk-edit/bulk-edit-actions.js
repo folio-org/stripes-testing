@@ -72,7 +72,7 @@ export default {
     });
   },
 
-  prepareBulkEditFileForImport(fileMask, finalFileName, stringToBeReplaced, replaceString) {
+  prepareBulkEditFileWithDuplicates(fileMask, finalFileName, stringToBeReplaced, replaceString) {
     FileManager.findDownloadedFilesByMask(`*${fileMask}*`).then((downloadedFilenames) => {
       const lastDownloadedFilename = downloadedFilenames.sort()[downloadedFilenames.length - 1];
 
@@ -80,6 +80,19 @@ export default {
         .then((actualContent) => {
           const content = actualContent.split('\n');
           content[2] = content[1].slice().replace(stringToBeReplaced, replaceString);
+          FileManager.createFile(`cypress/fixtures/${finalFileName}`, content.join('\n'));
+        });
+    });
+  },
+
+  prepareValidBulkEditFile(fileMask, finalFileName, stringToBeReplaced, replaceString) {
+    FileManager.findDownloadedFilesByMask(`*${fileMask}*`).then((downloadedFilenames) => {
+      const lastDownloadedFilename = downloadedFilenames.sort()[downloadedFilenames.length - 1];
+
+      FileManager.readFile(lastDownloadedFilename)
+        .then((actualContent) => {
+          const content = actualContent.split('\n');
+          content[1] = content[1].slice().replace(stringToBeReplaced, replaceString);
           FileManager.createFile(`cypress/fixtures/${finalFileName}`, content.join('\n'));
         });
     });

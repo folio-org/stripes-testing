@@ -80,10 +80,10 @@ describe('Check Out', () => {
     ])
       .then(userProperties => {
         user = userProperties;
-        servicePoint = NewServicePoint.getDefaulServicePoint();
-        ServicePoints.createViaApi(servicePoint.body);
-        UserEdit.addServicePointViaApi(servicePoint.body.id,
-          user.userId, servicePoint.body.id);
+        servicePoint = NewServicePoint.getDefaultServicePoint();
+        ServicePoints.createViaApi(servicePoint);
+        UserEdit.addServicePointViaApi(servicePoint.id,
+          user.userId, servicePoint.id);
       })
       .then(() => {
         cy.getUsers({ limit: 1, query: `"personal.lastName"="${user.username}" and "active"="true"` })
@@ -98,7 +98,7 @@ describe('Check Out', () => {
     cy.wrap(testItems.forEach(item => {
       CheckInActions.createItemCheckinApi({
         itemBarcode: item.barcode,
-        servicePointId: servicePoint.body.id,
+        servicePointId: servicePoint.id,
         checkInDate: new Date().toISOString(),
       });
     }))
@@ -112,8 +112,8 @@ describe('Check Out', () => {
         })).then(() => {
           InventoryInstance.deleteInstanceViaApi(testInstanceIds.instanceId);
         });
-        UserEdit.changeServicePointPreferenceViaApi(user.userId, [servicePoint.body.id]).then(() => {
-          ServicePoint.deleteViaApi(servicePoint.body.id);
+        UserEdit.changeServicePointPreferenceViaApi(user.userId, [servicePoint.id]).then(() => {
+          ServicePoint.deleteViaApi(servicePoint.id);
           Users.deleteViaApi(user.userId);
         });
       });
@@ -126,7 +126,7 @@ describe('Check Out', () => {
       { missingitemPieces : numberOfMissingPieces, missingDescription: missingPieces });
   };
 
-  it('C591 Check out: multipiece items', { tags: [TestTypes.smoke] }, () => {
+  it('C591 Check out: multipiece items (folijet) (vega)', { tags: [TestTypes.smoke] }, () => {
     CheckOutActions.checkIsInterfacesOpened();
     CheckOutActions.checkOutItemUser(userBarcode, testItems[0].barcode);
     CheckOutActions.checkPatronInformation(user.username, userBarcode);

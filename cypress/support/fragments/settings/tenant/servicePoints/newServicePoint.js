@@ -3,8 +3,18 @@ import getRandomPostfix from '../../../../utils/stringTools';
 
 const servicePointName = `autotest_service_${getRandomPostfix()}`;
 
+const getDefaultServicePoint = (specialName = servicePointName) => {
+  const defaultUiServicePoint = {
+    code: `autotest_code_${getRandomPostfix()}`,
+    discoveryDisplayName: `autotest_discovery_display_name_${getRandomPostfix()}`,
+    id: uuid(),
+    name: specialName,
+  };
+  return defaultUiServicePoint;
+};
+
 const defaultUiServicePoint = {
-  body: {
+  body:{
     code: `autotest_code_${getRandomPostfix()}`,
     discoveryDisplayName: `autotest_discovery_display_name_${getRandomPostfix()}`,
     id: uuid(),
@@ -12,11 +22,7 @@ const defaultUiServicePoint = {
   }
 };
 
-const getDefaulServicePoint = () => {
-  return defaultUiServicePoint;
-};
-
 export default {
   defaultUiServicePoint,
-  getDefaulServicePoint,
+  getDefaultServicePoint,
 };

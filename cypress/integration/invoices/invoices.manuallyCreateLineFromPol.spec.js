@@ -8,12 +8,13 @@ import newOrder from '../../support/fragments/orders/newOrder';
 import basicOrderLine from '../../support/fragments/orders/basicOrderLine';
 import Orders from '../../support/fragments/orders/orders';
 import OrdersHelper from '../../support/fragments/orders/ordersHelper';
+import devTeams from '../../support/dictionary/devTeams';
 
 describe('ui-invoices: Invoice Line creation - based on POL', () => {
   const invoice = { ...NewInvoice.defaultUiInvoice };
   const vendorPrimaryAddress = { ...VendorAddress.vendorAddress };
   const invoiceLine = { ...NewInvoiceLine.defaultUiInvoiceLine };
-  const order = { ...newOrder.defaultOrder };
+  const order = { ...newOrder.defaultOneTimeOrder };
   const orderLine = { ...basicOrderLine.defaultOrderLine };
   const euroCurrency = 'Euro (EUR)';
   const euroSign = '€';
@@ -42,7 +43,7 @@ describe('ui-invoices: Invoice Line creation - based on POL', () => {
     invoiceLine.subTotal = orderLine.cost.quantityPhysical * orderLine.cost.listUnitPrice;
   });
 
-  it('C2327 Create invoice line based on purchase order line', { tags: [testType.smoke] }, () => {
+  it('C2327 Create invoice line based on purchase order line (thunderjet)', { tags: [testType.smoke, devTeams.thunderjet] }, () => {
     Orders.createOrderWithOrderLineViaApi(order, orderLine)
       .then(orderNumber => {
         cy.visit(TopMenu.invoicesPath);

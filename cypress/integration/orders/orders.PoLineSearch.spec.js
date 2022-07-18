@@ -6,11 +6,12 @@ import TopMenu from '../../support/fragments/topMenu';
 import OrdersHelper from '../../support/fragments/orders/ordersHelper';
 import basicOrderLine from '../../support/fragments/orders/basicOrderLine';
 import getRandomPostfix from '../../support/utils/stringTools';
+import devTeams from '../../support/dictionary/devTeams';
 
 // TODO:  Rebuild the test after fixing the problem with orderLineNumber definition in its scope.
 // TODO: Check the search using the second POLINE,to have a working search on empty env.
 describe('orders: Test Po line search', () => {
-  const order = { ...NewOrder.defaultOrder };
+  const order = { ...NewOrder.defaultOneTimeOrder };
   const orderLine = {
     ...basicOrderLine.defaultOrderLine,
     details: {
@@ -106,7 +107,7 @@ describe('orders: Test Po line search', () => {
   });
 
   // TODO: add extra TC in testrail about it
-  it('C6719 Test the POL searches(Only test POL name search)', { tags: [TestType.smoke] }, () => {
+  it('C6719 Test the POL searches(Only test POL name search) (thunderjet)', { tags: [TestType.smoke, devTeams.thunderjet] }, () => {
     Orders.searchByParameter('PO line number', orderLineNumber);
     Orders.checkOrderlineSearchResults(orderLineNumber);
     Orders.resetFilters();

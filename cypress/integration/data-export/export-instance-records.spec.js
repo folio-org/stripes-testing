@@ -11,7 +11,6 @@ import permissions from '../../support/dictionary/permissions';
 import devTeams from '../../support/dictionary/devTeams';
 import users from '../../support/fragments/users/users';
 import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
-import InventoryInstance from '../../support/fragments/inventory/inventoryInstance';
 
 
 let user;
@@ -39,7 +38,7 @@ describe('data-export', () => {
     users.deleteViaApi(user.userId);
   });
 
-  it('C9288 Export small number of instance records - default instance mapping profile', { retries: 3, tags: [TestTypes.smoke, devTeams.firebird] }, () => {
+  it('C9288 Export small number of instance records - default instance mapping profile (firebird)', { retries: 3, tags: [TestTypes.smoke, devTeams.firebird] }, () => {
     const fileName = `autoTestFile${getRandomPostfix()}.csv`;
 
     // download file with existing UUIDs

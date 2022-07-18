@@ -45,7 +45,7 @@ describe('ui-data-import: MARC file import with matching for 999 ff field', () =
     DataImport.checkUploadState();
   });
 
-  it('C343343 MARC file import with matching for 999 ff field', { tags: [TestTypes.smoke, TestTypes.broken] }, () => {
+  it('C343343 MARC file import with matching for 999 ff field (folijet)', { tags: [TestTypes.smoke, TestTypes.broken] }, () => {
     // create Field mapping profile for export
     const mappingProfileForExport = {
       name: mappingProfileNameForExport,

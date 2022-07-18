@@ -1,4 +1,21 @@
-import { Button, SearchField, PaneHeader, Pane, Select, Accordion, KeyValue, Checkbox, MultiColumnList, MultiColumnListCell, MultiColumnListRow, Modal, TextField, SelectionOption } from '../../../../interactors';
+import {
+  Button,
+  SearchField,
+  PaneHeader,
+  Pane,
+  Select,
+  Accordion,
+  KeyValue,
+  Checkbox,
+  MultiColumnList,
+  MultiColumnListCell,
+  MultiColumnListRow,
+  Modal,
+  TextField,
+  SelectionOption,
+  HTML,
+  including
+} from '../../../../interactors';
 import SearchHelper from '../finance/financeHelper';
 import InteractorsTools from '../../utils/interactorsTools';
 import { getLongDelay } from '../../utils/cypressTools';
@@ -10,9 +27,9 @@ const searchButton = Button('Search');
 const newButton = Button('New');
 const saveAndClose = Button('Save & close');
 const orderDetailsAccordionId = 'purchaseOrder';
-const createdByAdmin = 'ADMINISTRATOR, DIKU ';
+const createdByAdmin = 'folio-aqa  ';
 const searchField = SearchField({ id: 'input-record-search' });
-const admin = 'administrator';
+const admin = 'folio-aqa';
 const buttonLocationFilter = Button({ id: 'accordion-toggle-button-pol-location-filter' });
 const buttonFundCodeFilter = Button({ id: 'accordion-toggle-button-fundCode' });
 const buttonOrderFormatFilter = Button({ id: 'accordion-toggle-button-orderFormat' });
@@ -23,7 +40,16 @@ const searchForm = SearchField({ id: 'input-record-search' });
 const ordersFiltersPane = Pane({ id: 'orders-filters-pane' });
 const ordersResultsPane = Pane({ id: 'orders-results-pane' });
 
+const searchByParameter = (parameter, value) => {
+  cy.do([
+    searchForm.selectIndex(parameter),
+    searchForm.fillIn(value),
+    Button('Search').click(),
+  ]);
+};
+
 export default {
+  searchByParameter,
   waitLoading() {
     cy.expect([
       ordersFiltersPane.exists(),
@@ -43,14 +69,6 @@ export default {
           });
       });
     return cy.get('@orderNumber');
-  },
-
-  searchByParameter: (parameter, value) => {
-    cy.do([
-      searchForm.selectIndex(parameter),
-      searchForm.fillIn(value),
-      Button('Search').click(),
-    ]);
   },
 
   openOrder: () => {
@@ -369,11 +387,24 @@ export default {
       buttonSubscriptionFromFilter.click(),
     ]);
   },
+  getOrdersApi: (searchParams) => {
+    return cy
+      .okapiRequest({
+        path: 'orders/composite-orders',
+        searchParams
+      })
+      .then(({ body }) => {
+        return body.purchaseOrders;
+      });
+  },
 
   deleteOrderApi: (id) => cy.okapiRequest({
     method: 'DELETE',
     path: `orders/composite-orders/${id}`,
   }),
 
+  checkIsOrderCreated:(orderNumber) => {
+    cy.do(Checkbox({ id: 'clickable-filter-workflowStatus-pending' }).click());
+    cy.expect(MultiColumnList({ id: 'orders-list' }).find(HTML(including(orderNumber))).exists());
+  }
 };
-
