@@ -1,4 +1,3 @@
-import { CheckBox } from '@interactors/html';
 import {
   Accordion,
   Button,
@@ -7,15 +6,17 @@ import {
   Select,
   Selection,
   SelectionList,
-  TextField
+  TextField,
+  Pane,
+  Checkbox
 } from '../../../../../interactors';
 import UrlParams from '../url-params';
 
 export default {
-  gotoViewAllPage() {
+  openViewAll() {
     cy.do([
       Button('Actions').click(),
-      Button('View all').click()
+      Button('View all logs').click()
     ]);
   },
 
@@ -60,9 +61,11 @@ export default {
 
   filterJobsByErrors(filter) {
     if (filter === 'Yes') {
-      cy.do(CheckBox({ id: 'clickable-filter-statusAny-error' }).click());
+      cy.do(Accordion('Errors in import')
+        .find(Checkbox({ id: 'clickable-filter-statusAny-error' })).click());
     } else {
-      cy.do(CheckBox({ id: 'clickable-filter-statusAny-committed' }).click());
+      cy.do(Accordion('Errors in import')
+        .find(Checkbox({ id: 'clickable-filter-statusAny-committed' })).click());
     }
   },
 
@@ -93,9 +96,11 @@ export default {
 
   filterJobsByInventorySingleRecordImports(filter) {
     if (filter === 'Yes') {
-      cy.do(CheckBox({ id: 'clickable-filter-singleRecordImports-yes' }).click());
+      cy.do(Accordion('Inventory single record imports')
+        .find(Checkbox({ id: 'clickable-filter-singleRecordImports-yes' })).click());
     } else {
-      cy.do(CheckBox({ id: 'clickable-filter-singleRecordImports-no' }).click());
+      cy.do(Accordion('Inventory single record imports')
+        .find(Checkbox({ id: 'clickable-filter-singleRecordImports-no' })).click());
     }
   },
 
@@ -258,4 +263,13 @@ export default {
       return body.jobExecutions[0];
     });
   },
+
+  checkIsViewAllOpened:() => {
+    cy.expect(Pane('Search & filter').exists());
+    cy.expect(Pane('Logs').find(MultiColumnList({ id: 'list-data-import' })).exists());
+  },
+
+  selectAllLogs:() => {
+    cy.do(MultiColumnList({ id:'list-column-selected' }).find(Checkbox({ name:'selected-all' })));
+  }
 };

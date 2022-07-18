@@ -34,7 +34,7 @@ describe('ui-inventory: Create page type request', () => {
           permissions.uiUserCreate.gui,
           permissions.uiUsersEdituserservicepoints.gui,
           permissions.uiUserAccounts.gui,
-          permissions.uiUserRequestsAll.gui,
+          permissions.usersViewRequests.gui,
           permissions.requestsAll.gui
         ], 'faculty');
       })

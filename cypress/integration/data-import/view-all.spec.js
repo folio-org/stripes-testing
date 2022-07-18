@@ -41,7 +41,7 @@ describe('ui-data-import: Search the "View all" log screen', () => {
   });
 
   it('C11112 Search the "View all" log screen (folijet)', { tags: [TestTypes.smoke] }, () => {
-    LogsViewAll.gotoViewAllPage();
+    LogsViewAll.openViewAll();
 
     LogsViewAll.options.forEach((option) => {
       LogsViewAll.selectOption(option);
