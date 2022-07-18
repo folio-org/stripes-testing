@@ -18,7 +18,7 @@ describe('ui-eholdings: Provider manage', () => {
       cy.visit(TopMenu.eholdingsPath);
     });
   });
-  it.only('C696 Edit proxy setting', { tags: [testTypes.smoke, testTypes.broken] }, () => {
+  it('C696 Edit proxy setting', { tags: [testTypes.smoke, testTypes.broken] }, () => {
     const specialProvider = 'Johns Hopkins University Press';
     eHoldingsProvidersSearch.byProvider(specialProvider);
     eHoldingsProviders.viewProvider();
