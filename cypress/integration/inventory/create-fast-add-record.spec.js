@@ -43,7 +43,7 @@ describe('ui-inventory: Create fast add record', () => {
     FastAddNewRecord.updateInventoryFastAddSetting(
       FastAddNewRecord.fastAddNewRecordFormDetails.defaultInstanceStatusCodeOption
     );
-    users.deleteViaApi(userId);
+    Users.deleteViaApi(userId);
   });
 
   it('C15850 Create a fast add record from Inventory. Monograph. (folijet) (prokopovych)', { tags: [TestTypes.smoke, DevTeams.folijet] }, () => {
