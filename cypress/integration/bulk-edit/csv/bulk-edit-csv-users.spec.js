@@ -35,7 +35,7 @@ describe('bulk-edit: csv file uploading', () => {
   });
 
 
-  it('C350928 Verify error accordion during matching (CSV approach)', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
+  it('C350928 Verify error accordion during matching (CSV approach) (firebird)', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
     BulkEditSearchPane.checkUsersRadio();
     BulkEditSearchPane.selectRecordIdentifier('User UUIDs');
 
@@ -55,7 +55,7 @@ describe('bulk-edit: csv file uploading', () => {
     BulkEditActions.newBulkEdit();
   });
 
-  it('C353233 Verify number of updated records', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
+  it('C353233 Verify number of updated records (firebird)', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
     BulkEditSearchPane.selectRecordIdentifier('User UUIDs');
 
     // Upload file
@@ -78,7 +78,7 @@ describe('bulk-edit: csv file uploading', () => {
     BulkEditActions.newBulkEdit();
   });
 
-  it('C357034 Verify elements of the bulk edit app -- CSV app', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
+  it('C357034 Verify elements of the bulk edit app -- CSV app (firebird)', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
     BulkEditSearchPane.selectRecordIdentifier('User UUIDs');
 
     BulkEditSearchPane.clickToBulkEditMainButton();
@@ -96,7 +96,7 @@ describe('bulk-edit: csv file uploading', () => {
     BulkEditSearchPane.verifyDefaultFilterState();
   });
 
-  it('C356817 Verify Matched records label cleanup -- CSV approach', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
+  it('C356817 Verify Matched records label cleanup -- CSV approach (firebird)', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
     BulkEditSearchPane.selectRecordIdentifier('User UUIDs');
 
     BulkEditSearchPane.uploadFile(userUUIDsFileName);

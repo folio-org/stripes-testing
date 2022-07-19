@@ -1,6 +1,6 @@
+import getRandomPostfix from '../../support/utils/stringTools';
 import TestTypes from '../../support/dictionary/testTypes';
 import FieldMappingProfiles from '../../support/fragments/data_import/mapping_profiles/fieldMappingProfiles';
-import getRandomPostfix from '../../support/utils/stringTools';
 import ActionProfiles from '../../support/fragments/data_import/action_profiles/actionProfiles';
 import NewJobProfile from '../../support/fragments/data_import/job_profiles/newJobProfile';
 import JobProfiles from '../../support/fragments/data_import/job_profiles/jobProfiles';
@@ -12,7 +12,8 @@ import TopMenu from '../../support/fragments/topMenu';
 import NewMappingProfile from '../../support/fragments/data_import/mapping_profiles/newMappingProfile';
 import InvoiceView from '../../support/fragments/invoices/invoiceView';
 import permissions from '../../support/dictionary/permissions';
-import users from '../../support/fragments/users/users';
+import Users from '../../support/fragments/users/users';
+import DevTeams from '../../support/dictionary/devTeams';
 
 describe('ui-data-import: EDIFACT file import with creating of new invoice record', () => {
   // unique name for profiles
@@ -40,7 +41,7 @@ describe('ui-data-import: EDIFACT file import with creating of new invoice recor
     cy.getInvoiceIdApi({ query: `vendorInvoiceNo="${FileDetails.invoiceNumberFromEdifactFile}"` })
       .then(id => cy.deleteInvoiceFromStorageApi(id));
     DataImport.checkUploadState();
-    users.deleteViaApi(user.userId);
+    Users.deleteViaApi(user.userId);
 
     // clean up generated profiles
     JobProfiles.deleteJobProfile(jobProfileName);
@@ -48,7 +49,7 @@ describe('ui-data-import: EDIFACT file import with creating of new invoice recor
     FieldMappingProfiles.deleteFieldMappingProfile(mappingProfileName);
   });
 
-  it('C343338 EDIFACT file import with creating of new invoice record', { tags: [TestTypes.smoke, TestTypes.broken] }, () => {
+  it('C343338 EDIFACT file import with creating of new invoice record (folijet)', { tags: [TestTypes.smoke, DevTeams.folijet] }, () => {
     // unique file name to upload
     const fileName = `C343338autotestFile.${getRandomPostfix()}.edi`;
 

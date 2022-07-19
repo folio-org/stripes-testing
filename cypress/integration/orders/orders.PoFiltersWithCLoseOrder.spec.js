@@ -7,6 +7,7 @@ import SearchHelper from '../../support/fragments/finance/financeHelper';
 import OrdersHelper from '../../support/fragments/orders/ordersHelper';
 import NewInvoice from '../../support/fragments/invoices/newInvoice';
 import DateTools from '../../support/utils/dateTools';
+import devTeams from '../../support/dictionary/devTeams';
 
 describe('orders: Test PO filters', () => {
   const today = new Date();
@@ -66,7 +67,7 @@ describe('orders: Test PO filters', () => {
     { filterActions: () => { Orders.selectRenewalDateFilter(renewalDate); } },
     { filterActions: () => { Orders.selectVendorFilter(invoice); } },
   ].forEach((filter) => {
-    it('C350906 Test the PO filters with closed Order [except tags]', { tags: [TestType.smoke] }, () => {
+    it('C350906 Test the PO filters with closed Order [except tags] (thunderjet)', { tags: [TestType.smoke, devTeams.thunderjet] }, () => {
       filter.filterActions();
       Orders.checkSearchResultsWithClosedOrder(orderNumber);
       Orders.resetFilters();

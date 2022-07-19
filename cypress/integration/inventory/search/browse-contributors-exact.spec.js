@@ -1,3 +1,4 @@
+import testType from '../../../support/dictionary/testTypes';
 import Permissions from '../../../support/dictionary/permissions';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 import InventorySearch from '../../../support/fragments/inventory/inventorySearch';
@@ -48,7 +49,7 @@ describe('ui-inventory: search', () => {
     });
   });
 
-  it('C353639 Browse contributors with exact match query', () => {
+  it('C353639 Browse contributors with exact match query (spitfire)', { tags: [testType.smoke] }, () => {
     InventorySearch.verifyKeywordsAsDefault();
     BrowseContributors.checkBrowseOptions();
     BrowseContributors.select();

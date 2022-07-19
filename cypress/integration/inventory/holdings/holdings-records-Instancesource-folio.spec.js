@@ -1,13 +1,13 @@
 /// <reference types="cypress" />
 
-import TopMenu from '../../support/fragments/topMenu';
-import InventoryInstance from '../../support/fragments/inventory/inventoryInstance';
-import HoldingsRecordView from '../../support/fragments/inventory/holdingsRecordView';
-import testTypes from '../../support/dictionary/testTypes';
-import features from '../../support/dictionary/features';
-import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
-import NewHoldingsRecord from '../../support/fragments/inventory/newHoldingsRecord';
-import HoldingsRecordEdit from '../../support/fragments/inventory/holdingsRecordEdit';
+import TopMenu from '../../../support/fragments/topMenu';
+import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
+import HoldingsRecordView from '../../../support/fragments/inventory/holdingsRecordView';
+import testTypes from '../../../support/dictionary/testTypes';
+import features from '../../../support/dictionary/features';
+import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
+import NewHoldingsRecord from '../../../support/fragments/inventory/newHoldingsRecord';
+import HoldingsRecordEdit from '../../../support/fragments/inventory/holdingsRecordEdit';
 
 
 describe('Manage holding records with FOLIO source', () => {
@@ -16,7 +16,7 @@ describe('Manage holding records with FOLIO source', () => {
     cy.visit(TopMenu.inventoryPath);
     InventoryInstances.add();
   });
-  it('C345406 FOLIO instance record + FOLIO holdings record (Regression)', { tags: [testTypes.smoke, features.holdingsRecord] }, () => {
+  it('C345406 FOLIO instance record + FOLIO holdings record (Regression) (spitfire)', { tags: [testTypes.smoke, features.holdingsRecord] }, () => {
     InventoryInstance.createHoldingsRecord();
     InventoryInstance.openHoldingView();
     HoldingsRecordView.checkSource('FOLIO');

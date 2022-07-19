@@ -4,6 +4,7 @@ import NewInvoiceLine from '../../support/fragments/invoices/newInvoiceLine';
 import Invoices from '../../support/fragments/invoices/invoices';
 import testType from '../../support/dictionary/testTypes';
 import VendorAddress from '../../support/fragments/invoices/vendorAddress';
+import devTeams from '../../support/dictionary/devTeams';
 
 describe('ui-invoices: Invoice Line creation', () => {
   const invoice = { ...NewInvoice.defaultUiInvoice };
@@ -24,7 +25,7 @@ describe('ui-invoices: Invoice Line creation', () => {
     cy.visit(TopMenu.invoicesPath);
   });
 
-  it('C2326 Manually create invoice line', { tags: [testType.smoke] }, () => {
+  it('C2326 Manually create invoice line (thunderjet)', { tags: [testType.smoke, devTeams.thunderjet] }, () => {
     Invoices.createDefaultInvoice(invoice, vendorPrimaryAddress);
     Invoices.createInvoiceLine(invoiceLine);
     Invoices.checkInvoiceLine(invoiceLine);

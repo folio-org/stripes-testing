@@ -16,7 +16,8 @@ import SettingsMenu from '../../support/fragments/settingsMenu';
 import FileDetails from '../../support/fragments/data_import/logs/fileDetails';
 import TopMenu from '../../support/fragments/topMenu';
 import permissions from '../../support/dictionary/permissions';
-import users from '../../support/fragments/users/users';
+import Users from '../../support/fragments/users/users';
+import DevTeams from '../../support/dictionary/devTeams';
 
 describe('ui-data-import: Verify the possibility to modify MARC Bibliographic record', () => {
   let user = {};
@@ -38,10 +39,10 @@ describe('ui-data-import: Verify the possibility to modify MARC Bibliographic re
 
   after(() => {
     DataImport.checkUploadState();
-    users.deleteViaApi(user.userId);
+    Users.deleteViaApi(user.userId);
   });
 
-  it('C345423 Verify the possibility to modify MARC Bibliographic record', { tags: [TestTypes.smoke, TestTypes.broken] }, () => {
+  it('C345423 Verify the possibility to modify MARC Bibliographic record (folijet)', { tags: [TestTypes.smoke, DevTeams.folijet] }, () => {
     const mappingProfileFieldsForModify = {
       marcMappingOption: 'Modifications',
       action: 'Add',

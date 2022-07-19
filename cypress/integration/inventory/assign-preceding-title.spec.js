@@ -6,6 +6,7 @@ import InventoryInstance from '../../support/fragments/inventory/inventoryInstan
 import InventoryInstanceEdit from '../../support/fragments/inventory/InventoryInstanceEdit';
 import Helper from '../../support/fragments/finance/financeHelper';
 import TestTypes from '../../support/dictionary/testTypes';
+import DevTeams from '../../support/dictionary/devTeams';
 
 describe('ui-inventory: Assign a Preceding title for an instance', () => {
   const instanceIds = [];
@@ -53,7 +54,7 @@ describe('ui-inventory: Assign a Preceding title for an instance', () => {
       });
   });
 
-  it('C9215 In Accordion Title --> Test assigning a Preceding title', { tags:  [TestTypes.smoke] }, () => {
+  it('C9215 In Accordion Title --> Test assigning a Preceding title (folijet) (prokopovych)', { tags:  [TestTypes.smoke, DevTeams.folijet] }, () => {
     InventorySearch.searchByParameter('Title (all)', instanceTitle);
     InventoryInstances.selectInstance();
     InventoryInstance.editInstance();

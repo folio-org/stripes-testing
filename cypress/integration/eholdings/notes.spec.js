@@ -13,7 +13,7 @@ describe('ui-eholdings: Notes', () => {
       cy.do(Accordion('Notes').find(Button('New')).click());
     });
 
-    it('should open Note create page', () => {
+    it('should open Note create page (spitfire)', () => {
       cy.expect(Page.has({ url: including('eholdings/notes/new') }));
     });
 
@@ -28,7 +28,7 @@ describe('ui-eholdings: Notes', () => {
         ]);
       });
 
-      it('should redirect to Provider show page', () => {
+      it('should redirect to Provider show page (spitfire)', () => {
         cy.expect(Page.has({ url: matching(/\/eholdings\/providers\/\d+/) }));
       });
 
@@ -47,7 +47,7 @@ describe('ui-eholdings: Notes', () => {
       ]);
     });
 
-    it('should redirect to note edit page', () => {
+    it('should redirect to note edit page (spitfire)', () => {
       cy.expect(Page.has({ url: matching(/\/eholdings\/notes\/[0-9a-z-]+\/edit/) }));
     });
 
@@ -61,7 +61,7 @@ describe('ui-eholdings: Notes', () => {
         ]);
       });
 
-      it('should redirect to note view page with edited details', () => {
+      it('should redirect to note view page with edited details (spitfire)', () => {
         cy.expect(Page.has({ url: matching(/\/eholdings\/notes\/[0-9a-z-]+/) }));
         cy.expect(HTML(noteEdit).exists());
       });
@@ -73,7 +73,7 @@ describe('ui-eholdings: Notes', () => {
       cy.do(Button('Assign / Unassign').click());
     });
 
-    it('should open note modal', () => {
+    it('should open note modal (spitfire)', () => {
       cy.expect(Modal('Assign / Unassign note').exists());
     });
 
@@ -85,7 +85,7 @@ describe('ui-eholdings: Notes', () => {
         ]);
       });
 
-      it('should show not empty result list', () => {
+      it('should show not empty result list (spitfire)', () => {
         cy.expect(Modal().find(MultiColumnList()).has({ rowCount: not(0) }));
       });
     });
@@ -107,7 +107,7 @@ describe('ui-eholdings: Notes', () => {
         ]);
       });
 
-      it('should show not empty result list', () => {
+      it('should show not empty result list (spitfire)', () => {
         cy.expect(Modal().find(MultiColumnList()).has({ rowCount: not(0) }));
       });
 
@@ -127,7 +127,7 @@ describe('ui-eholdings: Notes', () => {
           ]);
         });
 
-        it('should show assigned note', () => {
+        it('should show assigned note (spitfire)', () => {
           cy.expect(MultiColumnListCell(including(noteTitle)));
         });
       });

@@ -1,10 +1,11 @@
+import getRandomPostfix from '../../support/utils/stringTools';
 import LogsViewAll from '../../support/fragments/data_import/logs/logsViewAll';
 import DateTools from '../../support/utils/dateTools';
 import { Accordion } from '../../../interactors';
-import getRandomPostfix from '../../support/utils/stringTools';
 import TopMenu from '../../support/fragments/topMenu';
 import FileManager from '../../support/utils/fileManager';
 import TestTypes from '../../support/dictionary/testTypes';
+import DevTeams from '../../support/dictionary/devTeams';
 
 describe('ui-data-import: Filter the "View all" log screen', () => {
   // Path to static file in fixtures
@@ -54,7 +55,7 @@ describe('ui-data-import: Filter the "View all" log screen', () => {
     });
   });
 
-  it('C11113 Filter the "View all" log screen', { tags: [TestTypes.smoke] }, () => {
+  it('C11113 Filter the "View all" log screen (folijet)', { tags: [TestTypes.smoke, DevTeams.folijet] }, () => {
     LogsViewAll.gotoViewAllPage();
     LogsViewAll.checkByReverseChronologicalOrder();
 

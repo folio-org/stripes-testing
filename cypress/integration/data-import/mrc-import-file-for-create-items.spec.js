@@ -12,7 +12,8 @@ import SettingsMenu from '../../support/fragments/settingsMenu';
 import FileDetails from '../../support/fragments/data_import/logs/fileDetails';
 import TopMenu from '../../support/fragments/topMenu';
 import permissions from '../../support/dictionary/permissions';
-import users from '../../support/fragments/users/users';
+import Users from '../../support/fragments/users/users';
+import DevTeams from '../../support/dictionary/devTeams';
 
 describe('ui-data-import: MARC file import with creating of the new instance, holding and item', () => {
   let user = {};
@@ -45,10 +46,10 @@ describe('ui-data-import: MARC file import with creating of the new instance, ho
 
   after(() => {
     DataImport.checkUploadState();
-    users.deleteViaApi(user.userId);
+    Users.deleteViaApi(user.userId);
   });
 
-  it('C343334 MARC file import with creating a new mapping profiles, action profiles and job profile', { tags: [TestTypes.smoke, TestTypes.broken] }, () => {
+  it('C343334 MARC file import with creating a new mapping profiles, action profiles and job profile (folijet)', { tags: [TestTypes.smoke, DevTeams.folijet] }, () => {
     const collectionOfProfiles = [
       {
         mappingProfile: { typeValue: NewMappingProfile.folioRecordTypeValue.instance,

@@ -6,6 +6,7 @@ import InventoryInstance from '../../support/fragments/inventory/inventoryInstan
 import InventoryInstanceEdit from '../../support/fragments/inventory/InventoryInstanceEdit';
 import Helper from '../../support/fragments/finance/financeHelper';
 import TopMenu from '../../support/fragments/topMenu';
+import DevTeams from '../../support/dictionary/devTeams';
 
 describe('ui-inventory: Enter different type of identifiers', () => {
   let instanceTitle;
@@ -45,7 +46,7 @@ describe('ui-inventory: Enter different type of identifiers', () => {
     'ASIN',
     'BNB'
   ].forEach((identifier) => {
-    it('C609 In Accordion Identifiers --> enter different type of identifiers', { tags: [TestTypes.smoke] }, () => {
+    it('C609 In Accordion Identifiers --> enter different type of identifiers (folijet) (prokopovych)', { tags: [TestTypes.smoke, DevTeams.folijet] }, () => {
       resourceIdentifier = `testResourceIdentifier.${getRandomPostfix()}`;
 
       searchAndOpenInstance('Title (all)', instanceTitle);

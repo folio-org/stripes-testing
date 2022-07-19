@@ -42,7 +42,7 @@ describe('bulk-edit: permissions', () => {
   });
 
 
-  it('C350765 Verify BULK EDIT permissions list', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
+  it('C350765 Verify BULK EDIT permissions list (firebird)', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
     const permissionsToVerify = [
       permissions.bulkEditCsvView.gui,
       permissions.bulkEditCsvEdit.gui,
@@ -59,14 +59,14 @@ describe('bulk-edit: permissions', () => {
     UsersCard.verifyPermissions(permissionsToVerify);
   });
 
-  it('C350903 Verify "Bulk Edit: CSV - View" permissions', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
+  it('C350903 Verify "Bulk Edit: CSV - View" permissions (firebird)', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
     cy.login(userWithCsvViewPermission.username, userWithCsvViewPermission.password);
     cy.visit(TopMenu.bulkEditPath);
 
     BulkEditSearchPane.verifyCsvViewPermission();
   });
 
-  it('C350936 Verify "Bulk edit: in app - view" permissions', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
+  it('C350936 Verify "Bulk edit: in app - view" permissions (firebird)', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
     cy.login(userWithInAppViewPermission.username, userWithInAppViewPermission.password);
     cy.visit(TopMenu.bulkEditPath);
 
@@ -74,7 +74,7 @@ describe('bulk-edit: permissions', () => {
   });
 
   // TODO: think about dragging file without dropping
-  it('C353537 Verify label to the Drag and drop area -- CSV approach', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
+  it('C353537 Verify label to the Drag and drop area -- CSV approach (firebird)', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
     cy.login(userWithCsvPermissions.username, userWithCsvPermissions.password);
     cy.visit(TopMenu.bulkEditPath);
 

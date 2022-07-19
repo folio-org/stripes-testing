@@ -56,7 +56,7 @@ export default {
     ]);
   },
 
-  selectIntegration: () => {
+  selectIntegration: (integrationName) => {
     cy.do([
       Button({ id: 'accordion-toggle-button-integrationDetailsSection' }).click(),
       MultiColumnList({ id: 'list-integration-configs' }).find(MultiColumnListCell({ content: integrationName })).click(),
@@ -177,7 +177,7 @@ export default {
     ]);
   },
 
-  checkIntegationsAdd: (integrationName, integartionDescription) => {
+  checkIntegrationsAdd: (integrationName, integartionDescription) => {
     cy.do([
       Button({ id: 'accordion-toggle-button-integrationDetailsSection' }).click(),
     ]);

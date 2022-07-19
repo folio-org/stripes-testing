@@ -10,6 +10,7 @@ import SettingsMenu from '../../support/fragments/settingsMenu';
 import TopMenu from '../../support/fragments/topMenu';
 import NewMappingProfile from '../../support/fragments/data_import/mapping_profiles/newMappingProfile';
 import InvoiceView from '../../support/fragments/invoices/invoiceView';
+import DevTeams from '../../support/dictionary/devTeams';
 
 describe('ui-data-import: Import a large EDIFACT invoice file', () => {
 // unique name for profiles
@@ -35,7 +36,7 @@ describe('ui-data-import: Import a large EDIFACT invoice file', () => {
     DataImport.checkUploadState();
   });
 
-  it('C347615 Import a large EDIFACT invoice file', { tags: [TestTypes.smoke, TestTypes.broken] }, () => {
+  it('C347615 Import a large EDIFACT invoice file (folijet)', { tags: [TestTypes.smoke, DevTeams.folijet] }, () => {
     // unique file name to upload
     const fileName = `C347615autotestFile.${getRandomPostfix()}.edi`;
 

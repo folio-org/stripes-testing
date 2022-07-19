@@ -5,6 +5,7 @@ import FinanceHelp from '../../../support/fragments/finance/financeHelper';
 import TopMenu from '../../../support/fragments/topMenu';
 import { MultiColumnList } from '../../../../interactors';
 import TestType from '../../../support/dictionary/testTypes';
+import devTeams from '../../../support/dictionary/devTeams';
 
 describe('ui-finance: Ledger list search and filters', () => {
   let aUnit;
@@ -50,7 +51,7 @@ describe('ui-finance: Ledger list search and filters', () => {
     cy.deleteLedgerApi(ledger.id);
   });
 
-  it('C4061 Test the search and filter options for ledgers', { tags: [TestType.smoke] }, function () {
+  it('C4061 Test the search and filter options for ledgers (thunderjet)', { tags: [TestType.smoke, devTeams.thunderjet] }, function () {
     FinanceHelp.checkZeroSearchResultsMessage();
 
     // search by acquisition units, name and status
