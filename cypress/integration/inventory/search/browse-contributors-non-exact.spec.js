@@ -49,7 +49,7 @@ describe('ui-inventory: search', () => {
     });
   });
 
-  it('C353640 Browse contributors with non exact match query', { tags: [testType.smoke] }, () => {
+  it('C353640 Browse contributors with non exact match query (spitfire)', { tags: [testType.smoke] }, () => {
     InventorySearch.verifyKeywordsAsDefault();
     BrowseContributors.checkBrowseOptions();
     BrowseContributors.select();

@@ -1,13 +1,14 @@
-import TestTypes from '../../support/dictionary/testTypes';
-import permissions from '../../support/dictionary/permissions';
-import markItemAsWithdrawn from '../../support/fragments/inventory/markItemAsWithdrawn';
-import markItemAsMissing from '../../support/fragments/inventory/markItemAsMissing';
-import Requests from '../../support/fragments/requests/requests';
-import TopMenu from '../../support/fragments/topMenu';
-import Users from '../../support/fragments/users/users';
-import UserEdit from '../../support/fragments/users/userEdit';
-import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
-import InventoryInstance from '../../support/fragments/inventory/inventoryInstance';
+import TestTypes from '../../../support/dictionary/testTypes';
+import permissions from '../../../support/dictionary/permissions';
+import markItemAsWithdrawn from '../../../support/fragments/inventory/markItemAsWithdrawn';
+import markItemAsMissing from '../../../support/fragments/inventory/markItemAsMissing';
+import Requests from '../../../support/fragments/requests/requests';
+import TopMenu from '../../../support/fragments/topMenu';
+import Users from '../../../support/fragments/users/users';
+import UserEdit from '../../../support/fragments/users/userEdit';
+import ServicePoints from '../../../support/fragments/settings/tenant/servicePoints/servicePoints';
+import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
+import DevTeams from '../../../support/dictionary/devTeams';
 
 describe('ui-inventory: Mark items as withdrawn', () => {
   let user = {};
@@ -73,7 +74,7 @@ describe('ui-inventory: Mark items as withdrawn', () => {
     requesterIds.forEach(id => Users.deleteViaApi(id));
   });
 
-  it('C10930: Mark items as withdrawn (folijet)', { tags: [TestTypes.smoke, TestTypes.broken] }, () => {
+  it('C10930: Mark items as withdrawn (folijet) (prokopovych)', { tags: [TestTypes.smoke, DevTeams.folijet] }, () => {
     cy.visit(TopMenu.inventoryPath);
     markItemAsMissing.findAndOpenInstance(instanceData.instanceTitle);
     markItemAsMissing.getItemsToMarkAsMissing.call(markItemAsWithdrawn, createdItems).forEach(item => {

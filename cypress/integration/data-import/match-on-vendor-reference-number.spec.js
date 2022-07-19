@@ -1,4 +1,5 @@
 /* eslint-disable cypress/no-unnecessary-waiting */
+import getRandomPostfix from '../../support/utils/stringTools';
 import TestTypes from '../../support/dictionary/testTypes';
 import NewOrder from '../../support/fragments/orders/newOrder';
 import Helper from '../../support/fragments/finance/financeHelper';
@@ -9,8 +10,8 @@ import FileManager from '../../support/utils/fileManager';
 import SettingsMenu from '../../support/fragments/settingsMenu';
 import Orders from '../../support/fragments/orders/orders';
 import Users from '../../support/fragments/users/users';
-import getRandomPostfix from '../../support/utils/stringTools';
 import permissions from '../../support/dictionary/permissions';
+import DevTeams from '../../support/dictionary/devTeams';
 
 describe('ui-data-import: Match on VRN and update related Instance, Holdings, Item', () => {
   let userId = null;
@@ -90,7 +91,7 @@ describe('ui-data-import: Match on VRN and update related Instance, Holdings, It
     MatchOnVRN.deleteItemViaAPI();
   });
 
-  it('C350591 Match on VRN and update related Instance, Holdings, Item (folijet)', { tags: [TestTypes.smoke] }, () => {
+  it('C350591 Match on VRN and update related Instance, Holdings, Item (folijet)', { tags: [TestTypes.smoke, DevTeams.folijet] }, () => {
     // create order
     cy.visit(TopMenu.ordersPath);
     Orders.createOrder(order);

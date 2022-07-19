@@ -8,7 +8,8 @@ import InstanceRecordView from '../../support/fragments/inventory/instanceRecord
 import InteractorsTools from '../../support/utils/interactorsTools';
 import { getLongDelay } from '../../support/utils/cypressTools';
 import permissions from '../../support/dictionary/permissions';
-import users from '../../support/fragments/users/users';
+import Users from '../../support/fragments/users/users';
+import DevTeams from '../../support/dictionary/devTeams';
 
 describe('ui-inventory: Create fast add record', () => {
   const timeStamp = {
@@ -42,10 +43,10 @@ describe('ui-inventory: Create fast add record', () => {
     FastAddNewRecord.updateInventoryFastAddSetting(
       FastAddNewRecord.fastAddNewRecordFormDetails.defaultInstanceStatusCodeOption
     );
-    users.deleteViaApi(userId);
+    Users.deleteViaApi(userId);
   });
 
-  it('C15850 Create a fast add record from Inventory. Monograph. (folijet)', { tags: [TestTypes.smoke] }, () => {
+  it('C15850 Create a fast add record from Inventory. Monograph. (folijet) (prokopovych)', { tags: [TestTypes.smoke, DevTeams.folijet] }, () => {
     InventoryActions.openNewFastAddRecordForm();
     FastAddNewRecord.waitLoading();
     FastAddNewRecord.fillFastAddNewRecordForm(FastAddNewRecord.fastAddNewRecordFormDetails);

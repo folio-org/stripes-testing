@@ -1,15 +1,15 @@
-import testType from '../../../support/dictionary/testTypes';
-import NewOrder from '../../../support/fragments/orders/newOrder';
-import BasicOrderLine from '../../../support/fragments/orders/basicOrderLine';
-import Orders from '../../../support/fragments/orders/orders';
-import Receiving from '../../../support/fragments/receiving/receiving';
-import TopMenu from '../../../support/fragments/topMenu';
-import Helper from '../../../support/fragments/finance/financeHelper';
-import InventorySearch from '../../../support/fragments/inventory/inventorySearch';
-import InteractorsTools from '../../../support/utils/interactorsTools';
-import OrdersHelper from '../../../support/fragments/orders/ordersHelper';
-import CheckInActions from '../../../support/fragments/check-in-actions/checkInActions';
-import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
+import testType from '../../support/dictionary/testTypes';
+import NewOrder from '../../support/fragments/orders/newOrder';
+import BasicOrderLine from '../../support/fragments/orders/basicOrderLine';
+import Orders from '../../support/fragments/orders/orders';
+import Receiving from '../../support/fragments/receiving/receiving';
+import TopMenu from '../../support/fragments/topMenu';
+import Helper from '../../support/fragments/finance/financeHelper';
+import InventorySearch from '../../support/fragments/inventory/inventorySearch';
+import InteractorsTools from '../../support/utils/interactorsTools';
+import OrdersHelper from '../../support/fragments/orders/ordersHelper';
+import CheckInActions from '../../support/fragments/check-in-actions/checkInActions';
+import InventoryInstance from '../../support/fragments/inventory/inventoryInstance';
 
 describe('orders: Receive piece from Order', () => {
   const order = { ...NewOrder.defaultOrder };
@@ -42,7 +42,7 @@ describe('orders: Receive piece from Order', () => {
     Orders.deleteOrderApi(order.id);
   });
 
-  it('C735 Receiving pieces from an order for physical material that is set to create Items in inventory', { tags: [testType.smoke] }, () => {
+  it('C735 Receiving pieces from an order for physical material that is set to create Items in inventory (thunderjet)', { tags: [testType.smoke] }, () => {
     Orders.searchByParameter('PO number', orderNumber);
     Helper.selectFromResultsList();
     Orders.openOrder();
