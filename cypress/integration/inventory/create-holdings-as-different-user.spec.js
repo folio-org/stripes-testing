@@ -8,6 +8,7 @@ import HoldingsRecordView from '../../support/fragments/inventory/holdingsRecord
 import TestTypes from '../../support/dictionary/testTypes';
 import Users from '../../support/fragments/users/users';
 import Helper from '../../support/fragments/finance/financeHelper';
+import DevTeams from '../../support/dictionary/devTeams';
 
 describe('ui-inventory: Create a Holdings record as another user than the one that created the Instance', () => {
   let firstUser;
@@ -45,7 +46,7 @@ describe('ui-inventory: Create a Holdings record as another user than the one th
     Users.deleteViaApi(secondUser.userId);
   });
 
-  it('C1294: Create a Holdings record as another user than the one that created the Instance (folijet)', { tags: [TestTypes.smoke] }, () => {
+  it('C1294: Create a Holdings record as another user than the one that created the Instance (folijet) (prokopovych)', { tags: [TestTypes.smoke, DevTeams.folijet] }, () => {
     InventoryInstances.add(recordsData.instanceTitle);
     SearchInventory.searchInstanceByTitle(recordsData.instanceTitle);
     cy.expect(MultiColumnListCell({ row: 0, content: recordsData.instanceTitle }).exists());

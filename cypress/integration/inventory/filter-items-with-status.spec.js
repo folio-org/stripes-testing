@@ -10,6 +10,7 @@ import InventoryHoldings from '../../support/fragments/inventory/holdings/invent
 import TestTypes from '../../support/dictionary/testTypes';
 import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
 import InventoryInstance from '../../support/fragments/inventory/inventoryInstance';
+import DevTeams from '../../support/dictionary/devTeams';
 
 const ITEM_BARCODE = `123${getRandomPostfix()}`;
 let userId;
@@ -78,7 +79,7 @@ describe('ui-inventory: items with status', () => {
     users.deleteViaApi(userId);
   });
 
-  it('C11081: Verify item status filters retrieve items with that item status (folijet)', { tags: [TestTypes.smoke] }, () => {
+  it('C11081: Verify item status filters retrieve items with that item status (folijet) (prokopovych)', { tags: [TestTypes.smoke, DevTeams.folijet] }, () => {
     cy.intercept('GET', '/inventory/items?*').as('getItems');
     cy.intercept('GET', '/search/instances?*').as('getInstances');
     cy.intercept('GET', '/orders/titles?*').as('getTitles');
