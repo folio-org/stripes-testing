@@ -15,6 +15,8 @@ import {
 import UrlParams from '../url-params';
 import InteractorsTools from '../../../utils/interactorsTools';
 
+const singleRecordImportsAccordion = Accordion('Inventory single record imports');
+
 function getCheckboxByRow(row) {
   return MultiColumnList().find(MultiColumnListCell({ 'row': row, 'columnIndex': 0 })).find(Checkbox());
 }
@@ -110,10 +112,10 @@ export default {
 
   filterJobsByInventorySingleRecordImports(filter) {
     if (filter === 'Yes') {
-      cy.do(Accordion('Inventory single record imports')
+      cy.do(singleRecordImportsAccordion
         .find(Checkbox({ id: 'clickable-filter-singleRecordImports-yes' })).click());
     } else {
-      cy.do(Accordion('Inventory single record imports')
+      cy.do(singleRecordImportsAccordion
         .find(Checkbox({ id: 'clickable-filter-singleRecordImports-no' })).click());
     }
   },
@@ -279,7 +281,7 @@ export default {
     });
   },
 
-  checkIsViewAllOpened:() => {
+  viewAllIsOpened:() => {
     cy.expect(Pane('Search & filter').exists());
     cy.expect(Pane('Logs').find(MultiColumnList({ id: 'list-data-import' })).exists());
   },
@@ -300,7 +302,7 @@ export default {
       .find(Checkbox({ checked: true })).click());
   },
 
-  checkIsCheckmarkAllLogsRemoved:() => {
+  checkmarkAllLogsIsRemoved:() => {
     cy.do(MultiColumnList({ id:'list-data-import' }).find(Checkbox({ name:'selected-all', checked: false })).exists());
   },
 
@@ -309,5 +311,5 @@ export default {
     cy.do(Button('Delete selected logs').click());
   },
 
-  checkIsModalAbsent:() => { cy.expect(Modal('Delete data import logs?').absent()); }
+  modalIsAbsent:() => { cy.expect(Modal('Delete data import logs?').absent()); }
 };
