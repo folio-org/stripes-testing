@@ -4,6 +4,7 @@ import TestType from '../../../support/dictionary/testTypes';
 import FinanceHelp from '../../../support/fragments/finance/financeHelper';
 import NewFund from '../../../support/fragments/finance/funds/newFund';
 import Transaction from '../../../support/fragments/finance/fabrics/newTransaction';
+import devTeams from '../../../support/dictionary/devTeams';
 
 describe('ui-finance: Delete budget from fund', () => {
   const currentBudgetSectionId = 'currentBudget';
@@ -14,7 +15,7 @@ describe('ui-finance: Delete budget from fund', () => {
     cy.deleteLedgerApi(createdLedgerId);
   });
 
-  it('C343211 Delete Budget (thunderjet)', { tags: [TestType.smoke] }, () => {
+  it('C343211 Delete Budget (thunderjet)', { tags: [TestType.smoke, devTeams.thunderjet] }, () => {
     const quantityArray = [0, 100];
     const transactionFactory = new Transaction();
     Funds.createFundViaUI(fund)

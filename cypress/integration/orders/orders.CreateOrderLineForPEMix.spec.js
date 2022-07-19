@@ -5,6 +5,7 @@ import TopMenu from '../../support/fragments/topMenu';
 import SearchHelper from '../../support/fragments/finance/financeHelper';
 import interactorsTools from '../../support/utils/interactorsTools';
 import OrderLines from '../../support/fragments/orders/orderLines';
+import devTeams from '../../support/dictionary/devTeams';
 
 describe('orders: Test PO search', () => {
   const order = { ...NewOrder.defaultOneTimeOrder };
@@ -28,7 +29,7 @@ describe('orders: Test PO search', () => {
     Orders.deleteOrderApi(order.id);
   });
 
-  it('C343242 Create an order line for format = P/E mix (thunderjet)', { tags: [TestType.smoke] }, () => {
+  it('C343242 Create an order line for format = P/E mix (thunderjet)', { tags: [TestType.smoke, devTeams.thunderjet] }, () => {
     Orders.searchByParameter('PO number', orderNumber);
     SearchHelper.selectFromResultsList();
     Orders.createPOLineViaActions();

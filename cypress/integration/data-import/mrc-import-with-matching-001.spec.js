@@ -18,7 +18,8 @@ import TestTypes from '../../support/dictionary/testTypes';
 import SettingsMenu from '../../support/fragments/settingsMenu';
 import FileDetails from '../../support/fragments/data_import/logs/fileDetails';
 import permissions from '../../support/dictionary/permissions';
-import users from '../../support/fragments/users/users';
+import Users from '../../support/fragments/users/users';
+import DevTeams from '../../support/dictionary/devTeams';
 
 describe('ui-data-import: Test MARC-MARC matching for 001 field', () => {
   let user = {};
@@ -41,10 +42,10 @@ describe('ui-data-import: Test MARC-MARC matching for 001 field', () => {
 
   after(() => {
     DataImport.checkUploadState();
-    users.deleteViaApi(user.userId);
+    Users.deleteViaApi(user.userId);
   });
 
-  it('C17044: MARC-MARC matching for 001 field (folijet)', { tags: [TestTypes.smoke, TestTypes.broken] }, () => {
+  it('C17044: MARC-MARC matching for 001 field (folijet)', { tags: [TestTypes.smoke, DevTeams.folijet] }, () => {
     // unique file name to upload
     const nameForMarcFile = `C17044autoTestFile${getRandomPostfix()}.mrc`;
     const nameForExportedMarcFile = `C17044autoTestFile${getRandomPostfix()}.mrc`;
