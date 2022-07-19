@@ -5,6 +5,7 @@ import Funds from '../../../support/fragments/finance/funds/funds';
 import FinanceHelp from '../../../support/fragments/finance/financeHelper';
 import { MultiColumnList } from '../../../../interactors';
 import testType from '../../../support/dictionary/testTypes';
+import devTeams from '../../../support/dictionary/devTeams';
 
 describe('ui-finance: Funds list search and filter', () => {
   let aUnit;
@@ -65,7 +66,7 @@ describe('ui-finance: Funds list search and filter', () => {
     cy.deleteFundApi(fund.id);
   });
 
-  it('C4059 Test the search and filter options for funds (thunderjet)', { tags: [testType.smoke] }, function () {
+  it('C4059 Test the search and filter options for funds (thunderjet)', { tags: [testType.smoke, devTeams.thunderjet] }, function () {
     FinanceHelp.checkZeroSearchResultsMessage();
 
     Funds.checkFundFilters(ledger.name, fundType.name, 'Active', aUnit.name,

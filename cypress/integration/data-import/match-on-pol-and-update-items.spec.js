@@ -27,6 +27,7 @@ import InventoryInstance from '../../support/fragments/inventory/inventoryInstan
 import HoldingsRecordView from '../../support/fragments/inventory/holdingsRecordView';
 import ItemVeiw from '../../support/fragments/inventory/inventoryItem/itemVeiw';
 import InventoryViewSource from '../../support/fragments/inventory/inventoryViewSource';
+import DevTeams from '../../support/dictionary/devTeams';
 
 describe('ui-users:', () => {
   const firstItem = {
@@ -162,7 +163,7 @@ describe('ui-users:', () => {
     Orders.openOrder();
   };
 
-  it('C350590 Match on POL and update related Instance, Holdings, Item (folijet)', { tags: [TestTypes.smoke] }, () => {
+  it('C350590 Match on POL and update related Instance, Holdings, Item (folijet)', { tags: [TestTypes.smoke, DevTeams.folijet] }, () => {
     const collectionOfProfiles = [
       {
         mappingProfile: { typeValue: NewMappingProfile.folioRecordTypeValue.instance,
