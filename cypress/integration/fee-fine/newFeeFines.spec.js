@@ -14,6 +14,7 @@ import UserEdit from '../../support/fragments/users/userEdit';
 import NewFeeFine from '../../support/fragments/users/newFeeFine';
 import UserAllFeesFines from '../../support/fragments/users/userAllFeesFines';
 import PayFeeFaine from '../../support/fragments/users/payFeeFaine';
+import devTeams from '../../support/dictionary/devTeams';
 
 describe('Fee/fine management', () => {
   const testData = {};
@@ -51,7 +52,7 @@ describe('Fee/fine management', () => {
     });
   });
 
-  it('C455 Verify "New fee/fine" behavior when "Charge & pay now" button pressed', { tags: [TestType.smoke, Features.feeFine] }, () => {
+  it('C455 Verify "New fee/fine" behavior when "Charge & pay now" button pressed (spitfire)', { tags: [TestType.smoke, Features.feeFine, devTeams.firebird] }, () => {
     const initialCheckNewFeeFineFragment = (ownerName = '') => {
       NewFeeFine.checkInitialState(testData.userProperties, ownerName);
       NewFeeFine.setFeeFineOwner(testData.owner.name);

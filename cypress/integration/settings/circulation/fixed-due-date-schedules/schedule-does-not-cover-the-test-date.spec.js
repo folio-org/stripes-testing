@@ -183,7 +183,7 @@ describe('ui-circulation-settings: Fixed due date schedules', () => {
       });
   });
 
-  it('C641: renewing item using a fixed due date loan profile where the fixed due date schedule date range does not cover the test date',
+  it('C641: renewing item using a fixed due date loan profile where the fixed due date schedule date range does not cover the test date (prokopovych)',
     { tags: [TestTypes.smoke] },
     () => {
       cy.visit(SettingsMenu.circulationFixedDueDateSchedulesPath);
