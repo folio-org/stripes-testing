@@ -5,6 +5,7 @@ import InventorySearch from '../../support/fragments/inventory/inventorySearch';
 import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
 import InventoryInstance from '../../support/fragments/inventory/inventoryInstance';
 import Helper from '../../support/fragments/finance/financeHelper';
+import DevTeams from '../../support/dictionary/devTeams';
 
 describe('ui-inventory: Assign tags to an Instance record', () => {
   const instanceTitle = `autoTestInstanceTitle ${Helper.getRandomBarcode()}`;
@@ -40,7 +41,7 @@ describe('ui-inventory: Assign tags to an Instance record', () => {
     InventoryInstance.deleteInstanceViaApi(instanceId);
   });
 
-  it('C196769 Assign tags to an Instance record (folijet)', { tags: [TestTypes.smoke, TestTypes.broken] }, () => {
+  it('C196769 Assign tags to an Instance record (folijet)', { tags: [TestTypes.smoke, DevTeams.folijet] }, () => {
     cy.visit(TopMenu.inventoryPath);
     InventorySearch.searchByParameter('Title (all)', instanceTitle);
     InventoryInstances.selectInstance();

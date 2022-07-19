@@ -14,6 +14,7 @@ import CheckInActions from '../../support/fragments/check-in-actions/checkInActi
 import Users from '../../support/fragments/users/users';
 import UserEdit from '../../support/fragments/users/userEdit';
 import InventoryInstance from '../../support/fragments/inventory/inventoryInstance';
+import DevTeams from '../../support/dictionary/devTeams';
 
 describe('Check Out', () => {
   let user = {};
@@ -126,7 +127,7 @@ describe('Check Out', () => {
       { missingitemPieces : numberOfMissingPieces, missingDescription: missingPieces });
   };
 
-  it('C591 Check out: multipiece items (folijet) (vega)', { tags: [TestTypes.smoke] }, () => {
+  it('C591 Check out: multipiece items (folijet) (vega)', { tags: [TestTypes.smoke, DevTeams.folijet] }, () => {
     CheckOutActions.checkIsInterfacesOpened();
     CheckOutActions.checkOutItemUser(userBarcode, testItems[0].barcode);
     CheckOutActions.checkPatronInformation(user.username, userBarcode);

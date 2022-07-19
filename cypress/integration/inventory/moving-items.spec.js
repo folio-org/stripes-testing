@@ -117,7 +117,7 @@ describe('ui-inventory: moving items', () => {
     InteractorsTools.checkCalloutMessage(successCalloutMessage);
   });
 
-  it('C345404 Move holdings record with Source = MARC to an instance record with source = MARC', { tags:  [TestTypes.smoke, Features.eHoldings] }, () => {
+  it('C345404 Move holdings record with Source = MARC to an instance record with source = MARC (spitfire)', { tags:  [TestTypes.smoke, Features.eHoldings] }, () => {
     InventoryActions.import();
     InventoryInstance.getAssignedHRID().then(initialInstanceHrId => {
       // additional instance record which will linked with holdings record initially
