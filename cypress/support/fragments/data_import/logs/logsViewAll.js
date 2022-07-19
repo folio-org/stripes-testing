@@ -13,12 +13,20 @@ import {
   Modal
 } from '../../../../../interactors';
 import UrlParams from '../url-params';
+import InteractorsTools from '../../../utils/interactorsTools';
 
 function getCheckboxByRow(row) {
   return MultiColumnList().find(MultiColumnListCell({ 'row': row, 'columnIndex': 0 })).find(Checkbox());
 }
 
+const verifyMessageOfDeteted = (quantity) => {
+  InteractorsTools.checkCalloutMessage(`${quantity} data import logs have been successfully deleted.`);
+  InteractorsTools.closeCalloutMessage();
+};
+
 export default {
+  verifyMessageOfDeteted,
+
   openViewAll() {
     cy.do([
       Button('Actions').click(),
@@ -301,7 +309,5 @@ export default {
     cy.do(Button('Delete selected logs').click());
   },
 
-  checkIsModalAbsent:() => {
-    cy.expect(Modal('Delete data import logs?').absent());
-  }
+  checkIsModalAbsent:() => { cy.expect(Modal('Delete data import logs?').absent()); }
 };

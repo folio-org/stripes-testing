@@ -31,6 +31,7 @@ describe('ui-data-import: EDIFACT file import with creating of new invoice recor
         user = userProperties;
         cy.login(userProperties.username, userProperties.password, { path: TopMenu.dataImportPath, waiter: DataImport.wailtLoading });
         for (let i = 0; i < 15; i++) {
+          cy.visit(TopMenu.dataImportPath);
           DataImport.uploadFile('oneMarcBib.mrc', nameMarcFileForCreate);
           JobProfiles.searchJobProfileForImport('Default - Create instance and SRS MARC Bib');
           JobProfiles.runImportFile(nameMarcFileForCreate);
@@ -62,7 +63,7 @@ describe('ui-data-import: EDIFACT file import with creating of new invoice recor
 
         const countOfLogsForDelete = (count - 1);
         DeleteDataImportLogsModal.confirmDelete(countOfLogsForDelete);
-        InteractorsTools.checkCalloutMessage(`${count} data import logs have been successfully deleted.`);
+        LogsViewAll.verifyMessageOfDeteted(countOfLogsForDelete);
         LogsViewAll.checkIsModalAbsent();
       });
   });
