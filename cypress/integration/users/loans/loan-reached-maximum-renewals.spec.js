@@ -234,7 +234,7 @@ describe('ui-users-loans: renewal failure because loan has reached maximum renew
     Users.deleteViaApi(secondUser.userId);
   });
 
-  it('C569: renewal failure because loan has reached maximum renewals', { tags: [testTypes.smoke] }, () => {
+  it('C569: renewal failure because loan has reached maximum renewalsv (Prokopovych)', { tags: [testTypes.smoke] }, () => {
     cy.login(
       firstUser.username,
       firstUser.password,
