@@ -1,5 +1,4 @@
 import uuid from 'uuid';
-import moment from 'moment';
 import TopMenu from '../../support/fragments/topMenu';
 import TestType from '../../support/dictionary/testTypes';
 import renewalActions from '../../support/fragments/loans/renewals';
@@ -14,11 +13,8 @@ import getRandomPostfix, { getTestEntityValue } from '../../support/utils/string
 import { getNewItem } from '../../support/fragments/inventory/item';
 import loanPolicyActions from '../../support/fragments/circulation/loan-policy';
 import checkoutActions from '../../support/fragments/checkout/checkout';
-import checkinActions from '../../support/fragments/check-in-actions/checkInActions';
 import users from '../../support/fragments/users/users';
 import InventoryHoldings from '../../support/fragments/inventory/holdings/inventoryHoldings';
-import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
-import InventoryInstance from '../../support/fragments/inventory/inventoryInstance';
 import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
 
 describe('Renewal', () => {
