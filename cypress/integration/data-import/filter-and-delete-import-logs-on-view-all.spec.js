@@ -31,7 +31,7 @@ describe('ui-data-import: A user can filter and delete import logs from the "Vie
         cy.login(userProperties.username, userProperties.password, { path: TopMenu.dataImportPath, waiter: DataImport.wailtLoading });
         // TODO rewrite upload file by API
         // Log list should contain at least 30-35 import jobs, run by different users, and using different import profiles
-        for (let i = 0; i < 7; i++) {
+        for (let i = 0; i < 12; i++) {
           const nameMarcFileForCreate = `C358136autotestFile.${getRandomPostfix()}.mrc`;
 
           cy.visit(TopMenu.dataImportPath);
@@ -51,7 +51,7 @@ describe('ui-data-import: A user can filter and delete import logs from the "Vie
         secondUser = userProperties;
         cy.login(userProperties.username, userProperties.password, { path: TopMenu.dataImportPath, waiter: DataImport.wailtLoading });
         // Log list should contain at least 30-35 import jobs
-        for (let i = 0; i < 7; i++) {
+        for (let i = 0; i < 13; i++) {
           const nameMarcFileForCreate = `C358136autotestFile.${getRandomPostfix()}.mrc`;
 
           cy.visit(TopMenu.dataImportPath);
