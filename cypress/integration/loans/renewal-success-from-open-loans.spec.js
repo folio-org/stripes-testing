@@ -1,6 +1,6 @@
-import TopMenu from '../../support/fragments/topMenu';
 import uuid from 'uuid';
 import moment from 'moment';
+import TopMenu from '../../support/fragments/topMenu';
 import TestType from '../../support/dictionary/testTypes';
 import renewalActions from '../../support/fragments/loans/renewals';
 import generateItemBarcode from '../../support/utils/generateItemBarcode';
@@ -10,7 +10,8 @@ import {
   LOAN_TYPE_NAMES,
   MATERIAL_TYPE_NAMES,
 } from '../../support/constants';
-import getRandomPostfix from '../../support/utils/stringTools';
+import getRandomPostfix, { getTestEntityValue } from '../../support/utils/stringTools';
+import { getNewItem } from '../../support/fragments/inventory/item';
 import loanPolicyActions from '../../support/fragments/circulation/loan-policy';
 import checkoutActions from '../../support/fragments/checkout/checkout';
 import checkinActions from '../../support/fragments/check-in-actions/checkInActions';
@@ -18,13 +19,21 @@ import users from '../../support/fragments/users/users';
 import InventoryHoldings from '../../support/fragments/inventory/holdings/inventoryHoldings';
 import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
 import InventoryInstance from '../../support/fragments/inventory/inventoryInstance';
+import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
 
 describe('Renewal', () => {
   let materialTypeId;
+  let source;
+
   let loanId;
   let servicePointId;
   let initialCircRules;
   let sourceId;
+  let materialType;
+  let limitLoanTypeId;
+  let loanTypeId;
+  const newFirstItemData = getNewItem();
+  const newSecondItemData = getNewItem();
   const firstName = 'testPermFirst';
   const renewUserData = {
     firstName,
@@ -49,65 +58,73 @@ describe('Renewal', () => {
   before(() => {
     cy.getAdminToken()
       .then(() => {
-        // create first user
-        cy.createTempUser([
-          permissions.loansView.gui,
-          permissions.loansRenew.gui,
-          permissions.uiUsersView.gui,
-        ])
-          .then(userProperties => {
-            renewUserData.lastName = userProperties.username;
-            renewUserData.id = userProperties.userId;
-            renewUserData.barcode = userProperties.barcode;
-
-            cy.login(userProperties.username, userProperties.password);
+        cy.getMaterialTypes({ limit: 1 })
+          .then(({ id }) => {
+            materialType = { id };
           });
-        // create second user
-        cy.createTempUser([
-          permissions.loansView.gui,
-          permissions.loansRenew.gui,
-          permissions.loansRenewOverride.gui,
-        ])
-          .then(userProperties => {
-            renewOverrideUserData.lastName = userProperties.username;
-            renewOverrideUserData.id = userProperties.userId;
-            renewOverrideUserData.password = userProperties.password;
+        cy.getLoanTypes({ limit: 1, query: 'name="Course reserves"' })
+          .then((body) => {
+            limitLoanTypeId = body[0].id;
           });
+        cy.getLoanTypes({ limit: 1, query: 'name="Reading Room"' })
+          .then((body) => {
+            loanTypeId = body[0].id;
+          });
+        cy.getLocations({ limit: 1 });
+        cy.getHoldingTypes({ limit: 1 });
+        cy.getInstanceTypes({ limit: 1 });
       })
-      // create instance
       .then(() => {
-        cy.createInstance({
+        source = InventoryHoldings.getHoldingSources({ limit: 1 });
+        InventoryInstances.createFolioInstanceViaApi({
           instance: {
-            instanceTypeId: Cypress.env(CY_ENV.INSTANCE_TYPES)[0].id,
-            title: itemData.title,
+            instanceTypeId: Cypress.env('instanceTypes')[0].id,
+            title: getTestEntityValue(),
           },
           holdings: [{
-            holdingsTypeId: Cypress.env(CY_ENV.HOLDINGS_TYPES)[0].id,
-            permanentLocationId: Cypress.env(CY_ENV.LOCATION)[0].id,
-            sourceId,
+            holdingsTypeId: Cypress.env('holdingsTypes')[0].id,
+            permanentLocationId: Cypress.env('locations')[0].id,
+            sourceId: source.id,
           }],
-          items: [[{
-            barcode: itemData.barcode,
-            status: { name: 'Available' },
-            permanentLoanType: { id: Cypress.env(CY_ENV.LOAN_TYPES)[0].id },
-            materialType: { id: materialTypeId },
-          }]],
-        });
-      })
-      // create loan policy
-      .then(() => {
-        loanPolicyActions.createLoanableNotRenewableLoanPolicyApi(loanPolicyData);
-      })
-      // checkout item
-      .then(() => {
-        checkoutActions.createItemCheckoutViaApi({
-          servicePointId,
-          itemBarcode: itemData.barcode,
-          userBarcode: renewUserData.barcode
+          items: [
+            {
+              ...newFirstItemData,
+              permanentLoanType: { id: Cypress.env('loanTypes').id },
+              materialType: { id: Cypress.env('materialTypes')[0].id },
+            }, {
+              ...newSecondItemData,
+              permanentLoanType: { id: Cypress.env('loanTypes').id },
+              materialType: { id: Cypress.env('materialTypes')[0].id },
+            },
+          ],
         })
-          .then(body => {
-            loanId = body.id;
+          // create loan policy
+          .then(() => {
+            loanPolicyActions.createLoanableNotRenewableLoanPolicyApi(loanPolicyData);
           });
+        // checkout item
+        // .then(() => {
+        //   checkoutActions.createItemCheckoutViaApi({
+        //     servicePointId,
+        //     itemBarcode: itemData.barcode,
+        //     userBarcode: renewUserData.barcode
+        //   })
+        //     .then(body => {
+        //       loanId = body.id;
+        //     });
+        // });
+      });
+    cy.createTempUser([
+      permissions.loansView.gui,
+      permissions.loansRenew.gui,
+      permissions.uiUsersView.gui,
+    ])
+      .then(userProperties => {
+        renewUserData.lastName = userProperties.username;
+        renewUserData.id = userProperties.userId;
+        renewUserData.barcode = userProperties.barcode;
+
+        cy.login(userProperties.username, userProperties.password);
       });
   });
 
