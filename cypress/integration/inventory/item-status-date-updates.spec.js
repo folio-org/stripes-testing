@@ -114,7 +114,7 @@ describe('ui-inventory: Item status date updates', () => {
   });
 
   afterEach(() => {
-    CheckInActions.createItemCheckinApi({
+    CheckInActions.checkinItemViaApi({
       itemBarcode,
       servicePointId: effectiveLocationServicePoint.id,
       checkInDate: new Date().toISOString(),

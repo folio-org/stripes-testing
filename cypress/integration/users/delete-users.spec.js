@@ -151,7 +151,7 @@ describe('Deleting user', () => {
         });
       })
       .then(() => {
-        CheckoutActions.createItemCheckoutViaApi({
+        CheckoutActions.checkoutItemViaApi({
           itemBarcode: ITEM_BARCODE,
           userBarcode: specialUserBarcode,
           servicePointId: servicePoint.id,
@@ -160,7 +160,7 @@ describe('Deleting user', () => {
       .then(() => {
         verifyUserDeleteImpossible(specialUserId);
 
-        CheckinActions.createItemCheckinApi({
+        CheckinActions.checkinItemViaApi({
           itemBarcode: ITEM_BARCODE,
           servicePointId: servicePoint.id,
           checkInDate: '2021-09-30T16:14:50.444Z',
