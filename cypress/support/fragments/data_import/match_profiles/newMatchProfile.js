@@ -3,7 +3,8 @@ import {
   Select,
   TextField,
   SelectionList,
-  Accordion
+  Accordion,
+  SelectionOption
 } from '../../../../../interactors';
 import { getLongDelay } from '../../../utils/cypressTools';
 
@@ -56,37 +57,33 @@ const fillMatchProfileForm = ({
   itemOption
 }) => {
   cy.do(TextField('Name*').fillIn(profileName));
+  // wait for data to be loaded
+  cy.intercept('/_/jsonSchemas?path=raml-util/schemas/metadata.schema').as('getJson');
+  cy.wait('@getJson', getLongDelay());
+  // select existing record type
   if (existingRecordType === 'MARC_BIBLIOGRAPHIC') {
     cy.do(Button({ dataId:'MARC_BIBLIOGRAPHIC' }).click());
     fillIncomingRecordFields(incomingRecordFields);
     cy.do(Select('Match criterion').choose(matchCriterion));
-    // wait for data to be loaded
-    cy.wait(1500);
     fillExistingRecordFields(existingRecordFields);
-  }
-  if (existingRecordType === 'INSTANCE') {
+  } else if (existingRecordType === 'INSTANCE') {
     cy.do(Accordion({ id:'match-profile-details' }).find(Button({ dataId:'INSTANCE' })).click());
+    fillIncomingRecordFields(incomingRecordFields);
     cy.do(criterionValueTypeButton.click());
     cy.expect(criterionValueTypeList.exists());
-    cy.do(criterionValueTypeList.select(instanceOption));
-  }
-  if (existingRecordType === 'HOLDINGS') {
+    cy.do(SelectionList({ id:'sl-container-criterion-value-type' }).find(SelectionOption(instanceOption)).click());
+  } else if (existingRecordType === 'HOLDINGS') {
     cy.do(Accordion({ id:'match-profile-details' }).find(Button({ dataId:'HOLDINGS' })).click());
-    cy.wait(1000);
     fillIncomingRecordFields(incomingRecordFields);
     cy.do(criterionValueTypeButton.click());
     cy.expect(criterionValueTypeList.exists());
-    cy.get('[class^=selectionFilter-]').type(holdingsOption);
-    //cy.do(criterionValueTypeList.find(TextField({ placeholder: 'Filter options list' })).fillIn(holdingsOption));
-    //cy.do(criterionValueTypeList.select(holdingsOption));
-  }
-  if (existingRecordType === 'ITEM') {
+    cy.do(SelectionList({ id:'sl-container-criterion-value-type' }).find(SelectionOption(holdingsOption)).click());
+  } else {
     cy.do(Accordion({ id:'match-profile-details' }).find(Button({ dataId:'ITEM' })).click());
-    cy.wait(1000);
     fillIncomingRecordFields(incomingRecordFields);
     cy.do(criterionValueTypeButton.click());
     cy.expect(criterionValueTypeList.exists());
-    cy.do(criterionValueTypeList.select(itemOption));
+    cy.do(SelectionList({ id:'sl-container-criterion-value-type' }).find(SelectionOption(itemOption)).click());
   }
 };
 

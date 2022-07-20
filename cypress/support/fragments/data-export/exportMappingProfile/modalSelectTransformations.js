@@ -4,7 +4,7 @@ const ModalTransformation = Modal('Select transformations');
 
 export default {
   searchItemTransformationsByName: (name) => {
-    cy.get('div[class^=modal-] input[name=searchValue]').type(`${name}{enter}`);
+    cy.get('div[class^=modal-] input[name=searchValue]').clear().type(`${name}{enter}`);
   },
 
   selectTransformations:(marcField, subfield) => {

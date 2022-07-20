@@ -38,7 +38,7 @@ const getInstanceHRID = () => {
             },
           })
             .then(({ body: { relatedInstanceInfo } }) => {
-              return relatedInstanceInfo.hridList[0];
+              return relatedInstanceInfo.hridList[1];
             });
         });
     });

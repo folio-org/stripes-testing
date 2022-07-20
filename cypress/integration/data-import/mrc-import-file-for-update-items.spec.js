@@ -241,7 +241,7 @@ describe('ui-data-import: MARC file upload with the update of instance, holding,
   ];
 
   const collectionOfMatchProfiles = [
-    /*{
+    {
       matchProfile: { profileName: matchProfileNameForInstance,
         incomingRecordFields: {
           field: '001'
@@ -251,7 +251,7 @@ describe('ui-data-import: MARC file upload with the update of instance, holding,
         },
         matchCriterion: 'Exactly matches',
         existingRecordType: 'MARC_BIBLIOGRAPHIC' }
-    },*/
+    },
     {
       matchProfile: { profileName: matchProfileNameForHoldings,
         incomingRecordFields: {
@@ -260,7 +260,7 @@ describe('ui-data-import: MARC file upload with the update of instance, holding,
         },
         matchCriterion: 'Exactly matches',
         existingRecordType: 'HOLDINGS',
-        option: NewMatchProfile.optionsList.holdingsHrid }
+        holdingsOption: NewMatchProfile.optionsList.holdingsHrid }
     },
     {
       matchProfile: {
@@ -271,7 +271,7 @@ describe('ui-data-import: MARC file upload with the update of instance, holding,
         },
         matchCriterion: 'Exactly matches',
         existingRecordType: 'ITEM',
-        option: NewMatchProfile.optionsList.itemHrid
+        itemOption: NewMatchProfile.optionsList.itemHrid
       }
     }
   ];
@@ -286,7 +286,7 @@ describe('ui-data-import: MARC file upload with the update of instance, holding,
     cy.login(Cypress.env('diku_login'), Cypress.env('diku_password'));
     cy.getAdminToken();
 
-    /* DataImport.checkUploadState();
+    DataImport.checkUploadState();
 
     const jobProfile = {
       profile: {
@@ -307,10 +307,10 @@ describe('ui-data-import: MARC file upload with the update of instance, holding,
     DataImportSettingsJobProfiles.createJobProfileApi(testData.jobProfileForCreate)
       .then((bodyWithjobProfile) => {
         testData.jobProfileForCreate.id = bodyWithjobProfile.body.id;
-      }); */
+      });
   });
 
-  /* afterEach(() => {
+  afterEach(() => {
     DataImport.checkUploadState();
 
     // delete generated profiles
@@ -336,22 +336,22 @@ describe('ui-data-import: MARC file upload with the update of instance, holding,
     FileManager.deleteFolder(Cypress.config('downloadsFolder'));
     FileManager.deleteFile(`cypress/fixtures/${nameMarcFileForImportUpdate}`);
     FileManager.deleteFile(`cypress/fixtures/${nameForCSVFile}`);
-  }); */
+  });
 
   it('C343335 MARC file upload with the update of instance, holding, and items (folijet)', { tags: [TestTypes.smoke, TestTypes.broken] }, () => {
     // upload a marc file for creating of the new instance, holding and item
-    /* cy.visit(TopMenu.dataImportPath);
+    cy.visit(TopMenu.dataImportPath);
     DataImport.uploadFile('oneMarcBib.mrc', nameMarcFileForImportCreate);
     JobProfiles.searchJobProfileForImport(testData.jobProfileForCreate.profile.name);
     JobProfiles.runImportFile(nameMarcFileForImportCreate);
     Logs.openFileDetails(nameMarcFileForImportCreate);
     FileDetails.checkStatusInColumn(FileDetails.status.updated, FileDetails.columnName.srsMarc);
-    /*[FileDetails.columnName.instance,
-      FileDetails.columnName.holdings,
-      FileDetails.columnName.item].forEach(columnName => {
-      FileDetails.checkStatusInColumn(FileDetails.status.created, columnName);
-    }); */
-    /* FileDetails.checkItemsQuantityInSummaryTable(0, '1');
+    //[FileDetails.columnName.instance,
+      //FileDetails.columnName.holdings,
+      //FileDetails.columnName.item].forEach(columnName => {
+      //FileDetails.checkStatusInColumn(FileDetails.status.created, columnName);
+//});
+    FileDetails.checkItemsQuantityInSummaryTable(0, '1');
 
     // get Instance HRID through API
     SearchInventory
@@ -390,7 +390,7 @@ describe('ui-data-import: MARC file upload with the update of instance, holding,
       cy.visit(SettingsMenu.actionProfilePath);
       ActionProfiles.createActionProfile(profile.actionProfile, profile.mappingProfile.name);
       ActionProfiles.checkActionProfilePresented(profile.actionProfile.name);
-    }); */
+    });
 
     // create Match profile
     cy.visit(SettingsMenu.matchProfilePath);
@@ -400,7 +400,7 @@ describe('ui-data-import: MARC file upload with the update of instance, holding,
     });
 
     // create Job profile
-    /* cy.visit(SettingsMenu.jobProfilePath);
+    cy.visit(SettingsMenu.jobProfilePath);
     JobProfiles.createJobProfileWithLinkingProfilesForUpdate(jobProfileForUpdate);
     NewJobProfile.linkMatchAndActionProfilesForInstance(actionProfileNameForInstance, matchProfileNameForInstance, 0);
     NewJobProfile.linkMatchAndActionProfilesForHoldings(actionProfileNameForHoldings, matchProfileNameForHoldings, 2);
@@ -419,6 +419,6 @@ describe('ui-data-import: MARC file upload with the update of instance, holding,
       FileDetails.columnName.item].forEach(columnName => {
       FileDetails.checkStatusInColumn(FileDetails.status.updated, columnName);
     });
-    FileDetails.checkItemsQuantityInSummaryTable(1, FileDetails.status.updated, '1'); */
+    FileDetails.checkItemsQuantityInSummaryTable(1, '1');
   });
 });
