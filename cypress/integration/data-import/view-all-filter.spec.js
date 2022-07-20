@@ -56,7 +56,7 @@ describe('ui-data-import: Filter the "View all" log screen', () => {
   });
 
   it('C11113 Filter the "View all" log screen (folijet)', { tags: [TestTypes.smoke, DevTeams.folijet] }, () => {
-    LogsViewAll.gotoViewAllPage();
+    LogsViewAll.openViewAll();
     LogsViewAll.checkByReverseChronologicalOrder();
 
     // FILTER By "Errors in Import"
