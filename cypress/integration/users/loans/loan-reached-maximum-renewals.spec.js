@@ -18,7 +18,10 @@ import LostItemFeePolicy from '../../../support/fragments/circulation/lost-item-
 import NoticePolicy from '../../../support/fragments/circulation/notice-policy';
 import RenewConfirmationModal from '../../../support/fragments/users/loans/renewConfirmationModal';
 import OverrideAndRenewModal from '../../../support/fragments/users/loans/overrideAndRenewModal';
-import loans from '../../../support/fragments/users/userDefaultObjects/loans';
+import Loans from '../../../support/fragments/users/userDefaultObjects/loans';
+import CheckInActions from '../../../support/fragments/check-in-actions/checkInActions';
+import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
+import Users from '../../../support/fragments/users/users';
 
 describe('ui-users-loans: renewal failure because loan has reached maximum renewals', () => {
   const loanTypeName = `autotest_loan_type${getRandomPostfix()}`;
@@ -26,8 +29,10 @@ describe('ui-users-loans: renewal failure because loan has reached maximum renew
   const newSecondItemData = getNewItem();
   let firstUser = {};
   let secondUser = {};
-
+  let firstInstanceIds;
+  let secondInstanceIds;
   let servicePointId;
+  let rulesDefaultString;
 
   beforeEach(() => {
     let source;
@@ -37,6 +42,10 @@ describe('ui-users-loans: renewal failure because loan has reached maximum renew
     cy.getLocations({ limit: 1 });
     cy.getHoldingTypes({ limit: 1 });
     cy.createLoanType({ name: loanTypeName });
+    cy.getCirculationRules()
+      .then(rules => {
+        rulesDefaultString = rules.rulesAsText;
+      });
 
     RequestPolicy.createApi();
     LostItemFeePolicy.createViaApi();
@@ -112,15 +121,19 @@ describe('ui-users-loans: renewal failure because loan has reached maximum renew
                   materialType: { id: Cypress.env('materialTypes')[0].id },
                 }
               ],
-            }).then(() => {
-              [newFirstItemData.barcode].forEach((itemBarcode) => {
-                Checkout.createItemCheckoutViaApi({
-                  itemBarcode,
-                  userBarcode,
-                  servicePointId,
+            })
+              .then(specialInstanceIds => {
+                firstInstanceIds = specialInstanceIds;
+              })
+              .then(() => {
+                [newFirstItemData.barcode].forEach((itemBarcode) => {
+                  Checkout.createItemCheckoutViaApi({
+                    itemBarcode,
+                    userBarcode,
+                    servicePointId,
+                  });
                 });
               });
-            });
           });
         });
         cy.createTempUser([
@@ -156,19 +169,69 @@ describe('ui-users-loans: renewal failure because loan has reached maximum renew
                   materialType: { id: Cypress.env('materialTypes')[0].id },
                 }
               ],
-            }).then(() => {
-              [newSecondItemData.barcode].forEach((itemBarcode) => {
-                Checkout.createItemCheckoutViaApi({
-                  itemBarcode,
-                  userBarcode,
-                  servicePointId,
+            })
+              .then(specialInstanceIds => {
+                secondInstanceIds = specialInstanceIds;
+              })
+              .then(() => {
+                [newSecondItemData.barcode].forEach((itemBarcode) => {
+                  Checkout.createItemCheckoutViaApi({
+                    itemBarcode,
+                    userBarcode,
+                    servicePointId,
+                  });
                 });
               });
-            });
           });
         });
       });
     });
+  });
+
+  afterEach(() => {
+    [
+      newFirstItemData,
+      newSecondItemData,
+    ].forEach(item => {
+      CheckInActions.createItemCheckinApi({
+        itemBarcode: item.barcode,
+        servicePointId,
+        checkInDate: new Date().toISOString(),
+      });
+    });
+
+    cy.wrap(firstInstanceIds.holdingIds.forEach(holdingsId => {
+      cy.wrap(holdingsId.itemIds.forEach(itemId => {
+        cy.deleteItem(itemId);
+      })).then(() => {
+        cy.deleteHoldingRecordViaApi(holdingsId.id);
+      });
+    })).then(() => {
+      InventoryInstance.deleteInstanceViaApi(firstInstanceIds.instanceId);
+    });
+
+    cy.wrap(secondInstanceIds.holdingIds.forEach(holdingsId => {
+      cy.wrap(holdingsId.itemIds.forEach(itemId => {
+        cy.deleteItem(itemId);
+      })).then(() => {
+        cy.deleteHoldingRecordViaApi(holdingsId.id);
+      });
+    })).then(() => {
+      InventoryInstance.deleteInstanceViaApi(secondInstanceIds.instanceId);
+    });
+
+    cy.updateCirculationRules({
+      rulesAsText: rulesDefaultString,
+    });
+
+    cy.deleteLoanPolicy(Cypress.env(CY_ENV.LOAN_POLICY).id);
+    RequestPolicy.deleteApi(Cypress.env(CY_ENV.REQUEST_POLICY).id);
+    LostItemFeePolicy.deleteViaApi(Cypress.env(CY_ENV.LOST_ITEM_FEES_POLICY).id);
+    OverdueFinePolicy.deleteApi(Cypress.env(CY_ENV.OVERDUE_FINE_POLICY).id);
+    NoticePolicy.deleteApi(Cypress.env(CY_ENV.NOTICE_POLICY).id);
+
+    Users.deleteViaApi(firstUser.userId);
+    Users.deleteViaApi(secondUser.userId);
   });
 
   it('C569: renewal failure because loan has reached maximum renewals', { tags: [testTypes.smoke] }, () => {
@@ -192,7 +255,7 @@ describe('ui-users-loans: renewal failure because loan has reached maximum renew
     LoansPage.checkOverrideButtonVisible();
     RenewConfirmationModal.confirmRenewOverrideItem();
     OverrideAndRenewModal.confirmOverrideItem();
-    loans.getLoanDetails(newSecondItemData.barcode);
+    Loans.getLoanDetails(newSecondItemData.barcode);
     LoanDetails.checkStatusCheckedOut();
     LoanDetails.checkRenewalCount();
     LoanDetails.checkAction(0, 'Renewed through override');
