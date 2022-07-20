@@ -29,7 +29,7 @@ import ItemVeiw from '../../support/fragments/inventory/inventoryItem/itemVeiw';
 import InventoryViewSource from '../../support/fragments/inventory/inventoryViewSource';
 import DevTeams from '../../support/dictionary/devTeams';
 
-describe('ui-users:', () => {
+describe('ui-data-import: Match on POL and update related Instance, Holdings, Item', () => {
   const firstItem = {
     title: 'Sport and sociology. Dominic Malcolm.',
     orderNumber: 'auto99999test',

@@ -1,5 +1,5 @@
 import { matching } from 'bigtest';
-import { Accordion, Button, MultiColumnListCell, MultiColumnList, TextField } from '../../../../interactors';
+import { Accordion, Button, MultiColumnListCell, MultiColumnList, TextField, Pane } from '../../../../interactors';
 import DateTools from '../../utils/dateTools';
 
 
@@ -10,6 +10,10 @@ function clickApplyMainFilter() {
 
 
 export default {
+  waitLoading() {
+    cy.expect(Pane('Circulation log').exists());
+  },
+
   searchByItemBarcode(barcode) {
     cy.do(TextField({ name: 'itemBarcode' }).fillIn(barcode));
     clickApplyMainFilter();

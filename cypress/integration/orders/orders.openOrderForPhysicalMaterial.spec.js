@@ -18,7 +18,6 @@ describe('orders: create an order', () => {
     module: 'ORDERS',
     enabled: true,
     configName: 'createInventory',
-    id: '',
     value: '{"eresource":"Instance, Holding","physical":"Instance, Holding, Item","other":"None"}',
   };
 
