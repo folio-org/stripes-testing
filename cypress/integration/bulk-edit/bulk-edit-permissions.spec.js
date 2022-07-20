@@ -14,8 +14,8 @@ let userWithCsvViewPermission;
 let userWithInAppViewPermission;
 let userWithCsvPermissions;
 
-describe('bulk-edit: permissions', () => {
-  before('create user', () => {
+describe('bulk-edit', () => {
+  before('create test users', () => {
     cy.createTempUser([
       permissions.uiUsersEditProfile.gui,
       permissions.uiUsersViewProfile.gui,
@@ -35,7 +35,7 @@ describe('bulk-edit: permissions', () => {
     ]).then(userProperties => { userWithCsvPermissions = userProperties; });
   });
 
-  after('Delete all data', () => {
+  after('delete test data', () => {
     users.deleteViaApi(userWthViewEditPermissions.userId);
     users.deleteViaApi(userWithCsvViewPermission.userId);
     users.deleteViaApi(userWithInAppViewPermission.userId);
