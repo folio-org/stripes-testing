@@ -163,7 +163,7 @@ describe('ui-users-loans: Manual anonymization in closed loans', () => {
     });
   });
 
-  it('C9217 Manual anonymization in closed loans', { tags: [testTypes.smoke] }, () => {
+  it('C9217 Manual anonymization in closed loans (prokopovych)', { tags: [testTypes.smoke] }, () => {
     LoanDetails.createFeeFine(newOwnerData.owner, feeFineType);
     LoanDetails.anonymizeAllLoans();
     LoanDetails.checkAnonymizeModalOpen();

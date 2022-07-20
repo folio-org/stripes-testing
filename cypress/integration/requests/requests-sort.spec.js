@@ -42,7 +42,7 @@ describe('ui-requests: Sort requests', () => {
     });
   });
 
-  it('C2379: Test Request app sorting', { tags: [testType.smoke] }, () => {
+  it('C2379 Test Request app sorting (prokopovych)', { tags: [testType.smoke] }, () => {
     cy.visit(TopMenu.requestsPath);
 
     cy.intercept('GET', '/circulation/requests?*').as('getRequests');

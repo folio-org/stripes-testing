@@ -176,7 +176,7 @@ export default {
   },
 
   moveItemToAnotherHolding(firstHoldingName, secondHoldingName) {
-    openHoldings([firstHoldingName, secondHoldingName]);
+    openHoldings(firstHoldingName, secondHoldingName);
 
     cy.do([
       Accordion({ label: including(`Holdings: ${firstHoldingName}`) }).find(MultiColumnListRow({ indexRow: 'row-0' })).find(Checkbox()).click(),
@@ -185,7 +185,7 @@ export default {
   },
 
   returnItemToFirstHolding(firstHoldingName, secondHoldingName) {
-    this.openHoldings([firstHoldingName, secondHoldingName]);
+    this.openHoldings(firstHoldingName, secondHoldingName);
 
     cy.do([
       Accordion({ label: including(`Holdings: ${secondHoldingName}`) }).find(MultiColumnListRow({ indexRow: 'row-0' })).find(Checkbox()).click(),

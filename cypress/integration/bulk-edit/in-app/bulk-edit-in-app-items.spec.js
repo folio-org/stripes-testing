@@ -20,8 +20,8 @@ const invalidItemBarcodesFileName = `invalidItemBarcodes_${getRandomPostfix()}.c
 const validItemBarcodesFileName = `validItemBarcodes_${getRandomPostfix()}.csv`;
 const invalidBarcode = getRandomPostfix();
 
-describe('bulk-edit: in-app file uploading', { retries: 3 }, () => {
-  before('create user', () => {
+describe('bulk-edit', () => {
+  before('create test data', () => {
     cy.createTempUser([
       permissions.bulkEditView.gui,
       permissions.bulkEditEdit.gui,
@@ -37,7 +37,7 @@ describe('bulk-edit: in-app file uploading', { retries: 3 }, () => {
       });
   });
 
-  after('Delete all data', () => {
+  after('delete test data', () => {
     InventoryInstances.deleteInstanceViaApi(item.itemBarcode);
     Users.deleteViaApi(user.userId);
     FileManager.deleteFile(`cypress/fixtures/${invalidItemBarcodesFileName}`);
@@ -61,20 +61,6 @@ describe('bulk-edit: in-app file uploading', { retries: 3 }, () => {
     BulkEditSearchPane.verifyModalName(invalidFileWarning);
   });
 
-  it('C357053 Negative: Verify enable type ahead in location look-up (firebird)', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
-    BulkEditSearchPane.selectRecordIdentifier('Item barcode');
-
-    BulkEditSearchPane.uploadFile(validItemBarcodesFileName);
-    BulkEditSearchPane.waitFileUploading();
-
-    BulkEditActions.openActions();
-    BulkEditActions.openStartBulkEditForm();
-    BulkEditActions.fillTemporaryLocationFilter(`test_location_${getRandomPostfix()}`);
-    BulkEditActions.verifyNoMatchingOptionsForLocationFilter();
-    BulkEditActions.cancel();
-    BulkEditActions.newBulkEdit();
-  });
-
   // Bug UIBULKED-121
   it('C357030 Verify Matched records label cleanup -- In -app approach (firebird)', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
     BulkEditSearchPane.selectRecordIdentifier('Item barcode');
@@ -95,7 +81,7 @@ describe('bulk-edit: in-app file uploading', { retries: 3 }, () => {
     BulkEditSearchPane.waitFileUploading();
 
     BulkEditSearchPane.verifyNonMatchedResults(invalidBarcode);
-    BulkEditSearchPane.verifyErrorLabel(invalidItemBarcodesFileName, 1, 1);
+    BulkEditSearchPane.verifyErrorLabelAfterChanges(invalidItemBarcodesFileName, 1, 1);
     BulkEditActions.verifySuccessBanner();
   });
 });

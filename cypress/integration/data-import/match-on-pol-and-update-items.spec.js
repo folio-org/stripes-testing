@@ -29,8 +29,9 @@ import ItemVeiw from '../../support/fragments/inventory/inventoryItem/itemVeiw';
 import InventoryViewSource from '../../support/fragments/inventory/inventoryViewSource';
 import NewMatchProfile from '../../support/fragments/data_import/match_profiles/newMatchProfile';
 import Organizations from '../../support/fragments/organizations/organizations';
+import DevTeams from '../../support/dictionary/devTeams';
 
-describe('ui-users:', () => {
+describe('ui-data-import: Match on POL and update related Instance, Holdings, Item', () => {
   const firstItem = {
     title: 'Sport and sociology. Dominic Malcolm.',
     orderNumber: 'auto99999test',
@@ -239,7 +240,7 @@ describe('ui-users:', () => {
     Orders.openOrder();
   };
 
-  it('C350590 Match on POL and update related Instance, Holdings, Item', { tags: [TestTypes.smoke] }, () => {
+  it('C350590 Match on POL and update related Instance, Holdings, Item (folijet)', { tags: [TestTypes.smoke, DevTeams.folijet] }, () => {
     // create the first PO with POL
     Orders.createOrderWithOrderLineViaApi(NewOrder.getDefaultOrder(vendorId, firstItem.orderNumber),
       BasicOrderLine.getDefaultOrderLine(

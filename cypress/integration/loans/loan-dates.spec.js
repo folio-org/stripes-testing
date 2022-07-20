@@ -111,7 +111,7 @@ describe('loan dates', () => {
     Users.deleteViaApi(checkOutUser.userId);
   });
 
-  it('C566 Loan: Change due date warnings and alerts', { tags: [TestTypes.smoke] }, () => {
+  it('C566 Loan: Change due date warnings and alerts (prokopovych)', { tags: [TestTypes.smoke] }, () => {
     cy.visit(TopMenu.usersPath);
     // show open loans
     UsersSearchPane.searchByKeywords(checkOutUser.username);

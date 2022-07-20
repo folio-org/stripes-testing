@@ -17,14 +17,6 @@ export default {
     UserEdit.saveAndClose();
   },
 
-  logOutAndLogIn: (userName, password) => {
-    cy.do([
-      Dropdown('My profile').open(),
-      Button('Log out').click(),
-    ]);
-    cy.login(userName, password);
-  },
-
   switchServicePoint:(servicePoint) => {
     cy.do([
       Dropdown('My profile').open(),

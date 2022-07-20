@@ -20,7 +20,7 @@ describe('remote-storage-configuration', () => {
     RemoteStorageHelper.configurations.DematicEMS,
     RemoteStorageHelper.configurations.DematicStagingDirector
   ].forEach(configuration => {
-    it('C163919 configure remote storage', { tags: [TestTypes.smoke] }, () => {
+    it('C163919 configure remote storage (firebird)', { tags: [TestTypes.smoke, devTeams.firebird] }, () => {
       const name = `AutotestConfigurationName${getRandomPostfix()}`;
 
       configuration.create(name);
@@ -32,7 +32,7 @@ describe('remote-storage-configuration', () => {
     });
   });
 
-  it('C163920 edit remote storage', { tags: [TestTypes.smoke, devTeams.firebird] }, () => {
+  it('C163920 edit remote storage (firebird)', { tags: [TestTypes.smoke, devTeams.firebird] }, () => {
     const name = `AutotestConfigurationName${getRandomPostfix()}`;
     const configuration = RemoteStorageHelper.configurations.DematicStagingDirector;
     const urlToEdit = 'newTestUrl';
@@ -55,7 +55,7 @@ describe('remote-storage-configuration', () => {
     RemoteStorageHelper.deleteRemoteStorage(name);
   });
 
-  it('C163922 Flag a location as remote storage', { tags: [TestTypes.smoke, devTeams.firebird] }, () => {
+  it('C163922 Flag a location as remote storage (firebird)', { tags: [TestTypes.smoke, devTeams.firebird] }, () => {
     cy.visit(settingsMenu.tenantLocationsPath);
     const locationName = `loc_${getRandomPostfix()}`;
 
