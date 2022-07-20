@@ -58,7 +58,7 @@ describe('bulk-edit', () => {
   });
 
   // Bug UIBULKED-121
-  it('C356810 Verify uploading file with holdings UUIDs', { tags: [testTypes.smoke, devTeams.firebird]}, () => {
+  it('C356810 Verify uploading file with holdings UUIDs (firebird)', { tags: [testTypes.smoke, devTeams.firebird]}, () => {
     BulkEditSearchPane.selectRecordIdentifier('Holdings UUIDs');
 
     BulkEditSearchPane.uploadFile(validHoldingUUIDsFileName);
