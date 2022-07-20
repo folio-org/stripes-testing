@@ -75,8 +75,14 @@ export default {
     this.checkDateValid(date);
     this.checkKeyValue('Lost', DateTools.getFormattedDateWithTime(date));
   },
+  checkRenewalCount() {
+    this.checkKeyValue('Renewal count', '1');
+  },
   checkStatusDeclaredLost() {
     this.checkStatus(ITEM_STATUSES.DECLARED_LOST);
+  },
+  checkStatusCheckedOut() {
+    this.checkStatus(ITEM_STATUSES.CHECKED_OUT);
   },
   checkStatusInList(row, status) {
     cy.then(() => MultiColumnListHeader({ id: 'list-column-itemstatus' }).index()).then((columnIndex) => {
