@@ -20,8 +20,8 @@ const item = {
   itemBarcode2: `secondBarcode_${itemBarcode}`
 };
 
-describe('bulk-edit: in-app file uploading', () => {
-  before('create user', () => {
+describe('bulk-edit', () => {
+  before('create test data', () => {
     cy.createTempUser([
       permissions.bulkEditView.gui,
       permissions.bulkEditEdit.gui,
@@ -39,7 +39,7 @@ describe('bulk-edit: in-app file uploading', () => {
       });
   });
 
-  after('Delete all data', () => {
+  after('delete test data', () => {
     Users.deleteViaApi(user.userId);
     InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(item.itemBarcode1);
     FileManager.deleteFile(`cypress/fixtures/${validHoldingUUIDsFileName}`);
@@ -55,5 +55,24 @@ describe('bulk-edit: in-app file uploading', () => {
 
     BulkEditActions.downloadMatchedResults(resultFileName);
     BulkEditFiles.verifyMatchedResultFileContent(resultFileName, [item.itemBarcode1, item.itemBarcode2]);
+  });
+
+  // Bug UIBULKED-121
+  it('C356810 Verify uploading file with holdings UUIDs (firebird)', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
+    BulkEditSearchPane.selectRecordIdentifier('Holdings UUIDs');
+
+    BulkEditSearchPane.uploadFile(validHoldingUUIDsFileName);
+    BulkEditSearchPane.waitFileUploading();
+    BulkEditSearchPane.verifyMatchedResults(item.itemBarcode1, item.itemBarcode2);
+
+    BulkEditActions.openActions();
+    BulkEditActions.openStartBulkEditForm();
+    BulkEditActions.replaceTemporaryLocation();
+    BulkEditActions.confirmChanges();
+    BulkEditActions.saveAndClose();
+    BulkEditSearchPane.waitFileUploading();
+
+    BulkEditSearchPane.verifyChangedResults(item.itemBarcode1, item.itemBarcode2);
+    BulkEditActions.verifySuccessBanner(2);
   });
 });

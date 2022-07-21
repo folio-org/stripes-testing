@@ -16,7 +16,7 @@ const item = {
 };
 const validItemBarcodesFileName = `validItemBarcodes_${getRandomPostfix()}.csv`;
 
-describe('bulk-edit: in-app file uploading', { retries: 3 }, () => {
+describe('bulk-edit', { retries: 3 }, () => {
   before('create user', () => {
     cy.createTempUser([
       permissions.bulkEditView.gui,
@@ -31,7 +31,7 @@ describe('bulk-edit: in-app file uploading', { retries: 3 }, () => {
       });
   });
 
-  after('Delete all data', () => {
+  after('delete test data', () => {
     InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(item.itemBarcode);
     Users.deleteViaApi(user.userId);
     FileManager.deleteFile(`cypress/fixtures/${validItemBarcodesFileName}`);

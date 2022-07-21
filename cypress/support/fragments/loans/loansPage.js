@@ -20,6 +20,12 @@ export default {
     this.renewLoan();
     cy.contains(message).should('be.visible');
   },
+  checkOverrideButtonHidden() {
+    cy.expect(Button('Override').absent());
+  },
+  checkOverrideButtonVisible() {
+    cy.expect(Button('Override').exists());
+  },
   closePage() {
     cy.do(Pane({ id: 'pane-loanshistory' }).find(Button({ ariaLabel: 'Close ' })).click());
   },
