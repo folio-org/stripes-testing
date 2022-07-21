@@ -5,6 +5,9 @@ import JobProfiles from './job_profiles/jobProfiles';
 import SearchInventory from './searchInventory';
 import TopMenu from '../topMenu';
 import DataImportUploadFile from '../../../../interactors/dataImportUploadFile';
+import MarcAuthority from '../marcAuthority/marcAuthority';
+import MarcAuthoritiesSearch from '../marcAuthority/marcAuthoritiesSearch';
+import MarcAuthorities from '../marcAuthority/marcAuthorities';
 
 const sectionPaneJobsTitle = Section({ id: 'pane-jobs-title' });
 
@@ -12,15 +15,41 @@ const uploadFile = (filePathName, fileName) => {
   cy.get('input[type=file]', getLongDelay()).attachFile({ filePath: filePathName, fileName });
 };
 
-const wailtLoading = () => {
+const waitLoading = () => {
   cy.expect(sectionPaneJobsTitle.exists());
   cy.expect(sectionPaneJobsTitle.find(HTML(including('Loading'))).absent());
   cy.expect(PaneHeader({ id:'paneHeaderpane-logs-title' }).find(Button('Actions')).exists());
 };
 
+const getLinkToAuthority = (title) => cy.then(() => Button(title).href());
+
+const importFile = (profileName, uniqueFileName) => {
+  uploadFile(MarcAuthority.defaultAuthority.name, uniqueFileName);
+  JobProfiles.waitLoadingList();
+  JobProfiles.select(profileName);
+  JobProfiles.runImportFile(uniqueFileName);
+  JobProfiles.openFileRecords(uniqueFileName);
+  getLinkToAuthority(MarcAuthority.defaultAuthority.headingReference).then(link => {
+    cy.intercept({
+      method: 'GET',
+      url: `/metadata-provider/jobLogEntries/${link.split('/').at(-2)}/records/${link.split('/').at(-1)}`,
+    }).as('getRecord');
+    cy.visit(link);
+    cy.wait('@getRecord', getLongDelay()).then(response => {
+      const internalAuthorityId = response.response.body.relatedAuthorityInfo.idList[0];
+
+      cy.visit(TopMenu.marcAuthorities);
+      MarcAuthoritiesSearch.searchBy('Uniform title', MarcAuthority.defaultAuthority.headingReference);
+      MarcAuthorities.select(internalAuthorityId);
+      MarcAuthority.waitLoading();
+    });
+  });
+};
+
 export default {
+  importFile,
   uploadFile,
-  wailtLoading,
+  waitLoading,
 
   uploadExportedFile(fileName) {
     cy.get('input[type=file]', getLongDelay()).attachFile(fileName);
@@ -49,7 +78,7 @@ export default {
   checkUploadState:() => {
     cy.allure().startStep('Delete files before upload file');
     cy.visit(TopMenu.dataImportPath);
-    wailtLoading();
+    waitLoading();
     cy.then(() => DataImportUploadFile().isDeleteFilesButtonExists()).then(isDeleteFilesButtonExists => {
       if (isDeleteFilesButtonExists) {
         cy.do(Button('Delete files').click());
