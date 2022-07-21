@@ -16,7 +16,7 @@ const item = {
 };
 const validItemBarcodesFileName = `validItemBarcodes_${getRandomPostfix()}.csv`;
 
-describe('bulk-edit: in-app file uploading', { retries: 3 }, () => {
+describe('bulk-edit', { retries: 3 }, () => {
   before('create user', () => {
     cy.createTempUser([
       permissions.bulkEditView.gui,
