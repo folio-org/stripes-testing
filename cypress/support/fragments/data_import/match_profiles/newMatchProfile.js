@@ -69,6 +69,7 @@ const fillMatchProfileForm = ({
   } else if (existingRecordType === 'INSTANCE') {
     cy.intercept('/_/jsonSchemas?path=acq-models/mod-orders-storage/schemas/vendor_detail.json').as('getJson2');
     cy.wait('@getJson2', getLongDelay());
+    cy.wait(1000);
     cy.do(Accordion({ id:'match-profile-details' }).find(Button({ dataId:'INSTANCE' })).click());
     fillIncomingRecordFields(incomingRecordFields);
     cy.do(criterionValueTypeButton.click());
@@ -89,43 +90,10 @@ const fillMatchProfileForm = ({
   }
 };
 
-const fillMatchProfileFormForPol = ({
-  profileName,
-  incomingRecordFields,
-  matchCriterion,
-  existingRecordType,
-  option
-}) => {
-  cy.do(TextField('Name*').fillIn(profileName));
-  // wait for data to be loaded
-  cy.intercept('/_/jsonSchemas?path=raml-util/schemas/metadata.schema').as('getJson');
-  cy.wait('@getJson', getLongDelay());
-  // TODO think about how to use interactor
-  cy.get(`[data-id="${existingRecordType}"]`).last().click();
-  fillIncomingRecordFields(incomingRecordFields);
-  cy.do(Select('Match criterion').choose(matchCriterion));
-  // wait for data to be loaded
-  cy.wait(1500);
-  if (existingRecordType === 'INSTANCE') {
-    cy.do(criterionValueTypeButton.click());
-    cy.expect(criterionValueTypeList.exists());
-    cy.do(criterionValueTypeList.select(option));
-  } else if (existingRecordType === 'HOLDINGS') {
-    cy.do(criterionValueTypeButton.click());
-    cy.expect(criterionValueTypeList.exists());
-    cy.do(criterionValueTypeList.select(option));
-  } else {
-    cy.do(criterionValueTypeButton.click());
-    cy.expect(criterionValueTypeList.exists());
-    cy.do(criterionValueTypeList.select(option));
-  }
-};
-
 export default {
   optionsList,
   fillIncomingRecordFields,
   fillExistingRecordFields,
-  fillMatchProfileForm,
-  fillMatchProfileFormForPol
+  fillMatchProfileForm
 };
 

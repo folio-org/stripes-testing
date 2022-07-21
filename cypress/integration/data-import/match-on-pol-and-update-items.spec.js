@@ -32,7 +32,7 @@ import Organizations from '../../support/fragments/organizations/organizations';
 import DevTeams from '../../support/dictionary/devTeams';
 
 describe('ui-data-import: Match on POL and update related Instance, Holdings, Item', () => {
-  /*const firstItem = {
+  const firstItem = {
     title: 'Sport and sociology. Dominic Malcolm.',
     orderNumber: 'auto99999test',
     productId: '9782266111560',
@@ -55,7 +55,7 @@ describe('ui-data-import: Match on POL and update related Instance, Holdings, It
   let locationId;
   let acquisitionMethodId;
   let productIdTypeId;
-  let materialTypeId;*/
+  let materialTypeId;
   let user = {};
   let servicePointId;
 
@@ -73,7 +73,7 @@ describe('ui-data-import: Match on POL and update related Instance, Holdings, It
 
   const marcFileName = `C343335autotestFile.${getRandomPostfix()}.mrc`;
 
-  /*const collectionOfProfiles = [
+  const collectionOfProfiles = [
     {
       mappingProfile: { typeValue: NewMappingProfile.folioRecordTypeValue.instance,
         name: mappingProfileNameForInstance,
@@ -98,7 +98,7 @@ describe('ui-data-import: Match on POL and update related Instance, Holdings, It
         name: actionProfileNameForItem,
         action: 'Update (all record types except Orders)' }
     }
-  ];*/
+  ];
 
   const collectionOfMatchProfiles = [
     {
@@ -149,12 +149,14 @@ describe('ui-data-import: Match on POL and update related Instance, Holdings, It
       permissions.uiInventoryViewCreateEditItems,
       permissions.settingsDataImportEnabled.gui,
       permissions.moduleDataImportEnabled.gui,
-      permissions.uiReceivingViewEditCreate.gui
+      permissions.uiReceivingViewEditCreate.gui,
+      permissions.uiInventoryViewInstances.gui,
+      permissions.uiQuickMarcQuickMarcBibliographicEditorView.gui
     ])
       .then(userProperties => {
         user = userProperties;
       })
-      /*.then(() => {
+      .then(() => {
         cy.getAdminToken()
           .then(() => {
             Organizations.getOrganizationViaApi({ query: 'name="GOBI Library Solutions"' })
@@ -181,14 +183,14 @@ describe('ui-data-import: Match on POL and update related Instance, Holdings, It
               .then((servicePoint) => {
                 servicePointId = servicePoint[0].id;
               });
-          })*/
+          })
           .then(() => {
             cy.login(user.username, user.password, { path: TopMenu.ordersPath, waiter: Orders.waitLoading });
           });
-      //});
+      });
   });
 
-  /*after(() => {
+  after(() => {
     let itemId;
     const itemBarcode = Helper.getRandomBarcode();
 
@@ -238,11 +240,11 @@ describe('ui-data-import: Match on POL and update related Instance, Holdings, It
     Orders.searchByParameter('PO number', number);
     Helper.selectFromResultsList();
     Orders.openOrder();
-  };*/
+  };
 
   it('C350590 Match on POL and update related Instance, Holdings, Item (folijet)', { tags: [TestTypes.smoke, DevTeams.folijet] }, () => {
     // create the first PO with POL
-    /*Orders.createOrderWithOrderLineViaApi(NewOrder.getDefaultOrder(vendorId, firstItem.orderNumber),
+    Orders.createOrderWithOrderLineViaApi(NewOrder.getDefaultOrder(vendorId, firstItem.orderNumber),
       BasicOrderLine.getDefaultOrderLine(
         firstItem.quantity,
         firstItem.title,
@@ -299,7 +301,7 @@ describe('ui-data-import: Match on POL and update related Instance, Holdings, It
       cy.visit(SettingsMenu.actionProfilePath);
       ActionProfiles.createActionProfile(profile.actionProfile, profile.mappingProfile.name);
       ActionProfiles.checkActionProfilePresented(profile.actionProfile.name);
-    });*/
+    });
 
     // create match profiles
     cy.visit(SettingsMenu.matchProfilePath);
@@ -309,7 +311,7 @@ describe('ui-data-import: Match on POL and update related Instance, Holdings, It
     });
 
     // create job profile
-    /*cy.visit(SettingsMenu.jobProfilePath);
+    cy.visit(SettingsMenu.jobProfilePath);
     JobProfiles.createJobProfileWithLinkingProfilesForUpdate(specialJobProfile);
     NewJobProfile.linkMatchAndActionProfilesForInstance(actionProfileNameForInstance, matchProfileNameForInstance, 0);
     NewJobProfile.linkMatchAndActionProfilesForHoldings(actionProfileNameForHoldings, matchProfileNameForHoldings, 2);
@@ -325,12 +327,12 @@ describe('ui-data-import: Match on POL and update related Instance, Holdings, It
     Logs.checkStatusOfJobProfile();
     Logs.openFileDetails(marcFileName);
     FileDetails.checkItemsStatusesInResultList(0, [FileDetails.status.created, FileDetails.status.updated, FileDetails.status.updated, FileDetails.status.updated]);
-    //FileDetails.checkItemsStatusesInResultList(1, [FileDetails.status.dash, FileDetails.status.discarded, FileDetails.status.discarded, FileDetails.status.discarded]);
+    FileDetails.checkItemsStatusesInResultList(1, [FileDetails.status.dash, FileDetails.status.discarded, FileDetails.status.discarded, FileDetails.status.discarded]);
 
     FileDetails.openInstanceInInventory();
     InventoryInstance.checkIsInstanceUpdated();
     HoldingsRecordView.checkIsHoldingsUpdated();
     ItemVeiw.checkIsItemUpdated(firstItem.barcode);
-    InventoryViewSource.verifyMARCBibSource(firstItem.barcode);*/
+    InventoryViewSource.verifyMARCBibSource(firstItem.barcode);
   });
 });
