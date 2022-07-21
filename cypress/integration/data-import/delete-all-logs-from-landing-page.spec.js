@@ -7,6 +7,7 @@ import InteractorsTools from '../../support/utils/interactorsTools';
 import permissions from '../../support/dictionary/permissions';
 import Users from '../../support/fragments/users/users';
 import JobProfiles from '../../support/fragments/data_import/job_profiles/jobProfiles';
+import DevTeams from '../../support/dictionary/devTeams';
 
 describe('ui-data-import: A user can delete import logs with "Data import: Can delete import logs" permission on Landing page', () => {
   let userId = null;
@@ -48,7 +49,7 @@ describe('ui-data-import: A user can delete import logs with "Data import: Can d
     Users.deleteViaApi(userId);
   });
 
-  it('C358137 A user can delete import logs with "Data import: Can delete import logs" permission on Landing page (Folijet)', { tags: [TestTypes.smoke] }, () => {
+  it('C358137 A user can delete import logs with "Data import: Can delete import logs" permission on Landing page (Folijet)', { tags: [TestTypes.smoke, DevTeams.folijet] }, () => {
     Logs.openFileDetails(fileNameToUpload);
     Logs.clickOnHotLink();
     cy.location('pathname').should('include', '/inventory/view');
