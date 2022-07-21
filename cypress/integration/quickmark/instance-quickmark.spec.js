@@ -33,7 +33,7 @@ describe('Manage inventory Bib records with quickMarc editor', () => {
     });
   });
 
-  it('C10950 Edit and save a MARC record in quickMARC', { tags: [testTypes.smoke, features.quickMarcEditor] }, () => {
+  it('C10950 Edit and save a MARC record in quickMARC (spitfire)', { tags: [testTypes.smoke, features.quickMarcEditor] }, () => {
     InventoryInstance.goToEditMARCBiblRecord();
     QuickMarcEditor.waitLoading();
 
@@ -50,7 +50,7 @@ describe('Manage inventory Bib records with quickMarc editor', () => {
     });
   });
 
-  it('C10924 Add a field to a record using quickMARC', { tags: [testTypes.smoke, features.quickMarcEditor] }, () => {
+  it('C10924 Add a field to a record using quickMARC (spitfire)', { tags: [testTypes.smoke, features.quickMarcEditor] }, () => {
     InventoryInstance.goToEditMARCBiblRecord();
     QuickMarcEditor.waitLoading();
     quickmarcEditor.addRow();
@@ -69,7 +69,7 @@ describe('Manage inventory Bib records with quickMarc editor', () => {
     quickmarcEditor.checkContent();
   });
 
-  it('C10928 Delete a field(s) from a record in quickMARC', { tags: [testTypes.smoke, features.quickMarcEditor] }, () => {
+  it('C10928 Delete a field(s) from a record in quickMARC (spitfire)', { tags: [testTypes.smoke, features.quickMarcEditor] }, () => {
     InventoryInstance.goToEditMARCBiblRecord();
     QuickMarcEditor.waitLoading();
     quickmarcEditor.deletePenaltField().then(deletedTag => {
@@ -82,13 +82,13 @@ describe('Manage inventory Bib records with quickMarc editor', () => {
     });
   });
 
-  it('C10957 Attempt to delete a required field', { tags: [testTypes.smoke, features.quickMarcEditor] }, () => {
+  it('C10957 Attempt to delete a required field (spitfire)', { tags: [testTypes.smoke, features.quickMarcEditor] }, () => {
     InventoryInstance.goToEditMARCBiblRecord();
     QuickMarcEditor.waitLoading();
     QuickMarcEditor.checkRequiredFields();
   });
 
-  it('C10951 Add a 5XX field to a marc record in quickMARC', { tags: [testTypes.smoke, features.quickMarcEditor] }, () => {
+  it('C10951 Add a 5XX field to a marc record in quickMARC (spitfire)', { tags: [testTypes.smoke, features.quickMarcEditor] }, () => {
     InventoryInstance.startOverlaySourceBibRecord();
     InventoryActions.fillImportFields(InventoryInstance.validOCLC.id);
     InventoryActions.pressImportInModal();
@@ -117,7 +117,7 @@ describe('Manage inventory Bib records with quickMarc editor', () => {
     InventoryInstance.checkInstanceNotes(testRecord.tagMeaning, testRecord.content);
   });
 
-  it('C345388 Derive a MARC bib record', { tags: [testTypes.smoke, features.quickMarcEditor] }, () => {
+  it('C345388 Derive a MARC bib record (spitfire)', { tags: [testTypes.smoke, features.quickMarcEditor] }, () => {
     // TODO: check the issue with reading in new version of interactors
     InventoryInstance.getAssignedHRID()
       .then(instanceHRID => {
@@ -144,7 +144,7 @@ describe('Manage inventory Bib records with quickMarc editor', () => {
       });
   });
 
-  it('C353612 Verify "LDR" validation rules with invalid data for editable and non-editable positions when editing/deriving record', { tags: [testTypes.smoke, features.quickMarcEditor] }, () => {
+  it('C353612 Verify "LDR" validation rules with invalid data for editable and non-editable positions when editing/deriving record (spitfire)', { tags: [testTypes.smoke, features.quickMarcEditor] }, () => {
     const checkLdrErrors = () => {
       const initialLDRValue = InventoryInstance.validOCLC.ldrValue;
       const positions6Error = 'Record cannot be saved. Please enter a valid Leader 06. Valid values are listed at https://loc.gov/marc/bibliographic/bdleader.html';
@@ -188,7 +188,7 @@ describe('Manage inventory Bib records with quickMarc editor', () => {
     checkLdrErrors();
   });
 
-  it('C353610 Verify "LDR" validation rules with valid data for positions 06 and 07 when editing record', { tags: [testTypes.smoke, features.quickMarcEditor] }, () => {
+  it('C353610 Verify "LDR" validation rules with valid data for positions 06 and 07 when editing record (spitfire)', { tags: [testTypes.smoke, features.quickMarcEditor] }, () => {
     const initialLDRValue = InventoryInstance.validOCLC.ldrValue;
     const changesIn06 = ['a', 'c', 'd', 'e', 'f', 'g', 'i', 'j', 'k', 'm', 'o', 'p', 'r', 't'];
     const changesIn07 = ['a', 'b', 'c', 'd', 'i', 'm', 's'];

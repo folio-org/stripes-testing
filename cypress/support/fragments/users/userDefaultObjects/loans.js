@@ -77,5 +77,8 @@ export default {
     ]);
 
     this.checkDeclareLostModalAbsent();
+  },
+  getLoanDetails(title) {
+    cy.do(LoanHistoryList.find(MultiColumnListCell(title)).click());
   }
 };

@@ -20,6 +20,7 @@ import ExportJobProfiles from '../../support/fragments/data-export/exportJobProf
 import SettingsMenu from '../../support/fragments/settingsMenu';
 import FileDetails from '../../support/fragments/data_import/logs/fileDetails';
 import DataImportSettingsJobProfiles from '../../support/fragments/settings/dataImport/dataImportSettingsJobProfiles';
+import DevTeams from '../../support/dictionary/devTeams';
 
 describe('ui-data-import: MARC file upload with the update of instance, holding, and items', () => {
   // profile names for creating
@@ -247,7 +248,7 @@ describe('ui-data-import: MARC file upload with the update of instance, holding,
     DataImport.checkUploadState();
   });
 
-  it('C343335 MARC file upload with the update of instance, holding, and items (folijet)', { tags: [TestTypes.smoke, TestTypes.broken] }, () => {
+  it('C343335 MARC file upload with the update of instance, holding, and items (folijet)', { tags: [TestTypes.smoke, DevTeams.folijet] }, () => {
     // upload a marc file for creating of the new instance, holding and item
     cy.visit(TopMenu.dataImportPath);
     DataImport.uploadFile('oneMarcBib.mrc', nameMarcFileForImportCreate);

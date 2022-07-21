@@ -34,7 +34,7 @@ describe('ui-inventory: Create page type request', () => {
           permissions.uiUserCreate.gui,
           permissions.uiUsersEdituserservicepoints.gui,
           permissions.uiUserAccounts.gui,
-          permissions.uiUserRequestsAll.gui,
+          permissions.usersViewRequests.gui,
           permissions.requestsAll.gui
         ], 'faculty');
       })
@@ -82,7 +82,7 @@ describe('ui-inventory: Create page type request', () => {
     Requests.deleteRequestPolicyApi(requestPolicyId);
   });
 
-  it('C546: Create new request for "Page" type', { tags: [TestTypes.smoke, TestTypes.broken] }, () => {
+  it('C546: Create new request for "Page" type (folijet)', { tags: [TestTypes.smoke, TestTypes.broken] }, () => {
     cy.visit(TopMenu.inventoryPath);
     createPageTypeRequest.findAvailableItem(instanceData, createdItem.barcode);
     createPageTypeRequest.clickNewRequest(createdItem.barcode);

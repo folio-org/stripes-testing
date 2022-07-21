@@ -14,8 +14,8 @@ const invalidUserUUID = getRandomPostfix();
 const matchRecordsFileName = `matchedRecords_${getRandomPostfix()}.csv`;
 const importFileName = `bulkEditImport_${getRandomPostfix()}.csv`;
 
-describe('bulk-edit: csv file uploading', () => {
-  before('create user', () => {
+describe('bulk-edit', { retries: 3 }, () => {
+  before('create test data', () => {
     cy.createTempUser([
       permissions.bulkEditCsvView.gui,
       permissions.bulkEditCsvEdit.gui,
@@ -27,7 +27,7 @@ describe('bulk-edit: csv file uploading', () => {
       });
   });
 
-  after('Delete all data', () => {
+  after('delete test data', () => {
     FileManager.deleteFile(`cypress/fixtures/${userUUIDsFileName}`);
     FileManager.deleteFile(`cypress/fixtures/${importFileName}`);
     FileManager.deleteFile(`cypress/downloads/${matchRecordsFileName}`);
@@ -78,7 +78,7 @@ describe('bulk-edit: csv file uploading', () => {
     BulkEditActions.newBulkEdit();
   });
 
-  it('C357034 Verify elements of the bulk edit app -- CSV app', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
+  it('C357034 Verify elements of the bulk edit app -- CSV app (firebird)', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
     BulkEditSearchPane.selectRecordIdentifier('User UUIDs');
 
     BulkEditSearchPane.clickToBulkEditMainButton();
@@ -96,7 +96,7 @@ describe('bulk-edit: csv file uploading', () => {
     BulkEditSearchPane.verifyDefaultFilterState();
   });
 
-  it('C356817 Verify Matched records label cleanup -- CSV approach', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
+  it('C356817 Verify Matched records label cleanup -- CSV approach (firebird)', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
     BulkEditSearchPane.selectRecordIdentifier('User UUIDs');
 
     BulkEditSearchPane.uploadFile(userUUIDsFileName);

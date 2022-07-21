@@ -62,7 +62,7 @@ describe('Assign Tags to Request', () => {
       });
   });
 
-  it('C747 Assign Tags to Request', { tags:  [testType.smoke, testType.broken] }, () => {
+  it('C747 Assign Tags to Request (prokopovych)', { tags:  [testType.smoke, testType.broken] }, () => {
     NewRequest.createNewRequest(requestRecord);
 
     Requests.selectNotYetFilledRequest();

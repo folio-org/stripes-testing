@@ -1,15 +1,15 @@
 /// <reference types="cypress" />
 
-import TopMenu from '../../support/fragments/topMenu';
-import HoldingsRecordView from '../../support/fragments/inventory/holdingsRecordView';
-import TestTypes from '../../support/dictionary/testTypes';
-import Features from '../../support/dictionary/features';
-import NewHoldingsRecord from '../../support/fragments/inventory/newHoldingsRecord';
-import InventoryActions from '../../support/fragments/inventory/inventoryActions';
-import InventorySteps from '../../support/fragments/inventory/inventorySteps';
-import InventoryViewSource from '../../support/fragments/inventory/inventoryViewSource';
-import QuickmarcEditor from '../../support/fragments/quickMarcEditor';
-import InventoryInstance from '../../support/fragments/inventory/inventoryInstance';
+import TopMenu from '../../../support/fragments/topMenu';
+import HoldingsRecordView from '../../../support/fragments/inventory/holdingsRecordView';
+import TestTypes from '../../../support/dictionary/testTypes';
+import Features from '../../../support/dictionary/features';
+import NewHoldingsRecord from '../../../support/fragments/inventory/newHoldingsRecord';
+import InventoryActions from '../../../support/fragments/inventory/inventoryActions';
+import InventorySteps from '../../../support/fragments/inventory/inventorySteps';
+import InventoryViewSource from '../../../support/fragments/inventory/inventoryViewSource';
+import QuickmarcEditor from '../../../support/fragments/quickMarcEditor';
+import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 
 
 describe('Manage holding records with MARC source', () => {
@@ -20,7 +20,7 @@ describe('Manage holding records with MARC source', () => {
     // TODO: redesign to api step
     InventorySteps.addMarcHoldingRecord();
   });
-  it('C345409 MARC instance record + MARC holdings record', { tags: [TestTypes.smoke, Features.holdingsRecord] }, () => {
+  it('C345409 MARC instance record + MARC holdings record (spitfire)', { tags: [TestTypes.smoke, Features.holdingsRecord] }, () => {
     HoldingsRecordView.getId().then(initialHoldindsRecordId => {
       HoldingsRecordView.checkSource('MARC');
       HoldingsRecordView.checkActionsMenuOptionsInMarcSource();
