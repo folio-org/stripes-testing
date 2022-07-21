@@ -27,7 +27,7 @@ describe('Fee/fine management', () => {
     instanceTitle: `Pre-checkin_instance_${Number(new Date())}`
   };
   const userData = { ...DefaultUser.defaultApiPatron };
-  const ITEM_BARCODE = generateItemBarcode();
+  const itemBarcode = generateItemBarcode();
   beforeEach(() => {
     cy.getAdminToken();
     PatronGroups.createViaApi().then(patronGroupId => {
@@ -78,7 +78,7 @@ describe('Fee/fine management', () => {
               }],
               items: [
                 [{
-                  barcode: ITEM_BARCODE,
+                  barcode: itemBarcode,
                   missingPieces: '3',
                   numberOfMissingPieces: '3',
                   status: { name: 'Available' },
@@ -94,7 +94,7 @@ describe('Fee/fine management', () => {
 
   it('C455 Verify "New fee/fine" behavior when "Charge & pay now" button pressed (spitfire)', { tags: [TestType.smoke, Features.feeFine, devTeams.spitfire] }, () => {
     const feeInfo = [testData.owner.name, testData.feeFineType.feeFineTypeName, 'Paid fully'];
-    const itemInfo = [testData.instanceTitle + ' (book)', ITEM_BARCODE];
+    const itemInfo = [testData.instanceTitle + ' (book)', itemBarcode];
     const initialCheckNewFeeFineFragment = () => {
       NewFeeFine.checkInitialState(testData.userProperties, testData.owner.name);
       NewFeeFine.setFeeFineOwner(testData.owner.name);
@@ -141,7 +141,7 @@ describe('Fee/fine management', () => {
     cy.wait(2000);
     cy.visit(topMenu.checkOutPath);
 
-    cy.checkOutItem(testData.userProperties.barcode, ITEM_BARCODE);
+    cy.checkOutItem(testData.userProperties.barcode, itemBarcode);
     cy.verifyItemCheckOut();
     cy.visit(AppPaths.getUserPreviewPath(testData.userProperties.id));
     UsersCard.openLoans();
@@ -157,8 +157,8 @@ describe('Fee/fine management', () => {
     cy.wait(2000);
     cy.visit(topMenu.checkInPath);
     CheckInActions.waitLoading();
-    CheckInActions.checkInItemGui(ITEM_BARCODE);
-    CheckInActions.confirmMultipleItemsCheckin(ITEM_BARCODE);
+    CheckInActions.checkInItemGui(itemBarcode);
+    CheckInActions.confirmMultipleItemsCheckin(itemBarcode);
     CheckInActions.openNewfeefinesPane();
 
     initialCheckNewFeeFineFragment(testData.owner.name);
@@ -175,7 +175,7 @@ describe('Fee/fine management', () => {
   });
   after(() => {
     CheckInActions.createItemCheckinApi({
-      itemBarcode: ITEM_BARCODE,
+      itemBarcode,
       servicePointId: testData.userServicePoint,
       checkInDate: moment.utc().format(),
     }).then(() => {
@@ -183,7 +183,7 @@ describe('Fee/fine management', () => {
       PatronGroups.deleteViaApi(testData.patronGroupId);
     });
 
-    cy.getInstance({ limit: 1, expandAll: true, query: `"items.barcode"=="${ITEM_BARCODE}"` })
+    cy.getInstance({ limit: 1, expandAll: true, query: `"items.barcode"=="${itemBarcode}"` })
       .then((instance) => {
         cy.deleteItem(instance.items[0].id);
         cy.deleteHoldingRecordViaApi(instance.holdings[0].id);
