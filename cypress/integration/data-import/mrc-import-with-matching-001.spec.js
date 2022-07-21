@@ -67,10 +67,10 @@ describe('ui-data-import: Test MARC-MARC matching for 001 field', () => {
     // get Instance HRID through API
     SearchInventory
       .getInstanceHRID()
-      .then(id => {
+      .then(hrId => {
         // download .csv file
         cy.visit(TopMenu.inventoryPath);
-        SearchInventory.searchInstanceByHRID(id);
+        SearchInventory.searchInstanceByHRID(hrId[0]);
         InventorySearch.saveUUIDs();
         ExportMarcFile.downloadCSVFile(nameForCSVFile, 'SearchInstanceUUIDs*');
         FileManager.deleteFolder(Cypress.config('downloadsFolder'));

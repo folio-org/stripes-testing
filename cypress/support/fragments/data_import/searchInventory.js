@@ -11,8 +11,7 @@ import InventoryInstances from '../inventory/inventoryInstances';
 
 // TODO replace to Inventory/inventorySearch
 const getInstanceHRID = () => {
-  return logsViewAll
-    .getSingleJobProfile() // get the first job id from job logs list
+  return logsViewAll.getSingleJobProfile() // get the first job id from job logs list
     .then(({ id }) => {
       // then, make request with the job id
       // and get the only record id inside the uploaded file
@@ -38,7 +37,7 @@ const getInstanceHRID = () => {
             },
           })
             .then(({ body: { relatedInstanceInfo } }) => {
-              return relatedInstanceInfo.hridList[1];
+              return relatedInstanceInfo.hridList;
             });
         });
     });

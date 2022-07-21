@@ -347,20 +347,20 @@ describe('ui-data-import: MARC file upload with the update of instance, holding,
     JobProfiles.runImportFile(nameMarcFileForImportCreate);
     Logs.openFileDetails(nameMarcFileForImportCreate);
     FileDetails.checkStatusInColumn(FileDetails.status.updated, FileDetails.columnName.srsMarc);
-    //[FileDetails.columnName.instance,
-      //FileDetails.columnName.holdings,
-      //FileDetails.columnName.item].forEach(columnName => {
-      //FileDetails.checkStatusInColumn(FileDetails.status.created, columnName);
-//});
+    [FileDetails.columnName.instance,
+      FileDetails.columnName.holdings,
+      FileDetails.columnName.item].forEach(columnName => {
+      FileDetails.checkStatusInColumn(FileDetails.status.created, columnName);
+    });
     FileDetails.checkItemsQuantityInSummaryTable(0, '1');
 
     // get Instance HRID through API
     SearchInventory
       .getInstanceHRID()
-      .then(id => {
+      .then(hrId => {
         // download .csv file
         cy.visit(TopMenu.inventoryPath);
-        SearchInventory.searchInstanceByHRID(id);
+        SearchInventory.searchInstanceByHRID(hrId[1]);
         InventorySearch.saveUUIDs();
         ExportMarcFile.downloadCSVFile(nameForCSVFile, 'SearchInstanceUUIDs*');
         FileManager.deleteFolder(Cypress.config('downloadsFolder'));

@@ -78,12 +78,11 @@ describe('ui-data-import: Verify the possibility to modify MARC Bibliographic re
     });
 
     // get Instance HRID through API
-    SearchInventory
-      .getInstanceHRID()
-      .then(id => {
+    SearchInventory.getInstanceHRID()
+      .then(hrId => {
         // download .csv file
         cy.visit(TopMenu.inventoryPath);
-        SearchInventory.searchInstanceByHRID(id);
+        SearchInventory.searchInstanceByHRID(hrId[0]);
         InventorySearch.saveUUIDs();
         ExportMarcFile.downloadCSVFile(nameForCSVFile, 'SearchInstanceUUIDs*');
         FileManager.deleteFolder(Cypress.config('downloadsFolder'));

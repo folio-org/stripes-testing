@@ -85,10 +85,10 @@ describe('ui-data-import: MARC file import with matching for 999 ff field', () =
     // get Instance HRID through API
     SearchInventory
       .getInstanceHRID()
-      .then(id => {
+      .then(hrId => {
         // download .csv file
         cy.visit(TopMenu.inventoryPath);
-        SearchInventory.searchInstanceByHRID(id);
+        SearchInventory.searchInstanceByHRID(hrId[0]);
         InventorySearch.saveUUIDs();
         ExportMarcFile.downloadCSVFile(nameForCSVFile, 'SearchInstanceUUIDs*');
         FileManager.deleteFolder(Cypress.config('downloadsFolder'));
@@ -166,7 +166,7 @@ describe('ui-data-import: MARC file import with matching for 999 ff field', () =
           .getInstanceHRID()
           .then(hrId => {
             cy.visit(TopMenu.inventoryPath);
-            SearchInventory.searchInstanceByHRID(hrId);
+            SearchInventory.searchInstanceByHRID(hrId[0]);
 
             // ensure the fields created in Field mapping profile exists in inventory
             SearchInventory.checkInstanceDetails();
