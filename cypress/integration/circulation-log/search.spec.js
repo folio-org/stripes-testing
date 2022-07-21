@@ -19,7 +19,7 @@ let userId;
 let source;
 let servicePointId;
 
-describe('ui-circulation-log', () => {
+describe('circulation-log', () => {
   before('create inventory instance', () => {
     cy.createTempUser([
       permissions.inventoryAll.gui,
@@ -86,7 +86,7 @@ describe('ui-circulation-log', () => {
     SearchPane.resetResults();
   });
 
-  after('Delete all data', () => {
+  after('delete test data', () => {
     CheckinActions.createItemCheckinApi({
       itemBarcode: ITEM_BARCODE,
       servicePointId,

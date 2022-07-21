@@ -3,7 +3,6 @@ import moment from 'moment';
 import TestType from '../../support/dictionary/testTypes';
 import Features from '../../support/dictionary/features';
 import PatronGroups from '../../support/fragments/settings/users/patronGroups';
-import getRandomPostfix from '../../support/utils/stringTools';
 import DefaultUser from '../../support/fragments/users/userDefaultObjects/defaultUser';
 import Users from '../../support/fragments/users/users';
 import UsersOwners from '../../support/fragments/settings/users/usersOwners';
@@ -21,6 +20,7 @@ import InventoryInstance from '../../support/fragments/inventory/inventoryInstan
 import generateItemBarcode from '../../support/utils/generateItemBarcode';
 import InventoryHoldings from '../../support/fragments/inventory/holdings/inventoryHoldings';
 import NewFeeFine from '../../support/fragments/users/newFeeFine';
+import devTeams from '../../support/dictionary/devTeams';
 
 describe('Fee/fine management', () => {
   const testData = {
@@ -98,12 +98,11 @@ describe('Fee/fine management', () => {
     });
   });
 
-  it('C455 Verify "New fee/fine" behavior when "Charge & pay now" button pressed', { tags: [TestType.smoke, Features.feeFine] }, () => {
+  it('C455 Verify "New fee/fine" behavior when "Charge & pay now" button pressed (spitfire)', { tags: [TestType.smoke, Features.feeFine, devTeams.firebird] }, () => {
     const feeInfo = [testData.owner.name, testData.feeFineType.feeFineTypeName, 'Paid fully'];
     const itemInfo = [testData.instanceTitle + ' (book)', ITEM_BARCODE];
 
     const initialCheckNewFeeFineFragment = () => {
-      console.log(testData.userProperties);
       NewFeeFine.checkInitialState(testData.userProperties, testData.owner.name);
       NewFeeFine.setFeeFineOwner(testData.owner.name);
       NewFeeFine.checkFilteredFeeFineType(testData.feeFineType.feeFineTypeName);
@@ -159,7 +158,7 @@ describe('Fee/fine management', () => {
     // Scenario 4: CHARGING MANUAL FEE/FINES USING ELLIPSIS OPTION FROM CHECK-IN
     // waiting cypress runner ti be able to get a command
     // without wait, randomly doesn't redirecting browser to the checkin page
-    cy.wait(1000);
+    cy.wait(2000);
     cy.visit(topMenu.checkInPath);
     CheckInActions.waitLoading();
     CheckInActions.checkInItemGui(ITEM_BARCODE);

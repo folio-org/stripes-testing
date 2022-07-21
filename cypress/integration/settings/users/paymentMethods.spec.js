@@ -19,7 +19,7 @@ describe('ui-users-settings: payments methods in Fee/fine', () => {
     UsersOwners.deleteViaApi(specialOwnerId);
   });
 
-  it('C445 Verify that you can create/edit/delete payment methods for a fee/fine owner', { tags: [TestType.smoke, features.paymentMethod] }, () => {
+  it('C445 Verify that you can create/edit/delete payment methods for a fee/fine owner (prokopovych)', { tags: [TestType.smoke, features.paymentMethod] }, () => {
     // create
     const initialPaymentMethod = { ...PaymentMethods.defaultPaymentMethod };
     PaymentMethods.checkControls();

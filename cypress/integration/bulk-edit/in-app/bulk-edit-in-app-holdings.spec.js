@@ -20,8 +20,8 @@ const item = {
   itemBarcode2: `secondBarcode_${itemBarcode}`
 };
 
-describe('bulk-edit: in-app file uploading', () => {
-  before('create user', () => {
+describe('bulk-edit', () => {
+  before('create test data', () => {
     cy.createTempUser([
       permissions.bulkEditView.gui,
       permissions.bulkEditEdit.gui,
@@ -39,7 +39,7 @@ describe('bulk-edit: in-app file uploading', () => {
       });
   });
 
-  after('Delete all data', () => {
+  after('delete test data', () => {
     Users.deleteViaApi(user.userId);
     InventoryInstances.deleteInstanceViaApi(item.itemBarcode1);
     FileManager.deleteFile(`cypress/fixtures/${validHoldingUUIDsFileName}`);
