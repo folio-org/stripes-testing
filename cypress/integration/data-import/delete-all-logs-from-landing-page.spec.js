@@ -17,7 +17,7 @@ describe('ui-data-import: A user can delete import logs with "Data import: Can d
   const jobProfileToRun = 'Default - Create instance and SRS MARC Bib';
   const numberOfLogsToDelete = 2;
   const numberOfLogsPerPage = 25;
-  const numberOfLogsToUpload = 15;
+  const numberOfLogsToUpload = 30;
   const getCalloutSuccessMessage = logsCount => `${logsCount} data import logs have been successfully deleted.`;
 
   before(() => {
