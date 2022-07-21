@@ -13,7 +13,7 @@ describe('Fee/fine management', () => {
     cy.loginAsAdmin({ path: SettingsMenu.circulationLostItemFeePolicyPath, waiter: LostItemFeePolicy.waitLoading });
   });
 
-  it('C5558 Verify that you can create/edit/delete lost item fee policies', () => {
+  it('C5558 Verify that you can create/edit/delete lost item fee policies (prokopovych)', () => {
     // creating
     LostItemFeePolicy.startAdding();
     LostItemFeePolicy.fillName(name);

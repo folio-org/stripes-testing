@@ -56,6 +56,10 @@ export default {
     cy.expect(HTML('No matching options').exists());
   },
 
+  verifyMatchingOptionsForLocationFilter(location) {
+    cy.expect(HTML(including(location)).exists());
+  },
+
   confirmChanges() {
     cy.do(Button('Confirm changes').click());
   },

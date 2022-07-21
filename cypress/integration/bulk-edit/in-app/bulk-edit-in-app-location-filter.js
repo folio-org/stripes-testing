@@ -14,15 +14,10 @@ const item = {
   instanceName: `testBulkEdit_${getRandomPostfix()}`,
   itemBarcode: getRandomPostfix(),
 };
-const itemToBeDeleted = {
-  instanceName: `testBulkEdit_${getRandomPostfix()}`,
-  itemBarcode: getRandomPostfix(),
-};
-const invalidItemBarcodesFileName = `C350905_invalidItemBarcodes_${getRandomPostfix()}.csv`;
-const invalidBarcode = getRandomPostfix();
+const validItemBarcodesFileName = `validItemBarcodes_${getRandomPostfix()}.csv`;
 
-describe('bulk-edit', () => {
-  before('create test data', () => {
+describe('bulk-edit', { retries: 3 }, () => {
+  before('create user', () => {
     cy.createTempUser([
       permissions.bulkEditView.gui,
       permissions.bulkEditEdit.gui,
@@ -32,38 +27,46 @@ describe('bulk-edit', () => {
         cy.login(user.username, user.password, { path: TopMenu.bulkEditPath, waiter: BulkEditSearchPane.waitLoading });
 
         InventoryInstances.createInstanceViaApi(item.instanceName, item.itemBarcode);
-        InventoryInstances.createInstanceViaApi(itemToBeDeleted.instanceName, itemToBeDeleted.itemBarcode);
-
-        FileManager.createFile(`cypress/fixtures/${invalidItemBarcodesFileName}`, `${item.itemBarcode}\r\n${invalidBarcode}\r\n${itemToBeDeleted.itemBarcode}`);
+        FileManager.createFile(`cypress/fixtures/${validItemBarcodesFileName}`, item.itemBarcode);
       });
   });
 
   after('delete test data', () => {
     InventoryInstances.deleteInstanceViaApi(item.itemBarcode);
     Users.deleteViaApi(user.userId);
-    FileManager.deleteFile(`cypress/fixtures/${invalidItemBarcodesFileName}`);
+    FileManager.deleteFile(`cypress/fixtures/${validItemBarcodesFileName}`);
   });
 
-  it('C353230 Verify completion of the in-app bulk edit (firebird)', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
+  it('C357053 Negative: Verify enable type ahead in location look-up (firebird)', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
     BulkEditSearchPane.selectRecordIdentifier('Item barcode');
 
-    BulkEditSearchPane.uploadFile(invalidItemBarcodesFileName);
+    BulkEditSearchPane.uploadFile(validItemBarcodesFileName);
     BulkEditSearchPane.waitFileUploading();
 
     BulkEditActions.openActions();
     BulkEditActions.openStartBulkEditForm();
-    BulkEditActions.replaceTemporaryLocation();
-    BulkEditActions.confirmChanges();
 
-    InventoryInstances.deleteInstanceViaApi(itemToBeDeleted.itemBarcode);
+    BulkEditActions.fillTemporaryLocationFilter(`test_location_${getRandomPostfix()}`);
+    BulkEditActions.verifyNoMatchingOptionsForLocationFilter();
 
-    BulkEditActions.saveAndClose();
+    BulkEditActions.cancel();
+    BulkEditActions.newBulkEdit();
+  });
+
+  it('C356787 Verify enable type ahead in location look-up (firebird)', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
+    BulkEditSearchPane.selectRecordIdentifier('Item barcode');
+
+    BulkEditSearchPane.uploadFile(validItemBarcodesFileName);
     BulkEditSearchPane.waitFileUploading();
 
-    BulkEditSearchPane.verifyNonMatchedResults(invalidBarcode);
-    BulkEditActions.verifyActionAfterChangingRecords();
-    BulkEditSearchPane.verifyErrorLabelAfterChanges(invalidItemBarcodesFileName, 1, 1);
-    BulkEditActions.verifySuccessBanner(1);
+    BulkEditActions.openActions();
+    BulkEditActions.openStartBulkEditForm();
+
+    const location = 'Annex';
+    BulkEditActions.fillTemporaryLocationFilter(location);
+    BulkEditActions.verifyMatchingOptionsForLocationFilter(location);
+
+    BulkEditActions.cancel();
     BulkEditActions.newBulkEdit();
   });
 });

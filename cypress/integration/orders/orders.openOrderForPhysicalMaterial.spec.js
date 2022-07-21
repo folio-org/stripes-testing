@@ -8,6 +8,7 @@ import newOrganization from '../../support/fragments/organizations/newOrganizati
 import basicOrderLine from '../../support/fragments/orders/basicOrderLine';
 import Organizations from '../../support/fragments/organizations/organizations';
 import InventoryInteractionsDefaults from '../../support/fragments/settings/orders/inventoryInteractionsDefaults';
+import devTeams from '../../support/dictionary/devTeams';
 
 describe('orders: create an order', () => {
   const organization = { ...newOrganization.defaultUiOrganizations };
@@ -17,7 +18,6 @@ describe('orders: create an order', () => {
     module: 'ORDERS',
     enabled: true,
     configName: 'createInventory',
-    id: '',
     value: '{"eresource":"Instance, Holding","physical":"Instance, Holding, Item","other":"None"}',
   };
 
@@ -44,7 +44,7 @@ describe('orders: create an order', () => {
     Organizations.deleteOrganizationApi(organization.id);
   });
 
-  it('C734 Open order for physical material set to create Instance, Holding, Item (thunderjet)', { tags: [TestType.smoke, TestType.broken] }, () => {
+  it('C734 Open order for physical material set to create Instance, Holding, Item (thunderjet)', { tags: [TestType.smoke, devTeams.thunderjet, TestType.broken] }, () => {
     Orders.createOrder(order).then(orderId => {
       order.id = orderId;
       Orders.checkCreatedOrder(order);

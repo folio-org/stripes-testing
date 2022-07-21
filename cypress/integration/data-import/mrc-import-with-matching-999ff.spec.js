@@ -17,6 +17,7 @@ import getRandomPostfix from '../../support/utils/stringTools';
 import SettingsMenu from '../../support/fragments/settingsMenu';
 import FileDetails from '../../support/fragments/data_import/logs/fileDetails';
 import TopMenu from '../../support/fragments/topMenu';
+import DevTeams from '../../support/dictionary/devTeams';
 
 describe('ui-data-import: MARC file import with matching for 999 ff field', () => {
   // unique file name to upload
@@ -45,7 +46,7 @@ describe('ui-data-import: MARC file import with matching for 999 ff field', () =
     DataImport.checkUploadState();
   });
 
-  it('C343343 MARC file import with matching for 999 ff field (folijet)', { tags: [TestTypes.smoke, TestTypes.broken] }, () => {
+  it('C343343 MARC file import with matching for 999 ff field (folijet)', { tags: [TestTypes.smoke, DevTeams.folijet] }, () => {
     // create Field mapping profile for export
     const mappingProfileForExport = {
       name: mappingProfileNameForExport,
