@@ -8,7 +8,7 @@ import permissions from '../../support/dictionary/permissions';
 import Users from '../../support/fragments/users/users';
 import JobProfiles from '../../support/fragments/data_import/job_profiles/jobProfiles';
 
-describe('ui-data-import: Delete all logs from landing page', () => {
+describe('ui-data-import: A user can delete import logs with "Data import: Can delete import logs" permission on Landing page', () => {
   let userId = null;
   let fileNameToUpload = '';
   const filePathToUpload = 'oneMarcBib.mrc';
@@ -48,7 +48,7 @@ describe('ui-data-import: Delete all logs from landing page', () => {
     Users.deleteViaApi(userId);
   });
 
-  it('C358137 Delete all logs from landing page', { tags: [TestTypes.smoke] }, () => {
+  it('C358137 A user can delete import logs with "Data import: Can delete import logs" permission on Landing page (Folijet)', { tags: [TestTypes.smoke] }, () => {
     Logs.openFileDetails(fileNameToUpload);
     Logs.clickOnHotLink();
     cy.location('pathname').should('include', '/inventory/view');

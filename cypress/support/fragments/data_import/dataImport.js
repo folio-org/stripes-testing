@@ -26,6 +26,8 @@ const deleteLogsModal = Modal('Delete data import logs?');
 const deleteLogsModalCancelButton = deleteLogsModal.find(Button('No, do not delete'));
 const deleteLogsModalConfirmButton = deleteLogsModal.find(Button('Yes, delete'));
 const logsPane = Pane('Logs');
+const logsPaneHeader = PaneHeader({ id: 'paneHeaderpane-logs-title' });
+const jobsPane = Pane({ id: 'pane-jobs-title' });
 
 const uploadFile = (filePathName, fileName) => {
   cy.get('input[type=file]', getLongDelay()).attachFile({ filePath: filePathName, fileName });
@@ -34,7 +36,7 @@ const uploadFile = (filePathName, fileName) => {
 const wailtLoading = () => {
   cy.expect(sectionPaneJobsTitle.exists());
   cy.expect(sectionPaneJobsTitle.find(HTML(including('Loading'))).absent());
-  cy.expect(PaneHeader({ id:'paneHeaderpane-logs-title' }).find(actionsButton).exists());
+  cy.expect(logsPaneHeader.find(actionsButton).exists());
 };
 
 export default {
@@ -79,8 +81,8 @@ export default {
   },
 
   checkIsLandingPageOpened: () => {
-    cy.expect(Pane({ id: 'pane-jobs-title' }).find(Button('or choose files')).exists());
-    cy.expect(PaneHeader({ id: 'paneHeaderpane-logs-title' }).find(actionsButton).exists());
+    cy.expect(jobsPane.find(Button('or choose files')).exists());
+    cy.expect(logsPaneHeader.find(actionsButton).exists());
   },
 
   cancelDeleteImportLogs: () => {
