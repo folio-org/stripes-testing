@@ -7,6 +7,8 @@ import {
 } from '../../../../../interactors';
 
 const resultsList = MultiColumnList({ id:'search-results-list' });
+const jobSummaryTable = MultiColumnList({ id: 'job-summary-table' });
+const listRow = MultiColumnListRow({ indexRow: 'row-0' });
 
 const columnName = {
   srsMarc: resultsList.find(MultiColumnListHeader({ id:'list-column-srsmarcstatus' })),
@@ -31,7 +33,7 @@ const checkStatusInColumn = (specialStatus, specialColumnName) => {
 
 const checkItemsQuantityInSummaryTable = (rowNumber, quantity) => {
   for (let i = 1; i < 5; i++) {
-    cy.expect(MultiColumnList({ id: 'job-summary-table' })
+    cy.expect(jobSummaryTable
       .find(MultiColumnListRow({ indexRow: `row-${rowNumber}` }))
       .find(MultiColumnListCell({ columnIndex: i, content: quantity }))
       .exists());
@@ -39,12 +41,12 @@ const checkItemsQuantityInSummaryTable = (rowNumber, quantity) => {
 };
 
 const checkCreatedInvoiceISummaryTable = (quantity) => {
-  cy.expect(MultiColumnList({ id: 'job-summary-table' })
-    .find(MultiColumnListRow({ indexRow: 'row-0' }))
+  cy.expect(jobSummaryTable
+    .find(listRow)
     .find(MultiColumnListCell({ columnIndex: 1, content: quantity }))
     .exists());
-  cy.expect(MultiColumnList({ id: 'job-summary-table' })
-    .find(MultiColumnListRow({ indexRow: 'row-0' }))
+  cy.expect(jobSummaryTable
+    .find(listRow)
     .find(MultiColumnListCell({ columnIndex: 7, content: quantity }))
     .exists());
 };
@@ -53,7 +55,7 @@ function checkItemsStatusesInResultList(rowIndex, itemStatuses) {
   // itemStatuses = [SRS MARC status, Instance status, Holdings status, Item status]
   const indexes = [2, 3, 4, 5];
   itemStatuses.forEach((itemStatus, columnIndex) => {
-    cy.expect(MultiColumnList({ id: 'search-results-list' })
+    cy.expect(resultsList
       .find(MultiColumnListRow({ index: rowIndex }))
       .find(MultiColumnListCell({ columnIndex: indexes[columnIndex], content: itemStatus }))
       .exists());
@@ -72,8 +74,7 @@ export default {
   checkCreatedInvoiceISummaryTable,
 
   openInstanceInInventory:(columnIndex = 3, row = 0) => {
-    cy.do(MultiColumnList({ id:'search-results-list' })
-      .find(MultiColumnListCell({ row, columnIndex }))
+    cy.do(resultsList.find(MultiColumnListCell({ row, columnIndex }))
       .find(Link('Updated'))
       .click());
   }
