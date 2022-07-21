@@ -1,6 +1,9 @@
 import { Button, Pane } from '../../../../interactors';
 
 export default {
+  exportLoansToCSV() {
+    cy.do(Button('Export to CSV').click());
+  },
   openChangeDueDateForm() {
     cy.do([
       Button({ icon: 'ellipsis' }).click(),
@@ -23,4 +26,5 @@ export default {
   checkLoanPolicy(policyName) {
     cy.contains(policyName).should('be.visible');
   },
+
 };

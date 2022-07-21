@@ -78,7 +78,7 @@ describe('Check In - Actions ', () => {
   });
 
   after('Delete New Service point, Item and User', () => {
-    InventoryInstances.deleteInstanceViaApi(itemData.barcode);
+    InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(itemData.barcode);
     Users.deleteViaApi(userData.userId);
   });
 

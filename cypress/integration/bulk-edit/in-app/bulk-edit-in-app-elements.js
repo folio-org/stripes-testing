@@ -34,7 +34,7 @@ describe('bulk-edit: in-app file uploading', { retries: 3 }, () => {
   });
 
   after('Delete all data', () => {
-    InventoryInstances.deleteInstanceViaApi(item.itemBarcode);
+    InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(item.itemBarcode);
     Users.deleteViaApi(user.userId);
     FileManager.deleteFile(`cypress/fixtures/${invalidItemBarcodesFileName}`);
   });
