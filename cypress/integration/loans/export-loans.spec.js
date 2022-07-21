@@ -132,15 +132,13 @@ describe('Export Loans ', () => {
   });
 
   it('C721 Export patron*s loans to CSV (vega)', { tags: [TestTypes.smoke] }, () => {
+    const fileNameMask = 'export*';
     cy.visit(AppPaths.getOpenLoansPath(userData.userId));
     Loans.exportLoansToCSV();
     FileManager.verifyFile(
-      (actualName) => {
-        const expectedFileNameMask = /export\.csv/gm;//
-        expect(actualName).to.match(expectedFileNameMask);
-      },
-      'export*',
-      (actual, ...expectedArray) => expectedArray.forEach(expectedItem => (expect(actual).to.include(expectedItem))),
+      Loans.verifyExportFileName,
+      fileNameMask,
+      Loans.verifyContentOfExportFileName,
       [
         itemsData.itemsWithSeparateInstance[2].instanceId,
         itemsData.itemsWithSeparateInstance[3].instanceId,
@@ -157,12 +155,9 @@ describe('Export Loans ', () => {
     cy.visit(AppPaths.getClosedLoansPath(userData.userId));
     Loans.exportLoansToCSV();
     FileManager.verifyFile(
-      (actualName) => {
-        const expectedFileNameMask = /export\.csv/gm;//
-        expect(actualName).to.match(expectedFileNameMask);
-      },
-      'export*',
-      (actual, ...expectedArray) => expectedArray.forEach(expectedItem => (expect(actual).to.include(expectedItem))),
+      Loans.verifyExportFileName,
+      fileNameMask,
+      Loans.verifyContentOfExportFileName,
       [
         itemsData.itemsWithSeparateInstance[0].instanceId,
         itemsData.itemsWithSeparateInstance[1].instanceId,
