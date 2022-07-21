@@ -56,4 +56,23 @@ describe('bulk-edit', () => {
     BulkEditActions.downloadMatchedResults(resultFileName);
     BulkEditFiles.verifyMatchedResultFileContent(resultFileName, [item.itemBarcode1, item.itemBarcode2]);
   });
+
+  // Bug UIBULKED-121
+  it('C356810 Verify uploading file with holdings UUIDs (firebird)', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
+    BulkEditSearchPane.selectRecordIdentifier('Holdings UUIDs');
+
+    BulkEditSearchPane.uploadFile(validHoldingUUIDsFileName);
+    BulkEditSearchPane.waitFileUploading();
+    BulkEditSearchPane.verifyMatchedResults(item.itemBarcode1, item.itemBarcode2);
+
+    BulkEditActions.openActions();
+    BulkEditActions.openStartBulkEditForm();
+    BulkEditActions.replaceTemporaryLocation();
+    BulkEditActions.confirmChanges();
+    BulkEditActions.saveAndClose();
+    BulkEditSearchPane.waitFileUploading();
+
+    BulkEditSearchPane.verifyChangedResults(item.itemBarcode1, item.itemBarcode2);
+    BulkEditActions.verifySuccessBanner(2);
+  });
 });
