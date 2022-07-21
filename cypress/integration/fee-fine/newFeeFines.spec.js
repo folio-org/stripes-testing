@@ -92,13 +92,13 @@ describe('Fee/fine management', () => {
     });
   });
 
-  it('C455 Verify "New fee/fine" behavior when "Charge & pay now" button pressed (spitfire)', { tags: [TestType.smoke, Features.feeFine, devTeams.firebird] }, () => {
+  it('C455 Verify "New fee/fine" behavior when "Charge & pay now" button pressed (spitfire)', { tags: [TestType.smoke, Features.feeFine, devTeams.spitfire] }, () => {
     const feeInfo = [testData.owner.name, testData.feeFineType.feeFineTypeName, 'Paid fully'];
     const itemInfo = [testData.instanceTitle + ' (book)', ITEM_BARCODE];
     const initialCheckNewFeeFineFragment = () => {
       NewFeeFine.checkInitialState(testData.userProperties, testData.owner.name);
       NewFeeFine.setFeeFineOwner(testData.owner.name);
-      NewFeeFine.checkFilteredFeeFineType(testData.feeFineType.feeFineTypeName); 
+      NewFeeFine.checkFilteredFeeFineType(testData.feeFineType.feeFineTypeName);
     };
 
     const createFee = () => {
