@@ -37,13 +37,7 @@ describe('Fee/fine management', () => {
         patronGroup: patronGroupId,
         ...userData
       }).then(userProperties => {
-        console.log(userProperties);
-        testData.userProperties.id = userProperties.id;
-        testData.userProperties.userName = userProperties.username;
-        testData.userProperties.lastName = userProperties.lastName;
-        testData.userProperties.firstName = userProperties.firstName;
-        testData.userProperties.middleName = userProperties.middleName;
-        testData.userProperties.barcode = userProperties.barcode;
+        testData.userProperties = userProperties;
         ServicePoints.getViaApi({ limit: 1, query: 'pickupLocation=="true"' })
           .then((servicePoints) => {
             testData.servicePointId = servicePoints[0].id;
@@ -101,11 +95,10 @@ describe('Fee/fine management', () => {
   it('C455 Verify "New fee/fine" behavior when "Charge & pay now" button pressed (spitfire)', { tags: [TestType.smoke, Features.feeFine, devTeams.firebird] }, () => {
     const feeInfo = [testData.owner.name, testData.feeFineType.feeFineTypeName, 'Paid fully'];
     const itemInfo = [testData.instanceTitle + ' (book)', ITEM_BARCODE];
-
     const initialCheckNewFeeFineFragment = () => {
       NewFeeFine.checkInitialState(testData.userProperties, testData.owner.name);
       NewFeeFine.setFeeFineOwner(testData.owner.name);
-      NewFeeFine.checkFilteredFeeFineType(testData.feeFineType.feeFineTypeName);
+      NewFeeFine.checkFilteredFeeFineType(testData.feeFineType.feeFineTypeName); 
     };
 
     const createFee = () => {
@@ -143,6 +136,9 @@ describe('Fee/fine management', () => {
     createFee();
 
     // Scenario 3: CHARGING MANUAL FEE/FINES USING ELLIPSIS OPTION FROM OPEN/CLOSED LOANS
+    // waiting cypress runner ti be able to get a command
+    // without wait, randomly doesn't redirecting browser to the checkin page
+    cy.wait(2000);
     cy.visit(topMenu.checkOutPath);
 
     cy.checkOutItem(testData.userProperties.barcode, ITEM_BARCODE);
@@ -172,10 +168,10 @@ describe('Fee/fine management', () => {
     UsersCard.openFeeFines();
     UsersCard.viewAllFeesFines();
 
-    NewFeeFine.checkClosedFees(feeInfo.concat(itemInfo), 0);
-    NewFeeFine.checkClosedFees(feeInfo.concat(itemInfo), 1);
-    NewFeeFine.checkClosedFees(feeInfo, 2);
-    NewFeeFine.checkClosedFees(feeInfo, 3);
+    NewFeeFine.checkClosedFeesByRow(feeInfo.concat(itemInfo), 0);
+    NewFeeFine.checkClosedFeesByRow(feeInfo.concat(itemInfo), 1);
+    NewFeeFine.checkClosedFeesByRow(feeInfo, 2);
+    NewFeeFine.checkClosedFeesByRow(feeInfo, 3);
   });
   after(() => {
     CheckInActions.createItemCheckinApi({
