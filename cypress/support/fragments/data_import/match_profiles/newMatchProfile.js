@@ -67,6 +67,8 @@ const fillMatchProfileForm = ({
     cy.do(Select('Match criterion').choose(matchCriterion));
     fillExistingRecordFields(existingRecordFields);
   } else if (existingRecordType === 'INSTANCE') {
+    cy.intercept('/_/jsonSchemas?path=acq-models/mod-orders-storage/schemas/vendor_detail.json').as('getJson2');
+    cy.wait('@getJson2', getLongDelay());
     cy.do(Accordion({ id:'match-profile-details' }).find(Button({ dataId:'INSTANCE' })).click());
     fillIncomingRecordFields(incomingRecordFields);
     cy.do(criterionValueTypeButton.click());

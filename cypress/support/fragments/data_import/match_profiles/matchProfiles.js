@@ -57,9 +57,9 @@ export default {
     cy.expect(MultiColumnListCell(profileName).exists());
   },
 
-  createMatchProfileForPol(profile) {
+  /*createMatchProfileForPol(profile) {
     openNewMatchProfileForm();
     NewMatchProfile.fillMatchProfileFormForPol(profile);
     cy.do(Button('Save as profile & Close').click());
-  }
+  }*/
 };
