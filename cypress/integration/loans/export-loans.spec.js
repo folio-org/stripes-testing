@@ -1,5 +1,6 @@
 import moment from 'moment';
 import uuid from 'uuid';
+import devTeams from '../../support/dictionary/devTeams';
 import permissions from '../../support/dictionary/permissions';
 import TopMenu from '../../support/fragments/topMenu';
 import TestTypes from '../../support/dictionary/testTypes';
@@ -131,7 +132,7 @@ describe('Export Loans ', () => {
     FileManager.deleteFolder(Cypress.config('downloadsFolder'));
   });
 
-  it('C721 Export patron*s loans to CSV (vega)', { tags: [TestTypes.smoke] }, () => {
+  it('C721 Export patron*s loans to CSV (vega)', { tags: [TestTypes.smoke, devTeams.vega] }, () => {
     const fileNameMask = 'export*';
     cy.visit(AppPaths.getOpenLoansPath(userData.userId));
     Loans.exportLoansToCSV();
