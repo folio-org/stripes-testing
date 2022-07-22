@@ -32,7 +32,7 @@ export default {
   openViewAll() {
     cy.do([
       Button('Actions').click(),
-      Button('View all logs').click()
+      Button('View all').click()
     ]);
   },
 
