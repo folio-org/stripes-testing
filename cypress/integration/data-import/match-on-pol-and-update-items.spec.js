@@ -204,7 +204,7 @@ describe('ui-data-import: Match on POL and update related Instance, Holdings, It
               item.barcode = itemBarcode;
               cy.wrap(ItemRecordView.editItem(item))
                 .then(() => {
-                  CheckInActions.createItemCheckinApi({
+                  CheckInActions.checkinItemViaApi({
                     itemBarcode: item.barcode,
                     servicePointId,
                     checkInDate: new Date().toISOString(),

@@ -73,7 +73,7 @@ describe('circulation-log', () => {
             });
           })
           .then(() => {
-            CheckoutActions.createItemCheckoutViaApi({
+            CheckoutActions.checkoutItemViaApi({
               itemBarcode: ITEM_BARCODE,
               userBarcode: Cypress.env('users')[0].barcode,
               servicePointId,
@@ -87,7 +87,7 @@ describe('circulation-log', () => {
   });
 
   after('delete test data', () => {
-    CheckinActions.createItemCheckinApi({
+    CheckinActions.checkinItemViaApi({
       itemBarcode: ITEM_BARCODE,
       servicePointId,
       checkInDate: new Date().toISOString(),

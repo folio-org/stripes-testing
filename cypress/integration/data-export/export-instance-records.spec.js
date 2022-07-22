@@ -34,7 +34,7 @@ describe('data-export', () => {
   });
 
   after('delete test data', () => {
-    InventoryInstances.deleteInstanceViaApi(item.itemBarcode);
+    InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(item.itemBarcode);
     users.deleteViaApi(user.userId);
   });
 

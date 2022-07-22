@@ -139,7 +139,7 @@ describe('ui-users-loans: Manual anonymization in closed loans', () => {
               newFirstItemData.barcode,
               newSecondItemData.barcode,
             ].forEach((itemBarcode) => {
-              checkInActions.createItemCheckinApi({
+              checkInActions.checkinItemViaApi({
                 itemBarcode,
                 servicePointId,
                 checkInDate: moment.utc().format(),

@@ -32,7 +32,7 @@ describe('bulk-edit', { retries: 3 }, () => {
   });
 
   after('delete test data', () => {
-    InventoryInstances.deleteInstanceViaApi(item.itemBarcode);
+    InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(item.itemBarcode);
     Users.deleteViaApi(user.userId);
     FileManager.deleteFile(`cypress/fixtures/${validItemBarcodesFileName}`);
   });

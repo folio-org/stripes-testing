@@ -39,7 +39,7 @@ describe('bulk-edit', () => {
   });
 
   after('delete test data', () => {
-    InventoryInstances.deleteInstanceViaApi(item.itemBarcode);
+    InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(item.itemBarcode);
     Users.deleteViaApi(user.userId);
     FileManager.deleteFile(`cypress/fixtures/${invalidItemBarcodesFileName}`);
   });
@@ -55,7 +55,7 @@ describe('bulk-edit', () => {
     BulkEditActions.replaceTemporaryLocation();
     BulkEditActions.confirmChanges();
 
-    InventoryInstances.deleteInstanceViaApi(itemToBeDeleted.itemBarcode);
+    InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(itemToBeDeleted.itemBarcode);
 
     BulkEditActions.saveAndClose();
     BulkEditSearchPane.waitFileUploading();

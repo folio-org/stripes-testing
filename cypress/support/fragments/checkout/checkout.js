@@ -25,7 +25,7 @@ export default {
     cy.wait(3500);
     cy.do(Button({ href: `/users/${id}/loans/open` }).click());
   },
-  createItemCheckoutViaApi(body) {
+  checkoutItemViaApi(body) {
     const checkoutId = uuid();
 
     return cy.okapiRequest({
