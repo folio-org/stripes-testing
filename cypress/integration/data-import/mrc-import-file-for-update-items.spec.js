@@ -284,7 +284,7 @@ describe('ui-data-import: MARC file upload with the update of instance, holding,
   };
 
   beforeEach(() => {
-    cy.login(Cypress.env('diku_login'), Cypress.env('diku_password'));
+    cy.loginAsAdmin({ path: TopMenu.dataImportPath, waiter: DataImport.wailtLoading });
     cy.getAdminToken();
 
     DataImport.checkUploadState();
