@@ -41,7 +41,7 @@ describe('bulk-edit', () => {
 
   after('delete test data', () => {
     Users.deleteViaApi(user.userId);
-    InventoryInstances.deleteInstanceViaApi(item.itemBarcode1);
+    InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(item.itemBarcode1);
     FileManager.deleteFile(`cypress/fixtures/${validHoldingUUIDsFileName}`);
     FileManager.deleteFile(`cypress/downloads/${resultFileName}`);
   });

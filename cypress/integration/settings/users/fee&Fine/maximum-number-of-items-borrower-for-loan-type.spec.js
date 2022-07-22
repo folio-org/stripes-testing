@@ -148,7 +148,7 @@ describe('ui-users:', () => {
 
   after(() => {
     limitTestItems.forEach(item => {
-      CheckInActions.createItemCheckinApi({
+      CheckInActions.checkinItemViaApi({
         itemBarcode: item.barcode,
         servicePointId: servicePoint.id,
         checkInDate: new Date().toISOString(),
@@ -164,7 +164,7 @@ describe('ui-users:', () => {
       InventoryInstance.deleteInstanceViaApi(limitTstInstanceIds.instanceId);
     });
     testItems.forEach(item => {
-      CheckInActions.createItemCheckinApi({
+      CheckInActions.checkinItemViaApi({
         itemBarcode: item.barcode,
         servicePointId: servicePoint.id,
         checkInDate: new Date().toISOString(),
