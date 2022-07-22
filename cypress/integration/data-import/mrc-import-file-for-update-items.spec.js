@@ -8,7 +8,8 @@ import InventorySearch from '../../support/fragments/inventory/inventorySearch';
 import ExportFile from '../../support/fragments/data-export/exportFile';
 import TopMenu from '../../support/fragments/topMenu';
 import ExportMarcFile from '../../support/fragments/data-export/export-marc-file';
-import MatchProfiles from '../../support/fragments/data_import/match_profiles/match-profiles';
+import MatchProfiles from '../../support/fragments/data_import/match_profiles/matchProfiles';
+import NewMatchProfile from '../../support/fragments/data_import/match_profiles/newMatchProfile';
 import NewMappingProfile from '../../support/fragments/data_import/mapping_profiles/newMappingProfile';
 import NewActionProfile from '../../support/fragments/data_import/action_profiles/newActionProfile';
 import FieldMappingProfiles from '../../support/fragments/data_import/mapping_profiles/fieldMappingProfiles';
@@ -213,11 +214,77 @@ describe('ui-data-import: MARC file upload with the update of instance, holding,
   const mappingProfileNameForExport = `autoTestMappingProf.${getRandomPostfix()}`;
   const jobProfileNameForExport = `autoTestJobProf.${getRandomPostfix()}`;
 
+  const collectionOfMappingAndActionProfiles = [
+    {
+      mappingProfile: { typeValue: NewMappingProfile.folioRecordTypeValue.instance,
+        name: mappingProfileNameForInstance,
+        fillProfile: NewMappingProfile.fillInstanceMappingProfile },
+      actionProfile: { typeValue: NewActionProfile.folioRecordTypeValue.instance,
+        name: actionProfileNameForInstance,
+        action: 'Update (all record types except Orders)' }
+    },
+    {
+      mappingProfile: { typeValue: NewMappingProfile.folioRecordTypeValue.holdings,
+        name: mappingProfileNameForHoldings,
+        fillProfile: NewMappingProfile.fillHoldingsMappingProfile },
+      actionProfile: { typeValue: NewActionProfile.folioRecordTypeValue.holdings,
+        name: actionProfileNameForHoldings,
+        action: 'Update (all record types except Orders)' }
+    },
+    {
+      mappingProfile: { typeValue : NewMappingProfile.folioRecordTypeValue.item,
+        name: mappingProfileNameForItem,
+        fillProfile: NewMappingProfile.fillItemMappingProfile },
+      actionProfile: { typeValue: NewActionProfile.folioRecordTypeValue.item,
+        name: actionProfileNameForItem,
+        action: 'Update (all record types except Orders)' }
+    }
+  ];
+
+  const collectionOfMatchProfiles = [
+    {
+      matchProfile: { profileName: matchProfileNameForInstance,
+        incomingRecordFields: {
+          field: '001'
+        },
+        existingRecordFields: {
+          field: '001'
+        },
+        matchCriterion: 'Exactly matches',
+        existingRecordType: 'MARC_BIBLIOGRAPHIC' }
+    },
+    {
+      matchProfile: { profileName: matchProfileNameForHoldings,
+        incomingRecordFields: {
+          field: '901',
+          subfield: 'a'
+        },
+        matchCriterion: 'Exactly matches',
+        existingRecordType: 'HOLDINGS',
+        holdingsOption: NewMatchProfile.optionsList.holdingsHrid }
+    },
+    {
+      matchProfile: {
+        profileName: matchProfileNameForItem,
+        incomingRecordFields: {
+          field: '902',
+          subfield: 'a'
+        },
+        matchCriterion: 'Exactly matches',
+        existingRecordType: 'ITEM',
+        itemOption: NewMatchProfile.optionsList.itemHrid
+      }
+    }
+  ];
+
+  const jobProfileForUpdate = {
+    ...NewJobProfile.defaultJobProfile,
+    profileName: jobProfileNameUpdate,
+    acceptedType: NewJobProfile.acceptedDataType.marc
+  };
+
   beforeEach(() => {
-    cy.login(
-      Cypress.env('diku_login'),
-      Cypress.env('diku_password')
-    );
+    cy.loginAsAdmin({ path: TopMenu.dataImportPath, waiter: DataImport.wailtLoading });
     cy.getAdminToken();
 
     DataImport.checkUploadState();
@@ -246,149 +313,6 @@ describe('ui-data-import: MARC file upload with the update of instance, holding,
 
   afterEach(() => {
     DataImport.checkUploadState();
-  });
-
-  it('C343335 MARC file upload with the update of instance, holding, and items (folijet)', { tags: [TestTypes.smoke, DevTeams.folijet] }, () => {
-    // upload a marc file for creating of the new instance, holding and item
-    cy.visit(TopMenu.dataImportPath);
-    DataImport.uploadFile('oneMarcBib.mrc', nameMarcFileForImportCreate);
-    JobProfiles.searchJobProfileForImport(testData.jobProfileForCreate.profile.name);
-    JobProfiles.runImportFile(nameMarcFileForImportCreate);
-    Logs.openFileDetails(nameMarcFileForImportCreate);
-    FileDetails.checkStatusInColumn(FileDetails.status.updated, FileDetails.columnName.srsMarc);
-    FileDetails.checkStatusInColumn(FileDetails.status.created, FileDetails.columnName.instance);
-    FileDetails.checkStatusInColumn(FileDetails.status.created, FileDetails.columnName.holdings);
-    FileDetails.checkStatusInColumn(FileDetails.status.created, FileDetails.columnName.item);
-
-    // get Instance HRID through API
-    SearchInventory
-      .getInstanceHRID()
-      .then(id => {
-        // download .csv file
-        cy.visit(TopMenu.inventoryPath);
-        SearchInventory.searchInstanceByHRID(id);
-        InventorySearch.saveUUIDs();
-        ExportMarcFile.downloadCSVFile(nameForCSVFile, 'SearchInstanceUUIDs*');
-        FileManager.deleteFolder(Cypress.config('downloadsFolder'));
-      });
-
-    // create Field mapping profile for export
-    const exportMappingProfile = {
-      name: mappingProfileNameForExport,
-    };
-
-    cy.visit(SettingsMenu.exportMappingProfilePath);
-    ExportFieldMappingProfiles.createMappingProfile(exportMappingProfile.name);
-
-    cy.visit(SettingsMenu.exportJobProfilePath);
-    ExportJobProfiles.createJobProfile(jobProfileNameForExport, mappingProfileNameForExport);
-
-    // download exported marc file
-    cy.visit(TopMenu.dataExportPath);
-    ExportFile.uploadFile(nameForCSVFile);
-    ExportFile.exportWithCreatedJobProfile(nameForCSVFile, jobProfileNameForExport);
-    ExportMarcFile.downloadExportedMarcFile(nameMarcFileForImportUpdate);
-
-    const collectionOfMappingAndActionProfiles = [
-      {
-        mappingProfile: { typeValue: NewMappingProfile.folioRecordTypeValue.instance,
-          name: mappingProfileNameForInstance,
-          fillProfile: NewMappingProfile.fillInstanceMappingProfile },
-        actionProfile: { typeValue: NewActionProfile.folioRecordTypeValue.instance,
-          name: actionProfileNameForInstance,
-          action: 'Update (all record types except Orders)' }
-      },
-      {
-        mappingProfile: { typeValue: NewMappingProfile.folioRecordTypeValue.holdings,
-          name: mappingProfileNameForHoldings,
-          fillProfile: NewMappingProfile.fillHoldingsMappingProfile },
-        actionProfile: { typeValue: NewActionProfile.folioRecordTypeValue.holdings,
-          name: actionProfileNameForHoldings,
-          action: 'Update (all record types except Orders)' }
-      },
-      {
-        mappingProfile: { typeValue : NewMappingProfile.folioRecordTypeValue.item,
-          name: mappingProfileNameForItem,
-          fillProfile: NewMappingProfile.fillItemMappingProfile },
-        actionProfile: { typeValue: NewActionProfile.folioRecordTypeValue.item,
-          name: actionProfileNameForItem,
-          action: 'Update (all record types except Orders)' }
-      }
-    ];
-
-    collectionOfMappingAndActionProfiles.forEach(profile => {
-      cy.visit(SettingsMenu.mappingProfilePath);
-      FieldMappingProfiles.createMappingProfileForUpdate(profile.mappingProfile);
-      FieldMappingProfiles.checkMappingProfilePresented(profile.mappingProfile.name);
-      cy.visit(SettingsMenu.actionProfilePath);
-      ActionProfiles.createActionProfile(profile.actionProfile, profile.mappingProfile.name);
-      ActionProfiles.checkActionProfilePresented(profile.actionProfile.name);
-    });
-
-    // create Match profile
-    const collectionOfMatchProfiles = [
-      {
-        matchProfile: { profileName: matchProfileNameForInstance,
-          incomingRecordFields: {
-            field: '001'
-          },
-          existingRecordFields: {
-            field: '001'
-          },
-          matchCriterion: 'Exactly matches',
-          existingRecordType: 'MARC_BIBLIOGRAPHIC' }
-      },
-      {
-        matchProfile: { profileName: matchProfileNameForHoldings,
-          incomingRecordFields: {
-            field: '901',
-            subfield: 'a'
-          },
-          matchCriterion: 'Exactly matches',
-          existingRecordType: 'HOLDINGS' }
-      },
-      {
-        matchProfile: {
-          profileName: matchProfileNameForItem,
-          incomingRecordFields: {
-            field: '902',
-            subfield: 'a'
-          },
-          matchCriterion: 'Exactly matches',
-          existingRecordType: 'ITEM'
-        }
-      }
-    ];
-
-    cy.visit(SettingsMenu.matchProfilePath);
-    collectionOfMatchProfiles.forEach(profile => {
-      MatchProfiles.createMatchProfile(profile.matchProfile);
-    });
-
-    // create Job profile
-    const jobProfileForUpdate = {
-      ...NewJobProfile.defaultJobProfile,
-      profileName: jobProfileNameUpdate,
-      acceptedType: NewJobProfile.acceptedDataType.marc
-    };
-
-    cy.visit(SettingsMenu.jobProfilePath);
-    JobProfiles.createJobProfileWithLinkingProfilesForUpdate(jobProfileForUpdate);
-    NewJobProfile.linkMatchAndActionProfilesForInstance(actionProfileNameForInstance, matchProfileNameForInstance, 0);
-    NewJobProfile.linkMatchAndActionProfilesForHoldings(actionProfileNameForHoldings, matchProfileNameForHoldings, 2);
-    NewJobProfile.linkMatchAndActionProfilesForItem(actionProfileNameForItem, matchProfileNameForItem, 4);
-    NewJobProfile.saveAndClose();
-
-    // upload the exported marc file
-    cy.visit(TopMenu.dataImportPath);
-    DataImport.uploadExportedFile(nameMarcFileForImportUpdate);
-    JobProfiles.searchJobProfileForImport(jobProfileForUpdate.profileName);
-    JobProfiles.runImportFile(nameMarcFileForImportUpdate);
-    Logs.openFileDetails(nameMarcFileForImportUpdate);
-    FileDetails.checkStatusInColumn(FileDetails.status.updated, FileDetails.columnName.srsMarc);
-    FileDetails.checkStatusInColumn(FileDetails.status.updated, FileDetails.columnName.instance);
-    FileDetails.checkStatusInColumn(FileDetails.status.updated, FileDetails.columnName.holdings);
-    FileDetails.checkStatusInColumn(FileDetails.status.updated, FileDetails.columnName.item);
 
     // delete generated profiles
     JobProfiles.deleteJobProfile(jobProfileNameUpdate);
@@ -413,5 +337,89 @@ describe('ui-data-import: MARC file upload with the update of instance, holding,
     FileManager.deleteFolder(Cypress.config('downloadsFolder'));
     FileManager.deleteFile(`cypress/fixtures/${nameMarcFileForImportUpdate}`);
     FileManager.deleteFile(`cypress/fixtures/${nameForCSVFile}`);
+  });
+
+  it('C343335 MARC file upload with the update of instance, holding, and items (folijet)', { tags: [TestTypes.smoke, DevTeams.folijet] }, () => {
+    // upload a marc file for creating of the new instance, holding and item
+    cy.visit(TopMenu.dataImportPath);
+    DataImport.uploadFile('oneMarcBib.mrc', nameMarcFileForImportCreate);
+    JobProfiles.searchJobProfileForImport(testData.jobProfileForCreate.profile.name);
+    JobProfiles.runImportFile(nameMarcFileForImportCreate);
+    Logs.openFileDetails(nameMarcFileForImportCreate);
+    FileDetails.checkStatusInColumn(FileDetails.status.updated, FileDetails.columnName.srsMarc);
+    [FileDetails.columnName.instance,
+      FileDetails.columnName.holdings,
+      FileDetails.columnName.item].forEach(columnName => {
+      FileDetails.checkStatusInColumn(FileDetails.status.created, columnName);
+    });
+    FileDetails.checkItemsQuantityInSummaryTable(0, '1');
+
+    // get Instance HRID through API
+    SearchInventory
+      .getInstanceHRID()
+      .then(hrId => {
+        // download .csv file
+        cy.visit(TopMenu.inventoryPath);
+        SearchInventory.searchInstanceByHRID(hrId[1]);
+        InventorySearch.saveUUIDs();
+        ExportMarcFile.downloadCSVFile(nameForCSVFile, 'SearchInstanceUUIDs*');
+        FileManager.deleteFolder(Cypress.config('downloadsFolder'));
+      });
+
+    // create Field mapping profile for export
+    const exportMappingProfile = {
+      name: mappingProfileNameForExport,
+    };
+
+    cy.visit(SettingsMenu.exportMappingProfilePath);
+    ExportFieldMappingProfiles.createMappingProfile(exportMappingProfile.name);
+
+    cy.visit(SettingsMenu.exportJobProfilePath);
+    ExportJobProfiles.createJobProfile(jobProfileNameForExport, mappingProfileNameForExport);
+
+    // download exported marc file
+    cy.visit(TopMenu.dataExportPath);
+    ExportFile.uploadFile(nameForCSVFile);
+    ExportFile.exportWithCreatedJobProfile(nameForCSVFile, jobProfileNameForExport);
+    ExportMarcFile.downloadExportedMarcFile(nameMarcFileForImportUpdate);
+
+    // create mapping and action profiles
+    collectionOfMappingAndActionProfiles.forEach(profile => {
+      cy.visit(SettingsMenu.mappingProfilePath);
+      FieldMappingProfiles.createMappingProfileForUpdate(profile.mappingProfile);
+      FieldMappingProfiles.checkMappingProfilePresented(profile.mappingProfile.name);
+      cy.visit(SettingsMenu.actionProfilePath);
+      ActionProfiles.createActionProfile(profile.actionProfile, profile.mappingProfile.name);
+      ActionProfiles.checkActionProfilePresented(profile.actionProfile.name);
+    });
+
+    // create Match profile
+    cy.visit(SettingsMenu.matchProfilePath);
+    collectionOfMatchProfiles.forEach(profile => {
+      MatchProfiles.createMatchProfile(profile.matchProfile);
+      MatchProfiles.checkMatchProfilePresented(profile.matchProfile.profileName);
+    });
+
+    // create Job profile
+    cy.visit(SettingsMenu.jobProfilePath);
+    JobProfiles.createJobProfileWithLinkingProfilesForUpdate(jobProfileForUpdate);
+    NewJobProfile.linkMatchAndActionProfilesForInstance(actionProfileNameForInstance, matchProfileNameForInstance, 0);
+    NewJobProfile.linkMatchAndActionProfilesForHoldings(actionProfileNameForHoldings, matchProfileNameForHoldings, 2);
+    NewJobProfile.linkMatchAndActionProfilesForItem(actionProfileNameForItem, matchProfileNameForItem, 4);
+    NewJobProfile.saveAndClose();
+
+    // upload the exported marc file
+    cy.visit(TopMenu.dataImportPath);
+    DataImport.uploadExportedFile(nameMarcFileForImportUpdate);
+    JobProfiles.searchJobProfileForImport(jobProfileForUpdate.profileName);
+    JobProfiles.runImportFile(nameMarcFileForImportUpdate);
+    Logs.openFileDetails(nameMarcFileForImportUpdate);
+    [FileDetails.columnName.srsMarc,
+      FileDetails.columnName.instance,
+      FileDetails.columnName.holdings,
+      FileDetails.columnName.item].forEach(columnName => {
+      FileDetails.checkStatusInColumn(FileDetails.status.updated, columnName);
+    });
+    FileDetails.checkItemsQuantityInSummaryTable(1, '1');
   });
 });

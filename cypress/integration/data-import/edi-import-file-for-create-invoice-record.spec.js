@@ -92,6 +92,7 @@ describe('ui-data-import: EDIFACT file import with creating of new invoice recor
     Logs.checkStatusOfJobProfile();
     Logs.openFileDetails(fileName);
     FileDetails.checkStatusInColumn(FileDetails.status.created, FileDetails.columnName.invoice);
+    FileDetails.checkCreatedInvoiceISummaryTable('1');
     InvoiceView.checkInvoiceDetails(InvoiceView.vendorInvoiceNumber);
   });
 });
