@@ -65,7 +65,7 @@ describe('Check In - Actions ', () => {
         UserEdit.addServicePointViaApi(itemData.servicepointId,
           userData.userId, itemData.servicepointId);
 
-        CheckoutActions.createItemCheckoutViaApi({
+        CheckoutActions.checkoutItemViaApi({
           id: uuid(),
           itemBarcode: itemData.barcode,
           loanDate: moment.utc().format(),
@@ -78,7 +78,7 @@ describe('Check In - Actions ', () => {
   });
 
   after('Delete New Service point, Item and User', () => {
-    InventoryInstances.deleteInstanceViaApi(itemData.barcode);
+    InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(itemData.barcode);
     Users.deleteViaApi(userData.userId);
   });
 

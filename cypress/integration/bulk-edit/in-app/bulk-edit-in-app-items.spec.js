@@ -38,7 +38,7 @@ describe('bulk-edit', () => {
   });
 
   after('delete test data', () => {
-    InventoryInstances.deleteInstanceViaApi(item.itemBarcode);
+    InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(item.itemBarcode);
     Users.deleteViaApi(user.userId);
     FileManager.deleteFile(`cypress/fixtures/${invalidItemBarcodesFileName}`);
     FileManager.deleteFile(`cypress/fixtures/${validItemBarcodesFileName}`);
