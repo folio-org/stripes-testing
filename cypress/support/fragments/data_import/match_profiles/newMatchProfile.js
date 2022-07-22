@@ -16,35 +16,25 @@ const optionsList = {
   pol: 'Acquisitions data: Purchase order line (POL)'
 };
 
-const fillExistingRecordFields = ({ field, in1, in2, subfield }) => {
-  if (field) {
-    cy.do(TextField({ name: 'profile.matchDetails[0].existingMatchExpression.fields[0].value' }).fillIn(field));
-  }
-  if (in1) {
-    cy.do(TextField({ name: 'profile.matchDetails[0].existingMatchExpression.fields[1].value' }).fillIn(in1));
-  }
-  if (in2) {
-    cy.do(TextField({ name: 'profile.matchDetails[0].existingMatchExpression.fields[2].value' }).fillIn(in2));
-  }
-  if (subfield) {
-    cy.do(TextField({ name: 'profile.matchDetails[0].existingMatchExpression.fields[3].value' }).fillIn(subfield));
-  }
-};
+function fillExistingRecordFields(value, selector) {
+  const map = {
+    field: 'profile.matchDetails[0].existingMatchExpression.fields[0].value',
+    in1: 'profile.matchDetails[0].existingMatchExpression.fields[1].value',
+    in2: 'profile.matchDetails[0].existingMatchExpression.fields[2].value',
+    subfield: 'profile.matchDetails[0].existingMatchExpression.fields[3].value'
+  };
+  cy.do(TextField({ name: map[selector] }).fillIn(value));
+}
 
-const fillIncomingRecordFields = ({ field, in1, in2, subfield }) => {
-  if (field) {
-    cy.do(TextField({ name: 'profile.matchDetails[0].incomingMatchExpression.fields[0].value' }).fillIn(field));
-  }
-  if (in1) {
-    cy.do(TextField({ name: 'profile.matchDetails[0].incomingMatchExpression.fields[1].value' }).fillIn(in1));
-  }
-  if (in2) {
-    cy.do(TextField({ name: 'profile.matchDetails[0].incomingMatchExpression.fields[2].value' }).fillIn(in2));
-  }
-  if (subfield) {
-    cy.do(TextField({ name: 'profile.matchDetails[0].incomingMatchExpression.fields[3].value' }).fillIn(subfield));
-  }
-};
+function fillIncomingRecordFields(value, selector) {
+  const map = {
+    field: 'profile.matchDetails[0].incomingMatchExpression.fields[0].value',
+    in1: 'profile.matchDetails[0].incomingMatchExpression.fields[1].value',
+    in2: 'profile.matchDetails[0].incomingMatchExpression.fields[2].value',
+    subfield: 'profile.matchDetails[0].incomingMatchExpression.fields[3].value'
+  };
+  cy.do(TextField({ name: map[selector] }).fillIn(value));
+}
 
 const fillMatchProfileForm = ({
   profileName,
@@ -63,27 +53,30 @@ const fillMatchProfileForm = ({
   // select existing record type
   if (existingRecordType === 'MARC_BIBLIOGRAPHIC') {
     cy.do(Button({ dataId:'MARC_BIBLIOGRAPHIC' }).click());
-    fillIncomingRecordFields(incomingRecordFields);
+    fillIncomingRecordFields(incomingRecordFields.field, 'field');
     cy.do(Select('Match criterion').choose(matchCriterion));
-    fillExistingRecordFields(existingRecordFields);
+    fillExistingRecordFields(existingRecordFields.field, 'field');
   } else if (existingRecordType === 'INSTANCE') {
     cy.intercept('/_/jsonSchemas?path=acq-models/mod-orders-storage/schemas/vendor_detail.json').as('getJson2');
     cy.wait('@getJson2', getLongDelay());
     cy.wait(1000);
     cy.do(Accordion({ id:'match-profile-details' }).find(Button({ dataId:'INSTANCE' })).click());
-    fillIncomingRecordFields(incomingRecordFields);
+    fillIncomingRecordFields(incomingRecordFields.field, 'field');
+    fillIncomingRecordFields(incomingRecordFields.subfield, 'subfield');
     cy.do(criterionValueTypeButton.click());
     cy.expect(criterionValueTypeList.exists());
     cy.do(SelectionList({ id:'sl-container-criterion-value-type' }).find(SelectionOption(instanceOption)).click());
   } else if (existingRecordType === 'HOLDINGS') {
     cy.do(Accordion({ id:'match-profile-details' }).find(Button({ dataId:'HOLDINGS' })).click());
-    fillIncomingRecordFields(incomingRecordFields);
+    fillIncomingRecordFields(incomingRecordFields.field, 'field');
+    fillIncomingRecordFields(incomingRecordFields.subfield, 'subfield');
     cy.do(criterionValueTypeButton.click());
     cy.expect(criterionValueTypeList.exists());
     cy.do(SelectionList({ id:'sl-container-criterion-value-type' }).find(SelectionOption(holdingsOption)).click());
   } else {
     cy.do(Accordion({ id:'match-profile-details' }).find(Button({ dataId:'ITEM' })).click());
-    fillIncomingRecordFields(incomingRecordFields);
+    fillIncomingRecordFields(incomingRecordFields.field, 'field');
+    fillIncomingRecordFields(incomingRecordFields.subfield, 'subfield');
     cy.do(criterionValueTypeButton.click());
     cy.expect(criterionValueTypeList.exists());
     cy.do(SelectionList({ id:'sl-container-criterion-value-type' }).find(SelectionOption(itemOption)).click());
@@ -92,8 +85,5 @@ const fillMatchProfileForm = ({
 
 export default {
   optionsList,
-  fillIncomingRecordFields,
-  fillExistingRecordFields,
   fillMatchProfileForm
 };
-
