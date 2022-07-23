@@ -31,6 +31,7 @@ import Users from '../../support/fragments/users/users';
 import UserEdit from '../../support/fragments/users/userEdit';
 import ServicePoint from '../../support/fragments/servicePoint/servicePoint';
 import Organizations from '../../support/fragments/organizations/organizations';
+import Requests from '../../support/fragments/requests/requests';
 
 describe('ui-inventory: Item status date updates', () => {
   const instanceTitle = `autotestTitle ${Helper.getRandomBarcode()}`;
@@ -44,6 +45,8 @@ describe('ui-inventory: Item status date updates', () => {
   let user = {};
   let userForDeliveryRequest = {};
   const itemBarcode = Helper.getRandomBarcode();
+  let oldRulesText;
+  let requestPolicyId;
 
   before(() => {
     // TODO rewrite with user diku_admin
@@ -112,6 +115,11 @@ describe('ui-inventory: Item status date updates', () => {
             });
           });
       });
+
+    Requests.setRequestPolicyApi().then(({ oldRulesAsText, policy }) => {
+      oldRulesText = oldRulesAsText;
+      requestPolicyId = policy.id;
+    });
   });
 
   afterEach(() => {
@@ -142,6 +150,8 @@ describe('ui-inventory: Item status date updates', () => {
     });
     ServicePoint.deleteViaApi(notEffectiveLocationServicePoint.id);
     Users.deleteViaApi(userForDeliveryRequest.userId);
+    Requests.updateCirculationRulesApi(oldRulesText);
+    Requests.deleteRequestPolicyApi(requestPolicyId);
   });
 
   const openItem = (title, itemLocation, barcode) => {
@@ -221,7 +231,7 @@ describe('ui-inventory: Item status date updates', () => {
     fullCheck(ItemVeiw.itemStatuses.inProcess);
 
     // check in item at service point assigned to its effective location
-    SwitchServicePoint.switchServicePoint(effectiveLocationServicePoint.name);
+    SwitchServicePoint.switchServicePoint(effectiveLocationServicePointName);
     checkIn(itemBarcode, ItemVeiw.itemStatuses.available);
 
     // mark item as missing
@@ -235,7 +245,7 @@ describe('ui-inventory: Item status date updates', () => {
     checkIn(itemBarcode, ItemVeiw.itemStatuses.available);
 
     // check in item at service point not assigned to its effective location
-    SwitchServicePoint.switchServicePoint(notEffectiveLocationServicePoint.name);
+    SwitchServicePoint.switchServicePoint(notEffectiveLocationServicePointName);
     checkIn(itemBarcode, ItemVeiw.itemStatuses.inTransit, ConfirmItemInModal.confirmInTransitModal);
     // TODO запомнить время указ в поле 219 и проверить что после второго чек ин время не изменилось
 
@@ -243,7 +253,7 @@ describe('ui-inventory: Item status date updates', () => {
     checkIn(itemBarcode, ItemVeiw.itemStatuses.inTransit, ConfirmItemInModal.confirmInTransitModal);
 
     // check in item at service point assigned to its effective location
-    SwitchServicePoint.switchServicePoint(effectiveLocationServicePoint.name);
+    SwitchServicePoint.switchServicePoint(effectiveLocationServicePointName);
     checkIn(itemBarcode, ItemVeiw.itemStatuses.available);
 
     // create Page request on an item
@@ -252,17 +262,17 @@ describe('ui-inventory: Item status date updates', () => {
       itemBarcode,
       itemTitle: null,
       requesterBarcode: user.barcode,
-      pickupServicePoint: effectiveLocationServicePoint.name,
+      pickupServicePoint: effectiveLocationServicePointName,
     });
     openItem(instanceTitle, effectiveLocation.name, itemBarcode);
     fullCheck(ItemVeiw.itemStatuses.paged);
 
     // check in item at a service point other than the pickup service point for the request
-    SwitchServicePoint.switchServicePoint(notEffectiveLocationServicePoint.name);
+    SwitchServicePoint.switchServicePoint(notEffectiveLocationServicePointName);
     checkIn(itemBarcode, ItemVeiw.itemStatuses.inTransit, ConfirmItemInModal.confirmInTransitModal);
 
     // check in item at the pickup service point for the page request
-    SwitchServicePoint.switchServicePoint(effectiveLocationServicePoint.name);
+    SwitchServicePoint.switchServicePoint(effectiveLocationServicePointName);
     checkIn(itemBarcode, ItemVeiw.itemStatuses.awaitingPickup, ConfirmItemInModal.confirmAvaitingPickUpModal);
 
     // check out item to user for whom page request was created
@@ -304,7 +314,7 @@ describe('ui-inventory: Item status date updates', () => {
     checkOut(user.barcode, itemBarcode, ItemVeiw.itemStatuses.checkedOut, ConfirmItemInModal.confirmAvaitingPickupCheckInModal);
 
     // check in item at service point assigned to its effective location
-    SwitchServicePoint.switchServicePoint(effectiveLocationServicePoint.name);
+    SwitchServicePoint.switchServicePoint(effectiveLocationServicePointName);
     checkIn(itemBarcode, ItemVeiw.itemStatuses.available, ConfirmItemInModal.confirmAvaitingPickUpModal);
   });
 });

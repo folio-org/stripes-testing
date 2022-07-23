@@ -137,7 +137,7 @@ describe('ui-data-import: Test MARC-MARC matching for 001 field', () => {
         FileDetails.checkStatusInColumn(FileDetails.status.updated, FileDetails.columnName.instance);
 
         cy.visit(TopMenu.inventoryPath);
-        SearchInventory.searchInstanceByHRID(id);
+        SearchInventory.searchInstanceByHRID(hrId[0]);
 
         // ensure the fields created in Field mapping profile exists in inventory
         SearchInventory.checkInstanceDetails();

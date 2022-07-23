@@ -164,9 +164,9 @@ describe('ui-data-import: MARC file import with matching for 999 ff field', () =
         // get Instance HRID through API
         SearchInventory
           .getInstanceHRID()
-          .then(hrId => {
+          .then(id => {
             cy.visit(TopMenu.inventoryPath);
-            SearchInventory.searchInstanceByHRID(hrId[0]);
+            SearchInventory.searchInstanceByHRID(id[0]);
 
             // ensure the fields created in Field mapping profile exists in inventory
             SearchInventory.checkInstanceDetails();
