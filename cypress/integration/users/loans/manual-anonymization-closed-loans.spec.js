@@ -47,7 +47,7 @@ describe('ui-users-loans: Manual anonymization in closed loans', () => {
       cy.createLoanType({ name: loanTypeName });
 
       RequestPolicy.createApi();
-      LostItemFeePolicy.createApi();
+      LostItemFeePolicy.createViaApi();
       OverdueFinePolicy.createApi();
       NoticePolicy.createApi();
       cy.createLoanPolicy({
@@ -128,7 +128,7 @@ describe('ui-users-loans: Manual anonymization in closed loans', () => {
               newFirstItemData.barcode,
               newSecondItemData.barcode,
             ].forEach((itemBarcode) => {
-              Checkout.createItemCheckoutApi({
+              Checkout.createItemCheckoutViaApi({
                 itemBarcode,
                 userBarcode,
                 servicePointId,
@@ -139,7 +139,7 @@ describe('ui-users-loans: Manual anonymization in closed loans', () => {
               newFirstItemData.barcode,
               newSecondItemData.barcode,
             ].forEach((itemBarcode) => {
-              checkInActions.createItemCheckinApi({
+              checkInActions.checkinItemViaApi({
                 itemBarcode,
                 servicePointId,
                 checkInDate: moment.utc().format(),

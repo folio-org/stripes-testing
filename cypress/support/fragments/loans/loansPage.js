@@ -1,6 +1,9 @@
 import { Button, Pane } from '../../../../interactors';
 
 export default {
+  exportLoansToCSV() {
+    cy.do(Button('Export to CSV').click());
+  },
   openChangeDueDateForm() {
     cy.do([
       Button({ icon: 'ellipsis' }).click(),
@@ -29,4 +32,11 @@ export default {
   checkLoanPolicy(policyName) {
     cy.contains(policyName).should('be.visible');
   },
+  verifyExportFileName(actualName) {
+    const expectedFileNameMask = /export\.csv/gm;//
+    expect(actualName).to.match(expectedFileNameMask);
+  },
+  verifyContentOfExportFileName(actual, ...expectedArray) {
+    expectedArray.forEach(expectedItem => (expect(actual).to.include(expectedItem)));
+  }
 };

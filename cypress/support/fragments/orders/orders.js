@@ -401,6 +401,7 @@ export default {
   deleteOrderApi: (id) => cy.okapiRequest({
     method: 'DELETE',
     path: `orders/composite-orders/${id}`,
+    isDefaultSearchParamsRequired: false,
   }),
 
   checkIsOrderCreated:(orderNumber) => {

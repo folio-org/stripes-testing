@@ -3,22 +3,23 @@ import NewInvoice from '../../support/fragments/invoices/newInvoice';
 import Invoices from '../../support/fragments/invoices/invoices';
 import testType from '../../support/dictionary/testTypes';
 import VendorAddress from '../../support/fragments/invoices/vendorAddress';
-import newOrder from '../../support/fragments/orders/newOrder';
-import newOrderLine from '../../support/fragments/orders/enchancedOrderLine';
+import NewOrder from '../../support/fragments/orders/newOrder';
+import NewOrderLine from '../../support/fragments/orders/enchancedOrderLine';
 import Orders from '../../support/fragments/orders/orders';
 import OrdersHelper from '../../support/fragments/orders/ordersHelper';
+import Organizations from '../../support/fragments/organizations/organizations';
 import devTeams from '../../support/dictionary/devTeams';
 
 describe('ui-invoices: test POL search plugin', () => {
   const invoice = { ...NewInvoice.defaultUiInvoice };
   const vendorPrimaryAddress = { ...VendorAddress.vendorAddress };
-  const order = { ...newOrder.defaultOneTimeOrder };
-  const orderLine = { ...newOrderLine.defaultOrderLine };
+  const order = { ...NewOrder.defaultOneTimeOrder };
+  const orderLine = { ...NewOrderLine.defaultOrderLine };
   let createdOrderNumber;
 
   before(() => {
     cy.getAdminToken();
-    cy.getOrganizationApi({ query: `name=${invoice.vendorName}` })
+    Organizations.getOrganizationViaApi({ query: `name=${invoice.vendorName}` })
       .then(organization => {
         invoice.accountingCode = organization.erpCode;
         Object.assign(vendorPrimaryAddress,

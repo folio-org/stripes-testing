@@ -1,4 +1,4 @@
-import { TextField, Button, Select, Checkbox } from '../../../../../interactors';
+import { TextField, Button, Select, Checkbox, Modal } from '../../../../../interactors';
 import modalSelectTransformations from './modalSelectTransformations';
 
 const outputFormat = 'MARC';
@@ -23,6 +23,7 @@ export default {
     modalSelectTransformations.searchItemTransformationsByName('Holdings - HRID');
     modalSelectTransformations.selectTransformations(holdingsMarcField, subfield);
     cy.do(addTransformationsButton.click());
+    cy.expect(Modal('Select transformations').absent());
     modalSelectTransformations.searchItemTransformationsByName('Item - HRID');
     modalSelectTransformations.selectTransformations(itemMarcField, subfield);
     cy.do(Button('Save & close').click());

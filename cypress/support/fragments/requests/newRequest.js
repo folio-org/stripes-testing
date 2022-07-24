@@ -34,10 +34,7 @@ export default {
   },
 
   choosepickupServicePoint(pickupServicePoint) {
-    cy.intercept('/inventory/items?*').as('getItems');
-    cy.wait('@getItems', getLongDelay());
     cy.do(selectServicePoint.choose(pickupServicePoint));
-    cy.wait('@getItems');
     cy.expect(HTML(including(pickupServicePoint)).exists());
   },
 

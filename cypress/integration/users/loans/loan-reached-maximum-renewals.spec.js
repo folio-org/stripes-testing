@@ -193,7 +193,7 @@ describe('ui-users-loans: renewal failure because loan has reached maximum renew
       newFirstItemData,
       newSecondItemData,
     ].forEach(item => {
-      CheckInActions.createItemCheckinApi({
+      CheckInActions.checkinItemViaApi({
         itemBarcode: item.barcode,
         servicePointId,
         checkInDate: new Date().toISOString(),
