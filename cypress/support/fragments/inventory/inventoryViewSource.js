@@ -19,7 +19,7 @@ export default {
   waitLoading:() => cy.expect(rootSection.exists()),
 
   verifyMARCBibSource:(itemBarcode) => {
-    InventoryInstance.openViewSource();
+    InventoryInstance.viewSource();
     // verify table data in marc bibliographic source
     cy.contains('980').parent('tr').should('exist');
     cy.contains('KU/CC/DI/M').parent('tr').should('exist');

@@ -116,7 +116,7 @@ describe('Recieving notice: Checkout', () => {
   });
 
   afterEach('Deleting created entities', () => {
-    CheckInActions.createItemCheckinApi({
+    CheckInActions.checkinItemViaApi({
       itemBarcode: ITEM_BARCODE,
       servicePointId: testData.userServicePoint,
       checkInDate: moment.utc().format(),

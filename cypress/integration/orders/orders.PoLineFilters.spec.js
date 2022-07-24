@@ -4,10 +4,11 @@ import TestType from '../../support/dictionary/testTypes';
 import Orders from '../../support/fragments/orders/orders';
 import TopMenu from '../../support/fragments/topMenu';
 import OrdersHelper from '../../support/fragments/orders/ordersHelper';
-import basicOrderLine from '../../support/fragments/orders/basicOrderLine';
+import BasicOrderLine from '../../support/fragments/orders/basicOrderLine';
 import getRandomPostfix from '../../support/utils/stringTools';
 import NewInvoice from '../../support/fragments/invoices/newInvoice';
 import DateTools from '../../support/utils/dateTools';
+import Organizations from '../../support/fragments/organizations/organizations';
 import devTeams from '../../support/dictionary/devTeams';
 
 describe('orders: Test Po line filters', () => {
@@ -15,7 +16,7 @@ describe('orders: Test Po line filters', () => {
   const subcriptionDate = DateTools.getFormattedDate({ date: today }, 'MM/DD/YYYY');
   const order = { ...NewOrder.defaultOneTimeOrder };
   const orderLine = {
-    ...basicOrderLine.defaultOrderLine,
+    ...BasicOrderLine.defaultOrderLine,
     details: {
       productIds: [{
         productId: '9781868885015',
@@ -58,7 +59,7 @@ describe('orders: Test Po line filters', () => {
 
   before(() => {
     cy.getToken(Cypress.env('diku_login'), Cypress.env('diku_password'));
-    cy.getOrganizationApi({ query: 'name="Amazon.com"' })
+    Organizations.getOrganizationViaApi({ query: 'name="Amazon.com"' })
       .then(organization => {
         order.vendor = organization.id;
         orderLine.physical.materialSupplier = organization.id;

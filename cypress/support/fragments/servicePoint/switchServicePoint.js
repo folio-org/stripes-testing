@@ -23,6 +23,7 @@ export default {
       Button('Switch service point').click()
     ]);
     SelectServicePointModal.selectServicePoint(servicePoint);
-    cy.wait(5000);
+    // wait for data to be loaded
+    cy.wait(2000);
   }
 };

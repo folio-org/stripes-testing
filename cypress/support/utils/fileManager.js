@@ -56,4 +56,23 @@ export default {
     const fullPathToFile = path.split('/');
     return fullPathToFile[fullPathToFile.length - 1];
   },
+
+  renameFile(fileNameMask, fileName) {
+    /*
+    verifyNameFunc: function for verifying file name
+    fileMask: mask for searching file in downloads folder
+    */
+    // Need time for download file TODO: think about how it can be fixed
+    cy.wait(Cypress.env('downloadTimeout'));
+
+    return this.findDownloadedFilesByMask(fileNameMask)
+      .then((downloadedFilenames) => {
+        const lastDownloadedFilename = downloadedFilenames.sort()[downloadedFilenames.length - 1];
+
+        this.readFile(lastDownloadedFilename)
+          .then((actualContent) => {
+            return this.createFile(`${downloadsFolder}/${fileName}`, actualContent).then(() => (this.deleteFile(lastDownloadedFilename)));
+          });
+      });
+  }
 };
