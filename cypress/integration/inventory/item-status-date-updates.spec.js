@@ -12,7 +12,7 @@ import permissions from '../../support/dictionary/permissions';
 import CheckInActions from '../../support/fragments/check-in-actions/checkInActions';
 import SwitchServicePoint from '../../support/fragments/servicePoint/switchServicePoint';
 import NewRequest from '../../support/fragments/requests/newRequest';
-import CheckOut from '../../support/fragments/check-out/checkOut';
+import CheckOut from '../../support/fragments/checkout/checkout';
 import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
 import NewServicePoint from '../../support/fragments/settings/tenant/servicePoints/newServicePoint';
 import UsersSearchPane from '../../support/fragments/users/usersSearchPane';
@@ -32,6 +32,7 @@ import UserEdit from '../../support/fragments/users/userEdit';
 import ServicePoint from '../../support/fragments/servicePoint/servicePoint';
 import Organizations from '../../support/fragments/organizations/organizations';
 import Requests from '../../support/fragments/requests/requests';
+import CheckOutActions from '../../support/fragments/check-out-actions/check-out-actions';
 
 describe('ui-inventory: Item status date updates', () => {
   const instanceTitle = `autotestTitle ${Helper.getRandomBarcode()}`;
@@ -193,7 +194,7 @@ describe('ui-inventory: Item status date updates', () => {
 
   const checkOut = (specialUserBarcode, specialItemBarcode, status, confirmModalCheck) => {
     cy.visit(TopMenu.checkOutPath);
-    CheckOut.checkOutItem(specialUserBarcode, specialItemBarcode);
+    CheckOutActions.checkOutItemUser(specialUserBarcode, specialItemBarcode);
     if (confirmModalCheck) {
       confirmModalCheck();
     }

@@ -128,7 +128,7 @@ describe('ui-users-loans: renewal failure because loan has reached maximum renew
               })
               .then(() => {
                 [newFirstItemData.barcode].forEach((itemBarcode) => {
-                  Checkout.createItemCheckoutViaApi({
+                  Checkout.checkoutItemViaApi({
                     itemBarcode,
                     userBarcode,
                     servicePointId,
@@ -176,7 +176,7 @@ describe('ui-users-loans: renewal failure because loan has reached maximum renew
               })
               .then(() => {
                 [newSecondItemData.barcode].forEach((itemBarcode) => {
-                  Checkout.createItemCheckoutViaApi({
+                  Checkout.checkoutItemViaApi({
                     itemBarcode,
                     userBarcode,
                     servicePointId,
