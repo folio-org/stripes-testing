@@ -148,7 +148,7 @@ describe('ui-circulation-settings: Fixed due date schedules', () => {
                     });
                   })
                   .then(() => {
-                    checkout.createItemCheckoutViaApi({
+                    checkout.checkoutItemViaApi({
                       servicePointId,
                       itemBarcode: ITEM_BARCODE,
                       userBarcode: USER_BARCODE,
@@ -160,7 +160,7 @@ describe('ui-circulation-settings: Fixed due date schedules', () => {
   });
 
   after(() => {
-    checkinActions.createItemCheckinApi({
+    checkinActions.checkinItemViaApi({
       itemBarcode: ITEM_BARCODE,
       servicePointId,
       checkInDate: moment.utc().format(),

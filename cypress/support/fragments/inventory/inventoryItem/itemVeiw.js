@@ -1,4 +1,4 @@
-import { Accordion, KeyValue, Button, HTML, including, TextField } from '../../../../../interactors';
+import { Accordion, KeyValue, Button, HTML, including, TextField, Link } from '../../../../../interactors';
 import dateTools from '../../../utils/dateTools';
 import ConfirmItemMissingModal from './confirmItemMissingModal';
 
@@ -25,10 +25,15 @@ const closeDetailView = () => {
   cy.do(Button({ icon: 'times' }).click());
 };
 
+const verifyItemStatus = (itemStatus) => {
+  cy.expect(loanAccordion.find(HTML(including(itemStatus))).exists());
+};
+
 export default {
   itemStatuses,
   waitLoading,
   closeDetailView,
+  verifyItemStatus,
 
   verifyUpdatedItemDate:() => {
     cy.do(loanAccordion.find(KeyValue('Item status')).perform(element => {
@@ -38,10 +43,6 @@ export default {
       // The time on the server and the time on the yuai differ by 3 hours. It was experimentally found that it is necessary to add 18000000 sec
       dateTools.verifyDate(parsedDate, 18000000);
     }));
-  },
-
-  verifyItemStatus:(status) => {
-    cy.expect(loanAccordion.find(HTML(including(status))).exists());
   },
 
   clickMarkAsMissing:() => {
@@ -55,12 +56,13 @@ export default {
     cy.do(Button('Save and close').click());
   },
 
-  checkIsItemUpdated() {
+  checkIsItemUpdated(itemBarcode) {
     cy.do([
       Button(including('Holdings: Main Library > GV706.5')).click(),
+      Link(itemBarcode).click()
     ]);
-    cy.expect(KeyValue('Status').has({ value: 'In progress' }));
-    cy.expect(KeyValue('Effective location').has({ value: 'Main Library' }));
+    verifyItemStatus('In process');
+    cy.expect(Accordion('Location').find(KeyValue('Effective location for item')).has({ value: 'Main Library' }));
     closeDetailView();
   }
 };

@@ -89,7 +89,7 @@ export default {
     ]);
     cy.expect(Modal(including('New fee/fine')).exists());
   },
-  createItemCheckinApi: (body) => {
+  checkinItemViaApi: (body) => {
     return cy.okapiRequest({
       method: REQUEST_METHOD.POST,
       path: 'circulation/check-in-by-barcode',

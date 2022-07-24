@@ -4,7 +4,8 @@ import {
   Accordion,
   Selection,
   SelectionList,
-  Link
+  Link,
+  MultiColumnList
 } from '../../../../../interactors';
 
 const anyProfileAccordion = Accordion({ id: 'profileIdAny' });
@@ -35,6 +36,12 @@ export default {
 
   checkQuantityRecordsInFile:(quantityRecords) => {
     cy.do(MultiColumnListCell({ row: 0, content: quantityRecords }).exists());
+  },
+
+  clickOnHotLink: (row = 0, columnIndex = 3, status = 'Created') => {
+    cy.do(MultiColumnList({ id: 'search-results-list' })
+      .find(MultiColumnListCell({ row, columnIndex }))
+      .find(Link(status)).click());
   },
 
   quantityRecordsInInvoice,

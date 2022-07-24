@@ -137,7 +137,7 @@ describe('Renewal', () => {
       })
       // checkout item
       .then(() => {
-        checkoutActions.createItemCheckoutViaApi({
+        checkoutActions.checkoutItemViaApi({
           servicePointId,
           itemBarcode: itemData.barcode,
           userBarcode: renewUserData.barcode
@@ -149,7 +149,7 @@ describe('Renewal', () => {
   });
 
   after(() => {
-    checkinActions.createItemCheckinApi({
+    checkinActions.checkinItemViaApi({
       itemBarcode: itemData.barcode,
       servicePointId,
       checkInDate: moment.utc().format(),

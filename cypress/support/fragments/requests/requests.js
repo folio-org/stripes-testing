@@ -293,6 +293,8 @@ export default {
   },
 
   verifyAssignedTags(tag) {
+    // wait for data to be loaded
+    cy.wait(1500);
     cy.expect(Button({ id: 'clickable-show-tags' }).find(Badge()).has({ value: '1' }));
     cy.expect(Pane({ title: 'Tags' }).find(ValueChipRoot(tag)).exists());
   },

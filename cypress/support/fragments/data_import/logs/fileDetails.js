@@ -7,6 +7,8 @@ import {
 } from '../../../../../interactors';
 
 const resultsList = MultiColumnList({ id:'search-results-list' });
+const jobSummaryTable = MultiColumnList({ id: 'job-summary-table' });
+const listRow = MultiColumnListRow({ indexRow: 'row-0' });
 
 const columnName = {
   srsMarc: resultsList.find(MultiColumnListHeader({ id:'list-column-srsmarcstatus' })),
@@ -29,11 +31,31 @@ const checkStatusInColumn = (specialStatus, specialColumnName) => {
       .has({ content: specialStatus })));
 };
 
-function checkItemsStatuses(rowIndex, itemStatuses) {
+const checkItemsQuantityInSummaryTable = (rowNumber, quantity) => {
+  for (let i = 1; i < 5; i++) {
+    cy.expect(jobSummaryTable
+      .find(MultiColumnListRow({ indexRow: `row-${rowNumber}` }))
+      .find(MultiColumnListCell({ columnIndex: i, content: quantity }))
+      .exists());
+  }
+};
+
+const checkCreatedInvoiceISummaryTable = (quantity) => {
+  cy.expect(jobSummaryTable
+    .find(listRow)
+    .find(MultiColumnListCell({ columnIndex: 1, content: quantity }))
+    .exists());
+  cy.expect(jobSummaryTable
+    .find(listRow)
+    .find(MultiColumnListCell({ columnIndex: 7, content: quantity }))
+    .exists());
+};
+
+function checkItemsStatusesInResultList(rowIndex, itemStatuses) {
   // itemStatuses = [SRS MARC status, Instance status, Holdings status, Item status]
   const indexes = [2, 3, 4, 5];
   itemStatuses.forEach((itemStatus, columnIndex) => {
-    cy.expect(MultiColumnList({ id: 'search-results-list' })
+    cy.expect(resultsList
       .find(MultiColumnListRow({ index: rowIndex }))
       .find(MultiColumnListCell({ columnIndex: indexes[columnIndex], content: itemStatus }))
       .exists());
@@ -45,14 +67,14 @@ const invoiceNumberFromEdifactFile = '94999';
 export default {
   columnName,
   status,
-  checkStatusInColumn,
-  checkItemsStatuses,
-
   invoiceNumberFromEdifactFile,
+  checkStatusInColumn,
+  checkItemsStatusesInResultList,
+  checkItemsQuantityInSummaryTable,
+  checkCreatedInvoiceISummaryTable,
 
   openInstanceInInventory:(columnIndex = 3, row = 0) => {
-    cy.do(MultiColumnList({ id:'search-results-list' })
-      .find(MultiColumnListCell({ row, columnIndex }))
+    cy.do(resultsList.find(MultiColumnListCell({ row, columnIndex }))
       .find(Link('Updated'))
       .click());
   }
