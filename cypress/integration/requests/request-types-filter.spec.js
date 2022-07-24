@@ -18,7 +18,7 @@ describe('ui-requests: Make sure that request type filters are working properly'
   const getNoResultMessage = term => `No results found for "${term}". Please check your spelling and filters.`;
 
   beforeEach(() => {
-    cy.login(Cypress.env('diku_login'), Cypress.env('diku_password'));
+    cy.loginAsAdmin();
     cy.getAdminToken();
 
     Requests.setRequestPolicyApi().then(({ oldRulesAsText, policy }) => {

@@ -12,7 +12,7 @@ describe('ui-requests: Request: Edit requests. Make sure that edits are being sa
   let cancellationReason;
 
   before(() => {
-    cy.login(Cypress.env('diku_login'), Cypress.env('diku_password'));
+    cy.loginAsAdmin();
     cy.getAdminToken();
   });
 

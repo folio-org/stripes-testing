@@ -17,7 +17,7 @@ describe('ui-inventory: Assign tags to an Instance record', () => {
   let instanceId;
 
   beforeEach(() => {
-    cy.login(Cypress.env('diku_login'), Cypress.env('diku_password'));
+    cy.loginAsAdmin();
     cy.getAdminToken()
       .then(() => {
         cy.getInstanceTypes({ limit: 1 });

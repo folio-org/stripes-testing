@@ -33,10 +33,7 @@ describe('ui-data-import: MARC file import with matching for 999 ff field', () =
   const jobProfileNameForExport = `autotestJobProf${getRandomPostfix()}`;
 
   beforeEach(() => {
-    cy.login(
-      Cypress.env('diku_login'),
-      Cypress.env('diku_password')
-    );
+    cy.loginAsAdmin();
     cy.getAdminToken();
 
     DataImport.checkUploadState();
