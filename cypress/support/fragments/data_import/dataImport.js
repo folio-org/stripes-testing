@@ -23,20 +23,29 @@ const waitLoading = () => {
 
 const getLinkToAuthority = (title) => cy.then(() => Button(title).href());
 
+// file to upload - MarcAuthority.defaultAuthority
+// link to visit - defined with the parameter MarcAuthority.defaultAuthority.headingReference
 const importFile = (profileName, uniqueFileName) => {
   uploadFile(MarcAuthority.defaultAuthority.name, uniqueFileName);
+
   JobProfiles.waitLoadingList();
   JobProfiles.select(profileName);
   JobProfiles.runImportFile(uniqueFileName);
   JobProfiles.openFileRecords(uniqueFileName);
+
   getLinkToAuthority(MarcAuthority.defaultAuthority.headingReference).then(link => {
+    const jobLogEntriesUid = link.split('/').at(-2);
+    const recordId = link.split('/').at(-1);
+
     cy.intercept({
       method: 'GET',
-      url: `/metadata-provider/jobLogEntries/${link.split('/').at(-2)}/records/${link.split('/').at(-1)}`,
+      url: `/metadata-provider/jobLogEntries/${jobLogEntriesUid}/records/${recordId}`,
     }).as('getRecord');
+
     cy.visit(link);
-    cy.wait('@getRecord', getLongDelay()).then(response => {
-      const internalAuthorityId = response.response.body.relatedAuthorityInfo.idList[0];
+
+    cy.wait('@getRecord', getLongDelay()).then(request => {
+      const internalAuthorityId = request.response.body.relatedAuthorityInfo.idList[0];
 
       cy.visit(TopMenu.marcAuthorities);
       MarcAuthoritiesSearch.searchBy('Uniform title', MarcAuthority.defaultAuthority.headingReference);

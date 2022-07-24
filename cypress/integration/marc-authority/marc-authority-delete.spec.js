@@ -12,11 +12,10 @@ import MarcAuthoritiesDelete from '../../support/fragments/marcAuthority/marcAut
 
 describe('MARC Authority management', () => {
   const testData = {
-    userProperties: { name:'testname' },
     uniqueFileName: `autotestFile.${getRandomPostfix()}.mrc`
   };
 
-  beforeEach(() => {
+  beforeEach('Creating user and importing file', () => {
     cy.createTempUser([
       Permissions.settingsDataImportEnabled.gui,
       Permissions.moduleDataImportEnabled.gui,
@@ -31,7 +30,7 @@ describe('MARC Authority management', () => {
     });
   });
 
-  afterEach('', () => {
+  afterEach('Deleting created user', () => {
     Users.deleteViaApi(testData.userProperties.userId);
   });
   it('C350572 Edit an Authority record (spitfire)', { tags:  [TestTypes.smoke, Features.authority, DevTeams.spitfire] }, () => {
