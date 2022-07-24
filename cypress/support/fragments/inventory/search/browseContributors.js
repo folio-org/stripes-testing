@@ -30,7 +30,7 @@ const paneIntanceDetails = PaneContent({ id: 'pane-instancedetails-content' });
 const inventorySelect = Select({ id: 'input-inventory-search-qindex' });
 const inventorySearch = TextInput({ id: 'input-inventory-search' });
 const browseContributorsOption = Option('Browse contributors');
-const browseButtor = Button('Browse');
+const browseButton = Button('Browse');
 const row0 = MultiColumnListRow({ index: 0 });
 const row1 = MultiColumnListRow({ index: 1 });
 
@@ -63,7 +63,7 @@ export default {
     ]);
     cy.expect([
       Form().find(inventorySearch).exists(),
-      Form().find(browseButtor).exists(),
+      Form().find(browseButton).exists(),
       Form().find(Button('Reset all')).exists(),
       Form().find(Button({ id: 'accordion-toggle-button-nameType' })).exists(),
       // TODO add check for Relator term accordeon button after product updates
@@ -77,7 +77,7 @@ export default {
   browse(contributorName) {
     cy.do([
       inventorySearch.fillIn(contributorName),
-      browseButtor.click(),
+      browseButton.click(),
     ]);
   },
 
@@ -97,7 +97,7 @@ export default {
 
   checkNonExactSearchResult(contributorA, contributorZ) {
     cy.do([
-      row0.has({ content: ' __A_test_contributor_ would be here' }),
+      row0.has({ content: '__A_test_contributor_would be here' }),
       row1.has({ content: `${contributorA.name}${contributorA.contributorNameType}1` }),
       MultiColumnListRow({ index: 2 }).has({ content:  `${contributorZ.name}${contributorZ.contributorNameType}1` }),
     ]);
@@ -112,7 +112,10 @@ export default {
   },
 
   openInstance(contributor) {
-    cy.do(MultiColumnListCell(contributor.name).click());
+    cy.do([
+      MultiColumnListCell(contributor.name).click(),
+      browseButton.click(),
+    ]);
   },
 
   checkInstance(instance) {
