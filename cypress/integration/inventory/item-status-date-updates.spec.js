@@ -33,6 +33,7 @@ import ServicePoint from '../../support/fragments/servicePoint/servicePoint';
 import Organizations from '../../support/fragments/organizations/organizations';
 import Requests from '../../support/fragments/requests/requests';
 import CheckOutActions from '../../support/fragments/check-out-actions/check-out-actions';
+import DevTeams from '../../support/dictionary/devTeams';
 
 describe('ui-inventory: Item status date updates', () => {
   const instanceTitle = `autotestTitle ${Helper.getRandomBarcode()}`;
@@ -210,7 +211,7 @@ describe('ui-inventory: Item status date updates', () => {
     UsersCard.showOpenedLoans();
   };
 
-  it('C9200 Item status date updates (folijet) (prokopovych)', { tags: [TestTypes.smoke, TestTypes.long] }, () => {
+  it('C9200 Item status date updates (folijet) (prokopovych)', { tags: [TestTypes.smoke, DevTeams.folijet, TestTypes.long] }, () => {
     const caption = `autotest_caption_${getRandomPostfix()}`;
     const numberOfPieces = '3';
 
