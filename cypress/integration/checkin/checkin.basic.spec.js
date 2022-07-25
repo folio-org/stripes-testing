@@ -1,3 +1,4 @@
+import devTeams from '../../support/dictionary/devTeams';
 import moment from 'moment';
 import uuid from 'uuid';
 import permissions from '../../support/dictionary/permissions';
@@ -82,7 +83,7 @@ describe('Check In - Actions ', () => {
     Users.deleteViaApi(userData.userId);
   });
 
-  it('C347631 Check in: Basic check in (vega)', { tags: [TestTypes.smoke] }, () => {
+  it('C347631 Check in: Basic check in (vega)', { tags: [TestTypes.smoke, devTeams.vega] }, () => {
     CheckInActions.checkInItemGui(itemData.barcode);
     InTransitModal.verifyModalTitle();
     InTransitModal.verifySelectedCheckboxPrintSlip();

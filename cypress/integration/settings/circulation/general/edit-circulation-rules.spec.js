@@ -1,3 +1,4 @@
+import devTeams from '../../../../support/dictionary/devTeams';
 import TestType from '../../../../support/dictionary/testTypes';
 import SettingsMenu from '../../../../support/fragments/settingsMenu';
 import CirculationRules from '../../../../support/fragments/circulation/circulation-rules';
@@ -66,7 +67,7 @@ describe('ui-circulation-settings: Edit circulation rules', () => {
     Users.deleteViaApi(newUserId);
   });
 
-  it('C2268: Add notice policy to circulation rules (vega)', { tags: [TestType.smoke] }, () => {
+  it('C2268: Add notice policy to circulation rules (vega)', { tags: [TestType.smoke, devTeams.vega] }, () => {
     CirculationRules.clearCirculationRules();
     CirculationRules.fillInPriority();
 
