@@ -22,6 +22,7 @@ import Loans from '../../../support/fragments/users/userDefaultObjects/loans';
 import CheckInActions from '../../../support/fragments/check-in-actions/checkInActions';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 import Users from '../../../support/fragments/users/users';
+import DevTeams from '../../../support/dictionary/devTeams';
 
 describe('ui-users-loans: renewal failure because loan has reached maximum renewals', () => {
   const loanTypeName = `autotest_loan_type${getRandomPostfix()}`;
@@ -127,7 +128,7 @@ describe('ui-users-loans: renewal failure because loan has reached maximum renew
               })
               .then(() => {
                 [newFirstItemData.barcode].forEach((itemBarcode) => {
-                  Checkout.createItemCheckoutViaApi({
+                  Checkout.checkoutItemViaApi({
                     itemBarcode,
                     userBarcode,
                     servicePointId,
@@ -175,7 +176,7 @@ describe('ui-users-loans: renewal failure because loan has reached maximum renew
               })
               .then(() => {
                 [newSecondItemData.barcode].forEach((itemBarcode) => {
-                  Checkout.createItemCheckoutViaApi({
+                  Checkout.checkoutItemViaApi({
                     itemBarcode,
                     userBarcode,
                     servicePointId,
@@ -234,7 +235,7 @@ describe('ui-users-loans: renewal failure because loan has reached maximum renew
     Users.deleteViaApi(secondUser.userId);
   });
 
-  it('C569: renewal failure because loan has reached maximum renewalsv (Prokopovych)', { tags: [testTypes.smoke] }, () => {
+  it('C569: renewal failure because loan has reached maximum renewalsv (folijet) (prokopovych)', { tags: [testTypes.smoke, DevTeams.folijet] }, () => {
     cy.login(
       firstUser.username,
       firstUser.password,

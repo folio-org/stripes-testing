@@ -49,7 +49,7 @@ describe('ui-requests: Request: Edit requests. Make sure that edits are being sa
     Requests.deleteRequestPolicyApi(requestPolicyId);
   });
 
-  it('C556 Request: Edit requests. Make sure that edits are being saved. (folijet )(prokopovych)', { tags: [TestTypes.smoke, DevTeams.folijet] }, () => {
+  it('C556 Request: Edit requests. Make sure that edits are being saved. (folijet) (prokopovych)', { tags: [TestTypes.smoke, DevTeams.folijet] }, () => {
     cy.visit(TopMenu.requestsPath);
     Object.values(EditRequest.requestStatuses).forEach(status => {
       EditRequest.checkIsEditsBeingSaved(requestData, instanceData, status);
