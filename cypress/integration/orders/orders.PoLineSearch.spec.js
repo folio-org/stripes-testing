@@ -8,6 +8,7 @@ import BasicOrderLine from '../../support/fragments/orders/basicOrderLine';
 import getRandomPostfix from '../../support/utils/stringTools';
 import Organizations from '../../support/fragments/organizations/organizations';
 import devTeams from '../../support/dictionary/devTeams';
+import newOrganization from '../../support/fragments/organizations/newOrganization';
 
 // TODO:  Rebuild the test after fixing the problem with orderLineNumber definition in its scope.
 // TODO: Check the search using the second POLINE,to have a working search on empty env.
@@ -51,6 +52,7 @@ describe('orders: Test Po line search', () => {
     }],
   };
   let orderLineNumber;
+  const organization = { ...newOrganization.defaultUiOrganizations };
   const searchers = [
     { nameOfSearch: 'Keyword', valueOfLine: orderLine.titleOrPackage },
     { nameOfSearch: 'Contributor', valueOfLine: orderLine.contributors[0].contributor },
@@ -68,11 +70,12 @@ describe('orders: Test Po line search', () => {
 
   before(() => {
     cy.getAdminToken();
-    Organizations.getOrganizationViaApi({ query: 'name="Amazon.com"' })
-      .then(organization => {
-        order.vendor = organization.id;
-        orderLine.physical.materialSupplier = organization.id;
-        orderLine.eresource.accessProvider = organization.id;
+    Organizations.createOrganizationViaApi(organization)
+      .then(response => {
+        organization.id = response;
+        order.vendor = response;
+        orderLine.physical.materialSupplier = response;
+        orderLine.eresource.accessProvider = response;
       });
     cy.getLocations({ query: `name="${OrdersHelper.mainLibraryLocation}"` })
       .then(location => { orderLine.locations[0].locationId = location.id; });
@@ -97,6 +100,7 @@ describe('orders: Test Po line search', () => {
 
   after(() => {
     Orders.deleteOrderApi(order.id);
+    Organizations.deleteOrganizationViaApi(organization.id);
   });
 
   searchers.forEach((searcher) => {

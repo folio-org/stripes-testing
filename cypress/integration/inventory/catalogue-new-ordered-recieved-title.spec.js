@@ -58,7 +58,7 @@ describe('orders: Receive piece from Order', () => {
       });
   });
 
-  it('C735 Receiving pieces from an order for physical material that is set to create Items in inventory (thunderjet)', { tags: [testType.smoke] }, () => {
+  it('C3506 Catalog a new title which has been ordered and received in Orders (spitfire)', { tags: [testType.smoke] }, () => {
     Orders.searchByParameter('PO number', orderNumber);
     Helper.selectFromResultsList();
     Orders.openOrder();

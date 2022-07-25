@@ -26,7 +26,6 @@ describe('Assign Tags to Request', () => {
 
   beforeEach(() => {
     ServicePoints.getViaApi({ limit: 1, query: 'pickupLocation=="true"' });
-    console.log();
     cy.getUserGroups({ limit: 1 }).then((patronGroup) => {
       const userData = {
         active: true,

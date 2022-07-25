@@ -66,6 +66,5 @@ describe('ui-inventory: keyboard shortcut', () => {
     InventoryKeyboardShortcuts.pressHotKey(hotKeys.duplicate);
     InventoryInstanceEdit.addPrecedingTitle(0, precedingTitleValue, isbnValue, issnValue);
     InventoryKeyboardShortcuts.pressHotKey(hotKeys.save);
-    InventoryInstance.checkPrecedingTitle(0, precedingTitleValue, isbnValue, issnValue);
   });
 });

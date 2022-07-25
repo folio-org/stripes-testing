@@ -18,6 +18,7 @@ export default {
     name: `autotest_name_${getRandomPostfix()}`,
     status: 'Active',
     code: `autotest_code_${getRandomPostfix()}`,
+    erpCode: `ERP-${getRandomPostfix()}`,
     isVendor: true,
   },
 

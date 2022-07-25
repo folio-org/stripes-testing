@@ -9,6 +9,7 @@ import NewInvoice from '../../support/fragments/invoices/newInvoice';
 import DateTools from '../../support/utils/dateTools';
 import Organizations from '../../support/fragments/organizations/organizations';
 import devTeams from '../../support/dictionary/devTeams';
+import newOrganization from '../../support/fragments/organizations/newOrganization';
 
 describe('orders: Test PO filters', () => {
   const today = new Date();
@@ -17,15 +18,18 @@ describe('orders: Test PO filters', () => {
   const orderLine = { ...BasicOrderLine.defaultOrderLine };
   const invoice = { ...NewInvoice.defaultUiInvoice };
   let orderNumber;
+  const organization = { ...newOrganization.defaultUiOrganizations };
 
   before(() => {
     cy.getToken(Cypress.env('diku_login'), Cypress.env('diku_password'));
-    Organizations.getOrganizationViaApi({ query: 'name="Amazon.com"' })
-      .then(organization => {
-        order.vendor = organization.id;
-        orderLine.physical.materialSupplier = organization.id;
-        orderLine.eresource.accessProvider = organization.id;
+    Organizations.createOrganizationViaApi(organization)
+      .then(response => {
+        organization.id = response;
+        order.vendor = response;
+        orderLine.physical.materialSupplier = response;
+        orderLine.eresource.accessProvider = response;
       });
+    invoice.vendorName = organization.name;
     cy.getLocations({ query: `name="${OrdersHelper.mainLibraryLocation}"` })
       .then(location => { orderLine.locations[0].locationId = location.id; });
     cy.getMaterialTypes({ query: 'name="book"' })
@@ -59,6 +63,7 @@ describe('orders: Test PO filters', () => {
 
   after(() => {
     Orders.deleteOrderApi(order.id);
+    Organizations.deleteOrganizationViaApi(organization.id);
   });
 
   [

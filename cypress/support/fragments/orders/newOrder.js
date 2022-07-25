@@ -22,6 +22,6 @@ export default {
   defaultOneTimeOrder: {
     id: uuid(),
     vendor: '',
-    orderType: 'One-time'
+    orderType: 'One-Time'
   }
 };

@@ -7,18 +7,20 @@ import Helper from '../../support/fragments/finance/financeHelper';
 import OrdersHelper from '../../support/fragments/orders/ordersHelper';
 import Organizations from '../../support/fragments/organizations/organizations';
 import devTeams from '../../support/dictionary/devTeams';
+import newOrganization from '../../support/fragments/organizations/newOrganization';
 
 describe('orders: Close Order', () => {
   const order = { ...NewOrder.defaultOneTimeOrder };
   const orderLine = { ...BasicOrderLine.defaultOrderLine };
-
+  const organization = { ...newOrganization.defaultUiOrganizations };
   before(() => {
     cy.getAdminToken();
-    Organizations.getOrganizationViaApi({ query: 'name="Amazon.com"' })
-      .then(organization => {
-        order.vendor = organization.id;
-        orderLine.physical.materialSupplier = organization.id;
-        orderLine.eresource.accessProvider = organization.id;
+    Organizations.createOrganizationViaApi(organization)
+      .then(response => {
+        organization.id = response;
+        order.vendor = response;
+        orderLine.physical.materialSupplier = response;
+        orderLine.eresource.accessProvider = response;
       });
     cy.getLocations({ query: `name="${OrdersHelper.mainLibraryLocation}"` })
       .then(location => { orderLine.locations[0].locationId = location.id; });
@@ -29,6 +31,8 @@ describe('orders: Close Order', () => {
 
   after(() => {
     Orders.deleteOrderApi(order.id);
+
+    Organizations.deleteOrganizationViaApi(organization.id);
   });
 
   it('C667 Close an existing order (thunderjet)', { tags: [TestType.smoke, devTeams.thunderjet] }, () => {
