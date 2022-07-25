@@ -3,6 +3,7 @@ import EditRequest from '../../support/fragments/requests/edit-request';
 import TopMenu from '../../support/fragments/topMenu';
 import Requests from '../../support/fragments/requests/requests';
 import Users from '../../support/fragments/users/users';
+import DevTeams from '../../support/dictionary/devTeams';
 
 describe('ui-requests: Request: Edit requests. Make sure that edits are being saved.', () => {
   let userId;
@@ -11,7 +12,7 @@ describe('ui-requests: Request: Edit requests. Make sure that edits are being sa
   let cancellationReason;
 
   before(() => {
-    cy.login(Cypress.env('diku_login'), Cypress.env('diku_password'));
+    cy.loginAsAdmin();
     cy.getAdminToken();
   });
 
@@ -40,7 +41,7 @@ describe('ui-requests: Request: Edit requests. Make sure that edits are being sa
     Users.deleteViaApi(userId);
   });
 
-  it('C556 Request: Edit requests. Make sure that edits are being saved. (prokopovych)', { tags: [TestTypes.smoke] }, () => {
+  it('C556 Request: Edit requests. Make sure that edits are being saved. (folijet) (prokopovych)', { tags: [TestTypes.smoke, DevTeams.folijet] }, () => {
     cy.visit(TopMenu.requestsPath);
     Object.values(EditRequest.requestStatuses).forEach(status => {
       EditRequest.checkIsEditsBeingSaved(requestData, instanceData, status);

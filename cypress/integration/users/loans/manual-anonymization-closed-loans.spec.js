@@ -18,6 +18,7 @@ import OverdueFinePolicy from '../../../support/fragments/circulation/overdue-fi
 import LostItemFeePolicy from '../../../support/fragments/circulation/lost-item-fee-policy';
 import NoticePolicy from '../../../support/fragments/circulation/notice-policy';
 import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
+import DevTeams from '../../../support/dictionary/devTeams';
 
 describe('ui-users-loans: Manual anonymization in closed loans', () => {
   const loanTypeName = `autotest_loan_type${getRandomPostfix()}`;
@@ -128,7 +129,7 @@ describe('ui-users-loans: Manual anonymization in closed loans', () => {
               newFirstItemData.barcode,
               newSecondItemData.barcode,
             ].forEach((itemBarcode) => {
-              Checkout.createItemCheckoutViaApi({
+              Checkout.checkoutItemViaApi({
                 itemBarcode,
                 userBarcode,
                 servicePointId,
@@ -163,7 +164,7 @@ describe('ui-users-loans: Manual anonymization in closed loans', () => {
     });
   });
 
-  it('C9217 Manual anonymization in closed loans (prokopovych)', { tags: [testTypes.smoke] }, () => {
+  it('C9217 Manual anonymization in closed loans (folijet) (prokopovych)', { tags: [testTypes.smoke, DevTeams.folijet] }, () => {
     LoanDetails.createFeeFine(newOwnerData.owner, feeFineType);
     LoanDetails.anonymizeAllLoans();
     LoanDetails.checkAnonymizeModalOpen();
