@@ -12,7 +12,7 @@ import SettingsInvoices from '../../support/fragments/invoices/settingsInvoices'
 import Organizations from '../../support/fragments/organizations/organizations';
 import devTeams from '../../support/dictionary/devTeams';
 import NewOrganization from '../../support/fragments/organizations/newOrganization';
-import NewBatchGroup from '../../support/fragments/settings/invoices/batchGroup';
+import NewBatchGroup from '../../support/fragments/settings/invoices/batchGroups';
 import BatchGrops from '../../support/api/batch-groups';
 
 describe('ui-invoices-settings: Export batch voucher', () => {
