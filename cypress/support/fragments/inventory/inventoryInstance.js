@@ -278,6 +278,7 @@ export default {
     cy.okapiRequest({
       method: 'DELETE',
       path: `instance-storage/instances/${id}`,
+      isDefaultSearchParamsRequired: false,
     });
   },
 

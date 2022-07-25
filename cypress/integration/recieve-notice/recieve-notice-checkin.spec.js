@@ -177,7 +177,7 @@ describe('Recieving notice: Checkin', () => {
       MultipieceCheckOut.confirmMultipleCheckOut(ITEM_BARCODE);
       CheckOutActions.checkUserInfo(userData);
       CheckOutActions.checkItemInfo(ITEM_BARCODE, testData.instanceTitle);
-      CheckOutActions.endSession();
+      CheckOutActions.endCheckOutSession();
 
       cy.visit(topMenu.checkInPath);
       cy.checkInItem(ITEM_BARCODE);

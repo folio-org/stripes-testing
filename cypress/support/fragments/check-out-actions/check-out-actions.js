@@ -1,4 +1,3 @@
-import uuid from 'uuid';
 import {
   TextField,
   Button,
@@ -13,7 +12,6 @@ import {
   including,
   PaneContent
 } from '../../../../interactors';
-import { REQUEST_METHOD } from '../../constants';
 
 const modal = Modal('Confirm multipiece check out');
 
@@ -52,12 +50,6 @@ export default {
     ]);
   },
 
-  endSession() {
-    cy.do([
-      Button('End session').click(),
-    ]);
-  },
-
   checkOutItemUser(userBarcode, itemBarcode) {
     cy.do(TextField({ name: 'patron.identifier' }).fillIn(userBarcode));
     cy.intercept('/circulation/loans?*').as('getLoans');
@@ -88,17 +80,5 @@ export default {
 
   checkItem:(barcode) => {
     cy.expect(MultiColumnList({ id:'list-items-checked-out' }).find(HTML(including(barcode))).absent());
-  },
-
-  itemCheckoutApi(body) {
-    return cy.okapiRequest({
-      method: REQUEST_METHOD.POST,
-      path: 'circulation/check-in-by-barcode',
-      body: {
-        id: uuid(),
-        ...body,
-      },
-      isDefaultSearchParamsRequired: false,
-    });
-  },
+  }
 };

@@ -173,7 +173,7 @@ describe('Recieving notice: Checkout', () => {
       MultipieceCheckOut.confirmMultipleCheckOut(ITEM_BARCODE);
       CheckOutActions.checkUserInfo(userData);
       CheckOutActions.checkItemInfo(ITEM_BARCODE, testData.instanceTitle);
-      CheckOutActions.endSession();
+      CheckOutActions.endCheckOutSession();
 
       cy.visit(topMenu.circulationLogPath);
       SearchPane.searchByItemBarcode(ITEM_BARCODE);

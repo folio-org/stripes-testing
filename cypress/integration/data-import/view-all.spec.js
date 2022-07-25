@@ -13,10 +13,7 @@ describe('ui-data-import: Search the "View all" log screen', () => {
   const uniqueFileName = `C11112test${getRandomPostfix()}.${fileType}`;
 
   before(() => {
-    cy.login(
-      Cypress.env('diku_login'),
-      Cypress.env('diku_password')
-    );
+    cy.loginAsAdmin();
     cy.getAdminToken();
 
     cy.visit(TopMenu.dataImportPath);

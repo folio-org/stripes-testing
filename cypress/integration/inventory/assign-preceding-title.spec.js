@@ -17,7 +17,7 @@ describe('ui-inventory: Assign a Preceding title for an instance', () => {
   const issnValue = `ISSN test value ${getRandomPostfix()}`;
 
   before('navigate to Inventory', () => {
-    cy.login(Cypress.env('diku_login'), Cypress.env('diku_password'));
+    cy.loginAsAdmin();
     cy.getAdminToken()
       .then(() => {
         cy.getInstanceTypes({ limit: 1 });
