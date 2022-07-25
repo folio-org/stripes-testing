@@ -4,15 +4,23 @@ import Requests from '../../support/fragments/requests/requests';
 import { MultiColumnListHeader } from '../../../interactors';
 import Users from '../../support/fragments/users/users';
 import InventoryInstance from '../../support/fragments/inventory/inventoryInstance';
+import DevTeams from '../../support/dictionary/devTeams';
 
 describe('ui-requests: Sort requests', () => {
   const userIds = [];
   const requests = [];
   const instances = [];
+  let oldRulesText;
+  let requestPolicyId;
 
   beforeEach(() => {
-    cy.login(Cypress.env('diku_login'), Cypress.env('diku_password'));
-    cy.getToken('diku_admin', 'admin');
+    cy.loginAsAdmin();
+    cy.getAdminToken();
+
+    Requests.setRequestPolicyApi().then(({ oldRulesAsText, policy }) => {
+      oldRulesText = oldRulesAsText;
+      requestPolicyId = policy.id;
+    });
 
     Object.values(Requests.requestTypes).forEach((requestType) => {
       const itemStatus = requestType === 'Page' ? 'Available' : 'Checked out';
@@ -40,9 +48,11 @@ describe('ui-requests: Sort requests', () => {
     userIds.forEach(id => {
       Users.deleteViaApi(id);
     });
+    Requests.updateCirculationRulesApi(oldRulesText);
+    Requests.deleteRequestPolicyApi(requestPolicyId);
   });
 
-  it('C2379 Test Request app sorting (prokopovych)', { tags: [testType.smoke] }, () => {
+  it('C2379 Test Request app sorting (folijet) (prokopovych)', { tags: [testType.smoke, DevTeams.folijet] }, () => {
     cy.visit(TopMenu.requestsPath);
 
     cy.intercept('GET', '/circulation/requests?*').as('getRequests');

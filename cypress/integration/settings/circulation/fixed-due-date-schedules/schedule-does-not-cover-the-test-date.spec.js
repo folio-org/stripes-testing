@@ -17,11 +17,11 @@ import {
   LOST_ITEM_FEES_POLICY_NAMES,
 } from '../../../../support/constants';
 import fixedDueDateSchedules from '../../../../support/fragments/circulation/fixedDueDateSchedules';
-import checkout from '../../../../support/fragments/checkout/checkout';
+import Checkout from '../../../../support/fragments/checkout/checkout';
 import loans from '../../../../support/fragments/loans/loansPage';
 import topMenu from '../../../../support/fragments/topMenu';
-import checkinActions from '../../../../support/fragments/check-in-actions/checkInActions';
-import users from '../../../../support/fragments/users/users';
+import CheckinActions from '../../../../support/fragments/check-in-actions/checkInActions';
+import Users from '../../../../support/fragments/users/users';
 import InventoryHoldings from '../../../../support/fragments/inventory/holdings/inventoryHoldings';
 import ServicePoints from '../../../../support/fragments/settings/tenant/servicePoints/servicePoints';
 import InventoryInstance from '../../../../support/fragments/inventory/inventoryInstance';
@@ -65,7 +65,7 @@ describe('ui-circulation-settings: Fixed due date schedules', () => {
           });
       })
       .then(() => {
-        users.createViaApi({
+        Users.createViaApi({
           active: true,
           barcode: USER_BARCODE,
           personal: {
@@ -148,7 +148,7 @@ describe('ui-circulation-settings: Fixed due date schedules', () => {
                     });
                   })
                   .then(() => {
-                    checkout.checkoutItemViaApi({
+                    Checkout.checkoutItemViaApi({
                       servicePointId,
                       itemBarcode: ITEM_BARCODE,
                       userBarcode: USER_BARCODE,
@@ -160,13 +160,13 @@ describe('ui-circulation-settings: Fixed due date schedules', () => {
   });
 
   after(() => {
-    checkinActions.checkinItemViaApi({
+    CheckinActions.checkinItemViaApi({
       itemBarcode: ITEM_BARCODE,
       servicePointId,
       checkInDate: moment.utc().format(),
     })
       .then(() => {
-        users.deleteViaApi(userId);
+        Users.deleteViaApi(userId);
         cy.getInstance({ limit: 1, expandAll: true, query: `"items.barcode"=="${ITEM_BARCODE}"` })
           .then((instance) => {
             cy.deleteItem(instance.items[0].id);
@@ -196,7 +196,7 @@ describe('ui-circulation-settings: Fixed due date schedules', () => {
         }],
       });
       cy.visit(topMenu.checkOutPath);
-      checkout.checkUserOpenLoans({ barcode: userBarcode, id: userId });
+      Checkout.checkUserOpenLoans({ barcode: userBarcode, id: userId });
       loans.checkLoanPolicy(createdLoanPolicy.name);
       loans.renewalMessageCheck(dateFallsMessage);
     });

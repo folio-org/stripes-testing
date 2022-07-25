@@ -5,20 +5,20 @@ import TestTypes from '../../support/dictionary/testTypes';
 import Helper from '../../support/fragments/finance/financeHelper';
 import { MultiColumnListCell } from '../../../interactors';
 import DevTeams from '../../support/dictionary/devTeams';
+import InventoryInstance from '../../support/fragments/inventory/inventoryInstance';
 
 describe('ui-inventory: Create new instance with add "New"', () => {
   const instanceTitle = `autoTestInstanceTitle ${Helper.getRandomBarcode()}`;
 
   before('navigate to Inventory', () => {
-    cy.login(Cypress.env('diku_login'), Cypress.env('diku_password'));
+    cy.loginAsAdmin({ path: TopMenu.inventoryPath, waiter: InventoryInstances.waitContentLoading });
     cy.getAdminToken();
-    cy.visit(TopMenu.inventoryPath);
   });
 
   after(() => {
     InventoryInstances.getInstanceIdApi({ limit: 1, query: `title="${instanceTitle}"` })
       .then((id) => {
-        InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(id);
+        InventoryInstance.deleteInstanceViaApi(id);
       });
   });
 

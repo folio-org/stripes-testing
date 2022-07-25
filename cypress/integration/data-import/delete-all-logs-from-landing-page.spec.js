@@ -49,7 +49,7 @@ describe('ui-data-import: A user can delete import logs with "Data import: Can d
     Users.deleteViaApi(userId);
   });
 
-  it('C358137 A user can delete import logs with "Data import: Can delete import logs" permission on Landing page (Folijet)', { tags: [TestTypes.smoke, DevTeams.folijet] }, () => {
+  it('C358137 A user can delete import logs with "Data import: Can delete import logs" permission on Landing page (folijet)', { tags: [TestTypes.smoke, DevTeams.folijet] }, () => {
     Logs.openFileDetails(fileNameToUpload);
     Logs.clickOnHotLink();
     cy.location('pathname').should('include', '/inventory/view');
