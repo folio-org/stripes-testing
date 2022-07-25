@@ -34,7 +34,7 @@ describe('ui-data-import: Test MARC-MARC matching for 001 field', () => {
     ])
       .then(userProperties => {
         user = userProperties;
-        cy.login(userProperties.username, userProperties.password, { path: TopMenu.dataImportPath, waiter: DataImport.wailtLoading });
+        cy.login(userProperties.username, userProperties.password, { path: TopMenu.dataImportPath, waiter: DataImport.waitLoading });
       });
     DataImport.checkUploadState();
   });
