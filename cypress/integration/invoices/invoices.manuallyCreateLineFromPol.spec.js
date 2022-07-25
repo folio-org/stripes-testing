@@ -10,6 +10,7 @@ import Orders from '../../support/fragments/orders/orders';
 import OrdersHelper from '../../support/fragments/orders/ordersHelper';
 import Organizations from '../../support/fragments/organizations/organizations';
 import devTeams from '../../support/dictionary/devTeams';
+import NewOrganization from '../../support/fragments/organizations/newOrganization';
 
 describe('ui-invoices: Invoice Line creation - based on POL', () => {
   const invoice = { ...NewInvoice.defaultUiInvoice };
@@ -19,18 +20,32 @@ describe('ui-invoices: Invoice Line creation - based on POL', () => {
   const orderLine = { ...basicOrderLine.defaultOrderLine };
   const euroCurrency = 'Euro (EUR)';
   const euroSign = '€';
+  const organization = { ...NewOrganization.defaultUiOrganizations,
+    addresses:[{
+      addressLine1: '1 Centerpiece Blvd.',
+      addressLine2: 'P.O. Box 15550',
+      city: 'New Castle',
+      stateRegion: 'DE',
+      zipCode: '19720-5550',
+      country: 'USA',
+      isPrimary: true,
+      categories: [],
+      language: 'English'
+    }] };
 
   before(() => {
     cy.getAdminToken();
-    Organizations.getOrganizationViaApi({ query: `name=${invoice.vendorName}` })
-      .then(organization => {
-        invoice.accountingCode = organization.erpCode;
-        Object.assign(vendorPrimaryAddress,
-          organization.addresses.find(address => address.isPrimary === true));
+    Organizations.createOrganizationViaApi(organization)
+      .then(response => {
+        organization.id = response;
         order.vendor = organization.id;
         orderLine.physical.materialSupplier = organization.id;
         orderLine.eresource.accessProvider = organization.id;
       });
+    invoice.accountingCode = organization.erpCode;
+    invoice.vendorName = organization.name;
+    Object.assign(vendorPrimaryAddress,
+      organization.addresses.find(address => address.isPrimary === true));
     cy.getBatchGroups()
       .then(batchGroup => { invoice.batchGroup = batchGroup.name; });
     cy.getLocations({ query: `name="${OrdersHelper.mainLibraryLocation}"` })
@@ -42,6 +57,10 @@ describe('ui-invoices: Invoice Line creation - based on POL', () => {
     invoiceLine.description = orderLine.titleOrPackage;
     invoiceLine.quantity = orderLine.cost.quantityPhysical;
     invoiceLine.subTotal = orderLine.cost.quantityPhysical * orderLine.cost.listUnitPrice;
+  });
+
+  after(() => {
+    Organizations.deleteOrganizationViaApi(organization.id);
   });
 
   it('C2327 Create invoice line based on purchase order line (thunderjet)', { tags: [testType.smoke, devTeams.thunderjet] }, () => {

@@ -47,7 +47,7 @@ describe('ui-organizations: EDI convention in Organization Integration', () => {
 
   after(() => {
     Users.deleteViaApi(userId);
-    Organizations.deleteOrganizationApi(organization.id);
+    Organizations.deleteOrganizationViaApi(organization.id);
   });
 
   it('C350758: Verify if a User can set/edit EDI convention in Organization Integration (thunderjet)', { tags: [TestTypes.smoke, devTeams.thunderjet] }, () => {
