@@ -24,7 +24,7 @@ describe('bulk-edit', { retries: 3 }, () => {
       .then(userProperties => {
         user = userProperties;
         cy.getUsers({ limit: 1, query: `"username"="${user.username}"` })
-          .then((users) => { UserEdit.updateExternalId(users[0], externalId) });
+          .then((users) => { UserEdit.updateExternalId(users[0], externalId); });
         cy.login(user.username, user.password, { path: TopMenu.bulkEditPath, waiter: BulkEditSearchPane.waitLoading });
         FileManager.createFile(`cypress/fixtures/${userExternalIDsFileName}`, externalId);
       });
