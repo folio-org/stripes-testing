@@ -15,13 +15,13 @@ import Organizations from '../../support/fragments/organizations/organizations';
 describe('orders: Receive piece from Order', () => {
   const order = { ...NewOrder.defaultOneTimeOrder };
   const orderLine = { ...BasicOrderLine.defaultOrderLine };
-  let orderNumber;
-  let location;
   const barcode = Helper.getRandomBarcode();
   const caption = 'autotestCaption';
   const companyName = 'Amazon.com';
   const instanceTitle = `autotestTitle ${Helper.getRandomBarcode()}`;
   const itemQuantity = '1';
+  let orderNumber;
+  let location;
 
   before(() => {
     cy.getAdminToken();
@@ -48,10 +48,6 @@ describe('orders: Receive piece from Order', () => {
     cy.getMaterialTypes({ query: 'name="book"' })
       .then(materialType => { orderLine.physical.materialType = materialType.id; });
 
-    // Orders.createOrderWithOrderLineViaApi(order, orderLine)
-    //   .then(res => {
-    //     orderNumber = res;
-    //   });
     cy.loginAsAdmin({ path: TopMenu.ordersPath, waiter: Orders.waitLoading });
   });
 
