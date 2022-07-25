@@ -16,9 +16,12 @@ describe('orders: Receive piece from Order', () => {
   const order = { ...NewOrder.defaultOneTimeOrder };
   const orderLine = { ...BasicOrderLine.defaultOrderLine };
   let orderNumber;
+  let location;
   const barcode = Helper.getRandomBarcode();
   const caption = 'autotestCaption';
   const companyName = 'Amazon.com';
+  const instanceTitle = `autotestTitle ${Helper.getRandomBarcode()}`;
+  const itemQuantity = '1';
 
   before(() => {
     cy.getAdminToken();
@@ -28,19 +31,35 @@ describe('orders: Receive piece from Order', () => {
         orderLine.physical.materialSupplier = organization.id;
         orderLine.eresource.accessProvider = organization.id;
       });
+
     cy.getLocations({ query: `name="${OrdersHelper.mainLibraryLocation}"` })
-      .then(location => { orderLine.locations[0].locationId = location.id; });
+      .then(res => {
+        location = res;
+        Orders.createOrderWithOrderLineViaApi(
+          NewOrder.getDefaultOrder(),
+          BasicOrderLine.getDefaultOrderLine(itemQuantity, instanceTitle, location.id)
+        )
+          .then(response => {
+            orderNumber = response;
+          });
+        orderLine.locations[0].locationId = location.id;
+      });
+
     cy.getMaterialTypes({ query: 'name="book"' })
       .then(materialType => { orderLine.physical.materialType = materialType.id; });
-    Orders.createOrderWithOrderLineViaApi(order, orderLine)
-      .then(res => {
-        orderNumber = res;
-      });
+
+    // Orders.createOrderWithOrderLineViaApi(order, orderLine)
+    //   .then(res => {
+    //     orderNumber = res;
+    //   });
     cy.loginAsAdmin({ path: TopMenu.ordersPath, waiter: Orders.waitLoading });
   });
 
-  after('', () => {
-    Orders.deleteOrderApi(order.id);
+  after('Deleting order', () => {
+    Orders.getOrdersApi({ limit: 1, query: `"poNumber"=="${orderNumber}"` })
+      .then(res => {
+        Orders.deleteOrderApi(res[0].id);
+      });
   });
 
   it('C735 Receiving pieces from an order for physical material that is set to create Items in inventory (thunderjet)', { tags: [testType.smoke] }, () => {
