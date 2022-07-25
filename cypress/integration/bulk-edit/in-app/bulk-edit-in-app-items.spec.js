@@ -20,8 +20,8 @@ const invalidItemBarcodesFileName = `invalidItemBarcodes_${getRandomPostfix()}.c
 const validItemBarcodesFileName = `validItemBarcodes_${getRandomPostfix()}.csv`;
 const invalidBarcode = getRandomPostfix();
 
-describe('bulk-edit: in-app file uploading', { retries: 3 }, () => {
-  before('create user', () => {
+describe('bulk-edit', () => {
+  before('create test data', () => {
     cy.createTempUser([
       permissions.bulkEditView.gui,
       permissions.bulkEditEdit.gui,
@@ -37,8 +37,8 @@ describe('bulk-edit: in-app file uploading', { retries: 3 }, () => {
       });
   });
 
-  after('Delete all data', () => {
-    InventoryInstances.deleteInstanceViaApi(item.itemBarcode);
+  after('delete test data', () => {
+    InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(item.itemBarcode);
     Users.deleteViaApi(user.userId);
     FileManager.deleteFile(`cypress/fixtures/${invalidItemBarcodesFileName}`);
     FileManager.deleteFile(`cypress/fixtures/${validItemBarcodesFileName}`);

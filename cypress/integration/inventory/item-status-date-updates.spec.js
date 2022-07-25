@@ -12,7 +12,7 @@ import permissions from '../../support/dictionary/permissions';
 import CheckInActions from '../../support/fragments/check-in-actions/checkInActions';
 import SwitchServicePoint from '../../support/fragments/servicePoint/switchServicePoint';
 import NewRequest from '../../support/fragments/requests/newRequest';
-import CheckOut from '../../support/fragments/check-out/checkOut';
+import CheckOut from '../../support/fragments/checkout/checkout';
 import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
 import NewServicePoint from '../../support/fragments/settings/tenant/servicePoints/newServicePoint';
 import UsersSearchPane from '../../support/fragments/users/usersSearchPane';
@@ -30,6 +30,10 @@ import NewLocations from '../../support/fragments/settings/tenant/locations/newL
 import Users from '../../support/fragments/users/users';
 import UserEdit from '../../support/fragments/users/userEdit';
 import ServicePoint from '../../support/fragments/servicePoint/servicePoint';
+import Organizations from '../../support/fragments/organizations/organizations';
+import Requests from '../../support/fragments/requests/requests';
+import CheckOutActions from '../../support/fragments/check-out-actions/check-out-actions';
+import DevTeams from '../../support/dictionary/devTeams';
 
 describe('ui-inventory: Item status date updates', () => {
   const instanceTitle = `autotestTitle ${Helper.getRandomBarcode()}`;
@@ -43,6 +47,8 @@ describe('ui-inventory: Item status date updates', () => {
   let user = {};
   let userForDeliveryRequest = {};
   const itemBarcode = Helper.getRandomBarcode();
+  let oldRulesText;
+  let requestPolicyId;
 
   before(() => {
     // TODO rewrite with user diku_admin
@@ -69,7 +75,7 @@ describe('ui-inventory: Item status date updates', () => {
         ServicePoints.createViaApi(effectiveLocationServicePoint);
         ServicePoints.createViaApi(notEffectiveLocationServicePoint);
         UserEdit.addServicePointsViaApi([effectiveLocationServicePoint.id, notEffectiveLocationServicePoint.id],
-          user.userId, effectiveLocationServicePoint.id);
+          user.userId);
 
         cy.login(userProperties.username, userProperties.password)
           .then(() => {
@@ -111,10 +117,15 @@ describe('ui-inventory: Item status date updates', () => {
             });
           });
       });
+
+    Requests.setRequestPolicyApi().then(({ oldRulesAsText, policy }) => {
+      oldRulesText = oldRulesAsText;
+      requestPolicyId = policy.id;
+    });
   });
 
   afterEach(() => {
-    CheckInActions.createItemCheckinApi({
+    CheckInActions.checkinItemViaApi({
       itemBarcode,
       servicePointId: effectiveLocationServicePoint.id,
       checkInDate: new Date().toISOString(),
@@ -131,9 +142,9 @@ describe('ui-inventory: Item status date updates', () => {
       .then(order => {
         Orders.deleteOrderApi(order[0].id);
       });
-    cy.getOrganizationApi()
+    Organizations.getOrganizationViaApi()
       .then(organization => {
-        cy.deleteOrganizationApi(organization[0].id);
+        Organizations.deleteOrganizationViaApi(organization.id);
       });
     UserEdit.changeServicePointPreferenceViaApi(user.userId, [effectiveLocationServicePoint.id]).then(() => {
       ServicePoint.deleteViaApi(effectiveLocationServicePoint.id);
@@ -141,6 +152,8 @@ describe('ui-inventory: Item status date updates', () => {
     });
     ServicePoint.deleteViaApi(notEffectiveLocationServicePoint.id);
     Users.deleteViaApi(userForDeliveryRequest.userId);
+    Requests.updateCirculationRulesApi(oldRulesText);
+    Requests.deleteRequestPolicyApi(requestPolicyId);
   });
 
   const openItem = (title, itemLocation, barcode) => {
@@ -182,7 +195,7 @@ describe('ui-inventory: Item status date updates', () => {
 
   const checkOut = (specialUserBarcode, specialItemBarcode, status, confirmModalCheck) => {
     cy.visit(TopMenu.checkOutPath);
-    CheckOut.checkOutItem(specialUserBarcode, specialItemBarcode);
+    CheckOutActions.checkOutItemUser(specialUserBarcode, specialItemBarcode);
     if (confirmModalCheck) {
       confirmModalCheck();
     }
@@ -198,7 +211,7 @@ describe('ui-inventory: Item status date updates', () => {
     UsersCard.showOpenedLoans();
   };
 
-  it('C9200 Item status date updates (prokopovych)', { tags: [TestTypes.smoke, TestTypes.long] }, () => {
+  it('C9200 Item status date updates (folijet) (prokopovych)', { tags: [TestTypes.smoke, DevTeams.folijet, TestTypes.long] }, () => {
     const caption = `autotest_caption_${getRandomPostfix()}`;
     const numberOfPieces = '3';
 
@@ -220,7 +233,7 @@ describe('ui-inventory: Item status date updates', () => {
     fullCheck(ItemVeiw.itemStatuses.inProcess);
 
     // check in item at service point assigned to its effective location
-    SwitchServicePoint.switchServicePoint(effectiveLocationServicePoint.name);
+    SwitchServicePoint.switchServicePoint(effectiveLocationServicePointName);
     checkIn(itemBarcode, ItemVeiw.itemStatuses.available);
 
     // mark item as missing
@@ -234,7 +247,7 @@ describe('ui-inventory: Item status date updates', () => {
     checkIn(itemBarcode, ItemVeiw.itemStatuses.available);
 
     // check in item at service point not assigned to its effective location
-    SwitchServicePoint.switchServicePoint(notEffectiveLocationServicePoint.name);
+    SwitchServicePoint.switchServicePoint(notEffectiveLocationServicePointName);
     checkIn(itemBarcode, ItemVeiw.itemStatuses.inTransit, ConfirmItemInModal.confirmInTransitModal);
     // TODO запомнить время указ в поле 219 и проверить что после второго чек ин время не изменилось
 
@@ -242,7 +255,7 @@ describe('ui-inventory: Item status date updates', () => {
     checkIn(itemBarcode, ItemVeiw.itemStatuses.inTransit, ConfirmItemInModal.confirmInTransitModal);
 
     // check in item at service point assigned to its effective location
-    SwitchServicePoint.switchServicePoint(effectiveLocationServicePoint.name);
+    SwitchServicePoint.switchServicePoint(effectiveLocationServicePointName);
     checkIn(itemBarcode, ItemVeiw.itemStatuses.available);
 
     // create Page request on an item
@@ -251,17 +264,17 @@ describe('ui-inventory: Item status date updates', () => {
       itemBarcode,
       itemTitle: null,
       requesterBarcode: user.barcode,
-      pickupServicePoint: effectiveLocationServicePoint.name,
+      pickupServicePoint: effectiveLocationServicePointName,
     });
     openItem(instanceTitle, effectiveLocation.name, itemBarcode);
     fullCheck(ItemVeiw.itemStatuses.paged);
 
     // check in item at a service point other than the pickup service point for the request
-    SwitchServicePoint.switchServicePoint(notEffectiveLocationServicePoint.name);
+    SwitchServicePoint.switchServicePoint(notEffectiveLocationServicePointName);
     checkIn(itemBarcode, ItemVeiw.itemStatuses.inTransit, ConfirmItemInModal.confirmInTransitModal);
 
     // check in item at the pickup service point for the page request
-    SwitchServicePoint.switchServicePoint(effectiveLocationServicePoint.name);
+    SwitchServicePoint.switchServicePoint(effectiveLocationServicePointName);
     checkIn(itemBarcode, ItemVeiw.itemStatuses.awaitingPickup, ConfirmItemInModal.confirmAvaitingPickUpModal);
 
     // check out item to user for whom page request was created
@@ -303,7 +316,7 @@ describe('ui-inventory: Item status date updates', () => {
     checkOut(user.barcode, itemBarcode, ItemVeiw.itemStatuses.checkedOut, ConfirmItemInModal.confirmAvaitingPickupCheckInModal);
 
     // check in item at service point assigned to its effective location
-    SwitchServicePoint.switchServicePoint(effectiveLocationServicePoint.name);
+    SwitchServicePoint.switchServicePoint(effectiveLocationServicePointName);
     checkIn(itemBarcode, ItemVeiw.itemStatuses.available, ConfirmItemInModal.confirmAvaitingPickUpModal);
   });
 });

@@ -20,13 +20,13 @@ describe('Assign Tags to Request', () => {
   let userId;
 
   before(() => {
-    cy.login(Cypress.env('diku_login'), Cypress.env('diku_password'));
-    cy.getToken('diku_admin', 'admin');
-    cy.visit(TopMenu.requestsPath);
+    cy.loginAsAdmin({ path: TopMenu.requestsPath, waiter: Requests.waitContentLoading });
+    cy.getAdminToken();
   });
 
   beforeEach(() => {
     ServicePoints.getViaApi({ limit: 1, query: 'pickupLocation=="true"' });
+    console.log();
     cy.getUserGroups({ limit: 1 }).then((patronGroup) => {
       const userData = {
         active: true,
@@ -72,10 +72,9 @@ describe('Assign Tags to Request', () => {
     Requests.selectTags(tag);
     Requests.closePane('Tags');
     Requests.closePane('Request Detail');
-
+    Requests.findCreatedRequest(requestRecord.itemTitle);
     Requests.selectFirstRequest(requestRecord.itemTitle);
     Requests.openTagsPane();
-
     Requests.verifyAssignedTags(tag);
   });
 });

@@ -17,20 +17,13 @@ export default {
     UserEdit.saveAndClose();
   },
 
-  logOutAndLogIn: (userName, password) => {
-    cy.do([
-      Dropdown('My profile').open(),
-      Button('Log out').click(),
-    ]);
-    cy.login(userName, password);
-  },
-
   switchServicePoint:(servicePoint) => {
     cy.do([
       Dropdown('My profile').open(),
       Button('Switch service point').click()
     ]);
     SelectServicePointModal.selectServicePoint(servicePoint);
-    cy.wait(5000);
+    // wait for data to be loaded
+    cy.wait(2000);
   }
 };

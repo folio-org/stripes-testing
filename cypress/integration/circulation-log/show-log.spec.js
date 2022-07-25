@@ -4,7 +4,7 @@ import { Pane } from '../../../interactors';
 import devTeams from '../../support/dictionary/devTeams';
 
 
-describe('ui-circulation-log', () => {
+describe('circulation-log', () => {
   beforeEach('login', () => {
     cy.login(Cypress.env('diku_login'), Cypress.env('diku_password'));
   });

@@ -9,7 +9,8 @@ const defaultApiPatron = {
   barcode: `1234456_${getRandomPostfix()}`,
   personal: {
     email: 'test@folio.org',
-    firstName: '',
+    firstName: `autotest_user_firstname_${getRandomPostfix()}`,
+    middleName: `autotest_user_middlename_${getRandomPostfix()}`,
     lastName: `autotest_user_lastname_${getRandomPostfix()}`,
     preferredContactTypeId: '002',
   },

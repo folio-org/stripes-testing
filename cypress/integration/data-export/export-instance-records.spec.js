@@ -20,7 +20,7 @@ const item = {
 };
 
 describe('data-export', () => {
-  beforeEach('login', () => {
+  beforeEach('create test data', () => {
     cy.createTempUser([
       permissions.inventoryAll.gui,
       permissions.dataExportAll.gui,
@@ -33,8 +33,8 @@ describe('data-export', () => {
       });
   });
 
-  after('Delete all data', () => {
-    InventoryInstances.deleteInstanceViaApi(item.itemBarcode);
+  after('delete test data', () => {
+    InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(item.itemBarcode);
     users.deleteViaApi(user.userId);
   });
 

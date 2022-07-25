@@ -1,6 +1,6 @@
 import DefaultUser from './defaultUser';
-import checkoutActions from '../../checkout/checkout';
-import users from '../users';
+import Users from '../users';
+import Checkout from '../../checkout/checkout';
 
 const requestPrefStorage = { ...DefaultUser.defaultUiRequestPrefStorage };
 
@@ -9,7 +9,7 @@ export default {
     cy.getUserGroups().then(patronGroupId => {
       const specialPatron = { ...DefaultUser.defaultUiPatron.body };
       specialPatron.patronGroup = patronGroupId;
-      users.createViaApi(specialPatron);
+      Users.createViaApi(specialPatron);
       cy.getRequestPreference(requestPrefStorage.body);
 
       const permissions = { ...DefaultUser.defaultUiPermissions };
@@ -20,7 +20,7 @@ export default {
       newPassword.userId = specialPatron.userId;
       newPassword.username = specialPatron.username;
       cy.setUserPassword(newPassword);
-      checkoutActions.createItemCheckoutViaApi(DefaultUser.defaultUiChekhOutItem.body);
+      Checkout.checkoutItemViaApi(DefaultUser.defaultUiChekhOutItem.body);
       cy.wrap({ userName: newPassword.username, password: newPassword.password }).as('userProperties');
     });
     return cy.get('@userProperties');

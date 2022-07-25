@@ -38,7 +38,7 @@ describe('ui-organizations: EDI convention in Organization Integration', () => {
         userId = userProperties.userId;
         cy.login(userProperties.username, userProperties.password);
       });
-    Organizations.createOrganizationApi(organization)
+    Organizations.createOrganizationViaApi(organization)
       .then(response => {
         organization.id = response;
       });

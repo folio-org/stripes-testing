@@ -97,7 +97,7 @@ describe('Check Out', () => {
 
   after(() => {
     cy.wrap(testItems.forEach(item => {
-      CheckInActions.createItemCheckinApi({
+      CheckInActions.checkinItemViaApi({
         itemBarcode: item.barcode,
         servicePointId: servicePoint.id,
         checkInDate: new Date().toISOString(),

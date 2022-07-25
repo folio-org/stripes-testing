@@ -14,9 +14,9 @@ describe('ui-organizations: Creating organization', () => {
   });
 
   afterEach(() => {
-    cy.getOrganizationApi({ query: `name="${organization.name}"` })
+    Organizations.getOrganizationViaApi({ query: `name="${organization.name}"` })
       .then(returnedOrganization => {
-        cy.deleteOrganizationApi(returnedOrganization.id);
+        Organizations.deleteOrganizationViaApi(returnedOrganization.id);
       });
   });
 

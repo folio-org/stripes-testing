@@ -27,7 +27,7 @@ describe('ui-inventory: query search', () => {
   });
 
   after('Delete all data', () => {
-    InventoryInstances.deleteInstanceViaApi(item.itemBarcode);
+    InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(item.itemBarcode);
     Users.deleteViaApi(userId);
   });
 

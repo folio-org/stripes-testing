@@ -12,6 +12,7 @@ export default HTML.extend('button')
     default: (el) => el.classList.contains('default'),
     ariaLabel: (el) => el.ariaLabel,
     ariaExpanded: (el) => el.getAttribute('aria-expanded'),
+    dataId:(el) => el.getAttribute('data-id'),
     disabled: {
       apply: (el) => {
         if (el.disabled !== undefined) return el.disabled;

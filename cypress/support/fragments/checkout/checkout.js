@@ -4,8 +4,13 @@ import {
   TextField,
   Button,
   Pane,
+  MultiColumnListRow,
+  including,
+  HTML
 } from '../../../../interactors';
 import { REQUEST_METHOD } from '../../constants';
+
+const itemDetailsButton = Button('Item details');
 
 export default {
   waitLoading:() => {
@@ -25,7 +30,7 @@ export default {
     cy.wait(3500);
     cy.do(Button({ href: `/users/${id}/loans/open` }).click());
   },
-  createItemCheckoutViaApi(body) {
+  checkoutItemViaApi(body) {
     const checkoutId = uuid();
 
     return cy.okapiRequest({
@@ -41,4 +46,11 @@ export default {
         return checkedOutItem.body;
       });
   },
+
+  openItemRecordInInventory:(barcode) => {
+    cy.expect(MultiColumnListRow({ indexRow: 'row-0' }).find(HTML(including(barcode))).exists());
+    cy.do(Button({ id: 'available-item-actions-button' }).click());
+    cy.expect(itemDetailsButton.exists());
+    cy.do(itemDetailsButton.click());
+  }
 };

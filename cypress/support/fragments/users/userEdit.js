@@ -108,5 +108,12 @@ export default {
         addresses
       }
     });
+  },
+
+  updateExternalId(user, externalSystemId) {
+    cy.updateUser({
+      ...user,
+      externalSystemId
+    });
   }
 };

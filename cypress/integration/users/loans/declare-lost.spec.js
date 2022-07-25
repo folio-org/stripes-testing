@@ -93,7 +93,7 @@ describe('ui-users-loans: Loans', () => {
               newFirstItemData.barcode,
               newSecondItemData.barcode,
             ].forEach((itemBarcode) => {
-              Checkout.createItemCheckoutViaApi({
+              Checkout.checkoutItemViaApi({
                 itemBarcode,
                 userBarcode,
                 servicePointId,

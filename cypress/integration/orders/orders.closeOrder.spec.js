@@ -5,6 +5,7 @@ import Orders from '../../support/fragments/orders/orders';
 import TopMenu from '../../support/fragments/topMenu';
 import Helper from '../../support/fragments/finance/financeHelper';
 import OrdersHelper from '../../support/fragments/orders/ordersHelper';
+import Organizations from '../../support/fragments/organizations/organizations';
 import devTeams from '../../support/dictionary/devTeams';
 
 describe('orders: Close Order', () => {
@@ -13,7 +14,7 @@ describe('orders: Close Order', () => {
 
   before(() => {
     cy.getAdminToken();
-    cy.getOrganizationApi({ query: 'name="Amazon.com"' })
+    Organizations.getOrganizationViaApi({ query: 'name="Amazon.com"' })
       .then(organization => {
         order.vendor = organization.id;
         orderLine.physical.materialSupplier = organization.id;

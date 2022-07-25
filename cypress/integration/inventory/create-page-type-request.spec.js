@@ -8,6 +8,7 @@ import Users from '../../support/fragments/users/users';
 import UserEdit from '../../support/fragments/users/userEdit';
 import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
 import InventoryInstance from '../../support/fragments/inventory/inventoryInstance';
+import DevTeams from '../../support/dictionary/devTeams';
 
 describe('ui-inventory: Create page type request', () => {
   let user;
@@ -34,7 +35,7 @@ describe('ui-inventory: Create page type request', () => {
           permissions.uiUserCreate.gui,
           permissions.uiUsersEdituserservicepoints.gui,
           permissions.uiUserAccounts.gui,
-          permissions.uiUserRequestsAll.gui,
+          permissions.usersViewRequests.gui,
           permissions.requestsAll.gui
         ], 'faculty');
       })
@@ -82,7 +83,7 @@ describe('ui-inventory: Create page type request', () => {
     Requests.deleteRequestPolicyApi(requestPolicyId);
   });
 
-  it('C546: Create new request for "Page" type (folijet)', { tags: [TestTypes.smoke, TestTypes.broken] }, () => {
+  it('C546: Create new request for "Page" type (folijet) (vega)', { tags: [TestTypes.smoke, DevTeams.folijet] }, () => {
     cy.visit(TopMenu.inventoryPath);
     createPageTypeRequest.findAvailableItem(instanceData, createdItem.barcode);
     createPageTypeRequest.clickNewRequest(createdItem.barcode);

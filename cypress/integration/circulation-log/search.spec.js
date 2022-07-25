@@ -6,20 +6,20 @@ import permissions from '../../support/dictionary/permissions';
 import UsersSearchPane from '../../support/fragments/users/usersSearchPane';
 import UsersCard from '../../support/fragments/users/usersCard';
 import CheckinActions from '../../support/fragments/check-in-actions/checkInActions';
-import CheckoutActions from '../../support/fragments/checkout/checkout';
 import InventoryHoldings from '../../support/fragments/inventory/holdings/inventoryHoldings';
 import devTeams from '../../support/dictionary/devTeams';
 import Users from '../../support/fragments/users/users';
 import UserEdit from '../../support/fragments/users/userEdit';
 import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
 import InventoryInstance from '../../support/fragments/inventory/inventoryInstance';
+import Checkout from '../../support/fragments/checkout/checkout';
 
 const ITEM_BARCODE = `123${getRandomPostfix()}`;
 let userId;
 let source;
 let servicePointId;
 
-describe('ui-circulation-log', () => {
+describe('circulation-log', () => {
   before('create inventory instance', () => {
     cy.createTempUser([
       permissions.inventoryAll.gui,
@@ -73,7 +73,7 @@ describe('ui-circulation-log', () => {
             });
           })
           .then(() => {
-            CheckoutActions.createItemCheckoutViaApi({
+            Checkout.checkoutItemViaApi({
               itemBarcode: ITEM_BARCODE,
               userBarcode: Cypress.env('users')[0].barcode,
               servicePointId,
@@ -86,8 +86,8 @@ describe('ui-circulation-log', () => {
     SearchPane.resetResults();
   });
 
-  after('Delete all data', () => {
-    CheckinActions.createItemCheckinApi({
+  after('delete test data', () => {
+    CheckinActions.checkinItemViaApi({
       itemBarcode: ITEM_BARCODE,
       servicePointId,
       checkInDate: new Date().toISOString(),

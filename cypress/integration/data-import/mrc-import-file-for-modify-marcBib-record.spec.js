@@ -4,7 +4,7 @@ import getRandomPostfix from '../../support/utils/stringTools';
 import ActionProfiles from '../../support/fragments/data_import/action_profiles/actionProfiles';
 import NewJobProfile from '../../support/fragments/data_import/job_profiles/newJobProfile';
 import JobProfiles from '../../support/fragments/data_import/job_profiles/jobProfiles';
-import MatchProfiles from '../../support/fragments/data_import/match_profiles/match-profiles';
+import MatchProfiles from '../../support/fragments/data_import/match_profiles/matchProfiles';
 import DataImport from '../../support/fragments/data_import/dataImport';
 import Logs from '../../support/fragments/data_import/logs/logs';
 import SearchInventory from '../../support/fragments/data_import/searchInventory';
@@ -78,12 +78,11 @@ describe('ui-data-import: Verify the possibility to modify MARC Bibliographic re
     });
 
     // get Instance HRID through API
-    SearchInventory
-      .getInstanceHRID()
-      .then(id => {
+    SearchInventory.getInstanceHRID()
+      .then(hrId => {
         // download .csv file
         cy.visit(TopMenu.inventoryPath);
-        SearchInventory.searchInstanceByHRID(id);
+        SearchInventory.searchInstanceByHRID(hrId[0]);
         InventorySearch.saveUUIDs();
         ExportMarcFile.downloadCSVFile(nameForCSVFile, 'SearchInstanceUUIDs*');
         FileManager.deleteFolder(Cypress.config('downloadsFolder'));

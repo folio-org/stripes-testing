@@ -21,7 +21,7 @@ const itemToBeDeleted = {
 const invalidItemBarcodesFileName = `C350905_invalidItemBarcodes_${getRandomPostfix()}.csv`;
 const invalidBarcode = getRandomPostfix();
 
-describe('bulk-edit: in-app file uploading', () => {
+describe('bulk-edit', () => {
   before('create test data', () => {
     cy.createTempUser([
       permissions.bulkEditView.gui,
@@ -38,8 +38,8 @@ describe('bulk-edit: in-app file uploading', () => {
       });
   });
 
-  after('Delete all data', () => {
-    InventoryInstances.deleteInstanceViaApi(item.itemBarcode);
+  after('delete test data', () => {
+    InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(item.itemBarcode);
     Users.deleteViaApi(user.userId);
     FileManager.deleteFile(`cypress/fixtures/${invalidItemBarcodesFileName}`);
   });
@@ -55,7 +55,7 @@ describe('bulk-edit: in-app file uploading', () => {
     BulkEditActions.replaceTemporaryLocation();
     BulkEditActions.confirmChanges();
 
-    InventoryInstances.deleteInstanceViaApi(itemToBeDeleted.itemBarcode);
+    InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(itemToBeDeleted.itemBarcode);
 
     BulkEditActions.saveAndClose();
     BulkEditSearchPane.waitFileUploading();
@@ -64,5 +64,6 @@ describe('bulk-edit: in-app file uploading', () => {
     BulkEditActions.verifyActionAfterChangingRecords();
     BulkEditSearchPane.verifyErrorLabelAfterChanges(invalidItemBarcodesFileName, 1, 1);
     BulkEditActions.verifySuccessBanner(1);
+    BulkEditActions.newBulkEdit();
   });
 });

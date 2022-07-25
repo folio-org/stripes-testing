@@ -13,7 +13,7 @@ import ActionProfiles from '../../support/fragments/data_import/action_profiles/
 import NewJobProfile from '../../support/fragments/data_import/job_profiles/newJobProfile';
 import SettingsMenu from '../../support/fragments/settingsMenu';
 import Users from '../../support/fragments/users/users';
-import MatchProfiles from '../../support/fragments/data_import/match_profiles/match-profiles';
+import MatchProfiles from '../../support/fragments/data_import/match_profiles/matchProfiles';
 import JobProfiles from '../../support/fragments/data_import/job_profiles/jobProfiles';
 import DataImport from '../../support/fragments/data_import/dataImport';
 import Logs from '../../support/fragments/data_import/logs/logs';
@@ -27,9 +27,11 @@ import InventoryInstance from '../../support/fragments/inventory/inventoryInstan
 import HoldingsRecordView from '../../support/fragments/inventory/holdingsRecordView';
 import ItemVeiw from '../../support/fragments/inventory/inventoryItem/itemVeiw';
 import InventoryViewSource from '../../support/fragments/inventory/inventoryViewSource';
+import NewMatchProfile from '../../support/fragments/data_import/match_profiles/newMatchProfile';
+import Organizations from '../../support/fragments/organizations/organizations';
 import DevTeams from '../../support/dictionary/devTeams';
 
-describe('ui-users:', () => {
+describe('ui-data-import: Match on POL and update related Instance, Holdings, Item', () => {
   const firstItem = {
     title: 'Sport and sociology. Dominic Malcolm.',
     orderNumber: 'auto99999test',
@@ -71,6 +73,72 @@ describe('ui-users:', () => {
 
   const marcFileName = `C343335autotestFile.${getRandomPostfix()}.mrc`;
 
+  const collectionOfProfiles = [
+    {
+      mappingProfile: { typeValue: NewMappingProfile.folioRecordTypeValue.instance,
+        name: mappingProfileNameForInstance,
+        update: true },
+      actionProfile: { typeValue: NewActionProfile.folioRecordTypeValue.instance,
+        name: actionProfileNameForInstance,
+        action: 'Update (all record types except Orders)' }
+    },
+    {
+      mappingProfile: { typeValue: NewMappingProfile.folioRecordTypeValue.holdings,
+        name: mappingProfileNameForHoldings,
+        update: true },
+      actionProfile: { typeValue: NewActionProfile.folioRecordTypeValue.holdings,
+        name: actionProfileNameForHoldings,
+        action: 'Update (all record types except Orders)' }
+    },
+    {
+      mappingProfile: { typeValue: NewMappingProfile.folioRecordTypeValue.item,
+        name: mappingProfileNameForItem,
+        update: true },
+      actionProfile: { typeValue: NewActionProfile.folioRecordTypeValue.item,
+        name: actionProfileNameForItem,
+        action: 'Update (all record types except Orders)' }
+    }
+  ];
+
+  const collectionOfMatchProfiles = [
+    {
+      matchProfile: { profileName: matchProfileNameForInstance,
+        incomingRecordFields: {
+          field: '935',
+          subfield:'a'
+        },
+        matchCriterion: 'Exactly matches',
+        existingRecordType: 'INSTANCE',
+        instanceOption: NewMatchProfile.optionsList.pol }
+    },
+    {
+      matchProfile: { profileName: matchProfileNameForHoldings,
+        incomingRecordFields: {
+          field: '935',
+          subfield: 'a'
+        },
+        matchCriterion: 'Exactly matches',
+        existingRecordType: 'HOLDINGS',
+        holdingsOption: NewMatchProfile.optionsList.pol }
+    },
+    {
+      matchProfile: {
+        profileName: matchProfileNameForItem,
+        incomingRecordFields: {
+          field: '935',
+          subfield: 'a'
+        },
+        matchCriterion: 'Exactly matches',
+        existingRecordType: 'ITEM',
+        itemOption: NewMatchProfile.optionsList.pol
+      }
+    }
+  ];
+
+  const specialJobProfile = { ...NewJobProfile.defaultJobProfile,
+    profileName: jobProfileName,
+    acceptedType: NewJobProfile.acceptedDataType.marc };
+
   before(() => {
     cy.createTempUser([
       permissions.uiOrdersCreate.gui,
@@ -81,7 +149,9 @@ describe('ui-users:', () => {
       permissions.uiInventoryViewCreateEditItems,
       permissions.settingsDataImportEnabled.gui,
       permissions.moduleDataImportEnabled.gui,
-      permissions.uiReceivingViewEditCreate.gui
+      permissions.uiReceivingViewEditCreate.gui,
+      permissions.uiInventoryViewInstances.gui,
+      permissions.uiQuickMarcQuickMarcBibliographicEditorView.gui
     ])
       .then(userProperties => {
         user = userProperties;
@@ -89,7 +159,7 @@ describe('ui-users:', () => {
       .then(() => {
         cy.getAdminToken()
           .then(() => {
-            cy.getOrganizationApi({ query: 'name="GOBI Library Solutions"' })
+            Organizations.getOrganizationViaApi({ query: 'name="GOBI Library Solutions"' })
               .then(organization => {
                 vendorId = organization.id;
               });
@@ -134,7 +204,7 @@ describe('ui-users:', () => {
               item.barcode = itemBarcode;
               cy.wrap(ItemRecordView.editItem(item))
                 .then(() => {
-                  CheckInActions.createItemCheckinApi({
+                  CheckInActions.checkinItemViaApi({
                     itemBarcode: item.barcode,
                     servicePointId,
                     checkInDate: new Date().toISOString(),
@@ -155,6 +225,15 @@ describe('ui-users:', () => {
         });
     });
     Users.deleteViaApi(user.userId);
+    // delete generated profiles
+    JobProfiles.deleteJobProfile(jobProfileName);
+    collectionOfMatchProfiles.forEach(profile => {
+      MatchProfiles.deleteMatchProfile(profile.matchProfile.profileName);
+    });
+    collectionOfProfiles.forEach(profile => {
+      ActionProfiles.deleteActionProfile(profile.actionProfile.name);
+      FieldMappingProfiles.deleteFieldMappingProfile(profile.mappingProfile.name);
+    });
   });
 
   const openOrder = (number) => {
@@ -164,66 +243,6 @@ describe('ui-users:', () => {
   };
 
   it('C350590 Match on POL and update related Instance, Holdings, Item (folijet)', { tags: [TestTypes.smoke, DevTeams.folijet] }, () => {
-    const collectionOfProfiles = [
-      {
-        mappingProfile: { typeValue: NewMappingProfile.folioRecordTypeValue.instance,
-          name: mappingProfileNameForInstance },
-        actionProfile: { typeValue: NewActionProfile.folioRecordTypeValue.instance,
-          name: actionProfileNameForInstance,
-          action: 'Update (all record types except Orders)' }
-      },
-      {
-        mappingProfile: { typeValue: NewMappingProfile.folioRecordTypeValue.holdings,
-          name: mappingProfileNameForHoldings },
-        actionProfile: { typeValue: NewActionProfile.folioRecordTypeValue.holdings,
-          name: actionProfileNameForHoldings,
-          action: 'Update (all record types except Orders)' }
-      },
-      {
-        mappingProfile: { typeValue: NewMappingProfile.folioRecordTypeValue.item,
-          name: mappingProfileNameForItem },
-        actionProfile: { typeValue: NewActionProfile.folioRecordTypeValue.item,
-          name: actionProfileNameForItem,
-          action: 'Update (all record types except Orders)' }
-      }
-    ];
-
-    const collectionOfMatchProfiles = [
-      {
-        matchProfile: { profileName: matchProfileNameForInstance,
-          incomingRecordFields: {
-            field: '935',
-            subfield:'a'
-          },
-          matchCriterion: 'Exactly matches',
-          existingRecordType: 'INSTANCE' }
-      },
-      {
-        matchProfile: { profileName: matchProfileNameForHoldings,
-          incomingRecordFields: {
-            field: '935',
-            subfield: 'a'
-          },
-          matchCriterion: 'Exactly matches',
-          existingRecordType: 'HOLDINGS' }
-      },
-      {
-        matchProfile: {
-          profileName: matchProfileNameForItem,
-          incomingRecordFields: {
-            field: '935',
-            subfield: 'a'
-          },
-          matchCriterion: 'Exactly matches',
-          existingRecordType: 'ITEM'
-        }
-      }
-    ];
-
-    const specialJobProfile = { ...NewJobProfile.defaultJobProfile,
-      profileName: jobProfileName,
-      acceptedType: NewJobProfile.acceptedDataType.marc };
-
     // create the first PO with POL
     Orders.createOrderWithOrderLineViaApi(NewOrder.getDefaultOrder(vendorId, firstItem.orderNumber),
       BasicOrderLine.getDefaultOrderLine(
@@ -287,7 +306,8 @@ describe('ui-users:', () => {
     // create match profiles
     cy.visit(SettingsMenu.matchProfilePath);
     collectionOfMatchProfiles.forEach(profile => {
-      MatchProfiles.createMatchProfileForPol(profile.matchProfile);
+      MatchProfiles.createMatchProfile(profile.matchProfile);
+      MatchProfiles.checkMatchProfilePresented(profile.matchProfile.profileName);
     });
 
     // create job profile
@@ -306,23 +326,13 @@ describe('ui-users:', () => {
     JobProfiles.runImportFile(marcFileName);
     Logs.checkStatusOfJobProfile();
     Logs.openFileDetails(marcFileName);
-    FileDetails.checkItemsStatuses(0, [FileDetails.status.created, FileDetails.status.updated, FileDetails.status.updated, FileDetails.status.updated]);
-    FileDetails.checkItemsStatuses(1, [FileDetails.status.dash, FileDetails.status.discarded, FileDetails.status.discarded, FileDetails.status.discarded]);
+    FileDetails.checkItemsStatusesInResultList(0, [FileDetails.status.created, FileDetails.status.updated, FileDetails.status.updated, FileDetails.status.updated]);
+    FileDetails.checkItemsStatusesInResultList(1, [FileDetails.status.dash, FileDetails.status.discarded, FileDetails.status.discarded, FileDetails.status.discarded]);
 
     FileDetails.openInstanceInInventory();
-    InventoryInstance.checkIsInstanceUpdated(NewMappingProfile.instanceStatusTerm, 'MARC');
+    InventoryInstance.checkIsInstanceUpdated();
     HoldingsRecordView.checkIsHoldingsUpdated();
-    ItemVeiw.checkIsItemUpdated();
+    ItemVeiw.checkIsItemUpdated(firstItem.barcode);
     InventoryViewSource.verifyMARCBibSource(firstItem.barcode);
-
-    // delete generated profiles
-    JobProfiles.deleteJobProfile(jobProfileName);
-    collectionOfMatchProfiles.forEach(profile => {
-      MatchProfiles.deleteMatchProfile(profile.matchProfile.profileName);
-    });
-    collectionOfProfiles.forEach(profile => {
-      ActionProfiles.deleteActionProfile(profile.actionProfile.name);
-      FieldMappingProfiles.deleteFieldMappingProfile(profile.mappingProfile.name);
-    });
   });
 });
