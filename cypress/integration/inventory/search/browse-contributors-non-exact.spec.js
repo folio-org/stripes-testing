@@ -5,6 +5,7 @@ import InventorySearch from '../../../support/fragments/inventory/inventorySearc
 import BrowseContributors from '../../../support/fragments/inventory/search/browseContributors';
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
+import devTeams from '../../../support/dictionary/devTeams';
 
 describe('ui-inventory: search', () => {
   const testData = {};
@@ -49,7 +50,7 @@ describe('ui-inventory: search', () => {
     });
   });
 
-  it('C353640 Browse contributors with non exact match query (spitfire)', { tags: [testType.smoke] }, () => {
+  it('C353640 Browse contributors with non exact match query (spitfire)', { tags: [testType.smoke, devTeams.spitfire] }, () => {
     InventorySearch.verifyKeywordsAsDefault();
     BrowseContributors.checkBrowseOptions();
     BrowseContributors.select();
