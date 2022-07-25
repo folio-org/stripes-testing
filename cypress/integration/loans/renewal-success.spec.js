@@ -22,26 +22,29 @@ import InventoryHoldings from '../../support/fragments/inventory/holdings/invent
 import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
 import InventoryInstance from '../../support/fragments/inventory/inventoryInstance';
 import usersSearchPane from '../../support/fragments/users/usersSearchPane';
+import UsersCard from '../../support/fragments/users/usersCard';
 
-let userId;
-let userBarcode;
-let createdLoanPolicy;
-let materialTypeId;
-let mySchedule;
-let rulesDefaultString;
-let patronGroupId;
-let servicePointId;
-const USER_BARCODE = uuid();
-const ITEM_BARCODE = generateItemBarcode();
-const fromDate = moment.utc().subtract(2, 'days');
-const toDate = moment.utc().add(2, 'days');
-const dueDate = moment.utc().add(2, 'days');
-const newToDate = moment.utc().subtract(1, 'days');
-const dateFallsMessage = 'renewal date falls outside of date ranges in fixed loan policy';
-let sourceId;
-let userName;
+
 
 describe('ui-circulation-settings: Fixed due date schedules', () => {
+  let userId;
+  let userBarcode;
+  let createdLoanPolicy;
+  let materialTypeId;
+  let mySchedule;
+  let rulesDefaultString;
+  let patronGroupId;
+  let servicePointId;
+  const USER_BARCODE = uuid();
+  const ITEM_BARCODE1 = generateItemBarcode();
+  const ITEM_BARCODE2 = generateItemBarcode();
+  const fromDate = moment.utc().subtract(2, 'days');
+  const toDate = moment.utc().add(2, 'days');
+  const dueDate = moment.utc().add(2, 'days');
+  const newToDate = moment.utc().subtract(1, 'days');
+  const dateFallsMessage = 'renewal date falls outside of date ranges in fixed loan policy';
+  let sourceId;
+  let userName;
   before(() => {
     cy.login(Cypress.env(CY_ENV.DIKU_LOGIN), Cypress.env(CY_ENV.DIKU_PASSWORD));
     cy.getToken(Cypress.env(CY_ENV.DIKU_LOGIN), Cypress.env(CY_ENV.DIKU_PASSWORD))
@@ -91,7 +94,13 @@ describe('ui-circulation-settings: Fixed due date schedules', () => {
             sourceId,
           }],
           items: [[{
-            barcode: ITEM_BARCODE,
+            barcode: ITEM_BARCODE1,
+            status: { name: 'Available' },
+            permanentLoanType: { id: Cypress.env(CY_ENV.LOAN_TYPES)[0].id },
+            materialType: { id: materialTypeId },
+          },
+          {
+            barcode: ITEM_BARCODE2,
             status: { name: 'Available' },
             permanentLoanType: { id: Cypress.env(CY_ENV.LOAN_TYPES)[0].id },
             materialType: { id: materialTypeId },
@@ -150,24 +159,30 @@ describe('ui-circulation-settings: Fixed due date schedules', () => {
                   .then(() => {
                     checkout.createItemCheckoutViaApi({
                       servicePointId,
-                      itemBarcode: ITEM_BARCODE,
+                      itemBarcode: ITEM_BARCODE1,
                       userBarcode: USER_BARCODE,
                     });
+                    //   .then(() => {
+                    //     checkout.createItemCheckoutViaApi({
+                    //       servicePointId,
+                    //       itemBarcode: ITEM_BARCODE2,
+                    //       userBarcode: USER_BARCODE,
+                    //     });
+                    //   });
                   });
               });
           });
       });
   });
-
   after(() => {
     checkinActions.createItemCheckinApi({
-      itemBarcode: ITEM_BARCODE,
+      itemBarcode: ITEM_BARCODE1,
       servicePointId,
       checkInDate: moment.utc().format(),
     })
       .then(() => {
         users.deleteViaApi(userId);
-        cy.getInstance({ limit: 1, expandAll: true, query: `"items.barcode"=="${ITEM_BARCODE}"` })
+        cy.getInstance({ limit: 1, expandAll: true, query: `"items.barcode"=="${ITEM_BARCODE1}"` })
           .then((instance) => {
             cy.deleteItem(instance.items[0].id);
             cy.deleteHoldingRecordViaApi(instance.holdings[0].id);
@@ -188,5 +203,8 @@ describe('ui-circulation-settings: Fixed due date schedules', () => {
     () => {
       cy.visit(topMenu.usersPath);
       usersSearchPane.searchByKeywords(userName);
+      UsersCard.openLoans();
+      UsersCard.showOpenedLoans();
+      cy.pause();
     });
 });
