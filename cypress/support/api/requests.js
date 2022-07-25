@@ -15,6 +15,7 @@ Cypress.Commands.add('createItemRequestApi', (data) => {
       method: 'POST',
       path: 'circulation/requests',
       body: data,
+      isDefaultSearchParamsRequired: false,
     })
     .then(({ body }) => {
       Cypress.env('request', body);

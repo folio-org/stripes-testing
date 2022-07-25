@@ -11,8 +11,8 @@ describe('ui-requests: Sort requests', () => {
   const instances = [];
 
   beforeEach(() => {
-    cy.login(Cypress.env('diku_login'), Cypress.env('diku_password'));
-    cy.getToken('diku_admin', 'admin');
+    cy.loginAsAdmin();
+    cy.getAdminToken();
 
     Object.values(Requests.requestTypes).forEach((requestType) => {
       const itemStatus = requestType === 'Page' ? 'Available' : 'Checked out';

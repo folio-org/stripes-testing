@@ -3,19 +3,26 @@ import EditRequest from '../../support/fragments/requests/edit-request';
 import TopMenu from '../../support/fragments/topMenu';
 import Requests from '../../support/fragments/requests/requests';
 import Users from '../../support/fragments/users/users';
+import DevTeams from '../../support/dictionary/devTeams';
 
 describe('ui-requests: Request: Edit requests. Make sure that edits are being saved.', () => {
   let userId;
   let requestData;
   let instanceData;
   let cancellationReason;
+  let oldRulesText;
+  let requestPolicyId;
 
   before(() => {
-    cy.login(Cypress.env('diku_login'), Cypress.env('diku_password'));
+    cy.loginAsAdmin();
     cy.getAdminToken();
   });
 
   beforeEach(() => {
+    Requests.setRequestPolicyApi().then(({ oldRulesAsText, policy }) => {
+      oldRulesText = oldRulesAsText;
+      requestPolicyId = policy.id;
+    });
     Requests.createRequestApi().then(({
       createdUser,
       createdRequest,
@@ -38,9 +45,11 @@ describe('ui-requests: Request: Edit requests. Make sure that edits are being sa
       cancelledDate: new Date().toISOString(),
     });
     Users.deleteViaApi(userId);
+    Requests.updateCirculationRulesApi(oldRulesText);
+    Requests.deleteRequestPolicyApi(requestPolicyId);
   });
 
-  it('C556 Request: Edit requests. Make sure that edits are being saved. (prokopovych)', { tags: [TestTypes.smoke] }, () => {
+  it('C556 Request: Edit requests. Make sure that edits are being saved. (folijet )(prokopovych)', { tags: [TestTypes.smoke, DevTeams.folijet] }, () => {
     cy.visit(TopMenu.requestsPath);
     Object.values(EditRequest.requestStatuses).forEach(status => {
       EditRequest.checkIsEditsBeingSaved(requestData, instanceData, status);
