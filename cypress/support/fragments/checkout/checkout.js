@@ -52,5 +52,6 @@ export default {
     cy.do(Button({ id: 'available-item-actions-button' }).click());
     cy.expect(itemDetailsButton.exists());
     cy.do(itemDetailsButton.click());
+    cy.pause();
   }
 };
