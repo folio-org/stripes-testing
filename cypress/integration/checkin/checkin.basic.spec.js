@@ -12,6 +12,7 @@ import getRandomPostfix from '../../support/utils/stringTools';
 import Users from '../../support/fragments/users/users';
 import InTransitModal from '../../support/fragments/checkin/modals/inTransit';
 import Checkout from '../../support/fragments/checkout/checkout';
+import devTeams from '../../support/dictionary/devTeams';
 
 describe('Check In - Actions ', () => {
   const userData = {
@@ -82,7 +83,7 @@ describe('Check In - Actions ', () => {
     Users.deleteViaApi(userData.userId);
   });
 
-  it('C347631 Check in: Basic check in (vega)', { tags: [TestTypes.smoke] }, () => {
+  it('C347631 Check in: Basic check in (vega)', { tags: [TestTypes.smoke, devTeams.vega] }, () => {
     CheckInActions.checkInItemGui(itemData.barcode);
     InTransitModal.verifyModalTitle();
     InTransitModal.verifySelectedCheckboxPrintSlip();
