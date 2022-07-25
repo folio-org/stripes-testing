@@ -16,7 +16,7 @@ const optionsList = {
   pol: 'Acquisitions data: Purchase order line (POL)'
 };
 
-function fillExistingRecordFields(value, selector) {
+function fillExistingRecordFields(value = '', selector) {
   const map = {
     field: 'profile.matchDetails[0].existingMatchExpression.fields[0].value',
     in1: 'profile.matchDetails[0].existingMatchExpression.fields[1].value',
@@ -26,7 +26,7 @@ function fillExistingRecordFields(value, selector) {
   cy.do(TextField({ name: map[selector] }).fillIn(value));
 }
 
-function fillIncomingRecordFields(value, selector) {
+function fillIncomingRecordFields(value = '', selector) {
   const map = {
     field: 'profile.matchDetails[0].incomingMatchExpression.fields[0].value',
     in1: 'profile.matchDetails[0].incomingMatchExpression.fields[1].value',
@@ -54,8 +54,14 @@ const fillMatchProfileForm = ({
   if (existingRecordType === 'MARC_BIBLIOGRAPHIC') {
     cy.do(Button({ dataId:'MARC_BIBLIOGRAPHIC' }).click());
     fillIncomingRecordFields(incomingRecordFields.field, 'field');
+    fillIncomingRecordFields(incomingRecordFields.in1, 'in1');
+    fillIncomingRecordFields(incomingRecordFields.in2, 'in2');
+    fillIncomingRecordFields(incomingRecordFields.subfield, 'subfield');
     cy.do(Select('Match criterion').choose(matchCriterion));
     fillExistingRecordFields(existingRecordFields.field, 'field');
+    fillExistingRecordFields(existingRecordFields.in1, 'in1');
+    fillExistingRecordFields(existingRecordFields.in2, 'in2');
+    fillExistingRecordFields(existingRecordFields.subfield, 'subfield');
   } else if (existingRecordType === 'INSTANCE') {
     cy.intercept('/_/jsonSchemas?path=acq-models/mod-orders-storage/schemas/vendor_detail.json').as('getJson2');
     cy.wait('@getJson2', getLongDelay());

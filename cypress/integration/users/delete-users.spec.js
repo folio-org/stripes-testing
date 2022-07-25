@@ -10,9 +10,9 @@ import EditRequest from '../../support/fragments/requests/edit-request';
 import UsersOwners from '../../support/fragments/settings/users/usersOwners';
 import Users from '../../support/fragments/users/users';
 import CheckinActions from '../../support/fragments/check-in-actions/checkInActions';
-import CheckoutActions from '../../support/fragments/checkout/checkout';
 import InventoryHoldings from '../../support/fragments/inventory/holdings/inventoryHoldings';
 import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
+import Checkout from '../../support/fragments/checkout/checkout';
 
 describe('Deleting user', () => {
   const lastName = 'Test-' + uuid();
@@ -151,7 +151,7 @@ describe('Deleting user', () => {
         });
       })
       .then(() => {
-        CheckoutActions.checkoutItemViaApi({
+        Checkout.checkoutItemViaApi({
           itemBarcode: ITEM_BARCODE,
           userBarcode: specialUserBarcode,
           servicePointId: servicePoint.id,

@@ -9,7 +9,6 @@ import ServicePoints from '../../support/fragments/settings/tenant/servicePoints
 import UserEdit from '../../support/fragments/users/userEdit';
 import generateItemBarcode from '../../support/utils/generateItemBarcode';
 import getRandomPostfix from '../../support/utils/stringTools';
-import CheckOutActions from '../../support/fragments/checkout/checkout';
 import AppPaths from '../../support/fragments/app-paths';
 import Loans from '../../support/fragments/loans/loansPage';
 import FileManager from '../../support/utils/fileManager';
@@ -17,6 +16,7 @@ import InventoryInstance from '../../support/fragments/inventory/inventoryInstan
 import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
 
 import Users from '../../support/fragments/users/users';
+import Checkout from '../../support/fragments/checkout/checkout';
 
 describe('Export Loans ', () => {
   const testData = {};
@@ -86,7 +86,7 @@ describe('Export Loans ', () => {
       })
       .then(() => {
         itemsData.itemsWithSeparateInstance.forEach(item => {
-          CheckOutActions.checkoutItemViaApi({
+          Checkout.checkoutItemViaApi({
             id: uuid(),
             itemBarcode: item.barcode,
             loanDate: moment.utc().format(),

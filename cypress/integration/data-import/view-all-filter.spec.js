@@ -19,10 +19,7 @@ describe('ui-data-import: Filter the "View all" log screen', () => {
   let profileId;
 
   before(() => {
-    cy.login(
-      Cypress.env('diku_login'),
-      Cypress.env('diku_password')
-    );
+    cy.loginAsAdmin();
     cy.getAdminToken();
 
     // Create files dynamically with given name and content in fixtures

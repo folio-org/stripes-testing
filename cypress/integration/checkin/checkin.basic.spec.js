@@ -9,9 +9,9 @@ import UserEdit from '../../support/fragments/users/userEdit';
 import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
 import generateItemBarcode from '../../support/utils/generateItemBarcode';
 import getRandomPostfix from '../../support/utils/stringTools';
-import CheckoutActions from '../../support/fragments/checkout/checkout';
 import Users from '../../support/fragments/users/users';
 import InTransitModal from '../../support/fragments/checkin/modals/inTransit';
+import Checkout from '../../support/fragments/checkout/checkout';
 
 describe('Check In - Actions ', () => {
   const userData = {
@@ -65,7 +65,7 @@ describe('Check In - Actions ', () => {
         UserEdit.addServicePointViaApi(itemData.servicepointId,
           userData.userId, itemData.servicepointId);
 
-        CheckoutActions.checkoutItemViaApi({
+        Checkout.checkoutItemViaApi({
           id: uuid(),
           itemBarcode: itemData.barcode,
           loanDate: moment.utc().format(),

@@ -11,7 +11,10 @@ import {
   ValueChipRoot,
   Checkbox,
   TextField,
-  Badge, Section, Heading
+  Badge,
+  Section,
+  Heading,
+  Spinner
 } from '../../../../interactors';
 import users from '../users/users';
 import inventoryHoldings from '../inventory/holdings/inventoryHoldings';
@@ -20,6 +23,11 @@ import Helper from '../finance/financeHelper';
 
 const requestsResultsSection = Section({ id: 'pane-results' });
 const appsButton = Button({ id: 'app-list-dropdown-toggle' });
+
+const waitContentLoading = () => {
+  cy.expect(Pane({ id:'pane-filter' }).exists());
+  cy.expect(Pane({ id:'pane-results' }).find(HTML(including('Choose a filter or enter a search query to show results.'))).exists());
+};
 
 /**
  * Creates a request with associated item (instance) and user.
@@ -233,6 +241,7 @@ export default {
   deleteRequestPolicyApi,
   updateCirculationRulesApi,
   getRequestApi,
+  waitContentLoading,
 
   removeCreatedRequest() {
     cy.do([
@@ -293,8 +302,7 @@ export default {
   },
 
   verifyAssignedTags(tag) {
-    // wait for data to be loaded
-    cy.wait(1500);
+    cy.expect(Spinner().absent());
     cy.expect(Button({ id: 'clickable-show-tags' }).find(Badge()).has({ value: '1' }));
     cy.expect(Pane({ title: 'Tags' }).find(ValueChipRoot(tag)).exists());
   },
