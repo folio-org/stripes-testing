@@ -44,7 +44,7 @@ describe('ui-circulation-settings: Edit circulation rules', () => {
       });
       NewMaterialType.createViaApi(NewMaterialType.getDefaultMaterialType());
       NoticePolicy.createApi();
-      LoanPolicy.createApi();
+      LoanPolicy.createLoanableNotRenewableLoanPolicyApi(defaultLoanPolicy);
       RequestPolicy.createApi();
       LostItemFeePolicy.createViaApi();
       OverdueFinePolicy.createApi();
