@@ -3,5 +3,5 @@ export default {
   vega: 'vega',
   spitfire: 'spitfire',
   thunderjet: 'thunderjet',
-  folijet: 'folijet'
+  folijet: 'folijet',
 };
