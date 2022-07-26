@@ -61,7 +61,7 @@ export const CY_ENV = {
 };
 
 export const LIBRARY_DUE_DATE_MANAGMENT = {
-  CURRENT_DUE_DATE: 'CURRENT_DUE_DATE',
+  CURRENT_DUE_DATE: 'CURRENT_DUE_DATE_TIME',
 };
 
 export const LOAN_PROFILE = {

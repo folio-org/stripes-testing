@@ -1,3 +1,4 @@
+import devTeams from '../../../../support/dictionary/devTeams';
 import TestType from '../../../../support/dictionary/testTypes';
 import NewNoticePolicy from '../../../../support/fragments/circulation/newNoticePolicy';
 import SettingsMenu from '../../../../support/fragments/settingsMenu';
@@ -8,7 +9,7 @@ describe('ui-circulation-settings: create patron notice policies', () => {
     cy.loginAsAdmin({ path: SettingsMenu.circulationPatronNoticePoliciesPath, waiter: NewNoticePolicy.waitLoading });
   });
 
-  it('C6530 Create notice policy (vega)', { tags: [TestType.smoke] }, () => {
+  it('C6530 Create notice policy (vega)', { tags: [TestType.smoke, devTeams.vega] }, () => {
     NewNoticePolicy.waitLoading();
     NewNoticePolicy.startAdding();
     NewNoticePolicy.checkInitialState();
