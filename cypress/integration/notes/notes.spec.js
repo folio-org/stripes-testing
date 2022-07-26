@@ -74,7 +74,6 @@ describe('Note creation', () => {
   });
 
   after('Deleting agreement and user', () => {
-    cy.log(testData);
     Agreements.deleteViaApi(testData.agreementProps.id);
     Users.deleteViaApi(testData.user.userId);
   });
