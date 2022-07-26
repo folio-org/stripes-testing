@@ -83,7 +83,7 @@ describe('ui-inventory: Create page type request', () => {
     Requests.deleteRequestPolicyApi(requestPolicyId);
   });
 
-  it('C546: Create new request for "Page" type (folijet) (vega)', { tags: [TestTypes.smoke, DevTeams.folijet, DevTeams.vega] }, () => {
+  it('C546: Create new request for "Page" type (vega)', { tags: [TestTypes.smoke, DevTeams.vega] }, () => {
     cy.visit(TopMenu.inventoryPath);
     createPageTypeRequest.findAvailableItem(instanceData, createdItem.barcode);
     createPageTypeRequest.clickNewRequest(createdItem.barcode);
