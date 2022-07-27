@@ -19,6 +19,7 @@ export default {
     status: 'Active',
     code: `autotest_code_${getRandomPostfix()}`,
     isVendor: true,
+    erpCode: `ERP-${getRandomPostfix()}`,
   },
 
   createViaApi: (organizationProperties) => {
