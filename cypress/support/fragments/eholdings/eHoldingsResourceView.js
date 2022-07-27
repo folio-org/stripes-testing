@@ -31,13 +31,6 @@ export default {
     cy.expect(Section({ id:resourceId })
       .find(HTML(including(titleName, { class: 'headline' }))).exists());
   },
-  checkActions: (resourceId) => {
-    // waiting for button to be available to recieve click
-    cy.wait(1000);
-    cy.do(Section({ id: resourceId }).find(Button('Actions')).click());
-    cy.expect(Button('Edit').exists());
-    cy.expect(Button('Remove title from holdings').exists());
-  },
   addToHoldings:() => {
     cy.do(addToHoldingButton.click());
   },

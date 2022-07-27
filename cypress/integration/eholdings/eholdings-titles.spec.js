@@ -52,7 +52,6 @@ describe('eHoldings titles management', () => {
     eHoldingsTitle.openResource();
     eHoldingsResourceView.addToHoldings();
     eHoldingsResourceView.checkHoldingStatus(eHoldingsTitle.filterStatuses.selected);
-    eHoldingsResourceView.checkActions('21st-century-fuels');
   });
 
   // TODO: https://issues.folio.org/browse/UIEH-1256
@@ -96,7 +95,7 @@ describe('eHoldings titles management', () => {
     eHoldingsTitle.openResource();
     eHoldingsResourceView.checkHoldingStatus(eHoldingsTitle.filterStatuses.notSelected);
     eHoldingsResourceView.removeTitleFromHolding();
-    eHoldingsResourceView.checkHoldingStatus(eHoldingsTitle.filterStatuses.notSelected);
+    eHoldingsResourceView.checkHoldingStatus(eHoldingsTitle.filterStatuses.notSelecseted);
   });
 
   it('C693 Create a custom title. (spitfire)', { tags:  [testTypes.smoke, features.eHoldings] }, () => {
