@@ -58,6 +58,8 @@ describe('ui-data-import: Filter the "View all" log screen', () => {
 
     // FILTER By "Errors in Import"
     LogsViewAll.errorsInImportStatuses.forEach((filter) => {
+      // need some waiting until checkboxes become clickable after resetting filters
+      cy.wait(1000); // eslint-disable-line cypress/no-unnecessary-waiting
       LogsViewAll.filterJobsByErrors(filter);
       LogsViewAll.checkByErrorsInImport({ filter });
       LogsViewAll.resetAllFilters();
@@ -92,6 +94,8 @@ describe('ui-data-import: Filter the "View all" log screen', () => {
     // FILTER By "Inventory single record imports"
     cy.do(Accordion({ id: 'singleRecordImports' }).clickHeader());
     LogsViewAll.singleRecordImportsStatuses.forEach(filter => {
+      // need some waiting until checkboxes become clickable after resetting filters
+      cy.wait(1000); // eslint-disable-line cypress/no-unnecessary-waiting
       LogsViewAll.filterJobsByInventorySingleRecordImports(filter);
       LogsViewAll.checkByInventorySingleRecord({ filter });
       LogsViewAll.resetAllFilters();
