@@ -29,7 +29,6 @@ function waitLoading() {
 export default {
   waitLoading,
   waitLoadingWithExistingNote(title) {
-    waitLoading();
     cy.expect(rootSection.find(Section({ id: 'notes' })).find(MultiColumnListCell({ columnIndex:1 })).find(HTML(including(title))).exists());
   },
   openNotesSection() {
@@ -75,6 +74,6 @@ export default {
       .find(HTML(including(specialShortNoteDetails))).exists());
   },
   openNoteView(specialNote) {
-    cy.do(notesAccordion.find(MultiColumnListCell(including(specialNote.details))).click());
+    cy.do(notesAccordion.find(MultiColumnListCell(including(specialNote.title))).click());
   }
 };

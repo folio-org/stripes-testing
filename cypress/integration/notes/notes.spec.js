@@ -9,62 +9,62 @@ import TestTypes from '../../support/dictionary/testTypes';
 import Features from '../../support/dictionary/features';
 import Permissions from '../../support/dictionary/permissions';
 import NewAgreement from '../../support/fragments/agreements/newAgreement';
-import { getLongDelay } from '../../support/utils/cypressTools';
 import Users from '../../support/fragments/users/users';
+import devTeams from '../../support/dictionary/devTeams';
 
 describe('Note creation', () => {
-  let userId;
-  const agreementTitle = NewAgreement.defaultAgreement.name;
-
-  const longNote = { ...NewNote.defaultNote };
-  //  title that is more than 65 characters but less than 250 characters
-  longNote.title += String().padEnd(65 - longNote.title.length - 1, 'test');
-  // Enter a note that is more than 4000 characters
-  longNote.details += String().padEnd(4000 - longNote.details.length - 1, 'test');
-
-  // need to use this method instead of before and beforeAll
-  const initPrepairing = (specialPermissions) => {
-    cy.createTempUser(specialPermissions).then(userProperties => {
-      userId = userProperties.userId;
-      cy.login(userProperties.username, userProperties.password);
-      // TODO: move agreement creation into api requests
-      cy.visit(TopMenu.agreementsPath);
-      Agreements.waitLoading();
-      Agreements.create();
-      Agreements.selectRecord();
-      AgreementDetails.openNotesSection();
-    });
+  const specialNote = NewNote.defaultNote;
+  const longNote = NewNote.defaultNote;
+  const updatedNote = {
+    title: `changed_${specialNote.title}`,
+    details: `changed_${specialNote.details}`
   };
-  it('C1296 Create a note (spitfire)', { tags: [TestTypes.smoke, Features.notes] }, () => {
-    initPrepairing([Permissions.uiNotesItemCreate.gui, Permissions.uiNotesItemView,
-      // need access to special application( agreements in this case)
-      Permissions.uiAgreementsAgreementsEdit.gui, Permissions.uiAgreementsAgreementsDelete.gui]);
+  const testData = {
+    agreementTitle: NewAgreement.defaultAgreement.name
+  };
+
+  before('Creating user and agreement', () => {
+    cy.getAdminToken();
+
+    Agreements.createViaApi(testData.agreementTitle).then((res) => {
+      testData.agreementProps = res.body;
+    });
+
+    cy.createTempUser([
+      Permissions.uiNotesItemCreate.gui,
+      Permissions.uiNotesItemView.gui,
+      Permissions.uiNotesItemEdit.gui,
+      Permissions.uiAgreementsAgreementsEdit.gui,
+      Permissions.uiAgreementsAgreementsDelete.gui,
+      Permissions.uiAgreementsAgreementsView.gui,
+      Permissions.uiRequestsView.gui,
+    ]).then((resUserProperties) => {
+      testData.user = resUserProperties;
+      cy.login(resUserProperties.username, resUserProperties.password, { path: TopMenu.agreementsPath, waiter: Agreements.waitLoading });
+    });
+  });
+
+  it('C1296 Create a note (spitfire)', { tags: [TestTypes.smoke, Features.notes, devTeams.spitfire] }, () => {
+    Agreements.selectRecord(testData.agreementTitle);
+    AgreementDetails.openNotesSection();
     AgreementDetails.createNote(longNote);
-    Agreements.selectRecord();
+    Agreements.selectRecord(testData.agreementTitle);
     AgreementDetails.checkNotesCount(1);
     AgreementDetails.openNotesSection();
     AgreementDetails.waitLoadingWithExistingNote(longNote.title);
     AgreementDetails.specialNotePresented(longNote.title);
   });
 
-  it('C1299 Edit a note (spitfire)', { tags: [TestTypes.smoke, Features.notes] }, () => {
-    initPrepairing([Permissions.uiNotesItemCreate.gui,
-      Permissions.uiNotesItemView.gui,
-      Permissions.uiNotesItemEdit.gui,
-      // need access to special application( agreements in this case)
-      Permissions.uiAgreementsAgreementsEdit.gui, Permissions.uiAgreementsAgreementsDelete.gui]);
-    const specialNote = NewNote.defaultNote;
-    AgreementDetails.createNote(specialNote);
-    Agreements.selectRecord();
+  it('C16992 View a note (spitfire)', { tags: [TestTypes.smoke, Features.notes, devTeams.spitfire] }, () => {
+    AgreementDetails.openNoteView(longNote);
+    ExistingNoteView.checkProperties(longNote);
+    ExistingNoteView.close();
     AgreementDetails.checkNotesCount(1);
+  });
+
+  it('C1299 Edit a note (spitfire)', { tags: [TestTypes.smoke, Features.notes, devTeams.spitfire] }, () => {
     AgreementDetails.openNotesSection();
-    AgreementDetails.waitLoadingWithExistingNote(specialNote.title);
-
-    const updatedNote = { ...specialNote };
-    updatedNote.title = `changed_${specialNote.title}`;
-    updatedNote.details = `changed_${specialNote.details}`;
-
-    AgreementDetails.editNote(specialNote.title, updatedNote);
+    AgreementDetails.editNote(longNote.title, updatedNote);
     ExistingNoteView.checkProperties(updatedNote);
 
     ExistingNoteView.close();
@@ -73,36 +73,8 @@ describe('Note creation', () => {
     AgreementDetails.specialNotePresented(updatedNote.title);
   });
 
-  it('C16992 View a note (spitfire)', { tags: [TestTypes.smoke, Features.notes] }, () => {
-    initPrepairing([Permissions.uiNotesItemCreate.gui,
-      Permissions.uiNotesItemView.gui,
-      // need access to special application( agreements in this case)
-      Permissions.uiAgreementsAgreementsEdit.gui, Permissions.uiAgreementsAgreementsDelete.gui]);
-
-    AgreementDetails.createNote(longNote);
-    Agreements.selectRecord();
-    AgreementDetails.checkNotesCount(1);
-    AgreementDetails.openNotesSection();
-    AgreementDetails.waitLoadingWithExistingNote(longNote.title);
-
-    AgreementDetails.checkShortedNoteDetails(longNote.getShortDetails());
-    AgreementDetails.checkNoteShowMoreLink(longNote.details);
-
-    AgreementDetails.openNoteView(longNote);
-    ExistingNoteView.waitLoading();
-    ExistingNoteView.checkProperties(longNote);
-    cy.intercept('note-types?**').as('noteTypesLoading');
-    cy.intercept('note-links/domain/agreements/type/agreement/id/**').as('notesLoading');
-    ExistingNoteView.close();
-    cy.wait(['@notesLoading', '@noteTypesLoading'], getLongDelay());
-    AgreementDetails.checkNotesCount(1);
-  });
-
-  afterEach(() => {
-    // TODO: add support of delete through api
-    AgreementDetails.remove();
-    Agreements.waitLoading();
-    Agreements.agreementNotVisible(agreementTitle);
-    Users.deleteViaApi(userId);
+  after('Deleting agreement and user', () => {
+    Agreements.deleteViaApi(testData.agreementProps.id);
+    Users.deleteViaApi(testData.user.userId);
   });
 });
