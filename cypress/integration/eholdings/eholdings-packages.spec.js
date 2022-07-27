@@ -1,11 +1,11 @@
-import testType from '../../support/dictionary/testTypes';
+import TestType from '../../support/dictionary/testTypes';
 import TopMenu from '../../support/fragments/topMenu';
 import eHoldingsPackages from '../../support/fragments/eholdings/eHoldingsPackages';
 import eHoldingSearch from '../../support/fragments/eholdings/eHoldingsSearch';
 import eHoldingsPackagesSearch from '../../support/fragments/eholdings/eHoldingsPackagesSearch';
 import eHoldingsPackage from '../../support/fragments/eholdings/eHoldingsPackage';
-import features from '../../support/dictionary/features';
-import devTeams from '../../support/dictionary/devTeams';
+import Features from '../../support/dictionary/features';
+import DevTeams from '../../support/dictionary/devTeams';
 
 
 describe('eHoldings packages management', () => {
@@ -14,7 +14,7 @@ describe('eHoldings packages management', () => {
     cy.getAdminToken();
   });
 
-  it('C688 Add all titles in a package to your holdings (spitfire)', { tags:  [testType.smoke, features.eHoldings, devTeams.spitfire] }, () => {
+  it.only('C688 Add all titles in a package to your holdings (spitfire)', { tags:  [TestType.smoke, Features.eHoldings, DevTeams.spitfire] }, () => {
     eHoldingsPackages.getNotSelectedPackageIdViaApi().then(specialPackage => {
       cy.visit(`${TopMenu.eholdingsPath}/packages/${specialPackage.id}`);
       eHoldingsPackage.waitLoading(specialPackage.name);
@@ -27,7 +27,7 @@ describe('eHoldings packages management', () => {
     eHoldingsPackage.removeFromHoldings();
   });
 
-  it('C3463 Add two tags to package [Edinburgh Scholarship Online] (spitfire)', { tags:  [testType.smoke, features.eHoldings, features.tags, devTeams.spitfire] }, () => {
+  it('C3463 Add two tags to package [Edinburgh Scholarship Online] (spitfire)', { tags:  [TestType.smoke, Features.eHoldings, Features.tags, DevTeams.spitfire] }, () => {
     cy.visit(TopMenu.eholdingsPath);
     eHoldingSearch.switchToPackages();
     eHoldingsPackagesSearch.byName();
@@ -43,7 +43,7 @@ describe('eHoldings packages management', () => {
   });
 });
 
-it('C690 Remove a package from your holdings (spitfire)', { tags:  [testType.smoke, features.eHoldings, devTeams.spitfire] }, () => {
+it('C690 Remove a package from your holdings (spitfire)', { tags:  [TestType.smoke, Features.eHoldings, DevTeams.spitfire] }, () => {
   eHoldingsPackages.getNotCustomSelectedPackageIdViaApi()
     .then(specialPackage => {
       cy.visit(`${TopMenu.eholdingsPath}/packages/${specialPackage.id}`);
@@ -58,7 +58,7 @@ it('C690 Remove a package from your holdings (spitfire)', { tags:  [testType.smo
   eHoldingsPackage.addToHodlings();
 });
 
-it('C756 Remove a tag from a package record (spitfire)', { tags:  [testType.extendedPath, features.eHoldings, features.tags, devTeams.spitfire] }, () => {
+it('C756 Remove a tag from a package record (spitfire)', { tags:  [TestType.extendedPath, Features.eHoldings, Features.tags, DevTeams.spitfire] }, () => {
   cy.visit(TopMenu.eholdingsPath);
   eHoldingSearch.switchToPackages();
   eHoldingsPackagesSearch.byName();
