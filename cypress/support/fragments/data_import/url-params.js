@@ -17,7 +17,7 @@ export default {
   },
 
   getUserQueryString({ userId }) {
-    return `limit=100&sortBy=completed_date%2Cdesc&statusAny=COMMITTED&statusAny=ERROR&&statusAny=CANCELLEDuserId=${userId}`;
+    return `limit=100&sortBy=completed_date%2Cdesc&statusAny=COMMITTED&statusAny=ERROR&&statusAny=CANCELLED&userId=${userId}`;
   },
 
   getInventorySingleRecordImportsQueryString({ filter }) {
