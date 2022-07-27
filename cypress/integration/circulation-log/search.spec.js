@@ -19,7 +19,7 @@ let userId;
 let source;
 let servicePointId;
 
-describe('circulation-log', () => {
+describe('circulation-log', { retries: 3 }, () => {
   before('create inventory instance', () => {
     cy.createTempUser([
       permissions.inventoryAll.gui,
@@ -106,12 +106,12 @@ describe('circulation-log', () => {
       });
   });
 
-  it('C15484 Filter circulation log on item barcode (firebird)', { retries: 3, tags: [TestTypes.smoke, devTeams.firebird, TestTypes.broken] }, () => {
+  it('C15484 Filter circulation log on item barcode (firebird)', { tags: [TestTypes.smoke, devTeams.firebird, TestTypes.broken] }, () => {
     SearchPane.searchByItemBarcode(ITEM_BARCODE);
     SearchPane.verifyResultCells();
   });
 
-  it('C16976 Filter circulation log by date (firebird)', { retries: 3, tags: [TestTypes.smoke, devTeams.firebird, TestTypes.broken] }, () => {
+  it('C16976 Filter circulation log by date (firebird)', { tags: [TestTypes.smoke, devTeams.firebird, TestTypes.broken] }, () => {
     const verifyDate = true;
 
     SearchPane.filterByLastWeek();
