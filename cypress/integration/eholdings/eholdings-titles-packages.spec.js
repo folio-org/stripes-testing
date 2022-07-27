@@ -1,7 +1,6 @@
 import EHoldingSearch from '../../support/fragments/eholdings/eHoldingsSearch';
 import EHoldingsTitlesSearch from '../../support/fragments/eholdings/eHoldingsTitlesSearch';
 import TopMenu from '../../support/fragments/topMenu';
-import Users from '../../support/fragments/users/users';
 import testTypes from '../../support/dictionary/testTypes';
 import features from '../../support/dictionary/features';
 
