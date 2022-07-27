@@ -44,14 +44,14 @@ describe('ui-invoices-settings: Export batch voucher', () => {
   before(() => {
     cy.getToken(Cypress.env('diku_login'), Cypress.env('diku_password'));
     Organizations.createOrganizationViaApi(organization)
-    .then(response => {
-      organization.id = response; 
-    });
+      .then(response => {
+        organization.id = response;
+      });
     invoice.accountingCode = organization.erpCode;
     Object.assign(vendorPrimaryAddress,
       organization.addresses.find(address => address.isPrimary === true));
-      invoice.vendorName = organization.name;
-      BatchGrops.createBatchGroupViaApi(batchGroup)
+    invoice.vendorName = organization.name;
+    BatchGrops.createBatchGroupViaApi(batchGroup)
       .then(response => {
         invoice.batchGroup = response.name;
         batchGroupConfiguration.batchGroupId = response.id;
