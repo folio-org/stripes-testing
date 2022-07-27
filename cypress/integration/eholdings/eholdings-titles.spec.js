@@ -41,7 +41,6 @@ describe('eHoldings titles management', () => {
 
   it('C16994 Add a title in a package to holdings (spitfire)', { tags:  [testTypes.smoke, features.eHoldings, devTeams.spitfire] }, () => {
     eHoldingsTitlesSearch.bySubject(testData.subjectTitle);
-    // findItem();
     eHoldingsTitlesSearch.byPublicationType(testData.selectedResource.publicationType);
     eHoldingsTitlesSearch.bySelectionStatus(eHoldingsTitle.filterStatuses.notSelected);
     eHoldingsTitles.openTitle();
