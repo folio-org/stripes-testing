@@ -1,6 +1,5 @@
 import { Button, MultiColumnListCell, MultiColumnListRow, Section, or, including, HTML } from '../../../../interactors';
 import NewAgreement from './newAgreement';
-import AgreementDetails from './agreementsDetails';
 
 const section = Section({ id: 'pane-agreement-list' });
 const newButton = Button('New');
@@ -9,7 +8,16 @@ const waitLoading = () => {
     section.find(MultiColumnListRow()).exists(),
     section.find(HTML(including('No results found. Please check your filters.'))).exists()
   ));
-  cy.expect(newButton.exists());
+};
+const defaultApiAgreement = {
+  'periods': [{ 'startDate': '2022-07-26' }], // TODO: change to today date
+  'customProperties': {
+    'AuthorIdentification': [{ '_delete': true }],
+    'Eligible authors': [{ '_delete': true }]
+  },
+  'agreementStatus': 'draft',
+  'outwardRelationships': [],
+  'inwardRelationships': []
 };
 
 export default {
@@ -20,14 +28,31 @@ export default {
     NewAgreement.waitLoading();
     NewAgreement.fill(specialAgreement);
     NewAgreement.save();
-    waitLoading();
   },
 
-  selectRecord: (agreementTitle = NewAgreement.defaultAgreement.name) => {
+  selectRecord: (agreementTitle) => {
     cy.do(section.find(MultiColumnListCell(agreementTitle)).click());
-    AgreementDetails.waitLoading();
   },
 
-  agreementNotVisible: (agreementTitle) => cy.expect(section.find(MultiColumnListCell(agreementTitle)).absent())
+  agreementNotVisible: (agreementTitle) => cy.expect(section.find(MultiColumnListCell(agreementTitle)).absent()),
+
+  createViaApi(agreementName) {
+    return cy
+      .okapiRequest({
+        path: 'erm/sas',
+        method: 'POST',
+        body: { ...defaultApiAgreement, name: agreementName },
+        isDefaultSearchParamsRequired: false,
+      });
+  },
+
+  deleteViaApi(agreementId) {
+    return cy
+      .okapiRequest({
+        path: `erm/sas/${agreementId}`,
+        method: 'DELETE',
+        isDefaultSearchParamsRequired: false,
+      });
+  }
 };
 
