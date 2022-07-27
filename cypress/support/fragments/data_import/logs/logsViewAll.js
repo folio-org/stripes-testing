@@ -149,7 +149,7 @@ export default {
   waitUIToBeFiltered() {
     // Need some waiting when jobs list is long, UI takes longer to be filtered
     // eslint-disable-next-line cypress/no-unnecessary-waiting
-    cy.wait(1000);
+    cy.wait(1800);
   },
 
   checkByReverseChronologicalOrder() {
