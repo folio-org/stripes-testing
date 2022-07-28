@@ -74,7 +74,7 @@ describe('ui-invoices-settings: Export batch voucher', () => {
   });
 
   it('C10943 Run batch voucher export manually (thunderjet)', { tags: [TestType.smoke, devTeams.thunderjet, TestType.broken] }, () => {
-    Invoices.createDefaultInvoice(invoice, vendorPrimaryAddress);
+    Invoices.createSpecialInvoice(invoice, vendorPrimaryAddress);
     Invoices.createInvoiceLine(invoiceLine);
     Invoices.addFundDistributionToLine(invoiceLine, fund);
     Invoices.approveInvoice();
