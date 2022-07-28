@@ -53,7 +53,8 @@ export default {
       SelectionList().select(`Default (${invoice.accountingCode})`),
       Selection('Batch group*').open(),
       SelectionList().select(invoice.batchGroup),
-      Select({ id: 'invoice-payment-method' }).choose('Cash')
+      Select({ id: 'invoice-payment-method' }).choose('Cash'),
+      Checkbox('Export to accounting').click()
     ]);
     this.checkVendorPrimaryAddress(vendorPrimaryAddress);
     cy.do(saveAndClose.click());
