@@ -40,6 +40,12 @@ describe('orders: Receive piece from Order', () => {
     Organizations.deleteOrganizationViaApi(organization.id);
   });
 
+  after(() => {
+    Orders.deleteOrderApi(order.id);
+
+    Organizations.deleteOrganizationViaApi(organization.id);
+  });
+
   it('C735 Receiving pieces from an order for physical material that is set to create Items in inventory (thunderjet)', { tags: [testType.smoke, devTeams.thunderjet] }, () => {
     // TODO: update test case in test rail to reflect business actions
     const barcode = Helper.getRandomBarcode();
