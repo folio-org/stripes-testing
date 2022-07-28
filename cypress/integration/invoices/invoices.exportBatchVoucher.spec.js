@@ -68,10 +68,10 @@ describe('ui-invoices-settings: Export batch voucher', () => {
     cy.visit(TopMenu.invoicesPath);
   });
 
-  // after('Delete storage', () => {
-  //   FileManager.deleteFolder(Cypress.config('downloadsFolder'));
-  //   Organizations.deleteOrganizationViaApi(organization.id);
-  // });
+  after('Delete storage', () => {
+    FileManager.deleteFolder(Cypress.config('downloadsFolder'));
+    Organizations.deleteOrganizationViaApi(organization.id);
+  });
 
   it('C10943 Run batch voucher export manually (thunderjet)', { tags: [TestType.smoke, devTeams.thunderjet, TestType.broken] }, () => {
     Invoices.createDefaultInvoice(invoice, vendorPrimaryAddress);
