@@ -9,7 +9,8 @@ import {
   Button,
   SearchField,
   Select,
-  MultiColumnListHeader
+  Form,
+  TextInput,
 } from '../../../../interactors';
 import InventoryActions from './inventoryActions';
 
@@ -18,16 +19,24 @@ const languageInput = Accordion({ id: 'language' });
 const keywordInput = TextField({ id: 'input-inventory-search' });
 const searchButton = Button('Search');
 const searchTextField = TextField('Search ');
+const inventorySearch = TextInput({ id: 'input-inventory-search' });
 
 export default {
+  getAllSearchResults: () => MultiColumnList(),
+  getSearchResult: (row = 0, col = 0) => MultiColumnListCell({ 'row': row, 'columnIndex': col }),
+
   effectiveLocation: {
     mainLibrary: { id: 'clickable-filter-effectiveLocation-main-library' }
   },
+
   language: {
     eng: { id: 'clickable-filter-language-english' }
   },
-  getAllSearchResults: () => MultiColumnList(),
-  getSearchResult: (row = 0, col = 0) => MultiColumnListCell({ 'row': row, 'columnIndex': col }),
+  waitLoading: () => {
+    cy.expect([
+      Form().find(inventorySearch).exists(),
+    ]);
+  },
 
   selectResultCheckboxes(count) {
     const clickActions = [];
