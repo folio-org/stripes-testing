@@ -43,11 +43,11 @@ describe('ui-invoices-settings: Export batch voucher', () => {
 
   before(() => {
     cy.getToken(Cypress.env('diku_login'), Cypress.env('diku_password'));
-     Organizations.createOrganizationViaApi(organization)
+    Organizations.createOrganizationViaApi(organization)
       .then(response => {
-        organization.id = response; 
+        organization.id = response;
       });
-      invoice.vendorName = organization.name;
+    invoice.vendorName = organization.name;
     invoice.accountingCode = organization.erpCode;
     Object.assign(vendorPrimaryAddress,
       organization.addresses.find(address => address.isPrimary === true));
@@ -68,10 +68,10 @@ describe('ui-invoices-settings: Export batch voucher', () => {
     cy.visit(TopMenu.invoicesPath);
   });
 
-  after('Delete storage', () => {
-    FileManager.deleteFolder(Cypress.config('downloadsFolder'));
-    Organizations.deleteOrganizationViaApi(organization.id);
-  });
+  // after('Delete storage', () => {
+  //   FileManager.deleteFolder(Cypress.config('downloadsFolder'));
+  //   Organizations.deleteOrganizationViaApi(organization.id);
+  // });
 
   it('C10943 Run batch voucher export manually (thunderjet)', { tags: [TestType.smoke, devTeams.thunderjet, TestType.broken] }, () => {
     Invoices.createDefaultInvoice(invoice, vendorPrimaryAddress);
