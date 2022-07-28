@@ -119,4 +119,22 @@ describe('bulk-edit', { retries: 3 }, () => {
     BulkEditSearchPane.verifyErrorLabelAfterChanges(userUUIDsFileName, 1, 1);
     BulkEditActions.newBulkEdit();
   });
+
+  it('C353956 Verify uploading file with User UUIDs (firebird)', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
+    BulkEditSearchPane.selectRecordIdentifier('User UUIDs');
+
+    BulkEditSearchPane.uploadFile(userUUIDsFileName);
+    BulkEditSearchPane.waitFileUploading();
+
+    BulkEditActions.downloadMatchedResults(matchRecordsFileName);
+    BulkEditActions.prepareBulkEditFileWithDuplicates(matchRecordsFileName, importFileName, user.username, 'test');
+
+    BulkEditActions.openStartBulkEditForm();
+    BulkEditSearchPane.uploadFile(importFileName);
+    BulkEditSearchPane.waitFileUploading();
+    BulkEditActions.commitChanges();
+
+    BulkEditSearchPane.verifyChangedResults(user.username);
+    BulkEditActions.newBulkEdit();
+  });
 });
