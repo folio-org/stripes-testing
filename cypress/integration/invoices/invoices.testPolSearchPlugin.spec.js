@@ -68,7 +68,7 @@ describe('ui-invoices: test POL search plugin', () => {
 
   it('C350389 Test purchase order line plugin search (thunderjet)', { tags: [testType.smoke, devTeams.thunderjet] }, () => {
     Invoices.getSearchParamsMap(createdOrderNumber, orderLine);
-    Invoices.createDefaultInvoice(invoice, vendorPrimaryAddress);
+    Invoices.createSpecialInvoice(invoice, vendorPrimaryAddress);
     Invoices.checkCreatedInvoice(invoice, vendorPrimaryAddress);
     Invoices.openPolSearchPlugin();
     Invoices.checkSearchPolPlugin(Invoices.getSearchParamsMap(createdOrderNumber, orderLine), orderLine.titleOrPackage);
