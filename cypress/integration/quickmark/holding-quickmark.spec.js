@@ -11,13 +11,19 @@ import { calloutTypes } from '../../../interactors';
 import InteractorsTools from '../../support/utils/interactorsTools';
 import InventorySteps from '../../support/fragments/inventory/inventorySteps';
 import InventoryInstance from '../../support/fragments/inventory/inventoryInstance';
+import newLocation from '../../support/fragments/settings/tenant/locations/newLocation';
+import NewOrganization from '../../support/fragments/organizations/newOrganization';
 
 describe('Manage holding records through quickmarc editor', () => {
   const quickmarcEditor = new QuickMarcEditor(InventoryInstance.validOCLC);
 
   beforeEach(() => {
+    cy.getAdminToken();
     cy.login(Cypress.env('diku_login'), Cypress.env('diku_password'));
     cy.visit(TopMenu.inventoryPath);
+    // newLocation.createViaApi(NewOrganization.getDefaultOrganization()).then((res) => {
+    //   console.log(res);
+    // });
     // TODO: redesign to api step
     InventoryActions.import();
     // TODO: redesign to api step

@@ -32,6 +32,18 @@ describe('ui-invoices: Invoice Line creation - based on POL', () => {
     }] };
   const euroCurrency = 'Euro (EUR)';
   const euroSign = '€';
+  const organization = { ...NewOrganization.defaultUiOrganizations,
+    addresses:[{
+      addressLine1: '1 Centerpiece Blvd.',
+      addressLine2: 'P.O. Box 15550',
+      city: 'New Castle',
+      stateRegion: 'DE',
+      zipCode: '19720-5550',
+      country: 'USA',
+      isPrimary: true,
+      categories: [],
+      language: 'English'
+    }] };
 
   before(() => {
     cy.getAdminToken();
@@ -59,6 +71,10 @@ describe('ui-invoices: Invoice Line creation - based on POL', () => {
     invoiceLine.subTotal = orderLine.cost.quantityPhysical * orderLine.cost.listUnitPrice;
   });
   
+  after(() => {
+    Organizations.deleteOrganizationViaApi(organization.id);
+  });
+
   after(() => {
     Organizations.deleteOrganizationViaApi(organization.id);
   });

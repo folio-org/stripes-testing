@@ -28,7 +28,8 @@ describe('Fee/fine management', () => {
   };
   const userData = { ...DefaultUser.defaultApiPatron };
   const itemBarcode = generateItemBarcode();
-  beforeEach(() => {
+
+  beforeEach('Preconditions', () => {
     cy.getAdminToken();
     PatronGroups.createViaApi().then(patronGroupId => {
       testData.patronGroupId = patronGroupId;
@@ -94,7 +95,8 @@ describe('Fee/fine management', () => {
 
   it('C455 Verify "New fee/fine" behavior when "Charge & pay now" button pressed (spitfire)', { tags: [TestType.smoke, Features.feeFine, devTeams.spitfire] }, () => {
     const feeInfo = [testData.owner.name, testData.feeFineType.feeFineTypeName, 'Paid fully'];
-    const itemInfo = [testData.instanceTitle + ' (book)', itemBarcode];
+    const itemInfo = [testData.instanceTitle, itemBarcode];
+ 
     const initialCheckNewFeeFineFragment = () => {
       NewFeeFine.checkInitialState(testData.userProperties, testData.owner.name);
       NewFeeFine.setFeeFineOwner(testData.owner.name);
@@ -173,8 +175,9 @@ describe('Fee/fine management', () => {
     NewFeeFine.checkClosedFeesByRow(feeInfo, 2);
     NewFeeFine.checkClosedFeesByRow(feeInfo, 3);
   });
-  after(() => {
-    CheckInActions.createItemCheckinApi({
+
+  after('Deleting test data', () => {
+    CheckInActions.checkinItemViaApi({
       itemBarcode,
       servicePointId: testData.userServicePoint,
       checkInDate: moment.utc().format(),

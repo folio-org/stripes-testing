@@ -6,6 +6,7 @@ Cypress.Commands.add('getBatchGroups', (searchParams) => {
     return response.body.batchGroups[0];
   });
 });
+
 export default {
   createBatchGroupViaApi: (batchGroup) => cy.okapiRequest({
     method: 'POST',

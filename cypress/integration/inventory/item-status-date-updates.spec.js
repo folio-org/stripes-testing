@@ -122,6 +122,10 @@ describe('ui-inventory: Item status date updates', () => {
             });
           });
       });
+
+    Requests.setRequestPolicyApi().then(({ oldRulesAsText, policy }) => {
+      oldRulesText = oldRulesAsText;
+      requestPolicyId = policy.id;
     });
   });
 
@@ -200,7 +204,7 @@ describe('ui-inventory: Item status date updates', () => {
     if (confirmModalCheck) {
       confirmModalCheck();
     }
-    CheckOut.openItemRecordInInventory(itemBarcode);
+    CheckOut.openItemRecordInInventory(specialItemBarcode);
     fullCheck(status);
   };
 

@@ -75,6 +75,7 @@ export default {
   },
 
   searchJobProfileForImport:(jobProfileTitle) => {
+    // wait for data to be loaded
     cy.do(TextField({ id:'input-search-job-profiles-field' }).fillIn(jobProfileTitle));
     cy.do(Button('Search').click());
   },

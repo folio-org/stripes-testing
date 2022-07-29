@@ -9,9 +9,8 @@ export default {
     QuickMarcEditor.waitLoading();
     const quickmarcEditor = new QuickMarcEditor(InventoryInstance.validOCLC);
     quickmarcEditor.updateExistingField('852', QuickMarcEditor.getExistingLocation());
+    QuickMarcEditor.addPermanentLocation();
     QuickMarcEditor.pressSaveAndClose();
-    // TODO: see issues in cypress tests run related with this step and awaiting of holdingsRecordView
-    //interactorsTools.closeCalloutMessage();
     holdingsRecordView.waitLoading();
   },
 };

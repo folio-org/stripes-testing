@@ -17,7 +17,7 @@ const quantityRecordsInInvoice = {
 export default {
   checkImportFile(jobProfileName) {
     cy.do(Button('Actions').click());
-    cy.do(Button('View all logs').click());
+    cy.do(Button('View all').click());
     cy.do([
       anyProfileAccordion.clickHeader(),
       anyProfileAccordion.find(Selection({ singleValue: 'Choose job profile' })).open()]);
