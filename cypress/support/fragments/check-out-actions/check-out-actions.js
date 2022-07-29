@@ -30,7 +30,7 @@ export default {
     cy.expect([
       userPane.find(KeyValue({ value: 'Active' })).exists(),
       userPane.find(KeyValue({ value: patronGroup })).exists(),
-      userPane.find(Link(`${user.personal.lastName}, `)).exists(),
+      userPane.find(Link(including(`${user.personal.lastName}, `))).exists(),
       userPane.find(Link(user.barcode)).exists(),
     ]);
   },
