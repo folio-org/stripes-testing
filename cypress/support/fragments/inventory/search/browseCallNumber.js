@@ -1,35 +1,15 @@
-import { Select, TextInput, including, Button, MultiColumnListCell, MultiColumnListRow } from '../../../../../interactors';
-
-const inventorySearch = TextInput({ id: 'input-inventory-search' });
-const browseButton = Button('Browse');
-const row4 = MultiColumnListRow({ index: 4 });
-const row5 = MultiColumnListRow({ index: 5 });
+import { including, MultiColumnListCell } from '../../../../../interactors';
 
 export default {
-  select() {
-    // cypress can't draw selected option without wait
-    cy.wait(1000);
-    cy.do(Select('Search field index').choose('Browse call numbers'));
-  },
-
-  browse(callNumber) {
+  checkExactSearchResult(searchQuery) {
     cy.do([
-      inventorySearch.fillIn(callNumber),
-      browseButton.click(),
-    ]);
-  },
-  checkExactSearchResult(searchQuery, instanceTitle) {
-    cy.do([
-      MultiColumnListCell(`${searchQuery}${instanceTitle}`).has({ innerHTML: `<strong>${searchQuery}</strong>` }),
-      row4.has({ content: including(searchQuery) }),
+      MultiColumnListCell(`${searchQuery}`).has({ innerHTML: including(`<strong>${searchQuery}</strong>`) }),
     ]);
   },
 
   checkNonExactSearchResult(searchQuery) {
     cy.expect([
-      row4.has({ content: `${searchQuery}would be here` }),
-      row5.has({ content: including(searchQuery) }),
+      MultiColumnListCell().has({ content: including(`${searchQuery} would be here`) }),
     ]);
   },
-
 };

@@ -2,6 +2,7 @@ import { HTML, including } from '@interactors/html';
 import {
   MultiColumnList,
   MultiColumnListCell,
+  MultiColumnListHeader,
   Pane,
   Accordion,
   Checkbox,
