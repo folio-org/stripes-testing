@@ -58,7 +58,6 @@ export default {
     cy.do(importTypeSelect.choose(oclcWorldCat.text));
     cy.expect(importTypeSelect.has({ value: oclcWorldCat.value }));
 
-
     cy.do(OCLWorldCatIdentifierTextField.fillIn(specialOCLCWorldCatidentifier));
   },
 

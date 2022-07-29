@@ -1,4 +1,4 @@
-import { QuickMarcEditor, QuickMarcEditorRow, TextArea, Button, Modal, TextField, and, some, Pane, HTML, including } from '../../../interactors';
+import { QuickMarcEditor, QuickMarcEditorRow, TextArea, Button, Modal, TextField, and, some, Pane, HTML, including, Select } from '../../../interactors';
 import dateTools from '../utils/dateTools';
 import getRandomPostfix from '../utils/stringTools';
 
@@ -93,6 +93,14 @@ export default class QuickmarcEditor {
         cy.wrap(shouldBeDeletedRowTag).as('specialTag');
       });
     return cy.get('@specialTag');
+  }
+
+  static addPermanentLocation() {
+    cy.do([
+      Button('Permanent location look-up').click(),
+      Select({ name: 'institutionId' }).choose(including('autotest_name_100.99775068980188767')),
+      Button('Save and close').click(),
+    ]);
   }
 
   static pressSaveAndClose() { cy.do(saveAndCloseButton.click()); }
