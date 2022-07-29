@@ -50,6 +50,7 @@ export default {
         method: 'PUT',
         path: `circulation/requests/${requestData.id}`,
         body: requestData,
+        isDefaultSearchParamsRequired: false,
       })
       .then(({ body }) => {
         return body;

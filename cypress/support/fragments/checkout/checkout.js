@@ -51,6 +51,8 @@ export default {
     cy.expect(MultiColumnListRow({ indexRow: 'row-0' }).find(HTML(including(barcode))).exists());
     cy.do(Button({ id: 'available-item-actions-button' }).click());
     cy.expect(itemDetailsButton.exists());
+    // test fails without this cy.wait
+    cy.wait(1500);
     cy.do(itemDetailsButton.click());
   }
 };
