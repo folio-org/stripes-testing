@@ -26,7 +26,7 @@ describe('Manage holding records through quickmarc editor', () => {
     HoldingsRecordView.editInQuickMarc();
     QuickMarcEditor.waitLoading();
   });
-  it('C345390 Add a field to a record using quickMARC (spitfire)', { tags: [TestTypes.smoke, Features.quickMarcEditor] }, () => {
+  it.only.only('C345390 Add a field to a record using quickMARC (spitfire)', { tags: [TestTypes.smoke, Features.quickMarcEditor] }, () => {
     // TODO: redesign to dynamic reading of rows count
     quickmarcEditor.addRow(HoldingsRecordView.newHolding.rowsCountInQuickMarcEditor);
     quickmarcEditor.checkInitialContent(HoldingsRecordView.newHolding.rowsCountInQuickMarcEditor + 1);
