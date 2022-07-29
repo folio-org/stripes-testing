@@ -44,7 +44,7 @@ Cypress.Commands.add('getUserGroups', (searchParams) => {
 Cypress.Commands.add('getFirstUserGroupId', (searchParams, patronGroup) => {
   cy.okapiRequest({
     path: 'groups',
-    searchParams,
+    ...searchParams,
   }).then((response) => {
     let userGroupIdx = 0;
     if (patronGroup) {
