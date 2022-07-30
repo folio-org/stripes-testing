@@ -57,10 +57,9 @@ describe('bulk-edit', () => {
 
     InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(itemToBeDeleted.itemBarcode);
 
-    BulkEditActions.saveAndClose();
+    BulkEditActions.commitChanges();
     BulkEditSearchPane.waitFileUploading();
 
-    BulkEditSearchPane.verifyNonMatchedResults(invalidBarcode);
     BulkEditActions.verifyActionAfterChangingRecords();
     BulkEditSearchPane.verifyErrorLabelAfterChanges(invalidItemBarcodesFileName, 1, 1);
     BulkEditActions.verifySuccessBanner(1);

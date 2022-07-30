@@ -15,9 +15,11 @@ let user;
 const item = {
   instanceName: `testBulkEdit_${getRandomPostfix()}`,
   itemBarcode: getRandomPostfix(),
+  accessionNumber: getRandomPostfix()
 };
 const invalidItemBarcodesFileName = `invalidItemBarcodes_${getRandomPostfix()}.csv`;
 const validItemBarcodesFileName = `validItemBarcodes_${getRandomPostfix()}.csv`;
+const validItemAccessionNumbersFileName = `validItemAccessionNumbers_${getRandomPostfix()}.csv`;
 const invalidBarcode = getRandomPostfix();
 
 describe('bulk-edit', () => {
@@ -30,18 +32,27 @@ describe('bulk-edit', () => {
         user = userProperties;
         cy.login(user.username, user.password, { path: TopMenu.bulkEditPath, waiter: BulkEditSearchPane.waitLoading });
 
-        InventoryInstances.createInstanceViaApi(item.instanceName, item.itemBarcode);
+        InventoryInstances.createInstanceViaApi(
+          item.instanceName,
+          item.itemBarcode,
+          null,
+          '1',
+          '2',
+          item.accessionNumber
+        );
 
         FileManager.createFile(`cypress/fixtures/${invalidItemBarcodesFileName}`, `${item.itemBarcode}\r\n${invalidBarcode}`);
         FileManager.createFile(`cypress/fixtures/${validItemBarcodesFileName}`, item.itemBarcode);
+        FileManager.createFile(`cypress/fixtures/${validItemAccessionNumbersFileName}`, item.accessionNumber);
       });
   });
 
   after('delete test data', () => {
-    InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(item.itemBarcode);
-    Users.deleteViaApi(user.userId);
+    // InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(item.itemBarcode);
+    // Users.deleteViaApi(user.userId);
     FileManager.deleteFile(`cypress/fixtures/${invalidItemBarcodesFileName}`);
     FileManager.deleteFile(`cypress/fixtures/${validItemBarcodesFileName}`);
+    FileManager.deleteFile(`cypress/fixtures/${validItemAccessionNumbersFileName}`);
   });
 
   it('C350905 Negative uploading file with identifiers -- In app approach (firebird)', { tags: [testTypes.smoke, devTeams.firebird, testTypes.broken] }, () => {
@@ -61,7 +72,6 @@ describe('bulk-edit', () => {
     BulkEditSearchPane.verifyModalName(invalidFileWarning);
   });
 
-  // Bug UIBULKED-121
   it('C357030 Verify Matched records label cleanup -- In -app approach (firebird)', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
     BulkEditSearchPane.selectRecordIdentifier('Item barcode');
 
@@ -77,11 +87,27 @@ describe('bulk-edit', () => {
     BulkEditActions.openStartBulkEditForm();
     BulkEditActions.replaceTemporaryLocation();
     BulkEditActions.confirmChanges();
-    BulkEditActions.saveAndClose();
+    BulkEditActions.commitChanges();
     BulkEditSearchPane.waitFileUploading();
 
-    BulkEditSearchPane.verifyNonMatchedResults(invalidBarcode);
-    BulkEditSearchPane.verifyErrorLabelAfterChanges(invalidItemBarcodesFileName, 1, 1);
-    BulkEditActions.verifySuccessBanner();
+    BulkEditActions.verifySuccessBanner(1);
+    BulkEditActions.newBulkEdit();
+  });
+
+  it('C356809 Verify uploading file with Item accession number (firebird)', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
+    BulkEditSearchPane.selectRecordIdentifier('Item accession number');
+
+    BulkEditSearchPane.uploadFile(validItemAccessionNumbersFileName);
+    BulkEditSearchPane.waitFileUploading();
+
+    BulkEditActions.openActions();
+    BulkEditActions.openStartBulkEditForm();
+    BulkEditActions.replaceTemporaryLocation();
+    BulkEditActions.confirmChanges();
+    BulkEditActions.commitChanges();
+    BulkEditSearchPane.waitFileUploading();
+
+    BulkEditActions.verifySuccessBanner(1);
+    BulkEditActions.newBulkEdit();
   });
 });

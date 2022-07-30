@@ -46,6 +46,10 @@ describe('bulk-edit', () => {
     FileManager.deleteFile(`cypress/downloads/${resultFileName}`);
   });
 
+  afterEach('open new bulk edit', () => {
+    BulkEditActions.newBulkEdit();
+  });
+
   it('C357052 Verify Downloaded matched records if identifiers return more than one item (firebird)', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
     BulkEditSearchPane.selectRecordIdentifier('Holdings UUIDs');
 
@@ -57,7 +61,6 @@ describe('bulk-edit', () => {
     BulkEditFiles.verifyMatchedResultFileContent(resultFileName, [item.itemBarcode1, item.itemBarcode2]);
   });
 
-  // Bug UIBULKED-121
   it('C356810 Verify uploading file with holdings UUIDs (firebird)', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
     BulkEditSearchPane.selectRecordIdentifier('Holdings UUIDs');
 
@@ -69,7 +72,7 @@ describe('bulk-edit', () => {
     BulkEditActions.openStartBulkEditForm();
     BulkEditActions.replaceTemporaryLocation();
     BulkEditActions.confirmChanges();
-    BulkEditActions.saveAndClose();
+    BulkEditActions.commitChanges();
     BulkEditSearchPane.waitFileUploading();
 
     BulkEditSearchPane.verifyChangedResults(item.itemBarcode1, item.itemBarcode2);

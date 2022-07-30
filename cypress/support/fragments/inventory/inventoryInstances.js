@@ -81,7 +81,7 @@ export default {
     cy.do(Checkbox(tagName).click());
   },
 
-  createInstanceViaApi(instanceName, itemBarcode, publisher = null, holdingCallNumber = '1', itemCallNumber = '2') {
+  createInstanceViaApi(instanceName, itemBarcode, publisher = null, holdingCallNumber = '1', itemCallNumber = '2', accessionNumber = 'test_number_1') {
     let alternativeTitleTypeId = '';
     let holdingSourceId = '';
     const instanceId = uuid();
@@ -125,7 +125,8 @@ export default {
                 status: { name: 'Available' },
                 permanentLoanType: { id: Cypress.env('loanTypes')[0].id },
                 materialType: { id: Cypress.env('materialTypes')[0].id },
-                itemLevelCallNumber: itemCallNumber
+                itemLevelCallNumber: itemCallNumber,
+                accessionNumber
               },
               {
                 barcode: 'secondBarcode_' + itemBarcode,
@@ -134,7 +135,8 @@ export default {
                 status: { name: 'Available' },
                 permanentLoanType: { id: Cypress.env('loanTypes')[0].id },
                 materialType: { id: Cypress.env('materialTypes')[0].id },
-                itemLevelCallNumber: itemCallNumber
+                itemLevelCallNumber: itemCallNumber,
+                accessionNumber
               }
             ],
           ],
