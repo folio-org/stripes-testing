@@ -103,10 +103,11 @@ export default {
   },
 
   commitChanges() {
-    cy.do([
-      Modal().find(Button('Next')).click(),
-      Modal().find(Button('Commit changes')).click()
-    ]);
+    cy.do(Modal().find(Button('Commit changes')).click());
+  },
+
+  clickNext() {
+    cy.do(Modal().find(Button('Next')).click());
   },
 
   newBulkEdit() {
