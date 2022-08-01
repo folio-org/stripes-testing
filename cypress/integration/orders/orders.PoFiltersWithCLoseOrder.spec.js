@@ -11,7 +11,7 @@ import Organizations from '../../support/fragments/organizations/organizations';
 import devTeams from '../../support/dictionary/devTeams';
 import NewOrganization from '../../support/fragments/organizations/newOrganization';
 
-describe('orders: Test PO filters', () => {
+describe('orders: Test PO filters', { retries: 3 }, () => {
   const today = new Date();
   const renewalDate = DateTools.getFormattedDate({ date: today }, 'MM/DD/YYYY');
   const order = { ...NewOrder.defaultOneTimeOrder };

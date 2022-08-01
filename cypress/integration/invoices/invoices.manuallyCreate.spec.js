@@ -7,7 +7,7 @@ import Organizations from '../../support/fragments/organizations/organizations';
 import devTeams from '../../support/dictionary/devTeams';
 import newOrganization from '../../support/fragments/organizations/newOrganization';
 
-describe('ui-invoices: Invoice creation', () => {
+describe('ui-invoices: Invoice creation', { retries: 3 }, () => {
   const invoice = { ...NewInvoice.defaultUiInvoice };
   const vendorPrimaryAddress = { ...VendorAddress.vendorAddress };
   const organization = { ...newOrganization.defaultUiOrganizations,

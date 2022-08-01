@@ -6,7 +6,7 @@ import NewFund from '../../../support/fragments/finance/funds/newFund';
 import Transaction from '../../../support/fragments/finance/fabrics/newTransaction';
 import devTeams from '../../../support/dictionary/devTeams';
 
-describe('ui-finance: Delete budget from fund', () => {
+describe('ui-finance: Delete budget from fund', { retries: 3 }, () => {
   const currentBudgetSectionId = 'currentBudget';
   const fund = { ...NewFund.defaultFund };
   let createdLedgerId;

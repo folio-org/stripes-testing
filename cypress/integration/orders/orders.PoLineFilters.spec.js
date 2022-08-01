@@ -12,7 +12,7 @@ import Organizations from '../../support/fragments/organizations/organizations';
 import devTeams from '../../support/dictionary/devTeams';
 import NewOrganization from '../../support/fragments/organizations/newOrganization';
 
-describe('orders: Test Po line filters', () => {
+describe('orders: Test Po line filters', { retries: 3 }, () => {
   const organization = { ...NewOrganization.defaultUiOrganizations };
   const today = new Date();
   const subcriptionDate = DateTools.getFormattedDate({ date: today }, 'MM/DD/YYYY');

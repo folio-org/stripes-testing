@@ -18,7 +18,7 @@ const issnValue = `ISSN test value ${getRandomPostfix()}`;
 const hotKeys = InventoryHotkeys.hotKeys;
 const instanceTitle = `Instance_Test_Title_${getRandomPostfix()}`;
 
-describe('ui-inventory: keyboard shortcut', () => {
+describe('ui-inventory: keyboard shortcut', { retries: 3 }, () => {
   beforeEach('navigate to inventory', () => {
     cy.createTempUser([
       permissions.inventoryAll.gui

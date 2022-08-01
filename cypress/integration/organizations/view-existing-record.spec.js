@@ -4,7 +4,7 @@ import Organizations from '../../support/fragments/organizations/organizations';
 import NewOrganization from '../../support/fragments/organizations/newOrganization';
 import devTeams from '../../support/dictionary/devTeams';
 
-describe('ui-organizations: View organization', () => {
+describe('ui-organizations: View organization', { retries: 3 }, () => {
   const organization = { ...NewOrganization.defaultUiOrganizations };
 
   before(() => {
