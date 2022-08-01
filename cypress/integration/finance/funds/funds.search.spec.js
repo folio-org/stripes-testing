@@ -7,7 +7,7 @@ import { MultiColumnList } from '../../../../interactors';
 import testType from '../../../support/dictionary/testTypes';
 import devTeams from '../../../support/dictionary/devTeams';
 
-describe('ui-finance: Funds list search and filter', { retries: 3 }, () => {
+describe('ui-finance: Funds list search and filter', () => {
   let aUnit;
   let tag;
   let ledger;
