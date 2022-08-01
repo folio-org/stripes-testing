@@ -39,6 +39,16 @@ describe('Calendar', () => {
     calendarActions.openCalendarEvents();
     calendarActions.createCalendarEvent();
     calendarActions.openEditCalendarPage();
+    calendarActions.editCalendarEvent();
+    calendarActions.deleteCalendarEvent();
+  });
+
+  it('C353206 Settings (Calendar): Can create, view, and edit calendar events (vega)', { tags: [TestType.smoke, devTeams.vega] }, () => {
+    cy.login(limitedAccessUser.userName, limitedAccessUser.password);
+
+    calendarActions.openCalendarEvents();
+    calendarActions.createCalendarEvent();
+    calendarActions.openEditCalendarPage();
     calendarActions.checkDeleteButtonAbsence();
     calendarActions.editCalendarEvent();
     calendarActions.deleteCalendarEvent();
