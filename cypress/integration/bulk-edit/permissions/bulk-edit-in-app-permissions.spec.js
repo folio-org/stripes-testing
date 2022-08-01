@@ -12,7 +12,9 @@ describe('bulk-edit', () => {
     before('create test users', () => {
 
       cy.createTempUser([permissions.bulkEditView.gui])
-        .then(userProperties => { userWithInAppViewPermission = userProperties; });
+        .then(userProperties => {
+          userWithInAppViewPermission = userProperties;
+        });
     });
 
     after('delete test data', () => {
@@ -25,5 +27,5 @@ describe('bulk-edit', () => {
 
       BulkEditSearchPane.verifyInAppViewPermission();
     });
-  })
+  });
 });

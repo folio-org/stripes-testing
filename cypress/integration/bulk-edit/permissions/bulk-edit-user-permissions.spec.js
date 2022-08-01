@@ -17,7 +17,9 @@ describe('bulk-edit', () => {
         permissions.uiUsersViewProfile.gui,
         permissions.uiUsersPermissions.gui,
       ])
-        .then(userProperties => { userWthViewEditPermissions = userProperties; });
+        .then(userProperties => {
+          userWthViewEditPermissions = userProperties;
+        });
     });
 
     after('delete test data', () => {
@@ -40,5 +42,5 @@ describe('bulk-edit', () => {
       UserEdit.saveAndClose();
       UsersCard.verifyPermissions(permissionsToVerify);
     });
-  })
+  });
 });

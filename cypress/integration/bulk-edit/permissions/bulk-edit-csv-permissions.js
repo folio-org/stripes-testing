@@ -14,12 +14,17 @@ describe('bulk-edit', () => {
     before('create test users', () => {
 
       cy.createTempUser([permissions.bulkEditCsvView.gui])
-        .then(userProperties => { userWithCsvViewPermission = userProperties; });
+        .then(userProperties => {
+          userWithCsvViewPermission = userProperties;
+        });
 
       cy.createTempUser([
         permissions.bulkEditCsvView.gui,
         permissions.bulkEditCsvEdit.gui,
-      ]).then(userProperties => { userWithCsvPermissions = userProperties; });
+      ])
+        .then(userProperties => {
+          userWithCsvPermissions = userProperties;
+        });
     });
 
     after('delete test data', () => {
@@ -42,5 +47,5 @@ describe('bulk-edit', () => {
       BulkEditActions.openStartBulkEditForm();
       BulkEditActions.verifyLabel('Upload CSV file with edited records');
     });
-  })
+  });
 });
