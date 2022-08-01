@@ -12,7 +12,7 @@ import CheckInActions from '../../support/fragments/check-in-actions/checkInActi
 import InventoryInstance from '../../support/fragments/inventory/inventoryInstance';
 import Organizations from '../../support/fragments/organizations/organizations';
 
-describe('orders: Receive piece from Order', { retries: 3 }, () => {
+describe('orders: Receive piece from Order', () => {
   const order = { ...NewOrder.defaultOneTimeOrder };
   const orderLine = { ...BasicOrderLine.defaultOrderLine };
   const barcode = Helper.getRandomBarcode();
