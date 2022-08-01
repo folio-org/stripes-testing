@@ -42,7 +42,7 @@ describe('ui-invoices: Invoice creation', { retries: 3 }, () => {
   after(() => {
     Organizations.deleteOrganizationViaApi(organization.id);
   });
-  
+
   it('C2299 Manually Create Invoice (thunderjet)', { tags: [testType.smoke, devTeams.thunderjet] }, () => {
     Invoices.createDefaultInvoice(invoice, vendorPrimaryAddress);
     Invoices.checkCreatedInvoice(invoice, vendorPrimaryAddress);

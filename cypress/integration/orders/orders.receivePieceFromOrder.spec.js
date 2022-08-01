@@ -33,7 +33,7 @@ describe('orders: Receive piece from Order', { retries: 3 }, () => {
       .then(materialType => { orderLine.physical.materialType = materialType.id; });
     cy.login(Cypress.env('diku_login'), Cypress.env('diku_password'));
   });
-  
+
   after(() => {
     Orders.deleteOrderApi(order.id);
 

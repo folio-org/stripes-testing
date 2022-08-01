@@ -8,7 +8,6 @@ import InventoryInstances from '../../support/fragments/inventory/inventoryInsta
 import InventoryHotkeys from '../../support/fragments/inventory/inventoryHotkeys';
 import SearchInventory from '../../support/fragments/data_import/searchInventory';
 import devTeams from '../../support/dictionary/devTeams';
-import InventoryInstance from '../../support/fragments/inventory/inventoryInstance';
 import Users from '../../support/fragments/users/users';
 
 let userId;
