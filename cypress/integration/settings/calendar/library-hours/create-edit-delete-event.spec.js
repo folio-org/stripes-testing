@@ -51,5 +51,6 @@ describe('Calendar', () => {
     calendarActions.openEditCalendarPage();
     calendarActions.checkDeleteButtonAbsence();
     calendarActions.editCalendarEvent();
+    calendarActions.deleteCalendarEvent();
   });
 });

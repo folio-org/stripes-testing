@@ -15,46 +15,49 @@ const userExternalIDsFileName = `userExternalIDs_${getRandomPostfix()}.csv`;
 const matchRecordsFileName = `matchedRecords_${getRandomPostfix()}.csv`;
 const importFileName = `bulkEditImport_${getRandomPostfix()}.csv`;
 
-describe('bulk-edit', { retries: 3 }, () => {
-  before('create test data', () => {
-    cy.createTempUser([
-      permissions.bulkEditCsvView.gui,
-      permissions.bulkEditCsvEdit.gui,
-    ])
-      .then(userProperties => {
-        user = userProperties;
-        cy.getUsers({ limit: 1, query: `"username"="${user.username}"` })
-          .then((users) => { UserEdit.updateExternalId(users[0], externalId); });
-        cy.login(user.username, user.password, { path: TopMenu.bulkEditPath, waiter: BulkEditSearchPane.waitLoading });
-        FileManager.createFile(`cypress/fixtures/${userExternalIDsFileName}`, externalId);
-      });
-  });
+describe('bulk-edit', () => {
+  describe('csv approach', () => {
+    before('create test data', () => {
+      cy.createTempUser([
+        permissions.bulkEditCsvView.gui,
+        permissions.bulkEditCsvEdit.gui,
+      ])
+        .then(userProperties => {
+          user = userProperties;
+          cy.getUsers({ limit: 1, query: `"username"="${user.username}"` })
+            .then((users) => { UserEdit.updateExternalId(users[0], externalId); });
+          cy.login(user.username, user.password, { path: TopMenu.bulkEditPath, waiter: BulkEditSearchPane.waitLoading });
+          FileManager.createFile(`cypress/fixtures/${userExternalIDsFileName}`, externalId);
+        });
+    });
 
-  after('delete test data', () => {
-    FileManager.deleteFile(`cypress/fixtures/${userExternalIDsFileName}`);
-    FileManager.deleteFile(`cypress/fixtures/${importFileName}`);
-    FileManager.deleteFile(`cypress/downloads/${matchRecordsFileName}`);
-    Users.deleteViaApi(user.userId);
-  });
+    after('delete test data', () => {
+      FileManager.deleteFile(`cypress/fixtures/${userExternalIDsFileName}`);
+      FileManager.deleteFile(`cypress/fixtures/${importFileName}`);
+      FileManager.deleteFile(`cypress/downloads/${matchRecordsFileName}`);
+      Users.deleteViaApi(user.userId);
+    });
 
-  it('C353954 Verify uploading file with External IDs (firebird)', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
-    BulkEditSearchPane.selectRecordIdentifier('External IDs');
+    it('C353954 Verify uploading file with External IDs (firebird)', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
+      BulkEditSearchPane.selectRecordIdentifier('External IDs');
 
-    BulkEditSearchPane.uploadFile(userExternalIDsFileName);
-    BulkEditSearchPane.waitFileUploading();
+      BulkEditSearchPane.uploadFile(userExternalIDsFileName);
+      BulkEditSearchPane.waitFileUploading();
 
-    BulkEditSearchPane.verifyMatchedResults(user.username);
-    BulkEditSearchPane.verifyPaneRecordsCount(1);
+      BulkEditSearchPane.verifyMatchedResults(user.username);
+      BulkEditSearchPane.verifyPaneRecordsCount(1);
 
-    BulkEditActions.downloadMatchedResults(matchRecordsFileName);
-    BulkEditActions.prepareValidBulkEditFile(matchRecordsFileName, importFileName, user.username, 'test');
+      BulkEditActions.downloadMatchedResults(matchRecordsFileName);
+      BulkEditActions.prepareValidBulkEditFile(matchRecordsFileName, importFileName, user.username, 'test');
 
-    BulkEditActions.openStartBulkEditForm();
-    BulkEditSearchPane.uploadFile(importFileName);
-    BulkEditSearchPane.waitFileUploading();
-    BulkEditActions.commitChanges();
+      BulkEditActions.openStartBulkEditForm();
+      BulkEditSearchPane.uploadFile(importFileName);
+      BulkEditSearchPane.waitFileUploading();
+      BulkEditActions.clickNext();
+      BulkEditActions.commitChanges();
 
-    BulkEditSearchPane.verifyChangedResults(user.username);
-    BulkEditActions.newBulkEdit();
+      BulkEditSearchPane.verifyChangedResults(user.username);
+      BulkEditActions.newBulkEdit();
+    });
   });
 });

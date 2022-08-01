@@ -17,56 +17,58 @@ const item = {
 const validItemBarcodesFileName = `validItemBarcodes_${getRandomPostfix()}.csv`;
 
 describe('bulk-edit', { retries: 3 }, () => {
-  before('create user', () => {
-    cy.createTempUser([
-      permissions.bulkEditView.gui,
-      permissions.bulkEditEdit.gui,
-    ])
-      .then(userProperties => {
-        user = userProperties;
-        cy.login(user.username, user.password, { path: TopMenu.bulkEditPath, waiter: BulkEditSearchPane.waitLoading });
+  describe('in-app approach', () => {
+    before('create user', () => {
+      cy.createTempUser([
+        permissions.bulkEditView.gui,
+        permissions.bulkEditEdit.gui,
+      ])
+        .then(userProperties => {
+          user = userProperties;
+          cy.login(user.username, user.password, { path: TopMenu.bulkEditPath, waiter: BulkEditSearchPane.waitLoading });
 
-        InventoryInstances.createInstanceViaApi(item.instanceName, item.itemBarcode);
-        FileManager.createFile(`cypress/fixtures/${validItemBarcodesFileName}`, item.itemBarcode);
-      });
-  });
+          InventoryInstances.createInstanceViaApi(item.instanceName, item.itemBarcode);
+          FileManager.createFile(`cypress/fixtures/${validItemBarcodesFileName}`, item.itemBarcode);
+        });
+    });
 
-  after('delete test data', () => {
-    InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(item.itemBarcode);
-    Users.deleteViaApi(user.userId);
-    FileManager.deleteFile(`cypress/fixtures/${validItemBarcodesFileName}`);
-  });
+    after('delete test data', () => {
+      InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(item.itemBarcode);
+      Users.deleteViaApi(user.userId);
+      FileManager.deleteFile(`cypress/fixtures/${validItemBarcodesFileName}`);
+    });
 
-  it('C357053 Negative: Verify enable type ahead in location look-up (firebird)', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
-    BulkEditSearchPane.selectRecordIdentifier('Item barcode');
+    it('C357053 Negative: Verify enable type ahead in location look-up (firebird)', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
+      BulkEditSearchPane.selectRecordIdentifier('Item barcode');
 
-    BulkEditSearchPane.uploadFile(validItemBarcodesFileName);
-    BulkEditSearchPane.waitFileUploading();
+      BulkEditSearchPane.uploadFile(validItemBarcodesFileName);
+      BulkEditSearchPane.waitFileUploading();
 
-    BulkEditActions.openActions();
-    BulkEditActions.openStartBulkEditForm();
+      BulkEditActions.openActions();
+      BulkEditActions.openStartBulkEditForm();
 
-    BulkEditActions.fillTemporaryLocationFilter(`test_location_${getRandomPostfix()}`);
-    BulkEditActions.verifyNoMatchingOptionsForLocationFilter();
+      BulkEditActions.fillTemporaryLocationFilter(`test_location_${getRandomPostfix()}`);
+      BulkEditActions.verifyNoMatchingOptionsForLocationFilter();
 
-    BulkEditActions.cancel();
-    BulkEditActions.newBulkEdit();
-  });
+      BulkEditActions.cancel();
+      BulkEditActions.newBulkEdit();
+    });
 
-  it('C356787 Verify enable type ahead in location look-up (firebird)', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
-    BulkEditSearchPane.selectRecordIdentifier('Item barcode');
+    it('C356787 Verify enable type ahead in location look-up (firebird)', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
+      BulkEditSearchPane.selectRecordIdentifier('Item barcode');
 
-    BulkEditSearchPane.uploadFile(validItemBarcodesFileName);
-    BulkEditSearchPane.waitFileUploading();
+      BulkEditSearchPane.uploadFile(validItemBarcodesFileName);
+      BulkEditSearchPane.waitFileUploading();
 
-    BulkEditActions.openActions();
-    BulkEditActions.openStartBulkEditForm();
+      BulkEditActions.openActions();
+      BulkEditActions.openStartBulkEditForm();
 
-    const location = 'Annex';
-    BulkEditActions.fillTemporaryLocationFilter(location);
-    BulkEditActions.verifyMatchingOptionsForLocationFilter(location);
+      const location = 'Annex';
+      BulkEditActions.fillTemporaryLocationFilter(location);
+      BulkEditActions.verifyMatchingOptionsForLocationFilter(location);
 
-    BulkEditActions.cancel();
-    BulkEditActions.newBulkEdit();
+      BulkEditActions.cancel();
+      BulkEditActions.newBulkEdit();
+    });
   });
 });

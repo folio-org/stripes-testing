@@ -284,7 +284,7 @@ describe('ui-data-import: MARC file upload with the update of instance, holding,
   };
 
   beforeEach(() => {
-    cy.loginAsAdmin({ path: TopMenu.dataImportPath, waiter: DataImport.wailtLoading });
+    cy.loginAsAdmin();
     cy.getAdminToken();
 
     DataImport.checkUploadState();
