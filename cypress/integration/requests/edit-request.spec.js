@@ -10,6 +10,8 @@ describe('ui-requests: Request: Edit requests. Make sure that edits are being sa
   let requestData;
   let instanceData;
   let cancellationReason;
+  let oldRulesText;
+  let requestPolicyId;
 
   before(() => {
     cy.loginAsAdmin();
@@ -17,6 +19,10 @@ describe('ui-requests: Request: Edit requests. Make sure that edits are being sa
   });
 
   beforeEach(() => {
+    Requests.setRequestPolicyApi().then(({ oldRulesAsText, policy }) => {
+      oldRulesText = oldRulesAsText;
+      requestPolicyId = policy.id;
+    });
     Requests.createRequestApi().then(({
       createdUser,
       createdRequest,
@@ -39,6 +45,8 @@ describe('ui-requests: Request: Edit requests. Make sure that edits are being sa
       cancelledDate: new Date().toISOString(),
     });
     Users.deleteViaApi(userId);
+    Requests.updateCirculationRulesApi(oldRulesText);
+    Requests.deleteRequestPolicyApi(requestPolicyId);
   });
 
   it('C556 Request: Edit requests. Make sure that edits are being saved. (folijet) (prokopovych)', { tags: [TestTypes.smoke, DevTeams.folijet] }, () => {

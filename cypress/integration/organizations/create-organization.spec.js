@@ -13,7 +13,7 @@ describe('ui-organizations: Creating organization', () => {
     cy.visit(TopMenu.organizationsPath);
   });
 
-  afterEach(() => {
+  after(() => {
     Organizations.getOrganizationViaApi({ query: `name="${organization.name}"` })
       .then(returnedOrganization => {
         Organizations.deleteOrganizationViaApi(returnedOrganization.id);

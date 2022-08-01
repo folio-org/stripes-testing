@@ -24,6 +24,6 @@ export default {
     ]);
     SelectServicePointModal.selectServicePoint(servicePoint);
     // wait for data to be loaded
-    cy.wait(2000);
+    cy.wait(5000);
   }
 };

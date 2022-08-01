@@ -61,7 +61,6 @@ describe('bulk-edit', () => {
     BulkEditSearchPane.verifyModalName(invalidFileWarning);
   });
 
-  // Bug UIBULKED-121
   it('C357030 Verify Matched records label cleanup -- In -app approach (firebird)', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
     BulkEditSearchPane.selectRecordIdentifier('Item barcode');
 
@@ -77,11 +76,9 @@ describe('bulk-edit', () => {
     BulkEditActions.openStartBulkEditForm();
     BulkEditActions.replaceTemporaryLocation();
     BulkEditActions.confirmChanges();
-    BulkEditActions.saveAndClose();
+    BulkEditActions.commitChanges();
     BulkEditSearchPane.waitFileUploading();
 
-    BulkEditSearchPane.verifyNonMatchedResults(invalidBarcode);
-    BulkEditSearchPane.verifyErrorLabelAfterChanges(invalidItemBarcodesFileName, 1, 1);
-    BulkEditActions.verifySuccessBanner();
+    BulkEditActions.verifySuccessBanner(1);
   });
 });

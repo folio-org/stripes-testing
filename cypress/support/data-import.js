@@ -1,6 +1,7 @@
 /* eslint-disable cypress/no-unnecessary-waiting */
 import { Button, HTML, including, Modal, MultiColumnListCell, Section } from '../../interactors';
 import { getLongDelay } from './utils/cypressTools';
+import JobProfiles from './fragments/data_import/job_profiles/jobProfiles';
 
 Cypress.Commands.add('uploadFileWithDefaultJobProfile', (name, jobProfileToRun = 'Default - Create instance and SRS MARC Bib') => {
   // upload generated file with given unique name
@@ -8,6 +9,7 @@ Cypress.Commands.add('uploadFileWithDefaultJobProfile', (name, jobProfileToRun =
   cy.expect(Section({ id: 'pane-upload' }).find(HTML(including(name))).exists());
   cy.expect(Button({ icon: 'trash' }).exists());
 
+  JobProfiles.searchJobProfileForImport(jobProfileToRun);
   // run file with given jobProfile
   cy.do(MultiColumnListCell(jobProfileToRun).click());
   cy.do([
