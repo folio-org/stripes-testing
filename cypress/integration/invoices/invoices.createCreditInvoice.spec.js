@@ -54,7 +54,7 @@ describe('ui-invoices: Credit Invoice creation', () => {
     invoiceLine.subTotal = -subtotalValue;
     cy.visit(TopMenu.invoicesPath);
   });
-  
+
   after(() => {
     Organizations.deleteOrganizationViaApi(organization.id);
   });
