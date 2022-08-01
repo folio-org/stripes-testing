@@ -23,91 +23,96 @@ const validItemAccessionNumbersFileName = `validItemAccessionNumbers_${getRandom
 const invalidBarcode = getRandomPostfix();
 
 describe('bulk-edit', () => {
-  before('create test data', () => {
-    cy.createTempUser([
-      permissions.bulkEditView.gui,
-      permissions.bulkEditEdit.gui,
-    ])
-      .then(userProperties => {
-        user = userProperties;
-        cy.login(user.username, user.password, { path: TopMenu.bulkEditPath, waiter: BulkEditSearchPane.waitLoading });
+  describe('in-app approach', () => {
+    before('create test data', () => {
+      cy.createTempUser([
+        permissions.bulkEditView.gui,
+        permissions.bulkEditEdit.gui,
+      ])
+        .then(userProperties => {
+          user = userProperties;
+          cy.login(user.username, user.password, {
+            path: TopMenu.bulkEditPath,
+            waiter: BulkEditSearchPane.waitLoading
+          });
 
-        InventoryInstances.createInstanceViaApi(
-          item.instanceName,
-          item.itemBarcode,
-          null,
-          '1',
-          '2',
-          item.accessionNumber
-        );
+          InventoryInstances.createInstanceViaApi(
+            item.instanceName,
+            item.itemBarcode,
+            null,
+            '1',
+            '2',
+            item.accessionNumber
+          );
 
-        FileManager.createFile(`cypress/fixtures/${invalidItemBarcodesFileName}`, `${item.itemBarcode}\r\n${invalidBarcode}`);
-        FileManager.createFile(`cypress/fixtures/${validItemBarcodesFileName}`, item.itemBarcode);
-        FileManager.createFile(`cypress/fixtures/${validItemAccessionNumbersFileName}`, item.accessionNumber);
-      });
-  });
+          FileManager.createFile(`cypress/fixtures/${invalidItemBarcodesFileName}`, `${item.itemBarcode}\r\n${invalidBarcode}`);
+          FileManager.createFile(`cypress/fixtures/${validItemBarcodesFileName}`, item.itemBarcode);
+          FileManager.createFile(`cypress/fixtures/${validItemAccessionNumbersFileName}`, item.accessionNumber);
+        });
+    });
 
-  after('delete test data', () => {
-    InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(item.itemBarcode);
-    Users.deleteViaApi(user.userId);
-    FileManager.deleteFile(`cypress/fixtures/${invalidItemBarcodesFileName}`);
-    FileManager.deleteFile(`cypress/fixtures/${validItemBarcodesFileName}`);
-    FileManager.deleteFile(`cypress/fixtures/${validItemAccessionNumbersFileName}`);
-  });
+    after('delete test data', () => {
+      InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(item.itemBarcode);
+      Users.deleteViaApi(user.userId);
+      FileManager.deleteFile(`cypress/fixtures/${invalidItemBarcodesFileName}`);
+      FileManager.deleteFile(`cypress/fixtures/${validItemBarcodesFileName}`);
+      FileManager.deleteFile(`cypress/fixtures/${validItemAccessionNumbersFileName}`);
+    });
 
-  it('C350905 Negative uploading file with identifiers -- In app approach (firebird)', { tags: [testTypes.smoke, devTeams.firebird, testTypes.broken] }, () => {
-    BulkEditSearchPane.selectRecordIdentifier('Item barcode');
+    it('C350905 Negative uploading file with identifiers -- In app approach (firebird)', { tags: [testTypes.smoke, devTeams.firebird, testTypes.broken] }, () => {
+      BulkEditSearchPane.selectRecordIdentifier('Item barcode');
 
-    // try to upload empty file
-    BulkEditSearchPane.uploadFile('empty.csv');
-    InteractorsTools.checkCalloutMessage('Fail to upload file', calloutTypes.error);
-    InteractorsTools.closeCalloutMessage();
+      // try to upload empty file
+      BulkEditSearchPane.uploadFile('empty.csv');
+      InteractorsTools.checkCalloutMessage('Fail to upload file', calloutTypes.error);
+      InteractorsTools.closeCalloutMessage();
 
-    const invalidFileWarning = 'Invalid file';
-    // try to upload another extension
-    BulkEditSearchPane.uploadFile('example.json');
-    BulkEditSearchPane.verifyModalName(invalidFileWarning);
+      const invalidFileWarning = 'Invalid file';
+      // try to upload another extension
+      BulkEditSearchPane.uploadFile('example.json');
+      BulkEditSearchPane.verifyModalName(invalidFileWarning);
 
-    BulkEditSearchPane.uploadFile(['empty.csv', 'example.json']);
-    BulkEditSearchPane.verifyModalName(invalidFileWarning);
-  });
+      BulkEditSearchPane.uploadFile(['empty.csv', 'example.json']);
+      BulkEditSearchPane.verifyModalName(invalidFileWarning);
+    });
 
-  it('C357030 Verify Matched records label cleanup -- In -app approach (firebird)', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
-    BulkEditSearchPane.selectRecordIdentifier('Item barcode');
+    it('C357030 Verify Matched records label cleanup -- In -app approach (firebird)', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
+      BulkEditSearchPane.selectRecordIdentifier('Item barcode');
 
-    BulkEditSearchPane.uploadFile(invalidItemBarcodesFileName);
-    BulkEditSearchPane.waitFileUploading();
+      BulkEditSearchPane.uploadFile(invalidItemBarcodesFileName);
+      BulkEditSearchPane.waitFileUploading();
 
-    BulkEditSearchPane.verifyMatchedResults(item.itemBarcode);
-    BulkEditSearchPane.verifyNonMatchedResults(invalidBarcode);
-    BulkEditSearchPane.verifyErrorLabel(invalidItemBarcodesFileName, 1, 1);
-    BulkEditSearchPane.verifyPaneRecordsCount(1);
+      BulkEditSearchPane.verifyMatchedResults(item.itemBarcode);
+      BulkEditSearchPane.verifyNonMatchedResults(invalidBarcode);
+      BulkEditSearchPane.verifyErrorLabel(invalidItemBarcodesFileName, 1, 1);
+      BulkEditSearchPane.verifyPaneRecordsCount(1);
 
-    BulkEditActions.openActions();
-    BulkEditActions.openStartBulkEditForm();
-    BulkEditActions.replaceTemporaryLocation();
-    BulkEditActions.confirmChanges();
-    BulkEditActions.commitChanges();
-    BulkEditSearchPane.waitFileUploading();
+      BulkEditActions.openActions();
+      BulkEditActions.openStartBulkEditForm();
+      BulkEditActions.replaceTemporaryLocation();
+      BulkEditActions.confirmChanges();
+      BulkEditActions.commitChanges();
+      BulkEditSearchPane.waitFileUploading();
 
-    BulkEditActions.verifySuccessBanner(1);
-    BulkEditActions.newBulkEdit();
-  });
+      BulkEditActions.verifySuccessBanner(1);
+      BulkEditActions.newBulkEdit();
+    });
 
-  it('C356809 Verify uploading file with Item accession number (firebird)', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
-    BulkEditSearchPane.selectRecordIdentifier('Item accession number');
+    it('C356809 Verify uploading file with Item accession number (firebird)', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
+      BulkEditSearchPane.selectRecordIdentifier('Item accession number');
 
-    BulkEditSearchPane.uploadFile(validItemAccessionNumbersFileName);
-    BulkEditSearchPane.waitFileUploading();
+      BulkEditSearchPane.uploadFile(validItemAccessionNumbersFileName);
+      BulkEditSearchPane.waitFileUploading();
 
-    BulkEditActions.openActions();
-    BulkEditActions.openStartBulkEditForm();
-    BulkEditActions.replaceTemporaryLocation();
-    BulkEditActions.confirmChanges();
-    BulkEditActions.commitChanges();
-    BulkEditSearchPane.waitFileUploading();
+      BulkEditActions.openActions();
+      BulkEditActions.openStartBulkEditForm();
+      BulkEditActions.replaceTemporaryLocation();
+      BulkEditActions.confirmChanges();
+      BulkEditActions.commitChanges();
+      BulkEditSearchPane.waitFileUploading();
 
-    BulkEditActions.verifySuccessBanner(1);
-    BulkEditActions.newBulkEdit();
+      BulkEditActions.verifySuccessBanner(1);
+      BulkEditActions.newBulkEdit();
+    });
   });
 });
