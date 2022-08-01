@@ -10,7 +10,7 @@ import Organizations from '../../support/fragments/organizations/organizations';
 import InventoryInteractionsDefaults from '../../support/fragments/settings/orders/inventoryInteractionsDefaults';
 import devTeams from '../../support/dictionary/devTeams';
 
-describe('orders: create an order', { retries: 3 }, () => {
+describe('orders: create an order', () => {
   const organization = { ...newOrganization.defaultUiOrganizations };
   const order = { ...NewOrder.defaultOneTimeOrder };
   const orderLineTitle = basicOrderLine.defaultOrderLine.titleOrPackage;

@@ -15,7 +15,7 @@ import NewOrganization from '../../support/fragments/organizations/newOrganizati
 import NewBatchGroup from '../../support/fragments/settings/invoices/batchGroups';
 import BatchGrops from '../../support/api/batch-groups';
 
-describe('ui-invoices-settings: Export batch voucher', { retries: 3 }, () => {
+describe('ui-invoices-settings: Export batch voucher', () => {
   const invoice = { ...NewInvoice.defaultUiInvoice };
   const vendorPrimaryAddress = { ...VendorAddress.vendorAddress };
   const invoiceLine = { ...NewInvoiceLine.defaultUiInvoiceLine };

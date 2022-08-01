@@ -13,7 +13,7 @@ import Organizations from '../../support/fragments/organizations/organizations';
 import devTeams from '../../support/dictionary/devTeams';
 import NewOrganization from '../../support/fragments/organizations/newOrganization';
 
-describe('orders: Receive piece from Order', { retries: 3 }, () => {
+describe('orders: Receive piece from Order', () => {
   const order = { ...newOrder.defaultOneTimeOrder };
   const orderLine = { ...basicOrderLine.defaultOrderLine };
   const organization = { ...NewOrganization.defaultUiOrganizations };
