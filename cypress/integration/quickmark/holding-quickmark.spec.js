@@ -9,12 +9,12 @@ import { calloutTypes } from '../../../interactors';
 import InteractorsTools from '../../support/utils/interactorsTools';
 import InventorySteps from '../../support/fragments/inventory/inventorySteps';
 import InventoryInstance from '../../support/fragments/inventory/inventoryInstance';
+import DevTeams from '../../support/dictionary/devTeams';
 
 describe('Manage holding records through quickmarc editor', () => {
   const quickmarcEditor = new QuickMarcEditor(InventoryInstance.validOCLC);
 
   beforeEach(() => {
-    cy.getAdminToken();
     cy.login(Cypress.env('diku_login'), Cypress.env('diku_password'));
     cy.visit(TopMenu.inventoryPath);
     // TODO: redesign to api step
@@ -25,7 +25,8 @@ describe('Manage holding records through quickmarc editor', () => {
     HoldingsRecordView.editInQuickMarc();
     QuickMarcEditor.waitLoading();
   });
-  it('C345390 Add a field to a record using quickMARC (852) (spitfire)', { tags: [TestTypes.smoke, Features.quickMarcEditor] }, () => {
+
+  it('C345390 Add a field to a record using quickMARC (852) (spitfire)', { tags: [TestTypes.smoke, Features.quickMarcEditor, DevTeams.spitfire] }, () => {
     // TODO: redesign to dynamic reading of rows count
     quickmarcEditor.addRow(HoldingsRecordView.newHolding.rowsCountInQuickMarcEditor);
     quickmarcEditor.checkInitialContent(HoldingsRecordView.newHolding.rowsCountInQuickMarcEditor + 1);
@@ -37,7 +38,7 @@ describe('Manage holding records through quickmarc editor', () => {
     InventoryViewSource.contains(expectedInSourceRow);
   });
 
-  it('C345398 Add/Edit MARC 008 (spitfire)', { tags: [TestTypes.smoke, Features.quickMarcEditor] }, () => {
+  it('C345398 Add/Edit MARC 008 (spitfire)', { tags: [TestTypes.smoke, Features.quickMarcEditor, DevTeams.spitfire] }, () => {
     QuickMarcEditor.checkInitial008TagValueFromHoldings();
     QuickMarcEditor.checkNotExpectedByteLabelsInTag008Holdings();
 
@@ -59,7 +60,7 @@ describe('Manage holding records through quickmarc editor', () => {
     QuickMarcEditor.checkReplacedVoidValuesInTag008Holdings();
   });
 
-  it('C345400 Attempt to save a record without a MARC 852 (spitfire)', { tags: [TestTypes.smoke, Features.quickMarcEditor] }, () => {
+  it('C345400 Attempt to save a record without a MARC 852 (spitfire)', { tags: [TestTypes.smoke, Features.quickMarcEditor, DevTeams.spitfire] }, () => {
     QuickMarcEditor.getRegularTagContent('852')
       .then(initialTagContent => {
         QuickMarcEditor.deleteTag('852');
