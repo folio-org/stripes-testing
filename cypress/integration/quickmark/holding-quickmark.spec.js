@@ -1,5 +1,3 @@
-/// <reference types="cypress" />
-
 import TopMenu from '../../support/fragments/topMenu';
 import InventoryActions from '../../support/fragments/inventory/inventoryActions';
 import HoldingsRecordView from '../../support/fragments/inventory/holdingsRecordView';
@@ -16,6 +14,7 @@ describe('Manage holding records through quickmarc editor', () => {
   const quickmarcEditor = new QuickMarcEditor(InventoryInstance.validOCLC);
 
   beforeEach(() => {
+    cy.getAdminToken();
     cy.login(Cypress.env('diku_login'), Cypress.env('diku_password'));
     cy.visit(TopMenu.inventoryPath);
     // TODO: redesign to api step
@@ -26,7 +25,7 @@ describe('Manage holding records through quickmarc editor', () => {
     HoldingsRecordView.editInQuickMarc();
     QuickMarcEditor.waitLoading();
   });
-  it('C345390 Add a field to a record using quickMARC (spitfire)', { tags: [TestTypes.smoke, Features.quickMarcEditor] }, () => {
+  it('C345390 Add a field to a record using quickMARC (852) (spitfire)', { tags: [TestTypes.smoke, Features.quickMarcEditor] }, () => {
     // TODO: redesign to dynamic reading of rows count
     quickmarcEditor.addRow(HoldingsRecordView.newHolding.rowsCountInQuickMarcEditor);
     quickmarcEditor.checkInitialContent(HoldingsRecordView.newHolding.rowsCountInQuickMarcEditor + 1);
