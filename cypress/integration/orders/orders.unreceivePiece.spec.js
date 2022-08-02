@@ -53,6 +53,7 @@ describe('orders: Unreceive piece from Order', () => {
         // Receive piece
         Helper.selectFromResultsList();
         Receiving.receivePiece(0, caption, barcode);
+        cy.wait(2000);
         Receiving.checkReceivedPiece(0, caption, barcode);
         // Unreceive piece
         Receiving.unreceivePiece();
