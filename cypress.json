@@ -1,16 +1,15 @@
-
 {
-  "baseUrl": "https://bugfest-mg-aqa.int.aws.folio.org/",
+  "baseUrl": "https://cypress.ci.folio.org",
   "viewportWidth": 1920,
   "viewportHeight": 1080,
   "video": false,
   "defaultCommandTimeout": 101000,
   "pageLoadTimeout": 120000,
   "env": {
-    "OKAPI_HOST": "https://okapi-bugfest-mg-aqa.int.aws.folio.org",
-    "OKAPI_TENANT": "fs09000003",
-    "diku_login": "folio-aqa",
-    "diku_password": "Folio-aqa1",
+    "OKAPI_HOST": "https://cypress-okapi.ci.folio.org",
+    "OKAPI_TENANT": "diku",
+    "diku_login": "diku_admin",
+    "diku_password": "admin",
     "is_kiwi_release": false,
     "downloadTimeout": 1000,
     "allure": "true",
