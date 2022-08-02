@@ -52,13 +52,11 @@ export default {
   // the same steps can be used in Overlay Source Bibliographic Record
   fillImportFields(specialOCLCWorldCatidentifier = InventoryInstance.validOCLC.id) {
     // TODO: remove in the future, now related with differenes in our environments
-    if (Cypress.env('is_kiwi_release')) {
-      const oclcWorldCat = { text:'OCLC WorldCat',
-        value : '6f171ee7-7a0a-4dd4-8959-bd67ec07cc88' };
+    const oclcWorldCat = { text:'OCLC WorldCat',
+      value : 'f26df83c-aa25-40b6-876e-96852c3d4fd4' };
 
-      cy.do(importTypeSelect.choose(oclcWorldCat.text));
-      cy.expect(importTypeSelect.has({ value: oclcWorldCat.value }));
-    }
+    cy.do(importTypeSelect.choose(oclcWorldCat.text));
+    cy.expect(importTypeSelect.has({ value: oclcWorldCat.value }));
 
     cy.do(OCLWorldCatIdentifierTextField.fillIn(specialOCLCWorldCatidentifier));
   },

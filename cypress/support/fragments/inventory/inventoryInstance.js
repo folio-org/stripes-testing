@@ -42,22 +42,22 @@ const moveItemsButton = Button({ id: 'move-instance-items' });
 const instanceDetailsPane = Pane({ id:'pane-instancedetails' });
 
 const instanceHRID = 'Instance HRID';
-const validOCLC = { id:'176116217',
-  // TODO: hardcoded count related with interactors getters issue. Redesign to cy.then(QuickMarkEditor().rowsCount()).then(rowsCount => {...}
-  lastRowNumber: 30,
+const validOCLC = { id:'1229080794',
+// TODO: hardcoded count related with interactors getters issue. Redesign to cy.then(QuickMarkEditor().rowsCount()).then(rowsCount => {...}
+  lastRowNumber: 37,
   // it should be presented in marc bib one time to correct work(applicable in update of record)
   existingTag: '100',
-  ldrValue: '01677cam\\a22003974a\\4500',
+  ldrValue: '02218cam\\a2200481Mi\\4500',
   tag008BytesProperties : {
-    eLvl : { interactor:TextField('ELvl'), defaultValue:'4' },
-    srce: { interactor:TextField('Srce'), defaultValue:'\\' },
+    eLvl : { interactor:TextField('ELvl'), defaultValue:'M' },
+    srce: { interactor:TextField('Srce'), defaultValue:'d' },
     ctrl : { interactor:TextField('Ctrl'), defaultValue:'' },
-    lang : { interactor:TextField('Lang'), defaultValue:'rus' },
+    lang : { interactor:TextField('Lang'), defaultValue:'dut' },
     form : { interactor:TextField('Form'), defaultValue:'\\' },
-    ctry : { interactor:TextField('Ctry'), defaultValue:'ru\\' },
-    desc : { interactor:TextField('Desc'), defaultValue:'a' },
+    ctry : { interactor:TextField('Ctry'), defaultValue:'ne\\' },
+    desc : { interactor:TextField('Desc'), defaultValue:'i' },
     dtSt : { interactor:TextField('DtSt'), defaultValue:'s' },
-    startDate : { interactor:TextField('Start date'), defaultValue:'2007' },
+    startDate : { interactor:TextField('Start date'), defaultValue:'2019' },
     endDate : { interactor:TextField('End date'), defaultValue:'\\\\\\\\' }
   } };
 
