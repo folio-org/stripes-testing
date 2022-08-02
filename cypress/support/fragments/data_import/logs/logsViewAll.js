@@ -1,4 +1,3 @@
-import { CheckBox } from '@interactors/html';
 import {
   Accordion,
   Button,
@@ -7,15 +6,33 @@ import {
   Select,
   Selection,
   SelectionList,
-  TextField
+  TextField,
+  Pane,
+  Checkbox,
+  MultiColumnListCell,
+  Modal
 } from '../../../../../interactors';
 import UrlParams from '../url-params';
+import InteractorsTools from '../../../utils/interactorsTools';
+
+const singleRecordImportsAccordion = Accordion('Inventory single record imports');
+
+function getCheckboxByRow(row) {
+  return MultiColumnList().find(MultiColumnListCell({ 'row': row, 'columnIndex': 0 })).find(Checkbox());
+}
+
+const verifyMessageOfDeteted = (quantity) => {
+  InteractorsTools.checkCalloutMessage(`${quantity} data import logs have been successfully deleted.`);
+  InteractorsTools.closeCalloutMessage();
+};
 
 export default {
-  gotoViewAllPage() {
+  verifyMessageOfDeteted,
+
+  openViewAll() {
     cy.do([
       Button('Actions').click(),
-      Button('View all').click()
+      Button('View all logs').click()
     ]);
   },
 
@@ -60,9 +77,11 @@ export default {
 
   filterJobsByErrors(filter) {
     if (filter === 'Yes') {
-      cy.do(CheckBox({ id: 'clickable-filter-statusAny-error' }).click());
+      cy.do(Accordion('Errors in import')
+        .find(Checkbox({ id: 'clickable-filter-statusAny-error' })).click());
     } else {
-      cy.do(CheckBox({ id: 'clickable-filter-statusAny-committed' }).click());
+      cy.do(Accordion('Errors in import')
+        .find(Checkbox({ id: 'clickable-filter-statusAny-committed' })).click());
     }
   },
 
@@ -93,9 +112,11 @@ export default {
 
   filterJobsByInventorySingleRecordImports(filter) {
     if (filter === 'Yes') {
-      cy.do(CheckBox({ id: 'clickable-filter-singleRecordImports-yes' }).click());
+      cy.do(singleRecordImportsAccordion
+        .find(Checkbox({ id: 'clickable-filter-singleRecordImports-yes' })).click());
     } else {
-      cy.do(CheckBox({ id: 'clickable-filter-singleRecordImports-no' }).click());
+      cy.do(singleRecordImportsAccordion
+        .find(Checkbox({ id: 'clickable-filter-singleRecordImports-no' })).click());
     }
   },
 
@@ -128,7 +149,7 @@ export default {
   waitUIToBeFiltered() {
     // Need some waiting when jobs list is long, UI takes longer to be filtered
     // eslint-disable-next-line cypress/no-unnecessary-waiting
-    cy.wait(1000);
+    cy.wait(1800);
   },
 
   checkByReverseChronologicalOrder() {
@@ -160,9 +181,10 @@ export default {
 
   checkByDate({ from, end }) {
     const queryString = UrlParams.getDateQueryString({ from, end });
-    this.getNumberOfMatchedJobs(queryString).then(count => {
+    return this.getNumberOfMatchedJobs(queryString).then(count => {
       // ensure MultiColumnList is filtered by Date
       this.checkRowsCount(count);
+      cy.wrap(count);
     });
   },
 
@@ -258,4 +280,36 @@ export default {
       return body.jobExecutions[0];
     });
   },
+
+  viewAllIsOpened:() => {
+    cy.expect(Pane('Search & filter').exists());
+    cy.expect(Pane('Logs').find(MultiColumnList({ id: 'list-data-import' })).exists());
+  },
+
+  selectAllLogs:() => {
+    cy.do(MultiColumnList({ id:'list-data-import' }).find(Checkbox({ name:'selected-all', checked: false })).click());
+  },
+
+  checkIsLogsSelected:(elemCount) => {
+    for (let i = 0; i < elemCount; i++) {
+      cy.expect(getCheckboxByRow(i).is({ disabled: false, checked: true }));
+    }
+  },
+
+  unmarcCheckbox:(index) => {
+    cy.do(MultiColumnList({ id:'list-data-import' })
+      .find(MultiColumnListCell({ row: 0, columnIndex: index }))
+      .find(Checkbox({ checked: true })).click());
+  },
+
+  checkmarkAllLogsIsRemoved:() => {
+    cy.do(MultiColumnList({ id:'list-data-import' }).find(Checkbox({ name:'selected-all', checked: false })).exists());
+  },
+
+  deleteLog:() => {
+    cy.do(Pane({ id:'pane-results' }).find(Button('Actions')).click());
+    cy.do(Button('Delete selected logs').click());
+  },
+
+  modalIsAbsent:() => { cy.expect(Modal('Delete data import logs?').absent()); }
 };

@@ -1,3 +1,4 @@
+import devTeams from '../../../../support/dictionary/devTeams';
 import TestType from '../../../../support/dictionary/testTypes';
 import calendarActions from '../../../../support/fragments/settings/calendar/library-hours/library-hours';
 import permissions from '../../../../support/dictionary/permissions';
@@ -32,7 +33,7 @@ describe('Calendar', () => {
     calendarActions.clearCreatedEvents();
   });
 
-  it('C347825 Create, view, edit and delete calendar events (vega)', { tags: [TestType.smoke] }, () => {
+  it('C347825 Create, view, edit and delete calendar events (vega)', { tags: [TestType.smoke, devTeams.vega] }, () => {
     cy.login(fullAccessUser.userName, fullAccessUser.password);
 
     calendarActions.openCalendarEvents();
@@ -42,7 +43,7 @@ describe('Calendar', () => {
     calendarActions.deleteCalendarEvent();
   });
 
-  it('C353206 Settings (Calendar): Can create, view, and edit calendar events (vega)', { tags: [TestType.smoke] }, () => {
+  it('C353206 Settings (Calendar): Can create, view, and edit calendar events (vega)', { tags: [TestType.smoke, devTeams.vega] }, () => {
     cy.login(limitedAccessUser.userName, limitedAccessUser.password);
 
     calendarActions.openCalendarEvents();
@@ -50,5 +51,6 @@ describe('Calendar', () => {
     calendarActions.openEditCalendarPage();
     calendarActions.checkDeleteButtonAbsence();
     calendarActions.editCalendarEvent();
+    calendarActions.deleteCalendarEvent();
   });
 });

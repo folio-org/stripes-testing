@@ -278,22 +278,16 @@ export default {
     cy.okapiRequest({
       method: 'DELETE',
       path: `instance-storage/instances/${id}`,
+      isDefaultSearchParamsRequired: false,
     });
   },
 
-  checkIsInstanceUpdated:(status, specialSource) => {
+  checkIsInstanceUpdated:() => {
     const instanceStatusTerm = KeyValue('Instance status term');
     const source = KeyValue('Source');
 
-    cy.expect(instanceStatusTerm.has({ value: status }));
-    cy.expect(source.has({ value: specialSource }));
+    cy.expect(instanceStatusTerm.has({ value: 'Batch Loaded' }));
+    cy.expect(source.has({ value: 'MARC' }));
     cy.expect(KeyValue('Cataloged date').has({ value: DateTools.getFormattedDate({ date: new Date() }) }));
   },
-
-  openViewSource:() => {
-    cy.do([
-      Section({ id: 'pane-instancedetails' }).find(Button('Actions')).click(),
-      Button('View source').click(),
-    ]);
-  }
 };

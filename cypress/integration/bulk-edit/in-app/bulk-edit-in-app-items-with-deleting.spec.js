@@ -21,48 +21,53 @@ const itemToBeDeleted = {
 const invalidItemBarcodesFileName = `C350905_invalidItemBarcodes_${getRandomPostfix()}.csv`;
 const invalidBarcode = getRandomPostfix();
 
-describe('bulk-edit: in-app file uploading', () => {
-  before('create test data', () => {
-    cy.createTempUser([
-      permissions.bulkEditView.gui,
-      permissions.bulkEditEdit.gui,
-    ])
-      .then(userProperties => {
-        user = userProperties;
-        cy.login(user.username, user.password, { path: TopMenu.bulkEditPath, waiter: BulkEditSearchPane.waitLoading });
+describe('bulk-edit', () => {
+  describe('in-app approach', () => {
+    before('create test data', () => {
+      cy.createTempUser([
+        permissions.bulkEditView.gui,
+        permissions.bulkEditEdit.gui,
+      ])
+        .then(userProperties => {
+          user = userProperties;
+          cy.login(user.username, user.password, {
+            path: TopMenu.bulkEditPath,
+            waiter: BulkEditSearchPane.waitLoading
+          });
 
-        InventoryInstances.createInstanceViaApi(item.instanceName, item.itemBarcode);
-        InventoryInstances.createInstanceViaApi(itemToBeDeleted.instanceName, itemToBeDeleted.itemBarcode);
+          InventoryInstances.createInstanceViaApi(item.instanceName, item.itemBarcode);
+          InventoryInstances.createInstanceViaApi(itemToBeDeleted.instanceName, itemToBeDeleted.itemBarcode);
 
-        FileManager.createFile(`cypress/fixtures/${invalidItemBarcodesFileName}`, `${item.itemBarcode}\r\n${invalidBarcode}\r\n${itemToBeDeleted.itemBarcode}`);
-      });
-  });
+          FileManager.createFile(`cypress/fixtures/${invalidItemBarcodesFileName}`, `${item.itemBarcode}\r\n${invalidBarcode}\r\n${itemToBeDeleted.itemBarcode}`);
+        });
+    });
 
-  after('Delete all data', () => {
-    InventoryInstances.deleteInstanceViaApi(item.itemBarcode);
-    Users.deleteViaApi(user.userId);
-    FileManager.deleteFile(`cypress/fixtures/${invalidItemBarcodesFileName}`);
-  });
+    after('delete test data', () => {
+      InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(item.itemBarcode);
+      Users.deleteViaApi(user.userId);
+      FileManager.deleteFile(`cypress/fixtures/${invalidItemBarcodesFileName}`);
+    });
 
-  it('C353230 Verify completion of the in-app bulk edit (firebird)', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
-    BulkEditSearchPane.selectRecordIdentifier('Item barcode');
+    it('C353230 Verify completion of the in-app bulk edit (firebird)', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
+      BulkEditSearchPane.selectRecordIdentifier('Item barcode');
 
-    BulkEditSearchPane.uploadFile(invalidItemBarcodesFileName);
-    BulkEditSearchPane.waitFileUploading();
+      BulkEditSearchPane.uploadFile(invalidItemBarcodesFileName);
+      BulkEditSearchPane.waitFileUploading();
 
-    BulkEditActions.openActions();
-    BulkEditActions.openStartBulkEditForm();
-    BulkEditActions.replaceTemporaryLocation();
-    BulkEditActions.confirmChanges();
+      BulkEditActions.openActions();
+      BulkEditActions.openStartBulkEditForm();
+      BulkEditActions.replaceTemporaryLocation();
+      BulkEditActions.confirmChanges();
 
-    InventoryInstances.deleteInstanceViaApi(itemToBeDeleted.itemBarcode);
+      InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(itemToBeDeleted.itemBarcode);
 
-    BulkEditActions.saveAndClose();
-    BulkEditSearchPane.waitFileUploading();
+      BulkEditActions.commitChanges();
+      BulkEditSearchPane.waitFileUploading();
 
-    BulkEditSearchPane.verifyNonMatchedResults(invalidBarcode);
-    BulkEditActions.verifyActionAfterChangingRecords();
-    BulkEditSearchPane.verifyErrorLabelAfterChanges(invalidItemBarcodesFileName, 1, 1);
-    BulkEditActions.verifySuccessBanner(1);
+      BulkEditActions.verifyActionAfterChangingRecords();
+      BulkEditSearchPane.verifyErrorLabelAfterChanges(invalidItemBarcodesFileName, 1, 1);
+      BulkEditActions.verifySuccessBanner(1);
+      BulkEditActions.newBulkEdit();
+    });
   });
 });

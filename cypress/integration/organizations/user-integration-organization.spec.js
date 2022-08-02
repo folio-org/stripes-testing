@@ -54,7 +54,7 @@ describe('ui-organizations: EDI convention in Organization Integration', () => {
         userId = userProperties.userId;
         cy.login(userProperties.username, userProperties.password);
       });
-    Organizations.createOrganizationApi(organization)
+    Organizations.createOrganizationViaApi(organization)
       .then(response => {
         organization.id = response;
       });
@@ -63,7 +63,7 @@ describe('ui-organizations: EDI convention in Organization Integration', () => {
 
   after(() => {
     Users.deleteViaApi(userId);
-    Organizations.deleteOrganizationApi(organization.id);
+    Organizations.deleteOrganizationViaApi(organization.id);
   });
 
   it('C350762: User can Create and Edit Integrations for an Organization-Vendor (thunderjet)', { tags: [TestTypes.smoke, devTeams.thunderjet] }, () => {

@@ -8,6 +8,5 @@ export default {
   confirmItemStatus:() => {
     cy.do(confirmModal.find(TextArea('Additional information*')).fillIn(additionalInformation));
     cy.do(confirmModal.find(Button('Confirm')).click());
-    cy.do(Modal('Lost item fee(s) not billed to patron').find(Button('Close')).click());
   },
 };

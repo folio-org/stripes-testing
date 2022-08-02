@@ -7,7 +7,7 @@ import Users from '../../support/fragments/users/users';
 
 let user;
 
-describe('bulk-edit: landing page', () => {
+describe('bulk-edit', () => {
   before('create user', () => {
     cy.createTempUser([
       permissions.bulkEditView.gui,
@@ -21,7 +21,7 @@ describe('bulk-edit: landing page', () => {
       });
   });
 
-  after('Delete all data', () => {
+  after('delete test data', () => {
     Users.deleteViaApi(user.userId);
   });
 

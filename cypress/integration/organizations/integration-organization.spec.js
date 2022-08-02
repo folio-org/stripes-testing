@@ -38,7 +38,7 @@ describe('ui-organizations: EDI convention in Organization Integration', () => {
         userId = userProperties.userId;
         cy.login(userProperties.username, userProperties.password);
       });
-    Organizations.createOrganizationApi(organization)
+    Organizations.createOrganizationViaApi(organization)
       .then(response => {
         organization.id = response;
       });
@@ -47,7 +47,7 @@ describe('ui-organizations: EDI convention in Organization Integration', () => {
 
   after(() => {
     Users.deleteViaApi(userId);
-    Organizations.deleteOrganizationApi(organization.id);
+    Organizations.deleteOrganizationViaApi(organization.id);
   });
 
   it('C350758: Verify if a User can set/edit EDI convention in Organization Integration (thunderjet)', { tags: [TestTypes.smoke, devTeams.thunderjet] }, () => {

@@ -1,7 +1,7 @@
 import DataImport from '../../support/fragments/data_import/dataImport';
 import JobProfiles from '../../support/fragments/data_import/job_profiles/jobProfiles';
 import TopMenu from '../../support/fragments/topMenu';
-import MatchProfiles from '../../support/fragments/data_import/match_profiles/match-profiles';
+import MatchProfiles from '../../support/fragments/data_import/match_profiles/matchProfiles';
 import Logs from '../../support/fragments/data_import/logs/logs';
 import InventorySearch from '../../support/fragments/inventory/inventorySearch';
 import SearchInventory from '../../support/fragments/data_import/searchInventory';
@@ -34,7 +34,7 @@ describe('ui-data-import: Test MARC-MARC matching for 001 field', () => {
     ])
       .then(userProperties => {
         user = userProperties;
-        cy.login(userProperties.username, userProperties.password, { path: TopMenu.dataImportPath, waiter: DataImport.wailtLoading });
+        cy.login(userProperties.username, userProperties.password, { path: TopMenu.dataImportPath, waiter: DataImport.waitLoading });
       });
     DataImport.checkUploadState();
   });
@@ -67,10 +67,10 @@ describe('ui-data-import: Test MARC-MARC matching for 001 field', () => {
     // get Instance HRID through API
     SearchInventory
       .getInstanceHRID()
-      .then(id => {
+      .then(hrId => {
         // download .csv file
         cy.visit(TopMenu.inventoryPath);
-        SearchInventory.searchInstanceByHRID(id);
+        SearchInventory.searchInstanceByHRID(hrId[0]);
         InventorySearch.saveUUIDs();
         ExportMarcFile.downloadCSVFile(nameForCSVFile, 'SearchInstanceUUIDs*');
         FileManager.deleteFolder(Cypress.config('downloadsFolder'));
@@ -137,7 +137,7 @@ describe('ui-data-import: Test MARC-MARC matching for 001 field', () => {
         FileDetails.checkStatusInColumn(FileDetails.status.updated, FileDetails.columnName.instance);
 
         cy.visit(TopMenu.inventoryPath);
-        SearchInventory.searchInstanceByHRID(id);
+        SearchInventory.searchInstanceByHRID(hrId[0]);
 
         // ensure the fields created in Field mapping profile exists in inventory
         SearchInventory.checkInstanceDetails();

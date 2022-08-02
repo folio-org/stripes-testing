@@ -97,7 +97,7 @@ describe('Check Out', () => {
 
   after(() => {
     cy.wrap(testItems.forEach(item => {
-      CheckInActions.createItemCheckinApi({
+      CheckInActions.checkinItemViaApi({
         itemBarcode: item.barcode,
         servicePointId: servicePoint.id,
         checkInDate: new Date().toISOString(),
@@ -127,7 +127,7 @@ describe('Check Out', () => {
       { missingitemPieces : numberOfMissingPieces, missingDescription: missingPieces });
   };
 
-  it('C591 Check out: multipiece items (folijet) (vega)', { tags: [TestTypes.smoke, DevTeams.folijet] }, () => {
+  it('C591 Check out: multipiece items (vega)', { tags: [TestTypes.smoke, DevTeams.vega] }, () => {
     CheckOutActions.checkIsInterfacesOpened();
     CheckOutActions.checkOutItemUser(userBarcode, testItems[0].barcode);
     CheckOutActions.checkPatronInformation(user.username, userBarcode);

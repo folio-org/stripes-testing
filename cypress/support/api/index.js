@@ -10,7 +10,6 @@ import './requests';
 import './proxy';
 import './blocks';
 import './fees-fines';
-import './organizations';
 import './permissions';
 import './orders';
 import './batch-groups';

@@ -1,5 +1,4 @@
 import { Button, TextField, Pane, Select, HTML, including } from '../../../../interactors';
-import { getLongDelay } from '../../utils/cypressTools';
 
 const actionsButton = Button('Actions');
 const newRequestButton = Button('New');
@@ -12,12 +11,10 @@ const selectServicePoint = Select({ name:'pickupServicePointId' });
 
 export default {
   openNewRequestPane() {
-    cy.intercept('/cancellation-reason-storage/cancellation-reasons').as('getReasons');
     cy.do([
       actionsButton.click(),
       newRequestButton.click()
     ]);
-    cy.wait('@getReasons');
   },
 
   fillRequiredFields(newRequest) {
@@ -34,10 +31,7 @@ export default {
   },
 
   choosepickupServicePoint(pickupServicePoint) {
-    cy.intercept('/inventory/items?*').as('getItems');
-    cy.wait('@getItems', getLongDelay());
     cy.do(selectServicePoint.choose(pickupServicePoint));
-    cy.wait('@getItems');
     cy.expect(HTML(including(pickupServicePoint)).exists());
   },
 

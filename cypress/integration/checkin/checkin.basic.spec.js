@@ -9,9 +9,10 @@ import UserEdit from '../../support/fragments/users/userEdit';
 import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
 import generateItemBarcode from '../../support/utils/generateItemBarcode';
 import getRandomPostfix from '../../support/utils/stringTools';
-import CheckoutActions from '../../support/fragments/checkout/checkout';
 import Users from '../../support/fragments/users/users';
 import InTransitModal from '../../support/fragments/checkin/modals/inTransit';
+import Checkout from '../../support/fragments/checkout/checkout';
+import devTeams from '../../support/dictionary/devTeams';
 
 describe('Check In - Actions ', () => {
   const userData = {
@@ -65,7 +66,7 @@ describe('Check In - Actions ', () => {
         UserEdit.addServicePointViaApi(itemData.servicepointId,
           userData.userId, itemData.servicepointId);
 
-        CheckoutActions.createItemCheckoutViaApi({
+        Checkout.checkoutItemViaApi({
           id: uuid(),
           itemBarcode: itemData.barcode,
           loanDate: moment.utc().format(),
@@ -78,11 +79,11 @@ describe('Check In - Actions ', () => {
   });
 
   after('Delete New Service point, Item and User', () => {
-    InventoryInstances.deleteInstanceViaApi(itemData.barcode);
+    InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(itemData.barcode);
     Users.deleteViaApi(userData.userId);
   });
 
-  it('C347631 Check in: Basic check in (vega)', { tags: [TestTypes.smoke] }, () => {
+  it('C347631 Check in: Basic check in (vega)', { tags: [TestTypes.smoke, devTeams.vega] }, () => {
     CheckInActions.checkInItemGui(itemData.barcode);
     InTransitModal.verifyModalTitle();
     InTransitModal.verifySelectedCheckboxPrintSlip();
