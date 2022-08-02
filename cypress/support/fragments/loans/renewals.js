@@ -10,7 +10,11 @@ import {
   MultiColumnListHeader,
   MultiColumnListCell,
   MultiColumnListRow,
+  EditableList,
+  Checkbox,
+  FieldSet,
 } from '../../../../interactors';
+import button from '../../../../interactors/button';
 import dateTools from '../../utils/dateTools';
 
 const fieldLabels = {
@@ -192,4 +196,13 @@ export default {
       firstTableRow.find(MultiColumnListCell(overrideData.additionalInfo)).exists(),
     ]);
   },
+
+  renewAllLoans() {
+    cy.get('#clickable-list-column- input[type=checkbox]').click();
+    cy.do(Button(buttonLabels.renew).click());
+  },
+  confirmRenewalsSuccess() {
+    cy.expect(Modal('Renew Confirmation').exists());
+    cy.do(Button(buttonLabels.close).click());
+  }
 };

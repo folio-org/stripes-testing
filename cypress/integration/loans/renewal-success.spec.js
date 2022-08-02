@@ -1,21 +1,17 @@
-import moment from 'moment';
 import uuid from 'uuid';
-import TestTypes from '../../support/dictionary/testTypes';
+import moment from 'moment';
+import TestType from '../../support/dictionary/testTypes';
+import renewalActions from '../../support/fragments/loans/renewals';
 import generateItemBarcode from '../../support/utils/generateItemBarcode';
-import getRandomPostfix from '../../support/utils/stringTools';
+import permissions from '../../support/dictionary/permissions';
 import {
-  REQUEST_POLICY_NAMES,
-  NOTICE_POLICY_NAMES,
-  OVERDUE_FINE_POLICY_NAMES,
   CY_ENV,
   LOAN_TYPE_NAMES,
   MATERIAL_TYPE_NAMES,
-  LIBRARY_DUE_DATE_MANAGMENT,
-  LOAN_PROFILE,
-  LOST_ITEM_FEES_POLICY_NAMES,
 } from '../../support/constants';
-import checkout from '../../support/fragments/checkout/checkout';
-import topMenu from '../../support/fragments/topMenu';
+import getRandomPostfix from '../../support/utils/stringTools';
+import loanPolicyActions from '../../support/fragments/circulation/loan-policy';
+import checkoutActions from '../../support/fragments/checkout/checkout';
 import checkinActions from '../../support/fragments/check-in-actions/checkInActions';
 import users from '../../support/fragments/users/users';
 import InventoryHoldings from '../../support/fragments/inventory/holdings/inventoryHoldings';
@@ -23,31 +19,40 @@ import ServicePoints from '../../support/fragments/settings/tenant/servicePoints
 import InventoryInstance from '../../support/fragments/inventory/inventoryInstance';
 import usersSearchPane from '../../support/fragments/users/usersSearchPane';
 import UsersCard from '../../support/fragments/users/usersCard';
+import topMenu from '../../support/fragments/topMenu';
+import InteractorsTools from '../../support/utils/interactorsTools';
 
-
-
-describe('ui-circulation-settings: Fixed due date schedules', () => {
-  let userId;
-  let userBarcode;
-  let createdLoanPolicy;
+describe('Renewal', () => {
   let materialTypeId;
-  let mySchedule;
-  let rulesDefaultString;
-  let patronGroupId;
+  let loanId;
   let servicePointId;
-  const USER_BARCODE = uuid();
-  const ITEM_BARCODE1 = generateItemBarcode();
-  const ITEM_BARCODE2 = generateItemBarcode();
-  const fromDate = moment.utc().subtract(2, 'days');
-  const toDate = moment.utc().add(2, 'days');
-  const dueDate = moment.utc().add(2, 'days');
-  const newToDate = moment.utc().subtract(1, 'days');
-  const dateFallsMessage = 'renewal date falls outside of date ranges in fixed loan policy';
+  let initialCircRules;
   let sourceId;
+  const ITEM_BARCODE2 = `${generateItemBarcode()}2`;
+  const firstName = 'testPermFirst';
+  const renewUserData = {
+    firstName,
+    lastName: '',
+    id: '',
+    barcode: '',
+  };
+  const renewOverrideUserData = { ...renewUserData };
+  const LOAN_POLICY_ID = uuid();
+  const loanPolicyData = {
+    id: LOAN_POLICY_ID,
+    name: `Test loan policy ${LOAN_POLICY_ID}`,
+  };
+  const itemData = {
+    title: `CY_Test instance ${getRandomPostfix()}`,
+    status: 'Checked out',
+    requests: '0',
+    barcode: generateItemBarcode(),
+    loanPolicy: loanPolicyData.name,
+  };
   let userName;
+
   before(() => {
-    cy.login(Cypress.env(CY_ENV.DIKU_LOGIN), Cypress.env(CY_ENV.DIKU_PASSWORD));
-    cy.getToken(Cypress.env(CY_ENV.DIKU_LOGIN), Cypress.env(CY_ENV.DIKU_PASSWORD))
+    cy.getAdminToken()
       .then(() => {
         cy.getInstanceTypes({ limit: 1 });
         cy.getHoldingTypes({ limit: 1 });
@@ -56,37 +61,44 @@ describe('ui-circulation-settings: Fixed due date schedules', () => {
           sourceId = holdingsSources[0].id;
         });
         cy.getLoanTypes({ query: `name="${LOAN_TYPE_NAMES.CAN_CIRCULATE}"` });
-        cy.getMaterialTypes({ query: `name="${MATERIAL_TYPE_NAMES.MICROFORM}"` })
+        cy.getMaterialTypes({ query: `name="${MATERIAL_TYPE_NAMES.BOOK}"` })
           .then(materilaTypes => {
             materialTypeId = materilaTypes.id;
           });
-        cy.getUserGroups({ limit: 1 })
-          .then(patronGroups => {
-            patronGroupId = patronGroups;
+        cy.getRequestPolicy();
+        cy.getNoticePolicy();
+        cy.getOverdueFinePolicy();
+        cy.getLostItemFeesPolicy();
+        cy.getCirculationRules()
+          .then(rules => {
+            initialCircRules = rules.rulesAsText;
+          });
+        ServicePoints.getViaApi({ pickupLocation: true })
+          .then((servicePoints) => {
+            servicePointId = servicePoints[0].id;
           });
       })
       .then(() => {
-        users.createViaApi({
-          active: true,
-          barcode: USER_BARCODE,
-          personal: {
-            preferredContactTypeId: '002',
-            lastName: `Test user ${getRandomPostfix()}`,
-            email: 'test@folio.org',
-          },
-          patronGroup: patronGroupId,
-          departments: [],
-        })
-          .then((user) => {
-            console.log(user);
-            userId = user.id;
-            userBarcode = user.barcode;
-            userName = user.lastName;
+        // create user
+        cy.createTempUser([
+          permissions.loansView.gui,
+          permissions.loansRenew.gui,
+        ])
+          .then(userProperties => {
+            renewUserData.lastName = userProperties.username;
+            renewUserData.id = userProperties.userId;
+            renewUserData.barcode = userProperties.barcode;
+            userName = userProperties.username;
+
+            cy.login(userProperties.username, userProperties.password);
           });
+      })
+      // create instance
+      .then(() => {
         cy.createInstance({
           instance: {
             instanceTypeId: Cypress.env(CY_ENV.INSTANCE_TYPES)[0].id,
-            title: `Automation test instance ${getRandomPostfix()}`,
+            title: itemData.title,
           },
           holdings: [{
             holdingsTypeId: Cypress.env(CY_ENV.HOLDINGS_TYPES)[0].id,
@@ -94,7 +106,7 @@ describe('ui-circulation-settings: Fixed due date schedules', () => {
             sourceId,
           }],
           items: [[{
-            barcode: ITEM_BARCODE1,
+            barcode: itemData.barcode,
             status: { name: 'Available' },
             permanentLoanType: { id: Cypress.env(CY_ENV.LOAN_TYPES)[0].id },
             materialType: { id: materialTypeId },
@@ -105,105 +117,77 @@ describe('ui-circulation-settings: Fixed due date schedules', () => {
             permanentLoanType: { id: Cypress.env(CY_ENV.LOAN_TYPES)[0].id },
             materialType: { id: materialTypeId },
           }]],
+        });
+      })
+      // create loan policy
+      .then(() => {
+        loanPolicyActions.createRenewableLoanPolicyApi(loanPolicyData);
+      })
+      // create circulation rules
+      .then(() => {
+        const requestPolicyId = Cypress.env(CY_ENV.REQUEST_POLICY)[0].id;
+        const noticePolicyId = Cypress.env(CY_ENV.NOTICE_POLICY)[0].id;
+        const overdueFinePolicyId = Cypress.env(CY_ENV.OVERDUE_FINE_POLICY)[0].id;
+        const lostItemFeesPolicyId = Cypress.env(CY_ENV.LOST_ITEM_FEES_POLICY)[0].id;
+        const policy = `l ${loanPolicyData.id} r ${requestPolicyId} n ${noticePolicyId} o ${overdueFinePolicyId} i ${lostItemFeesPolicyId}`;
+        const priority = 'priority: number-of-criteria, criterium (t, s, c, b, a, m, g), last-line';
+        const newRule = `${priority}\nfallback-policy: ${policy}\nm ${materialTypeId}: ${policy}`;
+
+        cy.updateCirculationRules({
+          rulesAsText: newRule,
+        });
+      })
+      // checkout item
+      .then(() => {
+        checkoutActions.createItemCheckoutViaApi({
+          servicePointId,
+          itemBarcode: itemData.barcode,
+          userBarcode: renewUserData.barcode
         })
-          .then(() => {
-            cy.createFixedDueDateSchedule({
-              schedules: [{
-                from: fromDate.format(),
-                to: toDate.format(),
-                due: dueDate.format(),
-              }],
-            })
-              .then((schedule) => {
-                mySchedule = schedule;
-
-                cy.createLoanPolicy({
-                  loanable: true,
-                  loansPolicy: {
-                    closedLibraryDueDateManagementId: LIBRARY_DUE_DATE_MANAGMENT.CURRENT_DUE_DATE,
-                    fixedDueDateScheduleId: mySchedule.id,
-                    profileId: LOAN_PROFILE.FIXED,
-                  },
-                  renewable: true,
-                  renewalsPolicy: {
-                    unlimited: true,
-                  },
-                })
-                  .then((loanPolicy) => {
-                    createdLoanPolicy = loanPolicy;
-
-                    ServicePoints.getViaApi({ pickupLocation: true })
-                      .then(servicePoints => {
-                        servicePointId = servicePoints[0].id;
-                      });
-                    cy.getRequestPolicy({ query: `name=="${REQUEST_POLICY_NAMES.ALLOW_ALL}"` });
-                    cy.getNoticePolicy({ query: `name=="${NOTICE_POLICY_NAMES.SEND_NO_NOTICES}"` });
-                    cy.getOverdueFinePolicy({ query: `name=="${OVERDUE_FINE_POLICY_NAMES.OVERDUE_FINE_POLICY}"` });
-                    cy.getLostItemFeesPolicy({ query: `name=="${LOST_ITEM_FEES_POLICY_NAMES.LOST_ITEM_FEES_POLICY}"` });
-                    cy.getCirculationRules()
-                      .then(rules => {
-                        rulesDefaultString = rules.rulesAsText;
-                      });
-                  })
-                  .then(() => {
-                    const requestPolicyId = Cypress.env(CY_ENV.REQUEST_POLICY)[0].id;
-                    const noticePolicyId = Cypress.env(CY_ENV.NOTICE_POLICY)[0].id;
-                    const overdueFinePolicyId = Cypress.env(CY_ENV.OVERDUE_FINE_POLICY)[0].id;
-                    const lostItemFeesPolicyId = Cypress.env(CY_ENV.LOST_ITEM_FEES_POLICY)[0].id;
-                    const newRule = `\ng ${patronGroupId} + m ${materialTypeId}: l ${createdLoanPolicy.id} r ${requestPolicyId} n ${noticePolicyId} o ${overdueFinePolicyId} i ${lostItemFeesPolicyId}`;
-
-                    cy.updateCirculationRules({
-                      rulesAsText: rulesDefaultString + newRule,
-                    });
-                  })
-                  .then(() => {
-                    checkout.createItemCheckoutViaApi({
-                      servicePointId,
-                      itemBarcode: ITEM_BARCODE1,
-                      userBarcode: USER_BARCODE,
-                    });
-                    //   .then(() => {
-                    //     checkout.createItemCheckoutViaApi({
-                    //       servicePointId,
-                    //       itemBarcode: ITEM_BARCODE2,
-                    //       userBarcode: USER_BARCODE,
-                    //     });
-                    //   });
-                  });
-              });
+          .then(body => {
+            loanId = body.id;
           });
+        checkoutActions.createItemCheckoutViaApi({
+          servicePointId,
+          itemBarcode: ITEM_BARCODE2,
+          userBarcode: renewUserData.barcode
+        });
       });
   });
+
   after(() => {
     checkinActions.createItemCheckinApi({
-      itemBarcode: ITEM_BARCODE1,
+      itemBarcode: itemData.barcode,
+      servicePointId,
+      checkInDate: moment.utc().format(),
+    });
+    checkinActions.createItemCheckinApi({
+      itemBarcode: ITEM_BARCODE2,
       servicePointId,
       checkInDate: moment.utc().format(),
     })
       .then(() => {
-        users.deleteViaApi(userId);
-        cy.getInstance({ limit: 1, expandAll: true, query: `"items.barcode"=="${ITEM_BARCODE1}"` })
+        users.deleteViaApi(renewUserData.id);
+        cy.getInstance({ limit: 1, expandAll: true, query: `"items.barcode"=="${itemData.barcode}"` })
           .then((instance) => {
             cy.deleteItem(instance.items[0].id);
+            cy.deleteItem(instance.items[1].id);
             cy.deleteHoldingRecordViaApi(instance.holdings[0].id);
             InventoryInstance.deleteInstanceViaApi(instance.id);
           });
         cy.updateCirculationRules({
-          rulesAsText: rulesDefaultString,
+          rulesAsText: initialCircRules,
         });
-        cy.deleteLoanPolicy(createdLoanPolicy.id)
-          .then(() => {
-            cy.deleteFixedDueDateSchedule(mySchedule.id);
-          });
+        cy.deleteLoanPolicy(LOAN_POLICY_ID);
       });
   });
 
-  it('C567: Renewal: success, from open loans (multiple items) (prokopovych)', { tags: [TestTypes.smoke] },
-    () => {
-      cy.visit(topMenu.usersPath);
-      usersSearchPane.searchByKeywords(userName);
-      UsersCard.openLoans();
-      UsersCard.showOpenedLoans();
-      cy.pause();
-    });
+  it('C567: Renewal: success, from open loans (multiple items) (prokopovych)', { tags: [TestType.smoke] }, () => {
+    cy.visit(topMenu.usersPath);
+    usersSearchPane.searchByKeywords(userName);
+    UsersCard.openLoans();
+    UsersCard.showOpenedLoans();
+    renewalActions.renewAllLoans();
+    renewalActions.confirmRenewalsSuccess();
+  });
 });
