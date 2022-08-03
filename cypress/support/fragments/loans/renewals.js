@@ -10,11 +10,7 @@ import {
   MultiColumnListHeader,
   MultiColumnListCell,
   MultiColumnListRow,
-  EditableList,
-  Checkbox,
-  FieldSet,
 } from '../../../../interactors';
-import button from '../../../../interactors/button';
 import dateTools from '../../utils/dateTools';
 
 const fieldLabels = {

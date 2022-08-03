@@ -1,7 +1,7 @@
 import uuid from 'uuid';
 import moment from 'moment';
 import TestType from '../../support/dictionary/testTypes';
-import renewalActions from '../../support/fragments/loans/renewals';
+import RenewalActions from '../../support/fragments/loans/renewals';
 import generateItemBarcode from '../../support/utils/generateItemBarcode';
 import permissions from '../../support/dictionary/permissions';
 import {
@@ -10,21 +10,19 @@ import {
   MATERIAL_TYPE_NAMES,
 } from '../../support/constants';
 import getRandomPostfix from '../../support/utils/stringTools';
-import loanPolicyActions from '../../support/fragments/circulation/loan-policy';
-import checkoutActions from '../../support/fragments/checkout/checkout';
-import checkinActions from '../../support/fragments/check-in-actions/checkInActions';
+import LoanPolicyActions from '../../support/fragments/circulation/loan-policy';
+import CheckoutActions from '../../support/fragments/checkout/checkout';
+import CheckinActions from '../../support/fragments/check-in-actions/checkInActions';
 import users from '../../support/fragments/users/users';
 import InventoryHoldings from '../../support/fragments/inventory/holdings/inventoryHoldings';
 import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
 import InventoryInstance from '../../support/fragments/inventory/inventoryInstance';
-import usersSearchPane from '../../support/fragments/users/usersSearchPane';
+import UsersSearchPane from '../../support/fragments/users/usersSearchPane';
 import UsersCard from '../../support/fragments/users/usersCard';
-import topMenu from '../../support/fragments/topMenu';
-import InteractorsTools from '../../support/utils/interactorsTools';
+import TopMenu from '../../support/fragments/topMenu';
 
 describe('Renewal', () => {
   let materialTypeId;
-  let loanId;
   let servicePointId;
   let initialCircRules;
   let sourceId;
@@ -36,7 +34,6 @@ describe('Renewal', () => {
     id: '',
     barcode: '',
   };
-  const renewOverrideUserData = { ...renewUserData };
   const LOAN_POLICY_ID = uuid();
   const loanPolicyData = {
     id: LOAN_POLICY_ID,
@@ -121,7 +118,7 @@ describe('Renewal', () => {
       })
       // create loan policy
       .then(() => {
-        loanPolicyActions.createRenewableLoanPolicyApi(loanPolicyData);
+        LoanPolicyActions.createRenewableLoanPolicyApi(loanPolicyData);
       })
       // create circulation rules
       .then(() => {
@@ -139,15 +136,12 @@ describe('Renewal', () => {
       })
       // checkout item
       .then(() => {
-        checkoutActions.createItemCheckoutViaApi({
+        CheckoutActions.createItemCheckoutViaApi({
           servicePointId,
           itemBarcode: itemData.barcode,
           userBarcode: renewUserData.barcode
-        })
-          .then(body => {
-            loanId = body.id;
-          });
-        checkoutActions.createItemCheckoutViaApi({
+        });
+        CheckoutActions.createItemCheckoutViaApi({
           servicePointId,
           itemBarcode: ITEM_BARCODE2,
           userBarcode: renewUserData.barcode
@@ -156,12 +150,12 @@ describe('Renewal', () => {
   });
 
   after(() => {
-    checkinActions.createItemCheckinApi({
+    CheckinActions.createItemCheckinApi({
       itemBarcode: itemData.barcode,
       servicePointId,
       checkInDate: moment.utc().format(),
     });
-    checkinActions.createItemCheckinApi({
+    CheckinActions.createItemCheckinApi({
       itemBarcode: ITEM_BARCODE2,
       servicePointId,
       checkInDate: moment.utc().format(),
@@ -183,11 +177,11 @@ describe('Renewal', () => {
   });
 
   it('C567: Renewal: success, from open loans (multiple items) (prokopovych)', { tags: [TestType.smoke] }, () => {
-    cy.visit(topMenu.usersPath);
-    usersSearchPane.searchByKeywords(userName);
+    cy.visit(TopMenu.usersPath);
+    UsersSearchPane.searchByKeywords(userName);
     UsersCard.openLoans();
     UsersCard.showOpenedLoans();
-    renewalActions.renewAllLoans();
-    renewalActions.confirmRenewalsSuccess();
+    RenewalActions.renewAllLoans();
+    RenewalActions.confirmRenewalsSuccess();
   });
 });
