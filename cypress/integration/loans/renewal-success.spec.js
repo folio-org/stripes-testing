@@ -26,7 +26,7 @@ describe('Renewal', () => {
   let servicePointId;
   let initialCircRules;
   let sourceId;
-  const ITEM_BARCODE2 = `${generateItemBarcode()}2`;
+  const secondItemBarcode = `${generateItemBarcode()}2`;
   const firstName = 'testPermFirst';
   const renewUserData = {
     firstName,
@@ -34,10 +34,10 @@ describe('Renewal', () => {
     id: '',
     barcode: '',
   };
-  const LOAN_POLICY_ID = uuid();
+  const loanPolicyId = uuid();
   const loanPolicyData = {
-    id: LOAN_POLICY_ID,
-    name: `Test loan policy ${LOAN_POLICY_ID}`,
+    id: loanPolicyId,
+    name: `Test loan policy ${loanPolicyId}`,
   };
   const itemData = {
     title: `CY_Test instance ${getRandomPostfix()}`,
@@ -109,7 +109,7 @@ describe('Renewal', () => {
             materialType: { id: materialTypeId },
           },
           {
-            barcode: ITEM_BARCODE2,
+            barcode: secondItemBarcode,
             status: { name: 'Available' },
             permanentLoanType: { id: Cypress.env(CY_ENV.LOAN_TYPES)[0].id },
             materialType: { id: materialTypeId },
@@ -143,7 +143,7 @@ describe('Renewal', () => {
         });
         CheckoutActions.createItemCheckoutViaApi({
           servicePointId,
-          itemBarcode: ITEM_BARCODE2,
+          itemBarcode: secondItemBarcode,
           userBarcode: renewUserData.barcode
         });
       });
@@ -156,7 +156,7 @@ describe('Renewal', () => {
       checkInDate: moment.utc().format(),
     });
     CheckinActions.createItemCheckinApi({
-      itemBarcode: ITEM_BARCODE2,
+      itemBarcode: secondItemBarcode,
       servicePointId,
       checkInDate: moment.utc().format(),
     })
@@ -172,7 +172,7 @@ describe('Renewal', () => {
         cy.updateCirculationRules({
           rulesAsText: initialCircRules,
         });
-        cy.deleteLoanPolicy(LOAN_POLICY_ID);
+        cy.deleteLoanPolicy(loanPolicyId);
       });
   });
 
