@@ -19,10 +19,7 @@ describe('ui-data-import: Import a large EDIFACT invoice file', () => {
   const jobProfileName = `autoTestJobProf.${getRandomPostfix()}`;
 
   beforeEach(() => {
-    cy.login(
-      Cypress.env('diku_login'),
-      Cypress.env('diku_password')
-    );
+    cy.loginAsAdmin();
     cy.getAdminToken();
 
     DataImport.checkUploadState();

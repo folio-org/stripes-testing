@@ -1,4 +1,3 @@
-import uuid from 'uuid';
 import {
   TextField,
   Button,
@@ -13,7 +12,6 @@ import {
   including,
   PaneContent
 } from '../../../../interactors';
-import { REQUEST_METHOD } from '../../constants';
 
 const modal = Modal('Confirm multipiece check out');
 
@@ -32,7 +30,7 @@ export default {
     cy.expect([
       userPane.find(KeyValue({ value: 'Active' })).exists(),
       userPane.find(KeyValue({ value: patronGroup })).exists(),
-      userPane.find(Link(`${user.personal.lastName}, `)).exists(),
+      userPane.find(Link(including(`${user.personal.lastName}, `))).exists(),
       userPane.find(Link(user.barcode)).exists(),
     ]);
   },
@@ -49,12 +47,6 @@ export default {
       MultiColumnList({ rowCount: 1 }).find(MultiColumnListCell(itemBarcode)).exists(),
       MultiColumnList({ rowCount: 1 }).find(MultiColumnListCell(instanceTitle)).exists(),
       Label('Total items scanned: 1').exists(),
-    ]);
-  },
-
-  endSession() {
-    cy.do([
-      Button('End session').click(),
     ]);
   },
 
@@ -88,17 +80,5 @@ export default {
 
   checkItem:(barcode) => {
     cy.expect(MultiColumnList({ id:'list-items-checked-out' }).find(HTML(including(barcode))).absent());
-  },
-
-  itemCheckoutApi(body) {
-    return cy.okapiRequest({
-      method: REQUEST_METHOD.POST,
-      path: 'circulation/check-in-by-barcode',
-      body: {
-        id: uuid(),
-        ...body,
-      },
-      isDefaultSearchParamsRequired: false,
-    });
-  },
+  }
 };

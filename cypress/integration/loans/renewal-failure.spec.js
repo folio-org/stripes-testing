@@ -11,12 +11,12 @@ import {
 } from '../../support/constants';
 import getRandomPostfix from '../../support/utils/stringTools';
 import loanPolicyActions from '../../support/fragments/circulation/loan-policy';
-import checkoutActions from '../../support/fragments/checkout/checkout';
-import checkinActions from '../../support/fragments/check-in-actions/checkInActions';
-import users from '../../support/fragments/users/users';
+import CheckinActions from '../../support/fragments/check-in-actions/checkInActions';
+import Users from '../../support/fragments/users/users';
 import InventoryHoldings from '../../support/fragments/inventory/holdings/inventoryHoldings';
 import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
 import InventoryInstance from '../../support/fragments/inventory/inventoryInstance';
+import Checkout from '../../support/fragments/checkout/checkout';
 
 describe('Renewal', () => {
   let materialTypeId;
@@ -137,7 +137,7 @@ describe('Renewal', () => {
       })
       // checkout item
       .then(() => {
-        checkoutActions.createItemCheckoutViaApi({
+        Checkout.checkoutItemViaApi({
           servicePointId,
           itemBarcode: itemData.barcode,
           userBarcode: renewUserData.barcode
@@ -149,14 +149,14 @@ describe('Renewal', () => {
   });
 
   after(() => {
-    checkinActions.createItemCheckinApi({
+    CheckinActions.checkinItemViaApi({
       itemBarcode: itemData.barcode,
       servicePointId,
       checkInDate: moment.utc().format(),
     })
       .then(() => {
-        users.deleteViaApi(renewUserData.id);
-        users.deleteViaApi(renewOverrideUserData.id);
+        Users.deleteViaApi(renewUserData.id);
+        Users.deleteViaApi(renewOverrideUserData.id);
         cy.getInstance({ limit: 1, expandAll: true, query: `"items.barcode"=="${itemData.barcode}"` })
           .then((instance) => {
             cy.deleteItem(instance.items[0].id);

@@ -15,7 +15,7 @@ describe('ui-inventory: Enter different type of identifiers', () => {
 
   beforeEach('navigate to inventory', () => {
     instanceTitle = `autoTestInstanceTitle ${Helper.getRandomBarcode()}`;
-    cy.login(Cypress.env('diku_login'), Cypress.env('diku_password'));
+    cy.loginAsAdmin();
     cy.getAdminToken()
       .then(() => {
         cy.getInstanceTypes({ limit: 1 });

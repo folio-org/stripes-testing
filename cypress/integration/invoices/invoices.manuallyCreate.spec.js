@@ -3,6 +3,7 @@ import NewInvoice from '../../support/fragments/invoices/newInvoice';
 import Invoices from '../../support/fragments/invoices/invoices';
 import testType from '../../support/dictionary/testTypes';
 import VendorAddress from '../../support/fragments/invoices/vendorAddress';
+import Organizations from '../../support/fragments/organizations/organizations';
 import devTeams from '../../support/dictionary/devTeams';
 
 describe('ui-invoices: Invoice creation', () => {
@@ -11,7 +12,7 @@ describe('ui-invoices: Invoice creation', () => {
 
   before(() => {
     cy.getAdminToken();
-    cy.getOrganizationApi({ query: `name=${invoice.vendorName}` })
+    Organizations.getOrganizationViaApi({ query: `name=${invoice.vendorName}` })
       .then(organization => {
         invoice.accountingCode = organization.erpCode;
         Object.assign(vendorPrimaryAddress,

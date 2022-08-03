@@ -2,7 +2,8 @@ import {
   Button,
   KeyValue,
   MultiColumnListCell,
-  TextField
+  TextField,
+  Select
 } from '../../../../interactors';
 import logsViewAll from './logs/logsViewAll';
 import DateTools from '../../utils/dateTools';
@@ -10,8 +11,7 @@ import InventoryInstances from '../inventory/inventoryInstances';
 
 // TODO replace to Inventory/inventorySearch
 const getInstanceHRID = () => {
-  return logsViewAll
-    .getSingleJobProfile() // get the first job id from job logs list
+  return logsViewAll.getSingleJobProfile() // get the first job id from job logs list
     .then(({ id }) => {
       // then, make request with the job id
       // and get the only record id inside the uploaded file
@@ -37,16 +37,16 @@ const getInstanceHRID = () => {
             },
           })
             .then(({ body: { relatedInstanceInfo } }) => {
-              return relatedInstanceInfo.hridList[0];
+              return relatedInstanceInfo.hridList;
             });
         });
     });
 };
 
 const searchInstanceByHRID = (id) => {
-  cy.get('#input-inventory-search-qindex').select('Instance HRID');
+  InventoryInstances.waitContentLoading();
   cy.do([
-    // Select({ id: 'input-inventory-search-qindex' }).choose('Instance HRID'),
+    Select({ id: 'input-inventory-search-qindex' }).choose('Instance HRID'),
     TextField({ id: 'input-inventory-search' }).fillIn(id),
     Button('Search').click()
   ]);

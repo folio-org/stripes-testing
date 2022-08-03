@@ -202,13 +202,12 @@ export default {
       cy.wait(1500);
       cy.do(TextField('Permanent').fillIn('980$a'));
       cy.do(TextField('Call number type').fillIn('"Library of Congress classification"'));
+      // wait accepted values to be filled
+      cy.wait(1500);
       cy.do(TextField('Call number').fillIn('980$b " " 980$c'));
     } else if (specialMappingProfile.typeValue === itemType) {
       cy.do(TextField('Barcode').fillIn('981$b'));
       cy.do(TextField('Copy number').fillIn('981$b'));
-      // wait accepted values to be filled
-      // eslint-disable-next-line cypress/no-unnecessary-waiting
-      cy.wait(1800);
       cy.do(TextField('Status').fillIn(status));
     } else if (specialMappingProfile.typeValue === folioRecordTypeValue.instance) {
       if ('update' in specialMappingProfile) {

@@ -3,7 +3,7 @@ import NewActionProfile from '../../support/fragments/data_import/action_profile
 import NewFieldMappingProfile from '../../support/fragments/data_import/mapping_profiles/newMappingProfile';
 import ActionProfiles from '../../support/fragments/data_import/action_profiles/actionProfiles';
 import NewJobProfile from '../../support/fragments/data_import/job_profiles/newJobProfile';
-import MatchProfiles from '../../support/fragments/data_import/match_profiles/match-profiles';
+import MatchProfiles from '../../support/fragments/data_import/match_profiles/matchProfiles';
 import SearchInventory from '../../support/fragments/data_import/searchInventory';
 import DataImport from '../../support/fragments/data_import/dataImport';
 import Logs from '../../support/fragments/data_import/logs/logs';
@@ -33,10 +33,7 @@ describe('ui-data-import: MARC file import with matching for 999 ff field', () =
   const jobProfileNameForExport = `autotestJobProf${getRandomPostfix()}`;
 
   beforeEach(() => {
-    cy.login(
-      Cypress.env('diku_login'),
-      Cypress.env('diku_password')
-    );
+    cy.loginAsAdmin();
     cy.getAdminToken();
 
     DataImport.checkUploadState();
@@ -85,10 +82,10 @@ describe('ui-data-import: MARC file import with matching for 999 ff field', () =
     // get Instance HRID through API
     SearchInventory
       .getInstanceHRID()
-      .then(id => {
+      .then(hrId => {
         // download .csv file
         cy.visit(TopMenu.inventoryPath);
-        SearchInventory.searchInstanceByHRID(id);
+        SearchInventory.searchInstanceByHRID(hrId[0]);
         InventorySearch.saveUUIDs();
         ExportMarcFile.downloadCSVFile(nameForCSVFile, 'SearchInstanceUUIDs*');
         FileManager.deleteFolder(Cypress.config('downloadsFolder'));
@@ -164,9 +161,9 @@ describe('ui-data-import: MARC file import with matching for 999 ff field', () =
         // get Instance HRID through API
         SearchInventory
           .getInstanceHRID()
-          .then(hrId => {
+          .then(id => {
             cy.visit(TopMenu.inventoryPath);
-            SearchInventory.searchInstanceByHRID(hrId);
+            SearchInventory.searchInstanceByHRID(id[0]);
 
             // ensure the fields created in Field mapping profile exists in inventory
             SearchInventory.checkInstanceDetails();

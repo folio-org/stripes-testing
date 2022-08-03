@@ -49,7 +49,7 @@ export default {
     cy.do(MultiColumnListCell({ content: batchGroup.name }).perform(
       element => {
         const rowNumber = element.parentElement.parentElement.getAttribute('data-row-index');
-        const createdByAdmin = `${DateTools.getFormattedDateWithSlashes({ date: new Date() })} by folio-aqa`;
+        const createdByAdmin = `${DateTools.getFormattedDateWithSlashes({ date: new Date() })} by ADMINISTRATOR, DIKU`;
         cy.expect(getEditableListRow(rowNumber)
           .find(MultiColumnListCell({ columnIndex: 0 }))
           .has({ content: batchGroup.name }));

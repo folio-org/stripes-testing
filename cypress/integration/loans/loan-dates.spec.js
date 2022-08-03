@@ -97,7 +97,7 @@ describe('loan dates', () => {
   });
 
   after('Delete all data', () => {
-    CheckinActions.createItemCheckinApi({
+    CheckinActions.checkinItemViaApi({
       itemBarcode: item.barcode,
       servicePointId,
       checkInDate: '2021-09-30T16:14:50.444Z',

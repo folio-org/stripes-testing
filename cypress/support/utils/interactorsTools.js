@@ -86,7 +86,6 @@ export default {
     });
   },
   checkCalloutMessage: (text, calloutType = calloutTypes.success) => {
-    cy.expect(Callout({ type: calloutType }).exists());
     cy.expect(Callout({ type: calloutType }).is({ textContent: text }));
   },
   closeCalloutMessage: () => cy.do(Callout().find(Button({ icon:'times' })).click())

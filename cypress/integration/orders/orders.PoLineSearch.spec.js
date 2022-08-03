@@ -4,16 +4,17 @@ import TestType from '../../support/dictionary/testTypes';
 import Orders from '../../support/fragments/orders/orders';
 import TopMenu from '../../support/fragments/topMenu';
 import OrdersHelper from '../../support/fragments/orders/ordersHelper';
-import basicOrderLine from '../../support/fragments/orders/basicOrderLine';
+import BasicOrderLine from '../../support/fragments/orders/basicOrderLine';
 import getRandomPostfix from '../../support/utils/stringTools';
+import Organizations from '../../support/fragments/organizations/organizations';
 import devTeams from '../../support/dictionary/devTeams';
+import NewOrganization from '../../support/fragments/organizations/newOrganization';
 
-// TODO:  Rebuild the test after fixing the problem with orderLineNumber definition in its scope.
-// TODO: Check the search using the second POLINE,to have a working search on empty env.
 describe('orders: Test Po line search', () => {
+  const organization = { ...NewOrganization.defaultUiOrganizations };
   const order = { ...NewOrder.defaultOneTimeOrder };
   const orderLine = {
-    ...basicOrderLine.defaultOrderLine,
+    ...BasicOrderLine.defaultOrderLine,
     details: {
       productIds: [{
         productId: '9781868885015',
@@ -67,11 +68,12 @@ describe('orders: Test Po line search', () => {
 
   before(() => {
     cy.getAdminToken();
-    cy.getOrganizationApi({ query: 'name="Amazon.com"' })
-      .then(organization => {
-        order.vendor = organization.id;
-        orderLine.physical.materialSupplier = organization.id;
-        orderLine.eresource.accessProvider = organization.id;
+    Organizations.createOrganizationViaApi(organization)
+      .then(response => {
+        organization.id = response;
+        order.vendor = response;
+        orderLine.physical.materialSupplier = response;
+        orderLine.eresource.accessProvider = response;
       });
     cy.getLocations({ query: `name="${OrdersHelper.mainLibraryLocation}"` })
       .then(location => { orderLine.locations[0].locationId = location.id; });
@@ -96,6 +98,7 @@ describe('orders: Test Po line search', () => {
 
   after(() => {
     Orders.deleteOrderApi(order.id);
+    Organizations.deleteOrganizationViaApi(organization.id);
   });
 
   searchers.forEach((searcher) => {
