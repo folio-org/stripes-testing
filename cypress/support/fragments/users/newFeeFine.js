@@ -62,6 +62,10 @@ export default {
 
   chargeAndPayNow: () => cy.do([
     rootModal.find(Button({ id:'chargeAndPay' })).click(),
+  ]),
+
+  chargeOnly: () => cy.do([
+    rootModal.find(Button({ id:'chargeOnly' })).click(),
   ])
 };
 

@@ -11,6 +11,13 @@ const getRowByReason = (reason) => cy.then(() => rootSection.find(MultiColumnLis
 const getDescriptionColumnIdex = () => cy.then(() => rootSection.find(MultiColumnListHeader('Description')).index());
 
 export default {
+  createViaApi: (waiveProperties) => cy.okapiRequest({
+    method: 'POST',
+    path: 'waives',
+    body: waiveProperties,
+  }).then(response => {
+    return response.body;
+  }),
   waitLoading:() => cy.expect(rootSection.find(PaneHeader('Fee/fine: Waive reasons')).exists()),
   startAdding:() => cy.do(newButton.click()),
   fillReasonParameters : ({ reason, description }) => {
@@ -42,5 +49,11 @@ export default {
       cy.do(Modal({ id: 'delete-controlled-vocab-entry-confirmation' }).find(Button({ id:'clickable-delete-controlled-vocab-entry-confirmation-confirm' })).click());
       cy.expect(rootSection.find(MultiColumnListCell(reason)).absent());
     });
-  }
+  },
+  deleteViaApi:  (reasonId) => {
+    cy.okapiRequest({
+      method: 'DELETE',
+      path: `waives/${reasonId}`,
+    });
+  },
 };

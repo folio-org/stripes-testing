@@ -1,5 +1,9 @@
 # Change history for stripes-testing
 
+## **4.4.0** (in progress)
+
+* Implement e-2-e automation of test case C465. Refs FAT-797.
+
 ## [4.3.0](https://github.com/folio-org/stripes-testing/tree/v4.3.0) (2022-06-14)
 [Full Changelog](https://github.com/folio-org/stripes-testing/compare/v4.2.0...v4.3.0)
 
