@@ -76,4 +76,24 @@ export default {
       },
     });
   },
+  createRenewableLoanPolicyApi(loanPolicy) {
+    cy.createLoanPolicy({
+      name: loanPolicy.name,
+      id: loanPolicy.id,
+      loanable: true,
+      loansPolicy: {
+        closedLibraryDueDateManagementId: LIBRARY_DUE_DATE_MANAGMENT.CURRENT_DUE_DATE,
+        period: {
+          duration: 3,
+          intervalId: 'Weeks',
+        },
+        profileId: LOAN_PROFILE.ROLLING,
+      },
+      renewable: true,
+      renewalsPolicy: {
+        numberAllowed: 5,
+        renewFromId: 'CURRENT_DUE_DATE'
+      },
+    });
+  },
 };
