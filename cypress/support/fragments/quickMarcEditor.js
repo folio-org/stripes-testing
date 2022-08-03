@@ -1,4 +1,4 @@
-import { QuickMarcEditor, QuickMarcEditorRow, TextArea, Button, Modal, TextField, and, some, Pane, HTML, including } from '../../../interactors';
+import { QuickMarcEditor, QuickMarcEditorRow, TextArea, Button, Modal, TextField, and, some, Pane, HTML, including, Select } from '../../../interactors';
 import dateTools from '../utils/dateTools';
 import getRandomPostfix from '../utils/stringTools';
 
@@ -72,7 +72,6 @@ export default class QuickmarcEditor {
   }
 
   getInitialRowsCount() { return this.validRecord.lastRowNumber; }
-
 
   addNewField(tag = defaultFieldValues.freeTags[0], fieldContent = defaultFieldValues.content) {
     this.addRow();
@@ -311,6 +310,14 @@ export default class QuickmarcEditor {
         cy.expect(getRowInteractorByTagName(readOnlyTag).find(TextField('Indicator', { name: including('.indicators[1]') })).has({ disabled: true }));
       }
     });
+  }
+
+  static addPermanentLocation() {
+    cy.do([
+      Button('Permanent location look-up').click(),
+      Select({ name: 'institutionId' }).choose(including('autotest_name_100.99775068980188767')),
+      Button('Save and close').click(),
+    ]);
   }
 
   checkLDRValue(ldrValue = this.validRecord.ldrValue) {

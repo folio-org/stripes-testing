@@ -8,7 +8,6 @@ import InventoryInstances from '../../support/fragments/inventory/inventoryInsta
 import InventoryHotkeys from '../../support/fragments/inventory/inventoryHotkeys';
 import SearchInventory from '../../support/fragments/data_import/searchInventory';
 import devTeams from '../../support/dictionary/devTeams';
-import InventoryInstance from '../../support/fragments/inventory/inventoryInstance';
 import Users from '../../support/fragments/users/users';
 
 let userId;
@@ -18,7 +17,7 @@ const issnValue = `ISSN test value ${getRandomPostfix()}`;
 const hotKeys = InventoryHotkeys.hotKeys;
 const instanceTitle = `Instance_Test_Title_${getRandomPostfix()}`;
 
-describe('ui-inventory: keyboard shortcut', () => {
+describe('ui-inventory: keyboard shortcut', { retries: 3 }, () => {
   beforeEach('navigate to inventory', () => {
     cy.createTempUser([
       permissions.inventoryAll.gui

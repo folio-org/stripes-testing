@@ -30,7 +30,7 @@ describe('Calendar', () => {
   after(() => {
     users.deleteViaApi(fullAccessUser.id);
     users.deleteViaApi(limitedAccessUser.id);
-    calendarActions.clearCreatedEvents(servicePoint.name);//.then(() => ServicePoints.deleteViaApi(servicePoint.id));
+    calendarActions.clearCreatedEvents(servicePoint.name);
     ServicePoints.deleteViaApi(servicePoint.id);
   });
 
