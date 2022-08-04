@@ -85,11 +85,11 @@ describe('ui-data-import: Match on VRN and update related Instance, Holdings, It
     });
   });
 
-  /*after(() => {
+  after(() => {
     Users.deleteViaApi(userId);
     MatchOnVRN.deletePOLineViaAPI(MatchOnVRN.poLineData.title);
     MatchOnVRN.deleteItemViaAPI();
-  });*/
+  });
 
   it('C350591 Match on VRN and update related Instance, Holdings, Item (folijet)', { tags: [TestTypes.smoke, DevTeams.folijet] }, () => {
     // create order

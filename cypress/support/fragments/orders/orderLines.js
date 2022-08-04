@@ -260,7 +260,9 @@ export default {
   },
 
   openReceiving:() => {
-    cy.do(PaneHeader({ id: 'paneHeaderorder-lines-details' }).find(actionsButton).click());
-    cy.do(Button('Receive').click());
+    cy.do([
+      PaneHeader({ id: 'paneHeaderorder-lines-details' }).find(actionsButton).click(),
+      Button('Receive').click()
+    ]);
   }
 };

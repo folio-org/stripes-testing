@@ -38,10 +38,12 @@ export default {
   },
 
   searchByParameter: (parameter, value) => {
-    cy.do(searchField.selectIndex(parameter));
-    cy.do(searchField.fillIn(value));
-    cy.do(searchButton.focus());
-    cy.do(searchButton.click());
+    cy.do([
+      searchField.selectIndex(parameter),
+      searchField.fillIn(value),
+      searchButton.focus(),
+      searchButton.click()
+    ]);
   },
 
   resetAllFilters:() => {

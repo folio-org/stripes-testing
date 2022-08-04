@@ -59,8 +59,10 @@ const createJobProfile = (jobProfile) => {
 };
 
 const searchJobProfile = (profileName) => {
-  cy.do(TextField({ id:'input-search-job-profiles-field' }).fillIn(profileName));
-  cy.do(resultsPane.find(Button('Search')).click());
+  cy.do([
+    TextField({ id:'input-search-job-profiles-field' }).fillIn(profileName),
+    resultsPane.find(Button('Search')).click()
+  ]);
 };
 
 const waitCreatingJobProfile = () => {
