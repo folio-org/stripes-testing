@@ -123,7 +123,6 @@ describe('ui-inventory: Item status date updates', () => {
           });
       });
     });
-  });
 
   afterEach(() => {
     CheckInActions.checkinItemViaApi({
