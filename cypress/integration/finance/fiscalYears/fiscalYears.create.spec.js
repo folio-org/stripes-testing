@@ -6,7 +6,7 @@ import testType from '../../../support/dictionary/testTypes';
 import FinanceHelp from '../../../support/fragments/finance/financeHelper';
 import devTeams from '../../../support/dictionary/devTeams';
 
-describe('ui-finance: Fiscal Year creation', () => {
+describe('ui-finance: Fiscal Year creation', { retries: 3 }, () => {
   before(() => {
     cy.login(Cypress.env('diku_login'), Cypress.env('diku_password'));
     cy.visit(TopMenu.fiscalYearPath);
