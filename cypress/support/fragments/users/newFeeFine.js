@@ -1,3 +1,4 @@
+import { including } from '@interactors/html';
 import { Button, Modal, Option, Select, TextArea, MultiColumnListRow, HTML, TextField } from '../../../../interactors';
 
 const rootModal = Modal({ id: 'new-modal' });
@@ -22,7 +23,7 @@ export default {
   checkClosedFeesByRow(feeProps, index) {
     cy.do(Button({ id: 'closed-accounts' }).click());
     feeProps.forEach(feeProp => {
-      cy.expect(MultiColumnListRow({ indexRow: `row-${index}` }).find(HTML(feeProp)).exists());
+      cy.expect(MultiColumnListRow({ indexRow: `row-${index}` }).find(HTML(including(feeProp))).exists());
     });
   },
 

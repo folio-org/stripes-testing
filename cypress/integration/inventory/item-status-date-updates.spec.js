@@ -77,6 +77,11 @@ describe('ui-inventory: Item status date updates', () => {
         UserEdit.addServicePointsViaApi([effectiveLocationServicePoint.id, notEffectiveLocationServicePoint.id],
           user.userId);
 
+        Requests.setRequestPolicyApi().then(({ oldRulesAsText, policy }) => {
+          oldRulesText = oldRulesAsText;
+          requestPolicyId = policy.id;
+        });
+
         cy.login(userProperties.username, userProperties.password)
           .then(() => {
             NewLocations.createViaApi(NewLocations.getDefaultLocation(effectiveLocationServicePoint.id))
@@ -199,7 +204,7 @@ describe('ui-inventory: Item status date updates', () => {
     if (confirmModalCheck) {
       confirmModalCheck();
     }
-    CheckOut.openItemRecordInInventory(itemBarcode);
+    CheckOut.openItemRecordInInventory(specialItemBarcode);
     fullCheck(status);
   };
 
@@ -278,7 +283,7 @@ describe('ui-inventory: Item status date updates', () => {
     checkIn(itemBarcode, ItemVeiw.itemStatuses.awaitingPickup, ConfirmItemInModal.confirmAvaitingPickUpModal);
 
     // check out item to user for whom page request was created
-    checkOut(user.barcode, itemBarcode, ItemVeiw.itemStatuses.checkedOut, ConfirmItemInModal.confirmAvaitingPickupCheckInModal);
+    checkOut(user.barcode, itemBarcode, ItemVeiw.itemStatuses.checkedOut);
 
     // declare item lost
     openUser(user);

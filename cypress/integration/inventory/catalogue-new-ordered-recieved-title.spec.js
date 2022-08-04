@@ -77,6 +77,8 @@ describe('orders: Receive piece from Order', () => {
     InventorySearch.switchToItem();
     InventorySearch.simpleSearchByParameter('Barcode', barcode);
     InventoryInstance.openHoldings(['Main Library >']);
-    InventorySearch.verifySearchResult('In transit');
+    // waiting for status to be changed
+    cy.wait(5000);
+    InventorySearch.verifySearchResult('Available');
   });
 });

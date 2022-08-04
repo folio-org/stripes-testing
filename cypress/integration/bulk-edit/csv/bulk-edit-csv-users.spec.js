@@ -70,11 +70,12 @@ describe('bulk-edit', { retries: 3 }, () => {
     BulkEditActions.openStartBulkEditForm();
     BulkEditSearchPane.uploadFile(importFileName);
     BulkEditSearchPane.waitFileUploading();
+    BulkEditActions.clickNext();
     BulkEditActions.commitChanges();
 
     // Verify changes
-    BulkEditSearchPane.verifyMatchedResults(user.username);
-    BulkEditSearchPane.verifyErrorLabel(userUUIDsFileName, 1, 1);
+    BulkEditSearchPane.verifyChangedResults(user.username);
+    BulkEditSearchPane.verifyErrorLabelAfterChanges(userUUIDsFileName, 1, 1);
     BulkEditActions.newBulkEdit();
   });
 
@@ -113,6 +114,7 @@ describe('bulk-edit', { retries: 3 }, () => {
     BulkEditActions.openStartBulkEditForm();
     BulkEditSearchPane.uploadFile(importFileName);
     BulkEditSearchPane.waitFileUploading();
+    BulkEditActions.clickNext();
     BulkEditActions.commitChanges();
 
     BulkEditSearchPane.verifyChangedResults(user.username);

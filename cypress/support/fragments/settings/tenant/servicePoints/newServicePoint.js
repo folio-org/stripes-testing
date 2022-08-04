@@ -9,6 +9,8 @@ const getDefaultServicePoint = (specialName = servicePointName) => {
     discoveryDisplayName: `autotest_discovery_display_name_${getRandomPostfix()}`,
     id: uuid(),
     name: specialName,
+    pickupLocation: true,
+    holdShelfExpiryPeriod:{ intervalId:'Hours', 'duration':1 }
   };
   return defaultUiServicePoint;
 };
