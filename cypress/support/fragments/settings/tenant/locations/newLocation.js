@@ -51,7 +51,8 @@ export default {
       .okapiRequest({
         path: 'locations',
         body: locationProperties,
-        method: 'POST'
+        method: 'POST',
+        isDefaultSearchParamsRequired: false,
       })
       .then((response) => {
         return response.body;

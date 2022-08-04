@@ -31,6 +31,7 @@ import NewMatchProfile from '../../support/fragments/data_import/match_profiles/
 import Organizations from '../../support/fragments/organizations/organizations';
 import DevTeams from '../../support/dictionary/devTeams';
 import OrderLines from '../../support/fragments/orders/orderLines';
+import NewLocation from '../../support/fragments/settings/tenant/locations/newLocation';
 
 describe('ui-data-import: Match on POL and update related Instance, Holdings, Item', () => {
   const firstItem = {
@@ -54,6 +55,7 @@ describe('ui-data-import: Match on POL and update related Instance, Holdings, It
   const orderNumbers = [firstItem.orderNumber, secondItem.orderNumber];
   let vendorId;
   let locationId;
+  let locationName;
   let acquisitionMethodId;
   let productIdTypeId;
   let materialTypeId;
@@ -164,9 +166,10 @@ describe('ui-data-import: Match on POL and update related Instance, Holdings, It
               .then(organization => {
                 vendorId = organization.id;
               });
-            cy.getLocations({ limit:1, query:'name="Main Library"' })
+            NewLocation.createViaApi()
               .then(location => {
                 locationId = location.id;
+                locationName = location.name;
               });
             cy.getMaterialTypes({ query: 'name="book"' })
               .then(materialType => {
@@ -191,7 +194,7 @@ describe('ui-data-import: Match on POL and update related Instance, Holdings, It
       });
   });
 
-  after(() => {
+  /*after(() => {
     let itemId;
     const itemBarcode = Helper.getRandomBarcode();
 
@@ -235,7 +238,7 @@ describe('ui-data-import: Match on POL and update related Instance, Holdings, It
       ActionProfiles.deleteActionProfile(profile.actionProfile.name);
       FieldMappingProfiles.deleteFieldMappingProfile(profile.mappingProfile.name);
     });
-  });
+  });*/
 
   const openOrder = (number) => {
     Orders.searchByParameter('PO number', number);
@@ -273,7 +276,7 @@ describe('ui-data-import: Match on POL and update related Instance, Holdings, It
     // open the first PO
     openOrder(firstItem.orderNumber);
     OrderView.checkIsOrderOpened('Open');
-    OrderView.checkIsItemsInInventoryCreated(firstItem.title, 'Main Library');
+    OrderView.checkIsItemsInInventoryCreated(firstItem.title, locationName);
     // check receiving pieces are created
     checkReceivedPiece(firstItem.orderNumber, firstItem.title);
 

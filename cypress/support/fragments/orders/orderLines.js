@@ -15,8 +15,7 @@ import {
   SelectionList,
   Link,
   including,
-  PaneContent,
-  Section
+  PaneContent
 } from '../../../../interactors';
 import SearchHelper from '../finance/financeHelper';
 import getRandomPostfix from '../../utils/stringTools';

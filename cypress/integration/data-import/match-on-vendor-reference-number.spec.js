@@ -1,7 +1,6 @@
 /* eslint-disable cypress/no-unnecessary-waiting */
 import getRandomPostfix from '../../support/utils/stringTools';
 import TestTypes from '../../support/dictionary/testTypes';
-import NewOrder from '../../support/fragments/orders/newOrder';
 import Helper from '../../support/fragments/finance/financeHelper';
 import TopMenu from '../../support/fragments/topMenu';
 import Logs from '../../support/fragments/data_import/logs/logs';
