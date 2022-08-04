@@ -43,7 +43,7 @@ const fieldLabels = {
 export default {
   openCalendarEvents(servicePointName) {
     cy.visit(settingsMenu.calendarLibraryHoursPath);
-    // todo: Find the approach to use interactors
+    // TODO: Find the approach to use interactors
     cy.get(selectors.servicePoint).contains(servicePointName).scrollIntoView().click();
   },
 
