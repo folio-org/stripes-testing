@@ -57,6 +57,7 @@ describe('orders: Unreceive piece from Order', () => {
         Receiving.checkReceivedPiece(0, caption, barcode);
         // Unreceive piece
         Receiving.unreceivePiece();
+        cy.wait(2000);
         Receiving.checkUnreceivedPiece(1, caption);
         // inventory part
         cy.visit(TopMenu.inventoryPath);
