@@ -234,6 +234,11 @@ function deleteRequestPolicyApi(policyId) {
   });
 }
 
+function waitLoadingTags() {
+  cy.expect(Pane({ title: 'Tags' }).exists());
+  cy.wait(1000);
+}
+
 export default {
   createRequestApi,
   deleteRequestApi,
@@ -242,6 +247,7 @@ export default {
   updateCirculationRulesApi,
   getRequestApi,
   waitContentLoading,
+  waitLoadingTags,
 
   removeCreatedRequest() {
     cy.do([
@@ -293,8 +299,8 @@ export default {
   },
 
   selectTags(tag) {
-    this.waitLoadingTags();
-    cy.do(Pane({ title: 'Tags' }).find(MultiSelect()).select(tag));
+    waitLoadingTags();
+    cy.do(Pane('Tags').find(MultiSelect({ ariaLabelledby:'accordion-toggle-button-tag-accordion' })).choose(tag));
   },
 
   closePane(title) {
@@ -305,15 +311,6 @@ export default {
     cy.expect(Spinner().absent());
     cy.expect(Button({ id: 'clickable-show-tags' }).find(Badge()).has({ value: '1' }));
     cy.expect(Pane({ title: 'Tags' }).find(ValueChipRoot(tag)).exists());
-  },
-
-  waitLoadingTags() {
-    cy.expect(Pane({ title: 'Tags' }).exists());
-    cy.intercept({
-      method: 'GET',
-      url: '/tags?limit=10000',
-    }).as('getTags');
-    cy.wait('@getTags');
   },
 
   requestTypes: { PAGE: 'Page', HOLD: 'Hold', RECALL: 'Recall' },

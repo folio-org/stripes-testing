@@ -15,7 +15,8 @@ import {
   SelectionList,
   Link,
   including,
-  PaneContent
+  PaneContent,
+  Section
 } from '../../../../interactors';
 import SearchHelper from '../finance/financeHelper';
 import getRandomPostfix from '../../utils/stringTools';
@@ -256,6 +257,10 @@ export default {
 
   openInstance:() => {
     cy.do(PaneContent({ id:'order-lines-details-content' }).find(Link({ href: including('/inventory/view/') })).click());
+  },
+
+  openReceiving:() => {
+    cy.do(PaneHeader({ id: 'paneHeaderorder-lines-details' }).find(actionsButton).click());
+    cy.do(Button('Receive').click());
   }
 };
-

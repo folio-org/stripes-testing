@@ -30,6 +30,7 @@ import InventoryViewSource from '../../support/fragments/inventory/inventoryView
 import NewMatchProfile from '../../support/fragments/data_import/match_profiles/newMatchProfile';
 import Organizations from '../../support/fragments/organizations/organizations';
 import DevTeams from '../../support/dictionary/devTeams';
+import OrderLines from '../../support/fragments/orders/orderLines';
 
 describe('ui-data-import: Match on POL and update related Instance, Holdings, Item', () => {
   const firstItem = {
@@ -242,6 +243,16 @@ describe('ui-data-import: Match on POL and update related Instance, Holdings, It
     Orders.openOrder();
   };
 
+  const checkReceivedPiece = (number, title) => {
+    cy.visit(TopMenu.ordersPath);
+    Orders.resetFilters();
+    Orders.searchByParameter('PO number', number);
+    Orders.selectFromResultsList();
+    Orders.openPolDetails();
+    OrderLines.openReceiving();
+    Receiving.checkIsPiecesCreated(title);
+  };
+
   it('C350590 Match on POL and update related Instance, Holdings, Item (folijet)', { tags: [TestTypes.smoke, DevTeams.folijet] }, () => {
     // create the first PO with POL
     Orders.createOrderWithOrderLineViaApi(NewOrder.getDefaultOrder(vendorId, firstItem.orderNumber),
@@ -259,13 +270,12 @@ describe('ui-data-import: Match on POL and update related Instance, Holdings, It
         materialTypeId
       ));
     Orders.checkIsOrderCreated(firstItem.orderNumber);
-
     // open the first PO
     openOrder(firstItem.orderNumber);
     OrderView.checkIsOrderOpened('Open');
     OrderView.checkIsItemsInInventoryCreated(firstItem.title, 'Main Library');
-    cy.visit(TopMenu.receivingPath);
-    Receiving.checkIsPiecesCreated(firstItem.title, 'Title (Receiving titles)');
+    // check receiving pieces are created
+    checkReceivedPiece(firstItem.orderNumber, firstItem.title);
 
     // create second PO with POL
     Orders.createOrderWithOrderLineViaApi(NewOrder.getDefaultOrder(vendorId, secondItem.orderNumber),
@@ -290,8 +300,8 @@ describe('ui-data-import: Match on POL and update related Instance, Holdings, It
     openOrder(secondItem.orderNumber);
     OrderView.checkIsOrderOpened('Open');
     OrderView.checkIsItemsInInventoryCreated(secondItem.title, 'Main Library');
-    cy.visit(TopMenu.receivingPath);
-    Receiving.checkIsPiecesCreated(secondItem.title, 'Title (Receiving titles)');
+    // check receiving pieces are created
+    checkReceivedPiece(secondItem.orderNumber, secondItem.title);
 
     // create mapping and action profiles
     collectionOfProfiles.forEach(profile => {

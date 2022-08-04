@@ -57,6 +57,16 @@ const createJobProfile = (jobProfile) => {
   newJobProfile.fillJobProfile(jobProfile);
 };
 
+const searchJobProfile = (profileName) => {
+  cy.do(TextField({ id:'input-search-job-profiles-field' }).fillIn(profileName));
+  cy.do(Pane({ id:'pane-results' }).find(Button('Search')).click());
+};
+
+const waitCreatingJobProfile = () => {
+  cy.expect(Pane({ id:'pane-results' }).find(Button('Actions')).exists());
+  cy.expect(Pane({ id:'view-job-profile-pane' }).exists());
+};
+
 export default {
   defaultInstanceAndSRSMarcBib:'Default - Create instance and SRS MARC Bib',
   openNewJobProfileForm: () => {
@@ -68,10 +78,13 @@ export default {
 
   waitLoadingList,
   waitLoading,
+  searchJobProfile,
+  waitCreatingJobProfile,
 
   checkJobProfilePresented:(jobProfileTitle) => {
-    cy.get('[id="job-profiles-list"]')
-      .should('contains.text', jobProfileTitle);
+    waitCreatingJobProfile();
+    searchJobProfile(jobProfileTitle);
+    cy.expect(MultiColumnListCell(jobProfileTitle).exists());
   },
 
   searchJobProfileForImport:(jobProfileTitle) => {

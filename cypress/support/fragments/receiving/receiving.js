@@ -30,9 +30,14 @@ const filterOpenReceiving = () => {
   cy.do(Checkbox({ id: 'clickable-filter-purchaseOrder.workflowStatus-open' }).click());
 };
 
+const selectReceivingItem = (indexRow = 0) => {
+  cy.do(MultiColumnListCell({ 'row': indexRow, 'columnIndex': 0 }).click());
+};
+
 export default {
   searchByParameter,
   filterOpenReceiving,
+  selectReceivingItem,
 
   receivePiece: (rowNumber, caption, barcode) => {
     const recievingFieldName = `receivedItems[${rowNumber}]`;
@@ -80,16 +85,15 @@ export default {
     ]);
   },
 
-  checkIsPiecesCreated:(title, parameter) => {
-    filterOpenReceiving();
-    searchByParameter(parameter, title);
+  checkIsPiecesCreated:(title) => {
     cy.expect(Pane('Receiving')
       .find(MultiColumnList({ id: 'receivings-list' }))
       .find(MultiColumnListCell({ content: title }))
       .exists());
-  },
-
-  selectReceivingItem:(indexRow = 0) => {
-    cy.do(MultiColumnListCell({ 'row': indexRow, 'columnIndex': 0 }).click());
+    selectReceivingItem();
+    cy.expect(Pane({ id:'pane-title-details' })
+      .find(Accordion({ id:'expected' }))
+      .find(MultiColumnListRow({ indexRow: 'row-0' }))
+      .exists());
   }
 };
