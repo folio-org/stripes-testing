@@ -11,12 +11,13 @@ import permissions from '../../support/dictionary/permissions';
 import devTeams from '../../support/dictionary/devTeams';
 import users from '../../support/fragments/users/users';
 import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
+import generateItemBarcode from '../../support/utils/generateItemBarcode';
 
 
 let user;
 const item = {
   instanceName: `testBulkEdit_${getRandomPostfix()}`,
-  itemBarcode: getRandomPostfix(),
+  itemBarcode: generateItemBarcode(),
 };
 
 describe('data-export', () => {
