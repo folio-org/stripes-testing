@@ -10,17 +10,19 @@ import {
 } from '../../../../../interactors';
 
 const searchButton = Button('Search');
+const searchField = SearchField({ id: 'input-inventory-search' });
+const itemStatusAccordion = Accordion({ id:'itemStatus' });
 
 export default {
   toggleStatus(statusName) {
-    cy.do(Accordion({ id:'itemStatus' }).find(TextField({ type:'search' })).fillIn(statusName));
+    cy.do(itemStatusAccordion.find(TextField({ type:'search' })).fillIn(statusName));
     // interactor doesn't click
     cy.get('#itemStatus input').click();
     cy.do(Checkbox(statusName).click());
   },
 
   toggleItemStatusAccordion() {
-    cy.do(Accordion({ id:'itemStatus' }).clickHeader());
+    cy.do(itemStatusAccordion.clickHeader());
   },
 
   selectInstance(title) {
@@ -36,8 +38,8 @@ export default {
   },
 
   searchByParameter: (parameter, value) => {
-    cy.do(SearchField({ id: 'input-inventory-search' }).selectIndex(parameter));
-    cy.do(SearchField({ id: 'input-inventory-search' }).fillIn(value));
+    cy.do(searchField.selectIndex(parameter));
+    cy.do(searchField.fillIn(value));
     cy.do(searchButton.focus());
     cy.do(searchButton.click());
   },

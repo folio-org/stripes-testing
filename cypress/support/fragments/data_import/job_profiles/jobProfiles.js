@@ -5,6 +5,7 @@ import newJobProfile from './newJobProfile';
 const actionsButton = Button('Actions');
 const runButton = Button('Run');
 const waitSelector = Pane({ id:'view-job-profile-pane' });
+const resultsPane = Pane({ id:'pane-results' });
 
 const openNewJobProfileForm = () => {
   cy.do([
@@ -59,11 +60,11 @@ const createJobProfile = (jobProfile) => {
 
 const searchJobProfile = (profileName) => {
   cy.do(TextField({ id:'input-search-job-profiles-field' }).fillIn(profileName));
-  cy.do(Pane({ id:'pane-results' }).find(Button('Search')).click());
+  cy.do(resultsPane.find(Button('Search')).click());
 };
 
 const waitCreatingJobProfile = () => {
-  cy.expect(Pane({ id:'pane-results' }).find(Button('Actions')).exists());
+  cy.expect(resultsPane.find(Button('Actions')).exists());
   cy.expect(Pane({ id:'view-job-profile-pane' }).exists());
 };
 
