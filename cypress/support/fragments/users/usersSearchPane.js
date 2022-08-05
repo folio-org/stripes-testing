@@ -6,7 +6,6 @@ import {
   Button,
   Link,
 } from '../../../../interactors';
-import { getLongDelay } from '../../utils/cypressTools';
 
 export default {
   searchByStatus(status) {
