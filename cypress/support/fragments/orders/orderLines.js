@@ -256,6 +256,12 @@ export default {
 
   openInstance:() => {
     cy.do(PaneContent({ id:'order-lines-details-content' }).find(Link({ href: including('/inventory/view/') })).click());
+  },
+
+  openReceiving:() => {
+    cy.do([
+      PaneHeader({ id: 'paneHeaderorder-lines-details' }).find(actionsButton).click(),
+      Button('Receive').click()
+    ]);
   }
 };
-

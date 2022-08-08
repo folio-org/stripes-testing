@@ -408,5 +408,12 @@ export default {
   checkIsOrderCreated:(orderNumber) => {
     cy.do(Checkbox({ id: 'clickable-filter-workflowStatus-pending' }).click());
     cy.expect(MultiColumnList({ id: 'orders-list' }).find(HTML(including(orderNumber))).exists());
+  },
+
+  openPolDetails:() => {
+    cy.do(Pane({ id:'order-details' })
+      .find(Accordion({ id:'POListing' }))
+      .find(MultiColumnListRow({ indexRow: 'row-0' }))
+      .click());
   }
 };

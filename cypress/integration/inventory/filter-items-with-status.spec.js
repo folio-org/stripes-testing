@@ -1,10 +1,10 @@
 import uuid from 'uuid';
-import TopMenu from '../../support/fragments/topMenu';
-import FilterItems from '../../support/fragments/inventory/filterItems';
-import permissions from '../../support/dictionary/permissions';
-import { MultiColumnList } from '../../../interactors';
 import getRandomPostfix from '../../support/utils/stringTools';
-import users from '../../support/fragments/users/users';
+
+import TopMenu from '../../support/fragments/topMenu';
+import InventoryItems from '../../support/fragments/inventory/inventoryItem/inventoryItems';
+import permissions from '../../support/dictionary/permissions';
+import Users from '../../support/fragments/users/users';
 import InventorySearch from '../../support/fragments/inventory/inventorySearch';
 import InventoryHoldings from '../../support/fragments/inventory/holdings/inventoryHoldings';
 import TestTypes from '../../support/dictionary/testTypes';
@@ -19,6 +19,23 @@ const title = `Filter items with status test ${Number(new Date())}`;
 let source;
 
 describe('ui-inventory: items with status', () => {
+  const itemStatuses = [
+    'Available',
+    'Checked out',
+    'On order',
+    'In process',
+    'Awaiting pickup',
+    'Awaiting delivery',
+    'In transit',
+    'Missing',
+    'Withdrawn',
+    'Claimed returned',
+    'Declared lost',
+    'Lost and paid',
+    'Paged',
+    'Order closed'
+  ];
+
   before('create inventory instance', () => {
     cy.createTempUser([
       permissions.inventoryAll.gui,
@@ -41,7 +58,7 @@ describe('ui-inventory: items with status', () => {
             });
           })
           .then(() => {
-            const items = FilterItems.itemStatuses.map(status => ({
+            const items = itemStatuses.map(status => ({
               barcode: status === 'Available' ? ITEM_BARCODE : `test${getRandomPostfix()}`,
               missingPieces: '3',
               numberOfMissingPieces: '3',
@@ -76,34 +93,24 @@ describe('ui-inventory: items with status', () => {
         cy.deleteHoldingRecordViaApi(instance.holdings[0].id);
         InventoryInstance.deleteInstanceViaApi(instance.id);
       });
-    users.deleteViaApi(userId);
+    Users.deleteViaApi(userId);
   });
 
-  it('C11081: Verify item status filters retrieve items with that item status (folijet) (prokopovych)', { tags: [TestTypes.smoke, DevTeams.folijet] }, () => {
-    cy.intercept('GET', '/inventory/items?*').as('getItems');
-    cy.intercept('GET', '/search/instances?*').as('getInstances');
-    cy.intercept('GET', '/orders/titles?*').as('getTitles');
-    cy.intercept('GET', '/search/instances/facets?*').as('getFacets');
-    cy.intercept('GET', '/holdings-storage/holdings?*').as('getHoldings');
+  itemStatuses.forEach((status) => {
+    it(`C11081: Verify item status filters retrieve items with that item status - ${status} (folijet) (prokopovych)`, { tags: [TestTypes.smoke, DevTeams.folijet] }, () => {
+      InventorySearch.switchToItem();
+      InventoryItems.toggleItemStatusAccordion();
+      InventoryItems.toggleStatus(status);
+      InventoryItems.checkIsInstanceListPresented();
 
-    InventorySearch.switchToItem();
-    FilterItems.toggleItemStatusAccordion();
+      InventoryItems.searchByParameter('Keyword (title, contributor, identifier)', title);
+      InventoryItems.selectInstance(title);
 
-    cy.wrap(FilterItems.itemStatuses).each((status) => {
-      FilterItems.toggleStatus(status);
-      cy.wait(['@getInstances', '@getFacets']);
-      cy.expect(MultiColumnList().exists());
+      InventoryItems.toggleAccordionItemsButton(holdingId);
+      InventoryItems.verifyItemWithStatusExists(holdingId, status);
 
-      FilterItems.selectInstance(title);
-      FilterItems.waitItemsLoading();
-
-      FilterItems.toggleAccordionItemsButton(holdingId);
-      cy.wait('@getItems');
-      FilterItems.verifyItemWithStatusExists(holdingId, status);
-
-      FilterItems.toggleStatus(status);
-      cy.wait('@getFacets');
-      cy.expect(MultiColumnList().absent());
+      InventoryItems.resetAllFilters();
+      InventoryItems.checkIsInstanceListAbsent();
     });
   });
 });

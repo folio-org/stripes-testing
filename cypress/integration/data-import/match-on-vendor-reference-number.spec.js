@@ -1,7 +1,6 @@
 /* eslint-disable cypress/no-unnecessary-waiting */
 import getRandomPostfix from '../../support/utils/stringTools';
 import TestTypes from '../../support/dictionary/testTypes';
-import NewOrder from '../../support/fragments/orders/newOrder';
 import Helper from '../../support/fragments/finance/financeHelper';
 import TopMenu from '../../support/fragments/topMenu';
 import Logs from '../../support/fragments/data_import/logs/logs';
@@ -16,7 +15,7 @@ import DevTeams from '../../support/dictionary/devTeams';
 describe('ui-data-import: Match on VRN and update related Instance, Holdings, Item', () => {
   let userId = null;
   const order = {
-    ...NewOrder.defaultOneTimeOrder,
+    orderType: 'One-time',
     vendor: 'GOBI Library Solutions',
   };
   const instanceMappingProfileName = `CaseC350591 Update Instance by VRN match ${Helper.getRandomBarcode()}`;

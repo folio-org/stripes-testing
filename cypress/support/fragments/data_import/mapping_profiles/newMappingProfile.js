@@ -180,7 +180,7 @@ export default {
       Select({ name:'profile.incomingRecordType' }).choose(incomingRecordType.edifact),
       Select({ name:'profile.existingRecordType' }).choose(folioRecordTypeValue.invoice),
       TextArea({ name:'profile.description' }).fillIn(''),
-      TextField('Batch group*').fillIn('"FOLIO"'),
+      TextField('Batch group*').fillIn('"Amherst (AC)"'),
       Button('Organization look-up').click()
     ]);
     selectOrganizationByName(organizationName);

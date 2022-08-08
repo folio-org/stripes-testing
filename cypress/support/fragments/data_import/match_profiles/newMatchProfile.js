@@ -48,8 +48,7 @@ const fillMatchProfileForm = ({
 }) => {
   cy.do(TextField('Name*').fillIn(profileName));
   // wait for data to be loaded
-  cy.intercept('/_/jsonSchemas?path=raml-util/schemas/metadata.schema').as('getJson');
-  cy.wait('@getJson', getLongDelay());
+  cy.wait(1500);
   // select existing record type
   if (existingRecordType === 'MARC_BIBLIOGRAPHIC') {
     cy.do(Button({ dataId:'MARC_BIBLIOGRAPHIC' }).click());

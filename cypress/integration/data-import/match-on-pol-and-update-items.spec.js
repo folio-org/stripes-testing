@@ -30,6 +30,8 @@ import InventoryViewSource from '../../support/fragments/inventory/inventoryView
 import NewMatchProfile from '../../support/fragments/data_import/match_profiles/newMatchProfile';
 import Organizations from '../../support/fragments/organizations/organizations';
 import DevTeams from '../../support/dictionary/devTeams';
+import OrderLines from '../../support/fragments/orders/orderLines';
+import NewLocation from '../../support/fragments/settings/tenant/locations/newLocation';
 
 describe('ui-data-import: Match on POL and update related Instance, Holdings, Item', () => {
   const firstItem = {
@@ -52,7 +54,7 @@ describe('ui-data-import: Match on POL and update related Instance, Holdings, It
   const titles = [firstItem.title, secondItem.title];
   const orderNumbers = [firstItem.orderNumber, secondItem.orderNumber];
   let vendorId;
-  let locationId;
+  let location;
   let acquisitionMethodId;
   let productIdTypeId;
   let materialTypeId;
@@ -163,10 +165,6 @@ describe('ui-data-import: Match on POL and update related Instance, Holdings, It
               .then(organization => {
                 vendorId = organization.id;
               });
-            cy.getLocations({ limit:1, query:'name="Main Library"' })
-              .then(location => {
-                locationId = location.id;
-              });
             cy.getMaterialTypes({ query: 'name="book"' })
               .then(materialType => {
                 materialTypeId = materialType.id;
@@ -182,6 +180,10 @@ describe('ui-data-import: Match on POL and update related Instance, Holdings, It
             ServicePoints.getViaApi()
               .then((servicePoint) => {
                 servicePointId = servicePoint[0].id;
+                NewLocation.createViaApi(NewLocation.getDefaultLocation(servicePointId))
+                  .then(res => {
+                    location = res;
+                  });
               });
           })
           .then(() => {
@@ -234,6 +236,12 @@ describe('ui-data-import: Match on POL and update related Instance, Holdings, It
       ActionProfiles.deleteActionProfile(profile.actionProfile.name);
       FieldMappingProfiles.deleteFieldMappingProfile(profile.mappingProfile.name);
     });
+    NewLocation.deleteViaApiIncludingInstitutionCampusLibrary(
+      location.institutionId,
+      location.campusId,
+      location.libraryId,
+      location.id
+    );
   });
 
   const openOrder = (number) => {
@@ -242,13 +250,23 @@ describe('ui-data-import: Match on POL and update related Instance, Holdings, It
     Orders.openOrder();
   };
 
+  const checkReceivedPiece = (number, title) => {
+    cy.visit(TopMenu.ordersPath);
+    Orders.resetFilters();
+    Orders.searchByParameter('PO number', number);
+    Orders.selectFromResultsList();
+    Orders.openPolDetails();
+    OrderLines.openReceiving();
+    Receiving.checkIsPiecesCreated(title);
+  };
+
   it('C350590 Match on POL and update related Instance, Holdings, Item (folijet)', { tags: [TestTypes.smoke, DevTeams.folijet] }, () => {
     // create the first PO with POL
     Orders.createOrderWithOrderLineViaApi(NewOrder.getDefaultOrder(vendorId, firstItem.orderNumber),
       BasicOrderLine.getDefaultOrderLine(
         firstItem.quantity,
         firstItem.title,
-        locationId,
+        location.id,
         acquisitionMethodId,
         firstItem.price,
         firstItem.price,
@@ -259,20 +277,19 @@ describe('ui-data-import: Match on POL and update related Instance, Holdings, It
         materialTypeId
       ));
     Orders.checkIsOrderCreated(firstItem.orderNumber);
-
     // open the first PO
     openOrder(firstItem.orderNumber);
     OrderView.checkIsOrderOpened('Open');
-    OrderView.checkIsItemsInInventoryCreated(firstItem.title, 'Main Library');
-    cy.visit(TopMenu.receivingPath);
-    Receiving.checkIsPiecesCreated(firstItem.title, 'Title (Receiving titles)');
+    OrderView.checkIsItemsInInventoryCreated(firstItem.title, location.name);
+    // check receiving pieces are created
+    checkReceivedPiece(firstItem.orderNumber, firstItem.title);
 
     // create second PO with POL
     Orders.createOrderWithOrderLineViaApi(NewOrder.getDefaultOrder(vendorId, secondItem.orderNumber),
       BasicOrderLine.getDefaultOrderLine(
         secondItem.quantity,
         secondItem.title,
-        locationId,
+        location.id,
         acquisitionMethodId,
         secondItem.price,
         secondItem.price,
@@ -289,9 +306,9 @@ describe('ui-data-import: Match on POL and update related Instance, Holdings, It
     // open the second PO
     openOrder(secondItem.orderNumber);
     OrderView.checkIsOrderOpened('Open');
-    OrderView.checkIsItemsInInventoryCreated(secondItem.title, 'Main Library');
-    cy.visit(TopMenu.receivingPath);
-    Receiving.checkIsPiecesCreated(secondItem.title, 'Title (Receiving titles)');
+    OrderView.checkIsItemsInInventoryCreated(secondItem.title, location.name);
+    // check receiving pieces are created
+    checkReceivedPiece(secondItem.orderNumber, secondItem.title);
 
     // create mapping and action profiles
     collectionOfProfiles.forEach(profile => {
