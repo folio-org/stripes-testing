@@ -1,9 +1,11 @@
+import testType from '../../../support/dictionary/testTypes';
 import Permissions from '../../../support/dictionary/permissions';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 import InventorySearch from '../../../support/fragments/inventory/inventorySearch';
 import BrowseContributors from '../../../support/fragments/inventory/search/browseContributors';
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
+import devTeams from '../../../support/dictionary/devTeams';
 
 describe('ui-inventory: search', () => {
   const testData = {};
@@ -48,7 +50,7 @@ describe('ui-inventory: search', () => {
     });
   });
 
-  it('C353639 Browse contributors with exact match query', () => {
+  it('C353639 Browse contributors with exact match query (spitfire)', { tags: [testType.smoke, devTeams.spitfire] }, () => {
     InventorySearch.verifyKeywordsAsDefault();
     BrowseContributors.checkBrowseOptions();
     BrowseContributors.select();

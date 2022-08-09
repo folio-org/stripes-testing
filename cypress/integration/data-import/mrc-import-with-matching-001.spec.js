@@ -1,7 +1,7 @@
 import DataImport from '../../support/fragments/data_import/dataImport';
 import JobProfiles from '../../support/fragments/data_import/job_profiles/jobProfiles';
 import TopMenu from '../../support/fragments/topMenu';
-import MatchProfiles from '../../support/fragments/data_import/match_profiles/match-profiles';
+import MatchProfiles from '../../support/fragments/data_import/match_profiles/matchProfiles';
 import Logs from '../../support/fragments/data_import/logs/logs';
 import InventorySearch from '../../support/fragments/inventory/inventorySearch';
 import SearchInventory from '../../support/fragments/data_import/searchInventory';
@@ -18,7 +18,8 @@ import TestTypes from '../../support/dictionary/testTypes';
 import SettingsMenu from '../../support/fragments/settingsMenu';
 import FileDetails from '../../support/fragments/data_import/logs/fileDetails';
 import permissions from '../../support/dictionary/permissions';
-import users from '../../support/fragments/users/users';
+import Users from '../../support/fragments/users/users';
+import DevTeams from '../../support/dictionary/devTeams';
 
 describe('ui-data-import: Test MARC-MARC matching for 001 field', () => {
   let user = {};
@@ -33,7 +34,7 @@ describe('ui-data-import: Test MARC-MARC matching for 001 field', () => {
     ])
       .then(userProperties => {
         user = userProperties;
-        cy.login(userProperties.username, userProperties.password, { path: TopMenu.dataImportPath, waiter: DataImport.wailtLoading });
+        cy.login(userProperties.username, userProperties.password, { path: TopMenu.dataImportPath, waiter: DataImport.waitLoading });
       });
     DataImport.checkUploadState();
   });
@@ -41,10 +42,10 @@ describe('ui-data-import: Test MARC-MARC matching for 001 field', () => {
 
   after(() => {
     DataImport.checkUploadState();
-    users.deleteViaApi(user.userId);
+    Users.deleteViaApi(user.userId);
   });
 
-  it('C17044: MARC-MARC matching for 001 field', { tags: [TestTypes.smoke, TestTypes.broken] }, () => {
+  it('C17044: MARC-MARC matching for 001 field (folijet)', { tags: [TestTypes.smoke, DevTeams.folijet] }, () => {
     // unique file name to upload
     const nameForMarcFile = `C17044autoTestFile${getRandomPostfix()}.mrc`;
     const nameForExportedMarcFile = `C17044autoTestFile${getRandomPostfix()}.mrc`;
@@ -66,10 +67,10 @@ describe('ui-data-import: Test MARC-MARC matching for 001 field', () => {
     // get Instance HRID through API
     SearchInventory
       .getInstanceHRID()
-      .then(id => {
+      .then(hrId => {
         // download .csv file
         cy.visit(TopMenu.inventoryPath);
-        SearchInventory.searchInstanceByHRID(id);
+        SearchInventory.searchInstanceByHRID(hrId[0]);
         InventorySearch.saveUUIDs();
         ExportMarcFile.downloadCSVFile(nameForCSVFile, 'SearchInstanceUUIDs*');
         FileManager.deleteFolder(Cypress.config('downloadsFolder'));
@@ -136,7 +137,7 @@ describe('ui-data-import: Test MARC-MARC matching for 001 field', () => {
         FileDetails.checkStatusInColumn(FileDetails.status.updated, FileDetails.columnName.instance);
 
         cy.visit(TopMenu.inventoryPath);
-        SearchInventory.searchInstanceByHRID(id);
+        SearchInventory.searchInstanceByHRID(hrId[0]);
 
         // ensure the fields created in Field mapping profile exists in inventory
         SearchInventory.checkInstanceDetails();

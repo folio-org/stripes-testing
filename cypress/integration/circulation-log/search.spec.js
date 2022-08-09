@@ -6,20 +6,20 @@ import permissions from '../../support/dictionary/permissions';
 import UsersSearchPane from '../../support/fragments/users/usersSearchPane';
 import UsersCard from '../../support/fragments/users/usersCard';
 import CheckinActions from '../../support/fragments/check-in-actions/checkInActions';
-import CheckoutActions from '../../support/fragments/checkout/checkout';
 import InventoryHoldings from '../../support/fragments/inventory/holdings/inventoryHoldings';
 import devTeams from '../../support/dictionary/devTeams';
 import Users from '../../support/fragments/users/users';
 import UserEdit from '../../support/fragments/users/userEdit';
 import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
 import InventoryInstance from '../../support/fragments/inventory/inventoryInstance';
+import Checkout from '../../support/fragments/checkout/checkout';
 
 const ITEM_BARCODE = `123${getRandomPostfix()}`;
 let userId;
 let source;
 let servicePointId;
 
-describe('ui-circulation-log', () => {
+describe('circulation-log', { retries: 3 }, () => {
   before('create inventory instance', () => {
     cy.createTempUser([
       permissions.inventoryAll.gui,
@@ -73,7 +73,7 @@ describe('ui-circulation-log', () => {
             });
           })
           .then(() => {
-            CheckoutActions.createItemCheckoutViaApi({
+            Checkout.checkoutItemViaApi({
               itemBarcode: ITEM_BARCODE,
               userBarcode: Cypress.env('users')[0].barcode,
               servicePointId,
@@ -86,8 +86,8 @@ describe('ui-circulation-log', () => {
     SearchPane.resetResults();
   });
 
-  after('Delete all data', () => {
-    CheckinActions.createItemCheckinApi({
+  after('delete test data', () => {
+    CheckinActions.checkinItemViaApi({
       itemBarcode: ITEM_BARCODE,
       servicePointId,
       checkInDate: new Date().toISOString(),
@@ -106,26 +106,26 @@ describe('ui-circulation-log', () => {
       });
   });
 
-  it('C15484 Filter circulation log on item barcode', { retries: 3, tags: [TestTypes.smoke, devTeams.firebird, TestTypes.broken] }, () => {
+  it('C15484 Filter circulation log on item barcode (firebird)', { tags: [TestTypes.smoke, devTeams.firebird, TestTypes.broken] }, () => {
     SearchPane.searchByItemBarcode(ITEM_BARCODE);
     SearchPane.verifyResultCells();
   });
 
-  it('C16976 Filter circulation log by date', { retries: 3, tags: [TestTypes.smoke, devTeams.firebird, TestTypes.broken] }, () => {
+  it('C16976 Filter circulation log by date (firebird)', { tags: [TestTypes.smoke, devTeams.firebird, TestTypes.broken] }, () => {
     const verifyDate = true;
 
     SearchPane.filterByLastWeek();
     SearchPane.verifyResultCells(verifyDate);
   });
 
-  it('C15485 Filter circulation log on user barcode', { tags: [TestTypes.smoke, devTeams.firebird, TestTypes.broken] }, () => {
+  it('C15485 Filter circulation log on user barcode (firebird)', { tags: [TestTypes.smoke, devTeams.firebird, TestTypes.broken] }, () => {
     const userBarcode = Cypress.env('users')[0].barcode;
 
     SearchPane.searchByUserBarcode(userBarcode);
     SearchPane.verifyResultCells();
   });
 
-  it('C15853 Filter circulation log on description', { tags: [TestTypes.smoke, devTeams.firebird, TestTypes.broken] }, () => {
+  it('C15853 Filter circulation log on description (firebird)', { tags: [TestTypes.smoke, devTeams.firebird, TestTypes.broken] }, () => {
     // login with user that has all permissions
     cy.login(Cypress.env('diku_login'), Cypress.env('diku_password'));
     cy.visit(TopMenu.usersPath);

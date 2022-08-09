@@ -21,7 +21,7 @@ import users from '../../support/fragments/users/users';
 describe('eHoldings titles management', () => {
   let userId;
 
-  it('C16994 Add a title in a package to holdings', { tags:  [testTypes.smoke, features.eHoldings] }, () => {
+  it('C16994 Add a title in a package to holdings (spitfire)', { tags:  [testTypes.smoke, features.eHoldings] }, () => {
     cy.createTempUser([permissions.uieHoldingsRecordsEdit.gui,
       permissions.uieHoldingsPackageTitleSelectUnselect.gui]).then(userProperties => {
       userId = userProperties.userId;
@@ -49,7 +49,7 @@ describe('eHoldings titles management', () => {
   });
 
   // TODO: https://issues.folio.org/browse/UIEH-1256
-  it('C700 Title: Add or Edit custom coverage', { tags:  [testTypes.smoke, features.eHoldings] }, () => {
+  it('C700 Title: Add or Edit custom coverage (spitfire)', { tags:  [testTypes.smoke, features.eHoldings] }, () => {
     cy.createTempUser([permissions.uieHoldingsRecordsEdit.gui]).then(userProperties => {
       userId = userProperties.userId;
       cy.login(userProperties.username, userProperties.password);
@@ -93,7 +93,7 @@ describe('eHoldings titles management', () => {
     });
   });
 
-  it('C691 Remove a title in a package from your holdings', { tags:  [testTypes.smoke, features.eHoldings] }, () => {
+  it('C691 Remove a title in a package from your holdings (spitfire)', { tags:  [testTypes.smoke, features.eHoldings] }, () => {
     cy.createTempUser([permissions.uieHoldingsRecordsEdit.gui,
       permissions.uieHoldingsPackageTitleSelectUnselect.gui]).then(userProperties => {
       userId = userProperties.userId;
@@ -113,7 +113,7 @@ describe('eHoldings titles management', () => {
     });
   });
 
-  it('C693 Create a custom title.', { tags:  [testTypes.smoke, features.eHoldings] }, () => {
+  it('C693 Create a custom title. (spitfire)', { tags:  [testTypes.smoke, features.eHoldings] }, () => {
     cy.createTempUser([permissions.uieHoldingsRecordsEdit.gui,
       permissions.uieHoldingsTitlesPackagesCreateDelete.gui]).then(userProperties => {
       userId = userProperties.userId;

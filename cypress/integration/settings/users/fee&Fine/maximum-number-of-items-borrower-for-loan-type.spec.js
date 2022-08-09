@@ -16,6 +16,7 @@ import UserEdit from '../../../../support/fragments/users/userEdit';
 import Users from '../../../../support/fragments/users/users';
 import ServicePoints from '../../../../support/fragments/settings/tenant/servicePoints/servicePoints';
 import InventoryInstance from '../../../../support/fragments/inventory/inventoryInstance';
+import DevTeams from '../../../../support/dictionary/devTeams';
 
 describe('ui-users:', () => {
   let user = {};
@@ -147,7 +148,7 @@ describe('ui-users:', () => {
 
   after(() => {
     limitTestItems.forEach(item => {
-      CheckInActions.createItemCheckinApi({
+      CheckInActions.checkinItemViaApi({
         itemBarcode: item.barcode,
         servicePointId: servicePoint.id,
         checkInDate: new Date().toISOString(),
@@ -163,7 +164,7 @@ describe('ui-users:', () => {
       InventoryInstance.deleteInstanceViaApi(limitTstInstanceIds.instanceId);
     });
     testItems.forEach(item => {
-      CheckInActions.createItemCheckinApi({
+      CheckInActions.checkinItemViaApi({
         itemBarcode: item.barcode,
         servicePointId: servicePoint.id,
         checkInDate: new Date().toISOString(),
@@ -189,7 +190,7 @@ describe('ui-users:', () => {
       });
   });
 
-  it('C9277 Verify that maximum number of items borrowed for loan type (e.g. course reserve) limit works', { tags: [TestTypes.smoke] }, () => {
+  it('C9277 Verify that maximum number of items borrowed for loan type (e.g. course reserve) limit works (folijet) (prokopovych)', { tags: [TestTypes.smoke, DevTeams.folijet] }, () => {
     cy.visit(TopMenu.checkOutPath);
     СheckOutActions.checkOutItemUser(user.barcode, limitTestItems[0].barcode);
     СheckOutActions.checkOutItemUser(user.barcode, limitTestItems[1].barcode);

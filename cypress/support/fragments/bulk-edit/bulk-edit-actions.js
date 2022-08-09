@@ -56,6 +56,10 @@ export default {
     cy.expect(HTML('No matching options').exists());
   },
 
+  verifyMatchingOptionsForLocationFilter(location) {
+    cy.expect(HTML(including(location)).exists());
+  },
+
   confirmChanges() {
     cy.do(Button('Confirm changes').click());
   },
@@ -72,7 +76,7 @@ export default {
     });
   },
 
-  prepareBulkEditFileForImport(fileMask, finalFileName, stringToBeReplaced, replaceString) {
+  prepareBulkEditFileWithDuplicates(fileMask, finalFileName, stringToBeReplaced, replaceString) {
     FileManager.findDownloadedFilesByMask(`*${fileMask}*`).then((downloadedFilenames) => {
       const lastDownloadedFilename = downloadedFilenames.sort()[downloadedFilenames.length - 1];
 
@@ -85,10 +89,28 @@ export default {
     });
   },
 
+  prepareValidBulkEditFile(fileMask, finalFileName, stringToBeReplaced, replaceString) {
+    FileManager.findDownloadedFilesByMask(`*${fileMask}*`).then((downloadedFilenames) => {
+      const lastDownloadedFilename = downloadedFilenames.sort()[downloadedFilenames.length - 1];
+
+      FileManager.readFile(lastDownloadedFilename)
+        .then((actualContent) => {
+          const content = actualContent.split('\n');
+          content[1] = content[1].slice().replace(stringToBeReplaced, replaceString);
+          FileManager.createFile(`cypress/fixtures/${finalFileName}`, content.join('\n'));
+        });
+    });
+  },
+
   commitChanges() {
     cy.do([
-      Modal().find(Button('Next')).click(),
       Modal().find(Button('Commit changes')).click()
+    ]);
+  },
+
+  clickNext() {
+    cy.do([
+      Modal().find(Button('Next')).click(),
     ]);
   },
 

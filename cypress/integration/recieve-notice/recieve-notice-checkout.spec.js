@@ -116,7 +116,7 @@ describe('Recieving notice: Checkout', () => {
   });
 
   afterEach('Deleting created entities', () => {
-    CheckInActions.createItemCheckinApi({
+    CheckInActions.checkinItemViaApi({
       itemBarcode: ITEM_BARCODE,
       servicePointId: testData.userServicePoint,
       checkInDate: moment.utc().format(),
@@ -139,7 +139,7 @@ describe('Recieving notice: Checkout', () => {
     });
   });
 
-  it('C347621 Check that user can receive notice with multiple items after finishing the session "Check out" by clicking the End Session button',
+  it('C347621 Check that user can receive notice with multiple items after finishing the session "Check out" by clicking the End Session button (vega)',
     { tags: [testTypes.smoke, devTeams.vega, testTypes.broken] }, () => {
       NewNoticePolicyTemplate.startAdding();
       NewNoticePolicyTemplate.checkInitialState();
@@ -173,11 +173,11 @@ describe('Recieving notice: Checkout', () => {
       MultipieceCheckOut.confirmMultipleCheckOut(ITEM_BARCODE);
       CheckOutActions.checkUserInfo(userData);
       CheckOutActions.checkItemInfo(ITEM_BARCODE, testData.instanceTitle);
-      CheckOutActions.endSession();
+      CheckOutActions.endCheckOutSession();
 
       cy.visit(topMenu.circulationLogPath);
       SearchPane.searchByItemBarcode(ITEM_BARCODE);
       SearchPane.verifyResultCells();
-      SearchPane.checkResultSearch(searchResultsData, 1);
+      SearchPane.checkResultSearch(searchResultsData, 2);
     });
 });

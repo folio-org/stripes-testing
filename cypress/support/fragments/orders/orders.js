@@ -12,7 +12,9 @@ import {
   MultiColumnListRow,
   Modal,
   TextField,
-  SelectionOption
+  SelectionOption,
+  HTML,
+  including
 } from '../../../../interactors';
 import SearchHelper from '../finance/financeHelper';
 import InteractorsTools from '../../utils/interactorsTools';
@@ -399,5 +401,11 @@ export default {
   deleteOrderApi: (id) => cy.okapiRequest({
     method: 'DELETE',
     path: `orders/composite-orders/${id}`,
+    isDefaultSearchParamsRequired: false,
   }),
+
+  checkIsOrderCreated:(orderNumber) => {
+    cy.do(Checkbox({ id: 'clickable-filter-workflowStatus-pending' }).click());
+    cy.expect(MultiColumnList({ id: 'orders-list' }).find(HTML(including(orderNumber))).exists());
+  }
 };

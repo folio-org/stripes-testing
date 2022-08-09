@@ -5,6 +5,7 @@ import TopMenu from '../../support/fragments/topMenu';
 import { Pane } from '../../../interactors';
 import Users from '../../support/fragments/users/users';
 import InventoryInstance from '../../support/fragments/inventory/inventoryInstance';
+import DevTeams from '../../support/dictionary/devTeams';
 
 describe('ui-requests: Make sure that request type filters are working properly', () => {
   const requests = [];
@@ -17,7 +18,7 @@ describe('ui-requests: Make sure that request type filters are working properly'
   const getNoResultMessage = term => `No results found for "${term}". Please check your spelling and filters.`;
 
   beforeEach(() => {
-    cy.login(Cypress.env('diku_login'), Cypress.env('diku_password'));
+    cy.loginAsAdmin();
     cy.getAdminToken();
 
     Requests.setRequestPolicyApi().then(({ oldRulesAsText, policy }) => {
@@ -53,7 +54,7 @@ describe('ui-requests: Make sure that request type filters are working properly'
     Requests.deleteRequestPolicyApi(requestPolicyId);
   });
 
-  it('C540 Make sure that request type filters are working properly', { tags: [TestTypes.smoke] }, () => {
+  it('C540 Make sure that request type filters are working properly (folijet) (prokopovych)', { tags: [TestTypes.smoke, DevTeams.folijet] }, () => {
     cy.visit(TopMenu.requestsPath);
     // Apply filters and test that the appropriate results display
     requests.forEach(({ requestType }) => {

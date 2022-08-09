@@ -1,24 +1,24 @@
 import uuid from 'uuid';
 import getRandomPostfix from '../../utils/stringTools';
-import MaterialTypesSettings from '../inventory/materialType/materialTypesSettings';
+import NewMaterialType from '../settings/inventory/newMaterialType';
 
-const getDefaultOrderLine = (quantity, title, spesialLocationId, specialMaterialTypeId) => {
+const getDefaultOrderLine = (quantity, title, spesialLocationId, acquisitionMethod = '', listUnitPrice = '1.0', poLineEstimatedPrice = '1.0', productIds = [], specialMaterialTypeId) => {
   const defaultOrderLine = {
     id: uuid(),
     checkinItems: false,
-    acquisitionMethod: '',
+    acquisitionMethod,
     alerts: [],
     claims: [],
     contributors: [],
     cost: {
-      listUnitPrice: 1.0,
+      listUnitPrice,
       currency: 'USD',
       discountType: 'percentage',
       quantityPhysical: quantity,
-      poLineEstimatedPrice: 1.0
+      poLineEstimatedPrice
     },
     details: {
-      productIds: [],
+      productIds,
       subscriptionInterval: 0
     },
     fundDistribution: [],
@@ -54,8 +54,8 @@ const getDefaultOrderLine = (quantity, title, spesialLocationId, specialMaterial
       vendorAccount: '1234'
     }
   };
-  if (!defaultOrderLine.materialType) {
-    MaterialTypesSettings.createApi(MaterialTypesSettings.getDefaultMaterialType())
+  if (!defaultOrderLine.physical.materialType) {
+    NewMaterialType.createViaApi(NewMaterialType.getDefaultMaterialType())
       .then(mtypes => {
         defaultOrderLine.physical.materialType = mtypes.body.id;
       });

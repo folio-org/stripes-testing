@@ -81,7 +81,7 @@ export default {
     cy.do(Checkbox(tagName).click());
   },
 
-  createInstanceViaApi(instanceName, itemBarcode, publisher = null, holdingCallNumber = '1', itemCallNumber = '2') {
+  createInstanceViaApi(instanceName, itemBarcode, publisher = null, holdingCallNumber = '1', itemCallNumber = '2', accessionNumber = 'test_number_1') {
     let alternativeTitleTypeId = '';
     let holdingSourceId = '';
     const instanceId = uuid();
@@ -125,7 +125,8 @@ export default {
                 status: { name: 'Available' },
                 permanentLoanType: { id: Cypress.env('loanTypes')[0].id },
                 materialType: { id: Cypress.env('materialTypes')[0].id },
-                itemLevelCallNumber: itemCallNumber
+                itemLevelCallNumber: itemCallNumber,
+                accessionNumber
               },
               {
                 barcode: 'secondBarcode_' + itemBarcode,
@@ -134,7 +135,8 @@ export default {
                 status: { name: 'Available' },
                 permanentLoanType: { id: Cypress.env('loanTypes')[0].id },
                 materialType: { id: Cypress.env('materialTypes')[0].id },
-                itemLevelCallNumber: itemCallNumber
+                itemLevelCallNumber: itemCallNumber,
+                accessionNumber
               }
             ],
           ],
@@ -152,7 +154,7 @@ export default {
     return instanceId;
   },
 
-  deleteInstanceViaApi(itemBarcode) {
+  deleteInstanceAndHoldingRecordAndAllItemsViaApi(itemBarcode) {
     cy.getInstance({ limit: 1, expandAll: true, query: `"items.barcode"=="${itemBarcode}"` })
       .then((instance) => {
         instance.items.forEach((item) => cy.deleteItem(item.id));
@@ -187,5 +189,17 @@ export default {
         });
       });
     return cy.get('@ids');
-  }
+  },
+
+  getInstanceIdApi: (searchParams) => {
+    return cy
+      .okapiRequest({
+        path: 'instance-storage/instances',
+        searchParams,
+        isDefaultSearchParamsRequired: false
+      })
+      .then((res) => {
+        return res.body.instances[0].id;
+      });
+  },
 };

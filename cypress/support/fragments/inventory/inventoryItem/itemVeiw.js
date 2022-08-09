@@ -1,4 +1,4 @@
-import { Accordion, KeyValue, Button, HTML, including, TextField } from '../../../../../interactors';
+import { Accordion, KeyValue, Button, HTML, including, TextField, Link } from '../../../../../interactors';
 import dateTools from '../../../utils/dateTools';
 import ConfirmItemMissingModal from './confirmItemMissingModal';
 
@@ -21,9 +21,19 @@ const waitLoading = () => {
   cy.expect(Button('Actions').exists());
 };
 
+const closeDetailView = () => {
+  cy.do(Button({ icon: 'times' }).click());
+};
+
+const verifyItemStatus = (itemStatus) => {
+  cy.expect(loanAccordion.find(HTML(including(itemStatus))).exists());
+};
+
 export default {
   itemStatuses,
   waitLoading,
+  closeDetailView,
+  verifyItemStatus,
 
   verifyUpdatedItemDate:() => {
     cy.do(loanAccordion.find(KeyValue('Item status')).perform(element => {
@@ -35,10 +45,6 @@ export default {
     }));
   },
 
-  verifyItemStatus:(status) => {
-    cy.expect(loanAccordion.find(HTML(including(status))).exists());
-  },
-
   clickMarkAsMissing:() => {
     cy.do(Button('Actions').click());
     cy.do(Button('Mark as missing').click());
@@ -48,5 +54,15 @@ export default {
   addPieceToItem:(numberOfPieces) => {
     cy.do(TextField({ name:'numberOfPieces' }).fillIn(numberOfPieces));
     cy.do(Button('Save and close').click());
+  },
+
+  checkIsItemUpdated(itemBarcode) {
+    cy.do([
+      Button(including('Holdings: Main Library > GV706.5')).click(),
+      Link(itemBarcode).click()
+    ]);
+    verifyItemStatus('In process');
+    cy.expect(Accordion('Location').find(KeyValue('Effective location for item')).has({ value: 'Main Library' }));
+    closeDetailView();
   }
 };

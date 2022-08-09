@@ -1,5 +1,5 @@
 import uuid from 'uuid';
-import { Button, including, TextField, MultiColumnListRow, HTML, Pane, Modal } from '../../../../interactors';
+import { Button, including, TextField, MultiColumnListRow, MultiColumnList, HTML, Pane, Modal } from '../../../../interactors';
 import { REQUEST_METHOD } from '../../constants';
 import { getLongDelay } from '../../utils/cypressTools';
 import ItemVeiw from '../inventory/inventoryItem/itemVeiw';
@@ -12,6 +12,8 @@ const checkInButton = Button('Check in');
 const itemBarcodeField = TextField({ name:'item.barcode' });
 const addItemButton = Button({ id: 'clickable-add-item' });
 const availableActionsButton = Button({ id: 'available-actions-button-0' });
+const confirmModal = Modal('Confirm multipiece check in');
+const checkOutButton = confirmModal.find(Button('Check in'));
 
 const waitLoading = () => {
   cy.expect(TextField({ name: 'item.barcode' }).exists());
@@ -87,7 +89,7 @@ export default {
     ]);
     cy.expect(Modal(including('New fee/fine')).exists());
   },
-  createItemCheckinApi: (body) => {
+  checkinItemViaApi: (body) => {
     return cy.okapiRequest({
       method: REQUEST_METHOD.POST,
       path: 'circulation/check-in-by-barcode',
@@ -97,4 +99,8 @@ export default {
       },
     });
   },
+  confirmMultipleItemsCheckin(barcode) {
+    cy.do(checkOutButton.click());
+    cy.expect(MultiColumnList({ id:'list-items-checked-in' }).find(HTML(including(barcode))).exists());
+  }
 };

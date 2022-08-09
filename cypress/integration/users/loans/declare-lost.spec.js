@@ -94,7 +94,7 @@ describe('ui-users-loans: Loans', () => {
               newFirstItemData.barcode,
               newSecondItemData.barcode,
             ].forEach((itemBarcode) => {
-              Checkout.createItemCheckoutViaApi({
+              Checkout.checkoutItemViaApi({
                 itemBarcode,
                 userBarcode,
                 servicePointId,
@@ -110,7 +110,7 @@ describe('ui-users-loans: Loans', () => {
     });
   });
 
-  it('C9191: Declare lost', { tags: [TestType.smoke, TestType.broken] }, () => {
+  it('C9191 Declare lost (prokopovych)', { tags: [TestType.smoke, TestType.broken] }, () => {
     UsersCard.getApi(testUserId).then((user) => {
       Loans.getApi(testUserId).then(([firstLoan, secondLoan]) => {
         Loans.checkStatusCheckedOut(SECOND_LOAN_ROW_INDEX);

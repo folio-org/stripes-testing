@@ -9,31 +9,52 @@ import Funds from '../../support/fragments/finance/funds/funds';
 import DateTools from '../../support/utils/dateTools';
 import FileManager from '../../support/utils/fileManager';
 import SettingsInvoices from '../../support/fragments/invoices/settingsInvoices';
+import Organizations from '../../support/fragments/organizations/organizations';
+import devTeams from '../../support/dictionary/devTeams';
+import NewOrganization from '../../support/fragments/organizations/newOrganization';
+import NewBatchGroup from '../../support/fragments/settings/invoices/batch-groups';
+import BatchGrops from '../../support/api/batch-groups';
 
 describe('ui-invoices-settings: Export batch voucher', () => {
   const invoice = { ...NewInvoice.defaultUiInvoice };
   const vendorPrimaryAddress = { ...VendorAddress.vendorAddress };
   const invoiceLine = { ...NewInvoiceLine.defaultUiInvoiceLine };
   const fund = { ...NewFund.defaultFund };
+  const batchGroup = { ...NewBatchGroup.defaultUiBatchGroups };
   const subtotalValue = 100;
   const batchGroupConfiguration = {
     batchGroupId: '',
     format: 'Application/json',
-    enableScheduledExport: false
+    enableScheduledExport: false,
+    weekdays: []
   };
+  const organization = { ...NewOrganization.defaultUiOrganizations,
+    addresses:[{
+      addressLine1: '1 Centerpiece Blvd.',
+      addressLine2: 'P.O. Box 15550',
+      city: 'New Castle',
+      stateRegion: 'DE',
+      zipCode: '19720-5550',
+      country: 'USA',
+      isPrimary: true,
+      categories: [],
+      language: 'English'
+    }] };
 
   before(() => {
     cy.getToken(Cypress.env('diku_login'), Cypress.env('diku_password'));
-    cy.getOrganizationApi({ query: `name=${invoice.vendorName}` })
-      .then(organization => {
-        invoice.accountingCode = organization.erpCode;
-        Object.assign(vendorPrimaryAddress,
-          organization.addresses.find(address => address.isPrimary === true));
+    Organizations.createOrganizationViaApi(organization)
+      .then(response => {
+        organization.id = response;
       });
-    cy.getBatchGroups()
-      .then(batchGroup => {
-        invoice.batchGroup = batchGroup.name;
-        batchGroupConfiguration.batchGroupId = batchGroup.id;
+    invoice.accountingCode = organization.erpCode;
+    Object.assign(vendorPrimaryAddress,
+      organization.addresses.find(address => address.isPrimary === true));
+    invoice.vendorName = organization.name;
+    BatchGrops.createBatchGroupViaApi(batchGroup)
+      .then(response => {
+        invoice.batchGroup = response.name;
+        batchGroupConfiguration.batchGroupId = response.id;
       });
     SettingsInvoices.setConfigurationBatchGroup(batchGroupConfiguration);
     Funds.createFundViaUI(fund)
@@ -49,14 +70,15 @@ describe('ui-invoices-settings: Export batch voucher', () => {
 
   after('Delete storage', () => {
     FileManager.deleteFolder(Cypress.config('downloadsFolder'));
+    Organizations.deleteOrganizationViaApi(organization.id);
   });
 
-  it('C10943 Run batch voucher export manually', { tags: [TestType.smoke, TestType.broken] }, () => {
-    Invoices.createDefaultInvoice(invoice, vendorPrimaryAddress);
+  it('C10943 Run batch voucher export manually (thunderjet)', { tags: [TestType.smoke, devTeams.thunderjet, TestType.broken] }, () => {
+    Invoices.createSpecialInvoice(invoice, vendorPrimaryAddress);
     Invoices.createInvoiceLine(invoiceLine);
     Invoices.addFundDistributionToLine(invoiceLine, fund);
     Invoices.approveInvoice();
-    Invoices.voucherExport();
+    Invoices.voucherExport(batchGroup.name);
     FileManager.findDownloadedFilesByMask('*.json');
   });
 });

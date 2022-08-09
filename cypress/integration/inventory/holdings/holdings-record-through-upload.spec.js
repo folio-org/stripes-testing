@@ -1,15 +1,15 @@
 /// <reference types="cypress" />
 
-import TopMenu from '../../support/fragments/topMenu';
-import InventoryInstance from '../../support/fragments/inventory/inventoryInstance';
-import HoldingsRecordView from '../../support/fragments/inventory/holdingsRecordView';
-import testTypes from '../../support/dictionary/testTypes';
-import features from '../../support/dictionary/features';
-import DataImport from '../../support/fragments/data_import/dataImport';
-import SearchInventory from '../../support/fragments/data_import/searchInventory';
-import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
-import NewHoldingsRecord from '../../support/fragments/inventory/newHoldingsRecord';
-import HoldingsRecordEdit from '../../support/fragments/inventory/holdingsRecordEdit';
+import TopMenu from '../../../support/fragments/topMenu';
+import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
+import HoldingsRecordView from '../../../support/fragments/inventory/holdingsRecordView';
+import testTypes from '../../../support/dictionary/testTypes';
+import features from '../../../support/dictionary/features';
+import DataImport from '../../../support/fragments/data_import/dataImport';
+import SearchInventory from '../../../support/fragments/data_import/searchInventory';
+import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
+import NewHoldingsRecord from '../../../support/fragments/inventory/newHoldingsRecord';
+import HoldingsRecordEdit from '../../../support/fragments/inventory/holdingsRecordEdit';
 
 describe('Manage holding records of instance records created through marc file upload', () => {
   beforeEach(() => {
@@ -18,7 +18,7 @@ describe('Manage holding records of instance records created through marc file u
     cy.getAdminToken();
   });
 
-  it('C345408 MARC instance record + FOLIO holdings record (Regression)', { tags: [testTypes.smoke, features.holdingsRecord, testTypes.broken] }, () => {
+  it('C345408 MARC instance record + FOLIO holdings record (Regression) (spitfire)', { tags: [testTypes.smoke, features.holdingsRecord, testTypes.broken] }, () => {
     DataImport.uploadMarcBib().then(instanceRecordHrId => {
       cy.visit(TopMenu.inventoryPath);
       SearchInventory.searchInstanceByHRID(instanceRecordHrId);

@@ -97,7 +97,7 @@ describe('loan dates', () => {
   });
 
   after('Delete all data', () => {
-    CheckinActions.createItemCheckinApi({
+    CheckinActions.checkinItemViaApi({
       itemBarcode: item.barcode,
       servicePointId,
       checkInDate: '2021-09-30T16:14:50.444Z',
@@ -111,7 +111,7 @@ describe('loan dates', () => {
     Users.deleteViaApi(checkOutUser.userId);
   });
 
-  it('C566 Loan: Change due date warnings and alerts', { tags: [TestTypes.smoke] }, () => {
+  it('C566 Loan: Change due date warnings and alerts (prokopovych)', { tags: [TestTypes.smoke] }, () => {
     cy.visit(TopMenu.usersPath);
     // show open loans
     UsersSearchPane.searchByKeywords(checkOutUser.username);

@@ -14,6 +14,7 @@ import CheckInActions from '../../support/fragments/check-in-actions/checkInActi
 import Users from '../../support/fragments/users/users';
 import UserEdit from '../../support/fragments/users/userEdit';
 import InventoryInstance from '../../support/fragments/inventory/inventoryInstance';
+import DevTeams from '../../support/dictionary/devTeams';
 
 describe('Check Out', () => {
   let user = {};
@@ -96,7 +97,7 @@ describe('Check Out', () => {
 
   after(() => {
     cy.wrap(testItems.forEach(item => {
-      CheckInActions.createItemCheckinApi({
+      CheckInActions.checkinItemViaApi({
         itemBarcode: item.barcode,
         servicePointId: servicePoint.id,
         checkInDate: new Date().toISOString(),
@@ -126,7 +127,7 @@ describe('Check Out', () => {
       { missingitemPieces : numberOfMissingPieces, missingDescription: missingPieces });
   };
 
-  it('C591 Check out: multipiece items', { tags: [TestTypes.smoke] }, () => {
+  it('C591 Check out: multipiece items (vega)', { tags: [TestTypes.smoke, DevTeams.vega] }, () => {
     CheckOutActions.checkIsInterfacesOpened();
     CheckOutActions.checkOutItemUser(userBarcode, testItems[0].barcode);
     CheckOutActions.checkPatronInformation(user.username, userBarcode);

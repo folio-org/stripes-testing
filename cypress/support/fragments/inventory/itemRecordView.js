@@ -30,4 +30,13 @@ export default {
   verifyPermanentLoanType,
   verifyNote,
   verifyPermanentLocation,
+
+  editItem: (item) => {
+    return cy.okapiRequest({
+      method: 'PUT',
+      path: `inventory/items/${item.id}`,
+      body: item,
+      isDefaultSearchParamsRequired: false,
+    });
+  },
 };

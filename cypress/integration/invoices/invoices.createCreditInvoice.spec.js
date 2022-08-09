@@ -9,6 +9,8 @@ import Funds from '../../support/fragments/finance/funds/funds';
 import DateTools from '../../support/utils/dateTools';
 import Helper from '../../support/fragments/finance/financeHelper';
 import Transaction from '../../support/fragments/finance/fabrics/newTransaction';
+import Organizations from '../../support/fragments/organizations/organizations';
+import devTeams from '../../support/dictionary/devTeams';
 
 describe('ui-invoices: Credit Invoice creation', () => {
   const invoice = { ...NewInvoice.defaultUiInvoice };
@@ -19,7 +21,7 @@ describe('ui-invoices: Credit Invoice creation', () => {
 
   before(() => {
     cy.getAdminToken();
-    cy.getOrganizationApi({ query: `name=${invoice.vendorName}` })
+    Organizations.getOrganizationViaApi({ query: `name=${invoice.vendorName}` })
       .then(organization => {
         invoice.accountingCode = organization.erpCode;
         Object.assign(vendorPrimaryAddress,
@@ -38,7 +40,7 @@ describe('ui-invoices: Credit Invoice creation', () => {
     cy.visit(TopMenu.invoicesPath);
   });
 
-  it('C343209 Create a credit invoice', { tags: [TestType.smoke] }, () => {
+  it('C343209 Create a credit invoice (thunderjet)', { tags: [TestType.smoke, devTeams.thunderjet] }, () => {
     const transactionFactory = new Transaction();
     Invoices.createDefaultInvoice(invoice, vendorPrimaryAddress);
     Invoices.createInvoiceLine(invoiceLine);

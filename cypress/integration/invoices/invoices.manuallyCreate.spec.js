@@ -3,6 +3,8 @@ import NewInvoice from '../../support/fragments/invoices/newInvoice';
 import Invoices from '../../support/fragments/invoices/invoices';
 import testType from '../../support/dictionary/testTypes';
 import VendorAddress from '../../support/fragments/invoices/vendorAddress';
+import Organizations from '../../support/fragments/organizations/organizations';
+import devTeams from '../../support/dictionary/devTeams';
 
 describe('ui-invoices: Invoice creation', () => {
   const invoice = { ...NewInvoice.defaultUiInvoice };
@@ -10,7 +12,7 @@ describe('ui-invoices: Invoice creation', () => {
 
   before(() => {
     cy.getAdminToken();
-    cy.getOrganizationApi({ query: `name=${invoice.vendorName}` })
+    Organizations.getOrganizationViaApi({ query: `name=${invoice.vendorName}` })
       .then(organization => {
         invoice.accountingCode = organization.erpCode;
         Object.assign(vendorPrimaryAddress,
@@ -22,7 +24,7 @@ describe('ui-invoices: Invoice creation', () => {
     cy.visit(TopMenu.invoicesPath);
   });
 
-  it('C2299 Manually Create Invoice', { tags: [testType.smoke] }, () => {
+  it('C2299 Manually Create Invoice (thunderjet)', { tags: [testType.smoke, devTeams.thunderjet] }, () => {
     Invoices.createDefaultInvoice(invoice, vendorPrimaryAddress);
     Invoices.checkCreatedInvoice(invoice, vendorPrimaryAddress);
     Invoices.deleteInvoiceViaActions();

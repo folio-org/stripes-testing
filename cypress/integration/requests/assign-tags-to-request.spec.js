@@ -5,6 +5,7 @@ import Requests from '../../support/fragments/requests/requests';
 import NewRequest from '../../support/fragments/requests/newRequest';
 import Users from '../../support/fragments/users/users';
 import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
+import DevTeams from '../../support/dictionary/devTeams';
 
 describe('Assign Tags to Request', () => {
   const barcode = uuid();
@@ -18,11 +19,12 @@ describe('Assign Tags to Request', () => {
   };
   let itemBarcode;
   let userId;
+  let oldRulesText;
+  let requestPolicyId;
 
   before(() => {
-    cy.login(Cypress.env('diku_login'), Cypress.env('diku_password'));
-    cy.getToken('diku_admin', 'admin');
-    cy.visit(TopMenu.requestsPath);
+    cy.loginAsAdmin({ path: TopMenu.requestsPath, waiter: Requests.waitContentLoading });
+    cy.getAdminToken();
   });
 
   beforeEach(() => {
@@ -45,6 +47,11 @@ describe('Assign Tags to Request', () => {
         });
     });
 
+    Requests.setRequestPolicyApi().then(({ oldRulesAsText, policy }) => {
+      oldRulesText = oldRulesAsText;
+      requestPolicyId = policy.id;
+    });
+
     cy.getItems({ limit: 1, query: 'status.name=="Available"' }).then((item) => {
       itemBarcode = item.barcode;
       requestRecord.itemBarcode = itemBarcode;
@@ -60,9 +67,11 @@ describe('Assign Tags to Request', () => {
             Users.deleteViaApi(userId);
           });
       });
+    Requests.updateCirculationRulesApi(oldRulesText);
+    Requests.deleteRequestPolicyApi(requestPolicyId);
   });
 
-  it('C747 Assign Tags to Request', { tags:  [testType.smoke, testType.broken] }, () => {
+  it('C747 Assign Tags to Request (folijet) (prokopovych)', { tags:  [testType.smoke, DevTeams.folijet] }, () => {
     NewRequest.createNewRequest(requestRecord);
 
     Requests.selectNotYetFilledRequest();
@@ -72,10 +81,9 @@ describe('Assign Tags to Request', () => {
     Requests.selectTags(tag);
     Requests.closePane('Tags');
     Requests.closePane('Request Detail');
-
+    Requests.findCreatedRequest(requestRecord.itemTitle);
     Requests.selectFirstRequest(requestRecord.itemTitle);
     Requests.openTagsPane();
-
     Requests.verifyAssignedTags(tag);
   });
 });

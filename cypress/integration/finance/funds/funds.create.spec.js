@@ -3,6 +3,7 @@ import Funds from '../../../support/fragments/finance/funds/funds';
 import testType from '../../../support/dictionary/testTypes';
 import FinanceHelp from '../../../support/fragments/finance/financeHelper';
 import newFund from '../../../support/fragments/finance/funds/newFund';
+import devTeams from '../../../support/dictionary/devTeams';
 
 describe('ui-finance: Fund creation', () => {
   const fund = { ...newFund.defaultFund };
@@ -12,7 +13,7 @@ describe('ui-finance: Fund creation', () => {
     cy.deleteLedgerApi(createdLedgerId);
   });
 
-  it('C4052 Create a new fund', { tags: [testType.smoke] }, () => {
+  it('C4052 Create a new fund (thunderjet)', { tags: [testType.smoke, devTeams.thunderjet] }, () => {
     Funds.createFundViaUI(fund)
       .then(
         createdLedger => {

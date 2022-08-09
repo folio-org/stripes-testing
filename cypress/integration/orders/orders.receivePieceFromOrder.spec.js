@@ -9,18 +9,23 @@ import InventorySearch from '../../support/fragments/inventory/inventorySearch';
 import InventoryInstance from '../../support/fragments/inventory/inventoryInstance';
 import InteractorsTools from '../../support/utils/interactorsTools';
 import OrdersHelper from '../../support/fragments/orders/ordersHelper';
+import Organizations from '../../support/fragments/organizations/organizations';
+import devTeams from '../../support/dictionary/devTeams';
+import NewOrganization from '../../support/fragments/organizations/newOrganization';
 
 describe('orders: Receive piece from Order', () => {
   const order = { ...newOrder.defaultOneTimeOrder };
   const orderLine = { ...basicOrderLine.defaultOrderLine };
+  const organization = { ...NewOrganization.defaultUiOrganizations };
 
   before(() => {
     cy.getAdminToken();
-    cy.getOrganizationApi({ query: 'name="Amazon.com"' })
-      .then(organization => {
-        order.vendor = organization.id;
-        orderLine.physical.materialSupplier = organization.id;
-        orderLine.eresource.accessProvider = organization.id;
+    Organizations.createOrganizationViaApi(organization)
+      .then(response => {
+        organization.id = response;
+        order.vendor = response;
+        orderLine.physical.materialSupplier = response;
+        orderLine.eresource.accessProvider = response;
       });
     cy.getLocations({ query: `name="${OrdersHelper.mainLibraryLocation}"` })
       .then(location => { orderLine.locations[0].locationId = location.id; });
@@ -28,8 +33,20 @@ describe('orders: Receive piece from Order', () => {
       .then(materialType => { orderLine.physical.materialType = materialType.id; });
     cy.login(Cypress.env('diku_login'), Cypress.env('diku_password'));
   });
+  
+  after(() => {
+    Orders.deleteOrderApi(order.id);
 
-  it('C735 Receiving pieces from an order for physical material that is set to create Items in inventory', { tags: [testType.smoke] }, () => {
+    Organizations.deleteOrganizationViaApi(organization.id);
+  });
+
+  after(() => {
+    Orders.deleteOrderApi(order.id);
+
+    Organizations.deleteOrganizationViaApi(organization.id);
+  });
+
+  it('C735 Receiving pieces from an order for physical material that is set to create Items in inventory (thunderjet)', { tags: [testType.smoke, devTeams.thunderjet] }, () => {
     // TODO: update test case in test rail to reflect business actions
     const barcode = Helper.getRandomBarcode();
     const caption = 'autotestCaption';

@@ -24,6 +24,7 @@ import NewHoldingsRecord from './newHoldingsRecord';
 import InventoryInstanceSelectInstanceModal from './holdingsMove/inventoryInstanceSelectInstanceModal';
 import InventoryInstancesMovement from './holdingsMove/inventoryInstancesMovement';
 import ItemVeiw from './inventoryItem/itemVeiw';
+import DateTools from '../../utils/dateTools';
 
 const section = Section({ id: 'pane-instancedetails' });
 const actionsButton = section.find(Button('Actions'));
@@ -38,6 +39,7 @@ const addMarcHoldingRecordButton = Button({ id:'create-holdings-marc' });
 const viewHoldingsButton = Button('View holdings');
 const notesSection = Section({ id: 'instance-details-notes' });
 const moveItemsButton = Button({ id: 'move-instance-items' });
+const instanceDetailsPane = Pane({ id:'pane-instancedetails' });
 
 const instanceHRID = 'Instance HRID';
 const validOCLC = { id:'176116217',
@@ -69,10 +71,19 @@ const closeTag = Button({ icon: 'times' });
 const tagsPane = Pane('Tags');
 const textFieldTagInput = MultiSelect({ ariaLabelledby:'accordion-toggle-button-tag-accordion' });
 
+const openHoldings = (...holdingToBeOpened) => {
+  const openActions = [];
+  for (let i = 0; i < holdingToBeOpened.length; i++) {
+    openActions.push(Accordion({ label: including(`Holdings: ${holdingToBeOpened[i]}`) }).clickHeader());
+  }
+  return cy.do(openActions);
+};
+
 export default {
   validOCLC,
   pressAddHoldingsButton,
   waitLoading,
+  openHoldings,
   checkExpectedOCLCPresence: (OCLCNumber = validOCLC.id) => {
     cy.expect(identifiers.find(HTML(including(OCLCNumber))).exists());
   },
@@ -143,16 +154,9 @@ export default {
     const accordionHeader = `Holdings: ${locationName} >`;
     const indexRowNumber = `row-${rowNumber}`;
     // wait for data to be loaded
-    cy.intercept(
-      {
-        method: 'GET',
-        url: '/inventory/items?*',
-      }
-    ).as('getItems');
+    cy.intercept('/inventory/items?*').as('getItems');
     cy.wait('@getItems');
-    cy.do([
-      Accordion(accordionHeader).clickHeader(),
-    ]);
+    cy.do(Accordion(accordionHeader).clickHeader());
 
     cy.expect(Accordion(accordionHeader)
       .find(MultiColumnListRow({ indexRow: indexRowNumber }))
@@ -171,16 +175,8 @@ export default {
     }
   },
 
-  openHoldings(...holdingToBeOpened) {
-    const openActions = [];
-    for (let i = 0; i < holdingToBeOpened.length; i++) {
-      openActions.push(Accordion({ label: including(`Holdings: ${holdingToBeOpened[i]}`) }).clickHeader());
-    }
-    return cy.do(openActions);
-  },
-
   moveItemToAnotherHolding(firstHoldingName, secondHoldingName) {
-    this.openHoldings([firstHoldingName, secondHoldingName]);
+    openHoldings(firstHoldingName, secondHoldingName);
 
     cy.do([
       Accordion({ label: including(`Holdings: ${firstHoldingName}`) }).find(MultiColumnListRow({ indexRow: 'row-0' })).find(Checkbox()).click(),
@@ -189,7 +185,7 @@ export default {
   },
 
   returnItemToFirstHolding(firstHoldingName, secondHoldingName) {
-    this.openHoldings([firstHoldingName, secondHoldingName]);
+    this.openHoldings(firstHoldingName, secondHoldingName);
 
     cy.do([
       Accordion({ label: including(`Holdings: ${secondHoldingName}`) }).find(MultiColumnListRow({ indexRow: 'row-0' })).find(Checkbox()).click(),
@@ -271,10 +267,27 @@ export default {
     cy.expect(tagButton.find(HTML(including('0'))).exists());
   },
 
+  checkIsInstancePresented:(title, location, content = 'On order') => {
+    cy.expect(Pane({ titleLabel: including(title) }).exists());
+    cy.expect(instanceDetailsPane.find(HTML(including(location))).exists());
+    openHoldings([location]);
+    cy.expect(instanceDetailsPane.find(MultiColumnListCell(content)).exists());
+  },
+
   deleteInstanceViaApi: (id) => {
     cy.okapiRequest({
       method: 'DELETE',
       path: `instance-storage/instances/${id}`,
+      isDefaultSearchParamsRequired: false,
     });
-  }
+  },
+
+  checkIsInstanceUpdated:() => {
+    const instanceStatusTerm = KeyValue('Instance status term');
+    const source = KeyValue('Source');
+
+    cy.expect(instanceStatusTerm.has({ value: 'Batch Loaded' }));
+    cy.expect(source.has({ value: 'MARC' }));
+    cy.expect(KeyValue('Cataloged date').has({ value: DateTools.getFormattedDate({ date: new Date() }) }));
+  },
 };
