@@ -29,12 +29,6 @@ const deleteOwner = (rowNumber = 2) => {
   cy.expect(Modal('Delete Fee/fine owner').absent());
 };
 
-export const getNewOwner = (name, desc) => ({
-  owner: name ? getTestEntityValue(name) : getTestEntityValue(),
-  desc: desc ? getTestEntityValue(desc) : getTestEntityValue(),
-  id: uuid(),
-});
-
 export default {
   trySave,
   waitLoading:() => {
@@ -51,6 +45,12 @@ export default {
     // TODO: clarify the reason of extra waiting
     cy.wait(500);
   },
+  getDefaultNewOwner: (id, name, desc) => ({
+    owner: getTestEntityValue(name),
+    desc: getTestEntityValue(desc),
+    // required field
+    id,
+  }),
   startNewLineAdding: () => cy.do(addButton.click()),
   defaultServicePoints,
   getUsedServicePoints: () => {

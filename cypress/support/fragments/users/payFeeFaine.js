@@ -10,8 +10,10 @@ export default {
   },
   checkAmount:(amount) => cy.expect(amountTextfield.has({ value: amount.toFixed(2) })),
   setPaymentMethod: ({ name: paymentMethodName }) => cy.get('div[class^=modal-] select[name=method]').select(paymentMethodName),
-  submit: () => cy.do(rootModal.find(Button({ id:'submit-button' })).click()),
-  confirm:() => cy.do(confirmationModal.find(Button({ id: matching('clickable-confirmation-[0-9]+-confirm') })).click()),
+  submitAndConfirm: () => {
+    cy.do(rootModal.find(Button({ id:'submit-button' })).click());
+    cy.do(confirmationModal.find(Button({ id: matching('clickable-confirmation-[0-9]+-confirm') })).click());
+  },
   checkPartialPayConfirmation:() => cy.expect(confirmationModal.find(HTML(including('will be partially paid'))).exists),
   setAmount:(amount) => cy.do(amountTextfield.fillIn(amount.toFixed(2))),
   back:() => cy.do(confirmationModal.find(Button({ id: matching('clickable-confirmation-[0-9]+-cancel') })).click()),

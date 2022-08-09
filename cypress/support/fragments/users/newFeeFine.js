@@ -18,33 +18,43 @@ const getChargeFeeFine = ({ amount, userId, feeFineType, id, dateAction, created
   source,
 });
 
-const getNewFeeFineAccount = ({ ownerId, feeFineId, amount, paymentStatus, status, userId, feeFineType, feeFineOwner }) => ({
+const getNewFeeFineAccount = ({ id, ownerId, feeFineId, amount, paymentStatus, status, userId, feeFineType, feeFineOwner }) => ({
+  // required field
   feeFineId,
+  // required field
   ownerId,
+  // required field
   amount,
   paymentStatus: paymentStatus || { "name":"Outstanding" },
   status: status || {"name":"Open"},
-  id : uuid(),
+  // required field
+  id,
+  // required field
   userId,
+  // required field
   feeFineType,
+  // required field
   remaining: amount,
+  // required field
   feeFineOwner,
 });
 
-const createFeeFineAccountViaApi = (feeFineAccount) => {
-  return cy.okapiRequest({ method: 'POST',
+const createFeeFineAccountViaApi = (feeFineAccount) => (
+  cy.okapiRequest({
+    method: 'POST',
     path: 'accounts',
     body: feeFineAccount,
-    isDefaultSearchParamsRequired: false }).then(res => res.body.id);
-};
+    isDefaultSearchParamsRequired: false
+  }).then(res => res.body.id)
+);
 
-const chargeAmountFeeFineActionsViaApi = (chargeFeeFineAction) => {
-  return cy.okapiRequest({ method: 'POST',
+const chargeAmountFeeFineActionsViaApi = (chargeFeeFineAction) => (
+  cy.okapiRequest({ method: 'POST',
     path: 'feefineactions',
     body: chargeFeeFineAction,
     searchParams: { limit: 1000, query: `(userId==${chargeFeeFineAction.userId})` },
-    isDefaultSearchParamsRequired: false }).then(res => res.body.accountId);
-};
+    isDefaultSearchParamsRequired: false }).then(res => res.body.accountId)
+);
 
 export default {
   waitLoading:() => {
@@ -79,5 +89,12 @@ export default {
   createViaApi: (feeFineAccount) => {
     return createFeeFineAccountViaApi(getNewFeeFineAccount(feeFineAccount))
       .then((feeFineAccountId) => chargeAmountFeeFineActionsViaApi(getChargeFeeFine({ ...feeFineAccount, id: feeFineAccountId })));
-  }
+  },
+  deleteFeeFineAccountViaApi: (feeFineAccountId) => (
+    cy.okapiRequest({
+      method: 'DELETE',
+      path: `accounts/${feeFineAccountId}`,
+      isDefaultSearchParamsRequired: false
+    })
+  )
 };

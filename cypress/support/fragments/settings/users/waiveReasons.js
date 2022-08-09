@@ -13,14 +13,13 @@ const descriptionTextField = TextField({ placeholder: 'description' });
 const getRowByReason = (reason) => cy.then(() => rootSection.find(MultiColumnListCell(reason)).row());
 const getDescriptionColumnIdex = () => cy.then(() => rootSection.find(MultiColumnListHeader('Description')).index());
 
-export const getNewWaiveReason = (name, desc) => ({
-  nameReason: name ? getTestEntityValue(name) : getTestEntityValue(),
-  description: desc ? getTestEntityValue(desc) : getTestEntityValue(),
-  id: uuid(),
-});
-
 export default {
   waitLoading:() => cy.expect(rootSection.find(PaneHeader('Fee/fine: Waive reasons')).exists()),
+  getDefaultNewWaiveReason: (id, name, desc) => ({
+    nameReason: getTestEntityValue(name),
+    description: getTestEntityValue(desc),
+    id,
+  }),
   startAdding:() => cy.do(newButton.click()),
   fillReasonParameters : ({ reason, description }) => {
     cy.do(reasonTextField.fillIn(reason));
@@ -52,16 +51,20 @@ export default {
       cy.expect(rootSection.find(MultiColumnListCell(reason)).absent());
     });
   },
-  createViaApi: (waiveReason) => cy.okapiRequest({ method: 'POST',
-    path: 'waives',
-    body: waiveReason,
-    isDefaultSearchParamsRequired: false }),
-  deleteViaApi:  (waiveReasonId) => {
+  createViaApi: (waiveReason) => (
+    cy.okapiRequest({
+      method: 'POST',
+      path: 'waives',
+      body: waiveReason,
+      isDefaultSearchParamsRequired: false,
+    })
+  ),
+  deleteViaApi:  (waiveReasonId) => (
     cy.okapiRequest({
       method: 'DELETE',
       path: `waives/${waiveReasonId}`,
       isDefaultSearchParamsRequired: false,
-    });
-  },
+    })
+  ),
 
 };
