@@ -51,7 +51,8 @@ export default {
       .okapiRequest({
         path: 'locations',
         body: locationProperties,
-        method: 'POST'
+        method: 'POST',
+        isDefaultSearchParamsRequired: false
       })
       .then((response) => {
         return response.body;
@@ -70,5 +71,17 @@ export default {
       libraryId,
       servicePointIds: [],
       primaryServicePoint: ''
-    } })
+    } }),
+
+  deleteViaApiIncludingInstitutionCampusLibrary: (institutionId, campusId, libraryId, locationId) => {
+    cy
+      .okapiRequest({
+        path: `locations/${locationId}`,
+        method: 'DELETE',
+        isDefaultSearchParamsRequired: false
+      });
+    Libraries.deleteViaApi(libraryId);
+    Campuses.deleteViaApi(campusId);
+    Institutions.deleteViaApi(institutionId);
+  }
 };

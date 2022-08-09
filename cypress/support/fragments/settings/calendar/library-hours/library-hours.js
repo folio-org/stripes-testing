@@ -41,11 +41,10 @@ const fieldLabels = {
 };
 
 export default {
-  openCalendarEvents() {
-    cy
-      .visit(settingsMenu.calendarLibraryHoursPath)
-      // todo: Find the approach to use interactors
-      .get(selectors.servicePoint).first().click();
+  openCalendarEvents(servicePointName) {
+    cy.visit(settingsMenu.calendarLibraryHoursPath);
+    // TODO: Find the approach to use interactors
+    cy.get(selectors.servicePoint).contains(servicePointName).scrollIntoView().click();
   },
 
   createCalendarEvent() {
@@ -99,9 +98,9 @@ export default {
     cy.expect(Button(buttonLabels.delete).absent());
   },
 
-  clearCreatedEvents() {
+  clearCreatedEvents(servicePointName) {
     cy.login(Cypress.env('diku_login'), Cypress.env('diku_password'));
-    this.openCalendarEvents();
+    this.openCalendarEvents(servicePointName);
     this.deleteCalendarEvent();
   },
 };
