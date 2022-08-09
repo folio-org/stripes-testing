@@ -122,7 +122,6 @@ describe('ui-inventory: Item status date updates', () => {
             });
           });
       });
-    });
   });
 
   afterEach(() => {

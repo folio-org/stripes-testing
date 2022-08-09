@@ -126,7 +126,7 @@ export default {
     cy.do([
       actionsButton.click(),
       Button({ id: 'dropdown-clickable-duplicate-item' }).click(),
-      nameField.fillIn('DUPLICATE'),
+      nameField.fillIn(`DUPLICATETest_notice_${getRandomPostfix()}`),
       Button({ id: 'footer-save-entity' }).click(),
     ]);
   },
