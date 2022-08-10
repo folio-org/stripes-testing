@@ -1,4 +1,3 @@
-import uuid from 'uuid';
 import { including } from 'bigtest';
 import { Button, MultiColumnListCell, MultiColumnListRow, PaneHeader, Section, TextField, Modal, MultiColumnListHeader } from '../../../../../interactors';
 import { getTestEntityValue } from '../../../utils/stringTools';
