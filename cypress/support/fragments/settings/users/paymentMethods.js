@@ -56,7 +56,7 @@ export default {
     cy.okapiRequest({
       method: 'DELETE',
       path: `payments/${paymentMethodId}`,
-      isDefaultSearchParamsRequired: false
+      isDefaultSearchParamsRequired: false,
     });
   },
   delete:(paymentMethodName) => {

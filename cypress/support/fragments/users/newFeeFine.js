@@ -1,8 +1,59 @@
+import uuid from 'uuid';
 import { Button, Modal, Option, Select, TextArea, MultiColumnListRow, HTML, TextField } from '../../../../interactors';
 
 const rootModal = Modal({ id: 'new-modal' });
 const feeFineTypeSelect = rootModal.find(Select({ id: 'feeFineType' }));
 const amountTextField = rootModal.find(TextField({ name: 'amount' }));
+
+const getChargeFeeFine = ({ amount, userId, feeFineType, id, dateAction, createdAt, source }) => ({
+  accountId: id,
+  amountAction: amount,
+  balance: amount,
+  id : uuid(),
+  userId,
+  typeAction: feeFineType,
+  dateAction,
+  createdAt,
+  source,
+});
+
+const getNewFeeFineAccount = ({ id, ownerId, feeFineId, amount, paymentStatus, status, userId, feeFineType, feeFineOwner }) => ({
+  // required field
+  feeFineId,
+  // required field
+  ownerId,
+  // required field
+  amount,
+  paymentStatus: paymentStatus || { "name":"Outstanding" },
+  status: status || {"name":"Open"},
+  // required field
+  id,
+  // required field
+  userId,
+  // required field
+  feeFineType,
+  // required field
+  remaining: amount,
+  // required field
+  feeFineOwner,
+});
+
+const createFeeFineAccountViaApi = (feeFineAccount) => (
+  cy.okapiRequest({
+    method: 'POST',
+    path: 'accounts',
+    body: feeFineAccount,
+    isDefaultSearchParamsRequired: false
+  }).then(res => res.body.id)
+);
+
+const chargeAmountFeeFineActionsViaApi = (chargeFeeFineAction) => (
+  cy.okapiRequest({ method: 'POST',
+    path: 'feefineactions',
+    body: chargeFeeFineAction,
+    searchParams: { limit: 1000, query: `(userId==${chargeFeeFineAction.userId})` },
+    isDefaultSearchParamsRequired: false }).then(res => res.body.accountId)
+);
 
 export default {
   waitLoading:() => {
@@ -52,16 +103,24 @@ export default {
     cy.expect(amountTextField.has({ disabled: false }));
   },
 
-  cancel:() => {
-    cy.do(rootModal.find(Button({ id:'cancelCharge' })).click());
+  cancel:() => cy.do(rootModal.find(Button({ id:'cancelCharge' })).click()),
+
+  chargeAndPayNow: () => cy.do(rootModal.find(Button({ id:'chargeAndPay' })).click()),
+
+  createViaApi: (feeFineAccount) => {
+    return createFeeFineAccountViaApi(getNewFeeFineAccount(feeFineAccount))
+      .then((feeFineAccountId) => chargeAmountFeeFineActionsViaApi(getChargeFeeFine({ ...feeFineAccount, id: feeFineAccountId })));
   },
+
+  deleteFeeFineAccountViaApi: (feeFineAccountId) => (
+    cy.okapiRequest({
+      method: 'DELETE',
+      path: `accounts/${feeFineAccountId}`,
+      isDefaultSearchParamsRequired: false
+    })
+  ),
 
   keepEditing() {
     cy.do(Button({ id:'clickable-cancel-editing-confirmation-confirm' }).click());
   },
-
-  chargeAndPayNow: () => cy.do([
-    rootModal.find(Button({ id:'chargeAndPay' })).click(),
-  ])
 };
-
