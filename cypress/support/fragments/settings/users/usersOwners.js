@@ -1,5 +1,3 @@
-import uuid from 'uuid';
-
 import { PaneHeader, Button, MultiColumnListCell, TextField, MultiSelect, PaneSet, EditableList, EditableListRow, Modal, MultiSelectOption, ValueChipRoot, HTML, including } from '../../../../../interactors';
 import { getLongDelay } from '../../../utils/cypressTools';
 import { getTestEntityValue } from '../../../utils/stringTools';
