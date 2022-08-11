@@ -1,14 +1,14 @@
 import { HTML, including, Link } from '@interactors/html';
 import { TextField } from 'bigtest';
-import { Accordion, Button, Section, TextArea } from '../../../../interactors';
+import { Accordion, Button, Checkbox, MultiColumnList, MultiColumnListCell, MultiColumnListRow, Section, TextArea } from '../../../../interactors';
 
-const rootSection = Section({ id:'pane-userdetails' });
+const rootSection = Section({ id: 'pane-userdetails' });
 const permissionAccordion = Accordion({ id: 'permissionsSection' });
 const actionsButton = rootSection.find(Button('Actions'));
 const errors = {
-  patronHasBlocksInPlace:'Patron has block(s) in place'
+  patronHasBlocksInPlace: 'Patron has block(s) in place'
 };
-const feesFinesAccourdion = rootSection.find(Accordion({ id : 'accountsSection' }));
+const feesFinesAccourdion = rootSection.find(Accordion({ id: 'accountsSection' }));
 
 
 export default {
@@ -17,9 +17,15 @@ export default {
     cy.do(Accordion({ id: 'patronBlocksSection' }).clickHeader());
   },
 
+  patronBlocksAccordionCovered() {
+    cy.expect([
+      Section({ id: 'patronBlocksSection' }).find(Button({ id: 'accordion-toggle-button-patronBlocksSection' })).has({ ariaExpanded: 'false' })
+    ]);
+  },
+
   openLoans() {
     cy.intercept('/circulation/loans?*').as('getLoans');
-    cy.do(Accordion({ id : 'loansSection' }).clickHeader());
+    cy.do(Accordion({ id: 'loansSection' }).clickHeader());
     cy.wait('@getLoans');
   },
   openFeeFines() {
@@ -34,6 +40,61 @@ export default {
     cy.do([
       Button({ id: 'create-patron-block' }).click()
     ]);
+  },
+
+  createAndSaveNewPatronBlock(text) {
+    this.openPatronBlocks();
+    this.createPatronBlock();
+    this.fillDescription(text);
+    this.saveAndClose();
+  },
+
+  createNewPatronBlock(text) {
+    this.openPatronBlocks();
+    this.createPatronBlock();
+    this.fillDescription(text);
+  },
+
+  selectExpirationDate() {
+    cy.do(Button({ id: 'datepicker-toggle-calendar-button-dp-965' }));
+  },
+
+  submitPatronInformation(text) {
+    cy.expect(Accordion({ id: 'patronBlocksSection' })
+      .find(MultiColumnList({ id: 'patron-block-mcl' }))
+      .find(MultiColumnListRow({ index: 0 }))
+      .find(MultiColumnListCell({ columnIndex: 1 }))
+      .has({ content: text }));
+  },
+
+  submitNewBlockPageOpen() {
+    cy.expect([
+      TextArea({ id: 'patronBlockForm-desc' }).exists(),
+      Checkbox({ name: 'borrowing' }).exists,
+      Checkbox({ name: 'renewals' }).exists,
+      Checkbox({ name: 'requests' }).exists,
+    ]);
+  },
+
+  closeNewBlockPage() {
+    cy.do(Button({ id: 'close-patron-block' }).click());
+  },
+
+  selectPatronBlock(text) {
+    cy.do(Accordion({ id: 'patronBlocksSection' })
+      .find(MultiColumnList({ id: 'patron-block-mcl' }))
+      .find(MultiColumnListRow({ index: 0 }))
+      .find(MultiColumnListCell({ columnIndex: 1, content: text }))
+      .click());
+  },
+  deletePatronBlock() {
+    cy.do([
+      Button({ id: 'patron-block-delete' }).click(),
+      Button({ id: 'clickable-patron-block-confirmation-modal-confirm' }).click()
+    ]);
+  },
+  submitThatUserHasPatrons() {
+    cy.expect(TextField({ id: 'patron-block-place' }).has({ value: 'Patron has block(s) in place' }));
   },
 
   fillDescription(text) {
@@ -60,12 +121,12 @@ export default {
       cy.expect(permissionAccordion.find(HTML(including(permission))).exists());
     });
   },
-  waitLoading:() => cy.expect(rootSection.exists()),
+  waitLoading: () => cy.expect(rootSection.exists()),
   startFeeFine: () => {
     cy.do(actionsButton.click());
     cy.do(Button('Create fee/fine').click());
   },
   hasSaveError: (errorMessage) => cy.expect(rootSection.find(TextField({ value: errorMessage })).exists()),
   startFeeFineAdding: () => cy.do(feesFinesAccourdion.find(Button('Create fee/fine')).click()),
-  viewAllFeesFines:() => cy.do(feesFinesAccourdion.find(Button({ id: 'clickable-viewallaccounts' })).click()),
+  viewAllFeesFines: () => cy.do(feesFinesAccourdion.find(Button({ id: 'clickable-viewallaccounts' })).click()),
 };
