@@ -19,7 +19,8 @@ export default {
     body: ownerIdfeeFineTypeProperties
   }).then(response => ({
     id: response.body.id,
-    feeFineType: response.body.feeFineType
+    feeFineType: response.body.feeFineType,
+    amount: response.body.defaultAmount,
   })),
   deleteViaApi: (manualChargeId) => {
     cy.okapiRequest({

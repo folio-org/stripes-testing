@@ -1,5 +1,3 @@
-import uuid from 'uuid';
-
 import { PaneHeader, Button, MultiColumnListCell, TextField, MultiSelect, PaneSet, EditableList, EditableListRow, Modal, MultiSelectOption, ValueChipRoot, HTML, including } from '../../../../../interactors';
 import { getLongDelay } from '../../../utils/cypressTools';
 import { getTestEntityValue } from '../../../utils/stringTools';
@@ -29,11 +27,6 @@ const deleteOwner = (rowNumber = 2) => {
   cy.expect(Modal('Delete Fee/fine owner').absent());
 };
 
-export const getNewOwner = () => ({
-  owner: getTestEntityValue(),
-  id: uuid(),
-});
-
 export default {
   trySave,
   waitLoading:() => {
@@ -50,6 +43,12 @@ export default {
     // TODO: clarify the reason of extra waiting
     cy.wait(500);
   },
+  getDefaultNewOwner: (id, name, desc) => ({
+    owner: getTestEntityValue(name),
+    desc: getTestEntityValue(desc),
+    // required field
+    id,
+  }),
   startNewLineAdding: () => cy.do(addButton.click()),
   defaultServicePoints,
   getUsedServicePoints: () => {
@@ -135,6 +134,7 @@ export default {
     cy.okapiRequest({
       method: 'DELETE',
       path: `owners/${ownerId}`,
+      isDefaultSearchParamsRequired: false,
     });
   },
   checkValidatorError: (ownerName, errorMessage) => {
