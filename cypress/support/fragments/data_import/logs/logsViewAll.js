@@ -36,12 +36,40 @@ const columnName = {
 function waitUIToBeFiltered() {
   // Need some waiting when jobs list is long, UI takes longer to be filtered
   // eslint-disable-next-line cypress/no-unnecessary-waiting
-  cy.wait(1000);
+  cy.wait(1500);
+}
+
+function checkByErrorsInImport(...status) {
+  waitUIToBeFiltered();
+  return cy.get('#list-data-import').then(element => {
+    // only 100 records shows on every page
+    const resultCount = element.attr('data-total-count') > 99 ? 99 : element.attr('data-total-count');
+
+    // verify every string in result table
+    for (let i = 0; i < resultCount; i++) {
+      cy.expect(MultiColumnListCell({ content: or(...status), row: i }).exists());
+    }
+  });
+}
+
+function checkByUserName(userName) {
+  // this.waitUIToBeFiltered();
+  return cy.get('#list-data-import').then(element => {
+    // only 100 records shows on every page
+    const resultCount = element.attr('data-total-count') > 99 ? 99 : element.attr('data-total-count');
+
+    // verify every string in result table
+    for (let i = 0; i < resultCount; i++) {
+      cy.expect(MultiColumnListCell({ content: userName, row: i }).exists());
+    }
+  });
 }
 
 export default {
   verifyMessageOfDeteted,
   waitUIToBeFiltered,
+  checkByErrorsInImport,
+  checkByUserName,
   columnName,
 
   openViewAll() {
@@ -129,11 +157,13 @@ export default {
   selectNoFilterJobsByInventorySingleRecordImports: () => {
     cy.do(singleRecordImportsAccordion
       .find(Checkbox({ id: 'clickable-filter-singleRecordImports-no' })).click());
+    waitUIToBeFiltered();
   },
 
   selectYesFilterJobsByInventorySingleRecordImports: () => {
     cy.do(singleRecordImportsAccordion
       .find(Checkbox({ id: 'clickable-filter-singleRecordImports-yes' })).click());
+    waitUIToBeFiltered();
   },
 
   // TODO: redesign to interactors
@@ -176,19 +206,6 @@ export default {
     });
   },
 
-  checkByErrorsInImport(...status) {
-    waitUIToBeFiltered();
-    return cy.get('#list-data-import').then(element => {
-      // only 100 records shows on every page
-      const resultCount = element.attr('data-total-count') > 99 ? 99 : element.attr('data-total-count');
-
-      // verify every string in result table
-      for (let i = 0; i < resultCount; i++) {
-        cy.expect(MultiColumnListCell({ content: or(...status), row: i }).exists());
-      }
-    });
-  },
-
   checkByDate({ from, end }) {
     const queryString = UrlParams.getDateQueryString({ from, end });
     return this.getNumberOfMatchedJobs(queryString).then(count => {
@@ -210,45 +227,6 @@ export default {
       }
     });
   },
-
-  checkByUserName(userName) {
-    // this.waitUIToBeFiltered();
-    return cy.get('#list-data-import').then(element => {
-      // only 100 records shows on every page
-      const resultCount = element.attr('data-total-count') > 99 ? 99 : element.attr('data-total-count');
-
-      // verify every string in result table
-      for (let i = 0; i < resultCount; i++) {
-        cy.expect(MultiColumnListCell({ content: userName, row: i }).exists());
-      }
-    });
-  },
-
-  // checkByInventorySingleRecord({ filter }) {
-  //   this.waitUIToBeFiltered();
-  //   cy.get('body').then($body => {
-  //     if ($body.find('#list-data-import').length < 1) {
-  //       cy.expect(MultiColumnList().absent());
-  //     } else {
-  //       this.getMultiColumnListCellsValues(this.visibleColumns.JOB_PROFILE.columnIndex).then(profiles => {
-  //         const inventorySingleRecordProfiles = [
-  //           'Inventory Single Record - Default Create Instance',
-  //           'Inventory Single Record - Default Update Instance'
-  //         ];
-
-  //         if (filter === 'Yes') {
-  //           const isInventorySingleRecord = profiles.every(profile => inventorySingleRecordProfiles.includes(profile));
-  //           // eslint-disable-next-line no-unused-expressions
-  //           expect(isInventorySingleRecord).to.be.true;
-  //         } else {
-  //           const isNotInventorySingleRecord = profiles.every(profile => !inventorySingleRecordProfiles.includes(profile));
-  //           // eslint-disable-next-line no-unused-expressions
-  //           expect(isNotInventorySingleRecord).to.be.true;
-  //         }
-  //       });
-  //     }
-  //   });
-  // },
 
   checkByInventorySingleRecord(filter) {
     if (filter === 'Yes') {
@@ -272,20 +250,10 @@ export default {
     }
   },
 
-  checkByErrorsInImportAndUser({ filter, userName }) {
+  checkByErrorsInImportAndUser(status, userName) {
     this.waitUIToBeFiltered();
-    this.getMultiColumnListCellsValues(this.visibleColumns.STATUS.columnIndex).then(statuses => {
-      this.getMultiColumnListCellsValues(this.visibleColumns.RUN_BY.columnIndex).then(names => {
-        const expectedStatuses = filter === 'Yes' ? ['Failed', 'Completed with errors'] : ['Completed'];
-        const isFilteredByErrorStatus = statuses.every(jobStatus => expectedStatuses.includes(jobStatus));
-        const isFilteredByUser = names.every(name => name === userName);
-
-        // eslint-disable-next-line no-unused-expressions
-        expect(isFilteredByErrorStatus).to.be.true;
-        // eslint-disable-next-line no-unused-expressions
-        expect(isFilteredByUser).to.be.true;
-      });
-    });
+    checkByErrorsInImport(status);
+    checkByUserName(userName);
   },
 
   getNumberOfMatchedJobs(queryString) {
@@ -351,5 +319,9 @@ export default {
 
   openInventorysingleRecordImportsAccordion:() => {
     cy.do(Accordion({ id: 'singleRecordImports' }).clickHeader());
+  },
+
+  openUserAccordion:() => {
+    cy.do(Accordion({ id: 'userId' }).clickHeader());
   }
 };
