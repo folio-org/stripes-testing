@@ -1,3 +1,4 @@
+import { or } from '@interactors/html';
 import {
   Accordion,
   Button,
@@ -26,8 +27,22 @@ const verifyMessageOfDeteted = (quantity) => {
   InteractorsTools.closeCalloutMessage();
 };
 
+const columnName = {
+  status: MultiColumnList({ id:'list-data-import' }).find(MultiColumnListHeader({ id:'list-column-status' })),
+  jobProfile: MultiColumnList({ id:'list-data-import' }).find(MultiColumnListHeader({ id:'list-column-jobprofilename' })),
+  runBy: MultiColumnList({ id:'list-data-import' }).find(MultiColumnListHeader({ id:'list-column-runby' }))
+};
+
+function waitUIToBeFiltered() {
+  // Need some waiting when jobs list is long, UI takes longer to be filtered
+  // eslint-disable-next-line cypress/no-unnecessary-waiting
+  cy.wait(1000);
+}
+
 export default {
   verifyMessageOfDeteted,
+  waitUIToBeFiltered,
+  columnName,
 
   openViewAll() {
     cy.do([
@@ -73,16 +88,17 @@ export default {
     // Otherwise, server cannot parse request params and returns error with 422 status
     // In this case, sort by completed date in ascending order
     cy.do(MultiColumnListHeader('Ended running').click());
+    waitUIToBeFiltered();
   },
 
-  filterJobsByErrors(filter) {
-    if (filter === 'Yes') {
-      cy.do(Accordion('Errors in import')
-        .find(Checkbox({ id: 'clickable-filter-statusAny-error' })).click());
-    } else {
-      cy.do(Accordion('Errors in import')
-        .find(Checkbox({ id: 'clickable-filter-statusAny-committed' })).click());
-    }
+  selectYesfilterJobsByErrors: () => {
+    cy.do(Accordion('Errors in import')
+      .find(Checkbox({ id: 'clickable-filter-statusAny-error' })).click());
+  },
+
+  selectNofilterJobsByErrors: () => {
+    cy.do(Accordion('Errors in import')
+      .find(Checkbox({ id: 'clickable-filter-statusAny-committed' })).click());
   },
 
   filterJobsByDate({ from, end }) {
@@ -146,12 +162,6 @@ export default {
     RUN_BY: { columnIndex: 7 }
   },
 
-  waitUIToBeFiltered() {
-    // Need some waiting when jobs list is long, UI takes longer to be filtered
-    // eslint-disable-next-line cypress/no-unnecessary-waiting
-    cy.wait(1800);
-  },
-
   checkByReverseChronologicalOrder() {
     this.getMultiColumnListCellsValues(this.visibleColumns.ENDED_RUNNING.columnIndex).then(cells => {
       // convert each cell value to Date object
@@ -166,16 +176,16 @@ export default {
     });
   },
 
-  checkByErrorsInImport({ filter }) {
-    this.waitUIToBeFiltered();
-    this.getMultiColumnListCellsValues(this.visibleColumns.STATUS.columnIndex).then(statuses => {
-      // if filter is 'Yes', then check for error otherwise, completed status
-      const expectedStatuses = filter === 'Yes' ? ['Failed', 'Completed with errors'] : ['Completed'];
-      // each status in the statuses array should be in the expectedStatuses array
-      const isFilteredByErrorStatus = statuses.every(jobStatus => expectedStatuses.includes(jobStatus));
+  checkByErrorsInImport(...status) {
+    waitUIToBeFiltered();
+    return cy.get('#list-data-import').then(element => {
+      // only 100 records shows on every page
+      const resultCount = element.attr('data-total-count') > 99 ? 99 : element.attr('data-total-count');
 
-      // eslint-disable-next-line no-unused-expressions
-      expect(isFilteredByErrorStatus).to.be.true;
+      // verify every string in result table
+      for (let i = 0; i < resultCount; i++) {
+        cy.expect(MultiColumnListCell({ content: or(...status), row: i }).exists());
+      }
     });
   },
 
@@ -188,52 +198,78 @@ export default {
     });
   },
 
-  checkByJobProfileName({ jobProfileName }) {
+  checkByJobProfileName(jobProfileName) {
     this.waitUIToBeFiltered();
-    this.getMultiColumnListCellsValues(this.visibleColumns.JOB_PROFILE.columnIndex).then(jobProfiles => {
-      // each profile name in the jobProfiles array should be equal to jobProfileName
-      const isFilteredByProfile = jobProfiles.every(name => name === jobProfileName);
+    return cy.get('#list-data-import').then(element => {
+      // only 100 records shows on every page
+      const resultCount = element.attr('data-total-count') > 99 ? 99 : element.attr('data-total-count');
 
-      // eslint-disable-next-line no-unused-expressions
-      expect(isFilteredByProfile).to.be.true;
-    });
-  },
-
-  checkByUserName({ userName }) {
-    this.waitUIToBeFiltered();
-    this.getMultiColumnListCellsValues(this.visibleColumns.RUN_BY.columnIndex).then(userNames => {
-      // each name in the userNames array should be equal to the userName
-      const isFilteredByUser = userNames.every(name => name === userName);
-
-      // eslint-disable-next-line no-unused-expressions
-      expect(isFilteredByUser).to.be.true;
-    });
-  },
-
-  checkByInventorySingleRecord({ filter }) {
-    this.waitUIToBeFiltered();
-    cy.get('body').then($body => {
-      if ($body.find('#list-data-import').length < 1) {
-        cy.expect(MultiColumnList().absent());
-      } else {
-        this.getMultiColumnListCellsValues(this.visibleColumns.JOB_PROFILE.columnIndex).then(profiles => {
-          const inventorySingleRecordProfiles = [
-            'Inventory Single Record - Default Create Instance',
-            'Inventory Single Record - Default Update Instance'
-          ];
-
-          if (filter === 'Yes') {
-            const isInventorySingleRecord = profiles.every(profile => inventorySingleRecordProfiles.includes(profile));
-            // eslint-disable-next-line no-unused-expressions
-            expect(isInventorySingleRecord).to.be.true;
-          } else {
-            const isNotInventorySingleRecord = profiles.every(profile => !inventorySingleRecordProfiles.includes(profile));
-            // eslint-disable-next-line no-unused-expressions
-            expect(isNotInventorySingleRecord).to.be.true;
-          }
-        });
+      // verify every string in result table
+      for (let i = 0; i < resultCount; i++) {
+        cy.expect(MultiColumnListCell({ content: jobProfileName, row: i }).exists());
       }
     });
+  },
+
+  checkByUserName(userName) {
+    // this.waitUIToBeFiltered();
+    return cy.get('#list-data-import').then(element => {
+      // only 100 records shows on every page
+      const resultCount = element.attr('data-total-count') > 99 ? 99 : element.attr('data-total-count');
+
+      // verify every string in result table
+      for (let i = 0; i < resultCount; i++) {
+        cy.expect(MultiColumnListCell({ content: userName, row: i }).exists());
+      }
+    });
+  },
+
+  // checkByInventorySingleRecord({ filter }) {
+  //   this.waitUIToBeFiltered();
+  //   cy.get('body').then($body => {
+  //     if ($body.find('#list-data-import').length < 1) {
+  //       cy.expect(MultiColumnList().absent());
+  //     } else {
+  //       this.getMultiColumnListCellsValues(this.visibleColumns.JOB_PROFILE.columnIndex).then(profiles => {
+  //         const inventorySingleRecordProfiles = [
+  //           'Inventory Single Record - Default Create Instance',
+  //           'Inventory Single Record - Default Update Instance'
+  //         ];
+
+  //         if (filter === 'Yes') {
+  //           const isInventorySingleRecord = profiles.every(profile => inventorySingleRecordProfiles.includes(profile));
+  //           // eslint-disable-next-line no-unused-expressions
+  //           expect(isInventorySingleRecord).to.be.true;
+  //         } else {
+  //           const isNotInventorySingleRecord = profiles.every(profile => !inventorySingleRecordProfiles.includes(profile));
+  //           // eslint-disable-next-line no-unused-expressions
+  //           expect(isNotInventorySingleRecord).to.be.true;
+  //         }
+  //       });
+  //     }
+  //   });
+  // },
+
+  checkByInventorySingleRecord({ filter }) {
+    if (filter === 'Yes') {
+      return cy.get('#list-data-import').then(element => {
+        // only 100 records shows on every page
+        const resultCount = element.attr('data-total-count') > 99 ? 99 : element.attr('data-total-count');
+        // verify every string in result table
+        for (let i = 0; i < resultCount; i++) {
+          cy.expect(MultiColumnListCell({ content: or('Inventory Single Record - Default Create Instance', 'Inventory Single Record - Default Update Instance'), row: i }).exists());
+        }
+      });
+    } else {
+      return cy.get('#list-data-import').then(element => {
+        // only 100 records shows on every page
+        const resultCount = element.attr('data-total-count') > 99 ? 99 : element.attr('data-total-count');
+        // verify every string in result table
+        for (let i = 0; i < resultCount; i++) {
+          cy.expect(MultiColumnListCell({ content: or('Inventory Single Record - Default Create Instance', 'Inventory Single Record - Default Update Instance'), row: i }).absent());
+        }
+      });
+    }
   },
 
   checkByErrorsInImportAndUser({ filter, userName }) {
@@ -311,5 +347,9 @@ export default {
     cy.do(Button('Delete selected logs').click());
   },
 
-  modalIsAbsent:() => { cy.expect(Modal('Delete data import logs?').absent()); }
+  modalIsAbsent:() => { cy.expect(Modal('Delete data import logs?').absent()); },
+
+  openInventoryAccordion:() => {
+    cy.do(Accordion({ id: 'singleRecordImports' }).clickHeader());
+  }
 };

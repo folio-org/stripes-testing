@@ -1,4 +1,4 @@
-import { Button, TextField, MultiColumnListCell, Modal, HTML, including, Section, PaneHeader, MultiColumnList, Pane } from '../../../../../interactors';
+import { Button, TextField, MultiColumnListCell, Modal, HTML, including, Section, PaneHeader, MultiColumnList, Pane, PaneContent, Link } from '../../../../../interactors';
 import { getLongDelay } from '../../../utils/cypressTools';
 import newJobProfile from './newJobProfile';
 
@@ -133,5 +133,8 @@ export default {
     cy.do(Button(fileName).click());
     cy.expect(Section({ id:'pane-results' }).exists());
     cy.expect(PaneHeader(fileName).exists());
+  },
+  openJobProfile:() => {
+    cy.do(PaneContent({ id:'app-settings-nav-pane-content' }).find(Link({ href: including('/settings/data-import/job-profiles') })).click());
   }
 };

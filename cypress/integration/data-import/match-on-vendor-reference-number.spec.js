@@ -11,6 +11,7 @@ import Orders from '../../support/fragments/orders/orders';
 import Users from '../../support/fragments/users/users';
 import permissions from '../../support/dictionary/permissions';
 import DevTeams from '../../support/dictionary/devTeams';
+import JobProfiles from '../../support/fragments/data_import/job_profiles/jobProfiles';
 
 describe('ui-data-import: Match on VRN and update related Instance, Holdings, Item', () => {
   let userId = null;
@@ -126,7 +127,7 @@ describe('ui-data-import: Match on VRN and update related Instance, Holdings, It
     });
 
     // create job profiles
-    cy.visit(SettingsMenu.jobProfilePath);
+    JobProfiles.openJobProfile();
     MatchOnVRN.createJobProfileForVRN(jobProfilesData);
 
     // import a file
