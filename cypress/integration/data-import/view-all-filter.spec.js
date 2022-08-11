@@ -100,13 +100,17 @@ describe('ui-data-import: Filter the "View all" log screen', () => {
     LogsViewAll.resetAllFilters(); */
 
     // FILTER By "Inventory single record imports"
-    LogsViewAll.openInventoryAccordion();
+    LogsViewAll.openInventorysingleRecordImportsAccordion();
+    LogsViewAll.selectNoFilterJobsByInventorySingleRecordImports();
     [LogsViewAll.columnName.jobProfile].forEach(columnName => {
-      LogsViewAll.singleRecordImportsStatuses.forEach(filter => {
-        LogsViewAll.filterJobsByInventorySingleRecordImports(filter);
-        LogsViewAll.checkByInventorySingleRecord({ filter }, columnName);
-        LogsViewAll.resetAllFilters();
-      });
+      LogsViewAll.checkByInventorySingleRecord('No', columnName);
+      LogsViewAll.resetAllFilters();
+    });
+    LogsViewAll.openInventorysingleRecordImportsAccordion();
+    LogsViewAll.selectYesFilterJobsByInventorySingleRecordImports();
+    [LogsViewAll.columnName.jobProfile].forEach(columnName => {
+      LogsViewAll.checkByInventorySingleRecord('Yes', columnName);
+      LogsViewAll.resetAllFilters();
     });
 
     // FILTER By more than one filter

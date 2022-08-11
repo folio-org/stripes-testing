@@ -126,14 +126,14 @@ export default {
     ]);
   },
 
-  filterJobsByInventorySingleRecordImports(filter) {
-    if (filter === 'Yes') {
-      cy.do(singleRecordImportsAccordion
-        .find(Checkbox({ id: 'clickable-filter-singleRecordImports-yes' })).click());
-    } else {
-      cy.do(singleRecordImportsAccordion
-        .find(Checkbox({ id: 'clickable-filter-singleRecordImports-no' })).click());
-    }
+  selectNoFilterJobsByInventorySingleRecordImports: () => {
+    cy.do(singleRecordImportsAccordion
+      .find(Checkbox({ id: 'clickable-filter-singleRecordImports-no' })).click());
+  },
+
+  selectYesFilterJobsByInventorySingleRecordImports: () => {
+    cy.do(singleRecordImportsAccordion
+      .find(Checkbox({ id: 'clickable-filter-singleRecordImports-yes' })).click());
   },
 
   // TODO: redesign to interactors
@@ -250,7 +250,7 @@ export default {
   //   });
   // },
 
-  checkByInventorySingleRecord({ filter }) {
+  checkByInventorySingleRecord(filter) {
     if (filter === 'Yes') {
       return cy.get('#list-data-import').then(element => {
         // only 100 records shows on every page
@@ -349,7 +349,7 @@ export default {
 
   modalIsAbsent:() => { cy.expect(Modal('Delete data import logs?').absent()); },
 
-  openInventoryAccordion:() => {
+  openInventorysingleRecordImportsAccordion:() => {
     cy.do(Accordion({ id: 'singleRecordImports' }).clickHeader());
   }
 };
