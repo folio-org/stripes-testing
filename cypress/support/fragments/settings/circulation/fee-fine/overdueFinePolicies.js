@@ -34,15 +34,11 @@ export default {
   },
 
   openCreatingForm() {
-    cy.do([
-      actionsButton.click()
-    ]);
+    cy.do(actionsButton.click());
   },
 
   checkCreatingForm() {
-    cy.do([
-      createFormSection.click()
-    ]);
+    cy.do(createFormSection.click());
     cy.expect([
       createFormSection.exists(),
       createFormHeader.exists(),
@@ -100,6 +96,7 @@ export default {
     cy.reload();
     this.waitLoading();
 
+    // waiting the html form to be rendered
     cy.wait(1000);
     this.fillMaxFine('1.00');
     this.checkAlert(alertOverdueAmount);
@@ -116,8 +113,8 @@ export default {
     this.checkAlert(maximumOverDueFineAlert);
   },
 
-  fillGeneralInformation(overdueFine, maxOverdueFine, recallFine, maxRecallFine) {
-    // waiting form to be rendered in browser
+  fillGeneralInformation([overdueFine, maxOverdueFine, recallFine, maxRecallFine]) {
+    // waiting the html form to be rendered
     cy.wait(1000);
     this.fillOverdueFine(overdueFine);
     this.fillMaxFine(maxOverdueFine);
@@ -131,7 +128,7 @@ export default {
     ]);
   },
 
-  verifyCreatedFines(overdueFine, maxOverdueFine, recallFine, maxRecallFine) {
+  verifyCreatedFines([overdueFine, maxOverdueFine, recallFine, maxRecallFine]) {
     cy.expect([
       generalFeePolicySection.find(KeyValue('Overdue fine policy name', { value: name })).exists(),
       feeViewSection.find(KeyValue('Overdue fine', { value: `${overdueFine} per day` })).exists(),
@@ -149,7 +146,7 @@ export default {
     cy.expect(createFormContent.exists());
   },
 
-  checkEditingForm(overdueFine, maxOverdueFine, recallFine, maxRecallFine) {
+  checkEditingForm([overdueFine, maxOverdueFine, recallFine, maxRecallFine]) {
     cy.do(createFormSection.click());
     cy.expect([
       cancelButton.has({ disabled : false }),

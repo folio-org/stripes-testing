@@ -10,18 +10,21 @@ describe('ui-circulation-settings: overdue fine policies management', () => {
 
   it('C5557: Verify that you can create/edit/delete overdue fine policies', { tags: [devTeams.spitfire, testTypes.smoke] }, () => {
     // TODO add check that name is unique
+    const overduePolicyProps = ['1.00', '2.00', '3.00', '4.00'];
+    const editedOverduePolicyProps = ['5.00', '6.00', '7.00', '8.00'];
+
     OverdueFinePolicies.openCreatingForm();
     OverdueFinePolicies.checkCreatingForm();
     OverdueFinePolicies.checkOverDueFineInCreating();
-    OverdueFinePolicies.fillGeneralInformation('1.00', '2.00', '3.00', '4.00');
+    OverdueFinePolicies.fillGeneralInformation(overduePolicyProps);
     OverdueFinePolicies.save();
-    OverdueFinePolicies.verifyCreatedFines('1.00', '2.00', '3.00', '4.00');
+    OverdueFinePolicies.verifyCreatedFines(overduePolicyProps);
 
     OverdueFinePolicies.openEditingForm();
-    OverdueFinePolicies.checkEditingForm('1.00', '2.00', '3.00', '4.00');
-    OverdueFinePolicies.fillGeneralInformation('5.00', '6.00', '7.00', '8.00');
+    OverdueFinePolicies.checkEditingForm(overduePolicyProps);
+    OverdueFinePolicies.fillGeneralInformation(editedOverduePolicyProps);
     OverdueFinePolicies.save();
-    OverdueFinePolicies.verifyCreatedFines('5.00', '6.00', '7.00', '8.00');
+    OverdueFinePolicies.verifyCreatedFines(editedOverduePolicyProps);
 
     OverdueFinePolicies.delete();
     OverdueFinePolicies.linkIsAbsent();
