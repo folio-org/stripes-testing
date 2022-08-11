@@ -16,7 +16,7 @@ describe('ui-inventory: Create, edit, delete material types', () => {
   before(() => {
     cy.createTempUser([permissions.uiCreateEditDeleteMaterialTypes.gui]).then(userProperties => {
       userId = userProperties.userId;
-      cy.login(userProperties.username, userProperties.password);
+      cy.login(userProperties.username, userProperties.password, { path: SettingsMenu.materialTypePath, waiter: MaterialTypes.waitLoading });
     });
   });
 
@@ -25,11 +25,11 @@ describe('ui-inventory: Create, edit, delete material types', () => {
   });
 
   it('C505 Settings (Inventory): Create, edit, delete material types (folijet) (prokopovych)', { tags: [TestTypes.smoke, DevTeams.folijet] }, () => {
-    cy.visit(SettingsMenu.materialTypePath);
     InventorySettings.checkAvailableOptions();
     NewMaterialType.create(materialTypeName);
-    MaterialTypes.isPresented(materialTypeName);
-    MaterialTypes.edit(newMaterialTypeName);
+    MaterialTypes.checkIsPresented(materialTypeName);
+    MaterialTypes.edit(materialTypeName, newMaterialTypeName);
+    MaterialTypes.checkIsPresented(newMaterialTypeName);
     MaterialTypes.delete(newMaterialTypeName);
     MaterialTypes.checkIsDeleted(newMaterialTypeName);
     MaterialTypes.verifyMessageOfDeteted(newMaterialTypeName);
