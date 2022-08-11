@@ -7,7 +7,7 @@ import Users from '../../support/fragments/users/users';
 import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
 import DevTeams from '../../support/dictionary/devTeams';
 
-describe('Assign Tags to Request', () => {
+describe('ui-requests: Assign Tags to Request', () => {
   const barcode = uuid();
   const lastName = `Test-${uuid()}`;
   const tag = 'urgent';
