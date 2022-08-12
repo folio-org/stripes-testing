@@ -14,6 +14,7 @@ describe('ui-data-import: Filter the "View all" log screen', () => {
   const fileNameForFailedImport = `C11113test${getRandomPostfix()}.mrc`;
   const fileNameForSuccessfulImport = `C11113test${getRandomPostfix()}.mrc`;
   let userName;
+  let userFilterValue;
   let jobProfileName;
   let userNameId;
   let profileId;
@@ -45,8 +46,13 @@ describe('ui-data-import: Filter the "View all" log screen', () => {
 
   beforeEach(() => {
     LogsViewAll.getSingleJobProfile().then(({ jobProfileInfo, runBy, userId }) => {
+      const {
+        firstName,
+        lastName,
+      } = runBy;
       jobProfileName = jobProfileInfo.name;
-      userName = `${runBy.firstName} ${runBy.lastName}`;
+      userFilterValue = `${firstName} ${lastName}`;
+      userName = firstName ? `${firstName} ${lastName}` : `${lastName}`;
       userNameId = userId;
       profileId = jobProfileInfo.id;
     });
@@ -87,7 +93,7 @@ describe('ui-data-import: Filter the "View all" log screen', () => {
     LogsViewAll.resetAllFilters();
 
     // FILTER By "User"
-    LogsViewAll.filterJobsByUser(userName);
+    LogsViewAll.filterJobsByUser(userFilterValue);
     LogsViewAll.checkByUserName({ userName, userId: userNameId });
     LogsViewAll.resetAllFilters();
 

@@ -14,6 +14,7 @@ import {
   TextInput,
 } from '../../../../interactors';
 import InventoryActions from './inventoryActions';
+import InventoryInstance from './inventoryInstance';
 
 const effectiveLocationInput = Accordion({ id: 'effectiveLocation' });
 const languageInput = Accordion({ id: 'language' });
@@ -228,5 +229,22 @@ export default {
 
   verifySearchResult(cellContent) {
     cy.expect(MultiColumnListCell({ content: cellContent }).exists());
+  },
+
+  getInstancesByIdentifierViaApi(identifier, limit = 100) {
+    return cy
+      .okapiRequest({
+        method: 'GET',
+        path: 'search/instances',
+        searchParams: {
+          limit,
+          highlightMatch: true,
+          query: `(identifiers.value="${identifier}" or isbn="${identifier}") sortby title`,
+        },
+        isDefaultSearchParamsRequired: false,
+      }).then(({ body: { instances } }) => {
+        return instances;
+      });
   }
+
 };

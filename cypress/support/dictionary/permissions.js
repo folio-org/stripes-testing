@@ -114,6 +114,9 @@ export default {
   viewEditCreateOrganization:{ internal:'ui-organizations.create', gui:'Organizations: View, edit, create' },
   // Invoice
   viewEditDeleteInvoiceInvoiceLine:{ internal:'ui-invoice.invoice.delete', gui:'Invoice: Can view, edit and delete Invoices and Invoice lines' },
+  viewEditCreateInvoiceInvoiceLine: { internal: 'ui-invoice.invoice.create', gui: 'Invoice: Can view, edit and create new Invoices and Invoice lines' },
+  assignAcqUnitsToNewInvoice: { internal: 'ui-invoice.acq.unit.assignment.assign', gui: 'Invoice: Assign acquisition units to new invoice' },
+  invoiceSettingsAll: { internal: 'ui-invoice.settings.all', gui: 'Settings (Invoices): Can view and edit settings' },
   // Orders
   uiOrdersView: { internal: 'ui-orders.orders.view', gui: 'Orders: Can view Orders and Order lines' },
   uiOrdersCreate: { internal: 'ui-orders.orders.create', gui: 'Orders: Can create new Orders and Order lines' },

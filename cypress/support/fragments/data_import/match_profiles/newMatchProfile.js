@@ -69,6 +69,9 @@ const fillMatchProfileForm = ({
     cy.wait(1000);
     cy.do(Accordion({ id:'match-profile-details' }).find(Button({ dataId:'INSTANCE' })).click());
     fillIncomingRecordFields(incomingRecordFields.field, 'field');
+    if (incomingRecordFields.in1) {
+      fillIncomingRecordFields(incomingRecordFields.in1, 'in1');
+    }
     fillIncomingRecordFields(incomingRecordFields.subfield, 'subfield');
     cy.do(criterionValueTypeButton.click());
     cy.expect(criterionValueTypeList.exists());
