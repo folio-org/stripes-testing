@@ -300,8 +300,6 @@ function createMatchProfileForVRN({
   cy.do(criterionSelection.select('Acquisitions data: Vendor reference number'));
 
   saveProfile();
-  //cy.intercept('POST', '/data-import-profiles/matchProfiles').as('createMatchProfile');
-  //cy.wait('@createMatchProfile');
   cy.expect(PaneHeader(name).exists());
   closeDetailView();
 }

@@ -17,6 +17,8 @@ import UrlParams from '../url-params';
 import InteractorsTools from '../../../utils/interactorsTools';
 
 const singleRecordImportsAccordion = Accordion('Inventory single record imports');
+const dataImportList = MultiColumnList({ id:'list-data-import' });
+const errorsInImportAccordion = Accordion('Errors in import');
 
 function getCheckboxByRow(row) {
   return MultiColumnList().find(MultiColumnListCell({ 'row': row, 'columnIndex': 0 })).find(Checkbox());
@@ -28,9 +30,9 @@ const verifyMessageOfDeteted = (quantity) => {
 };
 
 const columnName = {
-  status: MultiColumnList({ id:'list-data-import' }).find(MultiColumnListHeader({ id:'list-column-status' })),
-  jobProfile: MultiColumnList({ id:'list-data-import' }).find(MultiColumnListHeader({ id:'list-column-jobprofilename' })),
-  runBy: MultiColumnList({ id:'list-data-import' }).find(MultiColumnListHeader({ id:'list-column-runby' }))
+  status: dataImportList.find(MultiColumnListHeader({ id:'list-column-status' })),
+  jobProfile: dataImportList.find(MultiColumnListHeader({ id:'list-column-jobprofilename' })),
+  runBy: dataImportList.find(MultiColumnListHeader({ id:'list-column-runby' }))
 };
 
 function waitUIToBeFiltered() {
@@ -120,13 +122,11 @@ export default {
   },
 
   selectYesfilterJobsByErrors: () => {
-    cy.do(Accordion('Errors in import')
-      .find(Checkbox({ id: 'clickable-filter-statusAny-error' })).click());
+    cy.do(errorsInImportAccordion.find(Checkbox({ id: 'clickable-filter-statusAny-error' })).click());
   },
 
   selectNofilterJobsByErrors: () => {
-    cy.do(Accordion('Errors in import')
-      .find(Checkbox({ id: 'clickable-filter-statusAny-committed' })).click());
+    cy.do(errorsInImportAccordion.find(Checkbox({ id: 'clickable-filter-statusAny-committed' })).click());
   },
 
   filterJobsByDate({ from, end }) {
@@ -291,7 +291,7 @@ export default {
   },
 
   selectAllLogs:() => {
-    cy.do(MultiColumnList({ id:'list-data-import' }).find(Checkbox({ name:'selected-all', checked: false })).click());
+    cy.do(dataImportList.find(Checkbox({ name:'selected-all', checked: false })).click());
   },
 
   checkIsLogsSelected:(elemCount) => {
@@ -301,13 +301,13 @@ export default {
   },
 
   unmarcCheckbox:(index) => {
-    cy.do(MultiColumnList({ id:'list-data-import' })
+    cy.do(dataImportList
       .find(MultiColumnListCell({ row: 0, columnIndex: index }))
       .find(Checkbox({ checked: true })).click());
   },
 
   checkmarkAllLogsIsRemoved:() => {
-    cy.do(MultiColumnList({ id:'list-data-import' }).find(Checkbox({ name:'selected-all', checked: false })).exists());
+    cy.do(dataImportList.find(Checkbox({ name:'selected-all', checked: false })).exists());
   },
 
   deleteLog:() => {
