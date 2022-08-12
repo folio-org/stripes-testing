@@ -14,7 +14,6 @@ import {
   TextInput,
 } from '../../../../interactors';
 import InventoryActions from './inventoryActions';
-import InventoryInstance from './inventoryInstance';
 
 const effectiveLocationInput = Accordion({ id: 'effectiveLocation' });
 const languageInput = Accordion({ id: 'language' });
@@ -246,5 +245,4 @@ export default {
         return instances;
       });
   }
-
 };

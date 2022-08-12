@@ -128,7 +128,7 @@ export default {
       mappingProfileFolioRecordTypeField.choose(folioRecordType),
     ]);
     // need to wait until selection lists are populated
-    cy.wait(1500); // eslint-disable-line cypress/no-unnecessary-waiting
+    cy.wait(1200); // eslint-disable-line cypress/no-unnecessary-waiting
     cy.do([
       mappingProfileStaffSuppressField.choose(staffSuppress),
       mappingProfileCatalogedDateField.fillIn(catalogedDate),
