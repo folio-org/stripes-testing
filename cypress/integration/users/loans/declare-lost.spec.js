@@ -1,8 +1,9 @@
+import uuid from 'uuid';
 import { getTestEntityValue } from '../../../support/utils/stringTools';
 import TestType from '../../../support/dictionary/testTypes';
 import AppPaths from '../../../support/fragments/app-paths';
 import { getNewItem } from '../../../support/fragments/inventory/item';
-import UsersOwners, { getNewOwner } from '../../../support/fragments/settings/users/usersOwners';
+import UsersOwners from '../../../support/fragments/settings/users/usersOwners';
 import Loans from '../../../support/fragments/users/userDefaultObjects/loans';
 import LoanDetails from '../../../support/fragments/users/userDefaultObjects/loanDetails';
 import Checkout from '../../../support/fragments/checkout/checkout';
@@ -13,7 +14,7 @@ import UserEdit from '../../../support/fragments/users/userEdit';
 import ServicePoints from '../../../support/fragments/settings/tenant/servicePoints/servicePoints';
 
 describe('ui-users-loans: Loans', () => {
-  const newOwnerData = getNewOwner();
+  const newOwnerData = UsersOwners.getDefaultNewOwner(uuid());
   const newFirstItemData = getNewItem();
   const newSecondItemData = getNewItem();
   const DECLARE_LOST_ADDITIONAL_INFORMATION = getTestEntityValue('Some additional information');
