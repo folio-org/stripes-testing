@@ -101,6 +101,7 @@ describe('ui-data-import: Match on Instance identifier match meets both the Iden
     DataImport.uploadFile(filePathForCreateInstance, fileNameForCreateInstance);
     JobProfiles.searchJobProfileForImport(jobProfileToRun);
     JobProfiles.runImportFile(fileNameForCreateInstance);
+    Logs.checkStatusOfJobProfile('Completed');
     Logs.openFileDetails(fileNameForCreateInstance);
     Logs.clickOnHotLink(0, 3, 'Created');
     InventoryInstance.verifyResourceIdentifier(resourceIdentifiers[0].type, resourceIdentifiers[0].value, 6);
@@ -128,6 +129,7 @@ describe('ui-data-import: Match on Instance identifier match meets both the Iden
     DataImport.uploadFile(filePathForUpdateInstance, fileNameForUpdateInstance);
     JobProfiles.searchJobProfileForImport(jobProfileName);
     JobProfiles.runImportFile(fileNameForUpdateInstance);
+    Logs.checkStatusOfJobProfile('Completed');
     Logs.openFileDetails(fileNameForUpdateInstance);
     Logs.verifyInstanceStatus(0, 3, 'Discarded');
     Logs.verifyInstanceStatus(1, 3, 'Updated');
@@ -138,3 +140,4 @@ describe('ui-data-import: Match on Instance identifier match meets both the Iden
     InstanceRecordView.verifyGeneralNoteContent(instanceGeneralNote);
   });
 });
+

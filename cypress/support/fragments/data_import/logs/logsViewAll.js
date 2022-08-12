@@ -123,15 +123,18 @@ export default {
   // TODO: redesign to interactors
   getMultiColumnListCellsValues(cell) {
     const cells = [];
-    cy.get(`[data-row-index] [class*="mclCell-"]:nth-child(${cell})`).each($cell => {
-      cy.wrap($cell)
+
+    // get MultiColumnList rows and loop over
+    return cy.get('[data-row-index]').each($row => {
+      // from each row, choose specific cell
+      cy.get(`[class*="mclCell-"]:nth-child(${cell})`, { withinSubject: $row })
+        // extract its text content
         .invoke('text')
         .then(cellValue => {
           cells.push(cellValue);
         });
-    });
-
-    return cy.wrap(cells);
+    })
+      .then(() => cells);
   },
 
   visibleColumns: {
