@@ -228,5 +228,21 @@ export default {
 
   verifySearchResult(cellContent) {
     cy.expect(MultiColumnListCell({ content: cellContent }).exists());
+  },
+
+  getInstancesByIdentifierViaApi(identifier, limit = 100) {
+    return cy
+      .okapiRequest({
+        method: 'GET',
+        path: 'search/instances',
+        searchParams: {
+          limit,
+          highlightMatch: true,
+          query: `(identifiers.value="${identifier}" or isbn="${identifier}") sortby title`,
+        },
+        isDefaultSearchParamsRequired: false,
+      }).then(({ body: { instances } }) => {
+        return instances;
+      });
   }
 };
