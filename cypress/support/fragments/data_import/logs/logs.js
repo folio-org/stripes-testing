@@ -25,8 +25,8 @@ export default {
     cy.expect(MultiColumnListCell(jobProfileName).exists());
   },
 
-  checkStatusOfJobProfile:() => {
-    cy.do(MultiColumnListCell({ row: 0, content: 'Completed' }).exists());
+  checkStatusOfJobProfile:(status = 'Completed') => {
+    cy.do(MultiColumnListCell({ row: 0, content: status }).exists());
   },
 
   openFileDetails:(fileName) => {
@@ -41,6 +41,12 @@ export default {
     cy.do(MultiColumnList({ id: 'search-results-list' })
       .find(MultiColumnListCell({ row, columnIndex }))
       .find(Link(status)).click());
+  },
+
+  verifyInstanceStatus: (row = 0, columnIndex = 3, status = 'Created') => {
+    cy.do(MultiColumnList({ id: 'search-results-list' })
+      .find(MultiColumnListCell({ row, columnIndex, content: status }))
+      .exists());
   },
 
   quantityRecordsInInvoice,

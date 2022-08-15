@@ -32,7 +32,7 @@ export default {
   verifyPermanentLocation,
 
   editItem: (item) => {
-    cy.okapiRequest({
+    return cy.okapiRequest({
       method: 'PUT',
       path: `inventory/items/${item.id}`,
       body: item,

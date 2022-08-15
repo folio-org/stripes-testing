@@ -1,9 +1,10 @@
 import {
   Button,
+  Checkbox,
   Dropdown,
   HTML,
   MultiColumnList,
-  MultiColumnListRow,
+  MultiColumnListRow
 } from '../../../../interactors';
 import ServicePoints from '../settings/tenant/servicePoints/servicePoints';
 import paymentMethods from '../settings/users/paymentMethods';
@@ -87,5 +88,6 @@ export default {
   },
   clickWaive:() => {
     cy.do(waiveAllButton.click());
-  }
+  },
+  checkAllFeesFines:() => cy.do(Checkbox({ name: 'check-all' }).click()),
 };

@@ -18,7 +18,8 @@ export default {
       .okapiRequest({
         path: 'location-units/institutions',
         body: institutionsProperties,
-        method: 'POST'
+        method: 'POST',
+        isDefaultSearchParamsRequired: false
       })
       .then((response) => {
         return response.body;
@@ -30,5 +31,13 @@ export default {
       id: uuid(),
       name: `autotest_name_${getRandomPostfix()}`,
     }
+  },
+  deleteViaApi: (institutionId) => {
+    return cy
+      .okapiRequest({
+        path: `location-units/institutions/${institutionId}`,
+        method: 'DELETE',
+        isDefaultSearchParamsRequired: false
+      });
   },
 };

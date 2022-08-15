@@ -6,7 +6,7 @@ import InventoryHoldings from '../../../support/fragments/inventory/holdings/inv
 import UserEdit from '../../../support/fragments/users/userEdit';
 import getRandomPostfix, { getTestEntityValue } from '../../../support/utils/stringTools';
 import { getNewItem } from '../../../support/fragments/inventory/item';
-import UsersOwners, { getNewOwner } from '../../../support/fragments/settings/users/usersOwners';
+import UsersOwners from '../../../support/fragments/settings/users/usersOwners';
 import permissions from '../../../support/dictionary/permissions';
 import Checkout from '../../../support/fragments/checkout/checkout';
 import AppPaths from '../../../support/fragments/app-paths';
@@ -22,7 +22,7 @@ import DevTeams from '../../../support/dictionary/devTeams';
 
 describe('ui-users-loans: Manual anonymization in closed loans', () => {
   const loanTypeName = `autotest_loan_type${getRandomPostfix()}`;
-  const newOwnerData = getNewOwner();
+  const newOwnerData = UsersOwners.getDefaultNewOwner(uuid());
   const newFirstItemData = getNewItem();
   const newSecondItemData = getNewItem();
   const feeFineType = uuid();
