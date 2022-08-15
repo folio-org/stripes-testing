@@ -74,6 +74,7 @@ export default {
   uiUsersViewLoans: { internal: 'ui-users.loans.view', gui: 'Users: User loans view' },
   uiUserLoansAnonymize: { internal: 'ui-users.loans.anonymize', gui: 'Users: User loans anonymize' },
   uiFeeFines: { internal: 'ui-users.feesfines.actions.all', gui: 'Users: Can create, edit and remove fees/fines' },
+  uiUsersLoansClaimReturned: { internal: 'ui-users.loans.claim-item-returned', gui: 'Users: User loans claim returned' },
   uiUsersDeclareItemLost: { internal: 'ui-users.loans.declare-item-lost', gui: 'Users: User loans declare lost' },
   usersLoansRenewThroughOverride: { internal: 'ui-users.loans.renew-override', gui: 'Users: User loans renew through override' },
   uiUsersEditProfile: { internal: 'ui-users.edit', gui: 'Users: Can edit user profile' },

@@ -1,4 +1,5 @@
 import { Button, Pane } from '../../../../interactors';
+import ConfirmItemStatusModal from '../users/loans/confirmItemStatusModal';
 
 export default {
   exportLoansToCSV() {
@@ -9,6 +10,13 @@ export default {
       Button({ icon: 'ellipsis' }).click(),
       Button('Change due date').click(),
     ]);
+  },
+  claimReturnedAndConfirm() {
+    this.claimReturned();
+    ConfirmItemStatusModal.confirmItemStatus();
+  },
+  claimReturnedAndCancel() {
+    cy.do(Button('Claim returned').click());
   },
   renewLoan() {
     cy.do([
