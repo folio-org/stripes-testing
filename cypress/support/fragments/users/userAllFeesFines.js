@@ -1,13 +1,14 @@
 import {
   Button,
-  Checkbox,
   Dropdown,
   HTML,
   MultiColumnList,
-  MultiColumnListRow
+  MultiColumnListRow,
+  MultiColumnListHeader,
 } from '../../../../interactors';
+import { CheckBox } from '@interactors/html';
 import ServicePoints from '../settings/tenant/servicePoints/servicePoints';
-import paymentMethods from '../settings/users/paymentMethods';
+import PaymentMethods from '../settings/users/paymentMethods';
 import UserEdit from './userEdit';
 
 const waiveAllButton = Button({ id: 'open-closed-all-wave-button' });
@@ -23,7 +24,7 @@ export default {
       isDefaultSearchParamsRequired : false,
     }).then(response => {
       const accountId = response.body.accounts[0]?.id;
-      paymentMethods.createViaApi(ownerId).then(paymentMethodProperties => {
+      PaymentMethods.createViaApi(ownerId).then(paymentMethodProperties => {
         ServicePoints.getViaApi({ limit: 1, query: 'pickupLocation=="true"' }).then(requestedServicePoints => {
           const servicePointId = requestedServicePoints[0].id;
           UserEdit.addServicePointViaApi(servicePointId, userId).then(() => {
@@ -42,7 +43,7 @@ export default {
               isDefaultSearchParamsRequired : false,
             });
             // test data clearing
-            paymentMethods.deleteViaApi(paymentMethodProperties.id);
+            PaymentMethods.deleteViaApi(paymentMethodProperties.id);
           });
         });
       });
@@ -86,8 +87,6 @@ export default {
     )
     cy.expect(Button('Waive', { disabled: !isActive }).exists());
   },
-  clickWaive:() => {
-    cy.do(waiveAllButton.click());
-  },
-  checkAllFeesFines:() => cy.do(Checkbox({ name: 'check-all' }).click()),
+  selectAllFeeFines: () => cy.do(MultiColumnListHeader({ index: 0 }).find(CheckBox()).click()),
+  clickWaive:() => cy.do(waiveAllButton.click()),
 };

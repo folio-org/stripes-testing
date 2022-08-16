@@ -10,6 +10,7 @@ import {
 const rootModal = Modal({ id: 'waive-modal' });
 const confirmModal = Modal({ title: 'Confirm fee/fine waive' });
 const amountField = TextField({ name: 'amount' });
+const submitButton = Button({ id: 'submit-button' });
 
 export default {
   waitLoading:() => {
@@ -35,10 +36,10 @@ export default {
   waiveAmountHasError:(errorMessage) => {
     cy.expect(amountField.has({ error: errorMessage }))
   },
-  isConfirmDisabled:(isDisabled) => cy.expect(Button({ id: 'submit-button' }).is({ disabled: isDisabled })),
-  submitWaive:() => cy.do(Button({ id: 'submit-button' }).click()),
+  isConfirmDisabled:(isDisabled) => cy.expect(submitButton.is({ disabled: isDisabled })),
+  submitWaive:() => cy.do(submitButton.click()),
   confirm:() => {
-    cy.do(Button({ id: 'submit-button' }).click());
+    cy.do(submitButton.click());
     cy.do(Button('Confirm').click());
   },
   cancel:() => cy.do(Button({ id: 'cancel-button' }).click()),
