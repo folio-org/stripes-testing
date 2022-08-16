@@ -146,12 +146,17 @@ export default {
       cy.expect(permissionAccordion.find(HTML(including(permission))).exists());
     });
   },
+
   waitLoading: () => cy.expect(rootSection.exists()),
+
   startFeeFine: () => {
     cy.do(actionsButton.click());
     cy.do(Button('Create fee/fine').click());
   },
+
   hasSaveError: (errorMessage) => cy.expect(rootSection.find(TextField({ value: errorMessage })).exists()),
+
   startFeeFineAdding: () => cy.do(feesFinesAccourdion.find(Button('Create fee/fine')).click()),
+  
   viewAllFeesFines: () => cy.do(feesFinesAccourdion.find(Button({ id: 'clickable-viewallaccounts' })).click()),
 };
