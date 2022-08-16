@@ -1,6 +1,8 @@
 import { HTML, including, Link } from '@interactors/html';
 import { TextField } from 'bigtest';
-import { Accordion, Button, Checkbox, MultiColumnList, MultiColumnListCell, MultiColumnListRow, Section, TextArea } from '../../../../interactors';
+import { Accordion, Button, Checkbox, Datepicker, MultiColumnList, MultiColumnListCell, MultiColumnListRow, Section, Selection, SelectionList, TextArea } from '../../../../interactors';
+import textField from '../../../../interactors/text-field';
+import DateTools from '../../utils/dateTools';
 
 const rootSection = Section({ id: 'pane-userdetails' });
 const permissionAccordion = Accordion({ id: 'permissionsSection' });
@@ -55,8 +57,22 @@ export default {
     this.fillDescription(text);
   },
 
-  selectExpirationDate() {
-    cy.do(Button({ id: 'datepicker-toggle-calendar-button-dp-965' }));
+  selectTodayExpirationDate() {
+    const today = new Date();
+    cy.do(textField({ name: 'expirationDate' }).fillIn(DateTools.getFormattedDate({ date: today }, 'YYYY-MM-DD')));
+  },
+
+  openLastUpdatedInfo() {
+    cy.do(Button({ role: 'presentation' }).click());
+  },
+
+  selectTomorrowExpirationDate() {
+    const tomorrow = DateTools.getTomorrowDay();
+    cy.do(textField({ name: 'expirationDate' }).fillIn(DateTools.getFormattedDate({ date: tomorrow }, 'YYYY-MM-DD')));
+  },
+
+  submitWrongExpirationDate() {
+    cy.expect(Datepicker().has('Expiration date must be in the future'));
   },
 
   submitPatronInformation(text) {
@@ -87,18 +103,27 @@ export default {
       .find(MultiColumnListCell({ columnIndex: 1, content: text }))
       .click());
   },
+
   deletePatronBlock() {
     cy.do([
       Button({ id: 'patron-block-delete' }).click(),
       Button({ id: 'clickable-patron-block-confirmation-modal-confirm' }).click()
     ]);
   },
+
   submitThatUserHasPatrons() {
     cy.expect(TextField({ id: 'patron-block-place' }).has({ value: 'Patron has block(s) in place' }));
   },
 
   fillDescription(text) {
     cy.do(TextArea({ name: 'desc' }).fillIn(text));
+  },
+
+  selectTemplate(templateName) {
+    cy.do([
+      Selection().open(),
+      SelectionList().select(templateName)
+    ]);
   },
 
   saveAndClose() {
