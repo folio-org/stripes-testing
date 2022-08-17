@@ -56,6 +56,7 @@ export default {
   paymentsPath: 'settings/users/payments',
   conditionsPath: 'settings/users/conditions',
   waiveReasons: 'settings/users/waivereasons',
+  patronBlockTemplates: 'settings/users/manual-block-templates',
   // Data Import
   mappingProfilePath: 'settings/data-import/mapping-profiles',
   actionProfilePath: 'settings/data-import/action-profiles',
