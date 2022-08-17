@@ -12,9 +12,9 @@ const errors = {
 };
 const feesFinesAccourdion = rootSection.find(Accordion({ id: 'accountsSection' }));
 
-
 export default {
   errors,
+
   openPatronBlocks() {
     cy.do(Accordion({ id: 'patronBlocksSection' }).clickHeader());
   },
