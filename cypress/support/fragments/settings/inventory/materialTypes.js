@@ -4,17 +4,16 @@ import {
   TextField,
   HTML,
   including,
-  MultiColumnListRow,
   Modal,
-  MultiColumnList,
-  MultiColumnListCell
+  MultiColumnListCell,
+  EditableListRow
 } from '../../../../../interactors';
 import ModalDeleteMaterialType from './modalDeleteMaterialType';
 import InteractorsTools from '../../../utils/interactorsTools';
 
 const pane = Pane('Material types');
 
-const isPresented = (materialTypeName) => {
+const checkIsPresented = (materialTypeName) => {
   cy.expect(pane.find(HTML(including(materialTypeName))).exists());
 };
 
@@ -27,14 +26,16 @@ const verifyMessageOfDeteted = (newMaterialTypeName) => {
   InteractorsTools.closeCalloutMessage();
 };
 
-const findRowIndex = (name) => cy.then(() => MultiColumnList({ id:'editList-materialtypes' })
-  .find(MultiColumnListCell(name))
-  .row());
+function waitLoading() { cy.expect(Pane({ id: 'controlled-vocab-pane' }).exists()); }
+
+function getEditableListRow(rowNumber) { return EditableListRow({ index: +rowNumber.split('-')[1] }); }
 
 export default {
-  isPresented,
+  checkIsPresented,
   checkIsDeleted,
   verifyMessageOfDeteted,
+  getEditableListRow,
+  waitLoading,
 
   deleteApi(id) {
     return cy.okapiRequest({
@@ -43,20 +44,24 @@ export default {
     });
   },
 
-  edit:(newMaterialTypeName) => {
-    cy.do(MultiColumnListRow({ rowIndexInParent: 'row-0' }).find(Button({ icon: 'edit' })).click());
+  edit:(materialTypeName, newMaterialTypeName) => {
+    cy.do(MultiColumnListCell({ content: materialTypeName }).perform(
+      element => {
+        const rowNumber = element.parentElement.parentElement.getAttribute('data-row-index');
+        cy.do(getEditableListRow(rowNumber).find(Button({ icon: 'edit' })).click());
+      }
+    ));
     cy.do(TextField({ placeholder: 'name' }).fillIn(newMaterialTypeName));
     cy.do(Button('Save').click());
   },
 
-  delete:(newMaterialTypeName) => {
-    findRowIndex(newMaterialTypeName).then(rowNumber => {
-      console.log(rowNumber);
-      cy.do(MultiColumnList({ id:'editList-materialtypes' })
-        .find(MultiColumnListRow({ rowIndexInParent :  `row-${rowNumber - 2}` }))
-        .find(Button({ icon: 'trash' }))
-        .click());
-    });
+  delete(newMaterialTypeName) {
+    cy.do(MultiColumnListCell({ content: newMaterialTypeName }).perform(
+      element => {
+        const rowNumber = element.parentElement.parentElement.getAttribute('data-row-index');
+        cy.do(getEditableListRow(rowNumber).find(Button({ icon: 'trash' })).click());
+      }
+    ));
     ModalDeleteMaterialType.deleteMaterialType();
     cy.expect(Modal('Delete Material type').absent());
   }

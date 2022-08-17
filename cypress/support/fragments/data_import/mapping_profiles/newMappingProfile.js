@@ -78,10 +78,8 @@ export default {
     if (specialMappingProfile.typeValue === holdingsType) {
       cy.do(TextField('Permanent').fillIn(permanentLocation));
     } else if (specialMappingProfile.typeValue === itemType) {
-      cy.intercept('loan-types?*').as('getType');
       cy.do(TextField('Material type').fillIn(materialType));
       cy.do(TextField('Permanent loan type').fillIn(permanentLoanType));
-      cy.wait('@getType');
       // wait accepted values to be filled
       // eslint-disable-next-line cypress/no-unnecessary-waiting
       cy.wait(1800);
