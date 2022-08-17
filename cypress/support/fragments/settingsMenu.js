@@ -10,7 +10,7 @@ export default {
   circulationOtherSettingsPath: 'settings/circulation/checkout',
   circulationStaffSlipsPath: 'settings/circulation/staffslips',
   circulationFixedDueDateSchedulesPath: 'settings/circulation/fixed-due-date-schedules',
-  circulationLoanHistoryPath: 'settings/circulation/loan-history',
+  circulationLoanHistoryPath: 'settings/circulation/loan-anonymizations',
   circulationLoanPoliciesPath: 'settings/circulation/loan-policies',
   circulationoVerdueFinePoliciesPath: 'settings/circulation/fine-policies',
   circulationLostItemFeePolicyPath: 'settings/circulation/lost-item-fee-policy',
