@@ -17,6 +17,7 @@ const folioRecordTypeValue = {
   holdings: 'Holdings',
   item: 'Item',
   invoice: 'Invoice',
+  marcBib: 'MARC Bibliographic'
 };
 
 const organization = {
@@ -48,6 +49,11 @@ const defaultMappingProfile = {
   loan: permanentLoanType,
   statusField: status,
   fillProfile:''
+};
+
+const fieldMappingsForMarc = {
+  update: 'Updates',
+  modify: 'Modifications'
 };
 
 const selectOrganizationByName = (organizationName) => {
@@ -222,4 +228,14 @@ export default {
     }
     cy.do(saveButton.click());
   },
+
+  fillMappingProfileForUpdatesMarc:(specialMappingProfile = defaultMappingProfile) => {
+    cy.do([
+      TextField({ name:'profile.name' }).fillIn(specialMappingProfile.name),
+      Select({ name:'profile.incomingRecordType' }).choose(incomingRecordType.marcBib),
+      Select({ name:'profile.existingRecordType' }).choose(specialMappingProfile.typeValue),
+      Select({ name:'profile.mappingDetails.marcMappingOption' }).choose(fieldMappingsForMarc.update),
+      saveButton.click()
+    ]);
+  }
 };

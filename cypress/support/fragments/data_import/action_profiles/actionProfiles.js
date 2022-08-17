@@ -5,7 +5,7 @@ const actionsButton = Button('Actions');
 
 const openNewActionProfileForm = () => {
   cy.do([
-    actionsButton.click(),
+    Pane({ id:'pane-results' }).find(actionsButton).click(),
     Button('New action profile').click()
   ]);
 };
