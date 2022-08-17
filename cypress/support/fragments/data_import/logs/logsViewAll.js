@@ -229,25 +229,18 @@ export default {
   },
 
   checkByInventorySingleRecord(filter) {
-    if (filter === 'Yes') {
-      return cy.get('#list-data-import').then(element => {
-        // only 100 records shows on every page
-        const resultCount = element.attr('data-total-count') > 99 ? 99 : element.attr('data-total-count');
-        // verify every string in result table
-        for (let i = 0; i < resultCount; i++) {
+    return cy.get('#list-data-import').then(element => {
+      // only 100 records shows on every page
+      const resultCount = element.attr('data-total-count') > 99 ? 99 : element.attr('data-total-count');
+      // verify every string in result table
+      for (let i = 0; i < resultCount; i++) {
+        if (filter === 'Yes') {
           cy.expect(MultiColumnListCell({ content: or('Inventory Single Record - Default Create Instance', 'Inventory Single Record - Default Update Instance'), row: i }).exists());
-        }
-      });
-    } else {
-      return cy.get('#list-data-import').then(element => {
-        // only 100 records shows on every page
-        const resultCount = element.attr('data-total-count') > 99 ? 99 : element.attr('data-total-count');
-        // verify every string in result table
-        for (let i = 0; i < resultCount; i++) {
+        } else {
           cy.expect(MultiColumnListCell({ content: or('Inventory Single Record - Default Create Instance', 'Inventory Single Record - Default Update Instance'), row: i }).absent());
         }
-      });
-    }
+      }
+    });
   },
 
   checkByErrorsInImportAndUser(status, userName) {
