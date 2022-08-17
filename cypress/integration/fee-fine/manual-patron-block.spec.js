@@ -55,7 +55,6 @@ describe('ui-patrons: Verify that library staff can create/edit/delete a manual 
     UsersCard.createAndSaveNewPatronBlock(testDescription);
     // Scenario#2
     UsersCard.submitPatronInformation(testDescription);
-    // UsersCard.submitThatUserHasPatrons();
     UsersCard.selectPatronBlock(testDescription);
     UsersCard.deletePatronBlock();
   });
