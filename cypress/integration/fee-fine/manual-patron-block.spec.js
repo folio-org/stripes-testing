@@ -84,7 +84,7 @@ describe('ui-patrons: Verify that library staff can create/edit/delete a manual 
     UsersCard.saveAndClose();
     // scenario#8
     UsersCard.selectPatronBlock(testDescription);
-    // UsersCard.openLastUpdatedInfo(); /problem/
+    UsersCard.openLastUpdatedInfo();
     // scenario#9
     UsersCard.deletePatronBlock();
   });
@@ -97,7 +97,7 @@ describe('ui-patrons: Verify that library staff can create/edit/delete a manual 
     UsersCard.createNewPatronBlock(testDescription);
     // scenario#11
     UsersCard.selectTodayExpirationDate();
-    // UsersCard.submitWrongExpirationDate(); /problem/
+    UsersCard.submitWrongExpirationDate();
     UsersCard.selectTomorrowExpirationDate();
     // scenario#12
     UsersCard.saveAndClose();

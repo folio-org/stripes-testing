@@ -1,6 +1,6 @@
 import { HTML, including, Link } from '@interactors/html';
 import { TextField } from 'bigtest';
-import { Accordion, Button, Checkbox, Datepicker, MultiColumnList, MultiColumnListCell, MultiColumnListRow, Pane, Section, Selection, SelectionList, TextArea } from '../../../../interactors';
+import { Accordion, Button, Checkbox, MultiColumnList, MultiColumnListCell, MultiColumnListRow, Pane, Section, Selection, SelectionList, TextArea } from '../../../../interactors';
 import textField from '../../../../interactors/text-field';
 import DateTools from '../../utils/dateTools';
 
@@ -63,7 +63,7 @@ export default {
   },
 
   openLastUpdatedInfo() {
-    cy.do(Button({ role: 'presentation' }).click());
+    cy.do(Accordion({ headline: 'Update information' }).find(Button()).click());
   },
 
   selectTomorrowExpirationDate() {
