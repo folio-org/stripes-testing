@@ -81,19 +81,24 @@ describe('ui-data-import: Match on Instance identifier match meets both the Iden
       .then(userProperties => {
         userId = userProperties.userId;
         cy.login(userProperties.username, userProperties.password);
-      });
-    cy.getAdminToken();
 
-    InventorySearch.getInstancesByIdentifierViaApi(resourceIdentifiers[0].value)
-      .then(instances => {
-        instances.forEach(({ id }) => {
-          InventoryInstance.deleteInstanceViaApi(id);
-        });
+        InventorySearch.getInstancesByIdentifierViaApi(resourceIdentifiers[0].value)
+          .then(instances => {
+            instances.forEach(({ id }) => {
+              InventoryInstance.deleteInstanceViaApi(id);
+            });
+          });
       });
   });
 
   after(() => {
     Users.deleteViaApi(userId);
+
+    // delete profiles
+    JobProfiles.deleteJobProfile(jobProfileName);
+    MatchProfiles.deleteMatchProfile(matchProfileName);
+    ActionProfiles.deleteActionProfile(actionProfileName);
+    FieldMappingProfiles.deleteFieldMappingProfile(mappingProfileName);
   });
 
   it('C347828 Match on Instance identifier match meets both the Identifier type and Data requirements (Folijet)', { tags: [TestTypes.criticalPath, DevTeams.folijet] }, () => {
@@ -113,9 +118,11 @@ describe('ui-data-import: Match on Instance identifier match meets both the Iden
 
     cy.visit(SettingsMenu.matchProfilePath);
     MatchProfiles.createMatchProfile(matchProfile);
+    MatchProfiles.checkMatchProfilePresented(matchProfileName);
 
     cy.visit(SettingsMenu.mappingProfilePath);
     FieldMappingProfiles.createMappingProfileForMatchOnInstanceIdentifier(mappingProfile);
+    FieldMappingProfiles.checkMappingProfilePresented(mappingProfileName);
 
     cy.visit(SettingsMenu.actionProfilePath);
     ActionProfiles.createActionProfile(actionProfile, mappingProfileName);
