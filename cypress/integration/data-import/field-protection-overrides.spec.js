@@ -14,6 +14,13 @@ import JobProfiles from '../../support/fragments/data_import/job_profiles/jobPro
 import TopMenu from '../../support/fragments/topMenu';
 import DataImport from '../../support/fragments/data_import/dataImport';
 import FileDetails from '../../support/fragments/data_import/logs/fileDetails';
+import Logs from '../../support/fragments/data_import/logs/logs';
+import SearchInventory from '../../support/fragments/data_import/searchInventory';
+import InventorySearch from '../../support/fragments/inventory/inventorySearch';
+import ExportMarcFile from '../../support/fragments/data-export/export-marc-file';
+import FileManager from '../../support/utils/fileManager';
+import ExportFile from '../../support/fragments/data-export/exportFile';
+import NewMatchProfile from '../../support/fragments/data_import/match_profiles/newMatchProfile';
 
 describe('ui-data-import: Check that field protection overrides work properly during data import', () => {
   // unique name for profiles
@@ -25,14 +32,17 @@ describe('ui-data-import: Check that field protection overrides work properly du
   const jobProfileName = `C17018autoTestJobProfile_${getRandomPostfix()}`;
 
   // unique file name to upload
-  const fileName = `C17018autotestFile.${getRandomPostfix()}.mrc`;
+  const fileNameForCreatingInstance = `C17018autotestFileCreteInstance.${getRandomPostfix()}.mrc`;
+  const nameForCSVFile = `autotestFile${getRandomPostfix()}.csv`;
+  const nameMarcFileForUpload = `CC17018autotestFile.${getRandomPostfix()}.mrc`;
 
   const protectedFields = {
-    firstField: '020',
+    firstField: '245',
     secondField: '035'
   };
 
   beforeEach(() => {
+    cy.loginAsAdmin();
     cy.getAdminToken()
       .then(() => {
         MarcFieldProtection.createMarcFieldProtectionViaApi({
@@ -51,9 +61,36 @@ describe('ui-data-import: Check that field protection overrides work properly du
           source: 'USER',
           field: protectedFields.secondField
         });
-      });
 
-    cy.loginAsAdmin();
+        cy.visit(TopMenu.dataImportPath);
+        // upload a marc file for export
+        DataImport.uploadFile('oneMarcBib.mrc', fileNameForCreatingInstance);
+        JobProfiles.searchJobProfileForImport('Default - Create instance and SRS MARC Bib');
+        JobProfiles.runImportFile(fileNameForCreatingInstance);
+        Logs.openFileDetails(fileNameForCreatingInstance);
+        [FileDetails.columnName.srsMarc, FileDetails.columnName.instance].forEach(columnName => {
+          FileDetails.checkStatusInColumn(FileDetails.status.created, columnName);
+        });
+
+        // get Instance HRID through API
+        SearchInventory
+          .getInstanceHRID()
+          .then(hrId => {
+            // download .csv file
+            cy.visit(TopMenu.inventoryPath);
+            SearchInventory.searchInstanceByHRID(hrId[0]);
+            InventorySearch.saveUUIDs();
+            ExportMarcFile.downloadCSVFile(nameForCSVFile, 'SearchInstanceUUIDs*');
+            FileManager.deleteFolder(Cypress.config('downloadsFolder'));
+          });
+
+        // download exported marc file
+        cy.visit(TopMenu.dataExportPath);
+        ExportFile.uploadFile(nameForCSVFile);
+        ExportFile.exportWithDefaultInstancesJobProfile(nameForCSVFile);
+        ExportMarcFile.downloadExportedMarcFile(nameMarcFileForUpload);
+        FileManager.deleteFolder(Cypress.config('downloadsFolder'));
+      });
   });
 
   afterEach(() => {
@@ -85,15 +122,15 @@ describe('ui-data-import: Check that field protection overrides work properly du
       action: 'Update (all record types except Orders, Invoices, or MARC Holdings)'
     };
 
-    const matchProfile = { profileName: matchProfileName,
+    const matchProfile = {
+      profileName: matchProfileName,
       incomingRecordFields: {
         field: '001'
       },
-      existingRecordFields: {
-        field: '001'
-      },
       matchCriterion: 'Exactly matches',
-      existingRecordType: 'MARC_BIBLIOGRAPHIC' };
+      existingRecordType: 'INSTANCE',
+      instanceOption: NewMatchProfile.optionsList.instanceHrid
+    };
 
     const jobProfile = {
       ...NewJobProfile.defaultJobProfile,
@@ -111,7 +148,7 @@ describe('ui-data-import: Check that field protection overrides work properly du
     MappingProfileDetails.checkCreatedMappingProfile(protectedFields.firstField, protectedFields.secondField);
 
     MappingProfileDetails.editMappingProfile();
-    MappingProfileDetails.markFieldForProtection(anotherMappingProfile.name);
+    MappingProfileDetails.markFieldForProtection(anotherMappingProfile.name, protectedFields.firstField);
     FieldMappingProfiles.checkMappingProfilePresented(anotherMappingProfile.name);
     MappingProfileDetails.checkCreatedMappingProfile(protectedFields.firstField, protectedFields.secondField);
 
@@ -135,12 +172,12 @@ describe('ui-data-import: Check that field protection overrides work properly du
     NewJobProfile.saveAndClose();
     JobProfiles.checkJobProfilePresented(jobProfile.profileName);
 
-    cy.visit(TopMenu.dataImportPath);
-    DataImport.uploadFile('oneMarcBib.mrc', fileName);
-    JobProfiles.searchJobProfileForImport(jobProfile.profileName);
-    JobProfiles.runImportFile(fileName);
+    // cy.visit(TopMenu.dataImportPath);
+    // DataImport.uploadFile(nameMarcFileForUpload);
+    // JobProfiles.searchJobProfileForImport(jobProfile.profileName);
+    // JobProfiles.runImportFile(nameMarcFileForUpload);
 
-    FileDetails.openInstanceInInventory();
+    // FileDetails.openInstanceInInventory();
   });
 });
 

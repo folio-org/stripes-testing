@@ -1,5 +1,14 @@
 import { HTML } from '@interactors/html';
-import { Accordion, including, MultiColumnListRow, Button, Pane, Checkbox } from '../../../../../interactors';
+import {
+  Accordion,
+  including,
+  MultiColumnListRow,
+  Button,
+  Pane,
+  Checkbox,
+  MultiColumnListCell,
+  EditableListRow
+} from '../../../../../interactors';
 
 const actionsButton = Button('Actions');
 const saveButton = Button('Save as profile & Close');
@@ -16,12 +25,16 @@ const checkUpdatesSectionOfMappingProfile = () => {
   cy.expect(Accordion({ id:'view-field-mappings-for-marc-updates' }).find(HTML(including('-'))).exists());
 };
 
-const checkOverrideSectionOfMappingProfile = (row, field, status) => {
-  cy.expect(Accordion({ id: 'override-protected-section' })
-    .find(MultiColumnListRow({ indexRow: `row-${row}` })).find(HTML(including(field)))
-    .exists());
-  cy.expect(Accordion({ id: 'override-protected-section' })
-    .find(MultiColumnListRow({ indexRow: `row-${row}` })).find(Checkbox()).has({ disabled: status }));
+const checkOverrideSectionOfMappingProfile = (field, status) => {
+  cy.do(MultiColumnListCell({ content: field }).perform(
+    element => {
+      const rowNumber = element.parentElement.parentElement.getAttribute('data-row-index');
+
+      cy.expect(Pane({ id:'full-screen-view' }).find(Accordion({ id: 'override-protected-section' }))
+        .find(MultiColumnListRow({ indexRow: rowNumber })).find(Checkbox())
+        .has({ disabled: status }));
+    }
+  ));
 };
 
 export default {
@@ -29,11 +42,11 @@ export default {
   checkUpdatesSectionOfMappingProfile,
   checkOverrideSectionOfMappingProfile,
 
-  checkCreatedMappingProfile:(firstField, secondField, secondRow = 1, firstRow = 0, firstFieldStatus = true, secondFieldStatus = true) => {
+  checkCreatedMappingProfile:(firstField, secondField, firstFieldStatus = true, secondFieldStatus = true) => {
     checkUpdatesSectionOfMappingProfile();
     cy.do(Accordion({ id:'override-protected-section' }).clickHeader());
-    checkOverrideSectionOfMappingProfile(firstRow, firstField, firstFieldStatus);
-    checkOverrideSectionOfMappingProfile(secondRow, secondField, secondFieldStatus);
+    checkOverrideSectionOfMappingProfile(firstField, firstFieldStatus);
+    checkOverrideSectionOfMappingProfile(secondField, secondFieldStatus);
   },
 
   editMappingProfile:() => {
@@ -43,12 +56,15 @@ export default {
     ]);
   },
 
-  markFieldForProtection:(profileName, row = 0) => {
-    cy.do(Accordion({ id: 'edit-override-protected-section' })
-      .find(MultiColumnListRow({ indexRow: `row-${row}` }))
-      .find(Checkbox())
-      .click());
-    saveMappingProfile();
-    closeViewModeForMappingProfile(profileName);
-  },
+  markFieldForProtection:(profileName, field) => {
+    cy.do(MultiColumnListCell({ content: field }).perform(
+      element => {
+        const rowNumber = element.parentElement.parentElement.getAttribute('data-row-index');
+
+        cy.expect(Pane({ id:'full-screen-view' }).find(Accordion({ id: 'override-protected-section' }))
+          .find(MultiColumnListRow({ indexRow: rowNumber })).find(Checkbox())
+          .click());
+      }
+    ));
+  }
 };
