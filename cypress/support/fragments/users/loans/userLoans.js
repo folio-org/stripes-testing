@@ -1,7 +1,6 @@
 import { matching } from 'bigtest';
 import { Pane, MultiColumnListRow, MultiColumnListCell, HTML, including, Button } from '../../../../../interactors';
 import ItemVeiw from '../../inventory/inventoryItem/itemVeiw';
-import DateTools from '../../../utils/dateTools';
 
 const claimReturnedButton = Button('Claim returned');
 const declaredLostButton = Button('Declare lost');
