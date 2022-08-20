@@ -1,5 +1,8 @@
-import { Button, Pane } from '../../../../interactors';
+import { matching } from 'bigtest';
+import { Button, Pane, KeyValue, including, MultiColumnListRow, MultiColumnListCell } from '../../../../interactors';
 import ConfirmItemStatusModal from '../users/loans/confirmItemStatusModal';
+
+const claimReturnedButton = Button('Claim returned');
 
 export default {
   exportLoansToCSV() {
@@ -11,12 +14,21 @@ export default {
       Button('Change due date').click(),
     ]);
   },
-  claimReturnedAndConfirm() {
+  claimReturnedAndConfirm(reasonWhyItemChangesStatus) {
     this.claimReturned();
-    ConfirmItemStatusModal.confirmItemStatus();
+    return ConfirmItemStatusModal.confirmItemStatus(reasonWhyItemChangesStatus);
   },
-  claimReturnedAndCancel() {
-    cy.do(Button('Claim returned').click());
+  resolveClaimedIsVisible() {
+    return cy.expect(Button('Resolve claim').exists());
+  },
+  claimReturned() {
+    return cy.do(claimReturnedButton.click());
+  },
+  claimReturnedButtonIsVisible() {
+    return cy.expect(claimReturnedButton.exists());
+  },
+  claimReturnedButtonIsDisabled() {
+    return cy.expect(claimReturnedButton.absent());
   },
   renewLoan() {
     cy.do([
@@ -34,11 +46,20 @@ export default {
   checkOverrideButtonVisible() {
     cy.expect(Button('Override').exists());
   },
+  dismissPane() {
+    return cy.do(Pane(including('Loan details')).dismiss());
+  },
   closePage() {
     cy.do(Pane({ id: 'pane-loanshistory' }).find(Button({ ariaLabel: 'Close ' })).click());
   },
   checkLoanPolicy(policyName) {
     cy.contains(policyName).should('be.visible');
+  },
+  checkItemStatus(itemStatus) {
+    cy.expect(KeyValue('Item status', { value: itemStatus }).exists());
+  },
+  checkClaimReturnedDateTime() {
+    cy.expect(KeyValue('Claimed returned', { value: matching(/\d{1,2}:\d{2}\s\w{2}/gm) }).exists());
   },
   verifyExportFileName(actualName) {
     const expectedFileNameMask = /export\.csv/gm;//
@@ -46,5 +67,8 @@ export default {
   },
   verifyContentOfExportFileName(actual, ...expectedArray) {
     expectedArray.forEach(expectedItem => (expect(actual).to.include(expectedItem)));
-  }
+  },
+  verifyResultsInTheRow: (allContentToCheck, rowIndex = 0) => {
+    return allContentToCheck.forEach(contentToCheck => cy.expect(MultiColumnListRow({ indexRow: `row-${rowIndex}` }).find(MultiColumnListCell({ content: including(contentToCheck) })).exists()));
+  },
 };

@@ -6,7 +6,6 @@ import {
   Button,
   Link,
 } from '../../../../interactors';
-import { getLongDelay } from '../../utils/cypressTools';
 
 export default {
   searchByStatus(status) {
@@ -14,13 +13,13 @@ export default {
   },
 
   searchByKeywords(keywords) {
-    cy.do([
+    return cy.do([
       TextField({ id: 'input-user-search' }).fillIn(keywords),
       Button({ id: 'submit-user-search' }).click()
     ]);
   },
 
   openUser(userId) {
-    cy.do(Link({ href: including(userId) }).click());
+    return cy.do(Link({ href: including(userId) }).click());
   },
 };
