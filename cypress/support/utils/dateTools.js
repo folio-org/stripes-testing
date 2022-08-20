@@ -82,6 +82,11 @@ export default {
     return new Date().getDate().toString();
   },
 
+  getTomorrowDay() {
+    const today = new Date();
+    return new Date(today.getFullYear(), today.getMonth(), today.getDate() + 1);
+  },
+
   getFutureWeekDateObj() {
     const today = new Date();
     return new Date(today.getFullYear(), today.getMonth(), today.getDate() + 7);

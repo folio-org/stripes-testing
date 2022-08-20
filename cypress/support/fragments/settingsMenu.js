@@ -10,7 +10,7 @@ export default {
   circulationOtherSettingsPath: 'settings/circulation/checkout',
   circulationStaffSlipsPath: 'settings/circulation/staffslips',
   circulationFixedDueDateSchedulesPath: 'settings/circulation/fixed-due-date-schedules',
-  circulationLoanHistoryPath: 'settings/circulation/loan-history',
+  circulationLoanHistoryPath: 'settings/circulation/loan-anonymization',
   circulationLoanPoliciesPath: 'settings/circulation/loan-policies',
   circulationoVerdueFinePoliciesPath: 'settings/circulation/fine-policies',
   circulationLostItemFeePolicyPath: 'settings/circulation/lost-item-fee-policy',
@@ -56,6 +56,7 @@ export default {
   paymentsPath: 'settings/users/payments',
   conditionsPath: 'settings/users/conditions',
   waiveReasons: 'settings/users/waivereasons',
+  patronBlockTemplates: 'settings/users/manual-block-templates',
   // Data Import
   mappingProfilePath: 'settings/data-import/mapping-profiles',
   actionProfilePath: 'settings/data-import/action-profiles',

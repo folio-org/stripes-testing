@@ -80,11 +80,12 @@ export default {
   uiUsersEditProfile: { internal: 'ui-users.edit', gui: 'Users: Can edit user profile' },
   uiUsersViewProfile: { internal: 'ui-users.view', gui: 'Users: Can view user profile' },
   uiUsersPermissions: { internal: 'ui-users.editperms', gui: 'Users: Can assign and unassign permissions to users' },
-  uiUsersfeefinesCRUD: { internal:'ui-users.feesfines.actions.all', gui: 'Users: Can create, edit and remove fees/fines' },
-  uiUsersfeefinesView: { internal: 'ui-users.feesfines.view', gui: 'Users: Can view fees/fines and loans' },
-  uiUsersManualCharge: { internal: 'ui-users.manual_charge', gui: 'Fees/Fines: Can charge' },
-  uiUsersManualPay: { internal: 'ui-users.manual_pay', gui: 'Fees/Fines: Can pay' },
-  uiUsersViewServicePoints: { internal: 'ui-users.viewuserservicepoints', gui: 'Users: Can view service points assigned to users' },
+  uiUsersfeefinesCRUD: { internal:'ui-users.feesfines.actions.all', gui:'Users: Can create, edit and remove fees/fines' },
+  uiUsersPatronBlocks: { internal: 'ui-users.patron_blocks', gui: 'Users: Can create, edit and remove patron blocks' },
+  uiUsersCreatePatronTamplate: { internal: 'ui-users.settings.patron-block-templates', gui: 'Settings (Users): Can create, edit and remove patron blocks templates' },
+  uiUsersCreatePatronGroups: { internal: 'ui-users.settings.usergroups', gui: 'Settings (Users): Can create, edit and remove patron groups' },
+  uiUsersCreatePatronLimits: { internal: 'ui-users.settings.limits', gui: 'Settings (Users): Can create, edit and remove patron blocks limits' },
+  uiUsersCreatePatronConditions: { internal: 'ui-users.settings.conditions', gui: 'Settings (Users): Can view and edit patron blocks conditions' },
   // Remote Storage
   remoteStorageCRUD: { internal: '', gui: 'Settings (Remote storage): Can create, edit, delete remote storage settings' },
   // Requests
@@ -119,6 +120,9 @@ export default {
   viewEditCreateOrganization:{ internal:'ui-organizations.create', gui:'Organizations: View, edit, create' },
   // Invoice
   viewEditDeleteInvoiceInvoiceLine:{ internal:'ui-invoice.invoice.delete', gui:'Invoice: Can view, edit and delete Invoices and Invoice lines' },
+  viewEditCreateInvoiceInvoiceLine: { internal: 'ui-invoice.invoice.create', gui: 'Invoice: Can view, edit and create new Invoices and Invoice lines' },
+  assignAcqUnitsToNewInvoice: { internal: 'ui-invoice.acq.unit.assignment.assign', gui: 'Invoice: Assign acquisition units to new invoice' },
+  invoiceSettingsAll: { internal: 'ui-invoice.settings.all', gui: 'Settings (Invoices): Can view and edit settings' },
   // Orders
   uiOrdersView: { internal: 'ui-orders.orders.view', gui: 'Orders: Can view Orders and Order lines' },
   uiOrdersCreate: { internal: 'ui-orders.orders.create', gui: 'Orders: Can create new Orders and Order lines' },
