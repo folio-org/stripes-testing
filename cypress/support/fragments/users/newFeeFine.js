@@ -107,6 +107,8 @@ export default {
 
   chargeAndPayNow: () => cy.do(rootModal.find(Button({ id:'chargeAndPay' })).click()),
 
+  chargeOnly: () => cy.do(rootModal.find(Button({ id:'chargeOnly' })).click()),
+
   createViaApi: (feeFineAccount) => {
     return createFeeFineAccountViaApi(getNewFeeFineAccount(feeFineAccount))
       .then((feeFineAccountId) => chargeAmountFeeFineActionsViaApi(getChargeFeeFine({ ...feeFineAccount, id: feeFineAccountId })));

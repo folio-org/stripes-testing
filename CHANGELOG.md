@@ -2,6 +2,7 @@
 
 ## IN PROGRESS
 * Update circulationLoanHistoryPath. Refs UITEST-100
+* Implement e-2-e automation of test case C465. Refs FAT-797.
 * Implement e-2-e automation of test case C347828. Refs FAT-1296.
 
 ## [4.3.0](https://github.com/folio-org/stripes-testing/tree/v4.3.0) (2022-06-14)
