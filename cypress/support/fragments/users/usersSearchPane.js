@@ -5,9 +5,12 @@ import {
   TextField,
   Button,
   Link,
+  PaneHeader,
 } from '../../../../interactors';
 
 export default {
+  waitLoading:() => cy.expect(PaneHeader('User search').exists()),
+
   searchByStatus(status) {
     cy.do(Accordion({ id: 'users-filter-accordion-status' }).find(Checkbox(status)).click());
   },
