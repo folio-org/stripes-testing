@@ -31,6 +31,10 @@ const verifyMarkAsSuppressed = () => {
   cy.expect(instanceDetailsSection.find(HTML(including('Warning: Instance is marked staff suppressed'))).exists());
 };
 
+const verifyMarkAsSuppressedFromDiscovery = () => {
+  cy.expect(instanceDetailsSection.find(HTML(including('Warning: Instance is marked suppressed from discovery'))).exists());
+};
+
 const verifyGeneralNoteContent = (content) => {
   cy.expect(instanceDetailsNotesSection.find(HTML(including(content))).exists());
 };
@@ -41,5 +45,6 @@ export default {
   verifyCatalogedDate,
   verifyInstanceStatusTerm,
   verifyMarkAsSuppressed,
+  verifyMarkAsSuppressedFromDiscovery,
   verifyGeneralNoteContent,
 };
