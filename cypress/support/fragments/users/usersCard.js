@@ -27,15 +27,15 @@ export default {
 
   openLoans() {
     cy.intercept('/circulation/loans?*').as('getLoans');
-    cy.do(Accordion({ id: 'loansSection' }).clickHeader());
-    cy.wait('@getLoans');
+    cy.do(Accordion({ id : 'loansSection' }).clickHeader());
+    return cy.wait('@getLoans');
   },
   openFeeFines() {
     cy.do(feesFinesAccourdion.clickHeader());
   },
 
   showOpenedLoans() {
-    cy.do(Link({ id: 'clickable-viewcurrentloans' }).click());
+    return cy.do(Link({ id: 'clickable-viewcurrentloans' }).click());
   },
 
   createPatronBlock() {
@@ -158,6 +158,12 @@ export default {
   hasSaveError: (errorMessage) => cy.expect(rootSection.find(TextField({ value: errorMessage })).exists()),
 
   startFeeFineAdding: () => cy.do(feesFinesAccourdion.find(Button('Create fee/fine')).click()),
-
-  viewAllFeesFines: () => cy.do(feesFinesAccourdion.find(Button({ id: 'clickable-viewallaccounts' })).click()),
+  viewAllFeesFines:() => cy.do(feesFinesAccourdion.find(Button({ id: 'clickable-viewallaccounts' })).click()),
+  verifyQuantityOfOpenAndClaimReturnedLoans(quantityOfOpenLoans, quantityOfClaimReturnedLoans) {
+    if (quantityOfClaimReturnedLoans > 0) {
+      return cy.expect(Section({ id: 'loansSection' }).find(HTML(including(`${quantityOfOpenLoans} open loans (${quantityOfClaimReturnedLoans} claimed returned)`))).exists());
+    } else {
+      return cy.expect(Section({ id: 'loansSection' }).find(HTML(including(`${quantityOfOpenLoans} open loans`))).exists());
+    }
+  }
 };
