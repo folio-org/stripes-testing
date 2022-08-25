@@ -156,7 +156,7 @@ export default {
 
   selectVendorOnUi: (organizationName) => {
     cy.do([
-      Button({ id: 'vendor-plugin' }).click(),
+      Button('Organization look-up').click(),
       SearchField({ id: searhInputId }).fillIn(organizationName),
       searchButton.click()
     ]);
@@ -340,7 +340,7 @@ export default {
       buttonLocationFilter.click(),
       Button('Location look-up').click(),
       Select({ name: 'campusId' }).choose('City Campus'),
-      Button({ id: 'locationId' }).click(),
+      Button('Location look-up').click(),
       SelectionOption('Main Library (KU/CC/DI/M) ').click(),
       Button('Save and close').click(),
       buttonLocationFilter.click(),
