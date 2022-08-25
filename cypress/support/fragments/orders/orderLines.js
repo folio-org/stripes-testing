@@ -124,11 +124,7 @@ export default {
       Select({ name: 'physical.materialType' }).choose('book'),
       Button('Add location').click(),
       Button('Location look-up').click(),
-      // Someone create new institution, and on ui sometimes we need to select Institution.
-      Select({ name: 'institutionId' }).choose('Københavns Universitet'),
       Select({ name: 'campusId' }).choose('Online'),
-      Button({ id: 'locationId' }).click(),
-      SelectionList({ id: 'sl-container-locationId' }).select('Online (E) '),
       Button('Save and close').click(),
       TextField({ name: 'locations[0].quantityPhysical' }).fillIn(quantityPhysical),
       saveAndClose.click()
