@@ -286,7 +286,7 @@ export default {
   selectVendorFilter: (invoice) => {
     cy.do([
       Button({ id: 'accordion-toggle-button-filter-vendor' }).click(),
-      Button({ id: 'filter-vendor-button' }).click(),
+      Button('Organization look-up').click(),
       Modal('Select Organization').find(SearchField({ id: searhInputId })).fillIn(invoice.vendorName),
       searchButton.click(),
     ]);

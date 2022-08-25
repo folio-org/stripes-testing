@@ -85,7 +85,7 @@ export default {
   },
   selectVendorOnUi: (organizationName) => {
     cy.do([
-      Button({ id: 'vendorId-plugin' }).click(),
+      Button('Organization look-up').click(),
       SearchField({ id: searhInputId }).fillIn(organizationName),
       searchButton.click()
     ]);
