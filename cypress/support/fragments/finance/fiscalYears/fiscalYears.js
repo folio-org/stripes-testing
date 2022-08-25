@@ -1,4 +1,4 @@
-import { Button, TextField, Pane, MultiColumnList, PaneHeader, PaneContent } from '../../../../../interactors';
+import { Button, TextField, Pane, MultiColumnList, PaneContent } from '../../../../../interactors';
 
 const createdFiscalYearNameXpath = '//*[@id="paneHeaderpane-fiscal-year-details-pane-title"]/h2/span';
 const numberOfSearchResultsHeader = '//*[@id="paneHeaderfiscal-year-results-pane-subtitle"]/span';
