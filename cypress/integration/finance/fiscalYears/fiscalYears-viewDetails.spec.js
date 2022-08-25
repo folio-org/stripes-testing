@@ -8,7 +8,7 @@ import devTeams from '../../../support/dictionary/devTeams';
 describe('ui-finance: Fiscal Year creation', () => {
   const defaultFiscalYear = { ...NewFiscalYear.defaultFiscalYear };
   before(() => {
-    cy.login(Cypress.env('diku_login'), Cypress.env('diku_password'));
+    cy.loginAsAdmin();
     cy.visit(TopMenu.fiscalYearPath);
     FiscalYears.createDefaultFiscalYear(defaultFiscalYear);
     FiscalYears.checkCreatedFiscalYear(defaultFiscalYear.name);
