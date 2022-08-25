@@ -1,4 +1,4 @@
-import { Button, TextField, Pane } from '../../../../../interactors';
+import { Button, TextField, Pane, MultiColumnList, PaneHeader, PaneContent } from '../../../../../interactors';
 
 const createdFiscalYearNameXpath = '//*[@id="paneHeaderpane-fiscal-year-details-pane-title"]/h2/span';
 const numberOfSearchResultsHeader = '//*[@id="paneHeaderfiscal-year-results-pane-subtitle"]/span';
@@ -54,6 +54,14 @@ export default {
     cy.xpath(numberOfSearchResultsHeader)
       .should('be.visible')
       .and('have.text', zeroResultsFoundText);
+  },
+
+  fiscalYearsDisplay: () => {
+    cy.expect(MultiColumnList({ id: 'fiscal-years-list' }).exists());
+  },
+
+  fiscalYearDetailView: () => {
+    cy.expect(PaneContent({ id: 'pane-fiscal-year-details-content' }).exists());
   },
 
   deleteFiscalYearViaActions: () => {
