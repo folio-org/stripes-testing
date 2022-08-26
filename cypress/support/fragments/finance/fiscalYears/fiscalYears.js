@@ -1,4 +1,4 @@
-import { Button, TextField, Pane, MultiColumnList, PaneContent } from '../../../../../interactors';
+import { Button, TextField, Pane, MultiColumnList, PaneContent, PaneHeader } from '../../../../../interactors';
 
 const createdFiscalYearNameXpath = '//*[@id="paneHeaderpane-fiscal-year-details-pane-title"]/h2/span';
 const numberOfSearchResultsHeader = '//*[@id="paneHeaderfiscal-year-results-pane-subtitle"]/span';
@@ -25,6 +25,10 @@ export default {
       saveAndClose.click()
     ]);
     this.waitForFiscalYearDetailsLoading();
+  },
+
+  closeThirdPane() {
+    cy.do(PaneHeader({ id: 'paneHeaderpane-fiscal-year-details' }).find(Button({ icon: 'times' })).click());
   },
 
   checkCreatedFiscalYear: (fiscalYearName) => {

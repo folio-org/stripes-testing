@@ -12,6 +12,7 @@ describe('ui-finance: Fiscal Year creation', () => {
     cy.visit(TopMenu.fiscalYearPath);
     FiscalYears.createDefaultFiscalYear(defaultFiscalYear);
     FiscalYears.checkCreatedFiscalYear(defaultFiscalYear.name);
+    FiscalYears.closeThirdPane();
   });
 
   after(() => {
@@ -19,7 +20,6 @@ describe('ui-finance: Fiscal Year creation', () => {
   });
 
   it('C3452: View fiscal year details (thunderjet)', { tags: [testType.criticalPath, devTeams.thunderjet] }, () => {
-    cy.visit(TopMenu.fiscalYearPath);
     FiscalYears.fiscalYearsDisplay();
     FinanceHelp.searchByName(defaultFiscalYear.name);
     FinanceHelp.selectFromResultsList();
