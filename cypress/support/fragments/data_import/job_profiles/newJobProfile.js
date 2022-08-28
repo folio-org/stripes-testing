@@ -1,4 +1,4 @@
-import { Accordion, Button, HTML, including, Select, TextField } from '../../../../../interactors';
+import { Accordion, Button, HTML, including, Select, TextField, Pane } from '../../../../../interactors';
 import ModalSelectActionProfile from './modalSelectActionProfile';
 
 const acceptedDataType = {
@@ -101,19 +101,19 @@ export default {
     cy.do(matchButton.click());
     ModalSelectActionProfile.searchActionProfileByName(matchProfileName, 'match');
     ModalSelectActionProfile.selectActionProfile(matchProfileName, 'match');
-    cy.expect(Accordion('Overview').find(HTML(including(matchProfileName))).exists());
+    cy.expect(Pane('New job profile').find(Accordion('Overview')).find(HTML(including(matchProfileName))).exists());
     // link first action profile to match profile
     cy.get('[id*="type-selector-dropdown-ROOT"]').eq(forMatchesOrder).click();
     cy.do(actionsButton.click());
     ModalSelectActionProfile.searchActionProfileByName(firstActionProfileName);
     ModalSelectActionProfile.selectActionProfile(firstActionProfileName);
-    cy.expect(Accordion('Overview').find(HTML(including(firstActionProfileName))).exists());
+    cy.expect(Pane('New job profile').find(Accordion('Overview')).find(HTML(including(firstActionProfileName))).exists());
     // link second action profile to match profile
     cy.get('[id*="type-selector-dropdown-ROOT"]').eq(forMatchesOrder).click();
     cy.do(actionsButton.click());
     ModalSelectActionProfile.searchActionProfileByName(secondActionProfileName);
     ModalSelectActionProfile.selectActionProfile(secondActionProfileName);
-    cy.expect(Accordion('Overview').find(HTML(including(secondActionProfileName))).exists());
+    cy.expect(Pane('New job profile').find(Accordion('Overview')).find(HTML(including(secondActionProfileName))).exists());
   },
 
   saveAndClose: () => {

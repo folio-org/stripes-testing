@@ -19,6 +19,7 @@ import DataImportUploadFile from '../../../../interactors/dataImportUploadFile';
 import MarcAuthority from '../marcAuthority/marcAuthority';
 import MarcAuthoritiesSearch from '../marcAuthority/marcAuthoritiesSearch';
 import MarcAuthorities from '../marcAuthority/marcAuthorities';
+import FileManager from '../../utils/fileManager';
 
 const sectionPaneJobsTitle = Section({ id: 'pane-jobs-title' });
 const actionsButton = Button('Actions');
@@ -216,5 +217,16 @@ export default {
     cy.do(actionsButton.click());
 
     cy.expect(deleteLogsButton.is({ disabled: true }));
+  },
+
+  editMarcFile(editedFileName, finalFileName, stringToBeReplaced, replaceString) {
+    FileManager.readFile(`cypress/fixtures/${editedFileName}`)
+      .then((actualContent) => {
+        const content = actualContent.split('\n');
+        console.log(content);
+
+        content[0] = content[0].slice().replace(stringToBeReplaced, replaceString);
+        FileManager.createFile(`cypress/fixtures/${finalFileName}`, content.join('\n'));
+      });
   },
 };

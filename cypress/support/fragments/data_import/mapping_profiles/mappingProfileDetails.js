@@ -41,12 +41,14 @@ export default {
   saveMappingProfile,
   checkUpdatesSectionOfMappingProfile,
   checkOverrideSectionOfMappingProfile,
+  closeViewModeForMappingProfile,
 
-  checkCreatedMappingProfile:(firstField, secondField, firstFieldStatus = true, secondFieldStatus = true) => {
+  checkCreatedMappingProfile:(profileName, firstField, secondField, firstFieldStatus = true, secondFieldStatus = true) => {
     checkUpdatesSectionOfMappingProfile();
     cy.do(Accordion({ id:'override-protected-section' }).clickHeader());
     checkOverrideSectionOfMappingProfile(firstField, firstFieldStatus);
     checkOverrideSectionOfMappingProfile(secondField, secondFieldStatus);
+    closeViewModeForMappingProfile(profileName);
   },
 
   editMappingProfile:() => {
@@ -56,12 +58,12 @@ export default {
     ]);
   },
 
-  markFieldForProtection:(profileName, field) => {
+  markFieldForProtection:(field) => {
     cy.do(MultiColumnListCell({ content: field }).perform(
       element => {
         const rowNumber = element.parentElement.parentElement.getAttribute('data-row-index');
 
-        cy.expect(Pane({ id:'full-screen-view' }).find(Accordion({ id: 'override-protected-section' }))
+        cy.do(Pane('New field mapping profile').find(Accordion({ id: 'edit-override-protected-section' }))
           .find(MultiColumnListRow({ indexRow: rowNumber })).find(Checkbox())
           .click());
       }

@@ -235,7 +235,28 @@ export default {
       Select({ name:'profile.incomingRecordType' }).choose(incomingRecordType.marcBib),
       Select({ name:'profile.existingRecordType' }).choose(specialMappingProfile.typeValue),
       Select({ name:'profile.mappingDetails.marcMappingOption' }).choose(fieldMappingsForMarc.update),
-      saveButton.click()
     ]);
+  },
+
+  fillMappingProfileForInstance:(specialMappingProfile = defaultMappingProfile) => {
+    cy.do([
+      TextField({ name:'profile.name' }).fillIn(specialMappingProfile.name),
+      Select({ name:'profile.incomingRecordType' }).choose(incomingRecordType.marcBib),
+      Select({ name:'profile.existingRecordType' }).choose(specialMappingProfile.typeValue),
+    ]);
+  },
+
+  addStatisticalCode:(name) => {
+    cy.do(Select({ name:'profile.mappingDetails.mappingFields[8].repeatableFieldAction' }).choose('Add these to existing'));
+    cy.do(Button('Add statistical code').click());
+    cy.do(TextField('Statistical code').fillIn(name));
+    // wait will be add uuid for acceptedValues
+    cy.wait(1000);
+  },
+
+  addNote:(note) => {
+    cy.do(Select({ name:'profile.mappingDetails.mappingFields[9].repeatableFieldAction' }).choose('Add these to existing'));
+    cy.do(Button('Add administrative note').click());
+    cy.do(TextField('Administrative note').fillIn(note));
   }
 };

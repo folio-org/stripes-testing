@@ -24,27 +24,36 @@ import NewMatchProfile from '../../support/fragments/data_import/match_profiles/
 
 describe('ui-data-import: Check that field protection overrides work properly during data import', () => {
   // unique name for profiles
-  const mappingProfileName = `C17018autoTestMappingProf.${getRandomPostfix()}`;
-  const mappingProfileName2 = `C17018autoTestMappingProf.${getRandomPostfix()}`;
-  const actionProfileName = `C17018autoTestActionProfile_${getRandomPostfix()}`;
-  const actionProfileName2 = `C17018autoTestActionProfile_${getRandomPostfix()}`;
-  const matchProfileName = `C17018autoTestMatchProfile_${getRandomPostfix()}`;
-  const jobProfileName = `C17018autoTestJobProfile_${getRandomPostfix()}`;
+  const marcBibMapProfileNameForUpdate = `C17018 Update MARC Bib with protections.${getRandomPostfix()}`;
+  const instanceMapProfileNameForUpdate = `C17018 Update instance 1.${getRandomPostfix()}`;
+  const marcBibMapProfileNameForUpdateAndOverride = `C17018 Update MARC Bib with protection OVERRIDES.${getRandomPostfix()}`;
+  const instanceMapProfileNameForUpdateAndOverride = `C17018 Update instance 2.${getRandomPostfix()}`;
+  const marcBibActionProfileNameForUpdate = `C17018 Update MARC Bib with protections.${getRandomPostfix()}`;
+  const instanceActionProfileNameForUpdate = `C17018 Update instance 1.${getRandomPostfix()}`;
+  const marcBibActionProfileNameForUpdateAndOverride = `C17018 Update MARC Bib with protection OVERRIDES.${getRandomPostfix()}`;
+  const instanceActionProfileNameForUpdateAndOverride = `C17018 Update MARC Bib with protection OVERRIDES.${getRandomPostfix()}`;
+  const matchProfileName = `C17018 001 to 001 MARC Bib.${getRandomPostfix()}`;
+  const jobProfileNameForUpdate = `C17018 Update 1: MARC Bib with protections.${getRandomPostfix()}`;
+  const jobProfileNameForOverride = `C17018 Update 2: MARC Bib with protections.${getRandomPostfix()}`;
 
   // unique file name to upload
   const fileNameForCreatingInstance = `C17018autotestFileCreteInstance.${getRandomPostfix()}.mrc`;
-  const nameForCSVFile = `autotestFile${getRandomPostfix()}.csv`;
-  const nameMarcFileForUpload = `CC17018autotestFile.${getRandomPostfix()}.mrc`;
+  const editedFileName = `oneMarcBib-Rev1-Protect_${getRandomPostfix()}.mrc`
 
   const protectedFields = {
-    firstField: '245',
-    secondField: '035'
+    firstField: '020',
+    secondField: '514'
   };
+  const note = '"This note was added when the MARC Bib was updated to check field protections"';
+  const overrideNote = '"This note was added when the MARC Bib was updated to check field protection OVERRIDES"';
+  let instanceHrid = '';
+  const fileForEdit = 'oneMarcBib-Rev1-Protect.mrc';
+  const instanceHridFromFile = 'ocn962073864';
 
   beforeEach(() => {
     cy.loginAsAdmin();
-    cy.getAdminToken()
-      .then(() => {
+    cy.getAdminToken();
+    /* .then(() => {
         MarcFieldProtection.createMarcFieldProtectionViaApi({
           indicator1: '*',
           indicator2: '*',
@@ -61,123 +70,146 @@ describe('ui-data-import: Check that field protection overrides work properly du
           source: 'USER',
           field: protectedFields.secondField
         });
-
-        cy.visit(TopMenu.dataImportPath);
-        // upload a marc file for export
-        DataImport.uploadFile('oneMarcBib.mrc', fileNameForCreatingInstance);
-        JobProfiles.searchJobProfileForImport('Default - Create instance and SRS MARC Bib');
-        JobProfiles.runImportFile(fileNameForCreatingInstance);
-        Logs.openFileDetails(fileNameForCreatingInstance);
-        [FileDetails.columnName.srsMarc, FileDetails.columnName.instance].forEach(columnName => {
-          FileDetails.checkStatusInColumn(FileDetails.status.created, columnName);
-        });
-
-        // get Instance HRID through API
-        SearchInventory
-          .getInstanceHRID()
-          .then(hrId => {
-            // download .csv file
-            cy.visit(TopMenu.inventoryPath);
-            SearchInventory.searchInstanceByHRID(hrId[0]);
-            InventorySearch.saveUUIDs();
-            ExportMarcFile.downloadCSVFile(nameForCSVFile, 'SearchInstanceUUIDs*');
-            FileManager.deleteFolder(Cypress.config('downloadsFolder'));
-          });
-
-        // download exported marc file
-        cy.visit(TopMenu.dataExportPath);
-        ExportFile.uploadFile(nameForCSVFile);
-        ExportFile.exportWithDefaultInstancesJobProfile(nameForCSVFile);
-        ExportMarcFile.downloadExportedMarcFile(nameMarcFileForUpload);
-        FileManager.deleteFolder(Cypress.config('downloadsFolder'));
-      });
+      }); */
   });
+
 
   afterEach(() => {
 
   });
 
   it('C17018 Check that field protection overrides work properly during data import (folijet)', { tags: [TestTypes.criticalPath, DevTeams.folijet] }, () => {
-    // create Field mapping profile
-    const mappingProfile = {
-      name: mappingProfileName,
+    const marcBibMappingProfile = {
+      name: marcBibMapProfileNameForUpdate,
+      typeValue : NewFieldMappingProfile.folioRecordTypeValue.marcBib
+    };
+
+    const instanceMappingProfile = {
+      name: instanceMapProfileNameForUpdate,
       typeValue : NewFieldMappingProfile.folioRecordTypeValue.instance
     };
 
-    const anotherMappingProfile = {
-      name: mappingProfileName2,
-      typeValue : NewFieldMappingProfile.folioRecordTypeValue.marcBib,
-
+    const marcBibMappingProfileOverride = {
+      name: marcBibMapProfileNameForUpdateAndOverride,
+      typeValue : NewFieldMappingProfile.folioRecordTypeValue.marcBib
     };
 
-    const actionProfile = {
-      typeValue: NewActionProfile.folioRecordTypeValue.instance,
-      name: actionProfileName,
-      action: 'Update (all record types except Orders, Invoices, or MARC Holdings)'
+    const instanceMappingProfileOverride = {
+      name: instanceMapProfileNameForUpdateAndOverride,
+      typeValue : NewFieldMappingProfile.folioRecordTypeValue.instance
     };
 
-    const anotherActionProfile = {
+    const marcBibActionProfile = {
       typeValue: NewActionProfile.folioRecordTypeValue.marcBib,
-      name: actionProfileName2,
+      name: marcBibActionProfileNameForUpdate,
       action: 'Update (all record types except Orders, Invoices, or MARC Holdings)'
     };
 
-    const matchProfile = {
-      profileName: matchProfileName,
+    const instanceActionProfile = {
+      typeValue: NewActionProfile.folioRecordTypeValue.instance,
+      name: instanceActionProfileNameForUpdate,
+      action: 'Update (all record types except Orders, Invoices, or MARC Holdings)'
+    };
+
+    const marcBibActionProfileOverride = {
+      typeValue: NewActionProfile.folioRecordTypeValue.marcBib,
+      name: marcBibActionProfileNameForUpdateAndOverride,
+      action: 'Update (all record types except Orders, Invoices, or MARC Holdings)'
+    };
+
+    const instanceActionProfileOverride = {
+      typeValue: NewActionProfile.folioRecordTypeValue.instance,
+      name: instanceActionProfileNameForUpdateAndOverride,
+      action: 'Update (all record types except Orders, Invoices, or MARC Holdings)'
+    };
+
+    const matchProfile = { profileName: matchProfileName,
       incomingRecordFields: {
         field: '001'
       },
+      existingRecordFields: {
+        field: '001'
+      },
       matchCriterion: 'Exactly matches',
-      existingRecordType: 'INSTANCE',
-      instanceOption: NewMatchProfile.optionsList.instanceHrid
+      existingRecordType: 'MARC_BIBLIOGRAPHIC' };
+
+    const jobProfileForUpdate = {
+      ...NewJobProfile.defaultJobProfile,
+      profileName: jobProfileNameForUpdate,
+      acceptedType: NewJobProfile.acceptedDataType.marc
     };
 
-    const jobProfile = {
+    const jobProfileForOverride = {
       ...NewJobProfile.defaultJobProfile,
-      profileName: jobProfileName,
+      profileName: jobProfileNameForOverride,
       acceptedType: NewJobProfile.acceptedDataType.marc
     };
 
     // create Field mapping profiles
     cy.visit(SettingsMenu.mappingProfilePath);
-    FieldMappingProfiles.createMappingProfile(mappingProfile);
-    FieldMappingProfiles.checkMappingProfilePresented(mappingProfile.name);
+    FieldMappingProfiles.createMappingProfileForUpdatesMarc(marcBibMappingProfile);
+    MappingProfileDetails.checkCreatedMappingProfile(marcBibMappingProfile.name, protectedFields.firstField, protectedFields.secondField);
+    FieldMappingProfiles.checkMappingProfilePresented(marcBibMappingProfile.name);
 
-    FieldMappingProfiles.createMappingProfileForUpdatesMarc(anotherMappingProfile);
-    FieldMappingProfiles.checkMappingProfilePresented(anotherMappingProfile.name);
-    MappingProfileDetails.checkCreatedMappingProfile(protectedFields.firstField, protectedFields.secondField);
+    FieldMappingProfiles.createMappingProfileWithNotes(instanceMappingProfile, note);
+    FieldMappingProfiles.checkMappingProfilePresented(instanceMappingProfile.name);
 
-    MappingProfileDetails.editMappingProfile();
-    MappingProfileDetails.markFieldForProtection(anotherMappingProfile.name, protectedFields.firstField);
-    FieldMappingProfiles.checkMappingProfilePresented(anotherMappingProfile.name);
-    MappingProfileDetails.checkCreatedMappingProfile(protectedFields.firstField, protectedFields.secondField);
+    FieldMappingProfiles.createMappingProfileForUpdatesAndOverrideMarc(marcBibMappingProfileOverride, protectedFields.firstField, protectedFields.secondField);
+    MappingProfileDetails.checkCreatedMappingProfile(marcBibMappingProfileOverride.name, protectedFields.firstField, protectedFields.secondField);
+    FieldMappingProfiles.checkMappingProfilePresented(marcBibMappingProfileOverride.name);
+
+    FieldMappingProfiles.createMappingProfileWithNotes(instanceMappingProfileOverride, overrideNote);
+    FieldMappingProfiles.checkMappingProfilePresented(instanceMappingProfileOverride.name);
 
     // create action profiles
     cy.visit(SettingsMenu.actionProfilePath);
-    ActionProfiles.createActionProfile(actionProfile, mappingProfile.name);
-    ActionProfiles.checkActionProfilePresented(actionProfile.name);
+    ActionProfiles.createActionProfile(marcBibActionProfile, marcBibMappingProfile.name);
+    ActionProfiles.checkActionProfilePresented(marcBibActionProfile.name);
 
-    ActionProfiles.createActionProfile(anotherActionProfile, anotherMappingProfile.name);
-    ActionProfiles.checkActionProfilePresented(anotherActionProfile.name);
+    ActionProfiles.createActionProfile(instanceActionProfile, instanceMappingProfile.name);
+    ActionProfiles.checkActionProfilePresented(instanceActionProfile.name);
+
+    ActionProfiles.createActionProfile(marcBibActionProfileOverride, marcBibMappingProfileOverride.name);
+    ActionProfiles.checkActionProfilePresented(marcBibActionProfileOverride.name);
+
+    ActionProfiles.createActionProfile(instanceActionProfileOverride, marcBibMappingProfileOverride.name);
+    ActionProfiles.checkActionProfilePresented(instanceActionProfileOverride.name);
 
     // create Match profile
     cy.visit(SettingsMenu.matchProfilePath);
     MatchProfiles.createMatchProfile(matchProfile);
     MatchProfiles.checkMatchProfilePresented(matchProfile.profileName);
 
-    // create Job profile
+    // create Job profiles
     cy.visit(SettingsMenu.jobProfilePath);
-    JobProfiles.createJobProfile(jobProfile);
-    NewJobProfile.linkMatchAndTwoActionProfiles(matchProfile.profileName, actionProfile.name, anotherActionProfile.name);
+    JobProfiles.createJobProfile(jobProfileForUpdate);
+    NewJobProfile.linkMatchAndTwoActionProfiles(matchProfile.profileName, marcBibActionProfile.name, instanceActionProfile.name);
     NewJobProfile.saveAndClose();
-    JobProfiles.checkJobProfilePresented(jobProfile.profileName);
+    JobProfiles.checkJobProfilePresented(jobProfileForUpdate.profileName);
 
-    // cy.visit(TopMenu.dataImportPath);
-    // DataImport.uploadFile(nameMarcFileForUpload);
-    // JobProfiles.searchJobProfileForImport(jobProfile.profileName);
-    // JobProfiles.runImportFile(nameMarcFileForUpload);
+    JobProfiles.createJobProfile(jobProfileForOverride);
+    NewJobProfile.linkMatchAndTwoActionProfiles(matchProfile.profileName, marcBibActionProfileOverride.name, instanceActionProfileOverride.name);
+    NewJobProfile.saveAndClose();
+    JobProfiles.checkJobProfilePresented(jobProfileForOverride.profileName);
 
-    // FileDetails.openInstanceInInventory();
+    cy.visit(TopMenu.dataImportPath);
+    // upload a marc file for export
+    DataImport.uploadFile('oneMarcBib-BeforeOverride.mrc', fileNameForCreatingInstance);
+    JobProfiles.searchJobProfileForImport('Default - Create instance and SRS MARC Bib');
+    JobProfiles.runImportFile(fileNameForCreatingInstance);
+    Logs.checkStatusOfJobProfile('Completed');
+    Logs.openFileDetails(fileNameForCreatingInstance);
+    [FileDetails.columnName.srsMarc, FileDetails.columnName.instance].forEach(columnName => {
+      FileDetails.checkStatusInColumn(FileDetails.status.created, columnName);
+    });
+
+    // get Instance HRID through API
+    SearchInventory.getInstanceHRID()
+      .then((hrId) => {
+        instanceHrid = hrId[0];
+      });
+
+    DataImport.editMarcFile(fileForEdit, editedFileName, instanceHridFromFile, instanceHrid);
   });
 });
 
