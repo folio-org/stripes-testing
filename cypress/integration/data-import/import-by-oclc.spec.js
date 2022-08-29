@@ -1,11 +1,11 @@
 import TopMenu from '../../support/fragments/topMenu';
 import InventoryActions from '../../support/fragments/inventory/inventoryActions';
 import testTypes from '../../support/dictionary/testTypes';
-import permissions from "../../support/dictionary/permissions";
-import Users from "../../support/fragments/users/users";
-import InventoryInstance from "../../support/fragments/inventory/inventoryInstance";
-import InventoryViewSource from "../../support/fragments/inventory/inventoryViewSource";
-import InventorySearch from "../../support/fragments/inventory/inventorySearch";
+import permissions from '../../support/dictionary/permissions';
+import Users from '../../support/fragments/users/users';
+import InventoryInstance from '../../support/fragments/inventory/inventoryInstance';
+import InventoryViewSource from '../../support/fragments/inventory/inventoryViewSource';
+import InventorySearch from '../../support/fragments/inventory/inventorySearch';
 
 let user;
 const oclc = '1007797324';
