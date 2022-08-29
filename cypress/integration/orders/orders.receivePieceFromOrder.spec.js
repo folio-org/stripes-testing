@@ -33,12 +33,6 @@ describe('orders: Receive piece from Order', () => {
       .then(materialType => { orderLine.physical.materialType = materialType.id; });
     cy.login(Cypress.env('diku_login'), Cypress.env('diku_password'));
   });
-  
-  after(() => {
-    Orders.deleteOrderApi(order.id);
-
-    Organizations.deleteOrganizationViaApi(organization.id);
-  });
 
   after(() => {
     Orders.deleteOrderApi(order.id);
