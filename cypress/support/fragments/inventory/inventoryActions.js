@@ -43,7 +43,7 @@ export default {
     cy.expect(OCLWorldCatIdentifierTextField.exists());
     this.fillImportFields(specialOCLCWorldCatidentifier);
 
-    this.pressImportInModal();
+    this.pressImportInModal(specialOCLCWorldCatidentifier);
     // TODO: see issues in cypress tests run related with this step and awaiting of holdingsRecordView
     // InteractorsTools.closeCalloutMessage();
     InventoryInstance.checkExpectedMARCSource();
