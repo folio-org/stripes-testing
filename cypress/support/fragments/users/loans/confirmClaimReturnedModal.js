@@ -1,8 +1,8 @@
-import { Button, Modal, TextArea, including } from '../../../../../interactors';
+import { Button, Modal, TextArea, including, HTML } from '../../../../../interactors';
 import getRandomPostfix from '../../../utils/stringTools';
 
 const additionalInformation = `autoTestText_${getRandomPostfix()}`;
-const confirmModal = Modal(including('Confirm item status'));
+const confirmModal = Modal(including('Confirm claim returned'));
 const cancelButton = confirmModal.find(Button('Cancel'));
 const confirmButton = confirmModal.find(Button('Confirm'));
 const additionalInformationField = confirmModal.find(TextArea('Additional information*'));
@@ -10,13 +10,16 @@ const additionalInformationField = confirmModal.find(TextArea('Additional inform
 export default {
   confirmItemStatus:(reasonToChangeStatus = additionalInformation) => {
     return cy.do([additionalInformationField.fillIn(reasonToChangeStatus),
-      confirmButton.click()]);
+      confirmButton.click(),
+      confirmModal.dismiss()]);
   },
-  verifyModalView:(titleToCheck) => {
+  verifyModalView:() => {
     cy.do(additionalInformationField.exists());
-    cy.expect(confirmButton.has({ disabled: true, visible: true }));
-    cy.expect(Modal(including(titleToCheck)).exists());
+    cy.expect([confirmButton.has({ disabled: true, visible: true }),
+      confirmModal.exists()]);
     return cy.do(cancelButton.click());
   },
-
+  verifyNumberOfItemsToBeClaimReturned: (quantityOfItemsToBeClaimReturned) => {
+    return cy.expect(confirmModal.find(HTML(including(`${quantityOfItemsToBeClaimReturned} item(s) will be claimed returned.`))).exists());
+  },
 };

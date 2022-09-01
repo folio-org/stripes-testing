@@ -57,6 +57,10 @@ export default {
       body: waiveReason,
       isDefaultSearchParamsRequired: false,
     })
+      .then(response => ({
+        id: response.body.id,
+        nameReason: response.body.nameReason,
+      }))
   ),
   deleteViaApi:  (waiveReasonId) => (
     cy.okapiRequest({
@@ -65,5 +69,4 @@ export default {
       isDefaultSearchParamsRequired: false,
     })
   ),
-
 };

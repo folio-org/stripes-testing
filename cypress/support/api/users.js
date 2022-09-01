@@ -102,6 +102,15 @@ Cypress.Commands.add('createTempUser', (permissions = [], patronGroup) => {
             userProperties.userId = newUserProperties.id;
             userProperties.barcode = newUserProperties.barcode;
             userProperties.firstName = Users.defaultUser.personal.firstName;
+            cy.createRequestPreference({
+              defaultDeliveryAddressTypeId: null,
+              defaultServicePointId: null,
+              delivery: false,
+              fulfillment: 'Hold Shelf',
+              holdShelf: true,
+              id: uuid(),
+              userId:  newUserProperties.id,
+            });
             cy.setUserPassword(userProperties);
             cy.addPermissionsToNewUserApi({
               userId: userProperties.userId,

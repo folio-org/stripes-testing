@@ -27,6 +27,10 @@ export default {
   eHoldingsPath: 'settings/eholdings',
   ermComparisonsPath: 'settings/comparisons-erm',
   innReachPath: 'settings/innreach',
+  // Finance
+  fundTypesPath: 'settings/finance/fund-types',
+  expenseClassesPath: 'settings/finance/expense-classes',
+  exportFundPath: 'settings/finance/export-fund',
   // Inventory
   inventoryPath: 'settings/inventory',
   materialTypePath: '/settings/inventory/materialtypes',

@@ -1,5 +1,5 @@
 import uuid from 'uuid';
-import { Button, including, TextField, MultiColumnListRow, MultiColumnList, HTML, Pane, Modal } from '../../../../interactors';
+import { Button, including, TextField, MultiColumnListRow, MultiColumnList, MultiColumnListCell, HTML, Pane, Modal } from '../../../../interactors';
 import { REQUEST_METHOD } from '../../constants';
 import { getLongDelay } from '../../utils/cypressTools';
 import ItemVeiw from '../inventory/inventoryItem/itemVeiw';
@@ -34,8 +34,10 @@ export default {
     cy.wait('@getItems', getLongDelay());
   },
   checkInItemGui:(barcode) => {
-    cy.do(itemBarcodeField.fillIn(barcode));
-    cy.do(addItemButton.click());
+    return cy.do([itemBarcodeField.exists(),
+      itemBarcodeField.fillIn(barcode),
+      addItemButton.click()
+    ]);
   },
   openItemRecordInInventory:(status) => {
     cy.expect(MultiColumnListRow({ indexRow: 'row-0' }).find(HTML(including(status))).exists());
@@ -102,5 +104,8 @@ export default {
   confirmMultipleItemsCheckin(barcode) {
     cy.do(checkOutButton.click());
     cy.expect(MultiColumnList({ id:'list-items-checked-in' }).find(HTML(including(barcode))).exists());
+  },
+  verifyLastCheckInItem(itemBarcode) {
+    return cy.expect(MultiColumnListRow({ indexRow: 'row-0' }).find(MultiColumnListCell({ content: including(itemBarcode) })).exists());
   }
 };
