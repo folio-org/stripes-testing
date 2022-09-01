@@ -5,11 +5,14 @@ const { rmdir, unlink } = require('fs');
 const cypressGrep = require('cypress-grep/src/plugin');
 const { downloadFile } = require('cypress-downloadfile/lib/addPlugin');
 const allureWriter = require('@shelex/cypress-allure-plugin/writer');
+const tesTrailReport = require('cypress-testrail-simple/src/plugin');
 // import allureWriter from "@shelex/cypress-allure-plugin/writer";
 
 // eslint-disable-next-line no-unused-vars
-module.exports = (on, config) => {
+module.exports = async (on, config) => {
   cypressGrep(config);
+
+  await tesTrailReport(on, config);
 
   on('task', {
     // a task to find files matching the given mask
@@ -57,8 +60,3 @@ module.exports = (on, config) => {
   allureWriter(on, config);
   return config;
 };
-
-module.exports = async (on, config) => {
-  // https://github.com/bahmutov/cypress-testrail-simple
-  await require('cypress-testrail-simple/src/plugin')(on, config)
-}
