@@ -1,11 +1,18 @@
 import { HTML } from '@interactors/html';
 import { including } from 'bigtest';
-import { KeyValue, Section } from '../../../../interactors';
+import {
+  Button,
+  KeyValue,
+  Section,
+} from '../../../../interactors';
 
 const instanceDetailsSection = Section({ id: 'pane-instancedetails' });
 const catalogedDateKeyValue = KeyValue('Cataloged date');
 const instanceStatusTermKeyValue = KeyValue('Instance status term');
 const instanceDetailsNotesSection = Section({ id: 'instance-details-notes' });
+const marcViewSection = Section({ id: 'marc-view-pane' });
+const actionsButton = Button('Actions');
+const viewSourceButton = Button('View source');
 
 const verifyResourceTitle = value => {
   cy.expect(KeyValue('Resource title').has({ value }));
@@ -38,6 +45,20 @@ const verifyMarkAsSuppressedFromDiscovery = () => {
 const verifyGeneralNoteContent = (content) => {
   cy.expect(instanceDetailsNotesSection.find(HTML(including(content))).exists());
 };
+
+const verifySrsMarcRecord = () => {
+  cy.expect(marcViewSection.exists());
+};
+
+const verifyImportedFieldExists = (field) => {
+  cy.expect(marcViewSection.find(HTML(including(field))).exists());
+};
+
+const viewSource = () => cy.do([
+  instanceDetailsSection.find(actionsButton).click(),
+  viewSourceButton.click(),
+]);
+
 export default {
   verifyResourceTitle,
   verifyInstanceStatusCode,
@@ -47,4 +68,7 @@ export default {
   verifyMarkAsSuppressed,
   verifyMarkAsSuppressedFromDiscovery,
   verifyGeneralNoteContent,
+  verifySrsMarcRecord,
+  verifyImportedFieldExists,
+  viewSource,
 };
