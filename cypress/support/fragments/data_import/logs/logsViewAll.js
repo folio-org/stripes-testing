@@ -268,7 +268,7 @@ export default {
   // This method is used to get the first job profile from job logs list
   // it is used to filter by "job Profile"
   getSingleJobProfile() {
-    const queryString = 'limit=1000&order=asc';
+    const queryString = UrlParams.getSingleJobProfileQueryString();
     return cy.request({
       method: 'GET',
       url: `${Cypress.env('OKAPI_HOST')}/metadata-provider/jobExecutions?${queryString}`,
