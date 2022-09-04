@@ -29,9 +29,11 @@ export default {
   },
 
   verifyResourceIdentifierInMARCBibSource:(fieldNumber, content) => {
-    InventoryInstance.viewSource();
-    // verify table data in marc bibliographic source
     cy.contains(fieldNumber).parent('tr').should('exist');
     cy.contains(content).parent('tr').should('exist');
-  }
+  },
+
+  verifyResourceIdentifierInMARCBibSourceAbsent:(fieldNumber) => {
+    cy.contains(fieldNumber).parent('tr').should('absent');
+  },
 };
