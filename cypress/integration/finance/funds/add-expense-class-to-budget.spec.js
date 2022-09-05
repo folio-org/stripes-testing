@@ -22,7 +22,7 @@ describe('ui-finance: Add budget to fund', () => {
 
   before(() => {
     cy.loginAsAdmin();
-    cy.visit(`${SettingsMenu.expenseClassesPath}`);
+    cy.visit(SettingsMenu.expenseClassesPath);
     SettingsFinance.createNewExpenseClass(firstExpenseClass);
 
     cy.visit(TopMenu.fiscalYearPath);
