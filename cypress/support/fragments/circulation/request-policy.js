@@ -11,12 +11,12 @@ export const defaultRequestPolicy = {
 };
 
 export default {
-  createApi() {
+  createApi(requestPolicyBody = defaultRequestPolicy) {
     return cy
       .okapiRequest({
         method: 'POST',
         path: 'request-policy-storage/request-policies',
-        body: defaultRequestPolicy,
+        body: requestPolicyBody,
       })
       .then(({ body }) => {
         Cypress.env('requestPolicy', body);
