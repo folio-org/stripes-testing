@@ -1,4 +1,4 @@
-import newFund from '../../../support/fragments/finance/funds/newFund';
+import NewFund from '../../../support/fragments/finance/funds/newFund';
 import Funds from '../../../support/fragments/finance/funds/funds';
 import DateTools from '../../../support/utils/dateTools';
 import FinanceHelp from '../../../support/fragments/finance/financeHelper';
@@ -16,7 +16,7 @@ import InteractorsTools from '../../../support/utils/interactorsTools';
 
 describe('ui-finance: Add budget to fund', () => {
   const firstExpenseClass = { ...NewExpenceClass.defaultUiBatchGroup };
-  const fund = { ...newFund.defaultFund };
+  const fund = { ...NewFund.defaultFund };
   const defaultLedger = NewLedger.defaultLedger;
   const defaultFiscalYear = { ...NewFiscalYear.defaultFiscalYear };
 
