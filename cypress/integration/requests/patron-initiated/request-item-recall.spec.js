@@ -1,22 +1,22 @@
 import moment from 'moment';
-import devTeams from '../../../support/dictionary/devTeams';
-import testTypes from '../../../support/dictionary/testTypes';
 import getRandomPostfix from '../../../support/utils/stringTools';
 import generateItemBarcode from '../../../support/utils/generateItemBarcode';
-import requestPolicy, { defaultRequestPolicy } from '../../../support/fragments/circulation/request-policy';
-import patronGroups from '../../../support/fragments/settings/users/patronGroups';
+import DevTeams from '../../../support/dictionary/devTeams';
+import TestTypes from '../../../support/dictionary/testTypes';
+import TopMenu from '../../../support/fragments/topMenu';
+import RequestPolicy, { defaultRequestPolicy } from '../../../support/fragments/circulation/request-policy';
+import PatronGroups from '../../../support/fragments/settings/users/patronGroups';
 import Users from '../../../support/fragments/users/users';
 import DefaultUser from '../../../support/fragments/users/userDefaultObjects/defaultUser';
-import inventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
+import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 import ServicePoints from '../../../support/fragments/settings/tenant/servicePoints/servicePoints';
 import UserEdit from '../../../support/fragments/users/userEdit';
 import InventoryHoldings from '../../../support/fragments/inventory/holdings/inventoryHoldings';
-import circulationRules from '../../../support/fragments/circulation/circulation-rules';
-import checkout from '../../../support/fragments/checkout/checkout';
-import checkInActions from '../../../support/fragments/check-in-actions/checkInActions';
-import requests from '../../../support/fragments/requests/requests';
-import topMenu from '../../../support/fragments/topMenu';
-import newRequest from '../../../support/fragments/requests/newRequest';
+import CirculationRules from '../../../support/fragments/circulation/circulation-rules';
+import Checkout from '../../../support/fragments/checkout/checkout';
+import CheckInActions from '../../../support/fragments/check-in-actions/checkInActions';
+import Requests from '../../../support/fragments/requests/requests';
+import NewRequest from '../../../support/fragments/requests/newRequest';
 
 describe('ui-requests: Request: Edit requests. Make sure that edits are being saved.', () => {
   const requestPolicyWithRecall = defaultRequestPolicy;
@@ -38,12 +38,12 @@ describe('ui-requests: Request: Edit requests. Make sure that edits are being sa
     cy.getAdminToken();
 
     // Create request policy that allows recalls and pages
-    requestPolicy.createApi(requestPolicyWithRecall).then((body) => {
+    RequestPolicy.createApi(requestPolicyWithRecall).then((body) => {
       testData.requestPolicyId = body.id;
     });
 
     // Create 2 users in the same group
-    patronGroups.createViaApi()
+    PatronGroups.createViaApi()
       .then(res => {
         patronGroup.id = res;
         Users.createViaApi({
@@ -101,12 +101,12 @@ describe('ui-requests: Request: Edit requests. Make sure that edits are being sa
     // Create a circulation rule with an associated request policy that allows recalls and pages
     cy.getCirculationRules().then((res) => {
       testData.baseRules = res.rulesAsText;
-      testData.ruleProps = circulationRules.getRuleProps(res.rulesAsText);
+      testData.ruleProps = CirculationRules.getRuleProps(res.rulesAsText);
       testData.ruleProps.r = testData.requestPolicyId;
 
-      circulationRules.addRuleApi(res.rulesAsText, testData.ruleProps, 'g ', patronGroup.id).then(() => {
+      CirculationRules.addRuleApi(res.rulesAsText, testData.ruleProps, 'g ', patronGroup.id).then(() => {
         // checkout must happen after creating new circ rule
-        checkout.checkoutItemViaApi({
+        Checkout.checkoutItemViaApi({
           itemBarcode: ITEM_BARCODE,
           userBarcode: userData0.barcode,
           servicePointId: testData.userServicePoint,
@@ -118,17 +118,17 @@ describe('ui-requests: Request: Edit requests. Make sure that edits are being sa
   });
 
   after('Deleting circ rule, users and item with rolling loan period', () => {
-    checkInActions.checkinItemViaApi({
+    CheckInActions.checkinItemViaApi({
       itemBarcode: ITEM_BARCODE,
       servicePointId: testData.userServicePoint,
       checkInDate: moment.utc().format(),
     }).then(() => {
-      requests.getRequestIdViaApi({ limit:1, query: `item.barcode="${ITEM_BARCODE}"` })
+      Requests.getRequestIdViaApi({ limit:1, query: `item.barcode="${ITEM_BARCODE}"` })
         .then(requestId => {
-          requests.deleteRequestApi(requestId);
+          Requests.deleteRequestApi(requestId);
           Users.deleteViaApi(userData0.id);
           Users.deleteViaApi(userData1.id);
-          patronGroups.deleteViaApi(patronGroup.id);
+          PatronGroups.deleteViaApi(patronGroup.id);
         });
     });
 
@@ -136,13 +136,13 @@ describe('ui-requests: Request: Edit requests. Make sure that edits are being sa
       .then((instance) => {
         cy.deleteItem(instance.items[0].id);
         cy.deleteHoldingRecordViaApi(instance.holdings[0].id);
-        inventoryInstance.deleteInstanceViaApi(instance.id);
+        InventoryInstance.deleteInstanceViaApi(instance.id);
       });
-    circulationRules.deleteRuleApi(testData.baseRules);
-    requestPolicy.deleteApi(testData.requestPolicyId);
+    CirculationRules.deleteRuleApi(testData.baseRules);
+    RequestPolicy.deleteApi(testData.requestPolicyId);
   });
 
-  it('C350540 Recall an Item by Placing a Title-level Request Using Patron Services (MOD-PATRON): Item checked out with rolling due date (vega)', { tags: [devTeams.vega, testTypes.smoke] }, () => {
+  it('C350540 Recall an Item by Placing a Title-level Request Using Patron Services (MOD-PATRON): Item checked out with rolling due date (vega)', { tags: [DevTeams.vega, TestTypes.smoke] }, () => {
     const newRequestData = {
       itemBarcode: ITEM_BARCODE,
       itemTitle: testData.instanceTitle,
@@ -155,9 +155,9 @@ describe('ui-requests: Request: Edit requests. Make sure that edits are being sa
       }
     };
 
-    cy.loginAsAdmin({ path: topMenu.requestsPath, waiter: requests.waitContentLoading });
+    cy.loginAsAdmin({ path: TopMenu.requestsPath, waiter: Requests.waitContentLoading });
 
-    newRequest.createNewRequest(newRequestData, 'Recall');
-    newRequest.checkCreatedNewRequest(newRequestData, 'Recall');
+    NewRequest.createNewRequest(newRequestData, 'Recall');
+    NewRequest.checkCreatedNewRequest(newRequestData, 'Recall');
   });
 });
