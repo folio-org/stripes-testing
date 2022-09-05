@@ -11,7 +11,7 @@ import MappingProfileDetails from './mappingProfileDetails';
 import NewMappingProfile from './newMappingProfile';
 
 const actionsButton = Button('Actions');
-
+const searchButton = Button('Search');
 const iconButton = Button({ icon: 'times' });
 const saveProfileButton = Button('Save as profile & Close');
 const mappingProfileNameField = TextField('Name*');
@@ -66,8 +66,8 @@ const deleteFieldMappingProfile = (profileName) => {
 
 const searchMappingProfile = (nameForSearch) => {
   cy.do(TextField({ id:'input-search-mapping-profiles-field' }).fillIn(nameForSearch));
-  cy.expect(Button('Search').has({ disabled:false }));
-  cy.do(Button('Search').click(), getLongDelay());
+  cy.expect(searchButton.has({ disabled:false }));
+  cy.do(searchButton.click(), getLongDelay());
 };
 
 const duplicateMappingProfile = () => {
@@ -101,7 +101,7 @@ export default {
 
   checkMappingProfilePresented: (mappingProfileName) => {
     cy.do(TextField({ id:'input-search-mapping-profiles-field' }).fillIn(mappingProfileName));
-    cy.do(Button('Search').click());
+    cy.do(searchButton.click());
     cy.expect(MultiColumnListCell(mappingProfileName).exists());
   },
 

@@ -12,8 +12,8 @@ const defaultJobProfile = {
 };
 
 const actionsButton = Button('Action');
-
 const matchButton = Button('Match');
+const saveAndCloseButton = Button('Save as profile & Close');
 
 export default {
   defaultJobProfile,
@@ -117,7 +117,7 @@ export default {
   },
 
   saveAndClose: () => {
-    cy.do(Button('Save as profile & Close').click());
-    cy.expect(Button('Save as profile & Close').absent());
+    cy.do(saveAndCloseButton.click());
+    cy.expect(saveAndCloseButton.absent());
   },
 };

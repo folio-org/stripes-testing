@@ -223,7 +223,6 @@ export default {
     FileManager.readFile(`cypress/fixtures/${editedFileName}`)
       .then((actualContent) => {
         const content = actualContent.split('\n');
-        console.log(content);
 
         content[0] = content[0].slice().replace(stringToBeReplaced, replaceString);
         FileManager.createFile(`cypress/fixtures/${finalFileName}`, content.join('\n'));

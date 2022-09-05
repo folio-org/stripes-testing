@@ -6,8 +6,7 @@ import {
   Button,
   Pane,
   Checkbox,
-  MultiColumnListCell,
-  EditableListRow
+  MultiColumnListCell
 } from '../../../../../interactors';
 
 const actionsButton = Button('Actions');
