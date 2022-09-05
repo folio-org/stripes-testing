@@ -26,8 +26,9 @@ jobs:
       COMPILE_TRANSLATION_FILES: 'false'
       PUBLISH_MOD_DESCRIPTOR: 'false'
       FOLIO_NPM_REGISTRY: 'https://repository.folio.org/repository/npm-folio/'
+      FOLIO_NPM_REGISTRY_AUTH: '//repository.folio.org/repository/npm-folio/'
       FOLIO_MD_REGISTRY: 'https://folio-registry.dev.folio.org'
-      NODEJS_VERSION: '12'
+      NODEJS_VERSION: '16'
       JEST_JUNIT_OUTPUT_DIR: 'artifacts/jest-junit'
       JEST_COVERAGE_REPORT_DIR: 'artifacts/coverage-jest/lcov-report/'
       BIGTEST_JUNIT_OUTPUT_DIR: 'artifacts/runTest'
@@ -67,7 +68,7 @@ jobs:
       - name: Setup kernel for react native, increase watchers
         run: echo fs.inotify.max_user_watches=524288 | sudo tee -a /etc/sysctl.conf && sudo sysctl -p
       - name: Use Node.js
-        uses: actions/setup-node@v2
+        uses: actions/setup-node@v3
         with:
           node-version: ${{ env.NODEJS_VERSION }}
           check-latest: true
@@ -118,7 +119,6 @@ jobs:
           docker run --name okapi -t -detach folioorg/okapi:latest dev
           echo "OKAPI_IP=$(docker inspect --format='{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' okapi)" >> $GITHUB_ENV
           sleep 10
-
       - name: Pull all Module descriptors to local Okapi instance
         if: ${{ env.PUBLISH_MOD_DESCRIPTOR == 'true' }}
         uses: fjogeleit/http-request-action@master
@@ -187,26 +187,26 @@ jobs:
       - name: Set default branch as env variable
         run: echo "DEFAULT_BRANCH=${{ github.event.repository.default_branch }}" >> $GITHUB_ENV
 
-      # - name: Fetch branches for SonarCloud
-      #   run: git fetch --no-tags ${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY} +refs/heads/${{ env.DEFAULT_BRANCH }}:refs/remotes/origin/${{ env.DEFAULT_BRANCH }}
+      - name: Fetch branches for SonarCloud
+        run: git fetch --no-tags ${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY} +refs/heads/${{ env.DEFAULT_BRANCH }}:refs/remotes/origin/${{ env.DEFAULT_BRANCH }}
 
-      # - name: Run SonarCloud scan
-      #   uses: sonarsource/sonarcloud-github-action@master
-      #   with:
-      #     args: >
-      #       -Dsonar.organization=folio-org
-      #       -Dsonar.projectKey=org.folio:${{ github.event.repository.name }}
-      #       -Dsonar.projectName=${{ github.event.repository.name }}
-      #       -Dsonar.sources=${{ env.SQ_ROOT_DIR }}
-      #       -Dsonar.language=js
-      #       -Dsonar.javascript.lcov.reportPaths=${{ env.SQ_LCOV_REPORT }}
-      #       -Dsonar.exclusions=${{ env.SQ_EXCLUSIONS }}
-      #   env:
-      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      #     SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+      - name: Run SonarCloud scan
+        uses: sonarsource/sonarcloud-github-action@master
+        with:
+          args: >
+            -Dsonar.organization=folio-org
+            -Dsonar.projectKey=org.folio:${{ github.event.repository.name }}
+            -Dsonar.projectName=${{ github.event.repository.name }}
+            -Dsonar.sources=${{ env.SQ_ROOT_DIR }}
+            -Dsonar.language=js
+            -Dsonar.javascript.lcov.reportPaths=${{ env.SQ_LCOV_REPORT }}
+            -Dsonar.exclusions=${{ env.SQ_EXCLUSIONS }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
 
       - name: Set up NPM environment for publishing
-        uses: actions/setup-node@v2
+        uses: actions/setup-node@v3
         with:
           node-version: ${{ env.NODEJS_VERSION }}
           check-latest: true
@@ -215,7 +215,7 @@ jobs:
       - name: Set _auth in .npmrc
         run: |
           npm config set @folio:registry $FOLIO_NPM_REGISTRY
-          npm config set _auth $NODE_AUTH_TOKEN
+          npm config set $FOLIO_NPM_REGISTRY_AUTH:_auth $NODE_AUTH_TOKEN
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
@@ -223,8 +223,8 @@ jobs:
         run: |
           echo ".github" >> .npmignore
           echo ".scannerwork" >> .npmignore
+          echo "artifacts" >> .npmignore
           cat .npmignore
-
       - name: Publish NPM to FOLIO NPM registry
         run: npm publish
         env:
