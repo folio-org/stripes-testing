@@ -5,6 +5,7 @@ import newJobProfile from './newJobProfile';
 const actionsButton = Button('Actions');
 const runButton = Button('Run');
 const waitSelector = Pane({ id:'view-job-profile-pane' });
+const closeButton = Button({ icon: 'times' });
 
 const openNewJobProfileForm = () => {
   cy.do([
@@ -12,6 +13,10 @@ const openNewJobProfileForm = () => {
     Button('New job profile').click(),
   ]);
   cy.expect(HTML({ className: including('form-'), id:'job-profiles-form' }).exists());
+};
+
+const closeJobProfile = (profileName) => {
+  cy.do(Pane({ title: profileName }).find(closeButton).click());
 };
 
 const waitLoadingList = () => {
@@ -116,5 +121,6 @@ export default {
     cy.do(Button(fileName).click());
     cy.expect(Section({ id:'pane-results' }).exists());
     cy.expect(PaneHeader(fileName).exists());
-  }
+  },
+  closeJobProfile,
 };

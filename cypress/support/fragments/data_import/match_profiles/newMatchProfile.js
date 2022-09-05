@@ -13,7 +13,8 @@ const criterionValueTypeButton = Button({ id:'criterion-value-type' });
 const optionsList = {
   holdingsHrid: 'Admin data: Holdings HRID',
   itemHrid: 'Admin data: Item HRID',
-  pol: 'Acquisitions data: Purchase order line (POL)'
+  pol: 'Acquisitions data: Purchase order line (POL)',
+  uri: 'Electronic access: URI',
 };
 
 function fillExistingRecordFields(value = '', selector) {
@@ -77,8 +78,17 @@ const fillMatchProfileForm = ({
     cy.expect(criterionValueTypeList.exists());
     cy.do(SelectionList({ id:'sl-container-criterion-value-type' }).find(SelectionOption(instanceOption)).click());
   } else if (existingRecordType === 'HOLDINGS') {
+    /* cy.intercept('/_/jsonSchemas?path=acq-models/mod-orders-storage/schemas/vendor_detail.json').as('getJson3');
+    cy.wait('@getJson3', getLongDelay()); */
+    cy.wait(1500);
     cy.do(Accordion({ id:'match-profile-details' }).find(Button({ dataId:'HOLDINGS' })).click());
     fillIncomingRecordFields(incomingRecordFields.field, 'field');
+    if (incomingRecordFields.in1) {
+      fillIncomingRecordFields(incomingRecordFields.in1, 'in1');
+    }
+    if (incomingRecordFields.in2) {
+      fillIncomingRecordFields(incomingRecordFields.in2, 'in2');
+    }
     fillIncomingRecordFields(incomingRecordFields.subfield, 'subfield');
     cy.do(criterionValueTypeButton.click());
     cy.expect(criterionValueTypeList.exists());

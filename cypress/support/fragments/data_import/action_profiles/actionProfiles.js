@@ -2,12 +2,16 @@ import { Button, TextField, MultiColumnListCell, Pane } from '../../../../../int
 import newActionProfile from './newActionProfile';
 
 const actionsButton = Button('Actions');
+const iconButton = Button({ icon: 'times' });
 
 const openNewActionProfileForm = () => {
   cy.do([
     actionsButton.click(),
     Button('New action profile').click()
   ]);
+};
+const closeActionProfile = profileName => {
+  cy.do(Pane({ title: profileName }).find(iconButton).click());
 };
 
 const deleteActionProfile = (profileName) => {
@@ -52,4 +56,5 @@ export default {
   },
 
   deleteActionProfile,
+  closeActionProfile,
 };
