@@ -21,7 +21,7 @@ describe('ui-finance: Add budget to fund', () => {
   const defaultFiscalYear = { ...NewFiscalYear.defaultFiscalYear };
 
   before(() => {
-    cy.login(Cypress.env('diku_login'), Cypress.env('diku_password'));
+    cy.loginAsAdmin();
     cy.visit(`${SettingsMenu.expenseClassesPath}`);
     SettingsFinance.createNewExpenseClass(firstExpenseClass);
 
@@ -60,7 +60,7 @@ describe('ui-finance: Add budget to fund', () => {
     Funds.editBudget();
     Funds.addExpensesClass(firstExpenseClass.name);
     InteractorsTools.checkCalloutMessage(`Budget ${fund.code} has been saved`);
-    // Need to wait callout massage
+    // Need to wait callout message
     cy.wait(4000);
   });
 });
