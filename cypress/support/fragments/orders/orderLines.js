@@ -12,7 +12,6 @@ import {
   TextField,
   SelectionOption,
   Pane,
-  SelectionList,
   Link,
   including,
   PaneContent
