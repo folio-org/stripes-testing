@@ -48,7 +48,7 @@ describe('ui-finance: Add budget to fund', () => {
     Funds.deleteBudgetViaActions();
     Funds.deleteFundViaActions();
 
-    cy.visit(`${SettingsMenu.expenseClassesPath}`);
+    cy.visit(SettingsMenu.expenseClassesPath);
     SettingsFinance.deleteExpenseClass(firstExpenseClass);
   });
 
