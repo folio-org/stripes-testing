@@ -19,6 +19,7 @@ import Requests from '../../../support/fragments/requests/requests';
 import NewRequest from '../../../support/fragments/requests/newRequest';
 
 describe('ui-requests: Request: Edit requests. Make sure that edits are being saved.', () => {
+  // TODO: A client configured to use edge-patron API
   const requestPolicyWithRecall = defaultRequestPolicy;
   const testData = {
     instanceTitle: `For_request_${Number(new Date())}`,
@@ -113,8 +114,6 @@ describe('ui-requests: Request: Edit requests. Make sure that edits are being sa
         });
       });
     });
-
-    // TODO: A client configured to use edge-patron API
   });
 
   after('Deleting circ rule, users and item with rolling loan period', () => {
