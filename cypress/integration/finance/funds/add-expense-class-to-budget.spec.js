@@ -50,13 +50,18 @@ describe('ui-finance: Add budget to fund', () => {
 
     cy.visit(SettingsMenu.expenseClassesPath);
     SettingsFinance.deleteExpenseClass(firstExpenseClass);
+
+    cy.visit(TopMenu.fiscalYearPath);
+    FinanceHelp.searchByName(defaultFiscalYear.name);
+    FinanceHelp.selectFromResultsList();
+    FiscalYears.deleteFiscalYearViaActions();
   });
 
   it('C15858 Add expense class to budget (thunderjet)', { tags: [testType.criticalPath, devTeams.thunderjet] }, () => {
     cy.visit(TopMenu.fundPath);
     FinanceHelp.searchByName(fund.name);
     FinanceHelp.selectFromResultsList();
-    Funds.seletBudgetDetails();
+    Funds.selectBudgetDetails();
     Funds.editBudget();
     Funds.addExpensesClass(firstExpenseClass.name);
     InteractorsTools.checkCalloutMessage(`Budget ${fund.code} has been saved`);

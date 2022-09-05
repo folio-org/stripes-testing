@@ -265,7 +265,7 @@ export default {
     ]);
   },
 
-  seletBudgetDetails:(rowNumber = 0) => {
+  selectBudgetDetails:(rowNumber = 0) => {
     cy.do([
       Section({ id: 'currentBudget' }).find(MultiColumnListRow({ index: rowNumber })).click()
     ]);
