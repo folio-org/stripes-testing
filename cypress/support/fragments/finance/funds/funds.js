@@ -15,7 +15,8 @@ import {
   KeyValue,
   Pane,
   MultiColumnListRow,
-  MultiColumnListCell
+  MultiColumnListCell,
+  SelectionOption
 } from '../../../../../interactors';
 import FinanceHelp from '../financeHelper';
 import TopMenu from '../../topMenu';
@@ -31,7 +32,7 @@ const viewTransactionsLinkXpath = '//a[text()="View transactions"]';
 const budgetPaneId = 'pane-budget';
 const transactionResultPaneId = 'transaction-results-pane';
 const actionsButtonName = 'Actions';
-
+const saveAndCloseButton = Button({ id: 'clickable-save-title' });
 
 export default {
   waitForFundDetailsLoading : () => {
@@ -261,6 +262,34 @@ export default {
   openBudgetDetails: (fundCode, fiscalYear) => {
     cy.do([
       Accordion({ id: 'currentBudget' }).find(MultiColumnListCell({ content: fundCode.concat('-', fiscalYear) })).click()
+    ]);
+  },
+
+  selectBudgetDetails:(rowNumber = 0) => {
+    cy.do([
+      Section({ id: 'currentBudget' }).find(MultiColumnListRow({ index: rowNumber })).click()
+    ]);
+  },
+
+  editBudget:() => {
+    cy.do([
+      Button('Actions').click(),
+      Button('Edit').click()
+    ]);
+  },
+
+  addExpensesClass:(firstExpenseClassName) => {
+    cy.do([
+      Button({ id: 'budget-status-expense-classes-add-button' }).click(),
+      Button({ name: 'statusExpenseClasses[0].expenseClassId' }).click(),
+      SelectionOption(firstExpenseClassName).click(),
+      saveAndCloseButton.click()
+    ]);
+  },
+  deleteExpensesClass:() => {
+    cy.do([
+      Section({ id: 'expense-classes' }).find(Button({ icon: 'trash' })).click(),
+      saveAndCloseButton.click()
     ]);
   }
 };
