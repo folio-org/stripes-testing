@@ -45,7 +45,6 @@ describe('ui-finance: Add budget to fund', () => {
   after(() => {
     Funds.editBudget();
     Funds.deleteExpensesClass();
-    cy.wait(4000);
     Funds.deleteBudgetViaActions();
     Funds.deleteFundViaActions();
 
@@ -61,6 +60,7 @@ describe('ui-finance: Add budget to fund', () => {
     Funds.editBudget();
     Funds.addExpensesClass(firstExpenseClass.name);
     InteractorsTools.checkCalloutMessage(`Budget ${fund.code} has been saved`);
+    // Need to wait callout massage
     cy.wait(4000);
   });
 });
