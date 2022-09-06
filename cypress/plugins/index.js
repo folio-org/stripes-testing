@@ -55,6 +55,6 @@ module.exports = async (on, config) => {
     },
   });
   allureWriter(on, config);
-  // await require('cypress-testrail-simple/src/plugin')(on, config);
+  await require('cypress-testrail-simple/src/plugin')(on, config);
   return config;
 };
