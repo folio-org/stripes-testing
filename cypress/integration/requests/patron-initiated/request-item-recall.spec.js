@@ -8,32 +8,43 @@ import RequestPolicy, { defaultRequestPolicy } from '../../../support/fragments/
 import PatronGroups from '../../../support/fragments/settings/users/patronGroups';
 import Users from '../../../support/fragments/users/users';
 import DefaultUser from '../../../support/fragments/users/userDefaultObjects/defaultUser';
-import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 import ServicePoints from '../../../support/fragments/settings/tenant/servicePoints/servicePoints';
 import UserEdit from '../../../support/fragments/users/userEdit';
-import InventoryHoldings from '../../../support/fragments/inventory/holdings/inventoryHoldings';
 import CirculationRules from '../../../support/fragments/circulation/circulation-rules';
 import Checkout from '../../../support/fragments/checkout/checkout';
 import CheckInActions from '../../../support/fragments/check-in-actions/checkInActions';
 import Requests from '../../../support/fragments/requests/requests';
 import NewRequest from '../../../support/fragments/requests/newRequest';
+import inventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
 
 describe('ui-requests: Request: Edit requests. Make sure that edits are being saved.', () => {
   // TODO: A client configured to use edge-patron API
-  const requestPolicyWithRecall = defaultRequestPolicy;
   const testData = {
-    instanceTitle: `For_request_${Number(new Date())}`,
     pickupServicePoint: 'Circ Desk 1',
+    patronGroup: {},
   };
-  const patronGroup = {};
   const userData0 = { ...DefaultUser.defaultApiPatron };
   const userData1 = { ...DefaultUser.defaultApiPatron };
-  const ITEM_BARCODE = generateItemBarcode();
   userData1.username = `autotest_username_${getRandomPostfix()}`;
   userData1.barcode = `1234456_${getRandomPostfix()}`;
+  const requestPolicyWithRecall = defaultRequestPolicy;
   requestPolicyWithRecall.requestTypes.push('Recall', 'Page');
+  const item = {
+    instanceName: `For_request_${getRandomPostfix()}`,
+    itemBarcode: generateItemBarcode(),
+  };
+  const newRequestData = {
+    itemBarcode: item.itemBarcode,
+    itemTitle: testData.instanceName,
+    requesterBarcode: userData1.barcode,
+    pickupServicePoint: testData.pickupServicePoint,
+    userProps: {
+      lastName: userData1.personal.lastName,
+      firstName: userData1.personal.firstName,
+      middleName: userData1.personal.middleName,
+    }
+  };
 
-  console.log(requestPolicyWithRecall);
 
   before('Creating circ rule with request policy, users and item with rolling loan period', () => {
     cy.getAdminToken();
@@ -46,7 +57,7 @@ describe('ui-requests: Request: Edit requests. Make sure that edits are being sa
     // Create 2 users in the same group
     PatronGroups.createViaApi()
       .then(res => {
-        patronGroup.id = res;
+        testData.patronGroup.id = res;
         Users.createViaApi({
           patronGroup: res,
           ...userData0
@@ -63,41 +74,14 @@ describe('ui-requests: Request: Edit requests. Make sure that edits are being sa
       });
 
     // Create item with remembered instance type
+    inventoryInstances.createInstanceViaApi(item.instanceName, item.itemBarcode);
     ServicePoints.getViaApi({ limit: 1, query: 'pickupLocation=="true"' })
       .then((servicePoints) => {
         UserEdit.addServicePointViaApi(servicePoints[0].id, userData0.id).then((points) => {
           testData.userServicePoint = points.body.defaultServicePointId;
         });
-        cy.getMaterialTypes({ limit: 1 }).then((res) => { testData.materialType = res.id; });
-        cy.getLocations({ limit: 1 }).then((res) => { testData.location = res.id; });
-        cy.getHoldingTypes({ limit: 1 }).then((res) => { testData.holdingType = res[0].id; });
-        InventoryHoldings.getHoldingSources({ limit: 1 }).then((res) => { testData.holdingSource = res[0].id; });
-        cy.getInstanceTypes({ limit: 1 }).then((res) => { testData.instanceType = res[0].id; });
-        cy.getLoanTypes({ limit: 1 }).then((res) => { testData.loanType = res[0].id; });
-      })
-      .then(() => {
-        cy.createInstance({
-          instance: {
-            instanceTypeId: testData.instanceType,
-            title: testData.instanceTitle,
-          },
-          holdings: [{
-            holdingsTypeId: testData.holdingType,
-            permanentLocationId: testData.location,
-            sourceId: testData.holdingSource,
-          }],
-          items: [
-            [{
-              barcode: ITEM_BARCODE,
-              missingPieces: '3',
-              numberOfMissingPieces: '3',
-              status: { name: 'Available' },
-              permanentLoanType: { id: testData.loanType },
-              materialType: { id: testData.materialType },
-            }],
-          ],
-        });
       });
+
 
     // Create a circulation rule with an associated request policy that allows recalls and pages
     cy.getCirculationRules().then((res) => {
@@ -105,10 +89,10 @@ describe('ui-requests: Request: Edit requests. Make sure that edits are being sa
       testData.ruleProps = CirculationRules.getRuleProps(res.rulesAsText);
       testData.ruleProps.r = testData.requestPolicyId;
 
-      CirculationRules.addRuleApi(res.rulesAsText, testData.ruleProps, 'g ', patronGroup.id).then(() => {
+      CirculationRules.addRuleApi(res.rulesAsText, testData.ruleProps, 'g ', testData.patronGroup.id).then(() => {
         // checkout must happen after creating new circ rule
         Checkout.checkoutItemViaApi({
-          itemBarcode: ITEM_BARCODE,
+          itemBarcode: item.itemBarcode,
           userBarcode: userData0.barcode,
           servicePointId: testData.userServicePoint,
         });
@@ -118,42 +102,26 @@ describe('ui-requests: Request: Edit requests. Make sure that edits are being sa
 
   after('Deleting circ rule, users and item with rolling loan period', () => {
     CheckInActions.checkinItemViaApi({
-      itemBarcode: ITEM_BARCODE,
+      itemBarcode: item.itemBarcode,
       servicePointId: testData.userServicePoint,
       checkInDate: moment.utc().format(),
     }).then(() => {
-      Requests.getRequestIdViaApi({ limit:1, query: `item.barcode="${ITEM_BARCODE}"` })
+      Requests.getRequestIdViaApi({ limit:1, query: `item.barcode="${item.itemBarcode}"` })
         .then(requestId => {
           Requests.deleteRequestApi(requestId);
           Users.deleteViaApi(userData0.id);
           Users.deleteViaApi(userData1.id);
-          PatronGroups.deleteViaApi(patronGroup.id);
+          PatronGroups.deleteViaApi(testData.patronGroup.id);
         });
     });
 
-    cy.getInstance({ limit: 1, expandAll: true, query: `"items.barcode"=="${ITEM_BARCODE}"` })
-      .then((instance) => {
-        cy.deleteItem(instance.items[0].id);
-        cy.deleteHoldingRecordViaApi(instance.holdings[0].id);
-        InventoryInstance.deleteInstanceViaApi(instance.id);
-      });
+    inventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(item.itemBarcode);
+
     CirculationRules.deleteRuleApi(testData.baseRules);
     RequestPolicy.deleteApi(testData.requestPolicyId);
   });
 
   it('C350540 Recall an Item by Placing a Title-level Request Using Patron Services (MOD-PATRON): Item checked out with rolling due date (vega)', { tags: [DevTeams.vega, TestTypes.smoke] }, () => {
-    const newRequestData = {
-      itemBarcode: ITEM_BARCODE,
-      itemTitle: testData.instanceTitle,
-      requesterBarcode: userData1.barcode,
-      pickupServicePoint: testData.pickupServicePoint,
-      userProps: {
-        lastName: userData1.personal.lastName,
-        firstName: userData1.personal.firstName,
-        middleName: userData1.personal.middleName,
-      }
-    };
-
     cy.loginAsAdmin({ path: TopMenu.requestsPath, waiter: Requests.waitContentLoading });
 
     NewRequest.createNewRequest(newRequestData, 'Recall');
