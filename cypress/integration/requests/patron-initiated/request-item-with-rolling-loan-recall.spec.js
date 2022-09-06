@@ -15,7 +15,7 @@ import Checkout from '../../../support/fragments/checkout/checkout';
 import CheckInActions from '../../../support/fragments/check-in-actions/checkInActions';
 import Requests from '../../../support/fragments/requests/requests';
 import NewRequest from '../../../support/fragments/requests/newRequest';
-import inventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
+import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
 
 describe('ui-requests: Request: Edit requests. Make sure that edits are being saved.', () => {
   // TODO: A client configured to use edge-patron API
@@ -45,7 +45,6 @@ describe('ui-requests: Request: Edit requests. Make sure that edits are being sa
     }
   };
 
-
   before('Creating circ rule with request policy, users and item with rolling loan period', () => {
     cy.getAdminToken();
 
@@ -74,7 +73,7 @@ describe('ui-requests: Request: Edit requests. Make sure that edits are being sa
       });
 
     // Create item with remembered instance type
-    inventoryInstances.createInstanceViaApi(item.instanceName, item.itemBarcode);
+    InventoryInstances.createInstanceViaApi(item.instanceName, item.itemBarcode);
     ServicePoints.getViaApi({ limit: 1, query: 'pickupLocation=="true"' })
       .then((servicePoints) => {
         UserEdit.addServicePointViaApi(servicePoints[0].id, userData0.id).then((points) => {
@@ -115,7 +114,7 @@ describe('ui-requests: Request: Edit requests. Make sure that edits are being sa
         });
     });
 
-    inventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(item.itemBarcode);
+    InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(item.itemBarcode);
 
     CirculationRules.deleteRuleApi(testData.baseRules);
     RequestPolicy.deleteApi(testData.requestPolicyId);

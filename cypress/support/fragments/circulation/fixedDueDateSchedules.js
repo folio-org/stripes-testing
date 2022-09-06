@@ -54,9 +54,19 @@ export default {
           schedules:[{ from:new Date(), to:new Date(), due:new Date() }],
           name: `autotest_schedule_${getRandomPostfix()}`,
         },
+        isDefaultSearchParamsRequired: false,
       })
       .then(fixedDueDateSchedules => {
         return fixedDueDateSchedules.body;
       });
-  }
+  },
+
+  deleteViaApi:(id) => {
+    return cy
+      .okapiRequest({
+        method: 'Delete',
+        path: `fixed-due-date-schedule-storage/fixed-due-date-schedules/${id}`,
+        isDefaultSearchParamsRequired: false,
+      });
+  },
 };
