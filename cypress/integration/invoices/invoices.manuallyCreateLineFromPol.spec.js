@@ -58,7 +58,7 @@ describe('ui-invoices: Invoice Line creation - based on POL', () => {
     invoiceLine.quantity = orderLine.cost.quantityPhysical;
     invoiceLine.subTotal = orderLine.cost.quantityPhysical * orderLine.cost.listUnitPrice;
   });
-  
+
   after(() => {
     Organizations.deleteOrganizationViaApi(organization.id);
   });
