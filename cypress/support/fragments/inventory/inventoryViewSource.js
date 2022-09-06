@@ -18,7 +18,7 @@ export default {
   close: () => cy.do(closeButton.click()),
   waitLoading:() => cy.expect(rootSection.exists()),
 
-  verifyMARCBibSource:(itemBarcode) => {
+  verifyBarcodeInMARCBibSource:(itemBarcode) => {
     InventoryInstance.viewSource();
     // verify table data in marc bibliographic source
     cy.contains('980').parent('tr').should('exist');
@@ -26,5 +26,14 @@ export default {
     cy.contains('981').parent('tr').should('exist');
     cy.contains(itemBarcode).parent('tr').should('exist');
     closeDetailView();
-  }
+  },
+
+  verifyResourceIdentifierInMARCBibSource:(fieldNumber, content) => {
+    cy.contains(fieldNumber).parent('tr').should('exist');
+    cy.contains(content).parent('tr').should('exist');
+  },
+
+  verifyResourceIdentifierInMARCBibSourceAbsent:(fieldNumber) => {
+    cy.contains(fieldNumber).parent('tr').should('absent');
+  },
 };
