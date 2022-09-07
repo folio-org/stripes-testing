@@ -11,6 +11,7 @@ import { getLongDelay } from '../../../utils/cypressTools';
 const criterionValueTypeList = SelectionList({ id: 'sl-container-criterion-value-type' });
 const criterionValueTypeButton = Button({ id:'criterion-value-type' });
 const optionsList = {
+  instanceHrid: 'Admin data: Instance HRID',
   holdingsHrid: 'Admin data: Holdings HRID',
   itemHrid: 'Admin data: Item HRID',
   pol: 'Acquisitions data: Purchase order line (POL)'

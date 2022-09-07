@@ -15,7 +15,7 @@ const getInstanceHRID = () => {
     .then(({ id }) => {
       // then, make request with the job id
       // and get the only record id inside the uploaded file
-      const queryString = 'limit=100&order=asc';
+      const queryString = 'limit=1000&order=asc';
       return cy.request({
         method: 'GET',
         url: `${Cypress.env('OKAPI_HOST')}/metadata-provider/jobLogEntries/${id}?${queryString}`,
