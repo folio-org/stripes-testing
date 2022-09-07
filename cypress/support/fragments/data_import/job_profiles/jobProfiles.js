@@ -9,7 +9,7 @@ const closeButton = Button({ icon: 'times' });
 
 const openNewJobProfileForm = () => {
   cy.do([
-    actionsButton.click(),
+    Pane({ id:'pane-results' }).find(actionsButton).click(),
     Button('New job profile').click(),
   ]);
   cy.expect(HTML({ className: including('form-'), id:'job-profiles-form' }).exists());
