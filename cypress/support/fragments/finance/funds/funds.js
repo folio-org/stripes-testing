@@ -16,7 +16,9 @@ import {
   Pane,
   MultiColumnListRow,
   MultiColumnListCell,
-  SelectionOption
+  SelectionOption,
+  Link,
+  MultiColumnList
 } from '../../../../../interactors';
 import FinanceHelp from '../financeHelper';
 import TopMenu from '../../topMenu';
@@ -45,19 +47,10 @@ export default {
   },
 
   defaultUiBudget: {
-    allocated: 50,
-    allocationFrom: 0,
-    allocationTo: 0,
+    allocated: 0,
     allowableEncumbrance: 100,
     allowableExpenditure: 100,
-    awaitingPayment: 0,
     budgetStatus: 'Active',
-    encumbered: 0,
-    expenditures: 0,
-    initialAllocation: 0,
-    netTransfers: 0,
-    name:`autotest_budget_${getRandomPostfix()}`,
-    _version: 1
   },
 
   waitForFundDetailsLoading : () => {
@@ -124,13 +117,29 @@ export default {
     ]);
   },
 
+  viewTransactions: () => {
+    cy.do(Link('View transactions').click());
+  },
+
+  checkTransactionList: (fundCode) => {
+    cy.expect([
+      MultiColumnList({ id: 'transactions-list' })
+        .find(MultiColumnListRow({ index: 0 }))
+        .find(MultiColumnListCell({ columnIndex: 2 }))
+        .has({ content: '$50.00' }),
+      MultiColumnList({ id: 'transactions-list' })
+        .find(MultiColumnListRow({ index: 0 }))
+        .find(MultiColumnListCell({ columnIndex: 2 }))
+        .has({ content: `${fundCode}` })
+    ]);
+  },
 
   increaseAllocation: () => {
     cy.do([
       Button('Actions').click(),
       Button('Increase allocation').click(),
-      TextField({ name: 'amount' }).fillIn(50),
-      Button('Confirm'),
+      TextField({ name: 'amount' }).fillIn('50'),
+      Modal({ id: 'add-transfer-modal' }).find(Button('Confirm')).click(),
     ]);
   },
 

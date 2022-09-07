@@ -16,7 +16,7 @@ export default {
 
   defaultUiFiscalYear: {
     name: `autotest_year_${getRandomPostfix()}`,
-    code: DateTools.getRandomFiscalYearCode(1000, 9999),
+    code: DateTools.getRandomFiscalYearCode(2000, 9999),
     periodStart: `${DateTools.getPreviousDayDateForFiscalYear()}T00:00:00.000+00:00`,
     periodEnd: `${DateTools.getCurrentDateForFiscalYear()}T00:00:00.000+00:00`,
     description: `This is fiscal year created by E2E test automation script_${getRandomPostfix()}`,
