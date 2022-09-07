@@ -17,7 +17,7 @@ import InteractorsTools from '../../../support/utils/interactorsTools';
 
 describe('ui-finance: Add budget to fund', () => {
   const firstExpenseClass = { ...NewExpenceClass.defaultUiBatchGroup };
-  const defaultfund = { ...NewFund.defaultFund };
+  const defaultfund = Funds.defaultUiFund;
   const defaultFiscalYear = FiscalYears.defaultUiFiscalYear;
   const defaultLedger = { ...Ledgers.defaultUiLedger };
 
@@ -26,18 +26,17 @@ describe('ui-finance: Add budget to fund', () => {
     FiscalYears.createViaApi(defaultFiscalYear)
       .then(response => {
         defaultFiscalYear.id = response.id;
-        console.log(defaultLedger);
         defaultLedger.fiscalYearOneId = defaultFiscalYear.id;
+
         Ledgers.createViaApi(defaultLedger)
           .then(ledgerResponse => {
             defaultLedger.id = ledgerResponse.id;
-            console.log(defaultfund);
             defaultfund.ledgerId = defaultLedger.id;
             defaultfund.ledgerName = defaultLedger.name;
+
             Funds.createViaApi(defaultfund)
               .then(fundResponse => {
                 defaultfund.id = fundResponse.fund.id;
-                console.log(defaultfund);
               });
             // console.log(response);
             // console.log(defaultFiscalYear.id);
