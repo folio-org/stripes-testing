@@ -128,4 +128,6 @@ export default {
   uiOrdersCreate: { internal: 'ui-orders.orders.create', gui: 'Orders: Can create new Orders and Order lines' },
   uiOrdersEdit: { internal: 'ui-orders.orders.edit', gui: 'Orders: Can edit Orders and Order lines' },
   uiOrdersDelete: { internal: 'ui-orders.orders.delete', gui: 'Orders: Can delete Orders and Order lines' },
+  // Finance
+  uiFinanceCreateAllocations: { internal: 'ui-finance.allocations.create', gui: 'Finance: Create allocations' },
 };

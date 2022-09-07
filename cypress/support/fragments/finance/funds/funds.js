@@ -44,6 +44,22 @@ export default {
     description: `This is fund created by E2E test automation script_${getRandomPostfix()}`,
   },
 
+  defaultUiBudget: {
+    allocated: 50,
+    allocationFrom: 0,
+    allocationTo: 0,
+    allowableEncumbrance: 100,
+    allowableExpenditure: 100,
+    awaitingPayment: 0,
+    budgetStatus: 'Active',
+    encumbered: 0,
+    expenditures: 0,
+    initialAllocation: 0,
+    netTransfers: 0,
+    name:`autotest_budget_${getRandomPostfix()}`,
+    _version: 1
+  },
+
   waitForFundDetailsLoading : () => {
     cy.do(Section({ id: 'pane-fund-details' }).visible());
   },
@@ -107,6 +123,17 @@ export default {
       Button('Save').click()
     ]);
   },
+
+
+  increaseAllocation: () => {
+    cy.do([
+      Button('Actions').click(),
+      Button('Increase allocation').click(),
+      TextField({ name: 'amount' }).fillIn(50),
+      Button('Confirm'),
+    ]);
+  },
+
 
   checkCreatedBudget: (fundCode, fiscalYear) => {
     cy.expect(Accordion('Budget summary').exists());
@@ -306,7 +333,19 @@ export default {
     return cy
       .okapiRequest({
         path: 'finance/funds',
-        body: fundProperties,
+        body: { fund:fundProperties },
+        method: 'POST'
+      })
+      .then((response) => {
+        return response.body;
+      });
+  },
+
+  addBudgetToFundViaApi: (budgetProperties) => {
+    return cy
+      .okapiRequest({
+        path: 'finance/budgets',
+        body: budgetProperties,
         method: 'POST'
       })
       .then((response) => {
@@ -317,6 +356,12 @@ export default {
   deleteFundViaApi: (fundId) => cy.okapiRequest({
     method: 'DELETE',
     path: `finance/funds/${fundId}`,
+    isDefaultSearchParamsRequired: false,
+  }),
+
+  deleteBudgetViaApi: (budgetId) => cy.okapiRequest({
+    method: 'DELETE',
+    path: `finance/budgets/${budgetId}`,
     isDefaultSearchParamsRequired: false,
   }),
 };
