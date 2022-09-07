@@ -1,4 +1,6 @@
 import { Button, TextField, Pane, MultiColumnList, PaneContent, PaneHeader } from '../../../../../interactors';
+import getRandomPostfix from '../../../utils/stringTools';
+import DateTools from '../../../utils/dateTools';
 
 const createdFiscalYearNameXpath = '//*[@id="paneHeaderpane-fiscal-year-details-pane-title"]/h2/span';
 const numberOfSearchResultsHeader = '//*[@id="paneHeaderfiscal-year-results-pane-subtitle"]/span';
@@ -11,6 +13,16 @@ const actions = Button('Actions');
 const deleteButton = Button('Delete');
 
 export default {
+
+  defaultUiFiscalYear: {
+    name: `autotest_year_${getRandomPostfix()}`,
+    code: DateTools.getRandomFiscalYearCode(1000, 9999),
+    periodStart: `${DateTools.getPreviousDayDateForFiscalYear()}T00:00:00.000+00:00`,
+    periodEnd: `${DateTools.getCurrentDateForFiscalYear()}T00:00:00.000+00:00`,
+    description: `This is fiscal year created by E2E test automation script_${getRandomPostfix()}`,
+    series: 'FY'
+  },
+
   waitForFiscalYearDetailsLoading : () => {
     cy.do(Pane({ id: 'pane-fiscal-year-details' }).exists);
   },
@@ -74,5 +86,23 @@ export default {
       deleteButton.click(),
       Button('Delete', { id:'clickable-fiscal-year-remove-confirmation-confirm' }).click()
     ]);
-  }
+  },
+
+  createViaApi: (fiscalYearProperties) => {
+    return cy
+      .okapiRequest({
+        path: 'finance/fiscal-years',
+        body: fiscalYearProperties,
+        method: 'POST'
+      })
+      .then((response) => {
+        return response.body;
+      });
+  },
+
+  deleteFiscalYearViaApi: (fiscalYearId) => cy.okapiRequest({
+    method: 'DELETE',
+    path: `finance/fiscal-years/${fiscalYearId}`,
+    isDefaultSearchParamsRequired: false,
+  }),
 };

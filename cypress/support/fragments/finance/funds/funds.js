@@ -35,6 +35,15 @@ const actionsButtonName = 'Actions';
 const saveAndCloseButton = Button({ id: 'clickable-save-title' });
 
 export default {
+
+  defaultUiFund: {
+    name: `autotest_fund_${getRandomPostfix()}`,
+    code: getRandomPostfix(),
+    externalAccountNo: getRandomPostfix(),
+    fundStatus: 'Active',
+    description: `This is fund created by E2E test automation script_${getRandomPostfix()}`,
+  },
+
   waitForFundDetailsLoading : () => {
     cy.do(Section({ id: 'pane-fund-details' }).visible());
   },
@@ -291,5 +300,23 @@ export default {
       Section({ id: 'expense-classes' }).find(Button({ icon: 'trash' })).click(),
       saveAndCloseButton.click()
     ]);
-  }
+  },
+
+  createViaApi: (fundProperties) => {
+    return cy
+      .okapiRequest({
+        path: 'finance/funds',
+        body: fundProperties,
+        method: 'POST'
+      })
+      .then((response) => {
+        return response.body;
+      });
+  },
+
+  deleteFundViaApi: (fundId) => cy.okapiRequest({
+    method: 'DELETE',
+    path: `finance/funds/${fundId}`,
+    isDefaultSearchParamsRequired: false,
+  }),
 };
