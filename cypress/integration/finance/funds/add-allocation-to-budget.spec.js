@@ -10,14 +10,13 @@ import FinanceHelp from '../../../support/fragments/finance/financeHelper';
 import InteractorsTools from '../../../support/utils/interactorsTools';
 
 describe('ui-finance: Add budget to fund', () => {
-  const defaultfund = Funds.defaultUiFund;
-  const defaultFiscalYear = FiscalYears.defaultUiFiscalYear;
+  const defaultfund = { ...Funds.defaultUiFund };
+  const defaultFiscalYear = { ...FiscalYears.defaultUiFiscalYear };
   const defaultLedger = { ...Ledgers.defaultUiLedger };
   const allocatedQuantity = '50';
   let user;
 
   before(() => {
-    cy.loginAsAdmin();
     cy.getAdminToken();
     FiscalYears.createViaApi(defaultFiscalYear)
       .then(response => {
@@ -33,7 +32,7 @@ describe('ui-finance: Add budget to fund', () => {
               .then(fundResponse => {
                 defaultfund.id = fundResponse.fund.id;
 
-                cy.visit(TopMenu.fundPath);
+                cy.loginAsAdmin({ path:TopMenu.fundPath, waiter: Funds.waitLoading });
                 FinanceHelp.searchByName(defaultfund.name);
                 FinanceHelp.selectFromResultsList();
                 Funds.addBudget(allocatedQuantity);
@@ -47,17 +46,17 @@ describe('ui-finance: Add budget to fund', () => {
         user = userProperties;
         cy.login(userProperties.username, userProperties.password);
       });
+    cy.visit(TopMenu.fundPath);
   });
 
   after(() => {
-    cy.loginAsAdmin();
-    cy.visit(TopMenu.fundPath);
+    cy.loginAsAdmin({ path:TopMenu.fundPath, waiter: Funds.waitLoading });
     FinanceHelp.searchByName(defaultfund.name);
     FinanceHelp.selectFromResultsList();
     Funds.selectBudgetDetails();
     Funds.deleteBudgetViaActions();
-    // need to wait,that budget will be deleted on ui
-    cy.wait(2000);
+    InteractorsTools.checkCalloutMessage('Budget has been deleted');
+    Funds.checkIsBudgetDeleted();
 
     Funds.deleteFundViaApi(defaultfund.id);
 
@@ -69,7 +68,6 @@ describe('ui-finance: Add budget to fund', () => {
   });
 
   it('C6649 Add allocation to a budget by creating an allocation transaction (thunderjet)', { tags: [testType.criticalPath, devTeams.thunderjet] }, () => {
-    cy.visit(TopMenu.fundPath);
     FinanceHelp.searchByName(defaultfund.name);
     FinanceHelp.selectFromResultsList();
     Funds.selectBudgetDetails();

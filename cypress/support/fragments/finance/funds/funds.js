@@ -52,6 +52,9 @@ export default {
     allowableExpenditure: 100,
     budgetStatus: 'Active',
   },
+  waitLoading : () => {
+    cy.expect(Pane({ id: 'fund-results-pane' }).exists());
+  },
 
   waitForFundDetailsLoading : () => {
     cy.do(Section({ id: 'pane-fund-details' }).visible());
@@ -316,6 +319,12 @@ export default {
     ]);
   },
 
+  checkIsBudgetDeleted:(rowNumber = 0) => {
+    cy.expect([
+      Section({ id: 'currentBudget' }).find(MultiColumnListRow({ index: rowNumber })).absent()
+    ]);
+  },
+
   editBudget:() => {
     cy.do([
       Button('Actions').click(),
@@ -343,7 +352,8 @@ export default {
       .okapiRequest({
         path: 'finance/funds',
         body: { fund:fundProperties },
-        method: 'POST'
+        method: 'POST',
+        isDefaultSearchParamsRequired: false,
       })
       .then((response) => {
         return response.body;
@@ -355,7 +365,8 @@ export default {
       .okapiRequest({
         path: 'finance/budgets',
         body: budgetProperties,
-        method: 'POST'
+        method: 'POST',
+        isDefaultSearchParamsRequired: false,
       })
       .then((response) => {
         return response.body;

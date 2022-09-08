@@ -93,7 +93,8 @@ export default {
       .okapiRequest({
         path: 'finance/fiscal-years',
         body: fiscalYearProperties,
-        method: 'POST'
+        method: 'POST',
+        isDefaultSearchParamsRequired: false,
       })
       .then((response) => {
         return response.body;
