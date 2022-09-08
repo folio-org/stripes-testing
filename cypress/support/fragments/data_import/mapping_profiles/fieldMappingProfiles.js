@@ -7,10 +7,11 @@ import {
   Select
 } from '../../../../../interactors';
 import { getLongDelay } from '../../../utils/cypressTools';
-import newMappingProfile from './newMappingProfile';
+import MappingProfileDetails from './mappingProfileDetails';
+import NewMappingProfile from './newMappingProfile';
 
 const actionsButton = Button('Actions');
-
+const searchButton = Button('Search');
 const iconButton = Button({ icon: 'times' });
 const saveProfileButton = Button('Save as profile & Close');
 const mappingProfileNameField = TextField('Name*');
@@ -63,10 +64,10 @@ const deleteFieldMappingProfile = (profileName) => {
     });
 };
 
-const searchMappingProfileForDuplicate = (nameForSearch) => {
+const searchMappingProfile = (nameForSearch) => {
   cy.do(TextField({ id:'input-search-mapping-profiles-field' }).fillIn(nameForSearch));
-  cy.expect(Button('Search').has({ disabled:false }));
-  cy.do(Button('Search').click(), getLongDelay());
+  cy.expect(searchButton.has({ disabled:false }));
+  cy.do(searchButton.click(), getLongDelay());
 };
 
 const duplicateMappingProfile = () => {
@@ -79,37 +80,37 @@ const duplicateMappingProfile = () => {
 export default {
   createMappingProfile:(mappingProfile) => {
     openNewMappingProfileForm();
-    newMappingProfile.fillMappingProfile(mappingProfile);
+    NewMappingProfile.fillMappingProfile(mappingProfile);
     closeViewModeForMappingProfile(mappingProfile.name);
     cy.expect(actionsButton.exists());
   },
 
   createMappingProfileForUpdate:(mappingProfile) => {
     openNewMappingProfileForm();
-    newMappingProfile.fillMappingProfileForUpdate(mappingProfile);
+    NewMappingProfile.fillMappingProfileForUpdate(mappingProfile);
     closeViewModeForMappingProfile(mappingProfile.name);
     cy.expect(actionsButton.exists());
   },
 
   createModifyMappingProfile:(mappingProfile, properties) => {
     openNewMappingProfileForm();
-    newMappingProfile.fillModifyMappingProfile(mappingProfile, properties);
+    NewMappingProfile.fillModifyMappingProfile(mappingProfile, properties);
     closeViewModeForMappingProfile(mappingProfile);
     cy.expect(actionsButton.exists());
   },
 
   checkMappingProfilePresented: (mappingProfileName) => {
     cy.do(TextField({ id:'input-search-mapping-profiles-field' }).fillIn(mappingProfileName));
-    cy.do(Button('Search').click());
+    cy.do(searchButton.click());
     cy.expect(MultiColumnListCell(mappingProfileName).exists());
   },
 
   createInvoiceMappingProfile:(mappingProfileName, defaultProfile, organizationName) => {
     cy.intercept('/tags?*').as('getTag');
-    searchMappingProfileForDuplicate(defaultProfile);
+    searchMappingProfile(defaultProfile);
     cy.wait('@getTag');
     duplicateMappingProfile();
-    newMappingProfile.fillMappingProfileForInvoice(mappingProfileName, organizationName);
+    NewMappingProfile.fillMappingProfileForInvoice(mappingProfileName, organizationName);
     closeViewModeForMappingProfile(mappingProfileName);
     cy.expect(actionsButton.exists());
   },
@@ -150,7 +151,30 @@ export default {
 
   createMappingProfileForMatch:(mappingProfile) => {
     openNewMappingProfileForm();
-    newMappingProfile.fillMappingProfileForMatch(mappingProfile);
+    NewMappingProfile.fillMappingProfileForMatch(mappingProfile);
+    closeViewModeForMappingProfile(mappingProfile.name);
+    cy.expect(actionsButton.exists());
+  },
+
+  createMappingProfileForUpdatesMarc:(mappingProfile) => {
+    openNewMappingProfileForm();
+    NewMappingProfile.fillMappingProfileForUpdatesMarc(mappingProfile);
+    cy.do(saveProfileButton.click());
+  },
+
+  createMappingProfileForUpdatesAndOverrideMarc:(mappingProfile, firstProtectedField, secondProtectedField) => {
+    openNewMappingProfileForm();
+    NewMappingProfile.fillMappingProfileForUpdatesMarc(mappingProfile);
+    MappingProfileDetails.markFieldForProtection(firstProtectedField);
+    MappingProfileDetails.markFieldForProtection(secondProtectedField);
+    cy.do(saveProfileButton.click());
+  },
+
+  createMappingProfileWithNotes:(mappingProfile, note) => {
+    openNewMappingProfileForm();
+    NewMappingProfile.fillMappingProfileForInstance(mappingProfile);
+    NewMappingProfile.addNote(note);
+    cy.do(saveProfileButton.click());
     closeViewModeForMappingProfile(mappingProfile.name);
     cy.expect(actionsButton.exists());
   },
