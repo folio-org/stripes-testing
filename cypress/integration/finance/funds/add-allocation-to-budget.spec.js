@@ -9,15 +9,15 @@ import Funds from '../../../support/fragments/finance/funds/funds';
 import FinanceHelp from '../../../support/fragments/finance/financeHelper';
 import InteractorsTools from '../../../support/utils/interactorsTools';
 
-
 describe('ui-finance: Add budget to fund', () => {
   const defaultfund = Funds.defaultUiFund;
   const defaultFiscalYear = FiscalYears.defaultUiFiscalYear;
   const defaultLedger = { ...Ledgers.defaultUiLedger };
-  const defaultBudget = Funds.defaultUiBudget;
+  const allocatedQuantity = '50';
   let user;
 
   before(() => {
+    cy.loginAsAdmin();
     cy.getAdminToken();
     FiscalYears.createViaApi(defaultFiscalYear)
       .then(response => {
@@ -32,47 +32,50 @@ describe('ui-finance: Add budget to fund', () => {
             Funds.createViaApi(defaultfund)
               .then(fundResponse => {
                 defaultfund.id = fundResponse.fund.id;
-                defaultBudget.fiscalYearId = defaultFiscalYear.id;
-                defaultBudget.fundId = defaultfund.id;
-                defaultBudget.name = `${defaultfund.code}-${defaultFiscalYear.code}`;
-                Funds.addBudgetToFundViaApi(defaultBudget)
-                  .then(budgetResponse => {
-                    defaultBudget.id = budgetResponse.id;
-                  });
+
+                cy.visit(TopMenu.fundPath);
+                FinanceHelp.searchByName(defaultfund.name);
+                FinanceHelp.selectFromResultsList();
+                Funds.addBudget(allocatedQuantity);
               });
           });
       });
-    cy.loginAsAdmin();
-
-    // console.log(defaultBudget);
-    // cy.createTempUser([
-    //   permissions.uiFinanceCreateAllocations.gui,
-    // ])
-    //   .then(userProperties => {
-    //     user = userProperties;
-    //     cy.login(userProperties.username, userProperties.password);
-    //   });
+    cy.createTempUser([
+      permissions.uiFinanceCreateAllocations.gui,
+    ])
+      .then(userProperties => {
+        user = userProperties;
+        cy.login(userProperties.username, userProperties.password);
+      });
   });
 
   after(() => {
-    Funds.deleteBudgetViaApi(defaultBudget.id);
+    cy.loginAsAdmin();
+    cy.visit(TopMenu.fundPath);
+    FinanceHelp.searchByName(defaultfund.name);
+    FinanceHelp.selectFromResultsList();
+    Funds.selectBudgetDetails();
+    Funds.deleteBudgetViaActions();
+    // need to wait,that budget will be deleted on ui
+    cy.wait(2000);
+
     Funds.deleteFundViaApi(defaultfund.id);
+
     Ledgers.deleteledgerViaApi(defaultLedger.id);
+
     FiscalYears.deleteFiscalYearViaApi(defaultFiscalYear.id);
-    // Users.deleteViaApi(user.userId);
+
+    Users.deleteViaApi(user.userId);
   });
 
   it('C6649 Add allocation to a budget by creating an allocation transaction (thunderjet)', { tags: [testType.criticalPath, devTeams.thunderjet] }, () => {
     cy.visit(TopMenu.fundPath);
-    console.log(defaultBudget);
     FinanceHelp.searchByName(defaultfund.name);
     FinanceHelp.selectFromResultsList();
     Funds.selectBudgetDetails();
     Funds.increaseAllocation();
-    InteractorsTools.checkCalloutMessage(`$50.00 was successfully allocated to the budget ${defaultBudget.name}`);
+    InteractorsTools.checkCalloutMessage(`$50.00 was successfully allocated to the budget ${defaultfund.code}-${defaultFiscalYear.code}`);
     Funds.viewTransactions();
     Funds.checkTransactionList(defaultfund.code);
-    cy.wait(4000);
-    cy.pause();
   });
 });

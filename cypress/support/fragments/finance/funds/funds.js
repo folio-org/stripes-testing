@@ -47,7 +47,7 @@ export default {
   },
 
   defaultUiBudget: {
-    allocated: 0,
+    allocated: 50,
     allowableEncumbrance: 100,
     allowableExpenditure: 100,
     budgetStatus: 'Active',
@@ -129,7 +129,7 @@ export default {
         .has({ content: '$50.00' }),
       MultiColumnList({ id: 'transactions-list' })
         .find(MultiColumnListRow({ index: 0 }))
-        .find(MultiColumnListCell({ columnIndex: 2 }))
+        .find(MultiColumnListCell({ columnIndex: 4 }))
         .has({ content: `${fundCode}` })
     ]);
   },
