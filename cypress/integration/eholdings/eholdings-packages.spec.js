@@ -9,15 +9,16 @@ import eHoldingsPackage from '../../support/fragments/eholdings/eHoldingsPackage
 import permissions from '../../support/dictionary/permissions';
 import features from '../../support/dictionary/features';
 import users from '../../support/fragments/users/users';
+import devTeams from '../../support/dictionary/devTeams';
 
 
 describe('eHoldings packages management', () => {
   let userId;
 
-  it('C688 Add all titles in a package to your holdings (spitfire)', { tags:  [testType.smoke, features.eHoldings] }, () => {
+  it('C688 Add all titles in a package to your holdings (spitfire)', { tags: [testType.smoke, devTeams.spitfire, features.eHoldings] }, () => {
     cy.createTempUser([permissions.uieHoldingsRecordsEdit.gui,
-      permissions.uieHoldingsPackageTitleSelectUnselect.gui,
-      permissions.moduleeHoldingsEnabled.gui
+    permissions.uieHoldingsPackageTitleSelectUnselect.gui,
+    permissions.moduleeHoldingsEnabled.gui
     ]).then(userProperties => {
       userId = userProperties.userId;
       eHoldingsPackages.getNotSelectedPackageIdViaApi().then(specialPackage => {
@@ -33,10 +34,10 @@ describe('eHoldings packages management', () => {
     });
   });
 
-  it('C3463 Add two tags to package [Edinburgh Scholarship Online] (spitfire)', { tags:  [testType.smoke, features.eHoldings, features.tags] }, () => {
+  it('C3463 Add two tags to package [Edinburgh Scholarship Online] (spitfire)', { tags: [testType.smoke, devTeams.spitfire, features.eHoldings, features.tags] }, () => {
     // TODO: "Tags: All permissions" doesn't have displayName. It's the reason why there is related permission name in response, see https://issues.folio.org/browse/UITAG-51
     cy.createTempUser([permissions.uieHoldingsRecordsEdit.gui,
-      permissions.uiTagsPermissionAll.gui]).then(userProperties => {
+    permissions.uiTagsPermissionAll.gui]).then(userProperties => {
       userId = userProperties.userId;
       cy.login(userProperties.username, userProperties.password);
       cy.visit(TopMenu.eholdingsPath);
@@ -54,9 +55,9 @@ describe('eHoldings packages management', () => {
     });
   });
 
-  it('C690 Remove a package from your holdings (spitfire)', { tags:  [testType.smoke, features.eHoldings] }, () => {
+  it('C690 Remove a package from your holdings (spitfire)', { tags: [testType.smoke, devTeams.spitfire, features.eHoldings] }, () => {
     cy.createTempUser([permissions.uieHoldingsRecordsEdit.gui,
-      permissions.uieHoldingsPackageTitleSelectUnselect.gui]).then(userProperties => {
+    permissions.uieHoldingsPackageTitleSelectUnselect.gui]).then(userProperties => {
       userId = userProperties.userId;
       eHoldingsPackages.getNotCustomSelectedPackageIdViaApi().then(specialPackage => {
         cy.login(userProperties.username, userProperties.password,
@@ -72,7 +73,7 @@ describe('eHoldings packages management', () => {
     });
   });
 
-  it('C756 Remove a tag from a package record (spitfire)', { tags:  [testType.extendedPath, features.eHoldings, features.tags] }, () => {
+  it('C756 Remove a tag from a package record (spitfire)', { tags: [testType.extendedPath, devTeams.spitfire, features.eHoldings, features.tags] }, () => {
     cy.createTempUser([permissions.uieHoldingsRecordsEdit.gui, permissions.uiTagsPermissionAll.gui]).then(userProperties => {
       userId = userProperties.userId;
       cy.login(userProperties.username, userProperties.password);

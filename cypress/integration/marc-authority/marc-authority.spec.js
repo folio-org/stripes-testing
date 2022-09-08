@@ -17,9 +17,10 @@ import dataImportSettingMappingProfiles from '../../support/fragments/settings/d
 import dataImportSettingsJobProfiles from '../../support/fragments/settings/dataImport/dataImportSettingsJobProfiles';
 import Users from '../../support/fragments/users/users';
 import { Callout } from '../../../interactors';
+import DevTeams from '../../support/dictionary/devTeams';
 
 describe('MARC Authority management', () => {
-  const userProperties = { name:'testname' };
+  const userProperties = { name: 'testname' };
   let marcAuthorityIds = [];
 
   const importFile = (profileName) => {
@@ -68,7 +69,7 @@ describe('MARC Authority management', () => {
     });
   });
 
-  it('C350572 Edit an Authority record (spitfire)', { tags:  [TestTypes.smoke, Features.authority] }, () => {
+  it('C350572 Edit an Authority record (spitfire)', { tags: [TestTypes.smoke, DevTeams.spitfire, Features.authority] }, () => {
     MarcAuthority.edit();
     QuickMarcEditor.waitLoading();
 
@@ -85,7 +86,7 @@ describe('MARC Authority management', () => {
     MarcAuthorities.checkRowsCount(1);
   });
 
-  it('C350667 Update a MARC authority record via data import. Record match with 010 $a (spitfire)', { tags:  [TestTypes.smoke, Features.authority] }, () => {
+  it('C350667 Update a MARC authority record via data import. Record match with 010 $a (spitfire)', { tags: [TestTypes.smoke, DevTeams.spitfire, Features.authority] }, () => {
     // profiles preparing
     dataImportSettingMappingProfiles.createMappingProfileApi().then(mappingProfileResponse => {
       const specialActionProfile = { ...dataImportSettingsActionProfiles.marcAuthorityUpdateActionProfile };
@@ -115,8 +116,10 @@ describe('MARC Authority management', () => {
             dataImportSettingsJobProfiles.deleteJobProfileApi(jobProfileResponse.body.id);
             dataImportSettingsMatchProfiles.deleteMatchProfileApi(matchProfileResponse.body.id);
             // unlink mapping profile and action profile
-            const linkedMappingProfile = { id: mappingProfileResponse.body.id,
-              profile:{ ...dataImportSettingMappingProfiles.marcAuthorityUpdateMappingProfile.profile } };
+            const linkedMappingProfile = {
+              id: mappingProfileResponse.body.id,
+              profile: { ...dataImportSettingMappingProfiles.marcAuthorityUpdateMappingProfile.profile }
+            };
             linkedMappingProfile.profile.id = mappingProfileResponse.body.id;
             linkedMappingProfile.addedRelations = [];
             linkedMappingProfile.deletedRelations = [
@@ -137,13 +140,13 @@ describe('MARC Authority management', () => {
     });
   });
 
-  it('C350575  MARC Authority fields LEADER and 008 can not be deleted (spitfire)', { tags:  [TestTypes.smoke, Features.authority, TestTypes.broken] }, () => {
+  it('C350575  MARC Authority fields LEADER and 008 can not be deleted (spitfire)', { tags: [TestTypes.smoke, DevTeams.spitfire, Features.authority, TestTypes.broken] }, () => {
     MarcAuthority.edit();
     QuickMarcEditor.waitLoading();
     QuickMarcEditor.checkNotDeletableTags('008', 'LDR');
   });
 
-  it('C350576 Update 008 of Authority record (spitfire)', { tags:  [TestTypes.smoke, Features.authority, TestTypes.broken] }, () => {
+  it('C350576 Update 008 of Authority record (spitfire)', { tags: [TestTypes.smoke, DevTeams.spitfire, Features.authority, TestTypes.broken] }, () => {
     MarcAuthority.edit();
     QuickMarcEditor.waitLoading();
 
@@ -154,7 +157,7 @@ describe('MARC Authority management', () => {
     MarcAuthority.contains(changedValueInSourceRow);
   });
 
-  it('C350578 Browse existing Authorities (spitfire)', { tags:  [TestTypes.smoke, Features.authority] }, () => {
+  it('C350578 Browse existing Authorities (spitfire)', { tags: [TestTypes.smoke, DevTeams.spitfire, Features.authority] }, () => {
     // make one more import to get 2 marc authorities to check browse functionality
     const secondFileName = `autotestFile.${getRandomPostfix()}_second.mrc`;
     cy.visit(TopMenu.dataImportPath);
@@ -173,7 +176,7 @@ describe('MARC Authority management', () => {
     MarcAuthorityBrowse.checkPresentedColumns();
   });
 
-  it('C350513 Browse authority - handling for when there is no exact match (spitfire)', { tags:  [TestTypes.smoke, Features.authority, TestTypes.broken] }, () => {
+  it('C350513 Browse authority - handling for when there is no exact match (spitfire)', { tags: [TestTypes.smoke, DevTeams.spitfire, Features.authority, TestTypes.broken] }, () => {
     // update created marc authority
     MarcAuthority.edit();
     QuickMarcEditor.waitLoading();
@@ -206,7 +209,7 @@ describe('MARC Authority management', () => {
     MarcAuthorityBrowse.checkHeadingReferenceInRow(2, `${randomPrefix} B`, true);
   });
 
-  it('C350902 MARC fields behavior when editing "MARC Authority" record (spitfire)', { tags:  [TestTypes.smoke, Features.authority] }, () => {
+  it('C350902 MARC fields behavior when editing "MARC Authority" record (spitfire)', { tags: [TestTypes.smoke, DevTeams.spitfire, Features.authority] }, () => {
     MarcAuthority.edit();
     QuickMarcEditor.waitLoading();
     const quickmarcEditor = new QuickMarcEditor(MarcAuthority.defaultAuthority);

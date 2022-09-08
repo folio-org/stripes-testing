@@ -11,6 +11,7 @@ import Permissions from '../../support/dictionary/permissions';
 import NewAgreement from '../../support/fragments/agreements/newAgreement';
 import { getLongDelay } from '../../support/utils/cypressTools';
 import Users from '../../support/fragments/users/users';
+import DevTeams from '../../support/dictionary/devTeams';
 
 describe('Note creation', () => {
   let userId;
@@ -35,10 +36,10 @@ describe('Note creation', () => {
       AgreementDetails.openNotesSection();
     });
   };
-  it('C1296 Create a note (spitfire)', { tags: [TestTypes.smoke, Features.notes] }, () => {
+  it('C1296 Create a note (spitfire)', { tags: [TestTypes.smoke, DevTeams.spitfire, Features.notes] }, () => {
     initPrepairing([Permissions.uiNotesItemCreate.gui, Permissions.uiNotesItemView,
-      // need access to special application( agreements in this case)
-      Permissions.uiAgreementsAgreementsEdit.gui, Permissions.uiAgreementsAgreementsDelete.gui]);
+    // need access to special application( agreements in this case)
+    Permissions.uiAgreementsAgreementsEdit.gui, Permissions.uiAgreementsAgreementsDelete.gui]);
     AgreementDetails.createNote(longNote);
     Agreements.selectRecord();
     AgreementDetails.checkNotesCount(1);
@@ -47,12 +48,12 @@ describe('Note creation', () => {
     AgreementDetails.specialNotePresented(longNote.title);
   });
 
-  it('C1299 Edit a note (spitfire)', { tags: [TestTypes.smoke, Features.notes] }, () => {
+  it('C1299 Edit a note (spitfire)', { tags: [TestTypes.smoke, DevTeams.spitfire, Features.notes] }, () => {
     initPrepairing([Permissions.uiNotesItemCreate.gui,
-      Permissions.uiNotesItemView.gui,
-      Permissions.uiNotesItemEdit.gui,
-      // need access to special application( agreements in this case)
-      Permissions.uiAgreementsAgreementsEdit.gui, Permissions.uiAgreementsAgreementsDelete.gui]);
+    Permissions.uiNotesItemView.gui,
+    Permissions.uiNotesItemEdit.gui,
+    // need access to special application( agreements in this case)
+    Permissions.uiAgreementsAgreementsEdit.gui, Permissions.uiAgreementsAgreementsDelete.gui]);
     const specialNote = NewNote.defaultNote;
     AgreementDetails.createNote(specialNote);
     Agreements.selectRecord();
@@ -73,11 +74,11 @@ describe('Note creation', () => {
     AgreementDetails.specialNotePresented(updatedNote.title);
   });
 
-  it('C16992 View a note (spitfire)', { tags: [TestTypes.smoke, Features.notes] }, () => {
+  it('C16992 View a note (spitfire)', { tags: [TestTypes.smoke, DevTeams.spitfire, Features.notes] }, () => {
     initPrepairing([Permissions.uiNotesItemCreate.gui,
-      Permissions.uiNotesItemView.gui,
-      // need access to special application( agreements in this case)
-      Permissions.uiAgreementsAgreementsEdit.gui, Permissions.uiAgreementsAgreementsDelete.gui]);
+    Permissions.uiNotesItemView.gui,
+    // need access to special application( agreements in this case)
+    Permissions.uiAgreementsAgreementsEdit.gui, Permissions.uiAgreementsAgreementsDelete.gui]);
 
     AgreementDetails.createNote(longNote);
     Agreements.selectRecord();

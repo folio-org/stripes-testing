@@ -6,19 +6,20 @@ import eHoldingsProviderEdit from '../../support/fragments/eholdings/eHoldingsPr
 import testTypes from '../../support/dictionary/testTypes';
 import permissions from '../../support/dictionary/permissions';
 import users from '../../support/fragments/users/users';
+import devTeams from '../../support/dictionary/devTeams';
 
 describe('ui-eholdings: Provider manage', () => {
   let userId;
 
   beforeEach(() => {
     cy.createTempUser([permissions.uieHoldingsRecordsEdit.gui,
-      permissions.moduleeHoldingsEnabled.gui]).then(userProperties => {
+    permissions.moduleeHoldingsEnabled.gui]).then(userProperties => {
       userId = userProperties.userId;
       cy.login(userProperties.username, userProperties.password);
       cy.visit(TopMenu.eholdingsPath);
     });
   });
-  it('C696 Edit proxy setting (spitfire)', { tags: [testTypes.smoke, testTypes.broken] }, () => {
+  it('C696 Edit proxy setting (spitfire)', { tags: [testTypes.smoke, devTeams.spitfire, testTypes.broken] }, () => {
     const specialProvider = 'Johns Hopkins University Press';
     eHoldingsProvidersSearch.byProvider(specialProvider);
     eHoldingsProviders.viewProvider();
