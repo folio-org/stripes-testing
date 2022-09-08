@@ -44,7 +44,7 @@ describe('ui-finance: Add budget to fund', () => {
     ])
       .then(userProperties => {
         user = userProperties;
-        cy.login(userProperties.username, userProperties.password);
+        cy.login(userProperties.username, userProperties.password, { path:TopMenu.fundPath, waiter: Funds.waitLoading });
       });
     cy.visit(TopMenu.fundPath);
   });
