@@ -4,6 +4,7 @@ import generateItemBarcode from '../../../support/utils/generateItemBarcode';
 import DevTeams from '../../../support/dictionary/devTeams';
 import TestTypes from '../../../support/dictionary/testTypes';
 import TopMenu from '../../../support/fragments/topMenu';
+import SettingsMenu from '../../../support/fragments/settingsMenu';
 import RequestPolicy, { defaultRequestPolicy } from '../../../support/fragments/circulation/request-policy';
 import PatronGroups from '../../../support/fragments/settings/users/patronGroups';
 import Users from '../../../support/fragments/users/users';
@@ -16,8 +17,10 @@ import CheckInActions from '../../../support/fragments/check-in-actions/checkInA
 import Requests from '../../../support/fragments/requests/requests';
 import NewRequest from '../../../support/fragments/requests/newRequest';
 import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
+import LoanPolicyActions from '../../../support/fragments/circulation/loan-policy';
+import TitleLevelRequests from '../../../support/fragments/requests/titleLevelRequests';
 
-describe('ui-requests: Request: Edit requests. Make sure that edits are being saved.', () => {
+describe('ui-requests: title-level-requests', () => {
   // TODO: A client configured to use edge-patron API
   const testData = {
     pickupServicePoint: 'Circ Desk 1',
@@ -50,8 +53,14 @@ describe('ui-requests: Request: Edit requests. Make sure that edits are being sa
 
     // Create request policy that allows recalls and pages
     RequestPolicy.createApi(requestPolicyWithRecall).then((body) => {
-      testData.requestPolicyId = body.id;
+      testData.requestPolicy = body;
     });
+
+    // Create loan policy
+    LoanPolicyActions.createApi(LoanPolicyActions.getDefaultLoanPolicy())
+      .then((policy) => {
+        testData.loanPolicy = policy;
+      });
 
     // Create 2 users in the same group
     PatronGroups.createViaApi()
@@ -86,7 +95,8 @@ describe('ui-requests: Request: Edit requests. Make sure that edits are being sa
     cy.getCirculationRules().then((res) => {
       testData.baseRules = res.rulesAsText;
       testData.ruleProps = CirculationRules.getRuleProps(res.rulesAsText);
-      testData.ruleProps.r = testData.requestPolicyId;
+      testData.ruleProps.r = testData.requestPolicy.id;
+      testData.ruleProps.l = testData.loanPolicy.id;
 
       CirculationRules.addRuleApi(res.rulesAsText, testData.ruleProps, 'g ', testData.patronGroup.id).then(() => {
         // checkout must happen after creating new circ rule
@@ -115,14 +125,21 @@ describe('ui-requests: Request: Edit requests. Make sure that edits are being sa
     });
 
     InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(item.itemBarcode);
-
     CirculationRules.deleteRuleApi(testData.baseRules);
-    RequestPolicy.deleteApi(testData.requestPolicyId);
+    RequestPolicy.deleteApi(testData.requestPolicy.id);
+    cy.deleteLoanPolicy(testData.loanPolicy.id);
   });
 
   it('C350540 Recall an Item by Placing a Title-level Request Using Patron Services (MOD-PATRON): Item checked out with rolling due date (vega)', { tags: [DevTeams.vega, TestTypes.smoke] }, () => {
-    cy.loginAsAdmin({ path: TopMenu.requestsPath, waiter: Requests.waitContentLoading });
+    cy.loginAsAdmin({ path: SettingsMenu.circulationTitleLevelRequestsPath, waiter: TitleLevelRequests.waitLoading });
 
+    try {
+      TitleLevelRequests.checkTitleRequestsAvailability();
+    } catch (error) {
+      TitleLevelRequests.allowTitleLevelRequests();
+    }
+
+    cy.visit(TopMenu.requestsPath);
     NewRequest.createNewRequest(newRequestData, 'Recall');
     NewRequest.checkCreatedNewRequest(newRequestData, 'Recall');
   });

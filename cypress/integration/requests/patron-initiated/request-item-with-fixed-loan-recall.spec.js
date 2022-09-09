@@ -4,6 +4,7 @@ import generateItemBarcode from '../../../support/utils/generateItemBarcode';
 import DevTeams from '../../../support/dictionary/devTeams';
 import TestTypes from '../../../support/dictionary/testTypes';
 import TopMenu from '../../../support/fragments/topMenu';
+import SettingsMenu from '../../../support/fragments/settingsMenu';
 import RequestPolicy, { defaultRequestPolicy } from '../../../support/fragments/circulation/request-policy';
 import PatronGroups from '../../../support/fragments/settings/users/patronGroups';
 import Users from '../../../support/fragments/users/users';
@@ -18,11 +19,13 @@ import NewRequest from '../../../support/fragments/requests/newRequest';
 import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
 import FixedDueDateSchedules from '../../../support/fragments/circulation/fixedDueDateSchedules';
 import LoanPolicyActions from '../../../support/fragments/circulation/loan-policy';
+import TitleLevelRequests from '../../../support/fragments/requests/titleLevelRequests';
 
-describe('ui-requests: Request: Edit requests. Make sure that edits are being saved.', () => {
+describe('ui-requests: title-level-requests', () => {
   // TODO: A client configured to use edge-patron API
   const testData = {
     pickupServicePoint: 'Circ Desk 1',
+    limitOfItem: 2,
     patronGroup: {},
   };
   const userData0 = { ...DefaultUser.defaultApiPatron };
@@ -46,7 +49,7 @@ describe('ui-requests: Request: Edit requests. Make sure that edits are being sa
       middleName: userData1.personal.middleName,
     }
   };
-  const limitOfItem = 2;
+
 
   before('Creating circ rule with request policy, users and item with rolling loan period', () => {
     cy.getAdminToken();
@@ -60,7 +63,7 @@ describe('ui-requests: Request: Edit requests. Make sure that edits are being sa
     FixedDueDateSchedules.createViaApi()
       .then((schedule) => {
         testData.scheduleId = schedule.id;
-        LoanPolicyActions.createApi(LoanPolicyActions.getDefaultLoanPolicy(limitOfItem, schedule.id))
+        LoanPolicyActions.createApi(LoanPolicyActions.getDefaultLoanPolicy(testData.limitOfItem, schedule.id))
           .then((policy) => {
             testData.loanPolicy = policy;
           });
@@ -128,7 +131,6 @@ describe('ui-requests: Request: Edit requests. Make sure that edits are being sa
     });
 
     InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(item.itemBarcode);
-
     CirculationRules.deleteRuleApi(testData.baseRules);
     RequestPolicy.deleteApi(testData.requestPolicy.id);
     cy.deleteLoanPolicy(testData.loanPolicy.id);
@@ -136,8 +138,15 @@ describe('ui-requests: Request: Edit requests. Make sure that edits are being sa
   });
 
   it('C350540 Recall an Item by Placing a Title-level Request Using Patron Services (MOD-PATRON): Item checked out with rolling due date (vega)', { tags: [DevTeams.vega, TestTypes.smoke] }, () => {
-    cy.loginAsAdmin({ path: TopMenu.requestsPath, waiter: Requests.waitContentLoading });
+    cy.loginAsAdmin({ path: SettingsMenu.circulationTitleLevelRequestsPath, waiter: TitleLevelRequests.waitLoading });
 
+    try {
+      TitleLevelRequests.checkTitleRequestsAvailability();
+    } catch (error) {
+      TitleLevelRequests.allowTitleLevelRequests();
+    }
+
+    cy.visit(TopMenu.requestsPath);
     NewRequest.createNewRequest(newRequestData, 'Recall');
     NewRequest.checkCreatedNewRequest(newRequestData, 'Recall');
   });
