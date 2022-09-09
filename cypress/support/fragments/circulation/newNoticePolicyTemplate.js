@@ -69,7 +69,9 @@ export default {
   saveAndClose() {
     return cy.do([saveButton.exists(),
       saveButton.has({ disabled: false }),
-      saveButton.click()]);
+      saveButton.click(),
+      Button({ icon: 'times' }).click(),
+    ]);
   },
 
   checkNewButton() {

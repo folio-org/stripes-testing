@@ -81,7 +81,9 @@ export default {
   },
 
   checkResultSearch(searchResults, rowIndex = 0) {
-    return cy.wrap(Object.values(searchResults)).each(contentToCheck => cy.expect(MultiColumnListRow({ indexRow: `row-${rowIndex}` }).find(MultiColumnListCell({ content: including(contentToCheck) })).exists()));
+    return cy.wrap(Object.values(searchResults)).each(contentToCheck => {
+      cy.expect(MultiColumnListRow({ indexRow: `row-${rowIndex}` }).find(MultiColumnListCell({ content: including(contentToCheck) })).exists())
+    });
   },
 
   filterByLastWeek() {
