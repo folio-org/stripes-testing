@@ -9,9 +9,19 @@ export default {
     return `${padWithZero(currentDate.getMonth() + 1)}/${padWithZero(currentDate.getDate())}/${currentDate.getFullYear()}`;
   },
 
+  getCurrentDateForFiscalYear: () => {
+    const currentDate = new Date();
+    return `${currentDate.getFullYear()}-${padWithZero(currentDate.getMonth() + 1)}-${padWithZero(currentDate.getDate())}`;
+  },
+
+
   getPreviousDayDate: () => {
     const currentDate = new Date();
     return `${padWithZero(currentDate.getMonth() + 1)}/${padWithZero(currentDate.getDate() - 1)}/${currentDate.getFullYear()}`;
+  },
+  getPreviousDayDateForFiscalYear: () => {
+    const currentDate = new Date();
+    return `${currentDate.getFullYear()}-${padWithZero(currentDate.getMonth() + 1)}-${padWithZero(currentDate.getDate() - 1)}`;
   },
 
   getPreviousFiscalYearCode: () => {
@@ -24,7 +34,7 @@ export default {
 
   getRandomFiscalYearCode: (min, max) => {
     // returns random 4 digit code for the Fiscal Year
-    return 'FY' + Math.floor((Math.random() * (Math.floor(max) - Math.ceil(min)) + Math.ceil(min))).toString();
+    return 'FYAQA' + Math.floor((Math.random() * (Math.floor(max) - Math.ceil(min)) + Math.ceil(min))).toString();
   },
 
   getDateRanges: (rangesCount = 1, isInDifferentYears = false) => {
