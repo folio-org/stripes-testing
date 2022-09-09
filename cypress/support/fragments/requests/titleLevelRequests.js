@@ -1,19 +1,24 @@
 import { Button } from 'bigtest';
-import { Checkbox, Section, Form } from '../../../../interactors';
+import { Checkbox, Section, Form, Heading } from '../../../../interactors';
 
 export default {
   waitLoading() {
     cy.expect(Section({ id: 'title-level-requests-pane' }));
   },
 
-  allowTitleLevelRequests() {
+  clickTitleLevelRequestsCheckbox() {
     cy.do([
       Checkbox('Allow title level requests').click(),
-      Form({ id: 'title-level-requests-form' }).find(Button('Save')).click(),
+      Checkbox({ name : 'createTitleLevelRequestsByDefault' }).click(),
     ]);
+    cy.do(Form({ id: 'title-level-requests-form' }).find(Button('Save')).click());
   },
 
-  checkTitleRequestsAvailability() {
+  checkTitleRequestsDisaabled() {
+    cy.expect(Checkbox({ name:'titleLevelRequestsFeatureEnabled' }).has({ checked: false }));
+  },
+
+  checkTitleRequestsEnabled() {
     cy.expect(Checkbox({ name:'titleLevelRequestsFeatureEnabled' }).has({ checked: true }));
   },
 };

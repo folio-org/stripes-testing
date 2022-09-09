@@ -128,18 +128,20 @@ describe('ui-requests: title-level-requests', () => {
     CirculationRules.deleteRuleViaApi(testData.baseRules);
     RequestPolicy.deleteViaApi(testData.requestPolicy.id);
     cy.deleteLoanPolicy(testData.loanPolicy.id);
+
+    cy.visit(SettingsMenu.circulationTitleLevelRequestsPath);
+    // TODO: write API request to check
+    // TODO: Disable Title Level Request
+    // TitleLevelRequests.clickTitleLevelRequestsCheckbox();
+    // TitleLevelRequests.checkTitleRequestsDisaabled();
   });
 
   it('C350540 Recall an Item by Placing a Title-level Request Using Patron Services (MOD-PATRON): Item checked out with rolling due date (vega)', { tags: [DevTeams.vega, TestTypes.smoke] }, () => {
-    cy.loginAsAdmin({ path: SettingsMenu.circulationTitleLevelRequestsPath, waiter: TitleLevelRequests.waitLoading });
+    cy.loginAsAdmin({ path: TopMenu.requestsPath, waiter: Requests.waitContentLoading });
+    // TODO: Enable Title Level Requests
+    // TitleLevelRequests.clickTitleLevelRequestsCheckbox();
+    // TitleLevelRequests.checkTitleRequestsEnabled();
 
-    try {
-      TitleLevelRequests.checkTitleRequestsAvailability();
-    } catch (error) {
-      TitleLevelRequests.allowTitleLevelRequests();
-    }
-
-    cy.visit(TopMenu.requestsPath);
     NewRequest.createNewRequest(newRequestData, 'Recall');
     NewRequest.checkCreatedNewRequest(newRequestData, 'Recall');
   });

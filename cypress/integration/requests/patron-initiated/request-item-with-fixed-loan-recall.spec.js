@@ -19,7 +19,6 @@ import NewRequest from '../../../support/fragments/requests/newRequest';
 import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
 import FixedDueDateSchedules from '../../../support/fragments/circulation/fixedDueDateSchedules';
 import LoanPolicyActions from '../../../support/fragments/circulation/loan-policy';
-import TitleLevelRequests from '../../../support/fragments/requests/titleLevelRequests';
 
 describe('ui-requests: title-level-requests', () => {
   // TODO: A client configured to use edge-patron API
@@ -135,18 +134,21 @@ describe('ui-requests: title-level-requests', () => {
     RequestPolicy.deleteViaApi(testData.requestPolicy.id);
     cy.deleteLoanPolicy(testData.loanPolicy.id);
     FixedDueDateSchedules.deleteViaApi(testData.scheduleId);
+
+    cy.visit(SettingsMenu.circulationTitleLevelRequestsPath);
+    // TODO: write API request to check
+    // TODO: Disable Title Level Request
+    // TitleLevelRequests.clickTitleLevelRequestsCheckbox();
+    // TitleLevelRequests.checkTitleRequestsDisabled();
   });
 
   it('C350540 Recall an Item by Placing a Title-level Request Using Patron Services (MOD-PATRON): Item checked out with rolling due date (vega)', { tags: [DevTeams.vega, TestTypes.smoke] }, () => {
-    cy.loginAsAdmin({ path: SettingsMenu.circulationTitleLevelRequestsPath, waiter: TitleLevelRequests.waitLoading });
+    cy.loginAsAdmin({ path: TopMenu.requestsPath, waiter: Requests.waitContentLoading });
+    // TODO: Enable Title Level Requests
+    // TitleLevelRequests.clickTitleLevelRequestsCheckbox();
+    // TitleLevelRequests.checkTitleRequestsEnabled();
 
-    try {
-      TitleLevelRequests.checkTitleRequestsAvailability();
-    } catch (error) {
-      TitleLevelRequests.allowTitleLevelRequests();
-    }
-
-    cy.visit(TopMenu.requestsPath);
+    // TODO: Check if this is fine doing via UI
     NewRequest.createNewRequest(newRequestData, 'Recall');
     NewRequest.checkCreatedNewRequest(newRequestData, 'Recall');
   });
