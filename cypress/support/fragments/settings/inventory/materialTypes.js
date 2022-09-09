@@ -36,7 +36,7 @@ export default {
   checkIsDeleted,
   verifyMessageOfDeteted,
 
-  deleteApi(id) {
+  deleteViaApi(id) {
     return cy.okapiRequest({
       method: 'DELETE',
       path: `material-types/${id}`,

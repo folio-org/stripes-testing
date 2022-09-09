@@ -33,7 +33,7 @@ export default {
     cy.expect(Heading('Loan policies').exists());
   },
   getDefaultLoanPolicy,
-  createApi(loanPolicy) {
+  createViaApi(loanPolicy) {
     return cy
       .okapiRequest({
         method: 'POST',
@@ -45,7 +45,7 @@ export default {
         return body;
       });
   },
-  deleteApi(id) {
+  deleteViaApi(id) {
     return cy.okapiRequest({
       method: 'DELETE',
       path: `loan-policy-storage/loan-policies/${id}`,

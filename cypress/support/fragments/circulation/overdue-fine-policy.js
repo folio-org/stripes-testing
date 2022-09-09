@@ -13,7 +13,7 @@ export const defaultOverdueFinePolicy = {
 };
 
 export default {
-  createApi() {
+  createViaApi() {
     return cy
       .okapiRequest({
         method: 'POST',
@@ -25,7 +25,7 @@ export default {
         return body;
       });
   },
-  deleteApi(id) {
+  deleteViaApi(id) {
     return cy.okapiRequest({
       method: 'DELETE',
       path: `overdue-fines-policies/${id}`,

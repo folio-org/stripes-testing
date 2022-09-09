@@ -133,7 +133,7 @@ describe('Recieving notice: Checkout', () => {
       });
 
     CirculationRules.deleteRuleApi(testData.baseRules);
-    NoticePolicyApi.deleteApi(testData.ruleProps.n);
+    NoticePolicyApi.deleteViaApi(testData.ruleProps.n);
     NoticePolicyTemplateApi.getViaApi({ query: `name=${noticePolicyTemplate.name}` }).then((templateId) => {
       NoticePolicyTemplateApi.deleteViaApi(templateId);
     });

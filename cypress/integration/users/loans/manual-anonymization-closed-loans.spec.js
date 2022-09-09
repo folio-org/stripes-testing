@@ -49,8 +49,8 @@ describe('ui-users-loans: Manual anonymization in closed loans', () => {
 
       RequestPolicy.createViaApi();
       LostItemFeePolicy.createViaApi();
-      OverdueFinePolicy.createApi();
-      NoticePolicy.createApi();
+      OverdueFinePolicy.createViaApi();
+      NoticePolicy.createViaApi();
       cy.createLoanPolicy({
         loanable: true,
         loansPolicy: {

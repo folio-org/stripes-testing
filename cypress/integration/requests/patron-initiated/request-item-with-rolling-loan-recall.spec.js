@@ -57,7 +57,7 @@ describe('ui-requests: title-level-requests', () => {
     });
 
     // Create loan policy
-    LoanPolicyActions.createApi(LoanPolicyActions.getDefaultLoanPolicy())
+    LoanPolicyActions.createViaApi(LoanPolicyActions.getDefaultLoanPolicy())
       .then((policy) => {
         testData.loanPolicy = policy;
       });
@@ -126,7 +126,7 @@ describe('ui-requests: title-level-requests', () => {
 
     InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(item.itemBarcode);
     CirculationRules.deleteRuleApi(testData.baseRules);
-    RequestPolicy.deleteApi(testData.requestPolicy.id);
+    RequestPolicy.deleteViaApi(testData.requestPolicy.id);
     cy.deleteLoanPolicy(testData.loanPolicy.id);
   });
 

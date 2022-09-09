@@ -44,11 +44,11 @@ describe('ui-circulation-settings: Edit circulation rules', () => {
         originalCirculationRules = circulationRules;
       });
       NewMaterialType.createViaApi(NewMaterialType.getDefaultMaterialType());
-      NoticePolicy.createApi();
+      NoticePolicy.createViaApi();
       LoanPolicy.createLoanableNotRenewableLoanPolicyApi(defaultLoanPolicy);
       RequestPolicy.createViaApi();
       LostItemFeePolicy.createViaApi();
-      OverdueFinePolicy.createApi();
+      OverdueFinePolicy.createViaApi();
 
       cy.login(username, password);
     });
@@ -58,12 +58,12 @@ describe('ui-circulation-settings: Edit circulation rules', () => {
 
   afterEach(() => {
     CirculationRules.updateApi(originalCirculationRules);
-    MaterialTypes.deleteApi(defaultMaterialType.id);
-    NoticePolicy.deleteApi(defaultNoticePolicy.id);
-    LoanPolicy.deleteApi(defaultLoanPolicy.id);
-    RequestPolicy.deleteApi(defaultRequestPolicy.id);
+    MaterialTypes.deleteViaApi(defaultMaterialType.id);
+    NoticePolicy.deleteViaApi(defaultNoticePolicy.id);
+    LoanPolicy.deleteViaApi(defaultLoanPolicy.id);
+    RequestPolicy.deleteViaApi(defaultRequestPolicy.id);
     LostItemFeePolicy.deleteViaApi(defaultLostItemFeePolicy.id);
-    OverdueFinePolicy.deleteApi(defaultOverdueFinePolicy.id);
+    OverdueFinePolicy.deleteViaApi(defaultOverdueFinePolicy.id);
     Users.deleteViaApi(newUserId);
   });
 

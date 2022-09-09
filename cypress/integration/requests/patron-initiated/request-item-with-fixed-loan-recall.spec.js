@@ -63,7 +63,7 @@ describe('ui-requests: title-level-requests', () => {
     FixedDueDateSchedules.createViaApi()
       .then((schedule) => {
         testData.scheduleId = schedule.id;
-        LoanPolicyActions.createApi(LoanPolicyActions.getDefaultLoanPolicy(testData.limitOfItem, schedule.id))
+        LoanPolicyActions.createViaApi(LoanPolicyActions.getDefaultLoanPolicy(testData.limitOfItem, schedule.id))
           .then((policy) => {
             testData.loanPolicy = policy;
           });
@@ -132,7 +132,7 @@ describe('ui-requests: title-level-requests', () => {
 
     InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(item.itemBarcode);
     CirculationRules.deleteRuleApi(testData.baseRules);
-    RequestPolicy.deleteApi(testData.requestPolicy.id);
+    RequestPolicy.deleteViaApi(testData.requestPolicy.id);
     cy.deleteLoanPolicy(testData.loanPolicy.id);
     FixedDueDateSchedules.deleteViaApi(testData.scheduleId);
   });

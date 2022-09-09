@@ -23,7 +23,7 @@ export default {
         return body;
       });
   },
-  deleteApi(id) {
+  deleteViaApi(id) {
     return cy.okapiRequest({
       method: 'DELETE',
       path: `request-policy-storage/request-policies/${id}`,

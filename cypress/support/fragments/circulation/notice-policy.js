@@ -64,7 +64,7 @@ export default {
         },
       });
   },
-  createApi() {
+  createViaApi() {
     return cy
       .okapiRequest({
         method: 'POST',
@@ -86,7 +86,7 @@ export default {
         return policy.body.patronNoticePolicies;
       });
   },
-  deleteApi(id) {
+  deleteViaApi(id) {
     return cy.okapiRequest({
       method: 'DELETE',
       path: `patron-notice-policy-storage/patron-notice-policies/${id}`,

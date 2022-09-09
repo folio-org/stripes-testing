@@ -87,7 +87,7 @@ describe('ui-users:', () => {
           .then(() => {
             FixedDueDateSchedules.createViaApi()
               .then((schedule) => {
-                LoanPolicyActions.createApi(LoanPolicyActions.getDefaultLoanPolicy(limitOfItem, schedule.id))
+                LoanPolicyActions.createViaApi(LoanPolicyActions.getDefaultLoanPolicy(limitOfItem, schedule.id))
                   .then((policy) => {
                     loanPolicy = policy;
                   });
