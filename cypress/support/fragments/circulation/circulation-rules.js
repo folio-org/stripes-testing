@@ -94,11 +94,11 @@ export default {
 
     return baseRuleProps;
   },
-  addRuleApi(defaultRules, ruleParams, priority, priorityId) {
+  addRuleViaApi(defaultRules, ruleParams, priority, priorityId) {
     const withNewRule = defaultRules + ' \n' + priority + priorityId + ': i ' + ruleParams.i + ' l ' + ruleParams.l + ' r ' + ruleParams.r + ' o ' + ruleParams.o + ' n ' + ruleParams.n;
     return cy.updateCirculationRules({ rulesAsText: withNewRule });
   },
-  deleteRuleApi(defaultRules) {
+  deleteRuleViaApi(defaultRules) {
     return cy.updateCirculationRules({ rulesAsText: defaultRules });
   }
 };

@@ -98,7 +98,7 @@ describe('ui-requests: title-level-requests', () => {
       testData.ruleProps.r = testData.requestPolicy.id;
       testData.ruleProps.l = testData.loanPolicy.id;
 
-      CirculationRules.addRuleApi(res.rulesAsText, testData.ruleProps, 'g ', testData.patronGroup.id).then(() => {
+      CirculationRules.addRuleViaApi(res.rulesAsText, testData.ruleProps, 'g ', testData.patronGroup.id).then(() => {
         // checkout must happen after creating new circ rule
         Checkout.checkoutItemViaApi({
           itemBarcode: item.itemBarcode,
@@ -125,7 +125,7 @@ describe('ui-requests: title-level-requests', () => {
     });
 
     InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(item.itemBarcode);
-    CirculationRules.deleteRuleApi(testData.baseRules);
+    CirculationRules.deleteRuleViaApi(testData.baseRules);
     RequestPolicy.deleteViaApi(testData.requestPolicy.id);
     cy.deleteLoanPolicy(testData.loanPolicy.id);
   });

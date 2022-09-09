@@ -132,7 +132,7 @@ describe('Recieving notice: Checkout', () => {
         InventoryInstance.deleteInstanceViaApi(instance.id);
       });
 
-    CirculationRules.deleteRuleApi(testData.baseRules);
+    CirculationRules.deleteRuleViaApi(testData.baseRules);
     NoticePolicyApi.deleteViaApi(testData.ruleProps.n);
     NoticePolicyTemplateApi.getViaApi({ query: `name=${noticePolicyTemplate.name}` }).then((templateId) => {
       NoticePolicyTemplateApi.deleteViaApi(templateId);
@@ -162,7 +162,7 @@ describe('Recieving notice: Checkout', () => {
       NewNoticePolicy.checkNoticeActions(noticePolicy);
       cy.getNoticePolicy({ query: `name=="${noticePolicy.name}"` }).then((res) => {
         testData.ruleProps.n = res[0].id;
-        CirculationRules.addRuleApi(testData.baseRules, testData.ruleProps, 'g ', patronGroup.id);
+        CirculationRules.addRuleViaApi(testData.baseRules, testData.ruleProps, 'g ', patronGroup.id);
       });
 
       cy.visit(topMenu.checkOutPath);
