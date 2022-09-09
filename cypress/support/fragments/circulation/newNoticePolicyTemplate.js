@@ -1,6 +1,6 @@
 /* eslint-disable cypress/no-unnecessary-waiting */
 import getRandomPostfix from '../../utils/stringTools';
-import { Button, TextField, TextArea, KeyValue, Checkbox, Link, Heading, Select, PaneSet } from '../../../../interactors';
+import { Button, TextField, TextArea, KeyValue, Checkbox, Link, Heading, Select, Pane } from '../../../../interactors';
 import richTextEditor from '../../../../interactors/rich-text-editor';
 import { NOTICE_CATEGORIES } from './notice-policy';
 import { actionsButtons } from './newNoticePolicy';
@@ -10,6 +10,7 @@ const titles = {
   newTemplate: 'New patron notice template',
   templates: 'Patron notice templates'
 };
+const saveButton = Button({ id: 'footer-save-entity' });
 const newButton = Button({ id: 'clickable-create-entry' });
 const actionsButton = Button('Actions');
 const tokenButton = Button('{ }');
@@ -35,15 +36,13 @@ export default {
   },
 
   openToSide(noticePolicyTemplate) {
-    cy.do(Link(noticePolicyTemplate.name).click());
+    return cy.do(Link(noticePolicyTemplate.name).click());
   },
 
   // noticePolicyTemplate must have the exact structure as newNoticePolicyTemplate.defaultUi on 14th line
   create: (noticePolicyTemplate) => {
-    cy.get('#template-editor')
-      .type('{selectAll}')
-      .type(noticePolicyTemplate.body, { parseSpecialCharSequences: false }); // TODO: research why <bodyField.fillIn(noticePolicyTemplate.body)> doesn't work
-    cy.do([
+    return cy.do([
+      bodyField.fillIn(noticePolicyTemplate.body),
       nameField.fillIn(noticePolicyTemplate.name),
       descriptionField.fillIn(noticePolicyTemplate.description),
       subjectField.fillIn(noticePolicyTemplate.subject),
@@ -51,26 +50,26 @@ export default {
   },
 
   startAdding() {
-    cy.do(newButton.click());
+    return cy.do(newButton.click());
   },
 
-  addToken(noticePolicyTemplate) {
+  addToken(noticePolicyTemplateToken) {
     cy.do(tokenButton.click());
     cy.expect(Heading(titles.addToken).exists());
     cy.do([
-      Checkbox(`${noticePolicyTemplate.token}`).click(),
+      Checkbox(`${noticePolicyTemplateToken}`).click(),
       // waiting for the html body input to be available for adding symbols
       cy.wait(1000),
       addTokenButton.click(),
     ]);
-    cy.do(bodyField.has({ value: `{{${noticePolicyTemplate.token}}}` }));
+    cy.do(bodyField.has({ value: `{{${noticePolicyTemplateToken}}}` }));
+    return cy.wrap(noticePolicyTemplateToken);
   },
 
-  save() {
-    cy.do([
-      Button({ id: 'footer-save-entity' }).click(),
-      Button({ icon: 'times' }).click(),
-    ]);
+  saveAndClose() {
+    return cy.do([saveButton.exists(),
+      saveButton.has({ disabled: false }),
+      saveButton.click()]);
   },
 
   checkNewButton() {
@@ -81,21 +80,20 @@ export default {
   },
 
   checkTemplateActions(noticePolicyTemplate) {
-    cy.expect([
+    return cy.do([
       this.openToSide(noticePolicyTemplate),
-      actionsButton.click(),
       actionsButton.click(),
       actionsButtons.duplicate.exists(),
       actionsButtons.duplicate.has({ visible: true }),
       actionsButtons.edit.exists(),
-      actionsButtons.duplicate.exists({ visible: true }),
+      actionsButtons.edit.has({ visible: true }),
       actionsButtons.delete.exists(),
-      actionsButtons.duplicate.exists({ visible: true }),
+      actionsButtons.delete.has({ visible: true }),
     ]);
   },
 
   checkInitialState() {
-    cy.expect([
+    return cy.expect([
       Heading(titles.newTemplate).exists(),
       nameField.exists(),
       descriptionField.exists(),
@@ -118,7 +116,7 @@ export default {
   },
 
   checkAfterSaving: (noticePolicyTemplate) => {
-    Object.values(noticePolicyTemplate).forEach((prop) => cy.expect(PaneSet().find(KeyValue({ value: prop }))));
+    Object.values(noticePolicyTemplate).forEach((prop) => cy.expect(Pane(noticePolicyTemplate.name).find(KeyValue({ value: prop })).exists()));
   },
 
   delete: () => {

@@ -9,7 +9,6 @@ import SearchPane from '../../support/fragments/circulation-log/searchPane';
 import CirculationRules from '../../support/fragments/circulation/circulation-rules';
 import NoticePolicyApi, { NOTICE_CATEGORIES, NOTICE_ACTIONS } from '../../support/fragments/circulation/notice-policy';
 import NoticePolicyTemplateApi from '../../support/fragments/circulation/notice-policy-template';
-import PatronGroups from '../../support/fragments/settings/users/patronGroups';
 import CheckInActions from '../../support/fragments/check-in-actions/checkInActions';
 import NewNoticePolicy from '../../support/fragments/circulation/newNoticePolicy';
 import NewNoticePolicyTemplate from '../../support/fragments/circulation/newNoticePolicyTemplate';
@@ -17,13 +16,10 @@ import CheckOutActions from '../../support/fragments/check-out-actions/check-out
 import DefaultUser from '../../support/fragments/users/userDefaultObjects/defaultUser';
 import loanPolicy from '../../support/fragments/circulation/loan-policy';
 import InventoryHoldings from '../../support/fragments/inventory/holdings/inventoryHoldings';
-import Users from '../../support/fragments/users/users';
 import MultipieceCheckOut from '../../support/fragments/checkout/modals/multipieceCheckOut';
-import UserEdit from '../../support/fragments/users/userEdit';
 import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
 import InventoryInstance from '../../support/fragments/inventory/inventoryInstance';
 
-// TODO Add email notice check after checktout: https://issues.folio.org/browse/FAT-1854
 describe('Recieving notice: Checkin', () => {
   const noticePolicyTemplate = { ...NewNoticePolicyTemplate.defaultUi };
   const noticePolicy = { ...NewNoticePolicy.defaultUi };
@@ -58,22 +54,10 @@ describe('Recieving notice: Checkin', () => {
     noticePolicy.noticeId = NOTICE_CATEGORIES.loan.id;
 
     cy.getAdminToken();
-    PatronGroups.createViaApi()
-      .then(res => {
-        patronGroup.id = res;
-        Users.createViaApi({
-          patronGroup: res,
-          ...userData
-        }).then((createdUser) => {
-          userData.id = createdUser.id;
-        });
-      });
 
     ServicePoints.getViaApi({ limit: 1, query: 'pickupLocation=="true"' })
       .then((servicePoints) => {
-        UserEdit.addServicePointViaApi(servicePoints[0].id, userData.id).then((points) => {
-          testData.userServicePoint = points.body.defaultServicePointId;
-        });
+        testData.userServicePoint = servicePoints[0].id;
         cy.getMaterialTypes({ limit: 1 }).then((res) => { testData.materialType = res.id; });
         cy.getLocations({ limit: 1 }).then((res) => { testData.location = res.id; });
         cy.getHoldingTypes({ limit: 1 }).then((res) => { testData.holdingType = res[0].id; });
@@ -124,9 +108,6 @@ describe('Recieving notice: Checkin', () => {
       itemBarcode: ITEM_BARCODE,
       servicePointId: testData.userServicePoint,
       checkInDate: moment.utc().format(),
-    }).then(() => {
-      Users.deleteViaApi(userData.id);
-      PatronGroups.deleteViaApi(patronGroup.id);
     });
 
     cy.getInstance({ limit: 1, expandAll: true, query: `"items.barcode"=="${ITEM_BARCODE}"` })
@@ -136,7 +117,7 @@ describe('Recieving notice: Checkin', () => {
         InventoryInstance.deleteInstanceViaApi(instance.id);
       });
 
-    CirculationRules.deleteRuleApi(testData.baseRules);
+    CirculationRules.deleteRuleViaApi(testData.baseRules);
     NoticePolicyApi.deleteApi(testData.ruleProps.n);
     NoticePolicyTemplateApi.getViaApi({ query: `name=${noticePolicyTemplate.name}` }).then((templateId) => {
       NoticePolicyTemplateApi.deleteViaApi(templateId);
@@ -144,13 +125,13 @@ describe('Recieving notice: Checkin', () => {
   });
 
   it('C347623 Check that user can receive notice with multiple items after finishing the session "Check in" by clicking the End Session button (vega)',
-    { tags: [testTypes.smoke, devTeams.vega, testTypes.broken] }, () => {
+    { tags: [testTypes.smoke, devTeams.vega] }, () => {
       NewNoticePolicyTemplate.startAdding();
       NewNoticePolicyTemplate.checkInitialState();
       NewNoticePolicyTemplate.addToken(noticePolicyTemplate);
       noticePolicyTemplate.body += '{{item.title}}';
       NewNoticePolicyTemplate.create(noticePolicyTemplate);
-      NewNoticePolicyTemplate.save();
+      NewNoticePolicyTemplate.saveAndClose();
       NewNoticePolicyTemplate.checkAfterSaving(noticePolicyTemplate);
       NewNoticePolicyTemplate.checkTemplateActions(noticePolicyTemplate);
 
@@ -166,7 +147,7 @@ describe('Recieving notice: Checkin', () => {
       NewNoticePolicy.checkNoticeActions(noticePolicy);
       cy.getNoticePolicy({ query: `name=="${noticePolicy.name}"` }).then((res) => {
         testData.ruleProps.n = res[0].id;
-        CirculationRules.addRuleApi(testData.baseRules, testData.ruleProps, 'g ', patronGroup.id);
+        CirculationRules.addRuleViaApi(testData.baseRules, testData.ruleProps, 'g ', patronGroup.id);
       });
 
       cy.visit(topMenu.checkOutPath);
