@@ -11,7 +11,7 @@ export const defaultRequestPolicy = {
 };
 
 export default {
-  createApi(requestPolicyBody = defaultRequestPolicy) {
+  createViaApi(requestPolicyBody = defaultRequestPolicy) {
     return cy
       .okapiRequest({
         method: 'POST',

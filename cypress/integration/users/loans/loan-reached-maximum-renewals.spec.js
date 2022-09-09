@@ -48,7 +48,7 @@ describe('ui-users-loans: renewal failure because loan has reached maximum renew
         rulesDefaultString = rules.rulesAsText;
       });
 
-    RequestPolicy.createApi();
+    RequestPolicy.createViaApi();
     LostItemFeePolicy.createViaApi();
     OverdueFinePolicy.createApi();
     NoticePolicy.createApi();

@@ -52,7 +52,7 @@ describe('ui-requests: title-level-requests', () => {
     cy.getAdminToken();
 
     // Create request policy that allows recalls and pages
-    RequestPolicy.createApi(requestPolicyWithRecall).then((body) => {
+    RequestPolicy.createViaApi(requestPolicyWithRecall).then((body) => {
       testData.requestPolicy = body;
     });
 
