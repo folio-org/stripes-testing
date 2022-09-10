@@ -39,14 +39,17 @@ export default {
     return cy.do(Link(noticePolicyTemplate.name).click());
   },
 
-  // noticePolicyTemplate must have the exact structure as newNoticePolicyTemplate.defaultUi on 14th line
   create: (noticePolicyTemplate) => {
-    return cy.do([
+    cy.get('#input-patron-notice-name').type(noticePolicyTemplate.name);
+    cy.do([
       bodyField.fillIn(noticePolicyTemplate.body),
-      nameField.fillIn(noticePolicyTemplate.name),
       descriptionField.fillIn(noticePolicyTemplate.description),
       subjectField.fillIn(noticePolicyTemplate.subject),
+      bodyField.has({ value: noticePolicyTemplate.body }),
+      descriptionField.has({ value: noticePolicyTemplate.description }),
+      subjectField.has({ value: noticePolicyTemplate.subject }),
     ]);
+    cy.get('#footer-save-entity').click();
   },
 
   startAdding() {
@@ -67,10 +70,8 @@ export default {
   },
 
   saveAndClose() {
-    return cy.do([saveButton.exists(),
-      saveButton.has({ disabled: false }),
+    return cy.do([saveButton.has({ disabled: false }),
       saveButton.click(),
-      Button({ icon: 'times' }).click(),
     ]);
   },
 
