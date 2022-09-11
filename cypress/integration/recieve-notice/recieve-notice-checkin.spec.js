@@ -1,5 +1,4 @@
 import uuid from 'uuid';
-import moment from 'moment';
 import permissions from '../../support/dictionary/permissions';
 import topMenu from '../../support/fragments/topMenu';
 import settingsMenu from '../../support/fragments/settingsMenu';
@@ -64,7 +63,7 @@ describe('Recieving notice: Checkout', () => {
   };
   const testData = {
     noticePolicyTemplateToken: 'item.title',
-    userServicePoint: ServicePoints.getDefaultServicePointWithPickUpLocation('autotest receive notice checkout', uuid()),
+    userServicePoint: ServicePoints.getDefaultServicePointWithPickUpLocation('autotest receive notice check in', uuid()),
   };
   const searchResultsData = {
     userBarcode: null,
