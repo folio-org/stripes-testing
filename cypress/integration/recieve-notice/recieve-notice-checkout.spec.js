@@ -151,34 +151,28 @@ describe('Recieving notice: Checkout', () => {
         servicePointId: testData.userServicePoint.id,
         checkInDate: moment.utc().format(),
       });
-    }).then(() => {
-      UserEdit.changeServicePointPreferenceViaApi(userData.userId, [testData.userServicePoint.id]);
-      CirculationRules.deleteRuleViaApi(testData.baseRules);
-    }).then(() => {
-      ServicePoints.deleteViaApi(testData.userServicePoint.id);
-      NoticePolicyApi.deleteApi(testData.ruleProps.n);
-      Users.deleteViaApi(userData.userId)
-        .then(
-          () => {
-            cy.get('@items').each(
-              (item, index) => {
-                cy.deleteItem(item.itemId);
-                cy.deleteHoldingRecordViaApi(itemsData.itemsWithSeparateInstance[index].holdingId);
-                InventoryInstance.deleteInstanceViaApi(itemsData.itemsWithSeparateInstance[index].instanceId);
-              }
-            ).then(() => {
-              Location.deleteViaApiIncludingInstitutionCampusLibrary(
-                testData.defaultLocation.institutionId,
-                testData.defaultLocation.campusId,
-                testData.defaultLocation.libraryId,
-                testData.defaultLocation.id
-              );
-            });
-            NoticePolicyTemplateApi.getViaApi({ query: `name=${noticePolicyTemplate.name}` }).then((templateId) => {
-              NoticePolicyTemplateApi.deleteViaApi(templateId);
-            });
-          }
-        );
+    });
+    UserEdit.changeServicePointPreferenceViaApi(userData.userId, [testData.userServicePoint.id]);
+    CirculationRules.deleteRuleViaApi(testData.baseRules);
+    ServicePoints.deleteViaApi(testData.userServicePoint.id);
+    NoticePolicyApi.deleteApi(testData.ruleProps.n);
+    Users.deleteViaApi(userData.userId);
+    PatronGroups.deleteViaApi(patronGroup.id);
+    cy.get('@items').each(
+      (item, index) => {
+        cy.deleteItem(item.itemId);
+        cy.deleteHoldingRecordViaApi(itemsData.itemsWithSeparateInstance[index].holdingId);
+        InventoryInstance.deleteInstanceViaApi(itemsData.itemsWithSeparateInstance[index].instanceId);
+      }
+    );
+    Location.deleteViaApiIncludingInstitutionCampusLibrary(
+      testData.defaultLocation.institutionId,
+      testData.defaultLocation.campusId,
+      testData.defaultLocation.libraryId,
+      testData.defaultLocation.id
+    );
+    NoticePolicyTemplateApi.getViaApi({ query: `name=${noticePolicyTemplate.name}` }).then((templateId) => {
+      NoticePolicyTemplateApi.deleteViaApi(templateId);
     });
   });
 
@@ -192,48 +186,36 @@ describe('Recieving notice: Checkout', () => {
       NewNoticePolicyTemplate.checkAfterSaving(noticePolicyTemplate);
       NewNoticePolicyTemplate.checkTemplateActions(noticePolicyTemplate);
 
-      cy.visit(settingsMenu.circulationPatronNoticePoliciesPath).then(() => {
-        NewNoticePolicy.waitLoading();
-        NewNoticePolicy.startAdding().then(() => {
-          NewNoticePolicy.checkInitialState();
-          NewNoticePolicy.fillGeneralInformation(noticePolicy);
-          NewNoticePolicy.addNotice(noticePolicy).then(() => {
-            NewNoticePolicy.save();
-          });
-        }).then(() => {
-          NewNoticePolicy.check(noticePolicy);
-          NewNoticePolicy.checkAfterSaving(noticePolicy);
-          NewNoticePolicy.checkNoticeActions(noticePolicy);
-        });
+      cy.visit(settingsMenu.circulationPatronNoticePoliciesPath);
+      NewNoticePolicy.waitLoading();
+      NewNoticePolicy.startAdding();
+      NewNoticePolicy.checkInitialState();
+      NewNoticePolicy.fillGeneralInformation(noticePolicy);
+      NewNoticePolicy.addNotice(noticePolicy);
+      NewNoticePolicy.save();
+      NewNoticePolicy.check(noticePolicy);
+      NewNoticePolicy.checkAfterSaving(noticePolicy);
+      NewNoticePolicy.checkNoticeActions(noticePolicy);
 
-        cy.getNoticePolicy({ query: `name=="${noticePolicy.name}"` }).then((res) => {
-          testData.ruleProps.n = res[0].id;
-          CirculationRules.addRuleViaApi(testData.baseRules, testData.ruleProps, 'g ', patronGroup.id);
-        });
+      cy.getNoticePolicy({ query: `name=="${noticePolicy.name}"` }).then((res) => {
+        testData.ruleProps.n = res[0].id;
+        CirculationRules.addRuleViaApi(testData.baseRules, testData.ruleProps, 'g ', patronGroup.id);
       });
 
+      cy.visit(topMenu.checkOutPath);
+      CheckOutActions.checkOutUser(userData.barcode);
+      CheckOutActions.checkUserInfo(userData, patronGroup.name);
+      cy.get('@items').each(
+        (item) => {
+          CheckOutActions.checkOutItem(item.barcode);
+          Checkout.verifyResultsInTheRow([item.barcode]);
+        }
+      );
+      CheckOutActions.endCheckOutSession();
 
-      cy.visit(topMenu.checkOutPath).then(() => {
-        CheckOutActions.checkOutUser(userData.barcode).then(() => {
-          CheckOutActions.checkUserInfo(userData, patronGroup.name)
-            .then(() => {
-              cy.get('@items').each(
-                (item) => {
-                  CheckOutActions.checkOutItem(item.barcode).then(() => {
-                    Checkout.verifyResultsInTheRow([item.barcode]);
-                  });
-                }
-              );
-            }).then(() => {
-              CheckOutActions.endCheckOutSession();
-            });
-        });
-      });
-
-      cy.visit(topMenu.circulationLogPath).then(() => {
-        SearchPane.searchByUserBarcode(userData.barcode);
-        SearchPane.verifyResultCells();
-        SearchPane.checkResultSearch(searchResultsData);
-      });
+      cy.visit(topMenu.circulationLogPath);
+      SearchPane.searchByUserBarcode(userData.barcode);
+      SearchPane.verifyResultCells();
+      SearchPane.checkResultSearch(searchResultsData);
     });
 });

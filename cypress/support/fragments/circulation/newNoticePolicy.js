@@ -104,7 +104,6 @@ export default {
   save: () => {
     cy.do([
       Button({ id: 'footer-save-entity' }).click(),
-      // Button({ icon: 'times' }).click(),
     ]);
   },
 

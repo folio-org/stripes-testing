@@ -1,10 +1,16 @@
+import uuid from 'uuid';
 import moment from 'moment';
+import permissions from '../../support/dictionary/permissions';
 import topMenu from '../../support/fragments/topMenu';
 import settingsMenu from '../../support/fragments/settingsMenu';
 import generateItemBarcode from '../../support/utils/generateItemBarcode';
 import testTypes from '../../support/dictionary/testTypes';
 import devTeams from '../../support/dictionary/devTeams';
-
+import UserEdit from '../../support/fragments/users/userEdit';
+import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
+import PatronGroups from '../../support/fragments/settings/users/patronGroups';
+import Location from '../../support/fragments/settings/tenant/locations/newLocation';
+import Users from '../../support/fragments/users/users';
 import SearchPane from '../../support/fragments/circulation-log/searchPane';
 import CirculationRules from '../../support/fragments/circulation/circulation-rules';
 import NoticePolicyApi, { NOTICE_CATEGORIES, NOTICE_ACTIONS } from '../../support/fragments/circulation/notice-policy';
@@ -13,125 +19,164 @@ import CheckInActions from '../../support/fragments/check-in-actions/checkInActi
 import NewNoticePolicy from '../../support/fragments/circulation/newNoticePolicy';
 import NewNoticePolicyTemplate from '../../support/fragments/circulation/newNoticePolicyTemplate';
 import CheckOutActions from '../../support/fragments/check-out-actions/check-out-actions';
-import DefaultUser from '../../support/fragments/users/userDefaultObjects/defaultUser';
-import loanPolicy from '../../support/fragments/circulation/loan-policy';
-import InventoryHoldings from '../../support/fragments/inventory/holdings/inventoryHoldings';
-import MultipieceCheckOut from '../../support/fragments/checkout/modals/multipieceCheckOut';
+import Checkout from '../../support/fragments/checkout/checkout';
 import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
 import InventoryInstance from '../../support/fragments/inventory/inventoryInstance';
+import getRandomPostfix from '../../support/utils/stringTools';
 
-describe('Recieving notice: Checkin', () => {
-  const noticePolicyTemplate = { ...NewNoticePolicyTemplate.defaultUi };
-  const noticePolicy = { ...NewNoticePolicy.defaultUi };
-  const ITEM_BARCODE = generateItemBarcode();
-  const patronGroup = {};
-  const userData = { ...DefaultUser.defaultApiPatron };
-  const searchResultsData = {
-    userBarcode: userData.barcode,
-    itemBarcode: ITEM_BARCODE,
-    objectType1: NOTICE_CATEGORIES.loan.name,
-    objectType2: 'Notice',
-    circAction1: 'Checked in',
-    circAction2: 'Closed loan',
-    circAction3: 'Checked out',
-    // TODO: add check for date with format <C6/8/2022, 6:46 AM>
-    servicePoint: 'Online',
-    source1: 'ADMINISTRATOR, DIKU',
-    source2: 'System',
-    desc: 'Checked out to proxy: no.',
+function generateUniqueItemBarcodeWithShift(index = 0) {
+  return ((generateItemBarcode() - Math.round(getRandomPostfix())) + '').substring(index);
+}
+
+describe('Recieving notice: Checkout', () => {
+  const noticePolicyTemplate = { ...NewNoticePolicyTemplate.defaultUi,
+    category: NOTICE_CATEGORIES.loan.name };
+  const noticePolicy = { ...NewNoticePolicy.defaultUi,
+    templateName: noticePolicyTemplate.name,
+    format: 'Email',
+    action: NOTICE_ACTIONS.checkin,
+    noticeName: NOTICE_CATEGORIES.loan.name,
+    noticeId: NOTICE_CATEGORIES.loan.id };
+  const patronGroup = {
+    name: 'groupToTestNoticeCheckout' + getRandomPostfix()
+  };
+  const userData = {
+    personal: {
+      lastname: null
+    }
+  };
+  const itemsData = {
+    itemsWithSeparateInstance: [{
+      instanceTitle: `Instance ${getRandomPostfix()}`,
+    },
+    {
+      instanceTitle: `Instance ${getRandomPostfix()}`,
+    },
+    {
+      instanceTitle: `Instance ${getRandomPostfix()}`,
+    },
+    {
+      instanceTitle: `Instance ${getRandomPostfix()}`,
+    },
+    {
+      instanceTitle: `Instance ${getRandomPostfix()}`,
+    }]
   };
   const testData = {
-    instanceTitle: `Pre-checkin_instance_${Number(new Date())}`
+    noticePolicyTemplateToken: 'item.title',
+    userServicePoint: ServicePoints.getDefaultServicePointWithPickUpLocation('autotest receive notice checkout', uuid()),
+  };
+  const searchResultsData = {
+    userBarcode: null,
+    object: 'Notice',
+    circAction: 'Send',
+    // TODO: add check for date with format <C6/8/2022, 6:46 AM>
+    servicePoint: testData.userServicePoint.name,
+    source: 'System',
+    desc: `Template: ${noticePolicyTemplate.name}. Triggering event: Check in.`,
   };
 
   beforeEach('Preconditions', () => {
-    noticePolicyTemplate.token = 'item.title';
-    noticePolicyTemplate.category = NOTICE_CATEGORIES.loan.name;
-    noticePolicy.templateName = noticePolicyTemplate.name;
-    noticePolicy.format = 'Email';
-    noticePolicy.action = NOTICE_ACTIONS.checkin;
-    noticePolicy.noticeName = NOTICE_CATEGORIES.loan.name;
-    noticePolicy.noticeId = NOTICE_CATEGORIES.loan.id;
-
-    cy.getAdminToken();
-
-    ServicePoints.getViaApi({ limit: 1, query: 'pickupLocation=="true"' })
-      .then((servicePoints) => {
-        testData.userServicePoint = servicePoints[0].id;
-        cy.getMaterialTypes({ limit: 1 }).then((res) => { testData.materialType = res.id; });
-        cy.getLocations({ limit: 1 }).then((res) => { testData.location = res.id; });
-        cy.getHoldingTypes({ limit: 1 }).then((res) => { testData.holdingType = res[0].id; });
-        InventoryHoldings.getHoldingSources({ limit: 1 }).then((res) => { testData.holdingSource = res[0].id; });
-        cy.getInstanceTypes({ limit: 1 }).then((res) => { testData.instanceType = res[0].id; });
-        cy.getLoanTypes({ limit: 1 }).then((res) => { testData.loanType = res[0].id; });
-      })
-
+    itemsData.itemsWithSeparateInstance.forEach(function (item, index) { item.barcode = generateUniqueItemBarcodeWithShift(index); });
+    searchResultsData.itemBarcode = itemsData.itemsWithSeparateInstance[0].barcode;
+    cy.getAdminToken().then(() => {
+      cy.getInstanceTypes({ limit: 1 }).then((instanceTypes) => { testData.instanceTypeId = instanceTypes[0].id; });
+      cy.getHoldingTypes({ limit: 1 }).then((res) => { testData.holdingTypeId = res[0].id; });
+      ServicePoints.createViaApi(testData.userServicePoint);
+      testData.defaultLocation = Location.getDefaultLocation(testData.userServicePoint.id);
+      Location.createViaApi(testData.defaultLocation);
+      cy.getLoanTypes({ limit: 1 }).then((res) => { testData.loanTypeId = res[0].id; });
+      cy.getMaterialTypes({ limit: 1 }).then((res) => {
+        testData.materialTypeId = res.id;
+        testData.materialTypeName = res.name;
+      });
+    })
       .then(() => {
-        cy.createInstance({
-          instance: {
-            instanceTypeId: testData.instanceType,
-            title: testData.instanceTitle,
+        itemsData.itemsWithSeparateInstance.forEach((item, index) => {
+          InventoryInstances.createFolioInstanceViaApi({ instance: {
+            instanceTypeId: testData.instanceTypeId,
+            title: item.instanceTitle,
           },
           holdings: [{
-            holdingsTypeId: testData.holdingType,
-            permanentLocationId: testData.location,
-            sourceId: testData.holdingSource,
+            holdingsTypeId: testData.holdingTypeId,
+            permanentLocationId: testData.defaultLocation.id,
           }],
-          items: [
-            [{
-              barcode: ITEM_BARCODE,
-              missingPieces: '3',
-              numberOfMissingPieces: '3',
-              status: { name: 'Available' },
-              permanentLoanType: { id: testData.loanType },
-              materialType: { id: testData.materialType },
-            }],
-          ],
+          items:[{
+            barcode: item.barcode,
+            status:  { name: 'Available' },
+            permanentLoanType: { id: testData.loanTypeId },
+            materialType: { id: testData.materialTypeId },
+          }] }).then(specialInstanceIds => {
+            itemsData.itemsWithSeparateInstance[index].instanceId = specialInstanceIds.instanceId;
+            itemsData.itemsWithSeparateInstance[index].holdingId = specialInstanceIds.holdingIds[0].id;
+            itemsData.itemsWithSeparateInstance[index].itemId = specialInstanceIds.holdingIds[0].itemIds;
+          });
         });
+        cy.wrap(itemsData.itemsWithSeparateInstance).as('items');
       });
+    PatronGroups.createViaApi(patronGroup.name)
+      .then(res => {
+        patronGroup.id = res;
+        cy.createTempUser([permissions.checkinAll.gui,
+          permissions.checkoutAll.gui,
+          permissions.circulationLogAll.gui,
+          permissions.uiCirculationSettingsNoticeTemplates.gui,
+          permissions.uiCirculationSettingsNoticePolicies.gui
+        ], patronGroup.name)
+          .then(userProperties => {
+            userData.username = userProperties.username;
+            userData.password = userProperties.password;
+            userData.userId = userProperties.userId;
+            userData.barcode = userProperties.barcode;
+            userData.personal.lastname = userProperties.lastName;
+            searchResultsData.userBarcode = userProperties.barcode;
+          })
+          .then(() => {
+            UserEdit.addServicePointViaApi(testData.userServicePoint.id,
+              userData.userId, testData.userServicePoint.id);
 
-    cy.getCirculationRules().then((res) => {
-      testData.baseRules = res.rulesAsText;
-      testData.ruleProps = CirculationRules.getRuleProps(res.rulesAsText);
-    });
+            cy.getCirculationRules().then((response) => {
+              testData.baseRules = response.rulesAsText;
+              testData.ruleProps = CirculationRules.getRuleProps(response.rulesAsText);
+            });
 
-    loanPolicy.getApi({ limit: 1 }).then((loanPolicyRes) => {
-      testData.ruleProps.l = loanPolicyRes.body.loanPolicies[0].id;
-      testData.loanNoticeName = loanPolicyRes.body.loanPolicies[0].name;
-    });
-
-    cy.loginAsAdmin({ path: settingsMenu.circulationPatronNoticePoliciesPath, waiter: NewNoticePolicyTemplate.waitLoading });
+            cy.login(userData.username, userData.password, { path: settingsMenu.circulationPatronNoticePoliciesPath, waiter: NewNoticePolicyTemplate.waitLoading });
+          });
+      });
   });
 
   afterEach('Deleting created entities', () => {
-    CheckInActions.checkinItemViaApi({
-      itemBarcode: ITEM_BARCODE,
-      servicePointId: testData.userServicePoint,
-      checkInDate: moment.utc().format(),
-    });
-
-    cy.getInstance({ limit: 1, expandAll: true, query: `"items.barcode"=="${ITEM_BARCODE}"` })
-      .then((instance) => {
-        cy.deleteItem(instance.items[0].id);
-        cy.deleteHoldingRecordViaApi(instance.holdings[0].id);
-        InventoryInstance.deleteInstanceViaApi(instance.id);
-      });
-
+    UserEdit.changeServicePointPreferenceViaApi(userData.userId, [testData.userServicePoint.id]);
     CirculationRules.deleteRuleViaApi(testData.baseRules);
+    ServicePoints.deleteViaApi(testData.userServicePoint.id);
     NoticePolicyApi.deleteApi(testData.ruleProps.n);
+    Users.deleteViaApi(userData.userId);
+    PatronGroups.deleteViaApi(patronGroup.id);
+    cy.get('@items').each(
+      (item, index) => {
+        cy.deleteItem(item.itemId);
+        cy.deleteHoldingRecordViaApi(itemsData.itemsWithSeparateInstance[index].holdingId);
+        InventoryInstance.deleteInstanceViaApi(itemsData.itemsWithSeparateInstance[index].instanceId);
+      }
+    );
+    Location.deleteViaApiIncludingInstitutionCampusLibrary(
+      testData.defaultLocation.institutionId,
+      testData.defaultLocation.campusId,
+      testData.defaultLocation.libraryId,
+      testData.defaultLocation.id
+    );
     NoticePolicyTemplateApi.getViaApi({ query: `name=${noticePolicyTemplate.name}` }).then((templateId) => {
       NoticePolicyTemplateApi.deleteViaApi(templateId);
     });
   });
 
-  it('C347623 Check that user can receive notice with multiple items after finishing the session "Check in" by clicking the End Session button (vega)',
+  it('C347621 Check that user can receive notice with multiple items after finishing the session "Check in" by clicking the End Session button (vega)',
     { tags: [testTypes.smoke, devTeams.vega] }, () => {
       NewNoticePolicyTemplate.startAdding();
       NewNoticePolicyTemplate.checkInitialState();
-      NewNoticePolicyTemplate.addToken(noticePolicyTemplate);
+      NewNoticePolicyTemplate.addToken(testData.noticePolicyTemplateToken);
       noticePolicyTemplate.body += '{{item.title}}';
       NewNoticePolicyTemplate.create(noticePolicyTemplate);
-      NewNoticePolicyTemplate.saveAndClose();
       NewNoticePolicyTemplate.checkAfterSaving(noticePolicyTemplate);
       NewNoticePolicyTemplate.checkTemplateActions(noticePolicyTemplate);
 
@@ -145,6 +190,7 @@ describe('Recieving notice: Checkin', () => {
       NewNoticePolicy.check(noticePolicy);
       NewNoticePolicy.checkAfterSaving(noticePolicy);
       NewNoticePolicy.checkNoticeActions(noticePolicy);
+
       cy.getNoticePolicy({ query: `name=="${noticePolicy.name}"` }).then((res) => {
         testData.ruleProps.n = res[0].id;
         CirculationRules.addRuleViaApi(testData.baseRules, testData.ruleProps, 'g ', patronGroup.id);
@@ -153,19 +199,24 @@ describe('Recieving notice: Checkin', () => {
       cy.visit(topMenu.checkOutPath);
       CheckOutActions.checkOutUser(userData.barcode);
       CheckOutActions.checkUserInfo(userData, patronGroup.name);
-      CheckOutActions.checkOutUser(userData.barcode);
-      CheckOutActions.checkOutItem(ITEM_BARCODE);
-      MultipieceCheckOut.confirmMultipleCheckOut(ITEM_BARCODE);
-      CheckOutActions.checkUserInfo(userData);
-      CheckOutActions.checkItemInfo(ITEM_BARCODE, testData.instanceTitle);
+      cy.get('@items').each(
+        (item) => {
+          CheckOutActions.checkOutItem(item.barcode);
+          Checkout.verifyResultsInTheRow([item.barcode]);
+        }
+      );
       CheckOutActions.endCheckOutSession();
 
       cy.visit(topMenu.checkInPath);
-      cy.checkInItem(ITEM_BARCODE);
+      cy.get('@items').each((item) => {
+        CheckInActions.checkInItem(item.barcode);
+        CheckInActions.verifyLastCheckInItem(item.barcode);
+      });
+      CheckInActions.endCheckInSession();
 
       cy.visit(topMenu.circulationLogPath);
-      SearchPane.searchByItemBarcode(ITEM_BARCODE);
+      SearchPane.searchByUserBarcode(userData.barcode);
       SearchPane.verifyResultCells();
-      SearchPane.checkResultSearch(searchResultsData, 3);
+      SearchPane.checkResultSearch(searchResultsData);
     });
 });
