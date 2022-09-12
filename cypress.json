@@ -1,5 +1,5 @@
 {
-  "baseUrl": "https://folio-testing-cypress.ci.folio.org",
+  "baseUrl": "https://folio-testing-cypress-diku.ci.folio.org",
   "viewportWidth": 1920,
   "viewportHeight": 1080,
   "video": false,
