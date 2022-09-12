@@ -17,8 +17,8 @@ describe('eHoldings packages management', () => {
 
   it('C688 Add all titles in a package to your holdings (spitfire)', { tags: [testType.smoke, devTeams.spitfire, features.eHoldings] }, () => {
     cy.createTempUser([permissions.uieHoldingsRecordsEdit.gui,
-    permissions.uieHoldingsPackageTitleSelectUnselect.gui,
-    permissions.moduleeHoldingsEnabled.gui
+      permissions.uieHoldingsPackageTitleSelectUnselect.gui,
+      permissions.moduleeHoldingsEnabled.gui
     ]).then(userProperties => {
       userId = userProperties.userId;
       eHoldingsPackages.getNotSelectedPackageIdViaApi().then(specialPackage => {
@@ -37,7 +37,7 @@ describe('eHoldings packages management', () => {
   it('C3463 Add two tags to package [Edinburgh Scholarship Online] (spitfire)', { tags: [testType.smoke, devTeams.spitfire, features.eHoldings, features.tags] }, () => {
     // TODO: "Tags: All permissions" doesn't have displayName. It's the reason why there is related permission name in response, see https://issues.folio.org/browse/UITAG-51
     cy.createTempUser([permissions.uieHoldingsRecordsEdit.gui,
-    permissions.uiTagsPermissionAll.gui]).then(userProperties => {
+      permissions.uiTagsPermissionAll.gui]).then(userProperties => {
       userId = userProperties.userId;
       cy.login(userProperties.username, userProperties.password);
       cy.visit(TopMenu.eholdingsPath);
@@ -57,7 +57,7 @@ describe('eHoldings packages management', () => {
 
   it('C690 Remove a package from your holdings (spitfire)', { tags: [testType.smoke, devTeams.spitfire, features.eHoldings] }, () => {
     cy.createTempUser([permissions.uieHoldingsRecordsEdit.gui,
-    permissions.uieHoldingsPackageTitleSelectUnselect.gui]).then(userProperties => {
+      permissions.uieHoldingsPackageTitleSelectUnselect.gui]).then(userProperties => {
       userId = userProperties.userId;
       eHoldingsPackages.getNotCustomSelectedPackageIdViaApi().then(specialPackage => {
         cy.login(userProperties.username, userProperties.password,

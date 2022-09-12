@@ -15,7 +15,7 @@ describe('ui-eholdings: Search titles', () => {
 
   before('Creating user and getting info about title', () => {
     cy.createTempUser([permissions.uieHoldingsRecordsEdit.gui,
-    permissions.uieHoldingsPackageTitleSelectUnselect.gui]).then(userProperties => {
+      permissions.uieHoldingsPackageTitleSelectUnselect.gui]).then(userProperties => {
       testData.userId = userProperties.userId;
       cy.login(userProperties.username, userProperties.password, { path: TopMenu.eholdingsPath, waiter: EHoldingsTitlesSearch.waitLoading });
     });

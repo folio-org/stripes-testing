@@ -13,7 +13,7 @@ describe('ui-eholdings: Provider manage', () => {
 
   beforeEach(() => {
     cy.createTempUser([permissions.uieHoldingsRecordsEdit.gui,
-    permissions.moduleeHoldingsEnabled.gui]).then(userProperties => {
+      permissions.moduleeHoldingsEnabled.gui]).then(userProperties => {
       userId = userProperties.userId;
       cy.login(userProperties.username, userProperties.password);
       cy.visit(TopMenu.eholdingsPath);

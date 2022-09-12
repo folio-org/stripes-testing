@@ -22,7 +22,7 @@ describe('eHoldings titles management', () => {
 
   it('C16994 Add a title in a package to holdings (spitfire)', { tags: [testTypes.smoke, devTeams.spitfire, features.eHoldings] }, () => {
     cy.createTempUser([permissions.uieHoldingsRecordsEdit.gui,
-    permissions.uieHoldingsPackageTitleSelectUnselect.gui]).then(userProperties => {
+      permissions.uieHoldingsPackageTitleSelectUnselect.gui]).then(userProperties => {
       userId = userProperties.userId;
       cy.login(userProperties.username, userProperties.password);
       cy.visit(TopMenu.eholdingsPath);
@@ -114,7 +114,7 @@ describe('eHoldings titles management', () => {
 
   it('C693 Create a custom title. (spitfire)', { tags: [testTypes.smoke, devTeams.spitfire, features.eHoldings] }, () => {
     cy.createTempUser([permissions.uieHoldingsRecordsEdit.gui,
-    permissions.uieHoldingsTitlesPackagesCreateDelete.gui]).then(userProperties => {
+      permissions.uieHoldingsTitlesPackagesCreateDelete.gui]).then(userProperties => {
       userId = userProperties.userId;
       eHoldingsPackages.getCustomPackageViaApi().then(packageName => {
         cy.login(userProperties.username, userProperties.password);

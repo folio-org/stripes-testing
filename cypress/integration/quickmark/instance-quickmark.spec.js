@@ -22,10 +22,10 @@ describe('Manage inventory Bib records with quickMarc editor', () => {
   beforeEach(() => {
     // TODO: discuss with Khalilah required set of quickmarc permissions
     cy.createTempUser([permissions.uiQuickMarcQuickMarcAuthoritiesEditorAll.gui,
-    permissions.uiQuickMarcQuickMarcEditorDuplicate.gui,
-    permissions.uiQuickMarcQuickMarcBibliographicEditorAll.gui,
-    permissions.inventoryAll.gui,
-    permissions.uiInventorySingleRecordImport.gui,
+      permissions.uiQuickMarcQuickMarcEditorDuplicate.gui,
+      permissions.uiQuickMarcQuickMarcBibliographicEditorAll.gui,
+      permissions.inventoryAll.gui,
+      permissions.uiInventorySingleRecordImport.gui,
     ]).then(userProperties => {
       userId = userProperties.userId;
       cy.login(userProperties.username, userProperties.password);
