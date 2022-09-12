@@ -8,7 +8,7 @@ describe('ui-circulation-settings: overdue fine policies management', () => {
     cy.loginAsAdmin({ path: SettingsMenu.circulationoVerdueFinePoliciesPath, waiter: OverdueFinePolicies.waitLoading });
   });
 
-  it('C5557: Verify that you can create/edit/delete overdue fine policies', { tags: [devTeams.spitfire, testTypes.smoke] }, () => {
+  it('C5557: Verify that you can create/edit/delete overdue fine policies (spitfire)', { tags: [devTeams.spitfire, testTypes.smoke] }, () => {
     // TODO add check that name is unique
     const overduePolicyProps = ['1.00', '2.00', '3.00', '4.00'];
     const editedOverduePolicyProps = ['5.00', '6.00', '7.00', '8.00'];
