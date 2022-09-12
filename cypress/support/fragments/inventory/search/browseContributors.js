@@ -95,7 +95,7 @@ export default {
   },
 
   checkNonExactSearchResult(contributorA, contributorZ) {
-    cy.do([
+    cy.expect([
       MultiColumnListRow({ index: 0 }).has({ content: '__A_test_contributor_would be here' }),
       rowContributorName(contributorA.name, contributorA.contributorNameType).exists(),
       rowContributorName(contributorZ.name, contributorZ.contributorNameType).exists(),
@@ -103,7 +103,7 @@ export default {
   },
 
   checkExactSearchResult(contributorA, contributorZ) {
-    cy.do([
+    cy.expect([
       MultiColumnListCell(contributorA.name).has({ innerHTML: `<strong>${contributorA.name}</strong>` }),
       rowContributorName(contributorA.name, contributorA.contributorNameType).exists(),
       rowContributorName(contributorZ.name, contributorZ.contributorNameType).exists(),
