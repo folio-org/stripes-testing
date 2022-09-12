@@ -1,6 +1,6 @@
-import { Button, HTML, including } from '@interactors/html';
+import { HTML, including } from '@interactors/html';
 import FileManager from '../../utils/fileManager';
-import { Modal, SelectionOption } from '../../../../interactors';
+import { Modal, SelectionOption, Button } from '../../../../interactors';
 
 const actionsBtn = Button('Actions');
 // interactor doesn't allow to pick second the same select
@@ -8,10 +8,22 @@ function getLocationSelect() {
   return cy.get('select').eq(2);
 }
 
+function getEmailSelect() {
+  return cy.get('select').eq(1);
+}
+
 
 export default {
   openStartBulkEditForm() {
     cy.do(Button(including('Start bulk edit')).click());
+  },
+
+  verifyBulkEditForm() {
+    getEmailSelect().select('Email');
+    cy.expect([
+      Button({ icon: 'plus-sign'}).exists(),
+      Button({ icon: 'trash', disabled: true }).exists(),
+    ])
   },
 
   openActions() {

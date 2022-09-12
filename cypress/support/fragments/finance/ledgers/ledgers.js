@@ -1,5 +1,6 @@
 import { Button, Accordion, Checkbox, SelectionList, Selection, SearchField, TextField, Section } from '../../../../../interactors';
 import FinanceHelper from '../financeHelper';
+import getRandomPostfix from '../../../utils/stringTools';
 
 const createdLedgerNameXpath = '//*[@id="paneHeaderpane-ledger-details-pane-title"]/h2/span';
 const numberOfSearchResultsHeader = '//*[@id="paneHeaderledger-results-pane-subtitle"]/span';
@@ -9,6 +10,13 @@ const fiscalYearCss = 'select[name^="fiscalYearOneId"]';
 
 
 export default {
+  defaultUiLedger: {
+    name: `autotest_ledger_${getRandomPostfix()}`,
+    ledgerStatus: 'Active',
+    code: `test_automation_code_${getRandomPostfix()}`,
+    description: 'This is ledger created by E2E test automation script'
+  },
+
   waitForLedgerDetailsLoading : () => {
     cy.do(Section({ id: 'pane-ledger-details' }).visible);
   },
@@ -93,5 +101,23 @@ export default {
       default:
         cy.log('No such status like ' + ledgerStatus + '. Please use frozen, active or inactive');
     }
-  }
+  },
+
+  createViaApi: (ledgersProperties) => {
+    return cy
+      .okapiRequest({
+        path: 'finance/ledgers',
+        body: ledgersProperties,
+        method: 'POST'
+      })
+      .then((response) => {
+        return response.body;
+      });
+  },
+
+  deleteledgerViaApi: (ledgerId) => cy.okapiRequest({
+    method: 'DELETE',
+    path: `finance/ledgers/${ledgerId}`,
+    isDefaultSearchParamsRequired: false,
+  }),
 };
