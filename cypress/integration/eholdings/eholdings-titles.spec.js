@@ -94,7 +94,7 @@ describe('eHoldings titles management', () => {
 
   it('C691 Remove a title in a package from your holdings (spitfire)', { tags: [testTypes.smoke, devTeams.spitfire, features.eHoldings] }, () => {
     cy.createTempUser([permissions.uieHoldingsRecordsEdit.gui,
-    permissions.uieHoldingsPackageTitleSelectUnselect.gui]).then(userProperties => {
+      permissions.uieHoldingsPackageTitleSelectUnselect.gui]).then(userProperties => {
       userId = userProperties.userId;
 
       eHoldingsTitles.getSelectedNotCustomTitleViaApi('chemical engineering').then(specialTitle => {
