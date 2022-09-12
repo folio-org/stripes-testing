@@ -1,6 +1,6 @@
 import uuid from 'uuid';
 import permissions from '../../support/dictionary/permissions';
-import topMenu from '../../support/fragments/topMenu';
+import TopMenu from '../../support/fragments/topMenu';
 import settingsMenu from '../../support/fragments/settingsMenu';
 import generateItemBarcode from '../../support/utils/generateItemBarcode';
 import testTypes from '../../support/dictionary/testTypes';
@@ -195,7 +195,7 @@ describe('Recieving notice: Checkout', () => {
         CirculationRules.addRuleViaApi(testData.baseRules, testData.ruleProps, 'g ', patronGroup.id);
       });
 
-      cy.visit(topMenu.checkOutPath);
+      cy.visit(TopMenu.checkOutPath);
       CheckOutActions.checkOutUser(userData.barcode);
       CheckOutActions.checkUserInfo(userData, patronGroup.name);
       cy.get('@items').each(
@@ -206,14 +206,14 @@ describe('Recieving notice: Checkout', () => {
       );
       CheckOutActions.endCheckOutSession();
 
-      cy.visit(topMenu.checkInPath);
+      cy.visit(TopMenu.checkInPath);
       cy.get('@items').each((item) => {
         CheckInActions.checkInItem(item.barcode);
         CheckInActions.verifyLastCheckInItem(item.barcode);
       });
       CheckInActions.endCheckInSession();
 
-      cy.visit(topMenu.circulationLogPath);
+      cy.visit(TopMenu.circulationLogPath);
       SearchPane.searchByUserBarcode(userData.barcode);
       SearchPane.verifyResultCells();
       SearchPane.checkResultSearch(searchResultsData);
