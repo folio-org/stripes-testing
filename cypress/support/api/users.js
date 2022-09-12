@@ -41,14 +41,14 @@ Cypress.Commands.add('getUserGroups', (searchParams) => {
     });
 });
 
-Cypress.Commands.add('getFirstUserGroupId', (searchParams, patronGroup) => {
+Cypress.Commands.add('getFirstUserGroupId', (searchParams, patronGroupName) => {
   cy.okapiRequest({
     path: 'groups',
     searchParams,
   }).then((response) => {
     let userGroupIdx = 0;
-    if (patronGroup) {
-      userGroupIdx = response.body.usergroups.findIndex(({ group }) => group === patronGroup) || 0;
+    if (patronGroupName) {
+      userGroupIdx = response.body.usergroups.findIndex(({ group }) => group === patronGroupName) || 0;
     }
     return response.body.usergroups[userGroupIdx].id;
   });
@@ -78,7 +78,7 @@ Cypress.Commands.add('updateUser', (userData) => {
   });
 });
 
-Cypress.Commands.add('createTempUser', (permissions = [], patronGroup) => {
+Cypress.Commands.add('createTempUser', (permissions = [], patronGroupName) => {
   const userProperties = {
     username: `cypressTestUser${getRandomPostfix()}`,
     password: `Password${getRandomPostfix()}`
@@ -86,7 +86,7 @@ Cypress.Commands.add('createTempUser', (permissions = [], patronGroup) => {
 
   cy.getAdminToken();
 
-  cy.getFirstUserGroupId({ limit: patronGroup ? 10 : 1 }, patronGroup)
+  cy.getFirstUserGroupId({ limit: patronGroupName ? 100 : 1 }, patronGroupName)
     .then((userGroupdId) => {
       const queryField = 'displayName';
       cy.getPermissionsApi({ query: `(${queryField}=="${permissions.join(`")or(${queryField}=="`)}"))"` })
@@ -98,27 +98,29 @@ Cypress.Commands.add('createTempUser', (permissions = [], patronGroup) => {
             patronGroup: userGroupdId,
             username: userProperties.username,
             barcode: uuid(),
-            personal: { ...Users.defaultUser.personal, lastName : userProperties.username } }).then(newUserProperties => {
-            userProperties.userId = newUserProperties.id;
-            userProperties.barcode = newUserProperties.barcode;
-            userProperties.firstName = Users.defaultUser.personal.firstName;
-            cy.createRequestPreference({
-              defaultDeliveryAddressTypeId: null,
-              defaultServicePointId: null,
-              delivery: false,
-              fulfillment: 'Hold Shelf',
-              holdShelf: true,
-              id: uuid(),
-              userId:  newUserProperties.id,
+            personal: { ...Users.defaultUser.personal, lastName : userProperties.username } })
+            .then(newUserProperties => {
+              userProperties.userId = newUserProperties.id;
+              userProperties.barcode = newUserProperties.barcode;
+              userProperties.firstName = newUserProperties.firstName;
+              userProperties.lastName = newUserProperties.lastName;
+              cy.createRequestPreference({
+                defaultDeliveryAddressTypeId: null,
+                defaultServicePointId: null,
+                delivery: false,
+                fulfillment: 'Hold Shelf',
+                holdShelf: true,
+                id: uuid(),
+                userId:  newUserProperties.id,
+              });
+              cy.setUserPassword(userProperties);
+              cy.addPermissionsToNewUserApi({
+                userId: userProperties.userId,
+                permissions: [...permissionsResponse.body.permissions.map(permission => permission.permissionName)]
+              });
+              cy.overrideLocalSettings(userProperties.userId);
+              cy.wrap(userProperties).as('userProperties');
             });
-            cy.setUserPassword(userProperties);
-            cy.addPermissionsToNewUserApi({
-              userId: userProperties.userId,
-              permissions: [...permissionsResponse.body.permissions.map(permission => permission.permissionName)]
-            });
-            cy.overrideLocalSettings(userProperties.userId);
-            cy.wrap(userProperties).as('userProperties');
-          });
         });
     });
   return cy.get('@userProperties');
