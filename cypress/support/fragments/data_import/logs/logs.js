@@ -25,8 +25,8 @@ export default {
     cy.expect(MultiColumnListCell(jobProfileName).exists());
   },
 
-  checkStatusOfJobProfile:() => {
-    cy.do(MultiColumnListCell({ row: 0, content: 'Completed' }).exists());
+  checkStatusOfJobProfile:(status = 'Completed') => {
+    cy.do(MultiColumnListCell({ row: 0, content: status }).exists());
   },
 
   openFileDetails:(fileName) => {
