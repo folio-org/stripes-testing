@@ -8,7 +8,7 @@ const allureWriter = require('@shelex/cypress-allure-plugin/writer');
 // import allureWriter from "@shelex/cypress-allure-plugin/writer";
 
 // eslint-disable-next-line no-unused-vars
-module.exports = (on, config) => {
+module.exports = async (on, config) => {
   cypressGrep(config);
 
   on('task', {
@@ -55,6 +55,7 @@ module.exports = (on, config) => {
     },
   });
   allureWriter(on, config);
+  await require('cypress-testrail-simple/src/plugin')(on, config);
   return config;
 };
 

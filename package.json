@@ -23,7 +23,8 @@
     "date-fns": "^2.16.1",
     "debug": "^4.0.1",
     "moment": "^2.29.3",
-    "element-is-visible": "^1.0.0"
+    "element-is-visible": "^1.0.0",
+    "cypress-testrail-simple": "3.1.0"
   },
   "devDependencies": {
     "@babel/eslint-parser": "^7.16.3",
