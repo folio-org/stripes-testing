@@ -10,7 +10,7 @@ import InventorySteps from '../../../support/fragments/inventory/inventorySteps'
 import InventoryViewSource from '../../../support/fragments/inventory/inventoryViewSource';
 import QuickmarcEditor from '../../../support/fragments/quickMarcEditor';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
-
+import DevTeams from '../../../support/dictionary/devTeams';
 
 describe('Manage holding records with MARC source', () => {
   beforeEach(() => {
@@ -20,7 +20,7 @@ describe('Manage holding records with MARC source', () => {
     // TODO: redesign to api step
     InventorySteps.addMarcHoldingRecord();
   });
-  it('C345409 MARC instance record + MARC holdings record (spitfire)', { tags: [TestTypes.smoke, Features.holdingsRecord] }, () => {
+  it('C345409 MARC instance record + MARC holdings record (spitfire)', { tags: [TestTypes.smoke, DevTeams.spitfire, Features.holdingsRecord] }, () => {
     HoldingsRecordView.getId().then(initialHoldindsRecordId => {
       HoldingsRecordView.checkSource('MARC');
       HoldingsRecordView.checkActionsMenuOptionsInMarcSource();

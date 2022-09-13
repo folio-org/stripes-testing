@@ -5,6 +5,7 @@ import {
   Button,
   Pane,
   MultiColumnListRow,
+  MultiColumnListCell,
   including,
   HTML
 } from '../../../../interactors';
@@ -54,5 +55,9 @@ export default {
     // test fails without this cy.wait
     cy.wait(1500);
     cy.do(itemDetailsButton.click());
-  }
+  },
+
+  verifyResultsInTheRow: (allContentToCheck, rowIndex = 0) => {
+    return allContentToCheck.forEach(contentToCheck => cy.expect(MultiColumnListRow({ indexRow: `row-${rowIndex}` }).find(MultiColumnListCell({ content: including(contentToCheck) })).exists()));
+  },
 };
