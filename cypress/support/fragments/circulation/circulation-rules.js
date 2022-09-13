@@ -67,14 +67,14 @@ export default {
     InteractorsTools.checkCalloutMessage(calloutMessages.CIRCULATION_RULES_UPDATE_SUCCESS);
   },
   checkNoticePolicyAddedToCirculationRules(noticePolicyId) {
-    this.getApi().then((circulationRules) => {
+    this.getViaApi().then((circulationRules) => {
       cy.expect(circulationRules.rulesAsText).to.include(`n ${noticePolicyId}`);
     });
   },
-  getApi() {
+  getViaApi() {
     return cy.getCirculationRules();
   },
-  updateApi(data) {
+  updateViaApi(data) {
     return cy.updateCirculationRules(data);
   },
   getRuleProps(defaultRules) {
@@ -94,11 +94,11 @@ export default {
 
     return baseRuleProps;
   },
-  addRuleApi(defaultRules, ruleParams, priority, priorityId) {
+  addRuleViaApi(defaultRules, ruleParams, priority, priorityId) {
     const withNewRule = defaultRules + ' \n' + priority + priorityId + ': i ' + ruleParams.i + ' l ' + ruleParams.l + ' r ' + ruleParams.r + ' o ' + ruleParams.o + ' n ' + ruleParams.n;
     return cy.updateCirculationRules({ rulesAsText: withNewRule });
   },
-  deleteRuleApi(defaultRules) {
+  deleteRuleViaApi(defaultRules) {
     return cy.updateCirculationRules({ rulesAsText: defaultRules });
   }
 };

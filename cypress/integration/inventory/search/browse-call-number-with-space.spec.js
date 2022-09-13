@@ -6,6 +6,7 @@ import InventoryInstances from '../../../support/fragments/inventory/inventoryIn
 import InventorySearch from '../../../support/fragments/inventory/inventorySearch';
 import BrowseCallNumber from '../../../support/fragments/inventory/search/browseCallNumber';
 import TopMenu from '../../../support/fragments/topMenu';
+import BrowseContributors from '../../../support/fragments/inventory/search/browseContributors';
 
 describe('ui-inventory: search', () => {
   const item = {
@@ -16,7 +17,7 @@ describe('ui-inventory: search', () => {
     itemCallNumber: 'RR 718',
   };
   const testData = {
-    exactSearch : item.itemCallNumber,
+    exactSearch: item.itemCallNumber,
     nonExactSearch: item.itemCallNumber.replace(/ /g, '')
   };
 
@@ -42,11 +43,12 @@ describe('ui-inventory: search', () => {
     InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(item.itemBarcode);
   });
 
-  it('C358140 Verify that browsing for "call number" with "space" value will get the correct result (spitfire)', { tags : [DevTeams.spitfire, TestTypes.smoke] }, () => {
+  it('C358140 Verify that browsing for "call number" with "space" value will get the correct result (spitfire)', { tags: [DevTeams.spitfire, TestTypes.smoke] }, () => {
     search(testData.exactSearch);
     BrowseCallNumber.checkExactSearchResult(testData.exactSearch);
-    cy.reload();
+    BrowseContributors.resetAllInSearchPane();
     search(testData.nonExactSearch);
-    BrowseCallNumber.checkNonExactSearchResult(testData.nonExactSearch);
+    BrowseCallNumber.checkExactSearchResult(testData.exactSearch);
+    // Add the test. There are no several additional checks that are present in steps.
   });
 });
