@@ -10,7 +10,8 @@ import FinanceHelp from '../../../support/fragments/finance/financeHelper';
 import InteractorsTools from '../../../support/utils/interactorsTools';
 
 describe('ui-finance: Add transfer to budget', () => {
-  const defaultfund = { ...Funds.defaultUiFund };
+  const firstFund = { ...Funds.defaultUiFund };
+  const secondFund = { ...Funds.defaultUiFund };
   const defaultFiscalYear = { ...FiscalYears.defaultUiFiscalYear };
   const defaultLedger = { ...Ledgers.defaultUiLedger };
   const allocatedQuantity = '50';
@@ -26,14 +27,24 @@ describe('ui-finance: Add transfer to budget', () => {
         Ledgers.createViaApi(defaultLedger)
           .then(ledgerResponse => {
             defaultLedger.id = ledgerResponse.id;
-            defaultfund.ledgerId = defaultLedger.id;
+            firstFund.ledgerId = defaultLedger.id;
+            secondFund.ledgerId = defaultLedger.id;
 
-            Funds.createViaApi(defaultfund)
+            Funds.createViaApi(firstFund)
               .then(fundResponse => {
-                defaultfund.id = fundResponse.fund.id;
+                firstFund.id = fundResponse.fund.id;
 
                 cy.loginAsAdmin({ path:TopMenu.fundPath, waiter: Funds.waitLoading });
-                FinanceHelp.searchByName(defaultfund.name);
+                FinanceHelp.searchByName(firstFund.name);
+                FinanceHelp.selectFromResultsList();
+                Funds.addBudget(allocatedQuantity);
+              });
+            Funds.createViaApi(secondFund)
+              .then(fundResponse => {
+                secondFund.id = fundResponse.fund.id;
+
+                cy.visit(TopMenu.fundPath);
+                FinanceHelp.searchByName(secondFund.name);
                 FinanceHelp.selectFromResultsList();
                 Funds.addBudget(allocatedQuantity);
               });
@@ -50,7 +61,12 @@ describe('ui-finance: Add transfer to budget', () => {
 
   after(() => {
     cy.loginAsAdmin({ path:TopMenu.fundPath, waiter: Funds.waitLoading });
-    FinanceHelp.searchByName(defaultfund.name);
+    FinanceHelp.searchByName(firstFund.name);
+    FinanceHelp.selectFromResultsList();
+    Funds.selectBudgetDetails();
+    Funds.deleteBudgetViaActions();
+    cy.visit(TopMenu.fundPath);
+    FinanceHelp.searchByName(secondFund.name);
     FinanceHelp.selectFromResultsList();
     Funds.selectBudgetDetails();
     Funds.deleteBudgetViaActions();
@@ -68,12 +84,12 @@ describe('ui-finance: Add transfer to budget', () => {
 
   it('C6650 Add transfer to a budget by creating a transfer transaction (thunderjet)', { tags: [testType.criticalPath, devTeams.thunderjet] }, () => {
     console.log(defaultFiscalYear);
-    FinanceHelp.searchByName(defaultfund.name);
+    FinanceHelp.searchByName(firstFund.name);
     FinanceHelp.selectFromResultsList();
     Funds.selectBudgetDetails();
-    Funds.increaseAllocation();
-    InteractorsTools.checkCalloutMessage(`$50.00 was successfully allocated to the budget ${defaultfund.code}-${defaultFiscalYear.code}`);
+    Funds.transfer(firstFund.name, secondFund.name);
+    InteractorsTools.checkCalloutMessage(`$50.00 was successfully allocated to the budget ${firstFund.code}-${defaultFiscalYear.code}`);
     Funds.viewTransactions();
-    Funds.checkTransactionList(defaultfund.code);
+    Funds.checkTransactionList(firstFund.code);
   });
 });
