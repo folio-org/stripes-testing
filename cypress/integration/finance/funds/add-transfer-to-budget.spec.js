@@ -26,7 +26,7 @@ describe('ui-finance: Add transfer to budget', () => {
   const defaultFiscalYear = { ...FiscalYears.defaultUiFiscalYear };
   const defaultLedger = { ...Ledgers.defaultUiLedger };
   const allocatedQuantity = '50';
-  // let user;
+  let user;
 
   before(() => {
     cy.getAdminToken();
@@ -50,8 +50,6 @@ describe('ui-finance: Add transfer to budget', () => {
                 FinanceHelp.selectFromResultsList();
                 Funds.addBudget(allocatedQuantity);
               });
-            console.log(firstFund);
-            console.log(secondFund);
 
             Funds.createViaApi(secondFund)
               .then(secondFundResponse => {
