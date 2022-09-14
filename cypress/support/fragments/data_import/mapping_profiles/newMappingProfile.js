@@ -17,6 +17,7 @@ const folioRecordTypeValue = {
   holdings: 'Holdings',
   item: 'Item',
   invoice: 'Invoice',
+  marcBib: 'MARC Bibliographic'
 };
 
 const organization = {
@@ -50,6 +51,11 @@ const defaultMappingProfile = {
   fillProfile:''
 };
 
+const fieldMappingsForMarc = {
+  update: 'Updates',
+  modify: 'Modifications'
+};
+
 const selectOrganizationByName = (organizationName) => {
   cy.do([
     organizationModal.find(TextField({ id: 'input-record-search' })).fillIn(organizationName),
@@ -76,7 +82,33 @@ export default {
       Select({ name:'profile.existingRecordType' }).choose(specialMappingProfile.typeValue)
     ]);
     if (specialMappingProfile.typeValue === holdingsType) {
-      cy.do(TextField('Permanent').fillIn(permanentLocation));
+      if (specialMappingProfile.permanentLocation) {
+        cy.do(TextField('Permanent').fillIn(specialMappingProfile.permanentLocation));
+      }
+
+      if (specialMappingProfile.electronicAccess) {
+        cy.get('[name="profile.mappingDetails.mappingFields[23].repeatableFieldAction"]')
+          .select(specialMappingProfile.electronicAccess.action);
+        cy.do([
+          Button('Add electronic access').click(),
+          TextField('Relationship').fillIn(specialMappingProfile.electronicAccess.relationship),
+          TextField('URI').fillIn(specialMappingProfile.electronicAccess.uri),
+          TextField('Link text').fillIn(specialMappingProfile.electronicAccess.linkText),
+        ]);
+      }
+
+      if (specialMappingProfile.discoverySuppress) {
+        cy.get('[name="profile.mappingDetails.mappingFields[0].booleanFieldAction"]')
+          .select(specialMappingProfile.discoverySuppress);
+      }
+
+      if (specialMappingProfile.callNumberType) {
+        cy.do(TextField('Call number type').fillIn(specialMappingProfile.callNumberType));
+      }
+
+      if (specialMappingProfile.callNumber) {
+        cy.do(TextField('Call number').fillIn(specialMappingProfile.callNumber));
+      }
     } else if (specialMappingProfile.typeValue === itemType) {
       cy.intercept('loan-types?*').as('getType');
       cy.do(TextField('Material type').fillIn(materialType));
@@ -95,6 +127,8 @@ export default {
         // wait accepted values to be filled
         // eslint-disable-next-line cypress/no-unnecessary-waiting
         cy.wait(1800);
+      } else {
+        cy.do(TextField('Cataloged date').fillIn(catalogedDate));
       }
     }
     cy.do(saveButton.click());
@@ -222,4 +256,35 @@ export default {
     }
     cy.do(saveButton.click());
   },
+
+  fillMappingProfileForUpdatesMarc:(specialMappingProfile = defaultMappingProfile) => {
+    cy.do([
+      TextField({ name:'profile.name' }).fillIn(specialMappingProfile.name),
+      Select({ name:'profile.incomingRecordType' }).choose(incomingRecordType.marcBib),
+      Select({ name:'profile.existingRecordType' }).choose(specialMappingProfile.typeValue),
+      Select({ name:'profile.mappingDetails.marcMappingOption' }).choose(fieldMappingsForMarc.update),
+    ]);
+  },
+
+  fillMappingProfileForInstance:(specialMappingProfile = defaultMappingProfile) => {
+    cy.do([
+      TextField({ name:'profile.name' }).fillIn(specialMappingProfile.name),
+      Select({ name:'profile.incomingRecordType' }).choose(incomingRecordType.marcBib),
+      Select({ name:'profile.existingRecordType' }).choose(specialMappingProfile.typeValue),
+    ]);
+  },
+
+  addStatisticalCode:(name) => {
+    cy.do(Select({ name:'profile.mappingDetails.mappingFields[8].repeatableFieldAction' }).choose('Add these to existing'));
+    cy.do(Button('Add statistical code').click());
+    cy.do(TextField('Statistical code').fillIn(name));
+    // wait will be add uuid for acceptedValues
+    cy.wait(1000);
+  },
+
+  addNote:(note) => {
+    cy.do(Select({ name:'profile.mappingDetails.mappingFields[9].repeatableFieldAction' }).choose('Add these to existing'));
+    cy.do(Button('Add administrative note').click());
+    cy.do(TextField('Administrative note').fillIn(note));
+  }
 };

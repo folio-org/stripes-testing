@@ -1,10 +1,6 @@
 import { HTML } from '@interactors/html';
 import { including } from 'bigtest';
-import {
-  Button,
-  KeyValue,
-  Section,
-} from '../../../../interactors';
+import { KeyValue, MultiColumnList, Section, MultiColumnListCell } from '../../../../interactors';
 
 const instanceDetailsSection = Section({ id: 'pane-instancedetails' });
 const catalogedDateKeyValue = KeyValue('Cataloged date');
@@ -13,6 +9,8 @@ const instanceDetailsNotesSection = Section({ id: 'instance-details-notes' });
 const marcViewSection = Section({ id: 'marc-view-pane' });
 const actionsButton = Button('Actions');
 const viewSourceButton = Button('View source');
+const instanceAdministrativeNote = MultiColumnList({ id: 'administrative-note-list' });
+const instanceNote = MultiColumnList({ id: 'list-instance-notes-0' });
 
 const verifyResourceTitle = value => {
   cy.expect(KeyValue('Resource title').has({ value }));
@@ -59,6 +57,14 @@ const viewSource = () => cy.do([
   viewSourceButton.click(),
 ]);
 
+const verifyAdministrativeNote = (value) => {
+  cy.expect(instanceAdministrativeNote.find(MultiColumnListCell({ content: value })).exists());
+};
+
+const verifyInstanceNote = (value) => {
+  cy.expect(instanceNote.find(MultiColumnListCell({ content: value })).exists());
+};
+
 export default {
   verifyResourceTitle,
   verifyInstanceStatusCode,
@@ -71,4 +77,6 @@ export default {
   verifySrsMarcRecord,
   verifyImportedFieldExists,
   viewSource,
+  verifyAdministrativeNote,
+  verifyInstanceNote
 };

@@ -2,12 +2,16 @@ import { Button, TextField, MultiColumnListCell, Pane } from '../../../../../int
 import newActionProfile from './newActionProfile';
 
 const actionsButton = Button('Actions');
+const iconButton = Button({ icon: 'times' });
 
 const openNewActionProfileForm = () => {
   cy.do([
-    actionsButton.click(),
+    Pane({ id:'pane-results' }).find(actionsButton).click(),
     Button('New action profile').click()
   ]);
+};
+const closeActionProfile = profileName => {
+  cy.do(Pane({ title: profileName }).find(iconButton).click());
 };
 
 const deleteActionProfile = (profileName) => {
@@ -45,11 +49,12 @@ export default {
 
   checkActionProfilePresented: (actionProfileName) => {
     // TODO: clarify with developers what should be waited
-    cy.wait(1000);
+    cy.wait(1500);
     cy.do(TextField({ id:'input-search-action-profiles-field' }).fillIn(actionProfileName));
     cy.do(Pane('Action profiles').find(Button('Search')).click());
     cy.expect(MultiColumnListCell(actionProfileName).exists());
   },
 
   deleteActionProfile,
+  closeActionProfile,
 };
