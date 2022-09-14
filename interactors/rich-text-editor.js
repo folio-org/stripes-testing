@@ -13,6 +13,9 @@ export default HTML.extend('rich text editor')
   .actions({
     fillIn: ({ perform }, value) => perform(element => {
       const editor = element.querySelector('.ql-editor');
-      if (editor) editor.textContent = value;
+      if (editor) {
+        editor.textContent = '';
+        editor.textContent = value;
+      }
     })
   });

@@ -299,6 +299,10 @@ export default {
     cy.expect(identifierRow.find(MultiColumnListCell({ columnIndex: 0 })).has({ content: type }));
     cy.expect(identifierRow.find(MultiColumnListCell({ columnIndex: 1 })).has({ content: value }));
   },
+  verifyResourceIdentifierAbsent() {
+    cy.expect(Accordion('Identifiers')
+      .find(MultiColumnList({ id: 'list-identifiers' })).absent());
+  },
   getId() {
     cy.url().then(url => cy.wrap(url.split('?')[0].split('/').at(-1))).as('instanceId');
     return cy.get('@instanceId');

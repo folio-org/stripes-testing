@@ -15,7 +15,10 @@ import {
   KeyValue,
   Pane,
   MultiColumnListRow,
-  MultiColumnListCell
+  MultiColumnListCell,
+  SelectionOption,
+  Link,
+  MultiColumnList
 } from '../../../../../interactors';
 import FinanceHelp from '../financeHelper';
 import TopMenu from '../../topMenu';
@@ -31,9 +34,28 @@ const viewTransactionsLinkXpath = '//a[text()="View transactions"]';
 const budgetPaneId = 'pane-budget';
 const transactionResultPaneId = 'transaction-results-pane';
 const actionsButtonName = 'Actions';
-
+const saveAndCloseButton = Button({ id: 'clickable-save-title' });
 
 export default {
+
+  defaultUiFund: {
+    name: `autotest_fund_${getRandomPostfix()}`,
+    code: getRandomPostfix(),
+    externalAccountNo: getRandomPostfix(),
+    fundStatus: 'Active',
+    description: `This is fund created by E2E test automation script_${getRandomPostfix()}`,
+  },
+
+  defaultUiBudget: {
+    allocated: 50,
+    allowableEncumbrance: 100,
+    allowableExpenditure: 100,
+    budgetStatus: 'Active',
+  },
+  waitLoading : () => {
+    cy.expect(Pane({ id: 'fund-results-pane' }).exists());
+  },
+
   waitForFundDetailsLoading : () => {
     cy.do(Section({ id: 'pane-fund-details' }).visible());
   },
@@ -97,6 +119,33 @@ export default {
       Button('Save').click()
     ]);
   },
+
+  viewTransactions: () => {
+    cy.do(Link('View transactions').click());
+  },
+
+  checkTransactionList: (fundCode) => {
+    cy.expect([
+      MultiColumnList({ id: 'transactions-list' })
+        .find(MultiColumnListRow({ index: 0 }))
+        .find(MultiColumnListCell({ columnIndex: 2 }))
+        .has({ content: '$50.00' }),
+      MultiColumnList({ id: 'transactions-list' })
+        .find(MultiColumnListRow({ index: 0 }))
+        .find(MultiColumnListCell({ columnIndex: 4 }))
+        .has({ content: `${fundCode}` })
+    ]);
+  },
+
+  increaseAllocation: () => {
+    cy.do([
+      Button('Actions').click(),
+      Button('Increase allocation').click(),
+      TextField({ name: 'amount' }).fillIn('50'),
+      Modal({ id: 'add-transfer-modal' }).find(Button('Confirm')).click(),
+    ]);
+  },
+
 
   checkCreatedBudget: (fundCode, fiscalYear) => {
     cy.expect(Accordion('Budget summary').exists());
@@ -262,5 +311,77 @@ export default {
     cy.do([
       Accordion({ id: 'currentBudget' }).find(MultiColumnListCell({ content: fundCode.concat('-', fiscalYear) })).click()
     ]);
-  }
+  },
+
+  selectBudgetDetails:(rowNumber = 0) => {
+    cy.do([
+      Section({ id: 'currentBudget' }).find(MultiColumnListRow({ index: rowNumber })).click()
+    ]);
+  },
+
+  checkIsBudgetDeleted:(rowNumber = 0) => {
+    cy.expect([
+      Section({ id: 'currentBudget' }).find(MultiColumnListRow({ index: rowNumber })).absent()
+    ]);
+  },
+
+  editBudget:() => {
+    cy.do([
+      Button('Actions').click(),
+      Button('Edit').click()
+    ]);
+  },
+
+  addExpensesClass:(firstExpenseClassName) => {
+    cy.do([
+      Button({ id: 'budget-status-expense-classes-add-button' }).click(),
+      Button({ name: 'statusExpenseClasses[0].expenseClassId' }).click(),
+      SelectionOption(firstExpenseClassName).click(),
+      saveAndCloseButton.click()
+    ]);
+  },
+  deleteExpensesClass:() => {
+    cy.do([
+      Section({ id: 'expense-classes' }).find(Button({ icon: 'trash' })).click(),
+      saveAndCloseButton.click()
+    ]);
+  },
+
+  createViaApi: (fundProperties) => {
+    return cy
+      .okapiRequest({
+        path: 'finance/funds',
+        body: { fund:fundProperties },
+        method: 'POST',
+        isDefaultSearchParamsRequired: false,
+      })
+      .then((response) => {
+        return response.body;
+      });
+  },
+
+  addBudgetToFundViaApi: (budgetProperties) => {
+    return cy
+      .okapiRequest({
+        path: 'finance/budgets',
+        body: budgetProperties,
+        method: 'POST',
+        isDefaultSearchParamsRequired: false,
+      })
+      .then((response) => {
+        return response.body;
+      });
+  },
+
+  deleteFundViaApi: (fundId) => cy.okapiRequest({
+    method: 'DELETE',
+    path: `finance/funds/${fundId}`,
+    isDefaultSearchParamsRequired: false,
+  }),
+
+  deleteBudgetViaApi: (budgetId) => cy.okapiRequest({
+    method: 'DELETE',
+    path: `finance/budgets/${budgetId}`,
+    isDefaultSearchParamsRequired: false,
+  }),
 };

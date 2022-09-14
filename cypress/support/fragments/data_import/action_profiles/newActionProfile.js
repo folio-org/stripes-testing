@@ -9,6 +9,7 @@ const folioRecordTypeValue = {
   instance: 'Instance',
   holdings: 'Holdings',
   item: 'Item',
+  marcBib: 'MARC Bibliographic'
 };
 
 const defaultActionProfile = {

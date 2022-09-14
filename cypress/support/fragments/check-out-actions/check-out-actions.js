@@ -14,29 +14,29 @@ import {
 } from '../../../../interactors';
 
 const modal = Modal('Confirm multipiece check out');
-
+const endSessionButton = Button('End session');
 const userPane = PaneContent({ id: 'patron-details-content' });
 export default {
   modal,
   checkOutUser(userBarcode) {
-    cy.do([
+    return cy.do([
       TextField('Patron identifier').fillIn(userBarcode),
       Pane('Scan patron card').find(Button('Enter')).click(),
       Button(userBarcode).exists(),
     ]);
   },
 
-  checkUserInfo(user, patronGroup = '0') {
-    cy.expect([
+  async checkUserInfo({ barcode, personal }, patronGroup = '0') {
+    return cy.expect([
       userPane.find(KeyValue({ value: 'Active' })).exists(),
       userPane.find(KeyValue({ value: patronGroup })).exists(),
-      userPane.find(Link(including(`${user.personal.lastName}, `))).exists(),
-      userPane.find(Link(user.barcode)).exists(),
+      userPane.find(Link(including(personal.lastname + ', '))).exists(),
+      userPane.find(Link(barcode)).exists(),
     ]);
   },
 
   checkOutItem(itemBarcode) {
-    cy.do([
+    return cy.do([
       TextField('Item ID').fillIn(itemBarcode),
       Pane('Scan items').find(Button('Enter')).click(),
     ]);
@@ -65,7 +65,8 @@ export default {
   },
 
   endCheckOutSession:() => {
-    cy.do(Button('End session').click());
+    cy.do(endSessionButton.click());
+    cy.expect(endSessionButton.absent());
   },
 
   checkIsInterfacesOpened:() => {
