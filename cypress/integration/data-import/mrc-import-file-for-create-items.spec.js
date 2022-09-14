@@ -53,7 +53,8 @@ describe('ui-data-import: MARC file import with creating of the new instance, ho
     const collectionOfProfiles = [
       {
         mappingProfile: { typeValue: NewMappingProfile.folioRecordTypeValue.instance,
-          name: mappingProfileNameForInstance },
+          name: mappingProfileNameForInstance,
+          permanentLocation: '"Annex (KU/CC/DI/A)"' },
         actionProfile: { typeValue: NewActionProfile.folioRecordTypeValue.instance,
           name: actionProfileNameForInstance }
       },

@@ -106,7 +106,7 @@ describe('Fee/Fine history ', () => {
     Users.deleteViaApi(userData.userId);
   });
 
-  it('C347919 Check that the user can add "Additional information" on the fee/fine history', { tags: [TestTypes.smoke, devTeams.vega] }, () => {
+  it('C347919 Check that the user can add "Additional information" on the fee/fine history (vega)', { tags: [TestTypes.smoke, devTeams.vega] }, () => {
     // the bug for this flaky issue is created FAT-2442
     cy.visit(AppPaths.getFeeFineDetailsPath(userData.userId, feeFineAccount.id));
     FeeFinesDetails.waitLoading();

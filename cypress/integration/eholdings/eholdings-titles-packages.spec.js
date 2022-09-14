@@ -5,6 +5,7 @@ import Users from '../../support/fragments/users/users';
 import testTypes from '../../support/dictionary/testTypes';
 import features from '../../support/dictionary/features';
 import permissions from '../../support/dictionary/permissions';
+import devTeams from '../../support/dictionary/devTeams';
 
 describe('ui-eholdings: Search titles', () => {
   const testData = {
@@ -19,7 +20,7 @@ describe('ui-eholdings: Search titles', () => {
       cy.login(userProperties.username, userProperties.password, { path: TopMenu.eholdingsPath, waiter: EHoldingsTitlesSearch.waitLoading });
     });
 
-    EHoldingsTitlesSearch.getViaApi({ 'filter[name]' : testData.title, 'filter[type]' : testData.publicationType.toLowerCase() }).then((res) => {
+    EHoldingsTitlesSearch.getViaApi({ 'filter[name]': testData.title, 'filter[type]': testData.publicationType.toLowerCase() }).then((res) => {
       testData.titleProps = res[0];
     });
   });
@@ -28,7 +29,7 @@ describe('ui-eholdings: Search titles', () => {
     Users.deleteViaApi(testData.userId);
   });
 
-  it('C684 Title Search: Search titles for chemical engineering. Then filter results to journals. (spitfire)', { tags:  [testTypes.smoke, features.eHoldings] }, () => {
+  it('C684 Title Search: Search titles for chemical engineering. Then filter results to journals. (spitfire)', { tags: [testTypes.smoke, devTeams.spitfire, features.eHoldings] }, () => {
     EHoldingSearch.switchToTitles();
     EHoldingsTitlesSearch.byTitle(testData.title);
     EHoldingsTitlesSearch.byPublicationType(testData.publicationType);
