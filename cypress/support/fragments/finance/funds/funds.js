@@ -146,6 +146,19 @@ export default {
     ]);
   },
 
+  transfer: (thisFund, fromFund) => {
+    cy.do([
+      Button('Actions').click(),
+      Button('Transfer').click(),
+      Button({ name: 'toFundId' }).click(),
+      SelectionOption(thisFund).click(),
+      Button({ name: 'fromFundId' }).click(),
+      SelectionOption(fromFund).click(),
+      TextField({ name: 'amount' }).fillIn('10'),
+      Modal({ id: 'add-transfer-modal' }).find(Button('Confirm')).click(),
+    ]);
+  },
+
 
   checkCreatedBudget: (fundCode, fiscalYear) => {
     cy.expect(Accordion('Budget summary').exists());
