@@ -1,4 +1,4 @@
-import { Button, ListItem, Section, PaneHeader } from '../../../../interactors';
+import { Button, ListItem, Section, PaneHeader, including } from '../../../../interactors';
 import eHoldingsTitle from './eHoldingsTitle';
 import getRandomPostfix from '../../utils/stringTools';
 import eHoldingsNewCustomTitle from './eHoldingsNewCustomTitle';
@@ -10,16 +10,16 @@ export default {
   waitLoading: () => {
     cy.expect(resultSection.find(PaneHeader('Loading...')).absent());
     cy.expect(resultSection
-      .find(ListItem({ index: 1 })
+      .find(ListItem({ className: including('list-item-'), index: 1 })
         .find(Button())).exists());
   },
   openTitle: (rowNumber = 0) => {
-    const specialRow = resultSection.find(ListItem({ index: rowNumber }));
+    const specialRow = resultSection.find(ListItem({ className: including('list-item-'), index: rowNumber }));
 
     cy.then(() => specialRow.h3Value())
       .then(title => {
         cy.do(resultSection
-          .find(ListItem({ index: rowNumber })
+          .find(ListItem({ className: including('list-item-'), index: rowNumber })
             .find(Button())).click());
         eHoldingsTitle.waitLoading(title);
       });

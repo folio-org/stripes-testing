@@ -14,17 +14,17 @@ export default {
   },
   waitLoading: () => {
     cy.expect(or(
-      resultSection.find(ListItem({ index: 1 }).find(Button())).exists(),
+      resultSection.find(ListItem({ className: including('list-item-'), index: 1 }).find(Button())).exists(),
       resultSection.find(HTML(including('Enter a query to show search results.'))).exists()
     ));
   },
   openPackage: (rowNumber = 0) => {
-    const specialRow = resultSection.find(ListItem({ index: rowNumber }));
+    const specialRow = resultSection.find(ListItem({ className: including('list-item-'), index: rowNumber }));
 
     cy.then(() => specialRow.h3Value())
       .then(specialPackage => {
         cy.do(resultSection
-          .find(ListItem({ index: rowNumber })
+          .find(ListItem({ className: including('list-item-'), index: rowNumber })
             .find(Button())).click());
         eHoldingsPackage.waitLoading(specialPackage);
         cy.wrap(specialPackage).as('selectedPackage');
@@ -32,7 +32,7 @@ export default {
     return cy.get('@selectedPackage');
   },
   getPackageName:(rowNumber = 0) => {
-    return cy.then(() => resultSection.find(ListItem({ index: rowNumber })).h3Value());
+    return cy.then(() => resultSection.find(ListItem({ className: including('list-item-'), index: rowNumber })).h3Value());
   },
   getCustomPackageViaApi:() => {
     cy.okapiRequest({ path: 'eholdings/packages',
