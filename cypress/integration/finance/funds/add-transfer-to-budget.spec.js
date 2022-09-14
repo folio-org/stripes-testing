@@ -8,10 +8,17 @@ import Users from '../../../support/fragments/users/users';
 import Funds from '../../../support/fragments/finance/funds/funds';
 import FinanceHelp from '../../../support/fragments/finance/financeHelper';
 import InteractorsTools from '../../../support/utils/interactorsTools';
+import getRandomPostfix from '../../../support/utils/stringTools';
 
 describe('ui-finance: Add transfer to budget', () => {
   const firstFund = { ...Funds.defaultUiFund };
-  const secondFund = { ...Funds.defaultUiFund };
+  const secondFund = {
+    name: `autotest_fund2_${getRandomPostfix()}`,
+    code: getRandomPostfix(),
+    externalAccountNo: getRandomPostfix(),
+    fundStatus: 'Active',
+    description: `This is fund created by E2E test automation script_${getRandomPostfix()}`,
+  };
   const defaultFiscalYear = { ...FiscalYears.defaultUiFiscalYear };
   const defaultLedger = { ...Ledgers.defaultUiLedger };
   const allocatedQuantity = '50';
@@ -39,9 +46,12 @@ describe('ui-finance: Add transfer to budget', () => {
                 FinanceHelp.selectFromResultsList();
                 Funds.addBudget(allocatedQuantity);
               });
+            console.log(firstFund);
+            console.log(secondFund);
+
             Funds.createViaApi(secondFund)
-              .then(fundResponse => {
-                secondFund.id = fundResponse.fund.id;
+              .then(secondFundResponse => {
+                secondFund.id = secondFundResponse.fund.id;
 
                 cy.visit(TopMenu.fundPath);
                 FinanceHelp.searchByName(secondFund.name);
@@ -59,36 +69,37 @@ describe('ui-finance: Add transfer to budget', () => {
       });
   });
 
-  after(() => {
-    cy.loginAsAdmin({ path:TopMenu.fundPath, waiter: Funds.waitLoading });
-    FinanceHelp.searchByName(firstFund.name);
-    FinanceHelp.selectFromResultsList();
-    Funds.selectBudgetDetails();
-    Funds.deleteBudgetViaActions();
-    cy.visit(TopMenu.fundPath);
-    FinanceHelp.searchByName(secondFund.name);
-    FinanceHelp.selectFromResultsList();
-    Funds.selectBudgetDetails();
-    Funds.deleteBudgetViaActions();
-    InteractorsTools.checkCalloutMessage('Budget has been deleted');
-    Funds.checkIsBudgetDeleted();
+  // TO DO: Now we do not have the ability to delete data, becouse deleting transactions is now impossible.
+  // In the future they want to change this.
+  // For this reason I have already written a method for cleaning the data and I think it should be kept.
 
-    Funds.deleteFundViaApi(defaultfund.id);
-
-    Ledgers.deleteledgerViaApi(defaultLedger.id);
-
-    FiscalYears.deleteFiscalYearViaApi(defaultFiscalYear.id);
-
-    Users.deleteViaApi(user.userId);
-  });
+  // after(() => {
+  //   cy.loginAsAdmin({ path:TopMenu.fundPath, waiter: Funds.waitLoading });
+  //   FinanceHelp.searchByName(firstFund.name);
+  //   FinanceHelp.selectFromResultsList();
+  //   Funds.selectBudgetDetails();
+  //   Funds.deleteBudgetViaActions();
+  //   cy.visit(TopMenu.fundPath);
+  //   FinanceHelp.searchByName(secondFund.name);
+  //   FinanceHelp.selectFromResultsList();
+  //   Funds.selectBudgetDetails();
+  //   Funds.deleteBudgetViaActions();
+  //   InteractorsTools.checkCalloutMessage('Budget has been deleted');
+  //   Funds.checkIsBudgetDeleted();
+  //   Funds.deleteFundViaApi(firstFund.id);
+  //   Funds.deleteFundViaApi(secondFund.id);
+  //   Ledgers.deleteledgerViaApi(defaultLedger.id);
+  //   FiscalYears.deleteFiscalYearViaApi(defaultFiscalYear.id);
+  //   Users.deleteViaApi(user.userId);
+  // });
 
   it('C6650 Add transfer to a budget by creating a transfer transaction (thunderjet)', { tags: [testType.criticalPath, devTeams.thunderjet] }, () => {
     console.log(defaultFiscalYear);
     FinanceHelp.searchByName(firstFund.name);
     FinanceHelp.selectFromResultsList();
     Funds.selectBudgetDetails();
-    Funds.transfer(firstFund.name, secondFund.name);
-    InteractorsTools.checkCalloutMessage(`$50.00 was successfully allocated to the budget ${firstFund.code}-${defaultFiscalYear.code}`);
+    Funds.transfer(firstFund, secondFund);
+    InteractorsTools.checkCalloutMessage(`$10.00 was successfully transferred to the budget ${firstFund.code}-${defaultFiscalYear.code}`);
     Funds.viewTransactions();
     Funds.checkTransactionList(firstFund.code);
   });

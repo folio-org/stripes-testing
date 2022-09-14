@@ -151,9 +151,9 @@ export default {
       Button('Actions').click(),
       Button('Transfer').click(),
       Button({ name: 'toFundId' }).click(),
-      SelectionOption(thisFund).click(),
+      SelectionOption(`${thisFund.name} (${thisFund.code})`).click(),
       Button({ name: 'fromFundId' }).click(),
-      SelectionOption(fromFund).click(),
+      SelectionOption(`${fromFund.name} (${fromFund.code})`).click(),
       TextField({ name: 'amount' }).fillIn('10'),
       Modal({ id: 'add-transfer-modal' }).find(Button('Confirm')).click(),
     ]);
