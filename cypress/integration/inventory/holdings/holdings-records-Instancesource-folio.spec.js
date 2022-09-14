@@ -8,7 +8,7 @@ import features from '../../../support/dictionary/features';
 import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
 import NewHoldingsRecord from '../../../support/fragments/inventory/newHoldingsRecord';
 import HoldingsRecordEdit from '../../../support/fragments/inventory/holdingsRecordEdit';
-
+import DevTeams from '../../../support/dictionary/devTeams';
 
 describe('Manage holding records with FOLIO source', () => {
   beforeEach(() => {
@@ -16,7 +16,7 @@ describe('Manage holding records with FOLIO source', () => {
     cy.visit(TopMenu.inventoryPath);
     InventoryInstances.add();
   });
-  it('C345406 FOLIO instance record + FOLIO holdings record (Regression) (spitfire)', { tags: [testTypes.smoke, features.holdingsRecord] }, () => {
+  it('C345406 FOLIO instance record + FOLIO holdings record (Regression) (spitfire)', { tags: [testTypes.smoke, DevTeams.spitfire, features.holdingsRecord] }, () => {
     InventoryInstance.createHoldingsRecord();
     InventoryInstance.openHoldingView();
     HoldingsRecordView.checkSource('FOLIO');

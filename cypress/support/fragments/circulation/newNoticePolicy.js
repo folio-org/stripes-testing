@@ -38,7 +38,7 @@ export default {
 
   waitLoading() {
     cy.do(Link('Patron notice policies').click());
-    cy.expect(Heading('Patron notice policies').exists());
+    return cy.expect(Heading('Patron notice policies').exists());
   },
 
   openToSide(patronNoticePolicy) {
@@ -56,11 +56,11 @@ export default {
   },
 
   startAdding() {
-    cy.do(Button({ id: 'clickable-create-entry' }).click());
+    return cy.do(Button({ id: 'clickable-create-entry' }).click());
   },
 
   addNotice(patronNoticePolicy) {
-    cy.do([
+    return cy.do([
       Section({ id: `edit${patronNoticePolicy.noticeName}Notices` }).find(addNoticeButton).click(),
       Select({ name: `${patronNoticePolicy.noticeId}Notices[0].templateId` }).choose(patronNoticePolicy.templateName),
       Select({ name: `${patronNoticePolicy.noticeId}Notices[0].format` }).choose(patronNoticePolicy.format),
@@ -70,7 +70,7 @@ export default {
   },
 
   check: (patronNoticePolicy) => {
-    cy.expect(NavListItem(patronNoticePolicy.name).exists());
+    return cy.expect(NavListItem(patronNoticePolicy.name).exists());
   },
 
   checkInitialState() {
@@ -92,20 +92,18 @@ export default {
     cy.expect([
       this.openToSide(patronNoticePolicy),
       actionsButton.click(),
-      actionsButton.click(),
       actionsButtons.duplicate.exists(),
       actionsButtons.duplicate.has({ visible: true }),
       actionsButtons.edit.exists(),
-      actionsButtons.duplicate.exists({ visible: true }),
+      actionsButtons.edit.has({ visible: true }),
       actionsButtons.delete.exists(),
-      actionsButtons.duplicate.exists({ visible: true }),
+      actionsButtons.delete.has({ visible: true }),
     ]);
   },
 
   save: () => {
     cy.do([
       Button({ id: 'footer-save-entity' }).click(),
-      Button({ icon: 'times' }).click(),
     ]);
   },
 

@@ -40,7 +40,7 @@ describe('ui-circulation-settings: Edit circulation rules', () => {
 
       cy.getAdminToken();
 
-      CirculationRules.getApi().then((circulationRules) => {
+      CirculationRules.getViaApi().then((circulationRules) => {
         originalCirculationRules = circulationRules;
       });
       NewMaterialType.createViaApi(NewMaterialType.getDefaultMaterialType());
@@ -57,7 +57,7 @@ describe('ui-circulation-settings: Edit circulation rules', () => {
   });
 
   afterEach(() => {
-    CirculationRules.updateApi(originalCirculationRules);
+    CirculationRules.updateViaApi(originalCirculationRules);
     MaterialTypes.deleteApi(defaultMaterialType.id);
     NoticePolicy.deleteApi(defaultNoticePolicy.id);
     LoanPolicy.deleteApi(defaultLoanPolicy.id);

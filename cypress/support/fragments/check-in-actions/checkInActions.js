@@ -14,6 +14,7 @@ const addItemButton = Button({ id: 'clickable-add-item' });
 const availableActionsButton = Button({ id: 'available-actions-button-0' });
 const confirmModal = Modal('Confirm multipiece check in');
 const checkOutButton = confirmModal.find(Button('Check in'));
+const endSessionButton = Button('End session');
 
 const waitLoading = () => {
   cy.expect(TextField({ name: 'item.barcode' }).exists());
@@ -107,5 +108,12 @@ export default {
   },
   verifyLastCheckInItem(itemBarcode) {
     return cy.expect(MultiColumnListRow({ indexRow: 'row-0' }).find(MultiColumnListCell({ content: including(itemBarcode) })).exists());
+  },
+  endCheckInSession:() => {
+    cy.do(endSessionButton.click());
+    cy.intercept('/circulation/end-patron-action-session').as('end-patron-session');
+    cy.wait('@end-patron-session').then(xhr => {
+      cy.wrap(xhr.response.statusCode).should('eq', 204);
+    });
   }
 };
