@@ -1,4 +1,4 @@
-import { Button, KeyValue, Modal, Section } from '../../../../interactors';
+import { Accordion, Button, KeyValue, Modal, MultiColumnListCell, Section } from '../../../../interactors';
 import InventoryViewSource from './inventoryViewSource';
 import NewHoldingsRecord from './newHoldingsRecord';
 
@@ -56,6 +56,12 @@ export default {
     cy.do(duplicateButton.click());
     NewHoldingsRecord.waitLoading();
   },
+  delete:() => {
+    cy.do(actionsButton.click());
+    cy.do(deleteButton.click());
+    cy.expect(deleteConfirmationModal.exists());
+    cy.do(deleteConfirmationModal.find(Button('Delete')).click());
+  },
   checkSource:sourceValue => cy.expect(KeyValue('Source', { value:sourceValue }).exists()),
   getHoldingsHrId: () => cy.then(() => holdingHrIdKeyValue.value()),
   checkInstanceHrId: expectedInstanceHrId => cy.expect(root.find(KeyValue('Instance HRID')).has({ value:expectedInstanceHrId })),
@@ -81,5 +87,11 @@ export default {
     cy.expect(KeyValue('Call number type').has({ value: 'Library of Congress classification' }));
     cy.expect(KeyValue('Permanent').has({ value: 'Main Library' }));
     cy.do(Button({ icon: 'times' }).click());
-  }
+  },
+  checkURIIsNotEmpty:() => {
+    cy.expect(Accordion('Electronic access').find(MultiColumnListCell({ row: 0, columnIndex: 1, content: '-' })).absent());
+  },
+  checkCallNumber:(callNumber) => {
+    cy.expect(KeyValue('Call number').has({ value: callNumber }));
+  },
 };

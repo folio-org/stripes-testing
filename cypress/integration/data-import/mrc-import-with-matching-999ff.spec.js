@@ -48,6 +48,7 @@ describe('ui-data-import: MARC file import with matching for 999 ff field', () =
     const mappingProfileForExport = {
       name: mappingProfileNameForExport,
       typeValue : NewFieldMappingProfile.folioRecordTypeValue.instance,
+      permanentLocation: '"Annex (KU/CC/DI/A)"',
     };
     cy.visit(SettingsMenu.mappingProfilePath);
     FieldMappingProfiles.createMappingProfile(mappingProfileForExport);
@@ -124,7 +125,8 @@ describe('ui-data-import: MARC file import with matching for 999 ff field', () =
         const mappingProfile = {
           name: mappingProfileName,
           typeValue : NewFieldMappingProfile.folioRecordTypeValue.instance,
-          update: true
+          update: true,
+          permanentLocation: '"Annex (KU/CC/DI/A)"'
         };
         cy.visit(SettingsMenu.mappingProfilePath);
         FieldMappingProfiles.createMappingProfile(mappingProfile);
