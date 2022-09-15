@@ -275,7 +275,7 @@ describe('ui-data-import: Match on POL and update related Instance, Holdings, It
         firstItem.price,
         firstItem.price,
         [{
-          productId: `xyz${getRandomPostfix()}`,
+          productId: firstItem.productId,
           productIdType: productIdTypeId
         }],
         materialTypeId
@@ -293,19 +293,19 @@ describe('ui-data-import: Match on POL and update related Instance, Holdings, It
 
         // create second PO with POL
         Orders.createOrderWithOrderLineViaApi(NewOrder.getDefaultOrder(vendorId),
-        BasicOrderLine.getDefaultOrderLine(
-          secondItem.quantity,
-          secondItem.title,
-          location.id,
-          acquisitionMethodId,
-          secondItem.price,
-          secondItem.price,
-          [{
-            productId: `xyz${getRandomPostfix()}`,
-            productIdType: productIdTypeId
-          }],
-          materialTypeId
-        ))
+          BasicOrderLine.getDefaultOrderLine(
+            secondItem.quantity,
+            secondItem.title,
+            location.id,
+            acquisitionMethodId,
+            secondItem.price,
+            secondItem.price,
+            [{
+              productId: secondItem.productId,
+              productIdType: productIdTypeId
+            }],
+            materialTypeId
+          ))
           .then(respo => {
             secondOrderNumber = respo;
 
@@ -320,7 +320,7 @@ describe('ui-data-import: Match on POL and update related Instance, Holdings, It
             checkReceivedPiece(secondOrderNumber, secondItem.title);
           });
 
-          DataImport.editMarcFile('marcFileForMatchOnPol.mrc', editedMarcFileName, 'test', firstOrderNumber);
+        DataImport.editMarcFile('marcFileForMatchOnPol.mrc', editedMarcFileName, 'test', firstOrderNumber);
       });
 
     // create mapping and action profiles

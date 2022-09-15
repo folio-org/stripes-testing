@@ -329,8 +329,6 @@ function clickOnUpdatedHotlink(columnIndex = 3, row = 0) {
 }
 
 function verifyInstanceStatusNotUpdated() {
-  cy.intercept('GET', '/metadata-provider/jobLogEntries/*').as('getLogEntries');
-  cy.wait('@getLogEntries', getLongDelay());
   cy.do(searchResultsList.find(MultiColumnListCell({
     row: 1,
     columnIndex: 3,

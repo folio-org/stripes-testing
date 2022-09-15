@@ -52,7 +52,7 @@ describe('ui-requests: Sort requests', () => {
     Requests.deleteRequestPolicyApi(requestPolicyId);
   });
 
-  it('C2379 Test Request app sorting (folijet) (prokopovych)', { tags: [testType.smoke, DevTeams.folijet] }, () => {
+  it('C2379 Test Request app sorting (folijet) (prokopovych)', { tags: [DevTeams.folijet] }, () => {
     cy.visit(TopMenu.requestsPath);
 
     cy.intercept('GET', '/circulation/requests?*').as('getRequests');
