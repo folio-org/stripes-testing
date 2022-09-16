@@ -43,7 +43,7 @@ describe('bulk-edit', () => {
       BulkEditActions.verifyBulkEditForm();
     });
 
-    it.only('C357578 Verify "In app - Update user records" permission (firebird)', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
+    it('C357578 Verify "In app - Update user records" permission (firebird)', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
       BulkEditSearchPane.verifyUsersUpdatePermission();
       BulkEditSearchPane.verifyRecordIdentifierItems();
       BulkEditSearchPane.verifyDragNDropUpdateUsersArea();
