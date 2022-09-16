@@ -78,6 +78,20 @@ export default {
     this.waitForFundDetailsLoading();
   },
 
+  createFundForWarningMessage(fund) {
+    cy.do([
+      Button('New').click(),
+      TextField('Name*').fillIn(fund.name),
+      TextField('Code*').fillIn(fund.code),
+      TextField('External account*').fillIn(fund.externalAccountNo),
+      Selection('Ledger*').find(Button()).click()
+    ]);
+  },
+
+  checkWarningMessageFundCodeUsed: () => {
+    cy.do(TextField('Code*').has({ error: 'This Fund code is already in use.' }));
+  },
+
   checkCreatedFund: (fundName) => {
     cy.xpath(createdFundNameXpath)
       .should('be.visible')
