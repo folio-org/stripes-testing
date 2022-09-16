@@ -1,11 +1,15 @@
 import { Pane, Checkbox, Label, Form, Button, TextField } from '../../../../../interactors';
 
+const checkoutForm = Form({ id: 'checkout-form' });
+const timeoutDurationTextField = TextField({ id: 'checkoutTimeoutDuration' });
+const saveButton = Button('Save');
+
 export default {
   waitLoading() {
     cy.expect([
       Pane('Other settings').exists(),
-      Form({ id: 'checkout-form' }).exists(),
-      Form({ id: 'checkout-form' }).find(Label('Patron id(s) for checkout scanning*')).exists()
+      checkoutForm.exists(),
+      checkoutForm.find(Label('Patron id(s) for checkout scanning*')).exists()
     ]);
   },
 
@@ -31,13 +35,13 @@ export default {
     this.verifyCheckboxIsChecked('#checkoutTimeout', 'checkoutTimeout');
 
     cy.do([
-      TextField({ id: 'checkoutTimeoutDuration' }).exists(),
-      TextField({ id: 'checkoutTimeoutDuration' }).fillIn(''),
-      TextField({ id: 'checkoutTimeoutDuration' }).fillIn((+checkoutTimeoutDuration + 1).toString()),
-      Button('Save').exists(),
-      Button('Save').click()]);
-    cy.reload().then(() => cy.do([TextField({ id: 'checkoutTimeoutDuration' }).fillIn(''),
-      TextField({ id: 'checkoutTimeoutDuration' }).fillIn(checkoutTimeoutDuration),
-      Button('Save').click()]));
+      timeoutDurationTextField.exists(),
+      timeoutDurationTextField.fillIn(''),
+      timeoutDurationTextField.fillIn((+checkoutTimeoutDuration + 1).toString()),
+      saveButton.exists(),
+      saveButton.click()]);
+    cy.reload().then(() => cy.do([timeoutDurationTextField.fillIn(''),
+      timeoutDurationTextField.fillIn(checkoutTimeoutDuration),
+      saveButton.click()]));
   },
 };
