@@ -6,7 +6,6 @@ import {
   Accordion,
   SelectionOption
 } from '../../../../../interactors';
-import { getLongDelay } from '../../../utils/cypressTools';
 
 const criterionValueTypeList = SelectionList({ id: 'sl-container-criterion-value-type' });
 const criterionValueTypeButton = Button({ id:'criterion-value-type' });

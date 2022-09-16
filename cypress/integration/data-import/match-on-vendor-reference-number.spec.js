@@ -135,34 +135,34 @@ describe('ui-data-import: Match on VRN and update related Instance, Holdings, It
       });
   });
 
-  // after(() => {
-  //   let itemId;
+  after(() => {
+    let itemId;
 
-  //   cy.getInstance({ limit: 1, expandAll: true, query: `"title"=="${item.title}"` })
-  //     .then((instance) => {
-  //       itemId = instance.items[0].id;
-  //       cy.deleteItem(itemId);
-  //       cy.deleteHoldingRecordViaApi(instance.holdings[0].id);
-  //       InventoryInstance.deleteInstanceViaApi(instance.id);
-  //     });
-  //   Orders.getOrdersApi({ limit: 1, query: `"poNumber"=="${orderNumber}"` })
-  //     .then(order => {
-  //       Orders.deleteOrderApi(order[0].id);
-  //     });
-  //   Users.deleteViaApi(user.userId);
-  //   FileManager.deleteFile(`cypress/fixtures/${editedMarcFileName}`);
-  //   // delete generated profiles
-  //   JobProfiles.deleteJobProfile(jobProfilesData.name);
-  //   MatchProfiles.deleteMatchProfile(instanceMatchProfileName);
-  //   MatchProfiles.deleteMatchProfile(holdingsMatchProfileName);
-  //   MatchProfiles.deleteMatchProfile(itemMatchProfileName);
-  //   ActionProfiles.deleteActionProfile(instanceActionProfileName);
-  //   ActionProfiles.deleteActionProfile(holdingsActionProfileName);
-  //   ActionProfiles.deleteActionProfile(itemActionProfileName);
-  //   FieldMappingProfiles.deleteFieldMappingProfile(instanceMappingProfileName);
-  //   FieldMappingProfiles.deleteFieldMappingProfile(holdingsMappingProfileName);
-  //   FieldMappingProfiles.deleteFieldMappingProfile(itemMappingProfileName);
-  // });
+    cy.getInstance({ limit: 1, expandAll: true, query: `"title"=="${item.title}"` })
+      .then((instance) => {
+        itemId = instance.items[0].id;
+        cy.deleteItem(itemId);
+        cy.deleteHoldingRecordViaApi(instance.holdings[0].id);
+        InventoryInstance.deleteInstanceViaApi(instance.id);
+      });
+    Orders.getOrdersApi({ limit: 1, query: `"poNumber"=="${orderNumber}"` })
+      .then(order => {
+        Orders.deleteOrderApi(order[0].id);
+      });
+    Users.deleteViaApi(user.userId);
+    FileManager.deleteFile(`cypress/fixtures/${editedMarcFileName}`);
+    // delete generated profiles
+    JobProfiles.deleteJobProfile(jobProfilesData.name);
+    MatchProfiles.deleteMatchProfile(instanceMatchProfileName);
+    MatchProfiles.deleteMatchProfile(holdingsMatchProfileName);
+    MatchProfiles.deleteMatchProfile(itemMatchProfileName);
+    ActionProfiles.deleteActionProfile(instanceActionProfileName);
+    ActionProfiles.deleteActionProfile(holdingsActionProfileName);
+    ActionProfiles.deleteActionProfile(itemActionProfileName);
+    FieldMappingProfiles.deleteFieldMappingProfile(instanceMappingProfileName);
+    FieldMappingProfiles.deleteFieldMappingProfile(holdingsMappingProfileName);
+    FieldMappingProfiles.deleteFieldMappingProfile(itemMappingProfileName);
+  });
 
   it('C350591 Match on VRN and update related Instance, Holdings, Item (folijet)', { tags: [TestTypes.smoke, DevTeams.folijet] }, () => {
     // create order with POL
