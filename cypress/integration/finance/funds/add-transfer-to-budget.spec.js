@@ -2,6 +2,7 @@
 // TO DO: Now we do not have the ability to delete data, becouse deleting transactions is now impossible.
 // In the future they want to change this.
 // For this reason I have already written a method for cleaning the data and I think it should be kept.
+import Users from '../../../support/fragments/users/users';
 import permissions from '../../../support/dictionary/permissions';
 import testType from '../../../support/dictionary/testTypes';
 import devTeams from '../../../support/dictionary/devTeams';
@@ -9,7 +10,6 @@ import getRandomPostfix from '../../../support/utils/stringTools';
 import FiscalYears from '../../../support/fragments/finance/fiscalYears/fiscalYears';
 import TopMenu from '../../../support/fragments/topMenu';
 import Ledgers from '../../../support/fragments/finance/ledgers/ledgers';
-// import Users from '../../../support/fragments/users/users';
 import Funds from '../../../support/fragments/finance/funds/funds';
 import FinanceHelp from '../../../support/fragments/finance/financeHelper';
 import InteractorsTools from '../../../support/utils/interactorsTools';
@@ -67,32 +67,31 @@ describe('ui-finance: Add transfer to budget', () => {
     ])
       .then(userProperties => {
         user = userProperties;
-        cy.login(userProperties.username, userProperties.password, { path:TopMenu.fundPath, waiter: Funds.waitLoading });
+        cy.login(user.username, user.password, { path:TopMenu.fundPath, waiter: Funds.waitLoading });
       });
   });
 
-  // after(() => {
-  //   cy.loginAsAdmin({ path:TopMenu.fundPath, waiter: Funds.waitLoading });
-  //   FinanceHelp.searchByName(firstFund.name);
-  //   FinanceHelp.selectFromResultsList();
-  //   Funds.selectBudgetDetails();
-  //   Funds.deleteBudgetViaActions();
-  //   cy.visit(TopMenu.fundPath);
-  //   FinanceHelp.searchByName(secondFund.name);
-  //   FinanceHelp.selectFromResultsList();
-  //   Funds.selectBudgetDetails();
-  //   Funds.deleteBudgetViaActions();
-  //   InteractorsTools.checkCalloutMessage('Budget has been deleted');
-  //   Funds.checkIsBudgetDeleted();
-  //   Funds.deleteFundViaApi(firstFund.id);
-  //   Funds.deleteFundViaApi(secondFund.id);
-  //   Ledgers.deleteledgerViaApi(defaultLedger.id);
-  //   FiscalYears.deleteFiscalYearViaApi(defaultFiscalYear.id);
-  //   Users.deleteViaApi(user.userId);
-  // });
+  after(() => {
+    // cy.loginAsAdmin({ path:TopMenu.fundPath, waiter: Funds.waitLoading });
+    // FinanceHelp.searchByName(firstFund.name);
+    // FinanceHelp.selectFromResultsList();
+    // Funds.selectBudgetDetails();
+    // Funds.deleteBudgetViaActions();
+    // cy.visit(TopMenu.fundPath);
+    // FinanceHelp.searchByName(secondFund.name);
+    // FinanceHelp.selectFromResultsList();
+    // Funds.selectBudgetDetails();
+    // Funds.deleteBudgetViaActions();
+    // InteractorsTools.checkCalloutMessage('Budget has been deleted');
+    // Funds.checkIsBudgetDeleted();
+    // Funds.deleteFundViaApi(firstFund.id);
+    // Funds.deleteFundViaApi(secondFund.id);
+    // Ledgers.deleteledgerViaApi(defaultLedger.id);
+    // FiscalYears.deleteFiscalYearViaApi(defaultFiscalYear.id);
+    Users.deleteViaApi(user.userId);
+  });
 
   it('C6650 Add transfer to a budget by creating a transfer transaction (thunderjet)', { tags: [testType.criticalPath, devTeams.thunderjet] }, () => {
-    console.log(defaultFiscalYear);
     FinanceHelp.searchByName(firstFund.name);
     FinanceHelp.selectFromResultsList();
     Funds.selectBudgetDetails();
