@@ -42,5 +42,20 @@ describe('bulk-edit', () => {
       BulkEditActions.openStartBulkEditForm();
       BulkEditActions.verifyBulkEditForm();
     });
+
+    it.only('C357578 Verify "In app - Update user records" permission (firebird)', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
+      BulkEditSearchPane.verifyUsersUpdatePermission();
+      BulkEditSearchPane.verifyRecordIdentifierItems();
+      BulkEditSearchPane.verifyDragNDropUpdateUsersArea();
+
+      BulkEditSearchPane.selectRecordIdentifier('User Barcodes');
+      BulkEditSearchPane.verifyDragNDropUsersBarcodesArea();
+
+      BulkEditSearchPane.selectRecordIdentifier('External IDs');
+      BulkEditSearchPane.verifyDragNDropExternalIDsArea();
+
+      BulkEditSearchPane.selectRecordIdentifier('Usernames');
+      BulkEditSearchPane.verifyDragNDropUsernamesArea();
+    });
   });
 });
