@@ -101,6 +101,10 @@ export default {
       });
   },
 
+  resetFilters: () => {
+    cy.do(Button({ id: 'reset-fiscal-years-filters' }).click());
+  },
+
   deleteFiscalYearViaApi: (fiscalYearId) => cy.okapiRequest({
     method: 'DELETE',
     path: `finance/fiscal-years/${fiscalYearId}`,
