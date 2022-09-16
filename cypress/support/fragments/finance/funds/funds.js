@@ -40,6 +40,11 @@ const deleteButton = Button('Delete');
 const transferButton = Button('Transfer');
 const amountTextField = TextField({ name: 'amount' });
 const confirmButton = Button('Confirm');
+const newButton = Button('New');
+const nameField = TextField('Name*');
+const codeField = TextField('Code*');
+const externalAccountField = TextField('External account*');
+const ledgerSelection = Selection('Ledger*');
 
 export default {
 
@@ -67,15 +72,29 @@ export default {
 
   createFund(fund) {
     cy.do([
-      Button('New').click(),
-      TextField('Name*').fillIn(fund.name),
-      TextField('Code*').fillIn(fund.code),
-      TextField('External account*').fillIn(fund.externalAccount),
-      Selection('Ledger*').open(),
+      newButton.click(),
+      nameField.fillIn(fund.name),
+      codeField.fillIn(fund.code),
+      externalAccountField.fillIn(fund.externalAccount),
+      ledgerSelection.open(),
       SelectionList().select(fund.ledgerName),
       Button('Save & Close').click()
     ]);
     this.waitForFundDetailsLoading();
+  },
+
+  createFundForWarningMessage(fund) {
+    cy.do([
+      newButton.click(),
+      nameField.fillIn(fund.name),
+      codeField.fillIn(fund.code),
+      externalAccountField.fillIn(fund.externalAccountNo),
+      ledgerSelection.find(Button()).click()
+    ]);
+  },
+
+  checkWarningMessageFundCodeUsed: () => {
+    cy.do(codeField.has({ error: 'This Fund code is already in use.' }));
   },
 
   checkCreatedFund: (fundName) => {
@@ -86,12 +105,12 @@ export default {
 
   tryToCreateFundWithoutMandatoryFields: (fundName) => {
     cy.do([
-      Button('New').click(),
-      TextField('Name*').fillIn(fundName),
+      newButton.click(),
+      nameField.fillIn(fundName),
       Button('Save & Close').click(),
-      TextField('Code*').fillIn('some code'),
+      codeField.fillIn('some code'),
       Button('Save & Close').click(),
-      TextField('External account*').fillIn('some account'),
+      externalAccountField.fillIn('some account'),
       Button('Save & Close').click(),
       // try to navigate without saving
       Button('Agreements').click(),
@@ -117,7 +136,7 @@ export default {
   },
 
   addBudget: (allocatedQuantity) => {
-    cy.do(Accordion('Current budget').find(Button('New')).click());
+    cy.do(Accordion('Current budget').find(newButton).click());
     cy.expect(Modal('Current budget').exists());
     cy.do([
       Modal('Current budget').find(TextField({ name: 'allocated' })).fillIn(allocatedQuantity.toString()),
