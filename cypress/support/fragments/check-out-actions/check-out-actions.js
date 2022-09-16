@@ -26,11 +26,11 @@ export default {
     ]);
   },
 
-  async checkUserInfo({ barcode, personal }, patronGroup = '0') {
+  async checkUserInfo({ barcode, username }, patronGroup = '0') {
     return cy.expect([
       userPane.find(KeyValue({ value: 'Active' })).exists(),
       userPane.find(KeyValue({ value: patronGroup })).exists(),
-      userPane.find(Link(including(personal.lastname + ', '))).exists(),
+      userPane.find(Link(including(username + ', '))).exists(),
       userPane.find(Link(barcode)).exists(),
     ]);
   },
