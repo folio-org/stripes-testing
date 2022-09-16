@@ -68,6 +68,7 @@ export default {
   uiCirculationViewCreateEditDelete: { internal: 'ui-circulation.settings.circulation-rules', gui: 'Settings (Circ): Can create, edit and remove circulation rules' },
   uiCirculationSettingsNoticeTemplates: { internal: 'ui-circulation.settings.notice-templates', gui: 'Settings (Circ): Can create, edit and remove patron notice templates' },
   uiCirculationSettingsNoticePolicies: { internal: 'ui-circulation.settings.notice-policies', gui: 'Settings (Circ): Can create, edit and remove notice policies' },
+  uiCirculationSettingsOtherSettings: { internal: 'ui-circulation.settings.other-settings', gui: 'Settings (Circ): Can create, edit and remove other settings' },
   // Users
   usersViewRequests: { internal: 'ui-users.requests.all', gui: 'Users: View requests' },
   uiUsersView: { internal: 'ui-users.view', gui: 'Users: Can view user profile' },
