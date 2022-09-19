@@ -1,4 +1,4 @@
-import { Button, TextField, Pane, MultiColumnList, PaneContent, PaneHeader } from '../../../../../interactors';
+import { Button, TextField, Pane, MultiColumnList, PaneContent, PaneHeader, MultiColumnListRow, MultiColumnListCell, SelectionOption } from '../../../../../interactors';
 import getRandomPostfix from '../../../utils/stringTools';
 import DateTools from '../../../utils/dateTools';
 
@@ -43,6 +43,15 @@ export default {
     cy.do(PaneHeader({ id: 'paneHeaderpane-fiscal-year-details' }).find(Button({ icon: 'times' })).click());
   },
 
+  selectNoAcquisitionUnit() {
+    cy.do([
+      Button({ id: 'accordion-toggle-button-acqUnitIds' }).click(),
+      Button({ id: 'acqUnitIds-selection' }).click(),
+      SelectionOption('No acquisition unit').click(),
+    ]);
+  },
+
+
   checkCreatedFiscalYear: (fiscalYearName) => {
     cy.xpath(createdFiscalYearNameXpath)
       .should('be.visible')
@@ -70,6 +79,13 @@ export default {
     cy.xpath(numberOfSearchResultsHeader)
       .should('be.visible')
       .and('have.text', zeroResultsFoundText);
+  },
+
+  checkSearchResults: (fiscalYear) => {
+    cy.expect(MultiColumnList({ id: 'fiscal-years-list' })
+      .find(MultiColumnListRow({ index: 0 }))
+      .find(MultiColumnListCell({ columnIndex: 0 }))
+      .has({ content: fiscalYear }));
   },
 
   fiscalYearsDisplay: () => {
