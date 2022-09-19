@@ -1,4 +1,3 @@
-
 import testType from '../../../support/dictionary/testTypes';
 import devTeams from '../../../support/dictionary/devTeams';
 import FiscalYears from '../../../support/fragments/finance/fiscalYears/fiscalYears';
@@ -7,7 +6,6 @@ import FinanceHelp from '../../../support/fragments/finance/financeHelper';
 
 describe('ui-finance: Add transfer to budget', () => {
   const defaultFiscalYear = { ...FiscalYears.defaultUiFiscalYear };
-
 
   before(() => {
     cy.getAdminToken();
