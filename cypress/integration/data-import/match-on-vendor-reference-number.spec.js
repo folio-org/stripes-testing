@@ -1,4 +1,5 @@
 /* eslint-disable cypress/no-unnecessary-waiting */
+import uuid from 'uuid';
 import getRandomPostfix from '../../support/utils/stringTools';
 import TestTypes from '../../support/dictionary/testTypes';
 import Helper from '../../support/fragments/finance/financeHelper';
@@ -12,22 +13,48 @@ import Users from '../../support/fragments/users/users';
 import permissions from '../../support/dictionary/permissions';
 import DevTeams from '../../support/dictionary/devTeams';
 import JobProfiles from '../../support/fragments/data_import/job_profiles/jobProfiles';
+import BasicOrderLine from '../../support/fragments/orders/basicOrderLine';
+import NewOrder from '../../support/fragments/orders/newOrder';
+import Organizations from '../../support/fragments/organizations/organizations';
+import OrderView from '../../support/fragments/orders/orderView';
+import OrderLines from '../../support/fragments/orders/orderLines';
+import Receiving from '../../support/fragments/receiving/receiving';
+import DataImport from '../../support/fragments/data_import/dataImport';
+import FileDetails from '../../support/fragments/data_import/logs/fileDetails';
+import InventoryInstance from '../../support/fragments/inventory/inventoryInstance';
+import MatchProfiles from '../../support/fragments/data_import/match_profiles/matchProfiles';
+import ActionProfiles from '../../support/fragments/data_import/action_profiles/actionProfiles';
+import FieldMappingProfiles from '../../support/fragments/data_import/mapping_profiles/fieldMappingProfiles';
 
 describe('ui-data-import: Match on VRN and update related Instance, Holdings, Item', () => {
-  let userId = null;
-  const order = {
-    orderType: 'One-time',
-    vendor: 'GOBI Library Solutions',
+  const item = {
+    title: 'Agrarianism and capitalism in early Georgia, 1732-1743 / Jay Jordan Butler.',
+    productId: `xyz${getRandomPostfix()}`,
+    vrn: uuid(),
+    vrnType: 'Vendor order reference number',
+    physicalUnitPrice: '20',
+    quantityPhysical: '1',
+    createInventory: 'Instance, holdings, item'
   };
-  const instanceMappingProfileName = `CaseC350591 Update Instance by VRN match ${Helper.getRandomBarcode()}`;
-  const holdingsMappingProfileName = `CaseC350591 Update Holdings by VRN match ${Helper.getRandomBarcode()}`;
-  const itemMappingProfileName = `CaseC350591 Update Item by VRN match ${Helper.getRandomBarcode()}`;
-  const instanceActionProfileName = `CaseC350591 Action for Instance ${Helper.getRandomBarcode()}`;
-  const holdingsActionProfileName = `CaseC350591 Action for Holdings ${Helper.getRandomBarcode()}`;
-  const itemActionProfileName = `CaseC350591 Action for Item ${Helper.getRandomBarcode()}`;
-  const instanceMatchProfileName = `CaseC350591 Match for Instance ${Helper.getRandomBarcode()}`;
-  const holdingsMatchProfileName = `CaseC350591 Match for Holdings ${Helper.getRandomBarcode()}`;
-  const itemMatchProfileName = `CaseC350591 Match for Item ${Helper.getRandomBarcode()}`;
+  let vendorId;
+  let locationId;
+  let acquisitionMethodId;
+  let productIdTypeId;
+  let materialTypeId;
+  let user = null;
+  let orderNumber;
+
+  const instanceMappingProfileName = `C350591 Update Instance by VRN match ${Helper.getRandomBarcode()}`;
+  const holdingsMappingProfileName = `C350591 Update Holdings by VRN match ${Helper.getRandomBarcode()}`;
+  const itemMappingProfileName = `C350591 Update Item by VRN match ${Helper.getRandomBarcode()}`;
+  const instanceActionProfileName = `C350591 Action for Instance ${Helper.getRandomBarcode()}`;
+  const holdingsActionProfileName = `C350591 Action for Holdings ${Helper.getRandomBarcode()}`;
+  const itemActionProfileName = `C350591 Action for Item ${Helper.getRandomBarcode()}`;
+  const instanceMatchProfileName = `C350591 Match for Instance ${Helper.getRandomBarcode()}`;
+  const holdingsMatchProfileName = `C350591 Match for Holdings ${Helper.getRandomBarcode()}`;
+  const itemMatchProfileName = `C350591 Match for Item ${Helper.getRandomBarcode()}`;
+  const editedMarcFileName = `C350591 marcFileForMatchOnVrn.${getRandomPostfix()}.mrc`;
+
   const matchProfiles = [
     {
       name: instanceMatchProfileName,
@@ -42,11 +69,9 @@ describe('ui-data-import: Match on VRN and update related Instance, Holdings, It
       existingRecordType: 'ITEM',
     },
   ];
-  const filePath = 'matchOnVendorReferenceNumber.mrc';
-  const fileName = `vrn${getRandomPostfix()}.mrc`;
 
   const jobProfilesData = {
-    name: `CaseC350591 Job profile ${Helper.getRandomBarcode()}`,
+    name: `C350591 Job profile ${Helper.getRandomBarcode()}`,
     dataType: 'MARC',
     matches: [
       {
@@ -74,35 +99,112 @@ describe('ui-data-import: Match on VRN and update related Instance, Holdings, It
       permissions.moduleDataImportEnabled.gui,
       permissions.settingsDataImportEnabled.gui,
       permissions.dataImportDeleteLogs.gui,
+      permissions.uiReceivingViewEditCreate.gui,
+      permissions.uiInventoryViewInstances.gui,
       permissions.uiQuickMarcQuickMarcBibliographicEditorView.gui,
     ]).then(userProperties => {
-      userId = userProperties.userId;
-      cy.login(userProperties.username, userProperties.password);
-    });
-
-    cy.readFile(`cypress/fixtures/${filePath}`).then(content => {
-      FileManager.createFile(`cypress/fixtures/${fileName}`, content);
-    });
+      user = userProperties;
+    })
+      .then(() => {
+        cy.getAdminToken()
+          .then(() => {
+            Organizations.getOrganizationViaApi({ query: 'name="GOBI Library Solutions"' })
+              .then(organization => {
+                vendorId = organization.id;
+              });
+            cy.getMaterialTypes({ query: 'name="book"' })
+              .then(materialType => {
+                materialTypeId = materialType.id;
+              });
+            cy.getAcquisitionMethodsApi({ query: 'value="Purchase at vendor system"' })
+              .then(params => {
+                acquisitionMethodId = params.body.acquisitionMethods[0].id;
+              });
+            cy.getProductIdTypes({ query: 'name=="ISSN"' })
+              .then(productIdType => {
+                productIdTypeId = productIdType.id;
+              });
+            cy.getLocations({ query: 'name="Main Library"' })
+              .then(res => {
+                locationId = res.id;
+              });
+          })
+          .then(() => {
+            cy.login(user.username, user.password, { path: TopMenu.ordersPath, waiter: Orders.waitLoading });
+          });
+      });
   });
 
   after(() => {
-    Users.deleteViaApi(userId);
-    MatchOnVRN.deletePOLineViaAPI(MatchOnVRN.poLineData.title);
-    MatchOnVRN.deleteItemViaAPI();
+    let itemId;
+
+    cy.getInstance({ limit: 1, expandAll: true, query: `"title"=="${item.title}"` })
+      .then((instance) => {
+        itemId = instance.items[0].id;
+        cy.deleteItem(itemId);
+        cy.deleteHoldingRecordViaApi(instance.holdings[0].id);
+        InventoryInstance.deleteInstanceViaApi(instance.id);
+      });
+    Orders.getOrdersApi({ limit: 1, query: `"poNumber"=="${orderNumber}"` })
+      .then(order => {
+        Orders.deleteOrderApi(order[0].id);
+      });
+    Users.deleteViaApi(user.userId);
+    FileManager.deleteFile(`cypress/fixtures/${editedMarcFileName}`);
+    // delete generated profiles
+    JobProfiles.deleteJobProfile(jobProfilesData.name);
+    MatchProfiles.deleteMatchProfile(instanceMatchProfileName);
+    MatchProfiles.deleteMatchProfile(holdingsMatchProfileName);
+    MatchProfiles.deleteMatchProfile(itemMatchProfileName);
+    ActionProfiles.deleteActionProfile(instanceActionProfileName);
+    ActionProfiles.deleteActionProfile(holdingsActionProfileName);
+    ActionProfiles.deleteActionProfile(itemActionProfileName);
+    FieldMappingProfiles.deleteFieldMappingProfile(instanceMappingProfileName);
+    FieldMappingProfiles.deleteFieldMappingProfile(holdingsMappingProfileName);
+    FieldMappingProfiles.deleteFieldMappingProfile(itemMappingProfileName);
   });
 
   it('C350591 Match on VRN and update related Instance, Holdings, Item (folijet)', { tags: [TestTypes.smoke, DevTeams.folijet] }, () => {
-    // create order
-    cy.visit(TopMenu.ordersPath);
-    Orders.createOrder(order);
-    MatchOnVRN.verifyCreatedOrder(order);
+    // create order with POL
+    Orders.createOrderWithOrderLineViaApi(NewOrder.getDefaultOrder(vendorId),
+      BasicOrderLine.getDefaultOrderLine(
+        item.quantityPhysical,
+        item.title,
+        locationId,
+        acquisitionMethodId,
+        item.physicalUnitPrice,
+        item.physicalUnitPrice,
+        [{
+          productId: item.productId,
+          productIdType: productIdTypeId
+        }],
+        materialTypeId,
+        [{
+          refNumberType: item.vrnType,
+          refNumber: item.vrn
+        }],
+      ))
+      .then(res => {
+        orderNumber = res;
 
-    // add and verify po line
-    Orders.createPOLineViaActions();
-    MatchOnVRN.fillPOLineInfo();
-    MatchOnVRN.goBackToPO();
-    MatchOnVRN.openOrder();
-    MatchOnVRN.verifyOrderStatus();
+        Orders.checkIsOrderCreated(orderNumber);
+        // open the first PO with POL
+        Orders.searchByParameter('PO number', orderNumber);
+        Helper.selectFromResultsList();
+        Orders.openOrder();
+        OrderView.checkIsOrderOpened('Open');
+        OrderView.checkIsItemsInInventoryCreated(item.title, 'Main Library');
+        // check receiving pieces are created
+        cy.visit(TopMenu.ordersPath);
+        Orders.resetFilters();
+        Orders.searchByParameter('PO number', orderNumber);
+        Orders.selectFromResultsList();
+        Orders.openPolDetails();
+        OrderLines.openReceiving();
+        Receiving.checkIsPiecesCreated(item.title);
+      });
+
+    DataImport.editMarcFile('marcFileForMatchOnVrn.mrc', editedMarcFileName, '14567-1', item.vrn);
 
     // create field mapping profiles
     cy.visit(SettingsMenu.mappingProfilePath);
@@ -132,12 +234,16 @@ describe('ui-data-import: Match on VRN and update related Instance, Holdings, It
 
     // import a file
     cy.visit(TopMenu.dataImportPath);
-    cy.uploadFileWithDefaultJobProfile(fileName, jobProfilesData.name);
-    FileManager.deleteFile(`cypress/fixtures/${fileName}`);
+    DataImport.checkIsLandingPageOpened();
+    DataImport.uploadFile(editedMarcFileName);
+    JobProfiles.searchJobProfileForImport(jobProfilesData.name);
+    JobProfiles.runImportFile(editedMarcFileName);
+    Logs.checkStatusOfJobProfile();
+    Logs.openFileDetails(editedMarcFileName);
+    FileDetails.checkItemsStatusesInResultList(0, [FileDetails.status.created, FileDetails.status.updated, FileDetails.status.updated, FileDetails.status.updated]);
+    FileDetails.checkItemsStatusesInResultList(1, [FileDetails.status.dash, FileDetails.status.discarded, FileDetails.status.discarded, FileDetails.status.discarded]);
 
     // verify Instance, Holdings and Item details
-    Logs.openFileDetails(fileName);
-    MatchOnVRN.verifyInstanceStatusNotUpdated();
     MatchOnVRN.clickOnUpdatedHotlink();
     MatchOnVRN.verifyInstanceUpdated();
     MatchOnVRN.verifyHoldingsUpdated();
