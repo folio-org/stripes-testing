@@ -127,17 +127,17 @@ describe('ui-data-import: Match on location', () => {
     // create Job profiles
     cy.visit(SettingsMenu.jobProfilePath);
     JobProfiles.createJobProfile(updateJobProfile);
-    NewJobProfile.
+    NewJobProfile.linkMatchProfile(instanceHridMatchProfileName);
 
-    NewJobProfile.saveAndClose();
-    JobProfiles.checkJobProfilePresented(updateJobProfile.profileName);
+    // NewJobProfile.saveAndClose();
+    // JobProfiles.checkJobProfilePresented(updateJobProfile.profileName);
 
-    // upload a marc file
-    cy.visit(TopMenu.dataImportPath);
-    DataImport.uploadFile(editedFileNameRev1, fileNameForProtect);
-    JobProfiles.searchJobProfileForImport(updateJobProfile.profileName);
-    JobProfiles.runImportFile(fileNameForProtect);
-    Logs.checkStatusOfJobProfile('Completed');
-    Logs.openFileDetails(fileNameForProtect);
+    // // upload a marc file
+    // cy.visit(TopMenu.dataImportPath);
+    // DataImport.uploadFile(editedFileNameRev1, fileNameForProtect);
+    // JobProfiles.searchJobProfileForImport(updateJobProfile.profileName);
+    // JobProfiles.runImportFile(fileNameForProtect);
+    // Logs.checkStatusOfJobProfile('Completed');
+    // Logs.openFileDetails(fileNameForProtect);
   });
 });
