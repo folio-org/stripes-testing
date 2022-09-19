@@ -77,7 +77,6 @@ describe('Recieving notice: Checkout', () => {
 
   beforeEach('Preconditions', () => {
     itemsData.itemsWithSeparateInstance.forEach(function (item, index) { item.barcode = generateUniqueItemBarcodeWithShift(index); });
-    searchResultsData.itemBarcode = itemsData.itemsWithSeparateInstance[0].barcode;
     cy.getAdminToken().then(() => {
       cy.getInstanceTypes({ limit: 1 }).then((instanceTypes) => { testData.instanceTypeId = instanceTypes[0].id; });
       cy.getHoldingTypes({ limit: 1 }).then((res) => { testData.holdingTypeId = res[0].id; });
