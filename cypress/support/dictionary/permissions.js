@@ -68,6 +68,7 @@ export default {
   uiCirculationViewCreateEditDelete: { internal: 'ui-circulation.settings.circulation-rules', gui: 'Settings (Circ): Can create, edit and remove circulation rules' },
   uiCirculationSettingsNoticeTemplates: { internal: 'ui-circulation.settings.notice-templates', gui: 'Settings (Circ): Can create, edit and remove patron notice templates' },
   uiCirculationSettingsNoticePolicies: { internal: 'ui-circulation.settings.notice-policies', gui: 'Settings (Circ): Can create, edit and remove notice policies' },
+  uiCirculationSettingsOtherSettings: { internal: 'ui-circulation.settings.other-settings', gui: 'Settings (Circ): Can create, edit and remove other settings' },
   // Users
   usersViewRequests: { internal: 'ui-users.requests.all', gui: 'Users: View requests' },
   uiUsersView: { internal: 'ui-users.view', gui: 'Users: Can view user profile' },
@@ -133,4 +134,5 @@ export default {
   uiOrdersDelete: { internal: 'ui-orders.orders.delete', gui: 'Orders: Can delete Orders and Order lines' },
   // Finance
   uiFinanceCreateAllocations: { internal: 'ui-finance.allocations.create', gui: 'Finance: Create allocations' },
+  uiFinanceCreateTransfers: { internal: 'ui-finance.transfers.create', gui: 'Finance: Create transfers' }
 };

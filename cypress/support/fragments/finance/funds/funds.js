@@ -33,8 +33,18 @@ const noItemsMessage = 'The list contains no items';
 const viewTransactionsLinkXpath = '//a[text()="View transactions"]';
 const budgetPaneId = 'pane-budget';
 const transactionResultPaneId = 'transaction-results-pane';
-const actionsButtonName = 'Actions';
 const saveAndCloseButton = Button({ id: 'clickable-save-title' });
+const currentBudgetSection = Section({ id: 'currentBudget' });
+const actionsButton = Button('Actions');
+const deleteButton = Button('Delete');
+const transferButton = Button('Transfer');
+const amountTextField = TextField({ name: 'amount' });
+const confirmButton = Button('Confirm');
+const newButton = Button('New');
+const nameField = TextField('Name*');
+const codeField = TextField('Code*');
+const externalAccountField = TextField('External account*');
+const ledgerSelection = Selection('Ledger*');
 
 export default {
 
@@ -62,15 +72,29 @@ export default {
 
   createFund(fund) {
     cy.do([
-      Button('New').click(),
-      TextField('Name*').fillIn(fund.name),
-      TextField('Code*').fillIn(fund.code),
-      TextField('External account*').fillIn(fund.externalAccount),
-      Selection('Ledger*').open(),
+      newButton.click(),
+      nameField.fillIn(fund.name),
+      codeField.fillIn(fund.code),
+      externalAccountField.fillIn(fund.externalAccount),
+      ledgerSelection.open(),
       SelectionList().select(fund.ledgerName),
       Button('Save & Close').click()
     ]);
     this.waitForFundDetailsLoading();
+  },
+
+  createFundForWarningMessage(fund) {
+    cy.do([
+      newButton.click(),
+      nameField.fillIn(fund.name),
+      codeField.fillIn(fund.code),
+      externalAccountField.fillIn(fund.externalAccountNo),
+      ledgerSelection.find(Button()).click()
+    ]);
+  },
+
+  checkWarningMessageFundCodeUsed: () => {
+    cy.do(codeField.has({ error: 'This Fund code is already in use.' }));
   },
 
   checkCreatedFund: (fundName) => {
@@ -81,12 +105,12 @@ export default {
 
   tryToCreateFundWithoutMandatoryFields: (fundName) => {
     cy.do([
-      Button('New').click(),
-      TextField('Name*').fillIn(fundName),
+      newButton.click(),
+      nameField.fillIn(fundName),
       Button('Save & Close').click(),
-      TextField('Code*').fillIn('some code'),
+      codeField.fillIn('some code'),
       Button('Save & Close').click(),
-      TextField('External account*').fillIn('some account'),
+      externalAccountField.fillIn('some account'),
       Button('Save & Close').click(),
       // try to navigate without saving
       Button('Agreements').click(),
@@ -104,15 +128,15 @@ export default {
 
   deleteFundViaActions: () => {
     cy.do([
-      cy.expect(Button(actionsButtonName).exists()),
-      Button(actionsButtonName).click(),
-      Button('Delete').click(),
+      cy.expect(actionsButton.exists()),
+      actionsButton.click(),
+      deleteButton.click(),
       Button('Delete', { id:'clickable-fund-remove-confirmation-confirm' }).click()
     ]);
   },
 
   addBudget: (allocatedQuantity) => {
-    cy.do(Accordion('Current budget').find(Button('New')).click());
+    cy.do(Accordion('Current budget').find(newButton).click());
     cy.expect(Modal('Current budget').exists());
     cy.do([
       Modal('Current budget').find(TextField({ name: 'allocated' })).fillIn(allocatedQuantity.toString()),
@@ -139,10 +163,23 @@ export default {
 
   increaseAllocation: () => {
     cy.do([
-      Button('Actions').click(),
+      actionsButton.click(),
       Button('Increase allocation').click(),
-      TextField({ name: 'amount' }).fillIn('50'),
-      Modal({ id: 'add-transfer-modal' }).find(Button('Confirm')).click(),
+      amountTextField.fillIn('50'),
+      Modal({ id: 'add-transfer-modal' }).find(confirmButton).click(),
+    ]);
+  },
+
+  transfer: (thisFund, fromFund) => {
+    cy.do([
+      actionsButton.click(),
+      transferButton.click(),
+      Button({ name: 'toFundId' }).click(),
+      SelectionOption(`${thisFund.name} (${thisFund.code})`).click(),
+      Button({ name: 'fromFundId' }).click(),
+      SelectionOption(`${fromFund.name} (${fromFund.code})`).click(),
+      amountTextField.fillIn('10'),
+      Modal({ id: 'add-transfer-modal' }).find(confirmButton).click(),
     ]);
   },
 
@@ -178,8 +215,8 @@ export default {
 
   transferAmount: (amount, fundFrom, fundTo) => {
     cy.do([
-      Button(actionsButtonName).click(),
-      Button('Transfer').click()
+      actionsButton.click(),
+      transferButton.click()
     ]);
     cy.expect(Modal('Transfer').exists());
     cy.do([
@@ -188,14 +225,14 @@ export default {
       SelectionList().select((fundFrom.name).concat(' ', '(', fundFrom.code, ')')),
       Selection('To').open(),
       SelectionList().select((fundTo.name).concat(' ', '(', fundTo.code, ')')),
-      Button('Confirm').click()
+      confirmButton.click()
     ]);
   },
 
   deleteBudgetViaActions() {
     cy.do([
-      Button(actionsButtonName).click(),
-      Button('Delete').click(),
+      actionsButton.click(),
+      deleteButton.click(),
       Button('Delete', { id:'clickable-budget-remove-confirmation-confirm' }).click()
     ]);
     this.waitForFundDetailsLoading();
@@ -203,8 +240,8 @@ export default {
 
   tryToDeleteBudgetWithTransaction() {
     cy.do([
-      Button(actionsButtonName).click(),
-      Button('Delete').click(),
+      actionsButton.click(),
+      deleteButton.click(),
       Button('Delete', { id:'clickable-budget-remove-confirmation-confirm' }).click()
     ]);
     cy.expect(Section({ id: 'summary' }).exists());
@@ -315,19 +352,19 @@ export default {
 
   selectBudgetDetails:(rowNumber = 0) => {
     cy.do([
-      Section({ id: 'currentBudget' }).find(MultiColumnListRow({ index: rowNumber })).click()
+      currentBudgetSection.find(MultiColumnListRow({ index: rowNumber })).click()
     ]);
   },
 
   checkIsBudgetDeleted:(rowNumber = 0) => {
     cy.expect([
-      Section({ id: 'currentBudget' }).find(MultiColumnListRow({ index: rowNumber })).absent()
+      currentBudgetSection.find(MultiColumnListRow({ index: rowNumber })).absent()
     ]);
   },
 
   editBudget:() => {
     cy.do([
-      Button('Actions').click(),
+      actionsButton.click(),
       Button('Edit').click()
     ]);
   },

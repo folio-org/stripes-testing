@@ -85,6 +85,18 @@ export default {
     ]);
   },
 
+  verifyDragNDropUpdateUsersArea() {
+    cy.expect(HTML('Select a file with record identifiers').exists());
+  },
+
+  verifyDragNDropExternalIDsArea() {
+    cy.expect(HTML('Select a file with External IDs').exists());
+  },
+
+  verifyDragNDropUsernamesArea() {
+    cy.expect(HTML('Select a file with Usernames').exists());
+  },
+
   verifyDragNDropUsersBarcodesArea() {
     this.checkUsersRadio();
     this.selectRecordIdentifier('User Barcodes');
@@ -130,6 +142,15 @@ export default {
       recordIdentifier.has({ disabled: true }),
       fileBtn.has({ disabled: true }),
       actions.absent()
+    ]);
+  },
+
+  verifyUsersUpdatePermission() {
+    cy.expect([
+      radioItems.has({ disabled: true }),
+      recordIdentifier.has({ disabled: false }),
+      fileBtn.has({ disabled: true }),
+      actions.absent(),
     ]);
   },
 
