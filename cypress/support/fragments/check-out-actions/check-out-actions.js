@@ -16,6 +16,8 @@ import {
 const modal = Modal('Confirm multipiece check out');
 const endSessionButton = Button('End session');
 const userPane = PaneContent({ id: 'patron-details-content' });
+const itemBarcodeField = TextField({ name:'item.barcode' });
+const patronBarcodeField = TextField({ name: 'patron.identifier' });
 export default {
   modal,
   checkOutUser(userBarcode) {
@@ -26,11 +28,11 @@ export default {
     ]);
   },
 
-  async checkUserInfo({ barcode, username }, patronGroup = '0') {
+  async checkUserInfo({ barcode, personal }, patronGroup = '0') {
     return cy.expect([
       userPane.find(KeyValue({ value: 'Active' })).exists(),
       userPane.find(KeyValue({ value: patronGroup })).exists(),
-      userPane.find(Link(including(username + ', '))).exists(),
+      userPane.find(Link(including(personal.lastname + ', '))).exists(),
       userPane.find(Link(barcode)).exists(),
     ]);
   },
@@ -90,5 +92,10 @@ export default {
 
   checkItem:(barcode) => {
     cy.expect(MultiColumnList({ id:'list-items-checked-out' }).find(HTML(including(barcode))).absent());
-  }
+  },
+
+  waitLoading:() => {
+    cy.expect(patronBarcodeField.exists());
+    cy.expect(itemBarcodeField.exists());
+  },
 };

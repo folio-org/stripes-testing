@@ -1,8 +1,8 @@
 import uuid from 'uuid';
 import permissions from '../../support/dictionary/permissions';
 import TestTypes from '../../support/dictionary/testTypes';
+import TopMenu from '../../support/fragments/topMenu';
 import CheckInActions from '../../support/fragments/check-in-actions/checkInActions';
-import CheckInPane from '../../support/fragments/check-in-actions/checkInPane';
 import CheckOutActions from '../../support/fragments/check-out-actions/check-out-actions';
 import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
 import UserEdit from '../../support/fragments/users/userEdit';
@@ -15,13 +15,8 @@ import Location from '../../support/fragments/settings/tenant/locations/newLocat
 
 describe('Check Out - Actions ', () => {
   const userData = {
-    permissions: [
-      permissions.checkinAll.gui,
-      permissions.uiCirculationViewCreateEditDelete.gui,
-      permissions.uiUserCreate.gui,
-      permissions.inventoryAll.gui,
-      permissions.checkoutCirculatingItems.gui,
-    ],
+    group: 'staff',
+    personal: {},
   };
   const itemData = {
     barcode: generateItemBarcode(),
@@ -29,28 +24,25 @@ describe('Check Out - Actions ', () => {
   };
   let defaultLocation;
   const servicePoint = ServicePoints.getDefaultServicePointWithPickUpLocation('autotest basic checkin', uuid());
-  const checkInResultsData = ['Available', itemData.barcode];
 
   before('Create New Item and New User', () => {
     cy.getAdminToken()
       .then(() => {
+        ServicePoints.createViaApi(servicePoint);
+        defaultLocation = Location.getDefaultLocation(servicePoint.id);
+        Location.createViaApi(defaultLocation);
         cy.getInstanceTypes({ limit: 1 }).then((instanceTypes) => {
           itemData.instanceTypeId = instanceTypes[0].id;
         });
         cy.getHoldingTypes({ limit: 1 }).then((res) => {
           itemData.holdingTypeId = res[0].id;
         });
-        ServicePoints.createViaApi(servicePoint);
-        defaultLocation = Location.getDefaultLocation(servicePoint.id);
-        checkInResultsData.push(defaultLocation.name);
-        Location.createViaApi(defaultLocation);
         cy.getLoanTypes({ limit: 1 }).then((res) => {
           itemData.loanTypeId = res[0].id;
         });
         cy.getMaterialTypes({ limit: 1 }).then((res) => {
           itemData.materialTypeId = res.id;
           itemData.materialTypeName = res.name;
-          checkInResultsData.push(`${itemData.instanceTitle} (${itemData.materialTypeName})`);
         });
       })
       .then(() => {
@@ -79,9 +71,18 @@ describe('Check Out - Actions ', () => {
         itemData.testInstanceIds = specialInstanceIds;
       });
 
-    cy.createTempUser(userData.permissions)
+    cy.createTempUser(
+      [
+        permissions.checkinAll.gui,
+        permissions.uiCirculationViewCreateEditDelete.gui,
+        permissions.uiUserCreate.gui,
+        permissions.inventoryAll.gui,
+        permissions.checkoutCirculatingItems.gui,
+      ],
+      userData.group
+    )
       .then((userProperties) => {
-        userData.username = userProperties.username;
+        userData.personal.lastname = userProperties.username;
         userData.password = userProperties.password;
         userData.userId = userProperties.userId;
         userData.barcode = userProperties.barcode;
@@ -90,14 +91,16 @@ describe('Check Out - Actions ', () => {
       .then(() => {
         UserEdit.addServicePointViaApi(servicePoint.id, userData.userId, servicePoint.id);
 
-        cy.login(userData.username, userData.password);
+        cy.login(userData.personal.lastname, userData.password, { path: TopMenu.checkOutPath, waiter: CheckOutActions.waitLoading });
       });
   });
 
   after('Delete New Service point, Item and User', () => {
-    cy.visit('/checkin');
-    CheckInActions.checkInItemGui(itemData.barcode);
-    CheckInPane.checkResultsInTheRow(checkInResultsData);
+    CheckInActions.checkinItemViaApi({
+      itemBarcode: itemData.barcode,
+      servicePointId: servicePoint.id,
+      checkInDate: new Date().toISOString(),
+    });
     InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(itemData.barcode);
     UserEdit.changeServicePointPreferenceViaApi(userData.userId, [servicePoint.id]);
     Users.deleteViaApi(userData.userId);
@@ -111,12 +114,9 @@ describe('Check Out - Actions ', () => {
   });
 
   it('C356772 An active user with barcode can Check out item (vega)', { tags: [TestTypes.smoke, devTeams.vega] }, () => {
-    cy.visit('/checkout');
-    CheckOutActions.checkIsInterfacesOpened();
     CheckOutActions.checkOutUser(userData.barcode);
-    CheckOutActions.checkUserInfo(userData, 'staff');
+    CheckOutActions.checkUserInfo(userData, userData.group);
     CheckOutActions.checkOutItem(itemData.barcode);
-    // cy.verifyItemCheckOut();
     CheckOutActions.checkItemInfo(itemData.barcode, itemData.instanceTitle);
   });
 });
