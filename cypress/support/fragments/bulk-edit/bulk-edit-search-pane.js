@@ -224,6 +224,17 @@ export default {
     cy.expect(resultsAccordion.has({ itemsAmount: (values.length).toString() }));
   },
 
+  verifyUserBarcodesResultAccordion() {
+    cy.expect([
+      MultiColumnListHeader('Status').exists(),
+      MultiColumnListHeader('Last name').exists(),
+      MultiColumnListHeader('First name').exists(),
+      MultiColumnListHeader('Barcode').exists(),
+      MultiColumnListHeader('Patron group').exists(),
+      MultiColumnListHeader('Username').exists(),
+    ]);
+  },
+
   verifyChangedResults(...values) {
     values.forEach(value => {
       cy.expect(changesAccordion.find(MultiColumnListCell({ content: value })).exists());
