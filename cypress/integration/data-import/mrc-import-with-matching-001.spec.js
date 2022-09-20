@@ -102,7 +102,8 @@ describe('ui-data-import: Test MARC-MARC matching for 001 field', () => {
         const mappingProfile = {
           name: mappingProfileName,
           typeValue : NewFieldMappingProfile.folioRecordTypeValue.instance,
-          update: true
+          update: true,
+          permanentLocation: '"Annex (KU/CC/DI/A)"',
         };
 
         cy.visit(SettingsMenu.mappingProfilePath);

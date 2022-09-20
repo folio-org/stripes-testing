@@ -6,6 +6,9 @@ const instanceDetailsSection = Section({ id: 'pane-instancedetails' });
 const catalogedDateKeyValue = KeyValue('Cataloged date');
 const instanceStatusTermKeyValue = KeyValue('Instance status term');
 const instanceDetailsNotesSection = Section({ id: 'instance-details-notes' });
+const marcViewSection = Section({ id: 'marc-view-pane' });
+const actionsButton = Button('Actions');
+const viewSourceButton = Button('View source');
 const instanceAdministrativeNote = MultiColumnList({ id: 'administrative-note-list' });
 const instanceNote = MultiColumnList({ id: 'list-instance-notes-0' });
 
@@ -41,6 +44,19 @@ const verifyGeneralNoteContent = (content) => {
   cy.expect(instanceDetailsNotesSection.find(HTML(including(content))).exists());
 };
 
+const verifySrsMarcRecord = () => {
+  cy.expect(marcViewSection.exists());
+};
+
+const verifyImportedFieldExists = (field) => {
+  cy.expect(marcViewSection.find(HTML(including(field))).exists());
+};
+
+const viewSource = () => cy.do([
+  instanceDetailsSection.find(actionsButton).click(),
+  viewSourceButton.click(),
+]);
+
 const verifyAdministrativeNote = (value) => {
   cy.expect(instanceAdministrativeNote.find(MultiColumnListCell({ content: value })).exists());
 };
@@ -58,6 +74,9 @@ export default {
   verifyMarkAsSuppressed,
   verifyMarkAsSuppressedFromDiscovery,
   verifyGeneralNoteContent,
+  verifySrsMarcRecord,
+  verifyImportedFieldExists,
+  viewSource,
   verifyAdministrativeNote,
   verifyInstanceNote
 };

@@ -82,7 +82,33 @@ export default {
       Select({ name:'profile.existingRecordType' }).choose(specialMappingProfile.typeValue)
     ]);
     if (specialMappingProfile.typeValue === holdingsType) {
-      cy.do(TextField('Permanent').fillIn(permanentLocation));
+      if (specialMappingProfile.permanentLocation) {
+        cy.do(TextField('Permanent').fillIn(specialMappingProfile.permanentLocation));
+      }
+
+      if (specialMappingProfile.electronicAccess) {
+        cy.get('[name="profile.mappingDetails.mappingFields[23].repeatableFieldAction"]')
+          .select(specialMappingProfile.electronicAccess.action);
+        cy.do([
+          Button('Add electronic access').click(),
+          TextField('Relationship').fillIn(specialMappingProfile.electronicAccess.relationship),
+          TextField('URI').fillIn(specialMappingProfile.electronicAccess.uri),
+          TextField('Link text').fillIn(specialMappingProfile.electronicAccess.linkText),
+        ]);
+      }
+
+      if (specialMappingProfile.discoverySuppress) {
+        cy.get('[name="profile.mappingDetails.mappingFields[0].booleanFieldAction"]')
+          .select(specialMappingProfile.discoverySuppress);
+      }
+
+      if (specialMappingProfile.callNumberType) {
+        cy.do(TextField('Call number type').fillIn(specialMappingProfile.callNumberType));
+      }
+
+      if (specialMappingProfile.callNumber) {
+        cy.do(TextField('Call number').fillIn(specialMappingProfile.callNumber));
+      }
     } else if (specialMappingProfile.typeValue === itemType) {
       cy.intercept('loan-types?*').as('getType');
       cy.do(TextField('Material type').fillIn(materialType));
@@ -101,6 +127,8 @@ export default {
         // wait accepted values to be filled
         // eslint-disable-next-line cypress/no-unnecessary-waiting
         cy.wait(1800);
+      } else {
+        cy.do(TextField('Cataloged date').fillIn(catalogedDate));
       }
     }
     cy.do(saveButton.click());
