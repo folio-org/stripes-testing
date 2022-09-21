@@ -14,9 +14,26 @@ import TopMenu from '../../support/fragments/topMenu';
 import DataImport from '../../support/fragments/data_import/dataImport';
 import FileDetails from '../../support/fragments/data_import/logs/fileDetails';
 import Logs from '../../support/fragments/data_import/logs/logs';
+import DataImportSettingsJobProfiles from '../../support/fragments/settings/dataImport/dataImportSettingsJobProfiles';
+import SearchInventory from '../../support/fragments/data_import/searchInventory';
+import InventoryInstance from '../../support/fragments/inventory/inventoryInstance';
 
 describe('ui-data-import: Match on location', () => {
-  // unique name for profiles
+  const holdingsPermanentLocation = 'Annex (KU/CC/DI/A)';
+  const itemPermanentLocation = 'Annex (KU/CC/DI/A)';
+  const recordType = 'MARC_BIBLIOGRAPHIC';
+  const instanceTitle = 'Anglo-Saxon manuscripts in microfiche facsimile Volume 25 Corpus Christi College, Cambridge II, MSS 12, 144, 162, 178, 188, 198, 265, 285, 322, 326, 449 microform A. N. Doane (editor and director), Matthew T. Hussey (associate editor), Phillip Pulsiano (founding editor)';
+
+  // unique profile names for creating
+  const instanceMappingProfileName = `autotest_instance_mapping_profile_${getRandomPostfix()}`;
+  const holdingsMappingProfileName = `autotest_holdings_mapping_profile_${getRandomPostfix()}`;
+  const itemMappingProfileName = `autotest_item_mapping_profile_${getRandomPostfix()}`;
+  const instanceActionProfileName = `autotest_instance_action_profile_${getRandomPostfix()}`;
+  const holdingsActionProfileName = `autotest_holdings_action_profile_${getRandomPostfix()}`;
+  const itemActionProfileName = `autotest_item_action_profile_${getRandomPostfix()}`;
+  const jobProfileName = `autotest_job_profile_${getRandomPostfix()}`;
+
+  // unique profile names for updating
   const instanceHridMatchProfileName = `C17027 match profile Instance HRID or UUID.${getRandomPostfix()}`;
   const holdingsPermLocationMatchProfileName = `C17027 match profile Holdings Permanent location.${getRandomPostfix()}`;
   const itemPermLocationMatchProfileName = `C17027 match profile Item Permanent location.${getRandomPostfix()}`;
@@ -30,22 +47,151 @@ describe('ui-data-import: Match on location', () => {
   const noteForHoldingsMappingProfile = '"This note for holdings mapping profile"';
   const noteForItemMappingProfile = '"This note for item mapping profile"';
 
+  // unique file name
+  const marcFileForCreate = `C17027 autoTestFile.${getRandomPostfix()}.mrc`;
+  const editedMarcFileName = `C17027 marcFileForMatchOnLocation.${getRandomPostfix()}.mrc`;
+  const fileNameAfterUpdate = `C17027 marcFileForMatchOnLocation.${getRandomPostfix()}.mrc`;
+
+  // profiles for creating instance, holdings, item
+  const instanceMappingProfileForCreate = {
+    profile:{
+      name: instanceMappingProfileName,
+      incomingRecordType: recordType,
+      existingRecordType: 'INSTANCE',
+    }
+  };
+
+  const holdingsMappingProfileForCreate = {
+    profile:{
+      name: holdingsMappingProfileName,
+      incomingRecordType: recordType,
+      existingRecordType: 'HOLDINGS',
+      mappingDetails: { name: 'holdings',
+        recordType: 'HOLDINGS',
+        mappingFields: [
+          { name: 'permanentLocationId',
+            enabled: true,
+            path: 'holdings.permanentLocationId',
+            value: `"${holdingsPermanentLocation}"` }] }
+    }
+  };
+
+  const itemMappingProfileForCreate = {
+    profile:{
+      name: itemMappingProfileName,
+      incomingRecordType: recordType,
+      existingRecordType: 'ITEM',
+      mappingDetails: { name: 'item',
+        recordType: 'ITEM',
+        mappingFields: [
+          { name: 'materialType.id',
+            enabled: true,
+            path: 'item.materialType.id',
+            value: '"book"',
+            acceptedValues: { '1a54b431-2e4f-452d-9cae-9cee66c9a892': 'book' } },
+          { name: 'permanentLoanType.id',
+            enabled: true,
+            path: 'item.permanentLoanType.id',
+            value: '"Can circulate"',
+            acceptedValues: { '2b94c631-fca9-4892-a730-03ee529ffe27': 'Can circulate' } },
+          { name: 'status.name',
+            enabled: true,
+            path: 'item.status.name',
+            value: '"Available"' },
+          { name: 'permanentLocation.id',
+            enabled: 'true',
+            path: 'item.permanentLocation.id',
+            value: `"${itemPermanentLocation}"`,
+            acceptedValues: { '53cf956f-c1df-410b-8bea-27f712cca7c0' : 'Annex (KU/CC/DI/A)' } }] }
+    }
+  };
+
+  const instanceActionProfileForCreate = {
+    profile: {
+      name: instanceActionProfileName,
+      action: 'CREATE',
+      folioRecord: 'INSTANCE'
+    },
+    addedRelations: [
+      {
+        masterProfileId: null,
+        masterProfileType: 'ACTION_PROFILE',
+        detailProfileId: '',
+        detailProfileType: 'MAPPING_PROFILE'
+      }
+    ],
+    deletedRelations: []
+  };
+
+  const holdingsActionProfileForCreate = {
+    profile: {
+      name: holdingsActionProfileName,
+      action: 'CREATE',
+      folioRecord: 'HOLDINGS'
+    },
+    addedRelations: [
+      {
+        masterProfileId: null,
+        masterProfileType: 'ACTION_PROFILE',
+        detailProfileId: '',
+        detailProfileType: 'MAPPING_PROFILE'
+      }
+    ],
+    deletedRelations: []
+  };
+
+  const itemActionProfileForCreate = {
+    profile: {
+      name: itemActionProfileName,
+      action: 'CREATE',
+      folioRecord: 'ITEM'
+    },
+    addedRelations: [
+      {
+        masterProfileId: null,
+        masterProfileType: 'ACTION_PROFILE',
+        detailProfileId: '',
+        detailProfileType: 'MAPPING_PROFILE'
+      }
+    ],
+    deletedRelations: []
+  };
+
+  const testData = [
+    { mappingProfile: instanceMappingProfileForCreate,
+      actionProfile: instanceActionProfileForCreate },
+    { mappingProfile: holdingsMappingProfileForCreate,
+      actionProfile: holdingsActionProfileForCreate },
+    { mappingProfile: itemMappingProfileForCreate,
+      actionProfile: itemActionProfileForCreate },
+  ];
+
+  const jobProfileForCreate = {
+    profile: {
+      name: jobProfileName,
+      dataType: 'MARC'
+    },
+    addedRelations: [],
+    deletedRelations: []
+  };
+
+  // profiles for updating instance, holdings, item
   const collectionOfMatchProfiles = [
     {
       matchProfile: { profileName: instanceHridMatchProfileName,
         incomingRecordFields: {
           field: '980',
-          subfield: 'd'
+          subfield: 'a'
         },
         matchCriterion: 'Exactly matches',
         existingRecordType: 'INSTANCE',
-        holdingsOption: NewMatchProfile.optionsList.instanceHrid }
+        instanceOption: NewMatchProfile.optionsList.instanceHrid }
     },
     {
       matchProfile: { profileName: holdingsPermLocationMatchProfileName,
         incomingRecordFields: {
           field: '980',
-          subfield: 'd'
+          subfield: 'a'
         },
         matchCriterion: 'Exactly matches',
         existingRecordType: 'HOLDINGS',
@@ -55,11 +201,11 @@ describe('ui-data-import: Match on location', () => {
       matchProfile: { profileName: itemPermLocationMatchProfileName,
         incomingRecordFields: {
           field: '980',
-          subfield: 'd'
+          subfield: 'a'
         },
         matchCriterion: 'Exactly matches',
         existingRecordType: 'ITEM',
-        holdingsOption: NewMatchProfile.optionsList.itemPermLoc }
+        itemOption: NewMatchProfile.optionsList.itemPermLoc }
     },
   ];
 
@@ -85,7 +231,7 @@ describe('ui-data-import: Match on location', () => {
     action: 'Update (all record types except Orders, Invoices, or MARC Holdings)'
   };
 
-  const updateJobProfile = {
+  const jobProfileNameForUpdate = {
     ...NewJobProfile.defaultJobProfile,
     profileName: jobProfile,
     acceptedType: NewJobProfile.acceptedDataType.marc
@@ -94,10 +240,68 @@ describe('ui-data-import: Match on location', () => {
   before(() => {
     cy.loginAsAdmin();
     cy.getAdminToken();
+
+    testData.jobProfileForCreate = jobProfileForCreate;
+
+    testData.forEach(specialPair => {
+      cy.createOnePairMappingAndActionProfiles(specialPair.mappingProfile, specialPair.actionProfile).then(idActionProfile => {
+        cy.addJobProfileRelation(testData.jobProfileForCreate.addedRelations, idActionProfile);
+      });
+    });
+    DataImportSettingsJobProfiles.createJobProfileApi(testData.jobProfileForCreate)
+      .then((bodyWithjobProfile) => {
+        testData.jobProfileForCreate.id = bodyWithjobProfile.body.id;
+      });
+
+    // upload a marc file for creating of the new instance, holding and item
+    cy.visit(TopMenu.dataImportPath);
+    DataImport.uploadFile('oneMarcBib.mrc', marcFileForCreate);
+    JobProfiles.searchJobProfileForImport(testData.jobProfileForCreate.profile.name);
+    JobProfiles.runImportFile(marcFileForCreate);
+    Logs.openFileDetails(marcFileForCreate);
+    [FileDetails.columnName.srsMarc,
+      FileDetails.columnName.instance,
+      FileDetails.columnName.holdings,
+      FileDetails.columnName.item].forEach(columnName => {
+      FileDetails.checkStatusInColumn(FileDetails.status.created, columnName);
+    });
+    FileDetails.checkItemsQuantityInSummaryTable(0, '1');
+
+    // get Instance HRID through API
+    SearchInventory
+      .getInstanceHRID()
+      .then(hrId => {
+        const instanceHrid = hrId[0];
+        console.log(instanceHrid);
+
+        DataImport.editMarcFile('oneMarcBib.mrc', editedMarcFileName, 'ocn962073864', instanceHrid);
+      });
   });
 
   after(() => {
+    // delete profiles
+    JobProfiles.deleteJobProfile(jobProfileName);
+    JobProfiles.deleteJobProfile(jobProfileNameForUpdate);
+    MatchProfiles.deleteMatchProfile(instanceHridMatchProfileName);
+    MatchProfiles.deleteMatchProfile(holdingsPermLocationMatchProfileName);
+    MatchProfiles.deleteMatchProfile(itemPermLocationMatchProfileName);
+    ActionProfiles.deleteActionProfile(instanceActionProfileName);
+    ActionProfiles.deleteActionProfile(holdingsActionProfileName);
+    ActionProfiles.deleteActionProfile(holdingsUpdatesActionProfile);
+    ActionProfiles.deleteActionProfile(itemActionProfileName);
+    ActionProfiles.deleteActionProfile(itemUpdatesActionProfile);
+    FieldMappingProfiles.deleteFieldMappingProfile(instanceMappingProfileName);
+    FieldMappingProfiles.deleteFieldMappingProfile(holdingsMappingProfileName);
+    FieldMappingProfiles.deleteFieldMappingProfile(holdingsUpdateMappingProfile);
+    FieldMappingProfiles.deleteFieldMappingProfile(itemMappingProfileName);
+    FieldMappingProfiles.deleteFieldMappingProfile(itemUpdateMappingProfile);
 
+    cy.getInstance({ limit: 1, expandAll: true, query: `"title"=="${instanceTitle}"` })
+      .then((instance) => {
+        cy.deleteItem(instance.items[0].id);
+        cy.deleteHoldingRecordViaApi(instance.holdings[0].id);
+        InventoryInstance.deleteInstanceViaApi(instance.id);
+      });
   });
 
 
@@ -110,10 +314,11 @@ describe('ui-data-import: Match on location', () => {
     });
 
     // create Field mapping profiles
-    FieldMappingProfiles.createMappingProfileWithNotes(holdingsUpdateMappingProfile, noteForHoldingsMappingProfile);
+    cy.visit(SettingsMenu.mappingProfilePath);
+    FieldMappingProfiles.createHoldingsMappingProfileWithNotes(holdingsUpdateMappingProfile, noteForHoldingsMappingProfile);
     FieldMappingProfiles.checkMappingProfilePresented(holdingsUpdateMappingProfile.name);
 
-    FieldMappingProfiles.createMappingProfileWithNotes(itemUpdateMappingProfile, noteForItemMappingProfile);
+    FieldMappingProfiles.createItemMappingProfileWithNotes(itemUpdateMappingProfile, noteForItemMappingProfile);
     FieldMappingProfiles.checkMappingProfilePresented(itemUpdateMappingProfile.name);
 
     // create action profiles
@@ -126,18 +331,31 @@ describe('ui-data-import: Match on location', () => {
 
     // create Job profiles
     cy.visit(SettingsMenu.jobProfilePath);
-    JobProfiles.createJobProfile(updateJobProfile);
+    JobProfiles.createJobProfile(jobProfileNameForUpdate);
     NewJobProfile.linkMatchProfile(instanceHridMatchProfileName);
+    NewJobProfile.linkMatchProfileForMatches(holdingsPermLocationMatchProfileName);
+    NewJobProfile.linkActionProfileForMatches(holdingsUpdatesActionProfile.name);
+    NewJobProfile.linkMatchProfileForMatches(itemPermLocationMatchProfileName, 2);
+    NewJobProfile.linkActionProfileForMatches(itemUpdatesActionProfile.name, 2);
+    NewJobProfile.saveAndClose();
+    JobProfiles.checkJobProfilePresented(jobProfileNameForUpdate.profileName);
 
-    // NewJobProfile.saveAndClose();
-    // JobProfiles.checkJobProfilePresented(updateJobProfile.profileName);
+    // upload a marc file
+    cy.visit(TopMenu.dataImportPath);
+    DataImport.uploadFile(editedMarcFileName, fileNameAfterUpdate);
+    JobProfiles.searchJobProfileForImport(jobProfileNameForUpdate.profileName);
+    JobProfiles.searchJobProfileForImport('C17027 job profile.801.47610420226701');
+    JobProfiles.runImportFile(fileNameAfterUpdate);
+    Logs.checkStatusOfJobProfile('Completed');
+    Logs.openFileDetails(fileNameAfterUpdate);
+    [FileDetails.columnName.srsMarc,
+      FileDetails.columnName.instance,
+      FileDetails.columnName.holdings,
+      FileDetails.columnName.item].forEach(columnName => {
+      FileDetails.checkStatusInColumn(FileDetails.status.updated, columnName);
+    });
+    FileDetails.checkItemsQuantityInSummaryTable(0, '1');
 
-    // // upload a marc file
-    // cy.visit(TopMenu.dataImportPath);
-    // DataImport.uploadFile(editedFileNameRev1, fileNameForProtect);
-    // JobProfiles.searchJobProfileForImport(updateJobProfile.profileName);
-    // JobProfiles.runImportFile(fileNameForProtect);
-    // Logs.checkStatusOfJobProfile('Completed');
-    // Logs.openFileDetails(fileNameForProtect);
+    FileDetails.openInstanceInInventory();
   });
 });

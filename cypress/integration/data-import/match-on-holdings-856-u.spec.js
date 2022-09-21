@@ -144,7 +144,7 @@ describe('ui-data-import: Match on Holdings 856 $u', () => {
 
     JobProfiles.createJobProfile(updateEHoldingsJobProfile);
     NewJobProfile.linkMatchProfile(matchProfileName);
-    NewJobProfile.linkProfileForMatches(updateEHoldingsActionProfileName);
+    NewJobProfile.linkActionProfileForMatches(updateEHoldingsActionProfileName);
     NewJobProfile.saveAndClose();
     JobProfiles.checkJobProfilePresented(updateEHoldingsJobProfileName);
     JobProfiles.closeJobProfile(updateEHoldingsJobProfileName);

@@ -170,10 +170,28 @@ export default {
     cy.do(saveProfileButton.click());
   },
 
-  createMappingProfileWithNotes:(mappingProfile, note) => {
+  createInstanceMappingProfileWithNotes:(mappingProfile, note) => {
     openNewMappingProfileForm();
     NewMappingProfile.fillMappingProfileForInstance(mappingProfile);
-    NewMappingProfile.addNote(note);
+    NewMappingProfile.addNoteToInstanceMappingProfile(note);
+    cy.do(saveProfileButton.click());
+    closeViewModeForMappingProfile(mappingProfile.name);
+    cy.expect(actionsButton.exists());
+  },
+
+  createHoldingsMappingProfileWithNotes:(mappingProfile, note) => {
+    openNewMappingProfileForm();
+    NewMappingProfile.fillMappingProfileForHoldings(mappingProfile);
+    NewMappingProfile.addNoteToHoldingsMappingProfile(note);
+    cy.do(saveProfileButton.click());
+    closeViewModeForMappingProfile(mappingProfile.name);
+    cy.expect(actionsButton.exists());
+  },
+
+  createItemMappingProfileWithNotes:(mappingProfile, note) => {
+    openNewMappingProfileForm();
+    NewMappingProfile.fillMappingProfileForItem(mappingProfile);
+    NewMappingProfile.addNoteToItemMappingProfile(note);
     cy.do(saveProfileButton.click());
     closeViewModeForMappingProfile(mappingProfile.name);
     cy.expect(actionsButton.exists());
