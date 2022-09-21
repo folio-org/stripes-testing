@@ -59,11 +59,11 @@ describe('bulk-edit', () => {
     it('C360556 Populating preview of matched records in case no matches (firebird)', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
       BulkEditSearchPane.selectRecordIdentifier('User Barcodes');
 
-      BulkEditSearchPane.uploadFile(userBarcodesFileName);
+      BulkEditSearchPane.uploadFile(invalidUserBarcodesFileName);
       BulkEditSearchPane.waitFileUploading();
 
       BulkEditActions.openActions();
-      BulkEditActions.verifyUsersActionDropdownItems();
+      BulkEditActions.verifyUsersActionDropdownItems(true);
     });
   });
 });
