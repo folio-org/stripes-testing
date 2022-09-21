@@ -3,6 +3,7 @@ import FileManager from '../../utils/fileManager';
 import {Modal, SelectionOption, Button, DropdownMenu, Checkbox, MultiColumnListHeader} from '../../../../interactors';
 
 const actionsBtn = Button('Actions');
+const dropdownMenu = DropdownMenu();
 // interactor doesn't allow to pick second the same select
 function getLocationSelect() {
   return cy.get('select').eq(2);
@@ -132,24 +133,24 @@ export default {
 
   verifyUsersActionDropdownItems() {
     cy.expect([
-      DropdownMenu().find(Checkbox({ name: 'active', checked: true })).exists(),
-      DropdownMenu().find(Checkbox({ name: 'lastName', checked: true })).exists(),
-      DropdownMenu().find(Checkbox({ name: 'firstName', checked: true })).exists(),
-      DropdownMenu().find(Checkbox({ name: 'barcode', checked: true })).exists(),
-      DropdownMenu().find(Checkbox({ name: 'patronGroup', checked: true })).exists(),
-      DropdownMenu().find(Checkbox({ name: 'username', checked: true })).exists(),
-      DropdownMenu().find(Checkbox({ name: 'email', checked: false })).exists(),
-      DropdownMenu().find(Checkbox({ name: 'expirationDate', checked: false })).exists(),
+      dropdownMenu.find(Checkbox({ name: 'active', checked: true })).exists(),
+      dropdownMenu.find(Checkbox({ name: 'lastName', checked: true })).exists(),
+      dropdownMenu.find(Checkbox({ name: 'firstName', checked: true })).exists(),
+      dropdownMenu.find(Checkbox({ name: 'barcode', checked: true })).exists(),
+      dropdownMenu.find(Checkbox({ name: 'patronGroup', checked: true })).exists(),
+      dropdownMenu.find(Checkbox({ name: 'username', checked: true })).exists(),
+      dropdownMenu.find(Checkbox({ name: 'email', checked: false })).exists(),
+      dropdownMenu.find(Checkbox({ name: 'expirationDate', checked: false })).exists(),
     ]);
   },
 
   verifyCheckedDropdownMenuItem() {
-    cy.do(DropdownMenu().find(Checkbox({ name: 'firstName'})).click());
+    cy.do(dropdownMenu.find(Checkbox({ name: 'firstName'})).click());
     cy.expect(MultiColumnListHeader('First name').absent());
   },
 
   verifyUncheckedDropdownMenuItem() {
-    cy.do(DropdownMenu().find(Checkbox({ name: 'email'})).click());
+    cy.do(dropdownMenu.find(Checkbox({ name: 'email'})).click());
     cy.expect(MultiColumnListHeader('Email').exists());
   }
 };
