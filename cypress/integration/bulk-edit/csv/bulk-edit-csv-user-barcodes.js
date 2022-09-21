@@ -61,6 +61,8 @@ describe('bulk-edit', () => {
 
       BulkEditSearchPane.uploadFile(invalidUserBarcodesFileName);
       BulkEditSearchPane.waitFileUploading();
+      BulkEditSearchPane.matchedAccordionIsAbsent();
+      BulkEditSearchPane.verifyErrorLabel(invalidUserBarcodesFileName, 0, 1);
 
       BulkEditActions.openActions();
       BulkEditActions.verifyUsersActionDropdownItems(true);
