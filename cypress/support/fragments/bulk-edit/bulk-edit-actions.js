@@ -131,16 +131,16 @@ export default {
     cy.do(Button('New bulk edit').click());
   },
 
-  verifyUsersActionDropdownItems() {
+  verifyUsersActionDropdownItems(isDisabled = false) {
     cy.expect([
-      dropdownMenu.find(Checkbox({ name: 'active', checked: true })).exists(),
-      dropdownMenu.find(Checkbox({ name: 'lastName', checked: true })).exists(),
-      dropdownMenu.find(Checkbox({ name: 'firstName', checked: true })).exists(),
-      dropdownMenu.find(Checkbox({ name: 'barcode', checked: true })).exists(),
-      dropdownMenu.find(Checkbox({ name: 'patronGroup', checked: true })).exists(),
-      dropdownMenu.find(Checkbox({ name: 'username', checked: true })).exists(),
-      dropdownMenu.find(Checkbox({ name: 'email', checked: false })).exists(),
-      dropdownMenu.find(Checkbox({ name: 'expirationDate', checked: false })).exists(),
+      dropdownMenu.find(Checkbox({ name: 'active', checked: true, disabled: isDisabled })).exists(),
+      dropdownMenu.find(Checkbox({ name: 'lastName', checked: true, disabled: isDisabled })).exists(),
+      dropdownMenu.find(Checkbox({ name: 'firstName', checked: true, disabled: isDisabled })).exists(),
+      dropdownMenu.find(Checkbox({ name: 'barcode', checked: true, disabled: isDisabled })).exists(),
+      dropdownMenu.find(Checkbox({ name: 'patronGroup', checked: true, disabled: isDisabled })).exists(),
+      dropdownMenu.find(Checkbox({ name: 'username', checked: true, disabled: isDisabled })).exists(),
+      dropdownMenu.find(Checkbox({ name: 'email', checked: false, disabled: isDisabled })).exists(),
+      dropdownMenu.find(Checkbox({ name: 'expirationDate', checked: false, disabled: isDisabled })).exists(),
     ]);
   },
 
