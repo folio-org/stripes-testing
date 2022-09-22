@@ -36,6 +36,7 @@ describe('bulk-edit', () => {
     after('delete test data', () => {
       Users.deleteViaApi(user.userId);
       FileManager.deleteFile(`cypress/fixtures/${userBarcodesFileName}`);
+      FileManager.deleteFile(`cypress/fixtures/${invalidUserBarcodesFileName}`);
     });
 
     afterEach('refresh bulk edit pane', () => {
