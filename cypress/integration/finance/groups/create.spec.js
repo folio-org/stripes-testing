@@ -1,4 +1,3 @@
-import getRandomPostfix from '../../../support/utils/stringTools';
 import testType from '../../../support/dictionary/testTypes';
 import devTeams from '../../../support/dictionary/devTeams';
 import Groups from '../../../support/fragments/finance/groups/groups';
@@ -19,7 +18,7 @@ describe('ui-finance: Group creation', () => {
     Groups.deleteGroupViaActions(defaultGroup);
 
     // should not create new ledger if mandatory fields are not filled
-    const testGroupName = `autotest_group_${getRandomPostfix()}`;
+    const testGroupName = 'autotest_group_';
     Groups.tryToCreateGroupWithoutMandatoryFields(testGroupName);
   });
 });
