@@ -69,6 +69,15 @@ export default {
     cy.expect(endSessionButton.absent());
   },
 
+  endCheckOutSessionAutomatically:() => {
+    //this timeout is needed to wait 60 seconds until the action is automatically done
+    cy.intercept('/circulation/end-patron-action-session').as('end-patron-session');
+    cy.wait('@end-patron-session', { timeout: 99000 }).then(xhr => {
+      cy.wrap(xhr.response.statusCode).should('eq', 204);
+    });
+    cy.expect(endSessionButton.absent());
+  },
+
   checkIsInterfacesOpened:() => {
     cy.expect(Pane('Scan patron card').exists());
     cy.expect(Pane('Scan items').exists());

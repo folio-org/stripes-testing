@@ -3,7 +3,7 @@ import { createInteractor, HTML } from '@interactors/html';
 const childIndex = el => [...el.parentElement.children].indexOf(el);
 
 export const ListItem = HTML.extend('list item')
-  .selector('li[class^=list-item-]')
+  .selector('li')
   .filters({
     index: childIndex,
     h3Value: el => el.querySelector('a[href]>h3').textContent,

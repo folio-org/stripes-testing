@@ -27,7 +27,10 @@ export const MultiColumnListCell = HTML.extend('multi column list cell')
   .filters({
     content,
     row: (el) => (+el.parentElement.getAttribute('data-row-inner') ? +el.parentElement.getAttribute('data-row-inner') : +el.parentElement.getAttribute('aria-rowindex')),
-    column: (el) => el.textContent,
+    column: (el) => {
+      const headers = el.closest('[class^=mclContainer]').querySelector('[class^=mclHeaderRow]').querySelectorAll('[role=columnheader]');
+      return headers ? headers[childIndex(el)]?.textContent : undefined;
+    },
     columnIndex: childIndex,
     selected: (el) => !!el.parentElement.className.match(/mclSelected/),
     measured: (el) => el.style && el.style.width !== '',
@@ -75,8 +78,8 @@ export const MultiColumnList = HTML.extend('multi column list')
       }
     ),
     click: (interactor, { row = 0, column }) => {
-      const columnSearch = !column ? { columnIndex: 0 } : { column };
-      return interactor.find(MultiColumnListCell({ row, ...columnSearch })).click();
+      const contentSearch = !column ? { columnIndex: 0 } : { content: column };
+      return interactor.find(MultiColumnListCell({ row, ...contentSearch })).click();
     },
     clickNextPagingButton: (interactor, label = 'Next') => {
       return interactor.find(Button(label)).click();

@@ -23,6 +23,7 @@ import Checkout from '../../support/fragments/checkout/checkout';
 import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
 import InventoryInstance from '../../support/fragments/inventory/inventoryInstance';
 import getRandomPostfix from '../../support/utils/stringTools';
+import OtherSettings from '../../support/fragments/settings/circulation/otherSettings';
 
 function generateUniqueItemBarcodeWithShift(index = 0) {
   return ((generateItemBarcode() - Math.round(getRandomPostfix())) + '').substring(index);
@@ -78,7 +79,6 @@ describe('Recieving notice: Checkout', () => {
 
   beforeEach('Preconditions', () => {
     itemsData.itemsWithSeparateInstance.forEach(function (item, index) { item.barcode = generateUniqueItemBarcodeWithShift(index); });
-    searchResultsData.itemBarcode = itemsData.itemsWithSeparateInstance[0].barcode;
     cy.getAdminToken().then(() => {
       cy.getInstanceTypes({ limit: 1 }).then((instanceTypes) => { testData.instanceTypeId = instanceTypes[0].id; });
       cy.getHoldingTypes({ limit: 1 }).then((res) => { testData.holdingTypeId = res[0].id; });
@@ -119,6 +119,7 @@ describe('Recieving notice: Checkout', () => {
         patronGroup.id = res;
         cy.createTempUser([permissions.checkoutAll.gui,
           permissions.circulationLogAll.gui,
+          permissions.uiCirculationSettingsOtherSettings.gui,
           permissions.uiCirculationSettingsNoticeTemplates.gui,
           permissions.uiCirculationSettingsNoticePolicies.gui
         ], patronGroup.name)
@@ -212,6 +213,53 @@ describe('Recieving notice: Checkout', () => {
         }
       );
       CheckOutActions.endCheckOutSession();
+
+      cy.visit(topMenu.circulationLogPath);
+      SearchPane.searchByUserBarcode(userData.barcode);
+      SearchPane.verifyResultCells();
+      SearchPane.checkResultSearch(searchResultsData);
+    });
+
+  it('C347622 Check that user can receive notice with multiple items after finishing the session "Check out" by setting automatic end (vega)',
+    { tags: [testTypes.smoke, devTeams.vega] }, () => {
+      NewNoticePolicyTemplate.startAdding();
+      NewNoticePolicyTemplate.checkInitialState();
+      NewNoticePolicyTemplate.addToken(testData.noticePolicyTemplateToken);
+      noticePolicyTemplate.body += '{{item.title}}';
+      NewNoticePolicyTemplate.create(noticePolicyTemplate);
+      NewNoticePolicyTemplate.checkAfterSaving(noticePolicyTemplate);
+      NewNoticePolicyTemplate.checkTemplateActions(noticePolicyTemplate);
+
+      cy.visit(settingsMenu.circulationOtherSettingsPath);
+      OtherSettings.waitLoading();
+      OtherSettings.selectPatronIdsForCheckoutScanning(['Barcode'], '1');
+
+      cy.visit(settingsMenu.circulationPatronNoticePoliciesPath);
+      NewNoticePolicy.waitLoading();
+      NewNoticePolicy.startAdding();
+      NewNoticePolicy.checkInitialState();
+      NewNoticePolicy.fillGeneralInformation(noticePolicy);
+      NewNoticePolicy.addNotice(noticePolicy);
+      NewNoticePolicy.save();
+      NewNoticePolicy.check(noticePolicy);
+      NewNoticePolicy.checkAfterSaving(noticePolicy);
+      NewNoticePolicy.checkNoticeActions(noticePolicy);
+
+      cy.getNoticePolicy({ query: `name=="${noticePolicy.name}"` }).then((res) => {
+        testData.ruleProps.n = res[0].id;
+        CirculationRules.addRuleViaApi(testData.baseRules, testData.ruleProps, 'g ', patronGroup.id);
+      });
+
+      cy.visit(topMenu.checkOutPath);
+      CheckOutActions.checkOutUser(userData.barcode);
+      CheckOutActions.checkUserInfo(userData, patronGroup.name);
+      cy.get('@items').each(
+        (item) => {
+          CheckOutActions.checkOutItem(item.barcode);
+          Checkout.verifyResultsInTheRow([item.barcode]);
+        }
+      );
+      CheckOutActions.endCheckOutSessionAutomatically();
 
       cy.visit(topMenu.circulationLogPath);
       SearchPane.searchByUserBarcode(userData.barcode);
