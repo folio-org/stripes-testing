@@ -81,5 +81,31 @@ export default {
 
   checkItem:(barcode) => {
     cy.expect(MultiColumnList({ id:'list-items-checked-out' }).find(HTML(including(barcode))).absent());
-  }
+  },
+
+  confirmMultipieceCheckOut() {
+    cy.do(Button({className: 'button---kpbBz interactionStyles---eaRy_ primary---xHTjI'}).click());
+  },
+
+  clickOnLoanDetails() {
+    cy.do(Button({ id: 'available-item-actions-button' }).click());
+    cy.get('a:contains("Loan details")').click(); //.do(Button({ text: 'Loan details' }).click());
+    cy.wait(10000);
+  },
+
+  changeDueDateToPast(minutes){
+    let today = new Date();
+    let month = today.getMonth() < 9 ? 0 + (today.getMonth() + 1).toString() : today.getMonth() + 1;
+    const formattedToday = month + '/' + today.getDate() + '/' + today.getFullYear();
+    today.setUTCMinutes(today.getMinutes() - minutes);
+    const fiveMinTime = today.toLocaleTimeString('en-US', { timeZone: 'UTC', hour: '2-digit', minute: '2-digit' });
+
+    cy.do([
+      Button({ text: 'Change due date' }).click(),
+      TextField({ name: 'date' }).fillIn(formattedToday),
+      TextField({ name: 'time' }).fillIn(fiveMinTime),
+      Button({ text: 'Save and close' }).click(),
+      Button({ text: 'Close' }).click(),
+    ]);
+  },
 };
