@@ -80,7 +80,7 @@ describe('ui-data-import: Match on POL and update related Instance, Holdings, It
         update: true },
       actionProfile: { typeValue: NewActionProfile.folioRecordTypeValue.instance,
         name: actionProfileNameForInstance,
-        action: 'Update (all record types except Orders)' }
+        action: 'Update (all record types except Orders, Invoices, or MARC Holdings)' }
     },
     {
       mappingProfile: { typeValue: NewMappingProfile.folioRecordTypeValue.holdings,
@@ -88,7 +88,7 @@ describe('ui-data-import: Match on POL and update related Instance, Holdings, It
         update: true },
       actionProfile: { typeValue: NewActionProfile.folioRecordTypeValue.holdings,
         name: actionProfileNameForHoldings,
-        action: 'Update (all record types except Orders)' }
+        action: 'Update (all record types except Orders, Invoices, or MARC Holdings)' }
     },
     {
       mappingProfile: { typeValue: NewMappingProfile.folioRecordTypeValue.item,
@@ -96,7 +96,7 @@ describe('ui-data-import: Match on POL and update related Instance, Holdings, It
         update: true },
       actionProfile: { typeValue: NewActionProfile.folioRecordTypeValue.item,
         name: actionProfileNameForItem,
-        action: 'Update (all record types except Orders)' }
+        action: 'Update (all record types except Orders, Invoices, or MARC Holdings)' }
     }
   ];
 
@@ -321,7 +321,7 @@ describe('ui-data-import: Match on POL and update related Instance, Holdings, It
     // upload .mrc file
     cy.visit(TopMenu.dataImportPath);
     DataImport.checkIsLandingPageOpened();
-    DataImport.uploadFile('matchOnPOL.mrc', marcFileName);
+    DataImport.uploadFile('marcFileForMatchOnPol', marcFileName);
     JobProfiles.searchJobProfileForImport(jobProfileName);
     JobProfiles.runImportFile(marcFileName);
     Logs.checkStatusOfJobProfile();
