@@ -1,16 +1,15 @@
-import Groups from '../../../support/fragments/finance/groups/groups';
-import TopMenu from '../../../support/fragments/topMenu';
 import getRandomPostfix from '../../../support/utils/stringTools';
 import testType from '../../../support/dictionary/testTypes';
-import FinanceHelp from '../../../support/fragments/finance/financeHelper';
 import devTeams from '../../../support/dictionary/devTeams';
+import Groups from '../../../support/fragments/finance/groups/groups';
+import TopMenu from '../../../support/fragments/topMenu';
 import NewGroup from '../../../support/fragments/finance/groups/newGroup';
 
 describe('ui-finance: Group creation', () => {
   const defaultGroup = { ...NewGroup.defaultGroup };
 
   before(() => {
-    cy.login(Cypress.env('diku_login'), Cypress.env('diku_password'));
+    cy.getAdminToken();
     cy.visit(TopMenu.groupsPath);
   });
 
