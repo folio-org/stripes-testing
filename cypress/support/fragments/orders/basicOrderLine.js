@@ -78,7 +78,7 @@ export default {
       listUnitPrice: 1.0,
       currency: 'USD',
       discountType: 'percentage',
-      quantityPhysical: 2,
+      quantityPhysical: 1,
       poLineEstimatedPrice: 1.0
     },
     details: {
@@ -91,7 +91,7 @@ export default {
       {
         locationId: '',
         quantity: 2,
-        quantityPhysical: 2
+        quantityPhysical: 1
       }
     ],
     orderFormat: 'Physical Resource',

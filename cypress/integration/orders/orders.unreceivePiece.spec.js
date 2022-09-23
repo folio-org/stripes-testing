@@ -54,13 +54,11 @@ describe('orders: Unreceive piece from Order', () => {
         Helper.selectFromResultsList();
         Receiving.receivePiece(0, caption, barcode);
         // Need to wait ,that receiving information load
-        cy.wait(2000);
         Receiving.checkReceivedPiece(0, caption, barcode);
         // Unreceive piece
         Receiving.unreceivePiece();
         // Need to wait ,that unreceiving information load
-        cy.wait(2000);
-        Receiving.checkUnreceivedPiece(1, caption);
+        Receiving.checkUnreceivedPiece(0, caption);
         // inventory part
         cy.visit(TopMenu.inventoryPath);
         InventorySearch.switchToItem();
