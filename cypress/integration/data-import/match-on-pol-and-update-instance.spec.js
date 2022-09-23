@@ -21,7 +21,7 @@ import DataImport from '../../support/fragments/data_import/dataImport';
 import Logs from '../../support/fragments/data_import/logs/logs';
 import FileDetails from '../../support/fragments/data_import/logs/fileDetails';
 import NewOrder from '../../support/fragments/orders/newOrder';
-import BasicOrderLine from '../../support/fragments/orders/basicOrderLine';
+import OrderLines from '../../support/fragments/orders/orderLines';
 import OrderView from '../../support/fragments/orders/orderView';
 import InventoryInstance from '../../support/fragments/inventory/inventoryInstance';
 import InventoryViewSource from '../../support/fragments/inventory/inventoryViewSource';
@@ -91,9 +91,12 @@ describe('ui-data-import: Match on POL and update related Instance, Holdings, It
     profileName: jobProfileName,
     acceptedType: NewJobProfile.acceptedDataType.marc };
 
+  const order = { ...NewOrder.defaultOneTimeOrder };
+
   const item = {
     title: 'Sport and sociology. $cDominic Malcolm.',
     productId: '9782266111560',
+    orderFormat: 'Physical resource',
     quantity: '1',
     price: '20',
     createInventory: 'None'
@@ -185,87 +188,81 @@ describe('ui-data-import: Match on POL and update related Instance, Holdings, It
     FieldMappingProfiles.closeViewModeForMappingProfile(itemMappingProfile.name);
   };
 
+  const fillPol = (title, prodId, prodType, method, format, price, quantity, inventory, type) => {
+    OrderLines.fillPolByLinkTitle(title);
+    OrderLines.addAndFillProductId(prodId, prodType);
+    OrderLines.addAcquisitionMethod(method);
+    OrderLines.addOrderFormat(format);
+    OrderLines.fillPhysicalUnitPrice(price);
+    OrderLines.fillPhysicalUnitQuantity(quantity);
+    OrderLines.addCreateInventory(inventory);
+    OrderLines.addMaterialType(type);
+  };
+
   it('C350590 Match on POL and update related Instance, Holdings, Item (folijet)', { tags: [TestTypes.smoke, DevTeams.folijet] }, () => {
-    // create mapping and action profiles
-    cy.visit(SettingsMenu.mappingProfilePath);
-    createInstanceMappingProfile(collectionOfProfiles[0].mappingProfile);
-    FieldMappingProfiles.checkMappingProfilePresented(collectionOfProfiles[0].mappingProfile.name);
-    createHoldingsMappingProfile(collectionOfProfiles[1].mappingProfile);
-    FieldMappingProfiles.checkMappingProfilePresented(collectionOfProfiles[1].mappingProfile.name);
-    createItemMappingProfile(collectionOfProfiles[2].mappingProfile);
-    FieldMappingProfiles.checkMappingProfilePresented(collectionOfProfiles[2].mappingProfile.name);
+    // // create mapping and action profiles
+    // cy.visit(SettingsMenu.mappingProfilePath);
+    // createInstanceMappingProfile(collectionOfProfiles[0].mappingProfile);
+    // FieldMappingProfiles.checkMappingProfilePresented(collectionOfProfiles[0].mappingProfile.name);
+    // createHoldingsMappingProfile(collectionOfProfiles[1].mappingProfile);
+    // FieldMappingProfiles.checkMappingProfilePresented(collectionOfProfiles[1].mappingProfile.name);
+    // createItemMappingProfile(collectionOfProfiles[2].mappingProfile);
+    // FieldMappingProfiles.checkMappingProfilePresented(collectionOfProfiles[2].mappingProfile.name);
 
-    // create action profiles
-    collectionOfProfiles.forEach(profile => {
-      cy.visit(SettingsMenu.actionProfilePath);
-      ActionProfiles.createActionProfile(profile.actionProfile, profile.mappingProfile.name);
-      ActionProfiles.checkActionProfilePresented(profile.actionProfile.name);
-    });
+    // // create action profiles
+    // collectionOfProfiles.forEach(profile => {
+    //   cy.visit(SettingsMenu.actionProfilePath);
+    //   ActionProfiles.createActionProfile(profile.actionProfile, profile.mappingProfile.name);
+    //   ActionProfiles.checkActionProfilePresented(profile.actionProfile.name);
+    // });
 
-    // create match profile
-    cy.visit(SettingsMenu.matchProfilePath);
-    MatchProfiles.createMatchProfile(matchProfile);
-    MatchProfiles.checkMatchProfilePresented(matchProfile.profileName);
+    // // create match profile
+    // cy.visit(SettingsMenu.matchProfilePath);
+    // MatchProfiles.createMatchProfile(matchProfile);
+    // MatchProfiles.checkMatchProfilePresented(matchProfile.profileName);
 
-    // createjob profile
-    cy.visit(SettingsMenu.jobProfilePath);
-    JobProfiles.createJobProfile(jobProfile);
-    collectionOfProfiles.forEach(profile => {
-      NewJobProfile.linkActionProfile(profile.actionProfile);
-    });
-    NewJobProfile.saveAndClose();
-    JobProfiles.checkJobProfilePresented(jobProfile.profileName);
+    // // createjob profile
+    // cy.visit(SettingsMenu.jobProfilePath);
+    // JobProfiles.createJobProfile(jobProfile);
+    // collectionOfProfiles.forEach(profile => {
+    //   NewJobProfile.linkActionProfile(profile.actionProfile);
+    // });
+    // NewJobProfile.saveAndClose();
+    // JobProfiles.checkJobProfilePresented(jobProfile.profileName);
 
-    // upload a marc file for creating of the new instance, holding and item
-    cy.visit(TopMenu.dataImportPath);
-    DataImport.uploadFile('marcFileForMatchOnPol.mrc', nameMarcFileForCreate);
-    JobProfiles.searchJobProfileForImport('Default - Create instance and SRS MARC Bib');
-    JobProfiles.runImportFile(nameMarcFileForCreate);
-    Logs.openFileDetails(nameMarcFileForCreate);
-    FileDetails.checkItemsStatusesInResultList(0, [FileDetails.status.created, FileDetails.status.created]);
-    FileDetails.checkItemsStatusesInResultList(1, [FileDetails.status.created, FileDetails.status.created]);
+    // // upload a marc file for creating of the new instance, holding and item
+    // cy.visit(TopMenu.dataImportPath);
+    // DataImport.uploadFile('marcFileForMatchOnPol.mrc', nameMarcFileForCreate);
+    // JobProfiles.searchJobProfileForImport('Default - Create instance and SRS MARC Bib');
+    // JobProfiles.runImportFile(nameMarcFileForCreate);
+    // Logs.openFileDetails(nameMarcFileForCreate);
+    // FileDetails.checkItemsStatusesInResultList(0, [FileDetails.status.created, FileDetails.status.created]);
+    // FileDetails.checkItemsStatusesInResultList(1, [FileDetails.status.created, FileDetails.status.created]);
 
     // create PO with POL
     cy.visit(TopMenu.ordersPath);
-    Orders.createOrderWithOrderLineViaApi(NewOrder.getDefaultOrder(vendorId),
-      BasicOrderLine.getDefaultOrderLine(
-        item.quantity,
-        item.title,
-        location.id,
-        acquisitionMethodId,
-        item.price,
-        item.price,
-        [{
-          productId: item.productId,
-          productIdType: productIdTypeId
-        }],
-        materialTypeId,
-        item.createInventory
-      ))
-      .then(res => {
-        orderNumber = res;
+    Orders.createOrder(order).then(orderId => {
+      order.id = orderId;
+      Orders.checkCreatedOrder(order);
+      OrderLines.addPOLine();
+      fillPol(item.title, item.productId, productIdTypeId, acquisitionMethodId, item.orderFormat, item.price, item.quantity, item.createInventory, materialTypeId);
 
-        Orders.checkIsOrderCreated(orderNumber);
-        // open the first PO with POL
-        Orders.searchByParameter('PO number', orderNumber);
-        Helper.selectFromResultsList();
-        Orders.openOrder();
-        OrderView.checkIsOrderOpened('Open');
-        OrderView.checkIsItemsInInventoryCreated(item.title, location.name);
+      OrderLines.backToEditingOrder();
+      Orders.openOrder();
 
-        DataImport.editMarcFile('marcFileForMatchOnPol.mrc', editedMarcFileName, 'test', orderNumber);
-      });
+      DataImport.editMarcFile('marcFileForMatchOnPol.mrc', editedMarcFileName, 'test', orderNumber);
+    });
 
-    // upload .mrc file
-    cy.visit(TopMenu.dataImportPath);
-    DataImport.checkIsLandingPageOpened();
-    DataImport.uploadFile(editedMarcFileName, marcFileName);
-    JobProfiles.searchJobProfileForImport(jobProfileName);
-    JobProfiles.runImportFile(marcFileName);
-    Logs.checkStatusOfJobProfile();
-    Logs.openFileDetails(marcFileName);
-    FileDetails.checkItemsStatusesInResultList(0, [FileDetails.status.updated, FileDetails.status.updated, FileDetails.status.created, FileDetails.status.created]);
-    FileDetails.checkItemsStatusesInResultList(1, [FileDetails.status.dash, FileDetails.status.discarded, FileDetails.status.discarded, FileDetails.status.discarded]);
+    // // upload .mrc file
+    // cy.visit(TopMenu.dataImportPath);
+    // DataImport.checkIsLandingPageOpened();
+    // DataImport.uploadFile(editedMarcFileName, marcFileName);
+    // JobProfiles.searchJobProfileForImport(jobProfileName);
+    // JobProfiles.runImportFile(marcFileName);
+    // Logs.checkStatusOfJobProfile();
+    // Logs.openFileDetails(marcFileName);
+    // FileDetails.checkItemsStatusesInResultList(0, [FileDetails.status.updated, FileDetails.status.updated, FileDetails.status.created, FileDetails.status.created]);
+    // FileDetails.checkItemsStatusesInResultList(1, [FileDetails.status.dash, FileDetails.status.discarded, FileDetails.status.discarded, FileDetails.status.discarded]);
 
     // FileDetails.openInstanceInInventory();
     // InventoryInstance.checkIsInstanceUpdated();

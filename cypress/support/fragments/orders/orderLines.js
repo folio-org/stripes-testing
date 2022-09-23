@@ -18,6 +18,7 @@ import {
 } from '../../../../interactors';
 import SearchHelper from '../finance/financeHelper';
 import getRandomPostfix from '../../utils/stringTools';
+import SelectInstanceModal from './selectInstanceModal';
 
 const saveAndClose = Button('Save & close');
 const actionsButton = Button('Actions');
@@ -247,6 +248,42 @@ export default {
 
   openInstance:() => {
     cy.do(PaneContent({ id:'order-lines-details-content' }).find(Link({ href: including('/inventory/view/') })).click());
+  },
+
+  fillPolByLinkTitle:(instanceTitle) => {
+    cy.do(Button('Title look-up').click());
+    SelectInstanceModal.searchByName(instanceTitle);
+    SelectInstanceModal.selectInstance(instanceTitle);
+  },
+
+  addAndFillProductId:(productId, productIdType) => {
+    cy.do(Button('Add product ID and product ID type').click());
+    cy.do(TextField({ name:'details.productIds[6].productId' }.fillIn(productId)));
+    cy.do(Select({ name:'details.productIds[6].productIdType' }).choose(productIdType));
+  },
+
+  addAcquisitionMethod:(method) => {
+    cy.do(Button({ id: 'acquisition-method' }).click());
+    cy.do(SelectionOption(method).click());
+  },
+
+  addOrderFormat:(format) => {
+    cy.do(Select({ name: 'orderFormat' }).choose(format));
+  },
+
+  fillPhysicalUnitPrice:(price) => {
+    cy.do(physicalUnitPriceTextField.fillIn(price));
+  },
+
+  fillPhysicalUnitQuantity:(quantity) => {
+    cy.do(quantityPhysicalTextField.fillIn(quantity));
+  },
+
+  addCreateInventory:(inventory) => {
+    cy.do(Select('Create inventory*').choose(inventory));
+  },
+
+  addMaterialType:(type) => {
+    cy.do(Select({ name:'eresource.materialType' }).choose(type));
   }
 };
-
