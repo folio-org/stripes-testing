@@ -65,6 +65,7 @@ export default createInteractor('multi select')
   .selector('[role=application][class^=multiSelectContainer-]')
   .filters({
     open,
+    label: el => el.querySelector('label').textContent,
     id: el => el.parentElement.id,
     placeholder: (el) => el.querySelector('input').placeholder,
     selected: (element) => {

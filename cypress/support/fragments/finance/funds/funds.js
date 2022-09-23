@@ -19,14 +19,11 @@ import {
   SelectionOption,
   Link,
   MultiColumnList,
-  MultiSelectOption,
-  MultiSelectMenu
 } from '../../../../../interactors';
 import FinanceHelp from '../financeHelper';
 import TopMenu from '../../topMenu';
 import getRandomPostfix from '../../../utils/stringTools';
 import Describer from '../../../utils/describer';
-import multiSelect from '../../../../../interactors/multi-select';
 
 const createdFundNameXpath = '//*[@id="paneHeaderpane-fund-details-pane-title"]/h2/span';
 const numberOfSearchResultsHeader = '//*[@id="paneHeaderfund-results-pane-subtitle"]/span';
@@ -99,9 +96,14 @@ export default {
     cy.do([
       actionsButton.click(),
       Button('Edit').click(),
-      multiSelect('Group').select(group),
+      MultiSelect({ label: 'Group' }).select([group]),
       saveAndCloseButton.click()
     ]);
+  },
+
+  checkAddGroupToFund: (group) => {
+    cy.expect(Pane({ id: 'pane-fund-details' }).exists());
+    cy.expect(Accordion({ id: 'information' }).find(KeyValue({ value: group })).exists());
   },
 
   checkWarningMessageFundCodeUsed: () => {

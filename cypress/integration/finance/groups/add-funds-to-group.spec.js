@@ -59,5 +59,7 @@ describe('ui-finance: Groups', () => {
     FinanceHelp.searchByName(defaultfund.name);
     FinanceHelp.selectFromResultsList();
     Funds.addGroupToFund(defaultGroup.name);
+    InteractorsTools.checkCalloutMessage('Fund has been saved');
+    Funds.checkAddGroupToFund(defaultGroup.name);
   });
 });
