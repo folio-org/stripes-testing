@@ -18,12 +18,15 @@ import {
   MultiColumnListCell,
   SelectionOption,
   Link,
-  MultiColumnList
+  MultiColumnList,
+  MultiSelectOption,
+  MultiSelectMenu
 } from '../../../../../interactors';
 import FinanceHelp from '../financeHelper';
 import TopMenu from '../../topMenu';
 import getRandomPostfix from '../../../utils/stringTools';
 import Describer from '../../../utils/describer';
+import multiSelect from '../../../../../interactors/multi-select';
 
 const createdFundNameXpath = '//*[@id="paneHeaderpane-fund-details-pane-title"]/h2/span';
 const numberOfSearchResultsHeader = '//*[@id="paneHeaderfund-results-pane-subtitle"]/span';
@@ -45,7 +48,6 @@ const nameField = TextField('Name*');
 const codeField = TextField('Code*');
 const externalAccountField = TextField('External account*');
 const ledgerSelection = Selection('Ledger*');
-
 export default {
 
   defaultUiFund: {
@@ -78,7 +80,7 @@ export default {
       externalAccountField.fillIn(fund.externalAccount),
       ledgerSelection.open(),
       SelectionList().select(fund.ledgerName),
-      Button('Save & Close').click()
+      saveAndCloseButton.click()
     ]);
     this.waitForFundDetailsLoading();
   },
@@ -90,6 +92,15 @@ export default {
       codeField.fillIn(fund.code),
       externalAccountField.fillIn(fund.externalAccountNo),
       ledgerSelection.find(Button()).click()
+    ]);
+  },
+
+  addGroupToFund: (group) => {
+    cy.do([
+      actionsButton.click(),
+      Button('Edit').click(),
+      multiSelect('Group').select(group),
+      saveAndCloseButton.click()
     ]);
   },
 
