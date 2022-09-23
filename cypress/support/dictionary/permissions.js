@@ -32,7 +32,7 @@ export default {
   uiMarcAuthoritiesAuthorityRecordDelete:{ internal: 'ui-marc-authorities.authority-record.delete', gui: 'MARC Authority: Delete MARC authority record' },
   // Inventory
   // TODO: gui name related with several internal names. Clarify the reason
-  inventoryAll: { internal: ['inventory.all', 'Inventory: All permissions'], gui: 'Inventory: All permissions' },
+  inventoryAll: { internal: 'ui-inventory.all-permissions.TEMPORARY', gui: 'Inventory: All permissions' },
   uiInventorySingleRecordImport: { internal: 'ui-inventory.single-record-import', gui: 'Inventory: Import single bibliographic records' },
   uiInventorySettingsFastAdd: { internal: 'ui-inventory.settings.fast-add', gui: 'Settings (Inventory): Edit fast add settings' },
   uiInventoryMarkItemsWithdrawn: { internal: 'ui-inventory.items.mark-items-withdrawn', gui: 'Inventory: Mark items withdrawn' },
@@ -68,7 +68,7 @@ export default {
   // Users
   usersViewRequests: { internal: 'ui-users.requests.all', gui: 'Users: View requests' },
   uiUsersView: { internal: 'ui-users.view', gui: 'Users: Can view user profile' },
-  uiUserCreate: { internal: 'ui-users.create', gui: 'Users: Create users' },
+  uiUsersCreate: { internal: 'ui-users.create', gui: 'Users: Can create new user' },
   uiUserEdit: { internal: 'ui-users.edit', gui: 'Users: Can edit user profile' },
   uiUserAccounts: { internal: 'ui-users.accounts', gui: 'Fee/Fine History: Can create, edit and remove accounts' },
   uiUsersViewLoans: { internal: 'ui-users.loans.view', gui: 'Users: User loans view' },
