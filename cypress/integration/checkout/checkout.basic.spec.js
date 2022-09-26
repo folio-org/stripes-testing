@@ -21,7 +21,7 @@ describe('Check Out - Actions ', () => {
     group: 'staff',
     personal: {},
   };
-  const testActiveUser = DefaultUser.defaultUiPatron.body;
+  const testActiveUser = { ...DefaultUser.defaultUiPatron.body };
   testActiveUser.patronGroup = 'undergrad (Undergraduate Student)';
   testActiveUser.personal.lastname = testActiveUser.personal.lastName;
   const itemData = {
@@ -130,6 +130,7 @@ describe('Check Out - Actions ', () => {
     });
     Users.checkIsUserCreated(testActiveUser);
     cy.visit(TopMenu.checkOutPath);
+    // without this waiter, the user will not be found by username
     cy.wait(4000);
     CheckOutActions.checkOutUser(testActiveUser.barcode, testActiveUser.username);
     CheckOutActions.checkUserInfo(testActiveUser, testActiveUser.patronGroup.substring(0, testActiveUser.patronGroup.indexOf(' ')));

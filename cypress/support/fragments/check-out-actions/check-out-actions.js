@@ -18,9 +18,9 @@ const endSessionButton = Button('End session');
 const userPane = PaneContent({ id: 'patron-details-content' });
 export default {
   modal,
-  checkOutUser(userBarcode, otherParametr) {
+  checkOutUser(userBarcode, otherParameter) {
     return cy.do([
-      TextField('Patron identifier').fillIn(otherParametr || userBarcode),
+      TextField('Patron identifier').fillIn(otherParameter || userBarcode),
       Pane('Scan patron card').find(Button('Enter')).click(),
       Button(userBarcode).exists(),
     ]);
