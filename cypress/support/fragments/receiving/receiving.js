@@ -7,7 +7,8 @@ import {
   MultiColumnListCell,
   MultiColumnList,
   Select,
-  Pane
+  Pane,
+  Section
 } from '../../../../interactors';
 import InteractorsTools from '../../utils/interactorsTools';
 
@@ -79,7 +80,7 @@ export default {
 
   checkUnreceivedPiece: (rowNumber = 0, caption) => {
     cy.do([
-      cy.expect(Accordion({ id: expectedPiecesAccordionId })
+      cy.expect(Section({ id: expectedPiecesAccordionId })
         .find(MultiColumnListRow({ index: rowNumber }))
         .find(MultiColumnListCell({ content: caption })).exists())
     ]);
