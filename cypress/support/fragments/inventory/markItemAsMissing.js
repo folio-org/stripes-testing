@@ -1,12 +1,13 @@
 import uuid from 'uuid';
-import { HTML, including, Link } from '@interactors/html';
+import { HTML, including } from '@interactors/html';
 import {
   Button,
   KeyValue,
   Modal,
   MultiColumnListCell, PaneHeader,
   Section,
-  TextField
+  TextField,
+  Label
 } from '../../../../interactors';
 import getRandomPostfix from '../../utils/stringTools';
 import users from '../users/users';
@@ -182,7 +183,7 @@ export default {
   },
 
   openItem(itemBarcode) {
-    cy.do(Link(itemBarcode).click());
+    cy.do(Label(itemBarcode).click());
   },
 
   clickMarkAsMissing() {
