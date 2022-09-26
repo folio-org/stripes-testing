@@ -16,13 +16,11 @@ import {
 const modal = Modal('Confirm multipiece check out');
 const endSessionButton = Button('End session');
 const userPane = PaneContent({ id: 'patron-details-content' });
-const itemBarcodeField = TextField({ name:'item.barcode' });
-const patronBarcodeField = TextField({ name: 'patron.identifier' });
 export default {
   modal,
-  checkOutUser(userBarcode) {
+  checkOutUser(userBarcode, otherParametr) {
     return cy.do([
-      TextField('Patron identifier').fillIn(userBarcode),
+      TextField('Patron identifier').fillIn(otherParametr || userBarcode),
       Pane('Scan patron card').find(Button('Enter')).click(),
       Button(userBarcode).exists(),
     ]);
@@ -92,10 +90,5 @@ export default {
 
   checkItem:(barcode) => {
     cy.expect(MultiColumnList({ id:'list-items-checked-out' }).find(HTML(including(barcode))).absent());
-  },
-
-  waitLoading:() => {
-    cy.expect(patronBarcodeField.exists());
-    cy.expect(itemBarcodeField.exists());
   },
 };

@@ -12,12 +12,18 @@ import getRandomPostfix from '../../support/utils/stringTools';
 import Users from '../../support/fragments/users/users';
 import devTeams from '../../support/dictionary/devTeams';
 import Location from '../../support/fragments/settings/tenant/locations/newLocation';
+import SettingsMenu from '../../support/fragments/settingsMenu';
+import OtherSettings from '../../support/fragments/settings/circulation/otherSettings';
+import DefaultUser from '../../support/fragments/users/userDefaultObjects/defaultUser';
 
 describe('Check Out - Actions ', () => {
   const userData = {
     group: 'staff',
     personal: {},
   };
+  const testActiveUser = DefaultUser.defaultUiPatron.body;
+  testActiveUser.patronGroup = 'undergrad (Undergraduate Student)';
+  testActiveUser.personal.lastname = testActiveUser.personal.lastName;
   const itemData = {
     barcode: generateItemBarcode(),
     instanceTitle: `Instance ${getRandomPostfix()}`,
@@ -73,9 +79,8 @@ describe('Check Out - Actions ', () => {
 
     cy.createTempUser(
       [
-        permissions.checkinAll.gui,
-        permissions.uiCirculationViewCreateEditDelete.gui,
-        permissions.uiUserCreate.gui,
+        permissions.uiCirculationSettingsOtherSettings.gui,
+        permissions.uiUsersCreate.gui,
         permissions.inventoryAll.gui,
         permissions.checkoutCirculatingItems.gui,
       ],
@@ -91,7 +96,10 @@ describe('Check Out - Actions ', () => {
       .then(() => {
         UserEdit.addServicePointViaApi(servicePoint.id, userData.userId, servicePoint.id);
 
-        cy.login(userData.personal.lastname, userData.password, { path: TopMenu.checkOutPath, waiter: CheckOutActions.waitLoading });
+        cy.login(userData.personal.lastname, userData.password, {
+          path: SettingsMenu.circulationOtherSettingsPath,
+          waiter: OtherSettings.waitLoading,
+        });
       });
   });
 
@@ -104,6 +112,7 @@ describe('Check Out - Actions ', () => {
     InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(itemData.barcode);
     UserEdit.changeServicePointPreferenceViaApi(userData.userId, [servicePoint.id]);
     Users.deleteViaApi(userData.userId);
+    Users.deleteViaApi(testActiveUser.id);
     Location.deleteViaApiIncludingInstitutionCampusLibrary(
       defaultLocation.institutionId,
       defaultLocation.campusId,
@@ -114,8 +123,16 @@ describe('Check Out - Actions ', () => {
   });
 
   it('C356772 An active user with barcode can Check out item (vega)', { tags: [TestTypes.smoke, devTeams.vega] }, () => {
-    CheckOutActions.checkOutUser(userData.barcode);
-    CheckOutActions.checkUserInfo(userData, userData.group);
+    OtherSettings.selectPatronIdsForCheckoutScanning(['Username'], '3');
+    cy.visit(TopMenu.usersPath);
+    Users.createViaUi(testActiveUser).then((id) => {
+      testActiveUser.id = id;
+    });
+    Users.checkIsUserCreated(testActiveUser);
+    cy.visit(TopMenu.checkOutPath);
+    cy.wait(4000);
+    CheckOutActions.checkOutUser(testActiveUser.barcode, testActiveUser.username);
+    CheckOutActions.checkUserInfo(testActiveUser, testActiveUser.patronGroup.substring(0, testActiveUser.patronGroup.indexOf(' ')));
     CheckOutActions.checkOutItem(itemData.barcode);
     CheckOutActions.checkItemInfo(itemData.barcode, itemData.instanceTitle);
   });
