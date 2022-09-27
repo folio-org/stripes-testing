@@ -293,15 +293,21 @@ export default {
   // fill fields of instance mapping profile
   fillCatalogedDate:() => {
     cy.do(TextField('Cataloged date').fillIn(catalogedDate));
+    // wait will be add uuid for acceptedValues
+    cy.wait(1000);
   },
 
   fillInstanceStatusTerm:() => {
     cy.do(TextField('Instance status term').fillIn(instanceStatusTerm));
+    // wait will be add uuid for acceptedValues
+    cy.wait(1000);
   },
 
   // fill fields of holdings mapping profile
   fillHoldingsType:(type) => {
     cy.do(TextField('Holdings type').fillIn(type));
+    // wait will be add uuid for acceptedValues
+    cy.wait(1000);
   },
 
   fillPermanentLocation:(location) => {
@@ -310,6 +316,8 @@ export default {
 
   fillCallNumberType:(type) => {
     cy.do(TextField('Call number type').fillIn(type));
+    // wait will be add uuid for acceptedValues
+    cy.wait(1000);
   },
 
   fillCallNumber:(number) => {
@@ -327,13 +335,19 @@ export default {
 
   fillStatus:(itemStatus) => {
     cy.do(TextField('Status').fillIn(itemStatus));
+    // wait will be add uuid for acceptedValues
+    cy.wait(1000);
   },
 
   fillPermanentLoanType:(loanType) => {
     cy.do(TextField('Permanent loan type').fillIn(loanType));
+    // wait will be add uuid for acceptedValues
+    cy.wait(1000);
   },
 
   fillMaterialType:() => {
     cy.do(TextField('Material type').fillIn(materialType));
+    // wait will be add uuid for acceptedValues
+    cy.wait(1000);
   }
 };

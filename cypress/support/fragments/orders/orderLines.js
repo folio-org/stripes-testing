@@ -256,12 +256,6 @@ export default {
     SelectInstanceModal.selectInstance(instanceTitle);
   },
 
-  addAndFillProductId:(productId, productIdType) => {
-    cy.do(Button('Add product ID and product ID type').click());
-    cy.do(TextField({ name:'details.productIds[6].productId' }.fillIn(productId)));
-    cy.do(Select({ name:'details.productIds[6].productIdType' }).choose(productIdType));
-  },
-
   addAcquisitionMethod:(method) => {
     cy.do(Button({ id: 'acquisition-method' }).click());
     cy.do(SelectionOption(method).click());
@@ -284,6 +278,13 @@ export default {
   },
 
   addMaterialType:(type) => {
-    cy.do(Select({ name:'eresource.materialType' }).choose(type));
+    cy.do(Select({ name:'physical.materialType' }).choose(type));
+    // need to wait upload product types
+    cy.wait(1000);
+  },
+
+  savePol:() => {
+    cy.do(saveAndClose.click());
+    cy.do(Pane({ id:'pane-poLineForm' }).absent());
   }
 };

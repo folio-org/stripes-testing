@@ -2,11 +2,8 @@ import getRandomPostfix from '../../support/utils/stringTools';
 import TestTypes from '../../support/dictionary/testTypes';
 import DevTeams from '../../support/dictionary/devTeams';
 import permissions from '../../support/dictionary/permissions';
-import Organizations from '../../support/fragments/organizations/organizations';
-import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
 import TopMenu from '../../support/fragments/topMenu';
 import Orders from '../../support/fragments/orders/orders';
-import NewLocation from '../../support/fragments/settings/tenant/locations/newLocation';
 import NewMappingProfile from '../../support/fragments/data_import/mapping_profiles/newMappingProfile';
 import SettingsMenu from '../../support/fragments/settingsMenu';
 import FieldMappingProfiles from '../../support/fragments/data_import/mapping_profiles/fieldMappingProfiles';
@@ -22,19 +19,13 @@ import Logs from '../../support/fragments/data_import/logs/logs';
 import FileDetails from '../../support/fragments/data_import/logs/fileDetails';
 import NewOrder from '../../support/fragments/orders/newOrder';
 import OrderLines from '../../support/fragments/orders/orderLines';
-import OrderView from '../../support/fragments/orders/orderView';
 import InventoryInstance from '../../support/fragments/inventory/inventoryInstance';
 import InventoryViewSource from '../../support/fragments/inventory/inventoryViewSource';
 import Users from '../../support/fragments/users/users';
+import FileManager from '../../support/utils/fileManager';
 
 describe('ui-data-import: Match on POL and update related Instance, Holdings, Item', () => {
   let user = null;
-  let vendorId;
-  let location;
-  let acquisitionMethodId;
-  let productIdTypeId;
-  let materialTypeId;
-  let servicePointId;
   let orderNumber;
 
   // unique profile names
@@ -64,15 +55,13 @@ describe('ui-data-import: Match on POL and update related Instance, Holdings, It
       mappingProfile: { typeValue: NewMappingProfile.folioRecordTypeValue.holdings,
         name: mappingProfileNameForHoldings },
       actionProfile: { typeValue: NewActionProfile.folioRecordTypeValue.holdings,
-        name: actionProfileNameForHoldings,
-        action: 'Update (all record types except Orders, Invoices, or MARC Holdings)' }
+        name: actionProfileNameForHoldings }
     },
     {
       mappingProfile: { typeValue: NewMappingProfile.folioRecordTypeValue.item,
         name: mappingProfileNameForItem },
       actionProfile: { typeValue: NewActionProfile.folioRecordTypeValue.item,
-        name: actionProfileNameForItem,
-        action: 'Update (all record types except Orders, Invoices, or MARC Holdings)' }
+        name: actionProfileNameForItem }
     }
   ];
 
@@ -91,14 +80,17 @@ describe('ui-data-import: Match on POL and update related Instance, Holdings, It
     profileName: jobProfileName,
     acceptedType: NewJobProfile.acceptedDataType.marc };
 
-  const order = { ...NewOrder.defaultOneTimeOrder };
+  const order = { ...NewOrder.defaultOneTimeOrder,
+    vendor: 'GOBI Library Solutions',
+    orderType: 'One-time' };
 
-  const item = {
-    title: 'Sport and sociology. $cDominic Malcolm.',
-    productId: '9782266111560',
+  const pol = {
+    title: 'Sport and sociology. Dominic Malcolm.',
+    acquisitionMethod: 'Purchase at vendor system',
     orderFormat: 'Physical resource',
     quantity: '1',
     price: '20',
+    materialType: 'book',
     createInventory: 'None'
   };
 
@@ -109,6 +101,7 @@ describe('ui-data-import: Match on POL and update related Instance, Holdings, It
       permissions.uiOrdersCreate.gui,
       permissions.uiOrdersView.gui,
       permissions.uiOrdersEdit.gui,
+      permissions.uiApproveOrder.gui,
       permissions.uiInventoryViewCreateEditHoldings.gui,
       permissions.uiInventoryViewCreateEditInstances.gui,
       permissions.uiInventoryViewCreateEditItems,
@@ -119,42 +112,34 @@ describe('ui-data-import: Match on POL and update related Instance, Holdings, It
         user = userProperties;
       })
       .then(() => {
-        cy.getAdminToken()
-          .then(() => {
-            Organizations.getOrganizationViaApi({ query: 'name="GOBI Library Solutions"' })
-              .then(organization => {
-                vendorId = organization.id;
-              });
-            cy.getMaterialTypes({ query: 'name="book"' })
-              .then(materialType => {
-                materialTypeId = materialType.id;
-              });
-            cy.getAcquisitionMethodsApi({ query: 'value="Purchase at vendor system"' })
-              .then(params => {
-                acquisitionMethodId = params.body.acquisitionMethods[0].id;
-              });
-            cy.getProductIdTypes({ query: 'name=="ISBN"' })
-              .then(productIdType => {
-                productIdTypeId = productIdType.id;
-              });
-            ServicePoints.getViaApi()
-              .then((servicePoint) => {
-                servicePointId = servicePoint[0].id;
-                NewLocation.createViaApi(NewLocation.getDefaultLocation(servicePointId))
-                  .then(res => {
-                    location = res;
-                  });
-              });
-          })
-          .then(() => {
-            cy.login(user.username, user.password);
-          });
+        cy.login(user.username, user.password);
+        cy.getAdminToken();
       });
   });
 
-  //   after(() => {
-
-  //   });
+  after(() => {
+    cy.getInstance({ limit: 1, expandAll: true, query: `"title"=="${pol.title}"` })
+      .then((instance) => {
+        console.log(instance);
+        cy.deleteItem(instance.items[0].id);
+        cy.deleteHoldingRecordViaApi(instance.holdings[0].id);
+        InventoryInstance.deleteInstanceViaApi(instance.id);
+      });
+    Orders.getOrdersApi({ limit: 1, query: `"poNumber"=="${orderNumber}"` })
+      .then(orderId => {
+        Orders.deleteOrderApi(orderId[0].id);
+      });
+    Users.deleteViaApi(user.userId);
+    // delete generated profiles
+    JobProfiles.deleteJobProfile(jobProfileName);
+    MatchProfiles.deleteMatchProfile(matchProfile.profileName);
+    collectionOfProfiles.forEach(profile => {
+      ActionProfiles.deleteActionProfile(profile.actionProfile.name);
+      FieldMappingProfiles.deleteFieldMappingProfile(profile.mappingProfile.name);
+    });
+    // delete created files
+    FileManager.deleteFile(`cypress/fixtures/${editedMarcFileName}`);
+  });
 
   const createInstanceMappingProfile = (instanceMappingProfile) => {
     FieldMappingProfiles.openNewMappingProfileForm();
@@ -188,86 +173,89 @@ describe('ui-data-import: Match on POL and update related Instance, Holdings, It
     FieldMappingProfiles.closeViewModeForMappingProfile(itemMappingProfile.name);
   };
 
-  const fillPol = (title, prodId, prodType, method, format, price, quantity, inventory, type) => {
+  const addPolToOrder = (title, method, format, price, quantity, inventory, type) => {
+    OrderLines.addPOLine();
     OrderLines.fillPolByLinkTitle(title);
-    OrderLines.addAndFillProductId(prodId, prodType);
     OrderLines.addAcquisitionMethod(method);
     OrderLines.addOrderFormat(format);
     OrderLines.fillPhysicalUnitPrice(price);
     OrderLines.fillPhysicalUnitQuantity(quantity);
     OrderLines.addCreateInventory(inventory);
     OrderLines.addMaterialType(type);
+    OrderLines.savePol();
   };
 
   it('C350590 Match on POL and update related Instance, Holdings, Item (folijet)', { tags: [TestTypes.smoke, DevTeams.folijet] }, () => {
-    // // create mapping and action profiles
-    // cy.visit(SettingsMenu.mappingProfilePath);
-    // createInstanceMappingProfile(collectionOfProfiles[0].mappingProfile);
-    // FieldMappingProfiles.checkMappingProfilePresented(collectionOfProfiles[0].mappingProfile.name);
-    // createHoldingsMappingProfile(collectionOfProfiles[1].mappingProfile);
-    // FieldMappingProfiles.checkMappingProfilePresented(collectionOfProfiles[1].mappingProfile.name);
-    // createItemMappingProfile(collectionOfProfiles[2].mappingProfile);
-    // FieldMappingProfiles.checkMappingProfilePresented(collectionOfProfiles[2].mappingProfile.name);
+    // create mapping and action profiles
+    cy.visit(SettingsMenu.mappingProfilePath);
+    createInstanceMappingProfile(collectionOfProfiles[0].mappingProfile);
+    FieldMappingProfiles.checkMappingProfilePresented(collectionOfProfiles[0].mappingProfile.name);
+    createHoldingsMappingProfile(collectionOfProfiles[1].mappingProfile);
+    FieldMappingProfiles.checkMappingProfilePresented(collectionOfProfiles[1].mappingProfile.name);
+    createItemMappingProfile(collectionOfProfiles[2].mappingProfile);
+    FieldMappingProfiles.checkMappingProfilePresented(collectionOfProfiles[2].mappingProfile.name);
 
-    // // create action profiles
-    // collectionOfProfiles.forEach(profile => {
-    //   cy.visit(SettingsMenu.actionProfilePath);
-    //   ActionProfiles.createActionProfile(profile.actionProfile, profile.mappingProfile.name);
-    //   ActionProfiles.checkActionProfilePresented(profile.actionProfile.name);
-    // });
+    // create action profiles
+    collectionOfProfiles.forEach(profile => {
+      cy.visit(SettingsMenu.actionProfilePath);
+      ActionProfiles.createActionProfile(profile.actionProfile, profile.mappingProfile.name);
+      ActionProfiles.checkActionProfilePresented(profile.actionProfile.name);
+    });
 
-    // // create match profile
-    // cy.visit(SettingsMenu.matchProfilePath);
-    // MatchProfiles.createMatchProfile(matchProfile);
-    // MatchProfiles.checkMatchProfilePresented(matchProfile.profileName);
+    // create match profile
+    cy.visit(SettingsMenu.matchProfilePath);
+    MatchProfiles.createMatchProfile(matchProfile);
+    MatchProfiles.checkMatchProfilePresented(matchProfile.profileName);
 
-    // // createjob profile
-    // cy.visit(SettingsMenu.jobProfilePath);
-    // JobProfiles.createJobProfile(jobProfile);
-    // collectionOfProfiles.forEach(profile => {
-    //   NewJobProfile.linkActionProfile(profile.actionProfile);
-    // });
-    // NewJobProfile.saveAndClose();
-    // JobProfiles.checkJobProfilePresented(jobProfile.profileName);
+    // create job profile
+    cy.visit(SettingsMenu.jobProfilePath);
+    JobProfiles.createJobProfile(jobProfile);
+    NewJobProfile.linkMatchAndThreeActionProfiles(matchProfileName, actionProfileNameForInstance, actionProfileNameForHoldings, actionProfileNameForItem);
+    NewJobProfile.saveAndClose();
+    JobProfiles.checkJobProfilePresented(jobProfile.profileName);
 
-    // // upload a marc file for creating of the new instance, holding and item
-    // cy.visit(TopMenu.dataImportPath);
-    // DataImport.uploadFile('marcFileForMatchOnPol.mrc', nameMarcFileForCreate);
-    // JobProfiles.searchJobProfileForImport('Default - Create instance and SRS MARC Bib');
-    // JobProfiles.runImportFile(nameMarcFileForCreate);
-    // Logs.openFileDetails(nameMarcFileForCreate);
-    // FileDetails.checkItemsStatusesInResultList(0, [FileDetails.status.created, FileDetails.status.created]);
-    // FileDetails.checkItemsStatusesInResultList(1, [FileDetails.status.created, FileDetails.status.created]);
+    // upload a marc file for creating of the new instance, holding and item
+    cy.visit(TopMenu.dataImportPath);
+    DataImport.uploadFile('marcFileForMatchOnPol.mrc', nameMarcFileForCreate);
+    JobProfiles.searchJobProfileForImport('Default - Create instance and SRS MARC Bib');
+    JobProfiles.runImportFile(nameMarcFileForCreate);
+    Logs.openFileDetails(nameMarcFileForCreate);
+    FileDetails.checkItemsStatusesInResultList(0, [FileDetails.status.created, FileDetails.status.created]);
+    FileDetails.checkItemsStatusesInResultList(1, [FileDetails.status.created, FileDetails.status.created]);
 
     // create PO with POL
     cy.visit(TopMenu.ordersPath);
-    Orders.createOrder(order).then(orderId => {
-      order.id = orderId;
-      Orders.checkCreatedOrder(order);
-      OrderLines.addPOLine();
-      fillPol(item.title, item.productId, productIdTypeId, acquisitionMethodId, item.orderFormat, item.price, item.quantity, item.createInventory, materialTypeId);
+    Orders.createOrder(order, true).then(orderId => {
+      Orders.getOrdersApi({ limit: 1, query: `"id"=="${orderId}"` })
+        .then(res => {
+          orderNumber = res[0].poNumber;
+          Orders.checkIsOrderCreated(orderNumber);
+          addPolToOrder(pol.title, pol.acquisitionMethod, pol.orderFormat, pol.price, pol.quantity, pol.createInventory, pol.materialType);
+          OrderLines.backToEditingOrder();
+          Orders.openOrder();
 
-      OrderLines.backToEditingOrder();
-      Orders.openOrder();
-
-      DataImport.editMarcFile('marcFileForMatchOnPol.mrc', editedMarcFileName, 'test', orderNumber);
+          // change file using order number
+          DataImport.editMarcFile('marcFileForMatchOnPol.mrc', editedMarcFileName, 'test', orderNumber);
+        });
     });
 
-    // // upload .mrc file
-    // cy.visit(TopMenu.dataImportPath);
-    // DataImport.checkIsLandingPageOpened();
-    // DataImport.uploadFile(editedMarcFileName, marcFileName);
-    // JobProfiles.searchJobProfileForImport(jobProfileName);
-    // JobProfiles.runImportFile(marcFileName);
-    // Logs.checkStatusOfJobProfile();
-    // Logs.openFileDetails(marcFileName);
-    // FileDetails.checkItemsStatusesInResultList(0, [FileDetails.status.updated, FileDetails.status.updated, FileDetails.status.created, FileDetails.status.created]);
-    // FileDetails.checkItemsStatusesInResultList(1, [FileDetails.status.dash, FileDetails.status.discarded, FileDetails.status.discarded, FileDetails.status.discarded]);
+    // upload .mrc file
+    cy.visit(TopMenu.dataImportPath);
+    DataImport.checkIsLandingPageOpened();
+    DataImport.uploadFile(editedMarcFileName, marcFileName);
+    JobProfiles.searchJobProfileForImport(jobProfileName);
+    JobProfiles.runImportFile(marcFileName);
+    Logs.checkStatusOfJobProfile();
+    Logs.openFileDetails(marcFileName);
+    // TODO after fixing MODSOURMAN-819 change SRS status to 'Updated'
+    FileDetails.checkItemsStatusesInResultList(0, [FileDetails.status.created, FileDetails.status.updated, FileDetails.status.created, FileDetails.status.created]);
+    FileDetails.checkItemsStatusesInResultList(1, [FileDetails.status.dash, FileDetails.status.discarded]);
 
-    // FileDetails.openInstanceInInventory();
-    // InventoryInstance.checkIsInstanceUpdated();
-    // HoldingsRecordView.checkIsHoldingsUpdated();
-    // ItemVeiw.checkIsItemUpdated(firstItem.barcode);
-    // InventoryViewSource.verifyBarcodeInMARCBibSource(firstItem.barcode);
+    FileDetails.openInstanceInInventory();
+    InventoryInstance.checkIsInstanceUpdated();
+    InventoryInstance.checkIsHoldingsCreated(['Main Library >']);
+    InventoryInstance.openHoldingsAccordion('Main Library >');
+    InventoryInstance.checkIsItemCreated('242451241241');
+    InventoryViewSource.verifyBarcodeInMARCBibSource('242451241241');
   });
 });
