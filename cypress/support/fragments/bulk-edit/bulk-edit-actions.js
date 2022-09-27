@@ -1,8 +1,9 @@
 import { HTML, including } from '@interactors/html';
 import FileManager from '../../utils/fileManager';
-import { Modal, SelectionOption, Button } from '../../../../interactors';
+import {Modal, SelectionOption, Button, DropdownMenu, Checkbox, MultiColumnListHeader} from '../../../../interactors';
 
 const actionsBtn = Button('Actions');
+const dropdownMenu = DropdownMenu();
 // interactor doesn't allow to pick second the same select
 function getLocationSelect() {
   return cy.get('select').eq(2);
@@ -128,5 +129,28 @@ export default {
 
   newBulkEdit() {
     cy.do(Button('New bulk edit').click());
+  },
+
+  verifyUsersActionDropdownItems(isDisabled = false) {
+    cy.expect([
+      dropdownMenu.find(Checkbox({ name: 'active', checked: true, disabled: isDisabled })).exists(),
+      dropdownMenu.find(Checkbox({ name: 'lastName', checked: true, disabled: isDisabled })).exists(),
+      dropdownMenu.find(Checkbox({ name: 'firstName', checked: true, disabled: isDisabled })).exists(),
+      dropdownMenu.find(Checkbox({ name: 'barcode', checked: true, disabled: isDisabled })).exists(),
+      dropdownMenu.find(Checkbox({ name: 'patronGroup', checked: true, disabled: isDisabled })).exists(),
+      dropdownMenu.find(Checkbox({ name: 'username', checked: true, disabled: isDisabled })).exists(),
+      dropdownMenu.find(Checkbox({ name: 'email', checked: false, disabled: isDisabled })).exists(),
+      dropdownMenu.find(Checkbox({ name: 'expirationDate', checked: false, disabled: isDisabled })).exists(),
+    ]);
+  },
+
+  verifyCheckedDropdownMenuItem() {
+    cy.do(dropdownMenu.find(Checkbox({ name: 'firstName'})).click());
+    cy.expect(MultiColumnListHeader('First name').absent());
+  },
+
+  verifyUncheckedDropdownMenuItem() {
+    cy.do(dropdownMenu.find(Checkbox({ name: 'email'})).click());
+    cy.expect(MultiColumnListHeader('Email').exists());
   }
 };

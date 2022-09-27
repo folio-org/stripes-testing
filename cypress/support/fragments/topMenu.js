@@ -9,6 +9,7 @@ export default {
   fundPath : '/finance/fund',
   dataImportPath : '/data-import',
   fiscalYearPath : '/finance/fiscalyear',
+  groupsPath: '/finance/groups',
   eholdingsPath : '/eholdings',
   dataExportPath : '/data-export',
   ordersPath : '/orders',

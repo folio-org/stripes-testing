@@ -18,7 +18,7 @@ import {
   MultiColumnListCell,
   SelectionOption,
   Link,
-  MultiColumnList
+  MultiColumnList,
 } from '../../../../../interactors';
 import FinanceHelp from '../financeHelper';
 import TopMenu from '../../topMenu';
@@ -45,7 +45,6 @@ const nameField = TextField('Name*');
 const codeField = TextField('Code*');
 const externalAccountField = TextField('External account*');
 const ledgerSelection = Selection('Ledger*');
-
 export default {
 
   defaultUiFund: {
@@ -78,7 +77,7 @@ export default {
       externalAccountField.fillIn(fund.externalAccount),
       ledgerSelection.open(),
       SelectionList().select(fund.ledgerName),
-      Button('Save & Close').click()
+      saveAndCloseButton.click()
     ]);
     this.waitForFundDetailsLoading();
   },
@@ -91,6 +90,20 @@ export default {
       externalAccountField.fillIn(fund.externalAccountNo),
       ledgerSelection.find(Button()).click()
     ]);
+  },
+
+  addGroupToFund: (group) => {
+    cy.do([
+      actionsButton.click(),
+      Button('Edit').click(),
+      MultiSelect({ label: 'Group' }).select([group]),
+      saveAndCloseButton.click()
+    ]);
+  },
+
+  checkAddGroupToFund: (group) => {
+    cy.expect(Pane({ id: 'pane-fund-details' }).exists());
+    cy.expect(Accordion({ id: 'information' }).find(KeyValue({ value: group })).exists());
   },
 
   checkWarningMessageFundCodeUsed: () => {
