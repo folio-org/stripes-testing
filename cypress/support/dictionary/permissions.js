@@ -136,4 +136,6 @@ export default {
   uiFinanceCreateAllocations: { internal: 'ui-finance.allocations.create', gui: 'Finance: Create allocations' },
   uiFinanceCreateTransfers: { internal: 'ui-finance.transfers.create', gui: 'Finance: Create transfers' },
   uiFinanceViewEditDeletFundBudget: { internal: 'ui-finance.fund-budget.delete', gui: 'Finance: View, edit, delete fund and budget' },
+  uiFinanceCreateViewEditGroups: { internal: 'ui-finance.group.create', gui: 'Finance: View, edit, create group' },
+  uiFinanceViewEditDeletGroups: { internal: 'ui-finance.group.delete', gui: 'Finance: View, edit, delete group' },
 };
