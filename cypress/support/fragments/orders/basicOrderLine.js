@@ -2,7 +2,7 @@ import uuid from 'uuid';
 import getRandomPostfix from '../../utils/stringTools';
 import NewMaterialType from '../settings/inventory/newMaterialType';
 
-const getDefaultOrderLine = (quantity, title, spesialLocationId, acquisitionMethod = '', listUnitPrice = '1.0', poLineEstimatedPrice = '1.0', productIds = [], specialMaterialTypeId) => {
+const getDefaultOrderLine = (quantity, title, spesialLocationId, acquisitionMethod = '', listUnitPrice = '1.0', poLineEstimatedPrice = '1.0', productIds = [], specialMaterialTypeId, referenceNumbers = []) => {
   const defaultOrderLine = {
     id: uuid(),
     checkinItems: false,
@@ -51,7 +51,8 @@ const getDefaultOrderLine = (quantity, title, spesialLocationId, acquisitionMeth
     titleOrPackage: title,
     vendorDetail: {
       instructions: '',
-      vendorAccount: '1234'
+      vendorAccount: '1234',
+      referenceNumbers
     }
   };
   if (!defaultOrderLine.physical.materialType) {

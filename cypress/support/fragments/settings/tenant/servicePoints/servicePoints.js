@@ -1,12 +1,12 @@
 import { getTestEntityValue } from '../../../../utils/stringTools';
 
 const defaultServicePoint = {
-  //required parameter
+  // required parameter
   code: undefined,
   discoveryDisplayName: getTestEntityValue('discovery_display_name'),
-  //required parameter
+  // required parameter
   id: undefined,
-  //required parameter
+  // required parameter
   name: undefined,
 };
 
