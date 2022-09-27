@@ -250,6 +250,13 @@ export default {
     cy.do(PaneContent({ id:'order-lines-details-content' }).find(Link({ href: including('/inventory/view/') })).click());
   },
 
+  openReceiving:() => {
+    cy.do([
+      PaneHeader({ id: 'paneHeaderorder-lines-details' }).find(actionsButton).click(),
+      Button('Receive').click()
+    ]);
+  },
+
   fillPolByLinkTitle:(instanceTitle) => {
     cy.do(Button('Title look-up').click());
     SelectInstanceModal.searchByName(instanceTitle);
@@ -288,3 +295,4 @@ export default {
     cy.do(Pane({ id:'pane-poLineForm' }).absent());
   }
 };
+

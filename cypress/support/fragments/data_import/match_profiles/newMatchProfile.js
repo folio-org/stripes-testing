@@ -6,7 +6,6 @@ import {
   Accordion,
   SelectionOption
 } from '../../../../../interactors';
-import { getLongDelay } from '../../../utils/cypressTools';
 
 const criterionValueTypeList = SelectionList({ id: 'sl-container-criterion-value-type' });
 const criterionValueTypeButton = Button({ id:'criterion-value-type' });
@@ -50,7 +49,7 @@ const fillMatchProfileForm = ({
 }) => {
   cy.do(TextField('Name*').fillIn(profileName));
   // wait for data to be loaded
-  cy.wait(1000);
+  cy.wait(1500);
   // select existing record type
   if (existingRecordType === 'MARC_BIBLIOGRAPHIC') {
     cy.do(Button({ dataId:'MARC_BIBLIOGRAPHIC' }).click());
@@ -64,10 +63,8 @@ const fillMatchProfileForm = ({
     fillExistingRecordFields(existingRecordFields.in2, 'in2');
     fillExistingRecordFields(existingRecordFields.subfield, 'subfield');
   } else if (existingRecordType === 'INSTANCE') {
-    cy.intercept('/_/jsonSchemas?path=acq-models/mod-orders-storage/schemas/vendor_detail.json').as('getJson2');
-    cy.wait('@getJson2', getLongDelay());
     // wait for list with data to be loaded
-    cy.wait(1000);
+    cy.wait(1500);
     cy.do(Accordion({ id:'match-profile-details' }).find(Button({ dataId:'INSTANCE' })).click());
     fillIncomingRecordFields(incomingRecordFields.field, 'field');
     if (incomingRecordFields.in1) {

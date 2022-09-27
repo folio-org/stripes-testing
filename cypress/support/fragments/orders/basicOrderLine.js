@@ -12,7 +12,7 @@ const getDefaultOrderLine = (
   productIds = [],
   specialMaterialTypeId,
   createInventory = 'Instance, Holding, Item',
-) => {
+, referenceNumbers = []) => {
   const defaultOrderLine = {
     id: uuid(),
     checkinItems: false,
@@ -61,7 +61,8 @@ const getDefaultOrderLine = (
     titleOrPackage: title,
     vendorDetail: {
       instructions: '',
-      vendorAccount: '1234'
+      vendorAccount: '1234',
+      referenceNumbers
     }
   };
   if (!defaultOrderLine.physical.materialType) {
