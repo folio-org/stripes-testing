@@ -92,27 +92,29 @@ export default {
     cy.expect(MultiColumnList({ id:'list-items-checked-out' }).find(HTML(including(barcode))).absent());
   },
 
-  confirmMultipieceCheckOut() {
-    cy.do(Button({className: 'button---kpbBz interactionStyles---eaRy_ primary---xHTjI'}).click());
+  confirmMultipieceCheckOut(barcode) {
+    cy.do(Button({ className: 'button---kpbBz interactionStyles---eaRy_ primary---xHTjI' }).click());
+    cy.expect(MultiColumnList({ id: 'list-items-checked-out' }).find(HTML(including(barcode))).exists());
   },
 
-  clickOnLoanDetails() {
+  openLoanDetails() {
     cy.do(Button({ id: 'available-item-actions-button' }).click());
-    cy.get('a:contains("Loan details")').click(); //.do(Button({ text: 'Loan details' }).click());
-    cy.wait(10000);
+    cy.do(Button('Loan details').click());
+    cy.expect(Pane({ id: 'pane-loandetails' }).exists());
   },
 
-  changeDueDateToPast(minutes){
+  changeDueDateToPast(minutes) {
+    const todayFormatted = {}
     let today = new Date();
     let month = today.getMonth() < 9 ? 0 + (today.getMonth() + 1).toString() : today.getMonth() + 1;
-    const formattedToday = month + '/' + today.getDate() + '/' + today.getFullYear();
+    todayFormatted.formattedDate = month + '/' + today.getDate() + '/' + today.getFullYear();
     today.setUTCMinutes(today.getMinutes() - minutes);
-    const fiveMinTime = today.toLocaleTimeString('en-US', { timeZone: 'UTC', hour: '2-digit', minute: '2-digit' });
+    todayFormatted.formattedTime = today.toLocaleTimeString('en-US', { timeZone: 'UTC', hour: '2-digit', minute: '2-digit' });
 
     cy.do([
       Button({ text: 'Change due date' }).click(),
-      TextField({ name: 'date' }).fillIn(formattedToday),
-      TextField({ name: 'time' }).fillIn(fiveMinTime),
+      TextField({ name: 'date' }).fillIn(todayFormatted.formattedDate),
+      TextField({ name: 'time' }).fillIn(todayFormatted.formattedTime),
       Button({ text: 'Save and close' }).click(),
       Button({ text: 'Close' }).click(),
     ]);
