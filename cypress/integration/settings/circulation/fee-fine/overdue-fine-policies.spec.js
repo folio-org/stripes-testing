@@ -5,7 +5,6 @@ import SettingsMenu from '../../../../support/fragments/settingsMenu';
 import TopMenu from '../../../../support/fragments/topMenu';
 import Permissions from '../../../../support/dictionary/permissions';
 import PatronGroups from '../../../../support/fragments/settings/users/patronGroups';
-import Users from '../../../../support/fragments/users/users';
 import getRandomPostfix from '../../../../support/utils/stringTools';
 import InventoryInstances from '../../../../support/fragments/inventory/inventoryInstances';
 import generateItemBarcode from '../../../../support/utils/generateItemBarcode';
@@ -22,7 +21,7 @@ import UsersOwners from '../../../../support/fragments/settings/users/usersOwner
 import CheckInActions from '../../../../support/fragments/check-in-actions/checkInActions';
 
 // TO DO remove ignoring errors. Now when you click on one of the buttons, some promise in the application returns false
-Cypress.on('uncaught:exception', (err, runnable) => {
+Cypress.on('uncaught:exception', () => {
   return false;
 });
 
@@ -166,7 +165,7 @@ describe('ui-circulation-settings: overdue fine policies management', () => {
     OverdueFinePolicies.linkIsAbsent();
   });
 
-  it('C9267: Verify that overdue fines calculated properly based on "Overdue fine" amount and interval setting (spitfire)', { tags: [devTeams.spitfire, testTypes.smoke] }, function () {
+  it.only('C9267: Verify that overdue fines calculated properly based on "Overdue fine" amount and interval setting (spitfire)', { tags: [devTeams.spitfire, testTypes.smoke] }, function () {
     cy.visit(TopMenu.checkOutPath);
     CheckOutActions.checkOutUser(userData.barcode);
     CheckOutActions.checkOutItem(instance.instanceBarcode);
