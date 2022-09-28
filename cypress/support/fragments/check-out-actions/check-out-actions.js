@@ -93,7 +93,7 @@ export default {
   },
 
   confirmMultipieceCheckOut(barcode) {
-    cy.do(Button({ className: 'button---kpbBz interactionStyles---eaRy_ primary---xHTjI' }).click());
+    cy.do(modal.find(Button('Check out')).click());
     cy.expect(MultiColumnList({ id: 'list-items-checked-out' }).find(HTML(including(barcode))).exists());
   },
 

@@ -1,5 +1,5 @@
 import uuid from 'uuid';
-import { Button, including, TextField, MultiColumnListRow, MultiColumnList, MultiColumnListCell, HTML, Pane, Modal, PaneContent } from '../../../../interactors';
+import { Button, including, TextField, MultiColumnListRow, MultiColumnList, MultiColumnListCell, HTML, Pane, Modal, PaneContent, or } from '../../../../interactors';
 import { REQUEST_METHOD } from '../../constants';
 import { getLongDelay } from '../../utils/cypressTools';
 import ItemVeiw from '../inventory/inventoryItem/itemVeiw';
@@ -124,13 +124,10 @@ export default {
     
     cy.expect(Pane(including('Fee/fine details')).exists());
     cy.expect(feeFinePane.find(HTML(including('Overdue fine'))).exists());
-    // Using try/catch because the Billed amount is rounded depending on the time and can be equal or greater by 1
-    try {
-      cy.expect(feeFinePane.find(HTML(including(`${billedAmount}.00`))).exists());
-    } catch (error) {
-      console.error(error);
-      cy.expect(feeFinePane.find(HTML(including(`${billedAmount + 1}.00`))).exists());
-    }
+    cy.expect(or(
+      feeFinePane.find(HTML(including(`${billedAmount}.00`))).exists(),
+      feeFinePane.find(HTML(including(`${billedAmount + 1}.00`))).exists()
+    ));
     cy.expect(feeFinePane.find(HTML(including('Outstanding'))).exists());
     cy.expect(feeFinePane.find(HTML(including(instanceBarcode))).exists());
     cy.expect(feeFinePane.find(HTML(including(loanPolicyName))).exists());

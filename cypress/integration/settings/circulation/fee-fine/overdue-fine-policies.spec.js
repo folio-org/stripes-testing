@@ -165,7 +165,7 @@ describe('ui-circulation-settings: overdue fine policies management', () => {
     OverdueFinePolicies.linkIsAbsent();
   });
 
-  it.only('C9267: Verify that overdue fines calculated properly based on "Overdue fine" amount and interval setting (spitfire)', { tags: [devTeams.spitfire, testTypes.smoke] }, function () {
+  it('C9267: Verify that overdue fines calculated properly based on "Overdue fine" amount and interval setting (spitfire)', { tags: [devTeams.spitfire, testTypes.smoke] }, function () {
     cy.visit(TopMenu.checkOutPath);
     CheckOutActions.checkOutUser(userData.barcode);
     CheckOutActions.checkOutItem(instance.instanceBarcode);
