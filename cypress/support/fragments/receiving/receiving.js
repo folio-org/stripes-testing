@@ -80,9 +80,8 @@ export default {
     ]);
   },
 
-  checkIsPiecesCreated:(title, parameter) => {
+  checkIsPiecesCreated:(title) => {
     filterOpenReceiving();
-    searchByParameter(parameter, title);
     cy.expect(Pane('Receiving')
       .find(MultiColumnList({ id: 'receivings-list' }))
       .find(MultiColumnListCell({ content: title }))

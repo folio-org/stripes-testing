@@ -1,4 +1,5 @@
 import getRandomPostfix from '../../utils/stringTools';
+import { Button, Select, TextField, Pane, Dropdown } from '../../../../interactors';
 
 const defaultUserName = `AutotestUser${getRandomPostfix()}`;
 const defaultUser = {
@@ -38,4 +39,23 @@ export default {
     path: `bl-users/by-id/${userId}`,
     isDefaultSearchParamsRequired : false
   }),
+
+  createViaUi: (userData) => {
+    return cy.do([
+      Dropdown('Actions').find(Button()).click(),
+      Button({ id: 'clickable-newuser' }).click(),
+      TextField({ id: 'adduser_lastname' }).fillIn(userData.personal.lastName),
+      Select({ id: 'adduser_group' }).choose(userData.patronGroup),
+      TextField({ name: 'barcode' }).fillIn(userData.barcode),
+      TextField({ name: 'username' }).fillIn(userData.username),
+      TextField({ id: 'adduser_email' }).fillIn(userData.personal.email),
+      Button({ id: 'clickable-save' }).click()]).then(() => {
+      cy.intercept('/users').as('user');
+      return cy.wait('@user', { timeout: 30000 }).then((xhr) => xhr.response.body.id);
+    });
+  },
+
+  checkIsUserCreated: (userData) => {
+    cy.expect(Pane(userData.personal.lastName).exists());
+  }
 };

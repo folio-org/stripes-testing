@@ -246,7 +246,7 @@ function createActionProfileForVRN(name, recordType, mappingProfile, action) {
     actionProfilesPaneHeader.find(actionButton).click(),
     newActionProfileButton.click(),
     nameField.fillIn(name),
-    actionSelect.choose(action || 'Update (all record types except Orders)'),
+    actionSelect.choose(action || 'Update (all record types except Orders, Invoices, or MARC Holdings)'),
     folioRecordTypeSelect.choose(recordType),
     linkProfileButton.click(),
     selectMappingProfilesModal.find(queryField).fillIn(mappingProfile),
@@ -331,8 +331,6 @@ function clickOnUpdatedHotlink(columnIndex = 3, row = 0) {
 }
 
 function verifyInstanceStatusNotUpdated() {
-  cy.intercept('GET', '/metadata-provider/jobLogEntries/*').as('getLogEntries');
-  cy.wait('@getLogEntries', getLongDelay());
   cy.do(searchResultsList.find(MultiColumnListCell({
     row: 1,
     columnIndex: 3,
