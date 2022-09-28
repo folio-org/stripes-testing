@@ -20,9 +20,6 @@ const organization = {
   gobiLibrary: 'GOBI Library Solutions',
   harrassowitz: 'Otto Harrassowitz GmbH & Co. KG',
 };
-const holdingType = {
-  monograph: '"Monograph"'
-};
 
 const permanentLocation = {
   annex: '"Annex (KU/CC/DI/A)"',

@@ -110,8 +110,7 @@ describe('ui-data-import: Match on POL and update related Instance, Holdings, It
     ])
       .then(userProperties => {
         user = userProperties;
-      })
-      .then(() => {
+
         cy.login(user.username, user.password);
         cy.getAdminToken();
       });
@@ -120,7 +119,6 @@ describe('ui-data-import: Match on POL and update related Instance, Holdings, It
   after(() => {
     cy.getInstance({ limit: 1, expandAll: true, query: `"title"=="${pol.title}"` })
       .then((instance) => {
-        console.log(instance);
         cy.deleteItem(instance.items[0].id);
         cy.deleteHoldingRecordViaApi(instance.holdings[0].id);
         InventoryInstance.deleteInstanceViaApi(instance.id);
