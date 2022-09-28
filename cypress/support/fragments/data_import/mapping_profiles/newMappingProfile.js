@@ -286,5 +286,21 @@ export default {
     cy.do(Select({ name:'profile.mappingDetails.mappingFields[9].repeatableFieldAction' }).choose('Add these to existing'));
     cy.do(Button('Add administrative note').click());
     cy.do(TextField('Administrative note').fillIn(note));
+  },
+
+  addName:(name) => {
+    cy.do(TextField({ name:'profile.name' }).fillIn(name));
+  },
+
+  addIncomingRecordType:(type) => {
+    cy.do(Select({ name:'profile.incomingRecordType' }).choose(type));
+  },
+
+  addFolioRecordType:(folioType) => {
+    cy.do(Select({ name:'profile.existingRecordType' }).choose(folioType));
+  },
+
+  saveProfile:() => {
+    cy.do(saveButton.click());
   }
 };
