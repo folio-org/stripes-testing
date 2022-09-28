@@ -224,6 +224,10 @@ export default {
     cy.expect(resultsAccordion.has({ itemsAmount: (values.length).toString() }));
   },
 
+  matchedAccordionIsAbsent() {
+    cy.expect(resultsAccordion.absent());
+  },
+
   verifyUserBarcodesResultAccordion() {
     cy.expect([
       MultiColumnListHeader('Status').exists(),
