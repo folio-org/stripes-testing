@@ -85,6 +85,18 @@ export default {
     ]);
   },
 
+  verifyDragNDropUpdateUsersArea() {
+    cy.expect(HTML('Select a file with record identifiers').exists());
+  },
+
+  verifyDragNDropExternalIDsArea() {
+    cy.expect(HTML('Select a file with External IDs').exists());
+  },
+
+  verifyDragNDropUsernamesArea() {
+    cy.expect(HTML('Select a file with Usernames').exists());
+  },
+
   verifyDragNDropUsersBarcodesArea() {
     this.checkUsersRadio();
     this.selectRecordIdentifier('User Barcodes');
@@ -130,6 +142,15 @@ export default {
       recordIdentifier.has({ disabled: true }),
       fileBtn.has({ disabled: true }),
       actions.absent()
+    ]);
+  },
+
+  verifyUsersUpdatePermission() {
+    cy.expect([
+      radioItems.has({ disabled: true }),
+      recordIdentifier.has({ disabled: false }),
+      fileBtn.has({ disabled: true }),
+      actions.absent(),
     ]);
   },
 
@@ -201,6 +222,21 @@ export default {
       cy.expect(resultsAccordion.find(MultiColumnListCell({ content: value })).exists());
     });
     cy.expect(resultsAccordion.has({ itemsAmount: (values.length).toString() }));
+  },
+
+  matchedAccordionIsAbsent() {
+    cy.expect(resultsAccordion.absent());
+  },
+
+  verifyUserBarcodesResultAccordion() {
+    cy.expect([
+      MultiColumnListHeader('Status').exists(),
+      MultiColumnListHeader('Last name').exists(),
+      MultiColumnListHeader('First name').exists(),
+      MultiColumnListHeader('Barcode').exists(),
+      MultiColumnListHeader('Patron group').exists(),
+      MultiColumnListHeader('Username').exists(),
+    ]);
   },
 
   verifyChangedResults(...values) {

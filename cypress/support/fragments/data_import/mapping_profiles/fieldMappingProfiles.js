@@ -77,7 +77,15 @@ const duplicateMappingProfile = () => {
   ]);
 };
 
+const saveProfile = () => {
+  cy.do(saveProfileButton.click());
+};
+
 export default {
+  openNewMappingProfileForm,
+  saveProfile,
+  closeViewModeForMappingProfile,
+
   createMappingProfile:(mappingProfile) => {
     openNewMappingProfileForm();
     NewMappingProfile.fillMappingProfile(mappingProfile);
@@ -170,28 +178,10 @@ export default {
     cy.do(saveProfileButton.click());
   },
 
-  createInstanceMappingProfileWithNotes:(mappingProfile, note) => {
+  createMappingProfileWithNotes:(mappingProfile, note) => {
     openNewMappingProfileForm();
-    NewMappingProfile.fillMappingProfileForInstance(mappingProfile);
-    NewMappingProfile.addNoteToInstanceMappingProfile(note);
-    cy.do(saveProfileButton.click());
-    closeViewModeForMappingProfile(mappingProfile.name);
-    cy.expect(actionsButton.exists());
-  },
-
-  createHoldingsMappingProfileWithNotes:(mappingProfile, note) => {
-    openNewMappingProfileForm();
-    NewMappingProfile.fillMappingProfileForHoldings(mappingProfile);
-    NewMappingProfile.addNoteToHoldingsMappingProfile(note);
-    cy.do(saveProfileButton.click());
-    closeViewModeForMappingProfile(mappingProfile.name);
-    cy.expect(actionsButton.exists());
-  },
-
-  createItemMappingProfileWithNotes:(mappingProfile, note) => {
-    openNewMappingProfileForm();
-    NewMappingProfile.fillMappingProfileForItem(mappingProfile);
-    NewMappingProfile.addNoteToItemMappingProfile(note);
+    NewMappingProfile.fillSummaryInMappingProfile(mappingProfile);
+    NewMappingProfile.addNote(note);
     cy.do(saveProfileButton.click());
     closeViewModeForMappingProfile(mappingProfile.name);
     cy.expect(actionsButton.exists());

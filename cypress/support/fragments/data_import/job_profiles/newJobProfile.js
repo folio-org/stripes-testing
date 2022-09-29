@@ -44,6 +44,7 @@ export default {
   },
 
   linkProfileForNonMatches(actionProfileName, forMatchesOrder = 1) {
+    // TODO move to const
     cy.get('[id*="type-selector-dropdown-ROOT"]').eq(forMatchesOrder).click();
     cy.do(actionsButton.click());
     ModalSelectProfile.searchProfileByName(actionProfileName);
@@ -146,6 +147,33 @@ export default {
     ModalSelectProfile.searchProfileByName(secondActionProfileName);
     ModalSelectProfile.selectProfile(secondActionProfileName);
     cy.expect(Pane('New job profile').find(Accordion('Overview')).find(HTML(including(secondActionProfileName))).exists());
+  },
+
+  linkMatchAndThreeActionProfiles(matchProfileName, firstActionProfileName, secondActionProfileName, thirdActionProfileName, forMatchesOrder = 0) {
+    // link match profile to job profile
+    cy.get('[id="type-selector-dropdown-linker-root"]').click();
+    cy.do(matchButton.click());
+    ModalSelectActionProfile.searchActionProfileByName(matchProfileName, 'match');
+    ModalSelectActionProfile.selectActionProfile(matchProfileName, 'match');
+    cy.expect(Pane('New job profile').find(Accordion('Overview')).find(HTML(including(matchProfileName))).exists());
+    // link first action profile to match profile
+    cy.get('[id*="type-selector-dropdown-ROOT"]').eq(forMatchesOrder).click();
+    cy.do(actionsButton.click());
+    ModalSelectActionProfile.searchActionProfileByName(firstActionProfileName);
+    ModalSelectActionProfile.selectActionProfile(firstActionProfileName);
+    cy.expect(Pane('New job profile').find(Accordion('Overview')).find(HTML(including(firstActionProfileName))).exists());
+    // link second action profile to match profile
+    cy.get('[id*="type-selector-dropdown-ROOT"]').eq(forMatchesOrder).click();
+    cy.do(actionsButton.click());
+    ModalSelectActionProfile.searchActionProfileByName(secondActionProfileName);
+    ModalSelectActionProfile.selectActionProfile(secondActionProfileName);
+    cy.expect(Pane('New job profile').find(Accordion('Overview')).find(HTML(including(secondActionProfileName))).exists());
+    // link third action profile to match profile
+    cy.get('[id*="type-selector-dropdown-ROOT"]').eq(forMatchesOrder).click();
+    cy.do(actionsButton.click());
+    ModalSelectActionProfile.searchActionProfileByName(thirdActionProfileName);
+    ModalSelectActionProfile.selectActionProfile(thirdActionProfileName);
+    cy.expect(Pane('New job profile').find(Accordion('Overview')).find(HTML(including(thirdActionProfileName))).exists());
   },
 
   saveAndClose: () => {

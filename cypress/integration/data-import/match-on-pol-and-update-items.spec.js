@@ -1,7 +1,6 @@
 import TestTypes from '../../support/dictionary/testTypes';
 import getRandomPostfix from '../../support/utils/stringTools';
 import permissions from '../../support/dictionary/permissions';
-import BasicOrderLine from '../../support/fragments/orders/basicOrderLine';
 import NewOrder from '../../support/fragments/orders/newOrder';
 import Orders from '../../support/fragments/orders/orders';
 import Helper from '../../support/fragments/finance/financeHelper';
@@ -30,11 +29,13 @@ import InventoryViewSource from '../../support/fragments/inventory/inventoryView
 import NewMatchProfile from '../../support/fragments/data_import/match_profiles/newMatchProfile';
 import Organizations from '../../support/fragments/organizations/organizations';
 import DevTeams from '../../support/dictionary/devTeams';
+import OrderLines from '../../support/fragments/orders/orderLines';
+import NewLocation from '../../support/fragments/settings/tenant/locations/newLocation';
+import FileManager from '../../support/utils/fileManager';
 
 describe('ui-data-import: Match on POL and update related Instance, Holdings, Item', () => {
   const firstItem = {
     title: 'Sport and sociology. Dominic Malcolm.',
-    orderNumber: 'auto99999test',
     productId: '9782266111560',
     quantity: '1',
     price: '20',
@@ -43,16 +44,16 @@ describe('ui-data-import: Match on POL and update related Instance, Holdings, It
 
   const secondItem = {
     title: 'South Asian texts in history : critical engagements with Sheldon Pollock. edited by Yigal Bronner, Whitney Cox, and Lawrence McCrea.',
-    orderNumber: 'auto100000test',
     productId: '9783161484100',
     quantity: '1',
     price: '20'
   };
 
   const titles = [firstItem.title, secondItem.title];
-  const orderNumbers = [firstItem.orderNumber, secondItem.orderNumber];
+  let firstOrderNumber;
+  let secondOrderNumber;
   let vendorId;
-  let locationId;
+  let location;
   let acquisitionMethodId;
   let productIdTypeId;
   let materialTypeId;
@@ -71,7 +72,7 @@ describe('ui-data-import: Match on POL and update related Instance, Holdings, It
   const mappingProfileNameForHoldings = `C350590 Update Holdings by POL match ${Helper.getRandomBarcode()}`;
   const mappingProfileNameForItem = `C350590 Update Item by POL match ${getRandomPostfix()}`;
 
-  const marcFileName = `C343335autotestFile.${getRandomPostfix()}.mrc`;
+  const editedMarcFileName = `C350590 marcFileForMatchOnPol.${getRandomPostfix()}.mrc`;
 
   const collectionOfProfiles = [
     {
@@ -80,7 +81,7 @@ describe('ui-data-import: Match on POL and update related Instance, Holdings, It
         update: true },
       actionProfile: { typeValue: NewActionProfile.folioRecordTypeValue.instance,
         name: actionProfileNameForInstance,
-        action: 'Update (all record types except Orders)' }
+        action: 'Update (all record types except Orders, Invoices, or MARC Holdings, Invoices, or MARC Holdings)' }
     },
     {
       mappingProfile: { typeValue: NewMappingProfile.folioRecordTypeValue.holdings,
@@ -88,7 +89,7 @@ describe('ui-data-import: Match on POL and update related Instance, Holdings, It
         update: true },
       actionProfile: { typeValue: NewActionProfile.folioRecordTypeValue.holdings,
         name: actionProfileNameForHoldings,
-        action: 'Update (all record types except Orders)' }
+        action: 'Update (all record types except Orders, Invoices, or MARC Holdings, Invoices, or MARC Holdings)' }
     },
     {
       mappingProfile: { typeValue: NewMappingProfile.folioRecordTypeValue.item,
@@ -96,7 +97,7 @@ describe('ui-data-import: Match on POL and update related Instance, Holdings, It
         update: true },
       actionProfile: { typeValue: NewActionProfile.folioRecordTypeValue.item,
         name: actionProfileNameForItem,
-        action: 'Update (all record types except Orders)' }
+        action: 'Update (all record types except Orders, Invoices, or MARC Holdings, Invoices, or MARC Holdings)' }
     }
   ];
 
@@ -163,10 +164,6 @@ describe('ui-data-import: Match on POL and update related Instance, Holdings, It
               .then(organization => {
                 vendorId = organization.id;
               });
-            cy.getLocations({ limit:1, query:'name="Main Library"' })
-              .then(location => {
-                locationId = location.id;
-              });
             cy.getMaterialTypes({ query: 'name="book"' })
               .then(materialType => {
                 materialTypeId = materialType.id;
@@ -182,6 +179,10 @@ describe('ui-data-import: Match on POL and update related Instance, Holdings, It
             ServicePoints.getViaApi()
               .then((servicePoint) => {
                 servicePointId = servicePoint[0].id;
+                NewLocation.createViaApi(NewLocation.getDefaultLocation(servicePointId))
+                  .then(res => {
+                    location = res;
+                  });
               });
           })
           .then(() => {
@@ -218,12 +219,14 @@ describe('ui-data-import: Match on POL and update related Instance, Holdings, It
             });
         });
     });
-    orderNumbers.forEach(number => {
-      Orders.getOrdersApi({ limit: 1, query: `"poNumber"=="${number}"` })
-        .then(order => {
-          Orders.deleteOrderApi(order[0].id);
-        });
-    });
+    Orders.getOrdersApi({ limit: 1, query: `"poNumber"=="${firstOrderNumber}"` })
+      .then(order => {
+        Orders.deleteOrderApi(order[0].id);
+      });
+    Orders.getOrdersApi({ limit: 1, query: `"poNumber"=="${secondOrderNumber}"` })
+      .then(order => {
+        Orders.deleteOrderApi(order[0].id);
+      });
     Users.deleteViaApi(user.userId);
     // delete generated profiles
     JobProfiles.deleteJobProfile(jobProfileName);
@@ -234,6 +237,14 @@ describe('ui-data-import: Match on POL and update related Instance, Holdings, It
       ActionProfiles.deleteActionProfile(profile.actionProfile.name);
       FieldMappingProfiles.deleteFieldMappingProfile(profile.mappingProfile.name);
     });
+    NewLocation.deleteViaApiIncludingInstitutionCampusLibrary(
+      location.institutionId,
+      location.campusId,
+      location.libraryId,
+      location.id
+    );
+    // delete created files
+    FileManager.deleteFile(`cypress/fixtures/${editedMarcFileName}`);
   });
 
   const openOrder = (number) => {
@@ -242,13 +253,23 @@ describe('ui-data-import: Match on POL and update related Instance, Holdings, It
     Orders.openOrder();
   };
 
+  const checkReceivedPiece = (number, title) => {
+    cy.visit(TopMenu.ordersPath);
+    Orders.resetFilters();
+    Orders.searchByParameter('PO number', number);
+    Orders.selectFromResultsList();
+    OrderView.openPolDetails(title);
+    OrderLines.openReceiving();
+    Receiving.checkIsPiecesCreated(title);
+  };
+
   it('C350590 Match on POL and update related Instance, Holdings, Item (folijet)', { tags: [TestTypes.smoke, DevTeams.folijet] }, () => {
     // create the first PO with POL
-    Orders.createOrderWithOrderLineViaApi(NewOrder.getDefaultOrder(vendorId, firstItem.orderNumber),
+    Orders.createOrderWithOrderLineViaApi(NewOrder.getDefaultOrder(vendorId),
       BasicOrderLine.getDefaultOrderLine(
         firstItem.quantity,
         firstItem.title,
-        locationId,
+        location.id,
         acquisitionMethodId,
         firstItem.price,
         firstItem.price,
@@ -257,41 +278,49 @@ describe('ui-data-import: Match on POL and update related Instance, Holdings, It
           productIdType: productIdTypeId
         }],
         materialTypeId
-      ));
-    Orders.checkIsOrderCreated(firstItem.orderNumber);
+      ))
+      .then(res => {
+        firstOrderNumber = res;
 
-    // open the first PO
-    openOrder(firstItem.orderNumber);
-    OrderView.checkIsOrderOpened('Open');
-    OrderView.checkIsItemsInInventoryCreated(firstItem.title, 'Main Library');
-    cy.visit(TopMenu.receivingPath);
-    Receiving.checkIsPiecesCreated(firstItem.title, 'Title (Receiving titles)');
+        Orders.checkIsOrderCreated(firstOrderNumber);
+        // open the first PO with POL
+        openOrder(firstOrderNumber);
+        OrderView.checkIsOrderOpened('Open');
+        OrderView.checkIsItemsInInventoryCreated(firstItem.title, location.name);
+        // check receiving pieces are created
+        checkReceivedPiece(firstOrderNumber, firstItem.title);
 
-    // create second PO with POL
-    Orders.createOrderWithOrderLineViaApi(NewOrder.getDefaultOrder(vendorId, secondItem.orderNumber),
-      BasicOrderLine.getDefaultOrderLine(
-        secondItem.quantity,
-        secondItem.title,
-        locationId,
-        acquisitionMethodId,
-        secondItem.price,
-        secondItem.price,
-        [{
-          productId: secondItem.productId,
-          productIdType: productIdTypeId
-        }],
-        materialTypeId
-      ));
-    cy.visit(TopMenu.ordersPath);
-    Orders.resetFilters();
-    Orders.checkIsOrderCreated(secondItem.orderNumber);
+        // create second PO with POL
+        Orders.createOrderWithOrderLineViaApi(NewOrder.getDefaultOrder(vendorId),
+          BasicOrderLine.getDefaultOrderLine(
+            secondItem.quantity,
+            secondItem.title,
+            location.id,
+            acquisitionMethodId,
+            secondItem.price,
+            secondItem.price,
+            [{
+              productId: secondItem.productId,
+              productIdType: productIdTypeId
+            }],
+            materialTypeId
+          ))
+          .then(respo => {
+            secondOrderNumber = respo;
 
-    // open the second PO
-    openOrder(secondItem.orderNumber);
-    OrderView.checkIsOrderOpened('Open');
-    OrderView.checkIsItemsInInventoryCreated(secondItem.title, 'Main Library');
-    cy.visit(TopMenu.receivingPath);
-    Receiving.checkIsPiecesCreated(secondItem.title, 'Title (Receiving titles)');
+            cy.visit(TopMenu.ordersPath);
+            Orders.resetFilters();
+            Orders.checkIsOrderCreated(secondOrderNumber);
+            // open the second PO
+            openOrder(secondOrderNumber);
+            OrderView.checkIsOrderOpened('Open');
+            OrderView.checkIsItemsInInventoryCreated(secondItem.title, location.name);
+            // check receiving pieces are created
+            checkReceivedPiece(secondOrderNumber, secondItem.title);
+          });
+
+        DataImport.editMarcFile('marcFileForMatchOnPol.mrc', editedMarcFileName, 'test', firstOrderNumber);
+      });
 
     // create mapping and action profiles
     collectionOfProfiles.forEach(profile => {
@@ -321,11 +350,11 @@ describe('ui-data-import: Match on POL and update related Instance, Holdings, It
     // upload .mrc file
     cy.visit(TopMenu.dataImportPath);
     DataImport.checkIsLandingPageOpened();
-    DataImport.uploadFile('matchOnPOL.mrc', marcFileName);
+    DataImport.uploadFile(editedMarcFileName);
     JobProfiles.searchJobProfileForImport(jobProfileName);
-    JobProfiles.runImportFile(marcFileName);
+    JobProfiles.runImportFile(editedMarcFileName);
     Logs.checkStatusOfJobProfile();
-    Logs.openFileDetails(marcFileName);
+    Logs.openFileDetails(editedMarcFileName);
     FileDetails.checkItemsStatusesInResultList(0, [FileDetails.status.created, FileDetails.status.updated, FileDetails.status.updated, FileDetails.status.updated]);
     FileDetails.checkItemsStatusesInResultList(1, [FileDetails.status.dash, FileDetails.status.discarded, FileDetails.status.discarded, FileDetails.status.discarded]);
 

@@ -31,6 +31,9 @@ export default {
       if (optionName === 'Barcode') {
         this.verifyCheckboxIsChecked('#barcode-checkbox', 'checkbox');
       } else cy.do(Checkbox(optionName).click());
+      if (optionName === 'Username') {
+        this.verifyCheckboxIsChecked('#username-checkbox', 'checkbox');
+      } else cy.do(Checkbox(optionName).click());
     });
     this.verifyCheckboxIsChecked('#checkoutTimeout', 'checkoutTimeout');
 

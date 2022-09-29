@@ -2,16 +2,13 @@ import { TextField, Button, Select, TextArea, Modal, HTML, including, MultiColum
 import getRandomPostfix from '../../../utils/stringTools';
 
 const saveButton = Button('Save as profile & Close');
-
 const organizationModal = Modal('Select Organization');
 
 const marcBib = 'MARC Bibliographic';
-
 const incomingRecordType = {
   marcBib: 'MARC Bibliographic',
   edifact: 'EDIFACT invoice',
 };
-
 const folioRecordTypeValue = {
   instance: 'Instance',
   holdings: 'Holdings',
@@ -19,13 +16,15 @@ const folioRecordTypeValue = {
   invoice: 'Invoice',
   marcBib: 'MARC Bibliographic'
 };
-
 const organization = {
   gobiLibrary: 'GOBI Library Solutions',
   harrassowitz: 'Otto Harrassowitz GmbH & Co. KG',
 };
 
-const permanentLocation = '"Annex (KU/CC/DI/A)"';
+const permanentLocation = {
+  annex: '"Annex (KU/CC/DI/A)"',
+  _980$a: '980$a'
+};
 
 const materialType = '"book"';
 
@@ -44,7 +43,7 @@ const instanceStatusTerm = '"Batch Loaded"';
 const defaultMappingProfile = {
   name: `autotest${folioRecordTypeValue.instance}${getRandomPostfix()}`,
   typeValue: folioRecordTypeValue.instance,
-  location: permanentLocation,
+  location: permanentLocation.annex,
   material: materialType,
   loan: permanentLoanType,
   statusField: status,
@@ -83,7 +82,7 @@ export default {
     ]);
     if (specialMappingProfile.typeValue === holdingsType) {
       if (specialMappingProfile.permanentLocation) {
-        cy.do(TextField('Permanent').fillIn(specialMappingProfile.permanentLocation));
+        cy.do(TextField('Permanent').fillIn(specialMappingProfile.permanentLocation.annex));
       }
 
       if (specialMappingProfile.electronicAccess) {
@@ -274,22 +273,6 @@ export default {
     ]);
   },
 
-  fillMappingProfileForHoldings:(specialMappingProfile = defaultMappingProfile) => {
-    cy.do([
-      TextField({ name:'profile.name' }).fillIn(specialMappingProfile.name),
-      Select({ name:'profile.incomingRecordType' }).choose(incomingRecordType.marcBib),
-      Select({ name:'profile.existingRecordType' }).choose(specialMappingProfile.typeValue),
-    ]);
-  },
-
-  fillMappingProfileForItem:(specialMappingProfile = defaultMappingProfile) => {
-    cy.do([
-      TextField({ name:'profile.name' }).fillIn(specialMappingProfile.name),
-      Select({ name:'profile.incomingRecordType' }).choose(incomingRecordType.marcBib),
-      Select({ name:'profile.existingRecordType' }).choose(specialMappingProfile.typeValue),
-    ]);
-  },
-
   addStatisticalCode:(name) => {
     cy.do(Select({ name:'profile.mappingDetails.mappingFields[8].repeatableFieldAction' }).choose('Add these to existing'));
     cy.do(Button('Add statistical code').click());
@@ -298,20 +281,8 @@ export default {
     cy.wait(1000);
   },
 
-  addNoteToInstanceMappingProfile:(note) => {
+  addNote:(note) => {
     cy.do(Select({ name:'profile.mappingDetails.mappingFields[9].repeatableFieldAction' }).choose('Add these to existing'));
-    cy.do(Button('Add administrative note').click());
-    cy.do(TextField('Administrative note').fillIn(note));
-  },
-
-  addNoteToHoldingsMappingProfile:(note) => {
-    cy.do(Select({ name:'profile.mappingDetails.mappingFields[5].repeatableFieldAction' }).choose('Add these to existing'));
-    cy.do(Button('Add administrative note').click());
-    cy.do(TextField('Administrative note').fillIn(note));
-  },
-
-  addNoteToItemMappingProfile:(note) => {
-    cy.do(Select({ name:'profile.mappingDetails.mappingFields[7].repeatableFieldAction' }).choose('Add these to existing'));
     cy.do(Button('Add administrative note').click());
     cy.do(TextField('Administrative note').fillIn(note));
   }

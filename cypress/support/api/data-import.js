@@ -1,4 +1,5 @@
 /// <reference types="cypress" />
+import uuid from 'uuid';
 
 import dataImportSettingsActionProfiles from '../fragments/settings/dataImport/dataImportSettingsActionProfiles';
 import dataImportSettingsJobProfiles from '../fragments/settings/dataImport/dataImportSettingsJobProfiles';
@@ -95,4 +96,17 @@ Cypress.Commands.add('createOnePairMappingAndActionProfiles', (mappingProfile, a
     });
   });
   return cy.get('@idActionProfile');
+});
+
+Cypress.Commands.add('createFieldProtection', (body) => {
+  cy.okapiRequest({
+    method: 'POST',
+    path: 'field-protection-settings/marc',
+    body: {
+      id: uuid(),
+      source: 'USER',
+      ...body,
+    },
+  })
+    .then(createdFieldProtection => createdFieldProtection.body);
 });

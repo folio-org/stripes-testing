@@ -1,54 +1,140 @@
+import uuid from 'uuid';
+import permissions from '../../support/dictionary/permissions';
+import TestTypes from '../../support/dictionary/testTypes';
+import TopMenu from '../../support/fragments/topMenu';
+import CheckInActions from '../../support/fragments/check-in-actions/checkInActions';
+import CheckOutActions from '../../support/fragments/check-out-actions/check-out-actions';
+import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
+import UserEdit from '../../support/fragments/users/userEdit';
+import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
 import generateItemBarcode from '../../support/utils/generateItemBarcode';
-import InventoryHoldings from '../../support/fragments/inventory/holdings/inventoryHoldings';
+import getRandomPostfix from '../../support/utils/stringTools';
+import Users from '../../support/fragments/users/users';
+import devTeams from '../../support/dictionary/devTeams';
+import Location from '../../support/fragments/settings/tenant/locations/newLocation';
+import SettingsMenu from '../../support/fragments/settingsMenu';
+import OtherSettings from '../../support/fragments/settings/circulation/otherSettings';
+import DefaultUser from '../../support/fragments/users/userDefaultObjects/defaultUser';
 
-describe('Check Out', () => {
-  const ITEM_BARCODE = generateItemBarcode();
-  let source;
+describe('Check Out - Actions ', () => {
+  const userData = {
+    group: 'staff',
+    personal: {},
+  };
+  const testActiveUser = { ...DefaultUser.defaultUiPatron.body };
+  testActiveUser.patronGroup = 'undergrad (Undergraduate Student)';
+  testActiveUser.personal.lastname = testActiveUser.personal.lastName;
+  const itemData = {
+    barcode: generateItemBarcode(),
+    instanceTitle: `Instance ${getRandomPostfix()}`,
+  };
+  let defaultLocation;
+  const servicePoint = ServicePoints.getDefaultServicePointWithPickUpLocation('autotest basic checkin', uuid());
 
-  beforeEach(() => {
-    cy.login(Cypress.env('diku_login'), Cypress.env('diku_password'));
+  before('Create New Item and New User', () => {
     cy.getAdminToken()
       .then(() => {
-        cy.getLoanTypes({ limit: 1 });
-        cy.getMaterialTypes({ limit: 1 });
-        cy.getLocations({ limit: 1 });
-        cy.getHoldingTypes({ limit: 1 });
-        source = InventoryHoldings.getHoldingSources({ limit: 1 });
-        cy.getInstanceTypes({ limit: 1 });
-        cy.getUsers({ limit: 1, query: '"personal.firstName"="checkin-all" and "active"="true"' });
+        ServicePoints.createViaApi(servicePoint);
+        defaultLocation = Location.getDefaultLocation(servicePoint.id);
+        Location.createViaApi(defaultLocation);
+        cy.getInstanceTypes({ limit: 1 }).then((instanceTypes) => {
+          itemData.instanceTypeId = instanceTypes[0].id;
+        });
+        cy.getHoldingTypes({ limit: 1 }).then((res) => {
+          itemData.holdingTypeId = res[0].id;
+        });
+        cy.getLoanTypes({ limit: 1 }).then((res) => {
+          itemData.loanTypeId = res[0].id;
+        });
+        cy.getMaterialTypes({ limit: 1 }).then((res) => {
+          itemData.materialTypeId = res.id;
+          itemData.materialTypeName = res.name;
+        });
       })
       .then(() => {
-        cy.getUserServicePoints(Cypress.env('users')[0].id);
-
-        cy.createInstance({
+        InventoryInstances.createFolioInstanceViaApi({
           instance: {
-            instanceTypeId: Cypress.env('instanceTypes')[0].id,
-            title: `Pre-checkout instance ${Number(new Date())}`,
+            instanceTypeId: itemData.instanceTypeId,
+            title: itemData.instanceTitle,
           },
-          holdings: [{
-            holdingsTypeId: Cypress.env('holdingsTypes')[0].id,
-            permanentLocationId: Cypress.env('locations')[0].id,
-            sourceId: source.id,
-          }],
-          items: [
-            [{
-              barcode: ITEM_BARCODE,
-              missingPieces: '3',
-              numberOfMissingPieces: '3',
-              status: { name: 'Available' },
-              permanentLoanType: { id: Cypress.env('loanTypes')[0].id },
-              materialType: { id: Cypress.env('materialTypes')[0].id },
-            }],
+          holdings: [
+            {
+              holdingsTypeId: itemData.holdingTypeId,
+              permanentLocationId: defaultLocation.id,
+            },
           ],
+          items: [
+            {
+              barcode: itemData.barcode,
+              status: { name: 'Available' },
+              permanentLoanType: { id: itemData.loanTypeId },
+              materialType: { id: itemData.materialTypeId },
+            },
+          ],
+        });
+      })
+      .then((specialInstanceIds) => {
+        itemData.testInstanceIds = specialInstanceIds;
+      });
+
+    cy.createTempUser(
+      [
+        permissions.uiCirculationSettingsOtherSettings.gui,
+        permissions.uiUsersCreate.gui,
+        permissions.inventoryAll.gui,
+        permissions.checkoutCirculatingItems.gui,
+      ],
+      userData.group
+    )
+      .then((userProperties) => {
+        userData.personal.lastname = userProperties.username;
+        userData.password = userProperties.password;
+        userData.userId = userProperties.userId;
+        userData.barcode = userProperties.barcode;
+        userData.firstName = userProperties.firstName;
+      })
+      .then(() => {
+        UserEdit.addServicePointViaApi(servicePoint.id, userData.userId, servicePoint.id);
+
+        cy.login(userData.personal.lastname, userData.password, {
+          path: SettingsMenu.circulationOtherSettingsPath,
+          waiter: OtherSettings.waitLoading,
         });
       });
   });
 
-  it('Basic flow', function () {
-    cy.visit('/checkout');
+  after('Delete New Service point, Item and User', () => {
+    CheckInActions.checkinItemViaApi({
+      itemBarcode: itemData.barcode,
+      servicePointId: servicePoint.id,
+      checkInDate: new Date().toISOString(),
+    });
+    InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(itemData.barcode);
+    UserEdit.changeServicePointPreferenceViaApi(userData.userId, [servicePoint.id]);
+    Users.deleteViaApi(userData.userId);
+    Users.deleteViaApi(testActiveUser.id);
+    Location.deleteViaApiIncludingInstitutionCampusLibrary(
+      defaultLocation.institutionId,
+      defaultLocation.campusId,
+      defaultLocation.libraryId,
+      defaultLocation.id
+    );
+    ServicePoints.deleteViaApi(servicePoint.id);
+  });
 
-    cy.checkOutItem(Cypress.env('users')[0].barcode, ITEM_BARCODE);
-
-    cy.verifyItemCheckOut();
+  it('C356772 An active user with barcode can Check out item (vega)', { tags: [TestTypes.smoke, devTeams.vega] }, () => {
+    OtherSettings.selectPatronIdsForCheckoutScanning(['Username'], '3');
+    cy.visit(TopMenu.usersPath);
+    Users.createViaUi(testActiveUser).then((id) => {
+      testActiveUser.id = id;
+    });
+    Users.checkIsUserCreated(testActiveUser);
+    cy.visit(TopMenu.checkOutPath);
+    // without this waiter, the user will not be found by username
+    cy.wait(4000);
+    CheckOutActions.checkOutUser(testActiveUser.barcode, testActiveUser.username);
+    CheckOutActions.checkUserInfo(testActiveUser, testActiveUser.patronGroup.substring(0, testActiveUser.patronGroup.indexOf(' ')));
+    CheckOutActions.checkOutItem(itemData.barcode);
+    CheckOutActions.checkItemInfo(itemData.barcode, itemData.instanceTitle);
   });
 });
