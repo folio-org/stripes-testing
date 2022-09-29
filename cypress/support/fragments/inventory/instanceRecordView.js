@@ -1,6 +1,6 @@
 import { HTML } from '@interactors/html';
 import { including } from 'bigtest';
-import { KeyValue, MultiColumnList, Section, MultiColumnListCell } from '../../../../interactors';
+import { KeyValue, MultiColumnList, Section, MultiColumnListCell, Button } from '../../../../interactors';
 
 const instanceDetailsSection = Section({ id: 'pane-instancedetails' });
 const catalogedDateKeyValue = KeyValue('Cataloged date');
