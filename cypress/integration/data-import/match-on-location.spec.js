@@ -311,11 +311,13 @@ describe('ui-data-import: Match on location', () => {
 
     // create Field mapping profiles
     cy.visit(SettingsMenu.mappingProfilePath);
-    FieldMappingProfiles.createHoldingsMappingProfileWithNotes(holdingsUpdateMappingProfile, noteForHoldingsMappingProfile);
-    FieldMappingProfiles.checkMappingProfilePresented(holdingsUpdateMappingProfile.name);
 
-    FieldMappingProfiles.createItemMappingProfileWithNotes(itemUpdateMappingProfile, noteForItemMappingProfile);
-    FieldMappingProfiles.checkMappingProfilePresented(itemUpdateMappingProfile.name);
+    // cy.visit(SettingsMenu.mappingProfilePath);
+    // FieldMappingProfiles.createHoldingsMappingProfileWithNotes(holdingsUpdateMappingProfile, noteForHoldingsMappingProfile);
+    // FieldMappingProfiles.checkMappingProfilePresented(holdingsUpdateMappingProfile.name);
+
+    // FieldMappingProfiles.createItemMappingProfileWithNotes(itemUpdateMappingProfile, noteForItemMappingProfile);
+    // FieldMappingProfiles.checkMappingProfilePresented(itemUpdateMappingProfile.name);
 
     // create action profiles
     cy.visit(SettingsMenu.actionProfilePath);
