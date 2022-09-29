@@ -123,6 +123,7 @@ export default {
     cy.do([
       inventorySearch.has({ value: instance.contributors[0].name }),
       MultiColumnListCell(instance.contributors[0].name).click(),
+      // https://issues.folio.org/browse/UIIN-2199
     ]);
     cy.expect([
       // TODO: add check for date with format <6/8/2022, 6:46 AM>

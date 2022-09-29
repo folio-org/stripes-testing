@@ -50,6 +50,7 @@ describe('ui-inventory: search', () => {
     });
   });
 
+  // https://issues.folio.org/browse/UIIN-2199
   it('C353639 Browse contributors with exact match query (spitfire)', { tags: [testType.smoke, devTeams.spitfire] }, () => {
     InventorySearch.verifyKeywordsAsDefault();
     BrowseContributors.checkBrowseOptions();
