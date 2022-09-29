@@ -30,7 +30,7 @@ function fillGeneralInfo(fileName, providerName) {
   return cy.do([
     Button('+ New').click(),
     TextField({ name: 'name' }).fillIn(fileName),
-    Accordion({ label: 'General information' }).find(Select()).choose(providerName),
+    Accordion({ label: 'General information' }).find(Select()).choose(including(providerName)),
   ]);
 }
 
@@ -90,7 +90,7 @@ export default {
     const date = DateTools.getFormattedDate({ date: new Date() }, 'MM/DD/YYYY');
 
     cy.expect(configurationPane.find(MultiColumnListCell({ content: name })).exists());
-    cy.expect(configurationPane.find(MultiColumnListCell({ content: configuration.title })).exists());
+    cy.expect(configurationPane.find(MultiColumnListCell({ content: including(configuration.title) })).exists());
     cy.expect(configurationPane.find(MultiColumnListCell({ content: date })).exists());
   },
 

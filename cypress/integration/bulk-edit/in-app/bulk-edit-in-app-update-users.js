@@ -31,6 +31,10 @@ describe('bulk-edit', () => {
       Users.deleteViaApi(user.userId);
     });
 
+    afterEach('open new bulk-edit form', () => {
+      cy.visit(TopMenu.bulkEditPath);
+    });
+
     it('C357579 Bulk edit: In app - Update user records permission enabled - Preview of records matched (firebird)', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
       BulkEditSearchPane.selectRecordIdentifier('User UUIDs');
 
