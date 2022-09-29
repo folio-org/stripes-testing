@@ -19,6 +19,7 @@ export default {
         method: 'POST',
         path: 'overdue-fines-policies',
         body: body,
+        isDefaultSearchParamsRequired: false,
       })
       .then(({ body }) => {
         Cypress.env('overdueFinePolicy', body);
