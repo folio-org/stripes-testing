@@ -127,6 +127,17 @@ export default {
     InteractorsTools.checkCalloutMessage('Order was closed');
   },
 
+  unOpenOrder: (orderNumber) => {
+    cy.do([
+      orderDetailsPane
+        .find(PaneHeader({ id: 'paneHeaderorder-details' })
+          .find(actionsButton)).click(),
+      Button('Unopen').click(),
+      Button('Submit').click()
+    ]);
+    InteractorsTools.checkCalloutMessage(`The Purchase order - ${orderNumber} has been successfully unopened`);
+  },
+
   receiveOrderViaActions: () => {
     cy.do([
       orderDetailsPane

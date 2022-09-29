@@ -130,6 +130,27 @@ export default {
     ]);
   },
 
+  fillInPOLineInfoWithFund: (fund) => {
+    cy.do([
+      TextField({ name: 'titleOrPackage' }).fillIn(orderLineTitle),
+      Select({ name: 'orderFormat' }).choose('Physical resource'),
+      Button({ id: 'acquisition-method' }).click(),
+      SelectionOption('Depository').click(),
+      physicalUnitPriceTextField.fillIn(physicalUnitPrice),
+      quantityPhysicalTextField.fillIn(quantityPhysical),
+      Select({ name: 'physical.materialType' }).choose('book'),
+      Button({ text: 'Add location' }).click(),
+      Button({ id: 'field-locations[0].locationId' }).click(),
+      SelectionOption('Main Library (KU/CC/DI/M)').click(),
+      TextField({ name: 'locations[0].quantityPhysical' }).fillIn(quantityPhysical),
+      Button({ id: 'fundDistribution-add-button' }).click(),
+      Button({ id: 'fundDistribution[0].fundId' }).click(),
+      SelectionOption(`${fund.name} (${fund.code})`).click(),
+      TextField({ name: 'fundDistribution[0].value' }).fillIn('100'),
+      saveAndClose.click()
+    ]);
+  },
+
   fillInPOLineInfoViaUi: () => {
     cy.do([
       TextField({ name: 'titleOrPackage' }).fillIn(orderLineTitle),
