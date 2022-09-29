@@ -44,6 +44,7 @@ export default {
   },
 
   linkProfileForNonMatches(actionProfileName, forMatchesOrder = 1) {
+    // TODO move to const
     cy.get('[id*="type-selector-dropdown-ROOT"]').eq(forMatchesOrder).click();
     cy.do(actionsButton.click());
     ModalSelectActionProfile.searchActionProfileByName(actionProfileName);
