@@ -73,6 +73,7 @@ export default {
   usersViewRequests: { internal: 'ui-users.requests.all', gui: 'Users: View requests' },
   uiUsersView: { internal: 'ui-users.view', gui: 'Users: Can view user profile' },
   uiUserCreate: { internal: 'ui-users.create', gui: 'Users: Create users' },
+  uiUsersCreate: { internal: 'ui-users.create', gui: 'Users: Can create new user' },
   uiUserEdit: { internal: 'ui-users.edit', gui: 'Users: Can edit user profile' },
   uiUserAccounts: { internal: 'ui-users.accounts', gui: 'Fee/Fine History: Can create, edit and remove accounts' },
   uiUsersViewLoans: { internal: 'ui-users.loans.view', gui: 'Users: User loans view' },
@@ -136,4 +137,6 @@ export default {
   uiFinanceCreateAllocations: { internal: 'ui-finance.allocations.create', gui: 'Finance: Create allocations' },
   uiFinanceCreateTransfers: { internal: 'ui-finance.transfers.create', gui: 'Finance: Create transfers' },
   uiFinanceViewEditDeletFundBudget: { internal: 'ui-finance.fund-budget.delete', gui: 'Finance: View, edit, delete fund and budget' },
+  uiFinanceCreateViewEditGroups: { internal: 'ui-finance.group.create', gui: 'Finance: View, edit, create group' },
+  uiFinanceViewEditDeletGroups: { internal: 'ui-finance.group.delete', gui: 'Finance: View, edit, delete group' },
 };

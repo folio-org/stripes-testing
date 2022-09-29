@@ -13,12 +13,13 @@ export const defaultOverdueFinePolicy = {
 };
 
 export default {
-  createApi() {
+  createApi(body = defaultOverdueFinePolicy) {
     return cy
       .okapiRequest({
         method: 'POST',
         path: 'overdue-fines-policies',
-        body: defaultOverdueFinePolicy,
+        body: body,
+        isDefaultSearchParamsRequired: false,
       })
       .then(({ body }) => {
         Cypress.env('overdueFinePolicy', body);

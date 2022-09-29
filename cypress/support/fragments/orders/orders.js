@@ -137,17 +137,16 @@ export default {
     ]);
   },
 
-  createOrder(order) {
+  createOrder(order, isApproved = false) {
     cy.do([
       actionsButton.click(),
       newButton.click()
     ]);
     this.selectVendorOnUi(order.vendor);
     cy.intercept('POST', '/orders/composite-orders**').as('newOrderID');
-    cy.do([
-      Select('Order type*').choose(order.orderType),
-      saveAndClose.click()
-    ]);
+    cy.do(Select('Order type*').choose(order.orderType));
+    if (isApproved) cy.do(Checkbox({ name:'approved' }).click());
+    cy.do(saveAndClose.click());
     return cy.wait('@newOrderID', getLongDelay())
       .then(({ response }) => {
         return response.body.id;
@@ -391,7 +390,8 @@ export default {
     return cy
       .okapiRequest({
         path: 'orders/composite-orders',
-        searchParams
+        searchParams,
+        isDefaultSearchParamsRequired: false
       })
       .then(({ body }) => {
         return body.purchaseOrders;

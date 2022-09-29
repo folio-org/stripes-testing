@@ -1,9 +1,10 @@
 import getRandomPostfix from '../../../utils/stringTools';
-import { Button, Accordion, TextField, Section, KeyValue } from '../../../../../interactors';
+import { Button, Accordion, TextField, Section, KeyValue, Modal, MultiColumnList, MultiColumnListRow, MultiColumnListCell, Pane, Checkbox, MultiColumnListHeader, SelectionOption } from '../../../../../interactors';
 
 const newButton = Button('New');
 const nameField = TextField('Name*');
 const codeField = TextField('Code*');
+const fundModal = Modal('Select funds');
 
 export default {
 
@@ -45,6 +46,37 @@ export default {
       Button('Delete').click(),
       Button('Delete', { id:'clickable-group-remove-confirmation-confirm' }).click()
     ]);
+  },
+
+  addFundToGroup: (ledgerName) => {
+    cy.do([
+      Section({ id: 'fund' }).find(Button('Add to group')).click(),
+      fundModal.find(Button({ id: 'accordion-toggle-button-ledgerId' })).click(),
+      fundModal.find(Button({ id: 'ledgerId-selection' })).click(),
+      SelectionOption(ledgerName).click(),
+      MultiColumnList({ id: 'list-plugin-find-records' })
+        .find(MultiColumnListHeader({ id:'list-column-ischecked' }))
+        .find(Checkbox())
+        .click(),
+      fundModal.find(Button('Save')).click()
+    ]);
+  },
+
+  checkAddingMultiplyFunds: (secondFundName, firstFundName) => {
+    cy.expect([
+      Accordion({ id: 'fund' })
+        .find(MultiColumnListRow({ index: 0 }))
+        .find(MultiColumnListCell({ columnIndex: 0 }))
+        .has({ content: secondFundName }),
+      Accordion({ id: 'fund' })
+        .find(MultiColumnListRow({ index: 1 }))
+        .find(MultiColumnListCell({ columnIndex: 0 }))
+        .has({ content: firstFundName }),
+    ]);
+  },
+
+  waitLoading : () => {
+    cy.expect(Pane({ id: 'group-results-pane' }).exists());
   },
 
   tryToCreateGroupWithoutMandatoryFields(groupName) {

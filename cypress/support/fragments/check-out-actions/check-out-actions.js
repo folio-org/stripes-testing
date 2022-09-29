@@ -18,9 +18,9 @@ const endSessionButton = Button('End session');
 const userPane = PaneContent({ id: 'patron-details-content' });
 export default {
   modal,
-  checkOutUser(userBarcode) {
+  checkOutUser(userBarcode, otherParameter) {
     return cy.do([
-      TextField('Patron identifier').fillIn(userBarcode),
+      TextField('Patron identifier').fillIn(otherParameter || userBarcode),
       Pane('Scan patron card').find(Button('Enter')).click(),
       Button(userBarcode).exists(),
     ]);
@@ -90,5 +90,33 @@ export default {
 
   checkItem:(barcode) => {
     cy.expect(MultiColumnList({ id:'list-items-checked-out' }).find(HTML(including(barcode))).absent());
-  }
+  },
+
+  confirmMultipieceCheckOut(barcode) {
+    cy.do(modal.find(Button('Check out')).click());
+    cy.expect(MultiColumnList({ id: 'list-items-checked-out' }).find(HTML(including(barcode))).exists());
+  },
+
+  openLoanDetails() {
+    cy.do(Button({ id: 'available-item-actions-button' }).click());
+    cy.do(Button('Loan details').click());
+    cy.expect(Pane({ id: 'pane-loandetails' }).exists());
+  },
+
+  changeDueDateToPast(minutes) {
+    const todayFormatted = {}
+    let today = new Date();
+    let month = today.getMonth() < 9 ? 0 + (today.getMonth() + 1).toString() : today.getMonth() + 1;
+    todayFormatted.formattedDate = month + '/' + today.getDate() + '/' + today.getFullYear();
+    today.setUTCMinutes(today.getMinutes() - minutes);
+    todayFormatted.formattedTime = today.toLocaleTimeString('en-US', { timeZone: 'UTC', hour: '2-digit', minute: '2-digit' });
+
+    cy.do([
+      Button({ text: 'Change due date' }).click(),
+      TextField({ name: 'date' }).fillIn(todayFormatted.formattedDate),
+      TextField({ name: 'time' }).fillIn(todayFormatted.formattedTime),
+      Button({ text: 'Save and close' }).click(),
+      Button({ text: 'Close' }).click(),
+    ]);
+  },
 };
