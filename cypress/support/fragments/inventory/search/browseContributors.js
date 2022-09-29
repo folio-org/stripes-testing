@@ -1,5 +1,5 @@
 import uuid from 'uuid';
-import { Select, TextInput, Heading, PaneHeader, Form, Button, Option, Section, PaneContent, HTML, MultiColumnListCell, Pane, MultiColumnListHeader, KeyValue, MultiColumnListRow, Image } from '../../../../../interactors';
+import { Select, TextInput, Heading, PaneHeader, Form, Button, Option, Section, PaneContent, HTML, MultiColumnListCell, Pane, MultiColumnListHeader, KeyValue, MultiColumnListRow, Image, or } from '../../../../../interactors';
 import getRandomPostfix from '../../../utils/stringTools';
 
 const defaultInstanceAWithContributor = {
@@ -90,7 +90,10 @@ export default {
     cy.expect([
       Pane({ id: 'pane-results' }).find(MultiColumnListHeader()).exists(),
       Button('Previous').is({ visible: true, disabled: true }),
-      Button('Next').is({ visible: true, disabled: true }),
+      or(
+        Button('Next').is({ visible: true, disabled: true }),
+        Button('Next').is({ visible: true, disabled: false }),
+      ),
     ]);
   },
 
