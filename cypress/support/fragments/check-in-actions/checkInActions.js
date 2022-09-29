@@ -1,5 +1,5 @@
 import uuid from 'uuid';
-import { Button, including, TextField, MultiColumnListRow, MultiColumnList, MultiColumnListCell, HTML, Pane, Modal } from '../../../../interactors';
+import { Button, including, TextField, MultiColumnListRow, MultiColumnList, MultiColumnListCell, HTML, Pane, Modal, PaneContent, or } from '../../../../interactors';
 import { REQUEST_METHOD } from '../../constants';
 import { getLongDelay } from '../../utils/cypressTools';
 import ItemVeiw from '../inventory/inventoryItem/itemVeiw';
@@ -15,6 +15,8 @@ const availableActionsButton = Button({ id: 'available-actions-button-0' });
 const confirmModal = Modal('Confirm multipiece check in');
 const checkOutButton = confirmModal.find(Button('Check in'));
 const endSessionButton = Button('End session');
+const feeFineDetailsButton = Button('Fee/fine details');
+const feeFinePane = PaneContent({ id: 'pane-account-action-history-content' });
 
 const waitLoading = () => {
   cy.expect(TextField({ name: 'item.barcode' }).exists());
@@ -115,5 +117,21 @@ export default {
     cy.wait('@end-patron-session').then(xhr => {
       cy.wrap(xhr.response.statusCode).should('eq', 204);
     });
+  },
+  checkFeeFinesDetails(billedAmount, instanceBarcode, loanPolicyName, OverdueFinePolicyName, LostItemFeePolicyName) {
+    cy.do(availableActionsButton.click());
+    cy.do(feeFineDetailsButton.click());
+    
+    cy.expect(Pane(including('Fee/fine details')).exists());
+    cy.expect(feeFinePane.find(HTML(including('Overdue fine'))).exists());
+    cy.expect(or(
+      feeFinePane.find(HTML(including(`${billedAmount}.00`))).exists(),
+      feeFinePane.find(HTML(including(`${billedAmount + 1}.00`))).exists()
+    ));
+    cy.expect(feeFinePane.find(HTML(including('Outstanding'))).exists());
+    cy.expect(feeFinePane.find(HTML(including(instanceBarcode))).exists());
+    cy.expect(feeFinePane.find(HTML(including(loanPolicyName))).exists());
+    cy.expect(feeFinePane.find(HTML(including(OverdueFinePolicyName))).exists());
+    cy.expect(feeFinePane.find(HTML(including(LostItemFeePolicyName))).exists());
   }
 };

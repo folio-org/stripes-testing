@@ -307,4 +307,16 @@ export default {
     cy.url().then(url => cy.wrap(url.split('?')[0].split('/').at(-1))).as('instanceId');
     return cy.get('@instanceId');
   },
+
+  checkIsHoldingsCreated:(...holdingToBeOpened) => {
+    cy.expect(Accordion({ label: including(`Holdings: ${holdingToBeOpened}`) }).exists());
+  },
+
+  openHoldingsAccordion:(location) => {
+    cy.do(Button(including(location)).click());
+  },
+
+  checkIsItemCreated:(itemBarcode) => {
+    cy.expect(Link(itemBarcode).exists());
+  }
 };
