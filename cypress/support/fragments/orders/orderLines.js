@@ -18,6 +18,7 @@ import {
 } from '../../../../interactors';
 import SearchHelper from '../finance/financeHelper';
 import getRandomPostfix from '../../utils/stringTools';
+import SelectInstanceModal from './selectInstanceModal';
 
 const saveAndClose = Button('Save & close');
 const actionsButton = Button('Actions');
@@ -130,6 +131,27 @@ export default {
     ]);
   },
 
+  fillInPOLineInfoWithFund: (fund) => {
+    cy.do([
+      TextField({ name: 'titleOrPackage' }).fillIn(orderLineTitle),
+      Select({ name: 'orderFormat' }).choose('Physical resource'),
+      Button({ id: 'acquisition-method' }).click(),
+      SelectionOption('Depository').click(),
+      physicalUnitPriceTextField.fillIn(physicalUnitPrice),
+      quantityPhysicalTextField.fillIn(quantityPhysical),
+      Select({ name: 'physical.materialType' }).choose('book'),
+      Button({ text: 'Add location' }).click(),
+      Button({ id: 'field-locations[0].locationId' }).click(),
+      SelectionOption('Main Library (KU/CC/DI/M)').click(),
+      TextField({ name: 'locations[0].quantityPhysical' }).fillIn(quantityPhysical),
+      Button({ id: 'fundDistribution-add-button' }).click(),
+      Button({ id: 'fundDistribution[0].fundId' }).click(),
+      SelectionOption(`${fund.name} (${fund.code})`).click(),
+      TextField({ name: 'fundDistribution[0].value' }).fillIn('100'),
+      saveAndClose.click()
+    ]);
+  },
+
   fillInPOLineInfoViaUi: () => {
     cy.do([
       TextField({ name: 'titleOrPackage' }).fillIn(orderLineTitle),
@@ -143,10 +165,9 @@ export default {
       electronicUnitPriceTextField.fillIn(electronicUnitPrice),
       quantityElectronicTextField.fillIn(quantityElectronic),
       Select({ name: 'physical.materialType' }).choose('book'),
-      Button('Add location').click(),
-      Button('Location look-up').click(),
-      Select({ name: 'campusId' }).choose('Online'),
-      Button('Save and close').click(),
+      Button({ text: 'Add location' }).click(),
+      Button({ id: 'field-locations[0].locationId' }).click(),
+      SelectionOption('Online (E)').click(),
       TextField({ name: 'locations[0].quantityPhysical' }).fillIn(quantityPhysical),
       TextField({ name: 'locations[0].quantityElectronic' }).fillIn(quantityElectronic),
     ]);
@@ -254,6 +275,44 @@ export default {
       PaneHeader({ id: 'paneHeaderorder-lines-details' }).find(actionsButton).click(),
       Button('Receive').click()
     ]);
+  },
+
+  fillPolByLinkTitle:(instanceTitle) => {
+    cy.do(Button('Title look-up').click());
+    SelectInstanceModal.searchByName(instanceTitle);
+    SelectInstanceModal.selectInstance(instanceTitle);
+  },
+
+  addAcquisitionMethod:(method) => {
+    cy.do(Button({ id: 'acquisition-method' }).click());
+    cy.do(SelectionOption(method).click());
+  },
+
+  addOrderFormat:(format) => {
+    cy.do(Select({ name: 'orderFormat' }).choose(format));
+  },
+
+  fillPhysicalUnitPrice:(price) => {
+    cy.do(physicalUnitPriceTextField.fillIn(price));
+  },
+
+  fillPhysicalUnitQuantity:(quantity) => {
+    cy.do(quantityPhysicalTextField.fillIn(quantity));
+  },
+
+  addCreateInventory:(inventory) => {
+    cy.do(Select('Create inventory*').choose(inventory));
+  },
+
+  addMaterialType:(type) => {
+    cy.do(Select({ name:'physical.materialType' }).choose(type));
+    // need to wait upload product types
+    cy.wait(1000);
+  },
+
+  savePol:() => {
+    cy.do(saveAndClose.click());
+    cy.do(Pane({ id:'pane-poLineForm' }).absent());
   }
 };
 

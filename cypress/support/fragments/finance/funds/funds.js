@@ -174,6 +174,28 @@ export default {
     ]);
   },
 
+  checkOrderInTransactionList: (fundCode) => {
+    cy.expect([
+      MultiColumnList({ id: 'transactions-list' })
+        .find(MultiColumnListRow({ index: 1 }))
+        .find(MultiColumnListCell({ columnIndex: 1 }))
+        .has({ content: 'Encumbrance' }),
+      MultiColumnList({ id: 'transactions-list' })
+        .find(MultiColumnListRow({ index: 1 }))
+        .find(MultiColumnListCell({ columnIndex: 2 }))
+        .has({ content: '($50.00)' }),
+      MultiColumnList({ id: 'transactions-list' })
+        .find(MultiColumnListRow({ index: 1 }))
+        .find(MultiColumnListCell({ columnIndex: 3 }))
+        .has({ content: `${fundCode}` }),
+      MultiColumnList({ id: 'transactions-list' })
+        .find(MultiColumnListRow({ index: 1 }))
+        .find(MultiColumnListCell({ columnIndex: 5 }))
+        .has({ content: 'PO line' })
+    ]);
+  },
+
+
   increaseAllocation: () => {
     cy.do([
       actionsButton.click(),

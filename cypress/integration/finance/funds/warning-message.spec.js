@@ -5,7 +5,7 @@ import TopMenu from '../../../support/fragments/topMenu';
 import Ledgers from '../../../support/fragments/finance/ledgers/ledgers';
 import Funds from '../../../support/fragments/finance/funds/funds';
 
-describe('ui-finance: Add transfer to budget', () => {
+describe('ui-finance: Funds', () => {
   const defaultFund = { ...Funds.defaultUiFund };
   const defaultFiscalYear = { ...FiscalYears.defaultUiFiscalYear };
   const defaultLedger = { ...Ledgers.defaultUiLedger };

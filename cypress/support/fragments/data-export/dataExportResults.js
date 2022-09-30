@@ -12,7 +12,7 @@ export default {
       InventorySearch.getSearchResult(0, 0).perform(element => {
         expect(element.innerText).to.match(quickExportFileNameMask);
       }),
-      MultiColumnListCell({ 'row': 0, 'column': this.defaultJobProfile }).exists(),
+      MultiColumnListCell({ row: 0, content: this.defaultJobProfile }).exists(),
     ]);
   },
 

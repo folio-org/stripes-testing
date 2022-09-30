@@ -1,24 +1,9 @@
-import {
-  Button,
-  SearchField,
-  PaneHeader,
-  Pane,
-  Select,
-  Accordion,
-  KeyValue,
-  Checkbox,
-  MultiColumnList,
-  MultiColumnListCell,
-  MultiColumnListRow,
-  Modal,
-  TextField,
-  SelectionOption,
-  HTML,
-  including
-} from '../../../../interactors';
+import { Button, SearchField, PaneHeader, Pane, Select, Accordion, KeyValue, Checkbox, MultiColumnList, MultiColumnListCell, MultiColumnListRow, Modal, TextField, SelectionOption, RadioButton } from '../../../../interactors';
 import SearchHelper from '../finance/financeHelper';
 import InteractorsTools from '../../utils/interactorsTools';
 import { getLongDelay } from '../../utils/cypressTools';
+import DateTools from '../../utils/dateTools';
+import FileManager from '../../utils/fileManager';
 
 const actionsButton = Button('Actions');
 const orderDetailsPane = Pane({ id: 'order-details' });
@@ -127,6 +112,17 @@ export default {
     InteractorsTools.checkCalloutMessage('Order was closed');
   },
 
+  unOpenOrder: (orderNumber) => {
+    cy.do([
+      orderDetailsPane
+        .find(PaneHeader({ id: 'paneHeaderorder-details' })
+          .find(actionsButton)).click(),
+      Button('Unopen').click(),
+      Button('Submit').click()
+    ]);
+    InteractorsTools.checkCalloutMessage(`The Purchase order - ${orderNumber} has been successfully unopened`);
+  },
+
   receiveOrderViaActions: () => {
     cy.do([
       orderDetailsPane
@@ -137,17 +133,16 @@ export default {
     ]);
   },
 
-  createOrder(order) {
+  createOrder(order, isApproved = false) {
     cy.do([
       actionsButton.click(),
       newButton.click()
     ]);
     this.selectVendorOnUi(order.vendor);
     cy.intercept('POST', '/orders/composite-orders**').as('newOrderID');
-    cy.do([
-      Select('Order type*').choose(order.orderType),
-      saveAndClose.click()
-    ]);
+    cy.do(Select('Order type*').choose(order.orderType));
+    if (isApproved) cy.do(Checkbox({ name:'approved' }).click());
+    cy.do(saveAndClose.click());
     return cy.wait('@newOrderID', getLongDelay())
       .then(({ response }) => {
         return response.body.id;
@@ -391,7 +386,8 @@ export default {
     return cy
       .okapiRequest({
         path: 'orders/composite-orders',
-        searchParams
+        searchParams,
+        isDefaultSearchParamsRequired: false
       })
       .then(({ body }) => {
         return body.purchaseOrders;
@@ -407,5 +403,33 @@ export default {
   checkIsOrderCreated:(orderNumber) => {
     cy.do(Checkbox({ id: 'clickable-filter-workflowStatus-pending' }).click());
     cy.expect(MultiColumnList({ id: 'orders-list' }).find(HTML(including(orderNumber))).exists());
-  }
+  },
+
+  exportResoultsCSV: () => {
+    cy.do([
+      actionsButton.click(),
+      Button({ id: 'clickable-export-csv' }).click(),
+      // Modal('Export settings').find(RadioButton({ ariaLabel: 'Export all line fields' })).click(),
+      Button('Export').click(),
+    ]);
+  },
+
+  verifySaveCSVQueryFileName(actualName) {
+    // valid name example: order-export-2022-06-24-12_08.csv
+    const expectedFileNameMask = /order-export-\d{4}-\d{2}-\d{2}-\d{2}_\d{2}.csv/gm;
+    expect(actualName).to.match(expectedFileNameMask);
+
+    const fileName = FileManager.getFileNameFromFilePath(actualName);
+    const actualDateString = fileName.match(/\d{4}-\d{2}-\d{2}/gm)[0];
+    DateTools.verifyDate(Date.parse(actualDateString), 86400000);
+  },
+
+  verifySaveCSVQuery(actualQuery, kw = '*', lang = 'eng') {
+    cy.url().then((url) => {
+      const params = new URLSearchParams(url.split('?')[1]);
+      const effectiveLocationId = /\w{8}-\w{4}-\w{4}-\w{4}-\w{12}/gm.exec(params.get('filters'))[0];
+      const expectedText = `((keyword all "${kw}" or isbn="${kw}") and languages=="${lang}" and items.effectiveLocationId=="${effectiveLocationId}") sortby title`;
+      expect(actualQuery).to.eq(expectedText);
+    });
+  },
 };
