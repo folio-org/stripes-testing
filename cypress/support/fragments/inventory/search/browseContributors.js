@@ -1,5 +1,5 @@
 import uuid from 'uuid';
-import { Select, TextInput, Heading, PaneHeader, Form, Button, Option, Section, PaneContent, HTML, MultiColumnListCell, Pane, MultiColumnListHeader, KeyValue, MultiColumnListRow, Image } from '../../../../../interactors';
+import { Select, TextInput, Heading, PaneHeader, Form, Button, Option, Section, PaneContent, HTML, MultiColumnListCell, Pane, MultiColumnListHeader, KeyValue, MultiColumnListRow, Image, or } from '../../../../../interactors';
 import getRandomPostfix from '../../../utils/stringTools';
 
 const defaultInstanceAWithContributor = {
@@ -90,7 +90,10 @@ export default {
     cy.expect([
       Pane({ id: 'pane-results' }).find(MultiColumnListHeader()).exists(),
       Button('Previous').is({ visible: true, disabled: true }),
-      Button('Next').is({ visible: true, disabled: true }),
+      or(
+        Button('Next').is({ visible: true, disabled: true }),
+        Button('Next').is({ visible: true, disabled: false }),
+      ),
     ]);
   },
 
@@ -120,6 +123,7 @@ export default {
     cy.do([
       inventorySearch.has({ value: instance.contributors[0].name }),
       MultiColumnListCell(instance.contributors[0].name).click(),
+      // https://issues.folio.org/browse/UIIN-2199
     ]);
     cy.expect([
       // TODO: add check for date with format <6/8/2022, 6:46 AM>
