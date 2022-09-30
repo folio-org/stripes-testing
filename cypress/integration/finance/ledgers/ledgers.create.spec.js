@@ -6,7 +6,7 @@ import testType from '../../../support/dictionary/testTypes';
 import FinanceHelp from '../../../support/fragments/finance/financeHelper';
 import devTeams from '../../../support/dictionary/devTeams';
 
-describe('ui-finance: Ledger creation', () => {
+describe('ui-finance: Ledgers', () => {
   before(() => {
     cy.login(Cypress.env('diku_login'), Cypress.env('diku_password'));
     cy.visit(TopMenu.ledgerPath);
