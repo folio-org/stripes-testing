@@ -14,7 +14,7 @@ import NewLedger from '../../../support/fragments/finance/ledgers/newLedger';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
 import InteractorsTools from '../../../support/utils/interactorsTools';
 
-describe('ui-finance: Add budget to fund', () => {
+describe('ui-finance: Funds', () => {
   const firstExpenseClass = { ...NewExpenceClass.defaultUiBatchGroup };
   const fund = { ...NewFund.defaultFund };
   const defaultLedger = NewLedger.defaultLedger;

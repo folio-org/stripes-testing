@@ -5,7 +5,7 @@ import FinanceHelp from '../../../support/fragments/finance/financeHelper';
 import testType from '../../../support/dictionary/testTypes';
 import devTeams from '../../../support/dictionary/devTeams';
 
-describe('ui-finance: Add budget to fund', () => {
+describe('ui-finance: Funds', () => {
   const fund = { ...newFund.defaultFund };
   let createdLedgerId;
 
