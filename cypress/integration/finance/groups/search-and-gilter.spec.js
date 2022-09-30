@@ -33,7 +33,6 @@ describe('ui-finance: Groups', () => {
       });
     cy.createTempUser([
       permissions.uiFinanceCreateViewEditGroups.gui,
-      permissions.uiFinanceViewEditDeletGroups.gui,
     ])
       .then(userProperties => {
         user = userProperties;
