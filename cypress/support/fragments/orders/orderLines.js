@@ -165,10 +165,9 @@ export default {
       electronicUnitPriceTextField.fillIn(electronicUnitPrice),
       quantityElectronicTextField.fillIn(quantityElectronic),
       Select({ name: 'physical.materialType' }).choose('book'),
-      Button('Add location').click(),
-      Button('Location look-up').click(),
-      Select({ name: 'campusId' }).choose('Online'),
-      Button('Save and close').click(),
+      Button({ text: 'Add location' }).click(),
+      Button({ id: 'field-locations[0].locationId' }).click(),
+      SelectionOption('Online (E)').click(),
       TextField({ name: 'locations[0].quantityPhysical' }).fillIn(quantityPhysical),
       TextField({ name: 'locations[0].quantityElectronic' }).fillIn(quantityElectronic),
     ]);

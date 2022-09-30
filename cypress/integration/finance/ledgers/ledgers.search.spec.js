@@ -7,7 +7,7 @@ import { MultiColumnList } from '../../../../interactors';
 import TestType from '../../../support/dictionary/testTypes';
 import devTeams from '../../../support/dictionary/devTeams';
 
-describe('ui-finance: Ledger list search and filters', () => {
+describe('ui-finance: Ledgers', () => {
   let aUnit;
 
   const ledger = {

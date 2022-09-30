@@ -14,7 +14,7 @@ import Funds from '../../../support/fragments/finance/funds/funds';
 import FinanceHelp from '../../../support/fragments/finance/financeHelper';
 import InteractorsTools from '../../../support/utils/interactorsTools';
 
-describe('ui-finance: Add transfer to budget', () => {
+describe('ui-finance: Transactions', () => {
   const firstFund = { ...Funds.defaultUiFund };
   const secondFund = {
     name: `autotest_fund2_${getRandomPostfix()}`,

@@ -5,7 +5,7 @@ import testType from '../../../support/dictionary/testTypes';
 import FinanceHelp from '../../../support/fragments/finance/financeHelper';
 import devTeams from '../../../support/dictionary/devTeams';
 
-describe('ui-finance: Fiscal Year creation', () => {
+describe('ui-finance: Fiscal Year', () => {
   const defaultFiscalYear = { ...NewFiscalYear.defaultFiscalYear };
   before(() => {
     cy.loginAsAdmin();
