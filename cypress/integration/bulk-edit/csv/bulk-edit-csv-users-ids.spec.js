@@ -76,7 +76,6 @@ describe('bulk-edit', () => {
 
       // Verify changes
       BulkEditSearchPane.verifyChangedResults(user.username);
-      BulkEditSearchPane.verifyErrorLabelAfterChanges(userUUIDsFileName, 1, 1);
       BulkEditActions.newBulkEdit();
     });
 
@@ -119,7 +118,6 @@ describe('bulk-edit', () => {
       BulkEditActions.commitChanges();
 
       BulkEditSearchPane.verifyChangedResults(user.username);
-      BulkEditSearchPane.verifyErrorLabelAfterChanges(userUUIDsFileName, 1, 1);
       BulkEditActions.newBulkEdit();
     });
 

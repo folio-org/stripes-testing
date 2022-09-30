@@ -20,7 +20,7 @@ describe('remote-storage-configuration', () => {
     RemoteStorageHelper.configurations.DematicEMS,
     RemoteStorageHelper.configurations.DematicStagingDirector
   ].forEach(configuration => {
-    it('C163919 configure remote storage (firebird)', { tags: [TestTypes.smoke, devTeams.firebird] }, () => {
+    it('C163919 Configure remote storage (firebird)', { tags: [TestTypes.smoke, devTeams.firebird] }, () => {
       const name = `AutotestConfigurationName${getRandomPostfix()}`;
 
       configuration.create(name);
@@ -32,7 +32,7 @@ describe('remote-storage-configuration', () => {
     });
   });
 
-  it('C163920 edit remote storage (firebird)', { tags: [TestTypes.smoke, devTeams.firebird] }, () => {
+  it('C163920 Edit remote storage configuration  (firebird)', { tags: [TestTypes.smoke, devTeams.firebird] }, () => {
     const name = `AutotestConfigurationName${getRandomPostfix()}`;
     const configuration = RemoteStorageHelper.configurations.DematicStagingDirector;
     const urlToEdit = 'newTestUrl';
