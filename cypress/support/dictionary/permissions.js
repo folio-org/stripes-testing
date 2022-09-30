@@ -139,4 +139,6 @@ export default {
   uiFinanceViewEditDeletFundBudget: { internal: 'ui-finance.fund-budget.delete', gui: 'Finance: View, edit, delete fund and budget' },
   uiFinanceCreateViewEditGroups: { internal: 'ui-finance.group.create', gui: 'Finance: View, edit, create group' },
   uiFinanceViewEditDeletGroups: { internal: 'ui-finance.group.delete', gui: 'Finance: View, edit, delete group' },
+  uiFinanceViewGroups: { internal: 'ui-finance.group.view', gui: 'Finance: View group' },
+
 };
