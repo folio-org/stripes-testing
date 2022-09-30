@@ -28,7 +28,7 @@ describe('ui-eholdings: Provider manage', () => {
     eHoldingsProviderEdit.changeProxy().then(newProxy => {
       eHoldingsProviderEdit.saveAndClose();
       // additional delay related with update of proxy information in ebsco services
-      cy.wait(1000);
+      cy.wait(5000);
       cy.reload();
       eHoldingsProviderView.checkProxy(newProxy);
     });
