@@ -12,7 +12,8 @@ const getDefaultOrderLine = (
   productIds = [],
   specialMaterialTypeId,
   createInventory = 'Instance, Holding, Item',
-, referenceNumbers = []) => {
+  referenceNumbers = []
+) => {
   const defaultOrderLine = {
     id: uuid(),
     checkinItems: false,

@@ -115,6 +115,8 @@ export default {
     newJobProfile.fillJobProfile(jobProfile);
   },
   select:(jobProfileTitle) => {
+    cy.do(TextField({ id:'input-search-job-profiles-field' }).fillIn(jobProfileTitle));
+    cy.do(Button('Search').click());
     cy.do(MultiColumnListCell(jobProfileTitle).click());
   },
   openFileRecords:(fileName) => {

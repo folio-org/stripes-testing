@@ -22,7 +22,7 @@ const mainSearchBy = (searchParameter, searchValue) => {
 
 export default {
   waitLoading:() => {
-    cy.expect(titleInfoPane.exists());
+    cy.expect(searchResults.exists());
   },
 
   bySubject: (subjectValue) => {
