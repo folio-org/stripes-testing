@@ -6,11 +6,13 @@ import {
   Button,
   Pane,
   Checkbox,
-  MultiColumnListCell
+  MultiColumnListCell,
+  Modal
 } from '../../../../../interactors';
 
 const actionsButton = Button('Actions');
 const saveButton = Button('Save as profile & Close');
+const deleteButton = Button('Delete');
 
 const saveMappingProfile = () => {
   cy.do(saveButton.click());
@@ -54,6 +56,14 @@ export default {
     cy.do([
       Pane({ id:'full-screen-view' }).find(actionsButton).click(),
       Button('Edit').click()
+    ]);
+  },
+
+  deleteMappingProfile:(name) => {
+    cy.do([
+      Pane({ id:'full-screen-view' }).find(actionsButton).click(),
+      deleteButton.click(),
+      Modal(`Delete "${name}" field mapping profile?`).find(deleteButton.click())
     ]);
   },
 
