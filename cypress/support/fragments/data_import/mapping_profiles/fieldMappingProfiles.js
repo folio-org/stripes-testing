@@ -79,8 +79,18 @@ const duplicateMappingProfile = () => {
   ]);
 };
 
+const saveProfile = () => {
+  cy.do(saveProfileButton.click());
+};
+
 export default {
   openNewMappingProfileForm,
+<<<<<<< HEAD
+=======
+  saveProfile,
+  closeViewModeForMappingProfile,
+
+>>>>>>> 3a5287a31b96149cc130d84548b123fec1c2f226
   createMappingProfile:(mappingProfile) => {
     openNewMappingProfileForm();
     NewMappingProfile.fillMappingProfile(mappingProfile);
@@ -175,7 +185,7 @@ export default {
 
   createMappingProfileWithNotes:(mappingProfile, note) => {
     openNewMappingProfileForm();
-    NewMappingProfile.fillMappingProfileForInstance(mappingProfile);
+    NewMappingProfile.fillSummaryInMappingProfile(mappingProfile);
     NewMappingProfile.addNote(note);
     cy.do(saveProfileButton.click());
     closeViewModeForMappingProfile(mappingProfile.name);

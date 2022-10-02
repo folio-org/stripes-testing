@@ -8,7 +8,7 @@ import { calloutTypes } from '../../../../interactors';
 import InteractorsTools from '../../../support/utils/interactorsTools';
 import devTeams from '../../../support/dictionary/devTeams';
 
-describe('ui-finance: Delete budget with transfer transaction from fund', () => {
+describe('ui-finance: Funds', () => {
   const fundFrom = { ...NewFund.defaultFund };
   const fundTo = { ...NewFund.defaultFund };
 

@@ -117,7 +117,7 @@ describe('ui-inventory: exports', { retries: 3 }, () => {
     );
   });
 
-  it('C196757 verifies export instances (MARC) (firebird)', { tags: [testTypes.smoke, devTeams.firebird, testTypes.broken] }, () => {
+  it('C196757 Export selected records (MARC) (firebird)', { tags: [testTypes.smoke, devTeams.firebird, testTypes.broken] }, () => {
     InventorySearch.searchByParameter('Title (all)', instanceTitle);
     cy.do(InventorySearch.getSearchResult().find(Checkbox()).click());
     InventorySearch.exportInstanceAsMarc();

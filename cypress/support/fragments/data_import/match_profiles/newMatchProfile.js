@@ -75,6 +75,7 @@ const fillMatchProfileForm = ({
     cy.expect(criterionValueTypeList.exists());
     cy.do(SelectionList({ id:'sl-container-criterion-value-type' }).find(SelectionOption(instanceOption)).click());
   } else if (existingRecordType === 'HOLDINGS') {
+    // wait for list with data to be loaded
     cy.wait(1500);
     cy.do(Accordion({ id:'match-profile-details' }).find(Button({ dataId:'HOLDINGS' })).click());
     fillIncomingRecordFields(incomingRecordFields.field, 'field');

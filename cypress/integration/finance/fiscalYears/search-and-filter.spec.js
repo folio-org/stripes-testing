@@ -4,7 +4,7 @@ import FiscalYears from '../../../support/fragments/finance/fiscalYears/fiscalYe
 import TopMenu from '../../../support/fragments/topMenu';
 import FinanceHelp from '../../../support/fragments/finance/financeHelper';
 
-describe('ui-finance: Add transfer to budget', () => {
+describe('ui-finance: Fiscal Year', () => {
   const defaultFiscalYear = { ...FiscalYears.defaultUiFiscalYear };
 
   before(() => {
