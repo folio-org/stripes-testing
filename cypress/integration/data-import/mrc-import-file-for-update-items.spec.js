@@ -221,7 +221,7 @@ describe('ui-data-import: MARC file upload with the update of instance, holding,
         fillProfile: NewMappingProfile.fillInstanceMappingProfile },
       actionProfile: { typeValue: NewActionProfile.folioRecordTypeValue.instance,
         name: actionProfileNameForInstance,
-        action: 'Update (all record types except Orders)' }
+        action: 'Update (all record types except Orders, Invoices, or MARC Holdings)' }
     },
     {
       mappingProfile: { typeValue: NewMappingProfile.folioRecordTypeValue.holdings,
@@ -229,7 +229,7 @@ describe('ui-data-import: MARC file upload with the update of instance, holding,
         fillProfile: NewMappingProfile.fillHoldingsMappingProfile },
       actionProfile: { typeValue: NewActionProfile.folioRecordTypeValue.holdings,
         name: actionProfileNameForHoldings,
-        action: 'Update (all record types except Orders)' }
+        action: 'Update (all record types except Orders, Invoices, or MARC Holdings)' }
     },
     {
       mappingProfile: { typeValue : NewMappingProfile.folioRecordTypeValue.item,
@@ -237,7 +237,7 @@ describe('ui-data-import: MARC file upload with the update of instance, holding,
         fillProfile: NewMappingProfile.fillItemMappingProfile },
       actionProfile: { typeValue: NewActionProfile.folioRecordTypeValue.item,
         name: actionProfileNameForItem,
-        action: 'Update (all record types except Orders)' }
+        action: 'Update (all record types except Orders, Invoices, or MARC Holdings)' }
     }
   ];
 

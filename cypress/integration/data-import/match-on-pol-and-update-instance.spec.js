@@ -184,7 +184,7 @@ describe('ui-data-import: Match on POL and update related Instance, Holdings, It
   };
 
   it('C350590 Match on POL and update related Instance, Holdings, Item (folijet)', { tags: [TestTypes.smoke, DevTeams.folijet] }, () => {
-    // create mapping and action profiles
+    // create mapping profiles
     cy.visit(SettingsMenu.mappingProfilePath);
     createInstanceMappingProfile(collectionOfProfiles[0].mappingProfile);
     FieldMappingProfiles.checkMappingProfilePresented(collectionOfProfiles[0].mappingProfile.name);

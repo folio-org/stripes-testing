@@ -21,10 +21,7 @@ const organization = {
   harrassowitz: 'Otto Harrassowitz GmbH & Co. KG',
 };
 
-const permanentLocation = {
-  annex: '"Annex (KU/CC/DI/A)"',
-  _980$a: '980$a'
-};
+const permanentLocation = '"Annex (KU/CC/DI/A)"';
 
 const materialType = '"book"';
 
@@ -43,7 +40,7 @@ const instanceStatusTerm = '"Batch Loaded"';
 const defaultMappingProfile = {
   name: `autotest${folioRecordTypeValue.instance}${getRandomPostfix()}`,
   typeValue: folioRecordTypeValue.instance,
-  location: permanentLocation.annex,
+  location: permanentLocation,
   material: materialType,
   loan: permanentLoanType,
   statusField: status,
@@ -82,7 +79,7 @@ export default {
     ]);
     if (specialMappingProfile.typeValue === holdingsType) {
       if (specialMappingProfile.permanentLocation) {
-        cy.do(TextField('Permanent').fillIn(specialMappingProfile.permanentLocation.annex));
+        cy.do(TextField('Permanent').fillIn(specialMappingProfile.permanentLocation));
       }
 
       if (specialMappingProfile.electronicAccess) {
