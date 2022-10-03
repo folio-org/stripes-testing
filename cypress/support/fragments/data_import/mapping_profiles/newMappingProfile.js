@@ -275,24 +275,32 @@ export default {
     cy.do(Button('Add statistical code').click());
     cy.do(TextField('Statistical code').fillIn(name));
     // wait will be add uuid for acceptedValues
-    cy.wait(1000);
+    cy.wait(500);
   },
 
-  addNote:(note) => {
+  addAdministrativeNote:(note) => {
     cy.do(Select({ name:'profile.mappingDetails.mappingFields[9].repeatableFieldAction' }).choose('Add these to existing'));
     cy.do(Button('Add administrative note').click());
     cy.do(TextField('Administrative note').fillIn(note));
+  },
+
+  addElectronicAccess:(relationship, uri) => {
+    cy.do([
+      Button('Add electronic access').click(),
+      TextField('Relationship').fillIn(relationship),
+      TextField('URI').fillIn(uri)
+    ]);
   },
 
   // fill fields of instance mapping profile
   fillCatalogedDate:() => {
     cy.do(TextField('Cataloged date').fillIn(catalogedDate));
     // wait will be add uuid for acceptedValues
-    cy.wait(1000);
+    cy.wait(500);
   },
 
-  fillInstanceStatusTerm:() => {
-    cy.do(TextField('Instance status term').fillIn(instanceStatusTerm));
+  fillInstanceStatusTerm:(statusTerm = instanceStatusTerm) => {
+    cy.do(TextField('Instance status term').fillIn(statusTerm));
     // wait will be add uuid for acceptedValues
     cy.wait(1000);
   },
@@ -301,7 +309,7 @@ export default {
   fillHoldingsType:(type) => {
     cy.do(TextField('Holdings type').fillIn(type));
     // wait will be add uuid for acceptedValues
-    cy.wait(1000);
+    cy.wait(500);
   },
 
   fillPermanentLocation:(location) => {
@@ -311,7 +319,7 @@ export default {
   fillCallNumberType:(type) => {
     cy.do(TextField('Call number type').fillIn(type));
     // wait will be add uuid for acceptedValues
-    cy.wait(1000);
+    cy.wait(500);
   },
 
   fillCallNumber:(number) => {
@@ -330,18 +338,28 @@ export default {
   fillStatus:(itemStatus) => {
     cy.do(TextField('Status').fillIn(itemStatus));
     // wait will be add uuid for acceptedValues
-    cy.wait(1000);
+    cy.wait(500);
   },
 
   fillPermanentLoanType:(loanType) => {
     cy.do(TextField('Permanent loan type').fillIn(loanType));
     // wait will be add uuid for acceptedValues
-    cy.wait(1000);
+    cy.wait(500);
   },
 
   fillMaterialType:() => {
     cy.do(TextField('Material type').fillIn(materialType));
     // wait will be add uuid for acceptedValues
-    cy.wait(1000);
+    cy.wait(500);
+  },
+
+  addItemNotes:(noteType, note, staffOnly) => {
+    cy.do(Select({ name:'profile.mappingDetails.mappingFields[25].repeatableFieldAction' }).choose('Add these to existing'));
+    cy.do(Button('Add item note').click());
+    cy.do(Select({ name:'profile.mappingDetails.mappingFields[25].subfields.0.fields.0.value' }).choose(noteType));
+    cy.do(TextField('Note').fillIn(note));
+    cy.do(Select({ name:'profile.mappingDetails.mappingFields[25].subfields[0].fields[2].booleanFieldAction' }).choose(staffOnly));
+    // wait will be add uuid for acceptedValues
+    cy.wait(500);
   }
 };
