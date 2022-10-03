@@ -217,24 +217,21 @@ describe('ui-data-import: MARC file upload with the update of instance, holding,
   const collectionOfMappingAndActionProfiles = [
     {
       mappingProfile: { typeValue: NewMappingProfile.folioRecordTypeValue.instance,
-        name: mappingProfileNameForInstance,
-        fillProfile: NewMappingProfile.fillInstanceMappingProfile },
+        name: mappingProfileNameForInstance },
       actionProfile: { typeValue: NewActionProfile.folioRecordTypeValue.instance,
         name: actionProfileNameForInstance,
         action: 'Update (all record types except Orders, Invoices, or MARC Holdings)' }
     },
     {
       mappingProfile: { typeValue: NewMappingProfile.folioRecordTypeValue.holdings,
-        name: mappingProfileNameForHoldings,
-        fillProfile: NewMappingProfile.fillHoldingsMappingProfile },
+        name: mappingProfileNameForHoldings },
       actionProfile: { typeValue: NewActionProfile.folioRecordTypeValue.holdings,
         name: actionProfileNameForHoldings,
         action: 'Update (all record types except Orders, Invoices, or MARC Holdings)' }
     },
     {
       mappingProfile: { typeValue : NewMappingProfile.folioRecordTypeValue.item,
-        name: mappingProfileNameForItem,
-        fillProfile: NewMappingProfile.fillItemMappingProfile },
+        name: mappingProfileNameForItem },
       actionProfile: { typeValue: NewActionProfile.folioRecordTypeValue.item,
         name: actionProfileNameForItem,
         action: 'Update (all record types except Orders, Invoices, or MARC Holdings)' }
@@ -351,7 +348,7 @@ describe('ui-data-import: MARC file upload with the update of instance, holding,
   const createHoldingsMappingProfile = (profile) => {
     FieldMappingProfiles.openNewMappingProfileForm();
     NewMappingProfile.fillSummaryInMappingProfile(profile);
-    NewMappingProfile.fillHoldingsType('"electronic"');
+    NewMappingProfile.fillHoldingsType('"Electronic"');
     NewMappingProfile.fillPermanentLocation('"Online (E)"');
     NewMappingProfile.fillCallNumberType('"Library of Congress classification"');
     NewMappingProfile.fillCallNumber('050$a " " 050$b');

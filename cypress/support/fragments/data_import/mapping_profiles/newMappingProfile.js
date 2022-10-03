@@ -136,51 +136,6 @@ export default {
     cy.do(saveButton.click());
   },
 
-  fillInstanceMappingProfile() {
-    cy.do([
-      TextField('Cataloged date').fillIn(catalogedDate),
-      TextField('Instance status term').fillIn(instanceStatusTerm)]);
-    cy.get('[name="profile.mappingDetails.mappingFields[8].repeatableFieldAction"]').select(actions.addTheseToExisting);
-    // wait for data to be loaded
-    cy.intercept('/statistical-code-types?*').as('getTypes');
-    cy.do(Button('Add statistical code').click());
-    cy.wait('@getTypes');
-    cy.do(TextField('Statistical code').fillIn('"ARL (Collection stats): books - Book, print (books)"'));
-    // wait will be add uuid for acceptedValues
-    cy.wait(1000);
-  },
-
-  fillHoldingsMappingProfile() {
-    // wait for data to be loaded
-    cy.intercept('/locations?*').as('getField');
-    cy.do(TextField('Permanent').fillIn('"Online (E)"'));
-    cy.wait('@getField');
-    cy.do(TextField('Holdings type').fillIn('"Electronic"'));
-    cy.do(TextField('Call number type').fillIn('"Library of Congress classification"'));
-    cy.do(TextField('Call number').fillIn('050$a " " 050$b'));
-    cy.get('[name="profile.mappingDetails.mappingFields[23].repeatableFieldAction"]').select(actions.addTheseToExisting);
-    cy.do(Button('Add electronic access').click());
-    cy.do(TextField('Relationship').fillIn('"Resource"'));
-    cy.do(TextField('URI').fillIn('856$u'));
-  },
-
-  fillItemMappingProfile() {
-    // wait for data to be loaded
-    cy.intercept('/loan-types?*').as('getType');
-    cy.wait('@getType');
-    cy.do(TextField('Material type').fillIn('"electronic resource"'));
-    cy.do(TextField('Permanent loan type').fillIn(permanentLoanType));
-    cy.do(TextField('Status').fillIn('"Available"'));
-    cy.get('[name="profile.mappingDetails.mappingFields[25].repeatableFieldAction"]').select(actions.addTheseToExisting);
-    // wait for data to be loaded
-    cy.intercept('/item-note-types?*').as('getType');
-    cy.do(Button('Add item note').click());
-    cy.wait('@getType');
-    cy.do(TextField('Note type').fillIn('"Electronic bookplate"'));
-    cy.do(TextField('Note').fillIn('"Smith Family Foundation"'));
-    cy.get('[name="profile.mappingDetails.mappingFields[25].subfields[0].fields[2].booleanFieldAction"]').select('Mark for all affected records');
-  },
-
   fillMappingProfileForUpdate:(specialMappingProfile = defaultMappingProfile) => {
     cy.do([
       TextField({ name:'profile.name' }).fillIn(specialMappingProfile.name),
@@ -355,8 +310,8 @@ export default {
     cy.wait(500);
   },
 
-  fillMaterialType:() => {
-    cy.do(TextField('Material type').fillIn(materialType));
+  fillMaterialType:(type = materialType) => {
+    cy.do(TextField('Material type').fillIn(type));
     // wait will be add uuid for acceptedValues
     cy.wait(500);
   },
@@ -364,7 +319,7 @@ export default {
   addItemNotes:(noteType, note, staffOnly) => {
     cy.do(Select({ name:'profile.mappingDetails.mappingFields[25].repeatableFieldAction' }).choose(actions.addTheseToExisting));
     cy.do(Button('Add item note').click());
-    cy.do(Select({ name:'profile.mappingDetails.mappingFields[25].subfields.0.fields.0.value' }).choose(noteType));
+    cy.do(TextField('Note type').fillIn(noteType));
     cy.do(TextField('Note').fillIn(note));
     cy.do(Select({ name:'profile.mappingDetails.mappingFields[25].subfields[0].fields[2].booleanFieldAction' }).choose(staffOnly));
     // wait will be add uuid for acceptedValues
