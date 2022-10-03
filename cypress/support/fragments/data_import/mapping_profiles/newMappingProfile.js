@@ -27,7 +27,6 @@ const actions = {
   findAndRemoveThese: 'Find and remove these'
 };
 
-
 const permanentLocation = '"Annex (KU/CC/DI/A)"';
 
 const materialType = '"book"';
@@ -291,11 +290,13 @@ export default {
     cy.do(TextField('Administrative note').fillIn(note));
   },
 
-  addElectronicAccess:(relationship, uri) => {
+  addElectronicAccess:(relationship, uri, linkText = '') => {
     cy.do([
+      Select({ name:'profile.mappingDetails.mappingFields[23].repeatableFieldAction' }).choose(actions.addTheseToExisting),
       Button('Add electronic access').click(),
       TextField('Relationship').fillIn(relationship),
-      TextField('URI').fillIn(uri)
+      TextField('URI').fillIn(uri),
+      TextField('Link text').fillIn(linkText),
     ]);
   },
 
@@ -366,6 +367,12 @@ export default {
     cy.do(Select({ name:'profile.mappingDetails.mappingFields[25].subfields.0.fields.0.value' }).choose(noteType));
     cy.do(TextField('Note').fillIn(note));
     cy.do(Select({ name:'profile.mappingDetails.mappingFields[25].subfields[0].fields[2].booleanFieldAction' }).choose(staffOnly));
+    // wait will be add uuid for acceptedValues
+    cy.wait(500);
+  },
+
+  addSuppressFromDiscovery:() => {
+    cy.do(Select({ name:'profile.mappingDetails.mappingFields[0].booleanFieldAction' }).choose('Mark for all affected records'));
     // wait will be add uuid for acceptedValues
     cy.wait(500);
   }
