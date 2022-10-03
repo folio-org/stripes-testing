@@ -20,6 +20,13 @@ const organization = {
   gobiLibrary: 'GOBI Library Solutions',
   harrassowitz: 'Otto Harrassowitz GmbH & Co. KG',
 };
+const actions = {
+  addTheseToExisting: 'Add these to existing',
+  deleteAllExistingValues: 'Delete all existing values',
+  deleteAllExistingAndAddThese: 'Delete all existing and add these',
+  findAndRemoveThese: 'Find and remove these'
+};
+
 
 const permanentLocation = '"Annex (KU/CC/DI/A)"';
 
@@ -134,7 +141,7 @@ export default {
     cy.do([
       TextField('Cataloged date').fillIn(catalogedDate),
       TextField('Instance status term').fillIn(instanceStatusTerm)]);
-    cy.get('[name="profile.mappingDetails.mappingFields[8].repeatableFieldAction"]').select('Add these to existing');
+    cy.get('[name="profile.mappingDetails.mappingFields[8].repeatableFieldAction"]').select(actions.addTheseToExisting);
     // wait for data to be loaded
     cy.intercept('/statistical-code-types?*').as('getTypes');
     cy.do(Button('Add statistical code').click());
@@ -152,7 +159,7 @@ export default {
     cy.do(TextField('Holdings type').fillIn('"Electronic"'));
     cy.do(TextField('Call number type').fillIn('"Library of Congress classification"'));
     cy.do(TextField('Call number').fillIn('050$a " " 050$b'));
-    cy.get('[name="profile.mappingDetails.mappingFields[23].repeatableFieldAction"]').select('Add these to existing');
+    cy.get('[name="profile.mappingDetails.mappingFields[23].repeatableFieldAction"]').select(actions.addTheseToExisting);
     cy.do(Button('Add electronic access').click());
     cy.do(TextField('Relationship').fillIn('"Resource"'));
     cy.do(TextField('URI').fillIn('856$u'));
@@ -165,7 +172,7 @@ export default {
     cy.do(TextField('Material type').fillIn('"electronic resource"'));
     cy.do(TextField('Permanent loan type').fillIn(permanentLoanType));
     cy.do(TextField('Status').fillIn('"Available"'));
-    cy.get('[name="profile.mappingDetails.mappingFields[25].repeatableFieldAction"]').select('Add these to existing');
+    cy.get('[name="profile.mappingDetails.mappingFields[25].repeatableFieldAction"]').select(actions.addTheseToExisting);
     // wait for data to be loaded
     cy.intercept('/item-note-types?*').as('getType');
     cy.do(Button('Add item note').click());
@@ -271,7 +278,7 @@ export default {
   },
 
   addStatisticalCode:(name) => {
-    cy.do(Select({ name:'profile.mappingDetails.mappingFields[8].repeatableFieldAction' }).choose('Add these to existing'));
+    cy.do(Select({ name:'profile.mappingDetails.mappingFields[8].repeatableFieldAction' }).choose(actions.addTheseToExisting));
     cy.do(Button('Add statistical code').click());
     cy.do(TextField('Statistical code').fillIn(name));
     // wait will be add uuid for acceptedValues
@@ -279,7 +286,7 @@ export default {
   },
 
   addAdministrativeNote:(note) => {
-    cy.do(Select({ name:'profile.mappingDetails.mappingFields[9].repeatableFieldAction' }).choose('Add these to existing'));
+    cy.do(Select({ name:'profile.mappingDetails.mappingFields[9].repeatableFieldAction' }).choose(actions.addTheseToExisting));
     cy.do(Button('Add administrative note').click());
     cy.do(TextField('Administrative note').fillIn(note));
   },
@@ -354,7 +361,7 @@ export default {
   },
 
   addItemNotes:(noteType, note, staffOnly) => {
-    cy.do(Select({ name:'profile.mappingDetails.mappingFields[25].repeatableFieldAction' }).choose('Add these to existing'));
+    cy.do(Select({ name:'profile.mappingDetails.mappingFields[25].repeatableFieldAction' }).choose(actions.addTheseToExisting));
     cy.do(Button('Add item note').click());
     cy.do(Select({ name:'profile.mappingDetails.mappingFields[25].subfields.0.fields.0.value' }).choose(noteType));
     cy.do(TextField('Note').fillIn(note));

@@ -1,4 +1,22 @@
-import { Button, SearchField, PaneHeader, Pane, Select, Accordion, KeyValue, Checkbox, MultiColumnList, MultiColumnListCell, MultiColumnListRow, Modal, TextField, SelectionOption, RadioButton } from '../../../../interactors';
+import {
+  Button,
+  SearchField,
+  PaneHeader,
+  Pane,
+  Select,
+  Accordion,
+  KeyValue,
+  Checkbox,
+  MultiColumnList,
+  MultiColumnListCell,
+  MultiColumnListRow,
+  Modal,
+  TextField,
+  HTML,
+  including,
+  SelectionOption,
+  RadioButton
+} from '../../../../interactors';
 import SearchHelper from '../finance/financeHelper';
 import InteractorsTools from '../../utils/interactorsTools';
 import { getLongDelay } from '../../utils/cypressTools';
