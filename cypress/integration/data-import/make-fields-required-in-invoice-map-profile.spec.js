@@ -25,9 +25,9 @@ describe('ui-data-import: Make some of the fields on the Invoice field mapping p
       });
   });
 
-  //   after(() => {
-  //     Users.deleteViaApi(user.userId);
-  //   });
+  after(() => {
+    Users.deleteViaApi(user.userId);
+  });
 
   it('C343284 Make some of the fields on the Invoice field mapping profile required (folijet)', { tags: [TestTypes.criticalPath, DevTeams.folijet] }, () => {
     FieldMappingProfiles.checkListOfExistingProfilesIsDisplayed();
