@@ -320,7 +320,7 @@ export default {
     cy.expect(Link(itemBarcode).exists());
   },
 
-  checkActionButtonParam() {
+  checkMARCSourceAtNewPane() {
     cy.do(actionsButton.click());
     cy.expect([
       Button({ id: 'edit-instance' }).exists,

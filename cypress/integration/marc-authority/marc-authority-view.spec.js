@@ -13,7 +13,7 @@ describe('MARC Authority management', () => {
     uniqueFileName: `autotestFile.${getRandomPostfix()}.mrc`
   };
 
-  before('Creating user and importing file', () => {
+  before('Creating user', () => {
     cy.createTempUser([
       Permissions.uiQuickMarcQuickMarcBibliographicEditorView.gui,
       Permissions.inventoryAll.gui,
@@ -35,6 +35,6 @@ describe('MARC Authority management', () => {
     InventoryInstances.searchBySource('MARC');
     InventoryInstances.selectInstance();
     InventoryInstance.checkExpectedMARCSource();
-    InventoryInstance.checkActionButtonParam();
+    InventoryInstance.checkMARCSourceAtNewPane();
   });
 });
