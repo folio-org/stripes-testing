@@ -7,6 +7,7 @@ import TopMenu from '../../support/fragments/topMenu';
 import Users from '../../support/fragments/users/users';
 import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
 import InventoryInstance from '../../support/fragments/inventory/inventoryInstance';
+import DataImport from '../../support/fragments/data_import/dataImport';
 
 describe('MARC Authority management', () => {
   const userData = {
@@ -21,8 +22,10 @@ describe('MARC Authority management', () => {
       userData.id = createdUserProperties.userId;
       userData.firstName = createdUserProperties.firstName;
       userData.name = createdUserProperties.username;
+      userData.password = createdUserProperties.password;
 
-      cy.login(createdUserProperties.username, createdUserProperties.password);
+      cy.loginAsAdmin();
+      DataImport.uploadMarcBib();
     });
   });
 
@@ -31,6 +34,7 @@ describe('MARC Authority management', () => {
   });
 
   it('C350967 quickMARC: View MARC bibliographic record (spitfire)', { tags: [TestTypes.smoke, Features.authority, DevTeams.spitfire] }, () => {
+    cy.login(userData.name, userData.password);
     cy.visit(TopMenu.inventoryPath);
     InventoryInstances.searchBySource('MARC');
     InventoryInstances.selectInstance();
