@@ -318,5 +318,18 @@ export default {
 
   checkIsItemCreated:(itemBarcode) => {
     cy.expect(Link(itemBarcode).exists());
+  },
+
+  checkActionButtonParam() {
+    cy.do(actionsButton.click());
+    cy.expect([
+      Button({ id: 'edit-instance' }).exists,
+      Button({ id: 'copy-instance' }).exists,
+      Button({ id: 'clickable-view-source' }).exists,
+      Button({ id: 'view-requests' }).exists,
+      Button({ id: 'edit-instance-marc' }).absent,
+    ])
+    cy.do(Button({ id: 'clickable-view-source' }).click());
+    cy.expect(HTML('MARC bibliographic record').exists());
   }
 };
