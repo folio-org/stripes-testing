@@ -1,12 +1,12 @@
 import permissions from '../../support/dictionary/permissions';
 import TestTypes from '../../support/dictionary/testTypes';
 import DevTeams from '../../support/dictionary/devTeams';
-import TopMenu from '../../support/fragments/topMenu';
 import FieldMappingProfiles from '../../support/fragments/data_import/mapping_profiles/fieldMappingProfiles';
 import NewMappingProfile from '../../support/fragments/data_import/mapping_profiles/newMappingProfile';
 import Helper from '../../support/fragments/finance/financeHelper';
 import Users from '../../support/fragments/users/users';
 import MappingProfileDetails from '../../support/fragments/data_import/mapping_profiles/mappingProfileDetails';
+import SettingsMenu from '../../support/fragments/settingsMenu';
 
 describe('ui-data-import: Make some of the fields on the Invoice field mapping profile required', () => {
   let user = null;
@@ -21,7 +21,7 @@ describe('ui-data-import: Make some of the fields on the Invoice field mapping p
       .then(userProperties => {
         user = userProperties;
 
-        cy.login(user.username, user.password, { path: TopMenu.mappingProfilesPath, waiter: FieldMappingProfiles.waitLoading });
+        cy.login(user.username, user.password, { path: SettingsMenu.mappingProfilePath, waiter: FieldMappingProfiles.waitLoading });
       });
   });
 

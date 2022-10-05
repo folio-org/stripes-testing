@@ -24,6 +24,5 @@ export default {
   checkInPath: '/checkin',
   checkOutPath: '/checkout',
   receivingPath: '/receiving',
-  bulkEditPath: '/bulk-edit',
-  mappingProfilesPath: '/settings/data-import/mapping-profiles'
+  bulkEditPath: '/bulk-edit'
 };

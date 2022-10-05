@@ -14,6 +14,7 @@ import {
 const actionsButton = Button('Actions');
 const saveButton = Button('Save as profile & Close');
 const deleteButton = Button('Delete');
+const fullScreenView = Pane({ id:'full-screen-view' });
 
 const saveMappingProfile = () => {
   cy.do(saveButton.click());
@@ -32,7 +33,7 @@ const checkOverrideSectionOfMappingProfile = (field, status) => {
     element => {
       const rowNumber = element.parentElement.parentElement.getAttribute('data-row-index');
 
-      cy.expect(Pane({ id:'full-screen-view' }).find(Accordion({ id: 'override-protected-section' }))
+      cy.expect(fullScreenView.find(Accordion({ id: 'override-protected-section' }))
         .find(MultiColumnListRow({ indexRow: rowNumber })).find(Checkbox())
         .has({ disabled: status }));
     }
@@ -55,16 +56,16 @@ export default {
 
   editMappingProfile:() => {
     cy.do([
-      Pane({ id:'full-screen-view' }).find(actionsButton).click(),
+      fullScreenView.find(actionsButton).click(),
       Button('Edit').click()
     ]);
   },
 
   deleteMappingProfile:(name) => {
     cy.do([
-      Pane({ id:'full-screen-view' }).find(actionsButton).click(),
+      fullScreenView.find(actionsButton).click(),
       deleteButton.click(),
-      Modal(`Delete "${name}" field mapping profile?`).find(deleteButton).click()
+      Modal(including(name)).find(deleteButton.click())
     ]);
   },
 
@@ -81,7 +82,9 @@ export default {
   },
 
   checkErrorMessageIsPresented:(textFieldName) => {
-    cy.do(TextField(textFieldName).click());
-    cy.expect(TextField(including(textFieldName)).has({ error: 'Please enter a value' }));
+    const fieldName = TextField(textFieldName);
+
+    cy.do(fieldName.click());
+    cy.expect(fieldName.has({ error: 'Please enter a value' }));
   }
 };

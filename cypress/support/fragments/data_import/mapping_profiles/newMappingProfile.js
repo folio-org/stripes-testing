@@ -67,7 +67,7 @@ const selectOrganizationByName = (organizationName) => {
 };
 
 const selectFromResultsList = (rowNumber = 0) => {
-  cy.do(Modal('Select Organization').find(MultiColumnListRow({ index: rowNumber })).click());
+  cy.do(organizationModal.find(MultiColumnListRow({ index: rowNumber })).click());
 };
 
 export default {
