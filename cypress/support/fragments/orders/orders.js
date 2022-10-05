@@ -14,8 +14,7 @@ import {
   TextField,
   HTML,
   including,
-  SelectionOption,
-  RadioButton
+  SelectionOption
 } from '../../../../interactors';
 import SearchHelper from '../finance/financeHelper';
 import InteractorsTools from '../../utils/interactorsTools';
