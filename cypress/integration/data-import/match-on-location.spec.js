@@ -302,7 +302,7 @@ describe('ui-data-import: Match on location', () => {
   //     });
   // });
 
-  /*const createHoldingsMappingProfile = (profile) => {
+  const createHoldingsMappingProfile = (profile) => {
     FieldMappingProfiles.openNewMappingProfileForm();
     NewMappingProfile.fillSummaryInMappingProfile(holdingsMappingProfile);
 
@@ -312,7 +312,7 @@ describe('ui-data-import: Match on location', () => {
     NewMappingProfile.fillCallNumber('980$b " " 980$c');
     FieldMappingProfiles.saveProfile();
     FieldMappingProfiles.closeViewModeForMappingProfile(holdingsMappingProfile.name);
-  };*/
+  };
   
   it('C17027 Match on location (folijet)', { tags: [TestTypes.criticalPath, DevTeams.folijet] }, () => {
     // create Match profile
