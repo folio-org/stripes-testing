@@ -2,7 +2,6 @@ import getRandomPostfix from '../../support/utils/stringTools';
 import TestTypes from '../../support/dictionary/testTypes';
 import DevTeams from '../../support/dictionary/devTeams';
 import NewMatchProfile from '../../support/fragments/data_import/match_profiles/newMatchProfile';
-import NewFieldMappingProfile from '../../support/fragments/data_import/mapping_profiles/newMappingProfile';
 import NewActionProfile from '../../support/fragments/data_import/action_profiles/newActionProfile';
 import NewJobProfile from '../../support/fragments/data_import/job_profiles/newJobProfile';
 import SettingsMenu from '../../support/fragments/settingsMenu';
@@ -17,10 +16,10 @@ import Logs from '../../support/fragments/data_import/logs/logs';
 import DataImportSettingsJobProfiles from '../../support/fragments/settings/dataImport/dataImportSettingsJobProfiles';
 import SearchInventory from '../../support/fragments/data_import/searchInventory';
 import InventoryInstance from '../../support/fragments/inventory/inventoryInstance';
+import NewMappingProfile from '../../support/fragments/data_import/mapping_profiles/newMappingProfile';
 
 describe('ui-data-import: Match on location', () => {
-  const holdingsPermanentLocation = 'Annex (KU/CC/DI/A)';
-  const itemPermanentLocation = 'Annex (KU/CC/DI/A)';
+  const permanentLocation = 'Annex (KU/CC/DI/A)';
   const recordType = 'MARC_BIBLIOGRAPHIC';
   const instanceTitle = 'Anglo-Saxon manuscripts in microfiche facsimile Volume 25 Corpus Christi College, Cambridge II, MSS 12, 144, 162, 178, 188, 198, 265, 285, 322, 326, 449 microform A. N. Doane (editor and director), Matthew T. Hussey (associate editor), Phillip Pulsiano (founding editor)';
 
@@ -72,7 +71,7 @@ describe('ui-data-import: Match on location', () => {
           { name: 'permanentLocationId',
             enabled: true,
             path: 'holdings.permanentLocationId',
-            value: `"${holdingsPermanentLocation}"` }] }
+            value: `"${permanentLocation}"` }] }
     }
   };
 
@@ -101,7 +100,7 @@ describe('ui-data-import: Match on location', () => {
           { name: 'permanentLocation.id',
             enabled: 'true',
             path: 'item.permanentLocation.id',
-            value: `"${itemPermanentLocation}"`,
+            value: `"${permanentLocation}"`,
             acceptedValues: { '53cf956f-c1df-410b-8bea-27f712cca7c0' : 'Annex (KU/CC/DI/A)' } }] }
     }
   };
@@ -212,12 +211,12 @@ describe('ui-data-import: Match on location', () => {
 
   const holdingsUpdateMappingProfile = {
     name: holdingsMappingProfile,
-    typeValue : NewFieldMappingProfile.folioRecordTypeValue.holdings
+    typeValue : NewMappingProfile.folioRecordTypeValue.holdings
   };
 
   const itemUpdateMappingProfile = {
     name: itemMappingProfile,
-    typeValue : NewFieldMappingProfile.folioRecordTypeValue.item
+    typeValue : NewMappingProfile.folioRecordTypeValue.item
   };
 
   const holdingsUpdatesActionProfile = {
@@ -241,7 +240,9 @@ describe('ui-data-import: Match on location', () => {
   before(() => {
     cy.loginAsAdmin();
     cy.getAdminToken();
+  });
 
+  beforeEach(() => {
     testData.jobProfileForCreate = jobProfileForCreate;
 
     testData.forEach(specialPair => {
@@ -263,7 +264,7 @@ describe('ui-data-import: Match on location', () => {
     FileDetails.checkItemsStatusesInResultList(0, [FileDetails.status.created, FileDetails.status.created, FileDetails.status.created, FileDetails.status.created]);
     // FileDetails.checkItemsStatusesInResultList(1, [FileDetails.status.created, FileDetails.status.created, FileDetails.status.created, FileDetails.status.created]);
     // FileDetails.checkItemsStatusesInResultList(2, [FileDetails.status.created, FileDetails.status.created, FileDetails.status.created, FileDetails.status.created]);
-    //FileDetails.checkItemsQuantityInSummaryTable(0, '3');
+    // FileDetails.checkItemsQuantityInSummaryTable(0, '3');
 
     // get Instance HRID through API
     SearchInventory
@@ -275,13 +276,13 @@ describe('ui-data-import: Match on location', () => {
       });
   });
 
-  // after(() => {
+  // afterEach(() => {
   //   // delete profiles
   //   JobProfiles.deleteJobProfile(jobProfileName);
   //   JobProfiles.deleteJobProfile(jobProfileNameForUpdate);
-  //   MatchProfiles.deleteMatchProfile(instanceHridMatchProfileName);
-  //   MatchProfiles.deleteMatchProfile(holdingsPermLocationMatchProfileName);
-  //   MatchProfiles.deleteMatchProfile(itemPermLocationMatchProfileName);
+  //   MatchProfiles.deleteMatchProfile(instanceHridMatchProfile);
+  //   MatchProfiles.deleteMatchProfile(holdingsPermLocationMatchProfile);
+  //   MatchProfiles.deleteMatchProfile(itemPermLocationMatchProfile);
   //   ActionProfiles.deleteActionProfile(instanceActionProfileName);
   //   ActionProfiles.deleteActionProfile(holdingsActionProfileName);
   //   ActionProfiles.deleteActionProfile(holdingsUpdatesActionProfile);
@@ -301,6 +302,18 @@ describe('ui-data-import: Match on location', () => {
   //     });
   // });
 
+  /*const createHoldingsMappingProfile = (profile) => {
+    FieldMappingProfiles.openNewMappingProfileForm();
+    NewMappingProfile.fillSummaryInMappingProfile(holdingsMappingProfile);
+
+    NewMappingProfile.fillHoldingsType('"Monograph"');
+    NewMappingProfile.fillPermanentLocation('980$a');
+    NewMappingProfile.fillCallNumberType('"Library of Congress classification"');
+    NewMappingProfile.fillCallNumber('980$b " " 980$c');
+    FieldMappingProfiles.saveProfile();
+    FieldMappingProfiles.closeViewModeForMappingProfile(holdingsMappingProfile.name);
+  };*/
+  
   it('C17027 Match on location (folijet)', { tags: [TestTypes.criticalPath, DevTeams.folijet] }, () => {
     // create Match profile
     cy.visit(SettingsMenu.matchProfilePath);
@@ -311,19 +324,15 @@ describe('ui-data-import: Match on location', () => {
 
     // create Field mapping profiles
     cy.visit(SettingsMenu.mappingProfilePath);
-
-    // cy.visit(SettingsMenu.mappingProfilePath);
-    // FieldMappingProfiles.createHoldingsMappingProfileWithNotes(holdingsUpdateMappingProfile, noteForHoldingsMappingProfile);
-    // FieldMappingProfiles.checkMappingProfilePresented(holdingsUpdateMappingProfile.name);
-
-    // FieldMappingProfiles.createItemMappingProfileWithNotes(itemUpdateMappingProfile, noteForItemMappingProfile);
-    // FieldMappingProfiles.checkMappingProfilePresented(itemUpdateMappingProfile.name);
+    FieldMappingProfiles.createHoldingsMappingProfileWithNotes(holdingsUpdateMappingProfile, noteForHoldingsMappingProfile);
+    FieldMappingProfiles.checkMappingProfilePresented(holdingsUpdateMappingProfile.name);
+    FieldMappingProfiles.createItemMappingProfileWithNotes(itemUpdateMappingProfile, noteForItemMappingProfile);
+    FieldMappingProfiles.checkMappingProfilePresented(itemUpdateMappingProfile.name);
 
     // create action profiles
     cy.visit(SettingsMenu.actionProfilePath);
     ActionProfiles.createActionProfile(holdingsUpdatesActionProfile, holdingsUpdateMappingProfile.name);
     ActionProfiles.checkActionProfilePresented(holdingsUpdatesActionProfile.name);
-
     ActionProfiles.createActionProfile(itemUpdatesActionProfile, itemUpdateMappingProfile.name);
     ActionProfiles.checkActionProfilePresented(itemUpdatesActionProfile.name);
 
