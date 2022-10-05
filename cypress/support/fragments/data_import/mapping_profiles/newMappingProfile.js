@@ -31,10 +31,15 @@ const organization = {
   gobiLibrary: 'GOBI Library Solutions',
   harrassowitz: 'Otto Harrassowitz GmbH & Co. KG',
 };
-const permanentLocation = {
-  annex: '"Annex (KU/CC/DI/A)"',
-  _980$a: '980$a'
+const actions = {
+  addTheseToExisting: 'Add these to existing',
+  deleteAllExistingValues: 'Delete all existing values',
+  deleteAllExistingAndAddThese: 'Delete all existing and add these',
+  findAndRemoveThese: 'Find and remove these'
 };
+
+const permanentLocation = '"Annex (KU/CC/DI/A)"';
+
 const materialType = '"book"';
 const permanentLoanType = '"Can circulate"';
 const status = '"In process"';
@@ -45,7 +50,7 @@ const instanceStatusTerm = '"Batch Loaded"';
 const defaultMappingProfile = {
   name: `autotest${folioRecordTypeValue.instance}${getRandomPostfix()}`,
   typeValue: folioRecordTypeValue.instance,
-  location: permanentLocation.annex,
+  location: permanentLocation,
   material: materialType,
   loan: permanentLoanType,
   statusField: status,
@@ -89,7 +94,7 @@ export default {
     ]);
     if (specialMappingProfile.typeValue === holdingsType) {
       if (specialMappingProfile.permanentLocation) {
-        cy.do(TextField('Permanent').fillIn(specialMappingProfile.permanentLocation.annex));
+        cy.do(TextField('Permanent').fillIn(specialMappingProfile.permanentLocation));
       }
 
       if (specialMappingProfile.electronicAccess) {
@@ -138,51 +143,6 @@ export default {
       }
     }
     cy.do(saveButton.click());
-  },
-
-  fillInstanceMappingProfile() {
-    cy.do([
-      TextField('Cataloged date').fillIn(catalogedDate),
-      TextField('Instance status term').fillIn(instanceStatusTerm)]);
-    cy.get('[name="profile.mappingDetails.mappingFields[8].repeatableFieldAction"]').select('Add these to existing');
-    // wait for data to be loaded
-    cy.intercept('/statistical-code-types?*').as('getTypes');
-    cy.do(Button('Add statistical code').click());
-    cy.wait('@getTypes');
-    cy.do(TextField('Statistical code').fillIn('"ARL (Collection stats): books - Book, print (books)"'));
-    // wait will be add uuid for acceptedValues
-    cy.wait(1000);
-  },
-
-  fillHoldingsMappingProfile() {
-    // wait for data to be loaded
-    cy.intercept('/locations?*').as('getField');
-    cy.do(TextField('Permanent').fillIn('"Online (E)"'));
-    cy.wait('@getField');
-    cy.do(TextField('Holdings type').fillIn('"Electronic"'));
-    cy.do(TextField('Call number type').fillIn('"Library of Congress classification"'));
-    cy.do(TextField('Call number').fillIn('050$a " " 050$b'));
-    cy.get('[name="profile.mappingDetails.mappingFields[23].repeatableFieldAction"]').select('Add these to existing');
-    cy.do(Button('Add electronic access').click());
-    cy.do(TextField('Relationship').fillIn('"Resource"'));
-    cy.do(TextField('URI').fillIn('856$u'));
-  },
-
-  fillItemMappingProfile() {
-    // wait for data to be loaded
-    cy.intercept('/loan-types?*').as('getType');
-    cy.wait('@getType');
-    cy.do(TextField('Material type').fillIn('"electronic resource"'));
-    cy.do(TextField('Permanent loan type').fillIn(permanentLoanType));
-    cy.do(TextField('Status').fillIn('"Available"'));
-    cy.get('[name="profile.mappingDetails.mappingFields[25].repeatableFieldAction"]').select('Add these to existing');
-    // wait for data to be loaded
-    cy.intercept('/item-note-types?*').as('getType');
-    cy.do(Button('Add item note').click());
-    cy.wait('@getType');
-    cy.do(TextField('Note type').fillIn('"Electronic bookplate"'));
-    cy.do(TextField('Note').fillIn('"Smith Family Foundation"'));
-    cy.get('[name="profile.mappingDetails.mappingFields[25].subfields[0].fields[2].booleanFieldAction"]').select('Mark for all affected records');
   },
 
   fillMappingProfileForUpdate:(specialMappingProfile = defaultMappingProfile) => {
@@ -281,17 +241,27 @@ export default {
   },
 
   addStatisticalCode:(name) => {
-    cy.do(Select({ name:'profile.mappingDetails.mappingFields[8].repeatableFieldAction' }).choose('Add these to existing'));
+    cy.do(Select({ name:'profile.mappingDetails.mappingFields[8].repeatableFieldAction' }).choose(actions.addTheseToExisting));
     cy.do(Button('Add statistical code').click());
     cy.do(TextField('Statistical code').fillIn(name));
     // wait will be add uuid for acceptedValues
-    cy.wait(1000);
+    cy.wait(500);
   },
 
   addAdministrativeNote:(note) => {
     cy.do(Select({ name: adminNoteFieldName }).choose('Add these to existing'));
     cy.do(Button('Add administrative note').click());
     cy.do(TextField('Administrative note').fillIn(note));
+  },
+
+  addElectronicAccess:(relationship, uri, linkText = '') => {
+    cy.do([
+      Select({ name:'profile.mappingDetails.mappingFields[23].repeatableFieldAction' }).choose(actions.addTheseToExisting),
+      Button('Add electronic access').click(),
+      TextField('Relationship').fillIn(relationship),
+      TextField('URI').fillIn(uri),
+      TextField('Link text').fillIn(linkText),
+    ]);
   },
 
   addName:(name) => {
@@ -316,8 +286,8 @@ export default {
     cy.wait(500);
   },
 
-  fillInstanceStatusTerm:() => {
-    cy.do(TextField('Instance status term').fillIn(instanceStatusTerm));
+  fillInstanceStatusTerm:(statusTerm = instanceStatusTerm) => {
+    cy.do(TextField('Instance status term').fillIn(statusTerm));
     // wait will be add uuid for acceptedValues
     cy.wait(500);
   },
@@ -363,8 +333,24 @@ export default {
     cy.wait(500);
   },
 
-  fillMaterialType:() => {
-    cy.do(TextField('Material type').fillIn(materialType));
+  fillMaterialType:(type = materialType) => {
+    cy.do(TextField('Material type').fillIn(type));
+    // wait will be add uuid for acceptedValues
+    cy.wait(500);
+  },
+
+  addItemNotes:(noteType, note, staffOnly) => {
+    cy.do(Select({ name:'profile.mappingDetails.mappingFields[25].repeatableFieldAction' }).choose(actions.addTheseToExisting));
+    cy.do(Button('Add item note').click());
+    cy.do(TextField('Note type').fillIn(noteType));
+    cy.do(TextField('Note').fillIn(note));
+    cy.do(Select({ name:'profile.mappingDetails.mappingFields[25].subfields[0].fields[2].booleanFieldAction' }).choose(staffOnly));
+    // wait will be add uuid for acceptedValues
+    cy.wait(500);
+  },
+
+  addSuppressFromDiscovery:() => {
+    cy.do(Select({ name:'profile.mappingDetails.mappingFields[0].booleanFieldAction' }).choose('Mark for all affected records'));
     // wait will be add uuid for acceptedValues
     cy.wait(500);
   },

@@ -37,6 +37,7 @@ const deleteJobProfile = (profileName) => {
         query:'cql.allRecords=1   ',
         limit: 1000
       },
+      isDefaultSearchParamsRequired: false
     })
     .then(({ body: { jobProfiles } }) => {
       // find profile to delete
@@ -50,6 +51,7 @@ const deleteJobProfile = (profileName) => {
           searchParams: {
             query:'cql.allRecords=1   sortBy name',
           },
+          isDefaultSearchParamsRequired: false
         })
         .then(({ status }) => {
           if (status === 204) cy.log('###DELETED JOB PROFILE###');
