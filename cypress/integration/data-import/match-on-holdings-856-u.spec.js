@@ -1,3 +1,4 @@
+import getRandomPostfix from '../../support/utils/stringTools';
 import DevTeams from '../../support/dictionary/devTeams';
 import TestTypes from '../../support/dictionary/testTypes';
 import ActionProfiles from '../../support/fragments/data_import/action_profiles/actionProfiles';
@@ -13,7 +14,7 @@ import HoldingsRecordView from '../../support/fragments/inventory/holdingsRecord
 import InventoryInstance from '../../support/fragments/inventory/inventoryInstance';
 import SettingsMenu from '../../support/fragments/settingsMenu';
 import TopMenu from '../../support/fragments/topMenu';
-import getRandomPostfix from '../../support/utils/stringTools';
+import Logs from '../../support/fragments/data_import/logs/logs';
 
 describe('ui-data-import: Match on Holdings 856 $u', () => {
   const matchProfileName = `autotestMatchProf${getRandomPostfix()}`;
@@ -28,28 +29,19 @@ describe('ui-data-import: Match on Holdings 856 $u', () => {
   const createInstanceAndEHoldingsJobProfileName = `createInstanceAndEHoldingsJobProf${getRandomPostfix()}`;
   const updateEHoldingsJobProfileName = `updateEHoldingsJobProf${getRandomPostfix()}`;
   let instanceHRID = null;
+  const instanceTitle = 'Together together 3 : personal relationships in public places / edited by Calvin Morrill, David A. Snow, and Cindy H. White.';
 
-  const createInstanceMappingProfile = {
+  const instanceCreateMappingProfile = {
     name: createInstanceMappingProfileName,
-    typeValue: NewMappingProfile.folioRecordTypeValue.instance,
+    typeValue: NewMappingProfile.folioRecordTypeValue.instance
   };
-  const createEHoldingsMappingProfile = {
+  const eHoldingsCreateMappingProfile = {
     name: createEHoldingsMappingProfileName,
-    typeValue: NewMappingProfile.folioRecordTypeValue.holdings,
-    permanentLocation: '"Online (E)"',
-    electronicAccess: {
-      action: 'Add these to existing',
-      relationship: '"Resource"',
-      uri: '856$u',
-      linkText: '856$z',
-    },
+    typeValue: NewMappingProfile.folioRecordTypeValue.holdings
   };
   const updateEHoldingsMappingProfile = {
     name: updateEHoldingsMappingProfileName,
-    typeValue: NewMappingProfile.folioRecordTypeValue.holdings,
-    discoverySuppress: 'Mark for all affected records',
-    callNumberType: '"Other scheme"',
-    callNumber: '"ONLINE"',
+    typeValue: NewMappingProfile.folioRecordTypeValue.holdings
   };
 
   const createInstanceActionProfile = {
@@ -97,12 +89,11 @@ describe('ui-data-import: Match on Holdings 856 $u', () => {
   });
 
   after(() => {
-    HoldingsRecordView.getId().then((id) => {
-      cy.deleteHoldingRecordViaApi(id);
-    });
-    InventoryInstance.getId().then(id => {
-      InventoryInstance.deleteInstanceViaApi(id);
-    });
+    cy.getInstance({ limit: 1, expandAll: true, query: `"title"=="${instanceTitle}"` })
+      .then((instance) => {
+        cy.deleteHoldingRecordViaApi(instance.holdings[0].id);
+        InventoryInstance.deleteInstanceViaApi(instance.id);
+      });
 
     JobProfiles.deleteJobProfile(createInstanceAndEHoldingsJobProfileName);
     JobProfiles.deleteJobProfile(updateEHoldingsJobProfileName);
@@ -115,19 +106,46 @@ describe('ui-data-import: Match on Holdings 856 $u', () => {
     FieldMappingProfiles.deleteFieldMappingProfile(updateEHoldingsMappingProfileName);
   });
 
+  const createInstanceMappingProfile = (instanceMappingProfile) => {
+    FieldMappingProfiles.openNewMappingProfileForm();
+    NewMappingProfile.fillSummaryInMappingProfile(instanceMappingProfile);
+    NewMappingProfile.fillCatalogedDate('###TODAY###');
+    FieldMappingProfiles.saveProfile();
+    FieldMappingProfiles.closeViewModeForMappingProfile(instanceMappingProfile.name);
+  };
+
+  const createHoldingsMappingProfile = (holdingsMappingProfile) => {
+    FieldMappingProfiles.openNewMappingProfileForm();
+    NewMappingProfile.fillSummaryInMappingProfile(holdingsMappingProfile);
+    NewMappingProfile.fillPermanentLocation('"Online (E)"');
+    NewMappingProfile.addElectronicAccess('"Resource"', '856$u', '856$z');
+    FieldMappingProfiles.saveProfile();
+    FieldMappingProfiles.closeViewModeForMappingProfile(holdingsMappingProfile.name);
+  };
+
+  const updateHoldingsMappingProfile = (holdingsMappingProfile) => {
+    FieldMappingProfiles.openNewMappingProfileForm();
+    NewMappingProfile.fillSummaryInMappingProfile(holdingsMappingProfile);
+    NewMappingProfile.addSuppressFromDiscovery();
+    NewMappingProfile.fillCallNumberType('"Other scheme"');
+    NewMappingProfile.fillCallNumber('"ONLINE"');
+    FieldMappingProfiles.saveProfile();
+    FieldMappingProfiles.closeViewModeForMappingProfile(holdingsMappingProfile.name);
+  };
+
   it('C17025 Match on Holdings 856 $u (folijet)', { tags: [TestTypes.smoke, DevTeams.folijet] }, () => {
-    FieldMappingProfiles.createMappingProfile(createInstanceMappingProfile);
-    FieldMappingProfiles.createMappingProfile(createEHoldingsMappingProfile);
-    FieldMappingProfiles.createMappingProfile(updateEHoldingsMappingProfile);
+    createInstanceMappingProfile(instanceCreateMappingProfile);
+    FieldMappingProfiles.checkMappingProfilePresented(instanceCreateMappingProfile.name);
+    createHoldingsMappingProfile(eHoldingsCreateMappingProfile);
+    FieldMappingProfiles.checkMappingProfilePresented(eHoldingsCreateMappingProfile.name);
+    updateHoldingsMappingProfile(updateEHoldingsMappingProfile);
+    FieldMappingProfiles.checkMappingProfilePresented(updateEHoldingsMappingProfile.name);
 
     cy.visit(SettingsMenu.actionProfilePath);
-
     ActionProfiles.createActionProfile(createInstanceActionProfile, createInstanceMappingProfileName);
     ActionProfiles.closeActionProfile(createInstanceActionProfileName);
-
     ActionProfiles.createActionProfile(createEHoldingsActionProfile, createEHoldingsMappingProfileName);
     ActionProfiles.closeActionProfile(createEHoldingsActionProfileName);
-
     ActionProfiles.createActionProfile(updateEHoldingsActionProfile, updateEHoldingsMappingProfileName);
     ActionProfiles.closeActionProfile(updateEHoldingsActionProfileName);
 
@@ -167,6 +185,7 @@ describe('ui-data-import: Match on Holdings 856 $u', () => {
     DataImport.uploadFile('matchOnURL.mrc', nameForUpdateCreateMarcFile);
     JobProfiles.searchJobProfileForImport(updateEHoldingsJobProfileName);
     JobProfiles.runImportFile(nameForUpdateCreateMarcFile);
+    Logs.checkStatusOfJobProfile();
 
     SearchInventory.getInstanceHRID()
       .then(() => {

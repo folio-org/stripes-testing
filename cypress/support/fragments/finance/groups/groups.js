@@ -95,6 +95,32 @@ export default {
     ]);
   },
 
+  checkSearchResults: (groupName) => {
+    cy.expect(MultiColumnList({ id: 'groups-list' })
+      .find(MultiColumnListRow({ index: 0 }))
+      .find(MultiColumnListCell({ columnIndex: 0 }))
+      .has({ content: groupName }));
+  },
+
+  resetFilters: () => {
+    cy.do(Button({ id: 'reset-groups-filters' }).click());
+  },
+
+  selectNoAcquisitionUnit() {
+    cy.do([
+      Button({ id: 'accordion-toggle-button-acqUnitIds' }).click(),
+      Button({ id: 'acqUnitIds-selection' }).click(),
+      SelectionOption('No acquisition unit').click(),
+    ]);
+  },
+
+  selectActiveStatus() {
+    cy.do([
+      Button({ text: 'Status' }).click(),
+      Checkbox({ name: 'Active' }).click(),
+    ]);
+  },
+
   checkCreatedGroup: (defaultGroup) => {
     cy.expect(Accordion({ id: 'information' }).find(KeyValue({ value: defaultGroup.name })).exists());
   },
