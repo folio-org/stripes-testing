@@ -65,7 +65,7 @@ export default {
     cy.do([
       fullScreenView.find(actionsButton).click(),
       deleteButton.click(),
-      Modal(including(name)).find(deleteButton.click())
+      Modal(including(name)).find(deleteButton).click()
     ]);
   },
 
