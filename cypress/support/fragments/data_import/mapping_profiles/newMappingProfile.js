@@ -232,35 +232,11 @@ export default {
     ]);
   },
 
-  fillMappingProfileForInstance:(specialMappingProfile = defaultMappingProfile) => {
+  fillSummaryInMappingProfile:(specialMappingProfile = defaultMappingProfile) => {
     cy.do([
       TextField({ name:'profile.name' }).fillIn(specialMappingProfile.name),
       Select({ name:'profile.incomingRecordType' }).choose(incomingRecordType.marcBib),
       Select({ name:'profile.existingRecordType' }).choose(specialMappingProfile.typeValue),
-    ]);
-  },
-
-  addStatisticalCode:(name) => {
-    cy.do(Select({ name:'profile.mappingDetails.mappingFields[8].repeatableFieldAction' }).choose(actions.addTheseToExisting));
-    cy.do(Button('Add statistical code').click());
-    cy.do(TextField('Statistical code').fillIn(name));
-    // wait will be add uuid for acceptedValues
-    cy.wait(500);
-  },
-
-  addAdministrativeNote:(note) => {
-    cy.do(Select({ name: adminNoteFieldName }).choose('Add these to existing'));
-    cy.do(Button('Add administrative note').click());
-    cy.do(TextField('Administrative note').fillIn(note));
-  },
-
-  addElectronicAccess:(relationship, uri, linkText = '') => {
-    cy.do([
-      Select({ name:'profile.mappingDetails.mappingFields[23].repeatableFieldAction' }).choose(actions.addTheseToExisting),
-      Button('Add electronic access').click(),
-      TextField('Relationship').fillIn(relationship),
-      TextField('URI').fillIn(uri),
-      TextField('Link text').fillIn(linkText),
     ]);
   },
 
@@ -276,8 +252,37 @@ export default {
     cy.do(Select({ name:'profile.existingRecordType' }).choose(folioType));
   },
 
-  saveProfile:() => {
-    cy.do(saveButton.click());
+  addStatisticalCode:(name) => {
+    cy.do(Select({ name:'profile.mappingDetails.mappingFields[8].repeatableFieldAction' }).choose(actions.addTheseToExisting));
+    cy.do(Button('Add statistical code').click());
+    cy.do(TextField('Statistical code').fillIn(name));
+    // wait will be add uuid for acceptedValues
+    cy.wait(500);
+  },
+
+  addAdministrativeNote:(note) => {
+    cy.do(Select({ name: adminNoteFieldName }).choose(actions.addTheseToExisting));
+    cy.do(Button('Add administrative note').click());
+    cy.do(TextField('Administrative note').fillIn(note));
+  },
+
+  addElectronicAccess:(relationship, uri, linkText = '') => {
+    cy.do([
+      Select({ name:'profile.mappingDetails.mappingFields[23].repeatableFieldAction' }).choose(actions.addTheseToExisting),
+      Button('Add electronic access').click(),
+      TextField('Relationship').fillIn(relationship),
+      TextField('URI').fillIn(uri),
+      TextField('Link text').fillIn(linkText)
+    ]);
+  },
+
+  addHoldingsStatements:(statement) => {
+    cy.do([
+      Select({ name:'profile.mappingDetails.mappingFields[16].repeatableFieldAction' }).choose(actions.addTheseToExisting),
+      Button('Add holdings statement').click(),
+      TextField('Add holdings statement').fillIn(`"${statement}"`),
+      TextField('Statement public note').fillIn(`"${statement}"`)
+    ]);
   },
 
   fillCatalogedDate:() => {
@@ -292,7 +297,6 @@ export default {
     cy.wait(500);
   },
 
-  // fill fields of holdings mapping profile
   fillHoldingsType:(type) => {
     cy.do(TextField('Holdings type').fillIn(type));
     // wait will be add uuid for acceptedValues
@@ -302,6 +306,7 @@ export default {
   fillPermanentLocation:(location) => {
     cy.do(TextField('Permanent').fillIn(location));
   },
+
   fillCallNumberType:(type) => {
     cy.do(TextField('Call number type').fillIn(type));
     // wait will be add uuid for acceptedValues
@@ -315,9 +320,11 @@ export default {
   fillBarcode:(barcode) => {
     cy.do(TextField('Barcode').fillIn(barcode));
   },
+
   fillCopyNumber:(number) => {
     cy.do(TextField('Copy number').fillIn(number));
   },
+
   fillStatus:(itemStatus) => {
     cy.do(TextField('Status').fillIn(itemStatus));
     // wait will be add uuid for acceptedValues
@@ -397,5 +404,9 @@ export default {
     cy.do(TextField('Invoice date*').fillIn(date));
     // wait will be add uuid for acceptedValues
     cy.wait(500);
-  }
+  },
+
+  saveProfile:() => {
+    cy.do(saveButton.click());
+  },
 };

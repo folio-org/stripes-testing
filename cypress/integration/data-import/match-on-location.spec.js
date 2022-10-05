@@ -304,16 +304,21 @@ describe('ui-data-import: Match on location', () => {
 
   const createHoldingsMappingProfile = (profile) => {
     FieldMappingProfiles.openNewMappingProfileForm();
-    NewMappingProfile.fillSummaryInMappingProfile(holdingsMappingProfile);
-
-    NewMappingProfile.fillHoldingsType('"Monograph"');
-    NewMappingProfile.fillPermanentLocation('980$a');
-    NewMappingProfile.fillCallNumberType('"Library of Congress classification"');
-    NewMappingProfile.fillCallNumber('980$b " " 980$c');
+    NewMappingProfile.fillSummaryInMappingProfile(profile);
+    NewMappingProfile.addAdministrativeNote(noteForHoldingsMappingProfile);
+    NewMappingProfile.addHoldingsStatements('Holdings statement');
     FieldMappingProfiles.saveProfile();
-    FieldMappingProfiles.closeViewModeForMappingProfile(holdingsMappingProfile.name);
+    FieldMappingProfiles.closeViewModeForMappingProfile(profile.name);
   };
-  
+
+  const createItemMappingProfile = (profile) => {
+    FieldMappingProfiles.openNewMappingProfileForm();
+    NewMappingProfile.fillSummaryInMappingProfile(profile);
+    NewMappingProfile.addAdministrativeNote(noteForItemMappingProfile);
+    FieldMappingProfiles.saveProfile();
+    FieldMappingProfiles.closeViewModeForMappingProfile(profile.name);
+  };
+
   it('C17027 Match on location (folijet)', { tags: [TestTypes.criticalPath, DevTeams.folijet] }, () => {
     // create Match profile
     cy.visit(SettingsMenu.matchProfilePath);
@@ -324,9 +329,9 @@ describe('ui-data-import: Match on location', () => {
 
     // create Field mapping profiles
     cy.visit(SettingsMenu.mappingProfilePath);
-    FieldMappingProfiles.createHoldingsMappingProfileWithNotes(holdingsUpdateMappingProfile, noteForHoldingsMappingProfile);
+    createHoldingsMappingProfile(holdingsUpdateMappingProfile);
     FieldMappingProfiles.checkMappingProfilePresented(holdingsUpdateMappingProfile.name);
-    FieldMappingProfiles.createItemMappingProfileWithNotes(itemUpdateMappingProfile, noteForItemMappingProfile);
+    createItemMappingProfile(itemUpdateMappingProfile);
     FieldMappingProfiles.checkMappingProfilePresented(itemUpdateMappingProfile.name);
 
     // create action profiles
