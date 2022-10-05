@@ -19,7 +19,7 @@ let userId;
 let source;
 let servicePointId;
 
-describe('circulation-log', { retries: 3 }, () => {
+describe('circulation-log', () => {
   before('create inventory instance', () => {
     cy.createTempUser([
       permissions.inventoryAll.gui,
