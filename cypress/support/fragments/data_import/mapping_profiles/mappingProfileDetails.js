@@ -6,11 +6,15 @@ import {
   Button,
   Pane,
   Checkbox,
-  MultiColumnListCell
+  MultiColumnListCell,
+  Modal,
+  TextField
 } from '../../../../../interactors';
 
 const actionsButton = Button('Actions');
 const saveButton = Button('Save as profile & Close');
+const deleteButton = Button('Delete');
+const fullScreenView = Pane({ id:'full-screen-view' });
 
 const saveMappingProfile = () => {
   cy.do(saveButton.click());
@@ -29,7 +33,7 @@ const checkOverrideSectionOfMappingProfile = (field, status) => {
     element => {
       const rowNumber = element.parentElement.parentElement.getAttribute('data-row-index');
 
-      cy.expect(Pane({ id:'full-screen-view' }).find(Accordion({ id: 'override-protected-section' }))
+      cy.expect(fullScreenView.find(Accordion({ id: 'override-protected-section' }))
         .find(MultiColumnListRow({ indexRow: rowNumber })).find(Checkbox())
         .has({ disabled: status }));
     }
@@ -52,8 +56,16 @@ export default {
 
   editMappingProfile:() => {
     cy.do([
-      Pane({ id:'full-screen-view' }).find(actionsButton).click(),
+      fullScreenView.find(actionsButton).click(),
       Button('Edit').click()
+    ]);
+  },
+
+  deleteMappingProfile:(name) => {
+    cy.do([
+      fullScreenView.find(actionsButton).click(),
+      deleteButton.click(),
+      Modal(including(name)).find(deleteButton).click()
     ]);
   },
 
@@ -67,5 +79,12 @@ export default {
           .click());
       }
     ));
+  },
+
+  checkErrorMessageIsPresented:(textFieldName) => {
+    const fieldName = TextField(textFieldName);
+
+    cy.do(fieldName.click());
+    cy.expect(fieldName.has({ error: 'Please enter a value' }));
   }
 };

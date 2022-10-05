@@ -4,7 +4,9 @@ import {
   TextField,
   Pane,
   MultiColumnListRow,
-  Select
+  Select,
+  PaneContent,
+  Form
 } from '../../../../../interactors';
 import { getLongDelay } from '../../../utils/cypressTools';
 import MappingProfileDetails from './mappingProfileDetails';
@@ -186,4 +188,12 @@ export default {
     closeViewModeForMappingProfile(mappingProfile.name);
     cy.expect(actionsButton.exists());
   },
+
+  checkListOfExistingProfilesIsDisplayed:() => {
+    cy.expect(PaneContent({ id:'pane-results-content' }).exists());
+  },
+
+  checkNewMappingProfileFormIsOpened:() => {
+    cy.expect(Form({ id:'mapping-profiles-form' }).exists());
+  }
 };

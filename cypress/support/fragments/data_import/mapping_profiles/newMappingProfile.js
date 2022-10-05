@@ -1,9 +1,20 @@
-import { TextField, Button, Select, TextArea, Modal, HTML, including, MultiColumnListCell } from '../../../../../interactors';
+import {
+  TextField,
+  Button,
+  Select,
+  TextArea,
+  Modal,
+  HTML,
+  including,
+  MultiColumnListCell,
+  MultiColumnListRow,
+  SearchField
+} from '../../../../../interactors';
 import getRandomPostfix from '../../../utils/stringTools';
 
 const saveButton = Button('Save as profile & Close');
 const organizationModal = Modal('Select Organization');
-
+const adminNoteFieldName = 'profile.mappingDetails.mappingFields[9].repeatableFieldAction';
 const marcBib = 'MARC Bibliographic';
 const incomingRecordType = {
   marcBib: 'MARC Bibliographic',
@@ -30,19 +41,12 @@ const actions = {
 const permanentLocation = '"Annex (KU/CC/DI/A)"';
 
 const materialType = '"book"';
-
 const permanentLoanType = '"Can circulate"';
-
 const status = '"In process"';
-
 const holdingsType = 'Holdings';
-
 const itemType = 'Item';
-
 const catalogedDate = '###TODAY###';
-
 const instanceStatusTerm = '"Batch Loaded"';
-
 const defaultMappingProfile = {
   name: `autotest${folioRecordTypeValue.instance}${getRandomPostfix()}`,
   typeValue: folioRecordTypeValue.instance,
@@ -67,6 +71,10 @@ const selectOrganizationByName = (organizationName) => {
   ]);
 };
 
+const selectFromResultsList = (rowNumber = 0) => {
+  cy.do(organizationModal.find(MultiColumnListRow({ index: rowNumber })).click());
+};
+
 export default {
   folioRecordTypeValue,
   permanentLocation,
@@ -76,6 +84,7 @@ export default {
   organization,
   instanceStatusTerm,
   catalogedDate,
+  selectFromResultsList,
 
   fillMappingProfile:(specialMappingProfile = defaultMappingProfile) => {
     cy.do([
@@ -240,7 +249,7 @@ export default {
   },
 
   addAdministrativeNote:(note) => {
-    cy.do(Select({ name:'profile.mappingDetails.mappingFields[9].repeatableFieldAction' }).choose(actions.addTheseToExisting));
+    cy.do(Select({ name: adminNoteFieldName }).choose('Add these to existing'));
     cy.do(Button('Add administrative note').click());
     cy.do(TextField('Administrative note').fillIn(note));
   },
@@ -255,7 +264,22 @@ export default {
     ]);
   },
 
-  // fill fields of instance mapping profile
+  addName:(name) => {
+    cy.do(TextField({ name:'profile.name' }).fillIn(name));
+  },
+
+  addIncomingRecordType:(type) => {
+    cy.do(Select({ name:'profile.incomingRecordType' }).choose(type));
+  },
+
+  addFolioRecordType:(folioType) => {
+    cy.do(Select({ name:'profile.existingRecordType' }).choose(folioType));
+  },
+
+  saveProfile:() => {
+    cy.do(saveButton.click());
+  },
+
   fillCatalogedDate:() => {
     cy.do(TextField('Cataloged date').fillIn(catalogedDate));
     // wait will be add uuid for acceptedValues
@@ -265,7 +289,7 @@ export default {
   fillInstanceStatusTerm:(statusTerm = instanceStatusTerm) => {
     cy.do(TextField('Instance status term').fillIn(statusTerm));
     // wait will be add uuid for acceptedValues
-    cy.wait(1000);
+    cy.wait(500);
   },
 
   // fill fields of holdings mapping profile
@@ -289,7 +313,6 @@ export default {
     cy.do(TextField('Call number').fillIn(number));
   },
 
-  // fill fields of item mapping profile
   fillBarcode:(barcode) => {
     cy.do(TextField('Barcode').fillIn(barcode));
   },
@@ -328,6 +351,53 @@ export default {
 
   addSuppressFromDiscovery:() => {
     cy.do(Select({ name:'profile.mappingDetails.mappingFields[0].booleanFieldAction' }).choose('Mark for all affected records'));
+    // wait will be add uuid for acceptedValues
+    cy.wait(500);
+  },
+
+  fillBatchGroup:(group) => {
+    cy.do(TextField('Batch group*').fillIn(group));
+    // wait will be add uuid for acceptedValues
+    cy.wait(500);
+  },
+
+  fillVendorInvoiceNumber:(number) => {
+    cy.do(TextField('Vendor invoice number*').fillIn(number));
+  },
+
+  fillPaymentMethod:(method) => {
+    cy.do(TextField('Payment method*').fillIn(method));
+    // wait will be add uuid for acceptedValues
+    cy.wait(500);
+  },
+
+  fillCurrency:(currency) => {
+    cy.do(TextField('Currency*').fillIn(currency));
+    // wait will be add uuid for acceptedValues
+    cy.wait(500);
+  },
+
+  fillDescription:(text) => {
+    cy.do(TextField('Description*').fillIn(text));
+  },
+
+  fillQuantity:(quantity) => {
+    cy.do(TextField('Quantity*').fillIn(quantity));
+  },
+
+  fillSubTotal:(number) => {
+    cy.do(TextField('Sub-total*').fillIn(number));
+  },
+
+  fillVendorName:(vendorName) => {
+    cy.do(Button('Organization look-up').click());
+    cy.do(SearchField({ id: 'input-record-search' }).fillIn(vendorName));
+    cy.do(Button('Search').click());
+    selectFromResultsList();
+  },
+
+  fillInvoiceDate:(date) => {
+    cy.do(TextField('Invoice date*').fillIn(date));
     // wait will be add uuid for acceptedValues
     cy.wait(500);
   }
