@@ -10,9 +10,7 @@ import InventoryInstance from '../../support/fragments/inventory/inventoryInstan
 import DataImport from '../../support/fragments/data_import/dataImport';
 
 describe('MARC Authority management', () => {
-  const userData = {
-    uniqueFileName: `autotestFile.${getRandomPostfix()}.mrc`
-  };
+  const userData = {};
 
   before('Creating user', () => {
     cy.createTempUser([
