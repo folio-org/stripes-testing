@@ -1,10 +1,10 @@
-import TestTypes from '../../support/dictionary/testTypes';
 import getRandomPostfix from '../../support/utils/stringTools';
 import permissions from '../../support/dictionary/permissions';
+import TestTypes from '../../support/dictionary/testTypes';
+import TopMenu from '../../support/fragments/topMenu';
 import NewOrder from '../../support/fragments/orders/newOrder';
 import Orders from '../../support/fragments/orders/orders';
 import Helper from '../../support/fragments/finance/financeHelper';
-import TopMenu from '../../support/fragments/topMenu';
 import FieldMappingProfiles from '../../support/fragments/data_import/mapping_profiles/fieldMappingProfiles';
 import NewActionProfile from '../../support/fragments/data_import/action_profiles/newActionProfile';
 import NewMappingProfile from '../../support/fragments/data_import/mapping_profiles/newMappingProfile';
@@ -20,6 +20,7 @@ import ItemRecordView from '../../support/fragments/inventory/itemRecordView';
 import CheckInActions from '../../support/fragments/check-in-actions/checkInActions';
 import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
 import OrderView from '../../support/fragments/orders/orderView';
+import BasicOrderLine from '../../support/fragments/orders/basicOrderLine';
 import Receiving from '../../support/fragments/receiving/receiving';
 import FileDetails from '../../support/fragments/data_import/logs/fileDetails';
 import InventoryInstance from '../../support/fragments/inventory/inventoryInstance';
@@ -81,7 +82,7 @@ describe('ui-data-import: Match on POL and update related Instance, Holdings, It
         update: true },
       actionProfile: { typeValue: NewActionProfile.folioRecordTypeValue.instance,
         name: actionProfileNameForInstance,
-        action: 'Update (all record types except Orders, Invoices, or MARC Holdings, Invoices, or MARC Holdings)' }
+        action: 'Update (all record types except Orders, Invoices, or MARC Holdings)' }
     },
     {
       mappingProfile: { typeValue: NewMappingProfile.folioRecordTypeValue.holdings,
@@ -89,7 +90,7 @@ describe('ui-data-import: Match on POL and update related Instance, Holdings, It
         update: true },
       actionProfile: { typeValue: NewActionProfile.folioRecordTypeValue.holdings,
         name: actionProfileNameForHoldings,
-        action: 'Update (all record types except Orders, Invoices, or MARC Holdings, Invoices, or MARC Holdings)' }
+        action: 'Update (all record types except Orders, Invoices, or MARC Holdings)' }
     },
     {
       mappingProfile: { typeValue: NewMappingProfile.folioRecordTypeValue.item,
@@ -97,7 +98,7 @@ describe('ui-data-import: Match on POL and update related Instance, Holdings, It
         update: true },
       actionProfile: { typeValue: NewActionProfile.folioRecordTypeValue.item,
         name: actionProfileNameForItem,
-        action: 'Update (all record types except Orders, Invoices, or MARC Holdings, Invoices, or MARC Holdings)' }
+        action: 'Update (all record types except Orders, Invoices, or MARC Holdings)' }
     }
   ];
 

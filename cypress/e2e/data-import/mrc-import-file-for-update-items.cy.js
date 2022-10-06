@@ -217,27 +217,24 @@ describe('ui-data-import: MARC file upload with the update of instance, holding,
   const collectionOfMappingAndActionProfiles = [
     {
       mappingProfile: { typeValue: NewMappingProfile.folioRecordTypeValue.instance,
-        name: mappingProfileNameForInstance,
-        fillProfile: NewMappingProfile.fillInstanceMappingProfile },
+        name: mappingProfileNameForInstance },
       actionProfile: { typeValue: NewActionProfile.folioRecordTypeValue.instance,
         name: actionProfileNameForInstance,
-        action: 'Update (all record types except Orders)' }
+        action: 'Update (all record types except Orders, Invoices, or MARC Holdings)' }
     },
     {
       mappingProfile: { typeValue: NewMappingProfile.folioRecordTypeValue.holdings,
-        name: mappingProfileNameForHoldings,
-        fillProfile: NewMappingProfile.fillHoldingsMappingProfile },
+        name: mappingProfileNameForHoldings },
       actionProfile: { typeValue: NewActionProfile.folioRecordTypeValue.holdings,
         name: actionProfileNameForHoldings,
-        action: 'Update (all record types except Orders)' }
+        action: 'Update (all record types except Orders, Invoices, or MARC Holdings)' }
     },
     {
       mappingProfile: { typeValue : NewMappingProfile.folioRecordTypeValue.item,
-        name: mappingProfileNameForItem,
-        fillProfile: NewMappingProfile.fillItemMappingProfile },
+        name: mappingProfileNameForItem },
       actionProfile: { typeValue: NewActionProfile.folioRecordTypeValue.item,
         name: actionProfileNameForItem,
-        action: 'Update (all record types except Orders)' }
+        action: 'Update (all record types except Orders, Invoices, or MARC Holdings)' }
     }
   ];
 
@@ -339,6 +336,38 @@ describe('ui-data-import: MARC file upload with the update of instance, holding,
     FileManager.deleteFile(`cypress/fixtures/${nameForCSVFile}`);
   });
 
+  const createInstanceMappingProfile = (profile) => {
+    FieldMappingProfiles.openNewMappingProfileForm();
+    NewMappingProfile.fillSummaryInMappingProfile(profile);
+    NewMappingProfile.fillCatalogedDate('###TODAY###');
+    NewMappingProfile.fillInstanceStatusTerm();
+    FieldMappingProfiles.saveProfile();
+    FieldMappingProfiles.closeViewModeForMappingProfile(profile.name);
+  };
+
+  const createHoldingsMappingProfile = (profile) => {
+    FieldMappingProfiles.openNewMappingProfileForm();
+    NewMappingProfile.fillSummaryInMappingProfile(profile);
+    NewMappingProfile.fillHoldingsType('"Electronic"');
+    NewMappingProfile.fillPermanentLocation('"Online (E)"');
+    NewMappingProfile.fillCallNumberType('"Library of Congress classification"');
+    NewMappingProfile.fillCallNumber('050$a " " 050$b');
+    NewMappingProfile.addElectronicAccess('"Resource"', '856$u');
+    FieldMappingProfiles.saveProfile();
+    FieldMappingProfiles.closeViewModeForMappingProfile(profile.name);
+  };
+
+  const createItemMappingProfile = (profile) => {
+    FieldMappingProfiles.openNewMappingProfileForm();
+    NewMappingProfile.fillSummaryInMappingProfile(profile);
+    NewMappingProfile.fillMaterialType('"electronic resource"');
+    NewMappingProfile.addItemNotes('"Electronic bookplate"', '"Smith Family Foundation"', 'Mark for all affected records');
+    NewMappingProfile.fillPermanentLoanType('"Can circulate"');
+    NewMappingProfile.fillStatus('"Available"');
+    FieldMappingProfiles.saveProfile();
+    FieldMappingProfiles.closeViewModeForMappingProfile(profile.name);
+  };
+
   it('C343335 MARC file upload with the update of instance, holding, and items (folijet)', { tags: [TestTypes.smoke, DevTeams.folijet] }, () => {
     // upload a marc file for creating of the new instance, holding and item
     cy.visit(TopMenu.dataImportPath);
@@ -384,10 +413,15 @@ describe('ui-data-import: MARC file upload with the update of instance, holding,
     ExportMarcFile.downloadExportedMarcFile(nameMarcFileForImportUpdate);
 
     // create mapping and action profiles
+    cy.visit(SettingsMenu.mappingProfilePath);
+    createInstanceMappingProfile(collectionOfMappingAndActionProfiles[0].mappingProfile);
+    FieldMappingProfiles.checkMappingProfilePresented(collectionOfMappingAndActionProfiles[0].mappingProfile.name);
+    createHoldingsMappingProfile(collectionOfMappingAndActionProfiles[1].mappingProfile);
+    FieldMappingProfiles.checkMappingProfilePresented(collectionOfMappingAndActionProfiles[1].mappingProfile.name);
+    createItemMappingProfile(collectionOfMappingAndActionProfiles[2].mappingProfile);
+    FieldMappingProfiles.checkMappingProfilePresented(collectionOfMappingAndActionProfiles[2].mappingProfile.name);
+
     collectionOfMappingAndActionProfiles.forEach(profile => {
-      cy.visit(SettingsMenu.mappingProfilePath);
-      FieldMappingProfiles.createMappingProfileForUpdate(profile.mappingProfile);
-      FieldMappingProfiles.checkMappingProfilePresented(profile.mappingProfile.name);
       cy.visit(SettingsMenu.actionProfilePath);
       ActionProfiles.createActionProfile(profile.actionProfile, profile.mappingProfile.name);
       ActionProfiles.checkActionProfilePresented(profile.actionProfile.name);

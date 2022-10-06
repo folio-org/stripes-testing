@@ -102,7 +102,7 @@ describe('ui-data-import: Verify the possibility to modify MARC Bibliographic re
     // create Action profile and link it to Field mapping profile
     const actionProfile = {
       name: actionProfileName,
-      action: 'Modify (MARC record types only)',
+      action: 'Modify (MARC Bibliographic and Authority record types only)',
       typeValue: 'MARC Bibliographic',
     };
 

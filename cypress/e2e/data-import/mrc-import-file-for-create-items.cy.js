@@ -30,6 +30,31 @@ describe('ui-data-import: MARC file import with creating of the new instance, ho
   const mappingProfileNameForHoldings = `autotestMappingHoldings${getRandomPostfix()}`;
   const mappingProfileNameForItem = `autotestMappingItem${getRandomPostfix()}`;
 
+  const collectionOfProfiles = [
+    {
+      mappingProfile: { typeValue: NewMappingProfile.folioRecordTypeValue.instance,
+        name: mappingProfileNameForInstance },
+      actionProfile: { typeValue: NewActionProfile.folioRecordTypeValue.instance,
+        name: actionProfileNameForInstance }
+    },
+    {
+      mappingProfile: { typeValue: NewMappingProfile.folioRecordTypeValue.holdings,
+        name: mappingProfileNameForHoldings },
+      actionProfile: { typeValue: NewActionProfile.folioRecordTypeValue.holdings,
+        name: actionProfileNameForHoldings }
+    },
+    {
+      mappingProfile: { typeValue: NewMappingProfile.folioRecordTypeValue.item,
+        name: mappingProfileNameForItem },
+      actionProfile: { typeValue: NewActionProfile.folioRecordTypeValue.item,
+        name: actionProfileNameForItem }
+    }
+  ];
+
+  const specialJobProfile = { ...NewJobProfile.defaultJobProfile,
+    profileName: jobProfileName,
+    acceptedType: NewJobProfile.acceptedDataType.marc };
+
   before(() => {
     cy.createTempUser([
       permissions.dataImportUploadAll.gui,
@@ -44,43 +69,54 @@ describe('ui-data-import: MARC file import with creating of the new instance, ho
     DataImport.checkUploadState();
   });
 
+  const createInstanceMappingProfile = (instanceMappingProfile) => {
+    FieldMappingProfiles.openNewMappingProfileForm();
+    NewMappingProfile.fillSummaryInMappingProfile(instanceMappingProfile);
+    FieldMappingProfiles.saveProfile();
+    FieldMappingProfiles.closeViewModeForMappingProfile(instanceMappingProfile.name);
+  };
+
+  const createHoldingsMappingProfile = (holdingsMappingProfile) => {
+    FieldMappingProfiles.openNewMappingProfileForm();
+    NewMappingProfile.fillSummaryInMappingProfile(holdingsMappingProfile);
+    NewMappingProfile.fillPermanentLocation('"Annex (KU/CC/DI/A)"');
+    FieldMappingProfiles.saveProfile();
+    FieldMappingProfiles.closeViewModeForMappingProfile(holdingsMappingProfile.name);
+  };
+
+  const createItemMappingProfile = (itemMappingProfile) => {
+    FieldMappingProfiles.openNewMappingProfileForm();
+    NewMappingProfile.fillSummaryInMappingProfile(itemMappingProfile);
+    NewMappingProfile.fillMaterialType('"book"');
+    NewMappingProfile.fillPermanentLoanType('"Can circulate"');
+    NewMappingProfile.fillStatus('"Available"');
+    FieldMappingProfiles.saveProfile();
+    FieldMappingProfiles.closeViewModeForMappingProfile(itemMappingProfile.name);
+  };
+
   after(() => {
     DataImport.checkUploadState();
     Users.deleteViaApi(user.userId);
+
+    // delete generated profiles
+    JobProfiles.deleteJobProfile(specialJobProfile.profileName);
+    collectionOfProfiles.forEach(profile => {
+      ActionProfiles.deleteActionProfile(profile.actionProfile.name);
+      FieldMappingProfiles.deleteFieldMappingProfile(profile.mappingProfile.name);
+    });
   });
 
-  // removed tag smoke because test runs infinite
-  it('C343334 MARC file import with creating a new mapping profiles, action profiles and job profile (folijet)', { tags: [DevTeams.folijet] }, () => {
-    const collectionOfProfiles = [
-      {
-        mappingProfile: { typeValue: NewMappingProfile.folioRecordTypeValue.instance,
-          name: mappingProfileNameForInstance,
-          permanentLocation: '"Annex (KU/CC/DI/A)"' },
-        actionProfile: { typeValue: NewActionProfile.folioRecordTypeValue.instance,
-          name: actionProfileNameForInstance }
-      },
-      {
-        mappingProfile: { typeValue: NewMappingProfile.folioRecordTypeValue.holdings,
-          name: mappingProfileNameForHoldings },
-        actionProfile: { typeValue: NewActionProfile.folioRecordTypeValue.holdings,
-          name: actionProfileNameForHoldings }
-      },
-      {
-        mappingProfile: { typeValue: NewMappingProfile.folioRecordTypeValue.item,
-          name: mappingProfileNameForItem },
-        actionProfile: { typeValue: NewActionProfile.folioRecordTypeValue.item,
-          name: actionProfileNameForItem }
-      }
-    ];
-
-    const specialJobProfile = { ...NewJobProfile.defaultJobProfile,
-      profileName: jobProfileName,
-      acceptedType: NewJobProfile.acceptedDataType.marc };
+  it('C343334 MARC file import with creating a new mapping profiles, action profiles and job profile (folijet)', { tags: [TestTypes.smoke, DevTeams.folijet] }, () => {
+    // create mapping profiles
+    cy.visit(SettingsMenu.mappingProfilePath);
+    createInstanceMappingProfile(collectionOfProfiles[0].mappingProfile);
+    FieldMappingProfiles.checkMappingProfilePresented(collectionOfProfiles[0].mappingProfile.name);
+    createHoldingsMappingProfile(collectionOfProfiles[1].mappingProfile);
+    FieldMappingProfiles.checkMappingProfilePresented(collectionOfProfiles[1].mappingProfile.name);
+    createItemMappingProfile(collectionOfProfiles[2].mappingProfile);
+    FieldMappingProfiles.checkMappingProfilePresented(collectionOfProfiles[2].mappingProfile.name);
 
     collectionOfProfiles.forEach(profile => {
-      cy.visit(SettingsMenu.mappingProfilePath);
-      FieldMappingProfiles.createMappingProfile(profile.mappingProfile);
-      FieldMappingProfiles.checkMappingProfilePresented(profile.mappingProfile.name);
       cy.visit(SettingsMenu.actionProfilePath);
       ActionProfiles.createActionProfile(profile.actionProfile, profile.mappingProfile.name);
       ActionProfiles.checkActionProfilePresented(profile.actionProfile.name);
@@ -109,12 +145,5 @@ describe('ui-data-import: MARC file import with creating of the new instance, ho
       FileDetails.checkStatusInColumn(FileDetails.status.created, columnName);
     });
     FileDetails.checkItemsQuantityInSummaryTable(0, '1');
-
-    // delete generated profiles
-    JobProfiles.deleteJobProfile(specialJobProfile.profileName);
-    collectionOfProfiles.forEach(profile => {
-      ActionProfiles.deleteActionProfile(profile.actionProfile.name);
-      FieldMappingProfiles.deleteFieldMappingProfile(profile.mappingProfile.name);
-    });
   });
 });
