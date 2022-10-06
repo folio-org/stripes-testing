@@ -47,7 +47,7 @@ describe('ui-data-import: Check that field protection settings work properly dur
   const actionProfile = {
     name: actionProfileName,
     typeValue : NewActionProfile.folioRecordTypeValue.instance,
-    action: 'Create (all record types)',
+    action: 'Create (all record types except MARC Authority or MARC Holdings)',
   };
   const actionProfileUpdate = {
     name: actionProfileUpdateName,

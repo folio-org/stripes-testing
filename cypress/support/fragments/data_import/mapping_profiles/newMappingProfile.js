@@ -14,7 +14,6 @@ import getRandomPostfix from '../../../utils/stringTools';
 
 const saveButton = Button('Save as profile & Close');
 const organizationModal = Modal('Select Organization');
-const adminNoteFieldName = 'profile.mappingDetails.mappingFields[9].repeatableFieldAction';
 const marcBib = 'MARC Bibliographic';
 const incomingRecordType = {
   marcBib: 'MARC Bibliographic',
@@ -260,10 +259,13 @@ export default {
     cy.wait(500);
   },
 
-  addAdministrativeNote:(note) => {
+  addAdministrativeNote:(note, number) => {
+    // number needs for using this method in filling fields for holdings and item profiles
+    const adminNoteFieldName = `profile.mappingDetails.mappingFields[${number}].repeatableFieldAction`;
+
     cy.do(Select({ name: adminNoteFieldName }).choose(actions.addTheseToExisting));
     cy.do(Button('Add administrative note').click());
-    cy.do(TextField('Administrative note').fillIn(note));
+    cy.do(TextField('Administrative note').fillIn(`"${note}"`));
   },
 
   addElectronicAccess:(relationship, uri, linkText = '') => {
@@ -280,7 +282,7 @@ export default {
     cy.do([
       Select({ name:'profile.mappingDetails.mappingFields[16].repeatableFieldAction' }).choose(actions.addTheseToExisting),
       Button('Add holdings statement').click(),
-      TextField('Add holdings statement').fillIn(`"${statement}"`),
+      TextField('Holdings statement').fillIn(`"${statement}"`),
       TextField('Statement public note').fillIn(`"${statement}"`)
     ]);
   },

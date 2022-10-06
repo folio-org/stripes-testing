@@ -17,11 +17,13 @@ import DataImportSettingsJobProfiles from '../../support/fragments/settings/data
 import SearchInventory from '../../support/fragments/data_import/searchInventory';
 import InventoryInstance from '../../support/fragments/inventory/inventoryInstance';
 import NewMappingProfile from '../../support/fragments/data_import/mapping_profiles/newMappingProfile';
+import HoldingsRecordView from '../../support/fragments/inventory/holdingsRecordView';
+import itemVeiw from '../../support/fragments/inventory/inventoryItem/itemVeiw';
 
 describe('ui-data-import: Match on location', () => {
-  const permanentLocation = 'Annex (KU/CC/DI/A)';
+  const permanentLocation = 'Annex';
   const recordType = 'MARC_BIBLIOGRAPHIC';
-  const instanceTitle = 'Anglo-Saxon manuscripts in microfiche facsimile Volume 25 Corpus Christi College, Cambridge II, MSS 12, 144, 162, 178, 188, 198, 265, 285, 322, 326, 449 microform A. N. Doane (editor and director), Matthew T. Hussey (associate editor), Phillip Pulsiano (founding editor)';
+  const instanceTitle = 'Progress and confusion : the state of macroeconomic policy / edited by Olivier Blanchard, Raghuram Rajan, Kenneth Rogoff, and Lawrence H. Summers.';
 
   // unique profile names for creating
   const instanceMappingProfileName = `autotest_instance_mapping_profile_${getRandomPostfix()}`;
@@ -42,9 +44,10 @@ describe('ui-data-import: Match on location', () => {
   const itemActionProfile = `C17027 action profile update item.${getRandomPostfix()}`;
   const jobProfile = `C17027 job profile.${getRandomPostfix()}`;
 
-  // notes for mapping profiles
-  const noteForHoldingsMappingProfile = '"This note for holdings mapping profile"';
-  const noteForItemMappingProfile = '"This note for item mapping profile"';
+  // elements for update items
+  const noteForHoldingsMappingProfile = 'This note for holdings mapping profile';
+  const noteForItemMappingProfile = 'This note for item mapping profile';
+  const holdingsStatement = 'This is holdings statement';
 
   // unique file name
   const marcFileForCreate = `C17027 autoTestFile.${getRandomPostfix()}.mrc`;
@@ -262,9 +265,7 @@ describe('ui-data-import: Match on location', () => {
     JobProfiles.runImportFile(marcFileForCreate);
     Logs.openFileDetails(marcFileForCreate);
     FileDetails.checkItemsStatusesInResultList(0, [FileDetails.status.created, FileDetails.status.created, FileDetails.status.created, FileDetails.status.created]);
-    // FileDetails.checkItemsStatusesInResultList(1, [FileDetails.status.created, FileDetails.status.created, FileDetails.status.created, FileDetails.status.created]);
-    // FileDetails.checkItemsStatusesInResultList(2, [FileDetails.status.created, FileDetails.status.created, FileDetails.status.created, FileDetails.status.created]);
-    // FileDetails.checkItemsQuantityInSummaryTable(0, '3');
+    FileDetails.checkItemsQuantityInSummaryTable(0, '1');
 
     // get Instance HRID through API
     SearchInventory
@@ -276,37 +277,38 @@ describe('ui-data-import: Match on location', () => {
       });
   });
 
-  // afterEach(() => {
-  //   // delete profiles
-  //   JobProfiles.deleteJobProfile(jobProfileName);
-  //   JobProfiles.deleteJobProfile(jobProfileNameForUpdate);
-  //   MatchProfiles.deleteMatchProfile(instanceHridMatchProfile);
-  //   MatchProfiles.deleteMatchProfile(holdingsPermLocationMatchProfile);
-  //   MatchProfiles.deleteMatchProfile(itemPermLocationMatchProfile);
-  //   ActionProfiles.deleteActionProfile(instanceActionProfileName);
-  //   ActionProfiles.deleteActionProfile(holdingsActionProfileName);
-  //   ActionProfiles.deleteActionProfile(holdingsUpdatesActionProfile);
-  //   ActionProfiles.deleteActionProfile(itemActionProfileName);
-  //   ActionProfiles.deleteActionProfile(itemUpdatesActionProfile);
-  //   FieldMappingProfiles.deleteFieldMappingProfile(instanceMappingProfileName);
-  //   FieldMappingProfiles.deleteFieldMappingProfile(holdingsMappingProfileName);
-  //   FieldMappingProfiles.deleteFieldMappingProfile(holdingsUpdateMappingProfile);
-  //   FieldMappingProfiles.deleteFieldMappingProfile(itemMappingProfileName);
-  //   FieldMappingProfiles.deleteFieldMappingProfile(itemUpdateMappingProfile);
+  afterEach(() => {
+    // delete profiles
+    JobProfiles.deleteJobProfile(jobProfileName);
+    JobProfiles.deleteJobProfile(jobProfile);
+    MatchProfiles.deleteMatchProfile(instanceHridMatchProfile);
+    MatchProfiles.deleteMatchProfile(holdingsPermLocationMatchProfile);
+    MatchProfiles.deleteMatchProfile(itemPermLocationMatchProfile);
+    ActionProfiles.deleteActionProfile(instanceActionProfileName);
+    ActionProfiles.deleteActionProfile(holdingsActionProfileName);
+    ActionProfiles.deleteActionProfile(itemActionProfileName);
+    ActionProfiles.deleteActionProfile(holdingsActionProfile);
+    ActionProfiles.deleteActionProfile(itemActionProfile);
+    FieldMappingProfiles.deleteFieldMappingProfile(instanceMappingProfileName);
+    FieldMappingProfiles.deleteFieldMappingProfile(holdingsMappingProfileName);
+    FieldMappingProfiles.deleteFieldMappingProfile(itemMappingProfileName);
+    FieldMappingProfiles.deleteFieldMappingProfile(holdingsMappingProfile);
+    FieldMappingProfiles.deleteFieldMappingProfile(itemMappingProfile);
 
-  //   cy.getInstance({ limit: 1, expandAll: true, query: `"title"=="${instanceTitle}"` })
-  //     .then((instance) => {
-  //       cy.deleteItem(instance.items[0].id);
-  //       cy.deleteHoldingRecordViaApi(instance.holdings[0].id);
-  //       InventoryInstance.deleteInstanceViaApi(instance.id);
-  //     });
-  // });
+    cy.getInstance({ limit: 1, expandAll: true, query: `"title"=="${instanceTitle}"` })
+      .then((instance) => {
+        console.log(instance);
+        cy.deleteItem(instance.items[0].id);
+        cy.deleteHoldingRecordViaApi(instance.holdings[0].id);
+        InventoryInstance.deleteInstanceViaApi(instance.id);
+      });
+  });
 
   const createHoldingsMappingProfile = (profile) => {
     FieldMappingProfiles.openNewMappingProfileForm();
     NewMappingProfile.fillSummaryInMappingProfile(profile);
-    NewMappingProfile.addAdministrativeNote(noteForHoldingsMappingProfile);
-    NewMappingProfile.addHoldingsStatements('Holdings statement');
+    NewMappingProfile.addAdministrativeNote(noteForHoldingsMappingProfile, 5);
+    NewMappingProfile.addHoldingsStatements(holdingsStatement);
     FieldMappingProfiles.saveProfile();
     FieldMappingProfiles.closeViewModeForMappingProfile(profile.name);
   };
@@ -314,7 +316,7 @@ describe('ui-data-import: Match on location', () => {
   const createItemMappingProfile = (profile) => {
     FieldMappingProfiles.openNewMappingProfileForm();
     NewMappingProfile.fillSummaryInMappingProfile(profile);
-    NewMappingProfile.addAdministrativeNote(noteForItemMappingProfile);
+    NewMappingProfile.addAdministrativeNote(noteForItemMappingProfile, 7);
     FieldMappingProfiles.saveProfile();
     FieldMappingProfiles.closeViewModeForMappingProfile(profile.name);
   };
@@ -334,14 +336,14 @@ describe('ui-data-import: Match on location', () => {
     createItemMappingProfile(itemUpdateMappingProfile);
     FieldMappingProfiles.checkMappingProfilePresented(itemUpdateMappingProfile.name);
 
-    // create action profiles
+    // create Action profiles
     cy.visit(SettingsMenu.actionProfilePath);
     ActionProfiles.createActionProfile(holdingsUpdatesActionProfile, holdingsUpdateMappingProfile.name);
     ActionProfiles.checkActionProfilePresented(holdingsUpdatesActionProfile.name);
     ActionProfiles.createActionProfile(itemUpdatesActionProfile, itemUpdateMappingProfile.name);
     ActionProfiles.checkActionProfilePresented(itemUpdatesActionProfile.name);
 
-    // create Job profiles
+    // create Job profile
     cy.visit(SettingsMenu.jobProfilePath);
     JobProfiles.createJobProfile(jobProfileNameForUpdate);
     NewJobProfile.linkMatchProfile(instanceHridMatchProfile);
@@ -359,9 +361,20 @@ describe('ui-data-import: Match on location', () => {
     JobProfiles.runImportFile(fileNameAfterUpdate);
     Logs.checkStatusOfJobProfile('Completed');
     Logs.openFileDetails(fileNameAfterUpdate);
+    FileDetails.checkStatusInColumn(FileDetails.status.created, FileDetails.columnName.srsMarc);
+    FileDetails.checkStatusInColumn(FileDetails.status.updated, FileDetails.columnName.holdings);
+    FileDetails.checkStatusInColumn(FileDetails.status.updated, FileDetails.columnName.item);
+    FileDetails.checkSrsRecordQuantityInSummaryTable('1');
+    FileDetails.checkHoldingsQuantityInSummaryTable('1', 1);
+    FileDetails.checkItemQuantityInSummaryTable('1', 1);
 
-    // FileDetails.checkItemsQuantityInSummaryTable(0, '1');
-
-    FileDetails.openInstanceInInventory();
+    // check updated items in Inventory
+    FileDetails.openItemsInInventory(4);
+    HoldingsRecordView.checkHoldingsAdministrativeNote(noteForHoldingsMappingProfile);
+    HoldingsRecordView.checkHoldingsStatement(holdingsStatement);
+    HoldingsRecordView.close();
+    InventoryInstance.openHoldingsAccordion(permanentLocation);
+    InventoryInstance.openItemView('No barcode');
+    itemVeiw.checkItemAdministrativeNote(noteForItemMappingProfile);
   });
 });

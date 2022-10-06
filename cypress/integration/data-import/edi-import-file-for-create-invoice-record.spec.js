@@ -37,17 +37,17 @@ describe('ui-data-import: EDIFACT file import with creating of new invoice recor
     DataImport.checkUploadState();
   });
 
-  after(() => {
-    cy.getInvoiceIdApi({ query: `vendorInvoiceNo="${FileDetails.invoiceNumberFromEdifactFile}"` })
-      .then(id => cy.deleteInvoiceFromStorageApi(id));
-    DataImport.checkUploadState();
-    Users.deleteViaApi(user.userId);
+  // after(() => {
+  //   cy.getInvoiceIdApi({ query: `vendorInvoiceNo="${FileDetails.invoiceNumberFromEdifactFile}"` })
+  //     .then(id => cy.deleteInvoiceFromStorageApi(id));
+  //   DataImport.checkUploadState();
+  //   Users.deleteViaApi(user.userId);
 
-    // clean up generated profiles
-    JobProfiles.deleteJobProfile(jobProfileName);
-    ActionProfiles.deleteActionProfile(actionProfileName);
-    FieldMappingProfiles.deleteFieldMappingProfile(mappingProfileName);
-  });
+  //   // clean up generated profiles
+  //   JobProfiles.deleteJobProfile(jobProfileName);
+  //   ActionProfiles.deleteActionProfile(actionProfileName);
+  //   FieldMappingProfiles.deleteFieldMappingProfile(mappingProfileName);
+  // });
 
   it('C343338 EDIFACT file import with creating of new invoice record (folijet)', { tags: [TestTypes.smoke, DevTeams.folijet] }, () => {
     // unique file name to upload
@@ -92,6 +92,7 @@ describe('ui-data-import: EDIFACT file import with creating of new invoice recor
     Logs.checkStatusOfJobProfile();
     Logs.openFileDetails(fileName);
     FileDetails.checkStatusInColumn(FileDetails.status.created, FileDetails.columnName.invoice);
+    FileDetails.checkSrsRecordQuantityInSummaryTable('1');
     FileDetails.checkCreatedInvoiceISummaryTable('1');
     InvoiceView.checkInvoiceDetails(InvoiceView.vendorInvoiceNumber);
   });

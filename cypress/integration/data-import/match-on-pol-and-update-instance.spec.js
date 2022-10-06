@@ -249,7 +249,7 @@ describe('ui-data-import: Match on POL and update related Instance, Holdings, It
     FileDetails.checkItemsStatusesInResultList(0, [FileDetails.status.created, FileDetails.status.updated, FileDetails.status.created, FileDetails.status.created]);
     FileDetails.checkItemsStatusesInResultList(1, [FileDetails.status.dash, FileDetails.status.discarded]);
 
-    FileDetails.openInstanceInInventory();
+    FileDetails.openItemsInInventory(3);
     InventoryInstance.checkIsInstanceUpdated();
     InventoryInstance.checkIsHoldingsCreated(['Main Library >']);
     InventoryInstance.openHoldingsAccordion('Main Library >');

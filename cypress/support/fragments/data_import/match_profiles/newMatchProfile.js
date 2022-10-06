@@ -65,8 +65,6 @@ const fillMatchProfileForm = ({
     fillExistingRecordFields(existingRecordFields.in2, 'in2');
     fillExistingRecordFields(existingRecordFields.subfield, 'subfield');
   } else if (existingRecordType === 'INSTANCE') {
-    cy.intercept('/_/jsonSchemas?path=acq-models/mod-orders-storage/schemas/vendor_detail.json').as('getJson2');
-    cy.wait('@getJson2', getLongDelay());
     // wait for list with data to be loaded
     cy.wait(1500);
     cy.do(Accordion({ id:'match-profile-details' }).find(Button({ dataId:'INSTANCE' })).click());

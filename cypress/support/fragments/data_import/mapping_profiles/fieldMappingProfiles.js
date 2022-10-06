@@ -95,13 +95,6 @@ export default {
     cy.expect(actionsButton.exists());
   },
 
-  createMappingProfileForUpdate:(mappingProfile) => {
-    openNewMappingProfileForm();
-    NewMappingProfile.fillMappingProfileForUpdate(mappingProfile);
-    closeViewModeForMappingProfile(mappingProfile.name);
-    cy.expect(actionsButton.exists());
-  },
-
   createModifyMappingProfile:(mappingProfile, properties) => {
     openNewMappingProfileForm();
     NewMappingProfile.fillModifyMappingProfile(mappingProfile, properties);
@@ -178,15 +171,6 @@ export default {
     MappingProfileDetails.markFieldForProtection(firstProtectedField);
     MappingProfileDetails.markFieldForProtection(secondProtectedField);
     cy.do(saveProfileButton.click());
-  },
-
-  createMappingProfileWithNotes:(mappingProfile, note) => {
-    openNewMappingProfileForm();
-    NewMappingProfile.fillSummaryInMappingProfile(mappingProfile);
-    NewMappingProfile.addAdministrativeNote(note);
-    cy.do(saveProfileButton.click());
-    closeViewModeForMappingProfile(mappingProfile.name);
-    cy.expect(actionsButton.exists());
   },
 
   checkListOfExistingProfilesIsDisplayed:() => {
