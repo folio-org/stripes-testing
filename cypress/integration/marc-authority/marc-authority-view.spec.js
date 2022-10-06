@@ -1,4 +1,3 @@
-import getRandomPostfix from '../../support/utils/stringTools';
 import TestTypes from '../../support/dictionary/testTypes';
 import Features from '../../support/dictionary/features';
 import DevTeams from '../../support/dictionary/devTeams';
@@ -11,6 +10,7 @@ import DataImport from '../../support/fragments/data_import/dataImport';
 
 describe('MARC Authority management', () => {
   const userData = {};
+  let instanceID;
 
   before('Creating user', () => {
     cy.createTempUser([
@@ -30,6 +30,8 @@ describe('MARC Authority management', () => {
   after('Deleting created user', () => {
     Users.deleteViaApi(userData.id);
 
+    InventoryInstance.deleteInstanceViaApi(instanceID);
+
     cy.loginAsAdmin({ path: TopMenu.dataImportPath, waiter: DataImport.waitLoading });
     DataImport.selectLog();
     DataImport.openDeleteImportLogsModal();
@@ -40,6 +42,7 @@ describe('MARC Authority management', () => {
     cy.login(userData.name, userData.password, { path: TopMenu.inventoryPath, waiter: InventoryInstances.waitContentLoading });
     InventoryInstances.searchBySource('MARC');
     InventoryInstances.selectInstance();
+    InventoryInstance.getId().then(id => instanceID = id);
     InventoryInstance.checkExpectedMARCSource();
     InventoryInstance.checkMARCSourceAtNewPane();
   });
