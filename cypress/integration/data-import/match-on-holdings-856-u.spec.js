@@ -46,12 +46,12 @@ describe('ui-data-import: Match on Holdings 856 $u', () => {
 
   const createInstanceActionProfile = {
     name: createInstanceActionProfileName,
-    action: 'Create (all record types)',
+    action: 'Create (all record types except MARC Authority or MARC Holdings)',
     typeValue: 'Instance',
   };
   const createEHoldingsActionProfile = {
     name: createEHoldingsActionProfileName,
-    action: 'Create (all record types)',
+    action: 'Create (all record types except MARC Authority or MARC Holdings)',
     typeValue: 'Holdings',
   };
   const updateEHoldingsActionProfile = {

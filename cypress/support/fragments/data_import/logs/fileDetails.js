@@ -22,7 +22,8 @@ const status = {
   created: 'Created',
   updated: 'Updated',
   discarded: 'Discarded',
-  dash: 'No value set-'
+  dash: 'No value set-',
+  multiple: 'Multiple'
 };
 
 const checkStatusInColumn = (specialStatus, specialColumnName) => {
@@ -73,9 +74,9 @@ export default {
   checkItemsQuantityInSummaryTable,
   checkCreatedInvoiceISummaryTable,
 
-  openInstanceInInventory:(columnIndex = 3, row = 0) => {
+  openInstanceInInventory:(statusOfItem, columnIndex = 3, row = 0) => {
     cy.do(resultsList.find(MultiColumnListCell({ row, columnIndex }))
-      .find(Link('Updated'))
+      .find(Link(status))
       .click());
   }
 };

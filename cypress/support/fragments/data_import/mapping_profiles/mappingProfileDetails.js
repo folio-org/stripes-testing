@@ -69,16 +69,30 @@ export default {
     ]);
   },
 
-  markFieldForProtection:(field) => {
-    cy.do(MultiColumnListCell({ content: field }).perform(
-      element => {
-        const rowNumber = element.parentElement.parentElement.getAttribute('data-row-index');
+  // markFieldForProtection:(field) => {
+  //   cy.do(MultiColumnListCell({ content: field }).perform(
+  //     element => {
+  //       const rowNumber = element.parentElement.parentElement.getAttribute('data-row-index');
 
-        cy.do(Pane('New field mapping profile').find(Accordion({ id: 'edit-override-protected-section' }))
-          .find(MultiColumnListRow({ indexRow: rowNumber })).find(Checkbox())
-          .click());
-      }
-    ));
+  //       cy.do(Pane('New field mapping profile').find(Accordion({ id: 'edit-override-protected-section' }))
+  //         .find(MultiColumnListRow({ indexRow: rowNumber })).find(Checkbox())
+  //         .click());
+  //     }
+  //   ));
+  // },
+
+  markFieldForProtection:(field) => {
+    // cy.get('[class^="mclCell"]').contains(field).then(array => {
+    //   array.forEach(elem => { console.log(elem); });
+    //   // console.log('Array', array[0].parentElement.querySelector('input[type="checkbox"]'));
+
+    //   array[0].querySelector('input[type="checkbox"]').click();
+    // });
+    cy.get('[class^="mclRow"]').then(array => {
+      array.forEach(elem => {
+        console.log(elem);
+      });
+    });
   },
 
   checkErrorMessageIsPresented:(textFieldName) => {
