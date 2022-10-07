@@ -1,0 +1,327 @@
+import uuid from 'uuid';
+import moment from 'moment';
+import TestTypes from '../../support/dictionary/testTypes';
+import devTeams from '../../support/dictionary/devTeams';
+import permissions from '../../support/dictionary/permissions';
+import UserEdit from '../../support/fragments/users/userEdit';
+import TopMenu from '../../support/fragments/topMenu';
+import AppPaths from '../../support/fragments/app-paths';
+import ChangeDueDateForm from '../../support/fragments/loans/changeDueDateForm';
+import LoansPage from '../../support/fragments/loans/loansPage';
+import settingsMenu from '../../support/fragments/settingsMenu';
+import generateItemBarcode from '../../support/utils/generateItemBarcode';
+import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
+import PatronGroups from '../../support/fragments/settings/users/patronGroups';
+import Location from '../../support/fragments/settings/tenant/locations/newLocation';
+import Users from '../../support/fragments/users/users';
+import SearchPane from '../../support/fragments/circulation-log/searchPane';
+import CirculationRules from '../../support/fragments/circulation/circulation-rules';
+import NoticePolicyApi, { NOTICE_CATEGORIES, NOTICE_ACTIONS } from '../../support/fragments/circulation/notice-policy';
+import NoticePolicyTemplateApi from '../../support/fragments/circulation/notice-policy-template';
+import CheckInActions from '../../support/fragments/check-in-actions/checkInActions';
+import NewNoticePolicy from '../../support/fragments/circulation/newNoticePolicy';
+import NewNoticePolicyTemplate from '../../support/fragments/circulation/newNoticePolicyTemplate';
+import CheckOutActions from '../../support/fragments/check-out-actions/check-out-actions';
+import Checkout from '../../support/fragments/checkout/checkout';
+import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
+import InventoryInstance from '../../support/fragments/inventory/inventoryInstance';
+import LoanPolicy from '../../support/fragments/circulation/loan-policy';
+import getRandomPostfix, { getTestEntityValue } from '../../support/utils/stringTools';
+import OtherSettings from '../../support/fragments/settings/circulation/otherSettings';
+
+function generateUniqueItemBarcodeWithShift(index = 0) {
+  return (generateItemBarcode() - Math.round(getRandomPostfix()) + '').substring(index);
+}
+
+describe('Check Out - Actions', () => {
+  const defaultTemplate = {
+    name: 'TestName',
+    description: 'Created by autotest team',
+    body: 'Test_email_body',
+  };
+  const checkOutTemplate = { ...defaultTemplate };
+  checkOutTemplate.name += ' Check out';
+  checkOutTemplate.subject = checkOutTemplate.name;
+  checkOutTemplate.body += ' {{item.title}} {{loan.initialBorrowDateTime}}';
+  const loanDueDateChangeTemplate = { ...defaultTemplate };
+  loanDueDateChangeTemplate.name += ' Loan due date change';
+  loanDueDateChangeTemplate.subject = loanDueDateChangeTemplate.name;
+  loanDueDateChangeTemplate.body += ' {{item.title}} {{loan.dueDateTime}}';
+  const checkInTemplate = { ...defaultTemplate };
+  checkInTemplate.name += ' Check in';
+  checkInTemplate.subject = checkInTemplate.name;
+  checkInTemplate.body += ' {{item.title}} {{loan.checkedInDateTime}}';
+
+  const noticePolicy = {
+    name: 'TestName Check out + Loan due date change + Check in',
+    description: 'Created by autotest team',
+    selectOptions(template) {
+      return {
+        noticeName: NOTICE_CATEGORIES.loan.name,
+        noticeId: NOTICE_CATEGORIES.loan.id,
+        templateName: template.name,
+        format: 'Email',
+        action: template.name.substring(template.name.indexOf(' ') + 1),
+      };
+    },
+  };
+
+  const patronGroup = {
+    name: 'groupToTestNoticeCheckout' + getRandomPostfix(),
+  };
+  const userData = {
+    personal: {
+      lastname: null,
+    },
+  };
+  const itemsData = {
+    itemsWithSeparateInstance: [
+      {
+        instanceTitle: `Instance ${getRandomPostfix()}`,
+      },
+      {
+        instanceTitle: `Instance ${getRandomPostfix()}`,
+      },
+    ],
+  };
+  const testData = {
+    noticePolicyTemplateToken: 'item.title',
+    userServicePoint: ServicePoints.getDefaultServicePointWithPickUpLocation(
+      'autotest receive notice check in',
+      uuid()
+    ),
+  };
+  const searchResultsData = {
+    userBarcode: null,
+    object: 'Notice',
+    circAction: 'Send',
+    // TODO: add check for date with format <C6/8/2022, 6:46 AM>
+    servicePoint: testData.userServicePoint.name,
+    source: 'System',
+    desc: `Template: ${checkOutTemplate.name}. Triggering event: Check in.`,
+  };
+  // const policy = {
+  //   loanable: true,
+  //   loansPolicy: {
+  //     profileId: 'Rolling',
+  //     period: {
+  //       duration: 10,
+  //       intervalId: 'Minutes',
+  //     },
+  //     closedLibraryDueDateManagementId: 'CURRENT_DUE_DATE',
+  //   },
+  //   renewable: true,
+  //   renewalsPolicy: {
+  //     unlimited: true,
+  //     renewFromId: 'CURRENT_DUE_DATE',
+  //   },
+  // };
+  let loanPolicyId;
+
+  before('Preconditions', () => {
+    itemsData.itemsWithSeparateInstance.forEach(function (item, index) {
+      item.barcode = generateUniqueItemBarcodeWithShift(index);
+    });
+
+    cy.getAdminToken()
+      .then(() => {
+        ServicePoints.createViaApi(testData.userServicePoint);
+        testData.defaultLocation = Location.getDefaultLocation(testData.userServicePoint.id);
+        Location.createViaApi(testData.defaultLocation);
+        cy.getInstanceTypes({ limit: 1 }).then((instanceTypes) => {
+          testData.instanceTypeId = instanceTypes[0].id;
+        });
+        cy.getHoldingTypes({ limit: 1 }).then((res) => {
+          testData.holdingTypeId = res[0].id;
+        });
+        cy.getLoanTypes({ limit: 1 }).then((res) => {
+          testData.loanTypeId = res[0].id;
+        });
+        cy.getMaterialTypes({ limit: 1 }).then((res) => {
+          testData.materialTypeId = res.id;
+          testData.materialTypeName = res.name;
+        });
+      })
+      .then(() => {
+        itemsData.itemsWithSeparateInstance.forEach((item, index) => {
+          InventoryInstances.createFolioInstanceViaApi({
+            instance: {
+              instanceTypeId: testData.instanceTypeId,
+              title: item.instanceTitle,
+            },
+            holdings: [
+              {
+                holdingsTypeId: testData.holdingTypeId,
+                permanentLocationId: testData.defaultLocation.id,
+              },
+            ],
+            items: [
+              {
+                barcode: item.barcode,
+                status: { name: 'Available' },
+                permanentLoanType: { id: testData.loanTypeId },
+                materialType: { id: testData.materialTypeId },
+              },
+            ],
+          }).then((specialInstanceIds) => {
+            itemsData.itemsWithSeparateInstance[index].instanceId = specialInstanceIds.instanceId;
+            itemsData.itemsWithSeparateInstance[index].holdingId = specialInstanceIds.holdingIds[0].id;
+            itemsData.itemsWithSeparateInstance[index].itemId = specialInstanceIds.holdingIds[0].itemIds;
+          });
+        });
+        cy.wrap(itemsData.itemsWithSeparateInstance).as('items');
+      });
+
+    //   LoanPolicy.createApi(loanBody).then((policy) => {
+    //   loanPolicy = policy;
+    // });
+    cy.createLoanPolicy({
+      loansPolicy: {
+        closedLibraryDueDateManagementId: 'CURRENT_DUE_DATE_TIME',
+        period: {
+          duration: 10,
+          intervalId: 'Minutes',
+        },
+        profileId: 'Rolling',
+      },
+      renewable: true,
+      renewalsPolicy: {
+        unlimited: true,
+        renewFromId: 'CURRENT_DUE_DATE',
+      },
+    }).then((res) => {
+      loanPolicyId = res.id;
+    });
+
+    PatronGroups.createViaApi(patronGroup.name).then((res) => {
+      patronGroup.id = res;
+      cy.createTempUser(
+        [
+          permissions.checkinAll.gui,
+          permissions.checkoutAll.gui,
+          permissions.circulationLogAll.gui,
+          permissions.uiCirculationSettingsNoticeTemplates.gui,
+          permissions.uiCirculationSettingsNoticePolicies.gui,
+          permissions.loansAll.gui,
+        ],
+        patronGroup.name
+      )
+        .then((userProperties) => {
+          userData.username = userProperties.username;
+          userData.password = userProperties.password;
+          userData.userId = userProperties.userId;
+          userData.barcode = userProperties.barcode;
+          userData.personal.lastname = userProperties.lastName;
+          searchResultsData.userBarcode = userProperties.barcode;
+        })
+        .then(() => {
+          UserEdit.addServicePointViaApi(testData.userServicePoint.id, userData.userId, testData.userServicePoint.id);
+
+          cy.getCirculationRules().then((response) => {
+            testData.baseRules = response.rulesAsText;
+            testData.ruleProps = CirculationRules.getRuleProps(response.rulesAsText);
+          });
+
+          cy.login(userData.username, userData.password, {
+            path: settingsMenu.circulationPatronNoticeTemplatesPath,
+            waiter: NewNoticePolicyTemplate.waitLoading,
+          });
+        });
+    });
+  });
+
+  after('Delete New Service point, Item and User', () => {
+    UserEdit.changeServicePointPreferenceViaApi(userData.userId, [testData.userServicePoint.id]);
+    CirculationRules.deleteRuleViaApi(testData.baseRules);
+    ServicePoints.deleteViaApi(testData.userServicePoint.id);
+    NoticePolicyApi.deleteApi(testData.ruleProps.n);
+    Users.deleteViaApi(userData.userId);
+    PatronGroups.deleteViaApi(patronGroup.id);
+    cy.get('@items').each((item, index) => {
+      cy.deleteItem(item.itemId);
+      cy.deleteHoldingRecordViaApi(itemsData.itemsWithSeparateInstance[index].holdingId);
+      InventoryInstance.deleteInstanceViaApi(itemsData.itemsWithSeparateInstance[index].instanceId);
+    });
+    Location.deleteViaApiIncludingInstitutionCampusLibrary(
+      testData.defaultLocation.institutionId,
+      testData.defaultLocation.campusId,
+      testData.defaultLocation.libraryId,
+      testData.defaultLocation.id
+    );
+    NoticePolicyTemplateApi.getViaApi({ query: `name=${checkOutTemplate.name}` }).then((templateId) => {
+      NoticePolicyTemplateApi.deleteViaApi(templateId);
+    });
+    NoticePolicyTemplateApi.getViaApi({ query: `name=${loanDueDateChangeTemplate.name}` }).then((templateId) => {
+      NoticePolicyTemplateApi.deleteViaApi(templateId);
+    });
+    NoticePolicyTemplateApi.getViaApi({ query: `name=${checkInTemplate.name}` }).then((templateId) => {
+      NoticePolicyTemplateApi.deleteViaApi(templateId);
+    });
+  });
+
+  it(
+    'C347862 Check out + Loan due date change + Check in triggers (vega)',
+    { tags: [TestTypes.smoke, devTeams.vega] },
+    () => {
+      // 1
+      const createPatronNoticeTemplate = (template) => {
+        NewNoticePolicyTemplate.startAdding();
+        NewNoticePolicyTemplate.checkInitialState();
+        NewNoticePolicyTemplate.addToken('item.title');
+        NewNoticePolicyTemplate.create(template, false);
+        NewNoticePolicyTemplate.checkPreview();
+        NewNoticePolicyTemplate.saveAndClose();
+        NewNoticePolicyTemplate.waitLoading();
+        NewNoticePolicyTemplate.checkAfterSaving(template);
+      };
+      createPatronNoticeTemplate(checkOutTemplate);
+      createPatronNoticeTemplate(loanDueDateChangeTemplate);
+      createPatronNoticeTemplate(checkInTemplate);
+      // 2
+      cy.visit(settingsMenu.circulationPatronNoticePoliciesPath);
+      NewNoticePolicy.waitLoading();
+      NewNoticePolicy.startAdding();
+      NewNoticePolicy.checkInitialState();
+      NewNoticePolicy.fillGeneralInformation(noticePolicy);
+      NewNoticePolicy.addNotice(noticePolicy.selectOptions(checkOutTemplate));
+      NewNoticePolicy.addNotice(noticePolicy.selectOptions(loanDueDateChangeTemplate), 1);
+      NewNoticePolicy.addNotice(noticePolicy.selectOptions(checkInTemplate), 2);
+      NewNoticePolicy.save();
+      NewNoticePolicy.waitLoading();
+      NewNoticePolicy.check(noticePolicy);
+
+      // 3
+      cy.getNoticePolicy({ query: `name=="${noticePolicy.name}"` }).then((res) => {
+        testData.ruleProps.n = res[0].id;
+        testData.ruleProps.l = loanPolicyId;
+        testData.ruleProps.l = CirculationRules.addRuleViaApi(
+          testData.baseRules,
+          testData.ruleProps,
+          'g ',
+          patronGroup.id
+        );
+      });
+
+      cy.visit(TopMenu.checkOutPath);
+      CheckOutActions.checkOutUser(userData.barcode);
+      CheckOutActions.checkUserInfo(userData, patronGroup.name);
+      cy.get('@items').each((item) => {
+        CheckOutActions.checkOutItem(item.barcode);
+        Checkout.verifyResultsInTheRow([item.barcode]);
+      });
+      CheckOutActions.endCheckOutSession();
+
+      cy.visit(AppPaths.getOpenLoansPath(userData.userId));
+      LoansPage.checkAll();
+      ChangeDueDateForm.fillDate('10/07/2030');
+      ChangeDueDateForm.saveAndClose();
+
+      cy.visit(TopMenu.checkInPath);
+      cy.get('@items').each((item) => {
+        CheckInActions.checkInItem(item.barcode);
+        CheckInActions.verifyLastCheckInItem(item.barcode);
+      });
+      CheckInActions.endCheckInSession();
+    }
+  );
+});

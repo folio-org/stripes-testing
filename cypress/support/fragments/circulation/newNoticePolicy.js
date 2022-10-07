@@ -59,12 +59,12 @@ export default {
     return cy.do(Button({ id: 'clickable-create-entry' }).click());
   },
 
-  addNotice(patronNoticePolicy) {
+  addNotice(patronNoticePolicy, index = 0) {
     return cy.do([
       Section({ id: `edit${patronNoticePolicy.noticeName}Notices` }).find(addNoticeButton).click(),
-      Select({ name: `${patronNoticePolicy.noticeId}Notices[0].templateId` }).choose(patronNoticePolicy.templateName),
-      Select({ name: `${patronNoticePolicy.noticeId}Notices[0].format` }).choose(patronNoticePolicy.format),
-      Select({ name: `${patronNoticePolicy.noticeId}Notices[0].sendOptions.sendWhen` }).choose(patronNoticePolicy.action),
+      Select({ name: `${patronNoticePolicy.noticeId}Notices[${index}].templateId` }).choose(patronNoticePolicy.templateName),
+      Select({ name: `${patronNoticePolicy.noticeId}Notices[${index}].format` }).choose(patronNoticePolicy.format),
+      Select({ name: `${patronNoticePolicy.noticeId}Notices[${index}].sendOptions.sendWhen` }).choose(patronNoticePolicy.action),
     ]);
     // add check for alert "div[role=alert]" 'Always sent at the end of a session and loans are bundled into a single notice for each patron.'
   },

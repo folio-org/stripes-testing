@@ -1,10 +1,13 @@
-import { matching } from 'bigtest';
+import { CheckboxInTable, matching } from 'bigtest';
 import { Button, Pane, KeyValue, including, MultiColumnListRow, MultiColumnListCell } from '../../../../interactors';
 import ConfirmItemStatusModal from '../users/loans/confirmItemStatusModal';
 
 const claimReturnedButton = Button('Claim returned');
 
 export default {
+  checkAll() {
+    cy.do(CheckboxInTable({ name: 'check-all' }).click());
+  },
   exportLoansToCSV() {
     cy.do(Button('Export to CSV').click());
   },
