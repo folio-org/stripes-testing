@@ -19,7 +19,6 @@ import Users from '../../support/fragments/users/users';
 
 describe('ui-data-import: Match on Instance identifier match meets both the Identifier type and Data requirements (Scenario 1)', () => {
   let userId;
-  const filePathForCreateInstance = 'ID Match Test File - Create.mrc';
   const filePathForUpdateInstance = 'ID Match Test File - Update1.mrc';
   const fileNameForCreateInstance = `C347828autotestFile.${getRandomPostfix()}.mrc`;
   const fileNameForUpdateInstance = `C347828autotestFile.${getRandomPostfix()}.mrc`;
@@ -103,7 +102,7 @@ describe('ui-data-import: Match on Instance identifier match meets both the Iden
 
   it('C347828 Match on Instance identifier match meets both the Identifier type and Data requirements (Folijet)', { tags: [TestTypes.criticalPath, DevTeams.folijet] }, () => {
     cy.visit(TopMenu.dataImportPath);
-    DataImport.uploadFile(filePathForCreateInstance, fileNameForCreateInstance);
+    DataImport.uploadFile('marcFileForMatchOnIdentifier.mrc', fileNameForCreateInstance);
     JobProfiles.searchJobProfileForImport(jobProfileToRun);
     JobProfiles.runImportFile(fileNameForCreateInstance);
     Logs.checkStatusOfJobProfile('Completed');
