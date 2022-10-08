@@ -174,6 +174,17 @@ export default {
       .find(Checkbox()).click());
   },
 
+  /*// this.waitUIToBeFiltered();
+  return cy.get('#list-data-import').then(element => {
+    // only 100 records shows on every page
+    const resultCount = element.attr('data-total-count') > 99 ? 99 : element.attr('data-total-count');
+
+    // verify every string in result table
+    for (let i = 0; i < resultCount; i++) {
+      cy.expect(MultiColumnListCell({ content: userName, row: i }).exists());
+    }
+  });*/
+
   verifyDataImportLogsDeleted(oldLogsHrIds) {
     cy.get('body').then($body => {
       if (!$body.find('#job-logs-list').length) {
