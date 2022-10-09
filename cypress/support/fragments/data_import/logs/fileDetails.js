@@ -104,7 +104,7 @@ export default {
 
   openInstanceInInventory:(statusOfItem, columnIndex = 3, row = 0) => {
     cy.do(resultsList.find(MultiColumnListCell({ row, columnIndex }))
-      .find(Link(status))
+      .find(Link(statusOfItem))
       .click());
   }
 };
