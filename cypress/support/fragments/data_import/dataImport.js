@@ -141,7 +141,7 @@ export default {
   },
 
   getLogsHrIdsFromUI: (logsCount = 25) => {
-    const hrIdColumnIndex = 7;
+    const hrIdColumnIndex = 8;
     const cells = [];
 
     new Array(logsCount).fill(null).forEach((_, index) => {
@@ -174,26 +174,13 @@ export default {
       .find(Checkbox()).click());
   },
 
-  /*// this.waitUIToBeFiltered();
-  return cy.get('#list-data-import').then(element => {
-    // only 100 records shows on every page
-    const resultCount = element.attr('data-total-count') > 99 ? 99 : element.attr('data-total-count');
-
-    // verify every string in result table
-    for (let i = 0; i < resultCount; i++) {
-      cy.expect(MultiColumnListCell({ content: userName, row: i }).exists());
-    }
-  });*/
-
   verifyDataImportLogsDeleted(oldLogsHrIds) {
     cy.get('body').then($body => {
       if (!$body.find('#job-logs-list').length) {
         cy.expect(jobLogsList.absent());
         return;
       }
-
       cy.expect(selectAllCheckbox.is({ disabled: false }));
-
       // since data import landing page displays latest 25 logs at a time,
       // when there are more than 25 logs and after deleting current logs, new logs will be displayed.
       // so we need to verify that the hrIds of new logs are different from those of previous logs.
@@ -226,7 +213,6 @@ export default {
 
   verifyDeleteLogsButtonDisabled: () => {
     cy.do(actionsButton.click());
-
     cy.expect(deleteLogsButton.is({ disabled: true }));
   },
 
