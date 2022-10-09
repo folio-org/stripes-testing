@@ -151,8 +151,8 @@ describe('ui-data-import: Match on Holdings 856 $u', () => {
 
     cy.visit(SettingsMenu.matchProfilePath);
     MatchProfiles.createMatchProfile(matchProfile);
-    cy.visit(SettingsMenu.jobProfilePath);
 
+    cy.visit(SettingsMenu.jobProfilePath);
     JobProfiles.createJobProfile(createInstanceAndEHoldingsJobProfile);
     NewJobProfile.linkActionProfile(createInstanceActionProfile);
     NewJobProfile.linkActionProfile(createEHoldingsActionProfile);

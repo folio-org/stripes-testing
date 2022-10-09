@@ -19,7 +19,6 @@ import Users from '../../support/fragments/users/users';
 
 describe('ui-data-import: Match on Instance identifier match meets both the Identifier type and Data requirements (Scenario 1)', () => {
   let userId;
-  const filePathForUpdateInstance = 'ID Match Test File - Update1.mrc';
   const fileNameForCreateInstance = `C347828autotestFile.${getRandomPostfix()}.mrc`;
   const fileNameForUpdateInstance = `C347828autotestFile.${getRandomPostfix()}.mrc`;
   const jobProfileToRun = 'Default - Create instance and SRS MARC Bib';
@@ -102,7 +101,7 @@ describe('ui-data-import: Match on Instance identifier match meets both the Iden
 
   it('C347828 Match on Instance identifier match meets both the Identifier type and Data requirements (Folijet)', { tags: [TestTypes.criticalPath, DevTeams.folijet] }, () => {
     cy.visit(TopMenu.dataImportPath);
-    DataImport.uploadFile('marcFileForMatchOnIdentifier.mrc', fileNameForCreateInstance);
+    DataImport.uploadFile('marcFileForMatchOnIdentifierForCreate.mrc', fileNameForCreateInstance);
     JobProfiles.searchJobProfileForImport(jobProfileToRun);
     JobProfiles.runImportFile(fileNameForCreateInstance);
     Logs.checkStatusOfJobProfile('Completed');
@@ -132,7 +131,7 @@ describe('ui-data-import: Match on Instance identifier match meets both the Iden
     JobProfiles.checkJobProfilePresented(jobProfileName);
 
     cy.visit(TopMenu.dataImportPath);
-    DataImport.uploadFile(filePathForUpdateInstance, fileNameForUpdateInstance);
+    DataImport.uploadFile('marcFileForMatchOnIdentifierForUpdate.mrc', fileNameForUpdateInstance);
     JobProfiles.searchJobProfileForImport(jobProfileName);
     JobProfiles.runImportFile(fileNameForUpdateInstance);
     Logs.checkStatusOfJobProfile('Completed');
