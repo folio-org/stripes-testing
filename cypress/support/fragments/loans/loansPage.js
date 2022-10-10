@@ -3,6 +3,7 @@ import { Button, Pane, KeyValue, including, MultiColumnListRow, MultiColumnListC
 import ConfirmItemStatusModal from '../users/loans/confirmItemStatusModal';
 
 const claimReturnedButton = Button('Claim returned');
+const changeDueDateButton = Button('Change due date');
 
 export default {
   checkAll() {
@@ -14,11 +15,11 @@ export default {
   openChangeDueDateForm() {
     cy.do([
       Button({ icon: 'ellipsis' }).click(),
-      Button('Change due date').click(),
+      changeDueDateButton.click(),
     ]);
   },
   openChangeDueDate() {
-    cy.do(Button('Change due date').click());
+    cy.do(changeDueDateButton.click());
   },
   claimReturnedAndConfirm(reasonWhyItemChangesStatus) {
     this.claimReturned();

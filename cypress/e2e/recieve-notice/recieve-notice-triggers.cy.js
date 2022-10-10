@@ -7,7 +7,7 @@ import TopMenu from '../../support/fragments/topMenu';
 import AppPaths from '../../support/fragments/app-paths';
 import ChangeDueDateForm from '../../support/fragments/loans/changeDueDateForm';
 import LoansPage from '../../support/fragments/loans/loansPage';
-import settingsMenu from '../../support/fragments/settingsMenu';
+import SettingsMenu from '../../support/fragments/settingsMenu';
 import generateItemBarcode from '../../support/utils/generateItemBarcode';
 import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
 import PatronGroups from '../../support/fragments/settings/users/patronGroups';
@@ -39,7 +39,7 @@ describe('Triggers: Check Out, Loan due date change, Check in', () => {
   const checkOutTemplate = { ...defaultTemplate };
   checkOutTemplate.name += ' Check out';
   checkOutTemplate.subject = checkOutTemplate.name;
-  checkOutTemplate.body += ' {{item.title}} {{loan.initialBorrowDateTime}}';
+  checkOutTemplate.body = `{{#loans}}${checkOutTemplate.body} {{item.title}} {{loan.initialBorrowDateTime}}{{/loans}}`;
   const loanDueDateChangeTemplate = { ...defaultTemplate };
   loanDueDateChangeTemplate.name += ' Loan due date change';
   loanDueDateChangeTemplate.subject = loanDueDateChangeTemplate.name;
@@ -47,7 +47,7 @@ describe('Triggers: Check Out, Loan due date change, Check in', () => {
   const checkInTemplate = { ...defaultTemplate };
   checkInTemplate.name += ' Check in';
   checkInTemplate.subject = checkInTemplate.name;
-  checkInTemplate.body += ' {{item.title}} {{loan.checkedInDateTime}}';
+  checkInTemplate.body = `{{#loans}}${checkInTemplate.body} {{item.title}} {{loan.checkedInDateTime}}{{/loans}}`;
   let loanPolicyId;
   const noticePolicy = {
     name: `${defaultTemplate.name} Check out + Loan due date change + Check in`,
@@ -77,9 +77,8 @@ describe('Triggers: Check Out, Loan due date change, Check in', () => {
     ],
   };
   const testData = {
-    noticePolicyTemplateToken: 'item.title',
     userServicePoint: ServicePoints.getDefaultServicePointWithPickUpLocation(
-      'autotest receive notice check in',
+      'autotest receive notice triggers',
       uuid()
     ),
   };
@@ -91,6 +90,23 @@ describe('Triggers: Check Out, Loan due date change, Check in', () => {
     servicePoint: testData.userServicePoint.name,
     source: 'System',
     desc: `Template: ${checkOutTemplate.name}. Triggering event: Check out.`,
+  };
+
+  const checkNoticeIsSent = (checkParams) => {
+    cy.visit(TopMenu.circulationLogPath);
+    SearchPane.searchByUserBarcode(userData.barcode);
+    SearchPane.checkResultSearch(checkParams);
+  };
+
+  const createPatronNoticeTemplate = (template) => {
+    NewNoticePolicyTemplate.startAdding();
+    NewNoticePolicyTemplate.checkInitialState();
+    NewNoticePolicyTemplate.addToken('item.title');
+    NewNoticePolicyTemplate.create(template, false);
+    NewNoticePolicyTemplate.checkPreview();
+    NewNoticePolicyTemplate.saveAndClose();
+    NewNoticePolicyTemplate.waitLoading();
+    NewNoticePolicyTemplate.checkAfterSaving(template);
   };
 
   before('Preconditions', () => {
@@ -196,7 +212,7 @@ describe('Triggers: Check Out, Loan due date change, Check in', () => {
           });
 
           cy.login(userData.username, userData.password, {
-            path: settingsMenu.circulationPatronNoticeTemplatesPath,
+            path: SettingsMenu.circulationPatronNoticeTemplatesPath,
             waiter: NewNoticePolicyTemplate.waitLoading,
           });
         });
@@ -237,21 +253,11 @@ describe('Triggers: Check Out, Loan due date change, Check in', () => {
     'C347862 Check out + Loan due date change + Check in triggers (vega)',
     { tags: [TestTypes.smoke, devTeams.vega] },
     () => {
-      const createPatronNoticeTemplate = (template) => {
-        NewNoticePolicyTemplate.startAdding();
-        NewNoticePolicyTemplate.checkInitialState();
-        NewNoticePolicyTemplate.addToken('item.title');
-        NewNoticePolicyTemplate.create(template, false);
-        NewNoticePolicyTemplate.checkPreview();
-        NewNoticePolicyTemplate.saveAndClose();
-        NewNoticePolicyTemplate.waitLoading();
-        NewNoticePolicyTemplate.checkAfterSaving(template);
-      };
       createPatronNoticeTemplate(checkOutTemplate);
       createPatronNoticeTemplate(loanDueDateChangeTemplate);
       createPatronNoticeTemplate(checkInTemplate);
 
-      cy.visit(settingsMenu.circulationPatronNoticePoliciesPath);
+      cy.visit(SettingsMenu.circulationPatronNoticePoliciesPath);
       NewNoticePolicy.waitLoading();
       NewNoticePolicy.startAdding();
       NewNoticePolicy.checkInitialState();
@@ -266,19 +272,13 @@ describe('Triggers: Check Out, Loan due date change, Check in', () => {
       cy.getNoticePolicy({ query: `name=="${noticePolicy.name}"` }).then((res) => {
         testData.ruleProps.n = res[0].id;
         testData.ruleProps.l = loanPolicyId;
-        testData.ruleProps.l = CirculationRules.addRuleViaApi(
+        CirculationRules.addRuleViaApi(
           testData.baseRules,
           testData.ruleProps,
           'g ',
           patronGroup.id
         );
       });
-
-      const checkMail = (checkParams) => {
-        cy.visit(TopMenu.circulationLogPath);
-        SearchPane.searchByUserBarcode(userData.barcode);
-        SearchPane.checkResultSearch(checkParams);
-      };
 
       cy.visit(TopMenu.checkOutPath);
       CheckOutActions.checkOutUser(userData.barcode);
@@ -288,7 +288,7 @@ describe('Triggers: Check Out, Loan due date change, Check in', () => {
         Checkout.verifyResultsInTheRow([item.barcode]);
       });
       CheckOutActions.endCheckOutSession();
-      checkMail(searchResultsData);
+      checkNoticeIsSent(searchResultsData);
 
       cy.visit(AppPaths.getOpenLoansPath(userData.userId));
       LoansPage.checkAll();
@@ -296,7 +296,7 @@ describe('Triggers: Check Out, Loan due date change, Check in', () => {
       ChangeDueDateForm.fillDate('10/07/2030');
       ChangeDueDateForm.saveAndClose();
       searchResultsData.desc = `Template: ${loanDueDateChangeTemplate.name}. Triggering event: Manual due date change.`;
-      checkMail(searchResultsData);
+      checkNoticeIsSent(searchResultsData);
 
       cy.visit(TopMenu.checkInPath);
       cy.get('@items').each((item) => {
@@ -305,7 +305,7 @@ describe('Triggers: Check Out, Loan due date change, Check in', () => {
       });
       CheckInActions.endCheckInSession();
       searchResultsData.desc = `Template: ${checkInTemplate.name}. Triggering event: Check in.`;
-      checkMail(searchResultsData);
+      checkNoticeIsSent(searchResultsData);
     }
   );
 });
