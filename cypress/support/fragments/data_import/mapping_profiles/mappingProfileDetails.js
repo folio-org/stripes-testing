@@ -16,9 +16,7 @@ const saveButton = Button('Save as profile & Close');
 const deleteButton = Button('Delete');
 const fullScreenView = Pane({ id:'full-screen-view' });
 
-const saveMappingProfile = () => {
-  cy.do(saveButton.click());
-};
+const saveMappingProfile = () => cy.do(saveButton.click());
 
 const closeViewModeForMappingProfile = (profileName) => {
   cy.do(Pane({ title: profileName }).find(Button({ icon: 'times' })).click());
@@ -69,30 +67,16 @@ export default {
     ]);
   },
 
-  // markFieldForProtection:(field) => {
-  //   cy.do(MultiColumnListCell({ content: field }).perform(
-  //     element => {
-  //       const rowNumber = element.parentElement.parentElement.getAttribute('data-row-index');
-
-  //       cy.do(Pane('New field mapping profile').find(Accordion({ id: 'edit-override-protected-section' }))
-  //         .find(MultiColumnListRow({ indexRow: rowNumber })).find(Checkbox())
-  //         .click());
-  //     }
-  //   ));
-  // },
-
   markFieldForProtection:(field) => {
-    // cy.get('[class^="mclCell"]').contains(field).then(array => {
-    //   array.forEach(elem => { console.log(elem); });
-    //   // console.log('Array', array[0].parentElement.querySelector('input[type="checkbox"]'));
+    cy.do(MultiColumnListCell({ content: field }).perform(
+      element => {
+        const rowNumber = element.parentElement.parentElement.getAttribute('data-row-index');
 
-    //   array[0].querySelector('input[type="checkbox"]').click();
-    // });
-    cy.get('[class^="mclRow"]').then(array => {
-      array.forEach(elem => {
-        console.log(elem);
-      });
-    });
+        cy.do(Pane('New field mapping profile').find(Accordion({ id: 'edit-override-protected-section' }))
+          .find(MultiColumnListRow({ indexRow: rowNumber })).find(Checkbox())
+          .click());
+      }
+    ));
   },
 
   checkErrorMessageIsPresented:(textFieldName) => {

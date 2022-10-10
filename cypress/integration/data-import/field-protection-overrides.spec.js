@@ -100,24 +100,24 @@ describe('ui-data-import: Check that field protection overrides work properly du
   });
 
   afterEach(() => {
-    //MarcFieldProtection.deleteMarcFieldProtectionViaApi(firstFieldId);
-    //MarcFieldProtection.deleteMarcFieldProtectionViaApi(secondFieldId);
-    //   // delete profiles
-    //   JobProfiles.deleteJobProfile(jobProfileNameForUpdate);
-    //   JobProfiles.deleteJobProfile(jobProfileNameForOverride);
-    //   MatchProfiles.deleteMatchProfile(matchProfileName);
-    //   ActionProfiles.deleteActionProfile(marcBibActionProfileNameForUpdate);
-    //   ActionProfiles.deleteActionProfile(instanceActionProfileNameForUpdate);
-    //   ActionProfiles.deleteActionProfile(marcBibActionProfileNameForUpdateAndOverride);
-    //   ActionProfiles.deleteActionProfile(instanceActionProfileNameForUpdateAndOverride);
-    //   FieldMappingProfiles.deleteFieldMappingProfile(marcBibMapProfileNameForUpdate);
-    //   FieldMappingProfiles.deleteFieldMappingProfile(instanceMapProfileNameForUpdate);
-    //   FieldMappingProfiles.deleteFieldMappingProfile(marcBibMapProfileNameForUpdateAndOverride);
-    //   FieldMappingProfiles.deleteFieldMappingProfile(instanceMapProfileNameForUpdateAndOverride);
+    MarcFieldProtection.deleteMarcFieldProtectionViaApi(firstFieldId);
+    MarcFieldProtection.deleteMarcFieldProtectionViaApi(secondFieldId);
+    // delete profiles
+    JobProfiles.deleteJobProfile(jobProfileNameForUpdate);
+    JobProfiles.deleteJobProfile(jobProfileNameForOverride);
+    MatchProfiles.deleteMatchProfile(matchProfileName);
+    ActionProfiles.deleteActionProfile(marcBibActionProfileNameForUpdate);
+    ActionProfiles.deleteActionProfile(instanceActionProfileNameForUpdate);
+    ActionProfiles.deleteActionProfile(marcBibActionProfileNameForUpdateAndOverride);
+    ActionProfiles.deleteActionProfile(instanceActionProfileNameForUpdateAndOverride);
+    FieldMappingProfiles.deleteFieldMappingProfile(marcBibMapProfileNameForUpdate);
+    FieldMappingProfiles.deleteFieldMappingProfile(instanceMapProfileNameForUpdate);
+    FieldMappingProfiles.deleteFieldMappingProfile(marcBibMapProfileNameForUpdateAndOverride);
+    FieldMappingProfiles.deleteFieldMappingProfile(instanceMapProfileNameForUpdateAndOverride);
 
-  //   // delete created files
-  //   FileManager.deleteFile(`cypress/fixtures/${editedFileNameRev1}`);
-  //   FileManager.deleteFile(`cypress/fixtures/${editedFileNameRev2}`);
+    // delete created files
+    FileManager.deleteFile(`cypress/fixtures/${editedFileNameRev1}`);
+    FileManager.deleteFile(`cypress/fixtures/${editedFileNameRev2}`);
   });
 
   // MODSOURMAN-819
@@ -204,102 +204,102 @@ describe('ui-data-import: Check that field protection overrides work properly du
     FieldMappingProfiles.createMappingProfileWithNotes(instanceMappingProfileOverride, noteForOverrideInstanceMappingProfile);
     FieldMappingProfiles.checkMappingProfilePresented(instanceMappingProfileOverride.name);
 
-    // // create action profiles
-    // cy.visit(SettingsMenu.actionProfilePath);
-    // ActionProfiles.createActionProfile(marcBibActionProfile, marcBibMappingProfile.name);
-    // ActionProfiles.checkActionProfilePresented(marcBibActionProfile.name);
+    // create action profiles
+    cy.visit(SettingsMenu.actionProfilePath);
+    ActionProfiles.createActionProfile(marcBibActionProfile, marcBibMappingProfile.name);
+    ActionProfiles.checkActionProfilePresented(marcBibActionProfile.name);
 
-    // ActionProfiles.createActionProfile(instanceActionProfile, instanceMappingProfile.name);
-    // ActionProfiles.checkActionProfilePresented(instanceActionProfile.name);
+    ActionProfiles.createActionProfile(instanceActionProfile, instanceMappingProfile.name);
+    ActionProfiles.checkActionProfilePresented(instanceActionProfile.name);
 
-    // ActionProfiles.createActionProfile(marcBibActionProfileOverride, marcBibMappingProfileOverride.name);
-    // ActionProfiles.checkActionProfilePresented(marcBibActionProfileOverride.name);
+    ActionProfiles.createActionProfile(marcBibActionProfileOverride, marcBibMappingProfileOverride.name);
+    ActionProfiles.checkActionProfilePresented(marcBibActionProfileOverride.name);
 
-    // ActionProfiles.createActionProfile(instanceActionProfileOverride, marcBibMappingProfileOverride.name);
-    // ActionProfiles.checkActionProfilePresented(instanceActionProfileOverride.name);
+    ActionProfiles.createActionProfile(instanceActionProfileOverride, marcBibMappingProfileOverride.name);
+    ActionProfiles.checkActionProfilePresented(instanceActionProfileOverride.name);
 
-    // // create Match profile
-    // cy.visit(SettingsMenu.matchProfilePath);
-    // MatchProfiles.createMatchProfile(matchProfile);
-    // MatchProfiles.checkMatchProfilePresented(matchProfile.profileName);
+    // create Match profile
+    cy.visit(SettingsMenu.matchProfilePath);
+    MatchProfiles.createMatchProfile(matchProfile);
+    MatchProfiles.checkMatchProfilePresented(matchProfile.profileName);
 
-    // // create Job profiles
-    // cy.visit(SettingsMenu.jobProfilePath);
-    // JobProfiles.createJobProfile(jobProfileForUpdate);
-    // NewJobProfile.linkMatchAndTwoActionProfiles(matchProfile.profileName, marcBibActionProfile.name, instanceActionProfile.name);
-    // NewJobProfile.saveAndClose();
-    // JobProfiles.checkJobProfilePresented(jobProfileForUpdate.profileName);
+    // create Job profiles
+    cy.visit(SettingsMenu.jobProfilePath);
+    JobProfiles.createJobProfile(jobProfileForUpdate);
+    NewJobProfile.linkMatchAndTwoActionProfiles(matchProfile.profileName, marcBibActionProfile.name, instanceActionProfile.name);
+    NewJobProfile.saveAndClose();
+    JobProfiles.checkJobProfilePresented(jobProfileForUpdate.profileName);
 
-    // JobProfiles.createJobProfile(jobProfileForOverride);
-    // NewJobProfile.linkMatchAndTwoActionProfiles(matchProfile.profileName, marcBibActionProfileOverride.name, instanceActionProfileOverride.name);
-    // NewJobProfile.saveAndClose();
-    // JobProfiles.checkJobProfilePresented(jobProfileForOverride.profileName);
+    JobProfiles.createJobProfile(jobProfileForOverride);
+    NewJobProfile.linkMatchAndTwoActionProfiles(matchProfile.profileName, marcBibActionProfileOverride.name, instanceActionProfileOverride.name);
+    NewJobProfile.saveAndClose();
+    JobProfiles.checkJobProfilePresented(jobProfileForOverride.profileName);
 
-    // cy.visit(TopMenu.dataImportPath);
-    // // upload a marc file
-    // DataImport.uploadFile('oneMarcBib-BeforeOverride.mrc', fileNameForCreatingInstance);
-    // JobProfiles.searchJobProfileForImport('Default - Create instance and SRS MARC Bib');
-    // JobProfiles.runImportFile(fileNameForCreatingInstance);
-    // Logs.checkStatusOfJobProfile('Completed');
-    // Logs.openFileDetails(fileNameForCreatingInstance);
-    // [FileDetails.columnName.srsMarc, FileDetails.columnName.instance].forEach(columnName => {
-    //   FileDetails.checkStatusInColumn(FileDetails.status.created, columnName);
-    // });
+    cy.visit(TopMenu.dataImportPath);
+    // upload a marc file
+    DataImport.uploadFile('oneMarcBib-BeforeOverride.mrc', fileNameForCreatingInstance);
+    JobProfiles.searchJobProfileForImport('Default - Create instance and SRS MARC Bib');
+    JobProfiles.runImportFile(fileNameForCreatingInstance);
+    Logs.checkStatusOfJobProfile('Completed');
+    Logs.openFileDetails(fileNameForCreatingInstance);
+    [FileDetails.columnName.srsMarc, FileDetails.columnName.instance].forEach(columnName => {
+      FileDetails.checkStatusInColumn(FileDetails.status.created, columnName);
+    });
 
-    // // get Instance HRID through API
-    // SearchInventory.getInstanceHRID()
-    //   .then(hrId => {
-    //     const instanceHrid = hrId[0];
-    //     DataImport.editMarcFile(fileForEditRev1, editedFileNameRev1, instanceHridFromFile, instanceHrid);
-    //     DataImport.editMarcFile(fileForEditRev2, editedFileNameRev2, instanceHridFromFile, instanceHrid);
+    // get Instance HRID through API
+    SearchInventory.getInstanceHRID()
+      .then(hrId => {
+        const instanceHrid = hrId[0];
+        DataImport.editMarcFile(fileForEditRev1, editedFileNameRev1, instanceHridFromFile, instanceHrid);
+        DataImport.editMarcFile(fileForEditRev2, editedFileNameRev2, instanceHridFromFile, instanceHrid);
 
-    //     // upload a marc file
-    //     cy.visit(TopMenu.dataImportPath);
-    //     DataImport.uploadFile(editedFileNameRev1, fileNameForProtect);
-    //     JobProfiles.searchJobProfileForImport(jobProfileForUpdate.profileName);
-    //     JobProfiles.runImportFile(fileNameForProtect);
-    //     Logs.checkStatusOfJobProfile('Completed');
-    //     Logs.openFileDetails(fileNameForProtect);
-    //     // [FileDetails.columnName.srsMarc, FileDetails.columnName.instance].forEach(columnName => {
-    //     //   FileDetails.checkStatusInColumn(FileDetails.status.updated, columnName);
-    //     // });
-    //     // FileDetails.checkItemsQuantityInSummaryTable(1, '1');
+        // upload a marc file
+        cy.visit(TopMenu.dataImportPath);
+        DataImport.uploadFile(editedFileNameRev1, fileNameForProtect);
+        JobProfiles.searchJobProfileForImport(jobProfileForUpdate.profileName);
+        JobProfiles.runImportFile(fileNameForProtect);
+        Logs.checkStatusOfJobProfile('Completed');
+        Logs.openFileDetails(fileNameForProtect);
+        [FileDetails.columnName.srsMarc, FileDetails.columnName.instance].forEach(columnName => {
+          FileDetails.checkStatusInColumn(FileDetails.status.updated, columnName);
+        });
+        FileDetails.checkItemsQuantityInSummaryTable(1, '1');
 
-    //     cy.visit(TopMenu.inventoryPath);
-    //     SearchInventory.searchInstanceByHRID(instanceHrid);
-    //     InstanceRecordView.verifyAdministrativeNote(administrativeNote);
-    //     InventoryInstance.verifyResourceIdentifier(resourceIdentifiers[0].type, resourceIdentifiers[0].value, 0);
-    //     InventoryInstance.verifyResourceIdentifier(resourceIdentifiers[1].type, resourceIdentifiers[1].value, 2);
-    //     InventoryInstance.verifyResourceIdentifier(resourceIdentifiers[2].type, resourceIdentifiers[2].value, 1);
-    //     InstanceRecordView.verifyInstanceNote(instanceNote);
-    //     // verify table data in marc bibliographic source
-    //     InventoryInstance.viewSource();
-    //     resourceIdentifiers.forEach(element => {
-    //       InventoryViewSource.verifyResourceIdentifierInMARCBibSource(protectedFields.firstField, element.value);
-    //     });
-    //     InventoryViewSource.verifyResourceIdentifierInMARCBibSource(protectedFields.secondField, instanceNote);
+        cy.visit(TopMenu.inventoryPath);
+        SearchInventory.searchInstanceByHRID(instanceHrid);
+        InstanceRecordView.verifyAdministrativeNote(administrativeNote);
+        InventoryInstance.verifyResourceIdentifier(resourceIdentifiers[0].type, resourceIdentifiers[0].value, 0);
+        InventoryInstance.verifyResourceIdentifier(resourceIdentifiers[1].type, resourceIdentifiers[1].value, 2);
+        InventoryInstance.verifyResourceIdentifier(resourceIdentifiers[2].type, resourceIdentifiers[2].value, 1);
+        InstanceRecordView.verifyInstanceNote(instanceNote);
+        // verify table data in marc bibliographic source
+        InventoryInstance.viewSource();
+        resourceIdentifiers.forEach(element => {
+          InventoryViewSource.verifyResourceIdentifierInMARCBibSource(protectedFields.firstField, element.value);
+        });
+        InventoryViewSource.verifyResourceIdentifierInMARCBibSource(protectedFields.secondField, instanceNote);
 
-    //     // upload a marc file
-    //     cy.visit(TopMenu.dataImportPath);
-    //     DataImport.uploadFile(editedFileNameRev2, fileNameForOverride);
-    //     JobProfiles.searchJobProfileForImport(jobProfileForOverride.profileName);
-    //     JobProfiles.runImportFile(fileNameForOverride);
-    //     Logs.checkStatusOfJobProfile('Completed');
-    //     Logs.openFileDetails(fileNameForOverride);
-    //     // [FileDetails.columnName.srsMarc, FileDetails.columnName.instance].forEach(columnName => {
-    //     //   FileDetails.checkStatusInColumn(FileDetails.status.updated, columnName);
-    //     // });
-    //     // FileDetails.checkItemsQuantityInSummaryTable(1, '1');
+        // upload a marc file
+        cy.visit(TopMenu.dataImportPath);
+        DataImport.uploadFile(editedFileNameRev2, fileNameForOverride);
+        JobProfiles.searchJobProfileForImport(jobProfileForOverride.profileName);
+        JobProfiles.runImportFile(fileNameForOverride);
+        Logs.checkStatusOfJobProfile('Completed');
+        Logs.openFileDetails(fileNameForOverride);
+        [FileDetails.columnName.srsMarc, FileDetails.columnName.instance].forEach(columnName => {
+          FileDetails.checkStatusInColumn(FileDetails.status.updated, columnName);
+        });
+        FileDetails.checkItemsQuantityInSummaryTable(1, '1');
 
-    //     cy.visit(TopMenu.inventoryPath);
-    //     SearchInventory.searchInstanceByHRID(instanceHrid);
-    //     InstanceRecordView.verifyAdministrativeNote(updatedAdministativeNote);
-    //     InventoryInstance.verifyResourceIdentifierAbsent();
-    //     InstanceRecordView.verifyInstanceNote(updatedInstanceNote);
-    //     // verify table data in marc bibliographic source
-    //     InventoryInstance.viewSource();
-    //     InventoryViewSource.verifyResourceIdentifierInMARCBibSourceAbsent(protectedFields.firstField);
-    //     InventoryViewSource.verifyResourceIdentifierInMARCBibSource(protectedFields.secondField, updatedInstanceNote);
-    //   });
+        cy.visit(TopMenu.inventoryPath);
+        SearchInventory.searchInstanceByHRID(instanceHrid);
+        InstanceRecordView.verifyAdministrativeNote(updatedAdministativeNote);
+        InventoryInstance.verifyResourceIdentifierAbsent();
+        InstanceRecordView.verifyInstanceNote(updatedInstanceNote);
+        // verify table data in marc bibliographic source
+        InventoryInstance.viewSource();
+        InventoryViewSource.verifyResourceIdentifierInMARCBibSourceAbsent(protectedFields.firstField);
+        InventoryViewSource.verifyResourceIdentifierInMARCBibSource(protectedFields.secondField, updatedInstanceNote);
+      });
   });
 });
