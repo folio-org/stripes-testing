@@ -203,6 +203,7 @@ export default {
   },
 
   uploadFile(fileName) {
+    cy.do(Button('or choose file').has({ disabled: false }));
     cy.get('input[type=file]').attachFile(fileName, { allowEmpty: true });
   },
 
