@@ -2,7 +2,7 @@ import getRandomPostfix from '../../support/utils/stringTools';
 import TestTypes from '../../support/dictionary/testTypes';
 import DevTeams from '../../support/dictionary/devTeams';
 import SettingsMenu from '../../support/fragments/settingsMenu';
-import NewFieldMappingProfile from '../../support/fragments/data_import/mapping_profiles/newMappingProfile';
+import NewFieldMappingProfile from '../../support/fragments/data_import/mapping_profiles/newFieldMappingProfile';
 import FieldMappingProfiles from '../../support/fragments/data_import/mapping_profiles/fieldMappingProfiles';
 import MarcFieldProtection from '../../support/fragments/settings/dataImport/marcFieldProtection';
 import MappingProfileDetails from '../../support/fragments/data_import/mapping_profiles/mappingProfileDetails';
