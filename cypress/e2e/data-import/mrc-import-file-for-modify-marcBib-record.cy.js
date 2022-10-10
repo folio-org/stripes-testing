@@ -60,7 +60,7 @@ describe('ui-data-import: Verify the possibility to modify MARC Bibliographic re
 
     const actionProfile = {
       name: actionProfileName,
-      action: 'Modify (MARC Bibliographic and Authority record types only)',
+      action: 'Modify (MARC Bibliographic record type only)',
       typeValue: 'MARC Bibliographic',
     };
 
@@ -119,7 +119,6 @@ describe('ui-data-import: Verify the possibility to modify MARC Bibliographic re
     NewFieldMappingProfile.fillModificationSection('Add', '947', 'a', 'Add subfield', 'Test', 'b', 'Addition');
     FieldMappingProfiles.saveProfile();
     FieldMappingProfiles.closeViewModeForMappingProfile(mappingProfileFieldsForModify.name);
-    FieldMappingProfiles.createModifyMappingProfile(mappingProfileName, mappingProfileFieldsForModify);
     FieldMappingProfiles.checkMappingProfilePresented(mappingProfileName);
 
     // create Action profile and link it to Field mapping profile
