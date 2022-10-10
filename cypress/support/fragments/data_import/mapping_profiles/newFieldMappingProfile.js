@@ -38,6 +38,11 @@ const actions = {
   findAndRemoveThese: 'Find and remove these'
 };
 
+const actionsFieldMappingsForMarc = {
+  modify: 'Modifications',
+  update: 'Updates'
+};
+
 const permanentLocation = '"Annex (KU/CC/DI/A)"';
 
 const materialType = '"book"';
@@ -156,24 +161,6 @@ export default {
     cy.expect(saveButton.absent());
   },
 
-  fillModifyMappingProfile(specialMappingProfileName = defaultMappingProfile.name, properties) {
-    cy.do([
-      TextField({ name:'profile.name' }).fillIn(specialMappingProfileName),
-      Select({ name:'profile.incomingRecordType' }).choose(incomingRecordType.marcBib),
-      Select({ name:'profile.existingRecordType' }).choose(marcBib),
-      Select({ name:'profile.mappingDetails.marcMappingOption' }).choose(properties.marcMappingOption),
-      Select({ name:'profile.mappingDetails.marcMappingDetails[0].action' }).choose(properties.action),
-      TextField({ name:'profile.mappingDetails.marcMappingDetails[0].field.field' }).fillIn(properties.addFieldNumber),
-      TextField({ name:'profile.mappingDetails.marcMappingDetails[0].field.subfields[0].subfield' }).fillIn(properties.subfieldInFirstField),
-      Select({ name:'profile.mappingDetails.marcMappingDetails[0].field.subfields[0].subaction' }).choose(properties.subaction),
-      TextArea({ name:'profile.mappingDetails.marcMappingDetails[0].field.subfields[0].data.text' }).fillIn(properties.subfieldTextInFirstField),
-      TextField({ name:'profile.mappingDetails.marcMappingDetails[0].field.subfields[1].subfield' }).fillIn(properties.subfieldInSecondField),
-      TextArea({ name:'profile.mappingDetails.marcMappingDetails[0].field.subfields[1].data.text' }).fillIn(properties.subfieldTextInSecondField),
-      saveButton.click(),
-    ]);
-    cy.expect(saveButton.absent());
-  },
-
   fillMappingProfileForInvoice:(specialMappingProfileName = defaultMappingProfile.name, organizationName) => {
     cy.do([
       TextField({ name:'profile.name' }).fillIn(specialMappingProfileName),
@@ -278,6 +265,7 @@ export default {
 
   saveProfile:() => {
     cy.do(saveButton.click());
+    cy.expect(saveButton.absent());
   },
 
   fillCatalogedDate:() => {
@@ -400,5 +388,21 @@ export default {
     cy.do(TextField('Invoice date*').fillIn(date));
     // wait will be add uuid for acceptedValues
     cy.wait(500);
+  },
+
+  addFieldMappingsForMarc:() => {
+    cy.do(Select({ name:'profile.mappingDetails.marcMappingOption' }).choose(actionsFieldMappingsForMarc.modify));
+  },
+
+  fillModificationSection:(action, fieldNumber, subfieldInFirstField, subaction, subfieldTextInFirstField, subfieldInSecondField, subfieldTextInSecondField) => {
+    cy.do([
+      Select({ name:'profile.mappingDetails.marcMappingDetails[0].action' }).choose(action),
+      TextField({ name:'profile.mappingDetails.marcMappingDetails[0].field.field' }).fillIn(fieldNumber),
+      TextField({ name:'profile.mappingDetails.marcMappingDetails[0].field.subfields[0].subfield' }).fillIn(subfieldInFirstField),
+      Select({ name:'profile.mappingDetails.marcMappingDetails[0].field.subfields[0].subaction' }).choose(subaction),
+      TextArea({ name:'profile.mappingDetails.marcMappingDetails[0].field.subfields[0].data.text' }).fillIn(subfieldTextInFirstField),
+      TextField({ name:'profile.mappingDetails.marcMappingDetails[0].field.subfields[1].subfield' }).fillIn(subfieldInSecondField),
+      TextArea({ name:'profile.mappingDetails.marcMappingDetails[0].field.subfields[1].data.text' }).fillIn(subfieldTextInSecondField)
+    ]);
   }
 };
