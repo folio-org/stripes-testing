@@ -94,8 +94,18 @@ export default {
     cy.url().then((url) => {
       const params = new URLSearchParams(url.split('?')[1]);
       const effectiveLocationId = /\w{8}-\w{4}-\w{4}-\w{4}-\w{12}/gm.exec(params.get('filters'))[0];
-      const expectedText = `((keyword all "${kw}" or isbn="${kw}") and languages=="${lang}" and items.effectiveLocationId=="${effectiveLocationId}") sortby title`;
-      expect(actualQuery).to.eq(expectedText);
+
+      const expectedKeywords = `keyword all "${kw}"`;
+      expect(actualQuery).to.have.string(expectedKeywords);
+
+      const expectedISBN = `isbn="${kw}"`;
+      expect(actualQuery).to.have.string(expectedISBN);
+
+      const expectedLang = `languages=="${lang}"`;
+      expect(actualQuery).to.have.string(expectedLang);
+
+      const expectedEffectiveLocationId = `items.effectiveLocationId=="${effectiveLocationId}"`;
+      expect(actualQuery).to.have.string(expectedEffectiveLocationId);
     });
   },
 
