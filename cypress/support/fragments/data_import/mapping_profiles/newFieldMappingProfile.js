@@ -394,7 +394,7 @@ export default {
     cy.do(Select({ name:'profile.mappingDetails.marcMappingOption' }).choose(actionsFieldMappingsForMarc.modify));
   },
 
-  fillModificationSection:(action, fieldNumber, subfieldInFirstField, subaction, subfieldTextInFirstField, subfieldInSecondField, subfieldTextInSecondField) => {
+  fillModificationSectionWithAdd:(action, fieldNumber, subfieldInFirstField = '*', subaction, subfieldTextInFirstField, subfieldInSecondField, subfieldTextInSecondField) => {
     cy.do([
       Select({ name:'profile.mappingDetails.marcMappingDetails[0].action' }).choose(action),
       TextField({ name:'profile.mappingDetails.marcMappingDetails[0].field.field' }).fillIn(fieldNumber),
@@ -404,5 +404,20 @@ export default {
       TextField({ name:'profile.mappingDetails.marcMappingDetails[0].field.subfields[1].subfield' }).fillIn(subfieldInSecondField),
       TextArea({ name:'profile.mappingDetails.marcMappingDetails[0].field.subfields[1].data.text' }).fillIn(subfieldTextInSecondField)
     ]);
+  },
+
+  fillModificationSectionWithDelete:(action, fieldNumber) => {
+    cy.do([
+      Select({ name:'profile.mappingDetails.marcMappingDetails[0].action' }).choose(action),
+      TextField({ name:'profile.mappingDetails.marcMappingDetails[0].field.field' }).fillIn(fieldNumber)
+    ]);
+  },
+
+  addNewFieldInModificationSection:(field) => {
+    // doesn't work
+    cy.get('div[class^="tableRow--"]').contains('div[class^="tableCell--"]', field).then(elem => {
+      console.log(elem);
+      elem.parent()[0].querySelector('button["type="button"]').click();
+    });
   }
 };

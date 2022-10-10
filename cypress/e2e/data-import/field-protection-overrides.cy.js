@@ -192,7 +192,7 @@ describe('ui-data-import: Check that field protection overrides work properly du
     FieldMappingProfiles.createMappingProfileWithNotes(instanceMappingProfileOverride, noteForOverrideInstanceMappingProfile);
     FieldMappingProfiles.checkMappingProfilePresented(instanceMappingProfileOverride.name);
 
-    // create action profiles
+    // create Action profiles
     cy.visit(SettingsMenu.actionProfilePath);
     ActionProfiles.createActionProfile(marcBibActionProfile, marcBibMappingProfile.name);
     ActionProfiles.checkActionProfilePresented(marcBibActionProfile.name);
@@ -263,9 +263,9 @@ describe('ui-data-import: Check that field protection overrides work properly du
         // verify table data in marc bibliographic source
         InventoryInstance.viewSource();
         resourceIdentifiers.forEach(element => {
-          InventoryViewSource.verifyResourceIdentifierInMARCBibSource(protectedFields.firstField, element.value);
+          InventoryViewSource.verifyFieldInMARCBibSource(protectedFields.firstField, element.value);
         });
-        InventoryViewSource.verifyResourceIdentifierInMARCBibSource(protectedFields.secondField, instanceNote);
+        InventoryViewSource.verifyFieldInMARCBibSource(protectedFields.secondField, instanceNote);
 
         // upload a marc file
         cy.visit(TopMenu.dataImportPath);
@@ -286,8 +286,8 @@ describe('ui-data-import: Check that field protection overrides work properly du
         InstanceRecordView.verifyInstanceNote(updatedInstanceNote);
         // verify table data in marc bibliographic source
         InventoryInstance.viewSource();
-        InventoryViewSource.verifyResourceIdentifierInMARCBibSourceAbsent(protectedFields.firstField);
-        InventoryViewSource.verifyResourceIdentifierInMARCBibSource(protectedFields.secondField, updatedInstanceNote);
+        InventoryViewSource.verifyFieldInMARCBibSourceIsAbsent(protectedFields.firstField);
+        InventoryViewSource.verifyFieldInMARCBibSource(protectedFields.secondField, updatedInstanceNote);
       });
   });
 });
