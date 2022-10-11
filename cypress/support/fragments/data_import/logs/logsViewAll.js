@@ -1,3 +1,4 @@
+import { or } from '@interactors/html';
 import {
   Accordion,
   Button,
@@ -16,6 +17,8 @@ import UrlParams from '../url-params';
 import InteractorsTools from '../../../utils/interactorsTools';
 
 const singleRecordImportsAccordion = Accordion('Inventory single record imports');
+const dataImportList = MultiColumnList({ id:'list-data-import' });
+const errorsInImportAccordion = Accordion('Errors in import');
 
 function getCheckboxByRow(row) {
   return MultiColumnList().find(MultiColumnListCell({ 'row': row, 'columnIndex': 0 })).find(Checkbox());
@@ -26,8 +29,51 @@ const verifyMessageOfDeteted = (quantity) => {
   InteractorsTools.closeCalloutMessage();
 };
 
+const columnName = {
+  status: dataImportList.find(MultiColumnListHeader({ id:'list-column-status' })),
+  jobProfile: dataImportList.find(MultiColumnListHeader({ id:'list-column-jobprofilename' })),
+  runBy: dataImportList.find(MultiColumnListHeader({ id:'list-column-runby' }))
+};
+
+function waitUIToBeFiltered() {
+  // Need some waiting when jobs list is long, UI takes longer to be filtered
+  // eslint-disable-next-line cypress/no-unnecessary-waiting
+  cy.wait(1800);
+}
+
+function checkByErrorsInImport(...status) {
+  waitUIToBeFiltered();
+  return cy.get('#list-data-import').then(element => {
+    // only 100 records shows on every page
+    const resultCount = element.attr('data-total-count') > 99 ? 99 : element.attr('data-total-count');
+
+    // verify every string in result table
+    for (let i = 0; i < resultCount; i++) {
+      cy.expect(MultiColumnListCell({ content: or(...status), row: i }).exists());
+    }
+  });
+}
+
+function checkByUserName(userName) {
+  waitUIToBeFiltered();
+  return cy.get('#list-data-import').then(element => {
+    // only 100 records shows on every page
+    const resultCount = element.attr('data-total-count') > 99 ? 99 : element.attr('data-total-count');
+
+    // verify every string in result table
+    for (let i = 0; i < resultCount; i++) {
+      console.log(i);
+      cy.expect(MultiColumnListCell({ content: userName, row: i }).exists());
+    }
+  });
+}
+
 export default {
   verifyMessageOfDeteted,
+  waitUIToBeFiltered,
+  checkByErrorsInImport,
+  checkByUserName,
+  columnName,
 
   openViewAll() {
     cy.do([
@@ -73,16 +119,15 @@ export default {
     // Otherwise, server cannot parse request params and returns error with 422 status
     // In this case, sort by completed date in ascending order
     cy.do(MultiColumnListHeader('Ended running').click());
+    waitUIToBeFiltered();
   },
 
-  filterJobsByErrors(filter) {
-    if (filter === 'Yes') {
-      cy.do(Accordion('Errors in import')
-        .find(Checkbox({ id: 'clickable-filter-statusAny-error' })).click());
-    } else {
-      cy.do(Accordion('Errors in import')
-        .find(Checkbox({ id: 'clickable-filter-statusAny-committed' })).click());
-    }
+  selectYesfilterJobsByErrors: () => {
+    cy.do(errorsInImportAccordion.find(Checkbox({ id: 'clickable-filter-statusAny-error' })).click());
+  },
+
+  selectNofilterJobsByErrors: () => {
+    cy.do(errorsInImportAccordion.find(Checkbox({ id: 'clickable-filter-statusAny-committed' })).click());
   },
 
   filterJobsByDate({ from, end }) {
@@ -146,12 +191,6 @@ export default {
     RUN_BY: { columnIndex: 7 }
   },
 
-  waitUIToBeFiltered() {
-    // Need some waiting when jobs list is long, UI takes longer to be filtered
-    // eslint-disable-next-line cypress/no-unnecessary-waiting
-    cy.wait(1800);
-  },
-
   checkByReverseChronologicalOrder() {
     this.getMultiColumnListCellsValues(this.visibleColumns.ENDED_RUNNING.columnIndex).then(cells => {
       // convert each cell value to Date object
@@ -166,19 +205,6 @@ export default {
     });
   },
 
-  checkByErrorsInImport({ filter }) {
-    this.waitUIToBeFiltered();
-    this.getMultiColumnListCellsValues(this.visibleColumns.STATUS.columnIndex).then(statuses => {
-      // if filter is 'Yes', then check for error otherwise, completed status
-      const expectedStatuses = filter === 'Yes' ? ['Failed', 'Completed with errors'] : ['Completed'];
-      // each status in the statuses array should be in the expectedStatuses array
-      const isFilteredByErrorStatus = statuses.every(jobStatus => expectedStatuses.includes(jobStatus));
-
-      // eslint-disable-next-line no-unused-expressions
-      expect(isFilteredByErrorStatus).to.be.true;
-    });
-  },
-
   checkByDate({ from, end }) {
     const queryString = UrlParams.getDateQueryString({ from, end });
     return this.getNumberOfMatchedJobs(queryString).then(count => {
@@ -188,68 +214,38 @@ export default {
     });
   },
 
-  checkByJobProfileName({ jobProfileName }) {
-    this.waitUIToBeFiltered();
-    this.getMultiColumnListCellsValues(this.visibleColumns.JOB_PROFILE.columnIndex).then(jobProfiles => {
-      // each profile name in the jobProfiles array should be equal to jobProfileName
-      const isFilteredByProfile = jobProfiles.every(name => name === jobProfileName);
+  checkByJobProfileName(jobProfileName) {
+    waitUIToBeFiltered();
+    return cy.get('#list-data-import').then(element => {
+      // only 100 records shows on every page
+      const resultCount = element.attr('data-total-count') > 99 ? 99 : element.attr('data-total-count');
 
-      // eslint-disable-next-line no-unused-expressions
-      expect(isFilteredByProfile).to.be.true;
-    });
-  },
-
-  checkByUserName({ userName }) {
-    this.waitUIToBeFiltered();
-    this.getMultiColumnListCellsValues(this.visibleColumns.RUN_BY.columnIndex).then(userNames => {
-      // each name in the userNames array should be equal to the userName
-      const isFilteredByUser = userNames.every(name => name === userName);
-
-      // eslint-disable-next-line no-unused-expressions
-      expect(isFilteredByUser).to.be.true;
-    });
-  },
-
-  checkByInventorySingleRecord({ filter }) {
-    this.waitUIToBeFiltered();
-    cy.get('body').then($body => {
-      if ($body.find('#list-data-import').length < 1) {
-        cy.expect(MultiColumnList().absent());
-      } else {
-        this.getMultiColumnListCellsValues(this.visibleColumns.JOB_PROFILE.columnIndex).then(profiles => {
-          const inventorySingleRecordProfiles = [
-            'Inventory Single Record - Default Create Instance',
-            'Inventory Single Record - Default Update Instance'
-          ];
-
-          if (filter === 'Yes') {
-            const isInventorySingleRecord = profiles.every(profile => inventorySingleRecordProfiles.includes(profile));
-            // eslint-disable-next-line no-unused-expressions
-            expect(isInventorySingleRecord).to.be.true;
-          } else {
-            const isNotInventorySingleRecord = profiles.every(profile => !inventorySingleRecordProfiles.includes(profile));
-            // eslint-disable-next-line no-unused-expressions
-            expect(isNotInventorySingleRecord).to.be.true;
-          }
-        });
+      // verify every string in result table
+      for (let i = 0; i < resultCount; i++) {
+        cy.expect(MultiColumnListCell({ content: jobProfileName, row: i }).exists());
       }
     });
   },
 
-  checkByErrorsInImportAndUser({ filter, userName }) {
-    this.waitUIToBeFiltered();
-    this.getMultiColumnListCellsValues(this.visibleColumns.STATUS.columnIndex).then(statuses => {
-      this.getMultiColumnListCellsValues(this.visibleColumns.RUN_BY.columnIndex).then(names => {
-        const expectedStatuses = filter === 'Yes' ? ['Failed', 'Completed with errors'] : ['Completed'];
-        const isFilteredByErrorStatus = statuses.every(jobStatus => expectedStatuses.includes(jobStatus));
-        const isFilteredByUser = names.every(name => name === userName);
-
-        // eslint-disable-next-line no-unused-expressions
-        expect(isFilteredByErrorStatus).to.be.true;
-        // eslint-disable-next-line no-unused-expressions
-        expect(isFilteredByUser).to.be.true;
-      });
+  checkByInventorySingleRecord(filter) {
+    return cy.get('#list-data-import').then(element => {
+      // only 100 records shows on every page
+      const resultCount = element.attr('data-total-count') > 99 ? 99 : element.attr('data-total-count');
+      // verify every string in result table
+      for (let i = 0; i < resultCount; i++) {
+        if (filter === 'Yes') {
+          cy.expect(MultiColumnListCell({ content: or('Inventory Single Record - Default Create Instance', 'Inventory Single Record - Default Update Instance'), row: i }).exists());
+        } else {
+          cy.expect(MultiColumnListCell({ content: or('Inventory Single Record - Default Create Instance', 'Inventory Single Record - Default Update Instance'), row: i }).absent());
+        }
+      }
     });
+  },
+
+  checkByErrorsInImportAndUser(status, userName) {
+    waitUIToBeFiltered();
+    checkByErrorsInImport(status);
+    checkByUserName(userName);
   },
 
   getNumberOfMatchedJobs(queryString) {
@@ -287,7 +283,7 @@ export default {
   },
 
   selectAllLogs:() => {
-    cy.do(MultiColumnList({ id:'list-data-import' }).find(Checkbox({ name:'selected-all', checked: false })).click());
+    cy.do(dataImportList.find(Checkbox({ name:'selected-all', checked: false })).click());
   },
 
   checkIsLogsSelected:(elemCount) => {
@@ -297,13 +293,13 @@ export default {
   },
 
   unmarcCheckbox:(index) => {
-    cy.do(MultiColumnList({ id:'list-data-import' })
+    cy.do(dataImportList
       .find(MultiColumnListCell({ row: 0, columnIndex: index }))
       .find(Checkbox({ checked: true })).click());
   },
 
   checkmarkAllLogsIsRemoved:() => {
-    cy.do(MultiColumnList({ id:'list-data-import' }).find(Checkbox({ name:'selected-all', checked: false })).exists());
+    cy.do(dataImportList.find(Checkbox({ name:'selected-all', checked: false })).exists());
   },
 
   deleteLog:() => {
@@ -311,5 +307,13 @@ export default {
     cy.do(Button('Delete selected logs').click());
   },
 
-  modalIsAbsent:() => { cy.expect(Modal('Delete data import logs?').absent()); }
+  modalIsAbsent:() => { cy.expect(Modal('Delete data import logs?').absent()); },
+
+  openInventorysingleRecordImportsAccordion:() => {
+    cy.do(Accordion({ id: 'singleRecordImports' }).clickHeader());
+  },
+
+  openUserAccordion:() => {
+    cy.do(Accordion({ id: 'userId' }).clickHeader());
+  }
 };
