@@ -321,7 +321,7 @@ describe('ui-data-import: Match on POL and update related Instance, Holdings, It
             checkReceivedPiece(secondOrderNumber, secondItem.title);
           });
 
-        DataImport.editMarcFile('marcFileForMatchOnPol.mrc', editedMarcFileName, 'test', firstOrderNumber);
+        DataImport.editMarcFile('marcFileForMatchOnPol.mrc', editedMarcFileName, ['test'], [firstOrderNumber]);
       });
 
     // create mapping and action profiles

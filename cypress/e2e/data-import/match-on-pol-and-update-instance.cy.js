@@ -233,7 +233,7 @@ describe('ui-data-import: Match on POL and update related Instance, Holdings, It
           Orders.openOrder();
 
           // change file using order number
-          DataImport.editMarcFile('marcFileForMatchOnPol.mrc', editedMarcFileName, 'test', orderNumber);
+          DataImport.editMarcFile('marcFileForMatchOnPol.mrc', editedMarcFileName, ['test'], [orderNumber]);
         });
     });
 

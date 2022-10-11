@@ -24,6 +24,7 @@ import InventoryViewSource from '../../support/fragments/inventory/inventoryView
 describe('ui-data-import: Check that field protection overrides work properly during data import', () => {
   let firstFieldId = null;
   let secondFieldId = null;
+  let instanceHrid = null;
 
   // unique name for profiles
   const marcBibMapProfileNameForUpdate = `C17018 Update MARC Bib with protections.${getRandomPostfix()}`;
@@ -102,6 +103,10 @@ describe('ui-data-import: Check that field protection overrides work properly du
   afterEach(() => {
     MarcFieldProtection.deleteMarcFieldProtectionViaApi(firstFieldId);
     MarcFieldProtection.deleteMarcFieldProtectionViaApi(secondFieldId);
+    cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${instanceHrid}"` })
+      .then((instance) => {
+        InventoryInstance.deleteInstanceViaApi(instance.id);
+      });
     // delete profiles
     JobProfiles.deleteJobProfile(jobProfileNameForUpdate);
     JobProfiles.deleteJobProfile(jobProfileNameForOverride);
@@ -249,9 +254,9 @@ describe('ui-data-import: Check that field protection overrides work properly du
     // get Instance HRID through API
     SearchInventory.getInstanceHRID()
       .then(hrId => {
-        const instanceHrid = hrId[0];
-        DataImport.editMarcFile(fileForEditRev1, editedFileNameRev1, instanceHridFromFile, instanceHrid);
-        DataImport.editMarcFile(fileForEditRev2, editedFileNameRev2, instanceHridFromFile, instanceHrid);
+        instanceHrid = hrId[0];
+        DataImport.editMarcFile(fileForEditRev1, editedFileNameRev1, [instanceHridFromFile], [instanceHrid]);
+        DataImport.editMarcFile(fileForEditRev2, editedFileNameRev2, [instanceHridFromFile], [instanceHrid]);
 
         // upload a marc file
         cy.visit(TopMenu.dataImportPath);
@@ -275,9 +280,9 @@ describe('ui-data-import: Check that field protection overrides work properly du
         // verify table data in marc bibliographic source
         InventoryInstance.viewSource();
         resourceIdentifiers.forEach(element => {
-          InventoryViewSource.verifyResourceIdentifierInMARCBibSource(protectedFields.firstField, element.value);
+          InventoryViewSource.verifyFieldInMARCBibSource(protectedFields.firstField, element.value);
         });
-        InventoryViewSource.verifyResourceIdentifierInMARCBibSource(protectedFields.secondField, instanceNote);
+        InventoryViewSource.verifyFieldInMARCBibSource(protectedFields.secondField, instanceNote);
 
         // upload a marc file
         cy.visit(TopMenu.dataImportPath);
@@ -298,8 +303,8 @@ describe('ui-data-import: Check that field protection overrides work properly du
         InstanceRecordView.verifyInstanceNote(updatedInstanceNote);
         // verify table data in marc bibliographic source
         InventoryInstance.viewSource();
-        InventoryViewSource.verifyResourceIdentifierInMARCBibSourceAbsent(protectedFields.firstField);
-        InventoryViewSource.verifyResourceIdentifierInMARCBibSource(protectedFields.secondField, updatedInstanceNote);
+        InventoryViewSource.verifyFieldInMARCBibSourceIsAbsent(protectedFields.firstField);
+        InventoryViewSource.verifyFieldInMARCBibSource(protectedFields.secondField, updatedInstanceNote);
       });
   });
 });
