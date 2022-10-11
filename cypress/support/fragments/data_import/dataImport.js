@@ -217,11 +217,17 @@ export default {
   },
 
   editMarcFile(editedFileName, finalFileName, stringToBeReplaced, replaceString) {
+    // stringToBeReplaced and replaceString must be array. Array length must be equal
     FileManager.readFile(`cypress/fixtures/${editedFileName}`)
       .then((actualContent) => {
         const content = actualContent.split('\n');
+        let firstString = content[0].slice();
 
-        content[0] = content[0].slice().replace(stringToBeReplaced, replaceString);
+        for (let i = 0; i < stringToBeReplaced.length; i++) {
+          firstString = firstString.replace(stringToBeReplaced[i], replaceString[i]);
+        }
+
+        content[0] = firstString;
         FileManager.createFile(`cypress/fixtures/${finalFileName}`, content.join('\n'));
       });
   },

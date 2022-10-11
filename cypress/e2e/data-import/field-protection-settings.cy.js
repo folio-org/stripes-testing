@@ -17,10 +17,25 @@ import MarcFieldProtection from '../../support/fragments/settings/dataImport/mar
 import SearchInventory from '../../support/fragments/data_import/searchInventory';
 import MatchProfiles from '../../support/fragments/data_import/match_profiles/matchProfiles';
 import NewMatchProfile from '../../support/fragments/data_import/match_profiles/newMatchProfile';
+import InventoryViewSource from '../../support/fragments/inventory/inventoryViewSource';
+import FileManager from '../../support/utils/fileManager';
+import InventoryInstance from '../../support/fragments/inventory/inventoryInstance';
 
-describe('ui-data-import: Check that field protection overrides work properly during data import', () => {
-  const marcFieldProtected = '920';
-  let marcFieldProtectionId = null;
+describe('ui-data-import: Check that field protection settings work properly during data import', () => {
+  const marcFieldProtected = ['507', '920'];
+  const marcFieldProtectionId = [];
+  let instanceHrid = null;
+
+  // data from .mrc file
+  const dataFromField001 = 'ocn894025734';
+  const dataForField500 = 'Repeatable unprotected field';
+  const dataForField507 = 'Non-repeatable protected field';
+  const dataForField920 = 'This field should be protected';
+
+  // data for changing .mrc file
+  const updateDataForField500 = 'Repeatable unprotected field Updated';
+  const updateDataForField507 = 'Non-repeatable protected field Updated';
+  const updateDataForField920 = 'The previous 920 should be retained, since it is protected and repeatable, and this new 920 added.';
 
   // unique profile names
   const mappingProfileName = `C17017 autotest MappingProf${getRandomPostfix()}`;
@@ -33,7 +48,8 @@ describe('ui-data-import: Check that field protection overrides work properly du
 
   // unique file names
   const nameMarcFileForCreate = `C17017 autotestFile.${getRandomPostfix()}.mrc`;
-  const editedMarcFileName = `C17017 protected920Field.${getRandomPostfix()}.mrc`;
+  const editedMarcFileName = `C17017 protectedFields.${getRandomPostfix()}.mrc`;
+  const fileNameForUpdate = `C17017 updatedProtectedFields.${getRandomPostfix()}.mrc`;
 
   // profiles for create
   const mappingProfile = { name: mappingProfileName,
@@ -76,22 +92,40 @@ describe('ui-data-import: Check that field protection overrides work properly du
     cy.loginAsAdmin();
     cy.getAdminToken()
       .then(() => {
-        MarcFieldProtection.createMarcFieldProtectionViaApi({
-          indicator1: '*',
-          indicator2: '*',
-          subfield: 'a',
-          data: '*',
-          source: 'USER',
-          field: marcFieldProtected
-        })
-          .then((resp) => {
-            marcFieldProtectionId = resp.id;
-          });
+        marcFieldProtected.forEach(field => {
+          MarcFieldProtection.createMarcFieldProtectionViaApi({
+            indicator1: '*',
+            indicator2: '*',
+            subfield: '*',
+            data: '*',
+            source: 'USER',
+            field
+          })
+            .then((resp) => {
+              const id = resp.id;
+              marcFieldProtectionId.push = id;
+            });
+        });
       });
   });
 
   afterEach(() => {
-    MarcFieldProtection.deleteMarcFieldProtectionViaApi(marcFieldProtectionId);
+    marcFieldProtectionId.forEach(field => MarcFieldProtection.deleteMarcFieldProtectionViaApi(field));
+    cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${instanceHrid}"` })
+      .then((instance) => {
+        InventoryInstance.deleteInstanceViaApi(instance.id);
+      });
+    // delete profiles
+    JobProfiles.deleteJobProfile(jobProfileName);
+    JobProfiles.deleteJobProfile(jobProfileUpdateName);
+    MatchProfiles.deleteMatchProfile(matchProfileUpdateName);
+    ActionProfiles.deleteActionProfile(actionProfileName);
+    ActionProfiles.deleteActionProfile(actionProfileUpdateName);
+    FieldMappingProfiles.deleteFieldMappingProfile(mappingProfileName);
+    FieldMappingProfiles.deleteFieldMappingProfile(mappingProfileUpdateName);
+    // delete created files
+    FileManager.deleteFile(`cypress/fixtures/${editedMarcFileName}`);
+    FileManager.deleteFile(`cypress/fixtures/${fileNameForUpdate}`);
   });
 
   const createInstanceMappingProfileForCreate = (instanceMappingProfile) => {
@@ -128,7 +162,7 @@ describe('ui-data-import: Check that field protection overrides work properly du
 
     // upload a marc file for creating of the new instance
     cy.visit(TopMenu.dataImportPath);
-    DataImport.uploadFile('920protectedField.mrc', nameMarcFileForCreate);
+    DataImport.uploadFile('marcFileForProtectionsFields.mrc', nameMarcFileForCreate);
     JobProfiles.searchJobProfileForImport(jobProfileName);
     JobProfiles.runImportFile(nameMarcFileForCreate);
     Logs.checkStatusOfJobProfile('Completed');
@@ -140,49 +174,60 @@ describe('ui-data-import: Check that field protection overrides work properly du
     Logs.clickOnHotLink(0, 3, 'Created');
     InstanceRecordView.viewSource();
     InstanceRecordView.verifySrsMarcRecord();
-    InstanceRecordView.verifyImportedFieldExists(marcFieldProtected);
+    InventoryViewSource.verifyFieldInMARCBibSource('500', dataForField500);
+    InventoryViewSource.verifyFieldInMARCBibSource(marcFieldProtected[0], dataForField507);
+    InventoryViewSource.verifyFieldInMARCBibSource(marcFieldProtected[1], dataForField920);
 
     // get Instance HRID through API
     SearchInventory
       .getInstanceHRID()
       .then(hrId => {
+        instanceHrid = hrId[0];
         // change file using order number
-        DataImport.editMarcFile('920protectedField.mrc', editedMarcFileName, 'ocn894025734', hrId[0]);
+        DataImport.editMarcFile(
+          'marcFileForProtectionsFields.mrc',
+          editedMarcFileName,
+          [dataFromField001, dataForField500, dataForField507, dataForField920],
+          [instanceHrid, updateDataForField500, updateDataForField507, updateDataForField920]
+        );
       });
 
-    // create mapping profile
+    // create mapping profile for update
     cy.visit(SettingsMenu.mappingProfilePath);
     createInstanceMappingProfileForUpdate(mappingProfileUpdate);
     FieldMappingProfiles.checkMappingProfilePresented(mappingProfileUpdate.name);
 
-    // create action profile
+    // create action profile for update
     cy.visit(SettingsMenu.actionProfilePath);
     ActionProfiles.createActionProfile(actionProfileUpdate, mappingProfileUpdateName);
     ActionProfiles.checkActionProfilePresented(actionProfileUpdate.name);
 
-    // create match profile
+    // create match profile for update
     cy.visit(SettingsMenu.matchProfilePath);
     MatchProfiles.createMatchProfile(matchProfile);
     cy.visit(SettingsMenu.jobProfilePath);
 
-    // create job profile
+    // create job profile for update
     cy.visit(SettingsMenu.jobProfilePath);
     JobProfiles.createJobProfileWithLinkingProfiles(jobProfileUpdate, actionProfileUpdateName, matchProfileUpdateName);
     JobProfiles.checkJobProfilePresented(jobProfileUpdateName);
 
     // upload a marc file for updating already created instance
-    // cy.visit(TopMenu.dataImportPath);
-    // DataImport.uploadFile(filePathForUploadFileUpdate, fileNameForUploadFileUpdate);
-    // JobProfiles.searchJobProfileForImport(jobProfileUpdateName);
-    // JobProfiles.runImportFile(fileNameForUploadFileUpdate);
-    // Logs.checkStatusOfJobProfile('Completed');
-    // Logs.openFileDetails(fileNameForUploadFileUpdate);
-    // Logs.verifyInstanceStatus(0, 2, 'Created');
-    // Logs.verifyInstanceStatus(0, 3, 'Updated');
-    // Logs.clickOnHotLink(0, 3, 'Updated');
-    // InstanceRecordView.viewSource();
+    cy.visit(TopMenu.dataImportPath);
+    DataImport.uploadFile(editedMarcFileName, fileNameForUpdate);
+    JobProfiles.searchJobProfileForImport(jobProfileUpdateName);
+    JobProfiles.runImportFile(fileNameForUpdate);
+    Logs.checkStatusOfJobProfile('Completed');
+    Logs.openFileDetails(fileNameForUpdate);
+    Logs.verifyInstanceStatus(0, 2, 'Created');
+    Logs.verifyInstanceStatus(0, 3, 'Updated');
+    Logs.clickOnHotLink(0, 3, 'Updated');
+    InstanceRecordView.viewSource();
 
-    // InstanceRecordView.verifySrsMarcRecord();
-    // InstanceRecordView.verifyImportedFieldExists(marcFieldProtection.field);
+    InstanceRecordView.verifySrsMarcRecord();
+    InventoryViewSource.verifyFieldInMARCBibSource('500', dataForField500);
+    InventoryViewSource.verifyFieldInMARCBibSource(marcFieldProtected[0], dataForField507);
+    InventoryViewSource.verifyFieldInMARCBibSource(marcFieldProtected[1], dataForField920);
+    InventoryViewSource.verifyFieldInMARCBibSource(marcFieldProtected[1], updateDataForField920);
   });
 });
