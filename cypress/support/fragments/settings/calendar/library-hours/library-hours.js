@@ -48,12 +48,10 @@ export default {
   },
 
   createCalendarEvent() {
-    cy
-      .do(Button(buttonLabels.new).click())
-      .expect(PaneHeader(pageHeaders.createEvent).exists());
+    cy.do(Button(buttonLabels.new).click());
+    cy.expect(PaneHeader(pageHeaders.createEvent).exists());
 
-    cy
-      .do([
+    cy.do([
         TextField(fieldLabels.from).find(Button({ icon: iconsSet.calendar })).click(),
         Calendar().clickActiveDay(currentDate),
         TextField(fieldLabels.to).find(Button({ icon: iconsSet.calendar })).click(),
@@ -61,35 +59,30 @@ export default {
         TextField({ name: nameAttributeValue }).fillIn(initialEventName)
       ]);
 
-    cy
-      .get(selectors.calendarFirstCell).click()
-      .do(Button(buttonLabels.saveAndClose).click())
-      .expect(KeyValue(currentEventLabel, { value: including(initialEventName) }).exists());
+    cy.get(selectors.calendarFirstCell).click();
+    cy.do(Button(buttonLabels.saveAndClose).click());
+    cy.expect(KeyValue(currentEventLabel, { value: including(initialEventName) }).exists());
   },
 
   openEditCalendarPage() {
-    cy
-      .do(IconButton({ icon: iconsSet.edit }).click())
-      .expect(PaneHeader(pageHeaders.modifyEvent).exists());
+    cy.do(IconButton({ icon: iconsSet.edit }).click());
+    cy.expect(PaneHeader(pageHeaders.modifyEvent).exists());
   },
 
   editCalendarEvent() {
-    cy
-      .do([
+    cy.do([
         TextField({ name: nameAttributeValue }).fillIn(editedEventName),
         Button(buttonLabels.saveAndClose).click()
-      ])
-      .expect(KeyValue(currentEventLabel, { value: including(editedEventName) }).exists());
+      ]);
+    cy.expect(KeyValue(currentEventLabel, { value: including(editedEventName) }).exists());
   },
 
   deleteCalendarEvent() {
-    cy
-      .do(IconButton({ icon: iconsSet.edit }).click())
-      .expect(PaneHeader(pageHeaders.modifyEvent).exists());
+    cy.do(IconButton({ icon: iconsSet.edit }).click());
+    cy.expect(PaneHeader(pageHeaders.modifyEvent).exists());
 
-    cy
-      .do(Button(buttonLabels.delete).click())
-      .expect(Modal(pageHeaders.deleteEvent).exists());
+    cy.do(Button(buttonLabels.delete).click());
+    cy.expect(Modal(pageHeaders.deleteEvent).exists());
 
     cy.do(Button({ id: 'clickable-delete-confirmation-confirm' }).click());
   },
