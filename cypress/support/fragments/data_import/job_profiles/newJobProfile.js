@@ -17,7 +17,6 @@ const saveAndCloseButton = Button('Save as profile & Close');
 
 export default {
   defaultJobProfile,
-
   acceptedDataType,
 
   fillJobProfile: (specialJobProfile = defaultJobProfile) => {

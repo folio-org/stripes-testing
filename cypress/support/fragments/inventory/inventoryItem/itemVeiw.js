@@ -71,4 +71,12 @@ export default {
   checkItemAdministrativeNote:(note) => {
     cy.expect(MultiColumnList({ id: 'administrative-note-list' }).find(HTML(including(note))).exists());
   },
+
+  checkMaterialType:(type) => {
+    cy.expect(Accordion('Item data').find(KeyValue('Material type')).has({ value: type }));
+  },
+
+  checkItemNote:(note) => {
+    cy.expect(Accordion('Item notes').find(KeyValue('Note')).has({ value: note }));
+  }
 };

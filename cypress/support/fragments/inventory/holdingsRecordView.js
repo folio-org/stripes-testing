@@ -95,10 +95,13 @@ export default {
       .absent());
   },
   checkCallNumber:(callNumber) => cy.expect(KeyValue('Call number').has({ value: callNumber })),
-  checkHoldingsAdministrativeNote:(note) => {
+  checkAdministrativeNote:(note) => {
     cy.expect(MultiColumnList({ id: 'administrative-note-list' }).find(HTML(including(note))).exists());
   },
   checkHoldingsStatement:(statement) => {
     cy.expect(MultiColumnList({ id: 'list-holdingsStatement' }).find(HTML(including(statement))).exists());
+  },
+  checkStatisticalCode:(code) => {
+    cy.expect(MultiColumnList({ id: 'list-statistical-codes' }).find(HTML(including(code))).exists());
   }
 };

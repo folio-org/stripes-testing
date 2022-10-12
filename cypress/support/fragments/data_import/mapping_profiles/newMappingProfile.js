@@ -74,6 +74,11 @@ const selectFromResultsList = (rowNumber = 0) => {
   cy.do(organizationModal.find(MultiColumnListRow({ index: rowNumber })).click());
 };
 
+const waitLoading = () => {
+// wait will be add uuid for acceptedValues
+  cy.wait(500);
+};
+
 export default {
   folioRecordTypeValue,
   permanentLocation,
@@ -84,6 +89,7 @@ export default {
   instanceStatusTerm,
   catalogedDate,
   selectFromResultsList,
+  waitLoading,
 
   fillMappingProfile:(specialMappingProfile = defaultMappingProfile) => {
     cy.do([
@@ -251,12 +257,14 @@ export default {
     cy.do(Select({ name:'profile.existingRecordType' }).choose(folioType));
   },
 
-  addStatisticalCode:(name) => {
-    cy.do(Select({ name:'profile.mappingDetails.mappingFields[8].repeatableFieldAction' }).choose(actions.addTheseToExisting));
+  addStatisticalCode:(name, number) => {
+    // number needs for using this method in filling fields for holdings and item profiles
+    const statisticalCodeFieldName = `profile.mappingDetails.mappingFields[${number}].repeatableFieldAction`;
+
+    cy.do(Select(statisticalCodeFieldName).choose(actions.addTheseToExisting));
     cy.do(Button('Add statistical code').click());
     cy.do(TextField('Statistical code').fillIn(name));
-    // wait will be add uuid for acceptedValues
-    cy.wait(500);
+    waitLoading();
   },
 
   addAdministrativeNote:(note, number) => {
@@ -289,20 +297,17 @@ export default {
 
   fillCatalogedDate:() => {
     cy.do(TextField('Cataloged date').fillIn(catalogedDate));
-    // wait will be add uuid for acceptedValues
-    cy.wait(500);
+    waitLoading();
   },
 
   fillInstanceStatusTerm:(statusTerm = instanceStatusTerm) => {
     cy.do(TextField('Instance status term').fillIn(statusTerm));
-    // wait will be add uuid for acceptedValues
-    cy.wait(500);
+    waitLoading();
   },
 
   fillHoldingsType:(type) => {
     cy.do(TextField('Holdings type').fillIn(type));
-    // wait will be add uuid for acceptedValues
-    cy.wait(500);
+    waitLoading();
   },
 
   fillPermanentLocation:(location) => {
@@ -311,8 +316,7 @@ export default {
 
   fillCallNumberType:(type) => {
     cy.do(TextField('Call number type').fillIn(type));
-    // wait will be add uuid for acceptedValues
-    cy.wait(500);
+    waitLoading();
   },
 
   fillCallNumber:(number) => {
@@ -329,20 +333,17 @@ export default {
 
   fillStatus:(itemStatus) => {
     cy.do(TextField('Status').fillIn(itemStatus));
-    // wait will be add uuid for acceptedValues
-    cy.wait(500);
+    waitLoading();
   },
 
   fillPermanentLoanType:(loanType) => {
     cy.do(TextField('Permanent loan type').fillIn(loanType));
-    // wait will be add uuid for acceptedValues
-    cy.wait(500);
+    waitLoading();
   },
 
   fillMaterialType:(type = materialType) => {
     cy.do(TextField('Material type').fillIn(type));
-    // wait will be add uuid for acceptedValues
-    cy.wait(500);
+    waitLoading();
   },
 
   addItemNotes:(noteType, note, staffOnly) => {
@@ -351,20 +352,17 @@ export default {
     cy.do(TextField('Note type').fillIn(noteType));
     cy.do(TextField('Note').fillIn(note));
     cy.do(Select({ name:'profile.mappingDetails.mappingFields[25].subfields[0].fields[2].booleanFieldAction' }).choose(staffOnly));
-    // wait will be add uuid for acceptedValues
-    cy.wait(500);
+    waitLoading();
   },
 
   addSuppressFromDiscovery:() => {
     cy.do(Select({ name:'profile.mappingDetails.mappingFields[0].booleanFieldAction' }).choose('Mark for all affected records'));
-    // wait will be add uuid for acceptedValues
-    cy.wait(500);
+    waitLoading();
   },
 
   fillBatchGroup:(group) => {
     cy.do(TextField('Batch group*').fillIn(group));
-    // wait will be add uuid for acceptedValues
-    cy.wait(500);
+    waitLoading();
   },
 
   fillVendorInvoiceNumber:(number) => {
@@ -373,14 +371,12 @@ export default {
 
   fillPaymentMethod:(method) => {
     cy.do(TextField('Payment method*').fillIn(method));
-    // wait will be add uuid for acceptedValues
-    cy.wait(500);
+    waitLoading();
   },
 
   fillCurrency:(currency) => {
     cy.do(TextField('Currency*').fillIn(currency));
-    // wait will be add uuid for acceptedValues
-    cy.wait(500);
+    waitLoading();
   },
 
   fillDescription:(text) => {
@@ -404,8 +400,7 @@ export default {
 
   fillInvoiceDate:(date) => {
     cy.do(TextField('Invoice date*').fillIn(date));
-    // wait will be add uuid for acceptedValues
-    cy.wait(500);
+    waitLoading();
   },
 
   saveProfile:() => {
