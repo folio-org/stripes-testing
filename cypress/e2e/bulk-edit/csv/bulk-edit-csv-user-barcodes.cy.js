@@ -39,10 +39,6 @@ describe('bulk-edit', () => {
       FileManager.deleteFile(`cypress/fixtures/${invalidUserBarcodesFileName}`);
     });
 
-    afterEach('refresh bulk edit pane', () => {
-      BulkEditActions.newBulkEdit();
-    });
-
     it('C347872 Populating preview of matched records (firebird)', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
       BulkEditSearchPane.selectRecordIdentifier('User Barcodes');
 
@@ -55,6 +51,7 @@ describe('bulk-edit', () => {
       BulkEditActions.verifyUsersActionDropdownItems();
       BulkEditActions.verifyCheckedDropdownMenuItem();
       BulkEditActions.verifyUncheckedDropdownMenuItem();
+      BulkEditActions.newBulkEdit();
     });
 
     it('C360556 Populating preview of matched records in case no matches (firebird)', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
@@ -67,6 +64,22 @@ describe('bulk-edit', () => {
 
       BulkEditActions.openActions();
       BulkEditActions.verifyUsersActionDropdownItems(true);
+      BulkEditActions.newBulkEdit();
+    });
+
+    it('C347871 Uploading file with identifiers (firebird)', { tags: [testTypes.criticalPath, devTeams.firebird] }, () => {
+      BulkEditSearchPane.selectRecordIdentifier('User Barcodes');
+
+      BulkEditSearchPane.uploadFile(userBarcodesFileName);
+      BulkEditSearchPane.waitFileUploading();
+      BulkEditSearchPane.verifyUserBarcodesResultAccordion();
+      BulkEditSearchPane.verifyMatchedResults(user.barcode);
+
+      BulkEditActions.newBulkEdit();
+      BulkEditSearchPane.selectRecordIdentifier('User Barcodes');
+
+      BulkEditSearchPane.uploadFile('example.json');
+      BulkEditSearchPane.verifyModalName('Invalid file');
     });
   });
 });
