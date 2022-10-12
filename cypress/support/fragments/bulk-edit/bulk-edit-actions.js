@@ -135,6 +135,8 @@ export default {
 
   newBulkEdit() {
     cy.do(Button('New bulk edit').click());
+    // very fast reload bulk edit page
+    cy.wait(500);
   },
 
   verifyUsersActionDropdownItems(isDisabled = false) {
