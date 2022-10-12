@@ -9,6 +9,10 @@ function getLocationSelect() {
   return cy.get('select').eq(2);
 }
 
+function getLocationTypeSelect() {
+  return cy.get('select').eq(1);
+}
+
 function getEmailSelect() {
   return cy.get('select').eq(1);
 }
@@ -52,6 +56,7 @@ export default {
   },
 
   replaceTemporaryLocation(location = 'Annex') {
+    getLocationTypeSelect().select('Temporary item location');
     getLocationSelect().select('Replace with');
     cy.do([
       Button('Select control\nSelect location').click(),
@@ -60,6 +65,7 @@ export default {
   },
 
   fillTemporaryLocationFilter(location = 'Annex') {
+    getLocationTypeSelect().select('Temporary item location');
     getLocationSelect().select('Replace with');
     cy.do(Button('Select control\nSelect location').click());
     cy.get('[class^=selectionFilter-]').type(location);
