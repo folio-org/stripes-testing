@@ -202,4 +202,9 @@ export default {
         return res.body.instances[0].id;
       });
   },
+
+  searchBySource: (source) => {
+    cy.do(Button({ id: 'accordion-toggle-button-source' }).click());
+    cy.do(Checkbox(source).click());
+  },
 };
