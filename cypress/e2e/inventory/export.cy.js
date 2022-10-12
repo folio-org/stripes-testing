@@ -17,7 +17,7 @@ let userId;
 const instanceTitle = `Inventory export test ${Number(new Date())}`;
 let locationName = '';
 
-describe('ui-inventory: exports', { retries: 3 }, () => {
+describe('ui-inventory: exports', () => {
   before('navigates to Inventory', () => {
     let source;
 
