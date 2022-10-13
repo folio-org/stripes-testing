@@ -7,13 +7,14 @@ import Ledgers from '../../../support/fragments/finance/ledgers/ledgers';
 import Users from '../../../support/fragments/users/users';
 import Funds from '../../../support/fragments/finance/funds/funds';
 import FinanceHelp from '../../../support/fragments/finance/financeHelper';
-import InteractorsTools from '../../../support/utils/interactorsTools';
+import SettingsMenu from '../../../support/fragments/settingsMenu';
+import AcquisitionUnits from '../../../support/fragments/settings/acquisitionUnits/acquisitionUnits';
 
 describe('ui-finance: Transactions', () => {
   const defaultfund = { ...Funds.defaultUiFund };
   const defaultFiscalYear = { ...FiscalYears.defaultUiFiscalYear };
   const defaultLedger = { ...Ledgers.defaultUiLedger };
-  const allocatedQuantity = '50';
+  const defaultAcquisitionUnit = { ...AcquisitionUnits.defaultAcquisitionUnit };
   let user;
 
   before(() => {
@@ -26,17 +27,6 @@ describe('ui-finance: Transactions', () => {
         Ledgers.createViaApi(defaultLedger)
           .then(ledgerResponse => {
             defaultLedger.id = ledgerResponse.id;
-            defaultfund.ledgerId = defaultLedger.id;
-
-            Funds.createViaApi(defaultfund)
-              .then(fundResponse => {
-                defaultfund.id = fundResponse.fund.id;
-
-                cy.loginAsAdmin({ path:TopMenu.fundPath, waiter: Funds.waitLoading });
-                FinanceHelp.searchByName(defaultfund.name);
-                FinanceHelp.selectFromResultsList();
-                Funds.addBudget(allocatedQuantity);
-              });
           });
       });
     cy.createTempUser([
@@ -63,38 +53,46 @@ describe('ui-finance: Transactions', () => {
       permissions.uiFinanceViewEditDeletFundBudget.gui,
       permissions.uiFinanceViewEditDeletGroups.gui,
       permissions.uiFinanceViewEditDeleteLedger.gui,
+      permissions.uiFinanceAssignAcquisitionUnitsToNewRecord.gui
     ])
       .then(userProperties => {
         user = userProperties;
-        cy.login(userProperties.username, userProperties.password, { path:TopMenu.fundPath, waiter: Funds.waitLoading });
       });
   });
 
   after(() => {
-    cy.loginAsAdmin({ path:Se.a, waiter: Funds.waitLoading });
+    cy.loginAsAdmin({ path:SettingsMenu.acquisitionUnitsPath, waiter: AcquisitionUnits.waitLoading });
+    AcquisitionUnits.unAssignAdmin(defaultAcquisitionUnit.name);
+    AcquisitionUnits.delete(defaultAcquisitionUnit.name);
+    cy.loginAsAdmin({ path:TopMenu.fundPath, waiter: Funds.waitLoading });
     FinanceHelp.searchByName(defaultfund.name);
     FinanceHelp.selectFromResultsList();
-    Funds.selectBudgetDetails();
-    Funds.deleteBudgetViaActions();
-    InteractorsTools.checkCalloutMessage('Budget has been deleted');
-    Funds.checkIsBudgetDeleted();
-
-    Funds.deleteFundViaApi(defaultfund.id);
-
+    Funds.deleteFundViaActions();
     Ledgers.deleteledgerViaApi(defaultLedger.id);
 
     FiscalYears.deleteFiscalYearViaApi(defaultFiscalYear.id);
-
     Users.deleteViaApi(user.userId);
   });
 
   it('C163928 Test acquisition unit restrictions for Fund records (thunderjet)', { tags: [testType.criticalPath, devTeams.thunderjet] }, () => {
+    cy.loginAsAdmin({ path:SettingsMenu.acquisitionUnitsPath, waiter: AcquisitionUnits.waitLoading });
+    AcquisitionUnits.newAcquisitionUnit();
+    AcquisitionUnits.fillInInfo(defaultAcquisitionUnit.name);
+    cy.wait(2000);
+    AcquisitionUnits.assignUser(user.username);
+    cy.login(user.username, user.password, { path:TopMenu.fundPath, waiter: Funds.waitLoading });
+    Funds.createFundWithAU(defaultfund, defaultLedger, defaultAcquisitionUnit.name);
+    cy.loginAsAdmin({ path:SettingsMenu.acquisitionUnitsPath, waiter: AcquisitionUnits.waitLoading });
+    AcquisitionUnits.unAssignUser(defaultAcquisitionUnit.name);
+    cy.login(user.username, user.password, { path:TopMenu.fundPath, waiter: Funds.waitLoading });
+    FinanceHelp.searchByName(defaultfund.name);
+    Funds.checkZeroSearchResultsHeader();
+    cy.loginAsAdmin({ path:SettingsMenu.acquisitionUnitsPath, waiter: AcquisitionUnits.waitLoading });
+    AcquisitionUnits.edit(defaultAcquisitionUnit.name);
+    AcquisitionUnits.selectViewCheckbox();
+    cy.pause();
+    cy.login(user.username, user.password, { path:TopMenu.fundPath, waiter: Funds.waitLoading });
     FinanceHelp.searchByName(defaultfund.name);
     FinanceHelp.selectFromResultsList();
-    Funds.selectBudgetDetails();
-    Funds.increaseAllocation();
-    InteractorsTools.checkCalloutMessage(`$50.00 was successfully allocated to the budget ${defaultfund.code}-${defaultFiscalYear.code}`);
-    Funds.viewTransactions();
-    Funds.checkTransactionList(defaultfund.code);
   });
 });

@@ -158,6 +158,6 @@ export default {
   uiFinanceViewEditDeletFundBudget: { internal: 'ui-finance.fund-budget.delete', gui: 'Finance: View, edit, delete fund and budget' },
   uiFinanceViewEditDeletGroups: { internal: 'ui-finance.group.delete', gui: 'Finance: View, edit, delete group' },
   uiFinanceViewEditDeleteLedger: { internal: 'ui-finance.ledger.delete', gui: 'Finance: View, edit, delete ledger' },
-
-
+  uiSettingsFinanceViewEditCreateDeleter: { internal: 'ui-finance.settings.all', gui: 'Settings (Finance): View, edit, create, delete' },
+  uiFinanceAssignAcquisitionUnitsToNewRecord: { internal: 'ui-finance.acq.unit.assignment.assign', gui: 'Finance: Assign acquisition units to new record' },
 };

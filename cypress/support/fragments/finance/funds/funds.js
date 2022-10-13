@@ -19,6 +19,8 @@ import {
   SelectionOption,
   Link,
   MultiColumnList,
+  MultiSelectOption,
+  MultiSelectMenu,
 } from '../../../../../interactors';
 import FinanceHelp from '../financeHelper';
 import TopMenu from '../../topMenu';
@@ -456,4 +458,22 @@ export default {
     path: `finance/budgets/${budgetId}`,
     isDefaultSearchParamsRequired: false,
   }),
+  createFundWithAU(fund, ledger, AUName) {
+    cy.do([
+      newButton.click(),
+      nameField.fillIn(fund.name),
+      codeField.fillIn(fund.code),
+      externalAccountField.fillIn(fund.externalAccountNo),
+      ledgerSelection.open(),
+      SelectionList().select(ledger.name),
+    ]);
+    //Need wait, while data is loading
+    cy.wait(4000);
+    cy.do([
+      MultiSelect({ id: 'fund-acq-units' }).find(Button({ ariaLabel: 'open menu' })).click(),
+      MultiSelectOption(AUName).click(),
+      saveAndCloseButton.click(),
+    ]);
+    this.waitForFundDetailsLoading();
+  },
 };
