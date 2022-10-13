@@ -129,7 +129,7 @@ export default {
 
   verifyKeywordsAsDefault() {
     cy.get('#input-inventory-search-qindex').then(elem => {
-      expect(elem.text()).to.include('Keyword (title, contributor, identifier)');
+      expect(elem.text()).to.include('Keyword (title, contributor, identifier');
     });
     cy.expect(Select({ id: 'input-inventory-search-qindex' }).exists());
   },
