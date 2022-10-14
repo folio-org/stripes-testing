@@ -13,6 +13,8 @@ const trashButton = Button({ icon: 'trash' });
 const assignedUsersSection = Section({ id: 'memberships' });
 const actionsButton = Button('Actions');
 const auPaneDetails = Section({ id: 'pane-ac-units-details' });
+const checkboxAll = Checkbox();
+const searchButton = Button('Search');
 
 export default {
 
@@ -35,8 +37,8 @@ export default {
       saveAUButton.click(),
       findUserButton.click(),
       userSearchModal.find(searchTextField).fillIn('diku'),
-      Button('Search').click(),
-      firstSearchResult.find(Checkbox()).click(),
+      searchButton.click(),
+      firstSearchResult.find(checkboxAll).click(),
       userSearchModal.find(saveButton).click()
     ]);
   },
@@ -45,8 +47,8 @@ export default {
     cy.do([
       findUserButton.click(),
       userSearchModal.find(searchTextField).fillIn(userName),
-      Button('Search').click(),
-      userSearchModal.find(firstSearchResult).find(Checkbox()).click(),
+      searchButton.click(),
+      userSearchModal.find(firstSearchResult).find(checkboxAll).click(),
       userSearchModal.find(saveButton).click()
     ]);
   },
