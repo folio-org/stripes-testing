@@ -12,9 +12,8 @@ import Logs from '../../support/fragments/data_import/logs/logs';
 
 describe('MARC Authority management', () => {
   const testData = {};
-  const pathToFile = 'corporate_name(prefix_in_010Sa)sc_02.mrc';
-  const fileName = `testMarcFile.${getRandomPostfix()}.mrc`;
   const jobProfileToRun = 'Default - Create SRS MARC Authority';
+  let fileName;
   let createdAuthorityIDs = [];
 
   before('Creating data', () => {
@@ -23,9 +22,20 @@ describe('MARC Authority management', () => {
       Permissions.uiMarcAuthoritiesAuthorityRecordView.gui,
     ]).then(createdUserProperties => {
       testData.userProperties = createdUserProperties;
-
-      cy.login(createdUserProperties.username, createdUserProperties.password, { path: TopMenu.dataImportPath, waiter: DataImport.waitLoading });
     });
+  });
+
+  beforeEach('', () => {
+    fileName = `testMarcFile.${getRandomPostfix()}.mrc`;
+
+    cy.login(testData.userProperties.username, testData.userProperties.password, { path: TopMenu.dataImportPath, waiter: DataImport.waitLoading });
+  });
+
+  afterEach('Deleting data', () => {
+    cy.loginAsAdmin({ path: TopMenu.dataImportPath, waiter: DataImport.waitLoading });
+    DataImport.selectLog();
+    DataImport.openDeleteImportLogsModal();
+    DataImport.confirmDeleteImportLogs();
   });
 
   after('Deleting data', () => {
@@ -33,15 +43,10 @@ describe('MARC Authority management', () => {
     createdAuthorityIDs.forEach(id => {
       MarcAuthority.deleteViaAPI(id);
     });
-
-    cy.loginAsAdmin({ path: TopMenu.dataImportPath, waiter: DataImport.waitLoading });
-    DataImport.selectLog();
-    DataImport.openDeleteImportLogsModal();
-    DataImport.confirmDeleteImportLogs();
   });
 
   it('C360521 Import of "MARC Authority" record with valid prefix in "010 $a" field only (spitfire)', { tags: [TestTypes.smoke, Features.authority, DevTeams.spitfire] }, () => {
-    DataImport.uploadFile(pathToFile, fileName);
+    DataImport.uploadFile('corporate_name(prefix_in_010Sa)sc_02.mrc', fileName);
     JobProfiles.waitLoadingList();
     JobProfiles.searchJobProfileForImport(jobProfileToRun);
     JobProfiles.runImportFile(fileName);
@@ -49,10 +54,26 @@ describe('MARC Authority management', () => {
     Logs.openFileDetails(fileName);
     for (let i = 0; i < 3; i++) {
       Logs.getCreatedAuthorityID(i).then(link => {
-        createdAuthorityIDs.push(link.split('/')[5])
+        createdAuthorityIDs.push(link.split('/')[5]);
       });
     }
     Logs.goToTitleLink('Apple Academic Press');
-    Logs.checkAuthorityLogJSON();
+    Logs.checkAuthorityLogJSON(['"sourceFileId":', '"af045f2f-e851-4613-984c-4bc13430454a"', '"naturalId":', '"n2015002050"']);
+  });
+
+  it('C360522 Import of "MARC Authority" record with same valid prefixes in "001" and "010 $a" fields (spitfire)', { tags: [TestTypes.smoke, Features.authority, DevTeams.spitfire] }, () => {
+    DataImport.uploadFile('D_genre(prefixes_in_001_010Sa)sc_03.mrc', fileName);
+    JobProfiles.waitLoadingList();
+    JobProfiles.searchJobProfileForImport(jobProfileToRun);
+    JobProfiles.runImportFile(fileName);
+    Logs.checkStatusOfJobProfile('Completed');
+    Logs.openFileDetails(fileName);
+    for (let i = 0; i < 2; i++) {
+      Logs.getCreatedAuthorityID(i).then(link => {
+        createdAuthorityIDs.push(link.split('/')[5]);
+      });
+    }
+    Logs.goToTitleLink('Case Reports');
+    Logs.checkAuthorityLogJSON(['"sourceFileId":', '"6ddf21a6-bc2f-4cb0-ad96-473e1f82da23"', '"naturalId":', '"D002363"']);
   });
 });

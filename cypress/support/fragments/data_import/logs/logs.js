@@ -63,18 +63,16 @@ export default {
     );
   },
 
-  checkAuthorityLogJSON: () => {
+  checkAuthorityLogJSON: (propertiesArray) => {
     cy.do(Button('Authority').click());
-    cy.expect([
-      HTML('"sourceFileId":').exists(),
-      HTML('"af045f2f-e851-4613-984c-4bc13430454a"').exists(),
-      HTML('"naturalId":').exists(),
-      HTML('"n2015002050"').exists(),
-    ]);
+
+    propertiesArray.forEach(property => { 
+      cy.expect(HTML(property).exists());
+    });
   },
   
-  getCreatedAuthorityID: (rowIndex = 0) => cy.then(() => 
+  getCreatedAuthorityID: (rowIndex = 0) => cy.then(() =>
     MultiColumnList({ id: 'search-results-list' })
-    .find(MultiColumnListRow({ indexRow: `row-${rowIndex}` }))
-    .find(Link('Created')).href()),
+      .find(MultiColumnListRow({ indexRow: `row-${rowIndex}` }))
+      .find(Link('Created')).href()),
 };
