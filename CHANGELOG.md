@@ -1,10 +1,15 @@
 # Change history for stripes-testing
 
-## IN PROGRESS
+## [4.4.0](https://github.com/folio-org/stripes-testing/tree/v4.4.0) (2022-10-13)
+[Full Changelog](https://github.com/folio-org/stripes-testing/compare/v4.3.0...v4.4.0)
+
 * Update circulationLoanHistoryPath. Refs UITEST-100
 * Implement e-2-e automation of test case C465. Refs FAT-797.
 * Implement e-2-e automation of test case C347828. Refs FAT-1296.
 * Implement e-2-e automation of test case C17017. Refs FAT-1288.
+* `<CheckboxInTable>` interactor.
+* `<Image>` interactor.
+* `<ConfirmationModal>` interactor.
 
 ## [4.3.0](https://github.com/folio-org/stripes-testing/tree/v4.3.0) (2022-06-14)
 [Full Changelog](https://github.com/folio-org/stripes-testing/compare/v4.2.0...v4.3.0)
