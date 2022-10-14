@@ -64,7 +64,7 @@ describe('ui-finance: Funds', () => {
     cy.loginAsAdmin({ path:SettingsMenu.acquisitionUnitsPath, waiter: AcquisitionUnits.waitLoading });
     AcquisitionUnits.unAssignAdmin(defaultAcquisitionUnit.name);
     AcquisitionUnits.delete(defaultAcquisitionUnit.name);
-    cy.loginAsAdmin({ path:TopMenu.fundPath, waiter: Funds.waitLoading });
+    cy.visit(TopMenu.fundPath);
     FinanceHelp.searchByName(defaultfund.name);
     FinanceHelp.selectFromResultsList();
     Funds.deleteFundViaActions();
@@ -91,7 +91,6 @@ describe('ui-finance: Funds', () => {
     cy.loginAsAdmin({ path:SettingsMenu.acquisitionUnitsPath, waiter: AcquisitionUnits.waitLoading });
     AcquisitionUnits.edit(defaultAcquisitionUnit.name);
     AcquisitionUnits.selectViewCheckbox();
-    cy.pause();
     cy.login(user.username, user.password, { path:TopMenu.fundPath, waiter: Funds.waitLoading });
     FinanceHelp.searchByName(defaultfund.name);
     FinanceHelp.selectFromResultsList();
