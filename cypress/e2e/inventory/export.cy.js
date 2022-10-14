@@ -105,7 +105,7 @@ describe('ui-inventory: exports', () => {
 
   it('C9287 verifies export CQL query (firebird)', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
     InventorySearch.byLanguage();
-    InventorySearch.searchByParameter('Keyword (title, contributor, identifier)', instanceTitle);
+    InventorySearch.searchByParameter('Keyword (title, contributor, identifier, HRID, UUID)', instanceTitle);
     InventorySearch.byEffectiveLocation(locationName);
     InventorySearch.saveCQLQuery();
 
