@@ -20,7 +20,6 @@ import {
   Link,
   MultiColumnList,
   MultiSelectOption,
-  MultiSelectMenu,
 } from '../../../../../interactors';
 import FinanceHelp from '../financeHelper';
 import TopMenu from '../../topMenu';

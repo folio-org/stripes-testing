@@ -78,6 +78,7 @@ describe('ui-finance: Transactions', () => {
     cy.loginAsAdmin({ path:SettingsMenu.acquisitionUnitsPath, waiter: AcquisitionUnits.waitLoading });
     AcquisitionUnits.newAcquisitionUnit();
     AcquisitionUnits.fillInInfo(defaultAcquisitionUnit.name);
+    //Need to wait,while dato is load
     cy.wait(2000);
     AcquisitionUnits.assignUser(user.username);
     cy.login(user.username, user.password, { path:TopMenu.fundPath, waiter: Funds.waitLoading });
