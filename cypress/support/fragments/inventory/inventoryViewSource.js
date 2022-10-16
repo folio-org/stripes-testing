@@ -28,12 +28,12 @@ export default {
     closeDetailView();
   },
 
-  verifyResourceIdentifierInMARCBibSource:(fieldNumber, content) => {
+  verifyFieldInMARCBibSource:(fieldNumber, content) => {
     cy.contains(fieldNumber).parent('tr').should('exist');
     cy.contains(content).parent('tr').should('exist');
   },
 
-  verifyResourceIdentifierInMARCBibSourceAbsent:(fieldNumber) => {
+  verifyFieldInMARCBibSourceIsAbsent:(fieldNumber) => {
     cy.contains(fieldNumber).parent('tr').should('absent');
   },
 };

@@ -1,6 +1,6 @@
 /* eslint-disable cypress/no-unnecessary-waiting */
 import getRandomPostfix from '../../utils/stringTools';
-import { Button, TextField, TextArea, KeyValue, Checkbox, Link, Heading, Select, Pane } from '../../../../interactors';
+import { Button, TextField, TextArea, KeyValue, Checkbox, Link, Heading, Select, Pane, Modal, Section } from '../../../../interactors';
 import richTextEditor from '../../../../interactors/rich-text-editor';
 import { NOTICE_CATEGORIES } from './notice-policy';
 import { actionsButtons } from './newNoticePolicy';
@@ -39,7 +39,7 @@ export default {
     return cy.do(Link(noticePolicyTemplate.name).click());
   },
 
-  create: (noticePolicyTemplate) => {
+  create: (noticePolicyTemplate, autoSave = true) => {
     cy.get('#input-patron-notice-name').type(noticePolicyTemplate.name);
     cy.do([
       bodyField.fillIn(noticePolicyTemplate.body),
@@ -49,7 +49,13 @@ export default {
       descriptionField.has({ value: noticePolicyTemplate.description }),
       subjectField.has({ value: noticePolicyTemplate.subject }),
     ]);
-    cy.get('#footer-save-entity').click();
+    if (autoSave) { cy.get('#footer-save-entity').click(); }
+  },
+
+  checkPreview: () => {
+    cy.do(Section({ id: 'email-template-form' }).find(Button('Preview')).click());
+    cy.expect(Modal('Preview of patron notice template').exists());
+    cy.do(Button('Close').click());
   },
 
   startAdding() {

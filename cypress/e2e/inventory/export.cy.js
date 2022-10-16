@@ -17,7 +17,7 @@ let userId;
 const instanceTitle = `Inventory export test ${Number(new Date())}`;
 let locationName = '';
 
-describe('ui-inventory: exports', { retries: 3 }, () => {
+describe('ui-inventory: exports', () => {
   before('navigates to Inventory', () => {
     let source;
 
@@ -105,7 +105,7 @@ describe('ui-inventory: exports', { retries: 3 }, () => {
 
   it('C9287 verifies export CQL query (firebird)', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
     InventorySearch.byLanguage();
-    InventorySearch.searchByParameter('Keyword (title, contributor, identifier)', instanceTitle);
+    InventorySearch.searchByParameter('Keyword (title, contributor, identifier, HRID, UUID)', instanceTitle);
     InventorySearch.byEffectiveLocation(locationName);
     InventorySearch.saveCQLQuery();
 
