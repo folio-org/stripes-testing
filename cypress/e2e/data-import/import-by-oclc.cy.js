@@ -10,7 +10,7 @@ import InventorySearch from '../../support/fragments/inventory/inventorySearch';
 let user;
 const oclc = '1007797324';
 
-describe('data-import: import by OCLC', () => {
+describe('ui-inventory: import by OCLC', () => {
   before('create user', () => {
     cy.createTempUser([
       permissions.uiQuickMarcQuickMarcBibliographicEditorAll.gui,

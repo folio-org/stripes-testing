@@ -16,9 +16,7 @@ const saveButton = Button('Save as profile & Close');
 const deleteButton = Button('Delete');
 const fullScreenView = Pane({ id:'full-screen-view' });
 
-const saveMappingProfile = () => {
-  cy.do(saveButton.click());
-};
+const saveMappingProfile = () => cy.do(saveButton.click());
 
 const closeViewModeForMappingProfile = (profileName) => {
   cy.do(Pane({ title: profileName }).find(Button({ icon: 'times' })).click());

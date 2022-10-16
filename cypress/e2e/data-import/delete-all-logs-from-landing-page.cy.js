@@ -14,7 +14,6 @@ describe('ui-data-import: A user can delete import logs with "Data import: Can d
   let fileNameToUpload = '';
   const filePathToUpload = 'oneMarcBib.mrc';
   const emptyFilePathToUpload = 'emptyMarc.mrc';
-  const jobProfileToRun = 'Default - Create instance and SRS MARC Bib';
   const numberOfLogsToDelete = 2;
   const numberOfLogsPerPage = 25;
   const numberOfLogsToUpload = 30;
@@ -39,13 +38,17 @@ describe('ui-data-import: A user can delete import logs with "Data import: Can d
           const filePath = numberOfLogsToUpload - 1 === index ? filePathToUpload : emptyFilePathToUpload;
           fileNameToUpload = `C358137autotestFile.${getRandomPostfix()}.mrc`;
           DataImport.uploadFile(filePath, fileNameToUpload);
-          JobProfiles.searchJobProfileForImport(jobProfileToRun);
+          JobProfiles.searchJobProfileForImport('Default - Create instance and SRS MARC Bib');
           JobProfiles.runImportFile(fileNameToUpload);
         });
       });
   });
 
   after(() => {
+    Logs.selectAllLogs();
+    Logs.actionsButtonClick();
+    Logs.deleteAllLogsButtonClick();
+    DataImport.confirmDeleteImportLogs();
     Users.deleteViaApi(userId);
   });
 
