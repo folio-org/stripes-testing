@@ -37,17 +37,17 @@ describe('ui-data-import: EDIFACT file import with creating of new invoice recor
     DataImport.checkUploadState();
   });
 
-  // after(() => {
-  //   cy.getInvoiceIdApi({ query: `vendorInvoiceNo="${FileDetails.invoiceNumberFromEdifactFile}"` })
-  //     .then(id => cy.deleteInvoiceFromStorageApi(id));
-  //   DataImport.checkUploadState();
-  //   Users.deleteViaApi(user.userId);
+  after(() => {
+    cy.getInvoiceIdApi({ query: `vendorInvoiceNo="${FileDetails.invoiceNumberFromEdifactFile}"` })
+      .then(id => cy.deleteInvoiceFromStorageApi(id));
+    DataImport.checkUploadState();
+    Users.deleteViaApi(user.userId);
 
-  //   // clean up generated profiles
-  //   JobProfiles.deleteJobProfile(jobProfileName);
-  //   ActionProfiles.deleteActionProfile(actionProfileName);
-  //   FieldMappingProfiles.deleteFieldMappingProfile(mappingProfileName);
-  // });
+    // clean up generated profiles
+    JobProfiles.deleteJobProfile(jobProfileName);
+    ActionProfiles.deleteActionProfile(actionProfileName);
+    FieldMappingProfiles.deleteFieldMappingProfile(mappingProfileName);
+  });
 
   it('C343338 EDIFACT file import with creating of new invoice record (folijet)', { tags: [TestTypes.smoke, DevTeams.folijet] }, () => {
     // unique file name to upload
@@ -66,7 +66,6 @@ describe('ui-data-import: EDIFACT file import with creating of new invoice recor
     };
 
     cy.visit(SettingsMenu.actionProfilePath);
-    // TODO: issue with mapping of action and mapping profiles
     ActionProfiles.createActionProfile(actionProfile, mappingProfileName);
     ActionProfiles.checkActionProfilePresented(actionProfileName);
 
