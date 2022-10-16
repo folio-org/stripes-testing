@@ -116,7 +116,7 @@ describe('ui-data-import: Verify the possibility to modify MARC Bibliographic re
     FieldMappingProfiles.openNewMappingProfileForm();
     NewFieldMappingProfile.fillSummaryInMappingProfile(mappingProfileFieldsForModify);
     NewFieldMappingProfile.addFieldMappingsForMarc();
-    NewFieldMappingProfile.fillModificationSection('Add', '947', 'a', 'Add subfield', 'Test', 'b', 'Addition');
+    NewFieldMappingProfile.fillModificationSectionWithAdd('Add', '947', 'a', 'Add subfield', 'Test', 'b', 'Addition');
     FieldMappingProfiles.saveProfile();
     FieldMappingProfiles.closeViewModeForMappingProfile(mappingProfileFieldsForModify.name);
     FieldMappingProfiles.checkMappingProfilePresented(mappingProfileName);

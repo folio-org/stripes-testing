@@ -265,7 +265,6 @@ export default {
 
   saveProfile:() => {
     cy.do(saveButton.click());
-    cy.expect(saveButton.absent());
   },
 
   fillCatalogedDate:() => {
