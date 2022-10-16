@@ -45,6 +45,10 @@ describe('ui-data-import: A user can delete import logs with "Data import: Can d
   });
 
   after(() => {
+    Logs.selectAllLogs();
+    Logs.actionsButtonClick();
+    Logs.deleteAllLogsButtonClick();
+    DataImport.confirmDeleteImportLogs();
     Users.deleteViaApi(userId);
   });
 

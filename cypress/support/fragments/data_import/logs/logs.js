@@ -5,19 +5,33 @@ import {
   Selection,
   SelectionList,
   Link,
-  MultiColumnList
+  MultiColumnList,
+  Checkbox
 } from '../../../../../interactors';
 
 const anyProfileAccordion = Accordion({ id: 'profileIdAny' });
+const actionsButton = Button('Actions');
+const viewAllLogsButton = Button('View all logs');
+const selectAllCheckbox = Checkbox({ name: 'selected-all' });
 
 const quantityRecordsInInvoice = {
   firstQuantity: '18',
 };
 
+const actionsButtonClick = () => { cy.do(actionsButton.click()); };
+const openViewAllLogs = () => { cy.do(viewAllLogsButton.click()); };
+const selectAllLogs = () => { cy.do(MultiColumnList({ id:'job-logs-list' }).find(selectAllCheckbox).click()); };
+const deleteAllLogsClick = () => { cy.do(Button('Delete selected logs').click()); };
+
 export default {
+  actionsButtonClick,
+  openViewAllLogs,
+  selectAllLogs,
+  deleteAllLogsButtonClick: deleteAllLogsClick,
+
   checkImportFile(jobProfileName) {
-    cy.do(Button('Actions').click());
-    cy.do(Button('View all logs').click());
+    cy.do(actionsButton.click());
+    cy.do(viewAllLogsButton.click());
     cy.do([
       anyProfileAccordion.clickHeader(),
       anyProfileAccordion.find(Selection({ singleValue: 'Choose job profile' })).open()]);
