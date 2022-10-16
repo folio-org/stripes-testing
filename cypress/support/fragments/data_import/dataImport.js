@@ -141,7 +141,7 @@ export default {
   },
 
   getLogsHrIdsFromUI: (logsCount = 25) => {
-    const hrIdColumnIndex = 7;
+    const hrIdColumnIndex = 8;
     const cells = [];
 
     new Array(logsCount).fill(null).forEach((_, index) => {
@@ -180,9 +180,7 @@ export default {
         cy.expect(jobLogsList.absent());
         return;
       }
-
       cy.expect(selectAllCheckbox.is({ disabled: false }));
-
       // since data import landing page displays latest 25 logs at a time,
       // when there are more than 25 logs and after deleting current logs, new logs will be displayed.
       // so we need to verify that the hrIds of new logs are different from those of previous logs.
@@ -215,16 +213,21 @@ export default {
 
   verifyDeleteLogsButtonDisabled: () => {
     cy.do(actionsButton.click());
-
     cy.expect(deleteLogsButton.is({ disabled: true }));
   },
 
   editMarcFile(editedFileName, finalFileName, stringToBeReplaced, replaceString) {
+    // stringToBeReplaced and replaceString must be array. Array length must be equal
     FileManager.readFile(`cypress/fixtures/${editedFileName}`)
       .then((actualContent) => {
         const content = actualContent.split('\n');
+        let firstString = content[0].slice();
 
-        content[0] = content[0].slice().replace(stringToBeReplaced, replaceString);
+        for (let i = 0; i < stringToBeReplaced.length; i++) {
+          firstString = firstString.replace(stringToBeReplaced[i], replaceString[i]);
+        }
+
+        content[0] = firstString;
         FileManager.createFile(`cypress/fixtures/${finalFileName}`, content.join('\n'));
       });
   },

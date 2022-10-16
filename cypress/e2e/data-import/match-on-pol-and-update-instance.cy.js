@@ -117,17 +117,6 @@ describe('ui-data-import: Match on POL and update related Instance, Holdings, It
   });
 
   after(() => {
-    cy.getInstance({ limit: 1, expandAll: true, query: `"title"=="${pol.title}"` })
-      .then((instance) => {
-        cy.deleteItem(instance.items[0].id);
-        cy.deleteHoldingRecordViaApi(instance.holdings[0].id);
-        InventoryInstance.deleteInstanceViaApi(instance.id);
-      });
-    Orders.getOrdersApi({ limit: 1, query: `"poNumber"=="${orderNumber}"` })
-      .then(orderId => {
-        Orders.deleteOrderApi(orderId[0].id);
-      });
-    Users.deleteViaApi(user.userId);
     // delete generated profiles
     JobProfiles.deleteJobProfile(jobProfileName);
     MatchProfiles.deleteMatchProfile(matchProfile.profileName);
@@ -137,6 +126,17 @@ describe('ui-data-import: Match on POL and update related Instance, Holdings, It
     });
     // delete created files
     FileManager.deleteFile(`cypress/fixtures/${editedMarcFileName}`);
+    Orders.getOrdersApi({ limit: 1, query: `"poNumber"=="${orderNumber}"` })
+      .then(orderId => {
+        Orders.deleteOrderApi(orderId[0].id);
+      });
+    Users.deleteViaApi(user.userId);
+    cy.getInstance({ limit: 1, expandAll: true, query: `"title"=="${pol.title}"` })
+      .then((instance) => {
+        cy.deleteItem(instance.items[0].id);
+        cy.deleteHoldingRecordViaApi(instance.holdings[0].id);
+        InventoryInstance.deleteInstanceViaApi(instance.id);
+      });
   });
 
   const createInstanceMappingProfile = (instanceMappingProfile) => {
@@ -233,7 +233,7 @@ describe('ui-data-import: Match on POL and update related Instance, Holdings, It
           Orders.openOrder();
 
           // change file using order number
-          DataImport.editMarcFile('marcFileForMatchOnPol.mrc', editedMarcFileName, 'test', orderNumber);
+          DataImport.editMarcFile('marcFileForMatchOnPol.mrc', editedMarcFileName, ['test'], [orderNumber]);
         });
     });
 
@@ -249,7 +249,7 @@ describe('ui-data-import: Match on POL and update related Instance, Holdings, It
     FileDetails.checkItemsStatusesInResultList(0, [FileDetails.status.created, FileDetails.status.updated, FileDetails.status.created, FileDetails.status.created]);
     FileDetails.checkItemsStatusesInResultList(1, [FileDetails.status.dash, FileDetails.status.discarded]);
 
-    FileDetails.openInstanceInInventory();
+    FileDetails.openInstanceInInventory('Updated');
     InventoryInstance.checkIsInstanceUpdated();
     InventoryInstance.checkIsHoldingsCreated(['Main Library >']);
     InventoryInstance.openHoldingsAccordion('Main Library >');

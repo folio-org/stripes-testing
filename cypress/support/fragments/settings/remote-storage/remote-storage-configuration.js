@@ -130,8 +130,7 @@ export default {
   closeWithoutSaving() {
     return cy.do([
       Modal().find(Button('Cancel')).click(),
-      Pane({ title: including('Edit ') }).find(Button({ icon: 'times' })).click(),
-      Button('Close without saving').click(),
+      Pane({ title: including('Edit ') }).find(Button({ icon: 'times' })).click()
     ]);
   },
 
