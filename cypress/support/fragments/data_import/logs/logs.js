@@ -6,7 +6,8 @@ import {
   SelectionList,
   Link,
   MultiColumnList,
-  Checkbox
+  HTML,
+  MultiColumnListRow,
 } from '../../../../../interactors';
 
 const anyProfileAccordion = Accordion({ id: 'profileIdAny' });
@@ -64,4 +65,29 @@ export default {
   },
 
   quantityRecordsInInvoice,
+
+  goToTitleLink: (title) => {
+    // When you click on a link, it opens in a new tab. Because of this, a direct transition to the link is carried out.
+    cy.do(
+      MultiColumnList({ id: 'search-results-list' })
+        .find(Link(title)).perform(element => {
+          cy.visit(element.href);
+        })
+    );
+  },
+
+  checkAuthorityLogJSON: () => {
+    cy.do(Button('Authority').click());
+    cy.expect([
+      HTML('"sourceFileId":').exists(),
+      HTML('"af045f2f-e851-4613-984c-4bc13430454a"').exists(),
+      HTML('"naturalId":').exists(),
+      HTML('"n2015002050"').exists(),
+    ]);
+  },
+  
+  getCreatedAuthorityID: (rowIndex = 0) => cy.then(() => 
+    MultiColumnList({ id: 'search-results-list' })
+    .find(MultiColumnListRow({ indexRow: `row-${rowIndex}` }))
+    .find(Link('Created')).href()),
 };
