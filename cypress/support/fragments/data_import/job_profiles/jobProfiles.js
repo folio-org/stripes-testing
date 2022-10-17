@@ -104,7 +104,7 @@ export default {
     openNewJobProfileForm();
     newJobProfile.fillJobProfile(jobProfile);
     if (!matchProfileName) {
-      newJobProfile.linkActionProfile(actionProfileName);
+      newJobProfile.linkActionProfileByName(actionProfileName);
     } else {
       newJobProfile.linkMatchAndActionProfiles(matchProfileName, actionProfileName);
     }

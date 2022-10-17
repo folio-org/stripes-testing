@@ -303,7 +303,7 @@ describe('ui-data-import: Check that field protection overrides work properly du
         InstanceRecordView.verifyInstanceNote(updatedInstanceNote);
         // verify table data in marc bibliographic source
         InventoryInstance.viewSource();
-        InventoryViewSource.verifyFieldInMARCBibSourceIsAbsent(protectedFields.firstField);
+        InventoryViewSource.notContains`${protectedFields.firstField}\t`();
         InventoryViewSource.verifyFieldInMARCBibSource(protectedFields.secondField, updatedInstanceNote);
       });
   });

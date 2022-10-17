@@ -405,18 +405,16 @@ export default {
     ]);
   },
 
-  fillModificationSectionWithDelete:(action, fieldNumber) => {
+  fillModificationSectionWithDelete:(action, fieldNumber, number) => {
     cy.do([
-      Select({ name:'profile.mappingDetails.marcMappingDetails[0].action' }).choose(action),
-      TextField({ name:'profile.mappingDetails.marcMappingDetails[0].field.field' }).fillIn(fieldNumber)
+      Select({ name:`profile.mappingDetails.marcMappingDetails[${number}].action` }).choose(action),
+      TextField({ name:`profile.mappingDetails.marcMappingDetails[${number}].field.field` }).fillIn(fieldNumber)
     ]);
   },
 
-  addNewFieldInModificationSection:(field) => {
-    // doesn't work
-    cy.get('div[class^="tableRow--"]').contains('div[class^="tableCell--"]', field).then(elem => {
-      console.log(elem);
-      elem.parent()[0].querySelector('button["type="button"]').click();
+  addNewFieldInModificationSection:() => {
+    cy.get('div[class^="tableRow-"]').last().then(elem => {
+      elem[0].querySelector('button[icon="plus-sign"]').click();
     });
   }
 };

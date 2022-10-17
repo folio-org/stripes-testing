@@ -254,6 +254,7 @@ describe('ui-data-import: Match on POL and update related Instance, Holdings, It
     InventoryInstance.checkIsHoldingsCreated(['Main Library >']);
     InventoryInstance.openHoldingsAccordion('Main Library >');
     InventoryInstance.checkIsItemCreated('242451241241');
+    InventoryInstance.viewSource();
     InventoryViewSource.verifyBarcodeInMARCBibSource('242451241241');
   });
 });

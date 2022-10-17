@@ -364,6 +364,7 @@ describe('ui-data-import: Match on POL and update related Instance, Holdings, It
     InventoryInstance.checkIsInstanceUpdated();
     HoldingsRecordView.checkIsHoldingsUpdated();
     ItemVeiw.checkIsItemUpdated(firstItem.barcode);
+    InventoryInstance.viewSource();
     InventoryViewSource.verifyBarcodeInMARCBibSource(firstItem.barcode);
   });
 });
