@@ -74,11 +74,12 @@ describe('ui-finance: Funds', () => {
     Users.deleteViaApi(user.userId);
   });
 
+  // Test is failed. FAT-3199
   it('C163928 Test acquisition unit restrictions for Fund records (thunderjet)', { tags: [testType.criticalPath, devTeams.thunderjet] }, () => {
     cy.loginAsAdmin({ path:SettingsMenu.acquisitionUnitsPath, waiter: AcquisitionUnits.waitLoading });
     AcquisitionUnits.newAcquisitionUnit();
     AcquisitionUnits.fillInInfo(defaultAcquisitionUnit.name);
-    //Need to wait,while dato is load
+    // Need to wait,while dato is load
     cy.wait(2000);
     AcquisitionUnits.assignUser(user.username);
     cy.login(user.username, user.password, { path:TopMenu.fundPath, waiter: Funds.waitLoading });
