@@ -79,9 +79,7 @@ const duplicateMappingProfile = () => {
   ]);
 };
 
-const saveProfile = () => {
-  cy.do(saveProfileButton.click());
-};
+const saveProfile = () => cy.do(saveProfileButton.click());
 
 export default {
   openNewMappingProfileForm,
