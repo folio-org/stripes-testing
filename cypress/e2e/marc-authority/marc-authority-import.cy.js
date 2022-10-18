@@ -25,7 +25,7 @@ describe('MARC Authority management', () => {
     });
   });
 
-  beforeEach('', () => {
+  beforeEach('Login to the application', () => {
     fileName = `testMarcFile.${getRandomPostfix()}.mrc`;
 
     cy.login(testData.userProperties.username, testData.userProperties.password, { path: TopMenu.dataImportPath, waiter: DataImport.waitLoading });
