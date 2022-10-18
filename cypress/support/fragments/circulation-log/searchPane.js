@@ -1,6 +1,17 @@
 import { matching } from 'bigtest';
-import { Accordion, Button, MultiColumnListCell, MultiColumnListRow, including, TextField, Pane } from '../../../../interactors';
+import {
+  Accordion,
+  Button,
+  MultiColumnListCell,
+  MultiColumnListRow,
+  including,
+  TextField,
+  Pane,
+  Dropdown, DropdownMenu
+} from '../../../../interactors';
 import DateTools from '../../utils/dateTools';
+
+const dropdownButton = MultiColumnListRow({ rowIndexInParent: 'row-0' }).find(Dropdown()).find(Button());
 
 
 // TODO: will rework to interactor when we get section id
@@ -98,5 +109,16 @@ export default {
   },
   resetResults() {
     cy.do(Button('Reset all').click());
-  }
+  },
+
+  goToUserDetails() {
+    cy.do([
+      dropdownButton.click(),
+      DropdownMenu().find(Button()).click()
+    ]);
+  },
+
+  userDetailIsOpen() {
+    cy.expect(Pane({ id: 'pane-userdetails' }).exists());
+  },
 };
