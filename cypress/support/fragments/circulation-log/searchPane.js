@@ -11,6 +11,8 @@ import {
 } from '../../../../interactors';
 import DateTools from '../../utils/dateTools';
 
+const dropdownButton = MultiColumnListRow({ rowIndexInParent: 'row-0' }).find(Dropdown()).find(Button());
+
 
 // TODO: will rework to interactor when we get section id
 function clickApplyMainFilter() {
@@ -111,7 +113,7 @@ export default {
 
   goToUserDetails() {
     cy.do([
-      MultiColumnListRow({ rowIndexInParent: 'row-0' }).find(Dropdown()).find(Button()).click(),
+      dropdownButton.click(),
       DropdownMenu().find(Button()).click()
     ]);
   },
