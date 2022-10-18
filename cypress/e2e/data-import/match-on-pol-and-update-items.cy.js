@@ -7,7 +7,7 @@ import Orders from '../../support/fragments/orders/orders';
 import Helper from '../../support/fragments/finance/financeHelper';
 import FieldMappingProfiles from '../../support/fragments/data_import/mapping_profiles/fieldMappingProfiles';
 import NewActionProfile from '../../support/fragments/data_import/action_profiles/newActionProfile';
-import NewMappingProfile from '../../support/fragments/data_import/mapping_profiles/newMappingProfile';
+import NewFieldMappingProfile from '../../support/fragments/data_import/mapping_profiles/newFieldMappingProfile';
 import ActionProfiles from '../../support/fragments/data_import/action_profiles/actionProfiles';
 import NewJobProfile from '../../support/fragments/data_import/job_profiles/newJobProfile';
 import SettingsMenu from '../../support/fragments/settingsMenu';
@@ -77,7 +77,7 @@ describe('ui-data-import: Match on POL and update related Instance, Holdings, It
 
   const collectionOfProfiles = [
     {
-      mappingProfile: { typeValue: NewMappingProfile.folioRecordTypeValue.instance,
+      mappingProfile: { typeValue: NewFieldMappingProfile.folioRecordTypeValue.instance,
         name: mappingProfileNameForInstance,
         update: true },
       actionProfile: { typeValue: NewActionProfile.folioRecordTypeValue.instance,
@@ -85,7 +85,7 @@ describe('ui-data-import: Match on POL and update related Instance, Holdings, It
         action: 'Update (all record types except Orders, Invoices, or MARC Holdings)' }
     },
     {
-      mappingProfile: { typeValue: NewMappingProfile.folioRecordTypeValue.holdings,
+      mappingProfile: { typeValue: NewFieldMappingProfile.folioRecordTypeValue.holdings,
         name: mappingProfileNameForHoldings,
         update: true },
       actionProfile: { typeValue: NewActionProfile.folioRecordTypeValue.holdings,
@@ -93,7 +93,7 @@ describe('ui-data-import: Match on POL and update related Instance, Holdings, It
         action: 'Update (all record types except Orders, Invoices, or MARC Holdings)' }
     },
     {
-      mappingProfile: { typeValue: NewMappingProfile.folioRecordTypeValue.item,
+      mappingProfile: { typeValue: NewFieldMappingProfile.folioRecordTypeValue.item,
         name: mappingProfileNameForItem,
         update: true },
       actionProfile: { typeValue: NewActionProfile.folioRecordTypeValue.item,

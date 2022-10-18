@@ -2,7 +2,7 @@ import getRandomPostfix from '../../support/utils/stringTools';
 import TestTypes from '../../support/dictionary/testTypes';
 import DevTeams from '../../support/dictionary/devTeams';
 import SettingsMenu from '../../support/fragments/settingsMenu';
-import NewFieldMappingProfile from '../../support/fragments/data_import/mapping_profiles/newMappingProfile';
+import NewFieldMappingProfile from '../../support/fragments/data_import/mapping_profiles/newFieldMappingProfile';
 import FieldMappingProfiles from '../../support/fragments/data_import/mapping_profiles/fieldMappingProfiles';
 import MarcFieldProtection from '../../support/fragments/settings/dataImport/marcFieldProtection';
 import MappingProfileDetails from '../../support/fragments/data_import/mapping_profiles/mappingProfileDetails';
@@ -209,7 +209,7 @@ describe('ui-data-import: Check that field protection overrides work properly du
     FieldMappingProfiles.createInstanceMappingProfileWithNotes(instanceMappingProfileOverride, noteForOverrideInstanceMappingProfile);
     FieldMappingProfiles.checkMappingProfilePresented(instanceMappingProfileOverride.name);
 
-    // create action profiles
+    // create Action profiles
     cy.visit(SettingsMenu.actionProfilePath);
     ActionProfiles.createActionProfile(marcBibActionProfile, marcBibMappingProfile.name);
     ActionProfiles.checkActionProfilePresented(marcBibActionProfile.name);
@@ -303,7 +303,7 @@ describe('ui-data-import: Check that field protection overrides work properly du
         InstanceRecordView.verifyInstanceNote(updatedInstanceNote);
         // verify table data in marc bibliographic source
         InventoryInstance.viewSource();
-        InventoryViewSource.verifyFieldInMARCBibSourceIsAbsent(protectedFields.firstField);
+        InventoryViewSource.notContains(`${protectedFields.firstField}\t`);
         InventoryViewSource.verifyFieldInMARCBibSource(protectedFields.secondField, updatedInstanceNote);
       });
   });

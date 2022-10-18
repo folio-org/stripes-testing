@@ -10,7 +10,7 @@ import {
 } from '../../../../../interactors';
 import { getLongDelay } from '../../../utils/cypressTools';
 import MappingProfileDetails from './mappingProfileDetails';
-import NewMappingProfile from './newMappingProfile';
+import NewFieldMappingProfile from './newFieldMappingProfile';
 
 const actionsButton = Button('Actions');
 const searchButton = Button('Search');
@@ -88,15 +88,8 @@ export default {
 
   createMappingProfile:(mappingProfile) => {
     openNewMappingProfileForm();
-    NewMappingProfile.fillMappingProfile(mappingProfile);
+    NewFieldMappingProfile.fillMappingProfile(mappingProfile);
     closeViewModeForMappingProfile(mappingProfile.name);
-    cy.expect(actionsButton.exists());
-  },
-
-  createModifyMappingProfile:(mappingProfile, properties) => {
-    openNewMappingProfileForm();
-    NewMappingProfile.fillModifyMappingProfile(mappingProfile, properties);
-    closeViewModeForMappingProfile(mappingProfile);
     cy.expect(actionsButton.exists());
   },
 
@@ -111,7 +104,7 @@ export default {
     searchMappingProfile(defaultProfile);
     cy.wait('@getTag');
     duplicateMappingProfile();
-    NewMappingProfile.fillMappingProfileForInvoice(mappingProfileName, organizationName);
+    NewFieldMappingProfile.fillMappingProfileForInvoice(mappingProfileName, organizationName);
     closeViewModeForMappingProfile(mappingProfileName);
     cy.expect(actionsButton.exists());
   },
@@ -152,20 +145,20 @@ export default {
 
   createMappingProfileForMatch:(mappingProfile) => {
     openNewMappingProfileForm();
-    NewMappingProfile.fillMappingProfileForMatch(mappingProfile);
+    NewFieldMappingProfile.fillMappingProfileForMatch(mappingProfile);
     closeViewModeForMappingProfile(mappingProfile.name);
     cy.expect(actionsButton.exists());
   },
 
   createMappingProfileForUpdatesMarc:(mappingProfile) => {
     openNewMappingProfileForm();
-    NewMappingProfile.fillMappingProfileForUpdatesMarc(mappingProfile);
+    NewFieldMappingProfile.fillMappingProfileForUpdatesMarc(mappingProfile);
     cy.do(saveProfileButton.click());
   },
 
   createMappingProfileForUpdatesAndOverrideMarc:(mappingProfile, firstProtectedField, secondProtectedField) => {
     openNewMappingProfileForm();
-    NewMappingProfile.fillMappingProfileForUpdatesMarc(mappingProfile);
+    NewFieldMappingProfile.fillMappingProfileForUpdatesMarc(mappingProfile);
     MappingProfileDetails.markFieldForProtection(firstProtectedField);
     MappingProfileDetails.markFieldForProtection(secondProtectedField);
     cy.do(saveProfileButton.click());

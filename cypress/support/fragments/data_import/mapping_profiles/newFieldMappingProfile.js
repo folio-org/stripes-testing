@@ -37,6 +37,11 @@ const actions = {
   findAndRemoveThese: 'Find and remove these'
 };
 
+const actionsFieldMappingsForMarc = {
+  modify: 'Modifications',
+  update: 'Updates'
+};
+
 const permanentLocation = '"Annex (KU/CC/DI/A)"';
 
 const materialType = '"book"';
@@ -70,13 +75,13 @@ const selectOrganizationByName = (organizationName) => {
   ]);
 };
 
-const selectFromResultsList = (rowNumber = 0) => {
-  cy.do(organizationModal.find(MultiColumnListRow({ index: rowNumber })).click());
+const waitLoading = () => {
+  // wait will be add uuid for acceptedValues
+  cy.wait(500);
 };
 
-const waitLoading = () => {
-// wait will be add uuid for acceptedValues
-  cy.wait(500);
+const selectFromResultsList = (rowNumber = 0) => {
+  cy.do(organizationModal.find(MultiColumnListRow({ index: rowNumber })).click());
 };
 
 export default {
@@ -158,24 +163,6 @@ export default {
     ]);
     specialMappingProfile.fillProfile();
     cy.do(saveButton.click());
-    cy.expect(saveButton.absent());
-  },
-
-  fillModifyMappingProfile(specialMappingProfileName = defaultMappingProfile.name, properties) {
-    cy.do([
-      TextField({ name:'profile.name' }).fillIn(specialMappingProfileName),
-      Select({ name:'profile.incomingRecordType' }).choose(incomingRecordType.marcBib),
-      Select({ name:'profile.existingRecordType' }).choose(marcBib),
-      Select({ name:'profile.mappingDetails.marcMappingOption' }).choose(properties.marcMappingOption),
-      Select({ name:'profile.mappingDetails.marcMappingDetails[0].action' }).choose(properties.action),
-      TextField({ name:'profile.mappingDetails.marcMappingDetails[0].field.field' }).fillIn(properties.addFieldNumber),
-      TextField({ name:'profile.mappingDetails.marcMappingDetails[0].field.subfields[0].subfield' }).fillIn(properties.subfieldInFirstField),
-      Select({ name:'profile.mappingDetails.marcMappingDetails[0].field.subfields[0].subaction' }).choose(properties.subaction),
-      TextArea({ name:'profile.mappingDetails.marcMappingDetails[0].field.subfields[0].data.text' }).fillIn(properties.subfieldTextInFirstField),
-      TextField({ name:'profile.mappingDetails.marcMappingDetails[0].field.subfields[1].subfield' }).fillIn(properties.subfieldInSecondField),
-      TextArea({ name:'profile.mappingDetails.marcMappingDetails[0].field.subfields[1].data.text' }).fillIn(properties.subfieldTextInSecondField),
-      saveButton.click(),
-    ]);
     cy.expect(saveButton.absent());
   },
 
@@ -403,7 +390,32 @@ export default {
     waitLoading();
   },
 
-  saveProfile:() => {
-    cy.do(saveButton.click());
+  addFieldMappingsForMarc:() => {
+    cy.do(Select({ name:'profile.mappingDetails.marcMappingOption' }).choose(actionsFieldMappingsForMarc.modify));
   },
+
+  fillModificationSectionWithAdd:(action, fieldNumber, subfieldInFirstField = '*', subaction, subfieldTextInFirstField, subfieldInSecondField, subfieldTextInSecondField) => {
+    cy.do([
+      Select({ name:'profile.mappingDetails.marcMappingDetails[0].action' }).choose(action),
+      TextField({ name:'profile.mappingDetails.marcMappingDetails[0].field.field' }).fillIn(fieldNumber),
+      TextField({ name:'profile.mappingDetails.marcMappingDetails[0].field.subfields[0].subfield' }).fillIn(subfieldInFirstField),
+      Select({ name:'profile.mappingDetails.marcMappingDetails[0].field.subfields[0].subaction' }).choose(subaction),
+      TextArea({ name:'profile.mappingDetails.marcMappingDetails[0].field.subfields[0].data.text' }).fillIn(subfieldTextInFirstField),
+      TextField({ name:'profile.mappingDetails.marcMappingDetails[0].field.subfields[1].subfield' }).fillIn(subfieldInSecondField),
+      TextArea({ name:'profile.mappingDetails.marcMappingDetails[0].field.subfields[1].data.text' }).fillIn(subfieldTextInSecondField)
+    ]);
+  },
+
+  fillModificationSectionWithDelete:(action, fieldNumber, number) => {
+    cy.do([
+      Select({ name:`profile.mappingDetails.marcMappingDetails[${number}].action` }).choose(action),
+      TextField({ name:`profile.mappingDetails.marcMappingDetails[${number}].field.field` }).fillIn(fieldNumber)
+    ]);
+  },
+
+  addNewFieldInModificationSection:() => {
+    cy.get('div[class^="tableRow-"]').last().then(elem => {
+      elem[0].querySelector('button[icon="plus-sign"]').click();
+    });
+  }
 };
