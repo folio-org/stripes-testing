@@ -31,7 +31,7 @@ export default {
     cy.do(Button('New').click());
   },
 
-  fillInInfo: (name) => {
+  fillInInfo(name) {
     cy.do([
       nameTextField.fillIn(name),
       viewCheckbox.click(),
