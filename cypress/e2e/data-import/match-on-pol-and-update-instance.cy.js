@@ -4,7 +4,7 @@ import DevTeams from '../../support/dictionary/devTeams';
 import permissions from '../../support/dictionary/permissions';
 import TopMenu from '../../support/fragments/topMenu';
 import Orders from '../../support/fragments/orders/orders';
-import NewMappingProfile from '../../support/fragments/data_import/mapping_profiles/newMappingProfile';
+import NewFieldMappingProfile from '../../support/fragments/data_import/mapping_profiles/newFieldMappingProfile';
 import SettingsMenu from '../../support/fragments/settingsMenu';
 import FieldMappingProfiles from '../../support/fragments/data_import/mapping_profiles/fieldMappingProfiles';
 import NewActionProfile from '../../support/fragments/data_import/action_profiles/newActionProfile';
@@ -45,20 +45,20 @@ describe('ui-data-import: Match on POL and update related Instance, Holdings, It
 
   const collectionOfProfiles = [
     {
-      mappingProfile: { typeValue: NewMappingProfile.folioRecordTypeValue.instance,
+      mappingProfile: { typeValue: NewFieldMappingProfile.folioRecordTypeValue.instance,
         name: mappingProfileNameForInstance },
       actionProfile: { typeValue: NewActionProfile.folioRecordTypeValue.instance,
         name: actionProfileNameForInstance,
         action: 'Update (all record types except Orders, Invoices, or MARC Holdings)' }
     },
     {
-      mappingProfile: { typeValue: NewMappingProfile.folioRecordTypeValue.holdings,
+      mappingProfile: { typeValue: NewFieldMappingProfile.folioRecordTypeValue.holdings,
         name: mappingProfileNameForHoldings },
       actionProfile: { typeValue: NewActionProfile.folioRecordTypeValue.holdings,
         name: actionProfileNameForHoldings }
     },
     {
-      mappingProfile: { typeValue: NewMappingProfile.folioRecordTypeValue.item,
+      mappingProfile: { typeValue: NewFieldMappingProfile.folioRecordTypeValue.item,
         name: mappingProfileNameForItem },
       actionProfile: { typeValue: NewActionProfile.folioRecordTypeValue.item,
         name: actionProfileNameForItem }
@@ -117,17 +117,6 @@ describe('ui-data-import: Match on POL and update related Instance, Holdings, It
   });
 
   after(() => {
-    cy.getInstance({ limit: 1, expandAll: true, query: `"title"=="${pol.title}"` })
-      .then((instance) => {
-        cy.deleteItem(instance.items[0].id);
-        cy.deleteHoldingRecordViaApi(instance.holdings[0].id);
-        InventoryInstance.deleteInstanceViaApi(instance.id);
-      });
-    Orders.getOrdersApi({ limit: 1, query: `"poNumber"=="${orderNumber}"` })
-      .then(orderId => {
-        Orders.deleteOrderApi(orderId[0].id);
-      });
-    Users.deleteViaApi(user.userId);
     // delete generated profiles
     JobProfiles.deleteJobProfile(jobProfileName);
     MatchProfiles.deleteMatchProfile(matchProfile.profileName);
@@ -137,36 +126,47 @@ describe('ui-data-import: Match on POL and update related Instance, Holdings, It
     });
     // delete created files
     FileManager.deleteFile(`cypress/fixtures/${editedMarcFileName}`);
+    Orders.getOrdersApi({ limit: 1, query: `"poNumber"=="${orderNumber}"` })
+      .then(orderId => {
+        Orders.deleteOrderApi(orderId[0].id);
+      });
+    Users.deleteViaApi(user.userId);
+    cy.getInstance({ limit: 1, expandAll: true, query: `"title"=="${pol.title}"` })
+      .then((instance) => {
+        cy.deleteItem(instance.items[0].id);
+        cy.deleteHoldingRecordViaApi(instance.holdings[0].id);
+        InventoryInstance.deleteInstanceViaApi(instance.id);
+      });
   });
 
   const createInstanceMappingProfile = (instanceMappingProfile) => {
     FieldMappingProfiles.openNewMappingProfileForm();
-    NewMappingProfile.fillSummaryInMappingProfile(instanceMappingProfile);
-    NewMappingProfile.fillCatalogedDate('###TODAY###');
-    NewMappingProfile.fillInstanceStatusTerm();
+    NewFieldMappingProfile.fillSummaryInMappingProfile(instanceMappingProfile);
+    NewFieldMappingProfile.fillCatalogedDate('###TODAY###');
+    NewFieldMappingProfile.fillInstanceStatusTerm();
     FieldMappingProfiles.saveProfile();
     FieldMappingProfiles.closeViewModeForMappingProfile(instanceMappingProfile.name);
   };
 
   const createHoldingsMappingProfile = (holdingsMappingProfile) => {
     FieldMappingProfiles.openNewMappingProfileForm();
-    NewMappingProfile.fillSummaryInMappingProfile(holdingsMappingProfile);
-    NewMappingProfile.fillHoldingsType('"Monograph"');
-    NewMappingProfile.fillPermanentLocation('980$a');
-    NewMappingProfile.fillCallNumberType('"Library of Congress classification"');
-    NewMappingProfile.fillCallNumber('980$b " " 980$c');
+    NewFieldMappingProfile.fillSummaryInMappingProfile(holdingsMappingProfile);
+    NewFieldMappingProfile.fillHoldingsType('"Monograph"');
+    NewFieldMappingProfile.fillPermanentLocation('980$a');
+    NewFieldMappingProfile.fillCallNumberType('"Library of Congress classification"');
+    NewFieldMappingProfile.fillCallNumber('980$b " " 980$c');
     FieldMappingProfiles.saveProfile();
     FieldMappingProfiles.closeViewModeForMappingProfile(holdingsMappingProfile.name);
   };
 
   const createItemMappingProfile = (itemMappingProfile) => {
     FieldMappingProfiles.openNewMappingProfileForm();
-    NewMappingProfile.fillSummaryInMappingProfile(itemMappingProfile);
-    NewMappingProfile.fillBarcode('981$b');
-    NewMappingProfile.fillCopyNumber('981$a');
-    NewMappingProfile.fillStatus('"Available"');
-    NewMappingProfile.fillPermanentLoanType('"Can circulate"');
-    NewMappingProfile.fillMaterialType('"book"');
+    NewFieldMappingProfile.fillSummaryInMappingProfile(itemMappingProfile);
+    NewFieldMappingProfile.fillBarcode('981$b');
+    NewFieldMappingProfile.fillCopyNumber('981$a');
+    NewFieldMappingProfile.fillStatus('"Available"');
+    NewFieldMappingProfile.fillPermanentLoanType('"Can circulate"');
+    NewFieldMappingProfile.fillMaterialType('"book"');
     FieldMappingProfiles.saveProfile();
     FieldMappingProfiles.closeViewModeForMappingProfile(itemMappingProfile.name);
   };
@@ -233,7 +233,7 @@ describe('ui-data-import: Match on POL and update related Instance, Holdings, It
           Orders.openOrder();
 
           // change file using order number
-          DataImport.editMarcFile('marcFileForMatchOnPol.mrc', editedMarcFileName, 'test', orderNumber);
+          DataImport.editMarcFile('marcFileForMatchOnPol.mrc', editedMarcFileName, ['test'], [orderNumber]);
         });
     });
 
@@ -249,11 +249,12 @@ describe('ui-data-import: Match on POL and update related Instance, Holdings, It
     FileDetails.checkItemsStatusesInResultList(0, [FileDetails.status.created, FileDetails.status.updated, FileDetails.status.created, FileDetails.status.created]);
     FileDetails.checkItemsStatusesInResultList(1, [FileDetails.status.dash, FileDetails.status.discarded]);
 
-    FileDetails.openInstanceInInventory();
+    FileDetails.openInstanceInInventory('Updated');
     InventoryInstance.checkIsInstanceUpdated();
     InventoryInstance.checkIsHoldingsCreated(['Main Library >']);
     InventoryInstance.openHoldingsAccordion('Main Library >');
     InventoryInstance.checkIsItemCreated('242451241241');
+    InventoryInstance.viewSource();
     InventoryViewSource.verifyBarcodeInMARCBibSource('242451241241');
   });
 });

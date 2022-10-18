@@ -6,7 +6,7 @@ import DataImport from '../../support/fragments/data_import/dataImport';
 import JobProfiles from '../../support/fragments/data_import/job_profiles/jobProfiles';
 import NewJobProfile from '../../support/fragments/data_import/job_profiles/newJobProfile';
 import FieldMappingProfiles from '../../support/fragments/data_import/mapping_profiles/fieldMappingProfiles';
-import NewMappingProfile from '../../support/fragments/data_import/mapping_profiles/newMappingProfile';
+import NewFieldMappingProfile from '../../support/fragments/data_import/mapping_profiles/newFieldMappingProfile';
 import MatchProfiles from '../../support/fragments/data_import/match_profiles/matchProfiles';
 import NewMatchProfile from '../../support/fragments/data_import/match_profiles/newMatchProfile';
 import SearchInventory from '../../support/fragments/data_import/searchInventory';
@@ -33,25 +33,25 @@ describe('ui-data-import: Match on Holdings 856 $u', () => {
 
   const instanceCreateMappingProfile = {
     name: createInstanceMappingProfileName,
-    typeValue: NewMappingProfile.folioRecordTypeValue.instance
+    typeValue: NewFieldMappingProfile.folioRecordTypeValue.instance
   };
   const eHoldingsCreateMappingProfile = {
     name: createEHoldingsMappingProfileName,
-    typeValue: NewMappingProfile.folioRecordTypeValue.holdings
+    typeValue: NewFieldMappingProfile.folioRecordTypeValue.holdings
   };
   const updateEHoldingsMappingProfile = {
     name: updateEHoldingsMappingProfileName,
-    typeValue: NewMappingProfile.folioRecordTypeValue.holdings
+    typeValue: NewFieldMappingProfile.folioRecordTypeValue.holdings
   };
 
   const createInstanceActionProfile = {
     name: createInstanceActionProfileName,
-    action: 'Create (all record types)',
+    action: 'Create (all record types except MARC Authority or MARC Holdings)',
     typeValue: 'Instance',
   };
   const createEHoldingsActionProfile = {
     name: createEHoldingsActionProfileName,
-    action: 'Create (all record types)',
+    action: 'Create (all record types except MARC Authority or MARC Holdings)',
     typeValue: 'Holdings',
   };
   const updateEHoldingsActionProfile = {
@@ -108,27 +108,27 @@ describe('ui-data-import: Match on Holdings 856 $u', () => {
 
   const createInstanceMappingProfile = (instanceMappingProfile) => {
     FieldMappingProfiles.openNewMappingProfileForm();
-    NewMappingProfile.fillSummaryInMappingProfile(instanceMappingProfile);
-    NewMappingProfile.fillCatalogedDate('###TODAY###');
+    NewFieldMappingProfile.fillSummaryInMappingProfile(instanceMappingProfile);
+    NewFieldMappingProfile.fillCatalogedDate('###TODAY###');
     FieldMappingProfiles.saveProfile();
     FieldMappingProfiles.closeViewModeForMappingProfile(instanceMappingProfile.name);
   };
 
   const createHoldingsMappingProfile = (holdingsMappingProfile) => {
     FieldMappingProfiles.openNewMappingProfileForm();
-    NewMappingProfile.fillSummaryInMappingProfile(holdingsMappingProfile);
-    NewMappingProfile.fillPermanentLocation('"Online (E)"');
-    NewMappingProfile.addElectronicAccess('"Resource"', '856$u', '856$z');
+    NewFieldMappingProfile.fillSummaryInMappingProfile(holdingsMappingProfile);
+    NewFieldMappingProfile.fillPermanentLocation('"Online (E)"');
+    NewFieldMappingProfile.addElectronicAccess('"Resource"', '856$u', '856$z');
     FieldMappingProfiles.saveProfile();
     FieldMappingProfiles.closeViewModeForMappingProfile(holdingsMappingProfile.name);
   };
 
   const updateHoldingsMappingProfile = (holdingsMappingProfile) => {
     FieldMappingProfiles.openNewMappingProfileForm();
-    NewMappingProfile.fillSummaryInMappingProfile(holdingsMappingProfile);
-    NewMappingProfile.addSuppressFromDiscovery();
-    NewMappingProfile.fillCallNumberType('"Other scheme"');
-    NewMappingProfile.fillCallNumber('"ONLINE"');
+    NewFieldMappingProfile.fillSummaryInMappingProfile(holdingsMappingProfile);
+    NewFieldMappingProfile.addSuppressFromDiscovery();
+    NewFieldMappingProfile.fillCallNumberType('"Other scheme"');
+    NewFieldMappingProfile.fillCallNumber('"ONLINE"');
     FieldMappingProfiles.saveProfile();
     FieldMappingProfiles.closeViewModeForMappingProfile(holdingsMappingProfile.name);
   };
@@ -151,8 +151,8 @@ describe('ui-data-import: Match on Holdings 856 $u', () => {
 
     cy.visit(SettingsMenu.matchProfilePath);
     MatchProfiles.createMatchProfile(matchProfile);
-    cy.visit(SettingsMenu.jobProfilePath);
 
+    cy.visit(SettingsMenu.jobProfilePath);
     JobProfiles.createJobProfile(createInstanceAndEHoldingsJobProfile);
     NewJobProfile.linkActionProfile(createInstanceActionProfile);
     NewJobProfile.linkActionProfile(createEHoldingsActionProfile);
@@ -168,7 +168,7 @@ describe('ui-data-import: Match on Holdings 856 $u', () => {
     JobProfiles.closeJobProfile(updateEHoldingsJobProfileName);
 
     cy.visit(TopMenu.dataImportPath);
-    DataImport.uploadFile('matchOnURL.mrc', nameForCreateMarcFile);
+    DataImport.uploadFile('marcFileForMatchOnURL.mrc', nameForCreateMarcFile);
     JobProfiles.searchJobProfileForImport(createInstanceAndEHoldingsJobProfileName);
     JobProfiles.runImportFile(nameForCreateMarcFile);
 
@@ -182,7 +182,7 @@ describe('ui-data-import: Match on Holdings 856 $u', () => {
       });
 
     cy.visit(TopMenu.dataImportPath);
-    DataImport.uploadFile('matchOnURL.mrc', nameForUpdateCreateMarcFile);
+    DataImport.uploadFile('marcFileForMatchOnURL.mrc', nameForUpdateCreateMarcFile);
     JobProfiles.searchJobProfileForImport(updateEHoldingsJobProfileName);
     JobProfiles.runImportFile(nameForUpdateCreateMarcFile);
     Logs.checkStatusOfJobProfile();

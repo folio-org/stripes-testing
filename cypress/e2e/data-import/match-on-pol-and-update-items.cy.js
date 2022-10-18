@@ -7,7 +7,7 @@ import Orders from '../../support/fragments/orders/orders';
 import Helper from '../../support/fragments/finance/financeHelper';
 import FieldMappingProfiles from '../../support/fragments/data_import/mapping_profiles/fieldMappingProfiles';
 import NewActionProfile from '../../support/fragments/data_import/action_profiles/newActionProfile';
-import NewMappingProfile from '../../support/fragments/data_import/mapping_profiles/newMappingProfile';
+import NewFieldMappingProfile from '../../support/fragments/data_import/mapping_profiles/newFieldMappingProfile';
 import ActionProfiles from '../../support/fragments/data_import/action_profiles/actionProfiles';
 import NewJobProfile from '../../support/fragments/data_import/job_profiles/newJobProfile';
 import SettingsMenu from '../../support/fragments/settingsMenu';
@@ -77,7 +77,7 @@ describe('ui-data-import: Match on POL and update related Instance, Holdings, It
 
   const collectionOfProfiles = [
     {
-      mappingProfile: { typeValue: NewMappingProfile.folioRecordTypeValue.instance,
+      mappingProfile: { typeValue: NewFieldMappingProfile.folioRecordTypeValue.instance,
         name: mappingProfileNameForInstance,
         update: true },
       actionProfile: { typeValue: NewActionProfile.folioRecordTypeValue.instance,
@@ -85,7 +85,7 @@ describe('ui-data-import: Match on POL and update related Instance, Holdings, It
         action: 'Update (all record types except Orders, Invoices, or MARC Holdings)' }
     },
     {
-      mappingProfile: { typeValue: NewMappingProfile.folioRecordTypeValue.holdings,
+      mappingProfile: { typeValue: NewFieldMappingProfile.folioRecordTypeValue.holdings,
         name: mappingProfileNameForHoldings,
         update: true },
       actionProfile: { typeValue: NewActionProfile.folioRecordTypeValue.holdings,
@@ -93,7 +93,7 @@ describe('ui-data-import: Match on POL and update related Instance, Holdings, It
         action: 'Update (all record types except Orders, Invoices, or MARC Holdings)' }
     },
     {
-      mappingProfile: { typeValue: NewMappingProfile.folioRecordTypeValue.item,
+      mappingProfile: { typeValue: NewFieldMappingProfile.folioRecordTypeValue.item,
         name: mappingProfileNameForItem,
         update: true },
       actionProfile: { typeValue: NewActionProfile.folioRecordTypeValue.item,
@@ -196,30 +196,8 @@ describe('ui-data-import: Match on POL and update related Instance, Holdings, It
     let itemId;
     const itemBarcode = Helper.getRandomBarcode();
 
-    titles.forEach(title => {
-      cy.getInstance({ limit: 1, expandAll: true, query: `"title"=="${title}"` })
-        .then((instance) => {
-          itemId = instance.items[0].id;
-
-          cy.getItems({ query: `"id"=="${itemId}"` })
-            .then((item) => {
-              item.barcode = itemBarcode;
-              cy.wrap(ItemRecordView.editItem(item))
-                .then(() => {
-                  CheckInActions.checkinItemViaApi({
-                    itemBarcode: item.barcode,
-                    servicePointId,
-                    checkInDate: new Date().toISOString(),
-                  })
-                    .then(() => {
-                      cy.deleteItem(itemId);
-                      cy.deleteHoldingRecordViaApi(instance.holdings[0].id);
-                      InventoryInstance.deleteInstanceViaApi(instance.id);
-                    });
-                });
-            });
-        });
-    });
+    // delete created files
+    FileManager.deleteFile(`cypress/fixtures/${editedMarcFileName}`);
     Orders.getOrdersApi({ limit: 1, query: `"poNumber"=="${firstOrderNumber}"` })
       .then(order => {
         Orders.deleteOrderApi(order[0].id);
@@ -238,14 +216,36 @@ describe('ui-data-import: Match on POL and update related Instance, Holdings, It
       ActionProfiles.deleteActionProfile(profile.actionProfile.name);
       FieldMappingProfiles.deleteFieldMappingProfile(profile.mappingProfile.name);
     });
+    titles.forEach(title => {
+      cy.getInstance({ limit: 1, expandAll: true, query: `"title"=="${title}"` })
+        .then((instance) => {
+          itemId = instance.items[0].id;
+
+          cy.getItems({ query: `"id"=="${itemId}"` })
+            .then((item) => {
+              item.barcode = itemBarcode;
+              ItemRecordView.editItem(item)
+                .then(() => {
+                  CheckInActions.checkinItemViaApi({
+                    itemBarcode: item.barcode,
+                    servicePointId,
+                    checkInDate: new Date().toISOString(),
+                  })
+                    .then(() => {
+                      cy.deleteItem(itemId);
+                      cy.deleteHoldingRecordViaApi(instance.holdings[0].id);
+                      InventoryInstance.deleteInstanceViaApi(instance.id);
+                    });
+                });
+            });
+        });
+    });
     NewLocation.deleteViaApiIncludingInstitutionCampusLibrary(
       location.institutionId,
       location.campusId,
       location.libraryId,
       location.id
     );
-    // delete created files
-    FileManager.deleteFile(`cypress/fixtures/${editedMarcFileName}`);
   });
 
   const openOrder = (number) => {
@@ -264,6 +264,7 @@ describe('ui-data-import: Match on POL and update related Instance, Holdings, It
     Receiving.checkIsPiecesCreated(title);
   };
 
+  // MODSOURMAN-819
   it('C350590 Match on POL and update related Instance, Holdings, Item (folijet)', { tags: [TestTypes.smoke, DevTeams.folijet] }, () => {
     // create the first PO with POL
     Orders.createOrderWithOrderLineViaApi(NewOrder.getDefaultOrder(vendorId),
@@ -320,7 +321,7 @@ describe('ui-data-import: Match on POL and update related Instance, Holdings, It
             checkReceivedPiece(secondOrderNumber, secondItem.title);
           });
 
-        DataImport.editMarcFile('marcFileForMatchOnPol.mrc', editedMarcFileName, 'test', firstOrderNumber);
+        DataImport.editMarcFile('marcFileForMatchOnPol.mrc', editedMarcFileName, ['test'], [firstOrderNumber]);
       });
 
     // create mapping and action profiles
@@ -359,10 +360,11 @@ describe('ui-data-import: Match on POL and update related Instance, Holdings, It
     FileDetails.checkItemsStatusesInResultList(0, [FileDetails.status.created, FileDetails.status.updated, FileDetails.status.updated, FileDetails.status.updated]);
     FileDetails.checkItemsStatusesInResultList(1, [FileDetails.status.dash, FileDetails.status.discarded, FileDetails.status.discarded, FileDetails.status.discarded]);
 
-    FileDetails.openInstanceInInventory();
+    FileDetails.openInstanceInInventory('Updated');
     InventoryInstance.checkIsInstanceUpdated();
     HoldingsRecordView.checkIsHoldingsUpdated();
     ItemVeiw.checkIsItemUpdated(firstItem.barcode);
+    InventoryInstance.viewSource();
     InventoryViewSource.verifyBarcodeInMARCBibSource(firstItem.barcode);
   });
 });

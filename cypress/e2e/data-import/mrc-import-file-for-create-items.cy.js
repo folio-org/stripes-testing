@@ -1,6 +1,6 @@
 import FieldMappingProfiles from '../../support/fragments/data_import/mapping_profiles/fieldMappingProfiles';
 import NewActionProfile from '../../support/fragments/data_import/action_profiles/newActionProfile';
-import NewMappingProfile from '../../support/fragments/data_import/mapping_profiles/newMappingProfile';
+import NewFieldMappingProfile from '../../support/fragments/data_import/mapping_profiles/newFieldMappingProfile';
 import ActionProfiles from '../../support/fragments/data_import/action_profiles/actionProfiles';
 import NewJobProfile from '../../support/fragments/data_import/job_profiles/newJobProfile';
 import getRandomPostfix from '../../support/utils/stringTools';
@@ -32,19 +32,19 @@ describe('ui-data-import: MARC file import with creating of the new instance, ho
 
   const collectionOfProfiles = [
     {
-      mappingProfile: { typeValue: NewMappingProfile.folioRecordTypeValue.instance,
+      mappingProfile: { typeValue: NewFieldMappingProfile.folioRecordTypeValue.instance,
         name: mappingProfileNameForInstance },
       actionProfile: { typeValue: NewActionProfile.folioRecordTypeValue.instance,
         name: actionProfileNameForInstance }
     },
     {
-      mappingProfile: { typeValue: NewMappingProfile.folioRecordTypeValue.holdings,
+      mappingProfile: { typeValue: NewFieldMappingProfile.folioRecordTypeValue.holdings,
         name: mappingProfileNameForHoldings },
       actionProfile: { typeValue: NewActionProfile.folioRecordTypeValue.holdings,
         name: actionProfileNameForHoldings }
     },
     {
-      mappingProfile: { typeValue: NewMappingProfile.folioRecordTypeValue.item,
+      mappingProfile: { typeValue: NewFieldMappingProfile.folioRecordTypeValue.item,
         name: mappingProfileNameForItem },
       actionProfile: { typeValue: NewActionProfile.folioRecordTypeValue.item,
         name: actionProfileNameForItem }
@@ -71,25 +71,25 @@ describe('ui-data-import: MARC file import with creating of the new instance, ho
 
   const createInstanceMappingProfile = (instanceMappingProfile) => {
     FieldMappingProfiles.openNewMappingProfileForm();
-    NewMappingProfile.fillSummaryInMappingProfile(instanceMappingProfile);
+    NewFieldMappingProfile.fillSummaryInMappingProfile(instanceMappingProfile);
     FieldMappingProfiles.saveProfile();
     FieldMappingProfiles.closeViewModeForMappingProfile(instanceMappingProfile.name);
   };
 
   const createHoldingsMappingProfile = (holdingsMappingProfile) => {
     FieldMappingProfiles.openNewMappingProfileForm();
-    NewMappingProfile.fillSummaryInMappingProfile(holdingsMappingProfile);
-    NewMappingProfile.fillPermanentLocation('"Annex (KU/CC/DI/A)"');
+    NewFieldMappingProfile.fillSummaryInMappingProfile(holdingsMappingProfile);
+    NewFieldMappingProfile.fillPermanentLocation('"Annex (KU/CC/DI/A)"');
     FieldMappingProfiles.saveProfile();
     FieldMappingProfiles.closeViewModeForMappingProfile(holdingsMappingProfile.name);
   };
 
   const createItemMappingProfile = (itemMappingProfile) => {
     FieldMappingProfiles.openNewMappingProfileForm();
-    NewMappingProfile.fillSummaryInMappingProfile(itemMappingProfile);
-    NewMappingProfile.fillMaterialType('"book"');
-    NewMappingProfile.fillPermanentLoanType('"Can circulate"');
-    NewMappingProfile.fillStatus('"Available"');
+    NewFieldMappingProfile.fillSummaryInMappingProfile(itemMappingProfile);
+    NewFieldMappingProfile.fillMaterialType('"book"');
+    NewFieldMappingProfile.fillPermanentLoanType('"Can circulate"');
+    NewFieldMappingProfile.fillStatus('"Available"');
     FieldMappingProfiles.saveProfile();
     FieldMappingProfiles.closeViewModeForMappingProfile(itemMappingProfile.name);
   };
