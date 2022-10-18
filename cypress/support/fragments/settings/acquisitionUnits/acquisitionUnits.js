@@ -15,6 +15,7 @@ const actionsButton = Button('Actions');
 const auPaneDetails = Section({ id: 'pane-ac-units-details' });
 const checkboxAll = Checkbox();
 const searchButton = Button('Search');
+const nameTextField = TextField({ name: 'name' });
 
 export default {
 
@@ -30,16 +31,20 @@ export default {
     cy.do(Button('New').click());
   },
 
-  fillInInfo: (name) => {
+  fillInInfo(name) {
     cy.do([
-      TextField({ name: 'name' }).fillIn(name),
+      nameTextField.fillIn(name),
       viewCheckbox.click(),
       saveAUButton.click(),
-      findUserButton.click(),
-      userSearchModal.find(searchTextField).fillIn('diku'),
-      searchButton.click(),
-      firstSearchResult.find(checkboxAll).click(),
-      userSearchModal.find(saveButton).click()
+    ]);
+    this.assignAdmin();
+  },
+
+  fillInAUInfo: (name) => {
+    cy.do([
+      nameTextField.fillIn(name),
+      viewCheckbox.click(),
+      saveAUButton.click(),
     ]);
   },
 
@@ -49,6 +54,16 @@ export default {
       userSearchModal.find(searchTextField).fillIn(userName),
       searchButton.click(),
       userSearchModal.find(firstSearchResult).find(checkboxAll).click(),
+      userSearchModal.find(saveButton).click()
+    ]);
+  },
+
+  assignAdmin: () => {
+    cy.do([
+      findUserButton.click(),
+      userSearchModal.find(searchTextField).fillIn('diku'),
+      searchButton.click(),
+      firstSearchResult.find(checkboxAll).click(),
       userSearchModal.find(saveButton).click()
     ]);
   },
