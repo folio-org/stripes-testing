@@ -1,5 +1,14 @@
 import { matching } from 'bigtest';
-import { Accordion, Button, MultiColumnListCell, MultiColumnListRow, including, TextField, Pane } from '../../../../interactors';
+import {
+  Accordion,
+  Button,
+  MultiColumnListCell,
+  MultiColumnListRow,
+  including,
+  TextField,
+  Pane,
+  Dropdown, DropdownMenu
+} from '../../../../interactors';
 import DateTools from '../../utils/dateTools';
 
 
@@ -98,5 +107,16 @@ export default {
   },
   resetResults() {
     cy.do(Button('Reset all').click());
-  }
+  },
+
+  goToUserDetails() {
+    cy.do([
+      MultiColumnListRow({ rowIndexInParent: 'row-0' }).find(Dropdown()).find(Button()).click(),
+      DropdownMenu().find(Button()).click()
+    ]);
+  },
+
+  userDetailIsOpen() {
+    cy.expect(Pane({ id: 'pane-userdetails' }).exists());
+  },
 };

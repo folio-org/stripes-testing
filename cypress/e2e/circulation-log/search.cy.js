@@ -82,10 +82,6 @@ describe('circulation-log', () => {
       });
   });
 
-  afterEach('reset search results', () => {
-    SearchPane.resetResults();
-  });
-
   after('delete test data', () => {
     CheckinActions.checkinItemViaApi({
       itemBarcode: ITEM_BARCODE,
@@ -109,6 +105,7 @@ describe('circulation-log', () => {
   it('C15484 Filter circulation log on item barcode (firebird)', { tags: [TestTypes.smoke, devTeams.firebird, TestTypes.broken] }, () => {
     SearchPane.searchByItemBarcode(ITEM_BARCODE);
     SearchPane.verifyResultCells();
+    SearchPane.resetResults();
   });
 
   it('C16976 Filter circulation log by date (firebird)', { tags: [TestTypes.smoke, devTeams.firebird, TestTypes.broken] }, () => {
@@ -116,6 +113,7 @@ describe('circulation-log', () => {
 
     SearchPane.filterByLastWeek();
     SearchPane.verifyResultCells(verifyDate);
+    SearchPane.resetResults();
   });
 
   it('C15485 Filter circulation log on user barcode (firebird)', { tags: [TestTypes.smoke, devTeams.firebird, TestTypes.broken] }, () => {
@@ -123,6 +121,7 @@ describe('circulation-log', () => {
 
     SearchPane.searchByUserBarcode(userBarcode);
     SearchPane.verifyResultCells();
+    SearchPane.resetResults();
   });
 
   it('C15853 Filter circulation log on description (firebird)', { tags: [TestTypes.smoke, devTeams.firebird, TestTypes.broken] }, () => {
@@ -148,5 +147,10 @@ describe('circulation-log', () => {
     cy.visit(TopMenu.circulationLogPath);
     SearchPane.searchByDescription(searchString);
     SearchPane.verifyResultCells();
+  });
+
+  it('C16975 Check the Actions button from filtering Circulation log by description (User details) (firebird)', { tags: [TestTypes.smoke, devTeams.firebird, TestTypes.broken] }, () => {
+    SearchPane.goToUserDetails();
+    SearchPane.userDetailIsOpen();
   });
 });
