@@ -1,7 +1,7 @@
 import getRandomPostfix from '../../support/utils/stringTools';
 import TestTypes from '../../support/dictionary/testTypes';
 import DevTeams from '../../support/dictionary/devTeams';
-import NewMappingProfile from '../../support/fragments/data_import/mapping_profiles/newMappingProfile';
+import NewFieldMappingProfile from '../../support/fragments/data_import/mapping_profiles/newFieldMappingProfile';
 import FieldMappingProfiles from '../../support/fragments/data_import/mapping_profiles/fieldMappingProfiles';
 import SettingsMenu from '../../support/fragments/settingsMenu';
 import NewActionProfile from '../../support/fragments/data_import/action_profiles/newActionProfile';
@@ -53,7 +53,7 @@ describe('ui-data-import: Check that field protection settings work properly dur
 
   // profiles for create
   const mappingProfile = { name: mappingProfileName,
-    typeValue: NewMappingProfile.folioRecordTypeValue.instance };
+    typeValue: NewFieldMappingProfile.folioRecordTypeValue.instance };
 
   const actionProfile = { name: actionProfileName,
     typeValue : NewActionProfile.folioRecordTypeValue.instance };
@@ -65,7 +65,7 @@ describe('ui-data-import: Check that field protection settings work properly dur
 
   // profiles for update
   const mappingProfileUpdate = { name: mappingProfileUpdateName,
-    typeValue: NewMappingProfile.folioRecordTypeValue.instance };
+    typeValue: NewFieldMappingProfile.folioRecordTypeValue.instance };
 
   const actionProfileUpdate = {
     name: actionProfileUpdateName,
@@ -130,16 +130,16 @@ describe('ui-data-import: Check that field protection settings work properly dur
 
   const createInstanceMappingProfileForCreate = (instanceMappingProfile) => {
     FieldMappingProfiles.openNewMappingProfileForm();
-    NewMappingProfile.fillSummaryInMappingProfile(instanceMappingProfile);
+    NewFieldMappingProfile.fillSummaryInMappingProfile(instanceMappingProfile);
     FieldMappingProfiles.saveProfile();
     FieldMappingProfiles.closeViewModeForMappingProfile(instanceMappingProfile.name);
   };
 
   const createInstanceMappingProfileForUpdate = (instanceMappingProfile) => {
     FieldMappingProfiles.openNewMappingProfileForm();
-    NewMappingProfile.fillSummaryInMappingProfile(instanceMappingProfile);
-    NewMappingProfile.fillInstanceStatusTerm('"Batch Loaded"');
-    NewMappingProfile.addStatisticalCode('"ARL (Collection stats): books - Book, print (books)"');
+    NewFieldMappingProfile.fillSummaryInMappingProfile(instanceMappingProfile);
+    NewFieldMappingProfile.fillInstanceStatusTerm('"Batch Loaded"');
+    NewFieldMappingProfile.addStatisticalCode('"ARL (Collection stats): books - Book, print (books)"');
     FieldMappingProfiles.saveProfile();
     FieldMappingProfiles.closeViewModeForMappingProfile(instanceMappingProfile.name);
   };

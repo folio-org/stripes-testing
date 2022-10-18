@@ -8,6 +8,7 @@ import {
   MultiColumnList,
   HTML,
   MultiColumnListRow,
+  Checkbox
 } from '../../../../../interactors';
 
 const anyProfileAccordion = Accordion({ id: 'profileIdAny' });
@@ -85,9 +86,8 @@ export default {
       HTML('"n2015002050"').exists(),
     ]);
   },
-  
-  getCreatedAuthorityID: (rowIndex = 0) => cy.then(() => 
-    MultiColumnList({ id: 'search-results-list' })
+
+  getCreatedAuthorityID: (rowIndex = 0) => cy.then(() => MultiColumnList({ id: 'search-results-list' })
     .find(MultiColumnListRow({ indexRow: `row-${rowIndex}` }))
     .find(Link('Created')).href()),
 };
