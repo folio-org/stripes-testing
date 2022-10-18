@@ -31,9 +31,8 @@ const openNewMappingProfileForm = () => {
   ]);
 };
 
-const closeViewModeForMappingProfile = (profileName) => {
-  cy.do(Pane({ title: profileName }).find(iconButton).click());
-};
+const closeViewModeForMappingProfile = (profileName) => cy.do(Pane({ title: profileName }).find(iconButton).click());
+const saveProfile = () => cy.do(saveProfileButton.click());
 
 const mappingProfileForDuplicate = {
   gobi: 'GOBI monograph invoice',
@@ -78,8 +77,6 @@ const duplicateMappingProfile = () => {
     Button('Duplicate').click()
   ]);
 };
-
-const saveProfile = () => cy.do(saveProfileButton.click());
 
 export default {
   openNewMappingProfileForm,
@@ -173,11 +170,6 @@ export default {
     cy.expect(actionsButton.exists());
   },
 
-  checkListOfExistingProfilesIsDisplayed:() => {
-    cy.expect(PaneContent({ id:'pane-results-content' }).exists());
-  },
-
-  checkNewMappingProfileFormIsOpened:() => {
-    cy.expect(Form({ id:'mapping-profiles-form' }).exists());
-  }
+  checkListOfExistingProfilesIsDisplayed:() => cy.expect(PaneContent({ id:'pane-results-content' }).exists()),
+  checkNewMappingProfileFormIsOpened:() => cy.expect(Form({ id:'mapping-profiles-form' }).exists())
 };
