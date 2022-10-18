@@ -149,7 +149,7 @@ describe('circulation-log', () => {
     SearchPane.verifyResultCells();
   });
 
-  it('C16975 Check the Actions button from filtering Circulation log by description (User details) (firebird)', { tags: [TestTypes.smoke, devTeams.firebird, TestTypes.broken] }, () => {
+  it('C16975 Check the Actions button from filtering Circulation log by description (User details) (firebird)', { tags: [TestTypes.criticalPath, devTeams.firebird, TestTypes.broken] }, () => {
     SearchPane.goToUserDetails();
     SearchPane.userDetailIsOpen();
   });
