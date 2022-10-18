@@ -160,4 +160,6 @@ export default {
   uiFinanceViewEditDeleteLedger: { internal: 'ui-finance.ledger.delete', gui: 'Finance: View, edit, delete ledger' },
   uiSettingsFinanceViewEditCreateDeleter: { internal: 'ui-finance.settings.all', gui: 'Settings (Finance): View, edit, create, delete' },
   uiFinanceAssignAcquisitionUnitsToNewRecord: { internal: 'ui-finance.acq.unit.assignment.assign', gui: 'Finance: Assign acquisition units to new record' },
+  // Settings
+  uiSettingsAcquisitionUnitsViewEditCreateDelete: { internal: 'ui-acquisition-units.settings.all', gui: 'Settings (acquisition units): Can view, edit, create and delete acquisition units' },
 };

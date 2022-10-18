@@ -35,11 +35,15 @@ export default {
       TextField({ name: 'name' }).fillIn(name),
       viewCheckbox.click(),
       saveAUButton.click(),
-      findUserButton.click(),
-      userSearchModal.find(searchTextField).fillIn('diku'),
-      searchButton.click(),
-      firstSearchResult.find(checkboxAll).click(),
-      userSearchModal.find(saveButton).click()
+    ]);
+    this.assignAdmin();
+  },
+
+  fillInAUInfo: (name) => {
+    cy.do([
+      TextField({ name: 'name' }).fillIn(name),
+      viewCheckbox.click(),
+      saveAUButton.click(),
     ]);
   },
 
@@ -49,6 +53,16 @@ export default {
       userSearchModal.find(searchTextField).fillIn(userName),
       searchButton.click(),
       userSearchModal.find(firstSearchResult).find(checkboxAll).click(),
+      userSearchModal.find(saveButton).click()
+    ]);
+  },
+
+  assignAdmin: () => {
+    cy.do([
+      findUserButton.click(),
+      userSearchModal.find(searchTextField).fillIn('diku'),
+      searchButton.click(),
+      firstSearchResult.find(checkboxAll).click(),
       userSearchModal.find(saveButton).click()
     ]);
   },
