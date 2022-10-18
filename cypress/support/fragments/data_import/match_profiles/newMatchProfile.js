@@ -15,6 +15,7 @@ const optionsList = {
   itemHrid: 'Admin data: Item HRID',
   pol: 'Acquisitions data: Purchase order line (POL)',
   uri: 'Electronic access: URI',
+  instanceUuid: 'Admin data: Instance UUID'
 };
 
 function fillExistingRecordFields(value = '', selector) {

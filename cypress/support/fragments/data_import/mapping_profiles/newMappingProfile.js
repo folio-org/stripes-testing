@@ -280,8 +280,8 @@ export default {
     cy.do(saveButton.click());
   },
 
-  fillCatalogedDate:() => {
-    cy.do(TextField('Cataloged date').fillIn(catalogedDate));
+  fillCatalogedDate:(date) => {
+    cy.do(TextField('Cataloged date').fillIn(date));
     // wait will be add uuid for acceptedValues
     cy.wait(500);
   },
