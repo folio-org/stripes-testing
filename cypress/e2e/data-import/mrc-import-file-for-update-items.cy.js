@@ -10,7 +10,7 @@ import TopMenu from '../../support/fragments/topMenu';
 import ExportMarcFile from '../../support/fragments/data-export/export-marc-file';
 import MatchProfiles from '../../support/fragments/data_import/match_profiles/matchProfiles';
 import NewMatchProfile from '../../support/fragments/data_import/match_profiles/newMatchProfile';
-import NewMappingProfile from '../../support/fragments/data_import/mapping_profiles/newMappingProfile';
+import NewFieldMappingProfile from '../../support/fragments/data_import/mapping_profiles/newFieldMappingProfile';
 import NewActionProfile from '../../support/fragments/data_import/action_profiles/newActionProfile';
 import FieldMappingProfiles from '../../support/fragments/data_import/mapping_profiles/fieldMappingProfiles';
 import ActionProfiles from '../../support/fragments/data_import/action_profiles/actionProfiles';
@@ -216,21 +216,21 @@ describe('ui-data-import: MARC file upload with the update of instance, holding,
 
   const collectionOfMappingAndActionProfiles = [
     {
-      mappingProfile: { typeValue: NewMappingProfile.folioRecordTypeValue.instance,
+      mappingProfile: { typeValue: NewFieldMappingProfile.folioRecordTypeValue.instance,
         name: mappingProfileNameForInstance },
       actionProfile: { typeValue: NewActionProfile.folioRecordTypeValue.instance,
         name: actionProfileNameForInstance,
         action: 'Update (all record types except Orders, Invoices, or MARC Holdings)' }
     },
     {
-      mappingProfile: { typeValue: NewMappingProfile.folioRecordTypeValue.holdings,
+      mappingProfile: { typeValue: NewFieldMappingProfile.folioRecordTypeValue.holdings,
         name: mappingProfileNameForHoldings },
       actionProfile: { typeValue: NewActionProfile.folioRecordTypeValue.holdings,
         name: actionProfileNameForHoldings,
         action: 'Update (all record types except Orders, Invoices, or MARC Holdings)' }
     },
     {
-      mappingProfile: { typeValue : NewMappingProfile.folioRecordTypeValue.item,
+      mappingProfile: { typeValue : NewFieldMappingProfile.folioRecordTypeValue.item,
         name: mappingProfileNameForItem },
       actionProfile: { typeValue: NewActionProfile.folioRecordTypeValue.item,
         name: actionProfileNameForItem,
@@ -336,32 +336,32 @@ describe('ui-data-import: MARC file upload with the update of instance, holding,
 
   const createInstanceMappingProfile = (profile) => {
     FieldMappingProfiles.openNewMappingProfileForm();
-    NewMappingProfile.fillSummaryInMappingProfile(profile);
-    NewMappingProfile.fillCatalogedDate('###TODAY###');
-    NewMappingProfile.fillInstanceStatusTerm();
+    NewFieldMappingProfile.fillSummaryInMappingProfile(profile);
+    NewFieldMappingProfile.fillCatalogedDate('###TODAY###');
+    NewFieldMappingProfile.fillInstanceStatusTerm();
     FieldMappingProfiles.saveProfile();
     FieldMappingProfiles.closeViewModeForMappingProfile(profile.name);
   };
 
   const createHoldingsMappingProfile = (profile) => {
     FieldMappingProfiles.openNewMappingProfileForm();
-    NewMappingProfile.fillSummaryInMappingProfile(profile);
-    NewMappingProfile.fillHoldingsType('"Electronic"');
-    NewMappingProfile.fillPermanentLocation('"Online (E)"');
-    NewMappingProfile.fillCallNumberType('"Library of Congress classification"');
-    NewMappingProfile.fillCallNumber('050$a " " 050$b');
-    NewMappingProfile.addElectronicAccess('"Resource"', '856$u');
+    NewFieldMappingProfile.fillSummaryInMappingProfile(profile);
+    NewFieldMappingProfile.fillHoldingsType('"Electronic"');
+    NewFieldMappingProfile.fillPermanentLocation('"Online (E)"');
+    NewFieldMappingProfile.fillCallNumberType('"Library of Congress classification"');
+    NewFieldMappingProfile.fillCallNumber('050$a " " 050$b');
+    NewFieldMappingProfile.addElectronicAccess('"Resource"', '856$u');
     FieldMappingProfiles.saveProfile();
     FieldMappingProfiles.closeViewModeForMappingProfile(profile.name);
   };
 
   const createItemMappingProfile = (profile) => {
     FieldMappingProfiles.openNewMappingProfileForm();
-    NewMappingProfile.fillSummaryInMappingProfile(profile);
-    NewMappingProfile.fillMaterialType('"electronic resource"');
-    NewMappingProfile.addItemNotes('"Electronic bookplate"', '"Smith Family Foundation"', 'Mark for all affected records');
-    NewMappingProfile.fillPermanentLoanType('"Can circulate"');
-    NewMappingProfile.fillStatus('"Available"');
+    NewFieldMappingProfile.fillSummaryInMappingProfile(profile);
+    NewFieldMappingProfile.fillMaterialType('"electronic resource"');
+    NewFieldMappingProfile.addItemNotes('"Electronic bookplate"', '"Smith Family Foundation"', 'Mark for all affected records');
+    NewFieldMappingProfile.fillPermanentLoanType('"Can circulate"');
+    NewFieldMappingProfile.fillStatus('"Available"');
     FieldMappingProfiles.saveProfile();
     FieldMappingProfiles.closeViewModeForMappingProfile(profile.name);
   };

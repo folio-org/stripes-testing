@@ -6,7 +6,7 @@ import Logs from '../../support/fragments/data_import/logs/logs';
 import InventorySearch from '../../support/fragments/inventory/inventorySearch';
 import SearchInventory from '../../support/fragments/data_import/searchInventory';
 import getRandomPostfix from '../../support/utils/stringTools';
-import NewFieldMappingProfile from '../../support/fragments/data_import/mapping_profiles/newMappingProfile';
+import NewFieldMappingProfile from '../../support/fragments/data_import/mapping_profiles/newFieldMappingProfile';
 import FieldMappingProfiles from '../../support/fragments/data_import/mapping_profiles/fieldMappingProfiles';
 import NewActionProfile from '../../support/fragments/data_import/action_profiles/newActionProfile';
 import ActionProfiles from '../../support/fragments/data_import/action_profiles/actionProfiles';
