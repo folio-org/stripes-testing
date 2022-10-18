@@ -1,39 +1,32 @@
 import { HTML, including } from '@interactors/html';
 import { Button, Section } from '../../../../interactors';
-import InventoryInstance from './inventoryInstance';
 
 const instanceTitle = 'MARC bibliographic record';
 const holdingTitle = 'Holdings record';
 const closeButton = Button({ icon: 'times' });
 const rootSection = Section({ id: 'marc-view-pane' });
 
-const closeDetailView = () => cy.do(Button({ icon: 'times' }).click());
+const close = () => cy.do(closeButton.click());
+const contains = (expectedText) => cy.expect(rootSection.find(HTML(including(expectedText))).exists());
 
 export default {
-  closeDetailView,
-  contains:(expectedText) => cy.expect(rootSection.find(HTML(including(expectedText))).exists()),
+  close,
+  contains,
   notContains:(notExpectedText) => cy.expect(rootSection.find(HTML(including(notExpectedText))).absent()),
   waitInstanceLoading: () => cy.expect(rootSection.find(HTML(including(instanceTitle))).exists()),
   waitHoldingLoading: () => cy.expect(rootSection.find(HTML(including(holdingTitle))).exists()),
-  close: () => cy.do(closeButton.click()),
   waitLoading:() => cy.expect(rootSection.exists()),
 
   verifyBarcodeInMARCBibSource:(itemBarcode) => {
-    InventoryInstance.viewSource();
-    // verify table data in marc bibliographic source
-    cy.contains('980').parent('tr').should('exist');
-    cy.contains('KU/CC/DI/M').parent('tr').should('exist');
-    cy.contains('981').parent('tr').should('exist');
-    cy.contains(itemBarcode).parent('tr').should('exist');
-    closeDetailView();
+    contains('980\t');
+    contains('KU/CC/DI/M');
+    contains('981\t');
+    contains(itemBarcode);
+    close();
   },
 
   verifyFieldInMARCBibSource:(fieldNumber, content) => {
-    cy.contains(fieldNumber).parent('tr').should('exist');
-    cy.contains(content).parent('tr').should('exist');
-  },
-
-  verifyFieldInMARCBibSourceIsAbsent:(fieldNumber) => {
-    cy.contains(fieldNumber).parent('tr').should('absent');
-  },
+    contains(fieldNumber);
+    contains(content);
+  }
 };
