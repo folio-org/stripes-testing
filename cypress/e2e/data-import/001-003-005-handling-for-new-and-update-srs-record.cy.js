@@ -10,7 +10,7 @@ import SearchInventory from '../../support/fragments/data_import/searchInventory
 import InventoryInstance from '../../support/fragments/inventory/inventoryInstance';
 import NewMatchProfile from '../../support/fragments/data_import/match_profiles/newMatchProfile';
 import Helper from '../../support/fragments/finance/financeHelper';
-import NewFieldMappingProfile from '../../support/fragments/data_import/mapping_profiles/newMappingProfile';
+import NewFieldMappingProfile from '../../support/fragments/data_import/mapping_profiles/newFieldMappingProfile';
 import SettingsMenu from '../../support/fragments/settingsMenu';
 import MatchProfiles from '../../support/fragments/data_import/match_profiles/matchProfiles';
 import FieldMappingProfiles from '../../support/fragments/data_import/mapping_profiles/fieldMappingProfiles';
@@ -43,9 +43,9 @@ describe('ui-data-import: Test 001/003/035 handling for New and Updated SRS reco
 
   // unique profile names
   const matchProfileName = `C17039 match profile ${Helper.getRandomBarcode()}`;
-  const mappingProfileName = `C17039 Update Instance mapping profile ${Helper.getRandomBarcode()}`;
-  const actionProfileName = `C17039 Update Instance action profile ${Helper.getRandomBarcode()}`;
-  const jobProfileName = `C17039 Update Instance, and create Holdings, Item based on POL match ${Helper.getRandomBarcode()}`;
+  const mappingProfileName = `C17039 mapping profile ${Helper.getRandomBarcode()}`;
+  const actionProfileName = `C17039 action profile ${Helper.getRandomBarcode()}`;
+  const jobProfileName = `C17039 job profile ${Helper.getRandomBarcode()}`;
 
   const matchProfile = {
     profileName: matchProfileName,
@@ -78,6 +78,7 @@ describe('ui-data-import: Test 001/003/035 handling for New and Updated SRS reco
 
   before(() => {
     cy.loginAsAdmin({ path: TopMenu.dataImportPath, waiter: DataImport.waitLoading });
+    cy.getAdminToken();
   });
 
   after(() => {
@@ -108,10 +109,10 @@ describe('ui-data-import: Test 001/003/035 handling for New and Updated SRS reco
     //     InventoryInstance.verifyResourceIdentifier(resourceIdentifiers[0].type, resourceIdentifiers[0].value, 0);
     //   });
 
-    // create match profile
-    cy.visit(SettingsMenu.matchProfilePath);
-    MatchProfiles.createMatchProfile(matchProfile);
-    MatchProfiles.checkMatchProfilePresented(matchProfile.profileName);
+    // // create match profile
+    // cy.visit(SettingsMenu.matchProfilePath);
+    // MatchProfiles.createMatchProfile(matchProfile);
+    // MatchProfiles.checkMatchProfilePresented(matchProfile.profileName);
 
     // create mapping profiles
     cy.visit(SettingsMenu.mappingProfilePath);
