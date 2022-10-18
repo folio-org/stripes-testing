@@ -15,6 +15,7 @@ const actionsButton = Button('Actions');
 const auPaneDetails = Section({ id: 'pane-ac-units-details' });
 const checkboxAll = Checkbox();
 const searchButton = Button('Search');
+const nameTextField = TextField({ name: 'name' });
 
 export default {
 
@@ -32,7 +33,7 @@ export default {
 
   fillInInfo: (name) => {
     cy.do([
-      TextField({ name: 'name' }).fillIn(name),
+      nameTextField.fillIn(name),
       viewCheckbox.click(),
       saveAUButton.click(),
     ]);
@@ -41,7 +42,7 @@ export default {
 
   fillInAUInfo: (name) => {
     cy.do([
-      TextField({ name: 'name' }).fillIn(name),
+      nameTextField.fillIn(name),
       viewCheckbox.click(),
       saveAUButton.click(),
     ]);
