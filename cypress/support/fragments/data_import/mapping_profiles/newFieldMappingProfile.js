@@ -224,24 +224,25 @@ export default {
     ]);
   },
 
+  addName:(name) => cy.do(TextField({ name:'profile.name' }).fillIn(name)),
+  addIncomingRecordType:(type) => cy.do(Select({ name:'profile.incomingRecordType' }).choose(type)),
+  addFolioRecordType:(folioType) => cy.do(Select({ name:'profile.existingRecordType' }).choose(folioType)),
+  saveProfile:() => cy.do(saveButton.click()),
+  fillPermanentLocation:(location) => cy.do(TextField('Permanent').fillIn(location)),
+  fillCallNumber:(number) => cy.do(TextField('Call number').fillIn(number)),
+  fillBarcode:(barcode) => cy.do(TextField('Barcode').fillIn(barcode)),
+  fillCopyNumber:(number) => cy.do(TextField('Copy number').fillIn(number)),
+  fillVendorInvoiceNumber:(number) => cy.do(TextField('Vendor invoice number*').fillIn(number)),
+  fillDescription:(text) => cy.do(TextField('Description*').fillIn(text)),
+  fillQuantity:(quantity) => cy.do(TextField('Quantity*').fillIn(quantity)),
+  fillSubTotal:(number) => cy.do(TextField('Sub-total*').fillIn(number)),
+
   fillSummaryInMappingProfile:(specialMappingProfile = defaultMappingProfile) => {
     cy.do([
       TextField({ name:'profile.name' }).fillIn(specialMappingProfile.name),
       Select({ name:'profile.incomingRecordType' }).choose(incomingRecordType.marcBib),
       Select({ name:'profile.existingRecordType' }).choose(specialMappingProfile.typeValue),
     ]);
-  },
-
-  addName:(name) => {
-    cy.do(TextField({ name:'profile.name' }).fillIn(name));
-  },
-
-  addIncomingRecordType:(type) => {
-    cy.do(Select({ name:'profile.incomingRecordType' }).choose(type));
-  },
-
-  addFolioRecordType:(folioType) => {
-    cy.do(Select({ name:'profile.existingRecordType' }).choose(folioType));
   },
 
   addStatisticalCode:(name, number) => {
@@ -297,25 +298,9 @@ export default {
     waitLoading();
   },
 
-  fillPermanentLocation:(location) => {
-    cy.do(TextField('Permanent').fillIn(location));
-  },
-
   fillCallNumberType:(type) => {
     cy.do(TextField('Call number type').fillIn(type));
     waitLoading();
-  },
-
-  fillCallNumber:(number) => {
-    cy.do(TextField('Call number').fillIn(number));
-  },
-
-  fillBarcode:(barcode) => {
-    cy.do(TextField('Barcode').fillIn(barcode));
-  },
-
-  fillCopyNumber:(number) => {
-    cy.do(TextField('Copy number').fillIn(number));
   },
 
   fillStatus:(itemStatus) => {
@@ -352,10 +337,6 @@ export default {
     waitLoading();
   },
 
-  fillVendorInvoiceNumber:(number) => {
-    cy.do(TextField('Vendor invoice number*').fillIn(number));
-  },
-
   fillPaymentMethod:(method) => {
     cy.do(TextField('Payment method*').fillIn(method));
     waitLoading();
@@ -364,18 +345,6 @@ export default {
   fillCurrency:(currency) => {
     cy.do(TextField('Currency*').fillIn(currency));
     waitLoading();
-  },
-
-  fillDescription:(text) => {
-    cy.do(TextField('Description*').fillIn(text));
-  },
-
-  fillQuantity:(quantity) => {
-    cy.do(TextField('Quantity*').fillIn(quantity));
-  },
-
-  fillSubTotal:(number) => {
-    cy.do(TextField('Sub-total*').fillIn(number));
   },
 
   fillVendorName:(vendorName) => {
