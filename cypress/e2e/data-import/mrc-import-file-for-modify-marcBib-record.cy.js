@@ -32,9 +32,11 @@ describe('ui-data-import: Verify the possibility to modify MARC Bibliographic re
     ])
       .then(userProperties => {
         user = userProperties;
-        cy.login(userProperties.username, userProperties.password);
+        cy.login(user.username, user.password, {
+          path: TopMenu.dataImportPath,
+          waiter: DataImport.waitLoading
+        });
       });
-    DataImport.checkUploadState();
   });
 
   after(() => {
@@ -66,7 +68,6 @@ describe('ui-data-import: Verify the possibility to modify MARC Bibliographic re
     const nameMarcFileForUpload = `C345423autotestFile.${getRandomPostfix()}.mrc`;
 
     // upload a marc file for creating of the new instance, holding and item
-    cy.visit(TopMenu.dataImportPath);
     DataImport.uploadFile('oneMarcBib.mrc', nameMarcFileForCreate);
     JobProfiles.searchJobProfileForImport('Default - Create instance and SRS MARC Bib');
     JobProfiles.runImportFile(nameMarcFileForCreate);

@@ -281,10 +281,8 @@ describe('ui-data-import: MARC file upload with the update of instance, holding,
   };
 
   beforeEach(() => {
-    cy.loginAsAdmin();
+    cy.loginAsAdmin({ path: TopMenu.dataImportPath, waiter: DataImport.waitLoading });
     cy.getAdminToken();
-
-    DataImport.checkUploadState();
 
     const jobProfile = {
       profile: {
@@ -371,7 +369,6 @@ describe('ui-data-import: MARC file upload with the update of instance, holding,
   // MODSOURMAN-819
   it('C343335 MARC file upload with the update of instance, holding, and items (folijet)', { tags: [TestTypes.smoke, DevTeams.folijet] }, () => {
     // upload a marc file for creating of the new instance, holding and item
-    cy.visit(TopMenu.dataImportPath);
     DataImport.uploadFile('oneMarcBib.mrc', nameMarcFileForImportCreate);
     JobProfiles.searchJobProfileForImport(testData.jobProfileForCreate.profile.name);
     JobProfiles.runImportFile(nameMarcFileForImportCreate);
