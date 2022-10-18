@@ -12,12 +12,12 @@ describe('ui-settings: Acquisitions Units', () => {
   before(() => {
     cy.getAdminToken();
     cy.createTempUser([
-      permissions.uiSettingsAcquisitionUnitsViewEditCreateDelete.gui
+      permissions.uiSettingsAcquisitionUnitsViewEditCreateDelete.gui,
+      permissions.uiFinanceManageAcquisitionUnits.gui
     ])
       .then(userProperties => {
         user = userProperties;
       });
-    cy.login(user.username, user.password, { path:SettingsMenu.acquisitionUnitsPath, waiter: AcquisitionUnits.waitLoading });
   });
 
   after(() => {
@@ -28,6 +28,7 @@ describe('ui-settings: Acquisitions Units', () => {
   });
 
   it('C6728 Create acquisitions unit (thunderjet)', { tags: [testType.criticalPath, devTeams.thunderjet] }, () => {
+    cy.login(user.username, user.password, { path:SettingsMenu.acquisitionUnitsPath, waiter: AcquisitionUnits.waitLoading });
     AcquisitionUnits.newAcquisitionUnit();
     AcquisitionUnits.fillInAUInfo(defaultAcquisitionUnit.name);
     AcquisitionUnits.assignAdmin();
