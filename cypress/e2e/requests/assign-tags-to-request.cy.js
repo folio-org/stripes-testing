@@ -6,84 +6,64 @@ import NewRequest from '../../support/fragments/requests/newRequest';
 import Users from '../../support/fragments/users/users';
 import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
 import DevTeams from '../../support/dictionary/devTeams';
+import Helper from '../../support/fragments/finance/financeHelper';
 
-describe('Assign Tags to Request', () => {
-  const barcode = uuid();
-  const lastName = `Test-${uuid()}`;
-  const tag = 'urgent';
-  const requestRecord = {
-    itemBarcode: null,
-    itemTitle: null,
-    requesterBarcode: barcode,
-    pickupServicePoint: 'Circ Desk 1',
-  };
-  let itemBarcode;
+describe('ui-requests: Assign Tags to Request', () => {
   let userId;
+  let requestData;
+  let instanceData;
+  let cancellationReason;
   let oldRulesText;
   let requestPolicyId;
+  const tag = 'important';
 
   before(() => {
-    cy.loginAsAdmin({ path: TopMenu.requestsPath, waiter: Requests.waitContentLoading });
-    cy.getAdminToken();
-  });
-
-  beforeEach(() => {
-    ServicePoints.getViaApi({ limit: 1, query: 'pickupLocation=="true"' });
-    cy.getUserGroups({ limit: 1 }).then((patronGroup) => {
-      const userData = {
-        active: true,
-        barcode,
-        personal: {
-          preferredContactTypeId: '002',
-          lastName,
-          email: 'test@folio.org',
-        },
-        patronGroup,
-        departments: []
-      };
-      Users.createViaApi(userData)
-        .then(userProperties => {
-          userId = userProperties.id;
+    cy.loginAsAdmin();
+    cy.getAdminToken()
+      .then(() => {
+        Requests.setRequestPolicyApi().then(({ oldRulesAsText, policy }) => {
+          oldRulesText = oldRulesAsText;
+          requestPolicyId = policy.id;
         });
-    });
-
-    Requests.setRequestPolicyApi().then(({ oldRulesAsText, policy }) => {
-      oldRulesText = oldRulesAsText;
-      requestPolicyId = policy.id;
-    });
-
-    cy.getItems({ limit: 1, query: 'status.name=="Available"' }).then((item) => {
-      itemBarcode = item.barcode;
-      requestRecord.itemBarcode = itemBarcode;
-      requestRecord.itemTitle = item.title;
-    });
-  });
-
-  afterEach(() => {
-    Requests.getRequestIdViaApi({ limit:1, query: `item.barcode="${itemBarcode}"` })
-      .then(requestId => {
-        Requests.deleteRequestApi(requestId)
-          .then(() => {
-            Users.deleteViaApi(userId);
-          });
+        Requests.createRequestApi().then(({
+          createdUser,
+          createdRequest,
+          instanceRecordData,
+          cancellationReasonId
+        }) => {
+          userId = createdUser.id;
+          requestData = createdRequest;
+          instanceData = instanceRecordData;
+          cancellationReason = cancellationReasonId;
+        });
       });
-    Requests.updateCirculationRulesApi(oldRulesText);
-    Requests.deleteRequestPolicyApi(requestPolicyId);
   });
+
+  // afterEach(() => {
+  //   Requests.getRequestIdViaApi({ limit:1, query: `item.barcode="${itemBarcode}"` })
+  //     .then(requestId => {
+  //       Requests.deleteRequestApi(requestId)
+  //         .then(() => {
+  //           Users.deleteViaApi(userId);
+  //         });
+  //     });
+  //   Requests.updateCirculationRulesApi(oldRulesText);
+  //   Requests.deleteRequestPolicyApi(requestPolicyId);
+  // });
 
   it('C747 Assign Tags to Request (folijet) (prokopovych)', { tags:  [testType.smoke, DevTeams.folijet] }, () => {
-    NewRequest.createNewRequest(requestRecord);
-
+    cy.visit(TopMenu.requestsPath);
     Requests.selectNotYetFilledRequest();
-    Requests.findCreatedRequest(requestRecord.itemTitle);
-    Requests.selectFirstRequest(requestRecord.itemTitle);
+    Requests.findCreatedRequest(instanceData.instanceTitle);
+    Requests.selectFirstRequest(instanceData.instanceTitle);
     Requests.openTagsPane();
     Requests.selectTags(tag);
     Requests.closePane('Tags');
     Requests.closePane('Request Detail');
-    Requests.findCreatedRequest(requestRecord.itemTitle);
-    Requests.selectFirstRequest(requestRecord.itemTitle);
+    Requests.findCreatedRequest(instanceData.instanceTitle);
+    Requests.selectFirstRequest(instanceData.instanceTitle);
     Requests.openTagsPane();
     Requests.verifyAssignedTags(tag);
+
   });
 });

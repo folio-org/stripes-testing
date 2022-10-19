@@ -6,7 +6,7 @@ const itemBarcodeInput = TextField({ name: 'item.barcode' });
 const requesterBarcodeInput = TextField({ name: 'requester.barcode' });
 const enterItemBarcodeButton = Button({ id: 'clickable-select-item' });
 const enterRequesterBarcodeButton = Button({ id: 'clickable-select-requester' });
-const saveAndCloseButton = Button({ id: 'clickable-save-request' });
+const saveAndCloseButton = Button('Save & close');
 const selectServicePoint = Select({ name:'pickupServicePointId' });
 
 export default {
@@ -27,7 +27,6 @@ export default {
     cy.intercept('/circulation/loans?*').as('getLoans');
     cy.do(enterItemBarcodeButton.click());
     cy.wait('@getLoans');
-    cy.wait(1500);
   },
 
   choosepickupServicePoint(pickupServicePoint) {
@@ -35,13 +34,8 @@ export default {
     cy.expect(HTML(including(pickupServicePoint)).exists());
   },
 
-  saveRequestAndClose() {
-    cy.do(saveAndCloseButton.click());
-  },
-
-  waitLoading() {
-    cy.expect(Pane({ title: 'Request Detail' }).exists());
-  },
+  saveRequestAndClose:() => cy.do(saveAndCloseButton.click()),
+  waitLoading:() => cy.expect(Pane({ title: 'Request Detail' }).exists()),
 
   createNewRequest(newRequest) {
     this.openNewRequestPane();
@@ -55,7 +49,7 @@ export default {
     this.openNewRequestPane();
     this.fillRequiredFields(newRequest);
     this.saveRequestAndClose();
-    //TODO investigate what to wait
+    // TODO investigate what to wait
     cy.wait(1000);
     this.waitLoading();
   }
