@@ -14,7 +14,6 @@ import getRandomPostfix from '../../../utils/stringTools';
 
 const saveButton = Button('Save as profile & Close');
 const organizationModal = Modal('Select Organization');
-const marcBib = 'MARC Bibliographic';
 const incomingRecordType = {
   marcBib: 'MARC Bibliographic',
   edifact: 'EDIFACT invoice',
