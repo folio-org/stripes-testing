@@ -27,7 +27,7 @@ const requestsPane = Pane({ title: 'Requests' });
 const pageCheckbox = Checkbox({ name: 'Page' });
 const recallCheckbox = Checkbox({ name: 'Recall' });
 const holdCheckbox = Checkbox({ name: 'Hold' });
-const showTagsbutton = Button({ id: 'clickable-show-tags' });
+const showTagsButton = Button({ id: 'clickable-show-tags' });
 const tagsPane = Pane({ title: 'Tags' });
 const resultsPane = Pane({ id:'pane-results' });
 
@@ -248,6 +248,7 @@ function waitLoadingTags() {
     url: '/tags?limit=10000',
   }).as('getTags');
   cy.wait('@getTags');
+  cy.wait(500);
 }
 
 export default {
@@ -265,8 +266,9 @@ export default {
   selectAwaitingPickupRequest:() => cy.do(Checkbox({ name: 'Open - Awaiting pickup' }).click()),
   selectInTransitRequest:() => cy.do(Checkbox({ name: 'Open - In transit' }).click()),
   selectNotYetFilledRequest:() => cy.do(Checkbox({ name: 'Open - Not yet filled' }).click()),
+  selectClosedCancelledRequest:() => cy.do((Checkbox({ name: 'Closed - Cancelled' }).click())),
   selectFirstRequest:(title) => cy.do(requestsPane.find(MultiColumnListCell({ row: 0, content: title })).click()),
-  openTagsPane:() => cy.do(showTagsbutton.click()),
+  openTagsPane:() => cy.do(showTagsButton.click()),
   closePane:(title) => cy.do(Pane({ title }).find(IconButton({ ariaLabel: 'Close ' })).click()),
   selectHoldsRequestType:() => cy.do(holdCheckbox.click()),
   selectPagesRequestType:() => cy.do(pageCheckbox.click()),
@@ -275,11 +277,11 @@ export default {
   navigateToApp:(appName) => cy.do([appsButton.click(), Button(appName).click()]),
   verifyCreatedRequest:(title) => cy.expect(requestsPane.find(MultiColumnListCell({ row: 0, content: title })).exists()),
 
-  removeCreatedRequest() {
+  cancelRequest() {
     cy.do([
       Pane({ title: 'Request Detail' }).find(Button('Actions')).click(),
       Button({ id: 'clickable-cancel-request' }).click(),
-      TextArea('Additional information for patron *').fillIn('test'),
+      TextArea('Additional information for patron  ').fillIn('test'),
       Button('Confirm').click(),
     ]);
   },
@@ -296,16 +298,20 @@ export default {
     this.selectNotYetFilledRequest();
   },
 
-  selectTags(tag) {
+  addTag(tag) {
     waitLoadingTags();
     cy.do(tagsPane.find(MultiSelect({ ariaLabelledby:'accordion-toggle-button-tag-accordion' })).choose(tag));
     // TODO investigate what to wait
-    cy.wait(1500);
+    cy.wait(500);
+  },
+
+  deleteTag:() => {
+
   },
 
   verifyAssignedTags(tag) {
     cy.expect(Spinner().absent());
-    cy.expect(showTagsbutton.find(Badge()).has({ value: '1' }));
+    cy.expect(showTagsButton.find(Badge()).has({ value: '1' }));
     cy.expect(tagsPane.find(ValueChipRoot(tag)).exists());
   },
 
@@ -497,5 +503,9 @@ export default {
   getRequestIdViaApi: (searchParams) => cy.okapiRequest({
     path: 'circulation/requests',
     searchParams
-  }).then(res => res.body.requests[0].id)
+  }).then(res => res.body.requests[0].id),
+
+  verifyShowTagsButtonIsDisabled:() => {
+    cy.expect(showTagsButton.has({ disabled: true }));
+  }
 };
