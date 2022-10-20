@@ -1,5 +1,12 @@
 import getRandomPostfix from '../../utils/stringTools';
-import { Button, Select, TextField, Pane, Dropdown } from '../../../../interactors';
+import {
+  Button,
+  Select,
+  TextField,
+  Pane,
+  Dropdown,
+  MultiColumnListCell,
+} from '../../../../interactors';
 
 const defaultUserName = `AutotestUser${getRandomPostfix()}`;
 const defaultUser = {
@@ -57,5 +64,16 @@ export default {
 
   checkIsUserCreated: (userData) => {
     cy.expect(Pane(userData.personal.lastName).exists());
+  },
+
+  checkIsPatronBlocked: (description, blockedActions) => {
+    cy.expect([
+      MultiColumnListCell({ content: description }).exists(),
+      MultiColumnListCell({ content: blockedActions }).exists(),
+    ]);
+  },
+
+  checkIsNotPatronBlocked: () => {
+    cy.expect(TextField({ value:'Patron has block(s) in place' }).absent());
   }
 };
