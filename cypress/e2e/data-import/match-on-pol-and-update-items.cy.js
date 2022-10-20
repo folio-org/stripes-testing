@@ -360,11 +360,19 @@ describe('ui-data-import: Match on POL and update related Instance, Holdings, It
     FileDetails.checkItemsStatusesInResultList(0, [FileDetails.status.created, FileDetails.status.updated, FileDetails.status.updated, FileDetails.status.updated]);
     FileDetails.checkItemsStatusesInResultList(1, [FileDetails.status.dash, FileDetails.status.discarded, FileDetails.status.discarded, FileDetails.status.discarded]);
 
-    FileDetails.openInstanceInInventory('Updated');
+    // check is items updated
+    FileDetails.openItemsInInventory(3);
     InventoryInstance.checkIsInstanceUpdated();
-    HoldingsRecordView.checkIsHoldingsUpdated();
-    ItemVeiw.checkIsItemUpdated(firstItem.barcode);
-    InventoryInstance.viewSource();
+    InventoryInstance.openHoldingView();
+    HoldingsRecordView.checkHoldingsType('Monograph');
+    HoldingsRecordView.checkCallNumberType('Library of Congress classification');
+    HoldingsRecordView.checkPermanentLocation('Main Library');
+    HoldingsRecordView.close();
+    InventoryInstance.openHoldingsAccordion('Main Library');
+    InventoryInstance.openItemView(firstItem.barcode);
+    ItemVeiw.verifyItemStatus('In process');
+    ItemVeiw.checkEffectiveLocation('Main Library');
+    ItemVeiw.closeDetailView();
     InventoryViewSource.verifyBarcodeInMARCBibSource(firstItem.barcode);
   });
 });

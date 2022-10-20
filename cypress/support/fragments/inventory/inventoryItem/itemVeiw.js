@@ -1,4 +1,12 @@
-import { Accordion, KeyValue, Button, HTML, including, TextField, Link } from '../../../../../interactors';
+import {
+  Accordion,
+  KeyValue,
+  Button,
+  HTML,
+  including,
+  TextField,
+  MultiColumnList
+} from '../../../../../interactors';
 import dateTools from '../../../utils/dateTools';
 import ConfirmItemMissingModal from './confirmItemMissingModal';
 
@@ -56,13 +64,19 @@ export default {
     cy.do(Button('Save and close').click());
   },
 
-  checkIsItemUpdated(itemBarcode) {
-    cy.do([
-      Button(including('Holdings: Main Library > GV706.5')).click(),
-      Link(itemBarcode).click()
-    ]);
-    verifyItemStatus('In process');
-    cy.expect(Accordion('Location').find(KeyValue('Effective location for item')).has({ value: 'Main Library' }));
-    closeDetailView();
+  checkEffectiveLocation:(location) => {
+    cy.expect(Accordion('Location').find(KeyValue('Effective location for item')).has({ value: location }));
+  },
+
+  checkItemAdministrativeNote:(note) => {
+    cy.expect(MultiColumnList({ id: 'administrative-note-list' }).find(HTML(including(note))).exists());
+  },
+
+  checkMaterialType:(type) => {
+    cy.expect(Accordion('Item data').find(KeyValue('Material type')).has({ value: type }));
+  },
+
+  checkItemNote:(note) => {
+    cy.expect(Accordion('Item notes').find(KeyValue('Note')).has({ value: note }));
   }
 };

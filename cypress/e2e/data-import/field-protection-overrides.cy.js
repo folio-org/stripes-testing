@@ -199,14 +199,14 @@ describe('ui-data-import: Check that field protection overrides work properly du
     MappingProfileDetails.checkCreatedMappingProfile(marcBibMappingProfile.name, protectedFields.firstField, protectedFields.secondField);
     FieldMappingProfiles.checkMappingProfilePresented(marcBibMappingProfile.name);
 
-    FieldMappingProfiles.createMappingProfileWithNotes(instanceMappingProfile, noteForUpdateInstanceMappingProfile);
+    FieldMappingProfiles.createInstanceMappingProfileWithNotes(instanceMappingProfile, noteForUpdateInstanceMappingProfile);
     FieldMappingProfiles.checkMappingProfilePresented(instanceMappingProfile.name);
 
     FieldMappingProfiles.createMappingProfileForUpdatesAndOverrideMarc(marcBibMappingProfileOverride, protectedFields.firstField, protectedFields.secondField);
     MappingProfileDetails.checkCreatedMappingProfile(marcBibMappingProfileOverride.name, protectedFields.firstField, protectedFields.secondField);
     FieldMappingProfiles.checkMappingProfilePresented(marcBibMappingProfileOverride.name);
 
-    FieldMappingProfiles.createMappingProfileWithNotes(instanceMappingProfileOverride, noteForOverrideInstanceMappingProfile);
+    FieldMappingProfiles.createInstanceMappingProfileWithNotes(instanceMappingProfileOverride, noteForOverrideInstanceMappingProfile);
     FieldMappingProfiles.checkMappingProfilePresented(instanceMappingProfileOverride.name);
 
     // create Action profiles

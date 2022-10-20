@@ -61,10 +61,39 @@ const checkCreatedInvoiceISummaryTable = (quantity) => {
     .exists());
 };
 
-const checkStatusInColumn = (specialStatus, specialColumnName) => {
-  cy.then(() => specialColumnName.index())
-    .then((index) => cy.expect(resultsList.find(MultiColumnListCell({ columnIndex: index }))
-      .has({ content: specialStatus })));
+const checkSrsRecordQuantityInSummaryTable = (quantity, row = 0) => {
+  cy.expect(jobSummaryTable
+    .find(MultiColumnListRow({ indexRow: `row-${row}` }))
+    .find(MultiColumnListCell({ columnIndex: 1, content: quantity }))
+    .exists());
+};
+
+const checkInstanceQuantityInSummaryTable = (quantity, row = 0) => {
+  cy.expect(jobSummaryTable
+    .find(MultiColumnListRow({ indexRow: `row-${row}` }))
+    .find(MultiColumnListCell({ columnIndex: 2, content: quantity }))
+    .exists());
+};
+
+const checkHoldingsQuantityInSummaryTable = (quantity, row = 0) => {
+  cy.expect(jobSummaryTable
+    .find(MultiColumnListRow({ indexRow: `row-${row}` }))
+    .find(MultiColumnListCell({ columnIndex: 3, content: quantity }))
+    .exists());
+};
+
+const checkItemQuantityInSummaryTable = (quantity, row = 0) => {
+  cy.expect(jobSummaryTable
+    .find(MultiColumnListRow({ indexRow: `row-${row}` }))
+    .find(MultiColumnListCell({ columnIndex: 4, content: quantity }))
+    .exists());
+};
+
+const checkCreatedInvoiceISummaryTable = (quantity) => {
+  cy.expect(jobSummaryTable
+    .find(listRow)
+    .find(MultiColumnListCell({ columnIndex: 7, content: quantity }))
+    .exists());
 };
 
 const checkItemsQuantityInSummaryTable = (rowNumber, quantity) => {
@@ -74,6 +103,12 @@ const checkItemsQuantityInSummaryTable = (rowNumber, quantity) => {
       .find(MultiColumnListCell({ columnIndex: i, content: quantity }))
       .exists());
   }
+};
+
+const checkStatusInColumn = (specialStatus, specialColumnName) => {
+  cy.then(() => specialColumnName.index())
+    .then((index) => cy.expect(resultsList.find(MultiColumnListCell({ columnIndex: index }))
+      .has({ content: specialStatus })));
 };
 
 function checkItemsStatusesInResultList(rowIndex, itemStatuses) {
@@ -102,7 +137,7 @@ export default {
   checkHoldingsQuantityInSummaryTable,
   checkItemQuantityInSummaryTable,
 
-  openInstanceInInventory:(statusOfItem, columnIndex = 3, row = 0) => {
+  openItemsInInventory:(columnIndex, row = 0) => {
     cy.do(resultsList.find(MultiColumnListCell({ row, columnIndex }))
       .find(Link(statusOfItem))
       .click());
