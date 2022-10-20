@@ -131,6 +131,27 @@ export default {
     ]);
   },
 
+  POLineInfoforElectronicResource: (orderLineTitleName, fund) => {
+    cy.do([
+      TextField({ name: 'titleOrPackage' }).fillIn(orderLineTitleName),
+      Select({ name: 'orderFormat' }).choose('Electronic resource'),
+      Button({ id: 'acquisition-method' }).click(),
+      SelectionOption('Other').click(),
+      Select({ name: 'checkinItems' }).choose('Synchronized order and receipt quantity'),
+      electronicUnitPriceTextField.fillIn(electronicUnitPrice),
+      quantityElectronicTextField.fillIn(quantityElectronic),
+      Button({ id: 'fundDistribution-add-button' }).click(),
+      Button({ id: 'fundDistribution[0].fundId' }).click(),
+      SelectionOption(`${fund.name} (${fund.code})`).click(),
+      TextField({ name: 'fundDistribution[0].value' }).fillIn('100'),
+      Button('Add location').click(),
+      Button({ id: 'field-locations[0].locationId' }).click(),
+      SelectionOption('Online (E)').click(),
+      TextField({ name: 'locations[0].quantityElectronic' }).fillIn(quantityElectronic),
+      saveAndClose.click()
+    ]);
+  },
+
   fillInPOLineInfoWithFund: (fund) => {
     cy.do([
       TextField({ name: 'titleOrPackage' }).fillIn(orderLineTitle),
