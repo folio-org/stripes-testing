@@ -141,8 +141,8 @@ export default {
   },
 
   deleteFundViaActions: () => {
+    cy.expect(actionsButton.exists())
     cy.do([
-      cy.expect(actionsButton.exists()),
       actionsButton.click(),
       deleteButton.click(),
       Button('Delete', { id:'clickable-fund-remove-confirmation-confirm' }).click()

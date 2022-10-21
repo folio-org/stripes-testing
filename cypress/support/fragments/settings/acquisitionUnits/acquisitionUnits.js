@@ -94,10 +94,10 @@ export default {
   edit: (AUName) => {
     cy.do(auListPane.find(Button(AUName)).click());
     cy.expect(auPaneDetails.find(assignedUsersSection).exists());
-    cy.do([
-      actionsButton.click(),
-      Button('Edit').click(),
-    ]);
+    cy.do(actionsButton.click());
+    //Need to wait,while edit button will be loaded
+    cy.wait(2000);
+    cy.do(Button('Edit').click());
   },
 
   selectViewCheckbox: () => {
