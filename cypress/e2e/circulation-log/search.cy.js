@@ -124,6 +124,18 @@ describe('circulation-log', () => {
     SearchPane.resetResults();
   });
 
+  it('C16978 Filter circulation log by checked-out (firebird)', { tags: [TestTypes.criticalPath, devTeams.firebird, TestTypes.broken] }, () => {
+    SearchPane.searchByCheckedOut();
+    SearchPane.verifyResult(ITEM_BARCODE);
+    SearchPane.resetFilters();
+    SearchPane.searchByItemBarcode(ITEM_BARCODE);
+    SearchPane.checkResultSearch({
+      itemBarcode: ITEM_BARCODE,
+      circAction: 'Checked out',
+    });
+    SearchPane.resetResults();
+  });
+
   it('C15853 Filter circulation log on description (firebird)', { tags: [TestTypes.smoke, devTeams.firebird, TestTypes.broken] }, () => {
     // login with user that has all permissions
     cy.login(Cypress.env('diku_login'), Cypress.env('diku_password'));
