@@ -65,7 +65,8 @@ describe('ui-finance: Funds', () => {
     FinanceHelp.searchByName(defaultfund.name);
     FinanceHelp.selectFromResultsList();
     Funds.deleteFundViaActions();
-    cy.wait(2000);
+    FinanceHelp.searchByName(defaultfund.name);
+    Funds.checkZeroSearchResultsHeader();
     Ledgers.deleteledgerViaApi(defaultLedger.id);
 
     FiscalYears.deleteFiscalYearViaApi(defaultFiscalYear.id);
@@ -80,7 +81,7 @@ describe('ui-finance: Funds', () => {
     cy.loginAsAdmin({ path:SettingsMenu.acquisitionUnitsPath, waiter: AcquisitionUnits.waitLoading });
     AcquisitionUnits.newAcquisitionUnit();
     AcquisitionUnits.fillInInfo(defaultAcquisitionUnit.name);
-    // Need to wait,while dato is load
+    // Need to wait,while data is load
     cy.wait(2000);
     AcquisitionUnits.assignUser(user.username);
     cy.login(user.username, user.password, { path:TopMenu.fundPath, waiter: Funds.waitLoading });
