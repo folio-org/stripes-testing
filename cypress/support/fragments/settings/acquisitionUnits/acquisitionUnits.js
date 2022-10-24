@@ -96,8 +96,10 @@ export default {
     cy.expect(auPaneDetails.find(assignedUsersSection).exists());
     // //Need to wait,while data of Acquisition Unit will be loaded
     cy.wait(5000);
-    cy.do(actionsButton.click());
-    cy.do(Button('Edit').click());
+    cy.do([
+      actionsButton.click(),
+      Button('Edit').click()
+    ]);
   },
 
   selectViewCheckbox: () => {
