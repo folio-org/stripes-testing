@@ -13,6 +13,8 @@ import UserEdit from '../../support/fragments/users/userEdit';
 import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
 import InventoryInstance from '../../support/fragments/inventory/inventoryInstance';
 import Checkout from '../../support/fragments/checkout/checkout';
+import LoansPage from "../../support/fragments/loans/loansPage";
+import ChangeDueDateForm from "../../support/fragments/loans/changeDueDateForm";
 
 const ITEM_BARCODE = `123${getRandomPostfix()}`;
 let userId;
@@ -102,13 +104,13 @@ describe('circulation-log', () => {
       });
   });
 
-  it('C15484 Filter circulation log on item barcode (firebird)', { tags: [TestTypes.smoke, devTeams.firebird, TestTypes.broken] }, () => {
+  it('C15484 Filter circulation log on item barcode (firebird)', { tags: [TestTypes.smoke, devTeams.firebird] }, () => {
     SearchPane.searchByItemBarcode(ITEM_BARCODE);
     SearchPane.verifyResultCells();
     SearchPane.resetResults();
   });
 
-  it('C16976 Filter circulation log by date (firebird)', { tags: [TestTypes.smoke, devTeams.firebird, TestTypes.broken] }, () => {
+  it('C16976 Filter circulation log by date (firebird)', { tags: [TestTypes.smoke, devTeams.firebird] }, () => {
     const verifyDate = true;
 
     SearchPane.filterByLastWeek();
@@ -116,7 +118,7 @@ describe('circulation-log', () => {
     SearchPane.resetResults();
   });
 
-  it('C15485 Filter circulation log on user barcode (firebird)', { tags: [TestTypes.smoke, devTeams.firebird, TestTypes.broken] }, () => {
+  it('C15485 Filter circulation log on user barcode (firebird)', { tags: [TestTypes.smoke, devTeams.firebird] }, () => {
     const userBarcode = Cypress.env('users')[0].barcode;
 
     SearchPane.searchByUserBarcode(userBarcode);
@@ -124,7 +126,7 @@ describe('circulation-log', () => {
     SearchPane.resetResults();
   });
 
-  it('C16978 Filter circulation log by checked-out (firebird)', { tags: [TestTypes.criticalPath, devTeams.firebird, TestTypes.broken] }, () => {
+  it('C16978 Filter circulation log by checked-out (firebird)', { tags: [TestTypes.criticalPath, devTeams.firebird] }, () => {
     SearchPane.searchByCheckedOut();
     SearchPane.verifyResult(ITEM_BARCODE);
     SearchPane.resetFilters();
@@ -136,7 +138,7 @@ describe('circulation-log', () => {
     SearchPane.resetResults();
   });
 
-  it('C15853 Filter circulation log on description (firebird)', { tags: [TestTypes.smoke, devTeams.firebird, TestTypes.broken] }, () => {
+  it('C15853 Filter circulation log on description (firebird)', { tags: [TestTypes.smoke, devTeams.firebird] }, () => {
     // login with user that has all permissions
     cy.login(Cypress.env('diku_login'), Cypress.env('diku_password'));
     cy.visit(TopMenu.usersPath);
@@ -161,8 +163,27 @@ describe('circulation-log', () => {
     SearchPane.verifyResultCells();
   });
 
-  it('C16975 Check the Actions button from filtering Circulation log by description (User details) (firebird)', { tags: [TestTypes.criticalPath, devTeams.firebird, TestTypes.broken] }, () => {
+  it('C16975 Check the Actions button from filtering Circulation log by description (User details) (firebird)', { tags: [TestTypes.criticalPath, devTeams.firebird] }, () => {
     SearchPane.goToUserDetails();
     SearchPane.userDetailIsOpen();
+  });
+
+  it('C16980 Filter circulation log by changed due date (firebird)', { tags: [TestTypes.criticalPath, devTeams.firebird] }, () => {
+    cy.login(Cypress.env('diku_login'), Cypress.env('diku_password'));
+    cy.visit(TopMenu.usersPath);
+
+    UsersSearchPane.searchByStatus('Active');
+    UsersSearchPane.searchByKeywords(userId);
+    UsersSearchPane.openUser(userId);
+    UsersCard.openLoans();
+    UsersCard.showOpenedLoans();
+    LoansPage.checkAll();
+    LoansPage.openChangeDueDateForm();
+    ChangeDueDateForm.fillDate('04/19/2030');
+    ChangeDueDateForm.saveAndClose();
+
+    cy.visit(TopMenu.circulationLogPath);
+    SearchPane.searchByChangedDueDate();
+    SearchPane.verifyResultCells();
   });
 });
