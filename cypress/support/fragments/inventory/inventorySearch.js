@@ -25,6 +25,7 @@ const keywordInput = TextField({ id: 'input-inventory-search' });
 const searchButton = Button('Search');
 const searchTextField = TextField('Search ');
 const inventorySearch = TextInput({ id: 'input-inventory-search' });
+const navigationInstancesButton = Button({ id: 'segment-navigation-instances' });
 
 const searchInstanceByHRID = (id) => {
   InventoryInstances.waitContentLoading();
@@ -250,28 +251,14 @@ export default {
     cy.do(searchButton.focus());
     cy.do(searchButton.click());
   },
-  simpleSearchByParameter: (parameter, value) => {
-    cy.do(SearchField({ id: 'input-inventory-search' }).selectIndex(parameter));
-    cy.do(searchTextField.fillIn(value));
-    cy.do(searchButton.focus());
-    cy.do(searchButton.click());
-  },
-  instanceSearch: (parameter, value) => {
-    cy.do(SearchField({ id: 'input-inventory-search' }).selectIndex(parameter));
-    cy.do(searchTextField.fillIn(value));
-    cy.do(searchButton.focus());
-    cy.do(searchButton.click());
-  },
   switchToItem: () => cy.do(Button({ id: 'segment-navigation-items' }).click()),
   switchToHoldings: () => cy.do(Button({ id: 'segment-navigation-holdings' }).click()),
-  switchToInstance: () => cy.do(Button({ id: 'segment-navigation-instances' }).click()),
+  switchToInstance: () => cy.do(navigationInstancesButton.click()),
 
   instanceTabIsDefault() {
-    cy.do(
-      Button({ id: 'segment-navigation-instances' }).perform(element => {
-        expect(element.classList[2]).to.include('primary');
-      })
-    );
+    cy.do(navigationInstancesButton.perform(element => {
+      expect(element.classList[2]).to.include('primary');
+    }));
   },
 
   browseSubjectsSearch(searchString = 'test123') {
