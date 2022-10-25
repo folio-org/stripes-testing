@@ -20,11 +20,11 @@ import InventoryViewSource from '../../support/fragments/inventory/inventoryView
 import ExportMarcFile from '../../support/fragments/data-export/export-marc-file';
 import InventorySearch from '../../support/fragments/inventory/inventorySearch';
 import FileManager from '../../support/utils/fileManager';
-import ExportFile from '../../support/fragments/data-export/exportFile';
 
 describe('ui-data-import: Test 001/003/035 handling for New and Updated SRS records', () => {
   let instanceHrid = null;
   let instanceHridForReimport = null;
+  let exportedFileName = null;
   // resource identifiers
   const resourceIdentifiers = [
     { type: 'OCLC', value: '(OCoLC)26493177' },
@@ -37,8 +37,7 @@ describe('ui-data-import: Test 001/003/035 handling for New and Updated SRS reco
   const nameMarcFileForCreate = `C17039 autotestFile.${getRandomPostfix()}.mrc`;
   const editedMarcFileName = `C17039 fileWith999Field.${getRandomPostfix()}.mrc`;
   const nameFileNameAfterUpload = `C17039 uploadedFile.${getRandomPostfix()}.mrc`;
-  const nameForCSVFile = `C17039 csvAutotestFile${getRandomPostfix()}.csv`;
-  const nameExportedMarcFile = `C17039 exportedAutotestFile${getRandomPostfix()}.mrc`;
+  const nameExportedMarcFile = '';
 
   // unique profile names
   const matchProfileName = `C17039 match profile ${Helper.getRandomBarcode()}`;
@@ -111,8 +110,8 @@ describe('ui-data-import: Test 001/003/035 handling for New and Updated SRS reco
     // delete downloads folder and created files in fixtures
     FileManager.deleteFolder(Cypress.config('downloadsFolder'));
     FileManager.deleteFile(`cypress/fixtures/${nameExportedMarcFile}`);
-    FileManager.deleteFile(`cypress/fixtures/${nameForCSVFile}`);
-    FileManager.deleteFile(`cypress/fixtures/${editedMarcFileName}`);0
+    FileManager.deleteFile(`cypress/fixtures/${editedMarcFileName}`);
+    FileManager.deleteFile(`cypress/fixtures/${exportedFileName}`);
   });
 
   it('C17039 Test 001/003/035 handling for New and Updated SRS records (folijet)', { tags: [TestTypes.criticalPath, DevTeams.folijet] }, () => {
@@ -204,26 +203,33 @@ describe('ui-data-import: Test 001/003/035 handling for New and Updated SRS reco
         InventoryViewSource.verifyFieldInMARCBibSource('035\t', '(ICU)1299036');
       });
 
-    // ensure that extra 035s are not being created
+    // export instance
     cy.visit(TopMenu.inventoryPath);
     InventorySearch.searchInstanceByHRID(instanceHridForReimport);
-    InventorySearch.saveUUIDs();
-    ExportMarcFile.downloadCSVFile(nameForCSVFile, 'SearchInstanceUUIDs*');
-    FileManager.deleteFolder(Cypress.config('downloadsFolder'));
+    InventorySearch.selectResultCheckboxes(1);
+    InventorySearch.exportInstanceAsMarc();
 
     // download exported marc file
     cy.visit(TopMenu.dataExportPath);
-    ExportFile.uploadFile(nameForCSVFile);
-    // TODO export with Export instances (MARC)
-    ExportFile.exportWithDefaultInstancesJobProfile(nameForCSVFile);
-    ExportMarcFile.downloadExportedMarcFile(nameExportedMarcFile);
+    ExportMarcFile.getExportedFileNameViaApi()
+      .then(name => {
+        exportedFileName = name;
 
-    // upload the exported marc file
-    cy.visit(TopMenu.dataImportPath);
-    DataImport.uploadExportedFile(nameExportedMarcFile);
-    JobProfiles.searchJobProfileForImport(jobProfile.profileName);
-    JobProfiles.runImportFile(nameExportedMarcFile);
-    Logs.openFileDetails(nameExportedMarcFile);
+        ExportMarcFile.downloadExportedMarcFile(exportedFileName);
+        // upload the exported marc file
+        cy.visit(TopMenu.dataImportPath);
+        DataImport.uploadExportedFile(exportedFileName);
+        JobProfiles.searchJobProfileForImport(jobProfile.profileName);
+        JobProfiles.runImportFile(exportedFileName);
+        Logs.checkStatusOfJobProfile('Completed');
+        Logs.openFileDetails(nameMarcFileForCreate);
+        [FileDetails.columnName.srsMarc,
+          FileDetails.columnName.instance].forEach(columnName => {
+          FileDetails.checkStatusInColumn(FileDetails.status.updated, columnName);
+        });
+        FileDetails.checkSrsRecordQuantityInSummaryTable('1');
+        FileDetails.checkInstanceQuantityInSummaryTable('1');
+      });
 
     // check instance is updated
     cy.visit(TopMenu.inventoryPath);
