@@ -15,11 +15,11 @@ import TopMenu from '../../support/fragments/topMenu';
 import DataImport from '../../support/fragments/data_import/dataImport';
 import FileDetails from '../../support/fragments/data_import/logs/fileDetails';
 import Logs from '../../support/fragments/data_import/logs/logs';
-import SearchInventory from '../../support/fragments/data_import/searchInventory';
 import FileManager from '../../support/utils/fileManager';
 import InstanceRecordView from '../../support/fragments/inventory/instanceRecordView';
 import InventoryInstance from '../../support/fragments/inventory/inventoryInstance';
 import InventoryViewSource from '../../support/fragments/inventory/inventoryViewSource';
+import InventorySearch from '../../support/fragments/inventory/inventorySearch';
 
 describe('ui-data-import: Check that field protection overrides work properly during data import', () => {
   let firstFieldId = null;
@@ -41,12 +41,12 @@ describe('ui-data-import: Check that field protection overrides work properly du
 
   // unique file name to upload
   const fileNameForCreatingInstance = `C17018autotestFileCreteInstance.${getRandomPostfix()}.mrc`;
-  const fileNameForProtect = `C17018 oneMarcBib-Rev1-Protect_${getRandomPostfix()}.mrc`;
-  const fileNameForOverride = `C17018 oneMarcBib-Rev2-Override_${getRandomPostfix()}.mrc`;
-  const editedFileNameRev1 = `oneMarcBib-Rev1-Protect_${getRandomPostfix()}.mrc`;
-  const editedFileNameRev2 = `oneMarcBib-Rev2-Override_${getRandomPostfix()}.mrc`;
-  const fileForEditRev1 = 'oneMarcBib-Rev1-Protect.mrc';
-  const fileForEditRev2 = 'oneMarcBib-Rev2-Override.mrc';
+  const fileNameForProtect = `C17018 marcFileForC17018-Rev1-Protect_${getRandomPostfix()}.mrc`;
+  const fileNameForOverride = `C17018 marcFileForC17018-Rev2-Override_${getRandomPostfix()}.mrc`;
+  const editedFileNameRev1 = `marcFileForC17018-Rev1-Protect_${getRandomPostfix()}.mrc`;
+  const editedFileNameRev2 = `marcFileForC17018-Rev2-Override_${getRandomPostfix()}.mrc`;
+  const fileForEditRev1 = 'marcFileForC17018-Rev1-Protect.mrc';
+  const fileForEditRev2 = 'marcFileForC17018-Rev2-Override.mrc';
 
   const protectedFields = {
     firstField: '020',
@@ -242,7 +242,7 @@ describe('ui-data-import: Check that field protection overrides work properly du
 
     cy.visit(TopMenu.dataImportPath);
     // upload a marc file
-    DataImport.uploadFile('oneMarcBib-BeforeOverride.mrc', fileNameForCreatingInstance);
+    DataImport.uploadFile('marcFileForC17018-BeforeOverride.mrc', fileNameForCreatingInstance);
     JobProfiles.searchJobProfileForImport('Default - Create instance and SRS MARC Bib');
     JobProfiles.runImportFile(fileNameForCreatingInstance);
     Logs.checkStatusOfJobProfile('Completed');
@@ -252,7 +252,7 @@ describe('ui-data-import: Check that field protection overrides work properly du
     });
 
     // get Instance HRID through API
-    SearchInventory.getInstanceHRID()
+    InventorySearch.getInstanceHRID()
       .then(hrId => {
         instanceHrid = hrId[0];
         DataImport.editMarcFile(fileForEditRev1, editedFileNameRev1, [instanceHridFromFile], [instanceHrid]);
@@ -271,7 +271,7 @@ describe('ui-data-import: Check that field protection overrides work properly du
         FileDetails.checkItemsQuantityInSummaryTable(1, '1');
 
         cy.visit(TopMenu.inventoryPath);
-        SearchInventory.searchInstanceByHRID(instanceHrid);
+        InventorySearch.searchInstanceByHRID(instanceHrid);
         InstanceRecordView.verifyAdministrativeNote(administrativeNote);
         InventoryInstance.verifyResourceIdentifier(resourceIdentifiers[0].type, resourceIdentifiers[0].value, 0);
         InventoryInstance.verifyResourceIdentifier(resourceIdentifiers[1].type, resourceIdentifiers[1].value, 2);
@@ -297,7 +297,7 @@ describe('ui-data-import: Check that field protection overrides work properly du
         FileDetails.checkItemsQuantityInSummaryTable(1, '1');
 
         cy.visit(TopMenu.inventoryPath);
-        SearchInventory.searchInstanceByHRID(instanceHrid);
+        InventorySearch.searchInstanceByHRID(instanceHrid);
         InstanceRecordView.verifyAdministrativeNote(updatedAdministativeNote);
         InventoryInstance.verifyResourceIdentifierAbsent();
         InstanceRecordView.verifyInstanceNote(updatedInstanceNote);

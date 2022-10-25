@@ -53,7 +53,7 @@ describe('ui-data-import: Match on VRN and update related Instance, Holdings, It
   const instanceMatchProfileName = `C350591 Match for Instance ${Helper.getRandomBarcode()}`;
   const holdingsMatchProfileName = `C350591 Match for Holdings ${Helper.getRandomBarcode()}`;
   const itemMatchProfileName = `C350591 Match for Item ${Helper.getRandomBarcode()}`;
-  const editedMarcFileName = `C350591 marcFileForMatchOnVrn.${getRandomPostfix()}.mrc`;
+  const editedMarcFileName = `C350591 marcFileForC350591.${getRandomPostfix()}.mrc`;
 
   const matchProfiles = [
     {
@@ -204,7 +204,7 @@ describe('ui-data-import: Match on VRN and update related Instance, Holdings, It
         Receiving.checkIsPiecesCreated(item.title);
       });
 
-    DataImport.editMarcFile('marcFileForMatchOnVrn.mrc', editedMarcFileName, ['14567-1'], [item.vrn]);
+    DataImport.editMarcFile('marcFileForC350591.mrc', editedMarcFileName, ['14567-1'], [item.vrn]);
 
     // create field mapping profiles
     cy.visit(SettingsMenu.mappingProfilePath);
