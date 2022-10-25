@@ -4,7 +4,6 @@ import NewFieldMappingProfile from '../../support/fragments/data_import/mapping_
 import ActionProfiles from '../../support/fragments/data_import/action_profiles/actionProfiles';
 import NewJobProfile from '../../support/fragments/data_import/job_profiles/newJobProfile';
 import MatchProfiles from '../../support/fragments/data_import/match_profiles/matchProfiles';
-import SearchInventory from '../../support/fragments/data_import/searchInventory';
 import DataImport from '../../support/fragments/data_import/dataImport';
 import Logs from '../../support/fragments/data_import/logs/logs';
 import JobProfiles from '../../support/fragments/data_import/job_profiles/jobProfiles';
@@ -81,12 +80,11 @@ describe('ui-data-import: MARC file import with matching for 999 ff field', () =
     FileDetails.checkStatusInColumn(FileDetails.status.created, FileDetails.columnName.instance);
 
     // get Instance HRID through API
-    SearchInventory
-      .getInstanceHRID()
+    InventorySearch.getInstanceHRID()
       .then(hrId => {
         // download .csv file
         cy.visit(TopMenu.inventoryPath);
-        SearchInventory.searchInstanceByHRID(hrId[0]);
+        InventorySearch.searchInstanceByHRID(hrId[0]);
         InventorySearch.saveUUIDs();
         ExportMarcFile.downloadCSVFile(nameForCSVFile, 'SearchInstanceUUIDs*');
         FileManager.deleteFolder(Cypress.config('downloadsFolder'));
@@ -161,14 +159,13 @@ describe('ui-data-import: MARC file import with matching for 999 ff field', () =
         FileDetails.checkStatusInColumn(FileDetails.status.updated, FileDetails.columnName.instance);
 
         // get Instance HRID through API
-        SearchInventory
-          .getInstanceHRID()
+        InventorySearch.getInstanceHRID()
           .then(id => {
             cy.visit(TopMenu.inventoryPath);
-            SearchInventory.searchInstanceByHRID(id[0]);
+            InventorySearch.searchInstanceByHRID(id[0]);
 
             // ensure the fields created in Field mapping profile exists in inventory
-            SearchInventory.checkInstanceDetails();
+            InventorySearch.checkInstanceDetails();
 
             // clean up generated profiles
             JobProfiles.deleteJobProfile(jobProfileName);
