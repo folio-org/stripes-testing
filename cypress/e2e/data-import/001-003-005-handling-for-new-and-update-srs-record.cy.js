@@ -37,7 +37,6 @@ describe('ui-data-import: Test 001/003/035 handling for New and Updated SRS reco
   const nameMarcFileForCreate = `C17039 autotestFile.${getRandomPostfix()}.mrc`;
   const editedMarcFileName = `C17039 fileWith999Field.${getRandomPostfix()}.mrc`;
   const nameFileNameAfterUpload = `C17039 uploadedFile.${getRandomPostfix()}.mrc`;
-  const nameExportedMarcFile = '';
 
   // unique profile names
   const matchProfileName = `C17039 match profile ${Helper.getRandomBarcode()}`;
@@ -109,7 +108,6 @@ describe('ui-data-import: Test 001/003/035 handling for New and Updated SRS reco
       });
     // delete downloads folder and created files in fixtures
     FileManager.deleteFolder(Cypress.config('downloadsFolder'));
-    FileManager.deleteFile(`cypress/fixtures/${nameExportedMarcFile}`);
     FileManager.deleteFile(`cypress/fixtures/${editedMarcFileName}`);
     FileManager.deleteFile(`cypress/fixtures/${exportedFileName}`);
   });
