@@ -7,7 +7,7 @@ import {
   including,
   TextField,
   Pane,
-  Dropdown, DropdownMenu
+  Dropdown, DropdownMenu, Checkbox
 } from '../../../../interactors';
 import DateTools from '../../utils/dateTools';
 
@@ -23,6 +23,17 @@ function clickApplyMainFilter() {
 export default {
   waitLoading() {
     cy.expect(Pane('Circulation log').exists());
+  },
+
+  searchByCheckedOut() {
+    cy.do([
+      Accordion({ id: 'loan' }).clickHeader(),
+      Checkbox({ id: 'clickable-filter-loan-checked-out' }).click()
+    ]);
+  },
+
+  verifyResult(content) {
+    cy.expect(MultiColumnListCell(content).exists());
   },
 
   searchByItemBarcode(barcode) {

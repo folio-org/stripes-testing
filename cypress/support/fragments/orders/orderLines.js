@@ -14,7 +14,9 @@ import {
   Pane,
   Link,
   including,
-  PaneContent
+  PaneContent,
+  Section,
+  KeyValue
 } from '../../../../interactors';
 import SearchHelper from '../finance/financeHelper';
 import getRandomPostfix from '../../utils/stringTools';
@@ -42,7 +44,23 @@ const quantityElectronicTextField = TextField({ name: 'cost.quantityElectronic' 
 const searchForm = SearchField({ id: 'input-record-search' });
 const contibutor = 'Autotest,Contributor_name';
 const orderLineTitle = `Autotest Tetle_${getRandomPostfix()}`;
-
+const orderLineTitleField = TextField({ name: 'titleOrPackage' });
+const orderFormatSelect = Select({ name: 'orderFormat' });
+const acquisitionMethodButton = Button({ id: 'acquisition-method' });
+const receivingWorkflowSelect = Select({ name: 'checkinItems' });
+const materialTypeSelect = Select({ name: 'physical.materialType' });
+const addLocationButton = Button({ text: 'Add location' });
+const locationSelect = Button({ id: 'field-locations[0].locationId' });
+const onlineLocationOption = SelectionOption('Online (E)');
+const quantityPhysicalLocationField = TextField({ name: 'locations[0].quantityPhysical' });
+const addFundDistributionButton = Button({ id: 'fundDistribution-add-button' });
+const fundDistributionSelect = Button({ id: 'fundDistribution[0].fundId' });
+const fundDistributionField = TextField({ name: 'fundDistribution[0].value' });
+const orderLineInfoPage = Section({ id: 'order-lines-details' });
+const itemDetailsSection = Section({ id: 'ItemDetails' });
+const poLineInfoSection = Section({ id: 'poLine' });
+const fundDistributionSection = Section({ id: 'FundDistribution' });
+const locationSection = Section({ id: 'location' });
 export default {
 
   searchByParameter: (parameter, value) => {
@@ -64,6 +82,33 @@ export default {
       .find(MultiColumnListCell({ columnIndex: 0 }))
       .has({ content: orderLineNumber }));
   },
+
+  checkCreatedPOLinePhysicalResource: (orderLineTitleName, fund) => {
+    cy.expect([
+      orderLineInfoPage.exists(),
+      itemDetailsSection.find(KeyValue({ value: orderLineTitleName })).exists(),
+      poLineInfoSection.find(KeyValue({ value: 'Physical Resource' })).exists(),
+      fundDistributionSection
+        .find(MultiColumnListRow({ index: 0 }))
+        .find(MultiColumnListCell({ columnIndex: 0 }))
+        .has({ content: `${fund.name}(${fund.code})` }),
+      locationSection.find(KeyValue({ value: quantityPhysical })).exists(),
+    ]);
+  },
+
+  checkCreatedPOLineElectronicResource: (orderLineTitleName, fund) => {
+    cy.expect([
+      orderLineInfoPage.exists(),
+      itemDetailsSection.find(KeyValue({ value: orderLineTitleName })).exists(),
+      poLineInfoSection.find(KeyValue({ value: 'Electronic Resource' })).exists(),
+      fundDistributionSection
+        .find(MultiColumnListRow({ index: 0 }))
+        .find(MultiColumnListCell({ columnIndex: 0 }))
+        .has({ content: `${fund.name}(${fund.code})` }),
+      locationSection.find(KeyValue({ value: quantityElectronic })).exists(),
+    ]);
+  },
+
   closeThirdPane: () => {
     cy.do(PaneHeader({ id: 'paneHeaderorder-details' }).find(Button({ icon: 'times' })).click());
   },
@@ -114,61 +159,103 @@ export default {
 
   POLineInfodorPhysicalMaterial: (orderLineTitleName) => {
     cy.do([
-      TextField({ name: 'titleOrPackage' }).fillIn(orderLineTitleName),
-      Select({ name: 'orderFormat' }).choose('Physical resource'),
-      Button({ id: 'acquisition-method' }).click(),
+      orderLineTitleField.fillIn(orderLineTitleName),
+      orderFormatSelect.choose('Physical resource'),
+      acquisitionMethodButton.click(),
       SelectionOption('Depository').click(),
-      Select({ name: 'checkinItems' }).choose('Independent order and receipt quantity'),
+      receivingWorkflowSelect.choose('Independent order and receipt quantity'),
       physicalUnitPriceTextField.fillIn(physicalUnitPrice),
       quantityPhysicalTextField.fillIn(quantityPhysical),
-      Select({ name: 'physical.materialType' }).choose('book'),
-      Button('Add location').click(),
-      Button('Location look-up').click(),
-      Select({ name: 'campusId' }).choose('Online'),
-      Button('Save and close').click(),
-      TextField({ name: 'locations[0].quantityPhysical' }).fillIn(quantityPhysical),
+      materialTypeSelect.choose('book'),
+      addLocationButton.click(),
+      locationSelect.click(),
+      onlineLocationOption.click(),
+      quantityPhysicalLocationField.fillIn(quantityPhysical),
+      saveAndClose.click()
+    ]);
+  },
+
+  POLineInfodorPhysicalMaterialWithFund: (orderLineTitleName, fund) => {
+    cy.do([
+      orderLineTitleField.fillIn(orderLineTitleName),
+      orderFormatSelect.choose('Physical resource'),
+      acquisitionMethodButton.click(),
+      SelectionOption('Depository').click(),
+      receivingWorkflowSelect.choose('Independent order and receipt quantity'),
+      physicalUnitPriceTextField.fillIn(physicalUnitPrice),
+      quantityPhysicalTextField.fillIn(quantityPhysical),
+      materialTypeSelect.choose('book'),
+      addFundDistributionButton.click(),
+      fundDistributionSelect.click(),
+      SelectionOption(`${fund.name} (${fund.code})`).click(),
+      fundDistributionField.fillIn('100'),
+      addLocationButton.click(),
+      locationSelect.click(),
+      onlineLocationOption.click(),
+      quantityPhysicalLocationField.fillIn(quantityPhysical),
+      saveAndClose.click()
+    ]);
+  },
+
+  POLineInfoforElectronicResource: (orderLineTitleName, fund) => {
+    cy.do([
+      orderLineTitleField.fillIn(orderLineTitleName),
+      orderFormatSelect.choose('Electronic resource'),
+      acquisitionMethodButton.click(),
+      SelectionOption('Other').click(),
+      receivingWorkflowSelect.choose('Synchronized order and receipt quantity'),
+      electronicUnitPriceTextField.fillIn(electronicUnitPrice),
+      quantityElectronicTextField.fillIn(quantityElectronic),
+      addFundDistributionButton.click(),
+      fundDistributionSelect.click(),
+      SelectionOption(`${fund.name} (${fund.code})`).click(),
+      fundDistributionField.fillIn('100'),
+      addLocationButton.click(),
+      locationSelect.click(),
+      onlineLocationOption.click(),
+      TextField({ name: 'locations[0].quantityElectronic' }).fillIn(quantityElectronic),
       saveAndClose.click()
     ]);
   },
 
   fillInPOLineInfoWithFund: (fund) => {
     cy.do([
-      TextField({ name: 'titleOrPackage' }).fillIn(orderLineTitle),
-      Select({ name: 'orderFormat' }).choose('Physical resource'),
-      Button({ id: 'acquisition-method' }).click(),
+      orderLineTitleField.fillIn(orderLineTitle),
+      orderFormatSelect.choose('Physical resource'),
+      acquisitionMethodButton.click(),
       SelectionOption('Depository').click(),
       physicalUnitPriceTextField.fillIn(physicalUnitPrice),
       quantityPhysicalTextField.fillIn(quantityPhysical),
-      Select({ name: 'physical.materialType' }).choose('book'),
-      Button({ text: 'Add location' }).click(),
-      Button({ id: 'field-locations[0].locationId' }).click(),
+      materialTypeSelect.choose('book'),
+      addLocationButton.click(),
+      locationSelect.click(),
       SelectionOption('Main Library (KU/CC/DI/M)').click(),
-      TextField({ name: 'locations[0].quantityPhysical' }).fillIn(quantityPhysical),
-      Button({ id: 'fundDistribution-add-button' }).click(),
-      Button({ id: 'fundDistribution[0].fundId' }).click(),
+      quantityPhysicalLocationField.fillIn(quantityPhysical),
+      addFundDistributionButton.click(),
+      fundDistributionSelect.click(),
       SelectionOption(`${fund.name} (${fund.code})`).click(),
-      TextField({ name: 'fundDistribution[0].value' }).fillIn('100'),
+      fundDistributionField.fillIn('100'),
       saveAndClose.click()
     ]);
   },
 
   fillInPOLineInfoViaUi: () => {
     cy.do([
-      TextField({ name: 'titleOrPackage' }).fillIn(orderLineTitle),
-      Select({ name: 'orderFormat' }).choose('P/E mix'),
-      Button({ id: 'acquisition-method' }).click(),
-      Button({ id: 'acquisition-method' }).click(),
+      orderLineTitleField.fillIn(orderLineTitle),
+      orderFormatSelect.choose('P/E mix'),
+      acquisitionMethodButton.click(),
+      acquisitionMethodButton.click(),
       SelectionOption('Depository').click(),
-      Select({ name: 'checkinItems' }).choose('Independent order and receipt quantity'),
+      receivingWorkflowSelect.choose('Independent order and receipt quantity'),
       physicalUnitPriceTextField.fillIn(physicalUnitPrice),
       quantityPhysicalTextField.fillIn(quantityPhysical),
       electronicUnitPriceTextField.fillIn(electronicUnitPrice),
       quantityElectronicTextField.fillIn(quantityElectronic),
-      Select({ name: 'physical.materialType' }).choose('book'),
-      Button({ text: 'Add location' }).click(),
-      Button({ id: 'field-locations[0].locationId' }).click(),
-      SelectionOption('Online (E)').click(),
-      TextField({ name: 'locations[0].quantityPhysical' }).fillIn(quantityPhysical),
+      materialTypeSelect.choose('book'),
+      addLocationButton.click(),
+      locationSelect.click(),
+      onlineLocationOption.click(),
+      quantityPhysicalLocationField.fillIn(quantityPhysical),
       TextField({ name: 'locations[0].quantityElectronic' }).fillIn(quantityElectronic),
     ]);
     cy.expect([
@@ -284,12 +371,12 @@ export default {
   },
 
   addAcquisitionMethod:(method) => {
-    cy.do(Button({ id: 'acquisition-method' }).click());
+    cy.do(acquisitionMethodButton.click());
     cy.do(SelectionOption(method).click());
   },
 
   addOrderFormat:(format) => {
-    cy.do(Select({ name: 'orderFormat' }).choose(format));
+    cy.do(orderFormatSelect.choose(format));
   },
 
   fillPhysicalUnitPrice:(price) => {

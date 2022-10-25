@@ -1,4 +1,14 @@
-import { Accordion, Button, KeyValue, Modal, MultiColumnListCell, Section } from '../../../../interactors';
+import {
+  Accordion,
+  Button,
+  KeyValue,
+  Modal,
+  MultiColumnListCell,
+  Section,
+  MultiColumnList,
+  HTML,
+  including
+} from '../../../../interactors';
 import InventoryViewSource from './inventoryViewSource';
 import NewHoldingsRecord from './newHoldingsRecord';
 
@@ -11,6 +21,7 @@ const deleteButton = Button({ id: 'clickable-delete-holdingsrecord' });
 const duplicateButton = Button({ id: 'copy-holdings' });
 const deleteConfirmationModal = Modal({ id:'delete-confirmation-modal' });
 const holdingHrIdKeyValue = root.find(KeyValue('Holdings HRID'));
+const closeButton = Button({ icon: 'times' });
 
 export default {
   newHolding : {
@@ -18,7 +29,7 @@ export default {
   },
   waitLoading: () => cy.expect(actionsButton.exists()),
   close: () => {
-    cy.do(Button({ icon: 'times' }).click());
+    cy.do(closeButton.click());
     cy.expect(root.absent());
   },
   editInQuickMarc: () => {
@@ -66,10 +77,7 @@ export default {
   getHoldingsHrId: () => cy.then(() => holdingHrIdKeyValue.value()),
   checkInstanceHrId: expectedInstanceHrId => cy.expect(root.find(KeyValue('Instance HRID')).has({ value:expectedInstanceHrId })),
   checkHrId: expectedHrId => cy.expect(holdingHrIdKeyValue.has({ value: expectedHrId })),
-  checkPermanentLocation: expectedLocation => {
-    // https://issues.folio.org/browse/UIIN-1980
-    cy.expect(KeyValue('Permanent', { value: expectedLocation }).exists());
-  },
+  checkPermanentLocation:expectedLocation => cy.expect(KeyValue('Permanent', { value: expectedLocation }).exists()),
   getId:() => {
     // parse hodling record id from current url
     cy.url().then(url => cy.wrap(url.split('?')[0].split('/').at(-1)).as('holdingsRecorId'));
@@ -80,18 +88,20 @@ export default {
     cy.do(actionsButton.click());
     cy.do(editButton.click());
   },
-
-  checkIsHoldingsUpdated:() => {
-    cy.do(Button('View holdings').click());
-    cy.expect(KeyValue('Holdings type').has({ value: 'Monograph' }));
-    cy.expect(KeyValue('Call number type').has({ value: 'Library of Congress classification' }));
-    cy.expect(KeyValue('Permanent').has({ value: 'Main Library' }));
-    cy.do(Button({ icon: 'times' }).click());
-  },
+  checkHoldingsType:type => cy.expect(KeyValue('Holdings type').has({ value: type })),
+  checkCallNumberType: number => cy.expect(KeyValue('Call number type').has({ value: number })),
   checkURIIsNotEmpty:() => {
-    cy.expect(Accordion('Electronic access').find(MultiColumnListCell({ row: 0, columnIndex: 1, content: '-' })).absent());
+    cy.expect(Accordion('Electronic access').find(MultiColumnListCell({ row: 0, columnIndex: 1, content: '-' }))
+      .absent());
   },
-  checkCallNumber:(callNumber) => {
-    cy.expect(KeyValue('Call number').has({ value: callNumber }));
+  checkCallNumber:(callNumber) => cy.expect(KeyValue('Call number').has({ value: callNumber })),
+  checkAdministrativeNote:(note) => {
+    cy.expect(MultiColumnList({ id: 'administrative-note-list' }).find(HTML(including(note))).exists());
   },
+  checkHoldingsStatement:(statement) => {
+    cy.expect(MultiColumnList({ id: 'list-holdingsStatement' }).find(HTML(including(statement))).exists());
+  },
+  checkStatisticalCode:(code) => {
+    cy.expect(MultiColumnList({ id: 'list-statistical-codes' }).find(HTML(including(code))).exists());
+  }
 };

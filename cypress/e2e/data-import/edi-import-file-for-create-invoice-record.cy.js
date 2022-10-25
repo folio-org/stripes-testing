@@ -66,7 +66,6 @@ describe('ui-data-import: EDIFACT file import with creating of new invoice recor
     };
 
     cy.visit(SettingsMenu.actionProfilePath);
-    // TODO: issue with mapping of action and mapping profiles
     ActionProfiles.createActionProfile(actionProfile, mappingProfileName);
     ActionProfiles.checkActionProfilePresented(actionProfileName);
 
@@ -92,6 +91,7 @@ describe('ui-data-import: EDIFACT file import with creating of new invoice recor
     Logs.checkStatusOfJobProfile();
     Logs.openFileDetails(fileName);
     FileDetails.checkStatusInColumn(FileDetails.status.created, FileDetails.columnName.invoice);
+    FileDetails.checkSrsRecordQuantityInSummaryTable('1');
     FileDetails.checkCreatedInvoiceISummaryTable('1');
     InvoiceView.checkInvoiceDetails(InvoiceView.vendorInvoiceNumber);
   });
