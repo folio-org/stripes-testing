@@ -2,8 +2,8 @@ import { QuickMarcEditor, QuickMarcEditorRow, TextArea, Button, Modal, TextField
 import dateTools from '../utils/dateTools';
 import getRandomPostfix from '../utils/stringTools';
 
-const addFieldButton = Button({ ariaLabel : 'Add a new field' });
-const deleteFieldButton = Button({ ariaLabel : 'Delete this field' });
+const addFieldButton = Button({ ariaLabel : 'plus-sign' });
+const deleteFieldButton = Button({ ariaLabel : 'trash' });
 const saveAndCloseButton = Button({ id:'quick-marc-record-save' });
 const confirmationModal = Modal({ id: 'quick-marc-confirm-modal' });
 const continueWithSaveButton = Modal().find(Button({ id: 'clickable-quick-marc-confirm-modal-confirm' }));
