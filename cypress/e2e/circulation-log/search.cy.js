@@ -13,8 +13,8 @@ import UserEdit from '../../support/fragments/users/userEdit';
 import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
 import InventoryInstance from '../../support/fragments/inventory/inventoryInstance';
 import Checkout from '../../support/fragments/checkout/checkout';
-import LoansPage from "../../support/fragments/loans/loansPage";
-import ChangeDueDateForm from "../../support/fragments/loans/changeDueDateForm";
+import LoansPage from '../../support/fragments/loans/loansPage';
+import ChangeDueDateForm from '../../support/fragments/loans/changeDueDateForm';
 
 const ITEM_BARCODE = `123${getRandomPostfix()}`;
 let userId;
