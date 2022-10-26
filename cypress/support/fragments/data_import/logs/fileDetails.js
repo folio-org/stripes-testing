@@ -2,8 +2,7 @@ import {
   MultiColumnListCell,
   MultiColumnList,
   MultiColumnListHeader,
-  MultiColumnListRow,
-  Link
+  MultiColumnListRow
 } from '../../../../../interactors';
 
 const resultsList = MultiColumnList({ id:'search-results-list' });
@@ -24,41 +23,6 @@ const status = {
   discarded: 'Discarded',
   dash: 'No value set-',
   multiple: 'Multiple'
-};
-
-const checkSrsRecordQuantityInSummaryTable = (quantity, row = 0) => {
-  cy.expect(jobSummaryTable
-    .find(MultiColumnListRow({ indexRow: `row-${row}` }))
-    .find(MultiColumnListCell({ columnIndex: 1, content: quantity }))
-    .exists());
-};
-
-const checkInstanceQuantityInSummaryTable = (quantity, row = 0) => {
-  cy.expect(jobSummaryTable
-    .find(MultiColumnListRow({ indexRow: `row-${row}` }))
-    .find(MultiColumnListCell({ columnIndex: 2, content: quantity }))
-    .exists());
-};
-
-const checkHoldingsQuantityInSummaryTable = (quantity, row = 0) => {
-  cy.expect(jobSummaryTable
-    .find(MultiColumnListRow({ indexRow: `row-${row}` }))
-    .find(MultiColumnListCell({ columnIndex: 3, content: quantity }))
-    .exists());
-};
-
-const checkItemQuantityInSummaryTable = (quantity, row = 0) => {
-  cy.expect(jobSummaryTable
-    .find(MultiColumnListRow({ indexRow: `row-${row}` }))
-    .find(MultiColumnListCell({ columnIndex: 4, content: quantity }))
-    .exists());
-};
-
-const checkCreatedInvoiceISummaryTable = (quantity) => {
-  cy.expect(jobSummaryTable
-    .find(listRow)
-    .find(MultiColumnListCell({ columnIndex: 7, content: quantity }))
-    .exists());
 };
 
 const checkSrsRecordQuantityInSummaryTable = (quantity, row = 0) => {
@@ -137,9 +101,7 @@ export default {
   checkHoldingsQuantityInSummaryTable,
   checkItemQuantityInSummaryTable,
 
-  openItemsInInventory:(columnIndex, row = 0) => {
-    cy.do(resultsList.find(MultiColumnListCell({ row, columnIndex }))
-      .find(Link(statusOfItem))
-      .click());
+  openItemInInventory:(columnIndex, row = 0) => {
+    cy.do(resultsList.find(MultiColumnListCell({ row, columnIndex })).click());
   }
 };

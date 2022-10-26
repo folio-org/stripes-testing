@@ -354,7 +354,7 @@ describe('ui-data-import: Match on location', () => {
     FileDetails.checkItemQuantityInSummaryTable('1', 1);
 
     // check updated items in Inventory
-    FileDetails.openItemsInInventory(4);
+    FileDetails.openItemInInventory(4);
     HoldingsRecordView.checkAdministrativeNote(noteForHoldingsMappingProfile);
     HoldingsRecordView.close();
     InventoryInstance.openHoldingsAccordion('Main Library >');
@@ -517,7 +517,7 @@ describe('ui-data-import: Match on location', () => {
     FileDetails.checkItemQuantityInSummaryTable('1', 1);
 
     // check updated items in Inventory
-    FileDetails.openItemsInInventory(4);
+    FileDetails.openItemInInventory(4);
     HoldingsRecordView.checkHoldingsStatement(holdingsStatement);
     HoldingsRecordView.close();
     InventoryInstance.openHoldingsAccordion('Main Library >');
@@ -680,7 +680,7 @@ describe('ui-data-import: Match on location', () => {
     FileDetails.checkItemQuantityInSummaryTable('1', 1);
 
     // check updated items in Inventory
-    FileDetails.openItemsInInventory(4);
+    FileDetails.openItemInInventory(4);
     HoldingsRecordView.checkHoldingsType(holdingsType);
     HoldingsRecordView.close();
     InventoryInstance.openHoldingsAccordion('Main Library >');
