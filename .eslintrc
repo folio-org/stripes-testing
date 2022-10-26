@@ -1,13 +1,14 @@
 {
   "extends": "@folio/eslint-config-stripes",
+  "env": {
+    "cypress/globals": true,
+    "jest": true,
+    "mocha": true
+  },
+  "parser": "@babel/eslint-parser",
   "plugins": [
     "cypress"
   ],
-  "parser": "babel-eslint",
-  "env": {
-    "mocha": true,
-    "cypress/globals": true
-  },
   "rules": {
     "func-names": 0,
     "import/no-extraneous-dependencies": 0,
