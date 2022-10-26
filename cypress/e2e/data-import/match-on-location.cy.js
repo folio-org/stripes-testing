@@ -16,7 +16,7 @@ import Logs from '../../support/fragments/data_import/logs/logs';
 import DataImportSettingsJobProfiles from '../../support/fragments/settings/dataImport/dataImportSettingsJobProfiles';
 import SearchInventory from '../../support/fragments/data_import/searchInventory';
 import InventoryInstance from '../../support/fragments/inventory/inventoryInstance';
-import NewMappingProfile from '../../support/fragments/data_import/mapping_profiles/newMappingProfile';
+import NewFieldMappingProfile from '../../support/fragments/data_import/mapping_profiles/newFieldMappingProfile';
 import HoldingsRecordView from '../../support/fragments/inventory/holdingsRecordView';
 import ItemVeiw from '../../support/fragments/inventory/inventoryItem/itemVeiw';
 import FileManager from '../../support/utils/fileManager';
@@ -270,12 +270,12 @@ describe('ui-data-import: Match on location', () => {
 
     const holdingsUpdateMappingProfile = {
       name: holdingsMappingProfile,
-      typeValue : NewMappingProfile.folioRecordTypeValue.holdings
+      typeValue : NewFieldMappingProfile.folioRecordTypeValue.holdings
     };
 
     const itemUpdateMappingProfile = {
       name: itemMappingProfile,
-      typeValue : NewMappingProfile.folioRecordTypeValue.item
+      typeValue : NewFieldMappingProfile.folioRecordTypeValue.item
     };
 
     const holdingsUpdatesActionProfile = {
@@ -309,14 +309,14 @@ describe('ui-data-import: Match on location', () => {
     // create Field mapping profiles
     cy.visit(SettingsMenu.mappingProfilePath);
     FieldMappingProfiles.openNewMappingProfileForm();
-    NewMappingProfile.fillSummaryInMappingProfile(holdingsUpdateMappingProfile);
-    NewMappingProfile.addAdministrativeNote(noteForHoldingsMappingProfile, 5);
+    NewFieldMappingProfile.fillSummaryInMappingProfile(holdingsUpdateMappingProfile);
+    NewFieldMappingProfile.addAdministrativeNote(noteForHoldingsMappingProfile, 5);
     FieldMappingProfiles.saveProfile();
     FieldMappingProfiles.closeViewModeForMappingProfile(holdingsUpdateMappingProfile.name);
     FieldMappingProfiles.checkMappingProfilePresented(holdingsUpdateMappingProfile.name);
     FieldMappingProfiles.openNewMappingProfileForm();
-    NewMappingProfile.fillSummaryInMappingProfile(itemUpdateMappingProfile);
-    NewMappingProfile.addAdministrativeNote(noteForItemMappingProfile, 7);
+    NewFieldMappingProfile.fillSummaryInMappingProfile(itemUpdateMappingProfile);
+    NewFieldMappingProfile.addAdministrativeNote(noteForItemMappingProfile, 7);
     FieldMappingProfiles.saveProfile();
     FieldMappingProfiles.closeViewModeForMappingProfile(itemUpdateMappingProfile.name);
     FieldMappingProfiles.checkMappingProfilePresented(itemUpdateMappingProfile.name);
@@ -436,12 +436,12 @@ describe('ui-data-import: Match on location', () => {
 
     const holdingsUpdateMappingProfile = {
       name: holdingsMappingProfile,
-      typeValue : NewMappingProfile.folioRecordTypeValue.holdings
+      typeValue : NewFieldMappingProfile.folioRecordTypeValue.holdings
     };
 
     const itemUpdateMappingProfile = {
       name: itemMappingProfile,
-      typeValue : NewMappingProfile.folioRecordTypeValue.item
+      typeValue : NewFieldMappingProfile.folioRecordTypeValue.item
     };
 
     const holdingsUpdatesActionProfile = {
@@ -472,14 +472,14 @@ describe('ui-data-import: Match on location', () => {
     // create Field mapping profiles
     cy.visit(SettingsMenu.mappingProfilePath);
     FieldMappingProfiles.openNewMappingProfileForm();
-    NewMappingProfile.fillSummaryInMappingProfile(holdingsUpdateMappingProfile);
-    NewMappingProfile.addHoldingsStatements(holdingsStatement);
+    NewFieldMappingProfile.fillSummaryInMappingProfile(holdingsUpdateMappingProfile);
+    NewFieldMappingProfile.addHoldingsStatements(holdingsStatement);
     FieldMappingProfiles.saveProfile();
     FieldMappingProfiles.closeViewModeForMappingProfile(holdingsUpdateMappingProfile.name);
     FieldMappingProfiles.checkMappingProfilePresented(holdingsUpdateMappingProfile.name);
     FieldMappingProfiles.openNewMappingProfileForm();
-    NewMappingProfile.fillSummaryInMappingProfile(itemUpdateMappingProfile);
-    NewMappingProfile.fillMaterialType(materialType);
+    NewFieldMappingProfile.fillSummaryInMappingProfile(itemUpdateMappingProfile);
+    NewFieldMappingProfile.fillMaterialType(materialType);
     FieldMappingProfiles.saveProfile();
     FieldMappingProfiles.closeViewModeForMappingProfile(itemUpdateMappingProfile.name);
     FieldMappingProfiles.checkMappingProfilePresented(itemUpdateMappingProfile.name);
@@ -599,12 +599,12 @@ describe('ui-data-import: Match on location', () => {
 
     const holdingsUpdateMappingProfile = {
       name: holdingsMappingProfile,
-      typeValue : NewMappingProfile.folioRecordTypeValue.holdings
+      typeValue : NewFieldMappingProfile.folioRecordTypeValue.holdings
     };
 
     const itemUpdateMappingProfile = {
       name: itemMappingProfile,
-      typeValue : NewMappingProfile.folioRecordTypeValue.item
+      typeValue : NewFieldMappingProfile.folioRecordTypeValue.item
     };
 
     const holdingsUpdatesActionProfile = {
@@ -635,14 +635,14 @@ describe('ui-data-import: Match on location', () => {
     // create Field mapping profiles
     cy.visit(SettingsMenu.mappingProfilePath);
     FieldMappingProfiles.openNewMappingProfileForm();
-    NewMappingProfile.fillSummaryInMappingProfile(holdingsUpdateMappingProfile);
-    NewMappingProfile.fillHoldingsType(holdingsType);
+    NewFieldMappingProfile.fillSummaryInMappingProfile(holdingsUpdateMappingProfile);
+    NewFieldMappingProfile.fillHoldingsType(holdingsType);
     FieldMappingProfiles.saveProfile();
     FieldMappingProfiles.closeViewModeForMappingProfile(holdingsUpdateMappingProfile.name);
     FieldMappingProfiles.checkMappingProfilePresented(holdingsUpdateMappingProfile.name);
     FieldMappingProfiles.openNewMappingProfileForm();
-    NewMappingProfile.fillSummaryInMappingProfile(itemUpdateMappingProfile);
-    NewMappingProfile.addItemNotes(itemNote, '"Smith Family Foundation"', 'Mark for all affected records');
+    NewFieldMappingProfile.fillSummaryInMappingProfile(itemUpdateMappingProfile);
+    NewFieldMappingProfile.addItemNotes(itemNote, '"Smith Family Foundation"', 'Mark for all affected records');
     FieldMappingProfiles.saveProfile();
     FieldMappingProfiles.closeViewModeForMappingProfile(itemUpdateMappingProfile.name);
     FieldMappingProfiles.checkMappingProfilePresented(itemUpdateMappingProfile.name);
