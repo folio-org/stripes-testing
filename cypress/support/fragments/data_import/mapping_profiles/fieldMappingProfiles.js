@@ -164,15 +164,6 @@ export default {
     cy.do(saveProfileButton.click());
   },
 
-  createMappingProfileWithNotes:(mappingProfile, note) => {
-    openNewMappingProfileForm();
-    NewFieldMappingProfile.fillSummaryInMappingProfile(mappingProfile);
-    NewFieldMappingProfile.addAdministrativeNote(note);
-    cy.do(saveProfileButton.click());
-    closeViewModeForMappingProfile(mappingProfile.name);
-    cy.expect(actionsButton.exists());
-  },
-
   checkListOfExistingProfilesIsDisplayed:() => {
     cy.expect(PaneContent({ id:'pane-results-content' }).exists());
   },

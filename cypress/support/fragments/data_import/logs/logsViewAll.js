@@ -264,6 +264,7 @@ export default {
   // it is used to filter by "job Profile"
   getSingleJobProfile() {
     const queryString = UrlParams.getSingleJobProfileQueryString();
+    console.log(queryString);
     return cy.request({
       method: 'GET',
       url: `${Cypress.env('OKAPI_HOST')}/metadata-provider/jobExecutions?${queryString}`,
