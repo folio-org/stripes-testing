@@ -9,7 +9,7 @@ import Logs from '../../support/fragments/data_import/logs/logs';
 import FileDetails from '../../support/fragments/data_import/logs/fileDetails';
 import SettingsMenu from '../../support/fragments/settingsMenu';
 import TopMenu from '../../support/fragments/topMenu';
-import NewMappingProfile from '../../support/fragments/data_import/mapping_profiles/newMappingProfile';
+import NewFieldMappingProfile from '../../support/fragments/data_import/mapping_profiles/newFieldMappingProfile';
 import InvoiceView from '../../support/fragments/invoices/invoiceView';
 import permissions from '../../support/dictionary/permissions';
 import Users from '../../support/fragments/users/users';
@@ -56,7 +56,7 @@ describe('ui-data-import: EDIFACT file import with creating of new invoice recor
     // create Field mapping profile
     cy.visit(SettingsMenu.mappingProfilePath);
     FieldMappingProfiles.waitLoading();
-    FieldMappingProfiles.createInvoiceMappingProfile(mappingProfileName, FieldMappingProfiles.mappingProfileForDuplicate.gobi, NewMappingProfile.organization.gobiLibrary);
+    FieldMappingProfiles.createInvoiceMappingProfile(mappingProfileName, FieldMappingProfiles.mappingProfileForDuplicate.gobi, NewFieldMappingProfile.organization.gobiLibrary);
     FieldMappingProfiles.checkMappingProfilePresented(mappingProfileName);
 
     // create Action profile and link it to Field mapping profile
@@ -66,7 +66,6 @@ describe('ui-data-import: EDIFACT file import with creating of new invoice recor
     };
 
     cy.visit(SettingsMenu.actionProfilePath);
-    // TODO: issue with mapping of action and mapping profiles
     ActionProfiles.createActionProfile(actionProfile, mappingProfileName);
     ActionProfiles.checkActionProfilePresented(actionProfileName);
 
@@ -92,6 +91,7 @@ describe('ui-data-import: EDIFACT file import with creating of new invoice recor
     Logs.checkStatusOfJobProfile();
     Logs.openFileDetails(fileName);
     FileDetails.checkStatusInColumn(FileDetails.status.created, FileDetails.columnName.invoice);
+    FileDetails.checkSrsRecordQuantityInSummaryTable('1');
     FileDetails.checkCreatedInvoiceISummaryTable('1');
     InvoiceView.checkInvoiceDetails(InvoiceView.vendorInvoiceNumber);
   });

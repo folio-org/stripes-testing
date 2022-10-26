@@ -1,6 +1,17 @@
 import { matching } from 'bigtest';
-import { Accordion, Button, MultiColumnListCell, MultiColumnListRow, including, TextField, Pane } from '../../../../interactors';
+import {
+  Accordion,
+  Button,
+  MultiColumnListCell,
+  MultiColumnListRow,
+  including,
+  TextField,
+  Pane,
+  Dropdown, DropdownMenu, Checkbox
+} from '../../../../interactors';
 import DateTools from '../../utils/dateTools';
+
+const dropdownButton = MultiColumnListRow({ rowIndexInParent: 'row-0' }).find(Dropdown()).find(Button());
 
 
 // TODO: will rework to interactor when we get section id
@@ -12,6 +23,17 @@ function clickApplyMainFilter() {
 export default {
   waitLoading() {
     cy.expect(Pane('Circulation log').exists());
+  },
+
+  searchByCheckedOut() {
+    cy.do([
+      Accordion({ id: 'loan' }).clickHeader(),
+      Checkbox({ id: 'clickable-filter-loan-checked-out' }).click()
+    ]);
+  },
+
+  verifyResult(content) {
+    cy.expect(MultiColumnListCell(content).exists());
   },
 
   searchByItemBarcode(barcode) {
@@ -27,6 +49,13 @@ export default {
   searchByDescription(desc) {
     cy.do(TextField({ name: 'description' }).fillIn(desc));
     clickApplyMainFilter();
+  },
+
+  searchByChangedDueDate() {
+    cy.do([
+      Accordion({ id: 'loan' }).clickHeader(),
+      Checkbox({ id: 'clickable-filter-loan-changed-due-date' }).click()
+    ])
   },
 
   resetFilters() {
@@ -98,5 +127,16 @@ export default {
   },
   resetResults() {
     cy.do(Button('Reset all').click());
-  }
+  },
+
+  goToUserDetails() {
+    cy.do([
+      dropdownButton.click(),
+      DropdownMenu().find(Button()).click()
+    ]);
+  },
+
+  userDetailIsOpen() {
+    cy.expect(Pane({ id: 'pane-userdetails' }).exists());
+  },
 };

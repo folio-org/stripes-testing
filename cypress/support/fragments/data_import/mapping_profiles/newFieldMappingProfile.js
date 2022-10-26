@@ -14,8 +14,6 @@ import getRandomPostfix from '../../../utils/stringTools';
 
 const saveButton = Button('Save as profile & Close');
 const organizationModal = Modal('Select Organization');
-const adminNoteFieldName = 'profile.mappingDetails.mappingFields[9].repeatableFieldAction';
-const marcBib = 'MARC Bibliographic';
 const incomingRecordType = {
   marcBib: 'MARC Bibliographic',
   edifact: 'EDIFACT invoice',
@@ -36,6 +34,11 @@ const actions = {
   deleteAllExistingValues: 'Delete all existing values',
   deleteAllExistingAndAddThese: 'Delete all existing and add these',
   findAndRemoveThese: 'Find and remove these'
+};
+
+const actionsFieldMappingsForMarc = {
+  modify: 'Modifications',
+  update: 'Updates'
 };
 
 const permanentLocation = '"Annex (KU/CC/DI/A)"';
@@ -71,6 +74,11 @@ const selectOrganizationByName = (organizationName) => {
   ]);
 };
 
+const waitLoading = () => {
+  // wait will be add uuid for acceptedValues
+  cy.wait(500);
+};
+
 const selectFromResultsList = (rowNumber = 0) => {
   cy.do(organizationModal.find(MultiColumnListRow({ index: rowNumber })).click());
 };
@@ -85,6 +93,7 @@ export default {
   instanceStatusTerm,
   catalogedDate,
   selectFromResultsList,
+  waitLoading,
 
   fillMappingProfile:(specialMappingProfile = defaultMappingProfile) => {
     cy.do([
@@ -156,24 +165,6 @@ export default {
     cy.expect(saveButton.absent());
   },
 
-  fillModifyMappingProfile(specialMappingProfileName = defaultMappingProfile.name, properties) {
-    cy.do([
-      TextField({ name:'profile.name' }).fillIn(specialMappingProfileName),
-      Select({ name:'profile.incomingRecordType' }).choose(incomingRecordType.marcBib),
-      Select({ name:'profile.existingRecordType' }).choose(marcBib),
-      Select({ name:'profile.mappingDetails.marcMappingOption' }).choose(properties.marcMappingOption),
-      Select({ name:'profile.mappingDetails.marcMappingDetails[0].action' }).choose(properties.action),
-      TextField({ name:'profile.mappingDetails.marcMappingDetails[0].field.field' }).fillIn(properties.addFieldNumber),
-      TextField({ name:'profile.mappingDetails.marcMappingDetails[0].field.subfields[0].subfield' }).fillIn(properties.subfieldInFirstField),
-      Select({ name:'profile.mappingDetails.marcMappingDetails[0].field.subfields[0].subaction' }).choose(properties.subaction),
-      TextArea({ name:'profile.mappingDetails.marcMappingDetails[0].field.subfields[0].data.text' }).fillIn(properties.subfieldTextInFirstField),
-      TextField({ name:'profile.mappingDetails.marcMappingDetails[0].field.subfields[1].subfield' }).fillIn(properties.subfieldInSecondField),
-      TextArea({ name:'profile.mappingDetails.marcMappingDetails[0].field.subfields[1].data.text' }).fillIn(properties.subfieldTextInSecondField),
-      saveButton.click(),
-    ]);
-    cy.expect(saveButton.absent());
-  },
-
   fillMappingProfileForInvoice:(specialMappingProfileName = defaultMappingProfile.name, organizationName) => {
     cy.do([
       TextField({ name:'profile.name' }).fillIn(specialMappingProfileName),
@@ -232,6 +223,19 @@ export default {
     ]);
   },
 
+  addName:(name) => cy.do(TextField({ name:'profile.name' }).fillIn(name)),
+  addIncomingRecordType:(type) => cy.do(Select({ name:'profile.incomingRecordType' }).choose(type)),
+  addFolioRecordType:(folioType) => cy.do(Select({ name:'profile.existingRecordType' }).choose(folioType)),
+  saveProfile:() => cy.do(saveButton.click()),
+  fillPermanentLocation:(location) => cy.do(TextField('Permanent').fillIn(location)),
+  fillCallNumber:(number) => cy.do(TextField('Call number').fillIn(number)),
+  fillBarcode:(barcode) => cy.do(TextField('Barcode').fillIn(barcode)),
+  fillCopyNumber:(number) => cy.do(TextField('Copy number').fillIn(number)),
+  fillVendorInvoiceNumber:(number) => cy.do(TextField('Vendor invoice number*').fillIn(number)),
+  fillDescription:(text) => cy.do(TextField('Description*').fillIn(text)),
+  fillQuantity:(quantity) => cy.do(TextField('Quantity*').fillIn(quantity)),
+  fillSubTotal:(number) => cy.do(TextField('Sub-total*').fillIn(number)),
+
   fillSummaryInMappingProfile:(specialMappingProfile = defaultMappingProfile) => {
     cy.do([
       TextField({ name:'profile.name' }).fillIn(specialMappingProfile.name),
@@ -240,18 +244,23 @@ export default {
     ]);
   },
 
-  addStatisticalCode:(name) => {
-    cy.do(Select({ name:'profile.mappingDetails.mappingFields[8].repeatableFieldAction' }).choose(actions.addTheseToExisting));
+  addStatisticalCode:(name, number) => {
+    // number needs for using this method in filling fields for holdings and item profiles
+    const statisticalCodeFieldName = `profile.mappingDetails.mappingFields[${number}].repeatableFieldAction`;
+
+    cy.do(Select(statisticalCodeFieldName).choose(actions.addTheseToExisting));
     cy.do(Button('Add statistical code').click());
     cy.do(TextField('Statistical code').fillIn(name));
-    // wait will be add uuid for acceptedValues
-    cy.wait(500);
+    waitLoading();
   },
 
-  addAdministrativeNote:(note) => {
-    cy.do(Select({ name: adminNoteFieldName }).choose('Add these to existing'));
+  addAdministrativeNote:(note, number) => {
+    // number needs for using this method in filling fields for holdings and item profiles
+    const adminNoteFieldName = `profile.mappingDetails.mappingFields[${number}].repeatableFieldAction`;
+
+    cy.do(Select({ name: adminNoteFieldName }).choose(actions.addTheseToExisting));
     cy.do(Button('Add administrative note').click());
-    cy.do(TextField('Administrative note').fillIn(note));
+    cy.do(TextField('Administrative note').fillIn(`"${note}"`));
   },
 
   addElectronicAccess:(relationship, uri, linkText = '') => {
@@ -260,83 +269,52 @@ export default {
       Button('Add electronic access').click(),
       TextField('Relationship').fillIn(relationship),
       TextField('URI').fillIn(uri),
-      TextField('Link text').fillIn(linkText),
+      TextField('Link text').fillIn(linkText)
     ]);
   },
 
-  addName:(name) => {
-    cy.do(TextField({ name:'profile.name' }).fillIn(name));
-  },
-
-  addIncomingRecordType:(type) => {
-    cy.do(Select({ name:'profile.incomingRecordType' }).choose(type));
-  },
-
-  addFolioRecordType:(folioType) => {
-    cy.do(Select({ name:'profile.existingRecordType' }).choose(folioType));
-  },
-
-  saveProfile:() => {
-    cy.do(saveButton.click());
+  addHoldingsStatements:(statement) => {
+    cy.do([
+      Select({ name:'profile.mappingDetails.mappingFields[16].repeatableFieldAction' }).choose(actions.addTheseToExisting),
+      Button('Add holdings statement').click(),
+      TextField('Holdings statement').fillIn(`"${statement}"`),
+      TextField('Statement public note').fillIn(`"${statement}"`)
+    ]);
   },
 
   fillCatalogedDate:() => {
     cy.do(TextField('Cataloged date').fillIn(catalogedDate));
-    // wait will be add uuid for acceptedValues
-    cy.wait(500);
+    waitLoading();
   },
 
   fillInstanceStatusTerm:(statusTerm = instanceStatusTerm) => {
     cy.do(TextField('Instance status term').fillIn(statusTerm));
-    // wait will be add uuid for acceptedValues
-    cy.wait(500);
+    waitLoading();
   },
 
-  // fill fields of holdings mapping profile
   fillHoldingsType:(type) => {
     cy.do(TextField('Holdings type').fillIn(type));
-    // wait will be add uuid for acceptedValues
-    cy.wait(500);
-  },
-
-  fillPermanentLocation:(location) => {
-    cy.do(TextField('Permanent').fillIn(location));
+    waitLoading();
   },
 
   fillCallNumberType:(type) => {
     cy.do(TextField('Call number type').fillIn(type));
-    // wait will be add uuid for acceptedValues
-    cy.wait(500);
-  },
-
-  fillCallNumber:(number) => {
-    cy.do(TextField('Call number').fillIn(number));
-  },
-
-  fillBarcode:(barcode) => {
-    cy.do(TextField('Barcode').fillIn(barcode));
-  },
-
-  fillCopyNumber:(number) => {
-    cy.do(TextField('Copy number').fillIn(number));
+    waitLoading();
   },
 
   fillStatus:(itemStatus) => {
     cy.do(TextField('Status').fillIn(itemStatus));
-    // wait will be add uuid for acceptedValues
-    cy.wait(500);
+    waitLoading();
   },
 
   fillPermanentLoanType:(loanType) => {
     cy.do(TextField('Permanent loan type').fillIn(loanType));
-    // wait will be add uuid for acceptedValues
-    cy.wait(500);
+    waitLoading();
   },
 
   fillMaterialType:(type = materialType) => {
     cy.do(TextField('Material type').fillIn(type));
-    // wait will be add uuid for acceptedValues
-    cy.wait(500);
+    waitLoading();
   },
 
   addItemNotes:(noteType, note, staffOnly) => {
@@ -345,48 +323,27 @@ export default {
     cy.do(TextField('Note type').fillIn(noteType));
     cy.do(TextField('Note').fillIn(note));
     cy.do(Select({ name:'profile.mappingDetails.mappingFields[25].subfields[0].fields[2].booleanFieldAction' }).choose(staffOnly));
-    // wait will be add uuid for acceptedValues
-    cy.wait(500);
+    waitLoading();
   },
 
   addSuppressFromDiscovery:() => {
     cy.do(Select({ name:'profile.mappingDetails.mappingFields[0].booleanFieldAction' }).choose('Mark for all affected records'));
-    // wait will be add uuid for acceptedValues
-    cy.wait(500);
+    waitLoading();
   },
 
   fillBatchGroup:(group) => {
     cy.do(TextField('Batch group*').fillIn(group));
-    // wait will be add uuid for acceptedValues
-    cy.wait(500);
-  },
-
-  fillVendorInvoiceNumber:(number) => {
-    cy.do(TextField('Vendor invoice number*').fillIn(number));
+    waitLoading();
   },
 
   fillPaymentMethod:(method) => {
     cy.do(TextField('Payment method*').fillIn(method));
-    // wait will be add uuid for acceptedValues
-    cy.wait(500);
+    waitLoading();
   },
 
   fillCurrency:(currency) => {
     cy.do(TextField('Currency*').fillIn(currency));
-    // wait will be add uuid for acceptedValues
-    cy.wait(500);
-  },
-
-  fillDescription:(text) => {
-    cy.do(TextField('Description*').fillIn(text));
-  },
-
-  fillQuantity:(quantity) => {
-    cy.do(TextField('Quantity*').fillIn(quantity));
-  },
-
-  fillSubTotal:(number) => {
-    cy.do(TextField('Sub-total*').fillIn(number));
+    waitLoading();
   },
 
   fillVendorName:(vendorName) => {
@@ -398,7 +355,35 @@ export default {
 
   fillInvoiceDate:(date) => {
     cy.do(TextField('Invoice date*').fillIn(date));
-    // wait will be add uuid for acceptedValues
-    cy.wait(500);
+    waitLoading();
+  },
+
+  addFieldMappingsForMarc:() => {
+    cy.do(Select({ name:'profile.mappingDetails.marcMappingOption' }).choose(actionsFieldMappingsForMarc.modify));
+  },
+
+  fillModificationSectionWithAdd:(action, fieldNumber, subfieldInFirstField = '*', subaction, subfieldTextInFirstField, subfieldInSecondField, subfieldTextInSecondField) => {
+    cy.do([
+      Select({ name:'profile.mappingDetails.marcMappingDetails[0].action' }).choose(action),
+      TextField({ name:'profile.mappingDetails.marcMappingDetails[0].field.field' }).fillIn(fieldNumber),
+      TextField({ name:'profile.mappingDetails.marcMappingDetails[0].field.subfields[0].subfield' }).fillIn(subfieldInFirstField),
+      Select({ name:'profile.mappingDetails.marcMappingDetails[0].field.subfields[0].subaction' }).choose(subaction),
+      TextArea({ name:'profile.mappingDetails.marcMappingDetails[0].field.subfields[0].data.text' }).fillIn(subfieldTextInFirstField),
+      TextField({ name:'profile.mappingDetails.marcMappingDetails[0].field.subfields[1].subfield' }).fillIn(subfieldInSecondField),
+      TextArea({ name:'profile.mappingDetails.marcMappingDetails[0].field.subfields[1].data.text' }).fillIn(subfieldTextInSecondField)
+    ]);
+  },
+
+  fillModificationSectionWithDelete:(action, fieldNumber, number) => {
+    cy.do([
+      Select({ name:`profile.mappingDetails.marcMappingDetails[${number}].action` }).choose(action),
+      TextField({ name:`profile.mappingDetails.marcMappingDetails[${number}].field.field` }).fillIn(fieldNumber)
+    ]);
+  },
+
+  addNewFieldInModificationSection:() => {
+    cy.get('div[class^="tableRow-"]').last().then(elem => {
+      elem[0].querySelector('button[icon="plus-sign"]').click();
+    });
   }
 };

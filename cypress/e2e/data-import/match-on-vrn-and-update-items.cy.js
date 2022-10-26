@@ -204,7 +204,7 @@ describe('ui-data-import: Match on VRN and update related Instance, Holdings, It
         Receiving.checkIsPiecesCreated(item.title);
       });
 
-    DataImport.editMarcFile('marcFileForMatchOnVrn.mrc', editedMarcFileName, '14567-1', item.vrn);
+    DataImport.editMarcFile('marcFileForMatchOnVrn.mrc', editedMarcFileName, ['14567-1'], [item.vrn]);
 
     // create field mapping profiles
     cy.visit(SettingsMenu.mappingProfilePath);

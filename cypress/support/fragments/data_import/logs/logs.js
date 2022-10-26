@@ -8,18 +8,32 @@ import {
   MultiColumnList,
   HTML,
   MultiColumnListRow,
+  Checkbox
 } from '../../../../../interactors';
 
 const anyProfileAccordion = Accordion({ id: 'profileIdAny' });
+const actionsButton = Button('Actions');
+const viewAllLogsButton = Button('View all logs');
+const selectAllCheckbox = Checkbox({ name: 'selected-all' });
 
 const quantityRecordsInInvoice = {
   firstQuantity: '18',
 };
 
+const actionsButtonClick = () => { cy.do(actionsButton.click()); };
+const openViewAllLogs = () => { cy.do(viewAllLogsButton.click()); };
+const selectAllLogs = () => { cy.do(MultiColumnList({ id:'job-logs-list' }).find(selectAllCheckbox).click()); };
+const deleteAllLogsClick = () => { cy.do(Button('Delete selected logs').click()); };
+
 export default {
+  actionsButtonClick,
+  openViewAllLogs,
+  selectAllLogs,
+  deleteAllLogsButtonClick: deleteAllLogsClick,
+
   checkImportFile(jobProfileName) {
-    cy.do(Button('Actions').click());
-    cy.do(Button('View all logs').click());
+    cy.do(actionsButton.click());
+    cy.do(viewAllLogsButton.click());
     cy.do([
       anyProfileAccordion.clickHeader(),
       anyProfileAccordion.find(Selection({ singleValue: 'Choose job profile' })).open()]);
@@ -63,18 +77,16 @@ export default {
     );
   },
 
-  checkAuthorityLogJSON: () => {
+  checkAuthorityLogJSON: (propertiesArray) => {
     cy.do(Button('Authority').click());
-    cy.expect([
-      HTML('"sourceFileId":').exists(),
-      HTML('"af045f2f-e851-4613-984c-4bc13430454a"').exists(),
-      HTML('"naturalId":').exists(),
-      HTML('"n2015002050"').exists(),
-    ]);
+
+    propertiesArray.forEach(property => { 
+      cy.expect(HTML(property).exists());
+    });
   },
   
-  getCreatedAuthorityID: (rowIndex = 0) => cy.then(() => 
+  getCreatedAuthorityID: (rowIndex = 0) => cy.then(() =>
     MultiColumnList({ id: 'search-results-list' })
-    .find(MultiColumnListRow({ indexRow: `row-${rowIndex}` }))
-    .find(Link('Created')).href()),
+      .find(MultiColumnListRow({ indexRow: `row-${rowIndex}` }))
+      .find(Link('Created')).href()),
 };

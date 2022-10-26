@@ -1,6 +1,7 @@
 import TestTypes from '../../support/dictionary/testTypes';
 import FieldMappingProfiles from '../../support/fragments/data_import/mapping_profiles/fieldMappingProfiles';
 import getRandomPostfix from '../../support/utils/stringTools';
+import NewFieldMappingProfile from '../../support/fragments/data_import/mapping_profiles/newFieldMappingProfile';
 import ActionProfiles from '../../support/fragments/data_import/action_profiles/actionProfiles';
 import NewJobProfile from '../../support/fragments/data_import/job_profiles/newJobProfile';
 import JobProfiles from '../../support/fragments/data_import/job_profiles/jobProfiles';
@@ -20,6 +21,17 @@ import Users from '../../support/fragments/users/users';
 import DevTeams from '../../support/dictionary/devTeams';
 
 describe('ui-data-import: Verify the possibility to modify MARC Bibliographic record', () => {
+  // unique name for profiles
+  const mappingProfileName = `autoTestMappingProf.${getRandomPostfix()}`;
+  const actionProfileName = `autoTestActionProf.${getRandomPostfix()}`;
+  const matchProfileName = `autoTestMatchProf.${getRandomPostfix()}`;
+  const jobProfileName = `autoTestJobProf.${getRandomPostfix()}`;
+
+  // file name
+  const nameMarcFileForCreate = `C345423autotestFile.${getRandomPostfix()}.mrc`;
+  const nameForCSVFile = `C345423autotestFile${getRandomPostfix()}.csv`;
+  const nameMarcFileForUpload = `C345423autotestFile.${getRandomPostfix()}.mrc`;
+
   let user = {};
 
   before(() => {
@@ -43,27 +55,32 @@ describe('ui-data-import: Verify the possibility to modify MARC Bibliographic re
   });
 
   it('C345423 Verify the possibility to modify MARC Bibliographic record (folijet)', { tags: [TestTypes.smoke, DevTeams.folijet] }, () => {
-    const mappingProfileFieldsForModify = {
-      marcMappingOption: 'Modifications',
-      action: 'Add',
-      addFieldNumber: '947',
-      subfieldInFirstField: 'a',
-      subaction: 'Add subfield',
-      subfieldTextInFirstField: 'Test',
-      subfieldInSecondField: 'b',
-      subfieldTextInSecondField: 'Addition',
+    const mappingProfileFieldsForModify = { name: mappingProfileName,
+      typeValue: NewFieldMappingProfile.folioRecordTypeValue.marcBib };
+
+    const actionProfile = {
+      name: actionProfileName,
+      action: 'Modify (MARC Bibliographic record type only)',
+      typeValue: 'MARC Bibliographic',
     };
 
-    // unique name for profiles
-    const mappingProfileName = `autoTestMappingProf.${getRandomPostfix()}`;
-    const actionProfileName = `autoTestActionProf.${getRandomPostfix()}`;
-    const matchProfileName = `autoTestMatchProf.${getRandomPostfix()}`;
-    const jobProfileName = `autoTestJobProf.${getRandomPostfix()}`;
+    const matchProfile = {
+      profileName: matchProfileName,
+      incomingRecordFields: {
+        field: '001',
+      },
+      existingRecordFields: {
+        field: '001',
+      },
+      matchCriterion: 'Exactly matches',
+      existingRecordType: 'MARC_BIBLIOGRAPHIC'
+    };
 
-    // file name
-    const nameMarcFileForCreate = `C345423autotestFile.${getRandomPostfix()}.mrc`;
-    const nameForCSVFile = `C345423autotestFile${getRandomPostfix()}.csv`;
-    const nameMarcFileForUpload = `C345423autotestFile.${getRandomPostfix()}.mrc`;
+    const jobProfile = {
+      ...NewJobProfile.defaultJobProfile,
+      profileName: jobProfileName,
+      acceptedType: NewJobProfile.acceptedDataType.marc
+    };
 
     // upload a marc file for creating of the new instance, holding and item
     cy.visit(TopMenu.dataImportPath);
@@ -96,42 +113,24 @@ describe('ui-data-import: Verify the possibility to modify MARC Bibliographic re
 
     // create Field mapping profile
     cy.visit(SettingsMenu.mappingProfilePath);
-    FieldMappingProfiles.createModifyMappingProfile(mappingProfileName, mappingProfileFieldsForModify);
+    FieldMappingProfiles.openNewMappingProfileForm();
+    NewFieldMappingProfile.fillSummaryInMappingProfile(mappingProfileFieldsForModify);
+    NewFieldMappingProfile.addFieldMappingsForMarc();
+    NewFieldMappingProfile.fillModificationSectionWithAdd('Add', '947', 'a', 'Add subfield', 'Test', 'b', 'Addition');
+    FieldMappingProfiles.saveProfile();
+    FieldMappingProfiles.closeViewModeForMappingProfile(mappingProfileFieldsForModify.name);
     FieldMappingProfiles.checkMappingProfilePresented(mappingProfileName);
 
     // create Action profile and link it to Field mapping profile
-    const actionProfile = {
-      name: actionProfileName,
-      action: 'Modify (MARC Bibliographic and Authority record types only)',
-      typeValue: 'MARC Bibliographic',
-    };
-
     cy.visit(SettingsMenu.actionProfilePath);
     ActionProfiles.createActionProfile(actionProfile, mappingProfileName);
     ActionProfiles.checkActionProfilePresented(actionProfileName);
 
     // create Match profile
-    const matchProfile = {
-      profileName: matchProfileName,
-      incomingRecordFields: {
-        field: '001',
-      },
-      existingRecordFields: {
-        field: '001',
-      },
-      matchCriterion: 'Exactly matches',
-      existingRecordType: 'MARC_BIBLIOGRAPHIC'
-    };
-
     cy.visit(SettingsMenu.matchProfilePath);
     MatchProfiles.createMatchProfile(matchProfile);
 
     // create Job profile
-    const jobProfile = {
-      ...NewJobProfile.defaultJobProfile,
-      profileName: jobProfileName,
-      acceptedType: NewJobProfile.acceptedDataType.marc
-    };
     cy.visit(SettingsMenu.jobProfilePath);
     JobProfiles.createJobProfileWithLinkingProfiles(jobProfile, actionProfileName, matchProfileName);
     JobProfiles.checkJobProfilePresented(jobProfile.profileName);

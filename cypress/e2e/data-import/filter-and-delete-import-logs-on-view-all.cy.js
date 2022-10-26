@@ -49,7 +49,10 @@ describe('ui-data-import: A user can filter and delete import logs from the "Vie
     ])
       .then(userProperties => {
         secondUser = userProperties;
-        cy.login(userProperties.username, userProperties.password, { path: TopMenu.dataImportPath, waiter: DataImport.waitLoading });
+        cy.login(userProperties.username, userProperties.password, {
+          path: TopMenu.dataImportPath,
+          waiter: DataImport.waitLoading
+        });
         // Log list should contain at least 30-35 import jobs
         for (let i = 0; i < 13; i++) {
           const nameMarcFileForCreate = `C358136autotestFile.${getRandomPostfix()}.mrc`;

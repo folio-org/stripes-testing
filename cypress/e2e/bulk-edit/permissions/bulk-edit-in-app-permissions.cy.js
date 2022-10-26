@@ -10,7 +10,6 @@ let userWithInAppViewPermission;
 describe('bulk-edit', () => {
   describe('permissions', () => {
     before('create test users', () => {
-
       cy.createTempUser([permissions.bulkEditView.gui])
         .then(userProperties => {
           userWithInAppViewPermission = userProperties;

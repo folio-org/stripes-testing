@@ -1,6 +1,6 @@
 import FieldMappingProfiles from '../../support/fragments/data_import/mapping_profiles/fieldMappingProfiles';
 import NewActionProfile from '../../support/fragments/data_import/action_profiles/newActionProfile';
-import NewFieldMappingProfile from '../../support/fragments/data_import/mapping_profiles/newMappingProfile';
+import NewFieldMappingProfile from '../../support/fragments/data_import/mapping_profiles/newFieldMappingProfile';
 import ActionProfiles from '../../support/fragments/data_import/action_profiles/actionProfiles';
 import NewJobProfile from '../../support/fragments/data_import/job_profiles/newJobProfile';
 import MatchProfiles from '../../support/fragments/data_import/match_profiles/matchProfiles';

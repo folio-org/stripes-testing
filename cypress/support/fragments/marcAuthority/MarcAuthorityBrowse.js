@@ -16,7 +16,8 @@ const presentedColumns = ['Authorized/Reference', 'Heading/Reference', 'Type of 
 const rootPaneAuthoritiesFilters = Section({ id: 'pane-authorities-filters' });
 const defaultMainFilterValue = { htmlValue:'', visibleValue: searchOptions.selectBrowseOption };
 const searchButton = rootPaneAuthoritiesFilters.find(Button({ id: 'submit-authorities-search' }));
-const mainFilter = rootPaneAuthoritiesFilters.find(SearchField({ id:'textarea-authorities-search' }));
+const searchInput = rootPaneAuthoritiesFilters.find(SearchField({ id:'textarea-authorities-search' }));
+const mainFilter = rootPaneAuthoritiesFilters.find(SearchField({ id:'textarea-authorities-search-qindex' }));
 // TODO: initially first line has data-row-index = 52. Currently it's 0, clarify the reason in case if start index will changed once again
 const getFirstLineIndexRow = (zeroIndex) => `row-${zeroIndex + 0}`;
 
@@ -39,7 +40,7 @@ export default {
   },
   searchBy:(searchOption, value) => {
     cy.do(mainFilter.selectIndex(searchOption));
-    cy.do(mainFilter.fillIn(value));
+    cy.do(searchInput.fillIn(value));
     cy.do(searchButton.click());
   },
   checkSearchOptions:() => {
