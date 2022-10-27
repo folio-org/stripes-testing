@@ -23,10 +23,17 @@ import Helper from '../finance/financeHelper';
 
 const requestsResultsSection = Section({ id: 'pane-results' });
 const appsButton = Button({ id: 'app-list-dropdown-toggle' });
+const requestsPane = Pane({ title: 'Requests' });
+const pageCheckbox = Checkbox({ name: 'Page' });
+const recallCheckbox = Checkbox({ name: 'Recall' });
+const holdCheckbox = Checkbox({ name: 'Hold' });
+const showTagsButton = Button({ id: 'clickable-show-tags' });
+const tagsPane = Pane({ title: 'Tags' });
+const resultsPane = Pane({ id:'pane-results' });
 
 const waitContentLoading = () => {
   cy.expect(Pane({ id:'pane-filter' }).exists());
-  cy.expect(Pane({ id:'pane-results' }).find(HTML(including('Choose a filter or enter a search query to show results.'))).exists());
+  cy.expect(resultsPane.find(HTML(including('Choose a filter or enter a search query to show results.'))).exists());
 };
 
 /**
@@ -234,6 +241,16 @@ function deleteRequestPolicyApi(policyId) {
   });
 }
 
+function waitLoadingTags() {
+  cy.expect(tagsPane.exists());
+  cy.intercept({
+    method: 'GET',
+    url: '/tags?limit=10000',
+  }).as('getTags');
+  cy.wait('@getTags');
+  cy.wait(500);
+}
+
 export default {
   createRequestApi,
   deleteRequestApi,
@@ -242,12 +259,29 @@ export default {
   updateCirculationRulesApi,
   getRequestApi,
   waitContentLoading,
+  waitLoadingTags,
 
-  removeCreatedRequest() {
+  resetAllFilters:() => cy.do(Button('Reset all').click()),
+  selectAwaitingDeliveryRequest:() => cy.do(Checkbox({ name: 'Open - Awaiting delivery' }).click()),
+  selectAwaitingPickupRequest:() => cy.do(Checkbox({ name: 'Open - Awaiting pickup' }).click()),
+  selectInTransitRequest:() => cy.do(Checkbox({ name: 'Open - In transit' }).click()),
+  selectNotYetFilledRequest:() => cy.do(Checkbox({ name: 'Open - Not yet filled' }).click()),
+  selectClosedCancelledRequest:() => cy.do((Checkbox({ name: 'Closed - Cancelled' }).click())),
+  selectFirstRequest:(title) => cy.do(requestsPane.find(MultiColumnListCell({ row: 0, content: title })).click()),
+  openTagsPane:() => cy.do(showTagsButton.click()),
+  closePane:(title) => cy.do(Pane({ title }).find(IconButton({ ariaLabel: 'Close ' })).click()),
+  selectHoldsRequestType:() => cy.do(holdCheckbox.click()),
+  selectPagesRequestType:() => cy.do(pageCheckbox.click()),
+  selectRecallsRequestType:() => cy.do(recallCheckbox.click()),
+  verifyNoResultMessage:(noResultMessage) => cy.expect(requestsResultsSection.find(HTML(including(noResultMessage))).exists()),
+  navigateToApp:(appName) => cy.do([appsButton.click(), Button(appName).click()]),
+  verifyCreatedRequest:(title) => cy.expect(requestsPane.find(MultiColumnListCell({ row: 0, content: title })).exists()),
+
+  cancelRequest() {
     cy.do([
       Pane({ title: 'Request Detail' }).find(Button('Actions')).click(),
       Button({ id: 'clickable-cancel-request' }).click(),
-      TextArea('Additional information for patron *').fillIn('test'),
+      TextArea('Additional information for patron  ').fillIn('test'),
       Button('Confirm').click(),
     ]);
   },
@@ -257,26 +291,6 @@ export default {
     cy.do(Pane({ title: 'Search & filter' }).find(Button('Search')).click());
   },
 
-  resetAllFilters() {
-    cy.do(Button('Reset all').click());
-  },
-
-  selectAwaitingDeliveryRequest() {
-    cy.do(Checkbox({ name: 'Open - Awaiting delivery' }).click());
-  },
-
-  selectAwaitingPickupRequest() {
-    cy.do(Checkbox({ name: 'Open - Awaiting pickup' }).click());
-  },
-
-  selectInTransitRequest() {
-    cy.do(Checkbox({ name: 'Open - In transit' }).click());
-  },
-
-  selectNotYetFilledRequest() {
-    cy.do(Checkbox({ name: 'Open - Not yet filled' }).click());
-  },
-
   selectAllOpenRequests() {
     this.selectAwaitingDeliveryRequest();
     this.selectAwaitingPickupRequest();
@@ -284,51 +298,24 @@ export default {
     this.selectNotYetFilledRequest();
   },
 
-  selectFirstRequest(title) {
-    cy.do(Pane({ title: 'Requests' }).find(MultiColumnListCell({ row: 0, content: title })).click());
+  addTag(tag) {
+    waitLoadingTags();
+    cy.do(tagsPane.find(MultiSelect({ ariaLabelledby:'accordion-toggle-button-tag-accordion' })).choose(tag));
+    // TODO investigate what to wait
+    cy.wait(500);
   },
 
-  openTagsPane() {
-    cy.do(Button({ id: 'clickable-show-tags' }).click());
-  },
+  deleteTag:() => {
 
-  selectTags(tag) {
-    this.waitLoadingTags();
-    cy.do(Pane({ title: 'Tags' }).find(MultiSelect()).select(tag));
-  },
-
-  closePane(title) {
-    cy.do(Pane({ title }).find(IconButton({ ariaLabel: 'Close ' })).click());
   },
 
   verifyAssignedTags(tag) {
     cy.expect(Spinner().absent());
-    cy.expect(Button({ id: 'clickable-show-tags' }).find(Badge()).has({ value: '1' }));
-    cy.expect(Pane({ title: 'Tags' }).find(ValueChipRoot(tag)).exists());
-  },
-
-  waitLoadingTags() {
-    cy.expect(Pane({ title: 'Tags' }).exists());
-    cy.intercept({
-      method: 'GET',
-      url: '/tags?limit=10000',
-    }).as('getTags');
-    cy.wait('@getTags');
+    cy.expect(showTagsButton.find(Badge()).has({ value: '1' }));
+    cy.expect(tagsPane.find(ValueChipRoot(tag)).exists());
   },
 
   requestTypes: { PAGE: 'Page', HOLD: 'Hold', RECALL: 'Recall' },
-
-  selectHoldsRequestType() {
-    cy.do(Checkbox({ name: 'Hold' }).click());
-  },
-
-  selectPagesRequestType() {
-    cy.do(Checkbox({ name: 'Page' }).click());
-  },
-
-  selectRecallsRequestType() {
-    cy.do(Checkbox({ name: 'Recall' }).click());
-  },
 
   REQUEST_TYPE_CELL: { columnIndex: 5 },
   verifyIsFilteredByRequestType(requestType) {
@@ -351,18 +338,6 @@ export default {
     cy.wait('@getFilteredRequests');
   },
 
-  verifyCreatedRequest(title) {
-    cy.expect(Pane({ title: 'Requests' }).find(MultiColumnListCell({ row: 0, content: title })).exists());
-  },
-
-  verifyNoResultMessage(noResultMessage) {
-    cy.expect(requestsResultsSection.find(HTML(including(noResultMessage))).exists());
-  },
-
-  navigateToApp(appName) {
-    cy.do([appsButton.click(), Button(appName).click()]);
-  },
-
   checkRequestType(requestType) {
     if (requestType === this.requestTypes.PAGE) {
       this.selectPagesRequestType();
@@ -375,11 +350,11 @@ export default {
 
   verifyRequestTypeChecked(requestType) {
     if (requestType === this.requestTypes.PAGE) {
-      cy.expect(Checkbox({ name: 'Page' }).has({ checked: true }));
+      cy.expect(pageCheckbox.has({ checked: true }));
     } else if (requestType === this.requestTypes.HOLD) {
-      cy.expect(Checkbox({ name: 'Hold' }).has({ checked: true }));
+      cy.expect(holdCheckbox.has({ checked: true }));
     } else if (requestType === this.requestTypes.RECALL) {
-      cy.expect(Checkbox({ name: 'Recall' }).has({ checked: true }));
+      cy.expect(recallCheckbox.has({ checked: true }));
     }
   },
 
@@ -419,9 +394,9 @@ export default {
   },
 
   validateRequestTypesChecked() {
-    cy.expect(Checkbox({ name: 'Recall' }).checked);
-    cy.expect(Checkbox({ name: 'Page' }).checked);
-    cy.expect(Checkbox({ name: 'Hold' }).checked);
+    cy.expect(recallCheckbox.checked);
+    cy.expect(pageCheckbox.checked);
+    cy.expect(holdCheckbox.checked);
   },
 
   validateNumsAscendingOrder(prev) {
@@ -528,5 +503,9 @@ export default {
   getRequestIdViaApi: (searchParams) => cy.okapiRequest({
     path: 'circulation/requests',
     searchParams
-  }).then(res => res.body.requests[0].id)
+  }).then(res => res.body.requests[0].id),
+
+  verifyShowTagsButtonIsDisabled:() => {
+    cy.expect(showTagsButton.has({ disabled: true }));
+  }
 };

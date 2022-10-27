@@ -6,12 +6,11 @@ const getDefaultOrderLine = (
   quantity,
   title,
   spesialLocationId,
+  specialMaterialTypeId,
   acquisitionMethod = '',
   listUnitPrice = '1.0',
   poLineEstimatedPrice = '1.0',
   productIds = [],
-  specialMaterialTypeId,
-  createInventory = 'Instance, Holding, Item',
   referenceNumbers = []
 ) => {
   const defaultOrderLine = {
@@ -44,7 +43,7 @@ const getDefaultOrderLine = (
     orderFormat: 'Physical Resource',
     paymentStatus: 'Pending',
     physical: {
-      createInventory,
+      createInventory: 'Instance, Holding, Item',
       materialType: specialMaterialTypeId,
       materialSupplier: null,
       volumes: []

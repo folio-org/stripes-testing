@@ -80,13 +80,12 @@ export default {
   checkAuthorityLogJSON: (propertiesArray) => {
     cy.do(Button('Authority').click());
 
-    propertiesArray.forEach(property => { 
+    propertiesArray.forEach(property => {
       cy.expect(HTML(property).exists());
     });
   },
-  
-  getCreatedAuthorityID: (rowIndex = 0) => cy.then(() =>
-    MultiColumnList({ id: 'search-results-list' })
-      .find(MultiColumnListRow({ indexRow: `row-${rowIndex}` }))
-      .find(Link('Created')).href()),
+
+  getCreatedAuthorityID: (rowIndex = 0) => cy.then(() => MultiColumnList({ id: 'search-results-list' })
+    .find(MultiColumnListRow({ indexRow: `row-${rowIndex}` }))
+    .find(Link('Created')).href()),
 };
