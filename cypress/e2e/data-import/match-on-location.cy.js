@@ -13,7 +13,7 @@ import TopMenu from '../../support/fragments/topMenu';
 import DataImport from '../../support/fragments/data_import/dataImport';
 import FileDetails from '../../support/fragments/data_import/logs/fileDetails';
 import Logs from '../../support/fragments/data_import/logs/logs';
-import DataImportSettingsJobProfiles from '../../support/fragments/settings/dataImport/dataImportSettingsJobProfiles';
+import SettingsJobProfiles from '../../support/fragments/settings/dataImport/settingsJobProfiles';
 import SearchInventory from '../../support/fragments/data_import/searchInventory';
 import InventoryInstance from '../../support/fragments/inventory/inventoryInstance';
 import NewFieldMappingProfile from '../../support/fragments/data_import/mapping_profiles/newFieldMappingProfile';
@@ -180,7 +180,7 @@ describe('ui-data-import: Match on location', () => {
             cy.addJobProfileRelation(testData.jobProfileForCreate.addedRelations, idActionProfile);
           });
         });
-        DataImportSettingsJobProfiles.createJobProfileApi(testData.jobProfileForCreate)
+        SettingsJobProfiles.createJobProfileApi(testData.jobProfileForCreate)
           .then((bodyWithjobProfile) => {
             testData.jobProfileForCreate.id = bodyWithjobProfile.body.id;
           });
