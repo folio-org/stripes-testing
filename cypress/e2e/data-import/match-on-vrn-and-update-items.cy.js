@@ -171,6 +171,7 @@ describe('ui-data-import: Match on VRN and update related Instance, Holdings, It
         item.quantityPhysical,
         item.title,
         locationId,
+        materialTypeId,
         acquisitionMethodId,
         item.physicalUnitPrice,
         item.physicalUnitPrice,
@@ -178,11 +179,10 @@ describe('ui-data-import: Match on VRN and update related Instance, Holdings, It
           productId: item.productId,
           productIdType: productIdTypeId
         }],
-        materialTypeId,
         [{
           refNumberType: item.vrnType,
           refNumber: item.vrn
-        }],
+        }]
       ))
       .then(res => {
         orderNumber = res;
