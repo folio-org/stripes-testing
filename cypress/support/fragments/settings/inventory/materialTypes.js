@@ -51,7 +51,6 @@ export default {
 
   delete:(newMaterialTypeName) => {
     findRowIndex(newMaterialTypeName).then(rowNumber => {
-      console.log(rowNumber);
       cy.do(MultiColumnList({ id:'editList-materialtypes' })
         .find(MultiColumnListRow({ rowIndexInParent :  `row-${rowNumber - 2}` }))
         .find(Button({ icon: 'trash' }))

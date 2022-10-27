@@ -62,7 +62,6 @@ function checkByUserName(userName) {
 
     // verify every string in result table
     for (let i = 0; i < resultCount; i++) {
-      console.log(i);
       cy.expect(MultiColumnListCell({ content: userName, row: i }).exists());
     }
   });

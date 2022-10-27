@@ -51,6 +51,13 @@ export default {
     clickApplyMainFilter();
   },
 
+  searchByChangedDueDate() {
+    cy.do([
+      Accordion({ id: 'loan' }).clickHeader(),
+      Checkbox({ id: 'clickable-filter-loan-changed-due-date' }).click()
+    ])
+  },
+
   resetFilters() {
     cy.do(Button({ id: 'reset-receiving-filters' }).click());
   },

@@ -14,7 +14,9 @@ import {
   Pane,
   Link,
   including,
-  PaneContent
+  PaneContent,
+  Section,
+  KeyValue
 } from '../../../../interactors';
 import SearchHelper from '../finance/financeHelper';
 import getRandomPostfix from '../../utils/stringTools';
@@ -54,7 +56,11 @@ const quantityPhysicalLocationField = TextField({ name: 'locations[0].quantityPh
 const addFundDistributionButton = Button({ id: 'fundDistribution-add-button' });
 const fundDistributionSelect = Button({ id: 'fundDistribution[0].fundId' });
 const fundDistributionField = TextField({ name: 'fundDistribution[0].value' });
-
+const orderLineInfoPage = Section({ id: 'order-lines-details' });
+const itemDetailsSection = Section({ id: 'ItemDetails' });
+const poLineInfoSection = Section({ id: 'poLine' });
+const fundDistributionSection = Section({ id: 'FundDistribution' });
+const locationSection = Section({ id: 'location' });
 export default {
 
   searchByParameter: (parameter, value) => {
@@ -76,6 +82,33 @@ export default {
       .find(MultiColumnListCell({ columnIndex: 0 }))
       .has({ content: orderLineNumber }));
   },
+
+  checkCreatedPOLinePhysicalResource: (orderLineTitleName, fund) => {
+    cy.expect([
+      orderLineInfoPage.exists(),
+      itemDetailsSection.find(KeyValue({ value: orderLineTitleName })).exists(),
+      poLineInfoSection.find(KeyValue({ value: 'Physical Resource' })).exists(),
+      fundDistributionSection
+        .find(MultiColumnListRow({ index: 0 }))
+        .find(MultiColumnListCell({ columnIndex: 0 }))
+        .has({ content: `${fund.name}(${fund.code})` }),
+      locationSection.find(KeyValue({ value: quantityPhysical })).exists(),
+    ]);
+  },
+
+  checkCreatedPOLineElectronicResource: (orderLineTitleName, fund) => {
+    cy.expect([
+      orderLineInfoPage.exists(),
+      itemDetailsSection.find(KeyValue({ value: orderLineTitleName })).exists(),
+      poLineInfoSection.find(KeyValue({ value: 'Electronic Resource' })).exists(),
+      fundDistributionSection
+        .find(MultiColumnListRow({ index: 0 }))
+        .find(MultiColumnListCell({ columnIndex: 0 }))
+        .has({ content: `${fund.name}(${fund.code})` }),
+      locationSection.find(KeyValue({ value: quantityElectronic })).exists(),
+    ]);
+  },
+
   closeThirdPane: () => {
     cy.do(PaneHeader({ id: 'paneHeaderorder-details' }).find(Button({ icon: 'times' })).click());
   },
@@ -134,6 +167,28 @@ export default {
       physicalUnitPriceTextField.fillIn(physicalUnitPrice),
       quantityPhysicalTextField.fillIn(quantityPhysical),
       materialTypeSelect.choose('book'),
+      addLocationButton.click(),
+      locationSelect.click(),
+      onlineLocationOption.click(),
+      quantityPhysicalLocationField.fillIn(quantityPhysical),
+      saveAndClose.click()
+    ]);
+  },
+
+  POLineInfodorPhysicalMaterialWithFund: (orderLineTitleName, fund) => {
+    cy.do([
+      orderLineTitleField.fillIn(orderLineTitleName),
+      orderFormatSelect.choose('Physical resource'),
+      acquisitionMethodButton.click(),
+      SelectionOption('Depository').click(),
+      receivingWorkflowSelect.choose('Independent order and receipt quantity'),
+      physicalUnitPriceTextField.fillIn(physicalUnitPrice),
+      quantityPhysicalTextField.fillIn(quantityPhysical),
+      materialTypeSelect.choose('book'),
+      addFundDistributionButton.click(),
+      fundDistributionSelect.click(),
+      SelectionOption(`${fund.name} (${fund.code})`).click(),
+      fundDistributionField.fillIn('100'),
       addLocationButton.click(),
       locationSelect.click(),
       onlineLocationOption.click(),

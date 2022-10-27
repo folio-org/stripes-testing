@@ -80,7 +80,7 @@ export default {
   checkAuthorityLogJSON: (propertiesArray) => {
     cy.do(Button('Authority').click());
 
-    propertiesArray.forEach(property => { 
+    propertiesArray.forEach(property => {
       cy.expect(HTML(property).exists());
     });
   },
