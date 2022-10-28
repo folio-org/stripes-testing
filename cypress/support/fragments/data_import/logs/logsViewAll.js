@@ -62,7 +62,6 @@ function checkByUserName(userName) {
 
     // verify every string in result table
     for (let i = 0; i < resultCount; i++) {
-      console.log(i);
       cy.expect(MultiColumnListCell({ content: userName, row: i }).exists());
     }
   });
@@ -265,6 +264,7 @@ export default {
   // it is used to filter by "job Profile"
   getSingleJobProfile() {
     const queryString = UrlParams.getSingleJobProfileQueryString();
+    console.log(queryString);
     return cy.request({
       method: 'GET',
       url: `${Cypress.env('OKAPI_HOST')}/metadata-provider/jobExecutions?${queryString}`,

@@ -7,7 +7,7 @@ import {
   including,
   TextField,
   Pane,
-  Dropdown, DropdownMenu
+  Dropdown, DropdownMenu, Checkbox
 } from '../../../../interactors';
 import DateTools from '../../utils/dateTools';
 
@@ -25,6 +25,17 @@ export default {
     cy.expect(Pane('Circulation log').exists());
   },
 
+  searchByCheckedOut() {
+    cy.do([
+      Accordion({ id: 'loan' }).clickHeader(),
+      Checkbox({ id: 'clickable-filter-loan-checked-out' }).click()
+    ]);
+  },
+
+  verifyResult(content) {
+    cy.expect(MultiColumnListCell(content).exists());
+  },
+
   searchByItemBarcode(barcode) {
     cy.do(TextField({ name: 'itemBarcode' }).fillIn(barcode));
     clickApplyMainFilter();
@@ -38,6 +49,13 @@ export default {
   searchByDescription(desc) {
     cy.do(TextField({ name: 'description' }).fillIn(desc));
     clickApplyMainFilter();
+  },
+
+  searchByChangedDueDate() {
+    cy.do([
+      Accordion({ id: 'loan' }).clickHeader(),
+      Checkbox({ id: 'clickable-filter-loan-changed-due-date' }).click()
+    ])
   },
 
   resetFilters() {

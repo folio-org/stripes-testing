@@ -272,14 +272,14 @@ describe('ui-data-import: Match on POL and update related Instance, Holdings, It
         firstItem.quantity,
         firstItem.title,
         location.id,
+        materialTypeId,
         acquisitionMethodId,
         firstItem.price,
         firstItem.price,
         [{
           productId: firstItem.productId,
           productIdType: productIdTypeId
-        }],
-        materialTypeId
+        }]
       ))
       .then(res => {
         firstOrderNumber = res;
@@ -298,14 +298,14 @@ describe('ui-data-import: Match on POL and update related Instance, Holdings, It
             secondItem.quantity,
             secondItem.title,
             location.id,
+            materialTypeId,
             acquisitionMethodId,
             secondItem.price,
             secondItem.price,
             [{
               productId: secondItem.productId,
               productIdType: productIdTypeId
-            }],
-            materialTypeId
+            }]
           ))
           .then(respo => {
             secondOrderNumber = respo;
@@ -360,11 +360,19 @@ describe('ui-data-import: Match on POL and update related Instance, Holdings, It
     FileDetails.checkItemsStatusesInResultList(0, [FileDetails.status.created, FileDetails.status.updated, FileDetails.status.updated, FileDetails.status.updated]);
     FileDetails.checkItemsStatusesInResultList(1, [FileDetails.status.dash, FileDetails.status.discarded, FileDetails.status.discarded, FileDetails.status.discarded]);
 
-    FileDetails.openInstanceInInventory('Updated');
+    // check is items updated
+    FileDetails.openItemInInventory(3);
     InventoryInstance.checkIsInstanceUpdated();
-    HoldingsRecordView.checkIsHoldingsUpdated();
-    ItemVeiw.checkIsItemUpdated(firstItem.barcode);
-    InventoryInstance.viewSource();
+    InventoryInstance.openHoldingView();
+    HoldingsRecordView.checkHoldingsType('Monograph');
+    HoldingsRecordView.checkCallNumberType('Library of Congress classification');
+    HoldingsRecordView.checkPermanentLocation('Main Library');
+    HoldingsRecordView.close();
+    InventoryInstance.openHoldingsAccordion('Main Library');
+    InventoryInstance.openItemView(firstItem.barcode);
+    ItemVeiw.verifyItemStatus('In process');
+    ItemVeiw.checkEffectiveLocation('Main Library');
+    ItemVeiw.closeDetailView();
     InventoryViewSource.verifyBarcodeInMARCBibSource(firstItem.barcode);
   });
 });
