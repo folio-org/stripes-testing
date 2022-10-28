@@ -9,5 +9,6 @@ export default HTML.extend('quickMarcEditorRow')
   .selector(quickMarcEditorRowSelector)
   .filters({
     index:  el => [...el.parentElement.children].indexOf(el),
-    tagValue: el => el.querySelector(quickMarcEditorTagInRowSelector).getAttribute('value')
+    tagValue: el => el.querySelector(quickMarcEditorTagInRowSelector).getAttribute('value'),
+    dataRow: el => el.parentElement.getAttribute('data-row='),
   });

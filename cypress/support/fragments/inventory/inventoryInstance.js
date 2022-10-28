@@ -117,7 +117,7 @@ export default {
   editMarcBibliographicRecord:() => {
     cy.do(actionsButton.click());
     cy.do(editMARCBibRecordButton.click());
-    cy.expect(Pane({id: 'quick-marc-editor-pane-content'}).exists());
+    cy.expect(Pane({id: 'quick-marc-editor-pane'}).exists());
   },
   checkInstanceNotes:(noteType, noteContent) => {
     cy.expect(Button({ id: 'accordion-toggle-button-instance-details-notes' }).exists());
@@ -126,7 +126,7 @@ export default {
   },
 
   checkElectronicAccess:() => {
-    cy.expect(Accordion('Electronic access').find(MultiColumnList({ id: 'list-electronic-access' }).absent()));
+    cy.expect(Accordion('Electronic access').find(MultiColumnList({ id: 'list-electronic-access' })).absent());
   },
 
   deriveNewMarcBib:() => {

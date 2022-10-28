@@ -3,7 +3,6 @@ import {
   Button,
   Pane,
   MultiColumnList,
-  EditableList,
   MultiColumnListCell
 } from '../../../../../interactors';
 
@@ -28,7 +27,7 @@ export default {
   },
 
   createNewMarcFieldProtection:() => {
-    cy.do(Pane({id:'controlled-vocab-pane-content'}).find(Button('New')).click());
+    cy.do(Pane({id:'controlled-vocab-pane'}).find(Button('+ New')).click());
   },
 
   fillMarcFieldProtection:(fieldNumber) => {
@@ -40,12 +39,7 @@ export default {
     cy.expect(MultiColumnList({id:'editList-marc-field-protection'}).exists());
   },
 
-  checkNewLineIsPresented:() => {
-    cy.expect(EditableList().find(MultiColumnListCell({ columnIndex: 5 })).has({ content: 'User' }));
-  },
-
   checkFieldProtectionIsCreated:() => {
-    cy.expect(EditableList().find(MultiColumnListCell({ columnIndex: 0 })).has({ content: '856' }));
-    cy.expect(EditableList().find(MultiColumnListCell({ columnIndex: 5 })).has({ content: 'User' }));
+    cy.expect(MultiColumnList({id:'editList-marc-field-protection'}).find(MultiColumnListCell({ content: '856' })).exists());
   }
 };
