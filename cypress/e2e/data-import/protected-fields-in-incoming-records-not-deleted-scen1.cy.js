@@ -24,62 +24,62 @@ describe('ui-data-import: Check that protected fields in incoming records are no
 
   before(() => {
     cy.createTempUser([
-        permissions.moduleDataImportEnabled.gui,
-        permissions.settingsDataImportEnabled.gui,
-        permissions.uiInventorySettingsConfigureSingleRecordImport.gui,
-        permissions.uiQuickMarcQuickMarcBibliographicEditorAll.gui,
-        permissions.inventoryAll.gui,
-        permissions.uiInventorySingleRecordImport.gui,
-        permissions.uiInventoryViewCreateEditInstances.gui
+      permissions.moduleDataImportEnabled.gui,
+      permissions.settingsDataImportEnabled.gui,
+      permissions.uiInventorySettingsConfigureSingleRecordImport.gui,
+      permissions.uiQuickMarcQuickMarcBibliographicEditorAll.gui,
+      permissions.inventoryAll.gui,
+      permissions.uiInventorySingleRecordImport.gui,
+      permissions.uiInventoryViewCreateEditInstances.gui
     ])
       .then(userProperties => {
         user = userProperties;
 
         cy.login(user.username, user.password, { path: TopMenu.dataImportPath, waiter: DataImport.waitLoading });
-        
+
         const fileName = `C358968autotestFile.${getRandomPostfix()}.mrc`;
 
         DataImport.uploadFile('marcFileForC358968.mrc', fileName);
         JobProfiles.searchJobProfileForImport('Default - Create instance and SRS MARC Bib');
         JobProfiles.runImportFile(fileName);
-        // Logs.checkStatusOfJobProfile('Completed');
-        // Logs.openFileDetails(fileName);
-        // [FileDetails.columnName.srsMarc,
-        //   FileDetails.columnName.instance].forEach(columnName => {
-        //   FileDetails.checkStatusInColumn(FileDetails.status.created, columnName);
-        // });
-        // FileDetails.checkSrsRecordQuantityInSummaryTable('1');
-        // FileDetails.checkInstanceQuantityInSummaryTable('1');
+        Logs.checkStatusOfJobProfile('Completed');
+        Logs.openFileDetails(fileName);
+        [FileDetails.columnName.srsMarc,
+          FileDetails.columnName.instance].forEach(columnName => {
+          FileDetails.checkStatusInColumn(FileDetails.status.created, columnName);
+        });
+        FileDetails.checkSrsRecordQuantityInSummaryTable('1');
+        FileDetails.checkInstanceQuantityInSummaryTable('1');
 
         // get Instance HRID through API
         SearchInventory.getInstanceHRID()
           .then(hrId => {
             instanceHrid = hrId;
-        });
+          });
       });
   });
 
-after(() => {
-  //MarcFieldProtection.changeOclcWorldCatToDefaultViaApi();
-//MarcFieldProtection.deleteMarcFieldProtectionViaApi('856');
-//     cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${instanceHrid}"` })
-//       .then((instance) => {
-//         InventoryInstance.deleteInstanceViaApi(instance.id);
-//       });
-//     Users.deleteViaApi(user.userId);
-});
+  after(() => {
+  // MarcFieldProtection.changeOclcWorldCatToDefaultViaApi();
+    // MarcFieldProtection.deleteMarcFieldProtectionViaApi('856');
+    //     cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${instanceHrid}"` })
+    //       .then((instance) => {
+    //         InventoryInstance.deleteInstanceViaApi(instance.id);
+    //       });
+    //     Users.deleteViaApi(user.userId);
+  });
 
   it('C358968 Check that protected fields in incoming records are not deleted during import: Scenario 1 (folijet)', { tags: [TestTypes.smoke, DevTeams.folijet] }, () => {
-    // cy.visit(SettingsMenu.marcFieldProtectionPath);
-    // MarcFieldProtection.currentListOfProtectedMarcFieldsIsPresented();
-    // MarcFieldProtection.createNewMarcFieldProtection();
-    // MarcFieldProtection.fillMarcFieldProtection(protectedField);
-    // MarcFieldProtection.checkFieldProtectionIsCreated();
+    cy.visit(SettingsMenu.marcFieldProtectionPath);
+    MarcFieldProtection.currentListOfProtectedMarcFieldsIsPresented();
+    MarcFieldProtection.createNewMarcFieldProtection();
+    MarcFieldProtection.fillMarcFieldProtection(protectedField);
+    MarcFieldProtection.checkFieldProtectionIsCreated();
 
-    // cy.visit(SettingsMenu.targetProfilesPath);
-    // Z3950TargetProfiles.openOclcWorldCat();
-    // Z3950TargetProfiles.editOclcWorldCat(authentication);
-    // Z3950TargetProfiles.checkIsOclcWorldCatIsChanged(authentication);
+    cy.visit(SettingsMenu.targetProfilesPath);
+    Z3950TargetProfiles.openOclcWorldCat();
+    Z3950TargetProfiles.editOclcWorldCat(authentication);
+    Z3950TargetProfiles.checkIsOclcWorldCatIsChanged(authentication);
 
     cy.visit(TopMenu.inventoryPath);
     SearchInventory.searchInstanceByHRID(instanceHrid);
@@ -91,6 +91,5 @@ after(() => {
     InventoryInstance.doOclcImport(oclcForChanging);
     InventoryInstance.checkCalloutMessage(`Updated record ${oclcForChanging}`);
     InventoryInstance.viewSource();
-
   });
 });

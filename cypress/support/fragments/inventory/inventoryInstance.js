@@ -117,7 +117,7 @@ export default {
   editMarcBibliographicRecord:() => {
     cy.do(actionsButton.click());
     cy.do(editMARCBibRecordButton.click());
-    cy.expect(Pane({id: 'quick-marc-editor-pane'}).exists());
+    cy.expect(Pane({ id: 'quick-marc-editor-pane' }).exists());
   },
   checkInstanceNotes:(noteType, noteContent) => {
     cy.expect(Button({ id: 'accordion-toggle-button-instance-details-notes' }).exists());
@@ -305,7 +305,7 @@ export default {
     cy.expect(identifierRow.find(MultiColumnListCell({ columnIndex: 0 })).has({ content: type }));
     cy.expect(identifierRow.find(MultiColumnListCell({ columnIndex: 1 })).has({ content: value }));
   },
-  verifyResourceIdentifierAbsent:() =>cy.expect(identifiersAccordion.find(identifiers).absent()),
+  verifyResourceIdentifierAbsent:() => cy.expect(identifiersAccordion.find(identifiers).absent()),
   getId() {
     cy.url().then(url => cy.wrap(url.split('?')[0].split('/').at(-1))).as('instanceId');
     return cy.get('@instanceId');
@@ -331,7 +331,7 @@ export default {
       Button({ id: 'clickable-view-source' }).exists(),
       Button({ id: 'view-requests' }).exists(),
       editMARCBibRecordButton.absent(),
-    ])
+    ]);
     cy.do(Button({ id: 'clickable-view-source' }).click());
     cy.expect(HTML('MARC bibliographic record').exists());
   },
@@ -341,7 +341,7 @@ export default {
   },
 
   doOclcImport:(oclc) => {
-    cy.do(singleRecordImportModal.find(TextField({name:'externalIdentifier'})).fillIn(oclc));
+    cy.do(singleRecordImportModal.find(TextField({ name:'externalIdentifier' })).fillIn(oclc));
     cy.do(singleRecordImportModal.find(Button('Import')).click());
   },
 
