@@ -227,19 +227,6 @@ export default {
     ]);
   },
 
-  addName:(name) => cy.do(TextField({ name:'profile.name' }).fillIn(name)),
-  addIncomingRecordType:(type) => cy.do(Select({ name:'profile.incomingRecordType' }).choose(type)),
-  addFolioRecordType:(folioType) => cy.do(Select({ name:'profile.existingRecordType' }).choose(folioType)),
-  saveProfile:() => cy.do(saveButton.click()),
-  fillPermanentLocation:(location) => cy.do(TextField('Permanent').fillIn(location)),
-  fillCallNumber:(number) => cy.do(TextField('Call number').fillIn(number)),
-  fillBarcode:(barcode) => cy.do(TextField('Barcode').fillIn(barcode)),
-  fillCopyNumber:(number) => cy.do(TextField('Copy number').fillIn(number)),
-  fillVendorInvoiceNumber:(number) => cy.do(TextField('Vendor invoice number*').fillIn(number)),
-  fillDescription:(text) => cy.do(TextField('Description*').fillIn(text)),
-  fillQuantity:(quantity) => cy.do(TextField('Quantity*').fillIn(quantity)),
-  fillSubTotal:(number) => cy.do(TextField('Sub-total*').fillIn(number)),
-
   fillSummaryInMappingProfile:(specialMappingProfile = defaultMappingProfile) => {
     cy.do([
       TextField({ name:'profile.name' }).fillIn(specialMappingProfile.name),
@@ -252,7 +239,7 @@ export default {
     // number needs for using this method in filling fields for holdings and item profiles
     const statisticalCodeFieldName = `profile.mappingDetails.mappingFields[${number}].repeatableFieldAction`;
 
-    cy.do(Select(statisticalCodeFieldName).choose(actions.addTheseToExisting));
+    cy.do(Select({ name: statisticalCodeFieldName }).choose(actions.addTheseToExisting));
     cy.do(Button('Add statistical code').click());
     cy.do(TextField('Statistical code').fillIn(name));
     waitLoading();
@@ -322,16 +309,19 @@ export default {
   },
 
   addItemNotes:(noteType, note, staffOnly) => {
-    cy.do(Select({ name:'profile.mappingDetails.mappingFields[25].repeatableFieldAction' }).choose(actions.addTheseToExisting));
+    cy.do(Select({ name:'profile.mappingDetails.mappingFields[25].repeatableFieldAction' })
+      .choose(actions.addTheseToExisting));
     cy.do(Button('Add item note').click());
     cy.do(TextField('Note type').fillIn(noteType));
     cy.do(TextField('Note').fillIn(note));
-    cy.do(Select({ name:'profile.mappingDetails.mappingFields[25].subfields[0].fields[2].booleanFieldAction' }).choose(staffOnly));
+    cy.do(Select({ name:'profile.mappingDetails.mappingFields[25].subfields[0].fields[2].booleanFieldAction' })
+      .choose(staffOnly));
     waitLoading();
   },
 
   addSuppressFromDiscovery:() => {
-    cy.do(Select({ name:'profile.mappingDetails.mappingFields[0].booleanFieldAction' }).choose('Mark for all affected records'));
+    cy.do(Select({ name:'profile.mappingDetails.mappingFields[0].booleanFieldAction' })
+      .choose('Mark for all affected records'));
     waitLoading();
   },
 

@@ -140,7 +140,7 @@ export default {
 
   openHoldingView: () => {
     cy.do(viewHoldingsButton.click());
-    cy.expect(actionsButton.exists());
+    cy.expect(Button('Actions').exists());
   },
   createHoldingsRecord:(permanentLocation) => {
     pressAddHoldingsButton();

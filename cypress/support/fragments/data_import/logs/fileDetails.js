@@ -2,7 +2,8 @@ import {
   MultiColumnListCell,
   MultiColumnList,
   MultiColumnListHeader,
-  MultiColumnListRow
+  MultiColumnListRow,
+  Link
 } from '../../../../../interactors';
 
 const invoiceNumberFromEdifactFile = '94999';
@@ -101,5 +102,15 @@ export default {
   checkHoldingsQuantityInSummaryTable,
   checkItemQuantityInSummaryTable,
 
-  openItemsInInventory:(columnIndex, row = 0) => cy.do(resultsList.find(MultiColumnListCell({ row, columnIndex })).click())
+  openInstanceInInventory:(row = 0, itemStatus) => {
+    cy.do(resultsList.find(MultiColumnListCell({ row, columnIndex: 3 }))
+      .find(Link(itemStatus))
+      .click());
+  },
+
+  openHoldingsInInventory:(row = 0, itemStatus) => {
+    cy.do(resultsList.find(MultiColumnListCell({ row, columnIndex: 3 }))
+      .find(Link(itemStatus))
+      .click());
+  }
 };
