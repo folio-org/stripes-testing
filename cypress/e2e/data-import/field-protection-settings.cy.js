@@ -139,7 +139,7 @@ describe('ui-data-import: Check that field protection settings work properly dur
     FieldMappingProfiles.openNewMappingProfileForm();
     NewFieldMappingProfile.fillSummaryInMappingProfile(instanceMappingProfile);
     NewFieldMappingProfile.fillInstanceStatusTerm('"Batch Loaded"');
-    NewFieldMappingProfile.addStatisticalCode('"ARL (Collection stats): books - Book, print (books)"');
+    NewFieldMappingProfile.addStatisticalCode('"ARL (Collection stats): books - Book, print (books)"', 8);
     FieldMappingProfiles.saveProfile();
     FieldMappingProfiles.closeViewModeForMappingProfile(instanceMappingProfile.name);
   };
@@ -157,7 +157,7 @@ describe('ui-data-import: Check that field protection settings work properly dur
 
     // create job profile
     cy.visit(SettingsMenu.jobProfilePath);
-    JobProfiles.createJobProfileWithLinkingProfiles(jobProfile, actionProfile);
+    JobProfiles.createJobProfileWithLinkingProfiles(jobProfile, actionProfile.name);
     JobProfiles.checkJobProfilePresented(jobProfileName);
 
     // upload a marc file for creating of the new instance
