@@ -38,9 +38,9 @@ describe('ui-data-import: MARC file import with matching for 999 ff field', () =
     DataImport.checkUploadState();
   });
 
-  afterEach(() => {
-    DataImport.checkUploadState();
-  });
+  // afterEach(() => {
+  //   DataImport.checkUploadState();
+  // });
 
   it('C343343 MARC file import with matching for 999 ff field (folijet)', { tags: [TestTypes.smoke, DevTeams.folijet] }, () => {
     // create Field mapping profile for export
@@ -68,7 +68,7 @@ describe('ui-data-import: MARC file import with matching for 999 ff field', () =
       profileName: jobProfileNameForExport
     };
     cy.visit(SettingsMenu.jobProfilePath);
-    JobProfiles.createJobProfileWithLinkingProfiles(jobProfileForExport, actionProfileForExport);
+    JobProfiles.createJobProfileWithLinkingProfiles(jobProfileForExport, actionProfileForExport.name);
     JobProfiles.checkJobProfilePresented(jobProfileNameForExport);
 
     // upload a marc file for export
