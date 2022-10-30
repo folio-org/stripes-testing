@@ -18,7 +18,7 @@ export default {
     cy.do(NavListItem(groupName).click());
   },
 
-  setMaximumNumberOfItemsChargedout: (itemsNumber) => {
+  setMaximumNumberOfItemsChargedOut: (itemsNumber) => {
     cy.do([
       TextField({ name:'3d7c52dc-c732-4223-8bf8-e5917801386f' }).fillIn(itemsNumber),
       Button('Save').click(),

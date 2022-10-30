@@ -25,14 +25,12 @@ function generateUniqueItemBarcodeWithShift(index = 0) {
 }
 
 describe('Patron Block: Maximum number of items charged out', () => {
+  const checkedOutBlockMessage =
+    'You have reached the maximum number of items you can check out as set by patron group';
   const patronGroup = {
     name: 'groupToPatronBlock' + getRandomPostfix(),
   };
-  const userData = {
-    personal: {
-      lastname: null,
-    },
-  };
+  const userData = {};
   const itemsData = {
     itemsWithSeparateInstance: [
       { instanceTitle: `Instance ${getRandomPostfix()}` },
@@ -43,10 +41,7 @@ describe('Patron Block: Maximum number of items charged out', () => {
     ],
   };
   const testData = {
-    userServicePoint: ServicePoints.getDefaultServicePointWithPickUpLocation(
-      'autotest receive notice triggers',
-      uuid()
-    ),
+    userServicePoint: ServicePoints.getDefaultServicePointWithPickUpLocation('autotest charged out limit', uuid()),
   };
 
   before('Preconditions', () => {
@@ -70,7 +65,6 @@ describe('Patron Block: Maximum number of items charged out', () => {
         });
         cy.getMaterialTypes({ limit: 1 }).then((res) => {
           testData.materialTypeId = res.id;
-          testData.materialTypeName = res.name;
         });
       })
       .then(() => {
@@ -121,7 +115,6 @@ describe('Patron Block: Maximum number of items charged out', () => {
           userData.password = userProperties.password;
           userData.userId = userProperties.userId;
           userData.barcode = userProperties.barcode;
-          userData.personal.lastname = userProperties.lastName;
         })
         .then(() => {
           UserEdit.addServicePointViaApi(testData.userServicePoint.id, userData.userId, testData.userServicePoint.id);
@@ -174,14 +167,14 @@ describe('Patron Block: Maximum number of items charged out', () => {
       cy.visit(SettingsMenu.conditionsPath);
       Conditions.waitLoading();
       Conditions.select('Maximum number of items charged out');
-      Conditions.setConditionState('Patron is Blocked');
+      Conditions.setConditionState(checkedOutBlockMessage);
       cy.visit(SettingsMenu.limitsPath);
       Limits.selectGroup(patronGroup.name);
-      Limits.setMaximumNumberOfItemsChargedout('4');
+      Limits.setMaximumNumberOfItemsChargedOut('4');
 
       cy.visit(TopMenu.usersPath);
       UsersSearchPane.searchByKeywords(userData.barcode);
-      Users.checkIsPatronBlocked('Patron is Blocked', 'Borrowing, Renewals, Requests');
+      Users.checkIsPatronBlocked(checkedOutBlockMessage, 'Borrowing, Renewals, Requests');
 
       cy.visit(TopMenu.checkInPath);
       const itemForCheckIn = itemsData.itemsWithSeparateInstance[0];
@@ -190,15 +183,15 @@ describe('Patron Block: Maximum number of items charged out', () => {
 
       cy.visit(TopMenu.usersPath);
       UsersSearchPane.searchByKeywords(userData.barcode);
-      Users.checkIsPatronBlocked('Patron is Blocked', 'Borrowing');
+      Users.checkIsPatronBlocked(checkedOutBlockMessage, 'Borrowing');
 
       cy.visit(SettingsMenu.limitsPath);
       Limits.selectGroup(patronGroup.name);
-      Limits.setMaximumNumberOfItemsChargedout('5');
+      Limits.setMaximumNumberOfItemsChargedOut('5');
 
       cy.visit(TopMenu.usersPath);
       UsersSearchPane.searchByKeywords(userData.barcode);
-      Users.checkIsNotPatronBlocked();
+      Users.checkPatronIsNotBlocked();
     }
   );
 });

@@ -73,7 +73,7 @@ export default {
     ]);
   },
 
-  checkIsNotPatronBlocked: () => {
+  checkPatronIsNotBlocked: () => {
     cy.expect(TextField({ value:'Patron has block(s) in place' }).absent());
   }
 };
