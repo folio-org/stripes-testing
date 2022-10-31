@@ -173,6 +173,7 @@ describe('Patron Block: Maximum number of items charged out', () => {
       Limits.setMaximumNumberOfItemsChargedOut('4');
 
       cy.visit(TopMenu.usersPath);
+      UsersSearchPane.waitLoading();
       UsersSearchPane.searchByKeywords(userData.barcode);
       Users.checkIsPatronBlocked(checkedOutBlockMessage, 'Borrowing, Renewals, Requests');
 
@@ -182,6 +183,7 @@ describe('Patron Block: Maximum number of items charged out', () => {
       CheckInActions.verifyLastCheckInItem(itemForCheckIn.barcode);
 
       cy.visit(TopMenu.usersPath);
+      UsersSearchPane.waitLoading();
       UsersSearchPane.searchByKeywords(userData.barcode);
       Users.checkIsPatronBlocked(checkedOutBlockMessage, 'Borrowing');
 
@@ -190,6 +192,7 @@ describe('Patron Block: Maximum number of items charged out', () => {
       Limits.setMaximumNumberOfItemsChargedOut('5');
 
       cy.visit(TopMenu.usersPath);
+      UsersSearchPane.waitLoading();
       UsersSearchPane.searchByKeywords(userData.barcode);
       Users.checkPatronIsNotBlocked();
     }
