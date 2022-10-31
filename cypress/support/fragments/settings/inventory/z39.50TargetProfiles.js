@@ -8,6 +8,8 @@ import {
   PaneContent
 } from '../../../../../interactors';
 
+const oclcWorldcatPane = Pane('✓ OCLC WorldCat');
+
 export default {
   changeOclcWorldCatToDefaultViaApi:() => {
     cy.okapiRequest({
@@ -35,10 +37,10 @@ export default {
   },
 
   editOclcWorldCat:(auth) => {
-    cy.do(Pane('✓ OCLC WorldCat').find(Button('Edit')).click());
+    cy.do(oclcWorldcatPane.find(Button('Edit')).click());
     cy.do(PaneContent({ id: '12-content' }).find(TextField({ name:'authentication' })).fillIn(auth));
     cy.do(Pane('OCLC WorldCat').find(Button('Save & close')).click());
   },
 
-  checkIsOclcWorldCatIsChanged:(auth) => cy.expect(Pane('✓ OCLC WorldCat').find(KeyValue({ value: auth })))
+  checkIsOclcWorldCatIsChanged:(auth) => cy.expect(oclcWorldcatPane.find(KeyValue({ value: auth })))
 };

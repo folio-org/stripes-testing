@@ -6,6 +6,10 @@ import {
   MultiColumnListCell
 } from '../../../../../interactors';
 
+const editList = MultiColumnList({ id:'editList-marc-field-protection' });
+const newButton = Button('+ New');
+const saveButton = Button('Save');
+
 export default {
   createMarcFieldProtectionViaApi:(fieldBody) => {
     return cy.okapiRequest({
@@ -36,20 +40,13 @@ export default {
       });
   },
 
-  createNewMarcFieldProtection:() => {
-    cy.do(Pane({ id:'controlled-vocab-pane' }).find(Button('+ New')).click());
-  },
+  createNewMarcFieldProtection:() => cy.do(Pane({ id:'controlled-vocab-pane' }).find(newButton).click()),
 
   fillMarcFieldProtection:(fieldNumber) => {
     cy.do(TextField({ name:'items[0].field' }).fillIn(fieldNumber));
-    cy.do(Button('Save').click());
+    cy.do(saveButton.click());
   },
 
-  currentListOfProtectedMarcFieldsIsPresented:() => {
-    cy.expect(MultiColumnList({ id:'editList-marc-field-protection' }).exists());
-  },
-
-  checkFieldProtectionIsCreated:() => {
-    cy.expect(MultiColumnList({ id:'editList-marc-field-protection' }).find(MultiColumnListCell({ content: '856' })).exists());
-  }
+  currentListOfProtectedMarcFieldsIsPresented:() => cy.expect(editList.exists()),
+  checkFieldProtectionIsCreated:() => cy.expect(editList.find(MultiColumnListCell({ content: '856' })).exists())
 };
