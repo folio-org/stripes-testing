@@ -174,7 +174,7 @@ describe('ui-data-import: Match on Holdings 856 $u', () => {
 
     InventorySearch.getInstanceHRID()
       .then(hrId => {
-        instanceHRID = hrId[0];
+        instanceHRID = hrId;
         cy.visit(TopMenu.inventoryPath);
         InventorySearch.searchInstanceByHRID(instanceHRID);
         InventoryInstance.openHoldingView();

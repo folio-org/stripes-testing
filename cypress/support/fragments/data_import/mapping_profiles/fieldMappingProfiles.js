@@ -164,7 +164,7 @@ export default {
   createMappingProfileWithNotes:(mappingProfile, note) => {
     openNewMappingProfileForm();
     NewFieldMappingProfile.fillSummaryInMappingProfile(mappingProfile);
-    NewFieldMappingProfile.addAdministrativeNote(note);
+    NewFieldMappingProfile.addAdministrativeNote(note, 9);
     cy.do(saveProfileButton.click());
     closeViewModeForMappingProfile(mappingProfile.name);
     cy.expect(actionsButton.exists());

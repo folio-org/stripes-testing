@@ -68,15 +68,9 @@ export default {
   },
 
   markFieldForProtection:(field) => {
-    cy.do(MultiColumnListCell({ content: field }).perform(
-      element => {
-        const rowNumber = element.parentElement.parentElement.getAttribute('data-row-index');
-
-        cy.do(Pane('New field mapping profile').find(Accordion({ id: 'edit-override-protected-section' }))
-          .find(MultiColumnListRow({ indexRow: rowNumber })).find(Checkbox())
-          .click());
-      }
-    ));
+    cy.get('div[class^="mclRow--"]').contains('div[class^="mclCell-"]', field).then(elem => {
+      elem.parent()[0].querySelector('input[type="checkbox"]').click();
+    });
   },
 
   checkErrorMessageIsPresented:(textFieldName) => {

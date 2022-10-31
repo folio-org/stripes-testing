@@ -54,8 +54,8 @@ describe('ui-data-import: Check that field protection overrides work properly du
   };
 
   // notes for mapping profiles
-  const noteForUpdateInstanceMappingProfile = '"This note was added when the MARC Bib was updated to check field protections"';
-  const noteForOverrideInstanceMappingProfile = '"This note was added when the MARC Bib was updated to check field protection OVERRIDES"';
+  const noteForUpdateInstanceMappingProfile = 'This note was added when the MARC Bib was updated to check field protections';
+  const noteForOverrideInstanceMappingProfile = 'This note was added when the MARC Bib was updated to check field protection OVERRIDES';
 
   // unique name for notes
   const administrativeNote = 'This note was added when the MARC Bib was updated to check field protections';
@@ -100,30 +100,30 @@ describe('ui-data-import: Check that field protection overrides work properly du
       });
   });
 
-  afterEach(() => {
-    MarcFieldProtection.deleteMarcFieldProtectionViaApi(firstFieldId);
-    MarcFieldProtection.deleteMarcFieldProtectionViaApi(secondFieldId);
-    cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${instanceHrid}"` })
-      .then((instance) => {
-        InventoryInstance.deleteInstanceViaApi(instance.id);
-      });
-    // delete profiles
-    JobProfiles.deleteJobProfile(jobProfileNameForUpdate);
-    JobProfiles.deleteJobProfile(jobProfileNameForOverride);
-    MatchProfiles.deleteMatchProfile(matchProfileName);
-    ActionProfiles.deleteActionProfile(marcBibActionProfileNameForUpdate);
-    ActionProfiles.deleteActionProfile(instanceActionProfileNameForUpdate);
-    ActionProfiles.deleteActionProfile(marcBibActionProfileNameForUpdateAndOverride);
-    ActionProfiles.deleteActionProfile(instanceActionProfileNameForUpdateAndOverride);
-    FieldMappingProfiles.deleteFieldMappingProfile(marcBibMapProfileNameForUpdate);
-    FieldMappingProfiles.deleteFieldMappingProfile(instanceMapProfileNameForUpdate);
-    FieldMappingProfiles.deleteFieldMappingProfile(marcBibMapProfileNameForUpdateAndOverride);
-    FieldMappingProfiles.deleteFieldMappingProfile(instanceMapProfileNameForUpdateAndOverride);
+  // afterEach(() => {
+  //   MarcFieldProtection.deleteMarcFieldProtectionViaApi(firstFieldId);
+  //   MarcFieldProtection.deleteMarcFieldProtectionViaApi(secondFieldId);
+  //   cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${instanceHrid}"` })
+  //     .then((instance) => {
+  //       InventoryInstance.deleteInstanceViaApi(instance.id);
+  //     });
+  //   // delete profiles
+  //   JobProfiles.deleteJobProfile(jobProfileNameForUpdate);
+  //   JobProfiles.deleteJobProfile(jobProfileNameForOverride);
+  //   MatchProfiles.deleteMatchProfile(matchProfileName);
+  //   ActionProfiles.deleteActionProfile(marcBibActionProfileNameForUpdate);
+  //   ActionProfiles.deleteActionProfile(instanceActionProfileNameForUpdate);
+  //   ActionProfiles.deleteActionProfile(marcBibActionProfileNameForUpdateAndOverride);
+  //   ActionProfiles.deleteActionProfile(instanceActionProfileNameForUpdateAndOverride);
+  //   FieldMappingProfiles.deleteFieldMappingProfile(marcBibMapProfileNameForUpdate);
+  //   FieldMappingProfiles.deleteFieldMappingProfile(instanceMapProfileNameForUpdate);
+  //   FieldMappingProfiles.deleteFieldMappingProfile(marcBibMapProfileNameForUpdateAndOverride);
+  //   FieldMappingProfiles.deleteFieldMappingProfile(instanceMapProfileNameForUpdateAndOverride);
 
-    // delete created files
-    FileManager.deleteFile(`cypress/fixtures/${editedFileNameRev1}`);
-    FileManager.deleteFile(`cypress/fixtures/${editedFileNameRev2}`);
-  });
+  //   // delete created files
+  //   FileManager.deleteFile(`cypress/fixtures/${editedFileNameRev1}`);
+  //   FileManager.deleteFile(`cypress/fixtures/${editedFileNameRev2}`);
+  // });
 
   // Test is failed. MODSOURMAN-819
   it('C17018 Check that field protection overrides work properly during data import (folijet)', { tags: [TestTypes.criticalPath, DevTeams.folijet] }, () => {
@@ -199,14 +199,14 @@ describe('ui-data-import: Check that field protection overrides work properly du
     MappingProfileDetails.checkCreatedMappingProfile(marcBibMappingProfile.name, protectedFields.firstField, protectedFields.secondField);
     FieldMappingProfiles.checkMappingProfilePresented(marcBibMappingProfile.name);
 
-    FieldMappingProfiles.createInstanceMappingProfileWithNotes(instanceMappingProfile, noteForUpdateInstanceMappingProfile);
+    FieldMappingProfiles.createMappingProfileWithNotes(instanceMappingProfile, noteForUpdateInstanceMappingProfile);
     FieldMappingProfiles.checkMappingProfilePresented(instanceMappingProfile.name);
 
     FieldMappingProfiles.createMappingProfileForUpdatesAndOverrideMarc(marcBibMappingProfileOverride, protectedFields.firstField, protectedFields.secondField);
     MappingProfileDetails.checkCreatedMappingProfile(marcBibMappingProfileOverride.name, protectedFields.firstField, protectedFields.secondField);
     FieldMappingProfiles.checkMappingProfilePresented(marcBibMappingProfileOverride.name);
 
-    FieldMappingProfiles.createInstanceMappingProfileWithNotes(instanceMappingProfileOverride, noteForOverrideInstanceMappingProfile);
+    FieldMappingProfiles.createMappingProfileWithNotes(instanceMappingProfileOverride, noteForOverrideInstanceMappingProfile);
     FieldMappingProfiles.checkMappingProfilePresented(instanceMappingProfileOverride.name);
 
     // create Action profiles
