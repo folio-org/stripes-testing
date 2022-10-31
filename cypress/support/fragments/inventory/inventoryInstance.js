@@ -126,7 +126,10 @@ export default {
   },
 
   checkElectronicAccess:() => {
-    cy.expect(Accordion('Electronic access').find(MultiColumnList({ id: 'list-electronic-access' })).absent());
+    cy.expect(Accordion('Electronic access')
+      .find(MultiColumnList({ id: 'list-electronic-access' }))
+      .find(MultiColumnListCell({ row: 0, columnIndex: 0, content: 'No value set-' }))
+      .exists());
   },
 
   deriveNewMarcBib:() => {

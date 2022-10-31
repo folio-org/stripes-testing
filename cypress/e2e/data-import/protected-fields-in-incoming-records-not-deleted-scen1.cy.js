@@ -13,6 +13,7 @@ import MarcFieldProtection from '../../support/fragments/settings/dataImport/mar
 import Z3950TargetProfiles from '../../support/fragments/settings/inventory/z39.50TargetProfiles';
 import InventoryInstance from '../../support/fragments/inventory/inventoryInstance';
 import InventoryEditMarcRecord from '../../support/fragments/inventory/inventoryEditMarcRecord';
+import InventoryViewSource from '../../support/fragments/inventory/inventoryViewSource';
 import Users from '../../support/fragments/users/users';
 
 describe('ui-data-import: Check that protected fields in incoming records are not deleted during import: Scenario 1', () => {
@@ -21,6 +22,7 @@ describe('ui-data-import: Check that protected fields in incoming records are no
   const protectedField = '856';
   const authentication = '100473910/PAOLF';
   const oclcForChanging = '466478385';
+  const imported856Field = 'Notice et cote du catalogue de la Bibliothèque nationale de France ‡u http://catalogue.bnf.fr/ark:/12148/cb371881758';
 
   before(() => {
     cy.createTempUser([
@@ -60,13 +62,16 @@ describe('ui-data-import: Check that protected fields in incoming records are no
   });
 
   after(() => {
-  // MarcFieldProtection.changeOclcWorldCatToDefaultViaApi();
-    // MarcFieldProtection.deleteMarcFieldProtectionViaApi('856');
-    //     cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${instanceHrid}"` })
-    //       .then((instance) => {
-    //         InventoryInstance.deleteInstanceViaApi(instance.id);
-    //       });
-    //     Users.deleteViaApi(user.userId);
+    MarcFieldProtection.getListOfMarcFieldProtectionViaApi({ query: `"field"=="${protectedField}"` })
+      .then(list => {
+        list.forEach(({ id }) => MarcFieldProtection.deleteMarcFieldProtectionViaApi(id));
+      });
+    Z3950TargetProfiles.changeOclcWorldCatToDefaultViaApi();
+    cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${instanceHrid}"` })
+      .then((instance) => {
+        InventoryInstance.deleteInstanceViaApi(instance.id);
+      });
+    Users.deleteViaApi(user.userId);
   });
 
   it('C358968 Check that protected fields in incoming records are not deleted during import: Scenario 1 (folijet)', { tags: [TestTypes.smoke, DevTeams.folijet] }, () => {
@@ -91,5 +96,7 @@ describe('ui-data-import: Check that protected fields in incoming records are no
     InventoryInstance.doOclcImport(oclcForChanging);
     InventoryInstance.checkCalloutMessage(`Updated record ${oclcForChanging}`);
     InventoryInstance.viewSource();
+    InventoryViewSource.contains(`${protectedField}\t`);
+    InventoryViewSource.contains(imported856Field);
   });
 });
