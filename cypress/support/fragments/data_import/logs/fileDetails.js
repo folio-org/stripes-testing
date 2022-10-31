@@ -109,7 +109,7 @@ export default {
   },
 
   openHoldingsInInventory:(row = 0, itemStatus) => {
-    cy.do(resultsList.find(MultiColumnListCell({ row, columnIndex: 3 }))
+    cy.do(resultsList.find(MultiColumnListCell({ row, columnIndex: 4 }))
       .find(Link(itemStatus))
       .click());
   }

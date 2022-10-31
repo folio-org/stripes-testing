@@ -100,30 +100,30 @@ describe('ui-data-import: Check that field protection overrides work properly du
       });
   });
 
-  // afterEach(() => {
-  //   MarcFieldProtection.deleteMarcFieldProtectionViaApi(firstFieldId);
-  //   MarcFieldProtection.deleteMarcFieldProtectionViaApi(secondFieldId);
-  //   cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${instanceHrid}"` })
-  //     .then((instance) => {
-  //       InventoryInstance.deleteInstanceViaApi(instance.id);
-  //     });
-  //   // delete profiles
-  //   JobProfiles.deleteJobProfile(jobProfileNameForUpdate);
-  //   JobProfiles.deleteJobProfile(jobProfileNameForOverride);
-  //   MatchProfiles.deleteMatchProfile(matchProfileName);
-  //   ActionProfiles.deleteActionProfile(marcBibActionProfileNameForUpdate);
-  //   ActionProfiles.deleteActionProfile(instanceActionProfileNameForUpdate);
-  //   ActionProfiles.deleteActionProfile(marcBibActionProfileNameForUpdateAndOverride);
-  //   ActionProfiles.deleteActionProfile(instanceActionProfileNameForUpdateAndOverride);
-  //   FieldMappingProfiles.deleteFieldMappingProfile(marcBibMapProfileNameForUpdate);
-  //   FieldMappingProfiles.deleteFieldMappingProfile(instanceMapProfileNameForUpdate);
-  //   FieldMappingProfiles.deleteFieldMappingProfile(marcBibMapProfileNameForUpdateAndOverride);
-  //   FieldMappingProfiles.deleteFieldMappingProfile(instanceMapProfileNameForUpdateAndOverride);
+  afterEach(() => {
+    MarcFieldProtection.deleteMarcFieldProtectionViaApi(firstFieldId);
+    MarcFieldProtection.deleteMarcFieldProtectionViaApi(secondFieldId);
+    cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${instanceHrid}"` })
+      .then((instance) => {
+        InventoryInstance.deleteInstanceViaApi(instance.id);
+      });
+    // delete profiles
+    JobProfiles.deleteJobProfile(jobProfileNameForUpdate);
+    JobProfiles.deleteJobProfile(jobProfileNameForOverride);
+    MatchProfiles.deleteMatchProfile(matchProfileName);
+    ActionProfiles.deleteActionProfile(marcBibActionProfileNameForUpdate);
+    ActionProfiles.deleteActionProfile(instanceActionProfileNameForUpdate);
+    ActionProfiles.deleteActionProfile(marcBibActionProfileNameForUpdateAndOverride);
+    ActionProfiles.deleteActionProfile(instanceActionProfileNameForUpdateAndOverride);
+    FieldMappingProfiles.deleteFieldMappingProfile(marcBibMapProfileNameForUpdate);
+    FieldMappingProfiles.deleteFieldMappingProfile(instanceMapProfileNameForUpdate);
+    FieldMappingProfiles.deleteFieldMappingProfile(marcBibMapProfileNameForUpdateAndOverride);
+    FieldMappingProfiles.deleteFieldMappingProfile(instanceMapProfileNameForUpdateAndOverride);
 
-  //   // delete created files
-  //   FileManager.deleteFile(`cypress/fixtures/${editedFileNameRev1}`);
-  //   FileManager.deleteFile(`cypress/fixtures/${editedFileNameRev2}`);
-  // });
+    // delete created files
+    FileManager.deleteFile(`cypress/fixtures/${editedFileNameRev1}`);
+    FileManager.deleteFile(`cypress/fixtures/${editedFileNameRev2}`);
+  });
 
   // Test is failed. MODSOURMAN-819
   it('C17018 Check that field protection overrides work properly during data import (folijet)', { tags: [TestTypes.criticalPath, DevTeams.folijet] }, () => {
