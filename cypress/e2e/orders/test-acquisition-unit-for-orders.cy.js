@@ -3,9 +3,7 @@ import testType from '../../support/dictionary/testTypes';
 import devTeams from '../../support/dictionary/devTeams';
 import FiscalYears from '../../support/fragments/finance/fiscalYears/fiscalYears';
 import TopMenu from '../../support/fragments/topMenu';
-import Ledgers from '../../support/fragments/finance/ledgers/ledgers';
 import Users from '../../support/fragments/users/users';
-import Funds from '../../support/fragments/finance/funds/funds';
 import FinanceHelp from '../../support/fragments/finance/financeHelper';
 import SettingsMenu from '../../support/fragments/settingsMenu';
 import AcquisitionUnits from '../../support/fragments/settings/acquisitionUnits/acquisitionUnits';
@@ -13,14 +11,16 @@ import Orders from '../../support/fragments/orders/orders';
 import NewOrder from '../../support/fragments/orders/newOrder';
 import Organizations from '../../support/fragments/organizations/organizations';
 import NewOrganization from '../../support/fragments/organizations/newOrganization';
-import getRandomPostfix from '../../support/utils/stringTools';
+import InteractorsTools from '../../support/utils/interactorsTools';
 
 describe('ui-finance: Orders', () => {
+
   const order = { ...NewOrder.defaultOneTimeOrder };
   const organization = { ...NewOrganization.defaultUiOrganizations };
   const defaultAcquisitionUnit = { ...AcquisitionUnits.defaultAcquisitionUnit };
-  const orderNumber = getRandomPostfix();
+  let orderNumber;
   let user;
+  let orderId;
 
   before(() => {
     cy.getAdminToken();
@@ -49,17 +49,12 @@ describe('ui-finance: Orders', () => {
       .then(userProperties => {
         user = userProperties;
       });
-
-      cy.loginAsAdmin({ path:SettingsMenu.ordersPONumberEditPath, waiter: Orders.waitSettingsPageLoading });
-     
-      Orders.selectUserCanEditPONumber();
-      cy.pause();
   });
 
   after(() => {
-    Orders.deleteOrderApi(order.id);
+    Orders.deleteOrderApi(orderId);
     Organizations.deleteOrganizationViaApi(organization.id);
-    cy.loginAsAdmin({ path:SettingsMenu.acquisitionUnitsPath });
+    cy.loginAsAdmin({ path:SettingsMenu.acquisitionUnitsPath , waiter: AcquisitionUnits.waitLoading });
     
     AcquisitionUnits.unAssignAdmin(defaultAcquisitionUnit.name);
     AcquisitionUnits.delete(defaultAcquisitionUnit.name);
@@ -68,26 +63,33 @@ describe('ui-finance: Orders', () => {
   });
 
   it('C163929 Test acquisition unit restrictions for Order records (thunderjet)', { tags: [testType.criticalPath, devTeams.thunderjet] }, () => {
-    cy.visit(SettingsMenu.ordersPONumberEditPath);
     cy.loginAsAdmin({ path:SettingsMenu.acquisitionUnitsPath, waiter: AcquisitionUnits.waitLoading });
     AcquisitionUnits.newAcquisitionUnit();
     AcquisitionUnits.fillInInfo(defaultAcquisitionUnit.name);
     // Need to wait,while data is load
     cy.wait(2000);
     AcquisitionUnits.assignUser(user.username);
+
     cy.login(user.username, user.password, { path:TopMenu.ordersPath, waiter: Orders.waitLoading });
-    Orders.createOrderWithAU(order, defaultAcquisitionUnit.name);
-    // console.log(orderNumber);
-    // cy.loginAsAdmin({ path:SettingsMenu.acquisitionUnitsPath, waiter: AcquisitionUnits.waitLoading });
-    // AcquisitionUnits.unAssignUser(defaultAcquisitionUnit.name);
-    // cy.login(user.username, user.password, { path:TopMenu.ordersPath, waiter: Orders.waitLoading });
-    // Orders.searchByParameter('PO number', orderNumber);
-    // Orders.checkZeroSearchResultsHeader();
-    // cy.loginAsAdmin({ path:SettingsMenu.acquisitionUnitsPath, waiter: AcquisitionUnits.waitLoading });
-    // AcquisitionUnits.edit(defaultAcquisitionUnit.name);
-    // AcquisitionUnits.selectViewCheckbox();
-    // cy.login(user.username, user.password, { path:TopMenu.ordersPath, waiter: Orders.waitLoading });
-    // Orders.searchByParameter('PO number', orderNumber);
-    // FinanceHelp.selectFromResultsList();
+    Orders.createOrderWithAU(order, defaultAcquisitionUnit.name).then ( ({response} ) => {
+      orderId = response.body.id
+      orderNumber = response.body.poNumber;
+    InteractorsTools.checkCalloutMessage(`The Purchase order - ${orderNumber} has been successfully saved`);
+
+    cy.loginAsAdmin({ path:SettingsMenu.acquisitionUnitsPath, waiter: AcquisitionUnits.waitLoading });
+    AcquisitionUnits.unAssignUser(defaultAcquisitionUnit.name);
+
+    cy.login(user.username, user.password, { path:TopMenu.ordersPath, waiter: Orders.waitLoading });
+    Orders.searchByParameter('PO number', orderNumber);
+    Orders.checkZeroSearchResultsHeader();
+
+    cy.loginAsAdmin({ path:SettingsMenu.acquisitionUnitsPath, waiter: AcquisitionUnits.waitLoading });
+    AcquisitionUnits.edit(defaultAcquisitionUnit.name);
+    AcquisitionUnits.selectViewCheckbox();
+    
+    cy.login(user.username, user.password, { path:TopMenu.ordersPath, waiter: Orders.waitLoading });
+    Orders.searchByParameter('PO number', orderNumber);
+    FinanceHelp.selectFromResultsList();
+  });
   });
 });

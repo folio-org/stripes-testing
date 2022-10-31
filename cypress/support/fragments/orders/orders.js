@@ -25,7 +25,7 @@ import DateTools from '../../utils/dateTools';
 import FileManager from '../../utils/fileManager';
 
 
-const numberOfSearchResultsHeader = '//*[@id="paneHeaderfund-results-pane-subtitle"]/span';
+const numberOfSearchResultsHeader = '//*[@id="paneHeaderorders-results-pane-subtitle"]/span';
 const zeroResultsFoundText = '0 records found';
 const actionsButton = Button('Actions');
 const orderDetailsPane = Pane({ id: 'order-details' });
@@ -191,18 +191,14 @@ export default {
     this.selectVendorOnUi(order.vendor);
     cy.intercept('POST', '/orders/composite-orders**').as('newOrderID');
     cy.do(Select('Order type*').choose(order.orderType));
-    cy.wait(4000);
+    // cy.wait(4000);
     cy.do([
-      TextField({ name: 'poNumber' }).fillIn(poNumber),
       MultiSelect({ id: 'order-acq-units' }).find(Button({ ariaLabel: 'open menu' })).click(),
       MultiSelectOption(AUName).click(),
     ]);
     if (isApproved) cy.do(Checkbox({ name:'approved' }).click());
     cy.do(saveAndClose.click());
-    return cy.wait('@newOrderID', getLongDelay())
-      .then(({ response }) => {
-        return response.body.id;
-      });
+    return cy.wait('@newOrderID', getLongDelay());
   },
 
   selectVendorOnUi: (organizationName) => {
@@ -487,16 +483,5 @@ export default {
       const expectedText = `((keyword all "${kw}" or isbn="${kw}") and languages=="${lang}" and items.effectiveLocationId=="${effectiveLocationId}") sortby title`;
       expect(actualQuery).to.eq(expectedText);
     });
-  },
-
-  selectUserCanEditPONumber: () => {
-    if (cy.do(Checkbox({ name: 'canUserEditOrderNumber'}).value(false))) {
-      cy.do([
-        Checkbox({ name: 'canUserEditOrderNumber'}).click(),
-      Button({ id: 'clickable-save-config' }).click()
-    ]);
-  } else {
-    cy.do(Checkbox({ name: 'canUserEditOrderNumber'}).focus());
-  };
   },
 };
