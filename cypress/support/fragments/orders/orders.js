@@ -14,7 +14,9 @@ import {
   TextField,
   HTML,
   including,
-  SelectionOption
+  SelectionOption,
+  MultiSelect,
+  MultiSelectOption
 } from '../../../../interactors';
 import SearchHelper from '../finance/financeHelper';
 import InteractorsTools from '../../utils/interactorsTools';
@@ -22,6 +24,9 @@ import { getLongDelay } from '../../utils/cypressTools';
 import DateTools from '../../utils/dateTools';
 import FileManager from '../../utils/fileManager';
 
+
+const numberOfSearchResultsHeader = '//*[@id="paneHeaderfund-results-pane-subtitle"]/span';
+const zeroResultsFoundText = '0 records found';
 const actionsButton = Button('Actions');
 const orderDetailsPane = Pane({ id: 'order-details' });
 const searhInputId = 'input-record-search';
@@ -41,7 +46,6 @@ const buttonSubscriptionFromFilter = Button({ id: 'accordion-toggle-button-subsc
 const searchForm = SearchField({ id: 'input-record-search' });
 const ordersFiltersPane = Pane({ id: 'orders-filters-pane' });
 const ordersResultsPane = Pane({ id: 'orders-results-pane' });
-
 const searchByParameter = (parameter, value) => {
   cy.do([
     searchForm.selectIndex(parameter),
@@ -56,6 +60,13 @@ export default {
     cy.expect([
       ordersFiltersPane.exists(),
       ordersResultsPane.exists(),
+    ]);
+  },
+  
+  waitSettingsPageLoading() {
+    cy.expect([
+      Pane({ id: 'settings-nav-pane' }).exists(),
+      Pane({ id: 'app-settings-nav-pane' }).exists(),
     ]);
   },
 
@@ -158,6 +169,34 @@ export default {
     this.selectVendorOnUi(order.vendor);
     cy.intercept('POST', '/orders/composite-orders**').as('newOrderID');
     cy.do(Select('Order type*').choose(order.orderType));
+    if (isApproved) cy.do(Checkbox({ name:'approved' }).click());
+    cy.do(saveAndClose.click());
+    return cy.wait('@newOrderID', getLongDelay())
+      .then(({ response }) => {
+        return response.body.id;
+      });
+  },
+  
+  checkZeroSearchResultsHeader: () => {
+    cy.xpath(numberOfSearchResultsHeader)
+      .should('be.visible')
+      .and('have.text', zeroResultsFoundText);
+  },
+
+  createOrderWithAU(order, AUName, poNumber, isApproved = false) {
+    cy.do([
+      actionsButton.click(),
+      newButton.click()
+    ]);
+    this.selectVendorOnUi(order.vendor);
+    cy.intercept('POST', '/orders/composite-orders**').as('newOrderID');
+    cy.do(Select('Order type*').choose(order.orderType));
+    cy.wait(4000);
+    cy.do([
+      TextField({ name: 'poNumber' }).fillIn(poNumber),
+      MultiSelect({ id: 'order-acq-units' }).find(Button({ ariaLabel: 'open menu' })).click(),
+      MultiSelectOption(AUName).click(),
+    ]);
     if (isApproved) cy.do(Checkbox({ name:'approved' }).click());
     cy.do(saveAndClose.click());
     return cy.wait('@newOrderID', getLongDelay())
@@ -448,5 +487,16 @@ export default {
       const expectedText = `((keyword all "${kw}" or isbn="${kw}") and languages=="${lang}" and items.effectiveLocationId=="${effectiveLocationId}") sortby title`;
       expect(actualQuery).to.eq(expectedText);
     });
+  },
+
+  selectUserCanEditPONumber: () => {
+    if (cy.do(Checkbox({ name: 'canUserEditOrderNumber'}).value(false))) {
+      cy.do([
+        Checkbox({ name: 'canUserEditOrderNumber'}).click(),
+      Button({ id: 'clickable-save-config' }).click()
+    ]);
+  } else {
+    cy.do(Checkbox({ name: 'canUserEditOrderNumber'}).focus());
+  };
   },
 };
