@@ -21,7 +21,6 @@ const deleteMatchProfile = (profileName) => {
     .then(({ body: { matchProfiles } }) => {
       // find profile to delete
       const profileToDelete = matchProfiles.find(profile => profile.name === profileName);
-
       // delete profile with its id
       cy
         .okapiRequest({
@@ -55,5 +54,12 @@ export default {
     cy.get('#input-search-match-profiles-field').clear().type(profileName);
     cy.do(Pane('Match profiles').find(Button('Search')).click());
     cy.expect(MultiColumnListCell(profileName).exists());
+  },
+
+  createMatchProfileWithMatchingBy999Field:(profile) => {
+    openNewMatchProfileForm();
+    NewMatchProfile.fillMatchProfileWithExistingPart(profile);
+    cy.do(Button('Save as profile & Close').click());
+    waitCreatingMatchProfile();
   }
 };
