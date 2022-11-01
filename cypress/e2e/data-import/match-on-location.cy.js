@@ -13,7 +13,7 @@ import TopMenu from '../../support/fragments/topMenu';
 import DataImport from '../../support/fragments/data_import/dataImport';
 import FileDetails from '../../support/fragments/data_import/logs/fileDetails';
 import Logs from '../../support/fragments/data_import/logs/logs';
-import DataImportSettingsJobProfiles from '../../support/fragments/settings/dataImport/dataImportSettingsJobProfiles';
+import SettingsJobProfiles from '../../support/fragments/settings/dataImport/settingsJobProfiles';
 import SearchInventory from '../../support/fragments/data_import/searchInventory';
 import InventoryInstance from '../../support/fragments/inventory/inventoryInstance';
 import NewFieldMappingProfile from '../../support/fragments/data_import/mapping_profiles/newFieldMappingProfile';
@@ -180,7 +180,7 @@ describe('ui-data-import: Match on location', () => {
             cy.addJobProfileRelation(testData.jobProfileForCreate.addedRelations, idActionProfile);
           });
         });
-        DataImportSettingsJobProfiles.createJobProfileApi(testData.jobProfileForCreate)
+        SettingsJobProfiles.createJobProfileApi(testData.jobProfileForCreate)
           .then((bodyWithjobProfile) => {
             testData.jobProfileForCreate.id = bodyWithjobProfile.body.id;
           });
@@ -195,7 +195,7 @@ describe('ui-data-import: Match on location', () => {
         FileDetails.checkItemsQuantityInSummaryTable(0, '1');
 
         // get Instance HRID through API
-        SearchInventory.getInstanceHRID()
+        InventorySearch.getInstanceHRID()
           .then(hrId => { instanceHrid = hrId[0]; });
       });
   });
@@ -296,7 +296,7 @@ describe('ui-data-import: Match on location', () => {
       acceptedType: NewJobProfile.acceptedDataType.marc
     };
 
-    // change Instance HRID in .mec file
+    // change Instance HRID in .mrc file
     DataImport.editMarcFile('marcFileForMatchOnLocation.mrc', editedMarcFileName, 'ocn933596084', instanceHrid);
 
     // create Match profile
@@ -354,7 +354,7 @@ describe('ui-data-import: Match on location', () => {
     FileDetails.checkItemQuantityInSummaryTable('1', 1);
 
     // check updated items in Inventory
-    FileDetails.openItemInInventory(4);
+    FileDetails.openHoldingsInInventory('Updated');
     HoldingsRecordView.checkAdministrativeNote(noteForHoldingsMappingProfile);
     HoldingsRecordView.close();
     InventoryInstance.openHoldingsAccordion('Main Library >');
@@ -381,7 +381,7 @@ describe('ui-data-import: Match on location', () => {
     const editedMarcFileName = `C17027 marcFileForMatchOnLocation.${getRandomPostfix()}.mrc`;
     const fileNameAfterUpdate = `C17027 marcFileForMatchOnLocation.${getRandomPostfix()}.mrc`;
 
-    // change Instance HRID in .mec file
+    // change Instance HRID in .mrc file
     DataImport.editMarcFile(
       'marcFileForMatchOnLocation.mrc',
       editedMarcFileName,
@@ -517,7 +517,7 @@ describe('ui-data-import: Match on location', () => {
     FileDetails.checkItemQuantityInSummaryTable('1', 1);
 
     // check updated items in Inventory
-    FileDetails.openItemInInventory(4);
+    FileDetails.openHoldingsInInventory('Updated');
     HoldingsRecordView.checkHoldingsStatement(holdingsStatement);
     HoldingsRecordView.close();
     InventoryInstance.openHoldingsAccordion('Main Library >');
@@ -544,7 +544,7 @@ describe('ui-data-import: Match on location', () => {
     const editedMarcFileName = `C17027 marcFileForMatchOnLocation.${getRandomPostfix()}.mrc`;
     const fileNameAfterUpdate = `C17027 marcFileForMatchOnLocation.${getRandomPostfix()}.mrc`;
 
-    // change Instance HRID in .mec file
+    // change Instance HRID in .mrc file
     DataImport.editMarcFile(
       'marcFileForMatchOnLocation.mrc',
       editedMarcFileName,
@@ -680,7 +680,7 @@ describe('ui-data-import: Match on location', () => {
     FileDetails.checkItemQuantityInSummaryTable('1', 1);
 
     // check updated items in Inventory
-    FileDetails.openItemInInventory(4);
+    FileDetails.openHoldingsInInventory('Updated');
     HoldingsRecordView.checkHoldingsType(holdingsType);
     HoldingsRecordView.close();
     InventoryInstance.openHoldingsAccordion('Main Library >');

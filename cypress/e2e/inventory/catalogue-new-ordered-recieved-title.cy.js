@@ -75,7 +75,7 @@ describe('orders: Receive piece from Order', () => {
     InventorySearch.instanceTabIsDefault();
     InventorySearch.verifyKeywordsAsDefault();
     InventorySearch.switchToItem();
-    InventorySearch.simpleSearchByParameter('Barcode', barcode);
+    InventorySearch.searchByParameter('Barcode', barcode);
     InventoryInstance.openHoldings(['Main Library >']);
     InventorySearch.verifySearchResult('In transit');
   });

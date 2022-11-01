@@ -11,10 +11,10 @@ import MarcAuthorities from '../../support/fragments/marcAuthority/marcAuthoriti
 import QuickMarcEditor from '../../support/fragments/quickMarcEditor';
 import { getLongDelay } from '../../support/utils/cypressTools';
 import MarcAuthorityBrowse from '../../support/fragments/marcAuthority/MarcAuthorityBrowse';
-import dataImportSettingsActionProfiles from '../../support/fragments/settings/dataImport/dataImportSettingsActionProfiles';
-import dataImportSettingsMatchProfiles from '../../support/fragments/settings/dataImport/dataImportSettingsMatchProfiles';
-import dataImportSettingMappingProfiles from '../../support/fragments/settings/dataImport/dataImportSettingsMappingProfiles';
-import dataImportSettingsJobProfiles from '../../support/fragments/settings/dataImport/dataImportSettingsJobProfiles';
+import SettingsActionProfiles from '../../support/fragments/settings/dataImport/settingsActionProfiles';
+import SettingsMatchProfiles from '../../support/fragments/settings/dataImport/settingsMatchProfiles';
+import SettingMappingProfiles from '../../support/fragments/settings/dataImport/settingsMappingProfiles';
+import SettingsJobProfiles from '../../support/fragments/settings/dataImport/settingsJobProfiles';
 import Users from '../../support/fragments/users/users';
 import { Callout } from '../../../interactors';
 import DevTeams from '../../support/dictionary/devTeams';
@@ -88,16 +88,16 @@ describe('MARC Authority management', () => {
 
   it('C350667 Update a MARC authority record via data import. Record match with 010 $a (spitfire)', { tags: [TestTypes.smoke, DevTeams.spitfire, Features.authority] }, () => {
     // profiles preparing
-    dataImportSettingMappingProfiles.createMappingProfileApi().then(mappingProfileResponse => {
-      const specialActionProfile = { ...dataImportSettingsActionProfiles.marcAuthorityUpdateActionProfile };
+    SettingMappingProfiles.createMappingProfileApi().then(mappingProfileResponse => {
+      const specialActionProfile = { ...SettingsActionProfiles.marcAuthorityUpdateActionProfile };
       specialActionProfile.addedRelations[0].detailProfileId = mappingProfileResponse.body.id;
-      dataImportSettingsActionProfiles.createActionProfileApi(specialActionProfile).then(actionProfileResponse => {
-        dataImportSettingsMatchProfiles.createMatchProfileApi().then(matchProfileResponse => {
-          const specialJobProfile = { ...dataImportSettingsJobProfiles.marcAuthorityUpdateJobProfile };
+      SettingsActionProfiles.createActionProfileApi(specialActionProfile).then(actionProfileResponse => {
+        SettingsMatchProfiles.createMatchProfileApi().then(matchProfileResponse => {
+          const specialJobProfile = { ...SettingsJobProfiles.marcAuthorityUpdateJobProfile };
           specialJobProfile.addedRelations[0].detailProfileId = matchProfileResponse.body.id;
           specialJobProfile.addedRelations[1].masterProfileId = matchProfileResponse.body.id;
           specialJobProfile.addedRelations[1].detailProfileId = actionProfileResponse.body.id;
-          dataImportSettingsJobProfiles.createJobProfileApi(specialJobProfile).then(jobProfileResponse => {
+          SettingsJobProfiles.createJobProfileApi(specialJobProfile).then(jobProfileResponse => {
             MarcAuthority.edit();
             QuickMarcEditor.waitLoading();
 
@@ -113,12 +113,12 @@ describe('MARC Authority management', () => {
             MarcAuthority.notContains(addedInSourceRow);
             MarcAuthority.notContains(updatedInSourceRow);
 
-            dataImportSettingsJobProfiles.deleteJobProfileApi(jobProfileResponse.body.id);
-            dataImportSettingsMatchProfiles.deleteMatchProfileApi(matchProfileResponse.body.id);
+            SettingsJobProfiles.deleteJobProfileApi(jobProfileResponse.body.id);
+            SettingsMatchProfiles.deleteMatchProfileApi(matchProfileResponse.body.id);
             // unlink mapping profile and action profile
             const linkedMappingProfile = {
               id: mappingProfileResponse.body.id,
-              profile: { ...dataImportSettingMappingProfiles.marcAuthorityUpdateMappingProfile.profile }
+              profile: { ...SettingMappingProfiles.marcAuthorityUpdateMappingProfile.profile }
             };
             linkedMappingProfile.profile.id = mappingProfileResponse.body.id;
             linkedMappingProfile.addedRelations = [];
@@ -130,10 +130,10 @@ describe('MARC Authority management', () => {
                 'detailProfileType': 'MAPPING_PROFILE'
               }];
 
-            dataImportSettingMappingProfiles.unlinkMappingProfileFromActionProfileApi(mappingProfileResponse.body.id, linkedMappingProfile);
+            SettingMappingProfiles.unlinkMappingProfileFromActionProfileApi(mappingProfileResponse.body.id, linkedMappingProfile);
 
-            dataImportSettingMappingProfiles.deleteMappingProfileApi(mappingProfileResponse.body.id);
-            dataImportSettingsActionProfiles.deleteActionProfileApi(actionProfileResponse.body.id);
+            SettingMappingProfiles.deleteMappingProfileApi(mappingProfileResponse.body.id);
+            SettingsActionProfiles.deleteActionProfileApi(actionProfileResponse.body.id);
           });
         });
       });

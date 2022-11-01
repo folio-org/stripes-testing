@@ -30,8 +30,8 @@ export default {
     // TODO move to const and rewrite functions
     cy.do(HTML({ className: including('linker-button'), id:'type-selector-dropdown-linker-root' }).find(Button()).click());
     cy.do(actionsButton.click());
-    ModalSelectActionProfile.searchActionProfileByName(profileName);
-    ModalSelectActionProfile.selectActionProfile(profileName);
+    ModalSelectProfile.searchProfileByName(profileName);
+    ModalSelectProfile.selectProfile(profileName);
     cy.expect(Accordion('Overview').find(HTML(including(profileName))).exists());
   },
 
