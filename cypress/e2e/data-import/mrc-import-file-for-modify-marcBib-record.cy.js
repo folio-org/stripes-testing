@@ -8,7 +8,6 @@ import JobProfiles from '../../support/fragments/data_import/job_profiles/jobPro
 import MatchProfiles from '../../support/fragments/data_import/match_profiles/matchProfiles';
 import DataImport from '../../support/fragments/data_import/dataImport';
 import Logs from '../../support/fragments/data_import/logs/logs';
-import SearchInventory from '../../support/fragments/data_import/searchInventory';
 import InventorySearch from '../../support/fragments/inventory/inventorySearch';
 import ExportMarcFile from '../../support/fragments/data-export/export-marc-file';
 import FileManager from '../../support/utils/fileManager';
@@ -44,9 +43,11 @@ describe('ui-data-import: Verify the possibility to modify MARC Bibliographic re
     ])
       .then(userProperties => {
         user = userProperties;
-        cy.login(userProperties.username, userProperties.password);
+        cy.login(user.username, user.password, {
+          path: TopMenu.dataImportPath,
+          waiter: DataImport.waitLoading
+        });
       });
-    DataImport.checkUploadState();
   });
 
   after(() => {
@@ -83,7 +84,6 @@ describe('ui-data-import: Verify the possibility to modify MARC Bibliographic re
     };
 
     // upload a marc file for creating of the new instance, holding and item
-    cy.visit(TopMenu.dataImportPath);
     DataImport.uploadFile('oneMarcBib.mrc', nameMarcFileForCreate);
     JobProfiles.searchJobProfileForImport('Default - Create instance and SRS MARC Bib');
     JobProfiles.runImportFile(nameMarcFileForCreate);
@@ -95,11 +95,11 @@ describe('ui-data-import: Verify the possibility to modify MARC Bibliographic re
     });
 
     // get Instance HRID through API
-    SearchInventory.getInstanceHRID()
+    InventorySearch.getInstanceHRID()
       .then(hrId => {
         // download .csv file
         cy.visit(TopMenu.inventoryPath);
-        SearchInventory.searchInstanceByHRID(hrId[0]);
+        InventorySearch.searchInstanceByHRID(hrId[0]);
         InventorySearch.saveUUIDs();
         ExportMarcFile.downloadCSVFile(nameForCSVFile, 'SearchInstanceUUIDs*');
         FileManager.deleteFolder(Cypress.config('downloadsFolder'));

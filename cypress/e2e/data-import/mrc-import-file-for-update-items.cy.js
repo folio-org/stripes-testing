@@ -3,7 +3,6 @@ import getRandomPostfix from '../../support/utils/stringTools';
 import DataImport from '../../support/fragments/data_import/dataImport';
 import JobProfiles from '../../support/fragments/data_import/job_profiles/jobProfiles';
 import Logs from '../../support/fragments/data_import/logs/logs';
-import SearchInventory from '../../support/fragments/data_import/searchInventory';
 import InventorySearch from '../../support/fragments/inventory/inventorySearch';
 import ExportFile from '../../support/fragments/data-export/exportFile';
 import TopMenu from '../../support/fragments/topMenu';
@@ -281,10 +280,8 @@ describe('ui-data-import: MARC file upload with the update of instance, holding,
   };
 
   beforeEach(() => {
-    cy.loginAsAdmin();
+    cy.loginAsAdmin({ path: TopMenu.dataImportPath, waiter: DataImport.waitLoading });
     cy.getAdminToken();
-
-    DataImport.checkUploadState();
 
     const jobProfile = {
       profile: {
@@ -371,7 +368,6 @@ describe('ui-data-import: MARC file upload with the update of instance, holding,
   // MODSOURMAN-819
   it('C343335 MARC file upload with the update of instance, holding, and items (folijet)', { tags: [TestTypes.smoke, DevTeams.folijet] }, () => {
     // upload a marc file for creating of the new instance, holding and item
-    cy.visit(TopMenu.dataImportPath);
     DataImport.uploadFile('oneMarcBib.mrc', nameMarcFileForImportCreate);
     JobProfiles.searchJobProfileForImport(testData.jobProfileForCreate.profile.name);
     JobProfiles.runImportFile(nameMarcFileForImportCreate);
@@ -385,12 +381,11 @@ describe('ui-data-import: MARC file upload with the update of instance, holding,
     FileDetails.checkItemsQuantityInSummaryTable(0, '1');
 
     // get Instance HRID through API
-    SearchInventory
-      .getInstanceHRID()
+    InventorySearch.getInstanceHRID()
       .then(hrId => {
         // download .csv file
         cy.visit(TopMenu.inventoryPath);
-        SearchInventory.searchInstanceByHRID(hrId[1]);
+        InventorySearch.searchInstanceByHRID(hrId[1]);
         InventorySearch.saveUUIDs();
         ExportMarcFile.downloadCSVFile(nameForCSVFile, 'SearchInstanceUUIDs*');
         FileManager.deleteFolder(Cypress.config('downloadsFolder'));

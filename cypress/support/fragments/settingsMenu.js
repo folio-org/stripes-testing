@@ -60,6 +60,7 @@ export default {
   usersPath: 'settings/users',
   paymentsPath: 'settings/users/payments',
   conditionsPath: 'settings/users/conditions',
+  limitsPath: 'settings/users/limits',
   waiveReasons: 'settings/users/waivereasons',
   patronBlockTemplates: 'settings/users/manual-block-templates',
   // Data Import

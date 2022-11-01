@@ -2,8 +2,11 @@ import {
   MultiColumnListCell,
   MultiColumnList,
   MultiColumnListHeader,
-  MultiColumnListRow
+  MultiColumnListRow,
+  Link
 } from '../../../../../interactors';
+
+const invoiceNumberFromEdifactFile = '94999';
 
 const resultsList = MultiColumnList({ id:'search-results-list' });
 const jobSummaryTable = MultiColumnList({ id: 'job-summary-table' });
@@ -86,8 +89,6 @@ function checkItemsStatusesInResultList(rowIndex, itemStatuses) {
   });
 }
 
-const invoiceNumberFromEdifactFile = '94999';
-
 export default {
   columnName,
   status,
@@ -101,7 +102,15 @@ export default {
   checkHoldingsQuantityInSummaryTable,
   checkItemQuantityInSummaryTable,
 
-  openItemInInventory:(columnIndex, row = 0) => {
-    cy.do(resultsList.find(MultiColumnListCell({ row, columnIndex })).click());
+  openInstanceInInventory:(row = 0, itemStatus) => {
+    cy.do(resultsList.find(MultiColumnListCell({ row, columnIndex: 3 }))
+      .find(Link(itemStatus))
+      .click());
+  },
+
+  openHoldingsInInventory:(row = 0, itemStatus) => {
+    cy.do(resultsList.find(MultiColumnListCell({ row, columnIndex: 4 }))
+      .find(Link(itemStatus))
+      .click());
   }
 };

@@ -55,5 +55,12 @@ export default {
     cy.get('#input-search-match-profiles-field').clear().type(profileName);
     cy.do(Pane('Match profiles').find(Button('Search')).click());
     cy.expect(MultiColumnListCell(profileName).exists());
+  },
+
+  createMatchProfileWithMatchingBy999Field:(profile) => {
+    openNewMatchProfileForm();
+    NewMatchProfile.fillMatchBy999Field(profile);
+    cy.do(Button('Save as profile & Close').click());
+    waitCreatingMatchProfile();
   }
 };

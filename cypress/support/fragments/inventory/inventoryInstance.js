@@ -21,7 +21,6 @@ import {
   Modal
 } from '../../../../interactors';
 import InventoryInstanceEdit from './InventoryInstanceEdit';
-import HoldingsRecordView from './holdingsRecordView';
 import InventoryViewSource from './inventoryViewSource';
 import NewHoldingsRecord from './newHoldingsRecord';
 import InventoryInstanceSelectInstanceModal from './holdingsMove/inventoryInstanceSelectInstanceModal';
@@ -149,7 +148,7 @@ export default {
 
   openHoldingView: () => {
     cy.do(viewHoldingsButton.click());
-    HoldingsRecordView.waitLoading();
+    cy.expect(Button('Actions').exists());
   },
   createHoldingsRecord:(permanentLocation) => {
     pressAddHoldingsButton();
