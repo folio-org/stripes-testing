@@ -342,7 +342,7 @@ export default {
     cy.expect(singleRecordImportModal.exists());
   },
 
-  doOclcImport:(oclc) => {
+  importWithOclc:(oclc) => {
     cy.do(singleRecordImportModal.find(TextField({ name:'externalIdentifier' })).fillIn(oclc));
     cy.do(singleRecordImportModal.find(Button('Import')).click());
   },

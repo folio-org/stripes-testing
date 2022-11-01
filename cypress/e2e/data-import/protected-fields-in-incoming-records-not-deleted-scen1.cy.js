@@ -93,7 +93,7 @@ describe('ui-data-import: Check that protected fields in incoming records are no
     InventoryInstance.checkElectronicAccess();
     InventoryInstance.startOverlaySourceBibRecord();
     InventoryInstance.singleRecordImportModalIsPresented();
-    InventoryInstance.doOclcImport(oclcForChanging);
+    InventoryInstance.importWithOclc(oclcForChanging);
     InventoryInstance.checkCalloutMessage(`Updated record ${oclcForChanging}`);
     InventoryInstance.viewSource();
     InventoryViewSource.contains(`${protectedField}\t`);
