@@ -97,6 +97,7 @@ export default {
     // //Need to wait,while data of Acquisition Unit will be loaded
     cy.wait(5000);
     cy.do(actionsButton.click());
+    // //Need to wait,while wright link of Edit button will be loaded
     cy.wait(5000);
     cy.do(Button('Edit').click());
   },

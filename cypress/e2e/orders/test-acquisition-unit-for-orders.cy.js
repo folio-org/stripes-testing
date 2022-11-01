@@ -22,13 +22,6 @@ describe('ui-finance: Orders', () => {
   let orderId;
 
   before(() => {
-    cy.getAdminToken();
-    Organizations.createOrganizationViaApi(organization)
-      .then(response => {
-        organization.id = response;
-      });
-    order.vendor = organization.name;
-    order.orderType = 'One-time';
     cy.createTempUser([
       permissions.uiOrdersView.gui,
       permissions.uiOrdersCreate.gui,
@@ -48,6 +41,12 @@ describe('ui-finance: Orders', () => {
       .then(userProperties => {
         user = userProperties;
       });
+      Organizations.createOrganizationViaApi(organization)
+      .then(response => {
+        organization.id = response;
+      });
+    order.vendor = organization.name;
+    order.orderType = 'One-time';
   });
 
   after(() => {
