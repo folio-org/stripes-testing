@@ -17,6 +17,8 @@ import ServicePoints from '../../../../support/fragments/settings/tenant/service
 import InventoryInstance from '../../../../support/fragments/inventory/inventoryInstance';
 import DevTeams from '../../../../support/dictionary/devTeams';
 import CheckOutActions from '../../../../support/fragments/check-out-actions/check-out-actions';
+import SettingsMenu from '../../../../support/fragments/settingsMenu';
+import OtherSettings from '../../../../support/fragments/settings/circulation/otherSettings';
 
 describe('ui-users:', () => {
   let user = {};
@@ -133,7 +135,8 @@ describe('ui-users:', () => {
       });
 
     cy.createTempUser([
-      permissions.checkoutCirculatingItems.gui
+      permissions.checkoutCirculatingItems.gui,
+      permissions.uiCirculationSettingsOtherSettings.gui
     ])
       .then(userProperties => {
         user = userProperties;
@@ -143,6 +146,10 @@ describe('ui-users:', () => {
       })
       .then(() => {
         cy.login(user.username, user.password);
+
+        cy.visit(SettingsMenu.circulationOtherSettingsPath);
+        OtherSettings.waitLoading();
+        OtherSettings.selectPatronIdsForCheckoutScanning(['Barcode'], '1');
       });
   });
 
