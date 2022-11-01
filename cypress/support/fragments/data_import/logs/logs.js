@@ -26,6 +26,7 @@ const selectAllLogs = () => { cy.do(MultiColumnList({ id:'job-logs-list' }).find
 const deleteAllLogsClick = () => { cy.do(Button('Delete selected logs').click()); };
 
 export default {
+  quantityRecordsInInvoice,
   actionsButtonClick,
   openViewAllLogs,
   selectAllLogs,
@@ -41,17 +42,9 @@ export default {
     cy.expect(MultiColumnListCell(jobProfileName).exists());
   },
 
-  checkStatusOfJobProfile:(status = 'Completed') => {
-    cy.do(MultiColumnListCell({ row: 0, content: status }).exists());
-  },
-
-  openFileDetails:(fileName) => {
-    cy.do(Link(fileName).click());
-  },
-
-  checkQuantityRecordsInFile:(quantityRecords) => {
-    cy.do(MultiColumnListCell({ row: 0, content: quantityRecords }).exists());
-  },
+  checkStatusOfJobProfile:(status = 'Completed') => cy.do(MultiColumnListCell({ row: 0, content: status }).exists()),
+  openFileDetails:(fileName) => cy.do(Link(fileName).click()),
+  checkQuantityRecordsInFile:(quantityRecords) => cy.do(MultiColumnListCell({ row: 0, content: quantityRecords }).exists()),
 
   clickOnHotLink: (row = 0, columnIndex = 3, status = 'Created') => {
     cy.do(MultiColumnList({ id: 'search-results-list' })
@@ -64,8 +57,6 @@ export default {
       .find(MultiColumnListCell({ row, columnIndex, content: status }))
       .exists());
   },
-
-  quantityRecordsInInvoice,
 
   goToTitleLink: (title) => {
     // When you click on a link, it opens in a new tab. Because of this, a direct transition to the link is carried out.

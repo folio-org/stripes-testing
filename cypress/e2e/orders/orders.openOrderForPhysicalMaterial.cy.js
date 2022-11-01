@@ -55,7 +55,7 @@ describe('orders: create an order', () => {
       Orders.openOrder();
 
       cy.visit(TopMenu.inventoryPath);
-      InventorySearch.instanceSearch('Title (all)', orderLineTitle);
+      InventorySearch.searchByParameter('Title (all)', orderLineTitle);
       InventorySearch.verifySearchResult(orderLineTitle);
     });
   });

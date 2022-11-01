@@ -26,10 +26,12 @@ describe('ui-data-import: A user can delete import logs with "Data import: Can d
     ])
       .then(userProperties => {
         userId = userProperties.userId;
-        cy.login(userProperties.username, userProperties.password);
+        cy.login(userProperties.username, userProperties.password, {
+          path: TopMenu.dataImportPath,
+          waiter: DataImport.waitLoading
+        });
       })
       .then(() => {
-        cy.visit(TopMenu.dataImportPath);
         DataImport.checkIsLandingPageOpened();
 
         new Array(numberOfLogsToUpload).fill(null).forEach((_, index) => {

@@ -18,7 +18,6 @@ import {
   TextField
 } from '../../../../interactors';
 import InventoryInstanceEdit from './InventoryInstanceEdit';
-import HoldingsRecordView from './holdingsRecordView';
 import InventoryViewSource from './inventoryViewSource';
 import NewHoldingsRecord from './newHoldingsRecord';
 import InventoryInstanceSelectInstanceModal from './holdingsMove/inventoryInstanceSelectInstanceModal';
@@ -141,7 +140,7 @@ export default {
 
   openHoldingView: () => {
     cy.do(viewHoldingsButton.click());
-    HoldingsRecordView.waitLoading();
+    cy.expect(Button('Actions').exists());
   },
   createHoldingsRecord:(permanentLocation) => {
     pressAddHoldingsButton();
@@ -328,7 +327,7 @@ export default {
       Button({ id: 'clickable-view-source' }).exists(),
       Button({ id: 'view-requests' }).exists(),
       Button({ id: 'edit-instance-marc' }).absent(),
-    ])
+    ]);
     cy.do(Button({ id: 'clickable-view-source' }).click());
     cy.expect(HTML('MARC bibliographic record').exists());
   }
