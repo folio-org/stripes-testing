@@ -25,6 +25,8 @@ const keywordInput = TextField({ id: 'input-inventory-search' });
 const searchButton = Button('Search');
 const searchTextField = TextField('Search ');
 const inventorySearch = TextInput({ id: 'input-inventory-search' });
+const inventorySearchInput = Select({ id: 'input-inventory-search-qindex' });
+const resetAllButton = Button({ id: 'clickable-reset-all'});
 const navigationInstancesButton = Button({ id: 'segment-navigation-instances' });
 
 const searchInstanceByHRID = (id) => {
@@ -200,7 +202,7 @@ export default {
     cy.get('#input-inventory-search-qindex').then(elem => {
       expect(elem.text()).to.include('Keyword (title, contributor, identifier');
     });
-    cy.expect(Select({ id: 'input-inventory-search-qindex' }).exists());
+    cy.expect(inventorySearchInput.exists());
   },
 
   verifyCallNumberBrowseEmptyPane() {
@@ -285,5 +287,35 @@ export default {
       }).then(({ body: { instances } }) => {
         return instances;
       });
-  }
+  },
+
+  selectSearchOptions(searchOption, text) {
+    cy.do([
+      inventorySearchInput.choose(searchOption),
+      keywordInput.fillIn(text),
+    ]);
+  },
+
+  clickSearch() {
+    cy.do(searchButton.click());
+  },
+
+  checkContributorRequest() {
+    cy.intercept('GET', '/search/instances?*').as('getInstances');
+
+    this.clickSearch();
+
+    cy.wait('@getInstances').then(interception => {
+      // checking that request contains '=' after 'contributors.name'
+      expect(interception.request.url).to.include('contributors.name%3D');
+    });
+  },
+
+  resetAll() {
+    cy.do(resetAllButton.click());
+  },
+
+  checkContributorsColumResult(cellContent) {
+    cy.expect(MultiColumnList({ id: 'list-inventory' }).find(MultiColumnListCell(including(cellContent))).exists());
+  },
 };
