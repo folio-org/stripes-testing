@@ -9,7 +9,6 @@ import InventoryInstances from '../../../../support/fragments/inventory/inventor
 import LoanPolicyActions from '../../../../support/fragments/circulation/loan-policy';
 import { CY_ENV, LOST_ITEM_FEES_POLICY_NAMES, NOTICE_POLICY_NAMES, OVERDUE_FINE_POLICY_NAMES, REQUEST_POLICY_NAMES } from '../../../../support/constants';
 import FixedDueDateSchedules from '../../../../support/fragments/circulation/fixedDueDateSchedules';
-import СheckOutActions from '../../../../support/fragments/check-out-actions/check-out-actions';
 import LimitCheckOut from '../../../../support/fragments/checkout/modals/limitCheckOut';
 import CheckInActions from '../../../../support/fragments/check-in-actions/checkInActions';
 import UserEdit from '../../../../support/fragments/users/userEdit';
@@ -17,6 +16,7 @@ import Users from '../../../../support/fragments/users/users';
 import ServicePoints from '../../../../support/fragments/settings/tenant/servicePoints/servicePoints';
 import InventoryInstance from '../../../../support/fragments/inventory/inventoryInstance';
 import DevTeams from '../../../../support/dictionary/devTeams';
+import CheckOutActions from '../../../../support/fragments/check-out-actions/check-out-actions';
 
 describe('ui-users:', () => {
   let user = {};
@@ -192,12 +192,12 @@ describe('ui-users:', () => {
 
   it('C9277 Verify that maximum number of items borrowed for loan type (e.g. course reserve) limit works (folijet) (prokopovych)', { tags: [TestTypes.smoke, DevTeams.folijet] }, () => {
     cy.visit(TopMenu.checkOutPath);
-    СheckOutActions.checkOutItemUser(user.barcode, limitTestItems[0].barcode);
-    СheckOutActions.checkOutItemUser(user.barcode, limitTestItems[1].barcode);
+    CheckOutActions.checkOutItemUser(user.barcode, limitTestItems[0].barcode);
+    CheckOutActions.checkOutItemUser(user.barcode, limitTestItems[1].barcode);
     testItems.forEach((item) => {
-      СheckOutActions.checkOutItemUser(user.barcode, item.barcode);
+      CheckOutActions.checkOutItemUser(user.barcode, item.barcode);
     });
-    СheckOutActions.checkOutItemUser(user.barcode, limitTestItems[2].barcode);
+    CheckOutActions.checkOutItemUser(user.barcode, limitTestItems[2].barcode);
     LimitCheckOut.verifyErrorMessage(1);
     LimitCheckOut.cancelModal();
   });
