@@ -84,8 +84,9 @@ export default {
       cy.expect(HTML(property).exists());
     });
   },
-
-  getCreatedAuthorityID: (rowIndex = 0) => cy.then(() => MultiColumnList({ id: 'search-results-list' })
-    .find(MultiColumnListRow({ indexRow: `row-${rowIndex}` }))
-    .find(Link('Created')).href()),
+  
+  getCreatedItemsID: (rowIndex = 0) => cy.then(() =>
+    MultiColumnList({ id: 'search-results-list' })
+      .find(MultiColumnListRow({ indexRow: `row-${rowIndex}` }))
+      .find(Link('Created')).href()),
 };
