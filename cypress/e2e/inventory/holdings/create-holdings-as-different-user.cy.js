@@ -1,6 +1,6 @@
 import TopMenu from '../../../support/fragments/topMenu';
 import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
-import SearchInventory from '../../../support/fragments/data_import/searchInventory';
+import InventorySearch from '../../../support/fragments/inventory/inventorySearch';
 import { MultiColumnListCell } from '../../../../interactors';
 import permissions from '../../../support/dictionary/permissions';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
@@ -48,7 +48,7 @@ describe('ui-inventory: Create a Holdings record as another user than the one th
 
   it('C1294: Create a Holdings record as another user than the one that created the Instance (folijet) (prokopovych)', { tags: [TestTypes.smoke, DevTeams.folijet] }, () => {
     InventoryInstances.add(recordsData.instanceTitle);
-    SearchInventory.searchInstanceByTitle(recordsData.instanceTitle);
+    InventorySearch.searchInstanceByTitle(recordsData.instanceTitle);
     cy.expect(MultiColumnListCell({ row: 0, content: recordsData.instanceTitle }).exists());
 
     // logout and login as a different user
@@ -56,7 +56,7 @@ describe('ui-inventory: Create a Holdings record as another user than the one th
     cy.login(firstUser.username, firstUser.password);
 
     cy.visit(TopMenu.inventoryPath);
-    SearchInventory.searchInstanceByTitle(recordsData.instanceTitle);
+    InventorySearch.searchInstanceByTitle(recordsData.instanceTitle);
     InventoryInstances.selectInstance();
     InventoryInstance.waitLoading();
     InventoryInstance.createHoldingsRecord(recordsData.permanentLocationOption);

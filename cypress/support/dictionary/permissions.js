@@ -35,12 +35,10 @@ export default {
   inventoryAll: { internal: ['inventory.all', 'Inventory: All permissions'], gui: 'Inventory: All permissions' },
   uiCallNumberBrowse: { internal: 'browse.call-numbers.instances.collection.get', gui:'Call number browse: View permissions' },
   uiInventorySingleRecordImport: { internal: 'ui-inventory.single-record-import', gui: 'Inventory: Import single bibliographic records' },
-  uiInventorySettingsFastAdd: { internal: 'ui-inventory.settings.fast-add', gui: 'Settings (Inventory): Edit fast add settings' },
   uiInventoryMarkItemsWithdrawn: { internal: 'ui-inventory.items.mark-items-withdrawn', gui: 'Inventory: Mark items withdrawn' },
   uiInventoryViewInstances: { internal: 'ui-inventory.instance.view', gui: 'Inventory: View instances, holdings, and items' },
   uiInventoryStorageModule: { internal: 'inventory-storage.all', gui: 'inventory storage module - all permissions' },
   uiInventoryHoldingsMove:{ internal:'ui-inventory.holdings.move', gui:'Inventory: Move holdings' },
-  uiCreateEditDeleteMaterialTypes: { internal: 'ui-inventory.settings.materialtypes', gui: 'Settings (Inventory): Create, edit, delete material types' },
   uiInventoryMarkAsMissing: { internal: 'ui-inventory.item.markasmissing', gui: 'Inventory: View, create, edit, mark missing items' },
   uiInventoryMoveItems: { internal: 'ui-inventory.item.move', gui: 'Inventory: Move items' },
   uiInventoryViewCreateEditHoldings:{ internal:'ui-inventory.holdings.edit', gui:'Inventory: View, create, edit holdings' },
@@ -177,4 +175,7 @@ export default {
   uiFinanceAssignAcquisitionUnitsToNewRecord: { internal: 'ui-finance.acq.unit.assignment.assign', gui: 'Finance: Assign acquisition units to new record' },
   // Settings
   uiSettingsAcquisitionUnitsViewEditCreateDelete: { internal: 'ui-acquisition-units.settings.all', gui: 'Settings (acquisition units): Can view, edit, create and delete acquisition units' },
+  uiInventorySettingsFastAdd: { internal: 'ui-inventory.settings.fast-add', gui: 'Settings (Inventory): Edit fast add settings' },
+  uiCreateEditDeleteMaterialTypes: { internal: 'ui-inventory.settings.materialtypes', gui: 'Settings (Inventory): Create, edit, delete material types' },
+  uiInventorySettingsConfigureSingleRecordImport: { internal: 'ui-inventory.settings.single-record-import', gui: 'Settings (Inventory): Configure single-record import' },
 };

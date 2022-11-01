@@ -9,12 +9,12 @@ import FieldMappingProfiles from '../../support/fragments/data_import/mapping_pr
 import NewFieldMappingProfile from '../../support/fragments/data_import/mapping_profiles/newFieldMappingProfile';
 import MatchProfiles from '../../support/fragments/data_import/match_profiles/matchProfiles';
 import NewMatchProfile from '../../support/fragments/data_import/match_profiles/newMatchProfile';
-import SearchInventory from '../../support/fragments/data_import/searchInventory';
 import HoldingsRecordView from '../../support/fragments/inventory/holdingsRecordView';
 import InventoryInstance from '../../support/fragments/inventory/inventoryInstance';
 import SettingsMenu from '../../support/fragments/settingsMenu';
 import TopMenu from '../../support/fragments/topMenu';
 import Logs from '../../support/fragments/data_import/logs/logs';
+import InventorySearch from '../../support/fragments/inventory/inventorySearch';
 
 describe('ui-data-import: Match on Holdings 856 $u', () => {
   const matchProfileName = `autotestMatchProf${getRandomPostfix()}`;
@@ -168,29 +168,29 @@ describe('ui-data-import: Match on Holdings 856 $u', () => {
     JobProfiles.closeJobProfile(updateEHoldingsJobProfileName);
 
     cy.visit(TopMenu.dataImportPath);
-    DataImport.uploadFile('marcFileForMatchOnURL.mrc', nameForCreateMarcFile);
+    DataImport.uploadFile('marcFileForC17025.mrc', nameForCreateMarcFile);
     JobProfiles.searchJobProfileForImport(createInstanceAndEHoldingsJobProfileName);
     JobProfiles.runImportFile(nameForCreateMarcFile);
 
-    SearchInventory.getInstanceHRID()
+    InventorySearch.getInstanceHRID()
       .then(hrId => {
-        instanceHRID = hrId[0];
+        instanceHRID = hrId;
         cy.visit(TopMenu.inventoryPath);
-        SearchInventory.searchInstanceByHRID(instanceHRID);
+        InventorySearch.searchInstanceByHRID(instanceHRID);
         InventoryInstance.openHoldingView();
         HoldingsRecordView.checkURIIsNotEmpty();
       });
 
     cy.visit(TopMenu.dataImportPath);
-    DataImport.uploadFile('marcFileForMatchOnURL.mrc', nameForUpdateCreateMarcFile);
+    DataImport.uploadFile('marcFileForC17025.mrc', nameForUpdateCreateMarcFile);
     JobProfiles.searchJobProfileForImport(updateEHoldingsJobProfileName);
     JobProfiles.runImportFile(nameForUpdateCreateMarcFile);
     Logs.checkStatusOfJobProfile();
 
-    SearchInventory.getInstanceHRID()
+    InventorySearch.getInstanceHRID()
       .then(() => {
         cy.visit(TopMenu.inventoryPath);
-        SearchInventory.searchInstanceByHRID(instanceHRID);
+        InventorySearch.searchInstanceByHRID(instanceHRID);
         InventoryInstance.openHoldingView();
         HoldingsRecordView.checkCallNumber('ONLINE');
       });

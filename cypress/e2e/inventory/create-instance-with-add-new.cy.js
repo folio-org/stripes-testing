@@ -1,4 +1,4 @@
-import SearchInventory from '../../support/fragments/data_import/searchInventory';
+import InventorySearch from '../../support/fragments/inventory/inventorySearch';
 import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
 import TopMenu from '../../support/fragments/topMenu';
 import TestTypes from '../../support/dictionary/testTypes';
@@ -24,7 +24,7 @@ describe('ui-inventory: Create new instance with add "New"', () => {
 
   it('C598 Create new instance with add "New" (folijet) (prokopovych)', { tags: [TestTypes.smoke, DevTeams.folijet] }, () => {
     InventoryInstances.add(instanceTitle);
-    SearchInventory.searchInstanceByTitle(instanceTitle);
+    InventorySearch.searchInstanceByTitle(instanceTitle);
 
     cy.expect(MultiColumnListCell({ row: 0, content: instanceTitle }).exists());
   });

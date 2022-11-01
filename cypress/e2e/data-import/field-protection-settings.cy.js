@@ -14,7 +14,7 @@ import Logs from '../../support/fragments/data_import/logs/logs';
 import FileDetails from '../../support/fragments/data_import/logs/fileDetails';
 import InstanceRecordView from '../../support/fragments/inventory/instanceRecordView';
 import MarcFieldProtection from '../../support/fragments/settings/dataImport/marcFieldProtection';
-import SearchInventory from '../../support/fragments/data_import/searchInventory';
+import InventorySearch from '../../support/fragments/inventory/inventorySearch';
 import MatchProfiles from '../../support/fragments/data_import/match_profiles/matchProfiles';
 import NewMatchProfile from '../../support/fragments/data_import/match_profiles/newMatchProfile';
 import InventoryViewSource from '../../support/fragments/inventory/inventoryViewSource';
@@ -139,7 +139,7 @@ describe('ui-data-import: Check that field protection settings work properly dur
     FieldMappingProfiles.openNewMappingProfileForm();
     NewFieldMappingProfile.fillSummaryInMappingProfile(instanceMappingProfile);
     NewFieldMappingProfile.fillInstanceStatusTerm('"Batch Loaded"');
-    NewFieldMappingProfile.addStatisticalCode('"ARL (Collection stats): books - Book, print (books)"');
+    NewFieldMappingProfile.addStatisticalCode('"ARL (Collection stats): books - Book, print (books)"', 8);
     FieldMappingProfiles.saveProfile();
     FieldMappingProfiles.closeViewModeForMappingProfile(instanceMappingProfile.name);
   };
@@ -157,12 +157,12 @@ describe('ui-data-import: Check that field protection settings work properly dur
 
     // create job profile
     cy.visit(SettingsMenu.jobProfilePath);
-    JobProfiles.createJobProfileWithLinkingProfiles(jobProfile, actionProfile);
+    JobProfiles.createJobProfileWithLinkingProfiles(jobProfile, actionProfile.name);
     JobProfiles.checkJobProfilePresented(jobProfileName);
 
     // upload a marc file for creating of the new instance
     cy.visit(TopMenu.dataImportPath);
-    DataImport.uploadFile('marcFileForProtectionsFields.mrc', nameMarcFileForCreate);
+    DataImport.uploadFile('marcFileForC17017.mrc', nameMarcFileForCreate);
     JobProfiles.searchJobProfileForImport(jobProfileName);
     JobProfiles.runImportFile(nameMarcFileForCreate);
     Logs.checkStatusOfJobProfile('Completed');
@@ -179,13 +179,12 @@ describe('ui-data-import: Check that field protection settings work properly dur
     InventoryViewSource.verifyFieldInMARCBibSource(marcFieldProtected[1], dataForField920);
 
     // get Instance HRID through API
-    SearchInventory
-      .getInstanceHRID()
+    InventorySearch.getInstanceHRID()
       .then(hrId => {
         instanceHrid = hrId[0];
         // change file using order number
         DataImport.editMarcFile(
-          'marcFileForProtectionsFields.mrc',
+          'marcFileForC17017.mrc',
           editedMarcFileName,
           [dataFromField001, dataForField500, dataForField507, dataForField920],
           [instanceHrid, updateDataForField500, updateDataForField507, updateDataForField920]

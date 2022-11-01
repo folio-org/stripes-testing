@@ -35,14 +35,12 @@ const actions = {
   deleteAllExistingAndAddThese: 'Delete all existing and add these',
   findAndRemoveThese: 'Find and remove these'
 };
-
 const actionsFieldMappingsForMarc = {
   modify: 'Modifications',
   update: 'Updates'
 };
 
 const permanentLocation = '"Annex (KU/CC/DI/A)"';
-
 const materialType = '"book"';
 const permanentLoanType = '"Can circulate"';
 const status = '"In process"';
@@ -60,11 +58,6 @@ const defaultMappingProfile = {
   fillProfile:''
 };
 
-const fieldMappingsForMarc = {
-  update: 'Updates',
-  modify: 'Modifications'
-};
-
 const selectOrganizationByName = (organizationName) => {
   cy.do([
     organizationModal.find(TextField({ id: 'input-record-search' })).fillIn(organizationName),
@@ -79,9 +72,7 @@ const waitLoading = () => {
   cy.wait(500);
 };
 
-const selectFromResultsList = (rowNumber = 0) => {
-  cy.do(organizationModal.find(MultiColumnListRow({ index: rowNumber })).click());
-};
+const selectFromResultsList = (rowNumber = 0) => cy.do(organizationModal.find(MultiColumnListRow({ index: rowNumber })).click());
 
 export default {
   folioRecordTypeValue,
@@ -214,15 +205,6 @@ export default {
     cy.do(saveButton.click());
   },
 
-  fillMappingProfileForUpdatesMarc:(specialMappingProfile = defaultMappingProfile) => {
-    cy.do([
-      TextField({ name:'profile.name' }).fillIn(specialMappingProfile.name),
-      Select({ name:'profile.incomingRecordType' }).choose(incomingRecordType.marcBib),
-      Select({ name:'profile.existingRecordType' }).choose(specialMappingProfile.typeValue),
-      Select({ name:'profile.mappingDetails.marcMappingOption' }).choose(fieldMappingsForMarc.update),
-    ]);
-  },
-
   addName:(name) => cy.do(TextField({ name:'profile.name' }).fillIn(name)),
   addIncomingRecordType:(type) => cy.do(Select({ name:'profile.incomingRecordType' }).choose(type)),
   addFolioRecordType:(folioType) => cy.do(Select({ name:'profile.existingRecordType' }).choose(folioType)),
@@ -236,6 +218,15 @@ export default {
   fillQuantity:(quantity) => cy.do(TextField('Quantity*').fillIn(quantity)),
   fillSubTotal:(number) => cy.do(TextField('Sub-total*').fillIn(number)),
 
+  fillMappingProfileForUpdatesMarc:(specialMappingProfile = defaultMappingProfile) => {
+    cy.do([
+      TextField({ name:'profile.name' }).fillIn(specialMappingProfile.name),
+      Select({ name:'profile.incomingRecordType' }).choose(incomingRecordType.marcBib),
+      Select({ name:'profile.existingRecordType' }).choose(specialMappingProfile.typeValue),
+      Select({ name:'profile.mappingDetails.marcMappingOption' }).choose(actionsFieldMappingsForMarc.update),
+    ]);
+  },
+
   fillSummaryInMappingProfile:(specialMappingProfile = defaultMappingProfile) => {
     cy.do([
       TextField({ name:'profile.name' }).fillIn(specialMappingProfile.name),
@@ -248,7 +239,7 @@ export default {
     // number needs for using this method in filling fields for holdings and item profiles
     const statisticalCodeFieldName = `profile.mappingDetails.mappingFields[${number}].repeatableFieldAction`;
 
-    cy.do(Select(statisticalCodeFieldName).choose(actions.addTheseToExisting));
+    cy.do(Select({ name: statisticalCodeFieldName }).choose(actions.addTheseToExisting));
     cy.do(Button('Add statistical code').click());
     cy.do(TextField('Statistical code').fillIn(name));
     waitLoading();
@@ -318,16 +309,19 @@ export default {
   },
 
   addItemNotes:(noteType, note, staffOnly) => {
-    cy.do(Select({ name:'profile.mappingDetails.mappingFields[25].repeatableFieldAction' }).choose(actions.addTheseToExisting));
+    cy.do(Select({ name:'profile.mappingDetails.mappingFields[25].repeatableFieldAction' })
+      .choose(actions.addTheseToExisting));
     cy.do(Button('Add item note').click());
     cy.do(TextField('Note type').fillIn(noteType));
     cy.do(TextField('Note').fillIn(note));
-    cy.do(Select({ name:'profile.mappingDetails.mappingFields[25].subfields[0].fields[2].booleanFieldAction' }).choose(staffOnly));
+    cy.do(Select({ name:'profile.mappingDetails.mappingFields[25].subfields[0].fields[2].booleanFieldAction' })
+      .choose(staffOnly));
     waitLoading();
   },
 
   addSuppressFromDiscovery:() => {
-    cy.do(Select({ name:'profile.mappingDetails.mappingFields[0].booleanFieldAction' }).choose('Mark for all affected records'));
+    cy.do(Select({ name:'profile.mappingDetails.mappingFields[0].booleanFieldAction' })
+      .choose('Mark for all affected records'));
     waitLoading();
   },
 
