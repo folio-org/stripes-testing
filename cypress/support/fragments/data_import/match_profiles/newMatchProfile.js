@@ -16,6 +16,7 @@ const optionsList = {
   itemHrid: 'Admin data: Item HRID',
   pol: 'Acquisitions data: Purchase order line (POL)',
   uri: 'Electronic access: URI',
+  instanceUuid: 'Admin data: Instance UUID',
   holdingsPermLoc: 'Location: Permanent',
   itemPermLoc: 'Location: Permanent',
   systemControlNumber: 'Identifier: Control number'
@@ -101,6 +102,26 @@ const fillMatchProfileForm = ({
     cy.expect(criterionValueTypeList.exists());
     cy.do(SelectionList({ id:'sl-container-criterion-value-type' }).find(SelectionOption(itemOption)).click());
   }
+};
+
+const fillMatchBy999Field = ({
+  profileName,
+  incomingRecordFields,
+  matchCriterion,
+  instanceOption
+}) => {
+  cy.do(TextField('Name*').fillIn(profileName));
+  // wait for data to be loaded
+  cy.wait(1500);
+  cy.do(matchProfileDetailsAccordion.find(Button({ dataId:'INSTANCE' })).click());
+  fillIncomingRecordFields(incomingRecordFields.field, 'field');
+  fillIncomingRecordFields(incomingRecordFields.in1, 'in1');
+  fillIncomingRecordFields(incomingRecordFields.in2, 'in2');
+  fillIncomingRecordFields(incomingRecordFields.subfield, 'subfield');
+  cy.do(Select('Match criterion').choose(matchCriterion));
+  cy.do(criterionValueTypeButton.click());
+  cy.expect(criterionValueTypeList.exists());
+  cy.do(SelectionList({ id:'sl-container-criterion-value-type' }).find(SelectionOption(instanceOption)).click());
 };
 
 const fillMatchProfileWithExistingPart = ({

@@ -34,6 +34,7 @@ export default {
   // Inventory
   inventoryPath: 'settings/inventory',
   materialTypePath: '/settings/inventory/materialtypes',
+  targetProfilesPath: 'settings/inventory/targetProfiles',
   // Invoice
   invoiceApprovalsPath: 'settings/invoice/approvals',
   invoiceAdjustmentsPath: 'settings/invoice/adjustments',
@@ -59,6 +60,7 @@ export default {
   usersPath: 'settings/users',
   paymentsPath: 'settings/users/payments',
   conditionsPath: 'settings/users/conditions',
+  limitsPath: 'settings/users/limits',
   waiveReasons: 'settings/users/waivereasons',
   patronBlockTemplates: 'settings/users/manual-block-templates',
   // Data Import
@@ -66,6 +68,8 @@ export default {
   actionProfilePath: 'settings/data-import/action-profiles',
   matchProfilePath: 'settings/data-import/match-profiles',
   jobProfilePath: 'settings/data-import/job-profiles',
+  marcFieldProtectionPath: 'settings/data-import/marc-field-protection',
+  // Data export
   exportMappingProfilePath: 'settings/data-export/mapping-profiles',
   exportJobProfilePath: 'settings/data-export/job-profiles',
 };

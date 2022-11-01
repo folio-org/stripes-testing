@@ -53,7 +53,7 @@ describe('MARC Authority management', () => {
     Logs.checkStatusOfJobProfile('Completed');
     Logs.openFileDetails(fileName);
     for (let i = 0; i < 3; i++) {
-      Logs.getCreatedAuthorityID(i).then(link => {
+      Logs.getCreatedItemsID(i).then(link => {
         createdAuthorityIDs.push(link.split('/')[5]);
       });
     }
@@ -69,7 +69,7 @@ describe('MARC Authority management', () => {
     Logs.checkStatusOfJobProfile('Completed');
     Logs.openFileDetails(fileName);
     for (let i = 0; i < 2; i++) {
-      Logs.getCreatedAuthorityID(i).then(link => {
+      Logs.getCreatedItemsID(i).then(link => {
         createdAuthorityIDs.push(link.split('/')[5]);
       });
     }

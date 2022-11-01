@@ -4,7 +4,6 @@ import TopMenu from '../../support/fragments/topMenu';
 import MatchProfiles from '../../support/fragments/data_import/match_profiles/matchProfiles';
 import Logs from '../../support/fragments/data_import/logs/logs';
 import InventorySearch from '../../support/fragments/inventory/inventorySearch';
-import SearchInventory from '../../support/fragments/data_import/searchInventory';
 import getRandomPostfix from '../../support/utils/stringTools';
 import NewFieldMappingProfile from '../../support/fragments/data_import/mapping_profiles/newFieldMappingProfile';
 import FieldMappingProfiles from '../../support/fragments/data_import/mapping_profiles/fieldMappingProfiles';
@@ -65,12 +64,11 @@ describe('ui-data-import: Test MARC-MARC matching for 001 field', () => {
     FileDetails.checkStatusInColumn(FileDetails.status.created, FileDetails.columnName.instance);
 
     // get Instance HRID through API
-    SearchInventory
-      .getInstanceHRID()
+    InventorySearch.getInstanceHRID()
       .then(hrId => {
         // download .csv file
         cy.visit(TopMenu.inventoryPath);
-        SearchInventory.searchInstanceByHRID(hrId[0]);
+        InventorySearch.searchInstanceByHRID(hrId[0]);
         InventorySearch.saveUUIDs();
         ExportMarcFile.downloadCSVFile(nameForCSVFile, 'SearchInstanceUUIDs*');
         FileManager.deleteFolder(Cypress.config('downloadsFolder'));
@@ -138,10 +136,10 @@ describe('ui-data-import: Test MARC-MARC matching for 001 field', () => {
         FileDetails.checkStatusInColumn(FileDetails.status.updated, FileDetails.columnName.instance);
 
         cy.visit(TopMenu.inventoryPath);
-        SearchInventory.searchInstanceByHRID(hrId[0]);
+        InventorySearch.searchInstanceByHRID(hrId[0]);
 
         // ensure the fields created in Field mapping profile exists in inventory
-        SearchInventory.checkInstanceDetails();
+        InventorySearch.checkInstanceDetails();
 
         // clean up generated profiles
         JobProfiles.deleteJobProfile(jobProfileName);

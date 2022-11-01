@@ -80,9 +80,11 @@ describe('ui-data-import: Match on Instance identifier match meets both the Iden
     ])
       .then(userProperties => {
         userId = userProperties.userId;
-        cy.login(userProperties.username, userProperties.password);
+        cy.login(userProperties.username, userProperties.password, {
+          path: TopMenu.dataImportPath,
+          waiter: DataImport.waitLoading
+        });
       });
-    cy.getAdminToken();
 
     InventorySearch.getInstancesByIdentifierViaApi(resourceIdentifiers[0].value)
       .then(instances => {
@@ -97,7 +99,6 @@ describe('ui-data-import: Match on Instance identifier match meets both the Iden
   });
 
   it('C347829 Match on Instance identifier match meets both the Identifier type and Data requirements (Folijet)', { tags: [TestTypes.criticalPath, DevTeams.folijet] }, () => {
-    cy.visit(TopMenu.dataImportPath);
     DataImport.uploadFile(filePathForCreateInstance, fileNameForCreateInstance);
     JobProfiles.searchJobProfileForImport(jobProfileToRun);
     JobProfiles.runImportFile(fileNameForCreateInstance);

@@ -29,14 +29,14 @@ describe('ui-data-import: Match on POL and update related Instance, Holdings, It
   let orderNumber;
 
   // unique profile names
-  const jobProfileName = `C350944 Update Instance, and create Holdings, Item based on POL match ${getRandomPostfix()}`;
+  const jobProfileName = `C350944 Update Instance, and create Holdings, Item based on POL match ${Helper.getRandomBarcode()}`;
   const matchProfileName = `C350944 935 $a POL to Instance POL ${Helper.getRandomBarcode()}`;
   const actionProfileNameForInstance = `C350944 Update Instance by POL match ${Helper.getRandomBarcode()}`;
   const actionProfileNameForHoldings = `C350944 Create Holdings by POL match ${Helper.getRandomBarcode()}`;
   const actionProfileNameForItem = `C350944 Create Item by POL match ${Helper.getRandomBarcode()}`;
   const mappingProfileNameForInstance = `C350944 Update Instance by POL match ${Helper.getRandomBarcode()}`;
   const mappingProfileNameForHoldings = `C350944 Create Holdings by POL match ${Helper.getRandomBarcode()}`;
-  const mappingProfileNameForItem = `C350944 Create Item by POL match ${getRandomPostfix()}`;
+  const mappingProfileNameForItem = `C350944 Create Item by POL match ${Helper.getRandomBarcode()}`;
 
   // unique file names
   const nameMarcFileForCreate = `C350944 autotestFile.${getRandomPostfix()}.mrc`;
