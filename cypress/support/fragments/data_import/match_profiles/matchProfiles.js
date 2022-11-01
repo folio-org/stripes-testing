@@ -63,7 +63,7 @@ export default {
     waitCreatingMatchProfile();
   },
 
-  createMatchProfileWithMatchingBy999Field:(profile) => {
+  createMatchProfileWithExistingPart:(profile) => {
     openNewMatchProfileForm();
     NewMatchProfile.fillMatchProfileWithExistingPart(profile);
     cy.do(Button('Save as profile & Close').click());
