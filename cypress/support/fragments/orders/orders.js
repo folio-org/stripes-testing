@@ -483,4 +483,18 @@ export default {
       expect(actualQuery).to.eq(expectedText);
     });
   },
+
+  selectPendingStatusFilter:() => {
+    cy.do(Checkbox({ id: 'clickable-filter-workflowStatus-pending' }).click());
+  },
+
+  selectOngoingOrderTypeInPOForm:() => {
+    cy.do(Select('Order type*').choose('Ongoing'));
+  },
+  checkEditedOngoingOrder: (orderNumber,organizationName) => {
+    cy.expect(Pane({ id: 'order-details' }).exists());
+    cy.expect(Accordion({ id: orderDetailsAccordionId }).find(KeyValue({ value: orderNumber })).exists());
+    cy.expect(Accordion({ id: orderDetailsAccordionId }).find(KeyValue({ value: organizationName })).exists());
+    cy.expect(Accordion({ id: orderDetailsAccordionId }).find(KeyValue({ value: 'Ongoing' })).exists());
+  },
 };
