@@ -17,15 +17,25 @@ import FieldMappingProfiles from '../../support/fragments/data_import/mapping_pr
 import NewActionProfile from '../../support/fragments/data_import/action_profiles/newActionProfile';
 import ActionProfiles from '../../support/fragments/data_import/action_profiles/actionProfiles';
 import NewJobProfile from '../../support/fragments/data_import/job_profiles/newJobProfile';
+import InstanceRecordView from '../../support/fragments/inventory/instanceRecordView';
+import Users from '../../support/fragments/users/users';
+import InventorySearch from '../../support/fragments/inventory/inventorySearch';
 
 describe('ui-data-import: Matching on newly-created 035 does not work (regression)', () => {
   let user = null;
-  const resourceIdentifier = { type: 'System control number', value: '(NhFolYBP)2304396' };
   const note = 'This instance was updated, plus a new subject heading was added';
+  const resourceIdentifierForFirstInstance = { type: 'System control number', value: '(NhFolYBP)2304396' };
+  const contentOf035FieldForFirstInstance = '(NhFolYBP)2304396';
+  const resourceIdentifierForSecondInstance = { type: 'System control number', value: '(NhFolYBP)2345942-321678' };
+  const contentOf035FieldForSecondInstance = '(NhFolYBP)2345942-321678';
+  let firstInstanceHrid;
+  let secondInstanceHrid;
 
   // unique file names
-  const fileForCreateName = `C358138autotestFile.${Helper.getRandomBarcode()}.mrc`;
-  const nameFileNameAfterUpload = `C17039 uploadedFile.${Helper.getRandomBarcode()}.mrc`;
+  const fileForCreateFirstName = `C358138autotestFile.${Helper.getRandomBarcode()}.mrc`;
+  const fileForCreateSecondName = `C358138autotestFile.${Helper.getRandomBarcode()}.mrc`;
+  const fileForUpdateFirstName = `C17039 uploadedFile.${Helper.getRandomBarcode()}.mrc`;
+  const fileForUpdateSecondName = `C17039 uploadedFile.${Helper.getRandomBarcode()}.mrc`;
 
   // unique profile names
   const matchProfileName = `C358138 Match on newly-created 035 ${Helper.getRandomBarcode()}`;
@@ -77,26 +87,31 @@ describe('ui-data-import: Matching on newly-created 035 does not work (regressio
       });
   });
 
-  //   after(() => {
+  after(() => {
   // delete profiles
-  //   JobProfiles.deleteJobProfile(jobProfileName);
-  //   MatchProfiles.deleteMatchProfile(matchProfileName);
-  //   ActionProfiles.deleteActionProfile(actionProfileName);
-  //   FieldMappingProfiles.deleteFieldMappingProfile(mappingProfileName);
+    JobProfiles.deleteJobProfile(jobProfileName);
+    MatchProfiles.deleteMatchProfile(matchProfileName);
+    ActionProfiles.deleteActionProfile(actionProfileName);
+    FieldMappingProfiles.deleteFieldMappingProfile(mappingProfileName);
 
-  //   cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${instanceHrid}"` })
-  //     .then((instance) => {
-  //       InventoryInstance.deleteInstanceViaApi(instance.id);
-  //     });
-  //   });
+    cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${firstInstanceHrid}"` })
+      .then((instance) => {
+        InventoryInstance.deleteInstanceViaApi(instance.id);
+      });
+    cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${secondInstanceHrid}"` })
+      .then((instance) => {
+        InventoryInstance.deleteInstanceViaApi(instance.id);
+      });
+    Users.deleteViaApi(user.userId);
+  });
 
   it('C358138 Matching on newly-created 035 does not work (regression) (folijet)', { tags: [TestTypes.smoke, DevTeams.folijet] }, () => {
     // upload a marc file for creating of the new instance
-    DataImport.uploadFile('marcFileForC358138.mrc', fileForCreateName);
+    DataImport.uploadFile('marcFileForC358138.mrc', fileForCreateFirstName);
     JobProfiles.searchJobProfileForImport('Default - Create instance and SRS MARC Bib');
-    JobProfiles.runImportFile(fileForCreateName);
+    JobProfiles.runImportFile(fileForCreateFirstName);
     Logs.checkStatusOfJobProfile('Completed');
-    Logs.openFileDetails(fileForCreateName);
+    Logs.openFileDetails(fileForCreateFirstName);
     [FileDetails.columnName.srsMarc,
       FileDetails.columnName.instance].forEach(columnName => {
       FileDetails.checkStatusInColumn(FileDetails.status.created, columnName);
@@ -104,22 +119,28 @@ describe('ui-data-import: Matching on newly-created 035 does not work (regressio
     FileDetails.checkSrsRecordQuantityInSummaryTable('1');
     FileDetails.checkInstanceQuantityInSummaryTable('1');
 
+    // get Instance HRID through API for delete instance
+    InventorySearch.getInstanceHRID()
+      .then(hrId => {
+        firstInstanceHrid = hrId[0];
+      });
+
     FileDetails.openInstanceInInventory('Created');
-    InventoryInstance.verifyResourceIdentifier(resourceIdentifier.type, resourceIdentifier.value, 6);
+    InventoryInstance.verifyResourceIdentifier(resourceIdentifierForFirstInstance.type, resourceIdentifierForFirstInstance.value, 2);
     InventoryInstance.viewSource();
     InventoryViewSource.contains('035\t');
-    InventoryViewSource.contains('$a (NhFolYBP)2304396');
+    InventoryViewSource.contains(contentOf035FieldForFirstInstance);
 
     // create match profile
     cy.visit(SettingsMenu.matchProfilePath);
-    MatchProfiles.createMatchProfileWithMatchingBy999Field(matchProfile);
+    MatchProfiles.createMatchProfileWithExistingPart(matchProfile);
     MatchProfiles.checkMatchProfilePresented(matchProfile.profileName);
 
     // create mapping profiles
     cy.visit(SettingsMenu.mappingProfilePath);
     FieldMappingProfiles.openNewMappingProfileForm();
     NewFieldMappingProfile.fillSummaryInMappingProfile(mappingProfile);
-    NewFieldMappingProfile.addAdministrativeNote(note, 5);
+    NewFieldMappingProfile.addAdministrativeNote(note, 9);
     FieldMappingProfiles.saveProfile();
     FieldMappingProfiles.closeViewModeForMappingProfile(mappingProfile.name);
     FieldMappingProfiles.checkMappingProfilePresented(mappingProfile.name);
@@ -136,23 +157,68 @@ describe('ui-data-import: Matching on newly-created 035 does not work (regressio
 
     // upload a marc file for updating already created instance
     cy.visit(TopMenu.dataImportPath);
-    DataImport.uploadFile('marcFileForC358138_rev', nameFileNameAfterUpload);
+    DataImport.uploadFile('marcFileForC358138_rev.mrc', fileForUpdateFirstName);
     JobProfiles.searchJobProfileForImport(jobProfile.profileName);
-    JobProfiles.runImportFile(nameFileNameAfterUpload);
+    JobProfiles.runImportFile(fileForUpdateFirstName);
     Logs.checkStatusOfJobProfile('Completed');
-    Logs.openFileDetails(nameFileNameAfterUpload);
-    FileDetails.checkStatusInColumn(FileDetails.status.updated, FileDetails.columnName.srsMarc);
+    Logs.openFileDetails(fileForUpdateFirstName);
+    FileDetails.checkStatusInColumn(FileDetails.status.created, FileDetails.columnName.srsMarc);
     FileDetails.checkStatusInColumn(FileDetails.status.updated, FileDetails.columnName.instance);
-    FileDetails.checkSrsRecordQuantityInSummaryTable('1', '1');
+    FileDetails.checkSrsRecordQuantityInSummaryTable('1');
     FileDetails.checkInstanceQuantityInSummaryTable('1', '1');
 
     FileDetails.openInstanceInInventory('Updated');
-    // step 13
+    InstanceRecordView.verifyAdministrativeNote(note);
     InventoryInstance.viewSource();
     InventoryViewSource.contains('035\t');
-    InventoryViewSource.contains('$a (NhFolYBP)2304396');
+    InventoryViewSource.contains(contentOf035FieldForFirstInstance);
     InventoryViewSource.contains('650\t');
-    // step 14-15
-    // InventoryViewSource.contains('');
+    InventoryViewSource.contains('Pulse techniques (Medical)');
+
+    // upload a marc file for creating of the new instance
+    cy.visit(TopMenu.dataImportPath);
+    DataImport.uploadFile('marcFileForC358138_with_035.mrc', fileForCreateSecondName);
+    JobProfiles.searchJobProfileForImport('Default - Create instance and SRS MARC Bib');
+    JobProfiles.runImportFile(fileForCreateSecondName);
+    Logs.checkStatusOfJobProfile('Completed');
+    Logs.openFileDetails(fileForCreateSecondName);
+    [FileDetails.columnName.srsMarc,
+      FileDetails.columnName.instance].forEach(columnName => {
+      FileDetails.checkStatusInColumn(FileDetails.status.created, columnName);
+    });
+    FileDetails.checkSrsRecordQuantityInSummaryTable('1');
+    FileDetails.checkInstanceQuantityInSummaryTable('1');
+
+    // get Instance HRID through API for delete instance
+    InventorySearch.getInstanceHRID()
+      .then(hrId => {
+        secondInstanceHrid = hrId[0];
+      });
+
+    FileDetails.openInstanceInInventory('Created');
+    InventoryInstance.verifyResourceIdentifier(resourceIdentifierForSecondInstance.type, resourceIdentifierForSecondInstance.value, 3);
+    InventoryInstance.viewSource();
+    InventoryViewSource.contains('035\t');
+    InventoryViewSource.contains(contentOf035FieldForSecondInstance);
+
+    // upload a marc file for updating already created instance
+    cy.visit(TopMenu.dataImportPath);
+    DataImport.uploadFile('marcFileForC358138_with_035_rev.mrc', fileForUpdateSecondName);
+    JobProfiles.searchJobProfileForImport(jobProfile.profileName);
+    JobProfiles.runImportFile(fileForUpdateSecondName);
+    Logs.checkStatusOfJobProfile('Completed');
+    Logs.openFileDetails(fileForUpdateSecondName);
+    FileDetails.checkStatusInColumn(FileDetails.status.created, FileDetails.columnName.srsMarc);
+    FileDetails.checkStatusInColumn(FileDetails.status.updated, FileDetails.columnName.instance);
+    FileDetails.checkSrsRecordQuantityInSummaryTable('1');
+    FileDetails.checkInstanceQuantityInSummaryTable('1', '1');
+
+    FileDetails.openInstanceInInventory('Updated');
+    InstanceRecordView.verifyAdministrativeNote(note);
+    InventoryInstance.viewSource();
+    InventoryViewSource.contains('035\t');
+    InventoryViewSource.contains(contentOf035FieldForSecondInstance);
+    InventoryViewSource.contains('650\t');
+    InventoryViewSource.contains('Symposia');
   });
 });

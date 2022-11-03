@@ -19,7 +19,7 @@ const optionsList = {
   instanceUuid: 'Admin data: Instance UUID',
   holdingsPermLoc: 'Location: Permanent',
   itemPermLoc: 'Location: Permanent',
-  systemControlNumber: 'Identifier: Control number'
+  systemControlNumber: 'Identifier: System control number'
 };
 
 function fillExistingRecordFields(value = '', selector) {
