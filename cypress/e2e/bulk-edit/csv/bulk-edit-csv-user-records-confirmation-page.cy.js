@@ -7,6 +7,7 @@ import getRandomPostfix from '../../../support/utils/stringTools';
 import devTeams from '../../../support/dictionary/devTeams';
 import BulkEditActions from '../../../support/fragments/bulk-edit/bulk-edit-actions';
 import Users from '../../../support/fragments/users/users';
+import UsersSearchPane from "../../../support/fragments/users/usersSearchPane";
 
 let user;
 const userUUIDsFileName = `userUUIDs_${getRandomPostfix()}.csv`;
@@ -37,18 +38,15 @@ describe('bulk-edit', () => {
       Users.deleteViaApi(user.userId);
     });
 
-
-    it('C353964 Verify uploading file with Usernames (firebird)', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
+    it('C357982 Verify user records - in app permission - confirmation page', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
       BulkEditSearchPane.selectRecordIdentifier('Usernames');
 
       BulkEditSearchPane.uploadFile(userUUIDsFileName);
       BulkEditSearchPane.waitFileUploading();
 
-      BulkEditSearchPane.verifyMatchedResults(user.username);
-      BulkEditSearchPane.verifyPaneRecordsCount(1);
-
+      const changedFirstName = `testedNameChanged_${getRandomPostfix()}`;
       BulkEditActions.downloadMatchedResults(matchRecordsFileName);
-      BulkEditActions.prepareValidBulkEditFile(matchRecordsFileName, importFileName, user.username, 'test');
+      BulkEditActions.prepareValidBulkEditFile(matchRecordsFileName, importFileName, 'testPermFirst', changedFirstName);
 
       BulkEditActions.openStartBulkEditForm();
       BulkEditSearchPane.uploadFile(importFileName);
@@ -57,7 +55,18 @@ describe('bulk-edit', () => {
       BulkEditActions.commitChanges();
 
       BulkEditSearchPane.verifyChangedResults(user.username);
-      BulkEditActions.newBulkEdit();
+      BulkEditSearchPane.verifyChangedResults(changedFirstName);
+      BulkEditSearchPane.verifyPaneTitleFileName(importFileName);
+      BulkEditSearchPane.verifyUserBarcodesResultAccordion();
+      BulkEditActions.openActions();
+      BulkEditSearchPane.verifyUsersActionShowColumns();
+      BulkEditActions.verifyActionsDownloadChangedCSV();
+
+      BulkEditActions.downloadChangedCSV();
+
+      cy.loginAsAdmin({ path: TopMenu.usersPath, waiter: UsersSearchPane.waitLoading });
+      UsersSearchPane.searchByKeywords(changedFirstName);
+      UsersSearchPane.openUser(changedFirstName);
     });
   });
 });
