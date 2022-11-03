@@ -64,7 +64,7 @@ describe('ui-invoices: Approve invoice', () => {
     Users.deleteViaApi(user.userId);
   });
   
-  it('C10945 Approve invoice (thunderjet)', { tags: [testType.smoke, devTeams.thunderjet] }, () => {
+  it('C10945 Approve invoice (thunderjet)', { tags: [testType.criticalPath, devTeams.thunderjet] }, () => {
     const transactionFactory = new Transaction();
     Invoices.searchByNumber(invoice.invoiceNumber);
     Helper.selectFromResultsList();
