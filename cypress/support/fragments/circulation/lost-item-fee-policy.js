@@ -87,12 +87,12 @@ export default {
     ]);
   },
 
-  createViaApi() {
+  createViaApi(policy = defaultLostItemFeePolicy) {
     return cy
       .okapiRequest({
         method: 'POST',
         path: 'lost-item-fees-policies',
-        body: defaultLostItemFeePolicy,
+        body: policy,
         isDefaultSearchParamsRequired: false,
       })
       .then(({ body }) => {

@@ -24,7 +24,7 @@ export default {
     return cy.expect(claimReturnedButton.exists());
   },
   checkOffLoanByBarcode: (itemBarcode) => {
-    //interactors don't allow to find element inside the cell column
+    // interactors don't allow to find element inside the cell column
     return cy.contains(itemBarcode).parent('*[class^="mclRow--"]').within(() => {
       cy.get('div input[type=checkbox]').click();
     });
@@ -40,6 +40,11 @@ export default {
     cy.expect(declaredLostButton.exists());
     return cy.do(declaredLostButton.click());
   },
+  declareLoanLostByApi:(apiBody, loanId) => cy.okapiRequest({
+    method: 'POST',
+    path: `circulation/loans/${loanId}/declare-item-lost`,
+    body: apiBody
+  }),
   openActionsMenuOfLoanByBarcode,
   declareLoanLostByBarcode:(itemBarcode) => {
     openActionsMenuOfLoanByBarcode(itemBarcode);
@@ -69,6 +74,14 @@ export default {
   },
   verifyQuantityOpenAndClaimedReturnedLoans: (numberOfOpenLoans, numberOfClaimedReturnedLoans) => {
     return cy.expect(Pane(including('Loans -')).find(HTML(including(`${numberOfOpenLoans} records found (${numberOfClaimedReturnedLoans} claimed returned)`))).exists());
-  }
+  },
+  getUserLoansIdApi:(userId, loanStatus = 'open') => (
+    cy.okapiRequest({
+      method: 'GET',
+      path: `circulation/loans?query=(userId==${userId} and status.name==${loanStatus})`,
+      // searchParams: { query: `(userId==${userId} and status.name==${loanStatus})` },
+      isDefaultSearchParamsRequired: false,
+    })
+      .then((({ body }) => body))),
 
 };
