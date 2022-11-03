@@ -54,6 +54,8 @@ describe('ui-invoices: Approve invoice', () => {
         permissions.uiFinanceViewFundAndBudget.gui,
         permissions.viewEditCreateInvoiceInvoiceLine.gui,
         permissions.uiInvoicesApproveInvoices.gui,
+        permissions.uiInvoicesPayInvoices.gui,
+
       ])
         .then(userProperties => {
           user = userProperties;
