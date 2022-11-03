@@ -1,9 +1,9 @@
 /// <reference types="cypress" />
 import uuid from 'uuid';
 
-import dataImportSettingsActionProfiles from '../fragments/settings/dataImport/dataImportSettingsActionProfiles';
-import dataImportSettingsJobProfiles from '../fragments/settings/dataImport/dataImportSettingsJobProfiles';
-import dataImportSettingsMappingProfiles from '../fragments/settings/dataImport/dataImportSettingsMappingProfiles';
+import SettingsActionProfiles from '../fragments/settings/dataImport/settingsActionProfiles';
+import SettingsJobProfiles from '../fragments/settings/dataImport/settingsJobProfiles';
+import SettingsMappingProfiles from '../fragments/settings/dataImport/settingsMappingProfiles';
 import getRandomPostfix from '../utils/stringTools';
 
 Cypress.Commands.add('getId', () => {
@@ -54,44 +54,44 @@ Cypress.Commands.add('createLinkedProfiles', (testData) => {
 
   testData.jobProfileForCreate = jobProfile;
 
-  dataImportSettingsMappingProfiles.createMappingProfileApi(testData.marcBibMappingProfile).then((bodyWithMappingProfile) => {
+  SettingsMappingProfiles.createMappingProfileApi(testData.marcBibMappingProfile).then((bodyWithMappingProfile) => {
     testData.marcBibActionProfile.addedRelations[0].detailProfileId = bodyWithMappingProfile.body.id;
-    dataImportSettingsActionProfiles.createActionProfileApi(testData.marcBibActionProfile).then((bodyWithActionProfile) => {
+    SettingsActionProfiles.createActionProfileApi(testData.marcBibActionProfile).then((bodyWithActionProfile) => {
       addJobProfileRelation(testData.jobProfileForCreate.addedRelations, bodyWithActionProfile.body.id);
     });
   });
 
-  dataImportSettingsMappingProfiles.createMappingProfileApi(testData.instanceMappingProfile).then((bodyWithMappingProfile) => {
+  SettingsMappingProfiles.createMappingProfileApi(testData.instanceMappingProfile).then((bodyWithMappingProfile) => {
     testData.instanceActionProfile.addedRelations[0].detailProfileId = bodyWithMappingProfile.body.id;
-    dataImportSettingsActionProfiles.createActionProfileApi(testData.instanceActionProfile).then((bodyWithActionProfile) => {
+    SettingsActionProfiles.createActionProfileApi(testData.instanceActionProfile).then((bodyWithActionProfile) => {
       addJobProfileRelation(testData.jobProfileForCreate.addedRelations, bodyWithActionProfile.body.id);
     });
   });
 
-  dataImportSettingsMappingProfiles.createMappingProfileApi(testData.holdingsMappingProfile).then((bodyWithMappingProfile) => {
+  SettingsMappingProfiles.createMappingProfileApi(testData.holdingsMappingProfile).then((bodyWithMappingProfile) => {
     testData.holdingsActionProfile.addedRelations[0].detailProfileId = bodyWithMappingProfile.body.id;
-    dataImportSettingsActionProfiles.createActionProfileApi(testData.holdingsActionProfile).then((bodyWithActionProfile) => {
+    SettingsActionProfiles.createActionProfileApi(testData.holdingsActionProfile).then((bodyWithActionProfile) => {
       addJobProfileRelation(testData.jobProfileForCreate.addedRelations, bodyWithActionProfile.body.id);
     });
   });
 
-  dataImportSettingsMappingProfiles.createMappingProfileApi(testData.itemMappingProfile).then((bodyWithMappingProfile) => {
+  SettingsMappingProfiles.createMappingProfileApi(testData.itemMappingProfile).then((bodyWithMappingProfile) => {
     testData.itemActionProfile.addedRelations[0].detailProfileId = bodyWithMappingProfile.body.id;
-    dataImportSettingsActionProfiles.createActionProfileApi(testData.itemActionProfile).then((bodyWithActionProfile) => {
+    SettingsActionProfiles.createActionProfileApi(testData.itemActionProfile).then((bodyWithActionProfile) => {
       addJobProfileRelation(testData.jobProfileForCreate.addedRelations, bodyWithActionProfile.body.id);
     });
   });
 
-  dataImportSettingsJobProfiles.createJobProfileApi(testData.jobProfileForCreate)
+  SettingsJobProfiles.createJobProfileApi(testData.jobProfileForCreate)
     .then((bodyWithjobProfile) => {
       testData.jobProfileForCreate.id = bodyWithjobProfile.body.id;
     });
 });
 
 Cypress.Commands.add('createOnePairMappingAndActionProfiles', (mappingProfile, actionProfile) => {
-  dataImportSettingsMappingProfiles.createMappingProfileApi(mappingProfile).then((bodyWithMappingProfile) => {
+  SettingsMappingProfiles.createMappingProfileApi(mappingProfile).then((bodyWithMappingProfile) => {
     actionProfile.addedRelations[0].detailProfileId = bodyWithMappingProfile.body.id;
-    dataImportSettingsActionProfiles.createActionProfileApi(actionProfile).then((bodyWithActionProfile) => {
+    SettingsActionProfiles.createActionProfileApi(actionProfile).then((bodyWithActionProfile) => {
       cy.wrap(bodyWithActionProfile.body.id).as('idActionProfile');
     });
   });

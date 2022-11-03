@@ -34,6 +34,7 @@ export default {
   // Inventory
   inventoryPath: 'settings/inventory',
   materialTypePath: '/settings/inventory/materialtypes',
+  targetProfilesPath: 'settings/inventory/targetProfiles',
   // Invoice
   invoiceApprovalsPath: 'settings/invoice/approvals',
   invoiceAdjustmentsPath: 'settings/invoice/adjustments',
@@ -54,6 +55,9 @@ export default {
   tagsPath: 'settings/tags',
   tenantPath: 'settings/tenant-settings',
   tenantLocationsPath: 'settings/tenant-settings/location-locations',
+  //Orders
+  ordersPONumberEditPath: 'settings/orders/po-number',
+  ordersOpeningPurchaseOrdersPath: 'settings/orders/open-order',
   // Users
   usersOwnersPath: 'settings/users/owners',
   usersPath: 'settings/users',
@@ -67,6 +71,8 @@ export default {
   actionProfilePath: 'settings/data-import/action-profiles',
   matchProfilePath: 'settings/data-import/match-profiles',
   jobProfilePath: 'settings/data-import/job-profiles',
+  marcFieldProtectionPath: 'settings/data-import/marc-field-protection',
+  // Data export
   exportMappingProfilePath: 'settings/data-export/mapping-profiles',
   exportJobProfilePath: 'settings/data-export/job-profiles',
 };
