@@ -23,5 +23,11 @@ export default {
       TextField({ name:'3d7c52dc-c732-4223-8bf8-e5917801386f' }).fillIn(itemsNumber),
       Button('Save').click(),
     ]);
-  }
+  },
+  setMaximumNumberOfOverdueItems: (itemsNumber) => {
+    cy.do([
+      TextField({ name:'584fbd4f-6a34-4730-a6ca-73a6a6a9d845' }).fillIn(itemsNumber),
+      Button('Save').click(),
+    ]);
+  },
 };

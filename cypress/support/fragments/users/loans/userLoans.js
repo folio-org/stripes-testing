@@ -1,5 +1,6 @@
 import { matching } from 'bigtest';
-import { Pane, MultiColumnListRow, MultiColumnListCell, HTML, including, Button } from '../../../../../interactors';
+import { Pane, MultiColumnListRow, MultiColumnListCell, HTML, including, Button, KeyValue } from '../../../../../interactors';
+
 import ItemVeiw from '../../inventory/inventoryItem/itemVeiw';
 
 const claimReturnedButton = Button('Claim returned');
@@ -24,7 +25,7 @@ export default {
     return cy.expect(claimReturnedButton.exists());
   },
   checkOffLoanByBarcode: (itemBarcode) => {
-    //interactors don't allow to find element inside the cell column
+    // interactors don't allow to find element inside the cell column
     return cy.contains(itemBarcode).parent('*[class^="mclRow--"]').within(() => {
       cy.get('div input[type=checkbox]').click();
     });
@@ -52,11 +53,17 @@ export default {
     cy.do(itemDetailsButton.click());
     ItemVeiw.waitLoading();
   },
-  renewItem:(barcode) => {
-    cy.expect(rowInList.find(HTML(including(barcode))).exists());
-    cy.do(ellipsisButton.click());
-    cy.expect(renewButton.exists());
-    cy.do(renewButton.click());
+  renewItem:(barcode, isLoanOpened = false) => {
+    if (isLoanOpened) {
+      cy.expect(KeyValue({ value: barcode }).exists());
+      cy.expect(renewButton.exists());
+      cy.do(renewButton.click());
+    } else {
+      cy.expect(rowInList.find(HTML(including(barcode))).exists());
+      cy.do(ellipsisButton.click());
+      cy.expect(renewButton.exists());
+      cy.do(renewButton.click());
+    }
   },
   checkResultsInTheRowByBarcode: (allContentToCheck, itemBarcode) => {
     return allContentToCheck.forEach(contentToCheck => cy.expect(MultiColumnListRow({ text: matching(itemBarcode), isContainer: false }).find(MultiColumnListCell({ content: including(contentToCheck) })).exists()));
