@@ -98,7 +98,7 @@ describe('ui-data-import: Match on Instance identifier match meets both the Iden
     Users.deleteViaApi(userId);
   });
 
-  it('C347829 Match on Instance identifier match meets both the Identifier type and Data requirements (Folijet)', { tags: [TestTypes.criticalPath, DevTeams.folijet] }, () => {
+  it('C347829 Match on Instance identifier match meets both the Identifier type and Data requirements (folijet)', { tags: [TestTypes.criticalPath, DevTeams.folijet] }, () => {
     DataImport.uploadFile(filePathForCreateInstance, fileNameForCreateInstance);
     JobProfiles.searchJobProfileForImport(jobProfileToRun);
     JobProfiles.runImportFile(fileNameForCreateInstance);
