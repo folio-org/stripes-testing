@@ -331,5 +331,11 @@ export default {
     ])
     cy.do(Button({ id: 'clickable-view-source' }).click());
     cy.expect(HTML('MARC bibliographic record').exists());
-  }
+  },
+
+  checkIdentifier: (text) => {
+    cy.expect(Accordion('Identifiers')
+      .find(MultiColumnList({ id: 'list-identifiers' }))
+      .find(MultiColumnListCell(including(text))).exists());
+  },
 };
