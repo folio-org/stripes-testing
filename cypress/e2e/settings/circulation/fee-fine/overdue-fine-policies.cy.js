@@ -128,14 +128,14 @@ describe('ui-circulation-settings: overdue fine policies management', () => {
       });
   });
 
-    after('delete test data', () => {
-      InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(instance.instanceBarcode);
-      LoanPolicy.deleteApi(loanPolicy.id);
-      OverdueFinePolicy.deleteApi(overdueFinePolicy.id);
-      LostItemFeePolicy.deleteViaApi(lostItemFeePolicy.id);
-      CirculationRules.updateViaApi(originalCirculationRules);
-      UsersOwners.deleteViaApi(ownerData.id);
-    });
+  after('delete test data', () => {
+    InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(instance.instanceBarcode);
+    LoanPolicy.deleteApi(loanPolicy.id);
+    OverdueFinePolicy.deleteApi(overdueFinePolicy.id);
+    LostItemFeePolicy.deleteViaApi(lostItemFeePolicy.id);
+    CirculationRules.updateViaApi(originalCirculationRules);
+    UsersOwners.deleteViaApi(ownerData.id);
+  });
 
   beforeEach('Log in', () => {
     cy.loginAsAdmin();
