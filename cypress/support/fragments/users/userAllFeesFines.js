@@ -1,3 +1,4 @@
+import { CheckBox } from '@interactors/html';
 import {
   Button,
   Dropdown,
@@ -6,7 +7,6 @@ import {
   MultiColumnListRow,
   MultiColumnListHeader,
 } from '../../../../interactors';
-import { CheckBox } from '@interactors/html';
 import ServicePoints from '../settings/tenant/servicePoints/servicePoints';
 import PaymentMethods from '../settings/users/paymentMethods';
 import UserEdit from './userEdit';
@@ -59,8 +59,8 @@ export default {
     cy.get('#list-accounts-history-view-feesfines')
       .find('[data-row-index]')
       .each($row => {
-        cy.get('[class*="mclCell-"]:first-child', { withinSubject: $row }).should(beChecked)
-      })
+        cy.get('[class*="mclCell-"]:first-child', { withinSubject: $row }).should(beChecked);
+      });
   },
   checkWaiveButtonActive:(isActive) => {
     cy.expect(waiveAllButton.has({ disabled: !isActive }));
@@ -68,7 +68,7 @@ export default {
   clickRowCheckbox:(rowIndex) => {
     cy.get('#list-accounts-history-view-feesfines')
       .find(`[data-row-index="row-${rowIndex}"]`)
-      .find('[class*="mclCell-"]:first-child').click()
+      .find('[class*="mclCell-"]:first-child').click();
   },
   clickWaiveEllipsis:(rowIndex) => {
     cy.do(
@@ -76,7 +76,7 @@ export default {
         .find(MultiColumnListRow({ index: rowIndex }))
         .find(Dropdown())
         .choose('Waive')
-    )
+    );
   },
   checkWaiveEllipsisActive:(rowIndex, isActive) => {
     cy.do(
@@ -84,7 +84,7 @@ export default {
         .find(MultiColumnListRow({ index: rowIndex }))
         .find(Dropdown())
         .open()
-    )
+    );
     cy.expect(Button('Waive', { disabled: !isActive }).exists());
   },
   selectAllFeeFines: () => cy.do(MultiColumnListHeader({ index: 0 }).find(CheckBox()).click()),

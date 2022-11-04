@@ -31,5 +31,5 @@ export default {
       Button('Run').click(),
     ]);
     cy.get('#job-logs-list').contains(fileName.replace('.csv', ''));
-  },
+  }
 };

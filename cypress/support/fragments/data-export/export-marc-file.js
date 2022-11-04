@@ -1,5 +1,6 @@
 import { recurse } from 'cypress-recurse';
 import FileManager from '../../utils/fileManager';
+import { Button, PaneHeader } from '../../../../interactors';
 
 const downloadCSVFile = (fileName, mask) => {
   // retry until file has been downloaded
@@ -71,4 +72,24 @@ const downloadExportedMarcFile = (fileName) => {
     });
 };
 
-export default { downloadCSVFile, downloadExportedMarcFile };
+const waitLandingPageOpened = () => {
+  cy.expect(PaneHeader({ id: 'paneHeader8' }).find(Button('View all')).exists());
+};
+
+export default {
+  downloadCSVFile,
+  downloadExportedMarcFile,
+  waitLandingPageOpened,
+
+  getExportedFileNameViaApi:() => {
+    return cy.okapiRequest({
+      path: 'data-export/job-executions',
+      isDefaultSearchParamsRequired: false,
+      searchParams: {
+        query: '(status==("COMPLETED" OR "COMPLETED_WITH_ERRORS" OR "FAIL")) sortBy completedDate/sort.descending'
+      },
+    }).then((name) => {
+      return name.body.jobExecutions[0].exportedFiles[0].fileName;
+    });
+  }
+};

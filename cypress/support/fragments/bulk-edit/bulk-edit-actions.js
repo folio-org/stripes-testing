@@ -22,7 +22,6 @@ export default {
   openStartBulkEditForm() {
     cy.do(Button(including('Start bulk edit')).click());
   },
-
   verifyBulkEditForm() {
     getEmailSelect().select('Email');
     cy.expect([
@@ -160,5 +159,16 @@ export default {
   verifyUncheckedDropdownMenuItem() {
     cy.do(dropdownMenu.find(Checkbox({ name: 'email'})).click());
     cy.expect(MultiColumnListHeader('Email').exists());
-  }
+  },
+
+  verifyActionsDownloadChangedCSV() {
+    cy.expect(DropdownMenu().find(Button('Download changed records (CSV)')).exists());
+  },
+
+  downloadChangedCSV(fileName = 'changedRecords.csv') {
+    // It is necessary to avoid cypress reload page expecting
+    cy.get('a[download]', { timeout: 15000 }).first().then(($input) => {
+      cy.downloadFile($input.attr('href'), 'cypress/downloads', fileName);
+    });
+  },
 };

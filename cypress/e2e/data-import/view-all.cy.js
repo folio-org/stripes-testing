@@ -13,10 +13,9 @@ describe('ui-data-import: Search the "View all" log screen', () => {
   const uniqueFileName = `C11112test${getRandomPostfix()}.${fileType}`;
 
   before(() => {
-    cy.loginAsAdmin();
+    cy.loginAsAdmin({ path: TopMenu.dataImportPath, waiter: DataImport.waitLoading });
     cy.getAdminToken();
 
-    cy.visit(TopMenu.dataImportPath);
     // create dynamically file with given name in fixtures
     FileManager.createFile(`cypress/fixtures/${uniqueFileName}`);
 

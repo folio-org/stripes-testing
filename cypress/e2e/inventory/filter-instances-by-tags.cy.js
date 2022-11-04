@@ -3,7 +3,7 @@ import TestTypes from '../../support/dictionary/testTypes';
 import permissions from '../../support/dictionary/permissions';
 import FilterInstancesByTags from '../../support/fragments/inventory/filterInstancesByTags';
 import TopMenu from '../../support/fragments/topMenu';
-import SearchInventory from '../../support/fragments/data_import/searchInventory';
+import InventorySearch from '../../support/fragments/inventory/inventorySearch';
 import Users from '../../support/fragments/users/users';
 import InventoryInstance from '../../support/fragments/inventory/inventoryInstance';
 import DevTeams from '../../support/dictionary/devTeams';
@@ -37,7 +37,7 @@ describe('ui-inventory: Filter instances by tags', () => {
   it('C343215 Filter instances by tags (folijet)', { tags: [TestTypes.smoke, DevTeams.folijet] }, () => {
     cy.visit(TopMenu.inventoryPath);
     FilterInstancesByTags.verifyPanesExist();
-    SearchInventory.searchInstanceByTitle(instanceRecord.instanceTitle);
+    InventorySearch.searchInstanceByTitle(instanceRecord.instanceTitle);
     FilterInstancesByTags.verifySearchResult(instanceRecord.instanceTitle);
     FilterInstancesByTags.selectFoundInstance(instanceRecord.instanceTitle);
     FilterInstancesByTags.verifyInstanceDetailsView();
