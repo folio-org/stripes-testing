@@ -58,7 +58,7 @@ describe('Search in Inventory', () => {
       });
     }
 
-    cy.login(testData.userProperties.username, testData.userProperties.password, { path: TopMenu.inventoryPath, waiter: InventorySearch.waitLoading });
+    cy.visit(TopMenu.inventoryPath);
 
     InventorySearch.selectSearchOptions('Contributor', 'Sauguet, Henri');
     InventorySearch.checkContributorRequest();
@@ -92,7 +92,7 @@ describe('Search in Inventory', () => {
       });
     }
 
-    cy.login(testData.userProperties.username, testData.userProperties.password, { path: TopMenu.inventoryPath, waiter: InventorySearch.waitLoading });
+    cy.visit(TopMenu.inventoryPath);
 
     searchQueries.forEach(query => {
       InventorySearch.selectSearchOptions('Keyword (title, contributor, identifier, HRID, UUID)', query);
