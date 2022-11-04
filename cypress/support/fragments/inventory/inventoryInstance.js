@@ -15,10 +15,12 @@ import {
   Link,
   MultiSelect,
   Pane,
-  TextField
+  TextField,
+  Callout,
+  calloutTypes,
+  Modal
 } from '../../../../interactors';
 import InventoryInstanceEdit from './InventoryInstanceEdit';
-import HoldingsRecordView from './holdingsRecordView';
 import InventoryViewSource from './inventoryViewSource';
 import NewHoldingsRecord from './newHoldingsRecord';
 import InventoryInstanceSelectInstanceModal from './holdingsMove/inventoryInstanceSelectInstanceModal';
@@ -28,7 +30,7 @@ import DateTools from '../../utils/dateTools';
 
 const section = Section({ id: 'pane-instancedetails' });
 const actionsButton = section.find(Button('Actions'));
-const identifiers = MultiColumnList({ id:'list-identifiers' });
+const identifiers = MultiColumnList({ id: 'list-identifiers' });
 const editMARCBibRecordButton = Button({ id:'edit-instance-marc' });
 const editInstanceButton = Button({ id:'edit-instance' });
 const moveHoldingsToAnotherInstanceButton = Button({ id:'move-instance' });
@@ -40,6 +42,8 @@ const viewHoldingsButton = Button('View holdings');
 const notesSection = Section({ id: 'instance-details-notes' });
 const moveItemsButton = Button({ id: 'move-instance-items' });
 const instanceDetailsPane = Pane({ id:'pane-instancedetails' });
+const identifiersAccordion = Accordion('Identifiers');
+const singleRecordImportModal = Modal('Single record import');
 
 const instanceHRID = 'Instance HRID';
 const validOCLC = { id:'176116217',
@@ -87,17 +91,14 @@ export default {
   checkExpectedOCLCPresence: (OCLCNumber = validOCLC.id) => {
     cy.expect(identifiers.find(HTML(including(OCLCNumber))).exists());
   },
-
   checkExpectedMARCSource: () => {
     cy.expect(section.find(HTML(including('MARC'))).exists());
     cy.expect(section.find(HTML(including('FOLIO'))).absent());
   },
-
   goToEditMARCBiblRecord:() => {
     cy.do(actionsButton.click());
     cy.do(editMARCBibRecordButton.click());
   },
-
   viewSource: () => {
     cy.do(actionsButton.click());
     cy.do(viewSourceButton.click());
@@ -112,10 +113,22 @@ export default {
     cy.do(editInstanceButton.click());
     InventoryInstanceEdit.waitLoading();
   },
+  editMarcBibliographicRecord:() => {
+    cy.do(actionsButton.click());
+    cy.do(editMARCBibRecordButton.click());
+    cy.expect(Pane({ id: 'quick-marc-editor-pane' }).exists());
+  },
   checkInstanceNotes:(noteType, noteContent) => {
     cy.expect(Button({ id: 'accordion-toggle-button-instance-details-notes' }).exists());
     cy.expect(notesSection.find(MultiColumnListHeader(noteType)).exists());
     cy.expect(notesSection.find(MultiColumnListCell(noteContent)).exists());
+  },
+
+  checkElectronicAccess:() => {
+    cy.expect(Accordion('Electronic access')
+      .find(MultiColumnList({ id: 'list-electronic-access' }))
+      .find(MultiColumnListCell({ row: 0, columnIndex: 0, content: 'No value set-' }))
+      .exists());
   },
 
   deriveNewMarcBib:() => {
@@ -125,14 +138,8 @@ export default {
   },
 
   getAssignedHRID:() => cy.then(() => KeyValue(instanceHRID).value()),
-
-  checkUpdatedHRID: (oldHRID) => {
-    cy.expect(KeyValue(instanceHRID, { value: oldHRID }).absent());
-  },
-
-  checkPresentedText: (expectedText) => {
-    cy.expect(section.find(HTML(including(expectedText))).exists());
-  },
+  checkUpdatedHRID: (oldHRID) => cy.expect(KeyValue(instanceHRID, { value: oldHRID }).absent()),
+  checkPresentedText: (expectedText) => cy.expect(section.find(HTML(including(expectedText))).exists()),
 
   goToMarcHoldingRecordAdding:() => {
     cy.do(actionsButton.click());
@@ -141,7 +148,7 @@ export default {
 
   openHoldingView: () => {
     cy.do(viewHoldingsButton.click());
-    HoldingsRecordView.waitLoading();
+    cy.expect(Button('Actions').exists());
   },
   createHoldingsRecord:(permanentLocation) => {
     pressAddHoldingsButton();
@@ -208,11 +215,12 @@ export default {
     InventoryInstancesMovement.move();
   },
   checkAddItem:(holdingsRecrodId) => {
-    cy.expect(section.find(Section({ id:holdingsRecrodId })).find(Button({ id: `clickable-new-item-${holdingsRecrodId}` })).exists());
+    cy.expect(section.find(Section({ id:holdingsRecrodId }))
+      .find(Button({ id: `clickable-new-item-${holdingsRecrodId}` }))
+      .exists());
   },
-
   checkInstanceIdentifier: (identifier) => {
-    cy.expect(Accordion('Identifiers').find(MultiColumnList({ id: 'list-identifiers' })
+    cy.expect(identifiersAccordion.find(identifiers
       .find(MultiColumnListRow({ index: 0 })))
       .find(MultiColumnListCell({ columnIndex: 1 }))
       .has({ content: identifier }));
@@ -292,17 +300,14 @@ export default {
   },
 
   verifyResourceIdentifier(type, value, rowIndex) {
-    const identifierRow = Accordion('Identifiers')
-      .find(MultiColumnList({ id: 'list-identifiers' })
+    const identifierRow = identifiersAccordion
+      .find(identifiers
         .find(MultiColumnListRow({ index: rowIndex })));
 
     cy.expect(identifierRow.find(MultiColumnListCell({ columnIndex: 0 })).has({ content: type }));
     cy.expect(identifierRow.find(MultiColumnListCell({ columnIndex: 1 })).has({ content: value }));
   },
-  verifyResourceIdentifierAbsent() {
-    cy.expect(Accordion('Identifiers')
-      .find(MultiColumnList({ id: 'list-identifiers' })).absent());
-  },
+  verifyResourceIdentifierAbsent:() => cy.expect(identifiersAccordion.find(identifiers).absent()),
   getId() {
     cy.url().then(url => cy.wrap(url.split('?')[0].split('/').at(-1))).as('instanceId');
     return cy.get('@instanceId');
@@ -327,11 +332,24 @@ export default {
       Button({ id: 'copy-instance' }).exists(),
       Button({ id: 'clickable-view-source' }).exists(),
       Button({ id: 'view-requests' }).exists(),
-      Button({ id: 'edit-instance-marc' }).absent(),
-    ])
+      editMARCBibRecordButton.absent(),
+    ]);
     cy.do(Button({ id: 'clickable-view-source' }).click());
     cy.expect(HTML('MARC bibliographic record').exists());
   },
+  
+  singleRecordImportModalIsPresented:() => {
+    cy.expect(singleRecordImportModal.exists());
+  },
+
+  importWithOclc:(oclc) => {
+    cy.do(singleRecordImportModal.find(TextField({ name:'externalIdentifier' })).fillIn(oclc));
+    cy.do(singleRecordImportModal.find(Button('Import')).click());
+  },
+
+  checkCalloutMessage: (text, calloutType = calloutTypes.success) => {
+    cy.expect(Callout({ type: calloutType }).is({ textContent: text }));
+  }, 
 
   checkIdentifier: (text) => {
     cy.expect(Accordion('Identifiers')

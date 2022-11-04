@@ -14,10 +14,10 @@ import TopMenu from '../../support/fragments/topMenu';
 import DataImport from '../../support/fragments/data_import/dataImport';
 import Logs from '../../support/fragments/data_import/logs/logs';
 import FileDetails from '../../support/fragments/data_import/logs/fileDetails';
-import SearchInventory from '../../support/fragments/data_import/searchInventory';
 import InventoryInstance from '../../support/fragments/inventory/inventoryInstance';
 import InventoryViewSource from '../../support/fragments/inventory/inventoryViewSource';
 import Users from '../../support/fragments/users/users';
+import InventorySearch from '../../support/fragments/inventory/inventorySearch';
 
 describe('ui-data-import: MARC field protections apply to MARC modifications of incoming records when they should not: Scenario 1', () => {
   let user = null;
@@ -131,7 +131,7 @@ describe('ui-data-import: MARC field protections apply to MARC modifications of 
 
     // upload a marc file for creating of the new instance, holding and item
     cy.visit(TopMenu.dataImportPath);
-    DataImport.uploadFile('marcFileForProtectionModification.mrc', fileName);
+    DataImport.uploadFile('marcFileForC350678.mrc', fileName);
     JobProfiles.searchJobProfileForImport(jobProfileName);
     JobProfiles.runImportFile(fileName);
     Logs.openFileDetails(fileName);
@@ -142,13 +142,12 @@ describe('ui-data-import: MARC field protections apply to MARC modifications of 
     FileDetails.checkItemsQuantityInSummaryTable(0, '1');
 
     // get Instance HRID through API
-    SearchInventory
-      .getInstanceHRID()
+    InventorySearch.getInstanceHRID()
       .then(hrId => {
         instanceHrid = hrId[1];
         // check fields are absent in the view source
         cy.visit(TopMenu.inventoryPath);
-        SearchInventory.searchInstanceByHRID(instanceHrid);
+        InventorySearch.searchInstanceByHRID(instanceHrid);
         // verify table data in marc bibliographic source
         InventoryInstance.viewSource();
         fieldsForDelete.forEach(fieldNumber => {

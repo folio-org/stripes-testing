@@ -361,7 +361,7 @@ describe('ui-data-import: Match on POL and update related Instance, Holdings, It
     FileDetails.checkItemsStatusesInResultList(1, [FileDetails.status.dash, FileDetails.status.discarded, FileDetails.status.discarded, FileDetails.status.discarded]);
 
     // check is items updated
-    FileDetails.openItemInInventory(3);
+    FileDetails.openInstanceInInventory('Updated');
     InventoryInstance.checkIsInstanceUpdated();
     InventoryInstance.openHoldingView();
     HoldingsRecordView.checkHoldingsType('Monograph');

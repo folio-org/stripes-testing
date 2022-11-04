@@ -6,7 +6,7 @@ import getRandomPostfix from '../../support/utils/stringTools';
 import InventoryInstanceEdit from '../../support/fragments/inventory/InventoryInstanceEdit';
 import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
 import InventoryHotkeys from '../../support/fragments/inventory/inventoryHotkeys';
-import SearchInventory from '../../support/fragments/data_import/searchInventory';
+import InventorySearch from '../../support/fragments/inventory/inventorySearch';
 import devTeams from '../../support/dictionary/devTeams';
 import InventoryInstance from '../../support/fragments/inventory/inventoryInstance';
 import Users from '../../support/fragments/users/users';
@@ -58,7 +58,7 @@ describe('ui-inventory: keyboard shortcut', () => {
     // TODO: Need to wait for the loading of saving the edited information.Reason: the robot runs quickly and the test drops.
     cy.wait(6000);
     InventoryKeyboardShortcuts.checkInstance(instanceTitle);
-    SearchInventory.searchInstanceByTitle(instanceTitle);
+    InventorySearch.searchInstanceByTitle(instanceTitle);
     InventoryInstances.selectInstance();
     InventoryKeyboardShortcuts.pressHotKey(hotKeys.openShortcutsModal);
     InventoryKeyboardShortcuts.waitModalLoading('Keyboard shortcuts');

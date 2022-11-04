@@ -334,5 +334,9 @@ export default {
 
   verifyPaneRecordsCount(value) {
     cy.expect(bulkEditPane.find(HTML(`${value} records match`)).exists());
-  }
+  },
+
+  verifyPaneTitleFileName(fileName) {
+    cy.expect(Pane(`Bulk edit ${fileName}`).exists());
+  },
 };
