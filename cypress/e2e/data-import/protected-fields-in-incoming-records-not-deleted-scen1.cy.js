@@ -79,7 +79,7 @@ describe('ui-data-import: Check that protected fields in incoming records are no
     MarcFieldProtection.currentListOfProtectedMarcFieldsIsPresented();
     MarcFieldProtection.createNewMarcFieldProtection();
     MarcFieldProtection.fillMarcFieldProtection(protectedField);
-    MarcFieldProtection.checkFieldProtectionIsCreated();
+    MarcFieldProtection.checkFieldProtectionIsCreated(protectedField);
 
     cy.visit(SettingsMenu.targetProfilesPath);
     Z3950TargetProfiles.openOclcWorldCat();
