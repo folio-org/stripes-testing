@@ -128,14 +128,14 @@ describe('ui-circulation-settings: overdue fine policies management', () => {
       });
   });
 
-  after('delete test data', () => {
-    InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(instance.instanceBarcode);
-    LoanPolicy.deleteApi(loanPolicy.id);
-    OverdueFinePolicy.deleteApi(overdueFinePolicy.id);
-    LostItemFeePolicy.deleteViaApi(lostItemFeePolicy.id);
-    CirculationRules.updateViaApi(originalCirculationRules);
-    UsersOwners.deleteViaApi(ownerData.id);
-  });
+    after('delete test data', () => {
+      InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(instance.instanceBarcode);
+      LoanPolicy.deleteApi(loanPolicy.id);
+      OverdueFinePolicy.deleteApi(overdueFinePolicy.id);
+      LostItemFeePolicy.deleteViaApi(lostItemFeePolicy.id);
+      CirculationRules.updateViaApi(originalCirculationRules);
+      UsersOwners.deleteViaApi(ownerData.id);
+    });
 
   beforeEach('Log in', () => {
     cy.loginAsAdmin();
@@ -166,7 +166,7 @@ describe('ui-circulation-settings: overdue fine policies management', () => {
     OverdueFinePolicies.linkIsAbsent();
   });
 
-  it('C9267: Verify that overdue fines calculated properly based on "Overdue fine" amount and interval setting (spitfire)', { tags: [devTeams.spitfire, testTypes.smoke] }, function () {
+  it('C9267: Verify that overdue fines calculated properly based on "Overdue fine" amount and interval setting (spitfire)', { tags: [devTeams.spitfire, testTypes.smoke, testTypes.broken] }, function () {
     cy.visit(TopMenu.checkOutPath);
     CheckOutActions.checkOutUser(userData.barcode);
     CheckOutActions.checkOutItem(instance.instanceBarcode);
