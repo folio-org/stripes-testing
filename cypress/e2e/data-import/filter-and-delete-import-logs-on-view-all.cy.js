@@ -38,6 +38,7 @@ describe.skip('ui-data-import: A user can filter and delete import logs from the
           DataImport.uploadFile('oneMarcBib.mrc', nameMarcFileForCreate);
           JobProfiles.searchJobProfileForImport('Default - Create instance and SRS MARC Bib');
           JobProfiles.runImportFile(nameMarcFileForCreate);
+          Logs.checkStatusOfJobProfile('Completed');
           Logs.openFileDetails(nameMarcFileForCreate);
         }
         cy.logout();
@@ -54,13 +55,25 @@ describe.skip('ui-data-import: A user can filter and delete import logs from the
           waiter: DataImport.waitLoading
         });
         // Log list should contain at least 30-35 import jobs
-        for (let i = 0; i < 13; i++) {
+        for (let i = 0; i < 6; i++) {
           const nameMarcFileForCreate = `C358136autotestFile.${getRandomPostfix()}.mrc`;
 
           cy.visit(TopMenu.dataImportPath);
           DataImport.uploadFile('oneMarcBib.mrc', nameMarcFileForCreate);
           JobProfiles.searchJobProfileForImport('Default - Create Holdings and SRS MARC Holdings');
           JobProfiles.runImportFile(nameMarcFileForCreate);
+          cy.wait(10000);
+          Logs.openFileDetails(nameMarcFileForCreate);
+        }
+
+        for (let i = 0; i < 7; i++) {
+          const nameMarcFileForCreate = `C358136autotestFile.${getRandomPostfix()}.mrc`;
+
+          cy.visit(TopMenu.dataImportPath);
+          DataImport.uploadFile('oneMarcBib.mrc', nameMarcFileForCreate);
+          JobProfiles.searchJobProfileForImport('Default - Create Holdings and SRS MARC Holdings');
+          JobProfiles.runImportFile(nameMarcFileForCreate);
+          cy.wait(10000);
           Logs.openFileDetails(nameMarcFileForCreate);
         }
       });
