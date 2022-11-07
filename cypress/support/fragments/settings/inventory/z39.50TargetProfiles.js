@@ -38,7 +38,7 @@ export default {
 
   editOclcWorldCat:(auth) => {
     cy.do(oclcWorldcatPane.find(Button('Edit')).click());
-    cy.do(PaneContent({ id: '12-content' }).find(TextField({ name:'authentication' })).fillIn(auth));
+    cy.do(TextField({ name:'authentication' }).fillIn(auth));
     cy.do(Pane('OCLC WorldCat').find(Button('Save & close')).click());
   },
 
