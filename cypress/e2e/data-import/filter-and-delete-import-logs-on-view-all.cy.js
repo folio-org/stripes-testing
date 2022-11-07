@@ -11,7 +11,7 @@ import JobProfiles from '../../support/fragments/data_import/job_profiles/jobPro
 import DevTeams from '../../support/dictionary/devTeams';
 import Logs from '../../support/fragments/data_import/logs/logs';
 
-describe('ui-data-import: A user can filter and delete import logs from the "View all" page', () => {
+describe.skip('ui-data-import: A user can filter and delete import logs from the "View all" page', () => {
   const startedDate = new Date();
   const completedDate = startedDate;
   // format date as YYYY-MM-DD
