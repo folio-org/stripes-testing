@@ -74,7 +74,7 @@ describe.skip('ui-data-import: A user can filter and delete import logs from the
     // TODO delete all created instances and holdings
   });
   // removed tag smoke because test runs infinite
-  it('C358136 A user can filter and delete import logs from the "View all" page (folijet)', { tags: [DevTeams.folijet] }, () => {
+  it('C358136 A user can filter and delete import logs from the "View all" page (folijet)', { tags: [TestTypes.criticalPath, DevTeams.folijet] }, () => {
     cy.visit(TopMenu.dataImportPath);
     LogsViewAll.openViewAll();
     LogsViewAll.viewAllIsOpened();
