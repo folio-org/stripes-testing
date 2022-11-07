@@ -9,8 +9,7 @@ import {
   PaneHeader,
   MultiColumnList,
   Pane,
-  MultiColumnListRow,
-  Link
+  MultiColumnListRow
 } from '../../../../../interactors';
 import { getLongDelay } from '../../../utils/cypressTools';
 import newJobProfile from './newJobProfile';
