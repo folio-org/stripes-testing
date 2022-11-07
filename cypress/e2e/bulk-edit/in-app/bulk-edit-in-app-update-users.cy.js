@@ -7,8 +7,8 @@ import getRandomPostfix from '../../../support/utils/stringTools';
 import devTeams from '../../../support/dictionary/devTeams';
 import BulkEditActions from '../../../support/fragments/bulk-edit/bulk-edit-actions';
 import Users from '../../../support/fragments/users/users';
-import UsersSearchPane from "../../../support/fragments/users/usersSearchPane";
-import UsersCard from "../../../support/fragments/users/usersCard";
+import UsersSearchPane from '../../../support/fragments/users/usersSearchPane';
+import UsersCard from '../../../support/fragments/users/usersCard';
 
 let user;
 const userUUIDsFileName = `userUUIDs_${getRandomPostfix()}.csv`;
@@ -68,7 +68,7 @@ describe('bulk-edit', () => {
       BulkEditSearchPane.selectRecordIdentifier('User UUIDs');
 
       BulkEditSearchPane.uploadFile(userUUIDsFileName);
-      BulkEditSearchPane.waitFileUploading()
+      BulkEditSearchPane.waitFileUploading();
 
       BulkEditActions.openActions();
       BulkEditActions.openStartBulkEditForm();
