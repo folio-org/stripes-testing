@@ -7,6 +7,8 @@ import getRandomPostfix from '../../../support/utils/stringTools';
 import devTeams from '../../../support/dictionary/devTeams';
 import BulkEditActions from '../../../support/fragments/bulk-edit/bulk-edit-actions';
 import Users from '../../../support/fragments/users/users';
+import UsersSearchPane from "../../../support/fragments/users/usersSearchPane";
+import UsersCard from "../../../support/fragments/users/usersCard";
 
 let user;
 const userUUIDsFileName = `userUUIDs_${getRandomPostfix()}.csv`;
@@ -60,6 +62,25 @@ describe('bulk-edit', () => {
 
       BulkEditSearchPane.selectRecordIdentifier('Usernames');
       BulkEditSearchPane.verifyDragNDropUsernamesArea();
+    });
+
+    it('C357987 Verify Users Patron group bulk edit -- in app approach (firebird)', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
+      BulkEditSearchPane.selectRecordIdentifier('User UUIDs');
+
+      BulkEditSearchPane.uploadFile(userUUIDsFileName);
+      BulkEditSearchPane.waitFileUploading()
+
+      BulkEditActions.openActions();
+      BulkEditActions.openStartBulkEditForm();
+      BulkEditActions.fillPatronGroup('graduate (Graduate Student)');
+      BulkEditActions.confirmChanges();
+      BulkEditActions.commitChanges();
+      BulkEditSearchPane.waitFileUploading();
+
+      cy.loginAsAdmin({ path: TopMenu.usersPath, waiter: UsersSearchPane.waitLoading });
+      UsersSearchPane.searchByKeywords(user.username);
+      UsersSearchPane.openUser(user.username);
+      UsersCard.verifyPatronBlockValue('graduate');
     });
   });
 });
