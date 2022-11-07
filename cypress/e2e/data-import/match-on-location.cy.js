@@ -14,7 +14,7 @@ import DataImport from '../../support/fragments/data_import/dataImport';
 import FileDetails from '../../support/fragments/data_import/logs/fileDetails';
 import Logs from '../../support/fragments/data_import/logs/logs';
 import SettingsJobProfiles from '../../support/fragments/settings/dataImport/settingsJobProfiles';
-import SearchInventory from '../../support/fragments/data_import/searchInventory';
+import InventorySearch from '../../support/fragments/inventory/inventorySearch';
 import InventoryInstance from '../../support/fragments/inventory/inventoryInstance';
 import NewFieldMappingProfile from '../../support/fragments/data_import/mapping_profiles/newFieldMappingProfile';
 import HoldingsRecordView from '../../support/fragments/inventory/holdingsRecordView';
@@ -297,7 +297,7 @@ describe('ui-data-import: Match on location', () => {
     };
 
     // change Instance HRID in .mrc file
-    DataImport.editMarcFile('marcFileForMatchOnLocation.mrc', editedMarcFileName, 'ocn933596084', instanceHrid);
+    DataImport.editMarcFile('marcFileForMatchOnLocation.mrc', editedMarcFileName, ['ocn933596084'], [instanceHrid]);
 
     // create Match profile
     cy.visit(SettingsMenu.matchProfilePath);
