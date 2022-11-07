@@ -1,4 +1,16 @@
-import { Button, TextField, MultiColumnListCell, Modal, HTML, including, Section, PaneHeader, MultiColumnList, Pane } from '../../../../../interactors';
+import {
+  Button,
+  TextField,
+  MultiColumnListCell,
+  Modal,
+  HTML,
+  including,
+  Section,
+  PaneHeader,
+  MultiColumnList,
+  Pane,
+  MultiColumnListRow
+} from '../../../../../interactors';
 import { getLongDelay } from '../../../utils/cypressTools';
 import newJobProfile from './newJobProfile';
 
@@ -6,10 +18,11 @@ const actionsButton = Button('Actions');
 const runButton = Button('Run');
 const waitSelector = Pane({ id:'view-job-profile-pane' });
 const closeButton = Button({ icon: 'times' });
+const paneResults = Pane({ id:'pane-results' });
 
 const openNewJobProfileForm = () => {
   cy.do([
-    Pane({ id:'pane-results' }).find(actionsButton).click(),
+    paneResults.find(actionsButton).click(),
     Button('New job profile').click(),
   ]);
   cy.expect(HTML({ className: including('form-'), id:'job-profiles-form' }).exists());
@@ -84,6 +97,15 @@ export default {
   searchJobProfileForImport:(jobProfileTitle) => {
     cy.do(TextField({ id:'input-search-job-profiles-field' }).fillIn(jobProfileTitle));
     cy.do(Button('Search').click());
+  },
+
+  selectJobProfile:() => {
+    // need to wait until file upload
+    cy.wait(1000);
+    cy.expect(paneResults.find(MultiColumnListRow({ index: 0 })).exists());
+    cy.do(paneResults
+      .find(MultiColumnListRow({ index: 0 }))
+      .click());
   },
 
   runImportFile:(fileName) => {
