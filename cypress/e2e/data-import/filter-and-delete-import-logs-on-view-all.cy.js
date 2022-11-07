@@ -1,5 +1,4 @@
 import getRandomPostfix from '../../support/utils/stringTools';
-import TestTypes from '../../support/dictionary/testTypes';
 import permissions from '../../support/dictionary/permissions';
 import DataImport from '../../support/fragments/data_import/dataImport';
 import TopMenu from '../../support/fragments/topMenu';
@@ -71,7 +70,6 @@ describe.skip('ui-data-import: A user can filter and delete import logs from the
     Users.deleteViaApi(secondUser.userId);
     // TODO delete all created instances and holdings
   });
-  // removed tag smoke because test runs infinite
   it('C358136 A user can filter and delete import logs from the "View all" page (folijet)', { tags: [DevTeams.folijet] }, () => {
     cy.visit(TopMenu.dataImportPath);
     LogsViewAll.openViewAll();

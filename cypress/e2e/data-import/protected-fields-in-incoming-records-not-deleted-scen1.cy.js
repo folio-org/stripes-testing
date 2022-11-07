@@ -8,7 +8,7 @@ import DataImport from '../../support/fragments/data_import/dataImport';
 import JobProfiles from '../../support/fragments/data_import/job_profiles/jobProfiles';
 import Logs from '../../support/fragments/data_import/logs/logs';
 import FileDetails from '../../support/fragments/data_import/logs/fileDetails';
-import SearchInventory from '../../support/fragments/data_import/searchInventory';
+import InventorySearch from '../../support/fragments/inventory/inventorySearch';
 import MarcFieldProtection from '../../support/fragments/settings/dataImport/marcFieldProtection';
 import Z3950TargetProfiles from '../../support/fragments/settings/inventory/z39.50TargetProfiles';
 import InventoryInstance from '../../support/fragments/inventory/inventoryInstance';
@@ -41,6 +41,7 @@ describe('ui-data-import: Check that protected fields in incoming records are no
 
         const fileName = `C358968autotestFile.${getRandomPostfix()}.mrc`;
 
+        Z3950TargetProfiles.changeOclcWorldCatToDefaultViaApi();
         DataImport.uploadFile('marcFileForC358968.mrc', fileName);
         JobProfiles.searchJobProfileForImport('Default - Create instance and SRS MARC Bib');
         JobProfiles.runImportFile(fileName);
@@ -54,7 +55,7 @@ describe('ui-data-import: Check that protected fields in incoming records are no
         FileDetails.checkInstanceQuantityInSummaryTable('1');
 
         // get Instance HRID through API
-        SearchInventory.getInstanceHRID()
+        InventorySearch.getInstanceHRID()
           .then(hrId => {
             instanceHrid = hrId;
           });
@@ -87,7 +88,7 @@ describe('ui-data-import: Check that protected fields in incoming records are no
     Z3950TargetProfiles.checkIsOclcWorldCatIsChanged(authentication);
 
     cy.visit(TopMenu.inventoryPath);
-    SearchInventory.searchInstanceByHRID(instanceHrid);
+    InventorySearch.searchInstanceByHRID(instanceHrid);
     InventoryInstance.editMarcBibliographicRecord();
     InventoryEditMarcRecord.deleteField();
     InventoryInstance.checkElectronicAccess();
