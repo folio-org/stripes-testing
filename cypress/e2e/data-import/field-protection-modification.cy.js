@@ -68,7 +68,7 @@ describe('ui-data-import: MARC field protections apply to MARC modifications of 
     const actionProfile = {
       typeValue: NewActionProfile.folioRecordTypeValue.marcBib,
       name: actionProfileName,
-      action: 'Modify (MARC Bibliographic record type only)'
+      action: 'Modify (MARC record types only)'
     };
 
     const jobProfile = {

@@ -49,7 +49,7 @@ describe('ui-data-import: Match on POL and update related Instance, Holdings, It
         name: mappingProfileNameForInstance },
       actionProfile: { typeValue: NewActionProfile.folioRecordTypeValue.instance,
         name: actionProfileNameForInstance,
-        action: 'Update (all record types except Orders, Invoices, or MARC Holdings)' }
+        action: 'Update (all record types except Orders)' }
     },
     {
       mappingProfile: { typeValue: NewFieldMappingProfile.folioRecordTypeValue.holdings,

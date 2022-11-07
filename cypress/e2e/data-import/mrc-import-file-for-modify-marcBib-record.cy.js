@@ -61,7 +61,7 @@ describe('ui-data-import: Verify the possibility to modify MARC Bibliographic re
 
     const actionProfile = {
       name: actionProfileName,
-      action: 'Modify (MARC Bibliographic record type only)',
+      action: 'Modify (MARC record types only)',
       typeValue: 'MARC Bibliographic',
     };
 
