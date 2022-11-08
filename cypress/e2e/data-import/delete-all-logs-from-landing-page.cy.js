@@ -42,7 +42,6 @@ describe('ui-data-import: A user can delete import logs with "Data import: Can d
           DataImport.uploadFile(filePath, fileNameToUpload);
           JobProfiles.searchJobProfileForImport('Default - Create instance and SRS MARC Bib');
           JobProfiles.runImportFile(fileNameToUpload);
-          cy.wait(5000);
         });
       });
   });
