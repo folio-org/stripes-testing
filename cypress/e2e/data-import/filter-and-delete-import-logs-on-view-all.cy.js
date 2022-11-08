@@ -74,7 +74,7 @@ describe('ui-data-import: A user can filter and delete import logs from the "Vie
     // TODO delete all created instances and holdings
   });
 
-  it('C358136 A user can filter and delete import logs from the "View all" page (folijet)', { tags: [TestTypes.criticalPath, DevTeams.folijet] }, () => {
+  it('C358136 A user can filter and delete import logs from the "View all" page (folijet)', () => {
     cy.visit(TopMenu.dataImportPath);
     LogsViewAll.openViewAll();
     LogsViewAll.viewAllIsOpened();
