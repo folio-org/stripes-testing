@@ -11,7 +11,7 @@ import JobProfiles from '../../support/fragments/data_import/job_profiles/jobPro
 import DevTeams from '../../support/dictionary/devTeams';
 import Logs from '../../support/fragments/data_import/logs/logs';
 
-describe.skip('ui-data-import: A user can filter and delete import logs from the "View all" page', () => {
+describe('ui-data-import: A user can filter and delete import logs from the "View all" page', () => {
   const startedDate = new Date();
   const completedDate = startedDate;
   // format date as YYYY-MM-DD
@@ -73,7 +73,7 @@ describe.skip('ui-data-import: A user can filter and delete import logs from the
     Users.deleteViaApi(secondUser.userId);
     // TODO delete all created instances and holdings
   });
-  // removed tag smoke because test runs infinite
+
   it('C358136 A user can filter and delete import logs from the "View all" page (folijet)', { tags: [TestTypes.criticalPath, DevTeams.folijet] }, () => {
     cy.visit(TopMenu.dataImportPath);
     LogsViewAll.openViewAll();
