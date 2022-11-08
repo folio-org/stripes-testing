@@ -49,15 +49,13 @@ export default {
   },
 
   checkReceivedPiece: (rowNumber, caption, barcode) => {
-    cy.do([
-      cy.expect(Accordion({ id: receivedPiecesAccordionId })
+      cy.expect([Accordion({ id: receivedPiecesAccordionId })
         .find(MultiColumnListRow({ index: rowNumber }))
-        .find(MultiColumnListCell({ content: barcode })).exists()),
-
-      cy.expect(Accordion({ id: receivedPiecesAccordionId })
+        .find(MultiColumnListCell({ content: barcode })).exists(),
+        Accordion({ id: receivedPiecesAccordionId })
         .find(MultiColumnListRow({ index: rowNumber }))
-        .find(MultiColumnListCell({ content: caption })).exists())
-    ]);
+        .find(MultiColumnListCell({ content: caption })).exists()
+      ]);
   },
 
   unreceivePiece: (rowNumber = 0) => {
@@ -73,11 +71,9 @@ export default {
   },
 
   checkUnreceivedPiece: (rowNumber = 0, caption) => {
-    cy.do([
       cy.expect(Accordion({ id: expectedPiecesAccordionId })
         .find(MultiColumnListRow({ index: rowNumber }))
-        .find(MultiColumnListCell({ content: caption })).exists())
-    ]);
+        .find(MultiColumnListCell({ content: caption })).exists());
   },
 
   checkIsPiecesCreated:(title) => {

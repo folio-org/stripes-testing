@@ -61,7 +61,7 @@ export default {
   assignAdmin: () => {
     cy.do([
       findUserButton.click(),
-      userSearchModal.find(searchTextField).fillIn('diku'),
+      userSearchModal.find(searchTextField).fillIn('folio-aqa'),
       searchButton.click(),
       firstSearchResult.find(checkboxAll).click(),
       userSearchModal.find(saveButton).click()
