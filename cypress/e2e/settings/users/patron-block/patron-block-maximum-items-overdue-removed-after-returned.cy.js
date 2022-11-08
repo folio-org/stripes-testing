@@ -103,7 +103,6 @@ describe('Patron Block: Maximum number of overdue items', () => {
         });
         cy.getMaterialTypes({ limit: 1 }).then((res) => {
           testData.materialTypeId = res.id;
-          testData.materialTypeName = res.name;
         });
       })
       .then(() => {
@@ -138,7 +137,9 @@ describe('Patron Block: Maximum number of overdue items', () => {
 
     UsersOwners.createViaApi(owner.body).then((response) => {
       owner.data = response;
-      PaymentMethods.createViaApi(response.id);
+      PaymentMethods.createViaApi(response.id).then(resp => {
+        testData.paymentMethodId = resp.id;
+      });
     });
     LoanPolicy.createApi(loanPolicyBody);
     PatronGroups.createViaApi(patronGroup.name).then((res) => {
@@ -167,7 +168,6 @@ describe('Patron Block: Maximum number of overdue items', () => {
         userData.password = userProperties.password;
         userData.userId = userProperties.userId;
         userData.barcode = userProperties.barcode;
-        userData.personal.lastname = userProperties.lastName;
       })
       .then(() => {
         UserEdit.addServicePointViaApi(testData.userServicePoint.id, userData.userId, testData.userServicePoint.id);
@@ -194,6 +194,7 @@ describe('Patron Block: Maximum number of overdue items', () => {
         checkInDate: new Date().toISOString(),
       });
     });
+    PaymentMethods.deleteViaApi(testData.paymentMethodId);
     UsersOwners.deleteViaApi(owner.data.id);
     cy.deleteLoanPolicy(loanPolicyBody.id);
     UserEdit.changeServicePointPreferenceViaApi(userData.userId, [testData.userServicePoint.id]);
@@ -213,6 +214,7 @@ describe('Patron Block: Maximum number of overdue items', () => {
       testData.defaultLocation.id
     );
     CirculationRules.deleteRuleViaApi(originalCirculationRules);
+    cy.deleteLoanType(testData.loanTypeId);
   });
   it(
     'C350649 Verify automated patron block "Maximum number of overdue items" removed after overdue item returned (vega)',
