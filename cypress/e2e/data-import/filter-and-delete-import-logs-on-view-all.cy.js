@@ -60,7 +60,7 @@ describe.skip('ui-data-import: A user can filter and delete import logs from the
 
           cy.visit(TopMenu.dataImportPath);
           DataImport.uploadFile('oneMarcBib.mrc', nameMarcFileForCreate);
-          JobProfiles.searchJobProfileForImport('Default - Create instance and SRS MARC Bib');
+          JobProfiles.searchJobProfileForImport('Default - Create Holdings and SRS MARC Holdings');
           JobProfiles.runImportFile(nameMarcFileForCreate);
           Logs.openFileDetails(nameMarcFileForCreate);
         }
