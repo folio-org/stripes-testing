@@ -522,7 +522,7 @@ describe('ui-data-import: Match on location', () => {
     HoldingsRecordView.close();
     InventoryInstance.openHoldingsAccordion('Main Library >');
     InventoryInstance.openItemView('No barcode');
-    ItemVeiw.checkMaterialType(materialType);
+    ItemVeiw.checkMaterialType('sound recording');
 
     // delete profiles
     JobProfiles.deleteJobProfile(jobProfile);
