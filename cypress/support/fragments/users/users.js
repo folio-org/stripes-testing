@@ -58,7 +58,7 @@ export default {
       TextField({ id: 'adduser_email' }).fillIn(userData.personal.email),
       Button({ id: 'clickable-save' }).click()]).then(() => {
       cy.intercept('/users').as('user');
-      return cy.wait('@user', { timeout: 30000 }).then((xhr) => xhr.response.body.id);
+      return cy.wait('@user', { timeout: 70000 }).then((xhr) => xhr.response.body.id);
     });
   },
 
