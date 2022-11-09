@@ -6,9 +6,7 @@ import testType from '../../../support/dictionary/testTypes';
 import devTeams from '../../../support/dictionary/devTeams';
 import NewExpenceClass from '../../../support/fragments/settings/finance/newExpenseClass';
 import SettingsFinance from '../../../support/fragments/settings/finance/settingsFinance';
-import FiscalYears from '../../../support/fragments/finance/fiscalYears/fiscalYears';
 import TopMenu from '../../../support/fragments/topMenu';
-import Ledgers from '../../../support/fragments/finance/ledgers/ledgers';
 import NewFiscalYear from '../../../support/fragments/finance/fiscalYears/newFiscalYear';
 import NewLedger from '../../../support/fragments/finance/ledgers/newLedger';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
@@ -17,8 +15,6 @@ import InteractorsTools from '../../../support/utils/interactorsTools';
 describe('ui-finance: Funds', () => {
   const firstExpenseClass = { ...NewExpenceClass.defaultUiBatchGroup };
   const fund = { ...NewFund.defaultFund };
-  const defaultLedger = NewLedger.defaultLedger;
-  const defaultFiscalYear = { ...NewFiscalYear.defaultFiscalYear };
 
   before(() => {
     cy.loginAsAdmin();
