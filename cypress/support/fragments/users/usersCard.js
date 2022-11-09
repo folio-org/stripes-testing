@@ -1,6 +1,19 @@
 import { HTML, including, Link } from '@interactors/html';
 import { TextField } from 'bigtest';
-import { Accordion, Button, Checkbox, MultiColumnList, MultiColumnListCell, MultiColumnListRow, Pane, Section, Selection, SelectionList, TextArea } from '../../../../interactors';
+import {
+  Accordion,
+  Button,
+  Checkbox,
+  KeyValue,
+  MultiColumnList,
+  MultiColumnListCell,
+  MultiColumnListRow,
+  Pane,
+  Section,
+  Selection,
+  SelectionList,
+  TextArea
+} from '../../../../interactors';
 import textField from '../../../../interactors/text-field';
 import DateTools from '../../utils/dateTools';
 
@@ -165,5 +178,9 @@ export default {
     } else {
       return cy.expect(Section({ id: 'loansSection' }).find(HTML(including(`${quantityOfOpenLoans} open loans`))).exists());
     }
-  }
+  },
+
+  verifyPatronBlockValue(value = '') {
+    cy.expect(KeyValue('Patron group').has({ value: including(value) }));
+  },
 };

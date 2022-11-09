@@ -4,10 +4,7 @@ import {
   TextField,
   HTML,
   including,
-  MultiColumnListRow,
-  Modal,
-  MultiColumnList,
-  MultiColumnListCell
+  Modal
 } from '../../../../../interactors';
 import ModalDeleteMaterialType from './modalDeleteMaterialType';
 import InteractorsTools from '../../../utils/interactorsTools';
@@ -27,10 +24,6 @@ const verifyMessageOfDeteted = (newMaterialTypeName) => {
   InteractorsTools.closeCalloutMessage();
 };
 
-const findRowIndex = (name) => cy.then(() => MultiColumnList({ id:'editList-materialtypes' })
-  .find(MultiColumnListCell(name))
-  .row());
-
 export default {
   isPresented,
   checkIsDeleted,
@@ -43,18 +36,17 @@ export default {
     });
   },
 
-  edit:(newMaterialTypeName) => {
-    cy.do(MultiColumnListRow({ rowIndexInParent: 'row-0' }).find(Button({ icon: 'edit' })).click());
+  edit:(materialTypeName, newMaterialTypeName) => {
+    cy.contains(materialTypeName).then(elem => {
+      elem.parent()[0].querySelector('button[icon="edit"]').click();
+    });
     cy.do(TextField({ placeholder: 'name' }).fillIn(newMaterialTypeName));
     cy.do(Button('Save').click());
   },
 
   delete:(newMaterialTypeName) => {
-    findRowIndex(newMaterialTypeName).then(rowNumber => {
-      cy.do(MultiColumnList({ id:'editList-materialtypes' })
-        .find(MultiColumnListRow({ rowIndexInParent :  `row-${rowNumber - 2}` }))
-        .find(Button({ icon: 'trash' }))
-        .click());
+    cy.contains(newMaterialTypeName).then(elem => {
+      elem.parent()[0].querySelector('button[icon="trash"]').click();
     });
     ModalDeleteMaterialType.deleteMaterialType();
     cy.expect(Modal('Delete Material type').absent());

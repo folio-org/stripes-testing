@@ -31,7 +31,6 @@ describe('ui-invoices: Approve invoice', () => {
     Organizations.getOrganizationViaApi({ query: `name=${invoice.vendorName}` })
       .then(organization => {
         invoice.accountingCode = organization.erpCode;
-        console.log(organization);
         Object.assign(vendorPrimaryAddress,
           organization.addresses.find(address => address.isPrimary === true));
           cy.getBatchGroups()

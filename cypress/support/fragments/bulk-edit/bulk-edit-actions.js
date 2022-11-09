@@ -17,6 +17,14 @@ function getEmailSelect() {
   return cy.get('select').eq(1);
 }
 
+function getPatronBlockSelect() {
+  return cy.get('select').eq(1);
+}
+
+function getPatronGroupTypeSelect() {
+  return cy.get('select').eq(3);
+}
+
 
 export default {
   openStartBulkEditForm() {
@@ -68,6 +76,11 @@ export default {
     getLocationSelect().select('Replace with');
     cy.do(Button('Select control\nSelect location').click());
     cy.get('[class^=selectionFilter-]').type(location);
+  },
+
+  fillPatronGroup(group = 'staff (Staff Member)') {
+    getPatronBlockSelect().select('Patron group');
+    getPatronGroupTypeSelect().select(group);
   },
 
   verifyNoMatchingOptionsForLocationFilter() {
