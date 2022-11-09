@@ -299,5 +299,9 @@ export default {
       .set('Product ID', orderLine.details.productIds[0].productId)
       .set('Product ID ISBN', orderLine.details.productIds[0].productId);
     return searchParamsMap;
-  }
+  },
+
+  waitLoading : () => {
+    cy.expect(Pane({ id: 'invoice-results-pane' }).exists());
+  },
 };

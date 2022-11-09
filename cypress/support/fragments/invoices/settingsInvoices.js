@@ -1,4 +1,4 @@
-import { Button, TextField, MultiColumnListHeader, EditableListRow, MultiColumnListCell, Selection, SelectionList } from '../../../../interactors';
+import { Button, TextField, MultiColumnListHeader, EditableListRow, MultiColumnListCell, Selection, SelectionList, PaneHeader, Checkbox } from '../../../../interactors';
 import InteractorsTools from '../../utils/interactorsTools';
 import DateTools from '../../utils/dateTools';
 
@@ -100,4 +100,11 @@ export default {
     body
   }),
 
+  waitApprovalsLoading: () => {
+    cy.expect(PaneHeader('Approvals').exists());
+  },
+
+  checkApproveAndPayCheckboxIsDisabled: () => {
+    cy.expect(Checkbox({ name: 'isApprovePayEnabled' }).disabled());
+  },
 };
