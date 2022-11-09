@@ -25,14 +25,6 @@ describe('ui-finance: Funds', () => {
     cy.visit(SettingsMenu.expenseClassesPath);
     SettingsFinance.createNewExpenseClass(firstExpenseClass);
 
-    cy.visit(TopMenu.fiscalYearPath);
-    FiscalYears.createDefaultFiscalYear(defaultFiscalYear);
-    FiscalYears.checkCreatedFiscalYear(defaultFiscalYear.name);
-
-    cy.visit(TopMenu.ledgerPath);
-    Ledgers.createDefaultLedger(defaultLedger);
-    Ledgers.checkCreatedLedgerName(defaultLedger);
-
     Funds.createFundViaUI(fund)
       .then(
         () => {
@@ -43,18 +35,18 @@ describe('ui-finance: Funds', () => {
   });
 
   after(() => {
+    cy.visit(TopMenu.fundPath);
+    FinanceHelp.searchByName(fund.name);
+    FinanceHelp.selectFromResultsList();
+    Funds.selectBudgetDetails();
     Funds.editBudget();
     Funds.deleteExpensesClass();
+    InteractorsTools.checkCalloutMessage(`Budget ${fund.code}-${DateTools.getCurrentFiscalYearCode()} has been saved`);
     Funds.deleteBudgetViaActions();
     Funds.deleteFundViaActions();
 
     cy.visit(SettingsMenu.expenseClassesPath);
     SettingsFinance.deleteExpenseClass(firstExpenseClass);
-
-    cy.visit(TopMenu.fiscalYearPath);
-    FinanceHelp.searchByName(defaultFiscalYear.name);
-    FinanceHelp.selectFromResultsList();
-    FiscalYears.deleteFiscalYearViaActions();
   });
 
   it('C15858 Add expense class to budget (thunderjet)', { tags: [testType.criticalPath, devTeams.thunderjet] }, () => {
@@ -64,8 +56,6 @@ describe('ui-finance: Funds', () => {
     Funds.selectBudgetDetails();
     Funds.editBudget();
     Funds.addExpensesClass(firstExpenseClass.name);
-    InteractorsTools.checkCalloutMessage(`Budget ${fund.code} has been saved`);
-    // Need to wait callout message
-    cy.wait(4000);
+    InteractorsTools.checkCalloutMessage(`Budget ${fund.code}-${DateTools.getCurrentFiscalYearCode()} has been saved`);
   });
 });
