@@ -67,7 +67,6 @@ describe('bulk-edit', () => {
 
       BulkEditSearchPane.uploadFile(itemBarcodesFileName);
       BulkEditSearchPane.waitFileUploading();
-      cy.pause();
 
       BulkEditActions.openActions();
       BulkEditActions.openStartBulkEditForm();
