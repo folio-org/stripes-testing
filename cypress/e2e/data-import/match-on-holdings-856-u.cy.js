@@ -88,23 +88,23 @@ describe('ui-data-import: Match on Holdings 856 $u', () => {
     cy.visit(SettingsMenu.mappingProfilePath);
   });
 
-  // after(() => {
-  //   cy.getInstance({ limit: 1, expandAll: true, query: `"title"=="${instanceTitle}"` })
-  //     .then((instance) => {
-  //       cy.deleteHoldingRecordViaApi(instance.holdings[0].id);
-  //       InventoryInstance.deleteInstanceViaApi(instance.id);
-  //     });
+  after(() => {
+    cy.getInstance({ limit: 1, expandAll: true, query: `"title"=="${instanceTitle}"` })
+      .then((instance) => {
+        cy.deleteHoldingRecordViaApi(instance.holdings[0].id);
+        InventoryInstance.deleteInstanceViaApi(instance.id);
+      });
 
-  //   JobProfiles.deleteJobProfile(createInstanceAndEHoldingsJobProfileName);
-  //   JobProfiles.deleteJobProfile(updateEHoldingsJobProfileName);
-  //   MatchProfiles.deleteMatchProfile(matchProfileName);
-  //   ActionProfiles.deleteActionProfile(createInstanceActionProfileName);
-  //   ActionProfiles.deleteActionProfile(createEHoldingsActionProfileName);
-  //   ActionProfiles.deleteActionProfile(updateEHoldingsActionProfileName);
-  //   FieldMappingProfiles.deleteFieldMappingProfile(createInstanceMappingProfileName);
-  //   FieldMappingProfiles.deleteFieldMappingProfile(createEHoldingsMappingProfileName);
-  //   FieldMappingProfiles.deleteFieldMappingProfile(updateEHoldingsMappingProfileName);
-  // });
+    JobProfiles.deleteJobProfile(createInstanceAndEHoldingsJobProfileName);
+    JobProfiles.deleteJobProfile(updateEHoldingsJobProfileName);
+    MatchProfiles.deleteMatchProfile(matchProfileName);
+    ActionProfiles.deleteActionProfile(createInstanceActionProfileName);
+    ActionProfiles.deleteActionProfile(createEHoldingsActionProfileName);
+    ActionProfiles.deleteActionProfile(updateEHoldingsActionProfileName);
+    FieldMappingProfiles.deleteFieldMappingProfile(createInstanceMappingProfileName);
+    FieldMappingProfiles.deleteFieldMappingProfile(createEHoldingsMappingProfileName);
+    FieldMappingProfiles.deleteFieldMappingProfile(updateEHoldingsMappingProfileName);
+  });
 
   const createInstanceMappingProfile = (instanceMappingProfile) => {
     FieldMappingProfiles.openNewMappingProfileForm();
