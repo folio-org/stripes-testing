@@ -105,7 +105,7 @@ describe('Export Loans ', () => {
           itemBarcode: itemsData.itemsWithSeparateInstance[1].barcode,
         });
 
-        cy.login(userData.username, userData.password, { path: TopMenu.checkInPath, waiter: CheckInActions.waitLoading });
+        cy.login(userData.username, userData.password);
       });
   });
 
@@ -129,11 +129,14 @@ describe('Export Loans ', () => {
         }
       )
     );
-    FileManager.deleteFolder(Cypress.config('downloadsFolder'));
+   FileManager.deleteFolder(Cypress.config('downloadsFolder'));
   });
 
   it('C721 Export patron*s loans to CSV (vega)', { tags: [TestTypes.smoke, devTeams.vega] }, () => {
     const fileNameMask = 'export*';
+    cy.wait(10000);
+    cy.visit(TopMenu.checkInPath);
+    CheckInActions.waitLoading();
     cy.visit(AppPaths.getOpenLoansPath(userData.userId));
     Loans.exportLoansToCSV();
     FileManager.verifyFile(
