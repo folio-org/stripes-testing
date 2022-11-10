@@ -24,7 +24,8 @@ describe('ui-data-import: A user can filter and delete import logs from the "Vie
   before(() => {
     cy.createTempUser([
       permissions.moduleDataImportEnabled.gui,
-      permissions.deleteImportLogs.gui
+      permissions.deleteImportLogs.gui,
+
     ])
       .then(userProperties => {
         firstUser = userProperties;
@@ -60,8 +61,9 @@ describe('ui-data-import: A user can filter and delete import logs from the "Vie
 
           cy.visit(TopMenu.dataImportPath);
           DataImport.uploadFile('oneMarcAuthority.mrc', nameMarcFileForCreate);
-          JobProfiles.searchJobProfileForImport('Default - Create MARC Authority');
+          JobProfiles.searchJobProfileForImport('Default - Create SRS MARC Authority');
           JobProfiles.runImportFile(nameMarcFileForCreate);
+          Logs.checkStatusOfJobProfile('Completed');
           Logs.openFileDetails(nameMarcFileForCreate);
         }
       });
