@@ -4,8 +4,7 @@ import {
   Pane,
   Link,
   including,
-  KeyValue,
-  PaneContent
+  KeyValue
 } from '../../../../../interactors';
 
 const oclcWorldcatPane = Pane('✓ OCLC WorldCat');
