@@ -92,6 +92,7 @@ describe('ui-finance: Groups', () => {
     Groups.deleteGroupViaApi(defaultGroup.id);
     Ledgers.deleteledgerViaApi(defaultLedger.id);
     FiscalYears.deleteFiscalYearViaApi(defaultFiscalYear.id);
+    cy.wait(2000);
     Users.deleteViaApi(user.userId);
   });
 

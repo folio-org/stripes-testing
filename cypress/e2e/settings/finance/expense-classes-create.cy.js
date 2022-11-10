@@ -8,12 +8,10 @@ describe('ui-invoices-settings: Batch Group creation', () => {
   const expenseClass = { ...NewExpenceClass.defaultUiBatchGroup };
   const newExpenseClass = { ...NewExpenceClass.defaultUiBatchGroup };
   before(() => {
-    cy.getAdminToken();
-    cy.visit(`${SettingsMenu.expenseClassesPath}`);
+    cy.loginAsAdmin({ path:SettingsMenu.expenseClassesPath, waiter: SettingsFinance.waitExpenseClassesLoading });
   });
 
   it('C15857: Create edit and delete Expense classes (thunderjet)', { tags: [TestType.criticalPath, devTeams.thunderjet] }, () => {
-    SettingsFinance.waitExpenseClassesLoading();
     SettingsFinance.createNewExpenseClass(expenseClass);
     SettingsFinance.checkExpenseClass(expenseClass);
 

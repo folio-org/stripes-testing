@@ -91,6 +91,7 @@ describe('ui-finance: Funds', () => {
     cy.login(user.username, user.password, { path:TopMenu.fundPath, waiter: Funds.waitLoading });
     FinanceHelp.searchByName(defaultfund.name);
     Funds.checkZeroSearchResultsHeader();
+    cy.logout();
     cy.loginAsAdmin({ path:SettingsMenu.acquisitionUnitsPath, waiter: AcquisitionUnits.waitLoading });
     AcquisitionUnits.edit(defaultAcquisitionUnit.name);
     AcquisitionUnits.selectViewCheckbox();
