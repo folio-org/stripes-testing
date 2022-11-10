@@ -1,9 +1,10 @@
-import { Button, TextArea, NavListItem, Checkbox, Modal } from '../../../../interactors';
+import { Button, TextArea, NavListItem, Checkbox, Modal, RichEditor } from '../../../../interactors';
 
 const editButton = Button({ id: 'clickable-edit-item' });
 const staffClipsDescripton = TextArea({ id: 'input-staff-slip-description' });
 const textCheck = 'The Wines of Italyc.2';
 const saveButton = Button('Save & close');
+const staffClipsEditor = RichEditor();
 
 export default {
   defaultUiEditStaffClips : {
@@ -55,8 +56,8 @@ export default {
     this.previewStaffClips();
   },
   clearStaffClips: () => {
-    cy.get('#template-editor').type('{selectAll}{backspace}');
-    cy.get('#input-staff-slip-description').type('{selectAll}{backspace}');
+    cy.do(staffClipsEditor.fillIn('{selectAll}{backspace}'));
+    cy.do(staffClipsDescripton.fillIn('{selectAll}{backspace}'));
     cy.do(saveButton.click());
   },
   editAndClearHold() {
