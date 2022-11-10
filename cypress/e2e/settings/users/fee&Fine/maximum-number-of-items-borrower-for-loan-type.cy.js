@@ -16,7 +16,6 @@ import Users from '../../../../support/fragments/users/users';
 import ServicePoints from '../../../../support/fragments/settings/tenant/servicePoints/servicePoints';
 import InventoryInstance from '../../../../support/fragments/inventory/inventoryInstance';
 import DevTeams from '../../../../support/dictionary/devTeams';
-import CheckOutActions from '../../../../support/fragments/check-out-actions/check-out-actions';
 import SettingsMenu from '../../../../support/fragments/settingsMenu';
 import OtherSettings from '../../../../support/fragments/settings/circulation/otherSettings';
 
@@ -26,7 +25,7 @@ describe('ui-users:', () => {
   let servicePoint;
   let limitTestInstanceIds;
   let testInstanceIds;
-  let loanPolicyForCourseRteserves;
+  let loanPolicyForCourseReserves;
   let materialType;
   let limitLoanTypeId;
   let loanTypeId;
@@ -90,7 +89,7 @@ describe('ui-users:', () => {
             // loan policy for "Course reserves" items
             LoanPolicyActions.createApi(LoanPolicyActions.getDefaultRollingLoanPolicy(limitOfItem))
               .then((policy) => {
-                loanPolicyForCourseRteserves = policy;
+                loanPolicyForCourseReserves = policy;
               });
             cy.getRequestPolicy({ query: `name=="${REQUEST_POLICY_NAMES.HOLD_ONLY}"` });
             cy.getNoticePolicy({ query: `name=="${NOTICE_POLICY_NAMES.SEND_NO_NOTICES}"` });
@@ -107,7 +106,7 @@ describe('ui-users:', () => {
             const noticePolicyId = Cypress.env(CY_ENV.NOTICE_POLICY)[0].id;
             const overdueFinePolicyId = Cypress.env(CY_ENV.OVERDUE_FINE_POLICY)[0].id;
             const lostItemFeesPolicyId = Cypress.env(CY_ENV.LOST_ITEM_FEES_POLICY)[0].id;
-            const policy = `l ${loanPolicyForCourseRteserves.id} r ${requestPolicyId} n ${noticePolicyId} o ${overdueFinePolicyId} i ${lostItemFeesPolicyId}`;
+            const policy = `l ${loanPolicyForCourseReserves.id} r ${requestPolicyId} n ${noticePolicyId} o ${overdueFinePolicyId} i ${lostItemFeesPolicyId}`;
             const priority = 'priority: number-of-criteria, criterium (t, s, c, b, a, m, g), last-line';
             const newRule = `${priority}\nfallback-policy: ${policy}\nt ${limitLoanTypeId}: ${policy}`;
 
@@ -187,7 +186,7 @@ describe('ui-users:', () => {
     cy.updateCirculationRules({
       rulesAsText: rulesDefaultString,
     });
-    cy.deleteLoanPolicy(loanPolicyForCourseRteserves.id);
+    cy.deleteLoanPolicy(loanPolicyForCourseReserves.id);
     UserEdit.changeServicePointPreferenceViaApi(user.userId, [servicePoint.id])
       .then(() => {
         ServicePoint.deleteViaApi(servicePoint.id);
