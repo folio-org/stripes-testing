@@ -19,6 +19,7 @@ const runButton = Button('Run');
 const waitSelector = Pane({ id:'view-job-profile-pane' });
 const closeButton = Button({ icon: 'times' });
 const paneResults = Pane({ id:'pane-results' });
+const searchButton = Button('Search');
 
 const openNewJobProfileForm = () => {
   cy.do([
@@ -77,6 +78,13 @@ const createJobProfile = (jobProfile) => {
   newJobProfile.fillJobProfile(jobProfile);
 };
 
+const searchJobProfileForImport = (jobProfileTitle) => {
+  // TODO: clarify with developers what should be waited
+  cy.wait(1500);
+  cy.do(Pane({ id:'pane-results' }).find(TextField({ id:'input-search-job-profiles-field' })).fillIn(jobProfileTitle));
+  cy.do(searchButton.click());
+};
+
 export default {
   defaultInstanceAndSRSMarcBib:'Default - Create instance and SRS MARC Bib',
   openNewJobProfileForm: () => {
@@ -88,15 +96,13 @@ export default {
 
   waitLoadingList,
   waitLoading,
+  searchJobProfileForImport,
+  deleteJobProfile,
+  createJobProfile,
 
   checkJobProfilePresented:(jobProfileTitle) => {
-    cy.get('[id="job-profiles-list"]')
-      .should('contains.text', jobProfileTitle);
-  },
-
-  searchJobProfileForImport:(jobProfileTitle) => {
-    cy.do(TextField({ id:'input-search-job-profiles-field' }).fillIn(jobProfileTitle));
-    cy.do(Button('Search').click());
+    searchJobProfileForImport(jobProfileTitle);
+    cy.expect(MultiColumnListCell(jobProfileTitle).exists());
   },
 
   selectJobProfile:() => {
@@ -119,9 +125,6 @@ export default {
     cy.expect(MultiColumnList({ id:'job-logs-list' }).find(Button(fileName)).exists());
   },
 
-  deleteJobProfile,
-  createJobProfile,
-
   createJobProfileWithLinkingProfiles: (jobProfile, actionProfileName, matchProfileName) => {
     openNewJobProfileForm();
     newJobProfile.fillJobProfile(jobProfile);
@@ -139,8 +142,7 @@ export default {
     newJobProfile.fillJobProfile(jobProfile);
   },
   select:(jobProfileTitle) => {
-    cy.do(TextField({ id:'input-search-job-profiles-field' }).fillIn(jobProfileTitle));
-    cy.do(Button('Search').click());
+    searchJobProfileForImport(jobProfileTitle);
     cy.do(MultiColumnListCell(jobProfileTitle).click());
   },
   openFileRecords:(fileName) => {

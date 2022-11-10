@@ -281,13 +281,13 @@ describe('ui-data-import: Match on location', () => {
     const holdingsUpdatesActionProfile = {
       typeValue: NewActionProfile.folioRecordTypeValue.holdings,
       name: holdingsActionProfile,
-      action: 'Update (all record types except Orders, Invoices, or MARC Holdings)'
+      action: 'Update (all record types except Orders)'
     };
 
     const itemUpdatesActionProfile = {
       typeValue: NewActionProfile.folioRecordTypeValue.item,
       name: itemActionProfile,
-      action: 'Update (all record types except Orders, Invoices, or MARC Holdings)'
+      action: 'Update (all record types except Orders)'
     };
 
     const jobProfileNameForUpdate = {
@@ -297,7 +297,7 @@ describe('ui-data-import: Match on location', () => {
     };
 
     // change Instance HRID in .mrc file
-    DataImport.editMarcFile('marcFileForMatchOnLocation.mrc', editedMarcFileName, 'ocn933596084', instanceHrid);
+    DataImport.editMarcFile('marcFileForMatchOnLocation.mrc', editedMarcFileName, ['ocn933596084'], [instanceHrid]);
 
     // create Match profile
     cy.visit(SettingsMenu.matchProfilePath);
@@ -447,13 +447,13 @@ describe('ui-data-import: Match on location', () => {
     const holdingsUpdatesActionProfile = {
       typeValue: NewActionProfile.folioRecordTypeValue.holdings,
       name: holdingsActionProfile,
-      action: 'Update (all record types except Orders, Invoices, or MARC Holdings)'
+      action: 'Update (all record types except Orders)'
     };
 
     const itemUpdatesActionProfile = {
       typeValue: NewActionProfile.folioRecordTypeValue.item,
       name: itemActionProfile,
-      action: 'Update (all record types except Orders, Invoices, or MARC Holdings)'
+      action: 'Update (all record types except Orders)'
     };
 
     const jobProfileNameForUpdate = {
@@ -522,7 +522,7 @@ describe('ui-data-import: Match on location', () => {
     HoldingsRecordView.close();
     InventoryInstance.openHoldingsAccordion('Main Library >');
     InventoryInstance.openItemView('No barcode');
-    ItemVeiw.checkMaterialType(materialType);
+    ItemVeiw.checkMaterialType('sound recording');
 
     // delete profiles
     JobProfiles.deleteJobProfile(jobProfile);
@@ -610,13 +610,13 @@ describe('ui-data-import: Match on location', () => {
     const holdingsUpdatesActionProfile = {
       typeValue: NewActionProfile.folioRecordTypeValue.holdings,
       name: holdingsActionProfile,
-      action: 'Update (all record types except Orders, Invoices, or MARC Holdings)'
+      action: 'Update (all record types except Orders)'
     };
 
     const itemUpdatesActionProfile = {
       typeValue: NewActionProfile.folioRecordTypeValue.item,
       name: itemActionProfile,
-      action: 'Update (all record types except Orders, Invoices, or MARC Holdings)'
+      action: 'Update (all record types except Orders)'
     };
 
     const jobProfileNameForUpdate = {

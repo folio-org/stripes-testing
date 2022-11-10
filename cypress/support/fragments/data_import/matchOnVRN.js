@@ -247,7 +247,7 @@ function createActionProfileForVRN(name, recordType, mappingProfile, action) {
     actionProfilesPaneHeader.find(actionButton).click(),
     newActionProfileButton.click(),
     nameField.fillIn(name),
-    actionSelect.choose(action || 'Update (all record types except Orders, Invoices, or MARC Holdings)'),
+    actionSelect.choose(action || 'Update (all record types except Orders)'),
     folioRecordTypeSelect.choose(recordType),
     linkProfileButton.click(),
     selectMappingProfilesModal.find(queryField).fillIn(mappingProfile),
