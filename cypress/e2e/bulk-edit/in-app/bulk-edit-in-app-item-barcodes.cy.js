@@ -10,7 +10,7 @@ import Users from '../../../support/fragments/users/users';
 import BulkEditActions from '../../../support/fragments/bulk-edit/bulk-edit-actions';
 
 let user;
-let items = [];
+const items = [];
 
 // prepare names for 5 instances with 2 items = 10 items
 for (let i = 0; i < 5; i++) {
