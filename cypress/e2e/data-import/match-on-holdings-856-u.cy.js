@@ -158,14 +158,12 @@ describe('ui-data-import: Match on Holdings 856 $u', () => {
     NewJobProfile.linkActionProfile(createEHoldingsActionProfile);
     NewJobProfile.saveAndClose();
     JobProfiles.checkJobProfilePresented(createInstanceAndEHoldingsJobProfileName);
-    JobProfiles.closeJobProfile(createInstanceAndEHoldingsJobProfileName);
 
     JobProfiles.createJobProfile(updateEHoldingsJobProfile);
     NewJobProfile.linkMatchProfile(matchProfileName);
     NewJobProfile.linkActionProfileForMatches(updateEHoldingsActionProfileName);
     NewJobProfile.saveAndClose();
     JobProfiles.checkJobProfilePresented(updateEHoldingsJobProfileName);
-    JobProfiles.closeJobProfile(updateEHoldingsJobProfileName);
 
     cy.visit(TopMenu.dataImportPath);
     DataImport.uploadFile('marcFileForC17025.mrc', nameForCreateMarcFile);

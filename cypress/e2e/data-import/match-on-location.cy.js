@@ -297,7 +297,7 @@ describe('ui-data-import: Match on location', () => {
     };
 
     // change Instance HRID in .mrc file
-    DataImport.editMarcFile('marcFileForMatchOnLocation.mrc', editedMarcFileName, 'ocn933596084', instanceHrid);
+    DataImport.editMarcFile('marcFileForMatchOnLocation.mrc', editedMarcFileName, ['ocn933596084'], [instanceHrid]);
 
     // create Match profile
     cy.visit(SettingsMenu.matchProfilePath);
@@ -522,7 +522,7 @@ describe('ui-data-import: Match on location', () => {
     HoldingsRecordView.close();
     InventoryInstance.openHoldingsAccordion('Main Library >');
     InventoryInstance.openItemView('No barcode');
-    ItemVeiw.checkMaterialType(materialType);
+    ItemVeiw.checkMaterialType('sound recording');
 
     // delete profiles
     JobProfiles.deleteJobProfile(jobProfile);
