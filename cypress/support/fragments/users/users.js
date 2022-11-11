@@ -73,7 +73,11 @@ export default {
     ]);
   },
 
-  checkPatronIsNotBlocked: () => {
-    cy.expect(TextField({ value:'Patron has block(s) in place' }).absent());
+  checkPatronIsNotBlocked: (userId) => {
+    cy.intercept(`/automated-patron-blocks/${userId}`).as('patronBlockStatus');
+    cy.wait('@patronBlockStatus', { timeout: 10000 }).then(xhr => {
+      cy.wrap(xhr.response.body.automatedPatronBlocks.length).should('eq', 0);
+      cy.expect(TextField({ value:'Patron has block(s) in place' }).absent());
+    });
   }
 };

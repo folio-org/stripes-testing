@@ -23,6 +23,7 @@ import LoanPolicy from '../../../../support/fragments/circulation/loan-policy';
 import Conditions from '../../../../support/fragments/settings/users/conditions';
 import Limits from '../../../../support/fragments/settings/users/limits';
 import UsersSearchPane from '../../../../support/fragments/users/usersSearchPane';
+import UsersCard from '../../../../support/fragments/users/usersCard';
 
 function generateUniqueItemBarcodeWithShift(index = 0) {
   return (generateItemBarcode() - Math.round(getRandomPostfix()) + '').substring(index);
@@ -34,9 +35,7 @@ describe('Patron Block: Maximum number of overdue items', () => {
   const patronGroup = {
     name: 'groupToPatronBlock' + getRandomPostfix(),
   };
-  const userData = {
-    personal: {},
-  };
+  const userData = {};
   const itemsData = {
     itemsWithSeparateInstance: [
       { instanceTitle: `Instance ${getRandomPostfix()}` },
@@ -233,6 +232,7 @@ describe('Patron Block: Maximum number of overdue items', () => {
       cy.visit(TopMenu.usersPath);
       UsersSearchPane.waitLoading();
       UsersSearchPane.searchByKeywords(userData.barcode);
+      UsersCard.waitLoading();
       Users.checkIsPatronBlocked(checkedOutBlockMessage, 'Borrowing, Renewals, Requests');
 
       cy.visit(TopMenu.checkInPath);
@@ -243,7 +243,7 @@ describe('Patron Block: Maximum number of overdue items', () => {
       cy.visit(TopMenu.usersPath);
       UsersSearchPane.waitLoading();
       UsersSearchPane.searchByKeywords(userData.barcode);
-      Users.checkPatronIsNotBlocked();
+      Users.checkPatronIsNotBlocked(userData.userId);
     }
   );
 });
