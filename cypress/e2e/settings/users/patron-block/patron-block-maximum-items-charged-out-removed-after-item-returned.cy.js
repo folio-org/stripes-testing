@@ -19,7 +19,6 @@ import getRandomPostfix from '../../../../support/utils/stringTools';
 import Conditions from '../../../../support/fragments/settings/users/conditions';
 import Limits from '../../../../support/fragments/settings/users/limits';
 import UsersSearchPane from '../../../../support/fragments/users/usersSearchPane';
-// import UsersCard from '../../../../support/fragments/users/usersCard';
 
 function generateUniqueItemBarcodeWithShift(index = 0) {
   return (generateItemBarcode() - Math.round(getRandomPostfix()) + '').substring(index);
