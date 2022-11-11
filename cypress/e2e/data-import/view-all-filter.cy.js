@@ -5,6 +5,7 @@ import TopMenu from '../../support/fragments/topMenu';
 import FileManager from '../../support/utils/fileManager';
 import TestTypes from '../../support/dictionary/testTypes';
 import DevTeams from '../../support/dictionary/devTeams';
+import DataImport from '../../support/fragments/data_import/dataImport';
 
 describe('ui-data-import: Filter the "View all" log screen', () => {
   // Path to static file in fixtures
@@ -42,6 +43,7 @@ describe('ui-data-import: Filter the "View all" log screen', () => {
   });
 
   beforeEach(() => {
+    DataImport.checkUploadState();
     LogsViewAll.getSingleJobProfile().then(({ jobProfileInfo, runBy }) => {
       const {
         firstName,

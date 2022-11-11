@@ -101,7 +101,7 @@ describe('ui-data-import: Match on Instance identifier match meets both the Iden
     FieldMappingProfiles.deleteFieldMappingProfile(mappingProfileName);
   });
 
-  it('C347828 Match on Instance identifier match meets both the Identifier type and Data requirements (Folijet)', { tags: [TestTypes.criticalPath, DevTeams.folijet] }, () => {
+  it('C347828 Match on Instance identifier match meets both the Identifier type and Data requirements (folijet)', { tags: [TestTypes.criticalPath, DevTeams.folijet] }, () => {
     DataImport.uploadFile('marcFileForMatchOnIdentifierForCreate.mrc', fileNameForCreateInstance);
     JobProfiles.searchJobProfileForImport(jobProfileToRun);
     JobProfiles.runImportFile(fileNameForCreateInstance);

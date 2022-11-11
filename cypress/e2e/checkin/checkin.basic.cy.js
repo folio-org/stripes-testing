@@ -87,7 +87,7 @@ describe('Check In - Actions ', () => {
           userBarcode: userData.barcode,
         });
 
-        cy.login(userData.username, userData.password, { path: TopMenu.checkInPath, waiter: CheckInActions.waitLoading });
+        cy.login(userData.username, userData.password);
       });
   });
 
@@ -105,6 +105,9 @@ describe('Check In - Actions ', () => {
   });
 
   it('C347631 Check in: Basic check in (vega)', { tags: [TestTypes.smoke, devTeams.vega] }, () => {
+    cy.wait(10000);
+    cy.visit(TopMenu.checkInPath);
+    CheckInActions.waitLoading();
     CheckInActions.checkInItemGui(itemData.barcode);
     CheckInPane.verifyResultCells();
     CheckInPane.checkResultsInTheRow(checkInResultsData);

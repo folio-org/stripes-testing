@@ -69,6 +69,7 @@ describe('ui-data-import: Import a large EDIFACT invoice file', () => {
     cy.visit(TopMenu.dataImportPath);
     DataImport.uploadFile('ediFileForC347615.edi', fileName);
     JobProfiles.searchJobProfileForImport(jobProfile.profileName);
+    JobProfiles.selectJobProfile();
     JobProfiles.runImportFile(fileName);
     Logs.checkImportFile(jobProfile.profileName);
     Logs.checkStatusOfJobProfile();

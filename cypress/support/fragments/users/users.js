@@ -58,7 +58,7 @@ export default {
       TextField({ id: 'adduser_email' }).fillIn(userData.personal.email),
       Button({ id: 'clickable-save' }).click()]).then(() => {
       cy.intercept('/users').as('user');
-      return cy.wait('@user', { timeout: 30000 }).then((xhr) => xhr.response.body.id);
+      return cy.wait('@user', { timeout: 70000 }).then((xhr) => xhr.response.body.id);
     });
   },
 
@@ -73,7 +73,11 @@ export default {
     ]);
   },
 
-  checkPatronIsNotBlocked: () => {
-    cy.expect(TextField({ value:'Patron has block(s) in place' }).absent());
+  checkPatronIsNotBlocked: (userId) => {
+    cy.intercept(`/automated-patron-blocks/${userId}`).as('patronBlockStatus');
+    cy.wait('@patronBlockStatus', { timeout: 10000 }).then(xhr => {
+      cy.wrap(xhr.response.body.automatedPatronBlocks.length).should('eq', 0);
+      cy.expect(TextField({ value:'Patron has block(s) in place' }).absent());
+    });
   }
 };

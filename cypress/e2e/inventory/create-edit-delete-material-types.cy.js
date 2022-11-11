@@ -29,7 +29,7 @@ describe('ui-inventory: Create, edit, delete material types', () => {
     InventorySettings.checkAvailableOptions();
     NewMaterialType.create(materialTypeName);
     MaterialTypes.isPresented(materialTypeName);
-    MaterialTypes.edit(newMaterialTypeName);
+    MaterialTypes.edit(materialTypeName, newMaterialTypeName);
     MaterialTypes.delete(newMaterialTypeName);
     MaterialTypes.checkIsDeleted(newMaterialTypeName);
     MaterialTypes.verifyMessageOfDeteted(newMaterialTypeName);

@@ -86,6 +86,7 @@ describe('ui-data-import: EDIFACT file import with creating of new invoice recor
     cy.visit(TopMenu.dataImportPath);
     DataImport.uploadFile('ediFileForC343338.edi', fileName);
     JobProfiles.searchJobProfileForImport(jobProfile.profileName);
+    JobProfiles.selectJobProfile();
     JobProfiles.runImportFile(fileName);
     Logs.checkImportFile(jobProfile.profileName);
     Logs.checkStatusOfJobProfile();
