@@ -9,8 +9,9 @@ import Users from '../../support/fragments/users/users';
 import JobProfiles from '../../support/fragments/data_import/job_profiles/jobProfiles';
 import DevTeams from '../../support/dictionary/devTeams';
 import Logs from '../../support/fragments/data_import/logs/logs';
+import TestTypes from '../../support/dictionary/testTypes';
 
-describe.skip('ui-data-import: A user can filter and delete import logs from the "View all" page', () => {
+describe('ui-data-import: A user can filter and delete import logs from the "View all" page', () => {
   const startedDate = new Date();
   const completedDate = startedDate;
   // format date as YYYY-MM-DD
@@ -23,20 +24,22 @@ describe.skip('ui-data-import: A user can filter and delete import logs from the
   before(() => {
     cy.createTempUser([
       permissions.moduleDataImportEnabled.gui,
-      permissions.deleteImportLogs.gui
+      permissions.deleteImportLogs.gui,
+
     ])
       .then(userProperties => {
         firstUser = userProperties;
         cy.login(userProperties.username, userProperties.password, { path: TopMenu.dataImportPath, waiter: DataImport.waitLoading });
         // TODO rewrite upload file by API
         // Log list should contain at least 30-35 import jobs, run by different users, and using different import profiles
-        for (let i = 0; i < 12; i++) {
+        for (let i = 0; i < 7; i++) {
           const nameMarcFileForCreate = `C358136autotestFile.${getRandomPostfix()}.mrc`;
 
           cy.visit(TopMenu.dataImportPath);
           DataImport.uploadFile('oneMarcBib.mrc', nameMarcFileForCreate);
           JobProfiles.searchJobProfileForImport('Default - Create instance and SRS MARC Bib');
           JobProfiles.runImportFile(nameMarcFileForCreate);
+          Logs.checkStatusOfJobProfile('Completed');
           Logs.openFileDetails(nameMarcFileForCreate);
         }
         cy.logout();
@@ -57,9 +60,10 @@ describe.skip('ui-data-import: A user can filter and delete import logs from the
           const nameMarcFileForCreate = `C358136autotestFile.${getRandomPostfix()}.mrc`;
 
           cy.visit(TopMenu.dataImportPath);
-          DataImport.uploadFile('oneMarcBib.mrc', nameMarcFileForCreate);
-          JobProfiles.searchJobProfileForImport('Default - Create Holdings and SRS MARC Holdings');
+          DataImport.uploadFile('oneMarcAuthority.mrc', nameMarcFileForCreate);
+          JobProfiles.searchJobProfileForImport('Default - Create SRS MARC Authority');
           JobProfiles.runImportFile(nameMarcFileForCreate);
+          Logs.checkStatusOfJobProfile('Completed');
           Logs.openFileDetails(nameMarcFileForCreate);
         }
       });
@@ -70,7 +74,7 @@ describe.skip('ui-data-import: A user can filter and delete import logs from the
     Users.deleteViaApi(secondUser.userId);
     // TODO delete all created instances and holdings
   });
-  it('C358136 A user can filter and delete import logs from the "View all" page (folijet)', { tags: [DevTeams.folijet] }, () => {
+  it('C358136 A user can filter and delete import logs from the "View all" page (folijet)', { tags: [TestTypes.criticalPath, DevTeams.folijet] }, () => {
     cy.visit(TopMenu.dataImportPath);
     LogsViewAll.openViewAll();
     LogsViewAll.viewAllIsOpened();

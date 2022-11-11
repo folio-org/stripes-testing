@@ -7,7 +7,7 @@ export default {
     returns array with all files matched to mask
     */
 
-    return cy.task('findFiles', `${downloadsFolder}/${mask}`);
+    return cy.task('findFiles', `cypress/downloads/${mask}`);
   },
 
   deleteFolder(pathToFolder) {

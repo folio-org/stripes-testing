@@ -46,17 +46,17 @@ describe('ui-data-import: Match on Holdings 856 $u', () => {
 
   const createInstanceActionProfile = {
     name: createInstanceActionProfileName,
-    action: 'Create (all record types except MARC Authority or MARC Holdings)',
+    action: 'Create (all record types)',
     typeValue: 'Instance',
   };
   const createEHoldingsActionProfile = {
     name: createEHoldingsActionProfileName,
-    action: 'Create (all record types except MARC Authority or MARC Holdings)',
+    action: 'Create (all record types)',
     typeValue: 'Holdings',
   };
   const updateEHoldingsActionProfile = {
     name: updateEHoldingsActionProfileName,
-    action: 'Update (all record types except Orders, Invoices, or MARC Holdings)',
+    action: 'Update (all record types except Orders)',
     typeValue: 'Holdings',
   };
 
@@ -158,14 +158,12 @@ describe('ui-data-import: Match on Holdings 856 $u', () => {
     NewJobProfile.linkActionProfile(createEHoldingsActionProfile);
     NewJobProfile.saveAndClose();
     JobProfiles.checkJobProfilePresented(createInstanceAndEHoldingsJobProfileName);
-    JobProfiles.closeJobProfile(createInstanceAndEHoldingsJobProfileName);
 
     JobProfiles.createJobProfile(updateEHoldingsJobProfile);
     NewJobProfile.linkMatchProfile(matchProfileName);
     NewJobProfile.linkActionProfileForMatches(updateEHoldingsActionProfileName);
     NewJobProfile.saveAndClose();
     JobProfiles.checkJobProfilePresented(updateEHoldingsJobProfileName);
-    JobProfiles.closeJobProfile(updateEHoldingsJobProfileName);
 
     cy.visit(TopMenu.dataImportPath);
     DataImport.uploadFile('marcFileForC17025.mrc', nameForCreateMarcFile);

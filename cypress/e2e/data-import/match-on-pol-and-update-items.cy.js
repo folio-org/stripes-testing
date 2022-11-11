@@ -82,7 +82,7 @@ describe('ui-data-import: Match on POL and update related Instance, Holdings, It
         update: true },
       actionProfile: { typeValue: NewActionProfile.folioRecordTypeValue.instance,
         name: actionProfileNameForInstance,
-        action: 'Update (all record types except Orders, Invoices, or MARC Holdings)' }
+        action: 'Update (all record types except Orders)' }
     },
     {
       mappingProfile: { typeValue: NewFieldMappingProfile.folioRecordTypeValue.holdings,
@@ -90,7 +90,7 @@ describe('ui-data-import: Match on POL and update related Instance, Holdings, It
         update: true },
       actionProfile: { typeValue: NewActionProfile.folioRecordTypeValue.holdings,
         name: actionProfileNameForHoldings,
-        action: 'Update (all record types except Orders, Invoices, or MARC Holdings)' }
+        action: 'Update (all record types except Orders)' }
     },
     {
       mappingProfile: { typeValue: NewFieldMappingProfile.folioRecordTypeValue.item,
@@ -98,7 +98,7 @@ describe('ui-data-import: Match on POL and update related Instance, Holdings, It
         update: true },
       actionProfile: { typeValue: NewActionProfile.folioRecordTypeValue.item,
         name: actionProfileNameForItem,
-        action: 'Update (all record types except Orders, Invoices, or MARC Holdings)' }
+        action: 'Update (all record types except Orders)' }
     }
   ];
 
