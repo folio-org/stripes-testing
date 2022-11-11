@@ -61,6 +61,7 @@ export default {
   assignAdmin: () => {
     cy.do([
       findUserButton.click(),
+              // TO DO: need to redesign test case with names of admin user.
       userSearchModal.find(searchTextField).fillIn('folio-aqa'),
       searchButton.click(),
       firstSearchResult.find(checkboxAll).click(),

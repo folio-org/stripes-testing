@@ -91,6 +91,8 @@ describe('ui-finance: Funds', () => {
     cy.login(user.username, user.password, { path:TopMenu.fundPath, waiter: Funds.waitLoading });
     FinanceHelp.searchByName(defaultfund.name);
     Funds.checkZeroSearchResultsHeader();
+    // Need to wait,while search area is load
+    cy.wait(2000);
     cy.loginAsAdmin({ path:SettingsMenu.acquisitionUnitsPath, waiter: AcquisitionUnits.waitLoading });
     AcquisitionUnits.edit(defaultAcquisitionUnit.name);
     AcquisitionUnits.selectViewCheckbox();

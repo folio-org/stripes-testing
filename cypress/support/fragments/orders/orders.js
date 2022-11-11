@@ -34,6 +34,7 @@ const searchButton = Button('Search');
 const newButton = Button('New');
 const saveAndClose = Button('Save & close');
 const orderDetailsAccordionId = 'purchaseOrder';
+        // TO DO: need to redesign test case with names of admin user.
 const createdByAdmin = 'folio-aqa  ';
 const searchField = SearchField({ id: 'input-record-search' });
 const admin = 'folio-aqa';
