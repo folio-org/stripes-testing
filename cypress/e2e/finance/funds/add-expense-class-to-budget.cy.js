@@ -7,8 +7,6 @@ import devTeams from '../../../support/dictionary/devTeams';
 import NewExpenceClass from '../../../support/fragments/settings/finance/newExpenseClass';
 import SettingsFinance from '../../../support/fragments/settings/finance/settingsFinance';
 import TopMenu from '../../../support/fragments/topMenu';
-import NewFiscalYear from '../../../support/fragments/finance/fiscalYears/newFiscalYear';
-import NewLedger from '../../../support/fragments/finance/ledgers/newLedger';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
 import InteractorsTools from '../../../support/utils/interactorsTools';
 
