@@ -14,9 +14,9 @@ export default {
     cy.expect(MultiColumnList({ id:'list-items-checked-out' }).find(HTML(including(barcode))).exists());
   },
 
-  checkContent:(itemTitle, materialType, barcode, { itemPieces = '-', description = '-' }, { missingitemPieces: missingItemPieces = '-', missingDescription = '-' }) => {
+  checkContent:(itemTitle, materialType, barcode, { itemPieces = '-', description = 'No value set-' }, { missingitemPieces: missingItemPieces = '-', missingDescription = '-' }) => {
     cy.expect(confirmModal.find(HTML(including(`${itemTitle} (${materialType}) (Barcode: ${barcode}) will be checked out.`))).exists());
-    if (itemPieces === description && itemPieces === '-') {
+    if (description === 'No value set-' && itemPieces === '-') {
       cy.expect(numberOfPieces.absent());
       cy.expect(descriptionOfPieces.absent());
     } else {
