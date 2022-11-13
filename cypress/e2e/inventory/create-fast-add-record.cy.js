@@ -10,6 +10,7 @@ import { getLongDelay } from '../../support/utils/cypressTools';
 import permissions from '../../support/dictionary/permissions';
 import Users from '../../support/fragments/users/users';
 import DevTeams from '../../support/dictionary/devTeams';
+import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
 
 describe('ui-inventory: Create fast add record', () => {
   const timeStamp = {
@@ -43,6 +44,7 @@ describe('ui-inventory: Create fast add record', () => {
     FastAddNewRecord.updateInventoryFastAddSetting(
       FastAddNewRecord.fastAddNewRecordFormDetails.defaultInstanceStatusCodeOption
     );
+    InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(FastAddNewRecord.fastAddNewRecordFormDetails.itemBarcode);
     Users.deleteViaApi(userId);
   });
 

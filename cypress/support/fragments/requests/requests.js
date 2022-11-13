@@ -248,7 +248,7 @@ function waitLoadingTags() {
     url: '/tags?limit=10000',
   }).as('getTags');
   cy.wait('@getTags');
-  cy.wait(500);
+  cy.wait(1000);
 }
 
 export default {
@@ -302,7 +302,7 @@ export default {
     waitLoadingTags();
     cy.do(tagsPane.find(MultiSelect({ ariaLabelledby:'accordion-toggle-button-tag-accordion' })).choose(tag));
     // TODO investigate what to wait
-    cy.wait(500);
+    cy.wait(1000);
   },
 
   deleteTag:() => {
