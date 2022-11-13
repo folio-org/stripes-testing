@@ -8,7 +8,8 @@ import {
   Pane,
   Modal,
   MultiColumnList,
-  MultiColumnListCell
+  MultiColumnListCell,
+  Spinner
 } from '../../../../interactors';
 import { getLongDelay } from '../../utils/cypressTools';
 import getRandomPostfix from '../../utils/stringTools';
@@ -77,10 +78,13 @@ const importFile = (profileName, uniqueFileName) => {
   });
 };
 
+const checkFileIsUploaded = () => cy.expect(Pane({ id:'pane-upload-content' }).find(Spinner()).absent());
+
 export default {
   importFile,
   uploadFile,
   waitLoading,
+  checkFileIsUploaded,
 
   uploadExportedFile(fileName) {
     cy.get('input[type=file]', getLongDelay()).attachFile(fileName);

@@ -22,7 +22,7 @@ describe('ui-data-import: A user can delete import logs with "Data import: Can d
   before(() => {
     cy.createTempUser([
       permissions.moduleDataImportEnabled.gui,
-      permissions.dataImportDeleteLogs.gui,
+      permissions.dataImportDeleteLogs.gui
     ])
       .then(userProperties => {
         userId = userProperties.userId;
