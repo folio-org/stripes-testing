@@ -6,7 +6,7 @@ import permissions from '../../../../support/dictionary/permissions';
 import UserEdit from '../../../../support/fragments/users/userEdit';
 import TopMenu from '../../../../support/fragments/topMenu';
 import SettingsMenu from '../../../../support/fragments/settingsMenu';
-import generateItemBarcode from '../../../../support/utils/generateItemBarcode';
+import generateUniqueItemBarcodeWithShift from '../../../../support/utils/generateUniqueItemBarcodeWithShift';
 import InventoryInstances from '../../../../support/fragments/inventory/inventoryInstances';
 import PatronGroups from '../../../../support/fragments/settings/users/patronGroups';
 import Location from '../../../../support/fragments/settings/tenant/locations/newLocation';
@@ -25,10 +25,6 @@ import Limits from '../../../../support/fragments/settings/users/limits';
 import UsersSearchPane from '../../../../support/fragments/users/usersSearchPane';
 import UsersCard from '../../../../support/fragments/users/usersCard';
 import UserLoans from '../../../../support/fragments/users/loans/userLoans';
-
-function generateUniqueItemBarcodeWithShift(index = 0) {
-  return (generateItemBarcode() - Math.round(getRandomPostfix()) + '').substring(index);
-}
 
 describe('Patron Block: Maximum number of overdue items', () => {
   let originalCirculationRules;
@@ -226,7 +222,7 @@ describe('Patron Block: Maximum number of overdue items', () => {
       cy.visit(SettingsMenu.conditionsPath);
       Conditions.waitLoading();
       Conditions.select('Maximum number of overdue items');
-      Conditions.setConditionState(checkedOutBlockMessage);
+      Conditions.setConditionState(checkedOutBlockMessage, undefined, false);
       cy.visit(SettingsMenu.limitsPath);
       Limits.selectGroup(patronGroup.name);
       Limits.setMaximumNumberOfOverdueItems('4');
@@ -236,7 +232,8 @@ describe('Patron Block: Maximum number of overdue items', () => {
       cy.visit(TopMenu.usersPath);
       UsersSearchPane.waitLoading();
       UsersSearchPane.searchByKeywords(userData.barcode);
-      Users.checkIsPatronBlocked(checkedOutBlockMessage, 'Borrowing, Renewals, Requests');
+      UsersCard.waitLoading();
+      Users.checkIsPatronBlocked(checkedOutBlockMessage, 'Borrowing, Requests');
 
       const itemForCheckIn = itemsData.itemsWithSeparateInstance[0];
       UsersCard.openLoans();
@@ -247,7 +244,7 @@ describe('Patron Block: Maximum number of overdue items', () => {
       cy.visit(TopMenu.usersPath);
       UsersSearchPane.waitLoading();
       UsersSearchPane.searchByKeywords(userData.barcode);
-      Users.checkPatronIsNotBlocked();
+      Users.checkPatronIsNotBlocked(userData.userId);
     }
   );
 });

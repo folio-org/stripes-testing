@@ -6,7 +6,7 @@ import permissions from '../../../../support/dictionary/permissions';
 import UserEdit from '../../../../support/fragments/users/userEdit';
 import TopMenu from '../../../../support/fragments/topMenu';
 import SettingsMenu from '../../../../support/fragments/settingsMenu';
-import generateItemBarcode from '../../../../support/utils/generateItemBarcode';
+import generateUniqueItemBarcodeWithShift from '../../../../support/utils/generateUniqueItemBarcodeWithShift';
 import InventoryInstances from '../../../../support/fragments/inventory/inventoryInstances';
 import PatronGroups from '../../../../support/fragments/settings/users/patronGroups';
 import Location from '../../../../support/fragments/settings/tenant/locations/newLocation';
@@ -19,10 +19,6 @@ import getRandomPostfix from '../../../../support/utils/stringTools';
 import Conditions from '../../../../support/fragments/settings/users/conditions';
 import Limits from '../../../../support/fragments/settings/users/limits';
 import UsersSearchPane from '../../../../support/fragments/users/usersSearchPane';
-
-function generateUniqueItemBarcodeWithShift(index = 0) {
-  return (generateItemBarcode() - Math.round(getRandomPostfix()) + '').substring(index);
-}
 
 describe('Patron Block: Maximum number of items charged out', () => {
   const checkedOutBlockMessage =

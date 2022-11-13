@@ -1,5 +1,5 @@
 import { matching } from 'bigtest';
-import { Pane, MultiColumnListRow, MultiColumnListCell, HTML, including, Button, KeyValue } from '../../../../../interactors';
+import { Pane, MultiColumnListRow, MultiColumnListCell, HTML, including, Button, KeyValue, Callout } from '../../../../../interactors';
 
 import ItemVeiw from '../../inventory/inventoryItem/itemVeiw';
 
@@ -58,6 +58,7 @@ export default {
       cy.expect(KeyValue({ value: barcode }).exists());
       cy.expect(renewButton.exists());
       cy.do(renewButton.click());
+      cy.expect(Callout(including('successfully renewed.')).exists());
     } else {
       cy.expect(rowInList.find(HTML(including(barcode))).exists());
       cy.do(ellipsisButton.click());
