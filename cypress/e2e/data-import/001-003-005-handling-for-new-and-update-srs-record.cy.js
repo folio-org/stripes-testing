@@ -155,7 +155,7 @@ describe('ui-data-import: Test 001/003/035 handling for New and Updated SRS reco
 
         // create match profile
         cy.visit(SettingsMenu.matchProfilePath);
-        MatchProfiles.createMatchProfileWithMatchingBy999Field(matchProfile);
+        MatchProfiles.createMatchProfileWithExistingPart(matchProfile);
         MatchProfiles.checkMatchProfilePresented(matchProfile.profileName);
 
         // create mapping profiles

@@ -59,7 +59,7 @@ describe('bulk-edit', () => {
       FileManager.deleteFile(`cypress/fixtures/${validItemAccessionNumbersFileName}`);
     });
 
-    it('C350905 Negative uploading file with identifiers -- In app approach (firebird)', { tags: [testTypes.smoke, devTeams.firebird, testTypes.broken] }, () => {
+    it('C350905 Negative uploading file with identifiers -- In app approach (firebird)', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
       BulkEditSearchPane.selectRecordIdentifier('Item barcode');
 
       // try to upload empty file

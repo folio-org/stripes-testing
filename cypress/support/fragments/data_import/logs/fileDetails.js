@@ -102,14 +102,14 @@ export default {
   checkHoldingsQuantityInSummaryTable,
   checkItemQuantityInSummaryTable,
 
-  openInstanceInInventory:(row = 0, itemStatus) => {
-    cy.do(resultsList.find(MultiColumnListCell({ row, columnIndex: 3 }))
+  openInstanceInInventory:(itemStatus, rowNumber = 0) => {
+    cy.do(resultsList.find(MultiColumnListCell({ row: rowNumber, columnIndex: 3 }))
       .find(Link(itemStatus))
       .click());
   },
 
-  openHoldingsInInventory:(row = 0, itemStatus) => {
-    cy.do(resultsList.find(MultiColumnListCell({ row, columnIndex: 4 }))
+  openHoldingsInInventory:(itemStatus, rowNumber = 0) => {
+    cy.do(resultsList.find(MultiColumnListCell({ row: rowNumber, columnIndex: 4 }))
       .find(Link(itemStatus))
       .click());
   }

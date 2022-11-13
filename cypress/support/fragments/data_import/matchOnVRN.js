@@ -20,6 +20,7 @@ import {
 } from '../../../../interactors';
 import { getLongDelay } from '../../utils/cypressTools';
 import NewJobProfile from './job_profiles/newJobProfile';
+import InventoryViewSource from '../inventory/inventoryViewSource';
 import DateTools from '../../utils/dateTools';
 import getRandomPostfix from '../../utils/stringTools';
 
@@ -370,12 +371,10 @@ function verifyMARCBibSource() {
     viewSourceButton.click(),
   ]);
   // verify table data in marc bibliographic source
-  // need interactor to work with tables
-  cy.contains('980').parent('tr').should('exist');
-  cy.contains('KU/CC/DI/M').parent('tr').should('exist');
-  cy.contains('981').parent('tr').should('exist');
-  cy.contains(itemBarcode).parent('tr').should('exist');
-
+  InventoryViewSource.contains('980\t');
+  InventoryViewSource.contains('KU/CC/DI/M');
+  InventoryViewSource.contains('981\t');
+  InventoryViewSource.contains(itemBarcode);
   closeDetailView();
 }
 
