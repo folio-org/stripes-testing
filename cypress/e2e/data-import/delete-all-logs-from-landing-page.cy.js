@@ -40,9 +40,7 @@ describe('ui-data-import: A user can delete import logs with "Data import: Can d
           const filePath = numberOfLogsToUpload - 1 === index ? filePathToUpload : emptyFilePathToUpload;
           fileNameToUpload = `C358137autotestFile.${getRandomPostfix()}.mrc`;
           DataImport.uploadFile(filePath, fileNameToUpload);
-          cy.wait(2000);
           JobProfiles.searchJobProfileForImport('Default - Create instance and SRS MARC Bib');
-          cy.wait(5000);
           JobProfiles.runImportFile(fileNameToUpload);
         });
       });
