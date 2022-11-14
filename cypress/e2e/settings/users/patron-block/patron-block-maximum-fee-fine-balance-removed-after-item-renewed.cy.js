@@ -6,7 +6,7 @@ import permissions from '../../../../support/dictionary/permissions';
 import UserEdit from '../../../../support/fragments/users/userEdit';
 import TopMenu from '../../../../support/fragments/topMenu';
 import SettingsMenu from '../../../../support/fragments/settingsMenu';
-import generateItemBarcode from '../../../../support/utils/generateItemBarcode';
+import generateUniqueItemBarcodeWithShift from '../../../../support/utils/generateUniqueItemBarcodeWithShift';
 import InventoryInstances from '../../../../support/fragments/inventory/inventoryInstances';
 import PatronGroups from '../../../../support/fragments/settings/users/patronGroups';
 import Location from '../../../../support/fragments/settings/tenant/locations/newLocation';
@@ -27,10 +27,6 @@ import UserLoans from '../../../../support/fragments/users/loans/userLoans';
 import LostItemFeePolicy from '../../../../support/fragments/circulation/lost-item-fee-policy';
 import UsersCard from '../../../../support/fragments/users/usersCard';
 
-function generateUniqueItemBarcodeWithShift(index = 0) {
-  return (generateItemBarcode() - Math.round(getRandomPostfix()) + '').substring(index);
-}
-
 describe('Patron Block: Maximum outstanding fee/fine balance', () => {
   let originalCirculationRules;
   const checkedOutBlockMessage = 'You have reached maximum outstanding fee/fine balance as set by patron group';
@@ -43,8 +39,8 @@ describe('Patron Block: Maximum outstanding fee/fine balance', () => {
       { instanceTitle: `InstanceForDeclareLost ${getRandomPostfix()}` },
       { instanceTitle: `InstanceForDeclareLost ${getRandomPostfix()}` },
       { instanceTitle: `InstanceForDeclareLost ${getRandomPostfix()}` },
-      { instanceTitle: `InstanceForAgedToLost ${getRandomPostfix()}` },
-      { instanceTitle: `InstanceForAgedToLost ${getRandomPostfix()}` },
+      { instanceTitle: `InstanceForDeclareLost ${getRandomPostfix()}` }, //InstanceForAgedToLost
+      { instanceTitle: `InstanceForDeclareLost ${getRandomPostfix()}` },
     ],
   };
   const testData = {
@@ -282,7 +278,7 @@ describe('Patron Block: Maximum outstanding fee/fine balance', () => {
       cy.visit(SettingsMenu.limitsPath);
       Limits.selectGroup(patronGroup.name);
       Limits.setMaximumOutstandingFeeFineBalance('624');
-      cy.wait(230000);
+      // cy.wait(230000);
 
       cy.visit(TopMenu.usersPath);
       UsersSearchPane.waitLoading();
