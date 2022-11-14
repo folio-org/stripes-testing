@@ -40,6 +40,12 @@ Cypress.Commands.add('getLoanTypes', (searchParams) => {
     });
 });
 
+Cypress.Commands.add('deleteLoanType', (loanId) => {
+  return cy.okapiRequest({
+    path: `loan-types/${loanId}`,
+    method: 'DELETE',
+  });
+});
 // TODO: update tests where cypress env is still used
 // TODO: move to the related fragment
 Cypress.Commands.add('getMaterialTypes', (searchParams) => {

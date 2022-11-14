@@ -42,6 +42,9 @@ export default {
       addItemButton.click()
     ]);
   },
+  confirmCheckInLostItem:() => {
+    cy.do(Button('Confirm').click());
+  },
   openItemRecordInInventory:(status) => {
     cy.expect(MultiColumnListRow({ indexRow: 'row-0' }).find(HTML(including(status))).exists());
     cy.do(availableActionsButton.click());
@@ -121,7 +124,7 @@ export default {
   checkFeeFinesDetails(billedAmount, instanceBarcode, loanPolicyName, OverdueFinePolicyName, LostItemFeePolicyName) {
     cy.do(availableActionsButton.click());
     cy.do(feeFineDetailsButton.click());
-    
+
     cy.expect(Pane(including('Fee/fine details')).exists());
     cy.expect(feeFinePane.find(HTML(including('Overdue fine'))).exists());
     cy.expect(or(

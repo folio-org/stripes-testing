@@ -11,7 +11,6 @@ import InventoryInstances from '../../../../support/fragments/inventory/inventor
 import PatronGroups from '../../../../support/fragments/settings/users/patronGroups';
 import Location from '../../../../support/fragments/settings/tenant/locations/newLocation';
 import Users from '../../../../support/fragments/users/users';
-import SearchPane from '../../../../support/fragments/circulation-log/searchPane';
 import CirculationRules from '../../../../support/fragments/circulation/circulation-rules';
 import CheckInActions from '../../../../support/fragments/check-in-actions/checkInActions';
 import Checkout from '../../../../support/fragments/checkout/checkout';
@@ -20,15 +19,13 @@ import InventoryInstance from '../../../../support/fragments/inventory/inventory
 import getRandomPostfix from '../../../../support/utils/stringTools';
 import UsersOwners from '../../../../support/fragments/settings/users/usersOwners';
 import PaymentMethods from '../../../../support/fragments/settings/users/paymentMethods';
-import OverdueFinePolicy, {
-  defaultOverdueFinePolicy,
-} from '../../../../support/fragments/circulation/overdue-fine-policy';
-import LostItemFeePolicy from '../../../../support/fragments/circulation/lost-item-fee-policy';
 import LoanPolicy from '../../../../support/fragments/circulation/loan-policy';
-import UserLoans from '../../../../support/fragments/users/loans/userLoans';
 import Conditions from '../../../../support/fragments/settings/users/conditions';
 import Limits from '../../../../support/fragments/settings/users/limits';
 import UsersSearchPane from '../../../../support/fragments/users/usersSearchPane';
+import UserLoans from '../../../../support/fragments/users/loans/userLoans';
+import LostItemFeePolicy from '../../../../support/fragments/circulation/lost-item-fee-policy';
+import UsersCard from '../../../../support/fragments/users/usersCard';
 
 function generateUniqueItemBarcodeWithShift(index = 0) {
   return (generateItemBarcode() - Math.round(getRandomPostfix()) + '').substring(index);
@@ -40,16 +37,14 @@ describe('Patron Block: Maximum outstanding fee/fine balance', () => {
   const patronGroup = {
     name: 'groupToPatronBlock' + getRandomPostfix(),
   };
-  const userData = {
-    personal: {},
-  };
+  const userData = {};
   const itemsData = {
     itemsWithSeparateInstance: [
-      { instanceTitle: `Instance ${getRandomPostfix()}` },
-      { instanceTitle: `Instance ${getRandomPostfix()}` },
-      { instanceTitle: `Instance ${getRandomPostfix()}` },
-      { instanceTitle: `Instance ${getRandomPostfix()}` },
-      { instanceTitle: `Instance ${getRandomPostfix()}` },
+      { instanceTitle: `InstanceForDeclareLost ${getRandomPostfix()}` },
+      { instanceTitle: `InstanceForDeclareLost ${getRandomPostfix()}` },
+      { instanceTitle: `InstanceForDeclareLost ${getRandomPostfix()}` },
+      { instanceTitle: `InstanceForAgedToLost ${getRandomPostfix()}` },
+      { instanceTitle: `InstanceForAgedToLost ${getRandomPostfix()}` },
     ],
   };
   const testData = {
@@ -67,12 +62,6 @@ describe('Patron Block: Maximum outstanding fee/fine balance', () => {
     },
     data: {},
   };
-  // const overdueFinePolicyBody = defaultOverdueFinePolicy;
-  // overdueFinePolicyBody.overdueFine = {
-  //   quantity: 1,
-  //   intervalId: 'minute',
-  // };
-  // overdueFinePolicyBody.maxOverdueFine = 100;
   const lostItemFeePolicyBody = {
     name: '1_lost' + getRandomPostfix(),
     itemAgedLostOverdue: {
@@ -84,23 +73,25 @@ describe('Patron Block: Maximum outstanding fee/fine balance', () => {
       intervalId: 'Minutes',
     },
     chargeAmountItem: {
-      chargeType: 'Set cost',
-      amount: 50.0,
+      chargeType: 'anotherCost',
+      amount: '100.00',
     },
-    lostItemProcessingFee: 50.0,
+    lostItemProcessingFee: '25.00',
     chargeAmountItemPatron: true,
     chargeAmountItemSystem: true,
     lostItemChargeFeeFine: {
-      duration: 1,
-      intervalId: 'Hours',
+      duration: 6,
+      intervalId: 'Weeks',
     },
     returnedLostItemProcessingFee: true,
     lostItemReturned: 'Charge',
-    id: '90933be3-fd2d-43b8-9af0-f24650e1ed3d',
+    replacedLostItemProcessingFee: false,
+    replacementAllowed: true,
+    id: uuid(),
   };
   const loanPolicyBody = {
     id: uuid(),
-    name: `1_loan_${getRandomPostfix()}`,
+    name: `1_minute_${getRandomPostfix()}`,
     loanable: true,
     loansPolicy: {
       closedLibraryDueDateManagementId: 'CURRENT_DUE_DATE_TIME',
@@ -112,8 +103,9 @@ describe('Patron Block: Maximum outstanding fee/fine balance', () => {
     },
     renewable: true,
     renewalsPolicy: {
-      unlimited: true,
-      renewFromId: 'CURRENT_DUE_DATE',
+      unlimited: false,
+      numberAllowed: 2,
+      renewFromId: 'SYSTEM_DATE',
     },
   };
 
@@ -133,12 +125,13 @@ describe('Patron Block: Maximum outstanding fee/fine balance', () => {
         cy.getHoldingTypes({ limit: 1 }).then((res) => {
           testData.holdingTypeId = res[0].id;
         });
-        cy.getLoanTypes({ limit: 1 }).then((res) => {
-          testData.loanTypeId = res[0].id;
+        cy.createLoanType({
+          name: `type_${getRandomPostfix()}`,
+        }).then((res) => {
+          testData.loanTypeId = res.id;
         });
         cy.getMaterialTypes({ limit: 1 }).then((res) => {
           testData.materialTypeId = res.id;
-          testData.materialTypeName = res.name;
         });
       })
       .then(() => {
@@ -173,12 +166,14 @@ describe('Patron Block: Maximum outstanding fee/fine balance', () => {
 
     UsersOwners.createViaApi(owner.body).then((response) => {
       owner.data = response;
-      PaymentMethods.createViaApi(response.id);
+      PaymentMethods.createViaApi(response.id).then(resp => {
+        testData.paymentMethodId = resp.id;
+      });
     });
-    // OverdueFinePolicy.createApi(overdueFinePolicyBody);
-    LostItemFeePolicy.createViaApi(lostItemFeePolicyBody).then((response) => {
-      lostItemFeePolicyBody.id = response.id;
-    });
+    LostItemFeePolicy.createViaApi(lostItemFeePolicyBody);
+    // .then((response) => {
+    //   lostItemFeePolicyBody.id = response.id;
+    // });
     LoanPolicy.createApi(loanPolicyBody);
     PatronGroups.createViaApi(patronGroup.name).then((res) => {
       patronGroup.id = res;
@@ -187,7 +182,6 @@ describe('Patron Block: Maximum outstanding fee/fine balance', () => {
       originalCirculationRules = response.rulesAsText;
       const ruleProps = CirculationRules.getRuleProps(response.rulesAsText);
       ruleProps.l = loanPolicyBody.id;
-      // ruleProps.o = overdueFinePolicyBody.id;
       ruleProps.i = lostItemFeePolicyBody.id;
       CirculationRules.addRuleViaApi(originalCirculationRules, ruleProps, 't ', testData.loanTypeId);
     });
@@ -195,11 +189,15 @@ describe('Patron Block: Maximum outstanding fee/fine balance', () => {
     cy.createTempUser(
       [
         permissions.uiUsersSettingsOwners.gui,
+        permissions.loansAll.gui,
+        permissions.loansRenewOverride.gui,
+        permissions.uiUsersfeefinesCRUD.gui,
         permissions.uiUsersCreatePatronConditions.gui,
         permissions.uiUsersCreatePatronLimits.gui,
         permissions.checkinAll.gui,
         permissions.checkoutAll.gui,
         permissions.uiUsersView.gui,
+        permissions.okapiTimersPatch.gui,
       ],
       patronGroup.name
     )
@@ -208,11 +206,12 @@ describe('Patron Block: Maximum outstanding fee/fine balance', () => {
         userData.password = userProperties.password;
         userData.userId = userProperties.userId;
         userData.barcode = userProperties.barcode;
-        userData.personal.lastname = userProperties.lastName;
+        UserEdit.addServicePointViaApi(testData.userServicePoint.id, userData.userId, testData.userServicePoint.id);
+        cy.getToken(userData.username, userData.password);
+        UserLoans.updateTimerForAgedToLost('minute');
+        cy.getAdminToken();
       })
       .then(() => {
-        UserEdit.addServicePointViaApi(testData.userServicePoint.id, userData.userId, testData.userServicePoint.id);
-
         cy.get('@items').each((item) => {
           Checkout.checkoutItemViaApi({
             id: uuid(),
@@ -226,8 +225,10 @@ describe('Patron Block: Maximum outstanding fee/fine balance', () => {
         UserLoans.getUserLoansIdApi(userData.userId).then((response) => {
           const resp = response.loans;
           cy.log(resp);
-          resp.forEach(({ id }) => {
-            UserLoans.declareLoanLostByApi({ servicePointId: testData.userServicePoint.id }, id);
+          resp.forEach(({ id, item }) => {
+            if (item.title.includes('InstanceForDeclareLost')) {
+              UserLoans.declareLoanLostByApi({ servicePointId: testData.userServicePoint.id }, id);
+            }
           });
         });
 
@@ -243,12 +244,16 @@ describe('Patron Block: Maximum outstanding fee/fine balance', () => {
         checkInDate: new Date().toISOString(),
       });
     });
+    PaymentMethods.deleteViaApi(testData.paymentMethodId);
     UsersOwners.deleteViaApi(owner.data.id);
     cy.deleteLoanPolicy(loanPolicyBody.id);
-    // OverdueFinePolicy.deleteApi(overdueFinePolicyBody.id);
     LostItemFeePolicy.deleteViaApi(lostItemFeePolicyBody.id);
     UserEdit.changeServicePointPreferenceViaApi(userData.userId, [testData.userServicePoint.id]);
     ServicePoints.deleteViaApi(testData.userServicePoint.id);
+
+    cy.getToken(userData.username, userData.password);
+    UserLoans.updateTimerForAgedToLost('reset');
+    cy.getAdminToken();
     Users.deleteViaApi(userData.userId);
     PatronGroups.deleteViaApi(patronGroup.id);
     cy.get('@items').each((item, index) => {
@@ -264,6 +269,7 @@ describe('Patron Block: Maximum outstanding fee/fine balance', () => {
       testData.defaultLocation.id
     );
     CirculationRules.deleteRuleViaApi(originalCirculationRules);
+    cy.deleteLoanType(testData.loanTypeId);
   });
   it(
     'C350655 Verify automated patron block "Maximum outstanding fee/fine balance" removed after lost item renewed (vega)',
@@ -272,26 +278,29 @@ describe('Patron Block: Maximum outstanding fee/fine balance', () => {
       cy.visit(SettingsMenu.conditionsPath);
       Conditions.waitLoading();
       Conditions.select('Maximum outstanding fee/fine balance');
-      Conditions.setConditionState(checkedOutBlockMessage);
+      Conditions.setConditionState(checkedOutBlockMessage, undefined, false);
       cy.visit(SettingsMenu.limitsPath);
       Limits.selectGroup(patronGroup.name);
-      Limits.setMaximumOutstandingFeeFineBalance('499.99');
+      Limits.setMaximumOutstandingFeeFineBalance('624');
+      cy.wait(230000);
 
       cy.visit(TopMenu.usersPath);
       UsersSearchPane.waitLoading();
       UsersSearchPane.searchByKeywords(userData.barcode);
-      Users.checkIsPatronBlocked(checkedOutBlockMessage, 'Borrowing, Renewals, Requests');
-      // cy.wait(100000);
+      UsersCard.waitLoading();
+      Users.checkIsPatronBlocked(checkedOutBlockMessage, 'Borrowing, Requests');
 
-      cy.visit(TopMenu.checkInPath);
       const itemForCheckIn = itemsData.itemsWithSeparateInstance[0];
-      CheckInActions.checkInItemGui(itemForCheckIn.barcode);
-      CheckInActions.verifyLastCheckInItem(itemForCheckIn.barcode);
+      UsersCard.openLoans();
+      UsersCard.showOpenedLoans();
+      UserLoans.openLoan(itemForCheckIn.barcode);
+      UserLoans.renewItem(itemForCheckIn.barcode, true);
+      UserLoans.reneweThroughOverride(`AutotestOverride${getRandomPostfix()}`);
 
       cy.visit(TopMenu.usersPath);
       UsersSearchPane.waitLoading();
       UsersSearchPane.searchByKeywords(userData.barcode);
-      Users.checkPatronIsNotBlocked();
+      Users.checkPatronIsNotBlocked(userData.userId);
     }
   );
 });

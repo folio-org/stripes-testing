@@ -1,6 +1,18 @@
 import { matching } from 'bigtest';
-import { Pane, MultiColumnListRow, MultiColumnListCell, HTML, including, Button } from '../../../../../interactors';
+import {
+  Pane,
+  MultiColumnListRow,
+  MultiColumnListCell,
+  HTML,
+  including,
+  Button,
+  KeyValue,
+  CheckboxInTable,
+  TextArea,
+  Modal,
+} from '../../../../../interactors';
 import ItemVeiw from '../../inventory/inventoryItem/itemVeiw';
+import { REQUEST_METHOD } from '../../../constants';
 
 const claimReturnedButton = Button('Claim returned');
 const declaredLostButton = Button('Declare lost');
@@ -8,9 +20,19 @@ const itemDetailsButton = Button('Item details');
 const renewButton = Button('Renew');
 const ellipsisButton = Button({ icon:'ellipsis' });
 const rowInList = MultiColumnListRow({ indexRow: 'row-0' });
+const overrideButton = Button('Override');
 
 function openActionsMenuOfLoanByBarcode(itemBarcode) {
   cy.do(MultiColumnListRow({ text: matching(itemBarcode), isContainer: false }).find(ellipsisButton).click());
+}
+
+function updateTimer(moduleId, routingEntry) {
+  return cy.okapiRequest({
+    method: REQUEST_METHOD.PATCH,
+    path: `_/proxy/tenants/diku/timers/${moduleId}`,
+    body: routingEntry,
+    isDefaultSearchParamsRequired: false,
+  });
 }
 
 export default {
@@ -57,11 +79,29 @@ export default {
     cy.do(itemDetailsButton.click());
     ItemVeiw.waitLoading();
   },
-  renewItem:(barcode) => {
-    cy.expect(rowInList.find(HTML(including(barcode))).exists());
-    cy.do(ellipsisButton.click());
-    cy.expect(renewButton.exists());
-    cy.do(renewButton.click());
+  renewItem:(barcode, isLoanOpened = false) => {
+    if (isLoanOpened) {
+      cy.expect(KeyValue({ value: barcode }).exists());
+      cy.expect(renewButton.exists());
+      cy.do(renewButton.click());
+    } else {
+      cy.expect(rowInList.find(HTML(including(barcode))).exists());
+      cy.do(ellipsisButton.click());
+      cy.expect(renewButton.exists());
+      cy.do(renewButton.click());
+    }
+  },
+  reneweThroughOverride: (mes) => {
+    cy.expect([
+      Modal('Renew Confirmation').exists(),
+      overrideButton.exists()
+    ]);
+    cy.do([
+      overrideButton.click(),
+      TextArea({ id: 'data-test-additional-info' }).fillIn(mes),
+      CheckboxInTable({ name: 'check-all' }).click(),
+      Modal({ id:'bulk-override-modal' }).find(overrideButton).click()
+    ]);
   },
   checkResultsInTheRowByBarcode: (allContentToCheck, itemBarcode) => {
     return allContentToCheck.forEach(contentToCheck => cy.expect(MultiColumnListRow({ text: matching(itemBarcode), isContainer: false }).find(MultiColumnListCell({ content: including(contentToCheck) })).exists()));
@@ -79,9 +119,77 @@ export default {
     cy.okapiRequest({
       method: 'GET',
       path: `circulation/loans?query=(userId==${userId} and status.name==${loanStatus})`,
-      // searchParams: { query: `(userId==${userId} and status.name==${loanStatus})` },
       isDefaultSearchParamsRequired: false,
     })
       .then((({ body }) => body))),
 
+  updateTimerForAgedToLost: (mode) => {
+    if (typeof mode !== 'string') {
+      throw new Error('Unknown mode!');
+    }
+
+    let delayTime;
+    if (mode === 'reset') {
+      delayTime = '30';
+    } else if (mode === 'minute') {
+      delayTime = '1';
+    }
+
+    const scheduledAgeToLostModuleId = 'mod-circulation_7';
+    const scheduledAgeToLostRoutingEntry = {
+      methods: ['POST'],
+      pathPattern: '/circulation/scheduled-age-to-lost',
+      unit: 'minute',
+      delay: delayTime,
+      modulePermissions: [
+        'circulation-storage.loans.item.put',
+        'circulation-storage.loans.item.get',
+        'circulation-storage.loans.collection.get',
+        'circulation-storage.circulation-rules.get',
+        'circulation-storage.patron-notice-policies.collection.get',
+        'circulation-storage.patron-notice-policies.item.get',
+        'inventory-storage.items.item.put',
+        'circulation.internal.fetch-items',
+        'lost-item-fees-policies.item.get',
+        'lost-item-fees-policies.collection.get',
+        'pubsub.publish.post',
+        'users.item.get',
+        'users.collection.get',
+        'scheduled-notice-storage.scheduled-notices.item.post',
+      ],
+    };
+    const scheduledAgeToLostFeeChargingModuleId = 'mod-circulation_8';
+    const scheduledAgeToLostFeeChargingRoutingEntry = {
+      methods: ['POST'],
+      pathPattern: '/circulation/scheduled-age-to-lost-fee-charging',
+      unit: 'minute',
+      delay: delayTime,
+      modulePermissions: [
+        'circulation-storage.loans.item.put',
+        'circulation-storage.loans.item.get',
+        'circulation-storage.loans.collection.get',
+        'inventory-storage.items.item.put',
+        'circulation.internal.fetch-items',
+        'lost-item-fees-policies.item.get',
+        'lost-item-fees-policies.collection.get',
+        'owners.collection.get',
+        'feefines.collection.get',
+        'accounts.item.post',
+        'feefineactions.item.post',
+        'pubsub.publish.post',
+        'users.item.get',
+        'users.collection.get',
+        'usergroups.collection.get',
+        'usergroups.item.get',
+        'circulation-storage.circulation-rules.get',
+        'circulation-storage.patron-notice-policies.item.get',
+        'circulation-storage.patron-notice-policies.collection.get',
+        'circulation.rules.notice-policy.get',
+        'scheduled-notice-storage.scheduled-notices.item.post',
+        'actual-cost-record-storage.actual-cost-records.item.post',
+      ],
+    };
+    updateTimer(scheduledAgeToLostModuleId, scheduledAgeToLostRoutingEntry);
+    updateTimer(scheduledAgeToLostFeeChargingModuleId, scheduledAgeToLostFeeChargingRoutingEntry);
+  },
 };
