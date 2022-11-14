@@ -1,16 +1,18 @@
+import permissions from '../../support/dictionary/permissions';
+import devTeams from '../../support/dictionary/devTeams';
 import NewOrder from '../../support/fragments/orders/newOrder';
-import BasicOrderLine from '../../support/fragments/orders/basicOrderLine';
 import TestType from '../../support/dictionary/testTypes';
 import Orders from '../../support/fragments/orders/orders';
 import TopMenu from '../../support/fragments/topMenu';
-import SearchHelper from '../../support/fragments/finance/financeHelper';
-import OrdersHelper from '../../support/fragments/orders/ordersHelper';
-import NewInvoice from '../../support/fragments/invoices/newInvoice';
 import Organizations from '../../support/fragments/organizations/organizations';
-import devTeams from '../../support/dictionary/devTeams';
 import NewOrganization from '../../support/fragments/organizations/newOrganization';
+import FinanceHelp from '../../support/fragments/finance/financeHelper';
+import Users from '../../support/fragments/users/users';
+import OrderLines from '../../support/fragments/orders/orderLines';
+import getRandomPostfix from '../../support/utils/stringTools';
+import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
 
-describe('orders: Test PO filters', () => {
+describe('orders: Test POL', () => {
   const organization = { ...NewOrganization.defaultUiOrganizations };
   const order = {
     ...NewOrder.defaultOneTimeOrder,
@@ -20,9 +22,13 @@ describe('orders: Test PO filters', () => {
     manualPo: true,
     approved: true,
   };
-  const orderLine = { ...BasicOrderLine.defaultOrderLine };
-  const invoice = { ...NewInvoice.defaultUiInvoice };
+  const item = {
+    instanceName: `testBulkEdit_${getRandomPostfix()}`,
+    itemBarcode: getRandomPostfix(),
+  };
   let orderNumber;
+  let user;
+  let orderID;
 
   before(() => {
     cy.getToken(Cypress.env('diku_login'), Cypress.env('diku_password'));
@@ -30,51 +36,39 @@ describe('orders: Test PO filters', () => {
       .then(response => {
         organization.id = response;
         order.vendor = response;
-        orderLine.physical.materialSupplier = response;
-        orderLine.eresource.accessProvider = response;
       });
-    invoice.vendorName = organization.name;
-    cy.getLocations({ query: `name="${OrdersHelper.mainLibraryLocation}"` })
-      .then(location => { orderLine.locations[0].locationId = location.id; });
-    cy.getMaterialTypes({ query: 'name="book"' })
-      .then(materialType => {
-        orderLine.physical.materialType = materialType.id;
-        cy.login(Cypress.env('diku_login'), Cypress.env('diku_password'));
-        cy.createOrderApi(order)
+      cy.login(Cypress.env('diku_login'), Cypress.env('diku_password'));
+      cy.createOrderApi(order)
           .then((response) => {
             orderNumber = response.body.poNumber;
-            cy.getAcquisitionMethodsApi({ query: 'value="Other"' })
-              .then(params => {
-                orderLine.acquisitionMethod = params.body.acquisitionMethods[0].id;
-                orderLine.purchaseOrderId = order.id;
-                cy.createOrderLineApi(orderLine);
-              });
-            cy.visit(TopMenu.ordersPath);
-            Orders.searchByParameter('PO number', orderNumber);
-            SearchHelper.selectFromResultsList();
-            Orders.openOrder();
-            Orders.closeThirdPane();
-            Orders.resetFilters();
+            orderID = response.body.id;
           });
-      });
+      InventoryInstances.createInstanceViaApi(item.instanceName, item.itemBarcode);
+      cy.createTempUser([
+        permissions.uiOrdersCreate.gui,
+        permissions.uiOrdersEdit.gui
+      ])
+        .then(userProperties => {
+          user = userProperties;
+          
+        cy.login(user.username, user.password, { path:TopMenu.ordersPath, waiter: Orders.waitLoading });
+        });
   });
 
   after(() => {
-    Orders.deleteOrderApi(order.id);
+    Orders.deleteOrderApi(orderID);
     Organizations.deleteOrganizationViaApi(organization.id);
+    InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(item.itemBarcode);
+    Users.deleteViaApi(user.userId);
   });
 
-  [
-    { filterActions: Orders.selectOpenStatusFilter },
-    { filterActions: Orders.selectPrefixFilter },
-    { filterActions: Orders.selectReEncumberFilter },
-    { filterActions: Orders.selectOrderTypeFilter },
-    { filterActions: () => { Orders.selectVendorFilter(invoice); } },
-  ].forEach((filter) => {
     it('C6648 "Not connected" message appears after changing item details [except tags] (thunderjet)', { tags: [TestType.criticalPath, devTeams.thunderjet] }, () => {
-      filter.filterActions();
-      Orders.checkSearchResults(orderNumber);
-      Orders.resetFilters();
+      Orders.searchByParameter('PO number', orderNumber);
+      FinanceHelp.selectFromResultsList();
+      OrderLines.addPOLine();
+      OrderLines.selectRandomInstanceInTitleLookUP(item.instanceName);
+      cy.wait(4000);
+      OrderLines.fillInInvalidDataForPublicationDate();
+      OrderLines.clickNotConnectionInfoButton();
     });
-  });
 });

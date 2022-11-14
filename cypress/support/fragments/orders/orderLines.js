@@ -61,6 +61,7 @@ const itemDetailsSection = Section({ id: 'ItemDetails' });
 const poLineInfoSection = Section({ id: 'poLine' });
 const fundDistributionSection = Section({ id: 'FundDistribution' });
 const locationSection = Section({ id: 'location' });
+
 export default {
 
   searchByParameter: (parameter, value) => {
@@ -400,6 +401,23 @@ export default {
   savePol:() => {
     cy.do(saveAndClose.click());
     cy.do(Pane({ id:'pane-poLineForm' }).absent());
+  },
+
+  selectRandomInstanceInTitleLookUP:(instanceName, rowNumber = 0) => {
+    cy.do([
+      Button({ id: 'find-instance-trigger' }).click(),
+      Modal('Select instance').find(TextField({ name: 'query' })).fillIn(instanceName),
+      Modal('Select instance').find(searchButton).click(),
+      Modal('Select instance').find(MultiColumnListRow({ index: rowNumber })).click()
+    ]);
+  },
+
+  fillInInvalidDataForPublicationDate:() => {
+    cy.do(TextField({ text: 'Publication date'}).fillIn('Invalid date'));
+  },
+
+  clickNotConnectionInfoButton:() => {
+    cy.do(Section({ id: 'itemDetails' }).find(Button({ icon: 'info'})).click());
   }
 };
 
