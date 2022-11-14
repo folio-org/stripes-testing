@@ -8,7 +8,7 @@ import TopMenu from '../../../../support/fragments/topMenu';
 import InventoryInstances from '../../../../support/fragments/inventory/inventoryInstances';
 import LoanPolicyActions from '../../../../support/fragments/circulation/loan-policy';
 import { CY_ENV, LOST_ITEM_FEES_POLICY_NAMES, NOTICE_POLICY_NAMES, OVERDUE_FINE_POLICY_NAMES, REQUEST_POLICY_NAMES } from '../../../../support/constants';
-import FixedDueDateSchedules from '../../../../support/fragments/circulation/fixedDueDateSchedules';
+import CheckOutActions from '../../../../support/fragments/check-out-actions/check-out-actions';
 import LimitCheckOut from '../../../../support/fragments/checkout/modals/limitCheckOut';
 import CheckInActions from '../../../../support/fragments/check-in-actions/checkInActions';
 import UserEdit from '../../../../support/fragments/users/userEdit';
@@ -16,17 +16,16 @@ import Users from '../../../../support/fragments/users/users';
 import ServicePoints from '../../../../support/fragments/settings/tenant/servicePoints/servicePoints';
 import InventoryInstance from '../../../../support/fragments/inventory/inventoryInstance';
 import DevTeams from '../../../../support/dictionary/devTeams';
-import CheckOutActions from '../../../../support/fragments/check-out-actions/check-out-actions';
 import SettingsMenu from '../../../../support/fragments/settingsMenu';
 import OtherSettings from '../../../../support/fragments/settings/circulation/otherSettings';
 
 describe('ui-users:', () => {
   let user = {};
-  const instanceTitle = `autotest_instance_title_${getRandomPostfix()}`;
+  const instanceTitle = `autotest title ${getRandomPostfix()}`;
   let servicePoint;
-  let limitTstInstanceIds;
+  let limitTestInstanceIds;
   let testInstanceIds;
-  let loanPolicy;
+  let loanPolicyForCourseReserves;
   let materialType;
   let limitLoanTypeId;
   let loanTypeId;
@@ -38,7 +37,7 @@ describe('ui-users:', () => {
   beforeEach(() => {
     cy.getAdminToken()
       .then(() => {
-        cy.getMaterialTypes({ limit: 1 })
+        cy.getMaterialTypes({ query: 'name:"book"' })
           .then(({ id }) => {
             materialType = { id };
           });
@@ -83,18 +82,15 @@ describe('ui-users:', () => {
           items: limitTestItems
         })
           .then(specialInstanceIds => {
-            limitTstInstanceIds = specialInstanceIds;
+            limitTestInstanceIds = specialInstanceIds;
           })
         // create loan policy
           .then(() => {
-            FixedDueDateSchedules.createViaApi()
-              .then((schedule) => {
-                LoanPolicyActions.createApi(LoanPolicyActions.getDefaultLoanPolicy(limitOfItem, schedule.id))
-                  .then((policy) => {
-                    loanPolicy = policy;
-                  });
+            LoanPolicyActions.createApi(LoanPolicyActions.getDefaultLoanPolicy(limitOfItem))
+              .then((policy) => {
+                loanPolicyForCourseReserves = policy;
               });
-            cy.getRequestPolicy({ query: `name=="${REQUEST_POLICY_NAMES.ALLOW_ALL}"` });
+            cy.getRequestPolicy({ query: `name=="${REQUEST_POLICY_NAMES.HOLD_ONLY}"` });
             cy.getNoticePolicy({ query: `name=="${NOTICE_POLICY_NAMES.SEND_NO_NOTICES}"` });
             cy.getOverdueFinePolicy({ query: `name=="${OVERDUE_FINE_POLICY_NAMES.OVERDUE_FINE_POLICY}"` });
             cy.getLostItemFeesPolicy({ query: `name=="${LOST_ITEM_FEES_POLICY_NAMES.LOST_ITEM_FEES_POLICY}"` });
@@ -109,7 +105,7 @@ describe('ui-users:', () => {
             const noticePolicyId = Cypress.env(CY_ENV.NOTICE_POLICY)[0].id;
             const overdueFinePolicyId = Cypress.env(CY_ENV.OVERDUE_FINE_POLICY)[0].id;
             const lostItemFeesPolicyId = Cypress.env(CY_ENV.LOST_ITEM_FEES_POLICY)[0].id;
-            const policy = `l ${loanPolicy.id} r ${requestPolicyId} n ${noticePolicyId} o ${overdueFinePolicyId} i ${lostItemFeesPolicyId}`;
+            const policy = `l ${loanPolicyForCourseReserves.id} r ${requestPolicyId} n ${noticePolicyId} o ${overdueFinePolicyId} i ${lostItemFeesPolicyId}`;
             const priority = 'priority: number-of-criteria, criterium (t, s, c, b, a, m, g), last-line';
             const newRule = `${priority}\nfallback-policy: ${policy}\nt ${limitLoanTypeId}: ${policy}`;
 
@@ -121,7 +117,7 @@ describe('ui-users:', () => {
         InventoryInstances.createFolioInstanceViaApi({
           instance: {
             instanceTypeId: Cypress.env('instanceTypes')[0].id,
-            title: instanceTitle,
+            title: `autotest title ${getRandomPostfix()}`,
           },
           holdings: [{
             holdingsTypeId: Cypress.env('holdingsTypes')[0].id,
@@ -161,14 +157,14 @@ describe('ui-users:', () => {
         checkInDate: new Date().toISOString(),
       });
     });
-    cy.wrap(limitTstInstanceIds.holdingIds.forEach(holdingsId => {
+    cy.wrap(limitTestInstanceIds.holdingIds.forEach(holdingsId => {
       cy.wrap(holdingsId.itemIds.forEach(itemId => {
         cy.deleteItem(itemId);
       })).then(() => {
         cy.deleteHoldingRecordViaApi(holdingsId.id);
       });
     })).then(() => {
-      InventoryInstance.deleteInstanceViaApi(limitTstInstanceIds.instanceId);
+      InventoryInstance.deleteInstanceViaApi(limitTestInstanceIds.instanceId);
     });
     testItems.forEach(item => {
       CheckInActions.checkinItemViaApi({
@@ -189,7 +185,7 @@ describe('ui-users:', () => {
     cy.updateCirculationRules({
       rulesAsText: rulesDefaultString,
     });
-    cy.deleteLoanPolicy(loanPolicy.id);
+    cy.deleteLoanPolicy(loanPolicyForCourseReserves.id);
     UserEdit.changeServicePointPreferenceViaApi(user.userId, [servicePoint.id])
       .then(() => {
         ServicePoint.deleteViaApi(servicePoint.id);
