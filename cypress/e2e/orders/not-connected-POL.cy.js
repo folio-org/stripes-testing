@@ -31,13 +31,13 @@ describe('orders: Test POL', () => {
   let orderID;
 
   before(() => {
-    cy.getToken(Cypress.env('diku_login'), Cypress.env('diku_password'));
+    cy.getAdminToken();
+
     Organizations.createOrganizationViaApi(organization)
       .then(response => {
         organization.id = response;
         order.vendor = response;
       });
-      cy.login(Cypress.env('diku_login'), Cypress.env('diku_password'));
       cy.createOrderApi(order)
           .then((response) => {
             orderNumber = response.body.poNumber;
