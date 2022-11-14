@@ -1,4 +1,16 @@
-import { Button, TextField, MultiColumnListCell, Modal, HTML, including, Section, PaneHeader, MultiColumnList, Pane } from '../../../../../interactors';
+import {
+  Button,
+  TextField,
+  MultiColumnListCell,
+  Modal,
+  HTML,
+  including,
+  Section,
+  PaneHeader,
+  MultiColumnList,
+  Pane,
+  MultiColumnListRow
+} from '../../../../../interactors';
 import { getLongDelay } from '../../../utils/cypressTools';
 import newJobProfile from './newJobProfile';
 
@@ -6,10 +18,12 @@ const actionsButton = Button('Actions');
 const runButton = Button('Run');
 const waitSelector = Pane({ id:'view-job-profile-pane' });
 const closeButton = Button({ icon: 'times' });
+const paneResults = Pane({ id:'pane-results' });
+const searchButton = Button('Search');
 
 const openNewJobProfileForm = () => {
   cy.do([
-    Pane({ id:'pane-results' }).find(actionsButton).click(),
+    paneResults.find(actionsButton).click(),
     Button('New job profile').click(),
   ]);
   cy.expect(HTML({ className: including('form-'), id:'job-profiles-form' }).exists());
@@ -64,6 +78,13 @@ const createJobProfile = (jobProfile) => {
   newJobProfile.fillJobProfile(jobProfile);
 };
 
+const searchJobProfileForImport = (jobProfileTitle) => {
+  // TODO: clarify with developers what should be waited
+  cy.wait(1500);
+  cy.do(Pane({ id:'pane-results' }).find(TextField({ id:'input-search-job-profiles-field' })).fillIn(jobProfileTitle));
+  cy.do(searchButton.click());
+};
+
 export default {
   defaultInstanceAndSRSMarcBib:'Default - Create instance and SRS MARC Bib',
   openNewJobProfileForm: () => {
@@ -75,15 +96,22 @@ export default {
 
   waitLoadingList,
   waitLoading,
+  searchJobProfileForImport,
+  deleteJobProfile,
+  createJobProfile,
 
   checkJobProfilePresented:(jobProfileTitle) => {
-    cy.get('[id="job-profiles-list"]')
-      .should('contains.text', jobProfileTitle);
+    searchJobProfileForImport(jobProfileTitle);
+    cy.expect(MultiColumnListCell(jobProfileTitle).exists());
   },
 
-  searchJobProfileForImport:(jobProfileTitle) => {
-    cy.do(TextField({ id:'input-search-job-profiles-field' }).fillIn(jobProfileTitle));
-    cy.do(Button('Search').click());
+  selectJobProfile:() => {
+    // need to wait until file upload
+    cy.wait(1000);
+    cy.expect(paneResults.find(MultiColumnListRow({ index: 0 })).exists());
+    cy.do(paneResults
+      .find(MultiColumnListRow({ index: 0 }))
+      .click());
   },
 
   runImportFile:(fileName) => {
@@ -96,9 +124,6 @@ export default {
     // wait until uploaded file is displayed in the list
     cy.expect(MultiColumnList({ id:'job-logs-list' }).find(Button(fileName)).exists());
   },
-
-  deleteJobProfile,
-  createJobProfile,
 
   createJobProfileWithLinkingProfiles: (jobProfile, actionProfileName, matchProfileName) => {
     openNewJobProfileForm();
@@ -117,8 +142,7 @@ export default {
     newJobProfile.fillJobProfile(jobProfile);
   },
   select:(jobProfileTitle) => {
-    cy.do(TextField({ id:'input-search-job-profiles-field' }).fillIn(jobProfileTitle));
-    cy.do(Button('Search').click());
+    searchJobProfileForImport(jobProfileTitle);
     cy.do(MultiColumnListCell(jobProfileTitle).click());
   },
   openFileRecords:(fileName) => {

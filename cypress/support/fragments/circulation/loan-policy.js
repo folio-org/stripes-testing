@@ -3,19 +3,18 @@ import { getTestEntityValue } from '../../utils/stringTools';
 import { LIBRARY_DUE_DATE_MANAGMENT, LOAN_PROFILE } from '../../constants';
 import Heading from '../../../../interactors';
 
-const getDefaultLoanPolicy = (limit, scheduleId) => {
+const getDefaultRollingLoanPolicy = (limit = '') => {
   const defaultLoanPolicy = {
-    id: uuid(),
-    name: getTestEntityValue(),
     loanable: true,
     loansPolicy: {
-      profileId: 'Rolling',
-      period: { duration: 1, intervalId: 'Days' },
-      itemLimit: limit,
       closedLibraryDueDateManagementId:'CURRENT_DUE_DATE',
-      fixedDueDateScheduleId: scheduleId
+      itemLimit: limit,
+      period: { duration: 3, intervalId: 'Hours' },
+      profileId: 'Rolling'
     },
-    renewable: false,
+    name: getTestEntityValue(),
+    renewable: true,
+    renewalsPolicy: { numberAllowed: '2', renewFromId: 'SYSTEM_DATE' }
   };
   return defaultLoanPolicy;
 };
@@ -32,7 +31,7 @@ export default {
   waitLoading() {
     cy.expect(Heading('Loan policies').exists());
   },
-  getDefaultLoanPolicy,
+  getDefaultRollingLoanPolicy,
   createApi(loanPolicy) {
     return cy
       .okapiRequest({

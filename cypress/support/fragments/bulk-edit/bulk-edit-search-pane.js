@@ -247,6 +247,12 @@ export default {
     cy.expect(bulkEditPane.find(HTML(`${values.length} records have been successfully changed`)).exists());
   },
 
+  verifyLocationChanges(rows, locationValue) {
+    for (let i = 0; i < rows; i++) {
+      cy.expect(changesAccordion.find(MultiColumnListCell({ row: i, content: locationValue })).exists())
+    }
+  },
+
   verifyNonMatchedResults(...values) {
     cy.expect([
       errorsAccordion.find(MultiColumnListHeader('Record identifier')).exists(),
@@ -334,5 +340,9 @@ export default {
 
   verifyPaneRecordsCount(value) {
     cy.expect(bulkEditPane.find(HTML(`${value} records match`)).exists());
-  }
+  },
+
+  verifyPaneTitleFileName(fileName) {
+    cy.expect(Pane(`Bulk edit ${fileName}`).exists());
+  },
 };

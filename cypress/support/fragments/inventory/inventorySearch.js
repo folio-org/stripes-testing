@@ -318,4 +318,8 @@ export default {
   checkContributorsColumResult(cellContent) {
     cy.expect(MultiColumnList({ id: 'list-inventory' }).find(MultiColumnListCell(including(cellContent))).exists());
   },
+
+  checkMissingSearchResult(cellContent) {
+    cy.expect(MultiColumnListCell({ content: cellContent }).absent());
+  },
 };

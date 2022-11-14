@@ -73,7 +73,7 @@ export default {
   },
 
   checkMaterialType:(type) => {
-    cy.expect(Accordion('Item data').find(KeyValue('Material type')).has({ value: type }));
+    cy.expect(Accordion('Item data').find(HTML(including(type))).exists());
   },
 
   checkItemNote:(note) => {
