@@ -67,6 +67,7 @@ describe('orders: Test POL', () => {
       FinanceHelp.selectFromResultsList();
       OrderLines.addPOLine();
       OrderLines.selectRandomInstanceInTitleLookUP(item.instanceName);
+      // Need to wait,while entering data loading on page
       cy.wait(4000);
       OrderLines.fillInInvalidDataForPublicationDate();
       OrderLines.clickNotConnectionInfoButton();
