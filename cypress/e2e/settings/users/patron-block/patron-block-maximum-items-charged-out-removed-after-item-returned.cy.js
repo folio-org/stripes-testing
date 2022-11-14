@@ -194,7 +194,7 @@ describe('Patron Block: Maximum number of items charged out', () => {
       cy.visit(TopMenu.usersPath);
       UsersSearchPane.waitLoading();
       UsersSearchPane.searchByKeywords(userData.barcode);
-      Users.checkPatronIsNotBlocked();
+      Users.checkPatronIsNotBlocked(userData.userId);
     }
   );
 });
