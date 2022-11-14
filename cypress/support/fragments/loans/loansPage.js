@@ -1,5 +1,14 @@
 import { matching } from 'bigtest';
-import { Button, Pane, KeyValue, including, MultiColumnListRow, MultiColumnListCell, CheckboxInTable } from '../../../../interactors';
+import {
+  Button,
+  Pane,
+  KeyValue,
+  including,
+  MultiColumnListRow,
+  MultiColumnListCell,
+  CheckboxInTable,
+  DropdownMenu
+} from '../../../../interactors';
 import ConfirmItemStatusModal from '../users/loans/confirmItemStatusModal';
 
 const claimReturnedButton = Button('Claim returned');
@@ -15,7 +24,7 @@ export default {
   openChangeDueDateForm() {
     cy.do([
       Button({ icon: 'ellipsis' }).click(),
-      changeDueDateButton.click(),
+      DropdownMenu().find(changeDueDateButton).click(),
     ]);
   },
   openChangeDueDate() {
