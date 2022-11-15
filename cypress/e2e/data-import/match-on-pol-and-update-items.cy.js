@@ -264,7 +264,6 @@ describe('ui-data-import: Match on POL and update related Instance, Holdings, It
     Receiving.checkIsPiecesCreated(title);
   };
 
-  // MODSOURMAN-819
   it('C350590 Match on POL and update related Instance, Holdings, Item (folijet)', { tags: [TestTypes.smoke, DevTeams.folijet] }, () => {
     // create the first PO with POL
     Orders.createOrderWithOrderLineViaApi(NewOrder.getDefaultOrder(vendorId),
