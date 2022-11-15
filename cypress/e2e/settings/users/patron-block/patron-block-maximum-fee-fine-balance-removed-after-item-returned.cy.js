@@ -39,8 +39,8 @@ describe('Patron Block: Maximum outstanding fee/fine balance', () => {
       { instanceTitle: `InstanceForDeclareLost ${getRandomPostfix()}` },
       { instanceTitle: `InstanceForDeclareLost ${getRandomPostfix()}` },
       { instanceTitle: `InstanceForDeclareLost ${getRandomPostfix()}` },
-      { instanceTitle: `InstanceForDeclareLost ${getRandomPostfix()}` }, //InstanceForAgedToLost
-      { instanceTitle: `InstanceForDeclareLost ${getRandomPostfix()}` },
+      { instanceTitle: `InstanceForAgedToLost ${getRandomPostfix()}` },
+      { instanceTitle: `InstanceForAgedToLost ${getRandomPostfix()}` },
     ],
   };
   const testData = {
@@ -167,9 +167,6 @@ describe('Patron Block: Maximum outstanding fee/fine balance', () => {
       });
     });
     LostItemFeePolicy.createViaApi(lostItemFeePolicyBody);
-    // .then((response) => {
-    //   lostItemFeePolicyBody.id = response.id;
-    // });
     LoanPolicy.createApi(loanPolicyBody);
     PatronGroups.createViaApi(patronGroup.name).then((res) => {
       patronGroup.id = res;
@@ -185,9 +182,6 @@ describe('Patron Block: Maximum outstanding fee/fine balance', () => {
     cy.createTempUser(
       [
         permissions.uiUsersSettingsOwners.gui,
-        permissions.loansAll.gui,
-        permissions.loansRenewOverride.gui,
-        permissions.uiUsersfeefinesCRUD.gui,
         permissions.uiUsersCreatePatronConditions.gui,
         permissions.uiUsersCreatePatronLimits.gui,
         permissions.checkinAll.gui,
@@ -268,30 +262,29 @@ describe('Patron Block: Maximum outstanding fee/fine balance', () => {
     cy.deleteLoanType(testData.loanTypeId);
   });
   it(
-    'C350655 Verify automated patron block "Maximum outstanding fee/fine balance" removed after lost item renewed (vega)',
+    'C350651 Verify automated patron block "Maximum outstanding fee/fine balance" removed after lost item returned (vega)',
     { tags: [TestTypes.criticalPath, devTeams.vega] },
     () => {
       cy.visit(SettingsMenu.conditionsPath);
       Conditions.waitLoading();
       Conditions.select('Maximum outstanding fee/fine balance');
-      Conditions.setConditionState(checkedOutBlockMessage, undefined, false);
+      Conditions.setConditionState(checkedOutBlockMessage);
       cy.visit(SettingsMenu.limitsPath);
       Limits.selectGroup(patronGroup.name);
       Limits.setMaximumOutstandingFeeFineBalance('624');
-      // cy.wait(230000);
+      cy.wait(230000);
 
       cy.visit(TopMenu.usersPath);
       UsersSearchPane.waitLoading();
       UsersSearchPane.searchByKeywords(userData.barcode);
       UsersCard.waitLoading();
-      Users.checkIsPatronBlocked(checkedOutBlockMessage, 'Borrowing, Requests');
+      Users.checkIsPatronBlocked(checkedOutBlockMessage, 'Borrowing, Renewals, Requests');
 
+      cy.visit(TopMenu.checkInPath);
       const itemForCheckIn = itemsData.itemsWithSeparateInstance[0];
-      UsersCard.openLoans();
-      UsersCard.showOpenedLoans();
-      UserLoans.openLoan(itemForCheckIn.barcode);
-      UserLoans.renewItem(itemForCheckIn.barcode, true);
-      UserLoans.reneweThroughOverride(`AutotestOverride${getRandomPostfix()}`);
+      CheckInActions.checkInItemGui(itemForCheckIn.barcode);
+      CheckInActions.confirmCheckInLostItem();
+      CheckInActions.verifyLastCheckInItem(itemForCheckIn.barcode);
 
       cy.visit(TopMenu.usersPath);
       UsersSearchPane.waitLoading();
