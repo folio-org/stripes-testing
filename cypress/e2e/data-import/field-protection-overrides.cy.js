@@ -268,7 +268,7 @@ describe('ui-data-import: Check that field protection overrides work properly du
           FileDetails.checkStatusInColumn(FileDetails.status.updated, columnName);
         });
         FileDetails.checkSrsRecordQuantityInSummaryTable('1', '1');
-        FileDetails.checkInstanceQuantityInSummaryTable('2', '1');
+        FileDetails.checkInstanceQuantityInSummaryTable('1', '1');
 
         cy.visit(TopMenu.inventoryPath);
         InventorySearch.searchInstanceByHRID(instanceHrid);
@@ -295,7 +295,7 @@ describe('ui-data-import: Check that field protection overrides work properly du
           FileDetails.checkStatusInColumn(FileDetails.status.updated, columnName);
         });
         FileDetails.checkSrsRecordQuantityInSummaryTable('1', '1');
-        FileDetails.checkInstanceQuantityInSummaryTable('2', '1');
+        FileDetails.checkInstanceQuantityInSummaryTable('1', '1');
 
         cy.visit(TopMenu.inventoryPath);
         InventorySearch.searchInstanceByHRID(instanceHrid);
