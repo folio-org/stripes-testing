@@ -220,13 +220,13 @@ describe('ui-data-import: Test 001/003/035 handling for New and Updated SRS reco
         JobProfiles.searchJobProfileForImport(jobProfile.profileName);
         JobProfiles.runImportFile(exportedFileName);
         Logs.checkStatusOfJobProfile('Completed');
-        Logs.openFileDetails(nameMarcFileForCreate);
+        Logs.openFileDetails(exportedFileName);
         [FileDetails.columnName.srsMarc,
           FileDetails.columnName.instance].forEach(columnName => {
           FileDetails.checkStatusInColumn(FileDetails.status.updated, columnName);
         });
-        FileDetails.checkSrsRecordQuantityInSummaryTable('1');
-        FileDetails.checkInstanceQuantityInSummaryTable('1');
+        FileDetails.checkSrsRecordQuantityInSummaryTable('1', '1');
+        FileDetails.checkInstanceQuantityInSummaryTable('1', '1');
       });
 
     // check instance is updated
