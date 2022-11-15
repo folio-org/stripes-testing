@@ -78,13 +78,10 @@ const importFile = (profileName, uniqueFileName) => {
   });
 };
 
-const checkFileIsUploaded = () => cy.expect(Pane({ id:'pane-upload-content' }).find(Spinner()).absent());
-
 export default {
   importFile,
   uploadFile,
   waitLoading,
-  checkFileIsUploaded,
 
   uploadExportedFile(fileName) {
     cy.get('input[type=file]', getLongDelay()).attachFile(fileName);
