@@ -106,6 +106,7 @@ export default {
   loansView: { internal: 'ui-users.loans.view', gui: 'Users: User loans view' },
   loansRenew: { internal: 'ui-users.loans.renew', gui: 'Users: User loans renew' },
   loansRenewOverride: { internal: 'ui-users.loans.renew-override', gui: 'Users: User loans renew through override' },
+  overridePatronBlock: { internal: 'ui-users.overridePatronBlock', gui: 'User: Can override patron blocks' },
   // Checkout
   checkoutAll: { internal: 'ui-checkout.all', gui: 'Check out: All permissions' },
   checkoutCirculatingItems: { internal: 'ui-checkout.circulation', gui: 'Check out: Check out circulating items' },

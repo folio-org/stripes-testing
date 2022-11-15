@@ -25,10 +25,11 @@ import Limits from '../../../../support/fragments/settings/users/limits';
 import UsersSearchPane from '../../../../support/fragments/users/usersSearchPane';
 import UsersCard from '../../../../support/fragments/users/usersCard';
 import UserLoans from '../../../../support/fragments/users/loans/userLoans';
+import Renewals from '../../../../support/fragments/loans/renewals';
 
 describe('Patron Block: Maximum number of overdue items', () => {
   let originalCirculationRules;
-  const checkedOutBlockMessage = 'You have reached maximum number of overdue items as set by patron group';
+  const blockMessage = 'You have reached maximum number of overdue items as set by patron group';
   const patronGroup = {
     name: 'groupToPatronBlock' + getRandomPostfix(),
   };
@@ -154,6 +155,7 @@ describe('Patron Block: Maximum number of overdue items', () => {
       [
         permissions.uiUsersSettingsOwners.gui,
         permissions.loansAll.gui,
+        permissions.overridePatronBlock.gui,
         permissions.uiUsersCreatePatronConditions.gui,
         permissions.uiUsersCreatePatronLimits.gui,
         permissions.checkinAll.gui,
@@ -222,7 +224,7 @@ describe('Patron Block: Maximum number of overdue items', () => {
       cy.visit(SettingsMenu.conditionsPath);
       Conditions.waitLoading();
       Conditions.select('Maximum number of overdue items');
-      Conditions.setConditionState(checkedOutBlockMessage, undefined, false);
+      Conditions.setConditionState(blockMessage);
       cy.visit(SettingsMenu.limitsPath);
       Limits.selectGroup(patronGroup.name);
       Limits.setMaximumNumberOfOverdueItems('4');
@@ -233,13 +235,14 @@ describe('Patron Block: Maximum number of overdue items', () => {
       UsersSearchPane.waitLoading();
       UsersSearchPane.searchByKeywords(userData.barcode);
       UsersCard.waitLoading();
-      Users.checkIsPatronBlocked(checkedOutBlockMessage, 'Borrowing, Requests');
+      Users.checkIsPatronBlocked(blockMessage, 'Borrowing, Renewals, Requests');
 
       const itemForCheckIn = itemsData.itemsWithSeparateInstance[0];
       UsersCard.openLoans();
       UsersCard.showOpenedLoans();
       UserLoans.openLoan(itemForCheckIn.barcode);
       UserLoans.renewItem(itemForCheckIn.barcode, true);
+      Renewals.renewBlockedPatron(`AutotestText${getRandomPostfix()}`);
 
       cy.visit(TopMenu.usersPath);
       UsersSearchPane.waitLoading();

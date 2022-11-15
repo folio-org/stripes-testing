@@ -58,7 +58,6 @@ export default {
       cy.expect(KeyValue({ value: barcode }).exists());
       cy.expect(renewButton.exists());
       cy.do(renewButton.click());
-      cy.expect(Callout(including('successfully renewed.')).exists());
     } else {
       cy.expect(rowInList.find(HTML(including(barcode))).exists());
       cy.do(ellipsisButton.click());
