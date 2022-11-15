@@ -67,7 +67,7 @@ export default {
         ]);
       }
     ));
-    InteractorsTools.checkCalloutMessage(`The Expense class ${expenseClass.name} was successfully deleted`);
+    InteractorsTools.checkCalloutMessage(`The expense class ${expenseClass.name} was successfully deleted`);
   },
 
 };

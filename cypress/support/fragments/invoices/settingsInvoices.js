@@ -74,7 +74,7 @@ export default {
         ]);
       }
     ));
-    InteractorsTools.checkCalloutMessage(`The Batch group ${batchGroup.name} was successfully deleted`);
+    InteractorsTools.checkCalloutMessage(`The batch group ${batchGroup.name} was successfully deleted`);
   },
 
   checkNotDeletingGroup: (batchGroupName) => {
