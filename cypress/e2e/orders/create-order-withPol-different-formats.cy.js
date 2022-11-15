@@ -78,7 +78,7 @@ describe('ui-orders: Orders and Order lines', () => {
     Users.deleteViaApi(user.userId);
   });
 
-  it.only('C658 Create an order and at least one order line for format = electronic resource  (thunderjet)', { tags: [testType.criticalPath, devTeams.thunderjet] }, () => {
+  it('C658 Create an order and at least one order line for format = electronic resource  (thunderjet)', { tags: [testType.criticalPath, devTeams.thunderjet] }, () => {
     Orders.createOrder(order).then(orderId => {
       order.id = orderId;
       OrderLines.addPOLine();
