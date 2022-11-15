@@ -77,7 +77,7 @@ describe('ui-data-import: Test 001/003/035 handling for New and Updated SRS reco
     cy.loginAsAdmin({ path: TopMenu.dataImportPath, waiter: DataImport.waitLoading });
     cy.getAdminToken()
       .then(() => {
-        const fileName = `C358136autotestFile.${getRandomPostfix()}.mrc`;
+        const fileName = `C17039autotestFile.${getRandomPostfix()}.mrc`;
 
         cy.visit(TopMenu.dataImportPath);
         DataImport.uploadFile('oneMarcBib.mrc', fileName);
