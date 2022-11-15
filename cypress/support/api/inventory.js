@@ -53,6 +53,7 @@ Cypress.Commands.add('getMaterialTypes', (searchParams) => {
     .okapiRequest({
       path: 'material-types',
       searchParams,
+      isDefaultSearchParamsRequired: false,
     })
     .then(response => {
       Cypress.env('materialTypes', response.body.mtypes);
