@@ -1,7 +1,7 @@
 import { TextField, Button, Select, Section, Pane } from '../../../../../interactors';
 import ModalSelectMappingProfile from './modalSelectMappingProfile';
 
-const action = 'Create (all record types except MARC Authority or MARC Holdings)';
+const action = 'Create (all record types)';
 
 const typeValue = 'MARC Bibliographic';
 

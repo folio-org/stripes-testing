@@ -61,7 +61,8 @@ export default {
   assignAdmin: () => {
     cy.do([
       findUserButton.click(),
-      userSearchModal.find(searchTextField).fillIn('diku'),
+              // TO DO: need to redesign test case with names of admin user.
+      userSearchModal.find(searchTextField).fillIn('folio-aqa'),
       searchButton.click(),
       firstSearchResult.find(checkboxAll).click(),
       userSearchModal.find(saveButton).click()
@@ -71,7 +72,7 @@ export default {
   unAssignUser: (AUName) => {
     cy.do([
       auListPane.find(Button(AUName)).click(),
-      assignedUsersSection.find(MultiColumnListCell({ row: 1, columnIndex: 2 })).find(trashButton).click()
+      assignedUsersSection.find(MultiColumnListCell({ row: 0, columnIndex: 2 })).find(trashButton).click()
     ]);
   },
 

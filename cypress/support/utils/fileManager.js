@@ -6,6 +6,7 @@ export default {
     more about masks: https://github.com/isaacs/minimatch#usage
     returns array with all files matched to mask
     */
+
     return cy.task('findFiles', `cypress/downloads/${mask}`);
   },
 

@@ -87,8 +87,7 @@ export default {
     ]);
     cy.expect(codeField.has({ error: 'Required!' }));
     cy.do([
-      // try to navigate without saving
-      Button('Agreements').click(),
+      Button({ icon: 'times' }).click(),
       Button('Keep editing').click,
       Button('Cancel').click(),
       Button('Close without saving').click()

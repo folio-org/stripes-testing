@@ -150,25 +150,25 @@ describe('ui-data-import: Check that field protection overrides work properly du
     const marcBibActionProfile = {
       typeValue: NewActionProfile.folioRecordTypeValue.marcBib,
       name: marcBibActionProfileNameForUpdate,
-      action: 'Update (all record types except Orders, Invoices, or MARC Holdings)'
+      action: 'Update (all record types except Orders)'
     };
 
     const instanceActionProfile = {
       typeValue: NewActionProfile.folioRecordTypeValue.instance,
       name: instanceActionProfileNameForUpdate,
-      action: 'Update (all record types except Orders, Invoices, or MARC Holdings)'
+      action: 'Update (all record types except Orders)'
     };
 
     const marcBibActionProfileOverride = {
       typeValue: NewActionProfile.folioRecordTypeValue.marcBib,
       name: marcBibActionProfileNameForUpdateAndOverride,
-      action: 'Update (all record types except Orders, Invoices, or MARC Holdings)'
+      action: 'Update (all record types except Orders)'
     };
 
     const instanceActionProfileOverride = {
       typeValue: NewActionProfile.folioRecordTypeValue.instance,
       name: instanceActionProfileNameForUpdateAndOverride,
-      action: 'Update (all record types except Orders, Invoices, or MARC Holdings)'
+      action: 'Update (all record types except Orders)'
     };
 
     const matchProfile = { profileName: matchProfileName,

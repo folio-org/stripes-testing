@@ -37,7 +37,7 @@ describe('ui-users:', () => {
   beforeEach(() => {
     cy.getAdminToken()
       .then(() => {
-        cy.getMaterialTypes({ query: 'name:"book"' })
+        cy.getMaterialTypes({ query: 'name="book"' })
           .then(({ id }) => {
             materialType = { id };
           });
@@ -84,9 +84,10 @@ describe('ui-users:', () => {
           .then(specialInstanceIds => {
             limitTestInstanceIds = specialInstanceIds;
           })
-        // create loan policy
+        // create loan policies
           .then(() => {
-            LoanPolicyActions.createApi(LoanPolicyActions.getDefaultLoanPolicy(limitOfItem))
+            // loan policy for "Course reserves" items
+            LoanPolicyActions.createApi(LoanPolicyActions.getDefaultRollingLoanPolicy(limitOfItem))
               .then((policy) => {
                 loanPolicyForCourseReserves = policy;
               });

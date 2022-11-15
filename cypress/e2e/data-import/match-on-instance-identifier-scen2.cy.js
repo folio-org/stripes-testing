@@ -59,7 +59,7 @@ describe('ui-data-import: Match on Instance identifier match meets both the Iden
   const actionProfile = {
     typeValue : NewActionProfile.folioRecordTypeValue.instance,
     name: actionProfileName,
-    action: 'Update (all record types except Orders, Invoices, or MARC Holdings)'
+    action: 'Update (all record types except Orders)'
   };
   const jobProfile = {
     ...NewJobProfile.defaultJobProfile,

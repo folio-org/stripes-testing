@@ -70,7 +70,7 @@ describe('ui-data-import: Check that field protection settings work properly dur
   const actionProfileUpdate = {
     name: actionProfileUpdateName,
     typeValue : NewActionProfile.folioRecordTypeValue.instance,
-    action: 'Update (all record types except Orders, Invoices, or MARC Holdings)',
+    action: 'Update (all record types except Orders)',
   };
 
   const matchProfile = {

@@ -86,7 +86,6 @@ describe('Check In - Actions ', () => {
           servicePointId: servicePoint.id,
           userBarcode: userData.barcode,
         });
-
         cy.login(userData.username, userData.password);
       });
   });

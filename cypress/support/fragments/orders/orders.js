@@ -34,9 +34,10 @@ const searchButton = Button('Search');
 const newButton = Button('New');
 const saveAndClose = Button('Save & close');
 const orderDetailsAccordionId = 'purchaseOrder';
-const createdByAdmin = 'ADMINISTRATOR, DIKU ';
+        // TO DO: need to redesign test case with names of admin user.
+const createdByAdmin = 'folio-aqa  ';
 const searchField = SearchField({ id: 'input-record-search' });
-const admin = 'administrator';
+const admin = 'folio-aqa';
 const buttonLocationFilter = Button({ id: 'accordion-toggle-button-pol-location-filter' });
 const buttonFundCodeFilter = Button({ id: 'accordion-toggle-button-fundCode' });
 const buttonOrderFormatFilter = Button({ id: 'accordion-toggle-button-orderFormat' });

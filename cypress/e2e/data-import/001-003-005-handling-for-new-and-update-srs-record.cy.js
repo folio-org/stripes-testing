@@ -65,7 +65,7 @@ describe('ui-data-import: Test 001/003/035 handling for New and Updated SRS reco
   const actionProfile = {
     typeValue: NewActionProfile.folioRecordTypeValue.instance,
     name: actionProfileName,
-    action: 'Update (all record types except Orders, Invoices, or MARC Holdings)'
+    action: 'Update (all record types except Orders)'
   };
 
   const jobProfile = {

@@ -134,7 +134,7 @@ describe('ui-data-import: MARC file import with matching for 999 ff field', () =
         const actionProfile = {
           typeValue : NewActionProfile.folioRecordTypeValue.instance,
           name: actionProfileName,
-          action: 'Update (all record types except Orders, Invoices, or MARC Holdings)'
+          action: 'Update (all record types except Orders)'
         };
         cy.visit(SettingsMenu.actionProfilePath);
         ActionProfiles.createActionProfile(actionProfile, mappingProfile.name);

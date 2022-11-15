@@ -92,6 +92,8 @@ describe('ui-finance: Groups', () => {
     Groups.deleteGroupViaApi(defaultGroup.id);
     Ledgers.deleteledgerViaApi(defaultLedger.id);
     FiscalYears.deleteFiscalYearViaApi(defaultFiscalYear.id);
+    // TO DO: need to find issue,why user can't be deleted without cy.wait() .
+    cy.wait(2000);
     Users.deleteViaApi(user.userId);
   });
 

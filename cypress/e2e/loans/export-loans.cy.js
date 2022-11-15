@@ -129,7 +129,7 @@ describe('Export Loans ', () => {
         }
       )
     );
-    FileManager.deleteFolder(Cypress.config('downloadsFolder'));
+   FileManager.deleteFolder(Cypress.config('downloadsFolder'));
   });
 
   it('C721 Export patron*s loans to CSV (vega)', { tags: [TestTypes.smoke, devTeams.vega] }, () => {

@@ -281,13 +281,13 @@ describe('ui-data-import: Match on location', () => {
     const holdingsUpdatesActionProfile = {
       typeValue: NewActionProfile.folioRecordTypeValue.holdings,
       name: holdingsActionProfile,
-      action: 'Update (all record types except Orders, Invoices, or MARC Holdings)'
+      action: 'Update (all record types except Orders)'
     };
 
     const itemUpdatesActionProfile = {
       typeValue: NewActionProfile.folioRecordTypeValue.item,
       name: itemActionProfile,
-      action: 'Update (all record types except Orders, Invoices, or MARC Holdings)'
+      action: 'Update (all record types except Orders)'
     };
 
     const jobProfileNameForUpdate = {
@@ -447,13 +447,13 @@ describe('ui-data-import: Match on location', () => {
     const holdingsUpdatesActionProfile = {
       typeValue: NewActionProfile.folioRecordTypeValue.holdings,
       name: holdingsActionProfile,
-      action: 'Update (all record types except Orders, Invoices, or MARC Holdings)'
+      action: 'Update (all record types except Orders)'
     };
 
     const itemUpdatesActionProfile = {
       typeValue: NewActionProfile.folioRecordTypeValue.item,
       name: itemActionProfile,
-      action: 'Update (all record types except Orders, Invoices, or MARC Holdings)'
+      action: 'Update (all record types except Orders)'
     };
 
     const jobProfileNameForUpdate = {
@@ -610,13 +610,13 @@ describe('ui-data-import: Match on location', () => {
     const holdingsUpdatesActionProfile = {
       typeValue: NewActionProfile.folioRecordTypeValue.holdings,
       name: holdingsActionProfile,
-      action: 'Update (all record types except Orders, Invoices, or MARC Holdings)'
+      action: 'Update (all record types except Orders)'
     };
 
     const itemUpdatesActionProfile = {
       typeValue: NewActionProfile.folioRecordTypeValue.item,
       name: itemActionProfile,
-      action: 'Update (all record types except Orders, Invoices, or MARC Holdings)'
+      action: 'Update (all record types except Orders)'
     };
 
     const jobProfileNameForUpdate = {
