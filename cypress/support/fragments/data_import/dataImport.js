@@ -8,8 +8,7 @@ import {
   Pane,
   Modal,
   MultiColumnList,
-  MultiColumnListCell,
-  Spinner
+  MultiColumnListCell
 } from '../../../../interactors';
 import { getLongDelay } from '../../utils/cypressTools';
 import getRandomPostfix from '../../utils/stringTools';
