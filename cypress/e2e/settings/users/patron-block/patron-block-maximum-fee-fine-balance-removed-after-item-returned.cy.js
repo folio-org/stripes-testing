@@ -29,7 +29,7 @@ import UsersCard from '../../../../support/fragments/users/usersCard';
 
 describe('Patron Block: Maximum outstanding fee/fine balance', () => {
   let originalCirculationRules;
-  const checkedOutBlockMessage = 'You have reached maximum outstanding fee/fine balance as set by patron group';
+  const blockMessage = 'You have reached maximum outstanding fee/fine balance as set by patron group';
   const patronGroup = {
     name: 'groupToPatronBlock' + getRandomPostfix(),
   };
@@ -268,7 +268,7 @@ describe('Patron Block: Maximum outstanding fee/fine balance', () => {
       cy.visit(SettingsMenu.conditionsPath);
       Conditions.waitLoading();
       Conditions.select('Maximum outstanding fee/fine balance');
-      Conditions.setConditionState(checkedOutBlockMessage);
+      Conditions.setConditionState(blockMessage);
       cy.visit(SettingsMenu.limitsPath);
       Limits.selectGroup(patronGroup.name);
       Limits.setMaximumOutstandingFeeFineBalance('624');
@@ -278,7 +278,7 @@ describe('Patron Block: Maximum outstanding fee/fine balance', () => {
       UsersSearchPane.waitLoading();
       UsersSearchPane.searchByKeywords(userData.barcode);
       UsersCard.waitLoading();
-      Users.checkIsPatronBlocked(checkedOutBlockMessage, 'Borrowing, Renewals, Requests');
+      Users.checkIsPatronBlocked(blockMessage, 'Borrowing, Renewals, Requests');
 
       cy.visit(TopMenu.checkInPath);
       const itemForCheckIn = itemsData.itemsWithSeparateInstance[0];
