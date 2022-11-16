@@ -8,8 +8,8 @@ import getRandomPostfix from '../../../support/utils/stringTools';
 import FileManager from '../../../support/utils/fileManager';
 import Users from '../../../support/fragments/users/users';
 import BulkEditActions from '../../../support/fragments/bulk-edit/bulk-edit-actions';
-import InventorySearch from "../../../support/fragments/inventory/inventorySearch";
-import InventoryInstance from "../../../support/fragments/inventory/inventoryInstance";
+import InventorySearch from '../../../support/fragments/inventory/inventorySearch';
+import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 
 let user;
 const items = [];
