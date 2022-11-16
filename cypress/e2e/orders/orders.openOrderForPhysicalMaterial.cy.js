@@ -29,13 +29,7 @@ describe('orders: create an order', () => {
       });
     order.vendor = organization.name;
     order.orderType = 'One-time';
-    InventoryInteractionsDefaults.getConfigurationInventoryInteractions({ limit: 1, query: '("module"="ORDERS" and "configName"="createInventory")' })
-      .then(responseInventory => {
-        interactions.id = responseInventory.configs[0].id;
-        InventoryInteractionsDefaults.setConfigurationInventoryInteractions(interactions);
-      });
-    cy.login(Cypress.env('diku_login'), Cypress.env('diku_password'));
-    cy.visit(TopMenu.ordersPath);
+    cy.loginAsAdmin({ path:TopMenu.ordersPath, waiter: Orders.waitLoading });
   });
 
   after(() => {
