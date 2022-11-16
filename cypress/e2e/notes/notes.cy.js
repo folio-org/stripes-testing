@@ -48,9 +48,13 @@ describe('Note creation', () => {
   });
 
   it('C1296 Create a note (spitfire)', { tags: [TestTypes.smoke, DevTeams.spitfire, Features.notes] }, () => {
-    initPrepairing([Permissions.uiNotesItemCreate.gui, Permissions.uiNotesItemView.gui,
+    initPrepairing([
+      Permissions.uiNotesItemCreate.gui,
+      Permissions.uiNotesItemView.gui,
       // need access to special application( agreements in this case)
-      Permissions.uiAgreementsAgreementsEdit.gui, Permissions.uiAgreementsAgreementsDelete.gui]);
+      Permissions.uiAgreementsAgreementsEdit.gui,
+      Permissions.uiAgreementsAgreementsDelete.gui]
+    );
     AgreementDetails.createNote(longNote);
     Agreements.selectRecord(agreementTitle);
     AgreementDetails.checkNotesCount(1);
@@ -60,11 +64,13 @@ describe('Note creation', () => {
   });
 
   it('C1299 Edit a note (spitfire)', { tags: [TestTypes.smoke, DevTeams.spitfire, Features.notes] }, () => {
-    initPrepairing([Permissions.uiNotesItemCreate.gui,
+    initPrepairing([
+      Permissions.uiNotesItemCreate.gui,
       Permissions.uiNotesItemView.gui,
-      Permissions.uiNotesItemEdit.gui,
       // need access to special application( agreements in this case)
-      Permissions.uiAgreementsAgreementsEdit.gui, Permissions.uiAgreementsAgreementsDelete.gui]);
+      Permissions.uiAgreementsAgreementsEdit.gui,
+      Permissions.uiAgreementsAgreementsDelete.gui]
+    );
     const specialNote = NewNote.defaultNote;
     AgreementDetails.createNote(specialNote);
     Agreements.selectRecord(agreementTitle);
@@ -86,10 +92,13 @@ describe('Note creation', () => {
   });
 
   it('C16992 View a note (spitfire)', { tags: [TestTypes.smoke, DevTeams.spitfire, Features.notes] }, () => {
-    initPrepairing([Permissions.uiNotesItemCreate.gui,
+    initPrepairing([
+      Permissions.uiNotesItemCreate.gui,
       Permissions.uiNotesItemView.gui,
       // need access to special application( agreements in this case)
-      Permissions.uiAgreementsAgreementsEdit.gui, Permissions.uiAgreementsAgreementsDelete.gui]);
+      Permissions.uiAgreementsAgreementsEdit.gui,
+      Permissions.uiAgreementsAgreementsDelete.gui]
+    );
 
     AgreementDetails.createNote(longNote);
     Agreements.selectRecord(agreementTitle);
