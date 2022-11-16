@@ -102,6 +102,7 @@ export default {
         id: uuid(),
         ...body,
       },
+      isDefaultSearchParamsRequired: false
     });
   },
   confirmMultipleItemsCheckin(barcode) {

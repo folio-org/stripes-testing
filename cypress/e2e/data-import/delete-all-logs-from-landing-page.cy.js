@@ -22,7 +22,7 @@ describe('ui-data-import: A user can delete import logs with "Data import: Can d
   before(() => {
     cy.createTempUser([
       permissions.moduleDataImportEnabled.gui,
-      permissions.dataImportDeleteLogs.gui,
+      permissions.dataImportDeleteLogs.gui
     ])
       .then(userProperties => {
         userId = userProperties.userId;
@@ -40,9 +40,9 @@ describe('ui-data-import: A user can delete import logs with "Data import: Can d
           const filePath = numberOfLogsToUpload - 1 === index ? filePathToUpload : emptyFilePathToUpload;
           fileNameToUpload = `C358137autotestFile.${getRandomPostfix()}.mrc`;
           DataImport.uploadFile(filePath, fileNameToUpload);
-          cy.wait(2000);
+          // need to wait untill file will be uploaded in loop
+          cy.wait(8000);
           JobProfiles.searchJobProfileForImport('Default - Create instance and SRS MARC Bib');
-          cy.wait(5000);
           JobProfiles.runImportFile(fileNameToUpload);
         });
       });

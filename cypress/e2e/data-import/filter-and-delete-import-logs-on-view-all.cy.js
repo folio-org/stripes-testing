@@ -32,15 +32,15 @@ describe('ui-data-import: A user can filter and delete import logs from the "Vie
         cy.login(userProperties.username, userProperties.password, { path: TopMenu.dataImportPath, waiter: DataImport.waitLoading });
         // TODO rewrite upload file by API
         // Log list should contain at least 30-35 import jobs, run by different users, and using different import profiles
-        for (let i = 0; i < 7; i++) {
+        for (let i = 0; i < 17; i++) {
           const nameMarcFileForCreate = `C358136autotestFile.${getRandomPostfix()}.mrc`;
 
-          cy.visit(TopMenu.dataImportPath);
           DataImport.uploadFile('oneMarcBib.mrc', nameMarcFileForCreate);
+          // need to wait untill file will be uploaded in loop
+          cy.wait(8000);
           JobProfiles.searchJobProfileForImport('Default - Create instance and SRS MARC Bib');
           JobProfiles.runImportFile(nameMarcFileForCreate);
           Logs.checkStatusOfJobProfile('Completed');
-          Logs.openFileDetails(nameMarcFileForCreate);
         }
         cy.logout();
       });
@@ -59,12 +59,12 @@ describe('ui-data-import: A user can filter and delete import logs from the "Vie
         for (let i = 0; i < 13; i++) {
           const nameMarcFileForCreate = `C358136autotestFile.${getRandomPostfix()}.mrc`;
 
-          cy.visit(TopMenu.dataImportPath);
           DataImport.uploadFile('oneMarcAuthority.mrc', nameMarcFileForCreate);
+          // need to wait untill file will be uploaded in loop
+          cy.wait(8000);
           JobProfiles.searchJobProfileForImport('Default - Create SRS MARC Authority');
           JobProfiles.runImportFile(nameMarcFileForCreate);
           Logs.checkStatusOfJobProfile('Completed');
-          Logs.openFileDetails(nameMarcFileForCreate);
         }
       });
   });
@@ -78,6 +78,7 @@ describe('ui-data-import: A user can filter and delete import logs from the "Vie
     cy.visit(TopMenu.dataImportPath);
     LogsViewAll.openViewAll();
     LogsViewAll.viewAllIsOpened();
+    LogsViewAll.filterJobsByJobProfile('Default - Create SRS MARC Authority');
     LogsViewAll.filterJobsByDate({ from: formattedStart, end: formattedStart });
 
     const formattedEnd = DateTools.getFormattedDate({ date: completedDate });

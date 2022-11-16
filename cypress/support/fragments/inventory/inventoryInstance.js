@@ -241,7 +241,6 @@ export default {
   },
   openItemView: (itemBarcode) => {
     cy.do(Link(including(itemBarcode)).click());
-    ItemVeiw.waitLoading();
   },
   openEditItemPage() {
     cy.do([

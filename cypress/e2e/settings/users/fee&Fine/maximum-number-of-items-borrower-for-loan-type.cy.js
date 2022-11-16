@@ -202,7 +202,7 @@ describe('ui-users:', () => {
       CheckOutActions.checkOutItemUser(user.barcode, item.barcode);
     });
     CheckOutActions.checkOutItemUser(user.barcode, limitTestItems[2].barcode);
-    LimitCheckOut.verifyErrorMessage(1);
+    LimitCheckOut.verifyErrorMessage(2);
     LimitCheckOut.cancelModal();
   });
 });
