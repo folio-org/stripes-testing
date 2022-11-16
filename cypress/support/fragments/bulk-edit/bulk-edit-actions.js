@@ -25,6 +25,10 @@ function getPatronGroupTypeSelect() {
   return cy.get('select').eq(3);
 }
 
+function getPermanentLoanSelect() {
+  return cy.get('select').eq(1);
+}
+
 
 export default {
   openStartBulkEditForm() {
@@ -81,6 +85,14 @@ export default {
   fillPatronGroup(group = 'staff (Staff Member)') {
     getPatronBlockSelect().select('Patron group');
     getPatronGroupTypeSelect().select(group);
+  },
+
+  fillLoanType(type = 'Selected') {
+    getPermanentLoanSelect().select('Permanent loan type');
+    cy.do([
+      Button({ id: 'loanType' }).click(),
+      SelectionOption(including(type)).click(),
+    ]);
   },
 
   verifyNoMatchingOptionsForLocationFilter() {
@@ -161,6 +173,46 @@ export default {
       dropdownMenu.find(Checkbox({ name: 'username', checked: true, disabled: isDisabled })).exists(),
       dropdownMenu.find(Checkbox({ name: 'email', checked: false, disabled: isDisabled })).exists(),
       dropdownMenu.find(Checkbox({ name: 'expirationDate', checked: false, disabled: isDisabled })).exists(),
+    ]);
+  },
+
+  verifyItemActionDropdownItems(isDisabled = false) {
+    cy.expect([
+      dropdownMenu.find(Checkbox({ name: 'barcode', checked: true, disabled: isDisabled })).exists(),
+      dropdownMenu.find(Checkbox({ name: 'status', checked: true, disabled: isDisabled })).exists(),
+      dropdownMenu.find(Checkbox({ name: 'effectiveLocation', checked: true, disabled: isDisabled })).exists(),
+      dropdownMenu.find(Checkbox({ name: 'callNumber', checked: true, disabled: isDisabled })).exists(),
+      dropdownMenu.find(Checkbox({ name: 'hrid', checked: true, disabled: isDisabled })).exists(),
+      dropdownMenu.find(Checkbox({ name: 'materialType', checked: true, disabled: isDisabled })).exists(),
+      dropdownMenu.find(Checkbox({ name: 'permanentLoanType', checked: true, disabled: isDisabled })).exists(),
+      dropdownMenu.find(Checkbox({ name: 'temporaryLoanType', checked: true, disabled: isDisabled })).exists(),
+      dropdownMenu.find(Checkbox({ name: 'id', checked: false, disabled: isDisabled })).exists(),
+      dropdownMenu.find(Checkbox({ name: 'formerIds', checked: false, disabled: isDisabled })).exists(),
+      dropdownMenu.find(Checkbox({ name: 'accessionNumber', checked: false, disabled: isDisabled })).exists(),
+      dropdownMenu.find(Checkbox({ name: 'permanentLocation', checked: false, disabled: isDisabled })).exists(),
+      dropdownMenu.find(Checkbox({ name: 'temporaryLocation', checked: false, disabled: isDisabled })).exists(),
+      dropdownMenu.find(Checkbox({ name: 'copyNumber', checked: false, disabled: isDisabled })).exists(),
+      dropdownMenu.find(Checkbox({ name: 'enumeration', checked: false, disabled: isDisabled })).exists(),
+      dropdownMenu.find(Checkbox({ name: 'chronology', checked: false, disabled: isDisabled })).exists(),
+      dropdownMenu.find(Checkbox({ name: 'volume', checked: false, disabled: isDisabled })).exists(),
+    ]);
+  },
+
+  verifyModifyLandingPageBeforeModifying() {
+    cy.expect([
+      Button({ id: 'clickable-cancel', disabled: false }).exists(),
+      Button({ id: 'clickable-create-widget', disabled: true }).exists(),
+      Button({ icon: 'plus-sign', disabled: false }).exists(),
+      Button({ icon: 'trash', disabled: true }).exists(),
+    ]);
+  },
+
+  verifyModifyLandingPageAfterModifying() {
+    cy.expect([
+      Button({ id: 'clickable-cancel', disabled: false }).exists(),
+      Button({ id: 'clickable-create-widget', disabled: false }).exists(),
+      Button({ icon: 'plus-sign', disabled: false }).exists(),
+      Button({ icon: 'trash', disabled: true }).exists(),
     ]);
   },
 
