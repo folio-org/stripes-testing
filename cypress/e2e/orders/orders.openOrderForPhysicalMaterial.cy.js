@@ -7,19 +7,12 @@ import InventorySearch from '../../support/fragments/inventory/inventorySearch';
 import newOrganization from '../../support/fragments/organizations/newOrganization';
 import basicOrderLine from '../../support/fragments/orders/basicOrderLine';
 import Organizations from '../../support/fragments/organizations/organizations';
-import InventoryInteractionsDefaults from '../../support/fragments/settings/orders/inventoryInteractionsDefaults';
 import devTeams from '../../support/dictionary/devTeams';
 
 describe('orders: create an order', () => {
   const organization = { ...newOrganization.defaultUiOrganizations };
   const order = { ...NewOrder.defaultOneTimeOrder };
   const orderLineTitle = basicOrderLine.defaultOrderLine.titleOrPackage;
-  const interactions = {
-    module: 'ORDERS',
-    enabled: true,
-    configName: 'createInventory',
-    value: '{"eresource":"Instance, Holding","physical":"Instance, Holding, Item","other":"None"}',
-  };
 
   before(() => {
     cy.getAdminToken();
