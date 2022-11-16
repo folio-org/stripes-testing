@@ -15,7 +15,8 @@ import DevTeams from '../../support/dictionary/devTeams';
 
 describe('Note creation', () => {
   let userId;
-  const agreementTitle = NewAgreement.defaultAgreement.name;
+  const defaultAgreement = NewAgreement.defaultAgreement;
+  const agreementTitle = defaultAgreement.name;
 
   const longNote = { ...NewNote.defaultNote };
   //  title that is more than 65 characters but less than 250 characters
@@ -31,17 +32,31 @@ describe('Note creation', () => {
       // TODO: move agreement creation into api requests
       cy.visit(TopMenu.agreementsPath);
       Agreements.waitLoading();
-      Agreements.create();
-      Agreements.selectRecord();
+      Agreements.create(defaultAgreement);
+      Agreements.selectRecord(agreementTitle);
       AgreementDetails.openNotesSection();
     });
   };
+  
+  afterEach(() => {
+    // TODO: add support of delete through api
+    AgreementDetails.remove();
+    cy.reload();
+    Agreements.waitLoading();
+    Agreements.agreementNotVisible(agreementTitle);
+    Users.deleteViaApi(userId);
+  });
+
   it('C1296 Create a note (spitfire)', { tags: [TestTypes.smoke, DevTeams.spitfire, Features.notes] }, () => {
-    initPrepairing([Permissions.uiNotesItemCreate.gui, Permissions.uiNotesItemView,
+    initPrepairing([
+      Permissions.uiNotesItemCreate.gui,
+      Permissions.uiNotesItemView.gui,
       // need access to special application( agreements in this case)
-      Permissions.uiAgreementsAgreementsEdit.gui, Permissions.uiAgreementsAgreementsDelete.gui]);
+      Permissions.uiAgreementsAgreementsEdit.gui,
+      Permissions.uiAgreementsAgreementsDelete.gui]
+    );
     AgreementDetails.createNote(longNote);
-    Agreements.selectRecord();
+    Agreements.selectRecord(agreementTitle);
     AgreementDetails.checkNotesCount(1);
     AgreementDetails.openNotesSection();
     AgreementDetails.waitLoadingWithExistingNote(longNote.title);
@@ -49,14 +64,16 @@ describe('Note creation', () => {
   });
 
   it('C1299 Edit a note (spitfire)', { tags: [TestTypes.smoke, DevTeams.spitfire, Features.notes] }, () => {
-    initPrepairing([Permissions.uiNotesItemCreate.gui,
+    initPrepairing([
+      Permissions.uiNotesItemCreate.gui,
       Permissions.uiNotesItemView.gui,
-      Permissions.uiNotesItemEdit.gui,
       // need access to special application( agreements in this case)
-      Permissions.uiAgreementsAgreementsEdit.gui, Permissions.uiAgreementsAgreementsDelete.gui]);
+      Permissions.uiAgreementsAgreementsEdit.gui,
+      Permissions.uiAgreementsAgreementsDelete.gui]
+    );
     const specialNote = NewNote.defaultNote;
     AgreementDetails.createNote(specialNote);
-    Agreements.selectRecord();
+    Agreements.selectRecord(agreementTitle);
     AgreementDetails.checkNotesCount(1);
     AgreementDetails.openNotesSection();
     AgreementDetails.waitLoadingWithExistingNote(specialNote.title);
@@ -75,13 +92,16 @@ describe('Note creation', () => {
   });
 
   it('C16992 View a note (spitfire)', { tags: [TestTypes.smoke, DevTeams.spitfire, Features.notes] }, () => {
-    initPrepairing([Permissions.uiNotesItemCreate.gui,
+    initPrepairing([
+      Permissions.uiNotesItemCreate.gui,
       Permissions.uiNotesItemView.gui,
       // need access to special application( agreements in this case)
-      Permissions.uiAgreementsAgreementsEdit.gui, Permissions.uiAgreementsAgreementsDelete.gui]);
+      Permissions.uiAgreementsAgreementsEdit.gui,
+      Permissions.uiAgreementsAgreementsDelete.gui]
+    );
 
     AgreementDetails.createNote(longNote);
-    Agreements.selectRecord();
+    Agreements.selectRecord(agreementTitle);
     AgreementDetails.checkNotesCount(1);
     AgreementDetails.openNotesSection();
     AgreementDetails.waitLoadingWithExistingNote(longNote.title);
@@ -97,13 +117,5 @@ describe('Note creation', () => {
     ExistingNoteView.close();
     cy.wait(['@notesLoading', '@noteTypesLoading'], getLongDelay());
     AgreementDetails.checkNotesCount(1);
-  });
-
-  afterEach(() => {
-    // TODO: add support of delete through api
-    AgreementDetails.remove();
-    Agreements.waitLoading();
-    Agreements.agreementNotVisible(agreementTitle);
-    Users.deleteViaApi(userId);
   });
 });

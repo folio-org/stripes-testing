@@ -115,8 +115,7 @@ describe('Fee/fine management', () => {
       PayFeeFaine.checkAmount(ManualCharges.defaultFeeFineType.defaultAmount);
       PayFeeFaine.setPaymentMethod(testData.paymentMethod);
 
-      PayFeeFaine.submit();
-      PayFeeFaine.confirm();
+      PayFeeFaine.submitAndConfirm();
     };
 
     // Scenario 1: CHARGING MANUAL FEE/FINE USING BUTTON FROM USER INFORMATION
@@ -174,7 +173,7 @@ describe('Fee/fine management', () => {
     NewFeeFine.checkClosedFeesByRow(feeInfo, 3);
   });
   after(() => {
-    CheckInActions.createItemCheckinApi({
+    CheckInActions.checkinItemViaApi({
       itemBarcode,
       servicePointId: testData.userServicePoint,
       checkInDate: moment.utc().format(),
