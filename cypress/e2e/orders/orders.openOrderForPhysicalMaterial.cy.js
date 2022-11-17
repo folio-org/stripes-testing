@@ -7,19 +7,12 @@ import InventorySearch from '../../support/fragments/inventory/inventorySearch';
 import newOrganization from '../../support/fragments/organizations/newOrganization';
 import basicOrderLine from '../../support/fragments/orders/basicOrderLine';
 import Organizations from '../../support/fragments/organizations/organizations';
-import InventoryInteractionsDefaults from '../../support/fragments/settings/orders/inventoryInteractionsDefaults';
 import devTeams from '../../support/dictionary/devTeams';
 
 describe('orders: create an order', () => {
   const organization = { ...newOrganization.defaultUiOrganizations };
   const order = { ...NewOrder.defaultOneTimeOrder };
   const orderLineTitle = basicOrderLine.defaultOrderLine.titleOrPackage;
-  const interactions = {
-    module: 'ORDERS',
-    enabled: true,
-    configName: 'createInventory',
-    value: '{"eresource":"Instance, Holding","physical":"Instance, Holding, Item","other":"None"}',
-  };
 
   before(() => {
     cy.getAdminToken();
@@ -29,13 +22,7 @@ describe('orders: create an order', () => {
       });
     order.vendor = organization.name;
     order.orderType = 'One-time';
-    InventoryInteractionsDefaults.getConfigurationInventoryInteractions({ limit: 1, query: '("module"="ORDERS" and "configName"="createInventory")' })
-      .then(responseInventory => {
-        interactions.id = responseInventory.configs[0].id;
-        InventoryInteractionsDefaults.setConfigurationInventoryInteractions(interactions);
-      });
-    cy.login(Cypress.env('diku_login'), Cypress.env('diku_password'));
-    cy.visit(TopMenu.ordersPath);
+    cy.loginAsAdmin({ path:TopMenu.ordersPath, waiter: Orders.waitLoading });
   });
 
   after(() => {
