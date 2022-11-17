@@ -4,6 +4,10 @@ import {Modal, SelectionOption, Button, DropdownMenu, Checkbox, MultiColumnListH
 
 const actionsBtn = Button('Actions');
 const dropdownMenu = DropdownMenu();
+const cancelBtn = Button({ id: 'clickable-cancel' });
+const createBtn = Button({ id: 'clickable-create-widget' });
+const plusBtn = Button({ icon: 'plus-sign' });
+const deleteBtn = Button({ icon: 'trash' });
 // interactor doesn't allow to pick second the same select
 function getLocationSelect() {
   return cy.get('select').eq(2);
@@ -200,19 +204,19 @@ export default {
 
   verifyModifyLandingPageBeforeModifying() {
     cy.expect([
-      Button({ id: 'clickable-cancel', disabled: false }).exists(),
-      Button({ id: 'clickable-create-widget', disabled: true }).exists(),
-      Button({ icon: 'plus-sign', disabled: false }).exists(),
-      Button({ icon: 'trash', disabled: true }).exists(),
+      cancelBtn.has({ disabled: false }),
+      createBtn.has({ disabled: true }),
+      plusBtn.has({ disabled: false }),
+      deleteBtn.has({ disabled: true }),
     ]);
   },
 
   verifyModifyLandingPageAfterModifying() {
     cy.expect([
-      Button({ id: 'clickable-cancel', disabled: false }).exists(),
-      Button({ id: 'clickable-create-widget', disabled: false }).exists(),
-      Button({ icon: 'plus-sign', disabled: false }).exists(),
-      Button({ icon: 'trash', disabled: true }).exists(),
+      cancelBtn.has({ disabled: false }),
+      createBtn.has({ disabled: false }),
+      plusBtn.has({ disabled: false }),
+      deleteBtn.has({ disabled: true }),
     ]);
   },
 
