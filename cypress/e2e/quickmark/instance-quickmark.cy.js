@@ -20,7 +20,6 @@ describe('Manage inventory Bib records with quickMarc editor', () => {
   const quickmarcEditor = new QuickMarcEditor(InventoryInstance.validOCLC);
 
   beforeEach(() => {
-    // TODO: discuss with Khalilah required set of quickmarc permissions
     cy.createTempUser([permissions.uiQuickMarcQuickMarcAuthoritiesEditorAll.gui,
       permissions.uiQuickMarcQuickMarcEditorDuplicate.gui,
       permissions.uiQuickMarcQuickMarcBibliographicEditorAll.gui,
