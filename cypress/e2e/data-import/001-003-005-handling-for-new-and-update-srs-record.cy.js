@@ -36,7 +36,7 @@ describe('ui-data-import: Test 001/003/035 handling for New and Updated SRS reco
   // unique file names
   const nameMarcFileForCreate = `C17039 autotestFile.${getRandomPostfix()}.mrc`;
   const editedMarcFileName = `C17039 fileWith999Field.${getRandomPostfix()}.mrc`;
-  const nameFileNameAfterUpload = `C17039 uploadedFile.${getRandomPostfix()}.mrc`;
+  const fileNameAfterUpload = `C17039 uploadedFile.${getRandomPostfix()}.mrc`;
 
   // unique profile names
   const matchProfileName = `C17039 match profile ${Helper.getRandomBarcode()}`;
@@ -180,11 +180,11 @@ describe('ui-data-import: Test 001/003/035 handling for New and Updated SRS reco
 
         // upload a marc file for updating already created instance
         cy.visit(TopMenu.dataImportPath);
-        DataImport.uploadFile(editedMarcFileName, nameFileNameAfterUpload);
+        DataImport.uploadFile(editedMarcFileName, fileNameAfterUpload);
         JobProfiles.searchJobProfileForImport(jobProfile.profileName);
-        JobProfiles.runImportFile(nameFileNameAfterUpload);
+        JobProfiles.runImportFile(fileNameAfterUpload);
         Logs.checkStatusOfJobProfile('Completed');
-        Logs.openFileDetails(nameFileNameAfterUpload);
+        Logs.openFileDetails(fileNameAfterUpload);
         FileDetails.checkStatusInColumn(FileDetails.status.updated, FileDetails.columnName.srsMarc);
         FileDetails.checkStatusInColumn(FileDetails.status.updated, FileDetails.columnName.instance);
         FileDetails.checkSrsRecordQuantityInSummaryTable('1', '1');
