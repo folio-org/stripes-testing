@@ -13,7 +13,8 @@ import {
   Checkbox,
   MultiColumnList,
   MultiColumnListRow,
-  Select
+  Select,
+  Section
 } from '../../../../interactors';
 import InteractorsTools from '../../utils/interactorsTools';
 import Helper from '../finance/financeHelper';
@@ -304,4 +305,11 @@ export default {
   waitLoading : () => {
     cy.expect(Pane({ id: 'invoice-results-pane' }).exists());
   },
+  
+  selectInvoiceLine: () => {
+    cy.do(Section({ id: 'invoiceLines' })
+    .find(MultiColumnListRow({ index: 0 }))
+      .find(MultiColumnListCell({ columnIndex: 0 }))
+      .click());
+  }
 };
