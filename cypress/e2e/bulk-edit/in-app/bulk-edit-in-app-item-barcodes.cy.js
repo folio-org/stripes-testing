@@ -8,6 +8,8 @@ import getRandomPostfix from '../../../support/utils/stringTools';
 import FileManager from '../../../support/utils/fileManager';
 import Users from '../../../support/fragments/users/users';
 import BulkEditActions from '../../../support/fragments/bulk-edit/bulk-edit-actions';
+import InventorySearch from '../../../support/fragments/inventory/inventorySearch';
+import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 
 let user;
 const items = [];
@@ -78,6 +80,31 @@ describe('bulk-edit', () => {
       BulkEditActions.verifySuccessBanner(10);
       BulkEditSearchPane.verifyLocationChanges(10, 'Annex');
       BulkEditActions.newBulkEdit();
+    });
+
+    it('C359210 Verify the in-app bulk edit permanent loan type (firebird)', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
+      BulkEditSearchPane.selectRecordIdentifier('Item barcode');
+
+      BulkEditSearchPane.uploadFile(itemBarcodesFileName);
+      BulkEditSearchPane.waitFileUploading();
+
+      BulkEditActions.openActions();
+      BulkEditActions.verifyItemActionDropdownItems();
+      BulkEditActions.openStartBulkEditForm();
+      BulkEditActions.verifyModifyLandingPageBeforeModifying();
+      BulkEditActions.fillLoanType('Selected');
+      BulkEditActions.verifyModifyLandingPageAfterModifying();
+      BulkEditActions.confirmChanges();
+      BulkEditActions.commitChanges();
+      BulkEditSearchPane.waitFileUploading();
+
+      cy.loginAsAdmin({ path: TopMenu.inventoryPath, waiter: InventoryInstances.waitContentLoading });
+      items.forEach(item => {
+        InventorySearch.searchByParameter('Keyword (title, contributor, identifier, HRID, UUID)', item.instanceName);
+        InventorySearch.selectSearchResultItem();
+        InventoryInstance.openHoldings(['']);
+        InventoryInstance.verifyLoan('Selected');
+      });
     });
   });
 });
