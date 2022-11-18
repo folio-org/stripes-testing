@@ -7,9 +7,7 @@ import NewInvoiceLine from '../../support/fragments/invoices/newInvoiceLine';
 import Invoices from '../../support/fragments/invoices/invoices';
 import VendorAddress from '../../support/fragments/invoices/vendorAddress';
 import Funds from '../../support/fragments/finance/funds/funds';
-import DateTools from '../../support/utils/dateTools';
 import Helper from '../../support/fragments/finance/financeHelper';
-import Transaction from '../../support/fragments/finance/fabrics/newTransaction';
 import Organizations from '../../support/fragments/organizations/organizations';
 import SettingsMenu from '../../support/fragments/settingsMenu';
 import SettingsInvoices from '../../support/fragments/invoices/settingsInvoices';
@@ -20,6 +18,7 @@ import OrderLines from '../../support/fragments/orders/orderLines';
 import Organizations from '../../support/fragments/organizations/organizations';
 import NewOrganization from '../../support/fragments/organizations/newOrganization';
 import SearchHelper from '../../support/fragments/finance/financeHelper';
+import BasicOrderLine from '../../support/fragments/orders/basicOrderLine';
 
 describe('ui-invoices: Cancelling approved invoices', () => {
   const invoice = { ...NewInvoice.defaultUiInvoice };
@@ -30,7 +29,8 @@ describe('ui-invoices: Cancelling approved invoices', () => {
   const defaultFund = { ...Funds.defaultUiFund };
   const defaultFiscalYear = { ...FiscalYears.defaultUiFiscalYear };
   const defaultLedger = { ...Ledgers.defaultUiLedger };
- const allocatedQuantity = '100';
+  const orderLineTitle = BasicOrderLine.defaultOrderLine.titleOrPackage;
+  const allocatedQuantity = '100';
   const subtotalValue = 100;
   let user;
   let orderNumber;
@@ -75,7 +75,7 @@ describe('ui-invoices: Cancelling approved invoices', () => {
             Orders.searchByParameter('PO number', orderNumber);
             SearchHelper.selectFromResultsList();
             Orders.createPOLineViaActions();
-            OrderLines.POLineInfodorPhysicalMaterialWithFund();
+            OrderLines.POLineInfodorPhysicalMaterialWithFund(orderLineTitle,defaultFund);
             interactorsTools.checkCalloutMessage('The purchase order line was successfully created');
         });
             Object.assign(vendorPrimaryAddress,
