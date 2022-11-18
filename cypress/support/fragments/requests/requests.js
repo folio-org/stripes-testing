@@ -302,7 +302,7 @@ export default {
     waitLoadingTags();
     cy.do(tagsPane.find(MultiSelect({ ariaLabelledby:'accordion-toggle-button-tag-accordion' })).choose(tag));
     // TODO investigate what to wait
-    cy.wait(1000);
+    cy.wait(1500);
   },
 
   deleteTag:() => {
@@ -497,7 +497,7 @@ export default {
     */
 
     // eslint-disable-next-line cypress/no-unnecessary-waiting
-    cy.wait(1000);
+    cy.wait(2000);
   },
 
   getRequestIdViaApi: (searchParams) => cy.okapiRequest({

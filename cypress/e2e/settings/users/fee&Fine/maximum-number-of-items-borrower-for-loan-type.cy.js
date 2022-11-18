@@ -37,7 +37,7 @@ describe('ui-users:', () => {
   beforeEach(() => {
     cy.getAdminToken()
       .then(() => {
-        cy.getMaterialTypes({ query: 'name:"book"' })
+        cy.getMaterialTypes({ limit: 1 })
           .then(({ id }) => {
             materialType = { id };
           });
@@ -86,7 +86,7 @@ describe('ui-users:', () => {
           })
         // create loan policy
           .then(() => {
-            LoanPolicyActions.createApi(LoanPolicyActions.getDefaultLoanPolicy(limitOfItem))
+            LoanPolicyActions.createApi(LoanPolicyActions.getDefaultRollingLoanPolicy(limitOfItem))
               .then((policy) => {
                 loanPolicyForCourseReserves = policy;
               });
@@ -201,7 +201,7 @@ describe('ui-users:', () => {
       CheckOutActions.checkOutItemUser(user.barcode, item.barcode);
     });
     CheckOutActions.checkOutItemUser(user.barcode, limitTestItems[2].barcode);
-    LimitCheckOut.verifyErrorMessage(1);
+    LimitCheckOut.verifyErrorMessage(2);
     LimitCheckOut.cancelModal();
   });
 });

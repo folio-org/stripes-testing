@@ -74,7 +74,7 @@ Cypress.Commands.add('updateUser', (userData) => {
   cy.okapiRequest({
     method: 'PUT',
     path: `users/${userData.id}`,
-    body: userData,
+    body: userData
   });
 });
 
