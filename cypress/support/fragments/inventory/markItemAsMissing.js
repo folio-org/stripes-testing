@@ -171,7 +171,7 @@ export default {
   findAndOpenInstance(instanceTitle) {
     cy.do([
       TextField({ id: 'input-inventory-search' }).fillIn(instanceTitle),
-      Button('Search').click(),
+      Button({ type: 'submit' }).click(),
       MultiColumnListCell({ row: 0, content: instanceTitle }).click(),
     ]);
     cy.expect(Section({ id: 'pane-instancedetails' }).exists());
