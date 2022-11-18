@@ -67,6 +67,7 @@ Cypress.Commands.add('getLocations', (searchParams) => {
     .okapiRequest({
       path: 'locations',
       searchParams,
+      isDefaultSearchParamsRequired: false
     })
     .then(response => {
       Cypress.env('locations', response.body.locations);
