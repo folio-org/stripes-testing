@@ -372,6 +372,7 @@ describe('ui-data-import: Match on POL and update related Instance, Holdings, It
     ItemVeiw.verifyItemStatus('In process');
     ItemVeiw.checkEffectiveLocation('Main Library');
     ItemVeiw.closeDetailView();
+    InventoryInstance.viewSource();
     InventoryViewSource.verifyBarcodeInMARCBibSource(firstItem.barcode);
   });
 });
