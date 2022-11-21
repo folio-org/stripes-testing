@@ -53,7 +53,7 @@ describe('ui-invoices: Cancelling approved invoices', () => {
             .then(fundResponse => {
               defaultFund.id = fundResponse.fund.id;
 
-              cy.loginAsAdmin({ path:TopMenu.fundPath, waiter: Funds.waitLoading });
+              cy.visit(TopMenu.fundPath);
               Helper.searchByName(defaultFund.name);
               Helper.selectFromResultsList();
               Funds.addBudget(allocatedQuantity);
