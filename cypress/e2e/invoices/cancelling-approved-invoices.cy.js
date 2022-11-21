@@ -5,7 +5,6 @@ import TopMenu from '../../support/fragments/topMenu';
 import NewInvoice from '../../support/fragments/invoices/newInvoice';
 import NewInvoiceLine from '../../support/fragments/invoices/newInvoiceLine';
 import Invoices from '../../support/fragments/invoices/invoices';
-import VendorAddress from '../../support/fragments/invoices/vendorAddress';
 import Funds from '../../support/fragments/finance/funds/funds';
 import Helper from '../../support/fragments/finance/financeHelper';
 import Organizations from '../../support/fragments/organizations/organizations';
@@ -15,17 +14,17 @@ import Users from '../../support/fragments/users/users';
 import NewOrder from '../../support/fragments/orders/newOrder';
 import Orders from '../../support/fragments/orders/orders';
 import OrderLines from '../../support/fragments/orders/orderLines';
-import Organizations from '../../support/fragments/organizations/organizations';
 import NewOrganization from '../../support/fragments/organizations/newOrganization';
 import SearchHelper from '../../support/fragments/finance/financeHelper';
 import BasicOrderLine from '../../support/fragments/orders/basicOrderLine';
+import FiscalYears from '../../support/fragments/finance/fiscalYears/fiscalYears';
+import Ledgers from '../../support/fragments/finance/ledgers/ledgers';
 
 describe('ui-invoices: Cancelling approved invoices', () => {
   const invoice = { ...NewInvoice.defaultUiInvoice };
-  const vendorPrimaryAddress = { ...VendorAddress.vendorAddress };
   const invoiceLine = { ...NewInvoiceLine.defaultUiInvoiceLine };
   const order = { ...NewOrder.defaultOneTimeOrder };
-  const organization = { ...NewOrganization.defaultUiOrganizations };
+  const organization = { ...NewOrganization.specialOrganization };
   const defaultFund = { ...Funds.defaultUiFund };
   const defaultFiscalYear = { ...FiscalYears.defaultUiFiscalYear };
   const defaultLedger = { ...Ledgers.defaultUiLedger };
@@ -41,8 +40,8 @@ describe('ui-invoices: Cancelling approved invoices', () => {
     SettingsInvoices.checkApproveAndPayCheckboxIsDisabled();
 
     FiscalYears.createViaApi(defaultFiscalYear)
-    .then(response => {
-      defaultFiscalYear.id = response.id;
+    .then(responseFY => {
+      defaultFiscalYear.id = responseFY.id;
       defaultLedger.fiscalYearOneId = defaultFiscalYear.id;
 
       Ledgers.createViaApi(defaultLedger)
@@ -55,28 +54,29 @@ describe('ui-invoices: Cancelling approved invoices', () => {
               defaultFund.id = fundResponse.fund.id;
 
               cy.loginAsAdmin({ path:TopMenu.fundPath, waiter: Funds.waitLoading });
-              FinanceHelp.searchByName(defaultFund.name);
-              FinanceHelp.selectFromResultsList();
+              Helper.searchByName(defaultFund.name);
+              Helper.selectFromResultsList();
               Funds.addBudget(allocatedQuantity);
             });
         });
     });
 
     Organizations.createOrganizationViaApi(organization)
-      .then(response => {
-        organization.id = response;
-        order.vendor = response;
+      .then(responseOrganization => {
+        organization.id = responseOrganization;
+        order.vendor = responseOrganization;
         invoice.accountingCode = organization.erpCode;
-        
+        invoice.vendorName = organization.name;
         cy.createOrderApi(order)
-          .then((response) => {
-            orderNumber = response.body.poNumber;
+          .then((responseOrder) => {
+            orderNumber = responseOrder.body.poNumber;
             cy.visit(TopMenu.ordersPath);
             Orders.searchByParameter('PO number', orderNumber);
             SearchHelper.selectFromResultsList();
             Orders.createPOLineViaActions();
             OrderLines.POLineInfodorPhysicalMaterialWithFund(orderLineTitle,defaultFund);
-            interactorsTools.checkCalloutMessage('The purchase order line was successfully created');
+            Orders.backToPO();
+            Orders.openOrder();
         });
             Object.assign(vendorPrimaryAddress,
                 organization.addresses.find(address => address.isPrimary === true));
@@ -85,16 +85,18 @@ describe('ui-invoices: Cancelling approved invoices', () => {
                     invoice.batchGroup = batchGroup.name;
                     invoiceLine.subTotal = -subtotalValue;
                     cy.visit(TopMenu.invoicesPath);
-                    Invoices.createDefaultInvoice(invoice, vendorPrimaryAddress);
-                    Invoices.createInvoiceLine(invoiceLine);
-                    Invoices.addFundDistributionToLine(invoiceLine, defaultFund);
+                    Invoices.createSpecialInvoice(invoice);
+                    Invoices.createInvoiceLineFromPol(orderNumber);
+                    // Need to wait,while Invoice Line will be laoded fully
+                    cy.wait(4000);
                     Invoices.approveInvoice();
                 });
     });
  
     cy.createTempUser([
         permissions.uiFinanceViewFundAndBudget.gui,
-        permissions.viewEditDeleteInvoiceInvoiceLine.gui
+        permissions.viewEditDeleteInvoiceInvoiceLine.gui,
+        permissions.uiInvoicesCancelInvoices.gui
       ])
         .then(userProperties => {
           user = userProperties;
@@ -102,6 +104,7 @@ describe('ui-invoices: Cancelling approved invoices', () => {
         });
   });
   after(() => {
+    Organizations.deleteOrganizationViaApi(organization.id);
     Users.deleteViaApi(user.userId);
   });
   
@@ -109,5 +112,18 @@ describe('ui-invoices: Cancelling approved invoices', () => {
     Invoices.searchByNumber(invoice.invoiceNumber);
     Helper.selectFromResultsList();
     Invoices.selectInvoiceLine();
+    cy.visit(TopMenu.fundPath);
+    Helper.searchByName(defaultFund.name);
+    Helper.selectFromResultsList();
+    Funds.selectBudgetDetails();
+    Funds.viewTransactions();
+    Funds.selectTransaction('Encumbrance');
+    Funds.checkEncumbrance(orderNumber);
+    Funds.selectTransaction('Pending payment');
+    Funds.checkPendingPayment(invoice.invoiceNumber);
+    cy.visit(TopMenu.invoicesPath);
+    Invoices.searchByNumber(invoice.invoiceNumber);
+    Helper.selectFromResultsList();
+    Invoices.cancelInvoice();
   });
 });
