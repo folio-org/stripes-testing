@@ -82,5 +82,26 @@ describe('bulk-edit', () => {
       UsersSearchPane.openUser(user.username);
       UsersCard.verifyPatronBlockValue('graduate');
     });
+
+    it('C359213 Verify elements "Are you sure form?" -- Users-in app approach (firebird)', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
+      BulkEditSearchPane.selectRecordIdentifier('User UUIDs');
+
+      BulkEditSearchPane.uploadFile(userUUIDsFileName);
+      BulkEditSearchPane.waitFileUploading();
+
+      BulkEditActions.openActions();
+      BulkEditActions.openStartBulkEditForm();
+      BulkEditActions.fillPatronGroup('graduate (Graduate Student)');
+
+      // need to check element here 7 step
+      BulkEditActions.confirmChanges();
+      BulkEditActions.commitChanges();
+      BulkEditSearchPane.waitFileUploading();
+
+      cy.loginAsAdmin({ path: TopMenu.usersPath, waiter: UsersSearchPane.waitLoading });
+      UsersSearchPane.searchByKeywords(user.username);
+      UsersSearchPane.openUser(user.username);
+      UsersCard.verifyPatronBlockValue('graduate');
+    });
   });
 });
