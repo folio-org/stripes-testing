@@ -20,10 +20,10 @@ export default {
   acceptedDataType,
 
   fillJobProfile: (specialJobProfile = defaultJobProfile) => {
-    cy.do([
-      TextField({ name:'profile.name' }).fillIn(specialJobProfile.profileName),
-      Select({ name:'profile.dataType' }).choose(specialJobProfile.acceptedType),
-    ]);
+    cy.do(TextField({ name:'profile.name' }).fillIn(specialJobProfile.profileName));
+    cy.expect(TextField({ name:'profile.name' }).has({ value: specialJobProfile.profileName }));
+    cy.do(Select({ name:'profile.dataType' }).choose(specialJobProfile.acceptedType));
+    cy.expect(Select({ name:'profile.dataType' }).has({ value: specialJobProfile.acceptedType }));
   },
 
   linkActionProfileByName(profileName) {

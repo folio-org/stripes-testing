@@ -143,11 +143,8 @@ describe('ui-data-import: Match on Holdings 856 $u', () => {
 
     cy.visit(SettingsMenu.actionProfilePath);
     ActionProfiles.createActionProfile(createInstanceActionProfile, createInstanceMappingProfileName);
-    ActionProfiles.closeActionProfile(createInstanceActionProfileName);
     ActionProfiles.createActionProfile(createEHoldingsActionProfile, createEHoldingsMappingProfileName);
-    ActionProfiles.closeActionProfile(createEHoldingsActionProfileName);
     ActionProfiles.createActionProfile(updateEHoldingsActionProfile, updateEHoldingsMappingProfileName);
-    ActionProfiles.closeActionProfile(updateEHoldingsActionProfileName);
 
     cy.visit(SettingsMenu.matchProfilePath);
     MatchProfiles.createMatchProfile(matchProfile);
