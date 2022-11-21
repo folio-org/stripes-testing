@@ -78,8 +78,6 @@ describe('ui-invoices: Cancelling approved invoices', () => {
             Orders.backToPO();
             Orders.openOrder();
         });
-            Object.assign(vendorPrimaryAddress,
-                organization.addresses.find(address => address.isPrimary === true));
                 cy.getBatchGroups()
                   .then(batchGroup => { 
                     invoice.batchGroup = batchGroup.name;
@@ -125,5 +123,12 @@ describe('ui-invoices: Cancelling approved invoices', () => {
     Invoices.searchByNumber(invoice.invoiceNumber);
     Helper.selectFromResultsList();
     Invoices.cancelInvoice();
+    cy.visit(TopMenu.fundPath);
+    Helper.searchByName(defaultFund.name);
+    Helper.selectFromResultsList();
+    Funds.selectBudgetDetails();
+    Funds.viewTransactions();
+    Funds.selectTransaction('Pending payment');
+    Funds.checkCancelPendingPayment(invoice.invoiceNumber);
   });
 });

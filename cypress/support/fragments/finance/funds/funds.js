@@ -493,4 +493,9 @@ export default {
   checkPendingPayment:(invoiceNumber) => {
     cy.expect(KeyValue({ value: invoiceNumber}).exists());
   },
+  
+  checkCancelPendingPayment:(invoiceNumber) => {
+    cy.expect(KeyValue({ value: invoiceNumber}).exists());
+    cy.do(Section({ id: 'information' }).find(Button({ icon: 'info' })).click());
+  },
 };
