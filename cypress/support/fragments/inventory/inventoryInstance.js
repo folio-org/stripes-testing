@@ -20,9 +20,9 @@ import {
   calloutTypes,
   Modal
 } from '../../../../interactors';
-import InventoryInstanceEdit from './InventoryInstanceEdit';
+import InstanceRecordEdit from './instanceRecordEdit';
 import InventoryViewSource from './inventoryViewSource';
-import NewHoldingsRecord from './newHoldingsRecord';
+import InventoryNewHoldings from './inventoryNewHoldings';
 import InventoryInstanceSelectInstanceModal from './holdingsMove/inventoryInstanceSelectInstanceModal';
 import InventoryInstancesMovement from './holdingsMove/inventoryInstancesMovement';
 import ItemVeiw from './inventoryItem/itemVeiw';
@@ -67,7 +67,7 @@ const validOCLC = { id:'176116217',
 
 const pressAddHoldingsButton = () => {
   cy.do(Button({ id:'clickable-new-holdings-record' }).click());
-  NewHoldingsRecord.waitLoading();
+  InventoryNewHoldings.waitLoading();
 };
 const waitLoading = () => cy.expect(actionsButton.exists());
 const tagButton = Button({ icon: 'tag' });
@@ -111,7 +111,7 @@ export default {
   editInstance:() => {
     cy.do(actionsButton.click());
     cy.do(editInstanceButton.click());
-    InventoryInstanceEdit.waitLoading();
+    InstanceRecordEdit.waitLoading();
   },
   editMarcBibliographicRecord:() => {
     cy.do(actionsButton.click());
@@ -152,8 +152,8 @@ export default {
   },
   createHoldingsRecord:(permanentLocation) => {
     pressAddHoldingsButton();
-    NewHoldingsRecord.fillRequiredFields(permanentLocation);
-    NewHoldingsRecord.saveAndClose();
+    InventoryNewHoldings.fillRequiredFields(permanentLocation);
+    InventoryNewHoldings.saveAndClose();
     waitLoading();
   },
 

@@ -6,9 +6,9 @@ import HoldingsRecordView from '../../../support/fragments/inventory/holdingsRec
 import testTypes from '../../../support/dictionary/testTypes';
 import features from '../../../support/dictionary/features';
 import DataImport from '../../../support/fragments/data_import/dataImport';
-import InventorySearch from '../../../support/fragments/inventory/inventorySearch';
+import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
 import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
-import NewHoldingsRecord from '../../../support/fragments/inventory/newHoldingsRecord';
+import InventoryNewHoldings from '../../../support/fragments/inventory/inventoryNewHoldings';
 import HoldingsRecordEdit from '../../../support/fragments/inventory/holdingsRecordEdit';
 import DevTeams from '../../../support/dictionary/devTeams';
 
@@ -22,7 +22,7 @@ describe('Manage holding records of instance records created through marc file u
   it('C345408 MARC instance record + FOLIO holdings record (Regression) (spitfire)', { tags: [testTypes.smoke, DevTeams.spitfire, features.holdingsRecord, testTypes.broken] }, () => {
     DataImport.uploadMarcBib().then(instanceRecordHrId => {
       cy.visit(TopMenu.inventoryPath);
-      InventorySearch.searchInstanceByHRID(instanceRecordHrId);
+      InventorySearchAndFilter.searchInstanceByHRID(instanceRecordHrId);
       InventoryInstances.selectInstance();
       InventoryInstance.waitLoading();
       InventoryInstance.createHoldingsRecord();
@@ -36,7 +36,7 @@ describe('Manage holding records of instance records created through marc file u
       HoldingsRecordView.checkReadOnlyFields();
       HoldingsRecordView.tryToDelete();
       HoldingsRecordView.duplicate();
-      NewHoldingsRecord.checkSource();
+      InventoryNewHoldings.checkSource();
       // TODO: clarify what is "Verify that you are able to add or access an item" and "Behavior is no different than what FOLIO currently supports" in TestRail
     });
   });

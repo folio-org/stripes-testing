@@ -1,6 +1,6 @@
 import TopMenu from '../../support/fragments/topMenu';
 import TestTypes from '../../support/dictionary/testTypes';
-import InventorySearch from '../../support/fragments/inventory/inventorySearch';
+import InventorySearchAndFilter from '../../support/fragments/inventory/inventorySearchAndFilter';
 import InventoryActions from '../../support/fragments/inventory/inventoryActions';
 import devTeams from '../../support/dictionary/devTeams';
 
@@ -11,51 +11,51 @@ describe('ui-inventory: browse call numbers', () => {
   });
 
   it('C347902 Verify "Browse call numbers" option on the Instances tab (firebird)', { tags: [TestTypes.smoke, devTeams.firebird] }, () => {
-    InventorySearch.verifyKeywordsAsDefault();
-    InventorySearch.selectBrowseCallNumbers();
-    InventorySearch.verifyCallNumberBrowseEmptyPane();
+    InventorySearchAndFilter.verifyKeywordsAsDefault();
+    InventorySearchAndFilter.selectBrowseCallNumbers();
+    InventorySearchAndFilter.verifyCallNumberBrowseEmptyPane();
     InventoryActions.actionsIsAbsent();
-    InventorySearch.showsOnlyEffectiveLocation();
+    InventorySearchAndFilter.showsOnlyEffectiveLocation();
   });
 
   it('C347903 Verify "Browse call numbers" option on Holdings tab (firebird)', { tags: [TestTypes.smoke, devTeams.firebird] }, () => {
-    InventorySearch.switchToHoldings();
-    InventorySearch.verifyKeywordsAsDefault();
-    InventorySearch.browseCallNumberIsAbsent();
+    InventorySearchAndFilter.switchToHoldings();
+    InventorySearchAndFilter.verifyKeywordsAsDefault();
+    InventorySearchAndFilter.browseCallNumberIsAbsent();
   });
 
   // TODO: Think about creating new user with minimal permissions
   it('C347923 Verify "Browse call numbers" option on Item tab (firebird)', { tags: [TestTypes.smoke, devTeams.firebird] }, () => {
-    InventorySearch.instanceTabIsDefault();
-    InventorySearch.switchToItem();
-    InventorySearch.verifyKeywordsAsDefault();
-    InventorySearch.browseCallNumberIsAbsent();
+    InventorySearchAndFilter.instanceTabIsDefault();
+    InventorySearchAndFilter.switchToItem();
+    InventorySearchAndFilter.verifyKeywordsAsDefault();
+    InventorySearchAndFilter.browseCallNumberIsAbsent();
   });
 
   it('C350377 Verify the "Browse subjects" search option on the Instances tab (firebird)', { tags: [TestTypes.smoke, devTeams.firebird] }, () => {
-    InventorySearch.instanceTabIsDefault();
-    InventorySearch.verifyKeywordsAsDefault();
-    InventorySearch.selectBrowseSubjects();
-    InventorySearch.verifyCallNumberBrowseEmptyPane();
+    InventorySearchAndFilter.instanceTabIsDefault();
+    InventorySearchAndFilter.verifyKeywordsAsDefault();
+    InventorySearchAndFilter.selectBrowseSubjects();
+    InventorySearchAndFilter.verifyCallNumberBrowseEmptyPane();
     InventoryActions.actionsIsAbsent();
-    InventorySearch.filtersIsAbsent();
-    InventorySearch.browseSubjectsSearch();
+    InventorySearchAndFilter.filtersIsAbsent();
+    InventorySearchAndFilter.browseSubjectsSearch();
     cy.reload();
-    InventorySearch.verifyCallNumberBrowsePane();
-    InventorySearch.filtersIsAbsent();
+    InventorySearchAndFilter.verifyCallNumberBrowsePane();
+    InventorySearchAndFilter.filtersIsAbsent();
   });
 
   it('C350378 Verify the "Browse subjects" search option on the Holdings tab (firebird)', { tags: [TestTypes.smoke, devTeams.firebird] }, () => {
-    InventorySearch.instanceTabIsDefault();
-    InventorySearch.verifyKeywordsAsDefault();
-    InventorySearch.switchToHoldings();
-    InventorySearch.browseSubjectIsAbsent();
+    InventorySearchAndFilter.instanceTabIsDefault();
+    InventorySearchAndFilter.verifyKeywordsAsDefault();
+    InventorySearchAndFilter.switchToHoldings();
+    InventorySearchAndFilter.browseSubjectIsAbsent();
   });
 
   it('C350379 Verify the "Browse subjects" search option on the Item tab (firebird)', { tags: [TestTypes.smoke, devTeams.firebird] }, () => {
-    InventorySearch.instanceTabIsDefault();
-    InventorySearch.verifyKeywordsAsDefault();
-    InventorySearch.switchToItem();
-    InventorySearch.browseSubjectIsAbsent();
+    InventorySearchAndFilter.instanceTabIsDefault();
+    InventorySearchAndFilter.verifyKeywordsAsDefault();
+    InventorySearchAndFilter.switchToItem();
+    InventorySearchAndFilter.browseSubjectIsAbsent();
   });
 });

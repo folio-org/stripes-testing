@@ -1,9 +1,8 @@
 import uuid from 'uuid';
 import TestTypes from '../../support/dictionary/testTypes';
 import permissions from '../../support/dictionary/permissions';
-import FilterInstancesByTags from '../../support/fragments/inventory/filterInstancesByTags';
 import TopMenu from '../../support/fragments/topMenu';
-import InventorySearch from '../../support/fragments/inventory/inventorySearch';
+import InventorySearchAndFilter from '../../support/fragments/inventory/inventorySearchAndFilter';
 import Users from '../../support/fragments/users/users';
 import InventoryInstance from '../../support/fragments/inventory/inventoryInstance';
 import DevTeams from '../../support/dictionary/devTeams';
@@ -23,7 +22,7 @@ describe('ui-inventory: Filter instances by tags', () => {
       userId = id;
       cy.login(username, password);
     }).then(() => {
-      FilterInstancesByTags.createInstanceViaApi().then(({ instanceData }) => {
+      InventorySearchAndFilter.createInstanceViaApi().then(({ instanceData }) => {
         instanceRecord = instanceData;
       });
     });
@@ -36,18 +35,18 @@ describe('ui-inventory: Filter instances by tags', () => {
 
   it('C343215 Filter instances by tags (folijet)', { tags: [TestTypes.smoke, DevTeams.folijet] }, () => {
     cy.visit(TopMenu.inventoryPath);
-    FilterInstancesByTags.verifyPanesExist();
-    InventorySearch.searchInstanceByTitle(instanceRecord.instanceTitle);
-    FilterInstancesByTags.verifySearchResult(instanceRecord.instanceTitle);
-    FilterInstancesByTags.selectFoundInstance(instanceRecord.instanceTitle);
-    FilterInstancesByTags.verifyInstanceDetailsView();
-    FilterInstancesByTags.openTagsField();
-    FilterInstancesByTags.verifyTagsView();
-    FilterInstancesByTags.addTag(testTag);
-    FilterInstancesByTags.verifyTagCount(tagsCount);
-    FilterInstancesByTags.closeTagsAndInstanceDetailPane();
-    FilterInstancesByTags.resetAllAndVerifyNoResultsAppear();
-    FilterInstancesByTags.filterByTag(testTag);
-    FilterInstancesByTags.verifyIsFilteredByTag(instanceRecord.instanceTitle);
+    InventorySearchAndFilter.verifyPanesExist();
+    InventorySearchAndFilter.searchInstanceByTitle(instanceRecord.instanceTitle);
+    InventorySearchAndFilter.verifySearchResult(instanceRecord.instanceTitle);
+    InventorySearchAndFilter.selectFoundInstance(instanceRecord.instanceTitle);
+    InventorySearchAndFilter.verifyInstanceDetailsView();
+    InventorySearchAndFilter.openTagsField();
+    InventorySearchAndFilter.verifyTagsView();
+    InventorySearchAndFilter.addTag(testTag);
+    InventorySearchAndFilter.verifyTagCount(tagsCount);
+    InventorySearchAndFilter.closeTagsAndInstanceDetailPane();
+    InventorySearchAndFilter.resetAllAndVerifyNoResultsAppear();
+    InventorySearchAndFilter.filterByTag(testTag);
+    InventorySearchAndFilter.verifyIsFilteredByTag(instanceRecord.instanceTitle);
   });
 });

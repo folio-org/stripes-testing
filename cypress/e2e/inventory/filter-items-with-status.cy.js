@@ -5,7 +5,7 @@ import permissions from '../../support/dictionary/permissions';
 import { MultiColumnList } from '../../../interactors';
 import getRandomPostfix from '../../support/utils/stringTools';
 import users from '../../support/fragments/users/users';
-import InventorySearch from '../../support/fragments/inventory/inventorySearch';
+import InventorySearchAndFilter from '../../support/fragments/inventory/inventorySearchAndFilter';
 import InventoryHoldings from '../../support/fragments/inventory/holdings/inventoryHoldings';
 import TestTypes from '../../support/dictionary/testTypes';
 import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
@@ -86,7 +86,7 @@ describe('ui-inventory: items with status', () => {
     cy.intercept('GET', '/search/instances/facets?*').as('getFacets');
     cy.intercept('GET', '/holdings-storage/holdings?*').as('getHoldings');
 
-    InventorySearch.switchToItem();
+    InventorySearchAndFilter.switchToItem();
     FilterItems.toggleItemStatusAccordion();
 
     cy.wrap(FilterItems.itemStatuses).each((status) => {

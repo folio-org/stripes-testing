@@ -8,7 +8,7 @@ import Users from '../../../support/fragments/users/users';
 import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
 import Logs from '../../../support/fragments/data_import/logs/logs';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
-import InventorySearch from '../../../support/fragments/inventory/inventorySearch'
+import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter'
 
 describe('Search in Inventory', () => {
   const testData = {};
@@ -60,20 +60,20 @@ describe('Search in Inventory', () => {
 
     cy.visit(TopMenu.inventoryPath);
 
-    InventorySearch.selectSearchOptions('Contributor', 'Sauguet, Henri');
-    InventorySearch.checkContributorRequest();
-    InventorySearch.checkContributorsColumResult('Sauguet');
-    InventorySearch.checkContributorsColumResult('Henri');
+    InventorySearchAndFilter.selectSearchOptions('Contributor', 'Sauguet, Henri');
+    InventorySearchAndFilter.checkContributorRequest();
+    InventorySearchAndFilter.checkContributorsColumResult('Sauguet');
+    InventorySearchAndFilter.checkContributorsColumResult('Henri');
     // The resetAll button is used because the reset search input is very unstable
-    InventorySearch.resetAll();
+    InventorySearchAndFilter.resetAll();
 
     searchQueries.forEach(query => {
-      InventorySearch.selectSearchOptions('Contributor', query);
-      InventorySearch.clickSearch();
-      InventorySearch.checkContributorsColumResult('Sauguet');
-      InventorySearch.checkContributorsColumResult('Henri');
-      if (query.includes('1901-1989')) InventorySearch.checkContributorsColumResult('Henri');
-      InventorySearch.resetAll();
+      InventorySearchAndFilter.selectSearchOptions('Contributor', query);
+      InventorySearchAndFilter.clickSearch();
+      InventorySearchAndFilter.checkContributorsColumResult('Sauguet');
+      InventorySearchAndFilter.checkContributorsColumResult('Henri');
+      if (query.includes('1901-1989')) InventorySearchAndFilter.checkContributorsColumResult('Henri');
+      InventorySearchAndFilter.resetAll();
     });
   });
 
@@ -95,13 +95,13 @@ describe('Search in Inventory', () => {
     cy.visit(TopMenu.inventoryPath);
 
     searchQueries.forEach(query => {
-      InventorySearch.selectSearchOptions('Keyword (title, contributor, identifier, HRID, UUID)', query);
-      InventorySearch.clickSearch();
-      InventorySearch.verifySearchResult('"Closer to the truth than any fact" : memoir, memory, and Jim Crow / Jennifer Jensen Wallach.');
-      InventorySearch.checkMissingSearchResult('Chopsticks only works in pairs (test) 9');
-      InventorySearch.selectSearchResultItem();
+      InventorySearchAndFilter.selectSearchOptions('Keyword (title, contributor, identifier, HRID, UUID)', query);
+      InventorySearchAndFilter.clickSearch();
+      InventorySearchAndFilter.verifySearchResult('"Closer to the truth than any fact" : memoir, memory, and Jim Crow / Jennifer Jensen Wallach.');
+      InventorySearchAndFilter.checkMissingSearchResult('Chopsticks only works in pairs (test) 9');
+      InventorySearchAndFilter.selectSearchResultItem();
       InventoryInstance.checkIdentifier(query);
-      InventorySearch.resetAll();
+      InventorySearchAndFilter.resetAll();
     });
   });
 });

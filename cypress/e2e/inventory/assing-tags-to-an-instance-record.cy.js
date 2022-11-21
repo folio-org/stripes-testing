@@ -1,7 +1,7 @@
 import uuid from 'uuid';
 import TestTypes from '../../support/dictionary/testTypes';
 import TopMenu from '../../support/fragments/topMenu';
-import InventorySearch from '../../support/fragments/inventory/inventorySearch';
+import InventorySearchAndFilter from '../../support/fragments/inventory/inventorySearchAndFilter';
 import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
 import InventoryInstance from '../../support/fragments/inventory/inventoryInstance';
 import Helper from '../../support/fragments/finance/financeHelper';
@@ -43,12 +43,12 @@ describe('ui-inventory: Assign tags to an Instance record', () => {
 
   it('C196769 Assign tags to an Instance record (folijet)', { tags: [TestTypes.smoke, DevTeams.folijet] }, () => {
     cy.visit(TopMenu.inventoryPath);
-    InventorySearch.searchByParameter('Title (all)', instanceTitle);
+    InventorySearchAndFilter.searchByParameter('Title (all)', instanceTitle);
     InventoryInstances.selectInstance();
     InventoryInstance.addTag(tag.label);
     InventoryInstances.resetAllFilters();
     InventoryInstances.searchByTag(tag.label);
-    InventorySearch.searchByParameter('Title (all)', instanceTitle);
+    InventorySearchAndFilter.searchByParameter('Title (all)', instanceTitle);
     InventoryInstance.checkAddedTag(tag.label, instanceTitle);
     InventoryInstance.deleteTag(tag.label);
   });

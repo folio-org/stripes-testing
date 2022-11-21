@@ -24,7 +24,7 @@ import RenewConfirmationModal from '../../support/fragments/users/loans/renewCon
 import OverrideAndRenewModal from '../../support/fragments/users/loans/overrideAndRenewModal';
 import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
 import InventoryInstance from '../../support/fragments/inventory/inventoryInstance';
-import InventorySearch from '../../support/fragments/inventory/inventorySearch';
+import InventorySearchAndFilter from '../../support/fragments/inventory/inventorySearchAndFilter';
 import BasicOrderLine from '../../support/fragments/orders/basicOrderLine';
 import NewLocations from '../../support/fragments/settings/tenant/locations/newLocation';
 import Users from '../../support/fragments/users/users';
@@ -158,7 +158,7 @@ describe('ui-inventory: Item status date updates', () => {
 
   const openItem = (title, itemLocation, barcode) => {
     cy.visit(TopMenu.inventoryPath);
-    InventorySearch.searchByParameter('Title (all)', title);
+    InventorySearchAndFilter.searchByParameter('Title (all)', title);
     InventoryInstances.selectInstance();
     InventoryInstance.openHoldings(itemLocation);
     InventoryInstance.openItemView(barcode);

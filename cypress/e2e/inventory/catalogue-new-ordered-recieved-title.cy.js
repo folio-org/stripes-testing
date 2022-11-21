@@ -5,7 +5,7 @@ import Orders from '../../support/fragments/orders/orders';
 import Receiving from '../../support/fragments/receiving/receiving';
 import TopMenu from '../../support/fragments/topMenu';
 import Helper from '../../support/fragments/finance/financeHelper';
-import InventorySearch from '../../support/fragments/inventory/inventorySearch';
+import InventorySearchAndFilter from '../../support/fragments/inventory/inventorySearchAndFilter';
 import InteractorsTools from '../../support/utils/interactorsTools';
 import OrdersHelper from '../../support/fragments/orders/ordersHelper';
 import CheckInActions from '../../support/fragments/check-in-actions/checkInActions';
@@ -72,11 +72,11 @@ describe('orders: Receive piece from Order', () => {
     CheckInActions.checkInItem(barcode);
 
     cy.visit(TopMenu.inventoryPath);
-    InventorySearch.instanceTabIsDefault();
-    InventorySearch.verifyKeywordsAsDefault();
-    InventorySearch.switchToItem();
-    InventorySearch.searchByParameter('Barcode', barcode);
+    InventorySearchAndFilter.instanceTabIsDefault();
+    InventorySearchAndFilter.verifyKeywordsAsDefault();
+    InventorySearchAndFilter.switchToItem();
+    InventorySearchAndFilter.searchByParameter('Barcode', barcode);
     InventoryInstance.openHoldings(['Main Library >']);
-    InventorySearch.verifySearchResult('In transit');
+    InventorySearchAndFilter.verifySearchResult('In transit');
   });
 });
