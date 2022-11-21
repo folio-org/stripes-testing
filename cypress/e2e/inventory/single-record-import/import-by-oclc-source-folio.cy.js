@@ -6,13 +6,14 @@ import InventoryInstance from '../../../support/fragments/inventory/inventoryIns
 import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
 import Z3950TargetProfiles from '../../../support/fragments/settings/inventory/z39.50TargetProfiles';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
+import DevTeams from '../../../support/dictionary/devTeams';
 
 let user;
 const oclc = '1007797324';
 const authentication = '100473910/PAOLF';
 
 describe('ui-inventory: import by OCLC', () => {
-  before('create user', () => {
+  before('create test data', () => {
     cy.createTempUser([
       permissions.uiInventoryViewCreateEditInstances,
       permissions.uiInventorySingleRecordImport.gui,
@@ -31,7 +32,7 @@ describe('ui-inventory: import by OCLC', () => {
     Users.deleteViaApi(user.userId);
   });
 
-  it('C343349 Overlay existing Source = FOLIO Instance by import of single MARC Bib record from OCLC (folijet)', { tags: [testTypes.smoke] }, () => {
+  it('C343349 Overlay existing Source = FOLIO Instance by import of single MARC Bib record from OCLC (folijet)', { tags: [testTypes.smoke, DevTeams.folijet] }, () => {
     cy.visit(SettingsMenu.targetProfilesPath);
     Z3950TargetProfiles.openOclcWorldCat();
     Z3950TargetProfiles.editOclcWorldCat(authentication);
