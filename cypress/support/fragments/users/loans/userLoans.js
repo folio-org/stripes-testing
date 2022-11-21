@@ -7,9 +7,6 @@ import {
   including,
   Button,
   KeyValue,
-  // CheckboxInTable,
-  // TextArea,
-  // Modal,
 } from '../../../../../interactors';
 import ItemVeiw from '../../inventory/inventoryItem/itemVeiw';
 import { REQUEST_METHOD } from '../../../constants';
@@ -20,7 +17,6 @@ const itemDetailsButton = Button('Item details');
 const renewButton = Button('Renew');
 const ellipsisButton = Button({ icon:'ellipsis' });
 const rowInList = MultiColumnListRow({ indexRow: 'row-0' });
-// const overrideButton = Button('Override');
 
 function openActionsMenuOfLoanByBarcode(itemBarcode) {
   cy.do(MultiColumnListRow({ text: matching(itemBarcode), isContainer: false }).find(ellipsisButton).click());
@@ -65,7 +61,8 @@ export default {
   declareLoanLostByApi:(apiBody, loanId) => cy.okapiRequest({
     method: 'POST',
     path: `circulation/loans/${loanId}/declare-item-lost`,
-    body: apiBody
+    body: apiBody,
+    isDefaultSearchParamsRequired: false
   }),
   openActionsMenuOfLoanByBarcode,
   declareLoanLostByBarcode:(itemBarcode) => {
@@ -91,18 +88,6 @@ export default {
       cy.do(renewButton.click());
     }
   },
-  // reneweThroughOverride: (mes) => {
-  //   cy.expect([
-  //     Modal('Renew Confirmation').exists(),
-  //     overrideButton.exists()
-  //   ]);
-  //   cy.do([
-  //     overrideButton.click(),
-  //     TextArea({ id: 'data-test-additional-info' }).fillIn(mes),
-  //     CheckboxInTable({ name: 'check-all' }).click(),
-  //     Modal({ id:'bulk-override-modal' }).find(overrideButton).click()
-  //   ]);
-  // },
   checkResultsInTheRowByBarcode: (allContentToCheck, itemBarcode) => {
     return allContentToCheck.forEach(contentToCheck => cy.expect(MultiColumnListRow({ text: matching(itemBarcode), isContainer: false }).find(MultiColumnListCell({ content: including(contentToCheck) })).exists()));
   },
@@ -115,7 +100,7 @@ export default {
   verifyQuantityOpenAndClaimedReturnedLoans: (numberOfOpenLoans, numberOfClaimedReturnedLoans) => {
     return cy.expect(Pane(including('Loans -')).find(HTML(including(`${numberOfOpenLoans} records found (${numberOfClaimedReturnedLoans} claimed returned)`))).exists());
   },
-  getUserLoansIdApi:(userId, loanStatus = 'open') => (
+  getUserLoansIdViaApi:(userId, loanStatus = 'open') => (
     cy.okapiRequest({
       method: 'GET',
       path: `circulation/loans?query=(userId==${userId} and status.name==${loanStatus})`,

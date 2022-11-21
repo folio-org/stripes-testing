@@ -37,3 +37,11 @@ Cypress.Commands.add('deleteFeesFinesTypeApi', (feesFinesTypeId) => {
       path: `feefines/${feesFinesTypeId}`,
     });
 });
+
+Cypress.Commands.add('getUserFeesFines', (userId, status = 'open') => {
+  cy.okapiRequest({
+    method: 'GET',
+    path: `accounts?query=(userId==${userId} and status.name==${status})`,
+    isDefaultSearchParamsRequired: false,
+  }).then(({ body }) => body);
+});
