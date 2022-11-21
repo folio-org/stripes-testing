@@ -22,11 +22,11 @@ import DateTools from '../../utils/dateTools';
 const effectiveLocationInput = Accordion({ id: 'effectiveLocation' });
 const languageInput = Accordion({ id: 'language' });
 const keywordInput = TextField({ id: 'input-inventory-search' });
-const searchButton = Button('Search');
+const searchButton = Button({ type: 'submit' });
 const searchTextField = TextField('Search ');
 const inventorySearch = TextInput({ id: 'input-inventory-search' });
 const inventorySearchInput = Select({ id: 'input-inventory-search-qindex' });
-const resetAllButton = Button({ id: 'clickable-reset-all'});
+const resetAllButton = Button({ id: 'clickable-reset-all' });
 const navigationInstancesButton = Button({ id: 'segment-navigation-instances' });
 
 const searchInstanceByHRID = (id) => {
@@ -34,7 +34,7 @@ const searchInstanceByHRID = (id) => {
   cy.do([
     Select({ id: 'input-inventory-search-qindex' }).choose('Instance HRID'),
     TextField({ id: 'input-inventory-search' }).fillIn(id),
-    Button('Search').click()
+    searchButton.click()
   ]);
   InventoryInstances.waitLoading();
 };
@@ -42,7 +42,7 @@ const searchInstanceByHRID = (id) => {
 const searchInstanceByTitle = (title) => {
   cy.do([
     TextField({ id: 'input-inventory-search' }).fillIn(title),
-    Button('Search').click()
+    searchButton.click()
   ]);
   InventoryInstances.waitLoading();
 };

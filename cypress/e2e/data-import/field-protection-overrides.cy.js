@@ -125,7 +125,6 @@ describe('ui-data-import: Check that field protection overrides work properly du
     FileManager.deleteFile(`cypress/fixtures/${editedFileNameRev2}`);
   });
 
-  // Test is failed. MODSOURMAN-819
   it('C17018 Check that field protection overrides work properly during data import (folijet)', { tags: [TestTypes.criticalPath, DevTeams.folijet] }, () => {
     const marcBibMappingProfile = {
       name: marcBibMapProfileNameForUpdate,
@@ -268,7 +267,8 @@ describe('ui-data-import: Check that field protection overrides work properly du
         [FileDetails.columnName.srsMarc, FileDetails.columnName.instance].forEach(columnName => {
           FileDetails.checkStatusInColumn(FileDetails.status.updated, columnName);
         });
-        FileDetails.checkItemsQuantityInSummaryTable(1, '1');
+        FileDetails.checkSrsRecordQuantityInSummaryTable('1', '1');
+        FileDetails.checkInstanceQuantityInSummaryTable('1', '1');
 
         cy.visit(TopMenu.inventoryPath);
         InventorySearch.searchInstanceByHRID(instanceHrid);
@@ -294,7 +294,8 @@ describe('ui-data-import: Check that field protection overrides work properly du
         [FileDetails.columnName.srsMarc, FileDetails.columnName.instance].forEach(columnName => {
           FileDetails.checkStatusInColumn(FileDetails.status.updated, columnName);
         });
-        FileDetails.checkItemsQuantityInSummaryTable(1, '1');
+        FileDetails.checkSrsRecordQuantityInSummaryTable('1', '1');
+        FileDetails.checkInstanceQuantityInSummaryTable('1', '1');
 
         cy.visit(TopMenu.inventoryPath);
         InventorySearch.searchInstanceByHRID(instanceHrid);
