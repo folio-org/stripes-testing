@@ -16,10 +16,10 @@ import Z3950TargetProfiles from '../../support/fragments/settings/inventory/z39.
 
 describe('Manage holding records through quickmarc editor', () => {
   const quickmarcEditor = new QuickMarcEditor(InventoryInstance.validOCLC);
-  
+
   before(() => {
     cy.getAdminToken().then(() => {
-      Z3950TargetProfiles.changeOclcWorldCatValueViaApi('100473910/PAOLF'); //100473910/PAOLF
+      Z3950TargetProfiles.changeOclcWorldCatValueViaApi('100473910/PAOLF');
     });
   });
 
@@ -30,7 +30,6 @@ describe('Manage holding records through quickmarc editor', () => {
     InventoryActions.import();
     // TODO: redesign to api step
     InventorySteps.addMarcHoldingRecord();
-    // TODO: https://issues.folio.org/browse/UIIN-2044
     HoldingsRecordView.editInQuickMarc();
     QuickMarcEditor.waitLoading();
   });
