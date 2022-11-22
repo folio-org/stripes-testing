@@ -1,11 +1,11 @@
 import uuid from 'uuid';
-import TestTypes from '../../support/dictionary/testTypes';
-import permissions from '../../support/dictionary/permissions';
-import TopMenu from '../../support/fragments/topMenu';
-import InventorySearchAndFilter from '../../support/fragments/inventory/inventorySearchAndFilter';
-import Users from '../../support/fragments/users/users';
-import InventoryInstance from '../../support/fragments/inventory/inventoryInstance';
-import DevTeams from '../../support/dictionary/devTeams';
+import TestTypes from '../../../support/dictionary/testTypes';
+import permissions from '../../../support/dictionary/permissions';
+import TopMenu from '../../../support/fragments/topMenu';
+import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
+import Users from '../../../support/fragments/users/users';
+import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
+import DevTeams from '../../../support/dictionary/devTeams';
 
 describe('ui-inventory: Filter instances by tags', () => {
   let userId;
