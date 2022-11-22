@@ -125,7 +125,6 @@ describe('ui-data-import: Check that field protection overrides work properly du
     FileManager.deleteFile(`cypress/fixtures/${editedFileNameRev2}`);
   });
 
-  // Test is failed. MODSOURMAN-819
   it('C17018 Check that field protection overrides work properly during data import (folijet)', { tags: [TestTypes.criticalPath, DevTeams.folijet] }, () => {
     const marcBibMappingProfile = {
       name: marcBibMapProfileNameForUpdate,

@@ -94,6 +94,7 @@ describe('ui-inventory: items with status', () => {
       cy.wait(['@getInstances', '@getFacets']);
       cy.expect(MultiColumnList().exists());
 
+      InventorySearch.searchByParameter('Keyword (title, contributor, identifier, HRID, UUID)', title);
       FilterItems.selectInstance(title);
       FilterItems.waitItemsLoading();
 
@@ -101,8 +102,7 @@ describe('ui-inventory: items with status', () => {
       cy.wait('@getItems');
       FilterItems.verifyItemWithStatusExists(holdingId, status);
 
-      FilterItems.toggleStatus(status);
-      cy.wait('@getFacets');
+      InventorySearch.resetAll();
       cy.expect(MultiColumnList().absent());
     });
   });

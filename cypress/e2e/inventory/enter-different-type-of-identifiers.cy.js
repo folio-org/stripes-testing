@@ -1,5 +1,4 @@
 import TestTypes from '../../support/dictionary/testTypes';
-import getRandomPostfix from '../../support/utils/stringTools';
 import InventorySearch from '../../support/fragments/inventory/inventorySearch';
 import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
 import InventoryInstance from '../../support/fragments/inventory/inventoryInstance';
@@ -13,7 +12,7 @@ describe('ui-inventory: Enter different type of identifiers', () => {
   let instanceId;
   let resourceIdentifier;
 
-  beforeEach('navigate to inventory', () => {
+  beforeEach('create test data', () => {
     instanceTitle = `autoTestInstanceTitle ${Helper.getRandomBarcode()}`;
     cy.loginAsAdmin();
     cy.getAdminToken()
@@ -32,7 +31,7 @@ describe('ui-inventory: Enter different type of identifiers', () => {
       });
   });
 
-  afterEach(() => {
+  afterEach('delete test data', () => {
     InventoryInstance.deleteInstanceViaApi(instanceId);
   });
 
@@ -47,7 +46,7 @@ describe('ui-inventory: Enter different type of identifiers', () => {
     'BNB'
   ].forEach((identifier) => {
     it('C609 In Accordion Identifiers --> enter different type of identifiers (folijet) (prokopovych)', { tags: [TestTypes.smoke, DevTeams.folijet] }, () => {
-      resourceIdentifier = `testResourceIdentifier.${getRandomPostfix()}`;
+      resourceIdentifier = `testResourceIdentifier ${Helper.getRandomBarcode()}`;
 
       searchAndOpenInstance('Title (all)', instanceTitle);
       InventoryInstance.editInstance();
