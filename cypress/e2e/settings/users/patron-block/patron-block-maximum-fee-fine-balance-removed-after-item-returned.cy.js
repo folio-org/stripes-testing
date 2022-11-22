@@ -26,6 +26,7 @@ import UsersSearchPane from '../../../../support/fragments/users/usersSearchPane
 import UserLoans from '../../../../support/fragments/users/loans/userLoans';
 import LostItemFeePolicy from '../../../../support/fragments/circulation/lost-item-fee-policy';
 import UsersCard from '../../../../support/fragments/users/usersCard';
+import NewFeeFine from '../../../../support/fragments/users/newFeeFine';
 
 describe('Patron Block: Maximum outstanding fee/fine balance', () => {
   let originalCirculationRules;
@@ -46,17 +47,14 @@ describe('Patron Block: Maximum outstanding fee/fine balance', () => {
   const testData = {
     userServicePoint: ServicePoints.getDefaultServicePointWithPickUpLocation('autotest fee/fine limit', uuid()),
   };
-  const owner = {
-    body: {
-      owner: 'AutotestOwner' + getRandomPostfix(),
-      servicePointOwner: [
-        {
-          value: testData.userServicePoint.id,
-          label: testData.userServicePoint.name,
-        },
-      ],
-    },
-    data: {},
+  const ownerBody = {
+    owner: 'AutotestOwner' + getRandomPostfix(),
+    servicePointOwner: [
+      {
+        value: testData.userServicePoint.id,
+        label: testData.userServicePoint.name,
+      },
+    ],
   };
   const lostItemFeePolicyBody = {
     name: '1_lost' + getRandomPostfix(),
@@ -165,10 +163,10 @@ describe('Patron Block: Maximum outstanding fee/fine balance', () => {
         cy.wrap(itemsData.itemsWithSeparateInstance).as('items');
       });
 
-    UsersOwners.createViaApi(owner.body).then((response) => {
-      owner.data = response;
-      PaymentMethods.createViaApi(response.id).then(resp => {
-        testData.paymentMethodId = resp.id;
+    UsersOwners.createViaApi(ownerBody).then((ownerResponse) => {
+      testData.ownerId = ownerResponse.id;
+      PaymentMethods.createViaApi(testData.ownerId).then((paymentMethod) => {
+        testData.paymentMethodId = paymentMethod.id;
       });
     });
     LostItemFeePolicy.createViaApi(lostItemFeePolicyBody);
@@ -244,7 +242,7 @@ describe('Patron Block: Maximum outstanding fee/fine balance', () => {
         checkInDate: new Date().toISOString(),
       });
     });
-    cy.getUserFeesFines(userData.userId).then((response) => {
+    NewFeeFine.getUserFeesFines(userData.userId).then((response) => {
       const resp = response.accounts;
       resp.forEach(({ id }) => {
         cy.deleteFeesFinesApi(id);
@@ -256,7 +254,7 @@ describe('Patron Block: Maximum outstanding fee/fine balance', () => {
       InventoryInstance.deleteInstanceViaApi(itemsData.itemsWithSeparateInstance[index].instanceId);
     });
     PaymentMethods.deleteViaApi(testData.paymentMethodId);
-    UsersOwners.deleteViaApi(owner.data.id);
+    UsersOwners.deleteViaApi(testData.ownerId);
     cy.deleteLoanPolicy(loanPolicyBody.id);
     LostItemFeePolicy.deleteViaApi(lostItemFeePolicyBody.id);
     CirculationRules.deleteRuleViaApi(originalCirculationRules);
