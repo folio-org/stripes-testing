@@ -33,7 +33,8 @@ describe('MARC Authority management', () => {
   afterEach('Deleting created user', () => {
     Users.deleteViaApi(testData.userProperties.userId);
   });
-  it('C350572 Edit an Authority record (spitfire)', { tags:  [TestTypes.smoke, Features.authority, DevTeams.spitfire] }, () => {
+  
+  it('C350643 Delete a "MARC Authority" record via "MARC Authority" app (spitfire)', { tags:  [TestTypes.smoke, Features.authority, DevTeams.spitfire] }, () => {
     MarcAuthoritiesDelete.clickDeleteButton();
     MarcAuthoritiesDelete.checkDeleteModal();
     MarcAuthoritiesDelete.confirmDelete();

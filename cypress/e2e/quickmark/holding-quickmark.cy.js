@@ -12,9 +12,16 @@ import InteractorsTools from '../../support/utils/interactorsTools';
 import InventorySteps from '../../support/fragments/inventory/inventorySteps';
 import InventoryInstance from '../../support/fragments/inventory/inventoryInstance';
 import DevTeams from '../../support/dictionary/devTeams';
+import Z3950TargetProfiles from '../../support/fragments/settings/inventory/z39.50TargetProfiles';
 
 describe('Manage holding records through quickmarc editor', () => {
   const quickmarcEditor = new QuickMarcEditor(InventoryInstance.validOCLC);
+
+  before(() => {
+    cy.getAdminToken().then(() => {
+      Z3950TargetProfiles.changeOclcWorldCatValueViaApi('100473910/PAOLF');
+    });
+  });
 
   beforeEach(() => {
     cy.login(Cypress.env('diku_login'), Cypress.env('diku_password'));
@@ -23,10 +30,10 @@ describe('Manage holding records through quickmarc editor', () => {
     InventoryActions.import();
     // TODO: redesign to api step
     InventorySteps.addMarcHoldingRecord();
-    // TODO: https://issues.folio.org/browse/UIIN-2044
     HoldingsRecordView.editInQuickMarc();
     QuickMarcEditor.waitLoading();
   });
+
   it('C345390 Add a field to a record using quickMARC (spitfire)', { tags: [TestTypes.smoke, DevTeams.spitfire, Features.quickMarcEditor] }, () => {
     // TODO: redesign to dynamic reading of rows count
     quickmarcEditor.addRow(HoldingsRecordView.newHolding.rowsCountInQuickMarcEditor);
