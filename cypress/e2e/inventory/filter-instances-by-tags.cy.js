@@ -14,7 +14,6 @@ describe('ui-inventory: Filter instances by tags', () => {
   const tagsCount = '1';
 
   beforeEach(() => {
-    cy.getAdminToken();
     cy.createTempUser([
       permissions.inventoryAll.gui,
       permissions.uiTagsPermissionAll.gui,

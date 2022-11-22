@@ -9,14 +9,24 @@ import SettingsMenu from '../../../support/fragments/settingsMenu';
 import DevTeams from '../../../support/dictionary/devTeams';
 
 let user;
-const oclc = '1007797324';
+let instanceRecord;
 const authentication = '100473910/PAOLF';
 
 describe('ui-inventory: import by OCLC', () => {
   before('create test data', () => {
+    cy.getAdminToken()
+      .then(() => {
+        Z3950TargetProfiles.changeOclcWorldCatValueViaApi('100473910/PAOLF');
+        InventorySearchAndFilter.createInstanceViaApi()
+          .then(({ instanceData }) => {
+            instanceRecord = instanceData;
+          });
+      });
+
     cy.createTempUser([
       permissions.uiInventoryViewCreateEditInstances,
       permissions.uiInventorySingleRecordImport.gui,
+      permissions.uiInventorySettingsConfigureSingleRecordImport.gui,
     ])
       .then(userProperties => {
         user = userProperties;
@@ -24,21 +34,19 @@ describe('ui-inventory: import by OCLC', () => {
       });
   });
 
-  after('delete test data', () => {
-    cy.getInstance({ limit: 1, expandAll: true, query: `"oclc"=="${oclc}"` })
-      .then(instance => {
-        InventoryInstance.deleteInstanceViaApi(instance.id);
-      });
-    Users.deleteViaApi(user.userId);
-  });
+  // after('delete test data', () => {
+  //   cy.getInstance({ limit: 1, expandAll: true, query: `"oclc"=="${oclc}"` })
+  //     .then(instance => {
+  //       InventoryInstance.deleteInstanceViaApi(instance.id);
+  //     });
+  //   Users.deleteViaApi(user.userId);
+  // });
 
   it('C343349 Overlay existing Source = FOLIO Instance by import of single MARC Bib record from OCLC (folijet)', { tags: [testTypes.smoke, DevTeams.folijet] }, () => {
-    cy.visit(SettingsMenu.targetProfilesPath);
-    Z3950TargetProfiles.openOclcWorldCat();
-    Z3950TargetProfiles.editOclcWorldCat(authentication);
-    Z3950TargetProfiles.checkIsOclcWorldCatIsChanged(authentication);
-
     cy.visit(TopMenu.inventoryPath);
-    InventorySearchAndFilter.searchInstanceByHRID(instanceHrid);
+    InventorySearchAndFilter.searchByParameter('Keyword (title, contributor, identifier, HRID, UUID)', instanceRecord.instanceTitle);
+    InventorySearchAndFilter.selectSearchResultItem();
+    InventoryInstance.startOverlaySourceBibRecord();
+    InventoryInstance.importWithOclc('1202462670');
   });
 });
