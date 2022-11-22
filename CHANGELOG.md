@@ -1,5 +1,7 @@
 # Change history for stripes-testing
 
+## 4.5.0 (IN PROGRESS)
+
 ## [4.4.0](https://github.com/folio-org/stripes-testing/tree/v4.4.0) (2022-10-13)
 [Full Changelog](https://github.com/folio-org/stripes-testing/compare/v4.3.0...v4.4.0)
 

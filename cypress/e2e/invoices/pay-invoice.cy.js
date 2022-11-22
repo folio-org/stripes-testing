@@ -69,6 +69,7 @@ describe('ui-invoices: Approve invoice', () => {
   
   it('C3453 Pay invoice (thunderjet)', { tags: [testType.criticalPath, devTeams.thunderjet] }, () => {
     const transactionFactory = new Transaction();
+    const valueInTransactionTable = `$${subtotalValue.toFixed(2)}`;
     Invoices.searchByNumber(invoice.invoiceNumber);
     Helper.selectFromResultsList();
     Invoices.payInvoice();

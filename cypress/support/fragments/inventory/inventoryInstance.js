@@ -337,7 +337,7 @@ export default {
     cy.do(Button({ id: 'clickable-view-source' }).click());
     cy.expect(HTML('MARC bibliographic record').exists());
   },
-  
+
   singleRecordImportModalIsPresented:() => {
     cy.expect(singleRecordImportModal.exists());
   },
@@ -349,11 +349,15 @@ export default {
 
   checkCalloutMessage: (text, calloutType = calloutTypes.success) => {
     cy.expect(Callout({ type: calloutType }).is({ textContent: text }));
-  }, 
+  },
 
   checkIdentifier: (text) => {
     cy.expect(Accordion('Identifiers')
       .find(MultiColumnList({ id: 'list-identifiers' }))
       .find(MultiColumnListCell(including(text))).exists());
+  },
+
+  verifyLoan(content) {
+    cy.expect(MultiColumnListCell({ content }).exists());
   },
 };

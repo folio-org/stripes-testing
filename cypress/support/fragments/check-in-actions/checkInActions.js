@@ -105,6 +105,7 @@ export default {
         id: uuid(),
         ...body,
       },
+      isDefaultSearchParamsRequired: false
     });
   },
   confirmMultipleItemsCheckin(barcode) {
@@ -124,7 +125,6 @@ export default {
   checkFeeFinesDetails(billedAmount, instanceBarcode, loanPolicyName, OverdueFinePolicyName, LostItemFeePolicyName) {
     cy.do(availableActionsButton.click());
     cy.do(feeFineDetailsButton.click());
-
     cy.expect(Pane(including('Fee/fine details')).exists());
     cy.expect(feeFinePane.find(HTML(including('Overdue fine'))).exists());
     cy.expect(or(

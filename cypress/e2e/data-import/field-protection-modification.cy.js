@@ -60,7 +60,7 @@ describe('ui-data-import: MARC field protections apply to MARC modifications of 
     Users.deleteViaApi(user.userId);
   });
 
-  // Test is failed. MODSOURMAN-819
+  // Test is failed. MODDATAIMP-739
   it('C350678 MARC field protections apply to MARC modifications of incoming records when they should not: Scenario 1 (folijet)', { tags: [TestTypes.smoke, DevTeams.folijet] }, () => {
     const mappingProfile = { name: mappingProfileName,
       typeValue : NewFieldMappingProfile.folioRecordTypeValue.marcBib };
