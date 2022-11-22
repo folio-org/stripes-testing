@@ -121,16 +121,16 @@ describe('Patron Block: Maximum outstanding fee/fine balance', () => {
         cy.getInstanceTypes({ limit: 1 }).then((instanceTypes) => {
           testData.instanceTypeId = instanceTypes[0].id;
         });
-        cy.getHoldingTypes({ limit: 1 }).then((res) => {
-          testData.holdingTypeId = res[0].id;
+        cy.getHoldingTypes({ limit: 1 }).then((holdingTypes) => {
+          testData.holdingTypeId = holdingTypes[0].id;
         });
         cy.createLoanType({
           name: `type_${getRandomPostfix()}`,
-        }).then((res) => {
-          testData.loanTypeId = res.id;
+        }).then((loanType) => {
+          testData.loanTypeId = loanType.id;
         });
-        cy.getMaterialTypes({ limit: 1 }).then((res) => {
-          testData.materialTypeId = res.id;
+        cy.getMaterialTypes({ limit: 1 }).then((materialTypes) => {
+          testData.materialTypeId = materialTypes.id;
         });
       })
       .then(() => {
@@ -171,12 +171,12 @@ describe('Patron Block: Maximum outstanding fee/fine balance', () => {
     });
     LostItemFeePolicy.createViaApi(lostItemFeePolicyBody);
     LoanPolicy.createApi(loanPolicyBody);
-    PatronGroups.createViaApi(patronGroup.name).then((res) => {
-      patronGroup.id = res;
+    PatronGroups.createViaApi(patronGroup.name).then((patronGroupResponse) => {
+      patronGroup.id = patronGroupResponse;
     });
-    CirculationRules.getViaApi().then((response) => {
-      originalCirculationRules = response.rulesAsText;
-      const ruleProps = CirculationRules.getRuleProps(response.rulesAsText);
+    CirculationRules.getViaApi().then((circulationRule) => {
+      originalCirculationRules = circulationRule.rulesAsText;
+      const ruleProps = CirculationRules.getRuleProps(circulationRule.rulesAsText);
       ruleProps.l = loanPolicyBody.id;
       ruleProps.i = lostItemFeePolicyBody.id;
       CirculationRules.addRuleViaApi(originalCirculationRules, ruleProps, 't ', testData.loanTypeId);
@@ -215,9 +215,9 @@ describe('Patron Block: Maximum outstanding fee/fine balance', () => {
           });
         });
 
-        UserLoans.getUserLoansIdViaApi(userData.userId).then((response) => {
-          const resp = response.loans;
-          resp.forEach(({ id, item }) => {
+        UserLoans.getUserLoansIdViaApi(userData.userId).then((userLoans) => {
+          const loansData = userLoans.loans;
+          loansData.forEach(({ id, item }) => {
             if (item.title.includes('InstanceForDeclareLost')) {
               UserLoans.declareLoanLostByApi({
                 servicePointId: testData.userServicePoint.id,
@@ -242,9 +242,9 @@ describe('Patron Block: Maximum outstanding fee/fine balance', () => {
         checkInDate: new Date().toISOString(),
       });
     });
-    NewFeeFine.getUserFeesFines(userData.userId).then((response) => {
-      const resp = response.accounts;
-      resp.forEach(({ id }) => {
+    NewFeeFine.getUserFeesFines(userData.userId).then((userFeesFines) => {
+      const feesFinesData = userFeesFines.accounts;
+      feesFinesData.forEach(({ id }) => {
         cy.deleteFeesFinesApi(id);
       });
     });
