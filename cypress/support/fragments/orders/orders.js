@@ -381,6 +381,10 @@ export default {
     ]);
   },
 
+  backToPO: () => {
+    cy.do(Button({ id: 'clickable-backToPO' }).click());
+  },
+
   selectFilterMainLibraryLocationsPOL: () => {
     cy.do([
       buttonLocationFilter.click(),
