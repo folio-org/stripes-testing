@@ -143,11 +143,8 @@ describe('ui-data-import: Match on Holdings 856 $u', () => {
 
     cy.visit(SettingsMenu.actionProfilePath);
     ActionProfiles.createActionProfile(createInstanceActionProfile, createInstanceMappingProfileName);
-    ActionProfiles.closeActionProfile(createInstanceActionProfileName);
     ActionProfiles.createActionProfile(createEHoldingsActionProfile, createEHoldingsMappingProfileName);
-    ActionProfiles.closeActionProfile(createEHoldingsActionProfileName);
     ActionProfiles.createActionProfile(updateEHoldingsActionProfile, updateEHoldingsMappingProfileName);
-    ActionProfiles.closeActionProfile(updateEHoldingsActionProfileName);
 
     cy.visit(SettingsMenu.matchProfilePath);
     MatchProfiles.createMatchProfile(matchProfile);
@@ -158,14 +155,12 @@ describe('ui-data-import: Match on Holdings 856 $u', () => {
     NewJobProfile.linkActionProfile(createEHoldingsActionProfile);
     NewJobProfile.saveAndClose();
     JobProfiles.checkJobProfilePresented(createInstanceAndEHoldingsJobProfileName);
-    JobProfiles.closeJobProfile(createInstanceAndEHoldingsJobProfileName);
 
     JobProfiles.createJobProfile(updateEHoldingsJobProfile);
     NewJobProfile.linkMatchProfile(matchProfileName);
     NewJobProfile.linkActionProfileForMatches(updateEHoldingsActionProfileName);
     NewJobProfile.saveAndClose();
     JobProfiles.checkJobProfilePresented(updateEHoldingsJobProfileName);
-    JobProfiles.closeJobProfile(updateEHoldingsJobProfileName);
 
     cy.visit(TopMenu.dataImportPath);
     DataImport.uploadFile('marcFileForC17025.mrc', nameForCreateMarcFile);
