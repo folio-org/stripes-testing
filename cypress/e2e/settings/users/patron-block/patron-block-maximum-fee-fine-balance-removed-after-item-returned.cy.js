@@ -219,7 +219,7 @@ describe('Patron Block: Maximum outstanding fee/fine balance', () => {
           const loansData = userLoans.loans;
           loansData.forEach(({ id, item }) => {
             if (item.title.includes('InstanceForDeclareLost')) {
-              UserLoans.declareLoanLostByApi({
+              UserLoans.declareLoanLostViaApi({
                 servicePointId: testData.userServicePoint.id,
                 declaredLostDateTime: moment.utc().format(),
               }, id);

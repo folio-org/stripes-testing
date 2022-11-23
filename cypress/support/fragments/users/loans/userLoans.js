@@ -58,7 +58,7 @@ export default {
     cy.expect(declaredLostButton.exists());
     return cy.do(declaredLostButton.click());
   },
-  declareLoanLostByApi:(apiBody, loanId) => cy.okapiRequest({
+  declareLoanLostViaApi:(apiBody, loanId) => cy.okapiRequest({
     method: 'POST',
     path: `circulation/loans/${loanId}/declare-item-lost`,
     body: apiBody,
