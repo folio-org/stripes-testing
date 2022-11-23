@@ -8,7 +8,7 @@ import {
   Button,
   KeyValue,
 } from '../../../../../interactors';
-import ItemVeiw from '../../inventory/inventoryItem/itemVeiw';
+import ItemView from '../../inventory/inventoryItem/itemView';
 import { REQUEST_METHOD } from '../../../constants';
 
 const claimReturnedButton = Button('Claim returned');
@@ -74,7 +74,7 @@ export default {
     cy.do(ellipsisButton.click());
     cy.expect(itemDetailsButton.exists());
     cy.do(itemDetailsButton.click());
-    ItemVeiw.waitLoading();
+    ItemView.waitLoading();
   },
   renewItem:(barcode, isLoanOpened = false) => {
     if (isLoanOpened) {
