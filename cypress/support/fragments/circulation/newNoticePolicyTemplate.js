@@ -40,7 +40,9 @@ export default {
   },
 
   create: (noticePolicyTemplate, autoSave = true) => {
+    cy.wait(4000);
     cy.get('#input-patron-notice-name').type(noticePolicyTemplate.name);
+    cy.wait(5000);
     cy.do([
       bodyField.fillIn(noticePolicyTemplate.body),
       descriptionField.fillIn(noticePolicyTemplate.description),
@@ -98,6 +100,7 @@ export default {
       actionsButtons.edit.has({ visible: true }),
       actionsButtons.delete.exists(),
       actionsButtons.delete.has({ visible: true }),
+      actionsButton.click(),
     ]);
   },
 
