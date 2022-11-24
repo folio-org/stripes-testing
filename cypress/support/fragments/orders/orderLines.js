@@ -404,6 +404,14 @@ export default {
     cy.do(Pane({ id:'pane-poLineForm' }).absent());
   },
 
+  fillPOLWithTitleLookUp:() => {
+    this.selectRandomInstanceInTitleLookUP;
+    cy.do([
+      physicalUnitPriceTextField.fillIn(physicalUnitPrice),
+      saveAndClose.click()
+    ]);
+  },
+
   selectRandomInstanceInTitleLookUP:(instanceName, rowNumber = 0) => {
     cy.do([
       Button({ id: 'find-instance-trigger' }).click(),
