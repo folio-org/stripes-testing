@@ -7,7 +7,7 @@ import TestTypes from '../../support/dictionary/testTypes';
 import CheckInActions from '../../support/fragments/check-in-actions/checkInActions';
 import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
 import UserEdit from '../../support/fragments/users/userEdit';
-import generateItemBarcode from '../../support/utils/generateItemBarcode';
+import generateUniqueItemBarcodeWithShift from '../../support/utils/generateUniqueItemBarcodeWithShift';
 import getRandomPostfix from '../../support/utils/stringTools';
 import AppPaths from '../../support/fragments/app-paths';
 import Loans from '../../support/fragments/loans/loansPage';
@@ -24,10 +24,6 @@ import UsersSearchPane from '../../support/fragments/users/usersSearchPane';
 import UsersCard from '../../support/fragments/users/usersCard';
 import Location from '../../support/fragments/settings/tenant/locations/newLocation';
 import ConfirmClaimReturnedModal from '../../support/fragments/users/loans/confirmClaimReturnedModal';
-
-function generateUniqueItemBarcodeWithShift(index = 0) {
-  return ((generateItemBarcode() - Math.round(getRandomPostfix())) + '').substring(index);
-}
 
 function getClaimedReturnedLoansQuantity(loansArray) {
   let res = 0;

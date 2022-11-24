@@ -25,7 +25,7 @@ import InventoryViewSource from './inventoryViewSource';
 import InventoryNewHoldings from './inventoryNewHoldings';
 import InventoryInstanceSelectInstanceModal from './holdingsMove/inventoryInstanceSelectInstanceModal';
 import InventoryInstancesMovement from './holdingsMove/inventoryInstancesMovement';
-import ItemVeiw from './inventoryItem/itemVeiw';
+import ItemView from './inventoryItem/itemView';
 import DateTools from '../../utils/dateTools';
 
 const section = Section({ id: 'pane-instancedetails' });
@@ -277,7 +277,7 @@ export default {
   },
   openItemView: (itemBarcode) => {
     cy.do(Link(including(itemBarcode)).click());
-    ItemVeiw.waitLoading();
+    ItemView.waitLoading();
   },
   openEditItemPage() {
     cy.do([
