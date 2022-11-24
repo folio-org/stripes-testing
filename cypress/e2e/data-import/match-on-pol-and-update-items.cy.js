@@ -25,7 +25,7 @@ import Receiving from '../../support/fragments/receiving/receiving';
 import FileDetails from '../../support/fragments/data_import/logs/fileDetails';
 import InventoryInstance from '../../support/fragments/inventory/inventoryInstance';
 import HoldingsRecordView from '../../support/fragments/inventory/holdingsRecordView';
-import ItemVeiw from '../../support/fragments/inventory/inventoryItem/itemVeiw';
+import ItemView from '../../support/fragments/inventory/inventoryItem/itemView';
 import InventoryViewSource from '../../support/fragments/inventory/inventoryViewSource';
 import NewMatchProfile from '../../support/fragments/data_import/match_profiles/newMatchProfile';
 import Organizations from '../../support/fragments/organizations/organizations';
@@ -264,7 +264,6 @@ describe('ui-data-import: Match on POL and update related Instance, Holdings, It
     Receiving.checkIsPiecesCreated(title);
   };
 
-  // MODSOURMAN-819
   it('C350590 Match on POL and update related Instance, Holdings, Item (folijet)', { tags: [TestTypes.smoke, DevTeams.folijet] }, () => {
     // create the first PO with POL
     Orders.createOrderWithOrderLineViaApi(NewOrder.getDefaultOrder(vendorId),
@@ -370,9 +369,10 @@ describe('ui-data-import: Match on POL and update related Instance, Holdings, It
     HoldingsRecordView.close();
     InventoryInstance.openHoldingsAccordion('Main Library');
     InventoryInstance.openItemView(firstItem.barcode);
-    ItemVeiw.verifyItemStatus('In process');
-    ItemVeiw.checkEffectiveLocation('Main Library');
-    ItemVeiw.closeDetailView();
+    ItemView.verifyItemStatus('In process');
+    ItemView.checkEffectiveLocation('Main Library');
+    ItemView.closeDetailView();
+    InventoryInstance.viewSource();
     InventoryViewSource.verifyBarcodeInMARCBibSource(firstItem.barcode);
   });
 });

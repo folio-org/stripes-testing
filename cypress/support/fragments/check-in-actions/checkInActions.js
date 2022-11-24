@@ -2,7 +2,7 @@ import uuid from 'uuid';
 import { Button, including, TextField, MultiColumnListRow, MultiColumnList, MultiColumnListCell, HTML, Pane, Modal, PaneContent, or } from '../../../../interactors';
 import { REQUEST_METHOD } from '../../constants';
 import { getLongDelay } from '../../utils/cypressTools';
-import ItemVeiw from '../inventory/inventoryItem/itemVeiw';
+import ItemView from '../inventory/inventoryItem/itemView';
 
 const loanDetailsButton = Button('Loan details');
 const patronDetailsButton = Button('Patron details');
@@ -42,6 +42,9 @@ export default {
       addItemButton.click()
     ]);
   },
+  confirmCheckInLostItem:() => {
+    cy.do(Button('Confirm').click());
+  },
   openItemRecordInInventory:(status) => {
     cy.expect(MultiColumnListRow({ indexRow: 'row-0' }).find(HTML(including(status))).exists());
     cy.do(availableActionsButton.click());
@@ -49,7 +52,7 @@ export default {
     cy.intercept('/tags?*').as('getTags');
     cy.do(itemDetailsButton.click());
     cy.wait('@getTags', getLongDelay());
-    ItemVeiw.waitLoading();
+    ItemView.waitLoading();
   },
   checkActionsMenuOptions:() => {
     cy.expect(availableActionsButton.exists());
@@ -102,6 +105,7 @@ export default {
         id: uuid(),
         ...body,
       },
+      isDefaultSearchParamsRequired: false
     });
   },
   confirmMultipleItemsCheckin(barcode) {
@@ -121,7 +125,6 @@ export default {
   checkFeeFinesDetails(billedAmount, instanceBarcode, loanPolicyName, OverdueFinePolicyName, LostItemFeePolicyName) {
     cy.do(availableActionsButton.click());
     cy.do(feeFineDetailsButton.click());
-    
     cy.expect(Pane(including('Fee/fine details')).exists());
     cy.expect(feeFinePane.find(HTML(including('Overdue fine'))).exists());
     cy.expect(or(

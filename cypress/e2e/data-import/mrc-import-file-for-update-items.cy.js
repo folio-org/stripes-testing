@@ -385,7 +385,7 @@ describe('ui-data-import: MARC file upload with the update of instance, holding,
       .then(hrId => {
         // download .csv file
         cy.visit(TopMenu.inventoryPath);
-        InventorySearch.searchInstanceByHRID(hrId[1]);
+        InventorySearch.searchInstanceByHRID(hrId[0]);
         InventorySearch.saveUUIDs();
         ExportMarcFile.downloadCSVFile(nameForCSVFile, 'SearchInstanceUUIDs*');
         FileManager.deleteFolder(Cypress.config('downloadsFolder'));
