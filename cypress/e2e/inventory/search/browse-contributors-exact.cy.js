@@ -1,7 +1,7 @@
 import testType from '../../../support/dictionary/testTypes';
 import Permissions from '../../../support/dictionary/permissions';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
-import InventorySearch from '../../../support/fragments/inventory/inventorySearch';
+import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
 import BrowseContributors from '../../../support/fragments/inventory/search/browseContributors';
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
@@ -52,7 +52,7 @@ describe('ui-inventory: search', () => {
 
   // https://issues.folio.org/browse/UIIN-2199
   it('C353639 Browse contributors with exact match query (spitfire)', { tags: [testType.smoke, devTeams.spitfire] }, () => {
-    InventorySearch.verifyKeywordsAsDefault();
+    InventorySearchAndFilter.verifyKeywordsAsDefault();
     BrowseContributors.checkBrowseOptions();
     BrowseContributors.select();
     BrowseContributors.checkSearch();

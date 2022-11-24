@@ -10,7 +10,7 @@ import {
   including
 } from '../../../../interactors';
 import InventoryViewSource from './inventoryViewSource';
-import NewHoldingsRecord from './newHoldingsRecord';
+import InventoryNewHoldings from './inventoryNewHoldings';
 
 const root = Section({ id: 'ui-inventory.holdingsRecordView' });
 const actionsButton = root.find(Button('Actions'));
@@ -65,7 +65,7 @@ export default {
   duplicate:() => {
     cy.do(actionsButton.click());
     cy.do(duplicateButton.click());
-    NewHoldingsRecord.waitLoading();
+    InventoryNewHoldings.waitLoading();
   },
   delete:() => {
     cy.do(actionsButton.click());

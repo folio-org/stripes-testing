@@ -14,7 +14,7 @@ import Logs from '../../support/fragments/data_import/logs/logs';
 import FileDetails from '../../support/fragments/data_import/logs/fileDetails';
 import InstanceRecordView from '../../support/fragments/inventory/instanceRecordView';
 import MarcFieldProtection from '../../support/fragments/settings/dataImport/marcFieldProtection';
-import InventorySearch from '../../support/fragments/inventory/inventorySearch';
+import InventorySearchAndFilter from '../../support/fragments/inventory/inventorySearchAndFilter';
 import MatchProfiles from '../../support/fragments/data_import/match_profiles/matchProfiles';
 import NewMatchProfile from '../../support/fragments/data_import/match_profiles/newMatchProfile';
 import InventoryViewSource from '../../support/fragments/inventory/inventoryViewSource';
@@ -179,7 +179,7 @@ describe('ui-data-import: Check that field protection settings work properly dur
     InventoryViewSource.verifyFieldInMARCBibSource(marcFieldProtected[1], dataForField920);
 
     // get Instance HRID through API
-    InventorySearch.getInstanceHRID()
+    InventorySearchAndFilter.getInstanceHRID()
       .then(hrId => {
         instanceHrid = hrId[0];
         // change file using order number
