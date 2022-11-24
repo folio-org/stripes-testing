@@ -183,4 +183,9 @@ export default {
   verifyPatronBlockValue(value = '') {
     cy.expect(KeyValue('Patron group').has({ value: including(value) }));
   },
+
+  verifyExpirationDate(date) {
+    // date format MM/DD/YYYY
+    cy.expect(KeyValue('Expiration date').has({ value: including(date) }));
+  },
 };
