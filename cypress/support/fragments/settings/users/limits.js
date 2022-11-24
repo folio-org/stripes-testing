@@ -38,4 +38,10 @@ export default {
       saveButton.click(),
     ]);
   },
+  setMaximumNumberOfLostItems: (itemsNumber) => {
+    cy.do([
+      TextField({ name:'72b67965-5b73-4840-bc0b-be8f3f6e047e' }).fillIn(itemsNumber),
+      Button('Save').click(),
+    ]);
+  },
 };
