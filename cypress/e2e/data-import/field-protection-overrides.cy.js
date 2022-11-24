@@ -19,7 +19,7 @@ import FileManager from '../../support/utils/fileManager';
 import InstanceRecordView from '../../support/fragments/inventory/instanceRecordView';
 import InventoryInstance from '../../support/fragments/inventory/inventoryInstance';
 import InventoryViewSource from '../../support/fragments/inventory/inventoryViewSource';
-import InventorySearch from '../../support/fragments/inventory/inventorySearch';
+import InventorySearchAndFilter from '../../support/fragments/inventory/inventorySearchAndFilter';
 
 describe('ui-data-import: Check that field protection overrides work properly during data import', () => {
   let firstFieldId = null;
@@ -251,7 +251,7 @@ describe('ui-data-import: Check that field protection overrides work properly du
     });
 
     // get Instance HRID through API
-    InventorySearch.getInstanceHRID()
+    InventorySearchAndFilter.getInstanceHRID()
       .then(hrId => {
         instanceHrid = hrId[0];
         DataImport.editMarcFile(fileForEditRev1, editedFileNameRev1, [instanceHridFromFile], [instanceHrid]);
@@ -271,7 +271,7 @@ describe('ui-data-import: Check that field protection overrides work properly du
         FileDetails.checkInstanceQuantityInSummaryTable('1', '1');
 
         cy.visit(TopMenu.inventoryPath);
-        InventorySearch.searchInstanceByHRID(instanceHrid);
+        InventorySearchAndFilter.searchInstanceByHRID(instanceHrid);
         InstanceRecordView.verifyAdministrativeNote(administrativeNote);
         InventoryInstance.verifyResourceIdentifier(resourceIdentifiers[0].type, resourceIdentifiers[0].value, 0);
         InventoryInstance.verifyResourceIdentifier(resourceIdentifiers[1].type, resourceIdentifiers[1].value, 2);
@@ -298,7 +298,7 @@ describe('ui-data-import: Check that field protection overrides work properly du
         FileDetails.checkInstanceQuantityInSummaryTable('1', '1');
 
         cy.visit(TopMenu.inventoryPath);
-        InventorySearch.searchInstanceByHRID(instanceHrid);
+        InventorySearchAndFilter.searchInstanceByHRID(instanceHrid);
         InstanceRecordView.verifyAdministrativeNote(updatedAdministativeNote);
         InventoryInstance.verifyResourceIdentifierAbsent();
         InstanceRecordView.verifyInstanceNote(updatedInstanceNote);

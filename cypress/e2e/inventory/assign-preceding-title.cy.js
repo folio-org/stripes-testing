@@ -1,9 +1,9 @@
 import TopMenu from '../../support/fragments/topMenu';
 import getRandomPostfix from '../../support/utils/stringTools';
-import InventorySearch from '../../support/fragments/inventory/inventorySearch';
+import InventorySearchAndFilter from '../../support/fragments/inventory/inventorySearchAndFilter';
 import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
 import InventoryInstance from '../../support/fragments/inventory/inventoryInstance';
-import InventoryInstanceEdit from '../../support/fragments/inventory/InventoryInstanceEdit';
+import InstanceRecordEdit from '../../support/fragments/inventory/instanceRecordEdit';
 import Helper from '../../support/fragments/finance/financeHelper';
 import TestTypes from '../../support/dictionary/testTypes';
 import DevTeams from '../../support/dictionary/devTeams';
@@ -55,15 +55,15 @@ describe('ui-inventory: Assign a Preceding title for an instance', () => {
   });
 
   it('C9215 In Accordion Title --> Test assigning a Preceding title (folijet) (prokopovych)', { tags:  [TestTypes.smoke, DevTeams.folijet] }, () => {
-    InventorySearch.searchByParameter('Title (all)', instanceTitle);
+    InventorySearchAndFilter.searchByParameter('Title (all)', instanceTitle);
     InventoryInstances.selectInstance();
     InventoryInstance.editInstance();
-    InventoryInstanceEdit.addPrecedingTitle(0, precedingTitleValue, isbnValue, issnValue);
-    InventoryInstanceEdit.saveAndClose();
+    InstanceRecordEdit.addPrecedingTitle(0, precedingTitleValue, isbnValue, issnValue);
+    InstanceRecordEdit.saveAndClose();
     InventoryInstance.checkPrecedingTitle(0, precedingTitleValue, isbnValue, issnValue);
     InventoryInstance.editInstance();
-    InventoryInstanceEdit.addExistingPrecedingTitle(instanceTitle2);
-    InventoryInstanceEdit.saveAndClose();
+    InstanceRecordEdit.addExistingPrecedingTitle(instanceTitle2);
+    InstanceRecordEdit.saveAndClose();
     InventoryInstance.checkPrecedingTitle(0, instanceTitle2, '', '');
   });
 });

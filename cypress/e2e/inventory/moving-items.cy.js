@@ -1,5 +1,5 @@
 import TopMenu from '../../support/fragments/topMenu';
-import InventorySearch from '../../support/fragments/inventory/inventorySearch';
+import InventorySearchAndFilter from '../../support/fragments/inventory/inventorySearchAndFilter';
 import TestTypes from '../../support/dictionary/testTypes';
 import InventoryInstance from '../../support/fragments/inventory/inventoryInstance';
 import InteractorsTools from '../../support/utils/interactorsTools';
@@ -105,9 +105,9 @@ describe('ui-inventory: moving items', () => {
 
 
   it('C15185 Move multiple items from one holdings to another holdings within an instance (firebird)', { tags: [TestTypes.smoke, devTeams.firebird] }, () => {
-    InventorySearch.switchToItem();
-    InventorySearch.searchByParameter('Barcode', ITEM_BARCODE);
-    InventorySearch.selectSearchResultItem();
+    InventorySearchAndFilter.switchToItem();
+    InventorySearchAndFilter.searchByParameter('Barcode', ITEM_BARCODE);
+    InventorySearchAndFilter.selectSearchResultItem();
     InventoryInstance.openMoveItemsWithinAnInstance();
 
     InventoryInstance.moveItemToAnotherHolding(firstHolding, secondHolding);
@@ -129,7 +129,7 @@ describe('ui-inventory: moving items', () => {
         InventoryInstance.waitLoading();
         InventoryInstance.moveHoldingsToAnotherInstance(initialInstanceHrId);
         InventoryInstancesMovement.closeInLeftForm();
-        InventorySearch.searchByParameter('Instance HRID', initialInstanceHrId);
+        InventorySearchAndFilter.searchByParameter('Instance HRID', initialInstanceHrId);
         InventoryInstances.waitLoading();
         InventoryInstances.selectInstance();
         InventoryInstance.openHoldingView();

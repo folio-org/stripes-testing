@@ -1,5 +1,5 @@
 import TopMenu from '../../support/fragments/topMenu';
-import InventorySearch from '../../support/fragments/inventory/inventorySearch';
+import InventorySearchAndFilter from '../../support/fragments/inventory/inventorySearchAndFilter';
 import InventoryModals from '../../support/fragments/inventory/inventoryModals';
 import testTypes from '../../support/dictionary/testTypes';
 import devTeams from '../../support/dictionary/devTeams';
@@ -13,18 +13,18 @@ describe('ui-inventory: selecting / changing records', () => {
   it('C196755 verifies search result counts and selected counts (firebird)', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
     const selectedRecords = 2;
 
-    InventorySearch.byKeywords('*');
-    InventorySearch.selectResultCheckboxes(selectedRecords);
-    InventorySearch.verifySelectedRecords(selectedRecords);
+    InventorySearchAndFilter.byKeywords('*');
+    InventorySearchAndFilter.selectResultCheckboxes(selectedRecords);
+    InventorySearchAndFilter.verifySelectedRecords(selectedRecords);
   });
 
   it('C196754 verify show selected records (firebird)', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
     const selectedRecords = 3;
 
-    InventorySearch.byKeywords('*');
-    InventorySearch.selectResultCheckboxes(selectedRecords);
-    InventorySearch.verifySelectedRecords(selectedRecords);
-    InventorySearch.showSelectedRecords();
+    InventorySearchAndFilter.byKeywords('*');
+    InventorySearchAndFilter.selectResultCheckboxes(selectedRecords);
+    InventorySearchAndFilter.verifySelectedRecords(selectedRecords);
+    InventorySearchAndFilter.showSelectedRecords();
 
     InventoryModals.verifySelectedRecords(selectedRecords);
     InventoryModals.verifySelectedRecordsCount(selectedRecords);
@@ -35,13 +35,13 @@ describe('ui-inventory: selecting / changing records', () => {
     const selectedRecords = 3;
     const unselectedRecords = 1;
 
-    InventorySearch.byKeywords('*');
-    InventorySearch.selectResultCheckboxes(selectedRecords);
-    InventorySearch.verifySelectedRecords(selectedRecords);
-    InventorySearch.showSelectedRecords();
+    InventorySearchAndFilter.byKeywords('*');
+    InventorySearchAndFilter.selectResultCheckboxes(selectedRecords);
+    InventorySearchAndFilter.verifySelectedRecords(selectedRecords);
+    InventorySearchAndFilter.showSelectedRecords();
 
     InventoryModals.clickOnCheckboxes(unselectedRecords);
     InventoryModals.save();
-    InventorySearch.verifySelectedRecords(selectedRecords - unselectedRecords);
+    InventorySearchAndFilter.verifySelectedRecords(selectedRecords - unselectedRecords);
   });
 });
