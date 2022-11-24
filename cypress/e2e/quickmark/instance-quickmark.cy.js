@@ -5,7 +5,7 @@ import InventoryActions from '../../support/fragments/inventory/inventoryActions
 import InventoryInstance from '../../support/fragments/inventory/inventoryInstance';
 import QuickMarcEditor from '../../support/fragments/quickMarcEditor';
 import InventoryViewSource from '../../support/fragments/inventory/inventoryViewSource';
-import InventoryInstanceEdit from '../../support/fragments/inventory/InventoryInstanceEdit';
+import InstanceRecordEdit from '../../support/fragments/inventory/instanceRecordEdit';
 import testTypes from '../../support/dictionary/testTypes';
 import features from '../../support/dictionary/features';
 import permissions from '../../support/dictionary/permissions';
@@ -99,8 +99,8 @@ describe('Manage inventory Bib records with quickMarc editor', () => {
     InventoryInstance.checkExpectedMARCSource();
 
     InventoryInstance.editInstance();
-    InventoryInstanceEdit.checkReadOnlyFields();
-    InventoryInstanceEdit.close();
+    InstanceRecordEdit.checkReadOnlyFields();
+    InstanceRecordEdit.close();
 
     InventoryInstance.goToEditMARCBiblRecord();
     QuickMarcEditor.waitLoading();

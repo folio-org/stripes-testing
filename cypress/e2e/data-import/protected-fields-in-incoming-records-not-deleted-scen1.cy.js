@@ -8,7 +8,7 @@ import DataImport from '../../support/fragments/data_import/dataImport';
 import JobProfiles from '../../support/fragments/data_import/job_profiles/jobProfiles';
 import Logs from '../../support/fragments/data_import/logs/logs';
 import FileDetails from '../../support/fragments/data_import/logs/fileDetails';
-import InventorySearch from '../../support/fragments/inventory/inventorySearch';
+import InventorySearchAndFilter from '../../support/fragments/inventory/inventorySearchAndFilter';
 import MarcFieldProtection from '../../support/fragments/settings/dataImport/marcFieldProtection';
 import Z3950TargetProfiles from '../../support/fragments/settings/inventory/z39.50TargetProfiles';
 import InventoryInstance from '../../support/fragments/inventory/inventoryInstance';
@@ -55,7 +55,7 @@ describe('ui-data-import: Check that protected fields in incoming records are no
         FileDetails.checkInstanceQuantityInSummaryTable('1');
 
         // get Instance HRID through API
-        InventorySearch.getInstanceHRID()
+        InventorySearchAndFilter.getInstanceHRID()
           .then(hrId => {
             instanceHrid = hrId;
           });
@@ -88,7 +88,7 @@ describe('ui-data-import: Check that protected fields in incoming records are no
     Z3950TargetProfiles.checkIsOclcWorldCatIsChanged(authentication);
 
     cy.visit(TopMenu.inventoryPath);
-    InventorySearch.searchInstanceByHRID(instanceHrid);
+    InventorySearchAndFilter.searchInstanceByHRID(instanceHrid);
     InventoryInstance.editMarcBibliographicRecord();
     InventoryEditMarcRecord.deleteField();
     InventoryInstance.checkElectronicAccess();

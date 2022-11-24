@@ -2,7 +2,7 @@ import TestTypes from '../../../support/dictionary/testTypes';
 import HoldingsRecordEdit from '../../../support/fragments/inventory/holdingsRecordEdit';
 import HoldingsRecordView from '../../../support/fragments/inventory/holdingsRecordView';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
-import InventorySearch from '../../../support/fragments/inventory/inventorySearch';
+import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
 import ItemRecordView from '../../../support/fragments/inventory/itemRecordView';
 import TopMenu from '../../../support/fragments/topMenu';
 import generateItemBarcode from '../../../support/utils/generateItemBarcode';
@@ -76,9 +76,9 @@ describe('ui-inventory: Update the effective location for the item', () => {
   it('C3501 An item is being moved from one library location to another. Update the effective location for the item (folijet) (prokopovych)',
     { tags: [TestTypes.smoke, DevTeams.folijet] },
     () => {
-      InventorySearch.switchToItem();
-      InventorySearch.searchByParameter('Barcode', itemBarcode);
-      InventorySearch.selectSearchResultItem();
+      InventorySearchAndFilter.switchToItem();
+      InventorySearchAndFilter.searchByParameter('Barcode', itemBarcode);
+      InventorySearchAndFilter.selectSearchResultItem();
       InventoryInstance.openHoldingView();
       HoldingsRecordView.edit();
       HoldingsRecordEdit.changePermanentLocation(anotherPermanentLocation);

@@ -6,7 +6,7 @@ import HoldingsRecordView from '../../../support/fragments/inventory/holdingsRec
 import testTypes from '../../../support/dictionary/testTypes';
 import features from '../../../support/dictionary/features';
 import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
-import NewHoldingsRecord from '../../../support/fragments/inventory/newHoldingsRecord';
+import InventoryNewHoldings from '../../../support/fragments/inventory/inventoryNewHoldings';
 import HoldingsRecordEdit from '../../../support/fragments/inventory/holdingsRecordEdit';
 import DevTeams from '../../../support/dictionary/devTeams';
 
@@ -27,7 +27,7 @@ describe('Manage holding records with FOLIO source', () => {
     HoldingsRecordEdit.closeWithoutSave();
     HoldingsRecordView.tryToDelete();
     HoldingsRecordView.duplicate();
-    NewHoldingsRecord.checkSource();
+    InventoryNewHoldings.checkSource();
     // TODO: clarify what is "Verify that you are able to add or access an item" and "Behavior is no different than what FOLIO currently supports" in TestRail
   });
 });

@@ -4,7 +4,7 @@ import TopMenu from '../../../support/fragments/topMenu';
 import HoldingsRecordView from '../../../support/fragments/inventory/holdingsRecordView';
 import TestTypes from '../../../support/dictionary/testTypes';
 import Features from '../../../support/dictionary/features';
-import NewHoldingsRecord from '../../../support/fragments/inventory/newHoldingsRecord';
+import InventoryNewHoldings from '../../../support/fragments/inventory/inventoryNewHoldings';
 import InventoryActions from '../../../support/fragments/inventory/inventoryActions';
 import InventorySteps from '../../../support/fragments/inventory/inventorySteps';
 import InventoryViewSource from '../../../support/fragments/inventory/inventoryViewSource';
@@ -31,8 +31,8 @@ describe('Manage holding records with MARC source', () => {
       QuickmarcEditor.waitLoading();
       QuickmarcEditor.closeWithoutSaving();
       HoldingsRecordView.duplicate();
-      NewHoldingsRecord.checkSource();
-      NewHoldingsRecord.saveAndClose();
+      InventoryNewHoldings.checkSource();
+      InventoryNewHoldings.saveAndClose();
       HoldingsRecordView.waitLoading();
       HoldingsRecordView.getId().then(newHoldindsRecordId => {
         HoldingsRecordView.close();

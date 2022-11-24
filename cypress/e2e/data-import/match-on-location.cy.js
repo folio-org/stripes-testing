@@ -14,7 +14,7 @@ import DataImport from '../../support/fragments/data_import/dataImport';
 import FileDetails from '../../support/fragments/data_import/logs/fileDetails';
 import Logs from '../../support/fragments/data_import/logs/logs';
 import SettingsJobProfiles from '../../support/fragments/settings/dataImport/settingsJobProfiles';
-import InventorySearch from '../../support/fragments/inventory/inventorySearch';
+import InventorySearchAndFilter from '../../support/fragments/inventory/inventorySearchAndFilter';
 import InventoryInstance from '../../support/fragments/inventory/inventoryInstance';
 import NewFieldMappingProfile from '../../support/fragments/data_import/mapping_profiles/newFieldMappingProfile';
 import HoldingsRecordView from '../../support/fragments/inventory/holdingsRecordView';
@@ -195,7 +195,7 @@ describe('ui-data-import: Match on location', () => {
         FileDetails.checkItemsQuantityInSummaryTable(0, '1');
 
         // get Instance HRID through API
-        InventorySearch.getInstanceHRID()
+        InventorySearchAndFilter.getInstanceHRID()
           .then(hrId => { instanceHrid = hrId[0]; });
       });
   });
