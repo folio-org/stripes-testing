@@ -8,7 +8,7 @@ import AppPaths from '../../support/fragments/app-paths';
 import ChangeDueDateForm from '../../support/fragments/loans/changeDueDateForm';
 import LoansPage from '../../support/fragments/loans/loansPage';
 import SettingsMenu from '../../support/fragments/settingsMenu';
-import generateItemBarcode from '../../support/utils/generateItemBarcode';
+import generateUniqueItemBarcodeWithShift from '../../support/utils/generateUniqueItemBarcodeWithShift';
 import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
 import PatronGroups from '../../support/fragments/settings/users/patronGroups';
 import Location from '../../support/fragments/settings/tenant/locations/newLocation';
@@ -25,10 +25,6 @@ import Checkout from '../../support/fragments/checkout/checkout';
 import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
 import InventoryInstance from '../../support/fragments/inventory/inventoryInstance';
 import getRandomPostfix from '../../support/utils/stringTools';
-
-function generateUniqueItemBarcodeWithShift(index = 0) {
-  return (generateItemBarcode() - Math.round(getRandomPostfix()) + '').substring(index);
-}
 
 describe('Triggers: Check Out, Loan due date change, Check in', () => {
   const defaultTemplate = {

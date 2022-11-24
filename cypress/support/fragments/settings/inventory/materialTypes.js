@@ -4,7 +4,8 @@ import {
   TextField,
   HTML,
   including,
-  Modal
+  Modal,
+  NavListItem
 } from '../../../../../interactors';
 import ModalDeleteMaterialType from './modalDeleteMaterialType';
 import InteractorsTools from '../../../utils/interactorsTools';
@@ -50,5 +51,9 @@ export default {
     });
     ModalDeleteMaterialType.deleteMaterialType();
     cy.expect(Modal('Delete Material type').absent());
+  },
+
+  checkAvailableOptions:() => {
+    cy.expect(Pane('Inventory').find(NavListItem('Material types')).exists());
   }
 };

@@ -1,8 +1,8 @@
 import TopMenu from '../../../support/fragments/topMenu';
-import InventorySearch from '../../../support/fragments/inventory/inventorySearch';
+import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
 import TestTypes from '../../../support/dictionary/testTypes';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
-import InventoryInstanceEdit from '../../../support/fragments/inventory/InventoryInstanceEdit';
+import InstanceRecordEdit from '../../../support/fragments/inventory/instanceRecordEdit';
 import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
 import permissions from '../../../support/dictionary/permissions';
 import getRandomPostfix from '../../../support/utils/stringTools';
@@ -91,16 +91,16 @@ describe('ui-inventory: location', () => {
     const editedLocationName = Cypress.env('locations')[1].name;
 
     // select instance
-    InventorySearch.switchToItem();
-    InventorySearch.searchByParameter('Barcode', ITEM_BARCODE);
+    InventorySearchAndFilter.switchToItem();
+    InventorySearchAndFilter.searchByParameter('Barcode', ITEM_BARCODE);
     InventoryInstances.selectInstance();
     InventoryInstance.openHoldings([toBeEditedLocationName]);
     InventoryInstance.openItemView(ITEM_BARCODE);
 
     // edit instance
     InventoryInstance.openEditItemPage();
-    InventoryInstanceEdit.chooseTemporaryLocation(editedLocationName);
-    InventoryInstanceEdit.saveAndClose();
+    InstanceRecordEdit.chooseTemporaryLocation(editedLocationName);
+    InstanceRecordEdit.saveAndClose();
     InventoryInstance.closeInstancePage();
 
     // verify results
@@ -119,16 +119,16 @@ describe('ui-inventory: location', () => {
     const editedLocationName = Cypress.env('locations')[0].name;
 
     // select instance
-    InventorySearch.switchToItem();
-    InventorySearch.searchByParameter('Barcode', ITEM_BARCODE);
+    InventorySearchAndFilter.switchToItem();
+    InventorySearchAndFilter.searchByParameter('Barcode', ITEM_BARCODE);
     InventoryInstances.selectInstance();
     InventoryInstance.openHoldings([editedLocationName]);
     InventoryInstance.openItemView(ITEM_BARCODE);
 
     // edit instance
     InventoryInstance.openEditItemPage();
-    InventoryInstanceEdit.choosePermanentLocation(toBeEditedLocationName);
-    InventoryInstanceEdit.saveAndClose();
+    InstanceRecordEdit.choosePermanentLocation(toBeEditedLocationName);
+    InstanceRecordEdit.saveAndClose();
     InventoryInstance.closeInstancePage();
 
     // verify results

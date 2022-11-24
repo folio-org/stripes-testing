@@ -14,7 +14,7 @@ import InventoryInstance from '../../support/fragments/inventory/inventoryInstan
 import SettingsMenu from '../../support/fragments/settingsMenu';
 import TopMenu from '../../support/fragments/topMenu';
 import Logs from '../../support/fragments/data_import/logs/logs';
-import InventorySearch from '../../support/fragments/inventory/inventorySearch';
+import InventorySearchAndFilter from '../../support/fragments/inventory/inventorySearchAndFilter';
 
 describe('ui-data-import: Match on Holdings 856 $u', () => {
   const matchProfileName = `autotestMatchProf${getRandomPostfix()}`;
@@ -167,11 +167,11 @@ describe('ui-data-import: Match on Holdings 856 $u', () => {
     JobProfiles.searchJobProfileForImport(createInstanceAndEHoldingsJobProfileName);
     JobProfiles.runImportFile(nameForCreateMarcFile);
 
-    InventorySearch.getInstanceHRID()
+    InventorySearchAndFilter.getInstanceHRID()
       .then(hrId => {
         instanceHRID = hrId;
         cy.visit(TopMenu.inventoryPath);
-        InventorySearch.searchInstanceByHRID(instanceHRID);
+        InventorySearchAndFilter.searchInstanceByHRID(instanceHRID);
         InventoryInstance.openHoldingView();
         HoldingsRecordView.checkURIIsNotEmpty();
       });
@@ -182,10 +182,10 @@ describe('ui-data-import: Match on Holdings 856 $u', () => {
     JobProfiles.runImportFile(nameForUpdateCreateMarcFile);
     Logs.checkStatusOfJobProfile();
 
-    InventorySearch.getInstanceHRID()
+    InventorySearchAndFilter.getInstanceHRID()
       .then(() => {
         cy.visit(TopMenu.inventoryPath);
-        InventorySearch.searchInstanceByHRID(instanceHRID);
+        InventorySearchAndFilter.searchInstanceByHRID(instanceHRID);
         InventoryInstance.openHoldingView();
         HoldingsRecordView.checkCallNumber('ONLINE');
       });

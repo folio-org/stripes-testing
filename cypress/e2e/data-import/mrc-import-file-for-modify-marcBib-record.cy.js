@@ -8,7 +8,7 @@ import JobProfiles from '../../support/fragments/data_import/job_profiles/jobPro
 import MatchProfiles from '../../support/fragments/data_import/match_profiles/matchProfiles';
 import DataImport from '../../support/fragments/data_import/dataImport';
 import Logs from '../../support/fragments/data_import/logs/logs';
-import InventorySearch from '../../support/fragments/inventory/inventorySearch';
+import InventorySearchAndFilter from '../../support/fragments/inventory/inventorySearchAndFilter';
 import ExportMarcFile from '../../support/fragments/data-export/export-marc-file';
 import FileManager from '../../support/utils/fileManager';
 import ExportFile from '../../support/fragments/data-export/exportFile';
@@ -95,12 +95,12 @@ describe('ui-data-import: Verify the possibility to modify MARC Bibliographic re
     });
 
     // get Instance HRID through API
-    InventorySearch.getInstanceHRID()
+    InventorySearchAndFilter.getInstanceHRID()
       .then(hrId => {
         // download .csv file
         cy.visit(TopMenu.inventoryPath);
-        InventorySearch.searchInstanceByHRID(hrId[0]);
-        InventorySearch.saveUUIDs();
+        InventorySearchAndFilter.searchInstanceByHRID(hrId[0]);
+        InventorySearchAndFilter.saveUUIDs();
         ExportMarcFile.downloadCSVFile(nameForCSVFile, 'SearchInstanceUUIDs*');
         FileManager.deleteFolder(Cypress.config('downloadsFolder'));
       });
