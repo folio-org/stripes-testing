@@ -105,7 +105,7 @@ describe('bulk-edit', () => {
       BulkEditSearchPane.verifyChangedResults('staff');
     });
 
-    it.only('C359214 Verify expiration date updates in In-app approach (firebird)', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
+    it('C359214 Verify expiration date updates in In-app approach (firebird)', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
       const todayDate = DateTools.getCurrentDate();
 
       BulkEditSearchPane.selectRecordIdentifier('User UUIDs');
