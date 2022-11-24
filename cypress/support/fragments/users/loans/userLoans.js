@@ -1,7 +1,15 @@
 import { matching } from 'bigtest';
-import { Pane, MultiColumnListRow, MultiColumnListCell, HTML, including, Button, KeyValue, Callout } from '../../../../../interactors';
-
-import ItemVeiw from '../../inventory/inventoryItem/itemVeiw';
+import {
+  Pane,
+  MultiColumnListRow,
+  MultiColumnListCell,
+  HTML,
+  including,
+  Button,
+  KeyValue,
+} from '../../../../../interactors';
+import ItemView from '../../inventory/inventoryItem/itemView';
+import { REQUEST_METHOD } from '../../../constants';
 
 const claimReturnedButton = Button('Claim returned');
 const declaredLostButton = Button('Declare lost');
@@ -12,6 +20,15 @@ const rowInList = MultiColumnListRow({ indexRow: 'row-0' });
 
 function openActionsMenuOfLoanByBarcode(itemBarcode) {
   cy.do(MultiColumnListRow({ text: matching(itemBarcode), isContainer: false }).find(ellipsisButton).click());
+}
+
+function updateTimer(moduleId, routingEntry) {
+  return cy.okapiRequest({
+    method: REQUEST_METHOD.PATCH,
+    path: `_/proxy/tenants/diku/timers/${moduleId}`,
+    body: routingEntry,
+    isDefaultSearchParamsRequired: false,
+  });
 }
 
 export default {
@@ -41,6 +58,12 @@ export default {
     cy.expect(declaredLostButton.exists());
     return cy.do(declaredLostButton.click());
   },
+  declareLoanLostViaApi:(apiBody, loanId) => cy.okapiRequest({
+    method: 'POST',
+    path: `circulation/loans/${loanId}/declare-item-lost`,
+    body: apiBody,
+    isDefaultSearchParamsRequired: false
+  }),
   openActionsMenuOfLoanByBarcode,
   declareLoanLostByBarcode:(itemBarcode) => {
     openActionsMenuOfLoanByBarcode(itemBarcode);
@@ -51,7 +74,7 @@ export default {
     cy.do(ellipsisButton.click());
     cy.expect(itemDetailsButton.exists());
     cy.do(itemDetailsButton.click());
-    ItemVeiw.waitLoading();
+    ItemView.waitLoading();
   },
   renewItem:(barcode, isLoanOpened = false) => {
     if (isLoanOpened) {
@@ -76,6 +99,82 @@ export default {
   },
   verifyQuantityOpenAndClaimedReturnedLoans: (numberOfOpenLoans, numberOfClaimedReturnedLoans) => {
     return cy.expect(Pane(including('Loans -')).find(HTML(including(`${numberOfOpenLoans} records found (${numberOfClaimedReturnedLoans} claimed returned)`))).exists());
-  }
+  },
+  getUserLoansIdViaApi:(userId, loanStatus = 'open') => (
+    cy.okapiRequest({
+      method: 'GET',
+      path: `circulation/loans?query=(userId==${userId} and status.name==${loanStatus})`,
+      isDefaultSearchParamsRequired: false,
+    })
+      .then((({ body }) => body))),
 
+  updateTimerForAgedToLost: (mode) => {
+    if (typeof mode !== 'string') {
+      throw new Error('Unknown mode!');
+    }
+
+    let delayTime;
+    if (mode === 'reset') {
+      delayTime = '30';
+    } else if (mode === 'minute') {
+      delayTime = '1';
+    }
+
+    const scheduledAgeToLostModuleId = 'mod-circulation_7';
+    const scheduledAgeToLostRoutingEntry = {
+      methods: ['POST'],
+      pathPattern: '/circulation/scheduled-age-to-lost',
+      unit: 'minute',
+      delay: delayTime,
+      modulePermissions: [
+        'circulation-storage.loans.item.put',
+        'circulation-storage.loans.item.get',
+        'circulation-storage.loans.collection.get',
+        'circulation-storage.circulation-rules.get',
+        'circulation-storage.patron-notice-policies.collection.get',
+        'circulation-storage.patron-notice-policies.item.get',
+        'inventory-storage.items.item.put',
+        'circulation.internal.fetch-items',
+        'lost-item-fees-policies.item.get',
+        'lost-item-fees-policies.collection.get',
+        'pubsub.publish.post',
+        'users.item.get',
+        'users.collection.get',
+        'scheduled-notice-storage.scheduled-notices.item.post',
+      ],
+    };
+    const scheduledAgeToLostFeeChargingModuleId = 'mod-circulation_8';
+    const scheduledAgeToLostFeeChargingRoutingEntry = {
+      methods: ['POST'],
+      pathPattern: '/circulation/scheduled-age-to-lost-fee-charging',
+      unit: 'minute',
+      delay: delayTime,
+      modulePermissions: [
+        'circulation-storage.loans.item.put',
+        'circulation-storage.loans.item.get',
+        'circulation-storage.loans.collection.get',
+        'inventory-storage.items.item.put',
+        'circulation.internal.fetch-items',
+        'lost-item-fees-policies.item.get',
+        'lost-item-fees-policies.collection.get',
+        'owners.collection.get',
+        'feefines.collection.get',
+        'accounts.item.post',
+        'feefineactions.item.post',
+        'pubsub.publish.post',
+        'users.item.get',
+        'users.collection.get',
+        'usergroups.collection.get',
+        'usergroups.item.get',
+        'circulation-storage.circulation-rules.get',
+        'circulation-storage.patron-notice-policies.item.get',
+        'circulation-storage.patron-notice-policies.collection.get',
+        'circulation.rules.notice-policy.get',
+        'scheduled-notice-storage.scheduled-notices.item.post',
+        'actual-cost-record-storage.actual-cost-records.item.post',
+      ],
+    };
+    updateTimer(scheduledAgeToLostModuleId, scheduledAgeToLostRoutingEntry);
+    updateTimer(scheduledAgeToLostFeeChargingModuleId, scheduledAgeToLostFeeChargingRoutingEntry);
+  },
 };
