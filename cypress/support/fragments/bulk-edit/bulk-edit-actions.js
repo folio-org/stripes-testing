@@ -1,6 +1,14 @@
 import { HTML, including } from '@interactors/html';
 import FileManager from '../../utils/fileManager';
-import {Modal, SelectionOption, Button, DropdownMenu, Checkbox, MultiColumnListHeader} from '../../../../interactors';
+import {
+  Modal,
+  SelectionOption,
+  Button,
+  DropdownMenu,
+  Checkbox,
+  MultiColumnListHeader,
+  MultiColumnListCell
+} from '../../../../interactors';
 
 const actionsBtn = Button('Actions');
 const dropdownMenu = DropdownMenu();
@@ -8,6 +16,7 @@ const cancelBtn = Button({ id: 'clickable-cancel' });
 const createBtn = Button({ id: 'clickable-create-widget' });
 const plusBtn = Button({ icon: 'plus-sign' });
 const deleteBtn = Button({ icon: 'trash' });
+const keepEditingBtn = Button('Keep editing');
 // interactor doesn't allow to pick second the same select
 function getLocationSelect() {
   return cy.get('select').eq(2);
@@ -32,11 +41,15 @@ function getPatronGroupTypeSelect() {
 function getPermanentLoanSelect() {
   return cy.get('select').eq(1);
 }
+const areYouSureForm = Modal('Are you sure?');
 
 
 export default {
   openStartBulkEditForm() {
     cy.do(Button(including('Start bulk edit')).click());
+  },
+  openInAppStartBulkEditFrom() {
+    cy.do(Button('Start bulk edit').click());
   },
   verifyBulkEditForm() {
     getEmailSelect().select('Email');
@@ -44,6 +57,20 @@ export default {
       Button({ icon: 'plus-sign'}).exists(),
       Button({ icon: 'trash', disabled: true }).exists(),
     ])
+  },
+
+  verifyAreYouSureForm(count, cellContent) {
+    cy.expect([
+      areYouSureForm.find(HTML(including(`${count} records will be changed`))).exists(),
+      areYouSureForm.find(keepEditingBtn).exists(),
+      areYouSureForm.find(Button('Download preview')).exists(),
+      areYouSureForm.find(Button('Commit changes')).exists(),
+      areYouSureForm.find(MultiColumnListCell(cellContent)).exists()
+    ]);
+  },
+
+  clickKeepEditingBtn() {
+    cy.do(areYouSureForm.find(keepEditingBtn).click());
   },
 
   openActions() {
