@@ -90,18 +90,18 @@ describe('bulk-edit', () => {
       BulkEditSearchPane.waitFileUploading();
 
       BulkEditActions.openActions();
-      BulkEditActions.openStartBulkEditForm();
-      BulkEditActions.fillPatronGroup('graduate (Graduate Student)');
+      BulkEditActions.openInAppStartBulkEditFrom();
+      BulkEditActions.fillPatronGroup('staff (Staff Member)');
 
-      // need to check element here 7 step
+      BulkEditActions.confirmChanges();
+      BulkEditActions.verifyAreYouSureForm(1, user.username);
+      BulkEditActions.clickKeepEditingBtn();
+
       BulkEditActions.confirmChanges();
       BulkEditActions.commitChanges();
       BulkEditSearchPane.waitFileUploading();
-
-      cy.loginAsAdmin({ path: TopMenu.usersPath, waiter: UsersSearchPane.waitLoading });
-      UsersSearchPane.searchByKeywords(user.username);
-      UsersSearchPane.openUser(user.username);
-      UsersCard.verifyPatronBlockValue('graduate');
+      BulkEditActions.verifySuccessBanner(1);
+      BulkEditSearchPane.verifyChangedResults('staff');
     });
   });
 });
