@@ -16,6 +16,7 @@ const cancelBtn = Button({ id: 'clickable-cancel' });
 const createBtn = Button({ id: 'clickable-create-widget' });
 const plusBtn = Button({ icon: 'plus-sign' });
 const deleteBtn = Button({ icon: 'trash' });
+const keepEditingBtn = Button('Keep editing');
 // interactor doesn't allow to pick second the same select
 function getLocationSelect() {
   return cy.get('select').eq(2);
@@ -61,7 +62,7 @@ export default {
   verifyAreYouSureForm(count, cellContent) {
     cy.expect([
       areYouSureForm.find(HTML(including(`${count} records will be changed`))).exists(),
-      areYouSureForm.find(Button('Keep editing')).exists(),
+      areYouSureForm.find(keepEditingBtn).exists(),
       areYouSureForm.find(Button('Download preview')).exists(),
       areYouSureForm.find(Button('Commit changes')).exists(),
       areYouSureForm.find(MultiColumnListCell(cellContent)).exists()
@@ -69,11 +70,7 @@ export default {
   },
 
   clickKeepEditingBtn() {
-    cy.do(areYouSureForm.find(Button('Keep editing')).click());
-  },
-
-  clickDownloadPreview() {
-    cy.do(areYouSureForm.find(Button('Download preview')).click());
+    cy.do(areYouSureForm.find(keepEditingBtn).click());
   },
 
   openActions() {
