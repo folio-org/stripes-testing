@@ -38,6 +38,6 @@ describe('ui-data-import: MARC file import with matching for 999 ff field', () =
     ActionProfiles.createActionProfile(actionProfile, mappingProfile.name);
     ActionProfiles.checkActionProfilePresented(actionProfile.name);
 
-    
+    ActionProfiles.selectActionProfile(actionProfile.name);
   });
 });

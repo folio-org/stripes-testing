@@ -40,21 +40,29 @@ const deleteActionProfile = (profileName) => {
     });
 };
 
+const searchActionProfile = (profileName) => {
+  // TODO: clarify with developers what should be waited
+  cy.wait(1500);
+  cy.do(TextField({ id:'input-search-action-profiles-field' }).fillIn(profileName));
+  cy.do(Pane('Action profiles').find(Button('Search')).click());
+};
+
 export default {
+  deleteActionProfile,
+  closeActionProfile,
+  searchActionProfile,
   createActionProfile:(actionProfile, mappingProfileName) => {
     openNewActionProfileForm();
     newActionProfile.fillActionProfile(actionProfile);
     newActionProfile.linkMappingProfile(mappingProfileName);
   },
 
-  checkActionProfilePresented: (actionProfileName) => {
-    // TODO: clarify with developers what should be waited
-    cy.wait(1500);
-    cy.do(TextField({ id:'input-search-action-profiles-field' }).fillIn(actionProfileName));
-    cy.do(Pane('Action profiles').find(Button('Search')).click());
-    cy.expect(MultiColumnListCell(actionProfileName).exists());
+  checkActionProfilePresented: (profileName) => {
+    searchActionProfile(profileName);
+    cy.expect(MultiColumnListCell(profileName).exists());
   },
 
-  deleteActionProfile,
-  closeActionProfile,
+  selectActionProfile:(profileName) => {
+    cy.do(MultiColumnListCell(profileName).click());
+  },
 };
