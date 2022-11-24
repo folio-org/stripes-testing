@@ -40,7 +40,11 @@ export default {
   },
 
   create: (noticePolicyTemplate, autoSave = true) => {
+    // this waiter is needed to synchronize with the page. we need to wait until the field #input-patron-notice-name is shown and ready to receive the text. Without of this waiter only the part of the entered string was saved.
+    cy.wait(10000);
     cy.get('#input-patron-notice-name').type(noticePolicyTemplate.name);
+    // this waiter is needed to synchronize with the page. we need to wait until the field #input-patron-notice-name is shown and ready to receive the text. Without of this waiter only the part of the entered string was saved.
+    cy.wait(10000);
     cy.do([
       bodyField.fillIn(noticePolicyTemplate.body),
       descriptionField.fillIn(noticePolicyTemplate.description),
@@ -98,6 +102,7 @@ export default {
       actionsButtons.edit.has({ visible: true }),
       actionsButtons.delete.exists(),
       actionsButtons.delete.has({ visible: true }),
+      actionsButton.click(),
     ]);
   },
 
