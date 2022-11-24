@@ -31,7 +31,6 @@ describe('ui-inventory: import by OCLC', () => {
         Z3950TargetProfiles.changeOclcWorldCatValueViaApi('100473910/PAOLF');
         InventorySearchAndFilter.createInstanceViaApi()
           .then(({ instanceData }) => {
-            console.log(instanceData);
             instanceRecord = instanceData;
           });
       });

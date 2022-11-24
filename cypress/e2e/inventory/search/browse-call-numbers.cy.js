@@ -3,11 +3,11 @@ import TestTypes from '../../../support/dictionary/testTypes';
 import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
 import InventoryActions from '../../../support/fragments/inventory/inventoryActions';
 import devTeams from '../../../support/dictionary/devTeams';
+import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
 
 describe('ui-inventory: browse call numbers', () => {
   beforeEach('navigate to inventory', () => {
-    cy.login(Cypress.env('diku_login'), Cypress.env('diku_password'));
-    cy.visit(TopMenu.inventoryPath);
+    cy.loginAsAdmin({ path: TopMenu.inventoryPath, waiter: InventoryInstances.waitContentLoading });
   });
 
   it('C347902 Verify "Browse call numbers" option on the Instances tab (firebird)', { tags: [TestTypes.smoke, devTeams.firebird] }, () => {
