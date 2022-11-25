@@ -25,7 +25,7 @@ import InventoryViewSource from './inventoryViewSource';
 import NewHoldingsRecord from './newHoldingsRecord';
 import InventoryInstanceSelectInstanceModal from './holdingsMove/inventoryInstanceSelectInstanceModal';
 import InventoryInstancesMovement from './holdingsMove/inventoryInstancesMovement';
-import ItemVeiw from './inventoryItem/itemVeiw';
+import ItemView from './inventoryItem/itemView';
 import DateTools from '../../utils/dateTools';
 
 const section = Section({ id: 'pane-instancedetails' });

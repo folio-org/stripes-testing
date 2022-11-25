@@ -2,7 +2,7 @@ import uuid from 'uuid';
 import { Button, including, TextField, MultiColumnListRow, MultiColumnList, MultiColumnListCell, HTML, Pane, Modal, PaneContent, or } from '../../../../interactors';
 import { REQUEST_METHOD } from '../../constants';
 import { getLongDelay } from '../../utils/cypressTools';
-import ItemVeiw from '../inventory/inventoryItem/itemVeiw';
+import ItemView from '../inventory/inventoryItem/itemView';
 
 const loanDetailsButton = Button('Loan details');
 const patronDetailsButton = Button('Patron details');
@@ -49,7 +49,7 @@ export default {
     cy.intercept('/tags?*').as('getTags');
     cy.do(itemDetailsButton.click());
     cy.wait('@getTags', getLongDelay());
-    ItemVeiw.waitLoading();
+    ItemView.waitLoading();
   },
   checkActionsMenuOptions:() => {
     cy.expect(availableActionsButton.exists());

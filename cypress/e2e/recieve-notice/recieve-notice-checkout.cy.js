@@ -3,7 +3,7 @@ import moment from 'moment';
 import permissions from '../../support/dictionary/permissions';
 import topMenu from '../../support/fragments/topMenu';
 import settingsMenu from '../../support/fragments/settingsMenu';
-import generateItemBarcode from '../../support/utils/generateItemBarcode';
+import generateUniqueItemBarcodeWithShift from '../../support/utils/generateUniqueItemBarcodeWithShift';
 import testTypes from '../../support/dictionary/testTypes';
 import devTeams from '../../support/dictionary/devTeams';
 import UserEdit from '../../support/fragments/users/userEdit';
@@ -24,10 +24,6 @@ import ServicePoints from '../../support/fragments/settings/tenant/servicePoints
 import InventoryInstance from '../../support/fragments/inventory/inventoryInstance';
 import getRandomPostfix from '../../support/utils/stringTools';
 import OtherSettings from '../../support/fragments/settings/circulation/otherSettings';
-
-function generateUniqueItemBarcodeWithShift(index = 0) {
-  return ((generateItemBarcode() - Math.round(getRandomPostfix())) + '').substring(index);
-}
 
 describe('Recieving notice: Checkout', () => {
   const noticePolicyTemplate = { ...NewNoticePolicyTemplate.defaultUi,
