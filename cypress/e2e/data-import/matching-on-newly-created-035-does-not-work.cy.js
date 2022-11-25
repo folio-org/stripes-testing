@@ -19,7 +19,7 @@ import ActionProfiles from '../../support/fragments/data_import/action_profiles/
 import NewJobProfile from '../../support/fragments/data_import/job_profiles/newJobProfile';
 import InstanceRecordView from '../../support/fragments/inventory/instanceRecordView';
 import Users from '../../support/fragments/users/users';
-import InventorySearch from '../../support/fragments/inventory/inventorySearch';
+import InventorySearchAndFilter from '../../support/fragments/inventory/inventorySearchAndFilter';
 
 describe('ui-data-import: Matching on newly-created 035 does not work (regression)', () => {
   let user = null;
@@ -120,7 +120,7 @@ describe('ui-data-import: Matching on newly-created 035 does not work (regressio
     FileDetails.checkInstanceQuantityInSummaryTable('1');
 
     // get Instance HRID through API for delete instance
-    InventorySearch.getInstanceHRID()
+    InventorySearchAndFilter.getInstanceHRID()
       .then(hrId => {
         firstInstanceHrid = hrId[0];
       });
@@ -190,7 +190,7 @@ describe('ui-data-import: Matching on newly-created 035 does not work (regressio
     FileDetails.checkInstanceQuantityInSummaryTable('1');
 
     // get Instance HRID through API for delete instance
-    InventorySearch.getInstanceHRID()
+    InventorySearchAndFilter.getInstanceHRID()
       .then(hrId => {
         secondInstanceHrid = hrId[0];
       });

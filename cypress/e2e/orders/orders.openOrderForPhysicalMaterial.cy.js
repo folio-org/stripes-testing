@@ -3,7 +3,7 @@ import NewOrder from '../../support/fragments/orders/newOrder';
 import Orders from '../../support/fragments/orders/orders';
 import TestType from '../../support/dictionary/testTypes';
 import OrderLines from '../../support/fragments/orders/orderLines';
-import InventorySearch from '../../support/fragments/inventory/inventorySearch';
+import InventorySearchAndFilter from '../../support/fragments/inventory/inventorySearchAndFilter';
 import newOrganization from '../../support/fragments/organizations/newOrganization';
 import basicOrderLine from '../../support/fragments/orders/basicOrderLine';
 import Organizations from '../../support/fragments/organizations/organizations';
@@ -43,8 +43,8 @@ describe('orders: create an order', () => {
       Orders.openOrder();
 
       cy.visit(TopMenu.inventoryPath);
-      InventorySearch.searchByParameter('Title (all)', orderLineTitle);
-      InventorySearch.verifySearchResult(orderLineTitle);
+      InventorySearchAndFilter.searchByParameter('Title (all)', orderLineTitle);
+      InventorySearchAndFilter.verifySearchResult(orderLineTitle);
     });
   });
 });

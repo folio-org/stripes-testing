@@ -3,10 +3,10 @@ import testTypes from '../../support/dictionary/testTypes';
 import InventoryKeyboardShortcuts from '../../support/fragments/inventory/inventoryKeyboardShortcuts';
 import permissions from '../../support/dictionary/permissions';
 import getRandomPostfix from '../../support/utils/stringTools';
-import InventoryInstanceEdit from '../../support/fragments/inventory/InventoryInstanceEdit';
+import InstanceRecordEdit from '../../support/fragments/inventory/instanceRecordEdit';
 import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
 import InventoryHotkeys from '../../support/fragments/inventory/inventoryHotkeys';
-import InventorySearch from '../../support/fragments/inventory/inventorySearch';
+import InventorySearchAndFilter from '../../support/fragments/inventory/inventorySearchAndFilter';
 import devTeams from '../../support/dictionary/devTeams';
 import InventoryInstance from '../../support/fragments/inventory/inventoryInstance';
 import Users from '../../support/fragments/users/users';
@@ -58,13 +58,13 @@ describe('ui-inventory: keyboard shortcut', () => {
     // TODO: Need to wait for the loading of saving the edited information.Reason: the robot runs quickly and the test drops.
     cy.wait(6000);
     InventoryKeyboardShortcuts.checkInstance(instanceTitle);
-    InventorySearch.searchInstanceByTitle(instanceTitle);
+    InventorySearchAndFilter.searchInstanceByTitle(instanceTitle);
     InventoryInstances.selectInstance();
     InventoryKeyboardShortcuts.pressHotKey(hotKeys.openShortcutsModal);
     InventoryKeyboardShortcuts.waitModalLoading('Keyboard shortcuts');
     InventoryKeyboardShortcuts.pressHotKey(hotKeys.close);
     InventoryKeyboardShortcuts.pressHotKey(hotKeys.duplicate);
-    InventoryInstanceEdit.addPrecedingTitle(0, precedingTitleValue, isbnValue, issnValue);
+    InstanceRecordEdit.addPrecedingTitle(0, precedingTitleValue, isbnValue, issnValue);
     InventoryKeyboardShortcuts.pressHotKey(hotKeys.save);
     InventoryInstance.checkPrecedingTitle(0, precedingTitleValue, isbnValue, issnValue);
   });
