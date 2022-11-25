@@ -13,7 +13,7 @@ import NewActionProfile from '../../support/fragments/data_import/action_profile
 import ActionProfiles from '../../support/fragments/data_import/action_profiles/actionProfiles';
 import NewJobProfile from '../../support/fragments/data_import/job_profiles/newJobProfile';
 import InstanceRecordView from '../../support/fragments/inventory/instanceRecordView';
-import InventorySearch from '../../support/fragments/inventory/inventorySearch';
+import InventorySearchAndFilter from '../../support/fragments/inventory/inventorySearchAndFilter';
 import permissions from '../../support/dictionary/permissions';
 import Users from '../../support/fragments/users/users';
 
@@ -83,7 +83,7 @@ describe('ui-data-import: Match on Instance identifier match meets both the Iden
           waiter: DataImport.waitLoading
         });
 
-        InventorySearch.getInstancesByIdentifierViaApi(resourceIdentifiers[0].value)
+        InventorySearchAndFilter.getInstancesByIdentifierViaApi(resourceIdentifiers[0].value)
           .then(instances => {
             instances.forEach(({ id }) => {
               InventoryInstance.deleteInstanceViaApi(id);

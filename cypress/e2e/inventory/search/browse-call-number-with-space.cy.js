@@ -3,7 +3,7 @@ import DevTeams from '../../../support/dictionary/devTeams';
 import TestTypes from '../../../support/dictionary/testTypes';
 import InventoryActions from '../../../support/fragments/inventory/inventoryActions';
 import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
-import InventorySearch from '../../../support/fragments/inventory/inventorySearch';
+import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
 import BrowseCallNumber from '../../../support/fragments/inventory/search/browseCallNumber';
 import TopMenu from '../../../support/fragments/topMenu';
 import BrowseContributors from '../../../support/fragments/inventory/search/browseContributors';
@@ -22,12 +22,12 @@ describe('ui-inventory: search', () => {
   };
 
   const search = (query) => {
-    InventorySearch.verifyKeywordsAsDefault();
-    InventorySearch.selectBrowseCallNumbers();
-    InventorySearch.verifyCallNumberBrowseEmptyPane();
+    InventorySearchAndFilter.verifyKeywordsAsDefault();
+    InventorySearchAndFilter.selectBrowseCallNumbers();
+    InventorySearchAndFilter.verifyCallNumberBrowseEmptyPane();
     InventoryActions.actionsIsAbsent();
-    InventorySearch.showsOnlyEffectiveLocation();
-    InventorySearch.browseSubjectsSearch(query);
+    InventorySearchAndFilter.showsOnlyEffectiveLocation();
+    InventorySearchAndFilter.browseSubjectsSearch(query);
     BrowseCallNumber.checkExactSearchResult(testData.exactSearch, item.instanceName);
   };
 
@@ -36,7 +36,7 @@ describe('ui-inventory: search', () => {
       InventoryInstances.createInstanceViaApi(item.instanceName, item.itemBarcode, item.publisher, item.holdingCallNumber, item.itemCallNumber);
     });
 
-    cy.loginAsAdmin({ path: TopMenu.inventoryPath, waiter: InventorySearch.waitLoading });
+    cy.loginAsAdmin({ path: TopMenu.inventoryPath, waiter: InventorySearchAndFilter.waitLoading });
   });
 
   afterEach('Deleting user and instance', () => {

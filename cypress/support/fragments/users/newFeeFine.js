@@ -125,4 +125,14 @@ export default {
   keepEditing() {
     cy.do(Button({ id:'clickable-cancel-editing-confirmation-confirm' }).click());
   },
+
+  getUserFeesFines: (userId, status = 'open') => {
+    return cy
+      .okapiRequest({
+        method: 'GET',
+        path: `accounts?query=(userId==${userId} and status.name==${status})`,
+        isDefaultSearchParamsRequired: false,
+      })
+      .then(({ body }) => body);
+  },
 };
