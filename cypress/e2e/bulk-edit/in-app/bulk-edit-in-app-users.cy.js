@@ -9,6 +9,7 @@ import BulkEditActions from '../../../support/fragments/bulk-edit/bulk-edit-acti
 import Users from '../../../support/fragments/users/users';
 import UsersSearchPane from '../../../support/fragments/users/usersSearchPane';
 import UsersCard from '../../../support/fragments/users/usersCard';
+import DateTools from '../../../support/utils/dateTools';
 
 let user;
 const userUUIDsFileName = `userUUIDs_${getRandomPostfix()}.csv`;
@@ -102,6 +103,28 @@ describe('bulk-edit', () => {
       BulkEditSearchPane.waitFileUploading();
       BulkEditActions.verifySuccessBanner(1);
       BulkEditSearchPane.verifyChangedResults('staff');
+    });
+
+    it('C359214 Verify expiration date updates in In-app approach (firebird)', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
+      const todayDate = DateTools.getCurrentDate();
+
+      BulkEditSearchPane.selectRecordIdentifier('User UUIDs');
+
+      BulkEditSearchPane.uploadFile(userUUIDsFileName);
+      BulkEditSearchPane.waitFileUploading();
+
+      BulkEditActions.openActions();
+      BulkEditActions.openInAppStartBulkEditFrom();
+      BulkEditActions.fillExpirationDate(todayDate);
+      BulkEditActions.confirmChanges();
+      BulkEditActions.commitChanges();
+      BulkEditSearchPane.waitFileUploading();
+      BulkEditActions.verifySuccessBanner(1);
+
+      cy.loginAsAdmin({ path: TopMenu.usersPath, waiter: UsersSearchPane.waitLoading });
+      UsersSearchPane.searchByKeywords(user.username);
+      UsersSearchPane.openUser(user.username);
+      UsersCard.verifyExpirationDate(todayDate);
     });
   });
 });
