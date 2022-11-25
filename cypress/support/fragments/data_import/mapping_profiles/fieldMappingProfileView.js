@@ -12,7 +12,7 @@ import {
   MultiColumnList,
   Link,
   Callout,
-  calloutTypes
+  KeyValue
 } from '../../../../../interactors';
 
 const actionsButton = Button('Actions');
@@ -94,4 +94,8 @@ export default {
     cy.expect(Callout({ textContent: including(`The field mapping profile "${profileName}" was successfully updated`) })
       .exists());
   },
+
+  verifyInstanceStatusTerm:(status) => {
+    cy.expect(KeyValue('Instance status term').has({ value: status }));
+  }
 };

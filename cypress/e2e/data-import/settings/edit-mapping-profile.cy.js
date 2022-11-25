@@ -17,6 +17,7 @@ describe('ui-data-import: edit profile', () => {
     name: mappingProfileName,
     typeValue: NewFieldMappingProfile.folioRecordTypeValue.instance
   };
+  const instanceStatusTerm = '"Batch Loaded"';
 
   before('create user', () => {
     cy.createTempUser([
@@ -42,8 +43,9 @@ describe('ui-data-import: edit profile', () => {
     FieldMappingProfiles.searchMappingProfile(mappingProfile.name);
     FieldMappingProfileView.editMappingProfile();
     FieldMappingProfileEdit.verifyScreenName(mappingProfile.name);
-    FieldMappingProfileEdit.fillInstanceStatusTerm();
+    FieldMappingProfileEdit.fillInstanceStatusTerm(instanceStatusTerm);
     FieldMappingProfileEdit.save();
     FieldMappingProfileView.checkCalloutMessage(mappingProfile.name);
+    FieldMappingProfileView.verifyInstanceStatusTerm(instanceStatusTerm);
   });
 });

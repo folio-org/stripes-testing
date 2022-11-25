@@ -14,8 +14,8 @@ export default {
     cy.expect(Form(including(`Edit ${profileName}`)).exists());
   },
 
-  fillInstanceStatusTerm:() => {
-    cy.do(TextField('Instance status term').fillIn('"Batch Loaded"'));
+  fillInstanceStatusTerm:(status) => {
+    cy.do(TextField('Instance status term').fillIn(status));
     // wait will be add uuid for acceptedValues
     cy.wait(500);
   },
