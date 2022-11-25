@@ -1,4 +1,12 @@
-import { Button, Modal, TextField, HTML, including, MultiColumnListCell, MultiColumnListRow } from '../../../../../interactors';
+import {
+  Button,
+  Modal,
+  TextField,
+  HTML,
+  including,
+  MultiColumnListCell,
+  MultiColumnListRow
+} from '../../../../../../interactors';
 
 const ModalSelectProfile = Modal('Select Field Mapping Profiles');
 
