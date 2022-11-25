@@ -5,7 +5,7 @@ import SettingsMenu from '../../support/fragments/settingsMenu';
 import NewFieldMappingProfile from '../../support/fragments/data_import/mapping_profiles/newFieldMappingProfile';
 import FieldMappingProfiles from '../../support/fragments/data_import/mapping_profiles/fieldMappingProfiles';
 import MarcFieldProtection from '../../support/fragments/settings/dataImport/marcFieldProtection';
-import MappingProfileDetailsView from '../../support/fragments/data_import/mapping_profiles/mappingProfileDetailsView';
+import FieldMappingProfileView from '../../support/fragments/data_import/mapping_profiles/fieldMappingProfileView';
 import ActionProfiles from '../../support/fragments/data_import/action_profiles/actionProfiles';
 import NewActionProfile from '../../support/fragments/data_import/action_profiles/newActionProfile';
 import MatchProfiles from '../../support/fragments/data_import/match_profiles/matchProfiles';
@@ -195,14 +195,14 @@ describe('ui-data-import: Check that field protection overrides work properly du
     // create Field mapping profiles
     cy.visit(SettingsMenu.mappingProfilePath);
     FieldMappingProfiles.createMappingProfileForUpdatesMarc(marcBibMappingProfile);
-    MappingProfileDetailsView.checkCreatedMappingProfile(marcBibMappingProfile.name, protectedFields.firstField, protectedFields.secondField);
+    FieldMappingProfileView.checkCreatedMappingProfile(marcBibMappingProfile.name, protectedFields.firstField, protectedFields.secondField);
     FieldMappingProfiles.checkMappingProfilePresented(marcBibMappingProfile.name);
 
     FieldMappingProfiles.createMappingProfileWithNotes(instanceMappingProfile, noteForUpdateInstanceMappingProfile);
     FieldMappingProfiles.checkMappingProfilePresented(instanceMappingProfile.name);
 
     FieldMappingProfiles.createMappingProfileForUpdatesAndOverrideMarc(marcBibMappingProfileOverride, protectedFields.firstField, protectedFields.secondField);
-    MappingProfileDetailsView.checkCreatedMappingProfile(marcBibMappingProfileOverride.name, protectedFields.firstField, protectedFields.secondField);
+    FieldMappingProfileView.checkCreatedMappingProfile(marcBibMappingProfileOverride.name, protectedFields.firstField, protectedFields.secondField);
     FieldMappingProfiles.checkMappingProfilePresented(marcBibMappingProfileOverride.name);
 
     FieldMappingProfiles.createMappingProfileWithNotes(instanceMappingProfileOverride, noteForOverrideInstanceMappingProfile);
