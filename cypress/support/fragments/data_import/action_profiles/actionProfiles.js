@@ -3,10 +3,11 @@ import newActionProfile from './newActionProfile';
 
 const actionsButton = Button('Actions');
 const iconButton = Button({ icon: 'times' });
+const resultsPane = Pane({ id:'pane-results' });
 
 const openNewActionProfileForm = () => {
   cy.do([
-    Pane({ id:'pane-results' }).find(actionsButton).click(),
+    resultsPane.find(actionsButton).click(),
     Button('New action profile').click()
   ]);
 };
@@ -65,4 +66,9 @@ export default {
   selectActionProfile:(profileName) => {
     cy.do(MultiColumnListCell(profileName).click());
   },
+
+  verifyActionProfileOpened:() => {
+    cy.expect(resultsPane.exists());
+    cy.expect(Pane({ id:'view-action-profile-pane' }).exists());
+  }
 };

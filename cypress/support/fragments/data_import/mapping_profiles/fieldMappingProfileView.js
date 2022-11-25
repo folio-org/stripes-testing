@@ -8,13 +8,16 @@ import {
   Checkbox,
   MultiColumnListCell,
   Modal,
-  TextField
+  TextField,
+  MultiColumnList,
+  Link
 } from '../../../../../interactors';
 
 const actionsButton = Button('Actions');
 const saveButton = Button('Save as profile & Close');
 const deleteButton = Button('Delete');
 const fullScreenView = Pane({ id:'full-screen-view' });
+const associatedList = MultiColumnList({ id:'associated-actionProfiles-list' });
 
 const saveMappingProfile = () => cy.do(saveButton.click());
 
@@ -78,5 +81,20 @@ export default {
 
     cy.do(fieldName.click());
     cy.expect(fieldName.has({ error: 'Please enter a value' }));
+  },
+
+  verifyLinkedActionProfile:(profileName) => {
+    cy.expect(Accordion('Associated action profiles')
+      .find(associatedList)
+      .find(MultiColumnListCell({ content: profileName }))
+      .exists());
+  },
+
+  openAssociatedActionProfile:() => {
+    cy.do(associatedList.find(Link({ href: including('/settings/data-import/action-profiles/view') }))
+      .perform(elem => {
+        const linkForVisit = elem.getAttribute('href');
+        cy.visit(linkForVisit);
+      }));
   }
 };
