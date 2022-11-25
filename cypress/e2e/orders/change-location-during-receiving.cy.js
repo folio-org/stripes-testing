@@ -1,6 +1,7 @@
 import permissions from '../../support/dictionary/permissions';
 import testType from '../../support/dictionary/testTypes';
 import devTeams from '../../support/dictionary/devTeams';
+import getRandomPostfix from '../../support/utils/stringTools';
 
 import NewOrder from '../../support/fragments/orders/newOrder';
 import BasicOrderLine from '../../support/fragments/orders/basicOrderLine';
@@ -8,10 +9,6 @@ import Orders from '../../support/fragments/orders/orders';
 import Receiving from '../../support/fragments/receiving/receiving';
 import TopMenu from '../../support/fragments/topMenu';
 import Helper from '../../support/fragments/finance/financeHelper';
-import InventorySearch from '../../support/fragments/inventory/inventorySearch';
-import InventoryInstance from '../../support/fragments/inventory/inventoryInstance';
-import InteractorsTools from '../../support/utils/interactorsTools';
-import OrdersHelper from '../../support/fragments/orders/ordersHelper';
 import Organizations from '../../support/fragments/organizations/organizations';
 import NewOrganization from '../../support/fragments/organizations/newOrganization';
 import OrderLines from '../../support/fragments/orders/orderLines';
@@ -38,7 +35,7 @@ describe('orders: Receive piece from Order', () => {
         organization.id = response;
         order.vendor = response;
       });
-    InventoryInstances.createInstanceViaApi(item.instanceName, item.itemBarcode);
+    // InventoryInstances.createInstanceViaApi(item.instanceName, item.itemBarcode);
 
     cy.loginAsAdmin({ path:TopMenu.ordersPath, waiter: Orders.waitLoading });
 
@@ -46,13 +43,15 @@ describe('orders: Receive piece from Order', () => {
       .then((response) => {
         orderNumber = response.body.poNumber;
         orderID = response.body.id;
+        Orders.searchByParameter('PO number', orderNumber);
+        Helper.selectFromResultsList();
+        OrderLines.addPOLine();
+        OrderLines.selectRandomInstanceInTitleLookUP('*');
+        OrderLines.fillPOLWithTitleLookUp();
+        OrderLines.backToEditingOrder();
+        Orders.openOrder();
       });
-    Orders.searchByParameter('PO number', orderNumber);
-    Helper.selectFromResultsList();
-    OrderLines.addPOLine();
-    OrderLines.fillPOLWithTitleLookUp(item.instanceName);
-    OrderLines.backToEditingOrder();
-    Orders.openOrder();
+   
     cy.createTempUser([
       permissions.uiOrdersView.gui,
       permissions.uiOrdersEdit.gui,
@@ -67,14 +66,21 @@ describe('orders: Receive piece from Order', () => {
   });
 
   after(() => {
-    Orders.deleteOrderApi(orderID);
-    Organizations.deleteOrganizationViaApi(organization.id);
-    InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(item.itemBarcode);
-    Users.deleteViaApi(user.userId);
+    // Orders.deleteOrderApi(orderID);
+    // Organizations.deleteOrganizationViaApi(organization.id);
+    // InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(item.itemBarcode);
+    // Users.deleteViaApi(user.userId);
   });
 
   it('C9177 Change location during receiving (thunderjet)', { tags: [testType.smoke, devTeams.thunderjet] }, () => {
+    const barcode = Helper.getRandomBarcode();
+    const caption = 'autotestCaption';
     Orders.searchByParameter('PO number', orderNumber);
     Helper.selectFromResultsList();
+        // Receiving part
+    Orders.receiveOrderViaActions();
+    Helper.selectFromResultsList();
+    Receiving.receivePiece(0, caption, barcode);
+    Receiving.checkReceivedPiece(0, caption, barcode);
   });
 });

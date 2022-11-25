@@ -405,7 +405,6 @@ export default {
   },
 
   fillPOLWithTitleLookUp:() => {
-    this.selectRandomInstanceInTitleLookUP;
     cy.do([
       physicalUnitPriceTextField.fillIn(physicalUnitPrice),
       saveAndClose.click()
