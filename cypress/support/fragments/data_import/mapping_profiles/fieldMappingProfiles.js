@@ -9,7 +9,7 @@ import {
   Form
 } from '../../../../../interactors';
 import { getLongDelay } from '../../../utils/cypressTools';
-import MappingProfileDetails from './mappingProfileDetails';
+import FieldMappingProfileView from './fieldMappingProfileView';
 import NewFieldMappingProfile from './newFieldMappingProfile';
 
 const actionsButton = Button('Actions');
@@ -156,8 +156,8 @@ export default {
   createMappingProfileForUpdatesAndOverrideMarc:(mappingProfile, firstProtectedField, secondProtectedField) => {
     openNewMappingProfileForm();
     NewFieldMappingProfile.fillMappingProfileForUpdatesMarc(mappingProfile);
-    MappingProfileDetails.markFieldForProtection(firstProtectedField);
-    MappingProfileDetails.markFieldForProtection(secondProtectedField);
+    FieldMappingProfileView.markFieldForProtection(firstProtectedField);
+    FieldMappingProfileView.markFieldForProtection(secondProtectedField);
     cy.do(saveProfileButton.click());
   },
 

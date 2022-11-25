@@ -5,7 +5,7 @@ import FieldMappingProfiles from '../../support/fragments/data_import/mapping_pr
 import NewFieldMappingProfile from '../../support/fragments/data_import/mapping_profiles/newFieldMappingProfile';
 import Helper from '../../support/fragments/finance/financeHelper';
 import Users from '../../support/fragments/users/users';
-import MappingProfileDetails from '../../support/fragments/data_import/mapping_profiles/mappingProfileDetails';
+import FieldMappingProfileView from '../../support/fragments/data_import/mapping_profiles/fieldMappingProfileView';
 import SettingsMenu from '../../support/fragments/settingsMenu';
 
 describe('ui-data-import: Make some of the fields on the Invoice field mapping profile required', () => {
@@ -38,44 +38,44 @@ describe('ui-data-import: Make some of the fields on the Invoice field mapping p
     NewFieldMappingProfile.addIncomingRecordType('EDIFACT invoice');
     NewFieldMappingProfile.addFolioRecordType('Invoice');
     NewFieldMappingProfile.saveProfile();
-    MappingProfileDetails.checkErrorMessageIsPresented('Batch group*');
+    FieldMappingProfileView.checkErrorMessageIsPresented('Batch group*');
 
     NewFieldMappingProfile.fillBatchGroup('"FOLIO"');
     NewFieldMappingProfile.saveProfile();
-    MappingProfileDetails.checkErrorMessageIsPresented('Vendor invoice number*');
+    FieldMappingProfileView.checkErrorMessageIsPresented('Vendor invoice number*');
 
     NewFieldMappingProfile.fillVendorInvoiceNumber('123');
     NewFieldMappingProfile.saveProfile();
-    MappingProfileDetails.checkErrorMessageIsPresented('Payment method*');
+    FieldMappingProfileView.checkErrorMessageIsPresented('Payment method*');
 
     NewFieldMappingProfile.fillPaymentMethod('"Cash"');
     NewFieldMappingProfile.saveProfile();
-    MappingProfileDetails.checkErrorMessageIsPresented('Currency*');
+    FieldMappingProfileView.checkErrorMessageIsPresented('Currency*');
 
     NewFieldMappingProfile.fillCurrency('"USD"');
     NewFieldMappingProfile.saveProfile();
-    MappingProfileDetails.checkErrorMessageIsPresented('Description*');
+    FieldMappingProfileView.checkErrorMessageIsPresented('Description*');
 
     NewFieldMappingProfile.fillDescription('abc');
     NewFieldMappingProfile.saveProfile();
-    MappingProfileDetails.checkErrorMessageIsPresented('Quantity*');
+    FieldMappingProfileView.checkErrorMessageIsPresented('Quantity*');
 
     NewFieldMappingProfile.fillQuantity('1');
     NewFieldMappingProfile.saveProfile();
-    MappingProfileDetails.checkErrorMessageIsPresented('Sub-total*');
+    FieldMappingProfileView.checkErrorMessageIsPresented('Sub-total*');
 
     NewFieldMappingProfile.fillSubTotal('10.00');
     NewFieldMappingProfile.saveProfile();
-    MappingProfileDetails.checkErrorMessageIsPresented('Vendor name*');
+    FieldMappingProfileView.checkErrorMessageIsPresented('Vendor name*');
 
     NewFieldMappingProfile.fillVendorName('EBSCO');
     NewFieldMappingProfile.saveProfile();
-    MappingProfileDetails.checkErrorMessageIsPresented('Invoice date*');
+    FieldMappingProfileView.checkErrorMessageIsPresented('Invoice date*');
     NewFieldMappingProfile.fillInvoiceDate('###TODAY###');
     NewFieldMappingProfile.saveProfile();
     FieldMappingProfiles.closeViewModeForMappingProfile(mappingProfileName);
     FieldMappingProfiles.checkMappingProfilePresented(mappingProfileName);
 
-    MappingProfileDetails.deleteMappingProfile(mappingProfileName);
+    FieldMappingProfileView.deleteMappingProfile(mappingProfileName);
   });
 });

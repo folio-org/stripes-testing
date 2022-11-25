@@ -41,7 +41,7 @@ export default {
   openLoans() {
     cy.intercept('/circulation/loans?*').as('getLoans');
     cy.do(Accordion({ id : 'loansSection' }).clickHeader());
-    return cy.wait('@getLoans');
+    return cy.wait('@getLoans', { requestTimeout: 10000 });
   },
   openFeeFines() {
     cy.do(feesFinesAccourdion.clickHeader());
@@ -182,5 +182,10 @@ export default {
 
   verifyPatronBlockValue(value = '') {
     cy.expect(KeyValue('Patron group').has({ value: including(value) }));
+  },
+
+  verifyExpirationDate(date) {
+    // date format MM/DD/YYYY
+    cy.expect(KeyValue('Expiration date').has({ value: including(date) }));
   },
 };
