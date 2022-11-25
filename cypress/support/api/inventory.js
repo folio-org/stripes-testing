@@ -138,7 +138,8 @@ Cypress.Commands.add('createInstance', ({ instance, holdings = [], items = [] })
         ...DEFAULT_INSTANCE,
         id: instanceId,
         ...instance,
-      }
+      },
+      isDefaultSearchParamsRequired: false
     })
     .then(() => {
       cy

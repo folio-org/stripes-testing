@@ -13,7 +13,6 @@ describe('ui-circulation-settings: create patron notice template', () => {
     NewNoticePolicyTemplate.startAdding();
     NewNoticePolicyTemplate.checkInitialState();
     NewNoticePolicyTemplate.create(patronNoticeTemplate);
-    NewNoticePolicyTemplate.saveAndClose();
     NewNoticePolicyTemplate.checkAfterSaving(patronNoticeTemplate);
     NewNoticePolicyTemplate.checkTemplateActions(patronNoticeTemplate);
     NewNoticePolicyTemplate.delete();
