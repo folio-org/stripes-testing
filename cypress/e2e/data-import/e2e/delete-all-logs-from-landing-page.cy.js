@@ -1,13 +1,13 @@
-import TestTypes from '../../support/dictionary/testTypes';
-import TopMenu from '../../support/fragments/topMenu';
-import DataImport from '../../support/fragments/data_import/dataImport';
-import getRandomPostfix from '../../support/utils/stringTools';
-import Logs from '../../support/fragments/data_import/logs/logs';
-import InteractorsTools from '../../support/utils/interactorsTools';
-import permissions from '../../support/dictionary/permissions';
-import Users from '../../support/fragments/users/users';
-import JobProfiles from '../../support/fragments/data_import/job_profiles/jobProfiles';
-import DevTeams from '../../support/dictionary/devTeams';
+import TestTypes from '../../../support/dictionary/testTypes';
+import TopMenu from '../../../support/fragments/topMenu';
+import DataImport from '../../../support/fragments/data_import/dataImport';
+import getRandomPostfix from '../../../support/utils/stringTools';
+import Logs from '../../../support/fragments/data_import/logs/logs';
+import InteractorsTools from '../../../support/utils/interactorsTools';
+import permissions from '../../../support/dictionary/permissions';
+import Users from '../../../support/fragments/users/users';
+import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
+import DevTeams from '../../../support/dictionary/devTeams';
 
 describe('ui-data-import: A user can delete import logs with "Data import: Can delete import logs" permission on Landing page', () => {
   let userId = null;
