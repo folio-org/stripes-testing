@@ -59,7 +59,7 @@ describe('ui-data-import: MARC file import with matching for 999 ff field', () =
       name: actionProfileNameForExport
     };
     cy.visit(SettingsMenu.actionProfilePath);
-    ActionProfiles.createActionProfile(actionProfileForExport, mappingProfileForExport.name);
+    ActionProfiles.create(actionProfileForExport, mappingProfileForExport.name);
     ActionProfiles.checkActionProfilePresented(actionProfileNameForExport);
 
     // create job profile for export
@@ -137,7 +137,7 @@ describe('ui-data-import: MARC file import with matching for 999 ff field', () =
           action: 'Update (all record types except Orders, Invoices, or MARC Holdings)'
         };
         cy.visit(SettingsMenu.actionProfilePath);
-        ActionProfiles.createActionProfile(actionProfile, mappingProfile.name);
+        ActionProfiles.create(actionProfile, mappingProfile.name);
         ActionProfiles.checkActionProfilePresented(actionProfileName);
 
         // create Job profile

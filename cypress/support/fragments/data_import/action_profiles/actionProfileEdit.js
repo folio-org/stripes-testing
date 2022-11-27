@@ -1,4 +1,5 @@
-import { Button, MultiColumnList, MultiColumnListCell } from '../../../../../interactors';
+import { including } from '@interactors/html';
+import { Button, MultiColumnList, MultiColumnListCell, Form, Select } from '../../../../../interactors';
 
 export default {
   unlinkFieldMappingProfile:() => {
@@ -18,4 +19,12 @@ export default {
   fieldMappingProfileAbsent:() => {
     cy.expect(Button('Link Profile').exists());
   },
+
+  verifyScreenName:(profileName) => {
+    cy.expect(Form(including(`Edit ${profileName}`)).exists());
+  },
+
+  changeAction:() => {
+    cy.do(Select({ name:'profile.action' }).choose('Update (all record types except Orders, Invoices, or MARC Holdings)'));
+  }
 };

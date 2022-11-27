@@ -170,7 +170,7 @@ describe('ui-data-import: Test 001/003/035 handling for New and Updated SRS reco
 
         // create action profile
         cy.visit(SettingsMenu.actionProfilePath);
-        ActionProfiles.createActionProfile(actionProfile, mappingProfile.name);
+        ActionProfiles.create(actionProfile, mappingProfile.name);
         ActionProfiles.checkActionProfilePresented(actionProfile.name);
 
         // create job profile for update

@@ -118,7 +118,7 @@ describe('ui-data-import: MARC file import with creating of the new instance, ho
 
     collectionOfProfiles.forEach(profile => {
       cy.visit(SettingsMenu.actionProfilePath);
-      ActionProfiles.createActionProfile(profile.actionProfile, profile.mappingProfile.name);
+      ActionProfiles.create(profile.actionProfile, profile.mappingProfile.name);
       ActionProfiles.checkActionProfilePresented(profile.actionProfile.name);
     });
 

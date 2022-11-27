@@ -418,7 +418,7 @@ describe('ui-data-import: MARC file upload with the update of instance, holding,
 
     collectionOfMappingAndActionProfiles.forEach(profile => {
       cy.visit(SettingsMenu.actionProfilePath);
-      ActionProfiles.createActionProfile(profile.actionProfile, profile.mappingProfile.name);
+      ActionProfiles.create(profile.actionProfile, profile.mappingProfile.name);
       ActionProfiles.checkActionProfilePresented(profile.actionProfile.name);
     });
 

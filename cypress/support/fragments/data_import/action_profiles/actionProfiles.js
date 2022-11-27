@@ -1,5 +1,6 @@
-import { Button, TextField, MultiColumnListCell, Pane } from '../../../../../interactors';
-import newActionProfile from './newActionProfile';
+import { including } from '@interactors/html';
+import { Button, TextField, MultiColumnListCell, Pane, MultiColumnListRow, Callout } from '../../../../../interactors';
+import NewActionProfile from './newActionProfile';
 
 const actionsButton = Button('Actions');
 const iconButton = Button({ icon: 'times' });
@@ -11,7 +12,7 @@ const openNewActionProfileForm = () => {
     Button('New action profile').click()
   ]);
 };
-const closeActionProfile = profileName => {
+const close = profileName => {
   cy.do(Pane({ title: profileName }).find(iconButton).click());
 };
 
@@ -41,7 +42,7 @@ const deleteActionProfile = (profileName) => {
     });
 };
 
-const searchActionProfile = (profileName) => {
+const search = (profileName) => {
   // TODO: clarify with developers what should be waited
   cy.wait(1500);
   cy.do(TextField({ id:'input-search-action-profiles-field' }).fillIn(profileName));
@@ -50,25 +51,35 @@ const searchActionProfile = (profileName) => {
 
 export default {
   deleteActionProfile,
-  closeActionProfile,
-  searchActionProfile,
-  createActionProfile:(actionProfile, mappingProfileName) => {
+  close,
+  search,
+  waitLoading: () => cy.expect(MultiColumnListRow({ index:0 }).exists()),
+  create:(actionProfile, mappingProfileName) => {
     openNewActionProfileForm();
-    newActionProfile.fillActionProfile(actionProfile);
-    newActionProfile.linkMappingProfile(mappingProfileName);
+    NewActionProfile.fill(actionProfile);
+    NewActionProfile.linkMappingProfile(mappingProfileName);
   },
+
+  createWithoutLinkedMappingProfile:(actionProfile) => {
+    openNewActionProfileForm();
+    NewActionProfile.fill(actionProfile);
+    cy.do(Button('Save as profile & Close').click());
+  },
+
+  selectActionProfileFromList:(profileName) => cy.do(MultiColumnListCell(profileName).click()),
 
   checkActionProfilePresented: (profileName) => {
-    searchActionProfile(profileName);
+    search(profileName);
     cy.expect(MultiColumnListCell(profileName).exists());
-  },
-
-  selectActionProfile:(profileName) => {
-    cy.do(MultiColumnListCell(profileName).click());
   },
 
   verifyActionProfileOpened:() => {
     cy.expect(resultsPane.exists());
     cy.expect(Pane({ id:'view-action-profile-pane' }).exists());
-  }
+  },
+
+  checkCalloutMessage: (profileName) => {
+    cy.expect(Callout({ textContent: including(`The action profile "${profileName}" was successfully updated`) })
+      .exists());
+  },
 };

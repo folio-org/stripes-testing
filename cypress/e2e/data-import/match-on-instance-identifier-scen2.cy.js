@@ -119,7 +119,7 @@ describe('ui-data-import: Match on Instance identifier match meets both the Iden
     FieldMappingProfiles.createMappingProfileForMatchOnInstanceIdentifier(mappingProfile);
 
     cy.visit(SettingsMenu.actionProfilePath);
-    ActionProfiles.createActionProfile(actionProfile, mappingProfileName);
+    ActionProfiles.create(actionProfile, mappingProfileName);
     ActionProfiles.checkActionProfilePresented(actionProfileName);
 
     cy.visit(SettingsMenu.jobProfilePath);

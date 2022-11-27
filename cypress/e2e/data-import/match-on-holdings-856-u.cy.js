@@ -142,9 +142,9 @@ describe('ui-data-import: Match on Holdings 856 $u', () => {
     FieldMappingProfiles.checkMappingProfilePresented(updateEHoldingsMappingProfile.name);
 
     cy.visit(SettingsMenu.actionProfilePath);
-    ActionProfiles.createActionProfile(createInstanceActionProfile, createInstanceMappingProfileName);
-    ActionProfiles.createActionProfile(createEHoldingsActionProfile, createEHoldingsMappingProfileName);
-    ActionProfiles.createActionProfile(updateEHoldingsActionProfile, updateEHoldingsMappingProfileName);
+    ActionProfiles.create(createInstanceActionProfile, createInstanceMappingProfileName);
+    ActionProfiles.create(createEHoldingsActionProfile, createEHoldingsMappingProfileName);
+    ActionProfiles.create(updateEHoldingsActionProfile, updateEHoldingsMappingProfileName);
 
     cy.visit(SettingsMenu.matchProfilePath);
     MatchProfiles.createMatchProfile(matchProfile);

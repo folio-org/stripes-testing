@@ -118,7 +118,7 @@ describe('ui-data-import: MARC field protections apply to MARC modifications of 
 
     // create action profile
     cy.visit(SettingsMenu.actionProfilePath);
-    ActionProfiles.createActionProfile(actionProfile, mappingProfileName);
+    ActionProfiles.create(actionProfile, mappingProfileName);
     ActionProfiles.checkActionProfilePresented(actionProfileName);
 
     // create job profile

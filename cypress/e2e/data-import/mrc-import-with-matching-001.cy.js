@@ -114,7 +114,7 @@ describe('ui-data-import: MARC-MARC matching for 001 field', () => {
           action: 'Update (all record types except Orders, Invoices, or MARC Holdings)',
         };
         cy.visit(SettingsMenu.actionProfilePath);
-        ActionProfiles.createActionProfile(actionProfile, mappingProfile.name);
+        ActionProfiles.create(actionProfile, mappingProfile.name);
         ActionProfiles.checkActionProfilePresented(actionProfileName);
 
         // create Job profile
