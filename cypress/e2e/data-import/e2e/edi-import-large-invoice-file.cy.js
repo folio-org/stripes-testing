@@ -1,16 +1,16 @@
-import TestTypes from '../../support/dictionary/testTypes';
-import FieldMappingProfiles from '../../support/fragments/data_import/mapping_profiles/fieldMappingProfiles';
-import getRandomPostfix from '../../support/utils/stringTools';
-import ActionProfiles from '../../support/fragments/data_import/action_profiles/actionProfiles';
-import NewJobProfile from '../../support/fragments/data_import/job_profiles/newJobProfile';
-import JobProfiles from '../../support/fragments/data_import/job_profiles/jobProfiles';
-import DataImport from '../../support/fragments/data_import/dataImport';
-import Logs from '../../support/fragments/data_import/logs/logs';
-import SettingsMenu from '../../support/fragments/settingsMenu';
-import TopMenu from '../../support/fragments/topMenu';
-import NewFieldMappingProfile from '../../support/fragments/data_import/mapping_profiles/newFieldMappingProfile';
-import InvoiceView from '../../support/fragments/invoices/invoiceView';
-import DevTeams from '../../support/dictionary/devTeams';
+import TestTypes from '../../../support/dictionary/testTypes';
+import FieldMappingProfiles from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfiles';
+import getRandomPostfix from '../../../support/utils/stringTools';
+import ActionProfiles from '../../../support/fragments/data_import/action_profiles/actionProfiles';
+import NewJobProfile from '../../../support/fragments/data_import/job_profiles/newJobProfile';
+import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
+import DataImport from '../../../support/fragments/data_import/dataImport';
+import Logs from '../../../support/fragments/data_import/logs/logs';
+import SettingsMenu from '../../../support/fragments/settingsMenu';
+import TopMenu from '../../../support/fragments/topMenu';
+import NewFieldMappingProfile from '../../../support/fragments/data_import/mapping_profiles/newFieldMappingProfile';
+import InvoiceView from '../../../support/fragments/invoices/invoiceView';
+import DevTeams from '../../../support/dictionary/devTeams';
 
 describe('ui-data-import: Import a large EDIFACT invoice file', () => {
 // unique name for profiles
