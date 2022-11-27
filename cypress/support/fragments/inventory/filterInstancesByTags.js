@@ -100,8 +100,10 @@ export default {
   },
 
   filterByTag(tag) {
+    cy.do(tagsAccordionButton.click());
+    // need to wait untill list with tags is uploaded
+    cy.wait(1000);
     cy.do([
-      tagsAccordionButton.click(),
       instancesTagsSection.find(TextField()).fillIn(tag),
       instancesTagsSection.find(Checkbox(tag)).click()
     ]);
