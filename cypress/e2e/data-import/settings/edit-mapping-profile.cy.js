@@ -27,6 +27,7 @@ describe('ui-data-import: Edit an existing field mapping profile', () => {
         user = userProperties;
         cy.login(user.username, user.password, { path: SettingsMenu.mappingProfilePath, waiter: FieldMappingProfiles.waitLoading });
 
+        // create field mapping profile
         FieldMappingProfiles.openNewMappingProfileForm();
         NewFieldMappingProfile.fillSummaryInMappingProfile(mappingProfile);
         FieldMappingProfiles.saveProfile();
