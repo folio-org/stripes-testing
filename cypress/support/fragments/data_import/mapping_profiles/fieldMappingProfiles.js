@@ -10,7 +10,6 @@ import {
 } from '../../../../../interactors';
 import { getLongDelay } from '../../../utils/cypressTools';
 import FieldMappingProfileEdit from './fieldMappingProfileEdit';
-import FieldMappingProfileView from './fieldMappingProfileView';
 import NewFieldMappingProfile from './newFieldMappingProfile';
 
 const actionsButton = Button('Actions');
