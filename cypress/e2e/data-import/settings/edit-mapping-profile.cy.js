@@ -10,7 +10,7 @@ import FieldMappingProfileEdit from '../../../support/fragments/data_import/mapp
 import InteractorsTools from '../../../support/utils/interactorsTools';
 import Users from '../../../support/fragments/users/users';
 
-describe('ui-data-import: edit profile', () => {
+describe('ui-data-import: Edit an existing field mapping profile', () => {
   const mappingProfileName = `C11115 autotest mapping profile ${Helper.getRandomBarcode()}`;
   let user;
   const mappingProfile = {
@@ -19,7 +19,7 @@ describe('ui-data-import: edit profile', () => {
   };
   const instanceStatusTerm = '"Batch Loaded"';
 
-  before('create user', () => {
+  before('create test data', () => {
     cy.createTempUser([
       permissions.settingsDataImportEnabled.gui
     ])
@@ -31,21 +31,22 @@ describe('ui-data-import: edit profile', () => {
         NewFieldMappingProfile.fillSummaryInMappingProfile(mappingProfile);
         FieldMappingProfiles.saveProfile();
         InteractorsTools.closeCalloutMessage();
-        FieldMappingProfiles.closeViewModeForMappingProfile(mappingProfile.name);
+        FieldMappingProfiles.closeViewModeForMappingProfile(mappingProfileName);
       });
   });
 
   after('delete test data', () => {
     Users.deleteViaApi(user.userId);
+    FieldMappingProfiles.deleteFieldMappingProfile(mappingProfileName);
   });
 
   it('C2351 Edit an existing field mapping profile (folijet)', { tags: [TestTypes.smoke, DevTeams.folijet] }, () => {
-    FieldMappingProfiles.searchMappingProfile(mappingProfile.name);
+    FieldMappingProfiles.searchMappingProfile(mappingProfileName);
     FieldMappingProfileView.editMappingProfile();
-    FieldMappingProfileEdit.verifyScreenName(mappingProfile.name);
+    FieldMappingProfileEdit.verifyScreenName(mappingProfileName);
     FieldMappingProfileEdit.fillInstanceStatusTerm(instanceStatusTerm);
     FieldMappingProfileEdit.save();
-    FieldMappingProfileView.checkCalloutMessage(mappingProfile.name);
+    FieldMappingProfileView.checkCalloutMessage(mappingProfileName);
     FieldMappingProfileView.verifyInstanceStatusTerm(instanceStatusTerm);
   });
 });
