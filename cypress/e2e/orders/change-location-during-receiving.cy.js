@@ -2,9 +2,7 @@ import permissions from '../../support/dictionary/permissions';
 import testType from '../../support/dictionary/testTypes';
 import devTeams from '../../support/dictionary/devTeams';
 import getRandomPostfix from '../../support/utils/stringTools';
-
 import NewOrder from '../../support/fragments/orders/newOrder';
-import BasicOrderLine from '../../support/fragments/orders/basicOrderLine';
 import Orders from '../../support/fragments/orders/orders';
 import Receiving from '../../support/fragments/receiving/receiving';
 import TopMenu from '../../support/fragments/topMenu';
@@ -16,8 +14,9 @@ import InventoryInstances from '../../support/fragments/inventory/inventoryInsta
 import Users from '../../support/fragments/users/users';
 
 describe('orders: Receive piece from Order', () => {
-  const order = { ...NewOrder.defaultOneTimeOrder };
-  const orderLine = { ...BasicOrderLine.defaultOrderLine };
+  const order = { ...NewOrder.defaultOneTimeOrder,
+    approved: true,
+  };
   const organization = { ...NewOrganization.defaultUiOrganizations };
   const item = {
     instanceName: `testBulkEdit_${getRandomPostfix()}`,
@@ -35,7 +34,7 @@ describe('orders: Receive piece from Order', () => {
         organization.id = response;
         order.vendor = response;
       });
-    // InventoryInstances.createInstanceViaApi(item.instanceName, item.itemBarcode);
+    InventoryInstances.createInstanceViaApi(item.instanceName, item.itemBarcode);
 
     cy.loginAsAdmin({ path:TopMenu.ordersPath, waiter: Orders.waitLoading });
 
@@ -46,7 +45,7 @@ describe('orders: Receive piece from Order', () => {
         Orders.searchByParameter('PO number', orderNumber);
         Helper.selectFromResultsList();
         OrderLines.addPOLine();
-        OrderLines.selectRandomInstanceInTitleLookUP('*');
+        OrderLines.selectRandomInstanceInTitleLookUP(item.instanceName);
         OrderLines.fillPOLWithTitleLookUp();
         OrderLines.backToEditingOrder();
         Orders.openOrder();
@@ -66,21 +65,22 @@ describe('orders: Receive piece from Order', () => {
   });
 
   after(() => {
-    // Orders.deleteOrderApi(orderID);
-    // Organizations.deleteOrganizationViaApi(organization.id);
-    // InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(item.itemBarcode);
-    // Users.deleteViaApi(user.userId);
+    Orders.deleteOrderApi(orderID);
+    Organizations.deleteOrganizationViaApi(organization.id);
+    InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(item.itemBarcode);
+    Users.deleteViaApi(user.userId);
   });
 
   it('C9177 Change location during receiving (thunderjet)', { tags: [testType.smoke, devTeams.thunderjet] }, () => {
-    const barcode = Helper.getRandomBarcode();
     const caption = 'autotestCaption';
     Orders.searchByParameter('PO number', orderNumber);
     Helper.selectFromResultsList();
         // Receiving part
     Orders.receiveOrderViaActions();
-    Helper.selectFromResultsList();
-    Receiving.receivePiece(0, caption, barcode);
-    Receiving.checkReceivedPiece(0, caption, barcode);
+    Receiving.selectFromResultsList(item.instanceName);
+    Receiving.receiveAndChangeLocation(0, caption);
+
+    Receiving.checkReceived(0, caption);
+    Receiving.selectInstanceInReceive(item.instanceName);
   });
 });
