@@ -1,23 +1,30 @@
 import { HTML, including } from '@interactors/html';
 import FileManager from '../../utils/fileManager';
-import {Modal, SelectionOption, Button, DropdownMenu, Checkbox, MultiColumnListHeader} from '../../../../interactors';
+import {
+  Modal,
+  SelectionOption,
+  Button,
+  DropdownMenu,
+  Checkbox,
+  MultiColumnListHeader,
+  MultiColumnListCell,
+  TextField
+} from '../../../../interactors';
 
 const actionsBtn = Button('Actions');
 const dropdownMenu = DropdownMenu();
+const cancelBtn = Button({ id: 'clickable-cancel' });
+const createBtn = Button({ id: 'clickable-create-widget' });
+const plusBtn = Button({ icon: 'plus-sign' });
+const deleteBtn = Button({ icon: 'trash' });
+const keepEditingBtn = Button('Keep editing');
+const areYouSureForm = Modal('Are you sure?');
 // interactor doesn't allow to pick second the same select
 function getLocationSelect() {
   return cy.get('select').eq(2);
 }
 
-function getLocationTypeSelect() {
-  return cy.get('select').eq(1);
-}
-
-function getEmailSelect() {
-  return cy.get('select').eq(1);
-}
-
-function getPatronBlockSelect() {
+function getBulkEditSelectType() {
   return cy.get('select').eq(1);
 }
 
@@ -30,12 +37,29 @@ export default {
   openStartBulkEditForm() {
     cy.do(Button(including('Start bulk edit')).click());
   },
+  openInAppStartBulkEditFrom() {
+    cy.do(Button('Start bulk edit').click());
+  },
   verifyBulkEditForm() {
-    getEmailSelect().select('Email');
+    getBulkEditSelectType().select('Email');
     cy.expect([
       Button({ icon: 'plus-sign'}).exists(),
       Button({ icon: 'trash', disabled: true }).exists(),
     ])
+  },
+
+  verifyAreYouSureForm(count, cellContent) {
+    cy.expect([
+      areYouSureForm.find(HTML(including(`${count} records will be changed`))).exists(),
+      areYouSureForm.find(keepEditingBtn).exists(),
+      areYouSureForm.find(Button('Download preview')).exists(),
+      areYouSureForm.find(Button('Commit changes')).exists(),
+      areYouSureForm.find(MultiColumnListCell(cellContent)).exists()
+    ]);
+  },
+
+  clickKeepEditingBtn() {
+    cy.do(areYouSureForm.find(keepEditingBtn).click());
   },
 
   openActions() {
@@ -63,7 +87,7 @@ export default {
   },
 
   replaceTemporaryLocation(location = 'Annex') {
-    getLocationTypeSelect().select('Temporary item location');
+    getBulkEditSelectType().select('Temporary item location');
     getLocationSelect().select('Replace with');
     cy.do([
       Button('Select control\nSelect location').click(),
@@ -72,15 +96,32 @@ export default {
   },
 
   fillTemporaryLocationFilter(location = 'Annex') {
-    getLocationTypeSelect().select('Temporary item location');
+    getBulkEditSelectType().select('Temporary item location');
     getLocationSelect().select('Replace with');
     cy.do(Button('Select control\nSelect location').click());
     cy.get('[class^=selectionFilter-]').type(location);
   },
 
   fillPatronGroup(group = 'staff (Staff Member)') {
-    getPatronBlockSelect().select('Patron group');
+    getBulkEditSelectType().select('Patron group');
     getPatronGroupTypeSelect().select(group);
+  },
+
+  fillExpirationDate(date) {
+    // date format MM/DD/YYYY
+    getBulkEditSelectType().select('Expiration date');
+    cy.do([
+      Button({ icon: 'calendar' }).click(),
+      TextField().fillIn(date)
+    ]);
+  },
+
+  fillLoanType(type = 'Selected') {
+    getBulkEditSelectType().select('Permanent loan type');
+    cy.do([
+      Button({ id: 'loanType' }).click(),
+      SelectionOption(including(type)).click(),
+    ]);
   },
 
   verifyNoMatchingOptionsForLocationFilter() {
@@ -161,6 +202,46 @@ export default {
       dropdownMenu.find(Checkbox({ name: 'username', checked: true, disabled: isDisabled })).exists(),
       dropdownMenu.find(Checkbox({ name: 'email', checked: false, disabled: isDisabled })).exists(),
       dropdownMenu.find(Checkbox({ name: 'expirationDate', checked: false, disabled: isDisabled })).exists(),
+    ]);
+  },
+
+  verifyItemActionDropdownItems(isDisabled = false) {
+    cy.expect([
+      dropdownMenu.find(Checkbox({ name: 'barcode', checked: true, disabled: isDisabled })).exists(),
+      dropdownMenu.find(Checkbox({ name: 'status', checked: true, disabled: isDisabled })).exists(),
+      dropdownMenu.find(Checkbox({ name: 'effectiveLocation', checked: true, disabled: isDisabled })).exists(),
+      dropdownMenu.find(Checkbox({ name: 'callNumber', checked: true, disabled: isDisabled })).exists(),
+      dropdownMenu.find(Checkbox({ name: 'hrid', checked: true, disabled: isDisabled })).exists(),
+      dropdownMenu.find(Checkbox({ name: 'materialType', checked: true, disabled: isDisabled })).exists(),
+      dropdownMenu.find(Checkbox({ name: 'permanentLoanType', checked: true, disabled: isDisabled })).exists(),
+      dropdownMenu.find(Checkbox({ name: 'temporaryLoanType', checked: true, disabled: isDisabled })).exists(),
+      dropdownMenu.find(Checkbox({ name: 'id', checked: false, disabled: isDisabled })).exists(),
+      dropdownMenu.find(Checkbox({ name: 'formerIds', checked: false, disabled: isDisabled })).exists(),
+      dropdownMenu.find(Checkbox({ name: 'accessionNumber', checked: false, disabled: isDisabled })).exists(),
+      dropdownMenu.find(Checkbox({ name: 'permanentLocation', checked: false, disabled: isDisabled })).exists(),
+      dropdownMenu.find(Checkbox({ name: 'temporaryLocation', checked: false, disabled: isDisabled })).exists(),
+      dropdownMenu.find(Checkbox({ name: 'copyNumber', checked: false, disabled: isDisabled })).exists(),
+      dropdownMenu.find(Checkbox({ name: 'enumeration', checked: false, disabled: isDisabled })).exists(),
+      dropdownMenu.find(Checkbox({ name: 'chronology', checked: false, disabled: isDisabled })).exists(),
+      dropdownMenu.find(Checkbox({ name: 'volume', checked: false, disabled: isDisabled })).exists(),
+    ]);
+  },
+
+  verifyModifyLandingPageBeforeModifying() {
+    cy.expect([
+      cancelBtn.has({ disabled: false }),
+      createBtn.has({ disabled: true }),
+      plusBtn.has({ disabled: false }),
+      deleteBtn.has({ disabled: true }),
+    ]);
+  },
+
+  verifyModifyLandingPageAfterModifying() {
+    cy.expect([
+      cancelBtn.has({ disabled: false }),
+      createBtn.has({ disabled: false }),
+      plusBtn.has({ disabled: false }),
+      deleteBtn.has({ disabled: true }),
     ]);
   },
 

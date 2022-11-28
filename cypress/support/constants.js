@@ -6,6 +6,7 @@ export const ITEM_STATUSES = {
 export const REQUEST_METHOD = {
   DELETE: 'DELETE',
   GET: 'GET',
+  PATCH: 'PATCH',
   POST: 'POST',
   PUT: 'PUT',
 };

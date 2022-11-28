@@ -7,7 +7,7 @@ const getDefaultRollingLoanPolicy = (limit = '') => {
   const defaultLoanPolicy = {
     loanable: true,
     loansPolicy: {
-      closedLibraryDueDateManagementId:'CURRENT_DUE_DATE',
+      closedLibraryDueDateManagementId: 'CURRENT_DUE_DATE_TIME',
       itemLimit: limit,
       period: { duration: 3, intervalId: 'Hours' },
       profileId: 'Rolling'

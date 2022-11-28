@@ -183,7 +183,7 @@ describe('ui-data-import: Match on POL and update related Instance, Holdings, It
     OrderLines.savePol();
   };
 
-  it('C350590 Match on POL and update related Instance, Holdings, Item (folijet)', { tags: [TestTypes.smoke, DevTeams.folijet] }, () => {
+  it('C350944 Match on POL and update related Instance, Holdings, Item (folijet)', { tags: [TestTypes.smoke, DevTeams.folijet] }, () => {
     // create mapping profiles
     cy.visit(SettingsMenu.mappingProfilePath);
     createInstanceMappingProfile(collectionOfProfiles[0].mappingProfile);
@@ -245,8 +245,7 @@ describe('ui-data-import: Match on POL and update related Instance, Holdings, It
     JobProfiles.runImportFile(marcFileName);
     Logs.checkStatusOfJobProfile();
     Logs.openFileDetails(marcFileName);
-    // TODO after fixing MODSOURMAN-819 change SRS status to 'Updated'
-    FileDetails.checkItemsStatusesInResultList(0, [FileDetails.status.created, FileDetails.status.updated, FileDetails.status.created, FileDetails.status.created]);
+    FileDetails.checkItemsStatusesInResultList(0, [FileDetails.status.updated, FileDetails.status.updated, FileDetails.status.created, FileDetails.status.created]);
     FileDetails.checkItemsStatusesInResultList(1, [FileDetails.status.dash, FileDetails.status.discarded]);
 
     FileDetails.openInstanceInInventory('Updated');

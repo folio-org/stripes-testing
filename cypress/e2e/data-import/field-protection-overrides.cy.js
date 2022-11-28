@@ -5,7 +5,7 @@ import SettingsMenu from '../../support/fragments/settingsMenu';
 import NewFieldMappingProfile from '../../support/fragments/data_import/mapping_profiles/newFieldMappingProfile';
 import FieldMappingProfiles from '../../support/fragments/data_import/mapping_profiles/fieldMappingProfiles';
 import MarcFieldProtection from '../../support/fragments/settings/dataImport/marcFieldProtection';
-import MappingProfileDetails from '../../support/fragments/data_import/mapping_profiles/mappingProfileDetails';
+import FieldMappingProfileView from '../../support/fragments/data_import/mapping_profiles/fieldMappingProfileView';
 import ActionProfiles from '../../support/fragments/data_import/action_profiles/actionProfiles';
 import NewActionProfile from '../../support/fragments/data_import/action_profiles/newActionProfile';
 import MatchProfiles from '../../support/fragments/data_import/match_profiles/matchProfiles';
@@ -19,7 +19,7 @@ import FileManager from '../../support/utils/fileManager';
 import InstanceRecordView from '../../support/fragments/inventory/instanceRecordView';
 import InventoryInstance from '../../support/fragments/inventory/inventoryInstance';
 import InventoryViewSource from '../../support/fragments/inventory/inventoryViewSource';
-import InventorySearch from '../../support/fragments/inventory/inventorySearch';
+import InventorySearchAndFilter from '../../support/fragments/inventory/inventorySearchAndFilter';
 
 describe('ui-data-import: Check that field protection overrides work properly during data import', () => {
   let firstFieldId = null;
@@ -125,7 +125,6 @@ describe('ui-data-import: Check that field protection overrides work properly du
     FileManager.deleteFile(`cypress/fixtures/${editedFileNameRev2}`);
   });
 
-  // Test is failed. MODSOURMAN-819
   it('C17018 Check that field protection overrides work properly during data import (folijet)', { tags: [TestTypes.criticalPath, DevTeams.folijet] }, () => {
     const marcBibMappingProfile = {
       name: marcBibMapProfileNameForUpdate,
@@ -196,14 +195,14 @@ describe('ui-data-import: Check that field protection overrides work properly du
     // create Field mapping profiles
     cy.visit(SettingsMenu.mappingProfilePath);
     FieldMappingProfiles.createMappingProfileForUpdatesMarc(marcBibMappingProfile);
-    MappingProfileDetails.checkCreatedMappingProfile(marcBibMappingProfile.name, protectedFields.firstField, protectedFields.secondField);
+    FieldMappingProfileView.checkCreatedMappingProfile(marcBibMappingProfile.name, protectedFields.firstField, protectedFields.secondField);
     FieldMappingProfiles.checkMappingProfilePresented(marcBibMappingProfile.name);
 
     FieldMappingProfiles.createMappingProfileWithNotes(instanceMappingProfile, noteForUpdateInstanceMappingProfile);
     FieldMappingProfiles.checkMappingProfilePresented(instanceMappingProfile.name);
 
     FieldMappingProfiles.createMappingProfileForUpdatesAndOverrideMarc(marcBibMappingProfileOverride, protectedFields.firstField, protectedFields.secondField);
-    MappingProfileDetails.checkCreatedMappingProfile(marcBibMappingProfileOverride.name, protectedFields.firstField, protectedFields.secondField);
+    FieldMappingProfileView.checkCreatedMappingProfile(marcBibMappingProfileOverride.name, protectedFields.firstField, protectedFields.secondField);
     FieldMappingProfiles.checkMappingProfilePresented(marcBibMappingProfileOverride.name);
 
     FieldMappingProfiles.createMappingProfileWithNotes(instanceMappingProfileOverride, noteForOverrideInstanceMappingProfile);
@@ -252,7 +251,7 @@ describe('ui-data-import: Check that field protection overrides work properly du
     });
 
     // get Instance HRID through API
-    InventorySearch.getInstanceHRID()
+    InventorySearchAndFilter.getInstanceHRID()
       .then(hrId => {
         instanceHrid = hrId[0];
         DataImport.editMarcFile(fileForEditRev1, editedFileNameRev1, [instanceHridFromFile], [instanceHrid]);
@@ -268,10 +267,11 @@ describe('ui-data-import: Check that field protection overrides work properly du
         [FileDetails.columnName.srsMarc, FileDetails.columnName.instance].forEach(columnName => {
           FileDetails.checkStatusInColumn(FileDetails.status.updated, columnName);
         });
-        FileDetails.checkItemsQuantityInSummaryTable(1, '1');
+        FileDetails.checkSrsRecordQuantityInSummaryTable('1', '1');
+        FileDetails.checkInstanceQuantityInSummaryTable('1', '1');
 
         cy.visit(TopMenu.inventoryPath);
-        InventorySearch.searchInstanceByHRID(instanceHrid);
+        InventorySearchAndFilter.searchInstanceByHRID(instanceHrid);
         InstanceRecordView.verifyAdministrativeNote(administrativeNote);
         InventoryInstance.verifyResourceIdentifier(resourceIdentifiers[0].type, resourceIdentifiers[0].value, 0);
         InventoryInstance.verifyResourceIdentifier(resourceIdentifiers[1].type, resourceIdentifiers[1].value, 2);
@@ -294,10 +294,11 @@ describe('ui-data-import: Check that field protection overrides work properly du
         [FileDetails.columnName.srsMarc, FileDetails.columnName.instance].forEach(columnName => {
           FileDetails.checkStatusInColumn(FileDetails.status.updated, columnName);
         });
-        FileDetails.checkItemsQuantityInSummaryTable(1, '1');
+        FileDetails.checkSrsRecordQuantityInSummaryTable('1', '1');
+        FileDetails.checkInstanceQuantityInSummaryTable('1', '1');
 
         cy.visit(TopMenu.inventoryPath);
-        InventorySearch.searchInstanceByHRID(instanceHrid);
+        InventorySearchAndFilter.searchInstanceByHRID(instanceHrid);
         InstanceRecordView.verifyAdministrativeNote(updatedAdministativeNote);
         InventoryInstance.verifyResourceIdentifierAbsent();
         InstanceRecordView.verifyInstanceNote(updatedInstanceNote);

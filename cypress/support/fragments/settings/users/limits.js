@@ -26,9 +26,21 @@ export default {
       saveButton.click(),
     ]);
   },
+  setMaximumOutstandingFeeFineBalance: (balance) => {
+    cy.do([
+      TextField({ name:'cf7a0d5f-a327-4ca1-aa9e-dc55ec006b8a' }).fillIn(balance),
+      saveButton.click(),
+    ]);
+  },
   setMaximumNumberOfOverdueItems: (itemsNumber) => {
     cy.do([
       TextField({ name:'584fbd4f-6a34-4730-a6ca-73a6a6a9d845' }).fillIn(itemsNumber),
+      saveButton.click(),
+    ]);
+  },
+  setMaximumNumberOfLostItems: (itemsNumber) => {
+    cy.do([
+      TextField({ name:'72b67965-5b73-4840-bc0b-be8f3f6e047e' }).fillIn(itemsNumber),
       saveButton.click(),
     ]);
   },

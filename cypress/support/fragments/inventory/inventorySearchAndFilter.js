@@ -1,3 +1,4 @@
+import uuid from 'uuid';
 import { HTML, including } from '@interactors/html';
 import {
   MultiColumnList,
@@ -12,29 +13,41 @@ import {
   Select,
   Form,
   TextInput,
-  KeyValue
+  KeyValue,
+  Section,
+  MultiSelect,
+  MultiSelectOption
 } from '../../../../interactors';
 import InventoryActions from './inventoryActions';
 import InventoryInstances from './inventoryInstances';
 import logsViewAll from '../data_import/logs/logsViewAll';
 import DateTools from '../../utils/dateTools';
+import Helper from '../finance/financeHelper';
 
 const effectiveLocationInput = Accordion({ id: 'effectiveLocation' });
 const languageInput = Accordion({ id: 'language' });
 const keywordInput = TextField({ id: 'input-inventory-search' });
-const searchButton = Button('Search');
+const searchButton = Button({ type: 'submit' });
 const searchTextField = TextField('Search ');
-const inventorySearch = TextInput({ id: 'input-inventory-search' });
-const inventorySearchInput = Select({ id: 'input-inventory-search-qindex' });
-const resetAllButton = Button({ id: 'clickable-reset-all'});
+const inventorySearchAndFilter = TextInput({ id: 'input-inventory-search' });
+const inventorySearchAndFilterInput = Select({ id: 'input-inventory-search-qindex' });
+const resetAllButton = Button({ id: 'clickable-reset-all' });
 const navigationInstancesButton = Button({ id: 'segment-navigation-instances' });
+const paneFilterSection = Section({ id: 'pane-filter' });
+const paneResultsSection = Section({ id: 'pane-results' });
+const instanceDetailsSection = Section({ id: 'pane-instancedetails' });
+const instancesTagsSection = Section({ id: 'instancesTags' });
+const tagsPane = Pane('Tags');
+const tagsButton = Button({ id: 'clickable-show-tags' });
+const tagsAccordionButton = instancesTagsSection.find(Button('Tags'));
+const emptyResultsMessage = 'Choose a filter or enter a search query to show results.';
 
 const searchInstanceByHRID = (id) => {
   InventoryInstances.waitContentLoading();
   cy.do([
     Select({ id: 'input-inventory-search-qindex' }).choose('Instance HRID'),
     TextField({ id: 'input-inventory-search' }).fillIn(id),
-    Button('Search').click()
+    searchButton.click()
   ]);
   InventoryInstances.waitLoading();
 };
@@ -42,7 +55,7 @@ const searchInstanceByHRID = (id) => {
 const searchInstanceByTitle = (title) => {
   cy.do([
     TextField({ id: 'input-inventory-search' }).fillIn(title),
-    Button('Search').click()
+    searchButton.click()
   ]);
   InventoryInstances.waitLoading();
 };
@@ -106,7 +119,7 @@ export default {
   checkInstanceDetails,
   getAllSearchResults: () => MultiColumnList(),
   getSearchResult: (row = 0, col = 0) => MultiColumnListCell({ 'row': row, 'columnIndex': col }),
-  waitLoading: () => cy.expect([Form().find(inventorySearch).exists()]),
+  waitLoading: () => cy.expect([Form().find(inventorySearchAndFilter).exists()]),
   browseCallNumberIsAbsent:() => cy.expect(HTML('Browse call numbers').absent()),
   browseSubjectIsAbsent:() => cy.expect(HTML('Browse subjects').absent()),
 
@@ -202,7 +215,7 @@ export default {
     cy.get('#input-inventory-search-qindex').then(elem => {
       expect(elem.text()).to.include('Keyword (title, contributor, identifier');
     });
-    cy.expect(inventorySearchInput.exists());
+    cy.expect(inventorySearchAndFilterInput.exists());
   },
 
   verifyCallNumberBrowseEmptyPane() {
@@ -291,7 +304,7 @@ export default {
 
   selectSearchOptions(searchOption, text) {
     cy.do([
-      inventorySearchInput.choose(searchOption),
+      inventorySearchAndFilterInput.choose(searchOption),
       keywordInput.fillIn(text),
     ]);
   },
@@ -322,4 +335,89 @@ export default {
   checkMissingSearchResult(cellContent) {
     cy.expect(MultiColumnListCell({ content: cellContent }).absent());
   },
+
+  verifyIsFilteredByTag(instanceTitle) {
+    cy.expect(MultiColumnListCell({ row: 0, content: instanceTitle }).exists());
+    cy.expect(MultiColumnList().has({ rowCount: 1 }));
+  },
+
+  filterByTag(tag) {
+    cy.do([
+      tagsAccordionButton.click(),
+      instancesTagsSection.find(TextField()).fillIn(tag),
+      instancesTagsSection.find(Checkbox(tag)).click()
+    ]);
+  },
+
+  resetAllAndVerifyNoResultsAppear() {
+    cy.do(resetAllButton.click());
+    cy.expect(paneResultsSection.find(HTML(including(emptyResultsMessage))).exists());
+  },
+
+  closeTagsAndInstanceDetailPane() {
+    cy.do(instanceDetailsSection.find(Button({ icon: 'times' })).click());
+    cy.expect(instanceDetailsSection.absent());
+    cy.expect(tagsPane.absent());
+  },
+
+  verifyTagCount(count = '0') {
+    cy.expect(tagsButton.find(HTML(including(count))).exists());
+  },
+
+  addTag(tag) {
+    cy.intercept('PUT', '**/inventory/instances/**').as('addTag');
+    cy.do([
+      MultiSelect({ id: 'input-tag' }).fillIn(tag),
+      MultiSelect().open(),
+      MultiSelectOption(including(tag)).click(),
+    ]);
+    cy.wait('@addTag');
+  },
+
+  verifyTagsView() {
+    cy.expect(tagsPane.exists());
+    // needs some waiting until request payload is gathered
+    // otherwise, UI throws "Permissions" error
+    // eslint-disable-next-line cypress/no-unnecessary-waiting
+    cy.wait(1200);
+  },
+
+  openTagsField() {
+    cy.do(tagsButton.click());
+  },
+
+  verifyInstanceDetailsView() {
+    cy.expect(instanceDetailsSection.exists());
+  },
+
+  selectFoundInstance(instanceTitle) {
+    cy.do(MultiColumnListCell({ row: 0, content: instanceTitle }).click());
+  },
+
+  verifyPanesExist() {
+    cy.expect(paneFilterSection.exists());
+    cy.expect(paneResultsSection.exists());
+    cy.expect(paneResultsSection.find(HTML(including(emptyResultsMessage))).exists());
+  },
+
+  createInstanceViaApi() {
+    const instanceData = {
+      instanceTitle: `instanceTitle ${Helper.getRandomBarcode()}`,
+      instanceId: uuid(),
+      instanceTypeId: null,
+    };
+
+    return cy.getInstanceTypes({ limit: 1 })
+      .then(instanceTypes => {
+        instanceData.instanceTypeId = instanceTypes[0].id;
+      }).then(() => {
+        cy.createInstance({
+          instance: {
+            instanceId: instanceData.instanceId,
+            instanceTypeId: instanceData.instanceTypeId,
+            title: instanceData.instanceTitle,
+          }
+        });
+      }).then(() => ({ instanceData }));
+  }
 };

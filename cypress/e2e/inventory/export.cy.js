@@ -1,5 +1,5 @@
 import TopMenu from '../../support/fragments/topMenu';
-import InventorySearch from '../../support/fragments/inventory/inventorySearch';
+import InventorySearchAndFilter from '../../support/fragments/inventory/inventorySearchAndFilter';
 import InventoryActions from '../../support/fragments/inventory/inventoryActions';
 import FileManager from '../../support/utils/fileManager';
 import DataExportResults from '../../support/fragments/data-export/dataExportResults';
@@ -86,13 +86,13 @@ describe('ui-inventory: exports', () => {
   });
 
   it('C9284 Export small number of Instance UUIDs (30 or fewer) (firebird)', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
-    InventorySearch.searchByParameter('Title (all)', instanceTitle);
-    InventorySearch.saveUUIDs();
+    InventorySearchAndFilter.searchByParameter('Title (all)', instanceTitle);
+    InventorySearchAndFilter.saveUUIDs();
 
     cy.intercept('/search/instances/ids**').as('getIds');
     cy.wait('@getIds', getLongDelay())
       .then((req) => {
-        const expectedUUIDs = InventorySearch.getUUIDsFromRequest(req);
+        const expectedUUIDs = InventorySearchAndFilter.getUUIDsFromRequest(req);
 
         FileManager.verifyFile(
           InventoryActions.verifySaveUUIDsFileName,
@@ -104,10 +104,10 @@ describe('ui-inventory: exports', () => {
   });
 
   it('C9287 verifies export CQL query (firebird)', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
-    InventorySearch.byLanguage();
-    InventorySearch.searchByParameter('Keyword (title, contributor, identifier, HRID, UUID)', instanceTitle);
-    InventorySearch.byEffectiveLocation(locationName);
-    InventorySearch.saveCQLQuery();
+    InventorySearchAndFilter.byLanguage();
+    InventorySearchAndFilter.searchByParameter('Keyword (title, contributor, identifier, HRID, UUID)', instanceTitle);
+    InventorySearchAndFilter.byEffectiveLocation(locationName);
+    InventorySearchAndFilter.saveCQLQuery();
 
     FileManager.verifyFile(
       InventoryActions.verifySaveCQLQueryFileName,
@@ -118,9 +118,9 @@ describe('ui-inventory: exports', () => {
   });
 
   it('C196757 Export selected records (MARC) (firebird)', { tags: [testTypes.smoke, devTeams.firebird, testTypes.broken] }, () => {
-    InventorySearch.searchByParameter('Title (all)', instanceTitle);
-    cy.do(InventorySearch.getSearchResult().find(Checkbox()).click());
-    InventorySearch.exportInstanceAsMarc();
+    InventorySearchAndFilter.searchByParameter('Title (all)', instanceTitle);
+    cy.do(InventorySearchAndFilter.getSearchResult().find(Checkbox()).click());
+    InventorySearchAndFilter.exportInstanceAsMarc();
 
     cy.intercept('/data-export/quick-export').as('getIds');
     cy.wait('@getIds', getLongDelay())

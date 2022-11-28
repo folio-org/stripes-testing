@@ -18,7 +18,7 @@ import ActionProfiles from '../../support/fragments/data_import/action_profiles/
 import NewJobProfile from '../../support/fragments/data_import/job_profiles/newJobProfile';
 import InventoryViewSource from '../../support/fragments/inventory/inventoryViewSource';
 import ExportMarcFile from '../../support/fragments/data-export/export-marc-file';
-import InventorySearch from '../../support/fragments/inventory/inventorySearch';
+import InventorySearchAndFilter from '../../support/fragments/inventory/inventorySearchAndFilter';
 import FileManager from '../../support/utils/fileManager';
 
 describe('ui-data-import: Test 001/003/035 handling for New and Updated SRS records', () => {
@@ -36,7 +36,7 @@ describe('ui-data-import: Test 001/003/035 handling for New and Updated SRS reco
   // unique file names
   const nameMarcFileForCreate = `C17039 autotestFile.${getRandomPostfix()}.mrc`;
   const editedMarcFileName = `C17039 fileWith999Field.${getRandomPostfix()}.mrc`;
-  const nameFileNameAfterUpload = `C17039 uploadedFile.${getRandomPostfix()}.mrc`;
+  const fileNameAfterUpload = `C17039 uploadedFile.${getRandomPostfix()}.mrc`;
 
   // unique profile names
   const matchProfileName = `C17039 match profile ${Helper.getRandomBarcode()}`;
@@ -77,7 +77,7 @@ describe('ui-data-import: Test 001/003/035 handling for New and Updated SRS reco
     cy.loginAsAdmin({ path: TopMenu.dataImportPath, waiter: DataImport.waitLoading });
     cy.getAdminToken()
       .then(() => {
-        const fileName = `C358136autotestFile.${getRandomPostfix()}.mrc`;
+        const fileName = `C17039autotestFile.${getRandomPostfix()}.mrc`;
 
         cy.visit(TopMenu.dataImportPath);
         DataImport.uploadFile('oneMarcBib.mrc', fileName);
@@ -86,7 +86,7 @@ describe('ui-data-import: Test 001/003/035 handling for New and Updated SRS reco
         Logs.openFileDetails(fileName);
 
         // get Instance HRID through API
-        InventorySearch.getInstanceHRID()
+        InventorySearchAndFilter.getInstanceHRID()
           .then(hrId => {
             instanceHridForReimport = hrId[0];
           });
@@ -128,12 +128,12 @@ describe('ui-data-import: Test 001/003/035 handling for New and Updated SRS reco
     FileDetails.checkInstanceQuantityInSummaryTable('1');
 
     // get Instance HRID through API
-    InventorySearch.getInstanceHRID()
+    InventorySearchAndFilter.getInstanceHRID()
       .then(hrId => {
         instanceHrid = hrId[0];
         // check fields are absent in the view source
         cy.visit(TopMenu.inventoryPath);
-        InventorySearch.searchInstanceByHRID(instanceHrid);
+        InventorySearchAndFilter.searchInstanceByHRID(instanceHrid);
         InventoryInstance.verifyResourceIdentifier(resourceIdentifiers[0].type, resourceIdentifiers[0].value, 0);
         InventoryInstance.verifyResourceIdentifier(resourceIdentifiers[1].type, resourceIdentifiers[1].value, 1);
         // verify table data in marc bibliographic source
@@ -180,11 +180,11 @@ describe('ui-data-import: Test 001/003/035 handling for New and Updated SRS reco
 
         // upload a marc file for updating already created instance
         cy.visit(TopMenu.dataImportPath);
-        DataImport.uploadFile(editedMarcFileName, nameFileNameAfterUpload);
+        DataImport.uploadFile(editedMarcFileName, fileNameAfterUpload);
         JobProfiles.searchJobProfileForImport(jobProfile.profileName);
-        JobProfiles.runImportFile(nameFileNameAfterUpload);
+        JobProfiles.runImportFile(fileNameAfterUpload);
         Logs.checkStatusOfJobProfile('Completed');
-        Logs.openFileDetails(nameFileNameAfterUpload);
+        Logs.openFileDetails(fileNameAfterUpload);
         FileDetails.checkStatusInColumn(FileDetails.status.updated, FileDetails.columnName.srsMarc);
         FileDetails.checkStatusInColumn(FileDetails.status.updated, FileDetails.columnName.instance);
         FileDetails.checkSrsRecordQuantityInSummaryTable('1', '1');
@@ -192,7 +192,7 @@ describe('ui-data-import: Test 001/003/035 handling for New and Updated SRS reco
 
         // check instance is updated
         cy.visit(TopMenu.inventoryPath);
-        InventorySearch.searchInstanceByHRID(instanceHrid);
+        InventorySearchAndFilter.searchInstanceByHRID(instanceHrid);
         InventoryInstance.checkIsInstanceUpdated();
         // verify table data in marc bibliographic source
         InventoryInstance.viewSource();
@@ -203,9 +203,9 @@ describe('ui-data-import: Test 001/003/035 handling for New and Updated SRS reco
 
     // export instance
     cy.visit(TopMenu.inventoryPath);
-    InventorySearch.searchInstanceByHRID(instanceHridForReimport);
-    InventorySearch.selectResultCheckboxes(1);
-    InventorySearch.exportInstanceAsMarc();
+    InventorySearchAndFilter.searchInstanceByHRID(instanceHridForReimport);
+    InventorySearchAndFilter.selectResultCheckboxes(1);
+    InventorySearchAndFilter.exportInstanceAsMarc();
 
     // download exported marc file
     cy.visit(TopMenu.dataExportPath);
@@ -220,18 +220,18 @@ describe('ui-data-import: Test 001/003/035 handling for New and Updated SRS reco
         JobProfiles.searchJobProfileForImport(jobProfile.profileName);
         JobProfiles.runImportFile(exportedFileName);
         Logs.checkStatusOfJobProfile('Completed');
-        Logs.openFileDetails(nameMarcFileForCreate);
+        Logs.openFileDetails(exportedFileName);
         [FileDetails.columnName.srsMarc,
           FileDetails.columnName.instance].forEach(columnName => {
           FileDetails.checkStatusInColumn(FileDetails.status.updated, columnName);
         });
-        FileDetails.checkSrsRecordQuantityInSummaryTable('1');
-        FileDetails.checkInstanceQuantityInSummaryTable('1');
+        FileDetails.checkSrsRecordQuantityInSummaryTable('1', '1');
+        FileDetails.checkInstanceQuantityInSummaryTable('1', '1');
       });
 
     // check instance is updated
     cy.visit(TopMenu.inventoryPath);
-    InventorySearch.searchInstanceByHRID(instanceHridForReimport);
+    InventorySearchAndFilter.searchInstanceByHRID(instanceHridForReimport);
     InventoryInstance.checkIsInstanceUpdated();
 
     // verify table data in marc bibliographic source

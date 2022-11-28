@@ -17,7 +17,7 @@ import FileDetails from '../../support/fragments/data_import/logs/fileDetails';
 import InventoryInstance from '../../support/fragments/inventory/inventoryInstance';
 import InventoryViewSource from '../../support/fragments/inventory/inventoryViewSource';
 import Users from '../../support/fragments/users/users';
-import InventorySearch from '../../support/fragments/inventory/inventorySearch';
+import InventorySearchAndFilter from '../../support/fragments/inventory/inventorySearchAndFilter';
 
 describe('ui-data-import: MARC field protections apply to MARC modifications of incoming records when they should not: Scenario 1', () => {
   let user = null;
@@ -60,7 +60,7 @@ describe('ui-data-import: MARC field protections apply to MARC modifications of 
     Users.deleteViaApi(user.userId);
   });
 
-  // Test is failed. MODSOURMAN-819
+  // Test is failed. MODDATAIMP-739
   it('C350678 MARC field protections apply to MARC modifications of incoming records when they should not: Scenario 1 (folijet)', { tags: [TestTypes.smoke, DevTeams.folijet] }, () => {
     const mappingProfile = { name: mappingProfileName,
       typeValue : NewFieldMappingProfile.folioRecordTypeValue.marcBib };
@@ -142,12 +142,12 @@ describe('ui-data-import: MARC field protections apply to MARC modifications of 
     FileDetails.checkItemsQuantityInSummaryTable(0, '1');
 
     // get Instance HRID through API
-    InventorySearch.getInstanceHRID()
+    InventorySearchAndFilter.getInstanceHRID()
       .then(hrId => {
         instanceHrid = hrId[1];
         // check fields are absent in the view source
         cy.visit(TopMenu.inventoryPath);
-        InventorySearch.searchInstanceByHRID(instanceHrid);
+        InventorySearchAndFilter.searchInstanceByHRID(instanceHrid);
         // verify table data in marc bibliographic source
         InventoryInstance.viewSource();
         fieldsForDelete.forEach(fieldNumber => {

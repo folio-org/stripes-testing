@@ -2,7 +2,7 @@ import TopMenu from '../../support/fragments/topMenu';
 import TestTypes from '../../support/dictionary/testTypes';
 import InventoryActions from '../../support/fragments/inventory/inventoryActions';
 import FastAddNewRecord from '../../support/fragments/inventory/fastAddNewRecord';
-import InventorySearch from '../../support/fragments/inventory/inventorySearch';
+import InventorySearchAndFilter from '../../support/fragments/inventory/inventorySearchAndFilter';
 import ItemRecordView from '../../support/fragments/inventory/itemRecordView';
 import InstanceRecordView from '../../support/fragments/inventory/instanceRecordView';
 import InteractorsTools from '../../support/utils/interactorsTools';
@@ -65,8 +65,8 @@ describe('ui-inventory: Create fast add record', () => {
         InteractorsTools.checkCalloutMessage(
           FastAddNewRecord.calloutMessages.INVENTORY_RECORDS_CREATE_SUCCESS
         );
-        InventorySearch.switchToItem();
-        InventorySearch.searchByParameter('Barcode', FastAddNewRecord.fastAddNewRecordFormDetails.itemBarcode);
+        InventorySearchAndFilter.switchToItem();
+        InventorySearchAndFilter.searchByParameter('Barcode', FastAddNewRecord.fastAddNewRecordFormDetails.itemBarcode);
         FastAddNewRecord.openRecordDetails();
 
         // verify instance details

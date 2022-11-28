@@ -105,6 +105,7 @@ export default {
   loansView: { internal: 'ui-users.loans.view', gui: 'Users: User loans view' },
   loansRenew: { internal: 'ui-users.loans.renew', gui: 'Users: User loans renew' },
   loansRenewOverride: { internal: 'ui-users.loans.renew-override', gui: 'Users: User loans renew through override' },
+  overridePatronBlock: { internal: 'ui-users.overridePatronBlock', gui: 'User: Can override patron blocks' },
   // Checkout
   checkoutAll: { internal: 'ui-checkout.all', gui: 'Check out: All permissions' },
   checkoutCirculatingItems: { internal: 'ui-checkout.circulation', gui: 'Check out: Check out circulating items' },
@@ -127,6 +128,7 @@ export default {
   uiInvoicesApproveInvoices: { internal: 'ui-invoice.approve', gui: 'Invoice: Approve invoices' },
   uiInvoicesPayInvoices: { internal: 'ui-invoice.pay', gui: 'Invoice: Pay invoices' },
   invoiceSettingsAll: { internal: 'ui-invoice.settings.all', gui: 'Settings (Invoices): Can view and edit settings' },
+  uiInvoicesCancelInvoices: { internal: 'ui-invoice.cancel', gui: 'Invoice: Cancel invoices' },
   // Orders
   uiOrdersView: { internal: 'ui-orders.orders.view', gui: 'Orders: Can view Orders and Order lines' },
   uiOrdersCreate: { internal: 'ui-orders.orders.create', gui: 'Orders: Can create new Orders and Order lines' },
@@ -179,4 +181,6 @@ export default {
   uiInventorySettingsFastAdd: { internal: 'ui-inventory.settings.fast-add', gui: 'Settings (Inventory): Edit fast add settings' },
   uiCreateEditDeleteMaterialTypes: { internal: 'ui-inventory.settings.materialtypes', gui: 'Settings (Inventory): Create, edit, delete material types' },
   uiInventorySettingsConfigureSingleRecordImport: { internal: 'ui-inventory.settings.single-record-import', gui: 'Settings (Inventory): Configure single-record import' },
+  // Timers
+  okapiTimersPatch: { internal: 'okapi.proxy.self.timers.patch', gui: 'Okapi - patch timer for current tenant' },
 };

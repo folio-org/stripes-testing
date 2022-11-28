@@ -1,7 +1,7 @@
 import testType from '../../../support/dictionary/testTypes';
 import Permissions from '../../../support/dictionary/permissions';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
-import InventorySearch from '../../../support/fragments/inventory/inventorySearch';
+import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
 import BrowseContributors from '../../../support/fragments/inventory/search/browseContributors';
 import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
@@ -51,7 +51,7 @@ describe('ui-inventory: search', () => {
   });
 
   it('C353640 Browse contributors with non exact match query (spitfire)', { tags: [testType.smoke, devTeams.spitfire] }, () => {
-    InventorySearch.verifyKeywordsAsDefault();
+    InventorySearchAndFilter.verifyKeywordsAsDefault();
     BrowseContributors.checkBrowseOptions();
     BrowseContributors.select();
     BrowseContributors.checkSearch();
@@ -59,7 +59,7 @@ describe('ui-inventory: search', () => {
     BrowseContributors.checkSearchResultsTable();
     BrowseContributors.checkNonExactSearchResult(instanceA.contributors[0], instanceZ.contributors[0]);
     BrowseContributors.resetAllInSearchPane();
-    InventorySearch.verifyKeywordsAsDefault();
+    InventorySearchAndFilter.verifyKeywordsAsDefault();
   });
 
   afterEach('Deleting user', () => {

@@ -20,12 +20,12 @@ import {
   calloutTypes,
   Modal
 } from '../../../../interactors';
-import InventoryInstanceEdit from './InventoryInstanceEdit';
+import InstanceRecordEdit from './instanceRecordEdit';
 import InventoryViewSource from './inventoryViewSource';
-import NewHoldingsRecord from './newHoldingsRecord';
+import InventoryNewHoldings from './inventoryNewHoldings';
 import InventoryInstanceSelectInstanceModal from './holdingsMove/inventoryInstanceSelectInstanceModal';
 import InventoryInstancesMovement from './holdingsMove/inventoryInstancesMovement';
-import ItemVeiw from './inventoryItem/itemVeiw';
+import ItemView from './inventoryItem/itemView';
 import DateTools from '../../utils/dateTools';
 
 const section = Section({ id: 'pane-instancedetails' });
@@ -44,6 +44,12 @@ const moveItemsButton = Button({ id: 'move-instance-items' });
 const instanceDetailsPane = Pane({ id:'pane-instancedetails' });
 const identifiersAccordion = Accordion('Identifiers');
 const singleRecordImportModal = Modal('Single record import');
+const source = KeyValue('Source');
+const tagButton = Button({ icon: 'tag' });
+const closeTag = Button({ icon: 'times' });
+const tagsPane = Pane('Tags');
+const textFieldTagInput = MultiSelect({ ariaLabelledby:'accordion-toggle-button-tag-accordion' });
+const descriptiveDataAccordion = Accordion('Descriptive data');
 
 const instanceHRID = 'Instance HRID';
 const validOCLC = { id:'176116217',
@@ -67,14 +73,9 @@ const validOCLC = { id:'176116217',
 
 const pressAddHoldingsButton = () => {
   cy.do(Button({ id:'clickable-new-holdings-record' }).click());
-  NewHoldingsRecord.waitLoading();
+  InventoryNewHoldings.waitLoading();
 };
 const waitLoading = () => cy.expect(actionsButton.exists());
-const tagButton = Button({ icon: 'tag' });
-const closeTag = Button({ icon: 'times' });
-const tagsPane = Pane('Tags');
-const textFieldTagInput = MultiSelect({ ariaLabelledby:'accordion-toggle-button-tag-accordion' });
-
 const openHoldings = (...holdingToBeOpened) => {
   const openActions = [];
   for (let i = 0; i < holdingToBeOpened.length; i++) {
@@ -82,12 +83,52 @@ const openHoldings = (...holdingToBeOpened) => {
   }
   return cy.do(openActions);
 };
+const verifyInstanceTitle = (title) => cy.expect(Pane({ titleLabel: including(title) }).exists());
+const verifyInstanceSource = (sourceValue) => cy.expect(source.has({ value: sourceValue }));
+const verifyLastUpdatedDate = () => {
+  const updatedDate = DateTools.getFormattedDateWithSlashes({ date: new Date() });
+  cy.expect(Accordion('Administrative data').find(HTML(including(`Record last updated: ${updatedDate}`))).exists());
+};
+const verifyInstancePublisher = (indexRow, indexColumn, type) => {
+  cy.expect(descriptiveDataAccordion.find(MultiColumnList({ id: 'list-publication' }))
+    .find(MultiColumnListRow({ index: indexRow })).find(MultiColumnListCell({ columnIndex: indexColumn }))
+    .has({ content: type }));
+};
+
+const verifyInstanceSubject = (indexRow, indexColumn, value) => {
+  cy.expect(Accordion('Subject')
+    .find(MultiColumnList({ id: 'list-subject' }))
+    .find(MultiColumnListRow({ index: indexRow })).find(MultiColumnListCell({ columnIndex: indexColumn }))
+    .has({ content: value }));
+};
+
+const verifyResourceIdentifier = (type, value, rowIndex) => {
+  const identifierRow = identifiersAccordion
+    .find(identifiers
+      .find(MultiColumnListRow({ index: rowIndex })));
+
+  cy.expect(identifierRow.find(MultiColumnListCell({ columnIndex: 0 })).has({ content: type }));
+  cy.expect(identifierRow.find(MultiColumnListCell({ columnIndex: 1 })).has({ content: value }));
+};
+
+const checkInstanceNotes = (noteType, noteContent) => {
+  cy.expect(Button({ id: 'accordion-toggle-button-instance-details-notes' }).exists());
+  cy.expect(notesSection.find(MultiColumnListHeader(noteType)).exists());
+  cy.expect(notesSection.find(MultiColumnListCell(noteContent)).exists());
+};
 
 export default {
   validOCLC,
   pressAddHoldingsButton,
   waitLoading,
   openHoldings,
+  verifyInstanceTitle,
+  verifyInstanceSource,
+  verifyLastUpdatedDate,
+  verifyInstancePublisher,
+  verifyInstanceSubject,
+  verifyResourceIdentifier,
+  checkInstanceNotes,
   checkExpectedOCLCPresence: (OCLCNumber = validOCLC.id) => {
     cy.expect(identifiers.find(HTML(including(OCLCNumber))).exists());
   },
@@ -111,17 +152,12 @@ export default {
   editInstance:() => {
     cy.do(actionsButton.click());
     cy.do(editInstanceButton.click());
-    InventoryInstanceEdit.waitLoading();
+    InstanceRecordEdit.waitLoading();
   },
   editMarcBibliographicRecord:() => {
     cy.do(actionsButton.click());
     cy.do(editMARCBibRecordButton.click());
     cy.expect(Pane({ id: 'quick-marc-editor-pane' }).exists());
-  },
-  checkInstanceNotes:(noteType, noteContent) => {
-    cy.expect(Button({ id: 'accordion-toggle-button-instance-details-notes' }).exists());
-    cy.expect(notesSection.find(MultiColumnListHeader(noteType)).exists());
-    cy.expect(notesSection.find(MultiColumnListCell(noteContent)).exists());
   },
 
   checkElectronicAccess:() => {
@@ -152,8 +188,8 @@ export default {
   },
   createHoldingsRecord:(permanentLocation) => {
     pressAddHoldingsButton();
-    NewHoldingsRecord.fillRequiredFields(permanentLocation);
-    NewHoldingsRecord.saveAndClose();
+    InventoryNewHoldings.fillRequiredFields(permanentLocation);
+    InventoryNewHoldings.saveAndClose();
     waitLoading();
   },
 
@@ -241,7 +277,7 @@ export default {
   },
   openItemView: (itemBarcode) => {
     cy.do(Link(including(itemBarcode)).click());
-    ItemVeiw.waitLoading();
+    ItemView.waitLoading();
   },
   openEditItemPage() {
     cy.do([
@@ -290,24 +326,20 @@ export default {
     });
   },
 
+  verifyResourceIdentifierAbsent:() => cy.expect(identifiersAccordion.find(identifiers).absent()),
+  verifyInstanceLanguage:(language) => cy.expect(descriptiveDataAccordion.find(KeyValue('Language')).has({ value: language })),
+  verifyInstancePhisicalcyDescription:(description) => {
+    cy.expect(descriptiveDataAccordion.find(KeyValue('Physical description')).has({ value: description }));
+  },
+
   checkIsInstanceUpdated:() => {
     const instanceStatusTerm = KeyValue('Instance status term');
-    const source = KeyValue('Source');
 
     cy.expect(instanceStatusTerm.has({ value: 'Batch Loaded' }));
     cy.expect(source.has({ value: 'MARC' }));
     cy.expect(KeyValue('Cataloged date').has({ value: DateTools.getFormattedDate({ date: new Date() }) }));
   },
 
-  verifyResourceIdentifier(type, value, rowIndex) {
-    const identifierRow = identifiersAccordion
-      .find(identifiers
-        .find(MultiColumnListRow({ index: rowIndex })));
-
-    cy.expect(identifierRow.find(MultiColumnListCell({ columnIndex: 0 })).has({ content: type }));
-    cy.expect(identifierRow.find(MultiColumnListCell({ columnIndex: 1 })).has({ content: value }));
-  },
-  verifyResourceIdentifierAbsent:() => cy.expect(identifiersAccordion.find(identifiers).absent()),
   getId() {
     cy.url().then(url => cy.wrap(url.split('?')[0].split('/').at(-1))).as('instanceId');
     return cy.get('@instanceId');
@@ -337,7 +369,7 @@ export default {
     cy.do(Button({ id: 'clickable-view-source' }).click());
     cy.expect(HTML('MARC bibliographic record').exists());
   },
-  
+
   singleRecordImportModalIsPresented:() => {
     cy.expect(singleRecordImportModal.exists());
   },
@@ -349,11 +381,15 @@ export default {
 
   checkCalloutMessage: (text, calloutType = calloutTypes.success) => {
     cy.expect(Callout({ type: calloutType }).is({ textContent: text }));
-  }, 
+  },
 
   checkIdentifier: (text) => {
     cy.expect(Accordion('Identifiers')
       .find(MultiColumnList({ id: 'list-identifiers' }))
       .find(MultiColumnListCell(including(text))).exists());
+  },
+
+  verifyLoan(content) {
+    cy.expect(MultiColumnListCell({ content }).exists());
   },
 };

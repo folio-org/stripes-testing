@@ -186,8 +186,9 @@ export default {
     STATUS: { columnIndex: 3 },
     RECORDS: { columnIndex: 4 },
     JOB_PROFILE: { columnIndex: 5 },
-    ENDED_RUNNING: { columnIndex: 6 },
-    RUN_BY: { columnIndex: 7 }
+    STARTED_RUNNING: { columnIndex: 6 },
+    ENDED_RUNNING: { columnIndex: 7 },
+    RUN_BY: { columnIndex: 8 }
   },
 
   checkByReverseChronologicalOrder() {
