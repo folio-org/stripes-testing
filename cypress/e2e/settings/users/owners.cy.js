@@ -63,7 +63,7 @@ describe('ui-users-settings: Owners', () => {
     });
   });
 
-  describe('Management of n fee/fine owners and service points', () => {
+  describe.skip('Management of n fee/fine owners and service points', () => {
     const testUsers = [];
     const addedServicePoints = [];
     const createRegularUser = () => cy.createTempUser([Permissions.uiUsersSettingsOwners.gui,
