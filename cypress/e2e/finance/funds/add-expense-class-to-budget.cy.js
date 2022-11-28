@@ -64,8 +64,6 @@ describe('ui-finance: Funds', () => {
     Funds.selectBudgetDetails();
     Funds.editBudget();
     Funds.addExpensesClass(firstExpenseClass.name);
-    InteractorsTools.checkCalloutMessage(`Budget ${fund.code} has been saved`);
-    // Need to wait callout message
-    cy.wait(4000);
+    InteractorsTools.checkCalloutMessage(`Budget ${fund.code}-FY2022 has been saved`);
   });
 });
