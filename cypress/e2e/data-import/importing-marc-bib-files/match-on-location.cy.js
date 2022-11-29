@@ -41,7 +41,7 @@ describe('ui-data-import: Match on location', () => {
   const holdingsType = '"Monograph"';
   const noteForItemMappingProfile = 'This note for item mapping profile';
   const materialType = '"sound recording"';
-  const itemNote = '"Electronic bookplate"';
+  const noteType = '"Electronic bookplate"';
 
   // unique file name
   const marcFileForCreate = `C17027 autoTestFile.${getRandomPostfix()}.mrc`;
@@ -187,7 +187,7 @@ describe('ui-data-import: Match on location', () => {
 
         // upload a marc file for creating of the new instance, holding and item
         cy.visit(TopMenu.dataImportPath);
-        DataImport.uploadFile('marcFileForMatchOnLocation.mrc', marcFileForCreate);
+        DataImport.uploadFile('marcFileForMatchOnLocation_1.mrc', marcFileForCreate);
         JobProfiles.searchJobProfileForImport(testData.jobProfileForCreate.profile.name);
         JobProfiles.runImportFile(marcFileForCreate);
         Logs.openFileDetails(marcFileForCreate);
@@ -297,7 +297,7 @@ describe('ui-data-import: Match on location', () => {
     };
 
     // change Instance HRID in .mrc file
-    DataImport.editMarcFile('marcFileForMatchOnLocation.mrc', editedMarcFileName, ['ocn933596084'], [instanceHrid]);
+    DataImport.editMarcFile('marcFileForMatchOnLocation_1.mrc', editedMarcFileName, ['ocn933596084'], [instanceHrid]);
 
     // create Match profile
     cy.visit(SettingsMenu.matchProfilePath);
@@ -354,7 +354,9 @@ describe('ui-data-import: Match on location', () => {
     FileDetails.checkItemQuantityInSummaryTable('1', 1);
 
     // check updated items in Inventory
-    FileDetails.openHoldingsInInventory('Updated');
+    cy.visit(TopMenu.inventoryPath);
+    InventorySearchAndFilter.searchInstanceByHRID(instanceHrid);
+    InventoryInstance.openHoldingView();
     HoldingsRecordView.checkAdministrativeNote(noteForHoldingsMappingProfile);
     HoldingsRecordView.close();
     InventoryInstance.openHoldingsAccordion('Main Library >');
@@ -382,12 +384,7 @@ describe('ui-data-import: Match on location', () => {
     const fileNameAfterUpdate = `C17027 marcFileForMatchOnLocation.${getRandomPostfix()}.mrc`;
 
     // change Instance HRID in .mrc file
-    DataImport.editMarcFile(
-      'marcFileForMatchOnLocation.mrc',
-      editedMarcFileName,
-      ['ocn933596084', 'Main Library'],
-      [instanceHrid, 'Main Library (KU/CC/DI/M)']
-    );
+    DataImport.editMarcFile('marcFileForMatchOnLocation_2.mrc', editedMarcFileName, ['ocn933596084'], [instanceHrid]);
 
     // unique profile names for updating
     const instanceHridMatchProfile = `C17027 match profile Instance HRID or UUID.${getRandomPostfix()}`;
@@ -517,7 +514,9 @@ describe('ui-data-import: Match on location', () => {
     FileDetails.checkItemQuantityInSummaryTable('1', 1);
 
     // check updated items in Inventory
-    FileDetails.openHoldingsInInventory('Updated');
+    cy.visit(TopMenu.inventoryPath);
+    InventorySearchAndFilter.searchInstanceByHRID(instanceHrid);
+    InventoryInstance.openHoldingView();
     HoldingsRecordView.checkHoldingsStatement(holdingsStatement);
     HoldingsRecordView.close();
     InventoryInstance.openHoldingsAccordion('Main Library >');
@@ -545,12 +544,7 @@ describe('ui-data-import: Match on location', () => {
     const fileNameAfterUpdate = `C17027 marcFileForMatchOnLocation.${getRandomPostfix()}.mrc`;
 
     // change Instance HRID in .mrc file
-    DataImport.editMarcFile(
-      'marcFileForMatchOnLocation.mrc',
-      editedMarcFileName,
-      ['ocn933596084', 'Main Library'],
-      [instanceHrid, 'KU/CC/DI/M']
-    );
+    DataImport.editMarcFile('marcFileForMatchOnLocation_3.mrc', editedMarcFileName, ['ocn933596084'], [instanceHrid]);
 
     // unique profile names for updating
     const instanceHridMatchProfile = `C17027 match profile Instance HRID or UUID.${getRandomPostfix()}`;
@@ -642,7 +636,7 @@ describe('ui-data-import: Match on location', () => {
     FieldMappingProfiles.checkMappingProfilePresented(holdingsUpdateMappingProfile.name);
     FieldMappingProfiles.openNewMappingProfileForm();
     NewFieldMappingProfile.fillSummaryInMappingProfile(itemUpdateMappingProfile);
-    NewFieldMappingProfile.addItemNotes(itemNote, '"Smith Family Foundation"', 'Mark for all affected records');
+    NewFieldMappingProfile.addItemNotes(noteType, '"Smith Family Foundation"', 'Mark for all affected records');
     FieldMappingProfiles.saveProfile();
     FieldMappingProfiles.closeViewModeForMappingProfile(itemUpdateMappingProfile.name);
     FieldMappingProfiles.checkMappingProfilePresented(itemUpdateMappingProfile.name);
@@ -680,12 +674,14 @@ describe('ui-data-import: Match on location', () => {
     FileDetails.checkItemQuantityInSummaryTable('1', 1);
 
     // check updated items in Inventory
-    FileDetails.openHoldingsInInventory('Updated');
-    HoldingsRecordView.checkHoldingsType(holdingsType);
+    cy.visit(TopMenu.inventoryPath);
+    InventorySearchAndFilter.searchInstanceByHRID(instanceHrid);
+    InventoryInstance.openHoldingView();
+    HoldingsRecordView.checkHoldingsType('Monograph');
     HoldingsRecordView.close();
     InventoryInstance.openHoldingsAccordion('Main Library >');
     InventoryInstance.openItemView('No barcode');
-    ItemView.checkItemNote(itemNote);
+    ItemView.checkItemNote('Smith Family Foundation');
 
     // delete profiles
     JobProfiles.deleteJobProfile(jobProfile);

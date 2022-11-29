@@ -69,7 +69,7 @@ const selectOrganizationByName = (organizationName) => {
 
 const waitLoading = () => {
   // wait will be add uuid for acceptedValues
-  cy.wait(500);
+  cy.wait(1000);
 };
 
 const selectFromResultsList = (rowNumber = 0) => cy.do(organizationModal.find(MultiColumnListRow({ index: rowNumber })).click());

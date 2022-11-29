@@ -77,6 +77,6 @@ export default {
   },
 
   checkItemNote:(note) => {
-    cy.expect(Accordion('Item notes').find(KeyValue('Note')).has({ value: note }));
+    cy.expect(Accordion('Item notes').find(KeyValue('Electronic bookplate')).has({ value: note }));
   }
 };
