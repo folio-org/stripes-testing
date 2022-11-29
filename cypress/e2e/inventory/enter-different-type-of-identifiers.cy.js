@@ -27,10 +27,7 @@ describe('ui-inventory: Enter different type of identifiers', () => {
             title: instanceTitle,
             source: 'FOLIO',
           },
-        }).then(specialInstanceId => {
-          console.log(instanceTitle);
-          instanceId = specialInstanceId;
-        });
+        }).then(specialInstanceId => { instanceId = specialInstanceId; });
       });
   });
 
