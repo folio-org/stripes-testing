@@ -53,7 +53,6 @@ describe('ui-inventory: Enter different type of identifiers', () => {
       searchAndOpenInstance('Title (all)', instanceTitle);
       InventoryInstance.editInstance();
       InventoryInstanceEdit.addIdentifier(identifier, resourceIdentifier);
-
       searchAndOpenInstance('Keyword (title, contributor, identifier, HRID, UUID)', resourceIdentifier);
       InventoryInstance.checkInstanceIdentifier(resourceIdentifier);
     });
