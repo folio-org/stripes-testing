@@ -404,6 +404,23 @@ export default {
     cy.do(Pane({ id:'pane-poLineForm' }).absent());
   },
 
+  fillPOLWithTitleLookUp:() => {
+    cy.do([
+      orderFormatSelect.choose('Other'),
+      acquisitionMethodButton.click(),
+      SelectionOption('Depository').click(),
+      receivingWorkflowSelect.choose('Synchronized order and receipt quantity'),
+      physicalUnitPriceTextField.fillIn(physicalUnitPrice),
+      quantityPhysicalTextField.fillIn(quantityPhysical),
+      materialTypeSelect.choose('book'),
+      addLocationButton.click(),
+      locationSelect.click(),
+      onlineLocationOption.click(),
+      quantityPhysicalLocationField.fillIn(quantityPhysical),
+      saveAndClose.click()
+    ]);
+  },
+
   selectRandomInstanceInTitleLookUP:(instanceName, rowNumber = 0) => {
     cy.do([
       Button({ id: 'find-instance-trigger' }).click(),
