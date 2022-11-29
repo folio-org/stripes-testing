@@ -16,6 +16,7 @@ export default {
       searchField.fillIn(name),
       Button('Search').click(),
     ]);
+    cy.wait(4000);
   },
 
   searchByCode : (code) => {

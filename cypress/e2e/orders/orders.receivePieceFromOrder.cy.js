@@ -53,7 +53,7 @@ describe('orders: Receive piece from Order', () => {
         InteractorsTools.checkCalloutMessage(`The Purchase order - ${orderNumber} has been successfully opened`);
         Orders.receiveOrderViaActions();
         // Receiving part
-        Helper.selectFromResultsList();
+        Receiving.selectPOLInReceive(orderLine.titleOrPackage);
         Receiving.receivePiece(0, caption, barcode);
         Receiving.checkReceivedPiece(0, caption, barcode);
         // inventory part
