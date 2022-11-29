@@ -13,11 +13,18 @@ import { replaceByIndex } from '../../support/utils/stringTools';
 import { Callout } from '../../../interactors';
 import Users from '../../support/fragments/users/users';
 import DevTeams from '../../support/dictionary/devTeams';
+import Z3950TargetProfiles from '../../support/fragments/settings/inventory/z39.50TargetProfiles';
 
 // TODO: redesign test to exclude repeated steps
 describe('Manage inventory Bib records with quickMarc editor', () => {
   let userId;
   const quickmarcEditor = new QuickMarcEditor(InventoryInstance.validOCLC);
+
+  before(() => {
+    cy.getAdminToken().then(() => {
+      Z3950TargetProfiles.changeOclcWorldCatValueViaApi('100473910/PAOLF'); //100473910/PAOLF
+    });
+  });
 
   beforeEach(() => {
     cy.createTempUser([permissions.uiQuickMarcQuickMarcAuthoritiesEditorAll.gui,
@@ -31,6 +38,10 @@ describe('Manage inventory Bib records with quickMarc editor', () => {
       cy.visit(TopMenu.inventoryPath);
       InventoryActions.import();
     });
+  });
+
+  afterEach(() => {
+    Users.deleteViaApi(userId);
   });
 
   it('C10950 Edit and save a MARC record in quickMARC (spitfire)', { tags: [testTypes.smoke, DevTeams.spitfire, features.quickMarcEditor] }, () => {
@@ -208,9 +219,5 @@ describe('Manage inventory Bib records with quickMarc editor', () => {
 
     checkCorrectUpdate(6, changesIn06);
     checkCorrectUpdate(7, changesIn07);
-  });
-
-  afterEach(() => {
-    Users.deleteViaApi(userId);
   });
 });
