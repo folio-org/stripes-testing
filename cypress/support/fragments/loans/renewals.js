@@ -17,6 +17,7 @@ const fieldLabels = {
   date: 'Date*',
   time: 'Time*',
   additionalInfo: 'Additional information*',
+  comment: 'Comment*'
 };
 const overrideData = {
   date: dateTools.getCurrentDate(),
@@ -30,11 +31,14 @@ const buttonLabels = {
   cancel: 'Cancel',
   override: 'Override',
   renew: 'Renew',
+  saveAndClose: 'Save & close',
 };
 const headers = {
   loansPage: 'Loan details -',
   renewConfirmation: 'Renew Confirmation',
   override: 'Override & renew',
+  blockedRenewing: 'Patron blocked from renewing',
+  overridePatronBlock: 'Override patron block',
 };
 const loanInfo = {
   notRenewed: '1 item not renewed.',
@@ -200,5 +204,22 @@ export default {
   confirmRenewalsSuccess() {
     cy.expect(Modal('Renew Confirmation').exists());
     cy.do(Button(buttonLabels.close).click());
+  },
+
+  renewBlockedPatron(commentText) {
+    cy.expect([
+      Button(buttonLabels.override).exists(),
+      Modal(including(headers.blockedRenewing)).exists(),
+    ]);
+    cy.do(Button(buttonLabels.override).click());
+
+    cy.expect([
+      Modal(including(headers.overridePatronBlock)).exists(),
+      TextArea(fieldLabels.comment).exists(),
+    ]);
+    cy.do([
+      TextArea(fieldLabels.comment).fillIn(commentText),
+      Button(buttonLabels.saveAndClose).click(),
+    ]);
   }
 };

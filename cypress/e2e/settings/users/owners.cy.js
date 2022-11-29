@@ -7,7 +7,7 @@ import Features from '../../../support/dictionary/features';
 import users from '../../../support/fragments/users/users';
 import ServicePoint from '../../../support/fragments/servicePoint/servicePoint';
 
-describe('ui-users-settings: Owners', () => {
+describe.skip('ui-users-settings: Owners', () => {
   describe('Owner creation', () => {
     const servicePoints = [];
     const ownerNames = [];

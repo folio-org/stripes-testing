@@ -1,6 +1,6 @@
 import { matching } from 'bigtest';
-import { Pane, MultiColumnListRow, MultiColumnListCell, HTML, including, Button } from '../../../../../interactors';
-import ItemVeiw from '../../inventory/inventoryItem/itemVeiw';
+import { Pane, MultiColumnListRow, MultiColumnListCell, HTML, including, Button, KeyValue } from '../../../../../interactors';
+import ItemView from '../../inventory/inventoryItem/itemView';
 
 const claimReturnedButton = Button('Claim returned');
 const declaredLostButton = Button('Declare lost');
@@ -50,13 +50,19 @@ export default {
     cy.do(ellipsisButton.click());
     cy.expect(itemDetailsButton.exists());
     cy.do(itemDetailsButton.click());
-    ItemVeiw.waitLoading();
+    ItemView.waitLoading();
   },
-  renewItem:(barcode) => {
-    cy.expect(rowInList.find(HTML(including(barcode))).exists());
-    cy.do(ellipsisButton.click());
-    cy.expect(renewButton.exists());
-    cy.do(renewButton.click());
+  renewItem:(barcode, isLoanOpened = false) => {
+    if (isLoanOpened) {
+      cy.expect(KeyValue({ value: barcode }).exists());
+      cy.expect(renewButton.exists());
+      cy.do(renewButton.click());
+    } else {
+      cy.expect(rowInList.find(HTML(including(barcode))).exists());
+      cy.do(ellipsisButton.click());
+      cy.expect(renewButton.exists());
+      cy.do(renewButton.click());
+    }
   },
   checkResultsInTheRowByBarcode: (allContentToCheck, itemBarcode) => {
     return allContentToCheck.forEach(contentToCheck => cy.expect(MultiColumnListRow({ text: matching(itemBarcode), isContainer: false }).find(MultiColumnListCell({ content: including(contentToCheck) })).exists()));
