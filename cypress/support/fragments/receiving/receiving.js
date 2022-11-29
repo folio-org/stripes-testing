@@ -124,4 +124,8 @@ export default {
     cy.do(Section({ id: 'pane-title-details' }).find(Link(instanceName)).click());
   },
 
+  selectPOLInReceive:(POLName) => {
+    cy.do(Section({ id: 'receiving-results-pane' }).find(Link(POLName)).click());
+  },
+
 };
