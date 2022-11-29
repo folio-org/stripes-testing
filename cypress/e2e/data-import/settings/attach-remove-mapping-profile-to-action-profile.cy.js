@@ -1,15 +1,15 @@
-import TestTypes from '../../support/dictionary/testTypes';
-import DevTeams from '../../support/dictionary/devTeams';
-import Helper from '../../support/fragments/finance/financeHelper';
-import SettingsMenu from '../../support/fragments/settingsMenu';
-import FieldMappingProfiles from '../../support/fragments/data_import/mapping_profiles/fieldMappingProfiles';
-import NewFieldMappingProfile from '../../support/fragments/data_import/mapping_profiles/newFieldMappingProfile';
-import ActionProfiles from '../../support/fragments/data_import/action_profiles/actionProfiles';
-import NewActionProfile from '../../support/fragments/data_import/action_profiles/newActionProfile';
-import ActionProfileView from '../../support/fragments/data_import/action_profiles/actionProfileView';
-import FieldMappingProfileView from '../../support/fragments/data_import/mapping_profiles/fieldMappingProfileView';
-import ActionProfileEdit from '../../support/fragments/data_import/action_profiles/actionProfileEdit';
-import ConfirmRemoval from '../../support/fragments/data_import/action_profiles/modals/confirmRemoval';
+import TestTypes from '../../../support/dictionary/testTypes';
+import DevTeams from '../../../support/dictionary/devTeams';
+import Helper from '../../../support/fragments/finance/financeHelper';
+import SettingsMenu from '../../../support/fragments/settingsMenu';
+import FieldMappingProfiles from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfiles';
+import NewFieldMappingProfile from '../../../support/fragments/data_import/mapping_profiles/newFieldMappingProfile';
+import ActionProfiles from '../../../support/fragments/data_import/action_profiles/actionProfiles';
+import NewActionProfile from '../../../support/fragments/data_import/action_profiles/newActionProfile';
+import ActionProfileView from '../../../support/fragments/data_import/action_profiles/actionProfileView';
+import FieldMappingProfileView from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfileView';
+import ActionProfileEdit from '../../../support/fragments/data_import/action_profiles/actionProfileEdit';
+import ConfirmRemoval from '../../../support/fragments/data_import/action_profiles/modals/confirmRemoval';
 
 describe('ui-data-import: Attach/Remove a field mapping profile to an action profile', () => {
   // unique profile names
