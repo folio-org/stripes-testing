@@ -1,3 +1,4 @@
+import uuid from 'uuid';
 import TestTypes from '../../support/dictionary/testTypes';
 import permissions from '../../support/dictionary/permissions';
 import TopMenu from '../../support/fragments/topMenu';
@@ -17,6 +18,7 @@ describe('ui-inventory: Create page type request', () => {
   let createdItem;
   let oldRulesText;
   let requestPolicyId;
+  const servicePoint = ServicePoints.getDefaultServicePointWithPickUpLocation('autotest create page type request', uuid());
 
   beforeEach(() => {
     cy.getAdminToken()
@@ -27,6 +29,7 @@ describe('ui-inventory: Create page type request', () => {
           });
       })
       .then(() => {
+        ServicePoints.createViaApi(servicePoint);
         cy.createTempUser([
           permissions.inventoryAll.gui,
           permissions.uiInventoryViewInstances.gui,
@@ -81,6 +84,7 @@ describe('ui-inventory: Create page type request', () => {
     Users.deleteViaApi(user.userId);
     Requests.updateCirculationRulesApi(oldRulesText);
     Requests.deleteRequestPolicyApi(requestPolicyId);
+    ServicePoints.deleteViaApi(servicePoint.id);
   });
 
   it('C546: Create new request for "Page" type (vega)', { tags: [TestTypes.smoke, DevTeams.vega] }, () => {
@@ -88,7 +92,7 @@ describe('ui-inventory: Create page type request', () => {
     createPageTypeRequest.findAvailableItem(instanceData, createdItem.barcode);
     createPageTypeRequest.clickNewRequest(createdItem.barcode);
     createPageTypeRequest.selectActiveFacultyUser(user.username);
-    createPageTypeRequest.saveAndClose();
+    createPageTypeRequest.saveAndClose(servicePoint.name);
     cy.wait(['@postRequest']);
     createPageTypeRequest.clickItemBarcodeLink(createdItem.barcode);
     createPageTypeRequest.verifyRequestsCountOnItemRecord();
