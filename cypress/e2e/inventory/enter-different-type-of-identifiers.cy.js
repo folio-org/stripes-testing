@@ -27,7 +27,10 @@ describe('ui-inventory: Enter different type of identifiers', () => {
             title: instanceTitle,
             source: 'FOLIO',
           },
-        }).then(specialInstanceId => { instanceId = specialInstanceId; });
+        }).then(specialInstanceId => {
+          console.log(instanceTitle);
+          instanceId = specialInstanceId;
+        });
       });
   });
 
@@ -36,7 +39,9 @@ describe('ui-inventory: Enter different type of identifiers', () => {
   });
 
   const searchAndOpenInstance = (parametr, title) => {
+    cy.intercept('GET', '/holdings-sources?*').as('getHoldSources');
     cy.visit(TopMenu.inventoryPath);
+    cy.wait(['@getHoldSources']);
     InventorySearch.searchByParameter(parametr, title);
     InventoryInstances.selectInstance();
   };
@@ -51,6 +56,7 @@ describe('ui-inventory: Enter different type of identifiers', () => {
       searchAndOpenInstance('Title (all)', instanceTitle);
       InventoryInstance.editInstance();
       InventoryInstanceEdit.addIdentifier(identifier, resourceIdentifier);
+
       searchAndOpenInstance('Keyword (title, contributor, identifier, HRID, UUID)', resourceIdentifier);
       InventoryInstance.checkInstanceIdentifier(resourceIdentifier);
     });
