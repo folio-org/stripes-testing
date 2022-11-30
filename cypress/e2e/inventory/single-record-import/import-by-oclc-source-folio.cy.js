@@ -47,11 +47,11 @@ describe('ui-inventory: import by OCLC', () => {
       });
   });
 
-  // after('delete test data', () => {
-  //   InventoryInstance.deleteInstanceViaApi(instanceRecord.instanceId);
-  //   Users.deleteViaApi(user.userId);
-  //   Z3950TargetProfiles.changeOclcWorldCatToDefaultViaApi();
-  // });
+  after('delete test data', () => {
+    InventoryInstance.deleteInstanceViaApi(instanceRecord.instanceId);
+    Users.deleteViaApi(user.userId);
+    Z3950TargetProfiles.changeOclcWorldCatToDefaultViaApi();
+  });
 
   it('C343349 Overlay existing Source = FOLIO Instance by import of single MARC Bib record from OCLC (folijet)', { tags: [testTypes.smoke, DevTeams.folijet] }, () => {
     cy.visit(TopMenu.inventoryPath);
