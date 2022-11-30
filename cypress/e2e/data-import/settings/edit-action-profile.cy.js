@@ -10,7 +10,7 @@ import Users from '../../../support/fragments/users/users';
 import ActionProfileEdit from '../../../support/fragments/data_import/action_profiles/actionProfileEdit';
 import ActionProfileView from '../../../support/fragments/data_import/action_profiles/actionProfileView';
 
-describe('ui-data-import: edit profile', () => {
+describe('ui-data-import: Edit an existing action profile without associated job profile', () => {
   const actionProfileName = `C2348 autotest action profile ${Helper.getRandomBarcode()}`;
   let user;
   const actionProfile = {
@@ -37,8 +37,8 @@ describe('ui-data-import: edit profile', () => {
     ActionProfiles.deleteActionProfile(actionProfileName);
   });
 
-  it('C2348 Edit an existing action profile (folijet)', { tags: [TestTypes.smoke, DevTeams.folijet] }, () => {
-    // step 1 checks
+  it('C2348 Edit an existing action profile without associated job profile (folijet)', { tags: [TestTypes.smoke, DevTeams.folijet] }, () => {
+    ActionProfiles.checkListOfExistingProfilesIsDisplayed();
     ActionProfiles.search(actionProfile.name);
     ActionProfiles.selectActionProfileFromList(actionProfile.name);
     ActionProfiles.verifyActionProfileOpened(actionProfile.name);
@@ -48,6 +48,5 @@ describe('ui-data-import: edit profile', () => {
     ActionProfileEdit.save();
     ActionProfiles.checkCalloutMessage(actionProfile.name);
     ActionProfileView.verifyAction();
-    // step 5 need to create test with linking action profile with job profile
   });
 });

@@ -1,5 +1,13 @@
 import { including } from '@interactors/html';
-import { Button, TextField, MultiColumnListCell, Pane, MultiColumnListRow, Callout } from '../../../../../interactors';
+import {
+  Button,
+  TextField,
+  MultiColumnListCell,
+  Pane,
+  MultiColumnListRow,
+  Callout,
+  PaneContent
+} from '../../../../../interactors';
 import NewActionProfile from './newActionProfile';
 
 const actionsButton = Button('Actions');
@@ -82,4 +90,6 @@ export default {
     cy.expect(Callout({ textContent: including(`The action profile "${profileName}" was successfully updated`) })
       .exists());
   },
+
+  checkListOfExistingProfilesIsDisplayed:() => cy.expect(PaneContent({ id:'pane-results-content' }).exists()),
 };
