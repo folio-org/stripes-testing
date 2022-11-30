@@ -32,11 +32,11 @@ describe('Importing MARC Authority files', () => {
     });
 
     cy.loginAsAdmin({ path: SettingsMenu.jobProfilePath, waiter: JobProfiles.waitLoadingList })
-    .then(()=>{
-      JobProfiles.createJobProfile(createdJobProfile);
-      NewJobProfile.linkActionProfileByName('Default - Create MARC Authority');
-      NewJobProfile.saveAndClose();
-    })
+      .then(() => {
+        JobProfiles.createJobProfile(createdJobProfile);
+        NewJobProfile.linkActionProfileByName('Default - Create MARC Authority');
+        NewJobProfile.saveAndClose();
+      })
   });
 
   beforeEach('Login to the application', () => {
