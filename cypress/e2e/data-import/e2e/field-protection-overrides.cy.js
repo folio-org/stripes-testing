@@ -234,6 +234,8 @@ describe('ui-data-import: Check that field protection overrides work properly du
     NewJobProfile.saveAndClose();
     JobProfiles.checkJobProfilePresented(jobProfileForUpdate.profileName);
 
+    // need to wait until the first job profile will be created
+    cy.wait(2500);
     JobProfiles.createJobProfile(jobProfileForOverride);
     NewJobProfile.linkMatchAndTwoActionProfiles(matchProfile.profileName, marcBibActionProfileOverride.name, instanceActionProfileOverride.name);
     NewJobProfile.saveAndClose();
