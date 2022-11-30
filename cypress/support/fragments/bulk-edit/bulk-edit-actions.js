@@ -24,6 +24,10 @@ function getLocationSelect() {
   return cy.get('select').eq(2);
 }
 
+function getActionSelect() {
+  return cy.get('select').eq(2);
+}
+
 function getBulkEditSelectType() {
   return cy.get('select').eq(1);
 }
@@ -118,6 +122,15 @@ export default {
 
   fillLoanType(type = 'Selected') {
     getBulkEditSelectType().select('Permanent loan type');
+    cy.do([
+      Button({ id: 'loanType' }).click(),
+      SelectionOption(including(type)).click(),
+    ]);
+  },
+
+  fillTemporaryLoanType(type = 'Selected') {
+    getBulkEditSelectType().select('Temporary loan type');
+    getActionSelect().select('Replace with');
     cy.do([
       Button({ id: 'loanType' }).click(),
       SelectionOption(including(type)).click(),

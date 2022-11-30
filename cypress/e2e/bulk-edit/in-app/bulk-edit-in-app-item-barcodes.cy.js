@@ -106,5 +106,24 @@ describe('bulk-edit', () => {
         InventoryInstance.verifyLoan('Selected');
       });
     });
+
+    it.only('C359225 Verify the in-app bulk edit temporary loan type (firebird)', { tags: [testTypes.smoke, devTeams.firebird] }, () =>{
+      BulkEditSearchPane.selectRecordIdentifier('Item barcode');
+
+      BulkEditSearchPane.uploadFile(itemBarcodesFileName);
+      BulkEditSearchPane.waitFileUploading();
+
+      BulkEditActions.openActions();
+      BulkEditActions.openStartBulkEditForm();
+      BulkEditActions.fillTemporaryLoanType('Selected');
+
+      cy.loginAsAdmin({ path: TopMenu.inventoryPath, waiter: InventoryInstances.waitContentLoading });
+      items.forEach(item => {
+        InventorySearchAndFilter.searchByParameter('Keyword (title, contributor, identifier, HRID, UUID)', item.instanceName);
+        InventorySearchAndFilter.selectSearchResultItem();
+        InventoryInstance.openHoldings(['']);
+        InventoryInstance.verifyLoan('Selected');
+      });
+    });
   });
 });
