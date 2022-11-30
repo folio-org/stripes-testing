@@ -1,10 +1,10 @@
-import getRandomPostfix from '../../support/utils/stringTools';
-import LogsViewAll from '../../support/fragments/data_import/logs/logsViewAll';
-import FileManager from '../../support/utils/fileManager';
-import TestTypes from '../../support/dictionary/testTypes';
-import TopMenu from '../../support/fragments/topMenu';
-import DataImport from '../../support/fragments/data_import/dataImport';
-import DevTeams from '../../support/dictionary/devTeams';
+import getRandomPostfix from '../../../support/utils/stringTools';
+import LogsViewAll from '../../../support/fragments/data_import/logs/logsViewAll';
+import FileManager from '../../../support/utils/fileManager';
+import TestTypes from '../../../support/dictionary/testTypes';
+import TopMenu from '../../../support/fragments/topMenu';
+import DataImport from '../../../support/fragments/data_import/dataImport';
+import DevTeams from '../../../support/dictionary/devTeams';
 
 describe('ui-data-import: Search the "View all" log screen', () => {
   let id;

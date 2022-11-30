@@ -266,6 +266,7 @@ export default {
   },
 
   deleteBudgetViaActions() {
+    cy.wait(4000);
     cy.do([
       actionsButton.click(),
       deleteButton.click(),
@@ -410,10 +411,13 @@ export default {
       Button({ id: 'budget-status-expense-classes-add-button' }).click(),
       Button({ name: 'statusExpenseClasses[0].expenseClassId' }).click(),
       SelectionOption(firstExpenseClassName).click(),
-      saveAndCloseButton.click()
     ]);
+    cy.wait(2000);
+    cy.do(saveAndCloseButton.click());
+    cy.wait(2000);
   },
   deleteExpensesClass:() => {
+    cy.wait(2000);
     cy.do([
       Section({ id: 'expense-classes' }).find(Button({ icon: 'trash' })).click(),
       saveAndCloseButton.click()

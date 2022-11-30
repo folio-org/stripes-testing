@@ -51,7 +51,7 @@ describe('orders: Unreceive piece from Order', () => {
         InteractorsTools.checkCalloutMessage(`The Purchase order - ${orderNumber} has been successfully opened`);
         Orders.receiveOrderViaActions();
         // Receive piece
-        Helper.selectFromResultsList();
+        Receiving.selectPOLInReceive(orderLine.titleOrPackage);
         Receiving.receivePiece(0, caption, barcode);
         Receiving.checkReceivedPiece(0, caption, barcode);
         // Unreceive piece

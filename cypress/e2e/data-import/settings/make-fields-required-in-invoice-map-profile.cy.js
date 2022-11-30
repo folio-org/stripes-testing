@@ -1,12 +1,12 @@
-import permissions from '../../support/dictionary/permissions';
-import TestTypes from '../../support/dictionary/testTypes';
-import DevTeams from '../../support/dictionary/devTeams';
-import FieldMappingProfiles from '../../support/fragments/data_import/mapping_profiles/fieldMappingProfiles';
-import NewFieldMappingProfile from '../../support/fragments/data_import/mapping_profiles/newFieldMappingProfile';
-import Helper from '../../support/fragments/finance/financeHelper';
-import Users from '../../support/fragments/users/users';
-import FieldMappingProfileView from '../../support/fragments/data_import/mapping_profiles/fieldMappingProfileView';
-import SettingsMenu from '../../support/fragments/settingsMenu';
+import permissions from '../../../support/dictionary/permissions';
+import TestTypes from '../../../support/dictionary/testTypes';
+import DevTeams from '../../../support/dictionary/devTeams';
+import FieldMappingProfiles from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfiles';
+import NewFieldMappingProfile from '../../../support/fragments/data_import/mapping_profiles/newFieldMappingProfile';
+import Helper from '../../../support/fragments/finance/financeHelper';
+import Users from '../../../support/fragments/users/users';
+import FieldMappingProfileView from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfileView';
+import SettingsMenu from '../../../support/fragments/settingsMenu';
 
 describe('ui-data-import: Make some of the fields on the Invoice field mapping profile required', () => {
   let user = null;

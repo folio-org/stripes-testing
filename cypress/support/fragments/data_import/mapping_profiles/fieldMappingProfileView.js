@@ -10,16 +10,15 @@ import {
   Modal,
   TextField,
   MultiColumnList,
-  Link
+  Link,
+  Callout,
+  KeyValue
 } from '../../../../../interactors';
 
 const actionsButton = Button('Actions');
-const saveButton = Button('Save as profile & Close');
 const deleteButton = Button('Delete');
 const fullScreenView = Pane({ id:'full-screen-view' });
 const associatedList = MultiColumnList({ id:'associated-actionProfiles-list' });
-
-const saveMappingProfile = () => cy.do(saveButton.click());
 
 const closeViewModeForMappingProfile = (profileName) => {
   cy.do(Pane({ title: profileName }).find(Button({ icon: 'times' })).click());
@@ -42,7 +41,6 @@ const checkOverrideSectionOfMappingProfile = (field, status) => {
 };
 
 export default {
-  saveMappingProfile,
   checkUpdatesSectionOfMappingProfile,
   checkOverrideSectionOfMappingProfile,
   closeViewModeForMappingProfile,
@@ -70,12 +68,6 @@ export default {
     ]);
   },
 
-  markFieldForProtection:(field) => {
-    cy.get('div[class^="mclRow--"]').contains('div[class^="mclCell-"]', field).then(elem => {
-      elem.parent()[0].querySelector('input[type="checkbox"]').click();
-    });
-  },
-
   checkErrorMessageIsPresented:(textFieldName) => {
     const fieldName = TextField(textFieldName);
 
@@ -96,5 +88,14 @@ export default {
         const linkForVisit = elem.getAttribute('href');
         cy.visit(linkForVisit);
       }));
+  },
+
+  checkCalloutMessage: (profileName) => {
+    cy.expect(Callout({ textContent: including(`The field mapping profile "${profileName}" was successfully updated`) })
+      .exists());
+  },
+
+  verifyInstanceStatusTerm:(status) => {
+    cy.expect(KeyValue('Instance status term').has({ value: status }));
   }
 };
