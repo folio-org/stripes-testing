@@ -61,10 +61,10 @@ describe('orders: Test PO filters', () => {
       });
   });
 
-  // after(() => {
-  //   Orders.deleteOrderApi(order.id);
-  //   Organizations.deleteOrganizationViaApi(organization.id);
-  // });
+  after(() => {
+    Orders.deleteOrderApi(order.id);
+    Organizations.deleteOrganizationViaApi(organization.id);
+  });
 
   [
     { filterActions: Orders.selectOpenStatusFilter },
