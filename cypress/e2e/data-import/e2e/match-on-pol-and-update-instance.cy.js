@@ -24,7 +24,7 @@ import InventoryViewSource from '../../../support/fragments/inventory/inventoryV
 import Users from '../../../support/fragments/users/users';
 import FileManager from '../../../support/utils/fileManager';
 
-describe('ui-data-import: Match on POL and update related Instance, Holdings, Item', () => {
+describe('ui-data-import: Match on POL and update related Instance with source MARC, create Holdings, Item records.', () => {
   let user = null;
   let orderNumber;
 
@@ -183,7 +183,7 @@ describe('ui-data-import: Match on POL and update related Instance, Holdings, It
     OrderLines.savePol();
   };
 
-  it('C350944 Match on POL and update related Instance, Holdings, Item (folijet)', { tags: [TestTypes.smoke, DevTeams.folijet] }, () => {
+  it('C350944 Match on POL and update related Instance with source MARC, create Holdings, Item records. (folijet)', { tags: [TestTypes.smoke, DevTeams.folijet] }, () => {
     // create mapping profiles
     cy.visit(SettingsMenu.mappingProfilePath);
     createInstanceMappingProfile(collectionOfProfiles[0].mappingProfile);
