@@ -36,7 +36,9 @@ describe('ui-inventory: Enter different type of identifiers', () => {
   });
 
   const searchAndOpenInstance = (parametr, title) => {
+    cy.intercept('GET', '/holdings-sources?*').as('getHoldSources');
     cy.visit(TopMenu.inventoryPath);
+    cy.wait(['@getHoldSources']);
     InventorySearch.searchByParameter(parametr, title);
     InventoryInstances.selectInstance();
   };
