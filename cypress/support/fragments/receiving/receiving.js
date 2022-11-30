@@ -70,6 +70,7 @@ export default {
       SelectionOption('Main Library (KU/CC/DI/M) ').click(),
       receiveButton.click(),
     ]);
+    cy.wait(1000);
     InteractorsTools.checkCalloutMessage(receivingSuccessful);
   },
 
@@ -80,6 +81,7 @@ export default {
 },
 
   checkReceivedPiece: (rowNumber, caption, barcode) => {
+    cy.wait(2000);
       cy.expect([
         Accordion({ id: receivedPiecesAccordionId })
         .find(MultiColumnListRow({ index: rowNumber }))
@@ -99,10 +101,12 @@ export default {
       Checkbox({ name: `${recievingFieldName}.checked` }).clickInput(),
       unreceiveButton.click(),
     ]);
+    cy.wait(1000);
     InteractorsTools.checkCalloutMessage(unreceivingSuccessful);
   },
 
   checkUnreceivedPiece: (rowNumber = 0, caption) => {
+    cy.wait(2000);
       cy.expect(Accordion({ id: expectedPiecesAccordionId })
         .find(MultiColumnListRow({ index: rowNumber }))
         .find(MultiColumnListCell({ content: caption })).exists());
