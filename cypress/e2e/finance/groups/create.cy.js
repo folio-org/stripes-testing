@@ -8,7 +8,7 @@ describe('ui-finance: Groups', () => {
   const defaultGroup = { ...NewGroup.defaultGroup };
 
   before(() => {
-    cy.getAdminToken();
+    cy.loginAsAdmin();
     cy.visit(TopMenu.groupsPath);
   });
 

@@ -1,11 +1,11 @@
-import getRandomPostfix from '../../support/utils/stringTools';
-import LogsViewAll from '../../support/fragments/data_import/logs/logsViewAll';
-import DateTools from '../../support/utils/dateTools';
-import TopMenu from '../../support/fragments/topMenu';
-import FileManager from '../../support/utils/fileManager';
-import TestTypes from '../../support/dictionary/testTypes';
-import DevTeams from '../../support/dictionary/devTeams';
-import DataImport from '../../support/fragments/data_import/dataImport';
+import getRandomPostfix from '../../../support/utils/stringTools';
+import LogsViewAll from '../../../support/fragments/data_import/logs/logsViewAll';
+import DateTools from '../../../support/utils/dateTools';
+import TopMenu from '../../../support/fragments/topMenu';
+import FileManager from '../../../support/utils/fileManager';
+import TestTypes from '../../../support/dictionary/testTypes';
+import DevTeams from '../../../support/dictionary/devTeams';
+import DataImport from '../../../support/fragments/data_import/dataImport';
 
 describe('ui-data-import: Filter the "View all" log screen', () => {
   // Path to static file in fixtures

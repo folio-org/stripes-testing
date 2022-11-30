@@ -1,15 +1,15 @@
-import getRandomPostfix from '../../support/utils/stringTools';
-import permissions from '../../support/dictionary/permissions';
-import DataImport from '../../support/fragments/data_import/dataImport';
-import TopMenu from '../../support/fragments/topMenu';
-import LogsViewAll from '../../support/fragments/data_import/logs/logsViewAll';
-import DateTools from '../../support/utils/dateTools';
-import DeleteDataImportLogsModal from '../../support/fragments/data_import/logs/deleteDataImportLogsModal';
-import Users from '../../support/fragments/users/users';
-import JobProfiles from '../../support/fragments/data_import/job_profiles/jobProfiles';
-import DevTeams from '../../support/dictionary/devTeams';
-import Logs from '../../support/fragments/data_import/logs/logs';
-import TestTypes from '../../support/dictionary/testTypes';
+import getRandomPostfix from '../../../support/utils/stringTools';
+import permissions from '../../../support/dictionary/permissions';
+import DataImport from '../../../support/fragments/data_import/dataImport';
+import TopMenu from '../../../support/fragments/topMenu';
+import LogsViewAll from '../../../support/fragments/data_import/logs/logsViewAll';
+import DateTools from '../../../support/utils/dateTools';
+import DeleteDataImportLogsModal from '../../../support/fragments/data_import/logs/deleteDataImportLogsModal';
+import Users from '../../../support/fragments/users/users';
+import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
+import DevTeams from '../../../support/dictionary/devTeams';
+import Logs from '../../../support/fragments/data_import/logs/logs';
+import TestTypes from '../../../support/dictionary/testTypes';
 
 describe('ui-data-import: A user can filter and delete import logs from the "View all" page', () => {
   const startedDate = new Date();
