@@ -107,7 +107,7 @@ describe('bulk-edit', () => {
       });
     });
 
-    it.only('C359225 Verify the in-app bulk edit temporary loan type (firebird)', { tags: [testTypes.smoke, devTeams.firebird] }, () =>{
+    it('C359225 Verify the in-app bulk edit temporary loan type (firebird)', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
       BulkEditSearchPane.selectRecordIdentifier('Item barcode');
 
       BulkEditSearchPane.uploadFile(itemBarcodesFileName);
