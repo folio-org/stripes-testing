@@ -61,6 +61,7 @@ describe('ui-inventory: import by OCLC', () => {
     InventoryInstance.importWithOclc(oclcRecordData.oclc);
     InventoryInstance.checkCalloutMessage(`Updated record ${oclcRecordData.oclc}`);
 
+    InventoryInstance.waitLoading();
     InventoryInstance.verifyLastUpdatedDate();
     InventoryInstance.verifyInstanceSource('MARC');
     InventoryInstance.verifyInstanceTitle(oclcRecordData.title);
