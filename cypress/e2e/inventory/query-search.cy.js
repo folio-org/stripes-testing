@@ -3,7 +3,7 @@ import testTypes from '../../support/dictionary/testTypes';
 import permissions from '../../support/dictionary/permissions';
 import getRandomPostfix from '../../support/utils/stringTools';
 import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
-import InventorySearch from '../../support/fragments/inventory/inventorySearch';
+import InventorySearchAndFilter from '../../support/fragments/inventory/inventorySearchAndFilter';
 import Users from '../../support/fragments/users/users';
 
 let userId;
@@ -36,15 +36,15 @@ describe('ui-inventory: query search', () => {
   });
 
   [
-    { searchTab: InventorySearch.switchToInstance, value: `uniformTitle all ${item.instanceName}` },
-    { searchTab: InventorySearch.switchToInstance, value: `publisher all ${item.publisher}` },
-    { searchTab: InventorySearch.switchToHoldings, value: `holdingsNormalizedCallNumbers="${item.holdingCallNumber}"` },
-    { searchTab: InventorySearch.switchToItem, value: `itemNormalizedCallNumbers="${item.itemCallNumber}"` },
+    { searchTab: InventorySearchAndFilter.switchToInstance, value: `uniformTitle all ${item.instanceName}` },
+    { searchTab: InventorySearchAndFilter.switchToInstance, value: `publisher all ${item.publisher}` },
+    { searchTab: InventorySearchAndFilter.switchToHoldings, value: `holdingsNormalizedCallNumbers="${item.holdingCallNumber}"` },
+    { searchTab: InventorySearchAndFilter.switchToItem, value: `itemNormalizedCallNumbers="${item.itemCallNumber}"` },
   ].forEach(searcher => {
     it('C9202 Test search field working for Query Search in Instance, Holdings and Item segment (prokopovych)', { tags: [testTypes.smoke] }, () => {
       searcher.searchTab();
-      InventorySearch.searchByParameter('Query search', searcher.value);
-      InventorySearch.verifySearchResult(item.instanceName);
+      InventorySearchAndFilter.searchByParameter('Query search', searcher.value);
+      InventorySearchAndFilter.verifySearchResult(item.instanceName);
     });
   });
 });

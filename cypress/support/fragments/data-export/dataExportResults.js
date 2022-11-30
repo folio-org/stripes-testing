@@ -1,4 +1,4 @@
-import InventorySearch from '../inventory/inventorySearch';
+import InventorySearchAndFilter from '../inventory/inventorySearchAndFilter';
 import { MultiColumnListCell } from '../../../../interactors';
 import DateTools from '../../utils/dateTools';
 
@@ -9,7 +9,7 @@ export default {
   defaultJobProfile: 'Default instances export job profile',
   verifyQuickExportResult() {
     cy.do([
-      InventorySearch.getSearchResult(0, 0).perform(element => {
+      InventorySearchAndFilter.getSearchResult(0, 0).perform(element => {
         expect(element.innerText).to.match(quickExportFileNameMask);
       }),
       MultiColumnListCell({ row: 0, content: this.defaultJobProfile }).exists(),

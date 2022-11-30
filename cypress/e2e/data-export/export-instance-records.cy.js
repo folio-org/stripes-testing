@@ -1,5 +1,5 @@
 import TopMenu from '../../support/fragments/topMenu';
-import InventorySearch from '../../support/fragments/inventory/inventorySearch';
+import InventorySearchAndFilter from '../../support/fragments/inventory/inventorySearchAndFilter';
 import TestTypes from '../../support/dictionary/testTypes';
 import FileManager from '../../support/utils/fileManager';
 import DownloadHelper from '../../support/fragments/data-export/export-marc-file';
@@ -44,9 +44,9 @@ describe('data-export', () => {
 
     // download file with existing UUIDs
     cy.visit(TopMenu.inventoryPath);
-    InventorySearch.switchToItem();
-    InventorySearch.searchByParameter('Barcode', item.itemBarcode);
-    InventorySearch.saveUUIDs();
+    InventorySearchAndFilter.switchToItem();
+    InventorySearchAndFilter.searchByParameter('Barcode', item.itemBarcode);
+    InventorySearchAndFilter.saveUUIDs();
     DownloadHelper.downloadCSVFile(fileName, 'SearchInstanceUUIDs*');
 
     // export file with UUIDs

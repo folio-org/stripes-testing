@@ -2,7 +2,6 @@ import getRandomPostfix from '../../support/utils/stringTools';
 import TestTypes from '../../support/dictionary/testTypes';
 import permissions from '../../support/dictionary/permissions';
 import SettingsMenu from '../../support/fragments/settingsMenu';
-import InventorySettings from '../../support/fragments/inventory/inventorySettings';
 import MaterialTypes from '../../support/fragments/settings/inventory/materialTypes';
 import NewMaterialType from '../../support/fragments/settings/inventory/newMaterialType';
 import Users from '../../support/fragments/users/users';
@@ -26,7 +25,7 @@ describe('ui-inventory: Create, edit, delete material types', () => {
 
   it('C505 Settings (Inventory): Create, edit, delete material types (folijet) (prokopovych)', { tags: [TestTypes.smoke, DevTeams.folijet] }, () => {
     cy.visit(SettingsMenu.materialTypePath);
-    InventorySettings.checkAvailableOptions();
+    MaterialTypes.checkAvailableOptions();
     NewMaterialType.create(materialTypeName);
     MaterialTypes.isPresented(materialTypeName);
     MaterialTypes.edit(materialTypeName, newMaterialTypeName);

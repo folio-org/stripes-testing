@@ -4,15 +4,22 @@ import TopMenu from '../../../support/fragments/topMenu';
 import HoldingsRecordView from '../../../support/fragments/inventory/holdingsRecordView';
 import TestTypes from '../../../support/dictionary/testTypes';
 import Features from '../../../support/dictionary/features';
-import NewHoldingsRecord from '../../../support/fragments/inventory/newHoldingsRecord';
+import InventoryNewHoldings from '../../../support/fragments/inventory/inventoryNewHoldings';
 import InventoryActions from '../../../support/fragments/inventory/inventoryActions';
 import InventorySteps from '../../../support/fragments/inventory/inventorySteps';
 import InventoryViewSource from '../../../support/fragments/inventory/inventoryViewSource';
 import QuickmarcEditor from '../../../support/fragments/quickMarcEditor';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 import DevTeams from '../../../support/dictionary/devTeams';
+import Z3950TargetProfiles from '../../../support/fragments/settings/inventory/z39.50TargetProfiles';
 
 describe('Manage holding records with MARC source', () => {
+  before(() => {
+    cy.getAdminToken().then(() => {
+      Z3950TargetProfiles.changeOclcWorldCatValueViaApi('100473910/PAOLF');
+    });
+  });
+
   beforeEach(() => {
     cy.login(Cypress.env('diku_login'), Cypress.env('diku_password'));
     cy.visit(TopMenu.inventoryPath);
@@ -20,6 +27,7 @@ describe('Manage holding records with MARC source', () => {
     // TODO: redesign to api step
     InventorySteps.addMarcHoldingRecord();
   });
+  
   it('C345409 MARC instance record + MARC holdings record (spitfire)', { tags: [TestTypes.smoke, DevTeams.spitfire, Features.holdingsRecord] }, () => {
     HoldingsRecordView.getId().then(initialHoldindsRecordId => {
       HoldingsRecordView.checkSource('MARC');
@@ -31,8 +39,8 @@ describe('Manage holding records with MARC source', () => {
       QuickmarcEditor.waitLoading();
       QuickmarcEditor.closeWithoutSaving();
       HoldingsRecordView.duplicate();
-      NewHoldingsRecord.checkSource();
-      NewHoldingsRecord.saveAndClose();
+      InventoryNewHoldings.checkSource();
+      InventoryNewHoldings.saveAndClose();
       HoldingsRecordView.waitLoading();
       HoldingsRecordView.getId().then(newHoldindsRecordId => {
         HoldingsRecordView.close();

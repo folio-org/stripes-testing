@@ -15,7 +15,7 @@ const waitLoading = () => {
 export default {
   waitLoading,
 
-  create: (specialAgreement = NewAgreement.defaultAgreement) => {
+  create: (specialAgreement) => {
     cy.do(newButton.click());
     NewAgreement.waitLoading();
     NewAgreement.fill(specialAgreement);
@@ -23,7 +23,7 @@ export default {
     waitLoading();
   },
 
-  selectRecord: (agreementTitle = NewAgreement.defaultAgreement.name) => {
+  selectRecord: (agreementTitle) => {
     cy.do(section.find(MultiColumnListCell(agreementTitle)).click());
     AgreementDetails.waitLoading();
   },

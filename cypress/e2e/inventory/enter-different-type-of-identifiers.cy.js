@@ -1,9 +1,9 @@
 import TestTypes from '../../support/dictionary/testTypes';
 import getRandomPostfix from '../../support/utils/stringTools';
-import InventorySearch from '../../support/fragments/inventory/inventorySearch';
+import InventorySearchAndFilter from '../../support/fragments/inventory/inventorySearchAndFilter';
 import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
 import InventoryInstance from '../../support/fragments/inventory/inventoryInstance';
-import InventoryInstanceEdit from '../../support/fragments/inventory/InventoryInstanceEdit';
+import InstanceRecordEdit from '../../support/fragments/inventory/instanceRecordEdit';
 import Helper from '../../support/fragments/finance/financeHelper';
 import TopMenu from '../../support/fragments/topMenu';
 import DevTeams from '../../support/dictionary/devTeams';
@@ -38,7 +38,7 @@ describe('ui-inventory: Enter different type of identifiers', () => {
 
   const searchAndOpenInstance = (parametr, title) => {
     cy.visit(TopMenu.inventoryPath);
-    InventorySearch.searchByParameter(parametr, title);
+    InventorySearchAndFilter.searchByParameter(parametr, title);
     InventoryInstances.selectInstance();
   };
 
@@ -51,7 +51,7 @@ describe('ui-inventory: Enter different type of identifiers', () => {
 
       searchAndOpenInstance('Title (all)', instanceTitle);
       InventoryInstance.editInstance();
-      InventoryInstanceEdit.addIdentifier(identifier, resourceIdentifier);
+      InstanceRecordEdit.addIdentifier(identifier, resourceIdentifier);
       searchAndOpenInstance('Keyword (title, contributor, identifier, HRID, UUID)', resourceIdentifier);
       InventoryInstance.checkInstanceIdentifier(resourceIdentifier);
     });

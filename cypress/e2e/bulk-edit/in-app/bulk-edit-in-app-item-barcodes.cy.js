@@ -8,7 +8,7 @@ import getRandomPostfix from '../../../support/utils/stringTools';
 import FileManager from '../../../support/utils/fileManager';
 import Users from '../../../support/fragments/users/users';
 import BulkEditActions from '../../../support/fragments/bulk-edit/bulk-edit-actions';
-import InventorySearch from '../../../support/fragments/inventory/inventorySearch';
+import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 
 let user;
@@ -100,8 +100,27 @@ describe('bulk-edit', () => {
 
       cy.loginAsAdmin({ path: TopMenu.inventoryPath, waiter: InventoryInstances.waitContentLoading });
       items.forEach(item => {
-        InventorySearch.searchByParameter('Keyword (title, contributor, identifier, HRID, UUID)', item.instanceName);
-        InventorySearch.selectSearchResultItem();
+        InventorySearchAndFilter.searchByParameter('Keyword (title, contributor, identifier, HRID, UUID)', item.instanceName);
+        InventorySearchAndFilter.selectSearchResultItem();
+        InventoryInstance.openHoldings(['']);
+        InventoryInstance.verifyLoan('Selected');
+      });
+    });
+
+    it('C359225 Verify the in-app bulk edit temporary loan type (firebird)', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
+      BulkEditSearchPane.selectRecordIdentifier('Item barcode');
+
+      BulkEditSearchPane.uploadFile(itemBarcodesFileName);
+      BulkEditSearchPane.waitFileUploading();
+
+      BulkEditActions.openActions();
+      BulkEditActions.openStartBulkEditForm();
+      BulkEditActions.fillTemporaryLoanType('Selected');
+
+      cy.loginAsAdmin({ path: TopMenu.inventoryPath, waiter: InventoryInstances.waitContentLoading });
+      items.forEach(item => {
+        InventorySearchAndFilter.searchByParameter('Keyword (title, contributor, identifier, HRID, UUID)', item.instanceName);
+        InventorySearchAndFilter.selectSearchResultItem();
         InventoryInstance.openHoldings(['']);
         InventoryInstance.verifyLoan('Selected');
       });

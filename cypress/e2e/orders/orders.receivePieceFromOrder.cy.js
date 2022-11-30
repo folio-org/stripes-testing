@@ -1,11 +1,11 @@
-import newOrder from '../../support/fragments/orders/newOrder';
-import basicOrderLine from '../../support/fragments/orders/basicOrderLine';
+import NewOrder from '../../support/fragments/orders/newOrder';
+import BasicOrderLine from '../../support/fragments/orders/basicOrderLine';
 import testType from '../../support/dictionary/testTypes';
 import Orders from '../../support/fragments/orders/orders';
 import Receiving from '../../support/fragments/receiving/receiving';
 import TopMenu from '../../support/fragments/topMenu';
 import Helper from '../../support/fragments/finance/financeHelper';
-import InventorySearch from '../../support/fragments/inventory/inventorySearch';
+import InventorySearchAndFilter from '../../support/fragments/inventory/inventorySearchAndFilter';
 import InventoryInstance from '../../support/fragments/inventory/inventoryInstance';
 import InteractorsTools from '../../support/utils/interactorsTools';
 import OrdersHelper from '../../support/fragments/orders/ordersHelper';
@@ -14,8 +14,8 @@ import devTeams from '../../support/dictionary/devTeams';
 import NewOrganization from '../../support/fragments/organizations/newOrganization';
 
 describe('orders: Receive piece from Order', () => {
-  const order = { ...newOrder.defaultOneTimeOrder };
-  const orderLine = { ...basicOrderLine.defaultOrderLine };
+  const order = { ...NewOrder.defaultOneTimeOrder };
+  const orderLine = { ...BasicOrderLine.defaultOrderLine };
   const organization = { ...NewOrganization.defaultUiOrganizations };
 
   before(() => {
@@ -53,13 +53,13 @@ describe('orders: Receive piece from Order', () => {
         InteractorsTools.checkCalloutMessage(`The Purchase order - ${orderNumber} has been successfully opened`);
         Orders.receiveOrderViaActions();
         // Receiving part
-        Helper.selectFromResultsList();
+        Receiving.selectPOLInReceive(orderLine.titleOrPackage);
         Receiving.receivePiece(0, caption, barcode);
         Receiving.checkReceivedPiece(0, caption, barcode);
         // inventory part
         cy.visit(TopMenu.inventoryPath);
-        InventorySearch.switchToItem();
-        InventorySearch.searchByParameter('Barcode', barcode);
+        InventorySearchAndFilter.switchToItem();
+        InventorySearchAndFilter.searchByParameter('Barcode', barcode);
         Helper.selectFromResultsList();
         InventoryInstance.checkHoldingsTable(OrdersHelper.mainLibraryLocation, 0, caption, barcode, 'In process');
       });
