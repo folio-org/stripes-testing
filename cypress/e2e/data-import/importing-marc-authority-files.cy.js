@@ -36,7 +36,7 @@ describe('Importing MARC Authority files', () => {
         JobProfiles.createJobProfile(createdJobProfile);
         NewJobProfile.linkActionProfileByName('Default - Create MARC Authority');
         NewJobProfile.saveAndClose();
-      })
+      });
   });
 
   beforeEach('Login to the application', () => {
@@ -55,7 +55,7 @@ describe('Importing MARC Authority files', () => {
   });
 
   after('Deleting data', () => {
-    JobProfiles.deleteJobProfile(createdJobProfile.profileName)
+    JobProfiles.deleteJobProfile(createdJobProfile.profileName);
     Users.deleteViaApi(testData.userProperties.userId);
   });
 
