@@ -9,6 +9,7 @@ import NewInvoice from '../../support/fragments/invoices/newInvoice';
 import Organizations from '../../support/fragments/organizations/organizations';
 import devTeams from '../../support/dictionary/devTeams';
 import NewOrganization from '../../support/fragments/organizations/newOrganization';
+import generateItemBarcode from '../../support/utils/generateItemBarcode';
 
 describe('orders: Test PO filters', () => {
   const organization = { ...NewOrganization.defaultUiOrganizations };
@@ -16,6 +17,7 @@ describe('orders: Test PO filters', () => {
     ...NewOrder.defaultOneTimeOrder,
     poNumberPrefix: 'pref',
     poNumberSuffix: 'suf',
+    poNumber: `pref${generateItemBarcode()}suf`,
     reEncumber: true,
     manualPo: true,
     approved: true,
@@ -59,10 +61,10 @@ describe('orders: Test PO filters', () => {
       });
   });
 
-  after(() => {
-    Orders.deleteOrderApi(order.id);
-    Organizations.deleteOrganizationViaApi(organization.id);
-  });
+  // after(() => {
+  //   Orders.deleteOrderApi(order.id);
+  //   Organizations.deleteOrganizationViaApi(organization.id);
+  // });
 
   [
     { filterActions: Orders.selectOpenStatusFilter },

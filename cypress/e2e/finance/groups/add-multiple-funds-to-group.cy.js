@@ -87,10 +87,14 @@ describe('ui-finance: Groups', () => {
     FinanceHelp.selectFromResultsList();
     Funds.selectBudgetDetails();
     Funds.deleteBudgetViaActions();
+    // Need to wait some time fo delating all items
+    cy.wait(1000);
     Funds.deleteFundViaApi(firstFund.id);
     Funds.deleteFundViaApi(secondFund.id);
+    cy.wait(1000);
     Groups.deleteGroupViaApi(defaultGroup.id);
     Ledgers.deleteledgerViaApi(defaultLedger.id);
+    cy.wait(1000);
     FiscalYears.deleteFiscalYearViaApi(defaultFiscalYear.id);
     Users.deleteViaApi(user.userId);
   });
