@@ -12,6 +12,7 @@ import OrdersHelper from '../../support/fragments/orders/ordersHelper';
 import NewInvoice from '../../support/fragments/invoices/newInvoice';
 import Organizations from '../../support/fragments/organizations/organizations';
 import NewOrganization from '../../support/fragments/organizations/newOrganization';
+import generateItemBarcode from '../../support/utils/generateItemBarcode';
 
 describe('orders: export', () => {
   let user;
@@ -20,6 +21,7 @@ describe('orders: export', () => {
     ...NewOrder.defaultOneTimeOrder,
     poNumberPrefix: 'pref',
     poNumberSuffix: 'suf',
+    poNumber: `pref${generateItemBarcode()}suf`,
     reEncumber: true,
     manualPo: true,
     approved: true,
@@ -79,12 +81,5 @@ describe('orders: export', () => {
   it('C196749 Export orders based on orders search', { tags: [TestTypes.smoke, devTeams.thunderjet] }, () => {
     Orders.selectOpenStatusFilter();
     Orders.exportResoultsCSV();
-    // Download csv file
-    // FileManager.verifyFile(
-    //   Orders.verifySaveCSVQueryFileName,
-    //   'order-export*',
-    //   Orders.verifySaveCSVQuery,
-    //   ['PO number', 'POLine number']
-    // );
   });
 });
