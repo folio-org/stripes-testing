@@ -20,7 +20,7 @@ const defaultActionProfile = {
 export default {
   folioRecordTypeValue,
 
-  fillActionProfile: (specialActionProfile = defaultActionProfile) => {
+  fill: (specialActionProfile = defaultActionProfile) => {
     cy.do([
       TextField({ name:'profile.name' }).fillIn(specialActionProfile.name),
       Select({ name:'profile.action' }).choose(specialActionProfile.action || action),

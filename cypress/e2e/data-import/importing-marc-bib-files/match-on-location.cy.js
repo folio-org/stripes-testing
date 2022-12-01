@@ -323,9 +323,9 @@ describe('ui-data-import: Match on location', () => {
 
     // create Action profiles
     cy.visit(SettingsMenu.actionProfilePath);
-    ActionProfiles.createActionProfile(holdingsUpdatesActionProfile, holdingsUpdateMappingProfile.name);
+    ActionProfiles.create(holdingsUpdatesActionProfile, holdingsUpdateMappingProfile.name);
     ActionProfiles.checkActionProfilePresented(holdingsUpdatesActionProfile.name);
-    ActionProfiles.createActionProfile(itemUpdatesActionProfile, itemUpdateMappingProfile.name);
+    ActionProfiles.create(itemUpdatesActionProfile, itemUpdateMappingProfile.name);
     ActionProfiles.checkActionProfilePresented(itemUpdatesActionProfile.name);
 
     // create Job profile
@@ -486,9 +486,9 @@ describe('ui-data-import: Match on location', () => {
 
     // create Action profiles
     cy.visit(SettingsMenu.actionProfilePath);
-    ActionProfiles.createActionProfile(holdingsUpdatesActionProfile, holdingsUpdateMappingProfile.name);
+    ActionProfiles.create(holdingsUpdatesActionProfile, holdingsUpdateMappingProfile.name);
     ActionProfiles.checkActionProfilePresented(holdingsUpdatesActionProfile.name);
-    ActionProfiles.createActionProfile(itemUpdatesActionProfile, itemUpdateMappingProfile.name);
+    ActionProfiles.create(itemUpdatesActionProfile, itemUpdateMappingProfile.name);
     ActionProfiles.checkActionProfilePresented(itemUpdatesActionProfile.name);
 
     // create Job profile
@@ -649,9 +649,9 @@ describe('ui-data-import: Match on location', () => {
 
     // create Action profiles
     cy.visit(SettingsMenu.actionProfilePath);
-    ActionProfiles.createActionProfile(holdingsUpdatesActionProfile, holdingsUpdateMappingProfile.name);
+    ActionProfiles.create(holdingsUpdatesActionProfile, holdingsUpdateMappingProfile.name);
     ActionProfiles.checkActionProfilePresented(holdingsUpdatesActionProfile.name);
-    ActionProfiles.createActionProfile(itemUpdatesActionProfile, itemUpdateMappingProfile.name);
+    ActionProfiles.create(itemUpdatesActionProfile, itemUpdateMappingProfile.name);
     ActionProfiles.checkActionProfilePresented(itemUpdatesActionProfile.name);
 
     // create Job profile
