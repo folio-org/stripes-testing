@@ -152,7 +152,7 @@ describe('ui-data-import: Check that field protection settings work properly dur
 
     // create action profile
     cy.visit(SettingsMenu.actionProfilePath);
-    ActionProfiles.createActionProfile(actionProfile, mappingProfileName);
+    ActionProfiles.create(actionProfile, mappingProfileName);
     ActionProfiles.checkActionProfilePresented(actionProfileName);
 
     // create job profile
@@ -198,7 +198,7 @@ describe('ui-data-import: Check that field protection settings work properly dur
 
     // create action profile for update
     cy.visit(SettingsMenu.actionProfilePath);
-    ActionProfiles.createActionProfile(actionProfileUpdate, mappingProfileUpdateName);
+    ActionProfiles.create(actionProfileUpdate, mappingProfileUpdateName);
     ActionProfiles.checkActionProfilePresented(actionProfileUpdate.name);
 
     // create match profile for update

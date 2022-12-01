@@ -210,16 +210,16 @@ describe('ui-data-import: Check that field protection overrides work properly du
 
     // create Action profiles
     cy.visit(SettingsMenu.actionProfilePath);
-    ActionProfiles.createActionProfile(marcBibActionProfile, marcBibMappingProfile.name);
+    ActionProfiles.create(marcBibActionProfile, marcBibMappingProfile.name);
     ActionProfiles.checkActionProfilePresented(marcBibActionProfile.name);
 
-    ActionProfiles.createActionProfile(instanceActionProfile, instanceMappingProfile.name);
+    ActionProfiles.create(instanceActionProfile, instanceMappingProfile.name);
     ActionProfiles.checkActionProfilePresented(instanceActionProfile.name);
 
-    ActionProfiles.createActionProfile(marcBibActionProfileOverride, marcBibMappingProfileOverride.name);
+    ActionProfiles.create(marcBibActionProfileOverride, marcBibMappingProfileOverride.name);
     ActionProfiles.checkActionProfilePresented(marcBibActionProfileOverride.name);
 
-    ActionProfiles.createActionProfile(instanceActionProfileOverride, marcBibMappingProfileOverride.name);
+    ActionProfiles.create(instanceActionProfileOverride, marcBibMappingProfileOverride.name);
     ActionProfiles.checkActionProfilePresented(instanceActionProfileOverride.name);
 
     // create Match profile

@@ -329,7 +329,7 @@ describe('ui-data-import: Match on POL and update related Instance, Holdings, It
       FieldMappingProfiles.createMappingProfileForMatch(profile.mappingProfile);
       FieldMappingProfiles.checkMappingProfilePresented(profile.mappingProfile.name);
       cy.visit(SettingsMenu.actionProfilePath);
-      ActionProfiles.createActionProfile(profile.actionProfile, profile.mappingProfile.name);
+      ActionProfiles.create(profile.actionProfile, profile.mappingProfile.name);
       ActionProfiles.checkActionProfilePresented(profile.actionProfile.name);
     });
 

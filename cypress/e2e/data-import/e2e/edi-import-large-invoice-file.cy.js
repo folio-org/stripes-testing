@@ -49,7 +49,7 @@ describe('ui-data-import: Import a large EDIFACT invoice file', () => {
     };
 
     cy.visit(SettingsMenu.actionProfilePath);
-    ActionProfiles.createActionProfile(actionProfile, mappingProfileName);
+    ActionProfiles.create(actionProfile, mappingProfileName);
     ActionProfiles.checkActionProfilePresented(actionProfileName);
 
     // create Job profile

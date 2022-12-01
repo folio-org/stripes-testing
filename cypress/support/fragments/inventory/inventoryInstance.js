@@ -81,7 +81,9 @@ const openHoldings = (...holdingToBeOpened) => {
   for (let i = 0; i < holdingToBeOpened.length; i++) {
     openActions.push(Accordion({ label: including(`Holdings: ${holdingToBeOpened[i]}`) }).clickHeader());
   }
-  return cy.do(openActions);
+  cy.do(openActions);
+  // don't have elem on page for waiter
+  cy.wait(2000);
 };
 const verifyInstanceTitle = (title) => cy.expect(Pane({ titleLabel: including(title) }).exists());
 const verifyInstanceSource = (sourceValue) => cy.expect(source.has({ value: sourceValue }));
