@@ -196,7 +196,7 @@ describe('ui-data-import: Match on POL and update related Instance, Holdings, It
     // create action profiles
     collectionOfProfiles.forEach(profile => {
       cy.visit(SettingsMenu.actionProfilePath);
-      ActionProfiles.createActionProfile(profile.actionProfile, profile.mappingProfile.name);
+      ActionProfiles.create(profile.actionProfile, profile.mappingProfile.name);
       ActionProfiles.checkActionProfilePresented(profile.actionProfile.name);
     });
 

@@ -147,7 +147,7 @@ describe('ui-data-import: Matching on newly-created 035 does not work (regressio
 
     // create action profile
     cy.visit(SettingsMenu.actionProfilePath);
-    ActionProfiles.createActionProfile(actionProfile, mappingProfile.name);
+    ActionProfiles.create(actionProfile, mappingProfile.name);
     ActionProfiles.checkActionProfilePresented(actionProfile.name);
 
     // create job profile for update

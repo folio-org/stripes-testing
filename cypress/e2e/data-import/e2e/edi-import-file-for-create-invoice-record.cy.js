@@ -66,7 +66,7 @@ describe('ui-data-import: EDIFACT file import with creating of new invoice recor
     };
 
     cy.visit(SettingsMenu.actionProfilePath);
-    ActionProfiles.createActionProfile(actionProfile, mappingProfileName);
+    ActionProfiles.create(actionProfile, mappingProfileName);
     ActionProfiles.checkActionProfilePresented(actionProfileName);
 
     // create Job profile
