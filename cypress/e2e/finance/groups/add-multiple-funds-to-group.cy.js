@@ -91,9 +91,11 @@ describe('ui-finance: Groups', () => {
     cy.wait(1000);
     Funds.deleteFundViaApi(firstFund.id);
     Funds.deleteFundViaApi(secondFund.id);
+    // Need to wait few seconds, that data will be deleted(its need to pass test in Jenkins run)
     cy.wait(1000);
     Groups.deleteGroupViaApi(defaultGroup.id);
     Ledgers.deleteledgerViaApi(defaultLedger.id);
+    // Need to wait few seconds, that data will be deleted(its need to pass test in Jenkins run)
     cy.wait(1000);
     FiscalYears.deleteFiscalYearViaApi(defaultFiscalYear.id);
     Users.deleteViaApi(user.userId);
