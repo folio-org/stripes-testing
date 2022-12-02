@@ -247,9 +247,7 @@ describe('ui-data-import: Match on VRN and update related Instance, Holdings, It
 
     // get Instance HRID through API
     InventorySearch.getInstanceHRID()
-      .then(hrId => {
-        instanceHrid = hrId[0];
-      });
+      .then(hrId => { instanceHrid = hrId[0]; });
 
     // verify Instance, Holdings and Item details
     MatchOnVRN.clickOnUpdatedHotlink();
