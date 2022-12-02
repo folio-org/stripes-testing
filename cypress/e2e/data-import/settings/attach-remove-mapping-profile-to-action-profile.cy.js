@@ -56,7 +56,7 @@ describe('ui-data-import: Attach/Remove a field mapping profile to an action pro
 
     ActionProfileView.edit();
     ActionProfileEdit.unlinkFieldMappingProfile();
-    ConfirmRemoval.canselRemoveFieldMappingProfile();
+    ConfirmRemoval.cancelRemoveFieldMappingProfile();
     ActionProfileEdit.fieldMappingProfilePresented(mappingProfile.name);
     ActionProfileEdit.unlinkFieldMappingProfile();
     ConfirmRemoval.confirmRemovefieldMappingProfile();

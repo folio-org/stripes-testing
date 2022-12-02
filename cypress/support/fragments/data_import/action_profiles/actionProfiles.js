@@ -68,12 +68,6 @@ export default {
     NewActionProfile.linkMappingProfile(mappingProfileName);
   },
 
-  createWithoutLinkedMappingProfile:(actionProfile) => {
-    openNewActionProfileForm();
-    NewActionProfile.fill(actionProfile);
-    cy.do(Button('Save as profile & Close').click());
-  },
-
   selectActionProfileFromList:(profileName) => cy.do(MultiColumnListCell(profileName).click()),
 
   checkActionProfilePresented: (profileName) => {
