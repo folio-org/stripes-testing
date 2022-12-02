@@ -1,5 +1,14 @@
 import { including } from '@interactors/html';
-import { Button, MultiColumnList, MultiColumnListCell, Form, Select } from '../../../../../interactors';
+import {
+  Button,
+  MultiColumnList,
+  MultiColumnListCell,
+  Form,
+  Select,
+  TextField
+} from '../../../../../interactors';
+
+const selectActionProfile = Select({ name:'profile.action' });
 
 export default {
   unlinkFieldMappingProfile:() => {
@@ -25,6 +34,11 @@ export default {
   },
 
   changeAction:() => {
-    cy.do(Select({ name:'profile.action' }).choose('Update (all record types except Orders, Invoices, or MARC Holdings)'));
+    cy.do(selectActionProfile.choose('Update (all record types except Orders, Invoices, or MARC Holdings)'));
+  },
+
+  changesNotSaved:() => {
+    cy.expect(TextField({ name:'profile.name' }).exists());
+    cy.expect(selectActionProfile.exists());
   }
 };
