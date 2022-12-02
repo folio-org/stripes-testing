@@ -28,6 +28,7 @@ describe('ui-data-import: Attach/Remove a field mapping profile to an action pro
 
   before(() => {
     cy.loginAsAdmin();
+    cy.getAdminToken();
   });
 
   after(() => {

@@ -119,6 +119,11 @@ const checkInstanceNotes = (noteType, noteContent) => {
   cy.expect(notesSection.find(MultiColumnListCell(noteContent)).exists());
 };
 
+const waitInstanceRecordViewOpened = (title) => {
+  cy.expect(Pane({ id:'pane-instancedetails' }).exists());
+  cy.expect(Pane({ titleLabel: including(title) }).exists());
+};
+
 export default {
   validOCLC,
   pressAddHoldingsButton,
@@ -131,6 +136,7 @@ export default {
   verifyInstanceSubject,
   verifyResourceIdentifier,
   checkInstanceNotes,
+  waitInstanceRecordViewOpened,
   checkExpectedOCLCPresence: (OCLCNumber = validOCLC.id) => {
     cy.expect(identifiers.find(HTML(including(OCLCNumber))).exists());
   },

@@ -245,6 +245,7 @@ describe('ui-data-import: Match on VRN and update related Instance, Holdings, It
 
     // verify Instance, Holdings and Item details
     MatchOnVRN.clickOnUpdatedHotlink();
+    InventoryInstance.waitInstanceRecordViewOpened(item.title);
     MatchOnVRN.verifyInstanceUpdated();
     MatchOnVRN.verifyHoldingsUpdated();
     MatchOnVRN.verifyItemUpdated();
