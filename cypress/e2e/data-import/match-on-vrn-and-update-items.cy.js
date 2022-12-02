@@ -25,6 +25,7 @@ import InventoryInstance from '../../support/fragments/inventory/inventoryInstan
 import MatchProfiles from '../../support/fragments/data_import/match_profiles/matchProfiles';
 import ActionProfiles from '../../support/fragments/data_import/action_profiles/actionProfiles';
 import FieldMappingProfiles from '../../support/fragments/data_import/mapping_profiles/fieldMappingProfiles';
+import InventorySearch from '../../support/fragments/inventory/inventorySearch';
 
 describe('ui-data-import: Match on VRN and update related Instance, Holdings, Item', () => {
   const item = {
@@ -43,6 +44,7 @@ describe('ui-data-import: Match on VRN and update related Instance, Holdings, It
   let materialTypeId;
   let user = null;
   let orderNumber;
+  let instanceHrid;
 
   const instanceMappingProfileName = `C350591 Update Instance by VRN match ${Helper.getRandomBarcode()}`;
   const holdingsMappingProfileName = `C350591 Update Holdings by VRN match ${Helper.getRandomBarcode()}`;
@@ -138,7 +140,7 @@ describe('ui-data-import: Match on VRN and update related Instance, Holdings, It
   after(() => {
     let itemId;
 
-    cy.getInstance({ limit: 1, expandAll: true, query: `"title"=="${item.title}"` })
+    cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${instanceHrid}"` })
       .then((instance) => {
         itemId = instance.items[0].id;
         cy.deleteItem(itemId);
@@ -242,6 +244,12 @@ describe('ui-data-import: Match on VRN and update related Instance, Holdings, It
     Logs.openFileDetails(editedMarcFileName);
     FileDetails.checkItemsStatusesInResultList(0, [FileDetails.status.created, FileDetails.status.updated, FileDetails.status.updated, FileDetails.status.updated]);
     FileDetails.checkItemsStatusesInResultList(1, [FileDetails.status.dash, FileDetails.status.discarded, FileDetails.status.discarded, FileDetails.status.discarded]);
+
+    // get Instance HRID through API
+    InventorySearch.getInstanceHRID()
+      .then(hrId => {
+        instanceHrid = hrId[0];
+      });
 
     // verify Instance, Holdings and Item details
     MatchOnVRN.clickOnUpdatedHotlink();
