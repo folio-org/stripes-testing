@@ -204,7 +204,6 @@ describe('ui-data-import: Check that field protection settings work properly dur
     // create match profile for update
     cy.visit(SettingsMenu.matchProfilePath);
     MatchProfiles.createMatchProfile(matchProfile);
-    cy.visit(SettingsMenu.jobProfilePath);
 
     // create job profile for update
     cy.visit(SettingsMenu.jobProfilePath);

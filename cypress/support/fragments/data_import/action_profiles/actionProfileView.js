@@ -21,7 +21,9 @@ export default {
       .find(MultiColumnListCell({ content: profileName })).exists());
   },
 
-  verifyLinkedFieldMappingProfileAbsent:(profileName) => cy.expect(viewPane.find(HTML(including(profileName))).absent()),
+  verifyLinkedFieldMappingProfileAbsent:(profileName) => {
+    cy.expect(viewPane.find(HTML(including(profileName))).absent());
+  },
 
   openFieldMappingProfileView:() => {
     cy.do(viewPane.find(Link({ href: including('/settings/data-import/mapping-profiles/view') }))
@@ -31,5 +33,6 @@ export default {
       }));
   },
 
-  verifyAction:() => cy.expect(KeyValue('Action').has({ value: 'Update' }))
+  verifyAction:() => cy.expect(KeyValue('Action').has({ value: 'Update' })),
+  closeViewModeForMatchProfile:() => cy.do(viewPane.find(Button({ icon: 'times' })).click())
 };
