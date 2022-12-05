@@ -1,4 +1,5 @@
 import uuid from 'uuid';
+import Conditions from './conditions';
 import { NavListItem, TextField, Button } from '../../../../../interactors';
 
 const saveButton = Button('Save');
@@ -44,4 +45,14 @@ export default {
       saveButton.click(),
     ]);
   },
+  setLimit: (limitName, number) => {
+    Conditions.getConditionsViaApi().then(conditions => {
+      return conditions.find(condition => condition.name === limitName).id;
+    }).then((limitId) => {
+      cy.do([
+        TextField({ name: limitId }).fillIn(number),
+        saveButton.click(),
+      ]);
+    });
+  }
 };

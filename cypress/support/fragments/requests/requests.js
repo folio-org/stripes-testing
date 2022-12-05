@@ -507,5 +507,12 @@ export default {
 
   verifyShowTagsButtonIsDisabled:() => {
     cy.expect(showTagsButton.has({ disabled: true }));
-  }
+  },
+
+  createNewRequestViaApi:(requestBody) => cy.okapiRequest({
+    method: 'POST',
+    path: 'circulation/requests',
+    body: requestBody,
+    isDefaultSearchParamsRequired: false
+  }),
 };
