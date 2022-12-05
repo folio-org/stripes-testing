@@ -13,6 +13,7 @@ import NewActionProfile from './newActionProfile';
 const actionsButton = Button('Actions');
 const iconButton = Button({ icon: 'times' });
 const resultsPane = Pane({ id:'pane-results' });
+const viewPane = Pane({ id:'view-action-profile-pane' });
 
 const openNewActionProfileForm = () => {
   cy.do([
@@ -20,9 +21,7 @@ const openNewActionProfileForm = () => {
     Button('New action profile').click()
   ]);
 };
-const close = profileName => {
-  cy.do(Pane({ title: profileName }).find(iconButton).click());
-};
+const close = profileName => cy.do(Pane({ title: profileName }).find(iconButton).click());
 
 const deleteActionProfile = (profileName) => {
   // get all action profiles
@@ -77,7 +76,7 @@ export default {
 
   verifyActionProfileOpened:() => {
     cy.expect(resultsPane.exists());
-    cy.expect(Pane({ id:'view-action-profile-pane' }).exists());
+    cy.expect(viewPane.exists());
   },
 
   checkCalloutMessage: (profileName) => {
@@ -85,5 +84,11 @@ export default {
       .exists());
   },
 
-  checkListOfExistingProfilesIsDisplayed:() => cy.expect(PaneContent({ id:'pane-results-content' }).exists()),
+  createWithoutLinkedMappingProfile:(actionProfile) => {
+    openNewActionProfileForm();
+    NewActionProfile.fill(actionProfile);
+    cy.do(Button('Save as profile & Close').click());
+  },
+
+  checkListOfExistingProfilesIsDisplayed:() => cy.expect(PaneContent({ id:'pane-results-content' }).exists())
 };
