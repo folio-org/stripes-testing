@@ -234,6 +234,8 @@ describe('ui-data-import: Check that field protection overrides work properly du
     NewJobProfile.saveAndClose();
     JobProfiles.checkJobProfilePresented(jobProfileForUpdate.profileName);
 
+    // need to wait until the first job profile will be created
+    cy.wait(2500);
     JobProfiles.createJobProfile(jobProfileForOverride);
     NewJobProfile.linkMatchAndTwoActionProfiles(matchProfile.profileName, marcBibActionProfileOverride.name, instanceActionProfileOverride.name);
     NewJobProfile.saveAndClose();
@@ -249,6 +251,8 @@ describe('ui-data-import: Check that field protection overrides work properly du
     [FileDetails.columnName.srsMarc, FileDetails.columnName.instance].forEach(columnName => {
       FileDetails.checkStatusInColumn(FileDetails.status.created, columnName);
     });
+    FileDetails.checkSrsRecordQuantityInSummaryTable('1', 0);
+    FileDetails.checkInstanceQuantityInSummaryTable('1', 0);
 
     // get Instance HRID through API
     InventorySearchAndFilter.getInstanceHRID()

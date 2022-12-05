@@ -28,7 +28,7 @@ describe('ui-data-import: Edit an existing action profile without associated job
 
         ActionProfiles.createWithoutLinkedMappingProfile(actionProfile);
         InteractorsTools.closeCalloutMessage();
-        ActionProfiles.checkActionProfilePresented(actionProfile.name);
+        ActionProfileView.closeViewModeForMatchProfile();
       });
   });
 
@@ -46,6 +46,7 @@ describe('ui-data-import: Edit an existing action profile without associated job
     ActionProfileEdit.verifyScreenName(actionProfile.name);
     ActionProfileEdit.changeAction();
     ActionProfileEdit.save();
+    ActionProfiles.checkListOfExistingProfilesIsDisplayed();
     ActionProfiles.checkCalloutMessage(actionProfile.name);
     ActionProfileView.verifyAction();
   });
