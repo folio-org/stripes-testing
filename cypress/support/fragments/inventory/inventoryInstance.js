@@ -25,7 +25,6 @@ import InventoryViewSource from './inventoryViewSource';
 import NewHoldingsRecord from './newHoldingsRecord';
 import InventoryInstanceSelectInstanceModal from './holdingsMove/inventoryInstanceSelectInstanceModal';
 import InventoryInstancesMovement from './holdingsMove/inventoryInstancesMovement';
-import ItemView from './inventoryItem/itemView';
 import DateTools from '../../utils/dateTools';
 
 const section = Section({ id: 'pane-instancedetails' });
@@ -306,7 +305,9 @@ export default {
     cy.expect(identifierRow.find(MultiColumnListCell({ columnIndex: 0 })).has({ content: type }));
     cy.expect(identifierRow.find(MultiColumnListCell({ columnIndex: 1 })).has({ content: value }));
   },
-  verifyResourceIdentifierAbsent:() => cy.expect(identifiersAccordion.find(identifiers).absent()),
+  verifyResourceIdentifierAbsent:(value) => {
+    cy.expect(identifiersAccordion.find(identifiers).find(HTML(including(value))).absent());
+  },
   getId() {
     cy.url().then(url => cy.wrap(url.split('?')[0].split('/').at(-1))).as('instanceId');
     return cy.get('@instanceId');
@@ -336,7 +337,7 @@ export default {
     cy.do(Button({ id: 'clickable-view-source' }).click());
     cy.expect(HTML('MARC bibliographic record').exists());
   },
-  
+
   singleRecordImportModalIsPresented:() => {
     cy.expect(singleRecordImportModal.exists());
   },
@@ -348,7 +349,7 @@ export default {
 
   checkCalloutMessage: (text, calloutType = calloutTypes.success) => {
     cy.expect(Callout({ type: calloutType }).is({ textContent: text }));
-  }, 
+  },
 
   checkIdentifier: (text) => {
     cy.expect(Accordion('Identifiers')
