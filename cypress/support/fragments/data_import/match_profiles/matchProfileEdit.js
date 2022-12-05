@@ -9,6 +9,7 @@ import {
 } from '../../../../../interactors';
 
 const selectActionProfile = Select({ name:'profile.action' });
+const criterionValueTypeSelectionList = SelectionList({ id: 'sl-container-criterion-value-type' });
 
 export default {
   save:() => cy.do(Button('Save as profile & Close').click()),
@@ -16,9 +17,9 @@ export default {
 
   changeExistingInstanceRecordField:() => {
     cy.do(Button({ id:'criterion-value-type' }).click());
-    cy.expect(SelectionList({ id: 'sl-container-criterion-value-type' }).exists());
-    cy.do(SelectionList({ id:'sl-container-criterion-value-type' })
-      .find(SelectionOption('Admin data: Instance UUID')).click());
+    cy.expect(criterionValueTypeSelectionList.exists());
+    cy.do(criterionValueTypeSelectionList.find(SelectionOption('Admin data: Instance UUID')).click());
+    // need to wait untill value weill be selected
     cy.wait(1000);
   },
 
