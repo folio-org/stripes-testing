@@ -400,4 +400,10 @@ export default {
   verifyLoan(content) {
     cy.expect(MultiColumnListCell({ content }).exists());
   },
+
+  verifyLoanInItemPage(barcode, value) {
+    cy.do(MultiColumnListCell({ content: barcode }).find(Link()).click());
+    cy.expect(KeyValue('Temporary loan type').has({ value: value}));
+    cy.do(Button({ icon: 'times'}).click());
+  },
 };
