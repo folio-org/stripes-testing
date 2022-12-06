@@ -334,7 +334,7 @@ export default {
     });
   },
 
-  verifyResourceIdentifierAbsent:() => cy.expect(identifiersAccordion.find(identifiers).absent()),
+  verifyResourceIdentifierAbsent:(value) => cy.expect(identifiersAccordion.find(MultiColumnListCell(including(value))).absent()),
   verifyInstanceLanguage:(language) => cy.expect(descriptiveDataAccordion.find(KeyValue('Language')).has({ value: language })),
   verifyInstancePhisicalcyDescription:(description) => {
     cy.expect(descriptiveDataAccordion.find(KeyValue('Physical description')).has({ value: description }));
