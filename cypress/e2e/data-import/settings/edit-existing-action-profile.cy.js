@@ -40,7 +40,6 @@ describe('ui-data-import: Edit an existing action profile without associated job
   it('C2348 Edit an existing action profile without associated job profile (folijet)', { tags: [TestTypes.smoke, DevTeams.folijet] }, () => {
     ActionProfiles.checkListOfExistingProfilesIsDisplayed();
     ActionProfiles.search(actionProfile.name);
-    ActionProfiles.selectActionProfileFromList(actionProfile.name);
     ActionProfiles.verifyActionProfileOpened(actionProfile.name);
     ActionProfileView.edit();
     ActionProfileEdit.verifyScreenName(actionProfile.name);
