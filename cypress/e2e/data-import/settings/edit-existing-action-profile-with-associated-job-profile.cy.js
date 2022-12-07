@@ -74,6 +74,10 @@ describe('ui-data-import: Edit an existing action profile with associated job pr
     ActionProfileEdit.verifyScreenName(actionProfile.name);
     ActionProfileEdit.changeAction();
     ActionProfileEdit.save();
+    ConfirmChanges.cancelChanges();
+    ActionProfileEdit.verifyScreenName(actionProfile.name);
+    ActionProfileEdit.changesNotSaved();
+    ActionProfileEdit.save();
     ConfirmChanges.confirmChanges();
     ActionProfiles.checkListOfExistingProfilesIsDisplayed();
     ActionProfiles.checkCalloutMessage(actionProfile.name);
