@@ -1,22 +1,19 @@
 import permissions from '../../../support/dictionary/permissions';
 import testType from '../../../support/dictionary/testTypes';
 import devTeams from '../../../support/dictionary/devTeams';
+import getRandomPostfix from '../../../support/utils/stringTools';
 import FiscalYears from '../../../support/fragments/finance/fiscalYears/fiscalYears';
 import TopMenu from '../../../support/fragments/topMenu';
 import Ledgers from '../../../support/fragments/finance/ledgers/ledgers';
 import Users from '../../../support/fragments/users/users';
 import Funds from '../../../support/fragments/finance/funds/funds';
 import FinanceHelp from '../../../support/fragments/finance/financeHelper';
-import SettingsMenu from '../../../support/fragments/settingsMenu';
-import AcquisitionUnits from '../../../support/fragments/settings/acquisitionUnits/acquisitionUnits';
 import DateTools from '../../../support/utils/dateTools';
-import getRandomPostfix from '../../../support/utils/stringTools';
 import NewOrder from '../../../support/fragments/orders/newOrder';
 import Orders from '../../../support/fragments/orders/orders';
 import OrderLines from '../../../support/fragments/orders/orderLines';
-import basicOrderLine from '../../../support/fragments/orders/basicOrderLine';
 import Organizations from '../../../support/fragments/organizations/organizations';
-import newOrganization from '../../../support/fragments/organizations/newOrganization';
+import NewOrganization from '../../../support/fragments/organizations/newOrganization';
 
 describe('ui-finance: Funds', () => {
 
@@ -49,7 +46,7 @@ describe('ui-finance: Funds', () => {
     vendor: '',
     reEncumber: true,
    };
-  const organization = { ...newOrganization.defaultUiOrganizations };
+  const organization = { ...NewOrganization.defaultUiOrganizations };
   const firstOrderLineTitle = `autotest_POL_title_${getRandomPostfix()}`;
   const secondOrderLineTitle = `autotest_POL_title_${getRandomPostfix()}`;
   const allocatedQuantity = '1000';
@@ -157,10 +154,12 @@ describe('ui-finance: Funds', () => {
     Ledgers.deleteledgerViaApi(defaultLedger.id);
     FiscalYears.deleteFiscalYearViaApi(firstFiscalYear.id);
     FiscalYears.deleteFiscalYearViaApi(secondFiscalYear.id);
+    Users.deleteViaApi(user.userId);
   });
 
   it('C186156 Rollover Fiscal Year (thunderjet)', { tags: [testType.criticalPath, devTeams.thunderjet] }, () => {
     FinanceHelp.searchByName(defaultLedger.name);
+    FinanceHelp.selectFromResultsList();
     Ledgers.rollover();
   });
 });
