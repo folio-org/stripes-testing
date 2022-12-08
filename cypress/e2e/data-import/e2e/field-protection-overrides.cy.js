@@ -89,7 +89,7 @@ describe('ui-data-import: Check that field protection overrides work properly du
         MarcFieldProtection.createMarcFieldProtectionViaApi({
           indicator1: '*',
           indicator2: '*',
-          subfield: 'a',
+          subfield: '*',
           data: '*',
           source: 'USER',
           field: protectedFields.secondField
@@ -219,7 +219,7 @@ describe('ui-data-import: Check that field protection overrides work properly du
     ActionProfiles.create(marcBibActionProfileOverride, marcBibMappingProfileOverride.name);
     ActionProfiles.checkActionProfilePresented(marcBibActionProfileOverride.name);
 
-    ActionProfiles.create(instanceActionProfileOverride, marcBibMappingProfileOverride.name);
+    ActionProfiles.create(instanceActionProfileOverride, instanceMappingProfileOverride.name);
     ActionProfiles.checkActionProfilePresented(instanceActionProfileOverride.name);
 
     // create Match profile
@@ -271,8 +271,8 @@ describe('ui-data-import: Check that field protection overrides work properly du
         [FileDetails.columnName.srsMarc, FileDetails.columnName.instance].forEach(columnName => {
           FileDetails.checkStatusInColumn(FileDetails.status.updated, columnName);
         });
-        FileDetails.checkSrsRecordQuantityInSummaryTable('1', '1');
-        FileDetails.checkInstanceQuantityInSummaryTable('1', '1');
+        FileDetails.checkSrsRecordQuantityInSummaryTable('1', 1);
+        FileDetails.checkInstanceQuantityInSummaryTable('1', 1);
 
         cy.visit(TopMenu.inventoryPath);
         InventorySearchAndFilter.searchInstanceByHRID(instanceHrid);
@@ -298,13 +298,16 @@ describe('ui-data-import: Check that field protection overrides work properly du
         [FileDetails.columnName.srsMarc, FileDetails.columnName.instance].forEach(columnName => {
           FileDetails.checkStatusInColumn(FileDetails.status.updated, columnName);
         });
-        FileDetails.checkSrsRecordQuantityInSummaryTable('1', '1');
-        FileDetails.checkInstanceQuantityInSummaryTable('1', '1');
+        FileDetails.checkSrsRecordQuantityInSummaryTable('1', 1);
+        FileDetails.checkInstanceQuantityInSummaryTable('1', 1);
 
         cy.visit(TopMenu.inventoryPath);
         InventorySearchAndFilter.searchInstanceByHRID(instanceHrid);
+        InstanceRecordView.verifyAdministrativeNote(administrativeNote);
         InstanceRecordView.verifyAdministrativeNote(updatedAdministativeNote);
-        InventoryInstance.verifyResourceIdentifierAbsent();
+        resourceIdentifiers.forEach(element => {
+          InventoryInstance.verifyResourceIdentifierAbsent(element.value);
+        });
         InstanceRecordView.verifyInstanceNote(updatedInstanceNote);
         // verify table data in marc bibliographic source
         InventoryInstance.viewSource();
