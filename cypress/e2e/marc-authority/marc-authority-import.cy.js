@@ -45,6 +45,22 @@ describe('MARC Authority management', () => {
     });
   });
 
+  it('C360520 Import of "MARC Authority" record with valid prefix in "001" field only (spitfire)', { tags: [TestTypes.smoke, Features.authority, DevTeams.spitfire] }, () => {
+    DataImport.uploadFile('marcFileForC360520.mrc', fileName);
+    JobProfiles.waitLoadingList();
+    JobProfiles.searchJobProfileForImport(jobProfileToRun);
+    JobProfiles.runImportFile(fileName);
+    Logs.checkStatusOfJobProfile('Completed');
+    Logs.openFileDetails(fileName);
+    for (let i = 0; i < 1; i++) {
+      Logs.getCreatedItemsID(i).then(link => {
+        createdAuthorityIDs.push(link.split('/')[5]);
+      });
+    }
+    Logs.goToTitleLink('Chemistry, Organic');
+    Logs.checkAuthorityLogJSON(['"sourceFileId":', '"191874a0-707a-4634-928e-374ee9103225"', '"naturalId":', '"fst00853501"']);
+  });
+
   it('C360521 Import of "MARC Authority" record with valid prefix in "010 $a" field only (spitfire)', { tags: [TestTypes.smoke, Features.authority, DevTeams.spitfire] }, () => {
     DataImport.uploadFile('corporate_name(prefix_in_010Sa)sc_02.mrc', fileName);
     JobProfiles.waitLoadingList();
