@@ -1,38 +1,47 @@
+import getRandomPostfix from '../../../support/utils/stringTools';
 import TestTypes from '../../../support/dictionary/testTypes';
 import DevTeams from '../../../support/dictionary/devTeams';
-import Helper from '../../../support/fragments/finance/financeHelper';
 import NewJobProfile from '../../../support/fragments/data_import/job_profiles/newJobProfile';
 import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
 import InteractorsTools from '../../../support/utils/interactorsTools';
-import Users from '../../../support/fragments/users/users';
+import JobProfileView from '../../../support/fragments/data_import/job_profiles/jobProfileView';
+import JobProfileEdit from '../../../support/fragments/data_import/job_profiles/jobProfileEdit';
 
 describe('ui-data-import: Edit an existing job profile by adding a long name', () => {
-  const jobProfileName = `C2332 autotest job profile ${Helper.getRandomBarcode()}`;
-  let user;
+  const jobProfileName = `C2332 autotest job profile ${getRandomPostfix()}`;
+  const jobProfileLongName = `C2332_autotest_job_profile_long_name_${getRandomPostfix()}_${getRandomPostfix()}_${getRandomPostfix()}_${getRandomPostfix()}_${getRandomPostfix()}_${getRandomPostfix()}`;
   const jobProfile = {
     ...NewJobProfile.defaultJobProfile,
     profileName: jobProfileName,
     acceptedType: NewJobProfile.acceptedDataType.marc
   };
 
-  before('create user', () => {
+  before('create test data', () => {
     cy.loginAsAdmin();
     cy.getAdminToken();
 
     // create Job profiles
     cy.visit(SettingsMenu.jobProfilePath);
     JobProfiles.createJobProfile(jobProfile);
-    NewJobProfile.linkMatchAndTwoActionProfiles(matchProfile.profileName, marcBibActionProfile.name, instanceActionProfile.name);
     NewJobProfile.saveAndClose();
-    JobProfiles.checkJobProfilePresented(jobProfileForUpdate.profileName);
+    InteractorsTools.closeCalloutMessage();
+    JobProfiles.closeJobProfile(jobProfileName);
   });
 
   after('delete test data', () => {
-    JobProfiles.deleteJobProfile(jobProfileName);
+    JobProfiles.deleteJobProfile(jobProfileLongName);
   });
 
   it('C2332 Edit an existing job profile by adding a long name (folijet)', { tags: [TestTypes.smoke, DevTeams.folijet] }, () => {
-
+    JobProfiles.checkListOfExistingProfilesIsDisplayed();
+    JobProfiles.searchJobProfileForImport(jobProfileName);
+    JobProfileView.edit();
+    JobProfileEdit.verifyScreenName(jobProfileName);
+    JobProfileEdit.changeProfileName(jobProfileLongName);
+    JobProfileEdit.saveAndClose();
+    JobProfileView.verifyJobProfileOpened();
+    JobProfileView.verifyJobProfileName(jobProfileLongName);
+    JobProfiles.checkCalloutMessage(jobProfileLongName);
   });
 });
