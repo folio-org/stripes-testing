@@ -21,6 +21,13 @@ export default {
     cy.do(Section({ id: 'pane-ledger-details' }).visible);
   },
 
+  rollover : () => {
+    cy.do([
+      Button('Actions').click(),
+      Button('Rollover').click()
+    ]);
+  },
+
   checkZeroSearchResultsHeader : () => {
     cy.xpath(numberOfSearchResultsHeader)
       .should('be.visible')
