@@ -178,7 +178,7 @@ function createRequestApi(
     });
 }
 
-function deleteRequestApi(requestId) {
+function deleteRequestViaApi(requestId) {
   return cy.okapiRequest({
     method: 'DELETE',
     path: `circulation/requests/${requestId}`,
@@ -253,7 +253,7 @@ function waitLoadingTags() {
 
 export default {
   createRequestApi,
-  deleteRequestApi,
+  deleteRequestViaApi,
   setRequestPolicyApi,
   deleteRequestPolicyApi,
   updateCirculationRulesApi,

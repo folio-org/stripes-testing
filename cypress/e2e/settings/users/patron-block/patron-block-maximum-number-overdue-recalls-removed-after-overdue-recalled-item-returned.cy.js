@@ -119,7 +119,7 @@ describe('Patron Block: Maximum number of overdue recalls', () => {
         cy.wrap(itemsData.itemsWithSeparateInstance).as('items');
       });
 
-    LoanPolicy.createApi(loanPolicyBody);
+    LoanPolicy.createViaApi(loanPolicyBody);
     PatronGroups.createViaApi(patronGroup.name).then((patronGroupResponse) => {
       patronGroup.id = patronGroupResponse;
     });
@@ -203,8 +203,8 @@ describe('Patron Block: Maximum number of overdue recalls', () => {
     UserEdit.changeServicePointPreferenceViaApi(userData.userId, [testData.userServicePoint.id]);
     UserEdit.changeServicePointPreferenceViaApi(recallUserData.userId, [testData.userServicePoint.id]);
     ServicePoints.deleteViaApi(testData.userServicePoint.id);
-    testData.requestsId.forEach((id) => {
-      Requests.deleteRequestApi(id);
+    cy.wrap(testData.requestsId).each((id) => {
+      Requests.deleteRequestViaApi(id);
     });
     Users.deleteViaApi(userData.userId);
     Users.deleteViaApi(recallUserData.userId);
