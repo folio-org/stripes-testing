@@ -23,6 +23,7 @@ import Limits from '../../../../support/fragments/settings/users/limits';
 import UsersSearchPane from '../../../../support/fragments/users/usersSearchPane';
 import UsersCard from '../../../../support/fragments/users/usersCard';
 import Requests from '../../../../support/fragments/requests/requests';
+import RequestPolicy from '../../../../support/fragments/circulation/request-policy';
 
 describe('Patron Block: Maximum number of overdue recalls', () => {
   let originalCirculationRules;
@@ -62,6 +63,11 @@ describe('Patron Block: Maximum number of overdue recalls', () => {
       unlimited: true,
       renewFromId: 'CURRENT_DUE_DATE',
     },
+  };
+  const requestPolicyBody = {
+    requestTypes: ['Recall'],
+    name: `recall_${getRandomPostfix()}`,
+    id: uuid(),
   };
 
   before('Preconditions', () => {
@@ -123,10 +129,12 @@ describe('Patron Block: Maximum number of overdue recalls', () => {
     PatronGroups.createViaApi(patronGroup.name).then((patronGroupResponse) => {
       patronGroup.id = patronGroupResponse;
     });
+    RequestPolicy.createViaApi(requestPolicyBody);
     CirculationRules.getViaApi().then((circulationRule) => {
       originalCirculationRules = circulationRule.rulesAsText;
       const ruleProps = CirculationRules.getRuleProps(circulationRule.rulesAsText);
       ruleProps.l = loanPolicyBody.id;
+      ruleProps.r = requestPolicyBody.id;
       CirculationRules.addRuleViaApi(originalCirculationRules, ruleProps, 't ', testData.loanTypeId);
     });
 
@@ -200,6 +208,7 @@ describe('Patron Block: Maximum number of overdue recalls', () => {
       });
     });
     cy.deleteLoanPolicy(loanPolicyBody.id);
+    RequestPolicy.deleteViaApi(requestPolicyBody.id);
     UserEdit.changeServicePointPreferenceViaApi(userData.userId, [testData.userServicePoint.id]);
     UserEdit.changeServicePointPreferenceViaApi(recallUserData.userId, [testData.userServicePoint.id]);
     ServicePoints.deleteViaApi(testData.userServicePoint.id);
