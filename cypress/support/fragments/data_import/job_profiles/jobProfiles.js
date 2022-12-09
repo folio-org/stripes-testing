@@ -9,7 +9,8 @@ import {
   PaneHeader,
   MultiColumnList,
   Pane,
-  MultiColumnListRow
+  MultiColumnListRow,
+  Callout
 } from '../../../../../interactors';
 import { getLongDelay } from '../../../utils/cypressTools';
 import newJobProfile from './newJobProfile';
@@ -99,6 +100,7 @@ export default {
   searchJobProfileForImport,
   deleteJobProfile,
   createJobProfile,
+  closeJobProfile,
 
   checkJobProfilePresented:(jobProfileTitle) => {
     searchJobProfileForImport(jobProfileTitle);
@@ -150,5 +152,11 @@ export default {
     cy.expect(Section({ id:'pane-results' }).exists());
     cy.expect(PaneHeader(fileName).exists());
   },
-  closeJobProfile,
+
+  checkListOfExistingProfilesIsDisplayed:() => cy.expect(paneResults.exists()),
+
+  checkCalloutMessage: (profileName) => {
+    cy.expect(Callout({ textContent: including(`The job profile "${profileName}" was successfully updated`) })
+      .exists());
+  }
 };
