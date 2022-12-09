@@ -137,6 +137,11 @@ export default {
     ]);
   },
 
+  clearTemporaryLoanType() {
+    getBulkEditSelectType().select('Temporary loan type');
+    getActionSelect().select('Clear field');
+  },
+
   verifyNoMatchingOptionsForLocationFilter() {
     cy.expect(HTML('No matching options').exists());
   },
