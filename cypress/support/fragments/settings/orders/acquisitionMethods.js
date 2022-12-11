@@ -18,5 +18,4 @@ export default {
         path: `orders/acquisition-methods/${id}`,
         isDefaultSearchParamsRequired: false,
       }),
-  };
-  
+    };
