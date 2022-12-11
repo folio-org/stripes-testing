@@ -5,7 +5,6 @@ import TopMenu from '../../support/fragments/topMenu';
 import Users from '../../support/fragments/users/users';
 import SettingsMenu from '../../support/fragments/settingsMenu';
 import AcquisitionUnits from '../../support/fragments/settings/acquisitionUnits/acquisitionUnits';
-import Orders from '../../support/fragments/orders/orders';
 import Organizations from '../../support/fragments/organizations/organizations';
 import NewInvoice from '../../support/fragments/invoices/newInvoice';
 import Invoices from '../../support/fragments/invoices/invoices';
@@ -64,13 +63,13 @@ describe('ui-finance: Orders', () => {
     cy.wait(2000);
     AcquisitionUnits.assignUser(user.username);
 
-    cy.login(user.username, user.password, { path:TopMenu.invoicesPath, waiter: Orders.waitLoading });
+    cy.login(user.username, user.password, { path:TopMenu.invoicesPath, waiter: Invoices.waitLoading });
     Invoices.createDefaultInvoice(invoice, vendorPrimaryAddress);
 
     cy.loginAsAdmin({ path:SettingsMenu.acquisitionUnitsPath, waiter: AcquisitionUnits.waitLoading });
     AcquisitionUnits.unAssignUser(defaultAcquisitionUnit.name);
 
-    cy.login(user.username, user.password, { path:TopMenu.ordersPath, waiter: Orders.waitLoading });
+    cy.login(user.username, user.password, { path:TopMenu.invoicesPath, waiter: Invoices.waitLoading });
     Invoices.searchByNumber(invoice.invoiceNumber);
     Invoices.checkZeroSearchResultsHeader();
 
@@ -78,7 +77,7 @@ describe('ui-finance: Orders', () => {
     AcquisitionUnits.edit(defaultAcquisitionUnit.name);
     AcquisitionUnits.selectViewCheckbox();
     
-    cy.login(user.username, user.password, { path:TopMenu.ordersPath, waiter: Orders.waitLoading });
+    cy.login(user.username, user.password, { path:TopMenu.invoicesPath, waiter: Invoices.waitLoading });
     Invoices.searchByNumber(invoice.invoiceNumber);
     Helper.selectFromResultsList();
   });
