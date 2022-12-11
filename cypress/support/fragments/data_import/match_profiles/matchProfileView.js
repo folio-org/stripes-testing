@@ -1,9 +1,5 @@
 import { HTML, including } from '@interactors/html';
-import {
-  Button,
-  Pane,
-  Accordion
-} from '../../../../../interactors';
+import { Button, Pane, Accordion } from '../../../../../interactors';
 
 const viewPane = Pane({ id:'view-match-profile-pane' });
 
