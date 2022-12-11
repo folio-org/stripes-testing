@@ -1,11 +1,7 @@
-import { Button, Checkbox, Modal, NavListItem, Pane, PaneContent, PaneHeader, SearchField, SelectionOption, TextField } from '../../../../../interactors';
+import { Button, Modal, NavListItem, Pane, PaneContent, SearchField, SelectionOption, TextField } from '../../../../../interactors';
 import SearchHelper from '../../finance/financeHelper';
-import getRandomPostfix from '../../../utils/stringTools';
 
 export default {
-    defaultOrdertemplate: {
-        name: `OT_name_${getRandomPostfix()}`,
-      },
 
     waitLoading: () => {
         cy.expect(Pane({ id: 'order-settings-order-templates-list' }).exists());
