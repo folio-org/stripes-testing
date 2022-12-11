@@ -1,4 +1,4 @@
-import { Button, Accordion, Checkbox, SelectionList, Selection, SearchField, TextField, Section } from '../../../../../interactors';
+import { Button, Accordion, Checkbox, SelectionList, Selection, SearchField, TextField, Section, Select } from '../../../../../interactors';
 import FinanceHelper from '../financeHelper';
 import getRandomPostfix from '../../../utils/stringTools';
 
@@ -25,6 +25,20 @@ export default {
     cy.do([
       Button('Actions').click(),
       Button('Rollover').click()
+    ]);
+  },
+
+  fillInRolloverInfo : (fiscalYear) => {
+    cy.do([
+      Select({ name: 'toFiscalYearId' }).choose(fiscalYear),
+      Checkbox({ name: 'budgetsRollover[0].rolloverAllocation' }).click(),
+      Checkbox({ name: 'encumbrancesRollover[0].rollover' }).click(),
+      Select({ name: 'encumbrancesRollover[0].basedOn' }).choose('Expended'),
+      Checkbox({ name: 'encumbrancesRollover[2].rollover' }).click(),
+      Select({ name: 'encumbrancesRollover[2].basedOn' }).choose('Initial encumbrance'),
+      Button('Rollover').click(),
+      Button('Continue').click(),
+      Button('Confirm').click(),
     ]);
   },
 
