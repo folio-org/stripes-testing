@@ -3,55 +3,51 @@ import testType from '../../support/dictionary/testTypes';
 import devTeams from '../../support/dictionary/devTeams';
 import TopMenu from '../../support/fragments/topMenu';
 import Users from '../../support/fragments/users/users';
-import FinanceHelp from '../../support/fragments/finance/financeHelper';
 import SettingsMenu from '../../support/fragments/settingsMenu';
 import AcquisitionUnits from '../../support/fragments/settings/acquisitionUnits/acquisitionUnits';
 import Orders from '../../support/fragments/orders/orders';
-import NewOrder from '../../support/fragments/orders/newOrder';
 import Organizations from '../../support/fragments/organizations/organizations';
-import NewOrganization from '../../support/fragments/organizations/newOrganization';
-import InteractorsTools from '../../support/utils/interactorsTools';
+import NewInvoice from '../../support/fragments/invoices/newInvoice';
+import Invoices from '../../support/fragments/invoices/invoices';
+import VendorAddress from '../../support/fragments/invoices/vendorAddress';
 
 describe('ui-finance: Orders', () => {
 
-  const order = { ...NewOrder.defaultOneTimeOrder };
-  const organization = { ...NewOrganization.defaultUiOrganizations };
+  const invoice = { ...NewInvoice.defaultUiInvoice };
+  const vendorPrimaryAddress = { ...VendorAddress.vendorAddress };
   const defaultAcquisitionUnit = { ...AcquisitionUnits.defaultAcquisitionUnit };
-  let orderNumber;
   let user;
-  let orderId;
 
   before(() => {
     cy.createTempUser([
-      permissions.uiOrdersView.gui,
-      permissions.uiOrdersCreate.gui,
-      permissions.uiOrdersEdit.gui,
-      permissions.uiOrdersDelete.gui,
-      permissions.uiExportOrders.gui,
-      permissions.uiOrdersApprovePurchaseOrders.gui,
-      permissions.uiOrdersAssignAcquisitionUnitsToNewOrder.gui,
-      permissions.uiOrdersCancelOrderLines.gui,
-      permissions.uiOrdersCancelPurchaseOrders.gui,
-      permissions.uiOrdersManageAcquisitionUnits.gui,
-      permissions.uiOrdersReopenPurchaseOrders.gui,
-      permissions.uiOrdersShowAllHiddenFields.gui,
-      permissions.uiOrdersUnopenpurchaseorders.gui,
-      permissions.uiOrdersUpdateEncumbrances.gui
+      permissions.viewEditDeleteInvoiceInvoiceLine.gui,
+      permissions.viewEditCreateInvoiceInvoiceLine.gui,
+      permissions.assignAcqUnitsToNewInvoice.gui,
+      permissions.uiInvoicesApproveInvoices.gui,
+      permissions.uiInvoicesPayInvoices.gui,
+      permissions.invoiceSettingsAll.gui,
+      permissions.uiInvoicesCancelInvoices.gui,
+      permissions.uiInvoicesCanViewAndEditInvoicesAndInvoiceLines.gui,
+      permissions.uiInvoicesCanViewInvoicesAndInvoiceLines.gui,
+      permissions.uiInvoicesDownloadBatchFileFromInvoiceRecord.gui,
+      permissions.uiInvoicesExportSearchResults.gui,
+      permissions.uiInvoicesManageAcquisitionUnits.gui,
+      permissions.uiInvoicesVoucherExport.gui
     ])
       .then(userProperties => {
         user = userProperties;
       });
-      Organizations.createOrganizationViaApi(organization)
-      .then(response => {
-        organization.id = response;
+      Organizations.getOrganizationViaApi({ query: `name=${invoice.vendorName}` })
+      .then(organization => {
+        invoice.accountingCode = organization.erpCode;
+        Object.assign(vendorPrimaryAddress,
+          organization.addresses.find(address => address.isPrimary === true));
       });
-    order.vendor = organization.name;
-    order.orderType = 'One-time';
+    cy.getBatchGroups()
+      .then(batchGroup => { invoice.batchGroup = batchGroup.name; });
   });
 
   after(() => {
-    Orders.deleteOrderApi(orderId);
-    Organizations.deleteOrganizationViaApi(organization.id);
     cy.loginAsAdmin({ path:SettingsMenu.acquisitionUnitsPath , waiter: AcquisitionUnits.waitLoading });
     
     AcquisitionUnits.unAssignAdmin(defaultAcquisitionUnit.name);
@@ -68,26 +64,22 @@ describe('ui-finance: Orders', () => {
     cy.wait(2000);
     AcquisitionUnits.assignUser(user.username);
 
-    cy.login(user.username, user.password, { path:TopMenu.ordersPath, waiter: Orders.waitLoading });
-    Orders.createOrderWithAU(order, defaultAcquisitionUnit.name).then ( ({response} ) => {
-      orderId = response.body.id
-      orderNumber = response.body.poNumber;
-    InteractorsTools.checkCalloutMessage(`The Purchase order - ${orderNumber} has been successfully saved`);
+    cy.login(user.username, user.password, { path:TopMenu.invoicesPath, waiter: Orders.waitLoading });
+    Invoices.createDefaultInvoice(invoice, vendorPrimaryAddress);
 
     cy.loginAsAdmin({ path:SettingsMenu.acquisitionUnitsPath, waiter: AcquisitionUnits.waitLoading });
     AcquisitionUnits.unAssignUser(defaultAcquisitionUnit.name);
 
     cy.login(user.username, user.password, { path:TopMenu.ordersPath, waiter: Orders.waitLoading });
-    Orders.searchByParameter('PO number', orderNumber);
-    Orders.checkZeroSearchResultsHeader();
+    Invoices.searchByNumber(invoice.invoiceNumber);
+    Invoices.checkZeroSearchResultsHeader();
 
     cy.loginAsAdmin({ path:SettingsMenu.acquisitionUnitsPath, waiter: AcquisitionUnits.waitLoading });
     AcquisitionUnits.edit(defaultAcquisitionUnit.name);
     AcquisitionUnits.selectViewCheckbox();
     
     cy.login(user.username, user.password, { path:TopMenu.ordersPath, waiter: Orders.waitLoading });
-    Orders.searchByParameter('PO number', orderNumber);
-    FinanceHelp.selectFromResultsList();
-  });
+    Invoices.searchByNumber(invoice.invoiceNumber);
+    Helper.selectFromResultsList();
   });
 });
