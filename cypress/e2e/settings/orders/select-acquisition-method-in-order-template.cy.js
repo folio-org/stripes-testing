@@ -22,14 +22,14 @@ describe('orders: Settings', () => {
       .then(response => {
         organization.id = response;
       });
-      AcquisitionMethods.createNewAcquisitionMethodViaAPI(acquisitionMethod);
-      cy.createTempUser([
-        permissions.uiSettingsOrdersCanViewEditCreateNewOrderTemplates.gui,
-      ])
-        .then(userProperties => {
-          user = userProperties;
-        });
-        cy.login(user.username, user.password, { path:SettingsMenu.ordersOrderTemplatesPath , waiter: OrderTemplate.waitLoading });
+    AcquisitionMethods.createNewAcquisitionMethodViaAPI(acquisitionMethod);
+    cy.createTempUser([
+      permissions.uiSettingsOrdersCanViewEditCreateNewOrderTemplates.gui,
+    ])
+    .then(userProperties => {
+      user = userProperties;
+    });
+    cy.login(user.username, user.password, { path:SettingsMenu.ordersOrderTemplatesPath , waiter: OrderTemplate.waitLoading });
   });
 
   after(() => {
