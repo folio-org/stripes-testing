@@ -185,6 +185,9 @@ export default {
 
   verifyExpirationDate(date) {
     // date format MM/DD/YYYY
-    cy.expect(KeyValue('Expiration date').has({ value: including(date) }));
+    const expectedDate = date.split('/');
+    expectedDate[0] = expectedDate[0].replace('0', '');
+    expectedDate[1] = expectedDate[1].replace('0', '');
+    cy.expect(KeyValue('Expiration date').has({ value: including(expectedDate.join('/')) }));
   },
 };
