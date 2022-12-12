@@ -178,7 +178,7 @@ function createRequestApi(
     });
 }
 
-function deleteRequestApi(requestId) {
+function deleteRequestViaApi(requestId) {
   return cy.okapiRequest({
     method: 'DELETE',
     path: `circulation/requests/${requestId}`,
@@ -253,7 +253,7 @@ function waitLoadingTags() {
 
 export default {
   createRequestApi,
-  deleteRequestApi,
+  deleteRequestViaApi,
   setRequestPolicyApi,
   deleteRequestPolicyApi,
   updateCirculationRulesApi,
@@ -507,5 +507,12 @@ export default {
 
   verifyShowTagsButtonIsDisabled:() => {
     cy.expect(showTagsButton.has({ disabled: true }));
-  }
+  },
+
+  createNewRequestViaApi:(requestBody) => cy.okapiRequest({
+    method: 'POST',
+    path: 'circulation/requests',
+    body: requestBody,
+    isDefaultSearchParamsRequired: false
+  }),
 };

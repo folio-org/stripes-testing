@@ -90,7 +90,7 @@ describe('ui-circulation-settings: overdue fine policies management', () => {
       }).then(() => {
         FixedDueDateSchedules.createViaApi()
           .then((schedule) => {
-            LoanPolicy.createApi(loanPolicyBody(schedule.id))
+            LoanPolicy.createViaApi(loanPolicyBody(schedule.id))
               .then((policy) => {
                 loanPolicy = policy;
               });
