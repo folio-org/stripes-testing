@@ -9,8 +9,9 @@ import Organizations from '../../support/fragments/organizations/organizations';
 import NewInvoice from '../../support/fragments/invoices/newInvoice';
 import Invoices from '../../support/fragments/invoices/invoices';
 import VendorAddress from '../../support/fragments/invoices/vendorAddress';
+import FinanceHelp from '../../support/fragments/finance/financeHelper';
 
-describe('ui-finance: Orders', () => {
+describe('ui-invoices: create', () => {
 
   const invoice = { ...NewInvoice.defaultUiInvoice };
   const vendorPrimaryAddress = { ...VendorAddress.vendorAddress };
@@ -79,6 +80,6 @@ describe('ui-finance: Orders', () => {
     
     cy.login(user.username, user.password, { path:TopMenu.invoicesPath, waiter: Invoices.waitLoading });
     Invoices.searchByNumber(invoice.invoiceNumber);
-    Helper.selectFromResultsList();
+    FinanceHelp.selectFromResultsList();
   });
 });
