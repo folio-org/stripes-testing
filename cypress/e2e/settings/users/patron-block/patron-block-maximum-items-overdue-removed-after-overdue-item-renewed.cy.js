@@ -29,6 +29,7 @@ import Renewals from '../../../../support/fragments/loans/renewals';
 
 describe('Patron Block: Maximum number of overdue items', () => {
   let originalCirculationRules;
+  const renewComment = `AutotestText${getRandomPostfix()}`;
   const blockMessage = 'You have reached maximum number of overdue items as set by patron group';
   const patronGroup = {
     name: 'groupToPatronBlock' + getRandomPostfix(),
@@ -242,7 +243,7 @@ describe('Patron Block: Maximum number of overdue items', () => {
       UsersCard.showOpenedLoans();
       UserLoans.openLoan(itemForRenew.barcode);
       UserLoans.renewItem(itemForRenew.barcode, true);
-      Renewals.renewBlockedPatron(`AutotestText${getRandomPostfix()}`);
+      Renewals.renewBlockedPatron(renewComment);
 
       cy.visit(TopMenu.usersPath);
       UsersSearchPane.waitLoading();

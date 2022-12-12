@@ -33,6 +33,7 @@ import RenewConfirmationModal from '../../../../support/fragments/users/loans/re
 
 describe('Patron Block: Maximum outstanding fee/fine balance', () => {
   let originalCirculationRules;
+  const renewComment = `AutotestText${getRandomPostfix()}`;
   const blockMessage = 'You have reached maximum outstanding fee/fine balance as set by patron group';
   const patronGroup = {
     name: 'groupToPatronBlock' + getRandomPostfix(),
@@ -303,7 +304,7 @@ describe('Patron Block: Maximum outstanding fee/fine balance', () => {
       UsersCard.showOpenedLoans();
       UserLoans.openLoan(itemForRenew.barcode);
       UserLoans.renewItem(itemForRenew.barcode, true);
-      Renewals.renewBlockedPatron(`AutotestText${getRandomPostfix()}`);
+      Renewals.renewBlockedPatron(renewComment);
       RenewConfirmationModal.confirmRenewOverrideItem();
       OverrideAndRenewModal.confirmOverrideItem();
 
