@@ -1,10 +1,10 @@
-import { Button, Accordion, Checkbox, SelectionList, Selection, SearchField, TextField, Section } from '../../../../../interactors';
+import { Button, Accordion, Checkbox, SelectionList, Selection, SearchField, TextField, Section, Select } from '../../../../../interactors';
 import FinanceHelper from '../financeHelper';
 import getRandomPostfix from '../../../utils/stringTools';
 
 const createdLedgerNameXpath = '//*[@id="paneHeaderpane-ledger-details-pane-title"]/h2/span';
 const numberOfSearchResultsHeader = '//*[@id="paneHeaderledger-results-pane-subtitle"]/span';
-
+const rolloverButton = Button('Rollover');
 const zeroResultsFoundText = '0 records found';
 const fiscalYearCss = 'select[name^="fiscalYearOneId"]';
 
@@ -19,6 +19,27 @@ export default {
 
   waitForLedgerDetailsLoading : () => {
     cy.do(Section({ id: 'pane-ledger-details' }).visible);
+  },
+
+  rollover : () => {
+    cy.do([
+      Button('Actions').click(),
+      rolloverButton.click()
+    ]);
+  },
+
+  fillInRolloverInfo : (fiscalYear) => {
+    cy.do([
+      Select({ name: 'toFiscalYearId' }).choose(fiscalYear),
+      Checkbox({ name: 'budgetsRollover[0].rolloverAllocation' }).click(),
+      Checkbox({ name: 'encumbrancesRollover[0].rollover' }).click(),
+      Select({ name: 'encumbrancesRollover[0].basedOn' }).choose('Expended'),
+      Checkbox({ name: 'encumbrancesRollover[2].rollover' }).click(),
+      Select({ name: 'encumbrancesRollover[2].basedOn' }).choose('Initial encumbrance'),
+      rolloverButton.click(),
+      Button('Continue').click(),
+      Button('Confirm').click(),
+    ]);
   },
 
   checkZeroSearchResultsHeader : () => {
