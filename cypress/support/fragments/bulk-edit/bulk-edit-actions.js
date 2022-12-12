@@ -8,7 +8,7 @@ import {
   Checkbox,
   MultiColumnListHeader,
   MultiColumnListCell,
-  TextField, Datepicker
+  TextField
 } from '../../../../interactors';
 
 const actionsBtn = Button('Actions');
@@ -118,12 +118,6 @@ export default {
       Button({ icon: 'calendar' }).click(),
       TextField().fillIn(date)
     ]);
-  },
-
-  verifyCalendarItem() {
-    getBulkEditSelectType().select('Expiration date');
-    cy.do(Button({ icon: 'calendar' }).click());
-    cy.expect(Datepicker().exists());
   },
 
   fillLoanType(type = 'Selected') {
