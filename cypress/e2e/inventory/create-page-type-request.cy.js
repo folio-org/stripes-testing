@@ -72,7 +72,7 @@ describe('ui-inventory: Create page type request', () => {
       query: `"requesterId"="${user.userId}"`
     }).then(({ body }) => {
       body.requests?.forEach(request => {
-        Requests.deleteRequestApi(request.id);
+        Requests.deleteRequestViaApi(request.id);
       });
     });
     cy.deleteItem(createdItem.itemId);

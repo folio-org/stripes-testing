@@ -27,10 +27,14 @@ import UserLoans from '../../../../support/fragments/users/loans/userLoans';
 import LostItemFeePolicy from '../../../../support/fragments/circulation/lost-item-fee-policy';
 import UsersCard from '../../../../support/fragments/users/usersCard';
 import NewFeeFine from '../../../../support/fragments/users/newFeeFine';
+import Renewals from '../../../../support/fragments/loans/renewals';
+import OverrideAndRenewModal from '../../../../support/fragments/users/loans/overrideAndRenewModal';
+import RenewConfirmationModal from '../../../../support/fragments/users/loans/renewConfirmationModal';
 
-describe('Patron Block: Maximum outstanding fee/fine balance', () => {
+describe('Patron Block: Maximum number of lost items', () => {
   let originalCirculationRules;
-  const blockMessage = 'You have reached maximum outstanding fee/fine balance as set by patron group';
+  const renewComment = `AutotestText${getRandomPostfix()}`;
+  const blockMessage = 'You have reached maximum number of lost items as set by patron group';
   const patronGroup = {
     name: 'groupToPatronBlock' + getRandomPostfix(),
   };
@@ -45,7 +49,7 @@ describe('Patron Block: Maximum outstanding fee/fine balance', () => {
     ],
   };
   const testData = {
-    userServicePoint: ServicePoints.getDefaultServicePointWithPickUpLocation('autotest fee/fine limit', uuid()),
+    userServicePoint: ServicePoints.getDefaultServicePointWithPickUpLocation('autotest lost items limit', uuid()),
   };
   const ownerBody = {
     owner: 'AutotestOwner' + getRandomPostfix(),
@@ -185,6 +189,10 @@ describe('Patron Block: Maximum outstanding fee/fine balance', () => {
     cy.createTempUser(
       [
         permissions.uiUsersSettingsOwners.gui,
+        permissions.loansAll.gui,
+        permissions.overridePatronBlock.gui,
+        permissions.loansRenewOverride.gui,
+        permissions.uiUsersfeefinesCRUD.gui,
         permissions.uiUsersCreatePatronConditions.gui,
         permissions.uiUsersCreatePatronLimits.gui,
         permissions.checkinAll.gui,
@@ -263,7 +271,7 @@ describe('Patron Block: Maximum outstanding fee/fine balance', () => {
     ServicePoints.deleteViaApi(testData.userServicePoint.id);
     Users.deleteViaApi(userData.userId);
     PatronGroups.deleteViaApi(patronGroup.id);
-    Conditions.resetConditionViaApi('cf7a0d5f-a327-4ca1-aa9e-dc55ec006b8a', 'Maximum outstanding fee/fine balance');
+    Conditions.resetConditionViaApi('72b67965-5b73-4840-bc0b-be8f3f6e047e', 'Maximum number of lost items');
     Location.deleteViaApiIncludingInstitutionCampusLibrary(
       testData.defaultLocation.institutionId,
       testData.defaultLocation.campusId,
@@ -272,16 +280,16 @@ describe('Patron Block: Maximum outstanding fee/fine balance', () => {
     );
   });
   it(
-    'C350651 Verify automated patron block "Maximum outstanding fee/fine balance" removed after lost item returned (vega)',
+    'C350653 Verify automated patron block "Maximum number of lost items" removed after lost item renewed (vega)',
     { tags: [TestTypes.criticalPath, devTeams.vega] },
     () => {
       cy.visit(SettingsMenu.conditionsPath);
       Conditions.waitLoading();
-      Conditions.select('Maximum outstanding fee/fine balance');
+      Conditions.select('Maximum number of lost items');
       Conditions.setConditionState(blockMessage);
       cy.visit(SettingsMenu.limitsPath);
       Limits.selectGroup(patronGroup.name);
-      Limits.setLimit('Maximum outstanding fee/fine balance', '624');
+      Limits.setLimit('Maximum number of lost items', '4');
       // needed for the "Lost Item Fee Policy" so items can get "aged to lost" status
       cy.wait(230000);
 
@@ -291,11 +299,14 @@ describe('Patron Block: Maximum outstanding fee/fine balance', () => {
       UsersCard.waitLoading();
       Users.checkIsPatronBlocked(blockMessage, 'Borrowing, Renewals, Requests');
 
-      cy.visit(TopMenu.checkInPath);
-      const itemForCheckIn = itemsData.itemsWithSeparateInstance[Math.floor(Math.random() * 5)];
-      CheckInActions.checkInItemGui(itemForCheckIn.barcode);
-      CheckInActions.confirmCheckInLostItem();
-      CheckInActions.verifyLastCheckInItem(itemForCheckIn.barcode);
+      const itemForRenew = itemsData.itemsWithSeparateInstance[Math.floor(Math.random() * 5)];
+      UsersCard.openLoans();
+      UsersCard.showOpenedLoans();
+      UserLoans.openLoan(itemForRenew.barcode);
+      UserLoans.renewItem(itemForRenew.barcode, true);
+      Renewals.renewBlockedPatron(renewComment);
+      RenewConfirmationModal.confirmRenewOverrideItem();
+      OverrideAndRenewModal.confirmOverrideItem();
 
       cy.visit(TopMenu.usersPath);
       UsersSearchPane.waitLoading();

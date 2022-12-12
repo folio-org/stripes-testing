@@ -27,9 +27,13 @@ import UserLoans from '../../../../support/fragments/users/loans/userLoans';
 import LostItemFeePolicy from '../../../../support/fragments/circulation/lost-item-fee-policy';
 import UsersCard from '../../../../support/fragments/users/usersCard';
 import NewFeeFine from '../../../../support/fragments/users/newFeeFine';
+import Renewals from '../../../../support/fragments/loans/renewals';
+import OverrideAndRenewModal from '../../../../support/fragments/users/loans/overrideAndRenewModal';
+import RenewConfirmationModal from '../../../../support/fragments/users/loans/renewConfirmationModal';
 
 describe('Patron Block: Maximum outstanding fee/fine balance', () => {
   let originalCirculationRules;
+  const renewComment = `AutotestText${getRandomPostfix()}`;
   const blockMessage = 'You have reached maximum outstanding fee/fine balance as set by patron group';
   const patronGroup = {
     name: 'groupToPatronBlock' + getRandomPostfix(),
@@ -185,6 +189,10 @@ describe('Patron Block: Maximum outstanding fee/fine balance', () => {
     cy.createTempUser(
       [
         permissions.uiUsersSettingsOwners.gui,
+        permissions.loansAll.gui,
+        permissions.overridePatronBlock.gui,
+        permissions.loansRenewOverride.gui,
+        permissions.uiUsersfeefinesCRUD.gui,
         permissions.uiUsersCreatePatronConditions.gui,
         permissions.uiUsersCreatePatronLimits.gui,
         permissions.checkinAll.gui,
@@ -272,7 +280,7 @@ describe('Patron Block: Maximum outstanding fee/fine balance', () => {
     );
   });
   it(
-    'C350651 Verify automated patron block "Maximum outstanding fee/fine balance" removed after lost item returned (vega)',
+    'C350655 Verify automated patron block "Maximum outstanding fee/fine balance" removed after lost item renewed (vega)',
     { tags: [TestTypes.criticalPath, devTeams.vega] },
     () => {
       cy.visit(SettingsMenu.conditionsPath);
@@ -291,11 +299,14 @@ describe('Patron Block: Maximum outstanding fee/fine balance', () => {
       UsersCard.waitLoading();
       Users.checkIsPatronBlocked(blockMessage, 'Borrowing, Renewals, Requests');
 
-      cy.visit(TopMenu.checkInPath);
-      const itemForCheckIn = itemsData.itemsWithSeparateInstance[Math.floor(Math.random() * 5)];
-      CheckInActions.checkInItemGui(itemForCheckIn.barcode);
-      CheckInActions.confirmCheckInLostItem();
-      CheckInActions.verifyLastCheckInItem(itemForCheckIn.barcode);
+      const itemForRenew = itemsData.itemsWithSeparateInstance[Math.floor(Math.random() * 5)];
+      UsersCard.openLoans();
+      UsersCard.showOpenedLoans();
+      UserLoans.openLoan(itemForRenew.barcode);
+      UserLoans.renewItem(itemForRenew.barcode, true);
+      Renewals.renewBlockedPatron(renewComment);
+      RenewConfirmationModal.confirmRenewOverrideItem();
+      OverrideAndRenewModal.confirmOverrideItem();
 
       cy.visit(TopMenu.usersPath);
       UsersSearchPane.waitLoading();
