@@ -27,21 +27,20 @@ describe('orders: Settings', () => {
       permissions.uiSettingsOrdersCanViewEditCreateNewOrderTemplates.gui,
     ]).then(userProperties => {
       user = userProperties;
-      cy.login(user.username, user.password, { path:SettingsMenu.ordersOrderTemplatesPath , waiter: OrderTemplate.waitLoading });
+      cy.login(user.username, user.password, { path:SettingsMenu.ordersOrderTemplatesPath, waiter: OrderTemplate.waitLoading });
     });
-    
   });
 
   after(() => {
     Organizations.deleteOrganizationViaApi(organization.id);
-    AcquisitionMethods.deleteAcquisitionMethodViaAPI(acquisitionMethod.id)
+    AcquisitionMethods.deleteAcquisitionMethodViaAPI(acquisitionMethod.id);
     Users.deleteViaApi(user.userId);
   });
 
-    it('C350602 Select Acquisition Method in Order Template (thunderjet)', { tags: [TestType.criticalPath, devTeams.thunderjet] }, () => {
-      OrderTemplate.newTemplate();
-      OrderTemplate.fillTemplateInformationWithAcquisitionMethod(orderTemplateName, organization.name, acquisitionMethod.value);
-      OrderTemplate.saveTemplate();
-      OrderTemplate.checkTemplateCreated(orderTemplateName);
-    });
+  it('C350602 Select Acquisition Method in Order Template (thunderjet)', { tags: [TestType.criticalPath, devTeams.thunderjet] }, () => {
+    OrderTemplate.newTemplate();
+    OrderTemplate.fillTemplateInformationWithAcquisitionMethod(orderTemplateName, organization.name, acquisitionMethod.value);
+    OrderTemplate.saveTemplate();
+    OrderTemplate.checkTemplateCreated(orderTemplateName);
+  });
 });
