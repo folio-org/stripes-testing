@@ -25,11 +25,11 @@ describe('orders: Settings', () => {
     AcquisitionMethods.createNewAcquisitionMethodViaAPI(acquisitionMethod);
     cy.createTempUser([
       permissions.uiSettingsOrdersCanViewEditCreateNewOrderTemplates.gui,
-    ])
-    .then(userProperties => {
+    ]).then(userProperties => {
       user = userProperties;
+      cy.login(user.username, user.password, { path:SettingsMenu.ordersOrderTemplatesPath , waiter: OrderTemplate.waitLoading });
     });
-    cy.login(user.username, user.password, { path:SettingsMenu.ordersOrderTemplatesPath , waiter: OrderTemplate.waitLoading });
+    
   });
 
   after(() => {
