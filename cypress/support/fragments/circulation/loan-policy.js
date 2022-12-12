@@ -7,7 +7,7 @@ const getDefaultRollingLoanPolicy = (limit = '') => {
   const defaultLoanPolicy = {
     loanable: true,
     loansPolicy: {
-      closedLibraryDueDateManagementId:'CURRENT_DUE_DATE',
+      closedLibraryDueDateManagementId: 'CURRENT_DUE_DATE_TIME',
       itemLimit: limit,
       period: { duration: 3, intervalId: 'Hours' },
       profileId: 'Rolling'
@@ -32,7 +32,7 @@ export default {
     cy.expect(Heading('Loan policies').exists());
   },
   getDefaultRollingLoanPolicy,
-  createApi(loanPolicy) {
+  createViaApi(loanPolicy) {
     return cy
       .okapiRequest({
         method: 'POST',

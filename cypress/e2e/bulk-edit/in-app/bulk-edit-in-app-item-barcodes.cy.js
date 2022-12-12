@@ -8,6 +8,8 @@ import getRandomPostfix from '../../../support/utils/stringTools';
 import FileManager from '../../../support/utils/fileManager';
 import Users from '../../../support/fragments/users/users';
 import BulkEditActions from '../../../support/fragments/bulk-edit/bulk-edit-actions';
+import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
+import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 
 let user;
 const items = [];
@@ -78,6 +80,85 @@ describe('bulk-edit', () => {
       BulkEditActions.verifySuccessBanner(10);
       BulkEditSearchPane.verifyLocationChanges(10, 'Annex');
       BulkEditActions.newBulkEdit();
+    });
+
+    it('C359210 Verify the in-app bulk edit permanent loan type (firebird)', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
+      BulkEditSearchPane.selectRecordIdentifier('Item barcode');
+
+      BulkEditSearchPane.uploadFile(itemBarcodesFileName);
+      BulkEditSearchPane.waitFileUploading();
+
+      BulkEditActions.openActions();
+      BulkEditActions.verifyItemActionDropdownItems();
+      BulkEditActions.openStartBulkEditForm();
+      BulkEditActions.verifyModifyLandingPageBeforeModifying();
+      BulkEditActions.fillLoanType('Selected');
+      BulkEditActions.verifyModifyLandingPageAfterModifying();
+      BulkEditActions.confirmChanges();
+      BulkEditActions.commitChanges();
+      BulkEditSearchPane.waitFileUploading();
+
+      cy.loginAsAdmin({ path: TopMenu.inventoryPath, waiter: InventoryInstances.waitContentLoading });
+      items.forEach(item => {
+        InventorySearchAndFilter.searchByParameter('Keyword (title, contributor, identifier, HRID, UUID)', item.instanceName);
+        InventorySearchAndFilter.selectSearchResultItem();
+        InventoryInstance.openHoldings(['']);
+        InventoryInstance.verifyLoan('Selected');
+      });
+    });
+
+    it('C359225 Verify the in-app bulk edit temporary loan type (firebird)', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
+      cy.login(user.username, user.password, {
+        path: TopMenu.bulkEditPath,
+        waiter: BulkEditSearchPane.waitLoading
+      });
+
+      BulkEditSearchPane.selectRecordIdentifier('Item barcode');
+
+      BulkEditSearchPane.uploadFile(itemBarcodesFileName);
+      BulkEditSearchPane.waitFileUploading();
+
+      BulkEditActions.openActions();
+      BulkEditActions.openStartBulkEditForm();
+      BulkEditActions.fillTemporaryLoanType('Selected');
+      BulkEditActions.confirmChanges();
+      BulkEditActions.commitChanges();
+      BulkEditSearchPane.waitFileUploading();
+
+      cy.loginAsAdmin({ path: TopMenu.inventoryPath, waiter: InventoryInstances.waitContentLoading });
+      items.forEach(item => {
+        InventorySearchAndFilter.searchByParameter('Keyword (title, contributor, identifier, HRID, UUID)', item.instanceName);
+        InventorySearchAndFilter.selectSearchResultItem();
+        InventoryInstance.openHoldings(['']);
+        InventoryInstance.verifyLoan('Selected');
+      });
+    });
+
+    it('C359226 Verify user can clear temporary loan type value (firebird)', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
+      cy.login(user.username, user.password, {
+        path: TopMenu.bulkEditPath,
+        waiter: BulkEditSearchPane.waitLoading
+      });
+
+      BulkEditSearchPane.selectRecordIdentifier('Item barcode');
+
+      BulkEditSearchPane.uploadFile(itemBarcodesFileName);
+      BulkEditSearchPane.waitFileUploading();
+
+      BulkEditActions.openActions();
+      BulkEditActions.openStartBulkEditForm();
+      BulkEditActions.clearTemporaryLoanType();
+      BulkEditActions.confirmChanges();
+      BulkEditActions.commitChanges();
+      BulkEditSearchPane.waitFileUploading();
+
+      cy.loginAsAdmin({ path: TopMenu.inventoryPath, waiter: InventoryInstances.waitContentLoading });
+      items.forEach(item => {
+        InventorySearchAndFilter.searchByParameter('Keyword (title, contributor, identifier, HRID, UUID)', item.instanceName);
+        InventorySearchAndFilter.selectSearchResultItem();
+        InventoryInstance.openHoldings(['']);
+        InventoryInstance.verifyLoanInItemPage(item.itemBarcode, '-');
+      });
     });
   });
 });

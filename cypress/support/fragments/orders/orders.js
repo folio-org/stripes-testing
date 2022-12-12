@@ -176,6 +176,22 @@ export default {
         return response.body.id;
       });
   },
+
+  createOrderForRollover(order, isApproved = false) {
+    cy.do([
+      actionsButton.click(),
+      newButton.click()
+    ]);
+    this.selectVendorOnUi(order.vendor);
+    cy.intercept('POST', '/orders/composite-orders**').as('newOrder');
+    cy.do(Select('Order type*').choose(order.orderType));
+    if (isApproved) cy.do(Checkbox({ name:'approved' }).click());
+    cy.do(saveAndClose.click());
+    return cy.wait('@newOrder', getLongDelay())
+      .then(({ response }) => {
+        return response.body;
+      });
+  },
   
   checkZeroSearchResultsHeader: () => {
     cy.xpath(numberOfSearchResultsHeader)
@@ -379,6 +395,10 @@ export default {
         .click(),
       Button('Add PO line').click()
     ]);
+  },
+
+  backToPO: () => {
+    cy.do(Button({ id: 'clickable-backToPO' }).click());
   },
 
   selectFilterMainLibraryLocationsPOL: () => {

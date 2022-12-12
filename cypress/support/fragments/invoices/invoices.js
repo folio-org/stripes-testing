@@ -13,7 +13,8 @@ import {
   Checkbox,
   MultiColumnList,
   MultiColumnListRow,
-  Select
+  Select,
+  Section
 } from '../../../../interactors';
 import InteractorsTools from '../../utils/interactorsTools';
 import Helper from '../finance/financeHelper';
@@ -35,8 +36,17 @@ const submitButton = Button('Submit');
 const searchButton = Button('Search');
 const invoiceDetailsPaneId = 'paneHeaderpane-invoiceDetails';
 const searhInputId = 'input-record-search';
+const numberOfSearchResultsHeader = '//*[@id="paneHeaderinvoice-results-pane-subtitle"]/span';
+const zeroResultsFoundText = '0 records found';
 
 export default {
+
+  checkZeroSearchResultsHeader: () => {
+    cy.xpath(numberOfSearchResultsHeader)
+      .should('be.visible')
+      .and('have.text', zeroResultsFoundText);
+  },
+
   createDefaultInvoice(invoice, vendorPrimaryAddress) {
     cy.do(actionsButton.click());
     cy.expect(buttonNew.exists());
@@ -60,7 +70,29 @@ export default {
     cy.do(saveAndClose.click());
     InteractorsTools.checkCalloutMessage(invoiceStates.invoiceCreatedMessage);
   },
-  createSpecialInvoice(invoice, vendorPrimaryAddress) {
+
+  createRolloverInvoice(invoice,organization) {
+    cy.do(actionsButton.click());
+    cy.expect(buttonNew.exists());
+    cy.do([
+      buttonNew.click(),
+      Selection('Status*').open(),
+      SelectionList().select(invoice.status),
+      TextField('Invoice date*').fillIn(invoice.invoiceDate),
+      TextField('Vendor invoice number*').fillIn(invoice.invoiceNumber),
+    ]);
+    this.selectVendorOnUi(organization);
+    cy.do([
+      Selection('Batch group*').open(),
+      SelectionList().select('FOLIO'),
+      Select({ id: 'invoice-payment-method' }).choose('Cash'),
+      Checkbox('Export to accounting').checked(false)
+    ]);
+    cy.do(saveAndClose.click());
+    InteractorsTools.checkCalloutMessage(invoiceStates.invoiceCreatedMessage);
+  },
+
+  createSpecialInvoice(invoice) {
     cy.do(actionsButton.click());
     cy.expect(buttonNew.exists());
     cy.do([
@@ -79,7 +111,6 @@ export default {
       Select({ id: 'invoice-payment-method' }).choose('Cash'),
       Checkbox('Export to accounting').click()
     ]);
-    this.checkVendorPrimaryAddress(vendorPrimaryAddress);
     cy.do(saveAndClose.click());
     InteractorsTools.checkCalloutMessage(invoiceStates.invoiceCreatedMessage);
   },
@@ -136,6 +167,15 @@ export default {
       saveAndClose.click()
     ]);
     InteractorsTools.checkCalloutMessage(invoiceStates.invoiceLineCreatedMessage);
+  },
+
+  addLineFromPol: (orderNumber) => {
+    cy.do([
+      Accordion({ id: invoiceLinesAccordionId }).find(actionsButton).click(),
+      Button('Add line from POL').click(),
+      Modal('Select order lines').find(SearchField()).fillIn(orderNumber),
+      MultiColumnListRow({ index: rowNumber = 0 }).click()
+    ]);
   },
 
   createInvoiceLineFromPol: (orderNumber, rowNumber = 0) => {
@@ -304,4 +344,20 @@ export default {
   waitLoading : () => {
     cy.expect(Pane({ id: 'invoice-results-pane' }).exists());
   },
+  
+  selectInvoiceLine: () => {
+    cy.do(Section({ id: 'invoiceLines' })
+    .find(MultiColumnListRow({ index: 0 }))
+      .find(MultiColumnListCell({ columnIndex: 0 }))
+      .click());
+  },
+
+  cancelInvoice: () => {
+    cy.do([
+      PaneHeader({ id: invoiceDetailsPaneId })
+        .find(actionsButton).click(),
+      Button('Cancel').click(),
+      submitButton.click()
+    ]);
+  }
 };

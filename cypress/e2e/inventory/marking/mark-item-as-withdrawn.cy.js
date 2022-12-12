@@ -68,7 +68,7 @@ describe('ui-inventory: Mark items as withdrawn', () => {
     cy.deleteHoldingRecordViaApi(instanceData.holdingId);
     InventoryInstance.deleteInstanceViaApi(instanceData.instanceId);
     createdRequestsIds.forEach(id => {
-      Requests.deleteRequestApi(id);
+      Requests.deleteRequestViaApi(id);
     });
     Users.deleteViaApi(user.userId);
     requesterIds.forEach(id => Users.deleteViaApi(id));

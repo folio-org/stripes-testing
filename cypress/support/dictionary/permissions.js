@@ -105,6 +105,7 @@ export default {
   loansView: { internal: 'ui-users.loans.view', gui: 'Users: User loans view' },
   loansRenew: { internal: 'ui-users.loans.renew', gui: 'Users: User loans renew' },
   loansRenewOverride: { internal: 'ui-users.loans.renew-override', gui: 'Users: User loans renew through override' },
+  overridePatronBlock: { internal: 'ui-users.overridePatronBlock', gui: 'User: Can override patron blocks' },
   // Checkout
   checkoutAll: { internal: 'ui-checkout.all', gui: 'Check out: All permissions' },
   checkoutCirculatingItems: { internal: 'ui-checkout.circulation', gui: 'Check out: Check out circulating items' },
@@ -127,6 +128,14 @@ export default {
   uiInvoicesApproveInvoices: { internal: 'ui-invoice.approve', gui: 'Invoice: Approve invoices' },
   uiInvoicesPayInvoices: { internal: 'ui-invoice.pay', gui: 'Invoice: Pay invoices' },
   invoiceSettingsAll: { internal: 'ui-invoice.settings.all', gui: 'Settings (Invoices): Can view and edit settings' },
+  uiInvoicesCancelInvoices: { internal: 'ui-invoice.cancel', gui: 'Invoice: Cancel invoices' },
+  uiInvoicesCanViewAndEditInvoicesAndInvoiceLines: { internal: 'ui-invoice.invoice.edit', gui: 'Invoice: Can view and edit Invoices and Invoice lines' },
+  uiInvoicesCanViewInvoicesAndInvoiceLines: { internal: 'ui-invoice.invoice.view', gui: 'Invoice: Can view Invoices and Invoice lines' },
+  uiInvoicesDownloadBatchFileFromInvoiceRecord: { internal: 'ui-invoice.batchVoucher.download', gui: 'Invoice: Download batch file from invoice record' },
+  uiInvoicesExportSearchResults: { internal: 'ui-invoice.exportCSV', gui: 'Invoice: Export search results' },
+  uiInvoicesManageAcquisitionUnits: { internal: 'ui-invoice.acq.unit.assignment.manage', gui: 'Invoice: Manage acquisition units' },
+  uiInvoicesVoucherExport: { internal: 'ui-invoice.voucherExport', gui: 'Invoice: Voucher export' },
+  
   // Orders
   uiOrdersView: { internal: 'ui-orders.orders.view', gui: 'Orders: Can view Orders and Order lines' },
   uiOrdersCreate: { internal: 'ui-orders.orders.create', gui: 'Orders: Can create new Orders and Order lines' },
@@ -179,4 +188,6 @@ export default {
   uiInventorySettingsFastAdd: { internal: 'ui-inventory.settings.fast-add', gui: 'Settings (Inventory): Edit fast add settings' },
   uiCreateEditDeleteMaterialTypes: { internal: 'ui-inventory.settings.materialtypes', gui: 'Settings (Inventory): Create, edit, delete material types' },
   uiInventorySettingsConfigureSingleRecordImport: { internal: 'ui-inventory.settings.single-record-import', gui: 'Settings (Inventory): Configure single-record import' },
+  // Timers
+  okapiTimersPatch: { internal: 'okapi.proxy.self.timers.patch', gui: 'Okapi - patch timer for current tenant' },
 };

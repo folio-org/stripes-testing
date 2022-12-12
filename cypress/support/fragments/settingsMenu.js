@@ -55,7 +55,8 @@ export default {
   tagsPath: 'settings/tags',
   tenantPath: 'settings/tenant-settings',
   tenantLocationsPath: 'settings/tenant-settings/location-locations',
-  //Orders
+  // Orders
+  ordersOrderTemplatesPath: 'settings/orders/order-templates',
   ordersPONumberEditPath: 'settings/orders/po-number',
   ordersOpeningPurchaseOrdersPath: 'settings/orders/open-order',
   // Users

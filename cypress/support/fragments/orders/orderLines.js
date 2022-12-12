@@ -61,6 +61,8 @@ const itemDetailsSection = Section({ id: 'ItemDetails' });
 const poLineInfoSection = Section({ id: 'poLine' });
 const fundDistributionSection = Section({ id: 'FundDistribution' });
 const locationSection = Section({ id: 'location' });
+const selectInstanceModal = Modal('Select instance');
+
 export default {
 
   searchByParameter: (parameter, value) => {
@@ -193,6 +195,54 @@ export default {
       locationSelect.click(),
       onlineLocationOption.click(),
       quantityPhysicalLocationField.fillIn(quantityPhysical),
+      saveAndClose.click()
+    ]);
+  },
+
+  rolloverPOLineInfoforPhysicalMaterialWithFund: (orderLineTitleName, fund, unitPrice, quantity, value ) => {
+    cy.do([
+      orderLineTitleField.fillIn(orderLineTitleName),
+      orderFormatSelect.choose('Physical resource'),
+      acquisitionMethodButton.click(),
+    ]);
+    cy.wait(2000);
+    cy.do([
+      SelectionOption('Depository').click(),
+      receivingWorkflowSelect.choose('Independent order and receipt quantity'),
+      physicalUnitPriceTextField.fillIn(unitPrice),
+      quantityPhysicalTextField.fillIn(quantity),
+      materialTypeSelect.choose('book'),
+      addFundDistributionButton.click(),
+      fundDistributionSelect.click(),
+      SelectionOption(`${fund.name} (${fund.code})`).click(),
+      Section({ id: 'fundDistributionAccordion' }).find(Button('$')).click(),
+      fundDistributionField.fillIn(value),
+      addLocationButton.click(),
+      locationSelect.click(),
+      onlineLocationOption.click(),
+      quantityPhysicalLocationField.fillIn(quantity),
+      saveAndClose.click()
+    ]);
+  },
+
+  rolloverPOLineInfoforElectronicResourceWithFund: (orderLineTitleName, fund, unitPrice, quantity, value ) => {
+    cy.do([
+      orderLineTitleField.fillIn(orderLineTitleName),
+      orderFormatSelect.choose('Electronic resource'),
+      acquisitionMethodButton.click(),
+      SelectionOption('Other').click(),
+      receivingWorkflowSelect.choose('Synchronized order and receipt quantity'),
+      electronicUnitPriceTextField.fillIn(unitPrice),
+      quantityElectronicTextField.fillIn(quantity),
+      addFundDistributionButton.click(),
+      fundDistributionSelect.click(),
+      SelectionOption(`${fund.name} (${fund.code})`).click(),
+      Section({ id: 'fundDistributionAccordion' }).find(Button('$')).click(),
+      fundDistributionField.fillIn(value),
+      addLocationButton.click(),
+      locationSelect.click(),
+      onlineLocationOption.click(),
+      TextField({ name: 'locations[0].quantityElectronic' }).fillIn(quantity),
       saveAndClose.click()
     ]);
   },
@@ -400,6 +450,43 @@ export default {
   savePol:() => {
     cy.do(saveAndClose.click());
     cy.do(Pane({ id:'pane-poLineForm' }).absent());
-  }
+  },
+
+  fillPOLWithTitleLookUp:() => {
+    cy.do([
+      orderFormatSelect.choose('Other'),
+      acquisitionMethodButton.click(),
+      SelectionOption('Depository').click(),
+      receivingWorkflowSelect.choose('Synchronized order and receipt quantity'),
+      physicalUnitPriceTextField.fillIn(physicalUnitPrice),
+      quantityPhysicalTextField.fillIn(quantityPhysical),
+      materialTypeSelect.choose('book'),
+      addLocationButton.click(),
+      locationSelect.click(),
+      onlineLocationOption.click(),
+      quantityPhysicalLocationField.fillIn(quantityPhysical),
+      saveAndClose.click()
+    ]);
+  },
+
+  selectRandomInstanceInTitleLookUP:(instanceName, rowNumber = 0) => {
+    cy.do([
+      Button({ id: 'find-instance-trigger' }).click(),
+      selectInstanceModal.find(TextField({ name: 'query' })).fillIn(instanceName),
+      selectInstanceModal.find(searchButton).click(),
+      selectInstanceModal.find(MultiColumnListRow({ index: rowNumber })).click()
+    ]);
+    // Need to wait,while entering data loading on page
+    cy.wait(2000);
+  },
+
+  fillInInvalidDataForPublicationDate:() => {
+    cy.do(TextField({ text: 'Publication date'}).fillIn('Invalid date'));
+  },
+
+  clickNotConnectionInfoButton:() => {
+    cy.do(Section({ id: 'itemDetails' }).find(Button({ icon: 'info'})).click());
+  },
+
 };
 

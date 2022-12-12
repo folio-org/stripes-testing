@@ -31,14 +31,13 @@ describe('ui-invoices: Approve invoice', () => {
     Organizations.getOrganizationViaApi({ query: `name=${invoice.vendorName}` })
       .then(organization => {
         invoice.accountingCode = organization.erpCode;
-        console.log(organization);
         Object.assign(vendorPrimaryAddress,
           organization.addresses.find(address => address.isPrimary === true));
-          cy.getBatchGroups()
-          .then(batchGroup => { 
+        cy.getBatchGroups()
+          .then(batchGroup => {
             invoice.batchGroup = batchGroup.name;
             Funds.createFundViaUI(defaultFund)
-            .then(() => {
+              .then(() => {
                 Funds.addBudget(100);
                 Funds.checkCreatedBudget(defaultFund.code, DateTools.getCurrentFiscalYearCode());
                 invoiceLine.subTotal = -subtotalValue;
@@ -47,28 +46,29 @@ describe('ui-invoices: Approve invoice', () => {
                 Invoices.createInvoiceLine(invoiceLine);
                 Invoices.addFundDistributionToLine(invoiceLine, defaultFund);
                 Invoices.approveInvoice();
-            });
-        });
-    });
+              });
+          });
+      });
     cy.createTempUser([
-        permissions.uiFinanceViewFundAndBudget.gui,
-        permissions.viewEditCreateInvoiceInvoiceLine.gui,
-        permissions.uiInvoicesApproveInvoices.gui,
-        permissions.uiInvoicesPayInvoices.gui,
+      permissions.uiFinanceViewFundAndBudget.gui,
+      permissions.viewEditCreateInvoiceInvoiceLine.gui,
+      permissions.uiInvoicesApproveInvoices.gui,
+      permissions.uiInvoicesPayInvoices.gui,
 
-      ])
-        .then(userProperties => {
-          user = userProperties;
-          cy.login(userProperties.username, userProperties.password, { path:TopMenu.invoicesPath, waiter: Invoices.waitLoading });
-        });
+    ])
+      .then(userProperties => {
+        user = userProperties;
+        cy.login(userProperties.username, userProperties.password, { path:TopMenu.invoicesPath, waiter: Invoices.waitLoading });
+      });
   });
-  
+
   after(() => {
     Users.deleteViaApi(user.userId);
   });
-  
+
   it('C3453 Pay invoice (thunderjet)', { tags: [testType.criticalPath, devTeams.thunderjet] }, () => {
     const transactionFactory = new Transaction();
+    const valueInTransactionTable = `$${subtotalValue.toFixed(2)}`;
     Invoices.searchByNumber(invoice.invoiceNumber);
     Helper.selectFromResultsList();
     Invoices.payInvoice();

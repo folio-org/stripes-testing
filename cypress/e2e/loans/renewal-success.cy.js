@@ -150,12 +150,12 @@ describe('Renewal', () => {
   });
 
   after(() => {
-    CheckinActions.createItemCheckinApi({
+    CheckinActions.checkinItemViaApi({
       itemBarcode: itemData.barcode,
       servicePointId,
       checkInDate: moment.utc().format(),
     });
-    CheckinActions.createItemCheckinApi({
+    CheckinActions.checkinItemViaApi({
       itemBarcode: secondItemBarcode,
       servicePointId,
       checkInDate: moment.utc().format(),

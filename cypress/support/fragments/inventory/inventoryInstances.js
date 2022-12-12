@@ -12,7 +12,7 @@ import {
   Modal
 } from '../../../../interactors';
 import InventoryHoldings from './holdings/inventoryHoldings';
-import NewInventoryInstance from './newInventoryInstance';
+import inventoryNewInstance from './inventoryNewInstance';
 import InventoryInstance from './inventoryInstance';
 
 const rootSection = Section({ id: 'pane-results' });
@@ -60,9 +60,9 @@ export default {
   add: (title) => {
     cy.do(actionsButton.click());
     cy.do(Button('New').click());
-    NewInventoryInstance.waitLoading();
-    NewInventoryInstance.fillRequiredValues(title);
-    NewInventoryInstance.save();
+    inventoryNewInstance.waitLoading();
+    inventoryNewInstance.fillRequiredValues(title);
+    inventoryNewInstance.save();
   },
 
   resetAllFilters:() => {

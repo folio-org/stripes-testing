@@ -1,18 +1,27 @@
-import { Button, TextField, MultiColumnListCell, Pane } from '../../../../../interactors';
-import newActionProfile from './newActionProfile';
+import { including } from '@interactors/html';
+import {
+  Button,
+  TextField,
+  MultiColumnListCell,
+  Pane,
+  MultiColumnListRow,
+  Callout,
+  PaneContent
+} from '../../../../../interactors';
+import NewActionProfile from './newActionProfile';
 
 const actionsButton = Button('Actions');
 const iconButton = Button({ icon: 'times' });
+const resultsPane = Pane({ id:'pane-results' });
+const viewPane = Pane({ id:'view-action-profile-pane' });
 
 const openNewActionProfileForm = () => {
   cy.do([
-    Pane({ id:'pane-results' }).find(actionsButton).click(),
+    resultsPane.find(actionsButton).click(),
     Button('New action profile').click()
   ]);
 };
-const closeActionProfile = profileName => {
-  cy.do(Pane({ title: profileName }).find(iconButton).click());
-};
+const close = profileName => cy.do(Pane({ title: profileName }).find(iconButton).click());
 
 const deleteActionProfile = (profileName) => {
   // get all action profiles
@@ -40,21 +49,46 @@ const deleteActionProfile = (profileName) => {
     });
 };
 
+const search = (profileName) => {
+  // TODO: clarify with developers what should be waited
+  cy.wait(1500);
+  cy.do(TextField({ id:'input-search-action-profiles-field' }).fillIn(profileName));
+  cy.do(Pane('Action profiles').find(Button('Search')).click());
+};
+
 export default {
-  createActionProfile:(actionProfile, mappingProfileName) => {
-    openNewActionProfileForm();
-    newActionProfile.fillActionProfile(actionProfile);
-    newActionProfile.linkMappingProfile(mappingProfileName);
-  },
-
-  checkActionProfilePresented: (actionProfileName) => {
-    // TODO: clarify with developers what should be waited
-    cy.wait(1500);
-    cy.do(TextField({ id:'input-search-action-profiles-field' }).fillIn(actionProfileName));
-    cy.do(Pane('Action profiles').find(Button('Search')).click());
-    cy.expect(MultiColumnListCell(actionProfileName).exists());
-  },
-
   deleteActionProfile,
-  closeActionProfile,
+  close,
+  search,
+  waitLoading: () => cy.expect(MultiColumnListRow({ index:0 }).exists()),
+  create:(actionProfile, mappingProfileName) => {
+    openNewActionProfileForm();
+    NewActionProfile.fill(actionProfile);
+    NewActionProfile.linkMappingProfile(mappingProfileName);
+  },
+
+  selectActionProfileFromList:(profileName) => cy.do(MultiColumnListCell(profileName).click()),
+
+  checkActionProfilePresented: (profileName) => {
+    search(profileName);
+    cy.expect(MultiColumnListCell(profileName).exists());
+  },
+
+  verifyActionProfileOpened:() => {
+    cy.expect(resultsPane.exists());
+    cy.expect(viewPane.exists());
+  },
+
+  checkCalloutMessage: (profileName) => {
+    cy.expect(Callout({ textContent: including(`The action profile "${profileName}" was successfully updated`) })
+      .exists());
+  },
+
+  createWithoutLinkedMappingProfile:(actionProfile) => {
+    openNewActionProfileForm();
+    NewActionProfile.fill(actionProfile);
+    cy.do(Button('Save as profile & Close').click());
+  },
+
+  checkListOfExistingProfilesIsDisplayed:() => cy.expect(PaneContent({ id:'pane-results-content' }).exists())
 };

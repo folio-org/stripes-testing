@@ -13,7 +13,7 @@ import {
 import { getLongDelay } from '../../utils/cypressTools';
 import getRandomPostfix from '../../utils/stringTools';
 import JobProfiles from './job_profiles/jobProfiles';
-import InventorySearch from '../inventory/inventorySearch';
+import InventorySearchAndFilter from '../inventory/inventorySearchAndFilter';
 import TopMenu from '../topMenu';
 import DataImportUploadFile from '../../../../interactors/dataImportUploadFile';
 import MarcAuthority from '../marcAuthority/marcAuthority';
@@ -96,7 +96,7 @@ export default {
     JobProfiles.runImportFile(nameForMarcFileWithBib);
 
     // get Instance HRID through API
-    InventorySearch.getInstanceHRID()
+    InventorySearchAndFilter.getInstanceHRID()
       .then(id => {
         cy.wrap(id).as('requestedHrId');
       });

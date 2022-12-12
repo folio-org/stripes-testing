@@ -4,6 +4,7 @@ import { MultiColumnListHeader } from '../../../interactors';
 import Users from '../../support/fragments/users/users';
 import InventoryInstance from '../../support/fragments/inventory/inventoryInstance';
 import DevTeams from '../../support/dictionary/devTeams';
+import TestTypes from '../../support/dictionary/testTypes';
 
 describe('ui-requests: Sort requests', () => {
   const userIds = [];
@@ -42,7 +43,7 @@ describe('ui-requests: Sort requests', () => {
       InventoryInstance.deleteInstanceViaApi(instance.instanceId);
     });
     requests.forEach(request => {
-      Requests.deleteRequestApi(request.id);
+      Requests.deleteRequestViaApi(request.id);
     });
     userIds.forEach(id => {
       Users.deleteViaApi(id);
@@ -51,8 +52,8 @@ describe('ui-requests: Sort requests', () => {
     Requests.deleteRequestPolicyApi(requestPolicyId);
   });
 
-  // Test is failed. This is a known issue. That's why test type is deleted.
-  it('C2379 Test Request app sorting (folijet) (prokopovych)', { tags: [DevTeams.folijet] }, () => {
+  // Test is failed. This is a known issue.
+  it('C2379 Test Request app sorting (folijet) (prokopovych)', { tags: [TestTypes.smoke, DevTeams.folijet] }, () => {
     cy.visit(TopMenu.requestsPath);
 
     cy.intercept('GET', '/circulation/requests?*').as('getRequests');

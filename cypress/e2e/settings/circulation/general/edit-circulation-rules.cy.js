@@ -46,7 +46,7 @@ describe('ui-circulation-settings: Edit circulation rules', () => {
       NewMaterialType.createViaApi(NewMaterialType.getDefaultMaterialType());
       NoticePolicy.createApi();
       LoanPolicy.createLoanableNotRenewableLoanPolicyApi(defaultLoanPolicy);
-      RequestPolicy.createApi();
+      RequestPolicy.createViaApi(RequestPolicy);
       LostItemFeePolicy.createViaApi();
       OverdueFinePolicy.createApi();
 
@@ -61,7 +61,7 @@ describe('ui-circulation-settings: Edit circulation rules', () => {
     MaterialTypes.deleteApi(defaultMaterialType.id);
     NoticePolicy.deleteApi(defaultNoticePolicy.id);
     LoanPolicy.deleteApi(defaultLoanPolicy.id);
-    RequestPolicy.deleteApi(defaultRequestPolicy.id);
+    RequestPolicy.deleteViaApi(defaultRequestPolicy.id);
     LostItemFeePolicy.deleteViaApi(defaultLostItemFeePolicy.id);
     OverdueFinePolicy.deleteApi(defaultOverdueFinePolicy.id);
     Users.deleteViaApi(newUserId);
