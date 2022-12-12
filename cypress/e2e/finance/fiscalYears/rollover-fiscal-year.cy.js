@@ -14,6 +14,8 @@ import Orders from '../../../support/fragments/orders/orders';
 import OrderLines from '../../../support/fragments/orders/orderLines';
 import Organizations from '../../../support/fragments/organizations/organizations';
 import NewOrganization from '../../../support/fragments/organizations/newOrganization';
+import NewInvoice from '../../../support/fragments/invoices/newInvoice';
+import Invoices from '../../../support/fragments/invoices/invoices';
 
 describe('ui-finance: Funds', () => {
 
@@ -47,10 +49,12 @@ describe('ui-finance: Funds', () => {
     reEncumber: true,
    };
   const organization = { ...NewOrganization.defaultUiOrganizations };
+  const invoice = { ...NewInvoice.defaultUiInvoice };
   const firstOrderLineTitle = `autotest_POL_title_${getRandomPostfix()}`;
   const secondOrderLineTitle = `autotest_POL_title_${getRandomPostfix()}`;
   const allocatedQuantity = '1000';
   let user;
+  let orderNumber;
 
   before(() => {
 
@@ -95,31 +99,37 @@ describe('ui-finance: Funds', () => {
       
       // Prepare 2 Open Orders for Rollover
       Organizations.createOrganizationViaApi(organization)
-      .then(response => {
-        organization.id = response;
+      .then(responseOrganizations => {
+        organization.id = responseOrganizations;
+        invoice.accountingCode = organization.erpCode;
       });
       firstOrder.vendor = organization.name;
       secondOrder.vendor = organization.name;
-    //   order.orderType = 'Ongoing';
     cy.visit(TopMenu.ordersPath);
-      Orders.createOrder(firstOrder).then(firstOrderId => {
-        firstOrder.id = firstOrderId;
+      Orders.createOrderForRollover(firstOrder).then(firstOrderResponse => {
+        firstOrder.id = firstOrderResponse.id;
+        orderNumber = firstOrderResponse.poNumber;
         Orders.checkCreatedOrder(firstOrder);
         OrderLines.addPOLine();
         OrderLines.rolloverPOLineInfoforPhysicalMaterialWithFund(firstOrderLineTitle, firstFund, '100' , '1', '100');
         OrderLines.backToEditingOrder();
         Orders.openOrder();
-      });
       cy.visit(TopMenu.ordersPath);
-      Orders.createOrder(secondOrder).then(secondOrderId => {
-        secondOrder.id = secondOrderId;
+      Orders.createOrderForRollover(secondOrder).then(secondOrderResponse => {
+        secondOrder.id = secondOrderResponse.id;
         Orders.checkCreatedOrder(secondOrder);
         OrderLines.addPOLine();
         OrderLines.rolloverPOLineInfoforElectronicResourceWithFund(secondOrderLineTitle, secondFund, '200' , '1', '200');
         OrderLines.backToEditingOrder();
         Orders.openOrder();
       });
-      
+      cy.visit(TopMenu.invoicesPath);
+      Invoices.createRolloverInvoice(invoice, organization.name);
+      Invoices.createInvoiceLineFromPol(orderNumber);
+      cy.wait(4000);
+      Invoices.approveInvoice();
+      Invoices.payInvoice();
+    });
     cy.createTempUser([
       permissions.uiFinanceExecuteFiscalYearRollover.gui,
       permissions.uiFinanceViewFiscalYear.gui,
@@ -133,28 +143,28 @@ describe('ui-finance: Funds', () => {
       });
   });
 
-  after(() => {
-    Orders.deleteOrderApi(firstOrder.id);
-    Orders.deleteOrderApi(secondOrder.id);
-    Organizations.deleteOrganizationViaApi(organization.id);
-    cy.loginAsAdmin({ path:TopMenu.fundPath, waiter: Funds.waitLoading });
-    FinanceHelp.searchByName(firstFund.name);
-    FinanceHelp.selectFromResultsList();
-    Funds.selectBudgetDetails();
-    Funds.deleteBudgetViaActions();
-    cy.visit(TopMenu.fundPath);
-    FinanceHelp.searchByName(secondFund.name);
-    FinanceHelp.selectFromResultsList();
-    Funds.selectBudgetDetails();
-    Funds.deleteBudgetViaActions();
-    Funds.checkIsBudgetDeleted();
-    Funds.deleteFundViaApi(firstFund.id);
-    Funds.deleteFundViaApi(secondFund.id);
-    Ledgers.deleteledgerViaApi(defaultLedger.id);
-    FiscalYears.deleteFiscalYearViaApi(firstFiscalYear.id);
-    FiscalYears.deleteFiscalYearViaApi(secondFiscalYear.id);
-    Users.deleteViaApi(user.userId);
-  });
+  // after(() => {
+  //   Orders.deleteOrderApi(firstOrder.id);
+  //   Orders.deleteOrderApi(secondOrder.id);
+  //   Organizations.deleteOrganizationViaApi(organization.id);
+  //   cy.loginAsAdmin({ path:TopMenu.fundPath, waiter: Funds.waitLoading });
+  //   FinanceHelp.searchByName(firstFund.name);
+  //   FinanceHelp.selectFromResultsList();
+  //   Funds.selectBudgetDetails();
+  //   Funds.deleteBudgetViaActions();
+  //   cy.visit(TopMenu.fundPath);
+  //   FinanceHelp.searchByName(secondFund.name);
+  //   FinanceHelp.selectFromResultsList();
+  //   Funds.selectBudgetDetails();
+  //   Funds.deleteBudgetViaActions();
+  //   Funds.checkIsBudgetDeleted();
+  //   Funds.deleteFundViaApi(firstFund.id);
+  //   Funds.deleteFundViaApi(secondFund.id);
+  //   Ledgers.deleteledgerViaApi(defaultLedger.id);
+  //   FiscalYears.deleteFiscalYearViaApi(firstFiscalYear.id);
+  //   FiscalYears.deleteFiscalYearViaApi(secondFiscalYear.id);
+  //   Users.deleteViaApi(user.userId);
+  // });
 
   it('C186156 Rollover Fiscal Year (thunderjet)', { tags: [testType.criticalPath, devTeams.thunderjet] }, () => {
     FinanceHelp.searchByName(defaultLedger.name);

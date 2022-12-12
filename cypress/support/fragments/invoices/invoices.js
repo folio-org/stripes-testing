@@ -70,6 +70,28 @@ export default {
     cy.do(saveAndClose.click());
     InteractorsTools.checkCalloutMessage(invoiceStates.invoiceCreatedMessage);
   },
+
+  createRolloverInvoice(invoice,organization) {
+    cy.do(actionsButton.click());
+    cy.expect(buttonNew.exists());
+    cy.do([
+      buttonNew.click(),
+      Selection('Status*').open(),
+      SelectionList().select(invoice.status),
+      TextField('Invoice date*').fillIn(invoice.invoiceDate),
+      TextField('Vendor invoice number*').fillIn(invoice.invoiceNumber),
+    ]);
+    this.selectVendorOnUi(organization);
+    cy.do([
+      Selection('Batch group*').open(),
+      SelectionList().select('FOLIO'),
+      Select({ id: 'invoice-payment-method' }).choose('Cash'),
+      Checkbox('Export to accounting').checked(false)
+    ]);
+    cy.do(saveAndClose.click());
+    InteractorsTools.checkCalloutMessage(invoiceStates.invoiceCreatedMessage);
+  },
+
   createSpecialInvoice(invoice) {
     cy.do(actionsButton.click());
     cy.expect(buttonNew.exists());
