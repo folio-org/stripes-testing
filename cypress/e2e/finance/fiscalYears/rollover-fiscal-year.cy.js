@@ -60,7 +60,6 @@ describe('ui-finance: Funds', () => {
       .then(firstFiscalYearResponse => {
         firstFiscalYear.id = firstFiscalYearResponse.id;
         defaultLedger.fiscalYearOneId = firstFiscalYear.id;
-
         Ledgers.createViaApi(defaultLedger)
           .then(ledgerResponse => {
             defaultLedger.id = ledgerResponse.id;
