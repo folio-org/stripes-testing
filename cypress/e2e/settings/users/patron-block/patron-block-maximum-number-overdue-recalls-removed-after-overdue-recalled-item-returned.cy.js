@@ -17,80 +17,38 @@ import Checkout from '../../../../support/fragments/checkout/checkout';
 import ServicePoints from '../../../../support/fragments/settings/tenant/servicePoints/servicePoints';
 import InventoryInstance from '../../../../support/fragments/inventory/inventoryInstance';
 import getRandomPostfix from '../../../../support/utils/stringTools';
-import UsersOwners from '../../../../support/fragments/settings/users/usersOwners';
-import PaymentMethods from '../../../../support/fragments/settings/users/paymentMethods';
 import LoanPolicy from '../../../../support/fragments/circulation/loan-policy';
 import Conditions from '../../../../support/fragments/settings/users/conditions';
 import Limits from '../../../../support/fragments/settings/users/limits';
 import UsersSearchPane from '../../../../support/fragments/users/usersSearchPane';
-import UserLoans from '../../../../support/fragments/users/loans/userLoans';
-import LostItemFeePolicy from '../../../../support/fragments/circulation/lost-item-fee-policy';
 import UsersCard from '../../../../support/fragments/users/usersCard';
-import NewFeeFine from '../../../../support/fragments/users/newFeeFine';
+import Requests from '../../../../support/fragments/requests/requests';
+import RequestPolicy from '../../../../support/fragments/circulation/request-policy';
 
-describe('Patron Block: Maximum outstanding fee/fine balance', () => {
+describe('Patron Block: Maximum number of overdue recalls', () => {
   let originalCirculationRules;
-  const blockMessage = 'You have reached maximum outstanding fee/fine balance as set by patron group';
+  const checkedOutBlockMessage = 'You have reached maximum number of overdue recalls as set by patron group';
   const patronGroup = {
     name: 'groupToPatronBlock' + getRandomPostfix(),
   };
   const userData = {};
+  const recallUserData = {};
   const itemsData = {
     itemsWithSeparateInstance: [
-      { instanceTitle: `InstanceForDeclareLost ${getRandomPostfix()}` },
-      { instanceTitle: `InstanceForDeclareLost ${getRandomPostfix()}` },
-      { instanceTitle: `InstanceForDeclareLost ${getRandomPostfix()}` },
-      { instanceTitle: `InstanceForAgedToLost ${getRandomPostfix()}` },
-      { instanceTitle: `InstanceForAgedToLost ${getRandomPostfix()}` },
+      { instanceTitle: `Instance ${getRandomPostfix()}` },
+      { instanceTitle: `Instance ${getRandomPostfix()}` },
+      { instanceTitle: `Instance ${getRandomPostfix()}` },
+      { instanceTitle: `Instance ${getRandomPostfix()}` },
+      { instanceTitle: `Instance ${getRandomPostfix()}` },
     ],
   };
   const testData = {
-    userServicePoint: ServicePoints.getDefaultServicePointWithPickUpLocation('autotest fee/fine limit', uuid()),
-  };
-  const ownerBody = {
-    owner: 'AutotestOwner' + getRandomPostfix(),
-    servicePointOwner: [
-      {
-        value: testData.userServicePoint.id,
-        label: testData.userServicePoint.name,
-      },
-    ],
-  };
-  const lostItemFeePolicyBody = {
-    name: '1_lost' + getRandomPostfix(),
-    itemAgedLostOverdue: {
-      duration: 1,
-      intervalId: 'Minutes',
-    },
-    patronBilledAfterAgedLost: {
-      duration: 1,
-      intervalId: 'Minutes',
-    },
-    chargeAmountItem: {
-      chargeType: 'anotherCost',
-      amount: '100.00',
-    },
-    lostItemProcessingFee: '25.00',
-    chargeAmountItemPatron: true,
-    chargeAmountItemSystem: true,
-    lostItemChargeFeeFine: {
-      duration: 6,
-      intervalId: 'Weeks',
-    },
-    returnedLostItemProcessingFee: false,
-    replacedLostItemProcessingFee: false,
-    replacementProcessingFee: '0.00',
-    replacementAllowed: false,
-    feesFinesShallRefunded: {
-      duration: 6,
-      intervalId: 'Months',
-    },
-    lostItemReturned: 'Charge',
-    id: uuid(),
+    requestsId: [],
+    userServicePoint: ServicePoints.getDefaultServicePointWithPickUpLocation('autotest overdue recalls limit', uuid()),
   };
   const loanPolicyBody = {
     id: uuid(),
-    name: `1_minute_${getRandomPostfix()}`,
+    name: `1_loan_${getRandomPostfix()}`,
     loanable: true,
     loansPolicy: {
       closedLibraryDueDateManagementId: 'CURRENT_DUE_DATE_TIME',
@@ -102,10 +60,14 @@ describe('Patron Block: Maximum outstanding fee/fine balance', () => {
     },
     renewable: true,
     renewalsPolicy: {
-      unlimited: false,
-      numberAllowed: 2,
-      renewFromId: 'SYSTEM_DATE',
+      unlimited: true,
+      renewFromId: 'CURRENT_DUE_DATE',
     },
+  };
+  const requestPolicyBody = {
+    requestTypes: ['Recall'],
+    name: `recall_${getRandomPostfix()}`,
+    id: uuid(),
   };
 
   before('Preconditions', () => {
@@ -163,22 +125,16 @@ describe('Patron Block: Maximum outstanding fee/fine balance', () => {
         cy.wrap(itemsData.itemsWithSeparateInstance).as('items');
       });
 
-    UsersOwners.createViaApi(ownerBody).then((ownerResponse) => {
-      testData.ownerId = ownerResponse.id;
-      PaymentMethods.createViaApi(testData.ownerId).then((paymentMethod) => {
-        testData.paymentMethodId = paymentMethod.id;
-      });
-    });
-    LostItemFeePolicy.createViaApi(lostItemFeePolicyBody);
     LoanPolicy.createViaApi(loanPolicyBody);
     PatronGroups.createViaApi(patronGroup.name).then((patronGroupResponse) => {
       patronGroup.id = patronGroupResponse;
     });
+    RequestPolicy.createViaApi(requestPolicyBody);
     CirculationRules.getViaApi().then((circulationRule) => {
       originalCirculationRules = circulationRule.rulesAsText;
       const ruleProps = CirculationRules.getRuleProps(circulationRule.rulesAsText);
       ruleProps.l = loanPolicyBody.id;
-      ruleProps.i = lostItemFeePolicyBody.id;
+      ruleProps.r = requestPolicyBody.id;
       CirculationRules.addRuleViaApi(originalCirculationRules, ruleProps, 't ', testData.loanTypeId);
     });
 
@@ -190,7 +146,6 @@ describe('Patron Block: Maximum outstanding fee/fine balance', () => {
         permissions.checkinAll.gui,
         permissions.checkoutAll.gui,
         permissions.uiUsersView.gui,
-        permissions.okapiTimersPatch.gui,
       ],
       patronGroup.name
     )
@@ -199,12 +154,21 @@ describe('Patron Block: Maximum outstanding fee/fine balance', () => {
         userData.password = userProperties.password;
         userData.userId = userProperties.userId;
         userData.barcode = userProperties.barcode;
-        UserEdit.addServicePointViaApi(testData.userServicePoint.id, userData.userId, testData.userServicePoint.id);
-        cy.getToken(userData.username, userData.password);
-        UserLoans.updateTimerForAgedToLost('minute');
-        cy.getAdminToken();
       })
       .then(() => {
+        UserEdit.addServicePointViaApi(testData.userServicePoint.id, userData.userId, testData.userServicePoint.id);
+
+        cy.createTempUser([permissions.requestsAll.gui], patronGroup.name).then((userProperties) => {
+          recallUserData.username = userProperties.username;
+          recallUserData.userId = userProperties.userId;
+          recallUserData.barcode = userProperties.barcode;
+          UserEdit.addServicePointViaApi(
+            testData.userServicePoint.id,
+            recallUserData.userId,
+            testData.userServicePoint.id
+          );
+        });
+
         cy.get('@items').each((item) => {
           Checkout.checkoutItemViaApi({
             id: uuid(),
@@ -212,18 +176,22 @@ describe('Patron Block: Maximum outstanding fee/fine balance', () => {
             loanDate: moment.utc().format(),
             servicePointId: testData.userServicePoint.id,
             userBarcode: userData.barcode,
-          });
-        });
-
-        UserLoans.getUserLoansIdViaApi(userData.userId).then((userLoans) => {
-          const loansData = userLoans.loans;
-          loansData.forEach(({ id, item }) => {
-            if (item.title.includes('InstanceForDeclareLost')) {
-              UserLoans.declareLoanLostViaApi({
-                servicePointId: testData.userServicePoint.id,
-                declaredLostDateTime: moment.utc().format(),
-              }, id);
-            }
+          }).then((checkoutResponse) => {
+            Requests.createNewRequestViaApi({
+              fulfilmentPreference: 'Hold Shelf',
+              holdingsRecordId: testData.holdingTypeId,
+              instanceId: item.instanceId,
+              item: { barcode: item.barcode },
+              itemId: checkoutResponse.itemId,
+              pickupServicePointId: testData.userServicePoint.id,
+              requestDate: new Date(),
+              requestExpirationDate: new Date(new Date().getTime() + 86400000),
+              requestLevel: 'Item',
+              requestType: 'Recall',
+              requesterId: recallUserData.userId,
+            }).then((request) => {
+              testData.requestsId.push(request.body.id);
+            });
           });
         });
 
@@ -232,9 +200,6 @@ describe('Patron Block: Maximum outstanding fee/fine balance', () => {
   });
 
   after('Deleting created entities', () => {
-    cy.getToken(userData.username, userData.password);
-    UserLoans.updateTimerForAgedToLost('reset');
-    cy.getAdminToken();
     cy.get('@items').each((item) => {
       CheckInActions.checkinItemViaApi({
         itemBarcode: item.barcode,
@@ -242,59 +207,55 @@ describe('Patron Block: Maximum outstanding fee/fine balance', () => {
         checkInDate: new Date().toISOString(),
       });
     });
-    NewFeeFine.getUserFeesFines(userData.userId).then((userFeesFines) => {
-      const feesFinesData = userFeesFines.accounts;
-      feesFinesData.forEach(({ id }) => {
-        cy.deleteFeesFinesApi(id);
-      });
+    cy.deleteLoanPolicy(loanPolicyBody.id);
+    RequestPolicy.deleteViaApi(requestPolicyBody.id);
+    UserEdit.changeServicePointPreferenceViaApi(userData.userId, [testData.userServicePoint.id]);
+    UserEdit.changeServicePointPreferenceViaApi(recallUserData.userId, [testData.userServicePoint.id]);
+    ServicePoints.deleteViaApi(testData.userServicePoint.id);
+    cy.wrap(testData.requestsId).each((id) => {
+      Requests.deleteRequestViaApi(id);
     });
+    Users.deleteViaApi(userData.userId);
+    Users.deleteViaApi(recallUserData.userId);
+    PatronGroups.deleteViaApi(patronGroup.id);
     cy.get('@items').each((item, index) => {
       cy.deleteItem(item.itemId);
       cy.deleteHoldingRecordViaApi(itemsData.itemsWithSeparateInstance[index].holdingId);
       InventoryInstance.deleteInstanceViaApi(itemsData.itemsWithSeparateInstance[index].instanceId);
     });
-    PaymentMethods.deleteViaApi(testData.paymentMethodId);
-    UsersOwners.deleteViaApi(testData.ownerId);
-    cy.deleteLoanPolicy(loanPolicyBody.id);
-    LostItemFeePolicy.deleteViaApi(lostItemFeePolicyBody.id);
-    CirculationRules.deleteRuleViaApi(originalCirculationRules);
-    cy.deleteLoanType(testData.loanTypeId);
-    UserEdit.changeServicePointPreferenceViaApi(userData.userId, [testData.userServicePoint.id]);
-    ServicePoints.deleteViaApi(testData.userServicePoint.id);
-    Users.deleteViaApi(userData.userId);
-    PatronGroups.deleteViaApi(patronGroup.id);
-    Conditions.resetConditionViaApi('cf7a0d5f-a327-4ca1-aa9e-dc55ec006b8a', 'Maximum outstanding fee/fine balance');
+    Conditions.resetConditionViaApi('e5b45031-a202-4abb-917b-e1df9346fe2c', 'Maximum number of overdue recalls');
     Location.deleteViaApiIncludingInstitutionCampusLibrary(
       testData.defaultLocation.institutionId,
       testData.defaultLocation.campusId,
       testData.defaultLocation.libraryId,
       testData.defaultLocation.id
     );
+    CirculationRules.deleteRuleViaApi(originalCirculationRules);
+    cy.deleteLoanType(testData.loanTypeId);
   });
   it(
-    'C350651 Verify automated patron block "Maximum outstanding fee/fine balance" removed after lost item returned (vega)',
+    'C350650 Verify automated patron block "Maximum number of overdue recalls" removed after overdue recalled item returned (vega)',
     { tags: [TestTypes.criticalPath, devTeams.vega] },
     () => {
       cy.visit(SettingsMenu.conditionsPath);
       Conditions.waitLoading();
-      Conditions.select('Maximum outstanding fee/fine balance');
-      Conditions.setConditionState(blockMessage);
+      Conditions.select('Maximum number of overdue recalls');
+      Conditions.setConditionState(checkedOutBlockMessage);
       cy.visit(SettingsMenu.limitsPath);
       Limits.selectGroup(patronGroup.name);
-      Limits.setLimit('Maximum outstanding fee/fine balance', '624');
-      // needed for the "Lost Item Fee Policy" so items can get "aged to lost" status
-      cy.wait(230000);
+      Limits.setLimit('Maximum number of overdue recalls', '4');
+      // needed for the "Loan Policy" so recall can get overdue status
+      cy.wait(120000);
 
       cy.visit(TopMenu.usersPath);
       UsersSearchPane.waitLoading();
       UsersSearchPane.searchByKeywords(userData.barcode);
       UsersCard.waitLoading();
-      Users.checkIsPatronBlocked(blockMessage, 'Borrowing, Renewals, Requests');
+      Users.checkIsPatronBlocked(checkedOutBlockMessage, 'Borrowing, Renewals, Requests');
 
       cy.visit(TopMenu.checkInPath);
-      const itemForCheckIn = itemsData.itemsWithSeparateInstance[Math.floor(Math.random() * 5)];
+      const itemForCheckIn = itemsData.itemsWithSeparateInstance[0];
       CheckInActions.checkInItemGui(itemForCheckIn.barcode);
-      CheckInActions.confirmCheckInLostItem();
       CheckInActions.verifyLastCheckInItem(itemForCheckIn.barcode);
 
       cy.visit(TopMenu.usersPath);

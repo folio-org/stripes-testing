@@ -32,7 +32,7 @@ describe('Patron blocks relations with users, conditions', () => {
             testData.testConditionId = patronBlockConditions.filter(conditionProperty => conditionProperty.name === testCondition.name)[0].id;
             testData.name = testCondition.name;
             Conditions.updateViaApi({ ...testCondition, id: testData.testConditionId });
-            Limits.createViApi(patronGroupId, testData.testConditionId, testData.chargeAmount - 0.01);
+            Limits.createViaApi(patronGroupId, testData.testConditionId, testData.chargeAmount - 0.01);
 
             UsersOwners.createViaApi({ owner: uuid() }).then(owner => {
               testData.ownerId = owner.id;

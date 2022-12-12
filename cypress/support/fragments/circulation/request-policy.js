@@ -11,19 +11,19 @@ export const defaultRequestPolicy = {
 };
 
 export default {
-  createApi() {
+  createViaApi(requestBody = defaultRequestPolicy) {
     return cy
       .okapiRequest({
         method: 'POST',
         path: 'request-policy-storage/request-policies',
-        body: defaultRequestPolicy,
+        body: requestBody,
       })
       .then(({ body }) => {
         Cypress.env('requestPolicy', body);
         return body;
       });
   },
-  deleteApi(id) {
+  deleteViaApi(id) {
     return cy.okapiRequest({
       method: 'DELETE',
       path: `request-policy-storage/request-policies/${id}`,
