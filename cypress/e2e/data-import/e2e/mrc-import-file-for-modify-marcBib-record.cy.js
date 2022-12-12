@@ -123,7 +123,7 @@ describe('ui-data-import: Verify the possibility to modify MARC Bibliographic re
 
     // create Action profile and link it to Field mapping profile
     cy.visit(SettingsMenu.actionProfilePath);
-    ActionProfiles.createActionProfile(actionProfile, mappingProfileName);
+    ActionProfiles.create(actionProfile, mappingProfileName);
     ActionProfiles.checkActionProfilePresented(actionProfileName);
 
     // create Match profile

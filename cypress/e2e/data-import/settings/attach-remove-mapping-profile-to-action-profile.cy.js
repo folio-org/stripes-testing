@@ -28,6 +28,7 @@ describe('ui-data-import: Attach/Remove a field mapping profile to an action pro
 
   before(() => {
     cy.loginAsAdmin();
+    cy.getAdminToken();
   });
 
   after(() => {
@@ -44,7 +45,7 @@ describe('ui-data-import: Attach/Remove a field mapping profile to an action pro
     FieldMappingProfiles.checkMappingProfilePresented(mappingProfile.name);
 
     cy.visit(SettingsMenu.actionProfilePath);
-    ActionProfiles.createActionProfile(actionProfile, mappingProfile.name);
+    ActionProfiles.create(actionProfile, mappingProfile.name);
     ActionProfiles.checkActionProfilePresented(actionProfile.name);
 
     ActionProfileView.verifyLinkedFieldMappingProfile(mappingProfile.name);
@@ -55,7 +56,7 @@ describe('ui-data-import: Attach/Remove a field mapping profile to an action pro
 
     ActionProfileView.edit();
     ActionProfileEdit.unlinkFieldMappingProfile();
-    ConfirmRemoval.canselRemoveFieldMappingProfile();
+    ConfirmRemoval.cancelRemoveFieldMappingProfile();
     ActionProfileEdit.fieldMappingProfilePresented(mappingProfile.name);
     ActionProfileEdit.unlinkFieldMappingProfile();
     ConfirmRemoval.confirmRemovefieldMappingProfile();

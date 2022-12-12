@@ -170,7 +170,7 @@ describe('Patron Block: Maximum number of lost items', () => {
       });
     });
     LostItemFeePolicy.createViaApi(lostItemFeePolicyBody);
-    LoanPolicy.createApi(loanPolicyBody);
+    LoanPolicy.createViaApi(loanPolicyBody);
     PatronGroups.createViaApi(patronGroup.name).then((patronGroupResponse) => {
       patronGroup.id = patronGroupResponse;
     });
@@ -281,7 +281,7 @@ describe('Patron Block: Maximum number of lost items', () => {
       Conditions.setConditionState(blockMessage);
       cy.visit(SettingsMenu.limitsPath);
       Limits.selectGroup(patronGroup.name);
-      Limits.setMaximumNumberOfLostItems('4');
+      Limits.setLimit('Maximum number of lost items', '4');
       // needed for the "Lost Item Fee Policy" so items can get "aged to lost" status
       cy.wait(230000);
 

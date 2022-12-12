@@ -1,5 +1,4 @@
 import { HTML, including, Link } from '@interactors/html';
-import { TextField } from 'bigtest';
 import {
   Accordion,
   Button,
@@ -12,9 +11,9 @@ import {
   Section,
   Selection,
   SelectionList,
-  TextArea
+  TextArea,
+  TextField
 } from '../../../../interactors';
-import textField from '../../../../interactors/text-field';
 import DateTools from '../../utils/dateTools';
 
 const rootSection = Section({ id: 'pane-userdetails' });
@@ -72,7 +71,7 @@ export default {
 
   selectTodayExpirationDate() {
     const today = new Date();
-    cy.do(textField({ name: 'expirationDate' }).fillIn(DateTools.getFormattedDate({ date: today }, 'YYYY-MM-DD')));
+    cy.do(TextField({ name: 'expirationDate' }).fillIn(DateTools.getFormattedDate({ date: today }, 'YYYY-MM-DD')));
   },
 
   openLastUpdatedInfo() {
@@ -81,7 +80,7 @@ export default {
 
   selectTomorrowExpirationDate() {
     const tomorrow = DateTools.getTomorrowDay();
-    cy.do(textField({ name: 'expirationDate' }).fillIn(DateTools.getFormattedDate({ date: tomorrow }, 'YYYY-MM-DD')));
+    cy.do(TextField({ name: 'expirationDate' }).fillIn(DateTools.getFormattedDate({ date: tomorrow }, 'YYYY-MM-DD')));
   },
 
   submitWrongExpirationDate() {

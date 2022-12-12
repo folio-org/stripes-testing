@@ -170,7 +170,7 @@ describe('Patron Block: Maximum outstanding fee/fine balance', () => {
       });
     });
     LostItemFeePolicy.createViaApi(lostItemFeePolicyBody);
-    LoanPolicy.createApi(loanPolicyBody);
+    LoanPolicy.createViaApi(loanPolicyBody);
     PatronGroups.createViaApi(patronGroup.name).then((patronGroupResponse) => {
       patronGroup.id = patronGroupResponse;
     });
@@ -281,7 +281,7 @@ describe('Patron Block: Maximum outstanding fee/fine balance', () => {
       Conditions.setConditionState(blockMessage);
       cy.visit(SettingsMenu.limitsPath);
       Limits.selectGroup(patronGroup.name);
-      Limits.setMaximumOutstandingFeeFineBalance('624');
+      Limits.setLimit('Maximum outstanding fee/fine balance', '624');
       // needed for the "Lost Item Fee Policy" so items can get "aged to lost" status
       cy.wait(230000);
 
