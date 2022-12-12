@@ -161,6 +161,6 @@ describe('ui-finance: Funds', () => {
     FinanceHelp.searchByName(defaultLedger.name);
     FinanceHelp.selectFromResultsList();
     Ledgers.rollover();
-    Ledgers.fillInRolloverInfo(secondFiscalYear.name),
+    Ledgers.fillInRolloverInfo(secondFiscalYear.name);
   });
 });
