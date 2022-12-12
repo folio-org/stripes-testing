@@ -126,5 +126,16 @@ describe('bulk-edit', () => {
       UsersSearchPane.openUser(user.username);
       UsersCard.verifyExpirationDate(todayDate);
     });
+
+    it('C359237 Verify "Expiration date" option in the dropdown (firebird)', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
+      BulkEditSearchPane.selectRecordIdentifier('User UUIDs');
+
+      BulkEditSearchPane.uploadFile(userUUIDsFileName);
+      BulkEditSearchPane.waitFileUploading();
+
+      BulkEditActions.openActions();
+      BulkEditActions.openInAppStartBulkEditFrom();
+      BulkEditActions.verifyCalendarItem();
+    });
   });
 });
