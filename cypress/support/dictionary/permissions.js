@@ -129,6 +129,13 @@ export default {
   uiInvoicesPayInvoices: { internal: 'ui-invoice.pay', gui: 'Invoice: Pay invoices' },
   invoiceSettingsAll: { internal: 'ui-invoice.settings.all', gui: 'Settings (Invoices): Can view and edit settings' },
   uiInvoicesCancelInvoices: { internal: 'ui-invoice.cancel', gui: 'Invoice: Cancel invoices' },
+  uiInvoicesCanViewAndEditInvoicesAndInvoiceLines: { internal: 'ui-invoice.invoice.edit', gui: 'Invoice: Can view and edit Invoices and Invoice lines' },
+  uiInvoicesCanViewInvoicesAndInvoiceLines: { internal: 'ui-invoice.invoice.view', gui: 'Invoice: Can view Invoices and Invoice lines' },
+  uiInvoicesDownloadBatchFileFromInvoiceRecord: { internal: 'ui-invoice.batchVoucher.download', gui: 'Invoice: Download batch file from invoice record' },
+  uiInvoicesExportSearchResults: { internal: 'ui-invoice.exportCSV', gui: 'Invoice: Export search results' },
+  uiInvoicesManageAcquisitionUnits: { internal: 'ui-invoice.acq.unit.assignment.manage', gui: 'Invoice: Manage acquisition units' },
+  uiInvoicesVoucherExport: { internal: 'ui-invoice.voucherExport', gui: 'Invoice: Voucher export' },
+  
   // Orders
   uiOrdersView: { internal: 'ui-orders.orders.view', gui: 'Orders: Can view Orders and Order lines' },
   uiOrdersCreate: { internal: 'ui-orders.orders.create', gui: 'Orders: Can create new Orders and Order lines' },
