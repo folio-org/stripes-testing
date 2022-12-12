@@ -4,7 +4,7 @@ import getRandomPostfix from '../../../utils/stringTools';
 
 const createdLedgerNameXpath = '//*[@id="paneHeaderpane-ledger-details-pane-title"]/h2/span';
 const numberOfSearchResultsHeader = '//*[@id="paneHeaderledger-results-pane-subtitle"]/span';
-
+const rolloverButton = Button('Rollover');
 const zeroResultsFoundText = '0 records found';
 const fiscalYearCss = 'select[name^="fiscalYearOneId"]';
 
@@ -24,7 +24,7 @@ export default {
   rollover : () => {
     cy.do([
       Button('Actions').click(),
-      Button('Rollover').click()
+      rolloverButton.click()
     ]);
   },
 
@@ -36,7 +36,7 @@ export default {
       Select({ name: 'encumbrancesRollover[0].basedOn' }).choose('Expended'),
       Checkbox({ name: 'encumbrancesRollover[2].rollover' }).click(),
       Select({ name: 'encumbrancesRollover[2].basedOn' }).choose('Initial encumbrance'),
-      Button('Rollover').click(),
+      rolloverButton.click(),
       Button('Continue').click(),
       Button('Confirm').click(),
     ]);
