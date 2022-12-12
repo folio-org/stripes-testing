@@ -102,6 +102,7 @@ describe('ui-data-import: Match on VRN and update related Instance, Holdings, It
       permissions.uiReceivingViewEditCreate.gui,
       permissions.uiInventoryViewInstances.gui,
       permissions.uiQuickMarcQuickMarcBibliographicEditorView.gui,
+      permissions.uiInventoryStorageModule.gui
     ]).then(userProperties => {
       user = userProperties;
     })
@@ -245,6 +246,7 @@ describe('ui-data-import: Match on VRN and update related Instance, Holdings, It
 
     // verify Instance, Holdings and Item details
     MatchOnVRN.clickOnUpdatedHotlink();
+    InventoryInstance.waitInstanceRecordViewOpened(item.title);
     MatchOnVRN.verifyInstanceUpdated();
     MatchOnVRN.verifyHoldingsUpdated();
     MatchOnVRN.verifyItemUpdated();

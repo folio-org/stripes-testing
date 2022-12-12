@@ -140,7 +140,7 @@ describe('Patron Block: Maximum number of overdue items', () => {
         testData.paymentMethodId = resp.id;
       });
     });
-    LoanPolicy.createApi(loanPolicyBody);
+    LoanPolicy.createViaApi(loanPolicyBody);
     PatronGroups.createViaApi(patronGroup.name).then((res) => {
       patronGroup.id = res;
     });
@@ -227,7 +227,7 @@ describe('Patron Block: Maximum number of overdue items', () => {
       Conditions.setConditionState(blockMessage);
       cy.visit(SettingsMenu.limitsPath);
       Limits.selectGroup(patronGroup.name);
-      Limits.setMaximumNumberOfOverdueItems('4');
+      Limits.setLimit('Maximum number of overdue items', '4');
       // needed for the "Loan Policy" so item can get overdue status
       cy.wait(120000);
 
