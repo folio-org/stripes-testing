@@ -7,6 +7,7 @@ import ItemView from '../inventory/inventoryItem/itemView';
 const loanDetailsButton = Button('Loan details');
 const patronDetailsButton = Button('Patron details');
 const itemDetailsButton = Button('Item details');
+const requestDetailsButton = Button('Request details');
 const newFeeFineButton = Button('New Fee/Fine');
 const checkInButton = Button('Check in');
 const itemBarcodeField = TextField({ name:'item.barcode' });
@@ -89,6 +90,14 @@ export default {
       itemDetailsButton.click()
     ]);
     cy.expect(Pane(including(itemBarcode)).exists());
+  },
+  openRequestDetails: (itemBarcode) => {
+    cy.do([
+      availableActionsButton.click(),
+      requestDetailsButton.click()
+    ]);
+    cy.expect(Pane(including('Request Detail')).exists());
+    cy.expect(HTML(including(itemBarcode)).exists());
   },
   openNewfeefinesPane: () => {
     cy.do([
