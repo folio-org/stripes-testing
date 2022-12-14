@@ -1,4 +1,4 @@
-import { Button, TextField, Select, KeyValue, Accordion, Pane, Checkbox, MultiColumnList, MultiColumnListCell, SearchField, MultiColumnListRow, SelectionOption, Section, TextArea } from '../../../../interactors';
+import { Button, TextField, Select, KeyValue, Accordion, Pane, Checkbox, MultiColumnList, MultiColumnListCell, SearchField, MultiColumnListRow, SelectionOption, Section, TextArea, MultiSelect, MultiSelectOption, PaneHeader } from '../../../../interactors';
 import getRandomPostfix from '../../utils/stringTools';
 
 const buttonNew = Button('New');
@@ -16,8 +16,21 @@ const FTPport = '22';
 const ediSection = Section({ id: 'edi' });
 const ftpSection = Section({ id: 'ftp' });
 const actionsButton = Button('Actions');
+const numberOfSearchResultsHeader = '//*[@id="paneHeaderorganizations-results-pane-subtitle"]/span';
+const zeroResultsFoundText = '0 records found';
 
 export default {
+
+  waitLoading : () => {
+    cy.expect(Pane({ id: 'organizations-results-pane' }).exists());
+  },
+
+  checkZeroSearchResultsHeader: () => {
+    cy.xpath(numberOfSearchResultsHeader)
+      .should('be.visible')
+      .and('have.text', zeroResultsFoundText);
+  },
+
   createOrganizationViaUi: (organization) => {
     cy.expect(buttonNew.exists());
     cy.do([
@@ -25,6 +38,23 @@ export default {
       Select('Organization status*').choose(organization.status),
       TextField('Name*').fillIn(organization.name),
       TextField('Code*').fillIn(organization.code),
+      saveAndClose.click()
+    ]);
+  },
+
+  createOrganizationWithAU: (organization,AcquisitionUnit) => {
+    cy.expect(buttonNew.exists());
+    cy.do([
+      buttonNew.click(),
+      Select('Organization status*').choose(organization.status),
+      TextField('Name*').fillIn(organization.name),
+      TextField('Code*').fillIn(organization.code),
+    ]);
+    // Need to wait while Acquisition Unit data will be loaded
+    cy.wait(4000);
+      cy.do([
+      MultiSelect({ id: 'org-acq-units' }).find(Button({ ariaLabel: 'open menu' })).click(),
+      MultiSelectOption(AcquisitionUnit).click(),
       saveAndClose.click()
     ]);
   },
@@ -213,5 +243,13 @@ export default {
       .find(MultiColumnListRow({ index: 1 }))
       .find(MultiColumnListCell({ columnIndex: 1 }))
       .has({ content: integartionDescription2 }));
+  },
+
+  deleteOrganization: () => {
+    cy.do([
+      PaneHeader({ id: 'paneHeaderpane-organization-details' }).find(actionsButton).click(),
+      Button('Delete').click(),
+      Button({ id: 'clickable-delete-organization-confirmation-confirm' }).click()
+    ]);
   },
 };
