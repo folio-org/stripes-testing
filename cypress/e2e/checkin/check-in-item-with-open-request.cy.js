@@ -202,7 +202,6 @@ describe('Check In - Actions', () => {
       InTransit.closeModal();
       CheckInPane.checkResultsInTheRow(checkInResultsData.statusForS);
 
-      CheckInActions.checkActionsMenuOptions();
       CheckInActions.checkActionsMenuOptions(['printTransitSlip', 'requestDetails']);
       CheckInActions.openRequestDetails(itemData.barcode);
       CheckInActions.openCheckInPane();
