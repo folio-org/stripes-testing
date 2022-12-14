@@ -22,11 +22,8 @@ import UserEdit from '../../support/fragments/users/userEdit';
 import Checkout from '../../support/fragments/checkout/checkout';
 import Requests from '../../support/fragments/requests/requests';
 import Users from '../../support/fragments/users/users';
-import Conditions from '../../support/fragments/settings/users/conditions';
 
-describe('Patron Block: Maximum outstanding fee/fine balance', () => {
-  // edit
-
+describe('Check In - Actions', () => {
   let originalCirculationRules;
   const userData = {};
   const requestUserData = {};
@@ -34,8 +31,12 @@ describe('Patron Block: Maximum outstanding fee/fine balance', () => {
     name: `groupChekIn ${getRandomPostfix()}`,
   };
   const testData = {
-    servicePointS: ServicePoints.getDefaultServicePointWithPickUpLocation('S', uuid()), // edit
+    servicePointS: ServicePoints.getDefaultServicePointWithPickUpLocation('S', uuid()),
     servicePointS1: ServicePoints.getDefaultServicePointWithPickUpLocation('S1', uuid()),
+  };
+  const checkInResultsData = {
+    statusForS: [`In transit - ${testData.servicePointS1.name}`],
+    statusForS1: ['Awaiting pickup'],
   };
   const itemData = {
     barcode: generateItemBarcode(),
@@ -67,7 +68,7 @@ describe('Patron Block: Maximum outstanding fee/fine balance', () => {
         });
         cy.getMaterialTypes({ limit: 1 }).then((materialTypes) => {
           testData.materialTypeId = materialTypes.id;
-          itemData.materialType = materialTypes.name;
+          itemData.materialType = materialTypes.name[0].toUpperCase() + materialTypes.name.slice(1);
         });
       })
       .then(() => {
@@ -121,7 +122,6 @@ describe('Patron Block: Maximum outstanding fee/fine balance', () => {
           userData.userId,
           testData.servicePointS.id
         );
-        // UserEdit.addServicePointViaApi(testData.servicePointS1.id, userData.userId, testData.servicePointS1.id);
 
         cy.createTempUser([permissions.requestsAll.gui], patronGroup.name).then((userProperties) => {
           requestUserData.username = userProperties.username;
@@ -166,8 +166,7 @@ describe('Patron Block: Maximum outstanding fee/fine balance', () => {
       checkInDate: new Date().toISOString(),
     });
     RequestPolicy.deleteViaApi(requestPolicyBody.id);
-    UserEdit.changeServicePointPreferenceViaApi(userData.userId, [testData.servicePointS.id]);
-    UserEdit.changeServicePointPreferenceViaApi(userData.userId, [testData.servicePointS1.id]);
+    UserEdit.changeServicePointPreferenceViaApi(userData.userId, [testData.servicePointS.id, testData.servicePointS1.id]);
     UserEdit.changeServicePointPreferenceViaApi(requestUserData.userId, [testData.servicePointS1.id]);
     ServicePoints.deleteViaApi(testData.servicePointS.id);
     ServicePoints.deleteViaApi(testData.servicePointS1.id);
@@ -178,7 +177,6 @@ describe('Patron Block: Maximum outstanding fee/fine balance', () => {
     cy.deleteItem(itemData.itemId);
     cy.deleteHoldingRecordViaApi(itemData.holdingId);
     InventoryInstance.deleteInstanceViaApi(itemData.instanceId);
-    Conditions.resetConditionViaApi('e5b45031-a202-4abb-917b-e1df9346fe2c', 'Maximum number of overdue recalls');
     Location.deleteViaApiIncludingInstitutionCampusLibrary(
       testData.defaultLocation.institutionId,
       testData.defaultLocation.campusId,
@@ -192,35 +190,33 @@ describe('Patron Block: Maximum outstanding fee/fine balance', () => {
     'C7148 Check In: item with at least one open request (vega)',
     { tags: [TestTypes.criticalPath, devTeams.vega] },
     () => {
-      // cy.loginAsAdmin();
       cy.visit(TopMenu.checkInPath);
       CheckInActions.waitLoading();
       SwitchServicePoint.switchServicePoint(testData.servicePointS.name);
+      SwitchServicePoint.checkIsServicePointSwitched(testData.servicePointS.name);
+
       CheckInActions.checkInItemGui(itemData.barcode);
       InTransit.verifyModalTitle();
       InTransit.checkModalMessage(itemData);
       InTransit.unselectCheckboxPrintSlip();
-      // const item = {
-      //   title: 'A semantic web primer',
-      //   materialType: 'Book',
-      //   barcode: '10101',
-      //   servicePoint: 'Circ Desk 2',
-      // };
       InTransit.closeModal();
-      // 3
-      // CheckInPane.checkResultsInTheRow(checkInResultsData); // 4
+      CheckInPane.checkResultsInTheRow(checkInResultsData.statusForS);
+
       CheckInActions.checkActionsMenuOptions();
+      CheckInActions.checkActionsMenuOptions(['printTransitSlip', 'requestDetails']);
       CheckInActions.openRequestDetails(itemData.barcode);
       CheckInActions.openCheckInPane();
-      // 7
+
       SwitchServicePoint.switchServicePoint(testData.servicePointS1.name);
       CheckInActions.checkInItemGui(itemData.barcode);
       AwaitingPickupForARequest.verifyModalTitle();
       AwaitingPickupForARequest.unselectCheckboxPrintSlip();
-      // AwaitingPickupForARequest.checkModalMessage(itemData);
+      AwaitingPickupForARequest.checkModalMessage(itemData);
       AwaitingPickupForARequest.closeModal();
+      CheckInPane.checkResultsInTheRow(checkInResultsData.statusForS1);
+
+      CheckInActions.checkActionsMenuOptions(['printHoldSlip', 'requestDetails']);
       CheckInActions.openRequestDetails(itemData.barcode);
-      // 10
     }
   );
 });

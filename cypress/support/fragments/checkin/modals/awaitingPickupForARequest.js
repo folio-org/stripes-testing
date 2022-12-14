@@ -1,4 +1,4 @@
-import { Button, Modal, Checkbox, HTML, including } from '../../../../../interactors';
+import { Button, Modal, Checkbox, including } from '../../../../../interactors';
 
 const modalTitle = 'Awaiting pickup for a request';
 const modalCheckbox = Modal(modalTitle).find(Checkbox('Print slip'));
@@ -22,6 +22,6 @@ export default {
   },
   checkModalMessage: (item) => {
     const message = `Place ${item.title} (${item.materialType}) (Barcode: ${item.barcode}) on Hold Shelf at ${item.servicePoint} for request`;
-    cy.get('div[class*="modalContent"]').should('include.text', message);
+    cy.expect(Modal({ content: including(message) }).exists());
   }
 };
