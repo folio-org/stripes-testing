@@ -8,7 +8,7 @@ import {
   Checkbox,
   MultiColumnListHeader,
   MultiColumnListCell,
-  TextField, Datepicker
+  TextField,
 } from '../../../../interactors';
 
 const actionsBtn = Button('Actions');
