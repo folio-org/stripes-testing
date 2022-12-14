@@ -8,7 +8,7 @@ import {
   Checkbox,
   MultiColumnListHeader,
   MultiColumnListCell,
-  TextField, Datepicker
+  TextField,
 } from '../../../../interactors';
 
 const actionsBtn = Button('Actions');
@@ -123,7 +123,8 @@ export default {
   verifyCalendarItem() {
     getBulkEditSelectType().select('Expiration date');
     cy.do(Button({ icon: 'calendar' }).click());
-    cy.expect(Datepicker().exists());
+    // TODO: bulk edit calendar is not common datepicker like our interactor
+    cy.get('[id^="datepicker-calendar-container"]').should('be.visible');
   },
 
   fillLoanType(type = 'Selected') {
