@@ -18,6 +18,9 @@ const ftpSection = Section({ id: 'ftp' });
 const actionsButton = Button('Actions');
 const numberOfSearchResultsHeader = '//*[@id="paneHeaderorganizations-results-pane-subtitle"]/span';
 const zeroResultsFoundText = '0 records found';
+const organizationStatus = Select('Organization status*');
+const organizationName = TextField('Name*');
+const organizationCode = TextField('Code*');
 
 export default {
 
@@ -35,9 +38,9 @@ export default {
     cy.expect(buttonNew.exists());
     cy.do([
       buttonNew.click(),
-      Select('Organization status*').choose(organization.status),
-      TextField('Name*').fillIn(organization.name),
-      TextField('Code*').fillIn(organization.code),
+      organizationStatus.choose(organization.status),
+      organizationName.fillIn(organization.name),
+      organizationCode.fillIn(organization.code),
       saveAndClose.click()
     ]);
   },
@@ -46,9 +49,9 @@ export default {
     cy.expect(buttonNew.exists());
     cy.do([
       buttonNew.click(),
-      Select('Organization status*').choose(organization.status),
-      TextField('Name*').fillIn(organization.name),
-      TextField('Code*').fillIn(organization.code),
+      organizationStatus.choose(organization.status),
+      organizationName.fillIn(organization.name),
+      organizationCode.fillIn(organization.code),
     ]);
     // Need to wait while Acquisition Unit data will be loaded
     cy.wait(4000);
