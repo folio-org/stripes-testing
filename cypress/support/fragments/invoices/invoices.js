@@ -363,6 +363,6 @@ export default {
   },
 
   selectInvoice:(invoiceNumber) => {
-    cy.do(Section({ id: 'invoice-results-pane-content' }).find(Link(invoiceNumber)).click());
+    cy.do(Pane({ id: 'invoice-results-pane' }).find(Link(invoiceNumber)).click());
   },
 };

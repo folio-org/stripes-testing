@@ -50,7 +50,7 @@ describe('ui-finance: Groups', () => {
 
                 cy.loginAsAdmin({ path:TopMenu.fundPath, waiter: Funds.waitLoading });
                 FinanceHelp.searchByName(firstFund.name);
-                FinanceHelp.selectFromResultsList();
+                Funds.selectFund(firstFund.name);
                 Funds.addBudget(allocatedQuantity);
               });
 
@@ -60,7 +60,7 @@ describe('ui-finance: Groups', () => {
 
                 cy.visit(TopMenu.fundPath);
                 FinanceHelp.searchByName(secondFund.name);
-                FinanceHelp.selectFromResultsList();
+                Funds.selectFund(secondFund.name);
                 Funds.addBudget(allocatedQuantity);
               });
           });

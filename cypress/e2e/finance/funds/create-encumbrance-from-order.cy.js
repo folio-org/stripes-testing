@@ -46,7 +46,7 @@ describe('ui-finance: Transactions', () => {
 
                 cy.loginAsAdmin({ path:TopMenu.fundPath, waiter: Funds.waitLoading });
                 FinanceHelp.searchByName(defaultFund.name);
-                FinanceHelp.selectFromResultsList();
+                Funds.selectFund(defaultFund.name);
                 Funds.addBudget(allocatedQuantity);
               });
           });
