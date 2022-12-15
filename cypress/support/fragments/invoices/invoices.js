@@ -14,7 +14,8 @@ import {
   MultiColumnList,
   MultiColumnListRow,
   Select,
-  Section
+  Section,
+  Link
 } from '../../../../interactors';
 import InteractorsTools from '../../utils/interactorsTools';
 import Helper from '../finance/financeHelper';
@@ -359,5 +360,9 @@ export default {
       Button('Cancel').click(),
       submitButton.click()
     ]);
-  }
+  },
+
+  selectInvoice:(invoiceNumber) => {
+    cy.do(Section({ id: 'invoice-results-pane-content' }).find(Link(invoiceNumber)).click());
+  },
 };

@@ -1,4 +1,4 @@
-import { Button, TextField, Select, KeyValue, Accordion, Pane, Checkbox, MultiColumnList, MultiColumnListCell, SearchField, MultiColumnListRow, SelectionOption, Section, TextArea, MultiSelect, MultiSelectOption, PaneHeader } from '../../../../interactors';
+import { Button, TextField, Select, KeyValue, Accordion, Pane, Checkbox, MultiColumnList, MultiColumnListCell, SearchField, MultiColumnListRow, SelectionOption, Section, TextArea, MultiSelect, MultiSelectOption, PaneHeader, Link } from '../../../../interactors';
 import getRandomPostfix from '../../utils/stringTools';
 
 const buttonNew = Button('New');
@@ -254,5 +254,9 @@ export default {
       Button('Delete').click(),
       Button({ id: 'clickable-delete-organization-confirmation-confirm' }).click()
     ]);
+  },
+
+  selectOrganization:(organizationName) => {
+    cy.do(Section({ id: 'paneHeaderorganizations-results-pane' }).find(Link(organizationName)).click());
   },
 };

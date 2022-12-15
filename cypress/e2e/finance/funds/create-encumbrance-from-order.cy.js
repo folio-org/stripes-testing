@@ -81,7 +81,7 @@ describe('ui-finance: Transactions', () => {
     Orders.deleteOrderApi(order.id);
     cy.visit(TopMenu.fundPath);
     FinanceHelp.searchByName(defaultFund.name);
-    FinanceHelp.selectFromResultsList();
+    Funds.selectFund(defaultFund.name);
     Funds.selectBudgetDetails();
     Funds.deleteBudgetViaActions();
     // Need to wait few seconds, that data will be deleted(its need to pass test in Jenkins run)
@@ -102,7 +102,7 @@ describe('ui-finance: Transactions', () => {
     InteractorsTools.checkCalloutMessage(`The Purchase order - ${orderNumber} has been successfully opened`);
     cy.visit(TopMenu.fundPath);
     FinanceHelp.searchByName(defaultFund.name);
-    FinanceHelp.selectFromResultsList();
+    Funds.selectFund(defaultFund.name);
     Funds.selectBudgetDetails();
     Funds.viewTransactions();
     Funds.checkOrderInTransactionList(defaultFund.code);

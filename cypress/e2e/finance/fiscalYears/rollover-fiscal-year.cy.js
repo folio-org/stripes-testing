@@ -17,7 +17,7 @@ import NewOrganization from '../../../support/fragments/organizations/newOrganiz
 import NewInvoice from '../../../support/fragments/invoices/newInvoice';
 import Invoices from '../../../support/fragments/invoices/invoices';
 
-describe('ui-finance: Funds', () => {
+describe('ui-finance: Fiscal Year', () => {
 
   const firstFiscalYear = { ...FiscalYears.defaultUiFiscalYear };
   const secondFiscalYear = { 

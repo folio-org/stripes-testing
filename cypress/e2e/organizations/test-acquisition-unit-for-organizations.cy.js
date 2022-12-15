@@ -74,6 +74,6 @@ describe('ui-organizations: Organizations', () => {
     
     cy.login(user.username, user.password, { path:TopMenu.organizationsPath, waiter: Organizations.waitLoading });
     Organizations.searchByParameters('Name', organization.name);
-    FinanceHelp.selectFromResultsList();
+    Organizations.selectOrganization(organization.name);
   });
 });

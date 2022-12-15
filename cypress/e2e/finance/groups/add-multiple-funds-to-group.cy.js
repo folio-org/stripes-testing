@@ -79,12 +79,12 @@ describe('ui-finance: Groups', () => {
   after(() => {
     cy.loginAsAdmin({ path:TopMenu.fundPath, waiter: Funds.waitLoading });
     FinanceHelp.searchByName(firstFund.name);
-    FinanceHelp.selectFromResultsList();
+    Funds.selectFund(firstFund.name);
     Funds.selectBudgetDetails();
     Funds.deleteBudgetViaActions();
     cy.visit(TopMenu.fundPath);
     FinanceHelp.searchByName(secondFund.name);
-    FinanceHelp.selectFromResultsList();
+    Funds.selectFund(secondFund.name);
     Funds.selectBudgetDetails();
     Funds.deleteBudgetViaActions();
     // Need to wait some time fo delating all items
@@ -103,7 +103,7 @@ describe('ui-finance: Groups', () => {
 
   it('C347878 Add multiple funds to a group with plugin  (thunderjet)', { tags: [testType.criticalPath, devTeams.thunderjet] }, () => {
     FinanceHelp.searchByName(defaultGroup.name);
-    FinanceHelp.selectFromResultsList();
+    Groups.selectGroup(defaultGroup.name);
     Groups.addFundToGroup(defaultLedger.name);
     InteractorsTools.checkCalloutMessage('Fund(s) have been added to group');
     Groups.checkAddingMultiplyFunds(secondFund.name, firstFund.name);

@@ -22,7 +22,7 @@ describe('ui-finance: Fiscal Year', () => {
   it('C3452: View fiscal year details (thunderjet)', { tags: [testType.criticalPath, devTeams.thunderjet] }, () => {
     FiscalYears.fiscalYearsDisplay();
     FinanceHelp.searchByName(defaultFiscalYear.name);
-    FinanceHelp.selectFromResultsList();
+    FiscalYears.selectFY(defaultFiscalYear.name);
     FiscalYears.fiscalYearDetailView();
   });
 });

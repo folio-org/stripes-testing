@@ -80,6 +80,6 @@ describe('ui-invoices: create', () => {
     
     cy.login(user.username, user.password, { path:TopMenu.invoicesPath, waiter: Invoices.waitLoading });
     Invoices.searchByNumber(invoice.invoiceNumber);
-    FinanceHelp.selectFromResultsList();
+    Invoices.selectInvoice(invoice.invoiceNumber);
   });
 });

@@ -502,4 +502,8 @@ export default {
     cy.expect(KeyValue({ value: invoiceNumber}).exists());
     cy.do(Section({ id: 'information' }).find(Button({ icon: 'info' })).click());
   },
+
+  selectFund:(FundName) => {
+    cy.do(Section({ id: 'fund-results-pane' }).find(Link(FundName)).click());
+  },
 };

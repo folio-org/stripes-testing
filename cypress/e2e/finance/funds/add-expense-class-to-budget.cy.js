@@ -53,14 +53,14 @@ describe('ui-finance: Funds', () => {
 
     cy.visit(TopMenu.fiscalYearPath);
     FinanceHelp.searchByName(defaultFiscalYear.name);
-    FinanceHelp.selectFromResultsList();
+    FiscalYears.selectFY(defaultFiscalYear.name);
     FiscalYears.deleteFiscalYearViaActions();
   });
 
   it('C15858 Add expense class to budget (thunderjet)', { tags: [testType.criticalPath, devTeams.thunderjet] }, () => {
     cy.visit(TopMenu.fundPath);
     FinanceHelp.searchByName(fund.name);
-    FinanceHelp.selectFromResultsList();
+    Funds.selectFund(defaultfund.name);
     Funds.selectBudgetDetails();
     Funds.editBudget();
     Funds.addExpensesClass(firstExpenseClass.name);
