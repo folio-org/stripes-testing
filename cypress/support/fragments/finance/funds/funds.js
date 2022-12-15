@@ -504,6 +504,6 @@ export default {
   },
 
   selectFund:(FundName) => {
-    cy.do(Section({ id: 'fund-results-pane' }).find(Link(FundName)).click());
+    cy.do(Pane({ id: 'fund-results-pane' }).find(Link(FundName)).click());
   },
 };

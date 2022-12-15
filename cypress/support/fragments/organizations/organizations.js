@@ -257,6 +257,6 @@ export default {
   },
 
   selectOrganization:(organizationName) => {
-    cy.do(Pane({ id: 'paneHeaderorganizations-results-pane' }).find(Link(organizationName)).click());
+    cy.do(Pane({ id: 'organizations-results-pane' }).find(Link(organizationName)).click());
   },
 };
