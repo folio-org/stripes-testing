@@ -132,6 +132,10 @@ export default {
   }),
 
   selectGroup:(GroupName) => {
-    cy.do(Section({ id: 'fund-results-pane' }).find(Link(GroupName)).click());
+    cy.do(Section({ id: 'group-results-pane' }).find(Link(GroupName)).click());
+  },
+
+  checkCreatedInList: (GroupName) => {
+    cy.expect(Section({ id: 'group-results-pane' }).find(Link(GroupName)).exists());
   },
 };

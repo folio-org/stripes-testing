@@ -38,7 +38,7 @@ describe('ui-organizations: Organizations', () => {
   after(() => {
     cy.loginAsAdmin({ path:TopMenu.organizationsPath, waiter: Organizations.waitLoading });
     Organizations.searchByParameters('Name', organization.name);
-    FinanceHelp.selectFromResultsList();
+    Organizations.selectOrganization(organization.name);
     Organizations.deleteOrganization();
 
     cy.visit(SettingsMenu.acquisitionUnitsPath);

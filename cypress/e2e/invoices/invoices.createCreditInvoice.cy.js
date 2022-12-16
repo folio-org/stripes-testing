@@ -62,7 +62,7 @@ describe('ui-invoices: Credit Invoice creation', () => {
     // check transactions after payment
     cy.visit(TopMenu.fundPath);
     Helper.searchByName(fund.name);
-    Helper.selectFromResultsList();
+    Funds.selectFund(fund.name);
     Funds.openBudgetDetails(fund.code, DateTools.getCurrentFiscalYearCode());
     Funds.openTransactions();
     Funds.checkTransaction(1, transactionFactory.create('credit', valueInTransactionTable, fund.code, '', 'Invoice', ''));

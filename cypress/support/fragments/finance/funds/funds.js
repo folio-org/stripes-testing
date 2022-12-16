@@ -480,9 +480,9 @@ export default {
     this.waitForFundDetailsLoading();
   },
 
-  selectTransaction:(transactionType) => {
+  selectTransaction:(inexRowNumber) => {
     cy.do([
-      MultiColumnListCell(transactionType).click(),
+      MultiColumnListRow({ indexRow: inexRowNumber}).find(Link()).click(),
     ]);
   },
 
