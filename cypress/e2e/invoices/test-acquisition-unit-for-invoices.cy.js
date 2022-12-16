@@ -9,7 +9,6 @@ import Organizations from '../../support/fragments/organizations/organizations';
 import NewInvoice from '../../support/fragments/invoices/newInvoice';
 import Invoices from '../../support/fragments/invoices/invoices';
 import VendorAddress from '../../support/fragments/invoices/vendorAddress';
-import FinanceHelp from '../../support/fragments/finance/financeHelper';
 
 describe('ui-invoices: create', () => {
 

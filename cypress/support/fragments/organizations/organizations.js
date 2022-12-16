@@ -19,8 +19,8 @@ const actionsButton = Button('Actions');
 const numberOfSearchResultsHeader = '//*[@id="paneHeaderorganizations-results-pane-subtitle"]/span';
 const zeroResultsFoundText = '0 records found';
 const organizationStatus = Select('Organization status*');
-const organizationName = TextField('Name*');
-const organizationCode = TextField('Code*');
+const organizationNameField = TextField('Name*');
+const organizationCodeField = TextField('Code*');
 
 export default {
 
@@ -39,8 +39,8 @@ export default {
     cy.do([
       buttonNew.click(),
       organizationStatus.choose(organization.status),
-      organizationName.fillIn(organization.name),
-      organizationCode.fillIn(organization.code),
+      organizationNameField.fillIn(organization.name),
+      organizationCodeField.fillIn(organization.code),
       saveAndClose.click()
     ]);
   },
@@ -50,8 +50,8 @@ export default {
     cy.do([
       buttonNew.click(),
       organizationStatus.choose(organization.status),
-      organizationName.fillIn(organization.name),
-      organizationCode.fillIn(organization.code),
+      organizationNameField.fillIn(organization.name),
+      organizationCodeField.fillIn(organization.code),
     ]);
     // Need to wait while Acquisition Unit data will be loaded
     cy.wait(4000);
