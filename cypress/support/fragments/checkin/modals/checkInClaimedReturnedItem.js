@@ -21,5 +21,9 @@ export default {
   },
   verifyModalIsClosed() {
     cy.expect(checkInModal.absent());
+  },
+  checkModalMessage: (item) => {
+    const message = `${item.title} (${item.materialType}) (Barcode: ${item.barcode}) has been claimed returned`;
+    cy.expect(Modal({ content: including(message) }).exists());
   }
 };
