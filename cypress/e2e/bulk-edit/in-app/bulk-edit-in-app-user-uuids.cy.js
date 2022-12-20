@@ -138,7 +138,7 @@ describe('bulk-edit', () => {
       BulkEditActions.verifyCalendarItem();
     });
 
-    it.only('C359585 Verify clicking on the "Commit changes" button (firebird)', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
+    it('C359585 Verify clicking on the "Commit changes" button (firebird)', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
       BulkEditSearchPane.selectRecordIdentifier('User UUIDs');
 
       BulkEditSearchPane.uploadFile(userUUIDsFileName);
