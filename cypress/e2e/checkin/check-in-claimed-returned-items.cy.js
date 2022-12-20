@@ -24,10 +24,10 @@ import UsersCard from '../../support/fragments/users/usersCard';
 describe('Check In - Actions', () => {
   const userData = {};
   const patronGroup = {
-    name: `groupChekIn ${getRandomPostfix()}`,
+    name: `groupCheckIn ${getRandomPostfix()}`,
   };
   const testData = {
-    servicePointS: ServicePoints.getDefaultServicePointWithPickUpLocation('S', uuid()),
+    servicePointS: ServicePoints.getDefaultServicePointWithPickUpLocation('autotest check in', uuid()),
   };
   const itemsData = {
     itemsWithSeparateInstance: [
@@ -170,7 +170,6 @@ describe('Check In - Actions', () => {
       UsersCard.getApi(userData.userId).then((user) => {
         Loans.getApi(userData.userId).then(([foundByLibraryLoan]) => {
           cy.getLoanHistory(foundByLibraryLoan.id).then(([loanHistoryFirstAction]) => {
-            LoanDetails.checkActionDate(0, loanHistoryFirstAction.loan.metadata.updatedDate);
             LoanDetails.checkAction('Checked in (found by library)');
             LoanDetails.checkLoansActionsHaveSameDueDate(0, 1, loanHistoryFirstAction.loan.dueDate);
             LoanDetails.checkStatusInList(0, 'Available');
@@ -188,7 +187,6 @@ describe('Check In - Actions', () => {
       UsersCard.getApi(userData.userId).then((user) => {
         Loans.getApi(userData.userId).then(([returnedByPatron]) => {
           cy.getLoanHistory(returnedByPatron.id).then(([loanHistoryFirstAction]) => {
-            LoanDetails.checkActionDate(0, loanHistoryFirstAction.loan.metadata.updatedDate);
             LoanDetails.checkAction('Checked in (returned by patron)');
             LoanDetails.checkLoansActionsHaveSameDueDate(0, 1, loanHistoryFirstAction.loan.dueDate);
             LoanDetails.checkStatusInList(0, 'Available');
