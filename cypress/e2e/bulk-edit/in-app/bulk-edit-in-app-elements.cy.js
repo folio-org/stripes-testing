@@ -85,6 +85,7 @@ describe('bulk-edit', () => {
     });
 
     it('C350943 Verify Record identifiers dropdown -- Inventory-Items app (firebird)', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
+      BulkEditSearchPane.selectRecordIdentifier('Item barcode');
       BulkEditSearchPane.verifyItemIdentifiers();
 
       [

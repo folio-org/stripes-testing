@@ -164,7 +164,10 @@ export default {
   },
 
   selectRecordIdentifier(value) {
-    cy.do(recordIdentifier.choose(value));
+    cy.do([
+      radioItems.click(),
+      recordIdentifier.choose(value)
+    ]);
   },
 
   clickToBulkEditMainButton() {
