@@ -37,6 +37,11 @@ describe('bulk-edit', () => {
         });
     });
 
+    beforeEach('select item tab', () => {
+      BulkEditSearchPane.checkItemsRadio();
+      BulkEditSearchPane.selectRecordIdentifier('Item barcode');
+    });
+
     after('delete test data', () => {
       InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(item.itemBarcode);
       Users.deleteViaApi(user.userId);
@@ -44,8 +49,6 @@ describe('bulk-edit', () => {
     });
 
     it('C353232 Verify error accordion during matching (In app approach) (firebird)', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
-      BulkEditSearchPane.selectRecordIdentifier('Item barcode');
-
       BulkEditSearchPane.uploadFile(invalidItemBarcodesFileName);
       BulkEditSearchPane.waitFileUploading();
 
@@ -59,8 +62,6 @@ describe('bulk-edit', () => {
     });
 
     it('C350941 Verify uploading file with identifiers -- In app approach (firebird)', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
-      BulkEditSearchPane.selectRecordIdentifier('Item barcode');
-
       BulkEditSearchPane.uploadFile(invalidItemBarcodesFileName);
       BulkEditSearchPane.waitFileUploading();
 
@@ -85,7 +86,6 @@ describe('bulk-edit', () => {
     });
 
     it('C350943 Verify Record identifiers dropdown -- Inventory-Items app (firebird)', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
-      BulkEditSearchPane.selectRecordIdentifier('Item barcode');
       BulkEditSearchPane.verifyItemIdentifiers();
 
       [
@@ -116,11 +116,10 @@ describe('bulk-edit', () => {
     });
 
     it('C357035 Verify elements of the bulk edit app -- In app approach (firebird)', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
-      BulkEditSearchPane.selectRecordIdentifier('Item barcode');
-
       BulkEditSearchPane.clickToBulkEditMainButton();
       BulkEditSearchPane.verifyDefaultFilterState();
 
+      BulkEditSearchPane.checkItemsRadio();
       BulkEditSearchPane.selectRecordIdentifier('Item barcode');
 
       BulkEditSearchPane.uploadFile(invalidItemBarcodesFileName);

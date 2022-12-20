@@ -164,10 +164,7 @@ export default {
   },
 
   selectRecordIdentifier(value) {
-    cy.do([
-      radioItems.click(),
-      recordIdentifier.choose(value)
-    ]);
+    cy.do(recordIdentifier.choose(value));
   },
 
   clickToBulkEditMainButton() {
@@ -203,6 +200,10 @@ export default {
 
   checkItemsRadio() {
     cy.do(RadioButton('Inventory - items').click());
+  },
+
+  checkHoldingsRadio() {
+    cy.do(RadioButton('Inventory - holdings').click());
   },
 
   uploadFile(fileName) {
@@ -252,7 +253,7 @@ export default {
 
   verifyLocationChanges(rows, locationValue) {
     for (let i = 0; i < rows; i++) {
-      cy.expect(changesAccordion.find(MultiColumnListCell({ row: i, content: locationValue })).exists())
+      cy.expect(changesAccordion.find(MultiColumnListCell({ row: i, content: locationValue })).exists());
     }
   },
 

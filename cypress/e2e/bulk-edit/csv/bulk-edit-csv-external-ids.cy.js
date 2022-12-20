@@ -48,15 +48,15 @@ describe('bulk-edit', () => {
       BulkEditSearchPane.verifyPaneRecordsCount(1);
 
       BulkEditActions.downloadMatchedResults(matchRecordsFileName);
-      BulkEditActions.prepareValidBulkEditFile(matchRecordsFileName, importFileName, user.username, 'test');
-
+      const newUserName = `testName_${getRandomPostfix()}`;
+      BulkEditActions.prepareValidBulkEditFile(matchRecordsFileName, importFileName, user.username, newUserName);
       BulkEditActions.openStartBulkEditForm();
       BulkEditSearchPane.uploadFile(importFileName);
       BulkEditSearchPane.waitFileUploading();
       BulkEditActions.clickNext();
       BulkEditActions.commitChanges();
 
-      BulkEditSearchPane.verifyChangedResults(user.username);
+      BulkEditSearchPane.verifyChangedResults(newUserName);
       BulkEditActions.newBulkEdit();
     });
   });
