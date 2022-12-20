@@ -138,7 +138,7 @@ describe('bulk-edit', () => {
       BulkEditActions.verifyCalendarItem();
     });
 
-    it('C359585 Verify clicking on the "Commit changes" button (firebird)', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
+    it.only('C359585 Verify clicking on the "Commit changes" button (firebird)', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
       BulkEditSearchPane.selectRecordIdentifier('User UUIDs');
 
       BulkEditSearchPane.uploadFile(userUUIDsFileName);
@@ -155,6 +155,7 @@ describe('bulk-edit', () => {
       BulkEditActions.commitChanges();
       BulkEditSearchPane.waitFileUploading();
       BulkEditActions.verifySuccessBanner(1);
+      BulkEditSearchPane.verifyChangedResults(user.username);
     });
   });
 });
