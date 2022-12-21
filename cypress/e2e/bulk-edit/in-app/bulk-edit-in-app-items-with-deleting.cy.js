@@ -49,6 +49,7 @@ describe('bulk-edit', () => {
     });
 
     it('C353230 Verify completion of the in-app bulk edit (firebird)', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
+      BulkEditSearchPane.checkItemsRadio();
       BulkEditSearchPane.selectRecordIdentifier('Item barcode');
 
       BulkEditSearchPane.uploadFile(invalidItemBarcodesFileName);

@@ -16,7 +16,7 @@ const item = {
 };
 const validItemBarcodesFileName = `validItemBarcodes_${getRandomPostfix()}.csv`;
 
-describe('bulk-edit', { retries: 3 }, () => {
+describe('bulk-edit', () => {
   describe('in-app approach', () => {
     before('create user', () => {
       cy.createTempUser([
@@ -30,6 +30,11 @@ describe('bulk-edit', { retries: 3 }, () => {
           InventoryInstances.createInstanceViaApi(item.instanceName, item.itemBarcode);
           FileManager.createFile(`cypress/fixtures/${validItemBarcodesFileName}`, item.itemBarcode);
         });
+    });
+
+    beforeEach('select item tab', () => {
+      cy.visit(TopMenu.bulkEditPath);
+      BulkEditSearchPane.checkItemsRadio();
     });
 
     after('delete test data', () => {

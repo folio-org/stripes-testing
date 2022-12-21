@@ -106,7 +106,7 @@ describe('bulk-edit', () => {
     });
 
     it('C359214 Verify expiration date updates in In-app approach (firebird)', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
-      const todayDate = DateTools.getCurrentDate();
+      const todayDate = DateTools.getFormattedDateWithSlashes({ date: new Date() });
 
       BulkEditSearchPane.selectRecordIdentifier('User UUIDs');
 
