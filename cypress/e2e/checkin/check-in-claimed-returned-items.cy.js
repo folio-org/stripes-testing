@@ -100,7 +100,7 @@ describe('Check In - Actions', () => {
     cy.createTempUser(
       [
         permissions.checkinAll.gui,
-        permissions.loansAll.gui,
+        permissions.loansView.gui,
       ],
       patronGroup.name
     )
