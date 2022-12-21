@@ -101,8 +101,6 @@ describe('Check In - Actions', () => {
       [
         permissions.checkinAll.gui,
         permissions.loansAll.gui,
-        permissions.uiUsersLoansClaimReturned.gui,
-        permissions.uiUsersView.gui,
       ],
       patronGroup.name
     )
@@ -154,7 +152,7 @@ describe('Check In - Actions', () => {
     cy.deleteLoanType(testData.loanTypeId);
   });
   it(
-    'C7148 Check In: item with at least one open request (vega)',
+    'C10974 Check In: claimed returned items (vega)',
     { tags: [TestTypes.criticalPath, devTeams.vega] },
     () => {
       const itemForFoundByLibrary = itemsData.itemsWithSeparateInstance[0];
