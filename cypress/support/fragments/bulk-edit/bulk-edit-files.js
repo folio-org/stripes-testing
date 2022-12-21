@@ -1,7 +1,8 @@
 import FileManager from '../../utils/fileManager';
 
 export default {
-  verifyMatchedResultFileContent(fileName, expectedResult) {
+  verifyMatchedResultFileContent(fileName, expectedResult, resultType = 'barcode') {
+    const verifyFunc = resultType === 'barcode' ? this.verifyMatchedResultByItemBarcode : this.verifyMatchedResultByHRID;
     // expectedResult is list of expected values
     FileManager.findDownloadedFilesByMask(fileName)
       .then((downloadedFilenames) => {
@@ -10,7 +11,7 @@ export default {
             const values = this.getValuesFromMatchedCSVFile(actualContent);
             // verify each row in csv file
             values.forEach((elem, index) => {
-              this.verifyMatchedResultByItemBarcode(elem, expectedResult[index]);
+              verifyFunc(elem, expectedResult[index]);
             });
           });
       });
@@ -28,4 +29,9 @@ export default {
     const actualBarcode = actualResult.split(',')[9];
     expect(actualBarcode).to.eq(expectedBarcode);
   },
+
+  verifyMatchedResultByHRID(actualResult, expectedResult) {
+    const actualHRID = actualResult.split(',')[2];
+    expect(actualHRID).to.eq(expectedResult);
+  }
 };

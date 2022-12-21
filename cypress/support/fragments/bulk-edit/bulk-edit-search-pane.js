@@ -202,6 +202,10 @@ export default {
     cy.do(RadioButton('Inventory - items').click());
   },
 
+  checkHoldingsRadio() {
+    cy.do(RadioButton('Inventory - holdings').click());
+  },
+
   uploadFile(fileName) {
     cy.do(Button('or choose file').has({ disabled: false }));
     cy.get('input[type=file]').attachFile(fileName, { allowEmpty: true });
@@ -249,7 +253,7 @@ export default {
 
   verifyLocationChanges(rows, locationValue) {
     for (let i = 0; i < rows; i++) {
-      cy.expect(changesAccordion.find(MultiColumnListCell({ row: i, content: locationValue })).exists())
+      cy.expect(changesAccordion.find(MultiColumnListCell({ row: i, content: locationValue })).exists());
     }
   },
 

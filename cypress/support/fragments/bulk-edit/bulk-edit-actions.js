@@ -90,8 +90,8 @@ export default {
     cy.do(Button('Cancel').click());
   },
 
-  replaceTemporaryLocation(location = 'Annex') {
-    getBulkEditSelectType().select('Temporary item location');
+  replaceTemporaryLocation(location = 'Annex', type = 'item') {
+    getBulkEditSelectType().select(`Temporary ${type} location`);
     getLocationSelect().select('Replace with');
     cy.do([
       Button('Select control\nSelect location').click(),
