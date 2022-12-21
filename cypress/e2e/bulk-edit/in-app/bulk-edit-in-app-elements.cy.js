@@ -129,7 +129,7 @@ describe('bulk-edit', () => {
       BulkEditSearchPane.verifyDefaultFilterState();
     });
 
-    it.only('C360089 Verify "Inventory - holdings" option on "Bulk edit" app (firebird)', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
+    it('C360089 Verify "Inventory - holdings" option on "Bulk edit" app (firebird)', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
       BulkEditSearchPane.checkHoldingsRadio();
       BulkEditSearchPane.verifyHoldingIdentifiers();
 
