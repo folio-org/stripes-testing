@@ -58,7 +58,8 @@ export default {
   verifyRecordsTypeItems() {
     cy.expect([
       recordTypes.find(HTML('Users')).exists(),
-      recordTypes.find(HTML('Inventory - items')).exists()
+      recordTypes.find(HTML('Inventory - items')).exists(),
+      recordTypes.find(HTML('Inventory - holdings')).exists(),
     ]);
     this.checkUsersRadio();
     cy.do(recordTypes.clickHeader());
@@ -73,6 +74,15 @@ export default {
       recordIdentifier.find(HTML('User Barcodes')).exists(),
       recordIdentifier.find(HTML('External IDs')).exists(),
       recordIdentifier.find(HTML('Usernames')).exists(),
+    ]);
+  },
+
+  verifyHoldingIdentifiers() {
+    cy.expect([
+      recordIdentifier.find(HTML('Holdings UUIDs')).exists(),
+      recordIdentifier.find(HTML('Holdings HRIDs')).exists(),
+      recordIdentifier.find(HTML('Instance HRIDs')).exists(),
+      recordIdentifier.find(HTML('Item barcodes')).exists(),
     ]);
   },
 
