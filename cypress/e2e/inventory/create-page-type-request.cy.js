@@ -1,3 +1,4 @@
+import uuid from 'uuid';
 import TestTypes from '../../support/dictionary/testTypes';
 import permissions from '../../support/dictionary/permissions';
 import TopMenu from '../../support/fragments/topMenu';
@@ -17,14 +18,13 @@ describe('ui-inventory: Create page type request', () => {
   let createdItem;
   let oldRulesText;
   let requestPolicyId;
+  const servicePoint = ServicePoints.getDefaultServicePointWithPickUpLocation('autotest basic checkin', uuid());
 
   beforeEach(() => {
     cy.getAdminToken()
       .then(() => {
-        ServicePoints.getViaApi({ limit: 1, query: 'pickupLocation=="true"' })
-          .then((res) => {
-            defaultServicePointId = res[0].id;
-          });
+        ServicePoints.createViaApi(servicePoint);
+        defaultServicePointId = servicePoint.id;
       })
       .then(() => {
         cy.createTempUser([
@@ -88,7 +88,7 @@ describe('ui-inventory: Create page type request', () => {
     createPageTypeRequest.findAvailableItem(instanceData, createdItem.barcode);
     createPageTypeRequest.clickNewRequest(createdItem.barcode);
     createPageTypeRequest.selectActiveFacultyUser(user.username);
-    createPageTypeRequest.saveAndClose();
+    createPageTypeRequest.saveAndClose(servicePoint.name);
     cy.wait(['@postRequest']);
     createPageTypeRequest.clickItemBarcodeLink(createdItem.barcode);
     createPageTypeRequest.verifyRequestsCountOnItemRecord();
