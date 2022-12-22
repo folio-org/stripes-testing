@@ -60,6 +60,22 @@ describe('MARC Authority management', () => {
     NotesEholdings.deleteNote();
   });
 
+  it('C16993 Able to sort Notes accordion column headings (spitfire)', { tags: [TestTypes.criticalPath, DevTeams.spitfire] }, () => {
+    note.titleFirst = '1 Title';
+    note.titleSecond = '2 Title';
+
+    NotesEholdings.createNote(note.titleFirst, note.details);
+    NotesEholdings.createNote(note.titleSecond, note.details);
+
+    NotesEholdings.verifyDefaultSort(note.titleFirst, note.titleSecond, note.details);
+    NotesEholdings.verifySortingByTitle(note.titleFirst, note.titleSecond, note.details);
+
+    NotesEholdings.openNoteView(note.titleFirst, note.details);
+    NotesEholdings.deleteNote();
+    NotesEholdings.openNoteView(note.titleSecond, note.details);
+    NotesEholdings.deleteNote();
+  });
+
   it('C1300 Delete a note (spitfire)', { tags: [TestTypes.criticalPath, DevTeams.spitfire] }, () => {
     NotesEholdings.createNote(note.title, note.details);
     NotesEholdings.verifyNoteCreation(note.title, note.details);

@@ -9,6 +9,7 @@ const actionsButton = Button('Actions');
 const deleteButton = Button('Delete');
 const editButton = Button('Edit');
 const deleteButtonInConfirmation = Button({ id: 'clickable-confirm-delete-note-confirm' });
+const sortByTitleButton = Button({ id: 'clickable-list-column-titleanddetails' });
 
 export default {
   waitLoading: () => cy.expect(notesSection.exists()),
@@ -36,6 +37,22 @@ export default {
     cy.expect([
       createButton.absent(),
       editButton.absent(),
+    ]);
+  },
+  verifyDefaultSort: (firstTitle, secondTitle, details) => { 
+    cy.expect([
+      MultiColumnListCell({ content: `Title: ${secondTitle}Details: ${details}Edit`, row: 0 }).exists(),
+      MultiColumnListCell({ content: `Title: ${firstTitle}Details: ${details}Edit`, row: 1 }).exists(),
+    ]);
+  },
+  verifySortingByTitle: (firstTitle, secondTitle, details) => {
+    cy.do([
+      sortByTitleButton.click(),
+      sortByTitleButton.click(),
+    ]);
+    cy.expect([
+      MultiColumnListCell({ content: `Title: ${firstTitle}Details: ${details}Edit`, row: 0 }).exists(),
+      MultiColumnListCell({ content: `Title: ${secondTitle}Details: ${details}Edit`, row: 1 }).exists(),
     ]);
   },
 };
