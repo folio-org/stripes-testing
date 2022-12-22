@@ -3,6 +3,7 @@ import TestTypes from '../../support/dictionary/testTypes';
 import DevTeams from '../../support/dictionary/devTeams';
 import Permissions from '../../support/dictionary/permissions';
 import NotesEholdings from '../../support/fragments/notes/notesEholdings'
+import Users from '../../support/fragments/users/users';
 
 describe('MARC Authority management', () => {
   const testData = {};
