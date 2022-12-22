@@ -25,6 +25,10 @@ describe('MARC Authority management', () => {
     });
   });
 
+  after('Deleting data', () => {
+    Users.deleteViaApi(testData.userProperties.userId);
+  });
+
   it('C1300 Delete a note (spitfire)', { tags: [TestTypes.criticalPath, DevTeams.spitfire] }, () => {
     cy.visit(urlToEholdings);
     
