@@ -18,15 +18,15 @@ export default {
   },
 
   fillRequiredFields(newRequest) {
+    cy.do(itemBarcodeInput.fillIn(newRequest.itemBarcode));
+    cy.intercept('/circulation/loans?*').as('getLoans');
+    cy.do(enterItemBarcodeButton.click());
+    cy.wait('@getLoans');
     cy.do(requesterBarcodeInput.fillIn(newRequest.requesterBarcode));
     cy.intercept('/proxiesfor?*').as('getUsers');
     cy.do(enterRequesterBarcodeButton.click());
     cy.expect(selectServicePoint.exists);
     cy.wait('@getUsers');
-    cy.do(itemBarcodeInput.fillIn(newRequest.itemBarcode));
-    cy.intercept('/circulation/loans?*').as('getLoans');
-    cy.do(enterItemBarcodeButton.click());
-    cy.wait('@getLoans');
   },
 
   choosepickupServicePoint(pickupServicePoint) {
