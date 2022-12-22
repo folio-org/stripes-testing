@@ -15,6 +15,13 @@ describe('MARC Authority management', () => {
 
   before('Creating data', () => {
     cy.createTempUser([
+      Permissions.uiNotesItemView.gui,
+      Permissions.moduleeHoldingsEnabled.gui,
+    ]).then(createdUserProperties => {
+      testData.viewUserProperties = createdUserProperties;
+    });
+
+    cy.createTempUser([
       Permissions.uiNotesItemCreate.gui,
       Permissions.uiNotesItemView.gui,
       Permissions.uiNotesItemEdit.gui,
@@ -22,29 +29,38 @@ describe('MARC Authority management', () => {
       Permissions.moduleeHoldingsEnabled.gui,
     ]).then(createdUserProperties => {
       testData.userProperties = createdUserProperties;
-      cy.login(testData.userProperties.username, testData.userProperties.password);
+
+      cy.login(testData.userProperties.username, testData.userProperties.password, { path: urlToEholdings, waiter: NotesEholdings.waitLoading });
     });
   });
 
   after('Deleting data', () => {
     Users.deleteViaApi(testData.userProperties.userId);
+    Users.deleteViaApi(testData.viewUserProperties.userId);
   });
 
   it('C527 Notes: Can create notes (spitfire)', { tags: [TestTypes.criticalPath, DevTeams.spitfire] }, () => {
-    cy.visit(urlToEholdings);
-    
-    NotesEholdings.waitLoading();
     NotesEholdings.createNote(note.title, note.details);
     NotesEholdings.verifyNoteCreation(note.title, note.details);
-    
     NotesEholdings.openNoteView(note.title, note.details);
     NotesEholdings.deleteNote();
   });
-  
+
+  it('C1245 Notes: Can view notes (spitfire)', { tags: [TestTypes.criticalPath, DevTeams.spitfire] }, () => {
+    NotesEholdings.createNote(note.title, note.details);
+    NotesEholdings.verifyNoteCreation(note.title, note.details);
+
+    cy.login(testData.viewUserProperties.username, testData.viewUserProperties.password, { path: urlToEholdings, waiter: NotesEholdings.waitLoading });
+    NotesEholdings.verifyNoteVisibilityWithViewPermission(note.title, note.details);
+    NotesEholdings.openNoteView(note.title, note.details);
+    NotesEholdings.verifyActionButtonVisibilityWithViewPermission();
+
+    cy.login(testData.userProperties.username, testData.userProperties.password, { path: urlToEholdings, waiter: NotesEholdings.waitLoading });
+    NotesEholdings.openNoteView(note.title, note.details);
+    NotesEholdings.deleteNote();
+  });
+
   it('C1300 Delete a note (spitfire)', { tags: [TestTypes.criticalPath, DevTeams.spitfire] }, () => {
-    cy.visit(urlToEholdings);
-    
-    NotesEholdings.waitLoading();
     NotesEholdings.createNote(note.title, note.details);
     NotesEholdings.verifyNoteCreation(note.title, note.details);
     NotesEholdings.openNoteView(note.title, note.details);

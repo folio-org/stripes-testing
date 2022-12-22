@@ -5,10 +5,9 @@ const createButton = Button({ id: 'note-create-button' });
 const titleField = TextField('Note title*');
 const detailsField = RichEditor('Details');
 const submitButton = Button({ type: 'submit' });
-
-
 const actionsButton = Button('Actions');
 const deleteButton = Button('Delete');
+const editButton = Button('Edit');
 const deleteButtonInConfirmation = Button({ id: 'clickable-confirm-delete-note-confirm' });
 
 export default {
@@ -31,4 +30,12 @@ export default {
     ]);
   },
   verifyNoteDeletion: (title, details) => cy.expect(MultiColumnListCell({ content: `Title: ${title}Details: ${details}Edit` }).absent()),
+  verifyNoteVisibilityWithViewPermission: (title, details) => cy.expect(MultiColumnListCell({ content: `Title: ${title}Details: ${details}` }).exists()),
+  verifyActionButtonVisibilityWithViewPermission: () => {
+    cy.do(actionsButton.click());
+    cy.expect([
+      createButton.absent(),
+      editButton.absent(),
+    ]);
+  },
 };
