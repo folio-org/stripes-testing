@@ -11,6 +11,7 @@ import BulkEditFiles from '../../../support/fragments/bulk-edit/bulk-edit-files'
 import Users from '../../../support/fragments/users/users';
 
 let user;
+let hrid;
 const itemBarcode = getRandomPostfix();
 const validHoldingUUIDsFileName = `validHoldingUUIDs_${getRandomPostfix()}.csv`;
 const resultFileName = `matchedRecords_${getRandomPostfix()}.csv`;
@@ -41,9 +42,15 @@ describe('bulk-edit', () => {
             query: `"instanceId"="${instanceId}"`
           })
             .then(holdings => {
+              hrid = holdings[0].hrid;
               FileManager.createFile(`cypress/fixtures/${validHoldingUUIDsFileName}`, holdings[0].id);
             });
         });
+    });
+
+    beforeEach('select holdings', () => {
+      BulkEditSearchPane.checkHoldingsRadio();
+      BulkEditSearchPane.selectRecordIdentifier('Holdings UUIDs');
     });
 
     after('delete test data', () => {
@@ -58,32 +65,30 @@ describe('bulk-edit', () => {
     });
 
     it('C357052 Verify Downloaded matched records if identifiers return more than one item (firebird)', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
-      BulkEditSearchPane.selectRecordIdentifier('Holdings UUIDs');
-
       BulkEditSearchPane.uploadFile(validHoldingUUIDsFileName);
       BulkEditSearchPane.waitFileUploading();
-      BulkEditSearchPane.verifyMatchedResults(item.itemBarcode1, item.itemBarcode2);
+      BulkEditSearchPane.verifyMatchedResults(hrid);
 
       BulkEditActions.downloadMatchedResults(resultFileName);
-      BulkEditFiles.verifyMatchedResultFileContent(resultFileName, [item.itemBarcode1, item.itemBarcode2]);
+      BulkEditFiles.verifyMatchedResultFileContent(resultFileName, [hrid], 'hrid');
     });
 
     it('C356810 Verify uploading file with holdings UUIDs (firebird)', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
-      BulkEditSearchPane.selectRecordIdentifier('Holdings UUIDs');
-
       BulkEditSearchPane.uploadFile(validHoldingUUIDsFileName);
       BulkEditSearchPane.waitFileUploading();
-      BulkEditSearchPane.verifyMatchedResults(item.itemBarcode1, item.itemBarcode2);
+      BulkEditSearchPane.verifyMatchedResults(hrid);
+
+      const location = 'Annex';
 
       BulkEditActions.openActions();
       BulkEditActions.openStartBulkEditForm();
-      BulkEditActions.replaceTemporaryLocation();
+      BulkEditActions.replaceTemporaryLocation(location, 'holdings');
       BulkEditActions.confirmChanges();
       BulkEditActions.commitChanges();
       BulkEditSearchPane.waitFileUploading();
 
-      BulkEditSearchPane.verifyChangedResults(item.itemBarcode1, item.itemBarcode2);
-      BulkEditActions.verifySuccessBanner(2);
+      BulkEditSearchPane.verifyChangedResults(location);
+      BulkEditActions.verifySuccessBanner(1);
     });
   });
 });

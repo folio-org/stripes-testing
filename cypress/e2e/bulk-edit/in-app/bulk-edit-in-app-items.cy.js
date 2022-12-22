@@ -51,6 +51,11 @@ describe('bulk-edit', () => {
         });
     });
 
+    beforeEach('select item tab', () => {
+      cy.visit(TopMenu.bulkEditPath);
+      BulkEditSearchPane.checkItemsRadio();
+    });
+
     after('delete test data', () => {
       InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(item.itemBarcode);
       Users.deleteViaApi(user.userId);
@@ -95,7 +100,6 @@ describe('bulk-edit', () => {
       BulkEditSearchPane.waitFileUploading();
 
       BulkEditActions.verifySuccessBanner(1);
-      BulkEditActions.newBulkEdit();
     });
 
     it('C356809 Verify uploading file with Item accession number (firebird)', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
@@ -112,7 +116,6 @@ describe('bulk-edit', () => {
       BulkEditSearchPane.waitFileUploading();
 
       BulkEditActions.verifySuccessBanner(1);
-      BulkEditActions.newBulkEdit();
     });
   });
 });

@@ -41,6 +41,12 @@ export default {
   verifyClaimReturnedButtonIsVisible() {
     return cy.expect(claimReturnedButton.exists());
   },
+  claimItemReturnedViaApi:(apiBody, loanId) => cy.okapiRequest({
+    method: 'POST',
+    path: `circulation/loans/${loanId}/claim-item-returned`,
+    body: apiBody,
+    isDefaultSearchParamsRequired: false
+  }),
   checkOffLoanByBarcode: (itemBarcode) => {
     // interactors don't allow to find element inside the cell column
     return cy.contains(itemBarcode).parent('*[class^="mclRow--"]').within(() => {
