@@ -30,7 +30,7 @@ describe('ui-organizations: Filtering organization', () => {
       cy.visit(TopMenu.organizationsPath);
       filter.filterActions();
       Organizations.checkOrganizationFilter();
-      Organizations.chooseOrganizationFromList(organization);
+      Organizations.selectOrganization(organization.name);
       Organizations.checkOpenOrganizationInfo(organization);
       Organizations.resetFilters();
     });

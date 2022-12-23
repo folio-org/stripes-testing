@@ -106,7 +106,7 @@ describe('bulk-edit', () => {
     });
 
     it('C359214 Verify expiration date updates in In-app approach (firebird)', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
-      const todayDate = DateTools.getCurrentDate();
+      const todayDate = DateTools.getFormattedDateWithSlashes({ date: new Date() });
 
       BulkEditSearchPane.selectRecordIdentifier('User UUIDs');
 
@@ -136,6 +136,26 @@ describe('bulk-edit', () => {
       BulkEditActions.openActions();
       BulkEditActions.openInAppStartBulkEditFrom();
       BulkEditActions.verifyCalendarItem();
+    });
+
+    it('C359585 Verify clicking on the "Commit changes" button (firebird)', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
+      BulkEditSearchPane.selectRecordIdentifier('User UUIDs');
+
+      BulkEditSearchPane.uploadFile(userUUIDsFileName);
+      BulkEditSearchPane.waitFileUploading();
+
+      BulkEditActions.openActions();
+      BulkEditActions.verifyCheckedDropdownMenuItem();
+      BulkEditActions.verifyUncheckedDropdownMenuItem();
+
+      BulkEditActions.openInAppStartBulkEditFrom();
+      BulkEditActions.fillPatronGroup('graduate (Graduate Student)');
+      BulkEditActions.confirmChanges();
+      BulkEditActions.verifyAreYouSureForm(1, user.username);
+      BulkEditActions.commitChanges();
+      BulkEditSearchPane.waitFileUploading();
+      BulkEditActions.verifySuccessBanner(1);
+      BulkEditSearchPane.verifyChangedResults(user.username);
     });
   });
 });

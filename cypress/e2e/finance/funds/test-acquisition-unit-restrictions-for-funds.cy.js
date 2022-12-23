@@ -63,7 +63,7 @@ describe('ui-finance: Funds', () => {
   after(() => {
     cy.loginAsAdmin({ path:TopMenu.fundPath, waiter: Funds.waitLoading });
     FinanceHelp.searchByName(defaultfund.name);
-    FinanceHelp.selectFromResultsList();
+    Funds.selectFund(defaultfund.name);
     Funds.deleteFundViaActions();
     FinanceHelp.searchByName(defaultfund.name);
     Funds.checkZeroSearchResultsHeader();
@@ -96,6 +96,6 @@ describe('ui-finance: Funds', () => {
     AcquisitionUnits.selectViewCheckbox();
     cy.login(user.username, user.password, { path:TopMenu.fundPath, waiter: Funds.waitLoading });
     FinanceHelp.searchByName(defaultfund.name);
-    FinanceHelp.selectFromResultsList();
+    Funds.selectFund(defaultfund.name);
   });
 });
