@@ -1,8 +1,9 @@
 import { Button, Modal, including, HTML } from '../../../../../interactors';
 
 const checkInModal = Modal('Check in claimed returned item');
+const cancelButton = Button('Cancel');
 const returnedByPatronButton = Button('Returned by patron');
-const foundByPatron = Button('Found by library');
+const foundByLibraryButton = Button('Found by library');
 
 export default {
   closeModal:() => {
@@ -16,10 +17,19 @@ export default {
       returnedByPatronButton.click()]);
   },
   chooseItemReturnedByLibrary: () => {
-    cy.do([foundByPatron.exists(),
-      foundByPatron.click()]);
+    cy.do([foundByLibraryButton.exists(),
+      foundByLibraryButton.click()]);
   },
   verifyModalIsClosed() {
     cy.expect(checkInModal.absent());
+  },
+  checkModalMessage: (item) => {
+    const message = `${item.title} (${item.materialType}) (Barcode: ${item.barcode}) has been claimed returned`;
+    cy.expect([
+      Modal({ content: including(message) }).exists(),
+      checkInModal.find(cancelButton).is({ disabled: false }),
+      checkInModal.find(foundByLibraryButton).is({ disabled: false }),
+      checkInModal.find(returnedByPatronButton).is({ disabled: false }),
+    ]);
   }
 };

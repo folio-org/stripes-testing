@@ -66,12 +66,12 @@ describe('ui-invoices: Approve invoice', () => {
   it('C10945 Approve invoice (thunderjet)', { tags: [testType.criticalPath, devTeams.thunderjet] }, () => {
     const transactionFactory = new Transaction();
     Invoices.searchByNumber(invoice.invoiceNumber);
-    Helper.selectFromResultsList();
+    Invoices.selectInvoice(invoice.invoiceNumber);
     Invoices.approveInvoice();
     // check transactions after approve
     cy.visit(TopMenu.fundPath);
     Helper.searchByName(defaultFund.name);
-    Helper.selectFromResultsList();
+    Funds.selectFund(defaultFund.name);
     Funds.openBudgetDetails(defaultFund.code, DateTools.getCurrentFiscalYearCode());
     Funds.openTransactions();
     const valueInTransactionTable = `$${subtotalValue.toFixed(2)}`;

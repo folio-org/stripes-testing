@@ -3,7 +3,6 @@ import testType from '../../support/dictionary/testTypes';
 import devTeams from '../../support/dictionary/devTeams';
 import TopMenu from '../../support/fragments/topMenu';
 import Users from '../../support/fragments/users/users';
-import FinanceHelp from '../../support/fragments/finance/financeHelper';
 import SettingsMenu from '../../support/fragments/settingsMenu';
 import AcquisitionUnits from '../../support/fragments/settings/acquisitionUnits/acquisitionUnits';
 import Organizations from '../../support/fragments/organizations/organizations';
@@ -38,7 +37,7 @@ describe('ui-organizations: Organizations', () => {
   after(() => {
     cy.loginAsAdmin({ path:TopMenu.organizationsPath, waiter: Organizations.waitLoading });
     Organizations.searchByParameters('Name', organization.name);
-    FinanceHelp.selectFromResultsList();
+    Organizations.selectOrganization(organization.name);
     Organizations.deleteOrganization();
 
     cy.visit(SettingsMenu.acquisitionUnitsPath);
@@ -74,6 +73,6 @@ describe('ui-organizations: Organizations', () => {
     
     cy.login(user.username, user.password, { path:TopMenu.organizationsPath, waiter: Organizations.waitLoading });
     Organizations.searchByParameters('Name', organization.name);
-    FinanceHelp.selectFromResultsList();
+    Organizations.selectOrganization(organization.name);
   });
 });
