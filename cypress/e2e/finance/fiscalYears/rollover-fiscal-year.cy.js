@@ -17,7 +17,7 @@ import NewOrganization from '../../../support/fragments/organizations/newOrganiz
 import NewInvoice from '../../../support/fragments/invoices/newInvoice';
 import Invoices from '../../../support/fragments/invoices/invoices';
 
-describe('ui-finance: Funds', () => {
+describe('ui-finance: Fiscal Year', () => {
 
   const firstFiscalYear = { ...FiscalYears.defaultUiFiscalYear };
   const secondFiscalYear = { 
@@ -27,8 +27,6 @@ describe('ui-finance: Funds', () => {
     periodEnd: `${DateTools.getCurrentDateForFiscalYear()}T00:00:00.000+00:00`,
     description: `This is fiscal year created by E2E test automation script_${getRandomPostfix()}`,
     series: 'FY',
-    periodStart: `${DateTools.getCurrentDateForFiscalYear()}T00:00:00.000+00:00`,
-    periodEnd: `${DateTools.getDayAfterTomorrowDateForFiscalYear()}T00:00:00.000+00:00`,
 };
   const defaultLedger = { ...Ledgers.defaultUiLedger };
   const firstFund = { ...Funds.defaultUiFund };
@@ -76,7 +74,7 @@ describe('ui-finance: Funds', () => {
 
                 cy.loginAsAdmin({ path:TopMenu.fundPath, waiter: Funds.waitLoading });
                 FinanceHelp.searchByName(firstFund.name);
-                FinanceHelp.selectFromResultsList();
+                Funds.selectFund(firstFund.name);
                 Funds.addBudget(allocatedQuantity);
               });
 
@@ -86,7 +84,7 @@ describe('ui-finance: Funds', () => {
 
                 cy.visit(TopMenu.fundPath);
                 FinanceHelp.searchByName(secondFund.name);
-                FinanceHelp.selectFromResultsList();
+                Funds.selectFund(secondFund.name);
                 Funds.addBudget(allocatedQuantity);
               });
           });
@@ -126,6 +124,7 @@ describe('ui-finance: Funds', () => {
       cy.visit(TopMenu.invoicesPath);
       Invoices.createRolloverInvoice(invoice, organization.name);
       Invoices.createInvoiceLineFromPol(orderNumber);
+      // Need to wait, while data will be loaded
       cy.wait(4000);
       Invoices.approveInvoice();
       Invoices.payInvoice();
@@ -143,33 +142,14 @@ describe('ui-finance: Funds', () => {
       });
   });
 
-  // after(() => {
-  //   Orders.deleteOrderApi(firstOrder.id);
-  //   Orders.deleteOrderApi(secondOrder.id);
-  //   Organizations.deleteOrganizationViaApi(organization.id);
-  //   cy.loginAsAdmin({ path:TopMenu.fundPath, waiter: Funds.waitLoading });
-  //   FinanceHelp.searchByName(firstFund.name);
-  //   FinanceHelp.selectFromResultsList();
-  //   Funds.selectBudgetDetails();
-  //   Funds.deleteBudgetViaActions();
-  //   cy.visit(TopMenu.fundPath);
-  //   FinanceHelp.searchByName(secondFund.name);
-  //   FinanceHelp.selectFromResultsList();
-  //   Funds.selectBudgetDetails();
-  //   Funds.deleteBudgetViaActions();
-  //   Funds.checkIsBudgetDeleted();
-  //   Funds.deleteFundViaApi(firstFund.id);
-  //   Funds.deleteFundViaApi(secondFund.id);
-  //   Ledgers.deleteledgerViaApi(defaultLedger.id);
-  //   FiscalYears.deleteFiscalYearViaApi(firstFiscalYear.id);
-  //   FiscalYears.deleteFiscalYearViaApi(secondFiscalYear.id);
-  //   Users.deleteViaApi(user.userId);
-  // });
+  after(() => {
+    Users.deleteViaApi(user.userId);
+  });
 
   it('C186156 Rollover Fiscal Year (thunderjet)', { tags: [testType.criticalPath, devTeams.thunderjet] }, () => {
     FinanceHelp.searchByName(defaultLedger.name);
-    FinanceHelp.selectFromResultsList();
+    Ledgers.selectLedger(defaultLedger.name);
     Ledgers.rollover();
-    Ledgers.fillInRolloverInfo(secondFiscalYear.name);
+    // Ledgers.fillInRolloverInfo(secondFiscalYear.name);
   });
 });
