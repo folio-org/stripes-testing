@@ -9,7 +9,7 @@ describe('MARC Authority management', () => {
   const testData = {};
   const urlToEholdings = '/eholdings/providers/38';
   const note = {
-    title: 'Test Title',
+    title: `Test Title ${getRandomPostfix()}`,
     details: `Test details ${getRandomPostfix()}`,
   }
 
@@ -30,6 +30,17 @@ describe('MARC Authority management', () => {
     Users.deleteViaApi(testData.userProperties.userId);
   });
 
+  it('C527 Notes: Can create notes (spitfire)', { tags: [TestTypes.criticalPath, DevTeams.spitfire] }, () => {
+    cy.visit(urlToEholdings);
+    
+    NotesEholdings.waitLoading();
+    NotesEholdings.createNote(note.title, note.details);
+    NotesEholdings.verifyNoteCreation(note.title, note.details);
+    
+    NotesEholdings.openNoteView(note.title, note.details);
+    NotesEholdings.deleteNote();
+  });
+  
   it('C1300 Delete a note (spitfire)', { tags: [TestTypes.criticalPath, DevTeams.spitfire] }, () => {
     cy.visit(urlToEholdings);
     
