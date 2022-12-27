@@ -85,7 +85,11 @@ const openHoldings = (...holdingToBeOpened) => {
   // don't have elem on page for waiter
   cy.wait(2000);
 };
-const verifyInstanceTitle = (title) => cy.expect(Pane({ titleLabel: including(title) }).exists());
+const verifyInstanceTitle = (title) => {
+  // don't have elem on page for waiter
+  cy.wait(2000);
+  cy.expect(Pane({ titleLabel: including(title) }).exists());
+};
 const verifyInstanceSource = (sourceValue) => cy.expect(source.has({ value: sourceValue }));
 const verifyLastUpdatedDate = () => {
   const updatedDate = DateTools.getFormattedDateWithSlashes({ date: new Date() });

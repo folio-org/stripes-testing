@@ -1,4 +1,5 @@
 import { Button, TextField, Pane, Select, HTML, including } from '../../../../interactors';
+import SelectUser from './selectUser';
 
 const actionsButton = Button('Actions');
 const newRequestButton = Button('New');
@@ -9,13 +10,22 @@ const enterRequesterBarcodeButton = Button({ id: 'clickable-select-requester' })
 const saveAndCloseButton = Button('Save & close');
 const selectServicePoint = Select({ name:'pickupServicePointId' });
 
+function addRequester(userName) {
+  cy.do(Button({ id:'requestform-addrequest' }).click());
+  SelectUser.searchUser(userName);
+  SelectUser.selectUserFromList(userName);
+}
+
+function openNewRequestPane() {
+  cy.do([
+    actionsButton.click(),
+    newRequestButton.click()
+  ]);
+}
+
 export default {
-  openNewRequestPane() {
-    cy.do([
-      actionsButton.click(),
-      newRequestButton.click()
-    ]);
-  },
+  addRequester,
+  openNewRequestPane,
 
   fillRequiredFields(newRequest) {
     cy.do(requesterBarcodeInput.fillIn(newRequest.requesterBarcode));
@@ -38,7 +48,7 @@ export default {
   waitLoading:() => cy.expect(Pane({ title: 'Request Detail' }).exists()),
 
   createNewRequest(newRequest) {
-    this.openNewRequestPane();
+    openNewRequestPane();
     this.fillRequiredFields(newRequest);
     this.choosepickupServicePoint(newRequest.pickupServicePoint);
     this.saveRequestAndClose();
@@ -47,10 +57,28 @@ export default {
 
   createDeliveryRequest(newRequest) {
     this.openNewRequestPane();
+    cy.pause();
     this.fillRequiredFields(newRequest);
+    // need to wait untill instanceId is uploaded
+    cy.wait(2500);
     this.saveRequestAndClose();
-    // TODO investigate what to wait
-    cy.wait(1000);
+  },
+
+  createWithUserName(newRequest) {
+    openNewRequestPane();
+    addRequester(newRequest.requesterName);
+    cy.intercept('/proxiesfor?*').as('getUsers');
+    cy.do(enterRequesterBarcodeButton.click());
+    cy.expect(selectServicePoint.exists);
+    cy.wait('@getUsers');
+    cy.do(itemBarcodeInput.fillIn(newRequest.itemBarcode));
+    cy.intercept('/circulation/loans?*').as('getLoans');
+    cy.do(enterItemBarcodeButton.click());
+    cy.wait('@getLoans');
+    // need to wait untill instanceId is uploaded
+    cy.wait(2500);
+    this.choosepickupServicePoint(newRequest.pickupServicePoint);
+    this.saveRequestAndClose();
     this.waitLoading();
   }
 };
