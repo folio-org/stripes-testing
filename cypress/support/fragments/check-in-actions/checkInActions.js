@@ -1,5 +1,17 @@
 import uuid from 'uuid';
-import { Button, including, TextField, MultiColumnListRow, MultiColumnList, MultiColumnListCell, HTML, Pane, Modal, PaneContent, or } from '../../../../interactors';
+import {
+  Button,
+  including,
+  TextField,
+  MultiColumnListRow,
+  MultiColumnList,
+  MultiColumnListCell,
+  HTML,
+  Pane,
+  Modal,
+  PaneContent,
+  or,
+} from '../../../../interactors';
 import { REQUEST_METHOD } from '../../constants';
 import { getLongDelay } from '../../utils/cypressTools';
 import ItemView from '../inventory/inventoryItem/itemView';
@@ -7,6 +19,9 @@ import ItemView from '../inventory/inventoryItem/itemView';
 const loanDetailsButton = Button('Loan details');
 const patronDetailsButton = Button('Patron details');
 const itemDetailsButton = Button('Item details');
+const requestDetailsButton = Button('Request details');
+const printTransitSlipButton = Button('Print transit slip');
+const printHoldSlipButton = Button('Print hold slip');
 const newFeeFineButton = Button('New Fee/Fine');
 const checkInButton = Button('Check in');
 const itemBarcodeField = TextField({ name:'item.barcode' });
@@ -17,6 +32,16 @@ const checkOutButton = confirmModal.find(Button('Check in'));
 const endSessionButton = Button('End session');
 const feeFineDetailsButton = Button('Fee/fine details');
 const feeFinePane = PaneContent({ id: 'pane-account-action-history-content' });
+
+const actionsButtons = {
+  loanDetails: loanDetailsButton,
+  patronDetails: patronDetailsButton,
+  itemDetails: itemDetailsButton,
+  requestDetails: requestDetailsButton,
+  newFeeFine: newFeeFineButton,
+  printTransitSlip: printTransitSlipButton,
+  printHoldSlip: printHoldSlipButton,
+};
 
 const waitLoading = () => {
   cy.expect(TextField({ name: 'item.barcode' }).exists());
@@ -54,15 +79,12 @@ export default {
     cy.wait('@getTags', getLongDelay());
     ItemView.waitLoading();
   },
-  checkActionsMenuOptions:() => {
+  checkActionsMenuOptions: (optionsToChek = ['loanDetails', 'patronDetails', 'itemDetails', 'newFeeFine']) => {
     cy.expect(availableActionsButton.exists());
     cy.do(availableActionsButton.click());
-    cy.expect([
-      loanDetailsButton.exists(),
-      patronDetailsButton.exists(),
-      itemDetailsButton.exists(),
-      newFeeFineButton.exists(),
-    ]);
+    optionsToCheck.forEach((option) => {
+      cy.expect(actionsButtons[option].exists());
+    });
     cy.do(availableActionsButton.click());
   },
   openCheckInPane: () => {
@@ -89,6 +111,14 @@ export default {
       itemDetailsButton.click()
     ]);
     cy.expect(Pane(including(itemBarcode)).exists());
+  },
+  openRequestDetails: (itemBarcode) => {
+    cy.do([
+      availableActionsButton.click(),
+      requestDetailsButton.click()
+    ]);
+    cy.expect(Pane(including('Request Detail')).exists());
+    cy.expect(HTML(including(itemBarcode)).exists());
   },
   openNewfeefinesPane: () => {
     cy.do([
