@@ -86,7 +86,7 @@ describe('ui-users:', () => {
           })
         // create loan policy
           .then(() => {
-            LoanPolicyActions.createApi(LoanPolicyActions.getDefaultRollingLoanPolicy(limitOfItem))
+            LoanPolicyActions.createViaApi(LoanPolicyActions.getDefaultRollingLoanPolicy(limitOfItem))
               .then((policy) => {
                 loanPolicyForCourseReserves = policy;
               });
