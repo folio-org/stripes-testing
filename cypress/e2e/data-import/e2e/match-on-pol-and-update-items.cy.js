@@ -250,7 +250,7 @@ describe('ui-data-import: Match on POL and update related Instance, Holdings, It
 
   const openOrder = (number) => {
     Orders.searchByParameter('PO number', number);
-    Helper.selectFromResultsList();
+    Orders.selectFromResultsList();
     Orders.openOrder();
   };
 
