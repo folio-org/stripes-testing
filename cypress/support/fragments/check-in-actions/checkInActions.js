@@ -82,7 +82,7 @@ export default {
   checkActionsMenuOptions: (optionsToChek = ['loanDetails', 'patronDetails', 'itemDetails', 'newFeeFine']) => {
     cy.expect(availableActionsButton.exists());
     cy.do(availableActionsButton.click());
-    optionsToChek.forEach((option) => {
+    optionsToCheck.forEach((option) => {
       cy.expect(actionsButtons[option].exists());
     });
     cy.do(availableActionsButton.click());

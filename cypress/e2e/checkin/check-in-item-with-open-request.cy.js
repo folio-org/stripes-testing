@@ -28,7 +28,7 @@ describe('Check In - Actions', () => {
   const userData = {};
   const requestUserData = {};
   const patronGroup = {
-    name: `groupChekIn ${getRandomPostfix()}`,
+    name: `groupCheckIn ${getRandomPostfix()}`,
   };
   const testData = {
     servicePointS: ServicePoints.getDefaultServicePointWithPickUpLocation('S', uuid()),
