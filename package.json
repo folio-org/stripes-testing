@@ -31,7 +31,6 @@
     "@babel/core": "^7.19.3",
     "@babel/eslint-parser": "^7.19.1",
     "@cypress/request": "2.88.7",
-    "@folio/eslint-config-stripes": "^6.1.0",
     "@interactors/with-cypress": "^1.0.0-rc1.2",
     "@shelex/cypress-allure-plugin": "^2.23.0",
     "bigtest": "^0.14.0",

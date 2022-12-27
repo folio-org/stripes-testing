@@ -15,6 +15,7 @@ import InventoryInstance from '../../support/fragments/inventory/inventoryInstan
 import Checkout from '../../support/fragments/checkout/checkout';
 import LoansPage from '../../support/fragments/loans/loansPage';
 import ChangeDueDateForm from '../../support/fragments/loans/changeDueDateForm';
+import searchPane from '../../support/fragments/circulation-log/searchPane';
 
 const ITEM_BARCODE = `123${getRandomPostfix()}`;
 let userId;
@@ -186,4 +187,22 @@ describe('circulation-log', () => {
     SearchPane.searchByChangedDueDate();
     SearchPane.verifyResultCells();
   });
+
+  it('C16997 Filter circulation log by Claimed returned (firebird)', { tags: [TestTypes.criticalPath, devTeams.firebird] }, () => {
+    cy.login(Cypress.env('diku_login'), Cypress.env('diku_password'));
+    cy.visit(TopMenu.usersPath);
+
+    UsersSearchPane.searchByStatus('Active');
+    UsersSearchPane.searchByKeywords(userId);
+    UsersSearchPane.openUser(userId);
+    UsersCard.openLoans();
+    UsersCard.showOpenedLoans();
+    LoansPage.checkAll();
+    LoansPage.claimReturnedAndConfirm('C16997 Filter circulation log by Claimed returned');
+
+    cy.visit(TopMenu.circulationLogPath);
+    SearchPane.searchByClaimedReturned();
+    SearchPane.verifyResultCells();
+
+  })
 });
