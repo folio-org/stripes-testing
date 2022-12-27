@@ -11,7 +11,6 @@ import Invoices from '../../support/fragments/invoices/invoices';
 import VendorAddress from '../../support/fragments/invoices/vendorAddress';
 
 describe('ui-invoices: create', () => {
-
   const invoice = { ...NewInvoice.defaultUiInvoice };
   const vendorPrimaryAddress = { ...VendorAddress.vendorAddress };
   const defaultAcquisitionUnit = { ...AcquisitionUnits.defaultAcquisitionUnit };
@@ -36,7 +35,7 @@ describe('ui-invoices: create', () => {
       .then(userProperties => {
         user = userProperties;
       });
-      Organizations.getOrganizationViaApi({ query: `name=${invoice.vendorName}` })
+    Organizations.getOrganizationViaApi({ query: `name=${invoice.vendorName}` })
       .then(organization => {
         invoice.accountingCode = organization.erpCode;
         Object.assign(vendorPrimaryAddress,
@@ -47,8 +46,8 @@ describe('ui-invoices: create', () => {
   });
 
   after(() => {
-    cy.loginAsAdmin({ path:SettingsMenu.acquisitionUnitsPath , waiter: AcquisitionUnits.waitLoading });
-    
+    cy.loginAsAdmin({ path:SettingsMenu.acquisitionUnitsPath, waiter: AcquisitionUnits.waitLoading });
+
     AcquisitionUnits.unAssignAdmin(defaultAcquisitionUnit.name);
     AcquisitionUnits.delete(defaultAcquisitionUnit.name);
 
@@ -76,7 +75,7 @@ describe('ui-invoices: create', () => {
     cy.loginAsAdmin({ path:SettingsMenu.acquisitionUnitsPath, waiter: AcquisitionUnits.waitLoading });
     AcquisitionUnits.edit(defaultAcquisitionUnit.name);
     AcquisitionUnits.selectViewCheckbox();
-    
+
     cy.login(user.username, user.password, { path:TopMenu.invoicesPath, waiter: Invoices.waitLoading });
     Invoices.searchByNumber(invoice.invoiceNumber);
     Invoices.selectInvoice(invoice.invoiceNumber);
