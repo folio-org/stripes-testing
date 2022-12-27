@@ -141,4 +141,8 @@ export default {
     path: `finance/ledgers/${ledgerId}`,
     isDefaultSearchParamsRequired: false,
   }),
+
+  selectLedger:(ledgerName) => {
+    cy.do(Pane({ id: 'ledger-results-pane' }).find(Link(ledgerName)).click());
+  },
 };

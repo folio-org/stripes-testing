@@ -56,6 +56,12 @@ describe('bulk-edit', () => {
         });
     });
 
+    beforeEach('select item tab', () => {
+      cy.visit(TopMenu.bulkEditPath);
+      BulkEditSearchPane.checkItemsRadio();
+      BulkEditSearchPane.selectRecordIdentifier('Item barcode');
+    });
+
     after('delete test data', () => {
       items.forEach(item => {
         InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(item.itemBarcode);
@@ -65,8 +71,6 @@ describe('bulk-edit', () => {
     });
 
     it('C358939 Verify that 10 records returned in preview of matched records after editing (firebird)', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
-      BulkEditSearchPane.selectRecordIdentifier('Item barcode');
-
       BulkEditSearchPane.uploadFile(itemBarcodesFileName);
       BulkEditSearchPane.waitFileUploading();
 
@@ -79,12 +83,9 @@ describe('bulk-edit', () => {
 
       BulkEditActions.verifySuccessBanner(10);
       BulkEditSearchPane.verifyLocationChanges(10, 'Annex');
-      BulkEditActions.newBulkEdit();
     });
 
     it('C359210 Verify the in-app bulk edit permanent loan type (firebird)', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
-      BulkEditSearchPane.selectRecordIdentifier('Item barcode');
-
       BulkEditSearchPane.uploadFile(itemBarcodesFileName);
       BulkEditSearchPane.waitFileUploading();
 
@@ -108,13 +109,6 @@ describe('bulk-edit', () => {
     });
 
     it('C359225 Verify the in-app bulk edit temporary loan type (firebird)', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
-      cy.login(user.username, user.password, {
-        path: TopMenu.bulkEditPath,
-        waiter: BulkEditSearchPane.waitLoading
-      });
-
-      BulkEditSearchPane.selectRecordIdentifier('Item barcode');
-
       BulkEditSearchPane.uploadFile(itemBarcodesFileName);
       BulkEditSearchPane.waitFileUploading();
 
@@ -135,13 +129,6 @@ describe('bulk-edit', () => {
     });
 
     it('C359226 Verify user can clear temporary loan type value (firebird)', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
-      cy.login(user.username, user.password, {
-        path: TopMenu.bulkEditPath,
-        waiter: BulkEditSearchPane.waitLoading
-      });
-
-      BulkEditSearchPane.selectRecordIdentifier('Item barcode');
-
       BulkEditSearchPane.uploadFile(itemBarcodesFileName);
       BulkEditSearchPane.waitFileUploading();
 

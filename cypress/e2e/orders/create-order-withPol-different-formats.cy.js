@@ -49,7 +49,7 @@ describe('ui-orders: Orders and Order lines', () => {
 
                 cy.loginAsAdmin({ path:TopMenu.fundPath, waiter: Funds.waitLoading });
                 FinanceHelp.searchByName(defaultFund.name);
-                FinanceHelp.selectFromResultsList();
+                Funds.selectFund(defaultFund.name);
                 Funds.addBudget(allocatedQuantity);
               });
           });
@@ -69,7 +69,7 @@ describe('ui-orders: Orders and Order lines', () => {
     Orders.deleteOrderApi(order.id);
     Organizations.deleteOrganizationViaApi(organization.id);
     FinanceHelp.searchByName(defaultFund.name);
-    FinanceHelp.selectFromResultsList();
+    Funds.selectFund(defaultFund.name);
     Funds.selectBudgetDetails();
     Funds.deleteBudgetViaActions();
     // Need to wait,while data will be deleted

@@ -15,6 +15,7 @@ export default {
   uiNotesItemCreate:{ internal: 'ui-notes.item.create', gui: 'Notes: Can create a note' },
   uiNotesItemView: { internal: 'ui-notes.item.view', gui: 'Notes: Can view a note' },
   uiNotesItemEdit:{ internal: 'ui-notes.item.edit', gui: 'Notes: Can edit a note' },
+  uiNotesItemDelete:{ internal: 'ui-notes.item.delete', gui: 'Notes: Can delete a note' },
   // Agreements
   uiAgreementsAgreementsEdit: { internal: 'ui-agreements.agreements.edit', gui: 'Agreements: Edit agreements' },
   uiAgreementsAgreementsDelete: { internal: 'ui-agreements.agreements.delete', gui: 'Agreements: Delete agreements' },
@@ -183,6 +184,18 @@ export default {
   uiFinanceViewEditDeleteLedger: { internal: 'ui-finance.ledger.delete', gui: 'Finance: View, edit, delete ledger' },
   uiSettingsFinanceViewEditCreateDeleter: { internal: 'ui-finance.settings.all', gui: 'Settings (Finance): View, edit, create, delete' },
   uiFinanceAssignAcquisitionUnitsToNewRecord: { internal: 'ui-finance.acq.unit.assignment.assign', gui: 'Finance: Assign acquisition units to new record' },
+  // Organizations
+  uiOrganizationsAssignAcquisitionUnitsToNewOrganization: { internal: 'ui-organizations.acqUnits.assig', gui: 'Organizations: Assign acquisition units to new organization' },
+  uiOrganizationsIntegrationUsernamesAndPasswordsView: { internal: 'ui-organizations.integrations.creds.view', gui: 'Organizations: Integration usernames and passwords: view' },
+  uiOrganizationsIntegrationUsernamesAndPasswordsViewEdit: { internal: 'ui-organizations.integrations.creds.edit', gui: 'Organizations: Integration usernames and passwords: view, edit' },
+  uiOrganizationsInterfaceUsernamesAndPasswordsView: { internal: 'ui-organizations.creds.view', gui: 'Organizations: Interface usernames and passwords: view' },
+  uiOrganizationsInterfaceUsernamesAndPasswordsViewEditCreateDelete: { internal: 'ui-organizations.creds.manage', gui: 'Organizations: Interface usernames and passwords: view, edit, create, delete' },
+  uiOrganizationsManageAcquisitionUnits: { internal: 'ui-organizations.acqUnits.manage', gui: 'Organizations: Manage acquisition units' },
+  uiOrganizationsView: { internal: 'ui-organizations.view', gui: 'Organizations: View' },
+  uiOrganizationsViewEdit: { internal: 'ui-organizations.edit', gui: 'Organizations: View, edit' },
+  uiOrganizationsViewEditCreate: { internal: 'ui-organizations.create', gui: 'Organizations: View, edit, create' },
+  uiOrganizationsViewEditDelete: { internal: 'ui-organizations.delete', gui: 'Organizations: View, edit, delete' },
+  uiSettingsOrganizationsCanViewAndEditSettings: { internal: 'ui-organizations.settings', gui: 'Settings (Organizations): Can view and edit settings' },
   // Settings
   uiSettingsAcquisitionUnitsViewEditCreateDelete: { internal: 'ui-acquisition-units.settings.all', gui: 'Settings (acquisition units): Can view, edit, create and delete acquisition units' },
   uiInventorySettingsFastAdd: { internal: 'ui-inventory.settings.fast-add', gui: 'Settings (Inventory): Edit fast add settings' },

@@ -37,6 +37,11 @@ describe('bulk-edit', () => {
         });
     });
 
+    beforeEach('select item tab', () => {
+      BulkEditSearchPane.checkItemsRadio();
+      BulkEditSearchPane.selectRecordIdentifier('Item barcode');
+    });
+
     after('delete test data', () => {
       InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(item.itemBarcode);
       Users.deleteViaApi(user.userId);
@@ -44,8 +49,6 @@ describe('bulk-edit', () => {
     });
 
     it('C353232 Verify error accordion during matching (In app approach) (firebird)', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
-      BulkEditSearchPane.selectRecordIdentifier('Item barcode');
-
       BulkEditSearchPane.uploadFile(invalidItemBarcodesFileName);
       BulkEditSearchPane.waitFileUploading();
 
@@ -59,8 +62,6 @@ describe('bulk-edit', () => {
     });
 
     it('C350941 Verify uploading file with identifiers -- In app approach (firebird)', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
-      BulkEditSearchPane.selectRecordIdentifier('Item barcode');
-
       BulkEditSearchPane.uploadFile(invalidItemBarcodesFileName);
       BulkEditSearchPane.waitFileUploading();
 
@@ -115,11 +116,10 @@ describe('bulk-edit', () => {
     });
 
     it('C357035 Verify elements of the bulk edit app -- In app approach (firebird)', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
-      BulkEditSearchPane.selectRecordIdentifier('Item barcode');
-
       BulkEditSearchPane.clickToBulkEditMainButton();
       BulkEditSearchPane.verifyDefaultFilterState();
 
+      BulkEditSearchPane.checkItemsRadio();
       BulkEditSearchPane.selectRecordIdentifier('Item barcode');
 
       BulkEditSearchPane.uploadFile(invalidItemBarcodesFileName);
@@ -127,6 +127,38 @@ describe('bulk-edit', () => {
 
       BulkEditSearchPane.clickToBulkEditMainButton();
       BulkEditSearchPane.verifyDefaultFilterState();
+    });
+
+    it('C360089 Verify "Inventory - holdings" option on "Bulk edit" app (firebird)', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
+      BulkEditSearchPane.checkHoldingsRadio();
+      BulkEditSearchPane.verifyHoldingIdentifiers();
+
+      [
+        {
+          identifier: 'Holdings UUIDs',
+          label: 'Select a file with holdings UUIDs',
+          pageText: 'Drag and drop or choose file with holdings UUIDs',
+        },
+        {
+          identifier: 'Holdings HRIDs',
+          label: 'Select a file with holdings HRIDs',
+          pageText: 'Drag and drop or choose file with holdings HRIDs',
+        },
+        {
+          identifier: 'Instance HRIDs',
+          label: 'Select a file with instance HRIDs',
+          pageText: 'Drag and drop or choose file with instance HRIDs',
+        },
+        {
+          identifier: 'Item barcodes',
+          label: 'Select a file with item barcode',
+          pageText: 'Drag and drop or choose file with item barcode',
+        },
+      ].forEach(checker => {
+        BulkEditSearchPane.selectRecordIdentifier(checker.identifier);
+        BulkEditSearchPane.verifyInputLabel(checker.label);
+        BulkEditSearchPane.verifyInputLabel(checker.pageText);
+      });
     });
   });
 });
