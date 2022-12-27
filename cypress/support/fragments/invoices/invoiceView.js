@@ -1,4 +1,4 @@
-import { MultiColumnListCell, Section, including, KeyValue, Pane, HTML } from '../../../../interactors';
+import { MultiColumnListCell, Section, including, KeyValue, Pane, HTML, MultiColumnList, Link } from '../../../../interactors';
 import invoices from './invoices';
 import TopMenu from '../topMenu';
 
@@ -14,7 +14,7 @@ export default {
 
       cy.visit(TopMenu.invoicesPath);
       invoices.searchByNumber(invoiceOfNumber);
-      cy.do(MultiColumnListCell({ row: 0, columnIndex: 0 }).click());
+      cy.do(MultiColumnList({ id:'invoices-list' }).find(Link(invoiceNumber)).click());
 
       const invoiceDate = KeyValue('Invoice date');
       const invoiceStatus = KeyValue('Status');
