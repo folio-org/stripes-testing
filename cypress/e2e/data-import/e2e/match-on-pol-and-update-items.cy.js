@@ -258,7 +258,7 @@ describe('ui-data-import: Match on POL and update related Instance, Holdings, It
     cy.visit(TopMenu.ordersPath);
     Orders.resetFilters();
     Orders.searchByParameter('PO number', number);
-    Orders.selectFromResultsList();
+    Orders.selectFromResultsList(number);
     OrderView.openPolDetails(title);
     OrderLines.openReceiving();
     Receiving.checkIsPiecesCreated(title);
