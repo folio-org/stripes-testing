@@ -36,7 +36,7 @@ import FileManager from '../../../support/utils/fileManager';
 
 describe('ui-data-import: Match on POL and update related Instance, Holdings, Item', () => {
   const firstItem = {
-    title: 'Sport and sociology. Dominic Malcolm.',
+    title: 'Agrarianism and capitalism in early Georgia, 1732-1743 / Jay Jordan Butler.',
     productId: '9782266111560',
     quantity: '1',
     price: '20',
@@ -44,13 +44,12 @@ describe('ui-data-import: Match on POL and update related Instance, Holdings, It
   };
 
   const secondItem = {
-    title: 'South Asian texts in history : critical engagements with Sheldon Pollock. edited by Yigal Bronner, Whitney Cox, and Lawrence McCrea.',
+    title: 'Evolution of the Earth / Donald R. Prothero, Robert H. Dott, Jr.',
     productId: '9783161484100',
     quantity: '1',
     price: '20'
   };
 
-  const titles = [firstItem.title, secondItem.title];
   let firstOrderNumber;
   let secondOrderNumber;
   let vendorId;
@@ -60,6 +59,7 @@ describe('ui-data-import: Match on POL and update related Instance, Holdings, It
   let materialTypeId;
   let user = {};
   let servicePointId;
+  let instanceHrid;
 
   // unique profile names
   const jobProfileName = `C350590 autotestJobProf${getRandomPostfix()}`;
@@ -216,30 +216,35 @@ describe('ui-data-import: Match on POL and update related Instance, Holdings, It
       ActionProfiles.deleteActionProfile(profile.actionProfile.name);
       FieldMappingProfiles.deleteFieldMappingProfile(profile.mappingProfile.name);
     });
-    titles.forEach(title => {
-      cy.getInstance({ limit: 1, expandAll: true, query: `"title"=="${title}"` })
-        .then((instance) => {
-          itemId = instance.items[0].id;
+    cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${instanceHrid}"` })
+      .then((instance) => {
+        cy.deleteItem(instance.items[0].id);
+        cy.deleteHoldingRecordViaApi(instance.holdings[0].id);
+        InventoryInstance.deleteInstanceViaApi(instance.id);
+      });
 
-          cy.getItems({ query: `"id"=="${itemId}"` })
-            .then((item) => {
-              item.barcode = itemBarcode;
-              ItemRecordView.editItem(item)
-                .then(() => {
-                  CheckInActions.checkinItemViaApi({
-                    itemBarcode: item.barcode,
-                    servicePointId,
-                    checkInDate: new Date().toISOString(),
-                  })
-                    .then(() => {
-                      cy.deleteItem(itemId);
-                      cy.deleteHoldingRecordViaApi(instance.holdings[0].id);
-                      InventoryInstance.deleteInstanceViaApi(instance.id);
-                    });
-                });
-            });
-        });
-    });
+    cy.getInstance({ limit: 1, expandAll: true, query: `"title"=="${secondItem.title}"` })
+      .then((instance) => {
+        itemId = instance.items[0].id;
+
+        cy.getItems({ query: `"id"=="${itemId}"` })
+          .then((item) => {
+            item.barcode = itemBarcode;
+            ItemRecordView.editItem(item)
+              .then(() => {
+                CheckInActions.checkinItemViaApi({
+                  itemBarcode: item.barcode,
+                  servicePointId,
+                  checkInDate: new Date().toISOString(),
+                })
+                  .then(() => {
+                    cy.deleteItem(itemId);
+                    cy.deleteHoldingRecordViaApi(instance.holdings[0].id);
+                    InventoryInstance.deleteInstanceViaApi(instance.id);
+                  });
+              });
+          });
+      });
     NewLocation.deleteViaApiIncludingInstitutionCampusLibrary(
       location.institutionId,
       location.campusId,
@@ -320,7 +325,7 @@ describe('ui-data-import: Match on POL and update related Instance, Holdings, It
             checkReceivedPiece(secondOrderNumber, secondItem.title);
           });
 
-        DataImport.editMarcFile('marcFileForMatchOnPol.mrc', editedMarcFileName, ['test'], [firstOrderNumber]);
+        DataImport.editMarcFile('marcFileForC350590.mrc', editedMarcFileName, ['test'], [firstOrderNumber]);
       });
 
     // create mapping and action profiles
@@ -361,6 +366,7 @@ describe('ui-data-import: Match on POL and update related Instance, Holdings, It
 
     // check is items updated
     FileDetails.openInstanceInInventory('Updated');
+    InventoryInstance.getAssignedHRID().then(initialInstanceHrId => { instanceHrid = initialInstanceHrId; });
     InventoryInstance.checkIsInstanceUpdated();
     InventoryInstance.openHoldingView();
     HoldingsRecordView.checkHoldingsType('Monograph');
