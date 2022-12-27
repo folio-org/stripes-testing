@@ -24,7 +24,7 @@ export default {
     cy.do(Modal('Items awaiting pickup').find(closeButton).click());
   },
 
-  confirmMultipieceItemModal:() => {
+  confirmMultipieceCheckInModal:() => {
     cy.do(Modal('Confirm multipiece check in').find(Button('Check in')).click());
-  },
+  }
 };

@@ -6,6 +6,8 @@ import {
   Button,
   Link,
   PaneHeader,
+  Pane,
+  MultiColumnListCell
 } from '../../../../interactors';
 
 export default {
@@ -20,6 +22,10 @@ export default {
       TextField({ id: 'input-user-search' }).fillIn(keywords),
       Button({ id: 'submit-user-search' }).click()
     ]);
+  },
+
+  selectUserFromList: (userName) => {
+    cy.do(Pane({ id:'users-search-results-pane' }).find(MultiColumnListCell(userName)).click());
   },
 
   openUser(userId) {

@@ -12,12 +12,21 @@ import {
   including,
   PaneContent
 } from '../../../../interactors';
+import SelectUser from './selectUser';
 
 const modal = Modal('Confirm multipiece check out');
 const endSessionButton = Button('End session');
 const userPane = PaneContent({ id: 'patron-details-content' });
+
+function addPatron(userName) {
+  cy.do(Button({ id:'clickable-find-user' }).click());
+  SelectUser.searchUser(userName);
+  SelectUser.selectUserFromList(userName);
+}
+
 export default {
   modal,
+  addPatron,
   checkOutUser(userBarcode, otherParameter) {
     return cy.do([
       TextField('Patron identifier').fillIn(otherParameter || userBarcode),
@@ -70,7 +79,7 @@ export default {
   },
 
   endCheckOutSessionAutomatically:() => {
-    //this timeout is needed to wait 60 seconds until the action is automatically done
+    // this timeout is needed to wait 60 seconds until the action is automatically done
     cy.intercept('/circulation/end-patron-action-session').as('end-patron-session');
     cy.wait('@end-patron-session', { timeout: 99000 }).then(xhr => {
       cy.wrap(xhr.response.statusCode).should('eq', 204);
@@ -97,6 +106,11 @@ export default {
     cy.expect(MultiColumnList({ id: 'list-items-checked-out' }).find(HTML(including(barcode))).exists());
   },
 
+  cancelMultipleCheckOutModal:() => {
+    cy.do(modal.find(Button('Cancel')).click());
+    cy.expect(modal.absent());
+  },
+
   openLoanDetails() {
     cy.do(Button({ id: 'available-item-actions-button' }).click());
     cy.do(Button('Loan details').click());
@@ -104,9 +118,9 @@ export default {
   },
 
   changeDueDateToPast(minutes) {
-    const todayFormatted = {}
-    let today = new Date();
-    let month = today.getMonth() < 9 ? 0 + (today.getMonth() + 1).toString() : today.getMonth() + 1;
+    const todayFormatted = {};
+    const today = new Date();
+    const month = today.getMonth() < 9 ? 0 + (today.getMonth() + 1).toString() : today.getMonth() + 1;
     todayFormatted.formattedDate = month + '/' + today.getDate() + '/' + today.getFullYear();
     today.setUTCMinutes(today.getMinutes() - minutes);
     todayFormatted.formattedTime = today.toLocaleTimeString('en-US', { timeZone: 'UTC', hour: '2-digit', minute: '2-digit' });
@@ -118,5 +132,20 @@ export default {
       Button({ text: 'Save and close' }).click(),
       Button({ text: 'Close' }).click(),
     ]);
+  },
+
+  checkOutItemWithUserName(userName, itemBarcode) {
+    addPatron(userName);
+    cy.intercept('/circulation/loans?*').as('getLoans');
+    cy.do(Button({ id: 'clickable-find-patron' }).click());
+    cy.expect(KeyValue('Borrower').exists());
+    cy.wait('@getLoans');
+    cy.intercept('/circulation/requests?*').as('getRequests');
+    cy.do(TextField({ name: 'item.barcode' }).fillIn(itemBarcode));
+    cy.wait('@getRequests');
+    cy.wait(2000);
+    cy.do(Button({ id: 'clickable-add-item' }).click());
+    // waiters needs for check out item in loop
+    cy.wait(1000);
   },
 };

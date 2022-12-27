@@ -13,7 +13,7 @@ const itemBarcodeField = TextField({ name:'item.barcode' });
 const addItemButton = Button({ id: 'clickable-add-item' });
 const availableActionsButton = Button({ id: 'available-actions-button-0' });
 const confirmModal = Modal('Confirm multipiece check in');
-const checkOutButton = confirmModal.find(Button('Check in'));
+const checkInButtonInModal = confirmModal.find(Button('Check in'));
 const endSessionButton = Button('End session');
 const feeFineDetailsButton = Button('Fee/fine details');
 const feeFinePane = PaneContent({ id: 'pane-account-action-history-content' });
@@ -109,7 +109,7 @@ export default {
     });
   },
   confirmMultipleItemsCheckin(barcode) {
-    cy.do(checkOutButton.click());
+    cy.do(checkInButtonInModal.click());
     cy.expect(MultiColumnList({ id:'list-items-checked-in' }).find(HTML(including(barcode))).exists());
   },
   verifyLastCheckInItem(itemBarcode) {
