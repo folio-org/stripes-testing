@@ -102,7 +102,8 @@ describe('ui-data-import: Match on VRN and update related Instance, Holdings, It
       permissions.uiReceivingViewEditCreate.gui,
       permissions.uiInventoryViewInstances.gui,
       permissions.uiQuickMarcQuickMarcBibliographicEditorView.gui,
-      permissions.uiInventoryStorageModule.gui
+      permissions.uiInventoryStorageModule.gui,
+      permissions.remoteStorageView.gui
     ]).then(userProperties => {
       user = userProperties;
     })
