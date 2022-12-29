@@ -57,7 +57,6 @@ export default {
 
   createDeliveryRequest(newRequest) {
     this.openNewRequestPane();
-    cy.pause();
     this.fillRequiredFields(newRequest);
     // need to wait untill instanceId is uploaded
     cy.wait(2500);
