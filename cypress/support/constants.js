@@ -11,6 +11,11 @@ export const REQUEST_METHOD = {
   PUT: 'PUT',
 };
 
+export const LOAN_POLICY_NAMES = {
+  EXAMPLE_LOAN: 'Example Loan Policy',
+  HOLD_ONLY: 'One hour',
+};
+
 export const REQUEST_POLICY_NAMES = {
   ALLOW_ALL: 'Allow All',
   HOLD_ONLY: 'Hold only',
