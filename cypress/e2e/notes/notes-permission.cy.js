@@ -5,7 +5,7 @@ import Permissions from '../../support/dictionary/permissions';
 import NotesEholdings from '../../support/fragments/notes/notesEholdings'
 import Users from '../../support/fragments/users/users';
 
-describe('MARC Authority management', () => {
+describe('Notes', () => {
   const testData = {};
   const urlToEholdings = '/eholdings/providers/38';
   const note = {
