@@ -1,3 +1,4 @@
+import uuid from 'uuid';
 import devTeams from '../../../../support/dictionary/devTeams';
 import testTypes from '../../../../support/dictionary/testTypes';
 import OverdueFinePolicies from '../../../../support/fragments/settings/circulation/fee-fine/overdueFinePolicies';
@@ -5,12 +6,11 @@ import SettingsMenu from '../../../../support/fragments/settingsMenu';
 import TopMenu from '../../../../support/fragments/topMenu';
 import Permissions from '../../../../support/dictionary/permissions';
 import PatronGroups from '../../../../support/fragments/settings/users/patronGroups';
-import getRandomPostfix from '../../../../support/utils/stringTools';
+import getRandomPostfix, { getTestEntityValue } from '../../../../support/utils/stringTools';
 import InventoryInstances from '../../../../support/fragments/inventory/inventoryInstances';
 import generateItemBarcode from '../../../../support/utils/generateItemBarcode';
 import LoanPolicy from '../../../../support/fragments/circulation/loan-policy';
-import uuid from 'uuid';
-import { getTestEntityValue } from '../../../../support/utils/stringTools';
+
 import FixedDueDateSchedules from '../../../../support/fragments/circulation/fixedDueDateSchedules';
 import OverdueFinePolicy from '../../../../support/fragments/circulation/overdue-fine-policy';
 import LostItemFeePolicy from '../../../../support/fragments/circulation/lost-item-fee-policy';
@@ -34,7 +34,7 @@ describe('ui-circulation-settings: overdue fine policies management', () => {
   const instance = {
     instanceName: `feeInstanceTest_${getRandomPostfix()}`,
     instanceBarcode: generateItemBarcode(),
-  }
+  };
   const loanPolicyBody = (scheduleId) => {
     return {
       id: uuid(),
@@ -49,7 +49,7 @@ describe('ui-circulation-settings: overdue fine policies management', () => {
       },
       renewable: false,
     };
-  }
+  };
   const ownerData = {};
   let loanPolicy;
   const overdueFinePolicyBody = {
@@ -61,8 +61,8 @@ describe('ui-circulation-settings: overdue fine policies management', () => {
     name: getTestEntityValue(),
     description: 'description',
     id: uuid(),
-    "overdueFine": { "quantity": "1.00", "intervalId": "minute" },
-    "overdueRecallFine": { "quantity": "3.00", "intervalId": "minute" }
+    'overdueFine': { 'quantity': '1.00', 'intervalId': 'minute' },
+    'overdueRecallFine': { 'quantity': '3.00', 'intervalId': 'minute' }
   };
   let overdueFinePolicy;
   let lostItemFeePolicy;
@@ -84,7 +84,7 @@ describe('ui-circulation-settings: overdue fine policies management', () => {
             userData.userId = userProperties.userId;
             userData.barcode = userProperties.barcode;
             userData.lastname = userProperties.lastName;
-          })
+          });
       }).then(() => {
         InventoryInstances.createInstanceViaApi(instance.instanceName, instance.instanceBarcode);
       }).then(() => {
@@ -102,17 +102,18 @@ describe('ui-circulation-settings: overdue fine policies management', () => {
             LostItemFeePolicy.createViaApi().then((lostItemFeeBody) => {
               lostItemFeePolicy = lostItemFeeBody;
             });
-          }).then(() => {
+          })
+          .then(() => {
             CirculationRules.getViaApi().then((circulationRules) => {
               originalCirculationRules = circulationRules;
             }).then(() => {
               const positionReqPolicyId = originalCirculationRules.rulesAsText.search('r ');
               const positionPatronNoticePolicyId = originalCirculationRules.rulesAsText.search('n ');
               const positionOverdueFinePolicyId = originalCirculationRules.rulesAsText.search('o ');
-              let newRule = {
+              const newRule = {
                 id: originalCirculationRules.id,
                 rulesAsText: originalCirculationRules.rulesAsText + `\nm all: l ${loanPolicy.id} ${originalCirculationRules.rulesAsText.substring(positionReqPolicyId, positionPatronNoticePolicyId)}${originalCirculationRules.rulesAsText.substring(positionPatronNoticePolicyId, positionOverdueFinePolicyId)}o ${overdueFinePolicy.id} i ${lostItemFeePolicy.id}`,
-              }
+              };
               CirculationRules.updateViaApi(newRule);
 
               ServicePoints.getViaApi().then((res) => {
@@ -122,7 +123,7 @@ describe('ui-circulation-settings: overdue fine policies management', () => {
                   ownerData.name = ownerName;
                   ownerData.id = id;
                 });
-              })
+              });
             });
           });
       });
@@ -144,7 +145,7 @@ describe('ui-circulation-settings: overdue fine policies management', () => {
   it('C5557: Verify that you can create/edit/delete overdue fine policies (spitfire)', { tags: [devTeams.spitfire, testTypes.smoke] }, () => {
     // TODO add check that name is unique
     cy.visit(SettingsMenu.circulationoVerdueFinePoliciesPath);
-    
+
     const overduePolicyProps = ['1.00', '2.00', '3.00', '4.00'];
     const editedOverduePolicyProps = ['5.00', '6.00', '7.00', '8.00'];
 
