@@ -1,4 +1,12 @@
 import getRandomPostfix from '../../support/utils/stringTools';
+import {
+  REQUEST_POLICY_NAMES,
+  NOTICE_POLICY_NAMES,
+  OVERDUE_FINE_POLICY_NAMES,
+  CY_ENV,
+  LOST_ITEM_FEES_POLICY_NAMES,
+  LOAN_POLICY_NAMES,
+} from '../../support/constants';
 import TestTypes from '../../support/dictionary/testTypes';
 import Orders from '../../support/fragments/orders/orders';
 import NewOrder from '../../support/fragments/orders/newOrder';
@@ -25,13 +33,10 @@ import InventorySearchAndFilter from '../../support/fragments/inventory/inventor
 import BasicOrderLine from '../../support/fragments/orders/basicOrderLine';
 import NewLocations from '../../support/fragments/settings/tenant/locations/newLocation';
 import Users from '../../support/fragments/users/users';
-import UserEdit from '../../support/fragments/users/userEdit';
-import ServicePoint from '../../support/fragments/servicePoint/servicePoint';
-import Organizations from '../../support/fragments/organizations/organizations';
-import Requests from '../../support/fragments/requests/requests';
 import CheckOutActions from '../../support/fragments/check-out-actions/check-out-actions';
 import DevTeams from '../../support/dictionary/devTeams';
 import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
+import DateTools from '../../support/utils/dateTools';
 
 describe('ui-inventory: Item status date updates', () => {
   const instanceTitle = `autotestTitle ${Helper.getRandomBarcode()}`;
@@ -40,22 +45,32 @@ describe('ui-inventory: Item status date updates', () => {
   let effectiveLocationServicePoint;
   let notEffectiveLocationServicePoint;
   let effectiveLocation;
-  const user = {};
   let userForDeliveryRequest = {};
   const itemBarcode = Helper.getRandomBarcode();
-  let oldRulesText;
-  let requestPolicyId;
   const userName = Cypress.env('diku_login');
 
   before(() => {
     cy.loginAsAdmin();
     cy.getAdminToken()
       .then(() => {
-        // Requests.setRequestPolicyApi().then(({ oldRulesAsText, policy }) => {
-        //   oldRulesText = oldRulesAsText;
-        //   requestPolicyId = policy.id;
-        // });
+        cy.getLoanPolicy({ query: `name=="${LOAN_POLICY_NAMES.EXAMPLE_LOAN}"` });
+        cy.getRequestPolicy({ query: `name=="${REQUEST_POLICY_NAMES.ALLOW_ALL}"` });
+        cy.getNoticePolicy({ query: `name=="${NOTICE_POLICY_NAMES.SEND_NO_NOTICES}"` });
+        cy.getOverdueFinePolicy({ query: `name=="${OVERDUE_FINE_POLICY_NAMES.OVERDUE_FINE_POLICY}"` });
+        cy.getLostItemFeesPolicy({ query: `name=="${LOST_ITEM_FEES_POLICY_NAMES.LOST_ITEM_FEES_POLICY}"` });
+      }).then(() => {
+        const loanPolicy = Cypress.env(CY_ENV.LOAN_POLICY).id;
+        const requestPolicyId = Cypress.env(CY_ENV.REQUEST_POLICY)[0].id;
+        const noticePolicyId = Cypress.env(CY_ENV.NOTICE_POLICY)[0].id;
+        const overdueFinePolicyId = Cypress.env(CY_ENV.OVERDUE_FINE_POLICY)[0].id;
+        const lostItemFeesPolicyId = Cypress.env(CY_ENV.LOST_ITEM_FEES_POLICY)[0].id;
+        const policy = `l ${loanPolicy} r ${requestPolicyId} n ${noticePolicyId} o ${overdueFinePolicyId} i ${lostItemFeesPolicyId}`;
+        const priority = 'priority: number-of-criteria, criterium (t, s, c, b, a, m, g), last-line';
+        const newRule = `${priority}\nfallback-policy: ${policy}`;
 
+        cy.updateCirculationRules({
+          rulesAsText: newRule,
+        });
         ServicePoints.getViaApi({ limit: 1, query: 'name=="Circ Desk 2"' })
           .then((servicePoints) => {
             effectiveLocationServicePoint = servicePoints[0];
@@ -83,30 +98,27 @@ describe('ui-inventory: Item status date updates', () => {
     ])
       .then(userProperties => {
         userForDeliveryRequest = userProperties;
-        cy.getUsers({ limit: 1, query: `"username"="${userForDeliveryRequest.username}"` })
-          .then((users) => {
-            cy.getAddressTypesApi({ limit: 1 }).then(addressTypes => {
-              UserEdit.updateUserAddress(users[0], [{ city: 'New York',
-                addressTypeId: addressTypes[0].id,
-                countryId: 'US' }]);
+
+        cy.getRequestPreference({ limit: 1, query: `"userId"="${userForDeliveryRequest.userId}"` })
+          .then((response) => {
+            cy.updateRequestPreference(response.body.requestPreferences[0].id, {
+              defaultDeliveryAddressTypeId: '46ff3f08-8f41-485c-98d8-701ba8404f4f',
+              defaultServicePointId: null,
+              delivery: true,
+              fulfillment: 'Delivery',
+              holdShelf: true,
+              userId: userForDeliveryRequest.userId
             });
           });
       });
   });
 
   afterEach(() => {
-    CheckInActions.checkinItemViaApi({
-      itemBarcode,
-      servicePointId: effectiveLocationServicePoint.id,
-      checkInDate: new Date().toISOString(),
-    })
-      .then(() => {
-        cy.getInstance({ limit: 1, expandAll: true, query: `"items.barcode"=="${itemBarcode}"` })
-          .then((instance) => {
-            cy.deleteItem(instance.items[0].id);
-            cy.deleteHoldingRecordViaApi(instance.holdings[0].id);
-            InventoryInstance.deleteInstanceViaApi(instance.id);
-          });
+    cy.getInstance({ limit: 1, expandAll: true, query: `"items.barcode"=="${itemBarcode}"` })
+      .then((instance) => {
+        cy.deleteItem(instance.items[0].id);
+        cy.deleteHoldingRecordViaApi(instance.holdings[0].id);
+        InventoryInstance.deleteInstanceViaApi(instance.id);
       });
     Orders.getOrdersApi({ limit: 1, query: `"poNumber"=="${orderNumber}"` })
       .then(order => {
@@ -174,7 +186,6 @@ describe('ui-inventory: Item status date updates', () => {
   it('C9200 Item status date updates (folijet) (prokopovych)', { tags: [TestTypes.smoke, DevTeams.folijet, TestTypes.long] }, () => {
     const caption = `autotest_caption_${getRandomPostfix()}`;
     const numberOfPieces = '3';
-
     // open order and create Item
     cy.visit(TopMenu.ordersPath);
     selectOrderWithNumber(orderNumber);
@@ -265,7 +276,6 @@ describe('ui-inventory: Item status date updates', () => {
       itemTitle: null,
       requesterBarcode: userForDeliveryRequest.barcode,
     });
-    fullCheck(ItemView.itemStatuses.awaitingDelivery);
     cy.visit(TopMenu.checkInPath);
     CheckInActions.checkInItem(itemBarcode);
     ConfirmItemInModal.confirmMultipieceCheckInModal();
@@ -276,10 +286,13 @@ describe('ui-inventory: Item status date updates', () => {
     fullCheck(ItemView.itemStatuses.awaitingDelivery);
 
     // check out item to user with delivery request
-    checkOut(userForDeliveryRequest.username, itemBarcode, ItemView.itemStatuses.checkedOut, CheckOutActions.confirmMultipieceCheckOut(itemBarcode));
+    checkOut(userForDeliveryRequest.username, itemBarcode, ItemView.itemStatuses.checkedOut);
 
     // check in item at service point assigned to its effective location
     SwitchServicePoint.switchServicePoint(effectiveLocationServicePoint.name);
-    checkIn(itemBarcode, ItemView.itemStatuses.available, ConfirmItemInModal.confirmAvaitingPickUpModal);
+    cy.visit(TopMenu.checkInPath);
+    CheckInActions.backdateCheckInItem(DateTools.getPreviousDayDate(), itemBarcode);
+    openItem(instanceTitle, effectiveLocation.name, itemBarcode);
+    fullCheck(ItemView.itemStatuses.available);
   });
 });

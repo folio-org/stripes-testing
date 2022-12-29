@@ -10,13 +10,15 @@ import {
   MultiColumnListCell,
   HTML,
   including,
-  PaneContent
+  PaneContent,
+  Checkbox
 } from '../../../../interactors';
 import SelectUser from './selectUser';
 
 const modal = Modal('Confirm multipiece check out');
 const endSessionButton = Button('End session');
 const userPane = PaneContent({ id: 'patron-details-content' });
+const modalForDeliveryRequest = Modal('Route for delivery request');
 
 function addPatron(userName) {
   cy.do(Button({ id:'clickable-find-user' }).click());
@@ -148,4 +150,9 @@ export default {
     // waiters needs for check out item in loop
     cy.wait(1000);
   },
+
+  closeForDeliveryRequestModal:() => {
+    cy.do(modalForDeliveryRequest.find(Checkbox('Print slip')).click());
+    cy.do(modalForDeliveryRequest.find(Button('Close and check out')).click());
+  }
 };

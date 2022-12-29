@@ -88,6 +88,7 @@ describe('ui-users-loans: Manual anonymization in closed loans', () => {
         permissions.uiUsersDeclareItemLost.gui,
         permissions.uiUserLoansAnonymize.gui,
         permissions.uiFeeFines.gui,
+        permissions.uiInventoryViewInstances.gui
       ]).then(({
         username,
         password,
