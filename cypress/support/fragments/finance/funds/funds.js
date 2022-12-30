@@ -480,9 +480,9 @@ export default {
     this.waitForFundDetailsLoading();
   },
 
-  selectTransaction:(transactionType) => {
+  selectTransaction:(inexRowNumber) => {
     cy.do([
-      MultiColumnListCell(transactionType).click(),
+      MultiColumnListRow({ indexRow: inexRowNumber}).find(Link()).click(),
     ]);
   },
 
@@ -501,5 +501,9 @@ export default {
   checkCancelPendingPayment:(invoiceNumber) => {
     cy.expect(KeyValue({ value: invoiceNumber}).exists());
     cy.do(Section({ id: 'information' }).find(Button({ icon: 'info' })).click());
+  },
+
+  selectFund:(FundName) => {
+    cy.do(Pane({ id: 'fund-results-pane' }).find(Link(FundName)).click());
   },
 };

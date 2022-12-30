@@ -8,7 +8,7 @@ import {
   Checkbox,
   MultiColumnListHeader,
   MultiColumnListCell,
-  TextField, Datepicker
+  TextField,
 } from '../../../../interactors';
 
 const actionsBtn = Button('Actions');
@@ -90,8 +90,8 @@ export default {
     cy.do(Button('Cancel').click());
   },
 
-  replaceTemporaryLocation(location = 'Annex') {
-    getBulkEditSelectType().select('Temporary item location');
+  replaceTemporaryLocation(location = 'Annex', type = 'item') {
+    getBulkEditSelectType().select(`Temporary ${type} location`);
     getLocationSelect().select('Replace with');
     cy.do([
       Button('Select control\nSelect location').click(),
@@ -123,7 +123,8 @@ export default {
   verifyCalendarItem() {
     getBulkEditSelectType().select('Expiration date');
     cy.do(Button({ icon: 'calendar' }).click());
-    cy.expect(Datepicker().exists());
+    // TODO: bulk edit calendar is not common datepicker like our interactor
+    cy.get('[id^="datepicker-calendar-container"]').should('be.visible');
   },
 
   fillLoanType(type = 'Selected') {

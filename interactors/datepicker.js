@@ -6,7 +6,7 @@ import { dispatchFocusout } from './util';
 import HTML from './baseHTML';
 
 export default HTML.extend('datepicker')
-  .selector('[data-test-datepicker-container],[id^=datepicker-calendar-container]')
+  .selector('[data-test-datepicker-container]')
   .locator((el) => el.querySelector('label').textContent)
   .filters({
     id: (el) => el.querySelector('input').id,
