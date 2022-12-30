@@ -19,15 +19,15 @@ import Users from '../../../support/fragments/users/users';
 
 describe('ui-data-import: Match on Instance identifier match meets both the Identifier type and Data requirements (Scenario 2)', () => {
   let userId;
-  const filePathForCreateInstance = 'marcFileForMatchOnIdentifierForCreate.mrc';
-  const filePathForUpdateInstance = 'marcFileForMatchOnIdentifierForUpdate_2.mrc';
-  const fileNameForCreateInstance = `C358137autotestFile.${getRandomPostfix()}.mrc`;
-  const fileNameForUpdateInstance = `C358137autotestFile.${getRandomPostfix()}.mrc`;
+  const filePathForCreateInstance = 'C347829 marcFileForMatchOnIdentifierForCreate.mrc';
+  const filePathForUpdateInstance = 'C347829 marcFileForMatchOnIdentifierForUpdate_2.mrc';
+  const fileNameForCreateInstance = `C347829autotestFile.${getRandomPostfix()}.mrc`;
+  const fileNameForUpdateInstance = `C347829autotestFile.${getRandomPostfix()}.mrc`;
   const jobProfileToRun = 'Default - Create instance and SRS MARC Bib';
-  const matchProfileName = `autotestMatchProf${getRandomPostfix()}`;
-  const mappingProfileName = `autotestMappingProf${getRandomPostfix()}`;
-  const actionProfileName = `autotestActionProf${getRandomPostfix()}`;
-  const jobProfileName = `autotestActionProf${getRandomPostfix()}`;
+  const matchProfileName = `C347829autotestMatchProf${getRandomPostfix()}`;
+  const mappingProfileName = `C347829autotestMappingProf${getRandomPostfix()}`;
+  const actionProfileName = `C347829autotestActionProf${getRandomPostfix()}`;
+  const jobProfileName = `C347829autotestActionProf${getRandomPostfix()}`;
   const instanceGeneralNote = 'IDENTIFIER UPDATE 2';
   const resourceIdentifiers = [
     { type: 'UPC', value: 'ORD32671387-4' },
