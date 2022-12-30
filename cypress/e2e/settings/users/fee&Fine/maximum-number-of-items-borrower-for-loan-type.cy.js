@@ -19,7 +19,7 @@ import DevTeams from '../../../../support/dictionary/devTeams';
 import SettingsMenu from '../../../../support/fragments/settingsMenu';
 import OtherSettings from '../../../../support/fragments/settings/circulation/otherSettings';
 
-describe('ui-users:', () => {
+describe('ui-users: Verify that maximum number of items borrowed for loan type (e.g. course reserve) limit works', () => {
   let user = {};
   const instanceTitle = `autotest title ${getRandomPostfix()}`;
   let servicePoint;
@@ -83,21 +83,19 @@ describe('ui-users:', () => {
         })
           .then(specialInstanceIds => {
             limitTestInstanceIds = specialInstanceIds;
-          })
+          });
         // create loan policy
-          .then(() => {
-            LoanPolicyActions.createViaApi(LoanPolicyActions.getDefaultRollingLoanPolicy(limitOfItem))
-              .then((policy) => {
-                loanPolicyForCourseReserves = policy;
-              });
-            cy.getRequestPolicy({ query: `name=="${REQUEST_POLICY_NAMES.HOLD_ONLY}"` });
-            cy.getNoticePolicy({ query: `name=="${NOTICE_POLICY_NAMES.SEND_NO_NOTICES}"` });
-            cy.getOverdueFinePolicy({ query: `name=="${OVERDUE_FINE_POLICY_NAMES.OVERDUE_FINE_POLICY}"` });
-            cy.getLostItemFeesPolicy({ query: `name=="${LOST_ITEM_FEES_POLICY_NAMES.LOST_ITEM_FEES_POLICY}"` });
-            cy.getCirculationRules()
-              .then(rules => {
-                rulesDefaultString = rules.rulesAsText;
-              });
+        LoanPolicyActions.createViaApi(LoanPolicyActions.getDefaultRollingLoanPolicy(limitOfItem))
+          .then((policy) => {
+            loanPolicyForCourseReserves = policy;
+          });
+        cy.getRequestPolicy({ query: `name=="${REQUEST_POLICY_NAMES.HOLD_ONLY}"` });
+        cy.getNoticePolicy({ query: `name=="${NOTICE_POLICY_NAMES.SEND_NO_NOTICES}"` });
+        cy.getOverdueFinePolicy({ query: `name=="${OVERDUE_FINE_POLICY_NAMES.OVERDUE_FINE_POLICY}"` });
+        cy.getLostItemFeesPolicy({ query: `name=="${LOST_ITEM_FEES_POLICY_NAMES.LOST_ITEM_FEES_POLICY}"` });
+        cy.getCirculationRules()
+          .then(rules => {
+            rulesDefaultString = rules.rulesAsText;
           })
         // create circulation rules
           .then(() => {
