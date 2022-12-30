@@ -322,6 +322,23 @@ export default {
     ]);
   },
 
+  verifyHoldingActionShowColumns() {
+    cy.expect([
+      DropdownMenu().find(Checkbox({ name: 'hrid', checked: true })).exists(),
+      DropdownMenu().find(Checkbox({ name: 'permanentLocation', checked: true })).exists(),
+      DropdownMenu().find(Checkbox({ name: 'temporaryLocation', checked: true })).exists(),
+      DropdownMenu().find(Checkbox({ name: 'callNumberPrefix', checked: true })).exists(),
+      DropdownMenu().find(Checkbox({ name: 'callNumber', checked: true })).exists(),
+      DropdownMenu().find(Checkbox({ name: 'callNumberSuffix', checked: true })).exists(),
+      DropdownMenu().find(Checkbox({ name: 'holdingsType', checked: true })).exists(),
+      DropdownMenu().find(Checkbox({ name: 'effectiveLocation', checked: false })).exists(),
+      DropdownMenu().find(Checkbox({ name: 'id', checked: false })).exists(),
+      DropdownMenu().find(Checkbox({ name: 'source', checked: false })).exists(),
+      DropdownMenu().find(Checkbox({ name: 'discoverySuppress', checked: false })).exists(),
+      DropdownMenu().find(Checkbox({ name: 'callNumberType', checked: false })).exists(),
+    ]);
+  },
+
   verifyItemsActionDropdownItems() {
     cy.expect([
       DropdownMenu().find(Checkbox({ name: 'barcode', checked: true })).exists(),

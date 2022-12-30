@@ -1,5 +1,5 @@
 import NewServicePoint from '../settings/tenant/servicePoints/newServicePoint';
-import { Dropdown, Button } from '../../../../interactors';
+import { Dropdown, Button, including } from '../../../../interactors';
 import TopMenu from '../topMenu';
 import permissions from '../../dictionary/permissions';
 import UsersSearchPane from '../users/usersSearchPane';
@@ -25,5 +25,9 @@ export default {
     SelectServicePointModal.selectServicePoint(servicePoint);
     // wait for data to be loaded
     cy.wait(5000);
-  }
+  },
+
+  checkIsServicePointSwitched: (name) => {
+    cy.expect(Dropdown('My profile').find(Button(including(name))).exists());
+  },
 };

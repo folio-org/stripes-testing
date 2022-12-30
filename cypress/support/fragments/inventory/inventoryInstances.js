@@ -8,7 +8,8 @@ import {
   Button,
   Pane,
   TextField,
-  Checkbox
+  Checkbox,
+  Modal
 } from '../../../../interactors';
 import InventoryHoldings from './holdings/inventoryHoldings';
 import inventoryNewInstance from './inventoryNewInstance';
@@ -17,6 +18,7 @@ import InventoryInstance from './inventoryInstance';
 const rootSection = Section({ id: 'pane-results' });
 const inventoriesList = rootSection.find(MultiColumnList({ id: 'list-inventory' }));
 const actionsButton = rootSection.find(Button('Actions'));
+const singleRecordImportModal = Modal('Single record import');
 
 const createInstanceViaAPI = (instanceWithSpecifiedNewId) => cy.okapiRequest({
   method: 'POST',
@@ -206,5 +208,12 @@ export default {
   searchBySource: (source) => {
     cy.do(Button({ id: 'accordion-toggle-button-source' }).click());
     cy.do(Checkbox(source).click());
+  },
+
+  importWithOclc:(oclc) => {
+    cy.do(actionsButton.click());
+    cy.do(Button({ id: 'dropdown-clickable-import-record' }).click());
+    cy.do(singleRecordImportModal.find(TextField({ name:'externalIdentifier' })).fillIn(oclc));
+    cy.do(singleRecordImportModal.find(Button('Import')).click());
   },
 };

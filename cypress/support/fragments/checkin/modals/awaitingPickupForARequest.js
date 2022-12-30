@@ -1,13 +1,14 @@
 import { Button, Modal, Checkbox, including } from '../../../../../interactors';
 
-const modalTitle = 'In transit';
+const modalTitle = 'Awaiting pickup for a request';
 const modalCheckbox = Modal(modalTitle).find(Checkbox('Print slip'));
 
 export default {
-  verifyModalTitle: () => {
-    cy.expect(Modal(modalTitle).exists());
+  verifyModalTitle:() => {
+    cy.expect(Modal(modalTitle)
+      .exists());
   },
-  closeModal: () => {
+  closeModal:() => {
     cy.do(Button('Close').click());
   },
   verifyUnSelectedCheckboxPrintSlip: () => {
@@ -20,7 +21,7 @@ export default {
     cy.do(modalCheckbox.click());
   },
   checkModalMessage: (item) => {
-    const message = `Route ${item.title} (${item.materialType}) (Barcode: ${item.barcode}) to ${item.servicePoint}.`;
+    const message = `Place ${item.title} (${item.materialType}) (Barcode: ${item.barcode}) on Hold Shelf at ${item.servicePoint} for request`;
     cy.expect(Modal({ content: including(message) }).exists());
-  },
+  }
 };

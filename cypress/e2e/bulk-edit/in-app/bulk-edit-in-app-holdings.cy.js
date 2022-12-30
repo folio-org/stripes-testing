@@ -86,9 +86,28 @@ describe('bulk-edit', () => {
       BulkEditActions.confirmChanges();
       BulkEditActions.commitChanges();
       BulkEditSearchPane.waitFileUploading();
-
       BulkEditSearchPane.verifyChangedResults(location);
       BulkEditActions.verifySuccessBanner(1);
+    });
+
+    it('C360114 Verify that User can upload file with Holdings UUIDs (firebird)', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
+      BulkEditSearchPane.uploadFile(validHoldingUUIDsFileName);
+      BulkEditSearchPane.waitFileUploading();
+      [
+        'Holdings HRID',
+        'Permanent Location',
+        'Temporary Location',
+        'Call number prefix',
+        'Call number',
+        'Call number suffix',
+        'Holdings type'
+      ].forEach(title => {
+        BulkEditSearchPane.verifyResultColumTitles(title);
+      });
+      BulkEditActions.openActions();
+      BulkEditSearchPane.verifyHoldingActionShowColumns();
+      BulkEditSearchPane.changeShowColumnCheckbox('Call number type');
+      BulkEditSearchPane.verifyResultColumTitles('Call number type');
     });
   });
 });
