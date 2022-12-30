@@ -22,7 +22,6 @@ describe('ui-data-import: Check that protected fields in incoming records are no
   let instanceHrid = null;
   const authentication = '100473910/PAOLF';
   const oclcForImport = '19257462';
-  const marcFields = [580, 780, 785];
 
   before(() => {
     cy.createTempUser([
@@ -39,7 +38,7 @@ describe('ui-data-import: Check that protected fields in incoming records are no
 
         cy.login(user.username, user.password, { path: TopMenu.dataImportPath, waiter: DataImport.waitLoading });
 
-        const fileName = `C358968autotestFile.${getRandomPostfix()}.mrc`;
+        const fileName = `C359189autotestFile.${getRandomPostfix()}.mrc`;
 
         Z3950TargetProfiles.changeOclcWorldCatToDefaultViaApi();
         DataImport.uploadFile('Test_file_with_856_field.mrc', fileName);
