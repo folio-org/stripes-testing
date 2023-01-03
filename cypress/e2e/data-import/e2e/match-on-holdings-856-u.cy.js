@@ -163,7 +163,8 @@ describe('ui-data-import: Match on Holdings 856 $u', () => {
     cy.visit(TopMenu.dataImportPath);
     DataImport.uploadFile('marcFileForC17025.mrc', nameForCreateMarcFile);
     JobProfiles.searchJobProfileForImport(createInstanceAndEHoldingsJobProfileName);
-    JobProfiles.runImportFile(nameForCreateMarcFile);
+    JobProfiles.runImportFile();
+    JobProfiles.waitFileIsImported(nameForCreateMarcFile);
 
     InventorySearchAndFilter.getInstanceHRID()
       .then(hrId => {
@@ -177,7 +178,8 @@ describe('ui-data-import: Match on Holdings 856 $u', () => {
     cy.visit(TopMenu.dataImportPath);
     DataImport.uploadFile('marcFileForC17025.mrc', nameForUpdateCreateMarcFile);
     JobProfiles.searchJobProfileForImport(updateEHoldingsJobProfileName);
-    JobProfiles.runImportFile(nameForUpdateCreateMarcFile);
+    JobProfiles.runImportFile();
+    JobProfiles.waitFileIsImported(nameForUpdateCreateMarcFile);
     Logs.checkStatusOfJobProfile();
 
     InventorySearchAndFilter.getInstanceHRID()

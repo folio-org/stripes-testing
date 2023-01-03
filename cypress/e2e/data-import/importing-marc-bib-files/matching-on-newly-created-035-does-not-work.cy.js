@@ -109,7 +109,8 @@ describe('ui-data-import: Matching on newly-created 035 does not work (regressio
     // upload a marc file for creating of the new instance
     DataImport.uploadFile('marcFileForC358138.mrc', fileForCreateFirstName);
     JobProfiles.searchJobProfileForImport('Default - Create instance and SRS MARC Bib');
-    JobProfiles.runImportFile(fileForCreateFirstName);
+    JobProfiles.runImportFile();
+    JobProfiles.waitFileIsImported(fileForCreateFirstName);
     Logs.checkStatusOfJobProfile('Completed');
     Logs.openFileDetails(fileForCreateFirstName);
     [FileDetails.columnName.srsMarc,
@@ -159,7 +160,8 @@ describe('ui-data-import: Matching on newly-created 035 does not work (regressio
     cy.visit(TopMenu.dataImportPath);
     DataImport.uploadFile('marcFileForC358138_rev.mrc', fileForUpdateFirstName);
     JobProfiles.searchJobProfileForImport(jobProfile.profileName);
-    JobProfiles.runImportFile(fileForUpdateFirstName);
+    JobProfiles.runImportFile();
+    JobProfiles.waitFileIsImported(fileForUpdateFirstName);
     Logs.checkStatusOfJobProfile('Completed');
     Logs.openFileDetails(fileForUpdateFirstName);
     FileDetails.checkStatusInColumn(FileDetails.status.created, FileDetails.columnName.srsMarc);
@@ -179,7 +181,8 @@ describe('ui-data-import: Matching on newly-created 035 does not work (regressio
     cy.visit(TopMenu.dataImportPath);
     DataImport.uploadFile('marcFileForC358138_with_035.mrc', fileForCreateSecondName);
     JobProfiles.searchJobProfileForImport('Default - Create instance and SRS MARC Bib');
-    JobProfiles.runImportFile(fileForCreateSecondName);
+    JobProfiles.runImportFile();
+    JobProfiles.waitFileIsImported(fileForCreateSecondName);
     Logs.checkStatusOfJobProfile('Completed');
     Logs.openFileDetails(fileForCreateSecondName);
     [FileDetails.columnName.srsMarc,
@@ -205,7 +208,8 @@ describe('ui-data-import: Matching on newly-created 035 does not work (regressio
     cy.visit(TopMenu.dataImportPath);
     DataImport.uploadFile('marcFileForC358138_with_035_rev.mrc', fileForUpdateSecondName);
     JobProfiles.searchJobProfileForImport(jobProfile.profileName);
-    JobProfiles.runImportFile(fileForUpdateSecondName);
+    JobProfiles.runImportFile();
+    JobProfiles.waitFileIsImported(fileForUpdateSecondName);
     Logs.checkStatusOfJobProfile('Completed');
     Logs.openFileDetails(fileForUpdateSecondName);
     FileDetails.checkStatusInColumn(FileDetails.status.created, FileDetails.columnName.srsMarc);

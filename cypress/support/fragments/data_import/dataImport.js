@@ -52,7 +52,8 @@ const importFile = (profileName, uniqueFileName) => {
 
   JobProfiles.waitLoadingList();
   JobProfiles.select(profileName);
-  JobProfiles.runImportFile(uniqueFileName);
+  JobProfiles.runImportFile();
+  JobProfiles.waitFileIsImported(uniqueFileName);
   JobProfiles.openFileRecords(uniqueFileName);
 
   getLinkToAuthority(MarcAuthority.defaultAuthority.headingReference).then(link => {
@@ -93,7 +94,8 @@ export default {
     cy.visit(TopMenu.dataImportPath);
     uploadFile('oneMarcBib.mrc', nameForMarcFileWithBib);
     JobProfiles.searchJobProfileForImport(JobProfiles.defaultInstanceAndSRSMarcBib);
-    JobProfiles.runImportFile(nameForMarcFileWithBib);
+    JobProfiles.runImportFile();
+    JobProfiles.waitFileIsImported(nameForMarcFileWithBib);
 
     // get Instance HRID through API
     InventorySearchAndFilter.getInstanceHRID()

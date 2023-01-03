@@ -59,7 +59,8 @@ describe('ui-data-import: MARC-MARC matching for 001 field', () => {
     // upload a marc file for export
     DataImport.uploadFile('oneMarcBib.mrc', nameForMarcFile);
     JobProfiles.searchJobProfileForImport('Default - Create instance and SRS MARC Bib');
-    JobProfiles.runImportFile(nameForMarcFile);
+    JobProfiles.runImportFile();
+    JobProfiles.waitFileIsImported(nameForMarcFile);
     Logs.openFileDetails(nameForMarcFile);
     FileDetails.checkStatusInColumn(FileDetails.status.created, FileDetails.columnName.instance);
 
@@ -131,7 +132,8 @@ describe('ui-data-import: MARC-MARC matching for 001 field', () => {
         cy.visit(TopMenu.dataImportPath);
         DataImport.uploadExportedFile(nameForExportedMarcFile);
         JobProfiles.searchJobProfileForImport(jobProfileName);
-        JobProfiles.runImportFile(nameForExportedMarcFile);
+        JobProfiles.runImportFile();
+        JobProfiles.waitFileIsImported(nameForExportedMarcFile);
         Logs.openFileDetails(nameForExportedMarcFile);
         FileDetails.checkStatusInColumn(FileDetails.status.updated, FileDetails.columnName.instance);
 

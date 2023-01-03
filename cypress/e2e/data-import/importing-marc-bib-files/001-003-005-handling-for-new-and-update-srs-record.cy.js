@@ -82,7 +82,8 @@ describe('ui-data-import: Test 001/003/035 handling for New and Updated SRS reco
         cy.visit(TopMenu.dataImportPath);
         DataImport.uploadFile('oneMarcBib.mrc', fileName);
         JobProfiles.searchJobProfileForImport('Default - Create instance and SRS MARC Bib');
-        JobProfiles.runImportFile(fileName);
+        JobProfiles.runImportFile();
+        JobProfiles.waitFileIsImported(fileName);
         Logs.openFileDetails(fileName);
 
         // get Instance HRID through API
@@ -117,7 +118,8 @@ describe('ui-data-import: Test 001/003/035 handling for New and Updated SRS reco
     cy.visit(TopMenu.dataImportPath);
     DataImport.uploadFile('marcFilrForC17039.mrc', nameMarcFileForCreate);
     JobProfiles.searchJobProfileForImport('Default - Create instance and SRS MARC Bib');
-    JobProfiles.runImportFile(nameMarcFileForCreate);
+    JobProfiles.runImportFile();
+    JobProfiles.waitFileIsImported(nameMarcFileForCreate);
     Logs.checkStatusOfJobProfile('Completed');
     Logs.openFileDetails(nameMarcFileForCreate);
     [FileDetails.columnName.srsMarc,
@@ -182,7 +184,8 @@ describe('ui-data-import: Test 001/003/035 handling for New and Updated SRS reco
         cy.visit(TopMenu.dataImportPath);
         DataImport.uploadFile(editedMarcFileName, fileNameAfterUpload);
         JobProfiles.searchJobProfileForImport(jobProfile.profileName);
-        JobProfiles.runImportFile(fileNameAfterUpload);
+        JobProfiles.runImportFile();
+        JobProfiles.waitFileIsImported(fileNameAfterUpload);
         Logs.checkStatusOfJobProfile('Completed');
         Logs.openFileDetails(fileNameAfterUpload);
         FileDetails.checkStatusInColumn(FileDetails.status.updated, FileDetails.columnName.srsMarc);
@@ -218,7 +221,8 @@ describe('ui-data-import: Test 001/003/035 handling for New and Updated SRS reco
         cy.visit(TopMenu.dataImportPath);
         DataImport.uploadExportedFile(exportedFileName);
         JobProfiles.searchJobProfileForImport(jobProfile.profileName);
-        JobProfiles.runImportFile(exportedFileName);
+        JobProfiles.runImportFile();
+        JobProfiles.waitFileIsImported(exportedFileName);
         Logs.checkStatusOfJobProfile('Completed');
         Logs.openFileDetails(exportedFileName);
         [FileDetails.columnName.srsMarc,

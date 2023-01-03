@@ -133,7 +133,8 @@ describe('ui-data-import: MARC field protections apply to MARC modifications of 
     cy.visit(TopMenu.dataImportPath);
     DataImport.uploadFile('marcFileForC350678.mrc', fileName);
     JobProfiles.searchJobProfileForImport(jobProfileName);
-    JobProfiles.runImportFile(fileName);
+    JobProfiles.runImportFile();
+    JobProfiles.waitFileIsImported(fileName);
     Logs.openFileDetails(fileName);
     [FileDetails.columnName.srsMarc,
       FileDetails.columnName.instance].forEach(columnName => {

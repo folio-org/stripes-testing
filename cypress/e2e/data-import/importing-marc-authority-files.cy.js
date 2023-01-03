@@ -63,7 +63,8 @@ describe('Importing MARC Authority files', () => {
     DataImport.uploadFile('test-auth-file.mrc', fileName);
     JobProfiles.waitLoadingList();
     JobProfiles.searchJobProfileForImport(jobProfileToRun);
-    JobProfiles.runImportFile(fileName);
+    JobProfiles.runImportFile();
+    JobProfiles.waitFileIsImported(fileName);
     Logs.checkStatusOfJobProfile('Completed');
     Logs.openFileDetails(fileName);
     Logs.getCreatedItemsID().then(link => {
@@ -77,7 +78,8 @@ describe('Importing MARC Authority files', () => {
     DataImport.uploadFile('test-auth-file.mrc', fileName);
     JobProfiles.waitLoadingList();
     JobProfiles.searchJobProfileForImport(createdJobProfile.profileName);
-    JobProfiles.runImportFile(fileName);
+    JobProfiles.runImportFile();
+    JobProfiles.waitFileIsImported(fileName);
     Logs.checkStatusOfJobProfile('Completed');
     Logs.openFileDetails(fileName);
     Logs.getCreatedItemsID().then(link => {

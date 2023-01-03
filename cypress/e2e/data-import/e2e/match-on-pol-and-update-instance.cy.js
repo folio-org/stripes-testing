@@ -223,7 +223,8 @@ describe('ui-data-import: Match on POL and update related Instance with source M
     cy.visit(TopMenu.dataImportPath);
     DataImport.uploadFile('marcFileForMatchOnPol.mrc', nameMarcFileForCreate);
     JobProfiles.searchJobProfileForImport('Default - Create instance and SRS MARC Bib');
-    JobProfiles.runImportFile(nameMarcFileForCreate);
+    JobProfiles.runImportFile();
+    JobProfiles.waitFileIsImported(nameMarcFileForCreate);
     Logs.openFileDetails(nameMarcFileForCreate);
     FileDetails.checkItemsStatusesInResultList(0, [FileDetails.status.created, FileDetails.status.created]);
     FileDetails.checkItemsStatusesInResultList(1, [FileDetails.status.created, FileDetails.status.created]);
@@ -249,7 +250,8 @@ describe('ui-data-import: Match on POL and update related Instance with source M
     DataImport.checkIsLandingPageOpened();
     DataImport.uploadFile(editedMarcFileName, marcFileName);
     JobProfiles.searchJobProfileForImport(jobProfileName);
-    JobProfiles.runImportFile(marcFileName);
+    JobProfiles.runImportFile();
+    JobProfiles.waitFileIsImported(marcFileName);
     Logs.checkStatusOfJobProfile();
     Logs.openFileDetails(marcFileName);
     FileDetails.checkItemsStatusesInResultList(0, [FileDetails.status.updated, FileDetails.status.updated, FileDetails.status.created, FileDetails.status.created]);

@@ -1,3 +1,4 @@
+/* eslint-disable cypress/no-unnecessary-waiting */
 import getRandomPostfix from '../../../support/utils/stringTools';
 import TestTypes from '../../../support/dictionary/testTypes';
 import DevTeams from '../../../support/dictionary/devTeams';
@@ -245,7 +246,8 @@ describe('ui-data-import: Check that field protection overrides work properly du
     // upload a marc file
     DataImport.uploadFile('marcFileForC17018-BeforeOverride.mrc', fileNameForCreatingInstance);
     JobProfiles.searchJobProfileForImport('Default - Create instance and SRS MARC Bib');
-    JobProfiles.runImportFile(fileNameForCreatingInstance);
+    JobProfiles.runImportFile();
+    JobProfiles.waitFileIsImported(fileNameForCreatingInstance);
     Logs.checkStatusOfJobProfile('Completed');
     Logs.openFileDetails(fileNameForCreatingInstance);
     [FileDetails.columnName.srsMarc, FileDetails.columnName.instance].forEach(columnName => {
@@ -265,7 +267,8 @@ describe('ui-data-import: Check that field protection overrides work properly du
         cy.visit(TopMenu.dataImportPath);
         DataImport.uploadFile(editedFileNameRev1, fileNameForProtect);
         JobProfiles.searchJobProfileForImport(jobProfileForUpdate.profileName);
-        JobProfiles.runImportFile(fileNameForProtect);
+        JobProfiles.runImportFile();
+        JobProfiles.waitFileIsImported(fileNameForProtect);
         Logs.checkStatusOfJobProfile('Completed');
         Logs.openFileDetails(fileNameForProtect);
         [FileDetails.columnName.srsMarc, FileDetails.columnName.instance].forEach(columnName => {
@@ -292,7 +295,8 @@ describe('ui-data-import: Check that field protection overrides work properly du
         cy.visit(TopMenu.dataImportPath);
         DataImport.uploadFile(editedFileNameRev2, fileNameForOverride);
         JobProfiles.searchJobProfileForImport(jobProfileForOverride.profileName);
-        JobProfiles.runImportFile(fileNameForOverride);
+        JobProfiles.runImportFile();
+        JobProfiles.waitFileIsImported(fileNameForOverride);
         Logs.checkStatusOfJobProfile('Completed');
         Logs.openFileDetails(fileNameForOverride);
         [FileDetails.columnName.srsMarc, FileDetails.columnName.instance].forEach(columnName => {

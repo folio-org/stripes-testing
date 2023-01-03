@@ -14,7 +14,7 @@ describe('MARC Authority management', () => {
   const testData = {};
   const jobProfileToRun = 'Default - Create SRS MARC Authority';
   let fileName;
-  let createdAuthorityIDs = [];
+  const createdAuthorityIDs = [];
 
   before('Creating data', () => {
     cy.createTempUser([
@@ -49,7 +49,8 @@ describe('MARC Authority management', () => {
     DataImport.uploadFile('marcFileForC360520.mrc', fileName);
     JobProfiles.waitLoadingList();
     JobProfiles.searchJobProfileForImport(jobProfileToRun);
-    JobProfiles.runImportFile(fileName);
+    JobProfiles.runImportFile();
+    JobProfiles.waitFileIsImported(fileName);
     Logs.checkStatusOfJobProfile('Completed');
     Logs.openFileDetails(fileName);
     for (let i = 0; i < 1; i++) {
@@ -65,7 +66,8 @@ describe('MARC Authority management', () => {
     DataImport.uploadFile('corporate_name(prefix_in_010Sa)sc_02.mrc', fileName);
     JobProfiles.waitLoadingList();
     JobProfiles.searchJobProfileForImport(jobProfileToRun);
-    JobProfiles.runImportFile(fileName);
+    JobProfiles.runImportFile();
+    JobProfiles.waitFileIsImported(fileName);
     Logs.checkStatusOfJobProfile('Completed');
     Logs.openFileDetails(fileName);
     for (let i = 0; i < 3; i++) {
@@ -81,7 +83,8 @@ describe('MARC Authority management', () => {
     DataImport.uploadFile('D_genre(prefixes_in_001_010Sa)sc_03.mrc', fileName);
     JobProfiles.waitLoadingList();
     JobProfiles.searchJobProfileForImport(jobProfileToRun);
-    JobProfiles.runImportFile(fileName);
+    JobProfiles.runImportFile();
+    JobProfiles.waitFileIsImported(fileName);
     Logs.checkStatusOfJobProfile('Completed');
     Logs.openFileDetails(fileName);
     for (let i = 0; i < 2; i++) {

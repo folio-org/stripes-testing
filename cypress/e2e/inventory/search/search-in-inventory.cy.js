@@ -8,13 +8,13 @@ import Users from '../../../support/fragments/users/users';
 import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
 import Logs from '../../../support/fragments/data_import/logs/logs';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
-import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter'
+import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
 
 describe('Search in Inventory', () => {
   const testData = {};
   const jobProfileToRun = 'Default - Create instance and SRS MARC Bib';
-  let fileName = `testInventoryFile.${getRandomPostfix()}.mrc`;
-  let createdInstanceIDs = [];
+  const fileName = `testInventoryFile.${getRandomPostfix()}.mrc`;
+  const createdInstanceIDs = [];
 
   before('Creating data', () => {
     cy.createTempUser([
@@ -49,7 +49,8 @@ describe('Search in Inventory', () => {
     DataImport.uploadFile('Sauguet_Henri_5_Bib_records.mrc', fileName);
     JobProfiles.waitLoadingList();
     JobProfiles.searchJobProfileForImport(jobProfileToRun);
-    JobProfiles.runImportFile(fileName);
+    JobProfiles.runImportFile();
+    JobProfiles.waitFileIsImported(fileName);
     Logs.checkStatusOfJobProfile('Completed');
     Logs.openFileDetails(fileName);
     for (let i = 0; i < 5; i++) {
@@ -83,7 +84,8 @@ describe('Search in Inventory', () => {
     DataImport.uploadFile('two_bib_records_with_isbn_search_by_keyword.mrc', fileName);
     JobProfiles.waitLoadingList();
     JobProfiles.searchJobProfileForImport(jobProfileToRun);
-    JobProfiles.runImportFile(fileName);
+    JobProfiles.runImportFile();
+    JobProfiles.waitFileIsImported(fileName);
     Logs.checkStatusOfJobProfile('Completed');
     Logs.openFileDetails(fileName);
     for (let i = 0; i < 2; i++) {

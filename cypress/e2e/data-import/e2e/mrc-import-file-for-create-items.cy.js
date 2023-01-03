@@ -133,7 +133,8 @@ describe('ui-data-import: MARC file import with creating of the new instance, ho
     cy.visit(TopMenu.dataImportPath);
     DataImport.uploadFile('oneMarcBib.mrc', fileName);
     JobProfiles.searchJobProfileForImport(specialJobProfile.profileName);
-    JobProfiles.runImportFile(fileName);
+    JobProfiles.runImportFile();
+    JobProfiles.waitFileIsImported(fileName);
     Logs.checkStatusOfJobProfile();
     Logs.checkImportFile(specialJobProfile.profileName);
     Logs.openFileDetails(fileName);
