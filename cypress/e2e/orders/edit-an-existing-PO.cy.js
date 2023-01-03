@@ -3,7 +3,6 @@ import testType from '../../support/dictionary/testTypes';
 import devTeams from '../../support/dictionary/devTeams';
 import TopMenu from '../../support/fragments/topMenu';
 import Users from '../../support/fragments/users/users';
-import FinanceHelp from '../../support/fragments/finance/financeHelper';
 import SettingsMenu from '../../support/fragments/settingsMenu';
 import SettingsOrders from '../../support/fragments/settings/orders/settingsOrders';
 import Orders from '../../support/fragments/orders/orders';
@@ -13,7 +12,6 @@ import NewOrganization from '../../support/fragments/organizations/newOrganizati
 import InteractorsTools from '../../support/utils/interactorsTools';
 
 describe('ui-finance: Orders', () => {
-
   const order = { ...NewOrder.defaultOneTimeOrder };
   const organization = { ...NewOrganization.defaultUiOrganizations };
   let orderNumber;
@@ -30,10 +28,10 @@ describe('ui-finance: Orders', () => {
       });
 
     cy.createOrderApi(order)
-    .then((response) => {
-      orderNumber = response.body.poNumber;
-      orderId = response.body.id;
-    });
+      .then((response) => {
+        orderNumber = response.body.poNumber;
+        orderId = response.body.id;
+      });
 
     cy.createTempUser([
       permissions.uiOrdersEdit.gui,
@@ -42,8 +40,8 @@ describe('ui-finance: Orders', () => {
         user = userProperties;
       });
 
-      cy.loginAsAdmin({ path:SettingsMenu.ordersOpeningPurchaseOrdersPath , waiter: SettingsOrders.waitLoadingOpeningPurchaseOrders });
-      SettingsOrders.expectDisabledCheckboxIsOpenOrderEnabled();
+    cy.loginAsAdmin({ path:SettingsMenu.ordersOpeningPurchaseOrdersPath, waiter: SettingsOrders.waitLoadingOpeningPurchaseOrders });
+    SettingsOrders.expectDisabledCheckboxIsOpenOrderEnabled();
   });
 
   after(() => {
@@ -56,7 +54,7 @@ describe('ui-finance: Orders', () => {
     cy.login(user.username, user.password, { path:TopMenu.ordersPath, waiter: Orders.waitLoading });
     Orders.searchByParameter('PO number', orderNumber);
     Orders.selectPendingStatusFilter();
-    FinanceHelp.selectFromResultsList();
+    Orders.selectFromResultsList(orderNumber);
     Orders.editOrder();
     Orders.selectOngoingOrderTypeInPOForm();
     Orders.saveEditingOrder();

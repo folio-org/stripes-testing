@@ -7,7 +7,6 @@ import Users from '../../support/fragments/users/users';
 import FileManager from '../../support/utils/fileManager';
 import NewOrder from '../../support/fragments/orders/newOrder';
 import BasicOrderLine from '../../support/fragments/orders/basicOrderLine';
-import SearchHelper from '../../support/fragments/finance/financeHelper';
 import OrdersHelper from '../../support/fragments/orders/ordersHelper';
 import NewInvoice from '../../support/fragments/invoices/newInvoice';
 import Organizations from '../../support/fragments/organizations/organizations';
@@ -56,7 +55,7 @@ describe('orders: export', () => {
               });
             cy.visit(TopMenu.ordersPath);
             Orders.searchByParameter('PO number', orderNumber);
-            SearchHelper.selectFromResultsList();
+            Orders.selectFromResultsList(orderNumber);
             Orders.openOrder();
             Orders.closeThirdPane();
             Orders.resetFilters();

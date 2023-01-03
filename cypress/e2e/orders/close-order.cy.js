@@ -40,7 +40,7 @@ describe('orders: Close Order', () => {
       .then(orderNumber => {
         cy.visit(TopMenu.ordersPath);
         Orders.searchByParameter('PO number', orderNumber);
-        Helper.selectFromResultsList();
+        Orders.selectFromResultsList(orderNumber);
         Orders.openOrder();
         Orders.closeOrder('Cancelled');
         Orders.closeThirdPane();

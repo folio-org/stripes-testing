@@ -46,7 +46,7 @@ describe('orders: Unreceive piece from Order', () => {
       .then(orderNumber => {
         cy.visit(TopMenu.ordersPath);
         Orders.searchByParameter('PO number', orderNumber);
-        Helper.selectFromResultsList();
+        Orders.selectFromResultsList(orderNumber);
         Orders.openOrder();
         InteractorsTools.checkCalloutMessage(`The Purchase order - ${orderNumber} has been successfully opened`);
         Orders.receiveOrderViaActions();

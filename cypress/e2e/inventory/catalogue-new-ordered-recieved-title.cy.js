@@ -58,13 +58,13 @@ describe('orders: Receive piece from Order', () => {
       });
   });
 
-  it('C735 Receiving pieces from an order for physical material that is set to create Items in inventory (thunderjet)', { tags: [testType.smoke] }, () => {
+  it('C3506 Catalog a new title which has been ordered and received in Orders (procopovich)', { tags: [testType.smoke] }, () => {
     Orders.searchByParameter('PO number', orderNumber);
-    Helper.selectFromResultsList();
+    Orders.selectFromResultsList(orderNumber);
     Orders.openOrder();
     InteractorsTools.checkCalloutMessage(`The Purchase order - ${orderNumber} has been successfully opened`);
     Orders.receiveOrderViaActions();
-    Helper.selectFromResultsList();
+    Receiving.selectFromResultsList(instanceTitle);
     Receiving.receivePiece(0, caption, barcode);
     Receiving.checkReceivedPiece(0, caption, barcode);
 

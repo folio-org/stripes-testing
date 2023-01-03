@@ -15,7 +15,6 @@ import NewOrder from '../../support/fragments/orders/newOrder';
 import Orders from '../../support/fragments/orders/orders';
 import OrderLines from '../../support/fragments/orders/orderLines';
 import NewOrganization from '../../support/fragments/organizations/newOrganization';
-import SearchHelper from '../../support/fragments/finance/financeHelper';
 import BasicOrderLine from '../../support/fragments/orders/basicOrderLine';
 import FiscalYears from '../../support/fragments/finance/fiscalYears/fiscalYears';
 import Ledgers from '../../support/fragments/finance/ledgers/ledgers';
@@ -40,26 +39,26 @@ describe('ui-invoices: Cancelling approved invoices', () => {
     SettingsInvoices.checkApproveAndPayCheckboxIsDisabled();
 
     FiscalYears.createViaApi(defaultFiscalYear)
-    .then(responseFY => {
-      defaultFiscalYear.id = responseFY.id;
-      defaultLedger.fiscalYearOneId = defaultFiscalYear.id;
+      .then(responseFY => {
+        defaultFiscalYear.id = responseFY.id;
+        defaultLedger.fiscalYearOneId = defaultFiscalYear.id;
 
-      Ledgers.createViaApi(defaultLedger)
-        .then(ledgerResponse => {
-          defaultLedger.id = ledgerResponse.id;
-          defaultFund.ledgerId = defaultLedger.id;
+        Ledgers.createViaApi(defaultLedger)
+          .then(ledgerResponse => {
+            defaultLedger.id = ledgerResponse.id;
+            defaultFund.ledgerId = defaultLedger.id;
 
-          Funds.createViaApi(defaultFund)
-            .then(fundResponse => {
-              defaultFund.id = fundResponse.fund.id;
+            Funds.createViaApi(defaultFund)
+              .then(fundResponse => {
+                defaultFund.id = fundResponse.fund.id;
 
-              cy.visit(TopMenu.fundPath);
-              Helper.searchByName(defaultFund.name);
-              Funds.selectFund(defaultFund.name);
-              Funds.addBudget(allocatedQuantity);
-            });
-        });
-    });
+                cy.visit(TopMenu.fundPath);
+                Helper.searchByName(defaultFund.name);
+                Funds.selectFund(defaultFund.name);
+                Funds.addBudget(allocatedQuantity);
+              });
+          });
+      });
 
     Organizations.createOrganizationViaApi(organization)
       .then(responseOrganization => {
@@ -72,40 +71,40 @@ describe('ui-invoices: Cancelling approved invoices', () => {
             orderNumber = responseOrder.body.poNumber;
             cy.visit(TopMenu.ordersPath);
             Orders.searchByParameter('PO number', orderNumber);
-            SearchHelper.selectFromResultsList();
+            Orders.selectFromResultsList(orderNumber);
             Orders.createPOLineViaActions();
-            OrderLines.POLineInfodorPhysicalMaterialWithFund(orderLineTitle,defaultFund);
+            OrderLines.POLineInfodorPhysicalMaterialWithFund(orderLineTitle, defaultFund);
             Orders.backToPO();
             Orders.openOrder();
-        });
-                cy.getBatchGroups()
-                  .then(batchGroup => { 
-                    invoice.batchGroup = batchGroup.name;
-                    invoiceLine.subTotal = -subtotalValue;
-                    cy.visit(TopMenu.invoicesPath);
-                    Invoices.createSpecialInvoice(invoice);
-                    Invoices.createInvoiceLineFromPol(orderNumber);
-                    // Need to wait,while Invoice Line will be laoded fully
-                    cy.wait(4000);
-                    Invoices.approveInvoice();
-                });
-    });
- 
+          });
+        cy.getBatchGroups()
+          .then(batchGroup => {
+            invoice.batchGroup = batchGroup.name;
+            invoiceLine.subTotal = -subtotalValue;
+            cy.visit(TopMenu.invoicesPath);
+            Invoices.createSpecialInvoice(invoice);
+            Invoices.createInvoiceLineFromPol(orderNumber);
+            // Need to wait,while Invoice Line will be laoded fully
+            cy.wait(4000);
+            Invoices.approveInvoice();
+          });
+      });
+
     cy.createTempUser([
-        permissions.uiFinanceViewFundAndBudget.gui,
-        permissions.viewEditDeleteInvoiceInvoiceLine.gui,
-        permissions.uiInvoicesCancelInvoices.gui
-      ])
-        .then(userProperties => {
-          user = userProperties;
-          cy.login(userProperties.username, userProperties.password, { path:TopMenu.invoicesPath, waiter: Invoices.waitLoading });
-        });
+      permissions.uiFinanceViewFundAndBudget.gui,
+      permissions.viewEditDeleteInvoiceInvoiceLine.gui,
+      permissions.uiInvoicesCancelInvoices.gui
+    ])
+      .then(userProperties => {
+        user = userProperties;
+        cy.login(userProperties.username, userProperties.password, { path:TopMenu.invoicesPath, waiter: Invoices.waitLoading });
+      });
   });
   after(() => {
     Organizations.deleteOrganizationViaApi(organization.id);
     Users.deleteViaApi(user.userId);
   });
-  
+
   it('C350728 Cancelling approved invoices voids payments/credits and Unreleases encumbrances (thunderjet)', { tags: [testType.criticalPath, devTeams.thunderjet] }, () => {
     Invoices.searchByNumber(invoice.invoiceNumber);
     Invoices.selectInvoice(invoice.invoiceNumber);

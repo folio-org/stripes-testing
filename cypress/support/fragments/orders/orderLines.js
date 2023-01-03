@@ -199,7 +199,7 @@ export default {
     ]);
   },
 
-  rolloverPOLineInfoforPhysicalMaterialWithFund: (orderLineTitleName, fund, unitPrice, quantity, value ) => {
+  rolloverPOLineInfoforPhysicalMaterialWithFund: (orderLineTitleName, fund, unitPrice, quantity, value) => {
     cy.do([
       orderLineTitleField.fillIn(orderLineTitleName),
       orderFormatSelect.choose('Physical resource'),
@@ -225,7 +225,7 @@ export default {
     ]);
   },
 
-  rolloverPOLineInfoforElectronicResourceWithFund: (orderLineTitleName, fund, unitPrice, quantity, value ) => {
+  rolloverPOLineInfoforElectronicResourceWithFund: (orderLineTitleName, fund, unitPrice, quantity, value) => {
     cy.do([
       orderLineTitleField.fillIn(orderLineTitleName),
       orderFormatSelect.choose('Electronic resource'),
@@ -481,12 +481,11 @@ export default {
   },
 
   fillInInvalidDataForPublicationDate:() => {
-    cy.do(TextField({ text: 'Publication date'}).fillIn('Invalid date'));
+    cy.do(TextField({ text: 'Publication date' }).fillIn('Invalid date'));
   },
 
   clickNotConnectionInfoButton:() => {
-    cy.do(Section({ id: 'itemDetails' }).find(Button({ icon: 'info'})).click());
-  },
-
+    cy.do(Section({ id: 'itemDetails' }).find(Button({ icon: 'info' })).click());
+  }
 };
 

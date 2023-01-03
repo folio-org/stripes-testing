@@ -16,7 +16,8 @@ import {
   including,
   SelectionOption,
   MultiSelect,
-  MultiSelectOption
+  MultiSelectOption,
+  Link
 } from '../../../../interactors';
 import SearchHelper from '../finance/financeHelper';
 import InteractorsTools from '../../utils/interactorsTools';
@@ -231,8 +232,8 @@ export default {
     cy.expect(Accordion({ id: orderDetailsAccordionId }).find(KeyValue({ value: createdByAdmin })).exists());
   },
 
-  selectFromResultsList: (rowNumber = 0) => {
-    cy.do(MultiColumnListRow({ index: rowNumber }).click());
+  selectFromResultsList: (number) => {
+    cy.do(MultiColumnList({ id:'orders-list' }).find(Link(number)).click());
   },
 
   deleteOrderViaActions: () => {
