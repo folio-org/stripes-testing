@@ -91,6 +91,7 @@ export default {
   uiUsersCreatePatronConditions: { internal: 'ui-users.settings.conditions', gui: 'Settings (Users): Can view and edit patron blocks conditions' },
   // Remote Storage
   remoteStorageCRUD: { internal: '', gui: 'Settings (Remote storage): Can create, edit, delete remote storage settings' },
+  remoteStorageView: { internal: 'ui-remote-storage.settings.remote-storages.view', gui: 'Remote storage: View' },
   // Requests
   uiRequestsCreate: { internal: 'ui-requests.create', gui: 'Requests: View, create' },
   uiRequestsView: { internal: 'ui-requests.view', gui: 'Requests: View' },
@@ -136,7 +137,6 @@ export default {
   uiInvoicesExportSearchResults: { internal: 'ui-invoice.exportCSV', gui: 'Invoice: Export search results' },
   uiInvoicesManageAcquisitionUnits: { internal: 'ui-invoice.acq.unit.assignment.manage', gui: 'Invoice: Manage acquisition units' },
   uiInvoicesVoucherExport: { internal: 'ui-invoice.voucherExport', gui: 'Invoice: Voucher export' },
-  
   // Orders
   uiOrdersView: { internal: 'ui-orders.orders.view', gui: 'Orders: Can view Orders and Order lines' },
   uiOrdersCreate: { internal: 'ui-orders.orders.create', gui: 'Orders: Can create new Orders and Order lines' },

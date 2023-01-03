@@ -1,14 +1,14 @@
+import { HTML, including, Link } from '@interactors/html';
 import {
   Button,
   MultiColumnListCell,
   Accordion,
   Selection,
   SelectionList,
-  Link,
   MultiColumnList,
-  HTML,
   MultiColumnListRow,
-  Checkbox
+  Checkbox,
+  Modal
 } from '../../../../../interactors';
 
 const anyProfileAccordion = Accordion({ id: 'profileIdAny' });
@@ -75,9 +75,17 @@ export default {
       cy.expect(HTML(property).exists());
     });
   },
-  
-  getCreatedItemsID: (rowIndex = 0) => cy.then(() =>
-    MultiColumnList({ id: 'search-results-list' })
-      .find(MultiColumnListRow({ indexRow: `row-${rowIndex}` }))
-      .find(Link('Created')).href()),
+
+  getCreatedItemsID: (rowIndex = 0) => cy.then(() => MultiColumnList({ id: 'search-results-list' })
+    .find(MultiColumnListRow({ indexRow: `row-${rowIndex}` }))
+    .find(Link('Created')).href()),
+
+  checkFileIsRunning:(fileName) => cy.expect(Accordion('Running').find(HTML(including(fileName))).exists()),
+
+  cancelImportJob:() => {
+    cy.do(Accordion('Running').find(Button({ icon:'trash' })).click());
+    cy.do(Modal({ id:'cancel-running-job-modal' })
+      .find(Button({ id:'clickable-cancel-running-job-modal-confirm' }))
+      .click());
+  }
 };
