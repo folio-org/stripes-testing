@@ -67,7 +67,6 @@ describe('ui-data-import: Inventory single record import is not delayed when lar
       cy.wait(2500);
       JobProfiles.searchJobProfileForImport(jobProfileToRun);
       JobProfiles.runImportFile();
-      JobProfiles.waitFileIsImported(fileName);
       Logs.checkFileIsRunning(fileName);
 
       cy.visit(TopMenu.inventoryPath);
