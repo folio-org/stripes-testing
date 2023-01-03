@@ -1,3 +1,4 @@
+/* eslint-disable cypress/no-unnecessary-waiting */
 import { HTML, including } from '@interactors/html';
 import { Button, Pane, Accordion } from '../../../../../interactors';
 

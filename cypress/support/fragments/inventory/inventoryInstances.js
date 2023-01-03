@@ -1,3 +1,4 @@
+/* eslint-disable cypress/no-unnecessary-waiting */
 import uuid from 'uuid';
 import {
   HTML,

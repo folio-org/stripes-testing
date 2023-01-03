@@ -1,3 +1,4 @@
+/* eslint-disable cypress/no-unnecessary-waiting */
 import { or } from '@interactors/html';
 import {
   Accordion,
