@@ -79,7 +79,7 @@ export default {
     cy.wait('@getTags', getLongDelay());
     ItemView.waitLoading();
   },
-  checkActionsMenuOptions: (optionsToChek = ['loanDetails', 'patronDetails', 'itemDetails', 'newFeeFine']) => {
+  checkActionsMenuOptions: (optionsToCheck = ['loanDetails', 'patronDetails', 'itemDetails', 'newFeeFine']) => {
     cy.expect(availableActionsButton.exists());
     cy.do(availableActionsButton.click());
     optionsToCheck.forEach((option) => {
