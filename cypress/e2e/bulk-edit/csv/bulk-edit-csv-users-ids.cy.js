@@ -75,7 +75,7 @@ describe('bulk-edit', () => {
       BulkEditActions.commitChanges();
 
       // Verify changes
-      BulkEditSearchPane.verifyChangedResults(user.username);
+      BulkEditSearchPane.verifyChangedResults(user.username, 'test');
       BulkEditActions.newBulkEdit();
     });
 
@@ -117,7 +117,7 @@ describe('bulk-edit', () => {
       BulkEditActions.clickNext();
       BulkEditActions.commitChanges();
 
-      BulkEditSearchPane.verifyChangedResults(user.username);
+      BulkEditSearchPane.verifyChangedResults(user.username, 'test');
       BulkEditActions.newBulkEdit();
     });
 
@@ -136,7 +136,7 @@ describe('bulk-edit', () => {
       BulkEditActions.clickNext();
       BulkEditActions.commitChanges();
 
-      BulkEditSearchPane.verifyChangedResults(user.username);
+      BulkEditSearchPane.verifyChangedResults(user.username, 'test');
       BulkEditActions.newBulkEdit();
     });
   });
