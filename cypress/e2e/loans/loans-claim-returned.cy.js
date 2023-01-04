@@ -180,65 +180,82 @@ describe('Loans ', () => {
     let claimedReturnedLoansQuantity;
     const claimedReturnedModalTitle = 'Claimed returned';
     let selectedItem = itemsData.itemsWithSeparateInstance.find(item => item.status === itemStatuses.checkedOut);
-    cy.login(userData.username, userData.password).then(() => {
-      openOpenedUserLoans(userData, itemsData.itemsWithSeparateInstance.length);
-      UserLoans.openLoan(selectedItem.barcode);
-      Loans.claimReturnedButtonIsVisible();
-      Loans.claimReturned();
-      ConfirmItemStatusModal.verifyModalView(claimedReturnedModalTitle).then(() => {
-        Loans.verifyResultsInTheRow([itemStatuses.checkedOut]);
-      });
-      Loans.claimReturnedAndConfirm(reasonWhyItemIsClaimedOut).then(() => {
-        Loans.resolveClaimedIsVisible();
-        itemsData.itemsWithSeparateInstance.find(function (item) {
-          if (item.barcode === selectedItem.barcode) {
-            item.status = itemStatuses.claimReturned;
-            return true;
-          }
-          return false;
-        });
-        Loans.checkItemStatus(itemStatuses.claimReturned);
-        Loans.checkClaimReturnedDateTime();
-        Loans.verifyResultsInTheRow([itemStatuses.claimReturned, userData.firstName, reasonWhyItemIsClaimedOut]);
-        Loans.dismissPane().then(() => {
-          claimedReturnedLoansQuantity = getClaimedReturnedLoansQuantity(itemsData.itemsWithSeparateInstance);
-          UserLoans.verifyQuantityOpenAndClaimedReturnedLoans(itemsData.itemsWithSeparateInstance.length, claimedReturnedLoansQuantity);
-          selectedItem = itemsData.itemsWithSeparateInstance.find(item => item.status === itemStatuses.checkedOut);
-          UserLoans.openActionsMenuOfLoanByBarcode(selectedItem.barcode);
-        });
-      });
-      Loans.claimReturned();
-      ConfirmItemStatusModal.verifyModalView(claimedReturnedModalTitle).then(() => {
-        UserLoans.checkResultsInTheRowByBarcode([itemStatuses.checkedOut], selectedItem.barcode);
-        UserLoans.openActionsMenuOfLoanByBarcode(selectedItem.barcode);
-      });
-      Loans.claimReturnedAndConfirm(reasonWhyItemIsClaimedOut).then(() => {
-        itemsData.itemsWithSeparateInstance.find(function (item) {
-          if (item.barcode === selectedItem.barcode) {
-            item.status = itemStatuses.claimReturned;
-            return true;
-          }
-          return false;
-        });
-        claimedReturnedLoansQuantity = getClaimedReturnedLoansQuantity(itemsData.itemsWithSeparateInstance);
-        UserLoans.verifyQuantityOpenAndClaimedReturnedLoans(itemsData.itemsWithSeparateInstance.length, claimedReturnedLoansQuantity);
-        UserLoans.checkResultsInTheRowByBarcode([itemStatuses.claimReturned], selectedItem.barcode);
-      });
-      UserLoans.openLoan(selectedItem.barcode);
+    cy.login(userData.username, userData.password);
+    openOpenedUserLoans(userData, itemsData.itemsWithSeparateInstance.length);
+    UserLoans.openLoan(selectedItem.barcode);
+    Loans.claimReturnedButtonIsVisible();
+    Loans.claimReturned();
+    ConfirmItemStatusModal.verifyModalView(claimedReturnedModalTitle).then(() => {
+      Loans.verifyResultsInTheRow([itemStatuses.checkedOut]);
+    });
+    Loans.claimReturnedAndConfirm(reasonWhyItemIsClaimedOut).then(() => {
       Loans.resolveClaimedIsVisible();
+      itemsData.itemsWithSeparateInstance.find(function (item) {
+        if (item.barcode === selectedItem.barcode) {
+          item.status = itemStatuses.claimReturned;
+          return true;
+        }
+        return false;
+      });
       Loans.checkItemStatus(itemStatuses.claimReturned);
       Loans.checkClaimReturnedDateTime();
       Loans.verifyResultsInTheRow([itemStatuses.claimReturned, userData.firstName, reasonWhyItemIsClaimedOut]);
       Loans.dismissPane().then(() => {
-        Loans.claimReturnedButtonIsDisabled();
-      });
-      selectedItems.push(selectedItem);
-      UserLoans.checkOffLoanByBarcode(selectedItem.barcode);
-      UserLoans.verifyClaimReturnedButtonIsDisabled().then(() => {
+        claimedReturnedLoansQuantity = getClaimedReturnedLoansQuantity(itemsData.itemsWithSeparateInstance);
+        UserLoans.verifyQuantityOpenAndClaimedReturnedLoans(itemsData.itemsWithSeparateInstance.length, claimedReturnedLoansQuantity);
         selectedItem = itemsData.itemsWithSeparateInstance.find(item => item.status === itemStatuses.checkedOut);
+        UserLoans.openActionsMenuOfLoanByBarcode(selectedItem.barcode);
+      });
+    });
+    Loans.claimReturned();
+    ConfirmItemStatusModal.verifyModalView(claimedReturnedModalTitle).then(() => {
+      UserLoans.checkResultsInTheRowByBarcode([itemStatuses.checkedOut], selectedItem.barcode);
+      UserLoans.openActionsMenuOfLoanByBarcode(selectedItem.barcode);
+    });
+    Loans.claimReturnedAndConfirm(reasonWhyItemIsClaimedOut).then(() => {
+      itemsData.itemsWithSeparateInstance.find(function (item) {
+        if (item.barcode === selectedItem.barcode) {
+          item.status = itemStatuses.claimReturned;
+          return true;
+        }
+        return false;
+      });
+      claimedReturnedLoansQuantity = getClaimedReturnedLoansQuantity(itemsData.itemsWithSeparateInstance);
+      UserLoans.verifyQuantityOpenAndClaimedReturnedLoans(itemsData.itemsWithSeparateInstance.length, claimedReturnedLoansQuantity);
+      UserLoans.checkResultsInTheRowByBarcode([itemStatuses.claimReturned], selectedItem.barcode);
+    });
+    UserLoans.openLoan(selectedItem.barcode);
+    Loans.resolveClaimedIsVisible();
+    Loans.checkItemStatus(itemStatuses.claimReturned);
+    Loans.checkClaimReturnedDateTime();
+    Loans.verifyResultsInTheRow([itemStatuses.claimReturned, userData.firstName, reasonWhyItemIsClaimedOut]);
+    Loans.dismissPane().then(() => {
+      Loans.claimReturnedButtonIsDisabled();
+    });
+    selectedItems.push(selectedItem);
+    UserLoans.checkOffLoanByBarcode(selectedItem.barcode)
+      .then(() => {
+        UserLoans.verifyClaimReturnedButtonIsDisabled();
+        selectedItem = itemsData.itemsWithSeparateInstance.find((item) => item.status === itemStatuses.checkedOut);
         selectedItems.push(selectedItem);
         UserLoans.checkOffLoanByBarcode(selectedItem.barcode);
-      }).then(() => {
+      })
+      .then(() => {
+        itemsData.itemsWithSeparateInstance.find(function (item) {
+          if (item.barcode === selectedItem.barcode) {
+            item.status = itemStatuses.claimReturned;
+            return true;
+          }
+          return false;
+        });
+      })
+      .then(() => {
+        UserLoans.verifyClaimReturnedButtonIsVisible();
+        selectedItem = itemsData.itemsWithSeparateInstance.find((item) => item.status === itemStatuses.declaredLost);
+        selectedItems.push(selectedItem);
+        UserLoans.checkOffLoanByBarcode(selectedItem.barcode);
+      })
+      .then(() => {
         itemsData.itemsWithSeparateInstance.find(function (item) {
           if (item.barcode === selectedItem.barcode) {
             item.status = itemStatuses.claimReturned;
@@ -247,65 +264,51 @@ describe('Loans ', () => {
           return false;
         });
       });
-      UserLoans.verifyClaimReturnedButtonIsVisible().then(() => {
-        selectedItem = itemsData.itemsWithSeparateInstance.find(item => item.status === itemStatuses.declaredLost);
-        selectedItems.push(selectedItem);
-        UserLoans.checkOffLoanByBarcode(selectedItem.barcode);
-      }).then(() => {
-        itemsData.itemsWithSeparateInstance.find(function (item) {
-          if (item.barcode === selectedItem.barcode) {
-            item.status = itemStatuses.claimReturned;
-            return true;
-          }
-          return false;
-        });
+    UserLoans.openClaimReturnedPane();
+    ConfirmClaimReturnedModal.verifyNumberOfItemsToBeClaimReturned(3);
+    ConfirmClaimReturnedModal.verifyModalView();
+    UserLoans.openClaimReturnedPane();
+    ConfirmClaimReturnedModal.confirmItemStatus(reasonWhyItemIsClaimedOut).then(() => {
+      selectedItems.forEach(item => {
+        UserLoans.checkResultsInTheRowByBarcode([item.status], item.barcode);
+        UserLoans.openLoan(item.barcode);
+        Loans.resolveClaimedIsVisible();
+        Loans.checkItemStatus(itemStatuses.claimReturned);
+        Loans.checkClaimReturnedDateTime();
+        Loans.verifyResultsInTheRow([itemStatuses.claimReturned, userData.firstName, reasonWhyItemIsClaimedOut]);
+        Loans.dismissPane();
       });
-      UserLoans.openClaimReturnedPane();
-      ConfirmClaimReturnedModal.verifyNumberOfItemsToBeClaimReturned(3);
-      ConfirmClaimReturnedModal.verifyModalView();
-      UserLoans.openClaimReturnedPane();
-      ConfirmClaimReturnedModal.confirmItemStatus(reasonWhyItemIsClaimedOut).then(() => {
-        selectedItems.forEach(item => {
-          UserLoans.checkResultsInTheRowByBarcode([item.status], item.barcode);
-          UserLoans.openLoan(item.barcode);
-          Loans.resolveClaimedIsVisible();
-          Loans.checkItemStatus(itemStatuses.claimReturned);
-          Loans.checkClaimReturnedDateTime();
-          Loans.verifyResultsInTheRow([itemStatuses.claimReturned, userData.firstName, reasonWhyItemIsClaimedOut]);
-          Loans.dismissPane();
-        });
-        cy.visit(TopMenu.checkInPath);
+      cy.visit(TopMenu.checkInPath);
+    });
+    cy.wrap(selectedItems).each(item => {
+      CheckInActions.checkInItemGui(item.barcode).then(() => {
+        if (item.status !== itemStatuses.declaredLost) {
+          CheckInClaimedReturnedItemModal.chooseItemReturnedByPatron();
+          CheckInClaimedReturnedItemModal.verifyModalIsClosed();
+          CheckInActions.verifyLastCheckInItem(item.barcode);
+        } else {
+          CheckInDeclareLostItemModal.confirm();
+          CheckInActions.verifyLastCheckInItem(item.barcode);
+        }
       });
-      cy.wrap(selectedItems).each(item => {
-        CheckInActions.checkInItemGui(item.barcode).then(() => {
-          if (item.status !== itemStatuses.declaredLost) {
-            CheckInClaimedReturnedItemModal.chooseItemReturnedByPatron();
-            CheckInClaimedReturnedItemModal.verifyModalIsClosed();
-            CheckInActions.verifyLastCheckInItem(item.barcode);
-          } else {
-            CheckInDeclareLostItemModal.confirm();
-            CheckInActions.verifyLastCheckInItem(item.barcode);
-          }
-        });
-      });
-      showOpenedUserLoansInUserCard(userData);
-      UsersCard.verifyQuantityOfOpenAndClaimReturnedLoans(2, 1);
-      cy.visit(TopMenu.checkInPath).then(() => {
-        cy.wrap(itemsData.itemsWithSeparateInstance).each(item => {
-          if (item.barcode !== selectedItems[0].barcode && item.barcode !== selectedItems[1].barcode &&
-            item.barcode !== selectedItems[2].barcode) {
-            CheckInActions.checkInItemGui(item.barcode).then(() => {
-              if (item.status !== itemStatuses.declaredLost) {
-                CheckInClaimedReturnedItemModal.chooseItemReturnedByPatron();
-                CheckInClaimedReturnedItemModal.verifyModalIsClosed();
-                CheckInActions.verifyLastCheckInItem(item.barcode);
-              } else {
-                CheckInDeclareLostItemModal.confirm();
-                CheckInActions.verifyLastCheckInItem(item.barcode);
-              }
-            });
-          }
-        });
+    });
+    showOpenedUserLoansInUserCard(userData);
+    UsersCard.verifyQuantityOfOpenAndClaimReturnedLoans(2, 1);
+    cy.visit(TopMenu.checkInPath).then(() => {
+      cy.wrap(itemsData.itemsWithSeparateInstance).each(item => {
+        if (item.barcode !== selectedItems[0].barcode && item.barcode !== selectedItems[1].barcode &&
+          item.barcode !== selectedItems[2].barcode) {
+          CheckInActions.checkInItemGui(item.barcode).then(() => {
+            if (item.status !== itemStatuses.declaredLost) {
+              CheckInClaimedReturnedItemModal.chooseItemReturnedByPatron();
+              CheckInClaimedReturnedItemModal.verifyModalIsClosed();
+              CheckInActions.verifyLastCheckInItem(item.barcode);
+            } else {
+              CheckInDeclareLostItemModal.confirm();
+              CheckInActions.verifyLastCheckInItem(item.barcode);
+            }
+          });
+        }
       });
     });
   });
