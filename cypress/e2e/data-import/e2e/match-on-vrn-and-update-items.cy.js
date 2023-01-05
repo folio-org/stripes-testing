@@ -238,7 +238,8 @@ describe('ui-data-import: Match on VRN and update related Instance, Holdings, It
     DataImport.checkIsLandingPageOpened();
     DataImport.uploadFile(editedMarcFileName);
     JobProfiles.searchJobProfileForImport(jobProfilesData.name);
-    JobProfiles.runImportFile(editedMarcFileName);
+    JobProfiles.runImportFile();
+    JobProfiles.waitFileIsImported(editedMarcFileName);
     Logs.checkStatusOfJobProfile();
     Logs.openFileDetails(editedMarcFileName);
     FileDetails.checkItemsStatusesInResultList(0, [FileDetails.status.created, FileDetails.status.updated, FileDetails.status.updated, FileDetails.status.updated]);

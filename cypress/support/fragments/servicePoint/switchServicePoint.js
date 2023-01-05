@@ -1,3 +1,4 @@
+/* eslint-disable cypress/no-unnecessary-waiting */
 import NewServicePoint from '../settings/tenant/servicePoints/newServicePoint';
 import { Dropdown, Button, including } from '../../../../interactors';
 import TopMenu from '../topMenu';
