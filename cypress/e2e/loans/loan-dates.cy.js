@@ -112,7 +112,7 @@ describe('loan dates', () => {
     Users.deleteViaApi(checkOutUser.userId);
   });
 
-  it('C566 Loan: Change due date warnings and alerts (prokopovych)', { tags: [TestTypes.smoke], DevTeams.prokopovych }, () => {
+  it('C566 Loan: Change due date warnings and alerts (prokopovych)', { tags: [TestTypes.smoke, DevTeams.prokopovych] }, () => {
     cy.visit(TopMenu.usersPath);
     // show open loans
     UsersSearchPane.searchByKeywords(checkOutUser.username);
@@ -151,7 +151,6 @@ describe('loan dates', () => {
     UsersCard.showOpenedLoans();
     LoansPage.openChangeDueDateForm();
     ChangeDueDateForm.verifyRequestsCount('1');
-    // Bug UIU-2586
-    // ChangeDueDateForm.verifyWarning('Item has been recalled');
+    ChangeDueDateForm.verifyWarning('Item has been recalled');
   });
 });
