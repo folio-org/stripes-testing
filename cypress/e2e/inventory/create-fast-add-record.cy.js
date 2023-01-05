@@ -65,8 +65,7 @@ describe('ui-inventory: Create fast add record', () => {
         InteractorsTools.checkCalloutMessage(
           FastAddNewRecord.calloutMessages.INVENTORY_RECORDS_CREATE_SUCCESS
         );
-        InventorySearchAndFilter.switchToItem();
-        InventorySearchAndFilter.searchByParameter('Barcode', FastAddNewRecord.fastAddNewRecordFormDetails.itemBarcode);
+        InventorySearchAndFilter.searchInstanceByTitle(FastAddNewRecord.fastAddNewRecordFormDetails.resourceTitle);
         FastAddNewRecord.openRecordDetails();
 
         // verify instance details
