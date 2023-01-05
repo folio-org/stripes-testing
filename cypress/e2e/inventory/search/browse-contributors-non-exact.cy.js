@@ -50,17 +50,17 @@ describe('ui-inventory: search', () => {
     });
   });
 
-  it("C353640 Browse contributors with non exact match query (spitfire)", { tags: [testType.smoke, devTeams.spitfire] }, () => {
-      BrowseContributors.clickBrowseBtn();
-      InventorySearchAndFilter.verifyKeywordsAsDefault();
-      BrowseContributors.checkBrowseOptions();
-      BrowseContributors.select();
-      BrowseContributors.checkSearch();
-      BrowseContributors.browse(instanceA.contributors[0].name.substring(0, 21));
-      BrowseContributors.checkSearchResultsTable();
-      BrowseContributors.checkNonExactSearchResult(instanceA.contributors[0], instanceZ.contributors[0]);
-      BrowseContributors.resetAllInSearchPane();
-      InventorySearchAndFilter.verifyKeywordsAsDefault();
+  it('C353640 Browse contributors with non exact match query (spitfire)', { tags: [testType.smoke, devTeams.spitfire] }, () => {
+    BrowseContributors.clickBrowseBtn();
+    InventorySearchAndFilter.verifyKeywordsAsDefault();
+    BrowseContributors.checkBrowseOptions();
+    BrowseContributors.select();
+    BrowseContributors.checkSearch();
+    BrowseContributors.browse(instanceA.contributors[0].name.substring(0, 21));
+    BrowseContributors.checkSearchResultsTable();
+    BrowseContributors.checkNonExactSearchResult(instanceA.contributors[0], instanceZ.contributors[0]);
+    BrowseContributors.resetAllInSearchPane();
+    InventorySearchAndFilter.verifyKeywordsAsDefault();
   });
 
   afterEach('Deleting user', () => {

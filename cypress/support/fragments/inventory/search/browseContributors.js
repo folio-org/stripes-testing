@@ -60,9 +60,7 @@ export default {
     ]);
     cy.then(() => Option('Call numbers').index()).then((callNumbersOptionIndex) => {
         cy.then(() => contributorsOption.index()).then((contributorsOptionIndex) => {
-            expect(contributorsOptionIndex).to.equal(
-              callNumbersOptionIndex + 1
-            );
+            expect(contributorsOptionIndex).to.equal(callNumbersOptionIndex + 1);
         });
     });
   },
