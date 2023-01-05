@@ -43,7 +43,8 @@ describe('ui-data-import: Check that protected fields in incoming records are no
         Z3950TargetProfiles.changeOclcWorldCatToDefaultViaApi();
         DataImport.uploadFile('Test_file_with_856_field.mrc', fileName);
         JobProfiles.searchJobProfileForImport('Default - Create instance and SRS MARC Bib');
-        JobProfiles.runImportFile(fileName);
+        JobProfiles.runImportFile();
+        JobProfiles.waitFileIsImported(fileName);
         Logs.checkStatusOfJobProfile('Completed');
         Logs.openFileDetails(fileName);
         [FileDetails.columnName.srsMarc,

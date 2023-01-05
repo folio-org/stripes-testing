@@ -164,7 +164,8 @@ describe('ui-data-import: Check that field protection settings work properly dur
     cy.visit(TopMenu.dataImportPath);
     DataImport.uploadFile('marcFileForC17017.mrc', nameMarcFileForCreate);
     JobProfiles.searchJobProfileForImport(jobProfileName);
-    JobProfiles.runImportFile(nameMarcFileForCreate);
+    JobProfiles.runImportFile();
+    JobProfiles.waitFileIsImported(nameMarcFileForCreate);
     Logs.checkStatusOfJobProfile('Completed');
     Logs.openFileDetails(nameMarcFileForCreate);
     Logs.verifyInstanceStatus(0, 2, 'Created');
@@ -214,7 +215,8 @@ describe('ui-data-import: Check that field protection settings work properly dur
     cy.visit(TopMenu.dataImportPath);
     DataImport.uploadFile(editedMarcFileName, fileNameForUpdate);
     JobProfiles.searchJobProfileForImport(jobProfileUpdateName);
-    JobProfiles.runImportFile(fileNameForUpdate);
+    JobProfiles.runImportFile();
+    JobProfiles.waitFileIsImported(fileNameForUpdate);
     Logs.checkStatusOfJobProfile('Completed');
     Logs.openFileDetails(fileNameForUpdate);
     Logs.verifyInstanceStatus(0, 2, 'Created');

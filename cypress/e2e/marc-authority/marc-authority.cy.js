@@ -30,7 +30,8 @@ describe('MARC Authority management', () => {
     DataImport.uploadFile(MarcAuthority.defaultAuthority.name, uniqueFileName);
     JobProfiles.waitLoadingList();
     JobProfiles.select(profileName);
-    JobProfiles.runImportFile(uniqueFileName);
+    JobProfiles.runImportFile();
+    JobProfiles.waitFileIsImported(uniqueFileName);
     JobProfiles.openFileRecords(uniqueFileName);
     DataImport.getLinkToAuthority(MarcAuthority.defaultAuthority.headingReference).then(link => {
       const jobLogEntryId = link.split('/').at(-2);
@@ -165,7 +166,8 @@ describe('MARC Authority management', () => {
     DataImport.uploadFile(MarcAuthority.defaultAuthority.name, secondFileName);
     JobProfiles.waitLoadingList();
     JobProfiles.select(MarcAuthority.defaultCreateJobProfile);
-    JobProfiles.runImportFile(secondFileName);
+    JobProfiles.runImportFile();
+    JobProfiles.waitFileIsImported(secondFileName);
 
     cy.visit(TopMenu.marcAuthorities);
     MarcAuthorities.switchToBrowse();
