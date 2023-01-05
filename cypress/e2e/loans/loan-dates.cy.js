@@ -14,7 +14,6 @@ import Users from '../../support/fragments/users/users';
 import CheckinActions from '../../support/fragments/check-in-actions/checkInActions';
 import InventoryHoldings from '../../support/fragments/inventory/holdings/inventoryHoldings';
 import UserEdit from '../../support/fragments/users/userEdit';
-import Checkout from '../../support/fragments/checkout/checkout';
 import MultipieceCheckOut from '../../support/fragments/checkout/modals/multipieceCheckOut';
 import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
 import InventoryInstance from '../../support/fragments/inventory/inventoryInstance';
@@ -82,7 +81,8 @@ describe('loan dates', () => {
             });
           })
           .then(() => {
-            cy.login(userProperties.username, userProperties.password, { path: TopMenu.checkOutPath, waiter: Checkout.waitLoading });
+            cy.login(userProperties.username, userProperties.password);
+            cy.visit(TopMenu.checkOutPath);
             CheckOutActions.checkOutItemUser(Cypress.env('users')[0].barcode, item.barcode);
             MultipieceCheckOut.confirmMultipleCheckOut(item.barcode);
             CheckOutActions.endCheckOutSession();
