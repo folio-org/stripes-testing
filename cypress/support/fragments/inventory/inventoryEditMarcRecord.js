@@ -28,6 +28,10 @@ export default {
   },
 
   editField:(content, number) => {
+    // need to wait untill the row is displayed
+    cy.wait(2000);
     cy.do(TextArea({ name:`records[${number}].content` }).fillIn(content));
+    // need to wait untill the row will be updated
+    cy.wait(2000);
   }
 };

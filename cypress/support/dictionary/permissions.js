@@ -26,6 +26,7 @@ export default {
   uiQuickMarcQuickMarcHoldingsEditorAll: { internal: 'ui-quick-marc.quick-marc-holdings-editor.all', gui: 'quickMARC: View, edit MARC holdings record' },
   uiQuickMarcQuickMarcHoldingsEditorView:{ internal:'ui-quick-marc.quick-marc-holdings-editor.view', gui:'quickMARC: View MARC holdings record' },
   uiQuickMarcQuickMarcBibliographicEditorView:{ internal:'ui-quick-marc.quick-marc-editor.view', gui:'quickMARC: View MARC bibliographic record' },
+  uiCanLinkUnlinkAuthorityRecordsToBibRecords:{ internal: 'ui-quick-marc.quick-marc-authority-records.linkUnlink', gui: 'quickMARC: Can Link/unlink authority records to bib records' },
   // Marc Authority record
   uiQuickMarcQuickMarcAuthoritiesEditorAll: { internal: 'ui-quick-marc.quick-marc-authorities-editor.all', gui: 'quickMARC: View, edit MARC authorities record' },
   uiMarcAuthoritiesAuthorityRecordView:{ internal: 'ui-marc-authorities.authority-record.view', gui:'MARC Authority: View MARC authority record' },
@@ -91,6 +92,7 @@ export default {
   uiUsersCreatePatronConditions: { internal: 'ui-users.settings.conditions', gui: 'Settings (Users): Can view and edit patron blocks conditions' },
   // Remote Storage
   remoteStorageCRUD: { internal: '', gui: 'Settings (Remote storage): Can create, edit, delete remote storage settings' },
+  remoteStorageView: { internal: 'ui-remote-storage.settings.remote-storages.view', gui: 'Remote storage: View' },
   // Requests
   uiRequestsCreate: { internal: 'ui-requests.create', gui: 'Requests: View, create' },
   uiRequestsView: { internal: 'ui-requests.view', gui: 'Requests: View' },
@@ -136,7 +138,6 @@ export default {
   uiInvoicesExportSearchResults: { internal: 'ui-invoice.exportCSV', gui: 'Invoice: Export search results' },
   uiInvoicesManageAcquisitionUnits: { internal: 'ui-invoice.acq.unit.assignment.manage', gui: 'Invoice: Manage acquisition units' },
   uiInvoicesVoucherExport: { internal: 'ui-invoice.voucherExport', gui: 'Invoice: Voucher export' },
-  
   // Orders
   uiOrdersView: { internal: 'ui-orders.orders.view', gui: 'Orders: Can view Orders and Order lines' },
   uiOrdersCreate: { internal: 'ui-orders.orders.create', gui: 'Orders: Can create new Orders and Order lines' },
