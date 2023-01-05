@@ -1,4 +1,5 @@
-import testType from '../../support/dictionary/testTypes';
+import TestTypes from '../../support/dictionary/testTypes';
+import DevTeams from '../../support/dictionary/devTeams';
 import NewOrder from '../../support/fragments/orders/newOrder';
 import BasicOrderLine from '../../support/fragments/orders/basicOrderLine';
 import Orders from '../../support/fragments/orders/orders';
@@ -9,8 +10,8 @@ import InventorySearchAndFilter from '../../support/fragments/inventory/inventor
 import InteractorsTools from '../../support/utils/interactorsTools';
 import OrdersHelper from '../../support/fragments/orders/ordersHelper';
 import CheckInActions from '../../support/fragments/check-in-actions/checkInActions';
-import InventoryInstance from '../../support/fragments/inventory/inventoryInstance';
 import Organizations from '../../support/fragments/organizations/organizations';
+import ItemView from '../../support/fragments/inventory/inventoryItem/itemView';
 
 describe('orders: Receive piece from Order', () => {
   const order = { ...NewOrder.defaultOneTimeOrder };
@@ -31,7 +32,6 @@ describe('orders: Receive piece from Order', () => {
         orderLine.physical.materialSupplier = organization.id;
         orderLine.eresource.accessProvider = organization.id;
       });
-
     cy.getLocations({ query: `name="${OrdersHelper.mainLibraryLocation}"` })
       .then(res => {
         location = res;
@@ -44,7 +44,6 @@ describe('orders: Receive piece from Order', () => {
           });
         orderLine.locations[0].locationId = location.id;
       });
-
     cy.getMaterialTypes({ query: 'name="book"' })
       .then(materialType => { orderLine.physical.materialType = materialType.id; });
 
@@ -58,7 +57,7 @@ describe('orders: Receive piece from Order', () => {
       });
   });
 
-  it('C3506 Catalog a new title which has been ordered and received in Orders (procopovich)', { tags: [testType.smoke] }, () => {
+  it('C3506 Catalog a new title which has been ordered and received in Orders (prokopovych)', { tags: [TestTypes.smoke, DevTeams.prokopovych] }, () => {
     Orders.searchByParameter('PO number', orderNumber);
     Orders.selectFromResultsList(orderNumber);
     Orders.openOrder();
@@ -76,7 +75,6 @@ describe('orders: Receive piece from Order', () => {
     InventorySearchAndFilter.verifyKeywordsAsDefault();
     InventorySearchAndFilter.switchToItem();
     InventorySearchAndFilter.searchByParameter('Barcode', barcode);
-    InventoryInstance.openHoldings(['Main Library >']);
-    InventorySearchAndFilter.verifySearchResult('In transit');
+    ItemView.verifyItemStatus(ItemView.itemStatuses.inTransit);
   });
 });
