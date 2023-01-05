@@ -15,6 +15,7 @@ import Location from '../../support/fragments/settings/tenant/locations/newLocat
 import SettingsMenu from '../../support/fragments/settingsMenu';
 import OtherSettings from '../../support/fragments/settings/circulation/otherSettings';
 import DefaultUser from '../../support/fragments/users/userDefaultObjects/defaultUser';
+import Checkout from '../../support/fragments/checkout/checkout';
 
 describe('Check Out - Actions ', () => {
   const userData = {
@@ -130,6 +131,7 @@ describe('Check Out - Actions ', () => {
     });
     Users.checkIsUserCreated(testActiveUser);
     cy.visit(TopMenu.checkOutPath);
+    Checkout.waitLoading();
     // without this waiter, the user will not be found by username
     cy.wait(4000);
     CheckOutActions.checkOutUser(testActiveUser.barcode, testActiveUser.username);
