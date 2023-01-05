@@ -1,6 +1,7 @@
 import uuid from 'uuid';
 import { getTestEntityValue } from '../../../support/utils/stringTools';
 import TestType from '../../../support/dictionary/testTypes';
+import DevTeams from '../../../support/dictionary/devTeams';
 import AppPaths from '../../../support/fragments/app-paths';
 import { getNewItem } from '../../../support/fragments/inventory/item';
 import UsersOwners from '../../../support/fragments/settings/users/usersOwners';
@@ -110,7 +111,7 @@ describe('ui-users-loans: Loans', () => {
     });
   });
 
-  it('C9191 Declare lost (prokopovych)', { tags: [TestType.smoke, TestType.broken] }, () => {
+  it('C9191 Declare lost (prokopovych)', { tags: [TestType.smoke, TestType.broken, DevTeams.prokopovych] }, () => {
     UsersCard.getApi(testUserId).then((user) => {
       Loans.getApi(testUserId).then(([firstLoan, secondLoan]) => {
         Loans.checkStatusCheckedOut(SECOND_LOAN_ROW_INDEX);

@@ -1,5 +1,6 @@
 import TopMenu from '../../support/fragments/topMenu';
 import TestTypes from '../../support/dictionary/testTypes';
+import DevTeams from '../../support/dictionary/devTeams';
 import getRandomPostfix from '../../support/utils/stringTools';
 import permissions from '../../support/dictionary/permissions';
 import UsersSearchPane from '../../support/fragments/users/usersSearchPane';
@@ -111,7 +112,7 @@ describe('loan dates', () => {
     Users.deleteViaApi(checkOutUser.userId);
   });
 
-  it('C566 Loan: Change due date warnings and alerts (prokopovych)', { tags: [TestTypes.smoke] }, () => {
+  it('C566 Loan: Change due date warnings and alerts (prokopovych)', { tags: [TestTypes.smoke], DevTeams.prokopovych }, () => {
     cy.visit(TopMenu.usersPath);
     // show open loans
     UsersSearchPane.searchByKeywords(checkOutUser.username);

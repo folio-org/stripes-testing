@@ -1,4 +1,5 @@
 import TestType from '../../../support/dictionary/testTypes';
+import DevTeams from '../../../support/dictionary/devTeams';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
 import UsersOwners from '../../../support/fragments/settings/users/usersOwners';
 import Permissions from '../../../support/dictionary/permissions';
@@ -37,7 +38,7 @@ describe('ui-users-settings: Owners', () => {
       });
     });
 
-    it('C350616 Fee/Fine Owners are not required to have a Service Point (prokopovych)', { tags: [TestType.smoke] }, () => {
+    it('C350616 Fee/Fine Owners are not required to have a Service Point (prokopovych)', { tags: [TestType.smoke, DevTeams.prokopovych] }, () => {
       const ownerName = `Automation owner $${getRandomPostfix()}`;
       ownerNames.push(ownerName);
       UsersOwners.startNewLineAdding();
@@ -69,7 +70,7 @@ describe('ui-users-settings: Owners', () => {
     const createRegularUser = () => cy.createTempUser([Permissions.uiUsersSettingsOwners.gui,
       Permissions.uiUsersEdituserservicepoints.gui]);
 
-    it('C441 Verify that you can create/edit/delete associations between fee/fine owners and service points (prokopovych)', { tags: [TestType.criticalPath] }, () => {
+    it('C441 Verify that you can create/edit/delete associations between fee/fine owners and service points (prokopovych)', { tags: [TestType.criticalPath, DevTeams.prokopovych] }, () => {
       createRegularUser().then(firstUserProperties => {
         testUsers.push(firstUserProperties);
 

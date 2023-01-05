@@ -1,6 +1,7 @@
 import uuid from 'uuid';
 import moment from 'moment';
 import TestType from '../../support/dictionary/testTypes';
+import DevTeams from '../../support/dictionary/devTeams';
 import renewalActions from '../../support/fragments/loans/renewals';
 import generateItemBarcode from '../../support/utils/generateItemBarcode';
 import permissions from '../../support/dictionary/permissions';
@@ -170,7 +171,7 @@ describe('Renewal', () => {
       });
   });
 
-  it('C568 Renewal: failure because loan is not renewable (prokopovych)', { tags: [TestType.smoke] }, () => {
+  it('C568 Renewal: failure because loan is not renewable (prokopovych)', { tags: [TestType.smoke, DevTeams.prokopovych] }, () => {
     renewalActions.renewWithoutOverrideAccess(loanId, renewUserData.id, itemData);
 
     cy.login(renewOverrideUserData.lastName, renewOverrideUserData.password);

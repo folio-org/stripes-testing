@@ -1,5 +1,7 @@
 import LostItemFeePolicy from '../../support/fragments/circulation/lost-item-fee-policy';
 import SettingsMenu from '../../support/fragments/settingsMenu';
+import TestTypes from '../../support/dictionary/testTypes';
+import DevTeams from '../../support/dictionary/devTeams';
 
 describe('Fee/fine management', () => {
   const name = 'A_very_specific_name';
@@ -13,29 +15,30 @@ describe('Fee/fine management', () => {
     cy.loginAsAdmin({ path: SettingsMenu.circulationLostItemFeePolicyPath, waiter: LostItemFeePolicy.waitLoading });
   });
 
-  it('C5558 Verify that you can create/edit/delete lost item fee policies (prokopovych)', () => {
+  it('C5558 Verify that you can create/edit/delete lost item fee policies (prokopovych)',
+    { tags: [TestTypes.smoke, DevTeams.prokopovych] }, () => {
     // creating
-    LostItemFeePolicy.startAdding();
-    LostItemFeePolicy.fillName(name);
-    LostItemFeePolicy.save();
-    LostItemFeePolicy.checkErrorMessage(lostItemChargeFeeFineError);
-    LostItemFeePolicy.fillDuration(duration, period);
-    LostItemFeePolicy.save();
-    LostItemFeePolicy.checkAfterSaving(name, `${duration} ${period}`);
+      LostItemFeePolicy.startAdding();
+      LostItemFeePolicy.fillName(name);
+      LostItemFeePolicy.save();
+      LostItemFeePolicy.checkErrorMessage(lostItemChargeFeeFineError);
+      LostItemFeePolicy.fillDuration(duration, period);
+      LostItemFeePolicy.save();
+      LostItemFeePolicy.checkAfterSaving(name, `${duration} ${period}`);
 
-    // editing
-    LostItemFeePolicy.startEditing();
-    LostItemFeePolicy.fillName(editedName);
-    LostItemFeePolicy.save();
-    LostItemFeePolicy.checkAfterSaving(editedName, `${duration} ${period}`);
+      // editing
+      LostItemFeePolicy.startEditing();
+      LostItemFeePolicy.fillName(editedName);
+      LostItemFeePolicy.save();
+      LostItemFeePolicy.checkAfterSaving(editedName, `${duration} ${period}`);
 
-    // creating policy with existing name
-    LostItemFeePolicy.startAdding();
-    LostItemFeePolicy.fillName(editedName);
-    LostItemFeePolicy.fillDuration(duration, period);
-    LostItemFeePolicy.save();
-    LostItemFeePolicy.checkErrorMessage(duplicateError);
-  });
+      // creating policy with existing name
+      LostItemFeePolicy.startAdding();
+      LostItemFeePolicy.fillName(editedName);
+      LostItemFeePolicy.fillDuration(duration, period);
+      LostItemFeePolicy.save();
+      LostItemFeePolicy.checkErrorMessage(duplicateError);
+    });
   after('Deleting lost item fee policy', () => {
     // deleting
     LostItemFeePolicy.delete(name);
