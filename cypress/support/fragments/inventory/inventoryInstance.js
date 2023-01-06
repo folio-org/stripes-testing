@@ -1,3 +1,4 @@
+/* eslint-disable cypress/no-unnecessary-waiting */
 import {
   MultiColumnList,
   HTML,
@@ -407,7 +408,7 @@ export default {
 
   verifyLoanInItemPage(barcode, value) {
     cy.do(MultiColumnListCell({ content: barcode }).find(Link()).click());
-    cy.expect(KeyValue('Temporary loan type').has({ value: value}));
-    cy.do(Button({ icon: 'times'}).click());
+    cy.expect(KeyValue('Temporary loan type').has({ value }));
+    cy.do(Button({ icon: 'times' }).click());
   },
 };

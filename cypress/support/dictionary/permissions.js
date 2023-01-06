@@ -55,6 +55,7 @@ export default {
   // DataImport
   dataImportUploadAll:{ internal: 'data-import.upload.all', gui:'Data Import File Upload - all permissions' },
   moduleDataImportEnabled:{ internal: 'ui-data-import.settings.manage', gui:'Data import: Can upload files, import, and view logs' },
+  settingsDataImportView:{ internal: 'ui-data-import.settings.readOnly', gui:'Data import: Can view only' },
   settingsDataImportEnabled:{ internal: 'settings.data-import.enabled', gui:'Settings (Data import): Can view, create, edit, and remove' },
   dataImportDeleteLogs: { internal: 'ui-data-import.logs.delete', gui: 'Data import: Can delete import logs' },
   // Storage

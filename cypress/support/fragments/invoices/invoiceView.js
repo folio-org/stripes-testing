@@ -14,7 +14,10 @@ export default {
 
       cy.visit(TopMenu.invoicesPath);
       invoices.searchByNumber(invoiceOfNumber);
-      cy.do(MultiColumnList({ id:'invoices-list' }).find(Link(invoiceNumber)).click());
+      cy.do(MultiColumnList({ id:'invoices-list' })
+        .find(MultiColumnListCell({ row: 0, columnIndex: 0 }))
+        .find(Link(invoiceNumber))
+        .click());
 
       const invoiceDate = KeyValue('Invoice date');
       const invoiceStatus = KeyValue('Status');

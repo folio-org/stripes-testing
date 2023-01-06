@@ -1,3 +1,4 @@
+/* eslint-disable cypress/no-unnecessary-waiting */
 import { Button, TextField, Pane, Select, HTML, including } from '../../../../interactors';
 import SelectUser from './selectUser';
 

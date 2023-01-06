@@ -101,7 +101,8 @@ describe('ui-data-import: Match on Instance identifier match meets both the Iden
   it('C347829 Match on Instance identifier match meets both the Identifier type and Data requirements (folijet)', { tags: [TestTypes.criticalPath, DevTeams.folijet] }, () => {
     DataImport.uploadFile(filePathForCreateInstance, fileNameForCreateInstance);
     JobProfiles.searchJobProfileForImport(jobProfileToRun);
-    JobProfiles.runImportFile(fileNameForCreateInstance);
+    JobProfiles.runImportFile();
+    JobProfiles.waitFileIsImported(fileNameForCreateInstance);
     Logs.checkStatusOfJobProfile('Completed');
     Logs.openFileDetails(fileNameForCreateInstance);
     Logs.clickOnHotLink(0, 3, 'Created');
@@ -129,7 +130,8 @@ describe('ui-data-import: Match on Instance identifier match meets both the Iden
     cy.visit(TopMenu.dataImportPath);
     DataImport.uploadFile(filePathForUpdateInstance, fileNameForUpdateInstance);
     JobProfiles.searchJobProfileForImport(jobProfileName);
-    JobProfiles.runImportFile(fileNameForUpdateInstance);
+    JobProfiles.runImportFile();
+    JobProfiles.waitFileIsImported(fileNameForUpdateInstance);
     Logs.checkStatusOfJobProfile('Completed');
     Logs.openFileDetails(fileNameForUpdateInstance);
     Logs.verifyInstanceStatus(0, 3, 'Discarded');

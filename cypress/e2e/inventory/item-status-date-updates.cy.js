@@ -1,3 +1,4 @@
+/* eslint-disable cypress/no-unnecessary-waiting */
 import getRandomPostfix from '../../support/utils/stringTools';
 import {
   REQUEST_POLICY_NAMES,
