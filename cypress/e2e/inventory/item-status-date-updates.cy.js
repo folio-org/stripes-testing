@@ -217,30 +217,30 @@ describe('ui-inventory: Item status date updates', () => {
     // check in item at service point assigned to its effective location
     checkIn(itemBarcode, ItemView.itemStatuses.available);
 
-    // // check in item at service point not assigned to its effective location
-    // SwitchServicePoint.switchServicePoint(notEffectiveLocationServicePoint.name);
-    // checkIn(itemBarcode, ItemView.itemStatuses.inTransit, ConfirmItemInModal.confirmInTransitModal);
+    // check in item at service point not assigned to its effective location
+    SwitchServicePoint.switchServicePoint(notEffectiveLocationServicePoint.name);
+    checkIn(itemBarcode, ItemView.itemStatuses.inTransit, ConfirmItemInModal.confirmInTransitModal);
 
-    // // check in item at service point not assigned to its effective location
-    // checkIn(itemBarcode, ItemView.itemStatuses.inTransit, ConfirmItemInModal.confirmInTransitModal);
+    // check in item at service point not assigned to its effective location
+    checkIn(itemBarcode, ItemView.itemStatuses.inTransit, ConfirmItemInModal.confirmInTransitModal);
 
-    // // check in item at service point assigned to its effective location
-    // SwitchServicePoint.switchServicePoint(effectiveLocationServicePoint.name);
-    // checkIn(itemBarcode, ItemView.itemStatuses.available);
+    // check in item at service point assigned to its effective location
+    SwitchServicePoint.switchServicePoint(effectiveLocationServicePoint.name);
+    checkIn(itemBarcode, ItemView.itemStatuses.available);
 
-    // // create Page request on an item
-    // cy.visit(TopMenu.requestsPath);
-    // NewRequest.createWithUserName({
-    //   itemBarcode,
-    //   requesterName: userName,
-    //   pickupServicePoint: effectiveLocationServicePoint.name
-    // });
-    // openItem(instanceTitle, effectiveLocation.name, itemBarcode);
-    // fullCheck(ItemView.itemStatuses.paged);
+    // create Page request on an item
+    cy.visit(TopMenu.requestsPath);
+    NewRequest.createWithUserName({
+      itemBarcode,
+      requesterName: userName,
+      pickupServicePoint: effectiveLocationServicePoint.name
+    });
+    openItem(instanceTitle, effectiveLocation.name, itemBarcode);
+    fullCheck(ItemView.itemStatuses.paged);
 
-    // // check in item at a service point other than the pickup service point for the request
-    // SwitchServicePoint.switchServicePoint(notEffectiveLocationServicePoint.name);
-    // checkIn(itemBarcode, ItemView.itemStatuses.inTransit, ConfirmItemInModal.confirmInTransitModal);
+    // check in item at a service point other than the pickup service point for the request
+    SwitchServicePoint.switchServicePoint(notEffectiveLocationServicePoint.name);
+    checkIn(itemBarcode, ItemView.itemStatuses.inTransit, ConfirmItemInModal.confirmInTransitModal);
 
     // // check in item at the pickup service point for the page request
     // SwitchServicePoint.switchServicePoint(effectiveLocationServicePoint.name);
