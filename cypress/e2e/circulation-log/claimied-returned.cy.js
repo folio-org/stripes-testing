@@ -5,15 +5,15 @@ import getRandomPostfix from '../../support/utils/stringTools';
 import permissions from '../../support/dictionary/permissions';
 import UsersSearchPane from '../../support/fragments/users/usersSearchPane';
 import UsersCard from '../../support/fragments/users/usersCard';
-import CheckinActions from '../../support/fragments/check-in-actions/checkInActions';
 import InventoryHoldings from '../../support/fragments/inventory/holdings/inventoryHoldings';
 import devTeams from '../../support/dictionary/devTeams';
 import Users from '../../support/fragments/users/users';
 import UserEdit from '../../support/fragments/users/userEdit';
 import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
-import InventoryInstance from '../../support/fragments/inventory/inventoryInstance';
 import Checkout from '../../support/fragments/checkout/checkout';
 import LoansPage from '../../support/fragments/loans/loansPage';
+import ItemsOperations from '../../support/fragments/inventory/inventoryItem/itemsOperations';
+import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
 
 const ITEM_BARCODE = `123${getRandomPostfix()}`;
 let userId;
@@ -80,34 +80,19 @@ describe('circulation-log', () => {
               servicePointId,
             });
           });
-          cy.loginAsAdmin();
-          cy.visit(TopMenu.usersPath);
+        cy.loginAsAdmin();
+        cy.visit(TopMenu.usersPath);
       });
-
   });
 
   after('delete test data', () => {
-    CheckinActions.checkinItemViaApi({
-      itemBarcode: ITEM_BARCODE,
-      servicePointId,
-      checkInDate: new Date().toISOString(),
-    })
-      .then(() => {
-        cy.getInstance({ limit: 1, expandAll: true, query: `"items.barcode"=="${ITEM_BARCODE}"` })
-          .then((instance) => {
-            cy.deleteItem(instance.items[0].id);
-            cy.deleteHoldingRecordViaApi(instance.holdings[0].id);
-            InventoryInstance.deleteInstanceViaApi(instance.id);
-          });
-        cy.getBlockApi(userId).then(() => {
-          cy.deleteBlockApi(Cypress.env('blockIds')[0].id);
-        });
-        Users.deleteViaApi(userId);
-      });
+    ItemsOperations.markItemAsMissingByUserId(userId).then(() => {
+      InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(ITEM_BARCODE);
+      Users.deleteViaApi(userId);
+    });
   });
 
   it('C16997 Filter circulation log by Claimed returned (firebird)', { tags: [TestTypes.criticalPath, devTeams.firebird] }, () => {
-
     UsersSearchPane.searchByStatus('Active');
     UsersSearchPane.searchByKeywords(userId);
     UsersSearchPane.openUser(userId);
@@ -121,15 +106,15 @@ describe('circulation-log', () => {
     SearchPane.searchByClaimedReturned();
     SearchPane.verifyResultCells();
     SearchPane.checkResultSearch({
-        itemBarcode: ITEM_BARCODE,
-        circAction: 'Claimed returned',
-      });
+      itemBarcode: ITEM_BARCODE,
+      circAction: 'Claimed returned',
+    });
     SearchPane.resetResults();
 
     SearchPane.searchByItemBarcode(ITEM_BARCODE);
     SearchPane.checkResultSearch({
-        itemBarcode: ITEM_BARCODE,
-        circAction: 'Claimed returned',
-      });
-  })
+      itemBarcode: ITEM_BARCODE,
+      circAction: 'Claimed returned',
+    });
+  });
 });
