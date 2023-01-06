@@ -1,3 +1,4 @@
+/* eslint-disable cypress/no-unnecessary-waiting */
 import {
   Button,
   TextField,
@@ -116,13 +117,16 @@ export default {
       .click());
   },
 
-  runImportFile:(fileName) => {
+  runImportFile:() => {
     waitLoading(waitSelector);
     cy.do([
       actionsButton.click(),
       runButton.click(),
       Modal('Are you sure you want to run this job?').find(runButton).click(),
     ]);
+  },
+
+  waitFileIsImported:(fileName) => {
     // wait until uploaded file is displayed in the list
     cy.expect(MultiColumnList({ id:'job-logs-list' }).find(Button(fileName)).exists());
   },

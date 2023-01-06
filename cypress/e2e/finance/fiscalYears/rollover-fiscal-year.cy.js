@@ -18,16 +18,15 @@ import NewInvoice from '../../../support/fragments/invoices/newInvoice';
 import Invoices from '../../../support/fragments/invoices/invoices';
 
 describe('ui-finance: Fiscal Year', () => {
-
   const firstFiscalYear = { ...FiscalYears.defaultUiFiscalYear };
-  const secondFiscalYear = { 
+  const secondFiscalYear = {
     name: `autotest_year_${getRandomPostfix()}`,
     code: DateTools.getRandomFiscalYearCode(2000, 9999),
     periodStart: `${DateTools.getPreviousDayDateForFiscalYear()}T00:00:00.000+00:00`,
     periodEnd: `${DateTools.getCurrentDateForFiscalYear()}T00:00:00.000+00:00`,
     description: `This is fiscal year created by E2E test automation script_${getRandomPostfix()}`,
     series: 'FY',
-};
+  };
   const defaultLedger = { ...Ledgers.defaultUiLedger };
   const firstFund = { ...Funds.defaultUiFund };
   const secondFund = {
@@ -37,15 +36,14 @@ describe('ui-finance: Fiscal Year', () => {
     fundStatus: 'Active',
     description: `This is fund created by E2E test automation script_${getRandomPostfix()}`,
   };
-  const firstOrder = { ...NewOrder.defaultOneTimeOrder ,
-    orderType: "Ongoing",
-    reEncumber: true,
-};
-  const secondOrder = { 
-    orderType: "Ongoing",
+  const firstOrder = { ...NewOrder.defaultOneTimeOrder,
+    orderType: 'Ongoing',
+    reEncumber: true };
+  const secondOrder = {
+    orderType: 'Ongoing',
     vendor: '',
     reEncumber: true,
-   };
+  };
   const organization = { ...NewOrganization.defaultUiOrganizations };
   const invoice = { ...NewInvoice.defaultUiInvoice };
   const firstOrderLineTitle = `autotest_POL_title_${getRandomPostfix()}`;
@@ -55,7 +53,6 @@ describe('ui-finance: Fiscal Year', () => {
   let orderNumber;
 
   before(() => {
-
     cy.getAdminToken();
     // create first Fiscal Year and prepere 2 Funds for Rollover
     FiscalYears.createViaApi(firstFiscalYear)
@@ -89,35 +86,35 @@ describe('ui-finance: Fiscal Year', () => {
               });
           });
       });
-      // Create second Fiscal Year for Rollover
-      FiscalYears.createViaApi(secondFiscalYear)
+    // Create second Fiscal Year for Rollover
+    FiscalYears.createViaApi(secondFiscalYear)
       .then(secondFiscalYearResponse => {
         secondFiscalYear.id = secondFiscalYearResponse.id;
       });
-      
-      // Prepare 2 Open Orders for Rollover
-      Organizations.createOrganizationViaApi(organization)
+
+    // Prepare 2 Open Orders for Rollover
+    Organizations.createOrganizationViaApi(organization)
       .then(responseOrganizations => {
         organization.id = responseOrganizations;
         invoice.accountingCode = organization.erpCode;
       });
-      firstOrder.vendor = organization.name;
-      secondOrder.vendor = organization.name;
+    firstOrder.vendor = organization.name;
+    secondOrder.vendor = organization.name;
     cy.visit(TopMenu.ordersPath);
-      Orders.createOrderForRollover(firstOrder).then(firstOrderResponse => {
-        firstOrder.id = firstOrderResponse.id;
-        orderNumber = firstOrderResponse.poNumber;
-        Orders.checkCreatedOrder(firstOrder);
-        OrderLines.addPOLine();
-        OrderLines.rolloverPOLineInfoforPhysicalMaterialWithFund(firstOrderLineTitle, firstFund, '100' , '1', '100');
-        OrderLines.backToEditingOrder();
-        Orders.openOrder();
+    Orders.createOrderForRollover(firstOrder).then(firstOrderResponse => {
+      firstOrder.id = firstOrderResponse.id;
+      orderNumber = firstOrderResponse.poNumber;
+      Orders.checkCreatedOrder(firstOrder);
+      OrderLines.addPOLine();
+      OrderLines.rolloverPOLineInfoforPhysicalMaterialWithFund(firstOrderLineTitle, firstFund, '100', '1', '100');
+      OrderLines.backToEditingOrder();
+      Orders.openOrder();
       cy.visit(TopMenu.ordersPath);
       Orders.createOrderForRollover(secondOrder).then(secondOrderResponse => {
         secondOrder.id = secondOrderResponse.id;
         Orders.checkCreatedOrder(secondOrder);
         OrderLines.addPOLine();
-        OrderLines.rolloverPOLineInfoforElectronicResourceWithFund(secondOrderLineTitle, secondFund, '200' , '1', '200');
+        OrderLines.rolloverPOLineInfoforElectronicResourceWithFund(secondOrderLineTitle, secondFund, '200', '1', '200');
         OrderLines.backToEditingOrder();
         Orders.openOrder();
       });
