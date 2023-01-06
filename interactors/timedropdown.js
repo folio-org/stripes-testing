@@ -1,6 +1,7 @@
-import { TextField, matching } from '@interactors/html';
+import { matching } from '@interactors/html';
 import HTML from './baseHTML';
 import Button from './button';
+import TextField from './text-field';
 
 const IncrementHourButton = HTML.extend('increment hour button').selector('button[id$="-next-hour"]');
 const DecrementHourButton = HTML.extend('decrement hour button').selector('button[id$="-prev-hour"]');
@@ -13,10 +14,10 @@ export default HTML.extend('time dropdown')
   .actions({
     incrementHour: async (interactor) => {
       await interactor.find(IncrementHourButton()).click();
-    }, // button selector, [class$="-next-hour"]
+    },
     decrementHour: async (interactor) => {
       await interactor.find(DecrementHourButton()).click();
-    }, // [class$="-prev-hour"]
+    },
     incrementMinute: async (interactor) => {
       await interactor.find(IncrementMinuteButton()).click();
     },
@@ -24,9 +25,10 @@ export default HTML.extend('time dropdown')
       await interactor.find(DecrementMinuteButton()).click();
     },
     setTimeAndClose: async (interactor, time) => {
-      // format of time => 15:00 for 3:00 PM, set hours, set minutes, set PM,
+      // format of time => 15:00 for 3:00 PM (Military time), set hours, set minutes, set PM,
       //  00:00 => 12:00 AM
       // 12:00 (12 noon) => 12:00 PM
+      // timepicker value must be cleared before calling this action
 
       const [hour, minute] = time.split(':');
 
@@ -52,15 +54,16 @@ export default HTML.extend('time dropdown')
       await minuteTextField.fillIn(minuteFieldValue.toString());
       minuteTextField.blur();
 
-      const meridianText = meridian === 0 ? 'AM' : 'PM';
-      const meridianTextInverse = meridian === 0 ? 'PM' : 'AM';
-      try {
-        await interactor.find(Button(meridianText)).exists();
-      } catch (e) {
-        console.log(e);
-        if (e.name === 'NoSuchElementError') {
-          await interactor.find(Button(meridianTextInverse)).click();
+
+      const currentDate = new Date(Date.now());
+
+      // if current meridian is PM
+      if (currentDate.getHours() >= 12) {
+        if (meridian === 0) {
+          await interactor.find(Button('PM')).click();
         }
+      } else if (meridian === 1) {
+        await interactor.find(Button('AM')).click();
       }
 
       await interactor.find(Button('Set time')).click();
