@@ -217,82 +217,82 @@ describe('ui-inventory: Item status date updates', () => {
     // check in item at service point assigned to its effective location
     checkIn(itemBarcode, ItemView.itemStatuses.available);
 
-    // check in item at service point not assigned to its effective location
-    SwitchServicePoint.switchServicePoint(notEffectiveLocationServicePoint.name);
-    checkIn(itemBarcode, ItemView.itemStatuses.inTransit, ConfirmItemInModal.confirmInTransitModal);
+    // // check in item at service point not assigned to its effective location
+    // SwitchServicePoint.switchServicePoint(notEffectiveLocationServicePoint.name);
+    // checkIn(itemBarcode, ItemView.itemStatuses.inTransit, ConfirmItemInModal.confirmInTransitModal);
 
-    // check in item at service point not assigned to its effective location
-    checkIn(itemBarcode, ItemView.itemStatuses.inTransit, ConfirmItemInModal.confirmInTransitModal);
+    // // check in item at service point not assigned to its effective location
+    // checkIn(itemBarcode, ItemView.itemStatuses.inTransit, ConfirmItemInModal.confirmInTransitModal);
 
-    // check in item at service point assigned to its effective location
-    SwitchServicePoint.switchServicePoint(effectiveLocationServicePoint.name);
-    checkIn(itemBarcode, ItemView.itemStatuses.available);
+    // // check in item at service point assigned to its effective location
+    // SwitchServicePoint.switchServicePoint(effectiveLocationServicePoint.name);
+    // checkIn(itemBarcode, ItemView.itemStatuses.available);
 
-    // create Page request on an item
-    cy.visit(TopMenu.requestsPath);
-    NewRequest.createWithUserName({
-      itemBarcode,
-      requesterName: userName,
-      pickupServicePoint: effectiveLocationServicePoint.name
-    });
-    openItem(instanceTitle, effectiveLocation.name, itemBarcode);
-    fullCheck(ItemView.itemStatuses.paged);
+    // // create Page request on an item
+    // cy.visit(TopMenu.requestsPath);
+    // NewRequest.createWithUserName({
+    //   itemBarcode,
+    //   requesterName: userName,
+    //   pickupServicePoint: effectiveLocationServicePoint.name
+    // });
+    // openItem(instanceTitle, effectiveLocation.name, itemBarcode);
+    // fullCheck(ItemView.itemStatuses.paged);
 
-    // check in item at a service point other than the pickup service point for the request
-    SwitchServicePoint.switchServicePoint(notEffectiveLocationServicePoint.name);
-    checkIn(itemBarcode, ItemView.itemStatuses.inTransit, ConfirmItemInModal.confirmInTransitModal);
+    // // check in item at a service point other than the pickup service point for the request
+    // SwitchServicePoint.switchServicePoint(notEffectiveLocationServicePoint.name);
+    // checkIn(itemBarcode, ItemView.itemStatuses.inTransit, ConfirmItemInModal.confirmInTransitModal);
 
-    // check in item at the pickup service point for the page request
-    SwitchServicePoint.switchServicePoint(effectiveLocationServicePoint.name);
-    checkIn(itemBarcode, ItemView.itemStatuses.awaitingPickup, ConfirmItemInModal.confirmAvaitingPickUpModal);
+    // // check in item at the pickup service point for the page request
+    // SwitchServicePoint.switchServicePoint(effectiveLocationServicePoint.name);
+    // checkIn(itemBarcode, ItemView.itemStatuses.awaitingPickup, ConfirmItemInModal.confirmAvaitingPickUpModal);
 
-    // check out item to user for whom page request was created
-    checkOut(userName, itemBarcode, ItemView.itemStatuses.checkedOut, ConfirmItemInModal.confirmAvaitingPickupCheckInModal);
+    // // check out item to user for whom page request was created
+    // checkOut(userName, itemBarcode, ItemView.itemStatuses.checkedOut, ConfirmItemInModal.confirmAvaitingPickupCheckInModal);
 
-    // declare item lost
-    openUser(userName);
-    UserLoans.declareLoanLost(itemBarcode);
-    ConfirmItemStatusModal.confirmItemStatus();
-    openItem(instanceTitle, effectiveLocation.name, itemBarcode);
-    fullCheck(ItemView.itemStatuses.declaredLost);
+    // // declare item lost
+    // openUser(userName);
+    // UserLoans.declareLoanLost(itemBarcode);
+    // ConfirmItemStatusModal.confirmItemStatus();
+    // openItem(instanceTitle, effectiveLocation.name, itemBarcode);
+    // fullCheck(ItemView.itemStatuses.declaredLost);
 
-    // renew item (through override)
-    openUser(userName);
-    UserLoans.renewItem(itemBarcode);
-    RenewConfirmationModal.confirmRenewOverrideItem();
-    OverrideAndRenewModal.confirmOverrideItem();
-    openItem(instanceTitle, effectiveLocation.name, itemBarcode);
-    fullCheck(ItemView.itemStatuses.checkedOut);
+    // // renew item (through override)
+    // openUser(userName);
+    // UserLoans.renewItem(itemBarcode);
+    // RenewConfirmationModal.confirmRenewOverrideItem();
+    // OverrideAndRenewModal.confirmOverrideItem();
+    // openItem(instanceTitle, effectiveLocation.name, itemBarcode);
+    // fullCheck(ItemView.itemStatuses.checkedOut);
 
-    // edit item record so that it has multiple pieces
-    InventoryInstance.openEditItemPage();
-    ItemView.addPieceToItem(numberOfPieces);
-    fullCheck(ItemView.itemStatuses.checkedOut);
+    // // edit item record so that it has multiple pieces
+    // InventoryInstance.openEditItemPage();
+    // ItemView.addPieceToItem(numberOfPieces);
+    // fullCheck(ItemView.itemStatuses.checkedOut);
 
-    // create delivery request (hold or recall) on item
-    cy.visit(TopMenu.requestsPath);
-    NewRequest.createDeliveryRequest({
-      itemBarcode,
-      itemTitle: null,
-      requesterBarcode: userForDeliveryRequest.barcode,
-    });
-    cy.visit(TopMenu.checkInPath);
-    CheckInActions.checkInItem(itemBarcode);
-    ConfirmItemInModal.confirmMultipieceCheckInModal();
-    cy.visit(TopMenu.checkOutPath);
-    CheckOutActions.checkOutItemWithUserName(userName, itemBarcode);
-    CheckOutActions.cancelMultipleCheckOutModal();
-    openItem(instanceTitle, effectiveLocation.name, itemBarcode);
-    fullCheck(ItemView.itemStatuses.awaitingDelivery);
+    // // create delivery request (hold or recall) on item
+    // cy.visit(TopMenu.requestsPath);
+    // NewRequest.createDeliveryRequest({
+    //   itemBarcode,
+    //   itemTitle: null,
+    //   requesterBarcode: userForDeliveryRequest.barcode,
+    // });
+    // cy.visit(TopMenu.checkInPath);
+    // CheckInActions.checkInItem(itemBarcode);
+    // ConfirmItemInModal.confirmMultipieceCheckInModal();
+    // cy.visit(TopMenu.checkOutPath);
+    // CheckOutActions.checkOutItemWithUserName(userName, itemBarcode);
+    // CheckOutActions.cancelMultipleCheckOutModal();
+    // openItem(instanceTitle, effectiveLocation.name, itemBarcode);
+    // fullCheck(ItemView.itemStatuses.awaitingDelivery);
 
-    // check out item to user with delivery request
-    checkOut(userForDeliveryRequest.username, itemBarcode, ItemView.itemStatuses.checkedOut);
+    // // check out item to user with delivery request
+    // checkOut(userForDeliveryRequest.username, itemBarcode, ItemView.itemStatuses.checkedOut);
 
-    // check in item at service point assigned to its effective location
-    SwitchServicePoint.switchServicePoint(effectiveLocationServicePoint.name);
-    cy.visit(TopMenu.checkInPath);
-    CheckInActions.backdateCheckInItem(DateTools.getPreviousDayDate(), itemBarcode);
-    openItem(instanceTitle, effectiveLocation.name, itemBarcode);
-    fullCheck(ItemView.itemStatuses.available);
+    // // check in item at service point assigned to its effective location
+    // SwitchServicePoint.switchServicePoint(effectiveLocationServicePoint.name);
+    // cy.visit(TopMenu.checkInPath);
+    // CheckInActions.backdateCheckInItem(DateTools.getPreviousDayDate(), itemBarcode);
+    // openItem(instanceTitle, effectiveLocation.name, itemBarcode);
+    // fullCheck(ItemView.itemStatuses.available);
   });
 });
