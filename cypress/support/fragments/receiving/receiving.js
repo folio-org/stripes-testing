@@ -36,10 +36,7 @@ const filterOpenReceiving = () => {
 export default {
   searchByParameter,
   filterOpenReceiving,
-
-  selectFromResultsList: (instanceName) => {
-    cy.do(Link(instanceName).click());
-  },
+  selectFromResultsList: (instanceName) => cy.do(Link(instanceName).click()),
 
   receivePiece: (rowNumber, caption, barcode) => {
     const recievingFieldName = `receivedItems[${rowNumber}]`;

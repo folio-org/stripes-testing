@@ -63,7 +63,7 @@ export default {
       ordersResultsPane.exists(),
     ]);
   },
-  
+
   waitSettingsPageLoading() {
     cy.expect([
       Pane({ id: 'settings-nav-pane' }).exists(),
@@ -193,7 +193,7 @@ export default {
         return response.body;
       });
   },
-  
+
   checkZeroSearchResultsHeader: () => {
     cy.xpath(numberOfSearchResultsHeader)
       .should('be.visible')
@@ -228,8 +228,12 @@ export default {
 
   checkCreatedOrder: (order) => {
     cy.expect(Pane({ id: 'order-details' }).exists());
-    cy.expect(Accordion({ id: orderDetailsAccordionId }).find(KeyValue({ value: order.vendor })).exists());
-    cy.expect(Accordion({ id: orderDetailsAccordionId }).find(KeyValue({ value: createdByAdmin })).exists());
+    cy.expect(Accordion({ id: orderDetailsAccordionId })
+      .find(KeyValue({ value: order.vendor }))
+      .exists());
+    cy.expect(Accordion({ id: orderDetailsAccordionId })
+      .find(KeyValue({ value: createdByAdmin }))
+      .exists());
   },
 
   selectFromResultsList: (number) => {
@@ -512,10 +516,10 @@ export default {
   selectOngoingOrderTypeInPOForm:() => {
     cy.do(Select('Order type*').choose('Ongoing'));
   },
-  checkEditedOngoingOrder: (orderNumber,organizationName) => {
+  checkEditedOngoingOrder: (orderNumber, organizationName) => {
     cy.expect(Pane({ id: 'order-details' }).exists());
     cy.expect(Accordion({ id: orderDetailsAccordionId }).find(KeyValue({ value: orderNumber })).exists());
     cy.expect(Accordion({ id: orderDetailsAccordionId }).find(KeyValue({ value: organizationName })).exists());
     cy.expect(Accordion({ id: orderDetailsAccordionId }).find(KeyValue({ value: 'Ongoing' })).exists());
-  },
+  }
 };

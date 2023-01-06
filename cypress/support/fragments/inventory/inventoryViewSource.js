@@ -11,8 +11,8 @@ const contains = (expectedText) => cy.expect(rootSection.find(HTML(including(exp
 
 function extructDataFrom999Field() {
   return cy.get('tbody tr').last().then($el => {
-    const srsUuid = $el[0].innerText.split('\t')[2].trim().split(' ')[1];
-    const instanceUuid = $el[0].innerText.split('\t')[2].trim().split(' ')[3];
+    const srsUuid = $el[0].innerText.split('\t')[3].trim().split(' ')[1];
+    const instanceUuid = $el[0].innerText.split('\t')[3].trim().split(' ')[3];
     return [srsUuid, instanceUuid];
   });
 }

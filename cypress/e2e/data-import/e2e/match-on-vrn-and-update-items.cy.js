@@ -102,7 +102,8 @@ describe('ui-data-import: Match on VRN and update related Instance, Holdings, It
       permissions.uiReceivingViewEditCreate.gui,
       permissions.uiInventoryViewInstances.gui,
       permissions.uiQuickMarcQuickMarcBibliographicEditorView.gui,
-      permissions.uiInventoryStorageModule.gui
+      permissions.uiInventoryStorageModule.gui,
+      permissions.remoteStorageView.gui
     ]).then(userProperties => {
       user = userProperties;
     })
@@ -191,7 +192,7 @@ describe('ui-data-import: Match on VRN and update related Instance, Holdings, It
         Orders.checkIsOrderCreated(orderNumber);
         // open the first PO with POL
         Orders.searchByParameter('PO number', orderNumber);
-        Helper.selectFromResultsList();
+        Orders.selectFromResultsList(orderNumber);
         Orders.openOrder();
         OrderView.checkIsOrderOpened('Open');
         OrderView.checkIsItemsInInventoryCreated(item.title, 'Main Library');
@@ -199,7 +200,7 @@ describe('ui-data-import: Match on VRN and update related Instance, Holdings, It
         cy.visit(TopMenu.ordersPath);
         Orders.resetFilters();
         Orders.searchByParameter('PO number', orderNumber);
-        Orders.selectFromResultsList();
+        Orders.selectFromResultsList(orderNumber);
         OrderView.openPolDetails(item.title);
         OrderLines.openReceiving();
         Receiving.checkIsPiecesCreated(item.title);

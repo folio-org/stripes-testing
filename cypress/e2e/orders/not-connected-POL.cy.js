@@ -1,7 +1,5 @@
 import permissions from '../../support/dictionary/permissions';
-import devTeams from '../../support/dictionary/devTeams';
 import NewOrder from '../../support/fragments/orders/newOrder';
-import TestType from '../../support/dictionary/testTypes';
 import Orders from '../../support/fragments/orders/orders';
 import TopMenu from '../../support/fragments/topMenu';
 import Organizations from '../../support/fragments/organizations/organizations';
