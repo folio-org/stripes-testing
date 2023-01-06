@@ -74,7 +74,7 @@ export default {
     cy.expect([
       Form().find(recordSearch).exists(),
       Form().find(searchButtonDisabled).exists(),
-      Button({ id: "accordion-toggle-button-nameType" }).exists(),
+      Button({ id: 'accordion-toggle-button-nameType' }).exists(),
       Section({ id: 'browse-inventory-filters-pane' }).find(resetAllButtonDisabled).exists(),
       // TODO add check for Relator term accordeon button after product updates
       Section({ id: 'browse-inventory-results-pane' }).find(Heading('Browse inventory')).exists(),
@@ -122,7 +122,7 @@ export default {
   },
 
   openInstance(contributor) {
-    cy.do([MultiColumnListCell(contributor.name).click()]);
+    cy.do(MultiColumnListCell(contributor.name).click());
   },
 
   checkInstance(instance) {
