@@ -33,6 +33,12 @@ const monthToLastDay = {
 
 const lastDayOfMonth = monthToLastDay[currentMonth];
 
+const nextMonth = ('0' + ((currentDate.getUTCMonth() + 2) % 12).toString()).slice(-2);
+const nextMonthYearInt = currentDate.getUTCMonth() === 11 ? currentYearInt + 1 : currentYearInt;
+const nextMonthYear = nextMonthYearInt.toString();
+
+const lastDayOfNextMonth = monthToLastDay[nextMonth];
+
 export default {
   calendar: {
     id: 'a8531527-aa3b-447a-8c76-88f905ade409',
@@ -43,14 +49,14 @@ export default {
     normalHours: [
       {
         startDay: 'SATURDAY',
-        startTime: '09:00',
-        endDay: 'SATURDAY',
-        endTime: '20:00'
+        startTime: '00:00',
+        endDay: 'SUNDAY',
+        endTime: '11:00'
       },
       {
-        startDay: 'MONDAY',
+        startDay: 'Monday',
         startTime: '09:00',
-        endDay: 'TUESDAY',
+        endDay: 'Tuesday',
         endTime: '02:00'
       },
       {
@@ -123,12 +129,40 @@ export default {
   },
 
   data: {
+    newCalendar: {
+      name: 'test-calendar-create',
+      startDate: `${nextMonthYear}-${nextMonth}-01`,
+      endDate: `${nextMonthYear}-${nextMonth}-${lastDayOfNextMonth}`,
+    },
+    editHoursOfOperation: {
+      startTime: '08:00',
+      endTime: '17:00'
+    },
     addHoursOfOperation: {
       status: 'Open',
       startDay: 'Friday',
       startTime: '15:00',
       endDay: 'Friday',
       endTime: '23:00',
+    },
+
+    addExceptionsClosure: {
+      name: 'TestClosureException',
+      status: 'Closed',
+      startDate: `${currentYear}-${currentMonth}-06`,
+      endDate: `${currentYear}-${currentMonth}-07`,
+    },
+
+    addExceptionsOpening: {
+      name: 'TestOpeningException',
+      status: 'Open',
+      startDate: `${currentYear}-${currentMonth}-07`,
+      endDate: `${currentYear}-${currentMonth}-07`,
+      startTime: '13:00',
+      endTime: '15:00'
+    },
+    editExistingCalendars: {
+      name: 'test-calendar-edit',
     }
   },
 
@@ -140,8 +174,8 @@ export default {
         wednesday: 'Midnight – Midnight9:00 AM – 11:00 PM',
         thursday: '9:00 AM – 12:00 PM',
         friday: '9:00 AM – 1:00 PM',
-        saturday: '9:00 AM – 8:00 PM',
-        sunday: 'Closed'
+        saturday: 'All day',
+        sunday: 'Midnight – 11:00 AM'
       },
       exceptions: {
         [`${currentYear}-${currentMonth}-01`]: 'Closed',
@@ -156,6 +190,16 @@ export default {
         startTime: '3:00 PM',
         endTime: '11:00 PM'
       }
+    },
+    addExceptionsOpening: {
+      startDate: `${currentDate.getUTCMonth() + 1}/7/${currentYear}`,
+      startTime: '1:00 PM',
+      endDate: `${currentDate.getUTCMonth() + 1}/7/${currentYear}`,
+      endTime: '3:00 PM'
+    },
+    editHoursOfOperation: {
+      startTime: '8:00 AM',
+      endTime: '5:00 PM'
     }
   }
 };
