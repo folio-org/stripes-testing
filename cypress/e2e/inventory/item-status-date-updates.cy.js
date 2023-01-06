@@ -242,27 +242,27 @@ describe('ui-inventory: Item status date updates', () => {
     SwitchServicePoint.switchServicePoint(notEffectiveLocationServicePoint.name);
     checkIn(itemBarcode, ItemView.itemStatuses.inTransit, ConfirmItemInModal.confirmInTransitModal);
 
-    // // check in item at the pickup service point for the page request
-    // SwitchServicePoint.switchServicePoint(effectiveLocationServicePoint.name);
-    // checkIn(itemBarcode, ItemView.itemStatuses.awaitingPickup, ConfirmItemInModal.confirmAvaitingPickUpModal);
+    // check in item at the pickup service point for the page request
+    SwitchServicePoint.switchServicePoint(effectiveLocationServicePoint.name);
+    checkIn(itemBarcode, ItemView.itemStatuses.awaitingPickup, ConfirmItemInModal.confirmAvaitingPickUpModal);
 
-    // // check out item to user for whom page request was created
-    // checkOut(userName, itemBarcode, ItemView.itemStatuses.checkedOut, ConfirmItemInModal.confirmAvaitingPickupCheckInModal);
+    // check out item to user for whom page request was created
+    checkOut(userName, itemBarcode, ItemView.itemStatuses.checkedOut, ConfirmItemInModal.confirmAvaitingPickupCheckInModal);
 
-    // // declare item lost
-    // openUser(userName);
-    // UserLoans.declareLoanLost(itemBarcode);
-    // ConfirmItemStatusModal.confirmItemStatus();
-    // openItem(instanceTitle, effectiveLocation.name, itemBarcode);
-    // fullCheck(ItemView.itemStatuses.declaredLost);
+    // declare item lost
+    openUser(userName);
+    UserLoans.declareLoanLost(itemBarcode);
+    ConfirmItemStatusModal.confirmItemStatus();
+    openItem(instanceTitle, effectiveLocation.name, itemBarcode);
+    fullCheck(ItemView.itemStatuses.declaredLost);
 
-    // // renew item (through override)
-    // openUser(userName);
-    // UserLoans.renewItem(itemBarcode);
-    // RenewConfirmationModal.confirmRenewOverrideItem();
-    // OverrideAndRenewModal.confirmOverrideItem();
-    // openItem(instanceTitle, effectiveLocation.name, itemBarcode);
-    // fullCheck(ItemView.itemStatuses.checkedOut);
+    // renew item (through override)
+    openUser(userName);
+    UserLoans.renewItem(itemBarcode);
+    RenewConfirmationModal.confirmRenewOverrideItem();
+    OverrideAndRenewModal.confirmOverrideItem();
+    openItem(instanceTitle, effectiveLocation.name, itemBarcode);
+    fullCheck(ItemView.itemStatuses.checkedOut);
 
     // // edit item record so that it has multiple pieces
     // InventoryInstance.openEditItemPage();
