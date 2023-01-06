@@ -97,6 +97,11 @@ export default {
   // Calendar
   calendarEdit: { internal: 'ui-calendar.edit', gui: 'Settings (Calendar): Can create, view, and edit calendar events' },
   calendarAll: { internal: 'ui-calendar.all', gui: 'Settings (Calendar): Can create, view, edit, and remove calendar events' },
+  calendarView: { internal: 'ui-calendar.view', gui: 'Settings (Calendar): Can view existing calendars' },
+  calendarCreate: { internal: 'ui-calendar.create', gui: 'Settings (Calendar): Can create and assign new calendars' },
+  calendarDelete: { internal: 'ui-calendar.delete', gui: 'Settings (Calendar): Can delete existing calendars' },
+  calendarEditCalendars: { internal: 'ui-calendar.edit', gui: 'Settings (Calendar): Can edit and reassign existing calendars' },
+
   // Data Export
   dataExportAll: { internal: 'data-export.all', gui: 'Data Export - all permissions' },
   dataExportEnableModule: { internal: 'module.data-export.enabled', gui: 'Data export: all permissions' },
