@@ -40,7 +40,7 @@ describe('ui-requests: Assign Tags to Request', () => {
         cy.deleteHoldingRecordViaApi(instance.holdings[0].id);
         InventoryInstance.deleteInstanceViaApi(instance.id);
       });
-    Requests.deleteRequestApi(requestData.id)
+    Requests.deleteRequestViaApi(requestData.id)
       .then(() => {
         Users.deleteViaApi(userId);
       });

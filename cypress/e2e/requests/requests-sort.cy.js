@@ -43,7 +43,7 @@ describe('ui-requests: Sort requests', () => {
       InventoryInstance.deleteInstanceViaApi(instance.instanceId);
     });
     requests.forEach(request => {
-      Requests.deleteRequestApi(request.id);
+      Requests.deleteRequestViaApi(request.id);
     });
     userIds.forEach(id => {
       Users.deleteViaApi(id);

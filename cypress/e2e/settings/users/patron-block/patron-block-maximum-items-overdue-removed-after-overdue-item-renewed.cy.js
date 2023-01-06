@@ -29,6 +29,7 @@ import Renewals from '../../../../support/fragments/loans/renewals';
 
 describe('Patron Block: Maximum number of overdue items', () => {
   let originalCirculationRules;
+  const renewComment = `AutotestText${getRandomPostfix()}`;
   const blockMessage = 'You have reached maximum number of overdue items as set by patron group';
   const patronGroup = {
     name: 'groupToPatronBlock' + getRandomPostfix(),
@@ -140,7 +141,7 @@ describe('Patron Block: Maximum number of overdue items', () => {
         testData.paymentMethodId = resp.id;
       });
     });
-    LoanPolicy.createApi(loanPolicyBody);
+    LoanPolicy.createViaApi(loanPolicyBody);
     PatronGroups.createViaApi(patronGroup.name).then((res) => {
       patronGroup.id = res;
     });
@@ -227,7 +228,7 @@ describe('Patron Block: Maximum number of overdue items', () => {
       Conditions.setConditionState(blockMessage);
       cy.visit(SettingsMenu.limitsPath);
       Limits.selectGroup(patronGroup.name);
-      Limits.setMaximumNumberOfOverdueItems('4');
+      Limits.setLimit('Maximum number of overdue items', '4');
       // needed for the "Loan Policy" so item can get overdue status
       cy.wait(120000);
 
@@ -237,12 +238,12 @@ describe('Patron Block: Maximum number of overdue items', () => {
       UsersCard.waitLoading();
       Users.checkIsPatronBlocked(blockMessage, 'Borrowing, Renewals, Requests');
 
-      const itemForCheckIn = itemsData.itemsWithSeparateInstance[0];
+      const itemForRenew = itemsData.itemsWithSeparateInstance[0];
       UsersCard.openLoans();
       UsersCard.showOpenedLoans();
-      UserLoans.openLoan(itemForCheckIn.barcode);
-      UserLoans.renewItem(itemForCheckIn.barcode, true);
-      Renewals.renewBlockedPatron(`AutotestText${getRandomPostfix()}`);
+      UserLoans.openLoan(itemForRenew.barcode);
+      UserLoans.renewItem(itemForRenew.barcode, true);
+      Renewals.renewBlockedPatron(renewComment);
 
       cy.visit(TopMenu.usersPath);
       UsersSearchPane.waitLoading();

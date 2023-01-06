@@ -4,7 +4,8 @@ import {
   Pane,
   MultiColumnList,
   MultiColumnListCell,
-  Link
+  Link,
+  KeyValue
 } from '../../../../../interactors';
 
 const viewPane = Pane({ id:'view-action-profile-pane' });
@@ -30,5 +31,8 @@ export default {
         const linkForVisit = elem.getAttribute('href');
         cy.visit(linkForVisit);
       }));
-  }
+  },
+
+  verifyAction:() => cy.expect(KeyValue('Action').has({ value: 'Update' })),
+  closeViewModeForMatchProfile:() => cy.do(viewPane.find(Button({ icon: 'times' })).click())
 };

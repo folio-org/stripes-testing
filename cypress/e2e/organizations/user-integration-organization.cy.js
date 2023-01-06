@@ -70,7 +70,7 @@ describe('ui-organizations: EDI convention in Organization Integration', () => {
     // Found and edit created organization
     Organizations.searchByParameters('Name', organization.name);
     Organizations.checkSearchResults(organization);
-    Organizations.chooseOrganizationFromList(organization);
+    Organizations.selectOrganization(organization.name);
     // Add first integration and check this
     Organizations.addIntegration();
     Organizations.fillIntegrationInformation(integrationName1, integartionDescription1, vendorEDICodeFor1Integration, libraryEDICodeFor1Integration, organization.accounts[0].accountNo, 'Purchase');

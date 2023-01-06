@@ -34,7 +34,7 @@ describe('ui-finance: Transactions', () => {
 
                 cy.loginAsAdmin({ path:TopMenu.fundPath, waiter: Funds.waitLoading });
                 FinanceHelp.searchByName(defaultfund.name);
-                FinanceHelp.selectFromResultsList();
+                Funds.selectFund(defaultfund.name);
                 Funds.addBudget(allocatedQuantity);
               });
           });
@@ -51,7 +51,7 @@ describe('ui-finance: Transactions', () => {
   after(() => {
     cy.loginAsAdmin({ path:TopMenu.fundPath, waiter: Funds.waitLoading });
     FinanceHelp.searchByName(defaultfund.name);
-    FinanceHelp.selectFromResultsList();
+    Funds.selectFund(defaultfund.name);
     Funds.selectBudgetDetails();
     Funds.deleteBudgetViaActions();
     InteractorsTools.checkCalloutMessage('Budget has been deleted');
@@ -68,7 +68,7 @@ describe('ui-finance: Transactions', () => {
 
   it('C6649 Add allocation to a budget by creating an allocation transaction (thunderjet)', { tags: [testType.criticalPath, devTeams.thunderjet] }, () => {
     FinanceHelp.searchByName(defaultfund.name);
-    FinanceHelp.selectFromResultsList();
+    Funds.selectFund(defaultfund.name);
     Funds.selectBudgetDetails();
     Funds.increaseAllocation();
     InteractorsTools.checkCalloutMessage(`$50.00 was successfully allocated to the budget ${defaultfund.code}-${defaultFiscalYear.code}`);

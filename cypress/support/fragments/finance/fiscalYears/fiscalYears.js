@@ -1,4 +1,4 @@
-import { Button, TextField, Pane, MultiColumnList, PaneContent, PaneHeader, MultiColumnListRow, MultiColumnListCell, SelectionOption } from '../../../../../interactors';
+import { Button, TextField, Pane, MultiColumnList, PaneContent, PaneHeader, MultiColumnListRow, MultiColumnListCell, SelectionOption, Link, Section } from '../../../../../interactors';
 import getRandomPostfix from '../../../utils/stringTools';
 import DateTools from '../../../utils/dateTools';
 
@@ -126,4 +126,13 @@ export default {
     path: `finance/fiscal-years/${fiscalYearId}`,
     isDefaultSearchParamsRequired: false,
   }),
+
+  selectFY:(FYName) => {
+    cy.do(Section({ id: 'fiscal-year-results-pane' }).find(Link(FYName)).click());
+  },
+
+  expextFY:(FYName) => {
+    cy.expect(Section({ id: 'fiscal-year-results-pane' }).find(Link(FYName)).exists());
+  },
+
 };

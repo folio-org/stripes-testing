@@ -1,6 +1,4 @@
-import NewFund from '../../../support/fragments/finance/funds/newFund';
 import Funds from '../../../support/fragments/finance/funds/funds';
-import DateTools from '../../../support/utils/dateTools';
 import FinanceHelp from '../../../support/fragments/finance/financeHelper';
 import testType from '../../../support/dictionary/testTypes';
 import devTeams from '../../../support/dictionary/devTeams';
@@ -9,61 +7,73 @@ import SettingsFinance from '../../../support/fragments/settings/finance/setting
 import FiscalYears from '../../../support/fragments/finance/fiscalYears/fiscalYears';
 import TopMenu from '../../../support/fragments/topMenu';
 import Ledgers from '../../../support/fragments/finance/ledgers/ledgers';
-import NewFiscalYear from '../../../support/fragments/finance/fiscalYears/newFiscalYear';
-import NewLedger from '../../../support/fragments/finance/ledgers/newLedger';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
 import InteractorsTools from '../../../support/utils/interactorsTools';
 
 describe('ui-finance: Funds', () => {
   const firstExpenseClass = { ...NewExpenceClass.defaultUiBatchGroup };
-  const fund = { ...NewFund.defaultFund };
-  const defaultLedger = NewLedger.defaultLedger;
-  const defaultFiscalYear = { ...NewFiscalYear.defaultFiscalYear };
+  const defaultfund = { ...Funds.defaultUiFund };
+  const defaultFiscalYear = { ...FiscalYears.defaultUiFiscalYear };
+  const defaultLedger = { ...Ledgers.defaultUiLedger };
+  const allocatedQuantity = '100';
 
   before(() => {
+    cy.getAdminToken();
     cy.loginAsAdmin();
     cy.visit(SettingsMenu.expenseClassesPath);
     SettingsFinance.createNewExpenseClass(firstExpenseClass);
 
-    cy.visit(TopMenu.fiscalYearPath);
-    FiscalYears.createDefaultFiscalYear(defaultFiscalYear);
-    FiscalYears.checkCreatedFiscalYear(defaultFiscalYear.name);
+    FiscalYears.createViaApi(defaultFiscalYear)
+      .then(response => {
+        defaultFiscalYear.id = response.id;
+        defaultLedger.fiscalYearOneId = defaultFiscalYear.id;
 
-    cy.visit(TopMenu.ledgerPath);
-    Ledgers.createDefaultLedger(defaultLedger);
-    Ledgers.checkCreatedLedgerName(defaultLedger);
+        Ledgers.createViaApi(defaultLedger)
+          .then(ledgerResponse => {
+            defaultLedger.id = ledgerResponse.id;
+            defaultfund.ledgerId = defaultLedger.id;
 
-    Funds.createFundViaUI(fund)
-      .then(
-        () => {
-          Funds.addBudget(100);
-          Funds.checkCreatedBudget(fund.code, DateTools.getCurrentFiscalYearCode());
-        }
-      );
+            Funds.createViaApi(defaultfund)
+              .then(fundResponse => {
+                defaultfund.id = fundResponse.fund.id;
+
+                cy.loginAsAdmin({ path:TopMenu.fundPath, waiter: Funds.waitLoading });
+                FinanceHelp.searchByName(defaultfund.name);
+                Funds.selectFund(defaultfund.name);
+                Funds.addBudget(allocatedQuantity);
+              });
+          });
+      });
   });
 
   after(() => {
+    cy.loginAsAdmin({ path:TopMenu.fundPath, waiter: Funds.waitLoading });
+    FinanceHelp.searchByName(defaultfund.name);
+    Funds.selectFund(defaultfund.name);
+    Funds.selectBudgetDetails();
     Funds.editBudget();
     Funds.deleteExpensesClass();
     Funds.deleteBudgetViaActions();
-    Funds.deleteFundViaActions();
+    InteractorsTools.checkCalloutMessage('Budget has been deleted');
+    Funds.checkIsBudgetDeleted();
+
+    Funds.deleteFundViaApi(defaultfund.id);
 
     cy.visit(SettingsMenu.expenseClassesPath);
     SettingsFinance.deleteExpenseClass(firstExpenseClass);
 
-    cy.visit(TopMenu.fiscalYearPath);
-    FinanceHelp.searchByName(defaultFiscalYear.name);
-    FinanceHelp.selectFromResultsList();
-    FiscalYears.deleteFiscalYearViaActions();
+    Ledgers.deleteledgerViaApi(defaultLedger.id);
+
+    FiscalYears.deleteFiscalYearViaApi(defaultFiscalYear.id);
   });
 
   it('C15858 Add expense class to budget (thunderjet)', { tags: [testType.criticalPath, devTeams.thunderjet] }, () => {
     cy.visit(TopMenu.fundPath);
-    FinanceHelp.searchByName(fund.name);
-    FinanceHelp.selectFromResultsList();
+    FinanceHelp.searchByName(defaultfund.name);
+    Funds.selectFund(defaultfund.name);
     Funds.selectBudgetDetails();
     Funds.editBudget();
     Funds.addExpensesClass(firstExpenseClass.name);
-    InteractorsTools.checkCalloutMessage(`Budget ${fund.code}-FY2022 has been saved`);
+    InteractorsTools.checkCalloutMessage(`Budget ${defaultfund.code}-${defaultFiscalYear.code} has been saved`);
   });
 });

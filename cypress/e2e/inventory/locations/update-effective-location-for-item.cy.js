@@ -73,6 +73,7 @@ describe('ui-inventory: Update the effective location for the item', () => {
     Users.deleteViaApi(userId);
   });
 
+  // FAT-4028 Requirements was changed. The test should be changed.
   it('C3501 An item is being moved from one library location to another. Update the effective location for the item (folijet) (prokopovych)',
     { tags: [TestTypes.smoke, DevTeams.folijet] },
     () => {

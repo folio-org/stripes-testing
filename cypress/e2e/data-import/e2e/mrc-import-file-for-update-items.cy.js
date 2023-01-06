@@ -369,7 +369,8 @@ describe('ui-data-import: MARC file upload with the update of instance, holding,
     // upload a marc file for creating of the new instance, holding and item
     DataImport.uploadFile('oneMarcBib.mrc', nameMarcFileForImportCreate);
     JobProfiles.searchJobProfileForImport(testData.jobProfileForCreate.profile.name);
-    JobProfiles.runImportFile(nameMarcFileForImportCreate);
+    JobProfiles.runImportFile();
+    JobProfiles.waitFileIsImported(nameMarcFileForImportCreate);
     Logs.openFileDetails(nameMarcFileForImportCreate);
     FileDetails.checkStatusInColumn(FileDetails.status.updated, FileDetails.columnName.srsMarc);
     [FileDetails.columnName.instance,
@@ -418,7 +419,7 @@ describe('ui-data-import: MARC file upload with the update of instance, holding,
 
     collectionOfMappingAndActionProfiles.forEach(profile => {
       cy.visit(SettingsMenu.actionProfilePath);
-      ActionProfiles.createActionProfile(profile.actionProfile, profile.mappingProfile.name);
+      ActionProfiles.create(profile.actionProfile, profile.mappingProfile.name);
       ActionProfiles.checkActionProfilePresented(profile.actionProfile.name);
     });
 
@@ -441,7 +442,8 @@ describe('ui-data-import: MARC file upload with the update of instance, holding,
     cy.visit(TopMenu.dataImportPath);
     DataImport.uploadExportedFile(nameMarcFileForImportUpdate);
     JobProfiles.searchJobProfileForImport(jobProfileForUpdate.profileName);
-    JobProfiles.runImportFile(nameMarcFileForImportUpdate);
+    JobProfiles.runImportFile();
+    JobProfiles.waitFileIsImported(nameMarcFileForImportUpdate);
     Logs.openFileDetails(nameMarcFileForImportUpdate);
     [FileDetails.columnName.srsMarc,
       FileDetails.columnName.instance,

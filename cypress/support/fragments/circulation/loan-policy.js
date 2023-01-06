@@ -32,7 +32,7 @@ export default {
     cy.expect(Heading('Loan policies').exists());
   },
   getDefaultRollingLoanPolicy,
-  createApi(loanPolicy) {
+  createViaApi(loanPolicy) {
     return cy
       .okapiRequest({
         method: 'POST',

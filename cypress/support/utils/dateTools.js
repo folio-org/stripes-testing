@@ -1,5 +1,6 @@
 import moment from 'moment';
 import getRandomStringCode from './genereteTextCode';
+
 const padWithZero = value => String(value).padStart(2, '0');
 
 export default {
@@ -19,6 +20,17 @@ export default {
     const currentDate = new Date();
     return `${padWithZero(currentDate.getMonth() + 1)}/${padWithZero(currentDate.getDate() - 1)}/${currentDate.getFullYear()}`;
   },
+
+  getTomorrowDayDateForFiscalYear: () => {
+    const currentDate = new Date();
+    return `${currentDate.getFullYear()}-${padWithZero(currentDate.getMonth() + 1)}-${padWithZero(currentDate.getDate() + 1)}`;
+  },
+
+  getDayAfterTomorrowDateForFiscalYear: () => {
+    const currentDate = new Date();
+    return `${currentDate.getFullYear()}-${padWithZero(currentDate.getMonth() + 1)}-${padWithZero(currentDate.getDate() + 2)}`;
+  },
+
   getPreviousDayDateForFiscalYear: () => {
     const currentDate = new Date();
     return `${currentDate.getFullYear()}-${padWithZero(currentDate.getMonth() + 1)}-${padWithZero(currentDate.getDate() - 1)}`;

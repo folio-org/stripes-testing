@@ -178,7 +178,7 @@ function createRequestApi(
     });
 }
 
-function deleteRequestApi(requestId) {
+function deleteRequestViaApi(requestId) {
   return cy.okapiRequest({
     method: 'DELETE',
     path: `circulation/requests/${requestId}`,
@@ -253,7 +253,7 @@ function waitLoadingTags() {
 
 export default {
   createRequestApi,
-  deleteRequestApi,
+  deleteRequestViaApi,
   setRequestPolicyApi,
   deleteRequestPolicyApi,
   updateCirculationRulesApi,
@@ -302,7 +302,7 @@ export default {
     waitLoadingTags();
     cy.do(tagsPane.find(MultiSelect({ ariaLabelledby:'accordion-toggle-button-tag-accordion' })).choose(tag));
     // TODO investigate what to wait
-    cy.wait(1500);
+    cy.wait(2000);
   },
 
   deleteTag:() => {
@@ -311,6 +311,8 @@ export default {
 
   verifyAssignedTags(tag) {
     cy.expect(Spinner().absent());
+    // need to wait until number of tags is displayed
+    cy.wait(1000);
     cy.expect(showTagsButton.find(Badge()).has({ value: '1' }));
     cy.expect(tagsPane.find(ValueChipRoot(tag)).exists());
   },
@@ -507,5 +509,12 @@ export default {
 
   verifyShowTagsButtonIsDisabled:() => {
     cy.expect(showTagsButton.has({ disabled: true }));
-  }
+  },
+
+  createNewRequestViaApi:(requestBody) => cy.okapiRequest({
+    method: 'POST',
+    path: 'circulation/requests',
+    body: requestBody,
+    isDefaultSearchParamsRequired: false
+  }),
 };

@@ -47,7 +47,7 @@ describe('ui-finance: Transactions', () => {
 
                 cy.loginAsAdmin({ path:TopMenu.fundPath, waiter: Funds.waitLoading });
                 FinanceHelp.searchByName(firstFund.name);
-                FinanceHelp.selectFromResultsList();
+                Funds.selectFund(firstFund.name);
                 Funds.addBudget(allocatedQuantity);
               });
 
@@ -57,7 +57,7 @@ describe('ui-finance: Transactions', () => {
 
                 cy.visit(TopMenu.fundPath);
                 FinanceHelp.searchByName(secondFund.name);
-                FinanceHelp.selectFromResultsList();
+                Funds.selectFund(secondFund.name);
                 Funds.addBudget(allocatedQuantity);
               });
           });
@@ -93,7 +93,7 @@ describe('ui-finance: Transactions', () => {
 
   it('C6650 Add transfer to a budget by creating a transfer transaction (thunderjet)', { tags: [testType.criticalPath, devTeams.thunderjet] }, () => {
     FinanceHelp.searchByName(firstFund.name);
-    FinanceHelp.selectFromResultsList();
+    Funds.selectFund(firstFund.name);
     Funds.selectBudgetDetails();
     Funds.transfer(firstFund, secondFund);
     InteractorsTools.checkCalloutMessage(`$10.00 was successfully transferred to the budget ${firstFund.code}-${defaultFiscalYear.code}`);

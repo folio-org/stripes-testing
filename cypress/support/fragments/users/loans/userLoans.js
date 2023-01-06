@@ -41,6 +41,12 @@ export default {
   verifyClaimReturnedButtonIsVisible() {
     return cy.expect(claimReturnedButton.exists());
   },
+  claimItemReturnedViaApi:(apiBody, loanId) => cy.okapiRequest({
+    method: 'POST',
+    path: `circulation/loans/${loanId}/claim-item-returned`,
+    body: apiBody,
+    isDefaultSearchParamsRequired: false
+  }),
   checkOffLoanByBarcode: (itemBarcode) => {
     // interactors don't allow to find element inside the cell column
     return cy.contains(itemBarcode).parent('*[class^="mclRow--"]').within(() => {
@@ -53,8 +59,10 @@ export default {
   openLoan:(itemBarcode) => {
     return cy.do(MultiColumnListRow({ text: matching(itemBarcode), isContainer: false }).click());
   },
-  declareLoanLost:() => {
-    cy.do(ellipsisButton.click());
+  declareLoanLost:(barcode) => {
+    cy.get('div[class^="mclRow--"]').contains('div[class^="mclCell-"]', barcode).then(elem => {
+      elem.parent()[0].querySelector('button[icon="ellipsis"]').click();
+    });
     cy.expect(declaredLostButton.exists());
     return cy.do(declaredLostButton.click());
   },
@@ -70,8 +78,9 @@ export default {
     return cy.do(declaredLostButton.click());
   },
   openItemRecordInInventory:(barcode) => {
-    cy.expect(rowInList.find(HTML(including(barcode))).exists());
-    cy.do(ellipsisButton.click());
+    cy.get('div[class^="mclRow--"]').contains('div[class^="mclCell-"]', barcode).then(elem => {
+      elem.parent()[0].querySelector('button[icon="ellipsis"]').click();
+    });
     cy.expect(itemDetailsButton.exists());
     cy.do(itemDetailsButton.click());
     ItemView.waitLoading();
@@ -82,8 +91,10 @@ export default {
       cy.expect(renewButton.exists());
       cy.do(renewButton.click());
     } else {
-      cy.expect(rowInList.find(HTML(including(barcode))).exists());
-      cy.do(ellipsisButton.click());
+      cy.wait(1500);
+      cy.get('div[class^="mclRow--"]').contains('div[class^="mclCell-"]', barcode).then(elem => {
+        elem.parent()[0].querySelector('button[icon="ellipsis"]').click();
+      });
       cy.expect(renewButton.exists());
       cy.do(renewButton.click());
     }

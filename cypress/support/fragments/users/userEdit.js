@@ -100,16 +100,6 @@ export default {
       });
     }),
 
-  updateUserAddress:(user, addresses) => {
-    cy.updateUser({
-      ...user,
-      personal: {
-        lastName: '',
-        addresses
-      }
-    });
-  },
-
   updateExternalId(user, externalSystemId) {
     cy.updateUser({
       ...user,

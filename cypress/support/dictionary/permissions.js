@@ -15,6 +15,7 @@ export default {
   uiNotesItemCreate:{ internal: 'ui-notes.item.create', gui: 'Notes: Can create a note' },
   uiNotesItemView: { internal: 'ui-notes.item.view', gui: 'Notes: Can view a note' },
   uiNotesItemEdit:{ internal: 'ui-notes.item.edit', gui: 'Notes: Can edit a note' },
+  uiNotesItemDelete:{ internal: 'ui-notes.item.delete', gui: 'Notes: Can delete a note' },
   // Agreements
   uiAgreementsAgreementsEdit: { internal: 'ui-agreements.agreements.edit', gui: 'Agreements: Edit agreements' },
   uiAgreementsAgreementsDelete: { internal: 'ui-agreements.agreements.delete', gui: 'Agreements: Delete agreements' },
@@ -54,6 +55,7 @@ export default {
   // DataImport
   dataImportUploadAll:{ internal: 'data-import.upload.all', gui:'Data Import File Upload - all permissions' },
   moduleDataImportEnabled:{ internal: 'ui-data-import.settings.manage', gui:'Data import: Can upload files, import, and view logs' },
+  settingsDataImportView:{ internal: 'ui-data-import.settings.readOnly', gui:'Data import: Can view only' },
   settingsDataImportEnabled:{ internal: 'settings.data-import.enabled', gui:'Settings (Data import): Can view, create, edit, and remove' },
   dataImportDeleteLogs: { internal: 'ui-data-import.logs.delete', gui: 'Data import: Can delete import logs' },
   // Storage
@@ -90,6 +92,7 @@ export default {
   uiUsersCreatePatronConditions: { internal: 'ui-users.settings.conditions', gui: 'Settings (Users): Can view and edit patron blocks conditions' },
   // Remote Storage
   remoteStorageCRUD: { internal: '', gui: 'Settings (Remote storage): Can create, edit, delete remote storage settings' },
+  remoteStorageView: { internal: 'ui-remote-storage.settings.remote-storages.view', gui: 'Remote storage: View' },
   // Requests
   uiRequestsCreate: { internal: 'ui-requests.create', gui: 'Requests: View, create' },
   uiRequestsView: { internal: 'ui-requests.view', gui: 'Requests: View' },
@@ -129,6 +132,12 @@ export default {
   uiInvoicesPayInvoices: { internal: 'ui-invoice.pay', gui: 'Invoice: Pay invoices' },
   invoiceSettingsAll: { internal: 'ui-invoice.settings.all', gui: 'Settings (Invoices): Can view and edit settings' },
   uiInvoicesCancelInvoices: { internal: 'ui-invoice.cancel', gui: 'Invoice: Cancel invoices' },
+  uiInvoicesCanViewAndEditInvoicesAndInvoiceLines: { internal: 'ui-invoice.invoice.edit', gui: 'Invoice: Can view and edit Invoices and Invoice lines' },
+  uiInvoicesCanViewInvoicesAndInvoiceLines: { internal: 'ui-invoice.invoice.view', gui: 'Invoice: Can view Invoices and Invoice lines' },
+  uiInvoicesDownloadBatchFileFromInvoiceRecord: { internal: 'ui-invoice.batchVoucher.download', gui: 'Invoice: Download batch file from invoice record' },
+  uiInvoicesExportSearchResults: { internal: 'ui-invoice.exportCSV', gui: 'Invoice: Export search results' },
+  uiInvoicesManageAcquisitionUnits: { internal: 'ui-invoice.acq.unit.assignment.manage', gui: 'Invoice: Manage acquisition units' },
+  uiInvoicesVoucherExport: { internal: 'ui-invoice.voucherExport', gui: 'Invoice: Voucher export' },
   // Orders
   uiOrdersView: { internal: 'ui-orders.orders.view', gui: 'Orders: Can view Orders and Order lines' },
   uiOrdersCreate: { internal: 'ui-orders.orders.create', gui: 'Orders: Can create new Orders and Order lines' },
@@ -176,6 +185,18 @@ export default {
   uiFinanceViewEditDeleteLedger: { internal: 'ui-finance.ledger.delete', gui: 'Finance: View, edit, delete ledger' },
   uiSettingsFinanceViewEditCreateDeleter: { internal: 'ui-finance.settings.all', gui: 'Settings (Finance): View, edit, create, delete' },
   uiFinanceAssignAcquisitionUnitsToNewRecord: { internal: 'ui-finance.acq.unit.assignment.assign', gui: 'Finance: Assign acquisition units to new record' },
+  // Organizations
+  uiOrganizationsAssignAcquisitionUnitsToNewOrganization: { internal: 'ui-organizations.acqUnits.assig', gui: 'Organizations: Assign acquisition units to new organization' },
+  uiOrganizationsIntegrationUsernamesAndPasswordsView: { internal: 'ui-organizations.integrations.creds.view', gui: 'Organizations: Integration usernames and passwords: view' },
+  uiOrganizationsIntegrationUsernamesAndPasswordsViewEdit: { internal: 'ui-organizations.integrations.creds.edit', gui: 'Organizations: Integration usernames and passwords: view, edit' },
+  uiOrganizationsInterfaceUsernamesAndPasswordsView: { internal: 'ui-organizations.creds.view', gui: 'Organizations: Interface usernames and passwords: view' },
+  uiOrganizationsInterfaceUsernamesAndPasswordsViewEditCreateDelete: { internal: 'ui-organizations.creds.manage', gui: 'Organizations: Interface usernames and passwords: view, edit, create, delete' },
+  uiOrganizationsManageAcquisitionUnits: { internal: 'ui-organizations.acqUnits.manage', gui: 'Organizations: Manage acquisition units' },
+  uiOrganizationsView: { internal: 'ui-organizations.view', gui: 'Organizations: View' },
+  uiOrganizationsViewEdit: { internal: 'ui-organizations.edit', gui: 'Organizations: View, edit' },
+  uiOrganizationsViewEditCreate: { internal: 'ui-organizations.create', gui: 'Organizations: View, edit, create' },
+  uiOrganizationsViewEditDelete: { internal: 'ui-organizations.delete', gui: 'Organizations: View, edit, delete' },
+  uiSettingsOrganizationsCanViewAndEditSettings: { internal: 'ui-organizations.settings', gui: 'Settings (Organizations): Can view and edit settings' },
   // Settings
   uiSettingsAcquisitionUnitsViewEditCreateDelete: { internal: 'ui-acquisition-units.settings.all', gui: 'Settings (acquisition units): Can view, edit, create and delete acquisition units' },
   uiInventorySettingsFastAdd: { internal: 'ui-inventory.settings.fast-add', gui: 'Settings (Inventory): Edit fast add settings' },

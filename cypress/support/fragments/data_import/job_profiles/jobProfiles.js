@@ -1,3 +1,4 @@
+/* eslint-disable cypress/no-unnecessary-waiting */
 import {
   Button,
   TextField,
@@ -9,7 +10,8 @@ import {
   PaneHeader,
   MultiColumnList,
   Pane,
-  MultiColumnListRow
+  MultiColumnListRow,
+  Callout
 } from '../../../../../interactors';
 import { getLongDelay } from '../../../utils/cypressTools';
 import newJobProfile from './newJobProfile';
@@ -99,6 +101,7 @@ export default {
   searchJobProfileForImport,
   deleteJobProfile,
   createJobProfile,
+  closeJobProfile,
 
   checkJobProfilePresented:(jobProfileTitle) => {
     searchJobProfileForImport(jobProfileTitle);
@@ -114,13 +117,16 @@ export default {
       .click());
   },
 
-  runImportFile:(fileName) => {
+  runImportFile:() => {
     waitLoading(waitSelector);
     cy.do([
       actionsButton.click(),
       runButton.click(),
       Modal('Are you sure you want to run this job?').find(runButton).click(),
     ]);
+  },
+
+  waitFileIsImported:(fileName) => {
     // wait until uploaded file is displayed in the list
     cy.expect(MultiColumnList({ id:'job-logs-list' }).find(Button(fileName)).exists());
   },
@@ -150,5 +156,11 @@ export default {
     cy.expect(Section({ id:'pane-results' }).exists());
     cy.expect(PaneHeader(fileName).exists());
   },
-  closeJobProfile,
+
+  checkListOfExistingProfilesIsDisplayed:() => cy.expect(paneResults.exists()),
+
+  checkCalloutMessage: (profileName) => {
+    cy.expect(Callout({ textContent: including(`The job profile "${profileName}" was successfully updated`) })
+      .exists());
+  }
 };

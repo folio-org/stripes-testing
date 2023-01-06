@@ -49,7 +49,7 @@ describe('ui-orders: Orders and Order lines', () => {
 
                 cy.loginAsAdmin({ path:TopMenu.fundPath, waiter: Funds.waitLoading });
                 FinanceHelp.searchByName(defaultFund.name);
-                FinanceHelp.selectFromResultsList();
+                Funds.selectFund(defaultFund.name);
                 Funds.addBudget(allocatedQuantity);
               });
           });
@@ -69,11 +69,15 @@ describe('ui-orders: Orders and Order lines', () => {
     Orders.deleteOrderApi(order.id);
     Organizations.deleteOrganizationViaApi(organization.id);
     FinanceHelp.searchByName(defaultFund.name);
-    FinanceHelp.selectFromResultsList();
+    Funds.selectFund(defaultFund.name);
     Funds.selectBudgetDetails();
     Funds.deleteBudgetViaActions();
+    // Need to wait,while data will be deleted
+    cy.wait(1000);
     Funds.deleteFundViaApi(defaultFund.id);
     Ledgers.deleteledgerViaApi(defaultLedger.id);
+    // Need to wait few seconds, that data will be deleted(its need to pass test in Jenkins run)
+    cy.wait(1000);
     FiscalYears.deleteFiscalYearViaApi(defaultFiscalYear.id);
     Users.deleteViaApi(user.userId);
   });

@@ -59,7 +59,7 @@ describe('ui-data-import: MARC file import with matching for 999 ff field', () =
       name: actionProfileNameForExport
     };
     cy.visit(SettingsMenu.actionProfilePath);
-    ActionProfiles.createActionProfile(actionProfileForExport, mappingProfileForExport.name);
+    ActionProfiles.create(actionProfileForExport, mappingProfileForExport.name);
     ActionProfiles.checkActionProfilePresented(actionProfileNameForExport);
 
     // create job profile for export
@@ -75,7 +75,8 @@ describe('ui-data-import: MARC file import with matching for 999 ff field', () =
     cy.visit(TopMenu.dataImportPath);
     DataImport.uploadFile('oneMarcBib.mrc', nameForMarcFile);
     JobProfiles.searchJobProfileForImport(jobProfileNameForExport);
-    JobProfiles.runImportFile(nameForMarcFile);
+    JobProfiles.runImportFile();
+    JobProfiles.waitFileIsImported(nameForMarcFile);
     Logs.openFileDetails(nameForMarcFile);
     FileDetails.checkStatusInColumn(FileDetails.status.created, FileDetails.columnName.instance);
 
@@ -137,7 +138,7 @@ describe('ui-data-import: MARC file import with matching for 999 ff field', () =
           action: 'Update (all record types except Orders, Invoices, or MARC Holdings)'
         };
         cy.visit(SettingsMenu.actionProfilePath);
-        ActionProfiles.createActionProfile(actionProfile, mappingProfile.name);
+        ActionProfiles.create(actionProfile, mappingProfile.name);
         ActionProfiles.checkActionProfilePresented(actionProfileName);
 
         // create Job profile
@@ -154,7 +155,8 @@ describe('ui-data-import: MARC file import with matching for 999 ff field', () =
         cy.visit(TopMenu.dataImportPath);
         DataImport.uploadExportedFile(nameForExportedMarcFile);
         JobProfiles.searchJobProfileForImport(jobProfileName);
-        JobProfiles.runImportFile(nameForExportedMarcFile);
+        JobProfiles.runImportFile();
+        JobProfiles.waitFileIsImported(nameForExportedMarcFile);
         Logs.openFileDetails(nameForExportedMarcFile);
         FileDetails.checkStatusInColumn(FileDetails.status.updated, FileDetails.columnName.instance);
 
