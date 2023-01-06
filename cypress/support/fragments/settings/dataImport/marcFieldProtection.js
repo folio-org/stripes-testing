@@ -41,12 +41,19 @@ export default {
   },
 
   createNewMarcFieldProtection:() => cy.do(Pane({ id:'controlled-vocab-pane' }).find(newButton).click()),
-
-  fillMarcFieldProtection:(fieldNumber) => {
-    cy.do(TextField({ name:'items[0].field' }).fillIn(fieldNumber));
-    cy.do(saveButton.click());
-  },
-
   currentListOfProtectedMarcFieldsIsPresented:() => cy.expect(editList.exists()),
-  checkFieldProtectionIsCreated:() => cy.expect(editList.find(MultiColumnListCell({ content: '856' })).exists())
+  checkFieldProtectionIsCreated:(data) => cy.expect(editList.find(MultiColumnListCell({ content: data })).exists()),
+
+  fillMarcFieldProtection:(fieldNumber, subfield = '*', data = '*') => {
+    cy.do(TextField({ name:'items[0].field' }).fillIn(fieldNumber));
+    if (subfield) {
+      // TODO: redesign to interactors
+      cy.get('input[name="items[0].subfield"]').clear().type(subfield);
+    }
+    if (data) {
+      // TODO: redesign to interactors
+      cy.get('input[name="items[0].data"]').clear().type(data);
+    }
+    cy.do(saveButton.click());
+  }
 };

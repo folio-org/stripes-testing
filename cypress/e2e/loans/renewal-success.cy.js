@@ -136,12 +136,12 @@ describe('Renewal', () => {
       })
       // checkout item
       .then(() => {
-        CheckoutActions.createItemCheckoutViaApi({
+        CheckoutActions.checkoutItemViaApi({
           servicePointId,
           itemBarcode: itemData.barcode,
           userBarcode: renewUserData.barcode
         });
-        CheckoutActions.createItemCheckoutViaApi({
+        CheckoutActions.checkoutItemViaApi({
           servicePointId,
           itemBarcode: secondItemBarcode,
           userBarcode: renewUserData.barcode
