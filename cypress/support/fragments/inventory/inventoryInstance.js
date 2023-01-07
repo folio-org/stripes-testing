@@ -1,3 +1,4 @@
+/* eslint-disable cypress/no-unnecessary-waiting */
 import {
   MultiColumnList,
   HTML,
@@ -85,7 +86,11 @@ const openHoldings = (...holdingToBeOpened) => {
   // don't have elem on page for waiter
   cy.wait(2000);
 };
-const verifyInstanceTitle = (title) => cy.expect(Pane({ titleLabel: including(title) }).exists());
+const verifyInstanceTitle = (title) => {
+  // don't have elem on page for waiter
+  cy.wait(2000);
+  cy.expect(Pane({ titleLabel: including(title) }).exists());
+};
 const verifyInstanceSource = (sourceValue) => cy.expect(source.has({ value: sourceValue }));
 const verifyLastUpdatedDate = () => {
   const updatedDate = DateTools.getFormattedDateWithSlashes({ date: new Date() });
@@ -403,7 +408,7 @@ export default {
 
   verifyLoanInItemPage(barcode, value) {
     cy.do(MultiColumnListCell({ content: barcode }).find(Link()).click());
-    cy.expect(KeyValue('Temporary loan type').has({ value: value}));
-    cy.do(Button({ icon: 'times'}).click());
+    cy.expect(KeyValue('Temporary loan type').has({ value }));
+    cy.do(Button({ icon: 'times' }).click());
   },
 };

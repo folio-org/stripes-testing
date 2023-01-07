@@ -189,7 +189,8 @@ describe('ui-data-import: Match on location', () => {
         cy.visit(TopMenu.dataImportPath);
         DataImport.uploadFile('marcFileForMatchOnLocation_1.mrc', marcFileForCreate);
         JobProfiles.searchJobProfileForImport(testData.jobProfileForCreate.profile.name);
-        JobProfiles.runImportFile(marcFileForCreate);
+        JobProfiles.runImportFile();
+        JobProfiles.waitFileIsImported(marcFileForCreate);
         Logs.openFileDetails(marcFileForCreate);
         FileDetails.checkItemsStatusesInResultList(0, [FileDetails.status.created, FileDetails.status.created, FileDetails.status.created, FileDetails.status.created]);
         FileDetails.checkItemsQuantityInSummaryTable(0, '1');
@@ -343,7 +344,8 @@ describe('ui-data-import: Match on location', () => {
     cy.visit(TopMenu.dataImportPath);
     DataImport.uploadFile(editedMarcFileName, fileNameAfterUpdate);
     JobProfiles.searchJobProfileForImport(jobProfileNameForUpdate.profileName);
-    JobProfiles.runImportFile(fileNameAfterUpdate);
+    JobProfiles.runImportFile();
+    JobProfiles.waitFileIsImported(fileNameAfterUpdate);
     Logs.checkStatusOfJobProfile('Completed');
     Logs.openFileDetails(fileNameAfterUpdate);
     FileDetails.checkStatusInColumn(FileDetails.status.created, FileDetails.columnName.srsMarc);
@@ -503,7 +505,8 @@ describe('ui-data-import: Match on location', () => {
     cy.visit(TopMenu.dataImportPath);
     DataImport.uploadFile(editedMarcFileName, fileNameAfterUpdate);
     JobProfiles.searchJobProfileForImport(jobProfileNameForUpdate.profileName);
-    JobProfiles.runImportFile(fileNameAfterUpdate);
+    JobProfiles.runImportFile();
+    JobProfiles.waitFileIsImported(fileNameAfterUpdate);
     Logs.checkStatusOfJobProfile('Completed');
     Logs.openFileDetails(fileNameAfterUpdate);
     FileDetails.checkStatusInColumn(FileDetails.status.created, FileDetails.columnName.srsMarc);
@@ -663,7 +666,8 @@ describe('ui-data-import: Match on location', () => {
     cy.visit(TopMenu.dataImportPath);
     DataImport.uploadFile(editedMarcFileName, fileNameAfterUpdate);
     JobProfiles.searchJobProfileForImport(jobProfileNameForUpdate.profileName);
-    JobProfiles.runImportFile(fileNameAfterUpdate);
+    JobProfiles.runImportFile();
+    JobProfiles.waitFileIsImported(fileNameAfterUpdate);
     Logs.checkStatusOfJobProfile('Completed');
     Logs.openFileDetails(fileNameAfterUpdate);
     FileDetails.checkStatusInColumn(FileDetails.status.created, FileDetails.columnName.srsMarc);
