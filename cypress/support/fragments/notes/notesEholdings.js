@@ -1,4 +1,4 @@
-import { Section, including, Button, MultiColumnListCell, TextField, RichEditor } from '../../../../interactors';
+import { Section, including, Button, MultiColumnListCell, TextField, RichEditor, HTML } from '../../../../interactors';
 
 const notesSection = Section({ id: 'providerShowNotes' });
 const createButton = Button({ id: 'note-create-button' });
@@ -22,6 +22,7 @@ export default {
     ]);
   },
   verifyNoteCreation: (title, details) => cy.expect(MultiColumnListCell({ content: `Title: ${title}Details: ${details}Edit` }).exists()),
+  verifyNoteTitle: (title) => cy.expect(notesSection.find(HTML(including(title))).exists()),
   openNoteView: (title) => cy.do(MultiColumnListCell(including(title)).click()),
   deleteNote: () => {
     cy.do([
@@ -53,6 +54,14 @@ export default {
     cy.expect([
       MultiColumnListCell({ content: `Title: ${firstTitle}Details: ${details}Edit`, row: 0 }).exists(),
       MultiColumnListCell({ content: `Title: ${secondTitle}Details: ${details}Edit`, row: 1 }).exists(),
+    ]);
+  },
+  editNote: (title, newTitle, newDetails) => {
+    cy.do([
+      MultiColumnListCell(including(title)).find(editButton).click(),
+      titleField.fillIn(newTitle),
+      detailsField.fillIn(newDetails),
+      submitButton.click(),
     ]);
   },
 };

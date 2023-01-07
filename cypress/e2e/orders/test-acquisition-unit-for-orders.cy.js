@@ -13,7 +13,6 @@ import NewOrganization from '../../support/fragments/organizations/newOrganizati
 import InteractorsTools from '../../support/utils/interactorsTools';
 
 describe('ui-finance: Orders', () => {
-
   const order = { ...NewOrder.defaultOneTimeOrder };
   const organization = { ...NewOrganization.defaultUiOrganizations };
   const defaultAcquisitionUnit = { ...AcquisitionUnits.defaultAcquisitionUnit };
@@ -41,7 +40,7 @@ describe('ui-finance: Orders', () => {
       .then(userProperties => {
         user = userProperties;
       });
-      Organizations.createOrganizationViaApi(organization)
+    Organizations.createOrganizationViaApi(organization)
       .then(response => {
         organization.id = response;
       });
@@ -52,8 +51,8 @@ describe('ui-finance: Orders', () => {
   after(() => {
     Orders.deleteOrderApi(orderId);
     Organizations.deleteOrganizationViaApi(organization.id);
-    cy.loginAsAdmin({ path:SettingsMenu.acquisitionUnitsPath , waiter: AcquisitionUnits.waitLoading });
-    
+    cy.loginAsAdmin({ path:SettingsMenu.acquisitionUnitsPath, waiter: AcquisitionUnits.waitLoading });
+
     AcquisitionUnits.unAssignAdmin(defaultAcquisitionUnit.name);
     AcquisitionUnits.delete(defaultAcquisitionUnit.name);
 
@@ -69,25 +68,25 @@ describe('ui-finance: Orders', () => {
     AcquisitionUnits.assignUser(user.username);
 
     cy.login(user.username, user.password, { path:TopMenu.ordersPath, waiter: Orders.waitLoading });
-    Orders.createOrderWithAU(order, defaultAcquisitionUnit.name).then ( ({response} ) => {
-      orderId = response.body.id
+    Orders.createOrderWithAU(order, defaultAcquisitionUnit.name).then(({ response }) => {
+      orderId = response.body.id;
       orderNumber = response.body.poNumber;
-    InteractorsTools.checkCalloutMessage(`The Purchase order - ${orderNumber} has been successfully saved`);
+      InteractorsTools.checkCalloutMessage(`The Purchase order - ${orderNumber} has been successfully saved`);
 
-    cy.loginAsAdmin({ path:SettingsMenu.acquisitionUnitsPath, waiter: AcquisitionUnits.waitLoading });
-    AcquisitionUnits.unAssignUser(defaultAcquisitionUnit.name);
+      cy.loginAsAdmin({ path:SettingsMenu.acquisitionUnitsPath, waiter: AcquisitionUnits.waitLoading });
+      AcquisitionUnits.unAssignUser(defaultAcquisitionUnit.name);
 
-    cy.login(user.username, user.password, { path:TopMenu.ordersPath, waiter: Orders.waitLoading });
-    Orders.searchByParameter('PO number', orderNumber);
-    Orders.checkZeroSearchResultsHeader();
+      cy.login(user.username, user.password, { path:TopMenu.ordersPath, waiter: Orders.waitLoading });
+      Orders.searchByParameter('PO number', orderNumber);
+      Orders.checkZeroSearchResultsHeader();
 
-    cy.loginAsAdmin({ path:SettingsMenu.acquisitionUnitsPath, waiter: AcquisitionUnits.waitLoading });
-    AcquisitionUnits.edit(defaultAcquisitionUnit.name);
-    AcquisitionUnits.selectViewCheckbox();
-    
-    cy.login(user.username, user.password, { path:TopMenu.ordersPath, waiter: Orders.waitLoading });
-    Orders.searchByParameter('PO number', orderNumber);
-    FinanceHelp.selectFromResultsList();
-  });
+      cy.loginAsAdmin({ path:SettingsMenu.acquisitionUnitsPath, waiter: AcquisitionUnits.waitLoading });
+      AcquisitionUnits.edit(defaultAcquisitionUnit.name);
+      AcquisitionUnits.selectViewCheckbox();
+
+      cy.login(user.username, user.password, { path:TopMenu.ordersPath, waiter: Orders.waitLoading });
+      Orders.searchByParameter('PO number', orderNumber);
+      FinanceHelp.selectFromResultsList();
+    });
   });
 });

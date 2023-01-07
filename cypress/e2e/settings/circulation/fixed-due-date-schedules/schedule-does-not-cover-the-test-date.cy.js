@@ -2,6 +2,7 @@ import moment from 'moment';
 import uuid from 'uuid';
 import devTeams from '../../../../support/dictionary/devTeams';
 import TestTypes from '../../../../support/dictionary/testTypes';
+import DevTeams from '../../../../support/dictionary/devTeams';
 import SettingsMenu from '../../../../support/fragments/settingsMenu';
 import generateItemBarcode from '../../../../support/utils/generateItemBarcode';
 import getRandomPostfix from '../../../../support/utils/stringTools';

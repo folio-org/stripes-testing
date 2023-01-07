@@ -1,5 +1,6 @@
 import TopMenu from '../../support/fragments/topMenu';
-import testTypes from '../../support/dictionary/testTypes';
+import TestTypes from '../../support/dictionary/testTypes';
+import DevTeams from '../../support/dictionary/devTeams';
 import permissions from '../../support/dictionary/permissions';
 import getRandomPostfix from '../../support/utils/stringTools';
 import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
@@ -41,10 +42,11 @@ describe('ui-inventory: query search', () => {
     { searchTab: InventorySearchAndFilter.switchToHoldings, value: `holdingsNormalizedCallNumbers="${item.holdingCallNumber}"` },
     { searchTab: InventorySearchAndFilter.switchToItem, value: `itemNormalizedCallNumbers="${item.itemCallNumber}"` },
   ].forEach(searcher => {
-    it('C9202 Test search field working for Query Search in Instance, Holdings and Item segment (prokopovych)', { tags: [testTypes.smoke] }, () => {
-      searcher.searchTab();
-      InventorySearchAndFilter.searchByParameter('Query search', searcher.value);
-      InventorySearchAndFilter.verifySearchResult(item.instanceName);
-    });
+    it('C9202 Test search field working for Query Search in Instance, Holdings and Item segment (prokopovych)',
+      { tags: [TestTypes.smoke, DevTeams.prokopovych] }, () => {
+        searcher.searchTab();
+        InventorySearchAndFilter.searchByParameter('Query search', searcher.value);
+        InventorySearchAndFilter.verifySearchResult(item.instanceName);
+      });
   });
 });
