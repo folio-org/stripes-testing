@@ -184,7 +184,7 @@ describe('ui-inventory: Item status date updates', () => {
     UsersCard.showOpenedLoans();
   };
 
-  // test is pooping
+  // test is looping
   it('C9200 Item status date updates (folijet) (prokopovych)', { tags: [DevTeams.folijet, TestTypes.long] }, () => {
     const caption = `autotest_caption_${getRandomPostfix()}`;
     const numberOfPieces = '3';

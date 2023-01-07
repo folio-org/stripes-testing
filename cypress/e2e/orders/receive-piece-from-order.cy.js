@@ -40,6 +40,7 @@ describe('orders: Receive piece from Order', () => {
     Organizations.deleteOrganizationViaApi(organization.id);
   });
 
+  // FAT-4047 Requarements is changed. Test case need review.
   it('C735 Receiving pieces from an order for physical material that is set to create Items in inventory (thunderjet)', { tags: [testType.smoke, devTeams.thunderjet] }, () => {
     // TODO: update test case in test rail to reflect business actions
     const barcode = Helper.getRandomBarcode();
@@ -60,7 +61,6 @@ describe('orders: Receive piece from Order', () => {
         cy.visit(TopMenu.inventoryPath);
         InventorySearchAndFilter.switchToItem();
         InventorySearchAndFilter.searchByParameter('Barcode', barcode);
-        Helper.selectFromResultsList();
         InventoryInstance.checkHoldingsTable(OrdersHelper.mainLibraryLocation, 0, caption, barcode, 'In process');
       });
   });
