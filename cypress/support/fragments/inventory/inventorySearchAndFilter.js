@@ -30,7 +30,7 @@ const keywordInput = TextField({ id: 'input-inventory-search' });
 const searchButton = Button({ type: 'submit' });
 const searchTextField = TextField('Search ');
 const inventorySearchAndFilter = TextInput({ id: 'input-inventory-search' });
-const inventorySearchAndFilterInput = Select({ id: 'input-inventory-search-qindex' });
+const browseSearchAndFilterInput = Select({ id: 'input-record-search-qindex' });
 const resetAllButton = Button({ id: 'clickable-reset-all' });
 const navigationInstancesButton = Button({ id: 'segment-navigation-instances' });
 const paneFilterSection = Section({ id: 'pane-filter' });
@@ -169,7 +169,7 @@ export default {
     // cypress can't draw selected option without wait
     // eslint-disable-next-line cypress/no-unnecessary-waiting
     cy.wait(1000);
-    cy.do(Select('Search field index').choose('Browse call numbers'));
+    cy.do(Select('Search field index').choose('Call numbers'));
   },
 
   selectBrowseSubjects() {
@@ -212,17 +212,17 @@ export default {
   },
 
   verifyKeywordsAsDefault() {
-    cy.get('#input-inventory-search-qindex').then(elem => {
-      expect(elem.text()).to.include('Keyword (title, contributor, identifier');
+    cy.get('#input-record-search-qindex').then((elem) => {
+      expect(elem.text()).to.include('Select a browse option');
     });
-    cy.expect(inventorySearchAndFilterInput.exists());
+    cy.expect(browseSearchAndFilterInput.exists());
   },
 
   verifyCallNumberBrowseEmptyPane() {
     const callNumberBrowsePane = Pane({ title: 'Browse inventory' });
     cy.expect(callNumberBrowsePane.exists());
     cy.expect(callNumberBrowsePane.has({ subtitle: 'Enter search criteria to start browsing' }));
-    cy.expect(HTML(including('Browse for results entering a query or choosing a filter.')).exists());
+    cy.expect(HTML(including('Choose a filter or enter a search query to show results.')).exists());
   },
 
   verifyCallNumberBrowsePane() {
@@ -278,10 +278,10 @@ export default {
 
   browseSubjectsSearch(searchString = 'test123') {
     cy.do([
-      TextField({ id: 'input-inventory-search' }).fillIn(searchString),
-      Button('Browse').click()
+      TextField({ id: 'input-record-search' }).fillIn(searchString),
+      searchButton.click()
     ]);
-    cy.expect(Pane({ id:'pane-results' }).find(MultiColumnListHeader()).exists());
+    cy.expect(Pane({ id:'browse-inventory-results-pane' }).find(MultiColumnListHeader()).exists());
   },
 
   verifySearchResult:(cellContent) => cy.expect(MultiColumnListCell({ content: cellContent }).exists()),
