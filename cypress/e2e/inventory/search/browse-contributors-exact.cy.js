@@ -50,17 +50,17 @@ describe('ui-inventory: search', () => {
     });
   });
 
-  it("C353639 Browse contributors with exact match query (spitfire)", { tags: [testType.smoke, devTeams.spitfire] }, () => {
-      BrowseContributors.clickBrowseBtn();
-      InventorySearchAndFilter.verifyKeywordsAsDefault();
-      BrowseContributors.checkBrowseOptions();
-      BrowseContributors.select();
-      BrowseContributors.checkSearch();
-      BrowseContributors.browse(instanceA.contributors[0].name);
-      BrowseContributors.checkSearchResultsTable();
-      BrowseContributors.checkExactSearchResult(instanceA.contributors[0], instanceZ.contributors[0]);
-      BrowseContributors.openInstance(instanceA.contributors[0]);
-      BrowseContributors.checkInstance(instanceA);
+  it('C353639 Browse contributors with exact match query (spitfire)', { tags: [testType.smoke, devTeams.spitfire] }, () => {
+    BrowseContributors.clickBrowseBtn();
+    InventorySearchAndFilter.verifyKeywordsAsDefault();
+    BrowseContributors.checkBrowseOptions();
+    BrowseContributors.select();
+    BrowseContributors.checkSearch();
+    BrowseContributors.browse(instanceA.contributors[0].name);
+    BrowseContributors.checkSearchResultsTable();
+    BrowseContributors.checkExactSearchResult(instanceA.contributors[0], instanceZ.contributors[0]);
+    BrowseContributors.openInstance(instanceA.contributors[0]);
+    BrowseContributors.checkInstance(instanceA);
   });
 
   afterEach('Deleting user', () => {

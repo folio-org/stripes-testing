@@ -49,19 +49,19 @@ describe('ui-inventory: search', () => {
     });
   });
 
-  afterEach("Deleting user and instance", () => {
+  afterEach('Deleting user and instance', () => {
     InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(item.itemBarcode);
     Users.deleteViaApi(testData.user.userId);
   });
 
   it('C358140 Verify that browsing for "call number" with "space" value will get the correct result (spitfire)', { tags: [DevTeams.spitfire, TestTypes.smoke] }, () => {
-      search(testData.exactSearch);
-      BrowseCallNumber.checkExactSearchResult(testData.exactSearch);
-      BrowseContributors.resetAllInSearchPane();
-      search(testData.itemWithoutSpace);
-      BrowseCallNumber.checkExactSearchResult(testData.exactSearch);
-      BrowseContributors.resetAllInSearchPane();
-      search(testData.itemWithLowerCaseR);
-      BrowseCallNumber.checkExactSearchResult(testData.exactSearch);
+    search(testData.exactSearch);
+    BrowseCallNumber.checkExactSearchResult(testData.exactSearch);
+    BrowseContributors.resetAllInSearchPane();
+    search(testData.itemWithoutSpace);
+    BrowseCallNumber.checkExactSearchResult(testData.exactSearch);
+    BrowseContributors.resetAllInSearchPane();
+    search(testData.itemWithLowerCaseR);
+    BrowseCallNumber.checkExactSearchResult(testData.exactSearch);
   });
 });
