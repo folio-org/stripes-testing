@@ -38,13 +38,13 @@ describe('ui-inventory: search', () => {
 
   beforeEach('Creating user and instance with item with call number', () => {
     cy.getAdminToken().then(() => {
-      InventoryInstances.createInstanceViaApi(item.instanceName, item.itemBarcode, item.publisher, item.holdingCallNumber, item.itemCallNumber);
       cy.createTempUser([
-        permissions.uiCallNumberBrowse.gui,
-        permissions.inventoryAll.gui
+        permissions.inventoryAll.gui,
+        permissions.uiCallNumberBrowse.gui
       ]).then(userProperties => {
         testData.user = userProperties;
         cy.login(userProperties.username, userProperties.password, { path: TopMenu.inventoryPath, waiter: InventorySearchAndFilter.waitLoading });
+        InventoryInstances.createInstanceViaApi(item.instanceName, item.itemBarcode, item.publisher, item.holdingCallNumber, item.itemCallNumber);
       });
     });
   });
