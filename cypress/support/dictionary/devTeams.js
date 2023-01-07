@@ -4,4 +4,5 @@ export default {
   spitfire: 'spitfire',
   thunderjet: 'thunderjet',
   folijet: 'folijet',
+  prokopovych: 'prokopovych',
 };

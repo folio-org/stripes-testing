@@ -3,7 +3,6 @@ import BasicOrderLine from '../../support/fragments/orders/basicOrderLine';
 import TestType from '../../support/dictionary/testTypes';
 import Orders from '../../support/fragments/orders/orders';
 import TopMenu from '../../support/fragments/topMenu';
-import Helper from '../../support/fragments/finance/financeHelper';
 import OrdersHelper from '../../support/fragments/orders/ordersHelper';
 import Organizations from '../../support/fragments/organizations/organizations';
 import devTeams from '../../support/dictionary/devTeams';
@@ -40,7 +39,7 @@ describe('orders: Close Order', () => {
       .then(orderNumber => {
         cy.visit(TopMenu.ordersPath);
         Orders.searchByParameter('PO number', orderNumber);
-        Helper.selectFromResultsList();
+        Orders.selectFromResultsList(orderNumber);
         Orders.openOrder();
         Orders.closeOrder('Cancelled');
         Orders.closeThirdPane();
