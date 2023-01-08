@@ -77,6 +77,7 @@ describe('ui-data-import: Match on Instance identifier match meets both the Iden
       permissions.viewEditCreateInvoiceInvoiceLine.gui,
       permissions.assignAcqUnitsToNewInvoice.gui,
       permissions.invoiceSettingsAll.gui,
+      permissions.remoteStorageView.gui
     ])
       .then(userProperties => {
         userId = userProperties.userId;
