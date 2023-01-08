@@ -19,8 +19,8 @@ import Users from '../../../support/fragments/users/users';
 
 describe('ui-data-import: Match on Instance identifier match meets both the Identifier type and Data requirements (Scenario 2)', () => {
   let userId;
-  const filePathForCreateInstance = 'C347829 marcFileForMatchOnIdentifierForCreate.mrc';
-  const filePathForUpdateInstance = 'C347829 marcFileForMatchOnIdentifierForUpdate_2.mrc';
+  const filePathForCreateInstance = 'marcFileForMatchOnIdentifierForCreate.mrc';
+  const filePathForUpdateInstance = 'marcFileForMatchOnIdentifierForUpdate_2.mrc';
   const fileNameForCreateInstance = `C347829autotestFile.${getRandomPostfix()}.mrc`;
   const fileNameForUpdateInstance = `C347829autotestFile.${getRandomPostfix()}.mrc`;
   const jobProfileToRun = 'Default - Create instance and SRS MARC Bib';
