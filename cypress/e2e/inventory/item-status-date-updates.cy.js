@@ -185,7 +185,7 @@ describe('ui-inventory: Item status date updates', () => {
   };
 
   // test is looping
-  it('C9200 Item status date updates (folijet) (prokopovych)', { tags: [DevTeams.folijet, TestTypes.long] }, () => {
+  it('C9200 Item status date updates (folijet) (prokopovych)', () => {
     const caption = `autotest_caption_${getRandomPostfix()}`;
     const numberOfPieces = '3';
     // open order and create Item
