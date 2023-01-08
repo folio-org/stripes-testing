@@ -41,6 +41,7 @@ const tagsPane = Pane('Tags');
 const tagsButton = Button({ id: 'clickable-show-tags' });
 const tagsAccordionButton = instancesTagsSection.find(Button('Tags'));
 const emptyResultsMessage = 'Choose a filter or enter a search query to show results.';
+const browseButton = Button({ id: "mode-navigation-browse" });
 
 const searchInstanceByHRID = (id) => {
   InventoryInstances.waitContentLoading();
@@ -168,15 +169,17 @@ export default {
   selectBrowseCallNumbers() {
     // cypress can't draw selected option without wait
     // eslint-disable-next-line cypress/no-unnecessary-waiting
+    cy.do(browseButton.click());
     cy.wait(1000);
-    cy.do(Select('Search field index').choose('Browse call numbers'));
+    cy.do(Select('Search field index').choose('Call numbers'));
   },
 
   selectBrowseSubjects() {
     // cypress can't draw selected option without wait
     // eslint-disable-next-line cypress/no-unnecessary-waiting
+    cy.do(browseButton.click());
     cy.wait(1000);
-    cy.do(Select('Search field index').choose('Browse subjects'));
+    cy.do(Select('Search field index').choose('Subjects'));
   },
 
   showsOnlyEffectiveLocation() {
@@ -222,7 +225,7 @@ export default {
     const callNumberBrowsePane = Pane({ title: 'Browse inventory' });
     cy.expect(callNumberBrowsePane.exists());
     cy.expect(callNumberBrowsePane.has({ subtitle: 'Enter search criteria to start browsing' }));
-    cy.expect(HTML(including('Browse for results entering a query or choosing a filter.')).exists());
+    cy.expect(HTML(including('Choose a filter or enter a search query to show results.')).exists());
   },
 
   verifyCallNumberBrowsePane() {
@@ -278,8 +281,9 @@ export default {
 
   browseSubjectsSearch(searchString = 'test123') {
     cy.do([
-      TextField({ id: 'input-inventory-search' }).fillIn(searchString),
-      Button('Browse').click()
+      browseButton.click(),
+      TextField({ id: 'input-record-search' }).fillIn(searchString),
+      searchButton.click()
     ]);
     cy.expect(Pane({ id:'pane-results' }).find(MultiColumnListHeader()).exists());
   },
