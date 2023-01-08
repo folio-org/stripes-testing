@@ -362,7 +362,11 @@ describe('ui-data-import: Match on POL and update related Instance, Holdings, It
     JobProfiles.waitFileIsImported(editedMarcFileName);
     Logs.checkStatusOfJobProfile();
     Logs.openFileDetails(editedMarcFileName);
-    FileDetails.checkItemsStatusesInResultList(0, [FileDetails.status.updated, FileDetails.status.updated, FileDetails.status.updated, FileDetails.status.updated]);
+    FileDetails.checkSrsRecordQuantityInSummaryTable('1', 0);
+    FileDetails.checkInstanceQuantityInSummaryTable('1', 1);
+    FileDetails.checkHoldingsQuantityInSummaryTable('1', 1);
+    FileDetails.checkItemQuantityInSummaryTable('1', 1);
+    FileDetails.checkItemsStatusesInResultList(0, [FileDetails.status.created, FileDetails.status.updated, FileDetails.status.updated, FileDetails.status.updated]);
     FileDetails.checkItemsStatusesInResultList(1, [FileDetails.status.dash, FileDetails.status.discarded, FileDetails.status.discarded, FileDetails.status.discarded]);
 
     // check is items updated
