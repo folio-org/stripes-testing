@@ -285,7 +285,7 @@ export default {
       TextField({ id: 'input-record-search' }).fillIn(searchString),
       searchButton.click()
     ]);
-    cy.expect(Pane({ id:'pane-results' }).find(MultiColumnListHeader()).exists());
+    cy.expect(Pane({ id: 'browse-inventory-results-pane' }).find(MultiColumnListHeader()).exists());
   },
 
   verifySearchResult:(cellContent) => cy.expect(MultiColumnListCell({ content: cellContent }).exists()),
