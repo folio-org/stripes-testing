@@ -8,7 +8,7 @@ Cypress.Commands.add('openCalendarSettings', (isLoggedIn = true) => {
   cy.visit('settings/calendar');
 });
 
-Cypress.Commands.add('createCalendar', (testCalendarRequestBody, callback) => {
+Cypress.Commands.add('createCalendar', (testCalendarRequestBody, callback = null) => {
   cy.wrap(localforage.getItem('okapiSess')).then((okapiSess) => {
     expect(okapiSess).to.have.property('token');
     cy.request({
@@ -26,7 +26,9 @@ Cypress.Commands.add('createCalendar', (testCalendarRequestBody, callback) => {
         cy.createCalendar(testCalendarRequestBody, callback);
       } else {
         expect(response.status).equals(201);
-        callback(response);
+        if (callback != null) {
+          callback(response);
+        }
       }
     });
   });
