@@ -16,6 +16,7 @@ import devTeams from '../../support/dictionary/devTeams';
 import InventoryInstancesMovement from '../../support/fragments/inventory/holdingsMove/inventoryInstancesMovement';
 import users from '../../support/fragments/users/users';
 import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
+import ItemView from '../../support/fragments/inventory/inventoryItem/itemView';
 
 const successCalloutMessage = '1 item has been successfully moved.';
 let userId;
@@ -108,7 +109,7 @@ describe('ui-inventory: moving items', () => {
     InventorySearchAndFilter.switchToItem();
     InventorySearchAndFilter.searchByParameter('Barcode', ITEM_BARCODE);
     InventorySearchAndFilter.selectSearchResultItem();
-    InventoryInstance.closeItemView();
+    ItemView.closeDetailView();
     InventoryInstance.openMoveItemsWithinAnInstance();
 
     InventoryInstance.moveItemToAnotherHolding(firstHolding, secondHolding);

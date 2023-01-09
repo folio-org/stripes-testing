@@ -252,10 +252,6 @@ export default {
     ]);
   },
 
-  closeItemView() {
-    cy.do(Button({ icon: 'times' }).click());
-  },
-
   moveHoldingsToAnotherInstance:(newInstanceHrId) => {
     cy.do(actionsButton.click());
     cy.do(moveHoldingsToAnotherInstanceButton.click());
