@@ -58,6 +58,13 @@ export default {
     ])
   },
 
+  searchByClaimedReturned() {
+    cy.do([
+      Accordion({ id: 'loan' }).clickHeader(),
+      Checkbox({ id: 'clickable-filter-loan-claimed-returned' }).click()
+    ])
+  },
+
   resetFilters() {
     cy.do(Button({ id: 'reset-receiving-filters' }).click());
   },
