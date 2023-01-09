@@ -16,7 +16,6 @@ import ItemsOperations from '../../support/fragments/inventory/inventoryItem/ite
 import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
 
 let userId;
-let source;
 let servicePointId;
 const item = {
   instanceName: `Barcode search test ${Number(new Date())}`,
@@ -33,23 +32,14 @@ describe('circulation-log', () => {
       .then(userProperties => {
         userId = userProperties.userId;
         cy.login(userProperties.username, userProperties.password, { path: TopMenu.circulationLogPath, waiter: SearchPane.waitLoading });
-        cy.getAdminToken()
-          .then(() => {
-            cy.getLoanTypes({ limit: 1 });
-            cy.getMaterialTypes({ limit: 1 });
-            cy.getLocations({ limit: 1 });
-            cy.getHoldingTypes({ limit: 1 });
-            source = InventoryHoldings.getHoldingSources({ limit: 1 });
-            cy.getInstanceTypes({ limit: 1 });
-            ServicePoints.getViaApi({ limit: 1, query: 'pickupLocation=="true"' })
-              .then((res) => {
-                servicePointId = res[0].id;
-              });
-            cy.getUsers({
-              limit: 1,
-              query: `"personal.lastName"="${userProperties.username}" and "active"="true"`
-            });
-          })
+        ServicePoints.getViaApi({ limit: 1, query: 'pickupLocation=="true"' })
+          .then((res) => {
+            servicePointId = res[0].id;
+          });
+        cy.getUsers({
+          limit: 1,
+          query: `"personal.lastName"="${userProperties.username}" and "active"="true"`
+        })
           .then(() => {
             UserEdit.addServicePointViaApi(servicePointId, userId);
             cy.getUserServicePoints(Cypress.env('users')[0].id);
@@ -64,8 +54,6 @@ describe('circulation-log', () => {
           });
         cy.loginAsAdmin();
         cy.visit(TopMenu.usersPath);
-        // cy.loginAsAdmin({ path: TopMenu.usersPath, waiter: UsersSearchPane.waitLoading })
-        //produces error with loans
       });
   });
 
