@@ -217,10 +217,9 @@ export default {
     cy.expect(Accordion(accordionHeader)
       .find(MultiColumnListRow({ indexRow: indexRowNumber }))
       .find(MultiColumnListCell({ content: barcode })).exists());
-    // TODO: uncomment once MODORDERS-569 will be implemented
-    // cy.expect(Accordion(accordionHeader)
-    //   .find(MultiColumnListRow({ rowNumber }))
-    //   .find(MultiColumnListCell({ content: caption })).exists());
+    cy.expect(Accordion(accordionHeader)
+      .find(MultiColumnListRow({ rowNumber }))
+      .find(MultiColumnListCell({ content: caption })).exists());
     cy.expect(Accordion(accordionHeader)
       .find(MultiColumnListRow({ indexRow: indexRowNumber }))
       .find(MultiColumnListCell({ content: status })).exists());

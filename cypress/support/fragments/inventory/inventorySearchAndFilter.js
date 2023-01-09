@@ -169,6 +169,7 @@ export default {
   selectBrowseCallNumbers() {
     // cypress can't draw selected option without wait
     // eslint-disable-next-line cypress/no-unnecessary-waiting
+    cy.do(browseButton.click());
     cy.wait(1000);
     cy.do(Select('Search field index').choose('Call numbers'));
   },
@@ -176,8 +177,9 @@ export default {
   selectBrowseSubjects() {
     // cypress can't draw selected option without wait
     // eslint-disable-next-line cypress/no-unnecessary-waiting
+    cy.do(browseButton.click());
     cy.wait(1000);
-    cy.do(Select('Search field index').choose('Browse subjects'));
+    cy.do(Select('Search field index').choose('Subjects'));
   },
 
   showsOnlyEffectiveLocation() {
@@ -283,7 +285,7 @@ export default {
       TextField({ id: 'input-record-search' }).fillIn(searchString),
       searchButton.click()
     ]);
-    cy.expect(Pane({ id:'browse-inventory-results-pane' }).find(MultiColumnListHeader()).exists());
+    cy.expect(Pane({ id: 'browse-inventory-results-pane' }).find(MultiColumnListHeader()).exists());
   },
 
   verifySearchResult:(cellContent) => cy.expect(MultiColumnListCell({ content: cellContent }).exists()),
