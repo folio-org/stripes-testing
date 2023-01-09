@@ -26,7 +26,7 @@ import InventoryHoldings from '../../../../support/fragments/inventory/holdings/
 import ServicePoints from '../../../../support/fragments/settings/tenant/servicePoints/servicePoints';
 import InventoryInstance from '../../../../support/fragments/inventory/inventoryInstance';
 
-const userData = {};
+let userData = {};
 let createdLoanPolicy;
 let materialTypeId;
 let mySchedule;
@@ -76,9 +76,7 @@ describe('ui-circulation-settings: Fixed due date schedules', () => {
           departments: [],
         })
           .then((user) => {
-            userData.userId = user.id;
-            userData.userBarcode = user.barcode;
-            userData.userLastName = user.lastName;
+            userData = { ...user };
           });
         cy.createInstance({
           instance: {
@@ -166,7 +164,7 @@ describe('ui-circulation-settings: Fixed due date schedules', () => {
       checkInDate: moment.utc().format(),
     })
       .then(() => {
-        Users.deleteViaApi(userData.userId);
+        Users.deleteViaApi(userData.id);
         cy.getInstance({ limit: 1, expandAll: true, query: `"items.barcode"=="${ITEM_BARCODE}"` })
           .then((instance) => {
             cy.deleteItem(instance.items[0].id);
@@ -196,7 +194,7 @@ describe('ui-circulation-settings: Fixed due date schedules', () => {
         }],
       });
       cy.visit(TopMenu.checkOutPath);
-      Checkout.checkUserOpenLoans({ barcode: userData.userBarcode, id: userData.userId });
+      Checkout.checkUserOpenLoans({ barcode: userData.barcode, id: userData.id });
       Loans.checkLoanPolicy(createdLoanPolicy.name);
       Loans.renewalMessageCheck(dateFallsMessage);
     });
