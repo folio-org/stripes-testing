@@ -221,7 +221,7 @@ describe('ui-data-import: Match on POL and update related Instance with source M
 
     // upload a marc file for creating of the new instance, holding and item
     cy.visit(TopMenu.dataImportPath);
-    DataImport.uploadFile('marcFileForMatchOnPol.mrc', nameMarcFileForCreate);
+    DataImport.uploadFile('marcFileForC350944.mrc', nameMarcFileForCreate);
     JobProfiles.searchJobProfileForImport('Default - Create instance and SRS MARC Bib');
     JobProfiles.runImportFile();
     JobProfiles.waitFileIsImported(nameMarcFileForCreate);
@@ -241,7 +241,7 @@ describe('ui-data-import: Match on POL and update related Instance with source M
           Orders.openOrder();
 
           // change file using order number
-          DataImport.editMarcFile('marcFileForMatchOnPol.mrc', editedMarcFileName, ['test'], [orderNumber]);
+          DataImport.editMarcFile('marcFileForC350944.mrc', editedMarcFileName, ['test'], [orderNumber]);
         });
     });
 
