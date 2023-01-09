@@ -20,6 +20,8 @@ export default {
       TextArea({ name: 'description' }).fillIn(data.description),
     ]);
     data.schedules.forEach((schedule, index) => {
+      // without this waiter the new date is saved with an error
+      // eslint-disable-next-line cypress/no-unnecessary-waiting
       cy.wait(5000);
       cy.do([
         TextField({ name: `schedules[${index}].from` }).fillIn(moment(schedule.from).format(createFormat)),
