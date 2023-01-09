@@ -2,6 +2,7 @@ import moment from 'moment';
 import uuid from 'uuid';
 
 import TestTypes from '../../../../support/dictionary/testTypes';
+import DevTeams from '../../../../support/dictionary/devTeams';
 import SettingsMenu from '../../../../support/fragments/settingsMenu';
 import generateItemBarcode from '../../../../support/utils/generateItemBarcode';
 import getRandomPostfix from '../../../../support/utils/stringTools';
@@ -184,7 +185,7 @@ describe('ui-circulation-settings: Fixed due date schedules', () => {
   });
 
   it('C641: renewing item using a fixed due date loan profile where the fixed due date schedule date range does not cover the test date (prokopovych)',
-    { tags: [TestTypes.smoke] },
+    { tags: [TestTypes.smoke, DevTeams.prokopovych] },
     () => {
       cy.visit(SettingsMenu.circulationFixedDueDateSchedulesPath);
       fixedDueDateSchedules.editSchedule(mySchedule.name, {

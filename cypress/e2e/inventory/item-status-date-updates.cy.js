@@ -1,5 +1,13 @@
-import uuid from 'uuid';
+/* eslint-disable cypress/no-unnecessary-waiting */
 import getRandomPostfix from '../../support/utils/stringTools';
+import {
+  REQUEST_POLICY_NAMES,
+  NOTICE_POLICY_NAMES,
+  OVERDUE_FINE_POLICY_NAMES,
+  CY_ENV,
+  LOST_ITEM_FEES_POLICY_NAMES,
+  LOAN_POLICY_NAMES,
+} from '../../support/constants';
 import TestTypes from '../../support/dictionary/testTypes';
 import Orders from '../../support/fragments/orders/orders';
 import NewOrder from '../../support/fragments/orders/newOrder';
@@ -13,8 +21,6 @@ import CheckInActions from '../../support/fragments/check-in-actions/checkInActi
 import SwitchServicePoint from '../../support/fragments/servicePoint/switchServicePoint';
 import NewRequest from '../../support/fragments/requests/newRequest';
 import CheckOut from '../../support/fragments/checkout/checkout';
-import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
-import NewServicePoint from '../../support/fragments/settings/tenant/servicePoints/newServicePoint';
 import UsersSearchPane from '../../support/fragments/users/usersSearchPane';
 import UsersCard from '../../support/fragments/users/usersCard';
 import ConfirmItemInModal from '../../support/fragments/check-in-actions/confirmItemInModal';
@@ -28,62 +34,47 @@ import InventorySearchAndFilter from '../../support/fragments/inventory/inventor
 import BasicOrderLine from '../../support/fragments/orders/basicOrderLine';
 import NewLocations from '../../support/fragments/settings/tenant/locations/newLocation';
 import Users from '../../support/fragments/users/users';
-import UserEdit from '../../support/fragments/users/userEdit';
-import ServicePoint from '../../support/fragments/servicePoint/servicePoint';
-import Organizations from '../../support/fragments/organizations/organizations';
-import Requests from '../../support/fragments/requests/requests';
 import CheckOutActions from '../../support/fragments/check-out-actions/check-out-actions';
 import DevTeams from '../../support/dictionary/devTeams';
+import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
+import DateTools from '../../support/utils/dateTools';
 
 describe('ui-inventory: Item status date updates', () => {
   const instanceTitle = `autotestTitle ${Helper.getRandomBarcode()}`;
-  const effectiveLocationServicePointName = `autotest_service_point_${getRandomPostfix()}`;
-  const notEffectiveLocationServicePointName = `autotest_service_point_${getRandomPostfix()}`;
   const itemQuantity = '1';
   let orderNumber;
   let effectiveLocationServicePoint;
   let notEffectiveLocationServicePoint;
   let effectiveLocation;
-  let user = {};
   let userForDeliveryRequest = {};
   const itemBarcode = Helper.getRandomBarcode();
-  let oldRulesText;
-  let requestPolicyId;
+  const userName = Cypress.env('diku_login');
 
   before(() => {
-    // TODO rewrite with user diku_admin
-    cy.createTempUser([
-      permissions.uiCreateOrderAndOrderLine.gui,
-      permissions.uiEditOrderAndOrderLine.gui,
-      permissions.uiCanViewOrderAndOrderLine.gui,
-      permissions.inventoryAll.gui,
-      permissions.checkinAll.gui,
-      permissions.uiReceivingViewEditCreate.gui,
-      permissions.checkoutAll.gui,
-      permissions.requestsAll.gui,
-      permissions.loansAll.gui,
-      permissions.uiInventoryStorageModule.gui,
-      permissions.uiUsersDeclareItemLost.gui,
-      permissions.usersLoansRenewThroughOverride.gui,
-      permissions.uiUserEdit.gui
-    ])
-      .then(userProperties => {
-        user = userProperties;
-        effectiveLocationServicePoint = NewServicePoint.getDefaultServicePoint(effectiveLocationServicePointName);
-        notEffectiveLocationServicePoint = NewServicePoint.getDefaultServicePoint(notEffectiveLocationServicePointName);
+    cy.loginAsAdmin();
+    cy.getAdminToken()
+      .then(() => {
+        cy.getLoanPolicy({ query: `name=="${LOAN_POLICY_NAMES.EXAMPLE_LOAN}"` });
+        cy.getRequestPolicy({ query: `name=="${REQUEST_POLICY_NAMES.ALLOW_ALL}"` });
+        cy.getNoticePolicy({ query: `name=="${NOTICE_POLICY_NAMES.SEND_NO_NOTICES}"` });
+        cy.getOverdueFinePolicy({ query: `name=="${OVERDUE_FINE_POLICY_NAMES.OVERDUE_FINE_POLICY}"` });
+        cy.getLostItemFeesPolicy({ query: `name=="${LOST_ITEM_FEES_POLICY_NAMES.LOST_ITEM_FEES_POLICY}"` });
+      }).then(() => {
+        const loanPolicy = Cypress.env(CY_ENV.LOAN_POLICY).id;
+        const requestPolicyId = Cypress.env(CY_ENV.REQUEST_POLICY)[0].id;
+        const noticePolicyId = Cypress.env(CY_ENV.NOTICE_POLICY)[0].id;
+        const overdueFinePolicyId = Cypress.env(CY_ENV.OVERDUE_FINE_POLICY)[0].id;
+        const lostItemFeesPolicyId = Cypress.env(CY_ENV.LOST_ITEM_FEES_POLICY)[0].id;
+        const policy = `l ${loanPolicy} r ${requestPolicyId} n ${noticePolicyId} o ${overdueFinePolicyId} i ${lostItemFeesPolicyId}`;
+        const priority = 'priority: number-of-criteria, criterium (t, s, c, b, a, m, g), last-line';
+        const newRule = `${priority}\nfallback-policy: ${policy}`;
 
-        ServicePoints.createViaApi(effectiveLocationServicePoint);
-        ServicePoints.createViaApi(notEffectiveLocationServicePoint);
-        UserEdit.addServicePointsViaApi([effectiveLocationServicePoint.id, notEffectiveLocationServicePoint.id],
-          user.userId);
-
-        Requests.setRequestPolicyApi().then(({ oldRulesAsText, policy }) => {
-          oldRulesText = oldRulesAsText;
-          requestPolicyId = policy.id;
+        cy.updateCirculationRules({
+          rulesAsText: newRule,
         });
-
-        cy.login(userProperties.username, userProperties.password)
-          .then(() => {
+        ServicePoints.getViaApi({ limit: 1, query: 'name=="Circ Desk 2"' })
+          .then((servicePoints) => {
+            effectiveLocationServicePoint = servicePoints[0];
             NewLocations.createViaApi(NewLocations.getDefaultLocation(effectiveLocationServicePoint.id))
               .then((location) => {
                 effectiveLocation = location;
@@ -96,6 +87,10 @@ describe('ui-inventory: Item status date updates', () => {
                   });
               });
           });
+        ServicePoints.getViaApi({ limit: 1, query: 'name=="Online"' })
+          .then((servicePoints) => {
+            notEffectiveLocationServicePoint = servicePoints[0];
+          });
       });
 
     cy.createTempUser([
@@ -104,56 +99,34 @@ describe('ui-inventory: Item status date updates', () => {
     ])
       .then(userProperties => {
         userForDeliveryRequest = userProperties;
-        cy.getUsers({ limit: 1, query: `"username"="${userForDeliveryRequest.username}"` })
-          .then((users) => {
-            cy.getAddressTypesApi({ limit: 1 }).then(addressTypes => {
-              UserEdit.updateUserAddress(users[0], [{ city: 'New York',
-                addressTypeId: addressTypes[0].id,
-                countryId: 'US' }]);
-              cy.createUserRequestPreferencesApi({
-                id: uuid(),
-                fulfillment: 'Delivery',
-                defaultDeliveryAddressTypeId: addressTypes[0].id,
-                defaultServicePointId: effectiveLocationServicePoint.id,
-                delivery: true,
-                holdShelf: true,
-                userId: userForDeliveryRequest.userId,
-              });
+
+        cy.getRequestPreference({ limit: 1, query: `"userId"="${userForDeliveryRequest.userId}"` })
+          .then((response) => {
+            cy.updateRequestPreference(response.body.requestPreferences[0].id, {
+              defaultDeliveryAddressTypeId: '46ff3f08-8f41-485c-98d8-701ba8404f4f',
+              defaultServicePointId: null,
+              delivery: true,
+              fulfillment: 'Delivery',
+              holdShelf: true,
+              userId: userForDeliveryRequest.userId
             });
           });
       });
   });
 
   afterEach(() => {
-    CheckInActions.checkinItemViaApi({
-      itemBarcode,
-      servicePointId: effectiveLocationServicePoint.id,
-      checkInDate: new Date().toISOString(),
-    })
-      .then(() => {
-        cy.getInstance({ limit: 1, expandAll: true, query: `"items.barcode"=="${itemBarcode}"` })
-          .then((instance) => {
-            cy.deleteItem(instance.items[0].id);
-            cy.deleteHoldingRecordViaApi(instance.holdings[0].id);
-            InventoryInstance.deleteInstanceViaApi(instance.id);
-          });
+    cy.getInstance({ limit: 1, expandAll: true, query: `"items.barcode"=="${itemBarcode}"` })
+      .then((instance) => {
+        cy.deleteItem(instance.items[0].id);
+        cy.deleteHoldingRecordViaApi(instance.holdings[0].id);
+        InventoryInstance.deleteInstanceViaApi(instance.id);
       });
     Orders.getOrdersApi({ limit: 1, query: `"poNumber"=="${orderNumber}"` })
       .then(order => {
+        console.log(order);
         Orders.deleteOrderApi(order[0].id);
       });
-    Organizations.getOrganizationViaApi()
-      .then(organization => {
-        Organizations.deleteOrganizationViaApi(organization.id);
-      });
-    UserEdit.changeServicePointPreferenceViaApi(user.userId, [effectiveLocationServicePoint.id]).then(() => {
-      ServicePoint.deleteViaApi(effectiveLocationServicePoint.id);
-      Users.deleteViaApi(user.userId);
-    });
-    ServicePoint.deleteViaApi(notEffectiveLocationServicePoint.id);
     Users.deleteViaApi(userForDeliveryRequest.userId);
-    Requests.updateCirculationRulesApi(oldRulesText);
-    Requests.deleteRequestPolicyApi(requestPolicyId);
   });
 
   const openItem = (title, itemLocation, barcode) => {
@@ -166,7 +139,7 @@ describe('ui-inventory: Item status date updates', () => {
 
   const selectOrderWithNumber = (numberOrder) => {
     Orders.searchByParameter('PO number', numberOrder);
-    Helper.selectFromResultsList();
+    Orders.selectFromResultsList(numberOrder);
   };
 
   const fullCheck = (status) => {
@@ -193,9 +166,9 @@ describe('ui-inventory: Item status date updates', () => {
     checkOpenItem(barcode, status, confirmModal);
   };
 
-  const checkOut = (specialUserBarcode, specialItemBarcode, status, confirmModalCheck) => {
+  const checkOut = (specialUserName, specialItemBarcode, status, confirmModalCheck) => {
     cy.visit(TopMenu.checkOutPath);
-    CheckOutActions.checkOutItemUser(specialUserBarcode, specialItemBarcode);
+    CheckOutActions.checkOutItemWithUserName(specialUserName, specialItemBarcode);
     if (confirmModalCheck) {
       confirmModalCheck();
     }
@@ -203,18 +176,18 @@ describe('ui-inventory: Item status date updates', () => {
     fullCheck(status);
   };
 
-  const openUser = ({ username, userId }) => {
+  const openUser = (name) => {
     cy.visit(TopMenu.usersPath);
-    UsersSearchPane.searchByKeywords(username);
-    UsersSearchPane.openUser(userId);
+    UsersSearchPane.searchByKeywords(name);
+    UsersSearchPane.selectUserFromList(name);
     UsersCard.openLoans();
     UsersCard.showOpenedLoans();
   };
 
-  it('C9200 Item status date updates (folijet) (prokopovych)', { tags: [TestTypes.smoke, DevTeams.folijet, TestTypes.long] }, () => {
+  // test is looping
+  it('C9200 Item status date updates (folijet) (prokopovych)', { tags: [DevTeams.folijet, TestTypes.long] }, () => {
     const caption = `autotest_caption_${getRandomPostfix()}`;
     const numberOfPieces = '3';
-
     // open order and create Item
     cy.visit(TopMenu.ordersPath);
     selectOrderWithNumber(orderNumber);
@@ -227,13 +200,13 @@ describe('ui-inventory: Item status date updates', () => {
     cy.visit(TopMenu.ordersPath);
     selectOrderWithNumber(orderNumber);
     Orders.receiveOrderViaActions();
-    Helper.selectFromResultsList();
+    Receiving.selectFromResultsList(instanceTitle);
     Receiving.receivePiece(0, caption, itemBarcode);
     openItem(instanceTitle, effectiveLocation.name, itemBarcode);
     fullCheck(ItemView.itemStatuses.inProcess);
 
     // check in item at service point assigned to its effective location
-    SwitchServicePoint.switchServicePoint(effectiveLocationServicePointName);
+    SwitchServicePoint.switchServicePoint(effectiveLocationServicePoint.name);
     checkIn(itemBarcode, ItemView.itemStatuses.available);
 
     // mark item as missing
@@ -243,56 +216,54 @@ describe('ui-inventory: Item status date updates', () => {
     // check in item at service point assigned to its effective location
     checkIn(itemBarcode, ItemView.itemStatuses.available, ConfirmItemInModal.confirmMissingModal);
 
-    // heck in item at service point assigned to its effective location
+    // check in item at service point assigned to its effective location
     checkIn(itemBarcode, ItemView.itemStatuses.available);
 
     // check in item at service point not assigned to its effective location
-    SwitchServicePoint.switchServicePoint(notEffectiveLocationServicePointName);
+    SwitchServicePoint.switchServicePoint(notEffectiveLocationServicePoint.name);
     checkIn(itemBarcode, ItemView.itemStatuses.inTransit, ConfirmItemInModal.confirmInTransitModal);
-    // TODO запомнить время указ в поле 219 и проверить что после второго чек ин время не изменилось
 
     // check in item at service point not assigned to its effective location
     checkIn(itemBarcode, ItemView.itemStatuses.inTransit, ConfirmItemInModal.confirmInTransitModal);
 
     // check in item at service point assigned to its effective location
-    SwitchServicePoint.switchServicePoint(effectiveLocationServicePointName);
+    SwitchServicePoint.switchServicePoint(effectiveLocationServicePoint.name);
     checkIn(itemBarcode, ItemView.itemStatuses.available);
 
     // create Page request on an item
     cy.visit(TopMenu.requestsPath);
-    NewRequest.createNewRequest({
+    NewRequest.createWithUserName({
       itemBarcode,
-      itemTitle: null,
-      requesterBarcode: user.barcode,
-      pickupServicePoint: effectiveLocationServicePointName,
+      requesterName: userName,
+      pickupServicePoint: effectiveLocationServicePoint.name
     });
     openItem(instanceTitle, effectiveLocation.name, itemBarcode);
     fullCheck(ItemView.itemStatuses.paged);
 
     // check in item at a service point other than the pickup service point for the request
-    SwitchServicePoint.switchServicePoint(notEffectiveLocationServicePointName);
+    SwitchServicePoint.switchServicePoint(notEffectiveLocationServicePoint.name);
     checkIn(itemBarcode, ItemView.itemStatuses.inTransit, ConfirmItemInModal.confirmInTransitModal);
 
     // check in item at the pickup service point for the page request
-    SwitchServicePoint.switchServicePoint(effectiveLocationServicePointName);
+    SwitchServicePoint.switchServicePoint(effectiveLocationServicePoint.name);
     checkIn(itemBarcode, ItemView.itemStatuses.awaitingPickup, ConfirmItemInModal.confirmAvaitingPickUpModal);
 
     // check out item to user for whom page request was created
-    checkOut(user.barcode, itemBarcode, ItemView.itemStatuses.checkedOut);
+    checkOut(userName, itemBarcode, ItemView.itemStatuses.checkedOut, ConfirmItemInModal.confirmAvaitingPickupCheckInModal);
 
     // declare item lost
-    openUser(user);
-    UserLoans.declareLoanLost();
+    openUser(userName);
+    UserLoans.declareLoanLost(itemBarcode);
     ConfirmItemStatusModal.confirmItemStatus();
-    UserLoans.openItemRecordInInventory(itemBarcode);
+    openItem(instanceTitle, effectiveLocation.name, itemBarcode);
     fullCheck(ItemView.itemStatuses.declaredLost);
 
     // renew item (through override)
-    openUser(user);
+    openUser(userName);
     UserLoans.renewItem(itemBarcode);
     RenewConfirmationModal.confirmRenewOverrideItem();
     OverrideAndRenewModal.confirmOverrideItem();
-    UserLoans.openItemRecordInInventory(itemBarcode);
+    openItem(instanceTitle, effectiveLocation.name, itemBarcode);
     fullCheck(ItemView.itemStatuses.checkedOut);
 
     // edit item record so that it has multiple pieces
@@ -309,14 +280,21 @@ describe('ui-inventory: Item status date updates', () => {
     });
     cy.visit(TopMenu.checkInPath);
     CheckInActions.checkInItem(itemBarcode);
-    ConfirmItemInModal.confirmAvaitingPickUpModal();
-    checkOut(user.barcode, itemBarcode, ItemView.itemStatuses.awaitingDelivery, ConfirmItemInModal.confirmMultipieceItemModal);
+    ConfirmItemInModal.confirmMultipieceCheckInModal();
+    cy.visit(TopMenu.checkOutPath);
+    CheckOutActions.checkOutItemWithUserName(userName, itemBarcode);
+    CheckOutActions.cancelMultipleCheckOutModal();
+    openItem(instanceTitle, effectiveLocation.name, itemBarcode);
+    fullCheck(ItemView.itemStatuses.awaitingDelivery);
 
     // check out item to user with delivery request
-    checkOut(user.barcode, itemBarcode, ItemView.itemStatuses.checkedOut, ConfirmItemInModal.confirmAvaitingPickupCheckInModal);
+    checkOut(userForDeliveryRequest.username, itemBarcode, ItemView.itemStatuses.checkedOut);
 
     // check in item at service point assigned to its effective location
-    SwitchServicePoint.switchServicePoint(effectiveLocationServicePointName);
-    checkIn(itemBarcode, ItemView.itemStatuses.available, ConfirmItemInModal.confirmAvaitingPickUpModal);
+    SwitchServicePoint.switchServicePoint(effectiveLocationServicePoint.name);
+    cy.visit(TopMenu.checkInPath);
+    CheckInActions.backdateCheckInItem(DateTools.getPreviousDayDate(), itemBarcode);
+    openItem(instanceTitle, effectiveLocation.name, itemBarcode);
+    fullCheck(ItemView.itemStatuses.available);
   });
 });

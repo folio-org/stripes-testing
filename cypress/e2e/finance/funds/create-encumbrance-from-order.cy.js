@@ -65,14 +65,14 @@ describe('ui-finance: Transactions', () => {
         user = userProperties;
         cy.login(userProperties.username, userProperties.password, { path:TopMenu.ordersPath, waiter: Orders.waitLoading });
         Orders.searchByParameter('PO number', orderNumber);
-        FinanceHelp.selectFromResultsList();
+        Orders.selectFromResultsList(orderNumber);
       });
   });
 
   after(() => {
     cy.loginAsAdmin({ path:TopMenu.ordersPath, waiter: Orders.waitLoading });
     Orders.searchByParameter('PO number', orderNumber);
-    FinanceHelp.selectFromResultsList();
+    Orders.selectFromResultsList(orderNumber);
     Orders.unOpenOrder(orderNumber);
     OrderLines.selectPOLInOrder();
     OrderLines.deleteOrderLine();
