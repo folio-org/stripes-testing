@@ -80,4 +80,31 @@ describe('Note creation', () => {
     NotesEholdings.openNoteView(note.title);
     NotesEholdings.deleteNote();
   });
+
+  it('C16993 Able to sort Notes accordion column headings (spitfire)', { tags: [TestTypes.criticalPath, DevTeams.spitfire] }, () => {
+    note.titleFirst = '1 Title';
+    note.titleSecond = '2 Title';
+    note.addDetails = `Test details ${getRandomPostfix()}`;
+
+    NotesEholdings.createNote(note.titleFirst, note.addDetails);
+    NotesEholdings.createNote(note.titleSecond, note.addDetails);
+
+    NotesEholdings.verifyDefaultSort(note.titleFirst, note.titleSecond, note.addDetails);
+    NotesEholdings.verifySortingByTitle(note.titleFirst, note.titleSecond, note.addDetails);
+
+    NotesEholdings.openNoteView(note.titleFirst, note.addDetails);
+    NotesEholdings.deleteNote();
+    NotesEholdings.openNoteView(note.titleSecond, note.addDetails);
+    NotesEholdings.deleteNote();
+  });
+  
+  it('C1300 Delete a note (spitfire)', { tags: [TestTypes.criticalPath, DevTeams.spitfire] }, () => {
+    note.addDetails = `Test details ${getRandomPostfix()}`;
+
+    NotesEholdings.createNote(note.title, note.addDetails);
+    NotesEholdings.verifyNoteCreation(note.title, note.addDetails);
+    NotesEholdings.openNoteView(note.title, note.addDetails);
+    NotesEholdings.deleteNote();
+    NotesEholdings.verifyNoteDeletion(note.title, note.addDetails);
+  });
 });
