@@ -18,7 +18,6 @@ describe('Checking the view of calendar on "Monthly calendar view" tab', () => {
 
     // create test service point and calendar
     cy.createServicePoint(testServicePoint, (response) => {
-      console.log(response.body);
       testCalendar.assignments = [response.body.id];
 
       cy.createCalendar(testCalendar, (calResponse) => {
@@ -47,13 +46,25 @@ describe('Checking the view of calendar on "Monthly calendar view" tab', () => {
     const currentDate = new Date();
     cy.do([
       Pane(testServicePoint.name).find(Headline(including(months[currentDate.getMonth()]))).exists(),
+    ]);
+
+    const prevMonth = months[(((currentDate.getMonth() - 1) % 12) + 12) % 12];
+
+    cy.do([
       Pane(testServicePoint.name).find(Button({ ariaLabel: 'arrow-left' })).click(),
-      Pane(testServicePoint.name).find(Headline(including(months[(currentDate.getMonth() - 1) % 12]))).exists(),
+      Pane(testServicePoint.name).find(Headline(including(prevMonth))).exists()
+    ]);
+
+    cy.do([
       Pane(testServicePoint.name).find(Button({ ariaLabel: 'arrow-right' })).click(),
-      Pane(testServicePoint.name).find(Headline(including(months[(currentDate.getMonth())]))).exists(),
+      Pane(testServicePoint.name).find(Headline(including(months[(currentDate.getMonth())]))).exists()
+    ]);
+
+    const nextMonth = months[(((currentDate.getMonth() + 1) % 12) + 12) % 12];
+
+    cy.do([
       Pane(testServicePoint.name).find(Button({ ariaLabel: 'arrow-right' })).click(),
-      Pane(testServicePoint.name).find(Headline(including(months[(currentDate.getMonth() + 1) % 12]))).exists(),
-      Pane(testServicePoint.name).find(Button({ ariaLabel: 'arrow-left' })).click(),
+      Pane(testServicePoint.name).find(Headline(including(nextMonth))).exists()
     ]);
   });
 
