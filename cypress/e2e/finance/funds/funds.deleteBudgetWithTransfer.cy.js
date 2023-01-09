@@ -29,7 +29,7 @@ describe('ui-finance: Funds', () => {
     cy.visit(TopMenu.fundPath);
     // add 100 budget to first fund and perform transfer
     FinanceHelp.searchByName(fundFrom.name);
-    FinanceHelp.selectFromResultsList();
+    Funds.selectFund(fundFrom.name);
     Funds.addBudget(hundredQunatity);
     Funds.checkCreatedBudget(fundFrom.code, DateTools.getCurrentFiscalYearCode());
     Funds.checkBudgetQuantity(hundredQunatity);

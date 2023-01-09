@@ -55,7 +55,7 @@ describe('ui-invoices: Cancelling approved invoices', () => {
 
               cy.visit(TopMenu.fundPath);
               Helper.searchByName(defaultFund.name);
-              Helper.selectFromResultsList();
+              Funds.selectFund(defaultFund.name);
               Funds.addBudget(allocatedQuantity);
             });
         });
@@ -108,27 +108,27 @@ describe('ui-invoices: Cancelling approved invoices', () => {
   
   it('C350728 Cancelling approved invoices voids payments/credits and Unreleases encumbrances (thunderjet)', { tags: [testType.criticalPath, devTeams.thunderjet] }, () => {
     Invoices.searchByNumber(invoice.invoiceNumber);
-    Helper.selectFromResultsList();
+    Invoices.selectInvoice(invoice.invoiceNumber);
     Invoices.selectInvoiceLine();
     cy.visit(TopMenu.fundPath);
     Helper.searchByName(defaultFund.name);
-    Helper.selectFromResultsList();
+    Funds.selectFund(defaultFund.name);
     Funds.selectBudgetDetails();
     Funds.viewTransactions();
-    Funds.selectTransaction('Encumbrance');
+    Funds.selectTransaction('row-1');
     Funds.checkEncumbrance(orderNumber);
-    Funds.selectTransaction('Pending payment');
+    Funds.selectTransaction('row-2');
     Funds.checkPendingPayment(invoice.invoiceNumber);
     cy.visit(TopMenu.invoicesPath);
     Invoices.searchByNumber(invoice.invoiceNumber);
-    Helper.selectFromResultsList();
+    Invoices.selectInvoice(invoice.invoiceNumber);
     Invoices.cancelInvoice();
     cy.visit(TopMenu.fundPath);
     Helper.searchByName(defaultFund.name);
-    Helper.selectFromResultsList();
+    Funds.selectFund(defaultFund.name);
     Funds.selectBudgetDetails();
     Funds.viewTransactions();
-    Funds.selectTransaction('Pending payment');
+    Funds.selectTransaction('row-1');
     Funds.checkCancelPendingPayment(invoice.invoiceNumber);
   });
 });

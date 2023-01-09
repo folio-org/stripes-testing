@@ -152,7 +152,7 @@ describe('ui-data-import: Check that field protection settings work properly dur
 
     // create action profile
     cy.visit(SettingsMenu.actionProfilePath);
-    ActionProfiles.createActionProfile(actionProfile, mappingProfileName);
+    ActionProfiles.create(actionProfile, mappingProfileName);
     ActionProfiles.checkActionProfilePresented(actionProfileName);
 
     // create job profile
@@ -164,7 +164,8 @@ describe('ui-data-import: Check that field protection settings work properly dur
     cy.visit(TopMenu.dataImportPath);
     DataImport.uploadFile('marcFileForC17017.mrc', nameMarcFileForCreate);
     JobProfiles.searchJobProfileForImport(jobProfileName);
-    JobProfiles.runImportFile(nameMarcFileForCreate);
+    JobProfiles.runImportFile();
+    JobProfiles.waitFileIsImported(nameMarcFileForCreate);
     Logs.checkStatusOfJobProfile('Completed');
     Logs.openFileDetails(nameMarcFileForCreate);
     Logs.verifyInstanceStatus(0, 2, 'Created');
@@ -198,13 +199,12 @@ describe('ui-data-import: Check that field protection settings work properly dur
 
     // create action profile for update
     cy.visit(SettingsMenu.actionProfilePath);
-    ActionProfiles.createActionProfile(actionProfileUpdate, mappingProfileUpdateName);
+    ActionProfiles.create(actionProfileUpdate, mappingProfileUpdateName);
     ActionProfiles.checkActionProfilePresented(actionProfileUpdate.name);
 
     // create match profile for update
     cy.visit(SettingsMenu.matchProfilePath);
     MatchProfiles.createMatchProfile(matchProfile);
-    cy.visit(SettingsMenu.jobProfilePath);
 
     // create job profile for update
     cy.visit(SettingsMenu.jobProfilePath);
@@ -215,7 +215,8 @@ describe('ui-data-import: Check that field protection settings work properly dur
     cy.visit(TopMenu.dataImportPath);
     DataImport.uploadFile(editedMarcFileName, fileNameForUpdate);
     JobProfiles.searchJobProfileForImport(jobProfileUpdateName);
-    JobProfiles.runImportFile(fileNameForUpdate);
+    JobProfiles.runImportFile();
+    JobProfiles.waitFileIsImported(fileNameForUpdate);
     Logs.checkStatusOfJobProfile('Completed');
     Logs.openFileDetails(fileNameForUpdate);
     Logs.verifyInstanceStatus(0, 2, 'Created');

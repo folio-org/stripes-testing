@@ -49,7 +49,7 @@ describe('ui-invoices: Credit Invoice creation', () => {
     // check transactions after approve
     cy.visit(TopMenu.fundPath);
     Helper.searchByName(fund.name);
-    Helper.selectFromResultsList();
+    Funds.selectFund(fund.name);
     Funds.openBudgetDetails(fund.code, DateTools.getCurrentFiscalYearCode());
     Funds.openTransactions();
     const valueInTransactionTable = `$${subtotalValue.toFixed(2)}`;
@@ -57,12 +57,12 @@ describe('ui-invoices: Credit Invoice creation', () => {
     // pay invoice
     cy.visit(TopMenu.invoicesPath);
     Invoices.searchByNumber(invoice.invoiceNumber);
-    Helper.selectFromResultsList();
+    Invoices.selectInvoice(invoice.invoiceNumber);
     Invoices.payInvoice();
     // check transactions after payment
     cy.visit(TopMenu.fundPath);
     Helper.searchByName(fund.name);
-    Helper.selectFromResultsList();
+    Funds.selectFund(fund.name);
     Funds.openBudgetDetails(fund.code, DateTools.getCurrentFiscalYearCode());
     Funds.openTransactions();
     Funds.checkTransaction(1, transactionFactory.create('credit', valueInTransactionTable, fund.code, '', 'Invoice', ''));

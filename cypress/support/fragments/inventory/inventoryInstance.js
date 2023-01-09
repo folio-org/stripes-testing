@@ -1,3 +1,4 @@
+/* eslint-disable cypress/no-unnecessary-waiting */
 import {
   MultiColumnList,
   HTML,
@@ -85,7 +86,11 @@ const openHoldings = (...holdingToBeOpened) => {
   // don't have elem on page for waiter
   cy.wait(2000);
 };
-const verifyInstanceTitle = (title) => cy.expect(Pane({ titleLabel: including(title) }).exists());
+const verifyInstanceTitle = (title) => {
+  // don't have elem on page for waiter
+  cy.wait(2000);
+  cy.expect(Pane({ titleLabel: including(title) }).exists());
+};
 const verifyInstanceSource = (sourceValue) => cy.expect(source.has({ value: sourceValue }));
 const verifyLastUpdatedDate = () => {
   const updatedDate = DateTools.getFormattedDateWithSlashes({ date: new Date() });
@@ -119,6 +124,11 @@ const checkInstanceNotes = (noteType, noteContent) => {
   cy.expect(notesSection.find(MultiColumnListCell(noteContent)).exists());
 };
 
+const waitInstanceRecordViewOpened = (title) => {
+  cy.expect(Pane({ id:'pane-instancedetails' }).exists());
+  cy.expect(Pane({ titleLabel: including(title) }).exists());
+};
+
 export default {
   validOCLC,
   pressAddHoldingsButton,
@@ -131,6 +141,7 @@ export default {
   verifyInstanceSubject,
   verifyResourceIdentifier,
   checkInstanceNotes,
+  waitInstanceRecordViewOpened,
   checkExpectedOCLCPresence: (OCLCNumber = validOCLC.id) => {
     cy.expect(identifiers.find(HTML(including(OCLCNumber))).exists());
   },
@@ -328,7 +339,7 @@ export default {
     });
   },
 
-  verifyResourceIdentifierAbsent:() => cy.expect(identifiersAccordion.find(identifiers).absent()),
+  verifyResourceIdentifierAbsent:(value) => cy.expect(identifiersAccordion.find(MultiColumnListCell(including(value))).absent()),
   verifyInstanceLanguage:(language) => cy.expect(descriptiveDataAccordion.find(KeyValue('Language')).has({ value: language })),
   verifyInstancePhisicalcyDescription:(description) => {
     cy.expect(descriptiveDataAccordion.find(KeyValue('Physical description')).has({ value: description }));
@@ -393,5 +404,11 @@ export default {
 
   verifyLoan(content) {
     cy.expect(MultiColumnListCell({ content }).exists());
+  },
+
+  verifyLoanInItemPage(barcode, value) {
+    cy.do(MultiColumnListCell({ content: barcode }).find(Link()).click());
+    cy.expect(KeyValue('Temporary loan type').has({ value }));
+    cy.do(Button({ icon: 'times' }).click());
   },
 };

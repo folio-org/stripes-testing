@@ -86,7 +86,8 @@ describe('ui-data-import: Verify the possibility to modify MARC Bibliographic re
     // upload a marc file for creating of the new instance, holding and item
     DataImport.uploadFile('oneMarcBib.mrc', nameMarcFileForCreate);
     JobProfiles.searchJobProfileForImport('Default - Create instance and SRS MARC Bib');
-    JobProfiles.runImportFile(nameMarcFileForCreate);
+    JobProfiles.runImportFile();
+    JobProfiles.waitFileIsImported(nameMarcFileForCreate);
     Logs.openFileDetails(nameMarcFileForCreate);
     [FileDetails.columnName.srsMarc,
       FileDetails.columnName.instance,
@@ -123,7 +124,7 @@ describe('ui-data-import: Verify the possibility to modify MARC Bibliographic re
 
     // create Action profile and link it to Field mapping profile
     cy.visit(SettingsMenu.actionProfilePath);
-    ActionProfiles.createActionProfile(actionProfile, mappingProfileName);
+    ActionProfiles.create(actionProfile, mappingProfileName);
     ActionProfiles.checkActionProfilePresented(actionProfileName);
 
     // create Match profile
@@ -139,7 +140,8 @@ describe('ui-data-import: Verify the possibility to modify MARC Bibliographic re
     cy.visit(TopMenu.dataImportPath);
     DataImport.uploadFile(nameMarcFileForUpload);
     JobProfiles.searchJobProfileForImport(jobProfile.profileName);
-    JobProfiles.runImportFile(nameMarcFileForUpload);
+    JobProfiles.runImportFile();
+    JobProfiles.waitFileIsImported(nameMarcFileForUpload);
     Logs.checkStatusOfJobProfile();
     Logs.checkImportFile(jobProfile.profileName);
     Logs.openFileDetails(nameMarcFileForUpload);

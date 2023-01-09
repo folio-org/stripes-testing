@@ -166,7 +166,7 @@ describe('Patron Block: Maximum number of items charged out', () => {
       Conditions.setConditionState(checkedOutBlockMessage);
       cy.visit(SettingsMenu.limitsPath);
       Limits.selectGroup(patronGroup.name);
-      Limits.setMaximumNumberOfItemsChargedOut('4');
+      Limits.setLimit('Maximum number of items charged out', '4');
 
       cy.visit(TopMenu.usersPath);
       UsersSearchPane.waitLoading();
@@ -185,7 +185,7 @@ describe('Patron Block: Maximum number of items charged out', () => {
 
       cy.visit(SettingsMenu.limitsPath);
       Limits.selectGroup(patronGroup.name);
-      Limits.setMaximumNumberOfItemsChargedOut('5');
+      Limits.setLimit('Maximum number of items charged out', '5');
 
       cy.visit(TopMenu.usersPath);
       UsersSearchPane.waitLoading();

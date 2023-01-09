@@ -50,7 +50,7 @@ describe('ui-finance: Groups', () => {
 
                 cy.loginAsAdmin({ path:TopMenu.fundPath, waiter: Funds.waitLoading });
                 FinanceHelp.searchByName(firstFund.name);
-                FinanceHelp.selectFromResultsList();
+                Funds.selectFund(firstFund.name);
                 Funds.addBudget(allocatedQuantity);
               });
 
@@ -60,7 +60,7 @@ describe('ui-finance: Groups', () => {
 
                 cy.visit(TopMenu.fundPath);
                 FinanceHelp.searchByName(secondFund.name);
-                FinanceHelp.selectFromResultsList();
+                Funds.selectFund(secondFund.name);
                 Funds.addBudget(allocatedQuantity);
               });
           });
@@ -79,25 +79,31 @@ describe('ui-finance: Groups', () => {
   after(() => {
     cy.loginAsAdmin({ path:TopMenu.fundPath, waiter: Funds.waitLoading });
     FinanceHelp.searchByName(firstFund.name);
-    FinanceHelp.selectFromResultsList();
+    Funds.selectFund(firstFund.name);
     Funds.selectBudgetDetails();
     Funds.deleteBudgetViaActions();
     cy.visit(TopMenu.fundPath);
     FinanceHelp.searchByName(secondFund.name);
-    FinanceHelp.selectFromResultsList();
+    Funds.selectFund(secondFund.name);
     Funds.selectBudgetDetails();
     Funds.deleteBudgetViaActions();
+    // Need to wait some time fo delating all items
+    cy.wait(1000);
     Funds.deleteFundViaApi(firstFund.id);
     Funds.deleteFundViaApi(secondFund.id);
+    // Need to wait few seconds, that data will be deleted(its need to pass test in Jenkins run)
+    cy.wait(1000);
     Groups.deleteGroupViaApi(defaultGroup.id);
     Ledgers.deleteledgerViaApi(defaultLedger.id);
+    // Need to wait few seconds, that data will be deleted(its need to pass test in Jenkins run)
+    cy.wait(1000);
     FiscalYears.deleteFiscalYearViaApi(defaultFiscalYear.id);
     Users.deleteViaApi(user.userId);
   });
 
   it('C347878 Add multiple funds to a group with plugin  (thunderjet)', { tags: [testType.criticalPath, devTeams.thunderjet] }, () => {
     FinanceHelp.searchByName(defaultGroup.name);
-    FinanceHelp.selectFromResultsList();
+    Groups.selectGroup(defaultGroup.name);
     Groups.addFundToGroup(defaultLedger.name);
     InteractorsTools.checkCalloutMessage('Fund(s) have been added to group');
     Groups.checkAddingMultiplyFunds(secondFund.name, firstFund.name);

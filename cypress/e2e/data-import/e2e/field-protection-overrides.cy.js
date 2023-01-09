@@ -1,3 +1,4 @@
+/* eslint-disable cypress/no-unnecessary-waiting */
 import getRandomPostfix from '../../../support/utils/stringTools';
 import TestTypes from '../../../support/dictionary/testTypes';
 import DevTeams from '../../../support/dictionary/devTeams';
@@ -89,7 +90,7 @@ describe('ui-data-import: Check that field protection overrides work properly du
         MarcFieldProtection.createMarcFieldProtectionViaApi({
           indicator1: '*',
           indicator2: '*',
-          subfield: 'a',
+          subfield: '*',
           data: '*',
           source: 'USER',
           field: protectedFields.secondField
@@ -210,16 +211,16 @@ describe('ui-data-import: Check that field protection overrides work properly du
 
     // create Action profiles
     cy.visit(SettingsMenu.actionProfilePath);
-    ActionProfiles.createActionProfile(marcBibActionProfile, marcBibMappingProfile.name);
+    ActionProfiles.create(marcBibActionProfile, marcBibMappingProfile.name);
     ActionProfiles.checkActionProfilePresented(marcBibActionProfile.name);
 
-    ActionProfiles.createActionProfile(instanceActionProfile, instanceMappingProfile.name);
+    ActionProfiles.create(instanceActionProfile, instanceMappingProfile.name);
     ActionProfiles.checkActionProfilePresented(instanceActionProfile.name);
 
-    ActionProfiles.createActionProfile(marcBibActionProfileOverride, marcBibMappingProfileOverride.name);
+    ActionProfiles.create(marcBibActionProfileOverride, marcBibMappingProfileOverride.name);
     ActionProfiles.checkActionProfilePresented(marcBibActionProfileOverride.name);
 
-    ActionProfiles.createActionProfile(instanceActionProfileOverride, marcBibMappingProfileOverride.name);
+    ActionProfiles.create(instanceActionProfileOverride, instanceMappingProfileOverride.name);
     ActionProfiles.checkActionProfilePresented(instanceActionProfileOverride.name);
 
     // create Match profile
@@ -234,6 +235,8 @@ describe('ui-data-import: Check that field protection overrides work properly du
     NewJobProfile.saveAndClose();
     JobProfiles.checkJobProfilePresented(jobProfileForUpdate.profileName);
 
+    // need to wait until the first job profile will be created
+    cy.wait(2500);
     JobProfiles.createJobProfile(jobProfileForOverride);
     NewJobProfile.linkMatchAndTwoActionProfiles(matchProfile.profileName, marcBibActionProfileOverride.name, instanceActionProfileOverride.name);
     NewJobProfile.saveAndClose();
@@ -243,12 +246,15 @@ describe('ui-data-import: Check that field protection overrides work properly du
     // upload a marc file
     DataImport.uploadFile('marcFileForC17018-BeforeOverride.mrc', fileNameForCreatingInstance);
     JobProfiles.searchJobProfileForImport('Default - Create instance and SRS MARC Bib');
-    JobProfiles.runImportFile(fileNameForCreatingInstance);
+    JobProfiles.runImportFile();
+    JobProfiles.waitFileIsImported(fileNameForCreatingInstance);
     Logs.checkStatusOfJobProfile('Completed');
     Logs.openFileDetails(fileNameForCreatingInstance);
     [FileDetails.columnName.srsMarc, FileDetails.columnName.instance].forEach(columnName => {
       FileDetails.checkStatusInColumn(FileDetails.status.created, columnName);
     });
+    FileDetails.checkSrsRecordQuantityInSummaryTable('1', 0);
+    FileDetails.checkInstanceQuantityInSummaryTable('1', 0);
 
     // get Instance HRID through API
     InventorySearchAndFilter.getInstanceHRID()
@@ -261,14 +267,15 @@ describe('ui-data-import: Check that field protection overrides work properly du
         cy.visit(TopMenu.dataImportPath);
         DataImport.uploadFile(editedFileNameRev1, fileNameForProtect);
         JobProfiles.searchJobProfileForImport(jobProfileForUpdate.profileName);
-        JobProfiles.runImportFile(fileNameForProtect);
+        JobProfiles.runImportFile();
+        JobProfiles.waitFileIsImported(fileNameForProtect);
         Logs.checkStatusOfJobProfile('Completed');
         Logs.openFileDetails(fileNameForProtect);
         [FileDetails.columnName.srsMarc, FileDetails.columnName.instance].forEach(columnName => {
           FileDetails.checkStatusInColumn(FileDetails.status.updated, columnName);
         });
-        FileDetails.checkSrsRecordQuantityInSummaryTable('1', '1');
-        FileDetails.checkInstanceQuantityInSummaryTable('1', '1');
+        FileDetails.checkSrsRecordQuantityInSummaryTable('1', 1);
+        FileDetails.checkInstanceQuantityInSummaryTable('1', 1);
 
         cy.visit(TopMenu.inventoryPath);
         InventorySearchAndFilter.searchInstanceByHRID(instanceHrid);
@@ -288,19 +295,23 @@ describe('ui-data-import: Check that field protection overrides work properly du
         cy.visit(TopMenu.dataImportPath);
         DataImport.uploadFile(editedFileNameRev2, fileNameForOverride);
         JobProfiles.searchJobProfileForImport(jobProfileForOverride.profileName);
-        JobProfiles.runImportFile(fileNameForOverride);
+        JobProfiles.runImportFile();
+        JobProfiles.waitFileIsImported(fileNameForOverride);
         Logs.checkStatusOfJobProfile('Completed');
         Logs.openFileDetails(fileNameForOverride);
         [FileDetails.columnName.srsMarc, FileDetails.columnName.instance].forEach(columnName => {
           FileDetails.checkStatusInColumn(FileDetails.status.updated, columnName);
         });
-        FileDetails.checkSrsRecordQuantityInSummaryTable('1', '1');
-        FileDetails.checkInstanceQuantityInSummaryTable('1', '1');
+        FileDetails.checkSrsRecordQuantityInSummaryTable('1', 1);
+        FileDetails.checkInstanceQuantityInSummaryTable('1', 1);
 
         cy.visit(TopMenu.inventoryPath);
         InventorySearchAndFilter.searchInstanceByHRID(instanceHrid);
+        InstanceRecordView.verifyAdministrativeNote(administrativeNote);
         InstanceRecordView.verifyAdministrativeNote(updatedAdministativeNote);
-        InventoryInstance.verifyResourceIdentifierAbsent();
+        resourceIdentifiers.forEach(element => {
+          InventoryInstance.verifyResourceIdentifierAbsent(element.value);
+        });
         InstanceRecordView.verifyInstanceNote(updatedInstanceNote);
         // verify table data in marc bibliographic source
         InventoryInstance.viewSource();

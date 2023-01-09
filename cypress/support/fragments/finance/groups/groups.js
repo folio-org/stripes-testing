@@ -1,5 +1,5 @@
 import getRandomPostfix from '../../../utils/stringTools';
-import { Button, Accordion, TextField, Section, KeyValue, Modal, MultiColumnList, MultiColumnListRow, MultiColumnListCell, Pane, Checkbox, MultiColumnListHeader, SelectionOption } from '../../../../../interactors';
+import { Button, Accordion, TextField, Section, KeyValue, Modal, MultiColumnList, MultiColumnListRow, MultiColumnListCell, Pane, Checkbox, MultiColumnListHeader, SelectionOption, Link } from '../../../../../interactors';
 
 const newButton = Button('New');
 const nameField = TextField('Name*');
@@ -130,4 +130,12 @@ export default {
     path: `finance/groups/${groupId}`,
     isDefaultSearchParamsRequired: false,
   }),
+
+  selectGroup:(GroupName) => {
+    cy.do(Section({ id: 'group-results-pane' }).find(Link(GroupName)).click());
+  },
+
+  checkCreatedInList: (GroupName) => {
+    cy.expect(Section({ id: 'group-results-pane' }).find(Link(GroupName)).exists());
+  },
 };

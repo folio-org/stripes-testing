@@ -38,6 +38,6 @@ describe('ui-finance: Fiscal Year', () => {
     // Search and Filter Fiscal Year
     FinanceHelp.searchByAll(defaultFiscalYear.name);
     FiscalYears.selectNoAcquisitionUnit();
-    FiscalYears.checkSearchResults(defaultFiscalYear.name);
+    FiscalYears.expextFY(defaultFiscalYear.name);
   });
 });

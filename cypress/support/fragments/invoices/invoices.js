@@ -14,7 +14,8 @@ import {
   MultiColumnList,
   MultiColumnListRow,
   Select,
-  Section
+  Section,
+  Link
 } from '../../../../interactors';
 import InteractorsTools from '../../utils/interactorsTools';
 import Helper from '../finance/financeHelper';
@@ -36,8 +37,17 @@ const submitButton = Button('Submit');
 const searchButton = Button('Search');
 const invoiceDetailsPaneId = 'paneHeaderpane-invoiceDetails';
 const searhInputId = 'input-record-search';
+const numberOfSearchResultsHeader = '//*[@id="paneHeaderinvoice-results-pane-subtitle"]/span';
+const zeroResultsFoundText = '0 records found';
 
 export default {
+
+  checkZeroSearchResultsHeader: () => {
+    cy.xpath(numberOfSearchResultsHeader)
+      .should('be.visible')
+      .and('have.text', zeroResultsFoundText);
+  },
+
   createDefaultInvoice(invoice, vendorPrimaryAddress) {
     cy.do(actionsButton.click());
     cy.expect(buttonNew.exists());
@@ -61,6 +71,28 @@ export default {
     cy.do(saveAndClose.click());
     InteractorsTools.checkCalloutMessage(invoiceStates.invoiceCreatedMessage);
   },
+
+  createRolloverInvoice(invoice,organization) {
+    cy.do(actionsButton.click());
+    cy.expect(buttonNew.exists());
+    cy.do([
+      buttonNew.click(),
+      Selection('Status*').open(),
+      SelectionList().select(invoice.status),
+      TextField('Invoice date*').fillIn(invoice.invoiceDate),
+      TextField('Vendor invoice number*').fillIn(invoice.invoiceNumber),
+    ]);
+    this.selectVendorOnUi(organization);
+    cy.do([
+      Selection('Batch group*').open(),
+      SelectionList().select('FOLIO'),
+      Select({ id: 'invoice-payment-method' }).choose('Cash'),
+      Checkbox('Export to accounting').checked(false)
+    ]);
+    cy.do(saveAndClose.click());
+    InteractorsTools.checkCalloutMessage(invoiceStates.invoiceCreatedMessage);
+  },
+
   createSpecialInvoice(invoice) {
     cy.do(actionsButton.click());
     cy.expect(buttonNew.exists());
@@ -328,5 +360,9 @@ export default {
       Button('Cancel').click(),
       submitButton.click()
     ]);
-  }
+  },
+
+  selectInvoice:(invoiceNumber) => {
+    cy.do(Pane({ id: 'invoice-results-pane' }).find(Link(invoiceNumber)).click());
+  },
 };

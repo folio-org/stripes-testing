@@ -62,17 +62,17 @@ describe('ui-finance: Groups', () => {
     Groups.resetFilters();
     // Filter Gruops by Acquisition Unit
     Groups.selectNoAcquisitionUnit();
-    Groups.checkSearchResults(defaultGroup.name);
+    Groups.checkCreatedInList(defaultGroup.name);
     Groups.resetFilters();
     // Filter Gruops by Status
     Groups.selectActiveStatus();
-    Groups.checkSearchResults(defaultGroup.name);
+    Groups.checkCreatedInList(defaultGroup.name);
     Groups.resetFilters();
     // Search and Filter Gruops
     FinanceHelp.searchByAll(defaultGroup.name);
     Groups.selectNoAcquisitionUnit();
     Groups.selectActiveStatus();
-    Groups.checkSearchResults(defaultGroup.name);
+    Groups.checkCreatedInList(defaultGroup.name);
     Groups.resetFilters();
   });
 });

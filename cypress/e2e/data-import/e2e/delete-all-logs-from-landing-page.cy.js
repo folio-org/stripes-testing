@@ -1,3 +1,4 @@
+/* eslint-disable cypress/no-unnecessary-waiting */
 import TestTypes from '../../../support/dictionary/testTypes';
 import TopMenu from '../../../support/fragments/topMenu';
 import DataImport from '../../../support/fragments/data_import/dataImport';
@@ -43,7 +44,8 @@ describe('ui-data-import: A user can delete import logs with "Data import: Can d
           // need to wait untill file will be uploaded in loop
           cy.wait(8000);
           JobProfiles.searchJobProfileForImport('Default - Create instance and SRS MARC Bib');
-          JobProfiles.runImportFile(fileNameToUpload);
+          JobProfiles.runImportFile();
+          JobProfiles.waitFileIsImported(fileNameToUpload);
         });
       });
   });

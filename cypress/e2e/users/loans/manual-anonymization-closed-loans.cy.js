@@ -47,7 +47,7 @@ describe('ui-users-loans: Manual anonymization in closed loans', () => {
 
       cy.createLoanType({ name: loanTypeName });
 
-      RequestPolicy.createApi();
+      RequestPolicy.createViaApi();
       LostItemFeePolicy.createViaApi();
       OverdueFinePolicy.createApi();
       NoticePolicy.createApi();
@@ -88,6 +88,7 @@ describe('ui-users-loans: Manual anonymization in closed loans', () => {
         permissions.uiUsersDeclareItemLost.gui,
         permissions.uiUserLoansAnonymize.gui,
         permissions.uiFeeFines.gui,
+        permissions.uiInventoryViewInstances.gui
       ]).then(({
         username,
         password,

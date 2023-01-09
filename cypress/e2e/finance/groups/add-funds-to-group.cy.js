@@ -57,7 +57,7 @@ describe('ui-finance: Groups', () => {
 
   it('C4056 Add funds to a group (thunderjet)', { tags: [testType.criticalPath, devTeams.thunderjet] }, () => {
     FinanceHelp.searchByName(defaultfund.name);
-    FinanceHelp.selectFromResultsList();
+    Funds.selectFund(defaultfund.name);
     Funds.addGroupToFund(defaultGroup.name);
     InteractorsTools.checkCalloutMessage('Fund has been saved');
     Funds.checkAddGroupToFund(defaultGroup.name);

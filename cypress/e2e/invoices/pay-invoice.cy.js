@@ -70,12 +70,12 @@ describe('ui-invoices: Approve invoice', () => {
     const transactionFactory = new Transaction();
     const valueInTransactionTable = `$${subtotalValue.toFixed(2)}`;
     Invoices.searchByNumber(invoice.invoiceNumber);
-    Helper.selectFromResultsList();
+    Invoices.selectInvoice(invoice.invoiceNumber);
     Invoices.payInvoice();
     // check transactions after payment
     cy.visit(TopMenu.fundPath);
     Helper.searchByName(defaultFund.name);
-    Helper.selectFromResultsList();
+    Funds.selectFund(defaultFund.name);
     Funds.openBudgetDetails(defaultFund.code, DateTools.getCurrentFiscalYearCode());
     Funds.openTransactions();
     Funds.checkTransaction(1, transactionFactory.create('credit', valueInTransactionTable, defaultFund.code, '', 'Invoice', ''));

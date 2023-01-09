@@ -45,7 +45,7 @@ describe('ui-requests: Make sure that request type filters are working properly'
       InventoryInstance.deleteInstanceViaApi(instance.instanceId);
     });
     requests.forEach(request => {
-      Requests.deleteRequestApi(request.id);
+      Requests.deleteRequestViaApi(request.id);
     });
     userIds.forEach(id => {
       Users.deleteViaApi(id);

@@ -36,10 +36,7 @@ const filterOpenReceiving = () => {
 export default {
   searchByParameter,
   filterOpenReceiving,
-
-  selectFromResultsList: (instanceName) => {
-    cy.do(Link(instanceName).click());
-  },
+  selectFromResultsList: (instanceName) => cy.do(Link(instanceName).click()),
 
   receivePiece: (rowNumber, caption, barcode) => {
     const recievingFieldName = `receivedItems[${rowNumber}]`;
@@ -63,13 +60,15 @@ export default {
       receiveButton.click(),
       Checkbox({ name: `${recievingFieldName}.checked` }).clickInput(),
       TextField({ name: `${recievingFieldName}.caption` }).fillIn(caption),
-      MultiColumnListRow({indexRow: `row-${rowNumber}`}).find(Button('Assign a different location')).click(),
+      MultiColumnListRow({ indexRow: `row-${rowNumber}` }).find(Button('Assign a different location')).click(),
       Select({ name: 'institutionId' }).choose('Københavns Universitet'),
       Select({ name: 'campusId' }).choose('City Campus'),
-      Button({id: 'locationId' }).click(),
+      Button({ id: 'locationId' }).click(),
       SelectionOption('Main Library (KU/CC/DI/M) ').click(),
       receiveButton.click(),
     ]);
+    // Need to wait, while data will be loaded
+    cy.wait(1000);
     InteractorsTools.checkCalloutMessage(receivingSuccessful);
   },
 
@@ -77,14 +76,16 @@ export default {
     cy.expect(Accordion({ id: receivedPiecesAccordionId })
       .find(MultiColumnListRow({ index: rowNumber }))
       .find(MultiColumnListCell({ content: caption })).exists());
-},
+  },
 
   checkReceivedPiece: (rowNumber, caption, barcode) => {
-      cy.expect([
-        Accordion({ id: receivedPiecesAccordionId })
+    // Need to wait, while data will be loaded before start checking
+    cy.wait(2000);
+    cy.expect([
+      Accordion({ id: receivedPiecesAccordionId })
         .find(MultiColumnListRow({ index: rowNumber }))
         .find(MultiColumnListCell({ content: barcode })).exists(),
-        Accordion({ id: receivedPiecesAccordionId })
+      Accordion({ id: receivedPiecesAccordionId })
         .find(MultiColumnListRow({ index: rowNumber }))
         .find(MultiColumnListCell({ content: caption })).exists()
     ]);
@@ -99,13 +100,17 @@ export default {
       Checkbox({ name: `${recievingFieldName}.checked` }).clickInput(),
       unreceiveButton.click(),
     ]);
+    // Need to wait, while data will be loaded
+    cy.wait(1000);
     InteractorsTools.checkCalloutMessage(unreceivingSuccessful);
   },
 
   checkUnreceivedPiece: (rowNumber = 0, caption) => {
-      cy.expect(Accordion({ id: expectedPiecesAccordionId })
-        .find(MultiColumnListRow({ index: rowNumber }))
-        .find(MultiColumnListCell({ content: caption })).exists());
+    // Need to wait, while data will be loaded before start checking
+    cy.wait(2000);
+    cy.expect(Accordion({ id: expectedPiecesAccordionId })
+      .find(MultiColumnListRow({ index: rowNumber }))
+      .find(MultiColumnListCell({ content: caption })).exists());
   },
 
   checkIsPiecesCreated:(title) => {
@@ -126,6 +131,5 @@ export default {
 
   selectPOLInReceive:(POLName) => {
     cy.do(Section({ id: 'receiving-results-pane' }).find(Link(POLName)).click());
-  },
-
+  }
 };

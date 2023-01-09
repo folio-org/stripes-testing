@@ -24,9 +24,11 @@ import InventoryViewSource from '../../../support/fragments/inventory/inventoryV
 import Users from '../../../support/fragments/users/users';
 import FileManager from '../../../support/utils/fileManager';
 
-describe('ui-data-import: Match on POL and update related Instance, Holdings, Item', () => {
+describe('ui-data-import: Match on POL and update related Instance with source MARC, create Holdings, Item records.', () => {
   let user = null;
   let orderNumber;
+  let instanceHrid;
+  const instanceTitle = 'South Asian texts in history : critical engagements with Sheldon Pollock. edited by Yigal Bronner, Whitney Cox, and Lawrence McCrea.';
 
   // unique profile names
   const jobProfileName = `C350944 Update Instance, and create Holdings, Item based on POL match ${Helper.getRandomBarcode()}`;
@@ -131,10 +133,15 @@ describe('ui-data-import: Match on POL and update related Instance, Holdings, It
         Orders.deleteOrderApi(orderId[0].id);
       });
     Users.deleteViaApi(user.userId);
-    cy.getInstance({ limit: 1, expandAll: true, query: `"title"=="${pol.title}"` })
+    cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${instanceHrid}"` })
       .then((instance) => {
         cy.deleteItem(instance.items[0].id);
         cy.deleteHoldingRecordViaApi(instance.holdings[0].id);
+        InventoryInstance.deleteInstanceViaApi(instance.id);
+      });
+
+    cy.getInstance({ limit: 1, expandAll: true, query: `"title"=="${instanceTitle}"` })
+      .then((instance) => {
         InventoryInstance.deleteInstanceViaApi(instance.id);
       });
   });
@@ -183,7 +190,7 @@ describe('ui-data-import: Match on POL and update related Instance, Holdings, It
     OrderLines.savePol();
   };
 
-  it('C350944 Match on POL and update related Instance, Holdings, Item (folijet)', { tags: [TestTypes.smoke, DevTeams.folijet] }, () => {
+  it('C350944 Match on POL and update related Instance with source MARC, create Holdings, Item records. (folijet)', { tags: [TestTypes.smoke, DevTeams.folijet] }, () => {
     // create mapping profiles
     cy.visit(SettingsMenu.mappingProfilePath);
     createInstanceMappingProfile(collectionOfProfiles[0].mappingProfile);
@@ -196,7 +203,7 @@ describe('ui-data-import: Match on POL and update related Instance, Holdings, It
     // create action profiles
     collectionOfProfiles.forEach(profile => {
       cy.visit(SettingsMenu.actionProfilePath);
-      ActionProfiles.createActionProfile(profile.actionProfile, profile.mappingProfile.name);
+      ActionProfiles.create(profile.actionProfile, profile.mappingProfile.name);
       ActionProfiles.checkActionProfilePresented(profile.actionProfile.name);
     });
 
@@ -216,7 +223,8 @@ describe('ui-data-import: Match on POL and update related Instance, Holdings, It
     cy.visit(TopMenu.dataImportPath);
     DataImport.uploadFile('marcFileForMatchOnPol.mrc', nameMarcFileForCreate);
     JobProfiles.searchJobProfileForImport('Default - Create instance and SRS MARC Bib');
-    JobProfiles.runImportFile(nameMarcFileForCreate);
+    JobProfiles.runImportFile();
+    JobProfiles.waitFileIsImported(nameMarcFileForCreate);
     Logs.openFileDetails(nameMarcFileForCreate);
     FileDetails.checkItemsStatusesInResultList(0, [FileDetails.status.created, FileDetails.status.created]);
     FileDetails.checkItemsStatusesInResultList(1, [FileDetails.status.created, FileDetails.status.created]);
@@ -242,13 +250,15 @@ describe('ui-data-import: Match on POL and update related Instance, Holdings, It
     DataImport.checkIsLandingPageOpened();
     DataImport.uploadFile(editedMarcFileName, marcFileName);
     JobProfiles.searchJobProfileForImport(jobProfileName);
-    JobProfiles.runImportFile(marcFileName);
+    JobProfiles.runImportFile();
+    JobProfiles.waitFileIsImported(marcFileName);
     Logs.checkStatusOfJobProfile();
     Logs.openFileDetails(marcFileName);
     FileDetails.checkItemsStatusesInResultList(0, [FileDetails.status.updated, FileDetails.status.updated, FileDetails.status.created, FileDetails.status.created]);
     FileDetails.checkItemsStatusesInResultList(1, [FileDetails.status.dash, FileDetails.status.discarded]);
 
     FileDetails.openInstanceInInventory('Updated');
+    InventoryInstance.getAssignedHRID().then(initialInstanceHrId => { instanceHrid = initialInstanceHrId; });
     InventoryInstance.checkIsInstanceUpdated();
     InventoryInstance.checkIsHoldingsCreated(['Main Library >']);
     InventoryInstance.openHoldingsAccordion('Main Library >');
