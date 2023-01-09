@@ -51,6 +51,7 @@ describe('ui-inventory: search', () => {
   });
 
   it('C353640 Browse contributors with non exact match query (spitfire)', { tags: [testType.smoke, devTeams.spitfire] }, () => {
+    BrowseContributors.clickBrowseBtn();
     InventorySearchAndFilter.verifyKeywordsAsDefault();
     BrowseContributors.checkBrowseOptions();
     BrowseContributors.select();
