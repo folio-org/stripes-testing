@@ -14,6 +14,7 @@ let user;
 let hrid;
 const itemBarcode = getRandomPostfix();
 const validHoldingUUIDsFileName = `validHoldingUUIDs_${getRandomPostfix()}.csv`;
+const validHoldingHRIDsFileName = `validHoldingHRIDs_${getRandomPostfix()}.csv`;
 const resultFileName = `matchedRecords_${getRandomPostfix()}.csv`;
 const item = {
   instanceName: `testBulkEdit_${getRandomPostfix()}`,
@@ -44,6 +45,7 @@ describe('bulk-edit', () => {
             .then(holdings => {
               hrid = holdings[0].hrid;
               FileManager.createFile(`cypress/fixtures/${validHoldingUUIDsFileName}`, holdings[0].id);
+              FileManager.createFile(`cypress/fixtures/${validHoldingHRIDsFileName}`, hrid);
             });
         });
     });
@@ -108,6 +110,39 @@ describe('bulk-edit', () => {
       BulkEditSearchPane.verifyHoldingActionShowColumns();
       BulkEditSearchPane.changeShowColumnCheckbox('Call number type');
       BulkEditSearchPane.verifyResultColumTitles('Call number type');
+    });
+
+    it('C360120 Verify that User can trigger bulk of holdings with file containing Holdings identifiers (firebird)', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
+      BulkEditSearchPane.selectRecordIdentifier('Holdings HRIDs');
+
+      BulkEditSearchPane.uploadFile(validHoldingHRIDsFileName);
+      BulkEditSearchPane.waitFileUploading();
+      BulkEditSearchPane.verifyMatchedResults(hrid);
+
+      const tempLocation = 'Annex';
+      const permLocation = 'Main Library';
+
+      BulkEditActions.openActions();
+      BulkEditActions.openStartBulkEditForm();
+
+      BulkEditActions.replaceTemporaryLocation(tempLocation, 'holdings');
+      BulkEditActions.addNewBulkEditFilterString();
+      BulkEditActions.replaceSecondPermanentLocation(permLocation, 'holdings');
+
+      BulkEditActions.confirmChanges();
+      BulkEditActions.clickKeepEditingBtn();
+
+      BulkEditActions.confirmChanges();
+      BulkEditActions.clickX();
+
+      BulkEditActions.confirmChanges();
+      BulkEditActions.verifyAreYouSureForm(1, hrid);
+      BulkEditActions.commitChanges();
+      BulkEditSearchPane.waitFileUploading();
+
+      BulkEditSearchPane.verifyChangedResults(tempLocation);
+      BulkEditSearchPane.verifyChangedResults(permLocation);
+      BulkEditActions.verifySuccessBanner(1);
     });
   });
 });

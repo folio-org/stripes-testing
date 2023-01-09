@@ -41,3 +41,10 @@ export const RepeatableField = HTML.extend('repeatable field')
     },
     fillItem: (interactor, { index, fillFn }) => fillFn(interactor.find(FieldList(index)))
   });
+
+
+export const RepeatableFieldItem = HTML.extend('repeatable field item')
+  .selector('[class^=repeatableFieldItem]')
+  .filters({
+    index: el => [...el.parentElement.children].indexOf(el)
+  });
