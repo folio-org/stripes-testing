@@ -9,12 +9,11 @@ import Organizations from '../../support/fragments/organizations/organizations';
 import NewOrganization from '../../support/fragments/organizations/newOrganization';
 
 describe('ui-organizations: Organizations', () => {
+  const organization = { ...NewOrganization.defaultUiOrganizations };
+  const defaultAcquisitionUnit = { ...AcquisitionUnits.defaultAcquisitionUnit };
+  let user;
 
-    const organization = { ...NewOrganization.defaultUiOrganizations };
-    const defaultAcquisitionUnit = { ...AcquisitionUnits.defaultAcquisitionUnit };
-    let user;
-    
-    before(() => {
+  before(() => {
     cy.getAdminToken();
     cy.createTempUser([
       permissions.uiOrganizationsAssignAcquisitionUnitsToNewOrganization.gui,
@@ -41,7 +40,7 @@ describe('ui-organizations: Organizations', () => {
     Organizations.deleteOrganization();
 
     cy.visit(SettingsMenu.acquisitionUnitsPath);
-    
+
     AcquisitionUnits.unAssignAdmin(defaultAcquisitionUnit.name);
     AcquisitionUnits.delete(defaultAcquisitionUnit.name);
 
@@ -70,7 +69,7 @@ describe('ui-organizations: Organizations', () => {
     cy.loginAsAdmin({ path:SettingsMenu.acquisitionUnitsPath, waiter: AcquisitionUnits.waitLoading });
     AcquisitionUnits.edit(defaultAcquisitionUnit.name);
     AcquisitionUnits.selectViewCheckbox();
-    
+
     cy.login(user.username, user.password, { path:TopMenu.organizationsPath, waiter: Organizations.waitLoading });
     Organizations.searchByParameters('Name', organization.name);
     Organizations.selectOrganization(organization.name);

@@ -1,3 +1,4 @@
+/* eslint-disable cypress/no-unnecessary-waiting */
 import { including } from '@interactors/html';
 import { Button, Form, TextField } from '../../../../../interactors';
 

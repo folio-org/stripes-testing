@@ -1,6 +1,6 @@
 import moment from 'moment';
 import uuid from 'uuid';
-
+import devTeams from '../../../../support/dictionary/devTeams';
 import TestTypes from '../../../../support/dictionary/testTypes';
 import SettingsMenu from '../../../../support/fragments/settingsMenu';
 import generateItemBarcode from '../../../../support/utils/generateItemBarcode';
@@ -16,18 +16,17 @@ import {
   LOAN_PROFILE,
   LOST_ITEM_FEES_POLICY_NAMES,
 } from '../../../../support/constants';
-import fixedDueDateSchedules from '../../../../support/fragments/circulation/fixedDueDateSchedules';
+import FixedDueDateSchedules from '../../../../support/fragments/circulation/fixedDueDateSchedules';
 import Checkout from '../../../../support/fragments/checkout/checkout';
-import loans from '../../../../support/fragments/loans/loansPage';
-import topMenu from '../../../../support/fragments/topMenu';
+import Loans from '../../../../support/fragments/loans/loansPage';
+import TopMenu from '../../../../support/fragments/topMenu';
 import CheckinActions from '../../../../support/fragments/check-in-actions/checkInActions';
 import Users from '../../../../support/fragments/users/users';
 import InventoryHoldings from '../../../../support/fragments/inventory/holdings/inventoryHoldings';
 import ServicePoints from '../../../../support/fragments/settings/tenant/servicePoints/servicePoints';
 import InventoryInstance from '../../../../support/fragments/inventory/inventoryInstance';
 
-let userId;
-let userBarcode;
+let userData = {};
 let createdLoanPolicy;
 let materialTypeId;
 let mySchedule;
@@ -77,8 +76,7 @@ describe('ui-circulation-settings: Fixed due date schedules', () => {
           departments: [],
         })
           .then((user) => {
-            userId = user.id;
-            userBarcode = user.barcode;
+            userData = { ...user };
           });
         cy.createInstance({
           instance: {
@@ -166,7 +164,7 @@ describe('ui-circulation-settings: Fixed due date schedules', () => {
       checkInDate: moment.utc().format(),
     })
       .then(() => {
-        Users.deleteViaApi(userId);
+        Users.deleteViaApi(userData.id);
         cy.getInstance({ limit: 1, expandAll: true, query: `"items.barcode"=="${ITEM_BARCODE}"` })
           .then((instance) => {
             cy.deleteItem(instance.items[0].id);
@@ -183,11 +181,11 @@ describe('ui-circulation-settings: Fixed due date schedules', () => {
       });
   });
 
-  it('C641: renewing item using a fixed due date loan profile where the fixed due date schedule date range does not cover the test date (prokopovych)',
-    { tags: [TestTypes.smoke] },
+  it('C641: Test renewing item using a fixed due date loan profile where the fixed due date schedule date range does not cover the test date (vega)',
+    { tags: [TestTypes.smoke, devTeams.vega] },
     () => {
       cy.visit(SettingsMenu.circulationFixedDueDateSchedulesPath);
-      fixedDueDateSchedules.editSchedule(mySchedule.name, {
+      FixedDueDateSchedules.editSchedule(mySchedule.name, {
         description: mySchedule.description,
         schedules:[{
           from: fromDate,
@@ -195,9 +193,9 @@ describe('ui-circulation-settings: Fixed due date schedules', () => {
           due: dueDate,
         }],
       });
-      cy.visit(topMenu.checkOutPath);
-      Checkout.checkUserOpenLoans({ barcode: userBarcode, id: userId });
-      loans.checkLoanPolicy(createdLoanPolicy.name);
-      loans.renewalMessageCheck(dateFallsMessage);
+      cy.visit(TopMenu.checkOutPath);
+      Checkout.checkUserOpenLoans({ barcode: userData.barcode, id: userData.id });
+      Loans.checkLoanPolicy(createdLoanPolicy.name);
+      Loans.renewalMessageCheck(dateFallsMessage);
     });
 });

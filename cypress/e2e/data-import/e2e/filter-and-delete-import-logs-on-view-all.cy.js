@@ -1,3 +1,4 @@
+/* eslint-disable cypress/no-unnecessary-waiting */
 import getRandomPostfix from '../../../support/utils/stringTools';
 import permissions from '../../../support/dictionary/permissions';
 import DataImport from '../../../support/fragments/data_import/dataImport';
@@ -41,7 +42,8 @@ describe('ui-data-import: A user can filter and delete import logs from the "Vie
           // need to wait untill file will be uploaded in loop
           cy.wait(8000);
           JobProfiles.searchJobProfileForImport('Default - Create instance and SRS MARC Bib');
-          JobProfiles.runImportFile(nameMarcFileForCreate);
+          JobProfiles.runImportFile();
+          JobProfiles.waitFileIsImported(nameMarcFileForCreate);
           Logs.checkStatusOfJobProfile('Completed');
         }
         cy.logout();
@@ -65,7 +67,8 @@ describe('ui-data-import: A user can filter and delete import logs from the "Vie
           // need to wait untill file will be uploaded in loop
           cy.wait(8000);
           JobProfiles.searchJobProfileForImport('Default - Create SRS MARC Authority');
-          JobProfiles.runImportFile(nameMarcFileForCreate);
+          JobProfiles.runImportFile();
+          JobProfiles.waitFileIsImported(nameMarcFileForCreate);
           Logs.checkStatusOfJobProfile('Completed');
         }
       });

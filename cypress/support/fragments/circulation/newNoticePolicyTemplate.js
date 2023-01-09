@@ -88,9 +88,8 @@ export default {
     ]);
   },
 
-  checkTemplateActions(noticePolicyTemplate) {
+  checkTemplateActions() {
     return cy.do([
-      this.openToSide(noticePolicyTemplate),
       actionsButton.click(),
       actionsButtons.duplicate.exists(),
       actionsButtons.duplicate.has({ visible: true }),
@@ -98,6 +97,7 @@ export default {
       actionsButtons.edit.has({ visible: true }),
       actionsButtons.delete.exists(),
       actionsButtons.delete.has({ visible: true }),
+      actionsButton.click(),
     ]);
   },
 

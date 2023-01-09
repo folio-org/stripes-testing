@@ -4,7 +4,6 @@ import TestType from '../../support/dictionary/testTypes';
 import Orders from '../../support/fragments/orders/orders';
 import TopMenu from '../../support/fragments/topMenu';
 import DateTools from '../../support/utils/dateTools';
-import SearchHelper from '../../support/fragments/finance/financeHelper';
 import OrdersHelper from '../../support/fragments/orders/ordersHelper';
 import Organizations from '../../support/fragments/organizations/organizations';
 import devTeams from '../../support/dictionary/devTeams';
@@ -14,6 +13,7 @@ describe('orders: Test PO search', () => {
   const order = { ...NewOrder.defaultOneTimeOrder };
   const orderLine = { ...BasicOrderLine.defaultOrderLine };
   const organization = { ...NewOrganization.defaultUiOrganizations };
+  let orderNumber;
 
   before(() => {
     cy.getAdminToken();
@@ -32,21 +32,22 @@ describe('orders: Test PO search', () => {
   });
 
   afterEach(() => {
-    SearchHelper.selectFromResultsList();
+    Orders.selectFromResultsList(orderNumber);
     Orders.deleteOrderViaActions();
     Organizations.deleteOrganizationViaApi(organization.id);
   });
 
   it('C6717 Test the PO searches (thunderjet)', { tags: [TestType.smoke, devTeams.thunderjet] }, () => {
     Orders.createOrderWithOrderLineViaApi(order, orderLine)
-      .then(orderNumber => {
+      .then(number => {
+        orderNumber = number;
         const today = new Date();
         cy.visit(TopMenu.ordersPath);
         Orders.checkPoSearch(Orders.getSearchParamsMap(orderNumber, DateTools.getFormattedDate({ date: today }, 'MM/DD/YYYY')),
           orderNumber);
         // open order to check 'date opened' search
         Orders.searchByParameter('PO number', orderNumber);
-        SearchHelper.selectFromResultsList();
+        Orders.selectFromResultsList(orderNumber);
         Orders.openOrder();
         Orders.closeThirdPane();
         Orders.resetFilters();

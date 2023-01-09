@@ -1,5 +1,6 @@
 import uuid from 'uuid';
 import TestType from '../../../support/dictionary/testTypes';
+import DevTeams from '../../../support/dictionary/devTeams';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
 import UsersOwners from '../../../support/fragments/settings/users/usersOwners';
 import PaymentMethods from '../../../support/fragments/settings/users/paymentMethods';
@@ -19,27 +20,28 @@ describe('ui-users-settings: payments methods in Fee/fine', () => {
     UsersOwners.deleteViaApi(specialOwnerId);
   });
 
-  it('C445 Verify that you can create/edit/delete payment methods for a fee/fine owner (prokopovych)', { tags: [TestType.smoke, features.paymentMethod] }, () => {
+  it('C445 Verify that you can create/edit/delete payment methods for a fee/fine owner (prokopovych)',
+    { tags: [TestType.smoke, features.paymentMethod, DevTeams.prokopovych] }, () => {
     // create
-    const initialPaymentMethod = { ...PaymentMethods.defaultPaymentMethod };
-    PaymentMethods.checkControls();
-    PaymentMethods.pressNew();
-    PaymentMethods.checkFields();
-    PaymentMethods.fillRequiredFields(initialPaymentMethod);
-    PaymentMethods.save();
-    PaymentMethods.checkCreatedRecord(initialPaymentMethod);
+      const initialPaymentMethod = { ...PaymentMethods.defaultPaymentMethod };
+      PaymentMethods.checkControls();
+      PaymentMethods.pressNew();
+      PaymentMethods.checkFields();
+      PaymentMethods.fillRequiredFields(initialPaymentMethod);
+      PaymentMethods.save();
+      PaymentMethods.checkCreatedRecord(initialPaymentMethod);
 
-    // update
-    const updatedPaymentMethod = { ...PaymentMethods.defaultPaymentMethod };
-    updatedPaymentMethod.name = `updatedPaymentMethod${getRandomPostfix()}`;
-    updatedPaymentMethod.refundMethodAllowed = { value: false, visibleValue: 'No' };
+      // update
+      const updatedPaymentMethod = { ...PaymentMethods.defaultPaymentMethod };
+      updatedPaymentMethod.name = `updatedPaymentMethod${getRandomPostfix()}`;
+      updatedPaymentMethod.refundMethodAllowed = { value: false, visibleValue: 'No' };
 
-    PaymentMethods.edit(initialPaymentMethod.name, updatedPaymentMethod);
-    PaymentMethods.checkCreatedRecord(updatedPaymentMethod);
+      PaymentMethods.edit(initialPaymentMethod.name, updatedPaymentMethod);
+      PaymentMethods.checkCreatedRecord(updatedPaymentMethod);
 
-    // delete
-    PaymentMethods.delete(updatedPaymentMethod.name);
-  });
+      // delete
+      PaymentMethods.delete(updatedPaymentMethod.name);
+    });
 });
 
 

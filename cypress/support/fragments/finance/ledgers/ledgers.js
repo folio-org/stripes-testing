@@ -1,4 +1,14 @@
-import { Button, Accordion, Checkbox, SelectionList, Selection, SearchField, TextField, Section, Select } from '../../../../../interactors';
+import { Button,
+  Accordion,
+  Checkbox,
+  SelectionList,
+  Selection,
+  SearchField,
+  TextField,
+  Section,
+  Select,
+  Pane,
+  Link } from '../../../../../interactors';
 import FinanceHelper from '../financeHelper';
 import getRandomPostfix from '../../../utils/stringTools';
 
@@ -139,10 +149,10 @@ export default {
   deleteledgerViaApi: (ledgerId) => cy.okapiRequest({
     method: 'DELETE',
     path: `finance/ledgers/${ledgerId}`,
-    isDefaultSearchParamsRequired: false,
+    isDefaultSearchParamsRequired: false
   }),
 
   selectLedger:(ledgerName) => {
     cy.do(Pane({ id: 'ledger-results-pane' }).find(Link(ledgerName)).click());
-  },
+  }
 };

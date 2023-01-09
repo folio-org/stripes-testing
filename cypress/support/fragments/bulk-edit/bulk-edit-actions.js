@@ -9,6 +9,7 @@ import {
   MultiColumnListHeader,
   MultiColumnListCell,
   TextField,
+  RepeatableFieldItem,
 } from '../../../../interactors';
 
 const actionsBtn = Button('Actions');
@@ -47,9 +48,9 @@ export default {
   verifyBulkEditForm() {
     getBulkEditSelectType().select('Email');
     cy.expect([
-      Button({ icon: 'plus-sign'}).exists(),
+      Button({ icon: 'plus-sign' }).exists(),
       Button({ icon: 'trash', disabled: true }).exists(),
-    ])
+    ]);
   },
 
   verifyAreYouSureForm(count, cellContent) {
@@ -64,6 +65,10 @@ export default {
 
   clickKeepEditingBtn() {
     cy.do(areYouSureForm.find(keepEditingBtn).click());
+  },
+
+  clickX() {
+    cy.do(Modal().find(Button({ icon: 'times' })).click());
   },
 
   openActions() {
@@ -104,6 +109,18 @@ export default {
     getLocationSelect().select('Replace with');
     cy.do(Button('Select control\nSelect location').click());
     cy.get('[class^=selectionFilter-]').type(location);
+  },
+
+  addNewBulkEditFilterString() {
+    cy.do(plusBtn.click());
+  },
+
+  replaceSecondPermanentLocation(location = 'Annex', type = 'item') {
+    cy.get('select').eq(3).select(`Permanent ${type} location`);
+    cy.do([
+      RepeatableFieldItem({ index: 1 }).find(Button('Select control\nSelect location')).click(),
+      SelectionOption(including(location)).click(),
+    ]);
   },
 
   fillPatronGroup(group = 'staff (Staff Member)') {

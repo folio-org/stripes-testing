@@ -58,7 +58,8 @@ export default {
   verifyRecordsTypeItems() {
     cy.expect([
       recordTypes.find(HTML('Users')).exists(),
-      recordTypes.find(HTML('Inventory - items')).exists()
+      recordTypes.find(HTML('Inventory - items')).exists(),
+      recordTypes.find(HTML('Inventory - holdings')).exists(),
     ]);
     this.checkUsersRadio();
     cy.do(recordTypes.clickHeader());
@@ -73,6 +74,15 @@ export default {
       recordIdentifier.find(HTML('User Barcodes')).exists(),
       recordIdentifier.find(HTML('External IDs')).exists(),
       recordIdentifier.find(HTML('Usernames')).exists(),
+    ]);
+  },
+
+  verifyHoldingIdentifiers() {
+    cy.expect([
+      recordIdentifier.find(HTML('Holdings UUIDs')).exists(),
+      recordIdentifier.find(HTML('Holdings HRIDs')).exists(),
+      recordIdentifier.find(HTML('Instance HRIDs')).exists(),
+      recordIdentifier.find(HTML('Item barcodes')).exists(),
     ]);
   },
 
@@ -309,6 +319,23 @@ export default {
       DropdownMenu().find(Checkbox('Username')).exists(),
       DropdownMenu().find(Checkbox('Email')).exists(),
       DropdownMenu().find(Checkbox('Expiration date')).exists(),
+    ]);
+  },
+
+  verifyHoldingActionShowColumns() {
+    cy.expect([
+      DropdownMenu().find(Checkbox({ name: 'hrid', checked: true })).exists(),
+      DropdownMenu().find(Checkbox({ name: 'permanentLocation', checked: true })).exists(),
+      DropdownMenu().find(Checkbox({ name: 'temporaryLocation', checked: true })).exists(),
+      DropdownMenu().find(Checkbox({ name: 'callNumberPrefix', checked: true })).exists(),
+      DropdownMenu().find(Checkbox({ name: 'callNumber', checked: true })).exists(),
+      DropdownMenu().find(Checkbox({ name: 'callNumberSuffix', checked: true })).exists(),
+      DropdownMenu().find(Checkbox({ name: 'holdingsType', checked: true })).exists(),
+      DropdownMenu().find(Checkbox({ name: 'effectiveLocation', checked: false })).exists(),
+      DropdownMenu().find(Checkbox({ name: 'id', checked: false })).exists(),
+      DropdownMenu().find(Checkbox({ name: 'source', checked: false })).exists(),
+      DropdownMenu().find(Checkbox({ name: 'discoverySuppress', checked: false })).exists(),
+      DropdownMenu().find(Checkbox({ name: 'callNumberType', checked: false })).exists(),
     ]);
   },
 
