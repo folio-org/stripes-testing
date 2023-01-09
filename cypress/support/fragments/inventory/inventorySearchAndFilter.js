@@ -41,6 +41,7 @@ const tagsPane = Pane('Tags');
 const tagsButton = Button({ id: 'clickable-show-tags' });
 const tagsAccordionButton = instancesTagsSection.find(Button('Tags'));
 const emptyResultsMessage = 'Choose a filter or enter a search query to show results.';
+const browseButton = Button({ id: "mode-navigation-browse" });
 
 const searchInstanceByHRID = (id) => {
   InventoryInstances.waitContentLoading();
@@ -278,6 +279,7 @@ export default {
 
   browseSubjectsSearch(searchString = 'test123') {
     cy.do([
+      browseButton.click(),
       TextField({ id: 'input-record-search' }).fillIn(searchString),
       searchButton.click()
     ]);
