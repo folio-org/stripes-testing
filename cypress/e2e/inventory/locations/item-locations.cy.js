@@ -94,6 +94,7 @@ describe('ui-inventory: location', () => {
     InventorySearchAndFilter.switchToItem();
     InventorySearchAndFilter.searchByParameter('Barcode', ITEM_BARCODE);
     InventoryInstances.selectInstance();
+    InventoryInstance.closeItemView();
     InventoryInstance.openHoldings([toBeEditedLocationName]);
     InventoryInstance.openItemView(ITEM_BARCODE);
 
@@ -107,7 +108,7 @@ describe('ui-inventory: location', () => {
     InventoryInstance.checkHoldingsTable(
       toBeEditedLocationName,
       0,
-      '',
+      '-',
       ITEM_BARCODE,
       'Available',
       editedLocationName
@@ -122,6 +123,7 @@ describe('ui-inventory: location', () => {
     InventorySearchAndFilter.switchToItem();
     InventorySearchAndFilter.searchByParameter('Barcode', ITEM_BARCODE);
     InventoryInstances.selectInstance();
+    InventoryInstance.closeItemView();
     InventoryInstance.openHoldings([editedLocationName]);
     InventoryInstance.openItemView(ITEM_BARCODE);
 
@@ -135,7 +137,7 @@ describe('ui-inventory: location', () => {
     InventoryInstance.checkHoldingsTable(
       editedLocationName,
       0,
-      '',
+      '-',
       ITEM_BARCODE,
       'Available',
       toBeEditedLocationName

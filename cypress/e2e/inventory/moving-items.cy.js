@@ -108,6 +108,7 @@ describe('ui-inventory: moving items', () => {
     InventorySearchAndFilter.switchToItem();
     InventorySearchAndFilter.searchByParameter('Barcode', ITEM_BARCODE);
     InventorySearchAndFilter.selectSearchResultItem();
+    InventoryInstance.closeItemView();
     InventoryInstance.openMoveItemsWithinAnInstance();
 
     InventoryInstance.moveItemToAnotherHolding(firstHolding, secondHolding);
