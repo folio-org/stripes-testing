@@ -26,7 +26,6 @@ describe('Add new hours of operation for service point', () => {
 
       cy.createCalendar(testCalendar, (calResponse) => {
         testCalendarResponse = calResponse.body;
-        console.log(testCalendarResponse);
       });
       cy.openCalendarSettings();
     });
@@ -50,21 +49,24 @@ describe('Add new hours of operation for service point', () => {
 
     cy.do([
       Accordion('Hours of operation').find(Button('Add row')).click(),
-      MultiColumnListRow({ index: 7 }).find(MultiColumnListCell({ column: 'Status' })).find(Select()).choose(addHoursOfOperationData.status),
-      MultiColumnListRow({ index: 7 }).find(MultiColumnListCell({ column: 'Start day' })).find(Select()).choose(addHoursOfOperationData.startDay),
-      MultiColumnListRow({ index: 7 }).find(MultiColumnListCell({ column: 'End day' })).find(Select()).choose(addHoursOfOperationData.endDay),
+      Accordion('Hours of operation').find(MultiColumnListRow({ index: 6 })).find(MultiColumnListCell({ column: 'Status' })).find(Select())
+        .choose(addHoursOfOperationData.status),
+      Accordion('Hours of operation').find(MultiColumnListRow({ index: 6 })).find(MultiColumnListCell({ column: 'Start day' })).find(Select())
+        .choose(addHoursOfOperationData.startDay),
+      Accordion('Hours of operation').find(MultiColumnListRow({ index: 6 })).find(MultiColumnListCell({ column: 'End day' })).find(Select())
+        .choose(addHoursOfOperationData.endDay),
     ]);
 
     // if status is open, set start time and end time
     if (addHoursOfOperationData.status === 'Open') {
       cy.do([
-        MultiColumnListRow({ index: 7 }).find(MultiColumnListCell({ column: 'Start time' }))
+        Accordion('Hours of operation').find(MultiColumnListRow({ index: 6 })).find(MultiColumnListCell({ column: 'Start time' }))
           .find(TextField())
           .find(IconButton({ id: matching(/^timepicker-toggle-button-/) }))
           .click(),
         TimeDropdown().exists(),
         TimeDropdown().setTimeAndClose(addHoursOfOperationData.startTime),
-        MultiColumnListRow({ index: 7 }).find(MultiColumnListCell({ column: 'End time' }))
+        Accordion('Hours of operation').find(MultiColumnListRow({ index: 6 })).find(MultiColumnListCell({ column: 'End time' }))
           .find(TextField())
           .find(IconButton({ id: matching(/^timepicker-toggle-button-/) }))
           .click(),
