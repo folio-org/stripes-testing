@@ -18,10 +18,13 @@ describe('Note creation', () => {
 
   before('Creating data', () => {
     cy.createTempUser([
+      Permissions.uiNotesItemCreate.gui,
       Permissions.uiNotesItemView.gui,
+      Permissions.uiNotesItemEdit.gui,
+      Permissions.uiNotesItemDelete.gui,
       Permissions.moduleeHoldingsEnabled.gui,
     ]).then(createdUserProperties => {
-      testData.viewUserProperties = createdUserProperties;
+      testData.deletedUserProperties = createdUserProperties;
     });
 
     cy.createTempUser([
@@ -39,7 +42,6 @@ describe('Note creation', () => {
 
   after('Deleting data', () => {
     Users.deleteViaApi(testData.userProperties.userId);
-    Users.deleteViaApi(testData.viewUserProperties.userId);
   });
 
   it('C1296 Create a note (spitfire)', { tags: [TestTypes.smoke, DevTeams.spitfire] }, () => {
@@ -64,6 +66,17 @@ describe('Note creation', () => {
   it('C16992 View a note (spitfire)', { tags: [TestTypes.smoke, DevTeams.spitfire] }, () => {
     NotesEholdings.createNote(note.title, note.details);
     NotesEholdings.verifyNoteTitle(note.title);
+    NotesEholdings.openNoteView(note.title);
+    NotesEholdings.deleteNote();
+  });
+
+  it('C359004 A user can view Notes that were created by deleted user (spitfire)', { tags: [TestTypes.smoke, DevTeams.spitfire] }, () => {
+    cy.login(testData.deletedUserProperties.username, testData.deletedUserProperties.password, { path: urlToEholdings, waiter: NotesEholdings.waitLoading });
+    NotesEholdings.createNote(note.title, note.details);
+    NotesEholdings.verifyNoteTitle(note.title);
+    Users.deleteViaApi(testData.deletedUserProperties.userId);
+    
+    cy.login(testData.userProperties.username, testData.userProperties.password, { path: urlToEholdings, waiter: NotesEholdings.waitLoading });
     NotesEholdings.openNoteView(note.title);
     NotesEholdings.deleteNote();
   });
