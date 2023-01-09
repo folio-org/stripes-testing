@@ -14,7 +14,6 @@ import Checkout from '../../support/fragments/checkout/checkout';
 import LoansPage from '../../support/fragments/loans/loansPage';
 import ItemsOperations from '../../support/fragments/inventory/inventoryItem/itemsOperations';
 import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
-import inventoryInstances from '../../support/fragments/inventory/inventoryInstances';
 
 let userId;
 let source;
@@ -55,7 +54,7 @@ describe('circulation-log', () => {
           .then(() => {
             UserEdit.addServicePointViaApi(servicePointId, userId);
             cy.getUserServicePoints(Cypress.env('users')[0].id);
-            inventoryInstances.createInstanceViaApi(item.instanceName, item.ITEM_BARCODE);
+            InventoryInstances.createInstanceViaApi(item.instanceName, item.ITEM_BARCODE);
           })
           .then(() => {
             Checkout.checkoutItemViaApi({
