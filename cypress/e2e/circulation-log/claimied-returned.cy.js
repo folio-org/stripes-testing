@@ -14,11 +14,16 @@ import Checkout from '../../support/fragments/checkout/checkout';
 import LoansPage from '../../support/fragments/loans/loansPage';
 import ItemsOperations from '../../support/fragments/inventory/inventoryItem/itemsOperations';
 import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
+import inventoryInstances from '../../support/fragments/inventory/inventoryInstances';
 
-const ITEM_BARCODE = `123${getRandomPostfix()}`;
 let userId;
 let source;
 let servicePointId;
+const item = {
+  instanceName: `Barcode search test ${Number(new Date())}`,
+  ITEM_BARCODE: `123${getRandomPostfix()}`,
+};
+
 
 describe('circulation-log', () => {
   before('create checked out item', () => {
@@ -29,8 +34,7 @@ describe('circulation-log', () => {
     ])
       .then(userProperties => {
         userId = userProperties.userId;
-        cy.login(userProperties.username, userProperties.password);
-        cy.visit(TopMenu.circulationLogPath);
+        cy.login(userProperties.username, userProperties.password, { path: TopMenu.circulationLogPath, waiter: SearchPane.waitLoading });
         cy.getAdminToken()
           .then(() => {
             cy.getLoanTypes({ limit: 1 });
@@ -51,43 +55,25 @@ describe('circulation-log', () => {
           .then(() => {
             UserEdit.addServicePointViaApi(servicePointId, userId);
             cy.getUserServicePoints(Cypress.env('users')[0].id);
-            cy.createInstance({
-              instance: {
-                instanceTypeId: Cypress.env('instanceTypes')[0].id,
-                title: `Barcode search test ${Number(new Date())}`,
-              },
-              holdings: [{
-                holdingsTypeId: Cypress.env('holdingsTypes')[0].id,
-                permanentLocationId: Cypress.env('locations')[0].id,
-                sourceId: source.id,
-              }],
-              items: [
-                [{
-                  barcode: ITEM_BARCODE,
-                  missingPieces: '3',
-                  numberOfMissingPieces: '3',
-                  status: { name: 'Available' },
-                  permanentLoanType: { id: Cypress.env('loanTypes')[0].id },
-                  materialType: { id: Cypress.env('materialTypes')[0].id },
-                }],
-              ],
-            });
+            inventoryInstances.createInstanceViaApi(item.instanceName, item.ITEM_BARCODE);
           })
           .then(() => {
             Checkout.checkoutItemViaApi({
-              itemBarcode: ITEM_BARCODE,
+              itemBarcode: item.ITEM_BARCODE,
               userBarcode: Cypress.env('users')[0].barcode,
               servicePointId,
             });
           });
         cy.loginAsAdmin();
         cy.visit(TopMenu.usersPath);
+        // cy.loginAsAdmin({ path: TopMenu.usersPath, waiter: UsersSearchPane.waitLoading })
+        //produces error with loans
       });
   });
 
   after('delete test data', () => {
     ItemsOperations.markItemAsMissingByUserId(userId).then(() => {
-      InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(ITEM_BARCODE);
+      InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(item.ITEM_BARCODE);
       Users.deleteViaApi(userId);
     });
   });
@@ -106,14 +92,14 @@ describe('circulation-log', () => {
     SearchPane.searchByClaimedReturned();
     SearchPane.verifyResultCells();
     SearchPane.checkResultSearch({
-      itemBarcode: ITEM_BARCODE,
+      itemBarcode: item.ITEM_BARCODE,
       circAction: 'Claimed returned',
     });
     SearchPane.resetResults();
 
-    SearchPane.searchByItemBarcode(ITEM_BARCODE);
+    SearchPane.searchByItemBarcode(item.ITEM_BARCODE);
     SearchPane.checkResultSearch({
-      itemBarcode: ITEM_BARCODE,
+      itemBarcode: item.ITEM_BARCODE,
       circAction: 'Claimed returned',
     });
   });
