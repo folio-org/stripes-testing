@@ -38,6 +38,7 @@ export default {
   },
 
   openLoans() {
+    cy.reload();
     cy.intercept('/circulation/loans?*').as('getLoans');
     cy.do(Accordion({ id : 'loansSection' }).clickHeader());
     return cy.wait('@getLoans', { requestTimeout: 10000 });
