@@ -30,7 +30,7 @@ const keywordInput = TextField({ id: 'input-inventory-search' });
 const searchButton = Button({ type: 'submit' });
 const searchTextField = TextField('Search ');
 const inventorySearchAndFilter = TextInput({ id: 'input-inventory-search' });
-const inventorySearchAndFilterInput = Select({ id: 'input-inventory-search-qindex' });
+const browseSearchAndFilterInput = Select({ id: 'input-record-search-qindex' });
 const resetAllButton = Button({ id: 'clickable-reset-all' });
 const navigationInstancesButton = Button({ id: 'segment-navigation-instances' });
 const paneFilterSection = Section({ id: 'pane-filter' });
@@ -215,10 +215,10 @@ export default {
   },
 
   verifyKeywordsAsDefault() {
-    cy.get('#input-inventory-search-qindex').then(elem => {
-      expect(elem.text()).to.include('Keyword (title, contributor, identifier');
+    cy.get('#input-record-search-qindex').then((elem) => {
+      expect(elem.text()).to.include('Select a browse option');
     });
-    cy.expect(inventorySearchAndFilterInput.exists());
+    cy.expect(browseSearchAndFilterInput.exists());
   },
 
   verifyCallNumberBrowseEmptyPane() {
