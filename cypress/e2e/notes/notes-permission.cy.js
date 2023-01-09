@@ -83,4 +83,16 @@ describe('Notes', () => {
     NotesEholdings.deleteNote();
     NotesEholdings.verifyNoteDeletion(note.title, note.details);
   });
+
+  it('C526 Notes: Can edit a note (spitfire)', { tags: [TestTypes.criticalPath, DevTeams.spitfire] }, () => {
+    const newNote = {
+      title: `Changed Title ${getRandomPostfix()}`,
+      details: `Changed details ${getRandomPostfix()}`,
+    }
+    NotesEholdings.createNote(note.title, note.details);
+    NotesEholdings.editNote(note.title, newNote.title, newNote.details);
+    NotesEholdings.verifyNoteTitle(newNote.title);
+    NotesEholdings.openNoteView(newNote.title);
+    NotesEholdings.deleteNote();
+  });
 });
