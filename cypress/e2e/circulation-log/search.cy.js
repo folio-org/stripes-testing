@@ -186,5 +186,4 @@ describe('circulation-log', () => {
     SearchPane.searchByChangedDueDate();
     SearchPane.verifyResultCells();
   });
-
 });
