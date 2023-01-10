@@ -12,7 +12,11 @@ const defaultServicePoints = ['Circ Desk 1',
 
 const startRowIndex = 2;
 
-const trySave = (rowNumber = 0) => cy.do(rootPaneset.find(Button({ id:`clickable-save-settings-owners-${rowNumber}` })).click());
+const trySave = (rowNumber = 0) => {
+  cy.do(rootPaneset.find(Button({ id:`clickable-save-settings-owners-${rowNumber}` })).click());
+  // fixed wait because there is no element for waiter
+  cy.wait(1000);
+};
 
 const save = (ownerName) => {
   trySave();
