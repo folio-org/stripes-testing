@@ -21,8 +21,11 @@ describe('eHoldings titles management', () => {
   let userId;
 
   it('C16994 Add a title in a package to holdings (spitfire)', { tags: [testTypes.smoke, devTeams.spitfire, features.eHoldings] }, () => {
-    cy.createTempUser([permissions.uieHoldingsRecordsEdit.gui,
-      permissions.uieHoldingsPackageTitleSelectUnselect.gui]).then(userProperties => {
+    cy.createTempUser([
+      permissions.uieHoldingsRecordsEdit.gui,
+      permissions.uieHoldingsPackageTitleSelectUnselect.gui,
+      permissions.uieHoldingsTitlesPackagesCreateDelete.gui
+    ]).then(userProperties => {
       userId = userProperties.userId;
       cy.login(userProperties.username, userProperties.password);
       cy.visit(TopMenu.eholdingsPath);
@@ -47,9 +50,11 @@ describe('eHoldings titles management', () => {
     });
   });
 
-  // TODO: https://issues.folio.org/browse/UIEH-1256
+  TODO: https://issues.folio.org/browse/UIEH-1256
   it('C700 Title: Add or Edit custom coverage (spitfire)', { tags: [testTypes.smoke, devTeams.spitfire, features.eHoldings] }, () => {
-    cy.createTempUser([permissions.uieHoldingsRecordsEdit.gui]).then(userProperties => {
+    cy.createTempUser([
+      permissions.uieHoldingsRecordsEdit.gui
+    ]).then(userProperties => {
       userId = userProperties.userId;
       cy.login(userProperties.username, userProperties.password);
       cy.visit(TopMenu.eholdingsPath);
@@ -93,8 +98,11 @@ describe('eHoldings titles management', () => {
   });
 
   it('C691 Remove a title in a package from your holdings (spitfire)', { tags: [testTypes.smoke, devTeams.spitfire, features.eHoldings] }, () => {
-    cy.createTempUser([permissions.uieHoldingsRecordsEdit.gui,
-      permissions.uieHoldingsPackageTitleSelectUnselect.gui]).then(userProperties => {
+    cy.createTempUser([
+      permissions.uieHoldingsRecordsEdit.gui,
+      permissions.uieHoldingsPackageTitleSelectUnselect.gui,
+      permissions.uieHoldingsTitlesPackagesCreateDelete.gui
+    ]).then(userProperties => {
       userId = userProperties.userId;
 
       eHoldingsTitles.getSelectedNotCustomTitleViaApi('chemical engineering').then(specialTitle => {
@@ -113,8 +121,10 @@ describe('eHoldings titles management', () => {
   });
 
   it('C693 Create a custom title. (spitfire)', { tags: [testTypes.smoke, devTeams.spitfire, features.eHoldings] }, () => {
-    cy.createTempUser([permissions.uieHoldingsRecordsEdit.gui,
-      permissions.uieHoldingsTitlesPackagesCreateDelete.gui]).then(userProperties => {
+    cy.createTempUser([
+      permissions.uieHoldingsRecordsEdit.gui,
+      permissions.uieHoldingsTitlesPackagesCreateDelete.gui
+    ]).then(userProperties => {
       userId = userProperties.userId;
       eHoldingsPackages.getCustomPackageViaApi().then(packageName => {
         cy.login(userProperties.username, userProperties.password);
