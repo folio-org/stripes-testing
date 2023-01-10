@@ -18,7 +18,7 @@ export default {
   filterStatuses,
 
   filterPackages: (selectionStatus = filterStatuses.notSelected, packageName) => {
-    // Wait is needed for modal to be loaded, element expectation didn't provide stabil affect at this point (button is clicking modal doesn't open).
+    // Wait is needed for modal to be loaded, element expectation didn't provide stable affect at this point (button is clicking modal doesn't open sometimes).
     cy.wait(2000);
     cy.do(packagesSection.find(Button({ icon: 'search' })).click());
     const selectionStatusAccordion = packageFilterModal.find(Accordion({ id: 'filter-packages-selected' }));
