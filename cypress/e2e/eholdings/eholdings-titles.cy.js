@@ -49,7 +49,6 @@ describe('eHoldings titles management', () => {
     });
   });
 
-  // TODO: https://issues.folio.org/browse/UIEH-1256
   it('C700 Title: Add or Edit custom coverage (spitfire)', { tags: [testTypes.smoke, devTeams.spitfire, features.eHoldings] }, () => {
     cy.createTempUser([
       permissions.uieHoldingsRecordsEdit.gui
