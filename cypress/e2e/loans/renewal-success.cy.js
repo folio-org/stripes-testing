@@ -1,6 +1,7 @@
 import uuid from 'uuid';
 import moment from 'moment';
 import TestType from '../../support/dictionary/testTypes';
+import DevTeams from '../../support/dictionary/devTeams';
 import RenewalActions from '../../support/fragments/loans/renewals';
 import generateItemBarcode from '../../support/utils/generateItemBarcode';
 import permissions from '../../support/dictionary/permissions';
@@ -176,7 +177,7 @@ describe('Renewal', () => {
       });
   });
 
-  it('C567: Renewal: success, from open loans (multiple items) (prokopovych)', { tags: [TestType.smoke] }, () => {
+  it('C567: Renewal: success, from open loans (multiple items) (prokopovych)', { tags: [TestType.smoke, DevTeams.prokopovych] }, () => {
     cy.visit(TopMenu.usersPath);
     UsersSearchPane.searchByKeywords(userName);
     UsersCard.openLoans();

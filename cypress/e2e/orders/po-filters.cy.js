@@ -3,7 +3,6 @@ import BasicOrderLine from '../../support/fragments/orders/basicOrderLine';
 import TestType from '../../support/dictionary/testTypes';
 import Orders from '../../support/fragments/orders/orders';
 import TopMenu from '../../support/fragments/topMenu';
-import SearchHelper from '../../support/fragments/finance/financeHelper';
 import OrdersHelper from '../../support/fragments/orders/ordersHelper';
 import NewInvoice from '../../support/fragments/invoices/newInvoice';
 import Organizations from '../../support/fragments/organizations/organizations';
@@ -53,7 +52,7 @@ describe('orders: Test PO filters', () => {
               });
             cy.visit(TopMenu.ordersPath);
             Orders.searchByParameter('PO number', orderNumber);
-            SearchHelper.selectFromResultsList();
+            Orders.selectFromResultsList(orderNumber);
             Orders.openOrder();
             Orders.closeThirdPane();
             Orders.resetFilters();
