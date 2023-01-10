@@ -60,23 +60,19 @@ describe('Notes', () => {
     NotesEholdings.deleteNote();
   });
 
-  it('C16993 Able to sort Notes accordion column headings (spitfire)', { tags: [TestTypes.criticalPath, DevTeams.spitfire] }, () => {
-    note.titleFirst = '1 Title';
-    note.titleSecond = '2 Title';
-
-    NotesEholdings.createNote(note.titleFirst, note.details);
-    NotesEholdings.createNote(note.titleSecond, note.details);
-
-    NotesEholdings.verifyDefaultSort(note.titleFirst, note.titleSecond, note.details);
-    NotesEholdings.verifySortingByTitle(note.titleFirst, note.titleSecond, note.details);
-
-    NotesEholdings.openNoteView(note.titleFirst, note.details);
-    NotesEholdings.deleteNote();
-    NotesEholdings.openNoteView(note.titleSecond, note.details);
+  it('C526 Notes: Can edit a note (spitfire)', { tags: [TestTypes.criticalPath, DevTeams.spitfire] }, () => {
+    const newNote = {
+      title: `Changed Title ${getRandomPostfix()}`,
+      details: `Changed details ${getRandomPostfix()}`,
+    }
+    NotesEholdings.createNote(note.title, note.details);
+    NotesEholdings.editNote(note.title, newNote.title, newNote.details);
+    NotesEholdings.verifyNoteTitle(newNote.title);
+    NotesEholdings.openNoteView(newNote.title);
     NotesEholdings.deleteNote();
   });
 
-  it('C1300 Delete a note (spitfire)', { tags: [TestTypes.criticalPath, DevTeams.spitfire] }, () => {
+  it('C528 Notes: Can delete notes (spitfire)', { tags: [TestTypes.criticalPath, DevTeams.spitfire] }, () => {
     NotesEholdings.createNote(note.title, note.details);
     NotesEholdings.verifyNoteCreation(note.title, note.details);
     NotesEholdings.openNoteView(note.title, note.details);
