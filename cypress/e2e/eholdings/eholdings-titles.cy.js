@@ -27,7 +27,7 @@ describe('eHoldings titles management', () => {
       permissions.uieHoldingsTitlesPackagesCreateDelete.gui
     ]).then(userProperties => {
       userId = userProperties.userId;
-      cy.login(userProperties.username, userProperties.password, { path: TopMenu.eholdingsPath, waiter: () => eHoldingsTitlesSearch.waitLoading() });
+      cy.login(userProperties.username, userProperties.password, { path: TopMenu.eholdingsPath, waiter: eHoldingsTitlesSearch.waitLoading });
       eHoldingSearch.switchToTitles();
       eHoldingsTitlesSearch.bySubject('chemical engineering');
       eHoldingsTitlesSearch.byPublicationType('Journal');
@@ -55,7 +55,7 @@ describe('eHoldings titles management', () => {
       permissions.uieHoldingsRecordsEdit.gui
     ]).then(userProperties => {
       userId = userProperties.userId;
-      cy.login(userProperties.username, userProperties.password, { path: TopMenu.eholdingsPath, waiter: () => eHoldingsTitlesSearch.waitLoading() });
+      cy.login(userProperties.username, userProperties.password, { path: TopMenu.eholdingsPath, waiter: eHoldingsTitlesSearch.waitLoading });
       eHoldingSearch.switchToTitles();
 
       // test related with special data from Ebsco
@@ -125,7 +125,7 @@ describe('eHoldings titles management', () => {
     ]).then(userProperties => {
       userId = userProperties.userId;
       eHoldingsPackages.getCustomPackageViaApi().then(packageName => {
-        cy.login(userProperties.username, userProperties.password, { path: TopMenu.eholdingsPath, waiter: () => eHoldingsTitlesSearch.waitLoading() });
+        cy.login(userProperties.username, userProperties.password, { path: TopMenu.eholdingsPath, waiter: eHoldingsTitlesSearch.waitLoading });
         eHoldingSearch.switchToTitles();
         const title = eHoldingsTitles.create(packageName);
         eHoldingsResourceView.checkNames(packageName, title);
