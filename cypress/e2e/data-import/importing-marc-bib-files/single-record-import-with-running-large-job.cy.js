@@ -47,9 +47,9 @@ describe('ui-data-import: Inventory single record import is not delayed when lar
   });
 
   after(() => {
-    Logs.cancelImportJob();
     Z3950TargetProfiles.changeOclcWorldCatToDefaultViaApi();
     Users.deleteViaApi(user.userId);
+    // TODO delete all instances
   });
 
   it('C356824 Inventory single record import is not delayed when large data import jobs are running (folijet)',
