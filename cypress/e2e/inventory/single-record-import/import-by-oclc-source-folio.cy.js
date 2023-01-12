@@ -73,6 +73,7 @@ describe('ui-inventory: import by OCLC', () => {
     InventoryInstance.verifyInstancePhisicalcyDescription(oclcRecordData.physicalDescription);
     InventoryInstance.verifyResourceIdentifier('ISBN', oclcRecordData.isbn1, 4);
     InventoryInstance.verifyResourceIdentifier('ISBN', oclcRecordData.isbn2, 5);
+    cy.wait(2000);
     InventoryInstance.verifyInstanceSubject(4, 0, oclcRecordData.subject);
     InventoryInstance.checkInstanceNotes(oclcRecordData.notes.noteType, oclcRecordData.notes.noteContent);
 
