@@ -64,6 +64,7 @@ describe('ui-inventory: import by OCLC', () => {
     InventoryInstance.waitInstanceRecordViewOpened(oclcRecordData.title);
     InventoryInstance.verifyLastUpdatedDate();
     InventoryInstance.verifyInstanceSource('MARC');
+    cy.wait(2000);
     InventoryInstance.verifyInstanceTitle(oclcRecordData.title);
     InventoryInstance.verifyInstanceLanguage(oclcRecordData.language);
     InventoryInstance.verifyInstancePublisher(0, 0, oclcRecordData.publisher);
