@@ -40,7 +40,7 @@ describe('ui-data-import: Match on POL and update related Instance, Holdings, It
     productId: '9782266111560',
     quantity: '1',
     price: '20',
-    barcode: '242451241241'
+    barcode: '242451241247'
   };
 
   const secondItem = {
