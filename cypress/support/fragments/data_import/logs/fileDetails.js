@@ -10,7 +10,6 @@ const invoiceNumberFromEdifactFile = '94999';
 
 const resultsList = MultiColumnList({ id:'search-results-list' });
 const jobSummaryTable = MultiColumnList({ id: 'job-summary-table' });
-const listRow = MultiColumnListRow({ indexRow: 'row-0' });
 
 const columnName = {
   srsMarc: resultsList.find(MultiColumnListHeader({ id:'list-column-srsmarcstatus' })),
@@ -56,9 +55,9 @@ const checkItemQuantityInSummaryTable = (quantity, row = 0) => {
     .exists());
 };
 
-const checkCreatedInvoiceISummaryTable = (quantity) => {
+const checkCreatedInvoiceISummaryTable = (quantity, row = 0) => {
   cy.expect(jobSummaryTable
-    .find(listRow)
+    .find(MultiColumnListRow({ indexRow: `row-${row}` }))
     .find(MultiColumnListCell({ columnIndex: 7, content: quantity }))
     .exists());
 };
