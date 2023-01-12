@@ -41,7 +41,7 @@ const tagsPane = Pane('Tags');
 const tagsButton = Button({ id: 'clickable-show-tags' });
 const tagsAccordionButton = instancesTagsSection.find(Button('Tags'));
 const emptyResultsMessage = 'Choose a filter or enter a search query to show results.';
-const browseButton = Button({ id: "mode-navigation-browse" });
+const browseButton = Button({ id: 'mode-navigation-browse' });
 
 const searchInstanceByHRID = (id) => {
   InventoryInstances.waitContentLoading();
@@ -219,6 +219,10 @@ export default {
       expect(elem.text()).to.include('Select a browse option');
     });
     cy.expect(browseSearchAndFilterInput.exists());
+  },
+
+  switchToBrowseTab() {
+    cy.do(Button({ id: 'mode-navigation-browse' }).click());
   },
 
   verifyCallNumberBrowseEmptyPane() {
