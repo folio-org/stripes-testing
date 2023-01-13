@@ -182,9 +182,6 @@ describe('Renewal', () => {
     cy.visit(TopMenu.usersPath);
     cy.intercept('GET', '/configurations/entries?*').as('getEntries');
     UsersSearchPane.searchByKeywords(userName);
-    cy.wait('@getEntries');
-    // wait few seconds, that the user will be displayed
-    cy.wait(2000);
     UsersCard.openLoans();
     UsersCard.showOpenedLoans();
     RenewalActions.renewAllLoans();
