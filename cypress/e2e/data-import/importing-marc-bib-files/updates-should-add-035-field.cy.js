@@ -17,12 +17,8 @@ import ActionProfiles from '../../../support/fragments/data_import/action_profil
 import NewMatchProfile from '../../../support/fragments/data_import/match_profiles/newMatchProfile';
 import MatchProfiles from '../../../support/fragments/data_import/match_profiles/matchProfiles';
 import NewJobProfile from '../../../support/fragments/data_import/job_profiles/newJobProfile';
-
-
-// import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
-// import InventoryViewSource from '../../../support/fragments/inventory/inventoryViewSource';
-// import Users from '../../../support/fragments/users/users';
-// import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
+import InstanceRecordView from '../../../support/fragments/inventory/instanceRecordView';
+import Users from '../../../support/fragments/users/users';
 
 describe('ui-data-import: Data Import Updates should add 035 field from 001/003, if it is not HRID or already exists', () => {
   let user = null;
@@ -36,6 +32,8 @@ describe('ui-data-import: Data Import Updates should add 035 field from 001/003,
   const secondMarcFileNameForCreate = `C358998 secondCreateAutotestFile.${getRandomPostfix()}.mrc`;
   const firstMarcFileNameForUpdate = `C358998 firstUpdateAutotestFile.${getRandomPostfix()}.mrc`;
   const secondMarcFileNameForUpdate = `C358998 secondUpdateAutotestFile.${getRandomPostfix()}.mrc`;
+  const firstFileNameAfterUpload = `C358998 firstFileNameAfterUpload.${getRandomPostfix()}.mrc`;
+  const secondFileNameAfterUpload = `C358998 secondFileNameAfterUpload.${getRandomPostfix()}.mrc`;
 
   // unique profile names
   const mappingProfileName = `C358998 Update instance via 999$i match and check 001, 003, 035 ${getRandomPostfix()}`;
@@ -78,7 +76,8 @@ describe('ui-data-import: Data Import Updates should add 035 field from 001/003,
       permissions.settingsDataImportEnabled.gui,
       permissions.inventoryAll.gui,
       permissions.uiInventoryViewCreateEditInstances.gui,
-      permissions.uiQuickMarcQuickMarcBibliographicEditorView.gui
+      permissions.uiQuickMarcQuickMarcBibliographicEditorView.gui,
+      permissions.remoteStorageView.gui
     ])
       .then(userProperties => {
         user = userProperties;
@@ -87,13 +86,27 @@ describe('ui-data-import: Data Import Updates should add 035 field from 001/003,
       });
   });
 
-  //   after(() => {
-  //     Users.deleteViaApi(user.userId);
-  //   });
+  after(() => {
+    // delete profiles
+    JobProfiles.deleteJobProfile(jobProfileName);
+    MatchProfiles.deleteMatchProfile(matchProfileName);
+    ActionProfiles.deleteActionProfile(actionProfileName);
+    FieldMappingProfiles.deleteFieldMappingProfile(mappingProfileName);
+
+    cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${firstInstanceHrid}"` })
+      .then((instance) => {
+        InventoryInstance.deleteInstanceViaApi(instance.id);
+      });
+    cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${secondInstanceHrid}"` })
+      .then((instance) => {
+        InventoryInstance.deleteInstanceViaApi(instance.id);
+      });
+    Users.deleteViaApi(user.userId);
+  });
 
   it('C358998 Data Import Updates should add 035 field from 001/003, if it is not HRID or already exists (folijet)', { tags: [TestTypes.smoke, DevTeams.folijet] }, () => {
     // upload .mrc file
-    DataImport.uploadFile('', firstMarcFileNameForCreate);
+    DataImport.uploadFile('marcFileForC358998ForCreate_1.mrc', firstMarcFileNameForCreate);
     JobProfiles.searchJobProfileForImport('Default - Create instance and SRS MARC Bib');
     JobProfiles.runImportFile();
     JobProfiles.waitFileIsImported(firstMarcFileNameForCreate);
@@ -106,23 +119,23 @@ describe('ui-data-import: Data Import Updates should add 035 field from 001/003,
     FileDetails.checkSrsRecordQuantityInSummaryTable('1');
     FileDetails.checkInstanceQuantityInSummaryTable('1');
 
-    FileDetails.openInstanceInInventory('Updated');
+    FileDetails.openInstanceInInventory('Created');
     InventoryInstance.getAssignedHRID().then(initialInstanceHrId => { firstInstanceHrid = initialInstanceHrId; });
     InventoryInstance.viewSource();
-    // change file step
+    // changing the first file
     InventoryViewSource.extructDataFrom999Field()
       .then(uuid => {
         // change file using uuid for 999 field
         DataImport.editMarcFile(
-          '',
+          'marcFileForC358998ForUpdate_1.mrc',
           firstMarcFileNameForUpdate,
-          ['srsUuid', 'instanceUuid', 'instanceHrid'],
+          ['srsUuid', 'instanceUuid', '303845'],
           [uuid[0], uuid[1], firstInstanceHrid]
         );
       });
     // upload .mrc file
     cy.visit(TopMenu.dataImportPath);
-    DataImport.uploadFile('', secondMarcFileNameForCreate);
+    DataImport.uploadFile('marcFileForC358998ForCreate_2.mrc', secondMarcFileNameForCreate);
     JobProfiles.searchJobProfileForImport('Default - Create instance and SRS MARC Bib');
     JobProfiles.runImportFile();
     JobProfiles.waitFileIsImported(secondMarcFileNameForCreate);
@@ -135,10 +148,10 @@ describe('ui-data-import: Data Import Updates should add 035 field from 001/003,
     FileDetails.checkSrsRecordQuantityInSummaryTable('1');
     FileDetails.checkInstanceQuantityInSummaryTable('1');
 
-    FileDetails.openInstanceInInventory('Updated');
+    FileDetails.openInstanceInInventory('Created');
     InventoryInstance.getAssignedHRID().then(initialInstanceHrId => { secondInstanceHrid = initialInstanceHrId; });
     InventoryInstance.viewSource();
-    // change file step
+    // changing the second file
     InventoryViewSource.extructDataFrom999Field()
       .then(uuid => {
         // change file using uuid for 999 field
@@ -175,17 +188,42 @@ describe('ui-data-import: Data Import Updates should add 035 field from 001/003,
     JobProfiles.createJobProfileWithLinkingProfiles(jobProfile, actionProfileName, matchProfileName);
     JobProfiles.checkJobProfilePresented(jobProfile.profileName);
 
-    // upload a marc file for updating already created instance
+    // upload a marc file for updating already created first instance
     cy.visit(TopMenu.dataImportPath);
-    DataImport.uploadFile(editedMarcFileName, fileNameAfterUpload);
+    DataImport.uploadFile(firstMarcFileNameForUpdate, firstFileNameAfterUpload);
     JobProfiles.searchJobProfileForImport(jobProfile.profileName);
     JobProfiles.runImportFile();
-    JobProfiles.waitFileIsImported(fileNameAfterUpload);
+    JobProfiles.waitFileIsImported(firstFileNameAfterUpload);
     Logs.checkStatusOfJobProfile('Completed');
-    Logs.openFileDetails(fileNameAfterUpload);
+    Logs.openFileDetails(firstFileNameAfterUpload);
     FileDetails.checkStatusInColumn(FileDetails.status.updated, FileDetails.columnName.srsMarc);
     FileDetails.checkStatusInColumn(FileDetails.status.updated, FileDetails.columnName.instance);
     FileDetails.checkSrsRecordQuantityInSummaryTable('1', '1');
     FileDetails.checkInstanceQuantityInSummaryTable('1', '1');
+    // open Instance in the Inventory
+    FileDetails.openInstanceInInventory('Updated');
+    InstanceRecordView.verifyInstanceStatusTerm('batch');
+    InstanceRecordView.verifyStatisticalCode('ARL (Collection stats)');
+    InventoryInstance.viewSource();
+    InventoryViewSource.contains('001\t');
+    InventoryViewSource.contains(firstInstanceHrid);
+    InventoryViewSource.notContains('003\t');
+    InventoryViewSource.contains('035\t');
+    InventoryViewSource.contains('(LTSCA)303845');
+
+    // upload a marc file for updating already created second instance
+    cy.visit(TopMenu.dataImportPath);
+    DataImport.uploadFile(secondMarcFileNameForUpdate, secondFileNameAfterUpload);
+    JobProfiles.searchJobProfileForImport(jobProfile.profileName);
+    JobProfiles.runImportFile();
+    JobProfiles.waitFileIsImported(secondFileNameAfterUpload);
+    Logs.checkStatusOfJobProfile('Completed');
+    Logs.openFileDetails(secondFileNameAfterUpload);
+    FileDetails.checkStatusInColumn(FileDetails.status.updated, FileDetails.columnName.srsMarc);
+    FileDetails.checkStatusInColumn(FileDetails.status.updated, FileDetails.columnName.instance);
+    FileDetails.checkSrsRecordQuantityInSummaryTable('1', '1');
+    FileDetails.checkInstanceQuantityInSummaryTable('1', '1');
+    // open Instance in the Inventory
+    FileDetails.openInstanceInInventory('Updated');
   });
 });
