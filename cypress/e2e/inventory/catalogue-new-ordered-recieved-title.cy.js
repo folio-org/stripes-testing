@@ -30,15 +30,17 @@ describe('orders: Receive piece from Order', () => {
     InventoryInteractionsDefaults
       .getConfigurationInventoryInteractions({ query: '(module==ORDERS and configName==approvals)' })
       .then((body) => {
-        const id = body.configs[0].id;
+        if (body.configs.length !== 0) {
+          const id = body.configs[0].id;
 
-        InventoryInteractionsDefaults.setConfigurationInventoryInteractions({
-          id,
-          module:'ORDERS',
-          configName:'approvals',
-          enabled:true,
-          value:'{"isApprovalRequired":false}'
-        });
+          InventoryInteractionsDefaults.setConfigurationInventoryInteractions({
+            id,
+            module:'ORDERS',
+            configName:'approvals',
+            enabled:true,
+            value:'{"isApprovalRequired":false}'
+          });
+        }
       });
     Organizations.getOrganizationViaApi({ query: `name=${companyName}` })
       .then(organization => {
@@ -80,10 +82,8 @@ describe('orders: Receive piece from Order', () => {
     Receiving.selectFromResultsList(instanceTitle);
     Receiving.receivePiece(0, caption, barcode);
     Receiving.checkReceivedPiece(0, caption, barcode);
-
     cy.visit(TopMenu.checkInPath);
     CheckInActions.checkInItem(barcode);
-
     cy.visit(TopMenu.inventoryPath);
     InventorySearchAndFilter.instanceTabIsDefault();
     InventorySearchAndFilter.verifyKeywordsAsDefault();
