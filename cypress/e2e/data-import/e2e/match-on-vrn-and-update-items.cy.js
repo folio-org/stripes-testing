@@ -53,7 +53,7 @@ describe('ui-data-import: Match on VRN and update related Instance, Holdings, It
   const instanceMatchProfileName = `C350591 Match for Instance ${Helper.getRandomBarcode()}`;
   const holdingsMatchProfileName = `C350591 Match for Holdings ${Helper.getRandomBarcode()}`;
   const itemMatchProfileName = `C350591 Match for Item ${Helper.getRandomBarcode()}`;
-  const editedMarcFileName = `C350591 marcFileForC350591.${getRandomPostfix()}.mrc`;
+  const editedMarcFileName = `marcFileForC350591.${getRandomPostfix()}.mrc`;
 
   const matchProfiles = [
     {

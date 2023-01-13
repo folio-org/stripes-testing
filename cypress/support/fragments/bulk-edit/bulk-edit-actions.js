@@ -9,6 +9,7 @@ import {
   MultiColumnListHeader,
   MultiColumnListCell,
   TextField,
+  RepeatableFieldItem,
 } from '../../../../interactors';
 
 const actionsBtn = Button('Actions');
@@ -47,9 +48,9 @@ export default {
   verifyBulkEditForm() {
     getBulkEditSelectType().select('Email');
     cy.expect([
-      Button({ icon: 'plus-sign'}).exists(),
+      Button({ icon: 'plus-sign' }).exists(),
       Button({ icon: 'trash', disabled: true }).exists(),
-    ])
+    ]);
   },
 
   verifyAreYouSureForm(count, cellContent) {
@@ -64,6 +65,10 @@ export default {
 
   clickKeepEditingBtn() {
     cy.do(areYouSureForm.find(keepEditingBtn).click());
+  },
+
+  clickX() {
+    cy.do(Modal().find(Button({ icon: 'times' })).click());
   },
 
   openActions() {
@@ -90,6 +95,10 @@ export default {
     cy.do(Button('Cancel').click());
   },
 
+  replaceWithIsDisabled() {
+    cy.expect(HTML('Replace with').is({ disabled: true }));
+  },
+
   replaceTemporaryLocation(location = 'Annex', type = 'item') {
     getBulkEditSelectType().select(`Temporary ${type} location`);
     getLocationSelect().select('Replace with');
@@ -104,6 +113,18 @@ export default {
     getLocationSelect().select('Replace with');
     cy.do(Button('Select control\nSelect location').click());
     cy.get('[class^=selectionFilter-]').type(location);
+  },
+
+  addNewBulkEditFilterString() {
+    cy.do(plusBtn.click());
+  },
+
+  replaceSecondPermanentLocation(location = 'Annex', type = 'item') {
+    cy.get('select').eq(3).select(`Permanent ${type} location`);
+    cy.do([
+      RepeatableFieldItem({ index: 1 }).find(Button('Select control\nSelect location')).click(),
+      SelectionOption(including(location)).click(),
+    ]);
   },
 
   fillPatronGroup(group = 'staff (Staff Member)') {
@@ -271,12 +292,12 @@ export default {
   },
 
   verifyCheckedDropdownMenuItem() {
-    cy.do(dropdownMenu.find(Checkbox({ name: 'firstName'})).click());
+    cy.do(dropdownMenu.find(Checkbox({ name: 'firstName' })).click());
     cy.expect(MultiColumnListHeader('First name').absent());
   },
 
   verifyUncheckedDropdownMenuItem() {
-    cy.do(dropdownMenu.find(Checkbox({ name: 'email'})).click());
+    cy.do(dropdownMenu.find(Checkbox({ name: 'email' })).click());
     cy.expect(MultiColumnListHeader('Email').exists());
   },
 

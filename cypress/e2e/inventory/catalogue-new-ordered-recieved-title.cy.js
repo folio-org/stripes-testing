@@ -12,6 +12,7 @@ import OrdersHelper from '../../support/fragments/orders/ordersHelper';
 import CheckInActions from '../../support/fragments/check-in-actions/checkInActions';
 import Organizations from '../../support/fragments/organizations/organizations';
 import ItemView from '../../support/fragments/inventory/inventoryItem/itemView';
+import InventoryInteractionsDefaults from '../../support/fragments/settings/orders/inventoryInteractionsDefaults';
 
 describe('orders: Receive piece from Order', () => {
   const order = { ...NewOrder.defaultOneTimeOrder };
@@ -26,6 +27,21 @@ describe('orders: Receive piece from Order', () => {
 
   before(() => {
     cy.getAdminToken();
+    InventoryInteractionsDefaults
+      .getConfigurationInventoryInteractions({ query: '(module==ORDERS and configName==approvals)' })
+      .then((body) => {
+        if (body.configs.length !== 0) {
+          const id = body.configs[0].id;
+
+          InventoryInteractionsDefaults.setConfigurationInventoryInteractions({
+            id,
+            module:'ORDERS',
+            configName:'approvals',
+            enabled:true,
+            value:'{"isApprovalRequired":false}'
+          });
+        }
+      });
     Organizations.getOrganizationViaApi({ query: `name=${companyName}` })
       .then(organization => {
         order.vendor = organization.id;
@@ -66,10 +82,8 @@ describe('orders: Receive piece from Order', () => {
     Receiving.selectFromResultsList(instanceTitle);
     Receiving.receivePiece(0, caption, barcode);
     Receiving.checkReceivedPiece(0, caption, barcode);
-
     cy.visit(TopMenu.checkInPath);
     CheckInActions.checkInItem(barcode);
-
     cy.visit(TopMenu.inventoryPath);
     InventorySearchAndFilter.instanceTabIsDefault();
     InventorySearchAndFilter.verifyKeywordsAsDefault();

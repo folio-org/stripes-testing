@@ -88,7 +88,7 @@ const openHoldings = (...holdingToBeOpened) => {
 };
 const verifyInstanceTitle = (title) => {
   // don't have elem on page for waiter
-  cy.wait(2000);
+  cy.wait(3000);
   cy.expect(Pane({ titleLabel: including(title) }).exists());
 };
 const verifyInstanceSource = (sourceValue) => cy.expect(source.has({ value: sourceValue }));
@@ -214,19 +214,16 @@ export default {
     cy.wait('@getItems');
     cy.do(Accordion(accordionHeader).clickHeader());
 
-    cy.expect(Accordion(accordionHeader)
-      .find(MultiColumnListRow({ indexRow: indexRowNumber }))
-      .find(MultiColumnListCell({ content: barcode })).exists());
-    cy.expect(Accordion(accordionHeader)
-      .find(MultiColumnListRow({ rowNumber }))
-      .find(MultiColumnListCell({ content: caption })).exists());
-    cy.expect(Accordion(accordionHeader)
-      .find(MultiColumnListRow({ indexRow: indexRowNumber }))
-      .find(MultiColumnListCell({ content: status })).exists());
+    const row = Accordion(accordionHeader).find(MultiColumnListRow({ indexRow: indexRowNumber }));
+
+    cy.expect([
+      row.find(MultiColumnListCell({ content: barcode })).exists(),
+      row.find(MultiColumnListCell({ content: caption })).exists(),
+      row.find(MultiColumnListCell({ content: status })).exists(),
+    ]);
+
     if (effectiveLocation) {
-      cy.expect(Accordion(accordionHeader)
-        .find(MultiColumnListRow({ indexRow: indexRowNumber }))
-        .find(MultiColumnListCell({ content: effectiveLocation })).exists());
+      cy.expect(row.find(MultiColumnListCell({ content: effectiveLocation })).exists());
     }
   },
 
@@ -254,6 +251,7 @@ export default {
       moveItemsButton.click()
     ]);
   },
+
   moveHoldingsToAnotherInstance:(newInstanceHrId) => {
     cy.do(actionsButton.click());
     cy.do(moveHoldingsToAnotherInstanceButton.click());
