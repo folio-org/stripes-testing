@@ -1,4 +1,3 @@
-/* eslint-disable cypress/no-unnecessary-waiting */
 import uuid from 'uuid';
 import moment from 'moment';
 import TestType from '../../support/dictionary/testTypes';
@@ -180,7 +179,6 @@ describe('Renewal', () => {
 
   it('C567: Renewal: success, from open loans (multiple items) (prokopovych)', { tags: [TestType.smoke, DevTeams.prokopovych] }, () => {
     cy.visit(TopMenu.usersPath);
-    cy.intercept('GET', '/configurations/entries?*').as('getEntries');
     UsersSearchPane.searchByKeywords(userName);
     UsersCard.openLoans();
     UsersCard.showOpenedLoans();
