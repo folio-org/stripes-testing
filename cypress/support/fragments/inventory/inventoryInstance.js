@@ -88,7 +88,7 @@ const openHoldings = (...holdingToBeOpened) => {
 };
 const verifyInstanceTitle = (title) => {
   // don't have elem on page for waiter
-  cy.wait(2000);
+  cy.wait(3000);
   cy.expect(Pane({ titleLabel: including(title) }).exists());
 };
 const verifyInstanceSource = (sourceValue) => cy.expect(source.has({ value: sourceValue }));

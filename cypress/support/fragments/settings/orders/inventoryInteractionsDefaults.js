@@ -4,6 +4,7 @@ export default {
       method: 'PUT',
       path: `configurations/entries/${body.id}`,
       body,
+      isDefaultSearchParamsRequired: false
     });
   },
 
