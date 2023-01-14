@@ -260,7 +260,7 @@ describe('ui-inventory: Item status date updates', () => {
     openUser(userName);
     UserLoans.renewItem(itemBarcode);
     RenewConfirmationModal.confirmRenewOverrideItem();
-    // OverrideAndRenewModal.confirmOverrideItem();
+    OverrideAndRenewModal.confirmOverrideItem();
     // openItem(instanceTitle, effectiveLocation.name, itemBarcode);
     // fullCheck(ItemView.itemStatuses.checkedOut);
 

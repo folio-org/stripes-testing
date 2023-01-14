@@ -286,7 +286,9 @@ export default {
       .exists());
   },
   openItemView: (itemBarcode) => {
+    cy.wait(5000);
     cy.do(Link(including(itemBarcode)).click());
+    cy.wait(5000);
     ItemView.waitLoading();
   },
   openEditItemPage() {
