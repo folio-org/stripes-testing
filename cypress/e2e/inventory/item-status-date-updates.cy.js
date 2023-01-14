@@ -261,8 +261,8 @@ describe('ui-inventory: Item status date updates', () => {
     UserLoans.renewItem(itemBarcode);
     RenewConfirmationModal.confirmRenewOverrideItem();
     OverrideAndRenewModal.confirmOverrideItem();
-    // openItem(instanceTitle, effectiveLocation.name, itemBarcode);
-    // fullCheck(ItemView.itemStatuses.checkedOut);
+    openItem(instanceTitle, effectiveLocation.name, itemBarcode);
+    fullCheck(ItemView.itemStatuses.checkedOut);
 
     // // edit item record so that it has multiple pieces
     // InventoryInstance.openEditItemPage();
