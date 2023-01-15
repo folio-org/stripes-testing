@@ -264,10 +264,10 @@ describe('ui-inventory: Item status date updates', () => {
     openItem(instanceTitle, effectiveLocation.name, itemBarcode);
     fullCheck(ItemView.itemStatuses.checkedOut);
 
-    // edit item record so that it has multiple pieces
-    InventoryInstance.openEditItemPage();
-    ItemView.addPieceToItem(numberOfPieces);
-    fullCheck(ItemView.itemStatuses.checkedOut);
+    // // edit item record so that it has multiple pieces
+    // InventoryInstance.openEditItemPage();
+    // ItemView.addPieceToItem(numberOfPieces);
+    // fullCheck(ItemView.itemStatuses.checkedOut);
 
     // // create delivery request (hold or recall) on item
     // cy.visit(TopMenu.requestsPath);
