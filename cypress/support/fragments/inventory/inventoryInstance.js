@@ -44,7 +44,7 @@ const notesSection = Section({ id: 'instance-details-notes' });
 const moveItemsButton = Button({ id: 'move-instance-items' });
 const instanceDetailsPane = Pane({ id:'pane-instancedetails' });
 const identifiersAccordion = Accordion('Identifiers');
-const singleRecordImportModal = Modal('Single record import');
+const singleRecordImportModal = Modal('Overlay source bibliographic record');
 const source = KeyValue('Source');
 const tagButton = Button({ icon: 'tag' });
 const closeTag = Button({ icon: 'times' });
@@ -125,6 +125,7 @@ const checkInstanceNotes = (noteType, noteContent) => {
 };
 
 const waitInstanceRecordViewOpened = (title) => {
+  // need to wait untill updated instance will be displayed
   cy.expect(Pane({ id:'pane-instancedetails' }).exists());
   cy.expect(Pane({ titleLabel: including(title) }).exists());
 };
