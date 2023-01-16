@@ -16,7 +16,6 @@ import InventoryHoldings from '../../support/fragments/inventory/holdings/invent
 
 const successCalloutMessage = '1 holding has been successfully moved.';
 let firstHolding = '';
-let secondHolding = '';
 let userId;
 let source;
 const item = {
