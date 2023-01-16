@@ -109,7 +109,7 @@ describe('ui-data-import: Check that protected fields in incoming records are no
     InventoryEditMarcRecord.editField('$t Dalton (Cambridge, England) $x 1470-479X $w (DLC)   00252543 $w (OCoLC)44000666 5', '70');
     InventoryEditMarcRecord.saveAndClose();
     InventoryInstance.startOverlaySourceBibRecord();
-    InventoryInstance.singleRecordImportModalIsPresented();
+    InventoryInstance.singleOverlaySourceBibRecordModalIsPresented();
     InventoryInstance.importWithOclc(oclcForImport);
     InventoryInstance.checkCalloutMessage(`Updated record ${oclcForImport}`);
     // check fields is presented in .mrc file
