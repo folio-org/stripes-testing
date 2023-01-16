@@ -118,7 +118,7 @@ describe('circulation-log', () => {
     SearchPane.resetResults();
   });
 
-  it.only('C15485 Filter circulation log on user barcode (firebird)', { tags: [TestTypes.smoke, devTeams.firebird] }, () => {
+  it('C15485 Filter circulation log on user barcode (firebird)', { tags: [TestTypes.smoke, devTeams.firebird] }, () => {
     const userBarcode = Cypress.env('users')[0].barcode;
 
     SearchPane.searchByUserBarcode(userBarcode);
