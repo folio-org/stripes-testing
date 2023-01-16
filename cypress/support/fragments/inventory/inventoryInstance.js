@@ -50,6 +50,7 @@ const tagButton = Button({ icon: 'tag' });
 const closeTag = Button({ icon: 'times' });
 const tagsPane = Pane('Tags');
 const textFieldTagInput = MultiSelect({ ariaLabelledby:'accordion-toggle-button-tag-accordion' });
+const descriptiveDataAccordion = Accordion('Descriptive data');
 
 const instanceHRID = 'Instance HRID';
 const validOCLC = { id:'176116217',

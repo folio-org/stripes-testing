@@ -59,7 +59,6 @@ describe('inventory', () => {
               })
               .then(() => {
                 firstHolding = Cypress.env('locations')[0].name;
-                secondHolding = Cypress.env('locations')[1].name;
                 cy.createInstance({
                   instance: {
                     instanceTypeId: Cypress.env('instanceTypes')[0].id,
@@ -94,11 +93,11 @@ describe('inventory', () => {
           });
       });
 
-    // after('delete test data', () => {
-    //     InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(item.ITEM_BARCODE);
-    //     InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(secondItem.ITEM_BARCODE);
-    //     Users.deleteViaApi(userId);
-    // })
+    after('delete test data', () => {
+        InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(item.ITEM_BARCODE);
+        InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(secondItem.ITEM_BARCODE);
+        Users.deleteViaApi(userId);
+    })
 
     it('C15187 Move some items with in a holdings record to another holdings associated with another instance', { tags: [TestTypes.criticalPath, devTeams.firebird] }, () => {
         InventorySearchAndFilter.switchToItem();
