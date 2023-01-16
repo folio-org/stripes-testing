@@ -92,9 +92,9 @@ export default {
       .then(() => {
         cy.getLoanTypes({ limit: 1 });
         cy.getMaterialTypes({ limit: 1 });
-        cy.getLocations({ limit: 1 });
-        cy.getHoldingTypes({ limit: 1 });
-        InventoryHoldings.getHoldingSources({ limit: 1 }).then(holdingSources => {
+        cy.getLocations({ limit: 2 });
+        cy.getHoldingTypes({ limit: 2 });
+        InventoryHoldings.getHoldingSources({ limit: 2 }).then(holdingSources => {
           holdingSourceId = holdingSources[0].id;
           cy.getInstanceTypes({ limit: 1 });
           cy.getAlternativeTitlesTypes({ limit: 1, query: 'name="Uniform title"' }).then(titleTypes => {
@@ -117,6 +117,11 @@ export default {
           holdings: [{
             holdingsTypeId: Cypress.env('holdingsTypes')[0].id,
             permanentLocationId: Cypress.env('locations')[0].id,
+            sourceId: holdingSourceId,
+          },
+          {
+            holdingsTypeId: Cypress.env('holdingsTypes')[1].id,
+            permanentLocationId: Cypress.env('locations')[1].id,
             sourceId: holdingSourceId,
           }],
           items: [
