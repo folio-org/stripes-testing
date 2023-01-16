@@ -33,7 +33,9 @@ export default {
 
   patronBlocksAccordionCovered() {
     cy.expect([
-      Section({ id: 'patronBlocksSection' }).find(Button({ id: 'accordion-toggle-button-patronBlocksSection' })).has({ ariaExpanded: 'false' })
+      Section({ id: 'patronBlocksSection' })
+        .find(Button({ id: 'accordion-toggle-button-patronBlocksSection' }))
+        .has({ ariaExpanded: 'false' })
     ]);
   },
 
@@ -52,9 +54,7 @@ export default {
   },
 
   createPatronBlock() {
-    cy.do([
-      Button({ id: 'create-patron-block' }).click()
-    ]);
+    cy.do(Button({ id: 'create-patron-block' }).click());
   },
 
   createAndSaveNewPatronBlock(text) {
