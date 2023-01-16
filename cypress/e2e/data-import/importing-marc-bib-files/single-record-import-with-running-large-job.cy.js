@@ -72,7 +72,7 @@ describe('ui-data-import: Inventory single record import is not delayed when lar
       cy.visit(TopMenu.inventoryPath);
       InventoryInstances.importWithOclc(oclcForImport);
       InventoryInstance.startOverlaySourceBibRecord();
-      InventoryInstance.singleRecordImportModalIsPresented();
+      InventoryInstance.singleOverlaySourceBibRecordModalIsPresented();
       InventoryInstance.importWithOclc(oclcForUpdating);
       InventoryInstance.checkCalloutMessage(`Updated record ${oclcForUpdating}`);
 
