@@ -12,6 +12,7 @@ import Logs from '../../../support/fragments/data_import/logs/logs';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
 import Users from '../../../support/fragments/users/users';
+import { getLongDelay } from '../../../support/utils/cypressTools';
 
 describe('ui-data-import: Inventory single record import is not delayed when large data import jobs are running', () => {
   let user = {};
@@ -70,7 +71,9 @@ describe('ui-data-import: Inventory single record import is not delayed when lar
       Logs.checkFileIsRunning(fileName);
 
       cy.visit(TopMenu.inventoryPath);
+      cy.intercept('/users?*').as('getUsers');
       InventoryInstances.importWithOclc(oclcForImport);
+      cy.wait('@getUsers', getLongDelay());
       InventoryInstance.startOverlaySourceBibRecord();
       InventoryInstance.singleOverlaySourceBibRecordModalIsPresented();
       InventoryInstance.importWithOclc(oclcForUpdating);
