@@ -45,16 +45,11 @@ const moveItemsButton = Button({ id: 'move-instance-items' });
 const instanceDetailsPane = Pane({ id:'pane-instancedetails' });
 const identifiersAccordion = Accordion('Identifiers');
 const singleRecordImportModal = Modal('Single record import');
-const confirmMoveModal = Modal('Confirm move');
-const moveFromInstanceDualPage = Section({ id: 'movement-from-instance-details' });
-const moveToInstanceDualPage = Section({ id: 'movement-to-instance-details' });
 const source = KeyValue('Source');
 const tagButton = Button({ icon: 'tag' });
 const closeTag = Button({ icon: 'times' });
 const tagsPane = Pane('Tags');
 const textFieldTagInput = MultiSelect({ ariaLabelledby:'accordion-toggle-button-tag-accordion' });
-const descriptiveDataAccordion = Accordion('Descriptive data');
-let moveToButtons;
 
 const instanceHRID = 'Instance HRID';
 const validOCLC = { id:'176116217',
@@ -249,11 +244,6 @@ export default {
     ]);
   },
 
-  moveItemsToAnotherInstance(instanceName) {
-      moveToButtons = cy.do(moveFromInstanceDualPage.filter(Accordion({ label: including('Holdings: ') }).find(Dropdown({ label: 'Move to' })))),
-      cy.do(moveToButtons.foreEach(element => element.choose(including(instanceName))))
-  },
-
   openMoveItemsWithinAnInstance: () => {
     return cy.do([
       actionsButton.click(),
@@ -269,13 +259,13 @@ export default {
     InventoryInstanceSelectInstanceModal.selectInstance();
     InventoryInstancesMovement.move();
   },
-  moveHoldingsToAnotherInstanceByItemTitle: (title) => {
+  moveHoldingsToAnotherInstanceByItemTitle: (holdingName, title) => {
     cy.do(actionsButton.click());
     cy.do(moveHoldingsToAnotherInstanceButton.click());
     InventoryInstanceSelectInstanceModal.waitLoading();
     InventoryInstanceSelectInstanceModal.searchByTitle(title)
     InventoryInstanceSelectInstanceModal.selectInstance();
-    InventoryInstancesMovement.move();
+    InventoryInstancesMovement.moveFromMultiple(holdingName);
   },
   checkAddItem:(holdingsRecrodId) => {
     cy.expect(section.find(Section({ id:holdingsRecrodId }))
@@ -404,10 +394,6 @@ export default {
   importWithOclc:(oclc) => {
     cy.do(singleRecordImportModal.find(TextField({ name:'externalIdentifier' })).fillIn(oclc));
     cy.do(singleRecordImportModal.find(Button('Import')).click());
-  },
-
-  confirmMove:() => {
-    cy.do(confirmMoveModal.find(Button('Continue')).click());
   },
 
   checkCalloutMessage: (text, calloutType = calloutTypes.success) => {

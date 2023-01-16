@@ -49,10 +49,10 @@ describe('ui-inventory: search', () => {
     });
   });
 
-  // afterEach('Deleting user and instance', () => {
-  //   InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(item.itemBarcode);
-  //   Users.deleteViaApi(testData.user.userId);
-  // });
+  afterEach('Deleting user and instance', () => {
+    InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(item.itemBarcode);
+    Users.deleteViaApi(testData.user.userId);
+  });
 
   it('C358140 Verify that browsing for "call number" with "space" value will get the correct result (spitfire)', { tags: [DevTeams.spitfire, TestTypes.smoke] }, () => {
     search(testData.exactSearch);
