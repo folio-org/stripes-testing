@@ -381,7 +381,7 @@ export default {
     cy.expect(HTML('MARC bibliographic record').exists());
   },
 
-  singleRecordImportModalIsPresented:() => {
+  singleOverlaySourceBibRecordModalIsPresented:() => {
     cy.expect(singleRecordImportModal.exists());
   },
 
