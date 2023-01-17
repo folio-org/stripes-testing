@@ -34,8 +34,8 @@ const closeDetailView = () => {
   cy.do(Button({ icon: 'times' }).click());
 };
 
-const dismissFromPaneHeader = () => {
-  cy.do(PaneHeader.find(Button({ ariaLabel: 'Close ' })).click());
+const dismiss = () => {
+  cy.do(Button({ ariaLabel: 'Close ' }).click());
 };
 
 const verifyItemStatus = (itemStatus) => {
@@ -47,7 +47,7 @@ export default {
   waitLoading,
   closeDetailView,
   verifyItemStatus,
-  dismissFromPaneHeader,
+  dismiss,
 
   verifyUpdatedItemDate:() => {
     cy.do(loanAccordion.find(KeyValue('Item status')).perform(element => {
