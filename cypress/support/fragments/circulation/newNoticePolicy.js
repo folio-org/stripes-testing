@@ -11,6 +11,7 @@ import {
   Heading,
   PaneSet,
   KeyValue,
+  TextField
 } from '../../../../interactors';
 
 const actionsButton = Button('Actions');
@@ -67,6 +68,26 @@ export default {
       Select({ name: `${patronNoticePolicy.noticeId}Notices[${index}].sendOptions.sendWhen` }).choose(patronNoticePolicy.action),
     ]);
     // add check for alert "div[role=alert]" 'Always sent at the end of a session and loans are bundled into a single notice for each patron.'
+  },
+
+  addFeeFineNotice(patronNoticePolicy, index = 0) {
+    this.addNotice(patronNoticePolicy, index);
+    if (patronNoticePolicy.send !== undefined) {
+      cy.do(Select({ name: `${patronNoticePolicy.noticeId}Notices[${index}].sendOptions.sendHow` }).choose(patronNoticePolicy.send));
+      if (patronNoticePolicy.send === 'After') {
+        cy.do([
+          TextField({ name: `${patronNoticePolicy.noticeId}Notices[${index}].sendOptions.sendBy.duration` }).fillIn(patronNoticePolicy.sendBy.duration),
+          Select({ name: `${patronNoticePolicy.noticeId}Notices[${index}].sendOptions.sendBy.intervalId` }).choose(patronNoticePolicy.sendBy.interval),
+          Select({ name: `${patronNoticePolicy.noticeId}Notices[${index}].frequency` }).choose(patronNoticePolicy.frequency),
+        ]);
+        if (patronNoticePolicy.frequency === 'Recurring') {
+          cy.do([
+            TextField({ name: `${patronNoticePolicy.noticeId}Notices[${index}].sendOptions.sendEvery.duration` }).fillIn(patronNoticePolicy.sendEvery.duration),
+            Select({ name: `${patronNoticePolicy.noticeId}Notices[${index}].sendOptions.sendEvery.intervalId` }).choose(patronNoticePolicy.sendEvery.interval),
+          ]);
+        }
+      }
+    }
   },
 
   check: (patronNoticePolicy) => {
