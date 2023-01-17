@@ -1,5 +1,3 @@
-/// <reference types="cypress" />
-
 import TopMenu from '../../support/fragments/topMenu';
 import InventoryActions from '../../support/fragments/inventory/inventoryActions';
 import InventoryInstance from '../../support/fragments/inventory/inventoryInstance';
@@ -15,7 +13,6 @@ import Users from '../../support/fragments/users/users';
 import DevTeams from '../../support/dictionary/devTeams';
 import Z3950TargetProfiles from '../../support/fragments/settings/inventory/z39.50TargetProfiles';
 
-// TODO: redesign test to exclude repeated steps
 describe('Manage inventory Bib records with quickMarc editor', () => {
   let userId;
   const quickmarcEditor = new QuickMarcEditor(InventoryInstance.validOCLC);
@@ -155,7 +152,7 @@ describe('Manage inventory Bib records with quickMarc editor', () => {
       });
   });
 
-  it('C353612 Verify "LDR" validation rules with invalid data for editable and non-editable positions when editing/deriving record (spitfire)', { tags: [testTypes.smoke, DevTeams.spitfire, features.quickMarcEditor] }, () => {
+  it('C353612 Verify "LDR" validation rules with invalid data for editable (06, 07) and non-editable positions when editing/deriving record (spitfire)', { tags: [testTypes.smoke, DevTeams.spitfire, features.quickMarcEditor] }, () => {
     const checkLdrErrors = () => {
       const initialLDRValue = InventoryInstance.validOCLC.ldrValue;
       const positions6Error = 'Record cannot be saved. Please enter a valid Leader 06. Valid values are listed at https://loc.gov/marc/bibliographic/bdleader.html';
