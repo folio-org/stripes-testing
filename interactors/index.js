@@ -38,7 +38,7 @@ export { default as Option } from './option';
 export { default as Pane, PaneHeader, PaneSet, PaneContent } from './pane';
 export { default as RadioButton } from './radio-button';
 export { default as RadioButtonGroup } from './radio-button-group';
-export { RepeatableField, RepeatableFieldAddButton, RepeatableFieldRemoveButton } from './repeatablefield';
+export { RepeatableField, RepeatableFieldAddButton, RepeatableFieldRemoveButton, RepeatableFieldItem } from './repeatablefield';
 export { default as RichEditor } from './rich-text-editor';
 export { default as SearchField } from './search-field';
 export { default as Section } from './section';

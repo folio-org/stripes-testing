@@ -5,6 +5,9 @@ import { getLongDelay } from '../../utils/cypressTools';
 const titlesFilterModal = Modal({ id : 'eholdings-details-view-search-modal' });
 const tagsSection = Section({ id: 'packageShowTags' });
 const closeButton = Button({ icon: 'times' });
+const actionsButton = Button('Actions');
+const removeFromHoldingsButton = Button('Remove from holdings');
+const confirmButton = Button('Yes, remove');
 
 const filterStatuses = { all: 'All',
   selected: 'Selected',
@@ -67,10 +70,11 @@ export default {
     cy.expect(titlesSection.find(KeyValue('Records found', { value:'0' })));
   },
   removeFromHoldings:() => {
-    cy.do(Button('Actions').click());
-    cy.do(Button('Remove from holdings').click());
+    cy.do(actionsButton.click());
+    cy.expect(removeFromHoldingsButton.exists());
+    cy.do(removeFromHoldingsButton.click());
     cy.expect(confirmationModal.exists());
-    cy.do(confirmationModal.find(Button('Yes, remove')).click());
+    cy.do(confirmationModal.find(confirmButton).click());
     cy.expect(confirmationModal.absent());
   },
   addTag:() => {

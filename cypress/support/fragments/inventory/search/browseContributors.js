@@ -1,5 +1,5 @@
 import uuid from 'uuid';
-import { Select, TextInput, Heading, PaneHeader, Form, Button, Option, Section, PaneContent, HTML, MultiColumnListCell, Pane, MultiColumnListHeader, KeyValue, MultiColumnListRow, Image, or } from '../../../../../interactors';
+import { Select, TextInput, Heading, PaneHeader, Form, Button, Option, Section, PaneContent, HTML, including, MultiColumnListCell, Pane, MultiColumnListHeader, KeyValue, MultiColumnListRow, Image, or } from '../../../../../interactors';
 import getRandomPostfix from '../../../utils/stringTools';
 
 const defaultInstanceAWithContributor = {
@@ -29,8 +29,14 @@ const defaultInstanceZWithContributor = {
 const paneIntanceDetails = PaneContent({ id: 'pane-instancedetails-content' });
 const inventorySelect = Select({ id: 'input-inventory-search-qindex' });
 const inventorySearch = TextInput({ id: 'input-inventory-search' });
-const browseContributorsOption = Option('Browse contributors');
-const browseButton = Button('Browse');
+const recordSelect = Select({ id: 'input-record-search-qindex' });
+const recordSearch = TextInput({ id: 'input-record-search' });
+const contributorsOption = Option('Contributors');
+const browseButton = Button({ id: 'mode-navigation-browse' });
+const searchButton = Button({ type: 'submit' });
+const resetAllButton = Button('Reset all');
+const searchButtonDisabled = Button({ type: 'submit', disabled: true });
+const resetAllButtonDisabled = Button({ className: including('resetButton---n7KP9'), disabled: true });
 const rowContributorName = (ContributorName, contributorNameType) => MultiColumnListRow(`${ContributorName}${contributorNameType}1`);
 
 export default {
@@ -40,44 +46,46 @@ export default {
   select() {
     // cypress can't draw selected option without wait
     cy.wait(1000);
-    cy.do(Select('Search field index').choose('Browse contributors'));
+    cy.do(Select('Search field index').choose('Contributors'));
+  },
+
+  clickBrowseBtn() {
+    cy.do(browseButton.click());
   },
 
   checkBrowseOptions() {
     cy.expect([
       Option({ value: 'contributors' }).exists(),
-      browseContributorsOption.exists(),
+      contributorsOption.exists(),
     ]);
-    cy.then(() => Option('Browse call numbers').index()).then((callNumbersOptionIndex) => {
-      cy.then(() => browseContributorsOption.index()).then((contributorsOptionIndex) => {
-        expect(contributorsOptionIndex).to.equal(callNumbersOptionIndex + 1);
-      });
+    cy.then(() => Option('Call numbers').index()).then((callNumbersOptionIndex) => {
+        cy.then(() => contributorsOption.index()).then((contributorsOptionIndex) => {
+            expect(contributorsOptionIndex).to.equal(callNumbersOptionIndex + 1);
+        });
     });
   },
 
   checkSearch() {
     cy.do([
-      inventorySelect.has({ value: 'contributors' }),
-      inventorySearch.fillIn(' '),
+      recordSelect.has({ value: 'contributors' }),
+      Select('Search field index').choose('Contributors'),
+      recordSearch.fillIn(' '),
     ]);
     cy.expect([
-      Form().find(inventorySearch).exists(),
-      Form().find(browseButton).exists(),
-      Form().find(Button('Reset all')).exists(),
-      Form().find(Button({ id: 'accordion-toggle-button-nameType' })).exists(),
+      Form().find(recordSearch).exists(),
+      Form().find(searchButtonDisabled).exists(),
+      Button({ id: 'accordion-toggle-button-nameType' }).exists(),
+      Section({ id: 'browse-inventory-filters-pane' }).find(resetAllButtonDisabled).exists(),
       // TODO add check for Relator term accordeon button after product updates
-      Section({ id: 'pane-results' }).find(Heading('Browse inventory')).exists(),
+      Section({ id: 'browse-inventory-results-pane' }).find(Heading('Browse inventory')).exists(),
       Image({ alt: 'View and manage instance records, holdings records and item records' }).exists(),
-      PaneHeader({ id: 'paneHeaderpane-results' }).find(HTML('Enter search criteria to start browsing')).exists(),
-      PaneContent('Browse for results entering a query or choosing a filter.').exists(),
+      PaneHeader({ id: 'paneHeaderbrowse-inventory-results-pane' }).find(HTML('Enter search criteria to start browsing')).exists(),
+      PaneContent('Choose a filter or enter a search query to show results.').exists(),
     ]);
   },
 
   browse(contributorName) {
-    cy.do([
-      inventorySearch.fillIn(contributorName),
-      browseButton.click(),
-    ]);
+    cy.do([recordSearch.fillIn(contributorName), searchButton.click()]);
   },
 
   checkSearchResultsTable() {
@@ -92,7 +100,7 @@ export default {
       Button('Previous').is({ visible: true, disabled: true }),
       or(
         Button('Next').is({ visible: true, disabled: true }),
-        Button('Next').is({ visible: true, disabled: false }),
+        Button('Next').is({ visible: true, disabled: false })
       ),
     ]);
   },
@@ -114,9 +122,7 @@ export default {
   },
 
   openInstance(contributor) {
-    cy.do([
-      MultiColumnListCell(contributor.name).click(),
-    ]);
+    cy.do(MultiColumnListCell(contributor.name).click());
   },
 
   checkInstance(instance) {
@@ -136,7 +142,7 @@ export default {
   },
 
   resetAllInSearchPane() {
-    cy.do(Button('Reset all').click());
+    cy.do(resetAllButton.click());
   },
 
   getContributorNameTypes() {
@@ -151,6 +157,7 @@ export default {
       method: 'POST',
       path: 'inventory/instances',
       body: instanceWithContributor,
+      isDefaultSearchParamsRequired : false
     });
-  }
+  },
 };

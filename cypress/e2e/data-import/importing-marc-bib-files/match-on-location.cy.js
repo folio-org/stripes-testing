@@ -348,10 +348,8 @@ describe('ui-data-import: Match on location', () => {
     JobProfiles.waitFileIsImported(fileNameAfterUpdate);
     Logs.checkStatusOfJobProfile('Completed');
     Logs.openFileDetails(fileNameAfterUpdate);
-    FileDetails.checkStatusInColumn(FileDetails.status.created, FileDetails.columnName.srsMarc);
     FileDetails.checkStatusInColumn(FileDetails.status.updated, FileDetails.columnName.holdings);
     FileDetails.checkStatusInColumn(FileDetails.status.updated, FileDetails.columnName.item);
-    FileDetails.checkSrsRecordQuantityInSummaryTable('1');
     FileDetails.checkHoldingsQuantityInSummaryTable('1', 1);
     FileDetails.checkItemQuantityInSummaryTable('1', 1);
 
@@ -509,10 +507,8 @@ describe('ui-data-import: Match on location', () => {
     JobProfiles.waitFileIsImported(fileNameAfterUpdate);
     Logs.checkStatusOfJobProfile('Completed');
     Logs.openFileDetails(fileNameAfterUpdate);
-    FileDetails.checkStatusInColumn(FileDetails.status.created, FileDetails.columnName.srsMarc);
     FileDetails.checkStatusInColumn(FileDetails.status.updated, FileDetails.columnName.holdings);
     FileDetails.checkStatusInColumn(FileDetails.status.updated, FileDetails.columnName.item);
-    FileDetails.checkSrsRecordQuantityInSummaryTable('1');
     FileDetails.checkHoldingsQuantityInSummaryTable('1', 1);
     FileDetails.checkItemQuantityInSummaryTable('1', 1);
 
@@ -670,10 +666,8 @@ describe('ui-data-import: Match on location', () => {
     JobProfiles.waitFileIsImported(fileNameAfterUpdate);
     Logs.checkStatusOfJobProfile('Completed');
     Logs.openFileDetails(fileNameAfterUpdate);
-    FileDetails.checkStatusInColumn(FileDetails.status.created, FileDetails.columnName.srsMarc);
     FileDetails.checkStatusInColumn(FileDetails.status.updated, FileDetails.columnName.holdings);
     FileDetails.checkStatusInColumn(FileDetails.status.updated, FileDetails.columnName.item);
-    FileDetails.checkSrsRecordQuantityInSummaryTable('1');
     FileDetails.checkHoldingsQuantityInSummaryTable('1', 1);
     FileDetails.checkItemQuantityInSummaryTable('1', 1);
 

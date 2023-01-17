@@ -1,4 +1,5 @@
-import testType from '../../support/dictionary/testTypes';
+import TestTypes from '../../support/dictionary/testTypes';
+import DevTeams from '../../support/dictionary/devTeams';
 import NewOrder from '../../support/fragments/orders/newOrder';
 import BasicOrderLine from '../../support/fragments/orders/basicOrderLine';
 import Orders from '../../support/fragments/orders/orders';
@@ -9,8 +10,9 @@ import InventorySearchAndFilter from '../../support/fragments/inventory/inventor
 import InteractorsTools from '../../support/utils/interactorsTools';
 import OrdersHelper from '../../support/fragments/orders/ordersHelper';
 import CheckInActions from '../../support/fragments/check-in-actions/checkInActions';
-import InventoryInstance from '../../support/fragments/inventory/inventoryInstance';
 import Organizations from '../../support/fragments/organizations/organizations';
+import ItemView from '../../support/fragments/inventory/inventoryItem/itemView';
+import InventoryInteractionsDefaults from '../../support/fragments/settings/orders/inventoryInteractionsDefaults';
 
 describe('orders: Receive piece from Order', () => {
   const order = { ...NewOrder.defaultOneTimeOrder };
@@ -25,13 +27,27 @@ describe('orders: Receive piece from Order', () => {
 
   before(() => {
     cy.getAdminToken();
+    InventoryInteractionsDefaults
+      .getConfigurationInventoryInteractions({ query: '(module==ORDERS and configName==approvals)' })
+      .then((body) => {
+        if (body.configs.length !== 0) {
+          const id = body.configs[0].id;
+
+          InventoryInteractionsDefaults.setConfigurationInventoryInteractions({
+            id,
+            module:'ORDERS',
+            configName:'approvals',
+            enabled:true,
+            value:'{"isApprovalRequired":false}'
+          });
+        }
+      });
     Organizations.getOrganizationViaApi({ query: `name=${companyName}` })
       .then(organization => {
         order.vendor = organization.id;
         orderLine.physical.materialSupplier = organization.id;
         orderLine.eresource.accessProvider = organization.id;
       });
-
     cy.getLocations({ query: `name="${OrdersHelper.mainLibraryLocation}"` })
       .then(res => {
         location = res;
@@ -44,7 +60,6 @@ describe('orders: Receive piece from Order', () => {
           });
         orderLine.locations[0].locationId = location.id;
       });
-
     cy.getMaterialTypes({ query: 'name="book"' })
       .then(materialType => { orderLine.physical.materialType = materialType.id; });
 
@@ -58,25 +73,22 @@ describe('orders: Receive piece from Order', () => {
       });
   });
 
-  it('C735 Receiving pieces from an order for physical material that is set to create Items in inventory (thunderjet)', { tags: [testType.smoke] }, () => {
+  it('C3506 Catalog a new title which has been ordered and received in Orders (prokopovych)', { tags: [TestTypes.smoke, DevTeams.prokopovych] }, () => {
     Orders.searchByParameter('PO number', orderNumber);
-    Helper.selectFromResultsList();
+    Orders.selectFromResultsList(orderNumber);
     Orders.openOrder();
     InteractorsTools.checkCalloutMessage(`The Purchase order - ${orderNumber} has been successfully opened`);
     Orders.receiveOrderViaActions();
-    Helper.selectFromResultsList();
+    Receiving.selectFromResultsList(instanceTitle);
     Receiving.receivePiece(0, caption, barcode);
     Receiving.checkReceivedPiece(0, caption, barcode);
-
     cy.visit(TopMenu.checkInPath);
     CheckInActions.checkInItem(barcode);
-
     cy.visit(TopMenu.inventoryPath);
     InventorySearchAndFilter.instanceTabIsDefault();
     InventorySearchAndFilter.verifyKeywordsAsDefault();
     InventorySearchAndFilter.switchToItem();
     InventorySearchAndFilter.searchByParameter('Barcode', barcode);
-    InventoryInstance.openHoldings(['Main Library >']);
-    InventorySearchAndFilter.verifySearchResult('In transit');
+    ItemView.verifyItemStatus(ItemView.itemStatuses.inTransit);
   });
 });

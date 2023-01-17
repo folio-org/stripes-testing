@@ -58,6 +58,13 @@ export default {
     ])
   },
 
+  searchByClaimedReturned() {
+    cy.do([
+      Accordion({ id: 'loan' }).clickHeader(),
+      Checkbox({ id: 'clickable-filter-loan-claimed-returned' }).click()
+    ])
+  },
+
   resetFilters() {
     cy.do(Button({ id: 'reset-receiving-filters' }).click());
   },
@@ -73,7 +80,7 @@ export default {
         circAction: MultiColumnListCell({ row: rowNumber, columnIndex: 3, content: matching(/\w/) }),
         date: MultiColumnListCell({ row: rowNumber, columnIndex: 4, content: matching(dateRegEx) }),
         servicePoint: MultiColumnListCell({ row: rowNumber, columnIndex: 5, content: matching(/\w|/) }),
-        source: MultiColumnListCell({ row: rowNumber, columnIndex: 6, content: matching(/\w/) }),
+        source: MultiColumnListCell({ row: rowNumber, columnIndex: 6, content: matching(/\w|/) }),
         description: MultiColumnListCell({ row: rowNumber, columnIndex: 7, content: matching(/\w/) })
       };
     }

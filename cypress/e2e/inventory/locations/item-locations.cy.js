@@ -10,6 +10,7 @@ import InventoryHoldings from '../../../support/fragments/inventory/holdings/inv
 import devTeams from '../../../support/dictionary/devTeams';
 import users from '../../../support/fragments/users/users';
 import ServicePoints from '../../../support/fragments/settings/tenant/servicePoints/servicePoints';
+import ItemView from '../../../support/fragments/inventory/inventoryItem/itemView';
 
 const ITEM_BARCODE = `123${getRandomPostfix()}`;
 let userId;
@@ -94,6 +95,7 @@ describe('ui-inventory: location', () => {
     InventorySearchAndFilter.switchToItem();
     InventorySearchAndFilter.searchByParameter('Barcode', ITEM_BARCODE);
     InventoryInstances.selectInstance();
+    ItemView.closeDetailView();
     InventoryInstance.openHoldings([toBeEditedLocationName]);
     InventoryInstance.openItemView(ITEM_BARCODE);
 
@@ -107,7 +109,7 @@ describe('ui-inventory: location', () => {
     InventoryInstance.checkHoldingsTable(
       toBeEditedLocationName,
       0,
-      '',
+      '-',
       ITEM_BARCODE,
       'Available',
       editedLocationName
@@ -122,6 +124,7 @@ describe('ui-inventory: location', () => {
     InventorySearchAndFilter.switchToItem();
     InventorySearchAndFilter.searchByParameter('Barcode', ITEM_BARCODE);
     InventoryInstances.selectInstance();
+    ItemView.closeDetailView();
     InventoryInstance.openHoldings([editedLocationName]);
     InventoryInstance.openItemView(ITEM_BARCODE);
 
@@ -135,7 +138,7 @@ describe('ui-inventory: location', () => {
     InventoryInstance.checkHoldingsTable(
       editedLocationName,
       0,
-      '',
+      '-',
       ITEM_BARCODE,
       'Available',
       toBeEditedLocationName

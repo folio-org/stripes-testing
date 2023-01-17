@@ -33,11 +33,14 @@ export default {
 
   patronBlocksAccordionCovered() {
     cy.expect([
-      Section({ id: 'patronBlocksSection' }).find(Button({ id: 'accordion-toggle-button-patronBlocksSection' })).has({ ariaExpanded: 'false' })
+      Section({ id: 'patronBlocksSection' })
+        .find(Button({ id: 'accordion-toggle-button-patronBlocksSection' }))
+        .has({ ariaExpanded: 'false' })
     ]);
   },
 
   openLoans() {
+    cy.reload();
     cy.intercept('/circulation/loans?*').as('getLoans');
     cy.do(Accordion({ id : 'loansSection' }).clickHeader());
     return cy.wait('@getLoans', { requestTimeout: 10000 });
@@ -51,9 +54,7 @@ export default {
   },
 
   createPatronBlock() {
-    cy.do([
-      Button({ id: 'create-patron-block' }).click()
-    ]);
+    cy.do(Button({ id: 'create-patron-block' }).click());
   },
 
   createAndSaveNewPatronBlock(text) {
