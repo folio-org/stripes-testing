@@ -95,16 +95,16 @@ describe('Fee/Fine history ', () => {
   });
 
 
-  // after('Delete owner, transfer account, feeFineType, paymentMethod, waiveReason, refundReason, user', () => {
-  //   TransferAccounts.deleteViaApi(transferAccount.id);
-  //   ManualCharges.deleteViaApi(feeFineType.id);
-  //   WaiveReasons.deleteViaApi(waiveReason.id);
-  //   RefundReasons.deleteViaApi(refundReasonId);
-  //   PaymentMethods.deleteViaApi(paymentMethod.id);
-  //   NewFeeFine.deleteFeeFineAccountViaApi(feeFineAccount.id);
-  //   UsersOwners.deleteViaApi(ownerData.id);
-  //   Users.deleteViaApi(userData.userId);
-  // });
+  after('Delete owner, transfer account, feeFineType, paymentMethod, waiveReason, refundReason, user', () => {
+    TransferAccounts.deleteViaApi(transferAccount.id);
+    ManualCharges.deleteViaApi(feeFineType.id);
+    WaiveReasons.deleteViaApi(waiveReason.id);
+    RefundReasons.deleteViaApi(refundReasonId);
+    PaymentMethods.deleteViaApi(paymentMethod.id);
+    NewFeeFine.deleteFeeFineAccountViaApi(feeFineAccount.id);
+    UsersOwners.deleteViaApi(ownerData.id);
+    Users.deleteViaApi(userData.userId);
+  });
 
   it('C347919 Check that the user can add "Additional information" on the fee/fine history (vega)', { tags: [TestTypes.smoke, devTeams.vega] }, () => {
     // the bug for this flaky issue is created FAT-2442. As temporary fix for this bug we need a waiter to be sure that the fee-fine is created before opening its page.
