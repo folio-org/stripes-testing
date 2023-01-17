@@ -1,4 +1,5 @@
 import { KeyValue, Button, DropdownMenu, Modal, HTML, Section, including, Accordion } from '../../../../../interactors';
+const confirmMoveButton = Modal('Confirm move').find(Button('Continue'));
 
 export default {
   waitLoading(currentinstanceHrId, instanceHrIdNew) {
@@ -9,13 +10,8 @@ export default {
   move() {
     cy.do(Button('Move to').click());
     cy.do(DropdownMenu().find(Button()).click());
-    cy.do(Modal('Confirm move').find(Button('Continue')).click());
+    cy.do(confirmMoveButton.click());
     cy.expect(HTML({ id:'inventory-module-display' }).exists());
-  },
-  moveFromMultiple(holdingName) {
-    cy.do(Accordion({ label: including(`Holdings: ${holdingName}`) }).find(Button('Move to')).click());
-    cy.do(DropdownMenu().find(Button()).click());
-    cy.do(Modal('Confirm move').find(Button('Continue')).click());
   },
   closeInLeftForm() {
     cy.do(Section({ id: 'movement-from-instance-details' }).find(Button({ icon: 'times' })).click());

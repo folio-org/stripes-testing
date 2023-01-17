@@ -5,7 +5,8 @@ import {
   HTML,
   including,
   TextField,
-  MultiColumnList
+  MultiColumnList, 
+  PaneHeader
 } from '../../../../../interactors';
 import dateTools from '../../../utils/dateTools';
 import ConfirmItemMissingModal from './confirmItemMissingModal';
@@ -33,6 +34,10 @@ const closeDetailView = () => {
   cy.do(Button({ icon: 'times' }).click());
 };
 
+const dismissFromPaneHeader = () => {
+  cy.do(PaneHeader.find(Button({ ariaLabel: 'Close ' })).click());
+};
+
 const verifyItemStatus = (itemStatus) => {
   cy.expect(loanAccordion.find(HTML(including(itemStatus))).exists());
 };
@@ -42,6 +47,7 @@ export default {
   waitLoading,
   closeDetailView,
   verifyItemStatus,
+  dismissFromPaneHeader,
 
   verifyUpdatedItemDate:() => {
     cy.do(loanAccordion.find(KeyValue('Item status')).perform(element => {
