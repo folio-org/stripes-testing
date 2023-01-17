@@ -32,7 +32,10 @@ describe('ui-data-import: Check that protected fields in incoming records are no
       permissions.uiQuickMarcQuickMarcBibliographicEditorAll.gui,
       permissions.inventoryAll.gui,
       permissions.uiInventorySingleRecordImport.gui,
-      permissions.uiInventoryViewCreateEditInstances.gui
+      permissions.uiInventoryViewCreateEditInstances.gui,
+      permissions.uiMarcAuthoritiesAuthorityRecordView.gui,
+      permissions.remoteStorageView.gui,
+      permissions.uiQuickMarcQuickMarcAuthorityLinkUnlink.gui
     ])
       .then(userProperties => {
         user = userProperties;
@@ -94,7 +97,7 @@ describe('ui-data-import: Check that protected fields in incoming records are no
     InventoryEditMarcRecord.deleteField();
     InventoryInstance.checkElectronicAccess();
     InventoryInstance.startOverlaySourceBibRecord();
-    InventoryInstance.singleRecordImportModalIsPresented();
+    InventoryInstance.singleOverlaySourceBibRecordModalIsPresented();
     InventoryInstance.importWithOclc(oclcForChanging);
     InventoryInstance.checkCalloutMessage(`Updated record ${oclcForChanging}`);
     InventoryInstance.viewSource();
