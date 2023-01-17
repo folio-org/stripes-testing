@@ -12,6 +12,7 @@ import Logs from '../../../support/fragments/data_import/logs/logs';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
 import Users from '../../../support/fragments/users/users';
+import { getLongDelay } from '../../../support/utils/cypressTools';
 
 describe('ui-data-import: Inventory single record import is not delayed when large data import jobs are running', () => {
   let user = {};
@@ -47,9 +48,9 @@ describe('ui-data-import: Inventory single record import is not delayed when lar
   });
 
   after(() => {
-    Logs.cancelImportJob();
     Z3950TargetProfiles.changeOclcWorldCatToDefaultViaApi();
     Users.deleteViaApi(user.userId);
+    // TODO delete all instances
   });
 
   it('C356824 Inventory single record import is not delayed when large data import jobs are running (folijet)',
@@ -70,9 +71,11 @@ describe('ui-data-import: Inventory single record import is not delayed when lar
       Logs.checkFileIsRunning(fileName);
 
       cy.visit(TopMenu.inventoryPath);
+      cy.intercept('/users?*').as('getUsers');
       InventoryInstances.importWithOclc(oclcForImport);
+      cy.wait('@getUsers', getLongDelay());
       InventoryInstance.startOverlaySourceBibRecord();
-      InventoryInstance.singleRecordImportModalIsPresented();
+      InventoryInstance.singleOverlaySourceBibRecordModalIsPresented();
       InventoryInstance.importWithOclc(oclcForUpdating);
       InventoryInstance.checkCalloutMessage(`Updated record ${oclcForUpdating}`);
 

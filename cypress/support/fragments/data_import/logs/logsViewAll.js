@@ -208,6 +208,7 @@ export default {
 
   checkByDate({ from, end }) {
     const queryString = UrlParams.getDateQueryString({ from, end });
+
     return this.getNumberOfMatchedJobs(queryString).then(count => {
       // ensure MultiColumnList is filtered by Date
       this.checkRowsCount(count);
@@ -247,6 +248,15 @@ export default {
     waitUIToBeFiltered();
     checkByErrorsInImport(status);
     checkByUserName(userName);
+  },
+
+  checkByDateAndJobProfile({ from, end }, profileId) {
+    const queryString = `completedAfter=${from}&completedBefore=${end}&limit=100&profileIdAny=${profileId}&sortBy=completed_date%2Cdesc&statusAny=COMMITTED&statusAny=ERROR&statusAny=CANCELLED`;
+    return this.getNumberOfMatchedJobs(queryString).then(count => {
+      // ensure MultiColumnList is filtered by Date
+      this.checkRowsCount(count);
+      cy.wrap(count);
+    });
   },
 
   getNumberOfMatchedJobs(queryString) {

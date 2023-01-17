@@ -8,7 +8,6 @@ import {
   LOST_ITEM_FEES_POLICY_NAMES,
   LOAN_POLICY_NAMES,
 } from '../../support/constants';
-import TestTypes from '../../support/dictionary/testTypes';
 import Orders from '../../support/fragments/orders/orders';
 import NewOrder from '../../support/fragments/orders/newOrder';
 import TopMenu from '../../support/fragments/topMenu';
@@ -35,7 +34,6 @@ import BasicOrderLine from '../../support/fragments/orders/basicOrderLine';
 import NewLocations from '../../support/fragments/settings/tenant/locations/newLocation';
 import Users from '../../support/fragments/users/users';
 import CheckOutActions from '../../support/fragments/check-out-actions/check-out-actions';
-import DevTeams from '../../support/dictionary/devTeams';
 import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
 import DateTools from '../../support/utils/dateTools';
 
@@ -185,7 +183,7 @@ describe('ui-inventory: Item status date updates', () => {
   };
 
   // test is looping
-  it('C9200 Item status date updates (folijet) (prokopovych)', { tags: [DevTeams.folijet, TestTypes.long] }, () => {
+  it('C9200 Item status date updates (folijet) (prokopovych)', () => {
     const caption = `autotest_caption_${getRandomPostfix()}`;
     const numberOfPieces = '3';
     // open order and create Item

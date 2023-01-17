@@ -7,8 +7,7 @@ import {
   SelectionList,
   MultiColumnList,
   MultiColumnListRow,
-  Checkbox,
-  Modal
+  Checkbox
 } from '../../../../../interactors';
 
 const anyProfileAccordion = Accordion({ id: 'profileIdAny' });
@@ -80,12 +79,5 @@ export default {
     .find(MultiColumnListRow({ indexRow: `row-${rowIndex}` }))
     .find(Link('Created')).href()),
 
-  checkFileIsRunning:(fileName) => cy.expect(Accordion('Running').find(HTML(including(fileName))).exists()),
-
-  cancelImportJob:() => {
-    cy.do(Accordion('Running').find(Button({ icon:'trash' })).click());
-    cy.do(Modal({ id:'cancel-running-job-modal' })
-      .find(Button({ id:'clickable-cancel-running-job-modal-confirm' }))
-      .click());
-  }
+  checkFileIsRunning:(fileName) => cy.expect(Accordion('Running').find(HTML(including(fileName))).exists())
 };

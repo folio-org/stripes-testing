@@ -17,7 +17,7 @@ export default {
 
   addNewRange,
 
-  setCustomCoverageDates: (range, rangeNumber = 0) => {
+  setCustomCoverageDates: (range, rangeNumber = 1) => {
     if (rangeNumber > 0) {
       addNewRange();
     }
