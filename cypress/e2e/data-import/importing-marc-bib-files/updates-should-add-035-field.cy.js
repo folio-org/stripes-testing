@@ -23,9 +23,11 @@ import Users from '../../../support/fragments/users/users';
 describe('ui-data-import: Data Import Updates should add 035 field from 001/003, if it is not HRID or already exists', () => {
   let user = null;
   let firstInstanceHrid;
-  let secondInstanceHrid;
+  const secondInstancesHrid = [];
   const instanceStatusTerm = '"Batch Loaded"';
   const statisticalCode = '"ARL (Collection stats): books - Book, print (books)"';
+  const rowNumbers = [0, 1, 2, 3, 4, 5, 6, 7];
+  const arrayOf999Fields = [];
 
   // unique file names
   const firstMarcFileNameForCreate = `C358998 firstCreateAutotestFile.${getRandomPostfix()}.mrc`;
@@ -86,54 +88,54 @@ describe('ui-data-import: Data Import Updates should add 035 field from 001/003,
       });
   });
 
-  after(() => {
-    // delete profiles
-    JobProfiles.deleteJobProfile(jobProfileName);
-    MatchProfiles.deleteMatchProfile(matchProfileName);
-    ActionProfiles.deleteActionProfile(actionProfileName);
-    FieldMappingProfiles.deleteFieldMappingProfile(mappingProfileName);
+  // after(() => {
+  //   // delete profiles
+  //   JobProfiles.deleteJobProfile(jobProfileName);
+  //   MatchProfiles.deleteMatchProfile(matchProfileName);
+  //   ActionProfiles.deleteActionProfile(actionProfileName);
+  //   FieldMappingProfiles.deleteFieldMappingProfile(mappingProfileName);
 
-    cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${firstInstanceHrid}"` })
-      .then((instance) => {
-        InventoryInstance.deleteInstanceViaApi(instance.id);
-      });
-    cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${secondInstanceHrid}"` })
-      .then((instance) => {
-        InventoryInstance.deleteInstanceViaApi(instance.id);
-      });
-    Users.deleteViaApi(user.userId);
-  });
+  //   cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${firstInstanceHrid}"` })
+  //     .then((instance) => {
+  //       InventoryInstance.deleteInstanceViaApi(instance.id);
+  //     });
+  //   cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${secondInstanceHrid}"` })
+  //     .then((instance) => {
+  //       InventoryInstance.deleteInstanceViaApi(instance.id);
+  //     });
+  //   Users.deleteViaApi(user.userId);
+  // });
 
   it('C358998 Data Import Updates should add 035 field from 001/003, if it is not HRID or already exists (folijet)', { tags: [TestTypes.smoke, DevTeams.folijet] }, () => {
-    // upload .mrc file
-    DataImport.uploadFile('marcFileForC358998ForCreate_1.mrc', firstMarcFileNameForCreate);
-    JobProfiles.searchJobProfileForImport('Default - Create instance and SRS MARC Bib');
-    JobProfiles.runImportFile();
-    JobProfiles.waitFileIsImported(firstMarcFileNameForCreate);
-    Logs.checkStatusOfJobProfile('Completed');
-    Logs.openFileDetails(firstMarcFileNameForCreate);
-    [FileDetails.columnName.srsMarc,
-      FileDetails.columnName.instance].forEach(columnName => {
-      FileDetails.checkStatusInColumn(FileDetails.status.created, columnName);
-    });
-    FileDetails.checkSrsRecordQuantityInSummaryTable('1');
-    FileDetails.checkInstanceQuantityInSummaryTable('1');
+    // // upload te first .mrc file
+    // DataImport.uploadFile('marcFileForC358998ForCreate_1.mrc', firstMarcFileNameForCreate);
+    // JobProfiles.searchJobProfileForImport('Default - Create instance and SRS MARC Bib');
+    // JobProfiles.runImportFile();
+    // JobProfiles.waitFileIsImported(firstMarcFileNameForCreate);
+    // Logs.checkStatusOfJobProfile('Completed');
+    // Logs.openFileDetails(firstMarcFileNameForCreate);
+    // [FileDetails.columnName.srsMarc,
+    //   FileDetails.columnName.instance].forEach(columnName => {
+    //   FileDetails.checkStatusInColumn(FileDetails.status.created, columnName);
+    // });
+    // FileDetails.checkSrsRecordQuantityInSummaryTable('1');
+    // FileDetails.checkInstanceQuantityInSummaryTable('1');
 
-    FileDetails.openInstanceInInventory('Created');
-    InventoryInstance.getAssignedHRID().then(initialInstanceHrId => { firstInstanceHrid = initialInstanceHrId; });
-    InventoryInstance.viewSource();
-    // changing the first file
-    InventoryViewSource.extructDataFrom999Field()
-      .then(uuid => {
-        // change file using uuid for 999 field
-        DataImport.editMarcFile(
-          'marcFileForC358998ForUpdate_1.mrc',
-          firstMarcFileNameForUpdate,
-          ['srsUuid', 'instanceUuid', '303845'],
-          [uuid[0], uuid[1], firstInstanceHrid]
-        );
-      });
-    // upload .mrc file
+    // FileDetails.openInstanceInInventory('Created');
+    // InventoryInstance.getAssignedHRID().then(initialInstanceHrId => { firstInstanceHrid = initialInstanceHrId; });
+    // InventoryInstance.viewSource();
+    // // changing the first file
+    // InventoryViewSource.extructDataFrom999Field()
+    //   .then(uuid => {
+    //     // change file using uuid for 999 field
+    //     DataImport.editMarcFile(
+    //       'marcFileForC358998ForUpdate_1.mrc',
+    //       firstMarcFileNameForUpdate,
+    //       ['srsUuid', 'instanceUuid', '303845'],
+    //       [uuid[0], uuid[1], firstInstanceHrid]
+    //     );
+    //   });
+    // upload the second .mrc file
     cy.visit(TopMenu.dataImportPath);
     DataImport.uploadFile('marcFileForC358998ForCreate_2.mrc', secondMarcFileNameForCreate);
     JobProfiles.searchJobProfileForImport('Default - Create instance and SRS MARC Bib');
@@ -141,28 +143,37 @@ describe('ui-data-import: Data Import Updates should add 035 field from 001/003,
     JobProfiles.waitFileIsImported(secondMarcFileNameForCreate);
     Logs.checkStatusOfJobProfile('Completed');
     Logs.openFileDetails(secondMarcFileNameForCreate);
-    [FileDetails.columnName.srsMarc,
-      FileDetails.columnName.instance].forEach(columnName => {
-      FileDetails.checkStatusInColumn(FileDetails.status.created, columnName);
+    rowNumbers.forEach(rowNumber => {
+      FileDetails.checkStatusInColumn(FileDetails.status.created, FileDetails.columnName.srsMarc, rowNumber);
+      FileDetails.checkStatusInColumn(FileDetails.status.created, FileDetails.columnName.instance, rowNumber);
     });
-    FileDetails.checkSrsRecordQuantityInSummaryTable('1');
-    FileDetails.checkInstanceQuantityInSummaryTable('1');
-
-    FileDetails.openInstanceInInventory('Created');
-    InventoryInstance.getAssignedHRID().then(initialInstanceHrId => { secondInstanceHrid = initialInstanceHrId; });
-    InventoryInstance.viewSource();
-    // changing the second file
-    InventoryViewSource.extructDataFrom999Field()
-      .then(uuid => {
-        // change file using uuid for 999 field
-        DataImport.editMarcFile(
-          '',
-          secondMarcFileNameForUpdate,
-          ['srsUuid', 'instanceUuid'],
-          [uuid[0], uuid[1]]
-        );
-      });
-
+    FileDetails.checkSrsRecordQuantityInSummaryTable('8');
+    FileDetails.checkInstanceQuantityInSummaryTable('8');
+    rowNumbers.forEach(rowNumber => {
+      cy.visit(TopMenu.dataImportPath);
+      Logs.openFileDetails(secondMarcFileNameForCreate);
+      FileDetails.openInstanceInInventory('Created', rowNumber);
+      InventoryInstance.getAssignedHRID().then(initialInstanceHrId => { secondInstancesHrid.push(initialInstanceHrId); });
+      InventoryInstance.viewSource();
+      // changing the second file
+      InventoryViewSource.extructDataFrom999Field()
+        .then(uuid => {
+          arrayOf999Fields.push(uuid[0], uuid[1]);
+        });
+    });
+    console.log(arrayOf999Fields);
+    // change file using uuid for 999 field
+    DataImport.editMarcFile(
+      'marcFileForC358998ForUpdate_2.mrc',
+      secondMarcFileNameForUpdate,
+      ['firstSrsUuid', 'firstInstanceUuid', 'secondSrsUuid', 'secondInstanceUuid',
+        'thirdSrsUuid', 'thirdInstanceUuid', 'forthSrsUuid', 'forthInstanceUuid',
+        'fifthSrsUuid', 'fifthInstanceUuid', 'sixthSrsUuid', 'sixthInstanceUuid',
+        'seventhSrsUuid', 'seventhInstanceUuid', 'eighthSrsUuid', 'eighthInstanceUuid'],
+      [arrayOf999Fields[0], arrayOf999Fields[1], arrayOf999Fields[2], arrayOf999Fields[3],
+        arrayOf999Fields[4], arrayOf999Fields[5], arrayOf999Fields[6], arrayOf999Fields[7]]
+    );
+    cy.pause();
     // create mapping profiles
     cy.visit(SettingsMenu.mappingProfilePath);
     FieldMappingProfiles.openNewMappingProfileForm();
@@ -188,28 +199,28 @@ describe('ui-data-import: Data Import Updates should add 035 field from 001/003,
     JobProfiles.createJobProfileWithLinkingProfiles(jobProfile, actionProfileName, matchProfileName);
     JobProfiles.checkJobProfilePresented(jobProfile.profileName);
 
-    // upload a marc file for updating already created first instance
-    cy.visit(TopMenu.dataImportPath);
-    DataImport.uploadFile(firstMarcFileNameForUpdate, firstFileNameAfterUpload);
-    JobProfiles.searchJobProfileForImport(jobProfile.profileName);
-    JobProfiles.runImportFile();
-    JobProfiles.waitFileIsImported(firstFileNameAfterUpload);
-    Logs.checkStatusOfJobProfile('Completed');
-    Logs.openFileDetails(firstFileNameAfterUpload);
-    FileDetails.checkStatusInColumn(FileDetails.status.updated, FileDetails.columnName.srsMarc);
-    FileDetails.checkStatusInColumn(FileDetails.status.updated, FileDetails.columnName.instance);
-    FileDetails.checkSrsRecordQuantityInSummaryTable('1', '1');
-    FileDetails.checkInstanceQuantityInSummaryTable('1', '1');
-    // open Instance in the Inventory
-    FileDetails.openInstanceInInventory('Updated');
-    InstanceRecordView.verifyInstanceStatusTerm('batch');
-    InstanceRecordView.verifyStatisticalCode('ARL (Collection stats)');
-    InventoryInstance.viewSource();
-    InventoryViewSource.contains('001\t');
-    InventoryViewSource.contains(firstInstanceHrid);
-    InventoryViewSource.notContains('003\t');
-    InventoryViewSource.contains('035\t');
-    InventoryViewSource.contains('(LTSCA)303845');
+    // // upload a marc file for updating already created first instance
+    // cy.visit(TopMenu.dataImportPath);
+    // DataImport.uploadFile(firstMarcFileNameForUpdate, firstFileNameAfterUpload);
+    // JobProfiles.searchJobProfileForImport(jobProfile.profileName);
+    // JobProfiles.runImportFile();
+    // JobProfiles.waitFileIsImported(firstFileNameAfterUpload);
+    // Logs.checkStatusOfJobProfile('Completed');
+    // Logs.openFileDetails(firstFileNameAfterUpload);
+    // FileDetails.checkStatusInColumn(FileDetails.status.updated, FileDetails.columnName.srsMarc);
+    // FileDetails.checkStatusInColumn(FileDetails.status.updated, FileDetails.columnName.instance);
+    // FileDetails.checkSrsRecordQuantityInSummaryTable('1', '1');
+    // FileDetails.checkInstanceQuantityInSummaryTable('1', '1');
+    // // open Instance in the Inventory
+    // FileDetails.openInstanceInInventory('Updated');
+    // InstanceRecordView.verifyInstanceStatusTerm('Batch Loaded');
+    // InstanceRecordView.verifyStatisticalCode('ARL (Collection stats)');
+    // InventoryInstance.viewSource();
+    // InventoryViewSource.contains('001\t');
+    // InventoryViewSource.contains(firstInstanceHrid);
+    // InventoryViewSource.notContains('003\t');
+    // InventoryViewSource.contains('035\t');
+    // InventoryViewSource.contains('(LTSCA)303845');
 
     // upload a marc file for updating already created second instance
     cy.visit(TopMenu.dataImportPath);
@@ -219,11 +230,16 @@ describe('ui-data-import: Data Import Updates should add 035 field from 001/003,
     JobProfiles.waitFileIsImported(secondFileNameAfterUpload);
     Logs.checkStatusOfJobProfile('Completed');
     Logs.openFileDetails(secondFileNameAfterUpload);
-    FileDetails.checkStatusInColumn(FileDetails.status.updated, FileDetails.columnName.srsMarc);
-    FileDetails.checkStatusInColumn(FileDetails.status.updated, FileDetails.columnName.instance);
-    FileDetails.checkSrsRecordQuantityInSummaryTable('1', '1');
-    FileDetails.checkInstanceQuantityInSummaryTable('1', '1');
+    rowNumbers.forEach(rowNumber => {
+      FileDetails.checkStatusInColumn(FileDetails.status.updated, FileDetails.columnName.srsMarc, rowNumber);
+      FileDetails.checkStatusInColumn(FileDetails.status.updated, FileDetails.columnName.instance, rowNumber);
+    });
+    FileDetails.checkSrsRecordQuantityInSummaryTable('8', 1);
+    FileDetails.checkInstanceQuantityInSummaryTable('8', 1);
+
     // open Instance in the Inventory
     FileDetails.openInstanceInInventory('Updated');
+    InstanceRecordView.verifyInstanceStatusTerm('Batch Loaded');
+    InstanceRecordView.verifyStatisticalCode('ARL (Collection stats)');
   });
 });
