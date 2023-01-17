@@ -173,7 +173,7 @@ describe('Recieving notice: Checkout', () => {
     });
   });
 
-  it.only('C347621 Check that user can receive notice with multiple items after finishing the session "Check out" by clicking the End Session button (vega)',
+  it('C347621 Check that user can receive notice with multiple items after finishing the session "Check out" by clicking the End Session button (vega)',
     { tags: [testTypes.smoke, devTeams.vega] }, () => {
       NewNoticePolicyTemplate.startAdding();
       NewNoticePolicyTemplate.checkInitialState();
