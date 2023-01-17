@@ -5,8 +5,7 @@ import {
   HTML,
   including,
   TextField,
-  MultiColumnList, 
-  PaneHeader
+  MultiColumnList
 } from '../../../../../interactors';
 import dateTools from '../../../utils/dateTools';
 import ConfirmItemMissingModal from './confirmItemMissingModal';

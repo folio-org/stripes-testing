@@ -1,4 +1,4 @@
-import { KeyValue, Button, DropdownMenu, Modal, HTML, Section, including, Accordion } from '../../../../../interactors';
+import { KeyValue, Button, DropdownMenu, Modal, HTML, Section} from '../../../../../interactors';
 const confirmMoveButton = Modal('Confirm move').find(Button('Continue'));
 
 export default {
