@@ -7,7 +7,9 @@ export default {
     cy.expect(rootPane.exists());
     cy.expect(HTML(including('Fee/fine details')).exists());
   },
-  openPayModal: () => cy.do(rootPane.find(Button({ id:'payAccountActionsHistory' })).click()),
+  openPayModal: () => {
+    cy.do(rootPane.find(Button('Actions')).click());
+    cy.do(Button('Pay').click()); },
   openNewStaffInfo: () => cy.do(HTML({ text: 'New staff info', id: 'button' }).click()),
   checkNewStaffInfo: (info) => cy.expect(HTML(info).exists()),
 };
