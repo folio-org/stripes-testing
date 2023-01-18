@@ -55,14 +55,14 @@ export default {
     cy.do([
       Accordion({ id: 'loan' }).clickHeader(),
       Checkbox({ id: 'clickable-filter-loan-changed-due-date' }).click()
-    ])
+    ]);
   },
 
   searchByClaimedReturned() {
     cy.do([
       Accordion({ id: 'loan' }).clickHeader(),
       Checkbox({ id: 'clickable-filter-loan-claimed-returned' }).click()
-    ])
+    ]);
   },
 
   resetFilters() {
@@ -118,7 +118,7 @@ export default {
 
   checkResultSearch(searchResults, rowIndex = 0) {
     return cy.wrap(Object.values(searchResults)).each(contentToCheck => {
-      cy.expect(MultiColumnListRow({ indexRow: `row-${rowIndex}` }).find(MultiColumnListCell({ content: including(contentToCheck) })).exists())
+      cy.expect(MultiColumnListRow({ indexRow: `row-${rowIndex}` }).find(MultiColumnListCell({ content: including(contentToCheck) })).exists());
     });
   },
 
