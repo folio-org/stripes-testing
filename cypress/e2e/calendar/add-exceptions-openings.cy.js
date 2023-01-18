@@ -5,7 +5,7 @@ import {
 } from '../../../interactors';
 
 
-import calendarFixtures from '../../fixtures/calendar_e2e_fixtures';
+import calendarFixtures from '../../support/fragments/calendar/calendar-e2e-test-values';
 
 const testServicePoint = calendarFixtures.servicePoint;
 const testCalendar = calendarFixtures.calendar;

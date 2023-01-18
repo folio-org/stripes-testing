@@ -2,7 +2,7 @@ import { Button, MultiColumnListCell, Pane, including, Link } from '../../../int
 import {
   checkCalendarFields, checkExpandButton, checkMenuAction
 } from '../../support/fragments/calendar/calendar-info-pane';
-import calendarFixtures from '../../fixtures/calendar_e2e_fixtures';
+import calendarFixtures from '../../support/fragments/calendar/calendar-e2e-test-values';
 
 const testServicePoint = calendarFixtures.servicePoint;
 const testCalendar = calendarFixtures.calendar;

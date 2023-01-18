@@ -1,10 +1,9 @@
-import {
-  MultiColumnListCell, PaneHeader, Pane, Button,
-  including, Link
-} from '../../../interactors';
+import PaneActions from '../../support/fragments/calendar/pane-actions';
 
 
-import calendarFixtures from '../../fixtures/calendar_e2e_fixtures';
+import calendarFixtures from '../../support/fragments/calendar/calendar-e2e-test-values';
+import { deleteServicePoint, createServicePoint, createCalendar,
+  openCalendarSettings, deleteCalendar } from '../../support/fragments/calendar/calendar';
 import permissions from '../../support/dictionary/permissions';
 
 const testServicePoint = calendarFixtures.servicePoint;
@@ -17,53 +16,45 @@ describe('User with Settings (Calendar): Can view existing calendars', () => {
   before(() => {
     // login as admin so necessary state can be created
     cy.loginAsAdmin();
+
     // reset db state
-    cy.deleteServicePoint(testServicePoint.id, false);
+    deleteServicePoint(testServicePoint.id, false);
 
     // create test service point
-    cy.createServicePoint(testServicePoint, (response) => {
+    createServicePoint(testServicePoint, (response) => {
       testCalendar.assignments = [response.body.id];
 
-      cy.createCalendar(testCalendar, (calResponse) => {
+      createCalendar(testCalendar, (calResponse) => {
         testCalendarResponse = calResponse.body;
       });
     });
     cy.logout();
 
-    cy.openCalendarSettings();
+    openCalendarSettings();
     cy.createTempUser([
       permissions.calendarView.gui,
     ]).then(userProperties => {
       cy.login(userProperties.username, userProperties.password);
-      cy.openCalendarSettings();
+      openCalendarSettings();
     });
   });
 
   after(() => {
     cy.logout();
 
-    // // login as admin to teardown testing data
+    // login as admin to teardown testing data
     cy.loginAsAdmin();
-    cy.deleteServicePoint(testServicePoint.id, true);
-    cy.deleteCalendar(testCalendarResponse.id);
+    deleteServicePoint(testServicePoint.id, true);
+    deleteCalendar(testCalendarResponse.id);
   });
 
 
   it('views existing calendar', () => {
-    const PaneActionButton = Button({ className: including('actionMenuToggle') });
-    cy.do([
-      Pane('Calendar').find(Link('All calendars')).click(),
-      Pane('All calendars').find(PaneActionButton).absent(),
-
-      Pane('All calendars').find(MultiColumnListCell(testCalendar.name)).click(),
-      Pane(testCalendar.name).exists(),
-      Pane(testCalendar.name).find(PaneActionButton).absent(),
-
-      Pane('Calendar').find(Link('Current calendar assignments')).click(),
-      PaneHeader('Current calendar assignments').find(Button('New')).absent(),
-
-      Pane('Current calendar assignments').find(MultiColumnListCell(testServicePoint.name)).click(),
-      Pane(testCalendar.name).find(PaneActionButton).absent()
-    ]);
+    PaneActions.allCalendarsPane.checkActionMenuAbsent();
+    PaneActions.allCalendarsPane.selectCalendar(testCalendar.name);
+    PaneActions.individualCalendarPane.checkActionMenuAbsent(testCalendar.name);
+    PaneActions.currentCalendarAssignmentsPane.newButtonAbsent();
+    PaneActions.currentCalendarAssignmentsPane.selectCalendar();
+    PaneActions.individualCalendarPane.checkActionMenuAbsent(testCalendar.name);
   });
 });

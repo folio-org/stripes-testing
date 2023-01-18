@@ -1,10 +1,13 @@
 import { Select as BaseSelect } from '@interactors/html';
+import { deleteServicePoint, createServicePoint, createCalendar,
+  openCalendarSettings, deleteCalendar } from '../../support/fragments/calendar/calendar';
 import {
   TextField, HTML, Calendar, Accordion, MultiSelect, Pane, Select,
   MultiColumnListCell, MultiColumnListRow, Button, including, Link, IconButton, matching, TimeDropdown
 } from '../../../interactors';
 
-import calendarFixtures from '../../fixtures/calendar_e2e_fixtures';
+import calendarFixtures from '../../support/fragments/calendar/calendar-e2e-test-values';
+import PaneActions from '../../support/fragments/calendar/pane-actions';
 
 const testServicePoint = calendarFixtures.servicePoint;
 const testCalendar = calendarFixtures.calendar;
@@ -41,10 +44,12 @@ describe('Create calendars that are 24/7 (never close)', () => {
 
 
   it('adds new calendar', () => {
-    cy.do([
-      Pane('Calendar').find(Link('All calendars')).click(),
-      Pane('All calendars').clickAction('New'),
-    ]);
+    // cy.do([
+    //   Pane('Calendar').find(Link('All calendars')).click(),
+    //   Pane('All calendars').clickAction('New'),
+    // ]);
+
+    PaneActions.allCalendarsPane.clickNewButton();
 
     cy.url().should('match', /\/settings\/calendar\/all\/create$/);
 
@@ -56,6 +61,7 @@ describe('Create calendars that are 24/7 (never close)', () => {
 
     const MonthSelect = BaseSelect.extend('month select')
       .selector('[class^=monthSelect');
+
 
     cy.do([
       TextField(including('Calendar name')).fillIn(newCalendarInfo.name),

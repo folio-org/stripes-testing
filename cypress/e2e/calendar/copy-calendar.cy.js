@@ -1,6 +1,6 @@
 import { including, Link, TextField, Pane, MultiColumnListCell, Button } from '../../../interactors';
 
-import calendarFixtures from '../../fixtures/calendar_e2e_fixtures';
+import calendarFixtures from '../../support/fragments/calendar/calendar-e2e-test-values';
 
 const testCalendar = calendarFixtures.calendar;
 
