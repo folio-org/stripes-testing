@@ -15,9 +15,9 @@ const rootSection = Section({ id: 'authority-search-results-pane' });
 const presentedColumns = ['Authorized/Reference', 'Heading/Reference', 'Type of heading'];
 const rootPaneAuthoritiesFilters = Section({ id: 'pane-authorities-filters' });
 const defaultMainFilterValue = { htmlValue:'', visibleValue: searchOptions.selectBrowseOption };
-const searchButton = rootPaneAuthoritiesFilters.find(Button({ id: 'submit-authorities-search' }));
-const searchInput = rootPaneAuthoritiesFilters.find(SearchField({ id:'textarea-authorities-search' }));
-const mainFilter = rootPaneAuthoritiesFilters.find(SearchField({ id:'textarea-authorities-search-qindex' }));
+const searchButton = Button({ id: 'submit-authorities-search' });
+const searchInput = SearchField({ id:'textarea-authorities-search' });
+const mainFilter = SearchField({ id:'textarea-authorities-search-qindex' });
 // TODO: initially first line has data-row-index = 52. Currently it's 0, clarify the reason in case if start index will changed once again
 const getFirstLineIndexRow = (zeroIndex) => `row-${zeroIndex + 0}`;
 
@@ -39,8 +39,14 @@ export default {
     cy.expect(rootPaneAuthoritiesFilters.find(Accordion('References')).exists());
   },
   searchBy:(searchOption, value) => {
-    cy.do(mainFilter.selectIndex(searchOption));
     cy.do(searchInput.fillIn(value));
+    // interactor doesn't work properly with this selector
+    cy.get('#textarea-authorities-search-qindex')
+    .find('option')
+    .contains(searchOption)
+    .then($option => {
+        cy.get('#textarea-authorities-search-qindex').select($option.text());
+    });
     cy.do(searchButton.click());
   },
   checkSearchOptions:() => {
@@ -60,5 +66,11 @@ export default {
     } else {
       cy.expect(specialCell.find(Button()).absent());
     }
-  }
+  },
+  checkHeadingReference: (headingReference) => {
+    cy.expect([
+      rootSection.find(MultiColumnListRow({ rowIndexInParent: `row-0` })).find(MultiColumnListCell({ content: `${headingReference}\xa0would be here` })),
+      rootSection.find(MultiColumnListRow({ rowIndexInParent: `row-1` })).find(MultiColumnListCell({ content: headingReference })),
+    ])
+  },
 };
