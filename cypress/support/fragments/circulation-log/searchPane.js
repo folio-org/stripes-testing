@@ -81,7 +81,7 @@ export default {
         date: MultiColumnListCell({ row: rowNumber, columnIndex: 4, content: matching(dateRegEx) }),
         servicePoint: MultiColumnListCell({ row: rowNumber, columnIndex: 5, content: matching(/\w|/) }),
         source: MultiColumnListCell({ row: rowNumber, columnIndex: 6, content: matching(/\w|/) }),
-        description: MultiColumnListCell({ row: rowNumber, columnIndex: 7, content: matching(/\w/) })
+        description: MultiColumnListCell({ row: rowNumber, columnIndex: 7, content: matching(/\w|/) })
       };
     }
 
