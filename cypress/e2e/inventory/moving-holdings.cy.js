@@ -28,6 +28,7 @@ describe('inventory', () => {
     cy.createTempUser([
       permissions.uiInventoryMoveItems.gui,
       permissions.uiInventoryHoldingsMove.gui,
+      permissions.inventoryViewCreateEditInstances.gui,
     ])
       .then(userProperties => {
         userId = userProperties.userId;
@@ -49,7 +50,7 @@ describe('inventory', () => {
     InventorySearchAndFilter.switchToItem();
     InventorySearchAndFilter.searchByParameter('Barcode', item.barcode)
     InventorySearchAndFilter.selectSearchResultItem();
-    ItemView.dismiss();
+    ItemView.clickCloseButton();
 
     InventoryInstance.moveHoldingsToAnotherInstanceByItemTitle(firstHoldingName ,secondItem.instanceName);
     InteractorsTools.checkCalloutMessage(successCalloutMessage);

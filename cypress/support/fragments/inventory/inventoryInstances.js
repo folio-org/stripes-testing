@@ -239,7 +239,7 @@ export default {
     cy.getInstance({ limit: 1, expandAll: true, query: `"items.barcode"=="${itemBarcode}"` })
       .then((instance) => {
         instance.items.forEach((item) => cy.deleteItem(item.id));
-        cy.deleteHoldingRecordViaApi(instance.holdings[0].id);
+        instance.items.forEach((holding) => cy.deleteHoldingRecordViaApi(holding.id));
         InventoryInstance.deleteInstanceViaApi(instance.id);
       });
   },

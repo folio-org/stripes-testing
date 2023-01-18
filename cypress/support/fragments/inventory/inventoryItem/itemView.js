@@ -33,7 +33,7 @@ const closeDetailView = () => {
   cy.do(Button({ icon: 'times' }).click());
 };
 
-const dismiss = () => {
+const clickCloseButton = () => {
   cy.do(Button({ ariaLabel: 'Close ' }).click());
 };
 
@@ -46,7 +46,7 @@ export default {
   waitLoading,
   closeDetailView,
   verifyItemStatus,
-  dismiss,
+  clickCloseButton,
 
   verifyUpdatedItemDate:() => {
     cy.do(loanAccordion.find(KeyValue('Item status')).perform(element => {

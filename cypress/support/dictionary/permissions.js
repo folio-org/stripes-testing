@@ -44,6 +44,7 @@ export default {
   uiInventoryMoveItems: { internal: 'ui-inventory.item.move', gui: 'Inventory: Move items' },
   uiInventoryViewCreateEditHoldings:{ internal:'ui-inventory.holdings.edit', gui:'Inventory: View, create, edit holdings' },
   uiInventoryViewCreateEditInstances:{ internal:'ui-inventory.instance.edit', gui:'Inventory: View, create, edit instances' },
+  inventoryViewCreateEditInstances:{ internal:'records-editor.records.item.get', gui:'All records-editor permissions' },
   uiInventoryViewCreateEditItems:{ internal:'ui-inventory.item.edit', gui:'Inventory: View, create, edit items' },
   // Tags
   uiTagsPermissionAll: { internal: 'ui-tags.permission.all', gui:'Tags: All permissions' },
