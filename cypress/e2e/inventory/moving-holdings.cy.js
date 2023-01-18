@@ -10,7 +10,6 @@ import ItemView from '../../support/fragments/inventory/inventoryItem/itemView';
 import InventoryInstance from '../../support/fragments/inventory/inventoryInstance';
 import InteractorsTools from '../../support/utils/interactorsTools';
 
-const successCalloutMessage = '1 holding has been successfully moved.';
 let userId;
 const item = {
   instanceName: `Inventory-first-${Number(new Date())}`,
@@ -21,6 +20,8 @@ const secondItem = {
   instanceName: `Inventory-second-${getRandomPostfix()}`,
   barcode: `123${getRandomPostfix()}`,
 };
+const successCalloutMessage = '1 holding has been successfully moved.';
+const firstHoldingName = 'Main Library'
 
 describe('inventory', () => {
   before('create test data', () => {
@@ -32,7 +33,7 @@ describe('inventory', () => {
         userId = userProperties.userId;
         cy.login(userProperties.username, userProperties.password, { path: TopMenu.inventoryPath, waiter: InventorySearchAndFilter.waitLoading })
           .then(() => {
-            InventoryInstances.createInstanceViaApi(item.instanceName, item.barcode);
+            InventoryInstances.createInstanceWithTwoHoldingsViaApi(item.instanceName, item.barcode);
             InventoryInstances.createInstanceViaApi(secondItem.instanceName, secondItem.barcode);
           });
       });
@@ -50,7 +51,7 @@ describe('inventory', () => {
     InventorySearchAndFilter.selectSearchResultItem();
     ItemView.dismiss();
 
-    InventoryInstance.moveHoldingsToAnotherInstanceByItemTitle(secondItem.instanceName);
+    InventoryInstance.moveHoldingsToAnotherInstanceByItemTitle(firstHoldingName ,secondItem.instanceName);
     InteractorsTools.checkCalloutMessage(successCalloutMessage);
   });
 })

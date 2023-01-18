@@ -260,13 +260,13 @@ export default {
     InventoryInstanceSelectInstanceModal.selectInstance();
     InventoryInstancesMovement.move();
   },
-  moveHoldingsToAnotherInstanceByItemTitle: (title) => {
+  moveHoldingsToAnotherInstanceByItemTitle: (holdingName, title) => {
     cy.do(actionsButton.click());
     cy.do(moveHoldingsToAnotherInstanceButton.click());
     InventoryInstanceSelectInstanceModal.waitLoading();
     InventoryInstanceSelectInstanceModal.searchByTitle(title)
     InventoryInstanceSelectInstanceModal.selectInstance();
-    InventoryInstancesMovement.move();
+    InventoryInstancesMovement.moveFromMultiple(holdingName);
   },
   checkAddItem:(holdingsRecordId) => {
     cy.expect(section.find(Section({ id:holdingsRecordId }))
