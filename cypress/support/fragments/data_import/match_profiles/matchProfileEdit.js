@@ -20,7 +20,7 @@ export default {
     cy.do(Button({ id:'criterion-value-type' }).click());
     cy.expect(criterionValueTypeSelectionList.exists());
     cy.do(criterionValueTypeSelectionList.find(SelectionOption('Admin data: Instance UUID')).click());
-    // need to wait untill value weill be selected
+    // need to wait until value weill be selected
     cy.wait(1000);
   },
 
