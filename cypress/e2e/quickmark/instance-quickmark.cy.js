@@ -80,7 +80,7 @@ describe('Manage inventory Bib records with quickMarc editor', () => {
     QuickMarcEditor.checkContent();
   });
 
-  it('C10928 Delete a field(s) from a record in quickMARC (spitfire)', { tags: [testTypes.smoke, DevTeams.spitfire] }, () => {
+  it('C10928 Delete a field(s) from a record in quickMARC (spitfire)', { tags: [testTypes.smoke, DevTeams.spitfire, features.quickMarcEditor] }, () => {
     InventoryInstance.goToEditMARCBiblRecord();
     QuickMarcEditor.waitLoading();
     cy.reload();
