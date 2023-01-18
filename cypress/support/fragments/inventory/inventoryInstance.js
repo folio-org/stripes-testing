@@ -125,9 +125,9 @@ const checkInstanceNotes = (noteType, noteContent) => {
 };
 
 const waitInstanceRecordViewOpened = (title) => {
-  // need to wait untill updated instance will be displayed
-  cy.wait(1500);
   cy.expect(Pane({ id:'pane-instancedetails' }).exists());
+  // need to wait until updated instance will be displayed
+  cy.wait(3000);
   cy.expect(Pane({ titleLabel: including(title) }).exists());
 };
 
