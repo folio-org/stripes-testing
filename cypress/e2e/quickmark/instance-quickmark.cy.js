@@ -14,6 +14,7 @@ import { Callout } from '../../../interactors';
 import Users from '../../support/fragments/users/users';
 import DevTeams from '../../support/dictionary/devTeams';
 import Z3950TargetProfiles from '../../support/fragments/settings/inventory/z39.50TargetProfiles';
+import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
 
 // TODO: redesign test to exclude repeated steps
 describe('Manage inventory Bib records with quickMarc editor', () => {
@@ -27,15 +28,15 @@ describe('Manage inventory Bib records with quickMarc editor', () => {
   });
 
   beforeEach(() => {
-    cy.createTempUser([permissions.uiQuickMarcQuickMarcAuthoritiesEditorAll.gui,
+    cy.createTempUser([
+      permissions.uiQuickMarcQuickMarcAuthoritiesEditorAll.gui,
       permissions.uiQuickMarcQuickMarcEditorDuplicate.gui,
       permissions.uiQuickMarcQuickMarcBibliographicEditorAll.gui,
       permissions.inventoryAll.gui,
       permissions.uiInventorySingleRecordImport.gui,
     ]).then(userProperties => {
       userId = userProperties.userId;
-      cy.login(userProperties.username, userProperties.password);
-      cy.visit(TopMenu.inventoryPath);
+      cy.login(userProperties.username, userProperties.password, { path: TopMenu.inventoryPath, waiter: InventoryInstances.waitContentLoading });
       InventoryActions.import();
     });
   });
@@ -47,7 +48,7 @@ describe('Manage inventory Bib records with quickMarc editor', () => {
   it('C10950 Edit and save a MARC record in quickMARC (spitfire)', { tags: [testTypes.smoke, DevTeams.spitfire, features.quickMarcEditor] }, () => {
     InventoryInstance.goToEditMARCBiblRecord();
     QuickMarcEditor.waitLoading();
-
+    cy.reload();
     const expectedInSourceRow = quickmarcEditor.addNewField(QuickMarcEditor.getFreeTags()[0]);
     quickmarcEditor.deletePenaltField().then(deletedTag => {
       const expectedInSourceRowWithSubfield = quickmarcEditor.addNewFieldWithSubField(QuickMarcEditor.getFreeTags()[1]);
@@ -80,7 +81,7 @@ describe('Manage inventory Bib records with quickMarc editor', () => {
     quickmarcEditor.checkContent();
   });
 
-  it('C10928 Delete a field(s) from a record in quickMARC (spitfire)', { tags: [testTypes.smoke, DevTeams.spitfire, features.quickMarcEditor] }, () => {
+  it('C10928 Delete a field(s) from a record in quickMARC (spitfire)', { tags: [testTypes.smoke, DevTeams.spitfire] }, () => {
     InventoryInstance.goToEditMARCBiblRecord();
     QuickMarcEditor.waitLoading();
     quickmarcEditor.deletePenaltField().then(deletedTag => {
@@ -187,7 +188,6 @@ describe('Manage inventory Bib records with quickMarc editor', () => {
         });
       });
     };
-
 
     InventoryInstance.checkExpectedMARCSource();
     InventoryInstance.goToEditMARCBiblRecord();

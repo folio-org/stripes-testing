@@ -6,6 +6,8 @@ const addFieldButton = Button({ ariaLabel : 'plus-sign' });
 const deleteFieldButton = Button({ ariaLabel : 'trash' });
 const saveAndCloseButton = Button({ id:'quick-marc-record-save' });
 const confirmationModal = Modal({ id: 'quick-marc-confirm-modal' });
+const cancelConformModel = Modal({ id: 'cancel-editing-confirmation' })
+const cancelConfirmBtn = Modal().find(Button({ id: 'clickable-cancel-editing-confirmation-confirm' }));
 const continueWithSaveButton = Modal().find(Button({ id: 'clickable-quick-marc-confirm-modal-confirm' }));
 const quickMarcEditorRowContent = HTML({ className: including('quickMarcEditorRowContent') });
 
@@ -96,6 +98,10 @@ export default class QuickmarcEditor {
   }
 
   static pressSaveAndClose() { cy.do(saveAndCloseButton.click()); }
+
+  static cancelConfirmationPresented() { cy.expect(cancelConformModel.exists()); }
+
+  static confirmCancel() { cy.do(cancelConfirmBtn.click()); }
 
   static deleteConfirmationPresented() { cy.expect(confirmationModal.exists()); }
 
