@@ -193,6 +193,7 @@ describe('Manage inventory Bib records with quickMarc editor', () => {
     InventoryInstance.checkExpectedMARCSource();
     InventoryInstance.goToEditMARCBiblRecord();
     QuickMarcEditor.waitLoading();
+    cy.reload();
     checkLdrErrors();
     QuickMarcEditor.closeWithoutSaving();
     InventoryInstance.deriveNewMarcBib();
