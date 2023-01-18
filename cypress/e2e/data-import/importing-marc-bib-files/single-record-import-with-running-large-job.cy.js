@@ -71,9 +71,9 @@ describe('ui-data-import: Inventory single record import is not delayed when lar
       Logs.checkFileIsRunning(fileName);
 
       cy.visit(TopMenu.inventoryPath);
-      cy.intercept('/users?*').as('getUsers');
       InventoryInstances.importWithOclc(oclcForImport);
-      cy.wait('@getUsers', getLongDelay());
+      // don't have elem on page for waiter
+      cy.wait(3000);
       InventoryInstance.startOverlaySourceBibRecord();
       InventoryInstance.singleOverlaySourceBibRecordModalIsPresented();
       InventoryInstance.importWithOclc(oclcForUpdating);
