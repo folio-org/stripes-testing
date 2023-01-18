@@ -19,7 +19,6 @@ import InventoryInstances from '../../support/fragments/inventory/inventoryInsta
 // TODO: redesign test to exclude repeated steps
 describe('Manage inventory Bib records with quickMarc editor', () => {
   let userId;
-  const quickmarcEditor = new QuickMarcEditor(InventoryInstance.validOCLC);
 
   before(() => {
     cy.getAdminToken().then(() => {
@@ -49,9 +48,9 @@ describe('Manage inventory Bib records with quickMarc editor', () => {
     InventoryInstance.goToEditMARCBiblRecord();
     QuickMarcEditor.waitLoading();
     cy.reload();
-    const expectedInSourceRow = quickmarcEditor.addNewField(QuickMarcEditor.getFreeTags()[0]);
-    quickmarcEditor.deletePenaltField().then(deletedTag => {
-      const expectedInSourceRowWithSubfield = quickmarcEditor.addNewFieldWithSubField(QuickMarcEditor.getFreeTags()[1]);
+    const expectedInSourceRow = QuickMarcEditor.addNewField(QuickMarcEditor.getFreeTags()[0]);
+    QuickMarcEditor.deletePenaltField().then(deletedTag => {
+      const expectedInSourceRowWithSubfield = QuickMarcEditor.addNewFieldWithSubField(QuickMarcEditor.getFreeTags()[1]);
       QuickMarcEditor.pressSaveAndClose();
       QuickMarcEditor.deleteConfirmationPresented();
       QuickMarcEditor.confirmDelete();
@@ -65,9 +64,9 @@ describe('Manage inventory Bib records with quickMarc editor', () => {
   it('C10924 Add a field to a record using quickMARC (spitfire)', { tags: [testTypes.smoke, DevTeams.spitfire, features.quickMarcEditor] }, () => {
     InventoryInstance.goToEditMARCBiblRecord();
     QuickMarcEditor.waitLoading();
-    quickmarcEditor.addRow();
-    quickmarcEditor.checkInitialContent();
-    const expectedInSourceRow = quickmarcEditor.fillAllAvailableValues();
+    QuickMarcEditor.addRow();
+    QuickMarcEditor.checkInitialContent();
+    const expectedInSourceRow = QuickMarcEditor.fillAllAvailableValues();
 
     QuickMarcEditor.pressSaveAndClose();
     InventoryInstance.waitLoading();
@@ -78,14 +77,14 @@ describe('Manage inventory Bib records with quickMarc editor', () => {
 
     InventoryInstance.goToEditMARCBiblRecord();
     QuickMarcEditor.waitLoading();
-    quickmarcEditor.checkContent();
+    QuickMarcEditor.checkContent();
   });
 
   it('C10928 Delete a field(s) from a record in quickMARC (spitfire)', { tags: [testTypes.smoke, DevTeams.spitfire] }, () => {
     InventoryInstance.goToEditMARCBiblRecord();
     QuickMarcEditor.waitLoading();
     cy.reload();
-    quickmarcEditor.deletePenaltField().then(deletedTag => {
+    QuickMarcEditor.deletePenaltField().then(deletedTag => {
       QuickMarcEditor.pressSaveAndClose();
       QuickMarcEditor.deleteConfirmationPresented();
       QuickMarcEditor.confirmDelete();
@@ -116,11 +115,11 @@ describe('Manage inventory Bib records with quickMarc editor', () => {
 
     InventoryInstance.goToEditMARCBiblRecord();
     QuickMarcEditor.waitLoading();
-    quickmarcEditor.addRow();
-    quickmarcEditor.checkInitialContent();
+    QuickMarcEditor.addRow();
+    QuickMarcEditor.checkInitialContent();
 
     const testRecord = { content: 'testContent', tag: '505', tagMeaning: 'Formatted Contents Note' };
-    const expectedInSourceRow = quickmarcEditor.fillAllAvailableValues(testRecord.content, testRecord.tag);
+    const expectedInSourceRow = QuickMarcEditor.fillAllAvailableValues(testRecord.content, testRecord.tag);
     QuickMarcEditor.pressSaveAndClose();
 
     InventoryInstance.viewSource();
@@ -135,10 +134,10 @@ describe('Manage inventory Bib records with quickMarc editor', () => {
     InventoryInstance.getAssignedHRID()
       .then(instanceHRID => {
         InventoryInstance.deriveNewMarcBib();
-        const expectedCreatedValue = quickmarcEditor.addNewField();
+        const expectedCreatedValue = QuickMarcEditor.addNewField();
 
-        quickmarcEditor.deletePenaltField().then(deletedTag => {
-          const expectedUpdatedValue = quickmarcEditor.updateExistingField();
+        QuickMarcEditor.deletePenaltField().then(deletedTag => {
+          const expectedUpdatedValue = QuickMarcEditor.updateExistingField();
 
           QuickMarcEditor.pressSaveAndClose();
           QuickMarcEditor.deleteConfirmationPresented();
@@ -179,13 +178,13 @@ describe('Manage inventory Bib records with quickMarc editor', () => {
       ];
 
       changedLDRs.forEach(changedLDR => {
-        quickmarcEditor.updateExistingField('LDR', changedLDR.newContent);
+        QuickMarcEditor.updateExistingField('LDR', changedLDR.newContent);
         cy.wrap(QuickMarcEditor.pressSaveAndClose()).then(() => {
           cy.expect(Callout(changedLDR.errorMessage).exists());
           cy.do(Callout(changedLDR.errorMessage).dismiss());
           cy.expect(Callout(changedLDR.errorMessage).absent());
           // eslint-disable-next-line no-unused-expressions
-          changedLDR.is008presented ? quickmarcEditor.checkInitialInstance008Content() : QuickMarcEditor.checkEmptyContent('008');
+          changedLDR.is008presented ? QuickMarcEditor.checkInitialInstance008Content() : QuickMarcEditor.checkEmptyContent('008');
         });
       });
     };
@@ -212,7 +211,7 @@ describe('Manage inventory Bib records with quickMarc editor', () => {
       values.forEach(specialValue => {
         InventoryInstance.goToEditMARCBiblRecord();
         QuickMarcEditor.waitLoading();
-        quickmarcEditor.updateExistingField('LDR', replaceByIndex(initialLDRValue, subfieldIndex, specialValue));
+        QuickMarcEditor.updateExistingField('LDR', replaceByIndex(initialLDRValue, subfieldIndex, specialValue));
         QuickMarcEditor.checkSubfieldsPresenceInTag008();
         QuickMarcEditor.pressSaveAndClose();
         InventoryInstance.waitLoading();
