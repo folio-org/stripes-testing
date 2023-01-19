@@ -149,31 +149,33 @@ describe('ui-data-import: Data Import Updates should add 035 field from 001/003,
     });
     FileDetails.checkSrsRecordQuantityInSummaryTable('8');
     FileDetails.checkInstanceQuantityInSummaryTable('8');
-    rowNumbers.forEach(rowNumber => {
-      cy.visit(TopMenu.dataImportPath);
-      Logs.openFileDetails(secondMarcFileNameForCreate);
-      FileDetails.openInstanceInInventory('Created', rowNumber);
-      InventoryInstance.getAssignedHRID().then(initialInstanceHrId => { secondInstancesHrid.push(initialInstanceHrId); });
-      InventoryInstance.viewSource();
-      // changing the second file
-      InventoryViewSource.extructDataFrom999Field()
-        .then(uuid => {
-          arrayOf999Fields.push(uuid[0], uuid[1]);
-        });
+    cy.wrap(
+      rowNumbers.forEach(rowNumber => {
+        cy.visit(TopMenu.dataImportPath);
+        Logs.openFileDetails(secondMarcFileNameForCreate);
+        FileDetails.openInstanceInInventory('Created', rowNumber);
+        InventoryInstance.getAssignedHRID().then(initialInstanceHrId => { secondInstancesHrid.push(initialInstanceHrId); });
+        InventoryInstance.viewSource();
+        // changing the second file
+        InventoryViewSource.extructDataFrom999Field()
+          .then(uuid => {
+            arrayOf999Fields.push(uuid[0], uuid[1]);
+          });
+      })
+    ).then(() => {
+      console.log(arrayOf999Fields);
+      // change file using uuid for 999 field
+      DataImport.editMarcFile(
+        'marcFileForC358998ForUpdate_2.mrc',
+        secondMarcFileNameForUpdate,
+        ['firstSrsUuid', 'firstInstanceUuid', 'secondSrsUuid', 'secondInstanceUuid',
+          'thirdSrsUuid', 'thirdInstanceUuid', 'forthSrsUuid', 'forthInstanceUuid',
+          'fifthSrsUuid', 'fifthInstanceUuid', 'sixthSrsUuid', 'sixthInstanceUuid',
+          'seventhSrsUuid', 'seventhInstanceUuid', 'eighthSrsUuid', 'eighthInstanceUuid'],
+        [...arrayOf999Fields]
+      );
     });
-    console.log(arrayOf999Fields);
-    // change file using uuid for 999 field
-    DataImport.editMarcFile(
-      'marcFileForC358998ForUpdate_2.mrc',
-      secondMarcFileNameForUpdate,
-      ['firstSrsUuid', 'firstInstanceUuid', 'secondSrsUuid', 'secondInstanceUuid',
-        'thirdSrsUuid', 'thirdInstanceUuid', 'forthSrsUuid', 'forthInstanceUuid',
-        'fifthSrsUuid', 'fifthInstanceUuid', 'sixthSrsUuid', 'sixthInstanceUuid',
-        'seventhSrsUuid', 'seventhInstanceUuid', 'eighthSrsUuid', 'eighthInstanceUuid'],
-      [arrayOf999Fields[0], arrayOf999Fields[1], arrayOf999Fields[2], arrayOf999Fields[3],
-        arrayOf999Fields[4], arrayOf999Fields[5], arrayOf999Fields[6], arrayOf999Fields[7]]
-    );
-    cy.pause();
+
     // create mapping profiles
     cy.visit(SettingsMenu.mappingProfilePath);
     FieldMappingProfiles.openNewMappingProfileForm();
