@@ -36,6 +36,7 @@ describe('Manage inventory Bib records with quickMarc editor', () => {
     ]).then(userProperties => {
       userId = userProperties.userId;
       cy.login(userProperties.username, userProperties.password, { path: TopMenu.inventoryPath, waiter: InventoryInstances.waitContentLoading });
+      cy.reload();
       InventoryActions.import();
     });
   });
