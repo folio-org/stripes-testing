@@ -38,10 +38,10 @@ describe('bulk-edit', () => {
           query: `"instanceId"="${instanceId}"`
         })
           .then(holdings => {
-            uuid = holdings[0].id
+            uuid = holdings[0].id;
             FileManager.createFile(`cypress/fixtures/${validHoldingUUIDsFileName}`, uuid);
           });
-      })
+      });
   });
 
   after('delete test data', () => {
@@ -64,4 +64,4 @@ describe('bulk-edit', () => {
     BulkEditActions.commitChanges();
     BulkEditSearchPane.verifyNonMatchedResults(uuid);
   });
-})
+});
