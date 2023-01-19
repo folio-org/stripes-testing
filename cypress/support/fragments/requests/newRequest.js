@@ -59,7 +59,7 @@ export default {
   createDeliveryRequest(newRequest) {
     this.openNewRequestPane();
     this.fillRequiredFields(newRequest);
-    // need to wait untill instanceId is uploaded
+    // need to wait until instanceId is uploaded
     cy.wait(2500);
     this.saveRequestAndClose();
   },
@@ -75,7 +75,7 @@ export default {
     cy.intercept('/circulation/loans?*').as('getLoans');
     cy.do(enterItemBarcodeButton.click());
     cy.wait('@getLoans');
-    // need to wait untill instanceId is uploaded
+    // need to wait until instanceId is uploaded
     cy.wait(2500);
     this.choosepickupServicePoint(newRequest.pickupServicePoint);
     this.saveRequestAndClose();

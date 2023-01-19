@@ -1,5 +1,3 @@
-/// <reference types="cypress" />
-
 import TopMenu from '../../support/fragments/topMenu';
 import InventoryActions from '../../support/fragments/inventory/inventoryActions';
 import HoldingsRecordView from '../../support/fragments/inventory/holdingsRecordView';

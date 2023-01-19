@@ -32,6 +32,7 @@ describe('ui-finance: Fiscal Year', () => {
     FiscalYears.checkSearchResults(defaultFiscalYear.name);
     FiscalYears.resetFilters();
     // Filter Fiscal Year
+    FiscalYears.openAcquisitionAccordion();
     FiscalYears.selectNoAcquisitionUnit();
     FiscalYears.checkSearchResults(defaultFiscalYear.name);
     FiscalYears.resetFilters();
