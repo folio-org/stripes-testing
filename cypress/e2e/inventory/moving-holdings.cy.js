@@ -9,6 +9,7 @@ import TopMenu from '../../support/fragments/topMenu';
 import ItemView from '../../support/fragments/inventory/inventoryItem/itemView';
 import InventoryInstance from '../../support/fragments/inventory/inventoryInstance';
 import InteractorsTools from '../../support/utils/interactorsTools';
+import InventoryInstancesMovement from '../../support/fragments/inventory/holdingsMove/inventoryInstancesMovement';
 
 let userId;
 const item = {
@@ -21,7 +22,7 @@ const secondItem = {
   barcode: `123${getRandomPostfix()}`,
 };
 const successCalloutMessage = '1 holding has been successfully moved.';
-const firstHoldingName = 'Main Library'
+const firstHoldingName = 'Online'
 
 describe('inventory', () => {
   before('create test data', () => {
@@ -52,7 +53,10 @@ describe('inventory', () => {
     InventorySearchAndFilter.selectSearchResultItem();
     ItemView.clickCloseButton();
 
-    InventoryInstance.moveHoldingsToAnotherInstanceByItemTitle(firstHoldingName ,secondItem.instanceName);
+    InventoryInstance.moveHoldingsToAnotherInstanceByItemTitle(firstHoldingName, secondItem.instanceName);
+    InteractorsTools.checkCalloutMessage(successCalloutMessage);
+
+    InventoryInstancesMovement.moveFromMultiple(firstHoldingName);
     InteractorsTools.checkCalloutMessage(successCalloutMessage);
   });
 })
