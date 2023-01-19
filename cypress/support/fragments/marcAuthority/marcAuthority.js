@@ -1,4 +1,4 @@
-import { Section, Button, HTML, including, TextField, QuickMarcEditor, QuickMarcEditorRow, Modal, TextArea, MultiColumnListHeader, Callout } from '../../../../interactors';
+import { Section, Button, HTML, including, TextField, QuickMarcEditorRow, TextArea, MultiColumnListHeader, Callout } from '../../../../interactors';
 
 const defaultCreateJobProfile = 'Default - Create SRS MARC Authority';
 const defaultUpdateJobProfile = 'Update authority by matching 010';
@@ -79,29 +79,29 @@ export default {
       QuickMarcEditorRow({ index: rowIndex }).find(addFieldButton).click(),
       QuickMarcEditorRow({ index: rowIndex + 1 }).find(TextField({ name: `records[${rowIndex + 1}].tag` })).fillIn(tag),
       QuickMarcEditorRow({ index: rowIndex + 1 }).find(TextArea({ name: `records[${rowIndex + 1}].content` })).fillIn(content),
-    ])
+    ]);
   },
   changeField: (tag, content) => {
     cy.do([
       QuickMarcEditorRow({ tagValue: tag }).find(TextArea()).fillIn(content),
-    ])
+    ]);
   },
-  checkNotDeletableTags: (tag) => { cy.expect(QuickMarcEditorRow({ tagValue: tag }).find(deleteFieldButton).absent()) },
+  checkNotDeletableTags: (tag) => { cy.expect(QuickMarcEditorRow({ tagValue: tag }).find(deleteFieldButton).absent()); },
   change008Field: (lang, kindrec, catrules) => {
     cy.do([
       TextField('Lang').fillIn(lang),
       TextField('Kind rec').fillIn(kindrec),
       TextField('CatRules').fillIn(catrules)
-    ])
+    ]);
   },
-  clicksaveAndCloseButton: () => { cy.do(saveAndCloseButton.click()) },
+  clicksaveAndCloseButton: () => { cy.do(saveAndCloseButton.click()); },
   checkPresentedColumns: (presentedColumns) => presentedColumns.forEach(columnName => cy.expect(MultiColumnListHeader(columnName).exists())),
-  checkLDRValue: (ldrValue) => { cy.expect(QuickMarcEditorRow({ tagValue: 'LDR' }).find(TextArea({ ariaLabel: 'Subfield' })).has({ textContent: ldrValue })) },
+  checkLDRValue: (ldrValue) => { cy.expect(QuickMarcEditorRow({ tagValue: 'LDR' }).find(TextArea({ ariaLabel: 'Subfield' })).has({ textContent: ldrValue })); },
   check008Field: () => {
     cy.do(TextField('Lang').fillIn('abc'));
-    cy.expect(TextField('abc').absent());  
+    cy.expect(TextField('abc').absent());
     cy.do(TextField('Lang').fillIn('a'));
-    cy.expect(TextField('Lang').has({ value: 'a'}));  
+    cy.expect(TextField('Lang').has({ value: 'a' }));
   },
   checkRemovedTag: (rowIndex) => {
     cy.do([
