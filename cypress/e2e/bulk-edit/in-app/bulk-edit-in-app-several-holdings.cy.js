@@ -67,7 +67,7 @@ describe('bulk-edit', { retries: 2 }, () => {
               cy.getLocations({ limit: 1, query: `(id="${holdings[0].temporaryLocationId}")` }).then((locations) => {
                 item2.locationName = locations.name;
               });
-              FileManager.createFile(`cypress/fixtures/${validHoldingUUIDsFileName}`, `${holdings[0].id}\r\n${item.holdingId}`);
+              FileManager.createFile(`cypress/fixtures/${validHoldingUUIDsFileName}`, `${item.holdingId}\r\n${item2.holdingId}`);
             });
         });
     });
