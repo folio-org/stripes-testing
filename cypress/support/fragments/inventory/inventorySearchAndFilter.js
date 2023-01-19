@@ -16,7 +16,8 @@ import {
   KeyValue,
   Section,
   MultiSelect,
-  MultiSelectOption
+  MultiSelectOption,
+  MultiColumnListRow
 } from '../../../../interactors';
 import InventoryActions from './inventoryActions';
 import InventoryInstances from './inventoryInstances';
@@ -160,10 +161,11 @@ export default {
   },
 
   byKeywords(kw = '*') {
-    return cy.do([
+    cy.do([
       keywordInput.fillIn(kw),
       searchButton.click(),
     ]);
+    cy.expect(MultiColumnListRow().exists());
   },
 
   selectBrowseCallNumbers() {
