@@ -60,13 +60,12 @@ const validOCLC = { id:'176116217',
   existingTag: '100',
   ldrValue: '01677cam\\a22003974a\\4500',
   tag008BytesProperties : {
-    eLvl : { interactor:TextField('ELvl'), defaultValue:'4' },
     srce: { interactor:TextField('Srce'), defaultValue:'\\' },
     ctrl : { interactor:TextField('Ctrl'), defaultValue:'' },
     lang : { interactor:TextField('Lang'), defaultValue:'rus' },
     form : { interactor:TextField('Form'), defaultValue:'\\' },
     ctry : { interactor:TextField('Ctry'), defaultValue:'ru\\' },
-    desc : { interactor:TextField('Desc'), defaultValue:'a' },
+    desc : { interactor:TextField('MRec'), defaultValue:'o' },
     dtSt : { interactor:TextField('DtSt'), defaultValue:'s' },
     startDate : { interactor:TextField('Start date'), defaultValue:'2007' },
     endDate : { interactor:TextField('End date'), defaultValue:'\\\\\\\\' }
@@ -186,6 +185,7 @@ export default {
     cy.do(actionsButton.click());
     cy.do(deriveNewMarcBibRecord.click());
     cy.expect(QuickMarcEditor().exists());
+    cy.reload();
   },
 
   getAssignedHRID:() => cy.then(() => KeyValue(instanceHRID).value()),
