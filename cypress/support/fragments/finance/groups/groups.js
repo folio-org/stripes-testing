@@ -106,9 +106,12 @@ export default {
     cy.do(Button({ id: 'reset-groups-filters' }).click());
   },
 
+  openAcquisitionAccordion() {
+    cy.do(Button({ id: 'accordion-toggle-button-acqUnitIds' }).click());
+  },
+
   selectNoAcquisitionUnit() {
     cy.do([
-      Button({ id: 'accordion-toggle-button-acqUnitIds' }).click(),
       Button({ id: 'acqUnitIds-selection' }).click(),
       SelectionOption('No acquisition unit').click(),
     ]);

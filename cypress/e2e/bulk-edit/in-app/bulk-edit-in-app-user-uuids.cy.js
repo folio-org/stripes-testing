@@ -28,6 +28,10 @@ describe('bulk-edit', () => {
         });
     });
 
+    beforeEach('select User', () => {
+      BulkEditSearchPane.checkUsersRadio();
+    });
+
     after('delete test data', () => {
       FileManager.deleteFile(`cypress/fixtures/${userUUIDsFileName}`);
       FileManager.deleteFile(`cypress/downloads/${matchRecordsFileName}`);

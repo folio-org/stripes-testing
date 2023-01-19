@@ -44,7 +44,7 @@ const notesSection = Section({ id: 'instance-details-notes' });
 const moveItemsButton = Button({ id: 'move-instance-items' });
 const instanceDetailsPane = Pane({ id:'pane-instancedetails' });
 const identifiersAccordion = Accordion('Identifiers');
-const singleRecordImportModal = Modal('Single record import');
+const singleRecordImportModal = Modal('Overlay source bibliographic record');
 const source = KeyValue('Source');
 const tagButton = Button({ icon: 'tag' });
 const closeTag = Button({ icon: 'times' });
@@ -125,6 +125,8 @@ const checkInstanceNotes = (noteType, noteContent) => {
 
 const waitInstanceRecordViewOpened = (title) => {
   cy.expect(Pane({ id:'pane-instancedetails' }).exists());
+  // need to wait until updated instance will be displayed
+  cy.wait(3000);
   cy.expect(Pane({ titleLabel: including(title) }).exists());
 };
 
@@ -380,7 +382,7 @@ export default {
     cy.expect(HTML('MARC bibliographic record').exists());
   },
 
-  singleRecordImportModalIsPresented:() => {
+  singleOverlaySourceBibRecordModalIsPresented:() => {
     cy.expect(singleRecordImportModal.exists());
   },
 
