@@ -32,32 +32,35 @@ import UserAllFeesFines from '../../support/fragments/users/userAllFeesFines';
 import PayFeeFaine from '../../support/fragments/users/payFeeFaine';
 
 describe('Overdue fine', () => {
-  const noticeTemplates = {
-    returnedUponAt: {
-      name: `Autotest_${getRandomPostfix()}_Overdue_fine_returned_upon_at`,
-      description: 'Created by autotest team',
-      category: 'Automated fee/fine charge',
-      subject: `Autotest_${getRandomPostfix()}_Overdue_fine_returned_upon_at`,
-      body: 'Test email body {{item.title}} {{loan.dueDateTime}}',
-    },
-    returnedAfterOnce: {
-      name: `Autotest_${getRandomPostfix()}_Overdue_fine_returned_after_once`,
-      description: 'Created by autotest team',
-      category: 'Automated fee/fine charge',
-      subject: `Autotest_${getRandomPostfix()}_Overdue_fine_returned_after_once`,
-      body: 'Test email body {{item.title}} {{loan.dueDateTime}}',
-    },
-    returnedAfterRecurring: {
-      name: `Autotest_${getRandomPostfix()}_Overdue_fine_returned_after_recurring`,
-      description: 'Created by autotest team',
-      category: 'Automated fee/fine charge',
-      subject: `Autotest_${getRandomPostfix()}_Overdue_fine_returned_after_recurring`,
-      body: 'Test email body {{item.title}} {{loan.dueDateTime}}',
+  const patronGroup = {
+    name: 'groupToTestNotices' + getRandomPostfix(),
+  };
+  const userData = {
+    personal: {
+      lastname: null,
     },
   };
-  const noticePolicy = {
-    name: `Autotest ${getRandomPostfix()} Overdue fine, returned`,
-    description: 'Created by autotest team',
+  const itemData = {
+    barcode: generateItemBarcode(),
+    title: `Instance ${getRandomPostfix()}`,
+  };
+  const testData = {
+    userServicePoint: ServicePoints.getDefaultServicePointWithPickUpLocation('autotestReceiveNotice', uuid()),
+    ruleProps: {},
+  };
+  const createNoticeTemplate = (noticeName) => {
+    return {
+      name: `Autotest_${getRandomPostfix()}_${noticeName}`,
+      description: 'Created by autotest team',
+      category: 'Automated fee/fine charge',
+      subject: `Autotest_${getRandomPostfix()}_${noticeName}`,
+      body: 'Test email body {{item.title}} {{loan.dueDateTime}}',
+    };
+  };
+  const noticeTemplates = {
+    returnedUponAt: createNoticeTemplate('Overdue_fine_returned_upon_at'),
+    returnedAfterOnce: createNoticeTemplate('Overdue_fine_returned_after_once'),
+    returnedAfterRecurring: createNoticeTemplate(`Autotest_${getRandomPostfix()}_Overdue_fine_returned_after_recurring`),
   };
   const selectOptions = (template) => {
     const generalOptions = {
@@ -98,22 +101,6 @@ describe('Overdue fine', () => {
       };
     }
   };
-  const patronGroup = {
-    name: 'groupToTestNotices' + getRandomPostfix(),
-  };
-  const userData = {
-    personal: {
-      lastname: null,
-    },
-  };
-  const itemData = {
-    barcode: generateItemBarcode(),
-    title: `Instance ${getRandomPostfix()}`,
-  };
-  const testData = {
-    userServicePoint: ServicePoints.getDefaultServicePointWithPickUpLocation('autotestReceiveNotice', uuid()),
-    ruleProps: {},
-  };
   const searchResultsData = (templateName) => {
     return {
       userBarcode: userData.barcode,
@@ -126,14 +113,12 @@ describe('Overdue fine', () => {
       desc: `Template: ${templateName}. Triggering event: Overdue fine returned.`,
     };
   };
-
   const checkNoticeIsSent = (checkParams) => {
     SearchPane.searchByUserBarcode(userData.barcode);
     SearchPane.findResultRowIndexByContent(checkParams.desc).then((rowIndex) => {
       SearchPane.checkResultSearch(checkParams, rowIndex);
     });
   };
-
   const createPatronNoticeTemplate = (template) => {
     NewNoticePolicyTemplate.startAdding();
     NewNoticePolicyTemplate.checkInitialState();
@@ -146,7 +131,10 @@ describe('Overdue fine', () => {
     template.category = 'AutomatedFeeFineCharge';
     NewNoticePolicyTemplate.checkAfterSaving(template);
   };
-
+  const noticePolicy = {
+    name: `Autotest ${getRandomPostfix()} Overdue fine, returned`,
+    description: 'Created by autotest team',
+  };
   const loanPolicyBody = {
     id: uuid(),
     name: `1_minute_${getRandomPostfix()}`,
@@ -288,7 +276,7 @@ describe('Overdue fine', () => {
     PatronGroups.deleteViaApi(patronGroup.id);
     cy.deleteItem(itemData.itemId);
     cy.deleteHoldingRecordViaApi(itemData.holdingId);
-    InventoryInstance.deleteInstanceViaApi(itemData.instanceId); //
+    InventoryInstance.deleteInstanceViaApi(itemData.instanceId);
     PaymentMethods.deleteViaApi(testData.paymentMethod.id);
     UsersOwners.deleteViaApi(userOwnerBody.id);
     Location.deleteViaApiIncludingInstitutionCampusLibrary(
@@ -348,6 +336,8 @@ describe('Overdue fine', () => {
       Checkout.verifyResultsInTheRow([itemData.barcode]);
       CheckOutActions.endCheckOutSession();
 
+      // need to wait so item can get overdue status
+      // eslint-disable-next-line cypress/no-unnecessary-waiting
       cy.wait(100000);
       cy.visit(TopMenu.checkInPath);
       CheckInActions.checkInItem(itemData.barcode);
@@ -355,6 +345,8 @@ describe('Overdue fine', () => {
       CheckInActions.endCheckInSession();
 
       cy.visit(TopMenu.circulationLogPath);
+      // wait to get "Overdue fine returned after once" and "Overdue fine returned after recurring" notices
+      // eslint-disable-next-line cypress/no-unnecessary-waiting
       cy.wait(200000);
       cy.reload();
       checkNoticeIsSent(searchResultsData(noticeTemplates.returnedAfterRecurring.name));
@@ -373,6 +365,8 @@ describe('Overdue fine', () => {
       PayFeeFaine.submitAndConfirm();
 
       cy.visit(TopMenu.circulationLogPath);
+      // wait to check that we don't get new "Overdue fine returned after recurring" notice because fee/fine was paid
+      // eslint-disable-next-line cypress/no-unnecessary-waiting
       cy.wait(100000);
       SearchPane.searchByUserBarcode(userData.barcode);
       SearchPane.checkResultSearch({ object: 'Fee/fine', circAction: 'Paid fully' }, 0);
