@@ -10,7 +10,7 @@ export default {
     cy.wait(1500);
     cy.do(viewPane.find(Button('Actions')).click());
     cy.do(Button('Edit').click());
-    // need to wait untill the page will be laoded
+    // need to wait until the page will be laoded
     cy.wait(1000);
     cy.expect(Accordion('Match criterion').exists());
   },
