@@ -356,4 +356,8 @@ export default {
       .find(MultiColumnList({ id: 'list-identifiers' }))
       .find(MultiColumnListCell(including(text))).exists());
   },
+
+  singleOverlaySourceBibRecordModalIsPresented:() => {
+    cy.expect(singleRecordImportModal.exists());
+  },
 };
