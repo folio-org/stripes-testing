@@ -94,7 +94,7 @@ export default {
         cy.getMaterialTypes({ limit: 1 });
         cy.getLocations({ limit: 1 });
         cy.getHoldingTypes({ limit: 1 });
-        InventoryHoldings.getHoldingSources({ limit: 1 }).then(holdingSources => {
+        InventoryHoldings.getHoldingSources({ limit: 1, query: '(name=="FOLIO")' }).then(holdingSources => {
           holdingSourceId = holdingSources[0].id;
           cy.getInstanceTypes({ limit: 1 });
           cy.getAlternativeTitlesTypes({ limit: 1, query: 'name="Uniform title"' }).then(titleTypes => {
