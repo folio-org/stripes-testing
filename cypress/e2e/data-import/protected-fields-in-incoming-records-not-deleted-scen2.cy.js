@@ -61,18 +61,18 @@ describe('ui-data-import: Check that protected fields in incoming records are no
       });
   });
 
-  //   after(() => {
-  //     MarcFieldProtection.getListOfMarcFieldProtectionViaApi({ query: '"field"=="*"' })
-  //       .then(list => {
-  //         list.forEach(({ id }) => MarcFieldProtection.deleteMarcFieldProtectionViaApi(id));
-  //       });
-  //     Z3950TargetProfiles.changeOclcWorldCatToDefaultViaApi();
-  //     cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${instanceHrid}"` })
-  //       .then((instance) => {
-  //         InventoryInstance.deleteInstanceViaApi(instance.id);
-  //       });
-  //     Users.deleteViaApi(user.userId);
-  //   });
+  after(() => {
+    MarcFieldProtection.getListOfMarcFieldProtectionViaApi({ query: '"field"=="*"' })
+      .then(list => {
+        list.forEach(({ id }) => MarcFieldProtection.deleteMarcFieldProtectionViaApi(id));
+      });
+    Z3950TargetProfiles.changeOclcWorldCatToDefaultViaApi();
+    cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${instanceHrid}"` })
+      .then((instance) => {
+        InventoryInstance.deleteInstanceViaApi(instance.id);
+      });
+    Users.deleteViaApi(user.userId);
+  });
 
   it('C359189 Check that protected fields in incoming records are not deleted during import: Scenario 2 (folijet)',
     { tags: [TestTypes.smoke, DevTeams.folijet] }, () => {
