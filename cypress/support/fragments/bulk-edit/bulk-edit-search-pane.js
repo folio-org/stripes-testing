@@ -86,6 +86,14 @@ export default {
     ]);
   },
 
+  verifyDragNDropHoldingsUUIDsArea() {
+    cy.expect([
+      HTML('Drag and drop or choose file with holdings UUIDs').exists(),
+      Button('or choose file').has({ visible: true }),
+      HTML('Select a file with holdings UUIDs').exists(),
+    ])
+  },
+
   verifyDragNDropUsersUIIDsArea() {
     this.checkUsersRadio();
     this.selectRecordIdentifier('User UUIDs');
