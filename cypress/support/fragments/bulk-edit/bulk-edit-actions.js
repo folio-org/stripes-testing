@@ -1,9 +1,16 @@
 import { HTML, including } from '@interactors/html';
 import FileManager from '../../utils/fileManager';
-import {Modal, SelectionOption, Button, DropdownMenu, Checkbox, MultiColumnListHeader} from '../../../../interactors';
+import { Modal, SelectionOption, Button, DropdownMenu, Checkbox, MultiColumnListHeader, MultiColumnListCell, TextField } from '../../../../interactors';
 
 const actionsBtn = Button('Actions');
+const cancelBtn = Button({ id: 'clickable-cancel' });
+const createBtn = Button({ id: 'clickable-create-widget' });
+const plusBtn = Button({ icon: 'plus-sign' });
+const deleteBtn = Button({ icon: 'trash' });
 const dropdownMenu = DropdownMenu();
+const keepEditingBtn = Button('Keep editing');
+const areYouSureForm = Modal('Are you sure?');
+
 // interactor doesn't allow to pick second the same select
 function getLocationSelect() {
   return cy.get('select').eq(2);
@@ -25,17 +32,48 @@ function getPatronGroupTypeSelect() {
   return cy.get('select').eq(3);
 }
 
+function getActionSelect() {
+  return cy.get('select').eq(2);
+}
+
+function getBulkEditSelectType() {
+  return cy.get('select').eq(1);
+}
+
+function getBulkEditSelectType() {
+  return cy.get('select').eq(1);
+}
+
 
 export default {
   openStartBulkEditForm() {
     cy.do(Button(including('Start bulk edit')).click());
   },
+
+  openInAppStartBulkEditFrom() {
+    cy.do(Button('Start bulk edit').click());
+  },
+
   verifyBulkEditForm() {
     getEmailSelect().select('Email');
     cy.expect([
-      Button({ icon: 'plus-sign'}).exists(),
+      Button({ icon: 'plus-sign' }).exists(),
       Button({ icon: 'trash', disabled: true }).exists(),
     ])
+  },
+
+  verifyAreYouSureForm(count, cellContent) {
+    cy.expect([
+      areYouSureForm.find(HTML(including(`${count} records will be changed`))).exists(),
+      areYouSureForm.find(keepEditingBtn).exists(),
+      areYouSureForm.find(Button('Download preview')).exists(),
+      areYouSureForm.find(Button('Commit changes')).exists(),
+      areYouSureForm.find(MultiColumnListCell(cellContent)).exists()
+    ]);
+  },
+
+  clickKeepEditingBtn() {
+    cy.do(areYouSureForm.find(keepEditingBtn).click());
   },
 
   openActions() {
@@ -81,6 +119,44 @@ export default {
   fillPatronGroup(group = 'staff (Staff Member)') {
     getPatronBlockSelect().select('Patron group');
     getPatronGroupTypeSelect().select(group);
+  },
+
+  fillLoanType(type = 'Selected') {
+    getBulkEditSelectType().select('Permanent loan type');
+    cy.do([
+      Button({ id: 'loanType' }).click(),
+      SelectionOption(including(type)).click(),
+    ]);
+  },
+  
+  fillTemporaryLoanType(type = 'Selected') {
+    getBulkEditSelectType().select('Temporary loan type');
+    getActionSelect().select('Replace with');
+    cy.do([
+      Button({ id: 'loanType' }).click(),
+      SelectionOption(including(type)).click(),
+    ]);
+  },
+
+  clearTemporaryLoanType() {
+    getBulkEditSelectType().select('Temporary loan type');
+    getActionSelect().select('Clear field');
+  },
+
+  fillExpirationDate(date) {
+    // date format MM/DD/YYYY
+    getBulkEditSelectType().select('Expiration date');
+    cy.do([
+      Button({ icon: 'calendar' }).click(),
+      TextField().fillIn(date)
+    ]);
+  },
+
+  verifyCalendarItem() {
+    getBulkEditSelectType().select('Expiration date');
+    cy.do(Button({ icon: 'calendar' }).click());
+    // TODO: bulk edit calendar is not common datepicker like our interactor
+    cy.get('[id^="datepicker-calendar-container"]').should('be.visible');
   },
 
   verifyNoMatchingOptionsForLocationFilter() {
@@ -164,13 +240,53 @@ export default {
     ]);
   },
 
+  verifyItemActionDropdownItems(isDisabled = false) {
+    cy.expect([
+      dropdownMenu.find(Checkbox({ name: 'barcode', checked: true, disabled: isDisabled })).exists(),
+      dropdownMenu.find(Checkbox({ name: 'status', checked: true, disabled: isDisabled })).exists(),
+      dropdownMenu.find(Checkbox({ name: 'effectiveLocation', checked: true, disabled: isDisabled })).exists(),
+      dropdownMenu.find(Checkbox({ name: 'callNumber', checked: true, disabled: isDisabled })).exists(),
+      dropdownMenu.find(Checkbox({ name: 'hrid', checked: true, disabled: isDisabled })).exists(),
+      dropdownMenu.find(Checkbox({ name: 'materialType', checked: true, disabled: isDisabled })).exists(),
+      dropdownMenu.find(Checkbox({ name: 'permanentLoanType', checked: true, disabled: isDisabled })).exists(),
+      dropdownMenu.find(Checkbox({ name: 'temporaryLoanType', checked: true, disabled: isDisabled })).exists(),
+      dropdownMenu.find(Checkbox({ name: 'id', checked: false, disabled: isDisabled })).exists(),
+      dropdownMenu.find(Checkbox({ name: 'formerIds', checked: false, disabled: isDisabled })).exists(),
+      dropdownMenu.find(Checkbox({ name: 'accessionNumber', checked: false, disabled: isDisabled })).exists(),
+      dropdownMenu.find(Checkbox({ name: 'permanentLocation', checked: false, disabled: isDisabled })).exists(),
+      dropdownMenu.find(Checkbox({ name: 'temporaryLocation', checked: false, disabled: isDisabled })).exists(),
+      dropdownMenu.find(Checkbox({ name: 'copyNumber', checked: false, disabled: isDisabled })).exists(),
+      dropdownMenu.find(Checkbox({ name: 'enumeration', checked: false, disabled: isDisabled })).exists(),
+      dropdownMenu.find(Checkbox({ name: 'chronology', checked: false, disabled: isDisabled })).exists(),
+      dropdownMenu.find(Checkbox({ name: 'volume', checked: false, disabled: isDisabled })).exists(),
+    ]);
+  },
+
+  verifyModifyLandingPageBeforeModifying() {
+    cy.expect([
+      cancelBtn.has({ disabled: false }),
+      createBtn.has({ disabled: true }),
+      plusBtn.has({ disabled: false }),
+      deleteBtn.has({ disabled: true }),
+    ]);
+  },
+
+  verifyModifyLandingPageAfterModifying() {
+    cy.expect([
+      cancelBtn.has({ disabled: false }),
+      createBtn.has({ disabled: false }),
+      plusBtn.has({ disabled: false }),
+      deleteBtn.has({ disabled: true }),
+    ]);
+  },
+
   verifyCheckedDropdownMenuItem() {
-    cy.do(dropdownMenu.find(Checkbox({ name: 'firstName'})).click());
+    cy.do(dropdownMenu.find(Checkbox({ name: 'firstName' })).click());
     cy.expect(MultiColumnListHeader('First name').absent());
   },
 
   verifyUncheckedDropdownMenuItem() {
-    cy.do(dropdownMenu.find(Checkbox({ name: 'email'})).click());
+    cy.do(dropdownMenu.find(Checkbox({ name: 'email' })).click());
     cy.expect(MultiColumnListHeader('Email').exists());
   },
 
