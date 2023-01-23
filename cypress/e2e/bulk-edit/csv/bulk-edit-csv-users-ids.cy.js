@@ -35,6 +35,10 @@ describe('bulk-edit', () => {
       Users.deleteViaApi(user.userId);
     });
 
+    afterEach('go to bulk edit', () => {
+      cy.visit(TopMenu.bulkEditPath);
+    });
+
 
     it('C350928 Verify error accordion during matching (CSV approach) (firebird)', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
       BulkEditSearchPane.checkUsersRadio();
@@ -53,7 +57,6 @@ describe('bulk-edit', () => {
       BulkEditSearchPane.verifyResultColumTitles('Email');
 
       BulkEditSearchPane.verifyErrorLabel(userUUIDsFileName, 1, 1);
-      BulkEditActions.newBulkEdit();
     });
 
     it('C353233 Verify number of updated records (firebird)', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
@@ -76,7 +79,6 @@ describe('bulk-edit', () => {
 
       // Verify changes
       BulkEditSearchPane.verifyChangedResults(user.username);
-      BulkEditActions.newBulkEdit();
     });
 
     it('C357034 Verify elements of the bulk edit app -- CSV app (firebird)', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
@@ -118,7 +120,6 @@ describe('bulk-edit', () => {
       BulkEditActions.commitChanges();
 
       BulkEditSearchPane.verifyChangedResults(user.username);
-      BulkEditActions.newBulkEdit();
     });
 
     it('C353956 Verify uploading file with User UUIDs (firebird)', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
@@ -137,7 +138,6 @@ describe('bulk-edit', () => {
       BulkEditActions.commitChanges();
 
       BulkEditSearchPane.verifyChangedResults(user.username);
-      BulkEditActions.newBulkEdit();
     });
   });
 });
