@@ -40,11 +40,6 @@ function getBulkEditSelectType() {
   return cy.get('select').eq(1);
 }
 
-function getBulkEditSelectType() {
-  return cy.get('select').eq(1);
-}
-
-
 export default {
   openStartBulkEditForm() {
     cy.do(Button(including('Start bulk edit')).click());
