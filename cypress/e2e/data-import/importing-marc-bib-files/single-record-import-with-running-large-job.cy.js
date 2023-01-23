@@ -12,7 +12,6 @@ import Logs from '../../../support/fragments/data_import/logs/logs';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
 import Users from '../../../support/fragments/users/users';
-import { getLongDelay } from '../../../support/utils/cypressTools';
 
 describe('ui-data-import: Inventory single record import is not delayed when large data import jobs are running', () => {
   let user = {};
@@ -64,16 +63,16 @@ describe('ui-data-import: Inventory single record import is not delayed when lar
       cy.visit(TopMenu.dataImportPath);
       DataImport.checkIsLandingPageOpened();
       DataImport.uploadFile('marcFileForC356824.mrc', fileName);
-      // need to wait untill file is uploaded
+      // need to wait until file is uploaded
       cy.wait(2500);
       JobProfiles.searchJobProfileForImport(jobProfileToRun);
       JobProfiles.runImportFile();
       Logs.checkFileIsRunning(fileName);
 
       cy.visit(TopMenu.inventoryPath);
-      cy.intercept('/users?*').as('getUsers');
       InventoryInstances.importWithOclc(oclcForImport);
-      cy.wait('@getUsers', getLongDelay());
+      // don't have elem on page for waiter
+      cy.wait(3000);
       InventoryInstance.startOverlaySourceBibRecord();
       InventoryInstance.singleOverlaySourceBibRecordModalIsPresented();
       InventoryInstance.importWithOclc(oclcForUpdating);
