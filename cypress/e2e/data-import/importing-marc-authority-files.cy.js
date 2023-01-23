@@ -46,7 +46,7 @@ describe('Data Import -> Importing MARC Authority files', () => {
   });
 
   afterEach('Deleting data', () => {
-    if(createdAuthorityID) MarcAuthority.deleteViaAPI(createdAuthorityID);
+    if (createdAuthorityID) MarcAuthority.deleteViaAPI(createdAuthorityID);
 
     cy.loginAsAdmin({ path: TopMenu.dataImportPath, waiter: DataImport.waitLoading });
     DataImport.selectLog();
