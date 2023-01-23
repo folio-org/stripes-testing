@@ -10,13 +10,29 @@ import BrowseContributors from '../../../support/fragments/inventory/search/brow
 import Users from '../../../support/fragments/users/users';
 import permissions from '../../../support/dictionary/permissions';
 
-describe('ui-inventory: search', () => {
+describe('Inventory -> Call Number Browse', () => {
   const item = {
     instanceName: `instanceForRecord_${getRandomPostfix()}`,
     itemBarcode: getRandomPostfix(),
     publisher: null,
     holdingCallNumber: '1',
     itemCallNumber: 'RR 718',
+  };
+
+  const itemA1 = {
+    instanceName: `testA1`,
+    itemBarcode: getRandomPostfix(),
+    publisher: null,
+    holdingCallNumber: '1',
+    itemCallNumber: '7777559A1',
+  };
+
+  const itemA2 = {
+    instanceName: `testA2`,
+    itemBarcode: getRandomPostfix(),
+    publisher: null,
+    holdingCallNumber: '1',
+    itemCallNumber: '7777559A2',
   };
 
   const testData = {
@@ -36,21 +52,28 @@ describe('ui-inventory: search', () => {
     BrowseCallNumber.checkExactSearchResult(testData.exactSearch, item.instanceName);
   };
 
-  beforeEach('Creating user and instance with item with call number', () => {
+  before('Creating user and instance with item with call number', () => {
     cy.getAdminToken().then(() => {
       cy.createTempUser([
         permissions.inventoryAll.gui,
         permissions.uiCallNumberBrowse.gui
       ]).then(userProperties => {
         testData.user = userProperties;
-        cy.login(userProperties.username, userProperties.password, { path: TopMenu.inventoryPath, waiter: InventorySearchAndFilter.waitLoading });
         InventoryInstances.createInstanceViaApi(item.instanceName, item.itemBarcode, item.publisher, item.holdingCallNumber, item.itemCallNumber);
+        InventoryInstances.createInstanceViaApi(itemA1.instanceName, itemA1.itemBarcode, itemA1.publisher, itemA1.holdingCallNumber, itemA1.itemCallNumber);
+        InventoryInstances.createInstanceViaApi(itemA2.instanceName, itemA2.itemBarcode, itemA2.publisher, itemA2.holdingCallNumber, itemA2.itemCallNumber);
       });
     });
   });
 
-  afterEach('Deleting user and instance', () => {
+  beforeEach('Login to application', () => {
+    cy.login(testData.user.username, testData.user.password, { path: TopMenu.inventoryPath, waiter: InventorySearchAndFilter.waitLoading });
+  });
+
+  after('Deleting user and instance', () => {
     InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(item.itemBarcode);
+    InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(itemA1.itemBarcode);
+    InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(itemA2.itemBarcode);
     Users.deleteViaApi(testData.user.userId);
   });
 
@@ -63,5 +86,15 @@ describe('ui-inventory: search', () => {
     BrowseContributors.resetAllInSearchPane();
     search(testData.itemWithLowerCaseR);
     BrowseCallNumber.checkExactSearchResult(testData.exactSearch);
+  });
+
+  it('C359589 Verify that "Browse call numbers" result list displays all unique call numbers from one “Instance” record (spitfire)', { tags: [DevTeams.spitfire, TestTypes.criticalPath] }, () => {
+    BrowseCallNumber.clickBrowseBtn();
+    InventorySearchAndFilter.verifyKeywordsAsDefault();
+    InventorySearchAndFilter.selectBrowseCallNumbers();
+    InventoryActions.actionsIsAbsent();
+    InventorySearchAndFilter.showsOnlyEffectiveLocation();
+    InventorySearchAndFilter.browseSubjectsSearch(itemA1.itemCallNumber);
+    BrowseCallNumber.checkExactSearchResult(itemA1.itemCallNumber);
   });
 });
