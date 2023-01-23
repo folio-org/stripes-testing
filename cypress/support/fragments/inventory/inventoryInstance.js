@@ -122,14 +122,12 @@ export default {
     cy.expect(notesSection.find(MultiColumnListHeader(noteType)).exists());
     cy.expect(notesSection.find(MultiColumnListCell(noteContent)).exists());
   },
-
   checkElectronicAccess:() => {
     cy.expect(Accordion('Electronic access')
       .find(MultiColumnList({ id: 'list-electronic-access' }))
       .find(MultiColumnListCell({ row: 0, columnIndex: 0, content: 'No value set-' }))
       .exists());
   },
-
   deriveNewMarcBib:() => {
     cy.do(actionsButton.click());
     cy.do(deriveNewMarcBibRecord.click());
@@ -144,7 +142,6 @@ export default {
     cy.do(actionsButton.click());
     cy.do(addMarcHoldingRecordButton.click());
   },
-
   openHoldingView: () => {
     cy.do(viewHoldingsButton.click());
     cy.expect(Button('Actions').exists());
@@ -155,7 +152,6 @@ export default {
     NewHoldingsRecord.saveAndClose();
     waitLoading();
   },
-
   checkHoldingsTable: (locationName, rowNumber, caption, barcode, status, effectiveLocation = null) => {
     const accordionHeader = `Holdings: ${locationName} >`;
     const indexRowNumber = `row-${rowNumber}`;
@@ -256,6 +252,7 @@ export default {
     cy.intercept('/tags?limit=10000').as('getTags');
     cy.do(tagButton.click());
     cy.wait(['@getTags']);
+    /* eslint-disable cypress/no-unnecessary-waiting */
     // TODO: clarify with developers what should be waited
     cy.wait(1000);
     cy.do(tagsPane.find(textFieldTagInput).choose(tagName));
@@ -350,7 +347,6 @@ export default {
   checkCalloutMessage: (text, calloutType = calloutTypes.success) => {
     cy.expect(Callout({ type: calloutType }).is({ textContent: text }));
   },
-
   checkIdentifier: (text) => {
     cy.expect(Accordion('Identifiers')
       .find(MultiColumnList({ id: 'list-identifiers' }))
@@ -360,10 +356,14 @@ export default {
   verifyLoan(content) {
     cy.expect(MultiColumnListCell({ content }).exists());
   },
-  
+
   verifyLoanInItemPage(barcode, value) {
     cy.do(MultiColumnListCell({ content: barcode }).find(Link()).click());
-    cy.expect(KeyValue('Temporary loan type').has({ value: value}));
-    cy.do(Button({ icon: 'times'}).click());
+    cy.expect(KeyValue('Temporary loan type').has({ value }));
+    cy.do(Button({ icon: 'times' }).click());
+  },
+
+  singleOverlaySourceBibRecordModalIsPresented:() => {
+    cy.expect(singleRecordImportModal.exists());
   },
 };
