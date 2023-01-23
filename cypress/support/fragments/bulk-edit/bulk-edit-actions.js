@@ -108,6 +108,14 @@ export default {
     ]);
   },
 
+  replacePermanentLocation(location, type) {
+    getBulkEditSelectType().select(`Permanent ${type} location`);
+    cy.do([
+      Button('Select control\nSelect location').click(),
+      SelectionOption(including(location)).click(),
+    ]);
+  },
+
   fillTemporaryLocationFilter(location = 'Annex') {
     getBulkEditSelectType().select('Temporary item location');
     getLocationSelect().select('Replace with');
