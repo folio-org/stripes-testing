@@ -84,7 +84,7 @@ export default {
     cy.do(Checkbox(tagName).click());
   },
 
-  createInstanceViaApi(instanceName, itemBarcode, publisher = null, holdingCallNumber = '1', itemCallNumber = '2', accessionNumber = 'test_number_1') {
+  createInstanceViaApi(instanceName, itemBarcode, publisher = null, holdingCallNumber = '1', itemCallNumber = '2', accessionNumber = 'test_number_1', holdingsCount = 1) {
     let alternativeTitleTypeId = '';
     let holdingSourceId = '';
     const instanceId = uuid();
@@ -92,7 +92,7 @@ export default {
       .then(() => {
         cy.getLoanTypes({ limit: 1 });
         cy.getMaterialTypes({ limit: 1 });
-        cy.getLocations({ limit: 1 });
+        cy.getLocations({ limit: 50 });
         cy.getHoldingTypes({ limit: 1 });
         InventoryHoldings.getHoldingSources({ limit: 1 }).then(holdingSources => {
           holdingSourceId = holdingSources[0].id;
@@ -103,6 +103,14 @@ export default {
         });
       })
       .then(() => {
+        const holdings = [];
+        for(let i = 0; i < holdingsCount; i++){
+          holdings.push({
+            holdingsTypeId: Cypress.env('holdingsTypes')[i].id,
+            permanentLocationId: Cypress.env('locations')[i].id,
+            sourceId: holdingSourceId,
+          })
+        };
         cy.createInstance({
           instance: {
             instanceTypeId: Cypress.env('instanceTypes')[0].id,
@@ -114,11 +122,7 @@ export default {
             publication: [{ publisher: publisher ?? 'MIT' }],
             instanceId
           },
-          holdings: [{
-            holdingsTypeId: Cypress.env('holdingsTypes')[0].id,
-            permanentLocationId: Cypress.env('locations')[0].id,
-            sourceId: holdingSourceId,
-          }],
+          holdings,
           items: [
             [
               {

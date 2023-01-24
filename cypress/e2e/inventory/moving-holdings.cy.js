@@ -22,7 +22,7 @@ const secondItem = {
   barcode: `123${getRandomPostfix()}`,
 };
 const successCalloutMessage = '1 holding has been successfully moved.';
-const firstHoldingName = 'Online'
+const firstHoldingName = 'Online';
 
 describe('inventory', () => {
   before('create test data', () => {
@@ -35,7 +35,7 @@ describe('inventory', () => {
         userId = userProperties.userId;
         cy.login(userProperties.username, userProperties.password, { path: TopMenu.inventoryPath, waiter: InventorySearchAndFilter.waitLoading })
           .then(() => {
-            InventoryInstances.createInstanceWithTwoHoldingsViaApi(item.instanceName, item.barcode);
+            InventoryInstances.createInstanceViaApi(item.instanceName, item.barcode, null, '1', '2', 'test_number_1', 2);
             InventoryInstances.createInstanceViaApi(secondItem.instanceName, secondItem.barcode);
           });
       });
