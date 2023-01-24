@@ -44,7 +44,7 @@ const notesSection = Section({ id: 'instance-details-notes' });
 const moveItemsButton = Button({ id: 'move-instance-items' });
 const instanceDetailsPane = Pane({ id:'pane-instancedetails' });
 const identifiersAccordion = Accordion('Identifiers');
-const singleRecordImportModal = Modal('Single record import');
+const singleRecordImportModal = Modal('Overlay source bibliographic record');
 const source = KeyValue('Source');
 const tagButton = Button({ icon: 'tag' });
 const closeTag = Button({ icon: 'times' });
@@ -60,13 +60,12 @@ const validOCLC = { id:'176116217',
   existingTag: '100',
   ldrValue: '01677cam\\a22003974a\\4500',
   tag008BytesProperties : {
-    eLvl : { interactor:TextField('ELvl'), defaultValue:'4' },
     srce: { interactor:TextField('Srce'), defaultValue:'\\' },
     ctrl : { interactor:TextField('Ctrl'), defaultValue:'' },
     lang : { interactor:TextField('Lang'), defaultValue:'rus' },
     form : { interactor:TextField('Form'), defaultValue:'\\' },
     ctry : { interactor:TextField('Ctry'), defaultValue:'ru\\' },
-    desc : { interactor:TextField('Desc'), defaultValue:'a' },
+    desc : { interactor:TextField('MRec'), defaultValue:'o' },
     dtSt : { interactor:TextField('DtSt'), defaultValue:'s' },
     startDate : { interactor:TextField('Start date'), defaultValue:'2007' },
     endDate : { interactor:TextField('End date'), defaultValue:'\\\\\\\\' }
@@ -88,7 +87,7 @@ const openHoldings = (...holdingToBeOpened) => {
 };
 const verifyInstanceTitle = (title) => {
   // don't have elem on page for waiter
-  cy.wait(2000);
+  cy.wait(3000);
   cy.expect(Pane({ titleLabel: including(title) }).exists());
 };
 const verifyInstanceSource = (sourceValue) => cy.expect(source.has({ value: sourceValue }));
@@ -126,6 +125,8 @@ const checkInstanceNotes = (noteType, noteContent) => {
 
 const waitInstanceRecordViewOpened = (title) => {
   cy.expect(Pane({ id:'pane-instancedetails' }).exists());
+  // need to wait until updated instance will be displayed
+  cy.wait(5000);
   cy.expect(Pane({ titleLabel: including(title) }).exists());
 };
 
@@ -184,6 +185,7 @@ export default {
     cy.do(actionsButton.click());
     cy.do(deriveNewMarcBibRecord.click());
     cy.expect(QuickMarcEditor().exists());
+    cy.reload();
   },
 
   getAssignedHRID:() => cy.then(() => KeyValue(instanceHRID).value()),
@@ -388,7 +390,7 @@ export default {
     cy.expect(HTML('MARC bibliographic record').exists());
   },
 
-  singleRecordImportModalIsPresented:() => {
+  singleOverlaySourceBibRecordModalIsPresented:() => {
     cy.expect(singleRecordImportModal.exists());
   },
 

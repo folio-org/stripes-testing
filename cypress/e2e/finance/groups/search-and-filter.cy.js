@@ -61,6 +61,7 @@ describe('ui-finance: Groups', () => {
     Groups.checkSearchResults(defaultGroup.name);
     Groups.resetFilters();
     // Filter Gruops by Acquisition Unit
+    Groups.openAcquisitionAccordion();
     Groups.selectNoAcquisitionUnit();
     Groups.checkCreatedInList(defaultGroup.name);
     Groups.resetFilters();

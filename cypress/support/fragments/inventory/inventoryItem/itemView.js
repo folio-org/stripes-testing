@@ -5,7 +5,8 @@ import {
   HTML,
   including,
   TextField,
-  MultiColumnList
+  MultiColumnList,
+  Pane
 } from '../../../../../interactors';
 import dateTools from '../../../utils/dateTools';
 import ConfirmItemMissingModal from './confirmItemMissingModal';
@@ -30,6 +31,7 @@ const waitLoading = () => {
 };
 
 const closeDetailView = () => {
+  cy.expect(Pane(including('Item')).exists());
   cy.do(Button({ icon: 'times' }).click());
 };
 

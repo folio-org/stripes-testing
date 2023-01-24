@@ -15,6 +15,7 @@ import {
 import InventoryHoldings from './holdings/inventoryHoldings';
 import inventoryNewInstance from './inventoryNewInstance';
 import InventoryInstance from './inventoryInstance';
+import Arrays from '../../utils/arrays';
 
 const rootSection = Section({ id: 'pane-results' });
 const inventoriesList = rootSection.find(MultiColumnList({ id: 'list-inventory' }));
@@ -106,8 +107,9 @@ export default {
         const holdings = [];
         for (let i = 0; i < holdingsCount; i++) {
           holdings.push({
-            holdingsTypeId: Cypress.env('holdingsTypes')[i].id,
-            permanentLocationId: Cypress.env('locations')[i].id,
+            holdingsTypeId: Cypress.env('holdingsTypes')[0].id,
+            permanentLocationId: Arrays.getRandomElement(Cypress.env('locations')).id,
+            temporaryLocationId: Arrays.getRandomElement(Cypress.env('locations')).id,
             sourceId: holdingSourceId,
           });
         }

@@ -31,6 +31,7 @@ export default {
   uiMarcAuthoritiesAuthorityRecordView:{ internal: 'ui-marc-authorities.authority-record.view', gui:'MARC Authority: View MARC authority record' },
   uiMarcAuthoritiesAuthorityRecordEdit:{ internal: 'ui-marc-authorities.authority-record.edit', gui:'MARC Authority: Edit MARC authority record' },
   uiMarcAuthoritiesAuthorityRecordDelete:{ internal: 'ui-marc-authorities.authority-record.delete', gui: 'MARC Authority: Delete MARC authority record' },
+  uiQuickMarcQuickMarcAuthorityLinkUnlink:{ internal:'ui-quick-marc.quick-marc-authority-records.linkUnlink', gui:'quickMARC: Can Link/unlink authority records to bib records' },
   // Inventory
   // TODO: gui name related with several internal names. Clarify the reason
   inventoryAll: { internal: ['inventory.all', 'Inventory: All permissions'], gui: 'Inventory: All permissions' },
@@ -85,6 +86,10 @@ export default {
   uiUsersEditProfile: { internal: 'ui-users.edit', gui: 'Users: Can edit user profile' },
   uiUsersViewProfile: { internal: 'ui-users.view', gui: 'Users: Can view user profile' },
   uiUsersPermissions: { internal: 'ui-users.editperms', gui: 'Users: Can assign and unassign permissions to users' },
+  uiUsersfeefinesView: { internal: 'ui-users.feesfines.view', gui: 'Users: Can view fees/fines and loans' },
+  uiUsersManualCharge: { internal: 'ui-users.manual_charge', gui: 'Fees/Fines: Can charge' },
+  uiUsersManualPay: { internal: 'ui-users.manual_pay', gui: 'Fees/Fines: Can pay' },
+  uiUsersViewServicePoints: { internal: 'ui-users.viewuserservicepoints', gui: 'Users: Can view service points assigned to users' },
   uiUsersfeefinesCRUD: { internal:'ui-users.feesfines.actions.all', gui:'Users: Can create, edit and remove fees/fines' },
   uiUsersPatronBlocks: { internal: 'ui-users.patron_blocks', gui: 'Users: Can create, edit and remove patron blocks' },
   uiUsersCreatePatronTamplate: { internal: 'ui-users.settings.patron-block-templates', gui: 'Settings (Users): Can create, edit and remove patron blocks templates' },

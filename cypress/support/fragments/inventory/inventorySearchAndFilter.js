@@ -16,7 +16,8 @@ import {
   KeyValue,
   Section,
   MultiSelect,
-  MultiSelectOption
+  MultiSelectOption,
+  MultiColumnListRow
 } from '../../../../interactors';
 import InventoryActions from './inventoryActions';
 import InventoryInstances from './inventoryInstances';
@@ -41,7 +42,7 @@ const tagsPane = Pane('Tags');
 const tagsButton = Button({ id: 'clickable-show-tags' });
 const tagsAccordionButton = instancesTagsSection.find(Button('Tags'));
 const emptyResultsMessage = 'Choose a filter or enter a search query to show results.';
-const browseButton = Button({ id: "mode-navigation-browse" });
+const browseButton = Button({ id: 'mode-navigation-browse' });
 
 const searchInstanceByHRID = (id) => {
   InventoryInstances.waitContentLoading();
@@ -160,10 +161,11 @@ export default {
   },
 
   byKeywords(kw = '*') {
-    return cy.do([
+    cy.do([
       keywordInput.fillIn(kw),
       searchButton.click(),
     ]);
+    cy.expect(MultiColumnListRow().exists());
   },
 
   selectBrowseCallNumbers() {
@@ -221,11 +223,15 @@ export default {
     cy.expect(browseSearchAndFilterInput.exists());
   },
 
+  switchToBrowseTab() {
+    cy.do(Button({ id: 'mode-navigation-browse' }).click());
+  },
+
   verifyCallNumberBrowseEmptyPane() {
     const callNumberBrowsePane = Pane({ title: 'Browse inventory' });
     cy.expect(callNumberBrowsePane.exists());
     cy.expect(callNumberBrowsePane.has({ subtitle: 'Enter search criteria to start browsing' }));
-    cy.expect(HTML(including('Choose a filter or enter a search query to show results.')).exists());
+    cy.expect(HTML(including('Browse for results entering a query or choosing a filter.')).exists());
   },
 
   verifyCallNumberBrowsePane() {

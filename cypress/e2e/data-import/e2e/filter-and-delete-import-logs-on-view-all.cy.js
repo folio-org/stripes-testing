@@ -21,6 +21,7 @@ describe('ui-data-import: A user can filter and delete import logs from the "Vie
   completedDate.setDate(completedDate.getDate() + 1);
   let firstUser;
   let secondUser;
+  const jobProfileId = '6eefa4c6-bbf7-4845-ad82-de7fc5abd0e3';
 
   before(() => {
     cy.createTempUser([
@@ -39,7 +40,7 @@ describe('ui-data-import: A user can filter and delete import logs from the "Vie
           const nameMarcFileForCreate = `C358136autotestFile.${getRandomPostfix()}.mrc`;
 
           DataImport.uploadFile('oneMarcBib.mrc', nameMarcFileForCreate);
-          // need to wait untill file will be uploaded in loop
+          // need to wait until file will be uploaded in loop
           cy.wait(8000);
           JobProfiles.searchJobProfileForImport('Default - Create instance and SRS MARC Bib');
           JobProfiles.runImportFile();
@@ -64,7 +65,7 @@ describe('ui-data-import: A user can filter and delete import logs from the "Vie
           const nameMarcFileForCreate = `C358136autotestFile.${getRandomPostfix()}.mrc`;
 
           DataImport.uploadFile('oneMarcAuthority.mrc', nameMarcFileForCreate);
-          // need to wait untill file will be uploaded in loop
+          // need to wait until file will be uploaded in loop
           cy.wait(8000);
           JobProfiles.searchJobProfileForImport('Default - Create SRS MARC Authority');
           JobProfiles.runImportFile();
@@ -81,7 +82,6 @@ describe('ui-data-import: A user can filter and delete import logs from the "Vie
   });
 
   it('C358136 A user can filter and delete import logs from the "View all" page (folijet)', { tags: [TestTypes.criticalPath, DevTeams.folijet] }, () => {
-    cy.visit(TopMenu.dataImportPath);
     LogsViewAll.openViewAll();
     LogsViewAll.viewAllIsOpened();
     LogsViewAll.filterJobsByJobProfile('Default - Create SRS MARC Authority');
@@ -89,7 +89,7 @@ describe('ui-data-import: A user can filter and delete import logs from the "Vie
 
     const formattedEnd = DateTools.getFormattedDate({ date: completedDate });
 
-    LogsViewAll.checkByDate({ from: formattedStart, end: formattedEnd })
+    LogsViewAll.checkByDateAndJobProfile({ from: formattedStart, end: formattedEnd }, jobProfileId)
       .then((count) => {
         LogsViewAll.selectAllLogs();
         LogsViewAll.checkIsLogsSelected(count);
