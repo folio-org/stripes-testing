@@ -46,7 +46,7 @@ const deleteFieldMappingProfile = (profileName) => {
       path: 'data-import-profiles/mappingProfiles',
       searchParams: {
         query: '(cql.allRecords=1) sortby name',
-        limit: 1000
+        limit: 2000
       },
     })
     .then(({ body: { mappingProfiles } }) => {
