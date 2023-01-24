@@ -15,7 +15,7 @@ export default {
     cy.do(confirmationModal.find(Button({ id: matching('clickable-confirmation-[0-9]+-confirm') })).click());
   },
   checkPartialPayConfirmation:() => cy.expect(confirmationModal.find(HTML(including('will be partially paid'))).exists),
-  setAmount:(amount) => cy.do(amountTextfield.fillIn(amount.toFixed(2))),
+  setAmount:(amount) => cy.do(amountTextfield.fillIn(amount)),
   back:() => cy.do(confirmationModal.find(Button({ id: matching('clickable-confirmation-[0-9]+-cancel') })).click()),
   checkRestOfPay:(rest) => cy.expect(rootModal.find(HTML(including(`Remaining amount:\n${rest.toFixed(2)}`))).exists()),
   checkConfirmModalClosed: () => cy.expect(HTML(including('Pay fee/fine')).absent()),
