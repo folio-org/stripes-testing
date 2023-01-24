@@ -12,6 +12,7 @@ describe('ui-requests: Request: Edit requests. Make sure that edits are being sa
   let cancellationReason;
   let oldRulesText;
   let requestPolicyId;
+  let servicePointName;
 
   before(() => {
     cy.loginAsAdmin();
@@ -29,6 +30,7 @@ describe('ui-requests: Request: Edit requests. Make sure that edits are being sa
       instanceRecordData,
       cancellationReasonId
     }) => {
+      servicePointName = createdRequest.pickupServicePoint.name;
       userId = createdUser.id;
       requestData = createdRequest;
       instanceData = instanceRecordData;
@@ -52,7 +54,7 @@ describe('ui-requests: Request: Edit requests. Make sure that edits are being sa
   it('C556 Request: Edit requests. Make sure that edits are being saved. (folijet) (prokopovych)', { tags: [TestTypes.smoke, DevTeams.folijet] }, () => {
     cy.visit(TopMenu.requestsPath);
     Object.values(EditRequest.requestStatuses).forEach(status => {
-      EditRequest.checkIsEditsBeingSaved(requestData, instanceData, status);
+      EditRequest.checkIsEditsBeingSaved(servicePointName, requestData, instanceData, status);
       EditRequest.resetFiltersAndReloadPage();
     });
   });

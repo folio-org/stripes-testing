@@ -49,7 +49,7 @@ const deleteJobProfile = (profileName) => {
       path: 'data-import-profiles/jobProfiles',
       searchParams: {
         query:'cql.allRecords=1   ',
-        limit: 1000
+        limit: 2000
       },
       isDefaultSearchParamsRequired: false
     })
