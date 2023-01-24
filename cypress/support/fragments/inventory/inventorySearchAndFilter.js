@@ -44,7 +44,6 @@ const tagsButton = Button({ id: 'clickable-show-tags' });
 const tagsAccordionButton = instancesTagsSection.find(Button('Tags'));
 const emptyResultsMessage = 'Choose a filter or enter a search query to show results.';
 const browseButton = Button({ id: 'mode-navigation-browse' });
-const section = Section({ id: 'browse-inventory-results-pane' });
 
 const searchInstanceByHRID = (id) => {
   InventoryInstances.waitContentLoading();
