@@ -93,7 +93,7 @@ export default {
         cy.getLoanTypes({ limit: 1 });
         cy.getMaterialTypes({ limit: 1 });
         cy.getLocations({ limit: 50 });
-        cy.getHoldingTypes({ limit: 1 });
+        cy.getHoldingTypes({ limit: holdingsCount });
         InventoryHoldings.getHoldingSources({ limit: 1 }).then(holdingSources => {
           holdingSourceId = holdingSources[0].id;
           cy.getInstanceTypes({ limit: 1 });
@@ -104,13 +104,13 @@ export default {
       })
       .then(() => {
         const holdings = [];
-        for(let i = 0; i < holdingsCount; i++){
+        for (let i = 0; i < holdingsCount; i++) {
           holdings.push({
             holdingsTypeId: Cypress.env('holdingsTypes')[i].id,
             permanentLocationId: Cypress.env('locations')[i].id,
             sourceId: holdingSourceId,
-          })
-        };
+          });
+        }
         cy.createInstance({
           instance: {
             instanceTypeId: Cypress.env('instanceTypes')[0].id,

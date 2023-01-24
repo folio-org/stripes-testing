@@ -41,11 +41,11 @@ describe('inventory', () => {
       });
   });
 
-  after('delete test data', () => {
-    InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(item.barcode);
-    InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(secondItem.barcode);
-    Users.deleteViaApi(userId);
-  })
+  // after('delete test data', () => {
+  //   InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(item.barcode);
+  //   InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(secondItem.barcode);
+  //   Users.deleteViaApi(userId);
+  // })
 
   it('C15187 Move some items with in a holdings record to another holdings associated with another instance', { tags: [testTypes.criticalPath, devTeams.firebird] }, () => {
     InventorySearchAndFilter.switchToItem();
