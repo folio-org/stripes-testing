@@ -15,7 +15,7 @@ const deleteMatchProfile = (profileName) => {
       path: 'data-import-profiles/matchProfiles',
       searchParams: {
         query: '(cql.allRecords=1) sortby name',
-        limit: 1000
+        limit: 2000
       },
     })
     .then(({ body: { matchProfiles } }) => {

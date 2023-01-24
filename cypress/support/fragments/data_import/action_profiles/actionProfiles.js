@@ -21,7 +21,7 @@ const deleteActionProfile = (profileName) => {
       path: 'data-import-profiles/actionProfiles',
       searchParams: {
         query: '(cql.allRecords=1) sortby name',
-        limit: 1000
+        limit: 2000
       },
     })
     .then(({ body: { actionProfiles } }) => {
