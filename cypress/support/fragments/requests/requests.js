@@ -101,7 +101,7 @@ function createRequestApi(
 
   return cy.wrap(Promise.resolve(true))
     .then(() => {
-      const servicePoint = NewServicePoint.getDefaultServicePoint(`autotest_servicePoint_${Helper.getRandomBarcode()}`);
+      const servicePoint = NewServicePoint.getDefaultServicePoint(`autotest_${Helper.getRandomBarcode()}`);
       ServicePoints.createViaApi(servicePoint);
       requestData.pickupServicePointId = servicePoint.id;
       cy.getAddressTypesApi({ limit: 1 }).then(addressTypes => {
