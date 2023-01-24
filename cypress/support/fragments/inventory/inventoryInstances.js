@@ -85,7 +85,7 @@ export default {
     cy.do(Checkbox(tagName).click());
   },
 
-  createInstanceViaApi(instanceName, itemBarcode, publisher = null, holdingCallNumber = '1', itemCallNumber = '2', accessionNumber = 'test_number_1', holdingsCount = 1) {
+  createInstanceViaApi(instanceName, itemBarcode, publisher = null, holdingCallNumber = '1', itemCallNumber = '2', accessionNumber = 'test_number_1', holdings = null) {
     let alternativeTitleTypeId = '';
     let holdingSourceId = '';
     const instanceId = uuid();
@@ -94,7 +94,7 @@ export default {
         cy.getLoanTypes({ limit: 1 });
         cy.getMaterialTypes({ limit: 1 });
         cy.getLocations({ limit: 50 });
-        cy.getHoldingTypes({ limit: holdingsCount });
+        cy.getHoldingTypes({ limit: 1 });
         InventoryHoldings.getHoldingSources({ limit: 1 }).then(holdingSources => {
           holdingSourceId = holdingSources[0].id;
           cy.getInstanceTypes({ limit: 1 });
@@ -104,15 +104,6 @@ export default {
         });
       })
       .then(() => {
-        const holdings = [];
-        for (let i = 0; i < holdingsCount; i++) {
-          holdings.push({
-            holdingsTypeId: Cypress.env('holdingsTypes')[0].id,
-            permanentLocationId: Arrays.getRandomElement(Cypress.env('locations')).id,
-            temporaryLocationId: Arrays.getRandomElement(Cypress.env('locations')).id,
-            sourceId: holdingSourceId,
-          });
-        }
         cy.createInstance({
           instance: {
             instanceTypeId: Cypress.env('instanceTypes')[0].id,
@@ -124,7 +115,12 @@ export default {
             publication: [{ publisher: publisher ?? 'MIT' }],
             instanceId
           },
-          holdings,
+          holdings: holdings || [{
+            holdingsTypeId: Cypress.env('holdingsTypes')[0].id,
+            permanentLocationId: Arrays.getRandomElement(Cypress.env('locations')).id,
+            temporaryLocationId: Arrays.getRandomElement(Cypress.env('locations')).id,
+            sourceId: holdingSourceId,
+          }],
           items: [
             [
               {

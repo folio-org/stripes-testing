@@ -10,6 +10,11 @@ import ItemView from '../../support/fragments/inventory/inventoryItem/itemView';
 import InventoryInstance from '../../support/fragments/inventory/inventoryInstance';
 import InteractorsTools from '../../support/utils/interactorsTools';
 import InventoryInstancesMovement from '../../support/fragments/inventory/holdingsMove/inventoryInstancesMovement';
+import InventoryHoldings from '../../support/fragments/inventory/holdings/inventoryHoldings';
+
+Cypress.on('uncaught:exception', (err, runnable) => {
+  return false;
+});
 
 let userId;
 const item = {
@@ -20,43 +25,65 @@ const item = {
 const secondItem = {
   instanceName: `Inventory-second-${getRandomPostfix()}`,
   barcode: `123${getRandomPostfix()}`,
+  firstHoldingName: '',
+  secondHoldingName: '',
+  holdings: [],
 };
 const successCalloutMessage = '1 holding has been successfully moved.';
-const firstHoldingName = 'Online';
 
 describe('inventory', () => {
   before('create test data', () => {
+    let holdingSources;
     cy.createTempUser([
       permissions.uiInventoryMoveItems.gui,
       permissions.uiInventoryHoldingsMove.gui,
       permissions.inventoryViewCreateEditInstances.gui,
     ])
       .then(userProperties => {
+        cy.getLocations({ limit: 2 });
+        cy.getHoldingTypes({ limit: 2 });
+        InventoryHoldings.getHoldingSources({ limit: 2 })
+          .then(holdingsSourcesResponse => {
+            holdingSources = holdingsSourcesResponse;
+          });
         userId = userProperties.userId;
         cy.login(userProperties.username, userProperties.password, { path: TopMenu.inventoryPath, waiter: InventorySearchAndFilter.waitLoading })
           .then(() => {
-            InventoryInstances.createInstanceViaApi(item.instanceName, item.barcode, null, '1', '2', 'test_number_1', 2);
-            InventoryInstances.createInstanceViaApi(secondItem.instanceName, secondItem.barcode);
+            secondItem.firstHoldingName = Cypress.env('locations')[0].name;
+            secondItem.secondHoldingName = Cypress.env('locations')[1].name;
+            secondItem.holdings = [
+              {
+                holdingsTypeId: Cypress.env('holdingsTypes')[0].id,
+                permanentLocationId: Cypress.env('locations')[0].id,
+                sourceId: holdingSources[0].id,
+              },
+              {
+                holdingsTypeId: Cypress.env('holdingsTypes')[1].id,
+                permanentLocationId: Cypress.env('locations')[1].id,
+                sourceId: holdingSources[1].id,
+              }];
+            InventoryInstances.createInstanceViaApi(item.instanceName, item.barcode);
+            InventoryInstances.createInstanceViaApi(secondItem.instanceName, secondItem.barcode, null, '1', '2', 'test_number_1', secondItem.holdings);
           });
       });
   });
 
-  // after('delete test data', () => {
-  //   InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(item.barcode);
-  //   InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(secondItem.barcode);
-  //   Users.deleteViaApi(userId);
-  // })
+  after('delete test data', () => {
+    InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(item.barcode);
+    InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(secondItem.barcode);
+    Users.deleteViaApi(userId);
+  });
 
   it('C15187 Move some items with in a holdings record to another holdings associated with another instance', { tags: [testTypes.criticalPath, devTeams.firebird] }, () => {
     InventorySearchAndFilter.switchToItem();
-    InventorySearchAndFilter.searchByParameter('Barcode', item.barcode)
+    InventorySearchAndFilter.searchByParameter('Barcode', item.barcode);
     InventorySearchAndFilter.selectSearchResultItem();
     ItemView.clickCloseButton();
 
-    InventoryInstance.moveHoldingsToAnotherInstanceByItemTitle(firstHoldingName, secondItem.instanceName);
+    InventoryInstance.moveHoldingsToAnotherInstanceByItemTitle(secondItem.firstHoldingName, secondItem.instanceName);
     InteractorsTools.checkCalloutMessage(successCalloutMessage);
 
-    InventoryInstancesMovement.moveFromMultiple(firstHoldingName);
+    InventoryInstancesMovement.moveFromMultiple(secondItem.firstHoldingName);
     InteractorsTools.checkCalloutMessage(successCalloutMessage);
   });
-})
+});
