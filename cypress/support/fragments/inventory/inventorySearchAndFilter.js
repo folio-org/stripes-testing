@@ -407,7 +407,7 @@ export default {
   },
 
   selectFoundItem(callNumber, suffix) {
-    cy.do(section.find(MultiColumnListCell({ content: `${callNumber} ${suffix}` })).click());
+    cy.do(Button(including(`${callNumber} ${suffix}`)).click());
   },
 
   verifyInstanceDisplayed(instanceTitle) {

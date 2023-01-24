@@ -18,6 +18,12 @@ describe('Inventory -> Call Number Browse', () => {
     publisher: null,
     holdingCallNumber: '1',
     itemCallNumber: 'RR 718',
+    callNumber: 'PRT 718',
+    copyNumber: 'c.4',
+    callNumberSuffix: 'suf',
+    volume: 'v.1',
+    enumeration: 'e.2',
+    chronology: 'ch.3',
   };
 
   const itemA1 = {
@@ -41,18 +47,6 @@ describe('Inventory -> Call Number Browse', () => {
     itemWithoutSpace: 'RR718',
     itemWithLowerCaseR: 'Rr 718',
     parameter: 'Keyword (title, contributor, identifier, HRID, UUID)',
-  };
-
-  const itemData = {
-    callNumber: 'PRT 718',
-    copyNumber: 'c.4',
-    callNumberSuffix: 'suf',
-  };
-
-  const enumerationData = {
-    volume: 'v.1',
-    enumeration: 'e.2',
-    chronology: 'ch.3',
   };
 
   const search = (query) => {
@@ -120,12 +114,12 @@ describe('Inventory -> Call Number Browse', () => {
     searchAndOpenInstance(testData.parameter, item.instanceName);
     InventoryInstance.addItem();
     InventoryInstance.fillItemRequiredFields();
-    InventoryInstance.addItemData(itemData.callNumber, itemData.copyNumber, itemData.callNumberSuffix);
-    InventoryInstance.addEnumerationData(enumerationData.volume, enumerationData.enumeration, enumerationData.chronology);
-    InventoryInstance.saveItemDataAndVerifyExistence(itemData.copyNumber);
-    search(itemData.callNumber);
-    BrowseCallNumber.checkItemSearchResult(itemData.callNumber, itemData.callNumberSuffix);
-    InventorySearchAndFilter.selectFoundItem(itemData.callNumber, itemData.callNumberSuffix);
+    InventoryInstance.addItemData(item.callNumber, item.copyNumber, item.callNumberSuffix);
+    InventoryInstance.addEnumerationData(item.volume, item.enumeration, item.chronology);
+    InventoryInstance.saveItemDataAndVerifyExistence(item.copyNumber);
+    search(item.callNumber);
+    BrowseCallNumber.checkItemSearchResult(item.callNumber, item.callNumberSuffix);
+    InventorySearchAndFilter.selectFoundItem(item.callNumber, item.callNumberSuffix);
     InventorySearchAndFilter.verifyShelvingOrder();
     InventorySearchAndFilter.verifyInstanceDisplayed(item.instanceName)
   });

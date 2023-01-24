@@ -54,7 +54,6 @@ const closeTag = Button({ icon: 'times' });
 const tagsPane = Pane('Tags');
 const textFieldTagInput = MultiSelect({ ariaLabelledby:'accordion-toggle-button-tag-accordion' });
 const descriptiveDataAccordion = Accordion('Descriptive data');
-//fill textfield ids
 const callNumberTextField = TextArea('Call number');
 const copyNumberTextField = TextField('Copy number');
 const callNumSuffixTextField = TextArea('Call number suffix');
@@ -62,7 +61,6 @@ const volumeTextField = TextField('Volume');
 const enumerationTextField = TextArea('Enumeration');
 const chronologyTextField = TextArea('Chronology');
 const addItemButton = Button('Add item');
-//fill button ids
 const enabledSaveButton = Button( {id: 'clickable-save-item', disabled: false} );
 const saveAndCloseButton = Button( {id: 'clickable-save-item'} );
 
@@ -213,9 +211,7 @@ export default {
 
   addItem() {
     cy.expect(addItemButton.exists());
-    //add Id to button
     cy.do(addItemButton.click());
-    //add id and find is new opened window pane or other
     cy.expect(Section({ id: "acc01" }).exists());
   },
 
