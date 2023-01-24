@@ -43,8 +43,7 @@ describe('ui-data-import: A user can filter and delete import logs from the "Vie
           // need to wait until file will be uploaded in loop
           cy.wait(8000);
           JobProfiles.searchJobProfileForImport('Default - Create instance and SRS MARC Bib');
-          JobProfiles.runImportFile();
-          JobProfiles.waitFileIsImported(nameMarcFileForCreate);
+          JobProfiles.runImportFile(nameMarcFileForCreate);
           Logs.checkStatusOfJobProfile('Completed');
         }
         cy.logout();
@@ -68,18 +67,17 @@ describe('ui-data-import: A user can filter and delete import logs from the "Vie
           // need to wait until file will be uploaded in loop
           cy.wait(8000);
           JobProfiles.searchJobProfileForImport('Default - Create SRS MARC Authority');
-          JobProfiles.runImportFile();
-          JobProfiles.waitFileIsImported(nameMarcFileForCreate);
+          JobProfiles.runImportFile(nameMarcFileForCreate);
           Logs.checkStatusOfJobProfile('Completed');
         }
       });
   });
 
-  after(() => {
-    Users.deleteViaApi(firstUser.userId);
-    Users.deleteViaApi(secondUser.userId);
-    // TODO delete all created instances and holdings
-  });
+  // after(() => {
+  //   Users.deleteViaApi(firstUser.userId);
+  //   Users.deleteViaApi(secondUser.userId);
+  //   // TODO delete all created instances and holdings
+  // });
 
   it('C358136 A user can filter and delete import logs from the "View all" page (folijet)', { tags: [TestTypes.criticalPath, DevTeams.folijet] }, () => {
     LogsViewAll.openViewAll();
