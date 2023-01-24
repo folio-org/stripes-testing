@@ -114,8 +114,6 @@ export default {
   checkExactSearchResult(contributorA, contributorZ) {
     cy.expect([
       MultiColumnListCell(contributorA.name).has({ innerHTML: including(`<strong>${contributorA.name}</strong>`) }),
-      // cy.expect(rootSection.find(HTML(including(expectedText))).exists());
-
       rowContributorName(contributorA.name, contributorA.contributorNameType).exists(),
       rowContributorName(contributorZ.name, contributorZ.contributorNameType).exists(),
     ]);
@@ -132,7 +130,6 @@ export default {
     ]);
     cy.expect([
       recordSelect.has({ value: 'contributors' }),
-      // paneIntanceDetails.find(KeyValue({ value: instance.source })).exists(),
       paneIntanceDetails.find(MultiColumnListCell(instance.contributors[0].contributorTypeText)).exists(),
       paneIntanceDetails.find(MultiColumnListCell(instance.contributors[0].name)).exists(),
     ]);
