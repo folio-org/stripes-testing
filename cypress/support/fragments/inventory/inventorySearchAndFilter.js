@@ -231,7 +231,7 @@ export default {
     const callNumberBrowsePane = Pane({ title: 'Browse inventory' });
     cy.expect(callNumberBrowsePane.exists());
     cy.expect(callNumberBrowsePane.has({ subtitle: 'Enter search criteria to start browsing' }));
-    cy.expect(HTML(including('Choose a filter or enter a search query to show results.')).exists());
+    cy.expect(HTML(including('Browse for results entering a query or choosing a filter.')).exists());
   },
 
   verifyCallNumberBrowsePane() {
