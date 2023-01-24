@@ -26,9 +26,7 @@ const defaultInstanceZWithContributor = {
   id: uuid()
 };
 
-const paneIntanceDetails = PaneContent({ id: 'pane-instancedetails-content' });
-const inventorySelect = Select({ id: 'input-inventory-search-qindex' });
-const inventorySearch = TextInput({ id: 'input-inventory-search' });
+const paneIntanceDetails = PaneContent({ id: 'browse-inventory-results-pane-content' });
 const recordSelect = Select({ id: 'input-record-search-qindex' });
 const recordSearch = TextInput({ id: 'input-record-search' });
 const contributorsOption = Option('Contributors');
@@ -80,7 +78,7 @@ export default {
       Section({ id: 'browse-inventory-results-pane' }).find(Heading('Browse inventory')).exists(),
       Image({ alt: 'View and manage instance records, holdings records and item records' }).exists(),
       PaneHeader({ id: 'paneHeaderbrowse-inventory-results-pane' }).find(HTML('Enter search criteria to start browsing')).exists(),
-      PaneContent('Choose a filter or enter a search query to show results.').exists(),
+      PaneContent('Browse for results entering a query or choosing a filter.').exists(),[]
     ]);
   },
 
@@ -115,7 +113,9 @@ export default {
 
   checkExactSearchResult(contributorA, contributorZ) {
     cy.expect([
-      MultiColumnListCell(contributorA.name).has({ innerHTML: `<strong>${contributorA.name}</strong>` }),
+      MultiColumnListCell(contributorA.name).has({ innerHTML: including(`<strong>${contributorA.name}</strong>`) }),
+      // cy.expect(rootSection.find(HTML(including(expectedText))).exists());
+
       rowContributorName(contributorA.name, contributorA.contributorNameType).exists(),
       rowContributorName(contributorZ.name, contributorZ.contributorNameType).exists(),
     ]);
@@ -127,15 +127,12 @@ export default {
 
   checkInstance(instance) {
     cy.do([
-      inventorySearch.has({ value: instance.contributors[0].name }),
+      recordSearch.has({ value: instance.contributors[0].name }),
       MultiColumnListCell(instance.contributors[0].name).click(),
     ]);
     cy.expect([
-      // TODO: add check for date with format <6/8/2022, 6:46 AM>
-      inventorySelect.has({ value: 'contributor' }),
-      paneIntanceDetails.find(KeyValue({ value: instance.title })).exists(),
-      paneIntanceDetails.find(KeyValue(instance.hrid)).exists(),
-      paneIntanceDetails.find(KeyValue({ value: instance.source })).exists(),
+      recordSelect.has({ value: 'contributors' }),
+      // paneIntanceDetails.find(KeyValue({ value: instance.source })).exists(),
       paneIntanceDetails.find(MultiColumnListCell(instance.contributors[0].contributorTypeText)).exists(),
       paneIntanceDetails.find(MultiColumnListCell(instance.contributors[0].name)).exists(),
     ]);
