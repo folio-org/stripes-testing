@@ -28,8 +28,6 @@ const expirationDates = [...new Array(5)].map((_, i) => {
 });
 
 export default {
-  servicePoint: 'Circ Desk 1',
-
   fulfillmentPreference: {
     HOLD_SHELF: 'Hold Shelf',
     DELIVERY: 'Delivery'
@@ -57,23 +55,23 @@ export default {
       });
   },
 
-  checkIsEditsBeingSaved(requestData, instanceRecordData, status) {
+  checkIsEditsBeingSaved(servicePoint, requestData, instanceRecordData, status) {
     this.updateRequestApi({ ...requestData, status }).then(() => {
       switch (status) {
         case this.requestStatuses.NOT_YET_FILLED:
         case this.requestStatuses.IN_TRANSIT:
-          return this.editAndCheckNotFilledAndInTransitRequest(instanceRecordData, status);
+          return this.editAndCheckNotFilledAndInTransitRequest(servicePoint, instanceRecordData, status);
         case this.requestStatuses.AWAITING_PICKUP:
-          return this.editAndCheckAwaitingPickupRequest(instanceRecordData);
+          return this.editAndCheckAwaitingPickupRequest(servicePoint, instanceRecordData);
         case this.requestStatuses.AWAITING_DELIVERY:
-          return this.editAndCheckAwaitingDeliveryRequest(instanceRecordData);
+          return this.editAndCheckAwaitingDeliveryRequest(servicePoint, instanceRecordData);
         default:
           throw new Error('Incorrect status');
       }
     });
   },
 
-  editAndCheckNotFilledAndInTransitRequest(instanceRecordData, status) {
+  editAndCheckNotFilledAndInTransitRequest(servicePoint, instanceRecordData, status) {
     const isTransit = status === this.requestStatuses.IN_TRANSIT ? 1 : 0;
     if (isTransit === 1) {
       Requests.selectInTransitRequest();
@@ -88,39 +86,39 @@ export default {
     cy.expect(deliveryTypeAddressTypeSelect.has({ disabled: false }));
     cy.do(fulfillmentPreferenceSelect.choose(this.fulfillmentPreference.HOLD_SHELF));
     cy.do(requestExpirationDateInput.fillIn(this.expirationDates[isTransit].formValue));
-    cy.do(pickupServicePointSelect.choose(this.servicePoint));
+    cy.do(pickupServicePointSelect.choose(servicePoint));
     this.saveAndClose();
     cy.expect(requestExpirationDateKeyValue.has({ value: this.expirationDates[isTransit].uiValue }));
-    cy.expect(pickupServicePointKeyValue.has({ value: this.servicePoint }));
+    cy.expect(pickupServicePointKeyValue.has({ value: servicePoint }));
   },
 
-  editAndCheckAwaitingPickupRequest(instanceRecordData) {
+  editAndCheckAwaitingPickupRequest(servicePoint, instanceRecordData) {
     Requests.selectAwaitingPickupRequest();
     this.findAndOpenCreatedRequest(instanceRecordData);
     cy.expect(holdShelfExpirationDateInput.has({ disabled: false }));
     cy.expect(requestExpirationDateInput.has({ disabled: false }));
     cy.expect(fulfillmentPreferenceSelect.has({ disabled: true }));
     cy.expect(pickupServicePointSelect.has({ disabled: false }));
-    cy.do(pickupServicePointSelect.choose(this.servicePoint));
+    cy.do(pickupServicePointSelect.choose(servicePoint));
     cy.do(requestExpirationDateInput.fillIn(this.expirationDates[2].formValue));
     cy.do(holdShelfExpirationDateInput.fillIn(this.expirationDates[3].formValue));
     this.saveAndClose();
-    cy.expect(pickupServicePointKeyValue.has({ value: this.servicePoint }));
+    cy.expect(pickupServicePointKeyValue.has({ value: servicePoint }));
     cy.expect(requestExpirationDateKeyValue.has({ value: this.expirationDates[2].uiValue }));
     cy.expect(holdShelfExpirationDateKeyValue.has({ value: including(this.expirationDates[3].uiValue) }));
   },
 
-  editAndCheckAwaitingDeliveryRequest(instanceRecordData, request) {
+  editAndCheckAwaitingDeliveryRequest(servicePoint, instanceRecordData, request) {
     Requests.selectAwaitingDeliveryRequest();
     this.findAndOpenCreatedRequest(instanceRecordData, request);
     cy.expect(requestExpirationDateInput.has({ disabled: false }));
     cy.expect(fulfillmentPreferenceSelect.has({ disabled: true }));
     cy.expect(pickupServicePointSelect.has({ disabled: false }));
     cy.expect(holdShelfExpirationDateKeyValue.has({ value: '-' }));
-    cy.do(pickupServicePointSelect.choose(this.servicePoint));
+    cy.do(pickupServicePointSelect.choose(servicePoint));
     cy.do(requestExpirationDateInput.fillIn(this.expirationDates[4].formValue));
     this.saveAndClose();
-    cy.expect(pickupServicePointKeyValue.has({ value: this.servicePoint }));
+    cy.expect(pickupServicePointKeyValue.has({ value: servicePoint }));
     cy.expect(requestExpirationDateKeyValue.has({ value: this.expirationDates[4].uiValue }));
   },
 

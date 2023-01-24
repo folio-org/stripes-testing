@@ -20,6 +20,7 @@ import users from '../users/users';
 import inventoryHoldings from '../inventory/holdings/inventoryHoldings';
 import ServicePoints from '../settings/tenant/servicePoints/servicePoints';
 import Helper from '../finance/financeHelper';
+import NewServicePoint from '../settings/tenant/servicePoints/newServicePoint';
 
 const requestsResultsSection = Section({ id: 'pane-results' });
 const appsButton = Button({ id: 'app-list-dropdown-toggle' });
@@ -100,9 +101,9 @@ function createRequestApi(
 
   return cy.wrap(Promise.resolve(true))
     .then(() => {
-      ServicePoints.getViaApi({ limit: 1, query: 'pickupLocation=="true"' }).then(servicePoints => {
-        requestData.pickupServicePointId = servicePoints[0].id;
-      });
+      const servicePoint = NewServicePoint.getDefaultServicePoint(`autotest_servicePoint_${Helper.getRandomBarcode()}`);
+      ServicePoints.createViaApi(servicePoint);
+      requestData.pickupServicePointId = servicePoint.id;
       cy.getAddressTypesApi({ limit: 1 }).then(addressTypes => {
         userData.personal.addresses[0].addressTypeId = addressTypes[0].id;
         userRequestPreferences.defaultDeliveryAddressTypeId = addressTypes[0].id;
