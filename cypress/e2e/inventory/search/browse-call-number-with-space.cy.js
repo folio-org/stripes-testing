@@ -39,7 +39,8 @@ describe('Inventory -> Call Number Browse', () => {
   const testData = {
     exactSearch: item.itemCallNumber,
     itemWithoutSpace: 'RR718',
-    itemWithLowerCaseR: 'Rr 718'
+    itemWithLowerCaseR: 'Rr 718',
+    parameter: 'Keyword (title, contributor, identifier, HRID, UUID)',
   };
 
   const itemData = {
@@ -94,29 +95,29 @@ describe('Inventory -> Call Number Browse', () => {
     Users.deleteViaApi(testData.user.userId);
   });
 
-  // it('C358140 Verify that browsing for "call number" with "space" value will get the correct result (spitfire)', { tags: [DevTeams.spitfire, TestTypes.smoke] }, () => {
-  //   search(testData.exactSearch);
-  //   BrowseCallNumber.checkExactSearchResult(testData.exactSearch);
-  //   BrowseContributors.resetAllInSearchPane();
-  //   search(testData.itemWithoutSpace);
-  //   BrowseCallNumber.checkExactSearchResult(testData.exactSearch);
-  //   BrowseContributors.resetAllInSearchPane();
-  //   search(testData.itemWithLowerCaseR);
-  //   BrowseCallNumber.checkExactSearchResult(testData.exactSearch);
-  // });
+  it('C358140 Verify that browsing for "call number" with "space" value will get the correct result (spitfire)', { tags: [DevTeams.spitfire, TestTypes.smoke] }, () => {
+    search(testData.exactSearch);
+    BrowseCallNumber.checkExactSearchResult(testData.exactSearch);
+    BrowseContributors.resetAllInSearchPane();
+    search(testData.itemWithoutSpace);
+    BrowseCallNumber.checkExactSearchResult(testData.exactSearch);
+    BrowseContributors.resetAllInSearchPane();
+    search(testData.itemWithLowerCaseR);
+    BrowseCallNumber.checkExactSearchResult(testData.exactSearch);
+  });
 
-  // it('C359589 Verify that "Browse call numbers" result list displays all unique call numbers from one “Instance” record (spitfire)', { tags: [DevTeams.spitfire, TestTypes.criticalPath] }, () => {
-  //   BrowseCallNumber.clickBrowseBtn();
-  //   InventorySearchAndFilter.verifyKeywordsAsDefault();
-  //   InventorySearchAndFilter.selectBrowseCallNumbers();
-  //   InventoryActions.actionsIsAbsent();
-  //   InventorySearchAndFilter.showsOnlyEffectiveLocation();
-  //   InventorySearchAndFilter.browseSubjectsSearch(itemA1.itemCallNumber);
-  //   BrowseCallNumber.checkExactSearchResult(itemA1.itemCallNumber);
-  // });
+  it('C359589 Verify that "Browse call numbers" result list displays all unique call numbers from one “Instance” record (spitfire)', { tags: [DevTeams.spitfire, TestTypes.criticalPath] }, () => {
+    BrowseCallNumber.clickBrowseBtn();
+    InventorySearchAndFilter.verifyKeywordsAsDefault();
+    InventorySearchAndFilter.selectBrowseCallNumbers();
+    InventoryActions.actionsIsAbsent();
+    InventorySearchAndFilter.showsOnlyEffectiveLocation();
+    InventorySearchAndFilter.browseSubjectsSearch(itemA1.itemCallNumber);
+    BrowseCallNumber.checkExactSearchResult(itemA1.itemCallNumber);
+  });
 
   it('C359593: Verify that clicking on "Call number" value execute search for "Instance" record by "Shelving order" value (spitfire)', { tags: [DevTeams.spitfire, TestTypes.criticalPath] }, () => {
-    searchAndOpenInstance('Keyword (title, contributor, identifier, HRID, UUID)', item.instanceName);
+    searchAndOpenInstance(testData.parameter, item.instanceName);
     InventoryInstance.addItem();
     InventoryInstance.fillItemRequiredFields();
     InventoryInstance.addItemData(itemData.callNumber, itemData.copyNumber, itemData.callNumberSuffix);
