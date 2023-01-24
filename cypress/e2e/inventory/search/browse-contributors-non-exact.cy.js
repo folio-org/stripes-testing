@@ -12,7 +12,7 @@ describe('Inventory -> Contributors Browse', () => {
   const instanceA = BrowseContributors.defaultInstanceAWithContributor;
   const instanceZ = BrowseContributors.defaultInstanceZWithContributor;
 
-  beforeEach('', () => {
+  beforeEach('Creating data', () => {
     cy.getAdminToken();
 
     cy.getInstanceTypes({ limit: 1 }).then((res) => {
@@ -50,7 +50,7 @@ describe('Inventory -> Contributors Browse', () => {
     });
   });
 
-  afterEach('', () => {
+  afterEach('Deleting data', () => {
     Users.deleteViaApi(testData.user.userId);
     InventoryInstance.deleteInstanceViaApi(instanceA.id);
     InventoryInstance.deleteInstanceViaApi(instanceZ.id);
