@@ -61,8 +61,8 @@ const volumeTextField = TextField('Volume');
 const enumerationTextField = TextArea('Enumeration');
 const chronologyTextField = TextArea('Chronology');
 const addItemButton = Button('Add item');
-const enabledSaveButton = Button( {id: 'clickable-save-item', disabled: false} );
-const saveAndCloseButton = Button( {id: 'clickable-save-item'} );
+const enabledSaveButton = Button({ id: 'clickable-save-item', disabled: false });
+const saveAndCloseButton = Button({ id: 'clickable-save-item' });
 
 const instanceHRID = 'Instance HRID';
 const validOCLC = { id:'176116217',
@@ -212,7 +212,7 @@ export default {
   addItem() {
     cy.expect(addItemButton.exists());
     cy.do(addItemButton.click());
-    cy.expect(Section({ id: "acc01" }).exists());
+    cy.expect(Section({ id: 'acc01' }).exists());
   },
 
   fillItemRequiredFields() {
