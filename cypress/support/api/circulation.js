@@ -74,6 +74,19 @@ Cypress.Commands.add('deleteLoanPolicy', (id) => {
   });
 });
 
+Cypress.Commands.add('getLoanPolicy', (searchParams) => {
+  cy.okapiRequest({
+    method: REQUEST_METHOD.GET,
+    path: 'loan-policy-storage/loan-policies',
+    searchParams,
+  })
+    .then(policy => {
+      Cypress.env(CY_ENV.LOAN_POLICY, policy.body.loanPolicies[0]);
+
+      return policy.body.requestPolicies;
+    });
+});
+
 Cypress.Commands.add('getRequestPolicy', (searchParams) => {
   cy.okapiRequest({
     method: REQUEST_METHOD.GET,

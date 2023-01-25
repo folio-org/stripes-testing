@@ -122,7 +122,7 @@ export default {
   checkFeeFinesDetails(billedAmount, instanceBarcode, loanPolicyName, OverdueFinePolicyName, LostItemFeePolicyName) {
     cy.do(availableActionsButton.click());
     cy.do(feeFineDetailsButton.click());
-    
+
     cy.expect(Pane(including('Fee/fine details')).exists());
     cy.expect(feeFinePane.find(HTML(including('Overdue fine'))).exists());
     cy.expect(or(
@@ -134,5 +134,15 @@ export default {
     cy.expect(feeFinePane.find(HTML(including(loanPolicyName))).exists());
     cy.expect(feeFinePane.find(HTML(including(OverdueFinePolicyName))).exists());
     cy.expect(feeFinePane.find(HTML(including(LostItemFeePolicyName))).exists());
+  },
+
+  backdateCheckInItem:(date, barcode) => {
+    cy.do(Button('today').click());
+    cy.do(TextField({ name:'item.checkinDate' }).fillIn(date));
+    waitLoading();
+    cy.intercept('/inventory/items?*').as('getItems');
+    cy.do(itemBarcodeField.fillIn(barcode));
+    cy.do(addItemButton.click());
+    cy.wait('@getItems', getLongDelay());
   }
 };

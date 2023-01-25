@@ -7,7 +7,8 @@ import {
   MultiColumnListCell,
   MultiColumnList,
   Select,
-  Pane
+  Pane,
+  Link
 } from '../../../../interactors';
 import InteractorsTools from '../../utils/interactorsTools';
 
@@ -33,6 +34,7 @@ const filterOpenReceiving = () => {
 export default {
   searchByParameter,
   filterOpenReceiving,
+  selectFromResultsList: (instanceName) => cy.do(Link(instanceName).click()),
 
   receivePiece: (rowNumber, caption, barcode) => {
     const recievingFieldName = `receivedItems[${rowNumber}]`;
@@ -49,13 +51,13 @@ export default {
   },
 
   checkReceivedPiece: (rowNumber, caption, barcode) => {
-      cy.expect([Accordion({ id: receivedPiecesAccordionId })
-        .find(MultiColumnListRow({ index: rowNumber }))
-        .find(MultiColumnListCell({ content: barcode })).exists(),
-        Accordion({ id: receivedPiecesAccordionId })
-        .find(MultiColumnListRow({ index: rowNumber }))
-        .find(MultiColumnListCell({ content: caption })).exists()
-      ]);
+    cy.expect([Accordion({ id: receivedPiecesAccordionId })
+      .find(MultiColumnListRow({ index: rowNumber }))
+      .find(MultiColumnListCell({ content: barcode })).exists(),
+    Accordion({ id: receivedPiecesAccordionId })
+      .find(MultiColumnListRow({ index: rowNumber }))
+      .find(MultiColumnListCell({ content: caption })).exists()
+    ]);
   },
 
   unreceivePiece: (rowNumber = 0) => {
@@ -71,9 +73,9 @@ export default {
   },
 
   checkUnreceivedPiece: (rowNumber = 0, caption) => {
-      cy.expect(Accordion({ id: expectedPiecesAccordionId })
-        .find(MultiColumnListRow({ index: rowNumber }))
-        .find(MultiColumnListCell({ content: caption })).exists());
+    cy.expect(Accordion({ id: expectedPiecesAccordionId })
+      .find(MultiColumnListRow({ index: rowNumber }))
+      .find(MultiColumnListCell({ content: caption })).exists());
   },
 
   checkIsPiecesCreated:(title) => {
