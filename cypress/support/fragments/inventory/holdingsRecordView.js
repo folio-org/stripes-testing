@@ -100,8 +100,5 @@ export default {
   },
   checkHoldingsStatement:(statement) => {
     cy.expect(MultiColumnList({ id: 'list-holdingsStatement' }).find(HTML(including(statement))).exists());
-  },
-  checkStatisticalCode:(code) => {
-    cy.expect(MultiColumnList({ id: 'list-statistical-codes' }).find(HTML(including(code))).exists());
   }
 };

@@ -65,6 +65,10 @@ const verifyInstanceNote = (value) => {
   cy.expect(instanceNote.find(MultiColumnListCell({ content: value })).exists());
 };
 
+const verifyStatisticalCode = (value) => {
+  cy.expect(MultiColumnList({ id: 'list-statistical-codes' }).find(MultiColumnListCell({ content: value })).exists());
+};
+
 export default {
   verifyResourceTitle,
   verifyInstanceStatusCode,
@@ -78,5 +82,6 @@ export default {
   verifyImportedFieldExists,
   viewSource,
   verifyAdministrativeNote,
-  verifyInstanceNote
+  verifyInstanceNote,
+  verifyStatisticalCode
 };
