@@ -27,7 +27,7 @@ const itemStatuses = {
 const loanAccordion = Accordion('Loan and availability');
 
 const waitLoading = () => {
-  cy.expect(Button('Actions').exists());
+  cy.expect(Pane(including('Item')).exists());
 };
 
 const closeDetailView = () => {
