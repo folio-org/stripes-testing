@@ -110,7 +110,7 @@ export default {
 
   errorsInImportStatuses: ['No', 'Yes'],
 
-  singleRecordImportsStatuses: ['No', 'Yes'],
+  singleRecordImportsStatuses: ['Yes', 'No'],
 
   resetAllFilters() {
     cy.do(Button('Reset all').click());
@@ -147,9 +147,12 @@ export default {
     ]);
   },
 
+  openUserIdAccordion() {
+    cy.do(Accordion({ id: 'userId' }).clickHeader());
+  },
+
   filterJobsByUser(user) {
     cy.do([
-      Accordion({ id: 'userId' }).clickHeader(),
       Selection({ singleValue: 'Choose user' }).open(),
       SelectionList().select(user)
     ]);
@@ -158,10 +161,10 @@ export default {
   filterJobsByInventorySingleRecordImports(filter) {
     if (filter === 'Yes') {
       cy.do(singleRecordImportsAccordion
-        .find(Checkbox({ id: 'clickable-filter-singleRecordImports-yes' })).click());
+        .find(Checkbox({ name: 'yes' })).click());
     } else {
       cy.do(singleRecordImportsAccordion
-        .find(Checkbox({ id: 'clickable-filter-singleRecordImports-no' })).click());
+        .find(Checkbox({ name: 'no' })).click());
     }
   },
 
@@ -230,6 +233,8 @@ export default {
   },
 
   checkByInventorySingleRecord(filter) {
+    // need to wait until selected data will be displayed
+    cy.wait(2000);
     return cy.get('#list-data-import').then(element => {
       // only 100 records shows on every page
       const resultCount = element.attr('data-total-count') > 99 ? 99 : element.attr('data-total-count');
