@@ -31,6 +31,7 @@ describe('ui-data-import: Match on Holdings 856 $u', () => {
   const createInstanceAndEHoldingsJobProfileName = `createInstanceAndEHoldingsJobProf${getRandomPostfix()}`;
   const updateEHoldingsJobProfileName = `updateEHoldingsJobProf${getRandomPostfix()}`;
   let instanceHRID = null;
+  const instanceTitle = 'Together together 3 : personal relationships in public places / edited by Calvin Morrill, David A. Snow, and Cindy H. White.';
 
   const collectionOfMappingAndActionProfiles = [
     {
@@ -84,7 +85,7 @@ describe('ui-data-import: Match on Holdings 856 $u', () => {
   });
 
   after(() => {
-    cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${instanceHRID}"` })
+    cy.getInstance({ limit: 1, expandAll: true, query: `"title"=="${instanceTitle}"` })
       .then((instance) => {
         cy.deleteHoldingRecordViaApi(instance.holdings[0].id);
         InventoryInstance.deleteInstanceViaApi(instance.id);
