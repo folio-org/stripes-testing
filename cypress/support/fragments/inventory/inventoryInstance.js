@@ -441,6 +441,7 @@ export default {
   },
 
   checkIdentifier: (text) => {
+    cy.expect(section.find(Button(including('Identifiers'))).exists());
     cy.expect(Accordion('Identifiers')
       .find(MultiColumnList({ id: 'list-identifiers' }))
       .find(MultiColumnListCell(including(text))).exists());
