@@ -2,6 +2,7 @@ import getRandomPostfix from '../../../support/utils/stringTools';
 import DevTeams from '../../../support/dictionary/devTeams';
 import TestTypes from '../../../support/dictionary/testTypes';
 import InventoryActions from '../../../support/fragments/inventory/inventoryActions';
+import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
 import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
 import BrowseCallNumber from '../../../support/fragments/inventory/search/browseCallNumber';
@@ -17,6 +18,12 @@ describe('Inventory -> Call Number Browse', () => {
     publisher: null,
     holdingCallNumber: '1',
     itemCallNumber: 'RR 718',
+    callNumber: 'PRT 718',
+    copyNumber: 'c.4',
+    callNumberSuffix: 'suf',
+    volume: 'v.1',
+    enumeration: 'e.2',
+    chronology: 'ch.3',
   };
 
   const itemA1 = {
@@ -38,7 +45,8 @@ describe('Inventory -> Call Number Browse', () => {
   const testData = {
     exactSearch: item.itemCallNumber,
     itemWithoutSpace: 'RR718',
-    itemWithLowerCaseR: 'Rr 718'
+    itemWithLowerCaseR: 'Rr 718',
+    parameter: 'Keyword (title, contributor, identifier, HRID, UUID)',
   };
 
   const search = (query) => {
@@ -49,7 +57,11 @@ describe('Inventory -> Call Number Browse', () => {
     InventoryActions.actionsIsAbsent();
     InventorySearchAndFilter.showsOnlyEffectiveLocation();
     InventorySearchAndFilter.browseSubjectsSearch(query);
-    BrowseCallNumber.checkExactSearchResult(testData.exactSearch, item.instanceName);
+  };
+
+  const searchAndOpenInstance = (parametr, title) => {
+    InventorySearchAndFilter.searchByParameter(parametr, title);
+    InventoryInstances.selectInstance();
   };
 
   before('Creating user and instance with item with call number', () => {
@@ -96,5 +108,19 @@ describe('Inventory -> Call Number Browse', () => {
     InventorySearchAndFilter.showsOnlyEffectiveLocation();
     InventorySearchAndFilter.browseSubjectsSearch(itemA1.itemCallNumber);
     BrowseCallNumber.checkExactSearchResult(itemA1.itemCallNumber);
+  });
+
+  it('C359593 Verify that clicking on "Call number" value execute search for "Instance" record by "Shelving order" value (spitfire)', { tags: [DevTeams.spitfire, TestTypes.criticalPath] }, () => {
+    searchAndOpenInstance(testData.parameter, item.instanceName);
+    InventoryInstance.addItem();
+    InventoryInstance.fillItemRequiredFields();
+    InventoryInstance.addItemData(item.callNumber, item.copyNumber, item.callNumberSuffix);
+    InventoryInstance.addEnumerationData(item.volume, item.enumeration, item.chronology);
+    InventoryInstance.saveItemDataAndVerifyExistence(item.copyNumber);
+    search(item.callNumber);
+    BrowseCallNumber.checkItemSearchResult(item.callNumber, item.callNumberSuffix);
+    InventorySearchAndFilter.selectFoundItem(item.callNumber, item.callNumberSuffix);
+    InventorySearchAndFilter.verifyShelvingOrder();
+    InventorySearchAndFilter.verifyInstanceDisplayed(item.instanceName)
   });
 });
