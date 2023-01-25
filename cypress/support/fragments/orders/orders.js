@@ -34,7 +34,7 @@ const searchButton = Button('Search');
 const newButton = Button('New');
 const saveAndClose = Button('Save & close');
 const orderDetailsAccordionId = 'purchaseOrder';
-        // TO DO: need to redesign test case with names of admin user.
+// TO DO: need to redesign test case with names of admin user.
 const createdByAdmin = 'folio-aqa  ';
 const searchField = SearchField({ id: 'input-record-search' });
 const admin = 'folio-aqa';
@@ -63,7 +63,7 @@ export default {
       ordersResultsPane.exists(),
     ]);
   },
-  
+
   waitSettingsPageLoading() {
     cy.expect([
       Pane({ id: 'settings-nav-pane' }).exists(),
@@ -177,7 +177,7 @@ export default {
         return response.body.id;
       });
   },
-  
+
   checkZeroSearchResultsHeader: () => {
     cy.xpath(numberOfSearchResultsHeader)
       .should('be.visible')
@@ -492,7 +492,7 @@ export default {
   selectOngoingOrderTypeInPOForm:() => {
     cy.do(Select('Order type*').choose('Ongoing'));
   },
-  checkEditedOngoingOrder: (orderNumber,organizationName) => {
+  checkEditedOngoingOrder: (orderNumber, organizationName) => {
     cy.expect(Pane({ id: 'order-details' }).exists());
     cy.expect(Accordion({ id: orderDetailsAccordionId }).find(KeyValue({ value: orderNumber })).exists());
     cy.expect(Accordion({ id: orderDetailsAccordionId }).find(KeyValue({ value: organizationName })).exists());

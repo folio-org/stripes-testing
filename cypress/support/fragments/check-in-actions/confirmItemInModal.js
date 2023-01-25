@@ -27,4 +27,8 @@ export default {
   confirmMultipieceItemModal:() => {
     cy.do(Modal('Confirm multipiece check in').find(Button('Check in')).click());
   },
+
+  confirmMultipieceCheckInModal:() => {
+    cy.do(Modal('Confirm multipiece check in').find(Button('Check in')).click());
+  }
 };
