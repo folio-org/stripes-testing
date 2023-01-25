@@ -182,7 +182,6 @@ export default {
   },
 
   openItem(itemBarcode) {
-    // cy.wait(3000);
     cy.do(Link(itemBarcode).click());
   },
 
