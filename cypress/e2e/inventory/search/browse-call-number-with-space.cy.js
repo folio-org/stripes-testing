@@ -110,7 +110,7 @@ describe('Inventory -> Call Number Browse', () => {
     BrowseCallNumber.checkExactSearchResult(itemA1.itemCallNumber);
   });
 
-  it('C359593: Verify that clicking on "Call number" value execute search for "Instance" record by "Shelving order" value (spitfire)', { tags: [DevTeams.spitfire, TestTypes.criticalPath] }, () => {
+  it('C359593 Verify that clicking on "Call number" value execute search for "Instance" record by "Shelving order" value (spitfire)', { tags: [DevTeams.spitfire, TestTypes.criticalPath] }, () => {
     searchAndOpenInstance(testData.parameter, item.instanceName);
     InventoryInstance.addItem();
     InventoryInstance.fillItemRequiredFields();
