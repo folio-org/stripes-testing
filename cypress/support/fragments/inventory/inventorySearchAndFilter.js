@@ -31,6 +31,7 @@ const keywordInput = TextField({ id: 'input-inventory-search' });
 const searchButton = Button({ type: 'submit' });
 const searchTextField = TextField('Search ');
 const inventorySearchAndFilter = TextInput({ id: 'input-inventory-search' });
+const inventorySearchAndFilterInput = Select({ id: 'input-inventory-search-qindex' });
 const browseSearchAndFilterInput = Select({ id: 'input-record-search-qindex' });
 const resetAllButton = Button({ id: 'clickable-reset-all' });
 const navigationInstancesButton = Button({ id: 'segment-navigation-instances' });
@@ -231,7 +232,7 @@ export default {
     const callNumberBrowsePane = Pane({ title: 'Browse inventory' });
     cy.expect(callNumberBrowsePane.exists());
     cy.expect(callNumberBrowsePane.has({ subtitle: 'Enter search criteria to start browsing' }));
-    cy.expect(HTML(including('Choose a filter or enter a search query to show results.')).exists());
+    cy.expect(HTML(including('Browse for results entering a query or choosing a filter.')).exists());
   },
 
   verifyCallNumberBrowsePane() {
@@ -402,6 +403,21 @@ export default {
 
   selectFoundInstance(instanceTitle) {
     cy.do(MultiColumnListCell({ row: 0, content: instanceTitle }).click());
+  },
+
+  selectFoundItem(callNumber, suffix) {
+    cy.do(Button(including(`${callNumber} ${suffix}`)).click());
+  },
+
+  verifyInstanceDisplayed(instanceTitle) {
+    cy.expect(MultiColumnListCell({ content: instanceTitle }).exists());
+  },
+
+  verifyShelvingOrder() {
+    cy.get('#input-inventory-search-qindex').then((elem) => {
+      expect(elem.text()).to.include('Effective call number (item), shelving order');
+    });
+    cy.expect(inventorySearchAndFilter.has({value:'PRT 3718 _V 11 E 12 CH 13 C 14 SUF'}));
   },
 
   verifyPanesExist() {

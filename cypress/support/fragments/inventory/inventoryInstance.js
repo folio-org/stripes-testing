@@ -1,6 +1,8 @@
 /* eslint-disable cypress/no-unnecessary-waiting */
 import {
   MultiColumnList,
+  Select,
+  Form,
   HTML,
   including,
   Button,
@@ -17,6 +19,7 @@ import {
   MultiSelect,
   Pane,
   TextField,
+  TextArea,
   Callout,
   calloutTypes,
   Modal
@@ -51,6 +54,15 @@ const closeTag = Button({ icon: 'times' });
 const tagsPane = Pane('Tags');
 const textFieldTagInput = MultiSelect({ ariaLabelledby:'accordion-toggle-button-tag-accordion' });
 const descriptiveDataAccordion = Accordion('Descriptive data');
+const callNumberTextField = TextArea('Call number');
+const copyNumberTextField = TextField('Copy number');
+const callNumSuffixTextField = TextArea('Call number suffix');
+const volumeTextField = TextField('Volume');
+const enumerationTextField = TextArea('Enumeration');
+const chronologyTextField = TextArea('Chronology');
+const addItemButton = Button('Add item');
+const enabledSaveButton = Button( {id: 'clickable-save-item', disabled: false} );
+const saveAndCloseButton = Button( {id: 'clickable-save-item'} );
 
 const instanceHRID = 'Instance HRID';
 const validOCLC = { id:'176116217',
@@ -195,6 +207,39 @@ export default {
   goToMarcHoldingRecordAdding:() => {
     cy.do(actionsButton.click());
     cy.do(addMarcHoldingRecordButton.click());
+  },
+
+  addItem() {
+    cy.expect(addItemButton.exists());
+    cy.do(addItemButton.click());
+    cy.expect(Section({ id: "acc01" }).exists());
+  },
+
+  fillItemRequiredFields() {
+    cy.do(Select({ id: 'additem_materialType' }).choose('book'));
+    cy.do(Select({ id: 'additem_loanTypePerm' }).choose('Can circulate'));
+    cy.expect(Form().find(enabledSaveButton).exists());
+  },
+
+  addItemData(callNumber, copyNumber, callNamberSuffix) {
+    cy.expect(Accordion({ id: 'acc02' }).exists());
+    cy.do(callNumberTextField.fillIn(callNumber));
+    cy.do(copyNumberTextField.fillIn(copyNumber));
+    cy.do(callNumSuffixTextField.fillIn(callNamberSuffix));
+  },
+
+  addEnumerationData(volume, enumeration, chronology) {
+    cy.expect(Accordion({ id: 'acc03' }).exists());
+    cy.do(volumeTextField.fillIn(volume));
+    cy.do(enumerationTextField.fillIn(enumeration));
+    cy.do(chronologyTextField.fillIn(chronology));
+  },
+
+  saveItemDataAndVerifyExistence(copyNumber) {
+    cy.do(saveAndCloseButton.click());
+    cy.expect(Section({ id: 'pane-instancedetails' }).exists());
+    cy.do(Button(including('Holdings:')).click());
+    cy.expect(Section({ id: 'pane-instancedetails' }).find(MultiColumnListCell({ row: 0, content: copyNumber })).exists());
   },
 
   openHoldingView: () => {

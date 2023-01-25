@@ -1,4 +1,14 @@
-import { Section, Button, HTML, including, TextField, QuickMarcEditorRow, TextArea, MultiColumnListHeader, Callout } from '../../../../interactors';
+import {
+  Section,
+  Button,
+  HTML,
+  including,
+  TextField,
+  QuickMarcEditorRow,
+  TextArea,
+  MultiColumnListHeader,
+  Callout
+} from '../../../../interactors';
 
 const defaultCreateJobProfile = 'Default - Create SRS MARC Authority';
 const defaultUpdateJobProfile = 'Update authority by matching 010';
