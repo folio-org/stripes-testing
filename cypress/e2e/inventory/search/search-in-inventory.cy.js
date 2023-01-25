@@ -8,13 +8,13 @@ import Users from '../../../support/fragments/users/users';
 import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
 import Logs from '../../../support/fragments/data_import/logs/logs';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
-import InventorySearch from '../../../support/fragments/inventory/inventorySearch'
+import InventorySearch from '../../../support/fragments/inventory/inventorySearch';
 
 describe('Search in Inventory', () => {
   const testData = {};
   const jobProfileToRun = 'Default - Create instance and SRS MARC Bib';
-  let fileName = `testInventoryFile.${getRandomPostfix()}.mrc`;
-  let createdInstanceIDs = [];
+  const fileName = `testInventoryFile.${getRandomPostfix()}.mrc`;
+  const createdInstanceIDs = [];
 
   before('Creating data', () => {
     cy.createTempUser([
