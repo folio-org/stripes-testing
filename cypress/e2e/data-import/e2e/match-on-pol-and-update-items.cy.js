@@ -379,7 +379,6 @@ describe('ui-data-import: Match on POL and update related Instance, Holdings, It
     HoldingsRecordView.checkPermanentLocation('Main Library');
     HoldingsRecordView.close();
     InventoryInstance.openHoldingsAccordion('Main Library');
-    cy.wait(2500);
     InventoryInstance.openItemView(firstItem.barcode);
     ItemView.verifyItemStatus('In process');
     ItemView.checkEffectiveLocation('Main Library');
