@@ -159,13 +159,7 @@ export default {
   },
 
   filterJobsByInventorySingleRecordImports(filter) {
-    if (filter === 'Yes') {
-      cy.do(singleRecordImportsAccordion
-        .find(Checkbox({ name: 'yes' })).click());
-    } else {
-      cy.do(singleRecordImportsAccordion
-        .find(Checkbox({ name: 'no' })).click());
-    }
+    cy.do(singleRecordImportsAccordion.find(Checkbox({ name: filter.toLowerCase() })).click());
   },
 
   // TODO: redesign to interactors
