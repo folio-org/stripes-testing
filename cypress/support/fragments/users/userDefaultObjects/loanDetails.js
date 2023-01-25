@@ -73,7 +73,7 @@ export default {
   },
   checkLostDate(date) {
     this.checkDateValid(date);
- //   this.checkKeyValue('Lost', DateTools.getFormattedDate({ date }));
+    this.checkKeyValue('Lost', DateTools.getFormattedDate({ date }));
   },
   checkRenewalCount() {
     this.checkKeyValue('Renewal count', '1');
