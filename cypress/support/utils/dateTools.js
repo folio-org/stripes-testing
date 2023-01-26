@@ -1,5 +1,6 @@
 import moment from 'moment';
 import getRandomStringCode from './genereteTextCode';
+
 const padWithZero = value => String(value).padStart(2, '0');
 
 export default {

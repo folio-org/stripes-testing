@@ -104,9 +104,9 @@ export default {
     this.verifyRequesterDetailsPopulated(username);
   },
 
-  saveAndClose() {
+  saveAndClose(servicePoint = 'Circ Desk 1') {
     Requests.verifyFulfillmentPreference();
-    newRequest.choosepickupServicePoint('Circ Desk 1');
+    newRequest.choosepickupServicePoint(servicePoint);
     newRequest.saveRequestAndClose();
     Requests.verifyRequestsPage();
     this.verifyNewRequest();
