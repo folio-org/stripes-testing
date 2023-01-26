@@ -8,12 +8,10 @@ import Features from '../../support/dictionary/features';
 import { calloutTypes } from '../../../interactors';
 import InteractorsTools from '../../support/utils/interactorsTools';
 import InventorySteps from '../../support/fragments/inventory/inventorySteps';
-import InventoryInstance from '../../support/fragments/inventory/inventoryInstance';
 import DevTeams from '../../support/dictionary/devTeams';
 import Z3950TargetProfiles from '../../support/fragments/settings/inventory/z39.50TargetProfiles';
 
 describe('Manage holding records through quickmarc editor', () => {
-  const quickmarcEditor = new QuickMarcEditor(InventoryInstance.validOCLC);
 
   before(() => {
     cy.getAdminToken().then(() => {
@@ -35,9 +33,9 @@ describe('Manage holding records through quickmarc editor', () => {
   
   it('C345390 Add a field to a record using quickMARC (spitfire)', { tags: [TestTypes.smoke, DevTeams.spitfire, Features.quickMarcEditor] }, () => {
     // TODO: redesign to dynamic reading of rows count
-    quickmarcEditor.addRow(HoldingsRecordView.newHolding.rowsCountInQuickMarcEditor);
-    quickmarcEditor.checkInitialContent(HoldingsRecordView.newHolding.rowsCountInQuickMarcEditor + 1);
-    const expectedInSourceRow = quickmarcEditor.fillAllAvailableValues(undefined, undefined, HoldingsRecordView.newHolding.rowsCountInQuickMarcEditor);
+    QuickMarcEditor.addRow(HoldingsRecordView.newHolding.rowsCountInQuickMarcEditor);
+    QuickMarcEditor.checkInitialContent(HoldingsRecordView.newHolding.rowsCountInQuickMarcEditor + 1);
+    const expectedInSourceRow = QuickMarcEditor.fillAllAvailableValues(undefined, undefined, HoldingsRecordView.newHolding.rowsCountInQuickMarcEditor);
     QuickMarcEditor.pressSaveAndClose();
     HoldingsRecordView.waitLoading();
 

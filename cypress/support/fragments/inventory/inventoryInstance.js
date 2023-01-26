@@ -47,7 +47,7 @@ const notesSection = Section({ id: 'instance-details-notes' });
 const moveItemsButton = Button({ id: 'move-instance-items' });
 const instanceDetailsPane = Pane({ id:'pane-instancedetails' });
 const identifiersAccordion = Accordion('Identifiers');
-const singleRecordImportModal = Modal('Overlay source bibliographic record');
+const singleRecordImportModal = Modal('Re-import');
 const source = KeyValue('Source');
 const tagButton = Button({ icon: 'tag' });
 const closeTag = Button({ icon: 'times' });
@@ -441,6 +441,7 @@ export default {
   },
 
   checkIdentifier: (text) => {
+    cy.expect(section.find(Button(including('Identifiers'))).exists());
     cy.expect(Accordion('Identifiers')
       .find(MultiColumnList({ id: 'list-identifiers' }))
       .find(MultiColumnListCell(including(text))).exists());
