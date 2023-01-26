@@ -51,14 +51,14 @@ describe('orders: Receive piece from Order', () => {
     cy.loginAsAdmin({ path: TopMenu.ordersPath, waiter: Orders.waitLoading });
   });
 
-  after('Deleting order', () => {
-    Orders.getOrdersApi({ limit: 1, query: `"poNumber"=="${orderNumber}"` })
-      .then(res => {
-        Orders.deleteOrderApi(res[0].id);
-      });
-  });
+  // after('Deleting order', () => {
+  //   Orders.getOrdersApi({ limit: 1, query: `"poNumber"=="${orderNumber}"` })
+  //     .then(res => {
+  //       Orders.deleteOrderApi(res[0].id);
+  //     });
+  // });
 
-  it('C735 Receiving pieces from an order for physical material that is set to create Items in inventory (thunderjet)', { tags: [testType.smoke] }, () => {
+  it('C3506: Catalog a new title which has been ordered and received in Orders (prokopovich)', { tags: [testType.smoke] }, () => {
     Orders.searchByParameter('PO number', orderNumber);
     Helper.selectFromResultsList();
     Orders.openOrder();
