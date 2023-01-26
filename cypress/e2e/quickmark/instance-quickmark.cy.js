@@ -193,6 +193,7 @@ describe('Manage inventory Bib records with quickMarc editor', () => {
     cy.reload();
     checkLdrErrors();
     QuickMarcEditor.closeWithoutSaving();
+    QuickMarcEditor.cancelEditConformation();
     InventoryInstance.deriveNewMarcBib();
     QuickMarcEditor.check008FieldsAbsent('Type', 'Blvl');
     checkLdrErrors();
