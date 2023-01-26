@@ -1,6 +1,6 @@
 /* eslint-disable cypress/no-unnecessary-waiting */
 import getRandomPostfix from '../../utils/stringTools';
-import { Button, TextField, TextArea, KeyValue, Checkbox, Link, Heading, Select, Pane, Modal, Section } from '../../../../interactors';
+import { Button, TextField, TextArea, KeyValue, Checkbox, Link, Heading, Select, Pane, Modal, Section, NavListItem } from '../../../../interactors';
 import richTextEditor from '../../../../interactors/rich-text-editor';
 import { NOTICE_CATEGORIES } from './notice-policy';
 import { actionsButtons } from './newNoticePolicy';
@@ -138,5 +138,20 @@ export default {
       Button({ id: 'dropdown-clickable-delete-item' }).click(),
       Button({ id: 'clickable-delete-item-confirmation-confirm' }).click(),
     ]);
+  },
+
+  duplicateTemplate: () => {
+    cy.do([
+      actionsButton.click(),
+      actionsButtons.duplicate.click(),
+    ]);
+  },
+
+  typeTemplateName: (noticePolicytemplateName) => {
+    cy.get('#input-patron-notice-name').clear().type(noticePolicytemplateName);
+  },
+
+  typeTemplateSubject: (noticePolicytemplateSubject) => {
+    cy.get('#input-patron-notice-subject').clear().type(noticePolicytemplateSubject);
   }
 };

@@ -257,7 +257,7 @@ describe('Patron Block: Maximum number of lost items', () => {
       });
     });
     cy.get('@items').each((item, index) => {
-      cy.deleteItem(item.itemId);
+      cy.deleteItemViaApi(item.itemId);
       cy.deleteHoldingRecordViaApi(itemsData.itemsWithSeparateInstance[index].holdingId);
       InventoryInstance.deleteInstanceViaApi(itemsData.itemsWithSeparateInstance[index].instanceId);
     });

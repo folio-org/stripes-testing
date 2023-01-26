@@ -60,7 +60,9 @@ describe('Overdue fine', () => {
   const noticeTemplates = {
     returnedUponAt: createNoticeTemplate('Overdue_fine_returned_upon_at'),
     returnedAfterOnce: createNoticeTemplate('Overdue_fine_returned_after_once'),
-    returnedAfterRecurring: createNoticeTemplate(`Autotest_${getRandomPostfix()}_Overdue_fine_returned_after_recurring`),
+    returnedAfterRecurring: createNoticeTemplate(
+      `Autotest_${getRandomPostfix()}_Overdue_fine_returned_after_recurring`
+    ),
   };
   const selectOptions = (template) => {
     const generalOptions = {
@@ -125,6 +127,16 @@ describe('Overdue fine', () => {
     NewNoticePolicyTemplate.addToken('item.title');
     NewNoticePolicyTemplate.create(template, false);
     NewNoticePolicyTemplate.chooseCategory(template.category);
+    NewNoticePolicyTemplate.checkPreview();
+    NewNoticePolicyTemplate.saveAndClose();
+    NewNoticePolicyTemplate.waitLoading();
+    template.category = 'AutomatedFeeFineCharge';
+    NewNoticePolicyTemplate.checkAfterSaving(template);
+  };
+  const duplicatePatronNoticeTemplate = (template) => {
+    NewNoticePolicyTemplate.duplicateTemplate();
+    NewNoticePolicyTemplate.typeTemplateName(template.name);
+    NewNoticePolicyTemplate.typeTemplateSubject(template.subject);
     NewNoticePolicyTemplate.checkPreview();
     NewNoticePolicyTemplate.saveAndClose();
     NewNoticePolicyTemplate.waitLoading();
@@ -216,7 +228,7 @@ describe('Overdue fine', () => {
       });
 
     LoanPolicy.createViaApi(loanPolicyBody);
-    OverdueFinePolicy.createApi(overdueFinePolicyBody);
+    OverdueFinePolicy.createViaApi(overdueFinePolicyBody);
     UsersOwners.createViaApi(userOwnerBody);
     PaymentMethods.createViaApi(userOwnerBody.id).then((paymentMethodRes) => {
       testData.paymentMethod = paymentMethodRes;
@@ -270,11 +282,11 @@ describe('Overdue fine', () => {
     CirculationRules.deleteRuleViaApi(testData.baseRules);
     ServicePoints.deleteViaApi(testData.userServicePoint.id);
     cy.deleteLoanPolicy(loanPolicyBody.id);
-    NoticePolicyApi.deleteApi(testData.ruleProps.n);
-    OverdueFinePolicy.deleteApi(overdueFinePolicyBody.id);
+    NoticePolicyApi.deleteViaApi(testData.ruleProps.n);
+    OverdueFinePolicy.deleteViaApi(overdueFinePolicyBody.id);
     Users.deleteViaApi(userData.userId);
     PatronGroups.deleteViaApi(patronGroup.id);
-    cy.deleteItem(itemData.itemId);
+    cy.deleteItemViaApi(itemData.itemId);
     cy.deleteHoldingRecordViaApi(itemData.holdingId);
     InventoryInstance.deleteInstanceViaApi(itemData.instanceId);
     PaymentMethods.deleteViaApi(testData.paymentMethod.id);
@@ -307,8 +319,8 @@ describe('Overdue fine', () => {
     { tags: [TestTypes.criticalPath, devTeams.vega] },
     () => {
       createPatronNoticeTemplate(noticeTemplates.returnedUponAt);
-      createPatronNoticeTemplate(noticeTemplates.returnedAfterOnce);
-      createPatronNoticeTemplate(noticeTemplates.returnedAfterRecurring);
+      duplicatePatronNoticeTemplate(noticeTemplates.returnedAfterOnce);
+      duplicatePatronNoticeTemplate(noticeTemplates.returnedAfterRecurring);
 
       cy.visit(SettingsMenu.circulationPatronNoticePoliciesPath);
       NewNoticePolicy.waitLoading();
@@ -320,7 +332,7 @@ describe('Overdue fine', () => {
       NewNoticePolicy.addFeeFineNotice(selectOptions(noticeTemplates.returnedAfterRecurring), 2);
       NewNoticePolicy.save();
       NewNoticePolicy.waitLoading();
-      NewNoticePolicy.check(noticePolicy);
+      NewNoticePolicy.checkPolicyName(noticePolicy);
 
       cy.getNoticePolicy({ query: `name=="${noticePolicy.name}"` }).then((noticePolicyRes) => {
         testData.ruleProps.n = noticePolicyRes[0].id;

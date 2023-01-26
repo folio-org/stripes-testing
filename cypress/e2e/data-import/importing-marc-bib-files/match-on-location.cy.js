@@ -213,7 +213,7 @@ describe('ui-data-import: Match on location', () => {
 
     cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${instanceHrid}"` })
       .then((instance) => {
-        cy.deleteItem(instance.items[0].id);
+        cy.deleteItemViaApi(instance.items[0].id);
         cy.deleteHoldingRecordViaApi(instance.holdings[0].id);
         InventoryInstance.deleteInstanceViaApi(instance.id);
       });

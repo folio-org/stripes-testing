@@ -90,7 +90,7 @@ export default {
     }
   },
 
-  check: (patronNoticePolicy) => {
+  checkPolicyName: (patronNoticePolicy) => {
     return cy.expect(NavListItem(patronNoticePolicy.name).exists());
   },
 

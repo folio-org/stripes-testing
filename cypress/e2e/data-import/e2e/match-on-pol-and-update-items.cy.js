@@ -218,7 +218,7 @@ describe('ui-data-import: Match on POL and update related Instance, Holdings, It
     });
     cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${instanceHrid}"` })
       .then((instance) => {
-        cy.deleteItem(instance.items[0].id);
+        cy.deleteItemViaApi(instance.items[0].id);
         cy.deleteHoldingRecordViaApi(instance.holdings[0].id);
         InventoryInstance.deleteInstanceViaApi(instance.id);
       });
@@ -238,7 +238,7 @@ describe('ui-data-import: Match on POL and update related Instance, Holdings, It
                   checkInDate: new Date().toISOString(),
                 })
                   .then(() => {
-                    cy.deleteItem(itemId);
+                    cy.deleteItemViaApi(itemId);
                     cy.deleteHoldingRecordViaApi(instance.holdings[0].id);
                     InventoryInstance.deleteInstanceViaApi(instance.id);
                   });

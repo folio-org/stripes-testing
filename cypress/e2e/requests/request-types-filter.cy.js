@@ -40,7 +40,7 @@ describe('ui-requests: Make sure that request type filters are working properly'
 
   afterEach(() => {
     instances.forEach(instance => {
-      cy.deleteItem(instance.itemId);
+      cy.deleteItemViaApi(instance.itemId);
       cy.deleteHoldingRecordViaApi(instance.holdingId);
       InventoryInstance.deleteInstanceViaApi(instance.instanceId);
     });

@@ -160,7 +160,7 @@ export default {
   deleteInstanceAndHoldingRecordAndAllItemsViaApi(itemBarcode) {
     cy.getInstance({ limit: 1, expandAll: true, query: `"items.barcode"=="${itemBarcode}"` })
       .then((instance) => {
-        instance.items.forEach((item) => cy.deleteItem(item.id));
+        instance.items.forEach((item) => cy.deleteItemViaApi(item.id));
         cy.deleteHoldingRecordViaApi(instance.holdings[0].id);
         InventoryInstance.deleteInstanceViaApi(instance.id);
       });
