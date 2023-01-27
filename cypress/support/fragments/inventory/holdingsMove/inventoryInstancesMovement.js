@@ -20,5 +20,9 @@ export default {
   },
   closeInLeftForm() {
     cy.do(Section({ id: 'movement-from-instance-details' }).find(Button({ icon: 'times' })).click());
-  }
+  },
+  waitForHoldingMoveToVisible(holdingName){
+    cy.wait(2000);
+    cy.expect(Accordion({ label: including(`Holdings: ${holdingName}`) }).find(Button('Move to')).exists());
+  },
 };
