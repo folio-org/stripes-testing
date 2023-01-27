@@ -11,7 +11,7 @@ export default {
     cy.do(Button('Move to').click());
     cy.do(DropdownMenu().find(Button()).click());
     cy.do(confirmMoveButton.click());
-    cy.expect(HTML({ id:'inventory-module-display' }).exists());
+    cy.expect(HTML({ id: 'inventory-module-display' }).exists());
   },
   moveFromMultiple(holdingName, moveToTitle) {
     cy.do(Accordion({ label: including(`Holdings: ${holdingName}`) }).find(Button('Move to')).click());
@@ -21,7 +21,7 @@ export default {
   closeInLeftForm() {
     cy.do(Section({ id: 'movement-from-instance-details' }).find(Button({ icon: 'times' })).click());
   },
-  verifyHoldingsMoved(holdingName, itemCount){
+  verifyHoldingsMoved(holdingName, itemCount) {
     cy.expect(Accordion({ label: including(`Holdings: ${holdingName}`) }).find(Badge()).has({ text: itemCount }));
   }
 };

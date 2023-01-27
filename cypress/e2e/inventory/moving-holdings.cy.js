@@ -12,6 +12,7 @@ import InteractorsTools from '../../support/utils/interactorsTools';
 import InventoryInstancesMovement from '../../support/fragments/inventory/holdingsMove/inventoryInstancesMovement';
 import InventoryHoldings from '../../support/fragments/inventory/holdings/inventoryHoldings';
 
+// TO DO: remove ignoring errors. Now when you click on one of the buttons, some promise in the application returns false
 Cypress.on('uncaught:exception', (err, runnable) => {
   return false;
 });
@@ -21,7 +22,6 @@ const item = {
   instanceName: `Inventory-first-${Number(new Date())}`,
   barcode: `123${getRandomPostfix()}`,
   firstHoldingName: '',
-  secondHoldingName: '',
   holdings: [],
 };
 
@@ -60,12 +60,12 @@ describe('inventory', () => {
                 permanentLocationId: Cypress.env('locations')[1].id,
                 sourceId: holdingSources[1].id,
               }];
-              secondItem.holdings = [
-                {
-                  holdingsTypeId: Cypress.env('holdingsTypes')[2].id,
-                  permanentLocationId: Cypress.env('locations')[2].id,
-                  sourceId: holdingSources[0].id,
-                }];
+            secondItem.holdings = [
+              {
+                holdingsTypeId: Cypress.env('holdingsTypes')[2].id,
+                permanentLocationId: Cypress.env('locations')[2].id,
+                sourceId: holdingSources[0].id,
+              }];
             InventoryInstances.createInstanceViaApi(item.instanceName, item.barcode, null, '1', '2', 'test_number_1', item.holdings);
             InventoryInstances.createInstanceViaApi(secondItem.instanceName, secondItem.barcode, null, '1', '2', 'test_number_1', secondItem.holdings);
 
