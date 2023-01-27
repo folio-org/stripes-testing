@@ -55,6 +55,7 @@ describe('ui-inventory: keyboard shortcut', () => {
     InventoryKeyboardShortcuts.pressHotKey(hotKeys.create);
     InventoryKeyboardShortcuts.closeShortcuts();
     InventoryKeyboardShortcuts.fillInstanceInfoAndSave(instanceTitle);
+    /* eslint-disable cypress/no-unnecessary-waiting */
     // TODO: Need to wait for the loading of saving the edited information.Reason: the robot runs quickly and the test drops.
     cy.wait(6000);
     InventoryKeyboardShortcuts.checkInstance(instanceTitle);

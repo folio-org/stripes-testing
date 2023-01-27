@@ -73,11 +73,11 @@ describe('ui-data-import: A user can filter and delete import logs from the "Vie
       });
   });
 
-  // after(() => {
-  //   Users.deleteViaApi(firstUser.userId);
-  //   Users.deleteViaApi(secondUser.userId);
-  //   // TODO delete all created instances and holdings
-  // });
+  after(() => {
+    Users.deleteViaApi(firstUser.userId);
+    Users.deleteViaApi(secondUser.userId);
+    // TODO delete all created instances and holdings
+  });
 
   it('C358136 A user can filter and delete import logs from the "View all" page (folijet)', { tags: [TestTypes.criticalPath, DevTeams.folijet] }, () => {
     LogsViewAll.openViewAll();
