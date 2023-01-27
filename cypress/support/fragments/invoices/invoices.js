@@ -137,6 +137,13 @@ export default {
     cy.expect(Accordion({ id: vendorDetailsAccordionId }).find(KeyValue({ value: invoice.accountingCode })).exists());
   },
 
+  checkCreatedInvoiceWithoutAdress(invoice) {
+    cy.expect(Pane({ id: 'pane-invoiceDetails' }).exists());
+    cy.expect(Accordion({ id: vendorDetailsAccordionId }).find(KeyValue({ value: invoice.invoiceNumber })).exists());
+    cy.expect(Accordion({ id: vendorDetailsAccordionId }).find(KeyValue({ value: invoice.vendorName })).exists());
+    cy.expect(Accordion({ id: vendorDetailsAccordionId }).find(KeyValue({ value: invoice.accountingCode })).exists());
+  },
+
   deleteInvoiceViaActions() {
     cy.do([
       PaneHeader({ id: invoiceDetailsPaneId }).find(actionsButton).click(),
