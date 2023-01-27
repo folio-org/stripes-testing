@@ -7,8 +7,9 @@ const addFieldButton = Button({ ariaLabel : 'plus-sign' });
 const deleteFieldButton = Button({ ariaLabel : 'trash' });
 const saveAndCloseButton = Button({ id:'quick-marc-record-save' });
 const confirmationModal = Modal({ id: 'quick-marc-confirm-modal' });
-const cancelConformModel = Modal({ id: 'cancel-editing-confirmation' })
-const cancelConfirmBtn = Modal().find(Button({ id: 'clickable-cancel-editing-confirmation-confirm' }));
+const cancelEditConformModel = Modal({ id: 'cancel-editing-confirmation' })
+const cancelEditConfirmBtn = Modal().find(Button({ id: 'clickable-cancel-editing-confirmation-confirm' }));
+const cancelEditCancelBtn = Modal().find(Button({ id: 'clickable-cancel-editing-confirmation-cancel' }));
 const continueWithSaveButton = Modal().find(Button({ id: 'clickable-quick-marc-confirm-modal-confirm' }));
 const quickMarcEditorRowContent = HTML({ className: including('quickMarcEditorRowContent') });
 const validRecord = InventoryInstance.validOCLC;
@@ -96,9 +97,14 @@ export default {
 
   pressSaveAndClose() { cy.do(saveAndCloseButton.click()); },
 
-  cancelConfirmationPresented() { cy.expect(cancelConformModel.exists()); },
+  cancelEditConfirmationPresented() { cy.expect(cancelEditConformModel.exists()); },
 
-  confirmCancel() { cy.do(cancelConfirmBtn.click()); },
+  confirmEditCancel() { cy.do(cancelEditConfirmBtn.click()); },
+
+  cancelEditConformation() {
+    cy.expect(cancelEditConformModel.exists());
+    cy.do(cancelEditCancelBtn.click());
+  },
 
   deleteConfirmationPresented() { cy.expect(confirmationModal.exists()); },
 

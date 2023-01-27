@@ -153,7 +153,8 @@ describe('ui-data-import: Match on POL and update related Instance, Holdings, It
       permissions.moduleDataImportEnabled.gui,
       permissions.uiReceivingViewEditCreate.gui,
       permissions.uiInventoryViewInstances.gui,
-      permissions.uiQuickMarcQuickMarcBibliographicEditorView.gui
+      permissions.uiQuickMarcQuickMarcBibliographicEditorView.gui,
+      permissions.remoteStorageView.gui
     ])
       .then(userProperties => {
         user = userProperties;

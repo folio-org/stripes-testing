@@ -7,12 +7,12 @@ import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 import devTeams from '../../../support/dictionary/devTeams';
 
-describe('ui-inventory: search', () => {
+describe('Inventory -> Contributors Browse', () => {
   const testData = {};
   const instanceA = BrowseContributors.defaultInstanceAWithContributor;
   const instanceZ = BrowseContributors.defaultInstanceZWithContributor;
 
-  beforeEach('ui-inventory: search', () => {
+  beforeEach('Creating data', () => {
     cy.getAdminToken();
 
     cy.getInstanceTypes({ limit: 1 }).then((res) => {
@@ -50,6 +50,12 @@ describe('ui-inventory: search', () => {
     });
   });
 
+  afterEach('Deleting data', () => {
+    Users.deleteViaApi(testData.user.userId);
+    InventoryInstance.deleteInstanceViaApi(instanceA.id);
+    InventoryInstance.deleteInstanceViaApi(instanceZ.id);
+  });
+
   it('C353640 Browse contributors with non exact match query (spitfire)', { tags: [testType.smoke, devTeams.spitfire] }, () => {
     BrowseContributors.clickBrowseBtn();
     InventorySearchAndFilter.verifyKeywordsAsDefault();
@@ -61,11 +67,5 @@ describe('ui-inventory: search', () => {
     BrowseContributors.checkNonExactSearchResult(instanceA.contributors[0], instanceZ.contributors[0]);
     BrowseContributors.resetAllInSearchPane();
     InventorySearchAndFilter.verifyKeywordsAsDefault();
-  });
-
-  afterEach('Deleting user', () => {
-    Users.deleteViaApi(testData.user.userId);
-    InventoryInstance.deleteInstanceViaApi(instanceA.id);
-    InventoryInstance.deleteInstanceViaApi(instanceZ.id);
   });
 });

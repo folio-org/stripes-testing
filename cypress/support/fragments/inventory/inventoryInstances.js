@@ -15,6 +15,7 @@ import {
 import InventoryHoldings from './holdings/inventoryHoldings';
 import inventoryNewInstance from './inventoryNewInstance';
 import InventoryInstance from './inventoryInstance';
+import Arrays from '../../utils/arrays';
 
 const rootSection = Section({ id: 'pane-results' });
 const inventoriesList = rootSection.find(MultiColumnList({ id: 'list-inventory' }));
@@ -92,7 +93,7 @@ export default {
       .then(() => {
         cy.getLoanTypes({ limit: 1 });
         cy.getMaterialTypes({ limit: 1 });
-        cy.getLocations({ limit: 1 });
+        cy.getLocations({ limit: 50 });
         cy.getHoldingTypes({ limit: 1 });
         InventoryHoldings.getHoldingSources({ limit: 1, query: '(name=="FOLIO")' }).then(holdingSources => {
           holdingSourceId = holdingSources[0].id;
@@ -116,7 +117,8 @@ export default {
           },
           holdings: [{
             holdingsTypeId: Cypress.env('holdingsTypes')[0].id,
-            permanentLocationId: Cypress.env('locations')[0].id,
+            permanentLocationId: Arrays.getRandomElement(Cypress.env('locations')).id,
+            temporaryLocationId: Arrays.getRandomElement(Cypress.env('locations')).id,
             sourceId: holdingSourceId,
           }],
           items: [

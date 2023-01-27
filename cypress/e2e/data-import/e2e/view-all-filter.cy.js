@@ -89,6 +89,7 @@ describe('ui-data-import: Filter the "View all" log screen', () => {
     LogsViewAll.resetAllFilters();
 
     // FILTER By "User"
+    LogsViewAll.openUserIdAccordion();
     LogsViewAll.filterJobsByUser(userFilterValue);
     LogsViewAll.checkByUserName(userName);
 
@@ -100,7 +101,7 @@ describe('ui-data-import: Filter the "View all" log screen', () => {
       // need some waiting until checkboxes become clickable after resetting filters
       cy.wait(1000); // eslint-disable-line cypress/no-unnecessary-waiting
       LogsViewAll.filterJobsByInventorySingleRecordImports(filter);
-      LogsViewAll.checkByInventorySingleRecord({ filter });
+      LogsViewAll.checkByInventorySingleRecord(filter);
       LogsViewAll.resetAllFilters();
     });
 

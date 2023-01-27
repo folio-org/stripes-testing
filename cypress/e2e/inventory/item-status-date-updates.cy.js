@@ -121,7 +121,6 @@ describe('ui-inventory: Item status date updates', () => {
       });
     Orders.getOrdersApi({ limit: 1, query: `"poNumber"=="${orderNumber}"` })
       .then(order => {
-        console.log(order);
         Orders.deleteOrderApi(order[0].id);
       });
     Users.deleteViaApi(userForDeliveryRequest.userId);

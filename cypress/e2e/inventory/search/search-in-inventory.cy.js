@@ -102,6 +102,8 @@ describe('Search in Inventory', () => {
       InventorySearchAndFilter.verifySearchResult('"Closer to the truth than any fact" : memoir, memory, and Jim Crow / Jennifer Jensen Wallach.');
       InventorySearchAndFilter.checkMissingSearchResult('Chopsticks only works in pairs (test) 9');
       InventorySearchAndFilter.selectSearchResultItem();
+      // Wait for details section reload and show updated ISBN number in Identifiers accordion.
+      cy.wait(1000);
       InventoryInstance.checkIdentifier(query);
       InventorySearchAndFilter.resetAll();
     });
