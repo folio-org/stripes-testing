@@ -91,12 +91,10 @@ describe('inventory', () => {
 
     InventoryInstance.moveHoldingsToAnotherInstanceByItemTitle(item.firstHoldingName, secondItem.instanceName);
     InteractorsTools.checkCalloutMessage(successCalloutMessage);
-
-    // cy.wait(5000);
-    // cy.pause();
-    InventoryInstancesMovement.waitForHoldingMoveToVisible(item.firstHoldingName);
+    InventoryInstancesMovement.verifyHoldingsMoved(item.firstHoldingName, '2');
 
     InventoryInstancesMovement.moveFromMultiple(item.firstHoldingName, item.instanceName);
     InteractorsTools.checkCalloutMessage(successCalloutMessage);
+    InventoryInstancesMovement.verifyHoldingsMoved(item.firstHoldingName, '2');
   });
 });

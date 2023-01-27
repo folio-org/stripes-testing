@@ -1,4 +1,4 @@
-import { KeyValue, Button, DropdownMenu, Modal, HTML, Section, including, Accordion} from '../../../../../interactors';
+import { KeyValue, Button, DropdownMenu, Modal, HTML, Section, including, Accordion, Badge } from '../../../../../interactors';
 const confirmMoveButton = Modal('Confirm move').find(Button('Continue'));
 
 export default {
@@ -21,8 +21,7 @@ export default {
   closeInLeftForm() {
     cy.do(Section({ id: 'movement-from-instance-details' }).find(Button({ icon: 'times' })).click());
   },
-  waitForHoldingMoveToVisible(holdingName){
-    cy.wait(2000);
-    cy.expect(Accordion({ label: including(`Holdings: ${holdingName}`) }).find(Button('Move to')).exists());
-  },
+  verifyHoldingsMoved(holdingName, itemCount){
+    cy.expect(Accordion({ label: including(`Holdings: ${holdingName}`) }).find(Badge()).has({ text: itemCount }));
+  }
 };
