@@ -35,6 +35,7 @@ const submitButton = Button('Submit');
 const searchButton = Button('Search');
 const invoiceDetailsPaneId = 'paneHeaderpane-invoiceDetails';
 const searhInputId = 'input-record-search';
+const invoiceDetailsPane = Pane({ id: 'pane-invoiceDetails' });
 
 export default {
   createDefaultInvoice(invoice, vendorPrimaryAddress) {
@@ -49,7 +50,7 @@ export default {
     ]);
     this.selectVendorOnUi(invoice.vendorName);
     cy.do([
-      Selection('Accounting code*').open(),
+      Selection('Accounting code').open(),
       SelectionList().select(`Default (${invoice.accountingCode})`),
       Selection('Batch group*').open(),
       SelectionList().select(invoice.batchGroup),
@@ -60,6 +61,30 @@ export default {
     cy.do(saveAndClose.click());
     InteractorsTools.checkCalloutMessage(invoiceStates.invoiceCreatedMessage);
   },
+
+  createInvoiceWithoutVendorAdress(invoice) {
+    cy.do(actionsButton.click());
+    cy.expect(buttonNew.exists());
+    cy.do([
+      buttonNew.click(),
+      Selection('Status*').open(),
+      SelectionList().select(invoice.status),
+      TextField('Invoice date*').fillIn(invoice.invoiceDate),
+      TextField('Vendor invoice number*').fillIn(invoice.invoiceNumber),
+    ]);
+    this.selectVendorOnUi(invoice.vendorName);
+    cy.do([
+      Selection('Accounting code').open(),
+      SelectionList().select(`Default (${invoice.accountingCode})`),
+      Selection('Batch group*').open(),
+      SelectionList().select(invoice.batchGroup),
+      Select({ id: 'invoice-payment-method' }).choose('Cash'),
+      Checkbox('Export to accounting').click()
+    ]);
+    cy.do(saveAndClose.click());
+    InteractorsTools.checkCalloutMessage(invoiceStates.invoiceCreatedMessage);
+  },
+
   createSpecialInvoice(invoice, vendorPrimaryAddress) {
     cy.do(actionsButton.click());
     cy.expect(buttonNew.exists());
@@ -107,7 +132,14 @@ export default {
 
   checkCreatedInvoice(invoice, vendorPrimaryAddress) {
     this.checkVendorPrimaryAddress(vendorPrimaryAddress);
-    cy.expect(Pane({ id: 'pane-invoiceDetails' }).exists());
+    cy.expect(invoiceDetailsPane.exists());
+    cy.expect(Accordion({ id: vendorDetailsAccordionId }).find(KeyValue({ value: invoice.invoiceNumber })).exists());
+    cy.expect(Accordion({ id: vendorDetailsAccordionId }).find(KeyValue({ value: invoice.vendorName })).exists());
+    cy.expect(Accordion({ id: vendorDetailsAccordionId }).find(KeyValue({ value: invoice.accountingCode })).exists());
+  },
+
+  checkCreatedInvoiceWithoutAdress(invoice) {
+    cy.expect(invoiceDetailsPane.exists());
     cy.expect(Accordion({ id: vendorDetailsAccordionId }).find(KeyValue({ value: invoice.invoiceNumber })).exists());
     cy.expect(Accordion({ id: vendorDetailsAccordionId }).find(KeyValue({ value: invoice.vendorName })).exists());
     cy.expect(Accordion({ id: vendorDetailsAccordionId }).find(KeyValue({ value: invoice.accountingCode })).exists());
@@ -299,5 +331,9 @@ export default {
       .set('Product ID', orderLine.details.productIds[0].productId)
       .set('Product ID ISBN', orderLine.details.productIds[0].productId);
     return searchParamsMap;
-  }
+  },
+
+  waitLoading : () => {
+    cy.expect(Pane({ id: 'invoice-results-pane' }).exists());
+  },
 };
