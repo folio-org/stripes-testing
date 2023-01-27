@@ -14,6 +14,13 @@ export default {
       MultiColumnListCell().has({ content: including(`${searchQuery} would be here`) }),
     ]);
   },
+
+  checkItemSearchResult(callNumber, suffix) {
+    cy.expect([
+      MultiColumnListCell(`${callNumber}would be here`).has({ content: including(`${callNumber}would be here`) }),
+      MultiColumnListCell(`${callNumber} ${suffix}`).has({ content: including(`${callNumber} ${suffix}`) }),
+    ]);
+  },
   
   clickBrowseBtn() {
     cy.do(browseButton.click());

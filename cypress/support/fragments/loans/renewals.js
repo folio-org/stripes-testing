@@ -22,7 +22,7 @@ const fieldLabels = {
 const overrideData = {
   date: dateTools.getCurrentDate(),
   simplifiedDate: dateTools.getFormattedDateWithSlashes({ date: new Date() }),
-  time: '11:11 AM',
+  time: '1:00 AM',
   additionalInfo: 'Override additional information',
   status: 'Checked out',
 };
