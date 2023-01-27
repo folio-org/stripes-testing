@@ -35,6 +35,7 @@ const submitButton = Button('Submit');
 const searchButton = Button('Search');
 const invoiceDetailsPaneId = 'paneHeaderpane-invoiceDetails';
 const searhInputId = 'input-record-search';
+const invoiceDetailsPane = Pane({ id: 'pane-invoiceDetails' });
 
 export default {
   createDefaultInvoice(invoice, vendorPrimaryAddress) {
@@ -131,14 +132,14 @@ export default {
 
   checkCreatedInvoice(invoice, vendorPrimaryAddress) {
     this.checkVendorPrimaryAddress(vendorPrimaryAddress);
-    cy.expect(Pane({ id: 'pane-invoiceDetails' }).exists());
+    cy.expect(invoiceDetailsPane.exists());
     cy.expect(Accordion({ id: vendorDetailsAccordionId }).find(KeyValue({ value: invoice.invoiceNumber })).exists());
     cy.expect(Accordion({ id: vendorDetailsAccordionId }).find(KeyValue({ value: invoice.vendorName })).exists());
     cy.expect(Accordion({ id: vendorDetailsAccordionId }).find(KeyValue({ value: invoice.accountingCode })).exists());
   },
 
   checkCreatedInvoiceWithoutAdress(invoice) {
-    cy.expect(Pane({ id: 'pane-invoiceDetails' }).exists());
+    cy.expect(invoiceDetailsPane.exists());
     cy.expect(Accordion({ id: vendorDetailsAccordionId }).find(KeyValue({ value: invoice.invoiceNumber })).exists());
     cy.expect(Accordion({ id: vendorDetailsAccordionId }).find(KeyValue({ value: invoice.vendorName })).exists());
     cy.expect(Accordion({ id: vendorDetailsAccordionId }).find(KeyValue({ value: invoice.accountingCode })).exists());
