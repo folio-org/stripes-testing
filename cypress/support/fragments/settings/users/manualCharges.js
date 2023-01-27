@@ -1,6 +1,7 @@
 import getRandomPostfix from '../../../utils/stringTools';
-import { Select, Button, TextField, MultiColumnListCell, Option } from '../../../../../interactors';
+import { Select, Button, TextField, MultiColumnListCell, Section, PaneHeader } from '../../../../../interactors';
 
+const rootSection = Section({ id:'controlled-vocab-pane' });
 
 const defaultFeeFineType = {
   // required field
@@ -12,8 +13,10 @@ const defaultFeeFineType = {
   automatic: false,
 };
 
+
 export default {
   defaultFeeFineType,
+  waitLoading:() => cy.expect(rootSection.find(PaneHeader('Fee/fine: Manual charges')).exists()),
   createViaApi : (ownerIdfeeFineTypeProperties) => cy.okapiRequest({
     method: 'POST',
     path: 'feefines',

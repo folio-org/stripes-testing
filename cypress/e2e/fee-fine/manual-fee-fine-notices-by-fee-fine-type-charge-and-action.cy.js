@@ -5,23 +5,15 @@ import permissions from '../../support/dictionary/permissions';
 import UserEdit from '../../support/fragments/users/userEdit';
 import TopMenu from '../../support/fragments/topMenu';
 import SettingsMenu from '../../support/fragments/settingsMenu';
-import generateItemBarcode from '../../support/utils/generateItemBarcode';
-import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
 import PatronGroups from '../../support/fragments/settings/users/patronGroups';
-import Location from '../../support/fragments/settings/tenant/locations/newLocation';
 import Users from '../../support/fragments/users/users';
 import SearchPane from '../../support/fragments/circulation-log/searchPane';
-import CirculationRules from '../../support/fragments/circulation/circulation-rules';
-import NoticePolicyApi from '../../support/fragments/circulation/notice-policy';
 import NoticePolicyTemplateApi from '../../support/fragments/circulation/notice-policy-template';
 import NewNoticePolicyTemplate from '../../support/fragments/circulation/newNoticePolicyTemplate';
 import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
-import InventoryInstance from '../../support/fragments/inventory/inventoryInstance';
 import getRandomPostfix from '../../support/utils/stringTools';
-import OverdueFinePolicy from '../../support/fragments/circulation/overdue-fine-policy';
 import UsersOwners from '../../support/fragments/settings/users/usersOwners';
 import PaymentMethods from '../../support/fragments/settings/users/paymentMethods';
-import LoanPolicy from '../../support/fragments/circulation/loan-policy';
 import UsersSearchPane from '../../support/fragments/users/usersSearchPane';
 import UsersCard from '../../support/fragments/users/usersCard';
 import UserAllFeesFines from '../../support/fragments/users/userAllFeesFines';
@@ -33,56 +25,38 @@ import FeeFineDetails from '../../support/fragments/users/feeFineDetails';
 import TransferFeeFine from '../../support/fragments/users/transferFeeFine';
 import WaiveFeeFinesModal from '../../support/fragments/users/waiveFeeFineModal';
 import RefundFeeFine from '../../support/fragments/users/refundFeeFine';
+import RefundReasons from '../../support/fragments/settings/users/refundReasons';
+import TransferAccounts from '../../support/fragments/settings/users/transferAccounts';
+import WaiveReasons from '../../support/fragments/settings/users/waiveReasons';
 
-describe('Manual fee/fine', () => {
+describe('Overdue fine', () => {
   const patronGroup = {
     name: 'groupToTestNotices' + getRandomPostfix(),
   };
-  const userData = {
-    personal: {
-      lastname: null,
-    },
-  };
-  const itemData = {
-    barcode: generateItemBarcode(),
-    title: `Instance ${getRandomPostfix()}`,
-  };
+  const userData = {};
   const testData = {
     userServicePoint: ServicePoints.getDefaultServicePointWithPickUpLocation('autotestReceiveNotice', uuid()),
-    ruleProps: {},
   };
   const createNoticeTemplate = (noticeName, noticeCategory) => {
     return {
-      name: `Autotest_${getRandomPostfix()}_${noticeName}`,
+      name: `${noticeName}_${getRandomPostfix()}`,
       description: 'Created by autotest team',
       category: noticeCategory,
-      subject: `Autotest_${getRandomPostfix()}_${noticeName}`,
-      body: 'Test email body {{item.title}} {{loan.dueDateTime}}',
+      subject: `${noticeName}_${getRandomPostfix()}`,
+      body: '{{item.title}}',
     };
   };
   const noticeTemplates = {
-    manualFeeFineCharge: createNoticeTemplate('Overdue_fine_returned_upon_at', 'Manual fee/fine charge'),
+    manualFeeFineCharge: createNoticeTemplate('Manual_fee_fine_charge', 'Manual fee/fine charge'),
     manualFeeFineAction: createNoticeTemplate(
-      'Overdue_fine_returned_after_once',
+      'Manual_fee_fine_action',
       'Manual fee/fine action (pay, waive, refund, transfer or cancel/error)'
     ),
-  };
-  const searchResultsData = (templateName) => {
-    return {
-      userBarcode: userData.barcode,
-      itemBarcode: itemData.barcode,
-      object: 'Notice',
-      circAction: 'Send',
-      // TODO: add check for date with format <C6/8/2022, 6:46 AM>
-      servicePoint: testData.userServicePoint.name,
-      source: 'System',
-      desc: `Template: ${templateName}. Triggering event: Overdue fine returned.`,
-    };
   };
   const openFeeFines = () => {
     cy.visit(TopMenu.usersPath);
     UsersSearchPane.waitLoading();
-    UsersSearchPane.searchByKeywords('user1');
+    UsersSearchPane.searchByKeywords(userData.barcode);
     UsersCard.waitLoading();
     UsersCard.openFeeFines();
     UsersCard.showOpenedFeeFines();
@@ -90,10 +64,14 @@ describe('Manual fee/fine', () => {
     UserAllFeesFines.clickRowCheckbox(0);
     FeeFineDetails.openActions();
   };
-  const checkNoticeIsSent = (checkParams) => {
-    SearchPane.searchByUserBarcode('user1');
-    // SearchPane.searchByUserBarcode(userData.barcode);
-    SearchPane.checkResultSearch(checkParams);
+  const checkNoticeIsSent = (noticesToCheck) => {
+    cy.visit(TopMenu.circulationLogPath);
+    SearchPane.searchByUserBarcode(userData.barcode);
+    noticesToCheck.forEach((notice) => {
+      SearchPane.findResultRowIndexByContent(notice.desc).then((rowIndex) => {
+        SearchPane.checkResultSearch(notice, rowIndex);
+      });
+    });
   };
   const createPatronNoticeTemplate = (template) => {
     NewNoticePolicyTemplate.startAdding();
@@ -104,29 +82,6 @@ describe('Manual fee/fine', () => {
     NewNoticePolicyTemplate.checkPreview();
     NewNoticePolicyTemplate.saveAndClose();
     NewNoticePolicyTemplate.waitLoading();
-    template.category = 'AutomatedFeeFineCharge';
-    NewNoticePolicyTemplate.checkAfterSaving(template);
-  };
-  const loanPolicyBody = {
-    id: uuid(),
-    name: `1_minute_${getRandomPostfix()}`,
-    loanable: true,
-    loansPolicy: {
-      closedLibraryDueDateManagementId: 'CURRENT_DUE_DATE_TIME',
-      period: {
-        duration: 1,
-        intervalId: 'Minutes',
-      },
-      profileId: 'Rolling',
-    },
-    renewable: false,
-  };
-  const overdueFinePolicyBody = {
-    id: uuid(),
-    name: `automationOverdueFinePolicy${getRandomPostfix()}`,
-    overdueFine: { quantity: '1.00', intervalId: 'minute' },
-    countClosed: true,
-    maxOverdueFine: '100.00',
   };
   const userOwnerBody = {
     id: uuid(),
@@ -138,73 +93,38 @@ describe('Manual fee/fine', () => {
       },
     ],
   };
+  const transferAccount = TransferAccounts.getDefaultNewTransferAccount(uuid());
+  const refundReason = RefundReasons.getDefaultNewRefundReason(uuid());
+  const waiveReason = WaiveReasons.getDefaultNewWaiveReason(uuid());
+  const manualCharge = {
+    feeFineOwnerName: userOwnerBody.owner,
+    feeFineType: 'Charge' + getRandomPostfix(),
+    defaultAmount: '10.00',
+    chargeNoticeId: noticeTemplates.manualFeeFineCharge.name,
+    actionNoticeId: noticeTemplates.manualFeeFineAction.name,
+  };
 
   before('Preconditions', () => {
-    cy.getAdminToken()
-      .then(() => {
-        ServicePoints.createViaApi(testData.userServicePoint);
-        testData.defaultLocation = Location.getDefaultLocation(testData.userServicePoint.id);
-        Location.createViaApi(testData.defaultLocation);
-        cy.getInstanceTypes({ limit: 1 }).then((instanceTypes) => {
-          testData.instanceTypeId = instanceTypes[0].id;
-        });
-        cy.getHoldingTypes({ limit: 1 }).then((holdingTypes) => {
-          testData.holdingTypeId = holdingTypes[0].id;
-        });
-        cy.createLoanType({
-          name: `type_${getRandomPostfix()}`,
-        }).then((loanType) => {
-          testData.loanTypeId = loanType.id;
-        });
-        cy.getMaterialTypes({ limit: 1 }).then((materialTypes) => {
-          testData.materialTypeId = materialTypes.id;
-        });
-      })
-      .then(() => {
-        InventoryInstances.createFolioInstanceViaApi({
-          instance: {
-            instanceTypeId: testData.instanceTypeId,
-            title: itemData.title,
-          },
-          holdings: [
-            {
-              holdingsTypeId: testData.holdingTypeId,
-              permanentLocationId: testData.defaultLocation.id,
-            },
-          ],
-          items: [
-            {
-              barcode: itemData.barcode,
-              status: { name: 'Available' },
-              permanentLoanType: { id: testData.loanTypeId },
-              materialType: { id: testData.materialTypeId },
-            },
-          ],
-        }).then((specialInstanceIds) => {
-          itemData.instanceId = specialInstanceIds.instanceId;
-          itemData.holdingId = specialInstanceIds.holdingIds[0].id;
-          itemData.itemId = specialInstanceIds.holdingIds[0].itemIds;
-        });
-      });
-
-    LoanPolicy.createViaApi(loanPolicyBody);
-    OverdueFinePolicy.createApi(overdueFinePolicyBody);
-    UsersOwners.createViaApi(userOwnerBody);
-    PaymentMethods.createViaApi(userOwnerBody.id).then((paymentMethodRes) => {
-      testData.paymentMethod = paymentMethodRes;
+    cy.getAdminToken().then(() => {
+      ServicePoints.createViaApi(testData.userServicePoint);
     });
 
-    PatronGroups.createViaApi(patronGroup.name).then((res) => {
-      patronGroup.id = res;
+    UsersOwners.createViaApi(userOwnerBody);
+    PaymentMethods.createViaApi(userOwnerBody.id).then((paymentRes) => {
+      testData.paymentMethodId = paymentRes.id;
+      testData.paymentMethodName = paymentRes.name;
+    });
+    TransferAccounts.createViaApi({ ...transferAccount, ownerId: userOwnerBody.id });
+    WaiveReasons.createViaApi(waiveReason);
+    RefundReasons.createViaApi(refundReason);
+
+    PatronGroups.createViaApi(patronGroup.name).then((group) => {
+      patronGroup.id = group;
       cy.createTempUser(
         [
-          permissions.checkinAll.gui,
-          permissions.checkoutAll.gui,
+          permissions.uiUsersSettingsAllFeeFinesRelated.gui,
           permissions.circulationLogAll.gui,
           permissions.uiCirculationSettingsNoticeTemplates.gui,
-          permissions.uiCirculationSettingsNoticePolicies.gui,
-          permissions.loansAll.gui,
-
           permissions.uiUsersfeefinesCRUD.gui,
           permissions.uiUserAccounts.gui,
         ],
@@ -215,7 +135,6 @@ describe('Manual fee/fine', () => {
           userData.password = userProperties.password;
           userData.userId = userProperties.userId;
           userData.barcode = userProperties.barcode;
-          userData.personal.lastname = userProperties.lastName;
         })
         .then(() => {
           UserEdit.addServicePointViaApi(
@@ -223,11 +142,6 @@ describe('Manual fee/fine', () => {
             userData.userId,
             testData.userServicePoint.id
           );
-
-          cy.getCirculationRules().then((response) => {
-            testData.baseRules = response.rulesAsText;
-            testData.ruleProps = CirculationRules.getRuleProps(response.rulesAsText);
-          });
 
           cy.login(userData.username, userData.password, {
             path: SettingsMenu.circulationPatronNoticeTemplatesPath,
@@ -238,36 +152,27 @@ describe('Manual fee/fine', () => {
   });
 
   after('Deleting created entities', () => {
+    cy.visit(TopMenu.usersPath);
     UserEdit.changeServicePointPreferenceViaApi(userData.userId, [testData.userServicePoint.id]);
-    CirculationRules.deleteRuleViaApi(testData.baseRules);
     ServicePoints.deleteViaApi(testData.userServicePoint.id);
-    cy.deleteLoanPolicy(loanPolicyBody.id);
-    NoticePolicyApi.deleteApi(testData.ruleProps.n);
-    OverdueFinePolicy.deleteApi(overdueFinePolicyBody.id);
     Users.deleteViaApi(userData.userId);
     PatronGroups.deleteViaApi(patronGroup.id);
-    cy.deleteItem(itemData.itemId);
-    cy.deleteHoldingRecordViaApi(itemData.holdingId);
-    InventoryInstance.deleteInstanceViaApi(itemData.instanceId);
-    PaymentMethods.deleteViaApi(testData.paymentMethod.id);
+
+    TransferAccounts.deleteViaApi(transferAccount.id);
+    WaiveReasons.deleteViaApi(waiveReason.id);
+    RefundReasons.deleteViaApi(refundReason.id);
+    cy.get('@manualChargeId').then((manualChargeId) => {
+      ManualCharges.deleteViaApi(manualChargeId);
+    });
+    PaymentMethods.deleteViaApi(testData.paymentMethodId);
     UsersOwners.deleteViaApi(userOwnerBody.id);
-    Location.deleteViaApiIncludingInstitutionCampusLibrary(
-      testData.defaultLocation.institutionId,
-      testData.defaultLocation.campusId,
-      testData.defaultLocation.libraryId,
-      testData.defaultLocation.id
-    );
-    NoticePolicyTemplateApi.getViaApi({ query: `name=${noticeTemplates.returnedUponAt.name}` }).then(
+
+    NoticePolicyTemplateApi.getViaApi({ query: `name=${noticeTemplates.manualFeeFineCharge.name}` }).then(
       (templateId) => {
         NoticePolicyTemplateApi.deleteViaApi(templateId);
       }
     );
-    NoticePolicyTemplateApi.getViaApi({ query: `name=${noticeTemplates.returnedAfterOnce.name}` }).then(
-      (templateId) => {
-        NoticePolicyTemplateApi.deleteViaApi(templateId);
-      }
-    );
-    NoticePolicyTemplateApi.getViaApi({ query: `name=${noticeTemplates.returnedAfterRecurring.name}` }).then(
+    NoticePolicyTemplateApi.getViaApi({ query: `name=${noticeTemplates.manualFeeFineAction.name}` }).then(
       (templateId) => {
         NoticePolicyTemplateApi.deleteViaApi(templateId);
       }
@@ -275,65 +180,112 @@ describe('Manual fee/fine', () => {
   });
 
   it(
-    'C347877 Manual fee/fine notices by fee/fine type: charge and action (vega)',
+    'C347874 Overdue fine, returned triggers (vega)',
     { tags: [TestTypes.criticalPath, devTeams.vega] },
     () => {
       createPatronNoticeTemplate(noticeTemplates.manualFeeFineCharge);
+      noticeTemplates.manualFeeFineCharge.category = 'FeeFineCharge';
+      NewNoticePolicyTemplate.checkAfterSaving(noticeTemplates.manualFeeFineCharge);
       createPatronNoticeTemplate(noticeTemplates.manualFeeFineAction);
+      noticeTemplates.manualFeeFineAction.category = 'FeeFineAction';
+      NewNoticePolicyTemplate.checkAfterSaving(noticeTemplates.manualFeeFineAction);
 
       cy.visit(SettingsMenu.manualCharges);
-      const manualChargeData = {
-        feeFineOwnerName: 'owner',
-        feeFineType: 'test manual charge',
-        defaultAmount: '10.00',
-        chargeNoticeId: 'Manual fee/fine charge',
-        actionNoticeId: 'Manual fee/fine action',
-      };
-      ManualCharges.createViaUi(manualChargeData);
-      ManualCharges.checkManualCharge(manualChargeData);
+      ManualCharges.waitLoading();
+      cy.intercept('POST', '/feefines').as('manualChargeCreate');
+      ManualCharges.createViaUi(manualCharge);
+      cy.wait('@manualChargeCreate').then((intercept) => {
+        cy.wrap(intercept.response.body.id).as('manualChargeId');
+      });
+      ManualCharges.checkManualCharge(manualCharge);
 
       cy.visit(TopMenu.usersPath);
       UsersSearchPane.waitLoading();
-      UsersSearchPane.searchByKeywords('user1');
+      UsersSearchPane.searchByKeywords(userData.barcode);
       UsersCard.waitLoading();
       UsersCard.openFeeFines();
       UsersCard.startFeeFineAdding();
-      NewFeeFine.setFeeFineOwner('owner');
-      NewFeeFine.checkFilteredFeeFineType('test manual charge');
-      NewFeeFine.setFeeFineType('test manual charge');
+      NewFeeFine.setFeeFineOwner(userOwnerBody.owner);
+      NewFeeFine.checkFilteredFeeFineType(manualCharge.feeFineType);
+      NewFeeFine.setFeeFineType(manualCharge.feeFineType);
       cy.intercept('POST', '/accounts').as('feeFineCreate');
       NewFeeFine.chargeOnly();
       cy.wait('@feeFineCreate').then((intercept) => {
-        cy.visit(AppPaths.getFeeFineDetailsPath('e725b572-c4ab-4168-ba00-0adeb1174c0c', intercept.response.body.id));
+        cy.wrap(intercept.response.body.id).as('feeFineId');
       });
-      cy.visit(TopMenu.circulationLogPath);
-      checkNoticeIsSent(searchResultsData(noticeTemplates.returnedAfterRecurring.name));
+      UsersSearchPane.waitLoading();
+      checkNoticeIsSent([
+        {
+          userBarcode: userData.barcode,
+          object: 'Notice',
+          circAction: 'Send',
+          desc: `Template: ${noticeTemplates.manualFeeFineCharge.name}. Triggering event: ${manualCharge.feeFineType}.`,
+        },
+        {
+          userBarcode: userData.barcode,
+          object: 'Fee/fine',
+          circAction: 'Billed',
+          desc: `Fee/Fine type: ${manualCharge.feeFineType}. Fee/Fine owner: ${userOwnerBody.owner}. Amount: 10.00. manual`,
+        },
+      ]);
 
       openFeeFines();
       UserAllFeesFines.clickTransfer();
       TransferFeeFine.setAmount(2);
-      TransferFeeFine.setOwner('autotest_463.30873378344404971');
-      TransferFeeFine.setTransferAccount('Traunt');
+      TransferFeeFine.setOwner(userOwnerBody.owner);
+      TransferFeeFine.setTransferAccount(transferAccount.accountName);
       TransferFeeFine.transferAndConfirm();
+      checkNoticeIsSent({
+        userBarcode: userData.barcode,
+        object: 'Fee/fine',
+        circAction: 'Transferred partially',
+        desc: `Fee/Fine type: ${manualCharge.feeFineType}. Amount: 2.00. Balance: 8.00. Transfer account: ${transferAccount.accountName}.`,
+      });
 
       openFeeFines();
       UserAllFeesFines.clickWaive();
       WaiveFeeFinesModal.waitLoading();
       WaiveFeeFinesModal.setWaiveAmount('2.00');
-      WaiveFeeFinesModal.selectWaiveReason('simpleReason');
+      WaiveFeeFinesModal.selectWaiveReason(waiveReason.nameReason);
       WaiveFeeFinesModal.confirm();
+      checkNoticeIsSent({
+        userBarcode: userData.barcode,
+        object: 'Fee/fine',
+        circAction: 'Waived partially',
+        desc: `Fee/Fine type: ${manualCharge.feeFineType}. Amount: 2.00. Balance: 6.00. Waive reason: ${waiveReason.nameReason}.`,
+      });
 
       openFeeFines();
       UserAllFeesFines.clickPay();
       PayFeeFaine.setAmount('2.00');
-      PayFeeFaine.setPaymentMethod({ name: 'card' });
+      PayFeeFaine.setPaymentMethod({ name: testData.paymentMethodName });
       PayFeeFaine.submitAndConfirm();
+      checkNoticeIsSent({
+        userBarcode: userData.barcode,
+        object: 'Fee/fine',
+        circAction: 'Paid partially',
+        desc: `Fee/Fine type: ${manualCharge.feeFineType}. Amount: 2.00. Balance: 4.00. Payment method: ${testData.paymentMethodName}.`,
+      });
 
       openFeeFines();
       UserAllFeesFines.clickRefund();
       RefundFeeFine.setAmount('2.00');
-      RefundFeeFine.selectRefundReason('simpleRefund');
+      RefundFeeFine.selectRefundReason(refundReason.nameReason);
       RefundFeeFine.submitAndConfirm();
+      checkNoticeIsSent({
+        userBarcode: userData.barcode,
+        object: 'Fee/fine',
+        circAction: 'Refunded fully',
+        desc: `Fee/Fine type: ${manualCharge.feeFineType}. Amount: 2.00. Balance: 6.00. Refund reason: ${refundReason.nameReason}.`,
+      });
+
+      cy.get('@feeFineId').then((feeFineId) => {
+        cy.visit(AppPaths.getFeeFineDetailsPath(userData.userId, feeFineId));
+        FeeFineDetails.waitLoading();
+        FeeFineDetails.openActions();
+        FeeFineDetails.openErrorModal();
+        FeeFineDetails.confirmFeeFineCancellation('AutoTestComment');
+      });
     }
   );
 });

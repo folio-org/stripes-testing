@@ -122,6 +122,10 @@ export default {
     });
   },
 
+  findResultRowIndexByContent(content) {
+    return cy.get('*[class^="mclCell"]').contains(content).parent().invoke('attr', 'data-row-inner');
+  },
+
   filterByLastWeek() {
     const lastWeek = DateTools.getLastWeekDateObj();
     const today = new Date();
