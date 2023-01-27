@@ -13,9 +13,7 @@ import InventoryInstancesMovement from '../../support/fragments/inventory/holdin
 import InventoryHoldings from '../../support/fragments/inventory/holdings/inventoryHoldings';
 
 // TO DO: remove ignoring errors. Now when you click on one of the buttons, some promise in the application returns false
-Cypress.on('uncaught:exception', (err, runnable) => {
-  return false;
-});
+Cypress.on('uncaught:exception', () => false);
 
 let userId;
 const item = {
