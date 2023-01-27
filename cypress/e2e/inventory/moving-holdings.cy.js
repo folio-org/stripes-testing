@@ -20,14 +20,14 @@ let userId;
 const item = {
   instanceName: `Inventory-first-${Number(new Date())}`,
   barcode: `123${getRandomPostfix()}`,
+  firstHoldingName: '',
+  secondHoldingName: '',
+  holdings: [],
 };
 
 const secondItem = {
   instanceName: `Inventory-second-${getRandomPostfix()}`,
   barcode: `123${getRandomPostfix()}`,
-  firstHoldingName: '',
-  secondHoldingName: '',
-  holdings: [],
 };
 const successCalloutMessage = '1 holding has been successfully moved.';
 
@@ -49,9 +49,7 @@ describe('inventory', () => {
         userId = userProperties.userId;
         cy.login(userProperties.username, userProperties.password, { path: TopMenu.inventoryPath, waiter: InventorySearchAndFilter.waitLoading })
           .then(() => {
-            secondItem.firstHoldingName = Cypress.env('locations')[0].name;
-            secondItem.secondHoldingName = Cypress.env('locations')[1].name;
-            secondItem.holdings = [
+            item.holdings = [
               {
                 holdingsTypeId: Cypress.env('holdingsTypes')[0].id,
                 permanentLocationId: Cypress.env('locations')[0].id,
@@ -62,17 +60,24 @@ describe('inventory', () => {
                 permanentLocationId: Cypress.env('locations')[1].id,
                 sourceId: holdingSources[1].id,
               }];
-            InventoryInstances.createInstanceViaApi(item.instanceName, item.barcode);
-            InventoryInstances.createInstanceViaApi(secondItem.instanceName, secondItem.barcode, null, '1', '2', 'test_number_1', secondItem.holdings);
+            console.log('makism', item.holdings);
+            cy.pause()
+            InventoryInstances.createInstanceViaApi(item.instanceName, item.barcode, null, '1', '2', 'test_number_1', item.holdings);
+            InventoryInstances.createInstanceViaApi(secondItem.instanceName, secondItem.barcode);
+
+            cy.getItems({ query: `"barcode"=="${item.barcode}"` })
+            .then(response => {
+              item.firstHoldingName = response.effectiveLocation.name;
+            });
           });
       });
   });
 
-  after('delete test data', () => {
-    InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(item.barcode);
-    InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(secondItem.barcode);
-    Users.deleteViaApi(userId);
-  });
+  // after('delete test data', () => {
+  //   InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(item.barcode);
+  //   InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(secondItem.barcode);
+  //   Users.deleteViaApi(userId);
+  // });
 
   it('C15187 Move some items with in a holdings record to another holdings associated with another instance', { tags: [testTypes.criticalPath, devTeams.firebird] }, () => {
     InventorySearchAndFilter.switchToItem();
@@ -80,10 +85,11 @@ describe('inventory', () => {
     InventorySearchAndFilter.selectSearchResultItem();
     ItemView.clickCloseButton();
 
-    InventoryInstance.moveHoldingsToAnotherInstanceByItemTitle(secondItem.firstHoldingName, secondItem.instanceName);
+    InventoryInstance.moveHoldingsToAnotherInstanceByItemTitle(item.firstHoldingName, secondItem.instanceName);
     InteractorsTools.checkCalloutMessage(successCalloutMessage);
+    cy.wait(5000);
 
-    InventoryInstancesMovement.moveFromMultiple(secondItem.firstHoldingName);
+    InventoryInstancesMovement.moveFromMultiple(item.firstHoldingName, item.instanceName);
     InteractorsTools.checkCalloutMessage(successCalloutMessage);
   });
 });

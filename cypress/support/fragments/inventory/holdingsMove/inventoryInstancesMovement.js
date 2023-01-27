@@ -13,9 +13,9 @@ export default {
     cy.do(confirmMoveButton.click());
     cy.expect(HTML({ id:'inventory-module-display' }).exists());
   },
-  moveFromMultiple(holdingName) {
+  moveFromMultiple(holdingName, moveToTitle) {
     cy.do(Accordion({ label: including(`Holdings: ${holdingName}`) }).find(Button('Move to')).click());
-    cy.do(DropdownMenu().find(Button()).click());
+    cy.do(DropdownMenu().find(Button(moveToTitle)).click());
     cy.do(Modal('Confirm move').find(Button('Continue')).click());
   },
   closeInLeftForm() {

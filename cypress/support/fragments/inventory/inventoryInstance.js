@@ -268,7 +268,7 @@ export default {
     InventoryInstanceSelectInstanceModal.waitLoading();
     InventoryInstanceSelectInstanceModal.searchByTitle(title)
     InventoryInstanceSelectInstanceModal.selectInstance();
-    InventoryInstancesMovement.moveFromMultiple(holdingName);
+    InventoryInstancesMovement.moveFromMultiple(holdingName, title);
   },
   checkAddItem:(holdingsRecordId) => {
     cy.expect(section.find(Section({ id:holdingsRecordId }))
