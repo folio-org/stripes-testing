@@ -1,6 +1,4 @@
 /// <reference types="cypress" />
-import uuid from 'uuid';
-
 import SettingsActionProfiles from '../fragments/settings/dataImport/settingsActionProfiles';
 import SettingsJobProfiles from '../fragments/settings/dataImport/settingsJobProfiles';
 import SettingsMappingProfiles from '../fragments/settings/dataImport/settingsMappingProfiles';
