@@ -1,6 +1,6 @@
 /* eslint-disable cypress/no-unnecessary-waiting */
 import getRandomPostfix from '../../utils/stringTools';
-import { Button, TextField, TextArea, KeyValue, Checkbox, Link, Heading, Select, Pane, Modal, Section, NavListItem } from '../../../../interactors';
+import { Button, TextField, TextArea, KeyValue, Checkbox, Link, Heading, Select, Pane, Modal, Section } from '../../../../interactors';
 import richTextEditor from '../../../../interactors/rich-text-editor';
 import { NOTICE_CATEGORIES } from './notice-policy';
 import { actionsButtons } from './newNoticePolicy';
@@ -148,10 +148,10 @@ export default {
   },
 
   typeTemplateName: (noticePolicytemplateName) => {
-    cy.get('#input-patron-notice-name').clear().type(noticePolicytemplateName);
+    cy.do(nameField.fillIn(noticePolicytemplateName));
   },
 
   typeTemplateSubject: (noticePolicytemplateSubject) => {
-    cy.get('#input-patron-notice-subject').clear().type(noticePolicytemplateSubject);
+    cy.do(subjectField.fillIn(noticePolicytemplateSubject));
   }
 };

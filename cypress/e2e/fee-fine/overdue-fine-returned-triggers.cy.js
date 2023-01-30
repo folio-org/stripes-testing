@@ -243,8 +243,6 @@ describe('Overdue fine', () => {
           permissions.circulationLogAll.gui,
           permissions.uiCirculationSettingsNoticeTemplates.gui,
           permissions.uiCirculationSettingsNoticePolicies.gui,
-          permissions.loansAll.gui,
-
           permissions.uiUsersfeefinesCRUD.gui,
           permissions.uiUserAccounts.gui,
         ],
