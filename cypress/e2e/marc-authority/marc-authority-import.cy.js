@@ -10,7 +10,7 @@ import Users from '../../support/fragments/users/users';
 import JobProfiles from '../../support/fragments/data_import/job_profiles/jobProfiles';
 import Logs from '../../support/fragments/data_import/logs/logs';
 
-describe('MARC Authority management', () => {
+describe('Data Import - Importing MARC Authority files', () => {
   const testData = {};
   const jobProfileToRun = 'Default - Create SRS MARC Authority';
   let fileName;

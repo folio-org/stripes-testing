@@ -1,6 +1,8 @@
 /* eslint-disable cypress/no-unnecessary-waiting */
 import {
   MultiColumnList,
+  Select,
+  Form,
   HTML,
   including,
   Button,
@@ -17,6 +19,7 @@ import {
   MultiSelect,
   Pane,
   TextField,
+  TextArea,
   Callout,
   calloutTypes,
   Modal
@@ -26,7 +29,7 @@ import InventoryViewSource from './inventoryViewSource';
 import InventoryNewHoldings from './inventoryNewHoldings';
 import InventoryInstanceSelectInstanceModal from './holdingsMove/inventoryInstanceSelectInstanceModal';
 import InventoryInstancesMovement from './holdingsMove/inventoryInstancesMovement';
-import ItemView from './inventoryItem/itemView';
+import ItemRecordView from './itemRecordView';
 import DateTools from '../../utils/dateTools';
 
 const section = Section({ id: 'pane-instancedetails' });
@@ -44,13 +47,22 @@ const notesSection = Section({ id: 'instance-details-notes' });
 const moveItemsButton = Button({ id: 'move-instance-items' });
 const instanceDetailsPane = Pane({ id:'pane-instancedetails' });
 const identifiersAccordion = Accordion('Identifiers');
-const singleRecordImportModal = Modal('Overlay source bibliographic record');
+const singleRecordImportModal = Modal('Re-import');
 const source = KeyValue('Source');
 const tagButton = Button({ icon: 'tag' });
 const closeTag = Button({ icon: 'times' });
 const tagsPane = Pane('Tags');
 const textFieldTagInput = MultiSelect({ ariaLabelledby:'accordion-toggle-button-tag-accordion' });
 const descriptiveDataAccordion = Accordion('Descriptive data');
+const callNumberTextField = TextArea('Call number');
+const copyNumberTextField = TextField('Copy number');
+const callNumSuffixTextField = TextArea('Call number suffix');
+const volumeTextField = TextField('Volume');
+const enumerationTextField = TextArea('Enumeration');
+const chronologyTextField = TextArea('Chronology');
+const addItemButton = Button('Add item');
+const enabledSaveButton = Button({ id: 'clickable-save-item', disabled: false });
+const saveAndCloseButton = Button({ id: 'clickable-save-item' });
 
 const instanceHRID = 'Instance HRID';
 const validOCLC = { id:'176116217',
@@ -60,13 +72,12 @@ const validOCLC = { id:'176116217',
   existingTag: '100',
   ldrValue: '01677cam\\a22003974a\\4500',
   tag008BytesProperties : {
-    eLvl : { interactor:TextField('ELvl'), defaultValue:'4' },
     srce: { interactor:TextField('Srce'), defaultValue:'\\' },
     ctrl : { interactor:TextField('Ctrl'), defaultValue:'' },
     lang : { interactor:TextField('Lang'), defaultValue:'rus' },
     form : { interactor:TextField('Form'), defaultValue:'\\' },
     ctry : { interactor:TextField('Ctry'), defaultValue:'ru\\' },
-    desc : { interactor:TextField('Desc'), defaultValue:'a' },
+    desc : { interactor:TextField('MRec'), defaultValue:'o' },
     dtSt : { interactor:TextField('DtSt'), defaultValue:'s' },
     startDate : { interactor:TextField('Start date'), defaultValue:'2007' },
     endDate : { interactor:TextField('End date'), defaultValue:'\\\\\\\\' }
@@ -125,9 +136,9 @@ const checkInstanceNotes = (noteType, noteContent) => {
 };
 
 const waitInstanceRecordViewOpened = (title) => {
-  // need to wait untill updated instance will be displayed
-  cy.wait(1500);
   cy.expect(Pane({ id:'pane-instancedetails' }).exists());
+  // need to wait until updated instance will be displayed
+  cy.wait(5000);
   cy.expect(Pane({ titleLabel: including(title) }).exists());
 };
 
@@ -186,6 +197,7 @@ export default {
     cy.do(actionsButton.click());
     cy.do(deriveNewMarcBibRecord.click());
     cy.expect(QuickMarcEditor().exists());
+    cy.reload();
   },
 
   getAssignedHRID:() => cy.then(() => KeyValue(instanceHRID).value()),
@@ -195,6 +207,39 @@ export default {
   goToMarcHoldingRecordAdding:() => {
     cy.do(actionsButton.click());
     cy.do(addMarcHoldingRecordButton.click());
+  },
+
+  addItem() {
+    cy.expect(addItemButton.exists());
+    cy.do(addItemButton.click());
+    cy.expect(Section({ id: 'acc01' }).exists());
+  },
+
+  fillItemRequiredFields() {
+    cy.do(Select({ id: 'additem_materialType' }).choose('book'));
+    cy.do(Select({ id: 'additem_loanTypePerm' }).choose('Can circulate'));
+    cy.expect(Form().find(enabledSaveButton).exists());
+  },
+
+  addItemData(callNumber, copyNumber, callNamberSuffix) {
+    cy.expect(Accordion({ id: 'acc02' }).exists());
+    cy.do(callNumberTextField.fillIn(callNumber));
+    cy.do(copyNumberTextField.fillIn(copyNumber));
+    cy.do(callNumSuffixTextField.fillIn(callNamberSuffix));
+  },
+
+  addEnumerationData(volume, enumeration, chronology) {
+    cy.expect(Accordion({ id: 'acc03' }).exists());
+    cy.do(volumeTextField.fillIn(volume));
+    cy.do(enumerationTextField.fillIn(enumeration));
+    cy.do(chronologyTextField.fillIn(chronology));
+  },
+
+  saveItemDataAndVerifyExistence(copyNumber) {
+    cy.do(saveAndCloseButton.click());
+    cy.expect(Section({ id: 'pane-instancedetails' }).exists());
+    cy.do(Button(including('Holdings:')).click());
+    cy.expect(Section({ id: 'pane-instancedetails' }).find(MultiColumnListCell({ row: 0, content: copyNumber })).exists());
   },
 
   openHoldingView: () => {
@@ -289,7 +334,7 @@ export default {
   },
   openItemView: (itemBarcode) => {
     cy.do(Link(including(itemBarcode)).click());
-    ItemView.waitLoading();
+    ItemRecordView.waitLoading();
   },
   openEditItemPage() {
     cy.do([
@@ -396,6 +441,7 @@ export default {
   },
 
   checkIdentifier: (text) => {
+    cy.expect(section.find(Button(including('Identifiers'))).exists());
     cy.expect(Accordion('Identifiers')
       .find(MultiColumnList({ id: 'list-identifiers' }))
       .find(MultiColumnListCell(including(text))).exists());
@@ -409,5 +455,9 @@ export default {
     cy.do(MultiColumnListCell({ content: barcode }).find(Link()).click());
     cy.expect(KeyValue('Temporary loan type').has({ value }));
     cy.do(Button({ icon: 'times' }).click());
+  },
+
+  verifyItemBarcode(barcode) {
+    cy.expect(MultiColumnListCell({ content: barcode }).exists());
   },
 };

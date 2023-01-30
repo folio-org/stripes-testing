@@ -71,9 +71,10 @@ const checkItemsQuantityInSummaryTable = (rowNumber, quantity) => {
   }
 };
 
-const checkStatusInColumn = (specialStatus, specialColumnName) => {
+const checkStatusInColumn = (specialStatus, specialColumnName, rowIndex = 0) => {
   cy.then(() => specialColumnName.index())
-    .then((index) => cy.expect(resultsList.find(MultiColumnListCell({ columnIndex: index }))
+    .then((index) => cy.expect(resultsList.find(MultiColumnListRow({ index: rowIndex }))
+      .find(MultiColumnListCell({ columnIndex: index }))
       .has({ content: specialStatus })));
 };
 

@@ -13,7 +13,7 @@ import NewOrder from '../../support/fragments/orders/newOrder';
 import TopMenu from '../../support/fragments/topMenu';
 import Helper from '../../support/fragments/finance/financeHelper';
 import OrdersHelper from '../../support/fragments/orders/ordersHelper';
-import ItemView from '../../support/fragments/inventory/inventoryItem/itemView';
+import ItemRecordView from '../../support/fragments/inventory/itemRecordView';
 import Receiving from '../../support/fragments/receiving/receiving';
 import permissions from '../../support/dictionary/permissions';
 import CheckInActions from '../../support/fragments/check-in-actions/checkInActions';
@@ -31,11 +31,13 @@ import InventoryInstances from '../../support/fragments/inventory/inventoryInsta
 import InventoryInstance from '../../support/fragments/inventory/inventoryInstance';
 import InventorySearchAndFilter from '../../support/fragments/inventory/inventorySearchAndFilter';
 import BasicOrderLine from '../../support/fragments/orders/basicOrderLine';
-import NewLocations from '../../support/fragments/settings/tenant/locations/newLocation';
+import NewLocation from '../../support/fragments/settings/tenant/locations/newLocation';
 import Users from '../../support/fragments/users/users';
 import CheckOutActions from '../../support/fragments/check-out-actions/check-out-actions';
 import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
 import DateTools from '../../support/utils/dateTools';
+import UserEdit from '../../support/fragments/users/userEdit';
+import ServicePoint from '../../support/fragments/servicePoint/servicePoint';
 
 describe('ui-inventory: Item status date updates', () => {
   const instanceTitle = `autotestTitle ${Helper.getRandomBarcode()}`;
@@ -73,8 +75,9 @@ describe('ui-inventory: Item status date updates', () => {
         ServicePoints.getViaApi({ limit: 1, query: 'name=="Circ Desk 2"' })
           .then((servicePoints) => {
             effectiveLocationServicePoint = servicePoints[0];
-            NewLocations.createViaApi(NewLocations.getDefaultLocation(effectiveLocationServicePoint.id))
+            NewLocation.createViaApi(NewLocation.getDefaultLocation(effectiveLocationServicePoint.id))
               .then((location) => {
+                console.log(location);
                 effectiveLocation = location;
                 Orders.createOrderWithOrderLineViaApi(
                   NewOrder.getDefaultOrder(),
@@ -113,18 +116,27 @@ describe('ui-inventory: Item status date updates', () => {
   });
 
   afterEach(() => {
-    cy.getInstance({ limit: 1, expandAll: true, query: `"items.barcode"=="${itemBarcode}"` })
-      .then((instance) => {
-        cy.deleteItemViaApi(instance.items[0].id);
-        cy.deleteHoldingRecordViaApi(instance.holdings[0].id);
-        InventoryInstance.deleteInstanceViaApi(instance.id);
-      });
+    InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(itemBarcode);
     Orders.getOrdersApi({ limit: 1, query: `"poNumber"=="${orderNumber}"` })
       .then(order => {
-        console.log(order);
         Orders.deleteOrderApi(order[0].id);
       });
-    Users.deleteViaApi(userForDeliveryRequest.userId);
+    UserEdit.changeServicePointPreferenceViaApi(
+      userForDeliveryRequest.userId,
+      [effectiveLocationServicePoint.id, notEffectiveLocationServicePoint.id]
+    )
+      .then(() => {
+        ServicePoint.deleteViaApi(effectiveLocationServicePoint.id);
+        ServicePoint.deleteViaApi(notEffectiveLocationServicePoint.id);
+        Users.deleteViaApi(userForDeliveryRequest.userId);
+      });
+
+    NewLocation.deleteViaApiIncludingInstitutionCampusLibrary(
+      effectiveLocation.institutionId,
+      effectiveLocation.campusId,
+      effectiveLocation.libraryId,
+      effectiveLocation.id
+    );
   });
 
   const openItem = (title, itemLocation, barcode) => {
@@ -141,8 +153,8 @@ describe('ui-inventory: Item status date updates', () => {
   };
 
   const fullCheck = (status) => {
-    ItemView.verifyUpdatedItemDate();
-    ItemView.verifyItemStatus(status);
+    ItemRecordView.verifyUpdatedItemDate();
+    ItemRecordView.verifyItemStatus(status);
     cy.log(`###${status}###`);
   };
 
@@ -192,7 +204,7 @@ describe('ui-inventory: Item status date updates', () => {
     Orders.openOrder();
     OrdersHelper.verifyOrderDateOpened();
     openItem(instanceTitle, effectiveLocation.name, 'No barcode');
-    fullCheck(ItemView.itemStatuses.onOrder);
+    fullCheck(ItemRecordView.itemStatuses.onOrder);
 
     // receive item
     cy.visit(TopMenu.ordersPath);
@@ -201,32 +213,32 @@ describe('ui-inventory: Item status date updates', () => {
     Receiving.selectFromResultsList(instanceTitle);
     Receiving.receivePiece(0, caption, itemBarcode);
     openItem(instanceTitle, effectiveLocation.name, itemBarcode);
-    fullCheck(ItemView.itemStatuses.inProcess);
+    fullCheck(ItemRecordView.itemStatuses.inProcess);
 
     // check in item at service point assigned to its effective location
     SwitchServicePoint.switchServicePoint(effectiveLocationServicePoint.name);
-    checkIn(itemBarcode, ItemView.itemStatuses.available);
+    checkIn(itemBarcode, ItemRecordView.itemStatuses.available);
 
     // mark item as missing
-    ItemView.clickMarkAsMissing();
-    fullCheck(ItemView.itemStatuses.missing);
+    ItemRecordView.clickMarkAsMissing();
+    fullCheck(ItemRecordView.itemStatuses.missing);
 
     // check in item at service point assigned to its effective location
-    checkIn(itemBarcode, ItemView.itemStatuses.available, ConfirmItemInModal.confirmMissingModal);
+    checkIn(itemBarcode, ItemRecordView.itemStatuses.available, ConfirmItemInModal.confirmMissingModal);
 
     // check in item at service point assigned to its effective location
-    checkIn(itemBarcode, ItemView.itemStatuses.available);
+    checkIn(itemBarcode, ItemRecordView.itemStatuses.available);
 
     // check in item at service point not assigned to its effective location
     SwitchServicePoint.switchServicePoint(notEffectiveLocationServicePoint.name);
-    checkIn(itemBarcode, ItemView.itemStatuses.inTransit, ConfirmItemInModal.confirmInTransitModal);
+    checkIn(itemBarcode, ItemRecordView.itemStatuses.inTransit, ConfirmItemInModal.confirmInTransitModal);
 
     // check in item at service point not assigned to its effective location
-    checkIn(itemBarcode, ItemView.itemStatuses.inTransit, ConfirmItemInModal.confirmInTransitModal);
+    checkIn(itemBarcode, ItemRecordView.itemStatuses.inTransit, ConfirmItemInModal.confirmInTransitModal);
 
     // check in item at service point assigned to its effective location
     SwitchServicePoint.switchServicePoint(effectiveLocationServicePoint.name);
-    checkIn(itemBarcode, ItemView.itemStatuses.available);
+    checkIn(itemBarcode, ItemRecordView.itemStatuses.available);
 
     // create Page request on an item
     cy.visit(TopMenu.requestsPath);
@@ -236,25 +248,25 @@ describe('ui-inventory: Item status date updates', () => {
       pickupServicePoint: effectiveLocationServicePoint.name
     });
     openItem(instanceTitle, effectiveLocation.name, itemBarcode);
-    fullCheck(ItemView.itemStatuses.paged);
+    fullCheck(ItemRecordView.itemStatuses.paged);
 
     // check in item at a service point other than the pickup service point for the request
     SwitchServicePoint.switchServicePoint(notEffectiveLocationServicePoint.name);
-    checkIn(itemBarcode, ItemView.itemStatuses.inTransit, ConfirmItemInModal.confirmInTransitModal);
+    checkIn(itemBarcode, ItemRecordView.itemStatuses.inTransit, ConfirmItemInModal.confirmInTransitModal);
 
     // check in item at the pickup service point for the page request
     SwitchServicePoint.switchServicePoint(effectiveLocationServicePoint.name);
-    checkIn(itemBarcode, ItemView.itemStatuses.awaitingPickup, ConfirmItemInModal.confirmAvaitingPickUpModal);
+    checkIn(itemBarcode, ItemRecordView.itemStatuses.awaitingPickup, ConfirmItemInModal.confirmAvaitingPickUpModal);
 
     // check out item to user for whom page request was created
-    checkOut(userName, itemBarcode, ItemView.itemStatuses.checkedOut, ConfirmItemInModal.confirmAvaitingPickupCheckInModal);
+    checkOut(userName, itemBarcode, ItemRecordView.itemStatuses.checkedOut, ConfirmItemInModal.confirmAvaitingPickupCheckInModal);
 
     // declare item lost
     openUser(userName);
     UserLoans.declareLoanLost(itemBarcode);
     ConfirmItemStatusModal.confirmItemStatus();
     openItem(instanceTitle, effectiveLocation.name, itemBarcode);
-    fullCheck(ItemView.itemStatuses.declaredLost);
+    fullCheck(ItemRecordView.itemStatuses.declaredLost);
 
     // renew item (through override)
     openUser(userName);
@@ -262,12 +274,12 @@ describe('ui-inventory: Item status date updates', () => {
     RenewConfirmationModal.confirmRenewOverrideItem();
     OverrideAndRenewModal.confirmOverrideItem();
     openItem(instanceTitle, effectiveLocation.name, itemBarcode);
-    fullCheck(ItemView.itemStatuses.checkedOut);
+    fullCheck(ItemRecordView.itemStatuses.checkedOut);
 
     // edit item record so that it has multiple pieces
     InventoryInstance.openEditItemPage();
-    ItemView.addPieceToItem(numberOfPieces);
-    fullCheck(ItemView.itemStatuses.checkedOut);
+    ItemRecordView.addPieceToItem(numberOfPieces);
+    fullCheck(ItemRecordView.itemStatuses.checkedOut);
 
     // create delivery request (hold or recall) on item
     cy.visit(TopMenu.requestsPath);
@@ -283,16 +295,16 @@ describe('ui-inventory: Item status date updates', () => {
     CheckOutActions.checkOutItemWithUserName(userName, itemBarcode);
     CheckOutActions.cancelMultipleCheckOutModal();
     openItem(instanceTitle, effectiveLocation.name, itemBarcode);
-    fullCheck(ItemView.itemStatuses.awaitingDelivery);
+    fullCheck(ItemRecordView.itemStatuses.awaitingDelivery);
 
     // check out item to user with delivery request
-    checkOut(userForDeliveryRequest.username, itemBarcode, ItemView.itemStatuses.checkedOut);
+    checkOut(userForDeliveryRequest.username, itemBarcode, ItemRecordView.itemStatuses.checkedOut);
 
     // check in item at service point assigned to its effective location
     SwitchServicePoint.switchServicePoint(effectiveLocationServicePoint.name);
     cy.visit(TopMenu.checkInPath);
     CheckInActions.backdateCheckInItem(DateTools.getPreviousDayDate(), itemBarcode);
     openItem(instanceTitle, effectiveLocation.name, itemBarcode);
-    fullCheck(ItemView.itemStatuses.available);
+    fullCheck(ItemRecordView.itemStatuses.available);
   });
 });

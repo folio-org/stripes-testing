@@ -10,7 +10,7 @@ import InventoryHoldings from '../../../support/fragments/inventory/holdings/inv
 import devTeams from '../../../support/dictionary/devTeams';
 import users from '../../../support/fragments/users/users';
 import ServicePoints from '../../../support/fragments/settings/tenant/servicePoints/servicePoints';
-import ItemView from '../../../support/fragments/inventory/inventoryItem/itemView';
+import ItemRecordView from '../../../support/fragments/inventory/itemRecordView';
 
 const ITEM_BARCODE = `123${getRandomPostfix()}`;
 let userId;
@@ -95,7 +95,7 @@ describe('ui-inventory: location', () => {
     InventorySearchAndFilter.switchToItem();
     InventorySearchAndFilter.searchByParameter('Barcode', ITEM_BARCODE);
     InventoryInstances.selectInstance();
-    ItemView.closeDetailView();
+    ItemRecordView.closeDetailView();
     InventoryInstance.openHoldings([toBeEditedLocationName]);
     InventoryInstance.openItemView(ITEM_BARCODE);
 
@@ -124,7 +124,7 @@ describe('ui-inventory: location', () => {
     InventorySearchAndFilter.switchToItem();
     InventorySearchAndFilter.searchByParameter('Barcode', ITEM_BARCODE);
     InventoryInstances.selectInstance();
-    ItemView.closeDetailView();
+    ItemRecordView.closeDetailView();
     InventoryInstance.openHoldings([editedLocationName]);
     InventoryInstance.openItemView(ITEM_BARCODE);
 

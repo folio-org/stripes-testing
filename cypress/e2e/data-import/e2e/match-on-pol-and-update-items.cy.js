@@ -25,7 +25,6 @@ import Receiving from '../../../support/fragments/receiving/receiving';
 import FileDetails from '../../../support/fragments/data_import/logs/fileDetails';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 import HoldingsRecordView from '../../../support/fragments/inventory/holdingsRecordView';
-import ItemView from '../../../support/fragments/inventory/inventoryItem/itemView';
 import InventoryViewSource from '../../../support/fragments/inventory/inventoryViewSource';
 import NewMatchProfile from '../../../support/fragments/data_import/match_profiles/newMatchProfile';
 import Organizations from '../../../support/fragments/organizations/organizations';
@@ -153,7 +152,8 @@ describe('ui-data-import: Match on POL and update related Instance, Holdings, It
       permissions.moduleDataImportEnabled.gui,
       permissions.uiReceivingViewEditCreate.gui,
       permissions.uiInventoryViewInstances.gui,
-      permissions.uiQuickMarcQuickMarcBibliographicEditorView.gui
+      permissions.uiQuickMarcQuickMarcBibliographicEditorView.gui,
+      permissions.remoteStorageView.gui
     ])
       .then(userProperties => {
         user = userProperties;
@@ -230,7 +230,7 @@ describe('ui-data-import: Match on POL and update related Instance, Holdings, It
         cy.getItems({ query: `"id"=="${itemId}"` })
           .then((item) => {
             item.barcode = itemBarcode;
-            ItemRecordView.editItem(item)
+            ItemRecordView.editItemViaApi(item)
               .then(() => {
                 CheckInActions.checkinItemViaApi({
                   itemBarcode: item.barcode,
@@ -380,9 +380,9 @@ describe('ui-data-import: Match on POL and update related Instance, Holdings, It
     HoldingsRecordView.close();
     InventoryInstance.openHoldingsAccordion('Main Library');
     InventoryInstance.openItemView(firstItem.barcode);
-    ItemView.verifyItemStatus('In process');
-    ItemView.checkEffectiveLocation('Main Library');
-    ItemView.closeDetailView();
+    ItemRecordView.verifyItemStatus('In process');
+    ItemRecordView.checkEffectiveLocation('Main Library');
+    ItemRecordView.closeDetailView();
     InventoryInstance.viewSource();
     InventoryViewSource.verifyBarcodeInMARCBibSource(firstItem.barcode);
   });

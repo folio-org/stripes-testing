@@ -81,7 +81,7 @@ describe('bulk-edit', () => {
       BulkEditSearchPane.waitFileUploading();
       BulkEditSearchPane.verifyMatchedResults(hrid);
 
-      const location = 'Annex';
+      const location = 'Online';
 
       BulkEditActions.openActions();
       BulkEditActions.openStartBulkEditForm();
