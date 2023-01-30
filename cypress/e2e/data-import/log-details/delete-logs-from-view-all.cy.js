@@ -17,14 +17,15 @@ describe('ui-data-import: delete logs from "View all" page', () => {
     ])
       .then(userProperties => {
         user = userProperties;
+
+        const fileName = 'oneMarcBib.mrc';
+
+        DataImport.uploadFileViaApi(`cypress/fixtures/${fileName}`);
         cy.login(userProperties.username, userProperties.password, {
           path: TopMenu.dataImportPath,
           waiter: DataImport.waitLoading
         });
       });
-    const fileName = 'oneMarcBib.mrc';
-
-    DataImport.uploadFileViaApi(`cypress/fixtures/${fileName}`);
   });
 
   // after(() => {

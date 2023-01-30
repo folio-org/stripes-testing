@@ -249,11 +249,14 @@ export default {
         const uploadDefinitionId = response.body.fileDefinitions[0].uploadDefinitionId;
         const fileId = response.body.fileDefinitions[0].id;
 
-        cy.okapiRequest({
-          path: `data-import/uploadDefinitions/${uploadDefinitionId}/files/${fileId}`,
-          method: 'POST',
-          isDefaultSearchParamsRequired: false,
-          contentTypeHeader: 'application/octet-stream'
+        cy.readFile(fileName).then(content => {
+          cy.okapiRequest({
+            path: `data-import/uploadDefinitions/${uploadDefinitionId}/files/${fileId}`,
+            method: 'POST',
+            body: content,
+            isDefaultSearchParamsRequired: false,
+            contentTypeHeader: 'application/octet-stream'
+          });
         });
       });
   }
