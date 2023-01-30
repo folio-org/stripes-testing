@@ -4,6 +4,7 @@ import dateTools from '../../utils/dateTools';
 import ConfirmItemMissingModal from './inventoryItem/confirmItemMissingModal';
 
 const loanAccordion = Accordion('Loan and availability');
+const actionsButton = Button('Actions');
 
 const viewItem = (locator, cellContent) => {
   cy.do(Accordion(`Holdings: ${locator} >`).clickHeader());
@@ -86,7 +87,7 @@ export default {
   },
 
   clickMarkAsMissing:() => {
-    cy.do(Button('Actions').click());
+    cy.do(actionsButton.click());
     cy.do(Button('Mark as missing').click());
     ConfirmItemMissingModal.confirmModal();
   },
@@ -120,7 +121,7 @@ export default {
 
   edit() {
     cy.do([
-      Button('Actions').click(),
+      actionsButton.click(),
       Button('Edit').click(),
     ]);
   },
