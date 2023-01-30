@@ -29,7 +29,7 @@ import InventoryViewSource from './inventoryViewSource';
 import InventoryNewHoldings from './inventoryNewHoldings';
 import InventoryInstanceSelectInstanceModal from './holdingsMove/inventoryInstanceSelectInstanceModal';
 import InventoryInstancesMovement from './holdingsMove/inventoryInstancesMovement';
-import ItemView from './inventoryItem/itemView';
+import ItemRecordView from './itemRecordView';
 import DateTools from '../../utils/dateTools';
 
 const section = Section({ id: 'pane-instancedetails' });
@@ -334,7 +334,7 @@ export default {
   },
   openItemView: (itemBarcode) => {
     cy.do(Link(including(itemBarcode)).click());
-    ItemView.waitLoading();
+    ItemRecordView.waitLoading();
   },
   openEditItemPage() {
     cy.do([
@@ -455,5 +455,9 @@ export default {
     cy.do(MultiColumnListCell({ content: barcode }).find(Link()).click());
     cy.expect(KeyValue('Temporary loan type').has({ value }));
     cy.do(Button({ icon: 'times' }).click());
+  },
+
+  verifyItemBarcode(barcode) {
+    cy.expect(MultiColumnListCell({ content: barcode }).exists());
   },
 };
