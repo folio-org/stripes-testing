@@ -170,17 +170,17 @@ export default {
   },
 
   selectBrowseCallNumbers() {
+    cy.do(browseButton.click());
     // cypress can't draw selected option without wait
     // eslint-disable-next-line cypress/no-unnecessary-waiting
-    cy.do(browseButton.click());
     cy.wait(1000);
     cy.do(Select('Search field index').choose('Call numbers'));
   },
 
   selectBrowseSubjects() {
+    cy.do(browseButton.click());
     // cypress can't draw selected option without wait
     // eslint-disable-next-line cypress/no-unnecessary-waiting
-    cy.do(browseButton.click());
     cy.wait(1000);
     cy.do(Select('Search field index').choose('Subjects'));
   },
@@ -417,7 +417,7 @@ export default {
     cy.get('#input-inventory-search-qindex').then((elem) => {
       expect(elem.text()).to.include('Effective call number (item), shelving order');
     });
-    cy.expect(inventorySearchAndFilter.has({value:'PRT 3718 _V 11 E 12 CH 13 C 14 SUF'}));
+    cy.expect(inventorySearchAndFilter.has({ value:'PRT 3718 _V 11 E 12 CH 13 C 14 SUF' }));
   },
 
   verifyPanesExist() {
