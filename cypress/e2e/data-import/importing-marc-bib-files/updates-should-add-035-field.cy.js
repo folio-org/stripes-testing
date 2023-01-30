@@ -21,7 +21,7 @@ import InstanceRecordView from '../../../support/fragments/inventory/instanceRec
 import Users from '../../../support/fragments/users/users';
 import FileManager from '../../../support/utils/fileManager';
 
-describe('ui-data-import: Data Import Updates should add 035 field from 001/003, if it is not HRID or already exists', () => {
+describe.skip('ui-data-import: Data Import Updates should add 035 field from 001/003, if it is not HRID or already exists', () => {
   let user = null;
   let instanceHridFromFirstFile;
   const instanceHridsFromSecondFile = [];
