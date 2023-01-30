@@ -15,14 +15,14 @@ describe('ui-circulation-settings: create patron notice policies', () => {
     NewNoticePolicy.checkInitialState();
     NewNoticePolicy.fillGeneralInformation(noticePolicy);
     NewNoticePolicy.save();
-    NewNoticePolicy.check(noticePolicy);
+    NewNoticePolicy.checkPolicyName(noticePolicy);
     NewNoticePolicy.choosePolicy(noticePolicy);
     NewNoticePolicy.duplicatePolicy(noticePolicy);
     NewNoticePolicy.deletePolicy(noticePolicy);
     NewNoticePolicy.choosePolicy(noticePolicy);
     NewNoticePolicy.editPolicy(noticePolicy);
     NewNoticePolicy.save(noticePolicy);
-    NewNoticePolicy.check(noticePolicy);
+    NewNoticePolicy.checkPolicyName(noticePolicy);
     NewNoticePolicy.choosePolicy(noticePolicy);
     NewNoticePolicy.deletePolicy(noticePolicy);
   });

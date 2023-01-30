@@ -50,7 +50,7 @@ describe('ui-users-loans: renewal failure because loan has reached maximum renew
 
     RequestPolicy.createViaApi();
     LostItemFeePolicy.createViaApi();
-    OverdueFinePolicy.createApi();
+    OverdueFinePolicy.createViaApi();
     NoticePolicy.createApi();
     cy.createLoanPolicy({
       loanable: true,
@@ -203,7 +203,7 @@ describe('ui-users-loans: renewal failure because loan has reached maximum renew
 
     cy.wrap(firstInstanceIds.holdingIds.forEach(holdingsId => {
       cy.wrap(holdingsId.itemIds.forEach(itemId => {
-        cy.deleteItem(itemId);
+        cy.deleteItemViaApi(itemId);
       })).then(() => {
         cy.deleteHoldingRecordViaApi(holdingsId.id);
       });
@@ -213,7 +213,7 @@ describe('ui-users-loans: renewal failure because loan has reached maximum renew
 
     cy.wrap(secondInstanceIds.holdingIds.forEach(holdingsId => {
       cy.wrap(holdingsId.itemIds.forEach(itemId => {
-        cy.deleteItem(itemId);
+        cy.deleteItemViaApi(itemId);
       })).then(() => {
         cy.deleteHoldingRecordViaApi(holdingsId.id);
       });
@@ -228,7 +228,7 @@ describe('ui-users-loans: renewal failure because loan has reached maximum renew
     cy.deleteLoanPolicy(Cypress.env(CY_ENV.LOAN_POLICY).id);
     RequestPolicy.deleteViaApi(Cypress.env(CY_ENV.REQUEST_POLICY).id);
     LostItemFeePolicy.deleteViaApi(Cypress.env(CY_ENV.LOST_ITEM_FEES_POLICY).id);
-    OverdueFinePolicy.deleteApi(Cypress.env(CY_ENV.OVERDUE_FINE_POLICY).id);
+    OverdueFinePolicy.deleteViaApi(Cypress.env(CY_ENV.OVERDUE_FINE_POLICY).id);
     NoticePolicy.deleteApi(Cypress.env(CY_ENV.NOTICE_POLICY).id);
 
     Users.deleteViaApi(firstUser.userId);

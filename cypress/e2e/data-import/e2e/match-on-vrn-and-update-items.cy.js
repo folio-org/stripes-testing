@@ -143,7 +143,7 @@ describe('ui-data-import: Match on VRN and update related Instance, Holdings, It
     cy.getInstance({ limit: 1, expandAll: true, query: `"title"=="${item.title}"` })
       .then((instance) => {
         itemId = instance.items[0].id;
-        cy.deleteItem(itemId);
+        cy.deleteItemViaApi(itemId);
         cy.deleteHoldingRecordViaApi(instance.holdings[0].id);
         InventoryInstance.deleteInstanceViaApi(instance.id);
       });
