@@ -18,7 +18,7 @@ import InventorySearchAndFilter from '../../../support/fragments/inventory/inven
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 import NewFieldMappingProfile from '../../../support/fragments/data_import/mapping_profiles/newFieldMappingProfile';
 import HoldingsRecordView from '../../../support/fragments/inventory/holdingsRecordView';
-import ItemView from '../../../support/fragments/inventory/inventoryItem/itemView';
+import ItemRecordView from '../../../support/fragments/inventory/itemRecordView';
 import FileManager from '../../../support/utils/fileManager';
 
 describe('ui-data-import: Match on location', () => {
@@ -361,7 +361,7 @@ describe('ui-data-import: Match on location', () => {
     HoldingsRecordView.close();
     InventoryInstance.openHoldingsAccordion('Main Library >');
     InventoryInstance.openItemView('No barcode');
-    ItemView.checkItemAdministrativeNote(noteForItemMappingProfile);
+    ItemRecordView.checkItemAdministrativeNote(noteForItemMappingProfile);
 
     // delete profiles
     JobProfiles.deleteJobProfile(jobProfile);
@@ -520,7 +520,7 @@ describe('ui-data-import: Match on location', () => {
     HoldingsRecordView.close();
     InventoryInstance.openHoldingsAccordion('Main Library >');
     InventoryInstance.openItemView('No barcode');
-    ItemView.checkMaterialType('sound recording');
+    ItemRecordView.checkMaterialType('sound recording');
 
     // delete profiles
     JobProfiles.deleteJobProfile(jobProfile);
@@ -679,7 +679,7 @@ describe('ui-data-import: Match on location', () => {
     HoldingsRecordView.close();
     InventoryInstance.openHoldingsAccordion('Main Library >');
     InventoryInstance.openItemView('No barcode');
-    ItemView.checkItemNote('Smith Family Foundation');
+    ItemRecordView.checkItemNote('Smith Family Foundation');
 
     // delete profiles
     JobProfiles.deleteJobProfile(jobProfile);
