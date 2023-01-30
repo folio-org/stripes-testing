@@ -292,4 +292,6 @@ export default {
     cy.do(singleRecordImportModal.find(TextField({ name:'externalIdentifier' })).fillIn(oclc));
     cy.do(singleRecordImportModal.find(Button('Import')).click());
   },
+
+  verifyInstanceDetailsView:() => cy.expect(Section({ id: 'pane-instancedetails' }).exists())
 };
