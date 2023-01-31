@@ -229,7 +229,7 @@ describe('ui-users-loans: renewal failure because loan has reached maximum renew
     RequestPolicy.deleteViaApi(Cypress.env(CY_ENV.REQUEST_POLICY).id);
     LostItemFeePolicy.deleteViaApi(Cypress.env(CY_ENV.LOST_ITEM_FEES_POLICY).id);
     OverdueFinePolicy.deleteViaApi(Cypress.env(CY_ENV.OVERDUE_FINE_POLICY).id);
-    NoticePolicy.deleteApi(Cypress.env(CY_ENV.NOTICE_POLICY).id);
+    NoticePolicy.deleteViaApi(Cypress.env(CY_ENV.NOTICE_POLICY).id);
 
     Users.deleteViaApi(firstUser.userId);
     Users.deleteViaApi(secondUser.userId);
