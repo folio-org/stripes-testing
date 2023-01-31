@@ -40,7 +40,7 @@ describe('ui-data-import: A user can filter and delete import logs from the "Vie
           const nameMarcFileForCreate = `C358136autotestFile.${getRandomPostfix()}.mrc`;
 
           DataImport.uploadFile('oneMarcBib.mrc', nameMarcFileForCreate);
-          // need to wait untill file will be uploaded in loop
+          // need to wait until file will be uploaded in loop
           cy.wait(8000);
           JobProfiles.searchJobProfileForImport('Default - Create instance and SRS MARC Bib');
           JobProfiles.runImportFile();
@@ -65,7 +65,7 @@ describe('ui-data-import: A user can filter and delete import logs from the "Vie
           const nameMarcFileForCreate = `C358136autotestFile.${getRandomPostfix()}.mrc`;
 
           DataImport.uploadFile('oneMarcAuthority.mrc', nameMarcFileForCreate);
-          // need to wait untill file will be uploaded in loop
+          // need to wait until file will be uploaded in loop
           cy.wait(8000);
           JobProfiles.searchJobProfileForImport('Default - Create SRS MARC Authority');
           JobProfiles.runImportFile();

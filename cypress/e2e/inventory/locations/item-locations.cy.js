@@ -10,7 +10,7 @@ import InventoryHoldings from '../../../support/fragments/inventory/holdings/inv
 import devTeams from '../../../support/dictionary/devTeams';
 import users from '../../../support/fragments/users/users';
 import ServicePoints from '../../../support/fragments/settings/tenant/servicePoints/servicePoints';
-import ItemView from '../../../support/fragments/inventory/inventoryItem/itemView';
+import ItemRecordView from '../../../support/fragments/inventory/itemRecordView';
 
 const ITEM_BARCODE = `123${getRandomPostfix()}`;
 let userId;
@@ -79,8 +79,8 @@ describe('ui-inventory: location', () => {
   after('Delete all data', () => {
     cy.getInstance({ limit: 1, expandAll: true, query: `"items.barcode"=="${ITEM_BARCODE}"` })
       .then((instance) => {
-        cy.deleteItem(instance.items[0].id);
-        cy.deleteItem(instance.items[1].id);
+        cy.deleteItemViaApi(instance.items[0].id);
+        cy.deleteItemViaApi(instance.items[1].id);
         cy.deleteHoldingRecordViaApi(instance.holdings[0].id);
         InventoryInstance.deleteInstanceViaApi(instance.id);
       });
@@ -95,7 +95,7 @@ describe('ui-inventory: location', () => {
     InventorySearchAndFilter.switchToItem();
     InventorySearchAndFilter.searchByParameter('Barcode', ITEM_BARCODE);
     InventoryInstances.selectInstance();
-    ItemView.closeDetailView();
+    ItemRecordView.closeDetailView();
     InventoryInstance.openHoldings([toBeEditedLocationName]);
     InventoryInstance.openItemView(ITEM_BARCODE);
 
@@ -124,7 +124,7 @@ describe('ui-inventory: location', () => {
     InventorySearchAndFilter.switchToItem();
     InventorySearchAndFilter.searchByParameter('Barcode', ITEM_BARCODE);
     InventoryInstances.selectInstance();
-    ItemView.closeDetailView();
+    ItemRecordView.closeDetailView();
     InventoryInstance.openHoldings([editedLocationName]);
     InventoryInstance.openItemView(ITEM_BARCODE);
 

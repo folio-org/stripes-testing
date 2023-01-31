@@ -63,7 +63,7 @@ describe('ui-data-import: Inventory single record import is not delayed when lar
       cy.visit(TopMenu.dataImportPath);
       DataImport.checkIsLandingPageOpened();
       DataImport.uploadFile('marcFileForC356824.mrc', fileName);
-      // need to wait untill file is uploaded
+      // need to wait until file is uploaded
       cy.wait(2500);
       JobProfiles.searchJobProfileForImport(jobProfileToRun);
       JobProfiles.runImportFile();
@@ -71,8 +71,10 @@ describe('ui-data-import: Inventory single record import is not delayed when lar
 
       cy.visit(TopMenu.inventoryPath);
       InventoryInstances.importWithOclc(oclcForImport);
+      // don't have elem on page for waiter
+      cy.wait(3000);
       InventoryInstance.startOverlaySourceBibRecord();
-      InventoryInstance.singleRecordImportModalIsPresented();
+      InventoryInstance.singleOverlaySourceBibRecordModalIsPresented();
       InventoryInstance.importWithOclc(oclcForUpdating);
       InventoryInstance.checkCalloutMessage(`Updated record ${oclcForUpdating}`);
 

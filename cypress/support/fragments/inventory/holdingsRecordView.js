@@ -13,14 +13,14 @@ import InventoryViewSource from './inventoryViewSource';
 import InventoryNewHoldings from './inventoryNewHoldings';
 
 const root = Section({ id: 'ui-inventory.holdingsRecordView' });
-const actionsButton = root.find(Button('Actions'));
+const actionsButton = Button('Actions');
 const editInQuickMarcButton = Button({ id: 'clickable-edit-marc-holdings' });
 const editButton = Button({ id: 'edit-holdings' });
 const viewSourceButton = Button({ id: 'clickable-view-source' });
 const deleteButton = Button({ id: 'clickable-delete-holdingsrecord' });
 const duplicateButton = Button({ id: 'copy-holdings' });
 const deleteConfirmationModal = Modal({ id:'delete-confirmation-modal' });
-const holdingHrIdKeyValue = root.find(KeyValue('Holdings HRID'));
+const holdingHrIdKeyValue = KeyValue('Holdings HRID');
 const closeButton = Button({ icon: 'times' });
 
 export default {
@@ -100,8 +100,5 @@ export default {
   },
   checkHoldingsStatement:(statement) => {
     cy.expect(MultiColumnList({ id: 'list-holdingsStatement' }).find(HTML(including(statement))).exists());
-  },
-  checkStatisticalCode:(code) => {
-    cy.expect(MultiColumnList({ id: 'list-statistical-codes' }).find(HTML(including(code))).exists());
   }
 };

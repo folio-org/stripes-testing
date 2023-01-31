@@ -92,14 +92,17 @@ describe('bulk-edit', () => {
       BulkEditSearchPane.verifyErrorLabel(invalidItemBarcodesFileName, 1, 1);
       BulkEditSearchPane.verifyPaneRecordsCount(1);
 
+      const newLocation = 'Annex';
+
       BulkEditActions.openActions();
       BulkEditActions.openStartBulkEditForm();
-      BulkEditActions.replaceTemporaryLocation();
+      BulkEditActions.replaceTemporaryLocation(newLocation);
       BulkEditActions.confirmChanges();
       BulkEditActions.commitChanges();
       BulkEditSearchPane.waitFileUploading();
 
       BulkEditActions.verifySuccessBanner(1);
+      BulkEditSearchPane.verifyChangedResults(newLocation);
     });
 
     it('C356809 Verify uploading file with Item accession number (firebird)', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
@@ -108,14 +111,17 @@ describe('bulk-edit', () => {
       BulkEditSearchPane.uploadFile(validItemAccessionNumbersFileName);
       BulkEditSearchPane.waitFileUploading();
 
+      const newLocation = 'Online';
+
       BulkEditActions.openActions();
       BulkEditActions.openStartBulkEditForm();
-      BulkEditActions.replaceTemporaryLocation();
+      BulkEditActions.replaceTemporaryLocation(newLocation);
       BulkEditActions.confirmChanges();
       BulkEditActions.commitChanges();
       BulkEditSearchPane.waitFileUploading();
 
       BulkEditActions.verifySuccessBanner(1);
+      BulkEditSearchPane.verifyChangedResults(newLocation);
     });
   });
 });

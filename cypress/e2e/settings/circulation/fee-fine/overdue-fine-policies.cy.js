@@ -11,7 +11,6 @@ import InventoryInstances from '../../../../support/fragments/inventory/inventor
 import generateItemBarcode from '../../../../support/utils/generateItemBarcode';
 import LoanPolicy from '../../../../support/fragments/circulation/loan-policy';
 
-import FixedDueDateSchedules from '../../../../support/fragments/circulation/fixedDueDateSchedules';
 import OverdueFinePolicy from '../../../../support/fragments/circulation/overdue-fine-policy';
 import LostItemFeePolicy from '../../../../support/fragments/circulation/lost-item-fee-policy';
 import CirculationRules from '../../../../support/fragments/circulation/circulation-rules';
@@ -19,6 +18,7 @@ import CheckOutActions from '../../../../support/fragments/check-out-actions/che
 import ServicePoints from '../../../../support/fragments/settings/tenant/servicePoints/servicePoints';
 import UsersOwners from '../../../../support/fragments/settings/users/usersOwners';
 import CheckInActions from '../../../../support/fragments/check-in-actions/checkInActions';
+import SwitchServicePoint from '../../../../support/fragments/servicePoint/switchServicePoint';
 
 // TO DO remove ignoring errors. Now when you click on one of the buttons, some promise in the application returns false
 Cypress.on('uncaught:exception', () => {
@@ -34,21 +34,6 @@ describe('ui-circulation-settings: overdue fine policies management', () => {
   const instance = {
     instanceName: `feeInstanceTest_${getRandomPostfix()}`,
     instanceBarcode: generateItemBarcode(),
-  };
-  const loanPolicyBody = (scheduleId) => {
-    return {
-      id: uuid(),
-      name: getTestEntityValue(),
-      loanable: true,
-      loansPolicy: {
-        profileId: 'Rolling',
-        period: { duration: 1, intervalId: 'Minutes' },
-        itemLimit: 1,
-        closedLibraryDueDateManagementId: 'CURRENT_DUE_DATE',
-        fixedDueDateScheduleId: scheduleId
-      },
-      renewable: false,
-    };
   };
   const ownerData = {};
   let loanPolicy;
@@ -88,14 +73,22 @@ describe('ui-circulation-settings: overdue fine policies management', () => {
       }).then(() => {
         InventoryInstances.createInstanceViaApi(instance.instanceName, instance.instanceBarcode);
       }).then(() => {
-        FixedDueDateSchedules.createViaApi()
-          .then((schedule) => {
-            LoanPolicy.createViaApi(loanPolicyBody(schedule.id))
-              .then((policy) => {
-                loanPolicy = policy;
-              });
-          }).then(() => {
-            OverdueFinePolicy.createApi(overdueFinePolicyBody).then((overdueBody) => {
+        LoanPolicy.createViaApi({
+          id: uuid(),
+          name: getTestEntityValue(),
+          loanable: true,
+          loansPolicy: {
+            profileId: 'Rolling',
+            period: { duration: 1, intervalId: 'Minutes' },
+            closedLibraryDueDateManagementId: 'CURRENT_DUE_DATE',
+          },
+          renewable: false,
+        })
+          .then((policy) => {
+            loanPolicy = policy;
+          })
+          .then(() => {
+            OverdueFinePolicy.createViaApi(overdueFinePolicyBody).then((overdueBody) => {
               overdueFinePolicy = overdueBody;
             });
           }).then(() => {
@@ -132,7 +125,7 @@ describe('ui-circulation-settings: overdue fine policies management', () => {
   after('delete test data', () => {
     InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(instance.instanceBarcode);
     LoanPolicy.deleteApi(loanPolicy.id);
-    OverdueFinePolicy.deleteApi(overdueFinePolicy.id);
+    OverdueFinePolicy.deleteViaApi(overdueFinePolicy.id);
     LostItemFeePolicy.deleteViaApi(lostItemFeePolicy.id);
     CirculationRules.updateViaApi(originalCirculationRules);
     UsersOwners.deleteViaApi(ownerData.id);
@@ -169,6 +162,8 @@ describe('ui-circulation-settings: overdue fine policies management', () => {
 
   it('C9267: Verify that overdue fines calculated properly based on "Overdue fine" amount and interval setting (spitfire)', { tags: [devTeams.spitfire, testTypes.smoke, testTypes.broken] }, function () {
     cy.visit(TopMenu.checkOutPath);
+    SwitchServicePoint.switchServicePoint('Circ Desk 1');
+    SwitchServicePoint.checkIsServicePointSwitched('Circ Desk 1');
     CheckOutActions.checkOutUser(userData.barcode);
     CheckOutActions.checkOutItem(instance.instanceBarcode);
     CheckOutActions.confirmMultipieceCheckOut(instance.instanceBarcode);

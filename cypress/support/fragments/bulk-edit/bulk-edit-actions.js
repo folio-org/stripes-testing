@@ -95,9 +95,21 @@ export default {
     cy.do(Button('Cancel').click());
   },
 
+  replaceWithIsDisabled() {
+    cy.expect(HTML('Replace with').is({ disabled: true }));
+  },
+
   replaceTemporaryLocation(location = 'Annex', type = 'item') {
     getBulkEditSelectType().select(`Temporary ${type} location`);
     getLocationSelect().select('Replace with');
+    cy.do([
+      Button('Select control\nSelect location').click(),
+      SelectionOption(including(location)).click(),
+    ]);
+  },
+
+  replacePermanentLocation(location, type) {
+    getBulkEditSelectType().select(`Permanent ${type} location`);
     cy.do([
       Button('Select control\nSelect location').click(),
       SelectionOption(including(location)).click(),
@@ -288,12 +300,12 @@ export default {
   },
 
   verifyCheckedDropdownMenuItem() {
-    cy.do(dropdownMenu.find(Checkbox({ name: 'firstName'})).click());
+    cy.do(dropdownMenu.find(Checkbox({ name: 'firstName' })).click());
     cy.expect(MultiColumnListHeader('First name').absent());
   },
 
   verifyUncheckedDropdownMenuItem() {
-    cy.do(dropdownMenu.find(Checkbox({ name: 'email'})).click());
+    cy.do(dropdownMenu.find(Checkbox({ name: 'email' })).click());
     cy.expect(MultiColumnListHeader('Email').exists());
   },
 

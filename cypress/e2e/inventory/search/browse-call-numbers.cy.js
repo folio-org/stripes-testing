@@ -11,6 +11,7 @@ describe('ui-inventory: browse call numbers', () => {
   });
 
   it('C347902 Verify "Browse call numbers" option on the Instances tab (firebird)', { tags: [TestTypes.smoke, devTeams.firebird] }, () => {
+    InventorySearchAndFilter.switchToBrowseTab();
     InventorySearchAndFilter.verifyKeywordsAsDefault();
     InventorySearchAndFilter.selectBrowseCallNumbers();
     InventorySearchAndFilter.verifyCallNumberBrowseEmptyPane();
@@ -20,20 +21,20 @@ describe('ui-inventory: browse call numbers', () => {
 
   it('C347903 Verify "Browse call numbers" option on Holdings tab (firebird)', { tags: [TestTypes.smoke, devTeams.firebird] }, () => {
     InventorySearchAndFilter.switchToHoldings();
-    InventorySearchAndFilter.verifyKeywordsAsDefault();
     InventorySearchAndFilter.browseCallNumberIsAbsent();
+    InventorySearchAndFilter.switchToBrowseTab();
+    InventorySearchAndFilter.verifyKeywordsAsDefault();
   });
 
-  // TODO: Think about creating new user with minimal permissions
   it('C347923 Verify "Browse call numbers" option on Item tab (firebird)', { tags: [TestTypes.smoke, devTeams.firebird] }, () => {
     InventorySearchAndFilter.instanceTabIsDefault();
     InventorySearchAndFilter.switchToItem();
-    InventorySearchAndFilter.verifyKeywordsAsDefault();
     InventorySearchAndFilter.browseCallNumberIsAbsent();
   });
 
   it('C350377 Verify the "Browse subjects" search option on the Instances tab (firebird)', { tags: [TestTypes.smoke, devTeams.firebird] }, () => {
     InventorySearchAndFilter.instanceTabIsDefault();
+    InventorySearchAndFilter.switchToBrowseTab();
     InventorySearchAndFilter.verifyKeywordsAsDefault();
     InventorySearchAndFilter.selectBrowseSubjects();
     InventorySearchAndFilter.verifyCallNumberBrowseEmptyPane();
@@ -47,14 +48,14 @@ describe('ui-inventory: browse call numbers', () => {
 
   it('C350378 Verify the "Browse subjects" search option on the Holdings tab (firebird)', { tags: [TestTypes.smoke, devTeams.firebird] }, () => {
     InventorySearchAndFilter.instanceTabIsDefault();
-    InventorySearchAndFilter.verifyKeywordsAsDefault();
     InventorySearchAndFilter.switchToHoldings();
     InventorySearchAndFilter.browseSubjectIsAbsent();
+    InventorySearchAndFilter.switchToBrowseTab();
+    InventorySearchAndFilter.verifyKeywordsAsDefault();
   });
 
   it('C350379 Verify the "Browse subjects" search option on the Item tab (firebird)', { tags: [TestTypes.smoke, devTeams.firebird] }, () => {
     InventorySearchAndFilter.instanceTabIsDefault();
-    InventorySearchAndFilter.verifyKeywordsAsDefault();
     InventorySearchAndFilter.switchToItem();
     InventorySearchAndFilter.browseSubjectIsAbsent();
   });
