@@ -16,7 +16,7 @@ import devTeams from '../../support/dictionary/devTeams';
 import InventoryInstancesMovement from '../../support/fragments/inventory/holdingsMove/inventoryInstancesMovement';
 import users from '../../support/fragments/users/users';
 import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
-import ItemView from '../../support/fragments/inventory/inventoryItem/itemView';
+import ItemRecordView from '../../support/fragments/inventory/itemRecordView';
 
 const successCalloutMessage = '1 item has been successfully moved.';
 let userId;
@@ -96,7 +96,7 @@ describe('ui-inventory: moving items', () => {
   after('Delete all data', () => {
     cy.getInstance({ limit: 1, expandAll: true, query: `"items.barcode"=="${ITEM_BARCODE}"` })
       .then((instance) => {
-        cy.deleteItem(instance.items[0].id);
+        cy.deleteItemViaApi(instance.items[0].id);
         cy.deleteHoldingRecordViaApi(instance.holdings[0].id);
         cy.deleteHoldingRecordViaApi(instance.holdings[1].id);
         InventoryInstance.deleteInstanceViaApi(instance.id);
@@ -109,7 +109,7 @@ describe('ui-inventory: moving items', () => {
     InventorySearchAndFilter.switchToItem();
     InventorySearchAndFilter.searchByParameter('Barcode', ITEM_BARCODE);
     InventorySearchAndFilter.selectSearchResultItem();
-    ItemView.closeDetailView();
+    ItemRecordView.closeDetailView();
     InventoryInstance.openMoveItemsWithinAnInstance();
 
     InventoryInstance.moveItemToAnotherHolding(firstHolding, secondHolding);

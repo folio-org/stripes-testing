@@ -32,10 +32,10 @@ describe('ui-data-import: Matching on newly-created 035 does not work (regressio
   let secondInstanceHrid;
 
   // unique file names
-  const fileForCreateFirstName = `C358138autotestFile.${Helper.getRandomBarcode()}.mrc`;
-  const fileForCreateSecondName = `C358138autotestFile.${Helper.getRandomBarcode()}.mrc`;
-  const fileForUpdateFirstName = `C358138 uploadedFile.${Helper.getRandomBarcode()}.mrc`;
-  const fileForUpdateSecondName = `C358138 uploadedFile.${Helper.getRandomBarcode()}.mrc`;
+  const fileForCreateFirstName = `C358138 firstAutotestFileForCreate.${Helper.getRandomBarcode()}.mrc`;
+  const fileForCreateSecondName = `C358138 secondAutotestFileForUpdate.${Helper.getRandomBarcode()}.mrc`;
+  const fileForUpdateFirstName = `C358138 firstAutotestFileForCreate.${Helper.getRandomBarcode()}.mrc`;
+  const fileForUpdateSecondName = `C358138 secondAutotestFileForUpdate.${Helper.getRandomBarcode()}.mrc`;
 
   // unique profile names
   const matchProfileName = `C358138 Match on newly-created 035 ${Helper.getRandomBarcode()}`;

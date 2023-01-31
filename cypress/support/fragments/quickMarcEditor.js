@@ -1,14 +1,18 @@
 import { QuickMarcEditor, QuickMarcEditorRow, TextArea, Button, Modal, TextField, and, some, Pane, HTML, including } from '../../../interactors';
 import dateTools from '../utils/dateTools';
 import getRandomPostfix from '../utils/stringTools';
+import InventoryInstance from '../../support/fragments/inventory/inventoryInstance';
 
 const addFieldButton = Button({ ariaLabel : 'plus-sign' });
 const deleteFieldButton = Button({ ariaLabel : 'trash' });
 const saveAndCloseButton = Button({ id:'quick-marc-record-save' });
 const confirmationModal = Modal({ id: 'quick-marc-confirm-modal' });
+const cancelEditConformModel = Modal({ id: 'cancel-editing-confirmation' })
+const cancelEditConfirmBtn = Modal().find(Button({ id: 'clickable-cancel-editing-confirmation-confirm' }));
+const cancelEditCancelBtn = Modal().find(Button({ id: 'clickable-cancel-editing-confirmation-cancel' }));
 const continueWithSaveButton = Modal().find(Button({ id: 'clickable-quick-marc-confirm-modal-confirm' }));
 const quickMarcEditorRowContent = HTML({ className: including('quickMarcEditorRowContent') });
-
+const validRecord = InventoryInstance.validOCLC;
 const specRetInputNamesHoldings008 = ['records[3].content.Spec ret[0]',
   'records[3].content.Spec ret[1]',
   'records[3].content.Spec ret[2]'];
@@ -66,22 +70,18 @@ const getRowInteractorByRowNumber = (specialRowNumber) => QuickMarcEditor()
 const getRowInteractorByTagName = (tagName) => QuickMarcEditor()
   .find(QuickMarcEditorRow({ tagValue: tagName }));
 
-export default class QuickmarcEditor {
-  constructor(validRecord) {
-    this.validRecord = validRecord;
-  }
+export default {
 
-  getInitialRowsCount() { return this.validRecord.lastRowNumber; }
-
+  getInitialRowsCount() { return validRecord.lastRowNumber; },
 
   addNewField(tag = defaultFieldValues.freeTags[0], fieldContent = defaultFieldValues.content) {
     this.addRow();
     return this.fillAllAvailableValues(fieldContent, tag);
-  }
+  },
 
   addNewFieldWithSubField(tag) {
     return this.addNewField(tag, defaultFieldValues.contentWithSubfield);
-  }
+  },
 
   deletePenaltField() {
     const shouldBeRemovedRowNumber = this.getInitialRowsCount() - 1;
@@ -93,36 +93,45 @@ export default class QuickmarcEditor {
         cy.wrap(shouldBeDeletedRowTag).as('specialTag');
       });
     return cy.get('@specialTag');
-  }
+  },
 
-  static pressSaveAndClose() { cy.do(saveAndCloseButton.click()); }
+  pressSaveAndClose() { cy.do(saveAndCloseButton.click()); },
 
-  static deleteConfirmationPresented() { cy.expect(confirmationModal.exists()); }
+  cancelEditConfirmationPresented() { cy.expect(cancelEditConformModel.exists()); },
 
-  static confirmDelete() { cy.do(continueWithSaveButton.click()); }
+  confirmEditCancel() { cy.do(cancelEditConfirmBtn.click()); },
+
+  cancelEditConformation() {
+    cy.expect(cancelEditConformModel.exists());
+    cy.do(cancelEditCancelBtn.click());
+  },
+
+  deleteConfirmationPresented() { cy.expect(confirmationModal.exists()); },
+
+  confirmDelete() { cy.do(continueWithSaveButton.click()); },
 
   addRow(rowNumber) {
     cy.do(getRowInteractorByRowNumber(rowNumber ?? this.getInitialRowsCount()).find(addFieldButton).click());
-  }
+  },
 
   checkInitialContent(rowNumber) {
     cy.expect(getRowInteractorByRowNumber(rowNumber ?? this.getInitialRowsCount() + 1)
       .find(TextArea({ name: `records[${rowNumber ?? this.getInitialRowsCount() + 1}].content` }))
       .has({ value: defaultFieldValues.initialSubField }));
-  }
+  },
 
   checkContent(content, rowNumber) {
     cy.expect(getRowInteractorByRowNumber(rowNumber ?? this.getInitialRowsCount() + 1)
       .find(TextArea({ name: `records[${rowNumber ?? this.getInitialRowsCount() + 1}].content` }))
       .has({ value: content ?? defaultFieldValues.contentWithSubfield }));
-  }
+  },
 
-  static checkEmptyContent(tagName) {
+  checkEmptyContent(tagName) {
     cy.expect(getRowInteractorByTagName(tagName).find(quickMarcEditorRowContent).exists());
     cy.expect(getRowInteractorByTagName(tagName).find(quickMarcEditorRowContent).find(TextField()).absent());
-  }
+  },
 
-  fillAllAvailableValues(fieldContent, tag, initialRowsCount = this.validRecord.lastRowNumber) {
+  fillAllAvailableValues(fieldContent, tag, initialRowsCount = validRecord.lastRowNumber) {
     const contentTextArea = TextArea({ name: `records[${initialRowsCount + 1}].content` });
     const tagTextField = TextField({ name: `records[${initialRowsCount + 1}].tag` });
     const separator = '\t   \t';
@@ -137,9 +146,9 @@ export default class QuickmarcEditor {
     } else {
       return `${tagValue}${separator}${defaultFieldValues.getSourceContent(content)}`;
     }
-  }
+  },
 
-  static checkRequiredFields() {
+  checkRequiredFields() {
     cy.expect(QuickMarcEditor().has({
       presentedFieldsTags: and(...requiredRowsTags.map(field => some(field)))
     }));
@@ -150,39 +159,39 @@ export default class QuickmarcEditor {
           assert.fail('Button Delete is presented into required row');
         }
       });
-  }
+  },
 
-  updateExistingField(tag = this.validRecord.existingTag, newContent = `newContent${getRandomPostfix()}`) {
+  updateExistingField(tag = validRecord.existingTag, newContent = `newContent${getRandomPostfix()}`) {
     cy.do(QuickMarcEditorRow({ tagValue: tag }).find(TextArea()).fillIn(newContent));
     return newContent;
-  }
+  },
 
-  updateExistingTagName({ currentTagName = this.validRecord.existingTag, newTagName }) {
+  updateExistingTagName({ currentTagName = validRecord.existingTag, newTagName }) {
     cy.then(() => QuickMarcEditorRow({ tagValue: currentTagName }).index()).then(index => {
       cy.do(QuickMarcEditorRow({ index }).find(TextField({ name: including('.tag') })).fillIn(newTagName));
     });
-  }
+  },
 
-  static waitLoading() {
+  waitLoading() {
     cy.expect(Pane({ id: 'quick-marc-editor-pane' }).exists());
-  }
+  },
 
-  static getExistingLocation() {
+  getExistingLocation() {
     return defaultFieldValues.existingLocation;
-  }
+  },
 
-  static getFreeTags() {
+  getFreeTags() {
     return defaultFieldValues.freeTags;
-  }
+  },
 
-  static checkInitial008TagValueFromHoldings() {
+  checkInitial008TagValueFromHoldings() {
     tag008HoldingsBytesProperties.getAllProperties().forEach(specialByte => {
       cy.expect(specialByte.interactor.has({ value: specialByte.defaultValue }));
     });
-  }
+  },
 
   // should be used only with default value of tag 008
-  static checkNotExpectedByteLabelsInTag008Holdings() {
+  checkNotExpectedByteLabelsInTag008Holdings() {
     cy.then(() => QuickMarcEditor().presentedRowsProperties()).then(rowsProperties => {
       let actualJoinedFieldNames = rowsProperties.filter(rowProperty => rowProperty.tag === '008').map(rowProperty => rowProperty.content)[0].toLowerCase();
 
@@ -214,10 +223,10 @@ export default class QuickmarcEditor {
       // eslint-disable-next-line no-unused-expressions
       expect(actualJoinedFieldNames).to.be.empty;
     });
-  }
+  },
 
   // TODO: redesign. move tag008HoldingsBytesProperties to InventoryInstance.validOCLC
-  static updateAllDefaultValuesIn008TagInHoldings() {
+  updateAllDefaultValuesIn008TagInHoldings() {
     tag008HoldingsBytesProperties.getUsualProperties().forEach(byteProperty => {
       cy.do(QuickMarcEditorRow({ tagValue: '008' }).find(byteProperty.interactor).fillIn(byteProperty.newValue));
     });
@@ -229,64 +238,69 @@ export default class QuickmarcEditor {
     });
     this.pressSaveAndClose();
     return tag008HoldingsBytesProperties.getAllProperties().map(property => property.newValue).join('');
-  }
+  },
 
   updateAllDefaultValuesIn008TagInAuthority() {
-    this.validRecord.tag008AuthorityBytesProperties.getAllProperties().forEach(byteProperty => {
+    validRecord.tag008AuthorityBytesProperties.getAllProperties().forEach(byteProperty => {
       cy.do(QuickMarcEditorRow({ tagValue: '008' }).find(byteProperty.interactor).fillIn(byteProperty.newValue));
     });
     QuickmarcEditor.pressSaveAndClose();
-    return this.validRecord.tag008AuthorityBytesProperties.getNewValueSourceLine();
-  }
+    return validRecord.tag008AuthorityBytesProperties.getNewValueSourceLine();
+  },
 
-  static clearTag008Holdings() {
+  clearTag008Holdings() {
     tag008HoldingsBytesProperties.getAllProperties().forEach(byteProperty => {
       cy.do(QuickMarcEditorRow({ tagValue: '008' }).find(byteProperty.interactor).fillIn(''));
     });
     this.pressSaveAndClose();
     return tag008HoldingsBytesProperties.getAllProperties().map(property => property.voidValue).join('');
-  }
+  },
 
-  static checkReplacedVoidValuesInTag008Holdings() {
+  checkReplacedVoidValuesInTag008Holdings() {
     tag008HoldingsBytesProperties.getAllProperties().forEach(byteProperty => {
       cy.expect(QuickMarcEditorRow({ tagValue: '008' }).find(byteProperty.interactor).has({ value: byteProperty.replacedVoidValue }));
     });
-  }
+  },
 
-  static getRegularTagContent(tag) {
+  getRegularTagContent(tag) {
     cy.then(() => QuickMarcEditorRow({ tagValue: tag }).find(TextArea()).textContent())
       .then(content => cy.wrap(content).as('tagContent'));
     return cy.get('@tagContent');
-  }
+  },
 
-  static deleteTag(tag) {
-    cy.do(QuickMarcEditorRow({ tagValue: tag }).find(deleteFieldButton).click());
-  }
+  deleteTag(rowIndex) {
+    cy.do([
+      QuickMarcEditorRow({ index: rowIndex }).find(TextField({ name: including('.tag') })).fillIn(''),
+      QuickMarcEditorRow({ index: rowIndex }).find(deleteFieldButton).click(),
+    ]);
+  },
 
-  static closeWithoutSaving() {
+  closeWithoutSaving() {
     cy.do(Button('Cancel').click());
-  }
+    cy.do(Button('Close without saving').click());
+  },
 
-  static getSourceContent(quickmarcTagValue) { return defaultFieldValues.getSourceContent(quickmarcTagValue); }
-  static checkNotDeletableTags(...tags) {
+  getSourceContent(quickmarcTagValue) { return defaultFieldValues.getSourceContent(quickmarcTagValue); },
+
+  checkNotDeletableTags(...tags) {
     cy.then(() => QuickMarcEditor().presentedRowsProperties())
       .then(presentedRowsProperties => presentedRowsProperties.filter(rowProperties => tags.includes(rowProperties.tag))
         .forEach(specialRowsProperties => cy.expect(specialRowsProperties.isDeleteButtonExist).to.be.false));
-  }
+  },
 
   checkInitialInstance008Content() {
-    Object.values(this.validRecord.tag008BytesProperties).forEach(property => cy.expect(property.interactor.has({ value: property.defaultValue })));
-  }
+    Object.values(validRecord.tag008BytesProperties).forEach(property => cy.expect(property.interactor.has({ value: property.defaultValue })));
+  },
 
-  static check008FieldsAbsent(...subfieldNames) {
+  check008FieldsAbsent(...subfieldNames) {
     subfieldNames.forEach(subfieldName => cy.expect(getRowInteractorByTagName('008').find(quickMarcEditorRowContent)
       .find(TextField(subfieldName)).absent()));
-  }
+  },
 
-  static checkSubfieldsPresenceInTag008() {
+  checkSubfieldsPresenceInTag008() {
     cy.expect(getRowInteractorByTagName('008').find(quickMarcEditorRowContent)
       .find(HTML({ className: including('bytesFieldRow-') })).exists());
-  }
+  },
 
   checkHeaderFirstLine({ headingReference:headingTypeFrom1XX, headingType, status }, { firstName, name }) {
     cy.expect(Pane(`Edit MARC authority record - ${headingTypeFrom1XX}`).exists());
@@ -298,9 +312,9 @@ export default class QuickmarcEditor {
       const stringDate = `${subtitle.split('Last updated: ')[1].split(' •')[0]} UTC`;
       dateTools.verifyDate(Date.parse(stringDate), 120_000);
     });
-  }
+  },
 
-  static checkReadOnlyTags() {
+  checkReadOnlyTags() {
     readOnlyAuthorityTags.forEach(readOnlyTag => {
       cy.expect(getRowInteractorByTagName(readOnlyTag).find(TextField('Field')).has({ disabled: true }));
       if (readOnlyTag !== 'LDR') {
@@ -311,14 +325,14 @@ export default class QuickmarcEditor {
         cy.expect(getRowInteractorByTagName(readOnlyTag).find(TextField('Indicator', { name: including('.indicators[1]') })).has({ disabled: true }));
       }
     });
-  }
+  },
 
-  checkLDRValue(ldrValue = this.validRecord.ldrValue) {
+  checkLDRValue(ldrValue = validRecord.ldrValue) {
     cy.expect(getRowInteractorByTagName('LDR').find(TextArea({ ariaLabel: 'Subfield' })).has({ textContent: ldrValue }));
-  }
+  },
 
   checkAuthority008SubfieldsLength() {
-    this.validRecord.tag008AuthorityBytesProperties.getAllProperties().map(property => property.interactor)
+    validRecord.tag008AuthorityBytesProperties.getAllProperties().map(property => property.interactor)
       .forEach(subfield => {
         cy.expect(getRowInteractorByTagName('008').find(subfield).has({ maxLength: (1).toString() }));
       });

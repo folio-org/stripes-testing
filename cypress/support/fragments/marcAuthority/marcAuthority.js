@@ -1,8 +1,22 @@
-import { Section, Button, HTML, including, TextField } from '../../../../interactors';
+import {
+  Section,
+  Button,
+  HTML,
+  including,
+  TextField,
+  QuickMarcEditorRow,
+  TextArea,
+  MultiColumnListHeader,
+  Callout
+} from '../../../../interactors';
 
 const defaultCreateJobProfile = 'Default - Create SRS MARC Authority';
 const defaultUpdateJobProfile = 'Update authority by matching 010';
 const rootSection = Section({ id: 'marc-view-pane' });
+
+const addFieldButton = Button({ ariaLabel : 'plus-sign' });
+const deleteFieldButton = Button({ ariaLabel : 'trash' });
+const saveAndCloseButton = Button({ id:'quick-marc-record-save' });
 
 // related with cypress\fixtures\oneMarcAuthority.mrc
 const defaultAuthority = { id:'176116217',
@@ -69,6 +83,42 @@ export default {
       isDefaultSearchParamsRequired : false,
       path: `records-editor/records/${internalAuthorityId}`,
     });
-  }
-
+  },
+  addNewField: (rowIndex, tag, content) => {
+    cy.do([
+      QuickMarcEditorRow({ index: rowIndex }).find(addFieldButton).click(),
+      QuickMarcEditorRow({ index: rowIndex + 1 }).find(TextField({ name: `records[${rowIndex + 1}].tag` })).fillIn(tag),
+      QuickMarcEditorRow({ index: rowIndex + 1 }).find(TextArea({ name: `records[${rowIndex + 1}].content` })).fillIn(content),
+    ]);
+  },
+  changeField: (tag, content) => {
+    cy.do([
+      QuickMarcEditorRow({ tagValue: tag }).find(TextArea()).fillIn(content),
+    ]);
+  },
+  checkNotDeletableTags: (tag) => { cy.expect(QuickMarcEditorRow({ tagValue: tag }).find(deleteFieldButton).absent()); },
+  change008Field: (lang, kindrec, catrules) => {
+    cy.do([
+      TextField('Lang').fillIn(lang),
+      TextField('Kind rec').fillIn(kindrec),
+      TextField('CatRules').fillIn(catrules)
+    ]);
+  },
+  clicksaveAndCloseButton: () => { cy.do(saveAndCloseButton.click()); },
+  checkPresentedColumns: (presentedColumns) => presentedColumns.forEach(columnName => cy.expect(MultiColumnListHeader(columnName).exists())),
+  checkLDRValue: (ldrValue) => { cy.expect(QuickMarcEditorRow({ tagValue: 'LDR' }).find(TextArea({ ariaLabel: 'Subfield' })).has({ textContent: ldrValue })); },
+  check008Field: () => {
+    cy.do(TextField('Lang').fillIn('abc'));
+    cy.expect(TextField('abc').absent());
+    cy.do(TextField('Lang').fillIn('a'));
+    cy.expect(TextField('Lang').has({ value: 'a' }));
+  },
+  checkRemovedTag: (rowIndex) => {
+    cy.do([
+      QuickMarcEditorRow({ index: rowIndex }).find(TextField({ name: `records[${rowIndex}].tag` })).fillIn('41'),
+      QuickMarcEditorRow({ index: rowIndex }).find(TextArea({ name: `records[${rowIndex}].content` })).fillIn('Test'),
+      saveAndCloseButton.click(),
+    ]);
+    cy.expect(Callout('Record cannot be saved. A MARC tag must contain three characters.').exists());
+  },
 };

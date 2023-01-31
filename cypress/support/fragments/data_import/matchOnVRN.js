@@ -409,7 +409,7 @@ function deleteItemViaAPI(barcode = itemBarcode) {
     isDefaultSearchParamsRequired: false,
   })
     .then(({ body: { items } }) => {
-      return cy.deleteItem(items[0].id);
+      return cy.deleteItemViaApi(items[0].id);
     });
 }
 

@@ -15,6 +15,7 @@ import {
 import InventoryHoldings from './holdings/inventoryHoldings';
 import inventoryNewInstance from './inventoryNewInstance';
 import InventoryInstance from './inventoryInstance';
+import Arrays from '../../utils/arrays';
 
 const rootSection = Section({ id: 'pane-results' });
 const inventoriesList = rootSection.find(MultiColumnList({ id: 'list-inventory' }));
@@ -92,9 +93,83 @@ export default {
       .then(() => {
         cy.getLoanTypes({ limit: 1 });
         cy.getMaterialTypes({ limit: 1 });
+        cy.getLocations({ limit: 50 });
+        cy.getHoldingTypes({ limit: 1 });
+        InventoryHoldings.getHoldingSources({ limit: 1, query: '(name=="FOLIO")' }).then(holdingSources => {
+          holdingSourceId = holdingSources[0].id;
+          cy.getInstanceTypes({ limit: 1 });
+          cy.getAlternativeTitlesTypes({ limit: 1, query: 'name="Uniform title"' }).then(titleTypes => {
+            alternativeTitleTypeId = titleTypes[0].id;
+          });
+        });
+      })
+      .then(() => {
+        cy.createInstance({
+          instance: {
+            instanceTypeId: Cypress.env('instanceTypes')[0].id,
+            title: instanceName,
+            alternativeTitles: [{
+              alternativeTitleTypeId,
+              alternativeTitle: instanceName
+            }],
+            publication: [{ publisher: publisher ?? 'MIT' }],
+            instanceId
+          },
+          holdings: [{
+            holdingsTypeId: Cypress.env('holdingsTypes')[0].id,
+            permanentLocationId: Arrays.getRandomElement(Cypress.env('locations')).id,
+            temporaryLocationId: Arrays.getRandomElement(Cypress.env('locations')).id,
+            sourceId: holdingSourceId,
+          }],
+          items: [
+            [
+              {
+                barcode: itemBarcode,
+                missingPieces: '3',
+                numberOfMissingPieces: '3',
+                status: { name: 'Available' },
+                permanentLoanType: { id: Cypress.env('loanTypes')[0].id },
+                materialType: { id: Cypress.env('materialTypes')[0].id },
+                itemLevelCallNumber: itemCallNumber,
+                accessionNumber
+              },
+              {
+                barcode: 'secondBarcode_' + itemBarcode,
+                missingPieces: '3',
+                numberOfMissingPieces: '3',
+                status: { name: 'Available' },
+                permanentLoanType: { id: Cypress.env('loanTypes')[0].id },
+                materialType: { id: Cypress.env('materialTypes')[0].id },
+                itemLevelCallNumber: itemCallNumber,
+                accessionNumber
+              }
+            ],
+          ],
+        });
+      })
+      .then(() => {
+        cy.getHoldings({ limit: 1, query: `"instanceId"="${instanceId}"` })
+          .then((holdings) => {
+            cy.updateHoldingRecord(holdings[0].id, {
+              ...holdings[0],
+              callNumber: holdingCallNumber
+            });
+          });
+      });
+    return instanceId;
+  },
+
+  createInstanceMARCSourceViaApi(instanceName, itemBarcode, publisher = null, holdingCallNumber = '1', itemCallNumber = '2', accessionNumber = 'test_number_1') {
+    let alternativeTitleTypeId = '';
+    let holdingSourceId = '';
+    const instanceId = uuid();
+    cy.getToken(Cypress.env('diku_login'), Cypress.env('diku_password'))
+      .then(() => {
+        cy.getLoanTypes({ limit: 1 });
+        cy.getMaterialTypes({ limit: 1 });
         cy.getLocations({ limit: 1 });
         cy.getHoldingTypes({ limit: 1 });
-        InventoryHoldings.getHoldingSources({ limit: 1 }).then(holdingSources => {
+        InventoryHoldings.getHoldingSources({ limit: 1, query: '(name=="MARC")' }).then(holdingSources => {
           holdingSourceId = holdingSources[0].id;
           cy.getInstanceTypes({ limit: 1 });
           cy.getAlternativeTitlesTypes({ limit: 1, query: 'name="Uniform title"' }).then(titleTypes => {
@@ -160,7 +235,7 @@ export default {
   deleteInstanceAndHoldingRecordAndAllItemsViaApi(itemBarcode) {
     cy.getInstance({ limit: 1, expandAll: true, query: `"items.barcode"=="${itemBarcode}"` })
       .then((instance) => {
-        instance.items.forEach((item) => cy.deleteItem(item.id));
+        instance.items.forEach((item) => cy.deleteItemViaApi(item.id));
         cy.deleteHoldingRecordViaApi(instance.holdings[0].id);
         InventoryInstance.deleteInstanceViaApi(instance.id);
       });
@@ -217,4 +292,6 @@ export default {
     cy.do(singleRecordImportModal.find(TextField({ name:'externalIdentifier' })).fillIn(oclc));
     cy.do(singleRecordImportModal.find(Button('Import')).click());
   },
+
+  verifyInstanceDetailsView:() => cy.expect(Section({ id: 'pane-instancedetails' }).exists())
 };

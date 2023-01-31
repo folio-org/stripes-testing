@@ -75,7 +75,7 @@ describe('ui-inventory: Create page type request', () => {
         Requests.deleteRequestViaApi(request.id);
       });
     });
-    cy.deleteItem(createdItem.itemId);
+    cy.deleteItemViaApi(createdItem.itemId);
     cy.deleteHoldingRecordViaApi(instanceData.holdingId);
     InventoryInstance.deleteInstanceViaApi(instanceData.instanceId);
     Users.deleteViaApi(user.userId);
