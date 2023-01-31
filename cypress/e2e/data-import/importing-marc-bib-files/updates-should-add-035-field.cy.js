@@ -96,35 +96,38 @@ describe('ui-data-import: Data Import Updates should add 035 field from 001/003,
     ])
       .then(userProperties => {
         user = userProperties;
-
+        cy.log('cy.log/login');
+        console.log('console.log/login');
         cy.login(user.username, user.password, { path: TopMenu.dataImportPath, waiter: DataImport.waitLoading });
       });
   });
 
-    // after(() => {
-    //   JobProfiles.deleteJobProfile(jobProfileName);
-    //   MatchProfiles.deleteMatchProfile(matchProfileName);
-    //   ActionProfiles.deleteActionProfile(actionProfileName);
-    //   FieldMappingProfiles.deleteFieldMappingProfile(mappingProfileName);
-    //   cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${instanceHridFromFirstFile}"` })
-    //     .then((instance) => {
-    //       InventoryInstance.deleteInstanceViaApi(instance.id);
-    //     });
-    //   instanceHridsFromSecondFile.forEach(hrid => {
-    //     cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${hrid}"` })
-    //       .then((instance) => {
-    //         InventoryInstance.deleteInstanceViaApi(instance.id);
-    //       });
-    //   });
-    //   Users.deleteViaApi(user.userId);
-    //   // delete downloads folder and created files in fixtures
-    //   FileManager.deleteFile(`cypress/fixtures/${firstMarcFileNameForUpdate}`);
-    //   FileManager.deleteFile(`cypress/fixtures/${secondMarcFileNameForUpdate}`);
-    // });
+  // after(() => {
+  //   JobProfiles.deleteJobProfile(jobProfileName);
+  //   MatchProfiles.deleteMatchProfile(matchProfileName);
+  //   ActionProfiles.deleteActionProfile(actionProfileName);
+  //   FieldMappingProfiles.deleteFieldMappingProfile(mappingProfileName);
+  //   cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${instanceHridFromFirstFile}"` })
+  //     .then((instance) => {
+  //       InventoryInstance.deleteInstanceViaApi(instance.id);
+  //     });
+  //   instanceHridsFromSecondFile.forEach(hrid => {
+  //     cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${hrid}"` })
+  //       .then((instance) => {
+  //         InventoryInstance.deleteInstanceViaApi(instance.id);
+  //       });
+  //   });
+  //   Users.deleteViaApi(user.userId);
+  //   // delete downloads folder and created files in fixtures
+  //   FileManager.deleteFile(`cypress/fixtures/${firstMarcFileNameForUpdate}`);
+  //   FileManager.deleteFile(`cypress/fixtures/${secondMarcFileNameForUpdate}`);
+  // });
 
   it('C358998 Data Import Updates should add 035 field from 001/003, if it is not HRID or already exists (folijet)',
     { tags: [TestTypes.smoke, DevTeams.folijet] }, () => {
-    // upload the first .mrc file
+      cy.log('cy.log/upload file');
+      console.log('console.log/upload file');
+      // upload the first .mrc file
       DataImport.uploadFile('marcFileForC358998ForCreate_1.mrc', firstMarcFileNameForCreate);
       JobProfiles.searchJobProfileForImport('Default - Create instance and SRS MARC Bib');
       JobProfiles.runImportFile();
@@ -229,62 +232,64 @@ describe('ui-data-import: Data Import Updates should add 035 field from 001/003,
         cy.log('cy.log/create job profile');
         console.log('console.log/create job profile');
 
-        //   // upload a marc file for updating already created first instance
-        //   cy.visit(TopMenu.dataImportPath);
-        //   DataImport.uploadFile(firstMarcFileNameForUpdate, firstFileNameAfterUpload);
-        //   JobProfiles.searchJobProfileForImport(jobProfile.profileName);
-        //   JobProfiles.runImportFile();
-        //   JobProfiles.waitFileIsImported(firstFileNameAfterUpload);
-        //   Logs.checkStatusOfJobProfile('Completed');
-        //   Logs.openFileDetails(firstFileNameAfterUpload);
-        //   FileDetails.checkStatusInColumn(FileDetails.status.updated, FileDetails.columnName.srsMarc);
-        //   FileDetails.checkStatusInColumn(FileDetails.status.updated, FileDetails.columnName.instance);
-        //   FileDetails.checkSrsRecordQuantityInSummaryTable('1', '1');
-        //   FileDetails.checkInstanceQuantityInSummaryTable('1', '1');
-        //   // open the first Instance in the Inventory and check 001, 003, 035 fields
-        //   FileDetails.openInstanceInInventory('Updated');
-        //   InstanceRecordView.verifyInstanceStatusTerm(instanceStatusTermUI);
-        //   InstanceRecordView.verifyStatisticalCode(statisticalCodeUI);
-        //   InventoryInstance.viewSource();
-        //   InventoryViewSource.contains('001\t');
-        //   InventoryViewSource.contains(instanceHridFromFirstFile);
-        //   InventoryViewSource.notContains('003\t');
-        //   InventoryViewSource.contains('035\t');
-        //   InventoryViewSource.contains('(LTSCA)303845');
-        // });
+        // upload a marc file for updating already created first instance
+        cy.visit(TopMenu.dataImportPath);
+        DataImport.uploadFile(firstMarcFileNameForUpdate, firstFileNameAfterUpload);
+        JobProfiles.searchJobProfileForImport(jobProfile.profileName);
+        JobProfiles.runImportFile();
+        JobProfiles.waitFileIsImported(firstFileNameAfterUpload);
+        Logs.checkStatusOfJobProfile('Completed');
+        Logs.openFileDetails(firstFileNameAfterUpload);
+        FileDetails.checkStatusInColumn(FileDetails.status.updated, FileDetails.columnName.srsMarc);
+        FileDetails.checkStatusInColumn(FileDetails.status.updated, FileDetails.columnName.instance);
+        FileDetails.checkSrsRecordQuantityInSummaryTable('1', '1');
+        FileDetails.checkInstanceQuantityInSummaryTable('1', '1');
+        // open the first Instance in the Inventory and check 001, 003, 035 fields
+        FileDetails.openInstanceInInventory('Updated');
+        InstanceRecordView.verifyInstanceStatusTerm(instanceStatusTermUI);
+        InstanceRecordView.verifyStatisticalCode(statisticalCodeUI);
+        InventoryInstance.viewSource();
+        InventoryViewSource.contains('001\t');
+        InventoryViewSource.contains(instanceHridFromFirstFile);
+        InventoryViewSource.notContains('003\t');
+        InventoryViewSource.contains('035\t');
+        InventoryViewSource.contains('(LTSCA)303845');
+      });
 
-        // // upload a marc file for updating already created second instance
-        // cy.visit(TopMenu.dataImportPath);
-        // DataImport.uploadFile(secondMarcFileNameForUpdate, secondFileNameAfterUpload);
-        // JobProfiles.searchJobProfileForImport(jobProfile.profileName);
-        // JobProfiles.runImportFile();
-        // JobProfiles.waitFileIsImported(secondFileNameAfterUpload);
-        // Logs.checkStatusOfJobProfile('Completed');
-        // Logs.openFileDetails(secondFileNameAfterUpload);
-        // rowNumbers.forEach(rowNumber => {
-        //   FileDetails.checkStatusInColumn(FileDetails.status.updated, FileDetails.columnName.srsMarc, rowNumber);
-        //   FileDetails.checkStatusInColumn(FileDetails.status.updated, FileDetails.columnName.instance, rowNumber);
-        // });
-        // FileDetails.checkSrsRecordQuantityInSummaryTable('8', 1);
-        // FileDetails.checkInstanceQuantityInSummaryTable('8', 1);
+      // upload a marc file for updating already created second instance
+      cy.visit(TopMenu.dataImportPath);
+      DataImport.uploadFile(secondMarcFileNameForUpdate, secondFileNameAfterUpload);
+      JobProfiles.searchJobProfileForImport(jobProfile.profileName);
+      JobProfiles.runImportFile();
+      JobProfiles.waitFileIsImported(secondFileNameAfterUpload);
+      Logs.checkStatusOfJobProfile('Completed');
+      Logs.openFileDetails(secondFileNameAfterUpload);
+      rowNumbers.forEach(rowNumber => {
+        FileDetails.checkStatusInColumn(FileDetails.status.updated, FileDetails.columnName.srsMarc, rowNumber);
+        FileDetails.checkStatusInColumn(FileDetails.status.updated, FileDetails.columnName.instance, rowNumber);
+      });
+      FileDetails.checkSrsRecordQuantityInSummaryTable('8', 1);
+      FileDetails.checkInstanceQuantityInSummaryTable('8', 1);
 
-        // // open the second Instance in the Inventory and check 001, 003, 035 fields
-        // fields035.forEach(element => {
-        //   cy.visit(TopMenu.dataImportPath);
-        //   Logs.openFileDetails(secondFileNameAfterUpload);
-        //   FileDetails.openInstanceInInventory('Updated', element.instanceNumber);
-        //   InstanceRecordView.verifyInstanceStatusTerm(instanceStatusTermUI);
-        //   InstanceRecordView.verifyStatisticalCode(statisticalCodeUI);
-        //   InventoryInstance.getAssignedHRID().then(initialInstanceHrId => {
-        //     const instanceHrid = initialInstanceHrId;
+      // open the second Instance in the Inventory and check 001, 003, 035 fields
+      fields035.forEach(element => {
+        cy.wait(5000);
+        cy.visit(TopMenu.dataImportPath);
+        Logs.openFileDetails(secondFileNameAfterUpload);
+        FileDetails.openInstanceInInventory('Updated', element.instanceNumber);
+        InstanceRecordView.verifyInstanceStatusTerm(instanceStatusTermUI);
+        InstanceRecordView.verifyStatisticalCode(statisticalCodeUI);
+        InventoryInstance.getAssignedHRID().then(initialInstanceHrId => {
+          const instanceHrid = initialInstanceHrId;
 
-      //     InventoryInstance.viewSource();
-      //     InventoryViewSource.contains('001\t');
-      //     InventoryViewSource.contains(instanceHrid);
-      //   });
-      //   InventoryViewSource.notContains('003\t');
-      //   InventoryViewSource.contains('035\t');
-      //   InventoryViewSource.contains(element.field035contains);
+          InventoryInstance.viewSource();
+          InventoryViewSource.contains('001\t');
+          InventoryViewSource.contains(instanceHrid);
+        });
+        InventoryViewSource.notContains('003\t');
+        InventoryViewSource.contains('035\t');
+        InventoryViewSource.contains(element.field035contains);
+        cy.wait(5000);
       });
     });
 });
