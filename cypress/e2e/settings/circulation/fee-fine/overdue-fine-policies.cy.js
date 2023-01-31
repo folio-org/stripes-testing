@@ -88,7 +88,7 @@ describe('ui-circulation-settings: overdue fine policies management', () => {
             loanPolicy = policy;
           })
           .then(() => {
-            OverdueFinePolicy.createApi(overdueFinePolicyBody).then((overdueBody) => {
+            OverdueFinePolicy.createViaApi(overdueFinePolicyBody).then((overdueBody) => {
               overdueFinePolicy = overdueBody;
             });
           }).then(() => {
@@ -125,7 +125,7 @@ describe('ui-circulation-settings: overdue fine policies management', () => {
   after('delete test data', () => {
     InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(instance.instanceBarcode);
     LoanPolicy.deleteApi(loanPolicy.id);
-    OverdueFinePolicy.deleteApi(overdueFinePolicy.id);
+    OverdueFinePolicy.deleteViaApi(overdueFinePolicy.id);
     LostItemFeePolicy.deleteViaApi(lostItemFeePolicy.id);
     CirculationRules.updateViaApi(originalCirculationRules);
     UsersOwners.deleteViaApi(ownerData.id);

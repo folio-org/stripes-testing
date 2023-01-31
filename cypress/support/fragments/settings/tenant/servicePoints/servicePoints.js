@@ -1,4 +1,7 @@
 import { getTestEntityValue } from '../../../../utils/stringTools';
+import { NavListItem, Pane, Button, TextField } from '../../../../../../interactors';
+
+const servicePointsPane = Pane('Service points');
 
 const defaultServicePoint = {
   // required parameter
@@ -41,4 +44,27 @@ export default {
     method: 'DELETE',
     isDefaultSearchParamsRequired: false
   }),
+
+  goToServicePointsTab() {
+    cy.do(NavListItem('Tenant').click());
+    cy.expect(Pane('Tenant').exists());
+    cy.do(NavListItem('Service points').click());
+    cy.expect(servicePointsPane.exists());
+  },
+
+  createNewServicePoint({ name, code, displayName }) {
+    cy.do(Button('+ New').click());
+    // UI renders 2 times. There is no way to create good waiter
+    cy.wait(2000);
+    cy.do([
+      TextField({ name: 'name' }).fillIn(name),
+      TextField({ name: 'code' }).fillIn(code),
+      TextField({ name: 'discoveryDisplayName' }).fillIn(displayName),
+      Button('Save & close').click(),
+    ]);
+  },
+
+  servicePointExists(name) {
+    cy.expect(servicePointsPane.find(NavListItem(name)).exists());
+  },
 };

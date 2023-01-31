@@ -53,6 +53,10 @@ export default {
     return cy.do(Link({ id: 'clickable-viewcurrentloans' }).click());
   },
 
+  showOpenedFeeFines() {
+    return cy.do(Link({ id: 'clickable-viewcurrentaccounts' }).click());
+  },
+
   createPatronBlock() {
     cy.do(Button({ id: 'create-patron-block' }).click());
   },

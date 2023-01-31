@@ -122,6 +122,11 @@ export default {
     });
   },
 
+  // TODO check if we can use it using MultiColumnRow
+  findResultRowIndexByContent(content) {
+    return cy.get('*[class^="mclCell"]').contains(content).parent().invoke('attr', 'data-row-inner');
+  },
+
   filterByLastWeek() {
     const lastWeek = DateTools.getLastWeekDateObj();
     const today = new Date();
