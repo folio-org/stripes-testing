@@ -97,6 +97,7 @@ describe('ui-data-import: Data Import Updates should add 035 field from 001/003,
     ])
       .then(userProperties => {
         user = userProperties;
+
         cy.login(user.username, user.password, { path: TopMenu.dataImportPath, waiter: DataImport.waitLoading });
       });
   });
