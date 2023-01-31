@@ -1,3 +1,4 @@
+/* eslint-disable cypress/no-unnecessary-waiting */
 import getRandomPostfix from '../../../support/utils/stringTools';
 import permissions from '../../../support/dictionary/permissions';
 import TestTypes from '../../../support/dictionary/testTypes';
@@ -96,8 +97,6 @@ describe('ui-data-import: Data Import Updates should add 035 field from 001/003,
     ])
       .then(userProperties => {
         user = userProperties;
-        cy.log('cy.log/login');
-        console.log('console.log/login');
         cy.login(user.username, user.password, { path: TopMenu.dataImportPath, waiter: DataImport.waitLoading });
       });
   });
@@ -125,8 +124,6 @@ describe('ui-data-import: Data Import Updates should add 035 field from 001/003,
 
   it('C358998 Data Import Updates should add 035 field from 001/003, if it is not HRID or already exists (folijet)',
     { tags: [TestTypes.smoke, DevTeams.folijet] }, () => {
-      cy.log('cy.log/upload file');
-      console.log('console.log/upload file');
       // upload the first .mrc file
       DataImport.uploadFile('marcFileForC358998ForCreate_1.mrc', firstMarcFileNameForCreate);
       JobProfiles.searchJobProfileForImport('Default - Create instance and SRS MARC Bib');
@@ -208,29 +205,21 @@ describe('ui-data-import: Data Import Updates should add 035 field from 001/003,
         FieldMappingProfiles.saveProfile();
         FieldMappingProfiles.closeViewModeForMappingProfile(mappingProfile.name);
         FieldMappingProfiles.checkMappingProfilePresented(mappingProfile.name);
-        cy.log('cy.log/create mapping profile');
-        console.log('console.log/create mapping profile');
 
         // create action profile
         cy.visit(SettingsMenu.actionProfilePath);
         ActionProfiles.create(actionProfile, mappingProfile.name);
         ActionProfiles.checkActionProfilePresented(actionProfile.name);
-        cy.log('cy.log/create action profile');
-        console.log('console.log/create action profile');
 
         // create match profile
         cy.visit(SettingsMenu.matchProfilePath);
         MatchProfiles.createMatchProfileWithExistingPart(matchProfile);
         MatchProfiles.checkMatchProfilePresented(matchProfile.profileName);
-        cy.log('cy.log/create match profile');
-        console.log('console.log/create match profile');
 
         // create job profile for update
         cy.visit(SettingsMenu.jobProfilePath);
         JobProfiles.createJobProfileWithLinkingProfiles(jobProfile, actionProfileName, matchProfileName);
         JobProfiles.checkJobProfilePresented(jobProfile.profileName);
-        cy.log('cy.log/create job profile');
-        console.log('console.log/create job profile');
 
         // upload a marc file for updating already created first instance
         cy.visit(TopMenu.dataImportPath);
@@ -273,7 +262,8 @@ describe('ui-data-import: Data Import Updates should add 035 field from 001/003,
 
       // open the second Instance in the Inventory and check 001, 003, 035 fields
       fields035.forEach(element => {
-        cy.wait(5000);
+        // need to wait until page will be opened in loop
+        cy.wait(8000);
         cy.visit(TopMenu.dataImportPath);
         Logs.openFileDetails(secondFileNameAfterUpload);
         FileDetails.openInstanceInInventory('Updated', element.instanceNumber);
@@ -289,7 +279,6 @@ describe('ui-data-import: Data Import Updates should add 035 field from 001/003,
         InventoryViewSource.notContains('003\t');
         InventoryViewSource.contains('035\t');
         InventoryViewSource.contains(element.field035contains);
-        cy.wait(5000);
       });
     });
 });
