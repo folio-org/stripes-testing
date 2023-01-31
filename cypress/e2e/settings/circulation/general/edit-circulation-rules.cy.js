@@ -59,7 +59,7 @@ describe('ui-circulation-settings: Edit circulation rules', () => {
   afterEach(() => {
     CirculationRules.updateViaApi(originalCirculationRules);
     MaterialTypes.deleteApi(defaultMaterialType.id);
-    NoticePolicy.deleteApi(defaultNoticePolicy.id);
+    NoticePolicy.deleteViaApi(defaultNoticePolicy.id);
     LoanPolicy.deleteApi(defaultLoanPolicy.id);
     RequestPolicy.deleteViaApi(defaultRequestPolicy.id);
     LostItemFeePolicy.deleteViaApi(defaultLostItemFeePolicy.id);
