@@ -102,26 +102,26 @@ describe('ui-data-import: Data Import Updates should add 035 field from 001/003,
       });
   });
 
-  // after(() => {
-  //   JobProfiles.deleteJobProfile(jobProfileName);
-  //   MatchProfiles.deleteMatchProfile(matchProfileName);
-  //   ActionProfiles.deleteActionProfile(actionProfileName);
-  //   FieldMappingProfiles.deleteFieldMappingProfile(mappingProfileName);
-  //   cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${instanceHridFromFirstFile}"` })
-  //     .then((instance) => {
-  //       InventoryInstance.deleteInstanceViaApi(instance.id);
-  //     });
-  //   instanceHridsFromSecondFile.forEach(hrid => {
-  //     cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${hrid}"` })
-  //       .then((instance) => {
-  //         InventoryInstance.deleteInstanceViaApi(instance.id);
-  //       });
-  //   });
-  //   Users.deleteViaApi(user.userId);
-  //   // delete downloads folder and created files in fixtures
-  //   FileManager.deleteFile(`cypress/fixtures/${firstMarcFileNameForUpdate}`);
-  //   FileManager.deleteFile(`cypress/fixtures/${secondMarcFileNameForUpdate}`);
-  // });
+  after(() => {
+    JobProfiles.deleteJobProfile(jobProfileName);
+    MatchProfiles.deleteMatchProfile(matchProfileName);
+    ActionProfiles.deleteActionProfile(actionProfileName);
+    FieldMappingProfiles.deleteFieldMappingProfile(mappingProfileName);
+    cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${instanceHridFromFirstFile}"` })
+      .then((instance) => {
+        InventoryInstance.deleteInstanceViaApi(instance.id);
+      });
+    instanceHridsFromSecondFile.forEach(hrid => {
+      cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${hrid}"` })
+        .then((instance) => {
+          InventoryInstance.deleteInstanceViaApi(instance.id);
+        });
+    });
+    Users.deleteViaApi(user.userId);
+    // delete downloads folder and created files in fixtures
+    FileManager.deleteFile(`cypress/fixtures/${firstMarcFileNameForUpdate}`);
+    FileManager.deleteFile(`cypress/fixtures/${secondMarcFileNameForUpdate}`);
+  });
 
   it('C358998 Data Import Updates should add 035 field from 001/003, if it is not HRID or already exists (folijet)',
     { tags: [TestTypes.smoke, DevTeams.folijet] }, () => {
