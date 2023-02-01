@@ -1,11 +1,12 @@
-import { Select as BaseSelect } from '@interactors/html';
-import {
-  MultiColumnListCell, MultiColumnListRow, TimeDropdown, Pane, Button, IconButton, TextField, Accordion,
-  including, Link, matching, Calendar, Select
-} from '../../../interactors';
+import { deleteServicePoint, createServicePoint, createCalendar,
+  openCalendarSettings, deleteCalendar } from '../../support/fragments/calendar/calendar';
 
 
 import calendarFixtures from '../../support/fragments/calendar/calendar-e2e-test-values';
+import PaneActions from '../../support/fragments/calendar/pane-actions';
+import CreateCalendarForm from '../../support/fragments/calendar/create-calendar-form';
+import TestTypes from '../../support/dictionary/testTypes';
+import devTeams from '../../support/dictionary/devTeams';
 
 const testServicePoint = calendarFixtures.servicePoint;
 const testCalendar = calendarFixtures.calendar;
@@ -19,93 +20,39 @@ describe('Add exceptions--closures to regular hours for service point', () => {
   let testCalendarResponse;
   before(() => {
     // login
-    cy.openCalendarSettings(false);
+    openCalendarSettings(false);
+
+    // get admin token to use in okapiRequest to retrieve service points
+    cy.getAdminToken();
 
     // reset db state
-    cy.deleteServicePoint(testServicePoint.id, false);
+    deleteServicePoint(testServicePoint.id, false);
 
     // create test service point and calendar
-    cy.createServicePoint(testServicePoint, (response) => {
+    createServicePoint(testServicePoint, (response) => {
       testCalendar.assignments = [response.body.id];
 
-      cy.createCalendar(testCalendar, (calResponse) => {
+      createCalendar(testCalendar, (calResponse) => {
         testCalendarResponse = calResponse.body;
       });
-      cy.openCalendarSettings();
+      openCalendarSettings();
     });
   });
 
 
   after(() => {
     // delete test calendar
-    // cy.deleteCalendar(testCalendarResponse.id);
+    deleteCalendar(testCalendarResponse.id);
   });
 
 
-  it('adds new hours of operation for service point', () => {
-    cy.do([
-      Pane('Calendar').find(Link('Current calendar assignments')).click(),
-      Pane('Current calendar assignments').find(MultiColumnListCell(testServicePoint.name, { column: 'Service point' })).click(),
-      Pane(testCalendar.name).clickAction('Edit')
-    ]);
+  it('C360951 Add exceptions--openings to regular hours for service point (bama)', { tags: [TestTypes.smoke, devTeams.bama] }, () => {
+    PaneActions.currentCalendarAssignmentsPane.openCurrentCalendarAssignmentsPane();
+    PaneActions.currentCalendarAssignmentsPane.selectCalendarByServicePoint(testServicePoint.name);
+    PaneActions.currentCalendarAssignmentsPane.clickEditAction(testCalendar.name);
 
-    cy.url().should('match', /\/settings\/calendar\/active\/edit\/.+$/g);
+    CreateCalendarForm.addOpeningExceptions(addExceptionsOpeningData);
 
-    // index 2 is used since only 2 closure exceptions exist in the fixture
-    const [startYear, startMonth, startDay] = addExceptionsOpeningData.startDate.split('-');
-    const [endYear, endMonth, endDay] = addExceptionsOpeningData.endDate.split('-');
-
-    const months = ['January', 'February', 'March', 'April', 'May', 'June',
-      'July', 'August', 'September', 'October', 'November', 'December'];
-
-    const MonthSelect = BaseSelect.extend('month select')
-      .selector('[class^=monthSelect');
-
-
-    cy.do([
-      Accordion('Exceptions').find(Button('Add row')).click(),
-
-      Accordion('Exceptions').find(MultiColumnListRow({ index: 2 })).find(MultiColumnListCell({ column: 'Name' })).find(TextField())
-        .fillIn(addExceptionsOpeningData.name),
-
-      Accordion('Exceptions').find(MultiColumnListRow({ index: 2 })).find(MultiColumnListCell({ column: 'Status' }))
-        .find(Select())
-        .chooseAndBlur(addExceptionsOpeningData.status),
-
-      Accordion('Exceptions').find(MultiColumnListRow({ index: 2 })).find(MultiColumnListCell({ column: 'Start date' }))
-        .find(TextField())
-        .find(IconButton({ id: matching(/^datepicker-toggle-calendar-/) }))
-        .click(),
-      Calendar({ portal: true }).exists(),
-      Calendar({ portal: true }).setYear(startYear),
-      Calendar({ portal: true }).find(MonthSelect()).choose(months[parseInt(startMonth, 10) - 1]),
-      Calendar({ portal: true }).clickActiveDay(startDay),
-      Accordion('Exceptions').find(MultiColumnListRow({ index: 2 })).find(MultiColumnListCell({ column: 'Start time' }))
-        .find(TextField())
-        .find(IconButton({ id: matching(/^timepicker-toggle-button-/) }))
-        .click(),
-      TimeDropdown().exists(),
-      TimeDropdown().setTimeAndClose(addExceptionsOpeningData.startTime),
-
-      Accordion('Exceptions').find(MultiColumnListRow({ index: 2 })).find(MultiColumnListCell({ column: 'End date' }))
-        .find(TextField())
-        .find(IconButton({ id: matching(/^datepicker-toggle-calendar-/) }))
-        .click(),
-      Calendar({ portal: true }).exists(),
-      Calendar({ portal: true }).setYear(endYear),
-      Calendar({ portal: true }).find(MonthSelect()).choose(months[parseInt(endMonth, 10) - 1]),
-      Calendar({ portal: true }).clickActiveDay(endDay),
-      Accordion('Exceptions').find(MultiColumnListRow({ index: 2 })).find(MultiColumnListCell({ column: 'End time' }))
-        .find(TextField())
-        .find(IconButton({ id: matching(/^timepicker-toggle-button-/) }))
-        .click(),
-      TimeDropdown().exists(),
-      TimeDropdown().setTimeAndClose(addExceptionsOpeningData.endTime),
-    ]);
-
-    cy.do(
-      Button('Save and close').click()
-    );
 
 
     // intercept http request
@@ -119,52 +66,14 @@ describe('Add exceptions--closures to regular hours for service point', () => {
 
     // check that new calendar exists in list of calendars
     cy.wait('@updateCalendar').then(() => {
-      cy.openCalendarSettings();
-      cy.do([
-        Pane('Calendar').find(Link('All calendars')).click(),
-        Pane('All calendars').find(MultiColumnListCell(testCalendar.name)).click()
-      ]);
+      openCalendarSettings();
+      PaneActions.allCalendarsPane.selectCalendar(testCalendar.name);
 
-      // check if new opening exception is displayed
-      const row = Pane(testCalendar.name)
-        .find(Accordion({ label: 'Exceptions — openings' }))
-        .find(MultiColumnListRow({ content: including(addExceptionsOpeningData.name), isContainer: true }));
-
-      cy.do(
-        row.exists()
-      );
-
-
-
-      cy.do([
-        row.find(
-          MultiColumnListCell({
-            column: 'Start',
-            content: including(addExceptionsOpeningExpectedUIValues.startTime)
-          })
-        ).exists(),
-
-        row.find(
-          MultiColumnListCell({
-            column: 'Start',
-            content: including(addExceptionsOpeningExpectedUIValues.startTime)
-          })
-        ).exists(),
-
-        row.find(
-          MultiColumnListCell({
-            column: 'Close',
-            content: including(addExceptionsOpeningExpectedUIValues.endDate)
-          })
-        ).exists(),
-
-        row.find(
-          MultiColumnListCell({
-            column: 'Close',
-            content: including(addExceptionsOpeningExpectedUIValues.endTime)
-          })
-        ).exists()
-      ]);
+      PaneActions.individualCalendarPane.checkOpeningExceptions({
+        calendarName: testCalendar.name,
+        addExceptionsOpeningData,
+        addExceptionsOpeningExpectedUIValues
+      });
     });
   });
 });

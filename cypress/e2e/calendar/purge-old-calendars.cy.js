@@ -1,7 +1,10 @@
-import {
-  MultiColumnListCell, Modal, Pane, Button, Link, including, Select, Accordion, ListItem
-} from '../../../interactors';
+import { deleteServicePoint, createServicePoint, createCalendar,
+  openCalendarSettings } from '../../support/fragments/calendar/calendar';
 import calendarFixtures from '../../support/fragments/calendar/calendar-e2e-test-values';
+import PaneActions from '../../support/fragments/calendar/pane-actions';
+import ModalFragments from '../../support/fragments/calendar/modal-fragments';
+import TestTypes from '../../support/dictionary/testTypes';
+import devTeams from '../../support/dictionary/devTeams';
 
 const testServicePoint = calendarFixtures.servicePoint;
 const testCalendar = calendarFixtures.calendar;
@@ -14,78 +17,48 @@ testCalendar.exceptions = [];
 
 
 describe('Purge old calendars with a selectable date', () => {
-  let testCalendarResponse;
   before(() => {
     // login
     cy.loginAsAdmin();
 
+    // get admin token to use in okapiRequest to retrieve service points
+    cy.getAdminToken();
+
     // reset db state
-    cy.deleteServicePoint(testServicePoint.id, false);
+    deleteServicePoint(testServicePoint.id, false);
 
     // create test service point
-    cy.createServicePoint(testServicePoint, (response) => {
+    createServicePoint(testServicePoint, (response) => {
       testCalendar.assignments = [response.body.id];
 
-      cy.createCalendar(testCalendar, (calResponse) => {
-        testCalendarResponse = calResponse.body;
-      });
+      createCalendar(testCalendar);
+      openCalendarSettings();
     });
-
-    cy.openCalendarSettings();
   });
 
   after(() => {
-    cy.deleteServicePoint(testServicePoint.id, true);
+    deleteServicePoint(testServicePoint.id, true);
   });
 
 
-  it('purges old calendar with a selectable date', () => {
-    cy.do([
-      Pane('Calendar').find(Link('All calendars')).click(),
-      Pane('All calendars').find(MultiColumnListCell(testCalendar.name)).exists(),
-      Pane('All calendars').clickAction('Purge old calendars'),
-      Modal('Purge old calendars').exists()
-    ]);
+  it('C360946 Delete -> Purge old calendars with a selectable date (bama)', { tags: [TestTypes.smoke, devTeams.bama] }, () => {
+    PaneActions.allCalendarsPane.openAllCalendarsPane();
+    PaneActions.allCalendarsPane.checkCalendarExists(testCalendar.name);
+    PaneActions.allCalendarsPane.clickPurgeOldCalendarsAction();
+    ModalFragments.checkPurgeOldCalendarsModalExists();
 
-    // check that all select options are present
-    cy.do([
-      Modal('Purge old calendars').find(Select({ label: including('Purge calendars that ended...') })).exists(),
-      Modal('Purge old calendars').find(Select({ label: including('Purge calendars that ended...') })).choose('more than 3 months ago'),
-      Modal('Purge old calendars').find(Select({ label: including('Purge calendars that ended...') })).choose('more than 6 months ago'),
-      Modal('Purge old calendars').find(Select({ label: including('Purge calendars that ended...') })).choose('more than 1 year ago'),
-      Modal('Purge old calendars').find(Select({ label: including('Purge calendars that ended...') })).choose('more than 2 years ago'),
-    ]);
+    ModalFragments.purgeOldCalendars.checkSelectFields();
+    ModalFragments.purgeOldCalendars.clickCancelButton();
+    ModalFragments.checkPurgeOldCalendarsModalAbsent();
 
-    // check that all select options are present
-    cy.do([
-      Modal('Purge old calendars').find(Select({ label: including('And were...') })).exists(),
-      Modal('Purge old calendars').find(Select({ label: including('And were...') })).choose('not assigned to any service points'),
-      Modal('Purge old calendars').find(Select({ label: including('And were...') })).choose('assigned or not assigned to service points')
-    ]);
+    PaneActions.allCalendarsPane.clickPurgeOldCalendarsAction();
+    ModalFragments.checkPurgeOldCalendarsModalWithDismiss();
 
-    cy.do([
-      Modal('Purge old calendars').find(Button('Cancel')).click(),
-      Modal('Purge old calendars').absent()
-    ]);
+    PaneActions.allCalendarsPane.clickPurgeOldCalendarsAction();
+    ModalFragments.checkPurgeOldCalendarsModalExists();
 
+    ModalFragments.purgeOldCalendars.purgeCalendarsMoreThanThreeMonthsOld({ calendarName: testCalendar.name });
 
-    cy.do([
-      Pane('All calendars').clickAction('Purge old calendars'),
-      Modal('Purge old calendars').exists(),
-      Modal('Purge old calendars').dismiss(),
-      Modal('Purge old calendars').absent()
-    ]);
-
-
-    cy.do([
-      Pane('All calendars').clickAction('Purge old calendars'),
-      Modal('Purge old calendars').exists(),
-      Modal('Purge old calendars').find(Select({ label: including('Purge calendars that ended...') })).choose('more than 3 months ago'),
-      Modal('Purge old calendars').find(Select({ label: including('And were...') })).choose('assigned or not assigned to service points'),
-      Modal('Purge old calendars').find(Accordion('Calendars to be deleted')).clickHeader(),
-      Modal('Purge old calendars').find(Accordion('Calendars to be deleted')).find(ListItem(testCalendar.name)).exists(),
-      Modal('Purge old calendars').find(Button('Delete')).click(),
-      Pane('All calendars').find(MultiColumnListCell(testCalendar.name)).absent()
-    ]);
+    PaneActions.allCalendarsPane.checkCalendarAbsent(testCalendar.name);
   });
 });

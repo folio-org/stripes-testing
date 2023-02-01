@@ -1,11 +1,13 @@
-import {
-  MultiColumnListHeader, Pane, Link
-} from '../../../interactors';
+import { deleteServicePoint, createCalendar,
+  openCalendarSettings, deleteCalendar, createServicePoint } from '../../support/fragments/calendar/calendar';
 import calendarFixtures from '../../support/fragments/calendar/calendar-e2e-test-values';
 import CalendarSortTableTools from '../../support/utils/uiCalendar_SortTableTools';
 import getCurrentStatus from '../../support/utils/uiCalendar_CalendarUtils';
-import { getLocalizedDate } from '../../support/utils/uiCalendar_DateUtils';
+import DateTools from '../../support/utils/dateTools';
 import { assertRowsAreProperlySorted } from '../../support/fragments/calendar/sort-table';
+import PaneActions from '../../support/fragments/calendar/pane-actions';
+import TestTypes from '../../support/dictionary/testTypes';
+import devTeams from '../../support/dictionary/devTeams';
 
 const isBetweenDatesByDay = CalendarSortTableTools.date.isBetweenDatesByDay;
 const dateFromYYYYMMDD = CalendarSortTableTools.date.dateFromYYYYMMDD;
@@ -15,6 +17,8 @@ const sortRows = CalendarSortTableTools.sortCurrentCalendarAssignments.sortRows;
 
 const testServicePoint = calendarFixtures.servicePoint;
 const testCalendar = calendarFixtures.calendar;
+
+const getLocalizedDate = DateTools.getLocalizedDate;
 
 
 
@@ -29,33 +33,30 @@ describe('Sort headings on "Current calendar assignments" tab', () => {
     cy.getAdminToken();
 
     // reset db state
-    cy.deleteServicePoint(testServicePoint.id, false);
+    deleteServicePoint(testServicePoint.id, false);
 
     // create test service point
-    cy.createServicePoint(testServicePoint, (response) => {
+    createServicePoint(testServicePoint, (response) => {
       testCalendar.assignments = [response.body.id];
 
-      cy.createCalendar(testCalendar, (calResponse) => {
+      createCalendar(testCalendar, (calResponse) => {
         testCalendarResponse = calResponse.body;
       });
-      cy.openCalendarSettings();
+      openCalendarSettings();
     });
   });
 
   after(() => {
-    cy.deleteServicePoint(testServicePoint.id, true);
-    cy.deleteCalendar(testCalendarResponse.id);
+    deleteServicePoint(testServicePoint.id, true);
+    deleteCalendar(testCalendarResponse.id);
   });
 
 
-  it('sorts headings on "Current calendar assignments" tab', () => {
+  it('C360960 Sort headings on "Current calendar assignments" tab (bama)', { tags: [TestTypes.smoke, devTeams.bama] }, () => {
     const calendars = [];
     const servicePoints = [];
 
-
-    cy.do([
-      Pane('Calendar').find(Link('Current calendar assignments')).click(),
-    ]);
+    PaneActions.currentCalendarAssignmentsPane.openCurrentCalendarAssignmentsPane();
 
     // intercept API request
     cy.intercept(Cypress.env('OKAPI_HOST') + '/calendar/calendars?limit=2147483647', (req) => {
@@ -139,9 +140,7 @@ describe('Sort headings on "Current calendar assignments" tab', () => {
         assertRowsAreProperlySorted(currentRows, 'servicePoint');
 
         // check for sorting by service point name in descending order
-        cy.do(
-          MultiColumnListHeader('Service point').click(),
-        );
+        PaneActions.calendarTable.clickServicePointHeader();
 
         sorts = addSort(sorts, 'servicePoint');
         currentRows = sortRows(baseRows, sorts);
@@ -150,18 +149,14 @@ describe('Sort headings on "Current calendar assignments" tab', () => {
 
 
         // sort in ascending order by calendar name
-        cy.do(
-          MultiColumnListHeader('Calendar name').click(),
-        );
+        PaneActions.calendarTable.clickCalendarNameHeader();
 
         sorts = addSort(sorts, 'calendarName');
         currentRows = sortRows(baseRows, sorts);
         assertRowsAreProperlySorted(currentRows, 'calendarName');
 
         // sort in descending order by calendar name
-        cy.do(
-          MultiColumnListHeader('Calendar name').click(),
-        );
+        PaneActions.calendarTable.clickCalendarNameHeader();
 
         sorts = addSort(sorts, 'calendarName');
         currentRows = sortRows(baseRows, sorts);
@@ -171,18 +166,14 @@ describe('Sort headings on "Current calendar assignments" tab', () => {
 
 
         // sort in ascending order by start date
-        cy.do(
-          MultiColumnListHeader('Start date').click(),
-        );
+        PaneActions.calendarTable.clickStartDateHeader();
 
         sorts = addSort(sorts, 'startDate');
         currentRows = sortRows(baseRows, sorts);
         assertRowsAreProperlySorted(currentRows, 'startDate');
 
         // sort in descending order by start date
-        cy.do(
-          MultiColumnListHeader('Start date').click(),
-        );
+        PaneActions.calendarTable.clickStartDateHeader();
 
         sorts = addSort(sorts, 'startDate');
         currentRows = sortRows(baseRows, sorts);
@@ -192,18 +183,14 @@ describe('Sort headings on "Current calendar assignments" tab', () => {
 
 
         // sort in ascending order by end date
-        cy.do(
-          MultiColumnListHeader('End date').click(),
-        );
+        PaneActions.calendarTable.clickEndDateHeader();
 
         sorts = addSort(sorts, 'endDate');
         currentRows = sortRows(baseRows, sorts);
         assertRowsAreProperlySorted(currentRows, 'endDate');
 
         // sort in descending order by end date
-        cy.do(
-          MultiColumnListHeader('End date').click(),
-        );
+        PaneActions.calendarTable.clickEndDateHeader();
 
         sorts = addSort(sorts, 'endDate');
         currentRows = sortRows(baseRows, sorts);
@@ -213,18 +200,14 @@ describe('Sort headings on "Current calendar assignments" tab', () => {
 
 
         // sort in ascending order by status
-        cy.do(
-          MultiColumnListHeader('Current status').click(),
-        );
+        PaneActions.calendarTable.clickCurrentStatusHeader();
 
         sorts = addSort(sorts, 'currentStatus');
         currentRows = sortRows(baseRows, sorts);
         assertRowsAreProperlySorted(currentRows, 'currentStatus');
 
         // sort in descending order by status
-        cy.do(
-          MultiColumnListHeader('Current status').click(),
-        );
+        PaneActions.calendarTable.clickCurrentStatusHeader();
 
         sorts = addSort(sorts, 'currentStatus');
         currentRows = sortRows(baseRows, sorts);

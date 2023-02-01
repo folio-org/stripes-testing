@@ -4,6 +4,8 @@ import { deleteServicePoint, createServicePoint, createCalendar,
 import calendarFixtures from '../../support/fragments/calendar/calendar-e2e-test-values';
 import PaneActions from '../../support/fragments/calendar/pane-actions';
 import CreateCalendarForm from '../../support/fragments/calendar/create-calendar-form';
+import TestTypes from '../../support/dictionary/testTypes';
+import devTeams from '../../support/dictionary/devTeams';
 
 const testServicePoint = calendarFixtures.servicePoint;
 const testCalendar = calendarFixtures.calendar;
@@ -21,6 +23,9 @@ describe('Add new calendar for service point', () => {
     // login and open calendar settings
     cy.loginAsAdmin();
 
+    // get admin token to use in okapiRequest to retrieve service points
+    cy.getAdminToken();
+
     // reset db state
     deleteServicePoint(testServicePoint.id, false);
 
@@ -36,15 +41,12 @@ describe('Add new calendar for service point', () => {
   });
 
 
-  it('adds new calendar', () => {
+  it('C360958 Create -> Add new calendar for service point (bama)', { tags: [TestTypes.smoke, devTeams.bama] }, () => {
     PaneActions.openCalendarWithServicePoint(testServicePoint.name);
     PaneActions.individualCalendarPane.close(testCalendarResponse.name);
     PaneActions.currentCalendarAssignmentsPane.clickNewButton();
 
-    cy.deleteCalendar(testCalendarResponse.id);
-
-
-    cy.url().should('match', /\/settings\/calendar\/active\/create$/);
+    deleteCalendar(testCalendarResponse.id);
 
     CreateCalendarForm.createCalendarWithoutHoursOfOperation(newCalendarInfo, testServicePoint.name);
 
@@ -63,6 +65,7 @@ describe('Add new calendar for service point', () => {
     // check that new calendar exists in list of calendars
     cy.wait('@createCalendar').then(() => {
       openCalendarSettings();
+      PaneActions.allCalendarsPane.openAllCalendarsPane();
       PaneActions.allCalendarsPane.checkCalendarExists(newCalendarInfo.name);
 
       // delete calendar

@@ -1,9 +1,13 @@
-import { MultiColumnList, MultiColumnListCell, Button, Pane, PaneHeader, Link } from '../../../interactors';
+import { deleteServicePoint, createServicePoint, createCalendar,
+  openCalendarSettings, deleteCalendar } from '../../support/fragments/calendar/calendar';
 import {
   checkCalendarFields, checkExpandButton, checkMenuAction
 } from '../../support/fragments/calendar/calendar-info-pane';
 
 import calendarFixtures from '../../support/fragments/calendar/calendar-e2e-test-values';
+import PaneActions from '../../support/fragments/calendar/pane-actions';
+import TestTypes from '../../support/dictionary/testTypes';
+import devTeams from '../../support/dictionary/devTeams';
 
 const testServicePoint = calendarFixtures.servicePoint;
 const testCalendar = calendarFixtures.calendar;
@@ -15,14 +19,17 @@ describe('Checking the view of calendar on "Current Calendar assignments tab"', 
     // login and open calendar settings
     cy.loginAsAdmin();
 
+    // get admin token to use in okapiRequest to retrieve service points
+    cy.getAdminToken();
+
     // reset db state
-    cy.deleteServicePoint(testServicePoint.id, false);
+    deleteServicePoint(testServicePoint.id, false);
 
     // create test service point and calendar
-    cy.createServicePoint(testServicePoint, (response) => {
+    createServicePoint(testServicePoint, (response) => {
       testCalendar.assignments = [response.body.id];
 
-      cy.createCalendar(testCalendar, (calResponse) => {
+      createCalendar(testCalendar, (calResponse) => {
         testCalendarResponse = calResponse.body;
       });
     });
@@ -30,40 +37,29 @@ describe('Checking the view of calendar on "Current Calendar assignments tab"', 
 
 
   beforeEach(() => {
-    cy.openCalendarSettings();
-    cy.do(Pane('Calendar').find(Link('Current calendar assignments')).click());
+    openCalendarSettings();
+    PaneActions.currentCalendarAssignmentsPane.openCurrentCalendarAssignmentsPane();
   });
 
   after(() => {
     // delete test calendar
-    cy.deleteCalendar(testCalendarResponse.id);
+    deleteCalendar(testCalendarResponse.id);
   });
 
-  it('should check that the "Current calendar assignments" tab contains all appropriate elements', () => {
-    cy.do([
-      PaneHeader('Current calendar assignments').find(Button('New')).exists(),
-      MultiColumnList().find(MultiColumnListCell(testServicePoint.name, { column: 'Service point' })).exists(),
-    ]);
-  });
+  it('C360941 Checking the view of calendar on "Current calendar assignments" tab (bama)', { tags: [TestTypes.smoke, devTeams.bama] }, () => {
+    PaneActions.currentCalendarAssignmentsPane.checkNewButtonExists();
+    PaneActions.currentCalendarAssignmentsPane.checkCalendarWithServicePointExists(testServicePoint.name);
 
-  it('should check that the fields of the calendar exists', () => {
-    cy.do([
-      Pane('Current calendar assignments').find(MultiColumnListCell(testCalendarResponse.name, { column: 'Calendar name' })).click(),
-    ]);
+    PaneActions.currentCalendarAssignmentsPane.openCurrentCalendarAssignmentsPane();
+    PaneActions.currentCalendarAssignmentsPane.selectCalendarByCalendarName(testCalendarResponse.name);
     checkCalendarFields(testCalendar, testServicePoint);
-  });
 
-  it('should check that the expand/collapse button works correctly', () => {
-    cy.do(
-      Pane('Current calendar assignments').find(MultiColumnListCell(testCalendarResponse.name, { column: 'Calendar name' })).click(),
-    );
+    PaneActions.currentCalendarAssignmentsPane.openCurrentCalendarAssignmentsPane();
+    PaneActions.currentCalendarAssignmentsPane.selectCalendarByCalendarName(testCalendarResponse.name);
     checkExpandButton();
-  });
 
-  it('should check that the individual calendar tab has the appropriate menu actions', () => {
-    cy.do(
-      Pane('Current calendar assignments').find(MultiColumnListCell(testCalendarResponse.name, { column: 'Calendar name' })).click(),
-    );
+    PaneActions.currentCalendarAssignmentsPane.openCurrentCalendarAssignmentsPane();
+    PaneActions.currentCalendarAssignmentsPane.selectCalendarByCalendarName(testCalendarResponse.name);
     checkMenuAction(testCalendarResponse.name);
   });
 });

@@ -1,9 +1,11 @@
-import {
-  MultiColumnListHeader, Pane, Link
-} from '../../../interactors';
+import { deleteServicePoint, createCalendar,
+  openCalendarSettings, deleteCalendar, createServicePoint } from '../../support/fragments/calendar/calendar';
 import calendarFixtures from '../../support/fragments/calendar/calendar-e2e-test-values';
 import CalendarSortTableTools from '../../support/utils/uiCalendar_SortTableTools';
 import { assertCalendarsIsProperlySorted } from '../../support/fragments/calendar/sort-table';
+import PaneActions from '../../support/fragments/calendar/pane-actions';
+import TestTypes from '../../support/dictionary/testTypes';
+import devTeams from '../../support/dictionary/devTeams';
 
 const testServicePoint = calendarFixtures.servicePoint;
 const testCalendar = calendarFixtures.calendar;
@@ -23,31 +25,30 @@ describe('Sort headings on "All calendars" tab', () => {
     cy.getAdminToken();
 
     // reset db state
-    cy.deleteServicePoint(testServicePoint.id, false);
+    deleteServicePoint(testServicePoint.id, false);
 
     // create test service point
-    cy.createServicePoint(testServicePoint, (response) => {
+    createServicePoint(testServicePoint, (response) => {
       testCalendar.assignments = [response.body.id];
 
-      cy.createCalendar(testCalendar, (calResponse) => {
+      createCalendar(testCalendar, (calResponse) => {
         testCalendarResponse = calResponse.body;
       });
-      cy.openCalendarSettings();
+      openCalendarSettings();
     });
   });
 
   after(() => {
-    cy.deleteServicePoint(testServicePoint.id, true);
-    cy.deleteCalendar(testCalendarResponse.id);
+    deleteServicePoint(testServicePoint.id, true);
+    deleteCalendar(testCalendarResponse.id);
   });
 
 
-  it('sorts headings on "All calendars" tab', () => {
+  it('C360954 Sort headings on "All calendars" tab (bama)', { tags: [TestTypes.smoke, devTeams.bama] }, () => {
     const calendars = [];
     const servicePoints = [];
-    cy.do([
-      Pane('Calendar').find(Link('All calendars')).click(),
-    ]);
+
+    PaneActions.allCalendarsPane.openAllCalendarsPane();
 
     // intercept API request
     cy.intercept(Cypress.env('OKAPI_HOST') + '/calendar/calendars?limit=2147483647', (req) => {
@@ -93,18 +94,14 @@ describe('Sort headings on "All calendars" tab', () => {
         let sorts = [];
 
         // sort in ascending order by calendar name
-        cy.do(
-          MultiColumnListHeader('Calendar name').click(),
-        );
+        PaneActions.calendarTable.clickCalendarNameHeader();
 
         sorts = addSort(sorts, 'calendarName');
         currentRows = sortCalendars(calendars, sorts);
         assertCalendarsIsProperlySorted(currentRows, 'calendarName');
 
         // sort in descending order by calendar name
-        cy.do(
-          MultiColumnListHeader('Calendar name').click(),
-        );
+        PaneActions.calendarTable.clickCalendarNameHeader();
 
         sorts = addSort(sorts, 'calendarName');
         currentRows = sortCalendars(calendars, sorts);
@@ -114,18 +111,14 @@ describe('Sort headings on "All calendars" tab', () => {
 
 
         // sort in ascending order by start date
-        cy.do(
-          MultiColumnListHeader('Start date').click(),
-        );
+        PaneActions.calendarTable.clickStartDateHeader();
 
         sorts = addSort(sorts, 'startDate');
         currentRows = sortCalendars(calendars, sorts);
         assertCalendarsIsProperlySorted(currentRows, 'startDate');
 
         // sort in descending order by start date
-        cy.do(
-          MultiColumnListHeader('Start date').click(),
-        );
+        PaneActions.calendarTable.clickStartDateHeader();
 
         sorts = addSort(sorts, 'startDate');
         currentRows = sortCalendars(calendars, sorts);
@@ -135,18 +128,14 @@ describe('Sort headings on "All calendars" tab', () => {
 
 
         // sort in ascending order by end date
-        cy.do(
-          MultiColumnListHeader('End date').click(),
-        );
+        PaneActions.calendarTable.clickEndDateHeader();
 
         sorts = addSort(sorts, 'endDate');
         currentRows = sortCalendars(calendars, sorts);
         assertCalendarsIsProperlySorted(currentRows, 'endDate');
 
         // sort in descending order by end date
-        cy.do(
-          MultiColumnListHeader('End date').click(),
-        );
+        PaneActions.calendarTable.clickEndDateHeader();
 
         sorts = addSort(sorts, 'endDate');
         currentRows = sortCalendars(calendars, sorts);
@@ -156,18 +145,14 @@ describe('Sort headings on "All calendars" tab', () => {
 
 
         // sort in ascending order by assignments
-        cy.do(
-          MultiColumnListHeader('Assignments').click(),
-        );
+        PaneActions.calendarTable.clickAssignmentsHeader();
 
         sorts = addSort(sorts, 'assignments');
         currentRows = sortCalendars(calendars, sorts);
         assertCalendarsIsProperlySorted(currentRows, 'assignments');
 
         // sort in descending order by assignments
-        cy.do(
-          MultiColumnListHeader('Assignments').click(),
-        );
+        PaneActions.calendarTable.clickAssignmentsHeader();
 
         sorts = addSort(sorts, 'assignments');
         currentRows = sortCalendars(calendars, sorts);

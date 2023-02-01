@@ -1,8 +1,10 @@
-import {
-  MultiColumnListCell, MultiColumnListRow, Pane, Button, Accordion, TextField,
-  including, Link
-} from '../../../interactors';
+import { deleteServicePoint, createServicePoint, createCalendar,
+  openCalendarSettings, deleteCalendar } from '../../support/fragments/calendar/calendar';
 import calendarFixtures from '../../support/fragments/calendar/calendar-e2e-test-values';
+import PaneActions from '../../support/fragments/calendar/pane-actions';
+import CreateCalendarForm from '../../support/fragments/calendar/create-calendar-form';
+import TestTypes from '../../support/dictionary/testTypes';
+import devTeams from '../../support/dictionary/devTeams';
 
 const testServicePoint = calendarFixtures.servicePoint;
 const testCalendar = calendarFixtures.calendar;
@@ -19,51 +21,35 @@ describe('Edit existing calendars', () => {
     // login
     cy.loginAsAdmin();
 
+    // get admin token to use in okapiRequest to retrieve service points
+    cy.getAdminToken();
+
     // reset db state
-    cy.deleteServicePoint(testServicePoint.id, false);
+    deleteServicePoint(testServicePoint.id, false);
 
     // create test service point
-    cy.createServicePoint(testServicePoint, (response) => {
+    createServicePoint(testServicePoint, (response) => {
       testCalendar.assignments = [response.body.id];
 
-      cy.createCalendar(testCalendar, (calResponse) => {
+      createCalendar(testCalendar, (calResponse) => {
         testCalendarResponse = calResponse.body;
       });
-      cy.openCalendarSettings();
+      openCalendarSettings();
     });
-
-    cy.openCalendarSettings();
   });
 
   after(() => {
-    cy.deleteServicePoint(testServicePoint.id, true);
-    cy.deleteCalendar(testCalendarResponse.id);
+    deleteServicePoint(testServicePoint.id, true);
+    deleteCalendar(testCalendarResponse.id);
   });
 
 
-  it('edits a single existing calendar', () => {
-    cy.do([
-      Pane('Calendar').find(Link('All calendars')).click(),
-      Pane('All calendars').find(MultiColumnListCell(testCalendar.name)).click(),
-      Pane(testCalendar.name).clickAction('Edit')
-    ]);
+  it('C360950 Edit -> Edit existing calendars (bama)', { tags: [TestTypes.smoke, devTeams.bama] }, () => {
+    PaneActions.allCalendarsPane.openAllCalendarsPane();
+    PaneActions.allCalendarsPane.selectCalendar(testCalendar.name);
+    PaneActions.individualCalendarPane.selectEditAction({ calendarName: testCalendar.name });
 
-    cy.url().should('match', /\/settings\/calendar\/all\/edit\/.+$/g);
-
-
-    cy.do([
-      TextField(including('Calendar name')).fillIn(editExistingCalendarsData.name),
-      Accordion('Hours of operation').find(MultiColumnListRow({ index: 0 })).find(MultiColumnListCell({ column: 'Actions' }))
-        .find(Button({ ariaLabel: 'trash' }))
-        .click(),
-      Accordion('Hours of operation').find(MultiColumnListRow({ index: 0 })).find(MultiColumnListCell({ column: 'Actions' }))
-        .find(Button({ ariaLabel: 'trash' }))
-        .click(),
-
-      Button('Save and close').click()
-    ]);
-
-
+    CreateCalendarForm.editExistingCalendarsAndSave(editExistingCalendarsData);
 
     // intercept http request
     cy.intercept(Cypress.env('OKAPI_HOST') + '/calendar/calendars/' + testCalendarResponse.id, (req) => {
@@ -76,25 +62,12 @@ describe('Edit existing calendars', () => {
 
 
     cy.wait('@editCalendar').then(() => {
-      cy.openCalendarSettings();
-      cy.do([
-        Pane('Calendar').find(Link('All calendars')).click(),
-        Pane('All calendars').find(MultiColumnListCell(editExistingCalendarsData.name)).exists(),
-        Pane('All calendars').find(MultiColumnListCell(editExistingCalendarsData.name)).click(),
-      ]);
+      openCalendarSettings();
+      PaneActions.allCalendarsPane.openAllCalendarsPane();
+      PaneActions.allCalendarsPane.checkCalendarExists(editExistingCalendarsData.name);
+      PaneActions.allCalendarsPane.selectCalendar(editExistingCalendarsData.name);
 
-      const daysOfTheWeek = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
-      const hoursOfOperationAccordion = Pane(editExistingCalendarsData.name).find(Accordion('Hours of operation'));
-
-      const jobs = [];
-
-      daysOfTheWeek.forEach(day => {
-        const row = hoursOfOperationAccordion.find(MultiColumnListRow({ content: including(day), isContainer: true }));
-        jobs.push(row.exists());
-        jobs.push(row.find(MultiColumnListCell({ column: 'Open', content: 'Closed' })).exists());
-      });
-
-      cy.do(jobs);
+      PaneActions.individualCalendarPane.checkEditExistingCalendars(editExistingCalendarsData);
     });
   });
 });

@@ -1,6 +1,11 @@
-import { including, Link, TextField, Pane, MultiColumnListCell, Button } from '../../../interactors';
+import { createCalendar,
+  openCalendarSettings, deleteCalendar } from '../../support/fragments/calendar/calendar';
 
 import calendarFixtures from '../../support/fragments/calendar/calendar-e2e-test-values';
+import PaneActions from '../../support/fragments/calendar/pane-actions';
+import CreateCalendarForm from '../../support/fragments/calendar/create-calendar-form';
+import TestTypes from '../../support/dictionary/testTypes';
+import devTeams from '../../support/dictionary/devTeams';
 
 const testCalendar = calendarFixtures.calendar;
 
@@ -12,31 +17,30 @@ describe('Duplicate an existing calendar to make a new one', () => {
 
   before(() => {
     // login
-    cy.openCalendarSettings(false);
+    openCalendarSettings(false);
+
+    // get admin token to use in okapiRequest to retrieve service points
+    cy.getAdminToken();
 
     // create test calendar
-    cy.createCalendar(testCalendar, (calResponse) => {
+    createCalendar(testCalendar, (calResponse) => {
       testCalendarResponse = calResponse.body;
     });
 
-    cy.openCalendarSettings();
+    openCalendarSettings();
   });
 
   after(() => {
     // delete test calendar
-    // cy.deleteCalendar(testCalendarResponse.id);
+    deleteCalendar(testCalendarResponse.id);
   });
 
 
-  it('should allow user to duplicate an existing calendar', () => {
-    cy.do([
-      Pane('Calendar').find(Link('All calendars')).click(),
-      Pane('All calendars').find(MultiColumnListCell(testCalendarResponse.name)).click(),
-      Pane(testCalendarResponse.name).clickAction('Duplicate'),
-      TextField(including('Calendar name')).fillIn(duplicateCalendarName),
-      Button('Save and close').click()
-    ]);
-
+  it('C360953 Copy -> Duplicate an existing calendar to make a new one (bama)', { tags: [TestTypes.smoke, devTeams.bama] }, () => {
+    PaneActions.allCalendarsPane.openAllCalendarsPane();
+    PaneActions.allCalendarsPane.selectCalendar(testCalendarResponse.name);
+    PaneActions.individualCalendarPane.selectDuplicateAction({ calendarName: testCalendarResponse.name });
+    CreateCalendarForm.editNameAndSave({ newCalendarName: duplicateCalendarName });
 
 
     // intercept http request
@@ -52,15 +56,13 @@ describe('Duplicate an existing calendar to make a new one', () => {
 
     // check that duplicate calendar exists in list of calendars
     cy.wait('@createDuplicateCalendar').then(() => {
-      cy.deleteCalendar(testCalendarResponse.id);
-      cy.openCalendarSettings();
-      cy.do([
-        Pane('Calendar').find(Link('All calendars')).click(),
-        Pane('All calendars').find(MultiColumnListCell(duplicateCalendarName)).exists()
-      ]);
+      deleteCalendar(testCalendarResponse.id);
+      openCalendarSettings();
+      PaneActions.allCalendarsPane.openAllCalendarsPane();
+      PaneActions.allCalendarsPane.checkCalendarExists(duplicateCalendarName);
 
       // delete duplicate calendar
-      cy.deleteCalendar(duplicateCalendarID);
+      deleteCalendar(duplicateCalendarID);
     });
   });
 });

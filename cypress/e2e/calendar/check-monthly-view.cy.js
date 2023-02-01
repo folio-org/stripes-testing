@@ -1,6 +1,11 @@
-import { Pane, CalendarCell, Headline, Button, including, Link, not } from '../../../interactors';
+import { deleteServicePoint, createServicePoint, createCalendar,
+  openCalendarSettings, deleteCalendar } from '../../support/fragments/calendar/calendar';
+
 
 import calendarFixtures from '../../support/fragments/calendar/calendar-e2e-test-values';
+import PaneActions from '../../support/fragments/calendar/pane-actions';
+import TestTypes from '../../support/dictionary/testTypes';
+import devTeams from '../../support/dictionary/devTeams';
 
 const testServicePoint = calendarFixtures.servicePoint;
 const testCalendar = calendarFixtures.calendar;
@@ -13,104 +18,37 @@ describe('Checking the view of calendar on "Monthly calendar view" tab', () => {
     // login and open calendar settings
     cy.loginAsAdmin();
 
+    // get admin token to use in okapiRequest to retrieve service points
+    cy.getAdminToken();
+
+
     // reset db state
-    cy.deleteServicePoint(testServicePoint.id, false);
+    deleteServicePoint(testServicePoint.id, false);
 
     // create test service point and calendar
-    cy.createServicePoint(testServicePoint, (response) => {
+    createServicePoint(testServicePoint, (response) => {
       testCalendar.assignments = [response.body.id];
 
-      cy.createCalendar(testCalendar, (calResponse) => {
+      createCalendar(testCalendar, (calResponse) => {
         testCalendarResponse = calResponse.body;
       });
+      openCalendarSettings();
+      PaneActions.monthlyCalendarView.selectCalendarByServicePoint(testServicePoint.name);
     });
-  });
-
-  beforeEach(() => {
-    cy.openCalendarSettings();
-    cy.do([
-      Pane('Calendar').find(Link('Monthly calendar view')).click(),
-      Pane('Monthly calendar view').find(Link(testServicePoint.name)).click()
-    ]);
   });
 
   after(() => {
     // delete test calendar
-    cy.deleteCalendar(testCalendarResponse.id);
+    deleteCalendar(testCalendarResponse.id);
   });
 
 
-  it('tests if the "previous" and "next" buttons of the calendar works as expected', () => {
-    const months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August',
-      'September', 'October', 'November', 'December'];
-    const currentDate = new Date();
-    cy.do([
-      Pane(testServicePoint.name).find(Headline(including(months[currentDate.getMonth()]))).exists(),
-    ]);
+  it('C360944 Checking the view of calendar on "Monthly calendar view" tab (bama)', { tags: [TestTypes.smoke, devTeams.bama] }, () => {
+    PaneActions.monthlyCalendarView.checkPrevAndNextButtons({ servicePointName: testServicePoint.name });
 
-    const prevMonth = months[(((currentDate.getMonth() - 1) % 12) + 12) % 12];
-
-    cy.do([
-      Pane(testServicePoint.name).find(Button({ ariaLabel: 'arrow-left' })).click(),
-      Pane(testServicePoint.name).find(Headline(including(prevMonth))).exists()
-    ]);
-
-    cy.do([
-      Pane(testServicePoint.name).find(Button({ ariaLabel: 'arrow-right' })).click(),
-      Pane(testServicePoint.name).find(Headline(including(months[(currentDate.getMonth())]))).exists()
-    ]);
-
-    const nextMonth = months[(((currentDate.getMonth() + 1) % 12) + 12) % 12];
-
-    cy.do([
-      Pane(testServicePoint.name).find(Button({ ariaLabel: 'arrow-right' })).click(),
-      Pane(testServicePoint.name).find(Headline(including(nextMonth))).exists()
-    ]);
-  });
-
-  it('checks that the contents of the calendar cells are correct', () => {
-    /**
-     * Preconditions:
-     *  testCalendar is only open for all days in the current month
-     */
-    const days = [
-      'sunday',
-      'monday',
-      'tuesday',
-      'wednesday',
-      'thursday',
-      'friday',
-      'saturday'
-    ];
-
-
-    const [startYear, startMonth, startDay] = testCalendar.startDate.split('-');
-    const startDateObj = new Date(parseInt(startYear, 10), parseInt(startMonth, 10) - 1, parseInt(startDay, 10));
-    let dayOfWeekIndex = startDateObj.getUTCDay(); // to keep track of current day of the week
-    let currDay = 1; // to keep track of dayLabel property of "CalendarCell"s
-
-    let currDate = `${startYear}-${startMonth}-${('0' + startDay).slice(-2)}`; // to keep track of current date so exceptions can be verified
-    const lastDay = parseInt(testCalendar.endDate.split('-')[2], 10);
-
-    // check adjacent days cells - every adjacent day cell's content must be equal to "Closed"
-    cy.do(
-      CalendarCell({ inCurrentMonth: false, content: not('Closed') }).absent()
-    );
-
-
-    while (currDay <= lastDay) {
-      // if the current date is an exception...
-      if (currDate in monthlyCalendarViewExpectedUIValues.exceptions) {
-        const content = monthlyCalendarViewExpectedUIValues.exceptions[currDate];
-        cy.do(CalendarCell({ dayLabel: currDay.toString(), content }).exists());
-      } else {
-        cy.do(CalendarCell({ dayLabel: currDay.toString(), content: monthlyCalendarViewExpectedUIValues.days[days[dayOfWeekIndex]] }).exists());
-      }
-
-      // update necessary variables
-      currDay += 1;
-      dayOfWeekIndex = (dayOfWeekIndex + 1) % 7;
-      currDate = `${startYear}-${startMonth}-${('0' + currDay.toString()).slice(-2)}`;
-    }
+    PaneActions.monthlyCalendarView.checkCalendarCells({
+      calendar: testCalendar,
+      monthlyCalendarViewExpectedUIValues
+    });
   });
 });

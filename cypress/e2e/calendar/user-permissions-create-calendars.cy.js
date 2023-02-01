@@ -1,11 +1,11 @@
-import {
-  MultiColumnListCell, PaneHeader, Pane, Button,
-  including, Link
-} from '../../../interactors';
-
+import { deleteServicePoint, createCalendar,
+  openCalendarSettings, deleteCalendar, createServicePoint } from '../../support/fragments/calendar/calendar';
 
 import calendarFixtures from '../../support/fragments/calendar/calendar-e2e-test-values';
 import permissions from '../../support/dictionary/permissions';
+import PaneActions from '../../support/fragments/calendar/pane-actions';
+import TestTypes from '../../support/dictionary/testTypes';
+import devTeams from '../../support/dictionary/devTeams';
 
 const testServicePoint = calendarFixtures.servicePoint;
 const testCalendar = calendarFixtures.calendar;
@@ -17,25 +17,29 @@ describe('User with Settings (Calendar): Can create and assign new calendars', (
   before(() => {
     // login as admin so necessary state can be created
     cy.loginAsAdmin();
+
+    // get admin token to use in okapiRequest to retrieve service points
+    cy.getAdminToken();
+
     // reset db state
-    cy.deleteServicePoint(testServicePoint.id, false);
+    deleteServicePoint(testServicePoint.id, false);
 
     // create test service point
-    cy.createServicePoint(testServicePoint, (response) => {
+    createServicePoint(testServicePoint, (response) => {
       testCalendar.assignments = [response.body.id];
 
-      cy.createCalendar(testCalendar, (calResponse) => {
+      createCalendar(testCalendar, (calResponse) => {
         testCalendarResponse = calResponse.body;
       });
     });
     cy.logout();
 
-    cy.openCalendarSettings();
+    openCalendarSettings();
     cy.createTempUser([
       permissions.calendarCreate.gui,
     ]).then(userProperties => {
       cy.login(userProperties.username, userProperties.password);
-      cy.openCalendarSettings();
+      openCalendarSettings();
     });
   });
 
@@ -44,32 +48,29 @@ describe('User with Settings (Calendar): Can create and assign new calendars', (
 
     // // login as admin to teardown testing data
     cy.loginAsAdmin();
-    cy.deleteServicePoint(testServicePoint.id, true);
-    cy.deleteCalendar(testCalendarResponse.id);
+    deleteServicePoint(testServicePoint.id, true);
+    deleteCalendar(testCalendarResponse.id);
   });
 
 
-  it('checks if user can create and assign calendars', () => {
-    const PaneActionButton = Button({ className: including('actionMenuToggle') });
-    cy.do([
-      Pane('Calendar').find(Link('All calendars')).click(),
-      Pane('All calendars').find(PaneActionButton).exists(),
-      Pane('All calendars').find(PaneActionButton).click(),
-      Button('New').exists(),
+  it('C365116 Permissions -> User with Settings (Calendar): Can create and assign new calendars (bama)', { tags: [TestTypes.smoke, devTeams.bama] }, () => {
+    PaneActions.allCalendarsPane.openAllCalendarsPane();
+    PaneActions.allCalendarsPane.checkActionMenuPresent();
+    PaneActions.allCalendarsPane.openActionMenu();
+    PaneActions.newButtonExists();
 
-      Pane('All calendars').find(MultiColumnListCell(testCalendar.name)).click(),
-      Pane(testCalendar.name).exists(),
-      Pane(testCalendar.name).find(PaneActionButton).exists(),
-      Pane(testCalendar.name).find(PaneActionButton).click(),
-      Button('Duplicate').exists(),
+    PaneActions.allCalendarsPane.selectCalendar(testCalendar.name);
+    PaneActions.checkPaneExists(testCalendar.name);
+    PaneActions.individualCalendarPane.checkActionMenuPresent(testCalendar.name);
+    PaneActions.individualCalendarPane.openActionMenu(testCalendar.name);
+    PaneActions.duplicateButtonExists();
 
-      Pane('Calendar').find(Link('Current calendar assignments')).click(),
-      PaneHeader('Current calendar assignments').find(Button('New')).exists(),
+    PaneActions.currentCalendarAssignmentsPane.openCurrentCalendarAssignmentsPane();
+    PaneActions.currentCalendarAssignmentsPane.checkNewButtonExists();
 
-      Pane('Current calendar assignments').find(MultiColumnListCell(testServicePoint.name)).click(),
-      Pane(testCalendar.name).find(PaneActionButton).exists(),
-      Pane(testCalendar.name).find(PaneActionButton).click(),
-      Button('Duplicate').exists()
-    ]);
+    PaneActions.currentCalendarAssignmentsPane.selectCalendarByServicePoint(testServicePoint.name);
+    PaneActions.individualCalendarPane.checkActionMenuPresent(testCalendar.name);
+    PaneActions.individualCalendarPane.openActionMenu(testCalendar.name);
+    PaneActions.duplicateButtonExists();
   });
 });

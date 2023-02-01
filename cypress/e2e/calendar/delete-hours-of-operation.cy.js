@@ -1,8 +1,10 @@
-import {
-  MultiColumnListCell, MultiColumnListRow, Pane, Button, Accordion,
-  including, Link
-} from '../../../interactors';
+import { deleteServicePoint, createServicePoint, createCalendar,
+  openCalendarSettings, deleteCalendar } from '../../support/fragments/calendar/calendar';
 import calendarFixtures from '../../support/fragments/calendar/calendar-e2e-test-values';
+import PaneActions from '../../support/fragments/calendar/pane-actions';
+import CreateCalendarForm from '../../support/fragments/calendar/create-calendar-form';
+import TestTypes from '../../support/dictionary/testTypes';
+import devTeams from '../../support/dictionary/devTeams';
 
 
 const testServicePoint = calendarFixtures.servicePoint;
@@ -26,56 +28,35 @@ describe('Delete existing hours of operation for service point', () => {
     // login
     cy.loginAsAdmin();
 
+    // get admin token to use in okapiRequest to retrieve service points
+    cy.getAdminToken();
+
     // reset db state
-    cy.deleteServicePoint(testServicePoint.id, false);
+    deleteServicePoint(testServicePoint.id, false);
 
     // create test service point
-    cy.createServicePoint(testServicePoint, (response) => {
+    createServicePoint(testServicePoint, (response) => {
       testCalendar.assignments = [response.body.id];
 
-      cy.createCalendar(testCalendar, (calResponse) => {
+      createCalendar(testCalendar, (calResponse) => {
         testCalendarResponse = calResponse.body;
       });
-      cy.openCalendarSettings();
+      openCalendarSettings();
     });
-
-    cy.openCalendarSettings();
   });
 
   after(() => {
-    cy.deleteServicePoint(testServicePoint.id, true);
-    cy.deleteCalendar(testCalendarResponse.id);
+    deleteServicePoint(testServicePoint.id, true);
+    deleteCalendar(testCalendarResponse.id);
   });
 
 
-  it('deletes hours of operation for an open day', () => {
-    cy.do([
-      Pane('Calendar').find(Link('Current calendar assignments')).click(),
-      Pane('Current calendar assignments').find(MultiColumnListCell(testServicePoint.name, { column: 'Service point' })).click(),
-      Pane(testCalendar.name).find(Accordion('Hours of operation')).find(MultiColumnListRow({ content: including(testOpeningHours.startDay), isContainer: true }))
-        .find(MultiColumnListCell({ column: 'Open', content: '9:00 AM' }))
-        .exists(),
-      Pane(testCalendar.name).find(Accordion('Hours of operation')).find(MultiColumnListRow({ content: including(testOpeningHours.endDay), isContainer: true }))
-        .find(MultiColumnListCell({ column: 'Close', content: '1:00 PM' }))
-        .exists(),
-      Pane(testCalendar.name).clickAction('Edit')
-    ]);
+  it('C2306 Delete -> Delete existing hours of operation for service point (bama)', { tags: [TestTypes.smoke, devTeams.bama] }, () => {
+    PaneActions.currentCalendarAssignmentsPane.openCurrentCalendarAssignmentsPane();
+    PaneActions.currentCalendarAssignmentsPane.selectCalendarByServicePoint(testServicePoint.name);
+    PaneActions.individualCalendarPane.selectEditAction({ calendarName: testCalendar.name });
 
-    cy.url().should('match', /\/settings\/calendar\/active\/edit\/.+$/g);
-
-
-    cy.do([
-      Accordion('Hours of operation').find(MultiColumnListRow({ index: 1 })).find(MultiColumnListCell({ column: 'Actions' }))
-        .find(Button({ ariaLabel: 'trash' }))
-        .click(),
-    ]);
-
-    cy.do([
-      Accordion('Hours of operation').find(MultiColumnListRow({ index: 3 })).absent(),
-      Button('Save and close').click()
-    ]);
-
-
+    CreateCalendarForm.deleteHoursOfOperationAndSave();
 
     // intercept http request
     cy.intercept(Cypress.env('OKAPI_HOST') + '/calendar/calendars/' + testCalendarResponse.id, (req) => {
@@ -88,21 +69,14 @@ describe('Delete existing hours of operation for service point', () => {
 
 
     cy.wait('@editCalendar').then(() => {
-      cy.openCalendarSettings();
-      cy.do([
-        Pane('Calendar').find(Link('All calendars')).click(),
-        Pane('All calendars').find(MultiColumnListCell(testCalendar.name)).click(),
-      ]);
+      openCalendarSettings();
+      PaneActions.allCalendarsPane.openAllCalendarsPane();
+      PaneActions.allCalendarsPane.checkCalendarExists(testCalendar.name);
 
-
-      cy.do([
-        Pane(testCalendar.name).find(Accordion('Hours of operation')).find(MultiColumnListRow({ content: including(testOpeningHours.startDay), isContainer: true }))
-          .find(MultiColumnListCell({ column: 'Open', content: 'Closed' }))
-          .exists(),
-        Pane(testCalendar.name).find(Accordion('Hours of operation')).find(MultiColumnListRow({ content: including(testOpeningHours.endDay), isContainer: true }))
-          .find(MultiColumnListCell({ column: 'Open', content: 'Closed' }))
-          .exists(),
-      ]);
+      PaneActions.individualCalendarPane.checkDeleteHoursOfOperation({
+        calendarName: testCalendar.name,
+        openingHoursData: testOpeningHours
+      });
     });
   });
 });

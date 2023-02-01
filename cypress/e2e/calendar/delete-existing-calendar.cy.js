@@ -1,62 +1,53 @@
-import {
-  MultiColumnListCell, Modal, Pane, Button, Link
-} from '../../../interactors';
+import { deleteServicePoint, createServicePoint, createCalendar,
+  openCalendarSettings } from '../../support/fragments/calendar/calendar';
 import calendarFixtures from '../../support/fragments/calendar/calendar-e2e-test-values';
+import PaneActions from '../../support/fragments/calendar/pane-actions';
+import ModalFragments from '../../support/fragments/calendar/modal-fragments';
+import TestTypes from '../../support/dictionary/testTypes';
+import devTeams from '../../support/dictionary/devTeams';
 
 const testServicePoint = calendarFixtures.servicePoint;
 const testCalendar = calendarFixtures.calendar;
 
 
 describe('Delete existing calendars', () => {
-  let testCalendarResponse;
   before(() => {
     // login
     cy.loginAsAdmin();
 
+    // get admin token to use in okapiRequest to retrieve service points
+    cy.getAdminToken();
+
     // reset db state
-    cy.deleteServicePoint(testServicePoint.id, false);
+    deleteServicePoint(testServicePoint.id, false);
 
     // create test service point
-    cy.createServicePoint(testServicePoint, (response) => {
+    createServicePoint(testServicePoint, (response) => {
       testCalendar.assignments = [response.body.id];
 
-      cy.createCalendar(testCalendar, (calResponse) => {
-        testCalendarResponse = calResponse.body;
-      });
-      cy.openCalendarSettings();
+      createCalendar(testCalendar);
+      openCalendarSettings();
     });
-
-    cy.openCalendarSettings();
   });
 
   after(() => {
-    cy.deleteServicePoint(testServicePoint.id, true);
+    deleteServicePoint(testServicePoint.id, true);
   });
 
 
-  it('deletes a single existing calendar', () => {
-    cy.do([
-      Pane('Calendar').find(Link('All calendars')).click(),
-      Pane('All calendars').find(MultiColumnListCell(testCalendar.name)).click(),
-      Pane(testCalendar.name).clickAction('Delete'),
-      Modal('Confirm deletion').exists(),
-      Modal('Confirm deletion').find(Button('Cancel')).click(),
-      Modal('Confirm deletion').absent(),
-    ]);
+  it('C360943 Delete -> Delete existing calendar (bama)', { tags: [TestTypes.smoke, devTeams.bama] }, () => {
+    PaneActions.allCalendarsPane.openAllCalendarsPane();
+    PaneActions.allCalendarsPane.selectCalendar(testCalendar.name);
+    PaneActions.individualCalendarPane.selectDeleteAction(testCalendar.name);
+    ModalFragments.checkCalendarDeletionModalWithCancelButton();
 
-    cy.do([
-      Pane(testCalendar.name).exists(),
-      Pane(testCalendar.name).clickAction('Delete'),
-      Modal('Confirm deletion').exists(),
-      Modal('Confirm deletion').dismiss(),
-      Modal('Confirm deletion').absent(),
-    ]);
+    PaneActions.individualCalendarPane.checkIndividualCalendarPaneExists(testCalendar.name);
+    PaneActions.individualCalendarPane.selectDeleteAction(testCalendar.name);
+    ModalFragments.checkCalendarDeletionModalWithDismiss();
 
-    cy.do([
-      Pane(testCalendar.name).clickAction('Delete'),
-      Modal('Confirm deletion').exists(),
-      Modal('Confirm deletion').find(Button('Delete')).click(),
-      Pane('All calendars').find(MultiColumnListCell(testCalendar.name)).absent()
-    ]);
+    PaneActions.individualCalendarPane.selectDeleteAction(testCalendar.name);
+    ModalFragments.checkCalendarDeletionModalExists();
+    ModalFragments.clickDeleteButtonOnCalendarDeletionModal();
+    PaneActions.allCalendarsPane.checkCalendarAbsent(testCalendar.name);
   });
 });

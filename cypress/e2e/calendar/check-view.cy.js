@@ -1,8 +1,12 @@
-import { Button, MultiColumnListCell, Pane, including, Link } from '../../../interactors';
+import { deleteServicePoint, createServicePoint, createCalendar,
+  openCalendarSettings, deleteCalendar } from '../../support/fragments/calendar/calendar';
 import {
   checkCalendarFields, checkExpandButton, checkMenuAction
 } from '../../support/fragments/calendar/calendar-info-pane';
 import calendarFixtures from '../../support/fragments/calendar/calendar-e2e-test-values';
+import PaneActions from '../../support/fragments/calendar/pane-actions';
+import TestTypes from '../../support/dictionary/testTypes';
+import devTeams from '../../support/dictionary/devTeams';
 
 const testServicePoint = calendarFixtures.servicePoint;
 const testCalendar = calendarFixtures.calendar;
@@ -15,57 +19,49 @@ describe('Checking the view of calendar on "All Calendars" tab', () => {
     // login and open calendar settings
     cy.loginAsAdmin();
 
+    // get admin token to use in okapiRequest to retrieve service points
+    cy.getAdminToken();
+
     // reset db state
-    cy.deleteServicePoint(testServicePoint.id, false);
+    deleteServicePoint(testServicePoint.id, false);
 
     // create test service point and calendar
-    cy.createServicePoint(testServicePoint, (response) => {
+    createServicePoint(testServicePoint, (response) => {
       testCalendar.assignments = [response.body.id];
 
-      cy.createCalendar(testCalendar, (calResponse) => {
+      createCalendar(testCalendar, (calResponse) => {
         testCalendarResponse = calResponse.body;
       });
+      openCalendarSettings();
+      PaneActions.allCalendarsPane.openAllCalendarsPane();
     });
   });
 
 
   beforeEach(() => {
-    cy.openCalendarSettings();
-    cy.do(Pane('Calendar').find(Link('All calendars')).click());
+    openCalendarSettings();
+    PaneActions.allCalendarsPane.openAllCalendarsPane();
   });
 
   after(() => {
     // delete test calendar
-    cy.deleteCalendar(testCalendarResponse.id);
+    deleteCalendar(testCalendarResponse.id);
   });
 
 
-  it('should check that the appropriate actions menu exists in the "All calendars" tab', () => {
-    cy.do([
-      Pane('All calendars').find(Button({ className: including('actionMenuToggle') })).click(),
-      Button('New').exists(),
-      Button('Purge old calendars').exists(),
-    ]);
-  });
+  it('C360940 Checking the view of calendar on "All Calendars" tab (bama)', { tags: [TestTypes.smoke, devTeams.bama] }, () => {
+    PaneActions.allCalendarsPane.checkNewAndPurgeMenuItemsExist();
 
-  it('should check that the fields of the calendar exists', () => {
-    cy.do(
-      Pane('All calendars').find(MultiColumnListCell(testCalendarResponse.name)).click(),
-    );
+    PaneActions.allCalendarsPane.openAllCalendarsPane();
+    PaneActions.allCalendarsPane.selectCalendar(testCalendarResponse.name);
     checkCalendarFields(testCalendar, testServicePoint);
-  });
 
-  it('should check that the expand/collapse button works correctly', () => {
-    cy.do(
-      Pane('All calendars').find(MultiColumnListCell(testCalendarResponse.name, { column: 'Calendar name' })).click(),
-    );
+    PaneActions.allCalendarsPane.openAllCalendarsPane();
+    PaneActions.allCalendarsPane.selectCalendar(testCalendarResponse.name);
     checkExpandButton();
-  });
 
-  it('should check that the individual calendar tab has the appropriate menu actions', () => {
-    cy.do(
-      Pane('All calendars').find(MultiColumnListCell(testCalendarResponse.name, { column: 'Calendar name' })).click(),
-    );
+    PaneActions.allCalendarsPane.openAllCalendarsPane();
+    PaneActions.allCalendarsPane.selectCalendar(testCalendarResponse.name);
     checkMenuAction(testCalendarResponse.name);
   });
 });

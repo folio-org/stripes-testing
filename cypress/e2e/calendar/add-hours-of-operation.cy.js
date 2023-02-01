@@ -1,9 +1,11 @@
-import { Select } from '@interactors/html';
-import {
-  MultiColumnListCell, MultiColumnListRow, TimeDropdown, Pane, Button, IconButton, TextField, Accordion,
-  including, Link, matching
-} from '../../../interactors';
+import { deleteServicePoint, createServicePoint, createCalendar,
+  openCalendarSettings, deleteCalendar } from '../../support/fragments/calendar/calendar';
+
 import calendarFixtures from '../../support/fragments/calendar/calendar-e2e-test-values';
+import PaneActions from '../../support/fragments/calendar/pane-actions';
+import CreateCalendarForm from '../../support/fragments/calendar/create-calendar-form';
+import TestTypes from '../../support/dictionary/testTypes';
+import devTeams from '../../support/dictionary/devTeams';
 
 const testServicePoint = calendarFixtures.servicePoint;
 const testCalendar = calendarFixtures.calendar;
@@ -15,69 +17,39 @@ describe('Add new hours of operation for service point', () => {
   let testCalendarResponse;
   before(() => {
     // login and open calendar settings
-    cy.openCalendarSettings(false);
+    openCalendarSettings(false);
+
+    // get admin token to use in okapiRequest to retrieve service points
+    cy.getAdminToken();
 
     // reset db state
-    cy.deleteServicePoint(testServicePoint.id, false);
+    deleteServicePoint(testServicePoint.id, false);
 
     // create test service point and calendar
-    cy.createServicePoint(testServicePoint, (response) => {
+    createServicePoint(testServicePoint, (response) => {
       testCalendar.assignments = [response.body.id];
 
-      cy.createCalendar(testCalendar, (calResponse) => {
+      createCalendar(testCalendar, (calResponse) => {
         testCalendarResponse = calResponse.body;
       });
-      cy.openCalendarSettings();
+      openCalendarSettings();
     });
   });
 
 
   after(() => {
     // delete test calendar
-    cy.deleteCalendar(testCalendarResponse.id);
+    deleteCalendar(testCalendarResponse.id);
   });
 
 
-  it('adds new hours of operation for service point', () => {
-    cy.do([
-      Pane('Calendar').find(Link('Current calendar assignments')).click(),
-      Pane('Current calendar assignments').find(MultiColumnListCell(testServicePoint.name, { column: 'Service point' })).click(),
-      Pane(testCalendar.name).clickAction('Edit')
-    ]);
+  it('C360942 Edit -> Add new hours of operation for service point (bama)', { tags: [TestTypes.smoke, devTeams.bama] }, () => {
+    PaneActions.currentCalendarAssignmentsPane.openCurrentCalendarAssignmentsPane();
+    PaneActions.currentCalendarAssignmentsPane.selectCalendarByServicePoint(testServicePoint.name);
+    PaneActions.currentCalendarAssignmentsPane.clickEditAction(testCalendar.name);
 
-    cy.url().should('match', /\/settings\/calendar\/active\/edit\/.+$/g);
 
-    cy.do([
-      Accordion('Hours of operation').find(Button('Add row')).click(),
-      Accordion('Hours of operation').find(MultiColumnListRow({ index: 6 })).find(MultiColumnListCell({ column: 'Status' })).find(Select())
-        .choose(addHoursOfOperationData.status),
-      Accordion('Hours of operation').find(MultiColumnListRow({ index: 6 })).find(MultiColumnListCell({ column: 'Start day' })).find(Select())
-        .choose(addHoursOfOperationData.startDay),
-      Accordion('Hours of operation').find(MultiColumnListRow({ index: 6 })).find(MultiColumnListCell({ column: 'End day' })).find(Select())
-        .choose(addHoursOfOperationData.endDay),
-    ]);
-
-    // if status is open, set start time and end time
-    if (addHoursOfOperationData.status === 'Open') {
-      cy.do([
-        Accordion('Hours of operation').find(MultiColumnListRow({ index: 6 })).find(MultiColumnListCell({ column: 'Start time' }))
-          .find(TextField())
-          .find(IconButton({ id: matching(/^timepicker-toggle-button-/) }))
-          .click(),
-        TimeDropdown().exists(),
-        TimeDropdown().setTimeAndClose(addHoursOfOperationData.startTime),
-        Accordion('Hours of operation').find(MultiColumnListRow({ index: 6 })).find(MultiColumnListCell({ column: 'End time' }))
-          .find(TextField())
-          .find(IconButton({ id: matching(/^timepicker-toggle-button-/) }))
-          .click(),
-        TimeDropdown().exists(),
-        TimeDropdown().setTimeAndClose(addHoursOfOperationData.endTime),
-      ]);
-    }
-
-    cy.do(
-      Button('Save and close').click()
-    );
+    CreateCalendarForm.addHoursOfOperation(addHoursOfOperationData);
 
     // intercept http request
     cy.intercept(Cypress.env('OKAPI_HOST') + '/calendar/calendars/' + testCalendarResponse.id, (req) => {
@@ -90,33 +62,13 @@ describe('Add new hours of operation for service point', () => {
 
     // check that new calendar exists in list of calendars
     cy.wait('@updateCalendar').then(() => {
-      cy.openCalendarSettings();
-      cy.do([
-        Pane('Calendar').find(Link('All calendars')).click(),
-        Pane('All calendars').find(MultiColumnListCell(testCalendar.name)).click()
-      ]);
+      openCalendarSettings();
+      PaneActions.allCalendarsPane.selectCalendar(testCalendar.name);
 
-      const jobs = [];
-
-      Object.keys(addHoursOfOperationExpectedUIValues).forEach(day => {
-        const row = Pane(testCalendar.name)
-          .find(Accordion('Hours of operation'))
-          .find(MultiColumnListRow({ content: including(day), isContainer: true }));
-        jobs.push(
-          row.find(MultiColumnListCell({
-            column: 'Open',
-            content: including(addHoursOfOperationExpectedUIValues[day].startTime)
-          }))
-            .exists(),
-          row.find(MultiColumnListCell({
-            column: 'Close',
-            content: including(addHoursOfOperationExpectedUIValues[day].endTime)
-          }))
-            .exists()
-        );
+      PaneActions.individualCalendarPane.checkHoursOfOperation({
+        calendarName: testCalendar.name,
+        addHoursOfOperationExpectedUIValues
       });
-
-      cy.do(jobs);
     });
   });
 });

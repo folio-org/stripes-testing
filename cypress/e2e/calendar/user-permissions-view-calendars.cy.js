@@ -5,6 +5,8 @@ import calendarFixtures from '../../support/fragments/calendar/calendar-e2e-test
 import { deleteServicePoint, createServicePoint, createCalendar,
   openCalendarSettings, deleteCalendar } from '../../support/fragments/calendar/calendar';
 import permissions from '../../support/dictionary/permissions';
+import TestTypes from '../../support/dictionary/testTypes';
+import devTeams from '../../support/dictionary/devTeams';
 
 const testServicePoint = calendarFixtures.servicePoint;
 const testCalendar = calendarFixtures.calendar;
@@ -16,6 +18,9 @@ describe('User with Settings (Calendar): Can view existing calendars', () => {
   before(() => {
     // login as admin so necessary state can be created
     cy.loginAsAdmin();
+
+    // get admin token to use in okapiRequest to retrieve service points
+    cy.getAdminToken();
 
     // reset db state
     deleteServicePoint(testServicePoint.id, false);
@@ -49,11 +54,12 @@ describe('User with Settings (Calendar): Can view existing calendars', () => {
   });
 
 
-  it('views existing calendar', () => {
+  it('C361625 Permissions -> User with Settings (Calendar): Can view existing calendars (bama)', { tags: [TestTypes.smoke, devTeams.bama] }, () => {
     PaneActions.allCalendarsPane.checkActionMenuAbsent();
     PaneActions.allCalendarsPane.selectCalendar(testCalendar.name);
     PaneActions.individualCalendarPane.checkActionMenuAbsent(testCalendar.name);
-    PaneActions.currentCalendarAssignmentsPane.newButtonAbsent();
+    PaneActions.currentCalendarAssignmentsPane.openCurrentCalendarAssignmentsPane();
+    PaneActions.currentCalendarAssignmentsPane.checkNewButtonAbsent();
     PaneActions.currentCalendarAssignmentsPane.selectCalendar();
     PaneActions.individualCalendarPane.checkActionMenuAbsent(testCalendar.name);
   });
