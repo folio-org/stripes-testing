@@ -1,4 +1,3 @@
-import { log } from 'debug';
 import {
   Button,
   Checkbox,
@@ -253,6 +252,7 @@ export default {
         const fileId = response.body.fileDefinitions[0].id;
         const jobExecutionId = response.body.fileDefinitions[0].jobExecutionId;
 
+        // convert file content in binary format (it's correct format for import)
         cy.fixture(fileName, 'binary')
           .then(binary => Cypress.Blob.binaryStringToBlob(binary))
           .then(blob => {
@@ -265,13 +265,16 @@ export default {
             });
           });
 
-        cy.wait(10000);
+        // need to wait until file will be converted and uploaded
+        cy.wait(1500);
         const jobProfileId = 'e34d7b92-9b83-11eb-a8b3-0242ac130003';
         cy.okapiRequest({
           path: `data-import/uploadDefinitions/${uploadDefinitionId}`,
           isDefaultSearchParamsRequired: false
         })
           .then(res => {
+            const sourcePath = res.body.fileDefinitions[0].sourcePath;
+
             cy.okapiRequest({
               path: `data-import/uploadDefinitions/${uploadDefinitionId}/processFiles`,
               method: 'POST',
@@ -284,7 +287,7 @@ export default {
                   fileDefinitions: [
                     {
                       id: fileId,
-                      sourcePath: response.body.fileDefinitions[0].sourcePath,
+                      sourcePath,
                       name: 'oneMarcBib.mrc',
                       status: 'UPLOADED',
                       jobExecutionId,
@@ -306,5 +309,5 @@ export default {
             });
           });
       });
-  },
+  }
 };
