@@ -8,14 +8,13 @@ import Receiving from '../../support/fragments/receiving/receiving';
 import TopMenu from '../../support/fragments/topMenu';
 import Helper from '../../support/fragments/finance/financeHelper';
 import InventorySearchAndFilter from '../../support/fragments/inventory/inventorySearchAndFilter';
-import InventoryInstance from '../../support/fragments/inventory/inventoryInstance';
 import InteractorsTools from '../../support/utils/interactorsTools';
 import OrdersHelper from '../../support/fragments/orders/ordersHelper';
 import Organizations from '../../support/fragments/organizations/organizations';
 import NewOrganization from '../../support/fragments/organizations/newOrganization';
 import OrderLines from '../../support/fragments/orders/orderLines';
 import Users from '../../support/fragments/users/users';
-import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
+import ItemRecordView from '../../support/fragments/inventory/itemRecordView';
 
 describe('orders: Receive piece from Order', () => {
   const order = { 
@@ -83,6 +82,6 @@ describe('orders: Receive piece from Order', () => {
         cy.visit(TopMenu.inventoryPath);
         InventorySearchAndFilter.switchToItem();
         InventorySearchAndFilter.searchByParameter('Barcode', barcode);
-        InventoryInstance.checkHoldingsTable(OrdersHelper.onlineLibraryLocation, 0, caption, barcode, 'In process');
+        ItemRecordView.checkItemDetails(OrdersHelper.onlineLibraryLocation, barcode, 'In process');
   });
 });
