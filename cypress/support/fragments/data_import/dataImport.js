@@ -1,3 +1,4 @@
+import { log } from 'debug';
 import {
   Button,
   Checkbox,
@@ -250,68 +251,60 @@ export default {
       .then((response) => {
         const uploadDefinitionId = response.body.fileDefinitions[0].uploadDefinitionId;
         const fileId = response.body.fileDefinitions[0].id;
+        const jobExecutionId = response.body.fileDefinitions[0].jobExecutionId;
 
-        cy.readFile(fileName).then(fileContent => {
-          function convert() {
-            let output = '';
-            for (let i = 0; i < fileContent.length; i++) {
-              output += fileContent[i].charCodeAt(0).toString(2) + ' ';
-            }
-            return output;
-          }
-          const binaryContent = convert();
-          console.log(binaryContent);
-
-          cy.okapiRequest({
-            path: `data-import/uploadDefinitions/${uploadDefinitionId}/files/${fileId}`,
-            method: 'POST',
-            body: binaryContent,
-            isDefaultSearchParamsRequired: false,
-            contentTypeHeader: 'application/octet-stream'
-          })
-            .then((body) => {
-              console.log(body);
-
-              //     cy.okapiRequest({
-              //       path: `data-import/uploadDefinitions/${uploadDefinitionId}`,
-              //       isDefaultSearchParamsRequired: false
-              //     });
-              //     const jobProfileId = 'e34d7b92-9b83-11eb-a8b3-0242ac130003';
-
-              // cy.okapiRequest({
-              //   path: `data-import/uploadDefinitions/${uploadDefinitionId}/processFiles`,
-              //   method: 'POST',
-              //   body: {
-              //     uploadDefinition: {
-              //       id: uploadDefinitionId,
-              //       metaJobExecutionId,
-              //       status: 'LOADED',
-              //       createDate,
-              //       fileDefinitions: [
-              //         {
-              //           id: fileId,
-              //           sourcePath,
-              //           name: 'oneMarcBib.mrc',
-              //           status: 'UPLOADED',
-              //           jobExecutionId,
-              //           uploadDefinitionId,
-              //           createDate,
-              //           uploadedDate: createDate,
-              //           size: 2,
-              //           uiKey: uiKeyValue
-              //         }
-              //       ]
-              //     },
-              //     jobProfileInfo: {
-              //       id: jobProfileId,
-              //       name: 'Default - Create instance and SRS MARC Bib',
-              //       dataType: 'MARC'
-              //     }
-              //   },
-              //   isDefaultSearchParamsRequired: false
-              // });
+        cy.fixture(fileName, 'binary')
+          .then(binary => Cypress.Blob.binaryStringToBlob(binary))
+          .then(blob => {
+            cy.okapiRequest({
+              path: `data-import/uploadDefinitions/${uploadDefinitionId}/files/${fileId}`,
+              method: 'POST',
+              body: blob,
+              isDefaultSearchParamsRequired: false,
+              contentTypeHeader: 'application/octet-stream'
             });
-        });
+          });
+
+        cy.wait(10000);
+        const jobProfileId = 'e34d7b92-9b83-11eb-a8b3-0242ac130003';
+        cy.okapiRequest({
+          path: `data-import/uploadDefinitions/${uploadDefinitionId}`,
+          isDefaultSearchParamsRequired: false
+        })
+          .then(res => {
+            cy.okapiRequest({
+              path: `data-import/uploadDefinitions/${uploadDefinitionId}/processFiles`,
+              method: 'POST',
+              body: {
+                uploadDefinition: {
+                  id: uploadDefinitionId,
+                  metaJobExecutionId: res.body.metaJobExecutionId,
+                  status: 'LOADED',
+                  createDate: res.body.createDate,
+                  fileDefinitions: [
+                    {
+                      id: fileId,
+                      sourcePath: response.body.fileDefinitions[0].sourcePath,
+                      name: 'oneMarcBib.mrc',
+                      status: 'UPLOADED',
+                      jobExecutionId,
+                      uploadDefinitionId,
+                      createDate: res.body.createDate,
+                      uploadedDate: res.body.createDate,
+                      size: 2,
+                      uiKey: uiKeyValue
+                    }
+                  ]
+                },
+                jobProfileInfo: {
+                  id: jobProfileId,
+                  name: 'Default - Create instance and SRS MARC Bib',
+                  dataType: 'MARC'
+                }
+              },
+              isDefaultSearchParamsRequired: false
+            });
+          });
       });
   },
 };

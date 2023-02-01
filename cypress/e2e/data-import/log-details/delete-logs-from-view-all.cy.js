@@ -20,7 +20,7 @@ describe('ui-data-import: delete logs from "View all" page', () => {
 
         const fileName = 'oneMarcBib.mrc';
 
-        DataImport.uploadFileViaApi(`cypress/fixtures/${fileName}`);
+        DataImport.uploadFileViaApi(fileName);
       //   cy.login(userProperties.username, userProperties.password, {
       //     path: TopMenu.dataImportPath,
       //     waiter: DataImport.waitLoading
