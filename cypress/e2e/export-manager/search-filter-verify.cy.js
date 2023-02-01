@@ -6,7 +6,7 @@ import ExportManagerSearchPane from '../../support/fragments/exportManager/expor
 import Users from '../../support/fragments/users/users';
 import uuid from 'uuid';
 import moment from 'moment';
-import InventoryInstances from './../support/fragments/inventory/inventoryInstances';
+import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
 import getRandomPostfix from '../../support/utils/stringTools';
 import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
 import UserEdit from '../../support/fragments/users/userEdit';
@@ -64,12 +64,13 @@ describe('export manager', () => {
           userBarcode: userData.barcode,
         });
 
+        //Login and visit are separated, because otherwise user wasn't getting assigned permissions
         cy.login(userData.username, userData.password);
         cy.visit(TopMenu.circulationLogPath);
       });
 
     SearchPane.searchByCheckedOut();
-    SearchPane.exportResults('circ log');
+    SearchPane.exportResults();
     InteractorsTools.checkCalloutMessage(exportRequestedCalloutMessage);
     InteractorsTools.checkCalloutMessage(jobCompletedCalloutMessage);
 
