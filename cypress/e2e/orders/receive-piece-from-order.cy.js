@@ -36,8 +36,6 @@ describe('orders: Receive piece from Order', () => {
     cy.createOrderApi(order)
       .then((orderResponse) => {
         orderNumber = orderResponse.body.poNumber;
-
-        console.log(orderNumber);
         cy.loginAsAdmin({ path:TopMenu.ordersPath, waiter: Orders.waitLoading });
         Orders.searchByParameter('PO number', orderNumber);
         Orders.selectFromResultsList(orderNumber);
