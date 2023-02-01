@@ -5,4 +5,5 @@ export default {
   thunderjet: 'thunderjet',
   folijet: 'folijet',
   prokopovych: 'prokopovych',
+  bama: 'bama'
 };
