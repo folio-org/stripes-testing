@@ -3,6 +3,7 @@ import CalendarSortTableTools from '../../utils/uiCalendar_SortTableTools';
 
 
 
+
 export const assertCalendarsIsProperlySorted = (calendars, sortProperty) => {
   const jobs = [];
   const sortPropertyToHeaderName = {

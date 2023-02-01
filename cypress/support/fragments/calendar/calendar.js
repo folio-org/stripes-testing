@@ -1,6 +1,5 @@
 import localforage from 'localforage';
 import { Button, Link, Modal, MultiColumnListCell, Pane } from '../../../../interactors';
-import ServicePointsAPI from '../settings/tenant/servicePoints/servicePoints';
 
 
 export const openCalendarSettings = (isLoggedIn = true) => {
@@ -8,49 +7,6 @@ export const openCalendarSettings = (isLoggedIn = true) => {
     cy.loginAsAdmin();
   }
   cy.visit('settings/calendar');
-};
-
-export const createCalendar = (testCalendarRequestBody, callback = null) => {
-  cy.wrap(localforage.getItem('okapiSess')).then((okapiSess) => {
-    expect(okapiSess).to.have.property('token');
-    cy.request({
-      url: Cypress.env('OKAPI_HOST') + '/calendar/calendars',
-      method: 'POST',
-      body: testCalendarRequestBody,
-      headers: {
-        'x-okapi-tenant': Cypress.env('okapi_tenant'),
-        'x-okapi-token': okapiSess.token
-      },
-      failOnStatusCode: false
-    }).then((response) => {
-      if (response.status === 409) {
-        cy.deleteCalendarUI(testCalendarRequestBody.name);
-        cy.createCalendar(testCalendarRequestBody, callback);
-      } else {
-        expect(response.status).equals(201);
-        if (callback != null) {
-          callback(response);
-        }
-      }
-    });
-  });
-};
-
-export const deleteCalendar = (calendarID, callback = null) => {
-  cy.wrap(localforage.getItem('okapiSess')).then(okapiSess => {
-    expect(okapiSess).to.have.property('token');
-    cy.request({
-      url: Cypress.env('OKAPI_HOST') + '/calendar/calendars/' + calendarID,
-      method: 'DELETE',
-      headers: {
-        'x-okapi-tenant': Cypress.env('OKAPI_TENANT'),
-        'x-okapi-token': okapiSess.token
-      }
-    }).then((response) => {
-      expect(response.status).equals(204);
-      if (callback) { callback(response); }
-    });
-  });
 };
 
 export const deleteCalendarUI = (calendarName) => {
@@ -71,23 +27,53 @@ export const deleteCalendarUI = (calendarName) => {
   ]);
 };
 
-export const createServicePoint = (testServicePointRequestBody, callback) => {
-  ServicePointsAPI.createViaApi(testServicePointRequestBody)
-    .cy.wrap(localforage.getItem('okapiSess')).then((okapiSess) => {
-      expect(okapiSess).to.have.property('token');
-      cy.request({
-        url: Cypress.env('OKAPI_HOST') + '/service-points',
-        method: 'POST',
-        body: testServicePointRequestBody,
-        headers: {
-          'x-okapi-tenant': Cypress.env('okapi_tenant'),
-          'x-okapi-token': okapiSess.token
-        }
-      }).then((response) => {
+export const createCalendar = (testCalendarRequestBody, callback = null) => {
+  cy.wrap(localforage.getItem('okapiSess')).then((okapiSess) => {
+    expect(okapiSess).to.have.property('token');
+    cy.request({
+      url: Cypress.env('OKAPI_HOST') + '/calendar/calendars',
+      method: 'POST',
+      body: testCalendarRequestBody,
+      headers: {
+        'x-okapi-tenant': Cypress.env('okapi_tenant'),
+        'x-okapi-token': okapiSess.token
+      },
+      failOnStatusCode: false
+    }).then((response) => {
+      if (response.status === 409) {
+        deleteCalendarUI(testCalendarRequestBody.name);
+        createCalendar(testCalendarRequestBody, callback);
+      } else {
         expect(response.status).equals(201);
-        callback(response);
-      });
+        if (callback != null) {
+          callback(response);
+        }
+      }
     });
+  });
+};
+
+export const deleteCalendar = (calendarID, callback = null) => {
+  cy.okapiRequest({
+    method: 'DELETE',
+    path: 'calendar/calendars/' + calendarID,
+  }).then((response) => {
+    expect(response.status).equals(204);
+    if (callback) { callback(response); }
+  });
+};
+
+
+
+export const createServicePoint = (testServicePointRequestBody, callback) => {
+  cy.okapiRequest({
+    method: 'POST',
+    path: 'service-points',
+    body: testServicePointRequestBody,
+  }).then((response) => {
+    expect(response.status).equals(201);
+    if (callback) { callback(response); }
+  });
 };
 
 export const deleteServicePoint = (servicePointID, checkStatusCode = true, callback = null) => {
