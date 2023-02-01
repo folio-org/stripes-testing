@@ -268,12 +268,16 @@ export default {
     return cy.get('@tagContent');
   },
 
-  deleteTag(tag) {
-    cy.do(QuickMarcEditorRow({ tagValue: tag }).find(deleteFieldButton).click());
+  deleteTag(rowIndex) {
+    cy.do([
+      QuickMarcEditorRow({ index: rowIndex }).find(TextField({ name: including('.tag') })).fillIn(''),
+      QuickMarcEditorRow({ index: rowIndex }).find(deleteFieldButton).click(),
+    ]);
   },
 
   closeWithoutSaving() {
     cy.do(Button('Cancel').click());
+    cy.do(Button('Close without saving').click());
   },
 
   getSourceContent(quickmarcTagValue) { return defaultFieldValues.getSourceContent(quickmarcTagValue); },

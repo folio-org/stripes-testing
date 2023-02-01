@@ -220,11 +220,11 @@ describe('Triggers: Check Out, Loan due date change, Check in', () => {
     CirculationRules.deleteRuleViaApi(testData.baseRules);
     ServicePoints.deleteViaApi(testData.userServicePoint.id);
     cy.deleteLoanPolicy(loanPolicyId);
-    NoticePolicyApi.deleteApi(testData.ruleProps.n);
+    NoticePolicyApi.deleteViaApi(testData.ruleProps.n);
     Users.deleteViaApi(userData.userId);
     PatronGroups.deleteViaApi(patronGroup.id);
     cy.get('@items').each((item, index) => {
-      cy.deleteItem(item.itemId);
+      cy.deleteItemViaApi(item.itemId);
       cy.deleteHoldingRecordViaApi(itemsData.itemsWithSeparateInstance[index].holdingId);
       InventoryInstance.deleteInstanceViaApi(itemsData.itemsWithSeparateInstance[index].instanceId);
     });
@@ -263,7 +263,7 @@ describe('Triggers: Check Out, Loan due date change, Check in', () => {
       NewNoticePolicy.addNotice(noticePolicy.selectOptions(checkInTemplate), 2);
       NewNoticePolicy.save();
       NewNoticePolicy.waitLoading();
-      NewNoticePolicy.check(noticePolicy);
+      NewNoticePolicy.checkPolicyName(noticePolicy);
 
       cy.getNoticePolicy({ query: `name=="${noticePolicy.name}"` }).then((res) => {
         testData.ruleProps.n = res[0].id;

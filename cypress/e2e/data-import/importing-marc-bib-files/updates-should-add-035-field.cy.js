@@ -1,3 +1,4 @@
+/* eslint-disable cypress/no-unnecessary-waiting */
 import getRandomPostfix from '../../../support/utils/stringTools';
 import permissions from '../../../support/dictionary/permissions';
 import TestTypes from '../../../support/dictionary/testTypes';
@@ -124,7 +125,7 @@ describe('ui-data-import: Data Import Updates should add 035 field from 001/003,
 
   it('C358998 Data Import Updates should add 035 field from 001/003, if it is not HRID or already exists (folijet)',
     { tags: [TestTypes.smoke, DevTeams.folijet] }, () => {
-    // upload the first .mrc file
+      // upload the first .mrc file
       DataImport.uploadFile('marcFileForC358998ForCreate_1.mrc', firstMarcFileNameForCreate);
       JobProfiles.searchJobProfileForImport('Default - Create instance and SRS MARC Bib');
       JobProfiles.runImportFile();
@@ -262,6 +263,8 @@ describe('ui-data-import: Data Import Updates should add 035 field from 001/003,
 
       // open the second Instance in the Inventory and check 001, 003, 035 fields
       fields035.forEach(element => {
+        // need to wait until page will be opened in loop
+        cy.wait(8000);
         cy.visit(TopMenu.dataImportPath);
         Logs.openFileDetails(secondFileNameAfterUpload);
         FileDetails.openInstanceInInventory('Updated', element.instanceNumber);

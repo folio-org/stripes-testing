@@ -38,7 +38,7 @@ describe('bulk-edit', () => {
           cy.getItems({ query: `"barcode"=="${item.itemBarcode}"` })
             .then(inventoryItem => {
               inventoryItem.formerIds = [formerId];
-              ItemRecordView.editItem(inventoryItem);
+              ItemRecordView.editItemViaApi(inventoryItem);
             });
 
           FileManager.createFile(`cypress/fixtures/${validItemFormerIdsFileName}`, formerId);

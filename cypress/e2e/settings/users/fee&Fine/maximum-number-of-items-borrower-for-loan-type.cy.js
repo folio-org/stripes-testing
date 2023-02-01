@@ -157,7 +157,7 @@ describe('ui-users: Verify that maximum number of items borrowed for loan type (
     });
     cy.wrap(limitTestInstanceIds.holdingIds.forEach(holdingsId => {
       cy.wrap(holdingsId.itemIds.forEach(itemId => {
-        cy.deleteItem(itemId);
+        cy.deleteItemViaApi(itemId);
       })).then(() => {
         cy.deleteHoldingRecordViaApi(holdingsId.id);
       });
@@ -173,7 +173,7 @@ describe('ui-users: Verify that maximum number of items borrowed for loan type (
     });
     cy.wrap(testInstanceIds.holdingIds.forEach(holdingsId => {
       cy.wrap(holdingsId.itemIds.forEach(itemId => {
-        cy.deleteItem(itemId);
+        cy.deleteItemViaApi(itemId);
       })).then(() => {
         cy.deleteHoldingRecordViaApi(holdingsId.id);
       });

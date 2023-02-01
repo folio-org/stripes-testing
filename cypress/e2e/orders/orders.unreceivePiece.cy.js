@@ -11,7 +11,7 @@ import OrdersHelper from '../../support/fragments/orders/ordersHelper';
 import Organizations from '../../support/fragments/organizations/organizations';
 import DevTeams from '../../support/dictionary/devTeams';
 import NewOrganization from '../../support/fragments/organizations/newOrganization';
-import ItemView from '../../support/fragments/inventory/inventoryItem/itemView';
+import ItemRecordView from '../../support/fragments/inventory/itemRecordView';
 
 describe('orders: Unreceive piece from Order', () => {
   const order = { ...NewOrder.defaultOneTimeOrder };
@@ -61,7 +61,7 @@ describe('orders: Unreceive piece from Order', () => {
         cy.visit(TopMenu.inventoryPath);
         InventorySearchAndFilter.switchToItem();
         InventorySearchAndFilter.searchByParameter('Barcode', barcode);
-        ItemView.verifyItemStatus('On order');
+        ItemRecordView.verifyItemStatus('On order');
       });
   });
 });
