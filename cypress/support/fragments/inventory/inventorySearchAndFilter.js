@@ -44,6 +44,7 @@ const tagsButton = Button({ id: 'clickable-show-tags' });
 const tagsAccordionButton = instancesTagsSection.find(Button('Tags'));
 const emptyResultsMessage = 'Choose a filter or enter a search query to show results.';
 const browseButton = Button({ id: 'mode-navigation-browse' });
+const viewHoldingButton = Button('View holdings');
 
 const searchInstanceByHRID = (id) => {
   InventoryInstances.waitContentLoading();
@@ -445,5 +446,9 @@ export default {
           }
         });
       }).then(() => ({ instanceData }));
-  }
+  },
+
+  selectViewHoldings() {
+    cy.do(viewHoldingButton.click());
+  },
 };
