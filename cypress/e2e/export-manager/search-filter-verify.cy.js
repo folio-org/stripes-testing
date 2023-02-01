@@ -1,11 +1,11 @@
+import uuid from 'uuid';
+import moment from 'moment';
 import devTeams from '../../support/dictionary/devTeams';
 import permissions from '../../support/dictionary/permissions';
 import testTypes from '../../support/dictionary/testTypes';
 import TopMenu from '../../support/fragments/topMenu';
 import ExportManagerSearchPane from '../../support/fragments/exportManager/exportManagerSearchPane';
 import Users from '../../support/fragments/users/users';
-import uuid from 'uuid';
-import moment from 'moment';
 import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
 import getRandomPostfix from '../../support/utils/stringTools';
 import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
@@ -23,10 +23,10 @@ const itemData = {
   barcode: getRandomPostfix(),
   instanceTitle: `Instance ${getRandomPostfix()}`,
 };
-const lastWeek = DateTools.getFormattedDate({ date: DateTools.getLastWeekDateObj() }, 'MM/DD/YYYY')
-const today = DateTools.getFormattedDate({ date: new Date() }, 'MM/DD/YYYY')
-const todayWithoutPadding = DateTools.getFormattedDateWithSlashes({ date: new Date() })
-const nextWeek = DateTools.getFormattedDate({ date: DateTools.getFutureWeekDateObj() }, 'MM/DD/YYYY')
+const lastWeek = DateTools.getFormattedDate({ date: DateTools.getLastWeekDateObj() }, 'MM/DD/YYYY');
+const today = DateTools.getFormattedDate({ date: new Date() }, 'MM/DD/YYYY');
+const todayWithoutPadding = DateTools.getFormattedDateWithSlashes({ date: new Date() });
+const nextWeek = DateTools.getFormattedDate({ date: DateTools.getFutureWeekDateObj() }, 'MM/DD/YYYY');
 const exportRequestedCalloutMessage = 'Your Circulation log export has been requested. Please wait while the file is downloaded.';
 const jobCompletedCalloutMessage = 'Export job has been completed.';
 
