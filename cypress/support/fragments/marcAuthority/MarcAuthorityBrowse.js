@@ -100,19 +100,15 @@ export default {
 
   checkResultWithValueA(valueA, auth, valueAuth, ref, valueRef) {
     cy.expect(MultiColumnListCell({row: 0, content: `${valueA} would be here`}).exists());
-    cy.expect(MultiColumnListCell({row: 1, content: auth}).exists());
-    cy.expect(MultiColumnListCell({row: 1, content: valueAuth}).exists());
-    cy.expect(MultiColumnListCell({row: 2, content: ref}).exists());
-    cy.expect(MultiColumnListCell({row: 2, content: valueRef}).exists());
+    cy.expect(MultiColumnListCell({row: 1, content: auth, content: valueAuth}).exists());
+    cy.expect(MultiColumnListCell({row: 2, content: ref, content: valueRef}).exists());
   },
 
   checkResultWithValueB(auth, valueAuth, ref, valueRef) {
-    cy.expect(MultiColumnListCell({row: 0, content: auth}).exists());
-    cy.expect(MultiColumnListCell({row: 0, content: valueAuth}).exists());
-    cy.expect(MultiColumnListCell({row: 1, content: ref}).exists());
-    cy.expect(MultiColumnListCell({row: 1, content: valueRef}).exists());
+    cy.expect(MultiColumnListCell({row: 0, content: auth, content: valueAuth}).exists());
+    cy.expect(MultiColumnListCell({row: 1, content: ref, content: valueRef}).exists());
   },
-  
+
   checkHeadingReference: (headingReference) => {
     cy.expect([
       rootSection.find(MultiColumnListRow({ rowIndexInParent: `row-0` })).find(MultiColumnListCell({ content: `${headingReference}\xa0would be here` })),
