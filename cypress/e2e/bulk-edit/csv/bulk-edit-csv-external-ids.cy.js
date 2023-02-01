@@ -48,7 +48,7 @@ describe('bulk-edit', () => {
       BulkEditSearchPane.verifyPaneRecordsCount(1);
 
       BulkEditActions.downloadMatchedResults(matchRecordsFileName);
-      BulkEditActions.prepareValidBulkEditFile(matchRecordsFileName, importFileName, user.username, 'test');
+      BulkEditActions.prepareValidBulkEditFile(matchRecordsFileName, importFileName, user.username, 'test-external-id');
 
       BulkEditActions.openStartBulkEditForm();
       BulkEditSearchPane.uploadFile(importFileName);
