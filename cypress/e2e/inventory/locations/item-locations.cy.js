@@ -79,8 +79,8 @@ describe('ui-inventory: location', () => {
   after('Delete all data', () => {
     cy.getInstance({ limit: 1, expandAll: true, query: `"items.barcode"=="${ITEM_BARCODE}"` })
       .then((instance) => {
-        cy.deleteItem(instance.items[0].id);
-        cy.deleteItem(instance.items[1].id);
+        cy.deleteItemViaApi(instance.items[0].id);
+        cy.deleteItemViaApi(instance.items[1].id);
         cy.deleteHoldingRecordViaApi(instance.holdings[0].id);
         InventoryInstance.deleteInstanceViaApi(instance.id);
       });

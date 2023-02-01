@@ -167,7 +167,7 @@ describe('ui-circulation-settings: Fixed due date schedules', () => {
         Users.deleteViaApi(userData.id);
         cy.getInstance({ limit: 1, expandAll: true, query: `"items.barcode"=="${ITEM_BARCODE}"` })
           .then((instance) => {
-            cy.deleteItem(instance.items[0].id);
+            cy.deleteItemViaApi(instance.items[0].id);
             cy.deleteHoldingRecordViaApi(instance.holdings[0].id);
             InventoryInstance.deleteInstanceViaApi(instance.id);
           });

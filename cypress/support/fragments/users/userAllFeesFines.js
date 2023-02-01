@@ -89,4 +89,7 @@ export default {
   },
   selectAllFeeFines: () => cy.do(MultiColumnListHeader({ index: 0 }).find(CheckBox()).click()),
   clickWaive:() => cy.do(waiveAllButton.click()),
+  paySelectedFeeFines:() => {
+    cy.do(Dropdown('Actions').choose('Pay'));
+  },
 };

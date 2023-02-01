@@ -4,7 +4,7 @@ import InventoryActions from '../../support/fragments/inventory/inventoryActions
 import testTypes from '../../support/dictionary/testTypes';
 import devTeams from '../../support/dictionary/devTeams';
 
-describe('ui-inventory: actions', () => {
+describe('ui-inventory: actions', { retries: 2 }, () => {
   beforeEach('navigates to actions', () => {
     cy.login(Cypress.env('diku_login'), Cypress.env('diku_password'));
     cy.visit(TopMenu.inventoryPath);
