@@ -252,22 +252,64 @@ export default {
         const fileId = response.body.fileDefinitions[0].id;
 
         cy.readFile(fileName).then(fileContent => {
-          const binaryContent = function text2Binary(fileContent) {
-            return fileContent.split('').map(function (char) {
-              return char.charCodeAt(0).toString(2);
-            }).join(' ');
+          const binaryContent = function convert() {
+            const output = '';
+            for (let i = 0; i < fileContent.length; i++) {
+              output.value += fileContent[i].charCodeAt(0).toString(2) + ' ';
+            }
+            return output;
           };
+          console.log(binaryContent);
 
-          cy.okapiRequest({
-            path: `data-import/uploadDefinitions/${uploadDefinitionId}/files/${fileId}`,
-            method: 'POST',
-            body: { binaryContent },
-            isDefaultSearchParamsRequired: false,
-            contentTypeHeader: 'application/octet-stream'
-          })
-            .then((body) => {
-              console.log(body);
-            });
+          // cy.okapiRequest({
+          //   path: `data-import/uploadDefinitions/${uploadDefinitionId}/files/${fileId}`,
+          //   method: 'POST',
+          //   body: binaryContent,
+          //   isDefaultSearchParamsRequired: false,
+          //   contentTypeHeader: 'application/octet-stream'
+          // })
+          //   .then((body) => {
+          //     console.log(body);
+
+          //     cy.okapiRequest({
+          //       path: `data-import/uploadDefinitions/${uploadDefinitionId}`,
+          //       isDefaultSearchParamsRequired: false
+          //     });
+          //     const jobProfileId = 'e34d7b92-9b83-11eb-a8b3-0242ac130003';
+
+              // cy.okapiRequest({
+              //   path: `data-import/uploadDefinitions/${uploadDefinitionId}/processFiles`,
+              //   method: 'POST',
+              //   body: {
+              //     uploadDefinition: {
+              //       id: uploadDefinitionId,
+              //       metaJobExecutionId,
+              //       status: 'LOADED',
+              //       createDate,
+              //       fileDefinitions: [
+              //         {
+              //           id: fileId,
+              //           sourcePath,
+              //           name: 'oneMarcBib.mrc',
+              //           status: 'UPLOADED',
+              //           jobExecutionId,
+              //           uploadDefinitionId,
+              //           createDate,
+              //           uploadedDate: createDate,
+              //           size: 2,
+              //           uiKey: uiKeyValue
+              //         }
+              //       ]
+              //     },
+              //     jobProfileInfo: {
+              //       id: jobProfileId,
+              //       name: 'Default - Create instance and SRS MARC Bib',
+              //       dataType: 'MARC'
+              //     }
+              //   },
+              //   isDefaultSearchParamsRequired: false
+              // });
+            //});
         });
       });
   },
