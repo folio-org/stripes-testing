@@ -114,7 +114,7 @@ describe('Data Import - Importing MARC Authority files', () => {
     JobProfiles.waitFileIsImported(fileName);
     Logs.checkStatusOfJobProfile('Completed');
     Logs.openFileDetails(fileName);
-    for (let i = 0; i < 4; i++) {
+    for (let i = 0; i < 1; i++) {
       Logs.getCreatedItemsID(i).then(link => {
         createdAuthorityIDs.push(link.split('/')[5]);
       });

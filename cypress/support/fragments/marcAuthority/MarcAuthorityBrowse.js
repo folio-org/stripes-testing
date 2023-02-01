@@ -19,6 +19,7 @@ const searchButton = Button({ id: 'submit-authorities-search' });
 const enabledSearchButton = Button({ id: 'submit-authorities-search', disabled: false });
 const searchInput = SearchField({ id:'textarea-authorities-search' });
 const mainFilter = SearchField({ id:'textarea-authorities-search-qindex' });
+const browseSearchAndFilterInput = Select('Search field index');
 // TODO: initially first line has data-row-index = 52. Currently it's 0, clarify the reason in case if start index will changed once again
 const getFirstLineIndexRow = (zeroIndex) => `row-${zeroIndex + 0}`;
 
@@ -45,7 +46,7 @@ export default {
   searchBy:(searchOption, value) => {
     cy.do(searchInput.fillIn(value));
     cy.expect(searchInput.has({ value: value }));
-    cy.do(Select('Search field index').choose(searchOption));
+    cy.do(browseSearchAndFilterInput.choose(searchOption));
     cy.get('#textarea-authorities-search-qindex').then((elem) => {
       expect(elem.text()).to.include(searchOption);
     });
@@ -55,7 +56,7 @@ export default {
 
   searchByChangingParameter(searchOption, value) {
     cy.expect(searchInput.has({ value: value }));
-    cy.do(Select('Search field index').choose(searchOption));
+    cy.do(browseSearchAndFilterInput.choose(searchOption));
     cy.get('#textarea-authorities-search-qindex').then((elem) => {
       expect(elem.text()).to.include(searchOption);
     });
