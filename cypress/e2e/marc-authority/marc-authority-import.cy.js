@@ -106,7 +106,7 @@ describe('Data Import - Importing MARC Authority files', () => {
     Logs.checkAuthorityLogJSON(['"sourceFileId":', '"6ddf21a6-bc2f-4cb0-ad96-473e1f82da23"', '"naturalId":', '"D002363"']);
   });
 
-  it('C353997 Browse for records which have subfield "t" value (personalNameTitle and sftPersonalNameTitle) (spitfire)', { tags: [TestTypes.criticalPath, Features.authority, DevTeams.spitfire] }, () => {
+  it('C353997 Browse for records which have subfield "t" value (personalNameTitle and sftPersonalNameTitle) (spitfire)', { tags: [TestTypes.criticalPath, DevTeams.spitfire] }, () => {
     DataImport.uploadFile('marcFileForC353997.mrc', fileName);
     JobProfiles.waitLoadingList();
     JobProfiles.searchJobProfileForImport(jobProfileToRun);
