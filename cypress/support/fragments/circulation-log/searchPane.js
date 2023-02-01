@@ -146,4 +146,11 @@ export default {
   userDetailIsOpen() {
     cy.expect(Pane({ id: 'pane-userdetails' }).exists());
   },
+
+  exportResults() {
+    cy.do([
+      Button('Actions').click(),
+      Button('Export results (CSV)').click(),
+    ])
+  },
 };
