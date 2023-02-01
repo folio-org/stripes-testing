@@ -235,10 +235,12 @@ export default {
   },
 
   uploadFileViaApi:(fileName) => {
+    const uiKeyValue = `${fileName}${getRandomPostfix()}`;
+
     cy.okapiRequest({
       path: 'data-import/uploadDefinitions',
       body: { fileDefinitions: [{
-        uiKey: `${fileName}${getRandomPostfix()}`,
+        uiKey: uiKeyValue,
         size: 2,
         name: fileName
       }] },
@@ -249,15 +251,24 @@ export default {
         const uploadDefinitionId = response.body.fileDefinitions[0].uploadDefinitionId;
         const fileId = response.body.fileDefinitions[0].id;
 
-        cy.readFile(fileName).then(content => {
+        cy.readFile(fileName).then(fileContent => {
+          const binaryContent = function text2Binary(fileContent) {
+            return fileContent.split('').map(function (char) {
+              return char.charCodeAt(0).toString(2);
+            }).join(' ');
+          };
+
           cy.okapiRequest({
             path: `data-import/uploadDefinitions/${uploadDefinitionId}/files/${fileId}`,
             method: 'POST',
-            body: content,
+            body: { binaryContent },
             isDefaultSearchParamsRequired: false,
             contentTypeHeader: 'application/octet-stream'
-          });
+          })
+            .then((body) => {
+              console.log(body);
+            });
         });
       });
-  }
+  },
 };
