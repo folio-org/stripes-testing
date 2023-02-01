@@ -252,30 +252,31 @@ export default {
         const fileId = response.body.fileDefinitions[0].id;
 
         cy.readFile(fileName).then(fileContent => {
-          const binaryContent = function convert() {
-            const output = '';
+          function convert() {
+            let output = '';
             for (let i = 0; i < fileContent.length; i++) {
-              output.value += fileContent[i].charCodeAt(0).toString(2) + ' ';
+              output += fileContent[i].charCodeAt(0).toString(2) + ' ';
             }
             return output;
-          };
+          }
+          const binaryContent = convert();
           console.log(binaryContent);
 
-          // cy.okapiRequest({
-          //   path: `data-import/uploadDefinitions/${uploadDefinitionId}/files/${fileId}`,
-          //   method: 'POST',
-          //   body: binaryContent,
-          //   isDefaultSearchParamsRequired: false,
-          //   contentTypeHeader: 'application/octet-stream'
-          // })
-          //   .then((body) => {
-          //     console.log(body);
+          cy.okapiRequest({
+            path: `data-import/uploadDefinitions/${uploadDefinitionId}/files/${fileId}`,
+            method: 'POST',
+            body: binaryContent,
+            isDefaultSearchParamsRequired: false,
+            contentTypeHeader: 'application/octet-stream'
+          })
+            .then((body) => {
+              console.log(body);
 
-          //     cy.okapiRequest({
-          //       path: `data-import/uploadDefinitions/${uploadDefinitionId}`,
-          //       isDefaultSearchParamsRequired: false
-          //     });
-          //     const jobProfileId = 'e34d7b92-9b83-11eb-a8b3-0242ac130003';
+              //     cy.okapiRequest({
+              //       path: `data-import/uploadDefinitions/${uploadDefinitionId}`,
+              //       isDefaultSearchParamsRequired: false
+              //     });
+              //     const jobProfileId = 'e34d7b92-9b83-11eb-a8b3-0242ac130003';
 
               // cy.okapiRequest({
               //   path: `data-import/uploadDefinitions/${uploadDefinitionId}/processFiles`,
@@ -309,7 +310,7 @@ export default {
               //   },
               //   isDefaultSearchParamsRequired: false
               // });
-            //});
+            });
         });
       });
   },
