@@ -141,6 +141,7 @@ describe('loan dates', () => {
       itemTitle: item.title,
       requesterBarcode: checkInUser.barcode,
       pickupServicePoint: 'Circ Desk 1',
+      requestType: 'Recall',
     });
 
     // go to changing due date and verify warning

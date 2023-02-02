@@ -10,6 +10,7 @@ const enterItemBarcodeButton = Button({ id: 'clickable-select-item' });
 const enterRequesterBarcodeButton = Button({ id: 'clickable-select-requester' });
 const saveAndCloseButton = Button('Save & close');
 const selectServicePoint = Select({ name:'pickupServicePointId' });
+const selectRequestType = Select({ name: 'requestType' });
 
 function addRequester(userName) {
   cy.do(Button({ id:'requestform-addrequest' }).click());
@@ -32,6 +33,7 @@ export default {
     cy.do(itemBarcodeInput.fillIn(newRequest.itemBarcode));
     cy.intercept('/circulation/loans?*').as('getLoans');
     cy.do(enterItemBarcodeButton.click());
+    cy.do(selectRequestType.choose(newRequest.requestType));
     cy.wait('@getLoans');
     cy.do(requesterBarcodeInput.fillIn(newRequest.requesterBarcode));
     cy.intercept('/proxiesfor?*').as('getUsers');
