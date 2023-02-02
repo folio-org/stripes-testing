@@ -1,4 +1,3 @@
-import getRandomPostfix from '../../../support/utils/stringTools';
 import permissions from '../../../support/dictionary/permissions';
 import TestTypes from '../../../support/dictionary/testTypes';
 import TopMenu from '../../../support/fragments/topMenu';
@@ -61,7 +60,7 @@ describe('ui-data-import: Match on POL and update related Instance, Holdings, It
   let instanceHrid;
 
   // unique profile names
-  const jobProfileName = `C350590 autotestJobProf${getRandomPostfix()}`;
+  const jobProfileName = `C350590 autotestJobProf${Helper.getRandomBarcode()}`;
   const matchProfileNameForInstance = `C350590 935 $a POL to Instance POL ${Helper.getRandomBarcode()}`;
   const matchProfileNameForHoldings = `C350590 935 $a POL to Holdings POL ${Helper.getRandomBarcode()}`;
   const matchProfileNameForItem = `C350590 935 $a POL to Item POL ${Helper.getRandomBarcode()}`;
@@ -70,9 +69,9 @@ describe('ui-data-import: Match on POL and update related Instance, Holdings, It
   const actionProfileNameForItem = `C350590 Update Item by POL match ${Helper.getRandomBarcode()}`;
   const mappingProfileNameForInstance = `C350590 Update Instance by POL match ${Helper.getRandomBarcode()}`;
   const mappingProfileNameForHoldings = `C350590 Update Holdings by POL match ${Helper.getRandomBarcode()}`;
-  const mappingProfileNameForItem = `C350590 Update Item by POL match ${getRandomPostfix()}`;
+  const mappingProfileNameForItem = `C350590 Update Item by POL match ${Helper.getRandomBarcode()}`;
 
-  const editedMarcFileName = `C350590 marcFileForMatchOnPol.${getRandomPostfix()}.mrc`;
+  const editedMarcFileName = `C350590 marcFileForMatchOnPol.${Helper.getRandomBarcode()}.mrc`;
 
   const collectionOfProfiles = [
     {
