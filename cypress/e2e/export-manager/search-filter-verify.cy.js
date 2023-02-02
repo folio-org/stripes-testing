@@ -48,7 +48,7 @@ describe('export manager', () => {
       permissions.checkoutAll.gui,
     ])
       .then(userProperties => {
-        userData = {...userProperties};
+        userData = { ...userProperties };
         UserEdit.addServicePointViaApi(testData.servicepointId,
           userData.userId, testData.servicepointId);
       })
