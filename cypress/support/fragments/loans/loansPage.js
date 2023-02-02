@@ -9,7 +9,7 @@ import {
   CheckboxInTable,
   DropdownMenu
 } from '../../../../interactors';
-import ConfirmClaimReturnedModal from '../users/loans/confirmClaimReturnedModal';
+import ConfirmItemStatusModal from '../users/loans/confirmItemStatusModal';
 
 const claimReturnedButton = Button('Claim returned');
 const changeDueDateButton = Button('Change due date');
@@ -32,7 +32,7 @@ export default {
   },
   claimReturnedAndConfirm(reasonWhyItemChangesStatus) {
     this.claimReturned();
-    return ConfirmClaimReturnedModal.confirmItemStatus(reasonWhyItemChangesStatus);
+    return ConfirmItemStatusModal.confirmItemStatus(reasonWhyItemChangesStatus);
   },
   resolveClaimedIsVisible() {
     return cy.expect(Button('Resolve claim').exists());

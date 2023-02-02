@@ -41,7 +41,7 @@ describe('ui-data-import: Check that protected fields in incoming records are no
         const fileName = `C359189autotestFile.${getRandomPostfix()}.mrc`;
 
         Z3950TargetProfiles.changeOclcWorldCatToDefaultViaApi();
-        DataImport.uploadFile('Test_file_with_856_field.mrc', fileName);
+        DataImport.uploadFile('marcFileForC359189.mrc', fileName);
         JobProfiles.searchJobProfileForImport('Default - Create instance and SRS MARC Bib');
         JobProfiles.runImportFile();
         JobProfiles.waitFileIsImported(fileName);
@@ -109,7 +109,7 @@ describe('ui-data-import: Check that protected fields in incoming records are no
     InventoryEditMarcRecord.editField('$t Dalton (Cambridge, England) $x 1470-479X $w (DLC)   00252543 $w (OCoLC)44000666 5', '70');
     InventoryEditMarcRecord.saveAndClose();
     InventoryInstance.startOverlaySourceBibRecord();
-    InventoryInstance.singleRecordImportModalIsPresented();
+    InventoryInstance.singleOverlaySourceBibRecordModalIsPresented();
     InventoryInstance.importWithOclc(oclcForImport);
     InventoryInstance.checkCalloutMessage(`Updated record ${oclcForImport}`);
     // check fields is presented in .mrc file

@@ -165,7 +165,7 @@ export default {
       orderFormatSelect.choose('Physical resource'),
       acquisitionMethodButton.click(),
       SelectionOption('Depository').click(),
-      receivingWorkflowSelect.choose('Independent order and receipt quantity'),
+      receivingWorkflowSelect.choose('Synchronized order and receipt quantity'),
       physicalUnitPriceTextField.fillIn(physicalUnitPrice),
       quantityPhysicalTextField.fillIn(quantityPhysical),
       materialTypeSelect.choose('book'),

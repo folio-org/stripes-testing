@@ -14,7 +14,7 @@ import {
 } from '../../../../interactors';
 import { REQUEST_METHOD } from '../../constants';
 import { getLongDelay } from '../../utils/cypressTools';
-import ItemView from '../inventory/inventoryItem/itemView';
+import ItemRecordView from '../inventory/itemRecordView';
 
 const loanDetailsButton = Button('Loan details');
 const patronDetailsButton = Button('Patron details');
@@ -77,7 +77,7 @@ export default {
     cy.intercept('/tags?*').as('getTags');
     cy.do(itemDetailsButton.click());
     cy.wait('@getTags', getLongDelay());
-    ItemView.waitLoading();
+    ItemRecordView.waitLoading();
   },
   checkActionsMenuOptions: (optionsToCheck = ['loanDetails', 'patronDetails', 'itemDetails', 'newFeeFine']) => {
     cy.expect(availableActionsButton.exists());

@@ -110,7 +110,7 @@ export default {
 
   errorsInImportStatuses: ['No', 'Yes'],
 
-  singleRecordImportsStatuses: ['No', 'Yes'],
+  singleRecordImportsStatuses: ['Yes', 'No'],
 
   resetAllFilters() {
     cy.do(Button('Reset all').click());
@@ -147,22 +147,19 @@ export default {
     ]);
   },
 
+  openUserIdAccordion() {
+    cy.do(Accordion({ id: 'userId' }).clickHeader());
+  },
+
   filterJobsByUser(user) {
     cy.do([
-      Accordion({ id: 'userId' }).clickHeader(),
       Selection({ singleValue: 'Choose user' }).open(),
       SelectionList().select(user)
     ]);
   },
 
   filterJobsByInventorySingleRecordImports(filter) {
-    if (filter === 'Yes') {
-      cy.do(singleRecordImportsAccordion
-        .find(Checkbox({ id: 'clickable-filter-singleRecordImports-yes' })).click());
-    } else {
-      cy.do(singleRecordImportsAccordion
-        .find(Checkbox({ id: 'clickable-filter-singleRecordImports-no' })).click());
-    }
+    cy.do(singleRecordImportsAccordion.find(Checkbox({ name: filter.toLowerCase() })).click());
   },
 
   // TODO: redesign to interactors
@@ -208,6 +205,7 @@ export default {
 
   checkByDate({ from, end }) {
     const queryString = UrlParams.getDateQueryString({ from, end });
+
     return this.getNumberOfMatchedJobs(queryString).then(count => {
       // ensure MultiColumnList is filtered by Date
       this.checkRowsCount(count);
@@ -229,6 +227,8 @@ export default {
   },
 
   checkByInventorySingleRecord(filter) {
+    // need to wait until selected data will be displayed
+    cy.wait(2000);
     return cy.get('#list-data-import').then(element => {
       // only 100 records shows on every page
       const resultCount = element.attr('data-total-count') > 99 ? 99 : element.attr('data-total-count');
@@ -247,6 +247,15 @@ export default {
     waitUIToBeFiltered();
     checkByErrorsInImport(status);
     checkByUserName(userName);
+  },
+
+  checkByDateAndJobProfile({ from, end }, profileId) {
+    const queryString = `completedAfter=${from}&completedBefore=${end}&limit=100&profileIdAny=${profileId}&sortBy=completed_date%2Cdesc&statusAny=COMMITTED&statusAny=ERROR&statusAny=CANCELLED`;
+    return this.getNumberOfMatchedJobs(queryString).then(count => {
+      // ensure MultiColumnList is filtered by Date
+      this.checkRowsCount(count);
+      cy.wrap(count);
+    });
   },
 
   getNumberOfMatchedJobs(queryString) {

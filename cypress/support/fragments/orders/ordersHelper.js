@@ -3,6 +3,7 @@ import dateTools from '../../utils/dateTools';
 
 export default {
   mainLibraryLocation: 'Main Library',
+  onlineLibraryLocation: 'Online',
 
   verifyOrderDateOpened:() => {
     cy.do(Section({ id:'purchaseOrder' }).find(KeyValue('Date opened')).perform(element => {

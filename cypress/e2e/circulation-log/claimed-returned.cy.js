@@ -13,6 +13,8 @@ import Checkout from '../../support/fragments/checkout/checkout';
 import LoansPage from '../../support/fragments/loans/loansPage';
 import ItemsOperations from '../../support/fragments/inventory/inventoryItem/itemsOperations';
 import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
+import UserLoans from '../../support/fragments/users/loans/userLoans';
+import ConfirmClaimReturnedModal from '../../support/fragments/users/loans/confirmClaimReturnedModal';
 
 let userId;
 let servicePointId;
@@ -70,7 +72,8 @@ describe('circulation-log', () => {
     UsersCard.openLoans();
     UsersCard.showOpenedLoans();
     LoansPage.checkAll();
-    LoansPage.claimReturnedAndConfirm('C16997 Filter circulation log by Claimed returned');
+    UserLoans.openClaimReturnedPane();
+    ConfirmClaimReturnedModal.confirmItemStatus('C16997 Filter circulation log by Claimed returned');
 
     cy.visit(TopMenu.circulationLogPath);
 

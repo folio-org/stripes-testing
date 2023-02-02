@@ -152,12 +152,12 @@ describe('Recieving notice: Checkout', () => {
     UserEdit.changeServicePointPreferenceViaApi(userData.userId, [testData.userServicePoint.id]);
     CirculationRules.deleteRuleViaApi(testData.baseRules);
     ServicePoints.deleteViaApi(testData.userServicePoint.id);
-    NoticePolicyApi.deleteApi(testData.ruleProps.n);
+    NoticePolicyApi.deleteViaApi(testData.ruleProps.n);
     Users.deleteViaApi(userData.userId);
     PatronGroups.deleteViaApi(patronGroup.id);
     cy.get('@items').each(
       (item, index) => {
-        cy.deleteItem(item.itemId);
+        cy.deleteItemViaApi(item.itemId);
         cy.deleteHoldingRecordViaApi(itemsData.itemsWithSeparateInstance[index].holdingId);
         InventoryInstance.deleteInstanceViaApi(itemsData.itemsWithSeparateInstance[index].instanceId);
       }
@@ -190,7 +190,7 @@ describe('Recieving notice: Checkout', () => {
       NewNoticePolicy.fillGeneralInformation(noticePolicy);
       NewNoticePolicy.addNotice(noticePolicy);
       NewNoticePolicy.save();
-      NewNoticePolicy.check(noticePolicy);
+      NewNoticePolicy.checkPolicyName(noticePolicy);
       NewNoticePolicy.checkAfterSaving(noticePolicy);
       NewNoticePolicy.checkNoticeActions(noticePolicy);
 
@@ -237,7 +237,7 @@ describe('Recieving notice: Checkout', () => {
       NewNoticePolicy.fillGeneralInformation(noticePolicy);
       NewNoticePolicy.addNotice(noticePolicy);
       NewNoticePolicy.save();
-      NewNoticePolicy.check(noticePolicy);
+      NewNoticePolicy.checkPolicyName(noticePolicy);
       NewNoticePolicy.checkAfterSaving(noticePolicy);
       NewNoticePolicy.checkNoticeActions(noticePolicy);
 
