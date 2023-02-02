@@ -99,7 +99,7 @@ describe('bulk-edit', () => {
       const newLocation = 'Annex';
 
       BulkEditActions.openActions();
-      BulkEditActions.openStartBulkEditForm();
+      BulkEditActions.openInAppStartBulkEditFrom();
       BulkEditActions.replaceTemporaryLocation(newLocation);
       BulkEditActions.confirmChanges();
       BulkEditActions.commitChanges();
@@ -118,7 +118,7 @@ describe('bulk-edit', () => {
       const newLocation = 'Online';
 
       BulkEditActions.openActions();
-      BulkEditActions.openStartBulkEditForm();
+      BulkEditActions.openInAppStartBulkEditFrom();
       BulkEditActions.replaceTemporaryLocation(newLocation);
       BulkEditActions.confirmChanges();
       BulkEditActions.commitChanges();

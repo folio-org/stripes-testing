@@ -62,7 +62,7 @@ describe('bulk-edit', () => {
     BulkEditSearchPane.waitFileUploading();
 
     BulkEditActions.openActions();
-    BulkEditActions.openStartBulkEditForm();
+    BulkEditActions.openInAppStartBulkEditFrom();
     BulkEditActions.replacePermanentLocation(location, 'holdings');
     BulkEditActions.confirmChanges();
     BulkEditActions.commitChanges();

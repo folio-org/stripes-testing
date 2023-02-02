@@ -51,7 +51,7 @@ describe('bulk-edit', () => {
 
       BulkEditActions.downloadMatchedResults(matchRecordsFileName);
 
-      BulkEditActions.openStartBulkEditForm();
+      BulkEditActions.openInAppStartBulkEditFrom();
       BulkEditActions.verifyBulkEditForm();
     });
 
@@ -77,7 +77,7 @@ describe('bulk-edit', () => {
       BulkEditSearchPane.waitFileUploading();
 
       BulkEditActions.openActions();
-      BulkEditActions.openStartBulkEditForm();
+      BulkEditActions.openInAppStartBulkEditFrom();
       BulkEditActions.fillPatronGroup('graduate (Graduate Student)');
       BulkEditActions.confirmChanges();
       BulkEditActions.commitChanges();
