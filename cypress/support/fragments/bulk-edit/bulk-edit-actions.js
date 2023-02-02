@@ -65,10 +65,12 @@ export default {
 
   clickKeepEditingBtn() {
     cy.do(areYouSureForm.find(keepEditingBtn).click());
+    cy.wait(1000);
   },
 
   clickX() {
     cy.do(Modal().find(Button({ icon: 'times' })).click());
+    cy.wait(1000);
   },
 
   openActions() {

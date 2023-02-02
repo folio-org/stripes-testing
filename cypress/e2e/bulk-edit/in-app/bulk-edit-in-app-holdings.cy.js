@@ -77,7 +77,7 @@ describe('bulk-edit', () => {
       BulkEditSearchPane.verifyMatchedResults(hrid);
 
       BulkEditActions.downloadMatchedResults(resultFileName);
-      BulkEditFiles.verifyMatchedResultFileContent(resultFileName, [hrid], 'hrid');
+      BulkEditFiles.verifyMatchedResultFileContent('*Matched-Records*', [hrid], 'hrid');
     });
 
     it('C356810 Verify uploading file with holdings UUIDs (firebird)', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
@@ -88,7 +88,7 @@ describe('bulk-edit', () => {
       const location = 'Online';
 
       BulkEditActions.openActions();
-      BulkEditActions.openStartBulkEditForm();
+      BulkEditActions.openInAppStartBulkEditFrom();
       BulkEditActions.replaceTemporaryLocation(location, 'holdings');
       BulkEditActions.confirmChanges();
       BulkEditActions.commitChanges();
@@ -128,7 +128,7 @@ describe('bulk-edit', () => {
       const permLocation = 'Main Library';
 
       BulkEditActions.openActions();
-      BulkEditActions.openStartBulkEditForm();
+      BulkEditActions.openInAppStartBulkEditFrom();
 
       BulkEditActions.replaceTemporaryLocation(tempLocation, 'holdings');
       BulkEditActions.addNewBulkEditFilterString();
@@ -142,6 +142,7 @@ describe('bulk-edit', () => {
 
       BulkEditActions.confirmChanges();
       BulkEditActions.verifyAreYouSureForm(1, hrid);
+
       BulkEditActions.commitChanges();
       BulkEditSearchPane.waitFileUploading();
 

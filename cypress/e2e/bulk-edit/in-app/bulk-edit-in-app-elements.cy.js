@@ -46,11 +46,11 @@ describe('bulk-edit', () => {
       BulkEditSearchPane.selectRecordIdentifier('Item barcode');
     });
 
-    after('delete test data', () => {
-      InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(item.itemBarcode);
-      Users.deleteViaApi(user.userId);
-      FileManager.deleteFile(`cypress/fixtures/${invalidItemBarcodesFileName}`);
-    });
+    // after('delete test data', () => {
+    //   InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(item.itemBarcode);
+    //   Users.deleteViaApi(user.userId);
+    //   FileManager.deleteFile(`cypress/fixtures/${invalidItemBarcodesFileName}`);
+    // });
 
     afterEach('reload bulk-edit page', () => {
       cy.visit(TopMenu.bulkEditPath);
