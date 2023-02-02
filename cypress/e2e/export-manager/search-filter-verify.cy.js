@@ -17,8 +17,8 @@ import InteractorsTools from '../../support/utils/interactorsTools';
 import CheckInActions from '../../support/fragments/check-in-actions/checkInActions';
 import FileManager from '../../support/utils/fileManager';
 
+let userData = {};
 const testData = {};
-const userData = {};
 const itemData = {
   barcode: getRandomPostfix(),
   instanceTitle: `Instance ${getRandomPostfix()}`,
@@ -31,7 +31,7 @@ const exportRequestedCalloutMessage = 'Your Circulation log export has been requ
 const jobCompletedCalloutMessage = 'Export job has been completed.';
 
 describe('export manager', () => {
-  before('navigate to export manager', () => {
+  before('create instance and user, check out item', () => {
     cy.getAdminToken().then(() => {
       cy.getInstanceTypes({ limit: 1 }).then((instanceTypes) => { testData.instanceTypeId = instanceTypes[0].id; });
       cy.getHoldingTypes({ limit: 1 }).then((res) => { testData.holdingTypeId = res[0].id; });
@@ -48,10 +48,7 @@ describe('export manager', () => {
       permissions.checkoutAll.gui,
     ])
       .then(userProperties => {
-        userData.username = userProperties.username;
-        userData.password = userProperties.password;
-        userData.userId = userProperties.userId;
-        userData.barcode = userProperties.barcode;
+        userData = {...userProperties};
         UserEdit.addServicePointViaApi(testData.servicepointId,
           userData.userId, testData.servicepointId);
       })
@@ -77,7 +74,7 @@ describe('export manager', () => {
     cy.visit(TopMenu.exportManagerPath);
   });
 
-  after('delete user', () => {
+  after('check in item, delete instance and user', () => {
     CheckInActions.checkinItemViaApi({
       checkInDate: moment.utc().format(),
       servicePointId: testData.servicepointId,
