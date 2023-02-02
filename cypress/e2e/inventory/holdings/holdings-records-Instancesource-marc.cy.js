@@ -1,7 +1,6 @@
 import TopMenu from '../../../support/fragments/topMenu';
 import HoldingsRecordView from '../../../support/fragments/inventory/holdingsRecordView';
 import TestTypes from '../../../support/dictionary/testTypes';
-import Features from '../../../support/dictionary/features';
 import InventoryNewHoldings from '../../../support/fragments/inventory/inventoryNewHoldings';
 import InventoryActions from '../../../support/fragments/inventory/inventoryActions';
 import InventorySteps from '../../../support/fragments/inventory/inventorySteps';
