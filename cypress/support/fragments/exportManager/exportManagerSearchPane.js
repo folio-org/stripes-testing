@@ -13,6 +13,8 @@ const startDateTextfield = TextField({ name: 'startDate' });
 const endDateTextfield = TextField({ name: 'endDate' });
 const applyButton = Button('Apply');
 const getSearchResult = (row = 0, col = 0) => MultiColumnListCell({ 'row': row, 'columnIndex': col });
+
+// Cypress clicks before the UI loads, use when there is no way to attach waiter to element
 const waitClick = () => { cy.wait(1000) };
 
 export default {
@@ -34,31 +36,25 @@ export default {
 	},
 	resetAll() {
 		cy.do(Button('Reset all').click());
-		// Cypress clicks before the UI loads, there is no way to attach waiter to element
 		waitClick();
 	},
 	resetJobType() {
 		cy.do(jobTypeAccordion.find(Button({ icon: 'times-circle-solid' })).click());
-		// Cypress clicks before the UI loads, there is no way to attach waiter to element
 		waitClick();
 	},
 	searchByScheduled() {
-		// Cypress clicks before the UI loads, there is no way to attach waiter to element
 		waitClick();
 		cy.do(statusAccordion.find(Checkbox({ id: 'clickable-filter-status-scheduled' })).click());
 	},
 	searchByInProgress() {
-		// Cypress clicks before the UI loads, there is no way to attach waiter to element
 		waitClick();
 		cy.do(statusAccordion.find(Checkbox({ id: 'clickable-filter-status-in-progress' })).click());
 	},
 	searchBySuccessful() {
-		// Cypress clicks before the UI loads, there is no way to attach waiter to element
 		waitClick();
 		cy.do(statusAccordion.find(Checkbox({ id: 'clickable-filter-status-successful' })).click());
 	},
 	searchByFailed() {
-		// Cypress clicks before the UI loads, there is no way to attach waiter to element
 		waitClick();
 		cy.do(statusAccordion.find(Checkbox({ id: 'clickable-filter-status-failed' })).click());
 	},
@@ -66,12 +62,10 @@ export default {
 		cy.expect(MultiColumnListCell(including(content)).exists());
 	},
 	searchByBulkEdit() {
-		// Cypress clicks before the UI loads, there is no way to attach waiter to element
 		waitClick();
 		cy.do(jobTypeAccordion.find(Checkbox({ id: 'clickable-filter-type-bulk-edit' })).click());
 	},
 	searchByCirculationLog() {
-		// Cypress clicks before the UI loads, there is no way to attach waiter to element
 		waitClick();
 		cy.do(jobTypeAccordion.find(Checkbox({ id: 'clickable-filter-type-circulation-log' })).click());
 	},
