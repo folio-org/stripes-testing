@@ -3,6 +3,12 @@ import { including } from "bigtest";
 
 const searchButton = Button({ type: 'submit' });
 const userSearchResults = Pane('User Search Results')
+const startTimeAccordion = Accordion({ id: 'startTime' });
+const endTimeAccordion = Accordion({ id: 'endTime' });
+const systemAccordion = Accordion({ id: 'isSystemSource' });
+const sourceAccordion = Accordion({ id: 'createdByUserId' });
+const jobTypeAccordion = Accordion({ id: 'type' });
+const statusAccordion = Accordion({ id: 'status' });
 const getSearchResult = (row = 0, col = 0) => MultiColumnListCell({ 'row': row, 'columnIndex': col });
 
 export default {
@@ -24,79 +30,79 @@ export default {
 	},
 	resetAll() {
 		cy.do(Button('Reset all').click());
-		//Cypress clicks before the UI loads, there is no way to attach waiter to element
+		// Cypress clicks before the UI loads, there is no way to attach waiter to element
 		cy.wait(1000);
 	},
 	resetJobType() {
-		cy.do(Accordion({ id: 'type' }).find(Button({ icon: 'times-circle-solid' })).click());
-		//Cypress clicks before the UI loads, there is no way to attach waiter to element
+		cy.do(jobTypeAccordion.find(Button({ icon: 'times-circle-solid' })).click());
+		// Cypress clicks before the UI loads, there is no way to attach waiter to element
 		cy.wait(1000);
 	},
 	searchByScheduled() {
-		//Cypress clicks before the UI loads, there is no way to attach waiter to element
+		// Cypress clicks before the UI loads, there is no way to attach waiter to element
 		cy.wait(1000);
-		cy.do(Accordion({ id: 'status' }).find(Checkbox({ id: 'clickable-filter-status-scheduled' })).click());
+		cy.do(statusAccordion.find(Checkbox({ id: 'clickable-filter-status-scheduled' })).click());
 	},
 	searchByInProgress() {
-		//Cypress clicks before the UI loads, there is no way to attach waiter to element
+		// Cypress clicks before the UI loads, there is no way to attach waiter to element
 		cy.wait(1000);
-		cy.do(Accordion({ id: 'status' }).find(Checkbox({ id: 'clickable-filter-status-in-progress' })).click());
+		cy.do(statusAccordion.find(Checkbox({ id: 'clickable-filter-status-in-progress' })).click());
 	},
 	searchBySuccessful() {
-		//Cypress clicks before the UI loads, there is no way to attach waiter to element
+		// Cypress clicks before the UI loads, there is no way to attach waiter to element
 		cy.wait(1000);
-		cy.do(Accordion({ id: 'status' }).find(Checkbox({ id: 'clickable-filter-status-successful' })).click());
+		cy.do(statusAccordion.find(Checkbox({ id: 'clickable-filter-status-successful' })).click());
 	},
 	searchByFailed() {
-		//Cypress clicks before the UI loads, there is no way to attach waiter to element
+		// Cypress clicks before the UI loads, there is no way to attach waiter to element
 		cy.wait(1000);
-		cy.do(Accordion({ id: 'status' }).find(Checkbox({ id: 'clickable-filter-status-failed' })).click());
+		cy.do(statusAccordion.find(Checkbox({ id: 'clickable-filter-status-failed' })).click());
 	},
 	verifyResult(content) {
 		cy.expect(MultiColumnListCell(including(content)).exists());
 	},
 	searchByBulkEdit() {
-		//Cypress clicks before the UI loads, there is no way to attach waiter to element
+		// Cypress clicks before the UI loads, there is no way to attach waiter to element
 		cy.wait(1000);
-		cy.do(Accordion({ id: 'type' }).find(Checkbox({ id: 'clickable-filter-type-bulk-edit' })).click());
+		cy.do(jobTypeAccordion.find(Checkbox({ id: 'clickable-filter-type-bulk-edit' })).click());
 	},
 	searchByCirculationLog() {
-		//Cypress clicks before the UI loads, there is no way to attach waiter to element
+		// Cypress clicks before the UI loads, there is no way to attach waiter to element
 		cy.wait(1000);
-		cy.do(Accordion({ id: 'type' }).find(Checkbox({ id: 'clickable-filter-type-circulation-log' })).click());
+		cy.do(jobTypeAccordion.find(Checkbox({ id: 'clickable-filter-type-circulation-log' })).click());
 	},
 	enterStartTime(fromDate, toDate) {
 		cy.do([
-			Accordion({ id: 'startTime' }).clickHeader(),
-			Accordion({ id: 'startTime' }).find(TextField({ name: 'startDate' })).fillIn(fromDate),
-			Accordion({ id: 'startTime' }).find(TextField({ name: 'endDate' })).fillIn(toDate),
-			Accordion({ id: 'startTime' }).find(Button('Apply')).click(),
+			startTimeAccordion.clickHeader(),
+			startTimeAccordion.find(TextField({ name: 'startDate' })).fillIn(fromDate),
+			startTimeAccordion.find(TextField({ name: 'endDate' })).fillIn(toDate),
+			startTimeAccordion.find(Button('Apply')).click(),
 		]);
 	},
 	resetStartTime() {
-		cy.do(Accordion({ id: 'startTime' }).find(Button({ ariaLabel: 'Clear selected filters for "[object Object]"' })).click());
+		cy.do(startTimeAccordion.find(Button({ ariaLabel: 'Clear selected filters for "[object Object]"' })).click());
 	},
 	enterEndTime(fromDate, toDate) {
 		cy.do([
-			Accordion({ id: 'endTime' }).clickHeader(),
-			Accordion({ id: 'endTime' }).find(TextField({ name: 'startDate' })).fillIn(fromDate),
-			Accordion({ id: 'endTime' }).find(TextField({ name: 'endDate' })).fillIn(toDate),
-			Accordion({ id: 'endTime' }).find(Button('Apply')).click(),
+			endTimeAccordion.clickHeader(),
+			endTimeAccordion.find(TextField({ name: 'startDate' })).fillIn(fromDate),
+			endTimeAccordion.find(TextField({ name: 'endDate' })).fillIn(toDate),
+			endTimeAccordion.find(Button('Apply')).click(),
 		]);
 	},
 	resetEndTime() {
-		cy.do(Accordion({ id: 'endTime' }).find(Button({ ariaLabel: 'Clear selected filters for "[object Object]"' })).click());
+		cy.do(endTimeAccordion.find(Button({ ariaLabel: 'Clear selected filters for "[object Object]"' })).click());
 	},
 	searchBySystemNo() {
 		cy.do([
-			Accordion({ id: 'isSystemSource' }).clickHeader(),
-			Accordion({ id: 'isSystemSource' }).find(Checkbox({ label: 'No' })).click(),
+			systemAccordion.clickHeader(),
+			systemAccordion.find(Checkbox({ label: 'No' })).click(),
 		]);
 	},
 	searchBySourceUserName(username) {
 		cy.do([
-			Accordion({ id: 'createdByUserId' }).clickHeader(),
-			Accordion({ id: 'createdByUserId' }).find(Button({ id: 'undefined-button' })).click(),
+			sourceAccordion.clickHeader(),
+			sourceAccordion.find(Button({ id: 'undefined-button' })).click(),
 			Modal('Select User').find(TextField()).fillIn(username),
 			searchButton.click(),
 		]);

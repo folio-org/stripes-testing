@@ -64,7 +64,7 @@ describe('export manager', () => {
           userBarcode: userData.barcode,
         });
 
-        //Login and visit are separated, because otherwise user wasn't getting assigned permissions
+        // Login and visit are separated, because otherwise user wasn't getting assigned permissions
         cy.login(userData.username, userData.password);
         cy.visit(TopMenu.circulationLogPath);
       });
@@ -90,8 +90,9 @@ describe('export manager', () => {
 
   it('C350727 Verify search filter options Export Manager (firebird)', { tags: [testTypes.criticalPath, devTeams.firebird] }, () => {
     ExportManagerSearchPane.waitLoading();
-    // Need to pass variable for the first search result, instead of '000096'
-    ExportManagerSearchPane.searchById('000096');
+    cy.do(ExportManagerSearchPane.getSearchResult(0, 0).perform(element => {
+      ExportManagerSearchPane.searchById(element.innerText);
+    }));
     ExportManagerSearchPane.selectSearchResultItem();
     ExportManagerSearchPane.closeExportJobPane();
 
