@@ -1,5 +1,3 @@
-/// <reference types="cypress" />
-
 import TopMenu from '../../../support/fragments/topMenu';
 import HoldingsRecordView from '../../../support/fragments/inventory/holdingsRecordView';
 import TestTypes from '../../../support/dictionary/testTypes';
@@ -28,7 +26,9 @@ describe('Manage holding records with MARC source', () => {
     InventorySteps.addMarcHoldingRecord();
   });
   
-  it('C345409 MARC instance record + MARC holdings record (spitfire)', { tags: [TestTypes.smoke, DevTeams.spitfire, Features.holdingsRecord] }, () => {
+  it('C345409 MARC instance record + MARC holdings record (spitfire)', { tags: [TestTypes.smoke, DevTeams.spitfire] }, () => {
+    // waiting until page loading
+    cy.wait(10000);
     HoldingsRecordView.getId().then(initialHoldindsRecordId => {
       HoldingsRecordView.checkSource('MARC');
       HoldingsRecordView.checkActionsMenuOptionsInMarcSource();

@@ -277,6 +277,10 @@ export default {
 
   closeWithoutSaving() {
     cy.do(Button('Cancel').click());
+  },
+
+  closeWithoutSavingAfterChange() {
+    cy.do(Button('Cancel').click());
     cy.do(Button('Close without saving').click());
   },
 
