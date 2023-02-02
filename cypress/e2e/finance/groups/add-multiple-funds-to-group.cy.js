@@ -104,7 +104,7 @@ describe('ui-finance: Groups', () => {
   it('C347878 Add multiple funds to a group with plugin  (thunderjet)', { tags: [testType.criticalPath, devTeams.thunderjet] }, () => {
     FinanceHelp.searchByName(defaultGroup.name);
     Groups.selectGroup(defaultGroup.name);
-    Groups.addFundToGroup(defaultLedger.name);
+    Groups.addLedgerToGroup(defaultLedger.name);
     InteractorsTools.checkCalloutMessage('Fund(s) have been added to group');
     Groups.checkAddingMultiplyFunds(secondFund.name, firstFund.name);
   });
