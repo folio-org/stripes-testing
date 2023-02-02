@@ -99,7 +99,7 @@ describe('Manage holding records through quickmarc editor', () => {
         QuickMarcEditor.deleteTag(5);
         QuickMarcEditor.pressSaveAndClose();
         InteractorsTools.checkCalloutMessage('Record cannot be saved. An 852 is required.', calloutTypes.error);
-        QuickMarcEditor.closeWithoutSaving();
+        QuickMarcEditor.closeWithoutSavingAfterChange();
         HoldingsRecordView.viewSource();
         InventoryViewSource.contains(QuickMarcEditor.getSourceContent(initialTagContent));
       });
