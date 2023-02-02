@@ -118,19 +118,8 @@ describe('ui-inventory: Item status date updates', () => {
   afterEach(() => {
     InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(itemBarcode);
     Orders.getOrdersApi({ limit: 1, query: `"poNumber"=="${orderNumber}"` })
-      .then(order => {
-        Orders.deleteOrderApi(order[0].id);
-      });
-    UserEdit.changeServicePointPreferenceViaApi(
-      userForDeliveryRequest.userId,
-      [effectiveLocationServicePoint.id, notEffectiveLocationServicePoint.id]
-    )
-      .then(() => {
-        ServicePoint.deleteViaApi(effectiveLocationServicePoint.id);
-        ServicePoint.deleteViaApi(notEffectiveLocationServicePoint.id);
-        Users.deleteViaApi(userForDeliveryRequest.userId);
-      });
-
+      .then(order => Orders.deleteOrderApi(order[0].id));
+    Users.deleteViaApi(userForDeliveryRequest.userId);
     NewLocation.deleteViaApiIncludingInstitutionCampusLibrary(
       effectiveLocation.institutionId,
       effectiveLocation.campusId,
@@ -268,13 +257,13 @@ describe('ui-inventory: Item status date updates', () => {
     openItem(instanceTitle, effectiveLocation.name, itemBarcode);
     fullCheck(ItemRecordView.itemStatuses.declaredLost);
 
-    // // renew item (through override)
-    // openUser(userName);
-    // UserLoans.renewItem(itemBarcode);
-    // RenewConfirmationModal.confirmRenewOverrideItem();
-    // OverrideAndRenewModal.confirmOverrideItem();
-    // openItem(instanceTitle, effectiveLocation.name, itemBarcode);
-    // fullCheck(ItemRecordView.itemStatuses.checkedOut);
+    // renew item (through override)
+    openUser(userName);
+    UserLoans.renewItem(itemBarcode);
+    RenewConfirmationModal.confirmRenewOverrideItem();
+    OverrideAndRenewModal.confirmOverrideItem();
+    openItem(instanceTitle, effectiveLocation.name, itemBarcode);
+    fullCheck(ItemRecordView.itemStatuses.checkedOut);
 
     // // edit item record so that it has multiple pieces
     // InventoryInstance.openEditItemPage();
