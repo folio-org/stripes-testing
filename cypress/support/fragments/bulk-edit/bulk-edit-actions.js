@@ -40,7 +40,7 @@ function getPatronGroupTypeSelect() {
 
 export default {
   openStartBulkEditForm() {
-    cy.do(Button(including('Start bulk edit')).click());
+    cy.do(Button('Start bulk edit (CSV)').click());
   },
   openInAppStartBulkEditFrom() {
     cy.do(Button('Start bulk edit').click());
@@ -197,9 +197,14 @@ export default {
   downloadMatchedResults(fileName = 'matchedRecords.csv') {
     cy.do(actionsBtn.click());
     // It is necessary to avoid cypress reload page expecting
-    cy.get('a[download]', { timeout: 15000 }).first().then(($input) => {
-      cy.downloadFile($input.attr('href'), 'cypress/downloads', fileName);
-    });
+    // cy.get('a[download]', { timeout: 15000 }).first().then(($input) => {
+    //   cy.downloadFile($input.attr('href'), 'cypress/downloads', fileName);
+    // });
+    // cy.get('[class^="ActionMenuGroup-"] button', { timeout: 15000 }).first().then(($input) => {
+    //   cy.downloadFile($input.attr('href'), 'cypress/downloads', fileName);
+    // });
+    cy.get('[class^="ActionMenuGroup-"] button', { timeout: 15000 }).first().click();
+    cy.wait(5000);
   },
 
   prepareBulkEditFileWithDuplicates(fileMask, finalFileName, stringToBeReplaced, replaceString) {

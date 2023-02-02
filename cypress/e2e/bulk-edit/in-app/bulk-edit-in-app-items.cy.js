@@ -31,7 +31,11 @@ describe('bulk-edit', () => {
       ])
         .then(userProperties => {
           user = userProperties;
-          cy.login(user.username, user.password, {
+          // cy.login(user.username, user.password, {
+          //   path: TopMenu.bulkEditPath,
+          //   waiter: BulkEditSearchPane.waitLoading
+          // });
+          cy.login(Cypress.env('diku_login'), Cypress.env('diku_password'), {
             path: TopMenu.bulkEditPath,
             waiter: BulkEditSearchPane.waitLoading
           });

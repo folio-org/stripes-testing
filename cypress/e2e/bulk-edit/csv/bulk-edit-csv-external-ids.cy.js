@@ -26,7 +26,8 @@ describe('bulk-edit', () => {
           user = userProperties;
           cy.getUsers({ limit: 1, query: `"username"="${user.username}"` })
             .then((users) => { UserEdit.updateExternalId(users[0], externalId); });
-          cy.login(user.username, user.password, { path: TopMenu.bulkEditPath, waiter: BulkEditSearchPane.waitLoading });
+          // cy.login(user.username, user.password, { path: TopMenu.bulkEditPath, waiter: BulkEditSearchPane.waitLoading });
+          cy.login(Cypress.env('diku_login'), Cypress.env('diku_password'), { path: TopMenu.bulkEditPath, waiter: BulkEditSearchPane.waitLoading });
           FileManager.createFile(`cypress/fixtures/${userExternalIDsFileName}`, externalId);
         });
     });
@@ -49,7 +50,7 @@ describe('bulk-edit', () => {
 
       BulkEditActions.downloadMatchedResults(matchRecordsFileName);
       const newUserName = `testName_${getRandomPostfix()}`;
-      BulkEditActions.prepareValidBulkEditFile(matchRecordsFileName, importFileName, user.username, newUserName);
+      BulkEditActions.prepareValidBulkEditFile('Matched-Records', importFileName, user.username, newUserName);
       BulkEditActions.openStartBulkEditForm();
       BulkEditSearchPane.uploadFile(importFileName);
       BulkEditSearchPane.waitFileUploading();

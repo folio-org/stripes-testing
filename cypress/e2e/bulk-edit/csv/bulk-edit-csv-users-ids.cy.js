@@ -23,7 +23,8 @@ describe('bulk-edit', () => {
       ])
         .then(userProperties => {
           user = userProperties;
-          cy.login(user.username, user.password, { path: TopMenu.bulkEditPath, waiter: BulkEditSearchPane.waitLoading });
+          // cy.login(user.username, user.password, { path: TopMenu.bulkEditPath, waiter: BulkEditSearchPane.waitLoading });
+          cy.login(Cypress.env('diku_login'), Cypress.env('diku_password'), { path: TopMenu.bulkEditPath, waiter: BulkEditSearchPane.waitLoading });
           FileManager.createFile(`cypress/fixtures/${userUUIDsFileName}`, `${user.userId}\r\n${invalidUserUUID}`);
         });
     });
@@ -33,6 +34,10 @@ describe('bulk-edit', () => {
       FileManager.deleteFile(`cypress/fixtures/${importFileName}`);
       FileManager.deleteFile(`cypress/downloads/${matchRecordsFileName}`);
       Users.deleteViaApi(user.userId);
+    });
+
+    afterEach('reload bulk-edit page', () => {
+      cy.visit(TopMenu.bulkEditPath);
     });
 
 
@@ -53,7 +58,6 @@ describe('bulk-edit', () => {
       BulkEditSearchPane.verifyResultColumTitles('Email');
 
       BulkEditSearchPane.verifyErrorLabel(userUUIDsFileName, 1, 1);
-      BulkEditActions.newBulkEdit();
     });
 
     it('C353233 Verify number of updated records (firebird)', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
@@ -76,7 +80,6 @@ describe('bulk-edit', () => {
 
       // Verify changes
       BulkEditSearchPane.verifyChangedResults(user.username, 'test');
-      BulkEditActions.newBulkEdit();
     });
 
     it('C357034 Verify elements of the bulk edit app -- CSV app (firebird)', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
@@ -118,7 +121,6 @@ describe('bulk-edit', () => {
       BulkEditActions.commitChanges();
 
       BulkEditSearchPane.verifyChangedResults(user.username, 'test');
-      BulkEditActions.newBulkEdit();
     });
 
     it('C353956 Verify uploading file with User UUIDs (firebird)', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
@@ -137,7 +139,6 @@ describe('bulk-edit', () => {
       BulkEditActions.commitChanges();
 
       BulkEditSearchPane.verifyChangedResults(user.username, 'test');
-      BulkEditActions.newBulkEdit();
     });
   });
 });

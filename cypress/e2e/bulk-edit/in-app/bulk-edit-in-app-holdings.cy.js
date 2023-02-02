@@ -31,7 +31,11 @@ describe('bulk-edit', () => {
       ])
         .then(userProperties => {
           user = userProperties;
-          cy.login(user.username, user.password, {
+          // cy.login(user.username, user.password, {
+          //   path: TopMenu.bulkEditPath,
+          //   waiter: BulkEditSearchPane.waitLoading
+          // });
+          cy.login(Cypress.env('diku_login'), Cypress.env('diku_password'), {
             path: TopMenu.bulkEditPath,
             waiter: BulkEditSearchPane.waitLoading
           });
@@ -64,7 +68,7 @@ describe('bulk-edit', () => {
     });
 
     afterEach('open new bulk edit', () => {
-      BulkEditActions.newBulkEdit();
+      cy.visit(TopMenu.bulkEditPath);
     });
 
     it('C357052 Verify Downloaded matched records if identifiers return more than one item (firebird)', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
