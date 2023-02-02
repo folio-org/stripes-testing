@@ -19,7 +19,7 @@ describe('Data Import -> Importing MARC Authority files', () => {
     acceptedType: 'MARC',
   };
   let fileName;
-  let createdAuthorityID;
+  const createdAuthorityIDs = [];
 
   before('Creating data', () => {
     cy.createTempUser([
@@ -46,8 +46,6 @@ describe('Data Import -> Importing MARC Authority files', () => {
   });
 
   afterEach('Deleting data', () => {
-    if (createdAuthorityID) MarcAuthority.deleteViaAPI(createdAuthorityID);
-
     cy.loginAsAdmin({ path: TopMenu.dataImportPath, waiter: DataImport.waitLoading });
     DataImport.selectLog();
     DataImport.openDeleteImportLogsModal();
@@ -55,6 +53,10 @@ describe('Data Import -> Importing MARC Authority files', () => {
   });
 
   after('Deleting data', () => {
+    createdAuthorityIDs.forEach(id => {
+      MarcAuthority.deleteViaAPI(id);
+    });
+
     JobProfiles.deleteJobProfile(createdJobProfile.profileName);
     Users.deleteViaApi(testData.userProperties.userId);
   });
@@ -68,7 +70,7 @@ describe('Data Import -> Importing MARC Authority files', () => {
     Logs.checkStatusOfJobProfile('Completed');
     Logs.openFileDetails(fileName);
     Logs.getCreatedItemsID().then(link => {
-      createdAuthorityID = link.split('/')[5];
+      createdAuthorityIDs.push(link.split('/')[5]);
     });
     Logs.goToTitleLink('Created');
     MarcAuthority.contains('MARC');
@@ -83,7 +85,7 @@ describe('Data Import -> Importing MARC Authority files', () => {
     Logs.checkStatusOfJobProfile('Completed');
     Logs.openFileDetails(fileName);
     Logs.getCreatedItemsID().then(link => {
-      createdAuthorityID = link.split('/')[5];
+      createdAuthorityIDs.push(link.split('/')[5]);
     });
     Logs.goToTitleLink('Created');
     MarcAuthority.contains('MARC');

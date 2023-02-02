@@ -13,6 +13,7 @@ export default HTML.extend('text area')
   .filters({
     id: el => el.querySelector('textarea').getAttribute('id'),
     ariaLabel: el => el.querySelector('textarea').getAttribute('aria-label'),
+    cols: el => el.querySelector('textarea').getAttribute('cols'),
     label,
     value: el => el.querySelector('textarea').value,
     textContent: el => el.querySelector('textarea').textContent,
