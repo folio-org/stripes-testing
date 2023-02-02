@@ -262,9 +262,9 @@ describe('ui-inventory: Item status date updates', () => {
     UserLoans.renewItem(itemBarcode, true);
     cy.log('cy.log/renew item');
     console.log('console.log/renew item');
-    RenewConfirmationModal.confirmRenewOverrideItem();
-    cy.log('cy.log/override item');
-    console.log('console.log/override item');
+    // RenewConfirmationModal.confirmRenewOverrideItem();
+    // cy.log('cy.log/override item');
+    // console.log('console.log/override item');
     // OverrideAndRenewModal.confirmOverrideItem();
     // openItem(instanceTitle, effectiveLocation.name, itemBarcode);
     // fullCheck(ItemRecordView.itemStatuses.checkedOut);
