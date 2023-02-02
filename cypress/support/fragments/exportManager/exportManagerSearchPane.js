@@ -9,6 +9,9 @@ const systemAccordion = Accordion({ id: 'isSystemSource' });
 const sourceAccordion = Accordion({ id: 'createdByUserId' });
 const jobTypeAccordion = Accordion({ id: 'type' });
 const statusAccordion = Accordion({ id: 'status' });
+const startDateTextfield = TextField({ name: 'startDate' });
+const endDateTextfield = TextField({ name: 'endDate' });
+const applyButton = Button('Apply');
 const getSearchResult = (row = 0, col = 0) => MultiColumnListCell({ 'row': row, 'columnIndex': col });
 
 export default {
@@ -74,9 +77,9 @@ export default {
 	enterStartTime(fromDate, toDate) {
 		cy.do([
 			startTimeAccordion.clickHeader(),
-			startTimeAccordion.find(TextField({ name: 'startDate' })).fillIn(fromDate),
-			startTimeAccordion.find(TextField({ name: 'endDate' })).fillIn(toDate),
-			startTimeAccordion.find(Button('Apply')).click(),
+			startTimeAccordion.find(startDateTextfield).fillIn(fromDate),
+			startTimeAccordion.find(endDateTextfield).fillIn(toDate),
+			startTimeAccordion.find(applyButton).click(),
 		]);
 	},
 	resetStartTime() {
@@ -85,9 +88,9 @@ export default {
 	enterEndTime(fromDate, toDate) {
 		cy.do([
 			endTimeAccordion.clickHeader(),
-			endTimeAccordion.find(TextField({ name: 'startDate' })).fillIn(fromDate),
-			endTimeAccordion.find(TextField({ name: 'endDate' })).fillIn(toDate),
-			endTimeAccordion.find(Button('Apply')).click(),
+			endTimeAccordion.find(startDateTextfield).fillIn(fromDate),
+			endTimeAccordion.find(endDateTextfield).fillIn(toDate),
+			endTimeAccordion.find(applyButton).click(),
 		]);
 	},
 	resetEndTime() {
