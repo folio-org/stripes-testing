@@ -57,4 +57,6 @@ module.exports = async (on, config) => {
   allureWriter(on, config);
   await require('cypress-testrail-simple/src/plugin')(on, config);
   return config;
+
+  await require('cypress-log-to-output').install(on);
 };

@@ -90,6 +90,8 @@ export default {
       cy.expect(KeyValue({ value: barcode }).exists());
       cy.expect(renewButton.exists());
       cy.do(renewButton.click());
+      cy.log('cy.log/click renew button');
+      console.log('console.log/click renew button');
     } else {
       cy.wait(1500);
       cy.get('div[class^="mclRow--"]').contains('div[class^="mclCell-"]', barcode).then(elem => {
@@ -97,6 +99,8 @@ export default {
       });
       cy.expect(renewButton.exists());
       cy.do(renewButton.click());
+      cy.log('cy.log/click renew button');
+      console.log('console.log/click renew button');
     }
   },
   checkResultsInTheRowByBarcode: (allContentToCheck, itemBarcode) => {
