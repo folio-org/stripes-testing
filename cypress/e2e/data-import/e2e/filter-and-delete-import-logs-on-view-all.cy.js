@@ -30,23 +30,18 @@ describe('ui-data-import: A user can filter and delete import logs from the "Vie
     ])
       .then(userProperties => {
         firstUser = userProperties;
+
+        // Log list should contain at least 30-35 import jobs, run by different users, and using different import profiles
+        const fileName = 'oneMarcBib.mrc';
+        for (let i = 0; i < 25; i++) {
+          DataImport.uploadFileViaApi(fileName);
+        }
+
         cy.login(userProperties.username, userProperties.password, {
           path: TopMenu.dataImportPath,
           waiter: DataImport.waitLoading
         });
-        // TODO rewrite upload file by API
-        // Log list should contain at least 30-35 import jobs, run by different users, and using different import profiles
-        for (let i = 0; i < 17; i++) {
-          const nameMarcFileForCreate = `C358136autotestFile.${getRandomPostfix()}.mrc`;
 
-          DataImport.uploadFile('oneMarcBib.mrc', nameMarcFileForCreate);
-          // need to wait until file will be uploaded in loop
-          cy.wait(8000);
-          JobProfiles.searchJobProfileForImport('Default - Create instance and SRS MARC Bib');
-          JobProfiles.runImportFile();
-          JobProfiles.waitFileIsImported(nameMarcFileForCreate);
-          Logs.checkStatusOfJobProfile('Completed');
-        }
         cy.logout();
       });
 
@@ -61,7 +56,7 @@ describe('ui-data-import: A user can filter and delete import logs from the "Vie
           waiter: DataImport.waitLoading
         });
         // Log list should contain at least 30-35 import jobs
-        for (let i = 0; i < 12; i++) {
+        for (let i = 0; i < 8; i++) {
           const nameMarcFileForCreate = `C358136autotestFile.${getRandomPostfix()}.mrc`;
 
           DataImport.uploadFile('oneMarcAuthority.mrc', nameMarcFileForCreate);
@@ -75,11 +70,11 @@ describe('ui-data-import: A user can filter and delete import logs from the "Vie
       });
   });
 
-  after(() => {
-    Users.deleteViaApi(firstUser.userId);
-    Users.deleteViaApi(secondUser.userId);
-    // TODO delete all created instances and holdings
-  });
+  // after(() => {
+  //   Users.deleteViaApi(firstUser.userId);
+  //   Users.deleteViaApi(secondUser.userId);
+  //   // TODO delete all created instances
+  // });
 
   it('C358136 A user can filter and delete import logs from the "View all" page (folijet)', { tags: [TestTypes.criticalPath, DevTeams.folijet] }, () => {
     LogsViewAll.openViewAll();

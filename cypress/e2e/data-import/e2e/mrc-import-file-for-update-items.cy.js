@@ -23,6 +23,7 @@ import SettingsJobProfiles from '../../../support/fragments/settings/dataImport/
 import DevTeams from '../../../support/dictionary/devTeams';
 
 describe('ui-data-import: MARC file upload with the update of instance, holding, and items', () => {
+  let instanceHRID = null;
   // profile names for creating
   const nameMarcBibMappingProfile = `autotest_marcBib_mapping_profile_${getRandomPostfix()}`;
   const nameInstanceMappingProfile = `autotest_instance_mapping_profile_${getRandomPostfix()}`;
@@ -307,7 +308,7 @@ describe('ui-data-import: MARC file upload with the update of instance, holding,
 
   afterEach(() => {
     DataImport.checkUploadState();
-
+    cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${instanceHRID}"` });
     // delete generated profiles
     JobProfiles.deleteJobProfile(jobProfileNameUpdate);
     collectionOfMatchProfiles.forEach(profile => {
@@ -383,6 +384,7 @@ describe('ui-data-import: MARC file upload with the update of instance, holding,
     // get Instance HRID through API
     InventorySearchAndFilter.getInstanceHRID()
       .then(hrId => {
+        instanceHRID = hrId[0];
         // download .csv file
         cy.visit(TopMenu.inventoryPath);
         InventorySearchAndFilter.searchInstanceByHRID(hrId[0]);
