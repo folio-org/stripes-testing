@@ -12,6 +12,7 @@ import {
 import DateTools from '../../utils/dateTools';
 
 const dropdownButton = MultiColumnListRow({ rowIndexInParent: 'row-0' }).find(Dropdown()).find(Button());
+const actionsButton = Button('Actions');
 
 
 // TODO: will rework to interactor when we get section id
@@ -150,5 +151,12 @@ export default {
 
   userDetailIsOpen() {
     cy.expect(Pane({ id: 'pane-userdetails' }).exists());
+  },
+
+  exportResults() {
+    cy.do([
+      actionsButton.click(),
+      Button('Export results (CSV)').click(),
+    ])
   },
 };
