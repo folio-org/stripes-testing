@@ -26,7 +26,6 @@ const itemData = {
   instanceTitle: `Instance ${getRandomPostfix()}`,
 };
 const userUUIDsFileName = `userUUIDs_${getRandomPostfix()}.csv`;
-const matchRecordsFileName = `matchedRecords_${getRandomPostfix()}.csv`;
 const lastWeek = DateTools.getFormattedDate({ date: DateTools.getLastWeekDateObj() }, 'MM/DD/YYYY');
 const today = DateTools.getFormattedDate({ date: new Date() }, 'MM/DD/YYYY');
 const todayWithoutPadding = DateTools.getFormattedDateWithSlashes({ date: new Date() });
@@ -35,7 +34,7 @@ const exportRequestedCalloutMessage = 'Your Circulation log export has been requ
 const jobCompletedCalloutMessage = 'Export job has been completed.';
 
 describe('export manager', () => {
-  before('create instance and user, check out item', () => {
+  before('create instance, user and two jobs', () => {
     cy.getAdminToken().then(() => {
       cy.getInstanceTypes({ limit: 1 }).then((instanceTypes) => { testData.instanceTypeId = instanceTypes[0].id; });
       cy.getHoldingTypes({ limit: 1 }).then((res) => { testData.holdingTypeId = res[0].id; });
@@ -68,16 +67,15 @@ describe('export manager', () => {
 
         // Login and visit are separated, because otherwise user wasn't getting assigned permissions
         cy.login(userData.username, userData.password);
-        cy.visit(TopMenu.bulkEditPath);
       });
 
     // Creating a bulk edit job
-    FileManager.createFile(`cypress/fixtures/${userUUIDsFileName}`, userData.userId);
+    cy.visit(TopMenu.bulkEditPath);
     BulkEditSearchPane.checkUsersRadio();
     BulkEditSearchPane.selectRecordIdentifier('User UUIDs');
+    FileManager.createFile(`cypress/fixtures/${userUUIDsFileName}`, userData.userId);
     BulkEditSearchPane.uploadFile(userUUIDsFileName);
     BulkEditSearchPane.waitFileUploading();
-    BulkEditActions.downloadMatchedResults(matchRecordsFileName);
 
     // Creating a circulation log job
     cy.visit(TopMenu.circulationLogPath);
@@ -89,7 +87,7 @@ describe('export manager', () => {
     cy.visit(TopMenu.exportManagerPath);
   });
 
-  after('check in item, delete instance and user', () => {
+  after('check in item, delete instance, user and files', () => {
     CheckInActions.checkinItemViaApi({
       checkInDate: moment.utc().format(),
       servicePointId: testData.servicepointId,
