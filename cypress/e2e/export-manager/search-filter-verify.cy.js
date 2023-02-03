@@ -17,7 +17,6 @@ import InteractorsTools from '../../support/utils/interactorsTools';
 import CheckInActions from '../../support/fragments/check-in-actions/checkInActions';
 import FileManager from '../../support/utils/fileManager';
 import BulkEditSearchPane from '../../support/fragments/bulk-edit/bulk-edit-search-pane';
-import BulkEditActions from '../../support/fragments/bulk-edit/bulk-edit-actions';
 
 let userData = {};
 const testData = {};
