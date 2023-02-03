@@ -16,6 +16,7 @@ import SearchPane from '../../support/fragments/circulation-log/searchPane';
 import InteractorsTools from '../../support/utils/interactorsTools';
 import CheckInActions from '../../support/fragments/check-in-actions/checkInActions';
 import FileManager from '../../support/utils/fileManager';
+import BulkEditSearchPane from '../../support/fragments/bulk-edit/bulk-edit-search-pane';
 
 let userData = {};
 const testData = {};
@@ -23,6 +24,7 @@ const itemData = {
   barcode: getRandomPostfix(),
   instanceTitle: `Instance ${getRandomPostfix()}`,
 };
+const userUUIDsFileName = `userUUIDs_${getRandomPostfix()}.csv`;
 const lastWeek = DateTools.getFormattedDate({ date: DateTools.getLastWeekDateObj() }, 'MM/DD/YYYY');
 const today = DateTools.getFormattedDate({ date: new Date() }, 'MM/DD/YYYY');
 const todayWithoutPadding = DateTools.getFormattedDateWithSlashes({ date: new Date() });
@@ -31,7 +33,7 @@ const exportRequestedCalloutMessage = 'Your Circulation log export has been requ
 const jobCompletedCalloutMessage = 'Export job has been completed.';
 
 describe('export manager', () => {
-  before('create instance and user, check out item', () => {
+  before('create instance, user and two jobs', () => {
     cy.getAdminToken().then(() => {
       cy.getInstanceTypes({ limit: 1 }).then((instanceTypes) => { testData.instanceTypeId = instanceTypes[0].id; });
       cy.getHoldingTypes({ limit: 1 }).then((res) => { testData.holdingTypeId = res[0].id; });
@@ -46,6 +48,7 @@ describe('export manager', () => {
       permissions.exportManagerAll.gui,
       permissions.circulationLogAll.gui,
       permissions.checkoutAll.gui,
+      permissions.bulkEditUpdateRecords.gui
     ])
       .then(userProperties => {
         userData = { ...userProperties };
@@ -63,9 +66,18 @@ describe('export manager', () => {
 
         // Login and visit are separated, because otherwise user wasn't getting assigned permissions
         cy.login(userData.username, userData.password);
-        cy.visit(TopMenu.circulationLogPath);
       });
 
+    // Creating a bulk edit job
+    cy.visit(TopMenu.bulkEditPath);
+    BulkEditSearchPane.checkUsersRadio();
+    BulkEditSearchPane.selectRecordIdentifier('User UUIDs');
+    FileManager.createFile(`cypress/fixtures/${userUUIDsFileName}`, userData.userId);
+    BulkEditSearchPane.uploadFile(userUUIDsFileName);
+    BulkEditSearchPane.waitFileUploading();
+
+    // Creating a circulation log job
+    cy.visit(TopMenu.circulationLogPath);
     SearchPane.searchByCheckedOut();
     SearchPane.exportResults();
     InteractorsTools.checkCalloutMessage(exportRequestedCalloutMessage);
@@ -74,7 +86,7 @@ describe('export manager', () => {
     cy.visit(TopMenu.exportManagerPath);
   });
 
-  after('check in item, delete instance and user', () => {
+  after('check in item, delete instance, user and files', () => {
     CheckInActions.checkinItemViaApi({
       checkInDate: moment.utc().format(),
       servicePointId: testData.servicepointId,
@@ -82,6 +94,7 @@ describe('export manager', () => {
     });
     InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(itemData.barcode);
     Users.deleteViaApi(userData.userId);
+    FileManager.deleteFile(`cypress/fixtures/${userUUIDsFileName}`);
     FileManager.deleteFolder(Cypress.config('downloadsFolder'));
   });
 
