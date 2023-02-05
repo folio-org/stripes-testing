@@ -451,4 +451,12 @@ export default {
   selectViewHoldings() {
     cy.do(viewHoldingButton.click());
   },
+
+  filterItemByStatisticalCode:(code) => {
+    cy.do([
+      Button({ id:'accordion-toggle-button-itemsStatisticalCodeIds' }).click(),
+      Accordion({ id:'itemsStatisticalCodeIds' }).find(TextField()).fillIn(code),
+    ]);
+    cy.do(Accordion({ id:'itemsStatisticalCodeIds' }).find(Checkbox(code)).click());
+  }
 };
