@@ -38,6 +38,7 @@ import ServicePoints from '../../support/fragments/settings/tenant/servicePoints
 import DateTools from '../../support/utils/dateTools';
 import UserEdit from '../../support/fragments/users/userEdit';
 import ServicePoint from '../../support/fragments/servicePoint/servicePoint';
+import ItemActions from '../../support/fragments/inventory/inventoryItem/itemActions';
 
 describe('ui-inventory: Item status date updates', () => {
   const instanceTitle = `autotestTitle ${Helper.getRandomBarcode()}`;
@@ -144,7 +145,7 @@ describe('ui-inventory: Item status date updates', () => {
     InventorySearchAndFilter.searchByParameter('Title (all)', title);
     InventoryInstances.selectInstance();
     InventoryInstance.openHoldings(itemLocation);
-    InventoryInstance.openItemView(barcode);
+    InventoryInstance.openItemByBarcode(barcode);
   };
 
   const selectOrderWithNumber = (numberOrder) => {
@@ -220,7 +221,7 @@ describe('ui-inventory: Item status date updates', () => {
     checkIn(itemBarcode, ItemRecordView.itemStatuses.available);
 
     // mark item as missing
-    ItemRecordView.clickMarkAsMissing();
+    ItemActions.markAsMissing();
     fullCheck(ItemRecordView.itemStatuses.missing);
 
     // check in item at service point assigned to its effective location

@@ -31,6 +31,7 @@ import DevTeams from '../../../support/dictionary/devTeams';
 import OrderLines from '../../../support/fragments/orders/orderLines';
 import NewLocation from '../../../support/fragments/settings/tenant/locations/newLocation';
 import FileManager from '../../../support/utils/fileManager';
+import ItemActions from '../../../support/fragments/inventory/inventoryItem/itemActions';
 
 describe('ui-data-import: Match on POL and update related Instance, Holdings, Item', () => {
   const firstItem = {
@@ -229,7 +230,7 @@ describe('ui-data-import: Match on POL and update related Instance, Holdings, It
         cy.getItems({ query: `"id"=="${itemId}"` })
           .then((item) => {
             item.barcode = itemBarcode;
-            ItemRecordView.editItemViaApi(item)
+            ItemActions.editItemViaApi(item)
               .then(() => {
                 CheckInActions.checkinItemViaApi({
                   itemBarcode: item.barcode,
@@ -378,7 +379,7 @@ describe('ui-data-import: Match on POL and update related Instance, Holdings, It
     HoldingsRecordView.checkPermanentLocation('Main Library');
     HoldingsRecordView.close();
     InventoryInstance.openHoldingsAccordion('Main Library');
-    InventoryInstance.openItemView(firstItem.barcode);
+    InventoryInstance.openItemByBarcode(firstItem.barcode);
     ItemRecordView.verifyItemStatus('In process');
     ItemRecordView.checkEffectiveLocation('Main Library');
     ItemRecordView.closeDetailView();
