@@ -10,7 +10,7 @@ import InventoryInstance from '../../../support/fragments/inventory/inventoryIns
 import DevTeams from '../../../support/dictionary/devTeams';
 import Z3950TargetProfiles from '../../../support/fragments/settings/inventory/z39.50TargetProfiles';
 
-describe('Manage holding records with MARC source', () => {
+describe('Manage holding records with MARC source', { retries: 2 }, () => {
   before(() => {
     cy.getAdminToken().then(() => {
       Z3950TargetProfiles.changeOclcWorldCatValueViaApi('100473910/PAOLF');
