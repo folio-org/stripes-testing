@@ -10,7 +10,8 @@ import Users from '../../../support/fragments/users/users';
 
 let user;
 const userUUIDsFileName = `userUUIDs_${getRandomPostfix()}.csv`;
-const matchRecordsFileName = `matchedRecords_${getRandomPostfix()}.csv`;
+// const matchRecordsFileName = `matchedRecords_${getRandomPostfix()}.csv`;
+const matchRecordsFileName = '*Matched-Records*';
 const importFileName = `bulkEditImport_${getRandomPostfix()}.csv`;
 
 describe('bulk-edit', () => {
@@ -37,7 +38,7 @@ describe('bulk-edit', () => {
     after('delete test data', () => {
       FileManager.deleteFile(`cypress/fixtures/${userUUIDsFileName}`);
       FileManager.deleteFile(`cypress/fixtures/${importFileName}`);
-      FileManager.deleteFile(`cypress/downloads/${matchRecordsFileName}`);
+      FileManager.deleteFolder(Cypress.config('downloadsFolder'));
       Users.deleteViaApi(user.userId);
     });
 
@@ -62,7 +63,6 @@ describe('bulk-edit', () => {
       BulkEditActions.commitChanges();
 
       BulkEditSearchPane.verifyChangedResults(newUserName);
-      BulkEditActions.newBulkEdit();
     });
   });
 });

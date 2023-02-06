@@ -225,7 +225,6 @@ export default {
   prepareValidBulkEditFile(fileMask, finalFileName, stringToBeReplaced, replaceString) {
     FileManager.findDownloadedFilesByMask(`*${fileMask}*`).then((downloadedFilenames) => {
       const lastDownloadedFilename = downloadedFilenames.sort()[downloadedFilenames.length - 1];
-
       FileManager.readFile(lastDownloadedFilename)
         .then((actualContent) => {
           const content = actualContent.split('\n');
@@ -255,14 +254,14 @@ export default {
 
   verifyUsersActionDropdownItems(isDisabled = false) {
     cy.expect([
-      dropdownMenu.find(Checkbox({ name: 'active', checked: true, disabled: isDisabled })).exists(),
-      dropdownMenu.find(Checkbox({ name: 'lastName', checked: true, disabled: isDisabled })).exists(),
-      dropdownMenu.find(Checkbox({ name: 'firstName', checked: true, disabled: isDisabled })).exists(),
-      dropdownMenu.find(Checkbox({ name: 'barcode', checked: true, disabled: isDisabled })).exists(),
-      dropdownMenu.find(Checkbox({ name: 'patronGroup', checked: true, disabled: isDisabled })).exists(),
-      dropdownMenu.find(Checkbox({ name: 'username', checked: true, disabled: isDisabled })).exists(),
-      dropdownMenu.find(Checkbox({ name: 'email', checked: false, disabled: isDisabled })).exists(),
-      dropdownMenu.find(Checkbox({ name: 'expirationDate', checked: false, disabled: isDisabled })).exists(),
+      dropdownMenu.find(Checkbox({ name: 'Active', checked: true, disabled: isDisabled })).exists(),
+      dropdownMenu.find(Checkbox({ name: 'Last name', checked: true, disabled: isDisabled })).exists(),
+      dropdownMenu.find(Checkbox({ name: 'First name', checked: true, disabled: isDisabled })).exists(),
+      dropdownMenu.find(Checkbox({ name: 'Barcode', checked: true, disabled: isDisabled })).exists(),
+      dropdownMenu.find(Checkbox({ name: 'Patron group', checked: true, disabled: isDisabled })).exists(),
+      dropdownMenu.find(Checkbox({ name: 'User name', checked: true, disabled: isDisabled })).exists(),
+      dropdownMenu.find(Checkbox({ name: 'Email', checked: false, disabled: isDisabled })).exists(),
+      dropdownMenu.find(Checkbox({ name: 'Expiration date', checked: false, disabled: isDisabled })).exists(),
     ]);
   },
 
@@ -307,12 +306,12 @@ export default {
   },
 
   verifyCheckedDropdownMenuItem() {
-    cy.do(dropdownMenu.find(Checkbox({ name: 'firstName' })).click());
+    cy.do(dropdownMenu.find(Checkbox({ name: 'First name' })).click());
     cy.expect(MultiColumnListHeader('First name').absent());
   },
 
   verifyUncheckedDropdownMenuItem() {
-    cy.do(dropdownMenu.find(Checkbox({ name: 'email' })).click());
+    cy.do(dropdownMenu.find(Checkbox({ name: 'Email' })).click());
     cy.expect(MultiColumnListHeader('Email').exists());
   },
 

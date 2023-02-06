@@ -35,7 +35,7 @@ describe('bulk-edit', () => {
     after('delete test data', () => {
       FileManager.deleteFile(`cypress/fixtures/${userExternalIDsFileName}`);
       FileManager.deleteFile(`cypress/fixtures/${importFileName}`);
-      FileManager.deleteFile(`cypress/downloads/${matchRecordsFileName}`);
+      FileManager.deleteFolder(Cypress.config('downloadsFolder'));
       Users.deleteViaApi(user.userId);
     });
 

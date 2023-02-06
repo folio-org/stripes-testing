@@ -15,7 +15,8 @@ let hrid;
 const itemBarcode = getRandomPostfix();
 const validHoldingUUIDsFileName = `validHoldingUUIDs_${getRandomPostfix()}.csv`;
 const validHoldingHRIDsFileName = `validHoldingHRIDs_${getRandomPostfix()}.csv`;
-const resultFileName = `matchedRecords_${getRandomPostfix()}.csv`;
+// const resultFileName = `matchedRecords_${getRandomPostfix()}.csv`;
+const resultFileName = '*Matched-Records*';
 const item = {
   instanceName: `testBulkEdit_${getRandomPostfix()}`,
   itemBarcode1: itemBarcode,
@@ -64,7 +65,7 @@ describe('bulk-edit', () => {
       InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(item.itemBarcode1);
       FileManager.deleteFile(`cypress/fixtures/${validHoldingUUIDsFileName}`);
       FileManager.deleteFile(`cypress/fixtures/${validHoldingHRIDsFileName}`);
-      FileManager.deleteFile(`cypress/downloads/${resultFileName}`);
+      FileManager.deleteFolder(Cypress.config('downloadsFolder'));
     });
 
     afterEach('open new bulk edit', () => {
@@ -77,7 +78,7 @@ describe('bulk-edit', () => {
       BulkEditSearchPane.verifyMatchedResults(hrid);
 
       BulkEditActions.downloadMatchedResults(resultFileName);
-      BulkEditFiles.verifyMatchedResultFileContent('*Matched-Records*', [hrid], 'hrid');
+      BulkEditFiles.verifyMatchedResultFileContent(resultFileName, [hrid], 'hrid');
     });
 
     it('C356810 Verify uploading file with holdings UUIDs (firebird)', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
@@ -101,9 +102,9 @@ describe('bulk-edit', () => {
       BulkEditSearchPane.uploadFile(validHoldingUUIDsFileName);
       BulkEditSearchPane.waitFileUploading();
       [
-        'Holdings HRID',
-        'Permanent Location',
-        'Temporary Location',
+        'Hrid',
+        'Permanent location',
+        'Temporary location',
         'Call number prefix',
         'Call number',
         'Call number suffix',

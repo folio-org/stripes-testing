@@ -46,11 +46,11 @@ describe('bulk-edit', () => {
       BulkEditSearchPane.selectRecordIdentifier('Item barcode');
     });
 
-    // after('delete test data', () => {
-    //   InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(item.itemBarcode);
-    //   Users.deleteViaApi(user.userId);
-    //   FileManager.deleteFile(`cypress/fixtures/${invalidItemBarcodesFileName}`);
-    // });
+    after('delete test data', () => {
+      InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(item.itemBarcode);
+      Users.deleteViaApi(user.userId);
+      FileManager.deleteFile(`cypress/fixtures/${invalidItemBarcodesFileName}`);
+    });
 
     afterEach('reload bulk-edit page', () => {
       cy.visit(TopMenu.bulkEditPath);
@@ -75,20 +75,20 @@ describe('bulk-edit', () => {
       const expectedColumnTitles = [
         'Barcode',
         'Status',
-        'Item effective location',
-        'Effective call number',
+        'Effective Location',
+        'Effective Call Number Components',
         'Item HRID',
-        'Material type',
-        'Permanent loan type',
-        'Temporary loan type'
+        'Material Type',
+        'Permanent Loan Type',
+        'Temporary Loan Type'
       ];
       expectedColumnTitles.forEach(title => BulkEditSearchPane.verifyResultColumTitles(title));
 
       BulkEditSearchPane.verifyActionsAfterConductedInAppUploading(false);
       BulkEditSearchPane.verifyItemsActionDropdownItems();
 
-      BulkEditSearchPane.changeShowColumnCheckbox('Item UUID');
-      BulkEditSearchPane.verifyResultColumTitles('Item UUID');
+      BulkEditSearchPane.changeShowColumnCheckbox('Item id');
+      BulkEditSearchPane.verifyResultColumTitles('Item id');
     });
 
     it('C350943 Verify Record identifiers dropdown -- Inventory-Items app (firebird)', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
