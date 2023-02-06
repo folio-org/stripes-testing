@@ -202,8 +202,9 @@ export default {
       actionsButton.click(),
       Button('Increase allocation').click(),
       amountTextField.fillIn('50'),
-      Modal({ id: 'add-transfer-modal' }).find(confirmButton).click(),
     ]);
+    cy.wait(2000);
+    cy.do(Modal({ id: 'add-transfer-modal' }).find(Button('Confirm')).click());
   },
 
   transfer: (thisFund, fromFund) => {
