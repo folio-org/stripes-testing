@@ -113,29 +113,26 @@ describe('ui-data-import: Item update via match by status', () => {
   };
 
   before('create user', () => {
-    cy.loginAsAdmin({ path: SettingsMenu.mappingProfilePath, waiter: FieldMappingProfiles.waitLoading });
-    // cy.createTempUser([
-    //   // permissions.moduleDataImportEnabled.gui,
-    //   // permissions.settingsDataImportEnabled.gui,
-    //   // permissions.dataExportEnableSettings.gui,
-    //   // permissions.inventoryAll.gui,
-    //   // permissions.uiInventoryMarcItemInProcess.gui,
-    //   // permissions.uiInventoryMarcItemIntellectual.gui,
-    //   // permissions.uiInventoryMarcItemLongMissing.gui,
-    //   // permissions.uiInventoryMarcItemRestricted.gui,
-    //   // permissions.uiInventoryMarcItemUnavailable.gui,
-    //   // permissions.uiInventoryMarcItemUnknow.gui,
-    //   // permissions.uiInventoryMarkItemsWithdrawn.gui,
-    //   // permissions.dataExportEnableApp.gui,
-    //   // permissions.settingsDataImportEnabled.gui
-    //   permissions.dataExportAll.gui
-
-    // ])
-    //   .then(userProperties => {
-    //     user = userProperties;
-    //     cy.login(user.username, user.password,
-    //       { path: SettingsMenu.mappingProfilePath, waiter: FieldMappingProfiles.waitLoading });
-    //   });
+    cy.createTempUser([
+      permissions.moduleDataImportEnabled.gui,
+      permissions.settingsDataImportEnabled.gui,
+      permissions.dataExportEnableSettings.gui,
+      permissions.inventoryAll.gui,
+      permissions.uiInventoryMarcItemInProcess.gui,
+      permissions.uiInventoryMarcItemIntellectual.gui,
+      permissions.uiInventoryMarcItemLongMissing.gui,
+      permissions.uiInventoryMarcItemRestricted.gui,
+      permissions.uiInventoryMarcItemUnavailable.gui,
+      permissions.uiInventoryMarcItemUnknow.gui,
+      permissions.uiInventoryMarkItemsWithdrawn.gui,
+      permissions.dataExportEnableApp.gui,
+      permissions.settingsDataImportEnabled.gui
+    ])
+      .then(userProperties => {
+        user = userProperties;
+        cy.login(user.username, user.password,
+          { path: SettingsMenu.mappingProfilePath, waiter: FieldMappingProfiles.waitLoading });
+      });
   });
 
   const mappingProfileForCreateHoldings = (holdingsMappingProfile) => {
@@ -168,85 +165,85 @@ describe('ui-data-import: Item update via match by status', () => {
 
   it('C357552 Check item update via match by status (folijet)',
     { tags: [TestTypes.smoke, DevTeams.folijet] }, () => {
-      // mappingProfileForCreateHoldings(collectionOfMappingAndActionProfiles[0].mappingProfile);
-      // FieldMappingProfiles.checkMappingProfilePresented(collectionOfMappingAndActionProfiles[0].mappingProfile.name);
-      // mappingProfileForCreateItem(collectionOfMappingAndActionProfiles[1].mappingProfile);
-      // FieldMappingProfiles.checkMappingProfilePresented(collectionOfMappingAndActionProfiles[1].mappingProfile.name);
-      // mappingProfileForUpdateItem(collectionOfMappingAndActionProfiles[2].mappingProfile);
-      // FieldMappingProfiles.checkMappingProfilePresented(collectionOfMappingAndActionProfiles[2].mappingProfile.name);
+      mappingProfileForCreateHoldings(collectionOfMappingAndActionProfiles[0].mappingProfile);
+      FieldMappingProfiles.checkMappingProfilePresented(collectionOfMappingAndActionProfiles[0].mappingProfile.name);
+      mappingProfileForCreateItem(collectionOfMappingAndActionProfiles[1].mappingProfile);
+      FieldMappingProfiles.checkMappingProfilePresented(collectionOfMappingAndActionProfiles[1].mappingProfile.name);
+      mappingProfileForUpdateItem(collectionOfMappingAndActionProfiles[2].mappingProfile);
+      FieldMappingProfiles.checkMappingProfilePresented(collectionOfMappingAndActionProfiles[2].mappingProfile.name);
 
-      // collectionOfMappingAndActionProfiles.forEach(profile => {
-      //   cy.visit(SettingsMenu.actionProfilePath);
-      //   ActionProfiles.create(profile.actionProfile, profile.mappingProfile.name);
-      //   ActionProfiles.checkActionProfilePresented(profile.actionProfile.name);
-      // });
+      collectionOfMappingAndActionProfiles.forEach(profile => {
+        cy.visit(SettingsMenu.actionProfilePath);
+        ActionProfiles.create(profile.actionProfile, profile.mappingProfile.name);
+        ActionProfiles.checkActionProfilePresented(profile.actionProfile.name);
+      });
 
-      // cy.visit(SettingsMenu.matchProfilePath);
-      // MatchProfiles.createMatchProfile(matchProfileItemHrid);
-      // MatchProfiles.checkMatchProfilePresented(matchProfileItemHrid.profileName);
-      // MatchProfiles.createMatchProfileWithStaticValue(matchProfileItemStatus);
-      // MatchProfiles.checkMatchProfilePresented(matchProfileItemStatus.profileName);
+      cy.visit(SettingsMenu.matchProfilePath);
+      MatchProfiles.createMatchProfile(matchProfileItemHrid);
+      MatchProfiles.checkMatchProfilePresented(matchProfileItemHrid.profileName);
+      MatchProfiles.createMatchProfileWithStaticValue(matchProfileItemStatus);
+      MatchProfiles.checkMatchProfilePresented(matchProfileItemStatus.profileName);
 
-      // cy.visit(SettingsMenu.jobProfilePath);
-      // JobProfiles.createJobProfile(createJobProfile);
-      // NewJobProfile.linkActionProfileByName('Default - Create instance');
-      // NewJobProfile.linkActionProfile(collectionOfMappingAndActionProfiles[0].actionProfile);
-      // NewJobProfile.linkActionProfile(collectionOfMappingAndActionProfiles[1].actionProfile);
-      // NewJobProfile.saveAndClose();
-      // JobProfiles.checkJobProfilePresented(jobProfileNameForCreate);
+      cy.visit(SettingsMenu.jobProfilePath);
+      JobProfiles.createJobProfile(createJobProfile);
+      NewJobProfile.linkActionProfileByName('Default - Create instance');
+      NewJobProfile.linkActionProfile(collectionOfMappingAndActionProfiles[0].actionProfile);
+      NewJobProfile.linkActionProfile(collectionOfMappingAndActionProfiles[1].actionProfile);
+      NewJobProfile.saveAndClose();
+      JobProfiles.checkJobProfilePresented(jobProfileNameForCreate);
 
-      // // need to wait until the first job profile will be created
-      // cy.wait(2500);
-      // JobProfiles.createJobProfile(updateJobProfile);
-      // NewJobProfile.linkMatchProfile(matchProfileNameForMatchOnItemHrid);
-      // NewJobProfile.linkMatchProfileForMatches(matchProfileNameForMatchOnItemStatus);
-      // NewJobProfile.linkActionProfileForMatches(actionProfileNameForUpdateItem);
-      // NewJobProfile.saveAndClose();
-      // JobProfiles.checkJobProfilePresented(jobProfileNameForUpdate);
+      // need to wait until the first job profile will be created
+      cy.wait(2500);
+      JobProfiles.createJobProfile(updateJobProfile);
+      NewJobProfile.linkMatchProfile(matchProfileNameForMatchOnItemHrid);
+      NewJobProfile.linkMatchProfileForMatches(matchProfileNameForMatchOnItemStatus);
+      NewJobProfile.linkActionProfileForMatches(actionProfileNameForUpdateItem);
+      NewJobProfile.saveAndClose();
+      JobProfiles.checkJobProfilePresented(jobProfileNameForUpdate);
 
-      // // create Field mapping profile for export
-      // cy.visit(SettingsMenu.exportMappingProfilePath);
-      // ExportFieldMappingProfiles.createMappingProfileForItemHrid(exportMappingProfile.name);
+      // create Field mapping profile for export
+      cy.visit(SettingsMenu.exportMappingProfilePath);
+      ExportFieldMappingProfiles.createMappingProfileForItemHrid(exportMappingProfile.name);
 
-      // cy.visit(SettingsMenu.exportJobProfilePath);
-      // ExportJobProfiles.createJobProfile(jobProfileNameForExport, mappingProfileNameForExport);
+      cy.visit(SettingsMenu.exportJobProfilePath);
+      ExportJobProfiles.createJobProfile(jobProfileNameForExport, mappingProfileNameForExport);
 
-      // // upload a marc file for creating of the new instance, holding and item
-      // cy.visit(TopMenu.dataImportPath);
-      // DataImport.uploadFile('marcFileForC357552.mrc', nameMarcFileForImportCreate);
-      // JobProfiles.searchJobProfileForImport(jobProfileNameForCreate);
-      // JobProfiles.runImportFile();
-      // JobProfiles.waitFileIsImported(nameMarcFileForImportCreate);
-      // Logs.openFileDetails(nameMarcFileForImportCreate);
-      // for (let i = 0; i < 9; i++) {
-      //   [FileDetails.columnName.srsMarc,
-      //     FileDetails.columnName.instance,
-      //     FileDetails.columnName.holdings,
-      //     FileDetails.columnName.item].forEach(columnName => {
-      //     FileDetails.checkStatusInColumn(FileDetails.status.created, columnName, i);
-      //   });
-      // }
-      // FileDetails.checkItemsQuantityInSummaryTable(0, '10');
-      // Logs.clickOnHotLink(0, 5, 'Created');
-      // ItemRecordView.waitLoading();
-      // ItemRecordView.getAssignedHRID().then(hrId => { itemHrid = hrId; });
-      // ItemActions.markAsWithdrawn();
-      // ItemRecordView.verifyItemStatusInPane('Withdrawn');
+      // upload a marc file for creating of the new instance, holding and item
+      cy.visit(TopMenu.dataImportPath);
+      DataImport.uploadFile('marcFileForC357552.mrc', nameMarcFileForImportCreate);
+      JobProfiles.searchJobProfileForImport(jobProfileNameForCreate);
+      JobProfiles.runImportFile();
+      JobProfiles.waitFileIsImported(nameMarcFileForImportCreate);
+      Logs.openFileDetails(nameMarcFileForImportCreate);
+      for (let i = 0; i < 9; i++) {
+        [FileDetails.columnName.srsMarc,
+          FileDetails.columnName.instance,
+          FileDetails.columnName.holdings,
+          FileDetails.columnName.item].forEach(columnName => {
+          FileDetails.checkStatusInColumn(FileDetails.status.created, columnName, i);
+        });
+      }
+      FileDetails.checkItemsQuantityInSummaryTable(0, '10');
+      Logs.clickOnHotLink(0, 5, 'Created');
+      ItemRecordView.waitLoading();
+      ItemRecordView.getAssignedHRID().then(hrId => { itemHrid = hrId; });
+      ItemActions.markAsWithdrawn();
+      ItemRecordView.verifyItemStatusInPane('Withdrawn');
 
-      // cy.visit(TopMenu.dataImportPath);
-      // Logs.openFileDetails(nameMarcFileForImportCreate);
-      // Logs.clickOnHotLink(3, 5, 'Created');
-      // ItemRecordView.waitLoading();
-      // ItemActions.markAsInProcess();
-      // ItemRecordView.verifyItemStatusInPane('In process');
+      cy.visit(TopMenu.dataImportPath);
+      Logs.openFileDetails(nameMarcFileForImportCreate);
+      Logs.clickOnHotLink(3, 5, 'Created');
+      ItemRecordView.waitLoading();
+      ItemActions.markAsInProcess();
+      ItemRecordView.verifyItemStatusInPane('In process');
 
-      // cy.visit(TopMenu.dataImportPath);
-      // Logs.openFileDetails(nameMarcFileForImportCreate);
-      // Logs.clickOnHotLink(7, 5, 'Created');
-      // ItemRecordView.waitLoading();
-      // ItemActions.markAsUnknown();
-      // ItemRecordView.verifyItemStatusInPane('Unknown');
-      // ItemRecordView.closeDetailView();
+      cy.visit(TopMenu.dataImportPath);
+      Logs.openFileDetails(nameMarcFileForImportCreate);
+      Logs.clickOnHotLink(7, 5, 'Created');
+      ItemRecordView.waitLoading();
+      ItemActions.markAsUnknown();
+      ItemRecordView.verifyItemStatusInPane('Unknown');
+      ItemRecordView.closeDetailView();
 
       cy.visit(TopMenu.inventoryPath);
       InventorySearchAndFilter.switchToItem();
