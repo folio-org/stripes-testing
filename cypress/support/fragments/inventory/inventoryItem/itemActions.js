@@ -49,19 +49,25 @@ export default {
 
   markAsWithdrawn:() => {
     openActions();
-    cy.do(Button('Mark as withdrawn').click());
-    cy.do(Modal('Confirm item status: Withdrawn').find(Button('Confirm')).click());
+    cy.do([
+      Button('Mark as withdrawn').click(),
+      Modal('Confirm item status: Withdrawn').find(Button('Confirm')).click()
+    ]);
   },
 
   markAsInProcess:() => {
     openActions();
-    cy.do(Button('Mark as in process').click());
-    cy.do(Modal('Confirm item status: In process').find(Button('Confirm')).click());
+    cy.do([
+      Button('Mark as in process').click(),
+      Modal('Confirm item status: In process').find(Button('Confirm')).click()
+    ]);
   },
 
   markAsUnknown:() => {
     openActions();
-    cy.do(Button('Mark as unknown').click());
-    cy.do(Modal('Confirm item status: Unknown').find(Button('Confirm')).click());
+    cy.do([
+      Button('Mark as unknown').click(),
+      Modal('Confirm item status: Unknown').find(Button('Confirm')).click()
+    ]);
   },
 };
