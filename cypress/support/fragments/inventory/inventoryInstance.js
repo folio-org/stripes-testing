@@ -334,7 +334,7 @@ export default {
     cy.do(Link(including(itemBarcode)).click());
     ItemRecordView.waitLoading();
   },
-  openEditItemPage() {
+  edit() {
     cy.do([
       Button('Actions').click(),
       Button('Edit').click(),
