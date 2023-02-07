@@ -13,7 +13,7 @@ const item = {
 };
 describe('ui-inventory: actions', () => {
   before('login and create test data', () => {
-    cy.login(Cypress.env('diku_login'), Cypress.env('diku_password'));
+    cy.loginAsAdmin();
     InventoryInstances.createInstanceViaApi(item.instanceName, item.itemBarcode);
   });
 
