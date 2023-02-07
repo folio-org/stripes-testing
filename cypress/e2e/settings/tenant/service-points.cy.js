@@ -12,6 +12,7 @@ const newServicePoint = {
   name: `testNameSP_${getRandomPostfix()}`,
   code: `testCodeSp_${getRandomPostfix()}`,
   displayName: `testDisplayNameSP_${getRandomPostfix()}`,
+  newNameForEdit: `test_${getRandomPostfix()}`,
 };
 
 describe('Service points', () => {
@@ -22,19 +23,24 @@ describe('Service points', () => {
       .then(userProperties => {
         user = userProperties;
         cy.login(user.username, user.password, { path: TopMenu.settingsPath, waiter: SettingsPane.waitLoading });
+        ServicePoints.goToServicePointsTab();
       });
   });
 
   after('delete test data', () => {
-    ServicePoints.getViaApi({ query: `("name"=="${newServicePoint.name}")` }).then(servicePoints => {
+    ServicePoints.getViaApi({ query: `("name"=="${newServicePoint.newNameForEdit}")` }).then(servicePoints => {
       ServicePoints.deleteViaApi(servicePoints[0].id);
     });
     Users.deleteViaApi(user.userId);
   });
 
   it('C375150 Verify that user can save new Service point (firebird)', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
-    ServicePoints.goToServicePointsTab();
     ServicePoints.createNewServicePoint(newServicePoint);
     ServicePoints.servicePointExists(newServicePoint.name);
+  });
+
+  it('C375151 Verify that user can edit existing Service point (firebird)', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
+    ServicePoints.editServicePoint({ name: newServicePoint.name, newName: newServicePoint.newNameForEdit });
+    ServicePoints.servicePointExists(newServicePoint.newNameForEdit);
   });
 });

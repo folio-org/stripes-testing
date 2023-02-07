@@ -119,6 +119,10 @@ export default {
     cy.expect(Accordion('Administrative data').find(KeyValue('Item barcode')).has({ value: barcode }));
   },
 
+  checkStatus:(status) => {
+    cy.expect(Accordion('Loan and availability').find(KeyValue('Item status')).has({ value: status }));
+  },
+
   edit() {
     cy.do([
       actionsButton.click(),
@@ -129,5 +133,11 @@ export default {
   checkCalloutMessage: () => {
     cy.expect(Callout({ textContent: including('The item - HRID  has been successfully saved.') })
       .exists());
-  }
+  },
+
+  checkItemDetails(location, barcode, status) {
+    this.checkEffectiveLocation(location);
+    this.checkBarcode(barcode);
+    this.checkStatus(status);
+  },
 };

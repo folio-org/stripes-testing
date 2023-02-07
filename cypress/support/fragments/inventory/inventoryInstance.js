@@ -308,9 +308,7 @@ export default {
     InventoryInstancesMovement.move();
   },
   checkAddItem:(holdingsRecrodId) => {
-    cy.expect(section.find(Section({ id:holdingsRecrodId }))
-      .find(Button({ id: `clickable-new-item-${holdingsRecrodId}` }))
-      .exists());
+    cy.expect(section.find(Button({ id: `clickable-new-item-${holdingsRecrodId}` })).exists());
   },
   checkInstanceIdentifier: (identifier) => {
     cy.expect(identifiersAccordion.find(identifiers
@@ -336,7 +334,7 @@ export default {
     cy.do(Link(including(itemBarcode)).click());
     ItemRecordView.waitLoading();
   },
-  openEditItemPage() {
+  edit() {
     cy.do([
       Button('Actions').click(),
       Button('Edit').click(),
