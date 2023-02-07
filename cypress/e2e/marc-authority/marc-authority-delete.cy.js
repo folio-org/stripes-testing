@@ -9,13 +9,16 @@ import MarcAuthority from '../../support/fragments/marcAuthority/marcAuthority';
 import MarcAuthoritiesSearch from '../../support/fragments/marcAuthority/marcAuthoritiesSearch';
 import Users from '../../support/fragments/users/users';
 import MarcAuthoritiesDelete from '../../support/fragments/marcAuthority/marcAuthoritiesDelete';
+import MarcAuthorities from '../../support/fragments/marcAuthority/marcAuthorities';
+import MarcAuthorityBrowse from '../../support/fragments/marcAuthority/MarcAuthorityBrowse';
 
 describe('MARC Authority management', () => {
   const testData = {
-    uniqueFileName: `C350643autotestFile.${getRandomPostfix()}.mrc`
+    uniqueFileName: `C350643autotestFile.${getRandomPostfix()}.mrc`,
+    fileName: `testMarcFile.${getRandomPostfix()}.mrc`,
   };
 
-  beforeEach('Creating user and importing file', () => {
+  before('Creating data', () => {
     cy.createTempUser([
       Permissions.settingsDataImportView.gui,
       Permissions.moduleDataImportEnabled.gui,
@@ -23,17 +26,26 @@ describe('MARC Authority management', () => {
       Permissions.uiMarcAuthoritiesAuthorityRecordDelete.gui
     ]).then(createdUserProperties => {
       testData.userProperties = createdUserProperties;
-
-      cy.login(createdUserProperties.username, createdUserProperties.password, { path: TopMenu.dataImportPath, waiter: DataImport.waitLoading });
-      DataImport.importFile(MarcAuthority.defaultCreateJobProfile, testData.uniqueFileName);
     });
   });
 
-  afterEach('Deleting created user', () => {
+  beforeEach('Creating user and importing file', () => {
+    cy.login(testData.userProperties.username, testData.userProperties.password, { path: TopMenu.dataImportPath, waiter: DataImport.waitLoading });
+  });
+
+  afterEach('Deleting data', () => {
+    cy.loginAsAdmin({ path: TopMenu.dataImportPath, waiter: DataImport.waitLoading });
+    DataImport.selectLog();
+    DataImport.openDeleteImportLogsModal();
+    DataImport.confirmDeleteImportLogs();
+  });
+
+  after('Deleting created user', () => {
     Users.deleteViaApi(testData.userProperties.userId);
   });
 
   it('C350643 Delete a "MARC Authority" record via "MARC Authority" app (spitfire)', { tags: [TestTypes.criticalPath, Features.authority, DevTeams.spitfire] }, () => {
+    DataImport.importFile(MarcAuthority.defaultCreateJobProfile, testData.uniqueFileName);
     MarcAuthoritiesDelete.clickDeleteButton();
     MarcAuthoritiesDelete.checkDeleteModal();
     MarcAuthoritiesDelete.confirmDelete();
@@ -41,5 +53,18 @@ describe('MARC Authority management', () => {
     cy.visit(TopMenu.marcAuthorities);
     MarcAuthoritiesSearch.searchBy('Uniform title', MarcAuthority.defaultAuthority.headingReference);
     MarcAuthoritiesDelete.checkEmptySearchResults(MarcAuthority.defaultAuthority.headingReference);
+  });
+
+  it('C357549 Delete a "MARC Authority" record (from browse result list) (spitfire)', { tags: [TestTypes.criticalPath, DevTeams.spitfire] }, () => {
+    DataImport.importFileForBrowse(MarcAuthority.defaultCreateJobProfile, testData.fileName);
+    cy.visit(TopMenu.marcAuthorities);
+    MarcAuthorities.switchToBrowse();
+    MarcAuthorityBrowse.searchBy('Uniform title', MarcAuthority.defaultAuthority.headingReference);
+    MarcAuthorities.selectItem(MarcAuthority.defaultAuthority.headingReference);
+    MarcAuthority.waitLoading();
+    MarcAuthoritiesDelete.clickDeleteButton();
+    MarcAuthoritiesDelete.checkDeleteModal();
+    MarcAuthoritiesDelete.confirmDelete();
+    MarcAuthoritiesDelete.checkAfterDeletion(MarcAuthority.defaultAuthority.headingReference);
   });
 });
