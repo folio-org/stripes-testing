@@ -3,6 +3,8 @@ import dateTools from '../utils/dateTools';
 import getRandomPostfix from '../utils/stringTools';
 import InventoryInstance from '../../support/fragments/inventory/inventoryInstance';
 
+const cancelButton = Button('Cancel');
+const closeWithoutSavingBtn = Button('Close without saving');
 const addFieldButton = Button({ ariaLabel : 'plus-sign' });
 const deleteFieldButton = Button({ ariaLabel : 'trash' });
 const saveAndCloseButton = Button({ id:'quick-marc-record-save' });
@@ -276,8 +278,9 @@ export default {
   },
 
   closeWithoutSaving() {
-    cy.do(Button('Cancel').click());
-    cy.do(Button('Close without saving').click());
+    cy.do(cancelButton.click());
+    cy.expect(closeWithoutSavingBtn.exists());
+    cy.do(closeWithoutSavingBtn.click());
   },
 
   getSourceContent(quickmarcTagValue) { return defaultFieldValues.getSourceContent(quickmarcTagValue); },
