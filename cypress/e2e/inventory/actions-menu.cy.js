@@ -11,7 +11,7 @@ const item = {
   instanceName: `testBulkEdit_${getRandomPostfix()}`,
   itemBarcode: getRandomPostfix(),
 };
-describe('ui-inventory: actions', { retries: 2 }, () => {
+describe('ui-inventory: actions', () => {
   before('login and create test data', () => {
     cy.login(Cypress.env('diku_login'), Cypress.env('diku_password'));
     InventoryInstances.createInstanceViaApi(item.instanceName, item.itemBarcode);
