@@ -25,7 +25,7 @@ function getCheckboxByRow(row) {
   return MultiColumnList().find(MultiColumnListCell({ 'row': row, 'columnIndex': 0 })).find(Checkbox());
 }
 
-const verifyMessageOfDeteted = (quantity) => {
+const verifyMessageOfDeleted = (quantity) => {
   InteractorsTools.checkCalloutMessage(`${quantity} data import logs have been successfully deleted.`);
   InteractorsTools.closeCalloutMessage();
 };
@@ -69,7 +69,7 @@ function checkByUserName(userName) {
 }
 
 export default {
-  verifyMessageOfDeteted,
+  verifyMessageOfDeleted,
   waitUIToBeFiltered,
   checkByErrorsInImport,
   checkByUserName,

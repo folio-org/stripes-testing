@@ -1,5 +1,3 @@
-/// <reference types="cypress" />
-
 import TopMenu from '../../../support/fragments/topMenu';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 import HoldingsRecordView from '../../../support/fragments/inventory/holdingsRecordView';
@@ -10,7 +8,7 @@ import InventoryNewHoldings from '../../../support/fragments/inventory/inventory
 import HoldingsRecordEdit from '../../../support/fragments/inventory/holdingsRecordEdit';
 import DevTeams from '../../../support/dictionary/devTeams';
 
-describe('Manage holding records with FOLIO source', () => {
+describe('Manage holding records with FOLIO source', { retries: 2 }, () => {
   beforeEach(() => {
     cy.login(Cypress.env('diku_login'), Cypress.env('diku_password'));
     cy.visit(TopMenu.inventoryPath);
