@@ -10,7 +10,7 @@ export default {
   select:(specialInternalId) => cy.do(authoritiesList.find(Button({ href : including(specialInternalId) })).click()),
   selectFirst: (title) => cy.do(MultiColumnListRow({ index: 0 }).find(Button(title)).click()),
   selectItem: (item) => {
-    MultiColumnListCell({content: item}).exists();
+    cy.expect(MultiColumnListCell({content: item}).exists());
     cy.do(Button(including(item)).click());
   },
   checkRow:(expectedHeadingReference) => cy.expect(authoritiesList.find(MultiColumnListCell(expectedHeadingReference)).exists()),

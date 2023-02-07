@@ -29,7 +29,7 @@ describe('MARC Authority management', () => {
     });
   });
 
-  beforeEach('Creating user and importing file', () => {
+  beforeEach('Login to the application', () => {
     cy.login(testData.userProperties.username, testData.userProperties.password, { path: TopMenu.dataImportPath, waiter: DataImport.waitLoading });
   });
 
