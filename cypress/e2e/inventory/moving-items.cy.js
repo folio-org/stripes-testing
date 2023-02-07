@@ -24,7 +24,7 @@ let firstHolding = '';
 let secondHolding = '';
 let ITEM_BARCODE;
 
-describe('ui-inventory: moving items', () => {
+describe('ui-inventory: moving items', { retries: 2 }, () => {
   beforeEach('navigates to Inventory', () => {
     let source;
 

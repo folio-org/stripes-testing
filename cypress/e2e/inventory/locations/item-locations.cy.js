@@ -100,7 +100,7 @@ describe('ui-inventory: location', () => {
     InventoryInstance.openItemByBarcode(ITEM_BARCODE);
 
     // edit instance
-    InventoryInstance.openEditItemPage();
+    InventoryInstance.edit();
     InstanceRecordEdit.chooseTemporaryLocation(editedLocationName);
     InstanceRecordEdit.saveAndClose();
     InventoryInstance.closeInstancePage();
@@ -129,7 +129,7 @@ describe('ui-inventory: location', () => {
     InventoryInstance.openItemByBarcode(ITEM_BARCODE);
 
     // edit instance
-    InventoryInstance.openEditItemPage();
+    InventoryInstance.edit();
     InstanceRecordEdit.choosePermanentLocation(toBeEditedLocationName);
     InstanceRecordEdit.saveAndClose();
     InventoryInstance.closeInstancePage();

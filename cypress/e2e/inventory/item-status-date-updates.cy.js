@@ -278,7 +278,7 @@ describe('ui-inventory: Item status date updates', () => {
     fullCheck(ItemRecordView.itemStatuses.checkedOut);
 
     // edit item record so that it has multiple pieces
-    InventoryInstance.openEditItemPage();
+    InventoryInstance.edit();
     ItemRecordView.addPieceToItem(numberOfPieces);
     fullCheck(ItemRecordView.itemStatuses.checkedOut);
 
