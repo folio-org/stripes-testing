@@ -9,6 +9,7 @@ Cypress.Commands.add('okapiRequest', ({
   searchParams = {},
   body,
   isDefaultSearchParamsRequired = true,
+  contentTypeHeader = 'application/json'
 }) => {
   const initialParams = new URLSearchParams({ ...searchParams });
   const cypressEnvPath = `${Cypress.env('OKAPI_HOST')}/${path}`;
@@ -22,6 +23,7 @@ Cypress.Commands.add('okapiRequest', ({
     headers: {
       'x-okapi-tenant': Cypress.env('OKAPI_TENANT'),
       'x-okapi-token': Cypress.env('token'),
+      'Content-type': contentTypeHeader
     },
     body,
   });
