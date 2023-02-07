@@ -99,7 +99,7 @@ describe('ui-data-import: A user can filter and delete import logs from the "Vie
 
         const countOfLogsForDelete = (count - 1);
         DeleteDataImportLogsModal.confirmDelete(countOfLogsForDelete);
-        LogsViewAll.verifyMessageOfDeteted(countOfLogsForDelete);
+        LogsViewAll.verifyMessageOfDeleted(countOfLogsForDelete);
         LogsViewAll.modalIsAbsent();
       });
   });
