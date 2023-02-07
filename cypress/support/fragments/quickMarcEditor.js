@@ -277,7 +277,7 @@ export default {
     ]);
   },
 
-  closeWithoutSaving() {
+  closeWithoutSavingAfterChange() {
     cy.do(cancelButton.click());
     cy.expect(closeWithoutSavingBtn.exists());
     cy.do(closeWithoutSavingBtn.click());
