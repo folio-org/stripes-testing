@@ -78,10 +78,83 @@ const importFile = (profileName, uniqueFileName) => {
   });
 };
 
+function uploadDefinitions(keyValue, fileName) {
+  return cy.okapiRequest({
+    path: 'data-import/uploadDefinitions',
+    body: { fileDefinitions: [{
+      uiKey: keyValue,
+      size: 2,
+      name: fileName
+    }] },
+    method: 'POST',
+    isDefaultSearchParamsRequired: false
+  });
+}
+
+function convertToBinery(fileName, uploadDefinitionId, fileId) {
+  // convert file content in binary format (it's correct format for import)
+  cy.fixture(fileName, 'binary')
+    .then(binary => Cypress.Blob.binaryStringToBlob(binary))
+    .then(blob => {
+      cy.okapiRequest({
+        path: `data-import/uploadDefinitions/${uploadDefinitionId}/files/${fileId}`,
+        method: 'POST',
+        body: blob,
+        isDefaultSearchParamsRequired: false,
+        contentTypeHeader: 'application/octet-stream'
+      });
+    });
+}
+
+function uploadDefinitionWithId(uploadDefinitionId) {
+  return cy.okapiRequest({
+    path: `data-import/uploadDefinitions/${uploadDefinitionId}`,
+    isDefaultSearchParamsRequired: false
+  });
+}
+
+function processFile(uploadDefinitionId, fileId, sourcePath, jobExecutionId, uiKeyValue, jobProfileId, metaJobExecutionId, date) {
+  return cy.okapiRequest({
+    path: `data-import/uploadDefinitions/${uploadDefinitionId}/processFiles`,
+    method: 'POST',
+    body: {
+      uploadDefinition: {
+        id: uploadDefinitionId,
+        metaJobExecutionId,
+        status: 'LOADED',
+        createDate: date,
+        fileDefinitions: [
+          {
+            id: fileId,
+            sourcePath,
+            name: 'oneMarcBib.mrc',
+            status: 'UPLOADED',
+            jobExecutionId,
+            uploadDefinitionId,
+            createDate: date,
+            uploadedDate: date,
+            size: 2,
+            uiKey: uiKeyValue
+          }
+        ]
+      },
+      jobProfileInfo: {
+        id: jobProfileId,
+        name: 'Default - Create instance and SRS MARC Bib',
+        dataType: 'MARC'
+      }
+    },
+    isDefaultSearchParamsRequired: false
+  });
+}
+
 export default {
   importFile,
   uploadFile,
   waitLoading,
+  uploadDefinitions,
+  convertToBinery,
+  processFile,
 
   uploadExportedFile(fileName) {
     cy.get('input[type=file]', getLongDelay()).attachFile(fileName);
@@ -233,4 +306,28 @@ export default {
         FileManager.createFile(`cypress/fixtures/${finalFileName}`, content.join('\n'));
       });
   },
+
+  uploadFileViaApi:(fileName) => {
+    const uiKeyValue = `${fileName}${getRandomPostfix()}`;
+
+    uploadDefinitions(uiKeyValue, fileName)
+      .then((response) => {
+        const uploadDefinitionId = response.body.fileDefinitions[0].uploadDefinitionId;
+        const fileId = response.body.fileDefinitions[0].id;
+        const jobExecutionId = response.body.fileDefinitions[0].jobExecutionId;
+        const jobProfileId = 'e34d7b92-9b83-11eb-a8b3-0242ac130003';
+
+        convertToBinery(fileName, uploadDefinitionId, fileId);
+        // need to wait until file will be converted and uploaded
+        cy.wait(1500);
+        uploadDefinitionWithId(uploadDefinitionId)
+          .then(res => {
+            const sourcePath = res.body.fileDefinitions[0].sourcePath;
+            const metaJobExecutionId = res.body.metaJobExecutionId;
+            const date = res.body.createDate;
+
+            processFile(uploadDefinitionId, fileId, sourcePath, jobExecutionId, uiKeyValue, jobProfileId, metaJobExecutionId, date);
+          });
+      });
+  }
 };
