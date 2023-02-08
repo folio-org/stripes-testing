@@ -16,7 +16,7 @@ describe('MARC Authority management', () => {
   const testData = {
     uniqueFileName: `C350643autotestFile.${getRandomPostfix()}.mrc`,
     fileName: `testMarcFile.${getRandomPostfix()}.mrc`,
-    recrod: 'Angelou, Maya. And still I rise',
+    record: 'Angelou, Maya. And still I rise',
     searchOption: 'Name-title',
   };
 
@@ -62,12 +62,12 @@ describe('MARC Authority management', () => {
     DataImport.importFileForBrowse(MarcAuthority.defaultCreateJobProfile, testData.fileName);
     cy.visit(TopMenu.marcAuthorities);
     MarcAuthorities.switchToBrowse();
-    MarcAuthorityBrowse.searchBy(testData.searchOption, testData.recrod);
-    MarcAuthorities.selectItem(testData.recrod);
+    MarcAuthorityBrowse.searchBy(testData.searchOption, testData.record);
+    MarcAuthorities.selectItem(testData.record);
     MarcAuthority.waitLoading();
     MarcAuthoritiesDelete.clickDeleteButton();
     MarcAuthoritiesDelete.checkDeleteModal();
     MarcAuthoritiesDelete.confirmDelete();
-    MarcAuthoritiesDelete.checkAfterDeletion(testData.recrod);
+    MarcAuthoritiesDelete.checkAfterDeletion(testData.record);
   });
 });
