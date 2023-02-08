@@ -20,6 +20,7 @@ import MarcAuthority from '../marcAuthority/marcAuthority';
 import MarcAuthoritiesSearch from '../marcAuthority/marcAuthoritiesSearch';
 import MarcAuthorities from '../marcAuthority/marcAuthorities';
 import FileManager from '../../utils/fileManager';
+import Logs from './logs/logs';
 
 const sectionPaneJobsTitle = Section({ id: 'pane-jobs-title' });
 const actionsButton = Button('Actions');
@@ -155,6 +156,16 @@ export default {
   uploadDefinitions,
   convertToBinery,
   processFile,
+
+  importFileForBrowse(profileName, fileName) {
+    uploadFile(MarcAuthority.defaultAuthority.name, fileName);
+    JobProfiles.waitLoadingList();
+    JobProfiles.searchJobProfileForImport(profileName);
+    JobProfiles.runImportFile();
+    JobProfiles.waitFileIsImported(fileName);
+    Logs.checkStatusOfJobProfile('Completed');
+    Logs.openFileDetails(fileName);
+  },
 
   uploadExportedFile(fileName) {
     cy.get('input[type=file]', getLongDelay()).attachFile(fileName);
