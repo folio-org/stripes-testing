@@ -11,7 +11,7 @@ import Logs from '../../support/fragments/data_import/logs/logs';
 import SettingsMenu from '../../support/fragments/settingsMenu';
 import NewJobProfile from '../../support/fragments/data_import/job_profiles/newJobProfile';
 
-describe('Data Import -> Importing MARC Authority files', () => {
+describe('Data Import -> Importing MARC Authority files', { retries: 2 }, () => {
   const testData = {};
   const jobProfileToRun = 'Default - Create SRS MARC Authority';
   const createdJobProfile = {

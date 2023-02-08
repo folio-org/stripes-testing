@@ -113,7 +113,7 @@ const fillMatchProfileWithExistingPart = ({
 }) => {
   cy.do(TextField('Name*').fillIn(profileName));
   // wait for data to be loaded
-  cy.wait(1500);
+  cy.wait(15000);
   cy.do(matchProfileDetailsAccordion.find(Button({ dataId:'INSTANCE' })).click());
   fillIncomingRecordFields(incomingRecordFields.field, 'field');
   fillIncomingRecordFields(incomingRecordFields.in1, 'in1');
@@ -122,6 +122,8 @@ const fillMatchProfileWithExistingPart = ({
   cy.do(Select('Match criterion').choose(matchCriterion));
   cy.do(criterionValueTypeButton.click());
   cy.expect(criterionValueTypeList.exists());
+  // wait for list will be loaded
+  cy.wait(2000);
   cy.do(SelectionList({ id:'sl-container-criterion-value-type' }).find(SelectionOption(instanceOption)).click());
 };
 

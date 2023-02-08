@@ -1,6 +1,10 @@
 # Change history for stripes-testing
 
-## 4.5.0 (IN PROGRESS)
+## [4.5.0](https://github.com/folio-org/stripes-testing/tree/v4.5.0) (2023-02-01)
+[Full Changelog](https://github.com/folio-org/stripes-testing/compare/v4.4.0...v4.5.0)
+
+* Implement many e-2-e automation tests.
+* `<Textarea>` interactor: add `cols` selector. Refs STCOM-1101.
 
 ## [4.4.0](https://github.com/folio-org/stripes-testing/tree/v4.4.0) (2022-10-13)
 [Full Changelog](https://github.com/folio-org/stripes-testing/compare/v4.3.0...v4.4.0)
