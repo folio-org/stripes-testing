@@ -31,13 +31,13 @@ const createInstanceViaAPI = (instanceWithSpecifiedNewId) => cy.okapiRequest({
 const createHoldingViaAPI = (holdingWithIds) => cy.okapiRequest({
   method: 'POST',
   path: 'holdings-storage/holdings',
-  body:  holdingWithIds
+  body: holdingWithIds
 });
 
 const createItemViaAPI = (itemWithIds) => cy.okapiRequest({
   method: 'POST',
   path: 'inventory/items',
-  body:  itemWithIds
+  body: itemWithIds
 });
 const waitContentLoading = () => {
   cy.expect(rootSection.find(HTML(including('Choose a filter or enter a search query to show results.'))).exists());
@@ -45,14 +45,14 @@ const waitContentLoading = () => {
 
 export default {
   waitContentLoading,
-  waitLoading:() => {
+  waitLoading: () => {
     cy.expect(rootSection.find(HTML(including('Choose a filter or enter a search query to show results'))).absent());
     cy.expect(rootSection.find(HTML(including('Loading…'))).absent());
     cy.expect(or(inventoriesList.exists()),
       rootSection.find(HTML(including('No results found'))).exists());
   },
 
-  selectInstance:(rowNumber = 0) => {
+  selectInstance: (rowNumber = 0) => {
     cy.intercept('/inventory/instances/*').as('getView');
     cy.do(inventoriesList.focus({ row: rowNumber }));
     cy.do(inventoriesList.click({ row: rowNumber }));
@@ -67,21 +67,21 @@ export default {
     inventoryNewInstance.save();
   },
 
-  resetAllFilters:() => {
+  resetAllFilters: () => {
     cy.do(Pane('Search & filter').find(Button('Reset all')).click());
   },
 
-  searchByTag:(tagName) => {
-    cy.do(Button({ id:'accordion-toggle-button-instancesTags' }).click());
+  searchByTag: (tagName) => {
+    cy.do(Button({ id: 'accordion-toggle-button-instancesTags' }).click());
     // wait for data to be loaded
     cy.intercept('/search/instances/facets?facet=instanceTags**').as('getTags');
-    cy.do(Section({ id:'instancesTags' }).find(TextField()).click());
-    cy.do(Section({ id:'instancesTags' }).find(TextField()).fillIn(tagName));
+    cy.do(Section({ id: 'instancesTags' }).find(TextField()).click());
+    cy.do(Section({ id: 'instancesTags' }).find(TextField()).fillIn(tagName));
     cy.wait('@getTags');
     // TODO: clarify with developers what should be waited
     cy.wait(1000);
-    cy.do(Section({ id:'instancesTags' }).find(TextField()).focus());
-    cy.do(Section({ id:'instancesTags' }).find(TextField()).click());
+    cy.do(Section({ id: 'instancesTags' }).find(TextField()).focus());
+    cy.do(Section({ id: 'instancesTags' }).find(TextField()).click());
     cy.do(Checkbox(tagName).click());
   },
 
@@ -162,8 +162,8 @@ export default {
   deleteInstanceAndHoldingRecordAndAllItemsViaApi(itemBarcode) {
     cy.getInstance({ limit: 1, expandAll: true, query: `"items.barcode"=="${itemBarcode}"` })
       .then((instance) => {
-        instance.items.forEach((item) => cy.deleteItem(item.id));
-        instance.holdings.forEach((holding) => cy.deleteHoldingRecordViaApi(holding.id));
+        cy.wrap(instance.items).each((item) => cy.deleteItem(item.id));
+        cy.wrap(instance.holdings).each((holding) => cy.deleteHoldingRecordViaApi(holding.id));
         InventoryInstance.deleteInstanceViaApi(instance.id);
       });
   },
@@ -213,10 +213,10 @@ export default {
     cy.do(Checkbox(source).click());
   },
 
-  importWithOclc:(oclc) => {
+  importWithOclc: (oclc) => {
     cy.do(actionsButton.click());
     cy.do(Button({ id: 'dropdown-clickable-import-record' }).click());
-    cy.do(singleRecordImportModal.find(TextField({ name:'externalIdentifier' })).fillIn(oclc));
+    cy.do(singleRecordImportModal.find(TextField({ name: 'externalIdentifier' })).fillIn(oclc));
     cy.do(singleRecordImportModal.find(Button('Import')).click());
   },
 };
