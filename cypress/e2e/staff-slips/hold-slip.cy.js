@@ -184,6 +184,7 @@ describe('Check In - Actions', () => {
         requesterBarcode: requestUserData.barcode,
         itemBarcode: itemData.barcode,
         pickupServicePoint: testData.userServicePoint.name,
+        requestType: 'Hold',
       });
 
       cy.visit(TopMenu.checkInPath);
