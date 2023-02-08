@@ -7,7 +7,6 @@ import InventoryInstances from '../../../support/fragments/inventory/inventoryIn
 import getRandomPostfix from '../../../support/utils/stringTools';
 import FileManager from '../../../support/utils/fileManager';
 import Users from '../../../support/fragments/users/users';
-import BulkEditActions from '../../../support/fragments/bulk-edit/bulk-edit-actions';
 
 let user;
 const item = {
@@ -75,12 +74,12 @@ describe('bulk-edit', () => {
       const expectedColumnTitles = [
         'Barcode',
         'Status',
-        'Effective Location',
-        'Effective Call Number Components',
+        'Item effective location',
+        'Effective call number',
         'Item HRID',
-        'Material Type',
-        'Permanent Loan Type',
-        'Temporary Loan Type'
+        'Material type',
+        'Permanent loan type',
+        'Temporary loan type'
       ];
       expectedColumnTitles.forEach(title => BulkEditSearchPane.verifyResultColumTitles(title));
 
@@ -88,7 +87,7 @@ describe('bulk-edit', () => {
       BulkEditSearchPane.verifyItemsActionDropdownItems();
 
       BulkEditSearchPane.changeShowColumnCheckbox('Item id');
-      BulkEditSearchPane.verifyResultColumTitles('Item id');
+      BulkEditSearchPane.verifyResultColumTitles('Item ID');
     });
 
     it('C350943 Verify Record identifiers dropdown -- Inventory-Items app (firebird)', { tags: [testTypes.smoke, devTeams.firebird] }, () => {

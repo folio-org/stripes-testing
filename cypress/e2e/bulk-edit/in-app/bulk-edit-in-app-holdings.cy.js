@@ -102,7 +102,7 @@ describe('bulk-edit', () => {
       BulkEditSearchPane.uploadFile(validHoldingUUIDsFileName);
       BulkEditSearchPane.waitFileUploading();
       [
-        'Hrid',
+        'Holdings HRID',
         'Permanent location',
         'Temporary location',
         'Call number prefix',

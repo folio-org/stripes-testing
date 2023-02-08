@@ -31,6 +31,10 @@ export default {
     cy.expect(actions.exists());
   },
 
+  actionsIsAbsent() {
+    cy.expect(actions.absent());
+  },
+
   verifyPanesBeforeImport() {
     cy.expect([
       Pane('Set criteria').exists(),
@@ -91,7 +95,7 @@ export default {
       HTML('Drag and drop or choose file with holdings UUIDs').exists(),
       Button('or choose file').has({ visible: true }),
       HTML('Select a file with holdings UUIDs').exists(),
-    ])
+    ]);
   },
 
   verifyDragNDropUsersUIIDsArea() {
@@ -99,7 +103,6 @@ export default {
     this.selectRecordIdentifier('User UUIDs');
     cy.expect([
       HTML('Select a file with User UUIDs').exists(),
-      actions.exists()
     ]);
   },
 
@@ -258,7 +261,7 @@ export default {
       MultiColumnListHeader('First name').exists(),
       MultiColumnListHeader('Barcode').exists(),
       MultiColumnListHeader('Patron group').exists(),
-      MultiColumnListHeader('User name').exists(),
+      MultiColumnListHeader('Username').exists(),
     ]);
   },
 
@@ -290,7 +293,7 @@ export default {
   },
 
   verifyErrorLabelAfterChanges(fileName, validRecordCount, invalidRecordCount) {
-    cy.expect(HTML(`${fileName}: ${validRecordCount + invalidRecordCount} entries * ${validRecordCount} records changed * ${invalidRecordCount} errors`).exists());
+    cy.expect(Accordion('Errors').find(HTML(`${fileName}: ${validRecordCount + invalidRecordCount} entries * ${validRecordCount} records changed * ${invalidRecordCount} errors`)).exists());
   },
 
   verifyActionsAfterConductedCSVUploading(errors = true) {
@@ -319,12 +322,12 @@ export default {
 
   verifyUsersActionShowColumns() {
     cy.expect([
-      DropdownMenu().find(Checkbox('Status')).exists(),
+      DropdownMenu().find(Checkbox('Active')).exists(),
       DropdownMenu().find(Checkbox('Last name')).exists(),
       DropdownMenu().find(Checkbox('First name')).exists(),
       DropdownMenu().find(Checkbox('Barcode')).exists(),
       DropdownMenu().find(Checkbox('Patron group')).exists(),
-      DropdownMenu().find(Checkbox('Username')).exists(),
+      DropdownMenu().find(Checkbox('User name')).exists(),
       DropdownMenu().find(Checkbox('Email')).exists(),
       DropdownMenu().find(Checkbox('Expiration date')).exists(),
     ]);

@@ -48,6 +48,6 @@ describe('bulk-edit', () => {
 
     // verify items radio
     BulkEditSearchPane.checkItemsRadio();
-    BulkEditSearchPane.actionsIsShown();
+    BulkEditSearchPane.actionsIsAbsent();
   });
 });
