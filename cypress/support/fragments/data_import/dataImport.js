@@ -317,6 +317,7 @@ export default {
         FileManager.createFile(`cypress/fixtures/${finalFileName}`, content.join('\n'));
       });
   },
+
   uploadFileViaApi:(fileName) => {
     const uiKeyValue = `${fileName}${getRandomPostfix()}`;
 
