@@ -32,6 +32,7 @@ const deleteLogsModalConfirmButton = deleteLogsModal.find(Button('Yes, delete'))
 const logsPane = Pane('Logs');
 const logsPaneHeader = PaneHeader({ id: 'paneHeaderpane-logs-title' });
 const jobsPane = Pane({ id: 'pane-jobs-title' });
+const orChooseFilesButton = Button('or choose files');
 
 const uploadFile = (filePathName, fileName) => {
   cy.get('input[type=file]', getLongDelay()).attachFile({ filePath: filePathName, fileName });
@@ -91,7 +92,7 @@ function uploadDefinitions(keyValue, fileName) {
   });
 }
 
-function convertToBinery(fileName, uploadDefinitionId, fileId) {
+function uploadBinaryMarcFile(fileName, uploadDefinitionId, fileId) {
   // convert file content in binary format (it's correct format for import)
   cy.fixture(fileName, 'binary')
     .then(binary => Cypress.Blob.binaryStringToBlob(binary))
@@ -153,7 +154,7 @@ export default {
   uploadFile,
   waitLoading,
   uploadDefinitions,
-  convertToBinery,
+  uploadBinaryMarcFile,
   processFile,
 
   uploadExportedFile(fileName) {
@@ -188,14 +189,14 @@ export default {
     cy.then(() => DataImportUploadFile().isDeleteFilesButtonExists()).then(isDeleteFilesButtonExists => {
       if (isDeleteFilesButtonExists) {
         cy.do(Button('Delete files').click());
-        cy.expect(Button('or choose files').exists());
+        cy.expect(orChooseFilesButton.exists());
         cy.allure().endStep();
       }
     });
   },
 
   checkIsLandingPageOpened: () => {
-    cy.expect(jobsPane.find(Button('or choose files')).exists());
+    cy.expect(jobsPane.find(orChooseFilesButton).exists());
     cy.expect(logsPaneHeader.find(actionsButton).exists());
   },
 
@@ -317,7 +318,7 @@ export default {
         const jobExecutionId = response.body.fileDefinitions[0].jobExecutionId;
         const jobProfileId = 'e34d7b92-9b83-11eb-a8b3-0242ac130003';
 
-        convertToBinery(fileName, uploadDefinitionId, fileId);
+        uploadBinaryMarcFile(fileName, uploadDefinitionId, fileId);
         // need to wait until file will be converted and uploaded
         cy.wait(1500);
         uploadDefinitionWithId(uploadDefinitionId)
@@ -329,5 +330,9 @@ export default {
             processFile(uploadDefinitionId, fileId, sourcePath, jobExecutionId, uiKeyValue, jobProfileId, metaJobExecutionId, date);
           });
       });
+  },
+
+  checkChooseFileButtonState: ({ isDisabled }) => {
+    cy.expect(orChooseFilesButton.has({ disabled: isDisabled }));
   }
 };

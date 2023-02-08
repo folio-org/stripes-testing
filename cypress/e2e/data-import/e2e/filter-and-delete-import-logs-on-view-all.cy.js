@@ -82,7 +82,7 @@ describe('ui-data-import: A user can filter and delete import logs from the "Vie
   });
 
   it('C358136 A user can filter and delete import logs from the "View all" page (folijet)', { tags: [TestTypes.criticalPath, DevTeams.folijet] }, () => {
-    LogsViewAll.openViewAll();
+    Logs.openViewAllLogs();
     LogsViewAll.viewAllIsOpened();
     LogsViewAll.filterJobsByJobProfile('Default - Create SRS MARC Authority');
     LogsViewAll.filterJobsByDate({ from: formattedStart, end: formattedStart });

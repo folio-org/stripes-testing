@@ -5,6 +5,7 @@ import TestTypes from '../../../support/dictionary/testTypes';
 import TopMenu from '../../../support/fragments/topMenu';
 import DataImport from '../../../support/fragments/data_import/dataImport';
 import DevTeams from '../../../support/dictionary/devTeams';
+import Logs from '../../../support/fragments/data_import/logs/logs';
 
 describe('ui-data-import: Search the "View all" log screen', () => {
   let id;
@@ -33,12 +34,12 @@ describe('ui-data-import: Search the "View all" log screen', () => {
     DataImport.checkUploadState();
   });
 
-  afterEach(() => {
-    DataImport.checkUploadState();
-  });
+  // afterEach(() => {
+  //   DataImport.checkUploadState();
+  // });
 
   it('C11112 Search the "View all" log screen (folijet)', { tags: [TestTypes.smoke, DevTeams.folijet] }, () => {
-    LogsViewAll.openViewAll();
+    Logs.openViewAllLogs();
 
     LogsViewAll.options.forEach((option) => {
       LogsViewAll.selectOption(option);

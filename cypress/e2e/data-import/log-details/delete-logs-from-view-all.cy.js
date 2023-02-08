@@ -5,7 +5,9 @@ import DataImport from '../../../support/fragments/data_import/dataImport';
 import TopMenu from '../../../support/fragments/topMenu';
 import LogsViewAll from '../../../support/fragments/data_import/logs/logsViewAll';
 import DeleteDataImportLogsModal from '../../../support/fragments/data_import/logs/deleteDataImportLogsModal';
+import Logs from '../../../support/fragments/data_import/logs/logs';
 import Users from '../../../support/fragments/users/users';
+
 
 let user;
 const maxLogsQuantityOnPage = 100;
@@ -37,7 +39,7 @@ describe('ui-data-import: delete logs from "View all" page', () => {
 
   it('C367923 A user can delete logs from the Import app "View all" page (folijet)',
     { tags: [TestTypes.criticalPath, DevTeams.folijet] }, () => {
-      LogsViewAll.openViewAll();
+      Logs.openViewAllLogs();
       LogsViewAll.viewAllIsOpened();
       LogsViewAll.selectAllLogs();
       LogsViewAll.checkIsLogsSelected(maxLogsQuantityOnPage);
