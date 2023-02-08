@@ -1,30 +1,60 @@
+import permissions from '../../../support/dictionary/permissions';
 import TestTypes from '../../../support/dictionary/testTypes';
 import DevTeams from '../../../support/dictionary/devTeams';
-import permissions from '../../../support/dictionary/permissions';
-import Helper from '../../../support/fragments/finance/financeHelper';
-import SettingsMenu from '../../../support/fragments/settingsMenu';
-import ActionProfiles from '../../../support/fragments/data_import/action_profiles/actionProfiles';
-import NewActionProfile from '../../../support/fragments/data_import/action_profiles/newActionProfile';
-import InteractorsTools from '../../../support/utils/interactorsTools';
+import TopMenu from '../../../support/fragments/topMenu';
+import DataImport from '../../../support/fragments/data_import/dataImport';
+import Logs from '../../../support/fragments/data_import/logs/logs';
+import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
+import LogsViewAll from '../../../support/fragments/data_import/logs/logsViewAll';
+import FileDetails from '../../../support/fragments/data_import/logs/fileDetails';
+import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 import Users from '../../../support/fragments/users/users';
-import ActionProfileEdit from '../../../support/fragments/data_import/action_profiles/actionProfileEdit';
-import ActionProfileView from '../../../support/fragments/data_import/action_profiles/actionProfileView';
 
 describe('ui-data-import:', () => {
   let user;
+  let instanceHrid;
+  const fileName = 'oneMarcBib.mrc';
 
   before('create user', () => {
+    cy.getAdminToken()
+      .then(() => {
+        DataImport.uploadFileViaApi(fileName);
+      });
+
     cy.createTempUser([
-      permissions.settingsDataImportView.gui
+      permissions.settingsDataImportView.gui,
+      permissions.uiInventoryViewInstances.gui
     ])
       .then(userProperties => {
         user = userProperties;
         cy.login(user.username, user.password,
-          { path: SettingsMenu.actionProfilePath, waiter: ActionProfiles.waitLoading });
+          { path: TopMenu.dataImportPath, waiter: DataImport.waitLoading });
       });
   });
 
-  it('C356780 A user can view logs but can not import files with "Data import: Can view only" permission (folijet)', { tags: [TestTypes.smoke, DevTeams.folijet] }, () => {
-
+  after(() => {
+    cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${instanceHrid}"` })
+      .then((instance) => {
+        InventoryInstance.deleteInstanceViaApi(instance.id);
+      });
+    Users.deleteViaApi(user.userId);
   });
+
+  it('C356780 A user can view logs but can not import files with "Data import: Can view only" permission (folijet)',
+    { tags: [TestTypes.smoke, DevTeams.folijet] }, () => {
+      DataImport.checkChooseFileButtonState({ isDisabled: true });
+      Logs.openFileDetails(fileName);
+      FileDetails.openInstanceInInventory('Created');
+      InventoryInstance.getAssignedHRID().then(hrId => {
+        instanceHrid = hrId;
+      });
+      InventoryInstances.verifyInstanceDetailsView();
+      cy.visit(TopMenu.dataImportPath);
+      Logs.openViewAllLogs();
+      LogsViewAll.viewAllIsOpened();
+      LogsViewAll.searchWithTerm(fileName);
+      LogsViewAll.openFileDetails(fileName);
+      FileDetails.openInstanceInInventory('Created');
+      InventoryInstances.verifyInstanceDetailsView();
+    });
 });
