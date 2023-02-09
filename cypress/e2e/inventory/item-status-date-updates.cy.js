@@ -260,7 +260,6 @@ describe('ui-inventory: Item status date updates', () => {
 
     // renew item (through override)
     openUserLoans(userName);
-    cy.pause();
     UserLoans.renewByBarcode(itemBarcode);
     RenewConfirmationModal.confirmRenewOverrideItem();
     cy.log('cy.log/override item');
@@ -285,12 +284,12 @@ describe('ui-inventory: Item status date updates', () => {
       itemTitle: null,
       requesterBarcode: userForDeliveryRequest.barcode,
     });
-    // checkIn(itemBarcode, ItemRecordView.itemStatuses.checkedOut, ConfirmItemInModal.confirmMultipieceCheckInModal);
-    // cy.visit(TopMenu.checkOutPath);
-    // CheckOutActions.checkOutItemWithUserName(userName, itemBarcode);
-    // CheckOutActions.cancelMultipleCheckOutModal();
-    // openItem(instanceTitle, effectiveLocation.name, itemBarcode);
-    // fullCheck(ItemRecordView.itemStatuses.awaitingDelivery);
+    checkIn(itemBarcode, ItemRecordView.itemStatuses.checkedOut, ConfirmItemInModal.confirmMultipieceCheckInModal);
+    cy.visit(TopMenu.checkOutPath);
+    CheckOutActions.checkOutItemWithUserName(userName, itemBarcode);
+    CheckOutActions.cancelMultipleCheckOutModal();
+    openItem(instanceTitle, effectiveLocation.name, itemBarcode);
+    fullCheck(ItemRecordView.itemStatuses.awaitingDelivery);
 
     // // check out item to user with delivery request
     // checkOut(userForDeliveryRequest.username, itemBarcode, ItemRecordView.itemStatuses.checkedOut);
