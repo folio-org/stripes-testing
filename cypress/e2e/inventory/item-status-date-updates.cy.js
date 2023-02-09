@@ -271,24 +271,28 @@ describe('ui-inventory: Item status date updates', () => {
     // passed
     // edit item record so that it has multiple pieces
     InventoryInstance.edit();
+    cy.log('cy.log/edit item');
+    console.log('console.log/edit item');
     ItemRecordView.addPieceToItem(numberOfPieces);
+    cy.log('cy.log/add pieces');
+    console.log('console.log/add pieces');
     fullCheck(ItemRecordView.itemStatuses.checkedOut);
 
-    // // create delivery request (hold or recall) on item
-    // cy.visit(TopMenu.requestsPath);
-    // NewRequest.createDeliveryRequest({
-    //   itemBarcode,
-    //   itemTitle: null,
-    //   requesterBarcode: userForDeliveryRequest.barcode,
-    // });
-    // cy.visit(TopMenu.checkInPath);
-    // CheckInActions.checkInItem(itemBarcode);
-    // ConfirmItemInModal.confirmMultipieceCheckInModal();
-    // cy.visit(TopMenu.checkOutPath);
-    // CheckOutActions.checkOutItemWithUserName(userName, itemBarcode);
-    // CheckOutActions.cancelMultipleCheckOutModal();
-    // openItem(instanceTitle, effectiveLocation.name, itemBarcode);
-    // fullCheck(ItemRecordView.itemStatuses.awaitingDelivery);
+    // create delivery request (hold or recall) on item
+    cy.visit(TopMenu.requestsPath);
+    NewRequest.createDeliveryRequest({
+      itemBarcode,
+      itemTitle: null,
+      requesterBarcode: userForDeliveryRequest.barcode,
+    });
+    cy.visit(TopMenu.checkInPath);
+    CheckInActions.checkInItem(itemBarcode);
+    ConfirmItemInModal.confirmMultipieceCheckInModal();
+    cy.visit(TopMenu.checkOutPath);
+    CheckOutActions.checkOutItemWithUserName(userName, itemBarcode);
+    CheckOutActions.cancelMultipleCheckOutModal();
+    openItem(instanceTitle, effectiveLocation.name, itemBarcode);
+    fullCheck(ItemRecordView.itemStatuses.awaitingDelivery);
 
     // // check out item to user with delivery request
     // checkOut(userForDeliveryRequest.username, itemBarcode, ItemRecordView.itemStatuses.checkedOut);
