@@ -210,7 +210,7 @@ describe('ui-inventory: Item status date updates', () => {
 
     // mark item as missing
     ItemRecordView.clickMarkAsMissing();
-    fullCheck(ItemRecordView.itemStatuses.missing);
+    ItemRecordView.verifyItemStatus(ItemRecordView.itemStatuses.missing);
 
     // check in item at service point assigned to its effective location
     checkIn(itemBarcode, ItemRecordView.itemStatuses.available, ConfirmItemInModal.confirmMissingModal);
@@ -262,20 +262,14 @@ describe('ui-inventory: Item status date updates', () => {
     openUserLoans(userName);
     UserLoans.renewByBarcode(itemBarcode);
     RenewConfirmationModal.confirmRenewOverrideItem();
-    cy.log('cy.log/override item');
-    console.log('console.log/override item');
     OverrideAndRenewModal.confirmOverrideItem();
     openItem(instanceTitle, effectiveLocation.name, itemBarcode);
     fullCheck(ItemRecordView.itemStatuses.checkedOut);
     // passed
     // edit item record so that it has multiple pieces
     InventoryInstance.edit();
-    cy.log('cy.log/edit item');
-    console.log('console.log/edit item');
     ItemRecordView.addPieceToItem(numberOfPieces);
-    cy.log('cy.log/add pieces');
-    console.log('console.log/add pieces');
-    fullCheck(ItemRecordView.itemStatuses.checkedOut);
+    ItemRecordView.verifyItemStatus(ItemRecordView.itemStatuses.checkedOut);
 
     // // create delivery request (hold or recall) on item
     // cy.visit(TopMenu.requestsPath);
