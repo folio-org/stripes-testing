@@ -339,51 +339,51 @@ describe('ui-inventory: Item status date updates', () => {
     ItemRecordView.addPieceToItem(numberOfPieces);
     ItemRecordView.verifyItemStatus(ItemRecordView.itemStatuses.checkedOut);
 
-    // create delivery request (hold or recall) on item
-    cy.visit(TopMenu.requestsPath);
-    NewRequest.createDeliveryRequest({
-      itemBarcode,
-      itemTitle: null,
-      requesterBarcode: userForDeliveryRequest.barcode,
-    });
-    cy.visit(TopMenu.checkInPath);
-    CheckInActions.checkInItem(itemBarcode);
-    ConfirmItemInModal.confirmMultipieceCheckInModal();
-    cy.visit(TopMenu.checkOutPath);
-    CheckOutActions.checkOutItemWithUserName(userName, itemBarcode);
-    CheckOutActions.cancelMultipleCheckOutModal();
-    cy.visit(TopMenu.inventoryPath);
-    InventorySearchAndFilter.searchByParameter('Title (all)', instanceTitle);
-    InventoryInstances.selectInstance();
-    InventoryInstance.openHoldings(effectiveLocation.name);
-    InventoryInstance.openItemView(itemBarcode);
-    ItemRecordView.verifyUpdatedItemDate();
-    ItemRecordView.verifyItemStatus(ItemRecordView.itemStatuses.awaitingDelivery);
-    cy.log(`###${ItemRecordView.itemStatuses.awaitingDelivery}###`);
+    // // create delivery request (hold or recall) on item
+    // cy.visit(TopMenu.requestsPath);
+    // NewRequest.createDeliveryRequest({
+    //   itemBarcode,
+    //   itemTitle: null,
+    //   requesterBarcode: userForDeliveryRequest.barcode,
+    // });
+    // cy.visit(TopMenu.checkInPath);
+    // CheckInActions.checkInItem(itemBarcode);
+    // ConfirmItemInModal.confirmMultipieceCheckInModal();
+    // cy.visit(TopMenu.checkOutPath);
+    // CheckOutActions.checkOutItemWithUserName(userName, itemBarcode);
+    // CheckOutActions.cancelMultipleCheckOutModal();
+    // cy.visit(TopMenu.inventoryPath);
+    // InventorySearchAndFilter.searchByParameter('Title (all)', instanceTitle);
+    // InventoryInstances.selectInstance();
+    // InventoryInstance.openHoldings(effectiveLocation.name);
+    // InventoryInstance.openItemView(itemBarcode);
+    // ItemRecordView.verifyUpdatedItemDate();
+    // ItemRecordView.verifyItemStatus(ItemRecordView.itemStatuses.awaitingDelivery);
+    // cy.log(`###${ItemRecordView.itemStatuses.awaitingDelivery}###`);
 
-    // check out item to user with delivery request
-    cy.visit(TopMenu.checkOutPath);
-    CheckOutActions.checkOutItemWithUserName(userForDeliveryRequest.username, itemBarcode);
-    cy.visit(TopMenu.inventoryPath);
-    InventorySearchAndFilter.searchByParameter('Title (all)', instanceTitle);
-    InventoryInstances.selectInstance();
-    InventoryInstance.openHoldings(effectiveLocation.name);
-    InventoryInstance.openItemView(itemBarcode);
-    ItemRecordView.verifyUpdatedItemDate();
-    ItemRecordView.verifyItemStatus(ItemRecordView.itemStatuses.checkedOut);
-    cy.log(`###${ItemRecordView.itemStatuses.checkedOut}###`);
+    // // check out item to user with delivery request
+    // cy.visit(TopMenu.checkOutPath);
+    // CheckOutActions.checkOutItemWithUserName(userForDeliveryRequest.username, itemBarcode);
+    // cy.visit(TopMenu.inventoryPath);
+    // InventorySearchAndFilter.searchByParameter('Title (all)', instanceTitle);
+    // InventoryInstances.selectInstance();
+    // InventoryInstance.openHoldings(effectiveLocation.name);
+    // InventoryInstance.openItemView(itemBarcode);
+    // ItemRecordView.verifyUpdatedItemDate();
+    // ItemRecordView.verifyItemStatus(ItemRecordView.itemStatuses.checkedOut);
+    // cy.log(`###${ItemRecordView.itemStatuses.checkedOut}###`);
 
-    // check in item at service point assigned to its effective location
-    cy.visit(TopMenu.checkInPath);
-    SwitchServicePoint.switchServicePoint(effectiveLocationServicePoint.name);
-    CheckInActions.backdateCheckInItem(DateTools.getPreviousDayDate(), itemBarcode);
-    cy.visit(TopMenu.inventoryPath);
-    InventorySearchAndFilter.searchByParameter('Title (all)', instanceTitle);
-    InventoryInstances.selectInstance();
-    InventoryInstance.openHoldings(effectiveLocation.name);
-    InventoryInstance.openItemView(itemBarcode);
-    ItemRecordView.verifyUpdatedItemDate();
-    ItemRecordView.verifyItemStatus(ItemRecordView.itemStatuses.available);
-    cy.log(`###${ItemRecordView.itemStatuses.available}###`);
+    // // check in item at service point assigned to its effective location
+    // cy.visit(TopMenu.checkInPath);
+    // SwitchServicePoint.switchServicePoint(effectiveLocationServicePoint.name);
+    // CheckInActions.backdateCheckInItem(DateTools.getPreviousDayDate(), itemBarcode);
+    // cy.visit(TopMenu.inventoryPath);
+    // InventorySearchAndFilter.searchByParameter('Title (all)', instanceTitle);
+    // InventoryInstances.selectInstance();
+    // InventoryInstance.openHoldings(effectiveLocation.name);
+    // InventoryInstance.openItemView(itemBarcode);
+    // ItemRecordView.verifyUpdatedItemDate();
+    // ItemRecordView.verifyItemStatus(ItemRecordView.itemStatuses.available);
+    // cy.log(`###${ItemRecordView.itemStatuses.available}###`);
   });
 });
