@@ -107,7 +107,7 @@ export default {
   saveAndClose() {
     Requests.verifyFulfillmentPreference();
     newRequest.choosepickupServicePoint('Circ Desk 1');
-    newRequest.saveRequestAndClose();
+    newRequest.save();
     Requests.verifyRequestsPage();
     this.verifyNewRequest();
   },

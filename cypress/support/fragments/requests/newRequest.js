@@ -25,8 +25,13 @@ function openNewRequestPane() {
   ]);
 }
 
+function save() { cy.do(saveAndCloseButton.click()); }
+function waitLoading() { cy.expect(Pane({ title: 'Request Detail' }).exists()); }
+
 export default {
   addRequester,
+  save,
+  waitLoading,
   openNewRequestPane,
 
   fillRequiredFields(newRequest) {
@@ -47,29 +52,25 @@ export default {
     cy.expect(HTML(including(pickupServicePoint)).exists());
   },
 
-  saveRequestAndClose:() => cy.do(saveAndCloseButton.click()),
-  waitLoading:() => cy.expect(Pane({ title: 'Request Detail' }).exists()),
-
   createNewRequest(newRequest) {
     openNewRequestPane();
     this.fillRequiredFields(newRequest);
     this.choosepickupServicePoint(newRequest.pickupServicePoint);
-    this.saveRequestAndClose();
-    this.waitLoading();
+    save();
+    waitLoading();
   },
 
-  createDeliveryRequest(newRequest) {
+  createDeliveryRequest(requesterBarcode, itemBarcode) {
     openNewRequestPane();
-    cy.do(itemBarcodeInput.fillIn(newRequest.itemBarcode));
-    cy.do(enterItemBarcodeButton.click());
-    cy.do(Select({ name: 'fulfilmentPreference' }).choose(newRequest.requestType));
-    cy.do(requesterBarcodeInput.fillIn(newRequest.requesterBarcode));
+    cy.do(requesterBarcodeInput.fillIn(requesterBarcode));
     cy.do(enterRequesterBarcodeButton.click());
+    cy.wait(1500);
+    cy.do(itemBarcodeInput.fillIn(itemBarcode));
+    cy.do(enterItemBarcodeButton.click());
     // need to wait until instanceId is uploaded
     cy.wait(2500);
-    cy.expect(selectServicePoint.exists);
-    this.saveRequestAndClose();
-    this.waitLoading();
+    save();
+    waitLoading();
   },
 
   createWithUserName(newRequest) {
@@ -86,7 +87,7 @@ export default {
     // need to wait until instanceId is uploaded
     cy.wait(2500);
     this.choosepickupServicePoint(newRequest.pickupServicePoint);
-    this.saveRequestAndClose();
-    this.waitLoading();
+    save();
+    waitLoading();
   }
 };
