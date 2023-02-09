@@ -158,7 +158,6 @@ export default {
   processFile,
 
   importFileForBrowse(profileName, fileName) {
-    uploadFile(MarcAuthority.defaultAuthority.name, fileName);
     JobProfiles.waitLoadingList();
     JobProfiles.searchJobProfileForImport(profileName);
     JobProfiles.runImportFile();
