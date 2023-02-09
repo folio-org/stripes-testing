@@ -285,9 +285,7 @@ describe('ui-inventory: Item status date updates', () => {
       itemTitle: null,
       requesterBarcode: userForDeliveryRequest.barcode,
     });
-    cy.visit(TopMenu.checkInPath);
-    CheckInActions.checkInItem(itemBarcode);
-    ConfirmItemInModal.confirmMultipieceCheckInModal();
+    checkIn(itemBarcode, ItemRecordView.itemStatuses.checkedOut, ConfirmItemInModal.confirmMultipieceCheckInModal);
     cy.visit(TopMenu.checkOutPath);
     CheckOutActions.checkOutItemWithUserName(userName, itemBarcode);
     CheckOutActions.cancelMultipleCheckOutModal();
