@@ -77,6 +77,10 @@ export default {
     openActionsMenuOfLoanByBarcode(itemBarcode);
     return cy.do(declaredLostButton.click());
   },
+  renewByBarcode:(itemBarcode) => {
+    openActionsMenuOfLoanByBarcode(itemBarcode);
+    return cy.do(renewButton.click());
+  },
   openItemRecordInInventory:(barcode) => {
     cy.get('div[class^="mclRow--"]').contains('div[class^="mclCell-"]', barcode).then(elem => {
       elem.parent()[0].querySelector('button[icon="ellipsis"]').click();
@@ -90,8 +94,6 @@ export default {
       cy.expect(KeyValue({ value: barcode }).exists());
       cy.expect(renewButton.exists());
       cy.do(renewButton.click());
-      cy.log('cy.log/click renew button');
-      console.log('console.log/click renew button');
     } else {
       cy.wait(1500);
       cy.get('div[class^="mclRow--"]').contains('div[class^="mclCell-"]', barcode).then(elem => {
@@ -99,8 +101,6 @@ export default {
       });
       cy.expect(renewButton.exists());
       cy.do(renewButton.click());
-      cy.log('cy.log/click renew button');
-      console.log('console.log/click renew button');
     }
   },
   checkResultsInTheRowByBarcode: (allContentToCheck, itemBarcode) => {

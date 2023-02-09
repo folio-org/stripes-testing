@@ -175,7 +175,7 @@ describe('ui-inventory: Item status date updates', () => {
     fullCheck(status);
   };
 
-  const openUser = (name) => {
+  const openUserLoans = (name) => {
     cy.visit(TopMenu.usersPath);
     UsersSearchPane.searchByKeywords(name);
     UsersSearchPane.selectUserFromList(name);
@@ -249,30 +249,30 @@ describe('ui-inventory: Item status date updates', () => {
 
     // check out item to user for whom page request was created
     checkOut(userName, itemBarcode, ItemRecordView.itemStatuses.checkedOut, ConfirmItemInModal.confirmAvaitingPickupCheckInModal);
-
+    cy.wait(2000);
     // declare item lost
-    openUser(userName);
-    UserLoans.declareLoanLost(itemBarcode);
+    openUserLoans(userName);
+    cy.wait(2000);
+    UserLoans.declareLoanLostByBarcode(itemBarcode);
     ConfirmItemStatusModal.confirmItemStatus();
     openItem(instanceTitle, effectiveLocation.name, itemBarcode);
     fullCheck(ItemRecordView.itemStatuses.declaredLost);
 
     // renew item (through override)
-    openUser(userName);
-    UserLoans.renewItem(itemBarcode, true);
-    cy.log('cy.log/renew item');
-    console.log('console.log/renew item');
-    // RenewConfirmationModal.confirmRenewOverrideItem();
-    // cy.log('cy.log/override item');
-    // console.log('console.log/override item');
-    // OverrideAndRenewModal.confirmOverrideItem();
-    // openItem(instanceTitle, effectiveLocation.name, itemBarcode);
-    // fullCheck(ItemRecordView.itemStatuses.checkedOut);
-
-    // edit item record so that it has multiple pieces
-    InventoryInstance.edit();
-    ItemRecordView.addPieceToItem(numberOfPieces);
+    openUserLoans(userName);
+    cy.pause();
+    UserLoans.renewByBarcode(itemBarcode);
+    RenewConfirmationModal.confirmRenewOverrideItem();
+    cy.log('cy.log/override item');
+    console.log('console.log/override item');
+    OverrideAndRenewModal.confirmOverrideItem();
+    openItem(instanceTitle, effectiveLocation.name, itemBarcode);
     fullCheck(ItemRecordView.itemStatuses.checkedOut);
+
+    // // edit item record so that it has multiple pieces
+    // InventoryInstance.edit();
+    // ItemRecordView.addPieceToItem(numberOfPieces);
+    // fullCheck(ItemRecordView.itemStatuses.checkedOut);
 
     // // create delivery request (hold or recall) on item
     // cy.visit(TopMenu.requestsPath);
