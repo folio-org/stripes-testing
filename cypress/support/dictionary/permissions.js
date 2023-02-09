@@ -109,6 +109,7 @@ export default {
   // Data Export
   dataExportAll: { internal: 'data-export.all', gui: 'Data Export - all permissions' },
   dataExportEnableModule: { internal: 'module.data-export.enabled', gui: 'Data export: all permissions' },
+  uiDataExportModuleEnabled: { internal: 'ui-data-export.app.enabled', gui: 'UI: Data export module is enabled' },
   // Loans
   loansAll: { internal: 'ui-users.loans.all', gui: 'Users: User loans view, change due date, renew' },
   loansView: { internal: 'ui-users.loans.view', gui: 'Users: User loans view' },
@@ -208,6 +209,7 @@ export default {
   uiInventorySettingsFastAdd: { internal: 'ui-inventory.settings.fast-add', gui: 'Settings (Inventory): Edit fast add settings' },
   uiCreateEditDeleteMaterialTypes: { internal: 'ui-inventory.settings.materialtypes', gui: 'Settings (Inventory): Create, edit, delete material types' },
   uiInventorySettingsConfigureSingleRecordImport: { internal: 'ui-inventory.settings.single-record-import', gui: 'Settings (Inventory): Configure single-record import' },
+  uiDataExportDisplayListOfSettingsPages: { internal: 'ui-data-export.settings.enabled', gui: 'Settings (data-export): display list of settings pages' },
   // Timers
   okapiTimersPatch: { internal: 'okapi.proxy.self.timers.patch', gui: 'Okapi - patch timer for current tenant' },
 };
