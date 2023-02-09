@@ -59,11 +59,17 @@ export default {
   },
 
   createDeliveryRequest(newRequest) {
-    this.openNewRequestPane();
-    this.fillRequiredFields(newRequest);
+    openNewRequestPane();
+    cy.do(itemBarcodeInput.fillIn(newRequest.itemBarcode));
+    cy.do(enterItemBarcodeButton.click());
+    cy.do(Select({ name: 'fulfilmentPreference' }).choose(newRequest.requestType));
+    cy.do(requesterBarcodeInput.fillIn(newRequest.requesterBarcode));
+    cy.do(enterRequesterBarcodeButton.click());
     // need to wait until instanceId is uploaded
     cy.wait(2500);
+    cy.expect(selectServicePoint.exists);
     this.saveRequestAndClose();
+    this.waitLoading();
   },
 
   createWithUserName(newRequest) {
