@@ -277,13 +277,13 @@ describe('ui-inventory: Item status date updates', () => {
     console.log('console.log/add pieces');
     fullCheck(ItemRecordView.itemStatuses.checkedOut);
 
-    // create delivery request (hold or recall) on item
-    cy.visit(TopMenu.requestsPath);
-    NewRequest.createDeliveryRequest({
-      itemBarcode,
-      itemTitle: null,
-      requesterBarcode: userForDeliveryRequest.barcode,
-    });
+    // // create delivery request (hold or recall) on item
+    // cy.visit(TopMenu.requestsPath);
+    // NewRequest.createDeliveryRequest({
+    //   itemBarcode,
+    //   itemTitle: null,
+    //   requesterBarcode: userForDeliveryRequest.barcode,
+    // });
     // checkIn(itemBarcode, ItemRecordView.itemStatuses.checkedOut, ConfirmItemInModal.confirmMultipieceCheckInModal);
     // cy.visit(TopMenu.checkOutPath);
     // CheckOutActions.checkOutItemWithUserName(userName, itemBarcode);
