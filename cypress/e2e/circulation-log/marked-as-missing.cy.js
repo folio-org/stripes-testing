@@ -27,10 +27,12 @@ describe('circulation log', () => {
     cy.createTempUser([
       permissions.inventoryAll.gui,
       permissions.circulationLogAll.gui,
+      permissions.checkoutAll.gui,
+      permissions.uiUsersViewLoans.gui,
+      permissions.uiUsersLoansClaimReturned.gui,
     ])
       .then(userProperties => {
         user = { ...userProperties };
-        cy.login(user.username, user.password, { path: TopMenu.circulationLogPath, waiter: SearchPane.waitLoading });
         ServicePoints.getViaApi({ limit: 1, query: 'pickupLocation=="true"' })
           .then((res) => {
             servicePointId = res[0].id;
