@@ -342,9 +342,9 @@ describe('ui-inventory: Item status date updates', () => {
     // create delivery request (hold or recall) on item
     cy.visit(TopMenu.requestsPath);
     NewRequest.createDeliveryRequest(userForDeliveryRequest.barcode, itemBarcode);
-    // cy.visit(TopMenu.checkInPath);
-    // CheckInActions.checkInItem(itemBarcode);
-    // ConfirmItemInModal.confirmMultipieceCheckInModal();
+    cy.visit(TopMenu.checkInPath);
+    CheckInActions.checkInItem(itemBarcode);
+    ConfirmItemInModal.confirmMultipieceCheckInModal();
     // cy.visit(TopMenu.checkOutPath);
     // CheckOutActions.checkOutItemWithUserName(userName, itemBarcode);
     // CheckOutActions.cancelMultipleCheckOutModal();
