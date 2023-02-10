@@ -22,11 +22,12 @@ import UserLoans from '../../support/fragments/users/loans/userLoans';
 import UsersCard from '../../support/fragments/users/usersCard';
 import Renewals from '../../support/fragments/loans/renewals';
 import NewRequest from '../../support/fragments/requests/newRequest';
+import LoanDetails from '../../support/fragments/users/userDefaultObjects/loanDetails';
 
 describe('TLR: Item renew', () => {
   let originalCirculationRules;
-  const userForRenew = {};
-  const userForCheckOut = {};
+  let userForRenew = {};
+  let userForCheckOut = {};
   const patronGroup = {
     name: 'groupToRenew' + getRandomPostfix(),
   };
@@ -57,7 +58,7 @@ describe('TLR: Item renew', () => {
         unlimited: true,
         renewFromId: 'CURRENT_DUE_DATE',
       },
-      requestManagement: { holds: { renewItemsWithRequest: false } },
+      requestManagement: { holds: { renewItemsWithRequest: true } },
     },
     nonRenewable: {
       id: uuid(),
@@ -77,7 +78,7 @@ describe('TLR: Item renew', () => {
         numberAllowed: 2,
         renewFromId: 'SYSTEM_DATE',
       },
-      requestManagement: { holds: { renewItemsWithRequest: true } },
+      requestManagement: { holds: { renewItemsWithRequest: false } },
     },
   };
 
@@ -145,11 +146,10 @@ describe('TLR: Item renew', () => {
     CirculationRules.getViaApi().then((circulationRule) => {
       originalCirculationRules = circulationRule.rulesAsText;
       const ruleProps = CirculationRules.getRuleProps(circulationRule.rulesAsText);
-      const defaultProps = ' i ' + ruleProps.i + ' r ' + ruleProps.r + ' o ' + ruleProps.o + ' n ' + ruleProps.n;
-      const renwableRule = originalCirculationRules + `\n m ${testData.materialBookId} + g ${patronGroup.id} : l ` + loanPolicyBody.renewable.id + defaultProps;
-      cy.updateCirculationRules({ rulesAsText: renwableRule });
-      const nonrenewableRule = `\n m ${testData.materialDvdId} + g ${patronGroup.id} : l ` + loanPolicyBody.nonRenewable.id + defaultProps;
-      cy.updateCirculationRules({ rulesAsText: nonrenewableRule });
+      const defaultProps = ` i ${ruleProps.i} r ${ruleProps.r} o ${ruleProps.o} n ${ruleProps.n}`;
+      const renwableRule = `${originalCirculationRules}\nm ${testData.materialBookId} + g ${patronGroup.id}: l ${loanPolicyBody.renewable.id} ${defaultProps}`;
+      const nonrenewableRule = `\nm ${testData.materialDvdId} + g ${patronGroup.id}: l ${loanPolicyBody.nonRenewable.id} ${defaultProps}`;
+      cy.updateCirculationRules({ rulesAsText: renwableRule + nonrenewableRule });
     });
 
     cy.createTempUser(
@@ -161,10 +161,7 @@ describe('TLR: Item renew', () => {
       ],
       patronGroup.name
     ).then((userProperties) => {
-      userForRenew.username = userProperties.username;
-      userForRenew.password = userProperties.password;
-      userForRenew.userId = userProperties.userId;
-      userForRenew.barcode = userProperties.barcode;
+      userForRenew = userProperties;
       UserEdit.addServicePointViaApi(
         testData.userServicePoint.id,
         userForRenew.userId,
@@ -174,10 +171,7 @@ describe('TLR: Item renew', () => {
 
     cy.createTempUser([permissions.checkoutAll.gui], patronGroup.name)
       .then((userProperties) => {
-        userForCheckOut.username = userProperties.username;
-        userForCheckOut.password = userProperties.password;
-        userForCheckOut.userId = userProperties.userId;
-        userForCheckOut.barcode = userProperties.barcode;
+        userForCheckOut = userProperties;
         UserEdit.addServicePointViaApi(
           testData.userServicePoint.id,
           userForCheckOut.userId,
@@ -194,9 +188,8 @@ describe('TLR: Item renew', () => {
             userBarcode: userForCheckOut.barcode,
           });
         });
+        cy.login(userForRenew.username, userForRenew.password);
       });
-
-    cy.login(userForRenew.username, userForRenew.password);
   });
 
   after('Deleting created entities', () => {
@@ -220,7 +213,7 @@ describe('TLR: Item renew', () => {
       });
     });
     cy.wrap(instanceData.itemIds).each((item) => {
-      cy.deleteItemViaApi(item.itemId);
+      cy.deleteItemViaApi(item);
     });
     cy.deleteHoldingRecordViaApi(instanceData.holdingId);
     InventoryInstance.deleteInstanceViaApi(instanceData.instanceId);
@@ -262,6 +255,7 @@ describe('TLR: Item renew', () => {
       UsersCard.showOpenedLoans();
       UserLoans.openLoan(instanceData.itemsData[0].barcode);
       UserLoans.renewItem(instanceData.itemsData[0].barcode, true);
+      LoanDetails.checkAction(0, 'Renewed');
 
       cy.visit(TopMenu.usersPath);
       UsersSearchPane.waitLoading();
