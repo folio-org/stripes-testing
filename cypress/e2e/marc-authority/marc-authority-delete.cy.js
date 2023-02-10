@@ -16,6 +16,8 @@ describe('MARC Authority management', () => {
   const testData = {
     uniqueFileName: `C350643autotestFile.${getRandomPostfix()}.mrc`,
     fileName: `testMarcFile.${getRandomPostfix()}.mrc`,
+    record: 'Angelou, Maya. And still I rise',
+    searchOption: 'Name-title',
   };
 
   before('Creating data', () => {
@@ -56,15 +58,16 @@ describe('MARC Authority management', () => {
   });
 
   it('C357549 Delete a "MARC Authority" record (from browse result list) (spitfire)', { tags: [TestTypes.criticalPath, DevTeams.spitfire] }, () => {
+    DataImport.uploadFile('marcFileForC357549.mrc', testData.fileName);
     DataImport.importFileForBrowse(MarcAuthority.defaultCreateJobProfile, testData.fileName);
     cy.visit(TopMenu.marcAuthorities);
     MarcAuthorities.switchToBrowse();
-    MarcAuthorityBrowse.searchBy('Uniform title', MarcAuthority.defaultAuthority.headingReference);
-    MarcAuthorities.selectItem(MarcAuthority.defaultAuthority.headingReference);
+    MarcAuthorityBrowse.searchBy(testData.searchOption, testData.record);
+    MarcAuthorities.selectItem(testData.record);
     MarcAuthority.waitLoading();
     MarcAuthoritiesDelete.clickDeleteButton();
     MarcAuthoritiesDelete.checkDeleteModal();
     MarcAuthoritiesDelete.confirmDelete();
-    MarcAuthoritiesDelete.checkAfterDeletion(MarcAuthority.defaultAuthority.headingReference);
+    MarcAuthoritiesDelete.checkAfterDeletion(testData.record);
   });
 });
