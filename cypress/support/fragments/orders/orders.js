@@ -162,7 +162,7 @@ export default {
     ]);
   },
 
-  createOrder(order, isApproved = false) {
+  createOrder(order, isApproved = false, isManual = false) {
     cy.do([
       actionsButton.click(),
       newButton.click()
@@ -171,6 +171,7 @@ export default {
     cy.intercept('POST', '/orders/composite-orders**').as('newOrderID');
     cy.do(Select('Order type*').choose(order.orderType));
     if (isApproved) cy.do(Checkbox({ name:'approved' }).click());
+    if (isManual) cy.do(Checkbox({ name:'manualPo' }).click());
     cy.do(saveAndClose.click());
     return cy.wait('@newOrderID', getLongDelay())
       .then(({ response }) => {
