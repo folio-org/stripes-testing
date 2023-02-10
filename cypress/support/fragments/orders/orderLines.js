@@ -317,7 +317,7 @@ export default {
     cy.do(saveAndClose.click());
   },
 
-  fillInPOLineInfoForExport: (accountNumber) => {
+  fillInPOLineInfoForExport: (accountNumber, AUMethod) => {
     cy.do([
       orderLineTitleField.fillIn(orderLineTitle),
       orderFormatSelect.choose('P/E mix'),

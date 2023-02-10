@@ -79,7 +79,7 @@ describe('orders: export', () => {
     Orders.createOrder(order, true, false).then(orderId => {
       order.id = orderId;
       Orders.createPOLineViaActions();
-      OrderLines.fillInPOLineInfoForExport(`${organization.accounts[0].name} (${organization.accounts[0].accountNo})`);
+      OrderLines.fillInPOLineInfoForExport(`${organization.accounts[0].name} (${organization.accounts[0].accountNo})`, 'Purchase');
       OrderLines.backToEditingOrder();
     });
   });
@@ -88,11 +88,28 @@ describe('orders: export', () => {
     Orders.createOrder(order, true, true).then(orderId => {
       order.id = orderId;
       Orders.createPOLineViaActions();
-      OrderLines.fillInPOLineInfoForExport(`${organization.accounts[0].name} (${organization.accounts[0].accountNo})`);
+      OrderLines.fillInPOLineInfoForExport(`${organization.accounts[0].name} (${organization.accounts[0].accountNo})`, 'Purchase');
       OrderLines.backToEditingOrder();
       Orders.openOrder();
       cy.visit(TopMenu.exportManagerPath);
       ExportManagerSearchPane.searchById('Gobi Library Solutions');
     });
   });
+  it('C350603 Searching POL by specifying acquisition method', { tags: [TestTypes.smoke, devTeams.thunderjet] }, () => {
+    cy.loginAsAdmin({ path:TopMenu.ordersPath, waiter: Orders.waitLoading });
+    order.orderType = 'Onegoing';
+    Orders.createOrder(order, true, false).then(orderId => {
+      order.id = orderId;
+      Orders.createPOLineViaActions();
+      OrderLines.fillInPOLineInfoForExport(`${organization.accounts[0].name} (${organization.accounts[0].accountNo})`, 'Purchase');
+      OrderLines.backToEditingOrder();
+      Orders.createPOLineViaActions();
+      OrderLines.fillInPOLineInfoForExport(`${organization.accounts[0].name} (${organization.accounts[0].accountNo})`, 'Purchase at vendor system');
+      OrderLines.backToEditingOrder();
+      Orders.createPOLineViaActions();
+      OrderLines.fillInPOLineInfoForExport(`${organization.accounts[0].name} (${organization.accounts[0].accountNo})`, 'Depository');
+      OrderLines.backToEditingOrder();
+    });
+    cy.login(user.username, user.password, { path:TopMenu.ordersPath, waiter: Orders.waitLoading });
+
 }); 
