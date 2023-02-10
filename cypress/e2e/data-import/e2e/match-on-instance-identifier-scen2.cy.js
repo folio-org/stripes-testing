@@ -96,6 +96,11 @@ describe('ui-data-import: Match on Instance identifier match meets both the Iden
   });
 
   after(() => {
+    // delete profiles
+    JobProfiles.deleteJobProfile(jobProfileName);
+    MatchProfiles.deleteMatchProfile(matchProfileName);
+    ActionProfiles.deleteActionProfile(actionProfileName);
+    FieldMappingProfiles.deleteFieldMappingProfile(mappingProfileName);
     Users.deleteViaApi(userId);
   });
 
