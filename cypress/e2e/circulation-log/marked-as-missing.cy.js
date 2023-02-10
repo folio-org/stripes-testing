@@ -34,14 +34,9 @@ describe('circulation log', () => {
         ServicePoints.getViaApi({ limit: 1, query: 'pickupLocation=="true"' })
           .then((res) => {
             servicePointId = res[0].id;
-          });
-        cy.getUsers({
-          limit: 1,
-          query: `"personal.lastName"="${user.username}" and "active"="true"`
-        })
+          })
           .then(() => {
             UserEdit.addServicePointViaApi(servicePointId, user.userId);
-            cy.getUserServicePoints(user.userId);
             InventoryInstances.createInstanceViaApi(item.name, item.barcode);
           })
           .then(() => {
