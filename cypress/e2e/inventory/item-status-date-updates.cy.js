@@ -118,9 +118,7 @@ describe('ui-inventory: Item status date updates', () => {
   afterEach(() => {
     InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(itemBarcode);
     Orders.getOrdersApi({ limit: 1, query: `"poNumber"=="${orderNumber}"` })
-      .then(order => {
-        Orders.deleteOrderApi(order[0].id);
-      });
+      .then(order => Orders.deleteOrderApi(order[0].id));
     UserEdit.changeServicePointPreferenceViaApi(
       userForDeliveryRequest.userId,
       [effectiveLocationServicePoint.id, notEffectiveLocationServicePoint.id]
