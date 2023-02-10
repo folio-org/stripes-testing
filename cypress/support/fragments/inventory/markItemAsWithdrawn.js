@@ -31,7 +31,7 @@ export default {
 
   itemStatusesToCreate() { return [...this.itemsToMarkAsMissing, ...this.itemsNotToMarkAsMissing]; },
 
-  withdrawItemButton: Button('Mark as withdrawn'),
+  withdrawItemButton: Button('Withdrawn'),
   newRequestButton: Button('New Request'),
 
   getWithdrawnItem(items) {
