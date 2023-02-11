@@ -21,7 +21,7 @@ export default {
 
   markAsMissing:() => {
     openActions();
-    cy.do(Button('Mark as missing').click());
+    cy.do(Button('Missing').click());
     cy.do(Modal('Confirm item status: Missing').find(Button('Confirm')).click());
   },
 
@@ -50,7 +50,7 @@ export default {
   markAsWithdrawn:() => {
     openActions();
     cy.do([
-      Button('Mark as withdrawn').click(),
+      Button('Withdrawn').click(),
       Modal('Confirm item status: Withdrawn').find(Button('Confirm')).click()
     ]);
   },
@@ -58,15 +58,15 @@ export default {
   markAsInProcess:() => {
     openActions();
     cy.do([
-      Button('Mark as in process').click(),
-      Modal('Confirm item status: In process').find(Button('Confirm')).click()
+      Button('In process (non-requestable)').click(),
+      Modal('Confirm item status: In process (non-requestable)').find(Button('Confirm')).click()
     ]);
   },
 
   markAsUnknown:() => {
     openActions();
     cy.do([
-      Button('Mark as unknown').click(),
+      Button('Unknown').click(),
       Modal('Confirm item status: Unknown').find(Button('Confirm')).click()
     ]);
   },
