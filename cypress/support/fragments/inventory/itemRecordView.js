@@ -88,7 +88,7 @@ export default {
 
   clickMarkAsMissing:() => {
     cy.do(actionsButton.click());
-    cy.do(Button('Mark as missing').click());
+    cy.do(Button('Missing').click());
     ConfirmItemMissingModal.confirmModal();
   },
 
