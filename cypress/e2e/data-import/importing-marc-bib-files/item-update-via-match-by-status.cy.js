@@ -110,7 +110,7 @@ describe('ui-data-import: Item update via match by status', () => {
     name: mappingProfileNameForExport,
   };
 
-  before('create user', () => {
+  before('create test data', () => {
     cy.createTempUser([
       permissions.moduleDataImportEnabled.gui,
       permissions.settingsDataImportEnabled.gui,
@@ -135,6 +135,23 @@ describe('ui-data-import: Item update via match by status', () => {
         cy.login(user.username, user.password,
           { path: SettingsMenu.mappingProfilePath, waiter: FieldMappingProfiles.waitLoading });
       });
+  });
+
+  after('delete test data', () => {
+    Users.deleteViaApi(user.userId);
+    // delete generated profiles
+    JobProfiles.deleteJobProfile(jobProfileNameForCreate);
+    JobProfiles.deleteJobProfile(jobProfileNameForUpdate);
+    MatchProfiles.deleteMatchProfile(matchProfileNameForMatchOnItemHrid);
+    MatchProfiles.deleteMatchProfile(matchProfileNameForMatchOnItemStatus);
+    collectionOfMappingAndActionProfiles.forEach(profile => {
+      ActionProfiles.deleteActionProfile(profile.actionProfile.name);
+      FieldMappingProfiles.deleteFieldMappingProfile(profile.mappingProfile.name);
+    });
+    // delete downloads folder and created files in fixtures
+    FileManager.deleteFolder(Cypress.config('downloadsFolder'));
+    FileManager.deleteFile(`cypress/fixtures/${nameMarcFileForImportCreate}`);
+    FileManager.deleteFile(`cypress/fixtures/${nameForCSVFile}`);
   });
 
   const mappingProfileForCreateHoldings = (holdingsMappingProfile) => {
@@ -251,7 +268,6 @@ describe('ui-data-import: Item update via match by status', () => {
       InventorySearchAndFilter.filterItemByStatisticalCode(statisticalCode);
       InventorySearchAndFilter.saveUUIDs();
       ExportMarcFile.downloadCSVFile(nameForCSVFile, 'SearchInstanceUUIDs*');
-      FileManager.deleteFolder(Cypress.config('downloadsFolder'));
 
       // download exported marc file
       cy.visit(TopMenu.dataExportPath);
@@ -259,7 +275,6 @@ describe('ui-data-import: Item update via match by status', () => {
       ExportFile.exportWithCreatedJobProfile(nameForCSVFile, jobProfileNameForExport);
       ExportMarcFile.downloadExportedMarcFile(nameMarcFileForUpdate);
 
-      // step 23
       // upload the exported marc file
       cy.visit(TopMenu.dataImportPath);
       DataImport.uploadExportedFile(nameMarcFileForUpdate);

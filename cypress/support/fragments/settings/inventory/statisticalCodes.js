@@ -14,10 +14,18 @@ export default {
         method: 'POST',
         path: 'statistical-codes',
         body: defaultStatisticalCode,
-        isDefaultSearchParamsRequired: false,
+        isDefaultSearchParamsRequired: false
       })
       .then((response) => {
         return response.body;
       });
+  },
+
+  deleteViaApi(id) {
+    return cy.okapiRequest({
+      method: 'DELETE',
+      path: `statistical-codes/${id}`,
+      isDefaultSearchParamsRequired: false
+    });
   }
 };
