@@ -21,6 +21,7 @@ import {
 import SearchHelper from '../finance/financeHelper';
 import getRandomPostfix from '../../utils/stringTools';
 import SelectInstanceModal from './selectInstanceModal';
+import { getLongDelay } from '../../utils/cypressTools';
 
 const saveAndClose = Button('Save & close');
 const actionsButton = Button('Actions');
@@ -323,9 +324,11 @@ export default {
       orderFormatSelect.choose('P/E mix'),
       acquisitionMethodButton.click(),
       acquisitionMethodButton.click(),
-      SelectionOption('Purchase').click(),
+      SelectionOption(AUMethod).click(),
       receivingWorkflowSelect.choose('Independent order and receipt quantity'),
       Select({ name: 'vendorDetail.vendorAccount' }).choose(accountNumber),
+    ]);
+    cy.do([
       physicalUnitPriceTextField.fillIn(physicalUnitPrice),
       quantityPhysicalTextField.fillIn(quantityPhysical),
       electronicUnitPriceTextField.fillIn(electronicUnitPrice),
@@ -336,7 +339,6 @@ export default {
       onlineLocationOption.click(),
       quantityPhysicalLocationField.fillIn(quantityPhysical),
       TextField({ name: 'locations[0].quantityElectronic' }).fillIn(quantityElectronic),
-
     ]);
     cy.expect([
       physicalUnitPriceTextField.has({ value: physicalUnitPrice }),
@@ -345,6 +347,11 @@ export default {
       quantityElectronicTextField.has({ value: quantityElectronic }),
     ]);
     cy.do(saveAndClose.click());
+    cy.intercept('GET', '/orders/order-lines**').as('POLineNumber');
+    return cy.wait('@POLineNumber', getLongDelay())
+      .then(({ response }) => {
+        return response.body.poLines[0].poLineNumber;
+      });
   },
 
   selectFilterMainLibraryLocationsPOL: () => {
