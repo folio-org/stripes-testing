@@ -318,7 +318,7 @@ export default {
     cy.do(saveAndClose.click());
   },
 
-  fillInPOLineInfoForExport: (accountNumber, AUMethod) => {
+  fillInPOLineInfoForExport(accountNumber, AUMethod) {
     cy.do([
       orderLineTitleField.fillIn(orderLineTitle),
       orderFormatSelect.choose('P/E mix'),
@@ -347,11 +347,6 @@ export default {
       quantityElectronicTextField.has({ value: quantityElectronic }),
     ]);
     cy.do(saveAndClose.click());
-    cy.intercept('GET', '/orders/order-lines**').as('POLineNumber');
-    return cy.wait('@POLineNumber', getLongDelay())
-      .then(({ response }) => {
-        return response.body.poLines[0].poLineNumber;
-      });
   },
 
   selectFilterMainLibraryLocationsPOL: () => {

@@ -40,6 +40,7 @@ describe('orders: export', () => {
   let firstPOLNumber;
   let secondPOLNumber;
   let thirdPOLNumber;
+  let orderNumber = null;
 
   beforeEach(() => {
     cy.getAdminToken();
@@ -119,35 +120,28 @@ describe('orders: export', () => {
     order.orderType = 'Ongoing';
     Orders.createOrder(order, true, false).then(orderId => {
       order.id = orderId;
-
       Orders.createPOLineViaActions();
-      OrderLines.fillInPOLineInfoForExport(`${organization.accounts[0].name} (${organization.accounts[0].accountNo})`, 'Purchase')
-        .then(firstPOLNumberResponse => {
-          firstPOLNumber = firstPOLNumberResponse;
-          
+      OrderLines.fillInPOLineInfoForExport(`${organization.accounts[0].name} (${organization.accounts[0].accountNo})`, 'Purchase');      OrderLines.backToEditingOrder();
+      Orders.createPOLineViaActions();
+      OrderLines.fillInPOLineInfoForExport(`${organization.accounts[0].name} (${organization.accounts[0].accountNo})`, 'Purchase at vendor system');
       OrderLines.backToEditingOrder();
       Orders.createPOLineViaActions();
-      OrderLines.fillInPOLineInfoForExport(`${organization.accounts[0].name} (${organization.accounts[0].accountNo})`, 'Purchase at vendor system')
-        .then(secondPOLNumberResponse => {
-          secondPOLNumber = secondPOLNumberResponse;
-        });
-      OrderLines.backToEditingOrder();
-      Orders.createPOLineViaActions();
-      OrderLines.fillInPOLineInfoForExport(`${organization.accounts[0].name} (${organization.accounts[0].accountNo})`, 'Depository')
-        .then(thirdPOLNumberResponse => {
-          thirdPOLNumber = thirdPOLNumberResponse;
-        });
+      OrderLines.fillInPOLineInfoForExport(`${organization.accounts[0].name} (${organization.accounts[0].accountNo})`, 'Depository');
+      Orders.getOrdersApi({ limit: 1, query: `"id"=="${orderId}"` })
+        .then(response => {
+          orderNumber = response[0].poNumber;
+         
+          cy.login(user.username, user.password, { path:TopMenu.ordersPath, waiter: Orders.waitLoading });
+          Orders.selectOrderLines();
+          Orders.selectFilterAcquisitionMethod('Purchase');
+          Orders.checkOrderlineSearchResults(`${orderNumber}-1`);
+          Orders.resetFilters();
+          Orders.selectFilterAcquisitionMethod('Purchase at vendor system');
+          Orders.checkOrderlineSearchResults(`${orderNumber}-2`);
+          Orders.resetFilters();
+          Orders.selectFilterAcquisitionMethod('Depository');
+          Orders.checkOrderlineSearchResults(`${orderNumber}-3`);
         });
     });
-    cy.login(user.username, user.password, { path:TopMenu.ordersPath, waiter: Orders.waitLoading });
-    Orders.selectOrderLines();
-    Orders.selectFilterAcquisitionMethod('Purchase');
-    Orders.checkOrderlineSearchResults(firstPOLNumber);
-    Orders.resetFilters();
-    Orders.selectFilterAcquisitionMethod('Purchase at vendor system');
-    Orders.checkOrderlineSearchResults(secondPOLNumber);
-    Orders.resetFilters();
-    Orders.selectFilterAcquisitionMethod('Depository');
-    Orders.checkOrderlineSearchResults(thirdPOLNumber);
   });
 });
