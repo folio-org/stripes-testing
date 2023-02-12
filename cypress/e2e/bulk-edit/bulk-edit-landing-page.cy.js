@@ -14,6 +14,10 @@ describe('bulk-edit', () => {
       permissions.bulkEditEdit.gui,
       permissions.bulkEditCsvView.gui,
       permissions.bulkEditCsvEdit.gui,
+      permissions.bulkEditQueryView.gui,
+      permissions.uiInventoryViewCreateEditItems.gui,
+      permissions.uiInventoryViewCreateEditHoldings.gui,
+      permissions.uiUserEdit.gui,
     ])
       .then(userProperties => {
         user = userProperties;

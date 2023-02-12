@@ -6,6 +6,7 @@ export default {
   bulkEditCsvEdit: { internal: 'ui-bulk-edit.edit', gui: 'Bulk Edit: (CSV) Edit' },
   bulkEditCsvDelete: { internal: 'ui-bulk-edit.delete', gui: 'Bulk Edit: (CSV) Delete' },
   bulkEditUpdateRecords: { internal: 'ui-bulk-edit.app-edit.users', gui: 'Bulk edit: In app - Update user records' },
+  bulkEditQueryView: { internal: 'ui-bulk-edit.query', gui: 'Bulk edit: Query' },
   // eHoldings
   uieHoldingsRecordsEdit: { internal: 'ui-eholdings.records.edit', gui:'eHoldings: Can edit providers, packages, titles detail records' },
   uieHoldingsTitlesPackagesCreateDelete: { internal: 'ui-eholdings.titles-packages.create-delete', gui: 'eHoldings: Can create and delete custom packages and titles' },
