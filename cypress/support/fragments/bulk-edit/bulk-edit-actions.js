@@ -319,4 +319,10 @@ export default {
       cy.downloadFile($input.attr('href'), 'cypress/downloads', fileName);
     });
   },
+
+  verifyPossibleActions(actions) {
+    actions.forEach(action => {
+      cy.expect(HTML(action).exists());
+    });
+  }
 };
