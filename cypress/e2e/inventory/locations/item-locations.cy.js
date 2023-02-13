@@ -97,7 +97,7 @@ describe('ui-inventory: location', () => {
     InventoryInstances.selectInstance();
     ItemRecordView.closeDetailView();
     InventoryInstance.openHoldings([toBeEditedLocationName]);
-    InventoryInstance.openItemView(ITEM_BARCODE);
+    InventoryInstance.openItemByBarcode(ITEM_BARCODE);
 
     // edit instance
     InventoryInstance.edit();
@@ -126,7 +126,7 @@ describe('ui-inventory: location', () => {
     InventoryInstances.selectInstance();
     ItemRecordView.closeDetailView();
     InventoryInstance.openHoldings([editedLocationName]);
-    InventoryInstance.openItemView(ITEM_BARCODE);
+    InventoryInstance.openItemByBarcode(ITEM_BARCODE);
 
     // edit instance
     InventoryInstance.edit();

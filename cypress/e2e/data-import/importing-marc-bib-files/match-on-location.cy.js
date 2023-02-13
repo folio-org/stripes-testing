@@ -360,7 +360,7 @@ describe('ui-data-import: Match on location', () => {
     HoldingsRecordView.checkAdministrativeNote(noteForHoldingsMappingProfile);
     HoldingsRecordView.close();
     InventoryInstance.openHoldingsAccordion('Main Library >');
-    InventoryInstance.openItemView('No barcode');
+    InventoryInstance.openItemByBarcode('No barcode');
     ItemRecordView.checkItemAdministrativeNote(noteForItemMappingProfile);
 
     // delete profiles
@@ -519,7 +519,7 @@ describe('ui-data-import: Match on location', () => {
     HoldingsRecordView.checkHoldingsStatement(holdingsStatement);
     HoldingsRecordView.close();
     InventoryInstance.openHoldingsAccordion('Main Library >');
-    InventoryInstance.openItemView('No barcode');
+    InventoryInstance.openItemByBarcode('No barcode');
     ItemRecordView.checkMaterialType('sound recording');
 
     // delete profiles
@@ -678,8 +678,8 @@ describe('ui-data-import: Match on location', () => {
     HoldingsRecordView.checkHoldingsType('Monograph');
     HoldingsRecordView.close();
     InventoryInstance.openHoldingsAccordion('Main Library >');
-    InventoryInstance.openItemView('No barcode');
-    ItemRecordView.checkItemNote('Smith Family Foundation');
+    InventoryInstance.openItemByBarcode('No barcode');
+    ItemRecordView.checkNoteInItem('Smith Family Foundation');
 
     // delete profiles
     JobProfiles.deleteJobProfile(jobProfile);

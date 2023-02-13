@@ -185,10 +185,6 @@ export default {
     cy.do(Link(itemBarcode).click());
   },
 
-  clickMarkAsMissing() {
-    cy.do([actionsButton.click(), markAsMissingButton.click()]);
-  },
-
   checkIsMarkAsMissingExist(isExist) {
     cy.do(actionsButton.click());
     if (isExist) {
@@ -238,10 +234,6 @@ export default {
       // check is updated status is close to +/- 2 minute from now
       expect(statusDateInMs).to.be.closeTo(nowInUTCMs, 120_000);
     });
-  },
-
-  closeItemView() {
-    cy.do(Button({ icon: 'times' }).click());
   },
 
   verifyRequestStatus(value) {
