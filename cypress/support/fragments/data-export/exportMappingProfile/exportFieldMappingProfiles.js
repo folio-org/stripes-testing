@@ -1,13 +1,15 @@
 import { Button } from '../../../../../interactors';
 import exportNewFieldMappingProfile from './exportNewFieldMappingProfile';
 
+const saveAndCloseButton = Button('Save & close');
+
 const openNewMappingProfileForm = () => {
   cy.do(Button('New').click());
 };
 
 const saveMappingProfile = () => {
-  cy.do(Button('Save & close').click());
-  cy.expect(Button('Save & close').absent());
+  cy.do(saveAndCloseButton.click());
+  cy.expect(saveAndCloseButton.absent());
 };
 
 export default {

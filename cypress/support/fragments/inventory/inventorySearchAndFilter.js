@@ -45,6 +45,7 @@ const tagsAccordionButton = instancesTagsSection.find(Button('Tags'));
 const emptyResultsMessage = 'Choose a filter or enter a search query to show results.';
 const browseButton = Button({ id: 'mode-navigation-browse' });
 const viewHoldingButton = Button('View holdings');
+const statisticalCodeAccordion = Accordion({ id:'itemsStatisticalCodeIds' });
 
 const searchInstanceByHRID = (id) => {
   InventoryInstances.waitContentLoading();
@@ -448,15 +449,13 @@ export default {
       }).then(() => ({ instanceData }));
   },
 
-  selectViewHoldings() {
-    cy.do(viewHoldingButton.click());
-  },
+  selectViewHoldings:() => cy.do(viewHoldingButton.click()),
 
   filterItemByStatisticalCode:(code) => {
     cy.do([
       Button({ id:'accordion-toggle-button-itemsStatisticalCodeIds' }).click(),
-      Accordion({ id:'itemsStatisticalCodeIds' }).find(TextField()).fillIn(code),
+      statisticalCodeAccordion.find(TextField()).fillIn(code),
     ]);
-    cy.do(Accordion({ id:'itemsStatisticalCodeIds' }).find(Checkbox(code)).click());
+    cy.do(statisticalCodeAccordion.find(Checkbox(code)).click());
   }
 };
