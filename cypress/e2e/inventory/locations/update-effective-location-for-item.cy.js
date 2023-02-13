@@ -88,7 +88,7 @@ describe('ui-inventory: Update the effective location for the item', () => {
       HoldingsRecordView.checkPermanentLocation(anotherPermanentLocation);
       HoldingsRecordView.close();
       InventoryInstance.openHoldings([anotherPermanentLocation]);
-      InventoryInstance.openItemView(itemBarcode);
+      InventoryInstance.openItemByBarcode(itemBarcode);
       ItemRecordView.verifyPermanentLocation(anotherPermanentLocation);
     });
 });
