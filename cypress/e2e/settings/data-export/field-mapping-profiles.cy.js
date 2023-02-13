@@ -14,7 +14,7 @@ const newTransformationCalloutMessage = '1 transformation has been successfully 
 const newFieldMappingProfileCalloutMessage = `The field mapping profile ${fieldMappingProfileName} has been successfully created`;
 
 describe('settings: data-export', () => {
-    before('', () => {
+    before('creating user and navigating to settings', () => {
         cy.createTempUser([
             permissions.inventoryAll.gui,
             permissions.uiDataExportModuleEnabled.gui,

@@ -1,5 +1,5 @@
 import { Pane, NavListItem, Button, TextField, Checkbox, Accordion, MultiColumnListHeader, MultiColumnListCell, Modal } from "../../../../../interactors";
-import { including } from 'bigtest';
+import { including } from '@interactors/html';
 
 const fieldMappingProfilesPane = Pane('Field mapping profiles');
 const instanceRecordTypeChechbox = Checkbox({ value: 'INSTANCE', name: 'filters.recordTypes' });
@@ -15,7 +15,7 @@ const newFieldMappingProfileSaveAndCloseButton = Pane('New field mapping profile
 export default {
     getSearchResult: (row = 0, col = 0) => MultiColumnListCell({ 'row': row, 'columnIndex': col }),
     clickNthCheckbox(checkBoxNumber = 1) {
-        // Couldn't get the element with interactors
+        // TODO: redesign with interactors
         cy.get(`div[class^="mclRow--"]:nth-child(${checkBoxNumber}) input[type="checkbox"]`).click();
     },
     verifySearchResultIncludes(allContentToCheck) {
@@ -109,7 +109,7 @@ export default {
         cy.expect(Modal('Select transformations').has({ content: including(`Total selected: ${expectedTotalSelected}`) }));
     },
     fillInTransformationsTextfields(textfield1, textfield2, textfield3, textfield4, rowIndex = 0) {
-        // Couldn't get the element with interactors
+        // TODO: redesign with interactors
         cy.xpath(`//div[contains(@class, "mclRow--")][${rowIndex + 1}]//input[contains(@name, "marcField")]`).type(textfield1);
         cy.xpath(`//div[contains(@class, "mclRow--")][${rowIndex + 1}]//input[contains(@name, "indicator1")]`).type(textfield2);
         cy.xpath(`//div[contains(@class, "mclRow--")][${rowIndex + 1}]//input[contains(@name, "indicator2")]`).type(textfield3);
