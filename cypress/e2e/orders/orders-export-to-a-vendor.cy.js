@@ -114,7 +114,7 @@ describe('orders: export', () => {
       ExportManagerSearchPane.searchById('Gobi Library Solutions');
     });
   });
-  it.only('C350603 Searching POL by specifying acquisition method', { tags: [TestTypes.smoke, devTeams.thunderjet] }, () => {
+  it('C350603 Searching POL by specifying acquisition method', { tags: [TestTypes.smoke, devTeams.thunderjet] }, () => {
     cy.logout();
     cy.loginAsAdmin({ path:TopMenu.ordersPath, waiter: Orders.waitLoading });
     order.orderType = 'Ongoing';
