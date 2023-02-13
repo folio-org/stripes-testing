@@ -11,9 +11,9 @@ import getRandomPostfix from '../../support/utils/stringTools';
 import InteractorsTools from '../../support/utils/interactorsTools';
 import OrderLines from '../../support/fragments/orders/orderLines';
 import ExportManagerSearchPane from '../../support/fragments/exportManager/exportManagerSearchPane';
+import OrderLinesLimit from '../../support/fragments/settings/orders/orderLinesLimit';
 
 describe('orders: export', () => {
-  let user;
   const order = { ...NewOrder.defaultOneTimeOrder };
   const organization = {
     ...NewOrganization.defaultUiOrganizations,
@@ -36,6 +36,8 @@ describe('orders: export', () => {
   const integartionDescription = 'Test Integation descripton1';
   const vendorEDICodeFor1Integration = getRandomPostfix();
   const libraryEDICodeFor1Integration = getRandomPostfix();
+  let user;
+  let orderNumber = null;
 
   beforeEach(() => {
     cy.getAdminToken();
@@ -52,7 +54,21 @@ describe('orders: export', () => {
     Organizations.addIntegration();
     Organizations.fillIntegrationInformation(integrationName, integartionDescription, vendorEDICodeFor1Integration, libraryEDICodeFor1Integration, organization.accounts[0].accountNo, 'Purchase');
     InteractorsTools.checkCalloutMessage('Integration was saved');
+    OrderLinesLimit
+      .getPOLLimit({ query: '(module==ORDERS and configName==poLines-limit)' })
+      .then((body) => {
+        if (body.configs[0].value !== 3) {
+          const id = body.configs[0].id;
 
+          OrderLinesLimit.setPOLLimit({
+            id,
+            configName: "poLines-limit",
+            enabled: true,
+            module: "ORDERS",
+            value: "3"
+          });
+        }
+      });
     cy.createTempUser([
       permissions.uiOrdersView.gui,
       permissions.uiOrdersCreate.gui, 
@@ -79,7 +95,7 @@ describe('orders: export', () => {
     Orders.createOrder(order, true, false).then(orderId => {
       order.id = orderId;
       Orders.createPOLineViaActions();
-      OrderLines.fillInPOLineInfoForExport(`${organization.accounts[0].name} (${organization.accounts[0].accountNo})`);
+      OrderLines.fillInPOLineInfoForExport(`${organization.accounts[0].name} (${organization.accounts[0].accountNo})`, 'Purchase');
       OrderLines.backToEditingOrder();
     });
   });
@@ -88,11 +104,41 @@ describe('orders: export', () => {
     Orders.createOrder(order, true, true).then(orderId => {
       order.id = orderId;
       Orders.createPOLineViaActions();
-      OrderLines.fillInPOLineInfoForExport(`${organization.accounts[0].name} (${organization.accounts[0].accountNo})`);
+      OrderLines.fillInPOLineInfoForExport(`${organization.accounts[0].name} (${organization.accounts[0].accountNo})`, 'Purchase');
       OrderLines.backToEditingOrder();
       Orders.openOrder();
       cy.visit(TopMenu.exportManagerPath);
       ExportManagerSearchPane.searchById('Gobi Library Solutions');
     });
   });
-}); 
+  it('C350603 Searching POL by specifying acquisition method', { tags: [TestTypes.smoke, devTeams.thunderjet] }, () => {
+    cy.logout();
+    cy.loginAsAdmin({ path:TopMenu.ordersPath, waiter: Orders.waitLoading });
+    order.orderType = 'Ongoing';
+    Orders.createOrder(order, true, false).then(orderId => {
+      order.id = orderId;
+      Orders.createPOLineViaActions();
+      OrderLines.fillInPOLineInfoForExport(`${organization.accounts[0].name} (${organization.accounts[0].accountNo})`, 'Purchase');      OrderLines.backToEditingOrder();
+      Orders.createPOLineViaActions();
+      OrderLines.fillInPOLineInfoForExport(`${organization.accounts[0].name} (${organization.accounts[0].accountNo})`, 'Purchase at vendor system');
+      OrderLines.backToEditingOrder();
+      Orders.createPOLineViaActions();
+      OrderLines.fillInPOLineInfoForExport(`${organization.accounts[0].name} (${organization.accounts[0].accountNo})`, 'Depository');
+      Orders.getOrdersApi({ limit: 1, query: `"id"=="${orderId}"` })
+        .then(response => {
+          orderNumber = response[0].poNumber;
+         
+          cy.login(user.username, user.password, { path:TopMenu.ordersPath, waiter: Orders.waitLoading });
+          Orders.selectOrderLines();
+          Orders.selectFilterAcquisitionMethod('Purchase');
+          Orders.checkOrderlineSearchResults(`${orderNumber}-1`);
+          Orders.resetFilters();
+          Orders.selectFilterAcquisitionMethod('Purchase at vendor system');
+          Orders.checkOrderlineSearchResults(`${orderNumber}-2`);
+          Orders.resetFilters();
+          Orders.selectFilterAcquisitionMethod('Depository');
+          Orders.checkOrderlineSearchResults(`${orderNumber}-3`);
+        });
+    });
+  });
+});
