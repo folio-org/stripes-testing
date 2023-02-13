@@ -17,8 +17,8 @@ describe('settings: data-export', () => {
     before('creating user and navigating to settings', () => {
         cy.createTempUser([
             permissions.inventoryAll.gui,
-            permissions.uiDataExportModuleEnabled.gui,
-            permissions.uiDataExportDisplayListOfSettingsPages.gui,
+            permissions.dataExportEnableSettings.gui,
+            permissions.dataExportEnableApp.gui,
         ])
             .then(userProperties => {
                 user = userProperties;

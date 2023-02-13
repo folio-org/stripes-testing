@@ -67,4 +67,15 @@ export default {
   servicePointExists(name) {
     cy.expect(servicePointsPane.find(NavListItem(name)).exists());
   },
+
+  editServicePoint({ name, newName, newCode, newDisplayName }) {
+    cy.do([
+      Button(name).click(),
+      Pane(name).find(Button('Edit')).click(),
+      TextField({ name: 'name' }).fillIn(newName || name),
+    ]);
+    if (newCode) cy.do(TextField({ name: 'code' }).fillIn(newCode));
+    if (newDisplayName) cy.do(TextField({ name: 'discoveryDisplayName' }).fillIn(newDisplayName));
+    cy.do(Button('Save & close').click());
+  },
 };

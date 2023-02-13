@@ -97,6 +97,12 @@ const openHoldings = (...holdingToBeOpened) => {
   // don't have elem on page for waiter
   cy.wait(2000);
 };
+
+const openItemByBarcode = (itemBarcode) => {
+  cy.do(Link(including(itemBarcode)).click());
+  ItemRecordView.waitLoading();
+};
+
 const verifyInstanceTitle = (title) => {
   // don't have elem on page for waiter
   cy.wait(3000);
@@ -155,6 +161,7 @@ export default {
   verifyResourceIdentifier,
   checkInstanceNotes,
   waitInstanceRecordViewOpened,
+  openItemByBarcode,
   checkExpectedOCLCPresence: (OCLCNumber = validOCLC.id) => {
     cy.expect(identifiers.find(HTML(including(OCLCNumber))).exists());
   },
@@ -308,9 +315,7 @@ export default {
     InventoryInstancesMovement.move();
   },
   checkAddItem:(holdingsRecrodId) => {
-    cy.expect(section.find(Section({ id:holdingsRecrodId }))
-      .find(Button({ id: `clickable-new-item-${holdingsRecrodId}` }))
-      .exists());
+    cy.expect(section.find(Button({ id: `clickable-new-item-${holdingsRecrodId}` })).exists());
   },
   checkInstanceIdentifier: (identifier) => {
     cy.expect(identifiersAccordion.find(identifiers
@@ -332,11 +337,7 @@ export default {
       .find(MultiColumnListCell({ content: issn }))
       .exists());
   },
-  openItemView: (itemBarcode) => {
-    cy.do(Link(including(itemBarcode)).click());
-    ItemRecordView.waitLoading();
-  },
-  openEditItemPage() {
+  edit() {
     cy.do([
       Button('Actions').click(),
       Button('Edit').click(),

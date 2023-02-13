@@ -17,7 +17,7 @@ import {
   SelectionOption,
   MultiSelect,
   MultiSelectOption,
-  Link
+  Link,
 } from '../../../../interactors';
 import SearchHelper from '../finance/financeHelper';
 import InteractorsTools from '../../utils/interactorsTools';
@@ -47,6 +47,7 @@ const buttonSubscriptionFromFilter = Button({ id: 'accordion-toggle-button-subsc
 const searchForm = SearchField({ id: 'input-record-search' });
 const ordersFiltersPane = Pane({ id: 'orders-filters-pane' });
 const ordersResultsPane = Pane({ id: 'orders-results-pane' });
+const buttonAcquisitionMethodFilter = Button({ id: 'accordion-toggle-button-acquisitionMethod' });
 const searchByParameter = (parameter, value) => {
   cy.do([
     searchForm.selectIndex(parameter),
@@ -162,7 +163,7 @@ export default {
     ]);
   },
 
-  createOrder(order, isApproved = false) {
+  createOrder(order, isApproved = false, isManual = false) {
     cy.do([
       actionsButton.click(),
       newButton.click()
@@ -171,6 +172,7 @@ export default {
     cy.intercept('POST', '/orders/composite-orders**').as('newOrderID');
     cy.do(Select('Order type*').choose(order.orderType));
     if (isApproved) cy.do(Checkbox({ name:'approved' }).click());
+    if (isManual) cy.do(Checkbox({ name:'manualPo' }).click());
     cy.do(saveAndClose.click());
     return cy.wait('@newOrderID', getLongDelay())
       .then(({ response }) => {
@@ -286,6 +288,10 @@ export default {
       .find(MultiColumnListRow({ index: 0 }))
       .find(MultiColumnListCell({ columnIndex: 0 }))
       .has({ content: orderLineNumber }));
+  },
+  checkOrderlineFilterInList: (orderLineNumber) => {
+    cy.expect(MultiColumnList({ id: 'order-line-list' })
+      .has(Link(orderLineNumber)));
   },
   closeThirdPane: () => {
     cy.do([
@@ -430,6 +436,13 @@ export default {
       buttonOrderFormatFilter.click(),
       Checkbox({ id: 'clickable-filter-orderFormat-physical-resource' }).click(),
       buttonOrderFormatFilter.click(),
+    ]);
+  },
+  selectFilterAcquisitionMethod: (AUmethod) => {
+    cy.do([
+      buttonAcquisitionMethodFilter.click(),
+      MultiSelect({ id: 'acq-methods-filter' }).select([AUmethod]),
+      buttonAcquisitionMethodFilter.click(),
     ]);
   },
   selectFilterVendorPOL: (invoice) => {
