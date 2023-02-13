@@ -52,7 +52,7 @@ describe('data-export', () => {
     // export file with UUIDs
     cy.visit(TopMenu.dataExportPath);
     ExportFileHelper.uploadFile(fileName);
-    ExportFileHelper.exportWithDefaultInstancesJobProfile(fileName);
+    ExportFileHelper.exportWithDefaultJobProfile(fileName);
 
     // collect expected results and verify actual result
     cy.intercept(/\/data-export\/job-executions\?query=status=\(COMPLETED/).as('getInfo');
