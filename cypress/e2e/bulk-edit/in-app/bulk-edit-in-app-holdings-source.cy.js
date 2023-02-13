@@ -62,6 +62,6 @@ describe('bulk-edit', () => {
     BulkEditActions.replacePermanentLocation(location, 'holdings');
     BulkEditActions.confirmChanges();
     BulkEditActions.commitChanges();
-    BulkEditSearchPane.verifyNonMatchedResults(uuid);
+    BulkEditSearchPane.verifyNonMatchedResults('Holdings records that have source "MARC" cannot be changed');
   });
 });

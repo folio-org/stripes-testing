@@ -82,7 +82,7 @@ describe('bulk-edit', () => {
       BulkEditSearchPane.verifyActionsAfterConductedInAppUploading(false);
       BulkEditSearchPane.verifyItemsActionDropdownItems();
 
-      BulkEditSearchPane.changeShowColumnCheckbox('Item ID');
+      BulkEditSearchPane.changeShowColumnCheckbox('Item id');
       BulkEditSearchPane.verifyResultColumTitles('Item ID');
     });
 

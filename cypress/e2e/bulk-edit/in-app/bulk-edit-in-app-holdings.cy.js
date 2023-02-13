@@ -15,7 +15,6 @@ let hrid;
 const itemBarcode = getRandomPostfix();
 const validHoldingUUIDsFileName = `validHoldingUUIDs_${getRandomPostfix()}.csv`;
 const validHoldingHRIDsFileName = `validHoldingHRIDs_${getRandomPostfix()}.csv`;
-// const resultFileName = `matchedRecords_${getRandomPostfix()}.csv`;
 const resultFileName = '*Matched-Records*';
 const item = {
   instanceName: `testBulkEdit_${getRandomPostfix()}`,
