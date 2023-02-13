@@ -37,9 +37,6 @@ describe('orders: export', () => {
   const vendorEDICodeFor1Integration = getRandomPostfix();
   const libraryEDICodeFor1Integration = getRandomPostfix();
   let user;
-  let firstPOLNumber;
-  let secondPOLNumber;
-  let thirdPOLNumber;
   let orderNumber = null;
 
   beforeEach(() => {

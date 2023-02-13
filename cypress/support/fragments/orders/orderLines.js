@@ -21,7 +21,6 @@ import {
 import SearchHelper from '../finance/financeHelper';
 import getRandomPostfix from '../../utils/stringTools';
 import SelectInstanceModal from './selectInstanceModal';
-import { getLongDelay } from '../../utils/cypressTools';
 
 const saveAndClose = Button('Save & close');
 const actionsButton = Button('Actions');
