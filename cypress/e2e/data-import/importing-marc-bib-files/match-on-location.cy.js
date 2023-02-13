@@ -679,7 +679,7 @@ describe('ui-data-import: Match on location', () => {
     HoldingsRecordView.close();
     InventoryInstance.openHoldingsAccordion('Main Library >');
     InventoryInstance.openItemByBarcode('No barcode');
-    ItemRecordView.checkItemNote('Smith Family Foundation');
+    ItemRecordView.checkNoteInItem('Smith Family Foundation');
 
     // delete profiles
     JobProfiles.deleteJobProfile(jobProfile);

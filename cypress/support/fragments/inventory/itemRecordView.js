@@ -76,8 +76,12 @@ export default {
     cy.expect(Accordion('Item data').find(HTML(including(type))).exists());
   },
 
-  checkItemNote:(note) => {
+  checkNoteInItem:(note) => {
     cy.expect(Accordion('Item notes').find(KeyValue('Electronic bookplate')).has({ value: note }));
+  },
+
+  checkItemNote:(note) => {
+    cy.expect(Accordion('Item notes').find(KeyValue('Note')).has({ value: note }));
   },
 
   checkBarcode:(barcode) => {

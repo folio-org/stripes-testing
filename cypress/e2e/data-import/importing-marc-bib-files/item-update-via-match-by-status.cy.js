@@ -242,26 +242,30 @@ describe('ui-data-import: Item update via match by status', () => {
           FileDetails.checkStatusInColumn(FileDetails.status.created, columnName, i);
         });
       }
-      FileDetails.checkItemsQuantityInSummaryTable(0, '10');
-      Logs.clickOnHotLink(0, 5, 'Created');
-      ItemRecordView.waitLoading();
-      ItemActions.markAsWithdrawn();
-      ItemRecordView.verifyItemStatusInPane('Withdrawn');
-
-      cy.visit(TopMenu.dataImportPath);
-      Logs.openFileDetails(nameMarcFileForImportCreate);
-      Logs.clickOnHotLink(3, 5, 'Created');
-      ItemRecordView.waitLoading();
-      ItemActions.markAsInProcess();
-      ItemRecordView.verifyItemStatusInPane('In process (non-requestable)');
-
-      cy.visit(TopMenu.dataImportPath);
-      Logs.openFileDetails(nameMarcFileForImportCreate);
-      Logs.clickOnHotLink(7, 5, 'Created');
-      ItemRecordView.waitLoading();
-      ItemActions.markAsUnknown();
-      ItemRecordView.verifyItemStatusInPane('Unknown');
-      ItemRecordView.closeDetailView();
+      [
+        {
+          lineNumber: 0,
+          markFunction: ItemActions.markAsWithdrawn,
+          status: 'Withdrawn'
+        },
+        {
+          lineNumber: 3,
+          markFunction: ItemActions.markAsInProcess,
+          status: 'In process (non-requestable)'
+        },
+        {
+          lineNumber: 7,
+          markFunction: ItemActions.markAsUnknown,
+          status: 'Unknown'
+        }
+      ].forEach(marker => {
+        Logs.clickOnHotLink(marker.lineNumber, 5, 'Created');
+        ItemRecordView.waitLoading();
+        marker.markFunction();
+        ItemRecordView.verifyItemStatusInPane(marker.status);
+        cy.visit(TopMenu.dataImportPath);
+        Logs.openFileDetails(nameMarcFileForImportCreate);
+      });
 
       cy.visit(TopMenu.inventoryPath);
       InventorySearchAndFilter.switchToItem();
@@ -289,32 +293,33 @@ describe('ui-data-import: Item update via match by status', () => {
         FileDetails.checkStatusInColumn(FileDetails.status.updated, columnName);
       });
       FileDetails.checkItemsQuantityInSummaryTable(1, '10');
-      Logs.clickOnHotLink(0, 5, 'Updated');
-      ItemRecordView.waitLoading();
-      ItemRecordView.checkItemNote('-');
-
-      cy.visit(TopMenu.dataImportPath);
-      Logs.openFileDetails(nameMarcFileForImportCreate);
-      Logs.clickOnHotLink(1, 5, 'Updated');
-      ItemRecordView.waitLoading();
-      ItemRecordView.checkItemNote(itemNote);
-
-      cy.visit(TopMenu.dataImportPath);
-      Logs.openFileDetails(nameMarcFileForImportCreate);
-      Logs.clickOnHotLink(2, 5, 'Updated');
-      ItemRecordView.waitLoading();
-      ItemRecordView.checkItemNote(itemNote);
-
-      cy.visit(TopMenu.dataImportPath);
-      Logs.openFileDetails(nameMarcFileForImportCreate);
-      Logs.clickOnHotLink(3, 5, 'Updated');
-      ItemRecordView.waitLoading();
-      ItemRecordView.checkItemNote('-');
-
-      cy.visit(TopMenu.dataImportPath);
-      Logs.openFileDetails(nameMarcFileForImportCreate);
-      Logs.clickOnHotLink(7, 5, 'Updated');
-      ItemRecordView.waitLoading();
-      ItemRecordView.checkItemNote('-');
+      [
+        {
+          rowNumber: 0,
+          note: '-'
+        },
+        {
+          rowNumber: 1,
+          note: `${itemNote}`
+        },
+        {
+          rowNumber: 2,
+          note: `${itemNote}`
+        },
+        {
+          rowNumber: 3,
+          note: '-'
+        },
+        {
+          rowNumber: 7,
+          note: '-'
+        }
+      ].forEach(check => {
+        Logs.clickOnHotLink(check.rowNumber, 5, 'Updated');
+        ItemRecordView.waitLoading();
+        ItemRecordView.checkItemNote(check.note);
+        cy.visit(TopMenu.dataImportPath);
+        Logs.openFileDetails(nameMarcFileForImportCreate);
+      });
     });
 });
