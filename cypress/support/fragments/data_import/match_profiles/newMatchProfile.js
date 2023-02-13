@@ -5,7 +5,8 @@ import {
   TextField,
   SelectionList,
   Accordion,
-  SelectionOption
+  SelectionOption,
+  Dropdown
 } from '../../../../../interactors';
 
 const criterionValueTypeList = SelectionList({ id: 'sl-container-criterion-value-type' });
@@ -20,7 +21,8 @@ const optionsList = {
   instanceUuid: 'Admin data: Instance UUID',
   holdingsPermLoc: 'Location: Permanent',
   itemPermLoc: 'Location: Permanent',
-  systemControlNumber: 'Identifier: System control number'
+  systemControlNumber: 'Identifier: System control number',
+  status: 'Loan and availability: Status'
 };
 
 function fillExistingRecordFields(value = '', selector) {
@@ -55,7 +57,7 @@ const fillMatchProfileForm = ({
 }) => {
   cy.do(TextField('Name*').fillIn(profileName));
   // wait for data to be loaded
-  cy.wait(1500);
+  cy.wait(15000);
   // select existing record type
   if (existingRecordType === 'MARC_BIBLIOGRAPHIC') {
     cy.do(Button({ dataId:'MARC_BIBLIOGRAPHIC' }).click());
@@ -101,6 +103,8 @@ const fillMatchProfileForm = ({
     fillIncomingRecordFields(incomingRecordFields.subfield, 'subfield');
     cy.do(criterionValueTypeButton.click());
     cy.expect(criterionValueTypeList.exists());
+    // wait for list will be loaded
+    cy.wait(2000);
     cy.do(SelectionList({ id:'sl-container-criterion-value-type' }).find(SelectionOption(itemOption)).click());
   }
 };
@@ -127,8 +131,27 @@ const fillMatchProfileWithExistingPart = ({
   cy.do(SelectionList({ id:'sl-container-criterion-value-type' }).find(SelectionOption(instanceOption)).click());
 };
 
+const fillMatchProfileStaticValue = ({ profileName, incomingStaticValue, matchCriterion, itemOption }) => {
+  cy.do(TextField('Name*').fillIn(profileName));
+  // wait for data to be loaded
+  cy.wait(15000);
+  cy.do([
+    matchProfileDetailsAccordion.find(Button({ dataId:'ITEM' })).click(),
+    Dropdown({ id:'record-selector-dropdown' }).open(),
+    Button('Static value (submatch only)').click(),
+    TextField({ name:'profile.matchDetails[0].incomingMatchExpression.staticValueDetails.text' }).fillIn(incomingStaticValue),
+    Select('Match criterion').choose(matchCriterion),
+    criterionValueTypeButton.click()]);
+  cy.expect(criterionValueTypeList.exists());
+  // wait for list will be loaded
+  cy.wait(2000);
+  cy.do(SelectionList({ id:'sl-container-criterion-value-type' })
+    .find(SelectionOption(itemOption)).click());
+};
+
 export default {
   optionsList,
   fillMatchProfileForm,
   fillMatchProfileWithExistingPart,
+  fillMatchProfileStaticValue
 };
