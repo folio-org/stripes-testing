@@ -31,7 +31,7 @@ describe('Manage holding records through quickmarc editor', () => {
         cy.visit(TopMenu.inventoryPath);
         InventoryInstances.searchBySource('MARC');
         InventoryInstances.selectInstance();
-        InventoryInstance.getId().then(id => instanceID = id);
+        InventoryInstance.getId().then(id => { instanceID = id; });
         InventorySteps.addMarcHoldingRecord();
       });
     });
@@ -54,9 +54,7 @@ describe('Manage holding records through quickmarc editor', () => {
     InventorySearchAndFilter.searchInstanceByTitle(instanceID);
     InventorySearchAndFilter.selectViewHoldings();
     HoldingsRecordView.delete();
-    
     Users.deleteViaApi(testData.user.userId);
-
     InventoryInstance.deleteInstanceViaApi(instanceID);
   });
 

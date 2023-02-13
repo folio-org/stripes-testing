@@ -42,7 +42,7 @@ describe('MARC Authority management', () => {
     cy.login(userData.name, userData.password, { path: TopMenu.inventoryPath, waiter: InventoryInstances.waitContentLoading });
     InventoryInstances.searchBySource('MARC');
     InventoryInstances.selectInstance();
-    InventoryInstance.getId().then(id => instanceID = id);
+    InventoryInstance.getId().then(id => { instanceID = id; });
     InventoryInstance.checkExpectedMARCSource();
     InventoryInstance.checkMARCSourceAtNewPane();
   });

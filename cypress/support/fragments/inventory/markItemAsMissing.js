@@ -14,7 +14,7 @@ import InventoryHoldings from './holdings/inventoryHoldings';
 import ServicePoints from '../settings/tenant/servicePoints/servicePoints';
 
 const actionsButton = Button('Actions');
-const markAsMissingButton = Button('Mark as missing');
+const markAsMissingButton = Button('Missing');
 const confirmItemMissingModal = Modal('Confirm item status: Missing');
 const itemStatusKeyValue = KeyValue('Item status');
 
