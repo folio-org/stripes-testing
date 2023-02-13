@@ -11,6 +11,7 @@ import permissions from '../../support/dictionary/permissions';
 import Users from '../../support/fragments/users/users';
 import DevTeams from '../../support/dictionary/devTeams';
 import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
+import InventoryInstance from '../../support/fragments/inventory/inventoryInstance';
 
 describe('ui-inventory: Create fast add record', () => {
   const timeStamp = {
@@ -87,10 +88,8 @@ describe('ui-inventory: Create fast add record', () => {
         FastAddNewRecord.closeHoldingsRecordView();
 
         // verify item details
-        ItemRecordView.viewItem(
-          FastAddNewRecord.fastAddNewRecordFormDetails.permanentLocationValue,
-          FastAddNewRecord.fastAddNewRecordFormDetails.itemBarcode
-        );
+        InventoryInstance.openHoldings([FastAddNewRecord.fastAddNewRecordFormDetails.permanentLocationValue]);
+        InventoryInstance.openItemByBarcode(FastAddNewRecord.fastAddNewRecordFormDetails.itemBarcode);
         FastAddNewRecord.verifyRecordCreatedDate(timeStamp);
         ItemRecordView.verifyPermanentLoanType(FastAddNewRecord.fastAddNewRecordFormDetails.permanentLoanType);
         ItemRecordView.verifyItemBarcode(FastAddNewRecord.fastAddNewRecordFormDetails.itemBarcode);

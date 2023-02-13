@@ -8,6 +8,8 @@ import Users from '../../../support/fragments/users/users';
 import UserEdit from '../../../support/fragments/users/userEdit';
 import ServicePoints from '../../../support/fragments/settings/tenant/servicePoints/servicePoints';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
+import ItemRecordView from '../../../support/fragments/inventory/itemRecordView';
+import ItemActions from '../../../support/fragments/inventory/inventoryItem/itemActions';
 
 describe('ui-inventory: Mark an item as Missing', () => {
   let user = {};
@@ -78,15 +80,14 @@ describe('ui-inventory: Mark an item as Missing', () => {
       MarkItemAsMissing.openHoldingsAccordion(instanceData.holdingId);
       MarkItemAsMissing.openItem(item.barcode);
       MarkItemAsMissing.checkIsMarkAsMissingExist(true);
-      MarkItemAsMissing.clickMarkAsMissing();
+      ItemActions.markAsMissing();
       MarkItemAsMissing.checkIsConfirmItemMissingModalExist(instanceData.instanceTitle, item.barcode, materialType);
       MarkItemAsMissing.cancelModal();
-      MarkItemAsMissing.verifyItemStatus(item.status.name);
-      MarkItemAsMissing.clickMarkAsMissing();
-      MarkItemAsMissing.confirmModal();
-      MarkItemAsMissing.verifyItemStatus('Missing');
+      ItemRecordView.verifyItemStatusInPane(item.status.name);
+      ItemActions.markAsMissing();
+      ItemRecordView.verifyItemStatusInPane('Missing');
       MarkItemAsMissing.verifyItemStatusUpdatedDate();
-      MarkItemAsMissing.closeItemView();
+      ItemRecordView.closeDetailView();
     });
 
     cy.visit(TopMenu.requestsPath);
@@ -102,7 +103,7 @@ describe('ui-inventory: Mark an item as Missing', () => {
       MarkItemAsMissing.openHoldingsAccordion(instanceData.holdingId);
       MarkItemAsMissing.openItem(item.barcode);
       MarkItemAsMissing.checkIsMarkAsMissingExist(false);
-      MarkItemAsMissing.closeItemView();
+      ItemRecordView.closeDetailView();
     });
   });
 });

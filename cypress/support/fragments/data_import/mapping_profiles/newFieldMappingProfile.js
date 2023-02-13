@@ -242,7 +242,7 @@ export default {
 
     cy.do(Select({ name: statisticalCodeFieldName }).choose(actions.addTheseToExisting));
     cy.do(Button('Add statistical code').click());
-    cy.do(TextField('Statistical code').fillIn(name));
+    cy.do(TextField('Statistical code').fillIn(`"${name}"`));
     waitLoading();
   },
 

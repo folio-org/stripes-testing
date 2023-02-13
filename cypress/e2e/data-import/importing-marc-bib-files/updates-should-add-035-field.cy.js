@@ -28,7 +28,7 @@ describe('ui-data-import: Data Import Updates should add 035 field from 001/003,
   const instanceHridsFromSecondFile = [];
   const instanceStatusTerm = '"Batch Loaded"';
   const instanceStatusTermUI = 'Batch Loaded';
-  const statisticalCode = '"ARL (Collection stats): books - Book, print (books)"';
+  const statisticalCode = 'ARL (Collection stats): books - Book, print (books)';
   const statisticalCodeUI = 'ARL (Collection stats)';
   const rowNumbers = [0, 1, 2, 3, 4, 5, 6, 7];
   const arrayOf999Fields = [];
