@@ -259,7 +259,7 @@ export default {
 
   addElectronicAccess:(relationship, uri, linkText = '') => {
     cy.do([
-      cy.do(Select({ name:'profile.mappingDetails.mappingFields[23].repeatableFieldAction' }).focus()),
+      Select({ name:'profile.mappingDetails.mappingFields[23].repeatableFieldAction' }).focus(),
       Select({ name:'profile.mappingDetails.mappingFields[23].repeatableFieldAction' }).choose(actions.addTheseToExisting),
       Button('Add electronic access').click(),
       TextField('Relationship').fillIn(relationship),
@@ -314,13 +314,18 @@ export default {
   },
 
   addItemNotes:(noteType, note, staffOnly) => {
-    cy.do(Select({ name:'profile.mappingDetails.mappingFields[25].repeatableFieldAction' })
-      .choose(actions.addTheseToExisting));
-    cy.do(Button('Add item note').click());
-    cy.do(TextField('Note type').fillIn(noteType));
-    cy.do(TextField('Note').fillIn(note));
-    cy.do(Select({ name:'profile.mappingDetails.mappingFields[25].subfields[0].fields[2].booleanFieldAction' })
-      .choose(staffOnly));
+    const noteFieldName = 'profile.mappingDetails.mappingFields[25].repeatableFieldAction';
+
+    cy.do([
+      Select({ name:noteFieldName }).focus(),
+      Select({ name:noteFieldName }).choose(actions.addTheseToExisting),
+      Button('Add item note').click(),
+      TextField('Note type').fillIn(noteType),
+      TextField('Note').fillIn(note),
+      Select({ name:'profile.mappingDetails.mappingFields[25].subfields[0].fields[2].booleanFieldAction' }).focus(),
+      Select({ name:'profile.mappingDetails.mappingFields[25].subfields[0].fields[2].booleanFieldAction' })
+        .choose(staffOnly)
+    ]);
     waitLoading();
   },
 
