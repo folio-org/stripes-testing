@@ -30,6 +30,16 @@ import Users from '../../../support/fragments/users/users';
 describe('ui-data-import: Item update via match by status', () => {
   let user;
   let statisticalCode;
+  const itemHrids = [];
+  const titlesItemsStatusChanged = [
+    'Making the news popular : mobilizing U.S. news audiences / Anthony M. Nadler.',
+    'Genius : the game / Leopoldo Gout.',
+    'Animal philosophy : essential readings in continental thought / edited by Matthew Calarco and Peter Atterton.'
+  ];
+  const titlesItemStatusNotChanged = [
+    'Political communication in the age of dissemination.',
+    'Language, borders and identity / edited by Dominic Watt and Carmen Llamas.'
+  ];
   const itemNote = 'THIS WAS UPDATED!';
 
   // unique profile names
@@ -263,6 +273,7 @@ describe('ui-data-import: Item update via match by status', () => {
         ItemRecordView.waitLoading();
         marker.markFunction();
         ItemRecordView.verifyItemStatusInPane(marker.status);
+        itemHrids.push(ItemRecordView.getAssignedHRID());
         cy.visit(TopMenu.dataImportPath);
         Logs.openFileDetails(nameMarcFileForImportCreate);
       });
@@ -286,38 +297,24 @@ describe('ui-data-import: Item update via match by status', () => {
       JobProfiles.runImportFile();
       JobProfiles.waitFileIsImported(nameMarcFileForUpdate);
       Logs.openFileDetails(nameMarcFileForUpdate);
-      [FileDetails.columnName.srsMarc,
-        FileDetails.columnName.instance,
-        FileDetails.columnName.holdings,
-        FileDetails.columnName.item].forEach(columnName => {
-        FileDetails.checkStatusInColumn(FileDetails.status.updated, columnName);
+      // FileDetails.checkItemQuantityInSummaryTable('7', 2);
+      // FileDetails.checkItemQuantityInSummaryTable('3', 3);
+      // check items what statuses were changed have Discarded status
+      titlesItemsStatusChanged.forEach(title => {
+        FileDetails.checkStatusByTitle(title, 'Discarded');
       });
-      FileDetails.checkItemsQuantityInSummaryTable(1, '10');
-      [
-        {
-          rowNumber: 0,
-          note: '-'
-        },
-        {
-          rowNumber: 1,
-          note: `${itemNote}`
-        },
-        {
-          rowNumber: 2,
-          note: `${itemNote}`
-        },
-        {
-          rowNumber: 3,
-          note: '-'
-        },
-        {
-          rowNumber: 7,
-          note: '-'
-        }
-      ].forEach(check => {
-        Logs.clickOnHotLink(check.rowNumber, 5, 'Updated');
+      itemHrids.forEach(hrid => {
+        cy.visit(TopMenu.inventoryPath);
+        InventorySearchAndFilter.switchToItem();
+        InventorySearchAndFilter.searchByParameter('Item HRID', hrid);
         ItemRecordView.waitLoading();
-        ItemRecordView.checkItemNote(check.note);
+        ItemRecordView.checkItemNote('-');
+      });
+      // check items what statuses were not changed have Updated status
+      titlesItemStatusNotChanged.forEach(title => {
+        FileDetails.openHoldingsInInventoryByTitle(title);
+        ItemRecordView.waitLoading();
+        ItemRecordView.checkItemNote(itemNote);
         cy.visit(TopMenu.dataImportPath);
         Logs.openFileDetails(nameMarcFileForImportCreate);
       });

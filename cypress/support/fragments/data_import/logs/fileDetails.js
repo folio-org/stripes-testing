@@ -112,5 +112,29 @@ export default {
     cy.do(resultsList.find(MultiColumnListCell({ row: rowNumber, columnIndex: 4 }))
       .find(Link(itemStatus))
       .click());
+  },
+
+  openHoldingsInInventoryByTitle:(title, itemStatus = 'Updated') => {
+    cy.do(MultiColumnListCell({ content: title }).perform(
+      element => {
+        const rowNumber = element.parentElement.parentElement.getAttribute('data-row-index');
+
+        cy.expect(MultiColumnListRow({ indexRow: rowNumber })
+          .find(MultiColumnListCell({ content: itemStatus }))
+          .click());
+      }
+    ));
+  },
+
+  checkStatusByTitle:(title, itemStatus) => {
+    cy.do(MultiColumnListCell({ content: title }).perform(
+      element => {
+        const rowNumber = element.parentElement.parentElement.getAttribute('data-row-index');
+
+        cy.expect(MultiColumnListRow({ indexRow: rowNumber })
+          .find(MultiColumnListCell({ columnIndex: 5 }))
+          .has({ content: itemStatus }));
+      }
+    ));
   }
 };
