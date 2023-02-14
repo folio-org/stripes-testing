@@ -240,6 +240,7 @@ export default {
     // number needs for using this method in filling fields for holdings and item profiles
     const statisticalCodeFieldName = `profile.mappingDetails.mappingFields[${number}].repeatableFieldAction`;
 
+    cy.do(Select({ name: statisticalCodeFieldName }).focus());
     cy.do(Select({ name: statisticalCodeFieldName }).choose(actions.addTheseToExisting));
     cy.do(Button('Add statistical code').click());
     cy.do(TextField('Statistical code').fillIn(`"${name}"`));
@@ -250,6 +251,7 @@ export default {
     // number needs for using this method in filling fields for holdings and item profiles
     const adminNoteFieldName = `profile.mappingDetails.mappingFields[${number}].repeatableFieldAction`;
 
+    cy.do(Select({ name: adminNoteFieldName }).focus());
     cy.do(Select({ name: adminNoteFieldName }).choose(actions.addTheseToExisting));
     cy.do(Button('Add administrative note').click());
     cy.do(TextField('Administrative note').fillIn(`"${note}"`));
