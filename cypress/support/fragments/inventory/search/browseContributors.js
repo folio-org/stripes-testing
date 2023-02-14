@@ -129,8 +129,8 @@ export default {
 
   checkContributorRowValues: (values) => {
     cy.intercept('GET', '/browse/contributors/instances?*').as('getInstances');
-    cy.wait('@getInstances', { timeout: 10000 }).then(xhr => {
-      cy.expect(xhr.response.body.items[5]).to.include(values);
+    cy.wait('@getInstances', { timeout: 10000 }).then(item => {
+      cy.expect(item.response.body.items[5]).to.include(values);
     });
   },
 
