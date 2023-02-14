@@ -35,6 +35,7 @@ const searchButton = Button({ type: 'submit' });
 const resetAllButton = Button('Reset all');
 const searchButtonDisabled = Button({ type: 'submit', disabled: true });
 const resetAllButtonDisabled = Button({ className: including('resetButton---n7KP9'), disabled: true });
+const nameTypeAccordion = Button({ id: 'accordion-toggle-button-nameType' });
 const rowContributorName = (ContributorName, contributorNameType) => MultiColumnListRow(`${ContributorName}${contributorNameType}1`);
 
 export default {
@@ -45,6 +46,7 @@ export default {
     // cypress can't draw selected option without wait
     cy.wait(1000);
     cy.do(Select('Search field index').choose('Contributors'));
+    cy.expect(nameTypeAccordion.exists());
   },
 
   clickBrowseBtn() {
@@ -83,7 +85,9 @@ export default {
   },
 
   browse(contributorName) {
-    cy.do([recordSearch.fillIn(contributorName), searchButton.click()]);
+    cy.do(recordSearch.fillIn(contributorName));
+    cy.expect(recordSearch.has({ value: contributorName }));
+    cy.do(searchButton.click());
   },
 
   checkSearchResultsTable() {
@@ -117,6 +121,17 @@ export default {
       rowContributorName(contributorA.name, contributorA.contributorNameType).exists(),
       rowContributorName(contributorZ.name, contributorZ.contributorNameType).exists(),
     ]);
+  },
+
+  checkSearchResultRecord(record) {
+    MultiColumnListCell(record).has({ innerHTML: including(`<strong>${record}</strong>`) });
+  },
+
+  checkContributorRowValues: (values) => {
+    cy.intercept('GET', '/browse/contributors/instances?*').as('getInstances');
+    cy.wait('@getInstances', { timeout: 10000 }).then(item => {
+      cy.expect(item.response.body.items[5]).to.include(values);
+    });
   },
 
   openInstance(contributor) {
