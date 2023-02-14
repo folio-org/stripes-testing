@@ -13,6 +13,8 @@ import ConfirmItemStatusModal from '../users/loans/confirmItemStatusModal';
 
 const claimReturnedButton = Button('Claim returned');
 const changeDueDateButton = Button('Change due date');
+const resolveClaimButton = Button('Resolve claim');
+const markAsMissingButton = Button('Mark as missing');
 
 export default {
   checkAll() {
@@ -86,5 +88,13 @@ export default {
   },
   verifyResultsInTheRow: (allContentToCheck, rowIndex = 0) => {
     return allContentToCheck.forEach(contentToCheck => cy.expect(MultiColumnListRow({ indexRow: `row-${rowIndex}` }).find(MultiColumnListCell({ content: including(contentToCheck) })).exists()));
+  },
+  markItemAsMissing: (barcode, reasonWhyItemChangesStatus) => {
+    cy.do([
+      MultiColumnListCell({ content: including(barcode) }).click(),
+      resolveClaimButton.click(),
+      markAsMissingButton.click(),
+    ]);
+    ConfirmItemStatusModal.confirmItemStatus(reasonWhyItemChangesStatus);
   },
 };

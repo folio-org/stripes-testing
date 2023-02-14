@@ -96,24 +96,42 @@ export default {
   },
 
   checkResultWithNoValue(value) {
-    cy.expect(MultiColumnListCell(including(`${value} would be here`)).exists());
+    cy.expect([
+      MultiColumnListCell(including(`${value} would be here`)).exists(),
+      MultiColumnListCell(value).absent(),
+    ]);
+  },
+
+  checkResultWithValue(auth, value) {
+    cy.expect([
+      MultiColumnListCell({content: auth}).exists(),
+      MultiColumnListCell({content: value}).exists(),
+    ]);
   },
 
   checkResultWithValueA(valueA, auth, valueAuth, ref, valueRef) {
-    cy.expect(MultiColumnListCell({row: 0, content: `${valueA} would be here`}).exists());
-    cy.expect(MultiColumnListCell({row: 1, content: auth, content: valueAuth}).exists());
-    cy.expect(MultiColumnListCell({row: 2, content: ref, content: valueRef}).exists());
+    cy.expect([
+      MultiColumnListCell({row: 0, content: `${valueA} would be here`}).exists(),
+      MultiColumnListCell({row: 1, content: auth}).exists(),
+      MultiColumnListCell({row: 1, content: valueAuth}).exists(),
+      MultiColumnListCell({row: 2, content: ref}).exists(),
+      MultiColumnListCell({row: 2, content: valueRef}).exists(),
+    ]);
   },
 
   checkResultWithValueB(auth, valueAuth, ref, valueRef) {
-    cy.expect(MultiColumnListCell({row: 0, content: auth, content: valueAuth}).exists());
-    cy.expect(MultiColumnListCell({row: 1, content: ref, content: valueRef}).exists());
+    cy.expect([
+      MultiColumnListCell({row: 0, content: auth}).exists(),
+      MultiColumnListCell({row: 0, content: valueAuth}).exists(),
+      MultiColumnListCell({row: 1, content: ref}).exists(),
+      MultiColumnListCell({row: 1, content: valueRef}).exists(),
+    ]);
   },
 
   checkHeadingReference: (headingReference) => {
     cy.expect([
       rootSection.find(MultiColumnListRow({ rowIndexInParent: `row-0` })).find(MultiColumnListCell({ content: `${headingReference}\xa0would be here` })),
       rootSection.find(MultiColumnListRow({ rowIndexInParent: `row-1` })).find(MultiColumnListCell({ content: headingReference })),
-    ])
+    ]);
   },
 };

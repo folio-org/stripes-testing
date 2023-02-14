@@ -1,33 +1,24 @@
 import { HTML, including } from '@interactors/html';
-import { Accordion, KeyValue, Pane, Button, TextField, MultiColumnList, Callout } from '../../../../interactors';
+import { Accordion, KeyValue, Pane, Button, TextField, MultiColumnList, Callout, PaneHeader } from '../../../../interactors';
 import dateTools from '../../utils/dateTools';
-import ConfirmItemMissingModal from './inventoryItem/confirmItemMissingModal';
 
 const loanAccordion = Accordion('Loan and availability');
-const actionsButton = Button('Actions');
 
-const viewItem = (locator, cellContent) => {
-  cy.do(Accordion(`Holdings: ${locator} >`).clickHeader());
-  cy.get('[id^="list-items"]').contains(cellContent).click();
-};
-
-const verifyItemBarcode = value => {
-  cy.expect(KeyValue('Item barcode').has({ value }));
-};
-
-const verifyPermanentLoanType = value => {
-  cy.expect(KeyValue('Permanent loan type').has({ value }));
-};
-
-const verifyNote = value => {
-  cy.expect(KeyValue('Check in note').has({ value }));
-};
-
+const verifyItemBarcode = value => { cy.expect(KeyValue('Item barcode').has({ value })); };
+const verifyPermanentLoanType = value => { cy.expect(KeyValue('Permanent loan type').has({ value })); };
+const verifyNote = value => { cy.expect(KeyValue('Check in note').has({ value })); };
+const waitLoading = () => { cy.expect(Pane(including('Item')).exists()); };
+const verifyItemStatus = (itemStatus) => { cy.expect(loanAccordion.find(HTML(including(itemStatus))).exists()); };
+const verifyItemStatusInPane = (itemStatus) => { cy.expect(PaneHeader(including(itemStatus)).exists()); };
 const verifyPermanentLocation = location => {
   // TODO: Try to add ID for div.row- for better interaction with KeyValue
   cy.expect(Accordion({ label: 'Location' })
     .find(KeyValue('Effective location for item'))
     .has({ value: location }));
+};
+const closeDetailView = () => {
+  cy.expect(Pane(including('Item')).exists());
+  cy.do(Button({ icon: 'times' }).click());
 };
 
 const itemStatuses = {
@@ -43,38 +34,18 @@ const itemStatuses = {
   awaitingDelivery: 'Awaiting delivery'
 };
 
-const waitLoading = () => {
-  cy.expect(Pane(including('Item')).exists());
-};
-
-const closeDetailView = () => {
-  cy.expect(Pane(including('Item')).exists());
-  cy.do(Button({ icon: 'times' }).click());
-};
-
-const verifyItemStatus = (itemStatus) => {
-  cy.expect(loanAccordion.find(HTML(including(itemStatus))).exists());
-};
-
 export default {
   itemStatuses,
   waitLoading,
-  viewItem,
   verifyItemBarcode,
   verifyPermanentLoanType,
   verifyNote,
   verifyPermanentLocation,
   closeDetailView,
   verifyItemStatus,
+  verifyItemStatusInPane,
 
-  editItemViaApi: (item) => {
-    return cy.okapiRequest({
-      method: 'PUT',
-      path: `inventory/items/${item.id}`,
-      body: item,
-      isDefaultSearchParamsRequired: false,
-    });
-  },
+  getAssignedHRID:() => cy.then(() => KeyValue('Item HRID').value()),
 
   verifyUpdatedItemDate:() => {
     cy.do(loanAccordion.find(KeyValue('Item status')).perform(element => {
@@ -84,12 +55,6 @@ export default {
       // The time on the server and the time on the yuai differ by 3 hours. It was experimentally found that it is necessary to add 18000000 sec
       dateTools.verifyDate(parsedDate, 18000000);
     }));
-  },
-
-  clickMarkAsMissing:() => {
-    cy.do(actionsButton.click());
-    cy.do(Button('Mark as missing').click());
-    ConfirmItemMissingModal.confirmModal();
   },
 
   addPieceToItem:(numberOfPieces) => {
@@ -111,23 +76,16 @@ export default {
     cy.expect(Accordion('Item data').find(HTML(including(type))).exists());
   },
 
-  checkItemNote:(note) => {
+  checkNoteInItem:(note) => {
     cy.expect(Accordion('Item notes').find(KeyValue('Electronic bookplate')).has({ value: note }));
+  },
+
+  checkItemNote:(note) => {
+    cy.expect(Accordion('Item notes').find(KeyValue('Note')).has({ value: note }));
   },
 
   checkBarcode:(barcode) => {
     cy.expect(Accordion('Administrative data').find(KeyValue('Item barcode')).has({ value: barcode }));
-  },
-
-  checkStatus:(status) => {
-    cy.expect(Accordion('Loan and availability').find(KeyValue('Item status')).has({ value: status }));
-  },
-
-  edit() {
-    cy.do([
-      actionsButton.click(),
-      Button('Edit').click(),
-    ]);
   },
 
   checkCalloutMessage: () => {
@@ -139,5 +97,5 @@ export default {
     this.checkEffectiveLocation(location);
     this.checkBarcode(barcode);
     this.checkStatus(status);
-  },
+  }
 };

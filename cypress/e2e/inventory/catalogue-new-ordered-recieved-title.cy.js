@@ -23,6 +23,7 @@ import SwitchServicePoint from '../../support/fragments/servicePoint/switchServi
 import ConfirmItemInModal from '../../support/fragments/check-in-actions/confirmItemInModal';
 import Users from '../../support/fragments/users/users';
 import ServicePoint from '../../support/fragments/servicePoint/servicePoint';
+import ItemActions from '../../support/fragments/inventory/inventoryItem/itemActions';
 
 describe('orders: Receive piece from Order', () => {
   let effectiveLocation;
@@ -129,10 +130,10 @@ describe('orders: Receive piece from Order', () => {
       InventoryInstance.openHoldings(effectiveLocation.name);
       InventoryInstance.verifyItemBarcode('No barcode');
       InventoryInstance.verifyLoan('Can circulate');
-      InventoryInstance.openItemView('No barcode');
+      InventoryInstance.openItemByBarcode('No barcode');
       ItemRecordView.waitLoading();
       ItemRecordView.checkBarcode('-');
-      ItemRecordView.edit();
+      ItemActions.edit();
       ItemRecordEdit.waitLoading(instanceTitle);
       ItemRecordEdit.addBarcode(barcode);
       ItemRecordEdit.save();
@@ -151,7 +152,7 @@ describe('orders: Receive piece from Order', () => {
       InventoryInstance.openHoldings(effectiveLocation.name);
       InventoryInstance.checkHoldingsTable(effectiveLocation.name, 0, '-', barcode, 'Available');
       InventoryInstance.verifyLoan('Can circulate');
-      InventoryInstance.openItemView(barcode);
+      InventoryInstance.openItemByBarcode(barcode);
       ItemRecordView.waitLoading();
       ItemRecordView.checkBarcode(barcode);
 
@@ -168,7 +169,7 @@ describe('orders: Receive piece from Order', () => {
       InventoryInstance.openHoldings(effectiveLocation.name);
       InventoryInstance.checkHoldingsTable(effectiveLocation.name, 0, '-', barcode, 'In transit');
       InventoryInstance.verifyLoan('Can circulate');
-      InventoryInstance.openItemView(barcode);
+      InventoryInstance.openItemByBarcode(barcode);
       ItemRecordView.waitLoading();
       ItemRecordView.checkBarcode(barcode);
     });

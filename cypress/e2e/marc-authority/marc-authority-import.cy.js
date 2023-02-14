@@ -21,6 +21,7 @@ describe('Data Import - Importing MARC Authority files', () => {
     recordBRef: 'Angelou, Maya. Still I rise',
     authorized: 'Authorized',
     reference: 'Reference',
+    recordWithoutTitle: 'Twain, Mark, 1835-1910',
   };
   const jobProfileToRun = 'Default - Create SRS MARC Authority';
   let fileName;
@@ -129,5 +130,26 @@ describe('Data Import - Importing MARC Authority files', () => {
     MarcAuthorityBrowse.checkResultWithValueB(testData.authorized, testData.recordB, testData.reference, testData.recordBRef);
     MarcAuthorityBrowse.searchByChangingValue(testData.searchOptionNameTitle, testData.recordA);
     MarcAuthorityBrowse.checkResultWithValueA(testData.recordA, testData.authorized, testData.recordB, testData.reference, testData.recordBRef);
+  });
+
+  it('C356766 Browse for record without subfield "t" (personalNameTitle and sftPersonalName) (spitfire)', { tags: [TestTypes.criticalPath, DevTeams.spitfire] }, () => {
+    DataImport.uploadFile('marcFileForC356766.mrc', fileName);
+    JobProfiles.waitLoadingList();
+    JobProfiles.searchJobProfileForImport(jobProfileToRun);
+    JobProfiles.runImportFile();
+    JobProfiles.waitFileIsImported(fileName);
+    Logs.checkStatusOfJobProfile('Completed');
+    Logs.openFileDetails(fileName);
+    for (let i = 0; i < 1; i++) {
+      Logs.getCreatedItemsID(i).then(link => {
+        createdAuthorityIDs.push(link.split('/')[5]);
+      });
+    }
+    cy.visit(TopMenu.marcAuthorities);
+    MarcAuthorities.switchToBrowse();
+    MarcAuthorityBrowse.searchBy(testData.searchOptionPersonalName, testData.recordWithoutTitle);
+    MarcAuthorityBrowse.checkResultWithValue(testData.authorized, testData.recordWithoutTitle);
+    MarcAuthorityBrowse.searchByChangingParameter(testData.searchOptionNameTitle, testData.recordWithoutTitle);
+    MarcAuthorityBrowse.checkResultWithNoValue(testData.recordWithoutTitle);
   });
 });

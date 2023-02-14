@@ -47,6 +47,12 @@ export default {
   uiInventoryViewCreateEditHoldings:{ internal:'ui-inventory.holdings.edit', gui:'Inventory: View, create, edit holdings' },
   uiInventoryViewCreateEditInstances:{ internal:'ui-inventory.instance.edit', gui:'Inventory: View, create, edit instances' },
   uiInventoryViewCreateEditItems:{ internal:'ui-inventory.item.edit', gui:'Inventory: View, create, edit items' },
+  uiInventoryMarcItemInProcess:{ internal: 'ui-inventory.items.mark-in-process-non-requestable', gui:'Inventory: Mark items in process (non-requestable)' },
+  uiInventoryMarcItemIntellectual:{ internal:'ui-inventory.items.mark-intellectual-item', gui:'Inventory: Mark items intellectual item' },
+  uiInventoryMarcItemLongMissing:{ internal:'ui-inventory.items.mark-long-missing', gui:'Inventory: Mark items long missing' },
+  uiInventoryMarcItemRestricted:{ internal:'ui-inventory.items.mark-restricted', gui:'Inventory: Mark items restricted' },
+  uiInventoryMarcItemUnavailable:{ internal:'ui-inventory.items.mark-unavailable', gui:'Inventory: Mark items unavailable' },
+  uiInventoryMarcItemUnknow:{ internal:'ui-inventory.items.mark-unknown', gui:'Inventory: Mark items unknown' },
   // Tags
   uiTagsPermissionAll: { internal: 'ui-tags.permission.all', gui:'Tags: All permissions' },
   // Settings->Owners
@@ -110,6 +116,8 @@ export default {
   // Data Export
   dataExportAll: { internal: 'data-export.all', gui: 'Data Export - all permissions' },
   dataExportEnableModule: { internal: 'module.data-export.enabled', gui: 'Data export: all permissions' },
+  dataExportEnableSettings: { internal: 'ui-data-export.settings.enabled', gui: 'Settings (data-export): display list of settings pages' },
+  dataExportEnableApp:{ internal:'ui-data-export.app.enabled', gui:'UI: Data export module is enabled' },
   // Loans
   loansAll: { internal: 'ui-users.loans.all', gui: 'Users: User loans view, change due date, renew' },
   loansView: { internal: 'ui-users.loans.view', gui: 'Users: User loans view' },
@@ -211,4 +219,6 @@ export default {
   uiInventorySettingsConfigureSingleRecordImport: { internal: 'ui-inventory.settings.single-record-import', gui: 'Settings (Inventory): Configure single-record import' },
   // Timers
   okapiTimersPatch: { internal: 'okapi.proxy.self.timers.patch', gui: 'Okapi - patch timer for current tenant' },
+  //Export manager
+  exportManagerAll: { internal: 'ui-export-manager.export-manager.all', gui: 'Export manager: All' },
 };

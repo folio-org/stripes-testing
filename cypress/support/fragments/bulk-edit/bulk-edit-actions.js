@@ -318,4 +318,10 @@ export default {
     // need to wait downloading
     cy.wait(5000);
   },
+
+  verifyPossibleActions(actions) {
+    actions.forEach(action => {
+      cy.expect(HTML(action).exists());
+    });
+  }
 };
