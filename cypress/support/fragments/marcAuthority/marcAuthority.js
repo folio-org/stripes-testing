@@ -121,4 +121,23 @@ export default {
     ]);
     cy.expect(Callout('Record cannot be saved. A MARC tag must contain three characters.').exists());
   },
+  
+  checkAddNew1XXTag: (rowIndex, tag, content) => {
+    cy.do([
+      QuickMarcEditorRow({ index: rowIndex }).find(addFieldButton).click(),
+      QuickMarcEditorRow({ index: rowIndex + 1 }).find(TextField({ name: `records[${rowIndex + 1}].tag` })).fillIn(tag),
+      QuickMarcEditorRow({ index: rowIndex + 1 }).find(TextArea({ name: `records[${rowIndex + 1}].content` })).fillIn(content),
+      saveAndCloseButton.click(),
+    ]);
+    cy.expect(Callout('Record cannot be saved. Cannot have multiple 1XXs').exists());
+  },
+
+  checkRemoved1XXTag: (rowIndex) => {
+    cy.do([
+      QuickMarcEditorRow({ index: rowIndex }).find(TextField({ name: `records[${rowIndex}].tag` })).fillIn(''),
+      QuickMarcEditorRow({ index: rowIndex }).find(TextArea({ name: `records[${rowIndex}].content` })).fillIn('Test'),
+      saveAndCloseButton.click(),
+    ]);
+    cy.expect(Callout('Record cannot be saved without 1XX field.').exists());
+  },
 };
