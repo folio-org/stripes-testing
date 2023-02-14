@@ -1,5 +1,5 @@
 /* eslint-disable cypress/no-unnecessary-waiting */
-import { HTML, including, or } from '@interactors/html';
+import { or } from '@interactors/html';
 import {
   Accordion,
   Button,
