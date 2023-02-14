@@ -259,6 +259,7 @@ export default {
 
   addElectronicAccess:(relationship, uri, linkText = '') => {
     cy.do([
+      cy.do(Select({ name:'profile.mappingDetails.mappingFields[23].repeatableFieldAction' }).focus()),
       Select({ name:'profile.mappingDetails.mappingFields[23].repeatableFieldAction' }).choose(actions.addTheseToExisting),
       Button('Add electronic access').click(),
       TextField('Relationship').fillIn(relationship),
@@ -269,6 +270,7 @@ export default {
 
   addHoldingsStatements:(statement) => {
     cy.do([
+      Select({ name:'profile.mappingDetails.mappingFields[16].repeatableFieldAction' }).focus(),
       Select({ name:'profile.mappingDetails.mappingFields[16].repeatableFieldAction' }).choose(actions.addTheseToExisting),
       Button('Add holdings statement').click(),
       TextField('Holdings statement').fillIn(`"${statement}"`),
