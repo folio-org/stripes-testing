@@ -63,7 +63,7 @@ describe('bulk-edit', () => {
       BulkEditSearchPane.verifyErrorLabel(invalidItemBarcodesFileName, 1, 1);
     });
 
-    it.only('C350941 Verify uploading file with identifiers -- In app approach (firebird)', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
+    it('C350941 Verify uploading file with identifiers -- In app approach (firebird)', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
       BulkEditSearchPane.uploadFile(invalidItemBarcodesFileName);
       BulkEditSearchPane.waitFileUploading();
 
