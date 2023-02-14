@@ -2,23 +2,25 @@ import { TextField, Button, Select, Checkbox, Modal } from '../../../../../inter
 import modalSelectTransformations from './modalSelectTransformations';
 
 const outputFormat = 'MARC';
-
 const holdingsMarcField = '901';
-
 const itemMarcField = '902';
-
 const subfield = '$a';
 
 const addTransformationsButton = Button('Add transformations');
+const fieldName = TextField({ name:'name' });
+const outputFormatSelect = Select({ name:'outputFormat' });
+const sourceCheckbox = Checkbox('Source record storage (entire record)');
+const itemCheckbox = Checkbox('Item');
 
 export default {
   fillMappingProfile:(profileName) => {
-    cy.do([TextField({ name:'name' }).fillIn(profileName),
-      Select({ name:'outputFormat' }).choose(outputFormat),
-      Checkbox('Source record storage (entire record)').click(),
+    cy.do([
+      fieldName.fillIn(profileName),
+      outputFormatSelect.choose(outputFormat),
+      sourceCheckbox.click(),
       Checkbox('Holdings').click(),
-      Checkbox('Item').click(),
-      addTransformationsButton.click(),
+      itemCheckbox.click(),
+      addTransformationsButton.click()
     ]);
     modalSelectTransformations.searchItemTransformationsByName('Holdings - HRID');
     modalSelectTransformations.selectTransformations(holdingsMarcField, subfield);
@@ -26,7 +28,17 @@ export default {
     cy.expect(Modal('Select transformations').absent());
     modalSelectTransformations.searchItemTransformationsByName('Item - HRID');
     modalSelectTransformations.selectTransformations(itemMarcField, subfield);
-    cy.do(Button('Save & close').click());
-    cy.expect(Button('Save & close').absent());
+  },
+
+  fillMappingProfileForItemHrid:(profileName) => {
+    cy.do([
+      fieldName.fillIn(profileName),
+      outputFormatSelect.choose(outputFormat),
+      sourceCheckbox.click(),
+      itemCheckbox.click(),
+      addTransformationsButton.click()
+    ]);
+    modalSelectTransformations.searchItemTransformationsByName('Item - HRID');
+    modalSelectTransformations.selectTransformations(itemMarcField, subfield);
   },
 };
