@@ -24,7 +24,6 @@ describe('Browse in Inventory', () => {
     totalRecords: 1
   }
 
-
   const jobProfileToRun = 'Default - Create instance and SRS MARC Bib';
   const fileName = `testInventoryFile.${getRandomPostfix()}.mrc`;
   const createdInstanceIDs = [];
