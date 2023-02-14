@@ -11,10 +11,10 @@ import UserEdit from '../../support/fragments/users/userEdit';
 import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
 import Checkout from '../../support/fragments/checkout/checkout';
 import LoansPage from '../../support/fragments/loans/loansPage';
-import ItemsOperations from '../../support/fragments/inventory/inventoryItem/itemsOperations';
 import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
 import UserLoans from '../../support/fragments/users/loans/userLoans';
 import ConfirmClaimReturnedModal from '../../support/fragments/users/loans/confirmClaimReturnedModal';
+import ItemActions from '../../support/fragments/inventory/inventoryItem/itemActions';
 
 let userId;
 let servicePointId;
@@ -59,7 +59,7 @@ describe('circulation-log', () => {
   });
 
   after('delete test data', () => {
-    ItemsOperations.markItemAsMissingByUserId(userId).then(() => {
+    ItemActions.markItemAsMissingByUserIdViaApi(userId).then(() => {
       InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(item.ITEM_BARCODE);
       Users.deleteViaApi(userId);
     });
