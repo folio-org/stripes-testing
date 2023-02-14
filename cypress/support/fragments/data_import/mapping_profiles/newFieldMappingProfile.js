@@ -240,6 +240,7 @@ export default {
     // number needs for using this method in filling fields for holdings and item profiles
     const statisticalCodeFieldName = `profile.mappingDetails.mappingFields[${number}].repeatableFieldAction`;
 
+    cy.do(Select({ name: statisticalCodeFieldName }).focus());
     cy.do(Select({ name: statisticalCodeFieldName }).choose(actions.addTheseToExisting));
     cy.do(Button('Add statistical code').click());
     cy.do(TextField('Statistical code').fillIn(`"${name}"`));
@@ -310,13 +311,18 @@ export default {
   },
 
   addItemNotes:(noteType, note, staffOnly) => {
-    cy.do(Select({ name:'profile.mappingDetails.mappingFields[25].repeatableFieldAction' })
-      .choose(actions.addTheseToExisting));
-    cy.do(Button('Add item note').click());
-    cy.do(TextField('Note type').fillIn(noteType));
-    cy.do(TextField('Note').fillIn(note));
-    cy.do(Select({ name:'profile.mappingDetails.mappingFields[25].subfields[0].fields[2].booleanFieldAction' })
-      .choose(staffOnly));
+    const noteFieldName = 'profile.mappingDetails.mappingFields[25].repeatableFieldAction';
+
+    cy.do([
+      Select({ name:noteFieldName }).focus(),
+      Select({ name:noteFieldName }).choose(actions.addTheseToExisting),
+      Button('Add item note').click(),
+      TextField('Note type').fillIn(noteType),
+      TextField('Note').fillIn(note),
+      Select({ name:'profile.mappingDetails.mappingFields[25].subfields[0].fields[2].booleanFieldAction' }).focus(),
+      Select({ name:'profile.mappingDetails.mappingFields[25].subfields[0].fields[2].booleanFieldAction' })
+        .choose(staffOnly)
+    ]);
     waitLoading();
   },
 

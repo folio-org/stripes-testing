@@ -119,8 +119,8 @@ export default {
       element => {
         const rowNumber = element.parentElement.parentElement.getAttribute('data-row-index');
 
-        cy.expect(MultiColumnListRow({ indexRow: rowNumber })
-          .find(MultiColumnListCell({ content: itemStatus }))
+        cy.expect(resultsList.find(MultiColumnListCell({ row: rowNumber, columnIndex: 5 }))
+          .find(Link(itemStatus))
           .click());
       }
     ));

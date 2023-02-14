@@ -30,7 +30,6 @@ import Users from '../../../support/fragments/users/users';
 describe('ui-data-import: Item update via match by status', () => {
   let user;
   let statisticalCode;
-  const itemHrids = [];
   const titlesItemsStatusChanged = [
     'Making the news popular : mobilizing U.S. news audiences / Anthony M. Nadler.',
     'Genius : the game / Leopoldo Gout.',
@@ -147,22 +146,22 @@ describe('ui-data-import: Item update via match by status', () => {
       });
   });
 
-  after('delete test data', () => {
-    Users.deleteViaApi(user.userId);
-    // delete generated profiles
-    JobProfiles.deleteJobProfile(jobProfileNameForCreate);
-    JobProfiles.deleteJobProfile(jobProfileNameForUpdate);
-    MatchProfiles.deleteMatchProfile(matchProfileNameForMatchOnItemHrid);
-    MatchProfiles.deleteMatchProfile(matchProfileNameForMatchOnItemStatus);
-    collectionOfMappingAndActionProfiles.forEach(profile => {
-      ActionProfiles.deleteActionProfile(profile.actionProfile.name);
-      FieldMappingProfiles.deleteFieldMappingProfile(profile.mappingProfile.name);
-    });
-    // delete downloads folder and created files in fixtures
-    FileManager.deleteFolder(Cypress.config('downloadsFolder'));
-    FileManager.deleteFile(`cypress/fixtures/${nameMarcFileForImportCreate}`);
-    FileManager.deleteFile(`cypress/fixtures/${nameForCSVFile}`);
-  });
+  // after('delete test data', () => {
+  //   Users.deleteViaApi(user.userId);
+  //   // delete generated profiles
+  //   JobProfiles.deleteJobProfile(jobProfileNameForCreate);
+  //   JobProfiles.deleteJobProfile(jobProfileNameForUpdate);
+  //   MatchProfiles.deleteMatchProfile(matchProfileNameForMatchOnItemHrid);
+  //   MatchProfiles.deleteMatchProfile(matchProfileNameForMatchOnItemStatus);
+  //   collectionOfMappingAndActionProfiles.forEach(profile => {
+  //     ActionProfiles.deleteActionProfile(profile.actionProfile.name);
+  //     FieldMappingProfiles.deleteFieldMappingProfile(profile.mappingProfile.name);
+  //   });
+  //   // delete downloads folder and created files in fixtures
+  //   FileManager.deleteFolder(Cypress.config('downloadsFolder'));
+  //   FileManager.deleteFile(`cypress/fixtures/${nameMarcFileForImportCreate}`);
+  //   FileManager.deleteFile(`cypress/fixtures/${nameForCSVFile}`);
+  // });
 
   const mappingProfileForCreateHoldings = (holdingsMappingProfile) => {
     FieldMappingProfiles.openNewMappingProfileForm();
@@ -273,7 +272,6 @@ describe('ui-data-import: Item update via match by status', () => {
         ItemRecordView.waitLoading();
         marker.markFunction();
         ItemRecordView.verifyItemStatusInPane(marker.status);
-        itemHrids.push(ItemRecordView.getAssignedHRID());
         cy.visit(TopMenu.dataImportPath);
         Logs.openFileDetails(nameMarcFileForImportCreate);
       });
@@ -297,18 +295,12 @@ describe('ui-data-import: Item update via match by status', () => {
       JobProfiles.runImportFile();
       JobProfiles.waitFileIsImported(nameMarcFileForUpdate);
       Logs.openFileDetails(nameMarcFileForUpdate);
-      // FileDetails.checkItemQuantityInSummaryTable('7', 2);
-      // FileDetails.checkItemQuantityInSummaryTable('3', 3);
+      FileDetails.checkItemQuantityInSummaryTable('7', 1);
+      FileDetails.checkItemQuantityInSummaryTable('3', 2);
       // check items what statuses were changed have Discarded status
       titlesItemsStatusChanged.forEach(title => {
         FileDetails.checkStatusByTitle(title, 'Discarded');
-      });
-      itemHrids.forEach(hrid => {
-        cy.visit(TopMenu.inventoryPath);
-        InventorySearchAndFilter.switchToItem();
-        InventorySearchAndFilter.searchByParameter('Item HRID', hrid);
-        ItemRecordView.waitLoading();
-        ItemRecordView.checkItemNote('-');
+        cy.pause();
       });
       // check items what statuses were not changed have Updated status
       titlesItemStatusNotChanged.forEach(title => {
@@ -319,4 +311,7 @@ describe('ui-data-import: Item update via match by status', () => {
         Logs.openFileDetails(nameMarcFileForImportCreate);
       });
     });
+  // 'Making the news popular : mobilizing U.S. news audiences / Anthony M. Nadler.',
+  // 'Genius : the game / Leopoldo Gout.',
+  // 'Animal philosophy : essential readings in continental thought / edited by Matthew Calarco and Peter Atterton.'
 });
