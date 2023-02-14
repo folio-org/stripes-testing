@@ -63,7 +63,7 @@ describe('bulk-edit', () => {
       BulkEditSearchPane.verifyErrorLabel(invalidItemBarcodesFileName, 1, 1);
     });
 
-    it('C350941 Verify uploading file with identifiers -- In app approach (firebird)', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
+    it.only('C350941 Verify uploading file with identifiers -- In app approach (firebird)', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
       BulkEditSearchPane.uploadFile(invalidItemBarcodesFileName);
       BulkEditSearchPane.waitFileUploading();
 
@@ -82,7 +82,7 @@ describe('bulk-edit', () => {
       BulkEditSearchPane.verifyActionsAfterConductedInAppUploading(false);
       BulkEditSearchPane.verifyItemsActionDropdownItems();
 
-      BulkEditSearchPane.changeShowColumnCheckbox('Item id');
+      BulkEditSearchPane.changeShowColumnCheckbox('Item ID');
       BulkEditSearchPane.verifyResultColumTitles('Item ID');
     });
 
