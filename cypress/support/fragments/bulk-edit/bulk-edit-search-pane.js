@@ -327,7 +327,7 @@ export default {
       DropdownMenu().find(Checkbox('First name')).exists(),
       DropdownMenu().find(Checkbox('Barcode')).exists(),
       DropdownMenu().find(Checkbox('Patron group')).exists(),
-      DropdownMenu().find(Checkbox('User name')).exists(),
+      DropdownMenu().find(Checkbox('Username')).exists(),
       DropdownMenu().find(Checkbox('Email')).exists(),
       DropdownMenu().find(Checkbox('Expiration date')).exists(),
     ]);
@@ -335,7 +335,7 @@ export default {
 
   verifyHoldingActionShowColumns() {
     cy.expect([
-      DropdownMenu().find(Checkbox({ name: 'Hrid', checked: true })).exists(),
+      DropdownMenu().find(Checkbox({ name: 'Holdings HRID', checked: true })).exists(),
       DropdownMenu().find(Checkbox({ name: 'Permanent location', checked: true })).exists(),
       DropdownMenu().find(Checkbox({ name: 'Temporary location', checked: true })).exists(),
       DropdownMenu().find(Checkbox({ name: 'Call number prefix', checked: true })).exists(),
@@ -343,9 +343,9 @@ export default {
       DropdownMenu().find(Checkbox({ name: 'Call number suffix', checked: true })).exists(),
       DropdownMenu().find(Checkbox({ name: 'Holdings type', checked: true })).exists(),
       DropdownMenu().find(Checkbox({ name: 'Effective location', checked: false })).exists(),
-      DropdownMenu().find(Checkbox({ name: 'Holdings record id', checked: false })).exists(),
+      DropdownMenu().find(Checkbox({ name: 'Holdings ID', checked: false })).exists(),
       DropdownMenu().find(Checkbox({ name: 'Source', checked: false })).exists(),
-      DropdownMenu().find(Checkbox({ name: 'Discovery suppress', checked: false })).exists(),
+      DropdownMenu().find(Checkbox({ name: 'Suppressed from discovery', checked: false })).exists(),
       DropdownMenu().find(Checkbox({ name: 'Call number type', checked: false })).exists(),
     ]);
   },
@@ -354,7 +354,7 @@ export default {
     cy.expect([
       DropdownMenu().find(Checkbox({ name: 'Barcode', checked: true })).exists(),
       DropdownMenu().find(Checkbox({ name: 'Status', checked: true })).exists(),
-      DropdownMenu().find(Checkbox({ name: 'Effective Location', checked: true })).exists(),
+      DropdownMenu().find(Checkbox({ name: 'Item effective location', checked: true })).exists(),
       DropdownMenu().find(Checkbox({ name: 'Effective Call Number Components', checked: true })).exists(),
       DropdownMenu().find(Checkbox({ name: 'Item HRID', checked: true })).exists(),
       DropdownMenu().find(Checkbox({ name: 'Material Type', checked: true })).exists(),

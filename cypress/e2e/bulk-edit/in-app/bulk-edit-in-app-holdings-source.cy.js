@@ -50,7 +50,7 @@ describe('bulk-edit', () => {
     FileManager.deleteFile(`cypress/fixtures/${validHoldingUUIDsFileName}`);
   });
 
-  it('C365125 Verify that User CANNOT bulk edit Holdings that have source "MARC"', { tags: [testTypes.criticalPath, devTeams.firebird] }, () => {
+  it('C365125 Verify that User CANNOT bulk edit Holdings that have source "MARC"  (firebird)', { tags: [testTypes.criticalPath, devTeams.firebird] }, () => {
     BulkEditSearchPane.checkHoldingsRadio();
     BulkEditSearchPane.selectRecordIdentifier('Holdings UUIDs');
     BulkEditSearchPane.verifyDragNDropHoldingsUUIDsArea();

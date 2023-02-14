@@ -253,7 +253,7 @@ export default {
       dropdownMenu.find(Checkbox({ name: 'First name', checked: true, disabled: isDisabled })).exists(),
       dropdownMenu.find(Checkbox({ name: 'Barcode', checked: true, disabled: isDisabled })).exists(),
       dropdownMenu.find(Checkbox({ name: 'Patron group', checked: true, disabled: isDisabled })).exists(),
-      dropdownMenu.find(Checkbox({ name: 'User name', checked: true, disabled: isDisabled })).exists(),
+      dropdownMenu.find(Checkbox({ name: 'Username', checked: true, disabled: isDisabled })).exists(),
       dropdownMenu.find(Checkbox({ name: 'Email', checked: false, disabled: isDisabled })).exists(),
       dropdownMenu.find(Checkbox({ name: 'Expiration date', checked: false, disabled: isDisabled })).exists(),
     ]);
