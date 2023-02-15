@@ -31,9 +31,9 @@ describe('ui-data-import: delete logs from "View all" page', () => {
       });
   });
 
-  after(() => {
-    Users.deleteViaApi(user.userId);
-  });
+  // after(() => {
+  //   Users.deleteViaApi(user.userId);
+  // });
 
   it('C367923 A user can delete logs from the Import app "View all" page (folijet)',
     { tags: [TestTypes.criticalPath, DevTeams.folijet] }, () => {
