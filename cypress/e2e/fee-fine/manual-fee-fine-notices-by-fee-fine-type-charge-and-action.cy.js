@@ -16,7 +16,6 @@ import UsersOwners from '../../support/fragments/settings/users/usersOwners';
 import PaymentMethods from '../../support/fragments/settings/users/paymentMethods';
 import UsersSearchPane from '../../support/fragments/users/usersSearchPane';
 import UsersCard from '../../support/fragments/users/usersCard';
-import UserAllFeesFines from '../../support/fragments/users/userAllFeesFines';
 import PayFeeFaine from '../../support/fragments/users/payFeeFaine';
 import ManualCharges from '../../support/fragments/settings/users/manualCharges';
 import NewFeeFine from '../../support/fragments/users/newFeeFine';
@@ -53,21 +52,15 @@ describe('Overdue fine', () => {
       'Manual fee/fine action (pay, waive, refund, transfer or cancel/error)'
     ),
   };
-  const openFeeFines = () => {
-    cy.visit(TopMenu.usersPath);
-    UsersSearchPane.waitLoading();
-    UsersSearchPane.searchByKeywords(userData.barcode);
-    UsersCard.waitLoading();
-    UsersCard.openFeeFines();
-    UsersCard.showOpenedFeeFines();
-    UserAllFeesFines.goToOpenFeeFines();
-    UserAllFeesFines.clickRowCheckbox(0);
+  const openUserFeeFine = (userId, feeFineId) => {
+    cy.visit(AppPaths.getFeeFineDetailsPath(userId, feeFineId));
+    FeeFineDetails.waitLoading();
     FeeFineDetails.openActions();
   };
   const checkNoticeIsSent = (noticesToCheck) => {
     cy.visit(TopMenu.circulationLogPath);
     SearchPane.searchByUserBarcode(userData.barcode);
-    noticesToCheck.forEach((notice) => {
+    cy.wrap(noticesToCheck).each((notice) => {
       SearchPane.findResultRowIndexByContent(notice.desc).then((rowIndex) => {
         SearchPane.checkResultSearch(notice, rowIndex);
       });
@@ -152,7 +145,6 @@ describe('Overdue fine', () => {
   });
 
   after('Deleting created entities', () => {
-    cy.visit(TopMenu.usersPath);
     UserEdit.changeServicePointPreferenceViaApi(userData.userId, [testData.userServicePoint.id]);
     ServicePoints.deleteViaApi(testData.userServicePoint.id);
     Users.deleteViaApi(userData.userId);
@@ -180,9 +172,27 @@ describe('Overdue fine', () => {
   });
 
   it(
-    'C347874 Overdue fine, returned triggers (vega)',
+    'C347877 Manual fee/fine notices by fee/fine type: charge and action (vega)',
     { tags: [TestTypes.criticalPath, devTeams.vega] },
     () => {
+      const feeFineCreate = (feeFineName) => {
+        cy.visit(TopMenu.usersPath);
+        UsersSearchPane.waitLoading();
+        UsersSearchPane.searchByKeywords(userData.barcode);
+        UsersCard.waitLoading();
+        UsersCard.openFeeFines();
+        UsersCard.startFeeFineAdding();
+        NewFeeFine.setFeeFineOwner(userOwnerBody.owner);
+        NewFeeFine.checkFilteredFeeFineType(manualCharge.feeFineType);
+        NewFeeFine.setFeeFineType(manualCharge.feeFineType);
+        cy.intercept('POST', '/accounts').as('feeFineCreate');
+        NewFeeFine.chargeOnly();
+        cy.wait('@feeFineCreate').then((intercept) => {
+          cy.wrap(intercept.response.body.id).as(feeFineName);
+        });
+        UsersSearchPane.waitLoading();
+      };
+
       createPatronNoticeTemplate(noticeTemplates.manualFeeFineCharge);
       noticeTemplates.manualFeeFineCharge.category = 'FeeFineCharge';
       NewNoticePolicyTemplate.checkAfterSaving(noticeTemplates.manualFeeFineCharge);
@@ -199,21 +209,7 @@ describe('Overdue fine', () => {
       });
       ManualCharges.checkManualCharge(manualCharge);
 
-      cy.visit(TopMenu.usersPath);
-      UsersSearchPane.waitLoading();
-      UsersSearchPane.searchByKeywords(userData.barcode);
-      UsersCard.waitLoading();
-      UsersCard.openFeeFines();
-      UsersCard.startFeeFineAdding();
-      NewFeeFine.setFeeFineOwner(userOwnerBody.owner);
-      NewFeeFine.checkFilteredFeeFineType(manualCharge.feeFineType);
-      NewFeeFine.setFeeFineType(manualCharge.feeFineType);
-      cy.intercept('POST', '/accounts').as('feeFineCreate');
-      NewFeeFine.chargeOnly();
-      cy.wait('@feeFineCreate').then((intercept) => {
-        cy.wrap(intercept.response.body.id).as('feeFineId');
-      });
-      UsersSearchPane.waitLoading();
+      feeFineCreate('feeFineId');
       checkNoticeIsSent([
         {
           userBarcode: userData.barcode,
@@ -229,62 +225,87 @@ describe('Overdue fine', () => {
         },
       ]);
 
-      openFeeFines();
-      UserAllFeesFines.clickTransfer();
-      TransferFeeFine.setAmount(2);
-      TransferFeeFine.setOwner(userOwnerBody.owner);
-      TransferFeeFine.setTransferAccount(transferAccount.accountName);
-      TransferFeeFine.transferAndConfirm();
-      checkNoticeIsSent({
-        userBarcode: userData.barcode,
-        object: 'Fee/fine',
-        circAction: 'Transferred partially',
-        desc: `Fee/Fine type: ${manualCharge.feeFineType}. Amount: 2.00. Balance: 8.00. Transfer account: ${transferAccount.accountName}.`,
-      });
-
-      openFeeFines();
-      UserAllFeesFines.clickWaive();
-      WaiveFeeFinesModal.waitLoading();
-      WaiveFeeFinesModal.setWaiveAmount('2.00');
-      WaiveFeeFinesModal.selectWaiveReason(waiveReason.nameReason);
-      WaiveFeeFinesModal.confirm();
-      checkNoticeIsSent({
-        userBarcode: userData.barcode,
-        object: 'Fee/fine',
-        circAction: 'Waived partially',
-        desc: `Fee/Fine type: ${manualCharge.feeFineType}. Amount: 2.00. Balance: 6.00. Waive reason: ${waiveReason.nameReason}.`,
-      });
-
-      openFeeFines();
-      UserAllFeesFines.clickPay();
-      PayFeeFaine.setAmount('2.00');
-      PayFeeFaine.setPaymentMethod({ name: testData.paymentMethodName });
-      PayFeeFaine.submitAndConfirm();
-      checkNoticeIsSent({
-        userBarcode: userData.barcode,
-        object: 'Fee/fine',
-        circAction: 'Paid partially',
-        desc: `Fee/Fine type: ${manualCharge.feeFineType}. Amount: 2.00. Balance: 4.00. Payment method: ${testData.paymentMethodName}.`,
-      });
-
-      openFeeFines();
-      UserAllFeesFines.clickRefund();
-      RefundFeeFine.setAmount('2.00');
-      RefundFeeFine.selectRefundReason(refundReason.nameReason);
-      RefundFeeFine.submitAndConfirm();
-      checkNoticeIsSent({
-        userBarcode: userData.barcode,
-        object: 'Fee/fine',
-        circAction: 'Refunded fully',
-        desc: `Fee/Fine type: ${manualCharge.feeFineType}. Amount: 2.00. Balance: 6.00. Refund reason: ${refundReason.nameReason}.`,
+      cy.get('@feeFineId').then((feeFineId) => {
+        openUserFeeFine(userData.userId, feeFineId);
+        FeeFineDetails.openTransferModal();
+        TransferFeeFine.setAmount(2);
+        TransferFeeFine.setOwner(userOwnerBody.owner);
+        TransferFeeFine.setTransferAccount(transferAccount.accountName);
+        TransferFeeFine.transferAndConfirm();
+        checkNoticeIsSent([
+          {
+            userBarcode: userData.barcode,
+            object: 'Fee/fine',
+            circAction: 'Transferred partially',
+            desc: `Fee/Fine type: ${manualCharge.feeFineType}. Amount: 2.00. Balance: 8.00. Transfer account: ${transferAccount.accountName}.`,
+          },
+        ]);
       });
 
       cy.get('@feeFineId').then((feeFineId) => {
-        cy.visit(AppPaths.getFeeFineDetailsPath(userData.userId, feeFineId));
+        openUserFeeFine(userData.userId, feeFineId);
+        FeeFineDetails.openWaiveModal();
+        WaiveFeeFinesModal.setWaiveAmount('2.00');
+        WaiveFeeFinesModal.selectWaiveReason(waiveReason.nameReason);
+        WaiveFeeFinesModal.confirm();
+        checkNoticeIsSent([
+          {
+            userBarcode: userData.barcode,
+            object: 'Fee/fine',
+            circAction: 'Waived partially',
+            desc: `Fee/Fine type: ${manualCharge.feeFineType}. Amount: 2.00. Balance: 6.00. Waive reason: ${waiveReason.nameReason}.`,
+          },
+        ]);
+      });
+
+      cy.get('@feeFineId').then((feeFineId) => {
+        openUserFeeFine(userData.userId, feeFineId);
+        FeeFineDetails.openPayModal();
+        PayFeeFaine.setAmount('2.00');
+        PayFeeFaine.setPaymentMethod({ name: testData.paymentMethodName });
+        PayFeeFaine.submitAndConfirm();
+        checkNoticeIsSent([
+          {
+            userBarcode: userData.barcode,
+            object: 'Fee/fine',
+            circAction: 'Paid partially',
+            desc: `Fee/Fine type: ${manualCharge.feeFineType}. Amount: 2.00. Balance: 4.00. Payment method: ${testData.paymentMethodName}.`,
+          },
+        ]);
+      });
+
+      cy.get('@feeFineId').then((feeFineId) => {
+        openUserFeeFine(userData.userId, feeFineId);
+        FeeFineDetails.openRefundModal();
+        RefundFeeFine.setAmount('2.00');
+        RefundFeeFine.selectRefundReason(refundReason.nameReason);
+        RefundFeeFine.submitAndConfirm();
+        checkNoticeIsSent([
+          {
+            userBarcode: userData.barcode,
+            object: 'Fee/fine',
+            circAction: 'Refunded fully',
+            desc: `Fee/Fine type: ${manualCharge.feeFineType}. Amount: 2.00. Balance: 6.00. Refund reason: ${refundReason.nameReason}.`,
+          },
+        ]);
+        cy.deleteFeesFinesApi(feeFineId);
+      });
+
+      feeFineCreate('secondFeeFineId');
+      cy.get('@secondFeeFineId').then((secondFeeFineId) => {
+        cy.visit(AppPaths.getFeeFineDetailsPath(userData.userId, secondFeeFineId));
         FeeFineDetails.waitLoading();
         FeeFineDetails.openActions();
         FeeFineDetails.openErrorModal();
         FeeFineDetails.confirmFeeFineCancellation('AutoTestComment');
+        checkNoticeIsSent([
+          {
+            userBarcode: userData.barcode,
+            object: 'Fee/fine',
+            circAction: 'Cancelled as error',
+            desc: 'Amount: 10.00. Cancellation reason: AutoTestComment. Additional information to patron: .',
+          },
+        ]);
       });
     }
   );
