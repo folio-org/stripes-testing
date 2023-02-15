@@ -261,7 +261,7 @@ describe('Overdue fine', () => {
       cy.get('@feeFineId').then((feeFineId) => {
         openUserFeeFine(userData.userId, feeFineId);
         FeeFineDetails.openPayModal();
-        PayFeeFaine.setAmount('2.00');
+        PayFeeFaine.setAmount(2);
         PayFeeFaine.setPaymentMethod({ name: testData.paymentMethodName });
         PayFeeFaine.submitAndConfirm();
         checkNoticeIsSent([

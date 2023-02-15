@@ -38,7 +38,6 @@ export default {
     cy.do([
       TextField({ name: `items[${index}].feeFineType` }).fillIn(data.feeFineType),
       TextField({ name: `items[${index}].defaultAmount` }).fillIn(data.defaultAmount),
-      // cy.wait(3000),
       Select({ name: `items[${index}].actionNoticeId` }).choose(data.actionNoticeId),
       Select({ name: `items[${index}].chargeNoticeId` }).choose(data.chargeNoticeId),
 
@@ -51,11 +50,6 @@ export default {
     this.fillInFields(data);
   },
   checkManualCharge(data) {
-    // cy.get('*[class^="mclRowFormatterContainer"]')
-    //   .last()
-    //   .then((elm) => {
-
-    //   });
     cy.expect([
       MultiColumnListCell({ content: data.feeFineType }).exists(),
       MultiColumnListCell({ content: data.defaultAmount }).exists(),
