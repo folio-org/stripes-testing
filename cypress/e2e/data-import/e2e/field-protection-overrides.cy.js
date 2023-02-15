@@ -102,8 +102,8 @@ describe('ui-data-import: Check that field protection overrides work properly du
   });
 
   afterEach(() => {
-    // MarcFieldProtection.deleteMarcFieldProtectionViaApi(firstFieldId);
-    // MarcFieldProtection.deleteMarcFieldProtectionViaApi(secondFieldId);
+    MarcFieldProtection.deleteMarcFieldProtectionViaApi(firstFieldId);
+    MarcFieldProtection.deleteMarcFieldProtectionViaApi(secondFieldId);
     cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${instanceHrid}"` })
       .then((instance) => {
         InventoryInstance.deleteInstanceViaApi(instance.id);

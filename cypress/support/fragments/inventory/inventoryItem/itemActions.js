@@ -3,8 +3,13 @@ import getRandomPostfix from '../../../utils/stringTools';
 import { Button, Modal } from '../../../../../interactors';
 
 function openActions() { cy.do(Button('Actions').click()); }
+function clickMissingButton() { cy.do(Button('Missing').click()); }
+function confirmMarkAsMissing() { cy.do(Modal('Confirm item status: Missing').find(Button('Confirm')).click()); }
+function cancelMarkAsMissing() { cy.do(Modal('Confirm item status: Missing').find(Button('Cancel')).click()); }
 
 export default {
+  confirmMarkAsMissing,
+  cancelMarkAsMissing,
   edit() {
     openActions();
     cy.do(Button('Edit').click());
@@ -21,8 +26,7 @@ export default {
 
   markAsMissing:() => {
     openActions();
-    cy.do(Button('Missing').click());
-    cy.do(Modal('Confirm item status: Missing').find(Button('Confirm')).click());
+    clickMissingButton();
   },
 
   markItemAsMissingByUserIdViaApi(userId) {

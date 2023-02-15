@@ -329,7 +329,7 @@ export default {
 
         convertToBinery(fileName, uploadDefinitionId, fileId);
         // need to wait until file will be converted and uploaded
-        cy.wait(2000);
+        cy.wait(1500);
         uploadDefinitionWithId(uploadDefinitionId)
           .then(res => {
             const sourcePath = res.body.fileDefinitions[0].sourcePath;

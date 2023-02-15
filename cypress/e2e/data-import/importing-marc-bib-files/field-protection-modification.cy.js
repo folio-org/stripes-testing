@@ -136,13 +136,12 @@ describe('ui-data-import: MARC field protections apply to MARC modifications of 
     JobProfiles.runImportFile();
     JobProfiles.waitFileIsImported(fileName);
     Logs.openFileDetails(fileName);
-    cy.pause();
     [FileDetails.columnName.srsMarc,
       FileDetails.columnName.instance].forEach(columnName => {
       FileDetails.checkStatusInColumn(FileDetails.status.created, columnName);
     });
     FileDetails.checkSrsRecordQuantityInSummaryTable(0, '1');
-    FileDetails.checkInstanceQuantityInSummaryTable(1, '1');
+    FileDetails.checkInstanceQuantityInSummaryTable(0, '1');
 
     // get Instance HRID through API
     InventorySearchAndFilter.getInstanceHRID()
