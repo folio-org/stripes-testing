@@ -77,7 +77,8 @@ describe('ui-data-import: Inventory single record import is not delayed when lar
       InventoryInstance.checkCalloutMessage(`Updated record ${oclcForUpdating}`);
 
       // check instance is updated
-      // need to wait because after the overlay, the data in the instance is displayed for a long time
+      // need to wait because after the overlay the data in the instance is displayed for a long time
+      // https://issues.folio.org/browse/MODCPCT-73
       cy.wait(10000);
       InventoryInstance.verifyInstanceTitle(updatedInstanceData.title);
       InventoryInstance.verifyInstanceLanguage(updatedInstanceData.language);
