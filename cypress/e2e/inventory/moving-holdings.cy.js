@@ -25,7 +25,7 @@ const item = {
 
 const secondItem = {
   instanceName: `Inventory-second-${getRandomPostfix()}`,
-  barcode: `123${getRandomPostfix()}`,
+  barcode: `456${getRandomPostfix()}`,
 };
 const successCalloutMessage = '1 holding has been successfully moved.';
 
