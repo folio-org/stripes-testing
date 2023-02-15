@@ -1,4 +1,3 @@
-import getRandomPostfix from '../../../support/utils/stringTools';
 import permissions from '../../../support/dictionary/permissions';
 import TestTypes from '../../../support/dictionary/testTypes';
 import TopMenu from '../../../support/fragments/topMenu';
@@ -25,7 +24,6 @@ import Receiving from '../../../support/fragments/receiving/receiving';
 import FileDetails from '../../../support/fragments/data_import/logs/fileDetails';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 import HoldingsRecordView from '../../../support/fragments/inventory/holdingsRecordView';
-import ItemView from '../../../support/fragments/inventory/inventoryItem/itemView';
 import InventoryViewSource from '../../../support/fragments/inventory/inventoryViewSource';
 import NewMatchProfile from '../../../support/fragments/data_import/match_profiles/newMatchProfile';
 import Organizations from '../../../support/fragments/organizations/organizations';
@@ -33,6 +31,7 @@ import DevTeams from '../../../support/dictionary/devTeams';
 import OrderLines from '../../../support/fragments/orders/orderLines';
 import NewLocation from '../../../support/fragments/settings/tenant/locations/newLocation';
 import FileManager from '../../../support/utils/fileManager';
+import ItemActions from '../../../support/fragments/inventory/inventoryItem/itemActions';
 
 describe('ui-data-import: Match on POL and update related Instance, Holdings, Item', () => {
   const firstItem = {
@@ -62,7 +61,7 @@ describe('ui-data-import: Match on POL and update related Instance, Holdings, It
   let instanceHrid;
 
   // unique profile names
-  const jobProfileName = `C350590 autotestJobProf${getRandomPostfix()}`;
+  const jobProfileName = `C350590 autotestJobProf${Helper.getRandomBarcode()}`;
   const matchProfileNameForInstance = `C350590 935 $a POL to Instance POL ${Helper.getRandomBarcode()}`;
   const matchProfileNameForHoldings = `C350590 935 $a POL to Holdings POL ${Helper.getRandomBarcode()}`;
   const matchProfileNameForItem = `C350590 935 $a POL to Item POL ${Helper.getRandomBarcode()}`;
@@ -71,9 +70,9 @@ describe('ui-data-import: Match on POL and update related Instance, Holdings, It
   const actionProfileNameForItem = `C350590 Update Item by POL match ${Helper.getRandomBarcode()}`;
   const mappingProfileNameForInstance = `C350590 Update Instance by POL match ${Helper.getRandomBarcode()}`;
   const mappingProfileNameForHoldings = `C350590 Update Holdings by POL match ${Helper.getRandomBarcode()}`;
-  const mappingProfileNameForItem = `C350590 Update Item by POL match ${getRandomPostfix()}`;
+  const mappingProfileNameForItem = `C350590 Update Item by POL match ${Helper.getRandomBarcode()}`;
 
-  const editedMarcFileName = `C350590 marcFileForMatchOnPol.${getRandomPostfix()}.mrc`;
+  const editedMarcFileName = `C350590 marcFileForMatchOnPol.${Helper.getRandomBarcode()}.mrc`;
 
   const collectionOfProfiles = [
     {
@@ -219,7 +218,7 @@ describe('ui-data-import: Match on POL and update related Instance, Holdings, It
     });
     cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${instanceHrid}"` })
       .then((instance) => {
-        cy.deleteItem(instance.items[0].id);
+        cy.deleteItemViaApi(instance.items[0].id);
         cy.deleteHoldingRecordViaApi(instance.holdings[0].id);
         InventoryInstance.deleteInstanceViaApi(instance.id);
       });
@@ -231,7 +230,7 @@ describe('ui-data-import: Match on POL and update related Instance, Holdings, It
         cy.getItems({ query: `"id"=="${itemId}"` })
           .then((item) => {
             item.barcode = itemBarcode;
-            ItemRecordView.editItem(item)
+            ItemActions.editItemViaApi(item)
               .then(() => {
                 CheckInActions.checkinItemViaApi({
                   itemBarcode: item.barcode,
@@ -239,7 +238,7 @@ describe('ui-data-import: Match on POL and update related Instance, Holdings, It
                   checkInDate: new Date().toISOString(),
                 })
                   .then(() => {
-                    cy.deleteItem(itemId);
+                    cy.deleteItemViaApi(itemId);
                     cy.deleteHoldingRecordViaApi(instance.holdings[0].id);
                     InventoryInstance.deleteInstanceViaApi(instance.id);
                   });
@@ -380,10 +379,10 @@ describe('ui-data-import: Match on POL and update related Instance, Holdings, It
     HoldingsRecordView.checkPermanentLocation('Main Library');
     HoldingsRecordView.close();
     InventoryInstance.openHoldingsAccordion('Main Library');
-    InventoryInstance.openItemView(firstItem.barcode);
-    ItemView.verifyItemStatus('In process');
-    ItemView.checkEffectiveLocation('Main Library');
-    ItemView.closeDetailView();
+    InventoryInstance.openItemByBarcode(firstItem.barcode);
+    ItemRecordView.verifyItemStatus('In process');
+    ItemRecordView.checkEffectiveLocation('Main Library');
+    ItemRecordView.closeDetailView();
     InventoryInstance.viewSource();
     InventoryViewSource.verifyBarcodeInMARCBibSource(firstItem.barcode);
   });

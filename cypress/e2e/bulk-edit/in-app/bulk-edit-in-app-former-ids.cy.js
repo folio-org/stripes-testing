@@ -8,8 +8,8 @@ import getRandomPostfix from '../../../support/utils/stringTools';
 import FileManager from '../../../support/utils/fileManager';
 import Users from '../../../support/fragments/users/users';
 import generateItemBarcode from '../../../support/utils/generateItemBarcode';
-import ItemRecordView from '../../../support/fragments/inventory/itemRecordView';
 import BulkEditActions from '../../../support/fragments/bulk-edit/bulk-edit-actions';
+import ItemActions from '../../../support/fragments/inventory/inventoryItem/itemActions';
 
 let user;
 const item = {
@@ -38,7 +38,7 @@ describe('bulk-edit', () => {
           cy.getItems({ query: `"barcode"=="${item.itemBarcode}"` })
             .then(inventoryItem => {
               inventoryItem.formerIds = [formerId];
-              ItemRecordView.editItem(inventoryItem);
+              ItemActions.editItemViaApi(inventoryItem);
             });
 
           FileManager.createFile(`cypress/fixtures/${validItemFormerIdsFileName}`, formerId);

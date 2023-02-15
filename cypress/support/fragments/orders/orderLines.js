@@ -165,7 +165,7 @@ export default {
       orderFormatSelect.choose('Physical resource'),
       acquisitionMethodButton.click(),
       SelectionOption('Depository').click(),
-      receivingWorkflowSelect.choose('Independent order and receipt quantity'),
+      receivingWorkflowSelect.choose('Synchronized order and receipt quantity'),
       physicalUnitPriceTextField.fillIn(physicalUnitPrice),
       quantityPhysicalTextField.fillIn(quantityPhysical),
       materialTypeSelect.choose('book'),
@@ -297,6 +297,37 @@ export default {
       acquisitionMethodButton.click(),
       SelectionOption('Depository').click(),
       receivingWorkflowSelect.choose('Independent order and receipt quantity'),
+      physicalUnitPriceTextField.fillIn(physicalUnitPrice),
+      quantityPhysicalTextField.fillIn(quantityPhysical),
+      electronicUnitPriceTextField.fillIn(electronicUnitPrice),
+      quantityElectronicTextField.fillIn(quantityElectronic),
+      materialTypeSelect.choose('book'),
+      addLocationButton.click(),
+      locationSelect.click(),
+      onlineLocationOption.click(),
+      quantityPhysicalLocationField.fillIn(quantityPhysical),
+      TextField({ name: 'locations[0].quantityElectronic' }).fillIn(quantityElectronic),
+    ]);
+    cy.expect([
+      physicalUnitPriceTextField.has({ value: physicalUnitPrice }),
+      quantityPhysicalTextField.has({ value: quantityPhysical }),
+      electronicUnitPriceTextField.has({ value: electronicUnitPrice }),
+      quantityElectronicTextField.has({ value: quantityElectronic }),
+    ]);
+    cy.do(saveAndClose.click());
+  },
+
+  fillInPOLineInfoForExport(accountNumber, AUMethod) {
+    cy.do([
+      orderLineTitleField.fillIn(orderLineTitle),
+      orderFormatSelect.choose('P/E mix'),
+      acquisitionMethodButton.click(),
+      acquisitionMethodButton.click(),
+      SelectionOption(AUMethod).click(),
+      receivingWorkflowSelect.choose('Independent order and receipt quantity'),
+      Select({ name: 'vendorDetail.vendorAccount' }).choose(accountNumber),
+    ]);
+    cy.do([
       physicalUnitPriceTextField.fillIn(physicalUnitPrice),
       quantityPhysicalTextField.fillIn(quantityPhysical),
       electronicUnitPriceTextField.fillIn(electronicUnitPrice),

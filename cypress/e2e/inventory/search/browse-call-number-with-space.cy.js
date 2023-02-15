@@ -27,7 +27,7 @@ describe('Inventory -> Call Number Browse', () => {
   };
 
   const itemA1 = {
-    instanceName: `testA1`,
+    instanceName: 'testA1',
     itemBarcode: getRandomPostfix(),
     publisher: null,
     holdingCallNumber: '1',
@@ -35,7 +35,7 @@ describe('Inventory -> Call Number Browse', () => {
   };
 
   const itemA2 = {
-    instanceName: `testA2`,
+    instanceName: 'testA2',
     itemBarcode: getRandomPostfix(),
     publisher: null,
     holdingCallNumber: '1',
@@ -121,6 +121,6 @@ describe('Inventory -> Call Number Browse', () => {
     BrowseCallNumber.checkItemSearchResult(item.callNumber, item.callNumberSuffix);
     InventorySearchAndFilter.selectFoundItem(item.callNumber, item.callNumberSuffix);
     InventorySearchAndFilter.verifyShelvingOrder();
-    InventorySearchAndFilter.verifyInstanceDisplayed(item.instanceName)
+    InventorySearchAndFilter.verifyInstanceDisplayed(item.instanceName);
   });
 });

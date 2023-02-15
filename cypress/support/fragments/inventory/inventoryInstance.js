@@ -29,7 +29,7 @@ import InventoryViewSource from './inventoryViewSource';
 import InventoryNewHoldings from './inventoryNewHoldings';
 import InventoryInstanceSelectInstanceModal from './holdingsMove/inventoryInstanceSelectInstanceModal';
 import InventoryInstancesMovement from './holdingsMove/inventoryInstancesMovement';
-import ItemView from './inventoryItem/itemView';
+import ItemRecordView from './itemRecordView';
 import DateTools from '../../utils/dateTools';
 
 const section = Section({ id: 'pane-instancedetails' });
@@ -97,6 +97,12 @@ const openHoldings = (...holdingToBeOpened) => {
   // don't have elem on page for waiter
   cy.wait(2000);
 };
+
+const openItemByBarcode = (itemBarcode) => {
+  cy.do(Link(including(itemBarcode)).click());
+  ItemRecordView.waitLoading();
+};
+
 const verifyInstanceTitle = (title) => {
   // don't have elem on page for waiter
   cy.wait(3000);
@@ -138,7 +144,7 @@ const checkInstanceNotes = (noteType, noteContent) => {
 const waitInstanceRecordViewOpened = (title) => {
   cy.expect(Pane({ id:'pane-instancedetails' }).exists());
   // need to wait until updated instance will be displayed
-  cy.wait(5000);
+  cy.wait(15000);
   cy.expect(Pane({ titleLabel: including(title) }).exists());
 };
 
@@ -155,6 +161,7 @@ export default {
   verifyResourceIdentifier,
   checkInstanceNotes,
   waitInstanceRecordViewOpened,
+  openItemByBarcode,
   checkExpectedOCLCPresence: (OCLCNumber = validOCLC.id) => {
     cy.expect(identifiers.find(HTML(including(OCLCNumber))).exists());
   },
@@ -308,9 +315,7 @@ export default {
     InventoryInstancesMovement.move();
   },
   checkAddItem:(holdingsRecrodId) => {
-    cy.expect(section.find(Section({ id:holdingsRecrodId }))
-      .find(Button({ id: `clickable-new-item-${holdingsRecrodId}` }))
-      .exists());
+    cy.expect(section.find(Button({ id: `clickable-new-item-${holdingsRecrodId}` })).exists());
   },
   checkInstanceIdentifier: (identifier) => {
     cy.expect(identifiersAccordion.find(identifiers
@@ -332,11 +337,7 @@ export default {
       .find(MultiColumnListCell({ content: issn }))
       .exists());
   },
-  openItemView: (itemBarcode) => {
-    cy.do(Link(including(itemBarcode)).click());
-    ItemView.waitLoading();
-  },
-  openEditItemPage() {
+  edit() {
     cy.do([
       Button('Actions').click(),
       Button('Edit').click(),
@@ -455,5 +456,9 @@ export default {
     cy.do(MultiColumnListCell({ content: barcode }).find(Link()).click());
     cy.expect(KeyValue('Temporary loan type').has({ value }));
     cy.do(Button({ icon: 'times' }).click());
+  },
+
+  verifyItemBarcode(barcode) {
+    cy.expect(MultiColumnListCell({ content: barcode }).exists());
   },
 };

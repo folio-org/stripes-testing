@@ -32,6 +32,7 @@ describe('ui-data-import: Verify the possibility to modify MARC Bibliographic re
   const nameMarcFileForUpload = `C345423autotestFile.${getRandomPostfix()}.mrc`;
 
   let user = {};
+  let instanceHRID;
 
   before(() => {
     cy.createTempUser([
@@ -52,6 +53,16 @@ describe('ui-data-import: Verify the possibility to modify MARC Bibliographic re
 
   after(() => {
     DataImport.checkUploadState();
+    cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${instanceHRID}"` });
+    // delete profiles
+    JobProfiles.deleteJobProfile(jobProfileName);
+    MatchProfiles.deleteMatchProfile(matchProfileName);
+    ActionProfiles.deleteActionProfile(actionProfileName);
+    FieldMappingProfiles.deleteFieldMappingProfile(mappingProfileName);
+    // delete downloads folder and created files in fixtures
+    FileManager.deleteFolder(Cypress.config('downloadsFolder'));
+    FileManager.deleteFile(`cypress/fixtures/${nameMarcFileForUpload}`);
+    FileManager.deleteFile(`cypress/fixtures/${nameForCSVFile}`);
     Users.deleteViaApi(user.userId);
   });
 
@@ -98,6 +109,7 @@ describe('ui-data-import: Verify the possibility to modify MARC Bibliographic re
     // get Instance HRID through API
     InventorySearchAndFilter.getInstanceHRID()
       .then(hrId => {
+        instanceHRID = hrId[0];
         // download .csv file
         cy.visit(TopMenu.inventoryPath);
         InventorySearchAndFilter.searchInstanceByHRID(hrId[0]);
@@ -150,16 +162,5 @@ describe('ui-data-import: Verify the possibility to modify MARC Bibliographic re
     ].forEach(columnName => {
       FileDetails.checkStatusInColumn(FileDetails.status.updated, columnName);
     });
-
-    // delete profiles
-    JobProfiles.deleteJobProfile(jobProfileName);
-    MatchProfiles.deleteMatchProfile(matchProfileName);
-    ActionProfiles.deleteActionProfile(actionProfileName);
-    FieldMappingProfiles.deleteFieldMappingProfile(mappingProfileName);
-
-    // delete downloads folder and created files in fixtures
-    FileManager.deleteFolder(Cypress.config('downloadsFolder'));
-    FileManager.deleteFile(`cypress/fixtures/${nameMarcFileForUpload}`);
-    FileManager.deleteFile(`cypress/fixtures/${nameForCSVFile}`);
   });
 });

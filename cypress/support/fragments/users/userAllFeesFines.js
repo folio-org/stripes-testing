@@ -12,9 +12,6 @@ import PaymentMethods from '../settings/users/paymentMethods';
 import UserEdit from './userEdit';
 
 const waiveAllButton = Button({ id: 'open-closed-all-wave-button' });
-const transfeAllButton = Button({ id: 'open-closed-all-transfer-button' });
-const payAllButton = Button({ id: 'open-closed-all-pay-button' });
-const refundAllButton = Button({ id: 'open-closed-all-refund-button' });
 
 export default {
   waiveFeeFine:(userId, amount, ownerId) => {
@@ -92,9 +89,6 @@ export default {
   },
   selectAllFeeFines: () => cy.do(MultiColumnListHeader({ index: 0 }).find(CheckBox()).click()),
   clickWaive:() => cy.do(waiveAllButton.click()),
-  clickTransfer:() => cy.do(transfeAllButton.click()),
-  clickPay:() => cy.do(payAllButton.click()),
-  clickRefund:() => cy.do(refundAllButton.click()),
   paySelectedFeeFines:() => {
     cy.do(Dropdown('Actions').choose('Pay'));
   },

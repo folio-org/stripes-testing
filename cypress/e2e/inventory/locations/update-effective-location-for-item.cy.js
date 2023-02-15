@@ -63,7 +63,7 @@ describe('ui-inventory: Update the effective location for the item', () => {
   afterEach(() => {
     cy.wrap(testInstanceIds.holdingIds.forEach(holdingsId => {
       cy.wrap(holdingsId.itemIds.forEach(itemId => {
-        cy.deleteItem(itemId);
+        cy.deleteItemViaApi(itemId);
       })).then(() => {
         cy.deleteHoldingRecordViaApi(holdingsId.id);
       });
@@ -88,7 +88,7 @@ describe('ui-inventory: Update the effective location for the item', () => {
       HoldingsRecordView.checkPermanentLocation(anotherPermanentLocation);
       HoldingsRecordView.close();
       InventoryInstance.openHoldings([anotherPermanentLocation]);
-      InventoryInstance.openItemView(itemBarcode);
+      InventoryInstance.openItemByBarcode(itemBarcode);
       ItemRecordView.verifyPermanentLocation(anotherPermanentLocation);
     });
 });

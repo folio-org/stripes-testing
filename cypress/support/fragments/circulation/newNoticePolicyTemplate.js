@@ -138,5 +138,20 @@ export default {
       Button({ id: 'dropdown-clickable-delete-item' }).click(),
       Button({ id: 'clickable-delete-item-confirmation-confirm' }).click(),
     ]);
+  },
+
+  duplicateTemplate: () => {
+    cy.do([
+      actionsButton.click(),
+      actionsButtons.duplicate.click(),
+    ]);
+  },
+
+  typeTemplateName: (noticePolicytemplateName) => {
+    cy.do(nameField.fillIn(noticePolicytemplateName));
+  },
+
+  typeTemplateSubject: (noticePolicytemplateSubject) => {
+    cy.do(subjectField.fillIn(noticePolicytemplateSubject));
   }
 };

@@ -257,7 +257,7 @@ Cypress.Commands.add('getItems', (searchParams) => {
     });
 });
 
-Cypress.Commands.add('deleteItem', (itemId) => {
+Cypress.Commands.add('deleteItemViaApi', (itemId) => {
   cy.okapiRequest({
     method: 'DELETE',
     path: `inventory/items/${itemId}`,
