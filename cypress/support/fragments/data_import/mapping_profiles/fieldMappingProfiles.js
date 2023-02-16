@@ -23,6 +23,7 @@ const mappingProfileIncomingRecordTypeField = Select('Incoming record type*');
 const mappingProfileFolioRecordTypeField = Select('FOLIO record type*');
 const mappingProfileStaffSuppressField = Select('Staff suppress');
 const mappingProfileSuppressFromDiscoveryField = Select('Suppress from discovery');
+const resultsPane = Pane({ id:'pane-results' });
 
 const openNewMappingProfileForm = () => {
   cy.do([
@@ -170,7 +171,9 @@ export default {
     closeViewModeForMappingProfile(mappingProfile.name);
     cy.expect(actionsButton.exists());
   },
+  selectMappingProfileFromList:(profileName) => cy.do(MultiColumnListCell(profileName).click()),
 
   checkListOfExistingProfilesIsDisplayed:() => cy.expect(PaneContent({ id:'pane-results-content' }).exists()),
-  checkNewMappingProfileFormIsOpened:() => cy.expect(Form({ id:'mapping-profiles-form' }).exists())
+  checkNewMappingProfileFormIsOpened:() => cy.expect(Form({ id:'mapping-profiles-form' }).exists()),
+  verifyActionMenuAbsent:() => cy.expect(resultsPane.find(actionsButton).absent())
 };

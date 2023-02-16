@@ -39,11 +39,7 @@ const waitLoadingList = () => {
   cy.get('[id="job-profiles-list"]', getLongDelay())
     .should('be.visible');
 };
-
-const waitLoading = (selector) => {
-  cy.expect(selector.exists());
-};
-
+const waitLoading = (selector) => cy.expect(selector.exists());
 const deleteJobProfile = (profileName) => {
   // get all job profiles
   cy
@@ -83,7 +79,7 @@ const createJobProfile = (jobProfile) => {
 const searchJobProfileForImport = (jobProfileTitle) => {
   // TODO: clarify with developers what should be waited
   cy.wait(1500);
-  cy.do(Pane({ id:'pane-results' }).find(TextField({ id:'input-search-job-profiles-field' })).fillIn(jobProfileTitle));
+  cy.do(paneResults.find(TextField({ id:'input-search-job-profiles-field' })).fillIn(jobProfileTitle));
   cy.do(searchButton.click());
 };
 
@@ -162,5 +158,7 @@ export default {
   checkCalloutMessage: (profileName) => {
     cy.expect(Callout({ textContent: including(`The job profile "${profileName}" was successfully updated`) })
       .exists());
-  }
+  },
+
+  verifyActionMenuAbsent:() => cy.expect(paneResults.find(actionsButton).absent())
 };
