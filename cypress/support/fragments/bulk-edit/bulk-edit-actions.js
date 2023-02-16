@@ -21,6 +21,9 @@ const deleteBtn = Button({ icon: 'trash' });
 const keepEditingBtn = Button('Keep editing');
 const areYouSureForm = Modal('Are you sure?');
 // interactor doesn't allow to pick second the same select
+function getEmailField() {
+  return cy.get('[class^=textField]');
+}
 function getLocationSelect() {
   return cy.get('select').eq(2);
 }
@@ -101,8 +104,8 @@ export default {
 
   replaceEmail(oldEmailDomain, newEmailDomain) {
     getBulkEditSelectType().select('Email');
-    cy.get('[class^=textField]').first().type(oldEmailDomain);
-    cy.get('[class^=textField]').eq(2).type(newEmailDomain);
+    getEmailField().first().type(oldEmailDomain);
+    getEmailField().eq(2).type(newEmailDomain);
   },
 
   replaceTemporaryLocation(location = 'Annex', type = 'item') {
