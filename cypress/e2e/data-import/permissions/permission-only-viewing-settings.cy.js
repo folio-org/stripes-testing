@@ -35,16 +35,16 @@ describe('ui-data-import:', () => {
     let matchProfileId;
     cy.getAdminToken();
     NewFieldMappingProfile.createMappingProfileViaApi(mappingProfileName)
-      .then((res) => {
-        mapProileId = res.body.id;
+      .then((mappingProfileResponse) => {
+        mapProileId = mappingProfileResponse.body.id;
 
         NewActionProfile.createActionProfileViaApi(actionProfileName, mapProileId)
-          .then((resp) => {
-            actProfileId = resp.body.id;
+          .then((actionProfileResponse) => {
+            actProfileId = actionProfileResponse.body.id;
 
             NewMatchProfile.createMatchProfileViaApi(matchProfileName)
-              .then((response) => {
-                matchProfileId = response.body.id;
+              .then((matchProfileResponse) => {
+                matchProfileId = matchProfileResponse.body.id;
 
                 NewJobProfile.createMatchProfileViaApi(jobProfileName, matchProfileId, actProfileId);
               });
