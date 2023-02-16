@@ -52,6 +52,8 @@ export default {
   uiInventoryMarcItemRestricted:{ internal:'ui-inventory.items.mark-restricted', gui:'Inventory: Mark items restricted' },
   uiInventoryMarcItemUnavailable:{ internal:'ui-inventory.items.mark-unavailable', gui:'Inventory: Mark items unavailable' },
   uiInventoryMarcItemUnknow:{ internal:'ui-inventory.items.mark-unknown', gui:'Inventory: Mark items unknown' },
+  ui:{internal:'inventory-storage.bound-with-parts.item.post', gui:'inventory storage - add a part to a bound-with'},
+  uiu:{internal:'', gui:'inventory storage - remove part of a bound-with'},
   // Tags
   uiTagsPermissionAll: { internal: 'ui-tags.permission.all', gui:'Tags: All permissions' },
   // Settings->Owners

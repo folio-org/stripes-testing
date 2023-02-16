@@ -78,7 +78,9 @@ describe('orders: Receive piece from Order', () => {
       permissions.uiInventoryViewCreateEditItems.gui,
       permissions.uiOrdersView.gui,
       permissions.uiOrdersEdit.gui,
-      permissions.uiReceivingViewEditCreate.gui
+      permissions.uiReceivingViewEditCreate.gui,
+      permissions.ui.gui,
+      permissions.uiu.gui
     ])
       .then(userProperties => {
         userId = userProperties.userId;
