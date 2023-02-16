@@ -158,6 +158,8 @@ describe('ui-data-import: Item update via match by status', () => {
     });
     // delete downloads folder and created files in fixtures
     FileManager.deleteFolder(Cypress.config('downloadsFolder'));
+    FileManager.deleteFile(`cypress/fixtures/${nameMarcFileForUpdate}`);
+    FileManager.deleteFile(`cypress/fixtures/${nameForCSVFile}`);
   });
 
   const mappingProfileForCreateHoldings = (holdingsMappingProfile) => {
