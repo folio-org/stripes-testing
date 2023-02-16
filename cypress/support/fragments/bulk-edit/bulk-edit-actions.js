@@ -99,6 +99,12 @@ export default {
     cy.expect(HTML('Replace with').is({ disabled: true }));
   },
 
+  replaceEmail(oldEmailDomain, newEmailDomain) {
+    getBulkEditSelectType().select('Email');
+    cy.get('[class^=textField]').first().type(oldEmailDomain);
+    cy.get('[class^=textField]').eq(2).type(newEmailDomain);
+  },
+
   replaceTemporaryLocation(location = 'Annex', type = 'item') {
     getBulkEditSelectType().select(`Temporary ${type} location`);
     getLocationSelect().select('Replace with');
