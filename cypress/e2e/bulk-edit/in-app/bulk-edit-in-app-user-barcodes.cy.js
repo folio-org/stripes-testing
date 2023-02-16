@@ -28,6 +28,7 @@ describe('bulk-edit', () => {
 
     after('delete test data', () => {
       Users.deleteViaApi(user.userId);
+      FileManager.deleteFile(`cypress/fixtures/${userBarcodesFileName}`);
     });
 
     afterEach('open new bulk-edit form', () => {
