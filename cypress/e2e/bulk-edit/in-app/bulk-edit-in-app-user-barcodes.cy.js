@@ -7,6 +7,8 @@ import getRandomPostfix from '../../../support/utils/stringTools';
 import devTeams from '../../../support/dictionary/devTeams';
 import BulkEditActions from '../../../support/fragments/bulk-edit/bulk-edit-actions';
 import Users from '../../../support/fragments/users/users';
+import UsersSearchPane from '../../../support/fragments/users/usersSearchPane';
+import UsersCard from '../../../support/fragments/users/usersCard';
 
 let user;
 const userBarcodesFileName = `userBarcodes_${getRandomPostfix()}.csv`;
@@ -26,6 +28,7 @@ describe('bulk-edit', () => {
 
     after('delete test data', () => {
       Users.deleteViaApi(user.userId);
+      FileManager.deleteFile(`cypress/fixtures/${userBarcodesFileName}`);
     });
 
     afterEach('open new bulk-edit form', () => {
@@ -41,6 +44,28 @@ describe('bulk-edit', () => {
       BulkEditActions.openActions();
       BulkEditActions.openInAppStartBulkEditFrom();
       BulkEditActions.verifyBulkEditForm();
+    });
+
+    it('C359592 Verify updating Email in Bulk edit (firebird)', { tags: [testTypes.criticalPath, devTeams.firebird] }, () => {
+      BulkEditSearchPane.selectRecordIdentifier('User Barcodes');
+
+      BulkEditSearchPane.uploadFile(userBarcodesFileName);
+      BulkEditSearchPane.waitFileUploading();
+
+      BulkEditActions.openActions();
+      BulkEditSearchPane.changeShowColumnCheckbox('Email');
+      BulkEditActions.openInAppStartBulkEditFrom();
+      const newEmailDomain = 'google.com';
+      BulkEditActions.replaceEmail('folio.org', newEmailDomain);
+      BulkEditActions.confirmChanges();
+      BulkEditActions.commitChanges();
+
+      BulkEditSearchPane.verifyChangedResults(`test@${newEmailDomain}`);
+      cy.loginAsAdmin({ path: TopMenu.usersPath, waiter: UsersSearchPane.waitLoading });
+      UsersSearchPane.searchByKeywords(user.username);
+      UsersSearchPane.openUser(user.username);
+      UsersCard.openContactInfo();
+      UsersCard.verifyEmail(`test@${newEmailDomain}`);
     });
   });
 });
