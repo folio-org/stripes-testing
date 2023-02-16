@@ -118,13 +118,13 @@ export default {
 			SelectionOption(integarationName).click(),
 		]);
 	},
-	rerunJob() {
+	downloadJob() {
 		cy.do([
 			Button('Actions').click(),
-			Button('Rerun').click(),
+			Button('Download').click(),
 		]);
 	},
-	downloadJob() {
+	rerunJob() {
 		cy.wait(5000);
 		cy.do(Button('Actions').click());
 		cy.wait(5000);
