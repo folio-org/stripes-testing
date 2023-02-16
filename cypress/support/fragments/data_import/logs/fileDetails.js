@@ -114,12 +114,12 @@ export default {
       .click());
   },
 
-  openHoldingsInInventoryByTitle:(title, itemStatus = 'Updated') => {
+  openItemInInventoryByTitle:(title, itemStatus = 'Updated') => {
     cy.do(MultiColumnListCell({ content: title }).perform(
       element => {
         const rowNumber = element.parentElement.parentElement.getAttribute('data-row-index');
 
-        cy.expect(resultsList.find(MultiColumnListCell({ row: rowNumber, columnIndex: 5 }))
+        cy.do(resultsList.find(MultiColumnListCell({ row: Number(rowNumber.slice(4)), columnIndex: 5 }))
           .find(Link(itemStatus))
           .click());
       }
