@@ -348,6 +348,34 @@ export default {
     cy.do(saveAndClose.click());
   },
 
+  fillInPOLineInfoForExportWithLocation(accountNumber, AUMethod, institutionName) {
+    cy.do([
+      orderFormatSelect.choose('Electronic resource'),
+      acquisitionMethodButton.click(),
+      acquisitionMethodButton.click(),
+      SelectionOption(AUMethod).click(),
+      Select({ name: 'vendorDetail.vendorAccount' }).choose(accountNumber),
+    ]);
+    cy.do([
+      electronicUnitPriceTextField.fillIn(electronicUnitPrice),
+      quantityElectronicTextField.fillIn(quantityElectronic),
+      Select({ name: 'eresource.materialType' }).choose('book'),
+      addLocationButton.click(),
+      Button('Create new holdings for location').click(),
+      Select({ name: 'institutionId'}).choose(institutionName),
+      Modal('Select permanent location').find(Button('Save and close')).click(),
+      TextField({ name: 'locations[0].quantityElectronic' }).fillIn(quantityElectronic),
+    ]);
+    cy.expect([
+      electronicUnitPriceTextField.has({ value: electronicUnitPrice }),
+      quantityElectronicTextField.has({ value: quantityElectronic }),
+    ]);
+    cy.do([
+      saveAndClose.click(),
+      Button('Submit').click()
+    ]);
+  },
+
   selectFilterMainLibraryLocationsPOL: () => {
     cy.do([
       buttonLocationFilter.click(),

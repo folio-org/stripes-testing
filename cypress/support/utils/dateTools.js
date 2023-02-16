@@ -117,4 +117,16 @@ export default {
   getFormattedDateWithTime(date) {
     return moment.utc(date).format('M/D/YYYY, h:mm A');
   },
+
+  getUTCDateForScheduling() {
+    const today = new Date();
+    let hours = today.getUTCHours();
+    let minutes = today.getUTCMinutes() + 1;
+    let ampm = hours >= 12 ? 'PM' : 'AM';
+    hours = hours % 12;
+    hours = hours ? hours : 12;
+    minutes = minutes < 10 ? '0' + minutes : minutes;
+    let strTime = hours + ':' + minutes + ' ' + ampm;
+    return strTime;
+  },
 };

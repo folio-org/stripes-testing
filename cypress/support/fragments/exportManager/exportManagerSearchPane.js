@@ -1,4 +1,4 @@
-import { Pane, Button, TextField, MultiColumnListCell, Accordion, Checkbox, Modal } from "../../../../interactors";
+import { Pane, Button, TextField, MultiColumnListCell, Accordion, Checkbox, Modal, Section, SelectionOption } from "../../../../interactors";
 import { including } from "bigtest";
 
 const searchButton = Button({ type: 'submit' });
@@ -107,5 +107,27 @@ export default {
 	},
 	verifyUserSearchResult(username) {
 		cy.expect(userSearchResults.has({ text: including(username) }));
+	},
+	selectOrganizationsSearch() {
+		Button('Organizations').click();
+	},
+	selectExportMethod(integarationName) {
+		cy.do([
+			Button({ id: 'accordion-toggle-button-exportConfigId'}).click(),
+			Button({ id: 'exportConfigId-selection' }).click(),
+			SelectionOption(integarationName).click(),
+		]);
+	},
+	rerunJob() {
+		cy.do([
+			Button('Actions').click(),
+			Button('Rerun').click(),
+		]);
+	},
+	downloadJob() {
+		cy.wait(5000);
+		cy.do(Button('Actions').click());
+		cy.wait(5000);
+		cy.do(Button('Rerun').click());
 	},
 }

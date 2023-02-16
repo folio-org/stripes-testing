@@ -26,4 +26,5 @@ export default {
   receivingPath: '/receiving',
   bulkEditPath: '/bulk-edit',
   exportManagerPath: '/export-manager',
+  exportManagerOrganizationsPath: 'export-manager/edi-jobs',
 };
