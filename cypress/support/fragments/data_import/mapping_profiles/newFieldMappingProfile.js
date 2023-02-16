@@ -251,6 +251,7 @@ export default {
     // number needs for using this method in filling fields for holdings and item profiles
     const adminNoteFieldName = `profile.mappingDetails.mappingFields[${number}].repeatableFieldAction`;
 
+    cy.do(Select({ name: adminNoteFieldName }).focus());
     cy.do(Select({ name: adminNoteFieldName }).choose(actions.addTheseToExisting));
     cy.do(Button('Add administrative note').click());
     cy.do(TextField('Administrative note').fillIn(`"${note}"`));
@@ -258,6 +259,7 @@ export default {
 
   addElectronicAccess:(relationship, uri, linkText = '') => {
     cy.do([
+      Select({ name:'profile.mappingDetails.mappingFields[23].repeatableFieldAction' }).focus(),
       Select({ name:'profile.mappingDetails.mappingFields[23].repeatableFieldAction' }).choose(actions.addTheseToExisting),
       Button('Add electronic access').click(),
       TextField('Relationship').fillIn(relationship),
@@ -268,6 +270,7 @@ export default {
 
   addHoldingsStatements:(statement) => {
     cy.do([
+      Select({ name:'profile.mappingDetails.mappingFields[16].repeatableFieldAction' }).focus(),
       Select({ name:'profile.mappingDetails.mappingFields[16].repeatableFieldAction' }).choose(actions.addTheseToExisting),
       Button('Add holdings statement').click(),
       TextField('Holdings statement').fillIn(`"${statement}"`),
