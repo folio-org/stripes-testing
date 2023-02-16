@@ -10,7 +10,6 @@ import {
   Pane,
   Link,
   Section,
-  SelectionOption
 } from '../../../../interactors';
 import InteractorsTools from '../../utils/interactorsTools';
 
