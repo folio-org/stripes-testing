@@ -6,7 +6,6 @@ import Logs from '../../../support/fragments/data_import/logs/logs';
 import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
 import ExportFile from '../../../support/fragments/data-export/exportFile';
 import TopMenu from '../../../support/fragments/topMenu';
-import ExportMarcFile from '../../../support/fragments/data-export/export-marc-file';
 import MatchProfiles from '../../../support/fragments/data_import/match_profiles/matchProfiles';
 import NewMatchProfile from '../../../support/fragments/data_import/match_profiles/newMatchProfile';
 import NewFieldMappingProfile from '../../../support/fragments/data_import/mapping_profiles/newFieldMappingProfile';
@@ -389,7 +388,7 @@ describe('ui-data-import: MARC file upload with the update of instance, holding,
         cy.visit(TopMenu.inventoryPath);
         InventorySearchAndFilter.searchInstanceByHRID(hrId[0]);
         InventorySearchAndFilter.saveUUIDs();
-        ExportMarcFile.downloadCSVFile(nameForCSVFile, 'SearchInstanceUUIDs*');
+        ExportFile.downloadCSVFile(nameForCSVFile, 'SearchInstanceUUIDs*');
         FileManager.deleteFolder(Cypress.config('downloadsFolder'));
       });
 
@@ -408,7 +407,7 @@ describe('ui-data-import: MARC file upload with the update of instance, holding,
     cy.visit(TopMenu.dataExportPath);
     ExportFile.uploadFile(nameForCSVFile);
     ExportFile.exportWithCreatedJobProfile(nameForCSVFile, jobProfileNameForExport);
-    ExportMarcFile.downloadExportedMarcFile(nameMarcFileForImportUpdate);
+    ExportFile.downloadExportedMarcFile(nameMarcFileForImportUpdate);
 
     // create mapping and action profiles
     cy.visit(SettingsMenu.mappingProfilePath);

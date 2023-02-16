@@ -9,6 +9,8 @@ import {
 } from '../../../../../interactors';
 
 const viewPane = Pane({ id:'view-action-profile-pane' });
+const resultsPane = Pane({ id:'pane-results' });
+const actionsButton = Button('Actions');
 
 export default {
   edit:() => {
@@ -32,7 +34,11 @@ export default {
         cy.visit(linkForVisit);
       }));
   },
-
+  verifyActionProfileOpened:() => {
+    cy.expect(resultsPane.exists());
+    cy.expect(viewPane.exists());
+  },
   verifyAction:() => cy.expect(KeyValue('Action').has({ value: 'Update' })),
-  closeViewModeForMatchProfile:() => cy.do(viewPane.find(Button({ icon: 'times' })).click())
+  closeViewModeForMatchProfile:() => cy.do(viewPane.find(Button({ icon: 'times' })).click()),
+  verifyActionMenuAbsent:() => cy.expect(resultsPane.find(actionsButton).absent())
 };

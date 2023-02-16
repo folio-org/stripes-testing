@@ -219,6 +219,7 @@ describe('ui-inventory: Item status date updates', () => {
 
     // mark item as missing
     ItemActions.markAsMissing();
+    ItemActions.confirmMarkAsMissing();
     fullCheck(ItemRecordView.itemStatuses.missing);
 
     // check in item at service point assigned to its effective location
