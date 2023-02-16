@@ -35,5 +35,33 @@ export default {
     cy.expect(Section({ id:'actionProfileFormAssociatedMappingProfileAccordion' }).find(Button('Link Profile')).has({ disabled : true }));
     cy.do(Button('Save as profile & Close').click());
     cy.expect(Pane('Action profiles').find(Button('Actions')).exists());
+  },
+
+  createActionProfileViaApi:(nameMapProfile, mapProfileId) => {
+    return cy
+      .okapiRequest({
+        method: 'POST',
+        path: 'data-import-profiles/actionProfiles',
+        body: {
+          profile: {
+            name: nameMapProfile,
+            action: 'CREATE',
+            folioRecord: 'INSTANCE'
+          },
+          addedRelations: [
+            {
+              masterProfileId: null,
+              masterProfileType: 'ACTION_PROFILE',
+              detailProfileId: mapProfileId,
+              detailProfileType: 'MAPPING_PROFILE'
+            }
+          ],
+          deletedRelations: []
+        },
+        isDefaultSearchParamsRequired: false,
+      })
+      .then(({ response }) => {
+        return response;
+      });
   }
 };

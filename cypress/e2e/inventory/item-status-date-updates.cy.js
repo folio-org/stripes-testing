@@ -78,7 +78,6 @@ describe('ui-inventory: Item status date updates', () => {
             effectiveLocationServicePoint = servicePoints[0];
             NewLocation.createViaApi(NewLocation.getDefaultLocation(effectiveLocationServicePoint.id))
               .then((location) => {
-                console.log(location);
                 effectiveLocation = location;
                 Orders.createOrderWithOrderLineViaApi(
                   NewOrder.getDefaultOrder(),
@@ -220,6 +219,7 @@ describe('ui-inventory: Item status date updates', () => {
 
     // mark item as missing
     ItemActions.markAsMissing();
+    ItemActions.confirmMarkAsMissing();
     fullCheck(ItemRecordView.itemStatuses.missing);
 
     // check in item at service point assigned to its effective location

@@ -4,7 +4,6 @@ import DateTools from '../../utils/dateTools';
 
 const quickExportFileNameMask = /quick-export-\d{1,3}.mrc/gm;
 
-
 export default {
   defaultJobProfile: 'Default instances export job profile',
   verifyQuickExportResult() {
