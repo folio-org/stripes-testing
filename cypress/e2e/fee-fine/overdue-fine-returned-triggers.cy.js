@@ -348,7 +348,7 @@ describe('Overdue fine', () => {
 
       // need to wait so item can get overdue status
       // eslint-disable-next-line cypress/no-unnecessary-waiting
-      cy.wait(100000);
+      cy.wait(120000);
       cy.visit(TopMenu.checkInPath);
       CheckInActions.checkInItem(itemData.barcode);
       CheckInActions.verifyLastCheckInItem(itemData.barcode);
