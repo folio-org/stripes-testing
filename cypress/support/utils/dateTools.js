@@ -126,7 +126,7 @@ export default {
     hours = hours % 12;
     hours = hours ? hours : 12;
     minutes = minutes < 10 ? '0' + minutes : minutes;
-    let strTime = hours + ':' + minutes + ' ' + ampm;
-    return strTime;
+    let utcTime = hours + ':' + minutes + ' ' + ampm;
+    return utcTime;
   },
 };

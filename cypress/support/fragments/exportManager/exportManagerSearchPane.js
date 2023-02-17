@@ -1,4 +1,4 @@
-import { Pane, Button, TextField, MultiColumnListCell, Accordion, Checkbox, Modal, Section, SelectionOption } from "../../../../interactors";
+import { Pane, Button, TextField, MultiColumnListCell, Accordion, Checkbox, Modal, SelectionOption } from "../../../../interactors";
 import { including } from "bigtest";
 
 const searchButton = Button({ type: 'submit' });
@@ -119,14 +119,18 @@ export default {
 		]);
 	},
 	downloadJob() {
-		cy.do([
-			Button('Actions').click(),
-			Button('Download').click(),
-		]);
-	},
-	rerunJob() {
+		//Need to wait while Button will be loaded for click
 		cy.wait(5000);
 		cy.do(Button('Actions').click());
+		//Need to wait while Button will be loaded for click
+		cy.wait(5000);
+		cy.do(Button('Download').click());
+	},
+	rerunJob() {
+		//Need to wait while Button will be loaded for click
+		cy.wait(5000);
+		cy.do(Button('Actions').click());
+		//Need to wait while Button will be loaded for click
 		cy.wait(5000);
 		cy.do(Button('Rerun').click());
 	},
