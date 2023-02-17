@@ -43,7 +43,7 @@ function getPatronGroupTypeSelect() {
 
 export default {
   openStartBulkEditForm() {
-    cy.do(Button(including('Start bulk edit')).click());
+    cy.do(Button('Start bulk edit (CSV)').click());
   },
   openInAppStartBulkEditFrom() {
     cy.do(Button('Start bulk edit').click());
@@ -68,10 +68,12 @@ export default {
 
   clickKeepEditingBtn() {
     cy.do(areYouSureForm.find(keepEditingBtn).click());
+    cy.wait(1000);
   },
 
   clickX() {
     cy.do(Modal().find(Button({ icon: 'times' })).click());
+    cy.wait(1000);
   },
 
   openActions() {
@@ -99,7 +101,7 @@ export default {
   },
 
   replaceWithIsDisabled() {
-    cy.expect(HTML('Replace with').is({ disabled: true }));
+    cy.xpath('(//div[contains(@class, "select--")]//select[contains(@class, "selectControl--")])[3]').should('be.disabled');
   },
 
   replaceEmail(oldEmailDomain, newEmailDomain) {
@@ -197,18 +199,18 @@ export default {
 
   confirmChanges() {
     cy.do(Button('Confirm changes').click());
+    cy.expect(Modal().find(MultiColumnListCell()).exists());
   },
 
   saveAndClose() {
     cy.do(Button('Save & close').click());
   },
 
-  downloadMatchedResults(fileName = 'matchedRecords.csv') {
+  downloadMatchedResults() {
     cy.do(actionsBtn.click());
-    // It is necessary to avoid cypress reload page expecting
-    cy.get('a[download]', { timeout: 15000 }).first().then(($input) => {
-      cy.downloadFile($input.attr('href'), 'cypress/downloads', fileName);
-    });
+    cy.get('[class^="ActionMenuGroup-"] button', { timeout: 15000 }).first().click();
+    // need to wait downloading
+    cy.wait(5000);
   },
 
   prepareBulkEditFileWithDuplicates(fileMask, finalFileName, stringToBeReplaced, replaceString) {
@@ -227,7 +229,6 @@ export default {
   prepareValidBulkEditFile(fileMask, finalFileName, stringToBeReplaced, replaceString) {
     FileManager.findDownloadedFilesByMask(`*${fileMask}*`).then((downloadedFilenames) => {
       const lastDownloadedFilename = downloadedFilenames.sort()[downloadedFilenames.length - 1];
-
       FileManager.readFile(lastDownloadedFilename)
         .then((actualContent) => {
           const content = actualContent.split('\n');
@@ -257,36 +258,36 @@ export default {
 
   verifyUsersActionDropdownItems(isDisabled = false) {
     cy.expect([
-      dropdownMenu.find(Checkbox({ name: 'active', checked: true, disabled: isDisabled })).exists(),
-      dropdownMenu.find(Checkbox({ name: 'lastName', checked: true, disabled: isDisabled })).exists(),
-      dropdownMenu.find(Checkbox({ name: 'firstName', checked: true, disabled: isDisabled })).exists(),
-      dropdownMenu.find(Checkbox({ name: 'barcode', checked: true, disabled: isDisabled })).exists(),
-      dropdownMenu.find(Checkbox({ name: 'patronGroup', checked: true, disabled: isDisabled })).exists(),
-      dropdownMenu.find(Checkbox({ name: 'username', checked: true, disabled: isDisabled })).exists(),
-      dropdownMenu.find(Checkbox({ name: 'email', checked: false, disabled: isDisabled })).exists(),
-      dropdownMenu.find(Checkbox({ name: 'expirationDate', checked: false, disabled: isDisabled })).exists(),
+      dropdownMenu.find(Checkbox({ name: 'Active', checked: true, disabled: isDisabled })).exists(),
+      dropdownMenu.find(Checkbox({ name: 'Last name', checked: true, disabled: isDisabled })).exists(),
+      dropdownMenu.find(Checkbox({ name: 'First name', checked: true, disabled: isDisabled })).exists(),
+      dropdownMenu.find(Checkbox({ name: 'Barcode', checked: true, disabled: isDisabled })).exists(),
+      dropdownMenu.find(Checkbox({ name: 'Patron group', checked: true, disabled: isDisabled })).exists(),
+      dropdownMenu.find(Checkbox({ name: 'Username', checked: true, disabled: isDisabled })).exists(),
+      dropdownMenu.find(Checkbox({ name: 'Email', checked: false, disabled: isDisabled })).exists(),
+      dropdownMenu.find(Checkbox({ name: 'Expiration date', checked: false, disabled: isDisabled })).exists(),
     ]);
   },
 
   verifyItemActionDropdownItems(isDisabled = false) {
     cy.expect([
-      dropdownMenu.find(Checkbox({ name: 'barcode', checked: true, disabled: isDisabled })).exists(),
-      dropdownMenu.find(Checkbox({ name: 'status', checked: true, disabled: isDisabled })).exists(),
-      dropdownMenu.find(Checkbox({ name: 'effectiveLocation', checked: true, disabled: isDisabled })).exists(),
-      dropdownMenu.find(Checkbox({ name: 'callNumber', checked: true, disabled: isDisabled })).exists(),
-      dropdownMenu.find(Checkbox({ name: 'hrid', checked: true, disabled: isDisabled })).exists(),
-      dropdownMenu.find(Checkbox({ name: 'materialType', checked: true, disabled: isDisabled })).exists(),
-      dropdownMenu.find(Checkbox({ name: 'permanentLoanType', checked: true, disabled: isDisabled })).exists(),
-      dropdownMenu.find(Checkbox({ name: 'temporaryLoanType', checked: true, disabled: isDisabled })).exists(),
-      dropdownMenu.find(Checkbox({ name: 'id', checked: false, disabled: isDisabled })).exists(),
-      dropdownMenu.find(Checkbox({ name: 'formerIds', checked: false, disabled: isDisabled })).exists(),
-      dropdownMenu.find(Checkbox({ name: 'accessionNumber', checked: false, disabled: isDisabled })).exists(),
-      dropdownMenu.find(Checkbox({ name: 'permanentLocation', checked: false, disabled: isDisabled })).exists(),
-      dropdownMenu.find(Checkbox({ name: 'temporaryLocation', checked: false, disabled: isDisabled })).exists(),
-      dropdownMenu.find(Checkbox({ name: 'copyNumber', checked: false, disabled: isDisabled })).exists(),
-      dropdownMenu.find(Checkbox({ name: 'enumeration', checked: false, disabled: isDisabled })).exists(),
-      dropdownMenu.find(Checkbox({ name: 'chronology', checked: false, disabled: isDisabled })).exists(),
-      dropdownMenu.find(Checkbox({ name: 'volume', checked: false, disabled: isDisabled })).exists(),
+      dropdownMenu.find(Checkbox({ name: 'Barcode', checked: true, disabled: isDisabled })).exists(),
+      dropdownMenu.find(Checkbox({ name: 'Status', checked: true, disabled: isDisabled })).exists(),
+      dropdownMenu.find(Checkbox({ name: 'Item effective location', checked: true, disabled: isDisabled })).exists(),
+      dropdownMenu.find(Checkbox({ name: 'Call number', checked: false, disabled: isDisabled })).exists(),
+      dropdownMenu.find(Checkbox({ name: 'Item HRID', checked: true, disabled: isDisabled })).exists(),
+      dropdownMenu.find(Checkbox({ name: 'Material type', checked: true, disabled: isDisabled })).exists(),
+      dropdownMenu.find(Checkbox({ name: 'Permanent loan type', checked: true, disabled: isDisabled })).exists(),
+      dropdownMenu.find(Checkbox({ name: 'Temporary loan type', checked: true, disabled: isDisabled })).exists(),
+      dropdownMenu.find(Checkbox({ name: 'Item ID', checked: false, disabled: isDisabled })).exists(),
+      dropdownMenu.find(Checkbox({ name: 'Former identifiers', checked: false, disabled: isDisabled })).exists(),
+      dropdownMenu.find(Checkbox({ name: 'Accession number', checked: false, disabled: isDisabled })).exists(),
+      dropdownMenu.find(Checkbox({ name: 'Item permanent location', checked: false, disabled: isDisabled })).exists(),
+      dropdownMenu.find(Checkbox({ name: 'Item temporary location', checked: false, disabled: isDisabled })).exists(),
+      dropdownMenu.find(Checkbox({ name: 'Copy number', checked: false, disabled: isDisabled })).exists(),
+      dropdownMenu.find(Checkbox({ name: 'Enumeration', checked: false, disabled: isDisabled })).exists(),
+      dropdownMenu.find(Checkbox({ name: 'Chronology', checked: false, disabled: isDisabled })).exists(),
+      dropdownMenu.find(Checkbox({ name: 'Volume', checked: false, disabled: isDisabled })).exists(),
     ]);
   },
 
@@ -309,12 +310,12 @@ export default {
   },
 
   verifyCheckedDropdownMenuItem() {
-    cy.do(dropdownMenu.find(Checkbox({ name: 'firstName' })).click());
+    cy.do(dropdownMenu.find(Checkbox({ name: 'First name' })).click());
     cy.expect(MultiColumnListHeader('First name').absent());
   },
 
   verifyUncheckedDropdownMenuItem() {
-    cy.do(dropdownMenu.find(Checkbox({ name: 'email' })).click());
+    cy.do(dropdownMenu.find(Checkbox({ name: 'Email' })).click());
     cy.expect(MultiColumnListHeader('Email').exists());
   },
 
@@ -322,11 +323,10 @@ export default {
     cy.expect(DropdownMenu().find(Button('Download changed records (CSV)')).exists());
   },
 
-  downloadChangedCSV(fileName = 'changedRecords.csv') {
-    // It is necessary to avoid cypress reload page expecting
-    cy.get('a[download]', { timeout: 15000 }).first().then(($input) => {
-      cy.downloadFile($input.attr('href'), 'cypress/downloads', fileName);
-    });
+  downloadChangedCSV() {
+    cy.do(Button('Download changed records (CSV)').click());
+    // need to wait downloading
+    cy.wait(5000);
   },
 
   verifyPossibleActions(actions) {

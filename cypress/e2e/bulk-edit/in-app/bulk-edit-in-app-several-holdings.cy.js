@@ -89,7 +89,7 @@ describe('bulk-edit', { retries: 2 }, () => {
       BulkEditSearchPane.verifyMatchedResults(item.hrid, item2.hrid);
 
       BulkEditActions.openActions();
-      BulkEditActions.openStartBulkEditForm();
+      BulkEditActions.openInAppStartBulkEditFrom();
       BulkEditActions.replaceTemporaryLocation(item.locationName, 'holdings');
       BulkEditActions.confirmChanges();
       BulkEditActions.commitChanges();
