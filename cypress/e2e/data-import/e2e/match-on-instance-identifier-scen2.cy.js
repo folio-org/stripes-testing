@@ -21,13 +21,13 @@ describe('ui-data-import: Match on Instance identifier match meets both the Iden
   let userId;
   const filePathForCreateInstance = 'marcFileForMatchOnIdentifierForCreate.mrc';
   const filePathForUpdateInstance = 'marcFileForMatchOnIdentifierForUpdate_2.mrc';
-  const fileNameForCreateInstance = `C358137autotestFile.${getRandomPostfix()}.mrc`;
-  const fileNameForUpdateInstance = `C358137autotestFile.${getRandomPostfix()}.mrc`;
+  const fileNameForCreateInstance = `C347829autotestFile.${getRandomPostfix()}.mrc`;
+  const fileNameForUpdateInstance = `C347829autotestFile.${getRandomPostfix()}.mrc`;
   const jobProfileToRun = 'Default - Create instance and SRS MARC Bib';
-  const matchProfileName = `autotestMatchProf${getRandomPostfix()}`;
-  const mappingProfileName = `autotestMappingProf${getRandomPostfix()}`;
-  const actionProfileName = `autotestActionProf${getRandomPostfix()}`;
-  const jobProfileName = `autotestActionProf${getRandomPostfix()}`;
+  const matchProfileName = `C347829autotestMatchProf${getRandomPostfix()}`;
+  const mappingProfileName = `C347829autotestMappingProf${getRandomPostfix()}`;
+  const actionProfileName = `C347829autotestActionProf${getRandomPostfix()}`;
+  const jobProfileName = `C347829autotestActionProf${getRandomPostfix()}`;
   const instanceGeneralNote = 'IDENTIFIER UPDATE 2';
   const resourceIdentifiers = [
     { type: 'UPC', value: 'ORD32671387-4' },
@@ -77,6 +77,7 @@ describe('ui-data-import: Match on Instance identifier match meets both the Iden
       permissions.viewEditCreateInvoiceInvoiceLine.gui,
       permissions.assignAcqUnitsToNewInvoice.gui,
       permissions.invoiceSettingsAll.gui,
+      permissions.remoteStorageView.gui
     ])
       .then(userProperties => {
         userId = userProperties.userId;
@@ -95,13 +96,19 @@ describe('ui-data-import: Match on Instance identifier match meets both the Iden
   });
 
   after(() => {
+    // delete profiles
+    JobProfiles.deleteJobProfile(jobProfileName);
+    MatchProfiles.deleteMatchProfile(matchProfileName);
+    ActionProfiles.deleteActionProfile(actionProfileName);
+    FieldMappingProfiles.deleteFieldMappingProfile(mappingProfileName);
     Users.deleteViaApi(userId);
   });
 
   it('C347829 Match on Instance identifier match meets both the Identifier type and Data requirements (folijet)', { tags: [TestTypes.criticalPath, DevTeams.folijet] }, () => {
     DataImport.uploadFile(filePathForCreateInstance, fileNameForCreateInstance);
     JobProfiles.searchJobProfileForImport(jobProfileToRun);
-    JobProfiles.runImportFile(fileNameForCreateInstance);
+    JobProfiles.runImportFile();
+    JobProfiles.waitFileIsImported(fileNameForCreateInstance);
     Logs.checkStatusOfJobProfile('Completed');
     Logs.openFileDetails(fileNameForCreateInstance);
     Logs.clickOnHotLink(0, 3, 'Created');
@@ -129,7 +136,8 @@ describe('ui-data-import: Match on Instance identifier match meets both the Iden
     cy.visit(TopMenu.dataImportPath);
     DataImport.uploadFile(filePathForUpdateInstance, fileNameForUpdateInstance);
     JobProfiles.searchJobProfileForImport(jobProfileName);
-    JobProfiles.runImportFile(fileNameForUpdateInstance);
+    JobProfiles.runImportFile();
+    JobProfiles.waitFileIsImported(fileNameForUpdateInstance);
     Logs.checkStatusOfJobProfile('Completed');
     Logs.openFileDetails(fileNameForUpdateInstance);
     Logs.verifyInstanceStatus(0, 3, 'Discarded');

@@ -8,7 +8,7 @@ import {
   Button,
   KeyValue,
 } from '../../../../../interactors';
-import ItemView from '../../inventory/inventoryItem/itemView';
+import ItemRecordView from '../../inventory/itemRecordView';
 import { REQUEST_METHOD } from '../../../constants';
 
 const claimReturnedButton = Button('Claim returned');
@@ -59,8 +59,10 @@ export default {
   openLoan:(itemBarcode) => {
     return cy.do(MultiColumnListRow({ text: matching(itemBarcode), isContainer: false }).click());
   },
-  declareLoanLost:() => {
-    cy.do(ellipsisButton.click());
+  declareLoanLost:(barcode) => {
+    cy.get('div[class^="mclRow--"]').contains('div[class^="mclCell-"]', barcode).then(elem => {
+      elem.parent()[0].querySelector('button[icon="ellipsis"]').click();
+    });
     cy.expect(declaredLostButton.exists());
     return cy.do(declaredLostButton.click());
   },
@@ -76,11 +78,12 @@ export default {
     return cy.do(declaredLostButton.click());
   },
   openItemRecordInInventory:(barcode) => {
-    cy.expect(rowInList.find(HTML(including(barcode))).exists());
-    cy.do(ellipsisButton.click());
+    cy.get('div[class^="mclRow--"]').contains('div[class^="mclCell-"]', barcode).then(elem => {
+      elem.parent()[0].querySelector('button[icon="ellipsis"]').click();
+    });
     cy.expect(itemDetailsButton.exists());
     cy.do(itemDetailsButton.click());
-    ItemView.waitLoading();
+    ItemRecordView.waitLoading();
   },
   renewItem:(barcode, isLoanOpened = false) => {
     if (isLoanOpened) {
@@ -88,8 +91,10 @@ export default {
       cy.expect(renewButton.exists());
       cy.do(renewButton.click());
     } else {
-      cy.expect(rowInList.find(HTML(including(barcode))).exists());
-      cy.do(ellipsisButton.click());
+      cy.wait(1500);
+      cy.get('div[class^="mclRow--"]').contains('div[class^="mclCell-"]', barcode).then(elem => {
+        elem.parent()[0].querySelector('button[icon="ellipsis"]').click();
+      });
       cy.expect(renewButton.exists());
       cy.do(renewButton.click());
     }

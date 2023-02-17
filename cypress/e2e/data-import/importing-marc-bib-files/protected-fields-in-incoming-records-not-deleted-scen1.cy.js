@@ -32,7 +32,10 @@ describe('ui-data-import: Check that protected fields in incoming records are no
       permissions.uiQuickMarcQuickMarcBibliographicEditorAll.gui,
       permissions.inventoryAll.gui,
       permissions.uiInventorySingleRecordImport.gui,
-      permissions.uiInventoryViewCreateEditInstances.gui
+      permissions.uiInventoryViewCreateEditInstances.gui,
+      permissions.uiMarcAuthoritiesAuthorityRecordView.gui,
+      permissions.remoteStorageView.gui,
+      permissions.uiQuickMarcQuickMarcAuthorityLinkUnlink.gui
     ])
       .then(userProperties => {
         user = userProperties;
@@ -44,7 +47,8 @@ describe('ui-data-import: Check that protected fields in incoming records are no
         Z3950TargetProfiles.changeOclcWorldCatToDefaultViaApi();
         DataImport.uploadFile('marcFileForC358968.mrc', fileName);
         JobProfiles.searchJobProfileForImport('Default - Create instance and SRS MARC Bib');
-        JobProfiles.runImportFile(fileName);
+        JobProfiles.runImportFile();
+        JobProfiles.waitFileIsImported(fileName);
         Logs.checkStatusOfJobProfile('Completed');
         Logs.openFileDetails(fileName);
         [FileDetails.columnName.srsMarc,
@@ -77,7 +81,7 @@ describe('ui-data-import: Check that protected fields in incoming records are no
 
   it('C358968 Check that protected fields in incoming records are not deleted during import: Scenario 1 (folijet)', { tags: [TestTypes.smoke, DevTeams.folijet] }, () => {
     cy.visit(SettingsMenu.marcFieldProtectionPath);
-    MarcFieldProtection.currentListOfProtectedMarcFieldsIsPresented();
+    MarcFieldProtection.checkListOfExistingProfilesIsDisplayed();
     MarcFieldProtection.createNewMarcFieldProtection();
     MarcFieldProtection.fillMarcFieldProtection(protectedField);
     MarcFieldProtection.checkFieldProtectionIsCreated(protectedField);
@@ -93,7 +97,7 @@ describe('ui-data-import: Check that protected fields in incoming records are no
     InventoryEditMarcRecord.deleteField();
     InventoryInstance.checkElectronicAccess();
     InventoryInstance.startOverlaySourceBibRecord();
-    InventoryInstance.singleRecordImportModalIsPresented();
+    InventoryInstance.singleOverlaySourceBibRecordModalIsPresented();
     InventoryInstance.importWithOclc(oclcForChanging);
     InventoryInstance.checkCalloutMessage(`Updated record ${oclcForChanging}`);
     InventoryInstance.viewSource();

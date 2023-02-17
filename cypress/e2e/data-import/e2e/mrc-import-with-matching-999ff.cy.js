@@ -10,7 +10,6 @@ import JobProfiles from '../../../support/fragments/data_import/job_profiles/job
 import TestTypes from '../../../support/dictionary/testTypes';
 import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
 import ExportFile from '../../../support/fragments/data-export/exportFile';
-import ExportMarcFile from '../../../support/fragments/data-export/export-marc-file';
 import FileManager from '../../../support/utils/fileManager';
 import getRandomPostfix from '../../../support/utils/stringTools';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
@@ -75,7 +74,8 @@ describe('ui-data-import: MARC file import with matching for 999 ff field', () =
     cy.visit(TopMenu.dataImportPath);
     DataImport.uploadFile('oneMarcBib.mrc', nameForMarcFile);
     JobProfiles.searchJobProfileForImport(jobProfileNameForExport);
-    JobProfiles.runImportFile(nameForMarcFile);
+    JobProfiles.runImportFile();
+    JobProfiles.waitFileIsImported(nameForMarcFile);
     Logs.openFileDetails(nameForMarcFile);
     FileDetails.checkStatusInColumn(FileDetails.status.created, FileDetails.columnName.instance);
 
@@ -86,14 +86,14 @@ describe('ui-data-import: MARC file import with matching for 999 ff field', () =
         cy.visit(TopMenu.inventoryPath);
         InventorySearchAndFilter.searchInstanceByHRID(hrId[0]);
         InventorySearchAndFilter.saveUUIDs();
-        ExportMarcFile.downloadCSVFile(nameForCSVFile, 'SearchInstanceUUIDs*');
+        ExportFile.downloadCSVFile(nameForCSVFile, 'SearchInstanceUUIDs*');
         FileManager.deleteFolder(Cypress.config('downloadsFolder'));
         cy.visit(TopMenu.dataExportPath);
 
         // download exported marc file
         ExportFile.uploadFile(nameForCSVFile);
-        ExportFile.exportWithDefaultInstancesJobProfile(nameForCSVFile);
-        ExportMarcFile.downloadExportedMarcFile(nameForExportedMarcFile);
+        ExportFile.exportWithDefaultJobProfile(nameForCSVFile);
+        ExportFile.downloadExportedMarcFile(nameForExportedMarcFile);
         FileManager.deleteFolder(Cypress.config('downloadsFolder'));
 
         cy.log('#####End Of Export#####');
@@ -154,7 +154,8 @@ describe('ui-data-import: MARC file import with matching for 999 ff field', () =
         cy.visit(TopMenu.dataImportPath);
         DataImport.uploadExportedFile(nameForExportedMarcFile);
         JobProfiles.searchJobProfileForImport(jobProfileName);
-        JobProfiles.runImportFile(nameForExportedMarcFile);
+        JobProfiles.runImportFile();
+        JobProfiles.waitFileIsImported(nameForExportedMarcFile);
         Logs.openFileDetails(nameForExportedMarcFile);
         FileDetails.checkStatusInColumn(FileDetails.status.updated, FileDetails.columnName.instance);
 

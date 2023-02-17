@@ -1,16 +1,17 @@
 import uuid from 'uuid';
 import moment from 'moment';
+import getRandomPostfix from '../../support/utils/stringTools';
 import TestType from '../../support/dictionary/testTypes';
-import renewalActions from '../../support/fragments/loans/renewals';
+import DevTeams from '../../support/dictionary/devTeams';
 import generateItemBarcode from '../../support/utils/generateItemBarcode';
 import permissions from '../../support/dictionary/permissions';
+import RenewalActions from '../../support/fragments/loans/renewals';
 import {
   CY_ENV,
   LOAN_TYPE_NAMES,
   MATERIAL_TYPE_NAMES,
 } from '../../support/constants';
-import getRandomPostfix from '../../support/utils/stringTools';
-import loanPolicyActions from '../../support/fragments/circulation/loan-policy';
+import LoanPolicyActions from '../../support/fragments/circulation/loan-policy';
 import CheckinActions from '../../support/fragments/check-in-actions/checkInActions';
 import Users from '../../support/fragments/users/users';
 import InventoryHoldings from '../../support/fragments/inventory/holdings/inventoryHoldings';
@@ -119,7 +120,7 @@ describe('Renewal', () => {
       })
       // create loan policy
       .then(() => {
-        loanPolicyActions.createLoanableNotRenewableLoanPolicyApi(loanPolicyData);
+        LoanPolicyActions.createLoanableNotRenewableLoanPolicyApi(loanPolicyData);
       })
       // create circulation rules
       .then(() => {
@@ -159,7 +160,7 @@ describe('Renewal', () => {
         Users.deleteViaApi(renewOverrideUserData.id);
         cy.getInstance({ limit: 1, expandAll: true, query: `"items.barcode"=="${itemData.barcode}"` })
           .then((instance) => {
-            cy.deleteItem(instance.items[0].id);
+            cy.deleteItemViaApi(instance.items[0].id);
             cy.deleteHoldingRecordViaApi(instance.holdings[0].id);
             InventoryInstance.deleteInstanceViaApi(instance.id);
           });
@@ -170,23 +171,17 @@ describe('Renewal', () => {
       });
   });
 
-  it('C568 Renewal: failure because loan is not renewable (prokopovych)', { tags: [TestType.smoke] }, () => {
-    renewalActions.renewWithoutOverrideAccess(loanId, renewUserData.id, itemData);
-
+  it('C568 Renewal: failure because loan is not renewable (prokopovych)', { tags: [TestType.smoke, DevTeams.prokopovych] }, () => {
+    RenewalActions.renewWithoutOverrideAccess(loanId, renewUserData.id, itemData);
     cy.login(renewOverrideUserData.lastName, renewOverrideUserData.password);
-
-    renewalActions.renewWithOverrideAccess(
+    RenewalActions.renewWithOverrideAccess(
       loanId,
       renewUserData.id,
       itemData
     );
-
-    renewalActions.startOverriding(itemData);
-
-    renewalActions.fillOverrideInfo();
-
-    renewalActions.overrideLoan();
-
-    renewalActions.checkLoanDetails({ firstName, lastName: renewOverrideUserData.lastName });
+    RenewalActions.startOverriding(itemData);
+    RenewalActions.fillOverrideInfo();
+    RenewalActions.overrideLoan();
+    RenewalActions.checkLoanDetails({ firstName, lastName: renewOverrideUserData.lastName });
   });
 });

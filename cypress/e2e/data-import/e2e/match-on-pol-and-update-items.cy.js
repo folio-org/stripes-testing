@@ -1,4 +1,3 @@
-import getRandomPostfix from '../../../support/utils/stringTools';
 import permissions from '../../../support/dictionary/permissions';
 import TestTypes from '../../../support/dictionary/testTypes';
 import TopMenu from '../../../support/fragments/topMenu';
@@ -25,7 +24,6 @@ import Receiving from '../../../support/fragments/receiving/receiving';
 import FileDetails from '../../../support/fragments/data_import/logs/fileDetails';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 import HoldingsRecordView from '../../../support/fragments/inventory/holdingsRecordView';
-import ItemView from '../../../support/fragments/inventory/inventoryItem/itemView';
 import InventoryViewSource from '../../../support/fragments/inventory/inventoryViewSource';
 import NewMatchProfile from '../../../support/fragments/data_import/match_profiles/newMatchProfile';
 import Organizations from '../../../support/fragments/organizations/organizations';
@@ -33,24 +31,24 @@ import DevTeams from '../../../support/dictionary/devTeams';
 import OrderLines from '../../../support/fragments/orders/orderLines';
 import NewLocation from '../../../support/fragments/settings/tenant/locations/newLocation';
 import FileManager from '../../../support/utils/fileManager';
+import ItemActions from '../../../support/fragments/inventory/inventoryItem/itemActions';
 
 describe('ui-data-import: Match on POL and update related Instance, Holdings, Item', () => {
   const firstItem = {
-    title: 'Sport and sociology. Dominic Malcolm.',
+    title: 'Agrarianism and capitalism in early Georgia, 1732-1743 / Jay Jordan Butler.',
     productId: '9782266111560',
     quantity: '1',
     price: '20',
-    barcode: '242451241241'
+    barcode: '242451241247'
   };
 
   const secondItem = {
-    title: 'South Asian texts in history : critical engagements with Sheldon Pollock. edited by Yigal Bronner, Whitney Cox, and Lawrence McCrea.',
+    title: 'Evolution of the Earth / Donald R. Prothero, Robert H. Dott, Jr.',
     productId: '9783161484100',
     quantity: '1',
     price: '20'
   };
 
-  const titles = [firstItem.title, secondItem.title];
   let firstOrderNumber;
   let secondOrderNumber;
   let vendorId;
@@ -60,9 +58,10 @@ describe('ui-data-import: Match on POL and update related Instance, Holdings, It
   let materialTypeId;
   let user = {};
   let servicePointId;
+  let instanceHrid;
 
   // unique profile names
-  const jobProfileName = `C350590 autotestJobProf${getRandomPostfix()}`;
+  const jobProfileName = `C350590 autotestJobProf${Helper.getRandomBarcode()}`;
   const matchProfileNameForInstance = `C350590 935 $a POL to Instance POL ${Helper.getRandomBarcode()}`;
   const matchProfileNameForHoldings = `C350590 935 $a POL to Holdings POL ${Helper.getRandomBarcode()}`;
   const matchProfileNameForItem = `C350590 935 $a POL to Item POL ${Helper.getRandomBarcode()}`;
@@ -71,9 +70,9 @@ describe('ui-data-import: Match on POL and update related Instance, Holdings, It
   const actionProfileNameForItem = `C350590 Update Item by POL match ${Helper.getRandomBarcode()}`;
   const mappingProfileNameForInstance = `C350590 Update Instance by POL match ${Helper.getRandomBarcode()}`;
   const mappingProfileNameForHoldings = `C350590 Update Holdings by POL match ${Helper.getRandomBarcode()}`;
-  const mappingProfileNameForItem = `C350590 Update Item by POL match ${getRandomPostfix()}`;
+  const mappingProfileNameForItem = `C350590 Update Item by POL match ${Helper.getRandomBarcode()}`;
 
-  const editedMarcFileName = `C350590 marcFileForMatchOnPol.${getRandomPostfix()}.mrc`;
+  const editedMarcFileName = `C350590 marcFileForMatchOnPol.${Helper.getRandomBarcode()}.mrc`;
 
   const collectionOfProfiles = [
     {
@@ -153,7 +152,8 @@ describe('ui-data-import: Match on POL and update related Instance, Holdings, It
       permissions.moduleDataImportEnabled.gui,
       permissions.uiReceivingViewEditCreate.gui,
       permissions.uiInventoryViewInstances.gui,
-      permissions.uiQuickMarcQuickMarcBibliographicEditorView.gui
+      permissions.uiQuickMarcQuickMarcBibliographicEditorView.gui,
+      permissions.remoteStorageView.gui
     ])
       .then(userProperties => {
         user = userProperties;
@@ -216,30 +216,35 @@ describe('ui-data-import: Match on POL and update related Instance, Holdings, It
       ActionProfiles.deleteActionProfile(profile.actionProfile.name);
       FieldMappingProfiles.deleteFieldMappingProfile(profile.mappingProfile.name);
     });
-    titles.forEach(title => {
-      cy.getInstance({ limit: 1, expandAll: true, query: `"title"=="${title}"` })
-        .then((instance) => {
-          itemId = instance.items[0].id;
+    cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${instanceHrid}"` })
+      .then((instance) => {
+        cy.deleteItemViaApi(instance.items[0].id);
+        cy.deleteHoldingRecordViaApi(instance.holdings[0].id);
+        InventoryInstance.deleteInstanceViaApi(instance.id);
+      });
 
-          cy.getItems({ query: `"id"=="${itemId}"` })
-            .then((item) => {
-              item.barcode = itemBarcode;
-              ItemRecordView.editItem(item)
-                .then(() => {
-                  CheckInActions.checkinItemViaApi({
-                    itemBarcode: item.barcode,
-                    servicePointId,
-                    checkInDate: new Date().toISOString(),
-                  })
-                    .then(() => {
-                      cy.deleteItem(itemId);
-                      cy.deleteHoldingRecordViaApi(instance.holdings[0].id);
-                      InventoryInstance.deleteInstanceViaApi(instance.id);
-                    });
-                });
-            });
-        });
-    });
+    cy.getInstance({ limit: 1, expandAll: true, query: `"title"=="${secondItem.title}"` })
+      .then((instance) => {
+        itemId = instance.items[0].id;
+
+        cy.getItems({ query: `"id"=="${itemId}"` })
+          .then((item) => {
+            item.barcode = itemBarcode;
+            ItemActions.editItemViaApi(item)
+              .then(() => {
+                CheckInActions.checkinItemViaApi({
+                  itemBarcode: item.barcode,
+                  servicePointId,
+                  checkInDate: new Date().toISOString(),
+                })
+                  .then(() => {
+                    cy.deleteItemViaApi(itemId);
+                    cy.deleteHoldingRecordViaApi(instance.holdings[0].id);
+                    InventoryInstance.deleteInstanceViaApi(instance.id);
+                  });
+              });
+          });
+      });
     NewLocation.deleteViaApiIncludingInstitutionCampusLibrary(
       location.institutionId,
       location.campusId,
@@ -250,7 +255,7 @@ describe('ui-data-import: Match on POL and update related Instance, Holdings, It
 
   const openOrder = (number) => {
     Orders.searchByParameter('PO number', number);
-    Helper.selectFromResultsList();
+    Orders.selectFromResultsList();
     Orders.openOrder();
   };
 
@@ -258,7 +263,7 @@ describe('ui-data-import: Match on POL and update related Instance, Holdings, It
     cy.visit(TopMenu.ordersPath);
     Orders.resetFilters();
     Orders.searchByParameter('PO number', number);
-    Orders.selectFromResultsList();
+    Orders.selectFromResultsList(number);
     OrderView.openPolDetails(title);
     OrderLines.openReceiving();
     Receiving.checkIsPiecesCreated(title);
@@ -320,7 +325,7 @@ describe('ui-data-import: Match on POL and update related Instance, Holdings, It
             checkReceivedPiece(secondOrderNumber, secondItem.title);
           });
 
-        DataImport.editMarcFile('marcFileForMatchOnPol.mrc', editedMarcFileName, ['test'], [firstOrderNumber]);
+        DataImport.editMarcFile('marcFileForC350590.mrc', editedMarcFileName, ['test'], [firstOrderNumber]);
       });
 
     // create mapping and action profiles
@@ -353,14 +358,20 @@ describe('ui-data-import: Match on POL and update related Instance, Holdings, It
     DataImport.checkIsLandingPageOpened();
     DataImport.uploadFile(editedMarcFileName);
     JobProfiles.searchJobProfileForImport(jobProfileName);
-    JobProfiles.runImportFile(editedMarcFileName);
+    JobProfiles.runImportFile();
+    JobProfiles.waitFileIsImported(editedMarcFileName);
     Logs.checkStatusOfJobProfile();
     Logs.openFileDetails(editedMarcFileName);
-    FileDetails.checkItemsStatusesInResultList(0, [FileDetails.status.updated, FileDetails.status.updated, FileDetails.status.updated, FileDetails.status.updated]);
+    FileDetails.checkSrsRecordQuantityInSummaryTable('1', 0);
+    FileDetails.checkInstanceQuantityInSummaryTable('1', 1);
+    FileDetails.checkHoldingsQuantityInSummaryTable('1', 1);
+    FileDetails.checkItemQuantityInSummaryTable('1', 1);
+    FileDetails.checkItemsStatusesInResultList(0, [FileDetails.status.created, FileDetails.status.updated, FileDetails.status.updated, FileDetails.status.updated]);
     FileDetails.checkItemsStatusesInResultList(1, [FileDetails.status.dash, FileDetails.status.discarded, FileDetails.status.discarded, FileDetails.status.discarded]);
 
     // check is items updated
     FileDetails.openInstanceInInventory('Updated');
+    InventoryInstance.getAssignedHRID().then(initialInstanceHrId => { instanceHrid = initialInstanceHrId; });
     InventoryInstance.checkIsInstanceUpdated();
     InventoryInstance.openHoldingView();
     HoldingsRecordView.checkHoldingsType('Monograph');
@@ -368,10 +379,10 @@ describe('ui-data-import: Match on POL and update related Instance, Holdings, It
     HoldingsRecordView.checkPermanentLocation('Main Library');
     HoldingsRecordView.close();
     InventoryInstance.openHoldingsAccordion('Main Library');
-    InventoryInstance.openItemView(firstItem.barcode);
-    ItemView.verifyItemStatus('In process');
-    ItemView.checkEffectiveLocation('Main Library');
-    ItemView.closeDetailView();
+    InventoryInstance.openItemByBarcode(firstItem.barcode);
+    ItemRecordView.verifyItemStatus('In process');
+    ItemRecordView.checkEffectiveLocation('Main Library');
+    ItemRecordView.closeDetailView();
     InventoryInstance.viewSource();
     InventoryViewSource.verifyBarcodeInMARCBibSource(firstItem.barcode);
   });

@@ -16,7 +16,8 @@ import {
   including,
   SelectionOption,
   MultiSelect,
-  MultiSelectOption
+  MultiSelectOption,
+  Link,
 } from '../../../../interactors';
 import SearchHelper from '../finance/financeHelper';
 import InteractorsTools from '../../utils/interactorsTools';
@@ -46,6 +47,7 @@ const buttonSubscriptionFromFilter = Button({ id: 'accordion-toggle-button-subsc
 const searchForm = SearchField({ id: 'input-record-search' });
 const ordersFiltersPane = Pane({ id: 'orders-filters-pane' });
 const ordersResultsPane = Pane({ id: 'orders-results-pane' });
+const buttonAcquisitionMethodFilter = Button({ id: 'accordion-toggle-button-acquisitionMethod' });
 const searchByParameter = (parameter, value) => {
   cy.do([
     searchForm.selectIndex(parameter),
@@ -62,7 +64,7 @@ export default {
       ordersResultsPane.exists(),
     ]);
   },
-  
+
   waitSettingsPageLoading() {
     cy.expect([
       Pane({ id: 'settings-nav-pane' }).exists(),
@@ -161,7 +163,7 @@ export default {
     ]);
   },
 
-  createOrder(order, isApproved = false) {
+  createOrder(order, isApproved = false, isManual = false) {
     cy.do([
       actionsButton.click(),
       newButton.click()
@@ -170,6 +172,7 @@ export default {
     cy.intercept('POST', '/orders/composite-orders**').as('newOrderID');
     cy.do(Select('Order type*').choose(order.orderType));
     if (isApproved) cy.do(Checkbox({ name:'approved' }).click());
+    if (isManual) cy.do(Checkbox({ name:'manualPo' }).click());
     cy.do(saveAndClose.click());
     return cy.wait('@newOrderID', getLongDelay())
       .then(({ response }) => {
@@ -192,7 +195,7 @@ export default {
         return response.body;
       });
   },
-  
+
   checkZeroSearchResultsHeader: () => {
     cy.xpath(numberOfSearchResultsHeader)
       .should('be.visible')
@@ -227,12 +230,16 @@ export default {
 
   checkCreatedOrder: (order) => {
     cy.expect(Pane({ id: 'order-details' }).exists());
-    cy.expect(Accordion({ id: orderDetailsAccordionId }).find(KeyValue({ value: order.vendor })).exists());
-    cy.expect(Accordion({ id: orderDetailsAccordionId }).find(KeyValue({ value: createdByAdmin })).exists());
+    cy.expect(Accordion({ id: orderDetailsAccordionId })
+      .find(KeyValue({ value: order.vendor }))
+      .exists());
+    cy.expect(Accordion({ id: orderDetailsAccordionId })
+      .find(KeyValue({ value: createdByAdmin }))
+      .exists());
   },
 
-  selectFromResultsList: (rowNumber = 0) => {
-    cy.do(MultiColumnListRow({ index: rowNumber }).click());
+  selectFromResultsList: (number) => {
+    cy.do(MultiColumnList({ id:'orders-list' }).find(Link(number)).click());
   },
 
   deleteOrderViaActions: () => {
@@ -281,6 +288,10 @@ export default {
       .find(MultiColumnListRow({ index: 0 }))
       .find(MultiColumnListCell({ columnIndex: 0 }))
       .has({ content: orderLineNumber }));
+  },
+  checkOrderlineFilterInList: (orderLineNumber) => {
+    cy.expect(MultiColumnList({ id: 'order-line-list' })
+      .has(Link(orderLineNumber)));
   },
   closeThirdPane: () => {
     cy.do([
@@ -427,6 +438,13 @@ export default {
       buttonOrderFormatFilter.click(),
     ]);
   },
+  selectFilterAcquisitionMethod: (AUmethod) => {
+    cy.do([
+      buttonAcquisitionMethodFilter.click(),
+      MultiSelect({ id: 'acq-methods-filter' }).select([AUmethod]),
+      buttonAcquisitionMethodFilter.click(),
+    ]);
+  },
   selectFilterVendorPOL: (invoice) => {
     cy.do([
       buttonFVendorFilter.click(),
@@ -511,10 +529,10 @@ export default {
   selectOngoingOrderTypeInPOForm:() => {
     cy.do(Select('Order type*').choose('Ongoing'));
   },
-  checkEditedOngoingOrder: (orderNumber,organizationName) => {
+  checkEditedOngoingOrder: (orderNumber, organizationName) => {
     cy.expect(Pane({ id: 'order-details' }).exists());
     cy.expect(Accordion({ id: orderDetailsAccordionId }).find(KeyValue({ value: orderNumber })).exists());
     cy.expect(Accordion({ id: orderDetailsAccordionId }).find(KeyValue({ value: organizationName })).exists());
     cy.expect(Accordion({ id: orderDetailsAccordionId }).find(KeyValue({ value: 'Ongoing' })).exists());
-  },
+  }
 };

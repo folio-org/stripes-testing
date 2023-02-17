@@ -43,10 +43,12 @@ export default {
     cy.do(PaneHeader({ id: 'paneHeaderpane-fiscal-year-details' }).find(Button({ icon: 'times' })).click());
   },
 
+  openAcquisitionAccordion() {
+    cy.do(Button({ id: 'accordion-toggle-button-acqUnitIds' }).click());
+  },
+
   selectNoAcquisitionUnit() {
-    cy.do([
-      Button({ id: 'accordion-toggle-button-acqUnitIds' }).click(),
-      Button({ id: 'acqUnitIds-selection' }).click(),
+    cy.do([Button({ id: 'acqUnitIds-selection' }).click(),
       SelectionOption('No acquisition unit').click(),
     ]);
   },

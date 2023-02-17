@@ -52,6 +52,10 @@ export default {
     if (autoSave) { cy.get('#footer-save-entity').click(); }
   },
 
+  chooseCategory: (category) => {
+    cy.do(Select({ name: 'category' }).choose(category));
+  },
+
   checkPreview: () => {
     cy.do(Section({ id: 'email-template-form' }).find(Button('Preview')).click());
     cy.expect(Modal('Preview of patron notice template').exists());
@@ -88,9 +92,8 @@ export default {
     ]);
   },
 
-  checkTemplateActions(noticePolicyTemplate) {
+  checkTemplateActions() {
     return cy.do([
-      this.openToSide(noticePolicyTemplate),
       actionsButton.click(),
       actionsButtons.duplicate.exists(),
       actionsButtons.duplicate.has({ visible: true }),
@@ -98,6 +101,7 @@ export default {
       actionsButtons.edit.has({ visible: true }),
       actionsButtons.delete.exists(),
       actionsButtons.delete.has({ visible: true }),
+      actionsButton.click(),
     ]);
   },
 
@@ -134,5 +138,20 @@ export default {
       Button({ id: 'dropdown-clickable-delete-item' }).click(),
       Button({ id: 'clickable-delete-item-confirmation-confirm' }).click(),
     ]);
+  },
+
+  duplicateTemplate: () => {
+    cy.do([
+      actionsButton.click(),
+      actionsButtons.duplicate.click(),
+    ]);
+  },
+
+  typeTemplateName: (noticePolicytemplateName) => {
+    cy.do(nameField.fillIn(noticePolicytemplateName));
+  },
+
+  typeTemplateSubject: (noticePolicytemplateSubject) => {
+    cy.do(subjectField.fillIn(noticePolicytemplateSubject));
   }
 };

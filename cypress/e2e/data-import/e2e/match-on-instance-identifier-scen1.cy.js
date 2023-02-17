@@ -101,49 +101,51 @@ describe('ui-data-import: Match on Instance identifier match meets both the Iden
     FieldMappingProfiles.deleteFieldMappingProfile(mappingProfileName);
   });
 
-  it('C347828 Match on Instance identifier match meets both the Identifier type and Data requirements (folijet)', { tags: [TestTypes.criticalPath, DevTeams.folijet] }, () => {
-    DataImport.uploadFile('marcFileForMatchOnIdentifierForCreate.mrc', fileNameForCreateInstance);
-    JobProfiles.searchJobProfileForImport(jobProfileToRun);
-    JobProfiles.runImportFile(fileNameForCreateInstance);
-    Logs.checkStatusOfJobProfile('Completed');
-    Logs.openFileDetails(fileNameForCreateInstance);
-    Logs.clickOnHotLink(0, 3, 'Created');
-    InventoryInstance.verifyResourceIdentifier(resourceIdentifiers[0].type, resourceIdentifiers[0].value, 6);
-    InventoryInstance.verifyResourceIdentifier(resourceIdentifiers[1].type, resourceIdentifiers[1].value, 4);
-    cy.go('back');
-    Logs.clickOnHotLink(1, 3, 'Created');
-    InventoryInstance.verifyResourceIdentifier(resourceIdentifiers[2].type, resourceIdentifiers[2].value, 0);
-    InventoryInstance.verifyResourceIdentifier(resourceIdentifiers[3].type, resourceIdentifiers[3].value, 3);
+  it('C347828 Match on Instance identifier match meets both the Identifier type and Data requirements (folijet)',
+    { tags: [TestTypes.criticalPath, DevTeams.folijet] }, () => {
+      DataImport.uploadFile('marcFileForMatchOnIdentifierForCreate.mrc', fileNameForCreateInstance);
+      JobProfiles.searchJobProfileForImport(jobProfileToRun);
+      JobProfiles.runImportFile();
+      JobProfiles.waitFileIsImported(fileNameForCreateInstance);
+      Logs.checkStatusOfJobProfile('Completed');
+      Logs.openFileDetails(fileNameForCreateInstance);
+      Logs.clickOnHotLink(0, 3, 'Created');
+      InventoryInstance.verifyResourceIdentifier(resourceIdentifiers[0].type, resourceIdentifiers[0].value, 6);
+      InventoryInstance.verifyResourceIdentifier(resourceIdentifiers[1].type, resourceIdentifiers[1].value, 4);
+      cy.go('back');
+      Logs.clickOnHotLink(1, 3, 'Created');
+      InventoryInstance.verifyResourceIdentifier(resourceIdentifiers[2].type, resourceIdentifiers[2].value, 0);
+      InventoryInstance.verifyResourceIdentifier(resourceIdentifiers[3].type, resourceIdentifiers[3].value, 3);
 
-    cy.visit(SettingsMenu.matchProfilePath);
-    MatchProfiles.createMatchProfile(matchProfile);
-    MatchProfiles.checkMatchProfilePresented(matchProfileName);
+      cy.visit(SettingsMenu.matchProfilePath);
+      MatchProfiles.createMatchProfile(matchProfile);
+      MatchProfiles.checkMatchProfilePresented(matchProfileName);
 
-    cy.visit(SettingsMenu.mappingProfilePath);
-    FieldMappingProfiles.createMappingProfileForMatchOnInstanceIdentifier(mappingProfile);
-    FieldMappingProfiles.checkMappingProfilePresented(mappingProfileName);
+      cy.visit(SettingsMenu.mappingProfilePath);
+      FieldMappingProfiles.createMappingProfileForMatchOnInstanceIdentifier(mappingProfile);
+      FieldMappingProfiles.checkMappingProfilePresented(mappingProfileName);
 
-    cy.visit(SettingsMenu.actionProfilePath);
-    ActionProfiles.create(actionProfile, mappingProfileName);
-    ActionProfiles.checkActionProfilePresented(actionProfileName);
+      cy.visit(SettingsMenu.actionProfilePath);
+      ActionProfiles.create(actionProfile, mappingProfileName);
+      ActionProfiles.checkActionProfilePresented(actionProfileName);
 
-    cy.visit(SettingsMenu.jobProfilePath);
-    JobProfiles.createJobProfileWithLinkingProfiles(jobProfile, actionProfileName, matchProfileName);
-    JobProfiles.checkJobProfilePresented(jobProfileName);
+      cy.visit(SettingsMenu.jobProfilePath);
+      JobProfiles.createJobProfileWithLinkingProfiles(jobProfile, actionProfileName, matchProfileName);
+      JobProfiles.checkJobProfilePresented(jobProfileName);
 
-    cy.visit(TopMenu.dataImportPath);
-    DataImport.uploadFile('marcFileForMatchOnIdentifierForUpdate.mrc', fileNameForUpdateInstance);
-    JobProfiles.searchJobProfileForImport(jobProfileName);
-    JobProfiles.runImportFile(fileNameForUpdateInstance);
-    Logs.checkStatusOfJobProfile('Completed');
-    Logs.openFileDetails(fileNameForUpdateInstance);
-    Logs.verifyInstanceStatus(0, 3, 'Updated');
-    Logs.verifyInstanceStatus(1, 3, 'Discarded');
-    Logs.clickOnHotLink(0, 3, 'Updated');
-    InstanceRecordView.verifyMarkAsSuppressedFromDiscovery();
-    InstanceRecordView.verifyInstanceStatusTerm(mappingProfile.instanceStatusUI);
-    InstanceRecordView.verifyCatalogedDate(mappingProfile.catalogedDateUI);
-    InstanceRecordView.verifyGeneralNoteContent(instanceGeneralNote);
-  });
+      cy.visit(TopMenu.dataImportPath);
+      DataImport.uploadFile('marcFileForMatchOnIdentifierForUpdate.mrc', fileNameForUpdateInstance);
+      JobProfiles.searchJobProfileForImport(jobProfileName);
+      JobProfiles.runImportFile();
+      JobProfiles.waitFileIsImported(fileNameForUpdateInstance);
+      Logs.checkStatusOfJobProfile('Completed');
+      Logs.openFileDetails(fileNameForUpdateInstance);
+      Logs.verifyInstanceStatus(0, 3, 'Updated');
+      Logs.verifyInstanceStatus(1, 3, 'Discarded');
+      Logs.clickOnHotLink(0, 3, 'Updated');
+      InstanceRecordView.verifyMarkAsSuppressedFromDiscovery();
+      InstanceRecordView.verifyInstanceStatusTerm(mappingProfile.instanceStatusUI);
+      InstanceRecordView.verifyCatalogedDate(mappingProfile.catalogedDateUI);
+      InstanceRecordView.verifyGeneralNoteContent(instanceGeneralNote);
+    });
 });
-

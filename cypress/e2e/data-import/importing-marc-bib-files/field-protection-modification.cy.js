@@ -33,6 +33,21 @@ describe('ui-data-import: MARC field protections apply to MARC modifications of 
   // unique file name to upload
   const fileName = `C350678autotestFileProtection.${Helper.getRandomBarcode()}.mrc`;
 
+  const mappingProfile = { name: mappingProfileName,
+    typeValue : NewFieldMappingProfile.folioRecordTypeValue.marcBib };
+
+  const actionProfile = {
+    typeValue: NewActionProfile.folioRecordTypeValue.marcBib,
+    name: actionProfileName,
+    action: 'Modify (MARC Bibliographic record type only)'
+  };
+
+  const jobProfile = {
+    ...NewJobProfile.defaultJobProfile,
+    profileName: jobProfileName,
+    acceptedType: NewJobProfile.acceptedDataType.marc
+  };
+
   before(() => {
     cy.createTempUser([
       permissions.inventoryAll.gui,
@@ -62,21 +77,6 @@ describe('ui-data-import: MARC field protections apply to MARC modifications of 
 
   // Test is failed. MODDATAIMP-739
   it('C350678 MARC field protections apply to MARC modifications of incoming records when they should not: Scenario 1 (folijet)', { tags: [TestTypes.smoke, DevTeams.folijet] }, () => {
-    const mappingProfile = { name: mappingProfileName,
-      typeValue : NewFieldMappingProfile.folioRecordTypeValue.marcBib };
-
-    const actionProfile = {
-      typeValue: NewActionProfile.folioRecordTypeValue.marcBib,
-      name: actionProfileName,
-      action: 'Modify (MARC Bibliographic record type only)'
-    };
-
-    const jobProfile = {
-      ...NewJobProfile.defaultJobProfile,
-      profileName: jobProfileName,
-      acceptedType: NewJobProfile.acceptedDataType.marc
-    };
-
     // create protection fields
     MarcFieldProtection.createMarcFieldProtectionViaApi({
       field: '*',
@@ -133,13 +133,15 @@ describe('ui-data-import: MARC field protections apply to MARC modifications of 
     cy.visit(TopMenu.dataImportPath);
     DataImport.uploadFile('marcFileForC350678.mrc', fileName);
     JobProfiles.searchJobProfileForImport(jobProfileName);
-    JobProfiles.runImportFile(fileName);
+    JobProfiles.runImportFile();
+    JobProfiles.waitFileIsImported(fileName);
     Logs.openFileDetails(fileName);
     [FileDetails.columnName.srsMarc,
       FileDetails.columnName.instance].forEach(columnName => {
       FileDetails.checkStatusInColumn(FileDetails.status.created, columnName);
     });
-    FileDetails.checkItemsQuantityInSummaryTable(0, '1');
+    FileDetails.checkSrsRecordQuantityInSummaryTable(0, '1');
+    FileDetails.checkInstanceQuantityInSummaryTable(0, '1');
 
     // get Instance HRID through API
     InventorySearchAndFilter.getInstanceHRID()

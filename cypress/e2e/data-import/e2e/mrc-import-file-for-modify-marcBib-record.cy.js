@@ -9,7 +9,6 @@ import MatchProfiles from '../../../support/fragments/data_import/match_profiles
 import DataImport from '../../../support/fragments/data_import/dataImport';
 import Logs from '../../../support/fragments/data_import/logs/logs';
 import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
-import ExportMarcFile from '../../../support/fragments/data-export/export-marc-file';
 import FileManager from '../../../support/utils/fileManager';
 import ExportFile from '../../../support/fragments/data-export/exportFile';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
@@ -32,6 +31,7 @@ describe('ui-data-import: Verify the possibility to modify MARC Bibliographic re
   const nameMarcFileForUpload = `C345423autotestFile.${getRandomPostfix()}.mrc`;
 
   let user = {};
+  let instanceHRID;
 
   before(() => {
     cy.createTempUser([
@@ -52,6 +52,16 @@ describe('ui-data-import: Verify the possibility to modify MARC Bibliographic re
 
   after(() => {
     DataImport.checkUploadState();
+    cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${instanceHRID}"` });
+    // delete profiles
+    JobProfiles.deleteJobProfile(jobProfileName);
+    MatchProfiles.deleteMatchProfile(matchProfileName);
+    ActionProfiles.deleteActionProfile(actionProfileName);
+    FieldMappingProfiles.deleteFieldMappingProfile(mappingProfileName);
+    // delete downloads folder and created files in fixtures
+    FileManager.deleteFolder(Cypress.config('downloadsFolder'));
+    FileManager.deleteFile(`cypress/fixtures/${nameMarcFileForUpload}`);
+    FileManager.deleteFile(`cypress/fixtures/${nameForCSVFile}`);
     Users.deleteViaApi(user.userId);
   });
 
@@ -86,7 +96,8 @@ describe('ui-data-import: Verify the possibility to modify MARC Bibliographic re
     // upload a marc file for creating of the new instance, holding and item
     DataImport.uploadFile('oneMarcBib.mrc', nameMarcFileForCreate);
     JobProfiles.searchJobProfileForImport('Default - Create instance and SRS MARC Bib');
-    JobProfiles.runImportFile(nameMarcFileForCreate);
+    JobProfiles.runImportFile();
+    JobProfiles.waitFileIsImported(nameMarcFileForCreate);
     Logs.openFileDetails(nameMarcFileForCreate);
     [FileDetails.columnName.srsMarc,
       FileDetails.columnName.instance,
@@ -97,18 +108,19 @@ describe('ui-data-import: Verify the possibility to modify MARC Bibliographic re
     // get Instance HRID through API
     InventorySearchAndFilter.getInstanceHRID()
       .then(hrId => {
+        instanceHRID = hrId[0];
         // download .csv file
         cy.visit(TopMenu.inventoryPath);
         InventorySearchAndFilter.searchInstanceByHRID(hrId[0]);
         InventorySearchAndFilter.saveUUIDs();
-        ExportMarcFile.downloadCSVFile(nameForCSVFile, 'SearchInstanceUUIDs*');
+        ExportFile.downloadCSVFile(nameForCSVFile, 'SearchInstanceUUIDs*');
         FileManager.deleteFolder(Cypress.config('downloadsFolder'));
       });
     // download exported marc file
     cy.visit(TopMenu.dataExportPath);
     ExportFile.uploadFile(nameForCSVFile);
-    ExportFile.exportWithDefaultInstancesJobProfile(nameForCSVFile);
-    ExportMarcFile.downloadExportedMarcFile(nameMarcFileForUpload);
+    ExportFile.exportWithDefaultJobProfile(nameForCSVFile);
+    ExportFile.downloadExportedMarcFile(nameMarcFileForUpload);
     FileManager.deleteFolder(Cypress.config('downloadsFolder'));
 
     // create Field mapping profile
@@ -139,7 +151,8 @@ describe('ui-data-import: Verify the possibility to modify MARC Bibliographic re
     cy.visit(TopMenu.dataImportPath);
     DataImport.uploadFile(nameMarcFileForUpload);
     JobProfiles.searchJobProfileForImport(jobProfile.profileName);
-    JobProfiles.runImportFile(nameMarcFileForUpload);
+    JobProfiles.runImportFile();
+    JobProfiles.waitFileIsImported(nameMarcFileForUpload);
     Logs.checkStatusOfJobProfile();
     Logs.checkImportFile(jobProfile.profileName);
     Logs.openFileDetails(nameMarcFileForUpload);
@@ -148,16 +161,5 @@ describe('ui-data-import: Verify the possibility to modify MARC Bibliographic re
     ].forEach(columnName => {
       FileDetails.checkStatusInColumn(FileDetails.status.updated, columnName);
     });
-
-    // delete profiles
-    JobProfiles.deleteJobProfile(jobProfileName);
-    MatchProfiles.deleteMatchProfile(matchProfileName);
-    ActionProfiles.deleteActionProfile(actionProfileName);
-    FieldMappingProfiles.deleteFieldMappingProfile(mappingProfileName);
-
-    // delete downloads folder and created files in fixtures
-    FileManager.deleteFolder(Cypress.config('downloadsFolder'));
-    FileManager.deleteFile(`cypress/fixtures/${nameMarcFileForUpload}`);
-    FileManager.deleteFile(`cypress/fixtures/${nameForCSVFile}`);
   });
 });

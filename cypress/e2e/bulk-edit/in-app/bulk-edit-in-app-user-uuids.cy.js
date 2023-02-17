@@ -28,6 +28,10 @@ describe('bulk-edit', () => {
         });
     });
 
+    beforeEach('select User', () => {
+      BulkEditSearchPane.checkUsersRadio();
+    });
+
     after('delete test data', () => {
       FileManager.deleteFile(`cypress/fixtures/${userUUIDsFileName}`);
       FileManager.deleteFile(`cypress/downloads/${matchRecordsFileName}`);
@@ -46,7 +50,7 @@ describe('bulk-edit', () => {
 
       BulkEditActions.downloadMatchedResults(matchRecordsFileName);
 
-      BulkEditActions.openStartBulkEditForm();
+      BulkEditActions.openInAppStartBulkEditFrom();
       BulkEditActions.verifyBulkEditForm();
     });
 
@@ -72,7 +76,7 @@ describe('bulk-edit', () => {
       BulkEditSearchPane.waitFileUploading();
 
       BulkEditActions.openActions();
-      BulkEditActions.openStartBulkEditForm();
+      BulkEditActions.openInAppStartBulkEditFrom();
       BulkEditActions.fillPatronGroup('graduate (Graduate Student)');
       BulkEditActions.confirmChanges();
       BulkEditActions.commitChanges();

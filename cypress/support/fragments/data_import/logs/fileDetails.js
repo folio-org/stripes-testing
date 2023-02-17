@@ -10,7 +10,6 @@ const invoiceNumberFromEdifactFile = '94999';
 
 const resultsList = MultiColumnList({ id:'search-results-list' });
 const jobSummaryTable = MultiColumnList({ id: 'job-summary-table' });
-const listRow = MultiColumnListRow({ indexRow: 'row-0' });
 
 const columnName = {
   srsMarc: resultsList.find(MultiColumnListHeader({ id:'list-column-srsmarcstatus' })),
@@ -56,9 +55,9 @@ const checkItemQuantityInSummaryTable = (quantity, row = 0) => {
     .exists());
 };
 
-const checkCreatedInvoiceISummaryTable = (quantity) => {
+const checkCreatedInvoiceISummaryTable = (quantity, row = 0) => {
   cy.expect(jobSummaryTable
-    .find(listRow)
+    .find(MultiColumnListRow({ indexRow: `row-${row}` }))
     .find(MultiColumnListCell({ columnIndex: 7, content: quantity }))
     .exists());
 };
@@ -72,9 +71,10 @@ const checkItemsQuantityInSummaryTable = (rowNumber, quantity) => {
   }
 };
 
-const checkStatusInColumn = (specialStatus, specialColumnName) => {
+const checkStatusInColumn = (specialStatus, specialColumnName, rowIndex = 0) => {
   cy.then(() => specialColumnName.index())
-    .then((index) => cy.expect(resultsList.find(MultiColumnListCell({ columnIndex: index }))
+    .then((index) => cy.expect(resultsList.find(MultiColumnListRow({ index: rowIndex }))
+      .find(MultiColumnListCell({ columnIndex: index }))
       .has({ content: specialStatus })));
 };
 
@@ -112,5 +112,29 @@ export default {
     cy.do(resultsList.find(MultiColumnListCell({ row: rowNumber, columnIndex: 4 }))
       .find(Link(itemStatus))
       .click());
+  },
+
+  openItemInInventoryByTitle:(title, itemStatus = 'Updated') => {
+    cy.do(MultiColumnListCell({ content: title }).perform(
+      element => {
+        const rowNumber = element.parentElement.parentElement.getAttribute('data-row-index');
+
+        cy.do(resultsList.find(MultiColumnListCell({ row: Number(rowNumber.slice(4)), columnIndex: 5 }))
+          .find(Link(itemStatus))
+          .click());
+      }
+    ));
+  },
+
+  checkStatusByTitle:(title, itemStatus) => {
+    cy.do(MultiColumnListCell({ content: title }).perform(
+      element => {
+        const rowNumber = element.parentElement.parentElement.getAttribute('data-row-index');
+
+        cy.expect(MultiColumnListRow({ indexRow: rowNumber })
+          .find(MultiColumnListCell({ columnIndex: 5 }))
+          .has({ content: itemStatus }));
+      }
+    ));
   }
 };

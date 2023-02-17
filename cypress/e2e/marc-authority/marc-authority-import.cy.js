@@ -9,12 +9,23 @@ import MarcAuthority from '../../support/fragments/marcAuthority/marcAuthority';
 import Users from '../../support/fragments/users/users';
 import JobProfiles from '../../support/fragments/data_import/job_profiles/jobProfiles';
 import Logs from '../../support/fragments/data_import/logs/logs';
+import MarcAuthorities from '../../support/fragments/marcAuthority/marcAuthorities';
+import MarcAuthorityBrowse from '../../support/fragments/marcAuthority/MarcAuthorityBrowse';
 
-describe('MARC Authority management', () => {
-  const testData = {};
+describe('Data Import - Importing MARC Authority files', () => {
+  const testData = {
+    searchOptionPersonalName: 'Personal name',
+    searchOptionNameTitle: 'Name-title',
+    recordA: 'Angelou, Maya.',
+    recordB: 'Angelou, Maya. And still I rise',
+    recordBRef: 'Angelou, Maya. Still I rise',
+    authorized: 'Authorized',
+    reference: 'Reference',
+    recordWithoutTitle: 'Twain, Mark, 1835-1910',
+  };
   const jobProfileToRun = 'Default - Create SRS MARC Authority';
   let fileName;
-  let createdAuthorityIDs = [];
+  const createdAuthorityIDs = [];
 
   before('Creating data', () => {
     cy.createTempUser([
@@ -49,7 +60,8 @@ describe('MARC Authority management', () => {
     DataImport.uploadFile('marcFileForC360520.mrc', fileName);
     JobProfiles.waitLoadingList();
     JobProfiles.searchJobProfileForImport(jobProfileToRun);
-    JobProfiles.runImportFile(fileName);
+    JobProfiles.runImportFile();
+    JobProfiles.waitFileIsImported(fileName);
     Logs.checkStatusOfJobProfile('Completed');
     Logs.openFileDetails(fileName);
     for (let i = 0; i < 1; i++) {
@@ -65,7 +77,8 @@ describe('MARC Authority management', () => {
     DataImport.uploadFile('corporate_name(prefix_in_010Sa)sc_02.mrc', fileName);
     JobProfiles.waitLoadingList();
     JobProfiles.searchJobProfileForImport(jobProfileToRun);
-    JobProfiles.runImportFile(fileName);
+    JobProfiles.runImportFile();
+    JobProfiles.waitFileIsImported(fileName);
     Logs.checkStatusOfJobProfile('Completed');
     Logs.openFileDetails(fileName);
     for (let i = 0; i < 3; i++) {
@@ -81,7 +94,8 @@ describe('MARC Authority management', () => {
     DataImport.uploadFile('D_genre(prefixes_in_001_010Sa)sc_03.mrc', fileName);
     JobProfiles.waitLoadingList();
     JobProfiles.searchJobProfileForImport(jobProfileToRun);
-    JobProfiles.runImportFile(fileName);
+    JobProfiles.runImportFile();
+    JobProfiles.waitFileIsImported(fileName);
     Logs.checkStatusOfJobProfile('Completed');
     Logs.openFileDetails(fileName);
     for (let i = 0; i < 2; i++) {
@@ -91,5 +105,51 @@ describe('MARC Authority management', () => {
     }
     Logs.goToTitleLink('Case Reports');
     Logs.checkAuthorityLogJSON(['"sourceFileId":', '"6ddf21a6-bc2f-4cb0-ad96-473e1f82da23"', '"naturalId":', '"D002363"']);
+  });
+
+  it('C353997 Browse for records which have subfield "t" value (personalNameTitle and sftPersonalNameTitle) (spitfire)', { tags: [TestTypes.criticalPath, DevTeams.spitfire] }, () => {
+    DataImport.uploadFile('marcFileForC353997.mrc', fileName);
+    JobProfiles.waitLoadingList();
+    JobProfiles.searchJobProfileForImport(jobProfileToRun);
+    JobProfiles.runImportFile();
+    JobProfiles.waitFileIsImported(fileName);
+    Logs.checkStatusOfJobProfile('Completed');
+    Logs.openFileDetails(fileName);
+    for (let i = 0; i < 1; i++) {
+      Logs.getCreatedItemsID(i).then(link => {
+        createdAuthorityIDs.push(link.split('/')[5]);
+      });
+    }
+    cy.visit(TopMenu.marcAuthorities);
+    MarcAuthorities.switchToBrowse();
+    MarcAuthorityBrowse.searchBy(testData.searchOptionPersonalName, testData.recordA);
+    MarcAuthorityBrowse.checkResultWithNoValue(testData.recordA);
+    MarcAuthorityBrowse.searchBy(testData.searchOptionPersonalName, testData.recordB);
+    MarcAuthorityBrowse.checkResultWithNoValue(testData.recordB);
+    MarcAuthorityBrowse.searchByChangingParameter(testData.searchOptionNameTitle, testData.recordB);
+    MarcAuthorityBrowse.checkResultWithValueB(testData.authorized, testData.recordB, testData.reference, testData.recordBRef);
+    MarcAuthorityBrowse.searchByChangingValue(testData.searchOptionNameTitle, testData.recordA);
+    MarcAuthorityBrowse.checkResultWithValueA(testData.recordA, testData.authorized, testData.recordB, testData.reference, testData.recordBRef);
+  });
+
+  it('C356766 Browse for record without subfield "t" (personalNameTitle and sftPersonalName) (spitfire)', { tags: [TestTypes.criticalPath, DevTeams.spitfire] }, () => {
+    DataImport.uploadFile('marcFileForC356766.mrc', fileName);
+    JobProfiles.waitLoadingList();
+    JobProfiles.searchJobProfileForImport(jobProfileToRun);
+    JobProfiles.runImportFile();
+    JobProfiles.waitFileIsImported(fileName);
+    Logs.checkStatusOfJobProfile('Completed');
+    Logs.openFileDetails(fileName);
+    for (let i = 0; i < 1; i++) {
+      Logs.getCreatedItemsID(i).then(link => {
+        createdAuthorityIDs.push(link.split('/')[5]);
+      });
+    }
+    cy.visit(TopMenu.marcAuthorities);
+    MarcAuthorities.switchToBrowse();
+    MarcAuthorityBrowse.searchBy(testData.searchOptionPersonalName, testData.recordWithoutTitle);
+    MarcAuthorityBrowse.checkResultWithValue(testData.authorized, testData.recordWithoutTitle);
+    MarcAuthorityBrowse.searchByChangingParameter(testData.searchOptionNameTitle, testData.recordWithoutTitle);
+    MarcAuthorityBrowse.checkResultWithNoValue(testData.recordWithoutTitle);
   });
 });

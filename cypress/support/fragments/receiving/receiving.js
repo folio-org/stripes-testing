@@ -10,7 +10,6 @@ import {
   Pane,
   Link,
   Section,
-  SelectionOption
 } from '../../../../interactors';
 import InteractorsTools from '../../utils/interactorsTools';
 
@@ -36,10 +35,7 @@ const filterOpenReceiving = () => {
 export default {
   searchByParameter,
   filterOpenReceiving,
-
-  selectFromResultsList: (instanceName) => {
-    cy.do(Link(instanceName).click());
-  },
+  selectFromResultsList: (instanceName) => cy.do(Link(instanceName).click()),
 
   receivePiece: (rowNumber, caption, barcode) => {
     const recievingFieldName = `receivedItems[${rowNumber}]`;
@@ -55,7 +51,7 @@ export default {
     InteractorsTools.checkCalloutMessage(receivingSuccessful);
   },
 
-  receiveAndChangeLocation: (rowNumber, caption) => {
+  receivePieceWithoutBarcode: (rowNumber, caption) => {
     const recievingFieldName = `receivedItems[${rowNumber}]`;
     cy.expect(Accordion({ id: expectedPiecesAccordionId }).exists());
     cy.do([
@@ -63,11 +59,21 @@ export default {
       receiveButton.click(),
       Checkbox({ name: `${recievingFieldName}.checked` }).clickInput(),
       TextField({ name: `${recievingFieldName}.caption` }).fillIn(caption),
-      MultiColumnListRow({indexRow: `row-${rowNumber}`}).find(Button('Assign a different location')).click(),
-      Select({ name: 'institutionId' }).choose('Københavns Universitet'),
-      Select({ name: 'campusId' }).choose('City Campus'),
-      Button({id: 'locationId' }).click(),
-      SelectionOption('Main Library (KU/CC/DI/M) ').click(),
+      receiveButton.click(),
+    ]);
+    InteractorsTools.checkCalloutMessage(receivingSuccessful);
+  },
+
+  receiveAndChangeLocation: (rowNumber, caption, institutionName) => {
+    const recievingFieldName = `receivedItems[${rowNumber}]`;
+    cy.expect(Accordion({ id: expectedPiecesAccordionId }).exists());
+    cy.do([
+      Accordion({ id: expectedPiecesAccordionId }).find(actionsButton).click(),
+      receiveButton.click(),
+      Checkbox({ name: `${recievingFieldName}.checked` }).clickInput(),
+      TextField({ name: `${recievingFieldName}.caption` }).fillIn(caption),
+      MultiColumnListRow({ indexRow: `row-${rowNumber}` }).find(Button('Assign a different location')).click(),
+      Select({ name: 'institutionId'}).choose(institutionName),
       receiveButton.click(),
     ]);
     // Need to wait, while data will be loaded
@@ -79,16 +85,17 @@ export default {
     cy.expect(Accordion({ id: receivedPiecesAccordionId })
       .find(MultiColumnListRow({ index: rowNumber }))
       .find(MultiColumnListCell({ content: caption })).exists());
-},
+  },
 
   checkReceivedPiece: (rowNumber, caption, barcode) => {
     // Need to wait, while data will be loaded before start checking
+    // eslint-disable-next-line cypress/no-unnecessary-waiting
     cy.wait(2000);
-      cy.expect([
-        Accordion({ id: receivedPiecesAccordionId })
+    cy.expect([
+      Accordion({ id: receivedPiecesAccordionId })
         .find(MultiColumnListRow({ index: rowNumber }))
         .find(MultiColumnListCell({ content: barcode })).exists(),
-        Accordion({ id: receivedPiecesAccordionId })
+      Accordion({ id: receivedPiecesAccordionId })
         .find(MultiColumnListRow({ index: rowNumber }))
         .find(MultiColumnListCell({ content: caption })).exists()
     ]);
@@ -111,9 +118,9 @@ export default {
   checkUnreceivedPiece: (rowNumber = 0, caption) => {
     // Need to wait, while data will be loaded before start checking
     cy.wait(2000);
-      cy.expect(Accordion({ id: expectedPiecesAccordionId })
-        .find(MultiColumnListRow({ index: rowNumber }))
-        .find(MultiColumnListCell({ content: caption })).exists());
+    cy.expect(Accordion({ id: expectedPiecesAccordionId })
+      .find(MultiColumnListRow({ index: rowNumber }))
+      .find(MultiColumnListCell({ content: caption })).exists());
   },
 
   checkIsPiecesCreated:(title) => {
@@ -134,6 +141,5 @@ export default {
 
   selectPOLInReceive:(POLName) => {
     cy.do(Section({ id: 'receiving-results-pane' }).find(Link(POLName)).click());
-  },
-
+  }
 };

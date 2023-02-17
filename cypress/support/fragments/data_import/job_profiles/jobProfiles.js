@@ -1,3 +1,4 @@
+/* eslint-disable cypress/no-unnecessary-waiting */
 import {
   Button,
   TextField,
@@ -38,11 +39,7 @@ const waitLoadingList = () => {
   cy.get('[id="job-profiles-list"]', getLongDelay())
     .should('be.visible');
 };
-
-const waitLoading = (selector) => {
-  cy.expect(selector.exists());
-};
-
+const waitLoading = (selector) => cy.expect(selector.exists());
 const deleteJobProfile = (profileName) => {
   // get all job profiles
   cy
@@ -82,7 +79,7 @@ const createJobProfile = (jobProfile) => {
 const searchJobProfileForImport = (jobProfileTitle) => {
   // TODO: clarify with developers what should be waited
   cy.wait(1500);
-  cy.do(Pane({ id:'pane-results' }).find(TextField({ id:'input-search-job-profiles-field' })).fillIn(jobProfileTitle));
+  cy.do(paneResults.find(TextField({ id:'input-search-job-profiles-field' })).fillIn(jobProfileTitle));
   cy.do(searchButton.click());
 };
 
@@ -116,13 +113,16 @@ export default {
       .click());
   },
 
-  runImportFile:(fileName) => {
+  runImportFile:() => {
     waitLoading(waitSelector);
     cy.do([
       actionsButton.click(),
       runButton.click(),
       Modal('Are you sure you want to run this job?').find(runButton).click(),
     ]);
+  },
+
+  waitFileIsImported:(fileName) => {
     // wait until uploaded file is displayed in the list
     cy.expect(MultiColumnList({ id:'job-logs-list' }).find(Button(fileName)).exists());
   },
@@ -158,5 +158,7 @@ export default {
   checkCalloutMessage: (profileName) => {
     cy.expect(Callout({ textContent: including(`The job profile "${profileName}" was successfully updated`) })
       .exists());
-  }
+  },
+
+  verifyActionMenuAbsent:() => cy.expect(paneResults.find(actionsButton).absent())
 };

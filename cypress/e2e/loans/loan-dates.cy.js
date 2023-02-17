@@ -1,5 +1,6 @@
 import TopMenu from '../../support/fragments/topMenu';
 import TestTypes from '../../support/dictionary/testTypes';
+import DevTeams from '../../support/dictionary/devTeams';
 import getRandomPostfix from '../../support/utils/stringTools';
 import permissions from '../../support/dictionary/permissions';
 import UsersSearchPane from '../../support/fragments/users/usersSearchPane';
@@ -13,7 +14,6 @@ import Users from '../../support/fragments/users/users';
 import CheckinActions from '../../support/fragments/check-in-actions/checkInActions';
 import InventoryHoldings from '../../support/fragments/inventory/holdings/inventoryHoldings';
 import UserEdit from '../../support/fragments/users/userEdit';
-import Checkout from '../../support/fragments/checkout/checkout';
 import MultipieceCheckOut from '../../support/fragments/checkout/modals/multipieceCheckOut';
 import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
 import InventoryInstance from '../../support/fragments/inventory/inventoryInstance';
@@ -81,7 +81,8 @@ describe('loan dates', () => {
             });
           })
           .then(() => {
-            cy.login(userProperties.username, userProperties.password, { path: TopMenu.checkOutPath, waiter: Checkout.waitLoading });
+            cy.login(userProperties.username, userProperties.password);
+            cy.visit(TopMenu.checkOutPath);
             CheckOutActions.checkOutItemUser(Cypress.env('users')[0].barcode, item.barcode);
             MultipieceCheckOut.confirmMultipleCheckOut(item.barcode);
             CheckOutActions.endCheckOutSession();
@@ -104,14 +105,14 @@ describe('loan dates', () => {
     });
     cy.getInstance({ limit: 1, expandAll: true, query: `"items.barcode"=="${item.barcode}"` })
       .then((instance) => {
-        cy.deleteItem(instance.items[0].id);
+        cy.deleteItemViaApi(instance.items[0].id);
         cy.deleteHoldingRecordViaApi(instance.holdings[0].id);
         InventoryInstance.deleteInstanceViaApi(instance.id);
       });
     Users.deleteViaApi(checkOutUser.userId);
   });
 
-  it('C566 Loan: Change due date warnings and alerts (prokopovych)', { tags: [TestTypes.smoke] }, () => {
+  it('C566 Loan: Change due date warnings and alerts (prokopovych)', { tags: [TestTypes.smoke, DevTeams.prokopovych] }, () => {
     cy.visit(TopMenu.usersPath);
     // show open loans
     UsersSearchPane.searchByKeywords(checkOutUser.username);
@@ -140,6 +141,7 @@ describe('loan dates', () => {
       itemTitle: item.title,
       requesterBarcode: checkInUser.barcode,
       pickupServicePoint: 'Circ Desk 1',
+      requestType: 'Recall',
     });
 
     // go to changing due date and verify warning
@@ -150,7 +152,6 @@ describe('loan dates', () => {
     UsersCard.showOpenedLoans();
     LoansPage.openChangeDueDateForm();
     ChangeDueDateForm.verifyRequestsCount('1');
-    // Bug UIU-2586
-    // ChangeDueDateForm.verifyWarning('Item has been recalled');
+    ChangeDueDateForm.verifyWarning('Item has been recalled');
   });
 });

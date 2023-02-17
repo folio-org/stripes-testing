@@ -11,7 +11,7 @@ import Users from '../../../support/fragments/users/users';
 let user;
 const userUUIDsFileName = `userUUIDs_${getRandomPostfix()}.csv`;
 const invalidUserUUID = getRandomPostfix();
-const matchRecordsFileName = `matchedRecords_${getRandomPostfix()}.csv`;
+const matchRecordsFileName = '*Matched-Records*';
 const importFileName = `bulkEditImport_${getRandomPostfix()}.csv`;
 
 describe('bulk-edit', () => {
@@ -31,8 +31,12 @@ describe('bulk-edit', () => {
     after('delete test data', () => {
       FileManager.deleteFile(`cypress/fixtures/${userUUIDsFileName}`);
       FileManager.deleteFile(`cypress/fixtures/${importFileName}`);
-      FileManager.deleteFile(`cypress/downloads/${matchRecordsFileName}`);
+      FileManager.deleteFolder(Cypress.config('downloadsFolder'));
       Users.deleteViaApi(user.userId);
+    });
+
+    afterEach('reload bulk-edit page', () => {
+      cy.visit(TopMenu.bulkEditPath);
     });
 
 
@@ -53,7 +57,6 @@ describe('bulk-edit', () => {
       BulkEditSearchPane.verifyResultColumTitles('Email');
 
       BulkEditSearchPane.verifyErrorLabel(userUUIDsFileName, 1, 1);
-      BulkEditActions.newBulkEdit();
     });
 
     it('C353233 Verify number of updated records (firebird)', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
@@ -64,8 +67,9 @@ describe('bulk-edit', () => {
       BulkEditSearchPane.waitFileUploading();
 
       // Prepare file for bulk edit
+      const newName = `testName_${getRandomPostfix()}`;
       BulkEditActions.downloadMatchedResults(matchRecordsFileName);
-      BulkEditActions.prepareBulkEditFileWithDuplicates(matchRecordsFileName, importFileName, user.username, 'test');
+      BulkEditActions.prepareValidBulkEditFile(matchRecordsFileName, importFileName, 'testPermFirst', newName);
 
       // Upload bulk edit file
       BulkEditActions.openStartBulkEditForm();
@@ -75,8 +79,7 @@ describe('bulk-edit', () => {
       BulkEditActions.commitChanges();
 
       // Verify changes
-      BulkEditSearchPane.verifyChangedResults(user.username);
-      BulkEditActions.newBulkEdit();
+      BulkEditSearchPane.verifyChangedResults(newName);
     });
 
     it('C357034 Verify elements of the bulk edit app -- CSV app (firebird)', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
@@ -108,8 +111,9 @@ describe('bulk-edit', () => {
       BulkEditSearchPane.verifyErrorLabel(userUUIDsFileName, 1, 1);
       BulkEditSearchPane.verifyPaneRecordsCount(1);
 
+      const newName = `testName_${getRandomPostfix()}`;
       BulkEditActions.downloadMatchedResults(matchRecordsFileName);
-      BulkEditActions.prepareBulkEditFileWithDuplicates(matchRecordsFileName, importFileName, user.username, 'test');
+      BulkEditActions.prepareValidBulkEditFile(matchRecordsFileName, importFileName, 'testPermFirst', newName);
 
       BulkEditActions.openStartBulkEditForm();
       BulkEditSearchPane.uploadFile(importFileName);
@@ -117,8 +121,7 @@ describe('bulk-edit', () => {
       BulkEditActions.clickNext();
       BulkEditActions.commitChanges();
 
-      BulkEditSearchPane.verifyChangedResults(user.username);
-      BulkEditActions.newBulkEdit();
+      BulkEditSearchPane.verifyChangedResults(newName);
     });
 
     it('C353956 Verify uploading file with User UUIDs (firebird)', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
@@ -127,17 +130,18 @@ describe('bulk-edit', () => {
       BulkEditSearchPane.uploadFile(userUUIDsFileName);
       BulkEditSearchPane.waitFileUploading();
 
+      const newName = `testName_${getRandomPostfix()}`;
       BulkEditActions.downloadMatchedResults(matchRecordsFileName);
-      BulkEditActions.prepareBulkEditFileWithDuplicates(matchRecordsFileName, importFileName, user.username, 'test');
+      BulkEditActions.prepareValidBulkEditFile(matchRecordsFileName, importFileName, 'testPermFirst', newName);
 
+      BulkEditActions.openActions();
       BulkEditActions.openStartBulkEditForm();
       BulkEditSearchPane.uploadFile(importFileName);
       BulkEditSearchPane.waitFileUploading();
       BulkEditActions.clickNext();
       BulkEditActions.commitChanges();
 
-      BulkEditSearchPane.verifyChangedResults(user.username);
-      BulkEditActions.newBulkEdit();
+      BulkEditSearchPane.verifyChangedResults(newName);
     });
   });
 });

@@ -14,7 +14,8 @@ let user;
 let hrid;
 const itemBarcode = getRandomPostfix();
 const validHoldingUUIDsFileName = `validHoldingUUIDs_${getRandomPostfix()}.csv`;
-const resultFileName = `matchedRecords_${getRandomPostfix()}.csv`;
+const validHoldingHRIDsFileName = `validHoldingHRIDs_${getRandomPostfix()}.csv`;
+const resultFileName = '*Matched-Records*';
 const item = {
   instanceName: `testBulkEdit_${getRandomPostfix()}`,
   itemBarcode1: itemBarcode,
@@ -44,6 +45,7 @@ describe('bulk-edit', () => {
             .then(holdings => {
               hrid = holdings[0].hrid;
               FileManager.createFile(`cypress/fixtures/${validHoldingUUIDsFileName}`, holdings[0].id);
+              FileManager.createFile(`cypress/fixtures/${validHoldingHRIDsFileName}`, hrid);
             });
         });
     });
@@ -57,11 +59,12 @@ describe('bulk-edit', () => {
       Users.deleteViaApi(user.userId);
       InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(item.itemBarcode1);
       FileManager.deleteFile(`cypress/fixtures/${validHoldingUUIDsFileName}`);
-      FileManager.deleteFile(`cypress/downloads/${resultFileName}`);
+      FileManager.deleteFile(`cypress/fixtures/${validHoldingHRIDsFileName}`);
+      FileManager.deleteFolder(Cypress.config('downloadsFolder'));
     });
 
     afterEach('open new bulk edit', () => {
-      BulkEditActions.newBulkEdit();
+      cy.visit(TopMenu.bulkEditPath);
     });
 
     it('C357052 Verify Downloaded matched records if identifiers return more than one item (firebird)', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
@@ -78,10 +81,10 @@ describe('bulk-edit', () => {
       BulkEditSearchPane.waitFileUploading();
       BulkEditSearchPane.verifyMatchedResults(hrid);
 
-      const location = 'Annex';
+      const location = 'Online';
 
       BulkEditActions.openActions();
-      BulkEditActions.openStartBulkEditForm();
+      BulkEditActions.openInAppStartBulkEditFrom();
       BulkEditActions.replaceTemporaryLocation(location, 'holdings');
       BulkEditActions.confirmChanges();
       BulkEditActions.commitChanges();
@@ -95,8 +98,8 @@ describe('bulk-edit', () => {
       BulkEditSearchPane.waitFileUploading();
       [
         'Holdings HRID',
-        'Permanent Location',
-        'Temporary Location',
+        'Permanent location',
+        'Temporary location',
         'Call number prefix',
         'Call number',
         'Call number suffix',
@@ -108,6 +111,40 @@ describe('bulk-edit', () => {
       BulkEditSearchPane.verifyHoldingActionShowColumns();
       BulkEditSearchPane.changeShowColumnCheckbox('Call number type');
       BulkEditSearchPane.verifyResultColumTitles('Call number type');
+    });
+
+    it('C360120 Verify that User can trigger bulk of holdings with file containing Holdings identifiers (firebird)', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
+      BulkEditSearchPane.selectRecordIdentifier('Holdings HRIDs');
+
+      BulkEditSearchPane.uploadFile(validHoldingHRIDsFileName);
+      BulkEditSearchPane.waitFileUploading();
+      BulkEditSearchPane.verifyMatchedResults(hrid);
+
+      const tempLocation = 'Annex';
+      const permLocation = 'Main Library';
+
+      BulkEditActions.openActions();
+      BulkEditActions.openInAppStartBulkEditFrom();
+
+      BulkEditActions.replaceTemporaryLocation(tempLocation, 'holdings');
+      BulkEditActions.addNewBulkEditFilterString();
+      BulkEditActions.replaceSecondPermanentLocation(permLocation, 'holdings');
+
+      BulkEditActions.confirmChanges();
+      BulkEditActions.clickKeepEditingBtn();
+
+      BulkEditActions.confirmChanges();
+      BulkEditActions.clickX();
+
+      BulkEditActions.confirmChanges();
+      BulkEditActions.verifyAreYouSureForm(1, hrid);
+
+      BulkEditActions.commitChanges();
+      BulkEditSearchPane.waitFileUploading();
+
+      BulkEditSearchPane.verifyChangedResults(tempLocation);
+      BulkEditSearchPane.verifyChangedResults(permLocation);
+      BulkEditActions.verifySuccessBanner(1);
     });
   });
 });

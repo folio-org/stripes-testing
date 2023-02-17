@@ -1,12 +1,11 @@
+import { HTML, including, Link } from '@interactors/html';
 import {
   Button,
   MultiColumnListCell,
   Accordion,
   Selection,
   SelectionList,
-  Link,
   MultiColumnList,
-  HTML,
   MultiColumnListRow,
   Checkbox
 } from '../../../../../interactors';
@@ -75,9 +74,10 @@ export default {
       cy.expect(HTML(property).exists());
     });
   },
-  
-  getCreatedItemsID: (rowIndex = 0) => cy.then(() =>
-    MultiColumnList({ id: 'search-results-list' })
-      .find(MultiColumnListRow({ indexRow: `row-${rowIndex}` }))
-      .find(Link('Created')).href()),
+
+  getCreatedItemsID: (rowIndex = 0) => cy.then(() => MultiColumnList({ id: 'search-results-list' })
+    .find(MultiColumnListRow({ indexRow: `row-${rowIndex}` }))
+    .find(Link('Created')).href()),
+
+  checkFileIsRunning:(fileName) => cy.expect(Accordion('Running').find(HTML(including(fileName))).exists())
 };

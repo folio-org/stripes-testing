@@ -1,3 +1,4 @@
+/* eslint-disable cypress/no-unnecessary-waiting */
 import getRandomPostfix from '../../../support/utils/stringTools';
 import permissions from '../../../support/dictionary/permissions';
 import DataImport from '../../../support/fragments/data_import/dataImport';
@@ -20,6 +21,7 @@ describe('ui-data-import: A user can filter and delete import logs from the "Vie
   completedDate.setDate(completedDate.getDate() + 1);
   let firstUser;
   let secondUser;
+  const jobProfileId = '6eefa4c6-bbf7-4845-ad82-de7fc5abd0e3';
 
   before(() => {
     cy.createTempUser([
@@ -28,22 +30,18 @@ describe('ui-data-import: A user can filter and delete import logs from the "Vie
     ])
       .then(userProperties => {
         firstUser = userProperties;
+
+        // Log list should contain at least 30-35 import jobs, run by different users, and using different import profiles
+        const fileName = 'oneMarcBib.mrc';
+        for (let i = 0; i < 25; i++) {
+          DataImport.uploadFileViaApi(fileName);
+        }
+
         cy.login(userProperties.username, userProperties.password, {
           path: TopMenu.dataImportPath,
           waiter: DataImport.waitLoading
         });
-        // TODO rewrite upload file by API
-        // Log list should contain at least 30-35 import jobs, run by different users, and using different import profiles
-        for (let i = 0; i < 17; i++) {
-          const nameMarcFileForCreate = `C358136autotestFile.${getRandomPostfix()}.mrc`;
 
-          DataImport.uploadFile('oneMarcBib.mrc', nameMarcFileForCreate);
-          // need to wait untill file will be uploaded in loop
-          cy.wait(8000);
-          JobProfiles.searchJobProfileForImport('Default - Create instance and SRS MARC Bib');
-          JobProfiles.runImportFile(nameMarcFileForCreate);
-          Logs.checkStatusOfJobProfile('Completed');
-        }
         cy.logout();
       });
 
@@ -58,14 +56,15 @@ describe('ui-data-import: A user can filter and delete import logs from the "Vie
           waiter: DataImport.waitLoading
         });
         // Log list should contain at least 30-35 import jobs
-        for (let i = 0; i < 12; i++) {
+        for (let i = 0; i < 8; i++) {
           const nameMarcFileForCreate = `C358136autotestFile.${getRandomPostfix()}.mrc`;
 
           DataImport.uploadFile('oneMarcAuthority.mrc', nameMarcFileForCreate);
-          // need to wait untill file will be uploaded in loop
+          // need to wait until file will be uploaded in loop
           cy.wait(8000);
           JobProfiles.searchJobProfileForImport('Default - Create SRS MARC Authority');
-          JobProfiles.runImportFile(nameMarcFileForCreate);
+          JobProfiles.runImportFile();
+          JobProfiles.waitFileIsImported(nameMarcFileForCreate);
           Logs.checkStatusOfJobProfile('Completed');
         }
       });
@@ -74,11 +73,10 @@ describe('ui-data-import: A user can filter and delete import logs from the "Vie
   after(() => {
     Users.deleteViaApi(firstUser.userId);
     Users.deleteViaApi(secondUser.userId);
-    // TODO delete all created instances and holdings
+    // TODO delete all created instances
   });
 
   it('C358136 A user can filter and delete import logs from the "View all" page (folijet)', { tags: [TestTypes.criticalPath, DevTeams.folijet] }, () => {
-    cy.visit(TopMenu.dataImportPath);
     LogsViewAll.openViewAll();
     LogsViewAll.viewAllIsOpened();
     LogsViewAll.filterJobsByJobProfile('Default - Create SRS MARC Authority');
@@ -86,7 +84,7 @@ describe('ui-data-import: A user can filter and delete import logs from the "Vie
 
     const formattedEnd = DateTools.getFormattedDate({ date: completedDate });
 
-    LogsViewAll.checkByDate({ from: formattedStart, end: formattedEnd })
+    LogsViewAll.checkByDateAndJobProfile({ from: formattedStart, end: formattedEnd }, jobProfileId)
       .then((count) => {
         LogsViewAll.selectAllLogs();
         LogsViewAll.checkIsLogsSelected(count);
@@ -96,7 +94,7 @@ describe('ui-data-import: A user can filter and delete import logs from the "Vie
 
         const countOfLogsForDelete = (count - 1);
         DeleteDataImportLogsModal.confirmDelete(countOfLogsForDelete);
-        LogsViewAll.verifyMessageOfDeteted(countOfLogsForDelete);
+        LogsViewAll.verifyMessageOfDeleted(countOfLogsForDelete);
         LogsViewAll.modalIsAbsent();
       });
   });

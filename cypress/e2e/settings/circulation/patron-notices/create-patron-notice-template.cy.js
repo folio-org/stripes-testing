@@ -12,8 +12,8 @@ describe('ui-circulation-settings: create patron notice template', () => {
   it('C199656 Create notice template (vega)', { tags: [TestType.smoke, devTeams.vega] }, () => {
     NewNoticePolicyTemplate.startAdding();
     NewNoticePolicyTemplate.checkInitialState();
+    NewNoticePolicyTemplate.addToken('item.title');
     NewNoticePolicyTemplate.create(patronNoticeTemplate);
-    NewNoticePolicyTemplate.saveAndClose();
     NewNoticePolicyTemplate.checkAfterSaving(patronNoticeTemplate);
     NewNoticePolicyTemplate.checkTemplateActions(patronNoticeTemplate);
     NewNoticePolicyTemplate.delete();

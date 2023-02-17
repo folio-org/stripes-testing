@@ -17,7 +17,7 @@ import NewActionProfile from '../../../support/fragments/data_import/action_prof
 import ActionProfiles from '../../../support/fragments/data_import/action_profiles/actionProfiles';
 import NewJobProfile from '../../../support/fragments/data_import/job_profiles/newJobProfile';
 import InventoryViewSource from '../../../support/fragments/inventory/inventoryViewSource';
-import ExportMarcFile from '../../../support/fragments/data-export/export-marc-file';
+import ExportFile from '../../../support/fragments/data-export/exportFile';
 import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
 import FileManager from '../../../support/utils/fileManager';
 
@@ -82,7 +82,8 @@ describe('ui-data-import: Test 001/003/035 handling for New and Updated SRS reco
         cy.visit(TopMenu.dataImportPath);
         DataImport.uploadFile('oneMarcBib.mrc', fileName);
         JobProfiles.searchJobProfileForImport('Default - Create instance and SRS MARC Bib');
-        JobProfiles.runImportFile(fileName);
+        JobProfiles.runImportFile();
+        JobProfiles.waitFileIsImported(fileName);
         Logs.openFileDetails(fileName);
 
         // get Instance HRID through API
@@ -117,7 +118,8 @@ describe('ui-data-import: Test 001/003/035 handling for New and Updated SRS reco
     cy.visit(TopMenu.dataImportPath);
     DataImport.uploadFile('marcFilrForC17039.mrc', nameMarcFileForCreate);
     JobProfiles.searchJobProfileForImport('Default - Create instance and SRS MARC Bib');
-    JobProfiles.runImportFile(nameMarcFileForCreate);
+    JobProfiles.runImportFile();
+    JobProfiles.waitFileIsImported(nameMarcFileForCreate);
     Logs.checkStatusOfJobProfile('Completed');
     Logs.openFileDetails(nameMarcFileForCreate);
     [FileDetails.columnName.srsMarc,
@@ -182,7 +184,8 @@ describe('ui-data-import: Test 001/003/035 handling for New and Updated SRS reco
         cy.visit(TopMenu.dataImportPath);
         DataImport.uploadFile(editedMarcFileName, fileNameAfterUpload);
         JobProfiles.searchJobProfileForImport(jobProfile.profileName);
-        JobProfiles.runImportFile(fileNameAfterUpload);
+        JobProfiles.runImportFile();
+        JobProfiles.waitFileIsImported(fileNameAfterUpload);
         Logs.checkStatusOfJobProfile('Completed');
         Logs.openFileDetails(fileNameAfterUpload);
         FileDetails.checkStatusInColumn(FileDetails.status.updated, FileDetails.columnName.srsMarc);
@@ -209,16 +212,17 @@ describe('ui-data-import: Test 001/003/035 handling for New and Updated SRS reco
 
     // download exported marc file
     cy.visit(TopMenu.dataExportPath);
-    ExportMarcFile.getExportedFileNameViaApi()
+    ExportFile.getExportedFileNameViaApi()
       .then(name => {
         exportedFileName = name;
 
-        ExportMarcFile.downloadExportedMarcFile(exportedFileName);
+        ExportFile.downloadExportedMarcFile(exportedFileName);
         // upload the exported marc file
         cy.visit(TopMenu.dataImportPath);
         DataImport.uploadExportedFile(exportedFileName);
         JobProfiles.searchJobProfileForImport(jobProfile.profileName);
-        JobProfiles.runImportFile(exportedFileName);
+        JobProfiles.runImportFile();
+        JobProfiles.waitFileIsImported(exportedFileName);
         Logs.checkStatusOfJobProfile('Completed');
         Logs.openFileDetails(exportedFileName);
         [FileDetails.columnName.srsMarc,

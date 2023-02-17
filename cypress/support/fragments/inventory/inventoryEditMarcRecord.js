@@ -9,7 +9,7 @@ const saveAndClose = () => {
 export default {
   saveAndClose,
   deleteField:() => {
-    // need to wait untill the row will be uploaded
+    // need to wait until the row will be uploaded
     cy.wait(1500);
     cy.do(QuickMarcEditorRow({ dataRow: 'record-row[29]' }).find(Button({ icon: 'trash' })).click());
     saveAndClose();

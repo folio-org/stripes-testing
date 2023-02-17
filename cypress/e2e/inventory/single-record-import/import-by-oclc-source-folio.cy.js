@@ -20,7 +20,7 @@ const oclcRecordData = {
   isbn1: '154785474X',
   isbn2: '9781547854745',
   oclc: '1202462670',
-  subject: 'Electronic books',
+  subject: 'Soups',
   notes: { noteType: 'General note', noteContent: 'Description based upon print version of record' }
 };
 
@@ -39,7 +39,8 @@ describe('ui-inventory: import by OCLC', () => {
       permissions.uiInventoryViewCreateEditInstances.gui,
       permissions.uiInventorySingleRecordImport.gui,
       permissions.uiInventorySettingsConfigureSingleRecordImport.gui,
-      permissions.uiQuickMarcQuickMarcBibliographicEditorAll.gui
+      permissions.uiQuickMarcQuickMarcBibliographicEditorAll.gui,
+      permissions.remoteStorageView.gui
     ])
       .then(userProperties => {
         user = userProperties;
@@ -61,11 +62,12 @@ describe('ui-inventory: import by OCLC', () => {
     InventoryInstance.importWithOclc(oclcRecordData.oclc);
     InventoryInstance.checkCalloutMessage(`Updated record ${oclcRecordData.oclc}`);
 
+    // need to wait because after the import the data in the instance is displayed for a long time
+    // https://issues.folio.org/browse/MODCPCT-73
+    cy.wait(10000);
     InventoryInstance.waitInstanceRecordViewOpened(oclcRecordData.title);
     InventoryInstance.verifyLastUpdatedDate();
     InventoryInstance.verifyInstanceSource('MARC');
-    InventoryInstance.verifyInstanceTitle(oclcRecordData.title);
-
     InventoryInstance.verifyInstanceTitle(oclcRecordData.title);
     InventoryInstance.verifyInstanceLanguage(oclcRecordData.language);
     InventoryInstance.verifyInstancePublisher(0, 0, oclcRecordData.publisher);
@@ -74,7 +76,7 @@ describe('ui-inventory: import by OCLC', () => {
     InventoryInstance.verifyInstancePhisicalcyDescription(oclcRecordData.physicalDescription);
     InventoryInstance.verifyResourceIdentifier('ISBN', oclcRecordData.isbn1, 4);
     InventoryInstance.verifyResourceIdentifier('ISBN', oclcRecordData.isbn2, 5);
-    InventoryInstance.verifyInstanceSubject(4, 0, oclcRecordData.subject);
+    InventoryInstance.verifyInstanceSubject(0, 0, oclcRecordData.subject);
     InventoryInstance.checkInstanceNotes(oclcRecordData.notes.noteType, oclcRecordData.notes.noteContent);
 
     InventoryInstance.viewSource();
@@ -86,7 +88,7 @@ describe('ui-inventory: import by OCLC', () => {
     InventoryViewSource.contains(oclcRecordData.title);
     InventoryViewSource.contains('300\t');
     InventoryViewSource.contains(oclcRecordData.physicalDescription);
-    InventoryViewSource.contains('655\t');
+    InventoryViewSource.contains('650\t');
     InventoryViewSource.contains(oclcRecordData.subject);
   });
 });

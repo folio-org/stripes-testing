@@ -14,7 +14,7 @@ import {
 } from '../../../../interactors';
 import { REQUEST_METHOD } from '../../constants';
 import { getLongDelay } from '../../utils/cypressTools';
-import ItemView from '../inventory/inventoryItem/itemView';
+import ItemRecordView from '../inventory/itemRecordView';
 
 const loanDetailsButton = Button('Loan details');
 const patronDetailsButton = Button('Patron details');
@@ -28,7 +28,7 @@ const itemBarcodeField = TextField({ name:'item.barcode' });
 const addItemButton = Button({ id: 'clickable-add-item' });
 const availableActionsButton = Button({ id: 'available-actions-button-0' });
 const confirmModal = Modal('Confirm multipiece check in');
-const checkOutButton = confirmModal.find(Button('Check in'));
+const checkInButtonInModal = confirmModal.find(Button('Check in'));
 const endSessionButton = Button('End session');
 const feeFineDetailsButton = Button('Fee/fine details');
 const feeFinePane = PaneContent({ id: 'pane-account-action-history-content' });
@@ -77,9 +77,9 @@ export default {
     cy.intercept('/tags?*').as('getTags');
     cy.do(itemDetailsButton.click());
     cy.wait('@getTags', getLongDelay());
-    ItemView.waitLoading();
+    ItemRecordView.waitLoading();
   },
-  checkActionsMenuOptions: (optionsToChek = ['loanDetails', 'patronDetails', 'itemDetails', 'newFeeFine']) => {
+  checkActionsMenuOptions: (optionsToCheck = ['loanDetails', 'patronDetails', 'itemDetails', 'newFeeFine']) => {
     cy.expect(availableActionsButton.exists());
     cy.do(availableActionsButton.click());
     optionsToCheck.forEach((option) => {
@@ -139,11 +139,13 @@ export default {
     });
   },
   confirmMultipleItemsCheckin(barcode) {
-    cy.do(checkOutButton.click());
+    cy.do(checkInButtonInModal.click());
     cy.expect(MultiColumnList({ id:'list-items-checked-in' }).find(HTML(including(barcode))).exists());
   },
   verifyLastCheckInItem(itemBarcode) {
-    return cy.expect(MultiColumnListRow({ indexRow: 'row-0' }).find(MultiColumnListCell({ content: including(itemBarcode) })).exists());
+    return cy.expect(MultiColumnListRow({ indexRow: 'row-0' })
+      .find(MultiColumnListCell({ content: including(itemBarcode) }))
+      .exists());
   },
   endCheckInSession:() => {
     cy.do(endSessionButton.click());
@@ -166,5 +168,15 @@ export default {
     cy.expect(feeFinePane.find(HTML(including(loanPolicyName))).exists());
     cy.expect(feeFinePane.find(HTML(including(OverdueFinePolicyName))).exists());
     cy.expect(feeFinePane.find(HTML(including(LostItemFeePolicyName))).exists());
+  },
+
+  backdateCheckInItem:(date, barcode) => {
+    cy.do(Button('today').click());
+    cy.do(TextField({ name:'item.checkinDate' }).fillIn(date));
+    waitLoading();
+    cy.intercept('/inventory/items?*').as('getItems');
+    cy.do(itemBarcodeField.fillIn(barcode));
+    cy.do(addItemButton.click());
+    cy.wait('@getItems', getLongDelay());
   }
 };

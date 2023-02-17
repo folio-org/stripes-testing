@@ -63,7 +63,7 @@ describe('ui-inventory: Update the effective location for the item', () => {
   afterEach(() => {
     cy.wrap(testInstanceIds.holdingIds.forEach(holdingsId => {
       cy.wrap(holdingsId.itemIds.forEach(itemId => {
-        cy.deleteItem(itemId);
+        cy.deleteItemViaApi(itemId);
       })).then(() => {
         cy.deleteHoldingRecordViaApi(holdingsId.id);
       });
@@ -73,6 +73,7 @@ describe('ui-inventory: Update the effective location for the item', () => {
     Users.deleteViaApi(userId);
   });
 
+  // FAT-4028 Requirements was changed. The test should be changed.
   it('C3501 An item is being moved from one library location to another. Update the effective location for the item (folijet) (prokopovych)',
     { tags: [TestTypes.smoke, DevTeams.folijet] },
     () => {
@@ -87,7 +88,7 @@ describe('ui-inventory: Update the effective location for the item', () => {
       HoldingsRecordView.checkPermanentLocation(anotherPermanentLocation);
       HoldingsRecordView.close();
       InventoryInstance.openHoldings([anotherPermanentLocation]);
-      InventoryInstance.openItemView(itemBarcode);
+      InventoryInstance.openItemByBarcode(itemBarcode);
       ItemRecordView.verifyPermanentLocation(anotherPermanentLocation);
     });
 });

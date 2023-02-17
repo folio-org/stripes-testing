@@ -1,4 +1,6 @@
-import { including, MultiColumnListCell } from '../../../../../interactors';
+import {Button, including, MultiColumnListCell} from '../../../../../interactors';
+
+const browseButton = Button({ id: 'mode-navigation-browse' });
 
 export default {
   checkExactSearchResult(searchQuery) {
@@ -11,5 +13,16 @@ export default {
     cy.expect([
       MultiColumnListCell().has({ content: including(`${searchQuery} would be here`) }),
     ]);
+  },
+
+  checkItemSearchResult(callNumber, suffix) {
+    cy.expect([
+      MultiColumnListCell(`${callNumber}would be here`).has({ content: including(`${callNumber}would be here`) }),
+      MultiColumnListCell(`${callNumber} ${suffix}`).has({ content: including(`${callNumber} ${suffix}`) }),
+    ]);
+  },
+  
+  clickBrowseBtn() {
+    cy.do(browseButton.click());
   },
 };

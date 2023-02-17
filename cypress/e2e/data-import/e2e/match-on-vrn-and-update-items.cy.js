@@ -53,7 +53,7 @@ describe('ui-data-import: Match on VRN and update related Instance, Holdings, It
   const instanceMatchProfileName = `C350591 Match for Instance ${Helper.getRandomBarcode()}`;
   const holdingsMatchProfileName = `C350591 Match for Holdings ${Helper.getRandomBarcode()}`;
   const itemMatchProfileName = `C350591 Match for Item ${Helper.getRandomBarcode()}`;
-  const editedMarcFileName = `C350591 marcFileForC350591.${getRandomPostfix()}.mrc`;
+  const editedMarcFileName = `marcFileForC350591.${getRandomPostfix()}.mrc`;
 
   const matchProfiles = [
     {
@@ -102,7 +102,8 @@ describe('ui-data-import: Match on VRN and update related Instance, Holdings, It
       permissions.uiReceivingViewEditCreate.gui,
       permissions.uiInventoryViewInstances.gui,
       permissions.uiQuickMarcQuickMarcBibliographicEditorView.gui,
-      permissions.uiInventoryStorageModule.gui
+      permissions.uiInventoryStorageModule.gui,
+      permissions.remoteStorageView.gui
     ]).then(userProperties => {
       user = userProperties;
     })
@@ -142,7 +143,7 @@ describe('ui-data-import: Match on VRN and update related Instance, Holdings, It
     cy.getInstance({ limit: 1, expandAll: true, query: `"title"=="${item.title}"` })
       .then((instance) => {
         itemId = instance.items[0].id;
-        cy.deleteItem(itemId);
+        cy.deleteItemViaApi(itemId);
         cy.deleteHoldingRecordViaApi(instance.holdings[0].id);
         InventoryInstance.deleteInstanceViaApi(instance.id);
       });
@@ -191,7 +192,7 @@ describe('ui-data-import: Match on VRN and update related Instance, Holdings, It
         Orders.checkIsOrderCreated(orderNumber);
         // open the first PO with POL
         Orders.searchByParameter('PO number', orderNumber);
-        Helper.selectFromResultsList();
+        Orders.selectFromResultsList(orderNumber);
         Orders.openOrder();
         OrderView.checkIsOrderOpened('Open');
         OrderView.checkIsItemsInInventoryCreated(item.title, 'Main Library');
@@ -199,7 +200,7 @@ describe('ui-data-import: Match on VRN and update related Instance, Holdings, It
         cy.visit(TopMenu.ordersPath);
         Orders.resetFilters();
         Orders.searchByParameter('PO number', orderNumber);
-        Orders.selectFromResultsList();
+        Orders.selectFromResultsList(orderNumber);
         OrderView.openPolDetails(item.title);
         OrderLines.openReceiving();
         Receiving.checkIsPiecesCreated(item.title);
@@ -238,7 +239,8 @@ describe('ui-data-import: Match on VRN and update related Instance, Holdings, It
     DataImport.checkIsLandingPageOpened();
     DataImport.uploadFile(editedMarcFileName);
     JobProfiles.searchJobProfileForImport(jobProfilesData.name);
-    JobProfiles.runImportFile(editedMarcFileName);
+    JobProfiles.runImportFile();
+    JobProfiles.waitFileIsImported(editedMarcFileName);
     Logs.checkStatusOfJobProfile();
     Logs.openFileDetails(editedMarcFileName);
     FileDetails.checkItemsStatusesInResultList(0, [FileDetails.status.created, FileDetails.status.updated, FileDetails.status.updated, FileDetails.status.updated]);

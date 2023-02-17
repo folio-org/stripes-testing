@@ -1,3 +1,4 @@
+import uuid from 'uuid';
 import devTeams from '../../../../support/dictionary/devTeams';
 import testTypes from '../../../../support/dictionary/testTypes';
 import OverdueFinePolicies from '../../../../support/fragments/settings/circulation/fee-fine/overdueFinePolicies';
@@ -5,13 +6,11 @@ import SettingsMenu from '../../../../support/fragments/settingsMenu';
 import TopMenu from '../../../../support/fragments/topMenu';
 import Permissions from '../../../../support/dictionary/permissions';
 import PatronGroups from '../../../../support/fragments/settings/users/patronGroups';
-import getRandomPostfix from '../../../../support/utils/stringTools';
+import getRandomPostfix, { getTestEntityValue } from '../../../../support/utils/stringTools';
 import InventoryInstances from '../../../../support/fragments/inventory/inventoryInstances';
 import generateItemBarcode from '../../../../support/utils/generateItemBarcode';
 import LoanPolicy from '../../../../support/fragments/circulation/loan-policy';
-import uuid from 'uuid';
-import { getTestEntityValue } from '../../../../support/utils/stringTools';
-import FixedDueDateSchedules from '../../../../support/fragments/circulation/fixedDueDateSchedules';
+
 import OverdueFinePolicy from '../../../../support/fragments/circulation/overdue-fine-policy';
 import LostItemFeePolicy from '../../../../support/fragments/circulation/lost-item-fee-policy';
 import CirculationRules from '../../../../support/fragments/circulation/circulation-rules';
@@ -19,6 +18,7 @@ import CheckOutActions from '../../../../support/fragments/check-out-actions/che
 import ServicePoints from '../../../../support/fragments/settings/tenant/servicePoints/servicePoints';
 import UsersOwners from '../../../../support/fragments/settings/users/usersOwners';
 import CheckInActions from '../../../../support/fragments/check-in-actions/checkInActions';
+import SwitchServicePoint from '../../../../support/fragments/servicePoint/switchServicePoint';
 
 // TO DO remove ignoring errors. Now when you click on one of the buttons, some promise in the application returns false
 Cypress.on('uncaught:exception', () => {
@@ -34,22 +34,7 @@ describe('ui-circulation-settings: overdue fine policies management', () => {
   const instance = {
     instanceName: `feeInstanceTest_${getRandomPostfix()}`,
     instanceBarcode: generateItemBarcode(),
-  }
-  const loanPolicyBody = (scheduleId) => {
-    return {
-      id: uuid(),
-      name: getTestEntityValue(),
-      loanable: true,
-      loansPolicy: {
-        profileId: 'Rolling',
-        period: { duration: 1, intervalId: 'Minutes' },
-        itemLimit: 1,
-        closedLibraryDueDateManagementId: 'CURRENT_DUE_DATE',
-        fixedDueDateScheduleId: scheduleId
-      },
-      renewable: false,
-    };
-  }
+  };
   const ownerData = {};
   let loanPolicy;
   const overdueFinePolicyBody = {
@@ -61,8 +46,8 @@ describe('ui-circulation-settings: overdue fine policies management', () => {
     name: getTestEntityValue(),
     description: 'description',
     id: uuid(),
-    "overdueFine": { "quantity": "1.00", "intervalId": "minute" },
-    "overdueRecallFine": { "quantity": "3.00", "intervalId": "minute" }
+    'overdueFine': { 'quantity': '1.00', 'intervalId': 'minute' },
+    'overdueRecallFine': { 'quantity': '3.00', 'intervalId': 'minute' }
   };
   let overdueFinePolicy;
   let lostItemFeePolicy;
@@ -84,35 +69,44 @@ describe('ui-circulation-settings: overdue fine policies management', () => {
             userData.userId = userProperties.userId;
             userData.barcode = userProperties.barcode;
             userData.lastname = userProperties.lastName;
-          })
+          });
       }).then(() => {
         InventoryInstances.createInstanceViaApi(instance.instanceName, instance.instanceBarcode);
       }).then(() => {
-        FixedDueDateSchedules.createViaApi()
-          .then((schedule) => {
-            LoanPolicy.createViaApi(loanPolicyBody(schedule.id))
-              .then((policy) => {
-                loanPolicy = policy;
-              });
-          }).then(() => {
-            OverdueFinePolicy.createApi(overdueFinePolicyBody).then((overdueBody) => {
+        LoanPolicy.createViaApi({
+          id: uuid(),
+          name: getTestEntityValue(),
+          loanable: true,
+          loansPolicy: {
+            profileId: 'Rolling',
+            period: { duration: 1, intervalId: 'Minutes' },
+            closedLibraryDueDateManagementId: 'CURRENT_DUE_DATE',
+          },
+          renewable: false,
+        })
+          .then((policy) => {
+            loanPolicy = policy;
+          })
+          .then(() => {
+            OverdueFinePolicy.createViaApi(overdueFinePolicyBody).then((overdueBody) => {
               overdueFinePolicy = overdueBody;
             });
           }).then(() => {
             LostItemFeePolicy.createViaApi().then((lostItemFeeBody) => {
               lostItemFeePolicy = lostItemFeeBody;
             });
-          }).then(() => {
+          })
+          .then(() => {
             CirculationRules.getViaApi().then((circulationRules) => {
               originalCirculationRules = circulationRules;
             }).then(() => {
               const positionReqPolicyId = originalCirculationRules.rulesAsText.search('r ');
               const positionPatronNoticePolicyId = originalCirculationRules.rulesAsText.search('n ');
               const positionOverdueFinePolicyId = originalCirculationRules.rulesAsText.search('o ');
-              let newRule = {
+              const newRule = {
                 id: originalCirculationRules.id,
                 rulesAsText: originalCirculationRules.rulesAsText + `\nm all: l ${loanPolicy.id} ${originalCirculationRules.rulesAsText.substring(positionReqPolicyId, positionPatronNoticePolicyId)}${originalCirculationRules.rulesAsText.substring(positionPatronNoticePolicyId, positionOverdueFinePolicyId)}o ${overdueFinePolicy.id} i ${lostItemFeePolicy.id}`,
-              }
+              };
               CirculationRules.updateViaApi(newRule);
 
               ServicePoints.getViaApi().then((res) => {
@@ -122,7 +116,7 @@ describe('ui-circulation-settings: overdue fine policies management', () => {
                   ownerData.name = ownerName;
                   ownerData.id = id;
                 });
-              })
+              });
             });
           });
       });
@@ -131,7 +125,7 @@ describe('ui-circulation-settings: overdue fine policies management', () => {
   after('delete test data', () => {
     InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(instance.instanceBarcode);
     LoanPolicy.deleteApi(loanPolicy.id);
-    OverdueFinePolicy.deleteApi(overdueFinePolicy.id);
+    OverdueFinePolicy.deleteViaApi(overdueFinePolicy.id);
     LostItemFeePolicy.deleteViaApi(lostItemFeePolicy.id);
     CirculationRules.updateViaApi(originalCirculationRules);
     UsersOwners.deleteViaApi(ownerData.id);
@@ -144,7 +138,7 @@ describe('ui-circulation-settings: overdue fine policies management', () => {
   it('C5557: Verify that you can create/edit/delete overdue fine policies (spitfire)', { tags: [devTeams.spitfire, testTypes.smoke] }, () => {
     // TODO add check that name is unique
     cy.visit(SettingsMenu.circulationoVerdueFinePoliciesPath);
-    
+
     const overduePolicyProps = ['1.00', '2.00', '3.00', '4.00'];
     const editedOverduePolicyProps = ['5.00', '6.00', '7.00', '8.00'];
 
@@ -168,6 +162,8 @@ describe('ui-circulation-settings: overdue fine policies management', () => {
 
   it('C9267: Verify that overdue fines calculated properly based on "Overdue fine" amount and interval setting (spitfire)', { tags: [devTeams.spitfire, testTypes.smoke, testTypes.broken] }, function () {
     cy.visit(TopMenu.checkOutPath);
+    SwitchServicePoint.switchServicePoint('Circ Desk 1');
+    SwitchServicePoint.checkIsServicePointSwitched('Circ Desk 1');
     CheckOutActions.checkOutUser(userData.barcode);
     CheckOutActions.checkOutItem(instance.instanceBarcode);
     CheckOutActions.confirmMultipieceCheckOut(instance.instanceBarcode);

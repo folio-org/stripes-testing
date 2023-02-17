@@ -1,6 +1,8 @@
+/* eslint-disable cypress/no-unnecessary-waiting */
 import uuid from 'uuid';
 import moment from 'moment';
 import TestType from '../../support/dictionary/testTypes';
+import DevTeams from '../../support/dictionary/devTeams';
 import RenewalActions from '../../support/fragments/loans/renewals';
 import generateItemBarcode from '../../support/utils/generateItemBarcode';
 import permissions from '../../support/dictionary/permissions';
@@ -136,12 +138,12 @@ describe('Renewal', () => {
       })
       // checkout item
       .then(() => {
-        CheckoutActions.createItemCheckoutViaApi({
+        CheckoutActions.checkoutItemViaApi({
           servicePointId,
           itemBarcode: itemData.barcode,
           userBarcode: renewUserData.barcode
         });
-        CheckoutActions.createItemCheckoutViaApi({
+        CheckoutActions.checkoutItemViaApi({
           servicePointId,
           itemBarcode: secondItemBarcode,
           userBarcode: renewUserData.barcode
@@ -164,8 +166,8 @@ describe('Renewal', () => {
         users.deleteViaApi(renewUserData.id);
         cy.getInstance({ limit: 1, expandAll: true, query: `"items.barcode"=="${itemData.barcode}"` })
           .then((instance) => {
-            cy.deleteItem(instance.items[0].id);
-            cy.deleteItem(instance.items[1].id);
+            cy.deleteItemViaApi(instance.items[0].id);
+            cy.deleteItemViaApi(instance.items[1].id);
             cy.deleteHoldingRecordViaApi(instance.holdings[0].id);
             InventoryInstance.deleteInstanceViaApi(instance.id);
           });
@@ -176,9 +178,13 @@ describe('Renewal', () => {
       });
   });
 
-  it('C567: Renewal: success, from open loans (multiple items) (prokopovych)', { tags: [TestType.smoke] }, () => {
+  it('C567: Renewal: success, from open loans (multiple items) (prokopovych)', { tags: [TestType.smoke, DevTeams.prokopovych] }, () => {
     cy.visit(TopMenu.usersPath);
+    cy.intercept('GET', '/configurations/entries?*').as('getEntries');
     UsersSearchPane.searchByKeywords(userName);
+    cy.wait('@getEntries');
+    // wait few seconds, that the user will be displayed
+    cy.wait(2000);
     UsersCard.openLoans();
     UsersCard.showOpenedLoans();
     RenewalActions.renewAllLoans();

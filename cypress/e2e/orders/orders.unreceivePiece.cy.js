@@ -1,21 +1,21 @@
 import NewOrder from '../../support/fragments/orders/newOrder';
-import basicOrderLine from '../../support/fragments/orders/basicOrderLine';
+import BasicOrderLine from '../../support/fragments/orders/basicOrderLine';
 import TestType from '../../support/dictionary/testTypes';
 import Orders from '../../support/fragments/orders/orders';
 import Receiving from '../../support/fragments/receiving/receiving';
 import TopMenu from '../../support/fragments/topMenu';
 import Helper from '../../support/fragments/finance/financeHelper';
 import InventorySearchAndFilter from '../../support/fragments/inventory/inventorySearchAndFilter';
-import InventoryInstance from '../../support/fragments/inventory/inventoryInstance';
 import InteractorsTools from '../../support/utils/interactorsTools';
 import OrdersHelper from '../../support/fragments/orders/ordersHelper';
 import Organizations from '../../support/fragments/organizations/organizations';
-import devTeams from '../../support/dictionary/devTeams';
+import DevTeams from '../../support/dictionary/devTeams';
 import NewOrganization from '../../support/fragments/organizations/newOrganization';
+import ItemRecordView from '../../support/fragments/inventory/itemRecordView';
 
 describe('orders: Unreceive piece from Order', () => {
   const order = { ...NewOrder.defaultOneTimeOrder };
-  const orderLine = { ...basicOrderLine.defaultOrderLine };
+  const orderLine = { ...BasicOrderLine.defaultOrderLine };
   const organization = { ...NewOrganization.defaultUiOrganizations };
 
   before(() => {
@@ -39,14 +39,14 @@ describe('orders: Unreceive piece from Order', () => {
     Organizations.deleteOrganizationViaApi(organization.id);
   });
 
-  it('C10925 Unreceive piece (thunderjet)', { tags: [TestType.smoke, devTeams.thunderjet] }, () => {
+  it('C10925 Unreceive piece (thunderjet)', { tags: [TestType.smoke, DevTeams.thunderjet] }, () => {
     const barcode = Helper.getRandomBarcode();
     const caption = 'autotestCaption';
     Orders.createOrderWithOrderLineViaApi(order, orderLine)
       .then(orderNumber => {
         cy.visit(TopMenu.ordersPath);
         Orders.searchByParameter('PO number', orderNumber);
-        Helper.selectFromResultsList();
+        Orders.selectFromResultsList(orderNumber);
         Orders.openOrder();
         InteractorsTools.checkCalloutMessage(`The Purchase order - ${orderNumber} has been successfully opened`);
         Orders.receiveOrderViaActions();
@@ -61,8 +61,7 @@ describe('orders: Unreceive piece from Order', () => {
         cy.visit(TopMenu.inventoryPath);
         InventorySearchAndFilter.switchToItem();
         InventorySearchAndFilter.searchByParameter('Barcode', barcode);
-        Helper.selectFromResultsList();
-        InventoryInstance.checkHoldingsTable(OrdersHelper.mainLibraryLocation, 0, caption, barcode, 'On order');
+        ItemRecordView.verifyItemStatus('On order');
       });
   });
 });

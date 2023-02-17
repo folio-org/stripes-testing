@@ -87,12 +87,12 @@ describe('ui-data-import: EDIFACT file import with creating of new invoice recor
     DataImport.uploadFile('ediFileForC343338.edi', fileName);
     JobProfiles.searchJobProfileForImport(jobProfile.profileName);
     JobProfiles.selectJobProfile();
-    JobProfiles.runImportFile(fileName);
+    JobProfiles.runImportFile();
+    JobProfiles.waitFileIsImported(fileName);
     Logs.checkImportFile(jobProfile.profileName);
     Logs.checkStatusOfJobProfile();
     Logs.openFileDetails(fileName);
     FileDetails.checkStatusInColumn(FileDetails.status.created, FileDetails.columnName.invoice);
-    FileDetails.checkSrsRecordQuantityInSummaryTable('1');
     FileDetails.checkCreatedInvoiceISummaryTable('1');
     InvoiceView.checkInvoiceDetails(InvoiceView.vendorInvoiceNumber);
   });

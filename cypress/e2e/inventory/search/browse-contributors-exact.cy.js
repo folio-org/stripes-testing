@@ -1,5 +1,5 @@
 import testType from '../../../support/dictionary/testTypes';
-import Permissions from '../../../support/dictionary/permissions';
+import permissions from '../../../support/dictionary/permissions';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
 import BrowseContributors from '../../../support/fragments/inventory/search/browseContributors';
@@ -7,7 +7,7 @@ import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 import devTeams from '../../../support/dictionary/devTeams';
 
-describe('ui-inventory: search', () => {
+describe('Inventory -> Contributors Browse', () => {
   const testData = {};
   const instanceA = BrowseContributors.defaultInstanceAWithContributor;
   const instanceZ = BrowseContributors.defaultInstanceZWithContributor;
@@ -42,7 +42,7 @@ describe('ui-inventory: search', () => {
       });
 
     cy.createTempUser([
-      Permissions.uiInventoryViewInstances.gui,
+      permissions.uiInventoryViewInstances.gui,
     ]).then((resUserProperties) => {
       testData.user = resUserProperties;
       cy.login(resUserProperties.username, resUserProperties.password);
@@ -50,7 +50,14 @@ describe('ui-inventory: search', () => {
     });
   });
 
+  afterEach('Deleting user', () => {
+    Users.deleteViaApi(testData.user.userId);
+    InventoryInstance.deleteInstanceViaApi(instanceA.id);
+    InventoryInstance.deleteInstanceViaApi(instanceZ.id);
+  });
+
   it('C353639 Browse contributors with exact match query (spitfire)', { tags: [testType.smoke, devTeams.spitfire] }, () => {
+    BrowseContributors.clickBrowseBtn();
     InventorySearchAndFilter.verifyKeywordsAsDefault();
     BrowseContributors.checkBrowseOptions();
     BrowseContributors.select();
@@ -60,11 +67,5 @@ describe('ui-inventory: search', () => {
     BrowseContributors.checkExactSearchResult(instanceA.contributors[0], instanceZ.contributors[0]);
     BrowseContributors.openInstance(instanceA.contributors[0]);
     BrowseContributors.checkInstance(instanceA);
-  });
-
-  afterEach('Deleting user', () => {
-    Users.deleteViaApi(testData.user.userId);
-    InventoryInstance.deleteInstanceViaApi(instanceA.id);
-    InventoryInstance.deleteInstanceViaApi(instanceZ.id);
   });
 });

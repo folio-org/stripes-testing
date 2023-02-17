@@ -33,11 +33,14 @@ export default {
 
   patronBlocksAccordionCovered() {
     cy.expect([
-      Section({ id: 'patronBlocksSection' }).find(Button({ id: 'accordion-toggle-button-patronBlocksSection' })).has({ ariaExpanded: 'false' })
+      Section({ id: 'patronBlocksSection' })
+        .find(Button({ id: 'accordion-toggle-button-patronBlocksSection' }))
+        .has({ ariaExpanded: 'false' })
     ]);
   },
 
   openLoans() {
+    cy.reload();
     cy.intercept('/circulation/loans?*').as('getLoans');
     cy.do(Accordion({ id : 'loansSection' }).clickHeader());
     return cy.wait('@getLoans', { requestTimeout: 10000 });
@@ -50,10 +53,12 @@ export default {
     return cy.do(Link({ id: 'clickable-viewcurrentloans' }).click());
   },
 
+  showOpenedFeeFines() {
+    return cy.do(Link({ id: 'clickable-viewcurrentaccounts' }).click());
+  },
+
   createPatronBlock() {
-    cy.do([
-      Button({ id: 'create-patron-block' }).click()
-    ]);
+    cy.do(Button({ id: 'create-patron-block' }).click());
   },
 
   createAndSaveNewPatronBlock(text) {
@@ -186,5 +191,13 @@ export default {
   verifyExpirationDate(date) {
     // date format MM/DD/YYYY
     cy.expect(KeyValue('Expiration date').has({ value: date }));
+  },
+
+  openContactInfo() {
+    cy.do(Accordion('Contact information').clickHeader());
+  },
+
+  verifyEmail(email) {
+    cy.expect(KeyValue('Email').has({ value: email }));
   },
 };

@@ -1,3 +1,4 @@
+/* eslint-disable cypress/no-unnecessary-waiting */
 import permissions from '../../../support/dictionary/permissions';
 import testType from '../../../support/dictionary/testTypes';
 import devTeams from '../../../support/dictionary/devTeams';
@@ -65,14 +66,14 @@ describe('ui-finance: Transactions', () => {
         user = userProperties;
         cy.login(userProperties.username, userProperties.password, { path:TopMenu.ordersPath, waiter: Orders.waitLoading });
         Orders.searchByParameter('PO number', orderNumber);
-        FinanceHelp.selectFromResultsList();
+        Orders.selectFromResultsList(orderNumber);
       });
   });
 
   after(() => {
     cy.loginAsAdmin({ path:TopMenu.ordersPath, waiter: Orders.waitLoading });
     Orders.searchByParameter('PO number', orderNumber);
-    FinanceHelp.selectFromResultsList();
+    Orders.selectFromResultsList(orderNumber);
     Orders.unOpenOrder(orderNumber);
     OrderLines.selectPOLInOrder();
     OrderLines.deleteOrderLine();
@@ -85,11 +86,9 @@ describe('ui-finance: Transactions', () => {
     Funds.selectBudgetDetails();
     Funds.deleteBudgetViaActions();
     // Need to wait few seconds, that data will be deleted(its need to pass test in Jenkins run)
-    cy.wait(1000);
+    cy.wait(2500);
     Funds.deleteFundViaApi(defaultFund.id);
     Ledgers.deleteledgerViaApi(defaultLedger.id);
-    // Need to wait few seconds, that data will be deleted(its need to pass test in Jenkins run)
-    cy.wait(1000);
     FiscalYears.deleteFiscalYearViaApi(defaultFiscalYear.id);
     Users.deleteViaApi(user.userId);
   });

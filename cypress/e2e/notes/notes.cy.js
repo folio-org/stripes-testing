@@ -1,120 +1,110 @@
-/// <reference types="cypress" />
-
-import Agreements from '../../support/fragments/agreements/agreements';
-import AgreementDetails from '../../support/fragments/agreements/agreementsDetails';
-import TopMenu from '../../support/fragments/topMenu';
-import NewNote from '../../support/fragments/notes/newNote';
-import ExistingNoteView from '../../support/fragments/notes/existingNoteView';
+import getRandomPostfix from '../../support/utils/stringTools';
 import TestTypes from '../../support/dictionary/testTypes';
-import Features from '../../support/dictionary/features';
-import Permissions from '../../support/dictionary/permissions';
-import NewAgreement from '../../support/fragments/agreements/newAgreement';
-import { getLongDelay } from '../../support/utils/cypressTools';
-import Users from '../../support/fragments/users/users';
 import DevTeams from '../../support/dictionary/devTeams';
+import Permissions from '../../support/dictionary/permissions';
+import NotesEholdings from '../../support/fragments/notes/notesEholdings'
+import Users from '../../support/fragments/users/users';
 
 describe('Note creation', () => {
-  let userId;
-  const defaultAgreement = NewAgreement.defaultAgreement;
-  const agreementTitle = defaultAgreement.name;
+  const testData = {};
+  const urlToEholdings = '/eholdings/providers/38';
+  const note = {
+    title: `Test Title ${getRandomPostfix()}`,
+    details: `Test details ${getRandomPostfix()}`,
+  }
 
-  const longNote = { ...NewNote.defaultNote };
-  //  title that is more than 65 characters but less than 250 characters
-  longNote.title += String().padEnd(65 - longNote.title.length - 1, 'test');
-  // Enter a note that is more than 4000 characters
-  longNote.details += String().padEnd(4000 - longNote.details.length - 1, 'test');
+  note.title += String().padEnd(65 - note.title.length - 1, 'test');
+  note.details += String().padEnd(4000 - note.details.length - 1, 'test');
 
-  // need to use this method instead of before and beforeAll
-  const initPrepairing = (specialPermissions) => {
-    cy.createTempUser(specialPermissions).then(userProperties => {
-      userId = userProperties.userId;
-      cy.login(userProperties.username, userProperties.password);
-      // TODO: move agreement creation into api requests
-      cy.visit(TopMenu.agreementsPath);
-      Agreements.waitLoading();
-      Agreements.create(defaultAgreement);
-      Agreements.selectRecord(agreementTitle);
-      AgreementDetails.openNotesSection();
-    });
-  };
-  
-  afterEach(() => {
-    // TODO: add support of delete through api
-    AgreementDetails.remove();
-    cy.reload();
-    Agreements.waitLoading();
-    Agreements.agreementNotVisible(agreementTitle);
-    Users.deleteViaApi(userId);
-  });
-
-  it('C1296 Create a note (spitfire)', { tags: [TestTypes.smoke, DevTeams.spitfire, Features.notes] }, () => {
-    initPrepairing([Permissions.uiNotesItemCreate.gui, Permissions.uiNotesItemView.gui,
-      // need access to special application( agreements in this case)
-      Permissions.uiAgreementsAgreementsEdit.gui, Permissions.uiAgreementsAgreementsDelete.gui]);
-    AgreementDetails.createNote(longNote);
-    Agreements.selectRecord(agreementTitle);
-    AgreementDetails.checkNotesCount(1);
-    AgreementDetails.openNotesSection();
-    AgreementDetails.waitLoadingWithExistingNote(longNote.title);
-    AgreementDetails.specialNotePresented(longNote.title);
-  });
-
-  it('C1299 Edit a note (spitfire)', { tags: [TestTypes.smoke, DevTeams.spitfire, Features.notes] }, () => {
-    initPrepairing([Permissions.uiNotesItemCreate.gui,
+  before('Creating data', () => {
+    cy.createTempUser([
+      Permissions.uiNotesItemCreate.gui,
       Permissions.uiNotesItemView.gui,
       Permissions.uiNotesItemEdit.gui,
-      // need access to special application( agreements in this case)
-      Permissions.uiAgreementsAgreementsEdit.gui, Permissions.uiAgreementsAgreementsDelete.gui]);
-    const specialNote = NewNote.defaultNote;
-    AgreementDetails.createNote(specialNote);
-    Agreements.selectRecord(agreementTitle);
-    AgreementDetails.checkNotesCount(1);
-    AgreementDetails.openNotesSection();
-    AgreementDetails.waitLoadingWithExistingNote(specialNote.title);
+      Permissions.uiNotesItemDelete.gui,
+      Permissions.moduleeHoldingsEnabled.gui,
+    ]).then(createdUserProperties => {
+      testData.deletedUserProperties = createdUserProperties;
+    });
 
-    const updatedNote = { ...specialNote };
-    updatedNote.title = `changed_${specialNote.title}`;
-    updatedNote.details = `changed_${specialNote.details}`;
-
-    AgreementDetails.editNote(specialNote.title, updatedNote);
-    ExistingNoteView.checkProperties(updatedNote);
-
-    ExistingNoteView.close();
-    AgreementDetails.checkNotesCount(1);
-    AgreementDetails.openNotesSection();
-    AgreementDetails.specialNotePresented(updatedNote.title);
-  });
-
-  it('C16992 View a note (spitfire)', { tags: [TestTypes.smoke, DevTeams.spitfire, Features.notes] }, () => {
-    initPrepairing([Permissions.uiNotesItemCreate.gui,
+    cy.createTempUser([
+      Permissions.uiNotesItemCreate.gui,
       Permissions.uiNotesItemView.gui,
-      // need access to special application( agreements in this case)
-      Permissions.uiAgreementsAgreementsEdit.gui, Permissions.uiAgreementsAgreementsDelete.gui]);
+      Permissions.uiNotesItemEdit.gui,
+      Permissions.uiNotesItemDelete.gui,
+      Permissions.moduleeHoldingsEnabled.gui,
+    ]).then(createdUserProperties => {
+      testData.userProperties = createdUserProperties;
 
-    AgreementDetails.createNote(longNote);
-    Agreements.selectRecord(agreementTitle);
-    AgreementDetails.checkNotesCount(1);
-    AgreementDetails.openNotesSection();
-    AgreementDetails.waitLoadingWithExistingNote(longNote.title);
-
-    AgreementDetails.checkShortedNoteDetails(longNote.getShortDetails());
-    AgreementDetails.checkNoteShowMoreLink(longNote.details);
-
-    AgreementDetails.openNoteView(longNote);
-    ExistingNoteView.waitLoading();
-    ExistingNoteView.checkProperties(longNote);
-    cy.intercept('note-types?**').as('noteTypesLoading');
-    cy.intercept('note-links/domain/agreements/type/agreement/id/**').as('notesLoading');
-    ExistingNoteView.close();
-    cy.wait(['@notesLoading', '@noteTypesLoading'], getLongDelay());
-    AgreementDetails.checkNotesCount(1);
+      cy.login(testData.userProperties.username, testData.userProperties.password, { path: urlToEholdings, waiter: NotesEholdings.waitLoading });
+    });
   });
 
-  afterEach(() => {
-    // TODO: add support of delete through api
-    AgreementDetails.remove();
-    Agreements.waitLoading();
-    Agreements.agreementNotVisible(agreementTitle);
-    Users.deleteViaApi(userId);
+  after('Deleting data', () => {
+    Users.deleteViaApi(testData.userProperties.userId);
+  });
+
+  it('C1296 Create a note (spitfire)', { tags: [TestTypes.smoke, DevTeams.spitfire] }, () => {
+    NotesEholdings.createNote(note.title, note.details);
+    NotesEholdings.verifyNoteTitle(note.title);
+    NotesEholdings.openNoteView(note.title);
+    NotesEholdings.deleteNote();
+  });
+
+  it('C1299 Edit a note (spitfire)', { tags: [TestTypes.smoke, DevTeams.spitfire] }, () => {
+    const newNote = {
+      title: `Changed Title ${getRandomPostfix()}`,
+      details: `Changed details ${getRandomPostfix()}`,
+    }
+    NotesEholdings.createNote(note.title, note.details);
+    NotesEholdings.editNote(note.title, newNote.title, newNote.details);
+    NotesEholdings.verifyNoteTitle(newNote.title);
+    NotesEholdings.openNoteView(newNote.title);
+    NotesEholdings.deleteNote();
+  });
+
+  it('C16992 View a note (spitfire)', { tags: [TestTypes.smoke, DevTeams.spitfire] }, () => {
+    NotesEholdings.createNote(note.title, note.details);
+    NotesEholdings.verifyNoteTitle(note.title);
+    NotesEholdings.openNoteView(note.title);
+    NotesEholdings.deleteNote();
+  });
+
+  it('C359004 A user can view Notes that were created by deleted user (spitfire)', { tags: [TestTypes.smoke, DevTeams.spitfire] }, () => {
+    cy.login(testData.deletedUserProperties.username, testData.deletedUserProperties.password, { path: urlToEholdings, waiter: NotesEholdings.waitLoading });
+    NotesEholdings.createNote(note.title, note.details);
+    NotesEholdings.verifyNoteTitle(note.title);
+    Users.deleteViaApi(testData.deletedUserProperties.userId);
+    
+    cy.login(testData.userProperties.username, testData.userProperties.password, { path: urlToEholdings, waiter: NotesEholdings.waitLoading });
+    NotesEholdings.openNoteView(note.title);
+    NotesEholdings.deleteNote();
+  });
+
+  it('C16993 Able to sort Notes accordion column headings (spitfire)', { tags: [TestTypes.criticalPath, DevTeams.spitfire] }, () => {
+    note.titleFirst = '1 Title';
+    note.titleSecond = '2 Title';
+    note.addDetails = `Test details ${getRandomPostfix()}`;
+
+    NotesEholdings.createNote(note.titleFirst, note.addDetails);
+    NotesEholdings.createNote(note.titleSecond, note.addDetails);
+
+    NotesEholdings.verifyDefaultSort(note.titleFirst, note.titleSecond, note.addDetails);
+    NotesEholdings.verifySortingByTitle(note.titleFirst, note.titleSecond, note.addDetails);
+
+    NotesEholdings.openNoteView(note.titleFirst, note.addDetails);
+    NotesEholdings.deleteNote();
+    NotesEholdings.openNoteView(note.titleSecond, note.addDetails);
+    NotesEholdings.deleteNote();
+  });
+  
+  it('C1300 Delete a note (spitfire)', { tags: [TestTypes.criticalPath, DevTeams.spitfire] }, () => {
+    note.addDetails = `Test details ${getRandomPostfix()}`;
+
+    NotesEholdings.createNote(note.title, note.addDetails);
+    NotesEholdings.verifyNoteCreation(note.title, note.addDetails);
+    NotesEholdings.openNoteView(note.title, note.addDetails);
+    NotesEholdings.deleteNote();
+    NotesEholdings.verifyNoteDeletion(note.title, note.addDetails);
   });
 });

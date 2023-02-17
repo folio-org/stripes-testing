@@ -156,7 +156,7 @@ describe('Check In - Actions', () => {
     Users.deleteViaApi(userData.userId);
     Users.deleteViaApi(requestUserData.userId);
     PatronGroups.deleteViaApi(patronGroup.id);
-    cy.deleteItem(itemData.itemId);
+    cy.deleteItemViaApi(itemData.itemId);
     cy.deleteHoldingRecordViaApi(itemData.holdingId);
     InventoryInstance.deleteInstanceViaApi(itemData.instanceId);
     Location.deleteViaApiIncludingInstitutionCampusLibrary(
@@ -184,6 +184,7 @@ describe('Check In - Actions', () => {
         requesterBarcode: requestUserData.barcode,
         itemBarcode: itemData.barcode,
         pickupServicePoint: testData.userServicePoint.name,
+        requestType: 'Hold',
       });
 
       cy.visit(TopMenu.checkInPath);
