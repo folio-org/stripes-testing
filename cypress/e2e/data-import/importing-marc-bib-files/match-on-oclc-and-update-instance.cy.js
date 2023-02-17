@@ -13,9 +13,8 @@ import DataImport from '../../../support/fragments/data_import/dataImport';
 import Logs from '../../../support/fragments/data_import/logs/logs';
 import FileDetails from '../../../support/fragments/data_import/logs/fileDetails';
 import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
-import NewMatchProfile from '../../../support/fragments/data_import/match_profiles/newMatchProfile';
 import MatchProfiles from '../../../support/fragments/data_import/match_profiles/matchProfiles';
-
+import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 
 describe('ui-data-import:', () => {
   let instanceHrid;
@@ -42,6 +41,7 @@ describe('ui-data-import:', () => {
 
   // unique file names
   const nameMarcFileForCreate = `C11109 autotestFile.${getRandomPostfix()}.mrc`;
+  const nameMarcFileForUpdate = `C11109 autotestFile.${getRandomPostfix()}.mrc`;
 
   const collectionOfMappingAndActionProfiles = [
     {
@@ -60,14 +60,54 @@ describe('ui-data-import:', () => {
     }
   ];
 
-  const jobProfileForCreate = {
-    profileName: jobProfileForCreateName,
-    acceptedType: NewJobProfile.acceptedDataType.marc
+  const matchProfile = {
+    profileName: matchProfileName,
+    incomingRecordFields: {
+      field: '035',
+      in1: '*',
+      in2: '*',
+      subfield: 'a'
+    },
+    matchCriterion: 'Exactly matches',
+    existingRecordType: 'INSTANCE',
+    instanceOption: 'Identifier: OCLC',
   };
 
+  const collectionOfJobProfiles = [
+    { jobProfileForCreate: {
+      profileName: jobProfileForCreateName,
+      acceptedType: NewJobProfile.acceptedDataType.marc
+    } },
+    { jobProfileForUpdate: {
+      profileName: jobProfileForUpdateName,
+      acceptedType: NewJobProfile.acceptedDataType.marc
+    } }
+  ];
+
   before('login', () => {
+    cy.getAdminToken()
+      .then(() => {
+
+      });
     cy.loginAsAdmin();
-    cy.getAdminToken();
+  });
+
+  after('delete test data', () => {
+    // delete generated profiles
+    collectionOfJobProfiles.forEach(profile => {
+      JobProfiles.deleteJobProfile(profile.profileName);
+    });
+    MatchProfiles.deleteMatchProfile(matchProfileName);
+    collectionOfMappingAndActionProfiles.forEach(profile => {
+      ActionProfiles.deleteActionProfile(profile.actionProfile.name);
+      FieldMappingProfiles.deleteFieldMappingProfile(profile.mappingProfile.name);
+    });
+    cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${instanceHrid}"` })
+      .then((instance) => {
+        cy.deleteItemViaApi(instance.items[0].id);
+        cy.deleteHoldingRecordViaApi(instance.holdings[0].id);
+        InventoryInstance.deleteInstanceViaApi(instance.id);
+      });
   });
 
   it('C11109 Update an instance based on an OCLC number match (folijet)',
@@ -92,7 +132,7 @@ describe('ui-data-import:', () => {
 
       // create job profile for creating instance
       cy.visit(SettingsMenu.jobProfilePath);
-      JobProfiles.createJobProfileWithLinkingProfiles(jobProfileForCreate, instanceCreateActionProfileName);
+      JobProfiles.createJobProfileWithLinkingProfiles(collectionOfJobProfiles[0].jobProfileForCreate, instanceCreateActionProfileName);
       JobProfiles.checkJobProfilePresented(jobProfileForCreateName);
 
       // upload a marc file for creating of the new instance
@@ -135,7 +175,35 @@ describe('ui-data-import:', () => {
           ActionProfiles.create(collectionOfMappingAndActionProfiles[1].actionProfileForUpdate, instanceUpdateMapProfileName);
           ActionProfiles.checkActionProfilePresented(instanceUpdateActionProfileName);
 
-          
+          // craete match profile
+          cy.visit(SettingsMenu.matchProfilePath);
+          MatchProfiles.createMatchProfile(matchProfile);
+          MatchProfiles.checkMatchProfilePresented(matchProfileName);
+
+          // create job profile for updating instance
+          cy.visit(SettingsMenu.jobProfilePath);
+          JobProfiles.createJobProfile(collectionOfJobProfiles[1].jobProfileForUpdate);
+          NewJobProfile.linkMatchProfile(matchProfileName);
+          NewJobProfile.linkActionProfileForMatches(instanceUpdateActionProfileName);
+          NewJobProfile.saveAndClose();
+          JobProfiles.checkJobProfilePresented(jobProfileForUpdateName);
+
+          // upload a marc file for updating instance
+          cy.visit(TopMenu.dataImportPath);
+          DataImport.uploadFile('marcFileForC11109.mrc', nameMarcFileForUpdate);
+          JobProfiles.searchJobProfileForImport(jobProfileForUpdateName);
+          JobProfiles.runImportFile();
+          JobProfiles.waitFileIsImported(nameMarcFileForUpdate);
+          Logs.checkStatusOfJobProfile('Completed');
+          Logs.openFileDetails(nameMarcFileForUpdate);
+          FileDetails.checkStatusInColumn(FileDetails.status.created, FileDetails.columnName.srsMarc);
+          FileDetails.checkStatusInColumn(FileDetails.status.updated, FileDetails.columnName.instance);
+          FileDetails.checkSrsRecordQuantityInSummaryTable('1');
+          FileDetails.checkInstanceQuantityInSummaryTable('1', 1);
+
+          cy.visit(TopMenu.inventoryPath);
+          InventorySearchAndFilter.searchInstanceByHRID(instanceHrid);
+          // checks
         });
     });
 });
