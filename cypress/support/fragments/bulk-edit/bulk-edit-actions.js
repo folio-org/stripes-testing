@@ -199,6 +199,7 @@ export default {
 
   confirmChanges() {
     cy.do(Button('Confirm changes').click());
+    cy.expect(Modal().find(MultiColumnListCell()).exists());
   },
 
   saveAndClose() {
