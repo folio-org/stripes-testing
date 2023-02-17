@@ -15,6 +15,8 @@ import InventoryInstance from '../../support/fragments/inventory/inventoryInstan
 import Checkout from '../../support/fragments/checkout/checkout';
 import LoansPage from '../../support/fragments/loans/loansPage';
 import ChangeDueDateForm from '../../support/fragments/loans/changeDueDateForm';
+import SearchResults from '../../support/fragments/circulation-log/searchResults';
+import ItemRecordView from '../../support/fragments/inventory/itemRecordView';
 
 const ITEM_BARCODE = `123${getRandomPostfix()}`;
 let userId;
@@ -108,6 +110,14 @@ describe('circulation-log', () => {
     SearchPane.searchByItemBarcode(ITEM_BARCODE);
     SearchPane.verifyResultCells();
     SearchPane.resetResults();
+  });
+
+  it('C16979 Check item details from filtering Circulation log by checked-out (firebird)', { tags: [TestTypes.criticalPath, devTeams.firebird] }, () => {
+    SearchPane.searchByItemBarcode(ITEM_BARCODE);
+    SearchResults.clickOnCell(ITEM_BARCODE, 0);
+    ItemRecordView.waitLoading();
+    ItemRecordView.closeDetailView();
+    cy.visit(TopMenu.circulationLogPath);
   });
 
   it('C16976 Filter circulation log by date (firebird)', { tags: [TestTypes.smoke, devTeams.firebird] }, () => {
