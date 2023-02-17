@@ -11,7 +11,6 @@ import UsersSearchPane from '../../../support/fragments/users/usersSearchPane';
 
 let user;
 const userUUIDsFileName = `userUUIDs_${getRandomPostfix()}.csv`;
-// const matchRecordsFileName = `matchedRecords_${getRandomPostfix()}.csv`;
 const matchRecordsFileName = '*Matched-Records*';
 const importFileName = `bulkEditImport_${getRandomPostfix()}.csv`;
 

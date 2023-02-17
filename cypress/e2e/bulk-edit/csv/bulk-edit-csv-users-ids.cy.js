@@ -11,7 +11,6 @@ import Users from '../../../support/fragments/users/users';
 let user;
 const userUUIDsFileName = `userUUIDs_${getRandomPostfix()}.csv`;
 const invalidUserUUID = getRandomPostfix();
-// const matchRecordsFileName = `matchedRecords_${getRandomPostfix()}.csv`;
 const matchRecordsFileName = '*Matched-Records*';
 const importFileName = `bulkEditImport_${getRandomPostfix()}.csv`;
 
