@@ -12,9 +12,6 @@ import OrderLines from '../../support/fragments/orders/orderLines';
 import ExportManagerSearchPane from '../../support/fragments/exportManager/exportManagerSearchPane';
 import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
 import NewLocation from '../../support/fragments/settings/tenant/locations/newLocation';
-import Institutions from '../../support/fragments/settings/tenant/institutions';
-import Campuses from '../../support/fragments/settings/tenant/campuses';
-import Libraries from '../../support/fragments/settings/tenant/libraries';
 import DateTools from '../../support/utils/dateTools';
 
 describe('orders: export', () => {
@@ -62,10 +59,6 @@ describe('orders: export', () => {
   let user;
   let location;
   let servicePointId;
-  let institutionId;
-  let campusId;
-  let libraryId;
-  let institutionName;
   const UTCTime = DateTools.getUTCDateForScheduling();
 
   before(() => {
