@@ -13,9 +13,6 @@ import InventoryInstances from '../../support/fragments/inventory/inventoryInsta
 import Users from '../../support/fragments/users/users';
 import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
 import NewLocation from '../../support/fragments/settings/tenant/locations/newLocation';
-import Institutions from '../../support/fragments/settings/tenant/institutions';
-import Campuses from '../../support/fragments/settings/tenant/campuses';
-import Libraries from '../../support/fragments/settings/tenant/libraries';
 
 describe('orders: Receive piece from Order', () => {
   const order = { ...NewOrder.defaultOneTimeOrder,
@@ -30,10 +27,6 @@ describe('orders: Receive piece from Order', () => {
   let orderID;
   let location;
   let servicePointId;
-  let institutionId;
-  let campusId;
-  let libraryId;
-  let institutionName;
 
   before(() => {
     cy.getAdminToken();
@@ -45,27 +38,13 @@ describe('orders: Receive piece from Order', () => {
       });
     InventoryInstances.createInstanceViaApi(item.instanceName, item.itemBarcode);
     ServicePoints.getViaApi()
-    .then((servicePointResponse) => {
-        servicePointId = servicePointResponse[0].id;
-        Institutions.createViaApi(Institutions.getDefaultInstitutions())
-            .then(institutionsResponse => {
-                institutionId = institutionsResponse.id;
-                institutionName = institutionsResponse.name;
-                Campuses.createViaApi({ ...Campuses.getDefaultCampuse(), institutionId })
-                    .then(campusesResponse => {
-                        campusId = campusesResponse.id;
-                        Libraries.createViaApi({ ...Libraries.getDefaultLibrary(), campusId })
-                            .then(librariesResponse => {
-                                libraryId = librariesResponse.id;
-                                NewLocation.createViaApi(NewLocation.getDefaultLocation(servicePointId,institutionId,campusId,libraryId))
-                                    .then(locationResponse => {
-                                        location = locationResponse;
-                                    });
-                            });
-                    });
-            });
+    .then((servicePoint) => {
+      servicePointId = servicePoint[0].id;
+      NewLocation.createViaApi(NewLocation.getDefaultLocation(servicePointId))
+        .then(res => {
+          location = res;
+        });
     });
-
 
     cy.loginAsAdmin({ path:TopMenu.ordersPath, waiter: Orders.waitLoading });
 
@@ -115,7 +94,7 @@ describe('orders: Receive piece from Order', () => {
     // Receiving part
     Orders.receiveOrderViaActions();
     Receiving.selectFromResultsList(item.instanceName);
-    Receiving.receiveAndChangeLocation(0, caption, institutionName);
+    Receiving.receiveAndChangeLocation(0, caption, location.institutionId);
 
     Receiving.checkReceived(0, caption);
     Receiving.selectInstanceInReceive(item.instanceName);

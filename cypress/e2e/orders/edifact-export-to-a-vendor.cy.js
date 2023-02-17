@@ -72,27 +72,13 @@ describe('orders: export', () => {
     cy.getAdminToken();
 
     ServicePoints.getViaApi()
-        .then((servicePoint) => {
-            servicePointId = servicePoint[0].id;
-            Institutions.createViaApi(Institutions.getDefaultInstitutions())
-                .then(institutionsResponse => {
-                    institutionId = institutionsResponse.id;
-                    institutionName = institutionsResponse.name;
-                    Campuses.createViaApi({ ...Campuses.getDefaultCampuse(), institutionId })
-                        .then(campusesResponse => {
-                            campusId = campusesResponse.id;
-                            Libraries.createViaApi({ ...Libraries.getDefaultLibrary(), campusId })
-                                .then(librariesResponse => {
-                                    libraryId = librariesResponse.id;
-                                    NewLocation.createViaApi(NewLocation.getDefaultLocation(servicePointId,institutionId,campusId,libraryId))
-                                        .then(locationResponse => {
-                                            location = locationResponse;
-                                        });
-                                });
-                        });
-                });
+    .then((servicePoint) => {
+      servicePointId = servicePoint[0].id;
+      NewLocation.createViaApi(NewLocation.getDefaultLocation(servicePointId))
+        .then(res => {
+          location = res;
         });
-
+    });
     Organizations.createOrganizationViaApi(organization)
       .then(response => {
         organization.id = response;
@@ -144,7 +130,7 @@ describe('orders: export', () => {
       order.id = orderId;
       Orders.createPOLineViaActions();
       OrderLines.selectRandomInstanceInTitleLookUP('*', 3);
-      OrderLines.fillInPOLineInfoForExportWithLocation(`${organization.accounts[0].name} (${organization.accounts[0].accountNo})`, 'Purchase', institutionName);
+      OrderLines.fillInPOLineInfoForExportWithLocation(`${organization.accounts[0].name} (${organization.accounts[0].accountNo})`, 'Purchase', location.institutionId);
       OrderLines.backToEditingOrder();
       Orders.openOrder();
     });
