@@ -22,7 +22,6 @@ import ItemRecordView from '../../../support/fragments/inventory/itemRecordView'
 import ItemActions from '../../../support/fragments/inventory/inventoryItem/itemActions';
 import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
 import ExportFile from '../../../support/fragments/data-export/exportFile';
-import ExportMarcFile from '../../../support/fragments/data-export/export-marc-file';
 import FileManager from '../../../support/utils/fileManager';
 import StatisticalCodes from '../../../support/fragments/settings/inventory/statisticalCodes';
 import Users from '../../../support/fragments/users/users';
@@ -159,6 +158,8 @@ describe('ui-data-import: Item update via match by status', () => {
     });
     // delete downloads folder and created files in fixtures
     FileManager.deleteFolder(Cypress.config('downloadsFolder'));
+    FileManager.deleteFile(`cypress/fixtures/${nameMarcFileForUpdate}`);
+    FileManager.deleteFile(`cypress/fixtures/${nameForCSVFile}`);
   });
 
   const mappingProfileForCreateHoldings = (holdingsMappingProfile) => {
@@ -278,13 +279,13 @@ describe('ui-data-import: Item update via match by status', () => {
       InventorySearchAndFilter.switchToItem();
       InventorySearchAndFilter.filterItemByStatisticalCode(statisticalCode);
       InventorySearchAndFilter.saveUUIDs();
-      ExportMarcFile.downloadCSVFile(nameForCSVFile, 'SearchInstanceUUIDs*');
+      ExportFile.downloadCSVFile(nameForCSVFile, 'SearchInstanceUUIDs*');
 
       // download exported marc file
       cy.visit(TopMenu.dataExportPath);
       ExportFile.uploadFile(nameForCSVFile);
       ExportFile.exportWithCreatedJobProfile(nameForCSVFile, jobProfileNameForExport);
-      ExportMarcFile.downloadExportedMarcFile(nameMarcFileForUpdate);
+      ExportFile.downloadExportedMarcFile(nameMarcFileForUpdate);
 
       // upload the exported marc file
       cy.visit(TopMenu.dataImportPath);
