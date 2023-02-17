@@ -18,6 +18,9 @@ import Libraries from '../../support/fragments/settings/tenant/libraries';
 import DateTools from '../../support/utils/dateTools';
 
 describe('orders: export', () => {
+  
+  // Test will be failed with issue https://issues.folio.org/browse/STCOM-1120
+  
   const order = { ...NewOrder.defaultOneTimeOrder };
   const organization = {
     ...NewOrganization.defaultUiOrganizations,
