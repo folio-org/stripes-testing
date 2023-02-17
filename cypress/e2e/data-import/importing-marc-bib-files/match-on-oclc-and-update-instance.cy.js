@@ -1,0 +1,141 @@
+import getRandomPostfix from '../../../support/utils/stringTools';
+import TestTypes from '../../../support/dictionary/testTypes';
+import DevTeams from '../../../support/dictionary/devTeams';
+import TopMenu from '../../../support/fragments/topMenu';
+import SettingsMenu from '../../../support/fragments/settingsMenu';
+import NewFieldMappingProfile from '../../../support/fragments/data_import/mapping_profiles/newFieldMappingProfile';
+import NewActionProfile from '../../../support/fragments/data_import/action_profiles/newActionProfile';
+import NewJobProfile from '../../../support/fragments/data_import/job_profiles/newJobProfile';
+import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
+import ActionProfiles from '../../../support/fragments/data_import/action_profiles/actionProfiles';
+import FieldMappingProfiles from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfiles';
+import DataImport from '../../../support/fragments/data_import/dataImport';
+import Logs from '../../../support/fragments/data_import/logs/logs';
+import FileDetails from '../../../support/fragments/data_import/logs/fileDetails';
+import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
+import NewMatchProfile from '../../../support/fragments/data_import/match_profiles/newMatchProfile';
+import MatchProfiles from '../../../support/fragments/data_import/match_profiles/matchProfiles';
+
+
+describe('ui-data-import:', () => {
+  let instanceHrid;
+  const itemsForCreateInstance = {
+    catalogedDate: '###TODAY###',
+    statusTerm: '"Batch Loaded"',
+    statisticalCode: 'ARL (Collection stats): books - Book, print (books)'
+  };
+  const itemsForUpdateInstance = {
+    statusTerm: '"Temporary"',
+    statisticalCode: 'ARL (Collection stats): maps - Maps, print (maps)'
+  };
+  const oclc = '(OCoLC)879516309';
+
+  // profile names for creating
+  const instanceCreateMapProfileName = `C11109 create mapping profile_${getRandomPostfix()}`;
+  const instanceCreateActionProfileName = `C11109 create action profile_${getRandomPostfix()}`;
+  const jobProfileForCreateName = `C11109 create job profile_${getRandomPostfix()}`;
+  // profile names for updating
+  const instanceUpdateMapProfileName = `C11109 update mapping profile_${getRandomPostfix()}`;
+  const instanceUpdateActionProfileName = `C11109 update action profile_${getRandomPostfix()}`;
+  const matchProfileName = `C11109 match profile_${getRandomPostfix()}`;
+  const jobProfileForUpdateName = `C11109 update job profile_${getRandomPostfix()}`;
+
+  // unique file names
+  const nameMarcFileForCreate = `C11109 autotestFile.${getRandomPostfix()}.mrc`;
+
+  const collectionOfMappingAndActionProfiles = [
+    {
+      mappingProfileForCreate: { name: instanceCreateMapProfileName,
+        typeValue : NewFieldMappingProfile.folioRecordTypeValue.instance },
+      actionProfileForCreate: { typeValue: NewActionProfile.folioRecordTypeValue.instance,
+        name: instanceCreateActionProfileName,
+        action: 'Create (all record types except MARC Authority or MARC Holdings)' }
+    },
+    {
+      mappingProfileForUpdate: { name: instanceUpdateMapProfileName,
+        typeValue : NewFieldMappingProfile.folioRecordTypeValue.instance },
+      actionProfileForUpdate: { typeValue: NewActionProfile.folioRecordTypeValue.instance,
+        name: instanceUpdateActionProfileName,
+        action: 'Update (all record types except Orders, Invoices, or MARC Holdings)' }
+    }
+  ];
+
+  const jobProfileForCreate = {
+    profileName: jobProfileForCreateName,
+    acceptedType: NewJobProfile.acceptedDataType.marc
+  };
+
+  before('login', () => {
+    cy.loginAsAdmin();
+    cy.getAdminToken();
+  });
+
+  it('C11109 Update an instance based on an OCLC number match (folijet)',
+    { tags: [TestTypes.smoke, DevTeams.folijet] }, () => {
+      // create mapping profile for creating instance
+      cy.visit(SettingsMenu.mappingProfilePath);
+      FieldMappingProfiles.openNewMappingProfileForm();
+      NewFieldMappingProfile.fillSummaryInMappingProfile(collectionOfMappingAndActionProfiles[0].mappingProfileForCreate);
+      NewFieldMappingProfile.addSuppressFromDiscovery();
+      NewFieldMappingProfile.fillCatalogedDate(itemsForCreateInstance.catalogedDate);
+      NewFieldMappingProfile.fillInstanceStatusTerm(itemsForCreateInstance.statusTerm);
+      NewFieldMappingProfile.addStatisticalCode(itemsForCreateInstance.statisticalCode, 8);
+      NewFieldMappingProfile.addNatureOfContentTerms();
+      FieldMappingProfiles.saveProfile();
+      FieldMappingProfiles.closeViewModeForMappingProfile(instanceCreateMapProfileName);
+      FieldMappingProfiles.checkMappingProfilePresented(instanceCreateMapProfileName);
+
+      // create action profile for creating instance
+      cy.visit(SettingsMenu.actionProfilePath);
+      ActionProfiles.create(collectionOfMappingAndActionProfiles[0].actionProfileForCreate, instanceCreateMapProfileName);
+      ActionProfiles.checkActionProfilePresented(instanceCreateActionProfileName);
+
+      // create job profile for creating instance
+      cy.visit(SettingsMenu.jobProfilePath);
+      JobProfiles.createJobProfileWithLinkingProfiles(jobProfileForCreate, instanceCreateActionProfileName);
+      JobProfiles.checkJobProfilePresented(jobProfileForCreateName);
+
+      // upload a marc file for creating of the new instance
+      cy.visit(TopMenu.dataImportPath);
+      DataImport.uploadFile('marcFileForC11109.mrc', nameMarcFileForCreate);
+      JobProfiles.searchJobProfileForImport(jobProfileForCreateName);
+      JobProfiles.runImportFile();
+      JobProfiles.waitFileIsImported(nameMarcFileForCreate);
+      Logs.checkStatusOfJobProfile('Completed');
+      Logs.openFileDetails(nameMarcFileForCreate);
+      [FileDetails.columnName.srsMarc,
+        FileDetails.columnName.instance,
+      ].forEach(columnName => {
+        FileDetails.checkStatusInColumn(FileDetails.status.created, columnName);
+      });
+      FileDetails.checkSrsRecordQuantityInSummaryTable('1');
+      FileDetails.checkInstanceQuantityInSummaryTable('1');
+
+      // get Instance HRID through API
+      InventorySearchAndFilter.getInstanceHRID()
+        .then(hrId => {
+          instanceHrid = hrId[0];
+
+          cy.visit(TopMenu.inventoryPath);
+          InventorySearchAndFilter.searchInstanceByHRID(instanceHrid);
+          // checks
+
+          // create mapping profile for updating instance
+          cy.visit(SettingsMenu.mappingProfilePath);
+          FieldMappingProfiles.openNewMappingProfileForm();
+          NewFieldMappingProfile.fillSummaryInMappingProfile(collectionOfMappingAndActionProfiles[1].mappingProfileForUpdate);
+          NewFieldMappingProfile.fillInstanceStatusTerm(itemsForUpdateInstance.statusTerm);
+          NewFieldMappingProfile.addStatisticalCode(itemsForUpdateInstance.statisticalCode, 8);
+          FieldMappingProfiles.saveProfile();
+          FieldMappingProfiles.closeViewModeForMappingProfile(instanceUpdateMapProfileName);
+          FieldMappingProfiles.checkMappingProfilePresented(instanceUpdateMapProfileName);
+
+          // create action profile for updating instance
+          cy.visit(SettingsMenu.actionProfilePath);
+          ActionProfiles.create(collectionOfMappingAndActionProfiles[1].actionProfileForUpdate, instanceUpdateMapProfileName);
+          ActionProfiles.checkActionProfilePresented(instanceUpdateActionProfileName);
+
+          
+        });
+    });
+});

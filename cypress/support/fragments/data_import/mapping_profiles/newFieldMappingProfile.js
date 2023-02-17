@@ -278,8 +278,32 @@ export default {
     ]);
   },
 
-  fillCatalogedDate:() => {
-    cy.do(TextField('Cataloged date').fillIn(catalogedDate));
+  addSuppressFromDiscovery:() => {
+    const suppressFromDiscovery = 'profile.mappingDetails.mappingFields[0].booleanFieldAction';
+    const staffSuppress = 'profile.mappingDetails.mappingFields[1].booleanFieldAction';
+    const previouslyHeld = 'profile.mappingDetails.mappingFields[2].booleanFieldAction';
+    cy.do([
+      Select({ name: suppressFromDiscovery }).focus(),
+      Select({ name: suppressFromDiscovery }).choose('Mark for all affected records'),
+      Select({ name: staffSuppress }).focus(),
+      Select({ name: staffSuppress }).choose('Mark for all affected records'),
+      Select({ name: previouslyHeld }).focus(),
+      Select({ name: previouslyHeld }).choose('Mark for all affected records')
+    ]);
+  },
+
+  addNatureOfContentTerms:() => {
+    const contentTerms = 'profile.mappingDetails.mappingFields[22].repeatableFieldAction';
+
+    cy.do(Select({ name: contentTerms }).focus());
+    cy.do(Select({ name: contentTerms }).choose(actions.addTheseToExisting));
+    cy.do(Button('Add nature of content term').click());
+    cy.do(TextField('Nature of content term').fillIn('"bibliography"'));
+    waitLoading();
+  },
+
+  fillCatalogedDate:(date = catalogedDate) => {
+    cy.do(TextField('Cataloged date').fillIn(date));
     waitLoading();
   },
 
