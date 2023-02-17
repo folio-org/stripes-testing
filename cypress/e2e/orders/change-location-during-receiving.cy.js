@@ -45,18 +45,18 @@ describe('orders: Receive piece from Order', () => {
       });
     InventoryInstances.createInstanceViaApi(item.instanceName, item.itemBarcode);
     ServicePoints.getViaApi()
-    .then((servicePoint) => {
-        servicePointId = servicePoint[0].id;
+    .then((servicePointResponse) => {
+        servicePointId = servicePointResponse[0].id;
         Institutions.createViaApi(Institutions.getDefaultInstitutions())
-            .then(locinsts => {
-                institutionId = locinsts.id;
-                institutionName = locinsts.name;
+            .then(institutionsResponse => {
+                institutionId = institutionsResponse.id;
+                institutionName = institutionsResponse.name;
                 Campuses.createViaApi({ ...Campuses.getDefaultCampuse(), institutionId })
-                    .then(loccamps => {
-                        campusId = loccamps.id;
+                    .then(campusesResponse => {
+                        campusId = campusesResponse.id;
                         Libraries.createViaApi({ ...Libraries.getDefaultLibrary(), campusId })
-                            .then(loclibs => {
-                                libraryId = loclibs.id;
+                            .then(librariesResponse => {
+                                libraryId = librariesResponse.id;
                                 NewLocation.createViaApi(NewLocation.getDefaultLocation(servicePointId,institutionId,campusId,libraryId))
                                     .then(locationResponse => {
                                         location = locationResponse;
