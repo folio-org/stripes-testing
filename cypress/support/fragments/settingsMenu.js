@@ -73,6 +73,7 @@ export default {
   matchProfilePath: 'settings/data-import/match-profiles',
   jobProfilePath: 'settings/data-import/job-profiles',
   marcFieldProtectionPath: 'settings/data-import/marc-field-protection',
+  fileExtensionsPath: 'settings/data-import/file-extensions',
   // Data export
   exportMappingProfilePath: 'settings/data-export/mapping-profiles',
   exportJobProfilePath: 'settings/data-export/job-profiles',

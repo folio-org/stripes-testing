@@ -240,6 +240,7 @@ export default {
     // number needs for using this method in filling fields for holdings and item profiles
     const statisticalCodeFieldName = `profile.mappingDetails.mappingFields[${number}].repeatableFieldAction`;
 
+    cy.do(Select({ name: statisticalCodeFieldName }).focus());
     cy.do(Select({ name: statisticalCodeFieldName }).choose(actions.addTheseToExisting));
     cy.do(Button('Add statistical code').click());
     cy.do(TextField('Statistical code').fillIn(`"${name}"`));
@@ -250,6 +251,7 @@ export default {
     // number needs for using this method in filling fields for holdings and item profiles
     const adminNoteFieldName = `profile.mappingDetails.mappingFields[${number}].repeatableFieldAction`;
 
+    cy.do(Select({ name: adminNoteFieldName }).focus());
     cy.do(Select({ name: adminNoteFieldName }).choose(actions.addTheseToExisting));
     cy.do(Button('Add administrative note').click());
     cy.do(TextField('Administrative note').fillIn(`"${note}"`));
@@ -257,6 +259,7 @@ export default {
 
   addElectronicAccess:(relationship, uri, linkText = '') => {
     cy.do([
+      Select({ name:'profile.mappingDetails.mappingFields[23].repeatableFieldAction' }).focus(),
       Select({ name:'profile.mappingDetails.mappingFields[23].repeatableFieldAction' }).choose(actions.addTheseToExisting),
       Button('Add electronic access').click(),
       TextField('Relationship').fillIn(relationship),
@@ -267,6 +270,7 @@ export default {
 
   addHoldingsStatements:(statement) => {
     cy.do([
+      Select({ name:'profile.mappingDetails.mappingFields[16].repeatableFieldAction' }).focus(),
       Select({ name:'profile.mappingDetails.mappingFields[16].repeatableFieldAction' }).choose(actions.addTheseToExisting),
       Button('Add holdings statement').click(),
       TextField('Holdings statement').fillIn(`"${statement}"`),
@@ -310,13 +314,18 @@ export default {
   },
 
   addItemNotes:(noteType, note, staffOnly) => {
-    cy.do(Select({ name:'profile.mappingDetails.mappingFields[25].repeatableFieldAction' })
-      .choose(actions.addTheseToExisting));
-    cy.do(Button('Add item note').click());
-    cy.do(TextField('Note type').fillIn(noteType));
-    cy.do(TextField('Note').fillIn(note));
-    cy.do(Select({ name:'profile.mappingDetails.mappingFields[25].subfields[0].fields[2].booleanFieldAction' })
-      .choose(staffOnly));
+    const noteFieldName = 'profile.mappingDetails.mappingFields[25].repeatableFieldAction';
+
+    cy.do([
+      Select({ name:noteFieldName }).focus(),
+      Select({ name:noteFieldName }).choose(actions.addTheseToExisting),
+      Button('Add item note').click(),
+      TextField('Note type').fillIn(noteType),
+      TextField('Note').fillIn(note),
+      Select({ name:'profile.mappingDetails.mappingFields[25].subfields[0].fields[2].booleanFieldAction' }).focus(),
+      Select({ name:'profile.mappingDetails.mappingFields[25].subfields[0].fields[2].booleanFieldAction' })
+        .choose(staffOnly)
+    ]);
     waitLoading();
   },
 
@@ -380,5 +389,22 @@ export default {
     cy.get('div[class^="tableRow-"]').last().then(elem => {
       elem[0].querySelector('button[icon="plus-sign"]').click();
     });
+  },
+
+  createMappingProfileViaApi:(nameProfile) => {
+    return cy
+      .okapiRequest({
+        method: 'POST',
+        path: 'data-import-profiles/mappingProfiles',
+        body: { profile: {
+          name: nameProfile,
+          incomingRecordType: 'MARC_BIBLIOGRAPHIC',
+          existingRecordType: 'INSTANCE',
+        } },
+        isDefaultSearchParamsRequired: false,
+      })
+      .then(({ response }) => {
+        return response;
+      });
   }
 };
