@@ -376,6 +376,34 @@ export default {
     ]);
   },
 
+  fillInPOLineInfoForExportWithLocationForPhisicalResource(accountNumber, AUMethod, institutionName) {
+    cy.do([
+      orderFormatSelect.choose('Physical resource'),
+      acquisitionMethodButton.click(),
+      acquisitionMethodButton.click(),
+      SelectionOption(AUMethod).click(),
+      Select({ name: 'vendorDetail.vendorAccount' }).choose(accountNumber),
+    ]);
+    cy.do([
+      physicalUnitPrice.fillIn(physicalUnitPrice),
+      quantityPhysicalTextField.fillIn(quantityPhysical),
+      materialTypeSelect.choose('book'),
+      addLocationButton.click(),
+      Button('Create new holdings for location').click(),
+      Select({ name: 'institutionId'}).choose(institutionName),
+      Modal('Select permanent location').find(Button('Save and close')).click(),
+      quantityPhysicalLocationField.fillIn(quantityPhysical),
+    ]);
+    cy.expect([
+      physicalUnitPriceTextField.has({ value: physicalUnitPrice }),
+      quantityPhysicalLocationField.has({ value: quantityPhysical }),
+    ]);
+    cy.do([
+      saveAndClose.click(),
+      Button('Submit').click()
+    ]);
+  },
+
   selectFilterMainLibraryLocationsPOL: () => {
     cy.do([
       buttonLocationFilter.click(),
