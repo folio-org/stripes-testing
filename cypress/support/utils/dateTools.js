@@ -128,5 +128,6 @@ export default {
     minutes = minutes < 10 ? '0' + minutes : minutes;
     let utcTime = hours + ':' + minutes + ' ' + ampm;
     return utcTime;
+    // return value in format HH:MM AM/PM
   },
 };
