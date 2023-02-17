@@ -48,7 +48,7 @@ const status = '"In process"';
 const holdingsType = 'Holdings';
 const itemType = 'Item';
 const catalogedDate = '###TODAY###';
-const instanceStatusTerm = '"Batch Loaded"';
+const instanceStatusTerm = 'Batch Loaded';
 const defaultMappingProfile = {
   name: `autotest${folioRecordTypeValue.instance}${getRandomPostfix()}`,
   typeValue: folioRecordTypeValue.instance,
@@ -308,7 +308,7 @@ export default {
   },
 
   fillInstanceStatusTerm:(statusTerm = instanceStatusTerm) => {
-    cy.do(TextField('Instance status term').fillIn(statusTerm));
+    cy.do(TextField('Instance status term').fillIn(`"${statusTerm}"`));
     waitLoading();
   },
 

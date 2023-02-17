@@ -1,4 +1,5 @@
 import getRandomPostfix from '../../../support/utils/stringTools';
+import DateTools from '../../../support/utils/dateTools';
 import TestTypes from '../../../support/dictionary/testTypes';
 import DevTeams from '../../../support/dictionary/devTeams';
 import TopMenu from '../../../support/fragments/topMenu';
@@ -15,19 +16,23 @@ import FileDetails from '../../../support/fragments/data_import/logs/fileDetails
 import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
 import MatchProfiles from '../../../support/fragments/data_import/match_profiles/matchProfiles';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
+import InstanceRecordView from '../../../support/fragments/inventory/instanceRecordView';
 
 describe('ui-data-import:', () => {
   let instanceHrid;
   const itemsForCreateInstance = {
     catalogedDate: '###TODAY###',
-    statusTerm: '"Batch Loaded"',
-    statisticalCode: 'ARL (Collection stats): books - Book, print (books)'
+    catalogedDateUi: DateTools.getFormattedDate({ date: new Date() }),
+    statusTerm: 'Batch Loaded',
+    statisticalCode: 'ARL (Collection stats): books - Book, print (books)',
+    statisticalCodeUI: 'Book, print (books)'
   };
   const itemsForUpdateInstance = {
-    statusTerm: '"Temporary"',
-    statisticalCode: 'ARL (Collection stats): maps - Maps, print (maps)'
+    statusTerm: 'Temporary',
+    statisticalCode: 'ARL (Collection stats): maps - Maps, print (maps)',
+    statisticalCodeUI: 'Maps, print (maps)'
   };
-  const oclc = '(OCoLC)879516309';
+  const oclcNumber = { type: 'OCLC', value: '(OCoLC)879516309' };
 
   // profile names for creating
   const instanceCreateMapProfileName = `C11109 create mapping profile_${getRandomPostfix()}`;
@@ -45,16 +50,16 @@ describe('ui-data-import:', () => {
 
   const collectionOfMappingAndActionProfiles = [
     {
-      mappingProfileForCreate: { name: instanceCreateMapProfileName,
+      mappingProfile: { name: instanceCreateMapProfileName,
         typeValue : NewFieldMappingProfile.folioRecordTypeValue.instance },
-      actionProfileForCreate: { typeValue: NewActionProfile.folioRecordTypeValue.instance,
+      actionProfile: { typeValue: NewActionProfile.folioRecordTypeValue.instance,
         name: instanceCreateActionProfileName,
         action: 'Create (all record types except MARC Authority or MARC Holdings)' }
     },
     {
-      mappingProfileForUpdate: { name: instanceUpdateMapProfileName,
+      mappingProfile: { name: instanceUpdateMapProfileName,
         typeValue : NewFieldMappingProfile.folioRecordTypeValue.instance },
-      actionProfileForUpdate: { typeValue: NewActionProfile.folioRecordTypeValue.instance,
+      actionProfile: { typeValue: NewActionProfile.folioRecordTypeValue.instance,
         name: instanceUpdateActionProfileName,
         action: 'Update (all record types except Orders, Invoices, or MARC Holdings)' }
     }
@@ -74,11 +79,11 @@ describe('ui-data-import:', () => {
   };
 
   const collectionOfJobProfiles = [
-    { jobProfileForCreate: {
+    { jobProfile: {
       profileName: jobProfileForCreateName,
       acceptedType: NewJobProfile.acceptedDataType.marc
     } },
-    { jobProfileForUpdate: {
+    { jobProfile: {
       profileName: jobProfileForUpdateName,
       acceptedType: NewJobProfile.acceptedDataType.marc
     } }
@@ -87,27 +92,30 @@ describe('ui-data-import:', () => {
   before('login', () => {
     cy.getAdminToken()
       .then(() => {
-
+        // InventorySearchAndFilter.getInstancesByIdentifierViaApi(oclcNumber.value)
+        //   .then(instances => {
+        //     if (instanses.body) {
+        //       instances.forEach(({ id }) => {
+        //         InventoryInstance.deleteInstanceViaApi(id);
+        //       });
+        //     }
+        //   });
       });
     cy.loginAsAdmin();
   });
 
   after('delete test data', () => {
-    // delete generated profiles
-    collectionOfJobProfiles.forEach(profile => {
-      JobProfiles.deleteJobProfile(profile.profileName);
-    });
+    cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${instanceHrid}"` })
+      .then((instance) => {
+        InventoryInstance.deleteInstanceViaApi(instance.id);
+      });
+    JobProfiles.deleteJobProfile(jobProfileForCreateName);
+    JobProfiles.deleteJobProfile(jobProfileForUpdateName);
     MatchProfiles.deleteMatchProfile(matchProfileName);
     collectionOfMappingAndActionProfiles.forEach(profile => {
       ActionProfiles.deleteActionProfile(profile.actionProfile.name);
       FieldMappingProfiles.deleteFieldMappingProfile(profile.mappingProfile.name);
     });
-    cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${instanceHrid}"` })
-      .then((instance) => {
-        cy.deleteItemViaApi(instance.items[0].id);
-        cy.deleteHoldingRecordViaApi(instance.holdings[0].id);
-        InventoryInstance.deleteInstanceViaApi(instance.id);
-      });
   });
 
   it('C11109 Update an instance based on an OCLC number match (folijet)',
@@ -115,7 +123,7 @@ describe('ui-data-import:', () => {
       // create mapping profile for creating instance
       cy.visit(SettingsMenu.mappingProfilePath);
       FieldMappingProfiles.openNewMappingProfileForm();
-      NewFieldMappingProfile.fillSummaryInMappingProfile(collectionOfMappingAndActionProfiles[0].mappingProfileForCreate);
+      NewFieldMappingProfile.fillSummaryInMappingProfile(collectionOfMappingAndActionProfiles[0].mappingProfile);
       NewFieldMappingProfile.addSuppressFromDiscovery();
       NewFieldMappingProfile.fillCatalogedDate(itemsForCreateInstance.catalogedDate);
       NewFieldMappingProfile.fillInstanceStatusTerm(itemsForCreateInstance.statusTerm);
@@ -127,12 +135,12 @@ describe('ui-data-import:', () => {
 
       // create action profile for creating instance
       cy.visit(SettingsMenu.actionProfilePath);
-      ActionProfiles.create(collectionOfMappingAndActionProfiles[0].actionProfileForCreate, instanceCreateMapProfileName);
+      ActionProfiles.create(collectionOfMappingAndActionProfiles[0].actionProfile, instanceCreateMapProfileName);
       ActionProfiles.checkActionProfilePresented(instanceCreateActionProfileName);
 
       // create job profile for creating instance
       cy.visit(SettingsMenu.jobProfilePath);
-      JobProfiles.createJobProfileWithLinkingProfiles(collectionOfJobProfiles[0].jobProfileForCreate, instanceCreateActionProfileName);
+      JobProfiles.createJobProfileWithLinkingProfiles(collectionOfJobProfiles[0].jobProfile, instanceCreateActionProfileName);
       JobProfiles.checkJobProfilePresented(jobProfileForCreateName);
 
       // upload a marc file for creating of the new instance
@@ -158,12 +166,15 @@ describe('ui-data-import:', () => {
 
           cy.visit(TopMenu.inventoryPath);
           InventorySearchAndFilter.searchInstanceByHRID(instanceHrid);
-          // checks
+          InstanceRecordView.verifyCatalogedDate(itemsForCreateInstance.catalogedDateUi);
+          InstanceRecordView.verifyInstanceStatusTerm(itemsForCreateInstance.statusTerm);
+          InstanceRecordView.verifyStatisticalCode(itemsForCreateInstance.statisticalCodeUI);
+          InventoryInstance.verifyResourceIdentifier(oclcNumber.type, oclcNumber.value, 2);
 
           // create mapping profile for updating instance
           cy.visit(SettingsMenu.mappingProfilePath);
           FieldMappingProfiles.openNewMappingProfileForm();
-          NewFieldMappingProfile.fillSummaryInMappingProfile(collectionOfMappingAndActionProfiles[1].mappingProfileForUpdate);
+          NewFieldMappingProfile.fillSummaryInMappingProfile(collectionOfMappingAndActionProfiles[1].mappingProfile);
           NewFieldMappingProfile.fillInstanceStatusTerm(itemsForUpdateInstance.statusTerm);
           NewFieldMappingProfile.addStatisticalCode(itemsForUpdateInstance.statisticalCode, 8);
           FieldMappingProfiles.saveProfile();
@@ -172,7 +183,7 @@ describe('ui-data-import:', () => {
 
           // create action profile for updating instance
           cy.visit(SettingsMenu.actionProfilePath);
-          ActionProfiles.create(collectionOfMappingAndActionProfiles[1].actionProfileForUpdate, instanceUpdateMapProfileName);
+          ActionProfiles.create(collectionOfMappingAndActionProfiles[1].actionProfile, instanceUpdateMapProfileName);
           ActionProfiles.checkActionProfilePresented(instanceUpdateActionProfileName);
 
           // craete match profile
@@ -182,7 +193,7 @@ describe('ui-data-import:', () => {
 
           // create job profile for updating instance
           cy.visit(SettingsMenu.jobProfilePath);
-          JobProfiles.createJobProfile(collectionOfJobProfiles[1].jobProfileForUpdate);
+          JobProfiles.createJobProfile(collectionOfJobProfiles[1].jobProfile);
           NewJobProfile.linkMatchProfile(matchProfileName);
           NewJobProfile.linkActionProfileForMatches(instanceUpdateActionProfileName);
           NewJobProfile.saveAndClose();
@@ -203,7 +214,9 @@ describe('ui-data-import:', () => {
 
           cy.visit(TopMenu.inventoryPath);
           InventorySearchAndFilter.searchInstanceByHRID(instanceHrid);
-          // checks
+          InstanceRecordView.verifyInstanceStatusTerm(itemsForUpdateInstance.statusTerm);
+          InstanceRecordView.verifyStatisticalCode(itemsForUpdateInstance.statisticalCodeUI);
+          InventoryInstance.verifyResourceIdentifier(oclcNumber.type, oclcNumber.value, 2);
         });
     });
 });
