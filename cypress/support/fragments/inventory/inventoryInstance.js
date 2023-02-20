@@ -86,6 +86,24 @@ const enabledSearchBtn = Button({ type: 'submit', disabled: false });
 const resetAllButton = Button('Reset all');
 const searchButtonDisabled = Button({ type: 'submit', disabled: true });
 const instanceHRID = 'Instance HRID';
+const paneResultsSection = Section({ id: 'pane-results' });
+const actionsBtn = Button('Actions');
+const actionsMenuSection = Section({ id: 'actions-menu-section' });
+const importRecord = Button({ id: 'dropdown-clickable-import-record' });
+const importRecordModal = Modal({id: 'import-record-modal'});
+const importButton = Button('Import');
+const closeSourceFile = Button({ icon: 'times-circle-solid' });
+const authoritySearchResults = Section({ id: 'authority-search-results-pane' });
+const mclLinkHeader = MultiColumnListHeader({ id: 'list-column-link' });
+const mclAuthRefTypeHeader = MultiColumnListHeader({ id: 'list-column-authreftype' });
+const mclHeadingRef = MultiColumnListHeader({ id: 'list-column-headingref' });
+const mclHeadingType = MultiColumnListHeader({ id: 'list-column-headingtype' });
+const buttonPrevPageDisabled = Button({ id: 'authority-result-list-prev-paging-button', disabled: true });
+const buttonNextPageDisabled = Button({ id: 'authority-result-list-next-paging-button', disabled: true });
+const buttonNextPageEnabled = Button({ id: 'authority-result-list-next-paging-button', disabled: false });
+const buttonLink = Button('Link');
+const closeDetailsView = Button({ icon: 'times' });
+const quickMarcEditorPane = Section({ id: 'quick-marc-editor-pane' });
 
 const validOCLC = { id:'176116217',
   // TODO: hardcoded count related with interactors getters issue. Redesign to cy.then(QuickMarkEditor().rowsCount()).then(rowsCount => {...}
@@ -227,15 +245,17 @@ export default {
   },
 
   importInstance() {
-    cy.do(Section({ id: 'pane-results' }).find(Button('Actions')).click());
-    cy.do(Section({ id: 'actions-menu-section' }).find(Button({ id: 'dropdown-clickable-import-record' })).click());
-    cy.expect(Modal({id: 'import-record-modal'}).exists());
+    cy.do(paneResultsSection.find(actionsBtn).click());
+    cy.do(actionsMenuSection.find(importRecord).click());
+    cy.expect(importRecordModal.exists());
     cy.do(TextField({ label: including('Enter the OCLC WorldCat identifier') }).fillIn(validOCLC.id));
-    cy.do(Modal({id: 'import-record-modal'}).find(Button('Import')).click());
-    cy.expect(Section({ id: 'pane-instancedetails' }).exists());
+    cy.do(importRecordModal.find(importButton).click());
+    cy.expect(section.exists());
   },
 
   verifyAndClickLinkIcon() {
+    // Waiter needed for the link to be loaded properly.
+    cy.wait(1000);
     cy.expect(QuickMarcEditorRow({ tagValue: '100' }).find(linkIconButton).exists());
     cy.do(QuickMarcEditorRow({ tagValue: '100' }).find(linkIconButton).click());
   },
@@ -266,12 +286,12 @@ export default {
   },
 
   closeAuthoritySource() {
-    cy.do(sourceFileAccordion.find(Button({ icon: 'times-circle-solid' })).click());
+    cy.do(sourceFileAccordion.find(closeSourceFile).click());
     cy.expect(sourceFileAccordion.find(MultiSelect({ selected: including('LC Name Authority file (LCNAF)') })).absent());
   },
 
   verifySearchOptions() {
-    cy.do(Select({ id: 'textarea-authorities-search-qindex' }).click());
+    cy.do(selectField.click());
     cy.expect([
       selectField.has({ content: including('Keyword') }),
       selectField.has({ content: including('Identifier (all)') }),
@@ -292,7 +312,7 @@ export default {
     cy.expect(searchInput.has({ value: value }));
     cy.expect(enabledSearchBtn.exists());
     cy.do(searchButton.click());
-    cy.expect(Section({ id: 'authority-search-results-pane' }).exists());
+    cy.expect(authoritySearchResults.exists());
   },
 
   checkResultsListPaneHeader() {
@@ -306,20 +326,18 @@ export default {
 
   checkSearchResultsTable() {
     cy.expect([
-      MultiColumnListHeader({ id: 'list-column-link' }).has({ content: 'Link' }),
-      MultiColumnListHeader({ id: 'list-column-authreftype' }).has({ content: 'Authorized' }),
-      MultiColumnListHeader({ id: 'list-column-headingref' }).has({ content: 'Heading/Reference' }),
-      MultiColumnListHeader({ id: 'list-column-headingtype' }).has({ content: 'Type of heading' }),
+      mclLinkHeader.has({ content: 'Link' }),
+      mclAuthRefTypeHeader.has({ content: 'Authorized' }),
+      mclHeadingRef.has({ content: 'Heading/Reference' }),
+      mclHeadingType.has({ content: 'Type of heading' }),
       MultiColumnListRow({index: 0}).find(Button({ ariaLabel: 'Link' })).exists(),
       MultiColumnListCell({row: 0, innerHTML: including('<b>Authorized</b>') }).exists(),
-      Button({ id: 'authority-result-list-prev-paging-button', disabled: true }).exists(),
-      Button({ id: 'authority-result-list-next-paging-button', disabled: true }).exists(),
     ]);
     cy.expect([
-      Button({ id: 'authority-result-list-prev-paging-button', disabled: true }).exists(),
+      buttonPrevPageDisabled.exists(),
       or(
-        Button({ id: 'authority-result-list-next-paging-button', disabled: true }).exists(),
-        Button({ id: 'authority-result-list-next-paging-button', disabled: false }).exists(),
+        buttonNextPageDisabled.exists(),
+        buttonNextPageEnabled.exists(),
       ),
     ]);
   },
@@ -331,21 +349,21 @@ export default {
   checkRecordDetailPage() {
     cy.expect([
       marcViewPane.exists(),
-      marcViewPane.find(Button('Link')).exists(),
+      marcViewPane.find(buttonLink).exists(),
       marcViewPane.has({ mark: 'Starr, Lisa' }),
     ]);
   },
 
   closeDetailsView() {
-    cy.do(Section({ id: 'marc-view-pane' }).find(Button({ icon: 'times' })).click());
-    cy.expect(Section({ id: 'authority-search-results-pane' }).exists());
+    cy.do(marcViewPane.find(closeDetailsView).click());
+    cy.expect(authoritySearchResults.exists());
   },
 
   closeFindAuthorityModal() {
-    cy.do(Button({ id: 'find-authority-modal-close-button' }).click());
+    cy.do(closeModalFindAuthority.click());
     cy.expect([
-      Modal({ id: 'find-authority-modal' }).absent(),
-      Section({ id: 'quick-marc-editor-pane' }).exists(),
+      findAuthorityModal.absent(),
+      quickMarcEditorPane.exists(),
     ]);
   },
 
@@ -470,7 +488,7 @@ export default {
     InventoryInstanceSelectInstanceModal.selectInstance();
     InventoryInstancesMovement.move();
   },
-  
+
   checkAddItem:(holdingsRecrodId) => {
     cy.expect(section.find(Button({ id: `clickable-new-item-${holdingsRecrodId}` })).exists());
   },
