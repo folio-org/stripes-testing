@@ -75,7 +75,7 @@ describe('bulk-edit', () => {
       BulkEditSearchPane.waitFileUploading();
 
       BulkEditActions.openActions();
-      BulkEditActions.openStartBulkEditForm();
+      BulkEditActions.openInAppStartBulkEditFrom();
       BulkEditActions.replaceTemporaryLocation('Annex');
       BulkEditActions.confirmChanges();
       BulkEditActions.commitChanges();
@@ -91,7 +91,7 @@ describe('bulk-edit', () => {
 
       BulkEditActions.openActions();
       BulkEditActions.verifyItemActionDropdownItems();
-      BulkEditActions.openStartBulkEditForm();
+      BulkEditActions.openInAppStartBulkEditFrom();
       BulkEditActions.verifyModifyLandingPageBeforeModifying();
       BulkEditActions.fillLoanType('Selected');
       BulkEditActions.verifyModifyLandingPageAfterModifying();
@@ -113,7 +113,7 @@ describe('bulk-edit', () => {
       BulkEditSearchPane.waitFileUploading();
 
       BulkEditActions.openActions();
-      BulkEditActions.openStartBulkEditForm();
+      BulkEditActions.openInAppStartBulkEditFrom();
       BulkEditActions.fillTemporaryLoanType('Selected');
       BulkEditActions.confirmChanges();
       BulkEditActions.commitChanges();
@@ -133,7 +133,7 @@ describe('bulk-edit', () => {
       BulkEditSearchPane.waitFileUploading();
 
       BulkEditActions.openActions();
-      BulkEditActions.openStartBulkEditForm();
+      BulkEditActions.openInAppStartBulkEditFrom();
       BulkEditActions.clearTemporaryLoanType();
       BulkEditActions.confirmChanges();
       BulkEditActions.commitChanges();
@@ -153,7 +153,7 @@ describe('bulk-edit', () => {
       BulkEditSearchPane.waitFileUploading();
 
       BulkEditActions.openActions();
-      BulkEditActions.openStartBulkEditForm();
+      BulkEditActions.openInAppStartBulkEditFrom();
       BulkEditActions.fillLoanType();
       BulkEditActions.replaceWithIsDisabled();
     });
