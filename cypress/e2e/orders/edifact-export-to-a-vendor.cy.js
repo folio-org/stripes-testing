@@ -121,12 +121,14 @@ describe('orders: export', () => {
     cy.visit(TopMenu.ordersPath);
     Orders.createOrder(order, true, false).then(orderId => {
       order.id = orderId;
-      Orders.createPOLineViaActions();
-      OrderLines.selectRandomInstanceInTitleLookUP('*', 3);
-      OrderLines.fillInPOLineInfoForExportWithLocation(`${organization.accounts[0].name} (${organization.accounts[0].accountNo})`, 'Purchase', location.institutionId);
-      OrderLines.backToEditingOrder();
-      Orders.openOrder();
     });
+    
+    Orders.createPOLineViaActions();
+    OrderLines.selectRandomInstanceInTitleLookUP('*', 3);
+    OrderLines.fillInPOLineInfoForExportWithLocation(`${organization.accounts[0].name} (${organization.accounts[0].accountNo})`, 'Purchase', location.institutionId);
+    OrderLines.backToEditingOrder();
+    Orders.openOrder();
+    
     cy.visit(TopMenu.exportManagerOrganizationsPath);
     ExportManagerSearchPane.selectOrganizationsSearch();
     ExportManagerSearchPane.selectExportMethod(integrationName1);

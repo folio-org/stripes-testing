@@ -362,7 +362,9 @@ export default {
       Select({ name: 'eresource.materialType' }).choose('book'),
       addLocationButton.click(),
       Button('Create new holdings for location').click(),
-      Select({ name: 'institutionId'}).value(institutionId),
+    ]);
+    cy.get('form[id=location-form] select[name=institutionId]').select(institutionId);
+        cy.do([
       Modal('Select permanent location').find(Button('Save and close')).click(),
       TextField({ name: 'locations[0].quantityElectronic' }).fillIn(quantityElectronic),
     ]);
