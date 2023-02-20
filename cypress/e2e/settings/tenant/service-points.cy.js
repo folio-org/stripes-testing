@@ -15,7 +15,7 @@ const newServicePoint = {
   newNameForEdit: `test_${getRandomPostfix()}`,
 };
 
-describe('Service points', () => {
+describe('settings: service-points', () => {
   before('create test data', () => {
     cy.createTempUser([
       permissions.uiTenantSettingsServicePointsCRUD.gui

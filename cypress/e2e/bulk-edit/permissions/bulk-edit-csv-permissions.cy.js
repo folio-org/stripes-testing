@@ -4,7 +4,6 @@ import permissions from '../../../support/dictionary/permissions';
 import BulkEditSearchPane from '../../../support/fragments/bulk-edit/bulk-edit-search-pane';
 import devTeams from '../../../support/dictionary/devTeams';
 import users from '../../../support/fragments/users/users';
-import BulkEditActions from '../../../support/fragments/bulk-edit/bulk-edit-actions';
 
 let userWithCsvViewPermission;
 let userWithCsvPermissions;
@@ -42,9 +41,7 @@ describe('bulk-edit', () => {
       cy.login(userWithCsvPermissions.username, userWithCsvPermissions.password);
       cy.visit(TopMenu.bulkEditPath);
 
-      BulkEditActions.openActions();
-      BulkEditActions.openStartBulkEditForm();
-      BulkEditActions.verifyLabel('Upload CSV file with edited records');
+      BulkEditSearchPane.actionsIsAbsent();
     });
   });
 });
