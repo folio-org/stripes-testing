@@ -269,121 +269,122 @@ describe('ui-data-import: Match on POL and update related Instance, Holdings, It
     Receiving.checkIsPiecesCreated(title);
   };
 
-  it('C350590 Match on POL and update related Instance, Holdings, Item (folijet)', { tags: [TestTypes.smoke, DevTeams.folijet] }, () => {
+  it('C350590 Match on POL and update related Instance, Holdings, Item (folijet)',
+    { tags: [TestTypes.smoke, DevTeams.folijet] }, () => {
     // create the first PO with POL
-    Orders.createOrderWithOrderLineViaApi(NewOrder.getDefaultOrder(vendorId),
-      BasicOrderLine.getDefaultOrderLine(
-        firstItem.quantity,
-        firstItem.title,
-        location.id,
-        materialTypeId,
-        acquisitionMethodId,
-        firstItem.price,
-        firstItem.price,
-        [{
-          productId: firstItem.productId,
-          productIdType: productIdTypeId
-        }]
-      ))
-      .then(res => {
-        firstOrderNumber = res;
+      Orders.createOrderWithOrderLineViaApi(NewOrder.getDefaultOrder(vendorId),
+        BasicOrderLine.getDefaultOrderLine(
+          firstItem.quantity,
+          firstItem.title,
+          location.id,
+          materialTypeId,
+          acquisitionMethodId,
+          firstItem.price,
+          firstItem.price,
+          [{
+            productId: firstItem.productId,
+            productIdType: productIdTypeId
+          }]
+        ))
+        .then(res => {
+          firstOrderNumber = res;
 
-        Orders.checkIsOrderCreated(firstOrderNumber);
-        // open the first PO with POL
-        openOrder(firstOrderNumber);
-        OrderView.checkIsOrderOpened('Open');
-        OrderView.checkIsItemsInInventoryCreated(firstItem.title, location.name);
-        // check receiving pieces are created
-        checkReceivedPiece(firstOrderNumber, firstItem.title);
+          Orders.checkIsOrderCreated(firstOrderNumber);
+          // open the first PO with POL
+          openOrder(firstOrderNumber);
+          OrderView.checkIsOrderOpened('Open');
+          OrderView.checkIsItemsInInventoryCreated(firstItem.title, location.name);
+          // check receiving pieces are created
+          checkReceivedPiece(firstOrderNumber, firstItem.title);
 
-        // create second PO with POL
-        Orders.createOrderWithOrderLineViaApi(NewOrder.getDefaultOrder(vendorId),
-          BasicOrderLine.getDefaultOrderLine(
-            secondItem.quantity,
-            secondItem.title,
-            location.id,
-            materialTypeId,
-            acquisitionMethodId,
-            secondItem.price,
-            secondItem.price,
-            [{
-              productId: secondItem.productId,
-              productIdType: productIdTypeId
-            }]
-          ))
-          .then(respo => {
-            secondOrderNumber = respo;
+          // create second PO with POL
+          Orders.createOrderWithOrderLineViaApi(NewOrder.getDefaultOrder(vendorId),
+            BasicOrderLine.getDefaultOrderLine(
+              secondItem.quantity,
+              secondItem.title,
+              location.id,
+              materialTypeId,
+              acquisitionMethodId,
+              secondItem.price,
+              secondItem.price,
+              [{
+                productId: secondItem.productId,
+                productIdType: productIdTypeId
+              }]
+            ))
+            .then(respo => {
+              secondOrderNumber = respo;
 
-            cy.visit(TopMenu.ordersPath);
-            Orders.resetFilters();
-            Orders.checkIsOrderCreated(secondOrderNumber);
-            // open the second PO
-            openOrder(secondOrderNumber);
-            OrderView.checkIsOrderOpened('Open');
-            OrderView.checkIsItemsInInventoryCreated(secondItem.title, location.name);
-            // check receiving pieces are created
-            checkReceivedPiece(secondOrderNumber, secondItem.title);
-          });
+              cy.visit(TopMenu.ordersPath);
+              Orders.resetFilters();
+              Orders.checkIsOrderCreated(secondOrderNumber);
+              // open the second PO
+              openOrder(secondOrderNumber);
+              OrderView.checkIsOrderOpened('Open');
+              OrderView.checkIsItemsInInventoryCreated(secondItem.title, location.name);
+              // check receiving pieces are created
+              checkReceivedPiece(secondOrderNumber, secondItem.title);
+            });
 
-        DataImport.editMarcFile('marcFileForC350590.mrc', editedMarcFileName, ['test'], [firstOrderNumber]);
+          DataImport.editMarcFile('marcFileForC350590.mrc', editedMarcFileName, ['test'], [firstOrderNumber]);
+        });
+
+      // create mapping and action profiles
+      collectionOfProfiles.forEach(profile => {
+        cy.visit(SettingsMenu.mappingProfilePath);
+        FieldMappingProfiles.createMappingProfileForMatch(profile.mappingProfile);
+        FieldMappingProfiles.checkMappingProfilePresented(profile.mappingProfile.name);
+        cy.visit(SettingsMenu.actionProfilePath);
+        ActionProfiles.create(profile.actionProfile, profile.mappingProfile.name);
+        ActionProfiles.checkActionProfilePresented(profile.actionProfile.name);
       });
 
-    // create mapping and action profiles
-    collectionOfProfiles.forEach(profile => {
-      cy.visit(SettingsMenu.mappingProfilePath);
-      FieldMappingProfiles.createMappingProfileForMatch(profile.mappingProfile);
-      FieldMappingProfiles.checkMappingProfilePresented(profile.mappingProfile.name);
-      cy.visit(SettingsMenu.actionProfilePath);
-      ActionProfiles.create(profile.actionProfile, profile.mappingProfile.name);
-      ActionProfiles.checkActionProfilePresented(profile.actionProfile.name);
+      // create match profiles
+      cy.visit(SettingsMenu.matchProfilePath);
+      collectionOfMatchProfiles.forEach(profile => {
+        MatchProfiles.createMatchProfile(profile.matchProfile);
+        MatchProfiles.checkMatchProfilePresented(profile.matchProfile.profileName);
+      });
+
+      // create job profile
+      cy.visit(SettingsMenu.jobProfilePath);
+      JobProfiles.createJobProfileWithLinkingProfilesForUpdate(specialJobProfile);
+      NewJobProfile.linkMatchAndActionProfilesForInstance(actionProfileNameForInstance, matchProfileNameForInstance, 0);
+      NewJobProfile.linkMatchAndActionProfilesForHoldings(actionProfileNameForHoldings, matchProfileNameForHoldings, 2);
+      NewJobProfile.linkMatchAndActionProfilesForItem(actionProfileNameForItem, matchProfileNameForItem, 4);
+      NewJobProfile.saveAndClose();
+
+      // upload .mrc file
+      cy.visit(TopMenu.dataImportPath);
+      DataImport.checkIsLandingPageOpened();
+      DataImport.uploadFile(editedMarcFileName);
+      JobProfiles.searchJobProfileForImport(jobProfileName);
+      JobProfiles.runImportFile();
+      JobProfiles.waitFileIsImported(editedMarcFileName);
+      Logs.checkStatusOfJobProfile();
+      Logs.openFileDetails(editedMarcFileName);
+      FileDetails.checkSrsRecordQuantityInSummaryTable('1');
+      FileDetails.checkInstanceQuantityInSummaryTable('1', 1);
+      FileDetails.checkHoldingsQuantityInSummaryTable('1', 1);
+      FileDetails.checkItemQuantityInSummaryTable('1', 1);
+      FileDetails.checkItemsStatusesInResultList(0, [FileDetails.status.created, FileDetails.status.updated, FileDetails.status.updated, FileDetails.status.updated]);
+      FileDetails.checkItemsStatusesInResultList(1, [FileDetails.status.dash, FileDetails.status.discarded, FileDetails.status.discarded, FileDetails.status.discarded]);
+
+      // check is items updated
+      FileDetails.openInstanceInInventory('Updated');
+      InventoryInstance.getAssignedHRID().then(initialInstanceHrId => { instanceHrid = initialInstanceHrId; });
+      InventoryInstance.checkIsInstanceUpdated();
+      InventoryInstance.openHoldingView();
+      HoldingsRecordView.checkHoldingsType('Monograph');
+      HoldingsRecordView.checkCallNumberType('Library of Congress classification');
+      HoldingsRecordView.checkPermanentLocation('Main Library');
+      HoldingsRecordView.close();
+      InventoryInstance.openHoldingsAccordion('Main Library');
+      InventoryInstance.openItemByBarcode(firstItem.barcode);
+      ItemRecordView.verifyItemStatus('In process');
+      ItemRecordView.checkEffectiveLocation('Main Library');
+      ItemRecordView.closeDetailView();
+      InventoryInstance.viewSource();
+      InventoryViewSource.verifyBarcodeInMARCBibSource(firstItem.barcode);
     });
-
-    // create match profiles
-    cy.visit(SettingsMenu.matchProfilePath);
-    collectionOfMatchProfiles.forEach(profile => {
-      MatchProfiles.createMatchProfile(profile.matchProfile);
-      MatchProfiles.checkMatchProfilePresented(profile.matchProfile.profileName);
-    });
-
-    // create job profile
-    cy.visit(SettingsMenu.jobProfilePath);
-    JobProfiles.createJobProfileWithLinkingProfilesForUpdate(specialJobProfile);
-    NewJobProfile.linkMatchAndActionProfilesForInstance(actionProfileNameForInstance, matchProfileNameForInstance, 0);
-    NewJobProfile.linkMatchAndActionProfilesForHoldings(actionProfileNameForHoldings, matchProfileNameForHoldings, 2);
-    NewJobProfile.linkMatchAndActionProfilesForItem(actionProfileNameForItem, matchProfileNameForItem, 4);
-    NewJobProfile.saveAndClose();
-
-    // upload .mrc file
-    cy.visit(TopMenu.dataImportPath);
-    DataImport.checkIsLandingPageOpened();
-    DataImport.uploadFile(editedMarcFileName);
-    JobProfiles.searchJobProfileForImport(jobProfileName);
-    JobProfiles.runImportFile();
-    JobProfiles.waitFileIsImported(editedMarcFileName);
-    Logs.checkStatusOfJobProfile();
-    Logs.openFileDetails(editedMarcFileName);
-    FileDetails.checkSrsRecordQuantityInSummaryTable('1', 0);
-    FileDetails.checkInstanceQuantityInSummaryTable('1', 1);
-    FileDetails.checkHoldingsQuantityInSummaryTable('1', 1);
-    FileDetails.checkItemQuantityInSummaryTable('1', 1);
-    FileDetails.checkItemsStatusesInResultList(0, [FileDetails.status.created, FileDetails.status.updated, FileDetails.status.updated, FileDetails.status.updated]);
-    FileDetails.checkItemsStatusesInResultList(1, [FileDetails.status.dash, FileDetails.status.discarded, FileDetails.status.discarded, FileDetails.status.discarded]);
-
-    // check is items updated
-    FileDetails.openInstanceInInventory('Updated');
-    InventoryInstance.getAssignedHRID().then(initialInstanceHrId => { instanceHrid = initialInstanceHrId; });
-    InventoryInstance.checkIsInstanceUpdated();
-    InventoryInstance.openHoldingView();
-    HoldingsRecordView.checkHoldingsType('Monograph');
-    HoldingsRecordView.checkCallNumberType('Library of Congress classification');
-    HoldingsRecordView.checkPermanentLocation('Main Library');
-    HoldingsRecordView.close();
-    InventoryInstance.openHoldingsAccordion('Main Library');
-    InventoryInstance.openItemByBarcode(firstItem.barcode);
-    ItemRecordView.verifyItemStatus('In process');
-    ItemRecordView.checkEffectiveLocation('Main Library');
-    ItemRecordView.closeDetailView();
-    InventoryInstance.viewSource();
-    InventoryViewSource.verifyBarcodeInMARCBibSource(firstItem.barcode);
-  });
 });

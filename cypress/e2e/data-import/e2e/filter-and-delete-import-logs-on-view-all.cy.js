@@ -76,26 +76,27 @@ describe('ui-data-import: A user can filter and delete import logs from the "Vie
     // TODO delete all created instances
   });
 
-  it('C358136 A user can filter and delete import logs from the "View all" page (folijet)', { tags: [TestTypes.criticalPath, DevTeams.folijet] }, () => {
-    LogsViewAll.openViewAll();
-    LogsViewAll.viewAllIsOpened();
-    LogsViewAll.filterJobsByJobProfile('Default - Create SRS MARC Authority');
-    LogsViewAll.filterJobsByDate({ from: formattedStart, end: formattedStart });
+  it('C358136 A user can filter and delete import logs from the "View all" page (folijet)',
+    { tags: [TestTypes.smoke, DevTeams.folijet] }, () => {
+      LogsViewAll.openViewAll();
+      LogsViewAll.viewAllIsOpened();
+      LogsViewAll.filterJobsByJobProfile('Default - Create SRS MARC Authority');
+      LogsViewAll.filterJobsByDate({ from: formattedStart, end: formattedStart });
 
-    const formattedEnd = DateTools.getFormattedDate({ date: completedDate });
+      const formattedEnd = DateTools.getFormattedDate({ date: completedDate });
 
-    LogsViewAll.checkByDateAndJobProfile({ from: formattedStart, end: formattedEnd }, jobProfileId)
-      .then((count) => {
-        LogsViewAll.selectAllLogs();
-        LogsViewAll.checkIsLogsSelected(count);
-        LogsViewAll.unmarcCheckbox(0);
-        LogsViewAll.checkmarkAllLogsIsRemoved();
-        LogsViewAll.deleteLog();
+      LogsViewAll.checkByDateAndJobProfile({ from: formattedStart, end: formattedEnd }, jobProfileId)
+        .then((count) => {
+          LogsViewAll.selectAllLogs();
+          LogsViewAll.checkIsLogsSelected(count);
+          LogsViewAll.unmarcCheckbox(0);
+          LogsViewAll.checkmarkAllLogsIsRemoved();
+          LogsViewAll.deleteLog();
 
-        const countOfLogsForDelete = (count - 1);
-        DeleteDataImportLogsModal.confirmDelete(countOfLogsForDelete);
-        LogsViewAll.verifyMessageOfDeleted(countOfLogsForDelete);
-        LogsViewAll.modalIsAbsent();
-      });
-  });
+          const countOfLogsForDelete = (count - 1);
+          DeleteDataImportLogsModal.confirmDelete(countOfLogsForDelete);
+          LogsViewAll.verifyMessageOfDeleted(countOfLogsForDelete);
+          LogsViewAll.modalIsAbsent();
+        });
+    });
 });

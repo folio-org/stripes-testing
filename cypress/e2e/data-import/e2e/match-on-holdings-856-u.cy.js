@@ -128,7 +128,7 @@ describe('ui-data-import: Match on Holdings 856 $u', () => {
     FieldMappingProfiles.closeViewModeForMappingProfile(holdingsMappingProfile.name);
   };
 
-  it('C17025 Match on Holdings 856 $u (folijet)', { tags: [TestTypes.smoke, DevTeams.folijet] }, () => {
+  it('C17025 Match on Holdings 856 $u (folijet)', { tags: [TestTypes.criticalPath, DevTeams.folijet] }, () => {
     createInstanceMappingProfile(collectionOfMappingAndActionProfiles[0].mappingProfile);
     FieldMappingProfiles.checkMappingProfilePresented(collectionOfMappingAndActionProfiles[0].mappingProfile.name);
     createHoldingsMappingProfile(collectionOfMappingAndActionProfiles[1].mappingProfile);
