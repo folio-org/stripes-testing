@@ -69,14 +69,24 @@ const enabledSaveButton = Button({ id: 'clickable-save-item', disabled: false })
 const saveAndCloseButton = Button({ id: 'clickable-save-item' });
 const linkIconButton = Button({ ariaLabel: 'link' });
 const searchInput = SearchField({ id:'textarea-authorities-search' });
-
+const selectField = Select({ id: 'textarea-authorities-search-qindex' });
+const searchOptionBtn = Button({ id: 'segment-navigation-search' });
+const browseOptionBtn = Button({ id: 'segment-navigation-browse' });
+const findAuthorityModal = Modal({ id: 'find-authority-modal' });
+const closeModalFindAuthority = Button({ id: 'find-authority-modal-close-button' });
+const sourceFileAccordion = Section({ id: 'sourceFileId' });
+const subjectHeadingAccordion = Section({ id: 'subjectHeadings' });
+const headingTypeAccordion = Section({ id: 'headingType' });
+const createdDateAccordion = Section({ id: 'createdDate' });
+const updatedDateAccordion = Section({ id: 'updatedDate' });
+const searchTextArea = TextArea({ id: 'textarea-authorities-search' });
+const marcViewPane = Section({ id: 'marc-view-pane' });
 const searchButton = Button({ type: 'submit' });
 const enabledSearchBtn = Button({ type: 'submit', disabled: false });
 const resetAllButton = Button('Reset all');
 const searchButtonDisabled = Button({ type: 'submit', disabled: true });
-const resetAllButtonDisabled = Button({ className: including('resetButton---n7KP9'), disabled: true });
-
 const instanceHRID = 'Instance HRID';
+
 const validOCLC = { id:'176116217',
   // TODO: hardcoded count related with interactors getters issue. Redesign to cy.then(QuickMarkEditor().rowsCount()).then(rowsCount => {...}
   lastRowNumber: 30,
@@ -99,7 +109,9 @@ const pressAddHoldingsButton = () => {
   cy.do(Button({ id:'clickable-new-holdings-record' }).click());
   InventoryNewHoldings.waitLoading();
 };
+
 const waitLoading = () => cy.expect(actionsButton.exists());
+
 const openHoldings = (...holdingToBeOpened) => {
   const openActions = [];
   for (let i = 0; i < holdingToBeOpened.length; i++) {
@@ -121,10 +133,12 @@ const verifyInstanceTitle = (title) => {
   cy.expect(Pane({ titleLabel: including(title) }).exists());
 };
 const verifyInstanceSource = (sourceValue) => cy.expect(source.has({ value: sourceValue }));
+
 const verifyLastUpdatedDate = () => {
   const updatedDate = DateTools.getFormattedDateWithSlashes({ date: new Date() });
   cy.expect(Accordion('Administrative data').find(HTML(including(`Record last updated: ${updatedDate}`))).exists());
 };
+
 const verifyInstancePublisher = (indexRow, indexColumn, type) => {
   cy.expect(descriptiveDataAccordion.find(MultiColumnList({ id: 'list-publication' }))
     .find(MultiColumnListRow({ index: indexRow })).find(MultiColumnListCell({ columnIndex: indexColumn }))
@@ -228,49 +242,48 @@ export default {
 
   verifySelectMarcAuthorityModal() {
     cy.expect([
-      Modal({ id: 'find-authority-modal' }).exists(),
-      Modal({ id: 'find-authority-modal' }).has({title: 'Select MARC authority'}),
-      Button({ id: 'find-authority-modal-close-button' }).exists(),
+      findAuthorityModal.exists(),
+      findAuthorityModal.has({title: 'Select MARC authority'}),
+      closeModalFindAuthority.exists(),
     ]);
   },
 
   verifySearchAndFilterDisplay() {
     cy.get('#textarea-authorities-search-qindex').then((elem) => { expect(elem.text()).to.include('Personal name'); });
     cy.expect([
-      Button({ id: 'segment-navigation-search' }).exists(),
-      Button({ id: 'segment-navigation-browse' }).exists(),
-      TextArea({ id: 'textarea-authorities-search' }).exists(),
+      searchOptionBtn.exists(),
+      browseOptionBtn.exists(),
+      searchTextArea.exists(),
       searchButtonDisabled.exists(),
       resetAllButton.exists(),
-      Section({ id: 'sourceFileId' }).find(MultiSelect({ label: including('Authority source') })).exists(),
-      Section({ id: 'sourceFileId' }).find(MultiSelect({ span: including('1 item selected') })).exists(),
-      //Section({ id: 'sourceFileId' }).find(MultiSelect({ selected: including('LC Name Authority file (LCNAF)') })).exists(),
-      Section({ id: 'subjectHeadings' }).find(Button('Thesaurus')).has({ ariaExpanded: 'false' }),
-      Section({ id: 'headingType' }).find(Button('Type of heading')).has({ ariaExpanded: 'false' }),
-      Section({ id: 'createdDate' }).find(Button('Date created')).has({ ariaExpanded: 'false' }),
-      Section({ id: 'updatedDate' }).find(Button('Date updated')).has({ ariaExpanded: 'false' }),
+      sourceFileAccordion.find(MultiSelect({ label: including('Authority source') })).exists(),
+      sourceFileAccordion.find(MultiSelect({ selected: including('LC Name Authority file (LCNAF)') })).exists(),
+      subjectHeadingAccordion.find(Button('Thesaurus')).has({ ariaExpanded: 'false' }),
+      headingTypeAccordion.find(Button('Type of heading')).has({ ariaExpanded: 'false' }),
+      createdDateAccordion.find(Button('Date created')).has({ ariaExpanded: 'false' }),
+      updatedDateAccordion.find(Button('Date updated')).has({ ariaExpanded: 'false' }),
     ]);
   },
 
   closeAuthoritySource() {
-    cy.do(Section({ id: 'sourceFileId' }).find(Button({ icon: 'times-circle-solid' })).click());
-    cy.expect(Section({ id: 'sourceFileId' }).find(MultiSelect({ span: including('0 items selected') })).exists());
+    cy.do(sourceFileAccordion.find(Button({ icon: 'times-circle-solid' })).click());
+    cy.expect(sourceFileAccordion.find(MultiSelect({ selected: including('LC Name Authority file (LCNAF)') })).absent());
   },
 
   verifySearchOptions() {
     cy.do(Select({ id: 'textarea-authorities-search-qindex' }).click());
     cy.expect([
-      Select({ id: 'textarea-authorities-search-qindex' }).has({ content: including('Keyword') }),
-      Select({ id: 'textarea-authorities-search-qindex' }).has({ content: including('Identifier (all)') }),
-      Select({ id: 'textarea-authorities-search-qindex' }).has({ content: including('Personal name') }),
-      Select({ id: 'textarea-authorities-search-qindex' }).has({ content: including('Corporate/Conference name') }),
-      Select({ id: 'textarea-authorities-search-qindex' }).has({ content: including('Geographic name') }),
-      Select({ id: 'textarea-authorities-search-qindex' }).has({ content: including('Name-title') }),
-      Select({ id: 'textarea-authorities-search-qindex' }).has({ content: including('Uniform title') }),
-      Select({ id: 'textarea-authorities-search-qindex' }).has({ content: including('Subject') }),
-      Select({ id: 'textarea-authorities-search-qindex' }).has({ content: including('Children\'s subject heading') }),
-      Select({ id: 'textarea-authorities-search-qindex' }).has({ content: including('Genre') }),
-      Select({ id: 'textarea-authorities-search-qindex' }).has({ content: including('Advanced search') }),
+      selectField.has({ content: including('Keyword') }),
+      selectField.has({ content: including('Identifier (all)') }),
+      selectField.has({ content: including('Personal name') }),
+      selectField.has({ content: including('Corporate/Conference name') }),
+      selectField.has({ content: including('Geographic name') }),
+      selectField.has({ content: including('Name-title') }),
+      selectField.has({ content: including('Uniform title') }),
+      selectField.has({ content: including('Subject') }),
+      selectField.has({ content: including('Children\'s subject heading') }),
+      selectField.has({ content: including('Genre') }),
+      selectField.has({ content: including('Advanced search') }),
     ]);
   },
 
@@ -288,7 +301,6 @@ export default {
       cy.wait('@getItems', { timeout: 10000 }).then(item => {
         cy.expect(Pane({ subtitle: `${item.response.body.totalRecords} results found` }).exists());
         expect(item.response.body.totalRecords < 100).to.be.true;
-        //let recordHeading = item.response.body.authorities[0].headingRef;
       });
   },
 
@@ -318,12 +330,10 @@ export default {
 
   checkRecordDetailPage() {
     cy.expect([
-      Section({ id: 'marc-view-pane' }).exists(),
-      Section({ id: 'marc-view-pane' }).find(Button('Link')).exists()
+      marcViewPane.exists(),
+      marcViewPane.find(Button('Link')).exists(),
+      marcViewPane.has({ mark: 'Starr, Lisa' }),
     ]);
-      // cy.wait('@getItems', { timeout: 10000 }).then(title => {
-      //   cy.expect(Section({ id: 'marc-view-pane', mark: title.response.body.totalRecords }).exists());
-      // });
   },
 
   closeDetailsView() {
@@ -460,15 +470,18 @@ export default {
     InventoryInstanceSelectInstanceModal.selectInstance();
     InventoryInstancesMovement.move();
   },
+  
   checkAddItem:(holdingsRecrodId) => {
     cy.expect(section.find(Button({ id: `clickable-new-item-${holdingsRecrodId}` })).exists());
   },
+
   checkInstanceIdentifier: (identifier) => {
     cy.expect(identifiersAccordion.find(identifiers
       .find(MultiColumnListRow({ index: 0 })))
       .find(MultiColumnListCell({ columnIndex: 1 }))
       .has({ content: identifier }));
   },
+
   checkPrecedingTitle:(rowNumber, title, isbn, issn) => {
     cy.expect(MultiColumnList({ id: 'precedingTitles' })
       .find(MultiColumnListRow({ index: rowNumber }))
@@ -483,12 +496,14 @@ export default {
       .find(MultiColumnListCell({ content: issn }))
       .exists());
   },
+
   edit() {
     cy.do([
       Button('Actions').click(),
       Button('Edit').click(),
     ]);
   },
+
   closeInstancePage() {
     cy.do(Button({ ariaLabel: 'Close ' }).click());
     cy.expect(section.exists());
