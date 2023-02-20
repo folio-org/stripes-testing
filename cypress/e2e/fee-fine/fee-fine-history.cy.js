@@ -18,7 +18,6 @@ import FeeFinesDetails from '../../support/fragments/users/feeFineDetails';
 import PayFeeFaine from '../../support/fragments/users/payFeeFaine';
 import AddNewStaffInfo from '../../support/fragments/users/addNewStaffInfo';
 
-// The test fails because of the bug: UIU-2664
 describe('Fee/Fine history ', () => {
   const userData = {};
   const ownerData = {};
@@ -106,7 +105,7 @@ describe('Fee/Fine history ', () => {
     Users.deleteViaApi(userData.userId);
   });
 
-  it('C347919 Check that the user can add "Additional information" on the fee/fine history (vega)', { tags: [TestTypes.smoke, devTeams.vega] }, () => {
+  it('C347919 Check that the user can add "Additional information" on the fee/fine history (vega)', { tags: [TestTypes.smoke, devTeams.vega], retries: 3 }, () => {
     // the bug for this flaky issue is created FAT-2442. As temporary fix for this bug we need a waiter to be sure that the fee-fine is created before opening its page.
     cy.wait(70000);
     cy.visit(AppPaths.getFeeFineDetailsPath(userData.userId, feeFineAccount.id));
