@@ -12,9 +12,6 @@ import OrderLines from '../../support/fragments/orders/orderLines';
 import ExportManagerSearchPane from '../../support/fragments/exportManager/exportManagerSearchPane';
 import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
 import NewLocation from '../../support/fragments/settings/tenant/locations/newLocation';
-import Institutions from '../../support/fragments/settings/tenant/institutions';
-import Campuses from '../../support/fragments/settings/tenant/campuses';
-import Libraries from '../../support/fragments/settings/tenant/libraries';
 import DateTools from '../../support/utils/dateTools';
 
 describe('orders: export', () => {
@@ -62,37 +59,19 @@ describe('orders: export', () => {
   let user;
   let location;
   let servicePointId;
-  let institutionId;
-  let campusId;
-  let libraryId;
-  let institutionName;
   const UTCTime = DateTools.getUTCDateForScheduling();
 
   before(() => {
     cy.getAdminToken();
 
     ServicePoints.getViaApi()
-        .then((servicePoint) => {
-            servicePointId = servicePoint[0].id;
-            Institutions.createViaApi(Institutions.getDefaultInstitutions())
-                .then(locinsts => {
-                    institutionId = locinsts.id;
-                    institutionName = locinsts.name;
-                    Campuses.createViaApi({ ...Campuses.getDefaultCampuse(), institutionId })
-                        .then(loccamps => {
-                            campusId = loccamps.id;
-                            Libraries.createViaApi({ ...Libraries.getDefaultLibrary(), campusId })
-                                .then(loclibs => {
-                                    libraryId = loclibs.id;
-                                    NewLocation.createViaApi(NewLocation.getDefaultLocation(servicePointId,institutionId,campusId,libraryId))
-                                        .then(locationResponse => {
-                                            location = locationResponse;
-                                        });
-                                });
-                        });
-                });
+    .then((servicePoint) => {
+      servicePointId = servicePoint[0].id;
+      NewLocation.createViaApi(NewLocation.getDefaultLocation(servicePointId))
+        .then(res => {
+          location = res;
         });
-
+    });
     Organizations.createOrganizationViaApi(organization)
       .then(response => {
         organization.id = response;
@@ -142,12 +121,14 @@ describe('orders: export', () => {
     cy.visit(TopMenu.ordersPath);
     Orders.createOrder(order, true, false).then(orderId => {
       order.id = orderId;
-      Orders.createPOLineViaActions();
-      OrderLines.selectRandomInstanceInTitleLookUP('*', 3);
-      OrderLines.fillInPOLineInfoForExportWithLocation(`${organization.accounts[0].name} (${organization.accounts[0].accountNo})`, 'Purchase', institutionName);
-      OrderLines.backToEditingOrder();
-      Orders.openOrder();
     });
+    
+    Orders.createPOLineViaActions();
+    OrderLines.selectRandomInstanceInTitleLookUP('*', 3);
+    OrderLines.fillInPOLineInfoForExportWithLocation(`${organization.accounts[0].name} (${organization.accounts[0].accountNo})`, 'Purchase', location.institutionId);
+    OrderLines.backToEditingOrder();
+    Orders.openOrder();
+    
     cy.visit(TopMenu.exportManagerOrganizationsPath);
     ExportManagerSearchPane.selectOrganizationsSearch();
     ExportManagerSearchPane.selectExportMethod(integrationName1);

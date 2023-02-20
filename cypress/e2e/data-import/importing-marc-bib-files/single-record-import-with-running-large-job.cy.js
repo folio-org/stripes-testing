@@ -64,7 +64,7 @@ describe('ui-data-import: Inventory single record import is not delayed when lar
       DataImport.checkIsLandingPageOpened();
       DataImport.uploadFile('marcFileForC356824.mrc', fileName);
       // wait until file will be uploaded
-      cy.wait(8000);
+      cy.wait(10000);
       JobProfiles.searchJobProfileForImport(jobProfileToRun);
       JobProfiles.runImportFile();
       Logs.checkFileIsRunning(fileName);
