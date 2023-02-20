@@ -7,7 +7,6 @@ import InventoryInstances from '../../../support/fragments/inventory/inventoryIn
 import getRandomPostfix from '../../../support/utils/stringTools';
 import FileManager from '../../../support/utils/fileManager';
 import Users from '../../../support/fragments/users/users';
-import BulkEditActions from '../../../support/fragments/bulk-edit/bulk-edit-actions';
 
 let user;
 const item = {
@@ -48,6 +47,10 @@ describe('bulk-edit', () => {
       FileManager.deleteFile(`cypress/fixtures/${invalidItemBarcodesFileName}`);
     });
 
+    afterEach('reload bulk-edit page', () => {
+      cy.visit(TopMenu.bulkEditPath);
+    });
+
     it('C353232 Verify error accordion during matching (In app approach) (firebird)', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
       BulkEditSearchPane.uploadFile(invalidItemBarcodesFileName);
       BulkEditSearchPane.waitFileUploading();
@@ -58,7 +61,6 @@ describe('bulk-edit', () => {
       BulkEditSearchPane.verifyActionsAfterConductedInAppUploading();
 
       BulkEditSearchPane.verifyErrorLabel(invalidItemBarcodesFileName, 1, 1);
-      BulkEditActions.newBulkEdit();
     });
 
     it('C350941 Verify uploading file with identifiers -- In app approach (firebird)', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
@@ -80,9 +82,8 @@ describe('bulk-edit', () => {
       BulkEditSearchPane.verifyActionsAfterConductedInAppUploading(false);
       BulkEditSearchPane.verifyItemsActionDropdownItems();
 
-      BulkEditSearchPane.changeShowColumnCheckbox('Item UUID');
-      BulkEditSearchPane.verifyResultColumTitles('Item UUID');
-      BulkEditActions.newBulkEdit();
+      BulkEditSearchPane.changeShowColumnCheckbox('Item ID');
+      BulkEditSearchPane.verifyResultColumTitles('Item ID');
     });
 
     it('C350943 Verify Record identifiers dropdown -- Inventory-Items app (firebird)', { tags: [testTypes.smoke, devTeams.firebird] }, () => {

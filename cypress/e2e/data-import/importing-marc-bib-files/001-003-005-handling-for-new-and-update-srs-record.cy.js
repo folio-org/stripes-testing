@@ -17,7 +17,7 @@ import NewActionProfile from '../../../support/fragments/data_import/action_prof
 import ActionProfiles from '../../../support/fragments/data_import/action_profiles/actionProfiles';
 import NewJobProfile from '../../../support/fragments/data_import/job_profiles/newJobProfile';
 import InventoryViewSource from '../../../support/fragments/inventory/inventoryViewSource';
-import ExportMarcFile from '../../../support/fragments/data-export/export-marc-file';
+import ExportFile from '../../../support/fragments/data-export/exportFile';
 import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
 import FileManager from '../../../support/utils/fileManager';
 
@@ -212,11 +212,11 @@ describe('ui-data-import: Test 001/003/035 handling for New and Updated SRS reco
 
     // download exported marc file
     cy.visit(TopMenu.dataExportPath);
-    ExportMarcFile.getExportedFileNameViaApi()
+    ExportFile.getExportedFileNameViaApi()
       .then(name => {
         exportedFileName = name;
 
-        ExportMarcFile.downloadExportedMarcFile(exportedFileName);
+        ExportFile.downloadExportedMarcFile(exportedFileName);
         // upload the exported marc file
         cy.visit(TopMenu.dataImportPath);
         DataImport.uploadExportedFile(exportedFileName);

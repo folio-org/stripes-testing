@@ -77,7 +77,7 @@ describe('ui-data-import: Check that protected fields in incoming records are no
 
   it('C359189 Check that protected fields in incoming records are not deleted during import: Scenario 2 (folijet)', { tags: [TestTypes.smoke, DevTeams.folijet] }, () => {
     cy.visit(SettingsMenu.marcFieldProtectionPath);
-    MarcFieldProtection.currentListOfProtectedMarcFieldsIsPresented();
+    MarcFieldProtection.checkListOfExistingProfilesIsDisplayed();
     MarcFieldProtection.createNewMarcFieldProtection();
     MarcFieldProtection.fillMarcFieldProtection('*', '5', 'NcD');
     MarcFieldProtection.checkFieldProtectionIsCreated('NcD');

@@ -192,4 +192,12 @@ export default {
     // date format MM/DD/YYYY
     cy.expect(KeyValue('Expiration date').has({ value: date }));
   },
+
+  openContactInfo() {
+    cy.do(Accordion('Contact information').clickHeader());
+  },
+
+  verifyEmail(email) {
+    cy.expect(KeyValue('Email').has({ value: email }));
+  },
 };

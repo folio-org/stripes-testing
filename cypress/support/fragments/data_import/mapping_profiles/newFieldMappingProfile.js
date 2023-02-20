@@ -389,5 +389,22 @@ export default {
     cy.get('div[class^="tableRow-"]').last().then(elem => {
       elem[0].querySelector('button[icon="plus-sign"]').click();
     });
+  },
+
+  createMappingProfileViaApi:(nameProfile) => {
+    return cy
+      .okapiRequest({
+        method: 'POST',
+        path: 'data-import-profiles/mappingProfiles',
+        body: { profile: {
+          name: nameProfile,
+          incomingRecordType: 'MARC_BIBLIOGRAPHIC',
+          existingRecordType: 'INSTANCE',
+        } },
+        isDefaultSearchParamsRequired: false,
+      })
+      .then(({ response }) => {
+        return response;
+      });
   }
 };

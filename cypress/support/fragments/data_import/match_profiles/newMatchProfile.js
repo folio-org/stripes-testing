@@ -153,5 +153,41 @@ export default {
   optionsList,
   fillMatchProfileForm,
   fillMatchProfileWithExistingPart,
-  fillMatchProfileStaticValue
+  fillMatchProfileStaticValue,
+
+  createMatchProfileViaApi:(nameProfile) => {
+    return cy
+      .okapiRequest({
+        method: 'POST',
+        path: 'data-import-profiles/matchProfiles',
+        body: { profile: { incomingRecordType:'MARC_BIBLIOGRAPHIC',
+          matchDetails:[{ incomingRecordType:'MARC_BIBLIOGRAPHIC',
+            incomingMatchExpression:{ fields:[{
+              label:'field',
+              value:'001'
+            },
+            { label:'indicator1',
+              value:'' },
+            { label:'indicator2',
+              value:'' },
+            { 'label':'recordSubfield', 'value':'' }],
+            staticValueDetails:null,
+            dataValueType:'VALUE_FROM_RECORD' },
+            existingRecordType:'INSTANCE',
+            existingMatchExpression:{ fields:[{
+              label:'field',
+              value:'instance.hrid'
+            }],
+            dataValueType:'VALUE_FROM_RECORD' },
+            matchCriterion:'EXACTLY_MATCHES' }],
+          name: nameProfile,
+          existingRecordType:'INSTANCE' },
+        addedRelations:[],
+        deletedRelations:[] },
+        isDefaultSearchParamsRequired: false,
+      })
+      .then(({ response }) => {
+        return response;
+      });
+  }
 };
