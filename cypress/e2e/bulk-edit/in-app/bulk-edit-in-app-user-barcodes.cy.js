@@ -67,5 +67,20 @@ describe('bulk-edit', () => {
       UsersCard.openContactInfo();
       UsersCard.verifyEmail(`test@${newEmailDomain}`);
     });
+
+    it('C359606 Negative -- Verify bulk edit Users emails (firebird)', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
+      BulkEditSearchPane.selectRecordIdentifier('User Barcodes');
+
+      BulkEditSearchPane.uploadFile(userBarcodesFileName);
+      BulkEditSearchPane.waitFileUploading();
+
+      BulkEditActions.openActions();
+      BulkEditActions.openInAppStartBulkEditFrom();
+      const newEmailDomain = 'google.com';
+      BulkEditActions.replaceEmail('folio123.org', newEmailDomain);
+      BulkEditActions.confirmChanges();
+      BulkEditActions.commitChanges();
+      BulkEditSearchPane.verifyErrorLabelAfterChanges(userBarcodesFileName, 0, 1);
+    });
   });
 });
