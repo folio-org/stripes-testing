@@ -6,7 +6,8 @@ import {
   including,
   KeyValue,
   Selection,
-  SelectionList
+  SelectionList,
+  Select
 } from '../../../../../interactors';
 
 const oclcWorldcatPane = Pane('✓ OCLC WorldCat');
@@ -91,7 +92,10 @@ export default {
     edit();
     addJobProfileForCreate();
     addJobProfileForUpdate();
-    cy.do(TextField({ name:'authentication' }).fillIn(auth));
+    cy.do([
+      TextField({ name:'authentication' }).fillIn(auth),
+      Select({ name:'externalIdentifierType' }).choose('OCLC')
+    ]);
     save();
   },
 

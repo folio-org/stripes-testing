@@ -2,7 +2,6 @@ import TopMenu from '../../support/fragments/topMenu';
 import InventorySearchAndFilter from '../../support/fragments/inventory/inventorySearchAndFilter';
 import TestTypes from '../../support/dictionary/testTypes';
 import FileManager from '../../support/utils/fileManager';
-import DownloadHelper from '../../support/fragments/data-export/export-marc-file';
 import ExportFileHelper from '../../support/fragments/data-export/exportFile';
 import DataExportResults from '../../support/fragments/data-export/dataExportResults';
 import getRandomPostfix from '../../support/utils/stringTools';
@@ -47,12 +46,12 @@ describe('data-export', () => {
     InventorySearchAndFilter.switchToItem();
     InventorySearchAndFilter.searchByParameter('Barcode', item.itemBarcode);
     InventorySearchAndFilter.saveUUIDs();
-    DownloadHelper.downloadCSVFile(fileName, 'SearchInstanceUUIDs*');
+    ExportFileHelper.downloadCSVFile(fileName, 'SearchInstanceUUIDs*');
 
     // export file with UUIDs
     cy.visit(TopMenu.dataExportPath);
     ExportFileHelper.uploadFile(fileName);
-    ExportFileHelper.exportWithDefaultInstancesJobProfile(fileName);
+    ExportFileHelper.exportWithDefaultJobProfile(fileName);
 
     // collect expected results and verify actual result
     cy.intercept(/\/data-export\/job-executions\?query=status=\(COMPLETED/).as('getInfo');

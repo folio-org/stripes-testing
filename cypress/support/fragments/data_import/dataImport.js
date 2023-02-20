@@ -98,6 +98,7 @@ function uploadBinaryMarcFile(fileName, uploadDefinitionId, fileId) {
   cy.fixture(fileName, 'binary')
     .then(binary => Cypress.Blob.binaryStringToBlob(binary))
     .then(blob => {
+      cy.wait(1500);
       cy.okapiRequest({
         path: `data-import/uploadDefinitions/${uploadDefinitionId}/files/${fileId}`,
         method: 'POST',
