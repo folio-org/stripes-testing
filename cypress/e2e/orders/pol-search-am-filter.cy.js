@@ -10,7 +10,6 @@ import NewOrganization from '../../support/fragments/organizations/newOrganizati
 import getRandomPostfix from '../../support/utils/stringTools';
 import InteractorsTools from '../../support/utils/interactorsTools';
 import OrderLines from '../../support/fragments/orders/orderLines';
-import ExportManagerSearchPane from '../../support/fragments/exportManager/exportManagerSearchPane';
 import OrderLinesLimit from '../../support/fragments/settings/orders/orderLinesLimit';
 
 describe('orders: export', () => {
