@@ -353,12 +353,6 @@ export default {
     waitLoading();
   },
 
-  addSuppressFromDiscovery:() => {
-    cy.do(Select({ name:'profile.mappingDetails.mappingFields[0].booleanFieldAction' })
-      .choose('Mark for all affected records'));
-    waitLoading();
-  },
-
   fillBatchGroup:(group) => {
     cy.do(TextField('Batch group*').fillIn(group));
     waitLoading();

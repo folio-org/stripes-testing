@@ -33,6 +33,7 @@ describe('ui-data-import:', () => {
     statisticalCodeUI: 'Maps, print (maps)'
   };
   const oclcNumber = { type: 'OCLC', value: '(OCoLC)879516309' };
+  const quantityOfItems = '1';
 
   // profile names for creating
   const instanceCreateMapProfileName = `C11109 create mapping profile_${getRandomPostfix()}`;
@@ -92,14 +93,14 @@ describe('ui-data-import:', () => {
   before('login', () => {
     cy.getAdminToken()
       .then(() => {
-        // InventorySearchAndFilter.getInstancesByIdentifierViaApi(oclcNumber.value)
-        //   .then(instances => {
-        //     if (instanses.body) {
-        //       instances.forEach(({ id }) => {
-        //         InventoryInstance.deleteInstanceViaApi(id);
-        //       });
-        //     }
-        //   });
+        InventorySearchAndFilter.getInstancesByIdentifierViaApi(oclcNumber.value)
+          .then(instances => {
+            if (instances) {
+              instances.forEach(({ id }) => {
+                InventoryInstance.deleteInstanceViaApi(id);
+              });
+            }
+          });
       });
     cy.loginAsAdmin();
   });
@@ -156,8 +157,8 @@ describe('ui-data-import:', () => {
       ].forEach(columnName => {
         FileDetails.checkStatusInColumn(FileDetails.status.created, columnName);
       });
-      FileDetails.checkSrsRecordQuantityInSummaryTable('1');
-      FileDetails.checkInstanceQuantityInSummaryTable('1');
+      FileDetails.checkSrsRecordQuantityInSummaryTable(quantityOfItems);
+      FileDetails.checkInstanceQuantityInSummaryTable(quantityOfItems);
 
       // get Instance HRID through API
       InventorySearchAndFilter.getInstanceHRID()
@@ -209,8 +210,8 @@ describe('ui-data-import:', () => {
           Logs.openFileDetails(nameMarcFileForUpdate);
           FileDetails.checkStatusInColumn(FileDetails.status.created, FileDetails.columnName.srsMarc);
           FileDetails.checkStatusInColumn(FileDetails.status.updated, FileDetails.columnName.instance);
-          FileDetails.checkSrsRecordQuantityInSummaryTable('1');
-          FileDetails.checkInstanceQuantityInSummaryTable('1', 1);
+          FileDetails.checkSrsRecordQuantityInSummaryTable(quantityOfItems);
+          FileDetails.checkInstanceQuantityInSummaryTable(quantityOfItems, 1);
 
           cy.visit(TopMenu.inventoryPath);
           InventorySearchAndFilter.searchInstanceByHRID(instanceHrid);
