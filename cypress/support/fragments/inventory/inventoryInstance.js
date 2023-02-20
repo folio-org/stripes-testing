@@ -8,6 +8,7 @@ import {
   Button,
   Section,
   QuickMarcEditor,
+  QuickMarcEditorRow,
   KeyValue,
   MultiColumnListHeader,
   MultiColumnListCell,
@@ -20,9 +21,12 @@ import {
   Pane,
   TextField,
   TextArea,
+  SearchField,
   Callout,
   calloutTypes,
-  Modal
+  Modal,
+  PaneHeader,
+  or,
 } from '../../../../interactors';
 import InstanceRecordEdit from './instanceRecordEdit';
 import InventoryViewSource from './inventoryViewSource';
@@ -63,6 +67,14 @@ const chronologyTextField = TextArea('Chronology');
 const addItemButton = Button('Add item');
 const enabledSaveButton = Button({ id: 'clickable-save-item', disabled: false });
 const saveAndCloseButton = Button({ id: 'clickable-save-item' });
+const linkIconButton = Button({ ariaLabel: 'link' });
+const searchInput = SearchField({ id:'textarea-authorities-search' });
+
+const searchButton = Button({ type: 'submit' });
+const enabledSearchBtn = Button({ type: 'submit', disabled: false });
+const resetAllButton = Button('Reset all');
+const searchButtonDisabled = Button({ type: 'submit', disabled: true });
+const resetAllButtonDisabled = Button({ className: including('resetButton---n7KP9'), disabled: true });
 
 const instanceHRID = 'Instance HRID';
 const validOCLC = { id:'176116217',
@@ -162,35 +174,169 @@ export default {
   checkInstanceNotes,
   waitInstanceRecordViewOpened,
   openItemByBarcode,
+
   checkExpectedOCLCPresence: (OCLCNumber = validOCLC.id) => {
     cy.expect(identifiers.find(HTML(including(OCLCNumber))).exists());
   },
+
   checkExpectedMARCSource: () => {
     cy.expect(section.find(HTML(including('MARC'))).exists());
     cy.expect(section.find(HTML(including('FOLIO'))).absent());
   },
+
   goToEditMARCBiblRecord:() => {
     cy.do(actionsButton.click());
     cy.do(editMARCBibRecordButton.click());
   },
+
   viewSource: () => {
     cy.do(actionsButton.click());
     cy.do(viewSourceButton.click());
     InventoryViewSource.waitLoading();
   },
+
   startOverlaySourceBibRecord:() => {
     cy.do(actionsButton.click());
     cy.do(overlaySourceBibRecord.click());
   },
+
   editInstance:() => {
     cy.do(actionsButton.click());
     cy.do(editInstanceButton.click());
     InstanceRecordEdit.waitLoading();
   },
+
   editMarcBibliographicRecord:() => {
     cy.do(actionsButton.click());
     cy.do(editMARCBibRecordButton.click());
     cy.expect(Pane({ id: 'quick-marc-editor-pane' }).exists());
+  },
+
+  importInstance() {
+    cy.do(Section({ id: 'pane-results' }).find(Button('Actions')).click());
+    cy.do(Section({ id: 'actions-menu-section' }).find(Button({ id: 'dropdown-clickable-import-record' })).click());
+    cy.expect(Modal({id: 'import-record-modal'}).exists());
+    cy.do(TextField({ label: including('Enter the OCLC WorldCat identifier') }).fillIn(validOCLC.id));
+    cy.do(Modal({id: 'import-record-modal'}).find(Button('Import')).click());
+    cy.expect(Section({ id: 'pane-instancedetails' }).exists());
+  },
+
+  verifyAndClickLinkIcon() {
+    cy.expect(QuickMarcEditorRow({ tagValue: '100' }).find(linkIconButton).exists());
+    cy.do(QuickMarcEditorRow({ tagValue: '100' }).find(linkIconButton).click());
+  },
+
+  verifySelectMarcAuthorityModal() {
+    cy.expect([
+      Modal({ id: 'find-authority-modal' }).exists(),
+      Modal({ id: 'find-authority-modal' }).has({title: 'Select MARC authority'}),
+      Button({ id: 'find-authority-modal-close-button' }).exists(),
+    ]);
+  },
+
+  verifySearchAndFilterDisplay() {
+    cy.get('#textarea-authorities-search-qindex').then((elem) => { expect(elem.text()).to.include('Personal name'); });
+    cy.expect([
+      Button({ id: 'segment-navigation-search' }).exists(),
+      Button({ id: 'segment-navigation-browse' }).exists(),
+      TextArea({ id: 'textarea-authorities-search' }).exists(),
+      searchButtonDisabled.exists(),
+      resetAllButton.exists(),
+      Section({ id: 'sourceFileId' }).find(MultiSelect({ label: including('Authority source') })).exists(),
+      Section({ id: 'sourceFileId' }).find(MultiSelect({ span: including('1 item selected') })).exists(),
+      //Section({ id: 'sourceFileId' }).find(MultiSelect({ selected: including('LC Name Authority file (LCNAF)') })).exists(),
+      Section({ id: 'subjectHeadings' }).find(Button('Thesaurus')).has({ ariaExpanded: 'false' }),
+      Section({ id: 'headingType' }).find(Button('Type of heading')).has({ ariaExpanded: 'false' }),
+      Section({ id: 'createdDate' }).find(Button('Date created')).has({ ariaExpanded: 'false' }),
+      Section({ id: 'updatedDate' }).find(Button('Date updated')).has({ ariaExpanded: 'false' }),
+    ]);
+  },
+
+  closeAuthoritySource() {
+    cy.do(Section({ id: 'sourceFileId' }).find(Button({ icon: 'times-circle-solid' })).click());
+    cy.expect(Section({ id: 'sourceFileId' }).find(MultiSelect({ span: including('0 items selected') })).exists());
+  },
+
+  verifySearchOptions() {
+    cy.do(Select({ id: 'textarea-authorities-search-qindex' }).click());
+    cy.expect([
+      Select({ id: 'textarea-authorities-search-qindex' }).has({ content: including('Keyword') }),
+      Select({ id: 'textarea-authorities-search-qindex' }).has({ content: including('Identifier (all)') }),
+      Select({ id: 'textarea-authorities-search-qindex' }).has({ content: including('Personal name') }),
+      Select({ id: 'textarea-authorities-search-qindex' }).has({ content: including('Corporate/Conference name') }),
+      Select({ id: 'textarea-authorities-search-qindex' }).has({ content: including('Geographic name') }),
+      Select({ id: 'textarea-authorities-search-qindex' }).has({ content: including('Name-title') }),
+      Select({ id: 'textarea-authorities-search-qindex' }).has({ content: including('Uniform title') }),
+      Select({ id: 'textarea-authorities-search-qindex' }).has({ content: including('Subject') }),
+      Select({ id: 'textarea-authorities-search-qindex' }).has({ content: including('Children\'s subject heading') }),
+      Select({ id: 'textarea-authorities-search-qindex' }).has({ content: including('Genre') }),
+      Select({ id: 'textarea-authorities-search-qindex' }).has({ content: including('Advanced search') }),
+    ]);
+  },
+
+  fillInAndSearchResults(value) {
+    cy.do(searchInput.fillIn(value));
+    cy.expect(searchInput.has({ value: value }));
+    cy.expect(enabledSearchBtn.exists());
+    cy.do(searchButton.click());
+    cy.expect(Section({ id: 'authority-search-results-pane' }).exists());
+  },
+
+  checkResultsListPaneHeader() {
+      cy.expect(PaneHeader('MARC authority').exists()),
+      cy.intercept('GET', '/search/authorities?*').as('getItems');
+      cy.wait('@getItems', { timeout: 10000 }).then(item => {
+        cy.expect(Pane({ subtitle: `${item.response.body.totalRecords} results found` }).exists());
+        expect(item.response.body.totalRecords < 100).to.be.true;
+        //let recordHeading = item.response.body.authorities[0].headingRef;
+      });
+  },
+
+  checkSearchResultsTable() {
+    cy.expect([
+      MultiColumnListHeader({ id: 'list-column-link' }).has({ content: 'Link' }),
+      MultiColumnListHeader({ id: 'list-column-authreftype' }).has({ content: 'Authorized' }),
+      MultiColumnListHeader({ id: 'list-column-headingref' }).has({ content: 'Heading/Reference' }),
+      MultiColumnListHeader({ id: 'list-column-headingtype' }).has({ content: 'Type of heading' }),
+      MultiColumnListRow({index: 0}).find(Button({ ariaLabel: 'Link' })).exists(),
+      MultiColumnListCell({row: 0, innerHTML: including('<b>Authorized</b>') }).exists(),
+      Button({ id: 'authority-result-list-prev-paging-button', disabled: true }).exists(),
+      Button({ id: 'authority-result-list-next-paging-button', disabled: true }).exists(),
+    ]);
+    cy.expect([
+      Button({ id: 'authority-result-list-prev-paging-button', disabled: true }).exists(),
+      or(
+        Button({ id: 'authority-result-list-next-paging-button', disabled: true }).exists(),
+        Button({ id: 'authority-result-list-next-paging-button', disabled: false }).exists(),
+      ),
+    ]);
+  },
+
+  selectRecord() {
+    cy.do(MultiColumnListRow({index: 0}).find(MultiColumnListCell({ columnIndex: 2 })).find(Button()).click());
+  },
+
+  checkRecordDetailPage() {
+    cy.expect([
+      Section({ id: 'marc-view-pane' }).exists(),
+      Section({ id: 'marc-view-pane' }).find(Button('Link')).exists()
+    ]);
+      // cy.wait('@getItems', { timeout: 10000 }).then(title => {
+      //   cy.expect(Section({ id: 'marc-view-pane', mark: title.response.body.totalRecords }).exists());
+      // });
+  },
+
+  closeDetailsView() {
+    cy.do(Section({ id: 'marc-view-pane' }).find(Button({ icon: 'times' })).click());
+    cy.expect(Section({ id: 'authority-search-results-pane' }).exists());
+  },
+
+  closeFindAuthorityModal() {
+    cy.do(Button({ id: 'find-authority-modal-close-button' }).click());
+    cy.expect([
+      Modal({ id: 'find-authority-modal' }).absent(),
+      Section({ id: 'quick-marc-editor-pane' }).exists(),
+    ]);
   },
 
   checkElectronicAccess:() => {
