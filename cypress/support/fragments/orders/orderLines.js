@@ -62,7 +62,7 @@ const poLineInfoSection = Section({ id: 'poLine' });
 const fundDistributionSection = Section({ id: 'FundDistribution' });
 const locationSection = Section({ id: 'location' });
 const selectInstanceModal = Modal('Select instance');
-
+const institutionSelect = cy.get('form[id=location-form] select[name=institutionId]');
 export default {
 
   searchByParameter: (parameter, value) => {
@@ -371,6 +371,36 @@ export default {
     cy.expect([
       electronicUnitPriceTextField.has({ value: electronicUnitPrice }),
       quantityElectronicTextField.has({ value: quantityElectronic }),
+    ]);
+    cy.do([
+      saveAndClose.click(),
+      Button('Submit').click()
+    ]);
+  },
+
+  fillInPOLineInfoForExportWithLocationForPhisicalResource(accountNumber, AUMethod, institutionName) {
+    cy.do([
+      orderFormatSelect.choose('Physical resource'),
+      acquisitionMethodButton.click(),
+      acquisitionMethodButton.click(),
+      SelectionOption(AUMethod).click(),
+      Select({ name: 'vendorDetail.vendorAccount' }).choose(accountNumber),
+    ]);
+    cy.do([
+      physicalUnitPrice.fillIn(physicalUnitPrice),
+      quantityPhysicalTextField.fillIn(quantityPhysical),
+      materialTypeSelect.choose('book'),
+      addLocationButton.click(),
+      Button('Create new holdings for location').click(),
+    ]);
+    institutionSelect.select(institutionId);
+    cy.do([
+      Modal('Select permanent location').find(Button('Save and close')).click(),
+      quantityPhysicalLocationField.fillIn(quantityPhysical),
+    ]);
+    cy.expect([
+      physicalUnitPriceTextField.has({ value: physicalUnitPrice }),
+      quantityPhysicalLocationField.has({ value: quantityPhysical }),
     ]);
     cy.do([
       saveAndClose.click(),

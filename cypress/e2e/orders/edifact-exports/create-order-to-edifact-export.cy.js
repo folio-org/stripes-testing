@@ -11,9 +11,6 @@ import getRandomPostfix from '../../../support/utils/stringTools';
 import OrderLines from '../../../support/fragments/orders/orderLines';
 import ServicePoints from '../../../support/fragments/settings/tenant/servicePoints/servicePoints';
 import NewLocation from '../../../support/fragments/settings/tenant/locations/newLocation';
-import Institutions from '../../../support/fragments/settings/tenant/institutions';
-import Campuses from '../../../support/fragments/settings/tenant/campuses';
-import Libraries from '../../../support/fragments/settings/tenant/libraries';
 import DateTools from '../../../support/utils/dateTools';
 
 describe('orders: export', () => {
@@ -44,36 +41,19 @@ describe('orders: export', () => {
   let user;
   let location;
   let servicePointId;
-  let institutionId;
-  let campusId;
-  let libraryId;
-  let institutionName;
   const UTCTime = DateTools.getUTCDateForScheduling();
 
   before(() => {
     cy.getAdminToken();
 
     ServicePoints.getViaApi()
-        .then((servicePoint) => {
-            servicePointId = servicePoint[0].id;
-            Institutions.createViaApi(Institutions.getDefaultInstitutions())
-                .then(institutionResponse => {
-                    institutionId = institutionResponse.id;
-                    institutionName = institutionResponse.name;
-                    Campuses.createViaApi({ ...Campuses.getDefaultCampuse(), institutionId })
-                        .then(campusesResponse => {
-                            campusId = campusesResponse.id;
-                            Libraries.createViaApi({ ...Libraries.getDefaultLibrary(), campusId })
-                                .then(librariesResponse => {
-                                    libraryId = librariesResponse.id;
-                                    NewLocation.createViaApi(NewLocation.getDefaultLocation(servicePointId,institutionId,campusId,libraryId))
-                                        .then(locationResponse => {
-                                            location = locationResponse;
-                                        });
-                                });
-                        });
-                });
+    .then((servicePoint) => {
+      servicePointId = servicePoint[0].id;
+      NewLocation.createViaApi(NewLocation.getDefaultLocation(servicePointId))
+        .then(res => {
+          location = res;
         });
+    });
 
     Organizations.createOrganizationViaApi(organization)
       .then(organizationsResponse => {
@@ -123,9 +103,8 @@ describe('orders: export', () => {
       order.id = orderId;
       Orders.createPOLineViaActions();
       OrderLines.selectRandomInstanceInTitleLookUP('*', 3);
-      OrderLines.fillInPOLineInfoForExportWithLfillInPOLineInfoForExportWithLocationForPhisicalResourceocation(`${organization.accounts[0].name} (${organization.accounts[0].accountNo})`, 'Purchase', institutionName);
+      OrderLines.fillInPOLineInfoForExportWithLfillInPOLineInfoForExportWithLocationForPhisicalResourceocation(`${organization.accounts[0].name} (${organization.accounts[0].accountNo})`, 'Purchase', location.institutionId);
       OrderLines.backToEditingOrder();
-      Orders.openOrder();
     });
   });
 });
