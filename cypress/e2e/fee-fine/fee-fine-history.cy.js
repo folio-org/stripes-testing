@@ -113,6 +113,8 @@ describe('Fee/Fine history ', () => {
     FeeFinesDetails.waitLoading();
     FeeFinesDetails.openPayModal();
     PayFeeFaine.checkAmount(feeFineType.amount);
+    // the time needed to wait until the textfield can be interacted
+    cy.wait(1000);
     PayFeeFaine.setAmount(feeFineType.amount - 1);
     PayFeeFaine.checkRestOfPay(1);
     PayFeeFaine.setPaymentMethod(paymentMethod);

@@ -11,5 +11,5 @@ export default {
     cy.do(rootPane.find(Button('Actions')).click());
     cy.do(Button('Pay').click()); },
   openNewStaffInfo: () => cy.do(HTML({ text: 'New staff info', id: 'button' }).click()),
-  checkNewStaffInfo: (info) => cy.expect(HTML(info).exists()),
+  checkNewStaffInfo: (info) => cy.expect(HTML('STAFF : ' + info).exists()),
 };
