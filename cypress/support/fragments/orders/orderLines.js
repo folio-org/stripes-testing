@@ -62,6 +62,7 @@ const poLineInfoSection = Section({ id: 'poLine' });
 const fundDistributionSection = Section({ id: 'FundDistribution' });
 const locationSection = Section({ id: 'location' });
 const selectInstanceModal = Modal('Select instance');
+
 export default {
 
   searchByParameter: (parameter, value) => {
@@ -386,13 +387,13 @@ export default {
       Select({ name: 'vendorDetail.vendorAccount' }).choose(accountNumber),
     ]);
     cy.do([
-      physicalUnitPrice.fillIn(physicalUnitPrice),
+      physicalUnitPriceTextField.fillIn(physicalUnitPrice),
       quantityPhysicalTextField.fillIn(quantityPhysical),
       materialTypeSelect.choose('book'),
       addLocationButton.click(),
       Button('Create new holdings for location').click(),
     ]);
-    cy.get('form[id=location-form] select[name=institutionId]').select(institutionId);
+    cy.get('form[id=location-form] select[name=institutionId]').select(institutionName);
     cy.do([
       Modal('Select permanent location').find(Button('Save and close')).click(),
       quantityPhysicalLocationField.fillIn(quantityPhysical),
