@@ -24,7 +24,7 @@ describe('ui-finance: Groups', () => {
   const defaultLedger = { ...Ledgers.defaultUiLedger };
   const firstGroup = { ...Groups.defaultUiGroup };
   const secondGroup = { 
-    name: `autotest_group_${getRandomPostfix()}`,
+    name: `autotest_group_2_${getRandomPostfix()}`,
     code: getRandomPostfix(),
     status: 'Active'
    };

@@ -147,6 +147,6 @@ describe('ui-finance: Fiscal Year', () => {
     FinanceHelp.searchByName(defaultLedger.name);
     Ledgers.selectLedger(defaultLedger.name);
     Ledgers.rollover();
-    // Ledgers.fillInRolloverInfo(secondFiscalYear.name);
+    Ledgers.fillInRolloverInfo(secondFiscalYear.name);
   });
 });

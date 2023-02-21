@@ -30,7 +30,7 @@ describe('ui-data-import: Test 001/003/035 handling for New and Updated SRS reco
     { type: 'OCLC', value: '(OCoLC)26493177' },
     { type: 'System control number', value: '(ICU)1299036' }
   ];
-  const instanceStatusTerm = '"Batch Loaded"';
+  const instanceStatusTerm = 'Batch Loaded';
   const catalogedDate = '###TODAY###';
 
   // unique file names
