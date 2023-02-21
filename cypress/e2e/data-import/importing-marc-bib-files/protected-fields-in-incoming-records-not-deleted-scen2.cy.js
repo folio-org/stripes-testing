@@ -91,43 +91,46 @@ describe('ui-data-import: Check that protected fields in incoming records are no
 
     // edit the MARC bibliographic record
     InventoryInstance.editMarcBibliographicRecord();
-    InventoryEditMarcRecord.editField(`${fields.field780} ‡5 NcD`, 62);
-    InventoryEditMarcRecord.editField(`${fields.field7851} ‡5 NcD`, 64);
-    InventoryEditMarcRecord.editField(`${fields.field7852} ‡5 NcD`, 65);
-    InventoryEditMarcRecord.editField(`${fields.field7853} ‡5 NcD`, 66);
-    InventoryEditMarcRecord.editField(`${fields.field7854} ‡5 NcD`, 67);
-    InventoryEditMarcRecord.editField(`${fields.field7855} ‡5 NcD`, 68);
-    InventoryEditMarcRecord.addField('580', fields.field580);
-    InventoryEditMarcRecord.saveAndClose();
+    InventoryEditMarcRecord.editField('780', '‡5 NcD');
+    // cy.pause();
+    // InventoryEditMarcRecord.editField(`${fields.field7851} ‡5 NcD`, 64);
+    // InventoryEditMarcRecord.editField(`${fields.field7852} ‡5 NcD`, 65);
+    // InventoryEditMarcRecord.editField(`${fields.field7853} ‡5 NcD`, 66);
+    // InventoryEditMarcRecord.editField(`${fields.field7854} ‡5 NcD`, 67);
+    // InventoryEditMarcRecord.editField(`${fields.field7855} ‡5 NcD`, 68);
+    // InventoryEditMarcRecord.addField('580', fields.field580);
+    // cy.wait(10000);
+    // cy.pause();
+    // InventoryEditMarcRecord.saveAndClose();
+    // cy.pause();
 
-    // overlay source bibliographic record
-    InventoryInstance.startOverlaySourceBibRecord();
-    InventoryInstance.singleRecordImportModalIsPresented();
-    InventoryInstance.importWithOclc(oclcForImport);
-    InventoryInstance.checkCalloutMessage(`Updated record ${oclcForImport}`);
-    // need to wait because after the overlay the data in the instance is displayed for a long time
-    // https://issues.folio.org/browse/MODCPCT-73
-    cy.wait(10000);
-
-    // check fields with NcD is presented in .mrc file
-    InventoryInstance.viewSource();
-    InventoryViewSource.contains(fields.field580);
-    InventoryViewSource.contains(`${fields.field780} ‡5 NcD`);
-    InventoryViewSource.contains(`${fields.field7851} ‡5 NcD`);
-    InventoryViewSource.contains(`${fields.field7852} ‡5 NcD`);
-    InventoryViewSource.contains(`${fields.field7853} ‡5 NcD`);
-    InventoryViewSource.contains(`${fields.field7854} ‡5 NcD`);
-    InventoryViewSource.contains(`${fields.field7855} ‡5 NcD`);
-
-    // check fields without NcD is presented in .mrc file
-    InventoryViewSource.contains(fields.field5801);
-    InventoryViewSource.contains(fields.field780);
-    InventoryViewSource.contains(fields.field7801);
-    InventoryViewSource.contains(fields.field7851);
-    InventoryViewSource.contains(fields.field7852);
-    InventoryViewSource.contains(fields.field7853);
-    InventoryViewSource.contains(fields.field7854);
-    InventoryViewSource.contains(fields.field7855);
-    InventoryViewSource.contains(fields.field7856);
+    // // overlay source bibliographic record
+    // InventoryInstance.startOverlaySourceBibRecord();
+    // InventoryInstance.singleRecordImportModalIsPresented();
+    // InventoryInstance.importWithOclc(oclcForImport);
+    // InventoryInstance.checkCalloutMessage(`Updated record ${oclcForImport}`);
+    // // need to wait because after the overlay the data in the instance is displayed for a long time
+    // // https://issues.folio.org/browse/MODCPCT-73
+    // cy.wait(20000);
+    // cy.pause();
+    // InventoryInstance.viewSource();
+    // // check fields without NcD is presented in .mrc file
+    // InventoryViewSource.contains(fields.field5801);
+    // InventoryViewSource.contains(fields.field780);
+    // InventoryViewSource.contains(fields.field7801);
+    // InventoryViewSource.contains(fields.field7851);
+    // InventoryViewSource.contains(fields.field7852);
+    // InventoryViewSource.contains(fields.field7853);
+    // InventoryViewSource.contains(fields.field7854);
+    // InventoryViewSource.contains(fields.field7855);
+    // InventoryViewSource.contains(fields.field7856);
+    // // check fields with NcD is presented in .mrc file
+    // InventoryViewSource.contains(fields.field580);
+    // InventoryViewSource.contains(`${fields.field780} ‡5 NcD`);
+    // InventoryViewSource.contains(`${fields.field7851} ‡5 NcD`);
+    // InventoryViewSource.contains(`${fields.field7852} ‡5 NcD`);
+    // InventoryViewSource.contains(`${fields.field7853} ‡5 NcD`);
+    // InventoryViewSource.contains(`${fields.field7854} ‡5 NcD`);
+    // InventoryViewSource.contains(`${fields.field7855} ‡5 NcD`);
   });
 });

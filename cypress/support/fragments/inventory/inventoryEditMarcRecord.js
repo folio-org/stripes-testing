@@ -28,11 +28,19 @@ export default {
     cy.do(TextArea({ name:'records[40].content' }).fillIn(fieldData));
   },
 
-  editField:(content, number) => {
-    // need to wait untill the row is displayed
-    cy.wait(2000);
-    cy.do(TextArea({ name:`records[${number}].content` }).fillIn(content));
-    // need to wait untill the row will be updated
-    cy.wait(2000);
+  editField:(fieldNumber, content) => {
+    cy.get('div[class^="quickMarcEditorRow--"]').contains('div[class^="textArea--"]', fieldNumber)
+      .then(elem => {
+        elem.parent()[0].querySelector('textarea[type="text"]').click().type(content);
+      // type(content, '{moveToEnd}');
+      });
+
+
+
+    // // need to wait untill the row is displayed
+    // cy.wait(2000);
+    // cy.do(TextArea({ name:`records[${number}].content` }).fillIn(content));
+    // // need to wait untill the row will be updated
+    // cy.wait(2000);
   }
 };
