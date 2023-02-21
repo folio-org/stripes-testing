@@ -9,7 +9,7 @@ const fundModal = Modal('Select funds');
 export default {
 
   defaultUiGroup: {
-    name: `autotest_group_${getRandomPostfix()}`,
+    name: `autotest_group_1_${getRandomPostfix()}`,
     code: getRandomPostfix(),
     status: 'Active'
   },

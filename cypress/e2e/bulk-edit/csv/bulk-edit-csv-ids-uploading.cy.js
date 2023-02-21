@@ -7,11 +7,11 @@ import getRandomPostfix from '../../../support/utils/stringTools';
 import devTeams from '../../../support/dictionary/devTeams';
 import BulkEditActions from '../../../support/fragments/bulk-edit/bulk-edit-actions';
 import Users from '../../../support/fragments/users/users';
-import UsersSearchPane from '../../../support/fragments/users/usersSearchPane';
 
 let user;
 const userUUIDsFileName = `userUUIDs_${getRandomPostfix()}.csv`;
-const matchRecordsFileName = '*Matched-Records*';
+const invalidUserUUID = getRandomPostfix();
+const matchRecordsFileName = 'Matched-Records';
 const importFileName = `bulkEditImport_${getRandomPostfix()}.csv`;
 
 describe('bulk-edit', () => {
@@ -23,11 +23,8 @@ describe('bulk-edit', () => {
       ])
         .then(userProperties => {
           user = userProperties;
-          cy.login(user.username, user.password, {
-            path: TopMenu.bulkEditPath,
-            waiter: BulkEditSearchPane.waitLoading
-          });
-          FileManager.createFile(`cypress/fixtures/${userUUIDsFileName}`, user.username);
+          cy.login(user.username, user.password, { path: TopMenu.bulkEditPath, waiter: BulkEditSearchPane.waitLoading });
+          FileManager.createFile(`cypress/fixtures/${userUUIDsFileName}`, `${user.userId}\r\n${invalidUserUUID}`);
         });
     });
 
@@ -38,36 +35,26 @@ describe('bulk-edit', () => {
       Users.deleteViaApi(user.userId);
     });
 
-    it('C357982 Verify user records - in app permission - confirmation page', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
-      BulkEditSearchPane.selectRecordIdentifier('Usernames');
+    afterEach('reload bulk-edit page', () => {
+      cy.visit(TopMenu.bulkEditPath);
+    });
+
+    it('C353956 Verify uploading file with User UUIDs (firebird)', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
+      BulkEditSearchPane.selectRecordIdentifier('User UUIDs');
 
       BulkEditSearchPane.uploadFile(userUUIDsFileName);
       BulkEditSearchPane.waitFileUploading();
 
-      const changedFirstName = `testedNameChanged_${getRandomPostfix()}`;
-      BulkEditActions.downloadMatchedResults(matchRecordsFileName);
-      BulkEditActions.prepareValidBulkEditFile(matchRecordsFileName, importFileName, 'testPermFirst', changedFirstName);
-
+      BulkEditActions.downloadMatchedResults();
+      const newName = `testName_${getRandomPostfix()}`;
+      BulkEditActions.prepareValidBulkEditFile(matchRecordsFileName, importFileName, user.username, newName);
       BulkEditActions.openStartBulkEditForm();
       BulkEditSearchPane.uploadFile(importFileName);
       BulkEditSearchPane.waitFileUploading();
       BulkEditActions.clickNext();
-
       BulkEditActions.commitChanges();
 
-      BulkEditSearchPane.verifyChangedResults(user.username);
-      BulkEditSearchPane.verifyChangedResults(changedFirstName);
-      BulkEditSearchPane.verifyPaneTitleFileName(importFileName);
-      BulkEditSearchPane.verifyUserBarcodesResultAccordion();
-      BulkEditActions.openActions();
-      BulkEditSearchPane.verifyUsersActionShowColumns();
-      BulkEditActions.verifyActionsDownloadChangedCSV();
-
-      BulkEditActions.downloadChangedCSV();
-
-      cy.loginAsAdmin({ path: TopMenu.usersPath, waiter: UsersSearchPane.waitLoading });
-      UsersSearchPane.searchByKeywords(changedFirstName);
-      UsersSearchPane.openUser(changedFirstName);
+      BulkEditSearchPane.verifyChangedResults(newName);
     });
   });
 });
