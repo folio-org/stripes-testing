@@ -62,7 +62,6 @@ const poLineInfoSection = Section({ id: 'poLine' });
 const fundDistributionSection = Section({ id: 'FundDistribution' });
 const locationSection = Section({ id: 'location' });
 const selectInstanceModal = Modal('Select instance');
-const institutionSelect = cy.get('form[id=location-form] select[name=institutionId]');
 export default {
 
   searchByParameter: (parameter, value) => {
@@ -393,7 +392,7 @@ export default {
       addLocationButton.click(),
       Button('Create new holdings for location').click(),
     ]);
-    institutionSelect.select(institutionId);
+    cy.get('form[id=location-form] select[name=institutionId]').select(institutionId);
     cy.do([
       Modal('Select permanent location').find(Button('Save and close')).click(),
       quantityPhysicalLocationField.fillIn(quantityPhysical),

@@ -55,6 +55,7 @@ describe('orders: export', () => {
     Organizations.fillIntegrationInformationWithoutScheduling(integrationName, integartionDescription, vendorEDICodeFor1Integration, libraryEDICodeFor1Integration, organization.accounts[0].accountNo, 'Purchase');
     InteractorsTools.checkCalloutMessage('Integration was saved');
     cy.visit(SettingsMenu.ordersPurchaseOrderLinesLimit);
+    SettingsOrders.waitLoadingOpeningPurchaseOrders;
     SettingsOrders.setPurchaseOrderLinesLimit(3);
     cy.createTempUser([
       permissions.uiOrdersView.gui,
@@ -85,7 +86,8 @@ describe('orders: export', () => {
     Orders.createOrder(order, true, false).then(orderId => {
       order.id = orderId;
       Orders.createPOLineViaActions();
-      OrderLines.fillInPOLineInfoForExport(`${organization.accounts[0].name} (${organization.accounts[0].accountNo})`, 'Purchase');      OrderLines.backToEditingOrder();
+      OrderLines.fillInPOLineInfoForExport(`${organization.accounts[0].name} (${organization.accounts[0].accountNo})`, 'Purchase');      
+      OrderLines.backToEditingOrder();
       Orders.createPOLineViaActions();
       OrderLines.fillInPOLineInfoForExport(`${organization.accounts[0].name} (${organization.accounts[0].accountNo})`, 'Purchase at vendor system');
       OrderLines.backToEditingOrder();
