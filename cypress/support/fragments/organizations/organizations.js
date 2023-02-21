@@ -15,6 +15,7 @@ const serverAddress = 'ftp://ftp.ci.folio.org';
 const FTPport = '22';
 const ediSection = Section({ id: 'edi' });
 const ftpSection = Section({ id: 'ftp' });
+const schedulingSection = Section({ id: 'scheduling' });
 const actionsButton = Button('Actions');
 const numberOfSearchResultsHeader = '//*[@id="paneHeaderorganizations-results-pane-subtitle"]/span';
 const zeroResultsFoundText = '0 records found';
@@ -96,7 +97,7 @@ export default {
     ]);
   },
 
-  fillIntegrationInformation: (integrationName, integartionDescription, vendorEDICode, libraryEDICode, accountNumber, acquisitionMethod) => {
+  fillIntegrationInformation: (integrationName, integartionDescription, vendorEDICode, libraryEDICode, accountNumber, acquisitionMethod, UTCTime) => {
     cy.do([
       Section({ id: 'integrationInfo' }).find(TextField('Integration name*')).fillIn(integrationName),
       TextArea('Description').fillIn(integartionDescription),
@@ -111,6 +112,12 @@ export default {
       ftpSection.find(Select('EDI FTP')).choose('FTP'),
       ftpSection.find(TextField('Server address*')).fillIn(serverAddress),
       ftpSection.find(TextField('FTP port*')).fillIn(FTPport),
+      ftpSection.find(TextField('Username')).fillIn('folio'),
+      ftpSection.find(TextField('Password')).fillIn('Ffx29%pu'),
+      ftpSection.find(TextField('Order directory')).fillIn('/files'),
+      schedulingSection.find(Checkbox({ name: 'exportTypeSpecificParameters.vendorEdiOrdersExportConfig.ediSchedule.enableScheduledExport'})).click(),
+      schedulingSection.find(TextField('Schedule frequency*')).fillIn('1'),
+      schedulingSection.find(TextField('Time*')).fillIn(`${UTCTime}`),
     ]);
     cy.do(saveAndClose.click());
   },

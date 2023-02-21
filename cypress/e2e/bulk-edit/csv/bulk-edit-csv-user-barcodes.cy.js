@@ -66,7 +66,7 @@ describe('bulk-edit', () => {
       BulkEditSearchPane.verifyErrorLabel(invalidUserBarcodesFileName, 0, 1);
 
       BulkEditActions.openActions();
-      BulkEditActions.verifyUsersActionDropdownItems();
+      BulkEditActions.verifyUsersActionDropdownItems(true);
     });
 
     it('C347871 Uploading file with identifiers (firebird)', { tags: [testTypes.criticalPath, devTeams.firebird] }, () => {
