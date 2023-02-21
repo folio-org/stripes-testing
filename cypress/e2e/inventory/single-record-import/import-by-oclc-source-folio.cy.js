@@ -40,7 +40,8 @@ describe('ui-inventory: import by OCLC', () => {
       permissions.uiInventorySingleRecordImport.gui,
       permissions.uiInventorySettingsConfigureSingleRecordImport.gui,
       permissions.uiQuickMarcQuickMarcBibliographicEditorAll.gui,
-      permissions.remoteStorageView.gui
+      permissions.remoteStorageView.gui,
+      permissions.settingsDataImportEnabled.gui
     ])
       .then(userProperties => {
         user = userProperties;
@@ -59,9 +60,6 @@ describe('ui-inventory: import by OCLC', () => {
     InventorySearchAndFilter.searchByParameter('Keyword (title, contributor, identifier, HRID, UUID)', instanceRecord.instanceTitle);
     InventorySearchAndFilter.selectSearchResultItem();
     InventoryInstance.startOverlaySourceBibRecord();
-    // need to wait because after the import the data in the instance is displayed for a long time
-    // https://issues.folio.org/browse/MODCPCT-73
-    cy.wait(10000);
     InventoryInstance.importWithOclc(oclcRecordData.oclc);
     InventoryInstance.checkCalloutMessage(`Updated record ${oclcRecordData.oclc}`);
 
