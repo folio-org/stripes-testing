@@ -21,14 +21,16 @@ export default {
 		cy.do(jobProfilesPane.find(newButton).click());
 	},
 	verifyNewJobProfileForm() {
-		cy.expect(paneHeader.exists());
-		cy.expect(XButton.exists());
-		cy.expect(nameTextfield.exists());
-		cy.expect(Select('Mapping profile*').exists());
-		cy.expect(selectMappingProfileDropdown.exists());
-		cy.expect(descriptionTextarea.exists());
-		cy.expect(saveAndCloseButton.has({ disabled: true }));
-		cy.expect(cancelButton.has({ disabled: false }));
+		cy.expect([
+			paneHeader.exists(),
+			XButton.exists(),
+			nameTextfield.exists(),
+			Select('Mapping profile*').exists(),
+			selectMappingProfileDropdown.exists(),
+			descriptionTextarea.exists(),
+			saveAndCloseButton.has({ disabled: true }),
+			cancelButton.has({ disabled: false }),
+		])
 	},
 	clickNameTextfield() {
 		cy.do(nameTextfield.find(TextInput()).click());
@@ -37,9 +39,11 @@ export default {
 		cy.do(descriptionTextarea.click());
 	},
 	verifyNameValidationError() {
-		cy.expect(nameTextfield.find(TextFieldIcon({ id: 'icon-job-profile-name-validation-error' })).exists());
-		cy.expect(nameTextfield.has({ valid: false }));
-		cy.expect(HTML('Please enter a value').exists());
+		cy.expect([
+			nameTextfield.find(TextFieldIcon({ id: 'icon-job-profile-name-validation-error' })).exists(),
+			nameTextfield.has({ valid: false }),
+			HTML('Please enter a value').exists(),
+		])
 	},
 	verifyNameValidationErrorGone() {
 		cy.expect(HTML('Please enter a value').absent());
@@ -54,15 +58,19 @@ export default {
 		cy.do(selectMappingProfileDropdown.focus());
 	},
 	verifySelectMappingProfileValidationError() {
-		cy.expect(selectMappingProfileDropdown.has({ valid: false }));
-		cy.expect(HTML('Please enter a value').exists());
+		cy.expect([
+			selectMappingProfileDropdown.has({ valid: false }),
+			HTML('Please enter a value').exists(),
+		])
 	},
 	selectMappingProfileFromDropdown(mappingProfileName) {
 		cy.do(selectMappingProfileDropdown.choose(mappingProfileName));
 	},
 	verifySelectMappingProfileValidationErrorGone() {
-		cy.expect(selectMappingProfileDropdown.has({ valid: true }));
-		cy.expect(HTML('Please enter a value').absent());
+		cy.expect([
+			selectMappingProfileDropdown.has({ valid: true }),
+			HTML('Please enter a value').absent(),
+		])
 	},
 	saveAndClose() {
 		cy.do(saveAndCloseButton.click());
