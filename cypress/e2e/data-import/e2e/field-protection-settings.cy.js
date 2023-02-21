@@ -138,7 +138,7 @@ describe('ui-data-import: Check that field protection settings work properly dur
   const createInstanceMappingProfileForUpdate = (instanceMappingProfile) => {
     FieldMappingProfiles.openNewMappingProfileForm();
     NewFieldMappingProfile.fillSummaryInMappingProfile(instanceMappingProfile);
-    NewFieldMappingProfile.fillInstanceStatusTerm('"Batch Loaded"');
+    NewFieldMappingProfile.fillInstanceStatusTerm('Batch Loaded');
     NewFieldMappingProfile.addStatisticalCode('ARL (Collection stats): books - Book, print (books)', 8);
     FieldMappingProfiles.saveProfile();
     FieldMappingProfiles.closeViewModeForMappingProfile(instanceMappingProfile.name);

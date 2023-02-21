@@ -222,4 +222,5 @@ export default {
   okapiTimersPatch: { internal: 'okapi.proxy.self.timers.patch', gui: 'Okapi - patch timer for current tenant' },
   // Export manager
   exportManagerAll: { internal: 'ui-export-manager.export-manager.all', gui: 'Export manager: All' },
+  exportManagerDownloadAndResendFiles: { internal: 'ui-export-manager.jobs.downloadAndResend', gui: 'Export manager: Download and re-send files' },
 };
