@@ -319,8 +319,8 @@ export default {
       });
   },
 
-  uploadFileViaApi:(fileName) => {
-    const uiKeyValue = `${fileName}${getRandomPostfix()}`;
+  uploadFileViaApi:(filePathName, fileName) => {
+    const uiKeyValue = fileName;
 
     uploadDefinitions(uiKeyValue, fileName)
       .then((response) => {
@@ -329,7 +329,7 @@ export default {
         const jobExecutionId = response.body.fileDefinitions[0].jobExecutionId;
         const jobProfileId = 'e34d7b92-9b83-11eb-a8b3-0242ac130003';
 
-        uploadBinaryMarcFile(fileName, uploadDefinitionId, fileId);
+        uploadBinaryMarcFile(filePathName, uploadDefinitionId, fileId);
         // need to wait until file will be converted and uploaded
         cy.wait(1500);
         uploadDefinitionWithId(uploadDefinitionId)
