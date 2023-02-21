@@ -62,7 +62,7 @@ describe('ui-data-import: Check that protected fields in incoming records are no
 
   it('C359189 Check that protected fields in incoming records are not deleted during import: Scenario 2 (folijet)', { tags: [TestTypes.smoke, DevTeams.folijet] }, () => {
     cy.visit(SettingsMenu.marcFieldProtectionPath);
-    MarcFieldProtection.currentListOfProtectedMarcFieldsIsPresented();
+    MarcFieldProtection.checkListOfExistingProfilesIsDisplayed();
     MarcFieldProtection.createNewMarcFieldProtection();
     MarcFieldProtection.fillMarcFieldProtection('*', '5', 'NcD');
     MarcFieldProtection.checkFieldProtectionIsCreated('NcD');
@@ -105,6 +105,9 @@ describe('ui-data-import: Check that protected fields in incoming records are no
     InventoryInstance.singleRecordImportModalIsPresented();
     InventoryInstance.importWithOclc(oclcForImport);
     InventoryInstance.checkCalloutMessage(`Updated record ${oclcForImport}`);
+    // need to wait because after the overlay the data in the instance is displayed for a long time
+    // https://issues.folio.org/browse/MODCPCT-73
+    cy.wait(10000);
 
     // check fields with NcD is presented in .mrc file
     InventoryInstance.viewSource();

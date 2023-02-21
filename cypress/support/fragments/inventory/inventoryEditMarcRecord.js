@@ -3,6 +3,7 @@ import { Button, QuickMarcEditorRow, Modal, Pane, TextField, TextArea } from '..
 const deleteFieldsModal = Modal('Delete fields');
 
 const saveAndClose = () => {
+  cy.wait(1500);
   cy.do(Button('Save & close').click());
 };
 
