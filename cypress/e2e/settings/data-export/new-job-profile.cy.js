@@ -6,7 +6,6 @@ import SettingsPane from '../../../support/fragments/settings/settingsPane';
 import JobProfiles from '../../../support/fragments/settings/data-export/jobProfiles';
 import getRandomPostfix from '../../../support/utils/stringTools';
 import Users from '../../../support/fragments/users/users';
-import FieldMappingProfiles from '../../../support/fragments/settings/data-export/fieldMappingProfiles';
 import InteractorsTools from '../../../support/utils/interactorsTools';
 import CreateFieldMappingProfile from '../../../support/fragments/settings/data-export/createFieldMappingProfile';
 import DeleteFieldMappingProfile from '../../../support/fragments/settings/data-export/deleteFieldMappingProfile';

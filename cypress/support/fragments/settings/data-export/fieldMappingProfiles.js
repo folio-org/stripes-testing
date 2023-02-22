@@ -1,4 +1,4 @@
-import { Pane, NavListItem, Button, TextField, Checkbox, Accordion, MultiColumnListHeader, MultiColumnListCell, Modal } from "../../../../../interactors";
+import { Pane, NavListItem, Button, TextField, Checkbox, MultiColumnListHeader, MultiColumnListCell, Modal } from "../../../../../interactors";
 import { including } from '@interactors/html';
 
 const fieldMappingProfilesPane = Pane('Field mapping profiles');

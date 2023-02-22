@@ -9,8 +9,6 @@ const cancelButton = Button('Cancel');
 const nameTextfield = TextField('Name*');
 const descriptionTextarea = TextArea('Description');
 const selectMappingProfileDropdown = Select({ name: 'mappingProfileId' });
-const actionsButton = Button('Actions');
-const deleteButton = Button('Delete');
 
 export default {
 	goToJobProfilesTab() {
