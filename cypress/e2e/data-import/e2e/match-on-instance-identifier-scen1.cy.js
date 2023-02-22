@@ -9,6 +9,7 @@ import InventoryInstance from '../../../support/fragments/inventory/inventoryIns
 import SettingsMenu from '../../../support/fragments/settingsMenu';
 import MatchProfiles from '../../../support/fragments/data_import/match_profiles/matchProfiles';
 import FieldMappingProfiles from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfiles';
+import NewFieldMappingProfile from '../../../support/fragments/data_import/mapping_profiles/newFieldMappingProfile';
 import NewActionProfile from '../../../support/fragments/data_import/action_profiles/newActionProfile';
 import ActionProfiles from '../../../support/fragments/data_import/action_profiles/actionProfiles';
 import NewJobProfile from '../../../support/fragments/data_import/job_profiles/newJobProfile';
@@ -47,13 +48,11 @@ describe('ui-data-import: Match on Instance identifier match meets both the Iden
   };
   const mappingProfile = {
     name: mappingProfileName,
-    incomingRecordType: 'MARC Bibliographic',
-    folioRecordType: 'Instance',
-    discoverySuppress: 'Mark for all affected records',
+    typeValue : NewFieldMappingProfile.folioRecordTypeValue.instance,
+    suppressFromDiscavery: 'Mark for all affected records',
     catalogedDate: '"2021-12-01"',
     catalogedDateUI: '2021-12-01',
-    instanceStatus: '"Batch Loaded"',
-    instanceStatusUI: 'Batch Loaded',
+    instanceStatus: 'Batch Loaded',
   };
   const actionProfile = {
     name: actionProfileName,
@@ -122,8 +121,14 @@ describe('ui-data-import: Match on Instance identifier match meets both the Iden
       MatchProfiles.checkMatchProfilePresented(matchProfileName);
 
       cy.visit(SettingsMenu.mappingProfilePath);
-      FieldMappingProfiles.createMappingProfileForMatchOnInstanceIdentifier(mappingProfile);
-      FieldMappingProfiles.checkMappingProfilePresented(mappingProfileName);
+      FieldMappingProfiles.openNewMappingProfileForm();
+      NewFieldMappingProfile.fillSummaryInMappingProfile(mappingProfile);
+      NewFieldMappingProfile.addSuppressFromDiscovery(mappingProfile.suppressFromDiscavery);
+      NewFieldMappingProfile.fillCatalogedDate(mappingProfile.catalogedDate);
+      NewFieldMappingProfile.fillInstanceStatusTerm(mappingProfile.instanceStatus);
+      FieldMappingProfiles.saveProfile();
+      FieldMappingProfiles.closeViewModeForMappingProfile(mappingProfile.name);
+      FieldMappingProfiles.checkMappingProfilePresented(mappingProfile.name);
 
       cy.visit(SettingsMenu.actionProfilePath);
       ActionProfiles.create(actionProfile, mappingProfileName);
@@ -144,7 +149,7 @@ describe('ui-data-import: Match on Instance identifier match meets both the Iden
       Logs.verifyInstanceStatus(1, 3, 'Discarded');
       Logs.clickOnHotLink(0, 3, 'Updated');
       InstanceRecordView.verifyMarkAsSuppressedFromDiscovery();
-      InstanceRecordView.verifyInstanceStatusTerm(mappingProfile.instanceStatusUI);
+      InstanceRecordView.verifyInstanceStatusTerm(mappingProfile.instanceStatus);
       InstanceRecordView.verifyCatalogedDate(mappingProfile.catalogedDateUI);
       InstanceRecordView.verifyGeneralNoteContent(instanceGeneralNote);
     });

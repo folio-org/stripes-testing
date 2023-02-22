@@ -44,7 +44,7 @@ describe('ui-data-import: Edit an existing match profile', () => {
     MatchProfiles.deleteMatchProfile(matchProfileName);
   });
 
-  it('C2339 Edit an existing match profile (folijet)', { tags: [TestTypes.smoke, DevTeams.folijet] }, () => {
+  it('C2339 Edit an existing match profile (folijet)', { tags: [TestTypes.criticalPath, DevTeams.folijet] }, () => {
     MatchProfiles.checkListOfExistingProfilesIsDisplayed();
     MatchProfiles.search(matchProfileName);
     MatchProfiles.selectMatchProfileFromList(matchProfileName);

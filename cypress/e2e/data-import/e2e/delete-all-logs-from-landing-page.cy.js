@@ -58,37 +58,38 @@ describe('ui-data-import: A user can delete import logs with "Data import: Can d
     Users.deleteViaApi(userId);
   });
 
-  it('C358137 A user can delete import logs with "Data import: Can delete import logs" permission on Landing page (folijet)', { tags: [TestTypes.smoke, DevTeams.folijet] }, () => {
-    Logs.openFileDetails(fileNameToUpload);
-    Logs.clickOnHotLink();
-    cy.location('pathname').should('include', '/inventory/view');
-    cy.visit(TopMenu.dataImportPath);
+  it('C358137 A user can delete import logs with "Data import: Can delete import logs" permission on Landing page (folijet)',
+    { tags: [TestTypes.smoke, DevTeams.folijet] }, () => {
+      Logs.openFileDetails(fileNameToUpload);
+      Logs.clickOnHotLink();
+      cy.location('pathname').should('include', '/inventory/view');
+      cy.visit(TopMenu.dataImportPath);
 
-    DataImport.getLogsHrIdsFromUI(numberOfLogsToDelete).then(logsHrIdsToBeDeleted => {
+      DataImport.getLogsHrIdsFromUI(numberOfLogsToDelete).then(logsHrIdsToBeDeleted => {
       // verify that user can cancel deletion of logs
-      DataImport.selectAllLogs();
-      DataImport.verifyAllLogsCheckedStatus({ logsCount: numberOfLogsPerPage, checked: true });
-      DataImport.verifyLogsPaneSubtitleExist(numberOfLogsPerPage);
-      DataImport.openDeleteImportLogsModal();
-      DataImport.cancelDeleteImportLogs();
-      DataImport.verifyAllLogsCheckedStatus({ logsCount: numberOfLogsPerPage, checked: false });
-      DataImport.verifyLogsPaneSubtitleAbsent();
-      DataImport.verifyDeleteLogsButtonDisabled();
+        DataImport.selectAllLogs();
+        DataImport.verifyAllLogsCheckedStatus({ logsCount: numberOfLogsPerPage, checked: true });
+        DataImport.verifyLogsPaneSubtitleExist(numberOfLogsPerPage);
+        DataImport.openDeleteImportLogsModal();
+        DataImport.cancelDeleteImportLogs();
+        DataImport.verifyAllLogsCheckedStatus({ logsCount: numberOfLogsPerPage, checked: false });
+        DataImport.verifyLogsPaneSubtitleAbsent();
+        DataImport.verifyDeleteLogsButtonDisabled();
 
-      // verify that user can delete logs
-      new Array(numberOfLogsToDelete).fill(null).forEach((_, index) => {
-        DataImport.selectLog(index);
+        // verify that user can delete logs
+        new Array(numberOfLogsToDelete).fill(null).forEach((_, index) => {
+          DataImport.selectLog(index);
+        });
+        DataImport.verifyLogsPaneSubtitleExist(numberOfLogsToDelete);
+        DataImport.openActionsMenu();
+        DataImport.openDeleteImportLogsModal();
+        DataImport.confirmDeleteImportLogs();
+        InteractorsTools.checkCalloutMessage(getCalloutSuccessMessage(numberOfLogsToDelete));
+        DataImport.verifyLogsPaneSubtitleAbsent();
+        DataImport.verifyDataImportLogsDeleted(logsHrIdsToBeDeleted);
+        DataImport.verifyDeleteLogsButtonDisabled();
+        cy.reload();
+        DataImport.checkMultiColumnListRowsCount(numberOfLogsPerPage);
       });
-      DataImport.verifyLogsPaneSubtitleExist(numberOfLogsToDelete);
-      DataImport.openActionsMenu();
-      DataImport.openDeleteImportLogsModal();
-      DataImport.confirmDeleteImportLogs();
-      InteractorsTools.checkCalloutMessage(getCalloutSuccessMessage(numberOfLogsToDelete));
-      DataImport.verifyLogsPaneSubtitleAbsent();
-      DataImport.verifyDataImportLogsDeleted(logsHrIdsToBeDeleted);
-      DataImport.verifyDeleteLogsButtonDisabled();
-      cy.reload();
-      DataImport.checkMultiColumnListRowsCount(numberOfLogsPerPage);
     });
-  });
 });
