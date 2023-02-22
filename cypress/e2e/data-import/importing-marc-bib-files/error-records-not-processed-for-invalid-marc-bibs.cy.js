@@ -7,11 +7,11 @@ import JobProfiles from '../../../support/fragments/data_import/job_profiles/job
 import Logs from '../../../support/fragments/data_import/logs/logs';
 import Users from '../../../support/fragments/users/users';
 import Helper from '../../../support/fragments/finance/financeHelper';
-import fileDetails from '../../../support/fragments/data_import/logs/fileDetails';
+import FileDetails from '../../../support/fragments/data_import/logs/fileDetails';
 
 describe('ui-data-import:', () => {
   let user;
-  // file name
+  const error = '{\"errors\":[{\"name\":\"io.vertx.core.json.DecodeException\",\"message\":\"Failed to decode:Illegal unquoted character ((CTRL-CHAR, code 9)): has to be escaped using backslash to be included in name\\n at [Source: (String)\\\"{\\\"leader\\\":\\\"01621cas a2200445 a 4500\\\",\\\"fields\\\":[{\\\"001\\\":\\\"in00000012507\\\"},{\\\"003\\\":\\\"OCoLC\\\"},{\\\"008\\\":\\\"06d0504c20069999txufr pso     0   a0eng c\\\"},{\\\"015\\\":{\\\"subfields\\\":[],\\\"ind1\\\":\\\";\\\",\\\"ind2\\\":\\\"A\\\"}},{\\\"00\\\\u0009\\\":{\\\"subfields\\\":[],\\\"ind1\\\":\\\" \\\",\\\"ind2\\\":\\\" \\\"}},{\\\"0==\\\":{\\\"subfields\\\":[],\\\"ind1\\\":\\\"d\\\",\\\"ind2\\\":\\\"s\\\"}},{\\\"\\\\u0009\\\\A\\\":{\\\"subfields\\\":[],\\\"ind1\\\":\\\"5\\\",\\\"ind2\\\":\\\"8\\\"}},{\\\"022\\\":{\\\"subfields\\\":[{\\\"a\\\":\\\"1 931-7603\\\"},{\\\"l\\\":\\\"1931-7603\\\"},{\\\"2\\\":\\\"1\\\"}],\\\"ind1\\\":\\\"0\\\",\\\"ind2\\\":\\\" \\\"}},{\\\"035\\\":{\\\"subfields\\\":[{\\\"a\\\":\\\"(OCoLC)68188263\\\"},{\\\"z\\\":\\\"(OCoLC)1058285745\\\"}],\\\"ind1\\\":\\\"\\\"[truncated 2505 chars]; line: 1, column: 192]\"}]}';
   const nameMarcFileForImportCreate = `C350750autotestFile.${Helper.getRandomBarcode()}.mrc`;
   before(() => {
     cy.createTempUser([
@@ -28,9 +28,9 @@ describe('ui-data-import:', () => {
       });
   });
 
-  //   after(() => {
-  //     Users.deleteViaApi(user.userId);
-  //   });
+  after(() => {
+    Users.deleteViaApi(user.userId);
+  });
 
   it('C350750 Error records not processed or saved for invalid MARC Bibs (folijet)',
     { tags: [TestTypes.criticalPath, DevTeams.folijet] }, () => {
@@ -40,6 +40,6 @@ describe('ui-data-import:', () => {
       JobProfiles.waitFileIsImported(nameMarcFileForImportCreate);
       Logs.checkStatusOfJobProfile('Completed with errors');
       Logs.openFileDetails(nameMarcFileForImportCreate);
-      fileDetails.
+      FileDetails.verifyErrorMessage(error);
     });
 });
