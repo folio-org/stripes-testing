@@ -134,7 +134,7 @@ export default {
       if ('update' in specialMappingProfile) {
         cy.do([
           TextField('Cataloged date').fillIn(catalogedDate),
-          TextField('Instance status term').fillIn(instanceStatusTerm),
+          TextField('Instance status term').fillIn(`"${instanceStatusTerm}"`),
         ]);
         // wait accepted values to be filled
         // eslint-disable-next-line cypress/no-unnecessary-waiting
@@ -196,7 +196,7 @@ export default {
       if ('update' in specialMappingProfile) {
         cy.do([
           TextField('Cataloged date').fillIn(catalogedDate),
-          TextField('Instance status term').fillIn(instanceStatusTerm),
+          TextField('Instance status term').fillIn(`"${instanceStatusTerm}"`),
         ]);
         // wait accepted values to be filled
         // eslint-disable-next-line cypress/no-unnecessary-waiting
