@@ -81,14 +81,14 @@ export const MultiColumnList = HTML.extend('multi column list')
       const contentSearch = !column ? { columnIndex: 0 } : { content: column };
       return interactor.find(MultiColumnListCell({ row, ...contentSearch })).click();
     },
-    clickNextPagingButton: (interactor, label = 'Next') => {
-      return interactor.find(Button(label)).click();
+    clickNextPagingButton: (interactor, label = 'next') => {
+      return interactor.perform((el) => el.parentNode.querySelector(`[data-button-id=${label}]`).click());
     },
-    clickPreviousPagingButton: (interactor, label = 'Previous') => {
-      return interactor.find(Button(label)).click();
+    clickPreviousPagingButton: (interactor, label = 'previous') => {
+      return interactor.perform((el) => el.parentNode.querySelector(`[data-button-id=${label}]`).click());
     },
-    clickLoadMoreButton: (interactor, label = 'Load more') => {
-      return interactor.find(Button(label)).click();
+    clickLoadMoreButton: (interactor, label = 'load-more') => {
+      return interactor.perform((el) => el.parentNode.querySelector(`[data-button-id=${label}]`).click());
     }
   });
 
