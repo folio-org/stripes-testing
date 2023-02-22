@@ -7,6 +7,7 @@ import FieldMappingProfiles from '../../../support/fragments/settings/data-expor
 import Users from '../../../support/fragments/users/users';
 import InteractorsTools from '../../../support/utils/interactorsTools';
 import getRandomPostfix from '../../../support/utils/stringTools';
+import CreateFieldMappingProfile from '../../../support/fragments/settings/data-export/createFieldMappingProfile';
 
 let user;
 let fieldMappingProfileName = `fieldMappingProfile${getRandomPostfix()}`;
@@ -32,7 +33,7 @@ describe('settings: data-export', () => {
 
     it('C15819 Transformation form (firebird)', { tags: [testTypes.criticalPath, devTeams.firebird] }, () => {
         FieldMappingProfiles.goTofieldMappingProfilesTab();
-        FieldMappingProfiles.createNewFieldMappingProfile(fieldMappingProfileName, 'Item');
+        CreateFieldMappingProfile.createFieldMappingProfile(fieldMappingProfileName, 'Item');
         FieldMappingProfiles.verifySearchAndFilterPane();
         FieldMappingProfiles.searchText('text');
         FieldMappingProfiles.verifySearchResultIncludes(['text']);

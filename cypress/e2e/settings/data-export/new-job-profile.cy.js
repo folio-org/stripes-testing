@@ -1,15 +1,18 @@
-import testTypes from "../../../support/dictionary/testTypes";
-import devTeams from "../../../support/dictionary/devTeams";
-import permissions from "../../../support/dictionary/permissions";
-import TopMenu from "../../../support/fragments/topMenu";
-import SettingsPane from "../../../support/fragments/settings/settingsPane";
-import JobProfiles from "../../../support/fragments/settings/data-export/jobProfiles";
-import getRandomPostfix from "../../../support/utils/stringTools";
-import Users from "../../../support/fragments/users/users";
-import FieldMappingProfiles from "../../../support/fragments/settings/data-export/fieldMappingProfiles";
-import InteractorsTools from "../../../support/utils/interactorsTools";
+import testTypes from '../../../support/dictionary/testTypes';
+import devTeams from '../../../support/dictionary/devTeams';
+import permissions from '../../../support/dictionary/permissions';
+import TopMenu from '../../../support/fragments/topMenu';
+import SettingsPane from '../../../support/fragments/settings/settingsPane';
+import JobProfiles from '../../../support/fragments/settings/data-export/jobProfiles';
+import getRandomPostfix from '../../../support/utils/stringTools';
+import Users from '../../../support/fragments/users/users';
+import FieldMappingProfiles from '../../../support/fragments/settings/data-export/fieldMappingProfiles';
+import InteractorsTools from '../../../support/utils/interactorsTools';
+import CreateFieldMappingProfile from '../../../support/fragments/settings/data-export/createFieldMappingProfile';
+import DeleteFieldMappingProfile from '../../../support/fragments/settings/data-export/deleteFieldMappingProfile';
 
 let user;
+let fieldMappingProfileId;
 let newJobProfileName = `jobProfile${getRandomPostfix()}`
 let secondNewJobProfileName = `secondJobProfile${getRandomPostfix()}`
 let fieldMappingProfileName = `fieldMappingProfile${getRandomPostfix()}`;
@@ -28,22 +31,26 @@ describe('settings: data-export', () => {
         cy.login(user.username, user.password, { path: TopMenu.settingsPath, waiter: SettingsPane.waitLoading });
       });
 
-    FieldMappingProfiles.goTofieldMappingProfilesTab();
-    FieldMappingProfiles.createNewFieldMappingProfile(fieldMappingProfileName, 'Holdings');
-    FieldMappingProfiles.searchText('Holdings');
-    FieldMappingProfiles.clickNthCheckbox();
-    FieldMappingProfiles.fillInTransformationsTextfields('456', '1', '2', '$a');
-    FieldMappingProfiles.clickTransformationsSaveAndCloseButton();
-    FieldMappingProfiles.clickNewFieldMappingProfileSaveAndCloseButton();
-    // Need to wait until the job is created
-    cy.wait(2000);
+    CreateFieldMappingProfile.createFieldMappingProfileViaApi(fieldMappingProfileName)
+      .then((response) => {
+        fieldMappingProfileId = response.body.id;
+      })
   });
 
-  after('delete user', () => {
+  after('delete jobas and user', () => {
+    JobProfiles.getJobProfile({ query: `"name"=="${newJobProfileName}"` })
+      .then(response => {
+        JobProfiles.deleteJobProfileViaApi(response.id);
+      });
+    JobProfiles.getJobProfile({ query: `"name"=="${secondNewJobProfileName}"` })
+      .then(response => {
+        JobProfiles.deleteJobProfileViaApi(response.id);
+      });
+    DeleteFieldMappingProfile.deleteFieldMappingProfileViaApi(fieldMappingProfileId);
     Users.deleteViaApi(user.userId);
   });
 
-  it('C10953 Create a new job profile', { tags: [testTypes.criticalPath, devTeams.firebird] }, () => {
+  it('C10953 Create a new job profile (firebird)', { tags: [testTypes.criticalPath, devTeams.firebird] }, () => {
     JobProfiles.goToJobProfilesTab();
     JobProfiles.clickNewJobProfile();
     JobProfiles.verifyNewJobProfileForm();

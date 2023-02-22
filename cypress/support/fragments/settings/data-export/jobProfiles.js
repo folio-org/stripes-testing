@@ -9,6 +9,8 @@ const cancelButton = Button('Cancel');
 const nameTextfield = TextField('Name*');
 const descriptionTextarea = TextArea('Description');
 const selectMappingProfileDropdown = Select({ name: 'mappingProfileId' });
+const actionsButton = Button('Actions');
+const deleteButton = Button('Delete');
 
 export default {
 	goToJobProfilesTab() {
@@ -81,4 +83,21 @@ export default {
 	verifyJobProfileInTheTable(jobProfileName) {
 		cy.expect(jobProfilesPane.find(MultiColumnListCell({ content: `${jobProfileName}` })))
 	},
+	getJobProfile: (searchParams) => {
+		return cy
+			.okapiRequest({
+				path: 'data-export/job-profiles',
+				searchParams,
+				isDefaultSearchParamsRequired: false
+			})
+			.then((response) => {
+				console.log(response);
+				return response.body.jobProfiles[0];
+			});
+	},
+	deleteJobProfileViaApi: (id) => cy.okapiRequest({
+		method: 'DELETE',
+		path: `data-export/job-profiles/${id}`,
+		isDefaultSearchParamsRequired: false
+	}),
 }

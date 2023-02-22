@@ -30,14 +30,6 @@ export default {
         cy.do(NavListItem('Field mapping profiles').click());
         cy.expect(fieldMappingProfilesPane.exists());
     },
-    createNewFieldMappingProfile(name, recordType) {
-        cy.do([
-            Button('New').click(),
-            TextField('Name*').fillIn(name),
-            Checkbox(recordType).click(),
-            Accordion('Transformations').find(Button('Add transformations')).click(),
-        ])
-    },
     verifyAllSearchAndFilterCheckboxesChecked() {
         cy.expect([
             instanceRecordTypeChechbox.has({ checked: true }),
