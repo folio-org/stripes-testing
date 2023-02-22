@@ -19,6 +19,7 @@ import SettingsMenu from '../../../support/fragments/settingsMenu';
 import FieldMappingProfileView from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfileView';
 import FileExtensions from '../../../support/fragments/settings/dataImport/fileExtensions';
 import MarcFieldProtection from '../../../support/fragments/settings/dataImport/marcFieldProtection';
+import Users from '../../../support/fragments/users/users';
 
 describe('ui-data-import:', () => {
   let user;
@@ -66,10 +67,11 @@ describe('ui-data-import:', () => {
     MatchProfiles.deleteMatchProfile(matchProfileName);
     ActionProfiles.deleteActionProfile(actionProfileName);
     FieldMappingProfiles.deleteFieldMappingProfile(mappingProfileName);
+    Users.deleteViaApi(user.userId);
   });
 
   it('C353645 Checking the Data import UI permission for only viewing settings (folijet)',
-    { tags: [TestTypes.smoke, DevTeams.folijet] }, () => {
+    { tags: [TestTypes.criticalPath, DevTeams.folijet] }, () => {
       cy.visit(SettingsMenu.jobProfilePath);
       JobProfiles.checkListOfExistingProfilesIsDisplayed();
       JobProfiles.verifyActionMenuAbsent();

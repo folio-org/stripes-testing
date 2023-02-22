@@ -191,15 +191,16 @@ describe('ui-users: Verify that maximum number of items borrowed for loan type (
       });
   });
 
-  it('C9277 Verify that maximum number of items borrowed for loan type (e.g. course reserve) limit works (folijet) (prokopovych)', { tags: [TestTypes.smoke, DevTeams.folijet] }, () => {
-    cy.visit(TopMenu.checkOutPath);
-    CheckOutActions.checkOutItemUser(user.barcode, limitTestItems[0].barcode);
-    CheckOutActions.checkOutItemUser(user.barcode, limitTestItems[1].barcode);
-    testItems.forEach((item) => {
-      CheckOutActions.checkOutItemUser(user.barcode, item.barcode);
+  it('C9277 Verify that maximum number of items borrowed for loan type (e.g. course reserve) limit works (folijet) (prokopovych)',
+    { tags: [TestTypes.smoke, DevTeams.folijet] }, () => {
+      cy.visit(TopMenu.checkOutPath);
+      CheckOutActions.checkOutItemUser(user.barcode, limitTestItems[0].barcode);
+      CheckOutActions.checkOutItemUser(user.barcode, limitTestItems[1].barcode);
+      testItems.forEach((item) => {
+        CheckOutActions.checkOutItemUser(user.barcode, item.barcode);
+      });
+      CheckOutActions.checkOutItemUser(user.barcode, limitTestItems[2].barcode);
+      LimitCheckOut.verifyErrorMessage(2);
+      LimitCheckOut.cancelModal();
     });
-    CheckOutActions.checkOutItemUser(user.barcode, limitTestItems[2].barcode);
-    LimitCheckOut.verifyErrorMessage(2);
-    LimitCheckOut.cancelModal();
-  });
 });

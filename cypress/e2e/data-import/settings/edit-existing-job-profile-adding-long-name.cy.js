@@ -33,7 +33,7 @@ describe('ui-data-import: Edit an existing job profile by adding a long name', (
     JobProfiles.deleteJobProfile(jobProfileLongName);
   });
 
-  it('C2332 Edit an existing job profile by adding a long name (folijet)', { tags: [TestTypes.smoke, DevTeams.folijet] }, () => {
+  it('C2332 Edit an existing job profile by adding a long name (folijet)', { tags: [TestTypes.criticalPath, DevTeams.folijet] }, () => {
     JobProfiles.checkListOfExistingProfilesIsDisplayed();
     JobProfiles.searchJobProfileForImport(jobProfileName);
     JobProfileView.edit();

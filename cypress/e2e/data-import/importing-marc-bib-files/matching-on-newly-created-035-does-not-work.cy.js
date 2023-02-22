@@ -105,124 +105,125 @@ describe('ui-data-import: Matching on newly-created 035 does not work (regressio
     Users.deleteViaApi(user.userId);
   });
 
-  it('C358138 Matching on newly-created 035 does not work (regression) (folijet)', { tags: [TestTypes.smoke, DevTeams.folijet] }, () => {
+  it('C358138 Matching on newly-created 035 does not work (regression) (folijet)',
+    { tags: [TestTypes.criticalPath, DevTeams.folijet] }, () => {
     // upload a marc file for creating of the new instance
-    DataImport.uploadFile('marcFileForC358138.mrc', fileForCreateFirstName);
-    JobProfiles.searchJobProfileForImport('Default - Create instance and SRS MARC Bib');
-    JobProfiles.runImportFile();
-    JobProfiles.waitFileIsImported(fileForCreateFirstName);
-    Logs.checkStatusOfJobProfile('Completed');
-    Logs.openFileDetails(fileForCreateFirstName);
-    [FileDetails.columnName.srsMarc,
-      FileDetails.columnName.instance].forEach(columnName => {
-      FileDetails.checkStatusInColumn(FileDetails.status.created, columnName);
-    });
-    FileDetails.checkSrsRecordQuantityInSummaryTable('1');
-    FileDetails.checkInstanceQuantityInSummaryTable('1');
-
-    // get Instance HRID through API for delete instance
-    InventorySearchAndFilter.getInstanceHRID()
-      .then(hrId => {
-        firstInstanceHrid = hrId[0];
+      DataImport.uploadFile('marcFileForC358138.mrc', fileForCreateFirstName);
+      JobProfiles.searchJobProfileForImport('Default - Create instance and SRS MARC Bib');
+      JobProfiles.runImportFile();
+      JobProfiles.waitFileIsImported(fileForCreateFirstName);
+      Logs.checkStatusOfJobProfile('Completed');
+      Logs.openFileDetails(fileForCreateFirstName);
+      [FileDetails.columnName.srsMarc,
+        FileDetails.columnName.instance].forEach(columnName => {
+        FileDetails.checkStatusInColumn(FileDetails.status.created, columnName);
       });
+      FileDetails.checkSrsRecordQuantityInSummaryTable('1');
+      FileDetails.checkInstanceQuantityInSummaryTable('1');
 
-    FileDetails.openInstanceInInventory('Created');
-    InventoryInstance.verifyResourceIdentifier(resourceIdentifierForFirstInstance.type, resourceIdentifierForFirstInstance.value, 2);
-    InventoryInstance.viewSource();
-    InventoryViewSource.contains('035\t');
-    InventoryViewSource.contains(contentOf035FieldForFirstInstance);
+      // get Instance HRID through API for delete instance
+      InventorySearchAndFilter.getInstanceHRID()
+        .then(hrId => {
+          firstInstanceHrid = hrId[0];
+        });
 
-    // create match profile
-    cy.visit(SettingsMenu.matchProfilePath);
-    MatchProfiles.createMatchProfileWithExistingPart(matchProfile);
-    MatchProfiles.checkMatchProfilePresented(matchProfile.profileName);
+      FileDetails.openInstanceInInventory('Created');
+      InventoryInstance.verifyResourceIdentifier(resourceIdentifierForFirstInstance.type, resourceIdentifierForFirstInstance.value, 2);
+      InventoryInstance.viewSource();
+      InventoryViewSource.contains('035\t');
+      InventoryViewSource.contains(contentOf035FieldForFirstInstance);
 
-    // create mapping profiles
-    cy.visit(SettingsMenu.mappingProfilePath);
-    FieldMappingProfiles.openNewMappingProfileForm();
-    NewFieldMappingProfile.fillSummaryInMappingProfile(mappingProfile);
-    NewFieldMappingProfile.addAdministrativeNote(note, 9);
-    FieldMappingProfiles.saveProfile();
-    FieldMappingProfiles.closeViewModeForMappingProfile(mappingProfile.name);
-    FieldMappingProfiles.checkMappingProfilePresented(mappingProfile.name);
+      // create match profile
+      cy.visit(SettingsMenu.matchProfilePath);
+      MatchProfiles.createMatchProfileWithExistingPart(matchProfile);
+      MatchProfiles.checkMatchProfilePresented(matchProfile.profileName);
 
-    // create action profile
-    cy.visit(SettingsMenu.actionProfilePath);
-    ActionProfiles.create(actionProfile, mappingProfile.name);
-    ActionProfiles.checkActionProfilePresented(actionProfile.name);
+      // create mapping profiles
+      cy.visit(SettingsMenu.mappingProfilePath);
+      FieldMappingProfiles.openNewMappingProfileForm();
+      NewFieldMappingProfile.fillSummaryInMappingProfile(mappingProfile);
+      NewFieldMappingProfile.addAdministrativeNote(note, 9);
+      FieldMappingProfiles.saveProfile();
+      FieldMappingProfiles.closeViewModeForMappingProfile(mappingProfile.name);
+      FieldMappingProfiles.checkMappingProfilePresented(mappingProfile.name);
 
-    // create job profile for update
-    cy.visit(SettingsMenu.jobProfilePath);
-    JobProfiles.createJobProfileWithLinkingProfiles(jobProfile, actionProfileName, matchProfileName);
-    JobProfiles.checkJobProfilePresented(jobProfile.profileName);
+      // create action profile
+      cy.visit(SettingsMenu.actionProfilePath);
+      ActionProfiles.create(actionProfile, mappingProfile.name);
+      ActionProfiles.checkActionProfilePresented(actionProfile.name);
 
-    // upload a marc file for updating already created instance
-    cy.visit(TopMenu.dataImportPath);
-    DataImport.uploadFile('marcFileForC358138_rev.mrc', fileForUpdateFirstName);
-    JobProfiles.searchJobProfileForImport(jobProfile.profileName);
-    JobProfiles.runImportFile();
-    JobProfiles.waitFileIsImported(fileForUpdateFirstName);
-    Logs.checkStatusOfJobProfile('Completed');
-    Logs.openFileDetails(fileForUpdateFirstName);
-    FileDetails.checkStatusInColumn(FileDetails.status.created, FileDetails.columnName.srsMarc);
-    FileDetails.checkStatusInColumn(FileDetails.status.updated, FileDetails.columnName.instance);
-    FileDetails.checkSrsRecordQuantityInSummaryTable('1');
-    FileDetails.checkInstanceQuantityInSummaryTable('1', '1');
+      // create job profile for update
+      cy.visit(SettingsMenu.jobProfilePath);
+      JobProfiles.createJobProfileWithLinkingProfiles(jobProfile, actionProfileName, matchProfileName);
+      JobProfiles.checkJobProfilePresented(jobProfile.profileName);
 
-    FileDetails.openInstanceInInventory('Updated');
-    InstanceRecordView.verifyAdministrativeNote(note);
-    InventoryInstance.viewSource();
-    InventoryViewSource.contains('035\t');
-    InventoryViewSource.contains(contentOf035FieldForFirstInstance);
-    InventoryViewSource.contains('650\t');
-    InventoryViewSource.contains('Pulse techniques (Medical)');
+      // upload a marc file for updating already created instance
+      cy.visit(TopMenu.dataImportPath);
+      DataImport.uploadFile('marcFileForC358138_rev.mrc', fileForUpdateFirstName);
+      JobProfiles.searchJobProfileForImport(jobProfile.profileName);
+      JobProfiles.runImportFile();
+      JobProfiles.waitFileIsImported(fileForUpdateFirstName);
+      Logs.checkStatusOfJobProfile('Completed');
+      Logs.openFileDetails(fileForUpdateFirstName);
+      FileDetails.checkStatusInColumn(FileDetails.status.created, FileDetails.columnName.srsMarc);
+      FileDetails.checkStatusInColumn(FileDetails.status.updated, FileDetails.columnName.instance);
+      FileDetails.checkSrsRecordQuantityInSummaryTable('1');
+      FileDetails.checkInstanceQuantityInSummaryTable('1', '1');
 
-    // upload a marc file for creating of the new instance
-    cy.visit(TopMenu.dataImportPath);
-    DataImport.uploadFile('marcFileForC358138_with_035.mrc', fileForCreateSecondName);
-    JobProfiles.searchJobProfileForImport('Default - Create instance and SRS MARC Bib');
-    JobProfiles.runImportFile();
-    JobProfiles.waitFileIsImported(fileForCreateSecondName);
-    Logs.checkStatusOfJobProfile('Completed');
-    Logs.openFileDetails(fileForCreateSecondName);
-    [FileDetails.columnName.srsMarc,
-      FileDetails.columnName.instance].forEach(columnName => {
-      FileDetails.checkStatusInColumn(FileDetails.status.created, columnName);
-    });
-    FileDetails.checkSrsRecordQuantityInSummaryTable('1');
-    FileDetails.checkInstanceQuantityInSummaryTable('1');
+      FileDetails.openInstanceInInventory('Updated');
+      InstanceRecordView.verifyAdministrativeNote(note);
+      InventoryInstance.viewSource();
+      InventoryViewSource.contains('035\t');
+      InventoryViewSource.contains(contentOf035FieldForFirstInstance);
+      InventoryViewSource.contains('650\t');
+      InventoryViewSource.contains('Pulse techniques (Medical)');
 
-    // get Instance HRID through API for delete instance
-    InventorySearchAndFilter.getInstanceHRID()
-      .then(hrId => {
-        secondInstanceHrid = hrId[0];
+      // upload a marc file for creating of the new instance
+      cy.visit(TopMenu.dataImportPath);
+      DataImport.uploadFile('marcFileForC358138_with_035.mrc', fileForCreateSecondName);
+      JobProfiles.searchJobProfileForImport('Default - Create instance and SRS MARC Bib');
+      JobProfiles.runImportFile();
+      JobProfiles.waitFileIsImported(fileForCreateSecondName);
+      Logs.checkStatusOfJobProfile('Completed');
+      Logs.openFileDetails(fileForCreateSecondName);
+      [FileDetails.columnName.srsMarc,
+        FileDetails.columnName.instance].forEach(columnName => {
+        FileDetails.checkStatusInColumn(FileDetails.status.created, columnName);
       });
+      FileDetails.checkSrsRecordQuantityInSummaryTable('1');
+      FileDetails.checkInstanceQuantityInSummaryTable('1');
 
-    FileDetails.openInstanceInInventory('Created');
-    InventoryInstance.verifyResourceIdentifier(resourceIdentifierForSecondInstance.type, resourceIdentifierForSecondInstance.value, 3);
-    InventoryInstance.viewSource();
-    InventoryViewSource.contains('035\t');
-    InventoryViewSource.contains(contentOf035FieldForSecondInstance);
+      // get Instance HRID through API for delete instance
+      InventorySearchAndFilter.getInstanceHRID()
+        .then(hrId => {
+          secondInstanceHrid = hrId[0];
+        });
 
-    // upload a marc file for updating already created instance
-    cy.visit(TopMenu.dataImportPath);
-    DataImport.uploadFile('marcFileForC358138_with_035_rev.mrc', fileForUpdateSecondName);
-    JobProfiles.searchJobProfileForImport(jobProfile.profileName);
-    JobProfiles.runImportFile();
-    JobProfiles.waitFileIsImported(fileForUpdateSecondName);
-    Logs.checkStatusOfJobProfile('Completed');
-    Logs.openFileDetails(fileForUpdateSecondName);
-    FileDetails.checkStatusInColumn(FileDetails.status.created, FileDetails.columnName.srsMarc);
-    FileDetails.checkStatusInColumn(FileDetails.status.updated, FileDetails.columnName.instance);
-    FileDetails.checkSrsRecordQuantityInSummaryTable('1');
-    FileDetails.checkInstanceQuantityInSummaryTable('1', '1');
+      FileDetails.openInstanceInInventory('Created');
+      InventoryInstance.verifyResourceIdentifier(resourceIdentifierForSecondInstance.type, resourceIdentifierForSecondInstance.value, 3);
+      InventoryInstance.viewSource();
+      InventoryViewSource.contains('035\t');
+      InventoryViewSource.contains(contentOf035FieldForSecondInstance);
 
-    FileDetails.openInstanceInInventory('Updated');
-    InstanceRecordView.verifyAdministrativeNote(note);
-    InventoryInstance.viewSource();
-    InventoryViewSource.contains('035\t');
-    InventoryViewSource.contains(contentOf035FieldForSecondInstance);
-    InventoryViewSource.contains('650\t');
-    InventoryViewSource.contains('Symposia');
-  });
+      // upload a marc file for updating already created instance
+      cy.visit(TopMenu.dataImportPath);
+      DataImport.uploadFile('marcFileForC358138_with_035_rev.mrc', fileForUpdateSecondName);
+      JobProfiles.searchJobProfileForImport(jobProfile.profileName);
+      JobProfiles.runImportFile();
+      JobProfiles.waitFileIsImported(fileForUpdateSecondName);
+      Logs.checkStatusOfJobProfile('Completed');
+      Logs.openFileDetails(fileForUpdateSecondName);
+      FileDetails.checkStatusInColumn(FileDetails.status.created, FileDetails.columnName.srsMarc);
+      FileDetails.checkStatusInColumn(FileDetails.status.updated, FileDetails.columnName.instance);
+      FileDetails.checkSrsRecordQuantityInSummaryTable('1');
+      FileDetails.checkInstanceQuantityInSummaryTable('1', '1');
+
+      FileDetails.openInstanceInInventory('Updated');
+      InstanceRecordView.verifyAdministrativeNote(note);
+      InventoryInstance.viewSource();
+      InventoryViewSource.contains('035\t');
+      InventoryViewSource.contains(contentOf035FieldForSecondInstance);
+      InventoryViewSource.contains('650\t');
+      InventoryViewSource.contains('Symposia');
+    });
 });
