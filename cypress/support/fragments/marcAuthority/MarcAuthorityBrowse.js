@@ -56,6 +56,7 @@ export default {
 
   searchByChangingParameter(searchOption, value) {
     cy.expect(searchInput.has({ value: value }));
+    cy.wait(500);
     cy.do(browseSearchAndFilterInput.choose(searchOption));
     cy.get('#textarea-authorities-search-qindex').then((elem) => {
       expect(elem.text()).to.include(searchOption);
