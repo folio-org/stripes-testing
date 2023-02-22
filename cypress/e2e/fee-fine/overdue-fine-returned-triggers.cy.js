@@ -102,6 +102,7 @@ describe('Overdue fine', () => {
         ...generalOptions,
       };
     }
+    return generalOptions;
   };
   const searchResultsData = (templateName) => {
     return {
