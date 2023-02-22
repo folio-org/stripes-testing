@@ -15,6 +15,10 @@ import getRandomPostfix from '../../../utils/stringTools';
 
 const saveButton = Button('Save as profile & Close');
 const organizationModal = Modal('Select Organization');
+const staffSuppressSelect = Select('Staff suppress');
+const suppressFromDiscoverySelect = Select('Suppress from discovery');
+const previouslyHeldSelect = Select('Previously held');
+
 const incomingRecordType = {
   marcBib: 'MARC Bibliographic',
   edifact: 'EDIFACT invoice',
@@ -282,19 +286,23 @@ export default {
     ]);
   },
 
-  addSuppressFromDiscovery:() => {
-    const suppressFromDiscovery = 'profile.mappingDetails.mappingFields[0].booleanFieldAction';
-    const staffSuppress = 'profile.mappingDetails.mappingFields[1].booleanFieldAction';
-    const previouslyHeld = 'profile.mappingDetails.mappingFields[2].booleanFieldAction';
-
+  addSuppressFromDiscovery:(suppressFromDiscavery, staffSuppress, previouslyHeld) => {
     cy.do([
-      Select({ name: suppressFromDiscovery }).focus(),
-      Select({ name: suppressFromDiscovery }).choose('Mark for all affected records'),
-      Select({ name: staffSuppress }).focus(),
-      Select({ name: staffSuppress }).choose('Mark for all affected records'),
-      Select({ name: previouslyHeld }).focus(),
-      Select({ name: previouslyHeld }).choose('Mark for all affected records')
+      suppressFromDiscoverySelect.focus(),
+      suppressFromDiscoverySelect.choose(suppressFromDiscavery)
     ]);
+    if (staffSuppress) {
+      cy.do([
+        staffSuppressSelect.focus(),
+        staffSuppressSelect.choose(staffSuppress)
+      ]);
+    }
+    if (previouslyHeld) {
+      cy.do([
+        previouslyHeldSelect.focus(),
+        previouslyHeldSelect.choose(previouslyHeld)
+      ]);
+    }
   },
 
   addNatureOfContentTerms:() => {

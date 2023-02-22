@@ -21,8 +21,6 @@ const mappingProfileCatalogedDateField = TextField('Cataloged date');
 const mappingProfileInstanceStatusField = TextField('Instance status term');
 const mappingProfileIncomingRecordTypeField = Select('Incoming record type*');
 const mappingProfileFolioRecordTypeField = Select('FOLIO record type*');
-const mappingProfileStaffSuppressField = Select('Staff suppress');
-const mappingProfileSuppressFromDiscoveryField = Select('Suppress from discovery');
 const resultsPane = Pane({ id:'pane-results' });
 
 const openNewMappingProfileForm = () => {
@@ -112,7 +110,6 @@ export default {
     name,
     incomingRecordType,
     folioRecordType,
-    staffSuppress,
     discoverySuppress,
     catalogedDate,
     instanceStatus,
@@ -123,18 +120,13 @@ export default {
       mappingProfileIncomingRecordTypeField.choose(incomingRecordType),
       mappingProfileFolioRecordTypeField.choose(folioRecordType),
     ]);
-    // need to wait until selection lists are populated
-    cy.wait(1200); // eslint-disable-line cypress/no-unnecessary-waiting
+    NewFieldMappingProfile.addSuppressFromDiscovery(discoverySuppress);
     cy.do([
-      staffSuppress
-        ? mappingProfileStaffSuppressField.choose(staffSuppress)
-        : mappingProfileSuppressFromDiscoveryField.choose(discoverySuppress),
       mappingProfileCatalogedDateField.fillIn(catalogedDate),
       mappingProfileInstanceStatusField.fillIn(instanceStatus),
-      saveProfileButton.click(),
+      saveProfileButton.click()
     ]);
     closeViewModeForMappingProfile(name);
-
     cy.expect(actionsButton.exists());
   },
 

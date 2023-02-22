@@ -34,6 +34,7 @@ describe('ui-data-import:', () => {
   };
   const oclcNumber = { type: 'OCLC', value: '(OCoLC)879516309' };
   const quantityOfItems = '1';
+  const actionForSuppress = 'Mark for all affected records';
 
   // profile names for creating
   const instanceCreateMapProfileName = `C11109 create mapping profile_${getRandomPostfix()}`;
@@ -125,7 +126,7 @@ describe('ui-data-import:', () => {
       cy.visit(SettingsMenu.mappingProfilePath);
       FieldMappingProfiles.openNewMappingProfileForm();
       NewFieldMappingProfile.fillSummaryInMappingProfile(collectionOfMappingAndActionProfiles[0].mappingProfile);
-      NewFieldMappingProfile.addSuppressFromDiscovery();
+      NewFieldMappingProfile.addSuppressFromDiscovery(actionForSuppress, actionForSuppress, actionForSuppress);
       NewFieldMappingProfile.fillCatalogedDate(itemsForCreateInstance.catalogedDate);
       NewFieldMappingProfile.fillInstanceStatusTerm(itemsForCreateInstance.statusTerm);
       NewFieldMappingProfile.addStatisticalCode(itemsForCreateInstance.statisticalCode, 8);
