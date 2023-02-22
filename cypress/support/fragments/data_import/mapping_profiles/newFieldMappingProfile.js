@@ -48,7 +48,7 @@ const status = '"In process"';
 const holdingsType = 'Holdings';
 const itemType = 'Item';
 const catalogedDate = '###TODAY###';
-const instanceStatusTerm = '"Batch Loaded"';
+const instanceStatusTerm = 'Batch Loaded';
 const defaultMappingProfile = {
   name: `autotest${folioRecordTypeValue.instance}${getRandomPostfix()}`,
   typeValue: folioRecordTypeValue.instance,
@@ -240,10 +240,12 @@ export default {
     // number needs for using this method in filling fields for holdings and item profiles
     const statisticalCodeFieldName = `profile.mappingDetails.mappingFields[${number}].repeatableFieldAction`;
 
-    cy.do(Select({ name: statisticalCodeFieldName }).focus());
-    cy.do(Select({ name: statisticalCodeFieldName }).choose(actions.addTheseToExisting));
-    cy.do(Button('Add statistical code').click());
-    cy.do(TextField('Statistical code').fillIn(`"${name}"`));
+    cy.do([
+      Select({ name: statisticalCodeFieldName }).focus(),
+      Select({ name: statisticalCodeFieldName }).choose(actions.addTheseToExisting),
+      Button('Add statistical code').click(),
+      TextField('Statistical code').fillIn(`"${name}"`)
+    ]);
     waitLoading();
   },
 
@@ -251,10 +253,12 @@ export default {
     // number needs for using this method in filling fields for holdings and item profiles
     const adminNoteFieldName = `profile.mappingDetails.mappingFields[${number}].repeatableFieldAction`;
 
-    cy.do(Select({ name: adminNoteFieldName }).focus());
-    cy.do(Select({ name: adminNoteFieldName }).choose(actions.addTheseToExisting));
-    cy.do(Button('Add administrative note').click());
-    cy.do(TextField('Administrative note').fillIn(`"${note}"`));
+    cy.do([
+      Select({ name: adminNoteFieldName }).focus(),
+      Select({ name: adminNoteFieldName }).choose(actions.addTheseToExisting),
+      Button('Add administrative note').click(),
+      TextField('Administrative note').fillIn(`"${note}"`)
+    ]);
   },
 
   addElectronicAccess:(relationship, uri, linkText = '') => {
@@ -278,13 +282,40 @@ export default {
     ]);
   },
 
-  fillCatalogedDate:() => {
-    cy.do(TextField('Cataloged date').fillIn(catalogedDate));
+  addSuppressFromDiscovery:() => {
+    const suppressFromDiscovery = 'profile.mappingDetails.mappingFields[0].booleanFieldAction';
+    const staffSuppress = 'profile.mappingDetails.mappingFields[1].booleanFieldAction';
+    const previouslyHeld = 'profile.mappingDetails.mappingFields[2].booleanFieldAction';
+
+    cy.do([
+      Select({ name: suppressFromDiscovery }).focus(),
+      Select({ name: suppressFromDiscovery }).choose('Mark for all affected records'),
+      Select({ name: staffSuppress }).focus(),
+      Select({ name: staffSuppress }).choose('Mark for all affected records'),
+      Select({ name: previouslyHeld }).focus(),
+      Select({ name: previouslyHeld }).choose('Mark for all affected records')
+    ]);
+  },
+
+  addNatureOfContentTerms:() => {
+    const contentTerms = 'profile.mappingDetails.mappingFields[22].repeatableFieldAction';
+
+    cy.do([
+      Select({ name: contentTerms }).focus(),
+      Select({ name: contentTerms }).choose(actions.addTheseToExisting),
+      Button('Add nature of content term').click(),
+      TextField('Nature of content term').fillIn('"bibliography"')
+    ]);
+    waitLoading();
+  },
+
+  fillCatalogedDate:(date = catalogedDate) => {
+    cy.do(TextField('Cataloged date').fillIn(date));
     waitLoading();
   },
 
   fillInstanceStatusTerm:(statusTerm = instanceStatusTerm) => {
-    cy.do(TextField('Instance status term').fillIn(statusTerm));
+    cy.do(TextField('Instance status term').fillIn(`"${statusTerm}"`));
     waitLoading();
   },
 
@@ -315,6 +346,7 @@ export default {
 
   addItemNotes:(noteType, note, staffOnly) => {
     const noteFieldName = 'profile.mappingDetails.mappingFields[25].repeatableFieldAction';
+    const selectName = 'profile.mappingDetails.mappingFields[25].subfields[0].fields[2].booleanFieldAction';
 
     cy.do([
       Select({ name:noteFieldName }).focus(),
@@ -322,16 +354,10 @@ export default {
       Button('Add item note').click(),
       TextField('Note type').fillIn(noteType),
       TextField('Note').fillIn(note),
-      Select({ name:'profile.mappingDetails.mappingFields[25].subfields[0].fields[2].booleanFieldAction' }).focus(),
-      Select({ name:'profile.mappingDetails.mappingFields[25].subfields[0].fields[2].booleanFieldAction' })
+      Select({ name:selectName }).focus(),
+      Select({ name:selectName })
         .choose(staffOnly)
     ]);
-    waitLoading();
-  },
-
-  addSuppressFromDiscovery:() => {
-    cy.do(Select({ name:'profile.mappingDetails.mappingFields[0].booleanFieldAction' })
-      .choose('Mark for all affected records'));
     waitLoading();
   },
 
@@ -351,9 +377,11 @@ export default {
   },
 
   fillVendorName:(vendorName) => {
-    cy.do(Button('Organization look-up').click());
-    cy.do(SearchField({ id: 'input-record-search' }).fillIn(vendorName));
-    cy.do(Button('Search').click());
+    cy.do([
+      Button('Organization look-up').click(),
+      SearchField({ id: 'input-record-search' }).fillIn(vendorName),
+      Button('Search').click()
+    ]);
     selectFromResultsList();
   },
 

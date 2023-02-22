@@ -12,7 +12,8 @@ import {
   Pane,
   Checkbox,
   MultiColumnListCell,
-  Modal
+  Modal,
+  Link
 } from '../../../../../interactors';
 import UrlParams from '../url-params';
 import InteractorsTools from '../../../utils/interactorsTools';
@@ -75,13 +76,6 @@ export default {
   checkByUserName,
   columnName,
 
-  openViewAll() {
-    cy.do([
-      Button('Actions').click(),
-      Button('View all logs').click()
-    ]);
-  },
-
   selectOption(option) {
     return cy.do([Select({ id: 'input-job-logs-search-qindex' }).choose(option)]);
   },
@@ -89,6 +83,8 @@ export default {
   searchWithTerm(term) {
     cy.get('#input-job-logs-search').clear().type(term);
     cy.do(Button('Search').click());
+    // need to wait until search list is populated
+    cy.wait(1500);
   },
 
   checkRowsCount(rowCount) {
@@ -323,7 +319,7 @@ export default {
     cy.do(Accordion({ id: 'singleRecordImports' }).clickHeader());
   },
 
-  openUserAccordion:() => {
-    cy.do(Accordion({ id: 'userId' }).clickHeader());
+  openFileDetails:(fileName) => {
+    cy.do(MultiColumnList({ id:'list-data-import' }).find(Link(fileName)).click());
   }
 };
