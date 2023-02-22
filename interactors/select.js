@@ -23,6 +23,7 @@ export default HTML.extend('select')
     ariaLabelledBy: el => el.querySelector('select').getAttribute('aria-labelledby'),
     placeholder: el => el.querySelector('select').getAttribute('placeholder'),
     value: el => el.querySelector('select').value,
+    content: el => el.querySelector('select').textContent,
     error: el => {
       const feedbackError = el.querySelector('[class^=feedbackError]');
       return feedbackError ? feedbackError.textContent : undefined;

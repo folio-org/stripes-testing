@@ -11,6 +11,7 @@ import JobProfiles from '../../../support/fragments/data_import/job_profiles/job
 import DevTeams from '../../../support/dictionary/devTeams';
 import Logs from '../../../support/fragments/data_import/logs/logs';
 import TestTypes from '../../../support/dictionary/testTypes';
+import Helper from '../../../support/fragments/finance/financeHelper';
 
 describe('ui-data-import: A user can filter and delete import logs from the "View all" page', () => {
   const startedDate = new Date();
@@ -32,9 +33,10 @@ describe('ui-data-import: A user can filter and delete import logs from the "Vie
         firstUser = userProperties;
 
         // Log list should contain at least 30-35 import jobs, run by different users, and using different import profiles
-        const fileName = 'oneMarcBib.mrc';
         for (let i = 0; i < 25; i++) {
-          DataImport.uploadFileViaApi(fileName);
+          const fileName = `oneMarcBib.mrc${Helper.getRandomBarcode()}`;
+
+          DataImport.uploadFileViaApi('oneMarcBib.mrc', fileName);
         }
 
         cy.login(userProperties.username, userProperties.password, {
