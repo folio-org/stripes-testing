@@ -7,6 +7,7 @@ import JobProfiles from '../../../support/fragments/data_import/job_profiles/job
 import Logs from '../../../support/fragments/data_import/logs/logs';
 import Users from '../../../support/fragments/users/users';
 import Helper from '../../../support/fragments/finance/financeHelper';
+import fileDetails from '../../../support/fragments/data_import/logs/fileDetails';
 
 describe('ui-data-import:', () => {
   let user;
@@ -33,12 +34,12 @@ describe('ui-data-import:', () => {
 
   it('C350750 Error records not processed or saved for invalid MARC Bibs (folijet)',
     { tags: [TestTypes.criticalPath, DevTeams.folijet] }, () => {
-      DataImport.uploadFile('marcFileForC357552.mrc', nameMarcFileForImportCreate);
+      DataImport.uploadFile('marcFileForC350750.mrc', nameMarcFileForImportCreate);
       JobProfiles.searchJobProfileForImport('Default - Create instance and SRS MARC Bib');
       JobProfiles.runImportFile();
       JobProfiles.waitFileIsImported(nameMarcFileForImportCreate);
       Logs.checkStatusOfJobProfile('Completed with errors');
       Logs.openFileDetails(nameMarcFileForImportCreate);
-      
+      fileDetails.
     });
 });
