@@ -4,7 +4,6 @@ import {
   TextField,
   Pane,
   MultiColumnListRow,
-  Select,
   PaneContent,
   Form
 } from '../../../../../interactors';
@@ -16,11 +15,6 @@ const actionsButton = Button('Actions');
 const searchButton = Button('Search');
 const iconButton = Button({ icon: 'times' });
 const saveProfileButton = Button('Save as profile & Close');
-const mappingProfileNameField = TextField('Name*');
-const mappingProfileCatalogedDateField = TextField('Cataloged date');
-const mappingProfileInstanceStatusField = TextField('Instance status term');
-const mappingProfileIncomingRecordTypeField = Select('Incoming record type*');
-const mappingProfileFolioRecordTypeField = Select('FOLIO record type*');
 const resultsPane = Pane({ id:'pane-results' });
 
 const openNewMappingProfileForm = () => {
@@ -103,30 +97,6 @@ export default {
     duplicateMappingProfile();
     NewFieldMappingProfile.fillMappingProfileForInvoice(mappingProfileName, organizationName);
     closeViewModeForMappingProfile(mappingProfileName);
-    cy.expect(actionsButton.exists());
-  },
-
-  createMappingProfileForMatchOnInstanceIdentifier: ({
-    name,
-    incomingRecordType,
-    folioRecordType,
-    discoverySuppress,
-    catalogedDate,
-    instanceStatus,
-  }) => {
-    openNewMappingProfileForm();
-    cy.do([
-      mappingProfileNameField.fillIn(name),
-      mappingProfileIncomingRecordTypeField.choose(incomingRecordType),
-      mappingProfileFolioRecordTypeField.choose(folioRecordType),
-    ]);
-    NewFieldMappingProfile.addSuppressFromDiscovery(discoverySuppress);
-    cy.do([
-      mappingProfileCatalogedDateField.fillIn(catalogedDate),
-      mappingProfileInstanceStatusField.fillIn(instanceStatus),
-      saveProfileButton.click()
-    ]);
-    closeViewModeForMappingProfile(name);
     cy.expect(actionsButton.exists());
   },
 

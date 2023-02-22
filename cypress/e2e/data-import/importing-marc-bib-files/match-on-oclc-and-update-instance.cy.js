@@ -126,7 +126,9 @@ describe('ui-data-import:', () => {
       cy.visit(SettingsMenu.mappingProfilePath);
       FieldMappingProfiles.openNewMappingProfileForm();
       NewFieldMappingProfile.fillSummaryInMappingProfile(collectionOfMappingAndActionProfiles[0].mappingProfile);
-      NewFieldMappingProfile.addSuppressFromDiscovery(actionForSuppress, actionForSuppress, actionForSuppress);
+      NewFieldMappingProfile.addStaffSuppress(actionForSuppress);
+      NewFieldMappingProfile.addSuppressFromDiscovery(actionForSuppress);
+      NewFieldMappingProfile.addPreviouslyHeld(actionForSuppress);
       NewFieldMappingProfile.fillCatalogedDate(itemsForCreateInstance.catalogedDate);
       NewFieldMappingProfile.fillInstanceStatusTerm(itemsForCreateInstance.statusTerm);
       NewFieldMappingProfile.addStatisticalCode(itemsForCreateInstance.statisticalCode, 8);
@@ -216,6 +218,7 @@ describe('ui-data-import:', () => {
 
           cy.visit(TopMenu.inventoryPath);
           InventorySearchAndFilter.searchInstanceByHRID(instanceHrid);
+          InstanceRecordView.verifyMarkAsSuppressedFromDiscoveryAndSuppressed();
           InstanceRecordView.verifyInstanceStatusTerm(itemsForUpdateInstance.statusTerm);
           InstanceRecordView.verifyStatisticalCode(itemsForUpdateInstance.statisticalCodeUI);
           InventoryInstance.verifyResourceIdentifier(oclcNumber.type, oclcNumber.value, 2);

@@ -286,23 +286,25 @@ export default {
     ]);
   },
 
-  addSuppressFromDiscovery:(suppressFromDiscavery, staffSuppress, previouslyHeld) => {
+  addSuppressFromDiscovery:(suppressFromDiscavery) => {
     cy.do([
       suppressFromDiscoverySelect.focus(),
       suppressFromDiscoverySelect.choose(suppressFromDiscavery)
     ]);
-    if (staffSuppress) {
-      cy.do([
-        staffSuppressSelect.focus(),
-        staffSuppressSelect.choose(staffSuppress)
-      ]);
-    }
-    if (previouslyHeld) {
-      cy.do([
-        previouslyHeldSelect.focus(),
-        previouslyHeldSelect.choose(previouslyHeld)
-      ]);
-    }
+  },
+
+  addStaffSuppress:(staffSuppress) => {
+    cy.do([
+      staffSuppressSelect.focus(),
+      staffSuppressSelect.choose(staffSuppress)
+    ]);
+  },
+
+  addPreviouslyHeld:(previouslyHeld) => {
+    cy.do([
+      previouslyHeldSelect.focus(),
+      previouslyHeldSelect.choose(previouslyHeld)
+    ]);
   },
 
   addNatureOfContentTerms:() => {
