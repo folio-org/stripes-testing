@@ -32,17 +32,16 @@ describe('ui-data-import: A user can filter and delete import logs from the "Vie
       .then(userProperties => {
         firstUser = userProperties;
 
+        cy.login(userProperties.username, userProperties.password, {
+          path: TopMenu.dataImportPath,
+          waiter: DataImport.waitLoading
+        });
         // Log list should contain at least 30-35 import jobs, run by different users, and using different import profiles
         for (let i = 0; i < 25; i++) {
           const fileName = `oneMarcBib.mrc${Helper.getRandomBarcode()}`;
 
           DataImport.uploadFileViaApi('oneMarcBib.mrc', fileName);
         }
-
-        cy.login(userProperties.username, userProperties.password, {
-          path: TopMenu.dataImportPath,
-          waiter: DataImport.waitLoading
-        });
 
         cy.logout();
       });
