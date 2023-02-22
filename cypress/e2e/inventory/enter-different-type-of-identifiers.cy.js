@@ -46,14 +46,15 @@ describe('ui-inventory: Enter different type of identifiers', () => {
     'ASIN',
     'BNB'
   ].forEach((identifier) => {
-    it('C609 In Accordion Identifiers --> enter different type of identifiers (folijet) (prokopovych)', { tags: [TestTypes.smoke, DevTeams.folijet] }, () => {
-      resourceIdentifier = `testResourceIdentifier.${getRandomPostfix()}`;
+    it('C609 In Accordion Identifiers --> enter different type of identifiers (folijet) (prokopovych)',
+      { tags: [TestTypes.smoke, DevTeams.folijet] }, () => {
+        resourceIdentifier = `testResourceIdentifier.${getRandomPostfix()}`;
 
-      searchAndOpenInstance('Title (all)', instanceTitle);
-      InventoryInstance.editInstance();
-      InstanceRecordEdit.addIdentifier(identifier, resourceIdentifier);
-      searchAndOpenInstance('Keyword (title, contributor, identifier, HRID, UUID)', resourceIdentifier);
-      InventoryInstance.checkInstanceIdentifier(resourceIdentifier);
-    });
+        searchAndOpenInstance('Title (all)', instanceTitle);
+        InventoryInstance.editInstance();
+        InstanceRecordEdit.addIdentifier(identifier, resourceIdentifier);
+        searchAndOpenInstance('Keyword (title, contributor, identifier, HRID, UUID)', resourceIdentifier);
+        InventoryInstance.checkInstanceIdentifier(resourceIdentifier);
+      });
   });
 });
