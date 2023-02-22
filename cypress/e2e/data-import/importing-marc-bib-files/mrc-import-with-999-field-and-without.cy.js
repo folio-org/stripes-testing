@@ -7,10 +7,13 @@ import JobProfiles from '../../../support/fragments/data_import/job_profiles/job
 import DataImport from '../../../support/fragments/data_import/dataImport';
 import Logs from '../../../support/fragments/data_import/logs/logs';
 import FileDetails from '../../../support/fragments/data_import/logs/fileDetails';
+import Users from '../../../support/fragments/users/users';
+import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 
 describe('ui-data-import:', () => {
   let user;
-  // unique file name
+  const instanceTitle = 'Mistapim in Cambodia [microform]. Photos. by the author.';
+  const error = '{"error":"A new Instance was not created because the incoming record already contained a 999ff$s or 999ff$i field"}';
   const nameMarcFileForCreate = `C359012 autotestFile.${getRandomPostfix()}.mrc`;
 
   before('create test data', () => {
@@ -23,12 +26,21 @@ describe('ui-data-import:', () => {
       });
   });
 
+  after('delete test data', () => {
+    cy.getInstance({ limit: 1, expandAll: true, query: `"title"=="${instanceTitle}"` })
+      .then((instance) => {
+        InventoryInstance.deleteInstanceViaApi(instance.id);
+      });
+    Users.deleteViaApi(user.userId);
+  });
+
   it('C359012 Checking the import of the MARC Bib file, that has records with 999 ff and without the 999 ff field (folijet)',
     { tags: [TestTypes.criticalPath, DevTeams.folijet] }, () => {
       DataImport.uploadFile('marcFileForC359012.mrc', nameMarcFileForCreate);
       JobProfiles.searchJobProfileForImport('Default - Create instance and SRS MARC Bib');
       JobProfiles.runImportFile();
       JobProfiles.waitFileIsImported(nameMarcFileForCreate);
+      Logs.checkStatusOfJobProfile('Completed with errors');
       Logs.openFileDetails(nameMarcFileForCreate);
       // check that "SRS MARC" and "Instance" were created for record, that not contains 999 ff field
       FileDetails.checkSrsRecordQuantityInSummaryTable('1');
@@ -39,7 +51,6 @@ describe('ui-data-import:', () => {
       FileDetails.checkErrorQuantityInSummaryTable('1', 3);
       FileDetails.checkStatusInColumn(FileDetails.status.discarded, FileDetails.columnName.srsMarc);
       FileDetails.checkStatusInColumn(FileDetails.status.error, FileDetails.columnName.error);
-
-      // check error message
+      FileDetails.verifyErrorMessage(error);
     });
 });

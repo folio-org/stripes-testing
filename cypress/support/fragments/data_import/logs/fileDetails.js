@@ -5,6 +5,7 @@ import {
   MultiColumnListRow,
   Link
 } from '../../../../../interactors';
+import LogsViewAll from './logsViewAll';
 
 const invoiceNumberFromEdifactFile = '94999';
 
@@ -145,5 +146,25 @@ export default {
           .has({ content: itemStatus }));
       }
     ));
+  },
+
+  verifyErrorMessage:(expectedError) => {
+    return LogsViewAll.getSingleJobProfile() // get the first job id from job logs list
+      .then(({ id }) => {
+      // then, make request with the job id
+      // and get the only record id inside the uploaded file
+        const queryString = 'limit=1000&order=asc';
+        return cy.request({
+          method: 'GET',
+          url: `${Cypress.env('OKAPI_HOST')}/metadata-provider/jobLogEntries/${id}?${queryString}`,
+          headers: {
+            'x-okapi-tenant': Cypress.env('OKAPI_TENANT'),
+            'x-okapi-token': Cypress.env('token'),
+          },
+        })
+          .then(({ body: { entries } }) => {
+            cy.expect(entries[0].error).to.eql(expectedError);
+          });
+      });
   }
 };
