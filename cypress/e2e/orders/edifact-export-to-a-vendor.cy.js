@@ -108,6 +108,7 @@ describe('orders: export', () => {
   after(() => {
     Orders.deleteOrderApi(order.id);
     Organizations.deleteOrganizationViaApi(organization.id);
+    cy.wait(5000);
     NewLocation.deleteViaApiIncludingInstitutionCampusLibrary(
         location.institutionId,
         location.campusId,
@@ -119,23 +120,27 @@ describe('orders: export', () => {
 
   it('C350402: Verify that an Order is exported to a definite Vendors Account specified in one of several Integration configurations', { tags: [TestTypes.smoke, devTeams.thunderjet] }, () => {
     cy.visit(TopMenu.ordersPath);
+    //Need to wait while first job will be runing
+    cy.wait(30000);
     Orders.createOrder(order, true, false).then(orderId => {
       order.id = orderId;
     });
     
     Orders.createPOLineViaActions();
-    OrderLines.selectRandomInstanceInTitleLookUP('*', 3);
+    OrderLines.selectRandomInstanceInTitleLookUP('*', 10);
     OrderLines.fillInPOLineInfoForExportWithLocation(`${organization.accounts[0].name} (${organization.accounts[0].accountNo})`, 'Purchase', location.institutionId);
     OrderLines.backToEditingOrder();
     Orders.openOrder();
     
     cy.visit(TopMenu.exportManagerOrganizationsPath);
+    cy.wait(30000);
     ExportManagerSearchPane.selectOrganizationsSearch();
     ExportManagerSearchPane.selectExportMethod(integrationName1);
     ExportManagerSearchPane.selectSearchResultItem();
     ExportManagerSearchPane.rerunJob();
     cy.reload();
     ExportManagerSearchPane.verifyResult('Successful');
+    ExportManagerSearchPane.selectSearchResultItem();
     ExportManagerSearchPane.downloadJob();
     ExportManagerSearchPane.resetAll();
     ExportManagerSearchPane.selectOrganizationsSearch();
