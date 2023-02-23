@@ -121,7 +121,7 @@ describe('ui-data-import: Match on Holdings 856 $u', () => {
   const updateHoldingsMappingProfile = (holdingsMappingProfile) => {
     FieldMappingProfiles.openNewMappingProfileForm();
     NewFieldMappingProfile.fillSummaryInMappingProfile(holdingsMappingProfile);
-    NewFieldMappingProfile.addSuppressFromDiscovery();
+    NewFieldMappingProfile.addSuppressFromDiscovery('Mark for all affected records');
     NewFieldMappingProfile.fillCallNumberType('"Other scheme"');
     NewFieldMappingProfile.fillCallNumber('"ONLINE"');
     FieldMappingProfiles.saveProfile();

@@ -343,7 +343,7 @@ export default {
       });
   },
 
-  checkChooseFileButtonState: ({ isDisabled }) => {
+  verifyChooseFileButtonState: ({ isDisabled }) => {
     cy.expect(orChooseFilesButton.has({ disabled: isDisabled }));
   }
 };
