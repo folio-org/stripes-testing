@@ -40,7 +40,8 @@ describe('ui-inventory: import by OCLC', () => {
       permissions.uiInventorySingleRecordImport.gui,
       permissions.uiInventorySettingsConfigureSingleRecordImport.gui,
       permissions.uiQuickMarcQuickMarcBibliographicEditorAll.gui,
-      permissions.remoteStorageView.gui
+      permissions.remoteStorageView.gui,
+      permissions.settingsDataImportEnabled.gui
     ])
       .then(userProperties => {
         user = userProperties;

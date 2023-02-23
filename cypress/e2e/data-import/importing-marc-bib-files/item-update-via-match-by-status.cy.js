@@ -191,7 +191,7 @@ describe('ui-data-import: Item update via match by status', () => {
   };
 
   it('C357552 Check item update via match by status (folijet)',
-    { tags: [TestTypes.smoke, DevTeams.folijet] }, () => {
+    { tags: [TestTypes.criticalPath, DevTeams.folijet] }, () => {
       mappingProfileForCreateHoldings(collectionOfMappingAndActionProfiles[0].mappingProfile);
       FieldMappingProfiles.checkMappingProfilePresented(collectionOfMappingAndActionProfiles[0].mappingProfile.name);
       mappingProfileForCreateItem(collectionOfMappingAndActionProfiles[1].mappingProfile);
