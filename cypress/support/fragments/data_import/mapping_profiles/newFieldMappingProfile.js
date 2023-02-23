@@ -15,6 +15,10 @@ import getRandomPostfix from '../../../utils/stringTools';
 
 const saveButton = Button('Save as profile & Close');
 const organizationModal = Modal('Select Organization');
+const staffSuppressSelect = Select('Staff suppress');
+const suppressFromDiscoverySelect = Select('Suppress from discovery');
+const previouslyHeldSelect = Select('Previously held');
+
 const incomingRecordType = {
   marcBib: 'MARC Bibliographic',
   edifact: 'EDIFACT invoice',
@@ -48,7 +52,7 @@ const status = '"In process"';
 const holdingsType = 'Holdings';
 const itemType = 'Item';
 const catalogedDate = '###TODAY###';
-const instanceStatusTerm = '"Batch Loaded"';
+const instanceStatusTerm = 'Batch Loaded';
 const defaultMappingProfile = {
   name: `autotest${folioRecordTypeValue.instance}${getRandomPostfix()}`,
   typeValue: folioRecordTypeValue.instance,
@@ -134,7 +138,7 @@ export default {
       if ('update' in specialMappingProfile) {
         cy.do([
           TextField('Cataloged date').fillIn(catalogedDate),
-          TextField('Instance status term').fillIn(instanceStatusTerm),
+          TextField('Instance status term').fillIn(`"${instanceStatusTerm}"`),
         ]);
         // wait accepted values to be filled
         // eslint-disable-next-line cypress/no-unnecessary-waiting
@@ -196,7 +200,7 @@ export default {
       if ('update' in specialMappingProfile) {
         cy.do([
           TextField('Cataloged date').fillIn(catalogedDate),
-          TextField('Instance status term').fillIn(instanceStatusTerm),
+          TextField('Instance status term').fillIn(`"${instanceStatusTerm}"`),
         ]);
         // wait accepted values to be filled
         // eslint-disable-next-line cypress/no-unnecessary-waiting
@@ -240,10 +244,12 @@ export default {
     // number needs for using this method in filling fields for holdings and item profiles
     const statisticalCodeFieldName = `profile.mappingDetails.mappingFields[${number}].repeatableFieldAction`;
 
-    cy.do(Select({ name: statisticalCodeFieldName }).focus());
-    cy.do(Select({ name: statisticalCodeFieldName }).choose(actions.addTheseToExisting));
-    cy.do(Button('Add statistical code').click());
-    cy.do(TextField('Statistical code').fillIn(`"${name}"`));
+    cy.do([
+      Select({ name: statisticalCodeFieldName }).focus(),
+      Select({ name: statisticalCodeFieldName }).choose(actions.addTheseToExisting),
+      Button('Add statistical code').click(),
+      TextField('Statistical code').fillIn(`"${name}"`)
+    ]);
     waitLoading();
   },
 
@@ -251,10 +257,12 @@ export default {
     // number needs for using this method in filling fields for holdings and item profiles
     const adminNoteFieldName = `profile.mappingDetails.mappingFields[${number}].repeatableFieldAction`;
 
-    cy.do(Select({ name: adminNoteFieldName }).focus());
-    cy.do(Select({ name: adminNoteFieldName }).choose(actions.addTheseToExisting));
-    cy.do(Button('Add administrative note').click());
-    cy.do(TextField('Administrative note').fillIn(`"${note}"`));
+    cy.do([
+      Select({ name: adminNoteFieldName }).focus(),
+      Select({ name: adminNoteFieldName }).choose(actions.addTheseToExisting),
+      Button('Add administrative note').click(),
+      TextField('Administrative note').fillIn(`"${note}"`)
+    ]);
   },
 
   addElectronicAccess:(relationship, uri, linkText = '') => {
@@ -278,13 +286,46 @@ export default {
     ]);
   },
 
-  fillCatalogedDate:() => {
-    cy.do(TextField('Cataloged date').fillIn(catalogedDate));
+  addSuppressFromDiscovery:(suppressFromDiscavery) => {
+    cy.do([
+      suppressFromDiscoverySelect.focus(),
+      suppressFromDiscoverySelect.choose(suppressFromDiscavery)
+    ]);
+  },
+
+  addStaffSuppress:(staffSuppress) => {
+    cy.do([
+      staffSuppressSelect.focus(),
+      staffSuppressSelect.choose(staffSuppress)
+    ]);
+  },
+
+  addPreviouslyHeld:(previouslyHeld) => {
+    cy.do([
+      previouslyHeldSelect.focus(),
+      previouslyHeldSelect.choose(previouslyHeld)
+    ]);
+  },
+
+  addNatureOfContentTerms:() => {
+    const contentTerms = 'profile.mappingDetails.mappingFields[22].repeatableFieldAction';
+
+    cy.do([
+      Select({ name: contentTerms }).focus(),
+      Select({ name: contentTerms }).choose(actions.addTheseToExisting),
+      Button('Add nature of content term').click(),
+      TextField('Nature of content term').fillIn('"bibliography"')
+    ]);
+    waitLoading();
+  },
+
+  fillCatalogedDate:(date = catalogedDate) => {
+    cy.do(TextField('Cataloged date').fillIn(date));
     waitLoading();
   },
 
   fillInstanceStatusTerm:(statusTerm = instanceStatusTerm) => {
-    cy.do(TextField('Instance status term').fillIn(statusTerm));
+    cy.do(TextField('Instance status term').fillIn(`"${statusTerm}"`));
     waitLoading();
   },
 
@@ -315,6 +356,7 @@ export default {
 
   addItemNotes:(noteType, note, staffOnly) => {
     const noteFieldName = 'profile.mappingDetails.mappingFields[25].repeatableFieldAction';
+    const selectName = 'profile.mappingDetails.mappingFields[25].subfields[0].fields[2].booleanFieldAction';
 
     cy.do([
       Select({ name:noteFieldName }).focus(),
@@ -322,16 +364,10 @@ export default {
       Button('Add item note').click(),
       TextField('Note type').fillIn(noteType),
       TextField('Note').fillIn(note),
-      Select({ name:'profile.mappingDetails.mappingFields[25].subfields[0].fields[2].booleanFieldAction' }).focus(),
-      Select({ name:'profile.mappingDetails.mappingFields[25].subfields[0].fields[2].booleanFieldAction' })
+      Select({ name:selectName }).focus(),
+      Select({ name:selectName })
         .choose(staffOnly)
     ]);
-    waitLoading();
-  },
-
-  addSuppressFromDiscovery:() => {
-    cy.do(Select({ name:'profile.mappingDetails.mappingFields[0].booleanFieldAction' })
-      .choose('Mark for all affected records'));
     waitLoading();
   },
 
@@ -351,9 +387,11 @@ export default {
   },
 
   fillVendorName:(vendorName) => {
-    cy.do(Button('Organization look-up').click());
-    cy.do(SearchField({ id: 'input-record-search' }).fillIn(vendorName));
-    cy.do(Button('Search').click());
+    cy.do([
+      Button('Organization look-up').click(),
+      SearchField({ id: 'input-record-search' }).fillIn(vendorName),
+      Button('Search').click()
+    ]);
     selectFromResultsList();
   },
 
@@ -389,5 +427,22 @@ export default {
     cy.get('div[class^="tableRow-"]').last().then(elem => {
       elem[0].querySelector('button[icon="plus-sign"]').click();
     });
+  },
+
+  createMappingProfileViaApi:(nameProfile) => {
+    return cy
+      .okapiRequest({
+        method: 'POST',
+        path: 'data-import-profiles/mappingProfiles',
+        body: { profile: {
+          name: nameProfile,
+          incomingRecordType: 'MARC_BIBLIOGRAPHIC',
+          existingRecordType: 'INSTANCE',
+        } },
+        isDefaultSearchParamsRequired: false,
+      })
+      .then(({ response }) => {
+        return response;
+      });
   }
 };

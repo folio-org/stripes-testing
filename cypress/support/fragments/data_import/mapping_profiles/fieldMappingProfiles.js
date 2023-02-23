@@ -4,7 +4,6 @@ import {
   TextField,
   Pane,
   MultiColumnListRow,
-  Select,
   PaneContent,
   Form
 } from '../../../../../interactors';
@@ -16,13 +15,7 @@ const actionsButton = Button('Actions');
 const searchButton = Button('Search');
 const iconButton = Button({ icon: 'times' });
 const saveProfileButton = Button('Save as profile & Close');
-const mappingProfileNameField = TextField('Name*');
-const mappingProfileCatalogedDateField = TextField('Cataloged date');
-const mappingProfileInstanceStatusField = TextField('Instance status term');
-const mappingProfileIncomingRecordTypeField = Select('Incoming record type*');
-const mappingProfileFolioRecordTypeField = Select('FOLIO record type*');
-const mappingProfileStaffSuppressField = Select('Staff suppress');
-const mappingProfileSuppressFromDiscoveryField = Select('Suppress from discovery');
+const resultsPane = Pane({ id:'pane-results' });
 
 const openNewMappingProfileForm = () => {
   cy.do([
@@ -107,36 +100,6 @@ export default {
     cy.expect(actionsButton.exists());
   },
 
-  createMappingProfileForMatchOnInstanceIdentifier: ({
-    name,
-    incomingRecordType,
-    folioRecordType,
-    staffSuppress,
-    discoverySuppress,
-    catalogedDate,
-    instanceStatus,
-  }) => {
-    openNewMappingProfileForm();
-    cy.do([
-      mappingProfileNameField.fillIn(name),
-      mappingProfileIncomingRecordTypeField.choose(incomingRecordType),
-      mappingProfileFolioRecordTypeField.choose(folioRecordType),
-    ]);
-    // need to wait until selection lists are populated
-    cy.wait(1200); // eslint-disable-line cypress/no-unnecessary-waiting
-    cy.do([
-      staffSuppress
-        ? mappingProfileStaffSuppressField.choose(staffSuppress)
-        : mappingProfileSuppressFromDiscoveryField.choose(discoverySuppress),
-      mappingProfileCatalogedDateField.fillIn(catalogedDate),
-      mappingProfileInstanceStatusField.fillIn(instanceStatus),
-      saveProfileButton.click(),
-    ]);
-    closeViewModeForMappingProfile(name);
-
-    cy.expect(actionsButton.exists());
-  },
-
   deleteFieldMappingProfile,
   mappingProfileForDuplicate,
   waitLoading: () => cy.expect(MultiColumnListRow({ index:0 }).exists()),
@@ -170,7 +133,9 @@ export default {
     closeViewModeForMappingProfile(mappingProfile.name);
     cy.expect(actionsButton.exists());
   },
+  selectMappingProfileFromList:(profileName) => cy.do(MultiColumnListCell(profileName).click()),
 
   checkListOfExistingProfilesIsDisplayed:() => cy.expect(PaneContent({ id:'pane-results-content' }).exists()),
-  checkNewMappingProfileFormIsOpened:() => cy.expect(Form({ id:'mapping-profiles-form' }).exists())
+  checkNewMappingProfileFormIsOpened:() => cy.expect(Form({ id:'mapping-profiles-form' }).exists()),
+  verifyActionMenuAbsent:() => cy.expect(resultsPane.find(actionsButton).absent())
 };

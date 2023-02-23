@@ -82,9 +82,10 @@ describe('ui-inventory: Mark an item as Missing', () => {
       MarkItemAsMissing.checkIsMarkAsMissingExist(true);
       ItemActions.markAsMissing();
       MarkItemAsMissing.checkIsConfirmItemMissingModalExist(instanceData.instanceTitle, item.barcode, materialType);
-      MarkItemAsMissing.cancelModal();
+      ItemActions.cancelMarkAsMissing();
       ItemRecordView.verifyItemStatusInPane(item.status.name);
       ItemActions.markAsMissing();
+      ItemActions.confirmMarkAsMissing();
       ItemRecordView.verifyItemStatusInPane('Missing');
       MarkItemAsMissing.verifyItemStatusUpdatedDate();
       ItemRecordView.closeDetailView();

@@ -9,7 +9,6 @@ import MatchProfiles from '../../../support/fragments/data_import/match_profiles
 import DataImport from '../../../support/fragments/data_import/dataImport';
 import Logs from '../../../support/fragments/data_import/logs/logs';
 import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
-import ExportMarcFile from '../../../support/fragments/data-export/export-marc-file';
 import FileManager from '../../../support/utils/fileManager';
 import ExportFile from '../../../support/fragments/data-export/exportFile';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
@@ -114,14 +113,14 @@ describe('ui-data-import: Verify the possibility to modify MARC Bibliographic re
         cy.visit(TopMenu.inventoryPath);
         InventorySearchAndFilter.searchInstanceByHRID(hrId[0]);
         InventorySearchAndFilter.saveUUIDs();
-        ExportMarcFile.downloadCSVFile(nameForCSVFile, 'SearchInstanceUUIDs*');
+        ExportFile.downloadCSVFile(nameForCSVFile, 'SearchInstanceUUIDs*');
         FileManager.deleteFolder(Cypress.config('downloadsFolder'));
       });
     // download exported marc file
     cy.visit(TopMenu.dataExportPath);
     ExportFile.uploadFile(nameForCSVFile);
-    ExportFile.exportWithDefaultInstancesJobProfile(nameForCSVFile);
-    ExportMarcFile.downloadExportedMarcFile(nameMarcFileForUpload);
+    ExportFile.exportWithDefaultJobProfile(nameForCSVFile);
+    ExportFile.downloadExportedMarcFile(nameMarcFileForUpload);
     FileManager.deleteFolder(Cypress.config('downloadsFolder'));
 
     // create Field mapping profile

@@ -10,8 +10,8 @@ import NewOrganization from '../../support/fragments/organizations/newOrganizati
 import getRandomPostfix from '../../support/utils/stringTools';
 import InteractorsTools from '../../support/utils/interactorsTools';
 import OrderLines from '../../support/fragments/orders/orderLines';
-import ExportManagerSearchPane from '../../support/fragments/exportManager/exportManagerSearchPane';
-import OrderLinesLimit from '../../support/fragments/settings/orders/orderLinesLimit';
+import SettingsMenu from '../../support/fragments/settingsMenu';
+import SettingsOrders from '../../support/fragments/settings/orders/settingsOrders';
 
 describe('orders: export', () => {
   const order = { ...NewOrder.defaultOneTimeOrder };
@@ -52,23 +52,11 @@ describe('orders: export', () => {
     Organizations.checkSearchResults(organization);
     Organizations.selectOrganization(organization.name);
     Organizations.addIntegration();
-    Organizations.fillIntegrationInformation(integrationName, integartionDescription, vendorEDICodeFor1Integration, libraryEDICodeFor1Integration, organization.accounts[0].accountNo, 'Purchase');
+    Organizations.fillIntegrationInformationWithoutScheduling(integrationName, integartionDescription, vendorEDICodeFor1Integration, libraryEDICodeFor1Integration, organization.accounts[0].accountNo, 'Purchase');
     InteractorsTools.checkCalloutMessage('Integration was saved');
-    OrderLinesLimit
-      .getPOLLimit({ query: '(module==ORDERS and configName==poLines-limit)' })
-      .then((body) => {
-        if (body.configs[0].value !== 3) {
-          const id = body.configs[0].id;
-
-          OrderLinesLimit.setPOLLimit({
-            id,
-            configName: "poLines-limit",
-            enabled: true,
-            module: "ORDERS",
-            value: "3"
-          });
-        }
-      });
+    cy.visit(SettingsMenu.ordersPurchaseOrderLinesLimit);
+    SettingsOrders.waitLoadingOpeningPurchaseOrders;
+    SettingsOrders.setPurchaseOrderLinesLimit(3);
     cy.createTempUser([
       permissions.uiOrdersView.gui,
       permissions.uiOrdersCreate.gui, 
@@ -98,7 +86,8 @@ describe('orders: export', () => {
     Orders.createOrder(order, true, false).then(orderId => {
       order.id = orderId;
       Orders.createPOLineViaActions();
-      OrderLines.fillInPOLineInfoForExport(`${organization.accounts[0].name} (${organization.accounts[0].accountNo})`, 'Purchase');      OrderLines.backToEditingOrder();
+      OrderLines.fillInPOLineInfoForExport(`${organization.accounts[0].name} (${organization.accounts[0].accountNo})`, 'Purchase');      
+      OrderLines.backToEditingOrder();
       Orders.createPOLineViaActions();
       OrderLines.fillInPOLineInfoForExport(`${organization.accounts[0].name} (${organization.accounts[0].accountNo})`, 'Purchase at vendor system');
       OrderLines.backToEditingOrder();
