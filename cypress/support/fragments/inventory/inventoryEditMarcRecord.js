@@ -1,8 +1,11 @@
+/* eslint-disable cypress/no-unnecessary-waiting */
+import { including } from '@interactors/html';
 import { Button, QuickMarcEditorRow, Modal, Pane, TextField, TextArea } from '../../../../interactors';
 
 const deleteFieldsModal = Modal('Delete fields');
 
 const saveAndClose = () => {
+  // need to wait until data will be filled in
   cy.wait(1500);
   cy.do(Button('Save & close').click());
 };
@@ -23,24 +26,15 @@ export default {
   },
 
   addField:(fieldNumber, fieldData) => {
+    cy.wait(1500);
     cy.do(QuickMarcEditorRow({ dataRow: 'record-row[39]' }).find(Button({ icon: 'plus-sign' })).click());
     cy.do(TextField({ name:'records[40].tag' }).fillIn(fieldNumber));
     cy.do(TextArea({ name:'records[40].content' }).fillIn(fieldData));
   },
 
-  editField:(fieldNumber, content) => {
-    cy.get('div[class^="quickMarcEditorRow--"]').contains('div[class^="textArea--"]', fieldNumber)
-      .then(elem => {
-        elem.parent()[0].querySelector('textarea[type="text"]').click().type(content);
-      // type(content, '{moveToEnd}');
-      });
-
-
-
-    // // need to wait untill the row is displayed
-    // cy.wait(2000);
-    // cy.do(TextArea({ name:`records[${number}].content` }).fillIn(content));
-    // // need to wait untill the row will be updated
-    // cy.wait(2000);
+  editField:(content, newContent) => {
+    // need to wait until the field will be found
+    cy.wait(1000);
+    cy.do(TextArea({ textContent:including(content) }).fillIn(newContent));
   }
 };
