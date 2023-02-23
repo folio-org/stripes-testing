@@ -3,12 +3,13 @@ import devTeams from '../../../support/dictionary/devTeams';
 import permissions from '../../../support/dictionary/permissions';
 import TopMenu from '../../../support/fragments/topMenu';
 import SettingsPane from '../../../support/fragments/settings/settingsPane';
-import JobProfiles from '../../../support/fragments/settings/data-export/jobProfiles';
 import getRandomPostfix from '../../../support/utils/stringTools';
 import Users from '../../../support/fragments/users/users';
 import InteractorsTools from '../../../support/utils/interactorsTools';
-import CreateFieldMappingProfile from '../../../support/fragments/settings/data-export/createFieldMappingProfile';
 import DeleteFieldMappingProfile from '../../../support/fragments/settings/data-export/deleteFieldMappingProfile';
+import ExportNewFieldMappingProfile from '../../../support/fragments/data-export/exportMappingProfile/exportNewFieldMappingProfile';
+import ExportJobProfiles from '../../../support/fragments/data-export/exportJobProfile/exportJobProfiles';
+import ExportNewJobProfile from '../../../support/fragments/data-export/exportJobProfile/exportNewJobProfile';
 
 let user;
 let fieldMappingProfileId;
@@ -30,63 +31,63 @@ describe('settings: data-export', () => {
         cy.login(user.username, user.password, { path: TopMenu.settingsPath, waiter: SettingsPane.waitLoading });
       });
 
-    CreateFieldMappingProfile.createFieldMappingProfileViaApi(fieldMappingProfileName)
+    ExportNewFieldMappingProfile.createFieldMappingProfileViaApi(fieldMappingProfileName)
       .then((response) => {
         fieldMappingProfileId = response.body.id;
       })
   });
 
-  after('delete jobas and user', () => {
-    JobProfiles.getJobProfile({ query: `"name"=="${newJobProfileName}"` })
+  after('delete jobs and user', () => {
+    ExportJobProfiles.getJobProfile({ query: `"name"=="${newJobProfileName}"` })
       .then(response => {
-        JobProfiles.deleteJobProfileViaApi(response.id);
+        ExportJobProfiles.deleteJobProfileViaApi(response.id);
       });
-    JobProfiles.getJobProfile({ query: `"name"=="${secondNewJobProfileName}"` })
+    ExportJobProfiles.getJobProfile({ query: `"name"=="${secondNewJobProfileName}"` })
       .then(response => {
-        JobProfiles.deleteJobProfileViaApi(response.id);
+        ExportJobProfiles.deleteJobProfileViaApi(response.id);
       });
     DeleteFieldMappingProfile.deleteFieldMappingProfileViaApi(fieldMappingProfileId);
     Users.deleteViaApi(user.userId);
   });
 
   it('C10953 Create a new job profile (firebird)', { tags: [testTypes.criticalPath, devTeams.firebird] }, () => {
-    JobProfiles.goToJobProfilesTab();
-    JobProfiles.clickNewJobProfile();
-    JobProfiles.verifyNewJobProfileForm();
+    ExportJobProfiles.goToJobProfilesTab();
+    ExportJobProfiles.openNewJobProfileForm();
+    ExportNewJobProfile.verifyNewJobProfileForm();
 
-    JobProfiles.clickNameTextfield();
-    JobProfiles.clickDescriptionTextarea();
-    JobProfiles.verifyNameValidationError();
+    ExportNewJobProfile.clickNameTextfield();
+    ExportNewJobProfile.clickDescriptionTextarea();
+    ExportNewJobProfile.verifyNameValidationError();
 
-    JobProfiles.fillinNameTextfield(newJobProfileName);
-    JobProfiles.verifyNameValidationErrorGone();
-    JobProfiles.verifySaveAndCloseButtonEnabled();
+    ExportNewJobProfile.fillinNameTextfield(newJobProfileName);
+    ExportNewJobProfile.verifyNameValidationErrorGone();
+    ExportNewJobProfile.verifySaveAndCloseButtonEnabled();
 
-    JobProfiles.clickSelectMappingProfileDropdown();
-    JobProfiles.clickNameTextfield();
-    JobProfiles.verifySelectMappingProfileValidationError();
+    ExportNewJobProfile.clickSelectMappingProfileDropdown();
+    ExportNewJobProfile.clickNameTextfield();
+    ExportNewJobProfile.verifySelectMappingProfileValidationError();
 
-    JobProfiles.selectMappingProfileFromDropdown(fieldMappingProfileName);
-    JobProfiles.verifySelectMappingProfileValidationErrorGone();
+    ExportNewJobProfile.selectMappingProfileFromDropdown(fieldMappingProfileName);
+    ExportNewJobProfile.verifySelectMappingProfileValidationErrorGone();
 
-    JobProfiles.saveAndClose();
+    ExportNewJobProfile.saveAndClose();
     InteractorsTools.checkCalloutMessage(newJobProfileCalloutMessage);
-    JobProfiles.verifyJobProfileInTheTable(newJobProfileName);
+    ExportJobProfiles.verifyJobProfileInTheTable(newJobProfileName);
 
-    JobProfiles.clickNewJobProfile();
-    JobProfiles.verifyNewJobProfileForm();
+    ExportJobProfiles.openNewJobProfileForm();
+    ExportNewJobProfile.verifyNewJobProfileForm();
 
-    JobProfiles.fillinDescription(newJobProfileDescription);
-    JobProfiles.saveAndClose();
+    ExportNewJobProfile.fillinDescription(newJobProfileDescription);
+    ExportNewJobProfile.saveAndClose();
 
-    JobProfiles.verifyNameValidationError();
-    JobProfiles.verifySelectMappingProfileValidationError();
+    ExportNewJobProfile.verifyNameValidationError();
+    ExportNewJobProfile.verifySelectMappingProfileValidationError();
 
-    JobProfiles.fillinNameTextfield(secondNewJobProfileName);
-    JobProfiles.selectMappingProfileFromDropdown(fieldMappingProfileName);
-    JobProfiles.saveAndClose();
+    ExportNewJobProfile.fillinNameTextfield(secondNewJobProfileName);
+    ExportNewJobProfile.selectMappingProfileFromDropdown(fieldMappingProfileName);
+    ExportNewJobProfile.saveAndClose();
 
     InteractorsTools.checkCalloutMessage(secondNewJobProfileCalloutMessage);
-    JobProfiles.verifyJobProfileInTheTable(secondNewJobProfileName);
+    ExportJobProfiles.verifyJobProfileInTheTable(secondNewJobProfileName);
   });
 });
