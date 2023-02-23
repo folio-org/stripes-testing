@@ -68,7 +68,7 @@ describe('bulk-edit', () => {
       UsersCard.verifyEmail(`test@${newEmailDomain}`);
     });
 
-    it('C359606 Negative -- Verify bulk edit Users emails (firebird)', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
+    it('C359606 Negative -- Verify bulk edit Users emails (firebird)', { tags: [testTypes.criticalPath, devTeams.firebird] }, () => {
       BulkEditSearchPane.selectRecordIdentifier('User Barcodes');
 
       BulkEditSearchPane.uploadFile(userBarcodesFileName);
