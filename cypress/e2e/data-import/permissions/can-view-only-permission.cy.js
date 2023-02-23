@@ -45,7 +45,7 @@ describe('ui-data-import:', () => {
 
   it('C356780 A user can view logs but can not import files with "Data import: Can view only" permission (folijet)',
     { tags: [TestTypes.smoke, DevTeams.folijet] }, () => {
-      DataImport.checkChooseFileButtonState({ isDisabled: true });
+      DataImport.verifyChooseFileButtonState({ isDisabled: true });
       Logs.openFileDetails(fileName);
       FileDetails.openInstanceInInventory('Created');
       InventoryInstance.getAssignedHRID().then(hrId => {
