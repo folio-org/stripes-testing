@@ -121,7 +121,7 @@ describe('ui-data-import:', () => {
   });
 
   it('C11109 Update an instance based on an OCLC number match (folijet)',
-    { tags: [TestTypes.smoke, DevTeams.folijet] }, () => {
+    { tags: [TestTypes.criticalPath, DevTeams.folijet] }, () => {
       // create mapping profile for creating instance
       cy.visit(SettingsMenu.mappingProfilePath);
       FieldMappingProfiles.openNewMappingProfileForm();
