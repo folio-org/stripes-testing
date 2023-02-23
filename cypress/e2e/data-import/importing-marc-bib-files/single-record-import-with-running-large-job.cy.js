@@ -37,6 +37,7 @@ describe('ui-data-import: Inventory single record import is not delayed when lar
       permissions.moduleDataImportEnabled.gui,
       permissions.uiInventorySingleRecordImport.gui,
       permissions.uiInventorySettingsConfigureSingleRecordImport.gui,
+      permissions.settingsDataImportEnabled.gui,
       permissions.remoteStorageView.gui
     ]).then(userProperties => {
       user = userProperties;
@@ -64,7 +65,7 @@ describe('ui-data-import: Inventory single record import is not delayed when lar
       DataImport.checkIsLandingPageOpened();
       DataImport.uploadFile('marcFileForC356824.mrc', fileName);
       // wait until file will be uploaded
-      cy.wait(8000);
+      cy.wait(10000);
       JobProfiles.searchJobProfileForImport(jobProfileToRun);
       JobProfiles.runImportFile();
       Logs.checkFileIsRunning(fileName);
@@ -77,9 +78,6 @@ describe('ui-data-import: Inventory single record import is not delayed when lar
       InventoryInstance.checkCalloutMessage(`Updated record ${oclcForUpdating}`);
 
       // check instance is updated
-      // need to wait because after the overlay the data in the instance is displayed for a long time
-      // https://issues.folio.org/browse/MODCPCT-73
-      cy.wait(10000);
       InventoryInstance.verifyInstanceTitle(updatedInstanceData.title);
       InventoryInstance.verifyInstanceLanguage(updatedInstanceData.language);
       InventoryInstance.verifyInstancePublisher(0, 0, updatedInstanceData.publisher);

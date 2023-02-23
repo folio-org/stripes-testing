@@ -65,7 +65,7 @@ describe('ui-data-import: Edit an existing action profile with associated job pr
     FieldMappingProfiles.deleteFieldMappingProfile(mappingProfileName);
   });
 
-  it('C367994 Edit an existing action profile with associated job profile (folijet)', { tags: [TestTypes.smoke, DevTeams.folijet] }, () => {
+  it('C367994 Edit an existing action profile with associated job profile (folijet)', { tags: [TestTypes.criticalPath, DevTeams.folijet] }, () => {
     cy.visit(SettingsMenu.actionProfilePath);
     ActionProfiles.checkListOfExistingProfilesIsDisplayed();
     ActionProfiles.search(actionProfile.name);

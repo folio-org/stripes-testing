@@ -164,6 +164,6 @@ export default {
     cy.do([
       actionsButton.click(),
       Button('Export results (CSV)').click(),
-    ])
+    ]);
   },
 };

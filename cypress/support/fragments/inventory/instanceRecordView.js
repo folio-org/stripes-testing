@@ -40,6 +40,10 @@ const verifyMarkAsSuppressedFromDiscovery = () => {
   cy.expect(instanceDetailsSection.find(HTML(including('Warning: Instance is marked suppressed from discovery'))).exists());
 };
 
+const verifyMarkAsSuppressedFromDiscoveryAndSuppressed = () => {
+  cy.expect(instanceDetailsSection.find(HTML(including('Warning: Instance is marked suppressed from discovery and staff suppressed'))).exists());
+};
+
 const verifyGeneralNoteContent = (content) => {
   cy.expect(instanceDetailsNotesSection.find(HTML(including(content))).exists());
 };
@@ -77,6 +81,7 @@ export default {
   verifyInstanceStatusTerm,
   verifyMarkAsSuppressed,
   verifyMarkAsSuppressedFromDiscovery,
+  verifyMarkAsSuppressedFromDiscoveryAndSuppressed,
   verifyGeneralNoteContent,
   verifySrsMarcRecord,
   verifyImportedFieldExists,

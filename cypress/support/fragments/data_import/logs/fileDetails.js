@@ -5,6 +5,7 @@ import {
   MultiColumnListRow,
   Link
 } from '../../../../../interactors';
+import LogsViewAll from './logsViewAll';
 
 const invoiceNumberFromEdifactFile = '94999';
 
@@ -16,7 +17,9 @@ const columnName = {
   instance: resultsList.find(MultiColumnListHeader({ id:'list-column-instancestatus' })),
   holdings: resultsList.find(MultiColumnListHeader({ id:'list-column-holdingsstatus' })),
   item: resultsList.find(MultiColumnListHeader({ id:'list-column-itemstatus' })),
-  invoice: resultsList.find(MultiColumnListHeader({ id:'list-column-invoicestatus' }))
+  invoice: resultsList.find(MultiColumnListHeader({ id:'list-column-invoicestatus' })),
+  error: resultsList.find(MultiColumnListHeader({ id:'list-column-error' })),
+  title: resultsList.find(MultiColumnListHeader({ id:'list-column-title' }))
 };
 
 const status = {
@@ -24,7 +27,7 @@ const status = {
   updated: 'Updated',
   discarded: 'Discarded',
   dash: 'No value set-',
-  multiple: 'Multiple'
+  error: 'Error'
 };
 
 const checkSrsRecordQuantityInSummaryTable = (quantity, row = 0) => {
@@ -59,6 +62,13 @@ const checkCreatedInvoiceISummaryTable = (quantity, row = 0) => {
   cy.expect(jobSummaryTable
     .find(MultiColumnListRow({ indexRow: `row-${row}` }))
     .find(MultiColumnListCell({ columnIndex: 7, content: quantity }))
+    .exists());
+};
+
+const checkErrorQuantityInSummaryTable = (quantity, row = 0) => {
+  cy.expect(jobSummaryTable
+    .find(MultiColumnListRow({ indexRow: `row-${row}` }))
+    .find(MultiColumnListCell({ columnIndex: 8, content: quantity }))
     .exists());
 };
 
@@ -101,6 +111,7 @@ export default {
   checkInstanceQuantityInSummaryTable,
   checkHoldingsQuantityInSummaryTable,
   checkItemQuantityInSummaryTable,
+  checkErrorQuantityInSummaryTable,
 
   openInstanceInInventory:(itemStatus, rowNumber = 0) => {
     cy.do(resultsList.find(MultiColumnListCell({ row: rowNumber, columnIndex: 3 }))
@@ -136,5 +147,32 @@ export default {
           .has({ content: itemStatus }));
       }
     ));
+  },
+
+  verifyErrorMessage:(expectedError) => {
+    return LogsViewAll.getSingleJobProfile() // get the first job id from job logs list
+      .then(({ id }) => {
+      // then, make request with the job id
+      // and get the only record id inside the uploaded file
+        const queryString = 'limit=1000&order=asc';
+        return cy.request({
+          method: 'GET',
+          url: `${Cypress.env('OKAPI_HOST')}/metadata-provider/jobLogEntries/${id}?${queryString}`,
+          headers: {
+            'x-okapi-tenant': Cypress.env('OKAPI_TENANT'),
+            'x-okapi-token': Cypress.env('token'),
+          },
+        })
+          .then(({ body: { entries } }) => {
+            cy.expect(entries[0].error).to.eql(expectedError);
+          });
+      });
+  },
+
+  verifyTitle:(title, specialColumnName, rowIndex = 0) => {
+    cy.then(() => specialColumnName.index())
+      .then((index) => cy.expect(resultsList.find(MultiColumnListRow({ index: rowIndex }))
+        .find(MultiColumnListCell({ columnIndex: index }))
+        .has({ content: title })));
   }
 };
