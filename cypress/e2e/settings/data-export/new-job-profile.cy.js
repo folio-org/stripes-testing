@@ -31,7 +31,7 @@ describe('settings: data-export', () => {
         cy.login(user.username, user.password, { path: TopMenu.settingsPath, waiter: SettingsPane.waitLoading });
       });
 
-    ExportNewFieldMappingProfile.createFieldMappingProfileViaApi(fieldMappingProfileName)
+    ExportNewFieldMappingProfile.createNewFieldMappingProfileViaApi(fieldMappingProfileName)
       .then((response) => {
         fieldMappingProfileId = response.body.id;
       })

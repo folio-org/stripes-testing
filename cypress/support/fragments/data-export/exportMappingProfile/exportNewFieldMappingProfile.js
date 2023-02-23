@@ -42,7 +42,7 @@ export default {
     modalSelectTransformations.selectTransformations(itemMarcField, subfield);
   },
 
-  createFieldMappingProfileViaApi: (nameProfile) => {
+  createNewFieldMappingProfileViaApi: (nameProfile) => {
     return cy.okapiRequest({
         method: 'POST',
         path: 'data-export/mapping-profiles',
@@ -55,7 +55,7 @@ export default {
         isDefaultSearchParamsRequired: false,
     }).then(({ response }) => { return response; });
 },
-createFieldMappingProfile(name, recordType) {
+createNewFieldMappingProfile(name, recordType) {
     cy.do([
         Button('New').click(),
         TextField('Name*').fillIn(name),
