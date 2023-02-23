@@ -32,17 +32,16 @@ describe('ui-data-import: A user can filter and delete import logs from the "Vie
       .then(userProperties => {
         firstUser = userProperties;
 
+        cy.login(userProperties.username, userProperties.password, {
+          path: TopMenu.dataImportPath,
+          waiter: DataImport.waitLoading
+        });
         // Log list should contain at least 30-35 import jobs, run by different users, and using different import profiles
         for (let i = 0; i < 25; i++) {
           const fileName = `oneMarcBib.mrc${Helper.getRandomBarcode()}`;
 
           DataImport.uploadFileViaApi('oneMarcBib.mrc', fileName);
         }
-
-        cy.login(userProperties.username, userProperties.password, {
-          path: TopMenu.dataImportPath,
-          waiter: DataImport.waitLoading
-        });
 
         cy.logout();
       });
@@ -78,26 +77,27 @@ describe('ui-data-import: A user can filter and delete import logs from the "Vie
     // TODO delete all created instances
   });
 
-  it('C358136 A user can filter and delete import logs from the "View all" page (folijet)', { tags: [TestTypes.criticalPath, DevTeams.folijet] }, () => {
-    Logs.openViewAllLogs();
-    LogsViewAll.viewAllIsOpened();
-    LogsViewAll.filterJobsByJobProfile('Default - Create SRS MARC Authority');
-    LogsViewAll.filterJobsByDate({ from: formattedStart, end: formattedStart });
+  it('C358136 A user can filter and delete import logs from the "View all" page (folijet)',
+    { tags: [TestTypes.smoke, DevTeams.folijet] }, () => {
+      Logs.openViewAllLogs();
+      LogsViewAll.viewAllIsOpened();
+      LogsViewAll.filterJobsByJobProfile('Default - Create SRS MARC Authority');
+      LogsViewAll.filterJobsByDate({ from: formattedStart, end: formattedStart });
 
-    const formattedEnd = DateTools.getFormattedDate({ date: completedDate });
+      const formattedEnd = DateTools.getFormattedDate({ date: completedDate });
 
-    LogsViewAll.checkByDateAndJobProfile({ from: formattedStart, end: formattedEnd }, jobProfileId)
-      .then((count) => {
-        LogsViewAll.selectAllLogs();
-        LogsViewAll.checkIsLogsSelected(count);
-        LogsViewAll.unmarcCheckbox(0);
-        LogsViewAll.checkmarkAllLogsIsRemoved();
-        LogsViewAll.deleteLog();
+      LogsViewAll.checkByDateAndJobProfile({ from: formattedStart, end: formattedEnd }, jobProfileId)
+        .then((count) => {
+          LogsViewAll.selectAllLogs();
+          LogsViewAll.checkIsLogsSelected(count);
+          LogsViewAll.unmarcCheckbox(0);
+          LogsViewAll.checkmarkAllLogsIsRemoved();
+          LogsViewAll.deleteLog();
 
-        const countOfLogsForDelete = (count - 1);
-        DeleteDataImportLogsModal.confirmDelete(countOfLogsForDelete);
-        LogsViewAll.verifyMessageOfDeleted(countOfLogsForDelete);
-        LogsViewAll.modalIsAbsent();
-      });
-  });
+          const countOfLogsForDelete = (count - 1);
+          DeleteDataImportLogsModal.confirmDelete(countOfLogsForDelete);
+          LogsViewAll.verifyMessageOfDeleted(countOfLogsForDelete);
+          LogsViewAll.modalIsAbsent();
+        });
+    });
 });

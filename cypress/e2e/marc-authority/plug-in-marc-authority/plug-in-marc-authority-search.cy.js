@@ -5,25 +5,24 @@ import TopMenu from '../../../support/fragments/topMenu';
 import Users from '../../../support/fragments/users/users';
 import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
-import Z3950TargetProfiles from '../../../support/fragments/settings/inventory/z39.50TargetProfiles';
+import DataImport from '../../../support/fragments/data_import/dataImport';
 
 describe('plug-in MARC authority | Search', () => {
     const testData = {};
     let instanceID;
 
   before('Creating user', () => {
-    cy.getAdminToken().then(() => {
-        Z3950TargetProfiles.changeOclcWorldCatValueViaApi('100473910/PAOLF');
-    });
     cy.createTempUser([
       Permissions.inventoryAll.gui,
-      Permissions.uiInventorySingleRecordImport.gui,
       Permissions.uiMarcAuthoritiesAuthorityRecordView.gui,
       Permissions.uiQuickMarcQuickMarcAuthoritiesEditorAll.gui,
       Permissions.uiQuickMarcQuickMarcBibliographicEditorAll.gui,
       Permissions.uiQuickMarcQuickMarcAuthorityLinkUnlink.gui,
     ]).then(createdUserProperties => {
       testData.userProperties = createdUserProperties;
+
+      cy.loginAsAdmin();
+      DataImport.uploadMarcBib();
     });
   });
 
@@ -34,10 +33,16 @@ describe('plug-in MARC authority | Search', () => {
   after('Deleting created user', () => {
     Users.deleteViaApi(testData.userProperties.userId);
     InventoryInstance.deleteInstanceViaApi(instanceID);
+
+    cy.loginAsAdmin({ path: TopMenu.dataImportPath, waiter: DataImport.waitLoading });
+    DataImport.selectLog();
+    DataImport.openDeleteImportLogsModal();
+    DataImport.confirmDeleteImportLogs();
   });
 
   it('C359015 MARC Authority plug-in | Search for MARC authority records when the user clicks on the "Link" icon (spitfire)', { tags: [TestTypes.smoke, DevTeams.spitfire] }, () => {
-    InventoryInstance.importInstance();
+    InventoryInstance.searchByTitle('Anglo-Saxon manuscripts');
+    InventoryInstances.selectInstance();
     InventoryInstance.getId().then(id => { instanceID = id; });
     InventoryInstance.editMarcBibliographicRecord();
     InventoryInstance.verifyAndClickLinkIcon();

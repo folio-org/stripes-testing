@@ -119,6 +119,7 @@ const checkModalTable = (modalTitle, itemData) => {
 const generateInitialLink = (userId, loanId) => `users/${userId}/loans/view/${loanId}`;
 
 export default {
+  checkLoansPage,
   renewWithoutOverrideAccess(loanId, userId, itemData) {
     cy.visit(generateInitialLink(userId, loanId));
 
