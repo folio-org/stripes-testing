@@ -1,7 +1,6 @@
-import { Pane, NavListItem, Button, TextField, Checkbox, MultiColumnListHeader, MultiColumnListCell, Modal } from "../../../../../interactors";
+import { Pane, Button, TextField, Checkbox, MultiColumnListHeader, MultiColumnListCell, Modal } from "../../../../../interactors";
 import { including } from '@interactors/html';
 
-const fieldMappingProfilesPane = Pane('Field mapping profiles');
 const instanceRecordTypeChechbox = Checkbox({ value: 'INSTANCE', name: 'filters.recordTypes' });
 const holdingsRecordTypeChechbox = Checkbox({ value: 'HOLDINGS', name: 'filters.recordTypes' });
 const itemRecordTypeChechbox = Checkbox({ value: 'ITEM', name: 'filters.recordTypes' });
@@ -10,7 +9,6 @@ const unSelectedStatusChechbox = Checkbox({ value: 'unselected' });
 const transformationsSearchTextfield = TextField({ name: 'searchValue' });
 const resetAllButton = Button('Reset all');
 const transformationsSaveAndCloseButton = Modal('Select transformations').find(Button('Save & close'));
-const newFieldMappingProfileSaveAndCloseButton = Pane('New field mapping profile').find(Button('Save & close'));
 
 export default {
     getSearchResult: (row = 0, col = 0) => MultiColumnListCell({ 'row': row, 'columnIndex': col }),
@@ -23,12 +21,6 @@ export default {
     },
     verifySearchResultDoesNotInclude(allContentToCheck) {
         return allContentToCheck.forEach(contentToCheck => cy.expect(Pane('Transformations').find(MultiColumnListCell({ content: including(contentToCheck) })).absent()));
-    },
-    goTofieldMappingProfilesTab() {
-        cy.do(NavListItem('Data export').click());
-        cy.expect(Pane('Data export').exists());
-        cy.do(NavListItem('Field mapping profiles').click());
-        cy.expect(fieldMappingProfilesPane.exists());
     },
     verifyAllSearchAndFilterCheckboxesChecked() {
         cy.expect([
@@ -109,8 +101,5 @@ export default {
     },
     clickTransformationsSaveAndCloseButton() {
         cy.do(transformationsSaveAndCloseButton.click());
-    },
-    clickNewFieldMappingProfileSaveAndCloseButton() {
-        cy.do(newFieldMappingProfileSaveAndCloseButton.click());
     },
 };
