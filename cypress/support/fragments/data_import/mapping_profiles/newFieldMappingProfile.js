@@ -15,6 +15,10 @@ import getRandomPostfix from '../../../utils/stringTools';
 
 const saveButton = Button('Save as profile & Close');
 const organizationModal = Modal('Select Organization');
+const staffSuppressSelect = Select('Staff suppress');
+const suppressFromDiscoverySelect = Select('Suppress from discovery');
+const previouslyHeldSelect = Select('Previously held');
+
 const incomingRecordType = {
   marcBib: 'MARC Bibliographic',
   edifact: 'EDIFACT invoice',
@@ -134,7 +138,7 @@ export default {
       if ('update' in specialMappingProfile) {
         cy.do([
           TextField('Cataloged date').fillIn(catalogedDate),
-          TextField('Instance status term').fillIn(instanceStatusTerm),
+          TextField('Instance status term').fillIn(`"${instanceStatusTerm}"`),
         ]);
         // wait accepted values to be filled
         // eslint-disable-next-line cypress/no-unnecessary-waiting
@@ -196,7 +200,7 @@ export default {
       if ('update' in specialMappingProfile) {
         cy.do([
           TextField('Cataloged date').fillIn(catalogedDate),
-          TextField('Instance status term').fillIn(instanceStatusTerm),
+          TextField('Instance status term').fillIn(`"${instanceStatusTerm}"`),
         ]);
         // wait accepted values to be filled
         // eslint-disable-next-line cypress/no-unnecessary-waiting
@@ -282,18 +286,24 @@ export default {
     ]);
   },
 
-  addSuppressFromDiscovery:() => {
-    const suppressFromDiscovery = 'profile.mappingDetails.mappingFields[0].booleanFieldAction';
-    const staffSuppress = 'profile.mappingDetails.mappingFields[1].booleanFieldAction';
-    const previouslyHeld = 'profile.mappingDetails.mappingFields[2].booleanFieldAction';
-
+  addSuppressFromDiscovery:(suppressFromDiscavery) => {
     cy.do([
-      Select({ name: suppressFromDiscovery }).focus(),
-      Select({ name: suppressFromDiscovery }).choose('Mark for all affected records'),
-      Select({ name: staffSuppress }).focus(),
-      Select({ name: staffSuppress }).choose('Mark for all affected records'),
-      Select({ name: previouslyHeld }).focus(),
-      Select({ name: previouslyHeld }).choose('Mark for all affected records')
+      suppressFromDiscoverySelect.focus(),
+      suppressFromDiscoverySelect.choose(suppressFromDiscavery)
+    ]);
+  },
+
+  addStaffSuppress:(staffSuppress) => {
+    cy.do([
+      staffSuppressSelect.focus(),
+      staffSuppressSelect.choose(staffSuppress)
+    ]);
+  },
+
+  addPreviouslyHeld:(previouslyHeld) => {
+    cy.do([
+      previouslyHeldSelect.focus(),
+      previouslyHeldSelect.choose(previouslyHeld)
     ]);
   },
 

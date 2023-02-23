@@ -104,6 +104,8 @@ const buttonNextPageEnabled = Button({ id: 'authority-result-list-next-paging-bu
 const buttonLink = Button('Link');
 const closeDetailsView = Button({ icon: 'times' });
 const quickMarcEditorPane = Section({ id: 'quick-marc-editor-pane' });
+const filterPane = Section({ id: 'pane-filter' });
+const inputSearchField = TextField({ id: 'input-inventory-search' });
 
 const validOCLC = { id:'176116217',
   // TODO: hardcoded count related with interactors getters issue. Redesign to cy.then(QuickMarkEditor().rowsCount()).then(rowsCount => {...}
@@ -251,11 +253,19 @@ export default {
     cy.expect(section.exists());
   },
 
+  searchByTitle(title) {
+    cy.do([
+      filterPane.find(inputSearchField).fillIn(title),
+      filterPane.find(searchButton).click(),
+    ]);
+    cy.expect(MultiColumnListRow({ index: 0 }).exists());
+  },
+
   verifyAndClickLinkIcon() {
     // Waiter needed for the link to be loaded properly.
     cy.wait(1000);
-    cy.expect(QuickMarcEditorRow({ tagValue: '100' }).find(linkIconButton).exists());
-    cy.do(QuickMarcEditorRow({ tagValue: '100' }).find(linkIconButton).click());
+    cy.expect(QuickMarcEditorRow({ tagValue: '700' }).find(linkIconButton).exists());
+    cy.do(QuickMarcEditorRow({ tagValue: '700' }).find(linkIconButton).click());
   },
 
   verifySelectMarcAuthorityModal() {
