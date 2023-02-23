@@ -15,6 +15,7 @@ const actionsButton = Button('Actions');
 const viewAllLogsButton = Button('View all logs');
 const selectAllCheckbox = Checkbox({ name: 'selected-all' });
 const searchResultList = MultiColumnList({ id: 'search-results-list' });
+const deleteSelectedLogsButton = Button('Delete selected logs');
 
 const quantityRecordsInInvoice = {
   firstQuantity: '18',
@@ -23,7 +24,7 @@ const quantityRecordsInInvoice = {
 const actionsButtonClick = () => cy.do(actionsButton.click());
 const viewAllLogsButtonClick = () => cy.do(viewAllLogsButton.click());
 const selectAllLogs = () => cy.do(MultiColumnList({ id:'job-logs-list' }).find(selectAllCheckbox).click());
-const deleteLogsButtonClick = () => cy.do(Button('Delete selected logs').click());
+const deleteLogsButtonClick = () => cy.do(deleteSelectedLogsButton.click());
 
 export default {
   quantityRecordsInInvoice,
@@ -78,5 +79,7 @@ export default {
     .find(MultiColumnListRow({ indexRow: `row-${rowIndex}` }))
     .find(Link('Created')).href()),
 
-  checkFileIsRunning:(fileName) => cy.expect(Accordion('Running').find(HTML(including(fileName))).exists())
+  checkFileIsRunning:(fileName) => cy.expect(Accordion('Running').find(HTML(including(fileName))).exists()),
+  verifyCheckboxForMarkingLogsAbsent:() => cy.expect(MultiColumnList({ id:'job-logs-list' }).find(selectAllCheckbox).absent()),
+  verifyDeleteSelectedLogsButtonAbsent:() => cy.expect(deleteSelectedLogsButton.absent())
 };

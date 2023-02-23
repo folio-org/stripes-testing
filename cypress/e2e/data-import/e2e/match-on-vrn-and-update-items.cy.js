@@ -166,92 +166,93 @@ describe('ui-data-import: Match on VRN and update related Instance, Holdings, It
     FieldMappingProfiles.deleteFieldMappingProfile(itemMappingProfileName);
   });
 
-  it('C350591 Match on VRN and update related Instance, Holdings, Item (folijet)', { tags: [TestTypes.smoke, DevTeams.folijet] }, () => {
+  it('C350591 Match on VRN and update related Instance, Holdings, Item (folijet)',
+    { tags: [TestTypes.smoke, DevTeams.folijet] }, () => {
     // create order with POL
-    Orders.createOrderWithOrderLineViaApi(NewOrder.getDefaultOrder(vendorId),
-      BasicOrderLine.getDefaultOrderLine(
-        item.quantityPhysical,
-        item.title,
-        locationId,
-        materialTypeId,
-        acquisitionMethodId,
-        item.physicalUnitPrice,
-        item.physicalUnitPrice,
-        [{
-          productId: item.productId,
-          productIdType: productIdTypeId
-        }],
-        [{
-          refNumberType: item.vrnType,
-          refNumber: item.vrn
-        }]
-      ))
-      .then(res => {
-        orderNumber = res;
+      Orders.createOrderWithOrderLineViaApi(NewOrder.getDefaultOrder(vendorId),
+        BasicOrderLine.getDefaultOrderLine(
+          item.quantityPhysical,
+          item.title,
+          locationId,
+          materialTypeId,
+          acquisitionMethodId,
+          item.physicalUnitPrice,
+          item.physicalUnitPrice,
+          [{
+            productId: item.productId,
+            productIdType: productIdTypeId
+          }],
+          [{
+            refNumberType: item.vrnType,
+            refNumber: item.vrn
+          }]
+        ))
+        .then(res => {
+          orderNumber = res;
 
-        Orders.checkIsOrderCreated(orderNumber);
-        // open the first PO with POL
-        Orders.searchByParameter('PO number', orderNumber);
-        Orders.selectFromResultsList(orderNumber);
-        Orders.openOrder();
-        OrderView.checkIsOrderOpened('Open');
-        OrderView.checkIsItemsInInventoryCreated(item.title, 'Main Library');
-        // check receiving pieces are created
-        cy.visit(TopMenu.ordersPath);
-        Orders.resetFilters();
-        Orders.searchByParameter('PO number', orderNumber);
-        Orders.selectFromResultsList(orderNumber);
-        OrderView.openPolDetails(item.title);
-        OrderLines.openReceiving();
-        Receiving.checkIsPiecesCreated(item.title);
+          Orders.checkIsOrderCreated(orderNumber);
+          // open the first PO with POL
+          Orders.searchByParameter('PO number', orderNumber);
+          Orders.selectFromResultsList(orderNumber);
+          Orders.openOrder();
+          OrderView.checkIsOrderOpened('Open');
+          OrderView.checkIsItemsInInventoryCreated(item.title, 'Main Library');
+          // check receiving pieces are created
+          cy.visit(TopMenu.ordersPath);
+          Orders.resetFilters();
+          Orders.searchByParameter('PO number', orderNumber);
+          Orders.selectFromResultsList(orderNumber);
+          OrderView.openPolDetails(item.title);
+          OrderLines.openReceiving();
+          Receiving.checkIsPiecesCreated(item.title);
+        });
+
+      DataImport.editMarcFile('marcFileForC350591.mrc', editedMarcFileName, ['14567-1'], [item.vrn]);
+
+      // create field mapping profiles
+      cy.visit(SettingsMenu.mappingProfilePath);
+      MatchOnVRN.creatMappingProfilesForInstance(instanceMappingProfileName)
+        .then(() => {
+          MatchOnVRN.creatMappingProfilesForHoldings(holdingsMappingProfileName);
+        }).then(() => {
+          MatchOnVRN.creatMappingProfilesForItem(itemMappingProfileName);
+        });
+
+      // create action profiles
+      cy.visit(SettingsMenu.actionProfilePath);
+      MatchOnVRN.createActionProfileForVRN(instanceActionProfileName, 'Instance', instanceMappingProfileName);
+      MatchOnVRN.createActionProfileForVRN(holdingsActionProfileName, 'Holdings', holdingsMappingProfileName);
+      MatchOnVRN.createActionProfileForVRN(itemActionProfileName, 'Item', itemMappingProfileName);
+
+      // create match profiles
+      cy.visit(SettingsMenu.matchProfilePath);
+      MatchOnVRN.waitJSONSchemasLoad();
+      matchProfiles.forEach(match => {
+        MatchOnVRN.createMatchProfileForVRN(match);
       });
 
-    DataImport.editMarcFile('marcFileForC350591.mrc', editedMarcFileName, ['14567-1'], [item.vrn]);
+      // create job profiles
+      cy.visit(SettingsMenu.jobProfilePath);
+      MatchOnVRN.createJobProfileForVRN(jobProfilesData);
 
-    // create field mapping profiles
-    cy.visit(SettingsMenu.mappingProfilePath);
-    MatchOnVRN.creatMappingProfilesForInstance(instanceMappingProfileName)
-      .then(() => {
-        MatchOnVRN.creatMappingProfilesForHoldings(holdingsMappingProfileName);
-      }).then(() => {
-        MatchOnVRN.creatMappingProfilesForItem(itemMappingProfileName);
-      });
+      // import a file
+      cy.visit(TopMenu.dataImportPath);
+      DataImport.checkIsLandingPageOpened();
+      DataImport.uploadFile(editedMarcFileName);
+      JobProfiles.searchJobProfileForImport(jobProfilesData.name);
+      JobProfiles.runImportFile();
+      JobProfiles.waitFileIsImported(editedMarcFileName);
+      Logs.checkStatusOfJobProfile();
+      Logs.openFileDetails(editedMarcFileName);
+      FileDetails.checkItemsStatusesInResultList(0, [FileDetails.status.created, FileDetails.status.updated, FileDetails.status.updated, FileDetails.status.updated]);
+      FileDetails.checkItemsStatusesInResultList(1, [FileDetails.status.dash, FileDetails.status.discarded, FileDetails.status.discarded, FileDetails.status.discarded]);
 
-    // create action profiles
-    cy.visit(SettingsMenu.actionProfilePath);
-    MatchOnVRN.createActionProfileForVRN(instanceActionProfileName, 'Instance', instanceMappingProfileName);
-    MatchOnVRN.createActionProfileForVRN(holdingsActionProfileName, 'Holdings', holdingsMappingProfileName);
-    MatchOnVRN.createActionProfileForVRN(itemActionProfileName, 'Item', itemMappingProfileName);
-
-    // create match profiles
-    cy.visit(SettingsMenu.matchProfilePath);
-    MatchOnVRN.waitJSONSchemasLoad();
-    matchProfiles.forEach(match => {
-      MatchOnVRN.createMatchProfileForVRN(match);
+      // verify Instance, Holdings and Item details
+      MatchOnVRN.clickOnUpdatedHotlink();
+      InventoryInstance.waitInstanceRecordViewOpened(item.title);
+      MatchOnVRN.verifyInstanceUpdated();
+      MatchOnVRN.verifyHoldingsUpdated();
+      MatchOnVRN.verifyItemUpdated();
+      MatchOnVRN.verifyMARCBibSource();
     });
-
-    // create job profiles
-    cy.visit(SettingsMenu.jobProfilePath);
-    MatchOnVRN.createJobProfileForVRN(jobProfilesData);
-
-    // import a file
-    cy.visit(TopMenu.dataImportPath);
-    DataImport.checkIsLandingPageOpened();
-    DataImport.uploadFile(editedMarcFileName);
-    JobProfiles.searchJobProfileForImport(jobProfilesData.name);
-    JobProfiles.runImportFile();
-    JobProfiles.waitFileIsImported(editedMarcFileName);
-    Logs.checkStatusOfJobProfile();
-    Logs.openFileDetails(editedMarcFileName);
-    FileDetails.checkItemsStatusesInResultList(0, [FileDetails.status.created, FileDetails.status.updated, FileDetails.status.updated, FileDetails.status.updated]);
-    FileDetails.checkItemsStatusesInResultList(1, [FileDetails.status.dash, FileDetails.status.discarded, FileDetails.status.discarded, FileDetails.status.discarded]);
-
-    // verify Instance, Holdings and Item details
-    MatchOnVRN.clickOnUpdatedHotlink();
-    InventoryInstance.waitInstanceRecordViewOpened(item.title);
-    MatchOnVRN.verifyInstanceUpdated();
-    MatchOnVRN.verifyHoldingsUpdated();
-    MatchOnVRN.verifyItemUpdated();
-    MatchOnVRN.verifyMARCBibSource();
-  });
 });

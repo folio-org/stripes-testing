@@ -59,6 +59,7 @@ export default {
   ordersOrderTemplatesPath: 'settings/orders/order-templates',
   ordersPONumberEditPath: 'settings/orders/po-number',
   ordersOpeningPurchaseOrdersPath: 'settings/orders/open-order',
+  ordersPurchaseOrderLinesLimit: 'settings/orders/polines-limit',
   // Users
   usersOwnersPath: 'settings/users/owners',
   usersPath: 'settings/users',

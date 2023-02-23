@@ -21,6 +21,7 @@ import InteractorsTools from '../../../utils/interactorsTools';
 const singleRecordImportsAccordion = Accordion('Inventory single record imports');
 const dataImportList = MultiColumnList({ id:'list-data-import' });
 const errorsInImportAccordion = Accordion('Errors in import');
+const selectAllCheckbox = Checkbox({ name:'selected-all' });
 
 function getCheckboxByRow(row) {
   return MultiColumnList().find(MultiColumnListCell({ 'row': row, 'columnIndex': 0 })).find(Checkbox());
@@ -321,5 +322,6 @@ export default {
 
   openFileDetails:(fileName) => {
     cy.do(MultiColumnList({ id:'list-data-import' }).find(Link(fileName)).click());
-  }
+  },
+  verifyCheckboxForMarkingLogsAbsent:() => cy.expect(selectAllCheckbox.absent())
 };
