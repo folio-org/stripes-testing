@@ -373,7 +373,6 @@ export default {
       quantityElectronicTextField.has({ value: quantityElectronic }),
     ]);
     cy.do(saveAndClose.click());
-    if (Button('Submit').visible(true)) cy.do(Button('Submit').click());
   },
 
   fillInPOLineInfoForExportWithLocationForPhisicalResource(accountNumber, AUMethod, institutionName) {
