@@ -1,3 +1,4 @@
+/* eslint-disable cypress/no-unnecessary-waiting */
 import permissions from '../../../support/dictionary/permissions';
 import TestTypes from '../../../support/dictionary/testTypes';
 import DevTeams from '../../../support/dictionary/devTeams';
@@ -50,22 +51,22 @@ describe('ui-data-import: Check that protected fields in incoming records are no
       });
   });
 
-  // after(() => {
-  //   MarcFieldProtection.getListOfMarcFieldProtectionViaApi({ query: '"field"=="*"' })
-  //     .then(list => {
-  //       list.forEach(({ id }) => MarcFieldProtection.deleteMarcFieldProtectionViaApi(id));
-  //     });
-  //   Z3950TargetProfiles.changeOclcWorldCatToDefaultViaApi();
-  //   Users.deleteViaApi(user.userId);
-  // });
+  after(() => {
+    MarcFieldProtection.getListOfMarcFieldProtectionViaApi({ query: 'data==NcD' })
+      .then((response) => {
+        MarcFieldProtection.deleteMarcFieldProtectionViaApi(response[0].id);
+      });
+    Z3950TargetProfiles.changeOclcWorldCatToDefaultViaApi();
+    Users.deleteViaApi(user.userId);
+  });
 
   it('C359189 Check that protected fields in incoming records are not deleted during import: Scenario 2 (folijet)',
     { tags: [TestTypes.criticalPath, DevTeams.folijet] }, () => {
-      // cy.visit(SettingsMenu.marcFieldProtectionPath);
-      // MarcFieldProtection.checkListOfExistingProfilesIsDisplayed();
-      // MarcFieldProtection.createNewMarcFieldProtection();
-      // MarcFieldProtection.fillMarcFieldProtection('*', '5', 'NcD');
-      // MarcFieldProtection.checkFieldProtectionIsCreated('NcD');
+      cy.visit(SettingsMenu.marcFieldProtectionPath);
+      MarcFieldProtection.checkListOfExistingProfilesIsDisplayed();
+      MarcFieldProtection.createNewMarcFieldProtection();
+      MarcFieldProtection.fillMarcFieldProtection('*', '5', 'NcD');
+      MarcFieldProtection.checkFieldProtectionIsCreated('NcD');
 
       cy.visit(SettingsMenu.targetProfilesPath);
       Z3950TargetProfiles.openOclcWorldCat();
@@ -75,23 +76,22 @@ describe('ui-data-import: Check that protected fields in incoming records are no
       cy.visit(TopMenu.inventoryPath);
       InventoryInstances.importWithOclc(oclcForImport);
       // check fields is presented in .mrc file
-      // InventoryInstance.viewSource();
-      // InventoryViewSource.contains(fields.field5801);
-      // InventoryViewSource.contains(fields.field780);
-      // InventoryViewSource.contains(fields.field7801);
-      // InventoryViewSource.contains(fields.field7851);
-      // InventoryViewSource.contains(fields.field7852);
-      // InventoryViewSource.contains(fields.field7853);
-      // InventoryViewSource.contains(fields.field7854);
-      // InventoryViewSource.contains(fields.field7855);
-      // InventoryViewSource.contains(fields.field7856);
-      // cy.intercept('GET', '/orders/titles?*').as('getOrdersTitles');
-      // InventoryViewSource.close();
-      // cy.wait('@getOrdersTitles');
+      InventoryInstance.viewSource();
+      InventoryViewSource.contains(fields.field5801);
+      InventoryViewSource.contains(fields.field780);
+      InventoryViewSource.contains(fields.field7801);
+      InventoryViewSource.contains(fields.field7851);
+      InventoryViewSource.contains(fields.field7852);
+      InventoryViewSource.contains(fields.field7853);
+      InventoryViewSource.contains(fields.field7854);
+      InventoryViewSource.contains(fields.field7855);
+      InventoryViewSource.contains(fields.field7856);
+      cy.intercept('GET', '/orders/titles?*').as('getOrdersTitles');
+      InventoryViewSource.close();
+      cy.wait('@getOrdersTitles');
 
       // edit the MARC bibliographic record
       InventoryInstance.editMarcBibliographicRecord();
-      InventoryEditMarcRecord.addField('580', '‡a Test ‡5 NcD');
       InventoryEditMarcRecord.editField(
         '$t Acta chemica Scandinavica. Series B, Organic chemistry and biochemistry $x 0302-4369 $w (DLC)sn 78006299 $w (OCoLC)981837',
         '$t Acta chemica Scandinavica. Series B, Organic chemistry and biochemistry $x 0302-4369 $w (DLC)sn 78006299 $w (OCoLC)981837 $5 NcD'
@@ -117,12 +117,18 @@ describe('ui-data-import: Check that protected fields in incoming records are no
         '$t Dalton (Cambridge, England) $x 1470-479X $w (DLC)   00252543 $w (OCoLC)44000666 $5 NcD'
       );
       InventoryEditMarcRecord.saveAndClose();
+      InventoryInstance.editMarcBibliographicRecord();
+      InventoryEditMarcRecord.addField('580', 'Test $5 NcD');
+      InventoryEditMarcRecord.saveAndClose();
 
       // overlay source bibliographic record
       InventoryInstance.startOverlaySourceBibRecord();
       InventoryInstance.singleRecordImportModalIsPresented();
       InventoryInstance.importWithOclc(oclcForImport);
       InventoryInstance.checkCalloutMessage(`Updated record ${oclcForImport}`);
+      // need to wait because after the import the data in the instance is displayed for a long time
+      // https://issues.folio.org/browse/MODCPCT-73
+      cy.wait(10000);
       InventoryInstance.viewSource();
       // check fields without NcD is presented in .mrc file
       InventoryViewSource.contains(fields.field5801);
