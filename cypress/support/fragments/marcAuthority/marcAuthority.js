@@ -152,4 +152,19 @@ export default {
     }
     cy.expect(HTML('This field is protected.').exists());
   },
+
+  checkAddNew001Tag: (rowIndex, content) => {
+    // need to wait until all data loaded
+    cy.wait(2000);
+    cy.do(QuickMarcEditorRow({ index: rowIndex }).find(addFieldButton).click());
+    cy.do(QuickMarcEditorRow({ index: rowIndex + 1 }).find(TextArea({ name: `records[${rowIndex + 1}].content` })).fillIn(content));
+
+    // interactor doesn't work properly
+    cy.get(`input[name='records[${rowIndex + 1}].tag']`).type('001');
+    // cy.do(QuickMarcEditorRow({ index: rowIndex + 1 }).find(TextField({ name: `records[${rowIndex + 1}].tag` })).fillIn('001'));
+
+    cy.expect(QuickMarcEditorRow({ index: rowIndex + 1 }).find(TextField()).has({ disabled: true }));
+    cy.do(saveAndCloseButton.click());
+    cy.expect(Callout('Record cannot be saved. Can only have one MARC 001.').exists());
+  },
 };
