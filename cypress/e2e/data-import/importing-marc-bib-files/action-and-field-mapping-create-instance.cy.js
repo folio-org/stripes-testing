@@ -3,26 +3,18 @@ import TestTypes from '../../../support/dictionary/testTypes';
 import DevTeams from '../../../support/dictionary/devTeams';
 import TopMenu from '../../../support/fragments/topMenu';
 import DataImport from '../../../support/fragments/data_import/dataImport';
-
-
-
 import JobProfiles from '../../../support/fragments/data_import/job_profiles/jobProfiles';
 import Logs from '../../../support/fragments/data_import/logs/logs';
-import FileDetails from '../../../support/fragments/data_import/logs/fileDetails';
-import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
-import NewMatchProfile from '../../../support/fragments/data_import/match_profiles/newMatchProfile';
-import Helper from '../../../support/fragments/finance/financeHelper';
 import NewFieldMappingProfile from '../../../support/fragments/data_import/mapping_profiles/newFieldMappingProfile';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
-import MatchProfiles from '../../../support/fragments/data_import/match_profiles/matchProfiles';
+import FileDetails from '../../../support/fragments/data_import/logs/fileDetails';
 import FieldMappingProfiles from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfiles';
 import NewActionProfile from '../../../support/fragments/data_import/action_profiles/newActionProfile';
 import ActionProfiles from '../../../support/fragments/data_import/action_profiles/actionProfiles';
 import NewJobProfile from '../../../support/fragments/data_import/job_profiles/newJobProfile';
-import InventoryViewSource from '../../../support/fragments/inventory/inventoryViewSource';
-import ExportFile from '../../../support/fragments/data-export/exportFile';
 import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
-import FileManager from '../../../support/utils/fileManager';
+import InstanceRecordView from '../../../support/fragments/inventory/instanceRecordView';
+import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 
 describe('ui-data-import:', () => {
   let instanceHrid;
@@ -40,7 +32,8 @@ describe('ui-data-import:', () => {
     catalogedDateUI: '2021-02-24',
     instanceStatus: 'Batch Loaded',
     statisticalCode: 'ARL (Collection stats): books - Book, print (books)',
-    statisticalCodeUI: 'Book, print (books)'
+    statisticalCodeUI: 'Book, print (books)',
+    natureOfContent: 'bibliography'
   };
 
   const actionProfile = {
@@ -59,24 +52,15 @@ describe('ui-data-import:', () => {
     cy.getAdminToken();
   });
 
-  //   after(() => {
-  //     JobProfiles.deleteJobProfile(jobProfileName);
-  //     MatchProfiles.deleteMatchProfile(matchProfileName);
-  //     ActionProfiles.deleteActionProfile(actionProfileName);
-  //     FieldMappingProfiles.deleteFieldMappingProfile(mappingProfileName);
-  //     cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${instanceHrid}"` })
-  //       .then((instance) => {
-  //         InventoryInstance.deleteInstanceViaApi(instance.id);
-  //       });
-  //     cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${instanceHridForReimport}"` })
-  //       .then((instance) => {
-  //         InventoryInstance.deleteInstanceViaApi(instance.id);
-  //       });
-  //     // delete downloads folder and created files in fixtures
-  //     FileManager.deleteFolder(Cypress.config('downloadsFolder'));
-  //     FileManager.deleteFile(`cypress/fixtures/${editedMarcFileName}`);
-  //     FileManager.deleteFile(`cypress/fixtures/${exportedFileName}`);
-  //   });
+  after(() => {
+    JobProfiles.deleteJobProfile(jobProfileName);
+    ActionProfiles.deleteActionProfile(actionProfileName);
+    FieldMappingProfiles.deleteFieldMappingProfile(mappingProfileName);
+    cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${instanceHrid}"` })
+      .then((instance) => {
+        InventoryInstance.deleteInstanceViaApi(instance.id);
+      });
+  });
 
   it('C11103 Action and field mapping: Create an instance (folijet)', { tags: [TestTypes.criticalPath, DevTeams.folijet] }, () => {
     // create mapping profile
@@ -88,7 +72,7 @@ describe('ui-data-import:', () => {
     NewFieldMappingProfile.fillCatalogedDate(mappingProfile.catalogedDate);
     NewFieldMappingProfile.fillInstanceStatusTerm(mappingProfile.statusTerm);
     NewFieldMappingProfile.addStatisticalCode(mappingProfile.statisticalCode, 8);
-    NewFieldMappingProfile.addNatureOfContentTerms();
+    NewFieldMappingProfile.addNatureOfContentTerms(mappingProfile.natureOfContent);
     FieldMappingProfiles.saveProfile();
     FieldMappingProfiles.closeViewModeForMappingProfile(mappingProfileName);
     FieldMappingProfiles.checkMappingProfilePresented(mappingProfileName);
@@ -107,7 +91,7 @@ describe('ui-data-import:', () => {
 
     // upload a marc file for creating of the new instance
     cy.visit(TopMenu.dataImportPath);
-    DataImport.uploadFile('***', nameMarcFileForCreate);
+    DataImport.uploadFile('oneMarcBib.mrc', nameMarcFileForCreate);
     JobProfiles.searchJobProfileForImport(jobProfileName);
     JobProfiles.runImportFile();
     JobProfiles.waitFileIsImported(nameMarcFileForCreate);
@@ -128,6 +112,11 @@ describe('ui-data-import:', () => {
 
         cy.visit(TopMenu.inventoryPath);
         InventorySearchAndFilter.searchInstanceByHRID(instanceHrid);
+        InstanceRecordView.verifyMarkAsSuppressedFromDiscoveryAndSuppressed();
+        InstanceRecordView.verifyCatalogedDate(mappingProfile.catalogedDateUI);
+        InstanceRecordView.verifyInstanceStatusTerm(mappingProfile.instanceStatus);
+        InstanceRecordView.verifyStatisticalCode(mappingProfile.statisticalCodeUI);
+        InstanceRecordView.verifyNatureOfContent(mappingProfile.natureOfContent);
       });
   });
 });
