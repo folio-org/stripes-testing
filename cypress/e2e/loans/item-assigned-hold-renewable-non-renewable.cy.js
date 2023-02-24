@@ -23,6 +23,8 @@ import UsersCard from '../../support/fragments/users/usersCard';
 import Renewals from '../../support/fragments/loans/renewals';
 import NewRequest from '../../support/fragments/requests/newRequest';
 import LoanDetails from '../../support/fragments/users/userDefaultObjects/loanDetails';
+import SettingsMenu from '../../support/fragments/settingsMenu';
+import TitleLevelRequests from '../../support/fragments/settings/circulation/titleLevelRequests';
 
 describe('TLR: Item renew', () => {
   let originalCirculationRules;
@@ -35,10 +37,7 @@ describe('TLR: Item renew', () => {
     title: `Instance ${getRandomPostfix()}`,
   };
   const testData = {
-    userServicePoint: ServicePoints.getDefaultServicePointWithPickUpLocation(
-      'autotestRenew',
-      uuid()
-    ),
+    userServicePoint: ServicePoints.getDefaultServicePointWithPickUpLocation('autotestRenew', uuid()),
   };
   const loanPolicyBody = {
     renewable: {
@@ -136,6 +135,11 @@ describe('TLR: Item renew', () => {
           instanceData.instanceId = specialInstanceIds.instanceId;
           instanceData.holdingId = specialInstanceIds.holdingIds[0].id;
           instanceData.itemIds = specialInstanceIds.holdingIds[0].itemIds;
+          cy.getInstance({ limit: 1, expandAll: true, query: `"id"=="${instanceData.instanceId}"` }).then(
+            (instance) => {
+              instanceData.instanceHRID = instance.hrid;
+            }
+          );
         });
       });
     LoanPolicy.createViaApi(loanPolicyBody.renewable);
@@ -188,6 +192,12 @@ describe('TLR: Item renew', () => {
             userBarcode: userForCheckOut.barcode,
           });
         });
+        cy.loginAsAdmin({
+          path: SettingsMenu.circulationTitleLevelRequestsPath,
+          waiter: TitleLevelRequests.waitLoading,
+        }).then(() => {
+          TitleLevelRequests.changeTitleLevelRequestsStatus('allow');
+        });
         cy.login(userForRenew.username, userForRenew.password);
       });
   });
@@ -232,19 +242,21 @@ describe('TLR: Item renew', () => {
       testData.defaultLocation.libraryId,
       testData.defaultLocation.id
     );
+    cy.loginAsAdmin();
+    cy.visit(SettingsMenu.circulationTitleLevelRequestsPath);
+    TitleLevelRequests.waitLoading();
+    TitleLevelRequests.changeTitleLevelRequestsStatus('forbid');
   });
   it(
     'C360533: TLR: Check that Item assigned to hold is renewable/non renewable depends Loan policy (vega)',
     { tags: [TestTypes.criticalPath, devTeams.vega] },
     () => {
       cy.visit(TopMenu.requestsPath);
-      cy.get('@items').each((item) => {
-        NewRequest.createNewRequest({
-          requesterBarcode: userForRenew.barcode,
-          itemBarcode: item.barcode,
-          pickupServicePoint: testData.userServicePoint.name,
-          requestType: 'Hold',
-        });
+      NewRequest.createNewRequest({
+        requesterBarcode: userForRenew.barcode,
+        instanceHRID: instanceData.instanceHRID,
+        pickupServicePoint: testData.userServicePoint.name,
+        requestType: 'Hold',
       });
 
       cy.visit(TopMenu.usersPath);
