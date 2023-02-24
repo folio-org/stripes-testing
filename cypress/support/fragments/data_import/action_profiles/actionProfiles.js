@@ -90,5 +90,6 @@ export default {
     cy.do(Button('Save as profile & Close').click());
   },
 
-  checkListOfExistingProfilesIsDisplayed:() => cy.expect(PaneContent({ id:'pane-results-content' }).exists())
+  checkListOfExistingProfilesIsDisplayed:() => cy.expect(PaneContent({ id:'pane-results-content' }).exists()),
+  verifyActionMenuAbsent:() => cy.expect(resultsPane.find(actionsButton).absent())
 };

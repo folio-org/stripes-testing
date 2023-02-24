@@ -12,7 +12,6 @@ import InteractorsTools from '../../support/utils/interactorsTools';
 import OrderLines from '../../support/fragments/orders/orderLines';
 
 describe('orders: export', () => {
-  let user;
   const order = { ...NewOrder.defaultOneTimeOrder };
   const organization = {
     ...NewOrganization.defaultUiOrganizations,
@@ -35,6 +34,7 @@ describe('orders: export', () => {
   const integartionDescription = 'Test Integation descripton1';
   const vendorEDICodeFor1Integration = getRandomPostfix();
   const libraryEDICodeFor1Integration = getRandomPostfix();
+  let user;
 
   before(() => {
     cy.getAdminToken();
@@ -49,9 +49,8 @@ describe('orders: export', () => {
     Organizations.checkSearchResults(organization);
     Organizations.selectOrganization(organization.name);
     Organizations.addIntegration();
-    Organizations.fillIntegrationInformation(integrationName, integartionDescription, vendorEDICodeFor1Integration, libraryEDICodeFor1Integration, organization.accounts[0].accountNo, 'Purchase');
+    Organizations.fillIntegrationInformationWithoutScheduling(integrationName, integartionDescription, vendorEDICodeFor1Integration, libraryEDICodeFor1Integration, organization.accounts[0].accountNo, 'Purchase');
     InteractorsTools.checkCalloutMessage('Integration was saved');
-    
     cy.createTempUser([
       permissions.uiOrdersView.gui,
       permissions.uiOrdersCreate.gui, 
@@ -59,7 +58,8 @@ describe('orders: export', () => {
       permissions.uiOrdersApprovePurchaseOrders.gui,
       permissions.viewEditCreateOrganization.gui, 
       permissions.viewOrganization.gui,
-      permissions.uiExportOrders.gui
+      permissions.uiExportOrders.gui,
+      permissions.exportManagerAll.gui,
     ])
       .then(userProperties => {
         user = userProperties;
@@ -74,11 +74,11 @@ describe('orders: export', () => {
   });
 
   it('C350396: Verify that Order is not exported to a definite Vendor if Acquisition method selected in the Order line DOES NOT match Organization Integration configs', { tags: [TestTypes.smoke, devTeams.thunderjet] }, () => {
-    Orders.createOrder(order,true).then(orderId => {
+    Orders.createOrder(order, true, false).then(orderId => {
       order.id = orderId;
       Orders.createPOLineViaActions();
-      OrderLines.fillInPOLineInfoForExport(`${organization.accounts[0].name} (${organization.accounts[0].accountNo})`);
+      OrderLines.fillInPOLineInfoForExport(`${organization.accounts[0].name} (${organization.accounts[0].accountNo})`, 'Purchase');
       OrderLines.backToEditingOrder();
     });
   });
-}); 
+});

@@ -75,6 +75,13 @@ export default {
     waitCreatingMatchProfile();
   },
 
+  createMatchProfileWithStaticValue:(profile) => {
+    openNewMatchProfileForm();
+    NewMatchProfile.fillMatchProfileStaticValue(profile);
+    saveAndClose();
+    waitCreatingMatchProfile();
+  },
+
   checkCalloutMessage: (profileName) => {
     cy.expect(Callout({ textContent: including(`The match profile "${profileName}" was successfully updated`) })
       .exists());
@@ -82,4 +89,5 @@ export default {
 
   checkListOfExistingProfilesIsDisplayed:() => cy.expect(resultsPane.exists()),
   selectMatchProfileFromList:(profileName) => cy.do(MultiColumnListCell(profileName).click()),
+  verifyActionMenuAbsent:() => cy.expect(resultsPane.find(actionsButton).absent())
 };

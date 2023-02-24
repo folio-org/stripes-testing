@@ -66,6 +66,13 @@ export default {
     ]);
   },
 
+  searchByMarkedAsMissing() {
+    cy.do([
+      Accordion({ id: 'loan' }).clickHeader(),
+      Checkbox({ id: 'clickable-filter-loan-marked-as-missing' }).click()
+    ]);
+  },
+
   resetFilters() {
     cy.do(Button({ id: 'reset-receiving-filters' }).click());
   },
@@ -157,6 +164,6 @@ export default {
     cy.do([
       actionsButton.click(),
       Button('Export results (CSV)').click(),
-    ])
+    ]);
   },
 };

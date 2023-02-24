@@ -6,6 +6,7 @@ import FileManager from '../../../support/utils/fileManager';
 import TestTypes from '../../../support/dictionary/testTypes';
 import DevTeams from '../../../support/dictionary/devTeams';
 import DataImport from '../../../support/fragments/data_import/dataImport';
+import Logs from '../../../support/fragments/data_import/logs/logs';
 
 describe('ui-data-import: Filter the "View all" log screen', () => {
   // Path to static file in fixtures
@@ -56,7 +57,7 @@ describe('ui-data-import: Filter the "View all" log screen', () => {
   });
 
   it('C11113 Filter the "View all" log screen (folijet)', { tags: [TestTypes.smoke, DevTeams.folijet] }, () => {
-    LogsViewAll.openViewAll();
+    Logs.openViewAllLogs();
     LogsViewAll.checkByReverseChronologicalOrder();
 
     // FILTER By "Errors in Import"
