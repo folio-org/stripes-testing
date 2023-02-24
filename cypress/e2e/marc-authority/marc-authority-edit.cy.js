@@ -10,6 +10,7 @@ import JobProfiles from '../../support/fragments/data_import/job_profiles/jobPro
 import Logs from '../../support/fragments/data_import/logs/logs';
 import MarcAuthorities from '../../support/fragments/marcAuthority/marcAuthorities';
 import QuickMarcEditor from '../../support/fragments/quickMarcEditor';
+import MarcFieldProtection from '../../support/fragments/settings/dataImport/marcFieldProtection';
 
 describe('MARC Authority -> Edit Authority record', () => {
   const testData = {
@@ -20,6 +21,23 @@ describe('MARC Authority -> Edit Authority record', () => {
   };
   const jobProfileToRun = 'Default - Create SRS MARC Authority';
   const fileName = `testMarcFile.${getRandomPostfix()}.mrc`;
+  const newFieldsArr = [
+    ['245', '1', '\\', '$a Added row (must indicate)'],
+    ['260', '1', '1', '$b Added row (not indicate)'],
+    ['520', '\\', '\\', '$a Added row (must indicate)'],
+    ['655', '1', '1', '$b Added row (must indicate)'],
+    ['655', '2', '1', '$b Added row (not indicate)'],
+    ['655', '1', '2', '$a Added row (not indicate)'],
+    ['655', '\\', '\\', '$a Added row (must indicate)'],
+  ];
+  const protectedMARCFields = [
+    ['245', '*', '*', 'a', '*'],
+    ['260', '1', '1', 'b', 'must indicate'],
+    ['520', '*', '*', '*', '*'],
+    ['655', '1', '*', 'b', '*'],
+    ['655', '*', '*', '*', 'Added row (must indicate)'],
+  ];
+  const marcFieldProtectionRules = [];
   let createdAuthorityID;
 
   before('', () => {
@@ -57,15 +75,49 @@ describe('MARC Authority -> Edit Authority record', () => {
 
     if (createdAuthorityID) MarcAuthority.deleteViaAPI(createdAuthorityID);
     Users.deleteViaApi(testData.userProperties.userId);
+    marcFieldProtectionRules.forEach(ruleID => {
+      if (ruleID) MarcFieldProtection.deleteMarcFieldProtectionViaApi(ruleID);
+    });
   });
 
   it('C350901 Add multiple / delete 1XX tag of "MARC Authority" record (spitfire)', { tags: [TestTypes.criticalPath, DevTeams.spitfire] }, () => {
     MarcAuthorities.searchBy(testData.authority.searchOption, testData.authority.title);
-    MarcAuthorities.selectFirst(testData.authority.title);
+    MarcAuthorities.selectTitle(testData.authority.title);
     MarcAuthority.edit();
     MarcAuthority.checkRemoved1XXTag(14)
     MarcAuthority.checkAddNew1XXTag(14, '100', '$a')
     QuickMarcEditor.closeWithoutSavingAfterChange();
     MarcAuthority.contains(testData.authority.title);
+  });
+
+  it('C353533 Protection of specified fields when editing "MARC Authority" record (spitfire)', { tags: [TestTypes.criticalPath, DevTeams.spitfire] }, () => {
+    MarcAuthorities.searchBy(testData.authority.searchOption, testData.authority.title);
+    MarcAuthorities.selectTitle(testData.authority.title);
+    MarcAuthority.edit();
+    MarcAuthority.checkInfoButton('999');
+    newFieldsArr.forEach(field => {
+      MarcAuthority.addNewField(10, field[0], field[3], field[1], field[2]);
+    })
+    QuickMarcEditor.pressSaveAndClose();
+
+    protectedMARCFields.forEach(marcFieldProtectionRule => {
+      MarcFieldProtection.createMarcFieldProtectionViaApi({
+        indicator1: marcFieldProtectionRule[1],
+        indicator2: marcFieldProtectionRule[2],
+        subfield: marcFieldProtectionRule[3],
+        data: marcFieldProtectionRule[4],
+        source: 'USER',
+        field: marcFieldProtectionRule[0]
+      }).then((response) => {
+        marcFieldProtectionRules.push(response.id);
+      });
+    });
+
+    MarcAuthority.edit();
+    MarcAuthority.checkInfoButton('655', 11);
+    MarcAuthority.checkInfoButton('655', 14);
+    MarcAuthority.checkInfoButton('245');
+    MarcAuthority.checkInfoButton('520');
+    MarcAuthority.checkInfoButton('999');
   });
 });
