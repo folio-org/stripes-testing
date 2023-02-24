@@ -25,9 +25,8 @@ describe('MARC -> MARC Bibliographic', () => {
       Permissions.moduleDataImportEnabled.gui,
     ]).then(createdUserProperties => {
       testData.userProperties = createdUserProperties;
-    });
 
-    cy.loginAsAdmin({ path: TopMenu.dataImportPath, waiter: DataImport.waitLoading }).then(() => {
+      cy.login(testData.userProperties.username, testData.userProperties.password, { path: TopMenu.dataImportPath, waiter: DataImport.waitLoading });
       DataImport.uploadFile('marcFileForC360542.mrc', fileName);
       JobProfiles.waitLoadingList();
       JobProfiles.searchJobProfileForImport(jobProfileToRun);
