@@ -73,6 +73,10 @@ const verifyStatisticalCode = (value) => {
   cy.expect(MultiColumnList({ id: 'list-statistical-codes' }).find(MultiColumnListCell({ content: value })).exists());
 };
 
+const verifyNatureOfContent = (value) => {
+  cy.expect(KeyValue('Nature of content').has({ value }));
+};
+
 export default {
   verifyResourceTitle,
   verifyInstanceStatusCode,
@@ -88,5 +92,6 @@ export default {
   viewSource,
   verifyAdministrativeNote,
   verifyInstanceNote,
-  verifyStatisticalCode
+  verifyStatisticalCode,
+  verifyNatureOfContent
 };

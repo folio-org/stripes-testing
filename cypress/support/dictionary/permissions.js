@@ -57,6 +57,7 @@ export default {
   // Tags
   uiTagsPermissionAll: { internal: 'ui-tags.permission.all', gui:'Tags: All permissions' },
   // Settings->Owners
+  uiUsersSettingsAllFeeFinesRelated: { internal: 'ui-users.settings.feefines.all', gui:'Settings (Users): Can create, edit and remove all feefines-related entries' },
   uiUsersSettingsOwners: { internal: 'ui-users.settings.owners', gui: 'Settings (Users): Can create, edit and remove owners' },
   uiUsersEdituserservicepoints: { internal: 'ui-users.edituserservicepoints', gui: 'Users: Can assign and unassign service points to users' },
   // Locations
