@@ -81,7 +81,11 @@ describe('Recieving notice: Checkout', () => {
       ServicePoints.createViaApi(testData.userServicePoint);
       testData.defaultLocation = Location.getDefaultLocation(testData.userServicePoint.id);
       Location.createViaApi(testData.defaultLocation);
-      cy.getLoanTypes({ limit: 1 }).then((res) => { testData.loanTypeId = res[0].id; });
+      cy.createLoanType({
+        name: `type_${getRandomPostfix()}`,
+      }).then((loanType) => {
+        testData.loanTypeId = loanType.id;
+      });
       cy.getMaterialTypes({ limit: 1 }).then((res) => {
         testData.materialTypeId = res.id;
         testData.materialTypeName = res.name;
@@ -162,6 +166,7 @@ describe('Recieving notice: Checkout', () => {
         InventoryInstance.deleteInstanceViaApi(itemsData.itemsWithSeparateInstance[index].instanceId);
       }
     );
+    cy.deleteLoanType(testData.loanTypeId);
     Location.deleteViaApiIncludingInstitutionCampusLibrary(
       testData.defaultLocation.institutionId,
       testData.defaultLocation.campusId,
@@ -196,7 +201,7 @@ describe('Recieving notice: Checkout', () => {
 
       cy.getNoticePolicy({ query: `name=="${noticePolicy.name}"` }).then((res) => {
         testData.ruleProps.n = res[0].id;
-        CirculationRules.addRuleViaApi(testData.baseRules, testData.ruleProps, 'g ', patronGroup.id);
+        CirculationRules.addRuleViaApi(testData.baseRules, testData.ruleProps, 't ', testData.loanTypeId);
       });
 
       cy.visit(topMenu.checkOutPath);

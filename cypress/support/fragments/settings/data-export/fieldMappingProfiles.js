@@ -1,4 +1,4 @@
-import { Pane, NavListItem, Button, TextField, Checkbox, Accordion, MultiColumnListHeader, MultiColumnListCell, Modal } from "../../../../../interactors";
+import { Pane, NavListItem, Button, TextField, Checkbox, MultiColumnListHeader, MultiColumnListCell, Modal } from "../../../../../interactors";
 import { including } from '@interactors/html';
 
 const fieldMappingProfilesPane = Pane('Field mapping profiles');
@@ -29,14 +29,6 @@ export default {
         cy.expect(Pane('Data export').exists());
         cy.do(NavListItem('Field mapping profiles').click());
         cy.expect(fieldMappingProfilesPane.exists());
-    },
-    createNewFieldMappingProfile(name, recordType) {
-        cy.do([
-            Button('New').click(),
-            TextField('Name*').fillIn(name),
-            Checkbox(recordType).click(),
-            Accordion('Transformations').find(Button('Add transformations')).click(),
-        ])
     },
     verifyAllSearchAndFilterCheckboxesChecked() {
         cy.expect([

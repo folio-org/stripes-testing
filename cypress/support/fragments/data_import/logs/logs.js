@@ -14,22 +14,29 @@ const anyProfileAccordion = Accordion({ id: 'profileIdAny' });
 const actionsButton = Button('Actions');
 const viewAllLogsButton = Button('View all logs');
 const selectAllCheckbox = Checkbox({ name: 'selected-all' });
+const searchResultList = MultiColumnList({ id: 'search-results-list' });
+const deleteSelectedLogsButton = Button('Delete selected logs');
 
 const quantityRecordsInInvoice = {
   firstQuantity: '18',
 };
 
-const actionsButtonClick = () => { cy.do(actionsButton.click()); };
-const openViewAllLogs = () => { cy.do(viewAllLogsButton.click()); };
-const selectAllLogs = () => { cy.do(MultiColumnList({ id:'job-logs-list' }).find(selectAllCheckbox).click()); };
-const deleteAllLogsClick = () => { cy.do(Button('Delete selected logs').click()); };
+const actionsButtonClick = () => cy.do(actionsButton.click());
+const viewAllLogsButtonClick = () => cy.do(viewAllLogsButton.click());
+const selectAllLogs = () => cy.do(MultiColumnList({ id:'job-logs-list' }).find(selectAllCheckbox).click());
+const deleteLogsButtonClick = () => cy.do(deleteSelectedLogsButton.click());
 
 export default {
   quantityRecordsInInvoice,
   actionsButtonClick,
-  openViewAllLogs,
+  viewAllLogsButtonClick,
   selectAllLogs,
-  deleteAllLogsButtonClick: deleteAllLogsClick,
+  deleteLogsButtonClick,
+
+  openViewAllLogs:() => {
+    actionsButtonClick();
+    viewAllLogsButtonClick();
+  },
 
   checkImportFile(jobProfileName) {
     cy.do(actionsButton.click());
@@ -46,25 +53,18 @@ export default {
   checkQuantityRecordsInFile:(quantityRecords) => cy.do(MultiColumnListCell({ row: 0, content: quantityRecords }).exists()),
 
   clickOnHotLink: (row = 0, columnIndex = 3, status = 'Created') => {
-    cy.do(MultiColumnList({ id: 'search-results-list' })
-      .find(MultiColumnListCell({ row, columnIndex }))
-      .find(Link(status)).click());
+    cy.do(searchResultList.find(MultiColumnListCell({ row, columnIndex })).find(Link(status)).click());
   },
 
   verifyInstanceStatus: (row = 0, columnIndex = 3, status = 'Created') => {
-    cy.do(MultiColumnList({ id: 'search-results-list' })
-      .find(MultiColumnListCell({ row, columnIndex, content: status }))
-      .exists());
+    cy.do(searchResultList.find(MultiColumnListCell({ row, columnIndex, content: status })).exists());
   },
 
   goToTitleLink: (title) => {
     // When you click on a link, it opens in a new tab. Because of this, a direct transition to the link is carried out.
-    cy.do(
-      MultiColumnList({ id: 'search-results-list' })
-        .find(Link(title)).perform(element => {
-          cy.visit(element.href);
-        })
-    );
+    cy.do(searchResultList.find(Link(title)).perform(element => {
+      cy.visit(element.href);
+    }));
   },
 
   checkAuthorityLogJSON: (propertiesArray) => {
@@ -75,9 +75,11 @@ export default {
     });
   },
 
-  getCreatedItemsID: (rowIndex = 0) => cy.then(() => MultiColumnList({ id: 'search-results-list' })
+  getCreatedItemsID: (rowIndex = 0) => cy.then(() => searchResultList
     .find(MultiColumnListRow({ indexRow: `row-${rowIndex}` }))
     .find(Link('Created')).href()),
 
-  checkFileIsRunning:(fileName) => cy.expect(Accordion('Running').find(HTML(including(fileName))).exists())
+  checkFileIsRunning:(fileName) => cy.expect(Accordion('Running').find(HTML(including(fileName))).exists()),
+  verifyCheckboxForMarkingLogsAbsent:() => cy.expect(MultiColumnList({ id:'job-logs-list' }).find(selectAllCheckbox).absent()),
+  verifyDeleteSelectedLogsButtonAbsent:() => cy.expect(deleteSelectedLogsButton.absent())
 };

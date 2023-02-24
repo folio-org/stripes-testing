@@ -56,7 +56,7 @@ describe('ui-organizations: EDI convention in Organization Integration', () => {
     Organizations.selectOrganization(organization.name);
 
     Organizations.addIntegration();
-    Organizations.fillIntegrationInformation(integrationName, integartionDescription, vendorEDICodeFor1Integration, libraryEDICodeFor1Integration, organization.accounts[0].accountNo, 'Purchase');
+    Organizations.fillIntegrationInformationWithoutScheduling(integrationName, integartionDescription, vendorEDICodeFor1Integration, libraryEDICodeFor1Integration, organization.accounts[0].accountNo, 'Purchase');
     InteractorsTools.checkCalloutMessage('Integration was saved');
 
     Organizations.selectIntegration(integrationName);

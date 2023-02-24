@@ -5,7 +5,9 @@ import DataImport from '../../../support/fragments/data_import/dataImport';
 import TopMenu from '../../../support/fragments/topMenu';
 import LogsViewAll from '../../../support/fragments/data_import/logs/logsViewAll';
 import DeleteDataImportLogsModal from '../../../support/fragments/data_import/logs/deleteDataImportLogsModal';
+import Logs from '../../../support/fragments/data_import/logs/logs';
 import Users from '../../../support/fragments/users/users';
+import Helper from '../../../support/fragments/finance/financeHelper';
 
 let user;
 const maxLogsQuantityOnPage = 100;
@@ -18,10 +20,10 @@ describe('ui-data-import: delete logs from "View all" page', () => {
       .then(userProperties => {
         user = userProperties;
 
-        const fileName = 'oneMarcBib.mrc';
-
         for (let i = 0; i < 101; i++) {
-          DataImport.uploadFileViaApi(fileName);
+          const fileName = `oneMarcBib.mrc${Helper.getRandomBarcode()}`;
+
+          DataImport.uploadFileViaApi('oneMarcBib.mrc', fileName);
         }
 
         cy.login(userProperties.username, userProperties.password, {
@@ -37,7 +39,7 @@ describe('ui-data-import: delete logs from "View all" page', () => {
 
   it('C367923 A user can delete logs from the Import app "View all" page (folijet)',
     { tags: [TestTypes.criticalPath, DevTeams.folijet] }, () => {
-      LogsViewAll.openViewAll();
+      Logs.openViewAllLogs();
       LogsViewAll.viewAllIsOpened();
       LogsViewAll.selectAllLogs();
       LogsViewAll.checkIsLogsSelected(maxLogsQuantityOnPage);
