@@ -83,6 +83,7 @@ export default createInteractor('multi select')
     focusedValue: (el) => el.querySelector('ul').querySelector('button:focus').parentNode.textContent,
     error: (el) => el.querySelector('[class^=feedbackError]').textContent,
     ariaLabelledby: (el) => el.getAttribute('aria-labelledby'),
+    span: el => el.querySelector('span').textContent,
   })
   .actions({
     toggle: ({ find }) => find(Button({ className: including('multiSelectToggleButton-') })).click(),
