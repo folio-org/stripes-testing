@@ -8,7 +8,7 @@ import InteractorsTools from '../../../support/utils/interactorsTools';
 import getRandomPostfix from '../../../support/utils/stringTools';
 import ExportFieldMappingProfiles from '../../../support/fragments/data-export/exportMappingProfile/exportFieldMappingProfiles';
 import ExportNewFieldMappingProfile from '../../../support/fragments/data-export/exportMappingProfile/exportNewFieldMappingProfile';
-import TransformationForm from '../../../support/fragments/settings/data-export/transformation-form';
+import ModalSelectTransformations from '../../../support/fragments/data-export/exportMappingProfile/modalSelectTransformations';
 
 let user;
 let fieldMappingProfileName = `fieldMappingProfile${getRandomPostfix()}`;
@@ -35,45 +35,45 @@ describe('settings: data-export', () => {
     it('C15819 Transformation form (firebird)', { tags: [testTypes.criticalPath, devTeams.firebird] }, () => {
         ExportFieldMappingProfiles.goTofieldMappingProfilesTab();
         ExportNewFieldMappingProfile.createNewFieldMappingProfile(fieldMappingProfileName, 'Item');
-        TransformationForm.verifySearchAndFilterPane();
-        TransformationForm.searchText('text');
-        TransformationForm.verifySearchResultIncludes(['text']);
-        TransformationForm.clickResetAll();
-        TransformationForm.searchText('TEXT');
-        TransformationForm.verifySearchResultIncludes(['text']);
+        ModalSelectTransformations.verifySearchAndFilterPane();
+        ModalSelectTransformations.searchText('text');
+        ModalSelectTransformations.verifySearchResultIncludes(['text']);
+        ModalSelectTransformations.clickResetAll();
+        ModalSelectTransformations.searchText('TEXT');
+        ModalSelectTransformations.verifySearchResultIncludes(['text']);
 
-        TransformationForm.uncheckHoldingsRecordTypeChechbox();
-        TransformationForm.uncheckInstanceRecordTypeChechbox();
-        TransformationForm.verifySearchResultIncludes(['Item']);
-        TransformationForm.verifySearchResultDoesNotInclude(['Holdings', 'Instance']);
+        ModalSelectTransformations.uncheckHoldingsRecordTypeChechbox();
+        ModalSelectTransformations.uncheckInstanceRecordTypeChechbox();
+        ModalSelectTransformations.verifySearchResultIncludes(['Item']);
+        ModalSelectTransformations.verifySearchResultDoesNotInclude(['Holdings', 'Instance']);
 
-        TransformationForm.uncheckItemRecordTypeChechbox();
-        TransformationForm.checkInstanceRecordTypeChechbox();
-        TransformationForm.checkHoldingsRecordTypeChechbox();
-        TransformationForm.verifySearchResultIncludes(['Holdings', 'Instance']);
-        TransformationForm.verifySearchResultDoesNotInclude(['Item']);
-        TransformationForm.clickResetAll();
+        ModalSelectTransformations.uncheckItemRecordTypeChechbox();
+        ModalSelectTransformations.checkInstanceRecordTypeChechbox();
+        ModalSelectTransformations.checkHoldingsRecordTypeChechbox();
+        ModalSelectTransformations.verifySearchResultIncludes(['Holdings', 'Instance']);
+        ModalSelectTransformations.verifySearchResultDoesNotInclude(['Item']);
+        ModalSelectTransformations.clickResetAll();
 
-        TransformationForm.clickNthCheckbox();
-        TransformationForm.verifyTotalSelected('1');
+        ModalSelectTransformations.clickNthCheckbox();
+        ModalSelectTransformations.verifyTotalSelected('1');
 
-        TransformationForm.uncheckUnselectedStatusChechbox();
-        TransformationForm.checkUnselectedStatusChechbox();
-        TransformationForm.uncheckSelectedStatusChechbox();
-        TransformationForm.checkSelectedStatusChechbox();
+        ModalSelectTransformations.uncheckUnselectedStatusChechbox();
+        ModalSelectTransformations.checkUnselectedStatusChechbox();
+        ModalSelectTransformations.uncheckSelectedStatusChechbox();
+        ModalSelectTransformations.checkSelectedStatusChechbox();
 
-        TransformationForm.clickNthCheckbox();
-        TransformationForm.verifyTotalSelected('0');
+        ModalSelectTransformations.clickNthCheckbox();
+        ModalSelectTransformations.verifyTotalSelected('0');
 
-        TransformationForm.uncheckHoldingsRecordTypeChechbox();
-        TransformationForm.uncheckInstanceRecordTypeChechbox();
-        TransformationForm.verifySearchResultIncludes(['Item']);
-        TransformationForm.verifySearchResultDoesNotInclude(['Holdings', 'Instance']);
-        TransformationForm.clickNthCheckbox();
+        ModalSelectTransformations.uncheckHoldingsRecordTypeChechbox();
+        ModalSelectTransformations.uncheckInstanceRecordTypeChechbox();
+        ModalSelectTransformations.verifySearchResultIncludes(['Item']);
+        ModalSelectTransformations.verifySearchResultDoesNotInclude(['Holdings', 'Instance']);
+        ModalSelectTransformations.clickNthCheckbox();
 
 
-        TransformationForm.fillInTransformationsTextfields('456', '1', '2', '$a');
-        TransformationForm.clickTransformationsSaveAndCloseButton();
+        ModalSelectTransformations.fillInTransformationsTextfields('456', '1', '2', '$a');
+        ModalSelectTransformations.clickTransformationsSaveAndCloseButton();
         InteractorsTools.checkCalloutMessage(newTransformationCalloutMessage);
 
         ExportFieldMappingProfiles.saveMappingProfile();
