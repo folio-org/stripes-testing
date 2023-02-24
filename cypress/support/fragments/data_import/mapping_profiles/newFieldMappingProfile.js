@@ -307,14 +307,14 @@ export default {
     ]);
   },
 
-  addNatureOfContentTerms:() => {
+  addNatureOfContentTerms:(value) => {
     const contentTerms = 'profile.mappingDetails.mappingFields[22].repeatableFieldAction';
 
     cy.do([
       Select({ name: contentTerms }).focus(),
       Select({ name: contentTerms }).choose(actions.addTheseToExisting),
       Button('Add nature of content term').click(),
-      TextField('Nature of content term').fillIn('"bibliography"')
+      TextField('Nature of content term').fillIn(`"${value}"`)
     ]);
     waitLoading();
   },
