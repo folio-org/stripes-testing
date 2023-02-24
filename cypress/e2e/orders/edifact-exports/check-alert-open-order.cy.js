@@ -11,7 +11,6 @@ import getRandomPostfix from '../../../support/utils/stringTools';
 import OrderLines from '../../../support/fragments/orders/orderLines';
 import ServicePoints from '../../../support/fragments/settings/tenant/servicePoints/servicePoints';
 import NewLocation from '../../../support/fragments/settings/tenant/locations/newLocation';
-import DateTools from '../../../support/utils/dateTools';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
 import SettingsOrders from '../../../support/fragments/settings/orders/settingsOrders';
 
@@ -60,7 +59,6 @@ describe('orders: Edifact export', () => {
   let user;
   let location;
   let servicePointId;
-  const UTCTime = DateTools.getUTCDateForScheduling();
 
   before(() => {
     cy.getAdminToken();

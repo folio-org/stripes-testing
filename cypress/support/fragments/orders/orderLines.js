@@ -409,7 +409,15 @@ export default {
       quantityPhysicalLocationField.has({ value: quantityPhysical }),
     ]);
     cy.do(saveAndClose.click());
-    if (Button('Submit').visible(true)) cy.do(Button('Submit').click());
+    // If purchase order line will be dublicate, Modal with button 'Submit' will be activated 
+    const confirmButton = Button('Submit');
+    cy.get(confirmButton).then(($button) => {
+    if ($button.is(':visible')) {
+      cy.wrap($button).click();
+      } else {
+        cy.wait(1000);
+      }
+    });
   },
 
   selectFilterMainLibraryLocationsPOL: () => {
