@@ -25,11 +25,16 @@ export default {
     cy.expect(Pane({ id:'quick-marc-editor-pane' }).exists());
   },
 
-  addField:(fieldNumber, fieldData) => {
-    cy.wait(1500);
-    cy.do(QuickMarcEditorRow({ dataRow: 'record-row[39]' }).find(Button({ icon: 'plus-sign' })).click());
-    cy.do(TextField({ name:'records[40].tag' }).fillIn(fieldNumber));
-    cy.do(TextArea({ name:'records[40].content' }).fillIn(fieldData));
+  addField:(fieldNumber, content, indicator0 = '\\', indicator1 = '\\', rowIndex = 39) => {
+    cy.wait(2000);
+    cy.do([
+      QuickMarcEditorRow({ index: rowIndex }).find(Button({ icon: 'plus-sign' })).click(),
+      QuickMarcEditorRow({ index: rowIndex + 1 }).find(TextField({ name: `records[${rowIndex + 1}].tag` })).fillIn(fieldNumber),
+      QuickMarcEditorRow({ index: rowIndex + 1 }).find(TextField({ name: `records[${rowIndex + 1}].indicators[0]` })).fillIn(indicator0),
+      QuickMarcEditorRow({ index: rowIndex + 1 }).find(TextField({ name: `records[${rowIndex + 1}].indicators[1]` })).fillIn(indicator1),
+      QuickMarcEditorRow({ index: rowIndex + 1 }).find(TextArea({ name: `records[${rowIndex + 1}].content` })).fillIn(content),
+    ]);
+    cy.wait(5000);
   },
 
   editField:(content, newContent) => {

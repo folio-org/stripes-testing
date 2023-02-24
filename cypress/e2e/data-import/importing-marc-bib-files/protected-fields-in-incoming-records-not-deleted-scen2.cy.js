@@ -91,7 +91,7 @@ describe('ui-data-import: Check that protected fields in incoming records are no
 
       // edit the MARC bibliographic record
       InventoryInstance.editMarcBibliographicRecord();
-      InventoryInstance.editMarcBibliographicRecord();
+      InventoryEditMarcRecord.addField('580', '‡a Test ‡5 NcD');
       InventoryEditMarcRecord.editField(
         '$t Acta chemica Scandinavica. Series B, Organic chemistry and biochemistry $x 0302-4369 $w (DLC)sn 78006299 $w (OCoLC)981837',
         '$t Acta chemica Scandinavica. Series B, Organic chemistry and biochemistry $x 0302-4369 $w (DLC)sn 78006299 $w (OCoLC)981837 $5 NcD'
@@ -116,7 +116,6 @@ describe('ui-data-import: Check that protected fields in incoming records are no
         '$t Dalton (Cambridge, England) $x 1470-479X $w (DLC)   00252543 $w (OCoLC)44000666',
         '$t Dalton (Cambridge, England) $x 1470-479X $w (DLC)   00252543 $w (OCoLC)44000666 $5 NcD'
       );
-      InventoryEditMarcRecord.addField('580', '‡a Test ‡5 NcD');
       InventoryEditMarcRecord.saveAndClose();
 
       // overlay source bibliographic record
