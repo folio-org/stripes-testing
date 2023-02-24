@@ -90,6 +90,13 @@ describe('MARC Authority -> Edit Authority record', () => {
     MarcAuthority.contains(testData.authority.title);
   });
 
+  it('C353536 Add multiple 001s when editing "MARC Authority" record (spitfire)', { tags: [TestTypes.criticalPath, DevTeams.spitfire] }, () => {
+    MarcAuthorities.searchBy(testData.authority.searchOption, testData.authority.title);
+    MarcAuthorities.selectTitle(testData.authority.title);
+    MarcAuthority.edit();
+    MarcAuthority.checkAddNew001Tag(4, '$a test');
+  });
+
   it('C353533 Protection of specified fields when editing "MARC Authority" record (spitfire)', { tags: [TestTypes.criticalPath, DevTeams.spitfire] }, () => {
     MarcAuthorities.searchBy(testData.authority.searchOption, testData.authority.title);
     MarcAuthorities.selectTitle(testData.authority.title);
