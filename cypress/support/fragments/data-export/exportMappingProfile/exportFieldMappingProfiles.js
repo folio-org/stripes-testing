@@ -33,4 +33,16 @@ export default {
     cy.do(NavListItem('Field mapping profiles').click());
     cy.expect(fieldMappingProfilesPane.exists());
   },
+
+  getFieldMappingProfile: (searchParams) => {
+		return cy
+			.okapiRequest({
+				path: 'data-export/mapping-profiles',
+				searchParams,
+				isDefaultSearchParamsRequired: false
+			})
+			.then((response) => {
+				return response.body.mappingProfiles[0];
+			});
+	},
 };

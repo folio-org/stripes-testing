@@ -31,7 +31,6 @@ export default {
 				isDefaultSearchParamsRequired: false
 			})
 			.then((response) => {
-				console.log(response);
 				return response.body.jobProfiles[0];
 			});
 	},
