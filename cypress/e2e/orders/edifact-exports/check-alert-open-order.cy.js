@@ -120,20 +120,20 @@ describe('orders: Edifact export', () => {
       });
   });
 
-  // after(() => {
-  //   cy.loginAsAdmin();
-  //   cy.visit(SettingsMenu.ordersPurchaseOrderLinesLimit);
-  //   SettingsOrders.setPurchaseOrderLinesLimit(1);
-  //   Orders.deleteOrderApi(order.id);
-  //   Organizations.deleteOrganizationViaApi(organization.id);
-  //   NewLocation.deleteViaApiIncludingInstitutionCampusLibrary(
-  //       location.institutionId,
-  //       location.campusId,
-  //       location.libraryId,
-  //       location.id
-  //     );
-  //   Users.deleteViaApi(user.userId);
-  // });
+  after(() => {
+    cy.loginAsAdmin();
+    cy.visit(SettingsMenu.ordersPurchaseOrderLinesLimit);
+    SettingsOrders.setPurchaseOrderLinesLimit(1);
+    Orders.deleteOrderApi(order.id);
+    Organizations.deleteOrganizationViaApi(organization.id);
+    NewLocation.deleteViaApiIncludingInstitutionCampusLibrary(
+        location.institutionId,
+        location.campusId,
+        location.libraryId,
+        location.id
+      );
+    Users.deleteViaApi(user.userId);
+  });
 
   it('C350410: Check if a User is alerted trying to open an Order with 2 POL, having more than 1 unique accounts for export', { tags: [TestTypes.smoke, devTeams.thunderjet] }, () => {
     Orders.searchByParameter('PO number', orderNumber);
