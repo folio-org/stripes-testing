@@ -99,12 +99,12 @@ describe('orders: Edifact export', () => {
       Orders.searchByParameter('PO number', orderNumber);
       Orders.selectFromResultsList();
       Orders.createPOLineViaActions();
-      OrderLines.selectRandomInstanceInTitleLookUP('*', 75);
+      OrderLines.selectRandomInstanceInTitleLookUP('*', 96);
       OrderLines.fillInPOLineInfoForExportWithLocation(`${organization.accounts[0].name} (${organization.accounts[0].accountNo})`, 'Purchase', location.institutionId);
       cy.wait(2000);
       OrderLines.backToEditingOrder();
       Orders.createPOLineViaActions();
-      OrderLines.selectRandomInstanceInTitleLookUP('*', 35);
+      OrderLines.selectRandomInstanceInTitleLookUP('*', 26);
       OrderLines.fillInPOLineInfoForExportWithLocation(`${organization.accounts[1].name} (${organization.accounts[1].accountNo})`, 'Purchase', location.institutionId);
     });
     
@@ -120,20 +120,20 @@ describe('orders: Edifact export', () => {
       });
   });
 
-  after(() => {
-    cy.loginAsAdmin();
-    cy.visit(SettingsMenu.ordersPurchaseOrderLinesLimit);
-    SettingsOrders.setPurchaseOrderLinesLimit(1);
-    Orders.deleteOrderApi(order.id);
-    Organizations.deleteOrganizationViaApi(organization.id);
-    NewLocation.deleteViaApiIncludingInstitutionCampusLibrary(
-        location.institutionId,
-        location.campusId,
-        location.libraryId,
-        location.id
-      );
-    Users.deleteViaApi(user.userId);
-  });
+  // after(() => {
+  //   cy.loginAsAdmin();
+  //   cy.visit(SettingsMenu.ordersPurchaseOrderLinesLimit);
+  //   SettingsOrders.setPurchaseOrderLinesLimit(1);
+  //   Orders.deleteOrderApi(order.id);
+  //   Organizations.deleteOrganizationViaApi(organization.id);
+  //   NewLocation.deleteViaApiIncludingInstitutionCampusLibrary(
+  //       location.institutionId,
+  //       location.campusId,
+  //       location.libraryId,
+  //       location.id
+  //     );
+  //   Users.deleteViaApi(user.userId);
+  // });
 
   it('C350410: Check if a User is alerted trying to open an Order with 2 POL, having more than 1 unique accounts for export', { tags: [TestTypes.smoke, devTeams.thunderjet] }, () => {
     Orders.searchByParameter('PO number', orderNumber);

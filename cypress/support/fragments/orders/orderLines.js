@@ -373,6 +373,15 @@ export default {
       quantityElectronicTextField.has({ value: quantityElectronic }),
     ]);
     cy.do(saveAndClose.click());
+    // If purchase order line will be dublicate, Modal with button 'Submit' will be activated 
+    const confirmButton = Button('Submit');
+    cy.get(confirmButton).then(($button) => {
+      if ($button.is(':visible')) {
+        cy.wrap($button).click();
+      } else {
+        cy.wait(1000);
+      }
+    });
   },
 
   fillInPOLineInfoForExportWithLocationForPhisicalResource(accountNumber, AUMethod, institutionName) {
