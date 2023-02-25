@@ -97,12 +97,11 @@ describe('orders: Edifact export', () => {
       Orders.searchByParameter('PO number', orderNumber);
       Orders.selectFromResultsList();
       Orders.createPOLineViaActions();
-      OrderLines.selectRandomInstanceInTitleLookUP('*', 96);
+      OrderLines.selectRandomInstanceInTitleLookUP('*', 1);
       OrderLines.fillInPOLineInfoForExportWithLocation(`${organization.accounts[0].name} (${organization.accounts[0].accountNo})`, 'Purchase', location.institutionId);
-      cy.wait(2000);
       OrderLines.backToEditingOrder();
       Orders.createPOLineViaActions();
-      OrderLines.selectRandomInstanceInTitleLookUP('*', 26);
+      OrderLines.selectRandomInstanceInTitleLookUP('*', 2);
       OrderLines.fillInPOLineInfoForExportWithLocation(`${organization.accounts[1].name} (${organization.accounts[1].accountNo})`, 'Purchase', location.institutionId);
     });
     

@@ -374,12 +374,17 @@ export default {
     ]);
     cy.do(saveAndClose.click());
     // If purchase order line will be dublicate, Modal with button 'Submit' will be activated 
-    const confirmButton = Button('Submit');
-    cy.get(confirmButton).then(($button) => {
-      if ($button.is(':visible')) {
-        cy.wrap($button).click();
+    cy.wait(2000);
+    this.submitOrderLine();
+  },
+
+  submitOrderLine:() => {
+    const submitButton = Button('Submit');
+    cy.get('body').then($body => {
+      if ($body.find('[id=line-is-not-unique-confirmation]').length) {   
+        cy.do(submitButton.click());
       } else {
-        cy.wait(1000);
+        // do nothing if modal is not displayed
       }
     });
   },
