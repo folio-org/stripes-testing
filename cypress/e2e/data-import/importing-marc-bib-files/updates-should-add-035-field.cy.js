@@ -196,7 +196,7 @@ describe('ui-data-import: Data Import Updates should add 035 field from 001/003,
           );
         });
 
-        // create mapping profiles
+        // create mapping profile
         cy.visit(SettingsMenu.mappingProfilePath);
         FieldMappingProfiles.openNewMappingProfileForm();
         NewFieldMappingProfile.fillSummaryInMappingProfile(mappingProfile);
