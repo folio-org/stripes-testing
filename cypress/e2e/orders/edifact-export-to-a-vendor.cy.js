@@ -18,7 +18,10 @@ describe('orders: export', () => {
   
   // Test will be failed with issue https://issues.folio.org/browse/STCOM-1120
   
-  const order = { ...NewOrder.defaultOneTimeOrder };
+  const order = { ...NewOrder.defaultOneTimeOrder,
+    orderType: 'Ongoing',
+    ongoing: {isSubscription: false, manualRenewal: false},
+   };
   const organization = {
     ...NewOrganization.defaultUiOrganizations,
     accounts: [
@@ -59,6 +62,7 @@ describe('orders: export', () => {
   let user;
   let location;
   let servicePointId;
+  let orderNumber;
   const UTCTime = DateTools.getUTCDateForScheduling();
 
   before(() => {
@@ -73,10 +77,9 @@ describe('orders: export', () => {
         });
     });
     Organizations.createOrganizationViaApi(organization)
-      .then(response => {
-        organization.id = response;
-        order.vendor = organization.name;
-        order.orderType = 'One-time';
+      .then(organizationsResponse => {
+        organization.id = organizationsResponse;
+        order.vendor = organizationsResponse;
       });
     cy.loginAsAdmin({ path:TopMenu.organizationsPath, waiter: Organizations.waitLoading });
     Organizations.searchByParameters('Name', organization.name);
@@ -87,6 +90,11 @@ describe('orders: export', () => {
     Organizations.addIntegration();
     cy.wait(2000);
     Organizations.fillIntegrationInformation(integrationName2, integartionDescription2, vendorEDICodeFor2Integration, libraryEDICodeFor2Integration, organization.accounts[1].accountNo, 'Purchase At Vendor System', UTCTime);
+
+    cy.createOrderApi(order)
+      .then((response) => {
+      orderNumber = response.body.poNumber;
+    });
 
     cy.createTempUser([
       permissions.uiOrdersView.gui,
@@ -105,33 +113,36 @@ describe('orders: export', () => {
       });
   });
 
-  // after(() => {
-  //   Orders.deleteOrderApi(order.id);
-  //   Organizations.deleteOrganizationViaApi(organization.id);
-  //   cy.wait(5000);
-  //   NewLocation.deleteViaApiIncludingInstitutionCampusLibrary(
-  //       location.institutionId,
-  //       location.campusId,
-  //       location.libraryId,
-  //       location.id
-  //     );
-  //   Users.deleteViaApi(user.userId);
-  // });
+  after(() => {
+    cy.loginAsAdmin({ path:TopMenu.ordersPath, waiter: Orders.waitLoading });
+    Orders.searchByParameter('PO number', orderNumber);
+    Orders.selectFromResultsList();
+    Orders.unOpenOrder(orderNumber);
+    // Need to wait until the order is opened before deleting it
+    cy.wait(2000);
+    Orders.deleteOrderApi(order.id);
+
+    Organizations.deleteOrganizationViaApi(organization.id);
+    NewLocation.deleteViaApiIncludingInstitutionCampusLibrary(
+        location.institutionId,
+        location.campusId,
+        location.libraryId,
+        location.id
+      );
+    Users.deleteViaApi(user.userId);
+  });
 
   it('C350402: Verify that an Order is exported to a definite Vendors Account specified in one of several Integration configurations', { tags: [TestTypes.smoke, devTeams.thunderjet] }, () => {
-    cy.visit(TopMenu.ordersPath);
     //Need to wait while first job will be runing
-    // cy.wait(30000);
-    Orders.createOrder(order, true, false).then(orderId => {
-      order.id = orderId;
-    });
-    
+    cy.wait(30000);
+    Orders.searchByParameter('PO number', orderNumber);
+    Orders.selectFromResultsList();
     Orders.createPOLineViaActions();
-    OrderLines.selectRandomInstanceInTitleLookUP('*', 10);
+    OrderLines.selectRandomInstanceInTitleLookUP('*', 1);
     OrderLines.fillInPOLineInfoForExportWithLocation(`${organization.accounts[0].name} (${organization.accounts[0].accountNo})`, 'Purchase', location.institutionId);
     OrderLines.backToEditingOrder();
     Orders.openOrder();
-    
+
     cy.visit(TopMenu.exportManagerOrganizationsPath);
     ExportManagerSearchPane.selectOrganizationsSearch();
     ExportManagerSearchPane.selectExportMethod(integrationName1);

@@ -415,14 +415,8 @@ export default {
     ]);
     cy.do(saveAndClose.click());
     // If purchase order line will be dublicate, Modal with button 'Submit' will be activated 
-    const confirmButton = Button('Submit');
-    cy.get(confirmButton).then(($button) => {
-    if ($button.is(':visible')) {
-      cy.wrap($button).click();
-      } else {
-        cy.wait(1000);
-      }
-    });
+    cy.wait(2000);
+    this.submitOrderLine();
   },
 
   selectFilterMainLibraryLocationsPOL: () => {
