@@ -131,12 +131,12 @@ const fillMatchProfileWithExistingPart = ({
   cy.do(SelectionList({ id:'sl-container-criterion-value-type' }).find(SelectionOption(instanceOption)).click());
 };
 
-const fillMatchProfileStaticValue = ({ profileName, incomingStaticValue, matchCriterion, itemOption }) => {
+const fillMatchProfileStaticValue = ({ profileName, incomingStaticValue, matchCriterion, itemOption, existingRecordType }) => {
   cy.do(TextField('Name*').fillIn(profileName));
   // wait for data to be loaded
   cy.wait(15000);
   cy.do([
-    matchProfileDetailsAccordion.find(Button({ dataId:'ITEM' })).click(),
+    matchProfileDetailsAccordion.find(Button({ dataId: existingRecordType })).click(),
     Dropdown({ id:'record-selector-dropdown' }).open(),
     Button('Static value (submatch only)').click(),
     TextField({ name:'profile.matchDetails[0].incomingMatchExpression.staticValueDetails.text' }).fillIn(incomingStaticValue),

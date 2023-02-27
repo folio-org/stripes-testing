@@ -215,6 +215,8 @@ export default {
   addFolioRecordType:(folioType) => cy.do(Select({ name:'profile.existingRecordType' }).choose(folioType)),
   saveProfile:() => cy.do(saveButton.click()),
   fillPermanentLocation:(location) => cy.do(TextField('Permanent').fillIn(location)),
+  fillTemporaryLocation:(location) => cy.do(TextField('Temporary').fillIn(location)),
+  fillIllPolicy:(policy) => cy.do(TextField('ILL policy').fillIn(policy)),
   fillCallNumber:(number) => cy.do(TextField('Call number').fillIn(number)),
   fillBarcode:(barcode) => cy.do(TextField('Barcode').fillIn(barcode)),
   fillCopyNumber:(number) => cy.do(TextField('Copy number').fillIn(number)),
@@ -286,7 +288,7 @@ export default {
     ]);
   },
 
-  addSuppressFromDiscovery:(suppressFromDiscavery) => {
+  addSuppressFromDiscovery:(suppressFromDiscavery = 'Mark for all affected records') => {
     cy.do([
       suppressFromDiscoverySelect.focus(),
       suppressFromDiscoverySelect.choose(suppressFromDiscavery)
@@ -354,6 +356,31 @@ export default {
     waitLoading();
   },
 
+  addHoldingsNotes:(type, note, staffOnly) => {
+    const holdingsNotesFieldName = 'profile.mappingDetails.mappingFields[22].repeatableFieldAction';
+    const selectName = 'profile.mappingDetails.mappingFields[22].subfields[0].fields[2].booleanFieldAction';
+
+    cy.do([
+      Select({ name:holdingsNotesFieldName }).focus(),
+      Select({ name:holdingsNotesFieldName }).choose(actions.addTheseToExisting),
+      TextField('Note type').fillIn(type),
+      TextField('Note').fillIn(note),
+      Select({ name:selectName }).focus(),
+      Select({ name:selectName }).choose(staffOnly)
+    ]);
+    waitLoading();
+  },
+
+  fillBatchGroup:(group) => {
+    cy.do(TextField('Batch group*').fillIn(group));
+    waitLoading();
+  },
+
+  fillPaymentMethod:(method) => {
+    cy.do(TextField('Payment method*').fillIn(method));
+    waitLoading();
+  },
+
   addItemNotes:(noteType, note, staffOnly) => {
     const noteFieldName = 'profile.mappingDetails.mappingFields[25].repeatableFieldAction';
     const selectName = 'profile.mappingDetails.mappingFields[25].subfields[0].fields[2].booleanFieldAction';
@@ -368,16 +395,6 @@ export default {
       Select({ name:selectName })
         .choose(staffOnly)
     ]);
-    waitLoading();
-  },
-
-  fillBatchGroup:(group) => {
-    cy.do(TextField('Batch group*').fillIn(group));
-    waitLoading();
-  },
-
-  fillPaymentMethod:(method) => {
-    cy.do(TextField('Payment method*').fillIn(method));
     waitLoading();
   },
 
@@ -427,6 +444,19 @@ export default {
     cy.get('div[class^="tableRow-"]').last().then(elem => {
       elem[0].querySelector('button[icon="plus-sign"]').click();
     });
+  },
+
+  addFormerHoldings:(name) => {
+    // number needs for using this method in filling fields for holdings and item profiles
+    const formerHoldingsFieldName = 'profile.mappingDetails.mappingFields[2].repeatableFieldAction';
+
+    cy.do([
+      Select({ name: formerHoldingsFieldName }).focus(),
+      Select({ name: formerHoldingsFieldName }).choose(actions.addTheseToExisting),
+      Button('Add former holdings identifier').click(),
+      TextField('Former holdings ID').fillIn(`"${name}"`)
+    ]);
+    waitLoading();
   },
 
   createMappingProfileViaApi:(nameProfile) => {
