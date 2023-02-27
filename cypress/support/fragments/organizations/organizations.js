@@ -104,6 +104,7 @@ export default {
       ediSection.find(TextField('Vendor EDI code*')).fillIn(vendorEDICode),
       ediSection.find(TextField('Library EDI code*')).fillIn(libraryEDICode),
       ediSection.find(Button({ icon: 'info' })).click(),
+      Checkbox({ name: 'exportTypeSpecificParameters.vendorEdiOrdersExportConfig.ediConfig.supportOrder' }).click(),
       Checkbox({ name: 'exportTypeSpecificParameters.vendorEdiOrdersExportConfig.ediConfig.supportInvoice' }).click(),
     ]);
     cy.get('select[name="exportTypeSpecificParameters.vendorEdiOrdersExportConfig.ediConfig.accountNoList"]').select(accountNumber);
