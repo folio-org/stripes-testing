@@ -1,5 +1,5 @@
 /* eslint-disable cypress/no-unnecessary-waiting */
-import { Button, TextField, Pane, Select, HTML, including, Checkbox, Section } from '../../../../interactors';
+import { Button, TextField, Pane, Select, HTML, including, Checkbox, Section, Accordion } from '../../../../interactors';
 import SelectUser from './selectUser';
 
 const actionsButton = Button('Actions');
@@ -93,5 +93,37 @@ export default {
     this.choosepickupServicePoint(newRequest.pickupServicePoint);
     this.saveRequestAndClose();
     this.waitLoading();
+  },
+
+  waitLoadingNewRequestPage(TLR = false) {
+    cy.expect(Pane({ title: 'New request' }).exists());
+    if (TLR) cy.expect(Checkbox('Create title level request').exists());
+    cy.expect([
+      Accordion('Item information').exists(),
+      Accordion('Request information').exists(),
+      Accordion('Requester information').exists()
+    ]);
+  },
+
+  enterItemInfo(barcode) {
+    cy.do(itemBarcodeInput.fillIn(barcode));
+    cy.do(enterItemBarcodeButton.click());
+  },
+
+  checkErrorMessage(message) {
+    cy.expect(HTML(including(message)).exists());
+  },
+
+  verifyItemInformation: (allContentToCheck) => {
+    return allContentToCheck.forEach(contentToCheck => cy.expect(Section({ id: 'section-item-info' }, including(contentToCheck)).exists));
+  },
+
+  enterRequesterInfo(newRequest) {
+    cy.do(requesterBarcodeInput.fillIn(newRequest.requesterBarcode));
+    cy.intercept('/proxiesfor?*').as('getUsers');
+    cy.do(enterRequesterBarcodeButton.click());
+    cy.expect(selectServicePoint.exists);
+    cy.wait('@getUsers');
+    this.choosepickupServicePoint(newRequest.pickupServicePoint);
   }
 };

@@ -11,7 +11,6 @@ import Location from '../../support/fragments/settings/tenant/locations/newLocat
 import Users from '../../support/fragments/users/users';
 import CirculationRules from '../../support/fragments/circulation/circulation-rules';
 import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
-import InventoryInstance from '../../support/fragments/inventory/inventoryInstance';
 import getRandomPostfix from '../../support/utils/stringTools';
 import NewRequest from '../../support/fragments/requests/newRequest';
 import RequestPolicy from '../../support/fragments/circulation/request-policy';
@@ -59,7 +58,6 @@ describe('Create Item or Title level request', () => {
         });
       })
       .then(() => {
-        cy.wrap(instanceData.itemsData).as('items');
         InventoryInstances.createFolioInstanceViaApi({
           instance: {
             instanceTypeId: testData.instanceTypeId,
@@ -79,10 +77,6 @@ describe('Create Item or Title level request', () => {
               materialType: { id: testData.materialTypeId },
             },
           ],
-        }).then((specialInstanceIds) => {
-          instanceData.instanceId = specialInstanceIds.instanceId;
-          instanceData.holdingId = specialInstanceIds.holdingIds[0].id;
-          instanceData.itemId = specialInstanceIds.holdingIds[0].itemId;
         });
       });
     PatronGroups.createViaApi(patronGroup.name).then((patronGroupResponse) => {
@@ -122,12 +116,10 @@ describe('Create Item or Title level request', () => {
   });
 
   after('Deleting created entities', () => {
-    cy.get('@requestId').each((id) => {
+    cy.get('@requestId').then((id) => {
       Requests.deleteRequestViaApi(id);
     });
-    cy.deleteItemViaApi(instanceData.itemId);
-    cy.deleteHoldingRecordViaApi(instanceData.holdingId);
-    InventoryInstance.deleteInstanceViaApi(instanceData.instanceId);
+    InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(testData.itemBarcode);
     RequestPolicy.deleteViaApi(requestPolicyBody.id);
     CirculationRules.deleteRuleViaApi(originalCirculationRules);
     cy.deleteLoanType(testData.loanTypeId);
@@ -152,12 +144,22 @@ describe('Create Item or Title level request', () => {
     () => {
       cy.visit(TopMenu.requestsPath);
       cy.intercept('POST', 'circulation/requests').as('createRequest');
-      NewRequest.createWithUserName({
-        itemBarcode: testData.itemBarcode,
-        requesterName: userData.username,
-        pickupServicePoint: testData.userServicePoint.name
+      NewRequest.openNewRequestPane();
+      NewRequest.waitLoadingNewRequestPage(true);
+      NewRequest.openNewRequestPane();
+      NewRequest.waitLoadingNewRequestPage(true);
+      NewRequest.enterItemInfo('wrongBarcode');
+      NewRequest.checkErrorMessage('Item with this barcode does not exist');
+      NewRequest.enterItemInfo(testData.itemBarcode);
+      NewRequest.verifyItemInformation([testData.itemBarcode, instanceData.title]);
+      NewRequest.enterRequesterInfo({
+        requesterBarcode: userData.barcode,
+        pickupServicePoint: testData.userServicePoint.name,
       });
+      NewRequest.saveRequestAndClose();
+      NewRequest.waitLoading();
       cy.wait('@createRequest').then((intercept) => {
+        cy.log(JSON.stringify(intercept));
         cy.wrap(intercept.response.body.id).as('requestId');
       });
     }
