@@ -16,8 +16,6 @@ import DateTools from '../../support/utils/dateTools';
 
 describe('orders: export', () => {
   
-  // Test will be failed with issue https://issues.folio.org/browse/STCOM-1120
-  
   const order = { ...NewOrder.defaultOneTimeOrder,
     orderType: 'Ongoing',
     ongoing: {isSubscription: false, manualRenewal: false},
