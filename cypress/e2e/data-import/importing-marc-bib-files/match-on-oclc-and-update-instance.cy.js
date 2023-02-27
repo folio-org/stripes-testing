@@ -132,7 +132,7 @@ describe('ui-data-import:', () => {
       NewFieldMappingProfile.fillCatalogedDate(itemsForCreateInstance.catalogedDate);
       NewFieldMappingProfile.fillInstanceStatusTerm(itemsForCreateInstance.statusTerm);
       NewFieldMappingProfile.addStatisticalCode(itemsForCreateInstance.statisticalCode, 8);
-      NewFieldMappingProfile.addNatureOfContentTerms();
+      NewFieldMappingProfile.addNatureOfContentTerms('bibliography');
       FieldMappingProfiles.saveProfile();
       FieldMappingProfiles.closeViewModeForMappingProfile(instanceCreateMapProfileName);
       FieldMappingProfiles.checkMappingProfilePresented(instanceCreateMapProfileName);
