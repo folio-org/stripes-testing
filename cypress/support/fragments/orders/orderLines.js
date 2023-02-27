@@ -372,10 +372,21 @@ export default {
       electronicUnitPriceTextField.has({ value: electronicUnitPrice }),
       quantityElectronicTextField.has({ value: quantityElectronic }),
     ]);
-    cy.do([
-      saveAndClose.click(),
-      Button('Submit').click()
-    ]);
+    cy.do(saveAndClose.click());
+    // If purchase order line will be dublicate, Modal with button 'Submit' will be activated 
+    cy.wait(2000);
+    this.submitOrderLine();
+  },
+
+  submitOrderLine:() => {
+    const submitButton = Button('Submit');
+    cy.get('body').then($body => {
+      if ($body.find('[id=line-is-not-unique-confirmation]').length) {   
+        cy.do(submitButton.click());
+      } else {
+        // do nothing if modal is not displayed
+      }
+    });
   },
 
   fillInPOLineInfoForExportWithLocationForPhisicalResource(accountNumber, AUMethod, institutionName) {
@@ -402,10 +413,10 @@ export default {
       physicalUnitPriceTextField.has({ value: physicalUnitPrice }),
       quantityPhysicalLocationField.has({ value: quantityPhysical }),
     ]);
-    cy.do([
-      saveAndClose.click(),
-      Button('Submit').click()
-    ]);
+    cy.do(saveAndClose.click());
+    // If purchase order line will be dublicate, Modal with button 'Submit' will be activated 
+    cy.wait(2000);
+    this.submitOrderLine();
   },
 
   selectFilterMainLibraryLocationsPOL: () => {
