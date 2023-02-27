@@ -121,8 +121,8 @@ export default {
   getUTCDateForScheduling() {
     const today = new Date();
     let hours = today.getUTCHours();
-    let minutes = today.getUTCMinutes() + 1;
-    let ampm = hours >= 12 ? 'P' : 'A';
+    let minutes = today.getUTCMinutes() + 2;
+    let ampm = hours >= 12 ? 'PM' : 'AM';
     hours = hours % 12;
     hours = hours ? hours : 12;
     minutes = minutes < 10 ? '0' + minutes : minutes;
