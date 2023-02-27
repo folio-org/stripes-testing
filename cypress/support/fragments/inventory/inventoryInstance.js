@@ -615,9 +615,7 @@ export default {
     cy.expect(HTML('MARC bibliographic record').exists());
   },
 
-  singleOverlaySourceBibRecordModalIsPresented:() => {
-    cy.expect(singleRecordImportModal.exists());
-  },
+  singleRecordImportModalIsPresented:() => cy.expect(singleRecordImportModal.exists()),
 
   importWithOclc:(oclc) => {
     cy.do(singleRecordImportModal.find(TextField({ name:'externalIdentifier' })).fillIn(oclc));
@@ -635,9 +633,7 @@ export default {
       .find(MultiColumnListCell(including(text))).exists());
   },
 
-  verifyLoan(content) {
-    cy.expect(MultiColumnListCell({ content }).exists());
-  },
+  verifyLoan: (content) => cy.expect(MultiColumnListCell({ content }).exists()),
 
   verifyLoanInItemPage(barcode, value) {
     cy.do(MultiColumnListCell({ content: barcode }).find(Link()).click());
