@@ -50,21 +50,21 @@ describe('ui-data-import', () => {
     name: holdingsMappingProfileNameForCreate,
     typeValue : NewFieldMappingProfile.folioRecordTypeValue.holdings,
     formerHoldingsId: `autotestFormerHoldingsId.${getRandomPostfix()}`,
-    holdingsType: 'Monograph',
+    holdingsType: '"Monograph"',
     statisticalCode: 'ARL (Collection stats): books - Book, print (books)',
     statisticalCodeUI: 'Book, print (books)',
     adminNote: `autotestAdminNote.${getRandomPostfix()}`,
-    permanentLocation: 'Main Library (KU/CC/DI/M)',
-    temporaryLocation: 'Online (E)',
+    permanentLocation: '"Main Library (KU/CC/DI/M)"',
+    temporaryLocation: '"Online (E)"',
     shelvingTitle: `autotestShelvingTitle.${getRandomPostfix()}`,
-    callNumberType: 'National Library of Medicine classification',
+    callNumberType: '"National Library of Medicine classification"',
     callNumber: '050$a " " 050$b',
     holdingsStatements: `autotestHoldingsStatements.${getRandomPostfix()}`,
-    illPolicy: 'Unknown lending policy',
-    noteType: 'Binding',
-    holdingsNote: `autotestHoldingsNote.${getRandomPostfix()}`,
+    illPolicy: '"Unknown lending policy"',
+    noteType: '"Binding"',
+    holdingsNote: `"autotestHoldingsNote.${getRandomPostfix()}"`,
     staffOnly: 'Mark for all affected records',
-    relationship: 'Resource'
+    relationship: '"Resource"'
   };
   const holdingsMappingProfileForUpdate = {
     name: holdingsMappingProfileNameForUpdate,
@@ -159,12 +159,14 @@ describe('ui-data-import', () => {
     FieldMappingProfiles.closeViewModeForMappingProfile(holdingsMappingProfileNameForCreate);
     FieldMappingProfiles.checkMappingProfilePresented(holdingsMappingProfileNameForCreate);
 
+    // create action profiles
     cy.visit(SettingsMenu.actionProfilePath);
     ActionProfiles.create(instanceActionProfileForCreate, instanceMappingProfileNameForCreate);
     ActionProfiles.checkActionProfilePresented(instanceActionProfileNameForCreate);
     ActionProfiles.create(holdingsActionProfileForCreate, holdingsMappingProfileNameForCreate);
     ActionProfiles.checkActionProfilePresented(holdingsActionProfileNameForCreate);
 
+    // create job profile
     cy.visit(SettingsMenu.jobProfilePath);
     JobProfiles.createJobProfile(jobProfileForCreate);
     NewJobProfile.linkActionProfile(instanceActionProfileForCreate);
@@ -172,7 +174,7 @@ describe('ui-data-import', () => {
     NewJobProfile.saveAndClose();
     JobProfiles.checkJobProfilePresented(jobProfileNameForCreate);
 
-    // upload a marc file for creating of the new instance
+    // upload a marc file for creating
     cy.visit(TopMenu.dataImportPath);
     DataImport.uploadFile('oneMarcBib.mrc', marcFileNameForCreate);
     JobProfiles.searchJobProfileForImport(jobProfileNameForCreate);
@@ -182,6 +184,7 @@ describe('ui-data-import', () => {
     Logs.openFileDetails(marcFileNameForCreate);
     [FileDetails.columnName.srsMarc,
       FileDetails.columnName.instance,
+      FileDetails.columnName.holdings
     ].forEach(columnName => {
       FileDetails.checkStatusInColumn(FileDetails.status.created, columnName);
     });
@@ -203,6 +206,8 @@ describe('ui-data-import', () => {
 
         DataImport.editMarcFile('oneMarcBib.mrc', editedMarcFileName, ['ocn962073864'], [instanceHrid]);
 
+        // create mapping profile
+        cy.visit(SettingsMenu.mappingProfilePath);
         FieldMappingProfiles.openNewMappingProfileForm();
         NewFieldMappingProfile.fillSummaryInMappingProfile(holdingsMappingProfileForUpdate);
         NewFieldMappingProfile.addFormerHoldings(holdingsMappingProfileForUpdate.formerHoldingsId);
@@ -217,16 +222,19 @@ describe('ui-data-import', () => {
         FieldMappingProfiles.closeViewModeForMappingProfile(holdingsMappingProfileNameForUpdate);
         FieldMappingProfiles.checkMappingProfilePresented(holdingsMappingProfileNameForUpdate);
 
+        // create action profile
         cy.visit(SettingsMenu.actionProfilePath);
         ActionProfiles.create(holdingsActionProfileForUpdate, holdingsMappingProfileNameForUpdate);
         ActionProfiles.checkActionProfilePresented(holdingsActionProfileNameForUpdate);
 
+        // create match profiles
         cy.visit(SettingsMenu.matchProfilePath);
         MatchProfiles.createMatchProfile(instanceMatchProfile);
         MatchProfiles.checkMatchProfilePresented(instanceMatchProfileName);
         MatchProfiles.createMatchProfileWithStaticValue(holdingsMatchProfile);
         MatchProfiles.checkMatchProfilePresented(holdingsMatchProfileName);
 
+        // create job profile
         cy.visit(SettingsMenu.jobProfilePath);
         JobProfiles.createJobProfile(jobProfileForUpdate);
         NewJobProfile.linkMatchProfileForMatches();

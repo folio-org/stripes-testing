@@ -363,6 +363,7 @@ export default {
     cy.do([
       Select({ name:holdingsNotesFieldName }).focus(),
       Select({ name:holdingsNotesFieldName }).choose(actions.addTheseToExisting),
+      Button('Add holdings note').click(),
       TextField('Note type').fillIn(type),
       TextField('Note').fillIn(note),
       Select({ name:selectName }).focus(),
