@@ -159,7 +159,6 @@ describe('Create Item or Title level request', () => {
       NewRequest.saveRequestAndClose();
       NewRequest.waitLoading();
       cy.wait('@createRequest').then((intercept) => {
-        cy.log(JSON.stringify(intercept));
         cy.wrap(intercept.response.body.id).as('requestId');
       });
     }
