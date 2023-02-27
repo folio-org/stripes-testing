@@ -63,6 +63,7 @@ export default {
   // Users
   usersOwnersPath: 'settings/users/owners',
   usersPath: 'settings/users',
+  manualCharges: 'settings/users/feefinestable',
   paymentsPath: 'settings/users/payments',
   conditionsPath: 'settings/users/conditions',
   limitsPath: 'settings/users/limits',
