@@ -75,7 +75,6 @@ describe('ui-data-import: MARC field protections apply to MARC modifications of 
     Users.deleteViaApi(user.userId);
   });
 
-  // Test is failed. MODDATAIMP-739
   it('C350678 MARC field protections apply to MARC modifications of incoming records when they should not: Scenario 1 (folijet)',
     { tags: [TestTypes.criticalPath, DevTeams.folijet] }, () => {
     // create protection fields
@@ -141,13 +140,13 @@ describe('ui-data-import: MARC field protections apply to MARC modifications of 
         FileDetails.columnName.instance].forEach(columnName => {
         FileDetails.checkStatusInColumn(FileDetails.status.created, columnName);
       });
-      FileDetails.checkSrsRecordQuantityInSummaryTable(0, '1');
-      FileDetails.checkInstanceQuantityInSummaryTable(0, '1');
+      FileDetails.checkSrsRecordQuantityInSummaryTable('1', 0);
+      FileDetails.checkInstanceQuantityInSummaryTable('1', 0);
 
       // get Instance HRID through API
       InventorySearchAndFilter.getInstanceHRID()
         .then(hrId => {
-          instanceHrid = hrId[1];
+          instanceHrid = hrId[0];
           // check fields are absent in the view source
           cy.visit(TopMenu.inventoryPath);
           InventorySearchAndFilter.searchInstanceByHRID(instanceHrid);
