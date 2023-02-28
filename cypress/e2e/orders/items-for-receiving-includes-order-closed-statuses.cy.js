@@ -172,7 +172,7 @@ describe('orders: Receiving and Check-in', () => {
     Orders.deleteOrderApi(order.id);
 
     Organizations.deleteOrganizationViaApi(organization.id);
-    // Need to find solution to delete all data, becouse now i cant delete location and user
+    // TODO: Need to find solution to delete all data, becouse now i cant delete location and user
     // NewLocation.deleteViaApiIncludingInstitutionCampusLibrary(
     //     location.institutionId,
     //     location.campusId,
