@@ -37,6 +37,10 @@ export default {
     cy.expect(bulkEditPane.exists());
   },
 
+  actionsIsAbsent() {
+    cy.expect(actions.absent());
+  },
+
   verifyPanesBeforeImport() {
     cy.expect([
       setCriteriaPane.exists(),
@@ -71,7 +75,7 @@ export default {
     ]);
   },
 
-  verifyUsersRecordIdentifiers() {
+  verifyRecordIdentifierItems() {
     this.checkUsersRadio();
     cy.expect([
       usersRadio.has({ checked: true }),
@@ -84,7 +88,7 @@ export default {
     ]);
   },
 
-  verifyHoldingsRecordIdentifiers() {
+  verifyHoldingIdentifiers() {
     this.checkHoldingsRadio();
     cy.expect([
       holdingsRadio.has({ checked: true }),
@@ -97,11 +101,23 @@ export default {
     ]);
   },
 
-  verifyItemsRecordIdentifiers() {
+  verifyItemIdentifiers() {
     this.checkItemsRadio();
     cy.expect([
       itemsRadio.has({ checked: true }),
-      fileButton.has({ disabled: true }),
+      recordIdentifierDropdown.find(HTML('Item barcode')).exists(),
+      recordIdentifierDropdown.find(HTML('Item UUIDs')).exists(),
+      recordIdentifierDropdown.find(HTML('Item HRIDs')).exists(),
+      recordIdentifierDropdown.find(HTML('Item former identifier')).exists(),
+      recordIdentifierDropdown.find(HTML('Item accession number')).exists(),
+      recordIdentifierDropdown.find(HTML('Holdings UUIDs')).exists(),
+    ]);
+  },
+
+  verifyItemIdentifiersDefaultState() {
+    this.checkItemsRadio();
+    cy.expect([
+      itemsRadio.has({ checked: true }),
       recordIdentifierDropdown.find(HTML('Item barcode')).exists(),
       recordIdentifierDropdown.find(HTML('Item UUIDs')).exists(),
       recordIdentifierDropdown.find(HTML('Item HRIDs')).exists(),
@@ -192,7 +208,7 @@ export default {
     ]);
   },
 
-  verifyDragNDropExternalIdsArea() {
+  verifyDragNDropExternalIDsArea() {
     this.checkUsersRadio();
     this.selectRecordIdentifier('External IDs');
     cy.expect([
@@ -210,6 +226,10 @@ export default {
       HTML('Drag and drop or choose file with Usernames').exists(),
       fileButton.has({ disabled: false }),
     ]);
+  },
+
+  verifyDragNDropUpdateUsersArea() {
+    cy.expect(HTML('Select a file with record identifiers').exists());
   },
 
   verifyDragNDropHoldingsUUIDsArea() {
@@ -330,6 +350,14 @@ export default {
 
   clickToBulkEditMainButton() {
     cy.do(Button({ id: 'ModuleMainHeading' }).click());
+  },
+
+  verifyDefaultFilterState() {
+    cy.expect([
+      Button('or choose file').has({ disabled: true }),
+      HTML('Select record identifier').exists()
+    ]);
+    this.verifyBulkEditPaneItems();
   },
 
   verifyInputLabel(name) {

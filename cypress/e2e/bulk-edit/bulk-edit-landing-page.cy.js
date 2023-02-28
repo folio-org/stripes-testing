@@ -36,13 +36,13 @@ describe('bulk-edit', () => {
     BulkEditSearchPane.verifyRecordTypesAccordion();
 
     // verify identifier items
-    BulkEditSearchPane.verifyUsersRecordIdentifiers();
+    BulkEditSearchPane.verifyRecordIdentifierItems();
     BulkEditSearchPane.verifyDragNDropUsersUIIDsArea();
     BulkEditSearchPane.verifyDragNDropUsersBarcodesArea();
-    BulkEditSearchPane.verifyDragNDropExternalIdsArea();
+    BulkEditSearchPane.verifyDragNDropExternalIDsArea();
     BulkEditSearchPane.verifyDragNDropUsernamesArea();
 
-    BulkEditSearchPane.verifyItemsRecordIdentifiers();
+    BulkEditSearchPane.verifyItemIdentifiersDefaultState();
     BulkEditSearchPane.clickRecordTypesAccordion();
     BulkEditSearchPane.verifyRecordTypesAccordionCollapsed();
     BulkEditSearchPane.clickRecordTypesAccordion();
@@ -53,7 +53,7 @@ describe('bulk-edit', () => {
     BulkEditSearchPane.verifyDragNDropItemAccessionNumberArea();
     BulkEditSearchPane.verifyDragNDropItemHoldingsUUIDsArea();
 
-    BulkEditSearchPane.verifyHoldingsRecordIdentifiers();
+    BulkEditSearchPane.verifyHoldingIdentifiers();
     BulkEditSearchPane.verifyDragNDropHoldingsUUIDsArea();
     BulkEditSearchPane.verifyDragNDropHoldingsHRIDsArea();
     BulkEditSearchPane.verifyDragNDropInstanceHRIDsArea();
