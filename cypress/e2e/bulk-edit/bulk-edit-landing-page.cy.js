@@ -15,9 +15,7 @@ describe('bulk-edit', () => {
       permissions.bulkEditCsvView.gui,
       permissions.bulkEditCsvEdit.gui,
       permissions.bulkEditQueryView.gui,
-      permissions.uiInventoryViewCreateEditItems.gui,
-      permissions.uiInventoryViewCreateEditHoldings.gui,
-      permissions.uiUserEdit.gui,
+      permissions.bulkEditLogsView.gui,
     ])
       .then(userProperties => {
         user = userProperties;
@@ -35,22 +33,41 @@ describe('bulk-edit', () => {
     BulkEditSearchPane.verifyPanesBeforeImport();
     BulkEditSearchPane.verifyBulkEditPaneItems();
     BulkEditSearchPane.verifySetCriteriaPaneItems();
-    BulkEditSearchPane.verifyRecordsTypeItems();
+    BulkEditSearchPane.verifyRecordTypesAccordion();
 
     // verify identifier items
-    BulkEditSearchPane.verifyRecordIdentifierItems();
+    BulkEditSearchPane.verifyUsersRecordIdentifiers();
     BulkEditSearchPane.verifyDragNDropUsersUIIDsArea();
     BulkEditSearchPane.verifyDragNDropUsersBarcodesArea();
+    BulkEditSearchPane.verifyDragNDropExternalIdsArea();
+    BulkEditSearchPane.verifyDragNDropUsernamesArea();
+
+    BulkEditSearchPane.verifyItemsRecordIdentifiers();
+    BulkEditSearchPane.clickRecordTypesAccordion();
+    BulkEditSearchPane.verifyRecordTypesAccordionCollapsed();
+    BulkEditSearchPane.clickRecordTypesAccordion();
+    BulkEditSearchPane.verifyDragNDropItemBarcodeArea();
+    BulkEditSearchPane.verifyDragNDropItemUUIDsArea();
+    BulkEditSearchPane.verifyDragNDropItemHRIDsArea();
+    BulkEditSearchPane.verifyDragNDropItemFormerIdentifierArea();
+    BulkEditSearchPane.verifyDragNDropItemAccessionNumberArea();
+    BulkEditSearchPane.verifyDragNDropItemHoldingsUUIDsArea();
+    
+    BulkEditSearchPane.verifyHoldingsRecordIdentifiers();
+    BulkEditSearchPane.verifyDragNDropHoldingsUUIDsArea();
+    BulkEditSearchPane.verifyDragNDropHoldingsHRIDsArea();
+    BulkEditSearchPane.verifyDragNDropInstanceHRIDsArea();
+    BulkEditSearchPane.verifyDragNDropHoldingsItemBarcodesArea();
 
     // verify query items
     BulkEditSearchPane.openQuerySearch();
-    BulkEditSearchPane.verifyEmptyQueryPane();
-    BulkEditSearchPane.fillQuery('test text');
-    BulkEditSearchPane.verifyFilledQueryPane();
-    BulkEditSearchPane.resetQueryField();
+    BulkEditSearchPane.verifyQueryPane();
+    BulkEditSearchPane.clickRecordTypesAccordion();
+    BulkEditSearchPane.verifyRecordTypesAccordionCollapsed();
+    BulkEditSearchPane.clickRecordTypesAccordion();
 
-    // verify items radio
-    BulkEditSearchPane.checkItemsRadio();
-    BulkEditSearchPane.actionsIsAbsent();
+    // verify logs items
+    BulkEditSearchPane.openLogsSearch();
+    BulkEditSearchPane.verifyLogsPane();
   });
 });
