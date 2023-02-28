@@ -1,6 +1,9 @@
 import permissions from '../../support/dictionary/permissions';
 import devTeams from '../../support/dictionary/devTeams';
 import testType from '../../support/dictionary/testTypes';
+import moment from 'moment';
+import uuid from 'uuid';
+import getRandomPostfix from '../../support/utils/stringTools';
 import NewOrder from '../../support/fragments/orders/newOrder';
 import Orders from '../../support/fragments/orders/orders';
 import Receiving from '../../support/fragments/receiving/receiving';
@@ -10,9 +13,7 @@ import InventorySearchAndFilter from '../../support/fragments/inventory/inventor
 import Organizations from '../../support/fragments/organizations/organizations';
 import NewOrganization from '../../support/fragments/organizations/newOrganization';
 import OrderLines from '../../support/fragments/orders/orderLines';
-import Users from '../../support/fragments/users/users';
 import ItemRecordView from '../../support/fragments/inventory/itemRecordView';
-import getRandomPostfix from '../../support/utils/stringTools';
 import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
 import NewLocation from '../../support/fragments/settings/tenant/locations/newLocation';
 import InventoryInstance from '../../support/fragments/inventory/inventoryInstance';
@@ -20,11 +21,10 @@ import ItemActions from '../../support/fragments/inventory/inventoryItem/itemAct
 import ItemRecordEdit from '../../support/fragments/inventory/itemRecordEdit';
 import SwitchServicePoint from '../../support/fragments/servicePoint/switchServicePoint';
 import CheckInActions from '../../support/fragments/check-in-actions/checkInActions';
-import moment from 'moment';
-import uuid from 'uuid';
 import Checkout from '../../support/fragments/checkout/checkout';
+// import Users from '../../support/fragments/users/users';
 
-describe('orders: Receive piece from Order', () => {
+describe('orders: Receiving and Check-in', () => {
   const order = { 
     ...NewOrder.defaultOneTimeOrder,
     approved: true,
@@ -172,7 +172,7 @@ describe('orders: Receive piece from Order', () => {
     Orders.deleteOrderApi(order.id);
 
     Organizations.deleteOrganizationViaApi(organization.id);
-    // Need to find solution to delete all data, becouse now i cant delete location
+    // Need to find solution to delete all data, becouse now i cant delete location and user
     // NewLocation.deleteViaApiIncludingInstitutionCampusLibrary(
     //     location.institutionId,
     //     location.campusId,
