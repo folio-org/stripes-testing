@@ -104,6 +104,7 @@ export default {
       ediSection.find(TextField('Vendor EDI code*')).fillIn(vendorEDICode),
       ediSection.find(TextField('Library EDI code*')).fillIn(libraryEDICode),
       ediSection.find(Button({ icon: 'info' })).click(),
+      Checkbox({ name: 'exportTypeSpecificParameters.vendorEdiOrdersExportConfig.ediConfig.supportOrder' }).click(),
       Checkbox({ name: 'exportTypeSpecificParameters.vendorEdiOrdersExportConfig.ediConfig.supportInvoice' }).click(),
     ]);
     cy.get('select[name="exportTypeSpecificParameters.vendorEdiOrdersExportConfig.ediConfig.accountNoList"]').select(accountNumber);
@@ -118,6 +119,25 @@ export default {
       schedulingSection.find(Checkbox({ name: 'exportTypeSpecificParameters.vendorEdiOrdersExportConfig.ediSchedule.enableScheduledExport'})).click(),
       schedulingSection.find(TextField('Schedule frequency*')).fillIn('1'),
       schedulingSection.find(TextField('Time*')).fillIn(`${UTCTime}`),
+    ]);
+    cy.do(saveAndClose.click());
+  },
+
+  fillIntegrationInformationWithoutScheduling: (integrationName, integartionDescription, vendorEDICode, libraryEDICode, accountNumber, acquisitionMethod) => {
+    cy.do([
+      Section({ id: 'integrationInfo' }).find(TextField('Integration name*')).fillIn(integrationName),
+      TextArea('Description').fillIn(integartionDescription),
+      ediSection.find(TextField('Vendor EDI code*')).fillIn(vendorEDICode),
+      ediSection.find(TextField('Library EDI code*')).fillIn(libraryEDICode),
+      ediSection.find(Button({ icon: 'info' })).click(),
+      Checkbox({ name: 'exportTypeSpecificParameters.vendorEdiOrdersExportConfig.ediConfig.supportInvoice' }).click(),
+    ]);
+    cy.get('select[name="exportTypeSpecificParameters.vendorEdiOrdersExportConfig.ediConfig.accountNoList"]').select(accountNumber);
+    cy.get('select[name="exportTypeSpecificParameters.vendorEdiOrdersExportConfig.ediConfig.defaultAcquisitionMethods"]').select(acquisitionMethod);
+    cy.do([
+      ftpSection.find(Select('EDI FTP')).choose('FTP'),
+      ftpSection.find(TextField('Server address*')).fillIn(serverAddress),
+      ftpSection.find(TextField('FTP port*')).fillIn(FTPport),
     ]);
     cy.do(saveAndClose.click());
   },

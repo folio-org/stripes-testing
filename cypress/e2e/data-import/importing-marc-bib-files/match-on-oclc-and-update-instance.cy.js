@@ -34,6 +34,7 @@ describe('ui-data-import:', () => {
   };
   const oclcNumber = { type: 'OCLC', value: '(OCoLC)879516309' };
   const quantityOfItems = '1';
+  const actionForSuppress = 'Mark for all affected records';
 
   // profile names for creating
   const instanceCreateMapProfileName = `C11109 create mapping profile_${getRandomPostfix()}`;
@@ -120,16 +121,18 @@ describe('ui-data-import:', () => {
   });
 
   it('C11109 Update an instance based on an OCLC number match (folijet)',
-    { tags: [TestTypes.smoke, DevTeams.folijet] }, () => {
+    { tags: [TestTypes.criticalPath, DevTeams.folijet] }, () => {
       // create mapping profile for creating instance
       cy.visit(SettingsMenu.mappingProfilePath);
       FieldMappingProfiles.openNewMappingProfileForm();
       NewFieldMappingProfile.fillSummaryInMappingProfile(collectionOfMappingAndActionProfiles[0].mappingProfile);
-      NewFieldMappingProfile.addSuppressFromDiscovery();
+      NewFieldMappingProfile.addStaffSuppress(actionForSuppress);
+      NewFieldMappingProfile.addSuppressFromDiscovery(actionForSuppress);
+      NewFieldMappingProfile.addPreviouslyHeld(actionForSuppress);
       NewFieldMappingProfile.fillCatalogedDate(itemsForCreateInstance.catalogedDate);
       NewFieldMappingProfile.fillInstanceStatusTerm(itemsForCreateInstance.statusTerm);
       NewFieldMappingProfile.addStatisticalCode(itemsForCreateInstance.statisticalCode, 8);
-      NewFieldMappingProfile.addNatureOfContentTerms();
+      NewFieldMappingProfile.addNatureOfContentTerms('bibliography');
       FieldMappingProfiles.saveProfile();
       FieldMappingProfiles.closeViewModeForMappingProfile(instanceCreateMapProfileName);
       FieldMappingProfiles.checkMappingProfilePresented(instanceCreateMapProfileName);
@@ -215,6 +218,7 @@ describe('ui-data-import:', () => {
 
           cy.visit(TopMenu.inventoryPath);
           InventorySearchAndFilter.searchInstanceByHRID(instanceHrid);
+          InstanceRecordView.verifyMarkAsSuppressedFromDiscoveryAndSuppressed();
           InstanceRecordView.verifyInstanceStatusTerm(itemsForUpdateInstance.statusTerm);
           InstanceRecordView.verifyStatisticalCode(itemsForUpdateInstance.statisticalCodeUI);
           InventoryInstance.verifyResourceIdentifier(oclcNumber.type, oclcNumber.value, 2);

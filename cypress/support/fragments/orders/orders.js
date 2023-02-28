@@ -148,7 +148,7 @@ export default {
         .find(PaneHeader({ id: 'paneHeaderorder-details' })
           .find(actionsButton)).click(),
       Button('Unopen').click(),
-      Button('Submit').click()
+      Button({ id:'clickable-order-unopen-confirmation-confirm-delete-holdings' }).click()
     ]);
     InteractorsTools.checkCalloutMessage(`The Purchase order - ${orderNumber} has been successfully unopened`);
   },
@@ -529,10 +529,15 @@ export default {
   selectOngoingOrderTypeInPOForm:() => {
     cy.do(Select('Order type*').choose('Ongoing'));
   },
+
   checkEditedOngoingOrder: (orderNumber, organizationName) => {
     cy.expect(Pane({ id: 'order-details' }).exists());
     cy.expect(Accordion({ id: orderDetailsAccordionId }).find(KeyValue({ value: orderNumber })).exists());
     cy.expect(Accordion({ id: orderDetailsAccordionId }).find(KeyValue({ value: organizationName })).exists());
     cy.expect(Accordion({ id: orderDetailsAccordionId }).find(KeyValue({ value: 'Ongoing' })).exists());
-  }
+  },
+
+ errorMessage:(modalName, errorContent) => {
+    cy.expect(Modal(modalName).content(errorContent));
+  },
 };

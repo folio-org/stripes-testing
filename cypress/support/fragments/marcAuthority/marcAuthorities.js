@@ -9,6 +9,7 @@ export default {
   waitRows: () => cy.expect(rootSection.find(PaneHeader()).find(HTML(including('found')))),
   select:(specialInternalId) => cy.do(authoritiesList.find(Button({ href : including(specialInternalId) })).click()),
   selectFirst: (title) => cy.do(MultiColumnListRow({ index: 0 }).find(Button(title)).click()),
+  selectTitle: (title) => cy.do(Button(title).click()),
   selectItem: (item) => {
     cy.expect(MultiColumnListCell({content: item}).exists());
     cy.do(Button(including(item)).click());
