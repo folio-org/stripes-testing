@@ -107,7 +107,7 @@ describe('ui-data-import: Check that protected fields in incoming records are no
 
       // overlay source bibliographic record
       InventoryInstance.startOverlaySourceBibRecord();
-      InventoryInstance.singleRecordImportModalIsPresented();
+      InventoryInstance.singleOverlaySourceBibRecordModalIsPresented();
       InventoryInstance.importWithOclc(oclcForImport);
       InventoryInstance.checkCalloutMessage(`Updated record ${oclcForImport}`);
 
