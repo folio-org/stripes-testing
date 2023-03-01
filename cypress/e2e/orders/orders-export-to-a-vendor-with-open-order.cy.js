@@ -74,7 +74,7 @@ describe('orders: export', () => {
     Users.deleteViaApi(user.userId);
   });
 
-  it('C350398: Verify that Order is not exported to a definite Vendor if Automatic export option in Order PO Line is disabled', { tags: [TestTypes.smoke, devTeams.thunderjet] }, () => {
+  it('C350398: Verify that Order is not exported to a definite Vendor if Automatic export option in Order PO Line is disabled (thunderjet)', { tags: [TestTypes.smoke, devTeams.thunderjet] }, () => {
     Orders.createOrder(order, true, true).then(orderId => {
       order.id = orderId;
       Orders.createPOLineViaActions();

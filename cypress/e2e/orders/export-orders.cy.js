@@ -77,7 +77,7 @@ describe('orders: export', () => {
     FileManager.deleteFolder(Cypress.config('downloadsFolder'));
   });
 
-  it('C196749 Export orders based on orders search', { tags: [TestTypes.smoke, devTeams.thunderjet] }, () => {
+  it('C196749 Export orders based on orders search (thunderjet)', { tags: [TestTypes.smoke, devTeams.thunderjet] }, () => {
     Orders.selectOpenStatusFilter();
     Orders.exportResoultsCSV();
   });
