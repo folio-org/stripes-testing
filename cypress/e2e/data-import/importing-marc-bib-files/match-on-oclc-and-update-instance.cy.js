@@ -18,7 +18,7 @@ import MatchProfiles from '../../../support/fragments/data_import/match_profiles
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 import InstanceRecordView from '../../../support/fragments/inventory/instanceRecordView';
 
-describe('ui-data-import:', () => {
+describe('ui-data-import', () => {
   let instanceHrid;
   const itemsForCreateInstance = {
     catalogedDate: '###TODAY###',
