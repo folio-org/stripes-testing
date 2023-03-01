@@ -1,4 +1,4 @@
-import { MultiColumnList, Callout, PaneContent, or, PaneHeader, Section, HTML, including, Button, MultiColumnListCell, MultiColumnListRow, SearchField } from '../../../../interactors';
+import { MultiColumnList, Callout, PaneContent, PaneHeader, Section, HTML, including, Button, MultiColumnListCell, MultiColumnListRow, SearchField } from '../../../../interactors';
 
 const rootSection = Section({ id: 'authority-search-results-pane' });
 const authoritiesList = rootSection.find(MultiColumnList({ id: 'authority-result-list' }));
