@@ -314,7 +314,7 @@ export default {
       Accordion('End date').has({ open: false }),
       bulkEditPane.find(HTML('Enter search criteria to start search')).exists(),
       bulkEditPane.find(HTML('Choose a filter or enter a search query to show results.')).exists(),
-    ])
+    ]);
   },
 
   verifyCsvViewPermission() {
@@ -368,12 +368,24 @@ export default {
     cy.do(usersRadio.click());
   },
 
+  usersRadioIsDisabled(isDisabled) {
+    cy.expect(usersRadio.has({ disabled: isDisabled }));
+  },
+
   checkItemsRadio() {
     cy.do(itemsRadio.click());
   },
 
+  itemsRadioIsDisabled(isDisabled) {
+    cy.expect(itemsRadio.has({ disabled: isDisabled }));
+  },
+
   checkHoldingsRadio() {
     cy.do(holdingsRadio.click());
+  },
+
+  itemsHoldingsIsDisabled(isDisabled) {
+    cy.expect(holdingsRadio.has({ disabled: isDisabled }));
   },
 
   uploadFile(fileName) {
