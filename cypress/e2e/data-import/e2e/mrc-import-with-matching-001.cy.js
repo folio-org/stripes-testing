@@ -11,7 +11,6 @@ import NewActionProfile from '../../../support/fragments/data_import/action_prof
 import ActionProfiles from '../../../support/fragments/data_import/action_profiles/actionProfiles';
 import NewJobProfile from '../../../support/fragments/data_import/job_profiles/newJobProfile';
 import ExportFile from '../../../support/fragments/data-export/exportFile';
-import ExportMarcFile from '../../../support/fragments/data-export/export-marc-file';
 import FileManager from '../../../support/utils/fileManager';
 import TestTypes from '../../../support/dictionary/testTypes';
 import SettingsMenu from '../../../support/fragments/settingsMenu';
@@ -71,14 +70,14 @@ describe('ui-data-import: MARC-MARC matching for 001 field', () => {
         cy.visit(TopMenu.inventoryPath);
         InventorySearchAndFilter.searchInstanceByHRID(hrId[0]);
         InventorySearchAndFilter.saveUUIDs();
-        ExportMarcFile.downloadCSVFile(nameForCSVFile, 'SearchInstanceUUIDs*');
+        ExportFile.downloadCSVFile(nameForCSVFile, 'SearchInstanceUUIDs*');
         FileManager.deleteFolder(Cypress.config('downloadsFolder'));
         cy.visit(TopMenu.dataExportPath);
 
         // download exported marc file
         ExportFile.uploadFile(nameForCSVFile);
-        ExportFile.exportWithDefaultInstancesJobProfile(nameForCSVFile);
-        ExportMarcFile.downloadExportedMarcFile(nameForExportedMarcFile);
+        ExportFile.exportWithDefaultJobProfile(nameForCSVFile);
+        ExportFile.downloadExportedMarcFile(nameForExportedMarcFile);
         FileManager.deleteFolder(Cypress.config('downloadsFolder'));
 
         // create Match profile

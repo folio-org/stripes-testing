@@ -20,6 +20,7 @@ import MarcAuthority from '../marcAuthority/marcAuthority';
 import MarcAuthoritiesSearch from '../marcAuthority/marcAuthoritiesSearch';
 import MarcAuthorities from '../marcAuthority/marcAuthorities';
 import FileManager from '../../utils/fileManager';
+import Logs from './logs/logs';
 
 const sectionPaneJobsTitle = Section({ id: 'pane-jobs-title' });
 const actionsButton = Button('Actions');
@@ -32,6 +33,7 @@ const deleteLogsModalConfirmButton = deleteLogsModal.find(Button('Yes, delete'))
 const logsPane = Pane('Logs');
 const logsPaneHeader = PaneHeader({ id: 'paneHeaderpane-logs-title' });
 const jobsPane = Pane({ id: 'pane-jobs-title' });
+const orChooseFilesButton = Button('or choose files');
 
 const uploadFile = (filePathName, fileName) => {
   cy.get('input[type=file]', getLongDelay()).attachFile({ filePath: filePathName, fileName });
@@ -78,10 +80,93 @@ const importFile = (profileName, uniqueFileName) => {
   });
 };
 
+function uploadDefinitions(keyValue, fileName) {
+  return cy.okapiRequest({
+    path: 'data-import/uploadDefinitions',
+    body: { fileDefinitions: [{
+      uiKey: keyValue,
+      size: 2,
+      name: fileName
+    }] },
+    method: 'POST',
+    isDefaultSearchParamsRequired: false
+  });
+}
+
+function uploadBinaryMarcFile(fileName, uploadDefinitionId, fileId) {
+  // convert file content in binary format (it's correct format for import)
+  cy.fixture(fileName, 'binary')
+    .then(binary => Cypress.Blob.binaryStringToBlob(binary))
+    .then(blob => {
+      cy.wait(1500);
+      cy.okapiRequest({
+        path: `data-import/uploadDefinitions/${uploadDefinitionId}/files/${fileId}`,
+        method: 'POST',
+        body: blob,
+        isDefaultSearchParamsRequired: false,
+        contentTypeHeader: 'application/octet-stream'
+      });
+    });
+}
+
+function uploadDefinitionWithId(uploadDefinitionId) {
+  return cy.okapiRequest({
+    path: `data-import/uploadDefinitions/${uploadDefinitionId}`,
+    isDefaultSearchParamsRequired: false
+  });
+}
+
+function processFile(uploadDefinitionId, fileId, sourcePath, jobExecutionId, uiKeyValue, jobProfileId, metaJobExecutionId, date) {
+  return cy.okapiRequest({
+    path: `data-import/uploadDefinitions/${uploadDefinitionId}/processFiles`,
+    method: 'POST',
+    body: {
+      uploadDefinition: {
+        id: uploadDefinitionId,
+        metaJobExecutionId,
+        status: 'LOADED',
+        createDate: date,
+        fileDefinitions: [
+          {
+            id: fileId,
+            sourcePath,
+            name: 'oneMarcBib.mrc',
+            status: 'UPLOADED',
+            jobExecutionId,
+            uploadDefinitionId,
+            createDate: date,
+            uploadedDate: date,
+            size: 2,
+            uiKey: uiKeyValue
+          }
+        ]
+      },
+      jobProfileInfo: {
+        id: jobProfileId,
+        name: 'Default - Create instance and SRS MARC Bib',
+        dataType: 'MARC'
+      }
+    },
+    isDefaultSearchParamsRequired: false
+  });
+}
+
 export default {
   importFile,
   uploadFile,
   waitLoading,
+  uploadDefinitions,
+  uploadBinaryMarcFile,
+  processFile,
+
+  importFileForBrowse(profileName, fileName) {
+    JobProfiles.waitLoadingList();
+    JobProfiles.searchJobProfileForImport(profileName);
+    JobProfiles.runImportFile();
+    JobProfiles.waitFileIsImported(fileName);
+    Logs.checkStatusOfJobProfile('Completed');
+    Logs.openFileDetails(fileName);
+  },
 
   uploadExportedFile(fileName) {
     cy.get('input[type=file]', getLongDelay()).attachFile(fileName);
@@ -115,14 +200,14 @@ export default {
     cy.then(() => DataImportUploadFile().isDeleteFilesButtonExists()).then(isDeleteFilesButtonExists => {
       if (isDeleteFilesButtonExists) {
         cy.do(Button('Delete files').click());
-        cy.expect(Button('or choose files').exists());
+        cy.expect(orChooseFilesButton.exists());
         cy.allure().endStep();
       }
     });
   },
 
   checkIsLandingPageOpened: () => {
-    cy.expect(jobsPane.find(Button('or choose files')).exists());
+    cy.expect(jobsPane.find(orChooseFilesButton).exists());
     cy.expect(logsPaneHeader.find(actionsButton).exists());
   },
 
@@ -233,4 +318,32 @@ export default {
         FileManager.createFile(`cypress/fixtures/${finalFileName}`, content.join('\n'));
       });
   },
+
+  uploadFileViaApi:(filePathName, fileName) => {
+    const uiKeyValue = fileName;
+
+    uploadDefinitions(uiKeyValue, fileName)
+      .then((response) => {
+        const uploadDefinitionId = response.body.fileDefinitions[0].uploadDefinitionId;
+        const fileId = response.body.fileDefinitions[0].id;
+        const jobExecutionId = response.body.fileDefinitions[0].jobExecutionId;
+        const jobProfileId = 'e34d7b92-9b83-11eb-a8b3-0242ac130003';
+
+        uploadBinaryMarcFile(filePathName, uploadDefinitionId, fileId);
+        // need to wait until file will be converted and uploaded
+        cy.wait(1500);
+        uploadDefinitionWithId(uploadDefinitionId)
+          .then(res => {
+            const sourcePath = res.body.fileDefinitions[0].sourcePath;
+            const metaJobExecutionId = res.body.metaJobExecutionId;
+            const date = res.body.createDate;
+
+            processFile(uploadDefinitionId, fileId, sourcePath, jobExecutionId, uiKeyValue, jobProfileId, metaJobExecutionId, date);
+          });
+      });
+  },
+
+  checkChooseFileButtonState: ({ isDisabled }) => {
+    cy.expect(orChooseFilesButton.has({ disabled: isDisabled }));
+  }
 };

@@ -123,7 +123,7 @@ describe('Export Loans ', () => {
     Users.deleteViaApi(userData.userId).then(
       () => itemsData.itemsWithSeparateInstance.forEach(
         (item, index) => {
-          cy.deleteItem(item.itemId);
+          cy.deleteItemViaApi(item.itemId);
           cy.deleteHoldingRecordViaApi(itemsData.itemsWithSeparateInstance[index].holdingId);
           InventoryInstance.deleteInstanceViaApi(itemsData.itemsWithSeparateInstance[index].instanceId);
         }

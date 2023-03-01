@@ -12,7 +12,8 @@ import {
   Pane,
   Checkbox,
   MultiColumnListCell,
-  Modal
+  Modal,
+  Link
 } from '../../../../../interactors';
 import UrlParams from '../url-params';
 import InteractorsTools from '../../../utils/interactorsTools';
@@ -25,7 +26,7 @@ function getCheckboxByRow(row) {
   return MultiColumnList().find(MultiColumnListCell({ 'row': row, 'columnIndex': 0 })).find(Checkbox());
 }
 
-const verifyMessageOfDeteted = (quantity) => {
+const verifyMessageOfDeleted = (quantity) => {
   InteractorsTools.checkCalloutMessage(`${quantity} data import logs have been successfully deleted.`);
   InteractorsTools.closeCalloutMessage();
 };
@@ -69,18 +70,11 @@ function checkByUserName(userName) {
 }
 
 export default {
-  verifyMessageOfDeteted,
+  verifyMessageOfDeleted,
   waitUIToBeFiltered,
   checkByErrorsInImport,
   checkByUserName,
   columnName,
-
-  openViewAll() {
-    cy.do([
-      Button('Actions').click(),
-      Button('View all logs').click()
-    ]);
-  },
 
   selectOption(option) {
     return cy.do([Select({ id: 'input-job-logs-search-qindex' }).choose(option)]);
@@ -89,6 +83,8 @@ export default {
   searchWithTerm(term) {
     cy.get('#input-job-logs-search').clear().type(term);
     cy.do(Button('Search').click());
+    // need to wait until search list is populated
+    cy.wait(1500);
   },
 
   checkRowsCount(rowCount) {
@@ -110,7 +106,7 @@ export default {
 
   errorsInImportStatuses: ['No', 'Yes'],
 
-  singleRecordImportsStatuses: ['No', 'Yes'],
+  singleRecordImportsStatuses: ['Yes', 'No'],
 
   resetAllFilters() {
     cy.do(Button('Reset all').click());
@@ -147,22 +143,19 @@ export default {
     ]);
   },
 
+  openUserIdAccordion() {
+    cy.do(Accordion({ id: 'userId' }).clickHeader());
+  },
+
   filterJobsByUser(user) {
     cy.do([
-      Accordion({ id: 'userId' }).clickHeader(),
       Selection({ singleValue: 'Choose user' }).open(),
       SelectionList().select(user)
     ]);
   },
 
   filterJobsByInventorySingleRecordImports(filter) {
-    if (filter === 'Yes') {
-      cy.do(singleRecordImportsAccordion
-        .find(Checkbox({ id: 'clickable-filter-singleRecordImports-yes' })).click());
-    } else {
-      cy.do(singleRecordImportsAccordion
-        .find(Checkbox({ id: 'clickable-filter-singleRecordImports-no' })).click());
-    }
+    cy.do(singleRecordImportsAccordion.find(Checkbox({ name: filter.toLowerCase() })).click());
   },
 
   // TODO: redesign to interactors
@@ -230,6 +223,8 @@ export default {
   },
 
   checkByInventorySingleRecord(filter) {
+    // need to wait until selected data will be displayed
+    cy.wait(2000);
     return cy.get('#list-data-import').then(element => {
       // only 100 records shows on every page
       const resultCount = element.attr('data-total-count') > 99 ? 99 : element.attr('data-total-count');
@@ -324,7 +319,7 @@ export default {
     cy.do(Accordion({ id: 'singleRecordImports' }).clickHeader());
   },
 
-  openUserAccordion:() => {
-    cy.do(Accordion({ id: 'userId' }).clickHeader());
+  openFileDetails:(fileName) => {
+    cy.do(MultiColumnList({ id:'list-data-import' }).find(Link(fileName)).click());
   }
 };

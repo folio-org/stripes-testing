@@ -4,22 +4,15 @@ import getRandomPostfix from '../../../utils/stringTools';
 
 const rootPane = Pane({ id: 'controlled-vocab-pane' });
 const ownerSelect = rootPane.find(Select({ id:'select-owner' }));
-const refineMethodAllowedSelect = rootPane.find(Select({ name: including('allowedRefundMethod') }));
 
 const newButton = rootPane.find(Button({ id:'clickable-add-settings-payments' }));
 const saveButton = rootPane.find(Button({ id:including('clickable-save-settings-payments') }));
 const nameTextField = rootPane.find(TextField({ placeholder:'nameMethod' }));
 
 const save = () => { cy.do(saveButton.click()); };
-const defaultPaymentMethod = { name : `testPaymentName${getRandomPostfix()}`,
-  refundMethodAllowed: { value: true, visibleValue: 'Yes' } };
+const defaultPaymentMethod = { name : `testPaymentName${getRandomPostfix()}` };
 
-const fillRequiredFields = (paymentMethod = defaultPaymentMethod) => {
-  cy.do(nameTextField.fillIn(paymentMethod.name));
-  if (!paymentMethod.refundMethodAllowed.value) {
-    cy.do(refineMethodAllowedSelect.choose('No'));
-  }
-};
+const fillRequiredFields = (paymentMethod = defaultPaymentMethod) => cy.do(nameTextField.fillIn(paymentMethod.name));
 
 const findRowIndex = (paymentMethodName) => cy.then(() => rootPane.find(MultiColumnListCell(paymentMethodName)).row());
 
@@ -43,14 +36,10 @@ export default {
     cy.expect(nameTextField.has({ error:'Please fill this in to continue' }));
     // red icon
     cy.expect(TextFieldIcon().has({ id: including('validation-error') }));
-    // default value
-    cy.expect(Select({ name: including('allowedRefundMethod') }).has({ value: 'true' }));
   },
   fillRequiredFields,
   checkCreatedRecord:(paymentMethod = defaultPaymentMethod) => {
-    findRowIndex(paymentMethod.name).then(rowNumber => {
-      cy.expect(rootPane.find(MultiColumnListRow({ rowIndexInParent :  `row-${rowNumber - 2}` })).find(MultiColumnListCell(paymentMethod.refundMethodAllowed.visibleValue)).exists());
-    });
+    cy.expect(rootPane.find(MultiColumnListCell(paymentMethod.name)).exists());
   },
   deleteViaApi: (paymentMethodId) => {
     cy.okapiRequest({

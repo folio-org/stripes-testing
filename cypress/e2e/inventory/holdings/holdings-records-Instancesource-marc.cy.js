@@ -1,9 +1,6 @@
-/// <reference types="cypress" />
-
 import TopMenu from '../../../support/fragments/topMenu';
 import HoldingsRecordView from '../../../support/fragments/inventory/holdingsRecordView';
 import TestTypes from '../../../support/dictionary/testTypes';
-import Features from '../../../support/dictionary/features';
 import InventoryNewHoldings from '../../../support/fragments/inventory/inventoryNewHoldings';
 import InventoryActions from '../../../support/fragments/inventory/inventoryActions';
 import InventorySteps from '../../../support/fragments/inventory/inventorySteps';
@@ -13,7 +10,7 @@ import InventoryInstance from '../../../support/fragments/inventory/inventoryIns
 import DevTeams from '../../../support/dictionary/devTeams';
 import Z3950TargetProfiles from '../../../support/fragments/settings/inventory/z39.50TargetProfiles';
 
-describe('Manage holding records with MARC source', () => {
+describe('Manage holding records with MARC source', { retries: 2 }, () => {
   before(() => {
     cy.getAdminToken().then(() => {
       Z3950TargetProfiles.changeOclcWorldCatValueViaApi('100473910/PAOLF');
@@ -28,7 +25,9 @@ describe('Manage holding records with MARC source', () => {
     InventorySteps.addMarcHoldingRecord();
   });
   
-  it('C345409 MARC instance record + MARC holdings record (spitfire)', { tags: [TestTypes.smoke, DevTeams.spitfire, Features.holdingsRecord] }, () => {
+  it('C345409 MARC instance record + MARC holdings record (spitfire)', { tags: [TestTypes.smoke, DevTeams.spitfire] }, () => {
+    // waiting until page loading
+    cy.wait(10000);
     HoldingsRecordView.getId().then(initialHoldindsRecordId => {
       HoldingsRecordView.checkSource('MARC');
       HoldingsRecordView.checkActionsMenuOptionsInMarcSource();

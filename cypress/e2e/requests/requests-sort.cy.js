@@ -38,7 +38,7 @@ describe('ui-requests: Sort requests', () => {
 
   afterEach(() => {
     instances.forEach(instance => {
-      cy.deleteItem(instance.itemId);
+      cy.deleteItemViaApi(instance.itemId);
       cy.deleteHoldingRecordViaApi(instance.holdingId);
       InventoryInstance.deleteInstanceViaApi(instance.instanceId);
     });

@@ -115,9 +115,10 @@ export default {
       ]);
     },
     selectCalendar(calendarName) {
-      cy.do(
+      cy.do([
         Pane('All calendars').find(MultiColumnListCell(calendarName, { column: 'Calendar name' })).click(),
-      );
+        Pane(calendarName).exists()
+      ]);
     },
     checkCalendarExists(calendarName) {
       cy.do([
@@ -365,6 +366,7 @@ export default {
     selectCalendarByCalendarName(calendarName) {
       cy.do([
         Pane('Current calendar assignments').find(MultiColumnListCell(calendarName, { column: 'Calendar name' })).click(),
+        Pane(calendarName).exists()
       ]);
     },
 

@@ -12,6 +12,7 @@ import {
 import DateTools from '../../utils/dateTools';
 
 const dropdownButton = MultiColumnListRow({ rowIndexInParent: 'row-0' }).find(Dropdown()).find(Button());
+const actionsButton = Button('Actions');
 
 
 // TODO: will rework to interactor when we get section id
@@ -55,14 +56,21 @@ export default {
     cy.do([
       Accordion({ id: 'loan' }).clickHeader(),
       Checkbox({ id: 'clickable-filter-loan-changed-due-date' }).click()
-    ])
+    ]);
   },
 
   searchByClaimedReturned() {
     cy.do([
       Accordion({ id: 'loan' }).clickHeader(),
       Checkbox({ id: 'clickable-filter-loan-claimed-returned' }).click()
-    ])
+    ]);
+  },
+
+  searchByMarkedAsMissing() {
+    cy.do([
+      Accordion({ id: 'loan' }).clickHeader(),
+      Checkbox({ id: 'clickable-filter-loan-marked-as-missing' }).click()
+    ]);
   },
 
   resetFilters() {
@@ -81,7 +89,7 @@ export default {
         date: MultiColumnListCell({ row: rowNumber, columnIndex: 4, content: matching(dateRegEx) }),
         servicePoint: MultiColumnListCell({ row: rowNumber, columnIndex: 5, content: matching(/\w|/) }),
         source: MultiColumnListCell({ row: rowNumber, columnIndex: 6, content: matching(/\w|/) }),
-        description: MultiColumnListCell({ row: rowNumber, columnIndex: 7, content: matching(/\w/) })
+        description: MultiColumnListCell({ row: rowNumber, columnIndex: 7, content: matching(/\w|/) })
       };
     }
 
@@ -118,8 +126,13 @@ export default {
 
   checkResultSearch(searchResults, rowIndex = 0) {
     return cy.wrap(Object.values(searchResults)).each(contentToCheck => {
-      cy.expect(MultiColumnListRow({ indexRow: `row-${rowIndex}` }).find(MultiColumnListCell({ content: including(contentToCheck) })).exists())
+      cy.expect(MultiColumnListRow({ indexRow: `row-${rowIndex}` }).find(MultiColumnListCell({ content: including(contentToCheck) })).exists());
     });
+  },
+
+  // TODO check if we can use it using MultiColumnRow
+  findResultRowIndexByContent(content) {
+    return cy.get('*[class^="mclCell"]').contains(content).parent().invoke('attr', 'data-row-inner');
   },
 
   filterByLastWeek() {
@@ -145,5 +158,12 @@ export default {
 
   userDetailIsOpen() {
     cy.expect(Pane({ id: 'pane-userdetails' }).exists());
+  },
+
+  exportResults() {
+    cy.do([
+      actionsButton.click(),
+      Button('Export results (CSV)').click(),
+    ]);
   },
 };

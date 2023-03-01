@@ -24,6 +24,9 @@ import UsersSearchPane from '../../support/fragments/users/usersSearchPane';
 import UsersCard from '../../support/fragments/users/usersCard';
 import Location from '../../support/fragments/settings/tenant/locations/newLocation';
 import ConfirmClaimReturnedModal from '../../support/fragments/users/loans/confirmClaimReturnedModal';
+import CirculationRules from '../../support/fragments/circulation/circulation-rules';
+import LostItemFeePolicy from '../../support/fragments/circulation/lost-item-fee-policy';
+
 
 function getClaimedReturnedLoansQuantity(loansArray) {
   let res = 0;
@@ -35,6 +38,7 @@ function getClaimedReturnedLoansQuantity(loansArray) {
 }
 
 describe('Loans ', () => {
+  let originalCirculationRules;
   let defaultLocation;
   const reasonWhyItemIsClaimedOut = 'reason why the item is claimed out';
   const reasonWhyItemIsDeclaredLost = 'reason why the item is declared lost';
@@ -64,6 +68,26 @@ describe('Loans ', () => {
       instanceTitle: `Instance ${getRandomPostfix()}`,
     }]
   };
+  const lostItemFeePolicyBody = {
+    name: 'claim_returned' + getRandomPostfix(),
+    chargeAmountItem: {
+      chargeType: 'actualCost',
+      amount: '0.00',
+    },
+    lostItemProcessingFee: '0.00',
+    chargeAmountItemPatron: true,
+    chargeAmountItemSystem: true,
+    lostItemChargeFeeFine: {
+      duration: 2,
+      intervalId: 'Days',
+    },
+    returnedLostItemProcessingFee: true,
+    lostItemReturned: 'Charge',
+    replacedLostItemProcessingFee: true,
+    replacementAllowed: true,
+    replacementProcessingFee: '0.00',
+    id: uuid(),
+  };
 
   const showOpenedUserLoansInUserCard = ({ username }) => {
     cy.visit(TopMenu.usersPath);
@@ -84,7 +108,7 @@ describe('Loans ', () => {
     cy.getAdminToken().then(() => {
       cy.getInstanceTypes({ limit: 1 }).then((instanceTypes) => { testData.instanceTypeId = instanceTypes[0].id; });
       cy.getHoldingTypes({ limit: 1 }).then((res) => { testData.holdingTypeId = res[0].id; });
-      cy.getLoanTypes({ limit: 1 }).then((res) => { testData.loanTypeId = res[0].id; });
+      cy.createLoanType({ name: `type_${getRandomPostfix()}` }).then((loanType) => { testData.loanTypeId = loanType.id; });
       cy.getMaterialTypes({ limit: 1 }).then((res) => { testData.materialTypeId = res.id; });
       UsersOwners.createViaApi({ ...UsersOwners.getDefaultNewOwner(uuid(), 'owner'), servicePointOwner: [{ value: servicePoint.id, label: servicePoint.name }] }).then(({ id, ownerName }) => {
         ownerData.name = ownerName;
@@ -114,6 +138,13 @@ describe('Loans ', () => {
           itemsData.itemsWithSeparateInstance[index].itemId = specialInstanceIds.holdingIds[0].itemIds;
         });
       });
+    });
+    LostItemFeePolicy.createViaApi(lostItemFeePolicyBody);
+    CirculationRules.getViaApi().then((circulationRule) => {
+      originalCirculationRules = circulationRule.rulesAsText;
+      const ruleProps = CirculationRules.getRuleProps(circulationRule.rulesAsText);
+      ruleProps.i = lostItemFeePolicyBody.id;
+      CirculationRules.addRuleViaApi(originalCirculationRules, ruleProps, 't ', testData.loanTypeId);
     });
     cy.createTempUser([permissions.checkinAll.gui,
       permissions.uiUsersViewLoans.gui,
@@ -161,12 +192,15 @@ describe('Loans ', () => {
       .then(
         () => itemsData.itemsWithSeparateInstance.forEach(
           (item, index) => {
-            cy.deleteItem(item.itemId);
+            cy.deleteItemViaApi(item.itemId);
             cy.deleteHoldingRecordViaApi(itemsData.itemsWithSeparateInstance[index].holdingId);
             InventoryInstance.deleteInstanceViaApi(itemsData.itemsWithSeparateInstance[index].instanceId);
           }
         )
       );
+    LostItemFeePolicy.deleteViaApi(lostItemFeePolicyBody.id);
+    CirculationRules.deleteRuleViaApi(originalCirculationRules);
+    cy.deleteLoanType(testData.loanTypeId);
     Location.deleteViaApiIncludingInstitutionCampusLibrary(
       defaultLocation.institutionId,
       defaultLocation.campusId,

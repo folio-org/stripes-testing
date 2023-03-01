@@ -3,10 +3,12 @@
  */
 
 
-import {
+import DateTools from './dateTools';
+
+const {
   dateFromYYYYMMDD,
   toStartOfDay,
-} from './uiCalendar_DateUtils';
+} = DateTools.uiCalendar;
 
 function getCalendarAssignmentsString(calendar) {
   let result = '';

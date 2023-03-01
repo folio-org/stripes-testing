@@ -135,7 +135,7 @@ describe('ui-data-import: Match on POL and update related Instance with source M
     Users.deleteViaApi(user.userId);
     cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${instanceHrid}"` })
       .then((instance) => {
-        cy.deleteItem(instance.items[0].id);
+        cy.deleteItemViaApi(instance.items[0].id);
         cy.deleteHoldingRecordViaApi(instance.holdings[0].id);
         InventoryInstance.deleteInstanceViaApi(instance.id);
       });
@@ -190,80 +190,81 @@ describe('ui-data-import: Match on POL and update related Instance with source M
     OrderLines.savePol();
   };
 
-  it('C350944 Match on POL and update related Instance with source MARC, create Holdings, Item records. (folijet)', { tags: [TestTypes.smoke, DevTeams.folijet] }, () => {
+  it('C350944 Match on POL and update related Instance with source MARC, create Holdings, Item records. (folijet)',
+    { tags: [TestTypes.criticalPath, DevTeams.folijet] }, () => {
     // create mapping profiles
-    cy.visit(SettingsMenu.mappingProfilePath);
-    createInstanceMappingProfile(collectionOfProfiles[0].mappingProfile);
-    FieldMappingProfiles.checkMappingProfilePresented(collectionOfProfiles[0].mappingProfile.name);
-    createHoldingsMappingProfile(collectionOfProfiles[1].mappingProfile);
-    FieldMappingProfiles.checkMappingProfilePresented(collectionOfProfiles[1].mappingProfile.name);
-    createItemMappingProfile(collectionOfProfiles[2].mappingProfile);
-    FieldMappingProfiles.checkMappingProfilePresented(collectionOfProfiles[2].mappingProfile.name);
+      cy.visit(SettingsMenu.mappingProfilePath);
+      createInstanceMappingProfile(collectionOfProfiles[0].mappingProfile);
+      FieldMappingProfiles.checkMappingProfilePresented(collectionOfProfiles[0].mappingProfile.name);
+      createHoldingsMappingProfile(collectionOfProfiles[1].mappingProfile);
+      FieldMappingProfiles.checkMappingProfilePresented(collectionOfProfiles[1].mappingProfile.name);
+      createItemMappingProfile(collectionOfProfiles[2].mappingProfile);
+      FieldMappingProfiles.checkMappingProfilePresented(collectionOfProfiles[2].mappingProfile.name);
 
-    // create action profiles
-    collectionOfProfiles.forEach(profile => {
-      cy.visit(SettingsMenu.actionProfilePath);
-      ActionProfiles.create(profile.actionProfile, profile.mappingProfile.name);
-      ActionProfiles.checkActionProfilePresented(profile.actionProfile.name);
+      // create action profiles
+      collectionOfProfiles.forEach(profile => {
+        cy.visit(SettingsMenu.actionProfilePath);
+        ActionProfiles.create(profile.actionProfile, profile.mappingProfile.name);
+        ActionProfiles.checkActionProfilePresented(profile.actionProfile.name);
+      });
+
+      // create match profile
+      cy.visit(SettingsMenu.matchProfilePath);
+      MatchProfiles.createMatchProfile(matchProfile);
+      MatchProfiles.checkMatchProfilePresented(matchProfile.profileName);
+
+      // create job profile
+      cy.visit(SettingsMenu.jobProfilePath);
+      JobProfiles.createJobProfile(jobProfile);
+      NewJobProfile.linkMatchAndThreeActionProfiles(matchProfileName, actionProfileNameForInstance, actionProfileNameForHoldings, actionProfileNameForItem);
+      NewJobProfile.saveAndClose();
+      JobProfiles.checkJobProfilePresented(jobProfile.profileName);
+
+      // upload a marc file for creating of the new instance, holding and item
+      cy.visit(TopMenu.dataImportPath);
+      DataImport.uploadFile('marcFileForC350944.mrc', nameMarcFileForCreate);
+      JobProfiles.searchJobProfileForImport('Default - Create instance and SRS MARC Bib');
+      JobProfiles.runImportFile();
+      JobProfiles.waitFileIsImported(nameMarcFileForCreate);
+      Logs.openFileDetails(nameMarcFileForCreate);
+      FileDetails.checkItemsStatusesInResultList(0, [FileDetails.status.created, FileDetails.status.created]);
+      FileDetails.checkItemsStatusesInResultList(1, [FileDetails.status.created, FileDetails.status.created]);
+
+      // create PO with POL
+      cy.visit(TopMenu.ordersPath);
+      Orders.createOrder(order, true).then(orderId => {
+        Orders.getOrdersApi({ limit: 1, query: `"id"=="${orderId}"` })
+          .then(res => {
+            orderNumber = res[0].poNumber;
+            Orders.checkIsOrderCreated(orderNumber);
+            addPolToOrder(pol.title, pol.acquisitionMethod, pol.orderFormat, pol.price, pol.quantity, pol.createInventory, pol.materialType);
+            OrderLines.backToEditingOrder();
+            Orders.openOrder();
+
+            // change file using order number
+            DataImport.editMarcFile('marcFileForC350944.mrc', editedMarcFileName, ['test'], [orderNumber]);
+          });
+      });
+
+      // upload .mrc file
+      cy.visit(TopMenu.dataImportPath);
+      DataImport.checkIsLandingPageOpened();
+      DataImport.uploadFile(editedMarcFileName, marcFileName);
+      JobProfiles.searchJobProfileForImport(jobProfileName);
+      JobProfiles.runImportFile();
+      JobProfiles.waitFileIsImported(marcFileName);
+      Logs.checkStatusOfJobProfile();
+      Logs.openFileDetails(marcFileName);
+      FileDetails.checkItemsStatusesInResultList(0, [FileDetails.status.updated, FileDetails.status.updated, FileDetails.status.created, FileDetails.status.created]);
+      FileDetails.checkItemsStatusesInResultList(1, [FileDetails.status.dash, FileDetails.status.discarded]);
+
+      FileDetails.openInstanceInInventory('Updated');
+      InventoryInstance.getAssignedHRID().then(initialInstanceHrId => { instanceHrid = initialInstanceHrId; });
+      InventoryInstance.checkIsInstanceUpdated();
+      InventoryInstance.checkIsHoldingsCreated(['Main Library >']);
+      InventoryInstance.openHoldingsAccordion('Main Library >');
+      InventoryInstance.checkIsItemCreated('242451241241');
+      InventoryInstance.viewSource();
+      InventoryViewSource.verifyBarcodeInMARCBibSource('242451241241');
     });
-
-    // create match profile
-    cy.visit(SettingsMenu.matchProfilePath);
-    MatchProfiles.createMatchProfile(matchProfile);
-    MatchProfiles.checkMatchProfilePresented(matchProfile.profileName);
-
-    // create job profile
-    cy.visit(SettingsMenu.jobProfilePath);
-    JobProfiles.createJobProfile(jobProfile);
-    NewJobProfile.linkMatchAndThreeActionProfiles(matchProfileName, actionProfileNameForInstance, actionProfileNameForHoldings, actionProfileNameForItem);
-    NewJobProfile.saveAndClose();
-    JobProfiles.checkJobProfilePresented(jobProfile.profileName);
-
-    // upload a marc file for creating of the new instance, holding and item
-    cy.visit(TopMenu.dataImportPath);
-    DataImport.uploadFile('marcFileForC350944.mrc', nameMarcFileForCreate);
-    JobProfiles.searchJobProfileForImport('Default - Create instance and SRS MARC Bib');
-    JobProfiles.runImportFile();
-    JobProfiles.waitFileIsImported(nameMarcFileForCreate);
-    Logs.openFileDetails(nameMarcFileForCreate);
-    FileDetails.checkItemsStatusesInResultList(0, [FileDetails.status.created, FileDetails.status.created]);
-    FileDetails.checkItemsStatusesInResultList(1, [FileDetails.status.created, FileDetails.status.created]);
-
-    // create PO with POL
-    cy.visit(TopMenu.ordersPath);
-    Orders.createOrder(order, true).then(orderId => {
-      Orders.getOrdersApi({ limit: 1, query: `"id"=="${orderId}"` })
-        .then(res => {
-          orderNumber = res[0].poNumber;
-          Orders.checkIsOrderCreated(orderNumber);
-          addPolToOrder(pol.title, pol.acquisitionMethod, pol.orderFormat, pol.price, pol.quantity, pol.createInventory, pol.materialType);
-          OrderLines.backToEditingOrder();
-          Orders.openOrder();
-
-          // change file using order number
-          DataImport.editMarcFile('marcFileForC350944.mrc', editedMarcFileName, ['test'], [orderNumber]);
-        });
-    });
-
-    // upload .mrc file
-    cy.visit(TopMenu.dataImportPath);
-    DataImport.checkIsLandingPageOpened();
-    DataImport.uploadFile(editedMarcFileName, marcFileName);
-    JobProfiles.searchJobProfileForImport(jobProfileName);
-    JobProfiles.runImportFile();
-    JobProfiles.waitFileIsImported(marcFileName);
-    Logs.checkStatusOfJobProfile();
-    Logs.openFileDetails(marcFileName);
-    FileDetails.checkItemsStatusesInResultList(0, [FileDetails.status.updated, FileDetails.status.updated, FileDetails.status.created, FileDetails.status.created]);
-    FileDetails.checkItemsStatusesInResultList(1, [FileDetails.status.dash, FileDetails.status.discarded]);
-
-    FileDetails.openInstanceInInventory('Updated');
-    InventoryInstance.getAssignedHRID().then(initialInstanceHrId => { instanceHrid = initialInstanceHrId; });
-    InventoryInstance.checkIsInstanceUpdated();
-    InventoryInstance.checkIsHoldingsCreated(['Main Library >']);
-    InventoryInstance.openHoldingsAccordion('Main Library >');
-    InventoryInstance.checkIsItemCreated('242451241241');
-    InventoryInstance.viewSource();
-    InventoryViewSource.verifyBarcodeInMARCBibSource('242451241241');
-  });
 });

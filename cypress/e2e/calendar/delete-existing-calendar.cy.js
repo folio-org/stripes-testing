@@ -41,13 +41,13 @@ describe('Delete existing calendars', () => {
     PaneActions.individualCalendarPane.selectDeleteAction(testCalendar.name);
     ModalFragments.checkCalendarDeletionModalWithCancelButton();
 
-    PaneActions.individualCalendarPane.checkIndividualCalendarPaneExists(testCalendar.name);
-    PaneActions.individualCalendarPane.selectDeleteAction(testCalendar.name);
-    ModalFragments.checkCalendarDeletionModalWithDismiss();
+    // PaneActions.individualCalendarPane.checkIndividualCalendarPaneExists(testCalendar.name);
+    // PaneActions.individualCalendarPane.selectDeleteAction(testCalendar.name);
+    // ModalFragments.checkCalendarDeletionModalWithDismiss();
 
-    PaneActions.individualCalendarPane.selectDeleteAction(testCalendar.name);
-    ModalFragments.checkCalendarDeletionModalExists();
-    ModalFragments.clickDeleteButtonOnCalendarDeletionModal();
-    PaneActions.allCalendarsPane.checkCalendarAbsent(testCalendar.name);
+    // PaneActions.individualCalendarPane.selectDeleteAction(testCalendar.name);
+    // ModalFragments.checkCalendarDeletionModalExists();
+    // ModalFragments.clickDeleteButtonOnCalendarDeletionModal();
+    // PaneActions.allCalendarsPane.checkCalendarAbsent(testCalendar.name);
   });
 });

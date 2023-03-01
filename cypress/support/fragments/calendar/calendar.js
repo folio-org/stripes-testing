@@ -77,24 +77,21 @@ export const createServicePoint = (testServicePointRequestBody, callback) => {
 };
 
 export const deleteServicePoint = (servicePointID, checkStatusCode = true, callback = null) => {
-  cy.wrap(localforage.getItem('okapiSess')).then(okapiSess => {
-    expect(okapiSess).to.have.property('token');
-    cy.request({
-      url: Cypress.env('OKAPI_HOST') + '/service-points/' + servicePointID,
-      method: 'DELETE',
-      headers: {
-        'x-okapi-tenant': Cypress.env('OKAPI_TENANT'),
-        'x-okapi-token': okapiSess.token
-      },
-      failOnStatusCode: false,
-    }).then((response) => {
-      if (checkStatusCode) {
-        expect(response.status).equals(204);
-      } else {
-        expect(response.status).oneOf([204, 404]);
-      }
-      if (callback) { callback(response); }
-    });
+  cy.request({
+    url: Cypress.env('OKAPI_HOST') + '/service-points/' + servicePointID,
+    method: 'DELETE',
+    headers: {
+      'x-okapi-tenant': Cypress.env('OKAPI_TENANT'),
+      'x-okapi-token': Cypress.env('token')
+    },
+    failOnStatusCode: false,
+  }).then((response) => {
+    if (checkStatusCode) {
+      expect(response.status).equals(204);
+    } else {
+      expect(response.status).oneOf([204, 404]);
+    }
+    if (callback) { callback(response); }
   });
 };
 

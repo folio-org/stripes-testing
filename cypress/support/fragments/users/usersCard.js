@@ -53,6 +53,10 @@ export default {
     return cy.do(Link({ id: 'clickable-viewcurrentloans' }).click());
   },
 
+  showOpenedFeeFines() {
+    return cy.do(Link({ id: 'clickable-viewcurrentaccounts' }).click());
+  },
+
   createPatronBlock() {
     cy.do(Button({ id: 'create-patron-block' }).click());
   },
@@ -187,5 +191,13 @@ export default {
   verifyExpirationDate(date) {
     // date format MM/DD/YYYY
     cy.expect(KeyValue('Expiration date').has({ value: date }));
+  },
+
+  openContactInfo() {
+    cy.do(Accordion('Contact information').clickHeader());
+  },
+
+  verifyEmail(email) {
+    cy.expect(KeyValue('Email').has({ value: email }));
   },
 };

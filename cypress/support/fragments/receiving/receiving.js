@@ -10,7 +10,7 @@ import {
   Pane,
   Link,
   Section,
-  SelectionOption
+  Modal,
 } from '../../../../interactors';
 import InteractorsTools from '../../utils/interactorsTools';
 
@@ -52,7 +52,20 @@ export default {
     InteractorsTools.checkCalloutMessage(receivingSuccessful);
   },
 
-  receiveAndChangeLocation: (rowNumber, caption) => {
+  receivePieceWithoutBarcode: (rowNumber, caption) => {
+    const recievingFieldName = `receivedItems[${rowNumber}]`;
+    cy.expect(Accordion({ id: expectedPiecesAccordionId }).exists());
+    cy.do([
+      Accordion({ id: expectedPiecesAccordionId }).find(actionsButton).click(),
+      receiveButton.click(),
+      Checkbox({ name: `${recievingFieldName}.checked` }).clickInput(),
+      TextField({ name: `${recievingFieldName}.caption` }).fillIn(caption),
+      receiveButton.click(),
+    ]);
+    InteractorsTools.checkCalloutMessage(receivingSuccessful);
+  },
+
+  receiveAndChangeLocation: (rowNumber, caption, institutionId) => {
     const recievingFieldName = `receivedItems[${rowNumber}]`;
     cy.expect(Accordion({ id: expectedPiecesAccordionId }).exists());
     cy.do([
@@ -61,10 +74,10 @@ export default {
       Checkbox({ name: `${recievingFieldName}.checked` }).clickInput(),
       TextField({ name: `${recievingFieldName}.caption` }).fillIn(caption),
       MultiColumnListRow({ indexRow: `row-${rowNumber}` }).find(Button('Assign a different location')).click(),
-      Select({ name: 'institutionId' }).choose('Københavns Universitet'),
-      Select({ name: 'campusId' }).choose('City Campus'),
-      Button({ id: 'locationId' }).click(),
-      SelectionOption('Main Library (KU/CC/DI/M) ').click(),
+    ]);
+    cy.get('form[id=location-form] select[name=institutionId]').select(institutionId);
+    cy.do([
+      Modal('Select permanent location').find(Button('Save and close')).click(),
       receiveButton.click(),
     ]);
     // Need to wait, while data will be loaded
@@ -80,6 +93,7 @@ export default {
 
   checkReceivedPiece: (rowNumber, caption, barcode) => {
     // Need to wait, while data will be loaded before start checking
+    // eslint-disable-next-line cypress/no-unnecessary-waiting
     cy.wait(2000);
     cy.expect([
       Accordion({ id: receivedPiecesAccordionId })

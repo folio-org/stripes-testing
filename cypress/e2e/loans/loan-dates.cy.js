@@ -105,7 +105,7 @@ describe('loan dates', () => {
     });
     cy.getInstance({ limit: 1, expandAll: true, query: `"items.barcode"=="${item.barcode}"` })
       .then((instance) => {
-        cy.deleteItem(instance.items[0].id);
+        cy.deleteItemViaApi(instance.items[0].id);
         cy.deleteHoldingRecordViaApi(instance.holdings[0].id);
         InventoryInstance.deleteInstanceViaApi(instance.id);
       });
@@ -141,6 +141,7 @@ describe('loan dates', () => {
       itemTitle: item.title,
       requesterBarcode: checkInUser.barcode,
       pickupServicePoint: 'Circ Desk 1',
+      requestType: 'Recall',
     });
 
     // go to changing due date and verify warning

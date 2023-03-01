@@ -41,7 +41,7 @@ describe('ui-data-import: A user can delete import logs with "Data import: Can d
           const filePath = numberOfLogsToUpload - 1 === index ? filePathToUpload : emptyFilePathToUpload;
           fileNameToUpload = `C358137autotestFile.${getRandomPostfix()}.mrc`;
           DataImport.uploadFile(filePath, fileNameToUpload);
-          // need to wait untill file will be uploaded in loop
+          // need to wait until file will be uploaded in loop
           cy.wait(8000);
           JobProfiles.searchJobProfileForImport('Default - Create instance and SRS MARC Bib');
           JobProfiles.runImportFile();
@@ -53,42 +53,43 @@ describe('ui-data-import: A user can delete import logs with "Data import: Can d
   after(() => {
     Logs.selectAllLogs();
     Logs.actionsButtonClick();
-    Logs.deleteAllLogsButtonClick();
+    Logs.deleteLogsButtonClick();
     DataImport.confirmDeleteImportLogs();
     Users.deleteViaApi(userId);
   });
 
-  it('C358137 A user can delete import logs with "Data import: Can delete import logs" permission on Landing page (folijet)', { tags: [TestTypes.smoke, DevTeams.folijet] }, () => {
-    Logs.openFileDetails(fileNameToUpload);
-    Logs.clickOnHotLink();
-    cy.location('pathname').should('include', '/inventory/view');
-    cy.visit(TopMenu.dataImportPath);
+  it('C358137 A user can delete import logs with "Data import: Can delete import logs" permission on Landing page (folijet)',
+    { tags: [TestTypes.smoke, DevTeams.folijet] }, () => {
+      Logs.openFileDetails(fileNameToUpload);
+      Logs.clickOnHotLink();
+      cy.location('pathname').should('include', '/inventory/view');
+      cy.visit(TopMenu.dataImportPath);
 
-    DataImport.getLogsHrIdsFromUI(numberOfLogsToDelete).then(logsHrIdsToBeDeleted => {
+      DataImport.getLogsHrIdsFromUI(numberOfLogsToDelete).then(logsHrIdsToBeDeleted => {
       // verify that user can cancel deletion of logs
-      DataImport.selectAllLogs();
-      DataImport.verifyAllLogsCheckedStatus({ logsCount: numberOfLogsPerPage, checked: true });
-      DataImport.verifyLogsPaneSubtitleExist(numberOfLogsPerPage);
-      DataImport.openDeleteImportLogsModal();
-      DataImport.cancelDeleteImportLogs();
-      DataImport.verifyAllLogsCheckedStatus({ logsCount: numberOfLogsPerPage, checked: false });
-      DataImport.verifyLogsPaneSubtitleAbsent();
-      DataImport.verifyDeleteLogsButtonDisabled();
+        DataImport.selectAllLogs();
+        DataImport.verifyAllLogsCheckedStatus({ logsCount: numberOfLogsPerPage, checked: true });
+        DataImport.verifyLogsPaneSubtitleExist(numberOfLogsPerPage);
+        DataImport.openDeleteImportLogsModal();
+        DataImport.cancelDeleteImportLogs();
+        DataImport.verifyAllLogsCheckedStatus({ logsCount: numberOfLogsPerPage, checked: false });
+        DataImport.verifyLogsPaneSubtitleAbsent();
+        DataImport.verifyDeleteLogsButtonDisabled();
 
-      // verify that user can delete logs
-      new Array(numberOfLogsToDelete).fill(null).forEach((_, index) => {
-        DataImport.selectLog(index);
+        // verify that user can delete logs
+        new Array(numberOfLogsToDelete).fill(null).forEach((_, index) => {
+          DataImport.selectLog(index);
+        });
+        DataImport.verifyLogsPaneSubtitleExist(numberOfLogsToDelete);
+        DataImport.openActionsMenu();
+        DataImport.openDeleteImportLogsModal();
+        DataImport.confirmDeleteImportLogs();
+        InteractorsTools.checkCalloutMessage(getCalloutSuccessMessage(numberOfLogsToDelete));
+        DataImport.verifyLogsPaneSubtitleAbsent();
+        DataImport.verifyDataImportLogsDeleted(logsHrIdsToBeDeleted);
+        DataImport.verifyDeleteLogsButtonDisabled();
+        cy.reload();
+        DataImport.checkMultiColumnListRowsCount(numberOfLogsPerPage);
       });
-      DataImport.verifyLogsPaneSubtitleExist(numberOfLogsToDelete);
-      DataImport.openActionsMenu();
-      DataImport.openDeleteImportLogsModal();
-      DataImport.confirmDeleteImportLogs();
-      InteractorsTools.checkCalloutMessage(getCalloutSuccessMessage(numberOfLogsToDelete));
-      DataImport.verifyLogsPaneSubtitleAbsent();
-      DataImport.verifyDataImportLogsDeleted(logsHrIdsToBeDeleted);
-      DataImport.verifyDeleteLogsButtonDisabled();
-      cy.reload();
-      DataImport.checkMultiColumnListRowsCount(numberOfLogsPerPage);
     });
-  });
 });

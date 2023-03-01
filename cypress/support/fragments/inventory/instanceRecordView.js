@@ -40,6 +40,10 @@ const verifyMarkAsSuppressedFromDiscovery = () => {
   cy.expect(instanceDetailsSection.find(HTML(including('Warning: Instance is marked suppressed from discovery'))).exists());
 };
 
+const verifyMarkAsSuppressedFromDiscoveryAndSuppressed = () => {
+  cy.expect(instanceDetailsSection.find(HTML(including('Warning: Instance is marked suppressed from discovery and staff suppressed'))).exists());
+};
+
 const verifyGeneralNoteContent = (content) => {
   cy.expect(instanceDetailsNotesSection.find(HTML(including(content))).exists());
 };
@@ -65,6 +69,10 @@ const verifyInstanceNote = (value) => {
   cy.expect(instanceNote.find(MultiColumnListCell({ content: value })).exists());
 };
 
+const verifyStatisticalCode = (value) => {
+  cy.expect(MultiColumnList({ id: 'list-statistical-codes' }).find(MultiColumnListCell({ content: value })).exists());
+};
+
 export default {
   verifyResourceTitle,
   verifyInstanceStatusCode,
@@ -73,10 +81,12 @@ export default {
   verifyInstanceStatusTerm,
   verifyMarkAsSuppressed,
   verifyMarkAsSuppressedFromDiscovery,
+  verifyMarkAsSuppressedFromDiscoveryAndSuppressed,
   verifyGeneralNoteContent,
   verifySrsMarcRecord,
   verifyImportedFieldExists,
   viewSource,
   verifyAdministrativeNote,
-  verifyInstanceNote
+  verifyInstanceNote,
+  verifyStatisticalCode
 };

@@ -2,7 +2,10 @@
  * utility functions for ui-calendar automated UI testing
  */
 
-import {
+import DateTools from './dateTools';
+import { WEEKDAYS, WEEKDAY_INDEX, getRelativeWeekdayStatus, weekdayIsBetween } from './uiCalendar_WeekdayUtils';
+
+const {
   dateFromHHMM,
   dateFromYYYYMMDD,
   dateFromYYYYMMDDAndHHMM,
@@ -10,9 +13,7 @@ import {
   getLocalizedDate, getLocalizedTime,
   getRelativeDateProximity,
   dateFromDateAndHHMM
-} from './uiCalendar_DateUtils';
-
-import { WEEKDAYS, WEEKDAY_INDEX, getRelativeWeekdayStatus, weekdayIsBetween } from './uiCalendar_WeekdayUtils';
+} = DateTools.uiCalendar;
 
 /** Get all openings and exceptions which apply to this date */
 export function getDateMatches(

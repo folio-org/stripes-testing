@@ -1,15 +1,18 @@
 /* eslint-disable cypress/no-unnecessary-waiting */
-import { Button, TextField, Pane, Select, HTML, including } from '../../../../interactors';
+import { Button, TextField, Pane, Select, HTML, including, Checkbox, Section } from '../../../../interactors';
 import SelectUser from './selectUser';
 
 const actionsButton = Button('Actions');
 const newRequestButton = Button('New');
 const itemBarcodeInput = TextField({ name: 'item.barcode' });
+const instanceHridInput = TextField({ name: 'instance.hrid' });
 const requesterBarcodeInput = TextField({ name: 'requester.barcode' });
 const enterItemBarcodeButton = Button({ id: 'clickable-select-item' });
 const enterRequesterBarcodeButton = Button({ id: 'clickable-select-requester' });
 const saveAndCloseButton = Button('Save & close');
 const selectServicePoint = Select({ name:'pickupServicePointId' });
+const selectRequestType = Select({ name: 'requestType' });
+const titleLevelRequest = Checkbox({ name: 'createTitleLevelRequest' });
 
 function addRequester(userName) {
   cy.do(Button({ id:'requestform-addrequest' }).click());
@@ -29,9 +32,19 @@ export default {
   openNewRequestPane,
 
   fillRequiredFields(newRequest) {
-    cy.do(itemBarcodeInput.fillIn(newRequest.itemBarcode));
-    cy.intercept('/circulation/loans?*').as('getLoans');
-    cy.do(enterItemBarcodeButton.click());
+    if (newRequest.instanceHRID !== undefined) {
+      cy.do([
+        titleLevelRequest.click(),
+        instanceHridInput.fillIn(newRequest.instanceHRID),
+      ]);
+      cy.intercept('/inventory/instances?*').as('getLoans');
+      cy.do(Section({ id: 'new-item-info' }).find(Button('Enter')).click());
+    } else {
+      cy.do(itemBarcodeInput.fillIn(newRequest.itemBarcode));
+      cy.intercept('/circulation/loans?*').as('getLoans');
+      cy.do(enterItemBarcodeButton.click());
+    }
+    cy.do(selectRequestType.choose(newRequest.requestType));
     cy.wait('@getLoans');
     cy.do(requesterBarcodeInput.fillIn(newRequest.requesterBarcode));
     cy.intercept('/proxiesfor?*').as('getUsers');
@@ -59,7 +72,7 @@ export default {
   createDeliveryRequest(newRequest) {
     this.openNewRequestPane();
     this.fillRequiredFields(newRequest);
-    // need to wait untill instanceId is uploaded
+    // need to wait until instanceId is uploaded
     cy.wait(2500);
     this.saveRequestAndClose();
   },
@@ -75,7 +88,7 @@ export default {
     cy.intercept('/circulation/loans?*').as('getLoans');
     cy.do(enterItemBarcodeButton.click());
     cy.wait('@getLoans');
-    // need to wait untill instanceId is uploaded
+    // need to wait until instanceId is uploaded
     cy.wait(2500);
     this.choosepickupServicePoint(newRequest.pickupServicePoint);
     this.saveRequestAndClose();

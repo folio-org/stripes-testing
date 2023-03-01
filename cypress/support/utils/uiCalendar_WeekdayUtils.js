@@ -2,9 +2,9 @@
  * utility functions for ui-calendar automated UI testing
  */
 
-import { getLocalizedTime } from './uiCalendar_DateUtils';
+import DateTools from './dateTools';
 
-
+const { getLocalizedTime } = DateTools.uiCalendar;
 
 export const WEEKDAYS = {
   SUNDAY: 0,

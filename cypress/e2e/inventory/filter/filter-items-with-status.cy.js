@@ -71,7 +71,7 @@ describe('ui-inventory: items with status', () => {
     cy.getInstance({ limit: 1, expandAll: true, query: `"items.barcode"=="${ITEM_BARCODE}"` })
       .then((instance) => {
         instance.items.forEach((item) => {
-          cy.deleteItem(item.id);
+          cy.deleteItemViaApi(item.id);
         });
         cy.deleteHoldingRecordViaApi(instance.holdings[0].id);
         InventoryInstance.deleteInstanceViaApi(instance.id);

@@ -9,6 +9,7 @@ import UserEdit from '../../../support/fragments/users/userEdit';
 import ServicePoints from '../../../support/fragments/settings/tenant/servicePoints/servicePoints';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 import DevTeams from '../../../support/dictionary/devTeams';
+import ItemRecordView from '../../../support/fragments/inventory/itemRecordView';
 
 describe('ui-inventory: Mark items as withdrawn', () => {
   let user = {};
@@ -63,7 +64,7 @@ describe('ui-inventory: Mark items as withdrawn', () => {
 
   afterEach(() => {
     createdItems.forEach(item => {
-      cy.deleteItem(item.itemId);
+      cy.deleteItemViaApi(item.itemId);
     });
     cy.deleteHoldingRecordViaApi(instanceData.holdingId);
     InventoryInstance.deleteInstanceViaApi(instanceData.instanceId);
@@ -89,7 +90,7 @@ describe('ui-inventory: Mark items as withdrawn', () => {
       markItemAsWithdrawn.confirmModal();
       markItemAsMissing.verifyItemStatus('Withdrawn');
       markItemAsMissing.verifyItemStatusUpdatedDate();
-      markItemAsMissing.closeItemView();
+      ItemRecordView.closeDetailView();
     });
 
     cy.visit(TopMenu.requestsPath);
@@ -105,12 +106,12 @@ describe('ui-inventory: Mark items as withdrawn', () => {
       markItemAsMissing.openHoldingsAccordion(instanceData.holdingId);
       markItemAsMissing.openItem(item.barcode);
       markItemAsWithdrawn.checkActionButtonExists({ isExist: false, button: markItemAsWithdrawn.withdrawItemButton });
-      markItemAsMissing.closeItemView();
+      ItemRecordView.closeDetailView();
     });
 
     markItemAsMissing.openHoldingsAccordion(instanceData.holdingId);
     markItemAsMissing.openItem(markItemAsWithdrawn.getWithdrawnItem(createdItems).barcode);
     markItemAsWithdrawn.checkActionButtonExists({ isExist: false, button: markItemAsWithdrawn.newRequestButton });
-    markItemAsMissing.closeItemView();
+    ItemRecordView.closeDetailView();
   });
 });

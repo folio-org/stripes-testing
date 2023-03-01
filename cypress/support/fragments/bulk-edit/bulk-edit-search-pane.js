@@ -31,6 +31,10 @@ export default {
     cy.expect(actions.exists());
   },
 
+  actionsIsAbsent() {
+    cy.expect(actions.absent());
+  },
+
   verifyPanesBeforeImport() {
     cy.expect([
       Pane('Set criteria').exists(),
@@ -86,12 +90,19 @@ export default {
     ]);
   },
 
+  verifyDragNDropHoldingsUUIDsArea() {
+    cy.expect([
+      HTML('Drag and drop or choose file with holdings UUIDs').exists(),
+      Button('or choose file').has({ visible: true }),
+      HTML('Select a file with holdings UUIDs').exists(),
+    ]);
+  },
+
   verifyDragNDropUsersUIIDsArea() {
     this.checkUsersRadio();
     this.selectRecordIdentifier('User UUIDs');
     cy.expect([
       HTML('Select a file with User UUIDs').exists(),
-      actions.exists()
     ]);
   },
 
@@ -223,7 +234,7 @@ export default {
 
   waitFileUploading() {
     // it is needed to avoid triggering for previous page list
-    cy.wait(1000);
+    cy.wait(3000);
     cy.expect(MultiColumnList().exists());
   },
 
@@ -245,7 +256,7 @@ export default {
 
   verifyUserBarcodesResultAccordion() {
     cy.expect([
-      MultiColumnListHeader('Status').exists(),
+      MultiColumnListHeader('Active').exists(),
       MultiColumnListHeader('Last name').exists(),
       MultiColumnListHeader('First name').exists(),
       MultiColumnListHeader('Barcode').exists(),
@@ -282,7 +293,7 @@ export default {
   },
 
   verifyErrorLabelAfterChanges(fileName, validRecordCount, invalidRecordCount) {
-    cy.expect(HTML(`${fileName}: ${validRecordCount + invalidRecordCount} entries * ${validRecordCount} records changed * ${invalidRecordCount} errors`).exists());
+    cy.expect(Accordion('Errors').find(HTML(`${fileName}: ${validRecordCount + invalidRecordCount} entries * ${validRecordCount} records changed * ${invalidRecordCount} errors`)).exists());
   },
 
   verifyActionsAfterConductedCSVUploading(errors = true) {
@@ -311,7 +322,7 @@ export default {
 
   verifyUsersActionShowColumns() {
     cy.expect([
-      DropdownMenu().find(Checkbox('Status')).exists(),
+      DropdownMenu().find(Checkbox('Active')).exists(),
       DropdownMenu().find(Checkbox('Last name')).exists(),
       DropdownMenu().find(Checkbox('First name')).exists(),
       DropdownMenu().find(Checkbox('Barcode')).exists(),
@@ -324,40 +335,39 @@ export default {
 
   verifyHoldingActionShowColumns() {
     cy.expect([
-      DropdownMenu().find(Checkbox({ name: 'hrid', checked: true })).exists(),
-      DropdownMenu().find(Checkbox({ name: 'permanentLocation', checked: true })).exists(),
-      DropdownMenu().find(Checkbox({ name: 'temporaryLocation', checked: true })).exists(),
-      DropdownMenu().find(Checkbox({ name: 'callNumberPrefix', checked: true })).exists(),
-      DropdownMenu().find(Checkbox({ name: 'callNumber', checked: true })).exists(),
-      DropdownMenu().find(Checkbox({ name: 'callNumberSuffix', checked: true })).exists(),
-      DropdownMenu().find(Checkbox({ name: 'holdingsType', checked: true })).exists(),
-      DropdownMenu().find(Checkbox({ name: 'effectiveLocation', checked: false })).exists(),
-      DropdownMenu().find(Checkbox({ name: 'id', checked: false })).exists(),
-      DropdownMenu().find(Checkbox({ name: 'source', checked: false })).exists(),
-      DropdownMenu().find(Checkbox({ name: 'discoverySuppress', checked: false })).exists(),
-      DropdownMenu().find(Checkbox({ name: 'callNumberType', checked: false })).exists(),
+      DropdownMenu().find(Checkbox({ name: 'Holdings HRID', checked: true })).exists(),
+      DropdownMenu().find(Checkbox({ name: 'Permanent location', checked: true })).exists(),
+      DropdownMenu().find(Checkbox({ name: 'Temporary location', checked: true })).exists(),
+      DropdownMenu().find(Checkbox({ name: 'Call number prefix', checked: true })).exists(),
+      DropdownMenu().find(Checkbox({ name: 'Call number', checked: true })).exists(),
+      DropdownMenu().find(Checkbox({ name: 'Call number suffix', checked: true })).exists(),
+      DropdownMenu().find(Checkbox({ name: 'Holdings type', checked: true })).exists(),
+      DropdownMenu().find(Checkbox({ name: 'Effective location', checked: false })).exists(),
+      DropdownMenu().find(Checkbox({ name: 'Holdings ID', checked: false })).exists(),
+      DropdownMenu().find(Checkbox({ name: 'Source', checked: false })).exists(),
+      DropdownMenu().find(Checkbox({ name: 'Suppressed from discovery', checked: false })).exists(),
+      DropdownMenu().find(Checkbox({ name: 'Call number type', checked: false })).exists(),
     ]);
   },
 
   verifyItemsActionDropdownItems() {
     cy.expect([
-      DropdownMenu().find(Checkbox({ name: 'barcode', checked: true })).exists(),
-      DropdownMenu().find(Checkbox({ name: 'status', checked: true })).exists(),
-      DropdownMenu().find(Checkbox({ name: 'effectiveLocation', checked: true })).exists(),
-      DropdownMenu().find(Checkbox({ name: 'callNumber', checked: true })).exists(),
-      DropdownMenu().find(Checkbox({ name: 'hrid', checked: true })).exists(),
-      DropdownMenu().find(Checkbox({ name: 'materialType', checked: true })).exists(),
-      DropdownMenu().find(Checkbox({ name: 'permanentLoanType', checked: true })).exists(),
-      DropdownMenu().find(Checkbox({ name: 'temporaryLoanType', checked: true })).exists(),
-      DropdownMenu().find(Checkbox({ name: 'id', checked: false })).exists(),
-      DropdownMenu().find(Checkbox({ name: 'formerIds', checked: false })).exists(),
-      DropdownMenu().find(Checkbox({ name: 'accessionNumber', checked: false })).exists(),
-      DropdownMenu().find(Checkbox({ name: 'permanentLocation', checked: false })).exists(),
-      DropdownMenu().find(Checkbox({ name: 'temporaryLocation', checked: false })).exists(),
-      DropdownMenu().find(Checkbox({ name: 'copyNumber', checked: false })).exists(),
-      DropdownMenu().find(Checkbox({ name: 'enumeration', checked: false })).exists(),
-      DropdownMenu().find(Checkbox({ name: 'chronology', checked: false })).exists(),
-      DropdownMenu().find(Checkbox({ name: 'volume', checked: false })).exists(),
+      DropdownMenu().find(Checkbox({ name: 'Barcode', checked: true })).exists(),
+      DropdownMenu().find(Checkbox({ name: 'Status', checked: true })).exists(),
+      DropdownMenu().find(Checkbox({ name: 'Item effective location', checked: true })).exists(),
+      DropdownMenu().find(Checkbox({ name: 'Effective call number', checked: true })).exists(),
+      DropdownMenu().find(Checkbox({ name: 'Item HRID', checked: true })).exists(),
+      DropdownMenu().find(Checkbox({ name: 'Material type', checked: true })).exists(),
+      DropdownMenu().find(Checkbox({ name: 'Permanent loan type', checked: true })).exists(),
+      DropdownMenu().find(Checkbox({ name: 'Temporary loan type', checked: true })).exists(),
+      DropdownMenu().find(Checkbox({ name: 'Item identifier', checked: false })).exists(),
+      DropdownMenu().find(Checkbox({ name: 'Accession number', checked: false })).exists(),
+      DropdownMenu().find(Checkbox({ name: 'Item permanent location', checked: false })).exists(),
+      DropdownMenu().find(Checkbox({ name: 'Item temporary location', checked: false })).exists(),
+      DropdownMenu().find(Checkbox({ name: 'Copy number', checked: false })).exists(),
+      DropdownMenu().find(Checkbox({ name: 'Enumeration', checked: false })).exists(),
+      DropdownMenu().find(Checkbox({ name: 'Chronology', checked: false })).exists(),
+      DropdownMenu().find(Checkbox({ name: 'Volume', checked: false })).exists(),
     ]);
   },
 

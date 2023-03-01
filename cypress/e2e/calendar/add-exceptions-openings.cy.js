@@ -67,6 +67,7 @@ describe('Add exceptions--closures to regular hours for service point', () => {
     // check that new calendar exists in list of calendars
     cy.wait('@updateCalendar').then(() => {
       openCalendarSettings();
+      PaneActions.allCalendarsPane.openAllCalendarsPane();
       PaneActions.allCalendarsPane.selectCalendar(testCalendar.name);
 
       PaneActions.individualCalendarPane.checkOpeningExceptions({

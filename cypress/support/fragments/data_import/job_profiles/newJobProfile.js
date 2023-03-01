@@ -188,4 +188,32 @@ export default {
     cy.do(saveAndCloseButton.click());
     cy.expect(saveAndCloseButton.absent());
   },
+
+  createMatchProfileViaApi:(nameProfile, matchProfileId, actProfileId) => {
+    return cy
+      .okapiRequest({
+        method: 'POST',
+        path: 'data-import-profiles/jobProfiles',
+        body: {
+          profile:{
+            name: nameProfile,
+            dataType:'MARC'
+          },
+          addedRelations:[{
+            masterProfileId:null,
+            masterProfileType:'JOB_PROFILE',
+            detailProfileId:matchProfileId,
+            detailProfileType:'MATCH_PROFILE',
+            order:0
+          },
+          { masterProfileId:null,
+            masterProfileType:'JOB_PROFILE',
+            detailProfileId:actProfileId,
+            detailProfileType:'ACTION_PROFILE',
+            order:1 }],
+          deletedRelations:[]
+        },
+        isDefaultSearchParamsRequired: false,
+      });
+  }
 };

@@ -63,6 +63,7 @@ describe('Add new hours of operation for service point', () => {
     // check that new calendar exists in list of calendars
     cy.wait('@updateCalendar').then(() => {
       openCalendarSettings();
+      PaneActions.allCalendarsPane.openAllCalendarsPane();
       PaneActions.allCalendarsPane.selectCalendar(testCalendar.name);
 
       PaneActions.individualCalendarPane.checkHoursOfOperation({

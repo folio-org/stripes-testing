@@ -32,7 +32,7 @@ describe('Duplicate an existing calendar to make a new one', () => {
 
   after(() => {
     // delete test calendar
-    deleteCalendar(testCalendarResponse.id);
+    // deleteCalendar(testCalendarResponse.id);
   });
 
 

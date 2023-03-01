@@ -2,6 +2,7 @@ import { matching } from '@interactors/html';
 import HTML from './baseHTML';
 import Button from './button';
 import TextField from './text-field';
+import Select from './select';
 
 const IncrementHourButton = HTML.extend('increment hour button').selector('button[id$="-next-hour"]');
 const DecrementHourButton = HTML.extend('decrement hour button').selector('button[id$="-prev-hour"]');
@@ -38,10 +39,10 @@ export default HTML.extend('time dropdown')
 
       if (hour === '00' || hour === '0') {
         hourFieldValue = 12;
-        meridian = 0;
+        meridian = 'AM';
       } else {
         const intHour = parseInt(hour, 10);
-        meridian = intHour >= 12 ? 1 : 0;
+        meridian = intHour >= 12 ? 'PM' : 'AM';
         hourFieldValue = intHour > 12 ? intHour - 12 : intHour;
       }
 
@@ -55,16 +56,8 @@ export default HTML.extend('time dropdown')
       minuteTextField.blur();
 
 
-      const currentDate = new Date(Date.now());
-
-      // if current meridian is PM
-      if (currentDate.getHours() >= 12) {
-        if (meridian === 0) {
-          await interactor.find(Button('PM')).click();
-        }
-      } else if (meridian === 1) {
-        await interactor.find(Button('AM')).click();
-      }
+      console.log(meridian);
+      await interactor.find(Select({ id: matching(/-period-toggle$/) })).choose(meridian);
 
       await interactor.find(Button('Set time')).click();
     }

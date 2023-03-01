@@ -63,7 +63,7 @@ export default {
       Accordion('Hours of operation').find(MultiColumnListRow({ index: 0 })).find(MultiColumnListCell({ column: 'Status' })).find(Select())
         .choose('Open'),
       Accordion('Hours of operation').find(MultiColumnListRow({ index: 0 })).find(MultiColumnListCell({ column: 'Start day' })).find(Select())
-        .choose('Monday'),
+        .choose('Sunday'),
       Accordion('Hours of operation').find(MultiColumnListRow({ index: 0 })).find(MultiColumnListCell({ column: 'Start time' }))
         .find(TextField())
         .find(IconButton({ id: matching(/^timepicker-toggle-button-/) }))
@@ -71,7 +71,7 @@ export default {
       TimeDropdown().exists(),
       TimeDropdown().setTimeAndClose('00:00'),
       Accordion('Hours of operation').find(MultiColumnListRow({ index: 0 })).find(MultiColumnListCell({ column: 'End day' })).find(Select())
-        .choose('Sunday'),
+        .choose('Saturday'),
       Accordion('Hours of operation').find(MultiColumnListRow({ index: 0 })).find(MultiColumnListCell({ column: 'End time' }))
         .find(TextField())
         .find(IconButton({ id: matching(/^timepicker-toggle-button-/) }))
