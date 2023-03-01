@@ -79,7 +79,7 @@ describe('orders: export', () => {
     Users.deleteViaApi(user.userId);
   });
 
-  it('C350603 Searching POL by specifying acquisition method', { tags: [TestTypes.smoke, devTeams.thunderjet] }, () => {
+  it('C350603 Searching POL by specifying acquisition method (thunderjet)', { tags: [TestTypes.smoke, devTeams.thunderjet] }, () => {
     cy.logout();
     cy.loginAsAdmin({ path:TopMenu.ordersPath, waiter: Orders.waitLoading });
     order.orderType = 'Ongoing';

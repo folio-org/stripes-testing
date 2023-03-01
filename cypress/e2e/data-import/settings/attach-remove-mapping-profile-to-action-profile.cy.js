@@ -36,7 +36,7 @@ describe('ui-data-import: Attach/Remove a field mapping profile to an action pro
     FieldMappingProfiles.deleteFieldMappingProfile(mappingProfileName);
   });
 
-  it('C11115 Attach/Remove a field mapping profile to an action profile (folijet)', { tags: [TestTypes.smoke, DevTeams.folijet] }, () => {
+  it('C11115 Attach/Remove a field mapping profile to an action profile (folijet)', { tags: [TestTypes.criticalPath, DevTeams.folijet] }, () => {
     cy.visit(SettingsMenu.mappingProfilePath);
     FieldMappingProfiles.openNewMappingProfileForm();
     NewFieldMappingProfile.fillSummaryInMappingProfile(mappingProfile);
