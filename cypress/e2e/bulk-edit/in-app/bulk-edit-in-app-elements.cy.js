@@ -14,6 +14,7 @@ const item = {
   itemBarcode: getRandomPostfix(),
 };
 const invalidItemBarcodesFileName = `invalidItemBarcodes_${getRandomPostfix()}.csv`;
+const validItemBarcodeFileName = `validItemBarcodes_${getRandomPostfix()}.csv`
 const invalidBarcode = getRandomPostfix();
 
 describe('bulk-edit', () => {
@@ -33,11 +34,11 @@ describe('bulk-edit', () => {
           InventoryInstances.createInstanceViaApi(item.instanceName, item.itemBarcode);
 
           FileManager.createFile(`cypress/fixtures/${invalidItemBarcodesFileName}`, `${item.itemBarcode}\r\n${invalidBarcode}`);
+          FileManager.createFile(`cypress/fixtures/${validItemBarcodeFileName}`, `${item.itemBarcode}`);
         });
     });
 
     beforeEach('select item tab', () => {
-      BulkEditSearchPane.checkItemsRadio();
       BulkEditSearchPane.selectRecordIdentifier('Item barcode');
     });
 
@@ -45,6 +46,7 @@ describe('bulk-edit', () => {
       InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(item.itemBarcode);
       Users.deleteViaApi(user.userId);
       FileManager.deleteFile(`cypress/fixtures/${invalidItemBarcodesFileName}`);
+      FileManager.deleteFile(`cypress/fixtures/${validItemBarcodeFileName}`);
     });
 
     afterEach('reload bulk-edit page', () => {
@@ -64,18 +66,22 @@ describe('bulk-edit', () => {
     });
 
     it('C350941 Verify uploading file with identifiers -- In app approach (firebird)', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
-      BulkEditSearchPane.uploadFile(invalidItemBarcodesFileName);
+      BulkEditSearchPane.verifyDragNDropItemBarcodeArea();
+      BulkEditSearchPane.uploadFile(validItemBarcodeFileName);
       BulkEditSearchPane.waitFileUploading();
 
+      BulkEditSearchPane.verifyMatchedResults(item.itemBarcode);
+      BulkEditSearchPane.actionsIsShown();
+
       const expectedColumnTitles = [
-        'Barcode',
-        'Status',
-        'Item effective location',
-        'Effective call number',
         'Item HRID',
+        'Barcode',
+        'Effective call number',
+        'Status',
         'Material type',
         'Permanent loan type',
-        'Temporary loan type'
+        'Temporary loan type',
+        'Item effective location',
       ];
       expectedColumnTitles.forEach(title => BulkEditSearchPane.verifyResultColumTitles(title));
 
