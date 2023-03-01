@@ -17,13 +17,36 @@ export default {
 
 
   getPreviousDayDate: () => {
-    const currentDate = new Date();
-    return `${padWithZero(currentDate.getMonth() + 1)}/${padWithZero(currentDate.getDate() - 1)}/${currentDate.getFullYear()}`;
+    const today = new Date();
+    let yesterday = new Date(today);
+    yesterday.setDate(today.getDate() - 1);
+
+    if (today.getMonth() !== yesterday.getMonth()) {
+      yesterday.setMonth(yesterday.getMonth());
+    }
+  
+    const month = yesterday.getMonth() + 1;
+    const day = yesterday.getDate();
+    const year = yesterday.getFullYear();
+    const formattedDate = `${month.toString().padStart(2, '0')}/${day.toString().padStart(2, '0')}/${year}`;
+    return formattedDate;
   },
 
   getTomorrowDayDateForFiscalYear: () => {
-    const currentDate = new Date();
-    return `${currentDate.getFullYear()}-${padWithZero(currentDate.getMonth() + 1)}-${padWithZero(currentDate.getDate() + 1)}`;
+    const today = new Date();
+    let tomorrow = new Date(today);
+    tomorrow.setDate(today.getDate() + 1);
+  
+    if (today.getMonth() !== tomorrow.getMonth()) {
+      tomorrow.setMonth(tomorrow.getMonth());
+    }
+  
+    const month = tomorrow.getMonth() + 1;
+    const day = tomorrow.getDate();
+    const year = tomorrow.getFullYear();
+    const formattedDate = `${month.toString().padStart(2, '0')}/${day.toString().padStart(2, '0')}/${year}`;
+  
+    return formattedDate;
   },
 
   getDayAfterTomorrowDateForFiscalYear: () => {
