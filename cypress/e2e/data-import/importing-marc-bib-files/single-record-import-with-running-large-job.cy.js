@@ -54,7 +54,7 @@ describe('ui-data-import: Inventory single record import is not delayed when lar
   });
 
   it('C356824 Inventory single record import is not delayed when large data import jobs are running (folijet)',
-    { tags: [TestTypes.smoke, DevTeams.folijet] }, () => {
+    { tags: [TestTypes.criticalPath, DevTeams.folijet] }, () => {
       cy.visit(SettingsMenu.targetProfilesPath);
       Z3950TargetProfiles.openOclcWorldCat();
       Z3950TargetProfiles.editOclcWorldCat(authentication);

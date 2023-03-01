@@ -111,6 +111,7 @@ describe('Fee/Fine history ', () => {
     cy.wait(70000);
     cy.visit(AppPaths.getFeeFineDetailsPath(userData.userId, feeFineAccount.id));
     FeeFinesDetails.waitLoading();
+    FeeFinesDetails.openActions();
     FeeFinesDetails.openPayModal();
     PayFeeFaine.checkAmount(feeFineType.amount);
     PayFeeFaine.setAmount(feeFineType.amount - 1);
@@ -126,6 +127,7 @@ describe('Fee/Fine history ', () => {
     AddNewStaffInfo.checkStaffInfoModalClosed();
     FeeFinesDetails.waitLoading();
     FeeFinesDetails.checkNewStaffInfo(newStaffInfoMessage);
+    FeeFinesDetails.openActions();
     FeeFinesDetails.openPayModal();
     PayFeeFaine.checkAmount(1);
     PayFeeFaine.setPaymentMethod(paymentMethod);

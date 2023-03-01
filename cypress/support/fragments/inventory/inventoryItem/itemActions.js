@@ -74,4 +74,8 @@ export default {
       Modal('Confirm item status: Unknown').find(Button('Confirm')).click()
     ]);
   },
+  
+  closeItem() {
+    cy.do(Button({ icon: 'times' }).click());
+  },
 };

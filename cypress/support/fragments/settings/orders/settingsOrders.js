@@ -1,5 +1,4 @@
-import { Button, Checkbox, PaneHeader, TextField } from '../../../../../interactors';
-
+import { Button, Checkbox, PaneHeader } from '../../../../../interactors';
 
 export default {
 
@@ -8,7 +7,7 @@ export default {
   },
 
   expectDisabledCheckboxIsOpenOrderEnabled: () => {
-    cy.expect(Checkbox({ name: 'isOpenOrderEnabled'}).disabled());
+    cy.expect(Checkbox({ name: 'isOpenOrderEnabled' }).disabled());
   },
 
   waitLoadingPurchaseOrderLinesLimit : () => {
@@ -17,8 +16,10 @@ export default {
 
   setPurchaseOrderLinesLimit: (polNumbers) => {
     // Need to wait,while input will be loaded(Settings menu has problems with interactors)
-    cy.wait(4000);
-    cy.get('input[name=value]').type(polNumbers);
-    cy.do(Button({id: 'set-polines-limit-submit-btn'}).click());
+    cy.wait(8000);
+    cy.get('input[name=value]').click().type(`{selectall}{backspace}${polNumbers}`);
+    cy.wait(2000);
+    cy.get('input[name=value]').click().type(`{selectall}{backspace}${polNumbers}`);
+    cy.do(Button({ id: 'set-polines-limit-submit-btn' }).click());
   }
 };

@@ -372,13 +372,24 @@ export default {
       electronicUnitPriceTextField.has({ value: electronicUnitPrice }),
       quantityElectronicTextField.has({ value: quantityElectronic }),
     ]);
-    cy.do([
-      saveAndClose.click(),
-      Button('Submit').click()
-    ]);
+    cy.do(saveAndClose.click());
+    // If purchase order line will be dublicate, Modal with button 'Submit' will be activated 
+    cy.wait(2000);
+    this.submitOrderLine();
   },
 
-  fillInPOLineInfoForExportWithLocationForPhisicalResource(accountNumber, AUMethod, institutionName) {
+  submitOrderLine:() => {
+    const submitButton = Button('Submit');
+    cy.get('body').then($body => {
+      if ($body.find('[id=line-is-not-unique-confirmation]').length) {   
+        cy.do(submitButton.click());
+      } else {
+        // do nothing if modal is not displayed
+      }
+    });
+  },
+
+  fillInPOLineInfoForExportWithLocationForPhisicalResource(accountNumber, AUMethod, institutionName, quantity) {
     cy.do([
       orderFormatSelect.choose('Physical resource'),
       acquisitionMethodButton.click(),
@@ -388,7 +399,7 @@ export default {
     ]);
     cy.do([
       physicalUnitPriceTextField.fillIn(physicalUnitPrice),
-      quantityPhysicalTextField.fillIn(quantityPhysical),
+      quantityPhysicalTextField.fillIn(quantity),
       materialTypeSelect.choose('book'),
       addLocationButton.click(),
       Button('Create new holdings for location').click(),
@@ -396,16 +407,16 @@ export default {
     cy.get('form[id=location-form] select[name=institutionId]').select(institutionName);
     cy.do([
       Modal('Select permanent location').find(Button('Save and close')).click(),
-      quantityPhysicalLocationField.fillIn(quantityPhysical),
+      quantityPhysicalLocationField.fillIn(quantity),
     ]);
     cy.expect([
       physicalUnitPriceTextField.has({ value: physicalUnitPrice }),
-      quantityPhysicalLocationField.has({ value: quantityPhysical }),
+      quantityPhysicalLocationField.has({ value: quantity }),
     ]);
-    cy.do([
-      saveAndClose.click(),
-      Button('Submit').click()
-    ]);
+    cy.do(saveAndClose.click());
+    // If purchase order line will be dublicate, Modal with button 'Submit' will be activated 
+    cy.wait(2000);
+    this.submitOrderLine();
   },
 
   selectFilterMainLibraryLocationsPOL: () => {

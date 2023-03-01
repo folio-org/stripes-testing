@@ -18,7 +18,8 @@ const columnName = {
   holdings: resultsList.find(MultiColumnListHeader({ id:'list-column-holdingsstatus' })),
   item: resultsList.find(MultiColumnListHeader({ id:'list-column-itemstatus' })),
   invoice: resultsList.find(MultiColumnListHeader({ id:'list-column-invoicestatus' })),
-  error: resultsList.find(MultiColumnListHeader({ id:'list-column-error' }))
+  error: resultsList.find(MultiColumnListHeader({ id:'list-column-error' })),
+  title: resultsList.find(MultiColumnListHeader({ id:'list-column-title' }))
 };
 
 const status = {
@@ -166,5 +167,12 @@ export default {
             cy.expect(entries[0].error).to.eql(expectedError);
           });
       });
+  },
+
+  verifyTitle:(title, specialColumnName, rowIndex = 0) => {
+    cy.then(() => specialColumnName.index())
+      .then((index) => cy.expect(resultsList.find(MultiColumnListRow({ index: rowIndex }))
+        .find(MultiColumnListCell({ columnIndex: index }))
+        .has({ content: title })));
   }
 };
