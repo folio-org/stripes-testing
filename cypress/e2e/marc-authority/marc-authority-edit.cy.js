@@ -41,7 +41,7 @@ describe('MARC Authority -> Edit Authority record', () => {
   const initialLDRValue = String.raw`04112cz\\a2200589n\\4500`;
   const changesSavedCallout = 'Record has been updated.';
   const changedLDRs = [
-    { newContent: replaceByIndex(replaceByIndex(replaceByIndex(initialLDRValue, 5, 'a'), 17, 'n'), 18, 'u') },
+    { newContent: replaceByIndex(replaceByIndex(replaceByIndex(initialLDRValue, 5, 'a'), 17, 'n'), 18, '\\') },
     { newContent: replaceByIndex(replaceByIndex(replaceByIndex(initialLDRValue, 5, 'c'), 17, 'o'), 18, ' ') },
     { newContent: replaceByIndex(replaceByIndex(replaceByIndex(initialLDRValue, 5, 'd'), 17, 'n'), 18, 'c') },
     { newContent: replaceByIndex(replaceByIndex(replaceByIndex(initialLDRValue, 5, 'n'), 17, 'o'), 18, 'i') },
@@ -147,6 +147,10 @@ describe('MARC Authority -> Edit Authority record', () => {
       MarcAuthority.edit();
       QuickMarcEditor.updateExistingField('LDR', changeLDR.newContent);
       QuickMarcEditor.pressSaveAndClose();
+      (changeLDR.newContent === String.raw`04112az\\a2200589n\\4500`) 
+      ? 
+      MarcAuthorities.verifyFirstValueSaveSuccess(changesSavedCallout, changeLDR.newContent) 
+      : 
       MarcAuthorities.verifySaveSuccess(changesSavedCallout, changeLDR.newContent);
     });    
   });
