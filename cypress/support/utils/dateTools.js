@@ -28,8 +28,7 @@ export default {
     const month = yesterday.getMonth() + 1;
     const day = yesterday.getDate();
     const year = yesterday.getFullYear();
-    const formattedDate = `${month.toString().padStart(2, '0')}/${day.toString().padStart(2, '0')}/${year}`;
-    return formattedDate;
+    return `${month.toString().padStart(2, '0')}/${day.toString().padStart(2, '0')}/${year}`;
   },
 
   getTomorrowDayDateForFiscalYear: () => {
@@ -44,9 +43,7 @@ export default {
     const month = tomorrow.getMonth() + 1;
     const day = tomorrow.getDate();
     const year = tomorrow.getFullYear();
-    const formattedDate = `${month.toString().padStart(2, '0')}/${day.toString().padStart(2, '0')}/${year}`;
-  
-    return formattedDate;
+    return`${month.toString().padStart(2, '0')}/${day.toString().padStart(2, '0')}/${year}`;
   },
 
   getDayAfterTomorrowDateForFiscalYear: () => {
