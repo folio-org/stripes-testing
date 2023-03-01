@@ -14,7 +14,7 @@ const item = {
   itemBarcode: getRandomPostfix(),
 };
 const invalidItemBarcodesFileName = `invalidItemBarcodes_${getRandomPostfix()}.csv`;
-const validItemBarcodeFileName = `validItemBarcodes_${getRandomPostfix()}.csv`
+const validItemBarcodeFileName = `validItemBarcodes_${getRandomPostfix()}.csv`;
 const invalidBarcode = getRandomPostfix();
 
 describe('bulk-edit', () => {
