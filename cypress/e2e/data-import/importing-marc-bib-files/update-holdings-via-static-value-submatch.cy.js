@@ -18,6 +18,8 @@ import InventorySearchAndFilter from '../../../support/fragments/inventory/inven
 import InstanceRecordView from '../../../support/fragments/inventory/instanceRecordView';
 import HoldingsRecordView from '../../../support/fragments/inventory/holdingsRecordView';
 import Helper from '../../../support/fragments/finance/financeHelper';
+import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
+import FileManager from '../../../support/utils/fileManager';
 
 describe('ui-data-import', () => {
   let instanceHrid;
@@ -67,9 +69,7 @@ describe('ui-data-import', () => {
     illPolicy: 'Unknown lending policy',
     noteType: '"Binding"',
     holdingsNote: `autotestHoldingsNote.${getRandomPostfix()}`,
-    staffOnly: 'Mark for all affected records',
-    relationship: 'Resource',
-    uri: `"autotestUri.${getRandomPostfix()}"`
+    staffOnly: 'Mark for all affected records'
   };
   const holdingsMappingProfileForUpdate = {
     name: holdingsMappingProfileNameForUpdate,
@@ -82,7 +82,6 @@ describe('ui-data-import', () => {
     shelvingTitle: `autotestShelvingTitle.${getRandomPostfix()}`,
     callNumberType: 'Other scheme',
     callNumber: Helper.getRandomBarcode(),
-    electronicAccess: 'Resource',
     holdingsStatements: `autotestHoldingsStatements.${getRandomPostfix()}`,
     illPolicy: 'Will lend'
   };
@@ -126,9 +125,24 @@ describe('ui-data-import', () => {
     profileName: jobProfileNameForUpdate
   };
 
-  before(() => {
+  before('create test data', () => {
     cy.loginAsAdmin({ path: SettingsMenu.mappingProfilePath, waiter: FieldMappingProfiles.waitLoading });
     cy.getAdminToken();
+  });
+
+  after('delete test data', () => {
+    JobProfiles.deleteJobProfile(jobProfileNameForCreate);
+    JobProfiles.deleteJobProfile(jobProfileNameForUpdate);
+    MatchProfiles.deleteMatchProfile(instanceMatchProfileName);
+    MatchProfiles.deleteMatchProfile(holdingsMatchProfileName);
+    ActionProfiles.deleteActionProfile(instanceActionProfileNameForCreate);
+    ActionProfiles.deleteActionProfile(holdingsActionProfileNameForCreate);
+    ActionProfiles.deleteActionProfile(holdingsActionProfileNameForUpdate);
+    FieldMappingProfiles.deleteFieldMappingProfile(instanceMappingProfileNameForCreate);
+    FieldMappingProfiles.deleteFieldMappingProfile(holdingsMappingProfileNameForCreate);
+    FieldMappingProfiles.deleteFieldMappingProfile(holdingsMappingProfileNameForUpdate);
+    // delete created files
+    FileManager.deleteFile(`cypress/fixtures/${editedMarcFileName}`);
   });
 
   it('C11110 Update a holdings via a static value submatch (folijet)', { tags: [TestTypes.criticalPath, DevTeams.folijet] }, () => {
@@ -148,7 +162,6 @@ describe('ui-data-import', () => {
 
     FieldMappingProfiles.openNewMappingProfileForm();
     NewFieldMappingProfile.fillSummaryInMappingProfile(holdingsMappingProfileForCreate);
-    NewFieldMappingProfile.addSuppressFromDiscovery();
     NewFieldMappingProfile.addFormerHoldings(holdingsMappingProfileForCreate.formerHoldingsId);
     NewFieldMappingProfile.fillHoldingsType(holdingsMappingProfileForCreate.holdingsType);
     NewFieldMappingProfile.addStatisticalCode(holdingsMappingProfileForCreate.statisticalCode, 4);
@@ -205,7 +218,6 @@ describe('ui-data-import', () => {
         cy.visit(TopMenu.inventoryPath);
         InventorySearchAndFilter.searchInstanceByHRID(instanceHrid);
         InstanceRecordView.openHoldingView();
-        HoldingsRecordView.checkMarkAsSuppressedFromDiscovery();
         HoldingsRecordView.checkFormerHoldingsId(holdingsMappingProfileForCreate.formerHoldingsId);
         HoldingsRecordView.checkHoldingsType(holdingsMappingProfileForCreate.holdingsType);
         HoldingsRecordView.checkStatisticalCode(holdingsMappingProfileForCreate.statisticalCodeUI);
