@@ -13,72 +13,68 @@ let user;
 const itemBarcode = getRandomPostfix();
 const validHoldingUUIDsFileName = `validHoldingUUIDs_${getRandomPostfix()}.csv`;
 const item = {
-	instanceName: `testBulkEdit_${getRandomPostfix()}`,
-	itemBarcode: itemBarcode,
+  instanceName: `testBulkEdit_${getRandomPostfix()}`,
+  itemBarcode: itemBarcode,
 };
 
 describe('bulk-edit', () => {
-	describe('in-app approach', () => {
-		before('create test data', () => {
-			cy.createTempUser([
-				permissions.bulkEditView.gui,
-				permissions.bulkEditEdit.gui,
-				permissions.inventoryAll.gui,
-			])
-				.then(userProperties => {
-					user = userProperties;
-					cy.login(user.username, user.password, {
-						path: TopMenu.bulkEditPath,
-						waiter: BulkEditSearchPane.waitLoading
-					});
+  describe('in-app approach', () => {
+    before('create test data', () => {
+      cy.createTempUser([
+        permissions.bulkEditView.gui,
+        permissions.bulkEditEdit.gui,
+        permissions.inventoryAll.gui,
+      ])
+        .then(userProperties => {
+          user = userProperties;
+          cy.login(user.username, user.password, {
+            path: TopMenu.bulkEditPath,
+            waiter: BulkEditSearchPane.waitLoading
+          });
 
-					const instanceId = InventoryInstances.createInstanceViaApi(item.instanceName, item.itemBarcode);
-					cy.getHoldings({
-						limit: 1,
-						query: `"instanceId"="${instanceId}"`
-					})
-						.then(holdings => {
-							FileManager.createFile(`cypress/fixtures/${validHoldingUUIDsFileName}`, holdings[0].id);
-						});
-				});
+          const instanceId = InventoryInstances.createInstanceViaApi(item.instanceName, item.itemBarcode);
+          cy.getHoldings({
+            limit: 1,
+            query: `"instanceId"="${instanceId}"`
+          })
+            .then(holdings => {
+              FileManager.createFile(`cypress/fixtures/${validHoldingUUIDsFileName}`, holdings[0].id);
+            });
+        });
 
-			BulkEditSearchPane.checkHoldingsRadio();
-			BulkEditSearchPane.selectRecordIdentifier('Holdings UUIDs');
-		});
+      BulkEditSearchPane.checkHoldingsRadio();
+      BulkEditSearchPane.selectRecordIdentifier('Holdings UUIDs');
+    });
 
-		after('delete test data', () => {
-			Users.deleteViaApi(user.userId);
-			InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(item.itemBarcode);
-			FileManager.deleteFile(`cypress/fixtures/${validHoldingUUIDsFileName}`);
-			FileManager.deleteFolder(Cypress.config('downloadsFolder'));
-		});
+    after('delete test data', () => {
+      Users.deleteViaApi(user.userId);
+      InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(item.itemBarcode);
+      FileManager.deleteFile(`cypress/fixtures/${validHoldingUUIDsFileName}`);
+      FileManager.deleteFolder(Cypress.config('downloadsFolder'));
+    });
 
-		afterEach('open new bulk edit', () => {
-			cy.visit(TopMenu.bulkEditPath);
-		});
+    it.only('C360114 Verify that User can upload file with Holdings UUIDs (firebird)', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
+      BulkEditSearchPane.uploadFile(validHoldingUUIDsFileName);
+      BulkEditSearchPane.waitFileUploading();
+      [
+        'Holdings HRID',
+        'Holdings type',
+        'Permanent location',
+        'Temporary location',
+        'Call number prefix',
+        'Call number',
+        'Call number suffix',
+      ].forEach(title => {
+        BulkEditSearchPane.verifyResultColumTitles(title);
+      });
+      BulkEditActions.openActions();
+      BulkEditSearchPane.verifyHoldingActionShowColumns();
 
-		it.only('C360114 Verify that User can upload file with Holdings UUIDs (firebird)', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
-			BulkEditSearchPane.uploadFile(validHoldingUUIDsFileName);
-			BulkEditSearchPane.waitFileUploading();
-			[
-				'Holdings HRID',
-				'Holdings type',
-				'Permanent location',
-				'Temporary location',
-				'Call number prefix',
-				'Call number',
-				'Call number suffix',
-			].forEach(title => {
-				BulkEditSearchPane.verifyResultColumTitles(title);
-			});
-			BulkEditActions.openActions();
-			BulkEditSearchPane.verifyHoldingActionShowColumns();
+      BulkEditSearchPane.changeShowColumnCheckbox('Permanent location');
+      BulkEditSearchPane.verifyResultColumTitlesDoNotInclude('Permanent location');
 
-			BulkEditSearchPane.changeShowColumnCheckbox('Permanent location');
-			BulkEditSearchPane.verifyResultColumTitlesDoNotInclude('Permanent location');
-
-			BulkEditSearchPane.changeShowColumnCheckbox('Call number type');
-			BulkEditSearchPane.verifyResultColumTitles('Call number type');
-		});
-	});
+      BulkEditSearchPane.changeShowColumnCheckbox('Call number type');
+      BulkEditSearchPane.verifyResultColumTitles('Call number type');
+    });
+  });
 });
