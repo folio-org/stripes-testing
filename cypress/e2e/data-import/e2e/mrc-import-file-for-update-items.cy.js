@@ -345,11 +345,11 @@ describe('ui-data-import: MARC file upload with the update of instance, holding,
   const createHoldingsMappingProfile = (profile) => {
     FieldMappingProfiles.openNewMappingProfileForm();
     NewFieldMappingProfile.fillSummaryInMappingProfile(profile);
-    NewFieldMappingProfile.fillHoldingsType('"Electronic"');
+    NewFieldMappingProfile.fillHoldingsType('Electronic');
     NewFieldMappingProfile.fillPermanentLocation('"Online (E)"');
-    NewFieldMappingProfile.fillCallNumberType('"Library of Congress classification"');
+    NewFieldMappingProfile.fillCallNumberType('Library of Congress classification');
     NewFieldMappingProfile.fillCallNumber('050$a " " 050$b');
-    NewFieldMappingProfile.addElectronicAccess('"Resource"', '856$u');
+    NewFieldMappingProfile.addElectronicAccess('Resource', '856$u');
     FieldMappingProfiles.saveProfile();
     FieldMappingProfiles.closeViewModeForMappingProfile(profile.name);
   };

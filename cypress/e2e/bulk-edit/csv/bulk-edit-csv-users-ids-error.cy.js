@@ -5,14 +5,11 @@ import BulkEditSearchPane from '../../../support/fragments/bulk-edit/bulk-edit-s
 import FileManager from '../../../support/utils/fileManager';
 import getRandomPostfix from '../../../support/utils/stringTools';
 import devTeams from '../../../support/dictionary/devTeams';
-import BulkEditActions from '../../../support/fragments/bulk-edit/bulk-edit-actions';
 import Users from '../../../support/fragments/users/users';
 
 let user;
 const userUUIDsFileName = `userUUIDs_${getRandomPostfix()}.csv`;
 const invalidUserUUID = getRandomPostfix();
-const matchRecordsFileName = 'Matched-Records';
-const importFileName = `bulkEditImport_${getRandomPostfix()}.csv`;
 
 describe('bulk-edit', () => {
   describe('csv approach', () => {
@@ -20,6 +17,7 @@ describe('bulk-edit', () => {
       cy.createTempUser([
         permissions.bulkEditCsvView.gui,
         permissions.bulkEditCsvEdit.gui,
+        permissions.uiUsersView.gui,
       ])
         .then(userProperties => {
           user = userProperties;
@@ -30,44 +28,12 @@ describe('bulk-edit', () => {
 
     after('delete test data', () => {
       FileManager.deleteFile(`cypress/fixtures/${userUUIDsFileName}`);
-      FileManager.deleteFile(`cypress/fixtures/${importFileName}`);
       FileManager.deleteFolder(Cypress.config('downloadsFolder'));
       Users.deleteViaApi(user.userId);
     });
 
-    afterEach('reload bulk-edit page', () => {
-      cy.visit(TopMenu.bulkEditPath);
-    });
-
-    it('C353233 Verify number of updated records (firebird)', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
-      BulkEditSearchPane.selectRecordIdentifier('User UUIDs');
-
-      // Upload file
-      BulkEditSearchPane.uploadFile(userUUIDsFileName);
-      BulkEditSearchPane.waitFileUploading();
-
-      // Prepare file for bulk edit
-      const newName = `testName_${getRandomPostfix()}`;
-      BulkEditActions.downloadMatchedResults();
-      BulkEditActions.prepareValidBulkEditFile(matchRecordsFileName, importFileName, 'testPermFirst', newName);
-
-      // Upload bulk edit file
-      BulkEditActions.openStartBulkEditForm();
-      BulkEditSearchPane.uploadFile(importFileName);
-      BulkEditSearchPane.waitFileUploading();
-      BulkEditActions.clickNext();
-      BulkEditActions.commitChanges();
-
-      // Verify changes
-      BulkEditSearchPane.verifyChangedResults(newName);
-    });
-
-    it('C357034 Verify elements of the bulk edit app -- CSV app (firebird)', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
-      BulkEditSearchPane.selectRecordIdentifier('User UUIDs');
-
-      BulkEditSearchPane.clickToBulkEditMainButton();
-      BulkEditSearchPane.verifyDefaultFilterState();
-
+    it('C350928 Verify error accordion during matching (CSV approach) (firebird)', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
+      BulkEditSearchPane.checkUsersRadio();
       BulkEditSearchPane.selectRecordIdentifier('User UUIDs');
 
       BulkEditSearchPane.uploadFile(userUUIDsFileName);
@@ -76,8 +42,13 @@ describe('bulk-edit', () => {
       BulkEditSearchPane.verifyMatchedResults(user.username);
       BulkEditSearchPane.verifyNonMatchedResults(invalidUserUUID);
 
-      BulkEditSearchPane.clickToBulkEditMainButton();
-      BulkEditSearchPane.verifyDefaultFilterState();
+      BulkEditSearchPane.verifyActionsAfterConductedCSVUploading();
+      BulkEditSearchPane.verifyUsersActionShowColumns();
+
+      BulkEditSearchPane.changeShowColumnCheckbox('Email');
+      BulkEditSearchPane.verifyResultColumTitles('Email');
+
+      BulkEditSearchPane.verifyErrorLabel(userUUIDsFileName, 1, 1);
     });
   });
 });
