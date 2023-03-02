@@ -416,8 +416,9 @@ export default {
     cy.do([
       buttonLocationFilter.click(),
       Button('Location look-up').click(),
+      Select({ name: 'institutionId' }).choose('Københavns Universitet'),
       Select({ name: 'campusId' }).choose('City Campus'),
-      Button('Location look-up').click(),
+      Button({ id: 'locationId' }).click(),
       SelectionOption('Main Library (KU/CC/DI/M) ').click(),
       Button('Save and close').click(),
       buttonLocationFilter.click(),

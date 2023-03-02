@@ -11,6 +11,7 @@ import Logs from '../../support/fragments/data_import/logs/logs';
 import MarcAuthorities from '../../support/fragments/marcAuthority/marcAuthorities';
 import QuickMarcEditor from '../../support/fragments/quickMarcEditor';
 import MarcFieldProtection from '../../support/fragments/settings/dataImport/marcFieldProtection';
+import { replaceByIndex } from '../../support/utils/stringTools';
 
 describe('MARC Authority -> Edit Authority record', () => {
   const testData = {
@@ -36,6 +37,17 @@ describe('MARC Authority -> Edit Authority record', () => {
     ['520', '*', '*', '*', '*'],
     ['655', '1', '*', 'b', '*'],
     ['655', '*', '*', '*', 'Added row (must indicate)'],
+  ];
+  const initialLDRValue = String.raw`04112cz\\a2200589n\\4500`;
+  const changesSavedCallout = 'Record has been updated.';
+  const changedLDRs = [
+    { newContent: replaceByIndex(replaceByIndex(replaceByIndex(initialLDRValue, 5, 'a'), 17, 'n'), 18, '\\') },
+    { newContent: replaceByIndex(replaceByIndex(replaceByIndex(initialLDRValue, 5, 'c'), 17, 'o'), 18, ' ') },
+    { newContent: replaceByIndex(replaceByIndex(replaceByIndex(initialLDRValue, 5, 'd'), 17, 'n'), 18, 'c') },
+    { newContent: replaceByIndex(replaceByIndex(replaceByIndex(initialLDRValue, 5, 'n'), 17, 'o'), 18, 'i') },
+    { newContent: replaceByIndex(replaceByIndex(replaceByIndex(initialLDRValue, 5, 'o'), 17, 'n'), 18, 'u') },
+    { newContent: replaceByIndex(replaceByIndex(replaceByIndex(initialLDRValue, 5, 's'), 17, 'o'), 18, 'c') },
+    { newContent: replaceByIndex(replaceByIndex(replaceByIndex(initialLDRValue, 5, 'x'), 17, 'n'), 18, 'i') },
   ];
   const marcFieldProtectionRules = [];
   let createdAuthorityID;
@@ -126,6 +138,21 @@ describe('MARC Authority -> Edit Authority record', () => {
     MarcAuthority.checkInfoButton('245');
     MarcAuthority.checkInfoButton('520');
     MarcAuthority.checkInfoButton('999');
+  });
+
+  it('C353583 Verify LDR validation rules with valid data (spitfire)', { tags: [TestTypes.criticalPath, DevTeams.spitfire] }, () => {
+    MarcAuthorities.searchBy(testData.authority.searchOption, testData.authority.title);
+    MarcAuthorities.selectTitle(testData.authority.title);
+    changedLDRs.forEach(changeLDR => {
+      MarcAuthority.edit();
+      QuickMarcEditor.updateExistingField('LDR', changeLDR.newContent);
+      QuickMarcEditor.pressSaveAndClose();
+      (changeLDR.newContent === String.raw`04112az\\a2200589n\\4500`) 
+      ? 
+      MarcAuthorities.verifyFirstValueSaveSuccess(changesSavedCallout, changeLDR.newContent) 
+      : 
+      MarcAuthorities.verifySaveSuccess(changesSavedCallout, changeLDR.newContent);
+    });    
   });
 
   it('C356840 Verify that the "Save & close" button enabled when user make changes in the record. (spitfire)', { tags: [TestTypes.criticalPath, DevTeams.spitfire] }, () => {
