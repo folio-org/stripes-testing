@@ -18,7 +18,6 @@ import InventorySearchAndFilter from '../../../support/fragments/inventory/inven
 import InstanceRecordView from '../../../support/fragments/inventory/instanceRecordView';
 import HoldingsRecordView from '../../../support/fragments/inventory/holdingsRecordView';
 import Helper from '../../../support/fragments/finance/financeHelper';
-import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 import FileManager from '../../../support/utils/fileManager';
 
 describe('ui-data-import', () => {
