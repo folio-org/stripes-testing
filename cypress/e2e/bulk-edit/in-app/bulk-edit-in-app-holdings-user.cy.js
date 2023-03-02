@@ -10,11 +10,10 @@ import BulkEditActions from '../../../support/fragments/bulk-edit/bulk-edit-acti
 import Users from '../../../support/fragments/users/users';
 
 let user;
-const itemBarcode = getRandomPostfix();
 const validHoldingUUIDsFileName = `validHoldingUUIDs_${getRandomPostfix()}.csv`;
 const item = {
   instanceName: `testBulkEdit_${getRandomPostfix()}`,
-  itemBarcode: itemBarcode,
+  itemBarcode: getRandomPostfix(),
 };
 
 describe('bulk-edit', () => {
@@ -53,7 +52,7 @@ describe('bulk-edit', () => {
       FileManager.deleteFolder(Cypress.config('downloadsFolder'));
     });
 
-    it.only('C360114 Verify that User can upload file with Holdings UUIDs (firebird)', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
+    it('C360114 Verify that User can upload file with Holdings UUIDs (firebird)', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
       BulkEditSearchPane.uploadFile(validHoldingUUIDsFileName);
       BulkEditSearchPane.waitFileUploading();
       [
