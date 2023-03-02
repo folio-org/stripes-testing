@@ -7,7 +7,7 @@ module.exports = defineConfig({
   defaultCommandTimeout: 101000,
   pageLoadTimeout: 120000,
   env: {
-    OKAPI_HOST: 'https://okapi-bugfest-orchid-aqa.int.aws.folio.org/',
+    OKAPI_HOST: 'https://okapi-bugfest-orchid-aqa.int.aws.folio.org',
     OKAPI_TENANT: 'fs09000003',
     diku_login: 'folio-aqa',
     diku_password: 'Folio-aqa1',
@@ -23,6 +23,6 @@ module.exports = defineConfig({
     setupNodeEvents(on, config) {
       return require('./cypress/plugins/index.js')(on, config);
     },
-    baseUrl: 'https://bugfest-orchid-aqa.int.aws.folio.org/',
+    baseUrl: 'https://bugfest-orchid-aqa.int.aws.folio.org',
   },
 });
