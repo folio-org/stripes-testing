@@ -349,4 +349,8 @@ export default {
   checkLinkButtonExist(tag) {
     cy.expect(getRowInteractorByTagName(tag).find(linkToMarcRecordButton).exists());
   },
+
+  checkButtonSaveAndCloseEnable() { 
+    cy.expect(saveAndCloseButton.exists());
+  },
 }
