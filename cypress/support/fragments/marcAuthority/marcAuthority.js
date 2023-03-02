@@ -167,4 +167,8 @@ export default {
     cy.do(saveAndCloseButton.click());
     cy.expect(Callout('Record cannot be saved. Can only have one MARC 001.').exists());
   },
+  
+  deleteTag: (rowIndex) => { 
+    cy.do(QuickMarcEditorRow({ index: rowIndex }).find(deleteFieldButton).click());
+  },
 };
