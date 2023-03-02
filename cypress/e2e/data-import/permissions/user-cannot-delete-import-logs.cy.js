@@ -11,7 +11,7 @@ import LogsViewAll from '../../../support/fragments/data_import/logs/logsViewAll
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 import Users from '../../../support/fragments/users/users';
 
-describe('ui-data-import:', () => {
+describe('ui-data-import', () => {
   let user;
   let instanceHrid;
   const fileName = `C353641 autotestFile.${Helper.getRandomBarcode()}.mrc`;
