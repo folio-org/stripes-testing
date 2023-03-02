@@ -18,8 +18,7 @@ import Logs from '../../../support/fragments/data_import/logs/logs';
 import FileDetails from '../../../support/fragments/data_import/logs/fileDetails';
 import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
 import InventoryViewSource from '../../../support/fragments/inventory/inventoryViewSource';
-
-import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
+import FileManager from '../../../support/utils/fileManager';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 import Users from '../../../support/fragments/users/users';
 
@@ -84,7 +83,22 @@ describe('ui-data-import', () => {
       });
   });
 
-
+  after('delete test data', () => {
+    JobProfiles.deleteJobProfile(jobProfileName);
+    MatchProfiles.deleteMatchProfile(matchProfileName);
+    ActionProfiles.deleteActionProfile(actionProfileName);
+    FieldMappingProfiles.deleteFieldMappingProfile(mappingProfileName);
+    // delete created files
+    FileManager.deleteFile(`cypress/fixtures/${editedMarcFileName}`);
+    Users.deleteViaApi(user.userId);
+    MarcFieldProtection.deleteMarcFieldProtectionViaApi(firstFieldId);
+    MarcFieldProtection.deleteMarcFieldProtectionViaApi(secondFieldId);
+    cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${instanceHrid}"` })
+      .then((instance) => {
+        cy.deleteHoldingRecordViaApi(instance.holdings[0].id);
+        InventoryInstance.deleteInstanceViaApi(instance.id);
+      });
+  });
 
   it('C356830 Test field protections when importing to update instance, after editing the MARC Bib outside of FOLIO (folijet)',
     { tags: [TestTypes.criticalPath, DevTeams.folijet] }, () => {
