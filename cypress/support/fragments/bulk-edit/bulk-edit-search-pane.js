@@ -37,6 +37,14 @@ export default {
     cy.expect(bulkEditPane.exists());
   },
 
+  searchBtnIsDisabled(isDisabled) {
+    cy.expect(searchButton.has({ disabled: isDisabled }));
+  },
+
+  resetAllBtnIsDisabled(isDisabled) {
+    cy.expect(resetAllButton.has({ disabled: isDisabled }));
+  },
+
   actionsIsAbsent() {
     cy.expect(actions.absent());
   },
