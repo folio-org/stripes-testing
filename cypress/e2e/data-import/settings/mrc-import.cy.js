@@ -17,7 +17,7 @@ import DataImport from '../../../support/fragments/data_import/dataImport';
 import Logs from '../../../support/fragments/data_import/logs/logs';
 import FileDetails from '../../../support/fragments/data_import/logs/fileDetails';
 import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
-
+import InventoryViewSource from '../../../support/fragments/inventory/inventoryViewSource';
 
 import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
@@ -36,6 +36,7 @@ describe('ui-data-import', () => {
   const jobProfileName = `C356830 Update instance and check field protections ${getRandomPostfix()}`;
   // unique file names
   const nameMarcFileForCreate = `C356830 autotestFile.${getRandomPostfix()}.mrc`;
+  const editedMarcFileName = `C356830 marcFileForMatch.${getRandomPostfix()}.mrc`;
 
   const protectedFields = {
     firstField: '*',
@@ -83,6 +84,8 @@ describe('ui-data-import', () => {
       });
   });
 
+
+
   it('C356830 Test field protections when importing to update instance, after editing the MARC Bib outside of FOLIO (folijet)',
     { tags: [TestTypes.criticalPath, DevTeams.folijet] }, () => {
       MarcFieldProtection.createMarcFieldProtectionViaApi({
@@ -111,8 +114,10 @@ describe('ui-data-import', () => {
       // create match profile
       cy.visit(SettingsMenu.matchProfilePath);
       MatchProfiles.createMatchProfile(matchProfile);
+      MatchProfiles.checkMatchProfilePresented(matchProfile.profileName);
 
       // create mapping profile
+      cy.visit(SettingsMenu.mappingProfilePath);
       FieldMappingProfiles.openNewMappingProfileForm();
       NewFieldMappingProfile.fillSummaryInMappingProfile(mappingProfile);
       NewFieldMappingProfile.fillCatalogedDate(mappingProfile.catalogedDate);
@@ -135,7 +140,7 @@ describe('ui-data-import', () => {
 
       // upload a marc file for creating of the new instance
       cy.visit(TopMenu.dataImportPath);
-      DataImport.uploadFile('marcFileFor356830.mrc', nameMarcFileForCreate);
+      DataImport.uploadFile('marcFileForC356830.mrc', nameMarcFileForCreate);
       JobProfiles.searchJobProfileForImport('Default - Create instance and SRS MARC Bib');
       JobProfiles.runImportFile();
       JobProfiles.waitFileIsImported(nameMarcFileForCreate);
@@ -151,7 +156,32 @@ describe('ui-data-import', () => {
         .then(hrId => {
           instanceHrid = hrId[0];
 
-          
+          cy.visit(TopMenu.inventoryPath);
+          InventorySearchAndFilter.searchInstanceByHRID(instanceHrid);
+          InventoryInstance.viewSource();
+          InventoryViewSource.verifyFieldInMARCBibSource('650\t', 'Drawing, Dutch ‡y 21st century ‡v Exhibitions. ‡5 amb');
+          InventoryViewSource.verifyFieldInMARCBibSource('920\t', 'This field should be protected');
+
+          DataImport.editMarcFile('marcFileForC356830_rev.mrc', editedMarcFileName, ['in0000000022'], [instanceHrid]);
         });
+
+      // upload .mrc file
+      cy.visit(TopMenu.dataImportPath);
+      DataImport.checkIsLandingPageOpened();
+      DataImport.uploadFile(editedMarcFileName);
+      JobProfiles.searchJobProfileForImport(jobProfileName);
+      JobProfiles.runImportFile();
+      JobProfiles.waitFileIsImported(editedMarcFileName);
+      Logs.checkStatusOfJobProfile();
+      Logs.openFileDetails(editedMarcFileName);
+      FileDetails.checkStatusInColumn(FileDetails.status.created, FileDetails.columnName.srsMarc);
+      FileDetails.checkStatusInColumn(FileDetails.status.updated, FileDetails.columnName.instance);
+      FileDetails.checkSrsRecordQuantityInSummaryTable('1', 0);
+      FileDetails.checkInstanceQuantityInSummaryTable('1', 1);
+
+      FileDetails.openInstanceInInventory('Updated');
+      InventoryInstance.viewSource();
+      InventoryViewSource.verifyFieldInMARCBibSource('650\t', 'Drawing, Dutch ‡y 21st century ‡v Exhibitions. ‡5 amb');
+      InventoryViewSource.verifyFieldInMARCBibSource('920\t', 'This field should be protected');
     });
 });
