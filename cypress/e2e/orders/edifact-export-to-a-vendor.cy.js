@@ -19,6 +19,7 @@ describe('orders: export', () => {
   const order = { ...NewOrder.defaultOneTimeOrder,
     orderType: 'Ongoing',
     ongoing: {isSubscription: false, manualRenewal: false},
+    approved: true,
    };
   const organization = {
     ...NewOrganization.defaultUiOrganizations,
