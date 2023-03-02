@@ -19,10 +19,10 @@ import InventoryInstance from '../../../support/fragments/inventory/inventoryIns
 describe('ui-data-import', () => {
   let instanceHrid;
   const quantityOfItems = '1';
-  const nameMarcFileForCreate = `C11103 autotestFile.${getRandomPostfix()}.mrc`;
-  const mappingProfileName = `C11103 autotest mapping profile.${getRandomPostfix()}.mrc`;
-  const actionProfileName = `C11103 autotest action profile.${getRandomPostfix()}.mrc`;
-  const jobProfileName = `C11103 autotest job profile.${getRandomPostfix()}.mrc`;
+  const marcFileForCreate = `C11103 autotestFile.${getRandomPostfix()}.mrc`;
+  const mappingProfileName = `C11103 autotest mapping profile.${getRandomPostfix()}`;
+  const actionProfileName = `C11103 autotest action profile.${getRandomPostfix()}`;
+  const jobProfileName = `C11103 autotest job profile.${getRandomPostfix()}`;
 
   const mappingProfile = {
     name: mappingProfileName,
@@ -91,12 +91,12 @@ describe('ui-data-import', () => {
 
     // upload a marc file for creating of the new instance
     cy.visit(TopMenu.dataImportPath);
-    DataImport.uploadFile('oneMarcBib.mrc', nameMarcFileForCreate);
+    DataImport.uploadFile('oneMarcBib.mrc', marcFileForCreate);
     JobProfiles.searchJobProfileForImport(jobProfileName);
     JobProfiles.runImportFile();
-    JobProfiles.waitFileIsImported(nameMarcFileForCreate);
+    JobProfiles.waitFileIsImported(marcFileForCreate);
     Logs.checkStatusOfJobProfile('Completed');
-    Logs.openFileDetails(nameMarcFileForCreate);
+    Logs.openFileDetails(marcFileForCreate);
     [FileDetails.columnName.srsMarc,
       FileDetails.columnName.instance,
     ].forEach(columnName => {

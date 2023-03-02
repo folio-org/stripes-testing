@@ -11,6 +11,7 @@ import {
   Link,
   Section,
   Modal,
+  PaneContent,
 } from '../../../../interactors';
 import InteractorsTools from '../../utils/interactorsTools';
 
@@ -38,6 +39,12 @@ export default {
   filterOpenReceiving,
   selectFromResultsList: (instanceName) => cy.do(Link(instanceName).click()),
 
+  waitLoading() {
+    cy.expect([
+      Pane({ id: 'receiving-filters-pane' }).exists(),
+      Pane({ id: 'receiving-results-pane' }).exists(),
+    ]);
+  },
   receivePiece: (rowNumber, caption, barcode) => {
     const recievingFieldName = `receivedItems[${rowNumber}]`;
     cy.expect(Accordion({ id: expectedPiecesAccordionId }).exists());
@@ -145,5 +152,38 @@ export default {
 
   selectPOLInReceive:(POLName) => {
     cy.do(Section({ id: 'receiving-results-pane' }).find(Link(POLName)).click());
-  }
+  },
+
+  receiveFromExpectedSection:() => {
+    cy.do([
+      Section({ id: 'expected' }).find(actionsButton).click(),
+      receiveButton.click()
+    ]);
+  },
+
+  unreceiveFromReceivedSection:() => {
+    cy.do([
+      Section({ id: 'received' }).find(actionsButton).click(),
+      unreceiveButton.click()
+    ]);
+  },
+
+  selectFromResultsList: () => {
+    cy.do(MultiColumnList({ id:'receivings-list' }).find(Link()).click());
+  },
+
+  receiveAll: () => {
+    cy.do([
+      Checkbox({ ariaLabel: 'Select all pieces' }).clickInput(),
+      receiveButton.click(),
+    ]);
+    InteractorsTools.checkCalloutMessage(receivingSuccessful);
+  },
+
+  clickOnInstance:() => {
+    cy.do([
+      Button('Collapse all').click(),
+      PaneContent({ id: 'pane-title-details-content' }).find(Link()).click()
+    ]);
+  },
 };

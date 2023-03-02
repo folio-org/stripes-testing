@@ -644,4 +644,14 @@ export default {
   verifyItemBarcode(barcode) {
     cy.expect(MultiColumnListCell({ content: barcode }).exists());
   },
+
+  openItemByBarcodeAndIndex: (barcode,indexRowNumber,rowCountInList) => {
+    cy.do([
+      Button('Collapse all').click(),
+      Button('Acquisition').click(),
+      MultiColumnList({ columnCount: rowCountInList})
+      .find(MultiColumnListRow({ indexRow: indexRowNumber }))
+      .find(Link(barcode)).click()
+    ]);
+  },
 };

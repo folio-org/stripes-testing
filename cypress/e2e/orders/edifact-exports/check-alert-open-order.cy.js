@@ -132,7 +132,7 @@ describe('orders: Edifact export', () => {
     Users.deleteViaApi(user.userId);
   });
 
-  it('C350410: Check if a User is alerted trying to open an Order with 2 POL, having more than 1 unique accounts for export', { tags: [TestTypes.smoke, devTeams.thunderjet] }, () => {
+  it('C350410: Check if a User is alerted trying to open an Order with 2 POL, having more than 1 unique accounts for export (thunderjet)', { tags: [TestTypes.smoke, devTeams.thunderjet] }, () => {
     Orders.searchByParameter('PO number', orderNumber);
     Orders.selectFromResultsList();
     Orders.openOrder();
