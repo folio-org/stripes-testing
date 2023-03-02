@@ -93,5 +93,10 @@ export default {
   verifyAdministrativeNote,
   verifyInstanceNote,
   verifyStatisticalCode,
-  verifyNatureOfContent
+  verifyNatureOfContent,
+
+  openHoldingView: () => {
+    cy.do(Button('View holdings').click());
+    cy.expect(Button('Actions').exists());
+  },
 };

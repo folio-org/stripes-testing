@@ -113,7 +113,7 @@ describe('ui-data-import: Match on Holdings 856 $u', () => {
     FieldMappingProfiles.openNewMappingProfileForm();
     NewFieldMappingProfile.fillSummaryInMappingProfile(holdingsMappingProfile);
     NewFieldMappingProfile.fillPermanentLocation('"Online (E)"');
-    NewFieldMappingProfile.addElectronicAccess('"Resource"', '856$u', '856$z');
+    NewFieldMappingProfile.addElectronicAccess('Resource', '856$u', '856$z');
     FieldMappingProfiles.saveProfile();
     FieldMappingProfiles.closeViewModeForMappingProfile(holdingsMappingProfile.name);
   };
@@ -122,7 +122,7 @@ describe('ui-data-import: Match on Holdings 856 $u', () => {
     FieldMappingProfiles.openNewMappingProfileForm();
     NewFieldMappingProfile.fillSummaryInMappingProfile(holdingsMappingProfile);
     NewFieldMappingProfile.addSuppressFromDiscovery('Mark for all affected records');
-    NewFieldMappingProfile.fillCallNumberType('"Other scheme"');
+    NewFieldMappingProfile.fillCallNumberType('Other scheme');
     NewFieldMappingProfile.fillCallNumber('"ONLINE"');
     FieldMappingProfiles.saveProfile();
     FieldMappingProfiles.closeViewModeForMappingProfile(holdingsMappingProfile.name);
