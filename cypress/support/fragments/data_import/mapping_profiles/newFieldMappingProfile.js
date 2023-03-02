@@ -88,6 +88,7 @@ export default {
   organization,
   instanceStatusTerm,
   catalogedDate,
+  actions,
   selectFromResultsList,
   waitLoading,
 
@@ -216,7 +217,7 @@ export default {
   saveProfile:() => cy.do(saveButton.click()),
   fillPermanentLocation:(location) => cy.do(TextField('Permanent').fillIn(location)),
   fillTemporaryLocation:(location) => cy.do(TextField('Temporary').fillIn(location)),
-  fillIllPolicy:(policy) => cy.do(TextField('ILL policy').fillIn(policy)),
+  fillIllPolicy:(policy) => cy.do(TextField('ILL policy').fillIn(`"${policy}"`)),
   fillCallNumber:(number) => cy.do(TextField('Call number').fillIn(number)),
   fillBarcode:(barcode) => cy.do(TextField('Barcode').fillIn(barcode)),
   fillCopyNumber:(number) => cy.do(TextField('Copy number').fillIn(number)),
@@ -242,26 +243,26 @@ export default {
     ]);
   },
 
-  addStatisticalCode:(name, number) => {
+  addStatisticalCode:(name, number, action = actions.addTheseToExisting) => {
     // number needs for using this method in filling fields for holdings and item profiles
     const statisticalCodeFieldName = `profile.mappingDetails.mappingFields[${number}].repeatableFieldAction`;
 
     cy.do([
       Select({ name: statisticalCodeFieldName }).focus(),
-      Select({ name: statisticalCodeFieldName }).choose(actions.addTheseToExisting),
+      Select({ name: statisticalCodeFieldName }).choose(action),
       Button('Add statistical code').click(),
       TextField('Statistical code').fillIn(`"${name}"`)
     ]);
     waitLoading();
   },
 
-  addAdministrativeNote:(note, number) => {
+  addAdministrativeNote:(note, number, action = actions.addTheseToExisting) => {
     // number needs for using this method in filling fields for holdings and item profiles
     const adminNoteFieldName = `profile.mappingDetails.mappingFields[${number}].repeatableFieldAction`;
 
     cy.do([
       Select({ name: adminNoteFieldName }).focus(),
-      Select({ name: adminNoteFieldName }).choose(actions.addTheseToExisting),
+      Select({ name: adminNoteFieldName }).choose(action),
       Button('Add administrative note').click(),
       TextField('Administrative note').fillIn(`"${note}"`)
     ]);
@@ -272,16 +273,17 @@ export default {
       Select({ name:'profile.mappingDetails.mappingFields[23].repeatableFieldAction' }).focus(),
       Select({ name:'profile.mappingDetails.mappingFields[23].repeatableFieldAction' }).choose(actions.addTheseToExisting),
       Button('Add electronic access').click(),
-      TextField('Relationship').fillIn(relationship),
+      TextField('Relationship').fillIn(`"${relationship}"`),
       TextField('URI').fillIn(uri),
       TextField('Link text').fillIn(linkText)
     ]);
+    waitLoading();
   },
 
-  addHoldingsStatements:(statement) => {
+  addHoldingsStatements:(statement, action = actions.addTheseToExisting) => {
     cy.do([
       Select({ name:'profile.mappingDetails.mappingFields[16].repeatableFieldAction' }).focus(),
-      Select({ name:'profile.mappingDetails.mappingFields[16].repeatableFieldAction' }).choose(actions.addTheseToExisting),
+      Select({ name:'profile.mappingDetails.mappingFields[16].repeatableFieldAction' }).choose(action),
       Button('Add holdings statement').click(),
       TextField('Holdings statement').fillIn(`"${statement}"`),
       TextField('Statement public note').fillIn(`"${statement}"`)
@@ -332,12 +334,12 @@ export default {
   },
 
   fillHoldingsType:(type) => {
-    cy.do(TextField('Holdings type').fillIn(type));
+    cy.do(TextField('Holdings type').fillIn(`"${type}"`));
     waitLoading();
   },
 
   fillCallNumberType:(type) => {
-    cy.do(TextField('Call number type').fillIn(type));
+    cy.do(TextField('Call number type').fillIn(`"${type}"`));
     waitLoading();
   },
 
@@ -365,7 +367,7 @@ export default {
       Select({ name:holdingsNotesFieldName }).choose(actions.addTheseToExisting),
       Button('Add holdings note').click(),
       TextField('Note type').fillIn(type),
-      TextField('Note').fillIn(note),
+      TextField('Note').fillIn(`"${note}"`),
       Select({ name:selectName }).focus(),
       Select({ name:selectName }).choose(staffOnly)
     ]);
@@ -447,13 +449,13 @@ export default {
     });
   },
 
-  addFormerHoldings:(name) => {
+  addFormerHoldings:(name, action = actions.addTheseToExisting) => {
     // number needs for using this method in filling fields for holdings and item profiles
     const formerHoldingsFieldName = 'profile.mappingDetails.mappingFields[2].repeatableFieldAction';
 
     cy.do([
       Select({ name: formerHoldingsFieldName }).focus(),
-      Select({ name: formerHoldingsFieldName }).choose(actions.addTheseToExisting),
+      Select({ name: formerHoldingsFieldName }).choose(action),
       Button('Add former holdings identifier').click(),
       TextField('Former holdings ID').fillIn(`"${name}"`)
     ]);

@@ -16,6 +16,8 @@ import NewMatchProfile from '../../../support/fragments/data_import/match_profil
 import NewJobProfile from '../../../support/fragments/data_import/job_profiles/newJobProfile';
 import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
 import InstanceRecordView from '../../../support/fragments/inventory/instanceRecordView';
+import HoldingsRecordView from '../../../support/fragments/inventory/holdingsRecordView';
+import Helper from '../../../support/fragments/finance/financeHelper';
 
 describe('ui-data-import', () => {
   let instanceHrid;
@@ -50,21 +52,24 @@ describe('ui-data-import', () => {
     name: holdingsMappingProfileNameForCreate,
     typeValue : NewFieldMappingProfile.folioRecordTypeValue.holdings,
     formerHoldingsId: `autotestFormerHoldingsId.${getRandomPostfix()}`,
-    holdingsType: '"Monograph"',
+    holdingsType: 'Monograph',
     statisticalCode: 'ARL (Collection stats): books - Book, print (books)',
     statisticalCodeUI: 'Book, print (books)',
     adminNote: `autotestAdminNote.${getRandomPostfix()}`,
     permanentLocation: '"Main Library (KU/CC/DI/M)"',
+    permanentLocationUI:'Main Library',
     temporaryLocation: '"Online (E)"',
+    temporaryLocationUI: 'Online',
     shelvingTitle: `autotestShelvingTitle.${getRandomPostfix()}`,
-    callNumberType: '"National Library of Medicine classification"',
-    callNumber: '050$a " " 050$b',
+    callNumberType: 'National Library of Medicine classification',
+    callNumber: Helper.getRandomBarcode(),
     holdingsStatements: `autotestHoldingsStatements.${getRandomPostfix()}`,
-    illPolicy: '"Unknown lending policy"',
+    illPolicy: 'Unknown lending policy',
     noteType: '"Binding"',
-    holdingsNote: `"autotestHoldingsNote.${getRandomPostfix()}"`,
+    holdingsNote: `autotestHoldingsNote.${getRandomPostfix()}`,
     staffOnly: 'Mark for all affected records',
-    relationship: '"Resource"'
+    relationship: 'Resource',
+    uri: `"autotestUri.${getRandomPostfix()}"`
   };
   const holdingsMappingProfileForUpdate = {
     name: holdingsMappingProfileNameForUpdate,
@@ -76,7 +81,8 @@ describe('ui-data-import', () => {
     adminNote: `autotestAdminNote.${getRandomPostfix()}`,
     shelvingTitle: `autotestShelvingTitle.${getRandomPostfix()}`,
     callNumberType: 'Other scheme',
-    callNumber: '050$a " " 050$b',
+    callNumber: Helper.getRandomBarcode(),
+    electronicAccess: 'Resource',
     holdingsStatements: `autotestHoldingsStatements.${getRandomPostfix()}`,
     illPolicy: 'Will lend'
   };
@@ -125,7 +131,7 @@ describe('ui-data-import', () => {
     cy.getAdminToken();
   });
 
-  it('C11110 Update an instance and holdings via a static value submatch (folijet)', { tags: [TestTypes.criticalPath, DevTeams.folijet] }, () => {
+  it('C11110 Update a holdings via a static value submatch (folijet)', { tags: [TestTypes.criticalPath, DevTeams.folijet] }, () => {
     // create mapping profiles
     FieldMappingProfiles.openNewMappingProfileForm();
     NewFieldMappingProfile.fillSummaryInMappingProfile(instanceMappingProfileForCreate);
@@ -150,11 +156,10 @@ describe('ui-data-import', () => {
     NewFieldMappingProfile.fillPermanentLocation(holdingsMappingProfileForCreate.permanentLocation);
     NewFieldMappingProfile.fillTemporaryLocation(holdingsMappingProfileForCreate.temporaryLocation);
     NewFieldMappingProfile.fillCallNumberType(holdingsMappingProfileForCreate.callNumberType);
-    NewFieldMappingProfile.fillCallNumber(holdingsMappingProfileForCreate.callNumber);
+    NewFieldMappingProfile.fillCallNumber(`"${holdingsMappingProfileForCreate.callNumber}"`);
     NewFieldMappingProfile.addHoldingsStatements(holdingsMappingProfileForCreate.holdingsStatements);
     NewFieldMappingProfile.fillIllPolicy(holdingsMappingProfileForCreate.illPolicy);
     NewFieldMappingProfile.addHoldingsNotes(holdingsMappingProfileForCreate.noteType, holdingsMappingProfileForCreate.holdingsNote, holdingsMappingProfileForCreate.staffOnly);
-    NewFieldMappingProfile.addElectronicAccess(holdingsMappingProfileForCreate.relationship, '');
     FieldMappingProfiles.saveProfile();
     FieldMappingProfiles.closeViewModeForMappingProfile(holdingsMappingProfileNameForCreate);
     FieldMappingProfiles.checkMappingProfilePresented(holdingsMappingProfileNameForCreate);
@@ -190,6 +195,7 @@ describe('ui-data-import', () => {
     });
     FileDetails.checkSrsRecordQuantityInSummaryTable(quantityOfItems);
     FileDetails.checkInstanceQuantityInSummaryTable(quantityOfItems);
+    FileDetails.checkHoldingsQuantityInSummaryTable(quantityOfItems);
 
     // get Instance HRID through API
     InventorySearchAndFilter.getInstanceHRID()
@@ -198,11 +204,19 @@ describe('ui-data-import', () => {
 
         cy.visit(TopMenu.inventoryPath);
         InventorySearchAndFilter.searchInstanceByHRID(instanceHrid);
-        // InstanceRecordView.verifyMarkAsSuppressedFromDiscoveryAndSuppressed();
-        // InstanceRecordView.verifyCatalogedDate(mappingProfile.catalogedDateUI);
-        // InstanceRecordView.verifyInstanceStatusTerm(mappingProfile.instanceStatus);
-        // InstanceRecordView.verifyStatisticalCode(mappingProfile.statisticalCodeUI);
-        // InstanceRecordView.verifyNatureOfContent(mappingProfile.natureOfContent);
+        InstanceRecordView.openHoldingView();
+        HoldingsRecordView.checkMarkAsSuppressedFromDiscovery();
+        HoldingsRecordView.checkFormerHoldingsId(holdingsMappingProfileForCreate.formerHoldingsId);
+        HoldingsRecordView.checkHoldingsType(holdingsMappingProfileForCreate.holdingsType);
+        HoldingsRecordView.checkStatisticalCode(holdingsMappingProfileForCreate.statisticalCodeUI);
+        HoldingsRecordView.checkAdministrativeNote(holdingsMappingProfileForCreate.adminNote);
+        HoldingsRecordView.checkPermanentLocation(holdingsMappingProfileForCreate.permanentLocationUI);
+        HoldingsRecordView.checkTemporaryLocation(holdingsMappingProfileForCreate.temporaryLocationUI);
+        HoldingsRecordView.checkCallNumberType(holdingsMappingProfileForCreate.callNumberType);
+        HoldingsRecordView.checkCallNumber(holdingsMappingProfileForCreate.callNumber);
+        HoldingsRecordView.checkHoldingsStatement(holdingsMappingProfileForCreate.holdingsStatements);
+        HoldingsRecordView.checkIllPolicy(holdingsMappingProfileForCreate.illPolicy);
+        HoldingsRecordView.checkHoldingsNote(holdingsMappingProfileForCreate.holdingsNote);
 
         DataImport.editMarcFile('oneMarcBib.mrc', editedMarcFileName, ['ocn962073864'], [instanceHrid]);
 
@@ -210,13 +224,13 @@ describe('ui-data-import', () => {
         cy.visit(SettingsMenu.mappingProfilePath);
         FieldMappingProfiles.openNewMappingProfileForm();
         NewFieldMappingProfile.fillSummaryInMappingProfile(holdingsMappingProfileForUpdate);
-        NewFieldMappingProfile.addFormerHoldings(holdingsMappingProfileForUpdate.formerHoldingsId);
+        NewFieldMappingProfile.addFormerHoldings(holdingsMappingProfileForUpdate.formerHoldingsId, NewFieldMappingProfile.actions.deleteAllExistingAndAddThese);
         NewFieldMappingProfile.fillHoldingsType(holdingsMappingProfileForUpdate.holdingsType);
-        NewFieldMappingProfile.addStatisticalCode(holdingsMappingProfileForUpdate.statisticalCode, 4);
-        NewFieldMappingProfile.addAdministrativeNote(holdingsMappingProfileForUpdate.adminNote, 5);
+        NewFieldMappingProfile.addStatisticalCode(holdingsMappingProfileForUpdate.statisticalCode, 4, NewFieldMappingProfile.actions.deleteAllExistingAndAddThese);
+        NewFieldMappingProfile.addAdministrativeNote(holdingsMappingProfileForUpdate.adminNote, 5, NewFieldMappingProfile.actions.deleteAllExistingAndAddThese);
         NewFieldMappingProfile.fillCallNumberType(holdingsMappingProfileForUpdate.callNumberType);
-        NewFieldMappingProfile.fillCallNumber(holdingsMappingProfileForUpdate.callNumber);
-        NewFieldMappingProfile.addHoldingsStatements(holdingsMappingProfileForUpdate.holdingsStatements);
+        NewFieldMappingProfile.fillCallNumber(`"${holdingsMappingProfileForUpdate.callNumber}"`);
+        NewFieldMappingProfile.addHoldingsStatements(holdingsMappingProfileForUpdate.holdingsStatements, NewFieldMappingProfile.actions.deleteAllExistingAndAddThese);
         NewFieldMappingProfile.fillIllPolicy(holdingsMappingProfileForUpdate.illPolicy);
         FieldMappingProfiles.saveProfile();
         FieldMappingProfiles.closeViewModeForMappingProfile(holdingsMappingProfileNameForUpdate);
@@ -237,8 +251,9 @@ describe('ui-data-import', () => {
         // create job profile
         cy.visit(SettingsMenu.jobProfilePath);
         JobProfiles.createJobProfile(jobProfileForUpdate);
-        NewJobProfile.linkMatchProfileForMatches();
-        NewJobProfile.linkMatchProfileForMatches();
+        NewJobProfile.linkMatchProfile(instanceMatchProfileName);
+        NewJobProfile.linkMatchProfileForMatches(holdingsMatchProfileName);
+        NewJobProfile.linkActionProfileForMatches(holdingsActionProfileNameForUpdate);
         NewJobProfile.saveAndClose();
         JobProfiles.checkJobProfilePresented(jobProfileNameForUpdate);
 
@@ -251,16 +266,20 @@ describe('ui-data-import', () => {
         JobProfiles.waitFileIsImported(marcFileNameForUpdate);
         Logs.checkStatusOfJobProfile();
         Logs.openFileDetails(marcFileNameForUpdate);
-        FileDetails.checkStatusInColumn(FileDetails.status.updated, FileDetails.columnName.instance);
         FileDetails.checkStatusInColumn(FileDetails.status.updated, FileDetails.columnName.holdings);
+        FileDetails.checkHoldingsQuantityInSummaryTable(quantityOfItems, 1);
 
         cy.visit(TopMenu.inventoryPath);
         InventorySearchAndFilter.searchInstanceByHRID(instanceHrid);
-        // InstanceRecordView.verifyMarkAsSuppressedFromDiscoveryAndSuppressed();
-        // InstanceRecordView.verifyCatalogedDate(mappingProfile.catalogedDateUI);
-        // InstanceRecordView.verifyInstanceStatusTerm(mappingProfile.instanceStatus);
-        // InstanceRecordView.verifyStatisticalCode(mappingProfile.statisticalCodeUI);
-        // InstanceRecordView.verifyNatureOfContent(mappingProfile.natureOfContent);
+        InstanceRecordView.openHoldingView();
+        HoldingsRecordView.checkFormerHoldingsId(holdingsMappingProfileForUpdate.formerHoldingsId);
+        HoldingsRecordView.checkHoldingsType(holdingsMappingProfileForUpdate.holdingsType);
+        HoldingsRecordView.checkStatisticalCode(holdingsMappingProfileForUpdate.statisticalCodeUI);
+        HoldingsRecordView.checkAdministrativeNote(holdingsMappingProfileForUpdate.adminNote);
+        HoldingsRecordView.checkCallNumberType(holdingsMappingProfileForUpdate.callNumberType);
+        HoldingsRecordView.checkCallNumber(holdingsMappingProfileForUpdate.callNumber);
+        HoldingsRecordView.checkHoldingsStatement(holdingsMappingProfileForUpdate.holdingsStatements);
+        HoldingsRecordView.checkIllPolicy(holdingsMappingProfileForUpdate.illPolicy);
       });
   });
 });

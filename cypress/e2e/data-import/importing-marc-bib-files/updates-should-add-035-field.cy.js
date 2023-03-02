@@ -170,6 +170,8 @@ describe('ui-data-import: Data Import Updates should add 035 field from 001/003,
         FileDetails.checkInstanceQuantityInSummaryTable('8');
         cy.wrap(
           rowNumbers.forEach(rowNumber => {
+            // need to wait until page will be opened in loop
+            cy.wait(8000);
             cy.visit(TopMenu.dataImportPath);
             Logs.openFileDetails(secondMarcFileNameForCreate);
             FileDetails.openInstanceInInventory('Created', rowNumber);
