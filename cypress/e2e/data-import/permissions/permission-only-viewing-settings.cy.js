@@ -21,7 +21,7 @@ import FileExtensions from '../../../support/fragments/settings/dataImport/fileE
 import MarcFieldProtection from '../../../support/fragments/settings/dataImport/marcFieldProtection';
 import Users from '../../../support/fragments/users/users';
 
-describe('ui-data-import:', () => {
+describe('ui-data-import', () => {
   let user;
 
   // profile names for creating
