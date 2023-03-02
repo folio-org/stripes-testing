@@ -97,13 +97,13 @@ describe('orders: export', () => {
     Users.deleteViaApi(user.userId);
   });
 
-  it('C350395: Verify that Orders can be created for the selected Vendors EDIFACT export', { tags: [TestTypes.smoke, devTeams.thunderjet] }, () => {
+  it('C350395: Verify that Orders can be created for the selected Vendors EDIFACT export (thunderjet)', { tags: [TestTypes.smoke, devTeams.thunderjet] }, () => {
     cy.visit(TopMenu.ordersPath);
     Orders.createOrder(order, true, false).then(orderId => {
       order.id = orderId;
       Orders.createPOLineViaActions();
       OrderLines.selectRandomInstanceInTitleLookUP('*', 3);
-      OrderLines.fillInPOLineInfoForExportWithLocationForPhisicalResource(`${organization.accounts[0].name} (${organization.accounts[0].accountNo})`, 'Purchase', location.institutionId);
+      OrderLines.fillInPOLineInfoForExportWithLocationForPhisicalResource(`${organization.accounts[0].name} (${organization.accounts[0].accountNo})`, 'Purchase', location.institutionId, '3');
       OrderLines.backToEditingOrder();
     });
   });
