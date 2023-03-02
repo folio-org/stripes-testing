@@ -27,6 +27,7 @@ describe('ui-data-import', () => {
   let firstFieldId = null;
   let secondFieldId = null;
   let instanceHrid = null;
+  const quantityOfItems = '1';
 
   // unique profile names
   const matchProfileName = `C356830 001 to Instance HRID ${getRandomPostfix()}`;
@@ -162,8 +163,8 @@ describe('ui-data-import', () => {
       [FileDetails.columnName.srsMarc, FileDetails.columnName.instance].forEach(columnName => {
         FileDetails.checkStatusInColumn(FileDetails.status.created, columnName);
       });
-      FileDetails.checkSrsRecordQuantityInSummaryTable('1', 0);
-      FileDetails.checkInstanceQuantityInSummaryTable('1', 0);
+      FileDetails.checkSrsRecordQuantityInSummaryTable(quantityOfItems, 0);
+      FileDetails.checkInstanceQuantityInSummaryTable(quantityOfItems, 0);
 
       // get Instance HRID through API
       InventorySearchAndFilter.getInstanceHRID()
@@ -188,10 +189,11 @@ describe('ui-data-import', () => {
       JobProfiles.waitFileIsImported(editedMarcFileName);
       Logs.checkStatusOfJobProfile();
       Logs.openFileDetails(editedMarcFileName);
-      FileDetails.checkStatusInColumn(FileDetails.status.created, FileDetails.columnName.srsMarc);
-      FileDetails.checkStatusInColumn(FileDetails.status.updated, FileDetails.columnName.instance);
-      FileDetails.checkSrsRecordQuantityInSummaryTable('1', 0);
-      FileDetails.checkInstanceQuantityInSummaryTable('1', 1);
+      [FileDetails.columnName.srsMarc, FileDetails.columnName.instance].forEach(columnName => {
+        FileDetails.checkStatusInColumn(FileDetails.status.updated, columnName);
+      });
+      FileDetails.checkSrsRecordQuantityInSummaryTable(quantityOfItems, 1);
+      FileDetails.checkInstanceQuantityInSummaryTable(quantityOfItems, 1);
 
       FileDetails.openInstanceInInventory('Updated');
       InventoryInstance.viewSource();
