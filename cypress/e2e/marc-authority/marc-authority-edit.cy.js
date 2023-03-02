@@ -154,4 +154,25 @@ describe('MARC Authority -> Edit Authority record', () => {
       MarcAuthorities.verifySaveSuccess(changesSavedCallout, changeLDR.newContent);
     });    
   });
+
+  it('C356840 Verify that the "Save & close" button enabled when user make changes in the record. (spitfire)', { tags: [TestTypes.criticalPath, DevTeams.spitfire] }, () => {
+    MarcAuthorities.searchBy(testData.authority.searchOption, testData.authority.title);
+    MarcAuthorities.selectTitle(testData.authority.title);
+    MarcAuthority.edit();
+    MarcAuthority.addNewField(7, '555', '$a test');
+    QuickMarcEditor.checkButtonSaveAndCloseEnable();
+    MarcAuthority.addNewField(7, '555', '$a test');
+    QuickMarcEditor.checkButtonSaveAndCloseEnable();
+    MarcAuthority.addNewField(7, '555', '$a test');
+    QuickMarcEditor.checkButtonSaveAndCloseEnable();
+    MarcAuthority.deleteTag(8);
+    QuickMarcEditor.checkButtonSaveAndCloseEnable();
+    MarcAuthority.deleteTag(8);
+    QuickMarcEditor.checkButtonSaveAndCloseEnable();
+    MarcAuthority.deleteTag(8);
+    MarcAuthority.deleteTag(8);
+    QuickMarcEditor.pressSaveAndClose();
+    QuickMarcEditor.confirmDelete();
+    MarcAuthorities.waitLoading();
+  });
 });
