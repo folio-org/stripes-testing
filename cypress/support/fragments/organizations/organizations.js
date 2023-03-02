@@ -1,5 +1,6 @@
 import { Button, TextField, Select, KeyValue, Accordion, Pane, Checkbox, MultiColumnList, MultiColumnListCell, SearchField, MultiColumnListRow, SelectionOption, Section, TextArea, MultiSelect, MultiSelectOption, PaneHeader, Link } from '../../../../interactors';
 import getRandomPostfix from '../../utils/stringTools';
+import DateTools from '../../utils/dateTools';
 
 const buttonNew = Button('New');
 const saveAndClose = Button('Save & close');
@@ -22,6 +23,8 @@ const zeroResultsFoundText = '0 records found';
 const organizationStatus = Select('Organization status*');
 const organizationNameField = TextField('Name*');
 const organizationCodeField = TextField('Code*');
+const today = new Date();
+const todayDate = DateTools.getFormattedDate({ date: today }, 'MM/DD/YYYY')
 
 export default {
 
@@ -118,6 +121,8 @@ export default {
       ftpSection.find(TextField('Order directory')).fillIn('/files'),
       schedulingSection.find(Checkbox({ name: 'exportTypeSpecificParameters.vendorEdiOrdersExportConfig.ediSchedule.enableScheduledExport'})).click(),
       schedulingSection.find(TextField('Schedule frequency*')).fillIn('1'),
+      schedulingSection.find(Select({ name: 'exportTypeSpecificParameters.vendorEdiOrdersExportConfig.ediSchedule.scheduleParameters.schedulePeriod'})).choose('Daily'),
+      schedulingSection.find(TextField({ name: 'exportTypeSpecificParameters.vendorEdiOrdersExportConfig.ediSchedule.scheduleParameters.schedulingDate' })).fillIn(`${todayDate}`),
       schedulingSection.find(TextField('Time*')).fillIn(`${UTCTime}`),
     ]);
     cy.do(saveAndClose.click());
