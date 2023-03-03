@@ -429,12 +429,12 @@ export default {
 
   verifyUserBarcodesResultAccordion() {
     cy.expect([
+      MultiColumnListHeader('Username').exists(),
+      MultiColumnListHeader('Barcode').exists(),
       MultiColumnListHeader('Active').exists(),
+      MultiColumnListHeader('Patron group').exists(),
       MultiColumnListHeader('Last name').exists(),
       MultiColumnListHeader('First name').exists(),
-      MultiColumnListHeader('Barcode').exists(),
-      MultiColumnListHeader('Patron group').exists(),
-      MultiColumnListHeader('Username').exists(),
     ]);
   },
 
