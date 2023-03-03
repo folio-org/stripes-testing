@@ -357,7 +357,7 @@ describe('ui-data-import', () => {
     // TODO delete code after fix https://issues.folio.org/browse/MODDATAIMP-691
     DataImport.clickDataImportNavButton();
     DataImport.uploadFile(editedMarcFileName, fileNameAfterUpdate);
-    JobProfiles.searchJobProfileForImport(jobProfileForUpdate.profileName);
+    JobProfiles.searchJobProfileForImport(jobProfileNameForUpdate);
     JobProfiles.runImportFile();
     JobProfiles.waitFileIsImported(fileNameAfterUpdate);
     Logs.checkStatusOfJobProfile('Completed');
