@@ -20,7 +20,9 @@ describe('Create calendars that are 24/7 (never close)', () => {
     cy.loginAsAdmin();
 
     // get admin token to use in okapiRequest to retrieve service points
-    cy.getAdminToken();
+    if (!Cypress.env('token')) {
+      cy.getAdminToken();
+    }
 
     // reset db state
     deleteServicePoint(testServicePoint.id, false);

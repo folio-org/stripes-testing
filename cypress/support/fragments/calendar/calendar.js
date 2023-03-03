@@ -1,4 +1,3 @@
-import localforage from 'localforage';
 import { Button, Link, Modal, MultiColumnListCell, Pane } from '../../../../interactors';
 
 
@@ -28,15 +27,14 @@ export const deleteCalendarUI = (calendarName) => {
 };
 
 export const createCalendar = (testCalendarRequestBody, callback = null) => {
-  cy.wrap(localforage.getItem('okapiSess')).then((okapiSess) => {
-    expect(okapiSess).to.have.property('token');
+  function makeRequest() {
     cy.request({
       url: Cypress.env('OKAPI_HOST') + '/calendar/calendars',
       method: 'POST',
       body: testCalendarRequestBody,
       headers: {
         'x-okapi-tenant': Cypress.env('okapi_tenant'),
-        'x-okapi-token': okapiSess.token
+        'x-okapi-token': Cypress.env('token')
       },
       failOnStatusCode: false
     }).then((response) => {
@@ -50,7 +48,16 @@ export const createCalendar = (testCalendarRequestBody, callback = null) => {
         }
       }
     });
-  });
+  }
+
+
+  if (!Cypress.env('token')) {
+    cy.getAdminToken().then(() => {
+      makeRequest();
+    });
+  } else {
+    makeRequest();
+  }
 };
 
 export const deleteCalendar = (calendarID, callback = null) => {
@@ -77,8 +84,7 @@ export const createServicePoint = (testServicePointRequestBody, callback) => {
 };
 
 export const deleteServicePoint = async (servicePointID, checkStatusCode = true, callback = null) => {
-  cy.wrap(localforage.getItem('okapiSess')).then((okapiSess) => {
-    expect(okapiSess).to.have.property('token');
+  function makeRequest() {
     cy.request({
       url: Cypress.env('OKAPI_HOST') + '/service-points/' + servicePointID,
       method: 'DELETE',
@@ -95,6 +101,14 @@ export const deleteServicePoint = async (servicePointID, checkStatusCode = true,
       }
       if (callback) { callback(response); }
     });
-  });
+  }
+
+  if (!Cypress.env('token')) {
+    cy.getAdminToken().then(() => {
+      makeRequest();
+    });
+  } else {
+    makeRequest();
+  }
 };
 

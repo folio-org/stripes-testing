@@ -18,7 +18,7 @@ const sortRows = CalendarSortTableTools.sortCurrentCalendarAssignments.sortRows;
 const testServicePoint = calendarFixtures.servicePoint;
 const testCalendar = calendarFixtures.calendar;
 
-const getLocalizedDate = DateTools.getLocalizedDate;
+const getLocalizedDate = DateTools.uiCalendar.getLocalizedDate;
 
 
 
@@ -30,7 +30,9 @@ describe('Sort headings on "Current calendar assignments" tab', () => {
     cy.loginAsAdmin();
 
     // get admin token to use in okapiRequest to retrieve service points
-    cy.getAdminToken();
+    if (!Cypress.env('token')) {
+      cy.getAdminToken();
+    }
 
     // reset db state
     deleteServicePoint(testServicePoint.id, false);

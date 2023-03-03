@@ -29,7 +29,9 @@ describe('Delete existing hours of operation for service point', () => {
     cy.loginAsAdmin();
 
     // get admin token to use in okapiRequest to retrieve service points
-    cy.getAdminToken();
+    if (!Cypress.env('token')) {
+      cy.getAdminToken();
+    }
 
     // reset db state
     deleteServicePoint(testServicePoint.id, false);
@@ -55,6 +57,7 @@ describe('Delete existing hours of operation for service point', () => {
     PaneActions.currentCalendarAssignmentsPane.openCurrentCalendarAssignmentsPane();
     PaneActions.currentCalendarAssignmentsPane.selectCalendarByServicePoint(testServicePoint.name);
     PaneActions.individualCalendarPane.selectEditAction({ calendarName: testCalendar.name });
+    PaneActions.individualCalendarPane.checkEditURLFromCurrentAssignmentsPage();
 
     CreateCalendarForm.deleteHoursOfOperationAndSave();
 
@@ -72,6 +75,7 @@ describe('Delete existing hours of operation for service point', () => {
       openCalendarSettings();
       PaneActions.allCalendarsPane.openAllCalendarsPane();
       PaneActions.allCalendarsPane.checkCalendarExists(testCalendar.name);
+      PaneActions.allCalendarsPane.selectCalendar(testCalendar.name);
 
       PaneActions.individualCalendarPane.checkDeleteHoursOfOperation({
         calendarName: testCalendar.name,

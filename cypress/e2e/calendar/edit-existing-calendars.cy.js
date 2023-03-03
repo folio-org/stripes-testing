@@ -22,7 +22,9 @@ describe('Edit existing calendars', () => {
     cy.loginAsAdmin();
 
     // get admin token to use in okapiRequest to retrieve service points
-    cy.getAdminToken();
+    if (!Cypress.env('token')) {
+      cy.getAdminToken();
+    }
 
     // reset db state
     deleteServicePoint(testServicePoint.id, false);
@@ -48,6 +50,7 @@ describe('Edit existing calendars', () => {
     PaneActions.allCalendarsPane.openAllCalendarsPane();
     PaneActions.allCalendarsPane.selectCalendar(testCalendar.name);
     PaneActions.individualCalendarPane.selectEditAction({ calendarName: testCalendar.name });
+    PaneActions.individualCalendarPane.checkEditURLFromAllCalendarsPage();
 
     CreateCalendarForm.editExistingCalendarsAndSave(editExistingCalendarsData);
 

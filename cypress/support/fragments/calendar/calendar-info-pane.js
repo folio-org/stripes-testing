@@ -21,7 +21,6 @@ export const checkExpandButton = () => {
     Accordion('Hours of operation', { open: true }).exists(),
     Accordion('Exceptions — openings', { open: true }).exists(),
     Accordion('Exceptions — closures', { open: true }).exists(),
-    Accordion('Record metadata', { open: true }).exists(),
 
     Button('Collapse all').click(),
     Button('Collapse all').absent(),
@@ -31,7 +30,6 @@ export const checkExpandButton = () => {
     Accordion('Hours of operation', { open: false }).exists(),
     Accordion('Exceptions — openings', { open: false }).exists(),
     Accordion('Exceptions — closures', { open: false }).exists(),
-    Accordion('Record metadata', { open: false }).exists()
   ]);
 };
 
@@ -58,6 +56,5 @@ export const checkCalendarFields = (calendar, servicePoint) => {
     Accordion('Exceptions — openings').find(MultiColumnListCell(firstOpeningException.name)).exists(),
     Accordion('Exceptions — closures').exists(),
     Accordion('Exceptions — closures').find(MultiColumnListCell(firstClosureException.name)).exists(),
-    Accordion('Record metadata').exists()
   ]);
 };

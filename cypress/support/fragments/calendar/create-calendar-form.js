@@ -214,18 +214,10 @@ export default {
     cy.do([
       row.find(MultiColumnListCell({ column: 'Start time' }))
         .find(TextField())
-        .find(IconButton({ id: matching(/^timepicker-clear-button-/) }))
-        .click(),
-      row.find(MultiColumnListCell({ column: 'Start time' }))
-        .find(TextField())
         .find(IconButton({ id: matching(/^timepicker-toggle-button-/) }))
         .click(),
       TimeDropdown().exists(),
       TimeDropdown().setTimeAndClose(editHoursOfOperationData.startTime),
-      row.find(MultiColumnListCell({ column: 'End time' }))
-        .find(TextField())
-        .find(IconButton({ id: matching(/^timepicker-clear-button-/) }))
-        .click(),
       row.find(MultiColumnListCell({ column: 'End time' }))
         .find(TextField())
         .find(IconButton({ id: matching(/^timepicker-toggle-button-/) }))

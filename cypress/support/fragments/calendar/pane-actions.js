@@ -28,7 +28,7 @@ export default {
   },
   duplicateButtonExists() {
     cy.do(
-      Button('New').exists()
+      Button('Duplicate').exists()
     );
   },
   purgeOldCalendarsButtonExists() {
@@ -117,7 +117,6 @@ export default {
     selectCalendar(calendarName) {
       cy.do([
         Pane('All calendars').find(MultiColumnListCell(calendarName, { column: 'Calendar name' })).click(),
-        Pane(calendarName).exists()
       ]);
     },
     checkCalendarExists(calendarName) {
@@ -275,11 +274,16 @@ export default {
         Pane(calendarName).clickAction('Delete'),
       );
     },
+    checkEditURLFromCurrentAssignmentsPage() {
+      cy.url().should('match', /\/settings\/calendar\/active\/edit\/.+$/g);
+    },
+    checkEditURLFromAllCalendarsPage() {
+      cy.url().should('match', /\/settings\/calendar\/all\/edit\/.+$/g);
+    },
     selectEditAction({ calendarName }) {
       cy.do(
         Pane(calendarName).clickAction('Edit'),
       );
-      cy.url().should('match', /\/settings\/calendar\/active\/edit\/.+$/g);
     },
     checkDeleteHoursOfOperation({ calendarName, openingHoursData }) {
       cy.do([

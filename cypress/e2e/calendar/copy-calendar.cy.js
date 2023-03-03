@@ -20,7 +20,9 @@ describe('Duplicate an existing calendar to make a new one', () => {
     openCalendarSettings(false);
 
     // get admin token to use in okapiRequest to retrieve service points
-    cy.getAdminToken();
+    if (!Cypress.env('token')) {
+      cy.getAdminToken();
+    }
 
     // create test calendar
     createCalendar(testCalendar, (calResponse) => {
@@ -28,11 +30,6 @@ describe('Duplicate an existing calendar to make a new one', () => {
     });
 
     openCalendarSettings();
-  });
-
-  after(() => {
-    // delete test calendar
-    // deleteCalendar(testCalendarResponse.id);
   });
 
 

@@ -23,7 +23,9 @@ describe('Add exceptions--closures to regular hours for service point', () => {
     openCalendarSettings(false);
 
     // get admin token to use in okapiRequest to retrieve service points
-    cy.getAdminToken();
+    if (!Cypress.env('token')) {
+      cy.getAdminToken();
+    }
 
     // reset db state
     deleteServicePoint(testServicePoint.id, false);

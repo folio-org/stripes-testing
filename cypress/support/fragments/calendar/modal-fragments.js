@@ -71,10 +71,22 @@ export default {
         Modal('Purge old calendars').find(Select({ label: including('And were...') })).choose('assigned or not assigned to service points')
       ]);
     },
-    purgeCalendarsMoreThanThreeMonthsOld({ calendarName }) {
+    purgeCalendarsMoreThanThreeMonthsOld({ calendarName, hasServicePoint }) {
       cy.do([
         Modal('Purge old calendars').find(Select({ label: including('Purge calendars that ended...') })).choose('more than 3 months ago'),
-        Modal('Purge old calendars').find(Select({ label: including('And were...') })).choose('not assigned to any service points'),
+
+      ]);
+
+      if (hasServicePoint) {
+        cy.do(
+          Modal('Purge old calendars').find(Select({ label: including('And were...') })).choose('assigned or not assigned to service points')
+        );
+      } else {
+        cy.do(
+          Modal('Purge old calendars').find(Select({ label: including('And were...') })).choose('not assigned to any service points')
+        );
+      }
+      cy.do([
         Modal('Purge old calendars').find(Accordion('Calendars to be deleted')).clickHeader(),
         Modal('Purge old calendars').find(Accordion('Calendars to be deleted')).find(ListItem(calendarName)).exists(),
         Modal('Purge old calendars').find(Button('Delete')).click(),

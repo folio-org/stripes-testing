@@ -20,7 +20,9 @@ describe('User with Settings (Calendar): Can view existing calendars', () => {
     cy.loginAsAdmin();
 
     // get admin token to use in okapiRequest to retrieve service points
-    cy.getAdminToken();
+    if (!Cypress.env('token')) {
+      cy.getAdminToken();
+    }
 
     // reset db state
     deleteServicePoint(testServicePoint.id, false);
@@ -55,12 +57,13 @@ describe('User with Settings (Calendar): Can view existing calendars', () => {
 
 
   it('C361625 Permissions -> User with Settings (Calendar): Can view existing calendars (bama)', { tags: [TestTypes.smoke, devTeams.bama] }, () => {
+    PaneActions.allCalendarsPane.openAllCalendarsPane();
     PaneActions.allCalendarsPane.checkActionMenuAbsent();
     PaneActions.allCalendarsPane.selectCalendar(testCalendar.name);
     PaneActions.individualCalendarPane.checkActionMenuAbsent(testCalendar.name);
     PaneActions.currentCalendarAssignmentsPane.openCurrentCalendarAssignmentsPane();
     PaneActions.currentCalendarAssignmentsPane.checkNewButtonAbsent();
-    PaneActions.currentCalendarAssignmentsPane.selectCalendar();
+    PaneActions.currentCalendarAssignmentsPane.selectCalendarByCalendarName(testCalendar.name);
     PaneActions.individualCalendarPane.checkActionMenuAbsent(testCalendar.name);
   });
 });
