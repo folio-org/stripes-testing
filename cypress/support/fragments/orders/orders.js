@@ -148,7 +148,7 @@ export default {
         .find(PaneHeader({ id: 'paneHeaderorder-details' })
           .find(actionsButton)).click(),
       Button('Unopen').click(),
-      Button({ id:'clickable-order-unopen-confirmation-confirm-delete-holdings' }).click()
+      Button({ id:'clickable-order-unopen-confirmation-confirm' }).click()
     ]);
     InteractorsTools.checkCalloutMessage(`The Purchase order - ${orderNumber} has been successfully unopened`);
   },
