@@ -179,6 +179,7 @@ describe('TLR: Item renew', () => {
   });
 
   after('Deleting created entities', () => {
+    cy.loginAsAdmin({ path: SettingsMenu.circulationTitleLevelRequestsPath, waiter: TitleLevelRequests.waitLoading });
     cy.get('@items').each((item) => {
       CheckInActions.checkinItemViaApi({
         itemBarcode: item.barcode,
@@ -201,6 +202,7 @@ describe('TLR: Item renew', () => {
     cy.wrap(instanceData.itemIds).each((item) => {
       cy.deleteItemViaApi(item);
     });
+    TitleLevelRequests.changeTitleLevelRequestsStatus('forbid');
     cy.deleteHoldingRecordViaApi(instanceData.holdingId);
     InventoryInstance.deleteInstanceViaApi(instanceData.instanceId);
     cy.deleteLoanPolicy(loanPolicyBody.id);
@@ -219,10 +221,6 @@ describe('TLR: Item renew', () => {
       testData.defaultLocation.libraryId,
       testData.defaultLocation.id
     );
-    cy.loginAsAdmin();
-    cy.visit(SettingsMenu.circulationTitleLevelRequestsPath);
-    TitleLevelRequests.waitLoading();
-    TitleLevelRequests.changeTitleLevelRequestsStatus('forbid');
   });
   it(
     'C360534 TLR: Check that Item assigned to recall is not renewable (vega)',
