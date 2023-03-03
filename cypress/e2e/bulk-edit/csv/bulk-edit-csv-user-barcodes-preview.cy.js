@@ -32,16 +32,16 @@ describe('bulk-edit', () => {
           FileManager.createFile(`cypress/fixtures/${invalidUserBarcodesFileName}`, getRandomPostfix());
         });
     });
+    
+    beforeEach('reload bulk-edit page', () => {
+      cy.visit(TopMenu.bulkEditPath);
+      BulkEditSearchPane.selectRecordIdentifier('User Barcodes');
+    });
 
     after('delete test data', () => {
       Users.deleteViaApi(user.userId);
       FileManager.deleteFile(`cypress/fixtures/${userBarcodesFileName}`);
       FileManager.deleteFile(`cypress/fixtures/${invalidUserBarcodesFileName}`);
-    });
-
-    beforeEach('reload bulk-edit page', () => {
-      cy.visit(TopMenu.bulkEditPath);
-      BulkEditSearchPane.selectRecordIdentifier('User Barcodes');
     });
 
     it('C347872 Populating preview of matched records (firebird)', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
