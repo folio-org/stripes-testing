@@ -1,4 +1,5 @@
-import { Pane, Button, Checkbox } from '../../../../../interactors';
+import { Pane, Button, Checkbox, Callout, calloutTypes } from '../../../../../interactors';
+import InteractorsTools from '../../../utils/interactorsTools';
 
 const SaveButton = Button('Save');
 const TLRCheckbox = Checkbox({ name: 'titleLevelRequestsFeatureEnabled' });
@@ -15,10 +16,16 @@ export default {
         if (!checked && status === 'allow') {
           cy.expect(Checkbox({ name: 'titleLevelRequestsFeatureEnabled', disabled: false }).exists());
           cy.do([TLRCheckbox.click(), SaveButton.click()]);
+          this.checkUpdateTLRCalloutAppeared();
         } else if (checked && status === 'forbid') {
           cy.expect(Checkbox({ name: 'titleLevelRequestsFeatureEnabled', disabled: false }).exists());
           cy.do([TLRCheckbox.click(), SaveButton.click()]);
+          this.checkUpdateTLRCalloutAppeared();
         }
       });
+  },
+
+  checkUpdateTLRCalloutAppeared() {
+    InteractorsTools.checkCalloutMessage('Setting was successfully updated.');
   },
 };

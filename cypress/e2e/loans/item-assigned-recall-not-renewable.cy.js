@@ -25,6 +25,7 @@ import NewRequest from '../../support/fragments/requests/newRequest';
 import RequestPolicy from '../../support/fragments/circulation/request-policy';
 import SettingsMenu from '../../support/fragments/settingsMenu';
 import TitleLevelRequests from '../../support/fragments/settings/circulation/titleLevelRequests';
+import Requests from '../../support/fragments/requests/requests';
 
 describe('TLR: Item renew', () => {
   let originalCirculationRules;
@@ -65,6 +66,10 @@ describe('TLR: Item renew', () => {
   before('Preconditions', () => {
     cy.getAdminToken()
       .then(() => {
+        cy.loginAsAdmin({
+          path: SettingsMenu.circulationTitleLevelRequestsPath,
+          waiter: TitleLevelRequests.waitLoading,
+        });
         ServicePoints.createViaApi(testData.userServicePoint);
         testData.defaultLocation = Location.getDefaultLocation(testData.userServicePoint.id);
         Location.createViaApi(testData.defaultLocation);
@@ -171,12 +176,7 @@ describe('TLR: Item renew', () => {
             userBarcode: userForCheckOut.barcode,
           });
         });
-        cy.loginAsAdmin({
-          path: SettingsMenu.circulationTitleLevelRequestsPath,
-          waiter: TitleLevelRequests.waitLoading,
-        }).then(() => {
-          TitleLevelRequests.changeTitleLevelRequestsStatus('allow');
-        });
+        TitleLevelRequests.changeTitleLevelRequestsStatus('allow');
         cy.login(userForRenew.username, userForRenew.password);
       });
   });
@@ -232,6 +232,7 @@ describe('TLR: Item renew', () => {
     { tags: [TestTypes.criticalPath, devTeams.vega] },
     () => {
       cy.visit(TopMenu.requestsPath);
+      Requests.waitLoading();
       cy.intercept('POST', 'circulation/requests').as('createRequest');
       NewRequest.createNewRequest({
         requesterBarcode: userForRenew.barcode,

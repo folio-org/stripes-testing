@@ -61,13 +61,21 @@ export default {
     isDefaultSearchParamsRequired : false,
   }).then(response => response.body.patronBlockConditions),
 
-  setConditionState: (message, borrowing = true, renewals = true, request = true) => {
-    cy.do([
-      borrowing && borrowingBox.click(),
-      renewals && renewalsBox.click(),
-      request && requestsBox.click(),
-      messageToBeDisplayed.fillIn(message),
-      Button('Save').click(),
-    ]);
-  }
+  setConditionState: (message, blockCheckboxes = [true, true, true]) => {
+    cy.get('[class*="partonBlockForm"] input')
+      .each((item, index) => {
+        cy.get(Cypress.$(item))
+          .invoke('is', ':checked')
+          .then((checked) => {
+            if (!checked && blockCheckboxes[index]) {
+              cy.get(Cypress.$(item)).click();
+            } else if (checked && !blockCheckboxes[index]) {
+              cy.get(Cypress.$(item)).click();
+            }
+          });
+      })
+      .then(() => {
+        cy.do([messageToBeDisplayed.fillIn(message), Button('Save').click()]);
+      });
+  },
 };
