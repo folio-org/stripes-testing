@@ -10,7 +10,7 @@ import FileDetails from '../../../support/fragments/data_import/logs/fileDetails
 import Users from '../../../support/fragments/users/users';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 
-describe('ui-data-import:', () => {
+describe('ui-data-import', () => {
   let user;
   const instanceTitle = 'Mistapim in Cambodia [microform]. Photos. by the author.';
   const error = '{"error":"A new Instance was not created because the incoming record already contained a 999ff$s or 999ff$i field"}';

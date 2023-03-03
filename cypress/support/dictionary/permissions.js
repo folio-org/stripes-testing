@@ -7,6 +7,7 @@ export default {
   bulkEditCsvDelete: { internal: 'ui-bulk-edit.delete', gui: 'Bulk Edit: (CSV) Delete' },
   bulkEditUpdateRecords: { internal: 'ui-bulk-edit.app-edit.users', gui: 'Bulk edit: In app - Update user records' },
   bulkEditQueryView: { internal: 'ui-bulk-edit.query', gui: 'Bulk edit: Query' },
+  bulkEditLogsView: { internal: 'ui-bulk-edit.logs.view', gui: 'Bulk edit - Can view logs' },
   // eHoldings
   uieHoldingsRecordsEdit: { internal: 'ui-eholdings.records.edit', gui:'eHoldings: Can edit providers, packages, titles detail records' },
   uieHoldingsTitlesPackagesCreateDelete: { internal: 'ui-eholdings.titles-packages.create-delete', gui: 'eHoldings: Can create and delete custom packages and titles' },
@@ -91,7 +92,6 @@ export default {
   uiUsersDeclareItemLost: { internal: 'ui-users.loans.declare-item-lost', gui: 'Users: User loans declare lost' },
   usersLoansRenewThroughOverride: { internal: 'ui-users.loans.renew-override', gui: 'Users: User loans renew through override' },
   uiUsersEditProfile: { internal: 'ui-users.edit', gui: 'Users: Can edit user profile' },
-  uiUsersViewProfile: { internal: 'ui-users.view', gui: 'Users: Can view user profile' },
   uiUsersPermissions: { internal: 'ui-users.editperms', gui: 'Users: Can assign and unassign permissions to users' },
   uiUsersfeefinesView: { internal: 'ui-users.feesfines.view', gui: 'Users: Can view fees/fines and loans' },
   uiUsersManualCharge: { internal: 'ui-users.manual_charge', gui: 'Fees/Fines: Can charge' },
