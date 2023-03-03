@@ -14,60 +14,60 @@ const invalidUserBarcodesFileName = `invalidUserBarcodes_${getRandomPostfix()}.c
 
 
 describe('bulk-edit', () => {
-	describe('csv approach', () => {
-		before('create test data', () => {
-			cy.createTempUser([
-				permissions.bulkEditCsvView.gui,
-				permissions.bulkEditCsvEdit.gui,
-				permissions.uiUsersView.gui,
-			])
-				.then(userProperties => {
-					user = userProperties;
-					cy.login(user.username, user.password, {
-						path: TopMenu.bulkEditPath,
-						waiter: BulkEditSearchPane.waitLoading
-					});
+  describe('csv approach', () => {
+    before('create test data', () => {
+      cy.createTempUser([
+        permissions.bulkEditCsvView.gui,
+        permissions.bulkEditCsvEdit.gui,
+        permissions.uiUsersView.gui,
+      ])
+        .then(userProperties => {
+          user = userProperties;
+          cy.login(user.username, user.password, {
+            path: TopMenu.bulkEditPath,
+            waiter: BulkEditSearchPane.waitLoading
+          });
 
-					FileManager.createFile(`cypress/fixtures/${userBarcodesFileName}`, user.barcode);
-					FileManager.createFile(`cypress/fixtures/${invalidUserBarcodesFileName}`, getRandomPostfix());
-				});
-		});
+          FileManager.createFile(`cypress/fixtures/${userBarcodesFileName}`, user.barcode);
+          FileManager.createFile(`cypress/fixtures/${invalidUserBarcodesFileName}`, getRandomPostfix());
+        });
+    });
 
-		after('delete test data', () => {
-			Users.deleteViaApi(user.userId);
-			FileManager.deleteFile(`cypress/fixtures/${userBarcodesFileName}`);
-			FileManager.deleteFile(`cypress/fixtures/${invalidUserBarcodesFileName}`);
-		});
+    after('delete test data', () => {
+      Users.deleteViaApi(user.userId);
+      FileManager.deleteFile(`cypress/fixtures/${userBarcodesFileName}`);
+      FileManager.deleteFile(`cypress/fixtures/${invalidUserBarcodesFileName}`);
+    });
 
-		beforeEach('reload bulk-edit page', () => {
-			cy.visit(TopMenu.bulkEditPath);
-			BulkEditSearchPane.selectRecordIdentifier('User Barcodes');
-		});
+    beforeEach('reload bulk-edit page', () => {
+      cy.visit(TopMenu.bulkEditPath);
+      BulkEditSearchPane.selectRecordIdentifier('User Barcodes');
+    });
 
-		it('C347872 Populating preview of matched records (firebird)', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
-			BulkEditSearchPane.uploadFile(userBarcodesFileName);
-			BulkEditSearchPane.waitFileUploading();
-			BulkEditSearchPane.verifyUserBarcodesResultAccordion();
-			BulkEditSearchPane.verifyMatchedResults(user.barcode);
+    it('C347872 Populating preview of matched records (firebird)', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
+      BulkEditSearchPane.uploadFile(userBarcodesFileName);
+      BulkEditSearchPane.waitFileUploading();
+      BulkEditSearchPane.verifyUserBarcodesResultAccordion();
+      BulkEditSearchPane.verifyMatchedResults(user.barcode);
 
-			BulkEditSearchPane.verifyActionsAfterConductedCSVUploading(false);
-			BulkEditSearchPane.verifyUsersActionShowColumns();
+      BulkEditSearchPane.verifyActionsAfterConductedCSVUploading(false);
+      BulkEditSearchPane.verifyUsersActionShowColumns();
 
-			BulkEditSearchPane.changeShowColumnCheckbox('Last name');
-			BulkEditSearchPane.verifyResultColumTitlesDoNotInclude('Last name');
+      BulkEditSearchPane.changeShowColumnCheckbox('Last name');
+      BulkEditSearchPane.verifyResultColumTitlesDoNotInclude('Last name');
 
-			BulkEditSearchPane.changeShowColumnCheckbox('Email');
-			BulkEditSearchPane.verifyResultColumTitles('Email');
-		});
+      BulkEditSearchPane.changeShowColumnCheckbox('Email');
+      BulkEditSearchPane.verifyResultColumTitles('Email');
+    });
 
-		it('C360556 Populating preview of matched records in case no matches (firebird)', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
-			BulkEditSearchPane.uploadFile(invalidUserBarcodesFileName);
-			BulkEditSearchPane.waitFileUploading();
-			BulkEditSearchPane.matchedAccordionIsAbsent();
-			BulkEditSearchPane.verifyErrorLabel(invalidUserBarcodesFileName, 0, 1);
+    it('C360556 Populating preview of matched records in case no matches (firebird)', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
+      BulkEditSearchPane.uploadFile(invalidUserBarcodesFileName);
+      BulkEditSearchPane.waitFileUploading();
+      BulkEditSearchPane.matchedAccordionIsAbsent();
+      BulkEditSearchPane.verifyErrorLabel(invalidUserBarcodesFileName, 0, 1);
 
-			BulkEditActions.openActions();
-			BulkEditActions.verifyUsersActionDropdownItemsInCaseOfError();
-		});
-	});
+      BulkEditActions.openActions();
+      BulkEditActions.verifyUsersActionDropdownItemsInCaseOfError();
+    });
+  });
 });
