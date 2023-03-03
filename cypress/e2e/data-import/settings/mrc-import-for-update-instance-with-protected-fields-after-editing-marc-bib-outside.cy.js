@@ -96,7 +96,6 @@ describe('ui-data-import', () => {
     MarcFieldProtection.deleteMarcFieldProtectionViaApi(secondFieldId);
     cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${instanceHrid}"` })
       .then((instance) => {
-        cy.deleteHoldingRecordViaApi(instance.holdings[0].id);
         InventoryInstance.deleteInstanceViaApi(instance.id);
       });
   });
@@ -177,7 +176,12 @@ describe('ui-data-import', () => {
           InventoryViewSource.verifyFieldInMARCBibSource('650\t', 'Drawing, Dutch ‡y 21st century ‡v Exhibitions. ‡5 amb');
           InventoryViewSource.verifyFieldInMARCBibSource('920\t', 'This field should be protected');
 
-          DataImport.editMarcFile('marcFileForC356830_rev.mrc', editedMarcFileName, ['in0000000022'], [instanceHrid]);
+          DataImport.editMarcFile(
+            'marcFileForC356830_rev.mrc',
+            editedMarcFileName,
+            ['in00000000022'],
+            [instanceHrid]
+          );
         });
 
       // upload .mrc file
