@@ -187,6 +187,8 @@ describe('ui-data-import: Match on location', () => {
 
         // upload a marc file for creating of the new instance, holding and item
         cy.visit(TopMenu.dataImportPath);
+        // TODO delete code after fix https://issues.folio.org/browse/MODDATAIMP-691
+        DataImport.clickDataImportNavButton();
         DataImport.uploadFile('marcFileForMatchOnLocation_1.mrc', marcFileForCreate);
         JobProfiles.searchJobProfileForImport(testData.jobProfileForCreate.profile.name);
         JobProfiles.runImportFile();
@@ -342,6 +344,8 @@ describe('ui-data-import: Match on location', () => {
 
     // upload a marc file
     cy.visit(TopMenu.dataImportPath);
+    // TODO delete code after fix https://issues.folio.org/browse/MODDATAIMP-691
+    DataImport.clickDataImportNavButton();
     DataImport.uploadFile(editedMarcFileName, fileNameAfterUpdate);
     JobProfiles.searchJobProfileForImport(jobProfileNameForUpdate.profileName);
     JobProfiles.runImportFile();
@@ -501,6 +505,8 @@ describe('ui-data-import: Match on location', () => {
 
     // upload a marc file
     cy.visit(TopMenu.dataImportPath);
+    // TODO delete code after fix https://issues.folio.org/browse/MODDATAIMP-691
+    DataImport.clickDataImportNavButton();
     DataImport.uploadFile(editedMarcFileName, fileNameAfterUpdate);
     JobProfiles.searchJobProfileForImport(jobProfileNameForUpdate.profileName);
     JobProfiles.runImportFile();
@@ -660,6 +666,8 @@ describe('ui-data-import: Match on location', () => {
 
     // upload a marc file
     cy.visit(TopMenu.dataImportPath);
+    // TODO delete code after fix https://issues.folio.org/browse/MODDATAIMP-691
+    DataImport.clickDataImportNavButton();
     DataImport.uploadFile(editedMarcFileName, fileNameAfterUpdate);
     JobProfiles.searchJobProfileForImport(jobProfileNameForUpdate.profileName);
     JobProfiles.runImportFile();

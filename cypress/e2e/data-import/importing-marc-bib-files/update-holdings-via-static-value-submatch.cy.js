@@ -193,6 +193,8 @@ describe('ui-data-import', () => {
 
     // upload a marc file for creating
     cy.visit(TopMenu.dataImportPath);
+    // TODO delete code after fix https://issues.folio.org/browse/MODDATAIMP-691
+    DataImport.clickDataImportNavButton();
     DataImport.uploadFile('oneMarcBib.mrc', marcFileNameForCreate);
     JobProfiles.searchJobProfileForImport(jobProfileNameForCreate);
     JobProfiles.runImportFile();
@@ -271,6 +273,8 @@ describe('ui-data-import', () => {
         // upload .mrc file
         cy.visit(TopMenu.dataImportPath);
         DataImport.checkIsLandingPageOpened();
+        // TODO delete code after fix https://issues.folio.org/browse/MODDATAIMP-691
+        DataImport.clickDataImportNavButton();
         DataImport.uploadFile(editedMarcFileName, marcFileNameForUpdate);
         JobProfiles.searchJobProfileForImport(jobProfileNameForUpdate);
         JobProfiles.runImportFile();

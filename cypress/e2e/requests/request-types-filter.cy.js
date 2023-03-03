@@ -50,7 +50,6 @@ describe('ui-requests: Make sure that request type filters are working properly'
     userIds.forEach(id => {
       Users.deleteViaApi(id);
     });
-    Requests.updateCirculationRulesApi(oldRulesText);
     Requests.deleteRequestPolicyApi(requestPolicyId);
   });
 
