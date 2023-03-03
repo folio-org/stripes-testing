@@ -32,7 +32,7 @@ describe('bulk-edit', () => {
           FileManager.createFile(`cypress/fixtures/${invalidUserBarcodesFileName}`, getRandomPostfix());
         });
     });
-    
+
     beforeEach('reload bulk-edit page', () => {
       cy.visit(TopMenu.bulkEditPath);
       BulkEditSearchPane.selectRecordIdentifier('User Barcodes');
