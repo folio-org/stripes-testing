@@ -1,4 +1,4 @@
-import { Section, NavListItem, Checkbox, TextArea, Button } from '../../../../../interactors';
+import { Section, NavListItem, TextArea, Button } from '../../../../../interactors';
 import Condition from './condition';
 
 const rootPaneset = Section({ id:'app-settings-nav-pane' });
@@ -8,9 +8,6 @@ const conditionsValues = ['Maximum number of items charged out',
   'Maximum number of overdue recalls',
   'Maximum outstanding fee/fine balance',
   'Recall overdue by maximum number of days'];
-const borrowingBox = Checkbox({ id:'blockBorrowing' });
-const renewalsBox = Checkbox({ id:'blockRenewals' });
-const requestsBox = Checkbox({ id:'blockRequests' });
 const messageToBeDisplayed = TextArea({ id:'message' });
 
 const resetCondition = (conditionValue) => {

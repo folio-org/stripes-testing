@@ -1,4 +1,4 @@
-import { Pane, Button, Checkbox, Callout, calloutTypes } from '../../../../../interactors';
+import { Pane, Button, Checkbox } from '../../../../../interactors';
 import InteractorsTools from '../../../utils/interactorsTools';
 
 const SaveButton = Button('Save');
