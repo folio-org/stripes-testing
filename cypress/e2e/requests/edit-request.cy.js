@@ -45,7 +45,6 @@ describe('ui-requests: Request: Edit requests. Make sure that edits are being sa
       cancelledDate: new Date().toISOString(),
     });
     Users.deleteViaApi(userId);
-    Requests.updateCirculationRulesApi(oldRulesText);
     Requests.deleteRequestPolicyApi(requestPolicyId);
   });
 

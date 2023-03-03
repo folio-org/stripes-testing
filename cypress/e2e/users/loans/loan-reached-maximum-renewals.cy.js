@@ -221,10 +221,6 @@ describe('ui-users-loans: renewal failure because loan has reached maximum renew
       InventoryInstance.deleteInstanceViaApi(secondInstanceIds.instanceId);
     });
 
-    cy.updateCirculationRules({
-      rulesAsText: rulesDefaultString,
-    });
-
     cy.deleteLoanPolicy(Cypress.env(CY_ENV.LOAN_POLICY).id);
     RequestPolicy.deleteViaApi(Cypress.env(CY_ENV.REQUEST_POLICY).id);
     LostItemFeePolicy.deleteViaApi(Cypress.env(CY_ENV.LOST_ITEM_FEES_POLICY).id);
