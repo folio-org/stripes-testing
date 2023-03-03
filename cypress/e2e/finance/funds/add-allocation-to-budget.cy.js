@@ -43,6 +43,7 @@ describe('ui-finance: Transactions', () => {
       permissions.uiFinanceCreateAllocations.gui,
     ])
       .then(userProperties => {
+        console.log(userProperties);
         user = userProperties;
         cy.login(userProperties.username, userProperties.password, { path:TopMenu.fundPath, waiter: Funds.waitLoading });
       });
