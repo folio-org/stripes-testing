@@ -198,8 +198,8 @@ describe('Loans ', () => {
           }
         )
       );
-    LostItemFeePolicy.deleteViaApi(lostItemFeePolicyBody.id);
     CirculationRules.deleteRuleViaApi(originalCirculationRules);
+    LostItemFeePolicy.deleteViaApi(lostItemFeePolicyBody.id);
     cy.deleteLoanType(testData.loanTypeId);
     Location.deleteViaApiIncludingInstitutionCampusLibrary(
       defaultLocation.institutionId,
