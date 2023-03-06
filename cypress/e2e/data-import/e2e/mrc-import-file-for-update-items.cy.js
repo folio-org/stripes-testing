@@ -372,13 +372,14 @@ describe('ui-data-import: MARC file upload with the update of instance, holding,
     JobProfiles.runImportFile();
     JobProfiles.waitFileIsImported(nameMarcFileForImportCreate);
     Logs.openFileDetails(nameMarcFileForImportCreate);
-    FileDetails.checkStatusInColumn(FileDetails.status.updated, FileDetails.columnName.srsMarc);
-    [FileDetails.columnName.instance,
+    [FileDetails.columnName.srsMarc,
+      FileDetails.columnName.instance,
       FileDetails.columnName.holdings,
       FileDetails.columnName.item].forEach(columnName => {
       FileDetails.checkStatusInColumn(FileDetails.status.created, columnName);
     });
     FileDetails.checkItemsQuantityInSummaryTable(0, '1');
+    FileDetails.checkItemsQuantityInSummaryTable(1, '0');
 
     // get Instance HRID through API
     InventorySearchAndFilter.getInstanceHRID()
