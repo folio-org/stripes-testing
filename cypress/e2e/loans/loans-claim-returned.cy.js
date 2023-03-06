@@ -38,6 +38,7 @@ function getClaimedReturnedLoansQuantity(loansArray) {
 }
 
 describe('Loans ', () => {
+  let addedCirculationRule;
   let originalCirculationRules;
   let defaultLocation;
   const reasonWhyItemIsClaimedOut = 'reason why the item is claimed out';
@@ -144,6 +145,7 @@ describe('Loans ', () => {
       originalCirculationRules = circulationRule.rulesAsText;
       const ruleProps = CirculationRules.getRuleProps(circulationRule.rulesAsText);
       ruleProps.i = lostItemFeePolicyBody.id;
+      addedCirculationRule = 't ' + testData.loanTypeId + ': i ' + ruleProps.i + ' l ' + ruleProps.l + ' r ' + ruleProps.r + ' o ' + ruleProps.o + ' n ' + ruleProps.n;
       CirculationRules.addRuleViaApi(originalCirculationRules, ruleProps, 't ', testData.loanTypeId);
     });
     cy.createTempUser([permissions.checkinAll.gui,
@@ -198,7 +200,7 @@ describe('Loans ', () => {
           }
         )
       );
-    CirculationRules.deleteRuleViaApi(originalCirculationRules);
+    CirculationRules.deleteRuleViaApi(addedCirculationRule);
     LostItemFeePolicy.deleteViaApi(lostItemFeePolicyBody.id);
     cy.deleteLoanType(testData.loanTypeId);
     Location.deleteViaApiIncludingInstitutionCampusLibrary(
