@@ -256,16 +256,33 @@ export default {
     cy.wait(500);
   },
 
-  verifyUsersActionDropdownItems(isDisabled = false) {
+  verifyUsersActionDropdownItemsInCaseOfError() {
     cy.expect([
-      dropdownMenu.find(Checkbox({ name: 'Active', checked: true, disabled: isDisabled })).exists(),
-      dropdownMenu.find(Checkbox({ name: 'Last name', checked: true, disabled: isDisabled })).exists(),
-      dropdownMenu.find(Checkbox({ name: 'First name', checked: true, disabled: isDisabled })).exists(),
-      dropdownMenu.find(Checkbox({ name: 'Barcode', checked: true, disabled: isDisabled })).exists(),
-      dropdownMenu.find(Checkbox({ name: 'Patron group', checked: true, disabled: isDisabled })).exists(),
-      dropdownMenu.find(Checkbox({ name: 'Username', checked: true, disabled: isDisabled })).exists(),
-      dropdownMenu.find(Checkbox({ name: 'Email', checked: false, disabled: isDisabled })).exists(),
-      dropdownMenu.find(Checkbox({ name: 'Expiration date', checked: false, disabled: isDisabled })).exists(),
+      DropdownMenu().find(Checkbox('Username')).has({ disabled: true }),
+      DropdownMenu().find(Checkbox('User id')).has({ disabled: true }),
+      DropdownMenu().find(Checkbox('External System ID')).has({ disabled: true }),
+      DropdownMenu().find(Checkbox('Barcode')).has({ disabled: true }),
+      DropdownMenu().find(Checkbox('Active')).has({ disabled: true }),
+      DropdownMenu().find(Checkbox('Type')).has({ disabled: true }),
+      DropdownMenu().find(Checkbox('Patron group')).has({ disabled: true }),
+      DropdownMenu().find(Checkbox('Departments')).has({ disabled: true }),
+      DropdownMenu().find(Checkbox('Proxy for')).has({ disabled: true }),
+      DropdownMenu().find(Checkbox('Last name')).has({ disabled: true }),
+      DropdownMenu().find(Checkbox('First name')).has({ disabled: true }),
+      DropdownMenu().find(Checkbox('Middle name')).has({ disabled: true }),
+      DropdownMenu().find(Checkbox('Preferred first name')).has({ disabled: true }),
+      DropdownMenu().find(Checkbox('Email')).has({ disabled: true }),
+      DropdownMenu().find(Checkbox('Phone')).has({ disabled: true }),
+      DropdownMenu().find(Checkbox('Mobile phone')).has({ disabled: true }),
+      DropdownMenu().find(Checkbox('Birth date')).has({ disabled: true }),
+      DropdownMenu().find(Checkbox('Addresses')).has({ disabled: true }),
+      DropdownMenu().find(Checkbox('Preferred contact type id')).has({ disabled: true }),
+      DropdownMenu().find(Checkbox('Date enrolled')).has({ disabled: true }),
+      DropdownMenu().find(Checkbox('Expiration date')).has({ disabled: true }),
+      DropdownMenu().find(Checkbox('Record created')).has({ disabled: true }),
+      DropdownMenu().find(Checkbox('Record updated')).has({ disabled: true }),
+      DropdownMenu().find(Checkbox('Tags')).has({ disabled: true }),
+      DropdownMenu().find(Checkbox('Custom fields')).has({ disabled: true }),
     ]);
   },
 
