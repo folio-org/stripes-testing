@@ -1,7 +1,7 @@
-import permissions from "../../../support/dictionary/permissions"
-import BulkEditSearchPane from "../../../support/fragments/bulk-edit/bulk-edit-search-pane";
-import TopMenu from "../../../support/fragments/topMenu";
-import Users from "../../../support/fragments/users/users";
+import permissions from '../../../support/dictionary/permissions'
+import BulkEditSearchPane from '../../../support/fragments/bulk-edit/bulk-edit-search-pane';
+import TopMenu from '../../../support/fragments/topMenu';
+import Users from '../../../support/fragments/users/users';
 import testTypes from '../../../support/dictionary/testTypes';
 import devTeams from '../../../support/dictionary/devTeams';
 
