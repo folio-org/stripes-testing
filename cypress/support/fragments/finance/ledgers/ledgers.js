@@ -81,6 +81,10 @@ export default {
     cy.do(Button({ id: 'reset-ledgers-filters' }).click());
   },
 
+  closeAndBackToDetails: () => {
+    cy.do(Button('Close & view ledger details').click());
+  },
+
   tryToCreateLedgerWithoutMandatoryFields(ledgerName) {
     cy.do([
       Button('New').click(),

@@ -16,6 +16,7 @@ describe('ui-finance: Ledgers', () => {
     const defaultLedger = NewLedger.defaultLedger;
 
     Ledgers.createDefaultLedger(defaultLedger);
+    Ledgers.closeAndBackToDetails();
     Ledgers.checkCreatedLedgerName(defaultLedger);
     Ledgers.deleteLedgerViaActions(defaultLedger);
 
