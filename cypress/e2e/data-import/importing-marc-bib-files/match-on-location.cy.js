@@ -318,7 +318,6 @@ describe('ui-data-import', () => {
       MatchProfiles.createMatchProfile(profile.matchProfile);
       MatchProfiles.checkMatchProfilePresented(profile.matchProfile.profileName);
     });
-<<<<<<< HEAD
 
     // create Field mapping profiles
     cy.visit(SettingsMenu.mappingProfilePath);
