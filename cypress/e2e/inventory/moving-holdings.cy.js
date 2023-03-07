@@ -6,11 +6,11 @@ import InventorySearchAndFilter from '../../support/fragments/inventory/inventor
 import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
 import Users from '../../support/fragments/users/users';
 import TopMenu from '../../support/fragments/topMenu';
-import ItemView from '../../support/fragments/inventory/inventoryItem/itemView';
 import InventoryInstance from '../../support/fragments/inventory/inventoryInstance';
 import InteractorsTools from '../../support/utils/interactorsTools';
 import InventoryInstancesMovement from '../../support/fragments/inventory/holdingsMove/inventoryInstancesMovement';
 import InventoryHoldings from '../../support/fragments/inventory/holdings/inventoryHoldings';
+import ItemRecordView from '../../support/fragments/inventory/itemRecordView';
 
 // TO DO: remove ignoring errors. Now when you click on one of the buttons, some promise in the application returns false
 Cypress.on('uncaught:exception', () => false);
@@ -85,7 +85,7 @@ describe('inventory', () => {
     InventorySearchAndFilter.switchToItem();
     InventorySearchAndFilter.searchByParameter('Barcode', item.barcode);
     InventorySearchAndFilter.selectSearchResultItem();
-    ItemView.clickCloseButton();
+    ItemRecordView.closeDetailView();
 
     InventoryInstance.moveHoldingsToAnotherInstanceByItemTitle(item.firstHoldingName, secondItem.instanceName);
     InteractorsTools.checkCalloutMessage(successCalloutMessage);
