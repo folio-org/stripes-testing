@@ -8,15 +8,19 @@ export default {
   },
   // TODO: redesign to elements attributes with id
   move() {
-    cy.do(Button('Move to').click());
-    cy.do(DropdownMenu().find(Button()).click());
-    cy.do(confirmMoveButton.click());
+    cy.do([
+      Button('Move to').click(),
+      DropdownMenu().find(Button()).click(),
+      confirmMoveButton.click()
+    ])
     cy.expect(HTML({ id: 'inventory-module-display' }).exists());
   },
   moveFromMultiple(holdingName, moveToTitle) {
-    cy.do(Accordion({ label: including(`Holdings: ${holdingName}`) }).find(Button('Move to')).click());
-    cy.do(DropdownMenu().find(Button(moveToTitle)).click());
-    cy.do(Modal('Confirm move').find(Button('Continue')).click());
+    cy.do([
+      Accordion({ label: including(`Holdings: ${holdingName}`) }).find(Button('Move to')).click(),
+      DropdownMenu().find(Button(moveToTitle)).click(),
+      confirmMoveButton.click(),
+    ])
   },
   closeInLeftForm() {
     cy.do(Section({ id: 'movement-from-instance-details' }).find(Button({ icon: 'times' })).click());
