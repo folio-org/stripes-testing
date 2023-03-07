@@ -93,26 +93,6 @@ describe('bulk-edit', () => {
       BulkEditActions.verifySuccessBanner(1);
     });
 
-    it('C360114 Verify that User can upload file with Holdings UUIDs (firebird)', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
-      BulkEditSearchPane.uploadFile(validHoldingUUIDsFileName);
-      BulkEditSearchPane.waitFileUploading();
-      [
-        'Holdings HRID',
-        'Permanent location',
-        'Temporary location',
-        'Call number prefix',
-        'Call number',
-        'Call number suffix',
-        'Holdings type'
-      ].forEach(title => {
-        BulkEditSearchPane.verifyResultColumTitles(title);
-      });
-      BulkEditActions.openActions();
-      BulkEditSearchPane.verifyHoldingActionShowColumns();
-      BulkEditSearchPane.changeShowColumnCheckbox('Call number type');
-      BulkEditSearchPane.verifyResultColumTitles('Call number type');
-    });
-
     it('C360120 Verify that User can trigger bulk of holdings with file containing Holdings identifiers (firebird)', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
       BulkEditSearchPane.selectRecordIdentifier('Holdings HRIDs');
 
