@@ -15,29 +15,47 @@ import {
 const resultsAccordion = Accordion('Preview of record matched');
 const changesAccordion = Accordion('Preview of record changed');
 const errorsAccordion = Accordion('Errors');
-const recordIdentifier = Select('Record identifier');
-const recordTypes = Accordion({ label: 'Record types' });
+const recordIdentifierDropdown = Select('Record identifier');
+const recordTypesAccordion = Accordion({ label: 'Record types' });
 const actions = Button('Actions');
 const radioItems = RadioButton('Inventory - items');
-const fileBtn = Button('or choose file');
+const fileButton = Button('or choose file');
 const bulkEditPane = Pane(including('Bulk edit'));
+const usersRadio = RadioButton('Users');
+const itemsRadio = RadioButton('Inventory - items');
+const holdingsRadio = RadioButton('Inventory - holdings');
+const identifierToggle = Button('Identifier');
+const queryToggle = Button('Query');
+const logsToggle = Button('Logs');
+const setCriteriaPane = Pane('Set criteria');
+const searchButton = Button('Search');
+const resetAllButton = Button('Reset all');
+const logsStatusesAccordion = Accordion('Statuses');
 
 export default {
   waitLoading() {
     cy.expect(bulkEditPane.exists());
   },
 
-  actionsIsShown() {
-    cy.expect(actions.exists());
+  searchBtnIsDisabled(isDisabled) {
+    cy.expect(searchButton.has({ disabled: isDisabled }));
+  },
+
+  resetAllBtnIsDisabled(isDisabled) {
+    cy.expect(resetAllButton.has({ disabled: isDisabled }));
   },
 
   actionsIsAbsent() {
     cy.expect(actions.absent());
   },
 
+  actionsIsShown() {
+    cy.expect(actions.exists());
+  },
+
   verifyPanesBeforeImport() {
     cy.expect([
-      Pane('Set criteria').exists(),
+      setCriteriaPane.exists(),
       bulkEditPane.exists(),
     ]);
   },
@@ -45,56 +63,140 @@ export default {
   verifyBulkEditPaneItems() {
     cy.expect([
       bulkEditPane.find(HTML('Set criteria to start bulk edit')).exists(),
+      bulkEditPane.find(HTML('Select a "record identifier" when on the Identifier tab. Enter a "search query" when on the Query tab')).exists(),
     ]);
   },
 
   verifySetCriteriaPaneItems() {
     cy.expect([
-      Button('Identifier').exists(),
-      Button('Query').exists(),
-      recordIdentifier.exists(),
-      recordIdentifier.find(HTML('Select record identifier')).exists(),
-      Accordion({ label: 'Record types', open: true }).exists(),
-      HTML('Drag and drop').exists()
+      setCriteriaPane.find(identifierToggle).exists(),
+      setCriteriaPane.find(queryToggle).exists(),
+      setCriteriaPane.find(logsToggle).exists(),
+      setCriteriaPane.find(recordIdentifierDropdown).exists(),
+      setCriteriaPane.find(recordTypesAccordion).has({ open: true }),
+      setCriteriaPane.find(HTML('Drag and drop')).exists(),
+      fileButton.has({ disabled: true })
     ]);
   },
 
-  verifyRecordsTypeItems() {
+  verifyRecordTypesAccordion() {
     cy.expect([
-      recordTypes.find(HTML('Users')).exists(),
-      recordTypes.find(HTML('Inventory - items')).exists(),
-      recordTypes.find(HTML('Inventory - holdings')).exists(),
+      recordTypesAccordion.find(HTML('Users')).exists(),
+      recordTypesAccordion.find(HTML('Inventory - items')).exists(),
+      recordTypesAccordion.find(HTML('Inventory - holdings')).exists(),
     ]);
-    this.checkUsersRadio();
-    cy.do(recordTypes.clickHeader());
-    cy.expect(Accordion({ label: 'Record types', open: false }).exists());
-    cy.do(recordTypes.clickHeader());
-    cy.expect(RadioButton({ text: 'Users', checked: true }).exists());
   },
 
   verifyRecordIdentifierItems() {
+    this.checkUsersRadio();
     cy.expect([
-      recordIdentifier.find(HTML('User UUIDs')).exists(),
-      recordIdentifier.find(HTML('User Barcodes')).exists(),
-      recordIdentifier.find(HTML('External IDs')).exists(),
-      recordIdentifier.find(HTML('Usernames')).exists(),
+      usersRadio.has({ checked: true }),
+      fileButton.has({ disabled: true }),
+      recordIdentifierDropdown.find(HTML('User UUIDs')).exists(),
+      recordIdentifierDropdown.find(HTML('User Barcodes')).exists(),
+      recordIdentifierDropdown.find(HTML('External IDs')).exists(),
+      recordIdentifierDropdown.find(HTML('Usernames')).exists(),
+      bulkEditPane.find(HTML('Select a "record identifier" when on the Identifier tab. Enter a "search query" when on the Query tab')).exists(),
     ]);
   },
 
   verifyHoldingIdentifiers() {
+    this.checkHoldingsRadio();
     cy.expect([
-      recordIdentifier.find(HTML('Holdings UUIDs')).exists(),
-      recordIdentifier.find(HTML('Holdings HRIDs')).exists(),
-      recordIdentifier.find(HTML('Instance HRIDs')).exists(),
-      recordIdentifier.find(HTML('Item barcodes')).exists(),
+      holdingsRadio.has({ checked: true }),
+      fileButton.has({ disabled: true }),
+      recordIdentifierDropdown.find(HTML('Holdings UUIDs')).exists(),
+      recordIdentifierDropdown.find(HTML('Holdings HRIDs')).exists(),
+      recordIdentifierDropdown.find(HTML('Instance HRIDs')).exists(),
+      recordIdentifierDropdown.find(HTML('Item barcodes')).exists(),
+      bulkEditPane.find(HTML('Select a "record identifier" when on the Identifier tab. Enter a "search query" when on the Query tab')).exists(),
     ]);
   },
 
-  verifyDragNDropHoldingsUUIDsArea() {
+  verifyItemIdentifiers() {
+    this.checkItemsRadio();
     cy.expect([
-      HTML('Drag and drop or choose file with holdings UUIDs').exists(),
-      Button('or choose file').has({ visible: true }),
+      itemsRadio.has({ checked: true }),
+      recordIdentifierDropdown.find(HTML('Item barcode')).exists(),
+      recordIdentifierDropdown.find(HTML('Item UUIDs')).exists(),
+      recordIdentifierDropdown.find(HTML('Item HRIDs')).exists(),
+      recordIdentifierDropdown.find(HTML('Item former identifier')).exists(),
+      recordIdentifierDropdown.find(HTML('Item accession number')).exists(),
+      recordIdentifierDropdown.find(HTML('Holdings UUIDs')).exists(),
+    ]);
+  },
+
+  verifyItemIdentifiersDefaultState() {
+    this.checkItemsRadio();
+    cy.expect([
+      itemsRadio.has({ checked: true }),
+      recordIdentifierDropdown.find(HTML('Item barcode')).exists(),
+      recordIdentifierDropdown.find(HTML('Item UUIDs')).exists(),
+      recordIdentifierDropdown.find(HTML('Item HRIDs')).exists(),
+      recordIdentifierDropdown.find(HTML('Item former identifier')).exists(),
+      recordIdentifierDropdown.find(HTML('Item accession number')).exists(),
+      recordIdentifierDropdown.find(HTML('Holdings UUIDs')).exists(),
+      bulkEditPane.find(HTML('Select a "record identifier" when on the Identifier tab. Enter a "search query" when on the Query tab')).exists(),
+    ]);
+  },
+
+  verifyDragNDropItemBarcodeArea() {
+    this.checkItemsRadio();
+    this.selectRecordIdentifier('Item barcode');
+    cy.expect([
+      HTML('Select a file with item barcode').exists(),
+      HTML('Drag and drop or choose file with item barcode').exists(),
+      fileButton.has({ disabled: false }),
+    ]);
+  },
+
+  verifyDragNDropItemUUIDsArea() {
+    this.checkItemsRadio();
+    this.selectRecordIdentifier('Item UUIDs');
+    cy.expect([
+      HTML('Select a file with item UUIDs').exists(),
+      HTML('Drag and drop or choose file with item UUIDs').exists(),
+      fileButton.has({ disabled: false }),
+    ]);
+  },
+
+  verifyDragNDropItemHRIDsArea() {
+    this.checkItemsRadio();
+    this.selectRecordIdentifier('Item HRIDs');
+    cy.expect([
+      HTML('Select a file with item HRIDs').exists(),
+      HTML('Drag and drop or choose file with item HRIDs').exists(),
+      fileButton.has({ disabled: false }),
+    ]);
+  },
+
+  verifyDragNDropItemFormerIdentifierArea() {
+    this.checkItemsRadio();
+    this.selectRecordIdentifier('Item former identifier');
+    cy.expect([
+      HTML('Select a file with item former identifier').exists(),
+      HTML('Drag and drop or choose file with item former identifier').exists(),
+      fileButton.has({ disabled: false }),
+    ]);
+  },
+
+  verifyDragNDropItemHoldingsUUIDsArea() {
+    this.checkItemsRadio();
+    this.selectRecordIdentifier('Holdings UUIDs');
+    cy.expect([
       HTML('Select a file with holdings UUIDs').exists(),
+      HTML('Drag and drop or choose file with holdings UUIDs').exists(),
+      fileButton.has({ disabled: false }),
+    ]);
+  },
+
+  verifyDragNDropItemAccessionNumberArea() {
+    this.checkItemsRadio();
+    this.selectRecordIdentifier('Item accession number');
+    cy.expect([
+      HTML('Select a file with item accession number').exists(),
+      HTML('Drag and drop or choose file with item accession number').exists(),
+      fileButton.has({ disabled: false }),
     ]);
   },
 
@@ -103,6 +205,38 @@ export default {
     this.selectRecordIdentifier('User UUIDs');
     cy.expect([
       HTML('Select a file with User UUIDs').exists(),
+      HTML('Drag and drop or choose file with User UUIDs').exists(),
+      fileButton.has({ disabled: false }),
+    ]);
+  },
+
+  verifyDragNDropUsersBarcodesArea() {
+    this.checkUsersRadio();
+    this.selectRecordIdentifier('User Barcodes');
+    cy.expect([
+      HTML('Select a file with User Barcodes').exists(),
+      HTML('Drag and drop or choose file with User Barcodes').exists(),
+      fileButton.has({ disabled: false }),
+    ]);
+  },
+
+  verifyDragNDropExternalIDsArea() {
+    this.checkUsersRadio();
+    this.selectRecordIdentifier('External IDs');
+    cy.expect([
+      HTML('Select a file with External IDs').exists(),
+      HTML('Drag and drop or choose file with External IDs').exists(),
+      fileButton.has({ disabled: false }),
+    ]);
+  },
+
+  verifyDragNDropUsernamesArea() {
+    this.checkUsersRadio();
+    this.selectRecordIdentifier('Usernames');
+    cy.expect([
+      HTML('Select a file with Usernames').exists(),
+      HTML('Drag and drop or choose file with Usernames').exists(),
+      fileButton.has({ disabled: false }),
     ]);
   },
 
@@ -110,58 +244,96 @@ export default {
     cy.expect(HTML('Select a file with record identifiers').exists());
   },
 
-  verifyDragNDropExternalIDsArea() {
-    cy.expect(HTML('Select a file with External IDs').exists());
+  verifyDragNDropHoldingsUUIDsArea() {
+    this.checkHoldingsRadio();
+    this.selectRecordIdentifier('Holdings UUIDs');
+    cy.expect([
+      HTML('Select a file with holdings UUIDs').exists(),
+      HTML('Drag and drop or choose file with holdings UUIDs').exists(),
+      fileButton.has({ disabled: false }),
+    ]);
   },
 
-  verifyDragNDropUsernamesArea() {
-    cy.expect(HTML('Select a file with Usernames').exists());
+  verifyDragNDropHoldingsHRIDsArea() {
+    this.checkHoldingsRadio();
+    this.selectRecordIdentifier('Holdings HRIDs');
+    cy.expect([
+      HTML('Select a file with holdings HRIDs').exists(),
+      HTML('Drag and drop or choose file with holdings HRIDs').exists(),
+      fileButton.has({ disabled: false }),
+    ]);
   },
 
-  verifyDragNDropUsersBarcodesArea() {
-    this.checkUsersRadio();
-    this.selectRecordIdentifier('User Barcodes');
-    cy.expect(HTML('Select a file with User Barcodes').exists());
+  verifyDragNDropInstanceHRIDsArea() {
+    this.checkHoldingsRadio();
+    this.selectRecordIdentifier('Instance HRIDs');
+    cy.expect([
+      HTML('Select a file with instance HRIDs').exists(),
+      HTML('Drag and drop or choose file with instance HRIDs').exists(),
+      fileButton.has({ disabled: false }),
+    ]);
+  },
+
+  verifyDragNDropHoldingsItemBarcodesArea() {
+    this.checkHoldingsRadio();
+    this.selectRecordIdentifier('Item barcodes');
+    cy.expect([
+      HTML('Select a file with item barcode').exists(),
+      HTML('Drag and drop or choose file with item barcode').exists(),
+      fileButton.has({ disabled: false }),
+    ]);
   },
 
   openQuerySearch() {
-    cy.do(Button('Query').click());
+    cy.do(queryToggle.click());
   },
 
-  verifyEmptyQueryPane() {
+  openLogsSearch() {
+    cy.do(logsToggle.click());
+  },
+
+  verifyQueryPane() {
     cy.expect([
-      TextArea().exists(),
-      Button({ text: 'Search', disabled: true }).exists(),
-      Button({ text: 'Reset all', disabled: true }).exists(),
-      Accordion({ label: 'Record types', open: true }).exists()
+      queryToggle.has({ default: false }),
+      TextArea().has({ disabled: true }),
+      searchButton.has({ disabled: true }),
+      resetAllButton.has({ disabled: true }),
+      recordTypesAccordion.has({ open: true }),
+      recordTypesAccordion.find(usersRadio).has({ disabled: true }),
+      recordTypesAccordion.find(itemsRadio).has({ disabled: true }),
+      recordTypesAccordion.find(holdingsRadio).has({ disabled: true }),
     ]);
+    this.verifyBulkEditPaneItems();
   },
 
-  fillQuery(text) {
-    cy.do(TextArea().fillIn(text));
-  },
-
-  verifyFilledQueryPane() {
+  verifyLogsPane() {
     cy.expect([
-      TextArea().exists(),
-      Button({ text: 'Search', disabled: false }).exists(),
-      Button({ text: 'Reset all', disabled: false }).exists(),
-      Accordion({ label: 'Record types', open: true }).exists()
-    ]);
-  },
-
-  resetQueryField() {
-    cy.do([
-      Button('Reset all').click(),
-      Button('Identifier').click()
+      logsToggle.has({ default: false }),
+      resetAllButton.has({ disabled: true }),
+      logsStatusesAccordion.has({ open: true }),
+      logsStatusesAccordion.find(Checkbox('New')).has({ checked: false }),
+      logsStatusesAccordion.find(Checkbox('Retrieving records')).has({ checked: false }),
+      logsStatusesAccordion.find(Checkbox('Saving records')).has({ checked: false }),
+      logsStatusesAccordion.find(Checkbox('Data modification')).has({ checked: false }),
+      logsStatusesAccordion.find(Checkbox('Reviewing changes')).has({ checked: false }),
+      logsStatusesAccordion.find(Checkbox('Completed')).has({ checked: false }),
+      logsStatusesAccordion.find(Checkbox('Completed with errors')).has({ checked: false }),
+      logsStatusesAccordion.find(Checkbox('Failed')).has({ checked: false }),
+      recordTypesAccordion.find(Checkbox('Users')).has({ checked: false }),
+      recordTypesAccordion.find(Checkbox('Inventory - items')).has({ checked: false }),
+      recordTypesAccordion.find(Checkbox('Inventory - holdings')).has({ checked: false }),
+      Accordion('Start date').has({ open: false }),
+      Accordion('End date').has({ open: false }),
+      bulkEditPane.find(HTML('Enter search criteria to start search')).exists(),
+      bulkEditPane.find(HTML('Choose a filter or enter a search query to show results.')).exists(),
     ]);
   },
 
   verifyCsvViewPermission() {
     cy.expect([
       radioItems.has({ disabled: true }),
-      recordIdentifier.has({ disabled: true }),
-      fileBtn.has({ disabled: true }),
+      recordIdentifierDropdown.has({ disabled: true }),
+      fileButton.has({ disabled: true }),
       actions.absent()
     ]);
   },
@@ -169,8 +341,8 @@ export default {
   verifyUsersUpdatePermission() {
     cy.expect([
       radioItems.has({ disabled: true }),
-      recordIdentifier.has({ disabled: false }),
-      fileBtn.has({ disabled: true }),
+      recordIdentifierDropdown.has({ disabled: false }),
+      fileButton.has({ disabled: true }),
       actions.absent(),
     ]);
   },
@@ -178,14 +350,14 @@ export default {
   verifyInAppViewPermission() {
     cy.expect([
       radioItems.has({ disabled: false }),
-      recordIdentifier.has({ disabled: true }),
-      fileBtn.has({ disabled: true }),
+      recordIdentifierDropdown.has({ disabled: true }),
+      fileButton.has({ disabled: true }),
       actions.absent()
     ]);
   },
 
   selectRecordIdentifier(value) {
-    cy.do(recordIdentifier.choose(value));
+    cy.do(recordIdentifierDropdown.choose(value));
   },
 
   clickToBulkEditMainButton() {
@@ -200,31 +372,32 @@ export default {
     this.verifyBulkEditPaneItems();
   },
 
-  verifyItemIdentifiers() {
-    cy.expect([
-      recordIdentifier.find(HTML('Item barcode')).exists(),
-      recordIdentifier.find(HTML('Item UUIDs')).exists(),
-      recordIdentifier.find(HTML('Item HRIDs')).exists(),
-      recordIdentifier.find(HTML('Item former identifier')).exists(),
-      recordIdentifier.find(HTML('Item accession number')).exists(),
-      recordIdentifier.find(HTML('Holdings UUIDs')).exists(),
-    ]);
-  },
-
   verifyInputLabel(name) {
     cy.expect(HTML(name).exists());
   },
 
   checkUsersRadio() {
-    cy.do(RadioButton('Users').click());
+    cy.do(usersRadio.click());
+  },
+
+  usersRadioIsDisabled(isDisabled) {
+    cy.expect(usersRadio.has({ disabled: isDisabled }));
   },
 
   checkItemsRadio() {
-    cy.do(RadioButton('Inventory - items').click());
+    cy.do(itemsRadio.click());
+  },
+
+  itemsRadioIsDisabled(isDisabled) {
+    cy.expect(itemsRadio.has({ disabled: isDisabled }));
   },
 
   checkHoldingsRadio() {
-    cy.do(RadioButton('Inventory - holdings').click());
+    cy.do(holdingsRadio.click());
+  },
+
+  itemsHoldingsIsDisabled(isDisabled) {
+    cy.expect(holdingsRadio.has({ disabled: isDisabled }));
   },
 
   uploadFile(fileName) {
@@ -256,12 +429,12 @@ export default {
 
   verifyUserBarcodesResultAccordion() {
     cy.expect([
+      MultiColumnListHeader('Username').exists(),
+      MultiColumnListHeader('Barcode').exists(),
       MultiColumnListHeader('Active').exists(),
+      MultiColumnListHeader('Patron group').exists(),
       MultiColumnListHeader('Last name').exists(),
       MultiColumnListHeader('First name').exists(),
-      MultiColumnListHeader('Barcode').exists(),
-      MultiColumnListHeader('Patron group').exists(),
-      MultiColumnListHeader('Username').exists(),
     ]);
   },
 
@@ -322,52 +495,125 @@ export default {
 
   verifyUsersActionShowColumns() {
     cy.expect([
-      DropdownMenu().find(Checkbox('Active')).exists(),
-      DropdownMenu().find(Checkbox('Last name')).exists(),
-      DropdownMenu().find(Checkbox('First name')).exists(),
-      DropdownMenu().find(Checkbox('Barcode')).exists(),
-      DropdownMenu().find(Checkbox('Patron group')).exists(),
-      DropdownMenu().find(Checkbox('Username')).exists(),
-      DropdownMenu().find(Checkbox('Email')).exists(),
-      DropdownMenu().find(Checkbox('Expiration date')).exists(),
+      DropdownMenu().find(Checkbox('Username')).has({ checked: true }),
+      DropdownMenu().find(Checkbox('User id')).has({ checked: false }),
+      DropdownMenu().find(Checkbox('External System ID')).has({ checked: false }),
+      DropdownMenu().find(Checkbox('Barcode')).has({ checked: true }),
+      DropdownMenu().find(Checkbox('Active')).has({ checked: true }),
+      DropdownMenu().find(Checkbox('Type')).has({ checked: false }),
+      DropdownMenu().find(Checkbox('Patron group')).has({ checked: true }),
+      DropdownMenu().find(Checkbox('Departments')).has({ checked: false }),
+      DropdownMenu().find(Checkbox('Proxy for')).has({ checked: false }),
+      DropdownMenu().find(Checkbox('Last name')).has({ checked: true }),
+      DropdownMenu().find(Checkbox('First name')).has({ checked: true }),
+      DropdownMenu().find(Checkbox('Middle name')).has({ checked: false }),
+      DropdownMenu().find(Checkbox('Preferred first name')).has({ checked: false }),
+      DropdownMenu().find(Checkbox('Email')).has({ checked: false }),
+      DropdownMenu().find(Checkbox('Phone')).has({ checked: false }),
+      DropdownMenu().find(Checkbox('Mobile phone')).has({ checked: false }),
+      DropdownMenu().find(Checkbox('Birth date')).has({ checked: false }),
+      DropdownMenu().find(Checkbox('Addresses')).has({ checked: false }),
+      DropdownMenu().find(Checkbox('Preferred contact type id')).has({ checked: false }),
+      DropdownMenu().find(Checkbox('Date enrolled')).has({ checked: false }),
+      DropdownMenu().find(Checkbox('Expiration date')).has({ checked: false }),
+      DropdownMenu().find(Checkbox('Record created')).has({ checked: false }),
+      DropdownMenu().find(Checkbox('Record updated')).has({ checked: false }),
+      DropdownMenu().find(Checkbox('Tags')).has({ checked: false }),
+      DropdownMenu().find(Checkbox('Custom fields')).has({ checked: false }),
     ]);
   },
 
   verifyHoldingActionShowColumns() {
     cy.expect([
-      DropdownMenu().find(Checkbox({ name: 'Holdings HRID', checked: true })).exists(),
-      DropdownMenu().find(Checkbox({ name: 'Permanent location', checked: true })).exists(),
-      DropdownMenu().find(Checkbox({ name: 'Temporary location', checked: true })).exists(),
-      DropdownMenu().find(Checkbox({ name: 'Call number prefix', checked: true })).exists(),
-      DropdownMenu().find(Checkbox({ name: 'Call number', checked: true })).exists(),
-      DropdownMenu().find(Checkbox({ name: 'Call number suffix', checked: true })).exists(),
-      DropdownMenu().find(Checkbox({ name: 'Holdings type', checked: true })).exists(),
-      DropdownMenu().find(Checkbox({ name: 'Effective location', checked: false })).exists(),
-      DropdownMenu().find(Checkbox({ name: 'Holdings ID', checked: false })).exists(),
-      DropdownMenu().find(Checkbox({ name: 'Source', checked: false })).exists(),
-      DropdownMenu().find(Checkbox({ name: 'Suppressed from discovery', checked: false })).exists(),
-      DropdownMenu().find(Checkbox({ name: 'Call number type', checked: false })).exists(),
+      DropdownMenu().find(Checkbox('Holdings ID')).has({ checked: false }),
+      DropdownMenu().find(Checkbox('Version')).has({ checked: false }),
+      DropdownMenu().find(Checkbox('Holdings HRID')).has({ checked: true }),
+      DropdownMenu().find(Checkbox('Holdings type')).has({ checked: true }),
+      DropdownMenu().find(Checkbox('Former ids')).has({ checked: false }),
+      DropdownMenu().find(Checkbox('Instance')).has({ checked: false }),
+      DropdownMenu().find(Checkbox('Permanent location')).has({ checked: true }),
+      DropdownMenu().find(Checkbox('Temporary location')).has({ checked: true }),
+      DropdownMenu().find(Checkbox('Effective location')).has({ checked: false }),
+      DropdownMenu().find(Checkbox('Electronic access')).has({ checked: false }),
+      DropdownMenu().find(Checkbox('Call number type')).has({ checked: false }),
+      DropdownMenu().find(Checkbox('Call number prefix')).has({ checked: true }),
+      DropdownMenu().find(Checkbox('Call number')).has({ checked: true }),
+      DropdownMenu().find(Checkbox('Call number suffix')).has({ checked: true }),
+      DropdownMenu().find(Checkbox('Shelving title')).has({ checked: false }),
+      DropdownMenu().find(Checkbox('Acquisition format')).has({ checked: false }),
+      DropdownMenu().find(Checkbox('Acquisition method')).has({ checked: false }),
+      DropdownMenu().find(Checkbox('Receipt status')).has({ checked: false }),
+      DropdownMenu().find(Checkbox('Notes')).has({ checked: false }),
+      DropdownMenu().find(Checkbox('Administrative notes')).has({ checked: false }),
+      DropdownMenu().find(Checkbox('Ill policy')).has({ checked: false }),
+      DropdownMenu().find(Checkbox('Retention policy')).has({ checked: false }),
+      DropdownMenu().find(Checkbox('Digitization policy')).has({ checked: false }),
+      DropdownMenu().find(Checkbox('Holdings statements')).has({ checked: false }),
+      DropdownMenu().find(Checkbox('Holdings statements for indexes')).has({ checked: false }),
+      DropdownMenu().find(Checkbox('Holdings statements for supplements')).has({ checked: false }),
+      DropdownMenu().find(Checkbox('Copy number')).has({ checked: false }),
+      DropdownMenu().find(Checkbox('Number of items')).has({ checked: false }),
+      DropdownMenu().find(Checkbox('Receiving history')).has({ checked: false }),
+      DropdownMenu().find(Checkbox('Suppressed from discovery')).has({ checked: false }),
+      DropdownMenu().find(Checkbox('Statistical codes')).has({ checked: false }),
+      DropdownMenu().find(Checkbox('Tags')).has({ checked: false }),
+      DropdownMenu().find(Checkbox('Source')).has({ checked: false }),
+      DropdownMenu().find(Checkbox('Instance HRID')).has({ checked: false }),
+      DropdownMenu().find(Checkbox('Item barcode')).has({ checked: false }),
     ]);
   },
 
   verifyItemsActionDropdownItems() {
     cy.expect([
-      DropdownMenu().find(Checkbox({ name: 'Barcode', checked: true })).exists(),
-      DropdownMenu().find(Checkbox({ name: 'Status', checked: true })).exists(),
-      DropdownMenu().find(Checkbox({ name: 'Item effective location', checked: true })).exists(),
-      DropdownMenu().find(Checkbox({ name: 'Effective call number', checked: true })).exists(),
       DropdownMenu().find(Checkbox({ name: 'Item HRID', checked: true })).exists(),
+      DropdownMenu().find(Checkbox({ name: 'Barcode', checked: true })).exists(),
+      DropdownMenu().find(Checkbox({ name: 'Effective call number', checked: true })).exists(),
+      DropdownMenu().find(Checkbox({ name: 'Status', checked: true })).exists(),
       DropdownMenu().find(Checkbox({ name: 'Material type', checked: true })).exists(),
       DropdownMenu().find(Checkbox({ name: 'Permanent loan type', checked: true })).exists(),
       DropdownMenu().find(Checkbox({ name: 'Temporary loan type', checked: true })).exists(),
-      DropdownMenu().find(Checkbox({ name: 'Item identifier', checked: false })).exists(),
+      DropdownMenu().find(Checkbox({ name: 'Item effective location', checked: true })).exists(),
+
+      DropdownMenu().find(Checkbox({ name: 'Item ID', checked: false })).exists(),
+      DropdownMenu().find(Checkbox({ name: 'Version', checked: false })).exists(),
+      DropdownMenu().find(Checkbox({ name: 'Holdings record ID', checked: false })).exists(),
+      DropdownMenu().find(Checkbox({ name: 'Former identifiers', checked: false })).exists(),
+      DropdownMenu().find(Checkbox({ name: 'Suppressed from discovery', checked: false })).exists(),
+      DropdownMenu().find(Checkbox({ name: 'Title', checked: false })).exists(),
+      DropdownMenu().find(Checkbox({ name: 'Contributor names', checked: false })).exists(),
+      DropdownMenu().find(Checkbox({ name: 'Call number', checked: false })).exists(),
+      DropdownMenu().find(Checkbox({ name: 'Shelving order', checked: false })).exists(),
       DropdownMenu().find(Checkbox({ name: 'Accession number', checked: false })).exists(),
-      DropdownMenu().find(Checkbox({ name: 'Item permanent location', checked: false })).exists(),
-      DropdownMenu().find(Checkbox({ name: 'Item temporary location', checked: false })).exists(),
-      DropdownMenu().find(Checkbox({ name: 'Copy number', checked: false })).exists(),
+      DropdownMenu().find(Checkbox({ name: 'Item level call number', checked: false })).exists(),
+      DropdownMenu().find(Checkbox({ name: 'Item level call number prefix', checked: false })).exists(),
+      DropdownMenu().find(Checkbox({ name: 'Item level call number suffix', checked: false })).exists(),
+      DropdownMenu().find(Checkbox({ name: 'Item level call number type', checked: false })).exists(),
+      DropdownMenu().find(Checkbox({ name: 'Volume', checked: false })).exists(),
       DropdownMenu().find(Checkbox({ name: 'Enumeration', checked: false })).exists(),
       DropdownMenu().find(Checkbox({ name: 'Chronology', checked: false })).exists(),
-      DropdownMenu().find(Checkbox({ name: 'Volume', checked: false })).exists(),
+      DropdownMenu().find(Checkbox({ name: 'Year, caption', checked: false })).exists(),
+      DropdownMenu().find(Checkbox({ name: 'Item identifier', checked: false })).exists(),
+      DropdownMenu().find(Checkbox({ name: 'Copy number', checked: false })).exists(),
+      DropdownMenu().find(Checkbox({ name: 'Number of pieces', checked: false })).exists(),
+      DropdownMenu().find(Checkbox({ name: 'Description of pieces', checked: false })).exists(),
+      DropdownMenu().find(Checkbox({ name: 'Number of missing pieces', checked: false })).exists(),
+      DropdownMenu().find(Checkbox({ name: 'Missing pieces', checked: false })).exists(),
+      DropdownMenu().find(Checkbox({ name: 'Missing pieces date', checked: false })).exists(),
+      DropdownMenu().find(Checkbox({ name: 'Item damaged status', checked: false })).exists(),
+      DropdownMenu().find(Checkbox({ name: 'Item damaged status date', checked: false })).exists(),
+      DropdownMenu().find(Checkbox({ name: 'Administrative notes', checked: false })).exists(),
+      DropdownMenu().find(Checkbox({ name: 'Notes', checked: false })).exists(),
+      DropdownMenu().find(Checkbox({ name: 'Circulation Notes', checked: false })).exists(),
+      DropdownMenu().find(Checkbox({ name: 'Is bound with', checked: false })).exists(),
+      DropdownMenu().find(Checkbox({ name: 'Bound with titles', checked: false })).exists(),
+      DropdownMenu().find(Checkbox({ name: 'Item permanent location', checked: false })).exists(),
+      DropdownMenu().find(Checkbox({ name: 'Item temporary location', checked: false })).exists(),
+      DropdownMenu().find(Checkbox({ name: 'In transit destination service point', checked: false })).exists(),
+      DropdownMenu().find(Checkbox({ name: 'Statistical codes', checked: false })).exists(),
+      DropdownMenu().find(Checkbox({ name: 'Purchase order line identifier', checked: false })).exists(),
+      DropdownMenu().find(Checkbox({ name: 'Tags', checked: false })).exists(),
+      DropdownMenu().find(Checkbox({ name: 'Last check in', checked: false })).exists(),
+      DropdownMenu().find(Checkbox({ name: 'Electronic access', checked: false })).exists(),
     ]);
   },
 
@@ -379,6 +625,10 @@ export default {
     cy.expect(resultsAccordion.find(MultiColumnListHeader(title)).exists());
   },
 
+  verifyResultColumTitlesDoNotInclude(title) {
+    cy.expect(resultsAccordion.find(MultiColumnListHeader(title)).absent());
+  },
+
   verifyPaneRecordsCount(value) {
     cy.expect(bulkEditPane.find(HTML(`${value} records match`)).exists());
   },
@@ -386,4 +636,17 @@ export default {
   verifyPaneTitleFileName(fileName) {
     cy.expect(Pane(`Bulk edit ${fileName}`).exists());
   },
+
+  clickRecordTypesAccordion() {
+    cy.do(recordTypesAccordion.clickHeader());
+  },
+
+  verifyRecordTypesAccordionCollapsed() {
+    cy.expect([
+      recordTypesAccordion.has({ open: false }),
+      usersRadio.absent(),
+      itemsRadio.absent(),
+      holdingsRadio.absent(),
+    ]);
+  }
 };

@@ -24,7 +24,7 @@ describe('Manage holding records with MARC source', { retries: 2 }, () => {
     // TODO: redesign to api step
     InventorySteps.addMarcHoldingRecord();
   });
-  
+
   it('C345409 MARC instance record + MARC holdings record (spitfire)', { tags: [TestTypes.smoke, DevTeams.spitfire] }, () => {
     // waiting until page loading
     cy.wait(10000);

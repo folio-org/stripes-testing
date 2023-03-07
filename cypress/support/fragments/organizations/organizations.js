@@ -1,5 +1,6 @@
 import { Button, TextField, Select, KeyValue, Accordion, Pane, Checkbox, MultiColumnList, MultiColumnListCell, SearchField, MultiColumnListRow, SelectionOption, Section, TextArea, MultiSelect, MultiSelectOption, PaneHeader, Link } from '../../../../interactors';
 import getRandomPostfix from '../../utils/stringTools';
+import DateTools from '../../utils/dateTools';
 
 const buttonNew = Button('New');
 const saveAndClose = Button('Save & close');
@@ -15,12 +16,15 @@ const serverAddress = 'ftp://ftp.ci.folio.org';
 const FTPport = '22';
 const ediSection = Section({ id: 'edi' });
 const ftpSection = Section({ id: 'ftp' });
+const schedulingSection = Section({ id: 'scheduling' });
 const actionsButton = Button('Actions');
 const numberOfSearchResultsHeader = '//*[@id="paneHeaderorganizations-results-pane-subtitle"]/span';
 const zeroResultsFoundText = '0 records found';
 const organizationStatus = Select('Organization status*');
 const organizationNameField = TextField('Name*');
 const organizationCodeField = TextField('Code*');
+const today = new Date();
+const todayDate = DateTools.getFormattedDate({ date: today }, 'MM/DD/YYYY')
 
 export default {
 
@@ -96,7 +100,35 @@ export default {
     ]);
   },
 
-  fillIntegrationInformation: (integrationName, integartionDescription, vendorEDICode, libraryEDICode, accountNumber, acquisitionMethod) => {
+  fillIntegrationInformation: (integrationName, integartionDescription, vendorEDICode, libraryEDICode, accountNumber, acquisitionMethod, UTCTime) => {
+    cy.do([
+      Section({ id: 'integrationInfo' }).find(TextField('Integration name*')).fillIn(integrationName),
+      TextArea('Description').fillIn(integartionDescription),
+      ediSection.find(TextField('Vendor EDI code*')).fillIn(vendorEDICode),
+      ediSection.find(TextField('Library EDI code*')).fillIn(libraryEDICode),
+      ediSection.find(Button({ icon: 'info' })).click(),
+      Checkbox({ name: 'exportTypeSpecificParameters.vendorEdiOrdersExportConfig.ediConfig.supportOrder' }).click(),
+      Checkbox({ name: 'exportTypeSpecificParameters.vendorEdiOrdersExportConfig.ediConfig.supportInvoice' }).click(),
+    ]);
+    cy.get('select[name="exportTypeSpecificParameters.vendorEdiOrdersExportConfig.ediConfig.accountNoList"]').select(accountNumber);
+    cy.get('select[name="exportTypeSpecificParameters.vendorEdiOrdersExportConfig.ediConfig.defaultAcquisitionMethods"]').select(acquisitionMethod);
+    cy.do([
+      ftpSection.find(Select('EDI FTP')).choose('FTP'),
+      ftpSection.find(TextField('Server address*')).fillIn(serverAddress),
+      ftpSection.find(TextField('FTP port*')).fillIn(FTPport),
+      ftpSection.find(TextField('Username')).fillIn('folio'),
+      ftpSection.find(TextField('Password')).fillIn('Ffx29%pu'),
+      ftpSection.find(TextField('Order directory')).fillIn('/files'),
+      schedulingSection.find(Checkbox({ name: 'exportTypeSpecificParameters.vendorEdiOrdersExportConfig.ediSchedule.enableScheduledExport'})).click(),
+      schedulingSection.find(TextField('Schedule frequency*')).fillIn('1'),
+      schedulingSection.find(Select({ name: 'exportTypeSpecificParameters.vendorEdiOrdersExportConfig.ediSchedule.scheduleParameters.schedulePeriod'})).choose('Daily'),
+      schedulingSection.find(TextField({ name: 'exportTypeSpecificParameters.vendorEdiOrdersExportConfig.ediSchedule.scheduleParameters.schedulingDate' })).fillIn(`${todayDate}`),
+      schedulingSection.find(TextField('Time*')).fillIn(`${UTCTime}`),
+    ]);
+    cy.do(saveAndClose.click());
+  },
+
+  fillIntegrationInformationWithoutScheduling: (integrationName, integartionDescription, vendorEDICode, libraryEDICode, accountNumber, acquisitionMethod) => {
     cy.do([
       Section({ id: 'integrationInfo' }).find(TextField('Integration name*')).fillIn(integrationName),
       TextArea('Description').fillIn(integartionDescription),

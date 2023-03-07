@@ -92,7 +92,7 @@ export default {
     cy.expect(Callout({ textContent: including('The item - HRID  has been successfully saved.') })
       .exists());
   },
-  
+
   checkStatus:(status) => {
     cy.expect(Accordion('Loan and availability').find(KeyValue('Item status')).has({ value: status }));
   },

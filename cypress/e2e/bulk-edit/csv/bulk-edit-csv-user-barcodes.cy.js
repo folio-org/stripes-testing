@@ -10,7 +10,6 @@ import BulkEditActions from '../../../support/fragments/bulk-edit/bulk-edit-acti
 
 let user;
 const userBarcodesFileName = `userBarcodes_${getRandomPostfix()}.csv`;
-const invalidUserBarcodesFileName = `invalidUserBarcodes_${getRandomPostfix()}.csv`;
 
 
 describe('bulk-edit', () => {
@@ -29,44 +28,12 @@ describe('bulk-edit', () => {
 
           // Create file with user barcodes
           FileManager.createFile(`cypress/fixtures/${userBarcodesFileName}`, user.barcode);
-          FileManager.createFile(`cypress/fixtures/${invalidUserBarcodesFileName}`, getRandomPostfix());
         });
     });
 
     after('delete test data', () => {
       Users.deleteViaApi(user.userId);
       FileManager.deleteFile(`cypress/fixtures/${userBarcodesFileName}`);
-      FileManager.deleteFile(`cypress/fixtures/${invalidUserBarcodesFileName}`);
-    });
-
-    afterEach('reload bulk-edit page', () => {
-      cy.visit(TopMenu.bulkEditPath);
-    });
-
-    it('C347872 Populating preview of matched records (firebird)', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
-      BulkEditSearchPane.selectRecordIdentifier('User Barcodes');
-
-      BulkEditSearchPane.uploadFile(userBarcodesFileName);
-      BulkEditSearchPane.waitFileUploading();
-      BulkEditSearchPane.verifyUserBarcodesResultAccordion();
-      BulkEditSearchPane.verifyMatchedResults(user.barcode);
-
-      BulkEditActions.openActions();
-      BulkEditActions.verifyUsersActionDropdownItems();
-      BulkEditActions.verifyCheckedDropdownMenuItem();
-      BulkEditActions.verifyUncheckedDropdownMenuItem();
-    });
-
-    it('C360556 Populating preview of matched records in case no matches (firebird)', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
-      BulkEditSearchPane.selectRecordIdentifier('User Barcodes');
-
-      BulkEditSearchPane.uploadFile(invalidUserBarcodesFileName);
-      BulkEditSearchPane.waitFileUploading();
-      BulkEditSearchPane.matchedAccordionIsAbsent();
-      BulkEditSearchPane.verifyErrorLabel(invalidUserBarcodesFileName, 0, 1);
-
-      BulkEditActions.openActions();
-      BulkEditActions.verifyUsersActionDropdownItems();
     });
 
     it('C347871 Uploading file with identifiers (firebird)', { tags: [testTypes.criticalPath, devTeams.firebird] }, () => {

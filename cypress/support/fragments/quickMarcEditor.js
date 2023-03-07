@@ -7,6 +7,7 @@ const cancelButton = Button('Cancel');
 const closeWithoutSavingBtn = Button('Close without saving');
 const addFieldButton = Button({ ariaLabel : 'plus-sign' });
 const deleteFieldButton = Button({ ariaLabel : 'trash' });
+const linkToMarcRecordButton = Button({ ariaLabel : 'link' });
 const saveAndCloseButton = Button({ id:'quick-marc-record-save' });
 const confirmationModal = Modal({ id: 'quick-marc-confirm-modal' });
 const cancelEditConformModel = Modal({ id: 'cancel-editing-confirmation' })
@@ -343,5 +344,13 @@ export default {
       .forEach(subfield => {
         cy.expect(getRowInteractorByTagName('008').find(subfield).has({ maxLength: (1).toString() }));
       });
-  }
+  },
+
+  checkLinkButtonExist(tag) {
+    cy.expect(getRowInteractorByTagName(tag).find(linkToMarcRecordButton).exists());
+  },
+
+  checkButtonSaveAndCloseEnable() { 
+    cy.expect(saveAndCloseButton.exists());
+  },
 }

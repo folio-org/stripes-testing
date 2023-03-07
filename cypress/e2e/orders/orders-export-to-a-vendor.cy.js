@@ -49,7 +49,7 @@ describe('orders: export', () => {
     Organizations.checkSearchResults(organization);
     Organizations.selectOrganization(organization.name);
     Organizations.addIntegration();
-    Organizations.fillIntegrationInformation(integrationName, integartionDescription, vendorEDICodeFor1Integration, libraryEDICodeFor1Integration, organization.accounts[0].accountNo, 'Purchase');
+    Organizations.fillIntegrationInformationWithoutScheduling(integrationName, integartionDescription, vendorEDICodeFor1Integration, libraryEDICodeFor1Integration, organization.accounts[0].accountNo, 'Purchase');
     InteractorsTools.checkCalloutMessage('Integration was saved');
     cy.createTempUser([
       permissions.uiOrdersView.gui,
@@ -73,7 +73,7 @@ describe('orders: export', () => {
     Users.deleteViaApi(user.userId);
   });
 
-  it('C350396: Verify that Order is not exported to a definite Vendor if Acquisition method selected in the Order line DOES NOT match Organization Integration configs', { tags: [TestTypes.smoke, devTeams.thunderjet] }, () => {
+  it('C350396: Verify that Order is not exported to a definite Vendor if Acquisition method selected in the Order line DOES NOT match Organization Integration configs (thunderjet)', { tags: [TestTypes.smoke, devTeams.thunderjet] }, () => {
     Orders.createOrder(order, true, false).then(orderId => {
       order.id = orderId;
       Orders.createPOLineViaActions();

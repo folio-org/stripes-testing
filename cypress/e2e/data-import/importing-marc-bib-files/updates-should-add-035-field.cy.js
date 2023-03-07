@@ -26,10 +26,9 @@ describe('ui-data-import: Data Import Updates should add 035 field from 001/003,
   let user = null;
   let instanceHridFromFirstFile;
   const instanceHridsFromSecondFile = [];
-  const instanceStatusTerm = '"Batch Loaded"';
-  const instanceStatusTermUI = 'Batch Loaded';
+  const instanceStatusTerm = 'Batch Loaded';
   const statisticalCode = 'ARL (Collection stats): books - Book, print (books)';
-  const statisticalCodeUI = 'ARL (Collection stats)';
+  const statisticalCodeUI = 'Book, print (books)';
   const rowNumbers = [0, 1, 2, 3, 4, 5, 6, 7];
   const arrayOf999Fields = [];
   const fields035 = [
@@ -124,7 +123,7 @@ describe('ui-data-import: Data Import Updates should add 035 field from 001/003,
   });
 
   it('C358998 Data Import Updates should add 035 field from 001/003, if it is not HRID or already exists (folijet)',
-    { tags: [TestTypes.smoke, DevTeams.folijet] }, () => {
+    { tags: [TestTypes.criticalPath, DevTeams.folijet] }, () => {
       // upload the first .mrc file
       DataImport.uploadFile('marcFileForC358998ForCreate_1.mrc', firstMarcFileNameForCreate);
       JobProfiles.searchJobProfileForImport('Default - Create instance and SRS MARC Bib');
@@ -171,6 +170,8 @@ describe('ui-data-import: Data Import Updates should add 035 field from 001/003,
         FileDetails.checkInstanceQuantityInSummaryTable('8');
         cy.wrap(
           rowNumbers.forEach(rowNumber => {
+            // need to wait until page will be opened in loop
+            cy.wait(8000);
             cy.visit(TopMenu.dataImportPath);
             Logs.openFileDetails(secondMarcFileNameForCreate);
             FileDetails.openInstanceInInventory('Created', rowNumber);
@@ -197,7 +198,7 @@ describe('ui-data-import: Data Import Updates should add 035 field from 001/003,
           );
         });
 
-        // create mapping profiles
+        // create mapping profile
         cy.visit(SettingsMenu.mappingProfilePath);
         FieldMappingProfiles.openNewMappingProfileForm();
         NewFieldMappingProfile.fillSummaryInMappingProfile(mappingProfile);
@@ -236,7 +237,7 @@ describe('ui-data-import: Data Import Updates should add 035 field from 001/003,
         FileDetails.checkInstanceQuantityInSummaryTable('1', '1');
         // open the first Instance in the Inventory and check 001, 003, 035 fields
         FileDetails.openInstanceInInventory('Updated');
-        InstanceRecordView.verifyInstanceStatusTerm(instanceStatusTermUI);
+        InstanceRecordView.verifyInstanceStatusTerm(instanceStatusTerm);
         InstanceRecordView.verifyStatisticalCode(statisticalCodeUI);
         InventoryInstance.viewSource();
         InventoryViewSource.contains('001\t');
@@ -268,7 +269,7 @@ describe('ui-data-import: Data Import Updates should add 035 field from 001/003,
         cy.visit(TopMenu.dataImportPath);
         Logs.openFileDetails(secondFileNameAfterUpload);
         FileDetails.openInstanceInInventory('Updated', element.instanceNumber);
-        InstanceRecordView.verifyInstanceStatusTerm(instanceStatusTermUI);
+        InstanceRecordView.verifyInstanceStatusTerm(instanceStatusTerm);
         InstanceRecordView.verifyStatisticalCode(statisticalCodeUI);
         InventoryInstance.getAssignedHRID().then(initialInstanceHrId => {
           const instanceHrid = initialInstanceHrId;

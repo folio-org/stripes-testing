@@ -16,6 +16,7 @@ const rootSection = Section({ id: 'marc-view-pane' });
 
 const addFieldButton = Button({ ariaLabel : 'plus-sign' });
 const deleteFieldButton = Button({ ariaLabel : 'trash' });
+const infoButton = Button({ ariaLabel : 'info' });
 const saveAndCloseButton = Button({ id:'quick-marc-record-save' });
 
 // related with cypress\fixtures\oneMarcAuthority.mrc
@@ -84,10 +85,12 @@ export default {
       path: `records-editor/records/${internalAuthorityId}`,
     });
   },
-  addNewField: (rowIndex, tag, content) => {
+  addNewField: (rowIndex, tag, content, indicator0 = '\\', indicator1 = '\\') => {
     cy.do([
       QuickMarcEditorRow({ index: rowIndex }).find(addFieldButton).click(),
       QuickMarcEditorRow({ index: rowIndex + 1 }).find(TextField({ name: `records[${rowIndex + 1}].tag` })).fillIn(tag),
+      QuickMarcEditorRow({ index: rowIndex + 1 }).find(TextField({ name: `records[${rowIndex + 1}].indicators[0]` })).fillIn(indicator0),
+      QuickMarcEditorRow({ index: rowIndex + 1 }).find(TextField({ name: `records[${rowIndex + 1}].indicators[1]` })).fillIn(indicator1),
       QuickMarcEditorRow({ index: rowIndex + 1 }).find(TextArea({ name: `records[${rowIndex + 1}].content` })).fillIn(content),
     ]);
   },
@@ -139,5 +142,33 @@ export default {
       saveAndCloseButton.click(),
     ]);
     cy.expect(Callout('Record cannot be saved without 1XX field.').exists());
+  },
+
+  checkInfoButton: (tag, rowIndex) => {
+    if (rowIndex) {
+      cy.do(QuickMarcEditorRow({ index: rowIndex }).find(infoButton).click());
+    } else {
+      cy.do(QuickMarcEditorRow({ tagValue: tag }).find(infoButton).click());
+    }
+    cy.expect(HTML('This field is protected.').exists());
+  },
+
+  checkAddNew001Tag: (rowIndex, content) => {
+    // need to wait until all data loaded
+    cy.wait(2000);
+    cy.do(QuickMarcEditorRow({ index: rowIndex }).find(addFieldButton).click());
+    cy.do(QuickMarcEditorRow({ index: rowIndex + 1 }).find(TextArea({ name: `records[${rowIndex + 1}].content` })).fillIn(content));
+
+    // interactor doesn't work properly
+    cy.get(`input[name='records[${rowIndex + 1}].tag']`).type('001');
+    // cy.do(QuickMarcEditorRow({ index: rowIndex + 1 }).find(TextField({ name: `records[${rowIndex + 1}].tag` })).fillIn('001'));
+
+    cy.expect(QuickMarcEditorRow({ index: rowIndex + 1 }).find(TextField()).has({ disabled: true }));
+    cy.do(saveAndCloseButton.click());
+    cy.expect(Callout('Record cannot be saved. Can only have one MARC 001.').exists());
+  },
+  
+  deleteTag: (rowIndex) => { 
+    cy.do(QuickMarcEditorRow({ index: rowIndex }).find(deleteFieldButton).click());
   },
 };
