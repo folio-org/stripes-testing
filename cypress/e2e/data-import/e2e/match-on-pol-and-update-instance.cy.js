@@ -158,9 +158,9 @@ describe('ui-data-import: Match on POL and update related Instance with source M
   const createHoldingsMappingProfile = (holdingsMappingProfile) => {
     FieldMappingProfiles.openNewMappingProfileForm();
     NewFieldMappingProfile.fillSummaryInMappingProfile(holdingsMappingProfile);
-    NewFieldMappingProfile.fillHoldingsType('"Monograph"');
+    NewFieldMappingProfile.fillHoldingsType('Monograph');
     NewFieldMappingProfile.fillPermanentLocation('980$a');
-    NewFieldMappingProfile.fillCallNumberType('"Library of Congress classification"');
+    NewFieldMappingProfile.fillCallNumberType('Library of Congress classification');
     NewFieldMappingProfile.fillCallNumber('980$b " " 980$c');
     FieldMappingProfiles.saveProfile();
     FieldMappingProfiles.closeViewModeForMappingProfile(holdingsMappingProfile.name);

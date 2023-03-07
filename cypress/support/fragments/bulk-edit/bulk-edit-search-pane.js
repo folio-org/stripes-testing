@@ -37,6 +37,14 @@ export default {
     cy.expect(bulkEditPane.exists());
   },
 
+  searchBtnIsDisabled(isDisabled) {
+    cy.expect(searchButton.has({ disabled: isDisabled }));
+  },
+
+  resetAllBtnIsDisabled(isDisabled) {
+    cy.expect(resetAllButton.has({ disabled: isDisabled }));
+  },
+
   actionsIsAbsent() {
     cy.expect(actions.absent());
   },
@@ -69,6 +77,16 @@ export default {
       setCriteriaPane.find(HTML('Drag and drop')).exists(),
       fileButton.has({ disabled: true })
     ]);
+  },
+  
+  verifySetCriteriaPaneSpecificTabs(...tabs) {
+    tabs.forEach(tab => {
+      cy.expect(setCriteriaPane.find(Button(`${tab}`)).exists());
+    });
+  },
+
+  verifySpecificTabHighlighted(tab) {
+    cy.expect(Button(`${tab}`).has({ default: false }));
   },
 
   verifyRecordTypesAccordion() {
@@ -421,12 +439,12 @@ export default {
 
   verifyUserBarcodesResultAccordion() {
     cy.expect([
+      MultiColumnListHeader('Username').exists(),
+      MultiColumnListHeader('Barcode').exists(),
       MultiColumnListHeader('Active').exists(),
+      MultiColumnListHeader('Patron group').exists(),
       MultiColumnListHeader('Last name').exists(),
       MultiColumnListHeader('First name').exists(),
-      MultiColumnListHeader('Barcode').exists(),
-      MultiColumnListHeader('Patron group').exists(),
-      MultiColumnListHeader('Username').exists(),
     ]);
   },
 
@@ -487,31 +505,71 @@ export default {
 
   verifyUsersActionShowColumns() {
     cy.expect([
-      DropdownMenu().find(Checkbox('Active')).exists(),
-      DropdownMenu().find(Checkbox('Last name')).exists(),
-      DropdownMenu().find(Checkbox('First name')).exists(),
-      DropdownMenu().find(Checkbox('Barcode')).exists(),
-      DropdownMenu().find(Checkbox('Patron group')).exists(),
-      DropdownMenu().find(Checkbox('Username')).exists(),
-      DropdownMenu().find(Checkbox('Email')).exists(),
-      DropdownMenu().find(Checkbox('Expiration date')).exists(),
+      DropdownMenu().find(Checkbox('Username')).has({ checked: true }),
+      DropdownMenu().find(Checkbox('User id')).has({ checked: false }),
+      DropdownMenu().find(Checkbox('External System ID')).has({ checked: false }),
+      DropdownMenu().find(Checkbox('Barcode')).has({ checked: true }),
+      DropdownMenu().find(Checkbox('Active')).has({ checked: true }),
+      DropdownMenu().find(Checkbox('Type')).has({ checked: false }),
+      DropdownMenu().find(Checkbox('Patron group')).has({ checked: true }),
+      DropdownMenu().find(Checkbox('Departments')).has({ checked: false }),
+      DropdownMenu().find(Checkbox('Proxy for')).has({ checked: false }),
+      DropdownMenu().find(Checkbox('Last name')).has({ checked: true }),
+      DropdownMenu().find(Checkbox('First name')).has({ checked: true }),
+      DropdownMenu().find(Checkbox('Middle name')).has({ checked: false }),
+      DropdownMenu().find(Checkbox('Preferred first name')).has({ checked: false }),
+      DropdownMenu().find(Checkbox('Email')).has({ checked: false }),
+      DropdownMenu().find(Checkbox('Phone')).has({ checked: false }),
+      DropdownMenu().find(Checkbox('Mobile phone')).has({ checked: false }),
+      DropdownMenu().find(Checkbox('Birth date')).has({ checked: false }),
+      DropdownMenu().find(Checkbox('Addresses')).has({ checked: false }),
+      DropdownMenu().find(Checkbox('Preferred contact type id')).has({ checked: false }),
+      DropdownMenu().find(Checkbox('Date enrolled')).has({ checked: false }),
+      DropdownMenu().find(Checkbox('Expiration date')).has({ checked: false }),
+      DropdownMenu().find(Checkbox('Record created')).has({ checked: false }),
+      DropdownMenu().find(Checkbox('Record updated')).has({ checked: false }),
+      DropdownMenu().find(Checkbox('Tags')).has({ checked: false }),
+      DropdownMenu().find(Checkbox('Custom fields')).has({ checked: false }),
     ]);
   },
 
   verifyHoldingActionShowColumns() {
     cy.expect([
-      DropdownMenu().find(Checkbox({ name: 'Holdings HRID', checked: true })).exists(),
-      DropdownMenu().find(Checkbox({ name: 'Permanent location', checked: true })).exists(),
-      DropdownMenu().find(Checkbox({ name: 'Temporary location', checked: true })).exists(),
-      DropdownMenu().find(Checkbox({ name: 'Call number prefix', checked: true })).exists(),
-      DropdownMenu().find(Checkbox({ name: 'Call number', checked: true })).exists(),
-      DropdownMenu().find(Checkbox({ name: 'Call number suffix', checked: true })).exists(),
-      DropdownMenu().find(Checkbox({ name: 'Holdings type', checked: true })).exists(),
-      DropdownMenu().find(Checkbox({ name: 'Effective location', checked: false })).exists(),
-      DropdownMenu().find(Checkbox({ name: 'Holdings ID', checked: false })).exists(),
-      DropdownMenu().find(Checkbox({ name: 'Source', checked: false })).exists(),
-      DropdownMenu().find(Checkbox({ name: 'Suppressed from discovery', checked: false })).exists(),
-      DropdownMenu().find(Checkbox({ name: 'Call number type', checked: false })).exists(),
+      DropdownMenu().find(Checkbox('Holdings ID')).has({ checked: false }),
+      DropdownMenu().find(Checkbox('Version')).has({ checked: false }),
+      DropdownMenu().find(Checkbox('Holdings HRID')).has({ checked: true }),
+      DropdownMenu().find(Checkbox('Holdings type')).has({ checked: true }),
+      DropdownMenu().find(Checkbox('Former ids')).has({ checked: false }),
+      DropdownMenu().find(Checkbox('Instance')).has({ checked: false }),
+      DropdownMenu().find(Checkbox('Permanent location')).has({ checked: true }),
+      DropdownMenu().find(Checkbox('Temporary location')).has({ checked: true }),
+      DropdownMenu().find(Checkbox('Effective location')).has({ checked: false }),
+      DropdownMenu().find(Checkbox('Electronic access')).has({ checked: false }),
+      DropdownMenu().find(Checkbox('Call number type')).has({ checked: false }),
+      DropdownMenu().find(Checkbox('Call number prefix')).has({ checked: true }),
+      DropdownMenu().find(Checkbox('Call number')).has({ checked: true }),
+      DropdownMenu().find(Checkbox('Call number suffix')).has({ checked: true }),
+      DropdownMenu().find(Checkbox('Shelving title')).has({ checked: false }),
+      DropdownMenu().find(Checkbox('Acquisition format')).has({ checked: false }),
+      DropdownMenu().find(Checkbox('Acquisition method')).has({ checked: false }),
+      DropdownMenu().find(Checkbox('Receipt status')).has({ checked: false }),
+      DropdownMenu().find(Checkbox('Notes')).has({ checked: false }),
+      DropdownMenu().find(Checkbox('Administrative notes')).has({ checked: false }),
+      DropdownMenu().find(Checkbox('Ill policy')).has({ checked: false }),
+      DropdownMenu().find(Checkbox('Retention policy')).has({ checked: false }),
+      DropdownMenu().find(Checkbox('Digitization policy')).has({ checked: false }),
+      DropdownMenu().find(Checkbox('Holdings statements')).has({ checked: false }),
+      DropdownMenu().find(Checkbox('Holdings statements for indexes')).has({ checked: false }),
+      DropdownMenu().find(Checkbox('Holdings statements for supplements')).has({ checked: false }),
+      DropdownMenu().find(Checkbox('Copy number')).has({ checked: false }),
+      DropdownMenu().find(Checkbox('Number of items')).has({ checked: false }),
+      DropdownMenu().find(Checkbox('Receiving history')).has({ checked: false }),
+      DropdownMenu().find(Checkbox('Suppressed from discovery')).has({ checked: false }),
+      DropdownMenu().find(Checkbox('Statistical codes')).has({ checked: false }),
+      DropdownMenu().find(Checkbox('Tags')).has({ checked: false }),
+      DropdownMenu().find(Checkbox('Source')).has({ checked: false }),
+      DropdownMenu().find(Checkbox('Instance HRID')).has({ checked: false }),
+      DropdownMenu().find(Checkbox('Item barcode')).has({ checked: false }),
     ]);
   },
 
@@ -575,6 +633,10 @@ export default {
 
   verifyResultColumTitles(title) {
     cy.expect(resultsAccordion.find(MultiColumnListHeader(title)).exists());
+  },
+
+  verifyResultColumTitlesDoNotInclude(title) {
+    cy.expect(resultsAccordion.find(MultiColumnListHeader(title)).absent());
   },
 
   verifyPaneRecordsCount(value) {

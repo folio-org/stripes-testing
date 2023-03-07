@@ -10,6 +10,7 @@ import BulkEditActions from '../../../support/fragments/bulk-edit/bulk-edit-acti
 
 let user;
 const userBarcodesFileName = `userBarcodes_${getRandomPostfix()}.csv`;
+const invalidUserBarcodesFileName = `invalidUserBarcodes_${getRandomPostfix()}.csv`;
 
 
 describe('bulk-edit', () => {
@@ -18,6 +19,7 @@ describe('bulk-edit', () => {
       cy.createTempUser([
         permissions.bulkEditCsvView.gui,
         permissions.bulkEditCsvEdit.gui,
+        permissions.uiUsersView.gui,
       ])
         .then(userProperties => {
           user = userProperties;
@@ -26,29 +28,46 @@ describe('bulk-edit', () => {
             waiter: BulkEditSearchPane.waitLoading
           });
 
-          // Create file with user barcodes
           FileManager.createFile(`cypress/fixtures/${userBarcodesFileName}`, user.barcode);
+          FileManager.createFile(`cypress/fixtures/${invalidUserBarcodesFileName}`, getRandomPostfix());
         });
+    });
+
+    beforeEach('reload bulk-edit page', () => {
+      cy.visit(TopMenu.bulkEditPath);
+      BulkEditSearchPane.selectRecordIdentifier('User Barcodes');
     });
 
     after('delete test data', () => {
       Users.deleteViaApi(user.userId);
       FileManager.deleteFile(`cypress/fixtures/${userBarcodesFileName}`);
+      FileManager.deleteFile(`cypress/fixtures/${invalidUserBarcodesFileName}`);
     });
 
-    it('C347871 Uploading file with identifiers (firebird)', { tags: [testTypes.criticalPath, devTeams.firebird] }, () => {
-      BulkEditSearchPane.selectRecordIdentifier('User Barcodes');
-
+    it('C347872 Populating preview of matched records (firebird)', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
       BulkEditSearchPane.uploadFile(userBarcodesFileName);
       BulkEditSearchPane.waitFileUploading();
       BulkEditSearchPane.verifyUserBarcodesResultAccordion();
       BulkEditSearchPane.verifyMatchedResults(user.barcode);
 
-      BulkEditActions.newBulkEdit();
-      BulkEditSearchPane.selectRecordIdentifier('User Barcodes');
+      BulkEditSearchPane.verifyActionsAfterConductedCSVUploading(false);
+      BulkEditSearchPane.verifyUsersActionShowColumns();
 
-      BulkEditSearchPane.uploadFile('example.json');
-      BulkEditSearchPane.verifyModalName('Invalid file');
+      BulkEditSearchPane.changeShowColumnCheckbox('Last name');
+      BulkEditSearchPane.verifyResultColumTitlesDoNotInclude('Last name');
+
+      BulkEditSearchPane.changeShowColumnCheckbox('Email');
+      BulkEditSearchPane.verifyResultColumTitles('Email');
+    });
+
+    it('C360556 Populating preview of matched records in case no matches (firebird)', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
+      BulkEditSearchPane.uploadFile(invalidUserBarcodesFileName);
+      BulkEditSearchPane.waitFileUploading();
+      BulkEditSearchPane.matchedAccordionIsAbsent();
+      BulkEditSearchPane.verifyErrorLabel(invalidUserBarcodesFileName, 0, 1);
+
+      BulkEditActions.openActions();
+      BulkEditActions.verifyUsersActionDropdownItemsInCaseOfError();
     });
   });
 });
