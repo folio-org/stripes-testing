@@ -21,6 +21,27 @@ export default {
     cy.expect(deleteFieldsModal.absent());
   },
 
+  findAndDeleteField:(field) => {
+    // cy.get('[class*="quickMarcEditorRow--"]:last-child').contains(field);
+
+    cy.get('[class*="quickMarcEditorRow--"]:last-child').find(field)
+      .then((trash) => {
+        cy.wrap(trash).click();
+      });
+
+
+
+  //   cy.do(TextField({ value: field }).perform(
+  //     element => {
+  //       const rowNumber = element.parentElement.parentElement.getAttribute('data-row');
+  // console.log(rowNumber);
+    // cy.expect(fullScreenView.find(Accordion({ id: 'override-protected-section' }))
+    //   .find(MultiColumnListRow({ indexRow: rowNumber })).find(Checkbox())
+    //   .has({ disabled: status }));
+    // }
+    // ));
+  },
+
   checkEditableQuickMarcFormIsOpened:() => {
     cy.expect(Pane({ id:'quick-marc-editor-pane' }).exists());
   },

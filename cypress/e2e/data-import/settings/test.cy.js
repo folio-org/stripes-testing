@@ -137,8 +137,11 @@ describe('ui-data-import', () => {
 
       cy.visit(TopMenu.inventoryPath);
       InventoryInstances.importWithOclc(oclcForImport);
+      cy.pause();
       InventoryInstance.editMarcBibliographicRecord();
-      InventoryEditMarcRecord.deleteField();
-      InventoryEditMarcRecord.addField('920', 'This should be a protected field');
+      cy.pause();
+      InventoryEditMarcRecord.findAndDeleteField('650');
+      // InventoryEditMarcRecord.deleteField();
+      // InventoryEditMarcRecord.addField('920', 'This should be a protected field');
     });
 });
