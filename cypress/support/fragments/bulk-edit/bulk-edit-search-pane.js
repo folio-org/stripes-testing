@@ -85,6 +85,12 @@ export default {
     });
   },
 
+  verifySetCriteriaPaneSpecificTabsHidden(...tabs) {
+    tabs.forEach(tab => {
+      cy.expect(setCriteriaPane.find(Button(`${tab}`)).absent());
+    });
+  },
+
   verifySpecificTabHighlighted(tab) {
     cy.expect(Button(`${tab}`).has({ default: false }));
   },
