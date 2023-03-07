@@ -33,6 +33,7 @@ export default {
 
   fillRequiredFields(newRequest) {
     if (newRequest.instanceHRID !== undefined) {
+      cy.expect(Checkbox({ name: 'createTitleLevelRequest', disabled: false }).exists());
       cy.do([
         titleLevelRequest.click(),
         instanceHridInput.fillIn(newRequest.instanceHRID),
