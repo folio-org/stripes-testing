@@ -78,6 +78,22 @@ export default {
       fileButton.has({ disabled: true })
     ]);
   },
+  
+  verifySetCriteriaPaneSpecificTabs(...tabs) {
+    tabs.forEach(tab => {
+      cy.expect(setCriteriaPane.find(Button(`${tab}`)).exists());
+    });
+  },
+
+  verifySetCriteriaPaneSpecificTabsHidden(...tabs) {
+    tabs.forEach(tab => {
+      cy.expect(setCriteriaPane.find(Button(`${tab}`)).absent());
+    });
+  },
+
+  verifySpecificTabHighlighted(tab) {
+    cy.expect(Button(`${tab}`).has({ default: false }));
+  },
 
   verifyRecordTypesAccordion() {
     cy.expect([
