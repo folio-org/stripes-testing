@@ -12,6 +12,7 @@ import {
 import DateTools from '../../utils/dateTools';
 
 const dropdownButton = MultiColumnListRow({ rowIndexInParent: 'row-0' }).find(Dropdown()).find(Button());
+const actionsButton = Button('Actions');
 
 
 // TODO: will rework to interactor when we get section id
@@ -62,6 +63,13 @@ export default {
     cy.do([
       Accordion({ id: 'loan' }).clickHeader(),
       Checkbox({ id: 'clickable-filter-loan-claimed-returned' }).click()
+    ]);
+  },
+
+  searchByMarkedAsMissing() {
+    cy.do([
+      Accordion({ id: 'loan' }).clickHeader(),
+      Checkbox({ id: 'clickable-filter-loan-marked-as-missing' }).click()
     ]);
   },
 
@@ -122,6 +130,11 @@ export default {
     });
   },
 
+  // TODO check if we can use it using MultiColumnRow
+  findResultRowIndexByContent(content) {
+    return cy.get('*[class^="mclCell"]').contains(content).parent().invoke('attr', 'data-row-inner');
+  },
+
   filterByLastWeek() {
     const lastWeek = DateTools.getLastWeekDateObj();
     const today = new Date();
@@ -145,5 +158,12 @@ export default {
 
   userDetailIsOpen() {
     cy.expect(Pane({ id: 'pane-userdetails' }).exists());
+  },
+
+  exportResults() {
+    cy.do([
+      actionsButton.click(),
+      Button('Export results (CSV)').click(),
+    ]);
   },
 };

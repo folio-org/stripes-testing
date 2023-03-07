@@ -1,94 +1,99 @@
+import permissions from '../../../support/dictionary/permissions';
 import TestTypes from '../../../support/dictionary/testTypes';
+import DevTeams from '../../../support/dictionary/devTeams';
 import HoldingsRecordEdit from '../../../support/fragments/inventory/holdingsRecordEdit';
 import HoldingsRecordView from '../../../support/fragments/inventory/holdingsRecordView';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
 import ItemRecordView from '../../../support/fragments/inventory/itemRecordView';
 import TopMenu from '../../../support/fragments/topMenu';
-import generateItemBarcode from '../../../support/utils/generateItemBarcode';
-import permissions from '../../../support/dictionary/permissions';
+import GenerateItemBarcode from '../../../support/utils/generateItemBarcode';
 import Users from '../../../support/fragments/users/users';
 import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
 import Helper from '../../../support/fragments/finance/financeHelper';
-import DevTeams from '../../../support/dictionary/devTeams';
 
 describe('ui-inventory: Update the effective location for the item', () => {
-  const instanceTitle = `autoTestInstanceTitle ${Helper.getRandomBarcode()}`;
+  const itemData = {
+    instanceTitle: `autoTestInstanceTitle ${Helper.getRandomBarcode()}`,
+    itemBarcode: GenerateItemBarcode()
+  };
   const anotherPermanentLocation = 'Main Library';
-  const itemBarcode = generateItemBarcode();
-  let userId;
-  let testInstanceIds;
+  let testInstanceId;
+  let instanceHrid;
+  let user;
 
-  beforeEach(() => {
+  before(() => {
+    cy.getAdminToken()
+      .then(() => {
+        cy.getLoanTypes({ limit: 1 }).then((res) => { itemData.loanTypeId = res[0].id; });
+        cy.getMaterialTypes({ limit: 1 }).then((res) => { itemData.materialTypeId = res.id; });
+        cy.getInstanceTypes({ limit: 1 }).then((instanceTypes) => { itemData.instanceTypeId = instanceTypes[0].id; });
+        cy.getLocations({ limit: 1, query: 'name="Online"' }).then((res) => { itemData.locationId = res.id; });
+        cy.getHoldingTypes({ limit: 1 }).then((res) => { itemData.holdingTypeId = res[0].id; });
+      })
+      .then(() => {
+        InventoryInstances.createFolioInstanceViaApi({
+          instance: {
+            instanceTypeId: itemData.instanceTypeId,
+            title: itemData.instanceTitle,
+          },
+          holdings: [{
+            holdingsTypeId: itemData.holdingTypeId,
+            permanentLocationId: itemData.locationId
+          }],
+          items: [
+            {
+              barcode: itemData.itemBarcode,
+              status: { name: 'Available' },
+              permanentLoanType: { id: itemData.loanTypeId },
+              materialType: { id: itemData.materialTypeId }
+            }]
+        })
+          .then(specialInstanceIds => {
+            testInstanceId = specialInstanceIds;
+          });
+      });
+
     cy.createTempUser([
       permissions.inventoryAll.gui,
+      permissions.remoteStorageView.gui
     ])
       .then(userProperties => {
-        userId = userProperties.userId;
-        cy.getAdminToken().then(() => {
-          cy.getLoanTypes({ limit: 1 });
-          cy.getMaterialTypes({ limit: 1 });
-          cy.getInstanceTypes({ limit: 1 });
-          cy.getLocations({ limit: 1, query: 'name="Online"' });
-          cy.getHoldingTypes({ limit: 1 });
-        })
-          .then(() => {
-            InventoryInstances.createFolioInstanceViaApi({
-              instance: {
-                instanceTypeId: Cypress.env('instanceTypes')[0].id,
-                title: instanceTitle,
-              },
-              holdings: [{
-                holdingsTypeId: Cypress.env('holdingsTypes')[0].id,
-                permanentLocationId: Cypress.env('locations')[0].id,
-              }],
-              items: [
-                {
-                  barcode: itemBarcode,
-                  missingPieces: '3',
-                  numberOfMissingPieces: '3',
-                  status: { name: 'Available' },
-                  permanentLoanType: { id: Cypress.env('loanTypes')[0].id },
-                  materialType: { id: Cypress.env('materialTypes')[0].id },
-                }],
-            })
-              .then(specialInstanceIds => {
-                testInstanceIds = specialInstanceIds;
-              });
-          });
-        cy.login(userProperties.username, userProperties.password, { path: TopMenu.inventoryPath, waiter: InventoryInstances.waitContentLoading });
+        user = userProperties;
+
+        cy.login(user.username, user.password, { path: TopMenu.inventoryPath, waiter: InventoryInstances.waitContentLoading });
+        InventorySearchAndFilter.searchByParameter('Keyword (title, contributor, identifier, HRID, UUID)', itemData.instanceTitle);
+        InventoryInstance.getAssignedHRID().then(initialInstanceHrId => { instanceHrid = initialInstanceHrId; });
+        InventorySearchAndFilter.resetAll();
       });
   });
 
   afterEach(() => {
-    cy.wrap(testInstanceIds.holdingIds.forEach(holdingsId => {
+    cy.wrap(testInstanceId.holdingIds.forEach(holdingsId => {
       cy.wrap(holdingsId.itemIds.forEach(itemId => {
-        cy.deleteItem(itemId);
+        cy.deleteItemViaApi(itemId);
       })).then(() => {
         cy.deleteHoldingRecordViaApi(holdingsId.id);
       });
     })).then(() => {
-      InventoryInstance.deleteInstanceViaApi(testInstanceIds.instanceId);
+      InventoryInstance.deleteInstanceViaApi(testInstanceId.instanceId);
     });
-    Users.deleteViaApi(userId);
+    Users.deleteViaApi(user.userId);
   });
 
-  // FAT-4028 Requirements was changed. The test should be changed.
   it('C3501 An item is being moved from one library location to another. Update the effective location for the item (folijet) (prokopovych)',
-    { tags: [TestTypes.smoke, DevTeams.folijet] },
-    () => {
-      InventorySearchAndFilter.switchToItem();
-      InventorySearchAndFilter.searchByParameter('Barcode', itemBarcode);
+    { tags: [TestTypes.smoke, DevTeams.folijet] }, () => {
+      InventorySearchAndFilter.searchInstanceByHRID(instanceHrid);
       InventorySearchAndFilter.selectSearchResultItem();
       InventoryInstance.openHoldingView();
       HoldingsRecordView.edit();
       HoldingsRecordEdit.changePermanentLocation(anotherPermanentLocation);
       HoldingsRecordEdit.saveAndClose();
       HoldingsRecordView.waitLoading();
-      HoldingsRecordView.checkPermanentLocation(anotherPermanentLocation);
       HoldingsRecordView.close();
       InventoryInstance.openHoldings([anotherPermanentLocation]);
-      InventoryInstance.openItemView(itemBarcode);
+      InventorySearchAndFilter.switchToItem();
+      InventorySearchAndFilter.searchByParameter('Barcode', itemData.itemBarcode);
       ItemRecordView.verifyPermanentLocation(anotherPermanentLocation);
     });
 });

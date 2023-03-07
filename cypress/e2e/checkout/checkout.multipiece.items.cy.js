@@ -106,7 +106,7 @@ describe('Check Out', () => {
       .then(() => {
         cy.wrap(testInstanceIds.holdingIds.forEach(holdingsId => {
           cy.wrap(holdingsId.itemIds.forEach(itemId => {
-            cy.deleteItem(itemId);
+            cy.deleteItemViaApi(itemId);
           })).then(() => {
             cy.deleteHoldingRecordViaApi(holdingsId.id);
           });

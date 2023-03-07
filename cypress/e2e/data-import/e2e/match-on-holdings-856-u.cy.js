@@ -31,7 +31,6 @@ describe('ui-data-import: Match on Holdings 856 $u', () => {
   const createInstanceAndEHoldingsJobProfileName = `createInstanceAndEHoldingsJobProf${getRandomPostfix()}`;
   const updateEHoldingsJobProfileName = `updateEHoldingsJobProf${getRandomPostfix()}`;
   let instanceHRID = null;
-  const instanceTitle = 'Together together 3 : personal relationships in public places / edited by Calvin Morrill, David A. Snow, and Cindy H. White.';
 
   const collectionOfMappingAndActionProfiles = [
     {
@@ -85,7 +84,7 @@ describe('ui-data-import: Match on Holdings 856 $u', () => {
   });
 
   after(() => {
-    cy.getInstance({ limit: 1, expandAll: true, query: `"title"=="${instanceTitle}"` })
+    cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${instanceHRID}"` })
       .then((instance) => {
         cy.deleteHoldingRecordViaApi(instance.holdings[0].id);
         InventoryInstance.deleteInstanceViaApi(instance.id);
@@ -114,7 +113,7 @@ describe('ui-data-import: Match on Holdings 856 $u', () => {
     FieldMappingProfiles.openNewMappingProfileForm();
     NewFieldMappingProfile.fillSummaryInMappingProfile(holdingsMappingProfile);
     NewFieldMappingProfile.fillPermanentLocation('"Online (E)"');
-    NewFieldMappingProfile.addElectronicAccess('"Resource"', '856$u', '856$z');
+    NewFieldMappingProfile.addElectronicAccess('Resource', '856$u', '856$z');
     FieldMappingProfiles.saveProfile();
     FieldMappingProfiles.closeViewModeForMappingProfile(holdingsMappingProfile.name);
   };
@@ -122,14 +121,14 @@ describe('ui-data-import: Match on Holdings 856 $u', () => {
   const updateHoldingsMappingProfile = (holdingsMappingProfile) => {
     FieldMappingProfiles.openNewMappingProfileForm();
     NewFieldMappingProfile.fillSummaryInMappingProfile(holdingsMappingProfile);
-    NewFieldMappingProfile.addSuppressFromDiscovery();
-    NewFieldMappingProfile.fillCallNumberType('"Other scheme"');
+    NewFieldMappingProfile.addSuppressFromDiscovery('Mark for all affected records');
+    NewFieldMappingProfile.fillCallNumberType('Other scheme');
     NewFieldMappingProfile.fillCallNumber('"ONLINE"');
     FieldMappingProfiles.saveProfile();
     FieldMappingProfiles.closeViewModeForMappingProfile(holdingsMappingProfile.name);
   };
 
-  it('C17025 Match on Holdings 856 $u (folijet)', { tags: [TestTypes.smoke, DevTeams.folijet] }, () => {
+  it('C17025 Match on Holdings 856 $u (folijet)', { tags: [TestTypes.criticalPath, DevTeams.folijet] }, () => {
     createInstanceMappingProfile(collectionOfMappingAndActionProfiles[0].mappingProfile);
     FieldMappingProfiles.checkMappingProfilePresented(collectionOfMappingAndActionProfiles[0].mappingProfile.name);
     createHoldingsMappingProfile(collectionOfMappingAndActionProfiles[1].mappingProfile);

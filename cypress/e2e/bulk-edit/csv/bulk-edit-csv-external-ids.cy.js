@@ -34,7 +34,7 @@ describe('bulk-edit', () => {
     after('delete test data', () => {
       FileManager.deleteFile(`cypress/fixtures/${userExternalIDsFileName}`);
       FileManager.deleteFile(`cypress/fixtures/${importFileName}`);
-      FileManager.deleteFile(`cypress/downloads/${matchRecordsFileName}`);
+      FileManager.deleteFolder(Cypress.config('downloadsFolder'));
       Users.deleteViaApi(user.userId);
     });
 
@@ -49,7 +49,7 @@ describe('bulk-edit', () => {
 
       BulkEditActions.downloadMatchedResults(matchRecordsFileName);
       const newUserName = `testName_${getRandomPostfix()}`;
-      BulkEditActions.prepareValidBulkEditFile(matchRecordsFileName, importFileName, user.username, newUserName);
+      BulkEditActions.prepareValidBulkEditFile('Matched-Records', importFileName, user.username, newUserName);
       BulkEditActions.openStartBulkEditForm();
       BulkEditSearchPane.uploadFile(importFileName);
       BulkEditSearchPane.waitFileUploading();

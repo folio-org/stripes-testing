@@ -22,7 +22,7 @@ const fieldLabels = {
 const overrideData = {
   date: dateTools.getCurrentDate(),
   simplifiedDate: dateTools.getFormattedDateWithSlashes({ date: new Date() }),
-  time: '11:11 AM',
+  time: '1:00 AM',
   additionalInfo: 'Override additional information',
   status: 'Checked out',
 };
@@ -119,6 +119,7 @@ const checkModalTable = (modalTitle, itemData) => {
 const generateInitialLink = (userId, loanId) => `users/${userId}/loans/view/${loanId}`;
 
 export default {
+  checkLoansPage,
   renewWithoutOverrideAccess(loanId, userId, itemData) {
     cy.visit(generateInitialLink(userId, loanId));
 

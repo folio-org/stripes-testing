@@ -1,8 +1,7 @@
 /* eslint-disable cypress/no-unnecessary-waiting */
 import uuid from 'uuid';
+import { HTML, including } from '@interactors/html';
 import {
-  HTML,
-  including,
   Section,
   or,
   MultiColumnList,
@@ -10,7 +9,8 @@ import {
   Pane,
   TextField,
   Checkbox,
-  Modal
+  Modal,
+  Select
 } from '../../../../interactors';
 import InventoryHoldings from './holdings/inventoryHoldings';
 import inventoryNewInstance from './inventoryNewInstance';
@@ -216,7 +216,10 @@ export default {
   importWithOclc: (oclc) => {
     cy.do(actionsButton.click());
     cy.do(Button({ id: 'dropdown-clickable-import-record' }).click());
-    cy.do(singleRecordImportModal.find(TextField({ name: 'externalIdentifier' })).fillIn(oclc));
+    cy.do(Select({ name:'selectedJobProfileId' }).choose('Inventory Single Record - Default Create Instance (Default)'));
+    cy.do(singleRecordImportModal.find(TextField({ name:'externalIdentifier' })).fillIn(oclc));
     cy.do(singleRecordImportModal.find(Button('Import')).click());
   },
+
+  verifyInstanceDetailsView:() => cy.expect(Section({ id: 'pane-instancedetails' }).exists())
 };

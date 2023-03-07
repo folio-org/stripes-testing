@@ -73,13 +73,13 @@ describe('ui-organizations: EDI convention in Organization Integration', () => {
     Organizations.selectOrganization(organization.name);
     // Add first integration and check this
     Organizations.addIntegration();
-    Organizations.fillIntegrationInformation(integrationName1, integartionDescription1, vendorEDICodeFor1Integration, libraryEDICodeFor1Integration, organization.accounts[0].accountNo, 'Purchase');
+    Organizations.fillIntegrationInformationWithoutScheduling(integrationName1, integartionDescription1, vendorEDICodeFor1Integration, libraryEDICodeFor1Integration, organization.accounts[0].accountNo, 'Purchase');
     InteractorsTools.checkCalloutMessage('Integration was saved');
     Organizations.checkIntegrationsAdd(integrationName1, integartionDescription1);
     // Add second inegration and check all
     Organizations.addIntegration();
     cy.wait(2000);
-    Organizations.fillIntegrationInformation(integrationName2, integartionDescription2, vendorEDICodeFor2Integration, libraryEDICodeFor2Integration, organization.accounts[1].accountNo, 'Purchase At Vendor System');
+    Organizations.fillIntegrationInformationWithoutScheduling(integrationName2, integartionDescription2, vendorEDICodeFor2Integration, libraryEDICodeFor2Integration, organization.accounts[1].accountNo, 'Purchase At Vendor System');
     InteractorsTools.checkCalloutMessage('Integration was saved');
     Organizations.checkTwoIntegationsAdd(integrationName1, integartionDescription1, integrationName2, integartionDescription2);
   });

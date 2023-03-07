@@ -6,6 +6,8 @@ export default {
   bulkEditCsvEdit: { internal: 'ui-bulk-edit.edit', gui: 'Bulk Edit: (CSV) Edit' },
   bulkEditCsvDelete: { internal: 'ui-bulk-edit.delete', gui: 'Bulk Edit: (CSV) Delete' },
   bulkEditUpdateRecords: { internal: 'ui-bulk-edit.app-edit.users', gui: 'Bulk edit: In app - Update user records' },
+  bulkEditQueryView: { internal: 'ui-bulk-edit.query', gui: 'Bulk edit: Query' },
+  bulkEditLogsView: { internal: 'ui-bulk-edit.logs.view', gui: 'Bulk edit - Can view logs' },
   // eHoldings
   uieHoldingsRecordsEdit: { internal: 'ui-eholdings.records.edit', gui:'eHoldings: Can edit providers, packages, titles detail records' },
   uieHoldingsTitlesPackagesCreateDelete: { internal: 'ui-eholdings.titles-packages.create-delete', gui: 'eHoldings: Can create and delete custom packages and titles' },
@@ -26,6 +28,7 @@ export default {
   uiQuickMarcQuickMarcHoldingsEditorAll: { internal: 'ui-quick-marc.quick-marc-holdings-editor.all', gui: 'quickMARC: View, edit MARC holdings record' },
   uiQuickMarcQuickMarcHoldingsEditorView:{ internal:'ui-quick-marc.quick-marc-holdings-editor.view', gui:'quickMARC: View MARC holdings record' },
   uiQuickMarcQuickMarcBibliographicEditorView:{ internal:'ui-quick-marc.quick-marc-editor.view', gui:'quickMARC: View MARC bibliographic record' },
+  uiCanLinkUnlinkAuthorityRecordsToBibRecords:{ internal: 'ui-quick-marc.quick-marc-authority-records.linkUnlink', gui: 'quickMARC: Can Link/unlink authority records to bib records' },
   // Marc Authority record
   uiQuickMarcQuickMarcAuthoritiesEditorAll: { internal: 'ui-quick-marc.quick-marc-authorities-editor.all', gui: 'quickMARC: View, edit MARC authorities record' },
   uiMarcAuthoritiesAuthorityRecordView:{ internal: 'ui-marc-authorities.authority-record.view', gui:'MARC Authority: View MARC authority record' },
@@ -47,18 +50,24 @@ export default {
   uiInventoryViewCreateEditInstances:{ internal:'ui-inventory.instance.edit', gui:'Inventory: View, create, edit instances' },
   inventoryViewCreateEditInstances:{ internal:'records-editor.records.item.get', gui:'All records-editor permissions' },
   uiInventoryViewCreateEditItems:{ internal:'ui-inventory.item.edit', gui:'Inventory: View, create, edit items' },
+  uiInventoryMarcItemInProcess:{ internal: 'ui-inventory.items.mark-in-process-non-requestable', gui:'Inventory: Mark items in process (non-requestable)' },
+  uiInventoryMarcItemIntellectual:{ internal:'ui-inventory.items.mark-intellectual-item', gui:'Inventory: Mark items intellectual item' },
+  uiInventoryMarcItemLongMissing:{ internal:'ui-inventory.items.mark-long-missing', gui:'Inventory: Mark items long missing' },
+  uiInventoryMarcItemRestricted:{ internal:'ui-inventory.items.mark-restricted', gui:'Inventory: Mark items restricted' },
+  uiInventoryMarcItemUnavailable:{ internal:'ui-inventory.items.mark-unavailable', gui:'Inventory: Mark items unavailable' },
+  uiInventoryMarcItemUnknow:{ internal:'ui-inventory.items.mark-unknown', gui:'Inventory: Mark items unknown' },
   // Tags
   uiTagsPermissionAll: { internal: 'ui-tags.permission.all', gui:'Tags: All permissions' },
   // Settings->Owners
+  uiUsersSettingsAllFeeFinesRelated: { internal: 'ui-users.settings.feefines.all', gui:'Settings (Users): Can create, edit and remove all feefines-related entries' },
   uiUsersSettingsOwners: { internal: 'ui-users.settings.owners', gui: 'Settings (Users): Can create, edit and remove owners' },
   uiUsersEdituserservicepoints: { internal: 'ui-users.edituserservicepoints', gui: 'Users: Can assign and unassign service points to users' },
   // Locations
   uiTenantSettingsSettingsLocation:{ internal: 'ui-tenant-settings.settings.location', gui:'Settings (tenant): Can create, edit and remove locations' },
+  uiTenantSettingsServicePointsCRUD:{ internal: 'ui-tenant-settings.settings.servicepoints', gui:'Settings (tenant):  Can create, edit and remove service points' },
   // DataImport
   dataImportUploadAll:{ internal: 'data-import.upload.all', gui:'Data Import File Upload - all permissions' },
   moduleDataImportEnabled:{ internal: 'ui-data-import.settings.manage', gui:'Data import: Can upload files, import, and view logs' },
-  settingsDataImportView:{ internal: 'ui-data-import.settings.readOnly', gui:'Data import: Can view only' },
-  settingsDataImportEnabled:{ internal: 'settings.data-import.enabled', gui:'Settings (Data import): Can view, create, edit, and remove' },
   dataImportDeleteLogs: { internal: 'ui-data-import.logs.delete', gui: 'Data import: Can delete import logs' },
   // Storage
   converterStorageAll:{ internal: 'converter-storage.all', gui:'Data Import Converter Storage - all permissions' },
@@ -84,7 +93,6 @@ export default {
   uiUsersDeclareItemLost: { internal: 'ui-users.loans.declare-item-lost', gui: 'Users: User loans declare lost' },
   usersLoansRenewThroughOverride: { internal: 'ui-users.loans.renew-override', gui: 'Users: User loans renew through override' },
   uiUsersEditProfile: { internal: 'ui-users.edit', gui: 'Users: Can edit user profile' },
-  uiUsersViewProfile: { internal: 'ui-users.view', gui: 'Users: Can view user profile' },
   uiUsersPermissions: { internal: 'ui-users.editperms', gui: 'Users: Can assign and unassign permissions to users' },
   uiUsersfeefinesView: { internal: 'ui-users.feesfines.view', gui: 'Users: Can view fees/fines and loans' },
   uiUsersManualCharge: { internal: 'ui-users.manual_charge', gui: 'Fees/Fines: Can charge' },
@@ -109,6 +117,8 @@ export default {
   // Data Export
   dataExportAll: { internal: 'data-export.all', gui: 'Data Export - all permissions' },
   dataExportEnableModule: { internal: 'module.data-export.enabled', gui: 'Data export: all permissions' },
+  dataExportEnableSettings: { internal: 'ui-data-export.settings.enabled', gui: 'Settings (data-export): display list of settings pages' },
+  dataExportEnableApp:{ internal:'ui-data-export.app.enabled', gui:'UI: Data export module is enabled' },
   // Loans
   loansAll: { internal: 'ui-users.loans.all', gui: 'Users: User loans view, change due date, renew' },
   loansView: { internal: 'ui-users.loans.view', gui: 'Users: User loans view' },
@@ -208,6 +218,12 @@ export default {
   uiInventorySettingsFastAdd: { internal: 'ui-inventory.settings.fast-add', gui: 'Settings (Inventory): Edit fast add settings' },
   uiCreateEditDeleteMaterialTypes: { internal: 'ui-inventory.settings.materialtypes', gui: 'Settings (Inventory): Create, edit, delete material types' },
   uiInventorySettingsConfigureSingleRecordImport: { internal: 'ui-inventory.settings.single-record-import', gui: 'Settings (Inventory): Configure single-record import' },
+  settingsDataImportView:{ internal: 'ui-data-import.settings.readOnly', gui:'Data import: Can view only' },
+  settingsDataImportEnabled:{ internal: 'settings.data-import.enabled', gui:'Settings (Data import): Can view, create, edit, and remove' },
+  settingsDataImportCanViewOnly:{ internal:'ui-data-import.settings.readOnly', gui:'Settings (Data import): Can view only' },
   // Timers
   okapiTimersPatch: { internal: 'okapi.proxy.self.timers.patch', gui: 'Okapi - patch timer for current tenant' },
+  // Export manager
+  exportManagerAll: { internal: 'ui-export-manager.export-manager.all', gui: 'Export manager: All' },
+  exportManagerDownloadAndResendFiles: { internal: 'ui-export-manager.jobs.downloadAndResend', gui: 'Export manager: Download and re-send files' },
 };

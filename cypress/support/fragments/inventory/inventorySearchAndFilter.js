@@ -31,6 +31,7 @@ const keywordInput = TextField({ id: 'input-inventory-search' });
 const searchButton = Button({ type: 'submit' });
 const searchTextField = TextField('Search ');
 const inventorySearchAndFilter = TextInput({ id: 'input-inventory-search' });
+const inventorySearchAndFilterInput = Select({ id: 'input-inventory-search-qindex' });
 const browseSearchAndFilterInput = Select({ id: 'input-record-search-qindex' });
 const resetAllButton = Button({ id: 'clickable-reset-all' });
 const navigationInstancesButton = Button({ id: 'segment-navigation-instances' });
@@ -43,6 +44,8 @@ const tagsButton = Button({ id: 'clickable-show-tags' });
 const tagsAccordionButton = instancesTagsSection.find(Button('Tags'));
 const emptyResultsMessage = 'Choose a filter or enter a search query to show results.';
 const browseButton = Button({ id: 'mode-navigation-browse' });
+const viewHoldingButton = Button('View holdings');
+const statisticalCodeAccordion = Accordion({ id:'itemsStatisticalCodeIds' });
 
 const searchInstanceByHRID = (id) => {
   InventoryInstances.waitContentLoading();
@@ -169,17 +172,17 @@ export default {
   },
 
   selectBrowseCallNumbers() {
+    cy.do(browseButton.click());
     // cypress can't draw selected option without wait
     // eslint-disable-next-line cypress/no-unnecessary-waiting
-    cy.do(browseButton.click());
     cy.wait(1000);
     cy.do(Select('Search field index').choose('Call numbers'));
   },
 
   selectBrowseSubjects() {
+    cy.do(browseButton.click());
     // cypress can't draw selected option without wait
     // eslint-disable-next-line cypress/no-unnecessary-waiting
-    cy.do(browseButton.click());
     cy.wait(1000);
     cy.do(Select('Search field index').choose('Subjects'));
   },
@@ -404,6 +407,21 @@ export default {
     cy.do(MultiColumnListCell({ row: 0, content: instanceTitle }).click());
   },
 
+  selectFoundItem(callNumber, suffix) {
+    cy.do(Button(including(`${callNumber} ${suffix}`)).click());
+  },
+
+  verifyInstanceDisplayed(instanceTitle) {
+    cy.expect(MultiColumnListCell({ content: instanceTitle }).exists());
+  },
+
+  verifyShelvingOrder() {
+    cy.get('#input-inventory-search-qindex').then((elem) => {
+      expect(elem.text()).to.include('Effective call number (item), shelving order');
+    });
+    cy.expect(inventorySearchAndFilter.has({ value:'PRT 3718 _V 11 E 12 CH 13 C 14 SUF' }));
+  },
+
   verifyPanesExist() {
     cy.expect(paneFilterSection.exists());
     cy.expect(paneResultsSection.exists());
@@ -429,5 +447,15 @@ export default {
           }
         });
       }).then(() => ({ instanceData }));
+  },
+
+  selectViewHoldings:() => cy.do(viewHoldingButton.click()),
+
+  filterItemByStatisticalCode:(code) => {
+    cy.do([
+      Button({ id:'accordion-toggle-button-itemsStatisticalCodeIds' }).click(),
+      statisticalCodeAccordion.find(TextField()).fillIn(code),
+    ]);
+    cy.do(statisticalCodeAccordion.find(Checkbox(code)).click());
   }
 };

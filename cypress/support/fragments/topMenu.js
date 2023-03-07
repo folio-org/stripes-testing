@@ -24,5 +24,7 @@ export default {
   checkInPath: '/checkin',
   checkOutPath: '/checkout',
   receivingPath: '/receiving',
-  bulkEditPath: '/bulk-edit'
+  bulkEditPath: '/bulk-edit',
+  exportManagerPath: '/export-manager',
+  exportManagerOrganizationsPath: 'export-manager/edi-jobs',
 };

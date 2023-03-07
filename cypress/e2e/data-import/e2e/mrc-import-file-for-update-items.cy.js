@@ -6,7 +6,6 @@ import Logs from '../../../support/fragments/data_import/logs/logs';
 import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
 import ExportFile from '../../../support/fragments/data-export/exportFile';
 import TopMenu from '../../../support/fragments/topMenu';
-import ExportMarcFile from '../../../support/fragments/data-export/export-marc-file';
 import MatchProfiles from '../../../support/fragments/data_import/match_profiles/matchProfiles';
 import NewMatchProfile from '../../../support/fragments/data_import/match_profiles/newMatchProfile';
 import NewFieldMappingProfile from '../../../support/fragments/data_import/mapping_profiles/newFieldMappingProfile';
@@ -23,6 +22,7 @@ import SettingsJobProfiles from '../../../support/fragments/settings/dataImport/
 import DevTeams from '../../../support/dictionary/devTeams';
 
 describe('ui-data-import: MARC file upload with the update of instance, holding, and items', () => {
+  let instanceHRID = null;
   // profile names for creating
   const nameMarcBibMappingProfile = `autotest_marcBib_mapping_profile_${getRandomPostfix()}`;
   const nameInstanceMappingProfile = `autotest_instance_mapping_profile_${getRandomPostfix()}`;
@@ -307,7 +307,7 @@ describe('ui-data-import: MARC file upload with the update of instance, holding,
 
   afterEach(() => {
     DataImport.checkUploadState();
-
+    cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${instanceHRID}"` });
     // delete generated profiles
     JobProfiles.deleteJobProfile(jobProfileNameUpdate);
     collectionOfMatchProfiles.forEach(profile => {
@@ -345,11 +345,11 @@ describe('ui-data-import: MARC file upload with the update of instance, holding,
   const createHoldingsMappingProfile = (profile) => {
     FieldMappingProfiles.openNewMappingProfileForm();
     NewFieldMappingProfile.fillSummaryInMappingProfile(profile);
-    NewFieldMappingProfile.fillHoldingsType('"Electronic"');
+    NewFieldMappingProfile.fillHoldingsType('Electronic');
     NewFieldMappingProfile.fillPermanentLocation('"Online (E)"');
-    NewFieldMappingProfile.fillCallNumberType('"Library of Congress classification"');
+    NewFieldMappingProfile.fillCallNumberType('Library of Congress classification');
     NewFieldMappingProfile.fillCallNumber('050$a " " 050$b');
-    NewFieldMappingProfile.addElectronicAccess('"Resource"', '856$u');
+    NewFieldMappingProfile.addElectronicAccess('Resource', '856$u');
     FieldMappingProfiles.saveProfile();
     FieldMappingProfiles.closeViewModeForMappingProfile(profile.name);
   };
@@ -383,11 +383,12 @@ describe('ui-data-import: MARC file upload with the update of instance, holding,
     // get Instance HRID through API
     InventorySearchAndFilter.getInstanceHRID()
       .then(hrId => {
+        instanceHRID = hrId[0];
         // download .csv file
         cy.visit(TopMenu.inventoryPath);
         InventorySearchAndFilter.searchInstanceByHRID(hrId[0]);
         InventorySearchAndFilter.saveUUIDs();
-        ExportMarcFile.downloadCSVFile(nameForCSVFile, 'SearchInstanceUUIDs*');
+        ExportFile.downloadCSVFile(nameForCSVFile, 'SearchInstanceUUIDs*');
         FileManager.deleteFolder(Cypress.config('downloadsFolder'));
       });
 
@@ -406,7 +407,7 @@ describe('ui-data-import: MARC file upload with the update of instance, holding,
     cy.visit(TopMenu.dataExportPath);
     ExportFile.uploadFile(nameForCSVFile);
     ExportFile.exportWithCreatedJobProfile(nameForCSVFile, jobProfileNameForExport);
-    ExportMarcFile.downloadExportedMarcFile(nameMarcFileForImportUpdate);
+    ExportFile.downloadExportedMarcFile(nameMarcFileForImportUpdate);
 
     // create mapping and action profiles
     cy.visit(SettingsMenu.mappingProfilePath);

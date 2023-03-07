@@ -1,4 +1,14 @@
-import { Section, Button, HTML, including, TextField, QuickMarcEditor, QuickMarcEditorRow, Modal, TextArea, MultiColumnListHeader, Callout } from '../../../../interactors';
+import {
+  Section,
+  Button,
+  HTML,
+  including,
+  TextField,
+  QuickMarcEditorRow,
+  TextArea,
+  MultiColumnListHeader,
+  Callout
+} from '../../../../interactors';
 
 const defaultCreateJobProfile = 'Default - Create SRS MARC Authority';
 const defaultUpdateJobProfile = 'Update authority by matching 010';
@@ -6,6 +16,7 @@ const rootSection = Section({ id: 'marc-view-pane' });
 
 const addFieldButton = Button({ ariaLabel : 'plus-sign' });
 const deleteFieldButton = Button({ ariaLabel : 'trash' });
+const infoButton = Button({ ariaLabel : 'info' });
 const saveAndCloseButton = Button({ id:'quick-marc-record-save' });
 
 // related with cypress\fixtures\oneMarcAuthority.mrc
@@ -74,34 +85,36 @@ export default {
       path: `records-editor/records/${internalAuthorityId}`,
     });
   },
-  addNewField: (rowIndex, tag, content) => {
+  addNewField: (rowIndex, tag, content, indicator0 = '\\', indicator1 = '\\') => {
     cy.do([
       QuickMarcEditorRow({ index: rowIndex }).find(addFieldButton).click(),
       QuickMarcEditorRow({ index: rowIndex + 1 }).find(TextField({ name: `records[${rowIndex + 1}].tag` })).fillIn(tag),
+      QuickMarcEditorRow({ index: rowIndex + 1 }).find(TextField({ name: `records[${rowIndex + 1}].indicators[0]` })).fillIn(indicator0),
+      QuickMarcEditorRow({ index: rowIndex + 1 }).find(TextField({ name: `records[${rowIndex + 1}].indicators[1]` })).fillIn(indicator1),
       QuickMarcEditorRow({ index: rowIndex + 1 }).find(TextArea({ name: `records[${rowIndex + 1}].content` })).fillIn(content),
-    ])
+    ]);
   },
   changeField: (tag, content) => {
     cy.do([
       QuickMarcEditorRow({ tagValue: tag }).find(TextArea()).fillIn(content),
-    ])
+    ]);
   },
-  checkNotDeletableTags: (tag) => { cy.expect(QuickMarcEditorRow({ tagValue: tag }).find(deleteFieldButton).absent()) },
+  checkNotDeletableTags: (tag) => { cy.expect(QuickMarcEditorRow({ tagValue: tag }).find(deleteFieldButton).absent()); },
   change008Field: (lang, kindrec, catrules) => {
     cy.do([
       TextField('Lang').fillIn(lang),
       TextField('Kind rec').fillIn(kindrec),
       TextField('CatRules').fillIn(catrules)
-    ])
+    ]);
   },
-  clicksaveAndCloseButton: () => { cy.do(saveAndCloseButton.click()) },
+  clicksaveAndCloseButton: () => { cy.do(saveAndCloseButton.click()); },
   checkPresentedColumns: (presentedColumns) => presentedColumns.forEach(columnName => cy.expect(MultiColumnListHeader(columnName).exists())),
-  checkLDRValue: (ldrValue) => { cy.expect(QuickMarcEditorRow({ tagValue: 'LDR' }).find(TextArea({ ariaLabel: 'Subfield' })).has({ textContent: ldrValue })) },
+  checkLDRValue: (ldrValue) => { cy.expect(QuickMarcEditorRow({ tagValue: 'LDR' }).find(TextArea({ ariaLabel: 'Subfield' })).has({ textContent: ldrValue })); },
   check008Field: () => {
     cy.do(TextField('Lang').fillIn('abc'));
-    cy.expect(TextField('abc').absent());  
+    cy.expect(TextField('abc').absent());
     cy.do(TextField('Lang').fillIn('a'));
-    cy.expect(TextField('Lang').has({ value: 'a'}));  
+    cy.expect(TextField('Lang').has({ value: 'a' }));
   },
   checkRemovedTag: (rowIndex) => {
     cy.do([
@@ -110,5 +123,52 @@ export default {
       saveAndCloseButton.click(),
     ]);
     cy.expect(Callout('Record cannot be saved. A MARC tag must contain three characters.').exists());
+  },
+  
+  checkAddNew1XXTag: (rowIndex, tag, content) => {
+    cy.do([
+      QuickMarcEditorRow({ index: rowIndex }).find(addFieldButton).click(),
+      QuickMarcEditorRow({ index: rowIndex + 1 }).find(TextField({ name: `records[${rowIndex + 1}].tag` })).fillIn(tag),
+      QuickMarcEditorRow({ index: rowIndex + 1 }).find(TextArea({ name: `records[${rowIndex + 1}].content` })).fillIn(content),
+      saveAndCloseButton.click(),
+    ]);
+    cy.expect(Callout('Record cannot be saved. Cannot have multiple 1XXs').exists());
+  },
+
+  checkRemoved1XXTag: (rowIndex) => {
+    cy.do([
+      QuickMarcEditorRow({ index: rowIndex }).find(TextField({ name: `records[${rowIndex}].tag` })).fillIn(''),
+      QuickMarcEditorRow({ index: rowIndex }).find(TextArea({ name: `records[${rowIndex}].content` })).fillIn('Test'),
+      saveAndCloseButton.click(),
+    ]);
+    cy.expect(Callout('Record cannot be saved without 1XX field.').exists());
+  },
+
+  checkInfoButton: (tag, rowIndex) => {
+    if (rowIndex) {
+      cy.do(QuickMarcEditorRow({ index: rowIndex }).find(infoButton).click());
+    } else {
+      cy.do(QuickMarcEditorRow({ tagValue: tag }).find(infoButton).click());
+    }
+    cy.expect(HTML('This field is protected.').exists());
+  },
+
+  checkAddNew001Tag: (rowIndex, content) => {
+    // need to wait until all data loaded
+    cy.wait(2000);
+    cy.do(QuickMarcEditorRow({ index: rowIndex }).find(addFieldButton).click());
+    cy.do(QuickMarcEditorRow({ index: rowIndex + 1 }).find(TextArea({ name: `records[${rowIndex + 1}].content` })).fillIn(content));
+
+    // interactor doesn't work properly
+    cy.get(`input[name='records[${rowIndex + 1}].tag']`).type('001');
+    // cy.do(QuickMarcEditorRow({ index: rowIndex + 1 }).find(TextField({ name: `records[${rowIndex + 1}].tag` })).fillIn('001'));
+
+    cy.expect(QuickMarcEditorRow({ index: rowIndex + 1 }).find(TextField()).has({ disabled: true }));
+    cy.do(saveAndCloseButton.click());
+    cy.expect(Callout('Record cannot be saved. Can only have one MARC 001.').exists());
+  },
+  
+  deleteTag: (rowIndex) => { 
+    cy.do(QuickMarcEditorRow({ index: rowIndex }).find(deleteFieldButton).click());
   },
 };

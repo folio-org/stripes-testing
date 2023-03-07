@@ -79,7 +79,11 @@ describe('Recieving notice: Checkout', () => {
       ServicePoints.createViaApi(testData.userServicePoint);
       testData.defaultLocation = Location.getDefaultLocation(testData.userServicePoint.id);
       Location.createViaApi(testData.defaultLocation);
-      cy.getLoanTypes({ limit: 1 }).then((res) => { testData.loanTypeId = res[0].id; });
+      cy.createLoanType({
+        name: `type_${getRandomPostfix()}`,
+      }).then((loanType) => {
+        testData.loanTypeId = loanType.id;
+      });
       cy.getMaterialTypes({ limit: 1 }).then((res) => {
         testData.materialTypeId = res.id;
         testData.materialTypeName = res.name;
@@ -143,16 +147,17 @@ describe('Recieving notice: Checkout', () => {
     UserEdit.changeServicePointPreferenceViaApi(userData.userId, [testData.userServicePoint.id]);
     CirculationRules.deleteRuleViaApi(testData.baseRules);
     ServicePoints.deleteViaApi(testData.userServicePoint.id);
-    NoticePolicyApi.deleteApi(testData.ruleProps.n);
+    NoticePolicyApi.deleteViaApi(testData.ruleProps.n);
     Users.deleteViaApi(userData.userId);
     PatronGroups.deleteViaApi(patronGroup.id);
     cy.get('@items').each(
       (item, index) => {
-        cy.deleteItem(item.itemId);
+        cy.deleteItemViaApi(item.itemId);
         cy.deleteHoldingRecordViaApi(itemsData.itemsWithSeparateInstance[index].holdingId);
         InventoryInstance.deleteInstanceViaApi(itemsData.itemsWithSeparateInstance[index].instanceId);
       }
     );
+    cy.deleteLoanType(testData.loanTypeId);
     Location.deleteViaApiIncludingInstitutionCampusLibrary(
       testData.defaultLocation.institutionId,
       testData.defaultLocation.campusId,
@@ -181,13 +186,13 @@ describe('Recieving notice: Checkout', () => {
       NewNoticePolicy.fillGeneralInformation(noticePolicy);
       NewNoticePolicy.addNotice(noticePolicy);
       NewNoticePolicy.save();
-      NewNoticePolicy.check(noticePolicy);
+      NewNoticePolicy.checkPolicyName(noticePolicy);
       NewNoticePolicy.checkAfterSaving(noticePolicy);
       NewNoticePolicy.checkNoticeActions(noticePolicy);
 
       cy.getNoticePolicy({ query: `name=="${noticePolicy.name}"` }).then((res) => {
         testData.ruleProps.n = res[0].id;
-        CirculationRules.addRuleViaApi(testData.baseRules, testData.ruleProps, 'g ', patronGroup.id);
+        CirculationRules.addRuleViaApi(testData.baseRules, testData.ruleProps, 't ', testData.loanTypeId);
       });
 
       cy.visit(TopMenu.checkOutPath);

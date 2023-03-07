@@ -1,4 +1,3 @@
-import getRandomPostfix from '../../../support/utils/stringTools';
 import permissions from '../../../support/dictionary/permissions';
 import TestTypes from '../../../support/dictionary/testTypes';
 import TopMenu from '../../../support/fragments/topMenu';
@@ -25,7 +24,6 @@ import Receiving from '../../../support/fragments/receiving/receiving';
 import FileDetails from '../../../support/fragments/data_import/logs/fileDetails';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 import HoldingsRecordView from '../../../support/fragments/inventory/holdingsRecordView';
-import ItemView from '../../../support/fragments/inventory/inventoryItem/itemView';
 import InventoryViewSource from '../../../support/fragments/inventory/inventoryViewSource';
 import NewMatchProfile from '../../../support/fragments/data_import/match_profiles/newMatchProfile';
 import Organizations from '../../../support/fragments/organizations/organizations';
@@ -33,6 +31,7 @@ import DevTeams from '../../../support/dictionary/devTeams';
 import OrderLines from '../../../support/fragments/orders/orderLines';
 import NewLocation from '../../../support/fragments/settings/tenant/locations/newLocation';
 import FileManager from '../../../support/utils/fileManager';
+import ItemActions from '../../../support/fragments/inventory/inventoryItem/itemActions';
 
 describe('ui-data-import: Match on POL and update related Instance, Holdings, Item', () => {
   const firstItem = {
@@ -62,7 +61,7 @@ describe('ui-data-import: Match on POL and update related Instance, Holdings, It
   let instanceHrid;
 
   // unique profile names
-  const jobProfileName = `C350590 autotestJobProf${getRandomPostfix()}`;
+  const jobProfileName = `C350590 autotestJobProf${Helper.getRandomBarcode()}`;
   const matchProfileNameForInstance = `C350590 935 $a POL to Instance POL ${Helper.getRandomBarcode()}`;
   const matchProfileNameForHoldings = `C350590 935 $a POL to Holdings POL ${Helper.getRandomBarcode()}`;
   const matchProfileNameForItem = `C350590 935 $a POL to Item POL ${Helper.getRandomBarcode()}`;
@@ -71,9 +70,9 @@ describe('ui-data-import: Match on POL and update related Instance, Holdings, It
   const actionProfileNameForItem = `C350590 Update Item by POL match ${Helper.getRandomBarcode()}`;
   const mappingProfileNameForInstance = `C350590 Update Instance by POL match ${Helper.getRandomBarcode()}`;
   const mappingProfileNameForHoldings = `C350590 Update Holdings by POL match ${Helper.getRandomBarcode()}`;
-  const mappingProfileNameForItem = `C350590 Update Item by POL match ${getRandomPostfix()}`;
+  const mappingProfileNameForItem = `C350590 Update Item by POL match ${Helper.getRandomBarcode()}`;
 
-  const editedMarcFileName = `C350590 marcFileForMatchOnPol.${getRandomPostfix()}.mrc`;
+  const editedMarcFileName = `C350590 marcFileForMatchOnPol.${Helper.getRandomBarcode()}.mrc`;
 
   const collectionOfProfiles = [
     {
@@ -153,7 +152,8 @@ describe('ui-data-import: Match on POL and update related Instance, Holdings, It
       permissions.moduleDataImportEnabled.gui,
       permissions.uiReceivingViewEditCreate.gui,
       permissions.uiInventoryViewInstances.gui,
-      permissions.uiQuickMarcQuickMarcBibliographicEditorView.gui
+      permissions.uiQuickMarcQuickMarcBibliographicEditorView.gui,
+      permissions.remoteStorageView.gui
     ])
       .then(userProperties => {
         user = userProperties;
@@ -218,7 +218,7 @@ describe('ui-data-import: Match on POL and update related Instance, Holdings, It
     });
     cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${instanceHrid}"` })
       .then((instance) => {
-        cy.deleteItem(instance.items[0].id);
+        cy.deleteItemViaApi(instance.items[0].id);
         cy.deleteHoldingRecordViaApi(instance.holdings[0].id);
         InventoryInstance.deleteInstanceViaApi(instance.id);
       });
@@ -230,7 +230,7 @@ describe('ui-data-import: Match on POL and update related Instance, Holdings, It
         cy.getItems({ query: `"id"=="${itemId}"` })
           .then((item) => {
             item.barcode = itemBarcode;
-            ItemRecordView.editItem(item)
+            ItemActions.editItemViaApi(item)
               .then(() => {
                 CheckInActions.checkinItemViaApi({
                   itemBarcode: item.barcode,
@@ -238,7 +238,7 @@ describe('ui-data-import: Match on POL and update related Instance, Holdings, It
                   checkInDate: new Date().toISOString(),
                 })
                   .then(() => {
-                    cy.deleteItem(itemId);
+                    cy.deleteItemViaApi(itemId);
                     cy.deleteHoldingRecordViaApi(instance.holdings[0].id);
                     InventoryInstance.deleteInstanceViaApi(instance.id);
                   });
@@ -269,121 +269,122 @@ describe('ui-data-import: Match on POL and update related Instance, Holdings, It
     Receiving.checkIsPiecesCreated(title);
   };
 
-  it('C350590 Match on POL and update related Instance, Holdings, Item (folijet)', { tags: [TestTypes.smoke, DevTeams.folijet] }, () => {
+  it('C350590 Match on POL and update related Instance, Holdings, Item (folijet)',
+    { tags: [TestTypes.smoke, DevTeams.folijet] }, () => {
     // create the first PO with POL
-    Orders.createOrderWithOrderLineViaApi(NewOrder.getDefaultOrder(vendorId),
-      BasicOrderLine.getDefaultOrderLine(
-        firstItem.quantity,
-        firstItem.title,
-        location.id,
-        materialTypeId,
-        acquisitionMethodId,
-        firstItem.price,
-        firstItem.price,
-        [{
-          productId: firstItem.productId,
-          productIdType: productIdTypeId
-        }]
-      ))
-      .then(res => {
-        firstOrderNumber = res;
+      Orders.createOrderWithOrderLineViaApi(NewOrder.getDefaultOrder(vendorId),
+        BasicOrderLine.getDefaultOrderLine(
+          firstItem.quantity,
+          firstItem.title,
+          location.id,
+          materialTypeId,
+          acquisitionMethodId,
+          firstItem.price,
+          firstItem.price,
+          [{
+            productId: firstItem.productId,
+            productIdType: productIdTypeId
+          }]
+        ))
+        .then(res => {
+          firstOrderNumber = res;
 
-        Orders.checkIsOrderCreated(firstOrderNumber);
-        // open the first PO with POL
-        openOrder(firstOrderNumber);
-        OrderView.checkIsOrderOpened('Open');
-        OrderView.checkIsItemsInInventoryCreated(firstItem.title, location.name);
-        // check receiving pieces are created
-        checkReceivedPiece(firstOrderNumber, firstItem.title);
+          Orders.checkIsOrderCreated(firstOrderNumber);
+          // open the first PO with POL
+          openOrder(firstOrderNumber);
+          OrderView.checkIsOrderOpened('Open');
+          OrderView.checkIsItemsInInventoryCreated(firstItem.title, location.name);
+          // check receiving pieces are created
+          checkReceivedPiece(firstOrderNumber, firstItem.title);
 
-        // create second PO with POL
-        Orders.createOrderWithOrderLineViaApi(NewOrder.getDefaultOrder(vendorId),
-          BasicOrderLine.getDefaultOrderLine(
-            secondItem.quantity,
-            secondItem.title,
-            location.id,
-            materialTypeId,
-            acquisitionMethodId,
-            secondItem.price,
-            secondItem.price,
-            [{
-              productId: secondItem.productId,
-              productIdType: productIdTypeId
-            }]
-          ))
-          .then(respo => {
-            secondOrderNumber = respo;
+          // create second PO with POL
+          Orders.createOrderWithOrderLineViaApi(NewOrder.getDefaultOrder(vendorId),
+            BasicOrderLine.getDefaultOrderLine(
+              secondItem.quantity,
+              secondItem.title,
+              location.id,
+              materialTypeId,
+              acquisitionMethodId,
+              secondItem.price,
+              secondItem.price,
+              [{
+                productId: secondItem.productId,
+                productIdType: productIdTypeId
+              }]
+            ))
+            .then(respo => {
+              secondOrderNumber = respo;
 
-            cy.visit(TopMenu.ordersPath);
-            Orders.resetFilters();
-            Orders.checkIsOrderCreated(secondOrderNumber);
-            // open the second PO
-            openOrder(secondOrderNumber);
-            OrderView.checkIsOrderOpened('Open');
-            OrderView.checkIsItemsInInventoryCreated(secondItem.title, location.name);
-            // check receiving pieces are created
-            checkReceivedPiece(secondOrderNumber, secondItem.title);
-          });
+              cy.visit(TopMenu.ordersPath);
+              Orders.resetFilters();
+              Orders.checkIsOrderCreated(secondOrderNumber);
+              // open the second PO
+              openOrder(secondOrderNumber);
+              OrderView.checkIsOrderOpened('Open');
+              OrderView.checkIsItemsInInventoryCreated(secondItem.title, location.name);
+              // check receiving pieces are created
+              checkReceivedPiece(secondOrderNumber, secondItem.title);
+            });
 
-        DataImport.editMarcFile('marcFileForC350590.mrc', editedMarcFileName, ['test'], [firstOrderNumber]);
+          DataImport.editMarcFile('marcFileForC350590.mrc', editedMarcFileName, ['test'], [firstOrderNumber]);
+        });
+
+      // create mapping and action profiles
+      collectionOfProfiles.forEach(profile => {
+        cy.visit(SettingsMenu.mappingProfilePath);
+        FieldMappingProfiles.createMappingProfileForMatch(profile.mappingProfile);
+        FieldMappingProfiles.checkMappingProfilePresented(profile.mappingProfile.name);
+        cy.visit(SettingsMenu.actionProfilePath);
+        ActionProfiles.create(profile.actionProfile, profile.mappingProfile.name);
+        ActionProfiles.checkActionProfilePresented(profile.actionProfile.name);
       });
 
-    // create mapping and action profiles
-    collectionOfProfiles.forEach(profile => {
-      cy.visit(SettingsMenu.mappingProfilePath);
-      FieldMappingProfiles.createMappingProfileForMatch(profile.mappingProfile);
-      FieldMappingProfiles.checkMappingProfilePresented(profile.mappingProfile.name);
-      cy.visit(SettingsMenu.actionProfilePath);
-      ActionProfiles.create(profile.actionProfile, profile.mappingProfile.name);
-      ActionProfiles.checkActionProfilePresented(profile.actionProfile.name);
+      // create match profiles
+      cy.visit(SettingsMenu.matchProfilePath);
+      collectionOfMatchProfiles.forEach(profile => {
+        MatchProfiles.createMatchProfile(profile.matchProfile);
+        MatchProfiles.checkMatchProfilePresented(profile.matchProfile.profileName);
+      });
+
+      // create job profile
+      cy.visit(SettingsMenu.jobProfilePath);
+      JobProfiles.createJobProfileWithLinkingProfilesForUpdate(specialJobProfile);
+      NewJobProfile.linkMatchAndActionProfilesForInstance(actionProfileNameForInstance, matchProfileNameForInstance, 0);
+      NewJobProfile.linkMatchAndActionProfilesForHoldings(actionProfileNameForHoldings, matchProfileNameForHoldings, 2);
+      NewJobProfile.linkMatchAndActionProfilesForItem(actionProfileNameForItem, matchProfileNameForItem, 4);
+      NewJobProfile.saveAndClose();
+
+      // upload .mrc file
+      cy.visit(TopMenu.dataImportPath);
+      DataImport.checkIsLandingPageOpened();
+      DataImport.uploadFile(editedMarcFileName);
+      JobProfiles.searchJobProfileForImport(jobProfileName);
+      JobProfiles.runImportFile();
+      JobProfiles.waitFileIsImported(editedMarcFileName);
+      Logs.checkStatusOfJobProfile();
+      Logs.openFileDetails(editedMarcFileName);
+      FileDetails.checkSrsRecordQuantityInSummaryTable('1');
+      FileDetails.checkInstanceQuantityInSummaryTable('1', 1);
+      FileDetails.checkHoldingsQuantityInSummaryTable('1', 1);
+      FileDetails.checkItemQuantityInSummaryTable('1', 1);
+      FileDetails.checkItemsStatusesInResultList(0, [FileDetails.status.created, FileDetails.status.updated, FileDetails.status.updated, FileDetails.status.updated]);
+      FileDetails.checkItemsStatusesInResultList(1, [FileDetails.status.dash, FileDetails.status.discarded, FileDetails.status.discarded, FileDetails.status.discarded]);
+
+      // check is items updated
+      FileDetails.openInstanceInInventory('Updated');
+      InventoryInstance.getAssignedHRID().then(initialInstanceHrId => { instanceHrid = initialInstanceHrId; });
+      InventoryInstance.checkIsInstanceUpdated();
+      InventoryInstance.openHoldingView();
+      HoldingsRecordView.checkHoldingsType('Monograph');
+      HoldingsRecordView.checkCallNumberType('Library of Congress classification');
+      HoldingsRecordView.checkPermanentLocation('Main Library');
+      HoldingsRecordView.close();
+      InventoryInstance.openHoldingsAccordion('Main Library');
+      InventoryInstance.openItemByBarcode(firstItem.barcode);
+      ItemRecordView.verifyItemStatus('In process');
+      ItemRecordView.checkEffectiveLocation('Main Library');
+      ItemRecordView.closeDetailView();
+      InventoryInstance.viewSource();
+      InventoryViewSource.verifyBarcodeInMARCBibSource(firstItem.barcode);
     });
-
-    // create match profiles
-    cy.visit(SettingsMenu.matchProfilePath);
-    collectionOfMatchProfiles.forEach(profile => {
-      MatchProfiles.createMatchProfile(profile.matchProfile);
-      MatchProfiles.checkMatchProfilePresented(profile.matchProfile.profileName);
-    });
-
-    // create job profile
-    cy.visit(SettingsMenu.jobProfilePath);
-    JobProfiles.createJobProfileWithLinkingProfilesForUpdate(specialJobProfile);
-    NewJobProfile.linkMatchAndActionProfilesForInstance(actionProfileNameForInstance, matchProfileNameForInstance, 0);
-    NewJobProfile.linkMatchAndActionProfilesForHoldings(actionProfileNameForHoldings, matchProfileNameForHoldings, 2);
-    NewJobProfile.linkMatchAndActionProfilesForItem(actionProfileNameForItem, matchProfileNameForItem, 4);
-    NewJobProfile.saveAndClose();
-
-    // upload .mrc file
-    cy.visit(TopMenu.dataImportPath);
-    DataImport.checkIsLandingPageOpened();
-    DataImport.uploadFile(editedMarcFileName);
-    JobProfiles.searchJobProfileForImport(jobProfileName);
-    JobProfiles.runImportFile();
-    JobProfiles.waitFileIsImported(editedMarcFileName);
-    Logs.checkStatusOfJobProfile();
-    Logs.openFileDetails(editedMarcFileName);
-    FileDetails.checkSrsRecordQuantityInSummaryTable('1', 0);
-    FileDetails.checkInstanceQuantityInSummaryTable('1', 1);
-    FileDetails.checkHoldingsQuantityInSummaryTable('1', 1);
-    FileDetails.checkItemQuantityInSummaryTable('1', 1);
-    FileDetails.checkItemsStatusesInResultList(0, [FileDetails.status.created, FileDetails.status.updated, FileDetails.status.updated, FileDetails.status.updated]);
-    FileDetails.checkItemsStatusesInResultList(1, [FileDetails.status.dash, FileDetails.status.discarded, FileDetails.status.discarded, FileDetails.status.discarded]);
-
-    // check is items updated
-    FileDetails.openInstanceInInventory('Updated');
-    InventoryInstance.getAssignedHRID().then(initialInstanceHrId => { instanceHrid = initialInstanceHrId; });
-    InventoryInstance.checkIsInstanceUpdated();
-    InventoryInstance.openHoldingView();
-    HoldingsRecordView.checkHoldingsType('Monograph');
-    HoldingsRecordView.checkCallNumberType('Library of Congress classification');
-    HoldingsRecordView.checkPermanentLocation('Main Library');
-    HoldingsRecordView.close();
-    InventoryInstance.openHoldingsAccordion('Main Library');
-    InventoryInstance.openItemView(firstItem.barcode);
-    ItemView.verifyItemStatus('In process');
-    ItemView.checkEffectiveLocation('Main Library');
-    ItemView.closeDetailView();
-    InventoryInstance.viewSource();
-    InventoryViewSource.verifyBarcodeInMARCBibSource(firstItem.barcode);
-  });
 });

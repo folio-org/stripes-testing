@@ -30,6 +30,7 @@ describe('Manage inventory Bib records with quickMarc editor', () => {
       permissions.uiQuickMarcQuickMarcBibliographicEditorAll.gui,
       permissions.inventoryAll.gui,
       permissions.uiInventorySingleRecordImport.gui,
+      permissions.converterStorageAll.gui,
     ]).then(userProperties => {
       userId = userProperties.userId;
       cy.login(userProperties.username, userProperties.password, { path: TopMenu.inventoryPath, waiter: InventoryInstances.waitContentLoading });
@@ -192,7 +193,7 @@ describe('Manage inventory Bib records with quickMarc editor', () => {
     QuickMarcEditor.waitLoading();
     cy.reload();
     checkLdrErrors();
-    QuickMarcEditor.closeWithoutSaving();
+    QuickMarcEditor.closeWithoutSavingAfterChange();
     InventoryInstance.deriveNewMarcBib();
     QuickMarcEditor.check008FieldsAbsent('Type', 'Blvl');
     checkLdrErrors();

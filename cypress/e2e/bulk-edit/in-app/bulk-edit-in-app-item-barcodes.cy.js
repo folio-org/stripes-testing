@@ -75,7 +75,7 @@ describe('bulk-edit', () => {
       BulkEditSearchPane.waitFileUploading();
 
       BulkEditActions.openActions();
-      BulkEditActions.openStartBulkEditForm();
+      BulkEditActions.openInAppStartBulkEditFrom();
       BulkEditActions.replaceTemporaryLocation('Annex');
       BulkEditActions.confirmChanges();
       BulkEditActions.commitChanges();
@@ -91,7 +91,7 @@ describe('bulk-edit', () => {
 
       BulkEditActions.openActions();
       BulkEditActions.verifyItemActionDropdownItems();
-      BulkEditActions.openStartBulkEditForm();
+      BulkEditActions.openInAppStartBulkEditFrom();
       BulkEditActions.verifyModifyLandingPageBeforeModifying();
       BulkEditActions.fillLoanType('Selected');
       BulkEditActions.verifyModifyLandingPageAfterModifying();
@@ -113,7 +113,7 @@ describe('bulk-edit', () => {
       BulkEditSearchPane.waitFileUploading();
 
       BulkEditActions.openActions();
-      BulkEditActions.openStartBulkEditForm();
+      BulkEditActions.openInAppStartBulkEditFrom();
       BulkEditActions.fillTemporaryLoanType('Selected');
       BulkEditActions.confirmChanges();
       BulkEditActions.commitChanges();
@@ -133,7 +133,7 @@ describe('bulk-edit', () => {
       BulkEditSearchPane.waitFileUploading();
 
       BulkEditActions.openActions();
-      BulkEditActions.openStartBulkEditForm();
+      BulkEditActions.openInAppStartBulkEditFrom();
       BulkEditActions.clearTemporaryLoanType();
       BulkEditActions.confirmChanges();
       BulkEditActions.commitChanges();
@@ -146,16 +146,33 @@ describe('bulk-edit', () => {
         InventoryInstance.openHoldings(['']);
         InventoryInstance.verifyLoanInItemPage(item.itemBarcode, '-');
       });
+    });
 
-      it('C360530 Verify that User cannot clear permanent loan type (firebird)', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
-        BulkEditSearchPane.uploadFile(itemBarcodesFileName);
-        BulkEditSearchPane.waitFileUploading();
+    it('C360530 Verify that User cannot clear permanent loan type (firebird)', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
+      BulkEditSearchPane.uploadFile(itemBarcodesFileName);
+      BulkEditSearchPane.waitFileUploading();
 
-        BulkEditActions.openActions();
-        BulkEditActions.openStartBulkEditForm();
-        BulkEditActions.fillLoanType();
-        BulkEditActions.replaceWithIsDisabled();
-      });
+      BulkEditActions.openActions();
+      BulkEditActions.openInAppStartBulkEditFrom();
+      BulkEditActions.fillLoanType();
+      BulkEditActions.replaceWithIsDisabled();
+    });
+
+    it('C359208 Verify Loan types options in Bulk Edit (firebird)', { tags: [testTypes.criticalPath, devTeams.firebird] }, () => {
+      BulkEditSearchPane.uploadFile(itemBarcodesFileName);
+      BulkEditSearchPane.waitFileUploading();
+
+      BulkEditActions.openActions();
+      BulkEditActions.openInAppStartBulkEditFrom();
+
+      const possibleActions = [
+        'Temporary item location',
+        'Permanent item location',
+        'Item status',
+        'Temporary loan type',
+        'Permanent loan type',
+      ];
+      BulkEditActions.verifyPossibleActions(possibleActions);
     });
   });
 });

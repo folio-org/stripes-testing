@@ -79,29 +79,30 @@ describe('ui-data-import: Check that protected fields in incoming records are no
     Users.deleteViaApi(user.userId);
   });
 
-  it('C358968 Check that protected fields in incoming records are not deleted during import: Scenario 1 (folijet)', { tags: [TestTypes.smoke, DevTeams.folijet] }, () => {
-    cy.visit(SettingsMenu.marcFieldProtectionPath);
-    MarcFieldProtection.currentListOfProtectedMarcFieldsIsPresented();
-    MarcFieldProtection.createNewMarcFieldProtection();
-    MarcFieldProtection.fillMarcFieldProtection(protectedField);
-    MarcFieldProtection.checkFieldProtectionIsCreated(protectedField);
+  it('C358968 Check that protected fields in incoming records are not deleted during import: Scenario 1 (folijet)',
+    { tags: [TestTypes.criticalPath, DevTeams.folijet] }, () => {
+      cy.visit(SettingsMenu.marcFieldProtectionPath);
+      MarcFieldProtection.checkListOfExistingProfilesIsDisplayed();
+      MarcFieldProtection.createNewMarcFieldProtection();
+      MarcFieldProtection.fillMarcFieldProtection(protectedField);
+      MarcFieldProtection.checkFieldProtectionIsCreated(protectedField);
 
-    cy.visit(SettingsMenu.targetProfilesPath);
-    Z3950TargetProfiles.openOclcWorldCat();
-    Z3950TargetProfiles.editOclcWorldCat(authentication);
-    Z3950TargetProfiles.checkIsOclcWorldCatIsChanged(authentication);
+      cy.visit(SettingsMenu.targetProfilesPath);
+      Z3950TargetProfiles.openOclcWorldCat();
+      Z3950TargetProfiles.editOclcWorldCat(authentication);
+      Z3950TargetProfiles.checkIsOclcWorldCatIsChanged(authentication);
 
-    cy.visit(TopMenu.inventoryPath);
-    InventorySearchAndFilter.searchInstanceByHRID(instanceHrid);
-    InventoryInstance.editMarcBibliographicRecord();
-    InventoryEditMarcRecord.deleteField();
-    InventoryInstance.checkElectronicAccess();
-    InventoryInstance.startOverlaySourceBibRecord();
-    InventoryInstance.singleOverlaySourceBibRecordModalIsPresented();
-    InventoryInstance.importWithOclc(oclcForChanging);
-    InventoryInstance.checkCalloutMessage(`Updated record ${oclcForChanging}`);
-    InventoryInstance.viewSource();
-    InventoryViewSource.contains(`${protectedField}\t`);
-    InventoryViewSource.contains(imported856Field);
-  });
+      cy.visit(TopMenu.inventoryPath);
+      InventorySearchAndFilter.searchInstanceByHRID(instanceHrid);
+      InventoryInstance.editMarcBibliographicRecord();
+      InventoryEditMarcRecord.deleteField();
+      InventoryInstance.checkElectronicAccess();
+      InventoryInstance.startOverlaySourceBibRecord();
+      InventoryInstance.singleOverlaySourceBibRecordModalIsPresented();
+      InventoryInstance.importWithOclc(oclcForChanging);
+      InventoryInstance.checkCalloutMessage(`Updated record ${oclcForChanging}`);
+      InventoryInstance.viewSource();
+      InventoryViewSource.contains(`${protectedField}\t`);
+      InventoryViewSource.contains(imported856Field);
+    });
 });

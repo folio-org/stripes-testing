@@ -50,7 +50,6 @@ describe('bulk-edit', { retries: 2 }, () => {
             .then(holdings => {
               item.hrid = holdings[0].hrid;
               item.holdingId = holdings[0].id;
-              console.log('holdings', holdings);
               cy.getLocations({ limit: 1, query: `(id="${holdings[0].temporaryLocationId}")` }).then((locations) => {
                 item.locationName = locations.name;
               });
@@ -90,7 +89,7 @@ describe('bulk-edit', { retries: 2 }, () => {
       BulkEditSearchPane.verifyMatchedResults(item.hrid, item2.hrid);
 
       BulkEditActions.openActions();
-      BulkEditActions.openStartBulkEditForm();
+      BulkEditActions.openInAppStartBulkEditFrom();
       BulkEditActions.replaceTemporaryLocation(item.locationName, 'holdings');
       BulkEditActions.confirmChanges();
       BulkEditActions.commitChanges();

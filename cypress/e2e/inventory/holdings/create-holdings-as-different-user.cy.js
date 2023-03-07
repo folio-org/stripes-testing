@@ -46,23 +46,24 @@ describe('ui-inventory: Create a Holdings record as another user than the one th
     Users.deleteViaApi(secondUser.userId);
   });
 
-  it('C1294: Create a Holdings record as another user than the one that created the Instance (folijet) (prokopovych)', { tags: [TestTypes.smoke, DevTeams.folijet] }, () => {
-    InventoryInstances.add(recordsData.instanceTitle);
-    InventorySearchAndFilter.searchInstanceByTitle(recordsData.instanceTitle);
-    cy.expect(MultiColumnListCell({ row: 0, content: recordsData.instanceTitle }).exists());
+  it('C1294: Create a Holdings record as another user than the one that created the Instance (folijet) (prokopovych)',
+    { tags: [TestTypes.smoke, DevTeams.folijet] }, () => {
+      InventoryInstances.add(recordsData.instanceTitle);
+      InventorySearchAndFilter.searchInstanceByTitle(recordsData.instanceTitle);
+      cy.expect(MultiColumnListCell({ row: 0, content: recordsData.instanceTitle }).exists());
 
-    // logout and login as a different user
-    cy.logout();
-    cy.login(firstUser.username, firstUser.password);
+      // logout and login as a different user
+      cy.logout();
+      cy.login(firstUser.username, firstUser.password);
 
-    cy.visit(TopMenu.inventoryPath);
-    InventorySearchAndFilter.searchInstanceByTitle(recordsData.instanceTitle);
-    InventoryInstances.selectInstance();
-    InventoryInstance.waitLoading();
-    InventoryInstance.createHoldingsRecord(recordsData.permanentLocationOption);
+      cy.visit(TopMenu.inventoryPath);
+      InventorySearchAndFilter.searchInstanceByTitle(recordsData.instanceTitle);
+      InventoryInstances.selectInstance();
+      InventoryInstance.waitLoading();
+      InventoryInstance.createHoldingsRecord(recordsData.permanentLocationOption);
 
-    InventoryInstance.openHoldingView();
-    HoldingsRecordView.checkSource(recordsData.source);
-    HoldingsRecordView.checkPermanentLocation(recordsData.permanentLocationValue);
-  });
+      InventoryInstance.openHoldingView();
+      HoldingsRecordView.checkSource(recordsData.source);
+      HoldingsRecordView.checkPermanentLocation(recordsData.permanentLocationValue);
+    });
 });

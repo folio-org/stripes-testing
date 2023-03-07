@@ -121,8 +121,10 @@ describe('Triggers: Check Out, Loan due date change, Check in', () => {
         cy.getHoldingTypes({ limit: 1 }).then((res) => {
           testData.holdingTypeId = res[0].id;
         });
-        cy.getLoanTypes({ limit: 1 }).then((res) => {
-          testData.loanTypeId = res[0].id;
+        cy.createLoanType({
+          name: `type_${getRandomPostfix()}`,
+        }).then((loanType) => {
+          testData.loanTypeId = loanType.id;
         });
         cy.getMaterialTypes({ limit: 1 }).then((res) => {
           testData.materialTypeId = res.id;
@@ -220,14 +222,15 @@ describe('Triggers: Check Out, Loan due date change, Check in', () => {
     CirculationRules.deleteRuleViaApi(testData.baseRules);
     ServicePoints.deleteViaApi(testData.userServicePoint.id);
     cy.deleteLoanPolicy(loanPolicyId);
-    NoticePolicyApi.deleteApi(testData.ruleProps.n);
+    NoticePolicyApi.deleteViaApi(testData.ruleProps.n);
     Users.deleteViaApi(userData.userId);
     PatronGroups.deleteViaApi(patronGroup.id);
     cy.get('@items').each((item, index) => {
-      cy.deleteItem(item.itemId);
+      cy.deleteItemViaApi(item.itemId);
       cy.deleteHoldingRecordViaApi(itemsData.itemsWithSeparateInstance[index].holdingId);
       InventoryInstance.deleteInstanceViaApi(itemsData.itemsWithSeparateInstance[index].instanceId);
     });
+    cy.deleteLoanType(testData.loanTypeId);
     Location.deleteViaApiIncludingInstitutionCampusLibrary(
       testData.defaultLocation.institutionId,
       testData.defaultLocation.campusId,
@@ -263,17 +266,12 @@ describe('Triggers: Check Out, Loan due date change, Check in', () => {
       NewNoticePolicy.addNotice(noticePolicy.selectOptions(checkInTemplate), 2);
       NewNoticePolicy.save();
       NewNoticePolicy.waitLoading();
-      NewNoticePolicy.check(noticePolicy);
+      NewNoticePolicy.checkPolicyName(noticePolicy);
 
       cy.getNoticePolicy({ query: `name=="${noticePolicy.name}"` }).then((res) => {
         testData.ruleProps.n = res[0].id;
         testData.ruleProps.l = loanPolicyId;
-        CirculationRules.addRuleViaApi(
-          testData.baseRules,
-          testData.ruleProps,
-          'g ',
-          patronGroup.id
-        );
+        CirculationRules.addRuleViaApi(testData.baseRules, testData.ruleProps, 't ', testData.loanTypeId);
       });
 
       cy.visit(TopMenu.checkOutPath);

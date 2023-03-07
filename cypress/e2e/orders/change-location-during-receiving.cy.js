@@ -11,6 +11,8 @@ import NewOrganization from '../../support/fragments/organizations/newOrganizati
 import OrderLines from '../../support/fragments/orders/orderLines';
 import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
 import Users from '../../support/fragments/users/users';
+import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
+import NewLocation from '../../support/fragments/settings/tenant/locations/newLocation';
 
 describe('orders: Receive piece from Order', () => {
   const order = { ...NewOrder.defaultOneTimeOrder,
@@ -23,6 +25,8 @@ describe('orders: Receive piece from Order', () => {
   let user;
   let orderNumber;
   let orderID;
+  let location;
+  let servicePointId;
 
   before(() => {
     cy.getAdminToken();
@@ -33,6 +37,14 @@ describe('orders: Receive piece from Order', () => {
         order.vendor = response;
       });
     InventoryInstances.createInstanceViaApi(item.instanceName, item.itemBarcode);
+    ServicePoints.getViaApi()
+    .then((servicePoint) => {
+      servicePointId = servicePoint[0].id;
+      NewLocation.createViaApi(NewLocation.getDefaultLocation(servicePointId))
+        .then(res => {
+          location = res;
+        });
+    });
 
     cy.loginAsAdmin({ path:TopMenu.ordersPath, waiter: Orders.waitLoading });
 
@@ -66,6 +78,12 @@ describe('orders: Receive piece from Order', () => {
     Orders.deleteOrderApi(orderID);
     Organizations.deleteOrganizationViaApi(organization.id);
     InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(item.itemBarcode);
+    NewLocation.deleteViaApiIncludingInstitutionCampusLibrary(
+      location.institutionId,
+      location.campusId,
+      location.libraryId,
+      location.id
+    );
     Users.deleteViaApi(user.userId);
   });
 
@@ -76,7 +94,7 @@ describe('orders: Receive piece from Order', () => {
     // Receiving part
     Orders.receiveOrderViaActions();
     Receiving.selectFromResultsList(item.instanceName);
-    Receiving.receiveAndChangeLocation(0, caption);
+    Receiving.receiveAndChangeLocation(0, caption, location.institutionId);
 
     Receiving.checkReceived(0, caption);
     Receiving.selectInstanceInReceive(item.instanceName);

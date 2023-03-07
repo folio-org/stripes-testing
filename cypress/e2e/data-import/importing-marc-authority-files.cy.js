@@ -11,7 +11,7 @@ import Logs from '../../support/fragments/data_import/logs/logs';
 import SettingsMenu from '../../support/fragments/settingsMenu';
 import NewJobProfile from '../../support/fragments/data_import/job_profiles/newJobProfile';
 
-describe('Importing MARC Authority files', () => {
+describe('Data Import -> Importing MARC Authority files', { retries: 2 }, () => {
   const testData = {};
   const jobProfileToRun = 'Default - Create SRS MARC Authority';
   const createdJobProfile = {
@@ -19,7 +19,7 @@ describe('Importing MARC Authority files', () => {
     acceptedType: 'MARC',
   };
   let fileName;
-  let createdAuthorityID;
+  const createdAuthorityIDs = [];
 
   before('Creating data', () => {
     cy.createTempUser([
@@ -46,8 +46,6 @@ describe('Importing MARC Authority files', () => {
   });
 
   afterEach('Deleting data', () => {
-    MarcAuthority.deleteViaAPI(createdAuthorityID);
-
     cy.loginAsAdmin({ path: TopMenu.dataImportPath, waiter: DataImport.waitLoading });
     DataImport.selectLog();
     DataImport.openDeleteImportLogsModal();
@@ -55,6 +53,10 @@ describe('Importing MARC Authority files', () => {
   });
 
   after('Deleting data', () => {
+    createdAuthorityIDs.forEach(id => {
+      MarcAuthority.deleteViaAPI(id);
+    });
+
     JobProfiles.deleteJobProfile(createdJobProfile.profileName);
     Users.deleteViaApi(testData.userProperties.userId);
   });
@@ -68,7 +70,7 @@ describe('Importing MARC Authority files', () => {
     Logs.checkStatusOfJobProfile('Completed');
     Logs.openFileDetails(fileName);
     Logs.getCreatedItemsID().then(link => {
-      createdAuthorityID = link.split('/')[5];
+      createdAuthorityIDs.push(link.split('/')[5]);
     });
     Logs.goToTitleLink('Created');
     MarcAuthority.contains('MARC');
@@ -83,7 +85,7 @@ describe('Importing MARC Authority files', () => {
     Logs.checkStatusOfJobProfile('Completed');
     Logs.openFileDetails(fileName);
     Logs.getCreatedItemsID().then(link => {
-      createdAuthorityID = link.split('/')[5];
+      createdAuthorityIDs.push(link.split('/')[5]);
     });
     Logs.goToTitleLink('Created');
     MarcAuthority.contains('MARC');

@@ -23,24 +23,64 @@ const deleteConfirmationModal = Modal({ id:'delete-confirmation-modal' });
 const holdingHrIdKeyValue = KeyValue('Holdings HRID');
 const closeButton = Button({ icon: 'times' });
 
+function waitLoading() { cy.expect(actionsButton.exists()); }
+
 export default {
+  waitLoading,
   newHolding : {
     rowsCountInQuickMarcEditor : 6
   },
-  waitLoading: () => cy.expect(actionsButton.exists()),
+
+  // actions
   close: () => {
     cy.do(closeButton.click());
     cy.expect(root.absent());
   },
   editInQuickMarc: () => {
-    cy.do(actionsButton.click());
-    cy.do(editInQuickMarcButton.click());
+    cy.do([
+      actionsButton.click(),
+      editInQuickMarcButton.click()
+    ]);
   },
   viewSource: () => {
-    cy.do(actionsButton.click());
-    cy.do(viewSourceButton.click());
+    cy.do([
+      actionsButton.click(),
+      viewSourceButton.click()
+    ]);
     InventoryViewSource.waitHoldingLoading();
   },
+  tryToDelete:() => {
+    cy.do([
+      actionsButton.click(),
+      deleteButton.click()
+    ]);
+    cy.expect(deleteConfirmationModal.exists());
+    cy.do(deleteConfirmationModal.find(Button('Cancel')).click());
+    cy.expect(deleteConfirmationModal.absent());
+  },
+  duplicate:() => {
+    cy.do([
+      actionsButton.click(),
+      duplicateButton.click()
+    ]);
+    InventoryNewHoldings.waitLoading();
+  },
+  delete:() => {
+    cy.do([
+      actionsButton.click(),
+      deleteButton.click()
+    ]);
+    cy.expect(deleteConfirmationModal.exists());
+    cy.do(deleteConfirmationModal.find(Button('Delete')).click());
+  },
+  edit:() => {
+    cy.do([
+      actionsButton.click(),
+      editButton.click()
+    ]);
+  },
+
+  // checks
   checkActionsMenuOptionsInFolioSource:() => {
     cy.do(actionsButton.click());
     cy.expect(viewSourceButton.absent());
@@ -55,53 +95,40 @@ export default {
     // close openned Actions
     cy.do(actionsButton.click());
   },
-  tryToDelete:() => {
-    cy.do(actionsButton.click());
-    cy.do(deleteButton.click());
-    cy.expect(deleteConfirmationModal.exists());
-    cy.do(deleteConfirmationModal.find(Button('Cancel')).click());
-    cy.expect(deleteConfirmationModal.absent());
-  },
-  duplicate:() => {
-    cy.do(actionsButton.click());
-    cy.do(duplicateButton.click());
-    InventoryNewHoldings.waitLoading();
-  },
-  delete:() => {
-    cy.do(actionsButton.click());
-    cy.do(deleteButton.click());
-    cy.expect(deleteConfirmationModal.exists());
-    cy.do(deleteConfirmationModal.find(Button('Delete')).click());
-  },
   checkSource:sourceValue => cy.expect(KeyValue('Source', { value:sourceValue }).exists()),
-  getHoldingsHrId: () => cy.then(() => holdingHrIdKeyValue.value()),
   checkInstanceHrId: expectedInstanceHrId => cy.expect(root.find(KeyValue('Instance HRID')).has({ value:expectedInstanceHrId })),
   checkHrId: expectedHrId => cy.expect(holdingHrIdKeyValue.has({ value: expectedHrId })),
   checkPermanentLocation:expectedLocation => cy.expect(KeyValue('Permanent', { value: expectedLocation }).exists()),
+  checkTemporaryLocation:expectedLocation => cy.expect(KeyValue('Temporary', { value: expectedLocation }).exists()),
+  checkReadOnlyFields:() => {},
+  checkHoldingsType: type => cy.expect(KeyValue('Holdings type').has({ value: type })),
+  checkCallNumberType: number => cy.expect(KeyValue('Call number type').has({ value: number })),
+  checkCallNumber:callNumber => cy.expect(KeyValue('Call number').has({ value: callNumber })),
+  checkFormerHoldingsId: value => cy.expect(KeyValue('Former holdings ID', { value }).exists()),
+  checkIllPolicy: value => cy.expect(KeyValue('ILL policy', { value }).exists()),
+  checkURIIsNotEmpty:() => cy.expect(Accordion('Electronic access')
+    .find(MultiColumnListCell({ row: 0, columnIndex: 1, content: '-' }))
+    .absent()),
+  checkAdministrativeNote:(note) => cy.expect(MultiColumnList({ id: 'administrative-note-list' })
+    .find(HTML(including(note)))
+    .exists()),
+  checkHoldingsStatement:(statement) => cy.expect(MultiColumnList({ id: 'list-holdingsStatement' })
+    .find(HTML(including(statement)))
+    .exists()),
+  checkStatisticalCode:(code) => cy.expect(MultiColumnList({ id: 'list-statistical-codes' })
+    .find(MultiColumnListCell({ content: code }))
+    .exists()),
+  checkHoldingsNote:(value) => cy.expect(MultiColumnList({ id: 'list-holdings-notes-0' })
+    .find(MultiColumnListCell({ content: value }))
+    .exists()),
+  checkMarkAsSuppressedFromDiscovery:() => cy.expect(root
+    .find(HTML(including('Warning: Holdings is marked suppressed from discovery')))
+    .exists()),
+
+  getHoldingsHrId: () => cy.then(() => holdingHrIdKeyValue.value()),
   getId:() => {
     // parse hodling record id from current url
     cy.url().then(url => cy.wrap(url.split('?')[0].split('/').at(-1)).as('holdingsRecorId'));
     return cy.get('@holdingsRecorId');
-  },
-  checkReadOnlyFields:() => {},
-  edit:() => {
-    cy.do(actionsButton.click());
-    cy.do(editButton.click());
-  },
-  checkHoldingsType:type => cy.expect(KeyValue('Holdings type').has({ value: type })),
-  checkCallNumberType: number => cy.expect(KeyValue('Call number type').has({ value: number })),
-  checkURIIsNotEmpty:() => {
-    cy.expect(Accordion('Electronic access').find(MultiColumnListCell({ row: 0, columnIndex: 1, content: '-' }))
-      .absent());
-  },
-  checkCallNumber:(callNumber) => cy.expect(KeyValue('Call number').has({ value: callNumber })),
-  checkAdministrativeNote:(note) => {
-    cy.expect(MultiColumnList({ id: 'administrative-note-list' }).find(HTML(including(note))).exists());
-  },
-  checkHoldingsStatement:(statement) => {
-    cy.expect(MultiColumnList({ id: 'list-holdingsStatement' }).find(HTML(including(statement))).exists());
-  },
-  checkStatisticalCode:(code) => {
-    cy.expect(MultiColumnList({ id: 'list-statistical-codes' }).find(HTML(including(code))).exists());
   }
 };

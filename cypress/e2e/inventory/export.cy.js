@@ -77,7 +77,7 @@ describe('ui-inventory: exports', () => {
       query: `(keyword all "${instanceTitle}") sortby title`
     })
       .then(instance => {
-        cy.deleteItem(instance.items[0].id);
+        cy.deleteItemViaApi(instance.items[0].id);
         cy.deleteHoldingRecordViaApi(instance.holdings[0].id);
         InventoryInstance.deleteInstanceViaApi(instance.id);
       });

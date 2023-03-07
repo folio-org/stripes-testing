@@ -14,6 +14,8 @@ describe('bulk-edit', () => {
       permissions.bulkEditEdit.gui,
       permissions.bulkEditCsvView.gui,
       permissions.bulkEditCsvEdit.gui,
+      permissions.bulkEditQueryView.gui,
+      permissions.bulkEditLogsView.gui,
     ])
       .then(userProperties => {
         user = userProperties;
@@ -31,22 +33,41 @@ describe('bulk-edit', () => {
     BulkEditSearchPane.verifyPanesBeforeImport();
     BulkEditSearchPane.verifyBulkEditPaneItems();
     BulkEditSearchPane.verifySetCriteriaPaneItems();
-    BulkEditSearchPane.verifyRecordsTypeItems();
+    BulkEditSearchPane.verifyRecordTypesAccordion();
 
     // verify identifier items
     BulkEditSearchPane.verifyRecordIdentifierItems();
     BulkEditSearchPane.verifyDragNDropUsersUIIDsArea();
     BulkEditSearchPane.verifyDragNDropUsersBarcodesArea();
+    BulkEditSearchPane.verifyDragNDropExternalIDsArea();
+    BulkEditSearchPane.verifyDragNDropUsernamesArea();
+
+    BulkEditSearchPane.verifyItemIdentifiersDefaultState();
+    BulkEditSearchPane.clickRecordTypesAccordion();
+    BulkEditSearchPane.verifyRecordTypesAccordionCollapsed();
+    BulkEditSearchPane.clickRecordTypesAccordion();
+    BulkEditSearchPane.verifyDragNDropItemBarcodeArea();
+    BulkEditSearchPane.verifyDragNDropItemUUIDsArea();
+    BulkEditSearchPane.verifyDragNDropItemHRIDsArea();
+    BulkEditSearchPane.verifyDragNDropItemFormerIdentifierArea();
+    BulkEditSearchPane.verifyDragNDropItemAccessionNumberArea();
+    BulkEditSearchPane.verifyDragNDropItemHoldingsUUIDsArea();
+
+    BulkEditSearchPane.verifyHoldingIdentifiers();
+    BulkEditSearchPane.verifyDragNDropHoldingsUUIDsArea();
+    BulkEditSearchPane.verifyDragNDropHoldingsHRIDsArea();
+    BulkEditSearchPane.verifyDragNDropInstanceHRIDsArea();
+    BulkEditSearchPane.verifyDragNDropHoldingsItemBarcodesArea();
 
     // verify query items
     BulkEditSearchPane.openQuerySearch();
-    BulkEditSearchPane.verifyEmptyQueryPane();
-    BulkEditSearchPane.fillQuery('test text');
-    BulkEditSearchPane.verifyFilledQueryPane();
-    BulkEditSearchPane.resetQueryField();
+    BulkEditSearchPane.verifyQueryPane();
+    BulkEditSearchPane.clickRecordTypesAccordion();
+    BulkEditSearchPane.verifyRecordTypesAccordionCollapsed();
+    BulkEditSearchPane.clickRecordTypesAccordion();
 
-    // verify items radio
-    BulkEditSearchPane.checkItemsRadio();
-    BulkEditSearchPane.actionsIsShown();
+    // verify logs items
+    BulkEditSearchPane.openLogsSearch();
+    BulkEditSearchPane.verifyLogsPane();
   });
 });

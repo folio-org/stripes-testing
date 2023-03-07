@@ -31,8 +31,7 @@ export default {
   },
 
   getListOfMarcFieldProtectionViaApi:(searchParams) => {
-    return cy.okapiRequest({ method: 'GET',
-      path: 'field-protection-settings/marc',
+    return cy.okapiRequest({ path: 'field-protection-settings/marc',
       searchParams,
       isDefaultSearchParamsRequired: false })
       .then(({ body }) => {
@@ -41,8 +40,9 @@ export default {
   },
 
   createNewMarcFieldProtection:() => cy.do(Pane({ id:'controlled-vocab-pane' }).find(newButton).click()),
-  currentListOfProtectedMarcFieldsIsPresented:() => cy.expect(editList.exists()),
+  checkListOfExistingProfilesIsDisplayed:() => cy.expect(editList.exists()),
   checkFieldProtectionIsCreated:(data) => cy.expect(editList.find(MultiColumnListCell({ content: data })).exists()),
+  verifyNewButtonAbsent:() => cy.expect(Pane({ id:'controlled-vocab-pane' }).find(newButton).absent()),
 
   fillMarcFieldProtection:(fieldNumber, subfield = '*', data = '*') => {
     cy.do(TextField({ name:'items[0].field' }).fillIn(fieldNumber));
