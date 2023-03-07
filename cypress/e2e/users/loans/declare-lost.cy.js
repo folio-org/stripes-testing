@@ -21,6 +21,7 @@ import InventoryInstance from '../../../support/fragments/inventory/inventoryIns
 import InventoryInstances from '../../../support/fragments/inventory/inventoryInstances';
 
 describe('ui-users-loans: Loans', () => {
+  let addedCirculationRule;
   const newOwnerData = UsersOwners.getDefaultNewOwner(uuid());
   const newFirstItemData = getNewItem();
   const newSecondItemData = getNewItem();
@@ -117,6 +118,7 @@ describe('ui-users-loans: Loans', () => {
       originalCirculationRules = circulationRule.rulesAsText;
       const ruleProps = CirculationRules.getRuleProps(circulationRule.rulesAsText);
       ruleProps.i = lostItemFeePolicyBody.id;
+      addedCirculationRule = 't ' + testData.loanTypeId + ': i ' + ruleProps.i + ' l ' + ruleProps.l + ' r ' + ruleProps.r + ' o ' + ruleProps.o + ' n ' + ruleProps.n;
       CirculationRules.addRuleViaApi(originalCirculationRules, ruleProps, 't ', testData.loanTypeId);
     });
 
@@ -158,7 +160,7 @@ describe('ui-users-loans: Loans', () => {
       cy.deleteItemViaApi(id);
     });
     LostItemFeePolicy.deleteViaApi(lostItemFeePolicyBody.id);
-    CirculationRules.deleteRuleViaApi(originalCirculationRules);
+    CirculationRules.deleteRuleViaApi(addedCirculationRule);
     cy.deleteLoanType(testData.loanTypeId);
     Users.deleteViaApi(testData.userId);
     UsersOwners.deleteViaApi(testData.ownerId);
