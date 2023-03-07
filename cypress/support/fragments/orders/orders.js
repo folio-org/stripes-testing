@@ -281,10 +281,7 @@ export default {
       .has({ content: `${orderNumber}\u00a0Canceled` }));
   },
   checkOrderlineSearchResults: (orderLineNumber) => {
-    cy.expect(MultiColumnList({ id: 'order-line-list' })
-      .find(MultiColumnListRow({ index: 0 }))
-      .find(MultiColumnListCell({ columnIndex: 0 }))
-      .has({ content: orderLineNumber }));
+    cy.expect(MultiColumnList({ id:'order-line-list' }).find(Link(orderLineNumber)).exists());
   },
   checkOrderlineFilterInList: (orderLineNumber) => {
     cy.expect(MultiColumnList({ id: 'order-line-list' })

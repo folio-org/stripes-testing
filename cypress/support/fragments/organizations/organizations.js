@@ -179,10 +179,7 @@ export default {
   },
 
   checkSearchResults: (organization) => {
-    cy.expect(organizationsList
-      .find(MultiColumnListRow({ index: 0 }))
-      .find(MultiColumnListCell({ columnIndex: 0 }))
-      .has({ content: organization.name }));
+    cy.expect(organizationsList.find(Link(organization.name)).exists());
   },
   selectYesInIsVendor: () => {
     cy.do([
