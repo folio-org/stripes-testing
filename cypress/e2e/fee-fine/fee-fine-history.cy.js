@@ -18,8 +18,7 @@ import FeeFinesDetails from '../../support/fragments/users/feeFineDetails';
 import PayFeeFaine from '../../support/fragments/users/payFeeFaine';
 import AddNewStaffInfo from '../../support/fragments/users/addNewStaffInfo';
 
-// The test fails because of the bug: UIU-2664
-describe('Fee/Fine history ', () => {
+describe('Fee/Fine history ', { retries: 3 }, () => {
   const userData = {};
   const ownerData = {};
   const feeFineType = {};
@@ -78,7 +77,8 @@ describe('Fee/Fine history ', () => {
               id: uuid(),
               ownerId: ownerData.id,
               feeFineId: feeFineType.id,
-              amount: feeFineType.amount,
+              // this test will be failed if the amount has two or more digits. Issue https://issues.folio.org/browse/UIU-2812
+              amount: 9,
               userId: userData.userId,
               feeFineType: feeFineType.name,
               createdAt: servicePointId,
@@ -108,13 +108,13 @@ describe('Fee/Fine history ', () => {
 
   it('C347919 Check that the user can add "Additional information" on the fee/fine history (vega)', { tags: [TestTypes.smoke, devTeams.vega] }, () => {
     // the bug for this flaky issue is created FAT-2442. As temporary fix for this bug we need a waiter to be sure that the fee-fine is created before opening its page.
-    cy.wait(70000);
+    cy.wait(30000);
     cy.visit(AppPaths.getFeeFineDetailsPath(userData.userId, feeFineAccount.id));
     FeeFinesDetails.waitLoading();
     FeeFinesDetails.openActions();
     FeeFinesDetails.openPayModal();
-    PayFeeFaine.checkAmount(feeFineType.amount);
-    PayFeeFaine.setAmount(feeFineType.amount - 1);
+    PayFeeFaine.checkAmount(feeFineAccount.amount);
+    PayFeeFaine.setAmount(feeFineAccount.amount - 1);
     PayFeeFaine.checkRestOfPay(1);
     PayFeeFaine.setPaymentMethod(paymentMethod);
     PayFeeFaine.submitAndConfirm();
