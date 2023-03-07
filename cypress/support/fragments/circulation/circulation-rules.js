@@ -98,7 +98,10 @@ export default {
     const withNewRule = defaultRules + ' \n' + priority + priorityId + ': i ' + ruleParams.i + ' l ' + ruleParams.l + ' r ' + ruleParams.r + ' o ' + ruleParams.o + ' n ' + ruleParams.n;
     return cy.updateCirculationRules({ rulesAsText: withNewRule });
   },
-  deleteRuleViaApi(defaultRules) {
-    return cy.updateCirculationRules({ rulesAsText: defaultRules });
+  deleteRuleViaApi(rule) {
+    this.getViaApi().then((circulationRules) => {
+      const allRules = circulationRules.rulesAsText;
+      cy.updateCirculationRules({ rulesAsText: allRules.replace(rule, '') });
+    });
   }
 };
