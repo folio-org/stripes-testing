@@ -345,11 +345,11 @@ describe('ui-data-import: MARC file upload with the update of instance, holding,
   const createHoldingsMappingProfile = (profile) => {
     FieldMappingProfiles.openNewMappingProfileForm();
     NewFieldMappingProfile.fillSummaryInMappingProfile(profile);
-    NewFieldMappingProfile.fillHoldingsType('"Electronic"');
+    NewFieldMappingProfile.fillHoldingsType('Electronic');
     NewFieldMappingProfile.fillPermanentLocation('"Online (E)"');
-    NewFieldMappingProfile.fillCallNumberType('"Library of Congress classification"');
+    NewFieldMappingProfile.fillCallNumberType('Library of Congress classification');
     NewFieldMappingProfile.fillCallNumber('050$a " " 050$b');
-    NewFieldMappingProfile.addElectronicAccess('"Resource"', '856$u');
+    NewFieldMappingProfile.addElectronicAccess('Resource', '856$u');
     FieldMappingProfiles.saveProfile();
     FieldMappingProfiles.closeViewModeForMappingProfile(profile.name);
   };
@@ -372,13 +372,14 @@ describe('ui-data-import: MARC file upload with the update of instance, holding,
     JobProfiles.runImportFile();
     JobProfiles.waitFileIsImported(nameMarcFileForImportCreate);
     Logs.openFileDetails(nameMarcFileForImportCreate);
-    FileDetails.checkStatusInColumn(FileDetails.status.updated, FileDetails.columnName.srsMarc);
-    [FileDetails.columnName.instance,
+    [FileDetails.columnName.srsMarc,
+      FileDetails.columnName.instance,
       FileDetails.columnName.holdings,
       FileDetails.columnName.item].forEach(columnName => {
       FileDetails.checkStatusInColumn(FileDetails.status.created, columnName);
     });
     FileDetails.checkItemsQuantityInSummaryTable(0, '1');
+    FileDetails.checkItemsQuantityInSummaryTable(1, '0');
 
     // get Instance HRID through API
     InventorySearchAndFilter.getInstanceHRID()
@@ -441,6 +442,8 @@ describe('ui-data-import: MARC file upload with the update of instance, holding,
 
     // upload the exported marc file
     cy.visit(TopMenu.dataImportPath);
+    // TODO delete code after fix https://issues.folio.org/browse/MODDATAIMP-691
+    DataImport.clickDataImportNavButton();
     DataImport.uploadExportedFile(nameMarcFileForImportUpdate);
     JobProfiles.searchJobProfileForImport(jobProfileForUpdate.profileName);
     JobProfiles.runImportFile();

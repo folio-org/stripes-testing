@@ -96,13 +96,8 @@ describe('orders: export', () => {
     });
 
     cy.createTempUser([
-      permissions.uiOrdersView.gui,
-      permissions.uiOrdersCreate.gui, 
-      permissions.uiOrdersEdit.gui,
-      permissions.uiOrdersApprovePurchaseOrders.gui,
-      permissions.viewEditCreateOrganization.gui, 
-      permissions.viewOrganization.gui,
-      permissions.uiExportOrders.gui,
+      permissions.uiApproveOrder.gui,
+      permissions.uiCreateOrderAndOrderLine.gui, 
       permissions.exportManagerAll.gui,
       permissions.exportManagerDownloadAndResendFiles.gui,
     ])

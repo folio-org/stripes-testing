@@ -7,8 +7,8 @@ import devTeams from '../../../support/dictionary/devTeams';
 describe('ui-invoices-settings: System Batch Group deletion', () => {
   const batchGroup = { ...NewBatchGroup.defaultUiBatchGroup };
   const systemBatchGroup = { ...NewBatchGroup.defaultUiBatchGroup };
-  const systemBatchGroupName = 'Amherst (AC)';
-  const systemBatchGroupDescription = 'Amherst College';
+  const systemBatchGroupName = 'FOLIO';
+  const systemBatchGroupDescription = 'System default';
   before(() => {
     cy.login(Cypress.env('diku_login'), Cypress.env('diku_password'));
     cy.visit(`${SettingsMenu.invoiceBatchGroupsPath}`);

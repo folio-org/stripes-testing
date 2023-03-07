@@ -129,6 +129,8 @@ describe('ui-data-import: MARC-MARC matching for 001 field', () => {
 
         // upload the exported marc file with 001 field
         cy.visit(TopMenu.dataImportPath);
+        // TODO delete code after fix https://issues.folio.org/browse/MODDATAIMP-691
+        DataImport.clickDataImportNavButton();
         DataImport.uploadExportedFile(nameForExportedMarcFile);
         JobProfiles.searchJobProfileForImport(jobProfileName);
         JobProfiles.runImportFile();

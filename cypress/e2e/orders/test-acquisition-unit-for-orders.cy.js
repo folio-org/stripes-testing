@@ -21,6 +21,7 @@ describe('ui-finance: Orders', () => {
   let orderId;
 
   before(() => {
+    cy.getAdminToken();
     cy.createTempUser([
       permissions.uiOrdersView.gui,
       permissions.uiOrdersCreate.gui,
@@ -49,10 +50,9 @@ describe('ui-finance: Orders', () => {
   });
 
   after(() => {
+    cy.loginAsAdmin({ path:SettingsMenu.acquisitionUnitsPath, waiter: AcquisitionUnits.waitLoading });
     Orders.deleteOrderApi(orderId);
     Organizations.deleteOrganizationViaApi(organization.id);
-    cy.loginAsAdmin({ path:SettingsMenu.acquisitionUnitsPath, waiter: AcquisitionUnits.waitLoading });
-
     AcquisitionUnits.unAssignAdmin(defaultAcquisitionUnit.name);
     AcquisitionUnits.delete(defaultAcquisitionUnit.name);
 

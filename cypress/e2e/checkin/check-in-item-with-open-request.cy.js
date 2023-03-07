@@ -24,6 +24,7 @@ import Requests from '../../support/fragments/requests/requests';
 import Users from '../../support/fragments/users/users';
 
 describe('Check In - Actions', () => {
+  let addedCirculationRule;
   let originalCirculationRules;
   const userData = {};
   const requestUserData = {};
@@ -106,6 +107,7 @@ describe('Check In - Actions', () => {
       originalCirculationRules = circulationRule.rulesAsText;
       const ruleProps = CirculationRules.getRuleProps(circulationRule.rulesAsText);
       ruleProps.r = requestPolicyBody.id;
+      addedCirculationRule = 't ' + testData.loanTypeId + ': i ' + ruleProps.i + ' l ' + ruleProps.l + ' r ' + ruleProps.r + ' o ' + ruleProps.o + ' n ' + ruleProps.n;
       CirculationRules.addRuleViaApi(originalCirculationRules, ruleProps, 't ', testData.loanTypeId);
     });
 
@@ -154,7 +156,6 @@ describe('Check In - Actions', () => {
             itemData.servicePoint = request.body.pickupServicePoint.name;
           });
         });
-
         cy.login(userData.username, userData.password);
       });
   });
@@ -183,7 +184,7 @@ describe('Check In - Actions', () => {
       testData.defaultLocation.libraryId,
       testData.defaultLocation.id
     );
-    CirculationRules.deleteRuleViaApi(originalCirculationRules);
+    CirculationRules.deleteRuleViaApi(addedCirculationRule);
     cy.deleteLoanType(testData.loanTypeId);
   });
   it(

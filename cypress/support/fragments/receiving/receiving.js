@@ -47,9 +47,9 @@ export default {
   },
   receivePiece: (rowNumber, caption, barcode) => {
     const recievingFieldName = `receivedItems[${rowNumber}]`;
-    cy.expect(Accordion({ id: expectedPiecesAccordionId }).exists());
+    cy.expect(Section({ id: expectedPiecesAccordionId }).exists());
     cy.do([
-      Accordion({ id: expectedPiecesAccordionId }).find(actionsButton).click(),
+      Section({ id: expectedPiecesAccordionId }).find(actionsButton).click(),
       receiveButton.click(),
       Checkbox({ name: `${recievingFieldName}.checked` }).clickInput(),
       TextField({ name: `${recievingFieldName}.caption` }).fillIn(caption),

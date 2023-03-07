@@ -106,7 +106,7 @@ describe('orders: Edifact export', () => {
     });
     
     cy.createTempUser([
-      permissions.uiOrdersApprovePurchaseOrders.gui,
+      permissions.uiApproveOrder.gui,
       permissions.uiOrdersCreate.gui, 
       permissions.uiOrdersEdit.gui,
       permissions.uiOrdersReopenPurchaseOrders.gui,
