@@ -199,8 +199,7 @@ describe('MARC Authority -> Edit Authority record', () => {
     cy.wait(3000);
     QuickMarcEditor.deleteFieldAndCheck(5, '010');
     QuickMarcEditor.checkButtonsEnabled();
-    QuickMarcEditor.pressSaveAndClose();
-    QuickMarcEditor.verifyConfirmModal();
+    QuickMarcEditor.clickSaveAndCloseThenCheck();
     QuickMarcEditor.constinueWithSaveAndCheck();
   });
 });

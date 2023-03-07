@@ -20,6 +20,7 @@ const cancelEditConfirmBtn = Button('Keep editing');
 const continueWithSaveButton = Modal().find(Button({ id: 'clickable-quick-marc-confirm-modal-confirm' }));
 const restoreDeletedFieldsBtn = Modal().find(Button({ id: 'clickable-quick-marc-confirm-modal-cancel' }));
 const quickMarcEditorRowContent = HTML({ className: including('quickMarcEditorRowContent') });
+const calloutUpdatedRecord = Callout('Record has been updated.');
 const validRecord = InventoryInstance.validOCLC;
 const specRetInputNamesHoldings008 = ['records[3].content.Spec ret[0]',
   'records[3].content.Spec ret[1]',
@@ -105,6 +106,16 @@ export default {
 
   pressSaveAndClose() { cy.do(saveAndCloseButton.click()); },
 
+  clickSaveAndCloseThenCheck() {
+    cy.do(saveAndCloseButton.click());
+    cy.expect([
+      confirmationModal.exists(),
+      confirmationModal.has({ content: including('By selecting Continue with save, then 1 field(s) will be deleted and this record will be updated. Are you sure you want to continue?') }),
+      continueWithSaveButton.exists(),
+      restoreDeletedFieldsBtn.exists(),
+    ]);
+  },
+
   cancelEditConfirmationPresented() { cy.expect(cancelEditConformModel.exists()); },
 
   confirmEditCancel() { cy.do(cancelEditConfirmBtn.click()); },
@@ -121,7 +132,7 @@ export default {
   constinueWithSaveAndCheck() {
     cy.do(continueWithSaveButton.click());
     cy.expect([
-      Callout('Record has been updated.').exists(),
+      calloutUpdatedRecord.exists(),
       rootSection.absent(),
       viewMarcSection.exists(),
     ]);
@@ -133,7 +144,7 @@ export default {
 
   clickSaveAndKeepEditing() {
     cy.do(saveAndKeepEditingBtn.click());
-    cy.expect(Callout('Record has been updated.').exists());
+    cy.expect(calloutUpdatedRecord.exists());
     cy.expect(rootSection.exists());
   },
 
