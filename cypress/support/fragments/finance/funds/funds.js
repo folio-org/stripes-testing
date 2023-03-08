@@ -66,6 +66,10 @@ export default {
     cy.expect(Pane({ id: 'fund-results-pane' }).exists());
   },
 
+  waitLoadingTransactions : () => {
+    cy.expect(Pane({ id: 'transaction-results-pane' }).exists());
+  },
+
   waitForFundDetailsLoading : () => {
     cy.do(Section({ id: 'pane-fund-details' }).visible());
   },

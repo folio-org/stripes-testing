@@ -60,7 +60,7 @@ export default {
     ]);
     this.selectVendorOnUi(invoice.vendorName);
     cy.do([
-      Selection('Accounting code*').open(),
+      Button({ name: 'accountNo'}).click(),
       SelectionList().select(`Default (${invoice.accountingCode})`),
       Selection('Batch group*').open(),
       SelectionList().select(invoice.batchGroup),
@@ -167,6 +167,19 @@ export default {
       TextField('Quantity*').fillIn(invoiceLine.quantity.toString()),
       saveAndClose.click()
     ]);
+    InteractorsTools.checkCalloutMessage(invoiceStates.invoiceLineCreatedMessage);
+  },
+
+  createInvoiceLinePOLLookUp: (orderNumber) => {
+    cy.do(Accordion({ id: invoiceLinesAccordionId }).find(actionsButton).click());
+    cy.do(Button('New blank line').click());
+    cy.do([
+      Button('POL look-up').click(),
+      Modal('Select order lines').find(SearchField({ id: searhInputId })).fillIn(orderNumber),
+      searchButton.click()
+    ]);
+    Helper.selectFromResultsList();
+    cy.do(saveAndClose.click());
     InteractorsTools.checkCalloutMessage(invoiceStates.invoiceLineCreatedMessage);
   },
 
