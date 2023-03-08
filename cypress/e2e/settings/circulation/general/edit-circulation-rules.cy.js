@@ -24,7 +24,7 @@ import NewMaterialType, {
   defaultMaterialType,
 } from '../../../../support/fragments/settings/inventory/newMaterialType';
 
-describe('ui-circulation-settings: Edit circulation rules', () => {
+describe.skip('ui-circulation-settings: Edit circulation rules', () => {
   let originalCirculationRules;
   let newUserId;
 

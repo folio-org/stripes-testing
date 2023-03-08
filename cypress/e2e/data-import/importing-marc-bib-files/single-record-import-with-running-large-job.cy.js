@@ -63,6 +63,8 @@ describe('ui-data-import: Inventory single record import is not delayed when lar
       // import a file
       cy.visit(TopMenu.dataImportPath);
       DataImport.checkIsLandingPageOpened();
+      // TODO delete code after fix https://issues.folio.org/browse/MODDATAIMP-691
+      DataImport.clickDataImportNavButton();
       DataImport.uploadFile('marcFileForC356824.mrc', fileName);
       // wait until file will be uploaded
       cy.wait(10000);

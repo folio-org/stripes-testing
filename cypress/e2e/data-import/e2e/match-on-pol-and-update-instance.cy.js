@@ -222,6 +222,8 @@ describe('ui-data-import: Match on POL and update related Instance with source M
 
       // upload a marc file for creating of the new instance, holding and item
       cy.visit(TopMenu.dataImportPath);
+      // TODO delete code after fix https://issues.folio.org/browse/MODDATAIMP-691
+      DataImport.clickDataImportNavButton();
       DataImport.uploadFile('marcFileForC350944.mrc', nameMarcFileForCreate);
       JobProfiles.searchJobProfileForImport('Default - Create instance and SRS MARC Bib');
       JobProfiles.runImportFile();
@@ -249,6 +251,8 @@ describe('ui-data-import: Match on POL and update related Instance with source M
       // upload .mrc file
       cy.visit(TopMenu.dataImportPath);
       DataImport.checkIsLandingPageOpened();
+      // TODO delete code after fix https://issues.folio.org/browse/MODDATAIMP-691
+      DataImport.clickDataImportNavButton();
       DataImport.uploadFile(editedMarcFileName, marcFileName);
       JobProfiles.searchJobProfileForImport(jobProfileName);
       JobProfiles.runImportFile();
