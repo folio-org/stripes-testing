@@ -139,6 +139,8 @@ describe('ui-data-import: Match on Instance identifier match meets both the Iden
       JobProfiles.checkJobProfilePresented(jobProfileName);
 
       cy.visit(TopMenu.dataImportPath);
+      // TODO delete code after fix https://issues.folio.org/browse/MODDATAIMP-691
+      DataImport.clickDataImportNavButton();
       DataImport.uploadFile('marcFileForMatchOnIdentifierForUpdate.mrc', fileNameForUpdateInstance);
       JobProfiles.searchJobProfileForImport(jobProfileName);
       JobProfiles.runImportFile();

@@ -356,6 +356,8 @@ describe('ui-data-import: Match on POL and update related Instance, Holdings, It
 
       // upload .mrc file
       cy.visit(TopMenu.dataImportPath);
+      // TODO delete code after fix https://issues.folio.org/browse/MODDATAIMP-691
+      DataImport.clickDataImportNavButton();
       DataImport.checkIsLandingPageOpened();
       DataImport.uploadFile(editedMarcFileName);
       JobProfiles.searchJobProfileForImport(jobProfileName);

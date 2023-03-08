@@ -76,6 +76,7 @@ export default {
     this.checkKeyValue('Lost', DateTools.getFormattedDateWithTime(date));
   },
   checkRenewalCount() {
+    cy.wait(1000);
     this.checkKeyValue('Renewal count', '1');
   },
   checkStatusDeclaredLost() {

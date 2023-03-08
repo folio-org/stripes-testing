@@ -33,7 +33,6 @@ describe('ui-users-loans: renewal failure because loan has reached maximum renew
   let firstInstanceIds;
   let secondInstanceIds;
   let servicePointId;
-  let rulesDefaultString;
 
   beforeEach(() => {
     let source;
@@ -43,10 +42,6 @@ describe('ui-users-loans: renewal failure because loan has reached maximum renew
     cy.getLocations({ limit: 1 });
     cy.getHoldingTypes({ limit: 1 });
     cy.createLoanType({ name: loanTypeName });
-    cy.getCirculationRules()
-      .then(rules => {
-        rulesDefaultString = rules.rulesAsText;
-      });
 
     RequestPolicy.createViaApi();
     LostItemFeePolicy.createViaApi();
@@ -219,10 +214,6 @@ describe('ui-users-loans: renewal failure because loan has reached maximum renew
       });
     })).then(() => {
       InventoryInstance.deleteInstanceViaApi(secondInstanceIds.instanceId);
-    });
-
-    cy.updateCirculationRules({
-      rulesAsText: rulesDefaultString,
     });
 
     cy.deleteLoanPolicy(Cypress.env(CY_ENV.LOAN_POLICY).id);
