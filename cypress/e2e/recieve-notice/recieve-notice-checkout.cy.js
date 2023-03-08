@@ -203,7 +203,7 @@ describe('Recieving notice: Checkout', () => {
       cy.getNoticePolicy({ query: `name=="${noticePolicy.name}"` }).then((res) => {
         testData.ruleProps.n = res[0].id;
         addedCirculationRule = 't ' + testData.loanTypeId + ': i ' + testData.ruleProps.i + ' l ' + testData.ruleProps.l + ' r ' + testData.ruleProps.r + ' o ' + testData.ruleProps.o + ' n ' + testData.ruleProps.n;
-        CirculationRules.addRuleViaApi(testData.baseRules, testData.testData.ruleProps, 't ', testData.loanTypeId);
+        CirculationRules.addRuleViaApi(testData.baseRules, testData.ruleProps, 't ', testData.loanTypeId);
       });
 
       cy.visit(topMenu.checkOutPath);
