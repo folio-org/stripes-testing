@@ -26,6 +26,7 @@ import Requests from '../../../../support/fragments/requests/requests';
 import RequestPolicy from '../../../../support/fragments/circulation/request-policy';
 
 describe('Patron Block: Maximum number of overdue recalls', () => {
+  let addedCirculationRule;
   let originalCirculationRules;
   const checkedOutBlockMessage = 'You have reached maximum number of overdue recalls as set by patron group';
   const patronGroup = {
@@ -135,6 +136,7 @@ describe('Patron Block: Maximum number of overdue recalls', () => {
       const ruleProps = CirculationRules.getRuleProps(circulationRule.rulesAsText);
       ruleProps.l = loanPolicyBody.id;
       ruleProps.r = requestPolicyBody.id;
+      addedCirculationRule = 't ' + testData.loanTypeId + ': i ' + ruleProps.i + ' l ' + ruleProps.l + ' r ' + ruleProps.r + ' o ' + ruleProps.o + ' n ' + ruleProps.n;
       CirculationRules.addRuleViaApi(originalCirculationRules, ruleProps, 't ', testData.loanTypeId);
     });
 
@@ -230,7 +232,7 @@ describe('Patron Block: Maximum number of overdue recalls', () => {
       testData.defaultLocation.libraryId,
       testData.defaultLocation.id
     );
-    CirculationRules.deleteRuleViaApi(originalCirculationRules);
+    CirculationRules.deleteRuleViaApi(addedCirculationRule);
     cy.deleteLoanType(testData.loanTypeId);
   });
   it(
