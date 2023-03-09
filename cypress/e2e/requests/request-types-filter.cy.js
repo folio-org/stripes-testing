@@ -11,7 +11,6 @@ describe('ui-requests: Make sure that request type filters are working properly'
   const requests = [];
   const instances = [];
   const userIds = [];
-  let oldRulesText;
   let requestPolicyId;
   const resetFiltersMessage = 'Choose a filter or enter a search query to show results.';
   const doesNotExistRequest = `notExist-${uuid()}`;
@@ -21,8 +20,7 @@ describe('ui-requests: Make sure that request type filters are working properly'
     cy.loginAsAdmin();
     cy.getAdminToken();
 
-    Requests.setRequestPolicyApi().then(({ oldRulesAsText, policy }) => {
-      oldRulesText = oldRulesAsText;
+    Requests.setRequestPolicyApi().then(({ policy }) => {
       requestPolicyId = policy.id;
     });
 
@@ -50,7 +48,6 @@ describe('ui-requests: Make sure that request type filters are working properly'
     userIds.forEach(id => {
       Users.deleteViaApi(id);
     });
-    Requests.updateCirculationRulesApi(oldRulesText);
     Requests.deleteRequestPolicyApi(requestPolicyId);
   });
 
