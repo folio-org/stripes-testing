@@ -25,7 +25,9 @@ describe('ui-data-import: Matching on newly-created 035 does not work (regressio
   let user = null;
   const note = 'This instance was updated, plus a new subject heading was added';
   const resourceIdentifierForFirstInstance = { type: 'System control number', value: '(NhFolYBP)2304396' };
+  const contentOf035FieldForFirstInstance = '(NhFolYBP)2304396';
   const resourceIdentifierForSecondInstance = { type: 'System control number', value: '(NhFolYBP)2345942-321678' };
+  const contentOf035FieldForSecondInstance = '(NhFolYBP)2345942-321678';
   let firstInstanceHrid;
   let secondInstanceHrid;
 
@@ -71,25 +73,6 @@ describe('ui-data-import: Matching on newly-created 035 does not work (regressio
   };
 
   before(() => {
-    cy.getAdminToken().then(() => {
-      InventorySearchAndFilter.getInstancesByIdentifierViaApi(resourceIdentifierForFirstInstance.value)
-        .then(instances => {
-          if (instances) {
-            instances.forEach(({ id }) => {
-              InventoryInstance.deleteInstanceViaApi(id);
-            });
-          }
-        });
-      InventorySearchAndFilter.getInstancesByIdentifierViaApi(resourceIdentifierForSecondInstance.value)
-        .then(instances => {
-          if (instances) {
-            instances.forEach(({ id }) => {
-              InventoryInstance.deleteInstanceViaApi(id);
-            });
-          }
-        });
-    });
-
     cy.createTempUser([
       permissions.moduleDataImportEnabled.gui,
       permissions.settingsDataImportEnabled.gui,
@@ -148,7 +131,7 @@ describe('ui-data-import: Matching on newly-created 035 does not work (regressio
       InventoryInstance.verifyResourceIdentifier(resourceIdentifierForFirstInstance.type, resourceIdentifierForFirstInstance.value, 2);
       InventoryInstance.viewSource();
       InventoryViewSource.contains('035\t');
-      InventoryViewSource.contains(resourceIdentifierForFirstInstance.value);
+      InventoryViewSource.contains(contentOf035FieldForFirstInstance);
 
       // create match profile
       cy.visit(SettingsMenu.matchProfilePath);
@@ -193,7 +176,7 @@ describe('ui-data-import: Matching on newly-created 035 does not work (regressio
       InstanceRecordView.verifyAdministrativeNote(note);
       InventoryInstance.viewSource();
       InventoryViewSource.contains('035\t');
-      InventoryViewSource.contains(resourceIdentifierForFirstInstance.value);
+      InventoryViewSource.contains(contentOf035FieldForFirstInstance);
       InventoryViewSource.contains('650\t');
       InventoryViewSource.contains('Pulse techniques (Medical)');
 
@@ -224,7 +207,7 @@ describe('ui-data-import: Matching on newly-created 035 does not work (regressio
       InventoryInstance.verifyResourceIdentifier(resourceIdentifierForSecondInstance.type, resourceIdentifierForSecondInstance.value, 3);
       InventoryInstance.viewSource();
       InventoryViewSource.contains('035\t');
-      InventoryViewSource.contains(resourceIdentifierForSecondInstance.value);
+      InventoryViewSource.contains(contentOf035FieldForSecondInstance);
 
       // upload a marc file for updating already created instance
       cy.visit(TopMenu.dataImportPath);
@@ -245,7 +228,7 @@ describe('ui-data-import: Matching on newly-created 035 does not work (regressio
       InstanceRecordView.verifyAdministrativeNote(note);
       InventoryInstance.viewSource();
       InventoryViewSource.contains('035\t');
-      InventoryViewSource.contains(resourceIdentifierForSecondInstance.value);
+      InventoryViewSource.contains(contentOf035FieldForSecondInstance);
       InventoryViewSource.contains('650\t');
       InventoryViewSource.contains('Symposia');
     });

@@ -20,7 +20,6 @@ import SettingsMenu from '../../../support/fragments/settingsMenu';
 import FileDetails from '../../../support/fragments/data_import/logs/fileDetails';
 import SettingsJobProfiles from '../../../support/fragments/settings/dataImport/settingsJobProfiles';
 import DevTeams from '../../../support/dictionary/devTeams';
-import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 
 describe('ui-data-import: MARC file upload with the update of instance, holding, and items', () => {
   let instanceHRID = null;
@@ -308,12 +307,7 @@ describe('ui-data-import: MARC file upload with the update of instance, holding,
 
   afterEach(() => {
     DataImport.checkUploadState();
-    cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${instanceHRID}"` })
-      .then((instance) => {
-        cy.deleteItemViaApi(instance.items[0].id);
-        cy.deleteHoldingRecordViaApi(instance.holdings[0].id);
-        InventoryInstance.deleteInstanceViaApi(instance.id);
-      });
+    cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${instanceHRID}"` });
     // delete generated profiles
     JobProfiles.deleteJobProfile(jobProfileNameUpdate);
     collectionOfMatchProfiles.forEach(profile => {
