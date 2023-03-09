@@ -12,34 +12,18 @@ const saveAndClose = () => {
 
 export default {
   saveAndClose,
-  deleteField:() => {
+  deleteField:(rowIndex) => {
     // need to wait until the row will be uploaded
     cy.wait(1500);
-    cy.do(QuickMarcEditorRow({ dataRow: 'record-row[29]' }).find(Button({ icon: 'trash' })).click());
-    saveAndClose();
-    cy.do(deleteFieldsModal.find(Button({ id: 'clickable-quick-marc-confirm-modal-confirm' })).click());
-    cy.expect(deleteFieldsModal.absent());
+    cy.do([
+      QuickMarcEditorRow({ index: rowIndex }).find(TextField({ name: including('.tag') })).fillIn(''),
+      QuickMarcEditorRow({ index: rowIndex }).find(Button({ ariaLabel : 'trash' })).click(),
+    ]);
   },
 
-  findAndDeleteField:(field) => {
-    // cy.get('[class*="quickMarcEditorRow--"]:last-child').contains(field);
-
-    cy.get('[class*="quickMarcEditorRow--"]:last-child').find(field)
-      .then((trash) => {
-        cy.wrap(trash).click();
-      });
-
-
-
-  //   cy.do(TextField({ value: field }).perform(
-  //     element => {
-  //       const rowNumber = element.parentElement.parentElement.getAttribute('data-row');
-  // console.log(rowNumber);
-    // cy.expect(fullScreenView.find(Accordion({ id: 'override-protected-section' }))
-    //   .find(MultiColumnListRow({ indexRow: rowNumber })).find(Checkbox())
-    //   .has({ disabled: status }));
-    // }
-    // ));
+  confirmDeletingField:() => {
+    cy.do(deleteFieldsModal.find(Button({ id: 'clickable-quick-marc-confirm-modal-confirm' })).click());
+    cy.expect(deleteFieldsModal.absent());
   },
 
   checkEditableQuickMarcFormIsOpened:() => {
