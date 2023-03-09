@@ -1,20 +1,26 @@
-import { QuickMarcEditor, QuickMarcEditorRow, TextArea, Button, Modal, TextField, and, some, Pane, HTML, including } from '../../../interactors';
+import { QuickMarcEditor, QuickMarcEditorRow, TextArea, Section, Button, Modal, Callout, TextField, and, some, Pane, HTML, including } from '../../../interactors';
 import dateTools from '../utils/dateTools';
 import getRandomPostfix from '../utils/stringTools';
 import InventoryInstance from '../../support/fragments/inventory/inventoryInstance';
 
+const rootSection = Section({ id: 'quick-marc-editor-pane' });
+const viewMarcSection = Section({ id: 'marc-view-pane' });
 const cancelButton = Button('Cancel');
 const closeWithoutSavingBtn = Button('Close without saving');
 const addFieldButton = Button({ ariaLabel : 'plus-sign' });
 const deleteFieldButton = Button({ ariaLabel : 'trash' });
 const linkToMarcRecordButton = Button({ ariaLabel : 'link' });
 const saveAndCloseButton = Button({ id:'quick-marc-record-save' });
+const saveAndKeepEditingBtn = Button({ id: 'quick-marc-record-save-edit' });
+const saveAndCloseButtonEnabled = Button({ id:'quick-marc-record-save', disabled: false });
+const saveAndKeepEditingBtnEnabled = Button({ id: 'quick-marc-record-save-edit', disabled: false });
 const confirmationModal = Modal({ id: 'quick-marc-confirm-modal' });
 const cancelEditConformModel = Modal({ id: 'cancel-editing-confirmation' })
-const cancelEditConfirmBtn = Modal().find(Button({ id: 'clickable-cancel-editing-confirmation-confirm' }));
-const cancelEditCancelBtn = Modal().find(Button({ id: 'clickable-cancel-editing-confirmation-cancel' }));
+const cancelEditConfirmBtn = Button('Keep editing');
 const continueWithSaveButton = Modal().find(Button({ id: 'clickable-quick-marc-confirm-modal-confirm' }));
+const restoreDeletedFieldsBtn = Modal().find(Button({ id: 'clickable-quick-marc-confirm-modal-cancel' }));
 const quickMarcEditorRowContent = HTML({ className: including('quickMarcEditorRowContent') });
+const calloutUpdatedRecord = Callout('Record has been updated.');
 const validRecord = InventoryInstance.validOCLC;
 const specRetInputNamesHoldings008 = ['records[3].content.Spec ret[0]',
   'records[3].content.Spec ret[1]',
@@ -100,21 +106,65 @@ export default {
 
   pressSaveAndClose() { cy.do(saveAndCloseButton.click()); },
 
+  clickSaveAndCloseThenCheck() {
+    cy.do(saveAndCloseButton.click());
+    cy.expect([
+      confirmationModal.exists(),
+      confirmationModal.has({ content: including('By selecting Continue with save, then 1 field(s) will be deleted and this record will be updated. Are you sure you want to continue?') }),
+      continueWithSaveButton.exists(),
+      restoreDeletedFieldsBtn.exists(),
+    ]);
+  },
+
   cancelEditConfirmationPresented() { cy.expect(cancelEditConformModel.exists()); },
 
   confirmEditCancel() { cy.do(cancelEditConfirmBtn.click()); },
 
   cancelEditConformation() {
     cy.expect(cancelEditConformModel.exists());
-    cy.do(cancelEditCancelBtn.click());
+    cy.do(cancelEditConfirmBtn.click());
   },
 
   deleteConfirmationPresented() { cy.expect(confirmationModal.exists()); },
 
   confirmDelete() { cy.do(continueWithSaveButton.click()); },
 
+  constinueWithSaveAndCheck() {
+    cy.do(continueWithSaveButton.click());
+    cy.expect([
+      calloutUpdatedRecord.exists(),
+      rootSection.absent(),
+      viewMarcSection.exists(),
+    ]);
+  },
+
   addRow(rowNumber) {
     cy.do(getRowInteractorByRowNumber(rowNumber ?? this.getInitialRowsCount()).find(addFieldButton).click());
+  },
+
+  clickSaveAndKeepEditing() {
+    cy.do(saveAndKeepEditingBtn.click());
+    cy.expect(calloutUpdatedRecord.exists());
+    cy.expect(rootSection.exists());
+  },
+
+  deleteFieldAndCheck(rowIndex, tag) {
+    cy.do(QuickMarcEditorRow({ index: rowIndex }).find(deleteFieldButton).click());
+    cy.expect(QuickMarcEditorRow({ tagValue: tag }).absent());
+  }, 
+
+  checkButtonsEnabled() {
+    cy.expect([
+      saveAndCloseButtonEnabled.exists(),
+      saveAndKeepEditingBtnEnabled.exists(),
+    ]);
+  },
+
+  verifyConfirmModal() {
+    cy.expect(confirmationModal.exists());
+    cy.expect(confirmationModal.has({ content: including('By selecting Continue with save, then 1 field(s) will be deleted and this record will be updated. Are you sure you want to continue?') }));
+    cy.expect(continueWithSaveButton.exists());
+    cy.expect(restoreDeletedFieldsBtn.exists());
   },
 
   checkInitialContent(rowNumber) {
@@ -348,5 +398,9 @@ export default {
 
   checkLinkButtonExist(tag) {
     cy.expect(getRowInteractorByTagName(tag).find(linkToMarcRecordButton).exists());
+  },
+
+  checkButtonSaveAndCloseEnable() { 
+    cy.expect(saveAndCloseButton.exists());
   },
 }

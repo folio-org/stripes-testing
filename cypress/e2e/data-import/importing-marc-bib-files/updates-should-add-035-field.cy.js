@@ -123,7 +123,7 @@ describe('ui-data-import: Data Import Updates should add 035 field from 001/003,
   });
 
   it('C358998 Data Import Updates should add 035 field from 001/003, if it is not HRID or already exists (folijet)',
-    { tags: [TestTypes.smoke, DevTeams.folijet] }, () => {
+    { tags: [TestTypes.criticalPath, DevTeams.folijet] }, () => {
       // upload the first .mrc file
       DataImport.uploadFile('marcFileForC358998ForCreate_1.mrc', firstMarcFileNameForCreate);
       JobProfiles.searchJobProfileForImport('Default - Create instance and SRS MARC Bib');
@@ -156,6 +156,8 @@ describe('ui-data-import: Data Import Updates should add 035 field from 001/003,
           });
         // upload the second .mrc file
         cy.visit(TopMenu.dataImportPath);
+        // TODO delete code after fix https://issues.folio.org/browse/MODDATAIMP-691
+        DataImport.clickDataImportNavButton();
         DataImport.uploadFile('marcFileForC358998ForCreate_2.mrc', secondMarcFileNameForCreate);
         JobProfiles.searchJobProfileForImport('Default - Create instance and SRS MARC Bib');
         JobProfiles.runImportFile();
@@ -170,6 +172,8 @@ describe('ui-data-import: Data Import Updates should add 035 field from 001/003,
         FileDetails.checkInstanceQuantityInSummaryTable('8');
         cy.wrap(
           rowNumbers.forEach(rowNumber => {
+            // need to wait until page will be opened in loop
+            cy.wait(8000);
             cy.visit(TopMenu.dataImportPath);
             Logs.openFileDetails(secondMarcFileNameForCreate);
             FileDetails.openInstanceInInventory('Created', rowNumber);
@@ -223,6 +227,8 @@ describe('ui-data-import: Data Import Updates should add 035 field from 001/003,
 
         // upload a marc file for updating already created first instance
         cy.visit(TopMenu.dataImportPath);
+        // TODO delete code after fix https://issues.folio.org/browse/MODDATAIMP-691
+        DataImport.clickDataImportNavButton();
         DataImport.uploadFile(firstMarcFileNameForUpdate, firstFileNameAfterUpload);
         JobProfiles.searchJobProfileForImport(jobProfile.profileName);
         JobProfiles.runImportFile();
@@ -247,6 +253,8 @@ describe('ui-data-import: Data Import Updates should add 035 field from 001/003,
 
       // upload a marc file for updating already created second instance
       cy.visit(TopMenu.dataImportPath);
+      // TODO delete code after fix https://issues.folio.org/browse/MODDATAIMP-691
+      DataImport.clickDataImportNavButton();
       DataImport.uploadFile(secondMarcFileNameForUpdate, secondFileNameAfterUpload);
       JobProfiles.searchJobProfileForImport(jobProfile.profileName);
       JobProfiles.runImportFile();

@@ -11,16 +11,20 @@ import Logs from '../../support/fragments/data_import/logs/logs';
 import MarcAuthorities from '../../support/fragments/marcAuthority/marcAuthorities';
 import QuickMarcEditor from '../../support/fragments/quickMarcEditor';
 import MarcFieldProtection from '../../support/fragments/settings/dataImport/marcFieldProtection';
+import { replaceByIndex } from '../../support/utils/stringTools';
 
 describe('MARC Authority -> Edit Authority record', () => {
   const testData = {
     authority: {
       title: 'Twain, Mark, 1835-1910. Adventures of Huckleberry Finn',
       searchOption: 'Keyword',
+    },
+    authorityB: {
+      title: 'Beethoven, Ludwig van (no 010)',
+      searchOption: 'Keyword',
     }
   };
   const jobProfileToRun = 'Default - Create SRS MARC Authority';
-  const fileName = `testMarcFile.${getRandomPostfix()}.mrc`;
   const newFieldsArr = [
     ['245', '1', '\\', '$a Added row (must indicate)'],
     ['260', '1', '1', '$b Added row (not indicate)'],
@@ -37,8 +41,23 @@ describe('MARC Authority -> Edit Authority record', () => {
     ['655', '1', '*', 'b', '*'],
     ['655', '*', '*', '*', 'Added row (must indicate)'],
   ];
+  const initialLDRValue = String.raw`04112cz\\a2200589n\\4500`;
+  const changesSavedCallout = 'Record has been updated.';
+  const changedLDRs = [
+    { newContent: replaceByIndex(replaceByIndex(replaceByIndex(initialLDRValue, 5, 'a'), 17, 'n'), 18, '\\') },
+    { newContent: replaceByIndex(replaceByIndex(replaceByIndex(initialLDRValue, 5, 'c'), 17, 'o'), 18, ' ') },
+    { newContent: replaceByIndex(replaceByIndex(replaceByIndex(initialLDRValue, 5, 'd'), 17, 'n'), 18, 'c') },
+    { newContent: replaceByIndex(replaceByIndex(replaceByIndex(initialLDRValue, 5, 'n'), 17, 'o'), 18, 'i') },
+    { newContent: replaceByIndex(replaceByIndex(replaceByIndex(initialLDRValue, 5, 'o'), 17, 'n'), 18, 'u') },
+    { newContent: replaceByIndex(replaceByIndex(replaceByIndex(initialLDRValue, 5, 's'), 17, 'o'), 18, 'c') },
+    { newContent: replaceByIndex(replaceByIndex(replaceByIndex(initialLDRValue, 5, 'x'), 17, 'n'), 18, 'i') },
+  ];
+  const marcFiles = [
+    {marc: 'marcFileForC350901.mrc', fileName: `testMarcFile.${getRandomPostfix()}.mrc`}, 
+    {marc: 'marcFileForC375141.mrc', fileName: `testMarcFile.${getRandomPostfix()}.mrc`}
+  ]
   const marcFieldProtectionRules = [];
-  let createdAuthorityID;
+  let createdAuthorityID = [];
 
   before('', () => {
     cy.createTempUser([
@@ -49,16 +68,18 @@ describe('MARC Authority -> Edit Authority record', () => {
       testData.userProperties = createdUserProperties;
     });
 
-    cy.loginAsAdmin({ path: TopMenu.dataImportPath, waiter: DataImport.waitLoading }).then(() => {
-      DataImport.uploadFile('marcFileForC350901.mrc', fileName);
-      JobProfiles.waitLoadingList();
-      JobProfiles.searchJobProfileForImport(jobProfileToRun);
-      JobProfiles.runImportFile();
-      JobProfiles.waitFileIsImported(fileName);
-      Logs.checkStatusOfJobProfile('Completed');
-      Logs.openFileDetails(fileName);
-      Logs.getCreatedItemsID().then(link => {
-        createdAuthorityID = link.split('/')[5];
+    marcFiles.forEach(marcFile => {
+      cy.loginAsAdmin({ path: TopMenu.dataImportPath, waiter: DataImport.waitLoading }).then(() => {
+        DataImport.uploadFile(marcFile.marc, marcFile.fileName);
+        JobProfiles.waitLoadingList();
+        JobProfiles.searchJobProfileForImport(jobProfileToRun);
+        JobProfiles.runImportFile();
+        JobProfiles.waitFileIsImported(marcFile.fileName);
+        Logs.checkStatusOfJobProfile('Completed');
+        Logs.openFileDetails(marcFile.fileName);
+        Logs.getCreatedItemsID().then(link => {
+          createdAuthorityID.push(link.split('/')[5]);
+        });
       });
     });
   });
@@ -73,7 +94,7 @@ describe('MARC Authority -> Edit Authority record', () => {
     DataImport.openDeleteImportLogsModal();
     DataImport.confirmDeleteImportLogs();
 
-    if (createdAuthorityID) MarcAuthority.deleteViaAPI(createdAuthorityID);
+    createdAuthorityID.forEach(id => { MarcAuthority.deleteViaAPI(id); });
     Users.deleteViaApi(testData.userProperties.userId);
     marcFieldProtectionRules.forEach(ruleID => {
       if (ruleID) MarcFieldProtection.deleteMarcFieldProtectionViaApi(ruleID);
@@ -126,5 +147,59 @@ describe('MARC Authority -> Edit Authority record', () => {
     MarcAuthority.checkInfoButton('245');
     MarcAuthority.checkInfoButton('520');
     MarcAuthority.checkInfoButton('999');
+  });
+
+  it('C353583 Verify LDR validation rules with valid data (spitfire)', { tags: [TestTypes.criticalPath, DevTeams.spitfire] }, () => {
+    MarcAuthorities.searchBy(testData.authority.searchOption, testData.authority.title);
+    MarcAuthorities.selectTitle(testData.authority.title);
+    changedLDRs.forEach(changeLDR => {
+      MarcAuthority.edit();
+      QuickMarcEditor.updateExistingField('LDR', changeLDR.newContent);
+      QuickMarcEditor.pressSaveAndClose();
+      (changeLDR.newContent === String.raw`04112az\\a2200589n\\4500`) 
+      ? 
+      MarcAuthorities.verifyFirstValueSaveSuccess(changesSavedCallout, changeLDR.newContent) 
+      : 
+      MarcAuthorities.verifySaveSuccess(changesSavedCallout, changeLDR.newContent);
+    });    
+  });
+
+  it('C356840 Verify that the "Save & close" button enabled when user make changes in the record. (spitfire)', { tags: [TestTypes.criticalPath, DevTeams.spitfire] }, () => {
+    MarcAuthorities.searchBy(testData.authority.searchOption, testData.authority.title);
+    MarcAuthorities.selectTitle(testData.authority.title);
+    MarcAuthority.edit();
+    MarcAuthority.addNewField(7, '555', '$a test');
+    QuickMarcEditor.checkButtonSaveAndCloseEnable();
+    MarcAuthority.addNewField(7, '555', '$a test');
+    QuickMarcEditor.checkButtonSaveAndCloseEnable();
+    MarcAuthority.addNewField(7, '555', '$a test');
+    QuickMarcEditor.checkButtonSaveAndCloseEnable();
+    MarcAuthority.deleteTag(8);
+    QuickMarcEditor.checkButtonSaveAndCloseEnable();
+    MarcAuthority.deleteTag(8);
+    QuickMarcEditor.checkButtonSaveAndCloseEnable();
+    MarcAuthority.deleteTag(8);
+    MarcAuthority.deleteTag(8);
+    QuickMarcEditor.pressSaveAndClose();
+    QuickMarcEditor.confirmDelete();
+    MarcAuthorities.waitLoading();
+  });
+
+  it('C375141 Add/edit/delete "010" field of "MARC authority" record not linked to a "MARC bibliographic" record (spitfire)', { tags: [TestTypes.criticalPath, DevTeams.spitfire] }, () => {
+    MarcAuthorities.searchAndVerify(testData.authorityB.searchOption, testData.authorityB.title);
+    MarcAuthority.edit();
+    MarcAuthorities.check010FieldAbsence();
+    MarcAuthority.addNewField(4, '010', '$a 123123');
+    QuickMarcEditor.checkButtonsEnabled();
+    QuickMarcEditor.clickSaveAndKeepEditing();
+    QuickMarcEditor.updateExistingField('010', '$a n90635366');
+    QuickMarcEditor.checkButtonsEnabled();
+    QuickMarcEditor.clickSaveAndKeepEditing();
+    // wait until all the saved and updated values will be loaded.
+    cy.wait(3000);
+    QuickMarcEditor.deleteFieldAndCheck(5, '010');
+    QuickMarcEditor.checkButtonsEnabled();
+    QuickMarcEditor.clickSaveAndCloseThenCheck();
+    QuickMarcEditor.constinueWithSaveAndCheck();
   });
 });

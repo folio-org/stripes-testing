@@ -31,8 +31,7 @@ export default {
   },
 
   getListOfMarcFieldProtectionViaApi:(searchParams) => {
-    return cy.okapiRequest({ method: 'GET',
-      path: 'field-protection-settings/marc',
+    return cy.okapiRequest({ path: 'field-protection-settings/marc',
       searchParams,
       isDefaultSearchParamsRequired: false })
       .then(({ body }) => {

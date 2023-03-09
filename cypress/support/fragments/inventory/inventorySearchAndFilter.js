@@ -125,8 +125,8 @@ export default {
   getAllSearchResults: () => MultiColumnList(),
   getSearchResult: (row = 0, col = 0) => MultiColumnListCell({ 'row': row, 'columnIndex': col }),
   waitLoading: () => cy.expect([Form().find(inventorySearchAndFilter).exists()]),
-  browseCallNumberIsAbsent:() => cy.expect(HTML('Browse call numbers').absent()),
-  browseSubjectIsAbsent:() => cy.expect(HTML('Browse subjects').absent()),
+  browseCallNumberIsAbsent: () => cy.expect(HTML('Browse call numbers').absent()),
+  browseSubjectIsAbsent: () => cy.expect(HTML('Browse subjects').absent()),
 
   effectiveLocation: {
     mainLibrary: { id: 'clickable-filter-effectiveLocation-main-library' }
@@ -297,7 +297,7 @@ export default {
     cy.expect(Pane({ id: 'browse-inventory-results-pane' }).find(MultiColumnListHeader()).exists());
   },
 
-  verifySearchResult:(cellContent) => cy.expect(MultiColumnListCell({ content: cellContent }).exists()),
+  verifySearchResult: (cellContent) => cy.expect(MultiColumnListCell({ content: cellContent }).exists()),
 
   getInstancesByIdentifierViaApi(identifier, limit = 100) {
     return cy

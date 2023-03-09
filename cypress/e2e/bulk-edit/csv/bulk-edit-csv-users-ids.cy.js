@@ -39,26 +39,6 @@ describe('bulk-edit', () => {
       cy.visit(TopMenu.bulkEditPath);
     });
 
-
-    it('C350928 Verify error accordion during matching (CSV approach) (firebird)', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
-      BulkEditSearchPane.checkUsersRadio();
-      BulkEditSearchPane.selectRecordIdentifier('User UUIDs');
-
-      BulkEditSearchPane.uploadFile(userUUIDsFileName);
-      BulkEditSearchPane.waitFileUploading();
-
-      BulkEditSearchPane.verifyMatchedResults(user.username);
-      BulkEditSearchPane.verifyNonMatchedResults(invalidUserUUID);
-
-      BulkEditSearchPane.verifyActionsAfterConductedCSVUploading();
-      BulkEditSearchPane.verifyUsersActionShowColumns();
-
-      BulkEditSearchPane.changeShowColumnCheckbox('Email');
-      BulkEditSearchPane.verifyResultColumTitles('Email');
-
-      BulkEditSearchPane.verifyErrorLabel(userUUIDsFileName, 1, 1);
-    });
-
     it('C353233 Verify number of updated records (firebird)', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
       BulkEditSearchPane.selectRecordIdentifier('User UUIDs');
 

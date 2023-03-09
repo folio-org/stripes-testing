@@ -72,6 +72,8 @@ describe('ui-data-import: MARC file import with matching for 999 ff field', () =
 
     // upload a marc file for export
     cy.visit(TopMenu.dataImportPath);
+    // TODO delete code after fix https://issues.folio.org/browse/MODDATAIMP-691
+    DataImport.clickDataImportNavButton();
     DataImport.uploadFile('oneMarcBib.mrc', nameForMarcFile);
     JobProfiles.searchJobProfileForImport(jobProfileNameForExport);
     JobProfiles.runImportFile();
@@ -152,6 +154,8 @@ describe('ui-data-import: MARC file import with matching for 999 ff field', () =
 
         // upload the exported marc file with 999.f.f.s fields
         cy.visit(TopMenu.dataImportPath);
+        // TODO delete code after fix https://issues.folio.org/browse/MODDATAIMP-691
+        DataImport.clickDataImportNavButton();
         DataImport.uploadExportedFile(nameForExportedMarcFile);
         JobProfiles.searchJobProfileForImport(jobProfileName);
         JobProfiles.runImportFile();

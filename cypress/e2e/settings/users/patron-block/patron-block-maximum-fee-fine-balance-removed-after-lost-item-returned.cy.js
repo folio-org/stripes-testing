@@ -29,6 +29,7 @@ import UsersCard from '../../../../support/fragments/users/usersCard';
 import NewFeeFine from '../../../../support/fragments/users/newFeeFine';
 
 describe('Patron Block: Maximum outstanding fee/fine balance', () => {
+  let addedCirculationRule;
   let originalCirculationRules;
   const blockMessage = 'You have reached maximum outstanding fee/fine balance as set by patron group';
   const patronGroup = {
@@ -179,6 +180,7 @@ describe('Patron Block: Maximum outstanding fee/fine balance', () => {
       const ruleProps = CirculationRules.getRuleProps(circulationRule.rulesAsText);
       ruleProps.l = loanPolicyBody.id;
       ruleProps.i = lostItemFeePolicyBody.id;
+      addedCirculationRule = 't ' + testData.loanTypeId + ': i ' + ruleProps.i + ' l ' + ruleProps.l + ' r ' + ruleProps.r + ' o ' + ruleProps.o + ' n ' + ruleProps.n;
       CirculationRules.addRuleViaApi(originalCirculationRules, ruleProps, 't ', testData.loanTypeId);
     });
 
@@ -257,7 +259,7 @@ describe('Patron Block: Maximum outstanding fee/fine balance', () => {
     UsersOwners.deleteViaApi(testData.ownerId);
     cy.deleteLoanPolicy(loanPolicyBody.id);
     LostItemFeePolicy.deleteViaApi(lostItemFeePolicyBody.id);
-    CirculationRules.deleteRuleViaApi(originalCirculationRules);
+    CirculationRules.deleteRuleViaApi(addedCirculationRule);
     cy.deleteLoanType(testData.loanTypeId);
     UserEdit.changeServicePointPreferenceViaApi(userData.userId, [testData.userServicePoint.id]);
     ServicePoints.deleteViaApi(testData.userServicePoint.id);

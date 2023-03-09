@@ -23,9 +23,10 @@ import Users from '../../../../support/fragments/users/users';
 import NewMaterialType, {
   defaultMaterialType,
 } from '../../../../support/fragments/settings/inventory/newMaterialType';
+import { LOAN_POLICY_NAMES, OVERDUE_FINE_POLICY_NAMES, LOST_ITEM_FEES_POLICY_NAMES, NOTICE_POLICY_NAMES, REQUEST_POLICY_NAMES } from '../../../../support/constants';
 
 describe('ui-circulation-settings: Edit circulation rules', () => {
-  let originalCirculationRules;
+  let addedCirculationRule;
   let newUserId;
 
   beforeEach(() => {
@@ -40,9 +41,6 @@ describe('ui-circulation-settings: Edit circulation rules', () => {
 
       cy.getAdminToken();
 
-      CirculationRules.getViaApi().then((circulationRules) => {
-        originalCirculationRules = circulationRules;
-      });
       NewMaterialType.createViaApi(NewMaterialType.getDefaultMaterialType());
       NoticePolicy.createApi();
       LoanPolicy.createLoanableNotRenewableLoanPolicyApi(defaultLoanPolicy);
@@ -57,7 +55,7 @@ describe('ui-circulation-settings: Edit circulation rules', () => {
   });
 
   afterEach(() => {
-    CirculationRules.updateViaApi(originalCirculationRules);
+    CirculationRules.deleteRuleViaApi(addedCirculationRule);
     MaterialTypes.deleteApi(defaultMaterialType.id);
     NoticePolicy.deleteViaApi(defaultNoticePolicy.id);
     LoanPolicy.deleteApi(defaultLoanPolicy.id);
@@ -72,22 +70,23 @@ describe('ui-circulation-settings: Edit circulation rules', () => {
     CirculationRules.fillInPriority();
 
     CirculationRules.fillInFallbackPolicy({
-      loanPolicyName: defaultLoanPolicy.name,
-      overdueFinePolicyName: defaultOverdueFinePolicy.name,
-      lostItemFeePolicyName: defaultLostItemFeePolicy.name,
-      requestPolicyName: defaultRequestPolicy.name,
-      noticePolicyName: defaultNoticePolicy.name,
+      loanPolicyName: LOAN_POLICY_NAMES.EXAMPLE_LOAN,
+      overdueFinePolicyName: OVERDUE_FINE_POLICY_NAMES.OVERDUE_FINE_POLICY,
+      lostItemFeePolicyName: LOST_ITEM_FEES_POLICY_NAMES.LOST_ITEM_FEES_POLICY,
+      requestPolicyName: REQUEST_POLICY_NAMES.ALLOW_ALL,
+      noticePolicyName: NOTICE_POLICY_NAMES.SEND_NO_NOTICES,
     });
 
     CirculationRules.fillInPolicy({
       priorityType: 'm ',
       priorityTypeName: defaultMaterialType.name,
-      loanPolicyName: defaultLoanPolicy.name,
-      overdueFinePolicyName: defaultOverdueFinePolicy.name,
       lostItemFeePolicyName: defaultLostItemFeePolicy.name,
+      loanPolicyName: defaultLoanPolicy.name,
       requestPolicyName: defaultRequestPolicy.name,
+      overdueFinePolicyName: defaultOverdueFinePolicy.name,
       noticePolicyName: defaultNoticePolicy.name,
     });
+    addedCirculationRule = 'm ' + defaultMaterialType.id + ' : l ' + defaultLoanPolicy.id + ' o ' + defaultOverdueFinePolicy.id + ' i ' + defaultLostItemFeePolicy.id + ' r ' + defaultRequestPolicy.id + ' n ' + defaultNoticePolicy.id;
 
     CirculationRules.saveCirculationRules();
 
