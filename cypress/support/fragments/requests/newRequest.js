@@ -1,5 +1,5 @@
 /* eslint-disable cypress/no-unnecessary-waiting */
-import { Button, TextField, Pane, Select, HTML, including, Checkbox, Section, Accordion } from '../../../../interactors';
+import { Button, TextField, Pane, Select, HTML, including, Checkbox, Section, Accordion, TextArea } from '../../../../interactors';
 import SelectUser from './selectUser';
 
 const actionsButton = Button('Actions');
@@ -116,6 +116,18 @@ export default {
 
   verifyItemInformation: (allContentToCheck) => {
     return allContentToCheck.forEach(contentToCheck => cy.expect(Section({ id: 'section-item-info' }, including(contentToCheck)).exists));
+  },
+
+  verifyRequestInformation: (itemStatus) => {
+    if (itemStatus === 'Available') {
+      cy.expect(Section({ id: 'new-request-info' }, including('Page')).exists);
+    } else if (itemStatus === 'Hold' || itemStatus === 'Recall') {
+      cy.expect(Select({ name: 'requestType' }).exists);
+    }
+    cy.expect([
+      TextField({ id: 'requestExpirationDate' }).exists(),
+      TextArea({ id: 'patronComments' }).exists(),
+    ]);
   },
 
   enterRequesterInfo(newRequest) {

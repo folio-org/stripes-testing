@@ -39,6 +39,10 @@ describe('Create Item or Title level request', () => {
   before('Preconditions', () => {
     cy.getAdminToken()
       .then(() => {
+        cy.loginAsAdmin({
+          path: SettingsMenu.circulationTitleLevelRequestsPath,
+          waiter: TitleLevelRequests.waitLoading,
+        });
         ServicePoints.createViaApi(testData.userServicePoint);
         testData.defaultLocation = Location.getDefaultLocation(testData.userServicePoint.id);
         Location.createViaApi(testData.defaultLocation);
@@ -105,17 +109,19 @@ describe('Create Item or Title level request', () => {
         userData.userId,
         testData.userServicePoint.id
       );
-      cy.loginAsAdmin({
-        path: SettingsMenu.circulationTitleLevelRequestsPath,
-        waiter: TitleLevelRequests.waitLoading,
-      }).then(() => {
-        TitleLevelRequests.changeTitleLevelRequestsStatus('allow');
+      TitleLevelRequests.changeTitleLevelRequestsStatus('allow');
+      cy.login(userData.username, userData.password, {
+        path: TopMenu.requestsPath,
+        waiter: Requests.waitLoading,
       });
-      cy.login(userData.username, userData.password);
     });
   });
 
   after('Deleting created entities', () => {
+    cy.loginAsAdmin({
+      path: SettingsMenu.circulationTitleLevelRequestsPath,
+      waiter: TitleLevelRequests.waitLoading,
+    });
     cy.get('@requestId').then((id) => {
       Requests.deleteRequestViaApi(id);
     });
@@ -133,25 +139,21 @@ describe('Create Item or Title level request', () => {
       testData.defaultLocation.libraryId,
       testData.defaultLocation.id
     );
-    cy.loginAsAdmin();
-    cy.visit(SettingsMenu.circulationTitleLevelRequestsPath);
-    TitleLevelRequests.waitLoading();
     TitleLevelRequests.changeTitleLevelRequestsStatus('forbid');
   });
   it(
     'C350422 Check that user can create "Page" Item level request (vega)',
     { tags: [TestTypes.criticalPath, devTeams.vega] },
     () => {
-      cy.visit(TopMenu.requestsPath);
+      // cy.visit(TopMenu.requestsPath);
       cy.intercept('POST', 'circulation/requests').as('createRequest');
-      NewRequest.openNewRequestPane();
-      NewRequest.waitLoadingNewRequestPage(true);
       NewRequest.openNewRequestPane();
       NewRequest.waitLoadingNewRequestPage(true);
       NewRequest.enterItemInfo('wrongBarcode');
       NewRequest.checkErrorMessage('Item with this barcode does not exist');
       NewRequest.enterItemInfo(testData.itemBarcode);
       NewRequest.verifyItemInformation([testData.itemBarcode, instanceData.title]);
+      NewRequest.verifyRequestInformation('Available');
       NewRequest.enterRequesterInfo({
         requesterBarcode: userData.barcode,
         pickupServicePoint: testData.userServicePoint.name,
