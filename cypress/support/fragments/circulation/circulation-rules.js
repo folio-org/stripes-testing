@@ -95,7 +95,9 @@ export default {
     return baseRuleProps;
   },
   addRuleViaApi(defaultRules, ruleParams, priority, priorityId) {
-    const withNewRule = defaultRules + ' \n' + priority + priorityId + ': i ' + ruleParams.i + ' l ' + ruleParams.l + ' r ' + ruleParams.r + ' o ' + ruleParams.o + ' n ' + ruleParams.n;
+    const newRule = priority + priorityId + ': i ' + ruleParams.i + ' l ' + ruleParams.l + ' r ' + ruleParams.r + ' o ' + ruleParams.o + ' n ' + ruleParams.n;
+    const withNewRule = defaultRules + ' \n' + newRule;
+    cy.wrap(newRule).as('newRule');
     return cy.updateCirculationRules({ rulesAsText: withNewRule });
   },
   deleteRuleViaApi(rule) {
