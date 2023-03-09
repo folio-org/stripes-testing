@@ -9,8 +9,8 @@ import BulkEditSearchPane from '../../../support/fragments/bulk-edit/bulk-edit-s
 import BulkEditActions from '../../../support/fragments/bulk-edit/bulk-edit-actions';
 import BulkEditFiles from '../../../support/fragments/bulk-edit/bulk-edit-files';
 import Users from '../../../support/fragments/users/users';
-import InventoryInstance from "../../../support/fragments/inventory/inventoryInstance";
-import InventorySearchAndFilter from "../../../support/fragments/inventory/inventorySearchAndFilter";
+import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
+import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
 
 let user;
 let hrid;
