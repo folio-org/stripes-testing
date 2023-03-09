@@ -69,9 +69,7 @@ export default {
     cy.wait('@getLoans');
     // need to wait until data to loaded
     cy.wait(1500);
-    cy.intercept('/circulation/requests?*').as('getRequests');
     cy.do(TextField({ name: 'item.barcode' }).fillIn(itemBarcode));
-    cy.wait('@getRequests');
     cy.do(Button({ id: 'clickable-add-item' }).click());
     // waiters needs for check out item in loop
     cy.wait(1500);
