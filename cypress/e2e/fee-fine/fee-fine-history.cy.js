@@ -18,7 +18,7 @@ import FeeFinesDetails from '../../support/fragments/users/feeFineDetails';
 import PayFeeFaine from '../../support/fragments/users/payFeeFaine';
 import AddNewStaffInfo from '../../support/fragments/users/addNewStaffInfo';
 
-describe('Fee/Fine history ', { retries: 3 }, () => {
+describe('Fee/Fine history ', { retries: 1 }, () => {
   const userData = {};
   const ownerData = {};
   const feeFineType = {};
@@ -114,8 +114,8 @@ describe('Fee/Fine history ', { retries: 3 }, () => {
     FeeFinesDetails.openActions();
     FeeFinesDetails.openPayModal();
     PayFeeFaine.checkAmount(feeFineAccount.amount);
-    PayFeeFaine.setAmount(feeFineAccount.amount - 1);
-    PayFeeFaine.checkRestOfPay(1);
+    PayFeeFaine.setAmount(feeFineAccount.amount - 2);
+    PayFeeFaine.checkRestOfPay(2);
     PayFeeFaine.setPaymentMethod(paymentMethod);
     PayFeeFaine.submitAndConfirm();
     PayFeeFaine.checkConfirmModalClosed();
@@ -129,9 +129,9 @@ describe('Fee/Fine history ', { retries: 3 }, () => {
     FeeFinesDetails.checkNewStaffInfo(newStaffInfoMessage);
     FeeFinesDetails.openActions();
     FeeFinesDetails.openPayModal();
-    PayFeeFaine.checkAmount(1);
+    PayFeeFaine.checkAmount(2);
     PayFeeFaine.setPaymentMethod(paymentMethod);
-    PayFeeFaine.setAmount(1);
+    PayFeeFaine.setAmount(2);
     PayFeeFaine.checkRestOfPay(0);
     PayFeeFaine.submitAndConfirm();
   });
