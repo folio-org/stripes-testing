@@ -4,27 +4,20 @@ import devTeams from '../../support/dictionary/devTeams';
 import getRandomPostfix from '../../support/utils/stringTools';
 import NewOrder from '../../support/fragments/orders/newOrder';
 import Orders from '../../support/fragments/orders/orders';
-import Receiving from '../../support/fragments/receiving/receiving';
 import TopMenu from '../../support/fragments/topMenu';
 import Organizations from '../../support/fragments/organizations/organizations';
 import NewOrganization from '../../support/fragments/organizations/newOrganization';
 import OrderLines from '../../support/fragments/orders/orderLines';
-import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
 import Users from '../../support/fragments/users/users';
-import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
-import NewLocation from '../../support/fragments/settings/tenant/locations/newLocation';
 import Ledgers from '../../support/fragments/finance/ledgers/ledgers';
 import Funds from '../../support/fragments/finance/funds/funds';
 import FiscalYears from '../../support/fragments/finance/fiscalYears/fiscalYears';
-import SettingsMenu from '../../support/fragments/settingsMenu';
-import SettingsInvoices from '../../support/fragments/invoices/settingsInvoices';
 import NewInvoice from '../../support/fragments/invoices/newInvoice';
-import NewInvoiceLine from '../../support/fragments/invoices/newInvoiceLine';
 import Invoices from '../../support/fragments/invoices/invoices';
 import VendorAddress from '../../support/fragments/invoices/vendorAddress';
 import FinanceHelp from '../../support/fragments/finance/financeHelper';
 
-describe('orders: Unopen order', () => {
+describe('invoices: add ajus', () => {
   const order = { ...NewOrder.defaultOngoingTimeOrder,
     approved: true,
     reEncumber: true,
@@ -41,31 +34,15 @@ describe('orders: Unopen order', () => {
       categories: [],
       language: 'English'
     }] };
-  const item = {
-    instanceName: `testBulkEdit_${getRandomPostfix()}`,
-    itemBarcode: getRandomPostfix(),
-  };
   const firstFund = { ...Funds.defaultUiFund };
-  const secondFund = {
-    name: `autotest_fund2_${getRandomPostfix()}`,
-    code: getRandomPostfix(),
-    externalAccountNo: getRandomPostfix(),
-    fundStatus: 'Active',
-    description: `This is fund created by E2E test automation script_${getRandomPostfix()}`,
-  };
   const defaultFiscalYear = { ...FiscalYears.defaultUiFiscalYear };
   const defaultLedger = { ...Ledgers.defaultUiLedger };
   const invoice = { ...NewInvoice.defaultUiInvoice };
   const vendorPrimaryAddress = { ...VendorAddress.vendorAddress };
-
   const allocatedQuantityForFistFund = '100';
-  const allocatedQuantityForSecondFund = '100';
   const adjustmentDescription = `test_description${getRandomPostfix()}`;
   let user;
   let orderNumber;
-  let orderID;
-  let location;
-  let servicePointId;
 
   before(() => {
     cy.getAdminToken();
@@ -81,7 +58,6 @@ describe('orders: Unopen order', () => {
       organization.addresses.find(address => address.isPrimary === true));
     invoice.batchGroup = 'FOLIO';
 
-
     FiscalYears.createViaApi(defaultFiscalYear)
     .then(response => {
       defaultFiscalYear.id = response.id;
@@ -95,7 +71,6 @@ describe('orders: Unopen order', () => {
           Funds.createViaApi(firstFund)
             .then(fundResponse => {
               firstFund.id = fundResponse.fund.id;
-
               cy.loginAsAdmin({ path:TopMenu.fundPath, waiter: Funds.waitLoading });
               FinanceHelp.searchByName(firstFund.name);
               Funds.selectFund(firstFund.name);
@@ -120,8 +95,6 @@ describe('orders: Unopen order', () => {
         Invoices.createInvoiceLinePOLLookUp(orderNumber);
       });
 
-
-
     cy.createTempUser([
       permissions.uiFinanceViewFundAndBudget.gui,
       permissions.uiInvoicesCanViewAndEditInvoicesAndInvoiceLines.gui,
@@ -130,11 +103,13 @@ describe('orders: Unopen order', () => {
     ])
       .then(userProperties => {
         user = userProperties;
-
         cy.login(user.username, user.password, { path:TopMenu.invoicesPath, waiter: Invoices.waitLoading });
       });
   });
 
+  after(() => {
+    Users.deleteViaApi(user.userId);
+  });
 
   it('C375998 Approve and pay invoice with added adjustment amount to invoice line (not prorated, related to total as "In addition to") (thunderjet)', { tags: [testType.smoke, devTeams.thunderjet] }, () => {
     Invoices.searchByNumber(invoice.invoiceNumber);
@@ -144,12 +119,12 @@ describe('orders: Unopen order', () => {
     Invoices.addAdjustment(adjustmentDescription, '10', '%', 'In addition to');
     Invoices.approveInvoice();
     Invoices.payInvoice();
-    cy.pause();
+
     cy.visit(TopMenu.fundPath);
-    FinanceHelp.searchByName(defaultfund.name);
-    Funds.selectFund(defaultfund.name);
+    FinanceHelp.searchByName(firstFund.name);
+    Funds.selectFund(firstFund.name);
     Funds.selectBudgetDetails();
     Funds.viewTransactions();
-    Funds.checkTransactionList(defaultfund.code);
+    Funds.checkTransactionDetails(defaultFiscalYear.code,'($22.00)', invoice.invoiceNumber, 'Payment', `${firstFund.name} (${firstFund.code})`);
   });
 });

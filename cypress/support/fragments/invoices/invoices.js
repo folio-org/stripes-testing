@@ -391,8 +391,9 @@ export default {
       Button({ id: 'adjustments-add-button' }).click(),
       TextField({ name: 'adjustments[0].description' }).fillIn(descriptionInput),
       TextField({ name: 'adjustments[0].value' }).fillIn(valueInput),
-      Button(typeToggle).click(),
+      Section({ id: 'invoiceLineForm-adjustments' }).find(Button(typeToggle)).click(),
       Select({ name: 'adjustments[0].relationToTotal' }).choose(realtioToTotal),
+      saveAndClose.click(),
     ]);
   },
 };
