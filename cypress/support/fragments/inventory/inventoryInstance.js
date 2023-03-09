@@ -496,9 +496,18 @@ export default {
     InventoryInstanceSelectInstanceModal.selectInstance();
     InventoryInstancesMovement.move();
   },
-
-  checkAddItem:(holdingsRecrodId) => {
-    cy.expect(section.find(Button({ id: `clickable-new-item-${holdingsRecrodId}` })).exists());
+  moveHoldingsToAnotherInstanceByItemTitle: (holdingName, title) => {
+    cy.do(actionsButton.click());
+    cy.do(moveHoldingsToAnotherInstanceButton.click());
+    InventoryInstanceSelectInstanceModal.waitLoading();
+    InventoryInstanceSelectInstanceModal.searchByTitle(title)
+    InventoryInstanceSelectInstanceModal.selectInstance();
+    InventoryInstancesMovement.moveFromMultiple(holdingName, title);
+  },
+  checkAddItem:(holdingsRecordId) => {
+    cy.expect(section.find(Section({ id:holdingsRecordId }))
+      .find(Button({ id: `clickable-new-item-${holdingsRecordId}` }))
+      .exists());
   },
 
   checkInstanceIdentifier: (identifier) => {

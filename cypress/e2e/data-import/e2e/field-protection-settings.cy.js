@@ -162,6 +162,8 @@ describe('ui-data-import: Check that field protection settings work properly dur
 
     // upload a marc file for creating of the new instance
     cy.visit(TopMenu.dataImportPath);
+    // TODO delete code after fix https://issues.folio.org/browse/MODDATAIMP-691
+    DataImport.clickDataImportNavButton();
     DataImport.uploadFile('marcFileForC17017.mrc', nameMarcFileForCreate);
     JobProfiles.searchJobProfileForImport(jobProfileName);
     JobProfiles.runImportFile();
@@ -213,6 +215,8 @@ describe('ui-data-import: Check that field protection settings work properly dur
 
     // upload a marc file for updating already created instance
     cy.visit(TopMenu.dataImportPath);
+    // TODO delete code after fix https://issues.folio.org/browse/MODDATAIMP-691
+    DataImport.clickDataImportNavButton();
     DataImport.uploadFile(editedMarcFileName, fileNameForUpdate);
     JobProfiles.searchJobProfileForImport(jobProfileUpdateName);
     JobProfiles.runImportFile();
