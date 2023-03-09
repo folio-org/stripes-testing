@@ -145,7 +145,6 @@ describe('Create Item or Title level request', () => {
     'C350422 Check that user can create "Page" Item level request (vega)',
     { tags: [TestTypes.criticalPath, devTeams.vega] },
     () => {
-      // cy.visit(TopMenu.requestsPath);
       cy.intercept('POST', 'circulation/requests').as('createRequest');
       NewRequest.openNewRequestPane();
       NewRequest.waitLoadingNewRequestPage(true);
