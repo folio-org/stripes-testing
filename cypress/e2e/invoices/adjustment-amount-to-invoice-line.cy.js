@@ -17,7 +17,7 @@ import Invoices from '../../support/fragments/invoices/invoices';
 import VendorAddress from '../../support/fragments/invoices/vendorAddress';
 import FinanceHelp from '../../support/fragments/finance/financeHelper';
 
-describe('invoices: add ajus', () => {
+describe('invoices: add adjustment', () => {
   const order = { ...NewOrder.defaultOngoingTimeOrder,
     approved: true,
     reEncumber: true,
@@ -82,7 +82,6 @@ describe('invoices: add ajus', () => {
     cy.createOrderApi(order)
       .then((response) => {
         orderNumber = response.body.poNumber;
-        orderID = response.body.id;
         cy.visit(TopMenu.ordersPath);
         Orders.searchByParameter('PO number', orderNumber);
         Orders.selectFromResultsList(orderNumber);
