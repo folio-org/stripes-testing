@@ -1,16 +1,15 @@
 import getRandomPostfix from '../../../../support/utils/stringTools';
 import permissions from '../../../../support/dictionary/permissions';
 import TopMenu from '../../../../support/fragments/topMenu';
-import devTeams from '../../../../support/fragments/topMenu';
+import devTeams from '../../../../support/dictionary/devTeams';
 import testTypes from '../../../../support/dictionary/testTypes';
 import BulkEditSearchPane from '../../../../support/fragments/bulk-edit/bulk-edit-search-pane';
 import Users from '../../../../support/fragments/users/users';
-import InventoryInstances from '../../../../support/fragments/inventory/inventoryInstances';
 import FileManager from '../../../../support/utils/fileManager';
 import BulkEditFiles from '../../../../support/fragments/bulk-edit/bulk-edit-files';
 
 let user;
-let invalidHoldingHRID = getRandomPostfix();
+const invalidHoldingHRID = getRandomPostfix();
 const invalidHoldingHRIDsFileName = `invalidHoldingHRIDs_${getRandomPostfix()}.csv`;
 const errorsEncounteredFileName = `*Errors-${invalidHoldingHRIDsFileName}*`;
 
