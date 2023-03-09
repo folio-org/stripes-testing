@@ -60,6 +60,7 @@ describe('orders: Unopen order', () => {
 
   const allocatedQuantityForFistFund = '100';
   const allocatedQuantityForSecondFund = '100';
+  const adjustmentDescription = `test_description${getRandomPostfix()}`;
   let user;
   let orderNumber;
   let orderID;
@@ -90,7 +91,6 @@ describe('orders: Unopen order', () => {
         .then(ledgerResponse => {
           defaultLedger.id = ledgerResponse.id;
           firstFund.ledgerId = defaultLedger.id;
-          secondFund.ledgerId = defaultLedger.id;
 
           Funds.createViaApi(firstFund)
             .then(fundResponse => {
@@ -100,16 +100,6 @@ describe('orders: Unopen order', () => {
               FinanceHelp.searchByName(firstFund.name);
               Funds.selectFund(firstFund.name);
               Funds.addBudget(allocatedQuantityForFistFund);
-            });
-
-          Funds.createViaApi(secondFund)
-            .then(secondFundResponse => {
-              secondFund.id = secondFundResponse.fund.id;
-
-              cy.visit(TopMenu.fundPath);
-              FinanceHelp.searchByName(secondFund.name);
-              Funds.selectFund(secondFund.name);
-              Funds.addBudget(allocatedQuantityForSecondFund);
             });
         });
     });
@@ -128,51 +118,38 @@ describe('orders: Unopen order', () => {
         cy.visit(TopMenu.invoicesPath);
         Invoices.createDefaultInvoice(invoice, vendorPrimaryAddress);
         Invoices.createInvoiceLinePOLLookUp(orderNumber);
-        Invoices.approveInvoice();
-        Invoices.payInvoice();
       });
 
 
 
     cy.createTempUser([
       permissions.uiFinanceViewFundAndBudget.gui,
-      permissions.uiInvoicesCanViewInvoicesAndInvoiceLines.gui,
-      permissions.uiApproveOrder.gui,
-      permissions.uiOrdersEdit.gui,
-      permissions.uiOrdersReopenPurchaseOrders.gui,
-      permissions.uiOrdersUnopenpurchaseorders.gui,
+      permissions.uiInvoicesCanViewAndEditInvoicesAndInvoiceLines.gui,
+      permissions.uiInvoicesApproveInvoices.gui,
+      permissions.uiInvoicesPayInvoices.gui,
     ])
       .then(userProperties => {
         user = userProperties;
 
-        cy.login(user.username, user.password, { path:TopMenu.ordersPath, waiter: Orders.waitLoading });
+        cy.login(user.username, user.password, { path:TopMenu.invoicesPath, waiter: Invoices.waitLoading });
       });
   });
 
 
-  it('C375106 Unopen order with changed Fund distribution when related paid invoice exists (thunderjet)', { tags: [testType.smoke, devTeams.thunderjet] }, () => {
-    Orders.searchByParameter('PO number', orderNumber);
-    Orders.selectFromResultsList(orderNumber);
-    Orders.unOpenOrder();
-    OrderLines.selectPOLInOrder();
-    OrderLines.backToEditingOrder();
-    Orders.openOrder();
-    OrderLines.selectPOLInOrder();
-    
-      cy.window().then((win) => {
-        const newWindow =     OrderLines.selectCurrentEncumbrance('$0.00');
-        cy.wrap(newWindow).should('have.property', 'closed', false);
-
-        cy.wrap(newWindow).should('have.property', 'focused', true);
-        Funds.waitLoadingTransactions();
-        newWindow.close();
-      
-        cy.wrap(newWindow).should('have.property', 'closed', true);
-      });
-      
-    cy.visit(TopMenu.invoicesPath);
+  it('C375998 Approve and pay invoice with added adjustment amount to invoice line (not prorated, related to total as "In addition to") (thunderjet)', { tags: [testType.smoke, devTeams.thunderjet] }, () => {
     Invoices.searchByNumber(invoice.invoiceNumber);
     Invoices.selectInvoice(invoice.invoiceNumber);
     Invoices.selectInvoiceLine();
+    Invoices.editInvoiceLine();
+    Invoices.addAdjustment(adjustmentDescription, '10', '%', 'In addition to');
+    Invoices.approveInvoice();
+    Invoices.payInvoice();
+    cy.pause();
+    cy.visit(TopMenu.fundPath);
+    FinanceHelp.searchByName(defaultfund.name);
+    Funds.selectFund(defaultfund.name);
+    Funds.selectBudgetDetails();
+    Funds.viewTransactions();
+    Funds.checkTransactionList(defaultfund.code);
   });
 });
