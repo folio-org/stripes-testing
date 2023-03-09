@@ -306,38 +306,38 @@ describe('ui-data-import: MARC file upload with the update of instance, holding,
       });
   });
 
-  // afterEach(() => {
-  //   DataImport.checkUploadState();
-  //   cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${instanceHRID}"` })
-  //     .then((instance) => {
-  //       cy.deleteItemViaApi(instance.items[0].id);
-  //       cy.deleteHoldingRecordViaApi(instance.holdings[0].id);
-  //       InventoryInstance.deleteInstanceViaApi(instance.id);
-  //     });
-  //   // delete generated profiles
-  //   JobProfiles.deleteJobProfile(jobProfileNameUpdate);
-  //   collectionOfMatchProfiles.forEach(profile => {
-  //     MatchProfiles.deleteMatchProfile(profile.matchProfile.profileName);
-  //   });
-  //   collectionOfMappingAndActionProfiles.forEach(profile => {
-  //     ActionProfiles.deleteActionProfile(profile.actionProfile.name);
-  //     FieldMappingProfiles.deleteFieldMappingProfile(profile.mappingProfile.name);
-  //   });
-  //   JobProfiles.deleteJobProfile(jobProfileNameCreate);
-  //   ActionProfiles.deleteActionProfile(nameMarcBibActionProfile);
-  //   ActionProfiles.deleteActionProfile(nameInstanceActionProfile);
-  //   ActionProfiles.deleteActionProfile(nameHoldingsActionProfile);
-  //   ActionProfiles.deleteActionProfile(nameItemActionProfile);
-  //   FieldMappingProfiles.deleteFieldMappingProfile(nameMarcBibMappingProfile);
-  //   FieldMappingProfiles.deleteFieldMappingProfile(nameInstanceMappingProfile);
-  //   FieldMappingProfiles.deleteFieldMappingProfile(nameHoldingsMappingProfile);
-  //   FieldMappingProfiles.deleteFieldMappingProfile(nameItemMappingProfile);
+  afterEach(() => {
+    DataImport.checkUploadState();
+    cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${instanceHRID}"` })
+      .then((instance) => {
+        cy.deleteItemViaApi(instance.items[0].id);
+        cy.deleteHoldingRecordViaApi(instance.holdings[0].id);
+        InventoryInstance.deleteInstanceViaApi(instance.id);
+      });
+    // delete generated profiles
+    JobProfiles.deleteJobProfile(jobProfileNameUpdate);
+    collectionOfMatchProfiles.forEach(profile => {
+      MatchProfiles.deleteMatchProfile(profile.matchProfile.profileName);
+    });
+    collectionOfMappingAndActionProfiles.forEach(profile => {
+      ActionProfiles.deleteActionProfile(profile.actionProfile.name);
+      FieldMappingProfiles.deleteFieldMappingProfile(profile.mappingProfile.name);
+    });
+    JobProfiles.deleteJobProfile(jobProfileNameCreate);
+    ActionProfiles.deleteActionProfile(nameMarcBibActionProfile);
+    ActionProfiles.deleteActionProfile(nameInstanceActionProfile);
+    ActionProfiles.deleteActionProfile(nameHoldingsActionProfile);
+    ActionProfiles.deleteActionProfile(nameItemActionProfile);
+    FieldMappingProfiles.deleteFieldMappingProfile(nameMarcBibMappingProfile);
+    FieldMappingProfiles.deleteFieldMappingProfile(nameInstanceMappingProfile);
+    FieldMappingProfiles.deleteFieldMappingProfile(nameHoldingsMappingProfile);
+    FieldMappingProfiles.deleteFieldMappingProfile(nameItemMappingProfile);
 
-  //   // delete downloads folder and created files in fixtures
-  //   FileManager.deleteFolder(Cypress.config('downloadsFolder'));
-  //   FileManager.deleteFile(`cypress/fixtures/${nameMarcFileForImportUpdate}`);
-  //   FileManager.deleteFile(`cypress/fixtures/${nameForCSVFile}`);
-  // });
+    // delete downloads folder and created files in fixtures
+    FileManager.deleteFolder(Cypress.config('downloadsFolder'));
+    FileManager.deleteFile(`cypress/fixtures/${nameMarcFileForImportUpdate}`);
+    FileManager.deleteFile(`cypress/fixtures/${nameForCSVFile}`);
+  });
 
   const createInstanceMappingProfile = (profile) => {
     FieldMappingProfiles.openNewMappingProfileForm();
