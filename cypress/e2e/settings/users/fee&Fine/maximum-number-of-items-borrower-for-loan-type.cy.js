@@ -7,7 +7,6 @@ import ServicePoint from '../../../../support/fragments/servicePoint/servicePoin
 import TopMenu from '../../../../support/fragments/topMenu';
 import InventoryInstances from '../../../../support/fragments/inventory/inventoryInstances';
 import LoanPolicyActions from '../../../../support/fragments/circulation/loan-policy';
-import { CY_ENV, LOST_ITEM_FEES_POLICY_NAMES, NOTICE_POLICY_NAMES, OVERDUE_FINE_POLICY_NAMES, REQUEST_POLICY_NAMES } from '../../../../support/constants';
 import CheckOutActions from '../../../../support/fragments/check-out-actions/check-out-actions';
 import LimitCheckOut from '../../../../support/fragments/checkout/modals/limitCheckOut';
 import CheckInActions from '../../../../support/fragments/check-in-actions/checkInActions';
