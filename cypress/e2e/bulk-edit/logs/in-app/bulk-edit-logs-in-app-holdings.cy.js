@@ -19,7 +19,6 @@ describe('Bulk Edit - Logs', () => {
       permissions.bulkEditLogsView.gui,
       permissions.bulkEditView.gui,
       permissions.bulkEditEdit.gui,
-      permissions.bulkEditQueryView.gui,
     ])
       .then(userProperties => {
         user = userProperties;
@@ -27,7 +26,6 @@ describe('Bulk Edit - Logs', () => {
           path: TopMenu.bulkEditPath,
           waiter: BulkEditSearchPane.waitLoading,
         });
-
         FileManager.createFile(`cypress/fixtures/${invalidHoldingHRIDsFileName}`, invalidHoldingHRID);
       });
   });
@@ -49,9 +47,10 @@ describe('Bulk Edit - Logs', () => {
     BulkEditSearchPane.clickActionsOnTheRow();
     BulkEditSearchPane.verifyLogsRowAction();
 
-    // BulkEditSearchPane.downloadFileUsedToTrigger();
+    BulkEditSearchPane.downloadFileUsedToTrigger();
+    BulkEditFiles.verifyMatchedResultFileContent(`*${invalidHoldingHRIDsFileName}*`, [invalidHoldingHRID], 'firstElement', false);
 
     BulkEditSearchPane.downloadFileWithErrorsEncountered();
-    BulkEditFiles.verifyMatchedResultFileContent(errorsEncounteredFileName, [invalidHoldingHRID], 'hrid');
+    BulkEditFiles.verifyMatchedResultFileContent(errorsEncounteredFileName, [invalidHoldingHRID], 'firstElement', false);
   });
 });
