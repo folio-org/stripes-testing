@@ -46,6 +46,8 @@ const nameField = TextField('Name*');
 const codeField = TextField('Code*');
 const externalAccountField = TextField('External account*');
 const ledgerSelection = Selection('Ledger*');
+const transactionDetailSection = Section({ id: 'pane-transaction-details' });
+const transactionList = MultiColumnList({ id: 'transactions-list' })
 export default {
 
   defaultUiFund: {
@@ -64,6 +66,10 @@ export default {
   },
   waitLoading : () => {
     cy.expect(Pane({ id: 'fund-results-pane' }).exists());
+  },
+
+  waitLoadingTransactions : () => {
+    cy.expect(Pane({ id: 'transaction-results-pane' }).exists());
   },
 
   waitForFundDetailsLoading : () => {
@@ -164,32 +170,48 @@ export default {
 
   checkTransactionList: (fundCode) => {
     cy.expect([
-      MultiColumnList({ id: 'transactions-list' })
+      transactionList
         .find(MultiColumnListRow({ index: 0 }))
         .find(MultiColumnListCell({ columnIndex: 2 }))
         .has({ content: '$50.00' }),
-      MultiColumnList({ id: 'transactions-list' })
+      transactionList
         .find(MultiColumnListRow({ index: 0 }))
         .find(MultiColumnListCell({ columnIndex: 4 }))
         .has({ content: `${fundCode}` })
     ]);
   },
 
+  checkTransactionDetails: (fiscalYear,amount, source, type, fund) => {
+    cy.do(
+      transactionList
+        .find(MultiColumnListRow({ index: 2 }))
+        .find(Link())
+        .click()
+        );
+    cy.expect(
+      transactionDetailSection.find(KeyValue('Fiscal year')).has({value: fiscalYear}),
+      transactionDetailSection.find(KeyValue('Amount')).has({value: amount}),
+      transactionDetailSection.find(KeyValue('Source')).has({value: source}),
+      transactionDetailSection.find(KeyValue('Type')).has({value: type}),
+      transactionDetailSection.find(KeyValue('From')).has({value: fund}),
+    )
+  },
+
   checkOrderInTransactionList: (fundCode) => {
     cy.expect([
-      MultiColumnList({ id: 'transactions-list' })
+      transactionList
         .find(MultiColumnListRow({ index: 1 }))
         .find(MultiColumnListCell({ columnIndex: 1 }))
         .has({ content: 'Encumbrance' }),
-      MultiColumnList({ id: 'transactions-list' })
+      transactionList
         .find(MultiColumnListRow({ index: 1 }))
         .find(MultiColumnListCell({ columnIndex: 2 }))
         .has({ content: '($50.00)' }),
-      MultiColumnList({ id: 'transactions-list' })
+      transactionList
         .find(MultiColumnListRow({ index: 1 }))
         .find(MultiColumnListCell({ columnIndex: 3 }))
         .has({ content: `${fundCode}` }),
-      MultiColumnList({ id: 'transactions-list' })
+      transactionList
         .find(MultiColumnListRow({ index: 1 }))
         .find(MultiColumnListCell({ columnIndex: 5 }))
         .has({ content: 'PO line' })
