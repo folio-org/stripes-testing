@@ -264,7 +264,7 @@ describe('MARC Authority -> Edit Authority record', () => {
     MarcAuthorities.selectTitle(testData.authority.title);
     MarcAuthority.edit();
 
-    tags.forEach(tag => {
+    tagsC375120.forEach(tag => {
       MarcAuthority.changeTag(rowIndexTag1XX, tag);
       QuickMarcEditor.clickSaveAndKeepEditing();
       QuickMarcEditor.checkDeleteButtonNotExist(rowIndexTag1XX);
