@@ -35,6 +35,8 @@ describe('ui-data-import', () => {
 
   it('C350750 Error records not processed or saved for invalid MARC Bibs (folijet)',
     { tags: [TestTypes.criticalPath, DevTeams.folijet] }, () => {
+      // TODO delete reload after fix https://issues.folio.org/browse/MODDATAIMP-691
+      cy.reload();
       DataImport.uploadFile('marcFileForC350750.mrc', nameMarcFileForImportCreate);
       JobProfiles.searchJobProfileForImport('Default - Create instance and SRS MARC Bib');
       JobProfiles.runImportFile();

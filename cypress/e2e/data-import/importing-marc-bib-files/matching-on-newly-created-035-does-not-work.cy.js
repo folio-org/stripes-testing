@@ -124,7 +124,9 @@ describe('ui-data-import: Matching on newly-created 035 does not work (regressio
 
   it('C358138 Matching on newly-created 035 does not work (regression) (folijet)',
     { tags: [TestTypes.criticalPath, DevTeams.folijet] }, () => {
-    // upload a marc file for creating of the new instance
+      // TODO delete reload after fix https://issues.folio.org/browse/MODDATAIMP-691
+      cy.reload();
+      // upload a marc file for creating of the new instance
       DataImport.uploadFile('marcFileForC358138.mrc', fileForCreateFirstName);
       JobProfiles.searchJobProfileForImport('Default - Create instance and SRS MARC Bib');
       JobProfiles.runImportFile();
@@ -176,8 +178,8 @@ describe('ui-data-import: Matching on newly-created 035 does not work (regressio
 
       // upload a marc file for updating already created instance
       cy.visit(TopMenu.dataImportPath);
-      // TODO delete code after fix https://issues.folio.org/browse/MODDATAIMP-691
-      DataImport.clickDataImportNavButton();
+      // TODO delete reload after fix https://issues.folio.org/browse/MODDATAIMP-691
+      cy.reload();
       DataImport.uploadFile('marcFileForC358138_rev.mrc', fileForUpdateFirstName);
       JobProfiles.searchJobProfileForImport(jobProfile.profileName);
       JobProfiles.runImportFile();
@@ -199,8 +201,8 @@ describe('ui-data-import: Matching on newly-created 035 does not work (regressio
 
       // upload a marc file for creating of the new instance
       cy.visit(TopMenu.dataImportPath);
-      // TODO delete code after fix https://issues.folio.org/browse/MODDATAIMP-691
-      DataImport.clickDataImportNavButton();
+      // TODO delete reload after fix https://issues.folio.org/browse/MODDATAIMP-691
+      cy.reload();
       DataImport.uploadFile('marcFileForC358138_with_035.mrc', fileForCreateSecondName);
       JobProfiles.searchJobProfileForImport('Default - Create instance and SRS MARC Bib');
       JobProfiles.runImportFile();
@@ -228,8 +230,8 @@ describe('ui-data-import: Matching on newly-created 035 does not work (regressio
 
       // upload a marc file for updating already created instance
       cy.visit(TopMenu.dataImportPath);
-      // TODO delete code after fix https://issues.folio.org/browse/MODDATAIMP-691
-      DataImport.clickDataImportNavButton();
+      // TODO delete reload after fix https://issues.folio.org/browse/MODDATAIMP-691
+      cy.reload();
       DataImport.uploadFile('marcFileForC358138_with_035_rev.mrc', fileForUpdateSecondName);
       JobProfiles.searchJobProfileForImport(jobProfile.profileName);
       JobProfiles.runImportFile();

@@ -237,8 +237,8 @@ describe('ui-data-import: Item update via match by status', () => {
 
       // upload a marc file for creating of the new instance, holding and item
       cy.visit(TopMenu.dataImportPath);
-      // TODO delete code after fix https://issues.folio.org/browse/MODDATAIMP-691
-      DataImport.clickDataImportNavButton();
+      // TODO delete reload after fix https://issues.folio.org/browse/MODDATAIMP-691
+      cy.reload();
       DataImport.uploadFile('marcFileForC357552.mrc', nameMarcFileForImportCreate);
       JobProfiles.searchJobProfileForImport(jobProfileNameForCreate);
       JobProfiles.runImportFile();

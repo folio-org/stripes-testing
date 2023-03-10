@@ -124,6 +124,8 @@ describe('ui-data-import: Data Import Updates should add 035 field from 001/003,
 
   it('C358998 Data Import Updates should add 035 field from 001/003, if it is not HRID or already exists (folijet)',
     { tags: [TestTypes.criticalPath, DevTeams.folijet] }, () => {
+      // TODO delete reload after fix https://issues.folio.org/browse/MODDATAIMP-691
+      cy.reload();
       // upload the first .mrc file
       DataImport.uploadFile('marcFileForC358998ForCreate_1.mrc', firstMarcFileNameForCreate);
       JobProfiles.searchJobProfileForImport('Default - Create instance and SRS MARC Bib');
@@ -156,8 +158,8 @@ describe('ui-data-import: Data Import Updates should add 035 field from 001/003,
           });
         // upload the second .mrc file
         cy.visit(TopMenu.dataImportPath);
-        // TODO delete code after fix https://issues.folio.org/browse/MODDATAIMP-691
-        DataImport.clickDataImportNavButton();
+        // TODO delete reload after fix https://issues.folio.org/browse/MODDATAIMP-691
+        cy.reload();
         DataImport.uploadFile('marcFileForC358998ForCreate_2.mrc', secondMarcFileNameForCreate);
         JobProfiles.searchJobProfileForImport('Default - Create instance and SRS MARC Bib');
         JobProfiles.runImportFile();
@@ -227,8 +229,8 @@ describe('ui-data-import: Data Import Updates should add 035 field from 001/003,
 
         // upload a marc file for updating already created first instance
         cy.visit(TopMenu.dataImportPath);
-        // TODO delete code after fix https://issues.folio.org/browse/MODDATAIMP-691
-        DataImport.clickDataImportNavButton();
+        // TODO delete reload after fix https://issues.folio.org/browse/MODDATAIMP-691
+        cy.reload();
         DataImport.uploadFile(firstMarcFileNameForUpdate, firstFileNameAfterUpload);
         JobProfiles.searchJobProfileForImport(jobProfile.profileName);
         JobProfiles.runImportFile();
@@ -253,8 +255,8 @@ describe('ui-data-import: Data Import Updates should add 035 field from 001/003,
 
       // upload a marc file for updating already created second instance
       cy.visit(TopMenu.dataImportPath);
-      // TODO delete code after fix https://issues.folio.org/browse/MODDATAIMP-691
-      DataImport.clickDataImportNavButton();
+      // TODO delete reload after fix https://issues.folio.org/browse/MODDATAIMP-691
+      cy.reload();
       DataImport.uploadFile(secondMarcFileNameForUpdate, secondFileNameAfterUpload);
       JobProfiles.searchJobProfileForImport(jobProfile.profileName);
       JobProfiles.runImportFile();
