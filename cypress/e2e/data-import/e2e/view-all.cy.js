@@ -20,6 +20,8 @@ describe('ui-data-import: Search the "View all" log screen', () => {
     // create dynamically file with given name in fixtures
     FileManager.createFile(`cypress/fixtures/${uniqueFileName}`);
 
+    // TODO delete reload after fix https://issues.folio.org/browse/MODDATAIMP-691
+    cy.reload();
     // remove generated test file from fixtures after uploading
     cy.uploadFileWithDefaultJobProfile(uniqueFileName);
     FileManager.deleteFile(`cypress/fixtures/${uniqueFileName}`);
