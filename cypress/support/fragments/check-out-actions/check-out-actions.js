@@ -67,12 +67,12 @@ export default {
     cy.do(Button({ id: 'clickable-find-patron' }).click());
     cy.expect(KeyValue('Borrower').exists());
     cy.wait('@getLoans');
-    cy.intercept('/circulation/requests?*').as('getRequests');
     cy.do(TextField({ name: 'item.barcode' }).fillIn(itemBarcode));
-    cy.wait('@getRequests');
+    // need to wait until data to loaded
+    cy.wait(1500);
     cy.do(Button({ id: 'clickable-add-item' }).click());
     // waiters needs for check out item in loop
-    cy.wait(1000);
+    cy.wait(1500);
   },
 
   endCheckOutSession:() => {
