@@ -113,7 +113,7 @@ describe('ui-users-loans: renewal failure because loan has reached maximum renew
           items: [
             {
               ...newFirstItemData,
-              permanentLoanType: { id: loanType.id.id },
+              permanentLoanType: { id: loanType.id },
               materialType: { id: Cypress.env('materialTypes')[0].id },
             }
           ],
