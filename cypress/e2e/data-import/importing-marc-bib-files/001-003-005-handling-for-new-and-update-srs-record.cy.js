@@ -80,6 +80,8 @@ describe('ui-data-import: Test 001/003/035 handling for New and Updated SRS reco
         const fileName = `C17039autotestFile.${getRandomPostfix()}.mrc`;
 
         cy.visit(TopMenu.dataImportPath);
+        // TODO delete code after fix https://issues.folio.org/browse/MODDATAIMP-691
+        DataImport.clickDataImportNavButton();
         DataImport.uploadFile('oneMarcBib.mrc', fileName);
         JobProfiles.searchJobProfileForImport('Default - Create instance and SRS MARC Bib');
         JobProfiles.runImportFile();
@@ -116,6 +118,8 @@ describe('ui-data-import: Test 001/003/035 handling for New and Updated SRS reco
   it('C17039 Test 001/003/035 handling for New and Updated SRS records (folijet)', { tags: [TestTypes.criticalPath, DevTeams.folijet] }, () => {
     // upload a marc file
     cy.visit(TopMenu.dataImportPath);
+    // TODO delete code after fix https://issues.folio.org/browse/MODDATAIMP-691
+    DataImport.clickDataImportNavButton();
     DataImport.uploadFile('marcFilrForC17039.mrc', nameMarcFileForCreate);
     JobProfiles.searchJobProfileForImport('Default - Create instance and SRS MARC Bib');
     JobProfiles.runImportFile();
@@ -182,6 +186,8 @@ describe('ui-data-import: Test 001/003/035 handling for New and Updated SRS reco
 
         // upload a marc file for updating already created instance
         cy.visit(TopMenu.dataImportPath);
+        // TODO delete code after fix https://issues.folio.org/browse/MODDATAIMP-691
+        DataImport.clickDataImportNavButton();
         DataImport.uploadFile(editedMarcFileName, fileNameAfterUpload);
         JobProfiles.searchJobProfileForImport(jobProfile.profileName);
         JobProfiles.runImportFile();
@@ -219,6 +225,8 @@ describe('ui-data-import: Test 001/003/035 handling for New and Updated SRS reco
         ExportFile.downloadExportedMarcFile(exportedFileName);
         // upload the exported marc file
         cy.visit(TopMenu.dataImportPath);
+        // TODO delete code after fix https://issues.folio.org/browse/MODDATAIMP-691
+        DataImport.clickDataImportNavButton();
         DataImport.uploadExportedFile(exportedFileName);
         JobProfiles.searchJobProfileForImport(jobProfile.profileName);
         JobProfiles.runImportFile();

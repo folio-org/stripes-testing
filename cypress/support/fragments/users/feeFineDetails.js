@@ -13,7 +13,7 @@ export default {
   openTransferModal: () => cy.do(Button('Transfer').click()),
   openErrorModal: () => cy.do(Button('Error').click()),
   openNewStaffInfo: () => cy.do(HTML({ text: 'New staff info', id: 'button' }).click()),
-  checkNewStaffInfo: (info) => cy.expect(HTML(info).exists()),
+  checkNewStaffInfo: (info) => cy.expect(HTML('STAFF : ' + info).exists()),
   openActions: () => cy.do(Button('Actions').click()),
   confirmFeeFineCancellation: (comment) => {
     cy.do([

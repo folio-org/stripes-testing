@@ -23,5 +23,14 @@ export default {
     id: uuid(),
     vendor: '',
     orderType: 'One-Time'
+  },
+  defaultOngoingTimeOrder: {
+    id: uuid(),
+    vendor: '',
+    ongoing: {
+      isSubscription: false, 
+      manualRenewal: false,
+    },
+    orderType: 'Ongoing'
   }
 };

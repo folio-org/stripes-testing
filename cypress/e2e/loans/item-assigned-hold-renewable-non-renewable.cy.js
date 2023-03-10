@@ -27,6 +27,7 @@ import SettingsMenu from '../../support/fragments/settingsMenu';
 import TitleLevelRequests from '../../support/fragments/settings/circulation/titleLevelRequests';
 
 describe('TLR: Item renew', () => {
+  let addedCirculationRule;
   let originalCirculationRules;
   let userForRenew = {};
   let userForCheckOut = {};
@@ -151,9 +152,8 @@ describe('TLR: Item renew', () => {
       originalCirculationRules = circulationRule.rulesAsText;
       const ruleProps = CirculationRules.getRuleProps(circulationRule.rulesAsText);
       const defaultProps = ` i ${ruleProps.i} r ${ruleProps.r} o ${ruleProps.o} n ${ruleProps.n}`;
-      const renwableRule = `${originalCirculationRules}\nm ${testData.materialBookId} + g ${patronGroup.id}: l ${loanPolicyBody.renewable.id} ${defaultProps}`;
-      const nonrenewableRule = `\nm ${testData.materialDvdId} + g ${patronGroup.id}: l ${loanPolicyBody.nonRenewable.id} ${defaultProps}`;
-      cy.updateCirculationRules({ rulesAsText: renwableRule + nonrenewableRule });
+      addedCirculationRule = ` \nm ${testData.materialBookId} + g ${patronGroup.id}: l ${loanPolicyBody.renewable.id} ${defaultProps} \nm ${testData.materialDvdId} + g ${patronGroup.id}: l ${loanPolicyBody.nonRenewable.id} ${defaultProps}`;
+      cy.updateCirculationRules({ rulesAsText: `${originalCirculationRules}${addedCirculationRule}` });
     });
 
     cy.createTempUser(
@@ -225,11 +225,11 @@ describe('TLR: Item renew', () => {
     cy.wrap(instanceData.itemIds).each((item) => {
       cy.deleteItemViaApi(item);
     });
+    CirculationRules.deleteRuleViaApi(addedCirculationRule);
     cy.deleteHoldingRecordViaApi(instanceData.holdingId);
     InventoryInstance.deleteInstanceViaApi(instanceData.instanceId);
     cy.deleteLoanPolicy(loanPolicyBody.renewable.id);
     cy.deleteLoanPolicy(loanPolicyBody.nonRenewable.id);
-    CirculationRules.deleteRuleViaApi(originalCirculationRules);
     UserEdit.changeServicePointPreferenceViaApi(userForRenew.userId, [testData.userServicePoint.id]);
     UserEdit.changeServicePointPreferenceViaApi(userForCheckOut.userId, [testData.userServicePoint.id]);
     ServicePoints.deleteViaApi(testData.userServicePoint.id);
