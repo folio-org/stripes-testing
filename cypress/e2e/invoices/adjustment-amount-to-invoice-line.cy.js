@@ -115,6 +115,25 @@ describe('invoices: add adjustment', () => {
     Invoices.selectInvoice(invoice.invoiceNumber);
     Invoices.selectInvoiceLine();
     Invoices.editInvoiceLine();
+    Invoices.addAdjustment(adjustmentDescription, '10', '$', 'In addition to');
+    Invoices.approveInvoice();
+    Invoices.payInvoice();
+
+    cy.visit(TopMenu.fundPath);
+    FinanceHelp.searchByName(firstFund.name);
+    Funds.selectFund(firstFund.name);
+    Funds.selectBudgetDetails();
+    Funds.viewTransactions();
+    Funds.checkTransactionDetails(defaultFiscalYear.code,'($30.00)', invoice.invoiceNumber, 'Payment', `${firstFund.name} (${firstFund.code})`);
+  });
+
+  it('C375999 Approve and pay invoice with added adjustment % to invoice line (not prorated, related to total as "In addition to") (thunderjet)', { tags: [testType.smoke, devTeams.thunderjet] }, () => {
+    cy.visit(TopMenu.invoicesPath);
+    
+    Invoices.searchByNumber(invoice.invoiceNumber);
+    Invoices.selectInvoice(invoice.invoiceNumber);
+    Invoices.selectInvoiceLine();
+    Invoices.editInvoiceLine();
     Invoices.addAdjustment(adjustmentDescription, '10', '%', 'In addition to');
     Invoices.approveInvoice();
     Invoices.payInvoice();
