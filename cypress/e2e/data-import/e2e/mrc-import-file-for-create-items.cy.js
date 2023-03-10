@@ -66,7 +66,6 @@ describe('ui-data-import: MARC file import with creating of the new instance, ho
         user = userProperties;
         cy.login(userProperties.username, userProperties.password);
       });
-    DataImport.checkUploadState();
   });
 
   const createInstanceMappingProfile = (instanceMappingProfile) => {
@@ -95,9 +94,7 @@ describe('ui-data-import: MARC file import with creating of the new instance, ho
   };
 
   after(() => {
-    DataImport.checkUploadState();
     Users.deleteViaApi(user.userId);
-
     // delete generated profiles
     JobProfiles.deleteJobProfile(specialJobProfile.profileName);
     collectionOfProfiles.forEach(profile => {

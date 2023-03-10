@@ -17,6 +17,7 @@ import TopMenu from '../../../support/fragments/topMenu';
 import permissions from '../../../support/dictionary/permissions';
 import Users from '../../../support/fragments/users/users';
 import DevTeams from '../../../support/dictionary/devTeams';
+import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 
 describe('ui-data-import: Verify the possibility to modify MARC Bibliographic record', () => {
   // unique name for profiles
@@ -31,7 +32,7 @@ describe('ui-data-import: Verify the possibility to modify MARC Bibliographic re
   const nameMarcFileForUpload = `C345423autotestFile.${getRandomPostfix()}.mrc`;
 
   let user = {};
-  let instanceHRID;
+  let instanceHrid = null;
 
   before(() => {
     cy.createTempUser([
@@ -51,8 +52,10 @@ describe('ui-data-import: Verify the possibility to modify MARC Bibliographic re
   });
 
   after(() => {
-    DataImport.checkUploadState();
-    cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${instanceHRID}"` });
+    cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${instanceHrid}"` })
+      .then((instance) => {
+        InventoryInstance.deleteInstanceViaApi(instance.id);
+      });
     // delete profiles
     JobProfiles.deleteJobProfile(jobProfileName);
     MatchProfiles.deleteMatchProfile(matchProfileName);
@@ -110,7 +113,7 @@ describe('ui-data-import: Verify the possibility to modify MARC Bibliographic re
     // get Instance HRID through API
     InventorySearchAndFilter.getInstanceHRID()
       .then(hrId => {
-        instanceHRID = hrId[0];
+        instanceHrid = hrId[0];
         // download .csv file
         cy.visit(TopMenu.inventoryPath);
         InventorySearchAndFilter.searchInstanceByHRID(hrId[0]);

@@ -34,12 +34,9 @@ describe('ui-data-import: MARC-MARC matching for 001 field', () => {
         user = userProperties;
         cy.login(userProperties.username, userProperties.password, { path: TopMenu.dataImportPath, waiter: DataImport.waitLoading });
       });
-    DataImport.checkUploadState();
   });
 
-
   after(() => {
-    DataImport.checkUploadState();
     Users.deleteViaApi(user.userId);
   });
 

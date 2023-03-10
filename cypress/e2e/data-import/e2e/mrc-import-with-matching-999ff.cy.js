@@ -33,12 +33,6 @@ describe('ui-data-import: MARC file import with matching for 999 ff field', () =
   beforeEach(() => {
     cy.loginAsAdmin();
     cy.getAdminToken();
-
-    DataImport.checkUploadState();
-  });
-
-  afterEach(() => {
-    DataImport.checkUploadState();
   });
 
   it('C343343 MARC file import with matching for 999 ff field (folijet)', { tags: [TestTypes.smoke, DevTeams.folijet] }, () => {
