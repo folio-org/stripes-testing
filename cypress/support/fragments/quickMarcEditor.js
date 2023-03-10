@@ -121,11 +121,11 @@ export default {
 
   pressSaveAndClose() { cy.do(saveAndCloseButton.click()); },
 
-  clickSaveAndCloseThenCheck(redords) {
+  clickSaveAndCloseThenCheck(records) {
     cy.do(saveAndCloseButton.click());
     cy.expect([
       confirmationModal.exists(),
-      confirmationModal.has({ content: including(`By selecting Continue with save, then ${redords} field(s) will be deleted and this record will be updated. Are you sure you want to continue?`) }),
+      confirmationModal.has({ content: including(`By selecting Continue with save, then ${records} field(s) will be deleted and this record will be updated. Are you sure you want to continue?`) }),
       continueWithSaveButton.exists(),
       restoreDeletedFieldsBtn.exists(),
     ]);
