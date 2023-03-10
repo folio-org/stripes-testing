@@ -22,7 +22,7 @@ import InstanceRecordView from '../../../support/fragments/inventory/instanceRec
 import Users from '../../../support/fragments/users/users';
 import FileManager from '../../../support/utils/fileManager';
 
-describe('ui-data-import: Data Import Updates should add 035 field from 001/003, if it is not HRID or already exists', () => {
+describe('ui-data-import', () => {
   let user = null;
   let instanceHridFromFirstFile;
   const instanceHridsFromSecondFile = [];
@@ -85,7 +85,7 @@ describe('ui-data-import: Data Import Updates should add 035 field from 001/003,
     acceptedType: NewJobProfile.acceptedDataType.marc
   };
 
-  before(() => {
+  before('create test data', () => {
     cy.createTempUser([
       permissions.moduleDataImportEnabled.gui,
       permissions.settingsDataImportEnabled.gui,
@@ -101,7 +101,7 @@ describe('ui-data-import: Data Import Updates should add 035 field from 001/003,
       });
   });
 
-  after(() => {
+  after('delete test data', () => {
     JobProfiles.deleteJobProfile(jobProfileName);
     MatchProfiles.deleteMatchProfile(matchProfileName);
     ActionProfiles.deleteActionProfile(actionProfileName);

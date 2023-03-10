@@ -16,7 +16,7 @@ import InventoryEditMarcRecord from '../../../support/fragments/inventory/invent
 import InventoryViewSource from '../../../support/fragments/inventory/inventoryViewSource';
 import Users from '../../../support/fragments/users/users';
 
-describe('ui-data-import: Check that protected fields in incoming records are not deleted during import: Scenario 1', () => {
+describe('ui-data-import', () => {
   let user = null;
   let instanceHrid = null;
   const protectedField = '856';
@@ -24,7 +24,7 @@ describe('ui-data-import: Check that protected fields in incoming records are no
   const oclcForChanging = '466478385';
   const imported856Field = 'Notice et cote du catalogue de la Bibliothèque nationale de France ‡u http://catalogue.bnf.fr/ark:/12148/cb371881758';
 
-  before(() => {
+  before('create test data', () => {
     cy.createTempUser([
       permissions.moduleDataImportEnabled.gui,
       permissions.settingsDataImportEnabled.gui,
@@ -68,7 +68,7 @@ describe('ui-data-import: Check that protected fields in incoming records are no
       });
   });
 
-  after(() => {
+  after('delete test data', () => {
     MarcFieldProtection.getListOfMarcFieldProtectionViaApi({ query: `"field"=="${protectedField}"` })
       .then(list => {
         list.forEach(({ id }) => MarcFieldProtection.deleteMarcFieldProtectionViaApi(id));

@@ -22,7 +22,7 @@ import SettingsJobProfiles from '../../../support/fragments/settings/dataImport/
 import DevTeams from '../../../support/dictionary/devTeams';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 
-describe('ui-data-import: MARC file upload with the update of instance, holding, and items', () => {
+describe('ui-data-import', () => {
   let instanceHRID = null;
   // profile names for creating
   const nameMarcBibMappingProfile = `autotest_marcBib_mapping_profile_${getRandomPostfix()}`;
@@ -280,7 +280,7 @@ describe('ui-data-import: MARC file upload with the update of instance, holding,
     acceptedType: NewJobProfile.acceptedDataType.marc
   };
 
-  beforeEach(() => {
+  beforeEach('create test data', () => {
     cy.loginAsAdmin({ path: TopMenu.dataImportPath, waiter: DataImport.waitLoading });
     cy.getAdminToken();
 
@@ -306,7 +306,7 @@ describe('ui-data-import: MARC file upload with the update of instance, holding,
       });
   });
 
-  afterEach(() => {
+  after('delete test data', () => {
     // delete generated profiles
     JobProfiles.deleteJobProfile(jobProfileNameUpdate);
     collectionOfMatchProfiles.forEach(profile => {

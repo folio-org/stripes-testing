@@ -19,10 +19,10 @@ import permissions from '../../../support/dictionary/permissions';
 import Users from '../../../support/fragments/users/users';
 import DevTeams from '../../../support/dictionary/devTeams';
 
-describe('ui-data-import: MARC-MARC matching for 001 field', () => {
+describe('ui-data-import', () => {
   let user = {};
 
-  before(() => {
+  before('login', () => {
     cy.createTempUser([
       permissions.dataImportUploadAll.gui,
       permissions.moduleDataImportEnabled.gui,
@@ -36,7 +36,7 @@ describe('ui-data-import: MARC-MARC matching for 001 field', () => {
       });
   });
 
-  after(() => {
+  after('delete test data', () => {
     Users.deleteViaApi(user.userId);
   });
 

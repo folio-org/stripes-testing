@@ -17,7 +17,7 @@ import FileDetails from '../../../support/fragments/data_import/logs/fileDetails
 import TopMenu from '../../../support/fragments/topMenu';
 import DevTeams from '../../../support/dictionary/devTeams';
 
-describe('ui-data-import: MARC file import with matching for 999 ff field', () => {
+describe('ui-data-import', () => {
   // unique file name to upload
   const nameForMarcFile = `C343343autotestFile${getRandomPostfix()}.mrc`;
   const nameForExportedMarcFile = `C343343autotestFile${getRandomPostfix()}.mrc`;
@@ -30,7 +30,7 @@ describe('ui-data-import: MARC file import with matching for 999 ff field', () =
   const actionProfileNameForExport = `autotestActionProf${getRandomPostfix()}`;
   const jobProfileNameForExport = `autotestJobProf${getRandomPostfix()}`;
 
-  beforeEach(() => {
+  beforeEach('login', () => {
     cy.loginAsAdmin();
     cy.getAdminToken();
   });

@@ -88,7 +88,7 @@ describe('ui-data-import: Check that field protection settings work properly dur
     acceptedType: NewJobProfile.acceptedDataType.marc
   };
 
-  beforeEach(() => {
+  beforeEach('create test data', () => {
     cy.loginAsAdmin();
     cy.getAdminToken()
       .then(() => {
@@ -109,7 +109,7 @@ describe('ui-data-import: Check that field protection settings work properly dur
       });
   });
 
-  afterEach(() => {
+  after('delete test data', () => {
     marcFieldProtectionId.forEach(field => MarcFieldProtection.deleteMarcFieldProtectionViaApi(field));
     // delete profiles
     JobProfiles.deleteJobProfile(jobProfileName);

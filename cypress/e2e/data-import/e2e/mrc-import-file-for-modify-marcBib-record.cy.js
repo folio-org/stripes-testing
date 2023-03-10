@@ -19,7 +19,7 @@ import Users from '../../../support/fragments/users/users';
 import DevTeams from '../../../support/dictionary/devTeams';
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 
-describe('ui-data-import: Verify the possibility to modify MARC Bibliographic record', () => {
+describe('ui-data-import', () => {
   // unique name for profiles
   const mappingProfileName = `autoTestMappingProf.${getRandomPostfix()}`;
   const actionProfileName = `autoTestActionProf.${getRandomPostfix()}`;
@@ -34,7 +34,7 @@ describe('ui-data-import: Verify the possibility to modify MARC Bibliographic re
   let user = {};
   let instanceHrid = null;
 
-  before(() => {
+  before('login', () => {
     cy.createTempUser([
       permissions.dataImportUploadAll.gui,
       permissions.moduleDataImportEnabled.gui,
@@ -51,7 +51,7 @@ describe('ui-data-import: Verify the possibility to modify MARC Bibliographic re
       });
   });
 
-  after(() => {
+  after('delete test data', () => {
     // delete profiles
     JobProfiles.deleteJobProfile(jobProfileName);
     MatchProfiles.deleteMatchProfile(matchProfileName);
@@ -96,9 +96,9 @@ describe('ui-data-import: Verify the possibility to modify MARC Bibliographic re
       acceptedType: NewJobProfile.acceptedDataType.marc
     };
 
-    // upload a marc file for creating of the new instance, holding and item
     // TODO delete reload after fix https://issues.folio.org/browse/MODDATAIMP-691
     cy.reload();
+    // upload a marc file for creating of the new instance, holding and item
     DataImport.uploadFile('oneMarcBib.mrc', nameMarcFileForCreate);
     JobProfiles.searchJobProfileForImport('Default - Create instance and SRS MARC Bib');
     JobProfiles.runImportFile();

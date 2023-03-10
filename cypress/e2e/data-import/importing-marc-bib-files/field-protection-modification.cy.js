@@ -19,7 +19,7 @@ import InventoryViewSource from '../../../support/fragments/inventory/inventoryV
 import Users from '../../../support/fragments/users/users';
 import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
 
-describe('ui-data-import: MARC field protections apply to MARC modifications of incoming records when they should not: Scenario 1', () => {
+describe('ui-data-import', () => {
   let user = null;
   const fieldsForDelete = ['977', '978', '979'];
   const fieldsForDeleteIds = [];
@@ -48,7 +48,7 @@ describe('ui-data-import: MARC field protections apply to MARC modifications of 
     acceptedType: NewJobProfile.acceptedDataType.marc
   };
 
-  before(() => {
+  before('login', () => {
     cy.createTempUser([
       permissions.inventoryAll.gui,
       permissions.moduleDataImportEnabled.gui,
@@ -62,7 +62,7 @@ describe('ui-data-import: MARC field protections apply to MARC modifications of 
       });
   });
 
-  after(() => {
+  after('delete test data', () => {
     fieldsForDeleteIds.forEach(fieldId => MarcFieldProtection.deleteMarcFieldProtectionViaApi(fieldId));
     // delete profiles
     JobProfiles.deleteJobProfile(jobProfileName);

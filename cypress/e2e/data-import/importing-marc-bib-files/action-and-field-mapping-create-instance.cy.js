@@ -47,12 +47,12 @@ describe('ui-data-import', () => {
     acceptedType: NewJobProfile.acceptedDataType.marc
   };
 
-  before(() => {
+  before('login', () => {
     cy.loginAsAdmin({ path: SettingsMenu.mappingProfilePath, waiter: FieldMappingProfiles.waitLoading });
     cy.getAdminToken();
   });
 
-  after(() => {
+  after('delete test data', () => {
     JobProfiles.deleteJobProfile(jobProfileName);
     ActionProfiles.deleteActionProfile(actionProfileName);
     FieldMappingProfiles.deleteFieldMappingProfile(mappingProfileName);

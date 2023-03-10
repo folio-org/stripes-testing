@@ -24,7 +24,7 @@ import InventoryViewSource from '../../../support/fragments/inventory/inventoryV
 import Users from '../../../support/fragments/users/users';
 import FileManager from '../../../support/utils/fileManager';
 
-describe('ui-data-import: Match on POL and update related Instance with source MARC, create Holdings, Item records.', () => {
+describe('ui-data-import', () => {
   let user = null;
   let orderNumber;
   let instanceHrid;
@@ -96,7 +96,7 @@ describe('ui-data-import: Match on POL and update related Instance with source M
     createInventory: 'None'
   };
 
-  before(() => {
+  before('login', () => {
     cy.createTempUser([
       permissions.moduleDataImportEnabled.gui,
       permissions.settingsDataImportEnabled.gui,
@@ -118,7 +118,7 @@ describe('ui-data-import: Match on POL and update related Instance with source M
       });
   });
 
-  after(() => {
+  after('delete test data', () => {
     // delete generated profiles
     JobProfiles.deleteJobProfile(jobProfileName);
     MatchProfiles.deleteMatchProfile(matchProfile.profileName);

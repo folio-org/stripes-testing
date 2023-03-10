@@ -72,7 +72,7 @@ describe('ui-data-import: Check that field protection overrides work properly du
     { type: 'ISBN', value: '4934691323219 (paperback)' }
   ];
 
-  beforeEach(() => {
+  beforeEach('create test data', () => {
     cy.loginAsAdmin();
     cy.getAdminToken()
       .then(() => {
@@ -101,7 +101,7 @@ describe('ui-data-import: Check that field protection overrides work properly du
       });
   });
 
-  afterEach(() => {
+  after('delete test data', () => {
     MarcFieldProtection.deleteMarcFieldProtectionViaApi(firstFieldId);
     MarcFieldProtection.deleteMarcFieldProtectionViaApi(secondFieldId);
     // delete profiles

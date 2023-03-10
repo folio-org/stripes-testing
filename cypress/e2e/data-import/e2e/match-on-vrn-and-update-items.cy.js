@@ -26,7 +26,7 @@ import MatchProfiles from '../../../support/fragments/data_import/match_profiles
 import ActionProfiles from '../../../support/fragments/data_import/action_profiles/actionProfiles';
 import FieldMappingProfiles from '../../../support/fragments/data_import/mapping_profiles/fieldMappingProfiles';
 
-describe('ui-data-import: Match on VRN and update related Instance, Holdings, Item', () => {
+describe('ui-data-import', () => {
   const item = {
     title: 'Agrarianism and capitalism in early Georgia, 1732-1743 / Jay Jordan Butler.',
     productId: `xyz${getRandomPostfix()}`,
@@ -89,7 +89,7 @@ describe('ui-data-import: Match on VRN and update related Instance, Holdings, It
     ]
   };
 
-  before(() => {
+  before('create test data', () => {
     cy.createTempUser([
       permissions.uiOrdersView.gui,
       permissions.uiOrdersCreate.gui,
@@ -137,7 +137,7 @@ describe('ui-data-import: Match on VRN and update related Instance, Holdings, It
       });
   });
 
-  after(() => {
+  after('delete test data', () => {
     Orders.getOrdersApi({ limit: 1, query: `"poNumber"=="${orderNumber}"` })
       .then(order => {
         Orders.deleteOrderApi(order[0].id);
