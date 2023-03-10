@@ -92,7 +92,7 @@ export default {
 
   createInvoiceMappingProfile:(mappingProfileName, defaultProfile, organizationName) => {
     cy.intercept('/tags?*').as('getTag');
-    searchMappingProfile(defaultProfile);
+    search(defaultProfile);
     cy.wait('@getTag');
     duplicateMappingProfile();
     NewFieldMappingProfile.fillMappingProfileForInvoice(mappingProfileName, organizationName);
