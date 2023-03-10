@@ -203,7 +203,6 @@ describe('ui-users-loans: renewal failure because loan has reached maximum renew
     })).then(() => {
       InventoryInstance.deleteInstanceViaApi(firstInstanceIds.instanceId);
     });
-
     cy.wrap(secondInstanceIds.holdingIds.forEach(holdingsId => {
       cy.wrap(holdingsId.itemIds.forEach(itemId => {
         cy.deleteItemViaApi(itemId);
@@ -213,6 +212,7 @@ describe('ui-users-loans: renewal failure because loan has reached maximum renew
     })).then(() => {
       InventoryInstance.deleteInstanceViaApi(secondInstanceIds.instanceId);
     });
+    cy.deleteLoanType(loanType.id);
     cy.deleteLoanPolicy(loanPolicy.id);
     CirculationRules.deleteRuleViaApi(addedCirculationRule);
     UserEdit.changeServicePointPreferenceViaApi(firstUser.userId, [servicePoint.id]);
