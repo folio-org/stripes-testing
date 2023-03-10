@@ -1,3 +1,4 @@
+import uuid from 'uuid';
 import testTypes from '../../../support/dictionary/testTypes';
 import permissions from '../../../support/dictionary/permissions';
 import { getNewItem } from '../../../support/fragments/inventory/item';
@@ -24,6 +25,8 @@ describe('ui-users-loans: renewal failure because loan has reached maximum renew
   const loanTypeName = `autotest_loan_type${getRandomPostfix()}`;
   const newFirstItemData = getNewItem();
   const newSecondItemData = getNewItem();
+  const servicePoint = ServicePoints.getDefaultServicePointWithPickUpLocation('autotest', uuid());
+  const servicePointId = servicePoint.id;
   let loanPolicy;
   let materialType;
   let holdingsSourceId;
@@ -33,7 +36,6 @@ describe('ui-users-loans: renewal failure because loan has reached maximum renew
   let secondUser = {};
   let firstInstanceIds;
   let secondInstanceIds;
-  let servicePointId;
 
   beforeEach(() => {
     cy.getAdminToken();
@@ -47,11 +49,7 @@ describe('ui-users-loans: renewal failure because loan has reached maximum renew
     cy.getLocations({ limit: 1 });
     cy.getHoldingTypes({ limit: 1 });
     cy.createLoanType({ name: loanTypeName });
-    ServicePoints.getViaApi()
-      .then((res) => {
-        servicePointId = res[0].id;
-      });
-
+    ServicePoints.createViaApi(servicePoint);
     LoanPolicyActions.createViaApi({
       loanable: true,
       loansPolicy: {
@@ -95,7 +93,7 @@ describe('ui-users-loans: renewal failure because loan has reached maximum renew
         password,
         userId,
       };
-      UserEdit.addServicePointViaApi(servicePointId, userId).then(() => {
+      UserEdit.addServicePointViaApi(servicePoint.id, userId).then(() => {
         InventoryInstances.createFolioInstanceViaApi({
           instance: {
             instanceTypeId: Cypress.env('instanceTypes')[0].id,
@@ -143,7 +141,7 @@ describe('ui-users-loans: renewal failure because loan has reached maximum renew
         password,
         userId,
       };
-      UserEdit.addServicePointViaApi(servicePointId, userId).then(() => {
+      UserEdit.addServicePointViaApi(servicePoint.id, userId).then(() => {
         InventoryInstances.createFolioInstanceViaApi({
           instance: {
             instanceTypeId: Cypress.env('instanceTypes')[0].id,
@@ -211,8 +209,11 @@ describe('ui-users-loans: renewal failure because loan has reached maximum renew
     });
     cy.deleteLoanPolicy(loanPolicy.id);
     CirculationRules.deleteRuleViaApi(addedCirculationRule);
+    UserEdit.changeServicePointPreferenceViaApi(firstUser.userId, [servicePoint.id]);
+    UserEdit.changeServicePointPreferenceViaApi(secondUser.userId, [servicePoint.id]);
     Users.deleteViaApi(firstUser.userId);
     Users.deleteViaApi(secondUser.userId);
+    ServicePoints.deleteViaApi(servicePoint.id);
   });
 
   it('C569: renewal failure because loan has reached maximum renewalsv (folijet) (prokopovych)', { tags: [testTypes.smoke, DevTeams.folijet] }, () => {
