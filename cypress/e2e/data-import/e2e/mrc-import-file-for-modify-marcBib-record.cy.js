@@ -51,8 +51,6 @@ describe('ui-data-import: Verify the possibility to modify MARC Bibliographic re
   });
 
   after(() => {
-    DataImport.checkUploadState();
-    cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${instanceHRID}"` });
     // delete profiles
     JobProfiles.deleteJobProfile(jobProfileName);
     MatchProfiles.deleteMatchProfile(matchProfileName);

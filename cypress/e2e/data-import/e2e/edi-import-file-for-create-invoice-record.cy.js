@@ -34,19 +34,16 @@ describe('ui-data-import: EDIFACT file import with creating of new invoice recor
         user = userProperties;
         cy.login(userProperties.username, userProperties.password);
       });
-    DataImport.checkUploadState();
   });
 
   after(() => {
-    cy.getInvoiceIdApi({ query: `vendorInvoiceNo="${FileDetails.invoiceNumberFromEdifactFile}"` })
-      .then(id => cy.deleteInvoiceFromStorageApi(id));
-    DataImport.checkUploadState();
-    Users.deleteViaApi(user.userId);
-
     // clean up generated profiles
     JobProfiles.deleteJobProfile(jobProfileName);
     ActionProfiles.deleteActionProfile(actionProfileName);
     FieldMappingProfiles.deleteFieldMappingProfile(mappingProfileName);
+    Users.deleteViaApi(user.userId);
+    cy.getInvoiceIdApi({ query: `vendorInvoiceNo="${FileDetails.invoiceNumberFromEdifactFile}"` })
+      .then(id => cy.deleteInvoiceFromStorageApi(id));
   });
 
   it('C343338 EDIFACT file import with creating of new invoice record (folijet)', { tags: [TestTypes.smoke, DevTeams.folijet] }, () => {

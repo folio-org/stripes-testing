@@ -21,8 +21,6 @@ describe('ui-data-import: Import a large EDIFACT invoice file', () => {
   beforeEach(() => {
     cy.loginAsAdmin();
     cy.getAdminToken();
-
-    DataImport.checkUploadState();
   });
 
   afterEach(() => {
@@ -30,7 +28,6 @@ describe('ui-data-import: Import a large EDIFACT invoice file', () => {
     JobProfiles.deleteJobProfile(jobProfileName);
     ActionProfiles.deleteActionProfile(actionProfileName);
     FieldMappingProfiles.deleteFieldMappingProfile(mappingProfileName);
-    DataImport.checkUploadState();
   });
 
   it('C347615 Import a large EDIFACT invoice file (folijet)', { tags: [TestTypes.smoke, DevTeams.folijet] }, () => {

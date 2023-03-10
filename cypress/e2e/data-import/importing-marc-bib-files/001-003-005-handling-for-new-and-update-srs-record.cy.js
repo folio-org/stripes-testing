@@ -101,6 +101,10 @@ describe('ui-data-import: Test 001/003/035 handling for New and Updated SRS reco
     MatchProfiles.deleteMatchProfile(matchProfileName);
     ActionProfiles.deleteActionProfile(actionProfileName);
     FieldMappingProfiles.deleteFieldMappingProfile(mappingProfileName);
+    // delete downloads folder and created files in fixtures
+    FileManager.deleteFolder(Cypress.config('downloadsFolder'));
+    FileManager.deleteFile(`cypress/fixtures/${editedMarcFileName}`);
+    FileManager.deleteFile(`cypress/fixtures/${exportedFileName}`);
     cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${instanceHrid}"` })
       .then((instance) => {
         InventoryInstance.deleteInstanceViaApi(instance.id);
@@ -109,10 +113,6 @@ describe('ui-data-import: Test 001/003/035 handling for New and Updated SRS reco
       .then((instance) => {
         InventoryInstance.deleteInstanceViaApi(instance.id);
       });
-    // delete downloads folder and created files in fixtures
-    FileManager.deleteFolder(Cypress.config('downloadsFolder'));
-    FileManager.deleteFile(`cypress/fixtures/${editedMarcFileName}`);
-    FileManager.deleteFile(`cypress/fixtures/${exportedFileName}`);
   });
 
   it('C17039 Test 001/003/035 handling for New and Updated SRS records (folijet)', { tags: [TestTypes.criticalPath, DevTeams.folijet] }, () => {

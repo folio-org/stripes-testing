@@ -306,8 +306,6 @@ describe('ui-data-import: MARC file upload with the update of instance, holding,
   });
 
   afterEach(() => {
-    DataImport.checkUploadState();
-    cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${instanceHRID}"` });
     // delete generated profiles
     JobProfiles.deleteJobProfile(jobProfileNameUpdate);
     collectionOfMatchProfiles.forEach(profile => {
@@ -326,7 +324,6 @@ describe('ui-data-import: MARC file upload with the update of instance, holding,
     FieldMappingProfiles.deleteFieldMappingProfile(nameInstanceMappingProfile);
     FieldMappingProfiles.deleteFieldMappingProfile(nameHoldingsMappingProfile);
     FieldMappingProfiles.deleteFieldMappingProfile(nameItemMappingProfile);
-
     // delete downloads folder and created files in fixtures
     FileManager.deleteFolder(Cypress.config('downloadsFolder'));
     FileManager.deleteFile(`cypress/fixtures/${nameMarcFileForImportUpdate}`);

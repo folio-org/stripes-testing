@@ -139,7 +139,6 @@ describe('ui-data-import: Match on POL and update related Instance with source M
         cy.deleteHoldingRecordViaApi(instance.holdings[0].id);
         InventoryInstance.deleteInstanceViaApi(instance.id);
       });
-
     cy.getInstance({ limit: 1, expandAll: true, query: `"title"=="${instanceTitle}"` })
       .then((instance) => {
         InventoryInstance.deleteInstanceViaApi(instance.id);

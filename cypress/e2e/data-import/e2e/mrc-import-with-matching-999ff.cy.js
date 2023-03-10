@@ -33,12 +33,21 @@ describe('ui-data-import: MARC file import with matching for 999 ff field', () =
   beforeEach(() => {
     cy.loginAsAdmin();
     cy.getAdminToken();
-
-    DataImport.checkUploadState();
   });
 
   afterEach(() => {
-    DataImport.checkUploadState();
+    // clean up generated profiles
+    JobProfiles.deleteJobProfile(jobProfileName);
+    JobProfiles.deleteJobProfile(jobProfileNameForExport);
+    MatchProfiles.deleteMatchProfile(matchProfileName);
+    ActionProfiles.deleteActionProfile(actionProfileName);
+    ActionProfiles.deleteActionProfile(actionProfileNameForExport);
+    FieldMappingProfiles.deleteFieldMappingProfile(mappingProfileName);
+    FieldMappingProfiles.deleteFieldMappingProfile(mappingProfileNameForExport);
+
+    // delete created files in fixtures
+    FileManager.deleteFile(`cypress/fixtures/${nameForExportedMarcFile}`);
+    FileManager.deleteFile(`cypress/fixtures/${nameForCSVFile}`);
   });
 
   it('C343343 MARC file import with matching for 999 ff field (folijet)', { tags: [TestTypes.smoke, DevTeams.folijet] }, () => {
@@ -168,22 +177,8 @@ describe('ui-data-import: MARC file import with matching for 999 ff field', () =
           .then(id => {
             cy.visit(TopMenu.inventoryPath);
             InventorySearchAndFilter.searchInstanceByHRID(id[0]);
-
             // ensure the fields created in Field mapping profile exists in inventory
             InventorySearchAndFilter.checkInstanceDetails();
-
-            // clean up generated profiles
-            JobProfiles.deleteJobProfile(jobProfileName);
-            JobProfiles.deleteJobProfile(jobProfileNameForExport);
-            MatchProfiles.deleteMatchProfile(matchProfileName);
-            ActionProfiles.deleteActionProfile(actionProfileName);
-            ActionProfiles.deleteActionProfile(actionProfileNameForExport);
-            FieldMappingProfiles.deleteFieldMappingProfile(mappingProfileName);
-            FieldMappingProfiles.deleteFieldMappingProfile(mappingProfileNameForExport);
-
-            // delete created files in fixtures
-            FileManager.deleteFile(`cypress/fixtures/${nameForExportedMarcFile}`);
-            FileManager.deleteFile(`cypress/fixtures/${nameForCSVFile}`);
           });
       });
   });

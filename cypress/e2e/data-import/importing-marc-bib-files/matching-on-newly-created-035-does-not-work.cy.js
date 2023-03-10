@@ -93,7 +93,7 @@ describe('ui-data-import: Matching on newly-created 035 does not work (regressio
     MatchProfiles.deleteMatchProfile(matchProfileName);
     ActionProfiles.deleteActionProfile(actionProfileName);
     FieldMappingProfiles.deleteFieldMappingProfile(mappingProfileName);
-
+    Users.deleteViaApi(user.userId);
     cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${firstInstanceHrid}"` })
       .then((instance) => {
         InventoryInstance.deleteInstanceViaApi(instance.id);
@@ -102,7 +102,6 @@ describe('ui-data-import: Matching on newly-created 035 does not work (regressio
       .then((instance) => {
         InventoryInstance.deleteInstanceViaApi(instance.id);
       });
-    Users.deleteViaApi(user.userId);
   });
 
   it('C358138 Matching on newly-created 035 does not work (regression) (folijet)',
