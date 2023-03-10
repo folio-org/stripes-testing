@@ -149,8 +149,8 @@ describe('ui-data-import', () => {
 
       // upload a marc file for creating of the new instance
       cy.visit(TopMenu.dataImportPath);
-      // TODO delete code after fix https://issues.folio.org/browse/MODDATAIMP-691
-      DataImport.clickDataImportNavButton();
+      // TODO delete reload after fix https://issues.folio.org/browse/MODDATAIMP-691
+      cy.reload();
       DataImport.uploadFile('marcFileForC11109.mrc', nameMarcFileForCreate);
       JobProfiles.searchJobProfileForImport(jobProfileForCreateName);
       JobProfiles.runImportFile();
@@ -207,8 +207,8 @@ describe('ui-data-import', () => {
 
           // upload a marc file for updating instance
           cy.visit(TopMenu.dataImportPath);
-          // TODO delete code after fix https://issues.folio.org/browse/MODDATAIMP-691
-          DataImport.clickDataImportNavButton();
+          // TODO delete reload after fix https://issues.folio.org/browse/MODDATAIMP-691
+          cy.reload();
           DataImport.uploadFile('marcFileForC11109.mrc', nameMarcFileForUpdate);
           JobProfiles.searchJobProfileForImport(jobProfileForUpdateName);
           JobProfiles.runImportFile();

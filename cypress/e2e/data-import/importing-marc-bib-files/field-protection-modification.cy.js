@@ -131,8 +131,8 @@ describe('ui-data-import: MARC field protections apply to MARC modifications of 
 
       // upload a marc file for creating of the new instance, holding and item
       cy.visit(TopMenu.dataImportPath);
-      // TODO delete code after fix https://issues.folio.org/browse/MODDATAIMP-691
-      DataImport.clickDataImportNavButton();
+      // TODO delete reload after fix https://issues.folio.org/browse/MODDATAIMP-691
+      cy.reload();
       DataImport.uploadFile('marcFileForC350678.mrc', fileName);
       JobProfiles.searchJobProfileForImport(jobProfileName);
       JobProfiles.runImportFile();

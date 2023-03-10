@@ -45,6 +45,8 @@ describe('ui-data-import: Check that protected fields in incoming records are no
         const fileName = `C358968autotestFile.${getRandomPostfix()}.mrc`;
 
         Z3950TargetProfiles.changeOclcWorldCatToDefaultViaApi();
+        // TODO delete reload after fix https://issues.folio.org/browse/MODDATAIMP-691
+        cy.reload();
         DataImport.uploadFile('marcFileForC358968.mrc', fileName);
         JobProfiles.searchJobProfileForImport('Default - Create instance and SRS MARC Bib');
         JobProfiles.runImportFile();

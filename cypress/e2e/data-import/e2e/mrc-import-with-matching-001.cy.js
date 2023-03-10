@@ -55,6 +55,8 @@ describe('ui-data-import: MARC-MARC matching for 001 field', () => {
     const actionProfileName = `autoTestActionProf.${getRandomPostfix()}`;
     const jobProfileName = `autoTestJobProf.${getRandomPostfix()}`;
 
+    // TODO delete reload after fix https://issues.folio.org/browse/MODDATAIMP-691
+    cy.reload();
     // upload a marc file for export
     DataImport.uploadFile('oneMarcBib.mrc', nameForMarcFile);
     JobProfiles.searchJobProfileForImport('Default - Create instance and SRS MARC Bib');
