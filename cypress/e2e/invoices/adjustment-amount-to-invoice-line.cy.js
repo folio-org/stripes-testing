@@ -115,7 +115,7 @@ describe('invoices: add adjustment', () => {
     Invoices.selectInvoice(invoice.invoiceNumber);
     Invoices.selectInvoiceLine();
     Invoices.editInvoiceLine();
-    Invoices.addAdjustment(adjustmentDescription, '10', '%', 'In addition to');
+    Invoices.addAdjustment(adjustmentDescription, '10', '$', 'In addition to');
     Invoices.approveInvoice();
     Invoices.payInvoice();
 
@@ -124,6 +124,6 @@ describe('invoices: add adjustment', () => {
     Funds.selectFund(firstFund.name);
     Funds.selectBudgetDetails();
     Funds.viewTransactions();
-    Funds.checkTransactionDetails(defaultFiscalYear.code,'($22.00)', invoice.invoiceNumber, 'Payment', `${firstFund.name} (${firstFund.code})`);
+    Funds.checkTransactionDetails(defaultFiscalYear.code,'($30.00)', invoice.invoiceNumber, 'Payment', `${firstFund.name} (${firstFund.code})`);
   });
 });
