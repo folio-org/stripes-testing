@@ -244,6 +244,8 @@ describe('ui-data-import: Check that field protection overrides work properly du
 
     cy.visit(TopMenu.dataImportPath);
     // upload a marc file
+    // TODO delete code after fix https://issues.folio.org/browse/MODDATAIMP-691
+    DataImport.clickDataImportNavButton();
     DataImport.uploadFile('marcFileForC17018-BeforeOverride.mrc', fileNameForCreatingInstance);
     JobProfiles.searchJobProfileForImport('Default - Create instance and SRS MARC Bib');
     JobProfiles.runImportFile();
@@ -265,6 +267,8 @@ describe('ui-data-import: Check that field protection overrides work properly du
 
         // upload a marc file
         cy.visit(TopMenu.dataImportPath);
+        // TODO delete code after fix https://issues.folio.org/browse/MODDATAIMP-691
+        DataImport.clickDataImportNavButton();
         DataImport.uploadFile(editedFileNameRev1, fileNameForProtect);
         JobProfiles.searchJobProfileForImport(jobProfileForUpdate.profileName);
         JobProfiles.runImportFile();
@@ -293,6 +297,8 @@ describe('ui-data-import: Check that field protection overrides work properly du
 
         // upload a marc file
         cy.visit(TopMenu.dataImportPath);
+        // TODO delete code after fix https://issues.folio.org/browse/MODDATAIMP-691
+        DataImport.clickDataImportNavButton();
         DataImport.uploadFile(editedFileNameRev2, fileNameForOverride);
         JobProfiles.searchJobProfileForImport(jobProfileForOverride.profileName);
         JobProfiles.runImportFile();
