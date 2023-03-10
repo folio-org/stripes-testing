@@ -31,13 +31,13 @@ describe('ui-data-import', () => {
   const noteForItemMappingProfile = 'This note for item mapping profile';
 
   // unique profile names for creating
-  const instanceMappingProfileNameForCreate = `autotest_instance_mapping_profile_${getRandomPostfix()}`;
-  const holdingsMappingProfileNameForCreate = `autotest_holdings_mapping_profile_${getRandomPostfix()}`;
-  const itemMappingProfileNameForCreate = `autotest_item_mapping_profile_${getRandomPostfix()}`;
-  const instanceActionProfileNameForCreate = `autotest_instance_action_profile_${getRandomPostfix()}`;
-  const holdingsActionProfileNameForCreate = `autotest_holdings_action_profile_${getRandomPostfix()}`;
-  const itemActionProfileNameForCreate = `autotest_item_action_profile_${getRandomPostfix()}`;
-  const jobProfileNameForCreate = `autotest_job_profile_${getRandomPostfix()}`;
+  const instanceMappingProfileNameForCreate = `C17027 autotest_instance_mapping_profile_${getRandomPostfix()}`;
+  const holdingsMappingProfileNameForCreate = `C17027 autotest_holdings_mapping_profile_${getRandomPostfix()}`;
+  const itemMappingProfileNameForCreate = `C17027 autotest_item_mapping_profile_${getRandomPostfix()}`;
+  const instanceActionProfileNameForCreate = `C17027 autotest_instance_action_profile_${getRandomPostfix()}`;
+  const holdingsActionProfileNameForCreate = `C17027 autotest_holdings_action_profile_${getRandomPostfix()}`;
+  const itemActionProfileNameForCreate = `C17027 autotest_item_action_profile_${getRandomPostfix()}`;
+  const jobProfileNameForCreate = `C17027 autotest job profile_${getRandomPostfix()}`;
   // unique profile names for updating
   const instanceHridMatchProfile = `C17027 match profile Instance HRID or UUID.${getRandomPostfix()}`;
   const holdingsPermLocationMatchProfile = `C17027 match profile Holdings Permanent location.${getRandomPostfix()}`;

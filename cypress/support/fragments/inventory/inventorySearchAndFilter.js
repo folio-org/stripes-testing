@@ -456,6 +456,9 @@ export default {
       Button({ id:'accordion-toggle-button-itemsStatisticalCodeIds' }).click(),
       statisticalCodeAccordion.find(TextField()).fillIn(code),
     ]);
+    // need to wait until data will be loaded
+    cy.wait(1000);
+    statisticalCodeAccordion.find(TextField()).click();
     cy.do(statisticalCodeAccordion.find(Checkbox(code)).click());
   }
 };
