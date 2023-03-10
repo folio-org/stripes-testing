@@ -20,6 +20,7 @@ import Users from '../../../support/fragments/users/users';
 import DevTeams from '../../../support/dictionary/devTeams';
 import LoanPolicyActions from '../../../support/fragments/circulation/loan-policy';
 import CirculationRules from '../../../support/fragments/circulation/circulation-rules';
+import Location from '../../../support/fragments/settings/tenant/locations/newLocation';
 
 describe('ui-users-loans: renewal failure because loan has reached maximum renewals', () => {
   const loanTypeName = `autotest_loan_type${getRandomPostfix()}`;
@@ -36,6 +37,7 @@ describe('ui-users-loans: renewal failure because loan has reached maximum renew
   let secondUser = {};
   let firstInstanceIds;
   let secondInstanceIds;
+  let defaultLocation;
 
   beforeEach(() => {
     cy.getAdminToken();
@@ -46,10 +48,13 @@ describe('ui-users-loans: renewal failure because loan has reached maximum renew
       holdingsSourceId = source.id;
     });
     cy.getInstanceTypes({ limit: 1 });
-    cy.getLocations({ limit: 1 });
     cy.getHoldingTypes({ limit: 1 });
     cy.createLoanType({ name: loanTypeName });
-    ServicePoints.createViaApi(servicePoint);
+    ServicePoints.createViaApi(servicePoint)
+      .then(() => {
+        defaultLocation = Location.getDefaultLocation(servicePoint.id);
+        Location.createViaApi(defaultLocation);
+      });
     LoanPolicyActions.createViaApi({
       loanable: true,
       loansPolicy: {
@@ -101,7 +106,7 @@ describe('ui-users-loans: renewal failure because loan has reached maximum renew
           },
           holdings: [{
             holdingsTypeId: Cypress.env('holdingsTypes')[0].id,
-            permanentLocationId: Cypress.env('locations')[0].id,
+            permanentLocationId: defaultLocation.id,
             sourceId: holdingsSourceId,
           }],
           items: [
@@ -149,7 +154,7 @@ describe('ui-users-loans: renewal failure because loan has reached maximum renew
           },
           holdings: [{
             holdingsTypeId: Cypress.env('holdingsTypes')[0].id,
-            permanentLocationId: Cypress.env('locations')[0].id,
+            permanentLocationId: defaultLocation.id,
             sourceId: holdingsSourceId,
           }],
           items: [
@@ -213,6 +218,12 @@ describe('ui-users-loans: renewal failure because loan has reached maximum renew
     UserEdit.changeServicePointPreferenceViaApi(secondUser.userId, [servicePoint.id]);
     Users.deleteViaApi(firstUser.userId);
     Users.deleteViaApi(secondUser.userId);
+    Location.deleteViaApiIncludingInstitutionCampusLibrary(
+      defaultLocation.institutionId,
+      defaultLocation.campusId,
+      defaultLocation.libraryId,
+      defaultLocation.id
+    );
     ServicePoints.deleteViaApi(servicePoint.id);
   });
 
