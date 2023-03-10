@@ -496,9 +496,18 @@ export default {
     InventoryInstanceSelectInstanceModal.selectInstance();
     InventoryInstancesMovement.move();
   },
-
-  checkAddItem:(holdingsRecrodId) => {
-    cy.expect(section.find(Button({ id: `clickable-new-item-${holdingsRecrodId}` })).exists());
+  moveHoldingsToAnotherInstanceByItemTitle: (holdingName, title) => {
+    cy.do(actionsButton.click());
+    cy.do(moveHoldingsToAnotherInstanceButton.click());
+    InventoryInstanceSelectInstanceModal.waitLoading();
+    InventoryInstanceSelectInstanceModal.searchByTitle(title);
+    InventoryInstanceSelectInstanceModal.selectInstance();
+    InventoryInstancesMovement.moveFromMultiple(holdingName, title);
+  },
+  checkAddItem:(holdingsRecordId) => {
+    cy.expect(section.find(Section({ id:holdingsRecordId }))
+      .find(Button({ id: `clickable-new-item-${holdingsRecordId}` }))
+      .exists());
   },
 
   checkInstanceIdentifier: (identifier) => {
@@ -645,13 +654,17 @@ export default {
     cy.expect(MultiColumnListCell({ content: barcode }).exists());
   },
 
-  openItemByBarcodeAndIndex: (barcode,indexRowNumber,rowCountInList) => {
+  openItemByBarcodeAndIndex: (barcode, indexRowNumber, rowCountInList) => {
     cy.do([
       Button('Collapse all').click(),
       Button('Acquisition').click(),
-      MultiColumnList({ columnCount: rowCountInList})
-      .find(MultiColumnListRow({ indexRow: indexRowNumber }))
-      .find(Link(barcode)).click()
+      MultiColumnList({ columnCount: rowCountInList })
+        .find(MultiColumnListRow({ indexRow: indexRowNumber }))
+        .find(Link(barcode)).click()
     ]);
+  },
+
+  verifyHoldingLocation(content) {
+    cy.expect(MultiColumnListCell({ content }).exists());
   },
 };

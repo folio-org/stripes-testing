@@ -18,7 +18,7 @@ import MatchProfiles from '../../../support/fragments/data_import/match_profiles
 import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 import InstanceRecordView from '../../../support/fragments/inventory/instanceRecordView';
 
-describe('ui-data-import:', () => {
+describe('ui-data-import', () => {
   let instanceHrid;
   const itemsForCreateInstance = {
     catalogedDate: '###TODAY###',
@@ -149,6 +149,8 @@ describe('ui-data-import:', () => {
 
       // upload a marc file for creating of the new instance
       cy.visit(TopMenu.dataImportPath);
+      // TODO delete code after fix https://issues.folio.org/browse/MODDATAIMP-691
+      DataImport.clickDataImportNavButton();
       DataImport.uploadFile('marcFileForC11109.mrc', nameMarcFileForCreate);
       JobProfiles.searchJobProfileForImport(jobProfileForCreateName);
       JobProfiles.runImportFile();
@@ -205,6 +207,8 @@ describe('ui-data-import:', () => {
 
           // upload a marc file for updating instance
           cy.visit(TopMenu.dataImportPath);
+          // TODO delete code after fix https://issues.folio.org/browse/MODDATAIMP-691
+          DataImport.clickDataImportNavButton();
           DataImport.uploadFile('marcFileForC11109.mrc', nameMarcFileForUpdate);
           JobProfiles.searchJobProfileForImport(jobProfileForUpdateName);
           JobProfiles.runImportFile();

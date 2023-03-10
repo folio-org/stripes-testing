@@ -122,7 +122,7 @@ export default {
 
   cancelEditConformation() {
     cy.expect(cancelEditConformModel.exists());
-    cy.do(cancelEditCancelBtn.click());
+    cy.do(cancelEditConfirmBtn.click());
   },
 
   deleteConfirmationPresented() { cy.expect(confirmationModal.exists()); },

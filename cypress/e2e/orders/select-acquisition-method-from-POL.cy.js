@@ -1,4 +1,6 @@
 import permissions from '../../support/dictionary/permissions';
+import testType from '../../support/dictionary/testTypes';
+import devTeams from '../../support/dictionary/devTeams';
 import NewOrder from '../../support/fragments/orders/newOrder';
 import Orders from '../../support/fragments/orders/orders';
 import TopMenu from '../../support/fragments/topMenu';
@@ -57,7 +59,7 @@ describe('orders: Export', () => {
     Users.deleteViaApi(user.userId);
   });
 
-  it('C350601 Select Acquisition method from controlled vocabulary list [except tags] (thunderjet)', () => {
+  it('C350601 Select Acquisition method from controlled vocabulary list [except tags] (thunderjet)', { tags: [testType.criticalPath, devTeams.thunderjet] }, () => {
     Orders.searchByParameter('PO number', orderNumber);
     Orders.selectFromResultsList(orderNumber);
     OrderLines.addPOLine();

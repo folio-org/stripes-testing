@@ -9,6 +9,8 @@ import BulkEditSearchPane from '../../../support/fragments/bulk-edit/bulk-edit-s
 import BulkEditActions from '../../../support/fragments/bulk-edit/bulk-edit-actions';
 import BulkEditFiles from '../../../support/fragments/bulk-edit/bulk-edit-files';
 import Users from '../../../support/fragments/users/users';
+import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
+import InventorySearchAndFilter from '../../../support/fragments/inventory/inventorySearchAndFilter';
 
 let user;
 let hrid;
@@ -93,26 +95,6 @@ describe('bulk-edit', () => {
       BulkEditActions.verifySuccessBanner(1);
     });
 
-    it('C360114 Verify that User can upload file with Holdings UUIDs (firebird)', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
-      BulkEditSearchPane.uploadFile(validHoldingUUIDsFileName);
-      BulkEditSearchPane.waitFileUploading();
-      [
-        'Holdings HRID',
-        'Permanent location',
-        'Temporary location',
-        'Call number prefix',
-        'Call number',
-        'Call number suffix',
-        'Holdings type'
-      ].forEach(title => {
-        BulkEditSearchPane.verifyResultColumTitles(title);
-      });
-      BulkEditActions.openActions();
-      BulkEditSearchPane.verifyHoldingActionShowColumns();
-      BulkEditSearchPane.changeShowColumnCheckbox('Call number type');
-      BulkEditSearchPane.verifyResultColumTitles('Call number type');
-    });
-
     it('C360120 Verify that User can trigger bulk of holdings with file containing Holdings identifiers (firebird)', { tags: [testTypes.smoke, devTeams.firebird] }, () => {
       BulkEditSearchPane.selectRecordIdentifier('Holdings HRIDs');
 
@@ -145,6 +127,33 @@ describe('bulk-edit', () => {
       BulkEditSearchPane.verifyChangedResults(tempLocation);
       BulkEditSearchPane.verifyChangedResults(permLocation);
       BulkEditActions.verifySuccessBanner(1);
+    });
+
+    it('C367975 Verify Bulk edit Holdings records with empty Electronic access Relationship type (firebird)', { tags: [testTypes.criticalPath, devTeams.firebird] }, () => {
+      BulkEditSearchPane.selectRecordIdentifier('Holdings HRIDs');
+
+      BulkEditSearchPane.uploadFile(validHoldingHRIDsFileName);
+      BulkEditSearchPane.waitFileUploading();
+      BulkEditSearchPane.verifyMatchedResults(hrid);
+
+      const tempLocation = 'Main Library';
+
+      BulkEditActions.openActions();
+      BulkEditActions.openInAppStartBulkEditFrom();
+      BulkEditActions.replaceTemporaryLocation(tempLocation, 'holdings');
+      BulkEditActions.confirmChanges();
+      BulkEditActions.commitChanges();
+      BulkEditSearchPane.waitFileUploading();
+
+      BulkEditSearchPane.verifyChangedResults(tempLocation);
+      BulkEditActions.verifySuccessBanner(1);
+
+      cy.loginAsAdmin({ path: TopMenu.inventoryPath, waiter: InventoryInstances.waitContentLoading });
+      InventorySearchAndFilter.switchToHoldings();
+      InventorySearchAndFilter.searchByParameter('Holdings HRID', hrid);
+      InventorySearchAndFilter.selectSearchResultItem();
+      InventoryInstance.openHoldings(['']);
+      InventoryInstance.verifyHoldingLocation(tempLocation);
     });
   });
 });

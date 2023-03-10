@@ -32,6 +32,7 @@ import OverrideAndRenewModal from '../../../../support/fragments/users/loans/ove
 import RenewConfirmationModal from '../../../../support/fragments/users/loans/renewConfirmationModal';
 
 describe('Patron Block: Maximum number of lost items', () => {
+  let addedCirculationRule;
   let originalCirculationRules;
   const renewComment = `AutotestText${getRandomPostfix()}`;
   const blockMessage = 'You have reached maximum number of lost items as set by patron group';
@@ -183,6 +184,7 @@ describe('Patron Block: Maximum number of lost items', () => {
       const ruleProps = CirculationRules.getRuleProps(circulationRule.rulesAsText);
       ruleProps.l = loanPolicyBody.id;
       ruleProps.i = lostItemFeePolicyBody.id;
+      addedCirculationRule = 't ' + testData.loanTypeId + ': i ' + ruleProps.i + ' l ' + ruleProps.l + ' r ' + ruleProps.r + ' o ' + ruleProps.o + ' n ' + ruleProps.n;
       CirculationRules.addRuleViaApi(originalCirculationRules, ruleProps, 't ', testData.loanTypeId);
     });
 
@@ -265,7 +267,7 @@ describe('Patron Block: Maximum number of lost items', () => {
     UsersOwners.deleteViaApi(testData.ownerId);
     cy.deleteLoanPolicy(loanPolicyBody.id);
     LostItemFeePolicy.deleteViaApi(lostItemFeePolicyBody.id);
-    CirculationRules.deleteRuleViaApi(originalCirculationRules);
+    CirculationRules.deleteRuleViaApi(addedCirculationRule);
     cy.deleteLoanType(testData.loanTypeId);
     UserEdit.changeServicePointPreferenceViaApi(userData.userId, [testData.userServicePoint.id]);
     ServicePoints.deleteViaApi(testData.userServicePoint.id);

@@ -11,7 +11,7 @@ import InventoryInstance from '../../../support/fragments/inventory/inventoryIns
 import Users from '../../../support/fragments/users/users';
 import Helper from '../../../support/fragments/finance/financeHelper';
 
-describe('ui-data-import:', () => {
+describe('ui-data-import', () => {
   let user;
   let instanceHrid;
 

@@ -24,6 +24,7 @@ import InventoryInstance from '../../support/fragments/inventory/inventoryInstan
 import getRandomPostfix from '../../support/utils/stringTools';
 
 describe('Recieving notice: Checkout', () => {
+  let addedCirculationRule;
   const noticePolicyTemplate = { ...NewNoticePolicyTemplate.defaultUi,
     category: NOTICE_CATEGORIES.loan.name };
   const noticePolicy = { ...NewNoticePolicy.defaultUi,
@@ -145,7 +146,7 @@ describe('Recieving notice: Checkout', () => {
 
   afterEach('Deleting created entities', () => {
     UserEdit.changeServicePointPreferenceViaApi(userData.userId, [testData.userServicePoint.id]);
-    CirculationRules.deleteRuleViaApi(testData.baseRules);
+    CirculationRules.deleteRuleViaApi(addedCirculationRule);
     ServicePoints.deleteViaApi(testData.userServicePoint.id);
     NoticePolicyApi.deleteViaApi(testData.ruleProps.n);
     Users.deleteViaApi(userData.userId);
@@ -192,6 +193,7 @@ describe('Recieving notice: Checkout', () => {
 
       cy.getNoticePolicy({ query: `name=="${noticePolicy.name}"` }).then((res) => {
         testData.ruleProps.n = res[0].id;
+        addedCirculationRule = 't ' + testData.loanTypeId + ': i ' + testData.ruleProps.i + ' l ' + testData.ruleProps.l + ' r ' + testData.ruleProps.r + ' o ' + testData.ruleProps.o + ' n ' + testData.ruleProps.n;
         CirculationRules.addRuleViaApi(testData.baseRules, testData.ruleProps, 't ', testData.loanTypeId);
       });
 

@@ -21,7 +21,7 @@ export default {
   selectFirst: (title) => cy.do(MultiColumnListRow({ index: 0 }).find(Button(title)).click()),
 
   selectFirstRecord: () => cy.do(MultiColumnListRow({ index: 0 }).find(Button()).click()),
-  
+
   selectTitle: (title) => cy.do(Button(title).click()),
 
   selectItem: (item) => {

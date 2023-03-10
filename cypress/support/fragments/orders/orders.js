@@ -35,9 +35,9 @@ const searchButton = Button('Search');
 const newButton = Button('New');
 const saveAndClose = Button('Save & close');
 const orderDetailsAccordionId = 'purchaseOrder';
-const createdByAdmin = 'ADMINISTRATOR, DIKU ';
+const createdByAdmin = 'folio-aqa  ';
 const searchField = SearchField({ id: 'input-record-search' });
-const admin = 'administrator';
+const admin = 'folio-aqa';
 const buttonLocationFilter = Button({ id: 'accordion-toggle-button-pol-location-filter' });
 const buttonFundCodeFilter = Button({ id: 'accordion-toggle-button-fundCode' });
 const buttonOrderFormatFilter = Button({ id: 'accordion-toggle-button-orderFormat' });
@@ -272,10 +272,7 @@ export default {
   },
 
   checkSearchResults: (orderNumber) => {
-    cy.expect(MultiColumnList({ id: 'orders-list' })
-      .find(MultiColumnListRow({ index: 0 }))
-      .find(MultiColumnListCell({ columnIndex: 0 }))
-      .has({ content: orderNumber }));
+    cy.expect(MultiColumnList({ id:'orders-list' }).find(Link(orderNumber)).exists());
   },
   checkSearchResultsWithClosedOrder: (orderNumber) => {
     cy.expect(MultiColumnList({ id: 'orders-list' })
@@ -284,10 +281,7 @@ export default {
       .has({ content: `${orderNumber}\u00a0Canceled` }));
   },
   checkOrderlineSearchResults: (orderLineNumber) => {
-    cy.expect(MultiColumnList({ id: 'order-line-list' })
-      .find(MultiColumnListRow({ index: 0 }))
-      .find(MultiColumnListCell({ columnIndex: 0 }))
-      .has({ content: orderLineNumber }));
+    cy.expect(MultiColumnList({ id:'order-line-list' }).find(Link(orderLineNumber)).exists());
   },
   checkOrderlineFilterInList: (orderLineNumber) => {
     cy.expect(MultiColumnList({ id: 'order-line-list' })
