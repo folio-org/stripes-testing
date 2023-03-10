@@ -56,6 +56,7 @@ describe('MARC Authority -> Edit Authority record', () => {
     {marc: 'marcFileForC350901.mrc', fileName: `testMarcFile.${getRandomPostfix()}.mrc`}, 
     {marc: 'marcFileForC375141.mrc', fileName: `testMarcFile.${getRandomPostfix()}.mrc`}
   ]
+  const tags = ['110', '111', '130', '150', '151']; 
   const marcFieldProtectionRules = [];
   let createdAuthorityID = [];
 
@@ -201,5 +202,26 @@ describe('MARC Authority -> Edit Authority record', () => {
     QuickMarcEditor.checkButtonsEnabled();
     QuickMarcEditor.clickSaveAndCloseThenCheck();
     QuickMarcEditor.constinueWithSaveAndCheck();
+  });
+
+  it('C375120 User cannot delete "1XX" field of "MARC authority" record (spitfire)', { tags: [TestTypes.criticalPath, DevTeams.spitfire] }, () => {
+    let rowIndexTag1XX = 21;
+    MarcAuthorities.searchBy(testData.authority.searchOption, testData.authority.title);
+    MarcAuthorities.selectTitle(testData.authority.title);
+    MarcAuthority.edit();
+
+    tags.forEach(tag => {
+      MarcAuthority.changeTag(rowIndexTag1XX, tag);
+      QuickMarcEditor.clickSaveAndKeepEditing();
+      QuickMarcEditor.checkDeleteButtonNotExist(rowIndexTag1XX);
+    });
+
+    MarcAuthority.changeTag(rowIndexTag1XX, '155');
+    QuickMarcEditor.pressSaveAndClose();
+    MarcAuthority.edit();
+
+    MarcAuthority.addNewField(rowIndexTag1XX, '100', '$a test');
+    MarcAuthority.changeTag(rowIndexTag1XX + 1, '400');
+    QuickMarcEditor.checkDeleteButtonExist(rowIndexTag1XX + 1);
   });
 });
