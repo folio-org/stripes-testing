@@ -57,7 +57,7 @@ describe('MARC Authority -> Edit Authority record', () => {
     {marc: 'marcFileForC350901.mrc', fileName: `testMarcFile.${getRandomPostfix()}.mrc`}, 
     {marc: 'marcFileForC375141.mrc', fileName: `testMarcFile.${getRandomPostfix()}.mrc`}
   ]
-  const tags = ['110', '111', '130', '150', '151']; 
+  const tagsC375120 = ['110', '111', '130', '150', '151']; 
   const marcFieldProtectionRules = [];
   let createdAuthorityID = [];
 
