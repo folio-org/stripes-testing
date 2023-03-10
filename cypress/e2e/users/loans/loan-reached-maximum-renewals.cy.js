@@ -23,7 +23,6 @@ import CirculationRules from '../../../support/fragments/circulation/circulation
 import Location from '../../../support/fragments/settings/tenant/locations/newLocation';
 
 describe('ui-users-loans: renewal failure because loan has reached maximum renewals', () => {
-  const loanTypeName = `autotest_loan_type${getRandomPostfix()}`;
   const newFirstItemData = getNewItem();
   const newSecondItemData = getNewItem();
   const servicePoint = ServicePoints.getDefaultServicePointWithPickUpLocation('autotest', uuid());
@@ -37,6 +36,7 @@ describe('ui-users-loans: renewal failure because loan has reached maximum renew
   let firstInstanceIds;
   let secondInstanceIds;
   let defaultLocation;
+  let loanType;
 
   beforeEach(() => {
     cy.getAdminToken();
@@ -48,7 +48,9 @@ describe('ui-users-loans: renewal failure because loan has reached maximum renew
     });
     cy.getInstanceTypes({ limit: 1 });
     cy.getHoldingTypes({ limit: 1 });
-    cy.createLoanType({ name: loanTypeName });
+    cy.createLoanType({ name: `autotest_loan_type${getRandomPostfix()}` }).then((type) => {
+      loanType = type;
+    });
     ServicePoints.createViaApi(servicePoint)
       .then(() => {
         defaultLocation = Location.getDefaultLocation(servicePoint.id);
@@ -111,7 +113,7 @@ describe('ui-users-loans: renewal failure because loan has reached maximum renew
           items: [
             {
               ...newFirstItemData,
-              permanentLoanType: { id: Cypress.env('loanTypes').id },
+              permanentLoanType: { id: loanType.id.id },
               materialType: { id: Cypress.env('materialTypes')[0].id },
             }
           ],
@@ -159,7 +161,7 @@ describe('ui-users-loans: renewal failure because loan has reached maximum renew
           items: [
             {
               ...newSecondItemData,
-              permanentLoanType: { id: Cypress.env('loanTypes').id },
+              permanentLoanType: { id: loanType.id },
               materialType: { id: Cypress.env('materialTypes')[0].id },
             }
           ],
@@ -211,6 +213,7 @@ describe('ui-users-loans: renewal failure because loan has reached maximum renew
     })).then(() => {
       InventoryInstance.deleteInstanceViaApi(secondInstanceIds.instanceId);
     });
+    cy.deleteLoanType(loanType.id);
     cy.deleteLoanPolicy(loanPolicy.id);
     CirculationRules.deleteRuleViaApi(addedCirculationRule);
     UserEdit.changeServicePointPreferenceViaApi(firstUser.userId, [servicePoint.id]);
