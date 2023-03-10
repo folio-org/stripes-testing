@@ -1,4 +1,4 @@
-import { QuickMarcEditor, QuickMarcEditorRow, TextArea, Section, Button, Modal, Callout, TextField, and, some, Pane, HTML, including } from '../../../interactors';
+import { QuickMarcEditor, QuickMarcEditorRow, TextArea, Section, Button, Modal, Callout, TextField, and, some, Pane, HTML, including, PaneContent } from '../../../interactors';
 import dateTools from '../utils/dateTools';
 import getRandomPostfix from '../utils/stringTools';
 import InventoryInstance from '../../support/fragments/inventory/inventoryInstance';
@@ -14,6 +14,8 @@ const saveAndCloseButton = Button({ id:'quick-marc-record-save' });
 const saveAndKeepEditingBtn = Button({ id: 'quick-marc-record-save-edit' });
 const saveAndCloseButtonEnabled = Button({ id:'quick-marc-record-save', disabled: false });
 const saveAndKeepEditingBtnEnabled = Button({ id: 'quick-marc-record-save-edit', disabled: false });
+const saveAndCloseButtonDisabled = Button({ id:'quick-marc-record-save', disabled: true });
+const saveAndKeepEditingBtnDisabled = Button({ id: 'quick-marc-record-save-edit', disabled: true });
 const confirmationModal = Modal({ id: 'quick-marc-confirm-modal' });
 const cancelEditConformModel = Modal({ id: 'cancel-editing-confirmation' })
 const cancelEditConfirmBtn = Button('Keep editing');
@@ -92,6 +94,19 @@ export default {
     return this.addNewField(tag, defaultFieldValues.contentWithSubfield);
   },
 
+  addEmptyFields(rowIndex) {
+    cy.do(QuickMarcEditorRow({ index: rowIndex }).find(addFieldButton).click());
+  },
+
+  addValuesToExistingField(rowIndex, tag, content, indicator0 = '\\', indicator1 = '\\') {
+    cy.do([
+      QuickMarcEditorRow({ index: rowIndex + 1 }).find(TextField({ name: `records[${rowIndex + 1}].tag` })).fillIn(tag),
+      QuickMarcEditorRow({ index: rowIndex + 1 }).find(TextField({ name: `records[${rowIndex + 1}].indicators[0]` })).fillIn(indicator0),
+      QuickMarcEditorRow({ index: rowIndex + 1 }).find(TextField({ name: `records[${rowIndex + 1}].indicators[1]` })).fillIn(indicator1),
+      QuickMarcEditorRow({ index: rowIndex + 1 }).find(TextArea({ name: `records[${rowIndex + 1}].content` })).fillIn(content),
+    ]);
+  },
+
   deletePenaltField() {
     const shouldBeRemovedRowNumber = this.getInitialRowsCount() - 1;
     cy.expect(getRowInteractorByRowNumber(shouldBeRemovedRowNumber).exists());
@@ -106,14 +121,18 @@ export default {
 
   pressSaveAndClose() { cy.do(saveAndCloseButton.click()); },
 
-  clickSaveAndCloseThenCheck() {
+  clickSaveAndCloseThenCheck(redords) {
     cy.do(saveAndCloseButton.click());
     cy.expect([
       confirmationModal.exists(),
-      confirmationModal.has({ content: including('By selecting Continue with save, then 1 field(s) will be deleted and this record will be updated. Are you sure you want to continue?') }),
+      confirmationModal.has({ content: including(`By selecting Continue with save, then ${redords} field(s) will be deleted and this record will be updated. Are you sure you want to continue?`) }),
       continueWithSaveButton.exists(),
       restoreDeletedFieldsBtn.exists(),
     ]);
+  },
+
+  clickRestoreDeletedField() {
+    cy.do(restoreDeletedFieldsBtn.click());
   },
 
   cancelEditConfirmationPresented() { cy.expect(cancelEditConformModel.exists()); },
@@ -138,6 +157,10 @@ export default {
     ]);
   },
 
+  checkFieldAbsense(tag) {
+    cy.expect(PaneContent({ id: 'marc-view-pane-content', text: (including(tag)) }).absent());
+  },
+
   addRow(rowNumber) {
     cy.do(getRowInteractorByRowNumber(rowNumber ?? this.getInitialRowsCount()).find(addFieldButton).click());
   },
@@ -153,10 +176,35 @@ export default {
     cy.expect(QuickMarcEditorRow({ tagValue: tag }).absent());
   }, 
 
+  deleteField(rowIndex) {
+    cy.do(QuickMarcEditorRow({ index: rowIndex }).find(deleteFieldButton).click());
+  },
+
+  afterDeleteNotification(tag) {
+    cy.get('[class^=deletedRowPlaceholder-]').should('include.text', `Field ${tag} has been deleted from this MARC record.`);
+    cy.get('[class^=deletedRowPlaceholder-]').contains('span', 'Undo');
+  },
+
+  undoDelete() {
+    cy.get('[class^=deletedRowPlaceholder-]').contains('span', 'Undo').click();
+  },
+
+  afterDeleteNotificationNoTag() {
+    cy.get('[class^=deletedRowPlaceholder-]').should('include.text', 'Field has been deleted from this MARC record');
+    cy.get('[class^=deletedRowPlaceholder-]').contains('span', 'Undo');
+  },
+
   checkButtonsEnabled() {
     cy.expect([
       saveAndCloseButtonEnabled.exists(),
       saveAndKeepEditingBtnEnabled.exists(),
+    ]);
+  },
+
+  checkButtonsDisabled() {
+    cy.expect([
+      saveAndCloseButtonDisabled.exists(),
+      saveAndKeepEditingBtnDisabled.exists(),
     ]);
   },
 
@@ -223,6 +271,19 @@ export default {
     cy.then(() => QuickMarcEditorRow({ tagValue: currentTagName }).index()).then(index => {
       cy.do(QuickMarcEditorRow({ index }).find(TextField({ name: including('.tag') })).fillIn(newTagName));
     });
+  },
+
+  updateExistingFieldContent(rowIndex, newContent = `newContent${getRandomPostfix()}`) {
+    cy.do(QuickMarcEditorRow({ index: rowIndex }).find(TextArea()).fillIn(newContent));
+    //cy.do(QuickMarcEditorRow({ tagValue: tag }).find(TextArea()).fillIn(newContent));
+    //return newContent;
+  },
+
+  updateExistingTagValue(rowIndex, newTagValue) {
+    cy.do(QuickMarcEditorRow({ index: rowIndex }).find(TextField({ name: including('.tag') })).fillIn(newTagValue));
+    // cy.then(() => QuickMarcEditorRow({ tagValue: currentTagValue }).index()).then(index => {
+    //   cy.do(QuickMarcEditorRow({ index }).find(TextField({ name: including('.tag') })).fillIn(newTagValue));
+    // });
   },
 
   waitLoading() {
