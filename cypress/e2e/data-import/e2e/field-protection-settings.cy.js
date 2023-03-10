@@ -111,10 +111,6 @@ describe('ui-data-import: Check that field protection settings work properly dur
 
   afterEach(() => {
     marcFieldProtectionId.forEach(field => MarcFieldProtection.deleteMarcFieldProtectionViaApi(field));
-    cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${instanceHrid}"` })
-      .then((instance) => {
-        InventoryInstance.deleteInstanceViaApi(instance.id);
-      });
     // delete profiles
     JobProfiles.deleteJobProfile(jobProfileName);
     JobProfiles.deleteJobProfile(jobProfileUpdateName);
@@ -126,6 +122,10 @@ describe('ui-data-import: Check that field protection settings work properly dur
     // delete created files
     FileManager.deleteFile(`cypress/fixtures/${editedMarcFileName}`);
     FileManager.deleteFile(`cypress/fixtures/${fileNameForUpdate}`);
+    cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${instanceHrid}"` })
+      .then((instance) => {
+        InventoryInstance.deleteInstanceViaApi(instance.id);
+      });
   });
 
   const createInstanceMappingProfileForCreate = (instanceMappingProfile) => {

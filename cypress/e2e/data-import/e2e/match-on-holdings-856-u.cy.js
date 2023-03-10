@@ -84,12 +84,6 @@ describe('ui-data-import: Match on Holdings 856 $u', () => {
   });
 
   after(() => {
-    cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${instanceHRID}"` })
-      .then((instance) => {
-        cy.deleteHoldingRecordViaApi(instance.holdings[0].id);
-        InventoryInstance.deleteInstanceViaApi(instance.id);
-      });
-
     JobProfiles.deleteJobProfile(createInstanceAndEHoldingsJobProfileName);
     JobProfiles.deleteJobProfile(updateEHoldingsJobProfileName);
     MatchProfiles.deleteMatchProfile(matchProfileName);
@@ -99,6 +93,11 @@ describe('ui-data-import: Match on Holdings 856 $u', () => {
     FieldMappingProfiles.deleteFieldMappingProfile(createInstanceMappingProfileName);
     FieldMappingProfiles.deleteFieldMappingProfile(createEHoldingsMappingProfileName);
     FieldMappingProfiles.deleteFieldMappingProfile(updateEHoldingsMappingProfileName);
+    cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${instanceHRID}"` })
+      .then((instance) => {
+        cy.deleteHoldingRecordViaApi(instance.holdings[0].id);
+        InventoryInstance.deleteInstanceViaApi(instance.id);
+      });
   });
 
   const createInstanceMappingProfile = (instanceMappingProfile) => {

@@ -107,10 +107,6 @@ describe('ui-data-import', () => {
   });
 
   after('delete test data', () => {
-    cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${instanceHrid}"` })
-      .then((instance) => {
-        InventoryInstance.deleteInstanceViaApi(instance.id);
-      });
     JobProfiles.deleteJobProfile(jobProfileForCreateName);
     JobProfiles.deleteJobProfile(jobProfileForUpdateName);
     MatchProfiles.deleteMatchProfile(matchProfileName);
@@ -118,6 +114,10 @@ describe('ui-data-import', () => {
       ActionProfiles.deleteActionProfile(profile.actionProfile.name);
       FieldMappingProfiles.deleteFieldMappingProfile(profile.mappingProfile.name);
     });
+    cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${instanceHrid}"` })
+      .then((instance) => {
+        InventoryInstance.deleteInstanceViaApi(instance.id);
+      });
   });
 
   it('C11109 Update an instance based on an OCLC number match (folijet)',

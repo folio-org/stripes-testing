@@ -138,15 +138,6 @@ describe('ui-data-import: Match on VRN and update related Instance, Holdings, It
   });
 
   after(() => {
-    let itemId;
-
-    cy.getInstance({ limit: 1, expandAll: true, query: `"title"=="${item.title}"` })
-      .then((instance) => {
-        itemId = instance.items[0].id;
-        cy.deleteItemViaApi(itemId);
-        cy.deleteHoldingRecordViaApi(instance.holdings[0].id);
-        InventoryInstance.deleteInstanceViaApi(instance.id);
-      });
     Orders.getOrdersApi({ limit: 1, query: `"poNumber"=="${orderNumber}"` })
       .then(order => {
         Orders.deleteOrderApi(order[0].id);
@@ -164,6 +155,13 @@ describe('ui-data-import: Match on VRN and update related Instance, Holdings, It
     FieldMappingProfiles.deleteFieldMappingProfile(instanceMappingProfileName);
     FieldMappingProfiles.deleteFieldMappingProfile(holdingsMappingProfileName);
     FieldMappingProfiles.deleteFieldMappingProfile(itemMappingProfileName);
+    cy.getInstance({ limit: 1, expandAll: true, query: `"title"=="${item.title}"` })
+      .then((instance) => {
+        const itemId = instance.items[0].id;
+        cy.deleteItemViaApi(itemId);
+        cy.deleteHoldingRecordViaApi(instance.holdings[0].id);
+        InventoryInstance.deleteInstanceViaApi(instance.id);
+      });
   });
 
   it('C350591 Match on VRN and update related Instance, Holdings, Item (folijet)',

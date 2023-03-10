@@ -68,11 +68,11 @@ describe('ui-data-import: MARC field protections apply to MARC modifications of 
     JobProfiles.deleteJobProfile(jobProfileName);
     ActionProfiles.deleteActionProfile(actionProfileName);
     FieldMappingProfiles.deleteFieldMappingProfile(mappingProfileName);
+    Users.deleteViaApi(user.userId);
     cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${instanceHrid}"` })
       .then((instance) => {
         InventoryInstance.deleteInstanceViaApi(instance.id);
       });
-    Users.deleteViaApi(user.userId);
   });
 
   it('C350678 MARC field protections apply to MARC modifications of incoming records when they should not: Scenario 1 (folijet)',

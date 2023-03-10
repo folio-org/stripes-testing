@@ -52,10 +52,6 @@ describe('ui-data-import: Verify the possibility to modify MARC Bibliographic re
   });
 
   after(() => {
-    cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${instanceHrid}"` })
-      .then((instance) => {
-        InventoryInstance.deleteInstanceViaApi(instance.id);
-      });
     // delete profiles
     JobProfiles.deleteJobProfile(jobProfileName);
     MatchProfiles.deleteMatchProfile(matchProfileName);
@@ -66,6 +62,10 @@ describe('ui-data-import: Verify the possibility to modify MARC Bibliographic re
     FileManager.deleteFile(`cypress/fixtures/${nameMarcFileForUpload}`);
     FileManager.deleteFile(`cypress/fixtures/${nameForCSVFile}`);
     Users.deleteViaApi(user.userId);
+    cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${instanceHrid}"` })
+      .then((instance) => {
+        InventoryInstance.deleteInstanceViaApi(instance.id);
+      });
   });
 
   it('C345423 Verify the possibility to modify MARC Bibliographic record (folijet)', { tags: [TestTypes.smoke, DevTeams.folijet] }, () => {

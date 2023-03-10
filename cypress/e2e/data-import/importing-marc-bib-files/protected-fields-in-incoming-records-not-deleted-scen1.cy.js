@@ -74,11 +74,11 @@ describe('ui-data-import: Check that protected fields in incoming records are no
         list.forEach(({ id }) => MarcFieldProtection.deleteMarcFieldProtectionViaApi(id));
       });
     Z3950TargetProfiles.changeOclcWorldCatToDefaultViaApi();
+    Users.deleteViaApi(user.userId);
     cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${instanceHrid}"` })
       .then((instance) => {
         InventoryInstance.deleteInstanceViaApi(instance.id);
       });
-    Users.deleteViaApi(user.userId);
   });
 
   it('C358968 Check that protected fields in incoming records are not deleted during import: Scenario 1 (folijet)',

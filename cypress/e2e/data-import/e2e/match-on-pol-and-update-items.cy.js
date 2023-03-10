@@ -193,7 +193,6 @@ describe('ui-data-import: Match on POL and update related Instance, Holdings, It
   });
 
   after(() => {
-    let itemId;
     const itemBarcode = Helper.getRandomBarcode();
 
     // delete created files
@@ -222,10 +221,9 @@ describe('ui-data-import: Match on POL and update related Instance, Holdings, It
         cy.deleteHoldingRecordViaApi(instance.holdings[0].id);
         InventoryInstance.deleteInstanceViaApi(instance.id);
       });
-
     cy.getInstance({ limit: 1, expandAll: true, query: `"title"=="${secondItem.title}"` })
       .then((instance) => {
-        itemId = instance.items[0].id;
+        const itemId = instance.items[0].id;
 
         cy.getItems({ query: `"id"=="${itemId}"` })
           .then((item) => {
