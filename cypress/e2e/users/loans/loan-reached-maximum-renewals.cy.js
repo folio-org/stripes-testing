@@ -27,7 +27,6 @@ describe('ui-users-loans: renewal failure because loan has reached maximum renew
   const newFirstItemData = getNewItem();
   const newSecondItemData = getNewItem();
   const servicePoint = ServicePoints.getDefaultServicePointWithPickUpLocation('autotest', uuid());
-  const servicePointId = servicePoint.id;
   let loanPolicy;
   let materialType;
   let holdingsSourceId;
@@ -125,7 +124,7 @@ describe('ui-users-loans: renewal failure because loan has reached maximum renew
               Checkout.checkoutItemViaApi({
                 itemBarcode,
                 userBarcode,
-                servicePointId,
+                servicePointId: servicePoint.id,
               });
             });
           });
@@ -173,7 +172,7 @@ describe('ui-users-loans: renewal failure because loan has reached maximum renew
               Checkout.checkoutItemViaApi({
                 itemBarcode,
                 userBarcode,
-                servicePointId,
+                servicePointId: servicePoint.id,
               });
             });
           });
@@ -188,7 +187,7 @@ describe('ui-users-loans: renewal failure because loan has reached maximum renew
     ].forEach(item => {
       CheckInActions.checkinItemViaApi({
         itemBarcode: item.barcode,
-        servicePointId,
+        servicePointId: servicePoint.id,
         checkInDate: new Date().toISOString(),
       });
     });
