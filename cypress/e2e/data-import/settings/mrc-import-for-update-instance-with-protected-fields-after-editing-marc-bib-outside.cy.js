@@ -66,7 +66,7 @@ describe('ui-data-import', () => {
     acceptedType: NewJobProfile.acceptedDataType.marc
   };
 
-  before('create test data', () => {
+  before('create test user', () => {
     cy.createTempUser([
       permissions.moduleDataImportEnabled.gui,
       permissions.settingsDataImportEnabled.gui,

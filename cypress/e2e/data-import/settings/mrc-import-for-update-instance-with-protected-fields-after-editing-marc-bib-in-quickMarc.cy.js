@@ -70,7 +70,7 @@ describe('ui-data-import', () => {
     acceptedType: NewJobProfile.acceptedDataType.marc
   };
 
-  before(() => {
+  before('create test user', () => {
     cy.createTempUser([
       permissions.moduleDataImportEnabled.gui,
       permissions.settingsDataImportEnabled.gui,
@@ -88,7 +88,7 @@ describe('ui-data-import', () => {
       });
   });
 
-  after(() => {
+  after('delete test data', () => {
     FileManager.deleteFolder(Cypress.config('downloadsFolder'));
     marcFieldProtectionId.forEach(field => MarcFieldProtection.deleteMarcFieldProtectionViaApi(field));
     cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${instanceHrid}"` })
