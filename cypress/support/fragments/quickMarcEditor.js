@@ -275,15 +275,10 @@ export default {
 
   updateExistingFieldContent(rowIndex, newContent = `newContent${getRandomPostfix()}`) {
     cy.do(QuickMarcEditorRow({ index: rowIndex }).find(TextArea()).fillIn(newContent));
-    //cy.do(QuickMarcEditorRow({ tagValue: tag }).find(TextArea()).fillIn(newContent));
-    //return newContent;
   },
 
   updateExistingTagValue(rowIndex, newTagValue) {
     cy.do(QuickMarcEditorRow({ index: rowIndex }).find(TextField({ name: including('.tag') })).fillIn(newTagValue));
-    // cy.then(() => QuickMarcEditorRow({ tagValue: currentTagValue }).index()).then(index => {
-    //   cy.do(QuickMarcEditorRow({ index }).find(TextField({ name: including('.tag') })).fillIn(newTagValue));
-    // });
   },
 
   waitLoading() {
