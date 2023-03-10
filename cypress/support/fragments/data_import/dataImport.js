@@ -331,5 +331,10 @@ export default {
 
   verifyChooseFileButtonState: ({ isDisabled }) => {
     cy.expect(orChooseFilesButton.has({ disabled: isDisabled }));
+  },
+
+  clickDataImportNavButton:() => {
+    // TODO delete this function after fix https://issues.folio.org/browse/MODDATAIMP-691
+    cy.do(Button({ id:'app-list-item-clickable-data-import-module' }).click());
   }
 };
