@@ -27,7 +27,6 @@ import ConfirmClaimReturnedModal from '../../support/fragments/users/loans/confi
 import CirculationRules from '../../support/fragments/circulation/circulation-rules';
 import LostItemFeePolicy from '../../support/fragments/circulation/lost-item-fee-policy';
 
-
 function getClaimedReturnedLoansQuantity(loansArray) {
   let res = 0;
 
