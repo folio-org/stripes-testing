@@ -378,4 +378,22 @@ export default {
   selectInvoice:(invoiceNumber) => {
     cy.do(Pane({ id: 'invoice-results-pane' }).find(Link(invoiceNumber)).click());
   },
+
+  editInvoiceLine:() => {
+    cy.do([
+      Section({ id: 'pane-invoiceLineDetails' }).find(actionsButton).click(),
+      Button('Edit').click(),
+    ]);
+  },
+
+  addAdjustment:(descriptionInput , valueInput, typeToggle, realtioToTotal) => {
+    cy.do([
+      Button({ id: 'adjustments-add-button' }).click(),
+      TextField({ name: 'adjustments[0].description' }).fillIn(descriptionInput),
+      TextField({ name: 'adjustments[0].value' }).fillIn(valueInput),
+      Section({ id: 'invoiceLineForm-adjustments' }).find(Button(typeToggle)).click(),
+      Select({ name: 'adjustments[0].relationToTotal' }).choose(realtioToTotal),
+      saveAndClose.click(),
+    ]);
+  },
 };
