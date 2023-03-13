@@ -97,7 +97,9 @@ describe('ui-data-import', () => {
       cy.visit(TopMenu.inventoryPath);
       InventorySearchAndFilter.searchInstanceByHRID(instanceHrid);
       InventoryInstance.editMarcBibliographicRecord();
-      InventoryEditMarcRecord.deleteField();
+      InventoryEditMarcRecord.deleteField(29);
+      InventoryEditMarcRecord.saveAndClose();
+      InventoryEditMarcRecord.confirmDeletingField();
       InventoryInstance.checkElectronicAccess();
       InventoryInstance.startOverlaySourceBibRecord();
       InventoryInstance.singleOverlaySourceBibRecordModalIsPresented();

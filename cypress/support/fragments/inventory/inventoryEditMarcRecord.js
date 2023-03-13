@@ -12,11 +12,16 @@ const saveAndClose = () => {
 
 export default {
   saveAndClose,
-  deleteField:() => {
+  deleteField:(rowIndex) => {
     // need to wait until the row will be uploaded
     cy.wait(1500);
-    cy.do(QuickMarcEditorRow({ dataRow: 'record-row[29]' }).find(Button({ icon: 'trash' })).click());
-    saveAndClose();
+    cy.do([
+      QuickMarcEditorRow({ index: rowIndex }).find(TextField({ name: including('.tag') })).fillIn(''),
+      QuickMarcEditorRow({ index: rowIndex }).find(Button({ ariaLabel : 'trash' })).click(),
+    ]);
+  },
+
+  confirmDeletingField:() => {
     cy.do(deleteFieldsModal.find(Button({ id: 'clickable-quick-marc-confirm-modal-confirm' })).click());
     cy.expect(deleteFieldsModal.absent());
   },
