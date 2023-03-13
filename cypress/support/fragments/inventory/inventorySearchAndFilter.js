@@ -452,10 +452,10 @@ export default {
   selectViewHoldings:() => cy.do(viewHoldingButton.click()),
 
   filterItemByStatisticalCode:(code) => {
-    cy.do([
-      Button({ id:'accordion-toggle-button-itemsStatisticalCodeIds' }).click(),
-      statisticalCodeAccordion.find(TextField()).fillIn(code),
-    ]);
+    cy.do(Button({ id:'accordion-toggle-button-itemsStatisticalCodeIds' }).click());
+    // need to wait until data will be loaded
+    cy.wait(1000);
+    cy.do(statisticalCodeAccordion.find(TextField()).fillIn(code));
     // need to wait until data will be loaded
     cy.wait(1000);
     statisticalCodeAccordion.find(TextField()).click();
