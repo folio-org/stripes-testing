@@ -140,13 +140,13 @@ describe('TLR: Item renew', () => {
           instanceData.instanceId = specialInstanceIds.instanceId;
           instanceData.holdingId = specialInstanceIds.holdingIds[0].id;
           instanceData.itemIds = specialInstanceIds.holdingIds[0].itemIds;
-          cy.getInstance({ limit: 1, expandAll: true, query: `"id"=="${instanceData.instanceId}"` }).then(
-            (instance) => {
-              instanceData.instanceHRID = instance.hrid;
-            }
-          );
         });
       });
+    cy.getInstance({ limit: 1, expandAll: true, query: `"id"=="${instanceData.instanceId}"` }).then(
+      (instance) => {
+        instanceData.instanceHRID = instance.hrid;
+      }
+    );
     LoanPolicy.createViaApi(loanPolicyBody.renewable);
     LoanPolicy.createViaApi(loanPolicyBody.nonRenewable);
     PatronGroups.createViaApi(patronGroup.name).then((patronGroupResponse) => {
