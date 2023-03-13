@@ -142,6 +142,16 @@ export default {
     InteractorsTools.checkCalloutMessage('Order was closed');
   },
 
+  unOpenOrderDeleteHoldingsItems: (orderNumber) => {
+    cy.do([
+      orderDetailsPane
+        .find(PaneHeader({ id: 'paneHeaderorder-details' })
+          .find(actionsButton)).click(),
+      Button('Unopen').click(),
+      Button({ id:'clickable-order-unopen-confirmation-confirm-delete-holdings' }).click()
+    ]);
+  },
+
   unOpenOrder: (orderNumber) => {
     cy.do([
       orderDetailsPane
@@ -152,6 +162,7 @@ export default {
     ]);
     InteractorsTools.checkCalloutMessage(`The Purchase order - ${orderNumber} has been successfully unopened`);
   },
+
 
   receiveOrderViaActions: () => {
     cy.do([

@@ -46,6 +46,9 @@ const nameField = TextField('Name*');
 const codeField = TextField('Code*');
 const externalAccountField = TextField('External account*');
 const ledgerSelection = Selection('Ledger*');
+const transactionDetailSection = Section({ id: 'pane-transaction-details' });
+const transactionList = MultiColumnList({ id: 'transactions-list' });
+
 export default {
 
   defaultUiFund: {
@@ -62,8 +65,13 @@ export default {
     allowableExpenditure: 100,
     budgetStatus: 'Active',
   },
+
   waitLoading : () => {
     cy.expect(Pane({ id: 'fund-results-pane' }).exists());
+  },
+
+  waitLoadingTransactions : () => {
+    cy.expect(Pane({ id: 'transaction-results-pane' }).exists());
   },
 
   waitForFundDetailsLoading : () => {
@@ -175,7 +183,23 @@ export default {
     ]);
   },
 
-  checkOrderInTransactionList: (fundCode) => {
+  checkTransactionDetails: (indexNumber, fiscalYear, amount, source, type, fund) => {
+    cy.do(
+      transactionList
+        .find(MultiColumnListRow({ index: indexNumber }))
+        .find(Link())
+        .click()
+        );
+    cy.expect(
+      transactionDetailSection.find(KeyValue('Fiscal year')).has({value: fiscalYear}),
+      transactionDetailSection.find(KeyValue('Amount')).has({value: amount}),
+      transactionDetailSection.find(KeyValue('Source')).has({value: source}),
+      transactionDetailSection.find(KeyValue('Type')).has({value: type}),
+      transactionDetailSection.find(KeyValue('From')).has({value: fund}),
+    )
+  },
+
+  checkOrderInTransactionList: (fundCode, amount) => {
     cy.expect([
       MultiColumnList({ id: 'transactions-list' })
         .find(MultiColumnListRow({ index: 1 }))
@@ -184,7 +208,7 @@ export default {
       MultiColumnList({ id: 'transactions-list' })
         .find(MultiColumnListRow({ index: 1 }))
         .find(MultiColumnListCell({ columnIndex: 2 }))
-        .has({ content: '($50.00)' }),
+        .has({ content: `${amount}` }),
       MultiColumnList({ id: 'transactions-list' })
         .find(MultiColumnListRow({ index: 1 }))
         .find(MultiColumnListCell({ columnIndex: 3 }))
