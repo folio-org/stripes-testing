@@ -58,7 +58,7 @@ const deleteFieldMappingProfile = (profileName) => {
     });
 };
 
-const searchMappingProfile = (nameForSearch) => {
+const search = (nameForSearch) => {
   cy.do(TextField({ id:'input-search-mapping-profiles-field' }).fillIn(nameForSearch));
   cy.expect(searchButton.has({ disabled:false }));
   cy.do(searchButton.click(), getLongDelay());
@@ -75,7 +75,7 @@ export default {
   openNewMappingProfileForm,
   saveProfile,
   closeViewModeForMappingProfile,
-  searchMappingProfile,
+  search,
 
   createMappingProfile:(mappingProfile) => {
     openNewMappingProfileForm();
@@ -92,7 +92,7 @@ export default {
 
   createInvoiceMappingProfile:(mappingProfileName, defaultProfile, organizationName) => {
     cy.intercept('/tags?*').as('getTag');
-    searchMappingProfile(defaultProfile);
+    search(defaultProfile);
     cy.wait('@getTag');
     duplicateMappingProfile();
     NewFieldMappingProfile.fillMappingProfileForInvoice(mappingProfileName, organizationName);

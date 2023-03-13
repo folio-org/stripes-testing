@@ -30,12 +30,6 @@ describe('ui-data-import: Search the "View all" log screen', () => {
     LogsViewAll.getSingleJobProfile().then(({ hrId }) => {
       id = hrId;
     });
-
-    DataImport.checkUploadState();
-  });
-
-  afterEach(() => {
-    DataImport.checkUploadState();
   });
 
   it('C11112 Search the "View all" log screen (folijet)', { tags: [TestTypes.smoke, DevTeams.folijet] }, () => {

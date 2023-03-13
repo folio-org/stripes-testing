@@ -62,6 +62,8 @@ describe('Data Import -> Importing MARC Authority files', { retries: 2 }, () => 
   });
 
   it('C350666 Create a MARC authority record via data import (spitfire)', { tags: [TestTypes.criticalPath, DevTeams.spitfire] }, () => {
+    // TODO delete reload after fix https://issues.folio.org/browse/MODDATAIMP-691
+    cy.reload();
     DataImport.uploadFile('test-auth-file.mrc', fileName);
     JobProfiles.waitLoadingList();
     JobProfiles.searchJobProfileForImport(jobProfileToRun);
@@ -77,6 +79,8 @@ describe('Data Import -> Importing MARC Authority files', { retries: 2 }, () => 
   });
 
   it('C350668 Update a MARC authority record via data import. Record match with 999 ff $s (spitfire)', { tags: [TestTypes.criticalPath, DevTeams.spitfire] }, () => {
+    // TODO delete reload after fix https://issues.folio.org/browse/MODDATAIMP-691
+    cy.reload();
     DataImport.uploadFile('test-auth-file.mrc', fileName);
     JobProfiles.waitLoadingList();
     JobProfiles.searchJobProfileForImport(createdJobProfile.profileName);

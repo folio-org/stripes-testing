@@ -104,6 +104,8 @@ describe('ui-data-import: Match on Instance identifier match meets both the Iden
   });
 
   it('C347829 Match on Instance identifier match meets both the Identifier type and Data requirements (folijet)', { tags: [TestTypes.criticalPath, DevTeams.folijet] }, () => {
+    // TODO delete reload after fix https://issues.folio.org/browse/MODDATAIMP-691
+    cy.reload();
     DataImport.uploadFile(filePathForCreateInstance, fileNameForCreateInstance);
     JobProfiles.searchJobProfileForImport(jobProfileToRun);
     JobProfiles.runImportFile();
@@ -140,8 +142,8 @@ describe('ui-data-import: Match on Instance identifier match meets both the Iden
     JobProfiles.checkJobProfilePresented(jobProfileName);
 
     cy.visit(TopMenu.dataImportPath);
-    // TODO delete code after fix https://issues.folio.org/browse/MODDATAIMP-691
-    DataImport.clickDataImportNavButton();
+    // TODO delete reload after fix https://issues.folio.org/browse/MODDATAIMP-691
+    cy.reload();
     DataImport.uploadFile(filePathForUpdateInstance, fileNameForUpdateInstance);
     JobProfiles.searchJobProfileForImport(jobProfileName);
     JobProfiles.runImportFile();

@@ -42,7 +42,7 @@ describe('ui-data-import: Edit an existing field mapping profile', () => {
   });
 
   it('C2351 Edit an existing field mapping profile (folijet)', { tags: [TestTypes.criticalPath, DevTeams.folijet] }, () => {
-    FieldMappingProfiles.searchMappingProfile(mappingProfileName);
+    FieldMappingProfiles.search(mappingProfileName);
     FieldMappingProfileView.editMappingProfile();
     FieldMappingProfileEdit.verifyScreenName(mappingProfileName);
     FieldMappingProfileEdit.fillInstanceStatusTerm(instanceStatusTerm);
