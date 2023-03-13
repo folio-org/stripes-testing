@@ -66,6 +66,7 @@ describe('orders: Unopen order', () => {
       organization.addresses.find(address => address.isPrimary === true));
     invoice.batchGroup = 'FOLIO';
 
+
     FiscalYears.createViaApi(defaultFiscalYear)
     .then(response => {
       defaultFiscalYear.id = response.id;
@@ -80,7 +81,6 @@ describe('orders: Unopen order', () => {
           Funds.createViaApi(firstFund)
             .then(fundResponse => {
               firstFund.id = fundResponse.fund.id;
-
               cy.loginAsAdmin({ path:TopMenu.fundPath, waiter: Funds.waitLoading });
               FinanceHelp.searchByName(firstFund.name);
               Funds.selectFund(firstFund.name);
@@ -90,7 +90,6 @@ describe('orders: Unopen order', () => {
           Funds.createViaApi(secondFund)
             .then(secondFundResponse => {
               secondFund.id = secondFundResponse.fund.id;
-
               cy.visit(TopMenu.fundPath);
               FinanceHelp.searchByName(secondFund.name);
               Funds.selectFund(secondFund.name);
@@ -102,7 +101,6 @@ describe('orders: Unopen order', () => {
     cy.createOrderApi(order)
       .then((response) => {
         orderNumber = response.body.poNumber;
-        orderID = response.body.id;
         cy.visit(TopMenu.ordersPath);
         Orders.searchByParameter('PO number', orderNumber);
         Orders.selectFromResultsList(orderNumber);
@@ -136,6 +134,10 @@ describe('orders: Unopen order', () => {
 
         cy.login(user.username, user.password, { path:TopMenu.ordersPath, waiter: Orders.waitLoading });
       });
+  });
+
+  after(() => {
+    Users.deleteViaApi(user.userId);
   });
 
   it('C375106 Unopen order with changed Fund distribution when related paid invoice exists (thunderjet)', { tags: [testType.smoke, devTeams.thunderjet] }, () => {
