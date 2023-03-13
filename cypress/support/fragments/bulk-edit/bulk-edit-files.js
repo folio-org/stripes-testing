@@ -3,7 +3,7 @@ import FileManager from '../../utils/fileManager';
 export default {
   verifyMatchedResultFileContent(fileName, expectedResult, resultType = 'barcode', validFile = true) {
     const verifyFunc = resultType === 'barcode' ? this.verifyMatchedResultByItemBarcode 
-    : resultType === 'firstElement' ? this.verifyMatchedResultEveryRow 
+    : resultType === 'firstElement' ? this.verifyMatchedResultFirstElement 
     : this.verifyMatchedResultByHRID;
     
     const getValuesFromCSVFile = validFile === true ? this.getValuesFromValidCSVFile 
@@ -46,7 +46,7 @@ export default {
     expect(actualHRID).to.eq(expectedResult);
   },
 
-  verifyMatchedResultEveryRow(actualResult, expectedResult) {
+  verifyMatchedResultFirstElement(actualResult, expectedResult) {
     const actualHRID = actualResult.split(',')[0];
     expect(actualHRID).to.eq(expectedResult);
   },
