@@ -136,7 +136,7 @@ describe('ui-users: Verify that maximum number of items borrowed for loan type (
 
         cy.visit(SettingsMenu.circulationOtherSettingsPath);
         OtherSettings.waitLoading();
-        OtherSettings.selectPatronIdsForCheckoutScanning(['Barcode'], '1');
+        OtherSettings.selectPatronIdsForCheckoutScanning(['Barcode'], '5');
       });
   });
 

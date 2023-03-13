@@ -593,5 +593,15 @@ export default {
   selectCurrentEncumbrance:(currentEncumbrance) => {
     cy.do(Section({ id: 'FundDistribution' }).find(Link(currentEncumbrance)).click());
   },
+
+  cancelPOL:() => {
+    cy.do([
+      Pane({ id: 'order-lines-details' })
+      .find(PaneHeader({ id: 'paneHeaderorder-lines-details' })
+        .find(actionsButton)).click(),
+        Button('Cancel').click(),
+        Button('Cancel order line').click()
+    ]);
+  },
 };
 
