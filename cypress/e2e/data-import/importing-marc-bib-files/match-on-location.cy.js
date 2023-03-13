@@ -1,3 +1,4 @@
+/* eslint-disable cypress/no-unnecessary-waiting */
 import getRandomPostfix from '../../../support/utils/stringTools';
 import TestTypes from '../../../support/dictionary/testTypes';
 import DevTeams from '../../../support/dictionary/devTeams';
@@ -245,8 +246,8 @@ describe('ui-data-import', () => {
 
         // upload a marc file for creating of the new instance, holding and item
         cy.visit(TopMenu.dataImportPath);
-        // TODO delete code after fix https://issues.folio.org/browse/MODDATAIMP-691
-        DataImport.clickDataImportNavButton();
+        // TODO delete reload after fix https://issues.folio.org/browse/MODDATAIMP-691
+        cy.reload();
         DataImport.uploadFile('marcFileForC17027.mrc', marcFileForCreate);
         JobProfiles.searchJobProfileForImport(testData.jobProfileForCreate.profile.name);
         JobProfiles.runImportFile();
@@ -354,8 +355,8 @@ describe('ui-data-import', () => {
 
     // upload a marc file
     cy.visit(TopMenu.dataImportPath);
-    // TODO delete code after fix https://issues.folio.org/browse/MODDATAIMP-691
-    DataImport.clickDataImportNavButton();
+    // TODO delete reload after fix https://issues.folio.org/browse/MODDATAIMP-691
+    cy.reload();
     DataImport.uploadFile(editedMarcFileName, fileNameAfterUpdate);
     JobProfiles.searchJobProfileForImport(jobProfileNameForUpdate);
     JobProfiles.runImportFile();
