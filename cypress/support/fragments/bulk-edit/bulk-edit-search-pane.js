@@ -9,7 +9,11 @@ import {
   MultiColumnListHeader,
   RadioButton,
   Select,
-  MultiColumnList, Pane, TextArea, including
+  MultiColumnList,
+  Pane,
+  TextArea,
+  including,
+  MultiColumnListRow
 } from '../../../../interactors';
 
 const resultsAccordion = Accordion('Preview of record matched');
@@ -24,6 +28,7 @@ const bulkEditPane = Pane(including('Bulk edit'));
 const usersRadio = RadioButton('Users');
 const itemsRadio = RadioButton('Inventory - items');
 const holdingsRadio = RadioButton('Inventory - holdings');
+const holdingsCheckbox = Checkbox('Inventory - holdings');
 const identifierToggle = Button('Identifier');
 const queryToggle = Button('Query');
 const logsToggle = Button('Logs');
@@ -78,7 +83,7 @@ export default {
       fileButton.has({ disabled: true })
     ]);
   },
-  
+
   verifySetCriteriaPaneSpecificTabs(...tabs) {
     tabs.forEach(tab => {
       cy.expect(setCriteriaPane.find(Button(`${tab}`)).exists());
@@ -412,6 +417,10 @@ export default {
     cy.do(holdingsRadio.click());
   },
 
+  checkHoldingsCheckbox() {
+    cy.do(holdingsCheckbox.click());
+  },
+
   itemsHoldingsIsDisabled(isDisabled) {
     cy.expect(holdingsRadio.has({ disabled: isDisabled }));
   },
@@ -507,6 +516,15 @@ export default {
     if (errors) {
       cy.expect(Button('Download errors (CSV)').exists());
     }
+  },
+
+  downloadErrors() {
+    cy.do([
+      actions.click(),
+      Button('Download errors (CSV)').click(),
+    ]);
+    //Need to wait for the file to download
+    cy.wait(5000);
   },
 
   verifyUsersActionShowColumns() {
@@ -664,5 +682,28 @@ export default {
       itemsRadio.absent(),
       holdingsRadio.absent(),
     ]);
-  }
+  },
+
+  clickActionsOnTheRow(row = 0) {
+    cy.do(MultiColumnListRow({ indexRow: `row-${row}` }).find(Button({ icon: 'ellipsis' })).click());
+  },
+
+  verifyLogsRowAction() {
+    cy.expect([
+      HTML('File that was used to trigger the bulk edit').exists(),
+      HTML('File with errors encountered during the record matching').exists()
+    ]);
+  },
+
+  downloadFileUsedToTrigger() {
+    cy.do(Button('File that was used to trigger the bulk edit').click());
+    //Need to wait for the file to download
+    cy.wait(5000);
+  },
+
+  downloadFileWithErrorsEncountered() {
+    cy.do(Button('File with errors encountered during the record matching').click());
+    //Need to wait for the file to download
+    cy.wait(5000);
+  },
 };
