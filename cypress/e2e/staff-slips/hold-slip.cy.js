@@ -21,6 +21,7 @@ import Checkout from '../../support/fragments/checkout/checkout';
 import Requests from '../../support/fragments/requests/requests';
 import Users from '../../support/fragments/users/users';
 import NewRequest from '../../support/fragments/requests/newRequest';
+import OtherSettings from '../../support/fragments/settings/circulation/otherSettings';
 
 describe('Check In - Actions', () => {
   let originalCirculationRules;
@@ -92,6 +93,7 @@ describe('Check In - Actions', () => {
         });
       });
 
+    OtherSettings.setOtherSettingsViaApi({ prefPatronIdentifier: 'barcode,username' });
     PatronGroups.createViaApi(patronGroup.name).then((patronGroupResponse) => {
       patronGroup.id = patronGroupResponse;
     });

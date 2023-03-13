@@ -30,6 +30,7 @@ import UsersSearchPane from '../../support/fragments/users/usersSearchPane';
 import UsersCard from '../../support/fragments/users/usersCard';
 import UserAllFeesFines from '../../support/fragments/users/userAllFeesFines';
 import PayFeeFaine from '../../support/fragments/users/payFeeFaine';
+import OtherSettings from '../../support/fragments/settings/circulation/otherSettings';
 
 describe('Overdue fine', () => {
   const patronGroup = {
@@ -228,6 +229,7 @@ describe('Overdue fine', () => {
         });
       });
 
+    OtherSettings.setOtherSettingsViaApi({ prefPatronIdentifier: 'barcode,username' });
     LoanPolicy.createViaApi(loanPolicyBody);
     OverdueFinePolicy.createViaApi(overdueFinePolicyBody);
     UsersOwners.createViaApi(userOwnerBody);
