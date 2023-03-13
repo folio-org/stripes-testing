@@ -25,7 +25,7 @@ function openActionsMenuOfLoanByBarcode(itemBarcode) {
 function updateTimer(moduleId, routingEntry) {
   return cy.okapiRequest({
     method: REQUEST_METHOD.PATCH,
-    path: `_/proxy/tenants/diku/timers/${moduleId}`,
+    path: `_/proxy/tenants/${Cypress.env('OKAPI_TENANT')}/timers/${moduleId}`,
     body: routingEntry,
     isDefaultSearchParamsRequired: false,
   });

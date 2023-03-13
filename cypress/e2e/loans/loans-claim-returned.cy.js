@@ -27,7 +27,6 @@ import ConfirmClaimReturnedModal from '../../support/fragments/users/loans/confi
 import CirculationRules from '../../support/fragments/circulation/circulation-rules';
 import LostItemFeePolicy from '../../support/fragments/circulation/lost-item-fee-policy';
 
-
 function getClaimedReturnedLoansQuantity(loansArray) {
   let res = 0;
 
@@ -38,6 +37,7 @@ function getClaimedReturnedLoansQuantity(loansArray) {
 }
 
 describe('Loans ', () => {
+  let addedCirculationRule;
   let originalCirculationRules;
   let defaultLocation;
   const reasonWhyItemIsClaimedOut = 'reason why the item is claimed out';
@@ -144,6 +144,7 @@ describe('Loans ', () => {
       originalCirculationRules = circulationRule.rulesAsText;
       const ruleProps = CirculationRules.getRuleProps(circulationRule.rulesAsText);
       ruleProps.i = lostItemFeePolicyBody.id;
+      addedCirculationRule = 't ' + testData.loanTypeId + ': i ' + ruleProps.i + ' l ' + ruleProps.l + ' r ' + ruleProps.r + ' o ' + ruleProps.o + ' n ' + ruleProps.n;
       CirculationRules.addRuleViaApi(originalCirculationRules, ruleProps, 't ', testData.loanTypeId);
     });
     cy.createTempUser([permissions.checkinAll.gui,
@@ -198,8 +199,8 @@ describe('Loans ', () => {
           }
         )
       );
+    CirculationRules.deleteRuleViaApi(addedCirculationRule);
     LostItemFeePolicy.deleteViaApi(lostItemFeePolicyBody.id);
-    CirculationRules.deleteRuleViaApi(originalCirculationRules);
     cy.deleteLoanType(testData.loanTypeId);
     Location.deleteViaApiIncludingInstitutionCampusLibrary(
       defaultLocation.institutionId,

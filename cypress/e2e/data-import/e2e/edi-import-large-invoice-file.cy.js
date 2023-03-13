@@ -67,6 +67,8 @@ describe('ui-data-import: Import a large EDIFACT invoice file', () => {
 
     // upload a marc file for creating of the new instance, holding and item
     cy.visit(TopMenu.dataImportPath);
+    // TODO delete code after fix https://issues.folio.org/browse/MODDATAIMP-691
+    DataImport.clickDataImportNavButton();
     DataImport.uploadFile('ediFileForC347615.edi', fileName);
     JobProfiles.searchJobProfileForImport(jobProfile.profileName);
     JobProfiles.selectJobProfile();
