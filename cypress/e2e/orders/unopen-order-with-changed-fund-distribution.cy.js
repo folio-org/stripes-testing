@@ -34,10 +34,6 @@ describe('orders: Unopen order', () => {
       categories: [],
       language: 'English'
     }] };
-  const item = {
-    instanceName: `testBulkEdit_${getRandomPostfix()}`,
-    itemBarcode: getRandomPostfix(),
-  };
   const firstFund = { ...Funds.defaultUiFund };
   const secondFund = {
     name: `autotest_fund2_${getRandomPostfix()}`,
@@ -69,7 +65,6 @@ describe('orders: Unopen order', () => {
     Object.assign(vendorPrimaryAddress,
       organization.addresses.find(address => address.isPrimary === true));
     invoice.batchGroup = 'FOLIO';
-
 
     FiscalYears.createViaApi(defaultFiscalYear)
     .then(response => {
@@ -128,8 +123,6 @@ describe('orders: Unopen order', () => {
         OrderLines.changeFundInPOL(secondFund);
       });
 
-
-
     cy.createTempUser([
       permissions.uiFinanceViewFundAndBudget.gui,
       permissions.uiInvoicesCanViewInvoicesAndInvoiceLines.gui,
@@ -143,10 +136,6 @@ describe('orders: Unopen order', () => {
 
         cy.login(user.username, user.password, { path:TopMenu.ordersPath, waiter: Orders.waitLoading });
       });
-  });
-
-  after(() => {
-    Users.deleteViaApi(user.userId);
   });
 
   it('C375106 Unopen order with changed Fund distribution when related paid invoice exists (thunderjet)', { tags: [testType.smoke, devTeams.thunderjet] }, () => {
