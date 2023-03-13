@@ -28,6 +28,7 @@ import TitleLevelRequests from '../../support/fragments/settings/circulation/tit
 import Requests from '../../support/fragments/requests/requests';
 
 describe('TLR: Item renew', () => {
+  let instanceHRID;
   let addedCirculationRule;
   let originalCirculationRules;
   let userForRenew = {};
@@ -140,13 +141,13 @@ describe('TLR: Item renew', () => {
           instanceData.instanceId = specialInstanceIds.instanceId;
           instanceData.holdingId = specialInstanceIds.holdingIds[0].id;
           instanceData.itemIds = specialInstanceIds.holdingIds[0].itemIds;
+          cy.getInstance({ limit: 1, expandAll: true, query: `"id"=="${specialInstanceIds.instanceId}"` }).then(
+            (instance) => {
+              instanceHRID = instance.hrid;
+            }
+          );
         });
       });
-    cy.getInstance({ limit: 1, expandAll: true, query: `"id"=="${instanceData.instanceId}"` }).then(
-      (instance) => {
-        instanceData.instanceHRID = instance.hrid;
-      }
-    );
     LoanPolicy.createViaApi(loanPolicyBody.renewable);
     LoanPolicy.createViaApi(loanPolicyBody.nonRenewable);
     PatronGroups.createViaApi(patronGroup.name).then((patronGroupResponse) => {
@@ -263,7 +264,7 @@ describe('TLR: Item renew', () => {
       Requests.waitLoading();
       NewRequest.createNewRequest({
         requesterBarcode: userForRenew.barcode,
-        instanceHRID: instanceData.instanceHRID,
+        instanceHRID,
         pickupServicePoint: testData.userServicePoint.name,
         requestType: 'Hold',
       });
@@ -298,7 +299,7 @@ describe('TLR: Item renew', () => {
       cy.intercept('POST', 'circulation/requests').as('createRequest');
       NewRequest.createNewRequest({
         requesterBarcode: userForRenew.barcode,
-        instanceHRID: instanceData.instanceHRID,
+        instanceHRID,
         pickupServicePoint: testData.userServicePoint.name,
         requestType: 'Recall',
       });
