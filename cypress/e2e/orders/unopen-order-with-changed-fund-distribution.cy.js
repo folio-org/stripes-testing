@@ -4,22 +4,15 @@ import devTeams from '../../support/dictionary/devTeams';
 import getRandomPostfix from '../../support/utils/stringTools';
 import NewOrder from '../../support/fragments/orders/newOrder';
 import Orders from '../../support/fragments/orders/orders';
-import Receiving from '../../support/fragments/receiving/receiving';
 import TopMenu from '../../support/fragments/topMenu';
 import Organizations from '../../support/fragments/organizations/organizations';
 import NewOrganization from '../../support/fragments/organizations/newOrganization';
 import OrderLines from '../../support/fragments/orders/orderLines';
-import InventoryInstances from '../../support/fragments/inventory/inventoryInstances';
 import Users from '../../support/fragments/users/users';
-import ServicePoints from '../../support/fragments/settings/tenant/servicePoints/servicePoints';
-import NewLocation from '../../support/fragments/settings/tenant/locations/newLocation';
 import Ledgers from '../../support/fragments/finance/ledgers/ledgers';
 import Funds from '../../support/fragments/finance/funds/funds';
 import FiscalYears from '../../support/fragments/finance/fiscalYears/fiscalYears';
-import SettingsMenu from '../../support/fragments/settingsMenu';
-import SettingsInvoices from '../../support/fragments/invoices/settingsInvoices';
 import NewInvoice from '../../support/fragments/invoices/newInvoice';
-import NewInvoiceLine from '../../support/fragments/invoices/newInvoiceLine';
 import Invoices from '../../support/fragments/invoices/invoices';
 import VendorAddress from '../../support/fragments/invoices/vendorAddress';
 import FinanceHelp from '../../support/fragments/finance/financeHelper';
@@ -62,9 +55,6 @@ describe('orders: Unopen order', () => {
   const allocatedQuantityForSecondFund = '100';
   let user;
   let orderNumber;
-  let orderID;
-  let location;
-  let servicePointId;
 
   before(() => {
     cy.getAdminToken();
@@ -130,6 +120,12 @@ describe('orders: Unopen order', () => {
         Invoices.createInvoiceLinePOLLookUp(orderNumber);
         Invoices.approveInvoice();
         Invoices.payInvoice();
+        cy.visit(TopMenu.ordersPath);
+        Orders.searchByParameter('PO number', orderNumber);
+        Orders.selectFromResultsList(orderNumber);
+        OrderLines.selectPOLInOrder();
+        OrderLines.editPOLInOrder();
+        OrderLines.changeFundInPOL(secondFund);
       });
 
 
@@ -149,30 +145,36 @@ describe('orders: Unopen order', () => {
       });
   });
 
+  after(() => {
+    Users.deleteViaApi(user.userId);
+  });
 
   it('C375106 Unopen order with changed Fund distribution when related paid invoice exists (thunderjet)', { tags: [testType.smoke, devTeams.thunderjet] }, () => {
     Orders.searchByParameter('PO number', orderNumber);
     Orders.selectFromResultsList(orderNumber);
     Orders.unOpenOrder();
     OrderLines.selectPOLInOrder();
+    cy.wait(5000);
+    OrderLines.checkFundInPOL(secondFund);
     OrderLines.backToEditingOrder();
     Orders.openOrder();
     OrderLines.selectPOLInOrder();
-    
-      cy.window().then((win) => {
-        const newWindow =     OrderLines.selectCurrentEncumbrance('$0.00');
-        cy.wrap(newWindow).should('have.property', 'closed', false);
-
-        cy.wrap(newWindow).should('have.property', 'focused', true);
-        Funds.waitLoadingTransactions();
-        newWindow.close();
-      
-        cy.wrap(newWindow).should('have.property', 'closed', true);
-      });
-      
+    OrderLines.checkFundInPOL(secondFund);
+    cy.visit(TopMenu.fundPath);
+    FinanceHelp.searchByName(secondFund.name);
+    Funds.selectFund(secondFund.name);
+    Funds.selectBudgetDetails();
+    Funds.viewTransactions();
+    Funds.checkOrderInTransactionList(`${secondFund.code}`, '$0.00');
     cy.visit(TopMenu.invoicesPath);
     Invoices.searchByNumber(invoice.invoiceNumber);
     Invoices.selectInvoice(invoice.invoiceNumber);
     Invoices.selectInvoiceLine();
+    cy.visit(TopMenu.fundPath);
+    FinanceHelp.searchByName(firstFund.name);
+    Funds.selectFund(firstFund.name);
+    Funds.selectBudgetDetails();
+    Funds.viewTransactions();
+    Funds.checkTransactionDetails(1, defaultFiscalYear.code,'($20.00)', invoice.invoiceNumber, 'Payment', `${firstFund.name} (${firstFund.code})`);
   });
 });
