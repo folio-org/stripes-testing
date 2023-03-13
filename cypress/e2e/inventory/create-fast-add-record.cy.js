@@ -42,10 +42,10 @@ describe('ui-inventory: Create fast add record', () => {
   });
 
   afterEach('reset "Fast add" setting', () => {
-    Users.deleteViaApi(userId);
     FastAddNewRecord.updateInventoryFastAddSetting(
       FastAddNewRecord.fastAddNewRecordFormDetails.defaultInstanceStatusCodeOption
     );
+    Users.deleteViaApi(userId);
     InventoryInstances.deleteInstanceAndHoldingRecordAndAllItemsViaApi(FastAddNewRecord.fastAddNewRecordFormDetails.itemBarcode);
   });
 
