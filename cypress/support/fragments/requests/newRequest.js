@@ -32,14 +32,12 @@ export default {
   openNewRequestPane,
 
   fillRequiredFields(newRequest) {
-    // need to prevent "value error"
-    cy.wait(3000);
     if ('instanceHRID' in newRequest) {
       cy.expect(Checkbox({ name: 'createTitleLevelRequest', disabled: false }).exists());
-      cy.do([
-        titleLevelRequest.click(),
-        instanceHridInput.fillIn(newRequest.instanceHRID),
-      ]);
+      cy.do(titleLevelRequest.click());
+      // need to prevent "value error"
+      cy.wait(3000);
+      cy.do(instanceHridInput.fillIn(newRequest.instanceHRID));
       cy.intercept('/inventory/instances?*').as('getLoans');
       cy.do(Section({ id: 'new-item-info' }).find(Button('Enter')).click());
     } else {
