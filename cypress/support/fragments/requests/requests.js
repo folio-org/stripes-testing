@@ -312,7 +312,7 @@ export default {
   verifyAssignedTags(tag) {
     cy.expect(Spinner().absent());
     // need to wait until number of tags is displayed
-    cy.wait(1000);
+    cy.wait(1500);
     cy.expect(showTagsButton.find(Badge()).has({ value: '1' }));
     cy.expect(tagsPane.find(ValueChipRoot(tag)).exists());
   },

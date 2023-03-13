@@ -46,7 +46,6 @@ describe('ui-data-import: Filter the "View all" log screen', () => {
   });
 
   beforeEach(() => {
-    DataImport.checkUploadState();
     LogsViewAll.getSingleJobProfile().then(({ jobProfileInfo, runBy }) => {
       const {
         firstName,

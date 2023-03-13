@@ -500,7 +500,7 @@ export default {
     cy.do(actionsButton.click());
     cy.do(moveHoldingsToAnotherInstanceButton.click());
     InventoryInstanceSelectInstanceModal.waitLoading();
-    InventoryInstanceSelectInstanceModal.searchByTitle(title)
+    InventoryInstanceSelectInstanceModal.searchByTitle(title);
     InventoryInstanceSelectInstanceModal.selectInstance();
     InventoryInstancesMovement.moveFromMultiple(holdingName, title);
   },
@@ -654,13 +654,17 @@ export default {
     cy.expect(MultiColumnListCell({ content: barcode }).exists());
   },
 
-  openItemByBarcodeAndIndex: (barcode,indexRowNumber,rowCountInList) => {
+  openItemByBarcodeAndIndex: (barcode, indexRowNumber, rowCountInList) => {
     cy.do([
       Button('Collapse all').click(),
       Button('Acquisition').click(),
-      MultiColumnList({ columnCount: rowCountInList})
-      .find(MultiColumnListRow({ indexRow: indexRowNumber }))
-      .find(Link(barcode)).click()
+      MultiColumnList({ columnCount: rowCountInList })
+        .find(MultiColumnListRow({ indexRow: indexRowNumber }))
+        .find(Link(barcode)).click()
     ]);
+  },
+
+  verifyHoldingLocation(content) {
+    cy.expect(MultiColumnListCell({ content }).exists());
   },
 };
