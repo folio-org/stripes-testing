@@ -24,6 +24,7 @@ import NewRequest from '../../support/fragments/requests/newRequest';
 import OtherSettings from '../../support/fragments/settings/circulation/otherSettings';
 
 describe('Check In - Actions', () => {
+  let addedCirculationRule;
   let originalCirculationRules;
   const userData = {};
   const requestUserData = {};
@@ -102,6 +103,7 @@ describe('Check In - Actions', () => {
       originalCirculationRules = circulationRule.rulesAsText;
       const ruleProps = CirculationRules.getRuleProps(circulationRule.rulesAsText);
       ruleProps.r = requestPolicyBody.id;
+      addedCirculationRule = 't ' + testData.loanTypeId + ': i ' + ruleProps.i + ' l ' + ruleProps.l + ' r ' + ruleProps.r + ' o ' + ruleProps.o + ' n ' + ruleProps.n;
       CirculationRules.addRuleViaApi(originalCirculationRules, ruleProps, 't ', testData.loanTypeId);
     });
 
@@ -148,7 +150,7 @@ describe('Check In - Actions', () => {
       checkInDate: new Date().toISOString(),
     });
     RequestPolicy.deleteViaApi(requestPolicyBody.id);
-    CirculationRules.deleteRuleViaApi(originalCirculationRules);
+    CirculationRules.deleteRuleViaApi(addedCirculationRule);
     UserEdit.changeServicePointPreferenceViaApi(userData.userId, [testData.userServicePoint.id]);
     UserEdit.changeServicePointPreferenceViaApi(requestUserData.userId, [testData.userServicePoint.id]);
     ServicePoints.deleteViaApi(testData.userServicePoint.id);

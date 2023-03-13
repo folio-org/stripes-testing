@@ -19,6 +19,7 @@ import InstanceRecordView from '../../../support/fragments/inventory/instanceRec
 import HoldingsRecordView from '../../../support/fragments/inventory/holdingsRecordView';
 import Helper from '../../../support/fragments/finance/financeHelper';
 import FileManager from '../../../support/utils/fileManager';
+import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 
 describe('ui-data-import', () => {
   let instanceHrid;
@@ -142,6 +143,11 @@ describe('ui-data-import', () => {
     FieldMappingProfiles.deleteFieldMappingProfile(holdingsMappingProfileNameForUpdate);
     // delete created files
     FileManager.deleteFile(`cypress/fixtures/${editedMarcFileName}`);
+    cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${instanceHrid}"` })
+      .then((instance) => {
+        cy.deleteHoldingRecordViaApi(instance.holdings[0].id);
+        InventoryInstance.deleteInstanceViaApi(instance.id);
+      });
   });
 
   it('C11110 Update a holdings via a static value submatch (folijet)', { tags: [TestTypes.criticalPath, DevTeams.folijet] }, () => {
@@ -193,6 +199,8 @@ describe('ui-data-import', () => {
 
     // upload a marc file for creating
     cy.visit(TopMenu.dataImportPath);
+    // TODO delete code after fix https://issues.folio.org/browse/MODDATAIMP-691
+    DataImport.clickDataImportNavButton();
     DataImport.uploadFile('oneMarcBib.mrc', marcFileNameForCreate);
     JobProfiles.searchJobProfileForImport(jobProfileNameForCreate);
     JobProfiles.runImportFile();
@@ -271,6 +279,8 @@ describe('ui-data-import', () => {
         // upload .mrc file
         cy.visit(TopMenu.dataImportPath);
         DataImport.checkIsLandingPageOpened();
+        // TODO delete code after fix https://issues.folio.org/browse/MODDATAIMP-691
+        DataImport.clickDataImportNavButton();
         DataImport.uploadFile(editedMarcFileName, marcFileNameForUpdate);
         JobProfiles.searchJobProfileForImport(jobProfileNameForUpdate);
         JobProfiles.runImportFile();

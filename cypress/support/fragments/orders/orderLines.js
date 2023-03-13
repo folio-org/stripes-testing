@@ -275,12 +275,12 @@ export default {
       acquisitionMethodButton.click(),
       SelectionOption('Depository').click(),
       physicalUnitPriceTextField.fillIn(physicalUnitPrice),
-      quantityPhysicalTextField.fillIn(quantityPhysical),
+      quantityPhysicalTextField.fillIn('2'),
       materialTypeSelect.choose('book'),
       addLocationButton.click(),
       locationSelect.click(),
       SelectionOption('Main Library (KU/CC/DI/M)').click(),
-      quantityPhysicalLocationField.fillIn(quantityPhysical),
+      quantityPhysicalLocationField.fillIn('2'),
       addFundDistributionButton.click(),
       fundDistributionSelect.click(),
       SelectionOption(`${fund.name} (${fund.code})`).click(),
@@ -588,6 +588,20 @@ export default {
 
   clickNotConnectionInfoButton:() => {
     cy.do(Section({ id: 'itemDetails' }).find(Button({ icon: 'info' })).click());
-  }
+  },
+
+  selectCurrentEncumbrance:(currentEncumbrance) => {
+    cy.do(Section({ id: 'FundDistribution' }).find(Link(currentEncumbrance)).click());
+  },
+
+  cancelPOL:() => {
+    cy.do([
+      Pane({ id: 'order-lines-details' })
+      .find(PaneHeader({ id: 'paneHeaderorder-lines-details' })
+        .find(actionsButton)).click(),
+        Button('Cancel').click(),
+        Button('Cancel order line').click()
+    ]);
+  },
 };
 

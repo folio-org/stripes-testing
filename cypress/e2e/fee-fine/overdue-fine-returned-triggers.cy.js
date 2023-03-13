@@ -33,6 +33,7 @@ import PayFeeFaine from '../../support/fragments/users/payFeeFaine';
 import OtherSettings from '../../support/fragments/settings/circulation/otherSettings';
 
 describe('Overdue fine', () => {
+  let addedCirculationRule;
   const patronGroup = {
     name: 'groupToTestNotices' + getRandomPostfix(),
   };
@@ -280,7 +281,7 @@ describe('Overdue fine', () => {
 
   after('Deleting created entities', () => {
     UserEdit.changeServicePointPreferenceViaApi(userData.userId, [testData.userServicePoint.id]);
-    CirculationRules.deleteRuleViaApi(testData.baseRules);
+    CirculationRules.deleteRuleViaApi(addedCirculationRule);
     ServicePoints.deleteViaApi(testData.userServicePoint.id);
     cy.deleteLoanPolicy(loanPolicyBody.id);
     NoticePolicyApi.deleteViaApi(testData.ruleProps.n);
@@ -339,6 +340,7 @@ describe('Overdue fine', () => {
         testData.ruleProps.n = noticePolicyRes[0].id;
         testData.ruleProps.l = loanPolicyBody.id;
         testData.ruleProps.o = overdueFinePolicyBody.id;
+        addedCirculationRule = 't ' + testData.loanTypeId + ': i ' + testData.ruleProps.i + ' l ' + testData.ruleProps.l + ' r ' + testData.ruleProps.r + ' o ' + testData.ruleProps.o + ' n ' + testData.ruleProps.n;
         CirculationRules.addRuleViaApi(testData.baseRules, testData.ruleProps, 't ', testData.loanTypeId);
       });
 

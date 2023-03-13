@@ -78,6 +78,22 @@ export default {
       fileButton.has({ disabled: true })
     ]);
   },
+  
+  verifySetCriteriaPaneSpecificTabs(...tabs) {
+    tabs.forEach(tab => {
+      cy.expect(setCriteriaPane.find(Button(`${tab}`)).exists());
+    });
+  },
+
+  verifySetCriteriaPaneSpecificTabsHidden(...tabs) {
+    tabs.forEach(tab => {
+      cy.expect(setCriteriaPane.find(Button(`${tab}`)).absent());
+    });
+  },
+
+  verifySpecificTabHighlighted(tab) {
+    cy.expect(Button(`${tab}`).has({ default: false }));
+  },
 
   verifyRecordTypesAccordion() {
     cy.expect([
@@ -429,12 +445,12 @@ export default {
 
   verifyUserBarcodesResultAccordion() {
     cy.expect([
+      MultiColumnListHeader('Username').exists(),
+      MultiColumnListHeader('Barcode').exists(),
       MultiColumnListHeader('Active').exists(),
+      MultiColumnListHeader('Patron group').exists(),
       MultiColumnListHeader('Last name').exists(),
       MultiColumnListHeader('First name').exists(),
-      MultiColumnListHeader('Barcode').exists(),
-      MultiColumnListHeader('Patron group').exists(),
-      MultiColumnListHeader('Username').exists(),
     ]);
   },
 

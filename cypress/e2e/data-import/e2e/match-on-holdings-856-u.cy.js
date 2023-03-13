@@ -161,6 +161,8 @@ describe('ui-data-import: Match on Holdings 856 $u', () => {
     JobProfiles.checkJobProfilePresented(updateEHoldingsJobProfileName);
 
     cy.visit(TopMenu.dataImportPath);
+    // TODO delete code after fix https://issues.folio.org/browse/MODDATAIMP-691
+    DataImport.clickDataImportNavButton();
     DataImport.uploadFile('marcFileForC17025.mrc', nameForCreateMarcFile);
     JobProfiles.searchJobProfileForImport(createInstanceAndEHoldingsJobProfileName);
     JobProfiles.runImportFile();
@@ -176,6 +178,8 @@ describe('ui-data-import: Match on Holdings 856 $u', () => {
       });
 
     cy.visit(TopMenu.dataImportPath);
+    // TODO delete code after fix https://issues.folio.org/browse/MODDATAIMP-691
+    DataImport.clickDataImportNavButton();
     DataImport.uploadFile('marcFileForC17025.mrc', nameForUpdateCreateMarcFile);
     JobProfiles.searchJobProfileForImport(updateEHoldingsJobProfileName);
     JobProfiles.runImportFile();

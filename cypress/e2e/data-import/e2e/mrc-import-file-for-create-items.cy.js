@@ -131,6 +131,8 @@ describe('ui-data-import: MARC file import with creating of the new instance, ho
     JobProfiles.checkJobProfilePresented(specialJobProfile.profileName);
 
     cy.visit(TopMenu.dataImportPath);
+    // TODO delete code after fix https://issues.folio.org/browse/MODDATAIMP-691
+    DataImport.clickDataImportNavButton();
     DataImport.uploadFile('oneMarcBib.mrc', fileName);
     JobProfiles.searchJobProfileForImport(specialJobProfile.profileName);
     JobProfiles.runImportFile();

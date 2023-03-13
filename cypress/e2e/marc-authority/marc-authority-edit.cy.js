@@ -18,10 +18,13 @@ describe('MARC Authority -> Edit Authority record', () => {
     authority: {
       title: 'Twain, Mark, 1835-1910. Adventures of Huckleberry Finn',
       searchOption: 'Keyword',
+    },
+    authorityB: {
+      title: 'Beethoven, Ludwig van (no 010)',
+      searchOption: 'Keyword',
     }
   };
   const jobProfileToRun = 'Default - Create SRS MARC Authority';
-  const fileName = `testMarcFile.${getRandomPostfix()}.mrc`;
   const newFieldsArr = [
     ['245', '1', '\\', '$a Added row (must indicate)'],
     ['260', '1', '1', '$b Added row (not indicate)'],
@@ -49,8 +52,13 @@ describe('MARC Authority -> Edit Authority record', () => {
     { newContent: replaceByIndex(replaceByIndex(replaceByIndex(initialLDRValue, 5, 's'), 17, 'o'), 18, 'c') },
     { newContent: replaceByIndex(replaceByIndex(replaceByIndex(initialLDRValue, 5, 'x'), 17, 'n'), 18, 'i') },
   ];
+  const tags = ['381', '382', '379', ''];
+  const marcFiles = [
+    {marc: 'marcFileForC350901.mrc', fileName: `testMarcFile.${getRandomPostfix()}.mrc`}, 
+    {marc: 'marcFileForC375141.mrc', fileName: `testMarcFile.${getRandomPostfix()}.mrc`}
+  ]
   const marcFieldProtectionRules = [];
-  let createdAuthorityID;
+  let createdAuthorityID = [];
 
   before('', () => {
     cy.createTempUser([
@@ -61,16 +69,18 @@ describe('MARC Authority -> Edit Authority record', () => {
       testData.userProperties = createdUserProperties;
     });
 
-    cy.loginAsAdmin({ path: TopMenu.dataImportPath, waiter: DataImport.waitLoading }).then(() => {
-      DataImport.uploadFile('marcFileForC350901.mrc', fileName);
-      JobProfiles.waitLoadingList();
-      JobProfiles.searchJobProfileForImport(jobProfileToRun);
-      JobProfiles.runImportFile();
-      JobProfiles.waitFileIsImported(fileName);
-      Logs.checkStatusOfJobProfile('Completed');
-      Logs.openFileDetails(fileName);
-      Logs.getCreatedItemsID().then(link => {
-        createdAuthorityID = link.split('/')[5];
+    marcFiles.forEach(marcFile => {
+      cy.loginAsAdmin({ path: TopMenu.dataImportPath, waiter: DataImport.waitLoading }).then(() => {
+        DataImport.uploadFile(marcFile.marc, marcFile.fileName);
+        JobProfiles.waitLoadingList();
+        JobProfiles.searchJobProfileForImport(jobProfileToRun);
+        JobProfiles.runImportFile();
+        JobProfiles.waitFileIsImported(marcFile.fileName);
+        Logs.checkStatusOfJobProfile('Completed');
+        Logs.openFileDetails(marcFile.fileName);
+        Logs.getCreatedItemsID().then(link => {
+          createdAuthorityID.push(link.split('/')[5]);
+        });
       });
     });
   });
@@ -85,7 +95,7 @@ describe('MARC Authority -> Edit Authority record', () => {
     DataImport.openDeleteImportLogsModal();
     DataImport.confirmDeleteImportLogs();
 
-    if (createdAuthorityID) MarcAuthority.deleteViaAPI(createdAuthorityID);
+    createdAuthorityID.forEach(id => { MarcAuthority.deleteViaAPI(id); });
     Users.deleteViaApi(testData.userProperties.userId);
     marcFieldProtectionRules.forEach(ruleID => {
       if (ruleID) MarcFieldProtection.deleteMarcFieldProtectionViaApi(ruleID);
@@ -174,5 +184,76 @@ describe('MARC Authority -> Edit Authority record', () => {
     QuickMarcEditor.pressSaveAndClose();
     QuickMarcEditor.confirmDelete();
     MarcAuthorities.waitLoading();
+  });
+
+  it('C375141 Add/edit/delete "010" field of "MARC authority" record not linked to a "MARC bibliographic" record (spitfire)', { tags: [TestTypes.criticalPath, DevTeams.spitfire] }, () => {
+    MarcAuthorities.searchAndVerify(testData.authorityB.searchOption, testData.authorityB.title);
+    MarcAuthority.edit();
+    MarcAuthorities.check010FieldAbsence();
+    MarcAuthority.addNewField(4, '010', '$a 123123');
+    QuickMarcEditor.checkButtonsEnabled();
+    QuickMarcEditor.clickSaveAndKeepEditing();
+    QuickMarcEditor.updateExistingField('010', '$a n90635366');
+    QuickMarcEditor.checkButtonsEnabled();
+    QuickMarcEditor.clickSaveAndKeepEditing();
+    // wait until all the saved and updated values will be loaded.
+    cy.wait(3000);
+    QuickMarcEditor.deleteFieldAndCheck(5, '010');
+    QuickMarcEditor.checkButtonsEnabled();
+    QuickMarcEditor.clickSaveAndCloseThenCheck(1);
+    QuickMarcEditor.constinueWithSaveAndCheck();
+  });
+
+  it('C359238 MARC Authority | Displaying of placeholder message when user deletes a row (spitfire)', { tags: [TestTypes.criticalPath, DevTeams.spitfire] }, () => {
+    MarcAuthorities.searchAndVerify(testData.authorityB.searchOption, testData.authorityB.title);
+    MarcAuthority.edit();
+    
+    // Waiter needed for the whole page to be loaded.
+    cy.wait(2000)
+    for (let i = 0; i < 4; i++) {
+      QuickMarcEditor.addEmptyFields(4)
+    }
+    QuickMarcEditor.addValuesToExistingField(4, '', '$a');
+    QuickMarcEditor.addValuesToExistingField(5, '251', '$a');
+    QuickMarcEditor.addValuesToExistingField(6, '', '$a Filled');
+    QuickMarcEditor.addValuesToExistingField(7, '400', '$a value');
+    QuickMarcEditor.checkButtonsEnabled();
+    for (let i = 0; i < 4; i++) {
+      QuickMarcEditor.deleteField(5);
+    }
+
+    QuickMarcEditor.checkButtonsDisabled();
+    QuickMarcEditor.deleteField(4);
+    QuickMarcEditor.afterDeleteNotification('035');
+    QuickMarcEditor.undoDelete();
+    QuickMarcEditor.updateExistingTagValue(7, '381');
+    QuickMarcEditor.updateExistingFieldContent(8, '$a Filled')
+    QuickMarcEditor.updateExistingTagValue(9, '379');
+    QuickMarcEditor.updateExistingFieldContent(9, '$a value')
+    QuickMarcEditor.updateExistingTagValue(10, '');
+    for (let i = 7; i < 11; i++) {
+      QuickMarcEditor.deleteField(i);
+    }
+
+    tags.forEach(tag => {
+      QuickMarcEditor.afterDeleteNotification(tag);
+    });
+    for (let i = 0; i < 4; i++) {
+      QuickMarcEditor.undoDelete();
+    }
+
+    QuickMarcEditor.deleteField(10);
+    QuickMarcEditor.deleteField(11);
+    QuickMarcEditor.afterDeleteNotification('');
+    QuickMarcEditor.afterDeleteNotification('400');
+    QuickMarcEditor.clickSaveAndCloseThenCheck(2);
+    QuickMarcEditor.clickRestoreDeletedField();
+    QuickMarcEditor.deleteField(8);
+    QuickMarcEditor.deleteField(10);
+    QuickMarcEditor.afterDeleteNotification('382');
+    QuickMarcEditor.afterDeleteNotification('');
+    QuickMarcEditor.clickSaveAndCloseThenCheck(2);
+    QuickMarcEditor.constinueWithSaveAndCheck();
+    QuickMarcEditor.checkFieldAbsense('382');
   });
 });
