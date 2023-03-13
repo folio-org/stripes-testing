@@ -17,8 +17,12 @@ import TopMenu from '../../../support/fragments/topMenu';
 import permissions from '../../../support/dictionary/permissions';
 import Users from '../../../support/fragments/users/users';
 import DevTeams from '../../../support/dictionary/devTeams';
+import InventoryInstance from '../../../support/fragments/inventory/inventoryInstance';
 
 describe('ui-data-import: Verify the possibility to modify MARC Bibliographic record', () => {
+  let user = {};
+  let instanceHRID;
+
   // unique name for profiles
   const mappingProfileName = `autoTestMappingProf.${getRandomPostfix()}`;
   const actionProfileName = `autoTestActionProf.${getRandomPostfix()}`;
@@ -30,8 +34,32 @@ describe('ui-data-import: Verify the possibility to modify MARC Bibliographic re
   const nameForCSVFile = `C345423autotestFile${getRandomPostfix()}.csv`;
   const nameMarcFileForUpload = `C345423autotestFile.${getRandomPostfix()}.mrc`;
 
-  let user = {};
-  let instanceHRID;
+  const mappingProfileFieldsForModify = { name: mappingProfileName,
+    typeValue: NewFieldMappingProfile.folioRecordTypeValue.marcBib };
+
+  const actionProfile = {
+    name: actionProfileName,
+    action: 'Modify (MARC Bibliographic record type only)',
+    typeValue: 'MARC Bibliographic',
+  };
+
+  const matchProfile = {
+    profileName: matchProfileName,
+    incomingRecordFields: {
+      field: '001',
+    },
+    existingRecordFields: {
+      field: '001',
+    },
+    matchCriterion: 'Exactly matches',
+    existingRecordType: 'MARC_BIBLIOGRAPHIC'
+  };
+
+  const jobProfile = {
+    ...NewJobProfile.defaultJobProfile,
+    profileName: jobProfileName,
+    acceptedType: NewJobProfile.acceptedDataType.marc
+  };
 
   before(() => {
     cy.createTempUser([
@@ -61,36 +89,13 @@ describe('ui-data-import: Verify the possibility to modify MARC Bibliographic re
     FileManager.deleteFile(`cypress/fixtures/${nameMarcFileForUpload}`);
     FileManager.deleteFile(`cypress/fixtures/${nameForCSVFile}`);
     Users.deleteViaApi(user.userId);
+    cy.getInstance({ limit: 1, expandAll: true, query: `"hrid"=="${instanceHRID}"` })
+      .then((instance) => {
+        InventoryInstance.deleteInstanceViaApi(instance.id);
+      });
   });
 
   it('C345423 Verify the possibility to modify MARC Bibliographic record (folijet)', { tags: [TestTypes.smoke, DevTeams.folijet] }, () => {
-    const mappingProfileFieldsForModify = { name: mappingProfileName,
-      typeValue: NewFieldMappingProfile.folioRecordTypeValue.marcBib };
-
-    const actionProfile = {
-      name: actionProfileName,
-      action: 'Modify (MARC Bibliographic record type only)',
-      typeValue: 'MARC Bibliographic',
-    };
-
-    const matchProfile = {
-      profileName: matchProfileName,
-      incomingRecordFields: {
-        field: '001',
-      },
-      existingRecordFields: {
-        field: '001',
-      },
-      matchCriterion: 'Exactly matches',
-      existingRecordType: 'MARC_BIBLIOGRAPHIC'
-    };
-
-    const jobProfile = {
-      ...NewJobProfile.defaultJobProfile,
-      profileName: jobProfileName,
-      acceptedType: NewJobProfile.acceptedDataType.marc
-    };
-
     // TODO delete reload after fix https://issues.folio.org/browse/MODDATAIMP-691
     cy.reload();
     // upload a marc file for creating of the new instance, holding and item
@@ -109,6 +114,7 @@ describe('ui-data-import: Verify the possibility to modify MARC Bibliographic re
     InventorySearchAndFilter.getInstanceHRID()
       .then(hrId => {
         instanceHRID = hrId[0];
+
         // download .csv file
         cy.visit(TopMenu.inventoryPath);
         InventorySearchAndFilter.searchInstanceByHRID(hrId[0]);
