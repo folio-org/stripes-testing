@@ -73,17 +73,17 @@ describe('ui-data-import', () => {
   before('create test data', () => {
     cy.getAdminToken().then(() => {
       InventorySearchAndFilter.getInstancesByIdentifierViaApi(resourceIdentifierForFirstInstance.value)
-        .then(instances => {
-          if (instances) {
-            instances.forEach(({ id }) => {
+        .then(listOfInstancesWithFirstIdentifiers => {
+          if (listOfInstancesWithFirstIdentifiers) {
+            listOfInstancesWithFirstIdentifiers.forEach(({ id }) => {
               InventoryInstance.deleteInstanceViaApi(id);
             });
           }
         });
       InventorySearchAndFilter.getInstancesByIdentifierViaApi(resourceIdentifierForSecondInstance.value)
-        .then(instances => {
-          if (instances) {
-            instances.forEach(({ id }) => {
+        .then(listOfInstancesWithSecondIdentifiers => {
+          if (listOfInstancesWithSecondIdentifiers) {
+            listOfInstancesWithSecondIdentifiers.forEach(({ id }) => {
               InventoryInstance.deleteInstanceViaApi(id);
             });
           }
