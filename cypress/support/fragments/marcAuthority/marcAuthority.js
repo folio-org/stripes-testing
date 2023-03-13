@@ -171,4 +171,10 @@ export default {
   deleteTag: (rowIndex) => { 
     cy.do(QuickMarcEditorRow({ index: rowIndex }).find(deleteFieldButton).click());
   },
+
+  changeTag: (rowIndex, tag) => {
+    // wait until all the saved and updated values will be loaded.
+    cy.wait(2000);
+    cy.do(QuickMarcEditorRow({ index: rowIndex }).find(TextField({ name: `records[${rowIndex}].tag` })).fillIn(tag));
+  },
 };
