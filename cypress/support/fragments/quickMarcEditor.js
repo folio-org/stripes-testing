@@ -1,7 +1,7 @@
 import { QuickMarcEditor, QuickMarcEditorRow, TextArea, Section, Button, Modal, Callout, TextField, and, some, Pane, HTML, including, PaneContent } from '../../../interactors';
 import dateTools from '../utils/dateTools';
 import getRandomPostfix from '../utils/stringTools';
-import InventoryInstance from './inventory/inventoryInstance';
+import InventoryInstance from '../../support/fragments/inventory/inventoryInstance';
 
 const rootSection = Section({ id: 'quick-marc-editor-pane' });
 const viewMarcSection = Section({ id: 'marc-view-pane' });
@@ -17,7 +17,7 @@ const saveAndKeepEditingBtnEnabled = Button({ id: 'quick-marc-record-save-edit',
 const saveAndCloseButtonDisabled = Button({ id:'quick-marc-record-save', disabled: true });
 const saveAndKeepEditingBtnDisabled = Button({ id: 'quick-marc-record-save-edit', disabled: true });
 const confirmationModal = Modal({ id: 'quick-marc-confirm-modal' });
-const cancelEditConformModel = Modal({ id: 'cancel-editing-confirmation' });
+const cancelEditConformModel = Modal({ id: 'cancel-editing-confirmation' })
 const cancelEditConfirmBtn = Button('Keep editing');
 const continueWithSaveButton = Modal().find(Button({ id: 'clickable-quick-marc-confirm-modal-confirm' }));
 const restoreDeletedFieldsBtn = Modal().find(Button({ id: 'clickable-quick-marc-confirm-modal-cancel' }));
@@ -174,7 +174,7 @@ export default {
   deleteFieldAndCheck(rowIndex, tag) {
     cy.do(QuickMarcEditorRow({ index: rowIndex }).find(deleteFieldButton).click());
     cy.expect(QuickMarcEditorRow({ tagValue: tag }).absent());
-  },
+  }, 
 
   deleteField(rowIndex) {
     cy.do(QuickMarcEditorRow({ index: rowIndex }).find(deleteFieldButton).click());
@@ -387,7 +387,7 @@ export default {
   closeWithoutSaving() {
     cy.do(cancelButton.click());
   },
-
+  
   closeWithoutSavingAfterChange() {
     cy.do(cancelButton.click());
     cy.expect(closeWithoutSavingBtn.exists());
@@ -456,7 +456,15 @@ export default {
     cy.expect(getRowInteractorByTagName(tag).find(linkToMarcRecordButton).exists());
   },
 
-  checkButtonSaveAndCloseEnable() {
+  checkButtonSaveAndCloseEnable() { 
     cy.expect(saveAndCloseButton.exists());
+  },
+
+  checkDeleteButtonExist(rowIndex) {
+    cy.expect(QuickMarcEditorRow({ index: rowIndex }).find(deleteFieldButton).exists());
+  },
+
+  checkDeleteButtonNotExist(rowIndex) {
+    cy.expect(QuickMarcEditorRow({ index: rowIndex }).find(deleteFieldButton).absent());
   },
 };

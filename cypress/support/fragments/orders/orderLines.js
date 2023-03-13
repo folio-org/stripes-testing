@@ -593,5 +593,27 @@ export default {
   selectCurrentEncumbrance:(currentEncumbrance) => {
     cy.do(Section({ id: 'FundDistribution' }).find(Link(currentEncumbrance)).click());
   },
+
+  cancelPOL:() => {
+    cy.do([
+      Pane({ id: 'order-lines-details' })
+      .find(PaneHeader({ id: 'paneHeaderorder-lines-details' })
+        .find(actionsButton)).click(),
+        Button('Cancel').click(),
+        Button('Cancel order line').click()
+    ]);
+  },
+
+  changeFundInPOL:(fund) => {
+    cy.do([
+      fundDistributionSelect.click(),
+      SelectionOption(`${fund.name} (${fund.code})`).click(),
+      saveAndClose.click()
+    ]);
+  },
+
+  checkFundInPOL:(fund) => {
+    cy.expect(Section({ id: 'FundDistribution'}).find(Link(`${fund.name}(${fund.code})`)).exists());
+  },
 };
 

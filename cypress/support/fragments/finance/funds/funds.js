@@ -181,10 +181,10 @@ export default {
     ]);
   },
 
-  checkTransactionDetails: (fiscalYear,amount, source, type, fund) => {
+  checkTransactionDetails: (indexNumber = 2, fiscalYear, amount, source, type, fund) => {
     cy.do(
       transactionList
-        .find(MultiColumnListRow({ index: 2 }))
+        .find(MultiColumnListRow({ index: indexNumber }))
         .find(Link())
         .click()
         );
@@ -197,7 +197,7 @@ export default {
     )
   },
 
-  checkOrderInTransactionList: (fundCode) => {
+  checkOrderInTransactionList: (fundCode, amount) => {
     cy.expect([
       transactionList
         .find(MultiColumnListRow({ index: 1 }))
@@ -206,7 +206,7 @@ export default {
       transactionList
         .find(MultiColumnListRow({ index: 1 }))
         .find(MultiColumnListCell({ columnIndex: 2 }))
-        .has({ content: '($50.00)' }),
+        .has({ content: `${amount}` }),
       transactionList
         .find(MultiColumnListRow({ index: 1 }))
         .find(MultiColumnListCell({ columnIndex: 3 }))
